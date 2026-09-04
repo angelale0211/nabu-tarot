@@ -8590,9 +8590,13 @@ function boot() {
   if ('serviceWorker' in navigator && location.protocol !== 'file:') {
     window.addEventListener('load', () => {
       const had = !!navigator.serviceWorker.controller;
+      // A new release takes over on the next open; reload once so the visitor
+      // sees it right away instead of the cached page.
+      navigator.serviceWorker.addEventListener('controllerchange', () => { if (had && !window.__reloaded) { window.__reloaded = true; location.reload(); } });
       navigator.serviceWorker.register('sw.js').then((reg) => {
         const w = reg.installing;
         if (w && !had) w.addEventListener('statechange', () => { if (w.state === 'activated') toast(T().offlineReady); });
+        reg.update().catch(() => {});
       }).catch(() => {});
     });
   }
