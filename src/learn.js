@@ -34,7 +34,7 @@ function bindPaywall(root, after) {
   });
 }
 /* What a locked course shows: lesson 1 = the overview guide, lesson 2 = the first card. */
-const DEMO = { tarot: { guide: 'tarot-start', card: 'major-0' }, lenormand: { guide: 'len-vs-tarot', card: 1 } };
+const DEMO = { tarot: { guide: 'tarot-overview', card: 'major-0' }, lenormand: { guide: 'len-vs-tarot', card: 1 } };
 function demoHTML(courseId) {
   const S = T(), d = DEMO[courseId], g = GUIDES.filter((x) => x.id === d.guide)[0];
   const lesson = (n, title, body) => '<div class="acc open lesson"><button><span>' + esc(S.lessonN(n)) + ' · ' + esc(title) + '</span></button><div class="in">' + body + '</div></div>';

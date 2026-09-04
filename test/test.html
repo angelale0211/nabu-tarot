@@ -23,7 +23,7 @@ async function go(hash, sel) { W().location.hash = hash; await sleep(30); return
     ok(N.DECK.vi.every((c) => { const i = N.insightOf(c.id, 'vi'), j = N.insightOf(c.id, 'en'); return i && j && i.pos.length >= 3 && i.neg.length >= 3 && j.pos.length >= 3 && [i.now, i.love, i.work, i.study, i.money, i.advice, j.now, j.love, j.work, j.study, j.money, j.advice].every((t) => t && t.length > 10); }), 'every insight has keywords and six texts in both languages');
     ok(Object.keys(N.KW.vi).length === 78 && Object.keys(N.ASK.vi).length === 78, 'Vietnamese lecture keywords and questions cover 78 cards');
     ok(N.TOPICS.length === 5 && N.TOPICS[1].q.vi[4] === 'Mình nên tiếp tục chờ đợi hay buông bỏ?', 'preset topics verbatim');
-    ok(N.GUIDES.length >= 18 && N.GUIDES.every((g) => g.sections.length >= 2 && g.title.vi && g.title.en), 'guides present in both languages (' + N.GUIDES.length + ')');
+    ok(N.GUIDES.length >= 20 && N.GUIDES.every((g) => g.sections.length >= 2 && g.title.vi && g.title.en), 'guides present in both languages (' + N.GUIDES.length + ')');
     ok(!JSON.stringify(N.GUIDES).match(/Thu Anh/) && !d.querySelector('#main').textContent.match(/Thu Anh/), 'no source names in guides or on screen');
     ok(N.sunSignIndex(8, 5) === 4 && N.sunSignIndex(1, 10) === 9 && N.sunSignIndex(3, 21) === 0 && N.sunSignIndex(12, 25) === 9, 'sun sign boundaries');
     ok(N.lifePath(1998, 11, 27) === 11 && N.lifePath(1990, 2, 11) === 5 && N.lifePath(1995, 3, 12) === 3, 'life path arithmetic');
@@ -76,7 +76,7 @@ async function go(hash, sel) { W().location.hash = hash; await sleep(30); return
     await go('#/learn', '.tile');
     ok(d.querySelectorAll('.tile').length === 5 && d.querySelectorAll('.tile .lock').length === 2 && !/Trải bài/.test(d.querySelector('.tiles').textContent), 'learn shows two locked courses and three free areas; no separate spreads tile');
     await go('#/learn/tarot', '.paywall');
-    ok(d.querySelectorAll('.lesson').length === 2 && /Gã Khờ/.test(d.querySelectorAll('.lesson')[1].textContent) && /Một bộ bài thôi/.test(d.querySelectorAll('.lesson')[0].textContent), 'locked tarot course shows lesson 1 (overview) and lesson 2 (The Fool)');
+    ok(d.querySelectorAll('.lesson').length === 2 && /Gã Khờ/.test(d.querySelectorAll('.lesson')[1].textContent) && /22 lá Ẩn Chính/.test(d.querySelectorAll('.lesson')[0].textContent) && /56 lá Ẩn Phụ/.test(d.querySelectorAll('.lesson')[0].textContent) && /Hành trình của Gã Khờ/.test(d.querySelectorAll('.lesson')[0].textContent) && /Thế Giới \(21\)/.test(d.querySelectorAll('.lesson')[0].textContent), 'lesson 1 introduces 22 Majors, 56 Minors and the Fool\'s Journey; lesson 2 is The Fool');
     ok(d.querySelector('.lesson').compareDocumentPosition(d.querySelector('.paywall')) & 4 && /200\.000đ/.test(d.querySelector('.paywall').textContent) && d.querySelector('#ccode'), 'price and code entry sit below the demo');
     await go('#/learn/card/major-0', '.detail .hero');
     ok(/Gã Khờ/.test(d.querySelector('.name').textContent) && !d.querySelector('.paywall'), 'the demo card opens directly while locked');
@@ -95,7 +95,7 @@ async function go(hash, sel) { W().location.hash = hash; await sleep(30); return
     d.querySelector('#ctabs [data-t="spreads"]').click(); await sleep(50);
     ok(d.querySelectorAll('#cpanel .acc').length === 13, 'thirteen tarot spreads inside the course');
     d.querySelector('#ctabs [data-t="guides"]').click(); await sleep(50);
-    ok(d.querySelectorAll('#cpanel .acc').length === 3, 'tarot guides inside the course');
+    ok(d.querySelectorAll('#cpanel .acc').length === 4, 'tarot guides inside the course');
     await go('#/learn/card/' + chosen, '.detail .hero');
     ok(/Nghĩa xuôi/.test(d.querySelector('#main').textContent) && /Các câu hỏi thường gặp/.test(d.querySelector('#main').textContent) && !/Tương ứng chiêm tinh/.test(d.querySelector('#main').textContent) && d.querySelectorAll('.qa').length >= 1, 'card page: meanings, FAQ heading, no astrology block');
     await go('#/learn/lenormand', '.paywall');
