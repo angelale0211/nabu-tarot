@@ -33,6 +33,17 @@ function bindPaywall(root, after) {
     toast(S.unlocked); if (after) after(); else route();
   });
 }
+/* What a locked course shows: lesson 1 = the overview guide, lesson 2 = the first card. */
+const DEMO = { tarot: { guide: 'tarot-start', card: 'major-0' }, lenormand: { guide: 'len-vs-tarot', card: 1 } };
+function demoHTML(courseId) {
+  const S = T(), d = DEMO[courseId], g = GUIDES.filter((x) => x.id === d.guide)[0];
+  const lesson = (n, title, body) => '<div class="acc open lesson"><button><span>' + esc(S.lessonN(n)) + ' · ' + esc(title) + '</span></button><div class="in">' + body + '</div></div>';
+  let l1 = guideBodyHTML(g);
+  if (courseId === 'lenormand') { const p = GUIDES.filter((x) => x.id === 'len-pairs')[0]; l1 += '<h2>' + esc(L(p.sections[2].h)) + '</h2><p>' + esc(L(p.sections[2].p)) + '</p>'; }
+  const l2 = courseId === 'tarot' ? cardBodyHTML(d.card) : lenBodyHTML(d.card);
+  return '<div class="demo-head"><span class="chip pink">' + esc(S.demoTag) + '</span><p class="muted">' + esc(S.demoIntro) + '</p></div>'
+    + lesson(1, S.lesson1, '<div class="guide">' + l1 + '</div>') + lesson(2, S.lesson2, l2);
+}
 function gate(courseId, back) {
   if (ACCESS.has(courseId)) return false;
   const m = $('#main');
@@ -67,8 +78,14 @@ function renderLearn(args, params) {
 
 /* ---- the two courses: cards | spreads | guides ---- */
 function renderCourse(courseId, tab) {
-  if (gate(courseId)) return;
+  if (!ACCESS.has(courseId)) {
+    const S = T(), m = $('#main');
+    m.innerHTML = backLink('#/learn', S.learnTitle) + '<h1 style="margin-bottom:8px">' + esc(S.cats[courseId]) + '</h1>' + demoHTML(courseId) + '<div id="unlockwrap" style="margin-top:18px">' + paywallHTML(courseId) + '</div>';
+    bindAccordions(m); bindPaywall(m);
+    return;
+  }
   const S = T(), m = $('#main'), sys = courseId === 'tarot' ? 'tarot' : 'len';
+  void sys;
   tab = ['cards', 'spreads', 'guides'].indexOf(tab) > -1 ? tab : 'cards';
   const until = ACCESS.get()[courseId];
   m.innerHTML = backLink('#/learn', S.learnTitle) + '<h1 style="margin-bottom:4px">' + esc(S.cats[courseId]) + '</h1><p class="faint">' + esc(S.accessUntil(fmtDate(until))) + '</p>'
@@ -108,9 +125,14 @@ function bindGrid(panel, courseId) {
 
 /* ---- tarot card page ---- */
 function renderCard(id) {
-  if (gate('tarot', '#/learn/tarot')) return;
-  const S = T(), m = $('#main'), c = cardById(id);
-  if (!c) { location.hash = '#/learn/tarot'; return; }
+  if (id !== DEMO.tarot.card && gate('tarot', '#/learn/tarot')) return;
+  const S = T(), m = $('#main');
+  if (!cardById(id)) { location.hash = '#/learn/tarot'; return; }
+  m.innerHTML = backLink('#/learn/tarot', S.cats.tarot) + cardBodyHTML(id);
+  bindAccordions(m);
+}
+function cardBodyHTML(id) {
+  const S = T(), c = cardById(id);
   const other = cardById(id, lang === 'vi' ? 'en' : 'vi'), I = insightOf(id);
   const kwv = lang === 'vi' ? (KW.vi[id] || null) : null;
   // Some Vietnamese keyword sets carry no negative side (or no positive side).
@@ -119,7 +141,7 @@ function renderCard(id) {
   const groups = {};
   asks.forEach((a) => { (groups[a[0]] = groups[a[0]] || []).push(a); });
   const catName = { love: 'Tình cảm', career: 'Công việc', money: 'Tiền bạc', health: 'Sức khỏe', timing: 'Thời gian', verdict: 'Có / không', other: 'Khác' };
-  m.innerHTML = backLink('#/learn/tarot', S.cats.tarot) + '<div class="detail">'
+  return '<div class="detail">'
     + '<div class="hero"><span class="face">' + faceSVG(c) + '</span><div><div class="name">' + esc(c.name) + '</div><div class="en">' + esc(other.name) + '</div><div class="meta m-' + c.suit + '"><i>' + esc(c.meta) + '</i></div></div></div>'
     + '<div class="ins"><h3>' + esc(S.onTheCard) + '</h3><p class="scene">' + esc(c.scene) + '</p></div>'
     + '<div class="ins"><h3>' + esc(S.kwPos) + '</h3><div class="kwl">' + pos.map((k) => '<span>' + esc(k) + '</span>').join('') + '</div>'
@@ -129,7 +151,6 @@ function renderCard(id) {
     + (asks.length ? '<div class="ins"><h3>' + esc(S.questions) + '</h3>' + Object.keys(groups).map((g) => '<div class="acc"><button><span>' + esc(catName[g] || g) + ' (' + groups[g].length + ')</span></button><div class="in">'
       + groups[g].map((a) => '<div class="qa"><div class="q">' + esc(a[1]) + '</div><p class="a">' + esc(a[2]) + '</p></div>').join('') + '</div></div>').join('') + '</div>' : '')
     + '<div class="row"><a class="btn primary" href="#/pick">' + esc(S.nav.pick) + '</a><a class="btn" href="#/book?card=' + id + '">' + esc(S.ctaBook) + '</a></div></div>';
-  bindAccordions(m);
 }
 
 /* ---- lenormand ---- */
@@ -142,12 +163,16 @@ function lenFace(n) {
     + '<text x="50" y="157" text-anchor="middle" font-family="Be Vietnam Pro, sans-serif" font-size="7.4" fill="var(--card-ink)">' + esc(d.name) + '</text></svg>';
 }
 function renderLen(n) {
-  if (gate('lenormand', '#/learn/lenormand')) return;
-  const S = T(), m = $('#main'), d = lenCard(n);
-  if (!d) { location.hash = '#/learn/lenormand'; return; }
+  if (n !== DEMO.lenormand.card && gate('lenormand', '#/learn/lenormand')) return;
+  const S = T(), m = $('#main');
+  if (!lenCard(n)) { location.hash = '#/learn/lenormand'; return; }
+  m.innerHTML = backLink('#/learn/lenormand', S.cats.lenormand) + lenBodyHTML(n);
+}
+function lenBodyHTML(n) {
+  const S = T(), d = lenCard(n);
   const other = lenCard(n, lang === 'vi' ? 'en' : 'vi');
   const sec = (h, t) => t ? '<h3>' + esc(h) + '</h3><p>' + esc(t) + '</p>' : '';
-  m.innerHTML = backLink('#/learn/lenormand', S.cats.lenormand) + '<div class="detail">'
+  return '<div class="detail">'
     + '<div class="hero"><span class="face">' + lenFace(n) + '</span><div><div class="name">' + n + '. ' + esc(d.name) + '</div><div class="en">' + esc(other.name) + '</div>'
     + '<div class="meta"><span class="chip tag">' + esc(S.lenTone[d.tone]) + '</span> <span class="chip tag">' + esc(S.lenCard) + ': ' + esc(d.card) + '</span></div></div></div>'
     + (d.tnote ? '<p class="faint">' + esc(d.tnote) + '</p>' : '')
@@ -257,9 +282,11 @@ function renderGuide(id) {
   const S = T(), m = $('#main'), g = GUIDES.filter((x) => x.id === id)[0];
   if (!g) { location.hash = '#/learn'; return; }
   const back = g.cat === 'tarot' || g.cat === 'lenormand' ? '#/learn/' + g.cat + '?tab=guides' : g.cat === 'astro' ? '#/learn/astro' : '#/learn/' + g.cat;
-  if ((g.cat === 'tarot' || g.cat === 'lenormand') && gate(g.cat, back)) return;
-  m.innerHTML = backLink(back, S.cats[g.cat]) + '<div class="guide">' + badgeHTML(g.badge) + '<h1 style="margin:8px 0">' + esc(L(g.title)) + '</h1><p class="lead">' + esc(L(g.intro)) + '</p>'
-    + g.sections.map((s) => '<h2>' + esc(L(s.h)) + '</h2><p>' + esc(L(s.p)) + '</p>').join('') + '</div>';
+  if ((g.cat === 'tarot' || g.cat === 'lenormand') && g.id !== DEMO[g.cat].guide && gate(g.cat, back)) return;
+  m.innerHTML = backLink(back, S.cats[g.cat]) + '<div class="guide">' + badgeHTML(g.badge) + '<h1 style="margin:8px 0">' + esc(L(g.title)) + '</h1>' + guideBodyHTML(g) + '</div>';
+}
+function guideBodyHTML(g) {
+  return '<p class="lead">' + esc(L(g.intro)) + '</p>' + g.sections.map((s) => '<h2>' + esc(L(s.h)) + '</h2><p>' + esc(L(s.p)) + '</p>').join('');
 }
 
 /* ---- numbers (free) ---- */

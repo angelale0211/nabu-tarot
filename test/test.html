@@ -69,7 +69,13 @@ async function go(hash, sel) { W().location.hash = hash; await sleep(30); return
     await go('#/learn', '.tile');
     ok(d.querySelectorAll('.tile').length === 5 && d.querySelectorAll('.tile .lock').length === 2 && !/Trải bài/.test(d.querySelector('.tiles').textContent), 'learn shows two locked courses and three free areas; no separate spreads tile');
     await go('#/learn/tarot', '.paywall');
-    ok(/200\.000đ/.test(d.querySelector('.paywall').textContent) && d.querySelector('#ccode'), 'tarot course shows the paywall with price and code entry');
+    ok(d.querySelectorAll('.lesson').length === 2 && /Gã Khờ/.test(d.querySelectorAll('.lesson')[1].textContent) && /Một bộ bài thôi/.test(d.querySelectorAll('.lesson')[0].textContent), 'locked tarot course shows lesson 1 (overview) and lesson 2 (The Fool)');
+    ok(d.querySelector('.lesson').compareDocumentPosition(d.querySelector('.paywall')) & 4 && /200\.000đ/.test(d.querySelector('.paywall').textContent) && d.querySelector('#ccode'), 'price and code entry sit below the demo');
+    await go('#/learn/card/major-0', '.detail .hero');
+    ok(/Gã Khờ/.test(d.querySelector('.name').textContent) && !d.querySelector('.paywall'), 'the demo card opens directly while locked');
+    await go('#/learn/card/major-1', '.paywall');
+    ok(!!d.querySelector('.paywall'), 'the second card is locked');
+    await go('#/learn/tarot', '.paywall');
     d.querySelector('#ccode').value = 'NABU-T-270101-ZZZZ'; d.querySelector('#cunlock').click(); await sleep(50);
     ok(/Mã không đúng/.test(d.querySelector('#cstatus').textContent), 'a forged code is rejected');
     const codeT = N.makeCode('tarot', '2027-03-04');
@@ -86,9 +92,9 @@ async function go(hash, sel) { W().location.hash = hash; await sleep(30); return
     await go('#/learn/card/' + chosen, '.detail .hero');
     ok(/Nghĩa xuôi/.test(d.querySelector('#main').textContent) && /Các câu hỏi thường gặp/.test(d.querySelector('#main').textContent) && !/Tương ứng chiêm tinh/.test(d.querySelector('#main').textContent) && d.querySelectorAll('.qa').length >= 1, 'card page: meanings, FAQ heading, no astrology block');
     await go('#/learn/lenormand', '.paywall');
-    ok(!!d.querySelector('.paywall'), 'lenormand course is still locked');
-    await go('#/learn/len/1', '.paywall');
-    ok(!!d.querySelector('.paywall'), 'lenormand card pages are locked too');
+    ok(d.querySelectorAll('.lesson').length === 2 && /Kỵ Mã/.test(d.querySelectorAll('.lesson')[1].textContent) && /Luyện mỗi ngày/.test(d.querySelectorAll('.lesson')[0].textContent), 'lenormand demo: overview + daily practice, then the Rider');
+    await go('#/learn/len/2', '.paywall');
+    ok(!!d.querySelector('.paywall'), 'other lenormand cards are locked');
     N.ACCESS.grant('lenormand', '2027-03-04');
     await go('#/learn/lenormand?tab=spreads', '#cpanel .acc');
     ok(d.querySelectorAll('#cpanel .acc').length === 7, 'seven lenormand spreads inside the course');
