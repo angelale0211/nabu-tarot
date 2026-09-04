@@ -1,0 +1,19 @@
+{
+ "posts": [
+  {
+   "id": "2026-09-04-welcome",
+   "date": "2026-09-04",
+   "title": {
+    "vi": "Chào mừng bạn đến với app Nabu Tarot",
+    "en": "Welcome to the Nabu Tarot app"
+   },
+   "body": {
+    "vi": "Đây là nơi Nabu đăng dự đoán mới. Bạn mở app là thấy ngay, không cần lướt mạng xã hội.\n\nMuốn xem năng lượng của mình hôm nay? Vào mục Rút bài. Bạn chạm vào một lá, app sẽ đọc ý nghĩa cho bạn.\n\nMuốn xem bài đầy đủ về tình cảm, công việc hay học tập? Vào mục Đặt lịch, chọn chủ đề và nhắn cho Nabu.",
+    "en": "This is where Nabu posts new readings. Open the app and they are right here, no scrolling through social media.\n\nWant to see your energy today? Go to Pick a card. Tap one card and the app reads it for you.\n\nWant a full reading on love, work or study? Go to Book, choose a topic and message Nabu."
+   },
+   "cards": ["major-17"],
+   "markers": {"initials": [], "signs": []},
+   "pinned": true
+  }
+ ]
+}

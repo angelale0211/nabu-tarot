@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html><head><meta charset="utf-8"><title>Nabu Tarot tests</title></head>
+<body>
+<iframe id="f" src="../index.html#/feed" style="width:430px;height:900px"></iframe>
+<pre id="results">running</pre>
+<script>
+const out = [];
+const ok = (cond, msg) => out.push((cond ? 'PASS ' : 'FAIL ') + msg);
+const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
+const f = document.getElementById('f');
+const W = () => f.contentWindow, D = () => f.contentDocument;
+
+async function waitFor(fn, ms) {
+  const t0 = Date.now();
+  while (Date.now() - t0 < (ms || 6000)) { try { if (fn()) return true; } catch (e) {} await sleep(60); }
+  return false;
+}
+
+(async () => {
+  try {
+    await waitFor(() => D() && D().querySelector('#nav a'), 8000);
+    const w = W(), d = D();
+    // deck + knowledge base
+    ok(w.NABU.DECK && w.NABU.DECK.vi.length === 78 && w.NABU.DECK.en.length === 78, 'deck has 78 cards in both languages');
+    const kwCount = Object.keys(w.NABU.KW.vi).length, askCount = Object.keys(w.NABU.ASK.vi).length;
+    ok(kwCount === 78, 'Thu Anh keywords cover all 78 cards (' + kwCount + ')');
+    ok(askCount >= 70, 'question readings cover ' + askCount + ' cards');
+    ok(w.NABU.DECK.vi.every((c) => c.art && c.art.length > 50 && c.name && c.up && c.rev && c.scene), 'every card has art, name, upright, reversed and scene text');
+    ok(w.NABU.TOPICS.length === 5 && w.NABU.TOPICS.every((t) => t.q.vi.length === 5 && t.q.en.length === 5), 'five preset topics with five questions each');
+    ok(w.NABU.TOPICS[1].q.vi[4] === 'Mình nên tiếp tục chờ đợi hay buông bỏ?', 'preset wording is verbatim');
+    // feed
+    await waitFor(() => d.querySelector('article.post'), 6000);
+    ok(d.querySelectorAll('article.post').length >= 1, 'feed shows posts from posts.json');
+    ok(!!d.querySelector('article.post .mini svg'), 'post shows the drawn card art');
+    ok(d.documentElement.lang === 'vi', 'default language is Vietnamese');
+    ok(d.querySelector('#nav a.on span').textContent === 'Dự đoán', 'feed tab is active');
+    // pick a card
+    w.location.hash = '#/pick';
+    await waitFor(() => d.querySelector('#fan .slot'), 4000);
+    ok(d.querySelectorAll('#fan .slot').length === 7, 'seven face-down cards in the fan');
+    ok(d.querySelectorAll('[data-focus]').length === 5, 'five focus chips');
+    d.querySelector('[data-focus="love"]').click();
+    d.querySelectorAll('#fan button')[3].click();
+    await waitFor(() => d.querySelector('#reveal .hero'), 4000);
+    ok(!!d.querySelector('#reveal .hero .name') && d.querySelector('#reveal .hero .name').textContent.length > 2, 'chosen card revealed with its name');
+    ok(d.querySelectorAll('#reveal .ins').length >= 4, 'insight has energy, shadow, focus and CTA blocks');
+    ok(/Lúc này bạn đang mang năng lượng/.test(d.querySelector('#reveal').textContent), 'energy line built from Thu Anh keywords');
+    ok(/Thu Anh/.test(d.querySelector('#reveal .src').textContent), 'source line credits Thu Anh');
+    ok(d.querySelector('#fan .slot.chosen') && d.querySelectorAll('#fan .slot.dim').length === 6, 'chosen card lifts, the other six dim');
+    const chosen = w.NABU.pick.chosen;
+    ok(d.querySelector('#reveal a.btn.primary').getAttribute('href') === '#/book?card=' + chosen, 'booking CTA carries the drawn card');
+    // every card renders an insight without throwing, in both languages and all focuses
+    let bad = 0;
+    for (const c of w.NABU.DECK.vi) for (const fo of ['general', 'love', 'work', 'study', 'money']) {
+      try { const h = w.NABU.insightHTML(c.id, fo); if (h.length < 200) bad++; } catch (e) { bad++; }
+    }
+    ok(bad === 0, 'insight generates for all 78 cards x 5 focuses (' + bad + ' failures)');
+    // second tap does nothing; redraw resets
+    d.querySelector('#redraw').click();
+    await sleep(100);
+    ok(w.NABU.pick.chosen === null && d.querySelectorAll('#fan .slot.dim').length === 0, 'redraw reshuffles and clears the choice');
+    // booking
+    w.location.hash = '#/book?card=' + chosen;
+    await waitFor(() => d.querySelector('[data-topic]'), 4000);
+    ok(d.querySelectorAll('[data-topic]').length === 6, 'five preset topics plus own question');
+    ok(d.querySelectorAll('[data-send]').length >= 2, 'send buttons present (instagram + copy)');
+    ok(/ig\.me\/m\/nabutarot/.test(d.querySelector('[data-send][href]').getAttribute('href')), 'instagram DM link');
+    d.querySelector('[data-topic="2"]').click();
+    ok(d.querySelector('[data-topic="2"]').classList.contains('open') && d.querySelectorAll('[data-topic="2"] li').length === 5, 'topic expands to its five questions');
+    d.querySelector('#bname').value = 'Lan'; d.querySelector('#bname').dispatchEvent(new w.Event('input'));
+    const msg = d.querySelector('#msgprev').textContent;
+    ok(/Chủ đề: #2 Người cũ/.test(msg) && /Tên: Lan/.test(msg) && /Lá mình vừa rút/.test(msg), 'message preview has topic, name and drawn card: ' + msg.replace(/\n/g, ' | '));
+    // language switch
+    d.querySelector('#lang').click();
+    await sleep(150);
+    ok(d.documentElement.lang === 'en' && /Book a reading/.test(d.querySelector('h1').textContent), 'english switch re-renders the screen');
+    ok(/Topic: #2 An ex/.test(d.querySelector('#msgprev').textContent), 'message follows the language');
+    d.querySelector('#lang').click();
+    await sleep(100);
+    // admin
+    w.location.hash = '#/admin';
+    await waitFor(() => d.querySelector('#cgrid'), 4000);
+    ok(d.querySelectorAll('#cgrid button').length === 78, 'composer card grid lists 78 cards');
+    d.querySelector('#ptitle').value = 'Thử'; d.querySelector('#pbody').value = 'Một.\n\nHai.';
+    d.querySelector('#cgrid button[data-cid="cups-2"]').click();
+    d.querySelector('[data-sign="4"]').click();
+    d.querySelector('#pinit').value = 'c, e';
+    d.querySelector('#preview').click();
+    const pv = d.querySelector('#pprev');
+    ok(pv.querySelectorAll('.body p').length === 2 && /Sư Tử/.test(pv.textContent) && /C, E/.test(pv.textContent) && pv.querySelector('.mini svg'), 'preview renders paragraphs, sign, initials and card');
+    // theme toggle
+    d.querySelector('#theme').click();
+    ok(d.documentElement.getAttribute('data-theme') === 'light', 'theme toggles to light');
+    d.querySelector('#theme').click();
+    ok(!d.documentElement.getAttribute('data-theme'), 'theme toggles back to dark');
+    // no horizontal overflow on a phone
+    ok(d.documentElement.scrollWidth <= 431, 'no horizontal overflow (' + d.documentElement.scrollWidth + ')');
+  } catch (e) { out.push('FAIL exception: ' + (e && e.stack || e)); }
+  document.getElementById('results').textContent = out.join('\n');
+})();
+</script>
+</body></html>
