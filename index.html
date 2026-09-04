@@ -390,6 +390,20 @@ main{padding:22px 0 30px}
 .tbl td{padding:8px 6px;border-bottom:1px solid var(--rule-soft);vertical-align:top}
 .tbl td:first-child{font-weight:600;white-space:nowrap}
 
+/* ---- services / prices ---- */
+.svc{background:var(--surface);border:1.5px solid var(--rule);border-radius:18px;padding:14px 14px 10px;margin-bottom:12px}
+.svc.blue{border-color:var(--blue)}.svc.lav{border-color:var(--lav)}.svc.pink{border-color:var(--pink)}.svc.gold{border-color:var(--gold)}
+.svc.on{box-shadow:0 0 0 2px var(--primary) inset}
+.svc .t{display:flex;gap:10px;align-items:center;margin-bottom:8px}
+.svc .t .ic{font-size:26px}
+.svc .t b{font-family:var(--display);font-weight:500;font-size:18px;display:block}
+.svc .t .tag{font-size:12.5px;color:var(--fg-faint);font-style:italic}
+.svc .pk{display:flex;flex-direction:column;gap:6px}
+.svc .pkg{display:flex;justify-content:space-between;align-items:center;gap:10px;width:100%;text-align:left;background:var(--surface-2);border:1px solid transparent;border-radius:12px;padding:9px 12px;font-size:14.5px}
+.svc .pkg b{font-family:var(--body);font-weight:700;white-space:nowrap}
+.svc button.pkg.on{background:var(--primary);color:var(--primary-ink);border-color:transparent}
+.paynote{background:var(--gold-soft);color:var(--picked-ink);border-radius:12px;padding:10px 14px;font-size:14px;font-weight:600;text-align:center}
+
 /* ---- booking ---- */
 .topic{display:block;width:100%;text-align:left;background:var(--surface);border:1px solid var(--rule-soft);border-radius:16px;padding:14px 16px;margin-bottom:10px}
 .topic.on{border-color:var(--primary);box-shadow:0 0 0 1px var(--primary) inset}
@@ -531,6 +545,66 @@ const INTERESTS = [
   { id: 'fortune', vi: 'Bói toán', en: 'Fortune telling' }
 ];
 
+/* ============================ services + prices ============================
+   Nabu's price list. Prices in VND. Each service has packages; a package
+   with needsTopic asks the client to choose one of the five preset topics.
+   Edit here, then  python build.py  and push. */
+const SERVICES = [
+  { id: 'tarot', icon: '🃏', tone: 'blue', name: { vi: 'Tarot', en: 'Tarot' },
+    tagline: { vi: 'Bạn hỏi được thì Tarot trả lời được.', en: 'If you can ask it, Tarot can answer it.' },
+    packages: [
+      { id: 'yn', name: { vi: '1 câu Yes/No', en: '1 yes/no question' }, price: 10000 },
+      { id: 'q1', name: { vi: '1 câu chi tiết', en: '1 question in detail' }, price: 20000 },
+      { id: 'q3', name: { vi: '3 câu chi tiết', en: '3 questions in detail' }, price: 45000 },
+      { id: 'topic', name: { vi: 'Xem chủ đề sẵn (5 lá)', en: 'Set topic (5 cards)' }, price: 55000, needsTopic: true },
+      { id: 't40', name: { vi: '40 phút', en: '40 minutes' }, price: 80000 }
+    ] },
+  { id: 'lenormand', icon: '🗝️', tone: 'lav', name: { vi: 'Lenormand', en: 'Lenormand' },
+    tagline: { vi: 'Hỏi chuyện cụ thể, trả lời cụ thể.', en: 'Concrete questions, concrete answers.' },
+    packages: [
+      { id: 'yn', name: { vi: '1 câu Yes/No', en: '1 yes/no question' }, price: 12000 },
+      { id: 'q1', name: { vi: '1 câu chi tiết', en: '1 question in detail' }, price: 25000 },
+      { id: 'q3', name: { vi: '3 câu chi tiết', en: '3 questions in detail' }, price: 50000 },
+      { id: 'topic', name: { vi: 'Xem chủ đề sẵn', en: 'Set topic' }, price: 60000, needsTopic: true },
+      { id: 't40', name: { vi: '40 phút', en: '40 minutes' }, price: 90000 }
+    ] },
+  { id: 'tea', icon: '🍵', tone: 'gold', name: { vi: 'Bói lá trà', en: 'Tea leaf reading' },
+    tagline: { vi: 'Một tách trà, một câu chuyện.', en: 'One cup of tea, one story.' },
+    note: { vi: 'Bạn pha một tách trà lá, uống gần cạn, chụp ảnh lòng tách gửi Nabu.', en: 'Brew loose-leaf tea, drink it nearly to the bottom, send Nabu a photo of the cup.' },
+    packages: [
+      { id: 'q1', name: { vi: '1 câu', en: '1 question' }, price: 25000 },
+      { id: 'q3', name: { vi: '3 câu', en: '3 questions' }, price: 50000 },
+      { id: 't30', name: { vi: '30 phút', en: '30 minutes' }, price: 80000 }
+    ] },
+  { id: 'tarot-oracle', icon: '🌙', tone: 'pink', name: { vi: 'Tarot + Oracle', en: 'Tarot + Oracle' },
+    tagline: { vi: 'Tarot trả lời, Oracle nhắn thêm một lời.', en: 'Tarot answers, Oracle adds a message.' },
+    packages: [
+      { id: 'q1', name: { vi: '1 câu chi tiết', en: '1 question in detail' }, price: 30000 },
+      { id: 'q3', name: { vi: '3 câu chi tiết', en: '3 questions in detail' }, price: 60000 },
+      { id: 'topic', name: { vi: 'Xem chủ đề sẵn', en: 'Set topic' }, price: 70000, needsTopic: true },
+      { id: 't40', name: { vi: '40 phút', en: '40 minutes' }, price: 100000 }
+    ] },
+  { id: 'lenormand-oracle', icon: '✨', tone: 'lav', name: { vi: 'Lenormand + Oracle', en: 'Lenormand + Oracle' },
+    tagline: { vi: 'Chuyện cụ thể, thêm một lời nhắn.', en: 'The concrete story, plus a message.' },
+    packages: [
+      { id: 'q1', name: { vi: '1 câu chi tiết', en: '1 question in detail' }, price: 35000 },
+      { id: 'q3', name: { vi: '3 câu chi tiết', en: '3 questions in detail' }, price: 65000 },
+      { id: 'topic', name: { vi: 'Xem chủ đề sẵn', en: 'Set topic' }, price: 75000, needsTopic: true },
+      { id: 't40', name: { vi: '40 phút', en: '40 minutes' }, price: 110000 }
+    ] },
+  { id: 'tuvi', icon: '🌸', tone: 'pink', name: { vi: 'Tử vi', en: 'Tử vi (Vietnamese astrology)' },
+    tagline: { vi: 'Không phải chuyện hôm nay, mà là cả đường dài.', en: 'Not about today, but the long road.' },
+    note: { vi: 'Cần ngày, tháng, năm sinh và giờ sinh chính xác.', en: 'Needs your exact date and hour of birth.' },
+    needsBirth: true,
+    packages: [
+      { id: 'one', name: { vi: '1 vấn đề', en: '1 matter' }, price: 66000 },
+      { id: 'year', name: { vi: 'Vận hạn năm', en: 'The year ahead' }, price: 139000 },
+      { id: 'all', name: { vi: 'Tổng quan', en: 'Full overview' }, price: 250000 }
+    ] }
+];
+const PAYMENT_NOTE = { vi: 'Bạn thân mến vui lòng chuyển khoản trước khi xem.', en: 'Please transfer the fee before the reading.' };
+const fmtPrice = (n) => String(n).replace(/\B(?=(\d{3})+(?!\d))/g, '.') + 'đ';
+
 /* ============================ UI strings ============================
    Vietnamese is the first language of the app. Keep every line short and
    spoken; the reader is a client on a phone, not a student. */
@@ -614,21 +688,25 @@ const STR = {
     animalNote: 'Tính theo năm dương lịch. Nếu bạn sinh trước Tết thì thuộc con giáp của năm trước.',
 
     bookTitle: 'Đặt lịch xem bài',
-    chooseTopic: '1. Chọn chủ đề',
+    priceTitle: 'Bảng giá', priceIntro: 'Chọn gói hợp với câu hỏi của bạn. Giá tính theo buổi, thanh toán chuyển khoản.',
+    chooseService: '1. Chọn dịch vụ', serviceHint: 'Chạm vào gói bạn muốn. Giá ghi bên cạnh.', needService: 'Bạn chọn một gói dịch vụ trước nhé.',
+    optional: 'không bắt buộc', birthTime: 'Giờ sinh', birthHint: 'Tử vi cần giờ sinh càng chính xác càng tốt.', needBirth: 'Tử vi cần ngày sinh của bạn.',
+    msgService: 'Dịch vụ', msgBirth: 'Ngày giờ sinh',
+    chooseTopic: '2. Chọn chủ đề',
     presetTopics: 'Chủ đề sẵn',
     topicHint: 'Mỗi chủ đề là trải bài 5 lá. Bấm để xem 5 câu hỏi.',
     ownTopic: 'Câu hỏi riêng',
     ownTopicHint: 'Bạn tự viết câu hỏi của mình.',
-    chooseTime: '2. Chọn giờ hẹn',
+    chooseTime: '3. Chọn giờ hẹn',
     timeHint: (tz) => 'Giờ hiển thị theo ' + tz + '. Chấm hồng là ngày còn chỗ.',
     noSlots: 'Ngày này không còn chỗ.',
     pickDay: 'Chọn một ngày có chấm hồng.',
     yourPick: 'Bạn chọn',
-    yourDetails: '3. Thông tin của bạn',
+    yourDetails: '4. Thông tin của bạn',
     yourName: 'Tên bạn (hoặc biệt danh)',
     yourNote: 'Bạn muốn hỏi thêm gì?',
     notePlaceholder: 'Kể ngắn gọn chuyện của bạn, hoặc câu hỏi bạn muốn hỏi.',
-    sendVia: '4. Gửi cho Nabu',
+    sendVia: '5. Gửi cho Nabu',
     sendHint: 'Tin nhắn được sao chép sẵn. Bấm vào ứng dụng, rồi dán vào ô chat.',
     sendInApp: 'Gửi yêu cầu đặt lịch',
     sending: 'Đang gửi...',
@@ -818,21 +896,25 @@ const STR = {
     animalNote: 'Counted by calendar year. If you were born before Lunar New Year, you belong to the previous animal.',
 
     bookTitle: 'Book a reading',
-    chooseTopic: '1. Choose a topic',
+    priceTitle: 'Prices', priceIntro: 'Pick the package that fits your question. Prices are per session, paid by bank transfer.',
+    chooseService: '1. Choose a service', serviceHint: 'Tap the package you want. The price is next to it.', needService: 'Choose a package first.',
+    optional: 'optional', birthTime: 'Time of birth', birthHint: 'Tử vi needs the birth time as exact as possible.', needBirth: 'Tử vi needs your birth date.',
+    msgService: 'Service', msgBirth: 'Birth date and time',
+    chooseTopic: '2. Choose a topic',
     presetTopics: 'Set topics',
     topicHint: 'Each topic is a five-card spread. Tap to see the five questions.',
     ownTopic: 'Your own question',
     ownTopicHint: 'Write your own question.',
-    chooseTime: '2. Choose a time',
+    chooseTime: '3. Choose a time',
     timeHint: (tz) => 'Times are in ' + tz + '. A pink dot means free slots.',
     noSlots: 'No free slots on this day.',
     pickDay: 'Choose a day with a pink dot.',
     yourPick: 'Your pick',
-    yourDetails: '3. Your details',
+    yourDetails: '4. Your details',
     yourName: 'Your name (or nickname)',
     yourNote: 'Anything to add?',
     notePlaceholder: 'A few lines about your situation, or the question you want to ask.',
-    sendVia: '4. Send to Nabu',
+    sendVia: '5. Send to Nabu',
     sendHint: 'The message is copied for you. Open the app, then paste it into the chat.',
     sendInApp: 'Send booking request',
     sending: 'Sending...',
@@ -8224,6 +8306,15 @@ const GUIDES = [
     { h: { vi: 'Đọc thế nào', en: 'How to read it' }, p: { vi: 'Con giáp là chuyện tính cách chung và "hợp tuổi" trong văn hóa. Nó là truyền thống lâu đời, không phải khoa học. Đừng để "khắc tuổi" quyết định chuyện cưới hỏi thay hai người trong cuộc.', en: 'Animals speak of general character and cultural "compatibility". It is a long tradition, not science. Do not let "clashing years" decide a marriage instead of the two people involved.' } },
     { h: { vi: 'Tử vi thì khác', en: 'Tử vi is different' }, p: { vi: 'Tử vi đẩu số cần giờ sinh và lập lá số 12 cung với hơn 100 sao. Đó là hệ thống riêng, sâu hơn nhiều so với con giáp. Nabu không xem tử vi trong app này.', en: 'Tử vi (Vietnamese astrology) needs the birth hour and builds a 12-palace chart with over 100 stars. It is a separate, much deeper system. Nabu does not offer tử vi in this app.' } }
   ] },
+{ id: 'fort-tea', cat: 'fortune', badge: 'conv', tags: ['fortune'],
+  title: { vi: 'Bói lá trà', en: 'Tea leaf reading' },
+  intro: { vi: 'Bạn uống một tách trà lá gần cạn, xoay tách ba vòng, úp lên đĩa, rồi nhìn hình lá trà còn lại trong lòng tách. Cách xem này đến từ châu Âu thế kỷ 17, khi trà mới sang từ Trung Quốc.', en: 'Drink a cup of loose-leaf tea nearly to the bottom, swirl it three times, turn it onto the saucer, then read the shapes the leaves left inside. The practice comes from 17th-century Europe, when tea arrived from China.' },
+  sections: [
+    { h: { vi: 'Cách chuẩn bị', en: 'How to prepare' }, p: { vi: 'Dùng trà lá rời, không dùng túi lọc. Tách sáng màu, lòng tròn. Vừa uống vừa nghĩ về câu hỏi. Chừa lại một chút nước, xoay tách bằng tay trái ba vòng, úp nhanh lên đĩa, đợi vài giây rồi lật lên.', en: 'Use loose leaves, not a bag. A light-coloured, round cup. Think about your question while you drink. Leave a sip, swirl three times with your left hand, flip onto the saucer, wait a few seconds, turn it back.' } },
+    { h: { vi: 'Đọc theo vị trí', en: 'Reading by position' }, p: { vi: 'Gần miệng tách: chuyện sắp tới. Giữa tách: vài tuần nữa. Đáy tách: xa hơn, hoặc chuyện gốc rễ. Gần quai: chuyện liên quan trực tiếp đến bạn. Đối diện quai: người khác, bên ngoài.', en: 'Near the rim: soon. Middle: a few weeks out. Bottom: further away, or the root of the matter. Near the handle: directly about you. Opposite the handle: other people, outside events.' } },
+    { h: { vi: 'Vài hình thường gặp', en: 'Common shapes' }, p: { vi: 'Chim: tin tức. Tim: tình cảm. Nhẫn: cam kết, hôn nhân. Chìa khoá: cửa mở, cơ hội. Đường thẳng: chuyến đi. Cây: thành công dần dần. Mây: rối, chưa rõ. Chữ cái: tên một người. Số: ngày hoặc tháng.', en: 'Bird: news. Heart: love. Ring: commitment, marriage. Key: a door opening. Straight line: a journey. Tree: gradual success. Cloud: confusion. A letter: someone\'s name. A number: days or months.' } },
+    { h: { vi: 'Đọc thế nào cho đúng tinh thần', en: 'The right spirit' }, p: { vi: 'Bói lá trà là cách kể chuyện qua hình ảnh, giống nhìn mây. Nó gợi ý, không phán. Hình bạn thấy đầu tiên thường là hình quan trọng nhất.', en: 'Tea leaves tell a story through pictures, like cloud-watching. They suggest; they do not rule. The shape you notice first is usually the one that matters.' } }
+  ] },
 { id: 'fort-oracle', cat: 'fortune', badge: 'conv', tags: ['fortune', 'tarot'],
   title: { vi: 'Bài oracle và bài "Pick a Card"', en: 'Oracle decks and "Pick a Card"' },
   intro: { vi: 'Oracle là bộ bài tự do: số lá, hình, nghĩa do tác giả đặt. Không có cấu trúc chung như tarot. Nabu dùng oracle như lời nhắn thêm, luôn một lá, xào riêng.', en: 'An oracle deck is free-form: card count, images and meanings are the author\'s. No shared structure like tarot. Nabu uses oracle as an extra message, always one card, shuffled separately.' },
@@ -8670,7 +8761,7 @@ function quickLinksHTML() {
     ['#/learn/astro', '🔮', S.cats.astro, lang === 'vi' ? '12 cung, hành tinh, nhà' : '12 signs, planets, houses'],
     ['#/learn/tarot', '📚', S.cats.tarot, lang === 'vi' ? '78 lá, ý nghĩa' : '78 cards, meanings'],
     ['#/book', '📅', S.nav.book, lang === 'vi' ? 'chọn giờ với Nabu' : 'pick a time with Nabu'],
-    ['#/me', '👤', S.nav.me, lang === 'vi' ? 'hồ sơ, tin nhắn' : 'profile, messages']];
+    ['#/prices', '💜', S.priceTitle, lang === 'vi' ? 'các gói xem bài' : 'reading packages']];
   return '<div class="tiles">' + tiles.map((t) => '<a class="tile" href="' + t[0] + '"><div class="ic">' + t[1] + '</div><b>' + esc(t[2]) + '</b><span>' + esc(t[3]) + '</span></a>').join('') + '</div>';
 }
 function suggestedGuidesHTML(limit) {
@@ -8999,9 +9090,10 @@ function renderNumbers() {
 ROUTES.learn = { nav: 'learn', render: renderLearn };
 
 /* ============================ booking ============================
-   Topic, then a calendar of Nabu's free slots (schedule.json, minus slots
-   taken in Firestore when accounts are on), then details, then send. */
-const book = { topic: null, name: '', note: '', card: null, slot: null, month: null, day: null };
+   Service and package, topic (required for "set topic" packages), a
+   calendar of Nabu's free slots (schedule.json, minus slots taken in
+   Firestore when accounts are on), details, then send. */
+const book = { service: null, pkg: null, topic: null, name: '', note: '', birth: '', birthTime: '', card: null, slot: null, month: null, day: null };
 let SCHEDULE = null, TAKEN = {};
 
 async function loadSchedule() {
@@ -9018,16 +9110,13 @@ function slotsFor(dateStr) {
   const horizon = new Date(today); horizon.setDate(horizon.getDate() + (S.horizonDays || 42));
   if (d < lead || d > horizon) return [];
   if ((S.blocked || []).indexOf(dateStr) > -1) return [];
-  const base = (S.weekly || {})[String(d.getDay())] || [];
-  const extra = (S.extra || {})[dateStr] || [];
-  const all = base.concat(extra).filter((t, i, a) => a.indexOf(t) === i).sort();
-  const booked = S.booked || [];
+  const base = (S.weekly || {})[String(d.getDay())] || [], extra = (S.extra || {})[dateStr] || [];
+  const all = base.concat(extra).filter((t, i, a) => a.indexOf(t) === i).sort(), booked = S.booked || [];
   return all.map((t) => { const k = slotKey(dateStr, t); return { time: t, key: k, taken: booked.indexOf(k) > -1 || !!TAKEN[k.replace(/[^0-9T]/g, '')] }; });
 }
 function calendarHTML() {
   const S = T(), m = book.month;
-  const first = new Date(m.getFullYear(), m.getMonth(), 1), start = first.getDay(), days = new Date(m.getFullYear(), m.getMonth() + 1, 0).getDate();
-  const todayStr = isoDate(new Date());
+  const start = new Date(m.getFullYear(), m.getMonth(), 1).getDay(), days = new Date(m.getFullYear(), m.getMonth() + 1, 0).getDate(), todayStr = isoDate(new Date());
   let cells = '';
   for (let i = 0; i < start; i++) cells += '<div class="d off"></div>';
   for (let d = 1; d <= days; d++) {
@@ -9035,8 +9124,7 @@ function calendarHTML() {
     cells += '<button class="d' + (free ? ' has' : '') + (ds === todayStr ? ' today' : '') + (ds === book.day ? ' sel' : '') + '" data-day="' + ds + '"' + (free ? '' : ' disabled') + '>' + d + '</button>';
   }
   return '<div class="cal"><div class="head"><button data-cal="-1" aria-label="prev">‹</button><b>' + esc(S.months[m.getMonth()]) + ' ' + m.getFullYear() + '</b><button data-cal="1" aria-label="next">›</button></div>'
-    + '<div class="dow">' + S.dow.map((d) => '<span>' + d + '</span>').join('') + '</div><div class="days">' + cells + '</div>'
-    + '<div id="slots">' + slotsHTML() + '</div></div>';
+    + '<div class="dow">' + S.dow.map((d) => '<span>' + d + '</span>').join('') + '</div><div class="days">' + cells + '</div><div id="slots">' + slotsHTML() + '</div></div>';
 }
 function slotsHTML() {
   const S = T();
@@ -9046,23 +9134,46 @@ function slotsHTML() {
   return '<div class="slots">' + list.map((s) => '<button data-slot="' + s.key + '" class="' + (s.taken ? 'taken' : '') + (book.slot === s.key ? ' on' : '') + '">' + s.time + '</button>').join('') + '</div>'
     + (book.slot ? '<div class="picked">📅 ' + esc(slotLabel(book.slot)) + '</div>' : '');
 }
-function slotLabel(key) {
-  const d = new Date(key.slice(0, 10) + 'T00:00:00');
-  return T().dateFmt(d) + ' · ' + key.slice(11) + ' (' + L(CONFIG.tzLabel) + ')';
-}
+function slotLabel(key) { return T().dateFmt(new Date(key.slice(0, 10) + 'T00:00:00')) + ' · ' + key.slice(11) + ' (' + L(CONFIG.tzLabel) + ')'; }
+
+const serviceOf = (id) => SERVICES.filter((s) => s.id === id)[0];
+const pkgOf = () => { const s = serviceOf(book.service); return s ? s.packages.filter((p) => p.id === book.pkg)[0] : null; };
+function serviceLine() { const s = serviceOf(book.service), p = pkgOf(); return s && p ? L(s.name) + ' – ' + L(p.name) + ' (' + fmtPrice(p.price) + ')' : ''; }
 function composeMessage() {
   const S = T(), lines = [S.msgHello];
+  if (book.service && book.pkg) lines.push(S.msgService + ': ' + serviceLine());
   if (book.topic === 'own') lines.push(S.msgTopic + ': ' + S.ownTopic);
   else if (book.topic) { const t = TOPICS[book.topic - 1]; lines.push(S.msgTopic + ': #' + t.id + ' ' + L(t.name)); }
   if (book.slot) lines.push(S.msgTime + ': ' + slotLabel(book.slot));
   if (book.name.trim()) lines.push(S.msgName + ': ' + book.name.trim());
+  const s = serviceOf(book.service);
+  if (s && s.needsBirth && (book.birth || book.birthTime)) lines.push(S.msgBirth + ': ' + (book.birth || '?') + (book.birthTime ? ' ' + book.birthTime : ''));
   if (book.note.trim()) lines.push(S.msgNote + ': ' + book.note.trim());
   if (book.card) { const c = cardById(book.card); if (c) lines.push(S.msgCard + ': ' + c.name); }
   return lines.join('\n');
 }
+
+/* ---- price sheet (also its own screen at #/prices) ---- */
+function priceSheetHTML(interactive) {
+  const S = T();
+  return SERVICES.map((s) => '<div class="svc ' + s.tone + (interactive && book.service === s.id ? ' on' : '') + '" data-svc="' + s.id + '">'
+    + '<div class="t"><span class="ic">' + s.icon + '</span><div><b>' + esc(L(s.name)) + '</b><div class="tag">' + esc(L(s.tagline)) + '</div></div></div>'
+    + (s.note ? '<p class="hint">' + esc(L(s.note)) + '</p>' : '')
+    + '<div class="pk">' + s.packages.map((p) => (interactive
+      ? '<button class="pkg' + (book.service === s.id && book.pkg === p.id ? ' on' : '') + '" data-pkg="' + s.id + '/' + p.id + '"><span>' + esc(L(p.name)) + '</span><b>' + fmtPrice(p.price) + '</b></button>'
+      : '<div class="pkg"><span>' + esc(L(p.name)) + '</span><b>' + fmtPrice(p.price) + '</b></div>')).join('') + '</div></div>').join('')
+    + '<p class="paynote">💜 ' + esc(L(PAYMENT_NOTE)) + '</p>';
+}
+function renderPrices() {
+  const S = T(), m = $('#main');
+  m.innerHTML = '<div class="eyebrow">' + esc(CONFIG.brand) + '</div><h1 style="margin-bottom:6px">' + esc(S.priceTitle) + '</h1><p class="muted">' + esc(S.priceIntro) + '</p>'
+    + priceSheetHTML(false) + '<a class="btn primary block" href="#/book">' + esc(S.ctaBook) + '</a>';
+}
+
 async function renderBook(args, params) {
   const S = T(), m = $('#main');
-  book.card = params.card || null; book.name = book.name || PROFILE.name || '';
+  book.card = params.card || null; book.name = book.name || PROFILE.name || ''; book.birth = book.birth || PROFILE.birthday || '';
+  if (params.svc) { book.service = params.svc; book.pkg = null; }
   if (!book.month) book.month = new Date(new Date().getFullYear(), new Date().getMonth(), 1);
   const topics = TOPICS.map((t) => '<button class="topic' + (book.topic === t.id ? ' on open' : '') + '" data-topic="' + t.id + '"><div class="t"><span class="ic">' + t.icon + '</span><span><span class="n">#' + t.id + '</span> ' + esc(L(t.name)) + '</span></div><ol>' + t.q[lang].map((q) => '<li>' + esc(q) + '</li>').join('') + '</ol></button>').join('')
     + '<button class="topic' + (book.topic === 'own' ? ' on' : '') + '" data-topic="own"><div class="t"><span class="ic">✍️</span><span>' + esc(S.ownTopic) + '</span></div><div class="hint">' + esc(S.ownTopicHint) + '</div></button>';
@@ -9072,21 +9183,32 @@ async function renderBook(args, params) {
   if (CONFIG.zalo) links.push(['https://zalo.me/' + CONFIG.zalo, S.viaZalo, '']);
   if (CONFIG.email) links.push(['mailto:' + CONFIG.email, S.viaEmail, '']);
   m.innerHTML = '<div class="eyebrow">' + esc(CONFIG.brand) + '</div><h1 style="margin-bottom:6px">' + esc(S.bookTitle) + '</h1><p class="muted">' + esc(L(CONFIG.bookingNote)) + '</p>'
-    + '<div class="sec"><h2 style="margin:18px 0 4px">' + esc(S.chooseTopic) + '</h2><p class="hint" style="margin-bottom:12px">' + esc(S.topicHint) + '</p>' + topics + '</div>'
+    + '<div class="sec"><h2 style="margin:18px 0 4px">' + esc(S.chooseService) + '</h2><p class="hint" style="margin-bottom:12px">' + esc(S.serviceHint) + '</p><div id="svcwrap">' + priceSheetHTML(true) + '</div></div>'
+    + '<div class="sec"><h2 style="margin:18px 0 4px">' + esc(S.chooseTopic) + ' <span class="faint" id="topicopt"></span></h2><p class="hint" style="margin-bottom:12px">' + esc(S.topicHint) + '</p>' + topics + '</div>'
     + '<div class="sec"><h2 style="margin-bottom:4px">' + esc(S.chooseTime) + '</h2><p class="hint" style="margin-bottom:10px">' + esc(S.timeHint(L(CONFIG.tzLabel))) + '</p><div id="calwrap"><p class="hint">…</p></div></div>'
     + '<div class="sec"><h2>' + esc(S.yourDetails) + '</h2><label class="f" for="bname">' + esc(S.yourName) + '</label><input id="bname" value="' + esc(book.name) + '" autocomplete="nickname">'
+    + '<div id="birthwrap" hidden><label class="f" for="bbirth">' + esc(S.birthday) + '</label><input id="bbirth" type="date" value="' + esc(book.birth) + '"><label class="f" for="btime">' + esc(S.birthTime) + '</label><input id="btime" type="time" value="' + esc(book.birthTime) + '"><p class="hint">' + esc(S.birthHint) + '</p></div>'
     + '<label class="f" for="bnote">' + esc(S.yourNote) + '</label><textarea id="bnote" placeholder="' + esc(S.notePlaceholder) + '">' + esc(book.note) + '</textarea>'
     + (book.card ? '<p class="hint">' + esc(S.msgCard) + ': <b>' + esc(cardById(book.card).name) + '</b></p>' : '') + '</div>'
-    + '<div class="sec"><h2 style="margin-bottom:6px">' + esc(S.sendVia) + '</h2><div class="msgbox" id="msgprev"></div>'
+    + '<div class="sec"><h2 style="margin-bottom:6px">' + esc(S.sendVia) + '</h2><div class="msgbox" id="msgprev"></div><p class="hint" style="margin:0 0 10px">' + esc(L(PAYMENT_NOTE)) + '</p>'
     + '<div class="row" style="flex-direction:column">'
     + (BE.enabled ? '<button class="btn block primary" id="sendapp">' + esc(S.sendInApp) + '</button><p class="hint" id="sendstatus"></p>' : '')
     + '<p class="hint">' + esc(S.sendHint) + '</p>'
     + links.map((l) => '<a class="btn block ' + l[2] + '" data-send href="' + esc(l[0]) + '" target="_blank" rel="noopener">' + esc(l[1]) + '</a>').join('')
     + '<button class="btn block" data-send="copy">' + esc(S.copyMsg) + '</button></div></div>'
-    + '<div class="sec card"><h3 style="margin-bottom:10px">' + esc(S.howItWorks) + '</h3><ol class="steps">' + [S.chooseTopic.slice(3), S.chooseTime.slice(3), S.sendVia.slice(3), L(CONFIG.bookingNote)].map((x) => '<li>' + esc(x) + '</li>').join('') + '</ol></div>'
+    + '<div class="sec card"><h3 style="margin-bottom:10px">' + esc(S.howItWorks) + '</h3><ol class="steps">' + [S.chooseService.slice(3), S.chooseTopic.slice(3), S.chooseTime.slice(3), S.sendVia.slice(3), L(PAYMENT_NOTE)].map((x) => '<li>' + esc(x) + '</li>').join('') + '</ol></div>'
     + '<div class="sec"><h3 style="margin-bottom:6px">' + esc(S.aboutTitle) + '</h3><p class="muted">' + esc(L(CONFIG.about)) + '</p></div>';
   const prev = () => { $('#msgprev').textContent = composeMessage(); };
-  prev();
+  const syncService = () => {
+    const s = serviceOf(book.service), p = pkgOf();
+    $$('.svc', m).forEach((el) => el.classList.toggle('on', el.getAttribute('data-svc') === book.service));
+    $$('[data-pkg]', m).forEach((el) => el.classList.toggle('on', el.getAttribute('data-pkg') === book.service + '/' + book.pkg));
+    $('#topicopt').textContent = p && p.needsTopic ? '' : '(' + S.optional + ')';
+    $('#birthwrap').hidden = !(s && s.needsBirth);
+    prev();
+  };
+  syncService();
+  $$('[data-pkg]', m).forEach((b) => b.addEventListener('click', () => { const v = b.getAttribute('data-pkg').split('/'); book.service = v[0]; book.pkg = v[1]; syncService(); }));
   $$('[data-topic]', m).forEach((b) => b.addEventListener('click', () => {
     const v = b.getAttribute('data-topic'), id = v === 'own' ? 'own' : Number(v);
     if (book.topic === id && v !== 'own') { b.classList.toggle('open'); return; }
@@ -9096,9 +9218,14 @@ async function renderBook(args, params) {
   }));
   $('#bname').addEventListener('input', (e) => { book.name = e.target.value; prev(); });
   $('#bnote').addEventListener('input', (e) => { book.note = e.target.value; prev(); });
+  $('#bbirth').addEventListener('input', (e) => { book.birth = e.target.value; prev(); });
+  $('#btime').addEventListener('input', (e) => { book.birthTime = e.target.value; prev(); });
   const need = () => {
-    if (!book.topic) { toast(S.needTopic); $$('[data-topic]', m)[0].scrollIntoView({ behavior: 'smooth', block: 'center' }); return false; }
+    const p = pkgOf(), s = serviceOf(book.service);
+    if (!p) { toast(S.needService); $('#svcwrap').scrollIntoView({ behavior: 'smooth', block: 'start' }); return false; }
+    if (p.needsTopic && (!book.topic || book.topic === 'own')) { toast(S.needTopic); $$('[data-topic]', m)[0].scrollIntoView({ behavior: 'smooth', block: 'center' }); return false; }
     if (!book.slot) { toast(S.needSlot); $('#calwrap').scrollIntoView({ behavior: 'smooth', block: 'center' }); return false; }
+    if (s && s.needsBirth && !book.birth) { toast(S.needBirth); $('#birthwrap').scrollIntoView({ behavior: 'smooth', block: 'center' }); return false; }
     return true;
   };
   $$('[data-send]', m).forEach((el) => el.addEventListener('click', (e) => {
@@ -9114,30 +9241,31 @@ async function renderBook(args, params) {
     if (!BE.user) { $('#sendstatus').textContent = S.needLogin; location.hash = '#/me?next=book'; return; }
     sendBtn.disabled = true; sendBtn.textContent = S.sending;
     try {
-      const t = book.topic === 'own' ? S.ownTopic : ('#' + book.topic + ' ' + L(TOPICS[book.topic - 1].name));
-      await BE.createBooking({ name: book.name.trim() || PROFILE.name || '', slot: book.slot, topic: t, note: book.note.trim(), card: book.card ? cardById(book.card).name : '' });
+      const p = pkgOf(), s = serviceOf(book.service);
+      const t = book.topic === 'own' ? S.ownTopic : book.topic ? ('#' + book.topic + ' ' + L(TOPICS[book.topic - 1].name)) : '';
+      await BE.createBooking({ name: book.name.trim() || PROFILE.name || '', slot: book.slot, service: L2(s.name, 'vi'), pkg: L2(p.name, 'vi'), price: p.price, topic: t,
+        note: book.note.trim(), birth: s.needsBirth ? (book.birth + (book.birthTime ? ' ' + book.birthTime : '')) : '', card: book.card ? cardById(book.card).name : '' });
       $('#sendstatus').textContent = S.sentOk; $('#sendstatus').className = 'hint ok'; toast('✓');
       TAKEN = await BE.takenSlots(); book.slot = null; book.note = ''; drawCal();
     } catch (e) { $('#sendstatus').textContent = S.publishFail + ': ' + e.message; $('#sendstatus').className = 'hint err'; }
     sendBtn.disabled = false; sendBtn.textContent = S.sendInApp;
   });
-  // calendar
+  const bindSlots = () => { $$('[data-slot]', m).forEach((b) => b.addEventListener('click', () => { book.slot = b.getAttribute('data-slot'); $('#slots').innerHTML = slotsHTML(); bindSlots(); prev(); })); };
   const drawCal = () => {
     const w = $('#calwrap'); if (!w) return;
     w.innerHTML = calendarHTML();
     $$('[data-cal]', w).forEach((b) => b.addEventListener('click', () => { book.month = new Date(book.month.getFullYear(), book.month.getMonth() + Number(b.getAttribute('data-cal')), 1); drawCal(); }));
     $$('[data-day]', w).forEach((b) => b.addEventListener('click', () => { book.day = b.getAttribute('data-day'); book.slot = null; drawCal(); }));
-    $$('[data-slot]', w).forEach((b) => b.addEventListener('click', () => { book.slot = b.getAttribute('data-slot'); $('#slots').innerHTML = slotsHTML(); bindSlots(); prev(); }));
-    prev();
+    bindSlots(); prev();
   };
-  const bindSlots = () => { $$('[data-slot]', m).forEach((b) => b.addEventListener('click', () => { book.slot = b.getAttribute('data-slot'); $('#slots').innerHTML = slotsHTML(); bindSlots(); prev(); })); };
   await loadSchedule();
-  if (!book.day) { // jump to the first month with a free slot
+  if (!book.day) {
     for (let i = 0; i < 3; i++) { const mm = new Date(book.month.getFullYear(), book.month.getMonth() + i, 1); const days = new Date(mm.getFullYear(), mm.getMonth() + 1, 0).getDate(); let any = false; for (let d = 1; d <= days && !any; d++) any = slotsFor(isoDate(new Date(mm.getFullYear(), mm.getMonth(), d))).some((s) => !s.taken); if (any) { book.month = mm; break; } }
   }
   drawCal();
 }
 ROUTES.book = { nav: 'book', render: renderBook };
+ROUTES.prices = { nav: 'book', render: renderPrices };
 
 /* ============================ me ============================
    Profile (name, birthday, interests), sign-in when accounts are on,
@@ -9198,7 +9326,7 @@ function chatHTML(msgs, mine) {
 }
 function bookingRow(b, admin) {
   const S = T();
-  return '<div class="bk"><div><b>' + esc(slotLabel(b.slot)) + '</b><br><span class="faint">' + esc(b.topic || '') + (admin ? ' · ' + esc(b.name || '') + ' ' + esc(b.email || '') : '') + (b.note ? '<br>' + esc(b.note) : '') + (b.card ? '<br>🃏 ' + esc(b.card) : '') + '</span></div>'
+  return '<div class="bk"><div><b>' + esc(slotLabel(b.slot)) + '</b><br><span class="faint">' + (b.service ? esc(b.service + (b.pkg ? ' – ' + b.pkg : '') + (b.price ? ' (' + fmtPrice(b.price) + ')' : '')) + '<br>' : '') + esc(b.topic || '') + (b.birth ? '<br>🎂 ' + esc(b.birth) : '') + (admin ? ' · ' + esc(b.name || '') + ' ' + esc(b.email || '') : '') + (b.note ? '<br>' + esc(b.note) : '') + (b.card ? '<br>🃏 ' + esc(b.card) : '') + '</span></div>'
     + (admin && b.status === 'requested' ? '<div class="row" style="flex-direction:column"><button class="btn sm primary" data-bk="confirmed" data-id="' + b.id + '">' + esc(S.confirm) + '</button><button class="btn sm" data-bk="declined" data-id="' + b.id + '">' + esc(S.decline) + '</button></div>'
       : '<span class="st ' + esc(b.status) + '">' + esc(S.status[b.status] || b.status) + '</span>') + '</div>';
 }
@@ -9427,7 +9555,7 @@ function adminInbox(p) {
 ROUTES.admin = { nav: '', render: renderAdmin };
 
 /* ============================ boot ============================ */
-window.NABU = { DECK: DECK, INSIGHT: INSIGHT, KW: KW, ASK: ASK, TOPICS: TOPICS, GUIDES: GUIDES, ZODIAC: ZODIAC, pick: pick, book: book,
+window.NABU = { DECK: DECK, INSIGHT: INSIGHT, KW: KW, ASK: ASK, TOPICS: TOPICS, GUIDES: GUIDES, SERVICES: SERVICES, ZODIAC: ZODIAC, pick: pick, book: book,
   insightHTML: insightHTML, insightOf: insightOf, sunSignIndex: sunSignIndex, lifePath: lifePath, PROFILE: () => PROFILE, BE: BE };
 BE.init().catch(() => { /* backend unreachable: the app runs device-only */ });
 boot();

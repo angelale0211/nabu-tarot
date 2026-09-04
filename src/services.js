@@ -1,0 +1,59 @@
+/* ============================ services + prices ============================
+   Nabu's price list. Prices in VND. Each service has packages; a package
+   with needsTopic asks the client to choose one of the five preset topics.
+   Edit here, then  python build.py  and push. */
+const SERVICES = [
+  { id: 'tarot', icon: '🃏', tone: 'blue', name: { vi: 'Tarot', en: 'Tarot' },
+    tagline: { vi: 'Bạn hỏi được thì Tarot trả lời được.', en: 'If you can ask it, Tarot can answer it.' },
+    packages: [
+      { id: 'yn', name: { vi: '1 câu Yes/No', en: '1 yes/no question' }, price: 10000 },
+      { id: 'q1', name: { vi: '1 câu chi tiết', en: '1 question in detail' }, price: 20000 },
+      { id: 'q3', name: { vi: '3 câu chi tiết', en: '3 questions in detail' }, price: 45000 },
+      { id: 'topic', name: { vi: 'Xem chủ đề sẵn (5 lá)', en: 'Set topic (5 cards)' }, price: 55000, needsTopic: true },
+      { id: 't40', name: { vi: '40 phút', en: '40 minutes' }, price: 80000 }
+    ] },
+  { id: 'lenormand', icon: '🗝️', tone: 'lav', name: { vi: 'Lenormand', en: 'Lenormand' },
+    tagline: { vi: 'Hỏi chuyện cụ thể, trả lời cụ thể.', en: 'Concrete questions, concrete answers.' },
+    packages: [
+      { id: 'yn', name: { vi: '1 câu Yes/No', en: '1 yes/no question' }, price: 12000 },
+      { id: 'q1', name: { vi: '1 câu chi tiết', en: '1 question in detail' }, price: 25000 },
+      { id: 'q3', name: { vi: '3 câu chi tiết', en: '3 questions in detail' }, price: 50000 },
+      { id: 'topic', name: { vi: 'Xem chủ đề sẵn', en: 'Set topic' }, price: 60000, needsTopic: true },
+      { id: 't40', name: { vi: '40 phút', en: '40 minutes' }, price: 90000 }
+    ] },
+  { id: 'tea', icon: '🍵', tone: 'gold', name: { vi: 'Bói lá trà', en: 'Tea leaf reading' },
+    tagline: { vi: 'Một tách trà, một câu chuyện.', en: 'One cup of tea, one story.' },
+    note: { vi: 'Bạn pha một tách trà lá, uống gần cạn, chụp ảnh lòng tách gửi Nabu.', en: 'Brew loose-leaf tea, drink it nearly to the bottom, send Nabu a photo of the cup.' },
+    packages: [
+      { id: 'q1', name: { vi: '1 câu', en: '1 question' }, price: 25000 },
+      { id: 'q3', name: { vi: '3 câu', en: '3 questions' }, price: 50000 },
+      { id: 't30', name: { vi: '30 phút', en: '30 minutes' }, price: 80000 }
+    ] },
+  { id: 'tarot-oracle', icon: '🌙', tone: 'pink', name: { vi: 'Tarot + Oracle', en: 'Tarot + Oracle' },
+    tagline: { vi: 'Tarot trả lời, Oracle nhắn thêm một lời.', en: 'Tarot answers, Oracle adds a message.' },
+    packages: [
+      { id: 'q1', name: { vi: '1 câu chi tiết', en: '1 question in detail' }, price: 30000 },
+      { id: 'q3', name: { vi: '3 câu chi tiết', en: '3 questions in detail' }, price: 60000 },
+      { id: 'topic', name: { vi: 'Xem chủ đề sẵn', en: 'Set topic' }, price: 70000, needsTopic: true },
+      { id: 't40', name: { vi: '40 phút', en: '40 minutes' }, price: 100000 }
+    ] },
+  { id: 'lenormand-oracle', icon: '✨', tone: 'lav', name: { vi: 'Lenormand + Oracle', en: 'Lenormand + Oracle' },
+    tagline: { vi: 'Chuyện cụ thể, thêm một lời nhắn.', en: 'The concrete story, plus a message.' },
+    packages: [
+      { id: 'q1', name: { vi: '1 câu chi tiết', en: '1 question in detail' }, price: 35000 },
+      { id: 'q3', name: { vi: '3 câu chi tiết', en: '3 questions in detail' }, price: 65000 },
+      { id: 'topic', name: { vi: 'Xem chủ đề sẵn', en: 'Set topic' }, price: 75000, needsTopic: true },
+      { id: 't40', name: { vi: '40 phút', en: '40 minutes' }, price: 110000 }
+    ] },
+  { id: 'tuvi', icon: '🌸', tone: 'pink', name: { vi: 'Tử vi', en: 'Tử vi (Vietnamese astrology)' },
+    tagline: { vi: 'Không phải chuyện hôm nay, mà là cả đường dài.', en: 'Not about today, but the long road.' },
+    note: { vi: 'Cần ngày, tháng, năm sinh và giờ sinh chính xác.', en: 'Needs your exact date and hour of birth.' },
+    needsBirth: true,
+    packages: [
+      { id: 'one', name: { vi: '1 vấn đề', en: '1 matter' }, price: 66000 },
+      { id: 'year', name: { vi: 'Vận hạn năm', en: 'The year ahead' }, price: 139000 },
+      { id: 'all', name: { vi: 'Tổng quan', en: 'Full overview' }, price: 250000 }
+    ] }
+];
+const PAYMENT_NOTE = { vi: 'Bạn thân mến vui lòng chuyển khoản trước khi xem.', en: 'Please transfer the fee before the reading.' };
+const fmtPrice = (n) => String(n).replace(/\B(?=(\d{3})+(?!\d))/g, '.') + 'đ';

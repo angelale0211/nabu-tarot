@@ -8,7 +8,7 @@ import io, os, re
 HERE = os.path.dirname(os.path.abspath(__file__))
 SRC = os.path.join(HERE, 'src')
 OUT = os.environ.get('NABU_OUT', HERE)
-SCRIPTS = ['config.js', 'strings.js', 'art.js', 'tarot-en.js', 'tarot-vi.js', 'kb-thuanh.js',
+SCRIPTS = ['config.js', 'services.js', 'strings.js', 'art.js', 'tarot-en.js', 'tarot-vi.js', 'kb-thuanh.js',
            'insight-en.js', 'insight-vi.js', 'len-art.js', 'len-en.js', 'len-vi.js', 'astro.js',
            'zodiac.js', 'astro-kb.js', 'spreads.js', 'kb-guides.js',
            'core.js', 'backend.js', 'home.js', 'pick.js', 'learn.js', 'book.js', 'me.js', 'admin.js', 'main.js']

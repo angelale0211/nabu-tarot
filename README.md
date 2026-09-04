@@ -22,6 +22,8 @@ Installs to the home screen on iPhone (Safari → Share → Add to Home Screen) 
 
 **GitHub token** – GitHub → Settings → Developer settings → Personal access tokens → Fine-grained tokens → Generate. Repository access: only `nabu-tarot`. Permissions: Contents → Read and write. The token stays in that phone's browser.
 
+**Services and prices** – `src/services.js` (six services with their packages and VND prices, the payment note). The booking screen and the `#/prices` page read from it.
+
 **Handles and wording** – `src/config.js` (Instagram, Facebook page username, Zalo, email, booking text). Then:
 
 ```
@@ -57,6 +59,7 @@ Until the secrets exist the workflow does nothing and the feed shows only in-app
 ```
 src/shell.html     markup + CSS (palette from the logo)
 src/config.js      brand settings, interests
+src/services.js    services, packages, prices
 src/strings.js     UI strings (vi/en), the five preset topics (verbatim)
 src/art.js, tarot-en.js, tarot-vi.js      card artwork and card text
 src/insight-en.js, insight-vi.js          the reading generator's text, 78 cards x 8 fields per language

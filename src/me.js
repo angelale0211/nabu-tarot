@@ -57,7 +57,7 @@ function chatHTML(msgs, mine) {
 }
 function bookingRow(b, admin) {
   const S = T();
-  return '<div class="bk"><div><b>' + esc(slotLabel(b.slot)) + '</b><br><span class="faint">' + esc(b.topic || '') + (admin ? ' · ' + esc(b.name || '') + ' ' + esc(b.email || '') : '') + (b.note ? '<br>' + esc(b.note) : '') + (b.card ? '<br>🃏 ' + esc(b.card) : '') + '</span></div>'
+  return '<div class="bk"><div><b>' + esc(slotLabel(b.slot)) + '</b><br><span class="faint">' + (b.service ? esc(b.service + (b.pkg ? ' – ' + b.pkg : '') + (b.price ? ' (' + fmtPrice(b.price) + ')' : '')) + '<br>' : '') + esc(b.topic || '') + (b.birth ? '<br>🎂 ' + esc(b.birth) : '') + (admin ? ' · ' + esc(b.name || '') + ' ' + esc(b.email || '') : '') + (b.note ? '<br>' + esc(b.note) : '') + (b.card ? '<br>🃏 ' + esc(b.card) : '') + '</span></div>'
     + (admin && b.status === 'requested' ? '<div class="row" style="flex-direction:column"><button class="btn sm primary" data-bk="confirmed" data-id="' + b.id + '">' + esc(S.confirm) + '</button><button class="btn sm" data-bk="declined" data-id="' + b.id + '">' + esc(S.decline) + '</button></div>'
       : '<span class="st ' + esc(b.status) + '">' + esc(S.status[b.status] || b.status) + '</span>') + '</div>';
 }
