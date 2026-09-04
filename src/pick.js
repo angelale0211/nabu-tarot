@@ -19,7 +19,8 @@ function insightHTML(id, focus) {
 function renderPick() {
   if (!pick.hand.length) newHand();
   const S = T(), m = $('#main');
-  const chips = Object.keys(S.focus).map((f) => '<button class="chip' + (pick.focus === f ? ' on' : '') + '" data-focus="' + f + '">' + esc(S.focus[f]) + '</button>').join('');
+  // Once a card is drawn the focus is fixed for that draw: the other chips stay visible but off until a redraw.
+  const chips = Object.keys(S.focus).map((f) => '<button class="chip' + (pick.focus === f ? ' on' : '') + '" data-focus="' + f + '"' + (pick.chosen != null && pick.focus !== f ? ' disabled' : '') + '>' + esc(S.focus[f]) + '</button>').join('');
   const fan = pick.hand.map((id, i) => {
     const cls = pick.chosen == null ? '' : (pick.chosen === id ? ' chosen' : ' dim');
     return '<div class="slot' + cls + '" style="transform:rotate(' + ((i - 3) * 9) + 'deg)"><button data-card="' + id + '" aria-label="' + (i + 1) + '">' + BACK + '</button></div>';
@@ -28,14 +29,15 @@ function renderPick() {
     + '<div class="faint" style="text-align:center">' + esc(S.focusLabel) + '</div><div class="chips focus">' + chips + '</div>'
     + '<div class="fan" id="fan">' + fan + '</div><div class="tap-hint">' + (pick.chosen == null ? esc(S.tapACard) : '') + '</div><div class="reveal" id="reveal"></div>';
   $$('[data-focus]', m).forEach((b) => b.addEventListener('click', () => {
+    if (pick.chosen != null) return;
     pick.focus = b.getAttribute('data-focus'); store.set('nabu-focus', pick.focus);
     $$('[data-focus]', m).forEach((x) => x.classList.toggle('on', x === b));
-    if (pick.chosen != null) renderReveal(false);
   }));
   $$('[data-card]', m).forEach((b) => b.addEventListener('click', () => {
     if (pick.chosen != null) return;
     pick.chosen = b.getAttribute('data-card');
     $$('.slot', m).forEach((s) => s.classList.add($('button', s) === b ? 'chosen' : 'dim'));
+    $$('[data-focus]', m).forEach((x) => { if (!x.classList.contains('on')) x.disabled = true; });
     $('.tap-hint', m).textContent = '';
     renderReveal(true);
     setTimeout(() => { const r = $('#reveal'); if (r) r.scrollIntoView({ behavior: 'smooth', block: 'start' }); }, 250);
