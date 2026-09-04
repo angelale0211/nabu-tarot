@@ -60,7 +60,15 @@ The worker keeps the key server-side, sends the model the same knowledge the pag
 4. Build → Firestore Database → Create (production mode). Rules tab: paste `firestore.rules` from this repo, replacing `nabu@example.com` with Nabu's login email(s). Publish.
 5. Project settings → Your apps → Web app → copy the config object into `CONFIG.firebase` in `src/config.js`, and put the same email(s) into `CONFIG.adminEmails`. Rebuild, push.
 
+**Chat with photos and voice notes.** Once accounts are on, the chat on the Me tab and in the dashboard has a 📷 button (send a photo, up to 8 MB) and a 🎤 button (tap to record a voice note, tap again to send). Files go to Firebase Storage: in the Firebase console open Build → Storage → Get started, then paste `storage.rules` from this repo (with your admin email) into its Rules tab.
+
+**Bookings straight into Outlook.** Every in-app booking is saved to Firestore (dashboard → Đặt lịch) and, when the worker is deployed with a Resend key, also mailed to `CONFIG.adminNotifyEmail` (angela_le_@outlook.com) as a calendar invitation that Outlook adds to the calendar. Steps: create a free account at https://resend.com with the same Outlook address → API Keys → create one → `cd worker && npx wrangler secret put RESEND_API_KEY` → `npx wrangler deploy` → set `CONFIG.bookingEndpoint` to `<worker url>/booking`. (Resend's free tier sends from onboarding@resend.dev to your own verified address, which is exactly what this needs.)
+
 After that: visitors can sign in, their profile follows them across devices, the Me tab has a chat with Nabu, booking requests arrive under `#/admin` → *Đặt lịch* (confirming locks the slot for everyone), and the inbox under *Tin nhắn*. Nabu signs in with the admin email on the Me tab to see the dashboard link.
+
+## Weekly and monthly horoscopes
+
+`.github/workflows/horoscope.yml` runs every day, pulls the general weekly and monthly forecasts for the 12 signs from Horoscope.com, translates them to Vietnamese, and writes `horoscope.json`. The home screen shows the two forecasts for the visitor's Sun sign under "Có thể bạn quan tâm", with the source named. No secrets are needed.
 
 ## Linking Facebook and Instagram posts
 

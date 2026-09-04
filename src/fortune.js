@@ -9,7 +9,7 @@ const FT = {
   numbers: { ic: '🔢', vi: ['Thần số học', 'Số của bạn, từ ngày sinh và tên'], en: ['Numerology', 'Your numbers, from birth date and name'] },
   palm: { ic: '🖐️', vi: ['Xem chỉ tay', 'Bản đồ bàn tay, chạm từng đường'], en: ['Palm reading', 'A map of the hand, tap each line'] },
   cards: { ic: '🂡', vi: ['Bói bài Tây', '52 lá đọc bằng tarot'], en: ['Playing cards', '52 cards read through tarot'] },
-  tea: { ic: '🍵', vi: ['Bói lá trà', 'Bản đồ tách trà và các hình'], en: ['Tea leaves', 'Cup map and the shapes'] },
+  tea: { ic: '🍵', vi: ['Bài trà', 'Bản đồ tách trà và các hình'], en: ['Tealeaf fortune telling', 'Cup map and the shapes'] },
   animals: { ic: '🐉', vi: ['12 con giáp', 'Vòng con giáp, tam hợp, tứ hành xung'], en: ['12 animals', 'The wheel, trios and clashes'] }
 };
 const NUM_ICON = { 1: '🚀', 2: '🤝', 3: '🎨', 4: '🏛️', 5: '🧭', 6: '🏡', 7: '🔭', 8: '👑', 9: '🌍', 11: '⚡', 22: '🏗️', 33: '💞' };

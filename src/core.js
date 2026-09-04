@@ -136,16 +136,16 @@ const miniHTML = (id, link) => {
 };
 
 /* The logo: cream disc, three fanned cards (blue, purple, pink), gold crescent. */
-const LOGO = '<svg viewBox="0 0 100 100" aria-hidden="true">'
-  + '<circle cx="50" cy="50" r="48" fill="#FBF3F5"/><circle cx="50" cy="50" r="44" fill="none" stroke="#3B2A5E" stroke-width="1.6"/>'
-  + '<g transform="rotate(-18 50 62)"><rect x="34" y="30" width="26" height="42" rx="4" fill="#AFC8F0" stroke="#3B2A5E" stroke-width="2"/></g>'
-  + '<g transform="rotate(18 50 62)"><rect x="40" y="30" width="26" height="42" rx="4" fill="#F6BBCB" stroke="#3B2A5E" stroke-width="2"/></g>'
-  + '<rect x="37" y="26" width="26" height="44" rx="4" fill="#3D2A6E" stroke="#3B2A5E" stroke-width="2"/>'
-  + '<rect x="40" y="29" width="20" height="38" rx="2.5" fill="none" stroke="#E5BE5E" stroke-width="1"/>'
-  + '<path d="M52 38 A9 9 0 1 0 52 56 A7 7 0 1 1 52 38 Z" fill="#E5BE5E"/>'
-  + '<circle cx="43.5" cy="33" r="1.3" fill="#E5BE5E"/><circle cx="44" cy="63" r="1.3" fill="#E5BE5E"/><circle cx="56.5" cy="62" r="1.3" fill="#E5BE5E"/>'
-  + '<path d="M22 24 l1.6 3.4 3.4 1.6 -3.4 1.6 -1.6 3.4 -1.6 -3.4 -3.4 -1.6 3.4 -1.6z" fill="#E5BE5E"/>'
-  + '<path d="M80 70 l1.2 2.6 2.6 1.2 -2.6 1.2 -1.2 2.6 -1.2 -2.6 -2.6 -1.2 2.6 -1.2z" fill="#F6BBCB"/>'
+const LOGO = '<svg viewBox="0 0 250 64" aria-label="Nabu Tarot" class="lockup">'
+  + '<circle cx="32" cy="32" r="30" fill="#FBF3F5"/><circle cx="32" cy="32" r="27.5" fill="none" stroke="#3B2A5E" stroke-width="1.2"/>'
+  + '<g transform="rotate(-18 32 40)"><rect x="21" y="16" width="17.5" height="29" rx="3" fill="#AFC8F0" stroke="#3B2A5E" stroke-width="1.5"/></g>'
+  + '<g transform="rotate(18 32 40)"><rect x="25.5" y="16" width="17.5" height="29" rx="3" fill="#F6BBCB" stroke="#3B2A5E" stroke-width="1.5"/></g>'
+  + '<rect x="23.5" y="13" width="17.5" height="31" rx="3" fill="#3D2A6E" stroke="#3B2A5E" stroke-width="1.5"/>'
+  + '<rect x="25.5" y="15" width="13.5" height="27" rx="2" fill="none" stroke="#E5BE5E" stroke-width=".8"/>'
+  + '<path d="M33.5 22 A6 6 0 1 0 33.5 34 A4.6 4.6 0 1 1 33.5 22 Z" fill="#E5BE5E"/>'
+  + '<circle cx="28" cy="18" r=".9" fill="#E5BE5E"/><circle cx="28.5" cy="39" r=".9" fill="#E5BE5E"/><circle cx="37" cy="38.5" r=".9" fill="#E5BE5E"/>'
+  + '<path d="M14 14 l1 2.2 2.2 1 -2.2 1 -1 2.2 -1 -2.2 -2.2 -1 2.2 -1z" fill="#E5BE5E"/><path d="M52 44 l.8 1.8 1.8 .8 -1.8 .8 -.8 1.8 -.8 -1.8 -1.8 -.8 1.8 -.8z" fill="#F6BBCB"/>'
+  + '<text x="74" y="41" font-family="Playfair Display, Georgia, serif" font-size="27" font-weight="500" fill="currentColor" letter-spacing=".3">Nabu Tarot</text>'
   + '</svg>';
 
 /* ---- chrome ---- */
@@ -162,12 +162,12 @@ function renderFooter() {
   if (CONFIG.instagram) links.push('<a href="https://instagram.com/' + esc(CONFIG.instagram) + '" target="_blank" rel="noopener">Instagram</a>');
   if (CONFIG.facebookUrl) links.push('<a href="' + esc(CONFIG.facebookUrl) + '" target="_blank" rel="noopener">Facebook</a>');
   links.push('<a href="#/report">' + esc(S.reportLink) + '</a>');
-  $('#foot').innerHTML = '<div class="wrap">' + LOGO + '<div><b>' + esc(CONFIG.brand) + '</b> · ' + esc(L(CONFIG.tagline)) + '<div class="links">' + links.join(' · ') + '</div><div class="copy">© ' + new Date().getFullYear() + ' ' + esc(CONFIG.brand) + '. ' + esc(S.rights) + '</div></div></div>';
+  $('#foot').innerHTML = '<div class="wrap">' + LOGO + '<div>' + esc(L(CONFIG.tagline)) + '<div class="links">' + links.join(' · ') + '</div><div class="copy">© ' + new Date().getFullYear() + ' ' + esc(CONFIG.brand) + '. ' + esc(S.rights) + '</div></div></div>';
 }
 function renderChrome(route) {
   document.documentElement.setAttribute('lang', lang);
   renderFooter();
-  $('#brand').innerHTML = LOGO + esc(CONFIG.brand);
+  $('#brand').innerHTML = LOGO;
   $('#lang').textContent = T().lang;
   $('#nav').innerHTML = ['home', 'pick', 'learn', 'book', 'me'].map((k) =>
     '<a href="#/' + k + '" class="' + (route === k ? 'on' : '') + '">' + ICONS[k] + '<span>' + esc(T().nav[k]) + '</span>'

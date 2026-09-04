@@ -10,4 +10,6 @@ compatibility_flags = ["nodejs_compat"]
 [vars]
 ALLOWED_ORIGIN = "https://angelale0211.github.io"
 
-# Secret (never in this file):  npx wrangler secret put ANTHROPIC_API_KEY
+# Secrets (never in this file):
+#   npx wrangler secret put ANTHROPIC_API_KEY   (Claude answers; optional)
+#   npx wrangler secret put RESEND_API_KEY      (booking invitations by email; resend.com free tier)

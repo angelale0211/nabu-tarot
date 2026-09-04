@@ -171,11 +171,13 @@ function adminInbox(p) {
   };
   const open = (uid, t) => {
     adminCleanup();
-    p.innerHTML = '<p><a href="#/admin" id="backin">← ' + esc(S.back) + '</a></p><h3 style="margin-bottom:8px">' + esc(t.name || t.email || uid) + ' <span class="faint">' + esc(t.email || '') + '</span></h3><div class="chat" id="achat"></div><div class="chatbar"><textarea id="atext" placeholder="' + esc(S.typeMsg) + '"></textarea><button class="btn primary" id="asend">' + esc(S.reply) + '</button></div>';
+    p.innerHTML = '<p><a href="#/admin" id="backin">← ' + esc(S.back) + '</a></p><h3 style="margin-bottom:8px">' + esc(t.name || t.email || uid) + ' <span class="faint">' + esc(t.email || '') + '</span></h3><div class="chat" id="achat"></div>' + chatBarHTML('atext', 'asend', S.reply);
     $('#backin').addEventListener('click', (e) => { e.preventDefault(); p.innerHTML = '<div id="threads"></div>'; list(); });
     const chat = $('#achat');
     admin.unsubs.push(BE.watchMessages(uid, (msgs) => { chat.innerHTML = chatHTML(msgs, 'nabu'); chat.scrollTop = chat.scrollHeight; BE.markRead(uid, 'admin'); }));
-    $('#asend').addEventListener('click', async () => { const tx = $('#atext').value.trim(); if (!tx) return; $('#atext').value = ''; try { await BE.sendMessage(tx, uid); } catch (e) { toast(e.message); } });
+    const sendAdmin = async (text, file, kind) => { let att = null; if (file) att = await BE.uploadAttachment(file, uid, kind); await BE.sendMessage(text, uid, att); };
+    $('#asend').addEventListener('click', async () => { const tx = $('#atext').value.trim(); if (!tx) return; $('#atext').value = ''; try { await sendAdmin(tx); } catch (e) { toast(e.message); } });
+    bindChatBar(p, sendAdmin);
   };
   list();
 }

@@ -2,13 +2,15 @@
    Today in several calendars, a greeting, quick links, what fits the
    visitor's sign and interests, then the feed (Nabu's posts plus anything
    synced from Facebook / Instagram into fb.json). */
-let POSTS = null, POSTS_CACHED = false, FBPOSTS = [];
+let POSTS = null, POSTS_CACHED = false, FBPOSTS = [], HORO = null;
 
 async function loadPosts() {
   const p = await loadJSON(CONFIG.postsPath, 'nabu-posts');
   POSTS = (p.data && p.data.posts) || []; POSTS_CACHED = p.fromCache;
   const f = await loadJSON('fb.json', 'nabu-fb');
   FBPOSTS = (f.data && f.data.posts) || [];
+  const h = await loadJSON('horoscope.json', 'nabu-horo');
+  HORO = h.data || null;
   return POSTS;
 }
 
@@ -37,7 +39,7 @@ function todayHTML() {
 
 /* ---- tour ---- */
 const TOUR = [
-  { ic: PICK_ICON, vi: ['Rút bài', 'Chạm một lá để xem năng lượng của bạn hôm nay. Chọn chủ đề trước: tình cảm, công việc, học tập, tiền bạc.'], en: ['Pick a card', 'Tap one card to see your energy today. Choose a focus first: love, work, study, money.'] },
+  { ic: DRAW_ICON, vi: ['Rút bài', 'Chạm một lá để xem năng lượng của bạn hôm nay. Chọn chủ đề trước: tình cảm, công việc, học tập, tiền bạc.'], en: ['Pick a card', 'Tap one card to see your energy today. Choose a focus first: love, work, study, money.'] },
   { ic: '✨', vi: ['Dự đoán', 'Bài mới của Nabu nằm ở trang chủ. Bài có ghi "dành cho bạn" là hợp với cung của bạn.'], en: ['Readings', 'Nabu\'s new posts live on the home screen. Posts marked "for you" match your sign.'] },
   { ic: '📚', vi: ['Học', 'Tarot, Lenormand, chiêm tinh, manifestation và bói toán. Bấm vào một lá hay một cung để đọc.'], en: ['Learn', 'Tarot, Lenormand, astrology, manifestation and fortune telling. Tap a card or a sign to read.'] },
   { ic: '📅', vi: ['Đặt lịch', 'Chọn chủ đề, chọn giờ trên lịch, gửi cho Nabu.'], en: ['Book', 'Choose a topic, pick a time on the calendar, send it to Nabu.'] },
@@ -126,19 +128,31 @@ function pickCtaHTML() {
 }
 function quickLinksHTML() {
   const S = T();
-  const tiles = [['#/pick', PICK_ICON, S.nav.pick, lang === 'vi' ? 'năng lượng hôm nay' : 'your energy today'],
+  const tiles = [['#/pick', DRAW_ICON, S.nav.pick, lang === 'vi' ? 'năng lượng hôm nay' : 'your energy today'],
     ['#/home?go=feed', '✨', S.feedTitle, lang === 'vi' ? 'bài mới của Nabu' : 'new posts from Nabu'],
     ['#/learn/astro', '🔮', S.cats.astro, lang === 'vi' ? '12 cung, hành tinh, nhà' : '12 signs, planets, houses'],
-    ['#/learn/tarot', '📚', S.cats.tarot, lang === 'vi' ? '78 lá, ý nghĩa' : '78 cards, meanings'],
+    ['#/learn/tarot', PICK_ICON, S.cats.tarot, lang === 'vi' ? '78 lá, ý nghĩa' : '78 cards, meanings'],
     ['#/book', '📅', S.nav.book, lang === 'vi' ? 'chọn giờ với Nabu' : 'pick a time with Nabu'],
     ['#/prices', '💜', S.priceTitle, lang === 'vi' ? 'các gói xem bài' : 'reading packages']];
   return '<div class="tiles">' + tiles.map((t) => '<a class="tile" href="' + t[0] + '"><div class="ic">' + t[1] + '</div><b>' + esc(t[2]) + '</b><span>' + esc(t[3]) + '</span></a>').join('') + '</div>';
 }
+const SIGN_EN = ['aries', 'taurus', 'gemini', 'cancer', 'leo', 'virgo', 'libra', 'scorpio', 'sagittarius', 'capricorn', 'aquarius', 'pisces'];
+function horoCardHTML(period) {
+  const S = T(), si = mySign();
+  if (si < 0) return '<div class="horo"><h3>' + esc(period === 'monthly' ? S.horoMonth : S.horoWeek) + '</h3><p class="muted">' + esc(S.horoNeedBirthday) + '</p><a class="btn sm" href="#/me">' + esc(S.setupBtn) + '</a></div>';
+  const key = ZKEYS[si], data = HORO && HORO[period] && HORO[period][SIGN_EN[si]];
+  const glyph = '<span class="hg" style="background:' + EL_COLOR[ZSIGN[key].el] + '">' + ZSIGN[key].g + '</span>';
+  if (!data) return '<div class="horo"><div class="hh">' + glyph + '<div><h3>' + esc(period === 'monthly' ? S.horoMonth : S.horoWeek) + '</h3><span class="faint">' + esc(S.zodiac[si]) + '</span></div></div><p class="muted">' + esc(S.horoUpdating) + '</p></div>';
+  const text = (lang === 'vi' && data.vi) ? data.vi : data.en, long = text.length > 380;
+  return '<div class="horo"><div class="hh">' + glyph + '<div><h3>' + esc(period === 'monthly' ? S.horoMonth : S.horoWeek) + '</h3><span class="faint">' + esc(S.zodiac[si]) + (data.range ? ' · ' + esc(data.range) : '') + '</span></div></div>'
+    + '<div class="body' + (long ? ' clamp' : '') + '"><p>' + esc(text) + '</p></div>' + (long ? '<button class="more" data-more>' + esc(S.readMore) + '</button>' : '')
+    + '<p class="faint" style="margin:8px 0 0">' + esc(S.horoSource) + ' ' + esc((HORO && HORO.source) || 'Horoscope.com') + (HORO && HORO.updated ? ' · ' + esc(S.horoUpdated) + ' ' + esc(HORO.updated) : '') + '</p></div>';
+}
 function suggestedGuidesHTML(limit) {
   const ints = PROFILE.interests || [];
-  const list = GUIDES.filter((g) => g.tags.some((t) => ints.indexOf(t) > -1) && !((g.cat === 'tarot' || g.cat === 'lenormand') && !ACCESS.has(g.cat))).slice(0, limit || 3);
-  if (!list.length) return '';
-  return '<div class="sec"><div class="eyebrow">' + esc(T().forInterests) + '</div>' + list.map((g) => '<a class="acc" href="#/learn/guide/' + g.id + '" style="display:block;text-decoration:none;color:inherit"><button style="pointer-events:none"><span>' + esc(L(g.title)) + '</span></button></a>').join('') + '</div>';
+  const list = GUIDES.filter((g) => g.tags.some((t) => ints.indexOf(t) > -1) && !((g.cat === 'tarot' || g.cat === 'lenormand') && !ACCESS.has(g.cat))).slice(0, 1);
+  const guide = list.length ? list.map((g) => '<a class="acc" href="#/learn/guide/' + g.id + '" style="display:block;text-decoration:none;color:inherit"><button style="pointer-events:none"><span>' + esc(L(g.title)) + '</span></button></a>').join('') : '';
+  return '<div class="sec" id="foryou"><div class="eyebrow">' + esc(T().forInterests) + '</div>' + guide + horoCardHTML('monthly') + horoCardHTML('weekly') + '</div>';
 }
 
 async function renderHome(args, params) {
@@ -151,11 +165,12 @@ async function renderHome(args, params) {
     + pickCtaHTML()
     + quickLinksHTML()
     + personalHTML()
-    + suggestedGuidesHTML(3)
+    + '<div id="foryouwrap"></div>'
     + '<div class="sec" id="feed"><p class="muted">…</p></div>';
   bindAccordions(m); bindCardLinks(m);
   if (!PROFILE.tourDone) bindTour(m, 0);
   if (POSTS == null) await loadPosts();
+  const fy = $('#foryouwrap'); if (fy) { fy.innerHTML = suggestedGuidesHTML(); bindPost(fy); }
   const feed = $('#feed'); if (!feed) return;
   const all = sortedPosts(), welcome = all.filter((p) => p.welcome)[0], list = all.filter((p) => !p.welcome);
   feed.innerHTML = (welcome ? '<section class="welcome"><h2>' + esc(L(welcome.title)) + '</h2>' + paras(L(welcome.body)) + '<div class="sig">' + LOGO + '</div></section>' : '')

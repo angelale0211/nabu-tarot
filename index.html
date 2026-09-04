@@ -237,7 +237,8 @@ p{margin:0 0 12px}
   border-bottom:1px solid var(--rule-soft);padding-top:env(safe-area-inset-top)}
 .top .wrap{display:flex;align-items:center;justify-content:space-between;height:58px}
 .brand{display:flex;align-items:center;gap:9px;font-family:var(--display);font-size:20px;letter-spacing:.02em;color:var(--fg);text-decoration:none}
-.brand svg{width:34px;height:34px}
+.brand svg{width:170px;height:44px}
+.lockup{color:var(--fg);display:block}
 .tools{display:flex;gap:8px}
 .pill{border:1px solid var(--rule);border-radius:999px;padding:6px 12px;font-size:13px;font-weight:600;color:var(--fg-soft);background:var(--surface);min-width:40px;text-align:center}
 .pill:active{background:var(--surface-2)}
@@ -337,7 +338,7 @@ main{padding:22px 0 30px}
 .welcome h2{margin-bottom:12px}
 .welcome p{margin-bottom:10px}
 .welcome .sig{display:flex;justify-content:center;padding-top:6px}
-.welcome .sig svg{width:72px;height:72px;filter:drop-shadow(0 2px 8px var(--shade))}
+.welcome .sig svg{width:200px;height:52px;filter:drop-shadow(0 2px 8px var(--shade))}
 
 .pickcta{display:grid;grid-template-columns:120px 1fr;gap:14px;align-items:center;background:linear-gradient(135deg,var(--lav-soft),var(--surface));border:1.5px solid var(--lav);border-radius:20px;padding:16px;margin-bottom:16px;text-decoration:none;color:inherit}
 .pickcta .fan3{position:relative;height:118px}
@@ -347,6 +348,15 @@ main{padding:22px 0 30px}
 .pickcta b{font-family:var(--display);font-weight:500;font-size:20px;display:block;margin-bottom:4px}
 .pickcta p{color:var(--fg-soft);font-size:14px;margin-bottom:10px}
 @media (max-width:380px){.pickcta{grid-template-columns:100px 1fr}}
+
+.horo{background:var(--surface);border:1px solid var(--rule-soft);border-radius:18px;padding:16px;margin-bottom:12px}
+.horo .hh{display:flex;gap:12px;align-items:center;margin-bottom:8px}
+.horo .hg{width:44px;height:44px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:24px;color:#fff;flex:none}
+.horo h3{font-size:17px}
+.horo .body p{margin:0;font-size:15px}
+.horo .body.clamp{max-height:7.5em;overflow:hidden;position:relative}
+.horo .body.clamp:after{content:"";position:absolute;left:0;right:0;bottom:0;height:3em;background:linear-gradient(transparent,var(--surface))}
+.horo .more{color:var(--link);font-weight:700;font-size:14px;margin-top:4px}
 
 /* ---- pick a card ---- */
 .pick-head{text-align:center;margin-bottom:18px}
@@ -442,8 +452,8 @@ main{padding:22px 0 30px}
 
 /* ---- footer ---- */
 .foot{border-top:1px solid var(--rule-soft);padding:22px 0 26px;color:var(--fg-soft);font-size:13px}
-.foot .wrap{display:flex;gap:12px;align-items:flex-start}
-.foot svg{width:44px;height:44px;flex:none}
+.foot .wrap{display:flex;flex-direction:column;gap:6px;align-items:flex-start}
+.foot svg{width:150px;height:40px;flex:none}
 .foot b{color:var(--fg)}
 .foot .links{margin-top:4px}
 .foot .links a{font-weight:600}
@@ -641,6 +651,11 @@ main{padding:22px 0 30px}
 .chatbar{display:flex;gap:8px;margin-top:10px}
 .chatbar textarea{min-height:44px;max-height:120px;border-radius:14px;padding:10px 14px}
 .chatbar button{flex:none}
+.chatbar .att-btn{padding:8px 10px;min-height:44px;font-size:18px;cursor:pointer}
+.chatbar .att-btn.rec{background:var(--tag-pink-bg);color:var(--tag-pink-ink);animation:pulse 1s infinite}
+@keyframes pulse{50%{opacity:.6}}
+.msg .att{display:block;max-width:220px;border-radius:10px;margin-bottom:6px}
+.msg audio.att{width:220px}
 .bk{display:flex;justify-content:space-between;gap:10px;align-items:center;padding:12px 0;border-bottom:1px solid var(--rule-soft);font-size:14px}
 .bk>div:first-child{min-width:0;overflow-wrap:anywhere}
 .bk .st{font-size:12px;font-weight:700;border-radius:8px;padding:3px 8px;background:var(--surface-3)}
@@ -688,6 +703,8 @@ main{padding:22px 0 30px}
 /* Small purple logo card used as the 'pick a card' icon in tiles and lists (needed before services.js). */
 const PICK_ICON = '<svg class="pickico" viewBox="0 0 100 172" aria-hidden="true"><rect x="3" y="3" width="94" height="166" rx="12" fill="#3D2A6E" stroke="#3B2A5E" stroke-width="4"/><rect x="14" y="14" width="72" height="144" rx="7" fill="none" stroke="#E5BE5E" stroke-width="2"/><path d="M58 58 A28 28 0 1 0 58 114 A22 22 0 1 1 58 58 Z" fill="#E5BE5E"/><circle cx="30" cy="36" r="4" fill="#E5BE5E"/><circle cx="32" cy="138" r="4" fill="#E5BE5E"/><circle cx="72" cy="132" r="4" fill="#E5BE5E"/></svg>';
 
+/* Draw icon for 'Rút bài': a cream card lifted at an angle with a gold sparkle. */
+const DRAW_ICON = '<svg class="pickico" viewBox="0 0 100 172" aria-hidden="true"><g transform="rotate(-8 50 86)"><rect x="8" y="8" width="84" height="156" rx="12" fill="#FBF3F5" stroke="#3B2A5E" stroke-width="4"/><rect x="18" y="18" width="64" height="136" rx="7" fill="none" stroke="#E5BE5E" stroke-width="2"/><path d="M50 52 l8 22 22 8 -22 8 -8 22 -8 -22 -22 -8 22 -8z" fill="#E5BE5E"/><path d="M72 30 l3 7 7 3 -7 3 -3 7 -3 -7 -7 -3 7 -3z" fill="#F6BBCB"/><path d="M28 132 l2.5 5.5 5.5 2.5 -5.5 2.5 -2.5 5.5 -2.5 -5.5 -5.5 -2.5 5.5 -2.5z" fill="#AFC8F0"/></g></svg>';
 const CONFIG = {
   brand: 'Nabu Tarot',
   // Social handles. Leave a value empty ('') to hide that button.
@@ -712,6 +729,11 @@ const CONFIG = {
   firebase: null,
   // e.g. firebase: { apiKey: '...', authDomain: 'nabu-tarot.firebaseapp.com', projectId: 'nabu-tarot', appId: '...' },
   adminEmails: [],
+  // Where booking requests are mailed as calendar invitations (an .ics the
+  // mail app adds to the calendar). Sent by the worker in worker/ through
+  // Resend; set bookingEndpoint to '<worker url>/booking' once deployed.
+  adminNotifyEmail: 'angela_le_@outlook.com',
+  bookingEndpoint: '',
   authProviders: ['google', 'facebook', 'email'],
 
   // Nabu AI. Leave empty to answer from the built-in knowledge base; set the
@@ -776,7 +798,7 @@ const SERVICES = [
       { id: 'yn', name: { vi: '1 câu Yes/No', en: '1 yes/no question' }, price: 10000 },
       { id: 'q1', name: { vi: '1 câu chi tiết', en: '1 question in detail' }, price: 20000 },
       { id: 'q3', name: { vi: '3 câu chi tiết', en: '3 questions in detail' }, price: 50000 },
-      { id: 'topic', name: { vi: 'Xem chủ đề sẵn (chỉ áp dụng với 5 chủ đề)', en: 'Set topic (five preset topics only)' }, price: 60000, needsTopic: true },
+      { id: 'topic', name: { vi: 'Xem 1 chủ đề sẵn (chọn trong 5 chủ đề)', en: '1 preset topic (choose from the 5 set topics)' }, price: 60000, needsTopic: true },
       { id: 't40', name: { vi: '40 phút', en: '40 minutes' }, price: 80000 }
     ] },
   { id: 'lenormand', icon: '🗝️', tone: 'lav', name: { vi: 'Lenormand', en: 'Lenormand' },
@@ -785,10 +807,10 @@ const SERVICES = [
       { id: 'yn', name: { vi: '1 câu Yes/No', en: '1 yes/no question' }, price: 12000 },
       { id: 'q1', name: { vi: '1 câu chi tiết', en: '1 question in detail' }, price: 25000 },
       { id: 'q3', name: { vi: '3 câu chi tiết', en: '3 questions in detail' }, price: 50000 },
-      { id: 'topic', name: { vi: 'Xem chủ đề sẵn (chỉ áp dụng với 5 chủ đề)', en: 'Set topic (five preset topics only)' }, price: 60000, needsTopic: true },
+      { id: 'topic', name: { vi: 'Xem 1 chủ đề sẵn (chọn trong 5 chủ đề)', en: '1 preset topic (choose from the 5 set topics)' }, price: 60000, needsTopic: true },
       { id: 't40', name: { vi: '40 phút', en: '40 minutes' }, price: 90000 }
     ] },
-  { id: 'tea', icon: '🍵', tone: 'gold', name: { vi: 'Bói lá trà', en: 'Tea leaf reading' },
+  { id: 'tea', icon: '🍵', tone: 'gold', name: { vi: 'Bài trà', en: 'Tealeaf fortune telling' },
     tagline: { vi: 'Một tách trà, một câu chuyện.', en: 'One cup of tea, one story.' },
     note: { vi: 'Bạn pha một tách trà lá, uống gần cạn, chụp ảnh lòng tách gửi Nabu.', en: 'Brew loose-leaf tea, drink it nearly to the bottom, send Nabu a photo of the cup.' },
     packages: [
@@ -801,7 +823,7 @@ const SERVICES = [
     packages: [
       { id: 'q1', name: { vi: '1 câu chi tiết', en: '1 question in detail' }, price: 30000 },
       { id: 'q3', name: { vi: '3 câu chi tiết', en: '3 questions in detail' }, price: 60000 },
-      { id: 'topic', name: { vi: 'Xem chủ đề sẵn (chỉ áp dụng với 5 chủ đề)', en: 'Set topic (five preset topics only)' }, price: 70000, needsTopic: true },
+      { id: 'topic', name: { vi: 'Xem 1 chủ đề sẵn (chọn trong 5 chủ đề)', en: '1 preset topic (choose from the 5 set topics)' }, price: 70000, needsTopic: true },
       { id: 't40', name: { vi: '40 phút', en: '40 minutes' }, price: 100000 }
     ] },
   { id: 'lenormand-oracle', icon: '✨', tone: 'lav', name: { vi: 'Lenormand + Oracle', en: 'Lenormand + Oracle' },
@@ -809,7 +831,7 @@ const SERVICES = [
     packages: [
       { id: 'q1', name: { vi: '1 câu chi tiết', en: '1 question in detail' }, price: 35000 },
       { id: 'q3', name: { vi: '3 câu chi tiết', en: '3 questions in detail' }, price: 65000 },
-      { id: 'topic', name: { vi: 'Xem chủ đề sẵn (chỉ áp dụng với 5 chủ đề)', en: 'Set topic (five preset topics only)' }, price: 75000, needsTopic: true },
+      { id: 'topic', name: { vi: 'Xem 1 chủ đề sẵn (chọn trong 5 chủ đề)', en: '1 preset topic (choose from the 5 set topics)' }, price: 75000, needsTopic: true },
       { id: 't40', name: { vi: '40 phút', en: '40 minutes' }, price: 110000 }
     ] },
   { id: 'tuvi', icon: '🌸', tone: 'pink', name: { vi: 'Tử vi', en: 'Tử vi (Vietnamese astrology)' },
@@ -873,7 +895,7 @@ const STR = {
     signCard: 'Lá tarot của cung bạn',
     lifePath: 'Số đường đời',
     readSign: 'Đọc về cung của bạn',
-    forInterests: 'Có thể bạn quan tâm',
+    forInterests: 'Có thể bạn quan tâm', horoMonth: 'Dự đoán tháng này', horoWeek: 'Dự đoán tuần này', horoNeedBirthday: 'Nhập ngày sinh ở mục Tôi để xem dự đoán theo cung của bạn.', horoUpdating: 'Dự đoán đang được cập nhật. Bạn quay lại sau nhé.', horoSource: 'Theo', horoUpdated: 'cập nhật',
 
     pickToday: 'Rút một lá bài hôm nay',
     pickTitle: 'Năng lượng hiện tại của bạn',
@@ -905,6 +927,10 @@ const STR = {
     aiIntro: 'Hỏi Nabu AI về điều bạn đang xem. Càng cụ thể càng tốt.', aiIntroLesson: 'Chỗ nào trong bài chưa hiểu, hỏi Nabu AI ở đây.', aiPlaceholder: 'Ví dụ: lá này nói gì về chuyện tình cảm của mình?', aiAsk: 'Hỏi', aiOnline: 'trả lời bằng AI', aiBuiltin: 'trả lời từ kho kiến thức', aiNote: 'Nabu AI trả lời từ ý nghĩa lá bài và kiến thức trong app. Chuyện quan trọng, bạn đặt lịch với Nabu.', aiFallback: 'AI đang bận, đây là câu trả lời từ kho kiến thức.',
     aiSugCard: ['Lá này nói gì về tình cảm của mình?', 'Mình có nên tiếp tục không?', 'Khi nào chuyện này xảy ra?'], aiSugLesson: ['Ẩn Chính khác Ẩn Phụ thế nào?', 'Lá hoàng gia là ai?', 'Nếu mình không hiểu một lá thì làm sao?'], aiSugSign: ['Cung này hợp với cung nào?', 'Cung này trong tình yêu thế nào?', 'Mặt Trăng ở cung này là sao?'], aiSugNumbers: ['Số đường đời của mình nói gì?', 'Năm nay của mình là năm gì?', 'Số vận mệnh theo tên mình là gì?'], aiSugGeneral: ['Gã Khờ nghĩa là gì?', 'Sư Tử hợp với Bảo Bình không?', 'Số đường đời của mình?'],
     aiCardGeneral: (n) => 'Lá ' + n + ' đang nói về năng lượng chung của bạn lúc này.', aiCardFocus: (n, f) => 'Với câu hỏi về ' + f.toLowerCase() + ', lá ' + n + ' nói thế này:', aiCardWhy: 'Lá này mang năng lượng:', aiCardShadow: 'Mặt trái cần để ý:', aiYes: (n) => 'Nếu hỏi có hay không: ' + n + ' thiên về CÓ, nhưng một lá không quyết định được. Muốn rõ hơn, hãy đặt lịch xem bài.', aiNo: (n) => 'Nếu hỏi có hay không: ' + n + ' thiên về KHÔNG, hoặc chưa phải lúc. Một lá không quyết định được; muốn rõ hơn, hãy đặt lịch xem bài.', aiMaybe: (n) => 'Nếu hỏi có hay không: ' + n + ' không nghiêng hẳn về bên nào. Câu trả lời tuỳ vào việc bạn làm tiếp theo.', aiTiming: 'Về thời gian, một lá chỉ gợi ý nhịp, không cho ngày chính xác.', aiFound: 'Mình tìm thấy trong khóa học:', aiLessonNone: 'Mình chưa thấy phần nào khớp. Bạn thử hỏi bằng tên lá bài, hoặc một từ khóa trong bài học nhé.', aiChem: (a, b) => a + ' và ' + b + ':', aiCompatYes: 'Đây là một trong những cặp thường được xem là hợp.', aiCompatWork: 'Không nằm trong nhóm dễ hợp nhất, nhưng cung chỉ là một phần; bản đồ sao đầy đủ mới nói được nhiều hơn.', aiAbout: (n) => 'Về ' + n + ':', aiGeneralHelp: 'Mình chưa có câu trả lời sẵn cho câu này. Mình trả lời tốt nhất khi câu hỏi nhắc đến một lá bài, một cung hoàng đạo, một hành tinh, một nhà, một con giáp hay một con số.', aiOfflineHint: 'Chuyện riêng của bạn thì đặt lịch với Nabu để được xem kỹ.', aiBooking: 'Bạn xem bảng giá và chọn giờ ở mục Đặt lịch. Chọn gói, chọn giờ trống trên lịch, rồi gửi cho Nabu.',
+    compatHead: { same: (a, b) => a + ' và ' + b + ': cùng một cung, nên rất dễ hiểu nhau. Câu trả lời ngắn là có, hai bạn hợp, miễn là đừng giống nhau cả ở tật xấu.', opposite: (a, b) => a + ' và ' + b + ' là hai cung đối diện nhau trên vòng hoàng đạo. Câu trả lời ngắn là có, hai bạn hút nhau rất mạnh, nhưng phải học cách cân bằng vì mỗi bên là mặt còn thiếu của bên kia.', good: (a, b) => a + ' và ' + b + ': câu trả lời ngắn là có, đây là một trong những cặp được xem là hợp nhau.', ok: (a, b) => a + ' và ' + b + ': khá hợp. Hai cung không cùng nguyên tố nhưng nuôi được nhau.', work: (a, b) => a + ' và ' + b + ': hợp được, nhưng phải cố gắng. Hai cung đứng ở góc vuông với nhau, nên dễ va chạm về cách làm.', neutral: (a, b) => a + ' và ' + b + ': ở mức trung bình. Không thuộc nhóm dễ hợp nhất, cũng không thuộc nhóm hay xung đột.' },
+    compatWhy: { same: 'Lý do:', opposite: 'Lý do:', good: 'Lý do:', ok: 'Lý do:', work: 'Lý do:', neutral: 'Lý do:' },
+    compatBring: (a, ka, b, kb) => a + ' mang vào mối quan hệ sự ' + ka + ', còn ' + b + ' mang sự ' + kb + '.', compatTipGood: 'Lời khuyên: hãy giữ cho mối quan hệ có chút thử thách và đừng lười giao tiếp, vì cặp dễ hợp thường chủ quan.', compatTipOpp: 'Lời khuyên: hãy xem điểm khác biệt là thứ bổ sung cho mình thay vì thứ phải sửa ở người kia.', compatTipWork: 'Lời khuyên: hãy nói rõ nhu cầu của mình bằng lời, đừng đợi người kia đoán. Cung Mặt Trời chỉ là một phần; bản đồ sao đầy đủ sẽ nói được nhiều hơn.',
+    compatWhich: (a) => a + ' thường hợp nhất với:', compatAsk: 'Bạn muốn xem cặp cụ thể nào thì nhắc tên cung kia trong câu hỏi nhé.',
     strengths: 'Điểm mạnh', challenges: 'Điểm cần để ý', compat: 'Thường hợp với', moonSign: 'Mặt Trăng ở cung này', risingSign: 'Cung Mọc ở cung này',
     numExpr: 'Số vận mệnh (theo tên)', numSoul: 'Số linh hồn', numPers: 'Số nhân cách', numYear: 'Năm cá nhân', numBirthday: 'Số ngày sinh', numName: 'Họ tên đầy đủ (khai sinh)', numNameHint: 'Tính theo bảng Pythagoras, bỏ dấu tiếng Việt, Đ đọc là D.',
     fortuneIntro: 'Năm cách xem cũ, làm mới bằng hình. Chạm để chơi thử.', readMoreTitle: 'Đọc thêm', numIntro: 'Chạm vào một số để xem nó nói gì. Số của bạn được đánh dấu.', numTap: 'Chạm vào một số ở trên.', numYours: 'Số của bạn', numCycle: 'Vòng 9 năm của bạn', numCycleHint: 'Mỗi năm cá nhân là một bước trong vòng 9 năm. Năm 1 gieo, năm 9 gặt và buông.', numHow: 'Cách tính',
@@ -943,9 +969,9 @@ const STR = {
     chooseService: '1. Chọn dịch vụ', serviceHint: 'Chạm vào gói bạn muốn. Giá ghi bên cạnh.', needService: 'Bạn chọn một gói dịch vụ trước nhé.',
     optional: 'không bắt buộc', birthTime: 'Giờ sinh', birthHint: 'Tử vi cần giờ sinh càng chính xác càng tốt.', needBirth: 'Tử vi cần ngày sinh của bạn.',
     msgService: 'Dịch vụ', msgBirth: 'Ngày giờ sinh',
-    chooseTopic: '2. Chọn chủ đề',
+    chooseTopic: '2. Chọn 1 chủ đề sẵn',
     presetTopics: 'Chủ đề sẵn',
-    topicHint: 'Chỉ áp dụng cho gói Xem chủ đề sẵn, với 5 chủ đề có sẵn dưới đây. Mỗi chủ đề là trải bài 5 lá. Bấm để xem 5 câu hỏi. Câu hỏi khác bạn ghi ở phần thông tin bên dưới.',
+    topicHint: 'Chỉ áp dụng cho gói Xem 1 chủ đề sẵn: bạn chọn một trong 5 chủ đề dưới đây. Mỗi chủ đề là trải bài 5 lá. Bấm để xem 5 câu hỏi. Câu hỏi khác bạn ghi ở phần thông tin bên dưới.',
     ownTopic: 'Câu hỏi riêng',
     ownTopicHint: 'Bạn tự viết câu hỏi của mình.',
     chooseTime: '3. Chọn giờ hẹn',
@@ -1003,7 +1029,7 @@ const STR = {
     messages: 'Nhắn tin với Nabu',
     messagesIntro: 'Nabu trả lời trong app. Bạn sẽ thấy chấm đỏ khi có tin mới.',
     messagesSoon: 'Nhắn tin trong app sẽ mở khi Nabu bật tài khoản. Bây giờ bạn nhắn qua Instagram nhé.',
-    typeMsg: 'Viết tin nhắn...',
+    typeMsg: 'Viết tin nhắn...', sendPhoto: 'Gửi ảnh', holdToRecord: 'Bấm để ghi âm, bấm lại để gửi', recording: 'Đang ghi âm… bấm 🎤 lần nữa để gửi.', uploading: 'Đang gửi…', noMic: 'Máy này không cho ghi âm.', fileTooBig: 'Ảnh quá lớn (tối đa 8 MB).',
     send: 'Gửi',
     noMsgs: 'Chưa có tin nhắn. Bạn cứ hỏi, Nabu sẽ trả lời.',
     themeTitle: 'Giao diện', themes: { auto: 'Theo điện thoại', light: 'Sáng', dark: 'Tối' }, themeHint: 'Theo điện thoại: app tự đổi sáng/tối cùng máy của bạn.',
@@ -1098,7 +1124,7 @@ const STR = {
     signCard: 'The tarot card of your sign',
     lifePath: 'Life path number',
     readSign: 'Read about your sign',
-    forInterests: 'You may also like',
+    forInterests: 'You may also like', horoMonth: 'This month\'s forecast', horoWeek: 'This week\'s forecast', horoNeedBirthday: 'Enter your birthday under Me to see the forecast for your sign.', horoUpdating: 'The forecast is being updated. Please check back soon.', horoSource: 'From', horoUpdated: 'updated',
 
     pickToday: 'Pick a card today',
     pickTitle: 'Your energy right now',
@@ -1130,6 +1156,10 @@ const STR = {
     aiIntro: 'Ask Nabu AI about what you are looking at. The more specific, the better.', aiIntroLesson: 'Anything in this lesson unclear? Ask Nabu AI here.', aiPlaceholder: 'For example: what does this card say about my love life?', aiAsk: 'Ask', aiOnline: 'answered by AI', aiBuiltin: 'answered from the knowledge base', aiNote: 'Nabu AI answers from the card meanings and the knowledge in this app. For anything important, book a reading with Nabu.', aiFallback: 'AI is busy; this answer comes from the knowledge base.',
     aiSugCard: ['What does this card say about my love life?', 'Should I keep going?', 'When will this happen?'], aiSugLesson: ['How do Majors differ from Minors?', 'Who are the court cards?', 'What if I do not understand a card?'], aiSugSign: ['Which signs suit this sign?', 'How is this sign in love?', 'What does the Moon in this sign mean?'], aiSugNumbers: ['What does my life path say?', 'What kind of year is this for me?', 'What is my destiny number from my name?'], aiSugGeneral: ['What does The Fool mean?', 'Do Leo and Aquarius get along?', 'What is my life path?'],
     aiCardGeneral: (n) => n + ' speaks about your general energy right now.', aiCardFocus: (n, f) => 'For a question about ' + f.toLowerCase() + ', ' + n + ' says:', aiCardWhy: 'The card carries this energy:', aiCardShadow: 'The shadow to watch:', aiYes: (n) => 'As a yes-or-no: ' + n + ' leans YES, but one card cannot decide it. For a clear answer, book a reading.', aiNo: (n) => 'As a yes-or-no: ' + n + ' leans NO, or not yet. One card cannot decide it; for a clear answer, book a reading.', aiMaybe: (n) => 'As a yes-or-no: ' + n + ' does not lean either way. The answer depends on what you do next.', aiTiming: 'On timing, one card only hints at a pace, never an exact date.', aiFound: 'Found in the course:', aiLessonNone: 'Nothing matched yet. Try a card name or a keyword from the lesson.', aiChem: (a, b) => a + ' and ' + b + ':', aiCompatYes: 'This is one of the pairs usually seen as a good match.', aiCompatWork: 'Not among the easiest pairs, but the Sun sign is one part; the full chart says much more.', aiAbout: (n) => 'About ' + n + ':', aiGeneralHelp: 'I do not have a ready answer for that. I answer best when the question names a card, a sign, a planet, a house, a zodiac animal or a number.', aiOfflineHint: 'For your own situation, book a reading with Nabu.', aiBooking: 'See the price list and pick a time under Book. Choose a package, a free slot on the calendar, then send it to Nabu.',
+    compatHead: { same: (a, b) => a + ' and ' + b + ' are the same sign, so you understand each other easily. The short answer is yes, you match, as long as you do not share the same faults.', opposite: (a, b) => a + ' and ' + b + ' sit opposite each other on the zodiac. The short answer is yes, the attraction is strong, but you have to learn balance, because each of you is the missing half of the other.', good: (a, b) => a + ' and ' + b + ': the short answer is yes, this is one of the pairs usually seen as a good match.', ok: (a, b) => a + ' and ' + b + ': a fairly good match. The two signs are not the same element, but they feed each other.', work: (a, b) => a + ' and ' + b + ': it can work, but it takes effort. The two signs sit at a square angle, so you tend to clash over how things should be done.', neutral: (a, b) => a + ' and ' + b + ': an average match. Not among the easiest pairs, and not among the ones that clash most either.' },
+    compatWhy: { same: 'Why:', opposite: 'Why:', good: 'Why:', ok: 'Why:', work: 'Why:', neutral: 'Why:' },
+    compatBring: (a, ka, b, kb) => a + ' brings ' + ka + ' into the relationship, while ' + b + ' brings ' + kb + '.', compatTipGood: 'Advice: keep a little challenge alive and do not get lazy about talking, because easy matches tend to take each other for granted.', compatTipOpp: 'Advice: treat the differences as what completes you rather than what needs fixing in the other person.', compatTipWork: 'Advice: say what you need in words instead of waiting to be guessed. The Sun sign is only one part; the full chart says much more.',
+    compatWhich: (a) => a + ' usually matches best with:', compatAsk: 'Name the other sign in your question if you want to check a specific pair.',
     strengths: 'Strengths', challenges: 'Watch out for', compat: 'Usually gets on with', moonSign: 'Moon in this sign', risingSign: 'Rising in this sign',
     numExpr: 'Expression number (from your name)', numSoul: 'Soul urge number', numPers: 'Personality number', numYear: 'Personal year', numBirthday: 'Birthday number', numName: 'Full name (as on your birth certificate)', numNameHint: 'Pythagorean table; Vietnamese tone marks dropped, Đ read as D.',
     fortuneIntro: 'Five old ways of reading, made visual. Tap to try one.', readMoreTitle: 'Read more', numIntro: 'Tap a number to see what it says. Your number is marked.', numTap: 'Tap a number above.', numYours: 'Your numbers', numCycle: 'Your 9-year cycle', numCycleHint: 'Each personal year is a step in a 9-year cycle. Year 1 plants, year 9 harvests and lets go.', numHow: 'How it is counted',
@@ -1168,9 +1198,9 @@ const STR = {
     chooseService: '1. Choose a service', serviceHint: 'Tap the package you want. The price is next to it.', needService: 'Choose a package first.',
     optional: 'optional', birthTime: 'Time of birth', birthHint: 'Tử vi needs the birth time as exact as possible.', needBirth: 'Tử vi needs your birth date.',
     msgService: 'Service', msgBirth: 'Birth date and time',
-    chooseTopic: '2. Choose a topic',
+    chooseTopic: '2. Choose 1 preset topic',
     presetTopics: 'Set topics',
-    topicHint: 'Only for the Set topic package, with the five preset topics below. Each topic is a five-card spread. Tap to see the five questions. Other questions go in the details section below.',
+    topicHint: 'Only for the 1 preset topic package: pick one of the five topics below. Each topic is a five-card spread. Tap to see the five questions. Other questions go in the details section below.',
     ownTopic: 'Your own question',
     ownTopicHint: 'Write your own question.',
     chooseTime: '3. Choose a time',
@@ -1228,7 +1258,7 @@ const STR = {
     messages: 'Message Nabu',
     messagesIntro: 'Nabu replies inside the app. A red dot shows when there is something new.',
     messagesSoon: 'In-app messaging opens once Nabu turns on accounts. For now, message on Instagram.',
-    typeMsg: 'Write a message...',
+    typeMsg: 'Write a message...', sendPhoto: 'Send a photo', holdToRecord: 'Tap to record, tap again to send', recording: 'Recording… tap 🎤 again to send.', uploading: 'Sending…', noMic: 'This device does not allow recording.', fileTooBig: 'Photo too large (8 MB max).',
     send: 'Send',
     noMsgs: 'No messages yet. Ask away, Nabu will answer.',
     themeTitle: 'Appearance', themes: { auto: 'Match my phone', light: 'Light', dark: 'Dark' }, themeHint: 'Match my phone: the app switches with your phone\'s light or dark setting.',
@@ -6185,6 +6215,322 @@ Object.assign(INSIGHT.vi, {
   'Xây của cải, và giữ lòng hào phóng.']
 });
 
+/* ============================ card insights, the 22 Majors, rewritten ============================
+   Full sentences with a clear subject, each line leading into the next.
+   Same field order as insight-en.js / insight-vi.js. */
+Object.assign(INSIGHT.vi, {
+'major-0': ['khởi đầu mới|cởi mở|dũng cảm|dám bước', 'bất cẩn|ngây thơ|không có kế hoạch|trốn trách nhiệm',
+  'Bạn đang đứng trước một điều hoàn toàn mới. Lúc này trong bạn có nhiều háo hức hơn là chắc chắn, và điều đó hoàn toàn bình thường. Lá bài mời bạn tin vào bước chân đầu tiên.',
+  'Một người mới hoặc một cảm xúc mới đang đến với bạn, hoặc chính bạn đã sẵn sàng yêu lại mà không mang theo nỗi sợ cũ. Bạn cứ vui với điều đó, nhưng đừng hứa nhiều hơn những gì mình đã biết chắc.',
+  'Bạn sắp nhận một dự án, một vai trò hay một hướng đi mà mình chưa từng thử. Bạn sẽ vừa làm vừa học, nên hãy hỏi sớm và hỏi nhiều.',
+  'Một môn học mới hoặc một cách học mới đang mở ra. Lúc này sự tò mò sẽ kéo bạn đi; kỷ luật có thể tính sau.',
+  'Một nguồn thu mới có thể xuất hiện, hoặc bạn đang muốn tiêu tiền cho một chuyến phiêu lưu. Bạn hãy để lại một khoản nhỏ phòng thân trước khi nhảy.',
+  'Bạn cứ bước, nhưng nhớ mang theo hành lý: một kế hoạch nhỏ và một đường lui, rồi hãy đi.'],
+'major-1': ['kỹ năng|tập trung|chủ động|biến ý thành việc', 'khoe mẽ|thao túng|tài năng phân tán|nói nhiều làm ít',
+  'Bạn đang có trong tay mọi công cụ mình cần. Câu hỏi lúc này không phải là "mình có làm được không", mà là "mình có bắt tay vào làm không". Năng lượng của bạn đang sắc bén và mạnh mẽ.',
+  'Lúc này bạn rất cuốn hút và thuyết phục, nên hãy dùng điều đó một cách thật lòng. Bạn nói rõ mình muốn gì sẽ tốt hơn là bắt người kia phải đoán.',
+  'Người khác đang nhìn thấy khả năng của bạn. Đây là lúc để bạn trình bày ý tưởng, dẫn dắt cuộc họp và bắt tay vào việc, vì kết quả sẽ đến từ hành động chứ không phải từ tính toán.',
+  'Đầu óc bạn đang nhanh nhạy và dễ tập trung. Bạn hãy ngồi xuống và dùng nó ngay, trước khi khoảng thời gian tốt này khép lại.',
+  'Đây là thời điểm tốt để biến kỹ năng của bạn thành tiền. Bạn hãy đặt giá và mạnh dạn đưa ra lời đề nghị.',
+  'Trong vài ngày tới, bạn hãy dồn mọi thứ mình có vào một mục tiêu duy nhất, và bạn sẽ thấy nó chuyển động.'],
+'major-2': ['trực giác|tĩnh lặng|điều còn ẩn|kiên nhẫn', 'bí mật|thu mình|bỏ qua linh cảm|ngồi yên quá lâu',
+  'Có một điều gì đó vẫn chưa lộ ra. Linh cảm của bạn đang biết nhiều hơn những gì sự thật cho thấy. Đây là lúc để lắng nghe, chứ chưa phải lúc để thúc ép.',
+  'Cảm xúc đang chảy ngầm, có thể là của bạn, có thể là của người ấy. Bạn đừng ép ai phải nói ra, mà hãy nhìn vào việc họ làm hơn là lời họ nói.',
+  'Ở đâu đó đang có thông tin bị giữ lại. Bạn nên đọc giữa các dòng trước khi đưa ra quyết định.',
+  'Học một mình trong yên tĩnh đang rất hợp với bạn. Bạn hiểu bài sâu hơn những gì điểm số hiện tại thể hiện.',
+  'Bạn khoan ký và khoan chi, vì vẫn còn một chi tiết mà người ta chưa nói với bạn.',
+  'Bạn hãy để câu hỏi đó yên một ngày. Câu trả lời thường đến đúng lúc bạn thôi đòi hỏi nó.'],
+'major-3': ['sung túc|nuôi dưỡng|dễ chịu|sáng tạo', 'hưởng thụ quá đà|bao bọc quá mức|bí ý tưởng|quên chăm mình',
+  'Mọi thứ quanh bạn đang lớn lên, và chúng chủ yếu cần được nuôi dưỡng chứ không cần sửa chữa. Bạn được phép thấy dễ chịu, vì điều bạn chăm sóc đang dần chín.',
+  'Năng lượng lúc này ấm áp, rộng rãi và gần gũi. Mối quan hệ của bạn đang sâu thêm, hoặc sự quan tâm đang chảy về phía bạn, và bạn chỉ cần mở lòng đón nhận.',
+  'Một dự án của bạn đang ra quả, và công việc sáng tạo được ủng hộ. Bạn sẽ tiến xa hơn khi làm cùng người khác thay vì làm một mình.',
+  'Bạn học vào nhất khi cơ thể thoải mái và được nghỉ đủ. Bạn hãy dọn góc học cho dễ chịu, việc học sẽ tự theo sau.',
+  'Tiền đang vào dễ hơn bình thường. Bạn hãy hưởng một chút, để dành một chút và chia sẻ một chút.',
+  'Tuần này bạn hãy chăm sóc cơ thể và không gian sống của mình, vì sự lớn lên luôn đi sau sự chăm sóc.'],
+'major-4': ['cấu trúc|ổn định|dẫn dắt|ranh giới', 'cứng nhắc|kiểm soát|lạnh lùng|không có kỷ luật nào',
+  'Đây là năng lượng của trật tự và quyền hạn. Bạn đang được yêu cầu đặt ra luật lệ, đứng ra nắm quyền, hoặc tôn trọng người đang nắm quyền.',
+  'Lúc này sự ổn định quan trọng hơn sự lãng mạn. Có thể một người đáng tin đang xuất hiện, hoặc chính bạn cần đặt ra những ranh giới rõ ràng.',
+  'Bạn hãy đứng ra dẫn dắt, hoặc làm việc thật tốt trong hệ thống. Lúc này kế hoạch, thứ bậc và kỷ luật sẽ thắng sự tùy hứng.',
+  'Một thời khóa biểu và một thói quen cố định sẽ giúp bạn nhiều hơn cảm hứng. Bạn hãy dựng cái khung trước đã.',
+  'Bạn cần ngân sách, sự kiểm soát và một kế hoạch dài hạn, vì tiền bạc lúc này đáp lại kỷ luật.',
+  'Bạn hãy quyết định rồi giữ vững quyết định đó. Chỉ cần chắc rằng nó công bằng với mọi người.'],
+'major-5': ['truyền thống|chỉ dẫn|học hỏi|thuộc về', 'giáo điều|làm theo cho xong|phán xét người khác|nổi loạn vô cớ',
+  'Những cách làm có sẵn đang nâng đỡ bạn, có thể là một người thầy, một nếp nhà hay một tổ chức. Làm theo cách quen thuộc lúc này sẽ cho bạn sự yên tâm.',
+  'Đây có thể là một cam kết, một sự chấp thuận từ gia đình, hoặc một mối quan hệ có chung giá trị. Hai bạn hãy nói với nhau về những điều mình tin.',
+  'Bạn hãy làm đúng quy trình, vì một người hướng dẫn hay một bằng cấp chính thức sẽ giúp bạn lúc này. Bạn đừng nhảy cóc.',
+  'Bạn nên học từ thầy giỏi và từ tài liệu chuẩn. Tuần này không phải lúc để sáng tạo lại phương pháp.',
+  'Bạn hãy chọn cách an toàn và quen thuộc với tiền, vì lời khuyên của người có kinh nghiệm đang rất đáng giá.',
+  'Bạn hãy hỏi một người đã đi qua con đường này. Tấm bản đồ của họ có thể tiết kiệm cho bạn nhiều tháng.'],
+'major-6': ['kết nối|lựa chọn|giá trị|hòa hợp', 'lệch pha|né tránh quyết định|cám dỗ|tình đơn phương',
+  'Đây là một cuộc gặp thật sự giữa hai điều, hoặc một lựa chọn cho thấy bạn thật sự coi trọng gì. Năng lượng này nói về sự hợp nhau, chứ không chỉ về sự hấp dẫn.',
+  'Bạn đang có một mối gắn bó mạnh, một lựa chọn quan trọng về người bạn đời, hoặc một khoảnh khắc phải quyết định mình muốn gì từ tình yêu.',
+  'Hợp tác và làm việc nhóm đang được ủng hộ. Nếu đứng trước ngã rẽ, bạn hãy chọn con đường hợp với giá trị của mình.',
+  'Bạn nên học cùng bạn học hoặc trong một nhóm. Nếu phải chọn môn, bạn hãy chọn môn mình thật sự quan tâm.',
+  'Bạn sắp đưa ra một quyết định tài chính thể hiện ưu tiên của mình. Bạn đừng chọn chỉ vì con số.',
+  'Bạn hãy chọn bằng giá trị của mình, chứ đừng chọn bằng nỗi sợ.'],
+'major-7': ['ý chí|tiến tới|chiến thắng|có hướng', 'hung hăng|mất kiểm soát|lực phân tán|giẫm lên người khác',
+  'Bạn đang chuyển động và đang thắng thế. Những lực kéo ngược chiều đang được ý chí của bạn giữ chung một hướng, nên bạn hãy tiếp tục giữ chắc tay lái.',
+  'Bạn cứ theo đuổi điều mình muốn, nhưng hãy giữ được cảm xúc của mình. Mối quan hệ này sẽ tiến lên nhờ nỗ lực.',
+  'Tham vọng và đà tiến đang ở phía bạn. Bạn hãy vượt qua chướng ngại, vì bạn có đủ sức, và có thể sẽ có một chuyến đi.',
+  'Tuần này kỷ luật chính là sức mạnh của bạn. Bạn hãy đặt mục tiêu rồi lao tới.',
+  'Tiền đến với bạn nhờ sự quyết tâm. Mục tiêu bạn theo đuổi bấy lâu đã nằm trong tầm tay.',
+  'Bạn hãy giữ cả hai dây cương, tức là vừa tự tin vừa kiểm soát, cùng một lúc.'],
+'major-8': ['sức mạnh bên trong|kiên nhẫn|bao dung|can đảm', 'nghi ngờ bản thân|dùng sức ép|cảm xúc thô|thấy yếu là thấy xấu hổ',
+  'Sức mạnh của bạn lúc này rất lặng lẽ. Sự kiên nhẫn và lòng tử tế sẽ xử lý được những việc mà sức ép không làm nổi, vì con sư tử được thuần bằng sự bình tĩnh chứ không bằng tiếng hét.',
+  'Sức mạnh dịu dàng sẽ thắng. Bạn hãy xử lý căng thẳng bằng sự kiên nhẫn thay vì phản ứng, vì có người đang cần sự bình tĩnh của bạn.',
+  'Bạn đang đối diện một người khó hoặc một tình huống khó, và sự điềm tĩnh của bạn đang được để ý.',
+  'Hôm nay sự bền bỉ sẽ thắng sự thông minh. Bạn cứ làm đều đặn và bình tĩnh.',
+  'Bạn nên quản lý tiền một cách đều tay thay vì đi nước cờ táo bạo, và đừng để nỗi sợ quyết định thay mình.',
+  'Bạn hãy thở trước rồi mới hành động. Phiên bản bình tĩnh của bạn chính là phiên bản mạnh nhất.'],
+'major-9': ['nhìn lại|khôn ngoan|một mình|đi tìm', 'cô lập|cô đơn|thu mình quá lâu|từ chối giúp đỡ',
+  'Lúc này bạn cần lùi lại một bước để suy nghĩ. Câu trả lời bạn tìm nằm ở bên trong, chứ không nằm ở thêm một ý kiến nào nữa. Một mình lúc này là điều có ích.',
+  'Bạn hoặc người ấy đang cần không gian để suy nghĩ. Thời gian riêng không phải là sự từ chối; sự gắn kết sâu hơn sẽ đến sau khi cả hai đã nhìn lại.',
+  'Bạn hãy suy nghĩ kỹ trước bước đi tiếp theo. Một người đi trước hoặc chính kinh nghiệm của bạn sẽ soi đường, nên hãy tránh quyết định trong lúc ồn ào.',
+  'Bạn hãy học sâu, tập trung và một mình. Bạn nên tắt thông báo điện thoại đi.',
+  'Bạn hãy xem lại tài chính của mình một cách lặng lẽ và thành thật. Nếu cần, bạn hãy hỏi một chuyên gia.',
+  'Bạn hãy dành cho mình một buổi tối một mình với câu hỏi đó, rồi quay lại với mọi người.'],
+'major-10': ['thay đổi|may mắn|vòng quay|bước ngoặt', 'chống lại thay đổi|xui xẻo|thấy mất kiểm soát|lặp lại vòng cũ',
+  'Bánh xe đang quay. Hoàn cảnh của bạn đang thay đổi dù bạn có đẩy hay không, và trong không khí vừa có may mắn vừa có sự chuyển mình.',
+  'Mối quan hệ của bạn đang bước sang một giai đoạn mới, và những cuộc gặp gỡ tình cờ rất dễ xảy ra. Bạn gieo gì thì sẽ gặt nấy.',
+  'Bạn hãy chờ đợi sự chuyển động: một vai trò mới, một cơ may hay một ngã rẽ bất ngờ. Bạn nên thích nghi thay vì cưỡng lại.',
+  'Kết quả của bạn có thể lên xuống. Bạn hãy tận dụng lúc lên và đừng hoảng khi xuống.',
+  'Vận tiền của bạn đang đổi. Bạn đừng đánh cược, nhưng hãy sẵn sàng đón lấy cơ hội.',
+  'Bạn hãy đi theo vòng quay, vì chống lại bánh xe chỉ khiến bạn mệt.'],
+'major-11': ['công bằng|sự thật|chịu trách nhiệm|rõ ràng', 'bất công|không thật thà|né hậu quả|phán xét khắc nghiệt',
+  'Nhân và quả đang hiện ra rất rõ. Mỗi quyết định lúc này đều có hậu quả, và chỉ có sự thật thà mới thật sự hiệu quả.',
+  'Bạn hãy thành thật về điều gì là công bằng giữa hai người. Sự cân bằng sẽ trở lại khi mỗi bên nhận phần trách nhiệm của mình.',
+  'Bạn đang đứng trước chuyện hợp đồng, pháp lý hoặc đánh giá. Bạn hãy làm đúng quy định và lưu lại giấy tờ.',
+  'Nỗ lực công bằng sẽ cho kết quả công bằng. Bạn hãy thành thật với chính mình về việc mình đã thật sự học bao nhiêu.',
+  'Bạn hãy thanh toán sòng phẳng: trả điều mình nợ và thu điều người ta nợ mình.',
+  'Bạn hãy nói thật, nhất là với chính mình.'],
+'major-12': ['tạm dừng|buông|góc nhìn mới|thả ra', 'giậm chân|tự làm khổ mình|do dự|tự chọn đứng yên',
+  'Mọi thứ đang tạm dừng, và sự dừng lại này có mục đích của nó. Khi nhìn từ một góc khác, tình hình sẽ khác đi. Bạn hãy chờ một cách tự nguyện.',
+  'Mối quan hệ của bạn đang lơ lửng, và việc thúc đẩy sẽ không giúp gì. Bạn hãy buông kết quả ra và xem điều gì thay đổi.',
+  'Có thể có sự chậm trễ hoặc một dự án bị treo. Bạn hãy dùng thời gian này để nghĩ lại cách làm thay vì ép nó tiến lên.',
+  'Bạn hãy lùi ra khỏi bài toán một lúc. Lời giải thường xuất hiện khi bạn thôi nhìn chằm chằm vào nó.',
+  'Đây chưa phải lúc để động đến tiền. Bạn hãy giữ nguyên và xem xét lại.',
+  'Bạn hãy cố ý không làm gì trong một lúc, rồi nhìn lại mọi thứ.'],
+'major-13': ['kết thúc|chuyển hóa|buông bỏ|đổi mới', 'níu kéo|sợ thay đổi|ứ đọng|kéo dài cái kết',
+  'Một điều đang kết thúc để một điều khác có thể bắt đầu. Cảm giác có thể nặng nề, nhưng năng lượng này đang dọn dẹp chứ không hề tàn nhẫn.',
+  'Một mối quan hệ, hoặc một phiên bản của nó, đang khép lại. Bạn hãy cho phép mình buồn, rồi để hình hài mới của nó hiện ra.',
+  'Một vai trò, một dự án hay một cách làm việc đang đóng lại. Bạn đừng bám víu, vì điều tiếp theo cần chính khoảng trống này.',
+  'Một cách học cũ hoặc một mục tiêu cũ đã hết vai trò. Bạn hãy đổi cách học của mình.',
+  'Một chương tài chính đang khép lại. Bạn hãy cắt bỏ những gì không còn hiệu quả và xây lại từ đầu.',
+  'Bạn hãy để nó kết thúc, vì bạn không thể mở chương mới khi vẫn còn giữ trang cuối.'],
+'major-14': ['cân bằng|điều độ|kiên nhẫn|chữa lành', 'quá đà|mất cân bằng|nóng vội|ưu tiên chỏi nhau',
+  'Bạn hãy pha trộn thay vì ép buộc. Năng lượng lúc này là tìm ra con đường ở giữa và đi từ từ, vì việc chữa lành đang thật sự diễn ra.',
+  'Sự hòa hợp sẽ lớn lên nhờ kiên nhẫn và biết nhường nhau. Bạn hãy tránh cực đoan, cả trong cảm xúc lẫn trong đòi hỏi.',
+  'Bạn nên làm việc nhóm một cách ổn định và cân đối công việc cẩn thận. Bạn đừng vội, và hãy kết hợp thế mạnh của mọi người.',
+  'Học đều nhịp sẽ tốt hơn học nhồi. Bạn hãy cân bằng giữa học và nghỉ.',
+  'Bạn hãy tiêu vừa phải và để dành vừa phải. Lúc này không cần nước cờ kịch tính nào.',
+  'Bạn hãy có mỗi thứ một ít, và không để thứ nào quá tay.'],
+'major-15': ['gắn chặt|ham muốn|tham vọng|thật đến trần trụi', 'nghiện|ám ảnh|mẫu hình độc hại|thấy bị trói',
+  'Có một thứ đang nắm lấy bạn, có thể là một thói quen, một người hay một ham muốn. Năng lượng này mạnh và không hẳn là xấu, nhưng bạn cần nhìn thấy sợi xích.',
+  'Bạn đang trong một sức hút dữ dội hoặc một mối gắn bó khó rời. Bạn hãy tự hỏi: nó nuôi mình hay rút cạn mình?',
+  'Bạn có thể đang đầy tham vọng và động lực, hoặc đang bị một công việc sở hữu. Bạn hãy xem mình đang đổi gì để lấy tiền.',
+  'Sự xao nhãng và trì hoãn đang rất mạnh. Bạn hãy gọi tên thói quen đang lấy mất thời gian của mình.',
+  'Bạn hãy coi chừng nợ nần, tiêu bốc đồng và những khoản tiền đi kèm điều kiện.',
+  'Bạn hãy gọi tên thứ đang giữ mình lại, vì khi gọi được tên nó, sợi xích sẽ lỏng ra.'],
+'major-16': ['thay đổi đột ngột|sự thật lộ ra|bứt phá|tự do', 'đổ vỡ|sốc|sụp đổ có thể tránh|không chịu học bài học',
+  'Một thứ được xây trên nền lung lay đang đổ xuống. Đó là một cú sốc, nhưng cái đổ ấy vốn không vững, và sự thật đang phá ra ngoài.',
+  'Một biến cố bất ngờ hoặc một sự thật đang lộ ra. Nó đau, nhưng nó dọn sạch những điều giả dối.',
+  'Ở chỗ làm đang có thay đổi đột ngột: một kế hoạch sụp đổ hoặc một cấu trúc bị thách thức. Bạn hãy xây lại trên nền chắc hơn.',
+  'Kế hoạch học của bạn đang tan vỡ. Bạn hãy đánh giá lại và dựng lịch mới từ đầu.',
+  'Có thể có một khoản chi bất ngờ hoặc một mất mát. Bạn hãy bảo vệ những thứ cơ bản trước.',
+  'Bạn hãy để cái giả rơi xuống, rồi xây lại bằng cái thật.'],
+'major-17': ['hy vọng|chữa lành|cảm hứng|hồi phục', 'nản lòng|mất niềm tin|nghi ngờ mình|lạc quan rỗng',
+  'Sau những điều khó khăn, một sự bình yên đã đến với bạn. Hy vọng lúc này là thật chứ không phải gượng ép, và bạn đang được hồi phục.',
+  'Bạn đang lành lại sau tổn thương, và sự cởi mở đang quay về. Một tình yêu thật thà và bình yên đang ở gần.',
+  'Cảm hứng và cảm giác có mục đích đang trở lại với bạn. Đây là thời điểm tốt cho những kế hoạch sáng tạo và dài hạn.',
+  'Động lực học của bạn đang trở lại. Bạn thấy rõ vì sao mình học điều này.',
+  'Khó khăn tiền bạc đang dịu đi. Bạn có thể cho đi hào phóng trong chừng mực.',
+  'Bạn hãy tin vào niềm hy vọng lặng lẽ ấy, vì nó đang nói thật với bạn.'],
+'major-18': ['trực giác|giấc mơ|chưa rõ|tiềm thức', 'ảo ảnh|lo âu|lừa dối|rối bời',
+  'Chưa có gì rõ ràng hoàn toàn. Nỗi sợ và trí tưởng tượng đang tô màu những gì bạn nhìn thấy, nên bạn hãy đi chậm và tin vào linh cảm thay vì tin vào lo lắng.',
+  'Bạn đang nhận những tín hiệu lẫn lộn và thấy không chắc chắn. Có điều gì đó đang bị giấu, nhưng bạn đừng vội nghĩ xấu, mà hãy hỏi thẳng.',
+  'Ở chỗ làm đang có sự rối rắm hoặc thông tin không rõ. Bạn hãy chờ sự thật rồi mới hành động.',
+  'Lo âu đang làm mờ sự hiểu bài của bạn. Bạn hãy ngủ một giấc, rồi xem lại khi đầu óc đã tỉnh.',
+  'Chuyện tiền lúc này chưa rõ ràng hoặc có rủi ro. Bạn đừng ký thứ gì mình chưa hiểu hết.',
+  'Bạn hãy đi chậm qua màn sương, vì sương rồi sẽ tan.'],
+'major-19': ['niềm vui|thành công|rõ ràng|sức sống', 'kiêu ngạo|phô bày quá mức|hạnh phúc đến muộn|vui giả',
+  'Năng lượng của bạn đang ấm áp, rõ ràng và tự tin. Mọi thứ đang vận hành tốt và điều đó hiện ra ngoài, nên bạn cứ vui một cách công khai.',
+  'Bạn đang có hạnh phúc, sự ấm áp và một kết nối dễ dàng. Mối quan hệ này đang đứng giữa ban ngày.',
+  'Bạn đang thành công, được ghi nhận và có một chiến thắng rõ ràng. Công việc của bạn được nhìn thấy.',
+  'Bạn đang sáng rõ và tự tin. Kết quả tốt đang trên đường tới.',
+  'May mắn và tăng trưởng đang ở phía bạn. Tiền đến cùng niềm vui thay vì cùng sự vật lộn.',
+  'Bạn hãy nói có với điều tốt đẹp này, vì bạn xứng đáng với nó.'],
+'major-20': ['thức tỉnh|tiếng gọi|tha thứ|tổng kết', 'tự phán xét|từ chối tiếng gọi|hối tiếc|kẹt trong quá khứ',
+  'Đây là một khoảnh khắc nhìn rõ. Bạn đang được gọi tới một quyết định, một thay đổi hay một tầng mới của cuộc đời. Quá khứ được xem lại và được thả ra.',
+  'Mối quan hệ của bạn đang đến một bước ngoặt. Bạn hãy tha thứ, quyết định, và đi tiếp.',
+  'Bạn đang nghe một tiếng gọi trong sự nghiệp, có thể là một đợt đánh giá hoặc một cơ hội đi lên. Bạn hãy đáp lại nó.',
+  'Kết quả và những đợt đánh giá đang đến. Bạn hãy học từ quá khứ và bước lên.',
+  'Bạn đang trong một đợt tổng kết tài chính. Bạn hãy đối diện với con số và quyết định.',
+  'Bạn hãy đáp lại tiếng gọi, vì bạn đã biết nó là gì rồi.'],
+'major-21': ['hoàn tất|trọn vẹn|thành tựu|đi xa', 'việc dang dở|chậm trễ|thấy chưa đủ|đi tắt',
+  'Một vòng đang khép lại, và bạn đã thấm bài học của nó. Đây là sự viên mãn, và cũng là cánh cửa mở sang vòng tiếp theo.',
+  'Mối quan hệ của bạn đang đến giai đoạn trọn vẹn và chín chắn, hoặc hai bạn sắp có một chuyến đi cùng nhau.',
+  'Bạn đang hoàn thành một dự án lớn và được công nhận. Có thể sẽ có chuyến đi xa hoặc công việc với nước ngoài.',
+  'Bạn đang tốt nghiệp, hoàn thành, hoặc làm chủ được một môn học.',
+  'Bạn đang đạt mục tiêu tài chính của mình, và sự vững vàng này sẽ kéo dài.',
+  'Bạn hãy làm cho xong hẳn, rồi ăn mừng trước khi bắt đầu việc mới.']
+});
+Object.assign(INSIGHT.en, {
+'major-0': ['new beginnings|openness|courage|a leap of faith', 'carelessness|naivety|no plan|running from responsibility',
+  'You are standing at the edge of something new. Right now there is more excitement in you than certainty, and that is perfectly fine. The card invites you to trust the first step.',
+  'Someone new, or a new feeling, is coming toward you, or you yourself are ready to love again without the old fears. Enjoy it, but do not promise more than you know for sure.',
+  'You are about to take on a project, a role or a direction you have never tried. You will learn on the job, so ask early and ask often.',
+  'A new subject or a new way of studying is opening up. For now, curiosity will carry you; structure can come later.',
+  'A new source of income may appear, or you may feel like spending on an adventure. Keep a small cushion aside before you leap.',
+  'Take the step, but pack a bag first: one small plan and one way back, and then go.'],
+'major-1': ['skill|focus|initiative|making it happen', 'showing off|manipulation|scattered talent|all talk',
+  'You already have every tool you need. The question right now is not "can I" but "will I start". Your energy is sharp and strong.',
+  'You are attractive and persuasive at the moment, so use that honestly. Saying clearly what you want will work better than making the other person guess.',
+  'Other people can see your abilities. This is the time to pitch the idea, lead the meeting and start the work, because results will come from doing rather than from planning.',
+  'Your mind is quick and you can concentrate easily. Sit down and use it now, before this good window closes.',
+  'This is a good moment to turn your skill into money. Set a price and make the offer.',
+  'For the next few days, point everything you have at one goal, and you will watch it move.'],
+'major-2': ['intuition|stillness|hidden knowledge|patience', 'secrets|withdrawal|ignoring your gut|passivity',
+  'Something has not surfaced yet. Your instincts already know more than the facts are showing. This is a time to listen, not yet a time to push.',
+  'Feelings are running under the surface, yours or theirs. Do not force a confession; watch what people do rather than what they say.',
+  'Somewhere, information is being held back. Read between the lines before you commit to a decision.',
+  'Quiet, solitary study suits you right now. You understand more deeply than your current results show.',
+  'Wait before you sign or spend, because there is a detail nobody has told you yet.',
+  'Let the question rest for a day. The answer usually arrives the moment you stop demanding it.'],
+'major-3': ['abundance|nurture|comfort|creativity', 'overindulgence|smothering|creative block|neglecting yourself',
+  'Things around you are growing, and they mostly need feeding rather than fixing. You are allowed to feel comfortable, because what you care for is ripening.',
+  'The energy now is warm, generous and close. Your relationship is deepening, or care is flowing toward you, and all you need to do is receive it.',
+  'A project of yours is bearing fruit, and creative work is favoured. You will get further working with people than working alone.',
+  'You learn best when your body is comfortable and rested. Make your study corner pleasant, and the studying will follow.',
+  'Money is coming in more easily than usual. Enjoy some of it, save some of it, and share a little.',
+  'This week, look after your body and your surroundings, because growth always follows care.'],
+'major-4': ['structure|stability|leadership|boundaries', 'rigidity|control|coldness|no structure at all',
+  'This is the energy of order and authority. You are being asked to set the rules, to take charge, or to respect the person who is in charge.',
+  'Stability matters more than romance right now. A dependable person may be appearing, or you yourself may need to set clear boundaries.',
+  'Take the lead, or work well within the system. Plans, hierarchy and discipline will beat improvisation this time.',
+  'A timetable and a fixed routine will do more for you than inspiration. Build the frame first.',
+  'You need a budget, control and a long-term plan, because money answers to discipline right now.',
+  'Decide, then hold your decision. Just make sure it is fair to everyone.'],
+'major-5': ['tradition|guidance|learning|belonging', 'dogma|conformity|judging others|rebellion for its own sake',
+  'Established ways are supporting you, whether a teacher, a family custom or an institution. Doing things the familiar way will give you peace of mind right now.',
+  'This may be a commitment, a family\'s blessing, or a relationship built on shared values. Talk with each other about what you both believe.',
+  'Follow the proper process, because a mentor or a formal qualification will help you now. Do not skip steps.',
+  'Learn from a good teacher and from the standard material. This is not the week to reinvent the method.',
+  'Choose the safe and familiar path with money, because the advice of an experienced person is worth a lot right now.',
+  'Ask someone who has walked this road before. Their map can save you months.'],
+'major-6': ['connection|choice|values|harmony', 'misalignment|avoiding a decision|temptation|one-sided love',
+  'This is a real meeting between two things, or a choice that reveals what you truly value. The energy is about alignment, not just attraction.',
+  'You are in a strong bond, facing an important choice about a partner, or standing at the moment where you must decide what you want from love.',
+  'Partnership and teamwork are favoured. If you are at a fork, choose the path that fits your values.',
+  'Study with a partner or in a group. If you have to choose a subject, choose the one you actually care about.',
+  'You are about to make a financial decision that reflects your priorities. Do not choose on the numbers alone.',
+  'Choose with your values, not with your fears.'],
+'major-7': ['drive|willpower|victory|direction', 'aggression|losing control|scattered effort|running over people',
+  'You are in motion and gaining ground. Forces pulling in opposite directions are being held on one course by your will, so keep both hands on the reins.',
+  'Pursue what you want, but stay in control of your feelings. This relationship moves forward through effort.',
+  'Ambition and momentum are on your side. Push through the obstacle, because you have what it takes, and travel may be part of it.',
+  'This week, discipline is your superpower. Set the target and drive toward it.',
+  'Money comes to you through determination. The goal you have been chasing is within reach.',
+  'Keep both reins in hand, which means confidence and control at the same time.'],
+'major-8': ['inner strength|patience|compassion|courage', 'self-doubt|forcing it|raw emotion|weakness felt as shame',
+  'Your strength right now is quiet. Patience and kindness will handle what force cannot, because the lion is tamed by calm, not by shouting.',
+  'Gentle strength wins here. Deal with tension patiently instead of reacting, because someone needs your calm.',
+  'You are facing a difficult person or situation, and your composure is being noticed.',
+  'Today, persistence beats brilliance. Keep at it steadily and calmly.',
+  'Manage your money steadily rather than making bold moves, and do not let fear decide for you.',
+  'Breathe first, then act. The calm version of you is the strongest one.'],
+'major-9': ['reflection|wisdom|solitude|seeking', 'isolation|loneliness|withdrawal too long|refusing help',
+  'It is time to step back and think. The answer you need is inside you, not in one more opinion. Solitude is useful right now.',
+  'You or your partner need space to think. Time alone is not rejection; a deeper connection comes after both of you have reflected.',
+  'Think carefully before your next move. A mentor or your own experience will light the way, so avoid deciding in the middle of noise.',
+  'Study deeply, alone and with full attention. Turn off your notifications.',
+  'Review your finances quietly and honestly. If you need to, ask an expert.',
+  'Give yourself one evening alone with the question, and then come back to people.'],
+'major-10': ['change|luck|cycles|turning point', 'resisting change|bad luck|feeling out of control|repeating the cycle',
+  'The wheel is turning. Your circumstances are shifting whether you push or not, and there is luck in the air as well as change.',
+  'Your relationship is entering a new phase, and chance meetings are likely. What goes around comes around.',
+  'Expect movement: a new role, a lucky break, or an unexpected turn. Adapt rather than resist.',
+  'Your results may swing. Ride the good streak and do not panic at a dip.',
+  'Your fortune is changing. Do not gamble, but be ready to catch an opportunity.',
+  'Go with the turn, because fighting the wheel only wears you out.'],
+'major-11': ['fairness|truth|accountability|clarity', 'unfairness|dishonesty|avoiding consequences|harsh judgement',
+  'Cause and effect are plainly visible. Every decision has consequences right now, and only honesty will truly work.',
+  'Be honest about what is fair between the two of you. Balance returns when each side owns its part.',
+  'You are dealing with contracts, legal matters or evaluations. Do things by the book and keep your records.',
+  'Fair effort brings fair results. Be honest with yourself about how much you have actually studied.',
+  'Settle your accounts: pay what you owe and collect what you are owed.',
+  'Tell the truth, especially to yourself.'],
+'major-12': ['pause|surrender|new perspective|letting go', 'stalling|martyrdom|indecision|stuck by choice',
+  'Things are on hold, and the pause has a purpose. Seen from a different angle, the situation looks different. Wait willingly.',
+  'Your relationship is in limbo, and pushing will not help. Let go of the outcome and see what changes.',
+  'There may be a delay or a project on hold. Use the time to rethink the approach instead of forcing it forward.',
+  'Step away from the problem for a while. The solution tends to appear when you stop staring at it.',
+  'This is not the time to touch your money. Hold and review.',
+  'Do nothing for a moment, on purpose, and then look at everything again.'],
+'major-13': ['endings|transformation|release|renewal', 'clinging|fear of change|stagnation|dragging out the end',
+  'Something is ending so that something else can begin. It may feel heavy, but this energy is clearing, not cruel.',
+  'A relationship, or one version of it, is closing. Let yourself grieve, and then let its new shape appear.',
+  'A role, a project or a way of working is coming to an end. Do not cling, because what comes next needs this very space.',
+  'An old study method or an old goal has run its course. Change how you learn.',
+  'A financial chapter is closing. Cut what no longer works and rebuild from there.',
+  'Let it end, because you cannot open a new chapter while you are still holding the last page.'],
+'major-14': ['balance|moderation|patience|healing', 'excess|imbalance|impatience|clashing priorities',
+  'Blend rather than force. The energy now is about finding the middle path and taking your time, because real healing is happening.',
+  'Harmony grows through patience and give-and-take. Avoid extremes, both in feeling and in demand.',
+  'Work steadily as a team and balance your tasks with care. Do not rush, and combine everyone\'s strengths.',
+  'Steady pacing beats cramming. Balance study with rest.',
+  'Spend moderately and save moderately. No dramatic moves are needed right now.',
+  'Have a little of everything, and nothing to excess.'],
+'major-15': ['attachment|desire|ambition|raw honesty', 'addiction|obsession|toxic patterns|feeling trapped',
+  'Something has a grip on you, whether a habit, a person or a craving. This energy is powerful and not necessarily bad, but you need to see the chain.',
+  'You are in an intense attraction or a bond that is hard to leave. Ask yourself: does it feed you or drain you?',
+  'You may be full of ambition and drive, or you may be owned by a job. Check what you are trading for the money.',
+  'Distraction and procrastination are strong right now. Name the habit that is stealing your time.',
+  'Watch out for debt, impulse spending, and money that comes with strings attached.',
+  'Name the thing that has hold of you, because once it is named, the chain loosens.'],
+'major-16': ['sudden change|revelation|breakthrough|freedom', 'disaster|shock|avoidable collapse|refusing the lesson',
+  'Something built on shaky ground is coming down. It is a shock, but what falls was never solid, and the truth is breaking through.',
+  'A sudden upheaval or a revealed truth is here. It hurts, but it clears away what was false.',
+  'There is sudden change at work: a plan collapses or a structure is challenged. Rebuild on firmer ground.',
+  'Your study plan is falling apart. Reassess and build a new schedule from scratch.',
+  'An unexpected expense or loss may come. Protect the basics first.',
+  'Let the false thing fall, and then rebuild with what is true.'],
+'major-17': ['hope|healing|inspiration|renewal', 'discouragement|lost faith|self-doubt|empty optimism',
+  'After hard times, a calm has come to you. Hope right now is real rather than forced, and you are being restored.',
+  'You are healing after hurt, and your openness is returning. An honest, calm kind of love is near.',
+  'Inspiration and a sense of purpose are coming back. This is a good time for creative and long-term plans.',
+  'Your motivation to study is returning. You can see clearly why you are learning this.',
+  'Money troubles are easing. You can give generously, within reason.',
+  'Trust the quiet hope, because it is telling you the truth.'],
+'major-18': ['intuition|dreams|uncertainty|the unconscious', 'illusion|anxiety|deception|confusion',
+  'Nothing is fully clear yet. Fear and imagination are colouring what you see, so move slowly and trust your instincts rather than your worries.',
+  'You are getting mixed signals and feeling unsure. Something is hidden, but do not assume the worst; ask directly instead.',
+  'There is confusion or unclear information at work. Wait for the facts before you act.',
+  'Anxiety is clouding your understanding. Get some sleep, then review with a clear head.',
+  'Money matters are unclear or risky at the moment. Do not sign anything you do not fully understand.',
+  'Walk slowly through the fog, because the fog will lift.'],
+'major-19': ['joy|success|clarity|vitality', 'arrogance|overexposure|delayed happiness|false cheer',
+  'Your energy is warm, clear and confident. Things are working and it shows, so enjoy it openly.',
+  'You have happiness, warmth and an easy connection. This relationship is standing in full daylight.',
+  'You are succeeding, being recognised, and winning clearly. Your work is being seen.',
+  'You are clear and confident. Good results are on their way.',
+  'Good fortune and growth are with you. Money comes with joy rather than with struggle.',
+  'Say yes to this good thing, because you have earned it.'],
+'major-20': ['awakening|a calling|forgiveness|reckoning', 'self-judgement|refusing the call|regret|stuck in the past',
+  'This is a moment of clear seeing. You are being called to a decision, a change, or a new level of life. The past is being reviewed and released.',
+  'Your relationship is reaching a turning point. Forgive, decide, and move on.',
+  'You are hearing a calling in your career, perhaps an evaluation or a chance to rise. Answer it.',
+  'Results and evaluations are coming. Learn from the past and step up.',
+  'You are in a financial reckoning. Face the numbers and decide.',
+  'Answer the call, because you already know what it is.'],
+'major-21': ['completion|wholeness|achievement|travel', 'unfinished business|delay|feeling incomplete|short-cuts',
+  'A cycle is closing, and you have absorbed its lesson. This is fulfilment, and it is also the doorway to the next round.',
+  'Your relationship is reaching a whole and mature stage, or the two of you are about to travel together.',
+  'You are completing a big project and being recognised. Travel or an international connection may follow.',
+  'You are graduating, completing, or mastering a subject.',
+  'You are reaching your financial goal, and this security will last.',
+  'Finish it properly, and then celebrate before you start the next thing.']
+});
+
 
 
 
@@ -8659,189 +9005,187 @@ SPREADS.vi = [
 ];
 
 /* ============================ guides ============================
-   Short pieces for the Learn tab. Every guide carries a badge:
-   doc  = a documented tradition with a source you can name
-   conv = common practice among readers, no single source
-   own  = one reader's own system, presented as such
-   Plain language; one idea per paragraph. `tags` are INTERESTS ids so the home
-   screen can suggest guides. */
+   Short pieces for the Học tab, written to be read on a phone: full
+   sentences, one idea at a time, each paragraph leading into the next.
+   `tags` are INTERESTS ids so the home screen can suggest guides. */
 const GUIDES = [
 
 /* ------------------------------------------------------------ tarot ---- */
 { id: 'tarot-overview', cat: 'tarot', badge: 'conv', tags: ['tarot'],
   title: { vi: 'Tổng quan bộ bài và cách học', en: 'The deck at a glance and how to learn it' },
-  intro: { vi: 'Một bộ tarot có 78 lá. 22 lá Ẩn Chính kể một hành trình lớn của đời người. 56 lá Ẩn Phụ kể chuyện hằng ngày. Bài này cho bạn cái khung để mọi lá sau đó có chỗ đứng.', en: 'A tarot deck has 78 cards. The 22 Major Arcana tell one big journey of a life. The 56 Minor Arcana tell everyday life. This lesson gives you the frame that every later card fits into.' },
+  intro: { vi: 'Một bộ tarot có 78 lá và chia làm hai phần. Hai mươi hai lá Ẩn Chính kể lại hành trình lớn của một đời người, còn năm mươi sáu lá Ẩn Phụ nói về những chuyện diễn ra mỗi ngày. Bài này cho bạn cái khung chung, để về sau mỗi lá bạn học đều có một chỗ đứng rõ ràng.', en: 'A tarot deck has 78 cards in two parts. The twenty-two Major Arcana tell the great journey of a life, while the fifty-six Minor Arcana speak about the things that happen every day. This lesson gives you the frame, so that every card you learn later has a clear place in it.' },
   sections: [
-    { h: { vi: '22 lá Ẩn Chính', en: 'The 22 Major Arcana' }, p: { vi: 'Đánh số từ 0 (Gã Khờ) đến 21 (Thế Giới). Đây là những bài học lớn: khởi đầu, lựa chọn, mất mát, hy vọng, hoàn tất. Khi một lá Ẩn Chính xuất hiện trong trải bài, chuyện đang hỏi thường quan trọng hơn bạn tưởng, và ít nằm trong tay bạn hơn.', en: 'Numbered 0 (The Fool) to 21 (The World). These are the big lessons: beginnings, choices, loss, hope, completion. When a Major turns up in a spread, the matter is usually bigger than it looks, and less in your hands.' } },
-    { h: { vi: '56 lá Ẩn Phụ', en: 'The 56 Minor Arcana' }, p: { vi: 'Chia làm bốn chất, mỗi chất 14 lá: từ Át đến Mười, rồi bốn lá hoàng gia là Tiểu Đồng, Kỵ Sĩ, Nữ Hoàng, Đức Vua. Gậy là lửa: hành động, đam mê, công việc. Cốc là nước: cảm xúc, tình yêu, các mối quan hệ. Kiếm là khí: suy nghĩ, lời nói, xung đột. Tiền là đất: tiền bạc, sức khỏe, việc cụ thể. Ẩn Phụ nói về chuyện hằng ngày, những thứ bạn thay đổi được.', en: 'Four suits of 14 cards each: Ace to Ten, then four court cards, Page, Knight, Queen, King. Wands are fire: action, passion, work. Cups are water: feelings, love, relationships. Swords are air: thought, words, conflict. Pentacles are earth: money, health, practical matters. The Minors speak of everyday life, the things you can change.' } },
-    { h: { vi: 'Hành trình của Gã Khờ: chặng một (0–7)', en: 'The Fool\'s Journey, part one (0–7)' }, p: { vi: 'Hãy xem 22 lá Ẩn Chính như một câu chuyện. Gã Khờ (0) là bạn lúc mới lên đường: tay trắng, tin đời. Trên đường, cậu gặp những người dạy cậu sống trong thế giới bên ngoài. Nhà Ảo Thuật (1) dạy cậu rằng mình có đủ công cụ. Nữ Tư Tế (2) dạy cậu lắng nghe trực giác. Hoàng Hậu (3) là tình thương và sự nuôi dưỡng. Hoàng Đế (4) là kỷ luật và trật tự. Giáo Hoàng (5) là truyền thống và người thầy. Người Yêu (6) là lựa chọn đầu tiên của trái tim. Cỗ Xe (7) là lần đầu cậu tự cầm cương và thắng.', en: 'Read the 22 Majors as one story. The Fool (0) is you setting out: empty-handed, trusting life. On the road he meets the people who teach him to live in the outer world. The Magician (1) shows him he already has the tools. The High Priestess (2) teaches him to listen inward. The Empress (3) is love and nurture. The Emperor (4) is discipline and order. The Hierophant (5) is tradition and the teacher. The Lovers (6) is the heart\'s first real choice. The Chariot (7) is the first time he takes the reins and wins.' } },
-    { h: { vi: 'Chặng hai (8–14): quay vào bên trong', en: 'Part two (8–14): turning inward' }, p: { vi: 'Thắng rồi, cậu học rằng sức mạnh thật không ồn ào. Sức Mạnh (8) là sự dịu dàng thuần được sư tử. Ẩn Sĩ (9) là lúc rút về một mình để hiểu mình. Bánh Xe (10) nhắc cậu rằng đời có lúc lên lúc xuống, không phải cái gì cũng do mình. Công Lý (11) bắt cậu chịu trách nhiệm cho việc mình làm. Người Treo Ngược (12) dạy cậu dừng lại và nhìn theo cách khác. Tử Thần (13) là kết thúc để bắt đầu lại. Tiết Độ (14) là cân bằng sau tất cả.', en: 'Having won, he learns that real strength is quiet. Strength (8) is the gentleness that tames the lion. The Hermit (9) is the retreat into solitude to understand himself. The Wheel (10) reminds him that life turns, and not everything is his doing. Justice (11) makes him answer for his actions. The Hanged Man (12) teaches him to stop and look another way. Death (13) is the ending that makes a new start. Temperance (14) is the balance found after all of it.' } },
-    { h: { vi: 'Chặng ba (15–21): bóng tối và ánh sáng', en: 'Part three (15–21): darkness and light' }, p: { vi: 'Chặng cuối là phần khó nhất và đẹp nhất. Ác Quỷ (15) là những thứ trói cậu: thói quen, ham muốn, nỗi sợ. Tòa Tháp (16) là cú sập của những gì xây trên nền giả. Sau cơn bão, Ngôi Sao (17) mang lại hy vọng. Mặt Trăng (18) là đoạn đường mờ, phải đi bằng linh cảm. Mặt Trời (19) là niềm vui trong sáng khi đã qua bóng tối. Phán Xét (20) là tiếng gọi thức tỉnh, nhìn lại cả hành trình. Thế Giới (21) là cậu về đến nơi, trọn vẹn, và sẵn sàng lên đường lần nữa với con số 0.', en: 'The last stretch is the hardest and the most beautiful. The Devil (15) is what binds him: habits, cravings, fears. The Tower (16) is the collapse of everything built on false ground. After the storm, The Star (17) brings hope. The Moon (18) is the foggy road, walked by instinct. The Sun (19) is clear joy once the dark is behind. Judgement (20) is the wake-up call, the look back over the whole road. The World (21) is arrival, wholeness, and readiness to set out again as 0.' } },
-    { h: { vi: 'Cách học trong khóa này', en: 'How to learn in this course' }, p: { vi: 'Học Ẩn Chính trước, theo đúng thứ tự câu chuyện trên: mỗi ngày một lá, đọc trang lá đó, rồi tự kể lại vì sao lá này đứng sau lá trước. Sau 22 ngày, sang Ẩn Phụ theo từng chất, từ Át đến Đức Vua. Mỗi sáng rút một lá, viết một câu bạn nghĩ nó nói gì, rồi mới đọc trang. Phần Trải bài học sau cùng, khi bạn đã quen mặt các lá.', en: 'Learn the Majors first, in the order of the story above: one card a day, read its page, then retell why this card follows the one before. After 22 days, move to the Minors one suit at a time, Ace to King. Each morning draw a card, write one line on what you think it says, then read the page. Leave the Spreads section for last, once the cards are familiar faces.' } }
+    { h: { vi: '22 lá Ẩn Chính', en: 'The 22 Major Arcana' }, p: { vi: 'Các lá Ẩn Chính được đánh số từ 0, Gã Khờ, đến 21, Thế Giới. Mỗi lá là một bài học lớn: một khởi đầu, một lựa chọn, một mất mát, một niềm hy vọng hay một lần hoàn tất. Khi một lá Ẩn Chính xuất hiện trong trải bài, chuyện bạn đang hỏi thường quan trọng hơn bạn tưởng, và cũng ít nằm trong tay bạn hơn.', en: 'The Majors are numbered from 0, The Fool, to 21, The World. Each one is a big lesson: a beginning, a choice, a loss, a hope, or a completion. When a Major appears in a spread, the matter you are asking about is usually more important than it looks, and less in your hands than you would like.' } },
+    { h: { vi: '56 lá Ẩn Phụ', en: 'The 56 Minor Arcana' }, p: { vi: 'Các lá Ẩn Phụ chia thành bốn chất, mỗi chất có mười bốn lá: từ Át đến Mười, rồi bốn lá hoàng gia là Tiểu Đồng, Kỵ Sĩ, Nữ Hoàng và Đức Vua. Gậy thuộc lửa, nói về hành động, đam mê và công việc. Cốc thuộc nước, nói về cảm xúc, tình yêu và các mối quan hệ. Kiếm thuộc khí, nói về suy nghĩ, lời nói và xung đột. Tiền thuộc đất, nói về tiền bạc, sức khỏe và những việc cụ thể. Ẩn Phụ kể chuyện hằng ngày, tức là những thứ bạn có thể thay đổi được.', en: 'The Minors come in four suits of fourteen cards: Ace to Ten, then the four court cards, Page, Knight, Queen and King. Wands belong to fire and speak of action, passion and work. Cups belong to water and speak of feelings, love and relationships. Swords belong to air and speak of thought, words and conflict. Pentacles belong to earth and speak of money, health and practical matters. The Minors tell the story of everyday life, which means the things you can actually change.' } },
+    { h: { vi: 'Hành trình của Gã Khờ: chặng một (0–7)', en: 'The Fool\'s Journey, part one (0–7)' }, p: { vi: 'Bạn có thể xem 22 lá Ẩn Chính như một câu chuyện liền mạch. Gã Khờ (0) là chính bạn lúc mới lên đường, tay trắng nhưng tin đời. Trên đường đi, cậu gặp những người dạy cậu cách sống trong thế giới bên ngoài. Nhà Ảo Thuật (1) cho cậu thấy mình đã có đủ công cụ. Nữ Tư Tế (2) dạy cậu lắng nghe trực giác. Hoàng Hậu (3) là tình thương và sự nuôi dưỡng, còn Hoàng Đế (4) là kỷ luật và trật tự. Giáo Hoàng (5) đại diện cho truyền thống và người thầy. Đến Người Yêu (6), cậu đứng trước lựa chọn đầu tiên của trái tim, và với Cỗ Xe (7), cậu lần đầu tự cầm cương và giành chiến thắng.', en: 'You can read the 22 Majors as one continuous story. The Fool (0) is you at the start of the road, empty-handed but trusting life. Along the way he meets the people who teach him how to live in the outer world. The Magician (1) shows him that he already has every tool he needs. The High Priestess (2) teaches him to listen inward. The Empress (3) is love and nurture, and The Emperor (4) is discipline and order. The Hierophant (5) stands for tradition and the teacher. With The Lovers (6) he faces the heart\'s first real choice, and with The Chariot (7) he takes the reins for the first time and wins.' } },
+    { h: { vi: 'Chặng hai (8–14): quay vào bên trong', en: 'Part two (8–14): turning inward' }, p: { vi: 'Sau khi thắng, cậu học được rằng sức mạnh thật sự không ồn ào. Sức Mạnh (8) là sự dịu dàng đủ để thuần một con sư tử. Ẩn Sĩ (9) là lúc cậu rút về một mình để hiểu chính mình. Bánh Xe (10) nhắc cậu rằng đời có lúc lên lúc xuống, và không phải điều gì cũng do mình quyết. Công Lý (11) buộc cậu chịu trách nhiệm cho những việc đã làm. Người Treo Ngược (12) dạy cậu biết dừng lại và nhìn theo một cách khác. Tử Thần (13) là một kết thúc cần thiết để bắt đầu lại, và Tiết Độ (14) là sự cân bằng cậu tìm thấy sau tất cả.', en: 'Having won, he learns that real strength makes no noise. Strength (8) is the gentleness that can tame a lion. The Hermit (9) is his retreat into solitude to understand himself. The Wheel (10) reminds him that life rises and falls, and that not everything is his to decide. Justice (11) makes him answer for what he has done. The Hanged Man (12) teaches him to stop and look at things another way. Death (13) is the ending that makes a new start possible, and Temperance (14) is the balance he finds after all of it.' } },
+    { h: { vi: 'Chặng ba (15–21): bóng tối và ánh sáng', en: 'Part three (15–21): darkness and light' }, p: { vi: 'Chặng cuối là phần khó nhất, nhưng cũng đẹp nhất. Ác Quỷ (15) là những thứ đang trói cậu: thói quen, ham muốn và nỗi sợ. Tòa Tháp (16) là cú sập của tất cả những gì được xây trên nền giả. Sau cơn bão, Ngôi Sao (17) mang hy vọng trở lại. Mặt Trăng (18) là đoạn đường mờ sương mà cậu phải đi bằng linh cảm. Rồi Mặt Trời (19) mang đến niềm vui trong sáng khi bóng tối đã ở lại phía sau. Phán Xét (20) là tiếng gọi thức tỉnh, khi cậu nhìn lại cả hành trình. Và Thế Giới (21) là lúc cậu về đến nơi, trọn vẹn, sẵn sàng lên đường lần nữa với con số 0.', en: 'The last stretch is the hardest, and also the most beautiful. The Devil (15) is everything that binds him: habits, cravings and fears. The Tower (16) is the collapse of all that was built on false ground. After the storm, The Star (17) brings hope back. The Moon (18) is the foggy road he must walk by instinct. Then The Sun (19) brings clear joy once the darkness is behind him. Judgement (20) is the wake-up call, when he looks back over the whole road. And The World (21) is his arrival, whole and ready to set out once more as 0.' } },
+    { h: { vi: 'Cách học trong khóa này', en: 'How to learn in this course' }, p: { vi: 'Hãy học Ẩn Chính trước, theo đúng thứ tự của câu chuyện ở trên. Mỗi ngày bạn mở một lá, đọc trang của lá đó, rồi tự kể lại vì sao lá này lại đứng sau lá trước. Sau hai mươi hai ngày, bạn chuyển sang Ẩn Phụ và học theo từng chất, từ Át đến Đức Vua. Mỗi sáng, bạn rút một lá và viết một câu về điều bạn nghĩ nó muốn nói, rồi mới đọc trang của nó. Phần Trải bài nên để sau cùng, khi các lá đã trở thành những gương mặt quen.', en: 'Learn the Majors first, in the order of the story above. Each day, open one card, read its page, then retell in your own words why this card follows the one before. After twenty-two days, move on to the Minors and take them one suit at a time, from Ace to King. Each morning, draw a card and write one line about what you think it is saying, and only then read its page. Leave the Spreads section for last, once the cards have become familiar faces.' } }
   ] },
 { id: 'tarot-start', cat: 'tarot', badge: 'conv', tags: ['tarot'],
   title: { vi: 'Bắt đầu học tarot', en: 'Getting started with tarot' },
-  intro: { vi: 'Bạn không cần thuộc 78 lá trước khi rút lá đầu tiên. Bạn cần một bộ bài, một câu hỏi rõ, và thói quen mỗi ngày.', en: 'You do not need to memorise 78 cards before your first draw. You need one deck, one clear question, and a daily habit.' },
+  intro: { vi: 'Bạn không cần thuộc hết 78 lá trước khi rút lá đầu tiên. Thứ bạn thật sự cần là một bộ bài, một câu hỏi rõ ràng và một thói quen nhỏ mỗi ngày. Bốn bước dưới đây là đủ để bắt đầu.', en: 'You do not need to memorise all 78 cards before your first draw. What you really need is one deck, one clear question and a small daily habit. The four steps below are enough to begin.' },
   sections: [
-    { h: { vi: 'Một bộ bài thôi', en: 'One deck only' }, p: { vi: 'Bắt đầu với Rider–Waite–Smith hoặc bộ vẽ theo nó. Mọi sách và video đều dựa trên hình của bộ này. 78 lá đều có tranh, nên tranh dạy bạn trước khi bạn thuộc nghĩa.', en: 'Start with Rider–Waite–Smith or a deck drawn after it. Every book and video assumes its pictures. All 78 cards are illustrated, so the pictures teach you before the meanings do.' } },
-    { h: { vi: 'Học cấu trúc trước, nghĩa sau', en: 'Structure before meanings' }, p: { vi: '22 lá Ẩn Chính là những bài học lớn. 56 lá Ẩn Phụ là chuyện hằng ngày, chia bốn chất: Gậy (lửa, hành động), Cốc (nước, cảm xúc), Kiếm (khí, suy nghĩ), Tiền (đất, vật chất). Biết bộ khung này, bạn đoán được một lá chưa học.', en: '22 Majors are the big lessons. 56 Minors are daily life, in four suits: Wands (fire, action), Cups (water, feeling), Swords (air, thought), Pentacles (earth, material). Knowing this skeleton, you can guess a card you have not studied.' } },
-    { h: { vi: 'Mỗi ngày một lá', en: 'One card a day' }, p: { vi: 'Sáng rút một lá. Viết ra bạn thấy gì và nghĩ nó nói gì. Rồi mới tra nghĩa. Khoảng cách giữa điều bạn nghĩ và điều sách nói là chỗ bạn học được nhiều nhất. Tối xem lại lá đó khớp với ngày của bạn ra sao.', en: 'Pull one card in the morning. Write what you see and what you think it says. Then look it up. The gap between your guess and the book is where you learn. In the evening, check how the card matched your day.' } },
-    { h: { vi: 'Câu hỏi quyết định câu trả lời', en: 'The question decides the answer' }, p: { vi: 'Hỏi "mình cần biết gì về…" tốt hơn "có nên không". Hỏi "làm sao để…" tốt hơn "khi nào". Một lá trả lời tốt câu "cái gì", trả lời dở câu "có/không", và gần như không trả lời được câu "khi nào".', en: '"What do I need to know about…" beats "should I". "How can I…" beats "when". One card answers "what" well, "yes or no" badly, and "when" almost not at all.' } }
+    { h: { vi: 'Chỉ dùng một bộ bài', en: 'Use one deck only' }, p: { vi: 'Hãy bắt đầu với bộ Rider–Waite–Smith hoặc một bộ được vẽ theo nó. Hầu hết sách và video đều dựa trên hình ảnh của bộ này, và cả 78 lá đều có tranh, nên bức tranh sẽ dạy bạn trước cả khi bạn thuộc nghĩa.', en: 'Start with the Rider–Waite–Smith deck or one drawn after it. Most books and videos assume its pictures, and all 78 cards are illustrated, so the pictures teach you before you have learned the meanings.' } },
+    { h: { vi: 'Học cấu trúc trước, nghĩa sau', en: 'Structure first, meanings later' }, p: { vi: 'Hãy nắm bộ khung trước: 22 lá Ẩn Chính là những bài học lớn, còn 56 lá Ẩn Phụ là chuyện hằng ngày, chia thành bốn chất. Gậy là lửa và hành động, Cốc là nước và cảm xúc, Kiếm là khí và suy nghĩ, Tiền là đất và vật chất. Khi đã biết khung này, bạn có thể đoán được nghĩa của một lá mình chưa từng học.', en: 'Get the skeleton first: the 22 Majors are the big lessons, and the 56 Minors are daily life, divided into four suits. Wands are fire and action, Cups are water and feeling, Swords are air and thought, Pentacles are earth and the material world. Once you know this frame, you can make a fair guess at a card you have never studied.' } },
+    { h: { vi: 'Mỗi ngày một lá', en: 'One card a day' }, p: { vi: 'Sáng nào bạn cũng rút một lá. Bạn viết ra điều mình nhìn thấy và điều mình nghĩ nó muốn nói, rồi mới tra nghĩa. Khoảng cách giữa điều bạn đoán và điều sách viết chính là nơi bạn học được nhiều nhất. Đến tối, bạn nhìn lại xem lá bài ấy khớp với ngày của mình đến đâu.', en: 'Every morning, pull one card. Write down what you see and what you think it is saying, and only then look up the meaning. The gap between your guess and the book is where most of the learning happens. In the evening, look back and see how well the card matched your day.' } },
+    { h: { vi: 'Câu hỏi quyết định câu trả lời', en: 'The question shapes the answer' }, p: { vi: 'Một câu hỏi tốt cho một câu trả lời tốt. "Mình cần biết gì về chuyện này?" luôn hay hơn "Có nên hay không?", và "Mình nên làm gì để…?" hay hơn "Khi nào?". Một lá bài trả lời tốt câu hỏi cái gì, trả lời dở câu hỏi có hay không, và gần như không trả lời được câu hỏi khi nào.', en: 'A good question earns a good answer. "What do I need to know about this?" always works better than "Should I or not?", and "What should I do to…?" works better than "When?". A single card answers what very well, answers yes-or-no poorly, and can hardly answer when at all.' } }
   ] },
 { id: 'tarot-reversed', cat: 'tarot', badge: 'conv', tags: ['tarot'],
-  title: { vi: 'Lá ngược: đọc hay không đọc?', en: 'Reversed cards: read them or not?' },
-  intro: { vi: 'Không có luật bắt buộc. Nhiều người đọc lá ngược, nhiều người không. Nabu không đọc lá ngược: mỗi lá được học cả mặt sáng lẫn mặt tối.', en: 'There is no rule. Many readers use reversals, many do not. Nabu does not: each card is learned with both its bright side and its shadow.' },
+  title: { vi: 'Lá ngược: có nên đọc không?', en: 'Reversed cards: should you read them?' },
+  intro: { vi: 'Không có luật nào bắt buộc bạn phải đọc lá ngược. Nhiều người đọc, nhiều người không, và cả hai cách đều cho ra những trải bài tốt. Điều quan trọng là bạn chọn một cách và giữ nó.', en: 'There is no rule that forces you to read reversed cards. Many readers do, many do not, and both ways produce good readings. What matters is that you choose one way and keep to it.' },
   sections: [
-    { h: { vi: 'Cách 1: không đọc ngược', en: 'Way 1: no reversals' }, p: { vi: 'Mỗi lá có mặt sáng và mặt tối. Bạn nhìn các lá xung quanh và câu hỏi để biết lá này đang nói mặt nào. Mẹo nhỏ: thêm chữ "quá" vào từ khóa tích cực là ra từ khóa tiêu cực. Tự tin quá thành kiêu. Chủ động quá thành áp đặt.', en: 'Every card has a bright side and a shadow. The neighbouring cards and the question tell you which side is speaking. A handy trick: put "too" in front of a positive keyword to get the negative one. Too confident becomes arrogant. Too active becomes pushy.' } },
-    { h: { vi: 'Cách 2: đọc ngược', en: 'Way 2: with reversals' }, p: { vi: 'Lá ngược thường là năng lượng của lá bị chặn, bị trễ, hoặc quay vào trong. Ngược không phải "xấu". Mười Kiếm ngược có thể là điều tệ nhất đã qua.', en: 'A reversed card is usually the card\'s energy blocked, delayed, or turned inward. Reversed is not "bad". Ten of Swords reversed can mean the worst is over.' } },
-    { h: { vi: 'Chọn một cách và giữ nó', en: 'Pick one way and keep it' }, p: { vi: 'Quyết định trước khi xào bài. Đổi giữa chừng vì không thích câu trả lời là tự lừa mình.', en: 'Decide before you shuffle. Switching halfway because you dislike the answer is fooling yourself.' } }
+    { h: { vi: 'Cách một: không đọc ngược', en: 'Way one: no reversals' }, p: { vi: 'Theo cách này, mỗi lá bài có sẵn một mặt sáng và một mặt tối. Bạn nhìn vào câu hỏi và các lá xung quanh để biết lá này đang nói về mặt nào. Có một mẹo nhỏ rất hiệu quả: hãy thêm chữ "quá" vào trước từ khóa tích cực, bạn sẽ có ngay từ khóa tiêu cực. Tự tin quá thì thành kiêu ngạo, chủ động quá thì thành áp đặt.', en: 'In this way, every card already has a bright side and a shadow side. You look at the question and at the neighbouring cards to tell which side is speaking. There is a small trick that works very well: put the word "too" in front of a positive keyword and you get the negative one. Too confident becomes arrogant, too active becomes pushy.' } },
+    { h: { vi: 'Cách hai: đọc ngược', en: 'Way two: with reversals' }, p: { vi: 'Nếu bạn đọc lá ngược, hãy hiểu nó là năng lượng của lá đang bị chặn lại, bị trì hoãn, hoặc quay vào bên trong. Ngược không có nghĩa là xấu. Mười Kiếm ngược, chẳng hạn, thường có nghĩa là điều tệ nhất đã qua rồi.', en: 'If you do read reversals, think of them as the card\'s energy being blocked, delayed, or turned inward. Reversed does not mean bad. The Ten of Swords reversed, for example, usually means that the worst is already over.' } },
+    { h: { vi: 'Chọn một cách và giữ nó', en: 'Pick one way and keep it' }, p: { vi: 'Bạn nên quyết định trước khi xào bài. Nếu đổi cách giữa chừng chỉ vì không thích câu trả lời, thì bạn đang tự lừa mình, và trải bài sẽ không còn nói được điều gì đáng tin.', en: 'Decide before you shuffle. If you switch halfway simply because you dislike the answer, you are fooling yourself, and the spread can no longer tell you anything you can trust.' } }
   ] },
 { id: 'tarot-court', cat: 'tarot', badge: 'conv', tags: ['tarot', 'love'],
-  title: { vi: 'Lá hoàng gia: người hay tính cách?', en: 'Court cards: a person or a trait?' },
-  intro: { vi: '16 lá hoàng gia (Tiểu Đồng, Kỵ Sĩ, Nữ Hoàng, Đức Vua) là phần khó nhất với người mới. Chúng có thể là một người, một phần của bạn, hoặc một cách hành xử.', en: 'The 16 court cards (Page, Knight, Queen, King) are the hardest part for beginners. They can be a person, a part of you, or a way of behaving.' },
+  title: { vi: 'Lá hoàng gia: là người hay là tính cách?', en: 'Court cards: a person or a trait?' },
+  intro: { vi: 'Mười sáu lá hoàng gia, gồm Tiểu Đồng, Kỵ Sĩ, Nữ Hoàng và Đức Vua của bốn chất, là phần khó nhất với người mới. Lý do là chúng có thể mang ba nghĩa cùng lúc: một người cụ thể, một phần trong con người bạn, hoặc một cách hành xử.', en: 'The sixteen court cards, the Page, Knight, Queen and King of each suit, are the hardest part for beginners. The reason is that they can carry three meanings at once: a specific person, a part of yourself, or a way of behaving.' },
   sections: [
-    { h: { vi: 'Bốn cấp', en: 'Four ranks' }, p: { vi: 'Tiểu Đồng: người trẻ, tin nhắn, bắt đầu học. Kỵ Sĩ: hành động, di chuyển, đôi khi quá đà. Nữ Hoàng: làm chủ chất đó từ bên trong. Đức Vua: làm chủ chất đó ra bên ngoài, có quyền.', en: 'Page: someone young, a message, learning. Knight: action, movement, sometimes too much. Queen: mastery of the suit from within. King: mastery turned outward, with authority.' } },
-    { h: { vi: 'Khi hỏi về một người', en: 'When asking about a person' }, p: { vi: 'Lá hoàng gia mô tả tính cách, không mô tả tuổi hay giới tính cố định. Nữ Hoàng Kiếm có thể là một người đàn ông sắc sảo. Nhìn chất trước: Gậy nóng, Cốc tình cảm, Kiếm lý trí, Tiền thực tế.', en: 'A court card describes character, not fixed age or gender. The Queen of Swords can be a sharp man. Look at the suit first: Wands hot, Cups emotional, Swords rational, Pentacles practical.' } }
+    { h: { vi: 'Bốn cấp bậc', en: 'Four ranks' }, p: { vi: 'Tiểu Đồng là người trẻ, là một tin nhắn, hoặc là bước đầu học một điều mới. Kỵ Sĩ là hành động và di chuyển, đôi khi hơi quá đà. Nữ Hoàng là người đã làm chủ chất đó từ bên trong. Đức Vua là người thể hiện chất đó ra bên ngoài và có quyền quyết định.', en: 'The Page is a young person, a message, or the first step of learning something new. The Knight is action and movement, sometimes a little too much of it. The Queen has mastered the suit from within. The King expresses the suit outwardly and holds the authority to decide.' } },
+    { h: { vi: 'Khi bạn hỏi về một người', en: 'When you ask about a person' }, p: { vi: 'Lá hoàng gia mô tả tính cách chứ không cố định tuổi hay giới tính. Nữ Hoàng Kiếm hoàn toàn có thể là một người đàn ông sắc sảo. Vì vậy, hãy nhìn vào chất trước: Gậy nóng và nhiệt, Cốc giàu tình cảm, Kiếm thiên về lý trí, còn Tiền thì thực tế.', en: 'A court card describes character rather than a fixed age or gender. The Queen of Swords can perfectly well be a sharp-minded man. So look at the suit first: Wands are hot and eager, Cups are emotional, Swords are rational, and Pentacles are practical.' } }
   ] },
 
 /* -------------------------------------------------------- lenormand ---- */
 { id: 'len-vs-tarot', cat: 'lenormand', badge: 'doc', tags: ['lenormand'],
-  title: { vi: 'Lenormand khác tarot thế nào', en: 'How Lenormand differs from tarot' },
-  intro: { vi: 'Lenormand là bộ 36 lá, mỗi lá là một vật: Kỵ Mã, Cỏ Ba Lá, Thuyền, Nhà… Bạn không đọc từng lá. Bạn đọc các lá đứng cạnh nhau như một câu.', en: 'Lenormand is a 36-card deck where each card is a thing: Rider, Clover, Ship, House… You do not read one card at a time. You read cards next to each other like a sentence.' },
+  title: { vi: 'Lenormand khác tarot ở đâu', en: 'How Lenormand differs from tarot' },
+  intro: { vi: 'Lenormand là một bộ bài 36 lá, và mỗi lá là một vật cụ thể: Kỵ Mã, Cỏ Ba Lá, Con Thuyền, Ngôi Nhà. Điểm khác lớn nhất so với tarot là bạn không đọc từng lá một, mà đọc những lá đứng cạnh nhau như đọc một câu văn.', en: 'Lenormand is a deck of 36 cards, and each card is a concrete thing: the Rider, the Clover, the Ship, the House. The biggest difference from tarot is that you do not read one card at a time; you read the cards standing next to each other, the way you would read a sentence.' },
   sections: [
-    { h: { vi: 'Lá là danh từ', en: 'Cards are nouns' }, p: { vi: 'Tarot cho bạn một cảnh và nhiều tầng nghĩa. Lenormand cho bạn một từ. Thư là thư. Chìa Khóa là mở ra, chắc chắn. Nghĩa đến từ việc ghép các từ lại: Kỵ Mã + Thư = tin nhắn đang tới.', en: 'Tarot gives you a scene with layers of meaning. Lenormand gives you a word. Letter is a letter. Key is opening, certainty. Meaning comes from joining words: Rider + Letter = a message on its way.' } },
-    { h: { vi: 'Không có lá ngược', en: 'No reversals' }, p: { vi: 'Lenormand không đọc lá ngược. Mỗi lá có sắc thái sẵn: tích cực, trung tính, tiêu cực. Lá cạnh bên làm dịu hay làm nặng sắc thái đó.', en: 'Lenormand has no reversals. Each card has a built-in tone: positive, neutral, negative. The card beside it softens or sharpens that tone.' } },
-    { h: { vi: 'Nguồn gốc', en: 'Where it comes from' }, p: { vi: 'Bộ bài bắt nguồn từ "Das Spiel der Hoffnung" của Hechtel (1799), một trò chơi cờ, và lấy tên bà Lenormand sau khi bà mất. Mỗi lá in kèm một lá bài Tây (bộ 36 lá piquet). Lenormand không có tương ứng cung hoàng đạo; các bảng cung trên mạng là do từng tác giả tự đặt.', en: 'The deck descends from Hechtel\'s "Das Spiel der Hoffnung" (1799), a board game, and took Mlle Lenormand\'s name after her death. Each card carries a playing-card inset (a 36-card piquet pack). Lenormand has no zodiac correspondences; the tables online are each author\'s own invention.' } }
+    { h: { vi: 'Mỗi lá là một danh từ', en: 'Each card is a noun' }, p: { vi: 'Tarot cho bạn một khung cảnh với nhiều tầng nghĩa, còn Lenormand chỉ cho bạn một từ. Lá Thư nghĩa là một lá thư, và Chìa Khóa nghĩa là mở ra, là điều chắc chắn. Nghĩa thật sự chỉ xuất hiện khi bạn ghép các từ lại với nhau. Chẳng hạn, Kỵ Mã đứng cạnh Lá Thư nghĩa là một tin nhắn đang trên đường đến.', en: 'Tarot gives you a scene with many layers of meaning, while Lenormand gives you a single word. The Letter means a letter, and the Key means opening, or certainty. The real meaning only appears when you join the words together. The Rider next to the Letter, for instance, means a message that is on its way.' } },
+    { h: { vi: 'Không có lá ngược', en: 'There are no reversals' }, p: { vi: 'Lenormand không đọc lá ngược. Thay vào đó, mỗi lá mang sẵn một sắc thái: tích cực, trung tính hoặc tiêu cực. Lá đứng bên cạnh sẽ làm dịu đi hoặc làm nặng thêm sắc thái ấy.', en: 'Lenormand does not use reversals. Instead, every card carries a built-in tone: positive, neutral or negative. The card beside it softens or sharpens that tone.' } },
+    { h: { vi: 'Bộ bài đến từ đâu', en: 'Where the deck comes from' }, p: { vi: 'Bộ bài này bắt nguồn từ một trò chơi bàn cờ ở Đức vào năm 1799 và chỉ mang tên bà Lenormand sau khi bà qua đời. Trên mỗi lá đều in kèm một lá bài Tây từ bộ 36 lá, và đó là tương ứng thật sự duy nhất của Lenormand. Lenormand không có tương ứng với cung hoàng đạo; những bảng cung mà bạn thấy trên mạng là do từng tác giả tự đặt ra.', en: 'The deck began as a German board game in 1799 and only took Mlle Lenormand\'s name after her death. Every card carries a playing card from the 36-card pack, and that is Lenormand\'s only real correspondence. Lenormand has no zodiac correspondences; the sign tables you see online are each author\'s own invention.' } }
   ] },
 { id: 'len-pairs', cat: 'lenormand', badge: 'doc', tags: ['lenormand'],
-  title: { vi: 'Cách đọc hai lá và ba lá', en: 'Reading two and three cards' },
-  intro: { vi: 'Đây là bài tập cơ bản nhất và cũng là thứ bạn dùng mãi. Hai lá là một ý. Ba lá là một câu chuyện nhỏ.', en: 'This is the most basic exercise and the one you keep using. Two cards make one idea. Three cards make a small story.' },
+  title: { vi: 'Đọc hai lá và ba lá', en: 'Reading two and three cards' },
+  intro: { vi: 'Đây là bài tập cơ bản nhất của Lenormand, và cũng là kỹ năng bạn sẽ dùng mãi về sau. Hai lá ghép lại thành một ý, còn ba lá ghép lại thành một câu chuyện nhỏ.', en: 'This is the most basic Lenormand exercise, and also the skill you will keep using for the rest of your practice. Two cards together make one idea, and three cards together make a small story.' },
   sections: [
-    { h: { vi: 'Hai lá', en: 'Two cards' }, p: { vi: 'Lá đầu là chủ đề, lá sau bổ nghĩa cho nó. Nhà + Tim: một gia đình ấm áp. Tim + Nhà: tình cảm hướng về gia đình, muốn ổn định. Đổi thứ tự là đổi nghĩa.', en: 'The first card is the subject, the second describes it. House + Heart: a warm home. Heart + House: love turned toward home, wanting to settle. Swap the order and the meaning shifts.' } },
-    { h: { vi: 'Ba lá', en: 'Three cards' }, p: { vi: 'Lá giữa là trọng tâm. Hai lá hai bên bổ nghĩa. Hoặc đọc trái sang phải như quá khứ, hiện tại, tương lai. Chọn một cách trước khi rút.', en: 'The middle card is the focus, the two sides describe it. Or read left to right as past, present, future. Choose the way before you draw.' } },
-    { h: { vi: 'Luyện mỗi ngày', en: 'Daily practice' }, p: { vi: 'Rút ba lá buổi sáng, viết một câu. Tối kiểm lại. Sau một tháng bạn sẽ đọc được cặp lá không cần tra.', en: 'Draw three cards in the morning, write one sentence. Check in the evening. After a month you will read pairs without looking them up.' } }
+    { h: { vi: 'Hai lá', en: 'Two cards' }, p: { vi: 'Lá đầu tiên là chủ đề, còn lá thứ hai bổ nghĩa cho nó. Ngôi Nhà đứng trước Trái Tim nói về một gia đình ấm áp. Nhưng nếu Trái Tim đứng trước Ngôi Nhà, thì đó lại là tình cảm đang hướng về gia đình, một mong muốn ổn định. Bạn thấy đấy, chỉ cần đổi thứ tự là nghĩa đã khác đi.', en: 'The first card is the subject, and the second card describes it. The House before the Heart speaks of a warm family home. But if the Heart comes before the House, it becomes love turned toward home, a wish to settle down. As you can see, swapping the order changes the meaning.' } },
+    { h: { vi: 'Ba lá', en: 'Three cards' }, p: { vi: 'Với ba lá, bạn có hai cách đọc. Cách thứ nhất là xem lá giữa làm trọng tâm, còn hai lá hai bên bổ nghĩa cho nó. Cách thứ hai là đọc từ trái sang phải như quá khứ, hiện tại và tương lai. Hãy chọn một cách trước khi rút bài.', en: 'With three cards you have two ways to read. The first treats the middle card as the focus, with the two outer cards describing it. The second reads from left to right as past, present and future. Choose your way before you draw.' } },
+    { h: { vi: 'Luyện mỗi ngày', en: 'Daily practice' }, p: { vi: 'Mỗi sáng, bạn rút ba lá và viết một câu duy nhất. Đến tối, bạn kiểm tra lại xem câu đó đúng đến đâu. Sau khoảng một tháng, bạn sẽ đọc được các cặp lá mà không cần tra nghĩa nữa.', en: 'Each morning, draw three cards and write a single sentence. In the evening, check how well that sentence held up. After about a month, you will be reading pairs without looking anything up.' } }
   ] },
 
 /* ------------------------------------------------------------ astro ---- */
 { id: 'astro-big3', cat: 'astro', badge: 'doc', tags: ['astro'],
-  title: { vi: 'Cung Mặt Trời, Mặt Trăng và Mọc', en: 'Sun, Moon and Rising' },
-  intro: { vi: 'Cung bạn hay nói "mình là Sư Tử" là cung Mặt Trời. Nó chỉ là một phần của bản đồ sao. Hai phần quan trọng nữa là Mặt Trăng và cung Mọc.', en: 'The sign you call "I am a Leo" is your Sun sign. It is one part of the chart. Two more matter a lot: the Moon and the Rising sign.' },
+  title: { vi: 'Cung Mặt Trời, Mặt Trăng và cung Mọc', en: 'Sun, Moon and Rising' },
+  intro: { vi: 'Khi bạn nói "mình là Sư Tử", bạn đang nói về cung Mặt Trời của mình. Nhưng cung Mặt Trời chỉ là một phần của bản đồ sao. Có hai phần nữa cũng quan trọng không kém, đó là cung Mặt Trăng và cung Mọc.', en: 'When you say "I am a Leo", you are talking about your Sun sign. But the Sun sign is only one part of the birth chart. Two other parts matter just as much: the Moon sign and the Rising sign.' },
   sections: [
-    { h: { vi: 'Mặt Trời: bạn là ai', en: 'Sun: who you are' }, p: { vi: 'Tính theo ngày sinh. Đây là cái tôi, hướng sống, thứ bạn muốn trở thành. App này tính cung Mặt Trời từ ngày sinh của bạn.', en: 'Set by your birth date. This is your core self, your direction, what you want to become. This app works out your Sun sign from your birthday.' } },
-    { h: { vi: 'Mặt Trăng: bạn cảm thế nào', en: 'Moon: how you feel' }, p: { vi: 'Cần giờ sinh gần đúng. Mặt Trăng là cảm xúc, thói quen, thứ bạn cần để thấy an toàn. Nhiều người thấy mình giống cung Mặt Trăng hơn cung Mặt Trời.', en: 'Needs a roughly correct birth time. The Moon is feelings, habits, what you need to feel safe. Many people recognise themselves more in their Moon than in their Sun.' } },
-    { h: { vi: 'Mọc: người khác thấy bạn thế nào', en: 'Rising: how others see you' }, p: { vi: 'Cần giờ sinh và nơi sinh chính xác, vì cung Mọc đổi mỗi hai giờ. Đây là ấn tượng đầu, phong cách, vẻ ngoài. Muốn có bản đồ sao đầy đủ, bạn cần cả ba thứ: ngày, giờ, nơi sinh.', en: 'Needs exact birth time and place, because the Rising sign changes every two hours. This is first impression, style, appearance. For a full chart you need all three: date, time, place of birth.' } }
+    { h: { vi: 'Mặt Trời: bạn là ai', en: 'The Sun: who you are' }, p: { vi: 'Cung Mặt Trời được tính từ ngày sinh của bạn. Nó nói về cái tôi, về hướng sống và về con người mà bạn muốn trở thành. Ứng dụng này tính cung Mặt Trời cho bạn ngay khi bạn nhập ngày sinh.', en: 'Your Sun sign comes from your date of birth. It speaks of your core self, your direction in life, and the person you want to become. This app works out your Sun sign as soon as you enter your birthday.' } },
+    { h: { vi: 'Mặt Trăng: bạn cảm thấy thế nào', en: 'The Moon: how you feel' }, p: { vi: 'Để biết cung Mặt Trăng, bạn cần giờ sinh gần đúng. Mặt Trăng nói về cảm xúc, thói quen và những gì bạn cần để thấy an toàn. Nhiều người nhận ra mình trong cung Mặt Trăng còn rõ hơn cả cung Mặt Trời.', en: 'To know your Moon sign, you need a roughly correct birth time. The Moon speaks of your feelings, your habits, and what you need in order to feel safe. Many people recognise themselves in their Moon sign even more clearly than in their Sun sign.' } },
+    { h: { vi: 'Cung Mọc: người khác thấy bạn ra sao', en: 'Rising: how others see you' }, p: { vi: 'Cung Mọc đòi hỏi giờ sinh và nơi sinh chính xác, vì nó đổi sau mỗi hai giờ. Đây là ấn tượng đầu tiên bạn để lại, là phong cách và vẻ ngoài của bạn. Nếu muốn có một bản đồ sao đầy đủ, bạn cần cả ba thứ: ngày sinh, giờ sinh và nơi sinh.', en: 'The Rising sign needs your exact birth time and place, because it changes every two hours. It is the first impression you leave, your style, your appearance. If you want a full birth chart, you need all three: the date, the time and the place of birth.' } }
   ] },
 { id: 'astro-elements', cat: 'astro', badge: 'doc', tags: ['astro', 'tarot'],
   title: { vi: 'Bốn nguyên tố và ba tính chất', en: 'Four elements and three modes' },
-  intro: { vi: '12 cung chia theo hai cách. Nguyên tố nói cung đó "làm bằng gì". Tính chất nói cung đó "chuyển động ra sao".', en: 'The 12 signs split two ways. The element says what a sign is made of. The mode says how it moves.' },
+  intro: { vi: 'Mười hai cung hoàng đạo được chia theo hai cách. Nguyên tố cho biết một cung được "làm bằng gì", còn tính chất cho biết cung ấy "chuyển động ra sao". Khi nắm được hai cách chia này, bạn sẽ hiểu bất kỳ cung nào nhanh hơn rất nhiều.', en: 'The twelve signs are divided in two ways. The element tells you what a sign is "made of", and the mode tells you how that sign "moves". Once you know these two divisions, you will understand any sign much faster.' },
   sections: [
-    { h: { vi: 'Nguyên tố', en: 'Elements' }, p: { vi: 'Lửa (Bạch Dương, Sư Tử, Nhân Mã): hành động, nhiệt, tự tin. Đất (Kim Ngưu, Xử Nữ, Ma Kết): thực tế, bền, vật chất. Khí (Song Tử, Thiên Bình, Bảo Bình): suy nghĩ, giao tiếp, ý tưởng. Nước (Cự Giải, Bọ Cạp, Song Ngư): cảm xúc, trực giác, ký ức. Trong tarot: Gậy là lửa, Tiền là đất, Kiếm là khí, Cốc là nước.', en: 'Fire (Aries, Leo, Sagittarius): action, heat, confidence. Earth (Taurus, Virgo, Capricorn): practical, steady, material. Air (Gemini, Libra, Aquarius): thought, communication, ideas. Water (Cancer, Scorpio, Pisces): feeling, intuition, memory. In tarot: Wands are fire, Pentacles earth, Swords air, Cups water.' } },
-    { h: { vi: 'Tính chất', en: 'Modes' }, p: { vi: 'Khởi đầu (Bạch Dương, Cự Giải, Thiên Bình, Ma Kết): mở mùa, bắt đầu việc. Cố định (Kim Ngưu, Sư Tử, Bọ Cạp, Bảo Bình): giữ, duy trì, bướng. Biến đổi (Song Tử, Xử Nữ, Nhân Mã, Song Ngư): thích nghi, kết thúc, linh hoạt.', en: 'Cardinal (Aries, Cancer, Libra, Capricorn): opens the season, starts things. Fixed (Taurus, Leo, Scorpio, Aquarius): holds, maintains, stubborn. Mutable (Gemini, Virgo, Sagittarius, Pisces): adapts, finishes, flexible.' } }
+    { h: { vi: 'Bốn nguyên tố', en: 'The four elements' }, p: { vi: 'Lửa gồm Bạch Dương, Sư Tử và Nhân Mã: hành động, nhiệt huyết và tự tin. Đất gồm Kim Ngưu, Xử Nữ và Ma Kết: thực tế, bền bỉ và gắn với vật chất. Khí gồm Song Tử, Thiên Bình và Bảo Bình: suy nghĩ, giao tiếp và ý tưởng. Nước gồm Cự Giải, Bọ Cạp và Song Ngư: cảm xúc, trực giác và ký ức. Trong tarot, bốn nguyên tố này tương ứng với bốn chất: Gậy là lửa, Tiền là đất, Kiếm là khí và Cốc là nước.', en: 'Fire holds Aries, Leo and Sagittarius: action, heat and confidence. Earth holds Taurus, Virgo and Capricorn: practical, steady and tied to the material world. Air holds Gemini, Libra and Aquarius: thought, communication and ideas. Water holds Cancer, Scorpio and Pisces: feeling, intuition and memory. In tarot, the four elements match the four suits: Wands are fire, Pentacles are earth, Swords are air and Cups are water.' } },
+    { h: { vi: 'Ba tính chất', en: 'The three modes' }, p: { vi: 'Các cung khởi đầu là Bạch Dương, Cự Giải, Thiên Bình và Ma Kết. Mỗi cung mở ra một mùa mới, nên chúng giỏi bắt đầu mọi việc. Các cung cố định là Kim Ngưu, Sư Tử, Bọ Cạp và Bảo Bình. Chúng giữ và duy trì, đôi khi hơi bướng. Các cung biến đổi là Song Tử, Xử Nữ, Nhân Mã và Song Ngư. Chúng thích nghi, linh hoạt và biết cách kết thúc.', en: 'The cardinal signs are Aries, Cancer, Libra and Capricorn. Each one opens a new season, so they are good at starting things. The fixed signs are Taurus, Leo, Scorpio and Aquarius. They hold and maintain, and can be a little stubborn. The mutable signs are Gemini, Virgo, Sagittarius and Pisces. They adapt, stay flexible, and know how to bring things to a close.' } }
   ] },
 { id: 'astro-moon', cat: 'astro', badge: 'conv', tags: ['astro', 'manifest'],
-  title: { vi: 'Chu kỳ trăng và cách dùng', en: 'The Moon cycle and how to use it' },
-  intro: { vi: 'Trăng đi hết một vòng trong khoảng 29,5 ngày. Nhiều người dùng chu kỳ này để đặt ý định và buông bỏ. Đây là thói quen, không phải quy luật.', en: 'The Moon completes a cycle in about 29.5 days. Many people use it to set intentions and let go. This is a practice, not a law.' },
+  title: { vi: 'Chu kỳ trăng và cách dùng nó', en: 'The Moon cycle and how to use it' },
+  intro: { vi: 'Mặt Trăng đi hết một vòng trong khoảng 29 ngày rưỡi, từ trăng non đến trăng tròn rồi trở lại trăng non. Nhiều người dùng vòng quay này như một nhịp sống: có lúc để gieo, có lúc để nhìn lại, và có lúc để buông. Đây là một thói quen đẹp chứ không phải một quy luật, nên bạn hãy thử và giữ lại những gì hợp với mình.', en: 'The Moon completes one cycle in about twenty-nine and a half days, from new to full and back to new again. Many people use this turning as a rhythm for life: there is a time to plant, a time to look back, and a time to let go. It is a lovely habit rather than a law, so try it and keep whatever suits you.' },
   sections: [
-    { h: { vi: 'Trăng non', en: 'New Moon' }, p: { vi: 'Bầu trời tối. Thời điểm gieo: viết điều bạn muốn bắt đầu trong tháng này. Ngắn gọn, cụ thể.', en: 'Dark sky. Planting time: write what you want to start this month. Short and specific.' } },
-    { h: { vi: 'Trăng tròn', en: 'Full Moon' }, p: { vi: 'Sáng nhất. Thời điểm nhìn lại: điều gì đã lộ ra, điều gì cần thả. Nhiều người xem bài vào trăng tròn vì cảm xúc rõ hơn.', en: 'Brightest. Time to look back: what has come to light, what to release. Many people read cards at the Full Moon because feelings are clearer.' } },
-    { h: { vi: 'Trăng khuyết', en: 'Waning Moon' }, p: { vi: 'Từ tròn về non. Dọn dẹp, kết thúc, nghỉ. Không hợp để bắt đầu việc lớn.', en: 'From full back to new. Clearing, ending, resting. Not the time to start something big.' } }
+    { h: { vi: 'Trăng non: gieo hạt', en: 'New Moon: planting' }, p: { vi: 'Vào đêm trăng non, bầu trời tối nhất và vòng quay mới bắt đầu. Đây là lúc thích hợp để bạn viết ra điều mình muốn bắt đầu trong tháng này. Hãy viết ngắn và cụ thể, chẳng hạn "mình sẽ tập thể dục ba buổi mỗi tuần" thay vì "mình sẽ khỏe hơn". Một ý định rõ ràng sẽ dễ theo đuổi hơn rất nhiều.', en: 'On the night of the new Moon the sky is at its darkest and a new cycle begins. This is a good moment to write down what you want to start this month. Keep it short and specific, for example "I will exercise three times a week" rather than "I will get healthier". A clear intention is far easier to follow through.' } },
+    { h: { vi: 'Trăng tròn: nhìn lại', en: 'Full Moon: looking back' }, p: { vi: 'Khoảng hai tuần sau, trăng tròn là lúc sáng nhất trong tháng. Những gì bạn gieo từ đầu chu kỳ bây giờ đã lộ rõ, nên đây là thời điểm để nhìn lại: điều gì đang tiến triển, điều gì cần buông. Nhiều người thích rút bài vào đêm trăng tròn, vì cảm xúc lúc này thường rõ ràng và dễ gọi tên hơn.', en: 'About two weeks later, the full Moon is the brightest point of the month. Whatever you planted at the start of the cycle has now come to light, so this is the time to look back: what is moving forward, and what needs to be released. Many people like to draw cards on a full-Moon night, because feelings tend to be clearer and easier to name.' } },
+    { h: { vi: 'Trăng khuyết: dọn dẹp và nghỉ', en: 'Waning Moon: clearing and rest' }, p: { vi: 'Từ trăng tròn cho đến trăng non tiếp theo, ánh trăng nhỏ dần. Đây là quãng để bạn dọn dẹp, kết thúc những việc dang dở và cho mình nghỉ ngơi. Bạn không nên bắt đầu việc lớn trong giai đoạn này; hãy để dành sức cho vòng quay mới.', en: 'From the full Moon to the next new Moon, the light shrinks night by night. This is the stretch for clearing up, finishing what is unfinished, and giving yourself some rest. It is not the time to start anything big; save your energy for the next cycle.' } },
+    { h: { vi: 'Cách dùng cho gọn', en: 'A simple way to use it' }, p: { vi: 'Bạn chỉ cần nhớ ba mốc: trăng non để đặt ý định, trăng tròn để nhìn lại, và trăng khuyết để buông. Ứng dụng luôn hiển thị pha trăng của hôm nay trên trang chủ, nên bạn không cần tự tính.', en: 'You only need to remember three points: the new Moon to set an intention, the full Moon to look back, and the waning Moon to let go. The app always shows today\'s Moon phase on the home screen, so you never have to work it out yourself.' } }
   ] },
 { id: 'astro-retro', cat: 'astro', badge: 'doc', tags: ['astro', 'work'],
-  title: { vi: 'Sao Thủy nghịch hành là gì', en: 'What Mercury retrograde is' },
-  intro: { vi: 'Ba, bốn lần mỗi năm, Sao Thủy nhìn từ Trái Đất có vẻ đi lùi khoảng ba tuần. Đó là hiệu ứng góc nhìn, sao không lùi thật.', en: 'Three or four times a year, Mercury appears from Earth to move backwards for about three weeks. It is a viewing effect; the planet does not reverse.' },
+  title: { vi: 'Sao Thủy nghịch hành là gì', en: 'What Mercury retrograde means' },
+  intro: { vi: 'Ba hoặc bốn lần mỗi năm, Sao Thủy nhìn từ Trái Đất có vẻ như đang đi lùi trong khoảng ba tuần. Thật ra hành tinh không hề lùi; đó chỉ là hiệu ứng góc nhìn khi hai hành tinh vượt qua nhau trên quỹ đạo.', en: 'Three or four times a year, Mercury appears from Earth to move backwards for about three weeks. The planet is not really reversing; it is a trick of perspective as the two planets pass each other in their orbits.' },
   sections: [
-    { h: { vi: 'Người ta gán cho nó điều gì', en: 'What people link it to' }, p: { vi: 'Sao Thủy gắn với giao tiếp, đi lại, hợp đồng, máy móc. Nên thời gian này người ta hay đổ lỗi cho tin nhắn hiểu lầm, chuyến đi trễ, máy hỏng.', en: 'Mercury is linked to communication, travel, contracts, devices. So this period gets blamed for misread messages, late trips and broken machines.' } },
-    { h: { vi: 'Cách dùng cho có ích', en: 'A useful way to use it' }, p: { vi: 'Xem nó như lời nhắc: đọc lại trước khi gửi, sao lưu, kiểm tra kỹ hợp đồng, liên lạc lại người cũ nếu cần. Đừng hoãn cả đời vì một hành tinh.', en: 'Treat it as a reminder: re-read before sending, back things up, check contracts, reconnect with old contacts if useful. Do not put your life on hold for a planet.' } }
+    { h: { vi: 'Vì sao người ta hay đổ lỗi cho nó', en: 'Why it gets the blame' }, p: { vi: 'Trong chiêm tinh, Sao Thủy gắn với giao tiếp, đi lại, hợp đồng và máy móc. Vì vậy, mỗi khi Sao Thủy nghịch hành, người ta thường đổ lỗi cho nó về những tin nhắn bị hiểu lầm, những chuyến đi trễ giờ hay chiếc điện thoại bỗng dưng hỏng.', en: 'In astrology, Mercury is linked to communication, travel, contracts and machines. So whenever Mercury goes retrograde, people tend to blame it for misread messages, late journeys and the phone that suddenly stops working.' } },
+    { h: { vi: 'Cách dùng cho có ích', en: 'A useful way to treat it' }, p: { vi: 'Bạn có thể xem giai đoạn này như một lời nhắc nhở nhẹ nhàng: đọc lại tin nhắn trước khi gửi, sao lưu dữ liệu, kiểm tra kỹ hợp đồng, và liên lạc lại với những người cũ nếu cần. Nhưng đừng hoãn cả cuộc đời chỉ vì một hành tinh; những việc quan trọng vẫn có thể làm được, chỉ cần cẩn thận hơn một chút.', en: 'You can treat this period as a gentle reminder: re-read a message before sending it, back up your data, check contracts carefully, and reconnect with old contacts if you need to. But do not put your whole life on hold because of one planet; important things can still be done, just with a little more care.' } }
   ] },
 
 /* --------------------------------------------------------- manifest ---- */
 { id: 'mani-what', cat: 'manifest', badge: 'conv', tags: ['manifest'],
   title: { vi: 'Manifestation là gì', en: 'What manifestation is' },
-  intro: { vi: 'Manifestation là việc nói rõ điều bạn muốn, tin rằng nó có thể, và hành động như thể nó đang tới. Phần "hành động" là phần hay bị quên.', en: 'Manifestation is naming clearly what you want, believing it is possible, and acting as if it is on its way. The "acting" part is the one people forget.' },
+  intro: { vi: 'Manifestation là việc bạn nói rõ điều mình muốn, tin rằng điều đó có thể xảy ra, và hành động như thể nó đang trên đường đến. Phần "hành động" là phần người ta hay quên nhất, nhưng lại là phần quan trọng nhất.', en: 'Manifestation means naming clearly what you want, believing that it is possible, and acting as if it is already on its way. The "acting" part is the one people forget most often, and it is also the part that matters most.' },
   sections: [
-    { h: { vi: 'Nó làm được gì', en: 'What it can do' }, p: { vi: 'Khi bạn nói rõ mục tiêu, não bạn bắt đầu để ý cơ hội liên quan. Bạn dám mở lời, dám nộp đơn, dám hẹn. Đó là cách "vũ trụ đáp lại" theo nghĩa thực tế nhất.', en: 'When you name a goal clearly, your mind starts noticing related chances. You dare to speak up, apply, ask. That is "the universe answering" in the most practical sense.' } },
-    { h: { vi: 'Nó không làm được gì', en: 'What it cannot do' }, p: { vi: 'Nó không thay đổi người khác. Nó không thay thế việc học, làm, hay đi khám bệnh. Nếu ai đó nói bạn bị bệnh hay nghèo là do "rung động thấp", họ đang đổ lỗi cho bạn, không phải dạy bạn.', en: 'It does not change other people. It does not replace studying, working, or seeing a doctor. If someone says you are sick or poor because of "low vibration", they are blaming you, not teaching you.' } },
-    { h: { vi: 'Cách bắt đầu', en: 'How to begin' }, p: { vi: 'Viết một câu ở thì hiện tại: "Mình đang làm công việc mình thích, lương đủ sống thoải mái." Đọc mỗi sáng. Rồi làm một việc nhỏ hướng về nó trong ngày.', en: 'Write one sentence in the present tense: "I am doing work I enjoy that pays me comfortably." Read it each morning. Then do one small thing toward it that day.' } }
+    { h: { vi: 'Nó làm được gì cho bạn', en: 'What it can do for you' }, p: { vi: 'Khi bạn gọi tên mục tiêu một cách rõ ràng, bộ não sẽ bắt đầu để ý những cơ hội liên quan mà trước đây bạn bỏ qua. Bạn sẽ dám mở lời, dám nộp đơn và dám hẹn gặp. Đó chính là cách "vũ trụ đáp lại" theo nghĩa thực tế nhất.', en: 'When you name a goal clearly, your mind starts noticing the related chances you used to walk past. You dare to speak up, to apply, to ask for the meeting. That is what "the universe answering" looks like in the most practical sense.' } },
+    { h: { vi: 'Nó không làm được gì', en: 'What it cannot do' }, p: { vi: 'Manifestation không thay đổi được người khác, và cũng không thay thế được việc học, việc làm hay việc đi khám bệnh. Nếu có ai nói rằng bạn ốm hay nghèo là vì "rung động thấp", thì họ đang đổ lỗi cho bạn chứ không phải đang dạy bạn.', en: 'Manifestation cannot change other people, and it does not replace studying, working, or seeing a doctor. If someone tells you that you are sick or poor because of "low vibration", they are blaming you, not teaching you.' } },
+    { h: { vi: 'Bắt đầu như thế nào', en: 'How to begin' }, p: { vi: 'Hãy viết một câu ở thì hiện tại, chẳng hạn: "Mình đang làm công việc mình thích, với mức lương đủ để sống thoải mái." Mỗi sáng bạn đọc lại câu ấy, rồi trong ngày làm một việc nhỏ hướng về nó. Chỉ cần vậy là bạn đã bắt đầu đúng cách.', en: 'Write one sentence in the present tense, for example: "I am doing work I enjoy, and it pays me enough to live comfortably." Read it every morning, then do one small thing during the day that moves toward it. That alone is a proper start.' } }
   ] },
 { id: 'mani-script', cat: 'manifest', badge: 'conv', tags: ['manifest', 'love', 'work'],
   title: { vi: 'Viết kịch bản (scripting)', en: 'Scripting' },
-  intro: { vi: 'Bạn viết một trang nhật ký như thể điều bạn muốn đã xảy ra. Càng cụ thể càng tốt: bạn thấy gì, nghe gì, cảm thấy gì.', en: 'You write a diary page as if what you want has already happened. The more specific the better: what you see, hear, feel.' },
+  intro: { vi: 'Scripting là cách bạn viết một trang nhật ký như thể điều mình mong muốn đã xảy ra rồi. Bạn càng viết cụ thể, càng tả rõ mình thấy gì, nghe gì và cảm thấy gì, thì bài tập càng có tác dụng.', en: 'Scripting means writing a diary page as if the thing you want has already happened. The more specific you are about what you see, hear and feel, the better the exercise works.' },
   sections: [
-    { h: { vi: 'Cách viết', en: 'How to write it' }, p: { vi: 'Thì hiện tại hoặc quá khứ gần. "Hôm nay mình vừa ký hợp đồng mới. Sếp bắt tay và nói…" Kết bằng lời cảm ơn. Viết 10 phút, không sửa.', en: 'Present or recent past tense. "Today I signed the new contract. My manager shook my hand and said…" End with thanks. Write for ten minutes, no editing.' } },
-    { h: { vi: 'Khi nào viết', en: 'When to write' }, p: { vi: 'Nhiều người viết vào trăng non hoặc tối trước ngày quan trọng. Thật ra lúc nào bạn yên tĩnh được 10 phút là được.', en: 'Many people write at the New Moon or the night before an important day. In truth, any ten quiet minutes will do.' } },
-    { h: { vi: 'Về người khác', en: 'About other people' }, p: { vi: 'Viết về cảm giác bạn muốn có trong tình yêu, đừng viết tên một người cụ thể phải yêu bạn. Người ta có ý chí riêng. Viết "mình được yêu một cách nhẹ nhàng và rõ ràng" mở ra nhiều cửa hơn.', en: 'Write about the feeling you want in love, not that a specific person must love you. People have their own will. "I am loved gently and clearly" opens more doors.' } }
+    { h: { vi: 'Viết như thế nào', en: 'How to write it' }, p: { vi: 'Bạn dùng thì hiện tại hoặc quá khứ gần, ví dụ: "Hôm nay mình vừa ký hợp đồng mới. Sếp bắt tay mình và nói rằng…". Bạn kết bài bằng một lời cảm ơn. Hãy viết liền trong mười phút và đừng dừng lại để sửa.', en: 'Use the present or the recent past tense, for example: "Today I signed the new contract. My manager shook my hand and said…". End the page with a word of thanks. Write for ten minutes without stopping to edit.' } },
+    { h: { vi: 'Viết khi nào', en: 'When to write' }, p: { vi: 'Nhiều người thích viết vào đêm trăng non hoặc tối hôm trước một ngày quan trọng. Thật ra, bất cứ lúc nào bạn có được mười phút yên tĩnh đều là thời điểm tốt.', en: 'Many people like to write on a new-Moon night or the evening before an important day. In truth, any ten quiet minutes will do.' } },
+    { h: { vi: 'Khi viết về người khác', en: 'When writing about other people' }, p: { vi: 'Hãy viết về cảm giác mà bạn muốn có trong tình yêu, thay vì viết rằng một người cụ thể phải yêu bạn. Mỗi người đều có ý chí riêng của họ. Một câu như "mình được yêu một cách nhẹ nhàng và rõ ràng" sẽ mở ra nhiều cánh cửa hơn là một cái tên.', en: 'Write about the feeling you want to have in love, rather than writing that a specific person must love you. Everyone has a will of their own. A line like "I am loved gently and clearly" opens more doors than a single name ever will.' } }
   ] },
 { id: 'mani-369', cat: 'manifest', badge: 'own', tags: ['manifest'],
   title: { vi: 'Phương pháp 369', en: 'The 369 method' },
-  intro: { vi: 'Viết câu khẳng định 3 lần buổi sáng, 6 lần buổi chiều, 9 lần buổi tối. Lan truyền trên TikTok, gắn với tên Tesla nhưng ông không hề dạy điều này.', en: 'Write your affirmation 3 times in the morning, 6 in the afternoon, 9 at night. It spread on TikTok and is linked to Tesla\'s name, though he never taught it.' },
+  intro: { vi: 'Với phương pháp này, bạn viết câu khẳng định của mình ba lần vào buổi sáng, sáu lần vào buổi chiều và chín lần vào buổi tối. Nó lan truyền từ TikTok và thường được gắn với tên Tesla, dù ông chưa bao giờ dạy điều này.', en: 'With this method, you write your affirmation three times in the morning, six times in the afternoon and nine times at night. It spread from TikTok and is often linked to Tesla, although he never taught anything of the kind.' },
   sections: [
-    { h: { vi: 'Vì sao nó có tác dụng với một số người', en: 'Why it works for some' }, p: { vi: 'Không phải vì con số. Vì bạn nhắc mình 18 lần mỗi ngày về một mục tiêu. Sự lặp lại làm mục tiêu thành ưu tiên.', en: 'Not because of the numbers. Because you remind yourself 18 times a day of one goal. Repetition turns the goal into a priority.' } },
-    { h: { vi: 'Cách làm gọn', en: 'A lean version' }, p: { vi: 'Một câu ngắn, dưới 15 chữ. Giữ 21 ngày. Nếu quên một ngày, cứ tiếp tục, đừng bắt đầu lại.', en: 'One short sentence, under 15 words. Keep it for 21 days. If you miss a day, continue; do not restart.' } }
+    { h: { vi: 'Vì sao nó có tác dụng với một số người', en: 'Why it works for some people' }, p: { vi: 'Tác dụng không đến từ con số, mà đến từ việc bạn nhắc mình về một mục tiêu đến mười tám lần mỗi ngày. Sự lặp lại đều đặn biến mục tiêu ấy thành ưu tiên thật sự trong đầu bạn.', en: 'The effect does not come from the numbers; it comes from reminding yourself of one goal eighteen times a day. That steady repetition turns the goal into a real priority in your mind.' } },
+    { h: { vi: 'Cách làm gọn nhất', en: 'The leanest version' }, p: { vi: 'Bạn chọn một câu ngắn, dưới mười lăm chữ, và giữ nó trong hai mươi mốt ngày. Nếu lỡ quên một ngày, bạn cứ tiếp tục chứ đừng bắt đầu lại từ đầu. Ứng dụng có sẵn bảng đếm để bạn chạm mỗi lần viết xong.', en: 'Choose one short sentence, under fifteen words, and keep it for twenty-one days. If you miss a day, simply carry on rather than starting over. The app has a counter you can tap each time you finish a line.' } }
   ] },
 { id: 'mani-gratitude', cat: 'manifest', badge: 'conv', tags: ['manifest'],
   title: { vi: 'Biết ơn và câu khẳng định', en: 'Gratitude and affirmations' },
-  intro: { vi: 'Hai thói quen đơn giản nhất và có bằng chứng tâm lý học tốt nhất. Ghi ba điều biết ơn mỗi tối. Nói một câu khẳng định mỗi sáng.', en: 'The two simplest habits, and the ones with the best backing from psychology. Note three things you are grateful for each night. Say one affirmation each morning.' },
+  intro: { vi: 'Đây là hai thói quen đơn giản nhất, và cũng là hai thói quen được tâm lý học ủng hộ nhiều nhất. Mỗi tối, bạn ghi ba điều mình biết ơn. Mỗi sáng, bạn nói một câu khẳng định.', en: 'These are the two simplest habits, and also the two with the strongest backing from psychology. Each night, you write down three things you are grateful for. Each morning, you say one affirmation.' },
   sections: [
-    { h: { vi: 'Biết ơn', en: 'Gratitude' }, p: { vi: 'Cụ thể mới có tác dụng. Không phải "biết ơn gia đình" mà "biết ơn mẹ gọi hỏi mình ăn chưa lúc 7 giờ tối". Ba điều, mỗi tối, trong sổ.', en: 'It only works when specific. Not "grateful for family" but "grateful mum called at 7pm to ask if I had eaten". Three things, every night, in a notebook.' } },
-    { h: { vi: 'Câu khẳng định', en: 'Affirmations' }, p: { vi: 'Câu phải tin được. "Mình là triệu phú" khi tài khoản trống sẽ làm bạn thấy giả. "Mình đang học cách quản lý tiền tốt hơn mỗi tuần" thì tin được và kéo bạn đi.', en: 'The sentence has to be believable. "I am a millionaire" with an empty account feels fake. "I am learning to handle money better every week" is believable and moves you.' } }
+    { h: { vi: 'Biết ơn cho cụ thể', en: 'Be specific about gratitude' }, p: { vi: 'Lòng biết ơn chỉ có tác dụng khi nó cụ thể. Thay vì viết "biết ơn gia đình", bạn hãy viết "biết ơn vì mẹ gọi hỏi mình ăn cơm chưa lúc bảy giờ tối". Ba điều như thế mỗi tối, ghi vào sổ, là đủ để thay đổi cách bạn nhìn một ngày.', en: 'Gratitude only works when it is specific. Instead of writing "grateful for my family", write "grateful that mum called at seven to ask if I had eaten". Three lines like that each night, in a notebook, are enough to change how you see a day.' } },
+    { h: { vi: 'Câu khẳng định phải tin được', en: 'An affirmation you can believe' }, p: { vi: 'Câu khẳng định chỉ có ích khi bạn tin được nó. Nếu bạn nói "mình là triệu phú" trong lúc tài khoản trống, bạn sẽ chỉ thấy giả tạo. Nhưng câu "mình đang học cách quản lý tiền tốt hơn mỗi tuần" thì tin được, và chính niềm tin ấy sẽ kéo bạn đi.', en: 'An affirmation only helps when you can believe it. If you say "I am a millionaire" while your account is empty, it will only feel fake. But "I am learning to handle money better every week" is believable, and that belief is what moves you forward.' } }
   ] },
 { id: 'mani-limits', cat: 'manifest', badge: 'own', tags: ['manifest'],
   title: { vi: 'Giới hạn và sự thật thà', en: 'Limits and honesty' },
-  intro: { vi: 'Nabu không hứa manifestation làm được mọi thứ. Đây là cách Nabu nhìn nó: một công cụ để rõ mình muốn gì, và để can đảm hơn.', en: 'Nabu does not promise manifestation can do everything. This is how Nabu sees it: a tool to get clear on what you want, and to be braver.' },
+  intro: { vi: 'Nabu không hứa rằng manifestation làm được mọi thứ. Theo cách Nabu nhìn, đây là một công cụ giúp bạn biết rõ mình muốn gì và can đảm hơn để đi lấy nó. Bảng dưới đây giúp bạn tự kiểm tra xem mình đang dùng nó đúng hay sai.', en: 'Nabu does not promise that manifestation can do everything. The way Nabu sees it, it is a tool that helps you know what you want and be braver about going for it. The checklist below helps you see whether you are using it well or badly.' },
   sections: [
-    { h: { vi: 'Dấu hiệu bạn đang dùng sai', en: 'Signs you are using it wrong' }, p: { vi: 'Bạn chờ thay vì làm. Bạn tự trách khi điều xấu xảy ra. Bạn tiêu tiền vào khóa học hứa "bí mật". Bạn tránh bác sĩ hoặc tránh nói chuyện thật vì "sợ hút năng lượng xấu".', en: 'You wait instead of acting. You blame yourself when bad things happen. You spend on courses promising "the secret". You avoid doctors or honest conversations for fear of "attracting bad energy".' } },
-    { h: { vi: 'Dấu hiệu bạn đang dùng đúng', en: 'Signs you are using it right' }, p: { vi: 'Bạn rõ hơn mình muốn gì. Bạn dám mở lời. Bạn bớt sợ. Bạn vẫn làm việc, vẫn đi khám, vẫn tiết kiệm. Manifestation là thêm vào, không thay thế.', en: 'You are clearer about what you want. You speak up. You are less afraid. You still work, still see the doctor, still save. Manifestation adds; it does not replace.' } }
+    { h: { vi: 'Dấu hiệu bạn đang dùng sai', en: 'Signs you are using it badly' }, p: { vi: 'Bạn chờ đợi thay vì hành động. Bạn tự trách mình mỗi khi chuyện xấu xảy ra. Bạn tiêu tiền vào những khóa học hứa hẹn một "bí mật". Bạn tránh đi bác sĩ hoặc tránh những cuộc nói chuyện thẳng thắn vì sợ "hút năng lượng xấu".', en: 'You wait instead of acting. You blame yourself whenever something bad happens. You spend money on courses that promise a "secret". You avoid the doctor, or avoid honest conversations, for fear of "attracting bad energy".' } },
+    { h: { vi: 'Dấu hiệu bạn đang dùng đúng', en: 'Signs you are using it well' }, p: { vi: 'Bạn thấy rõ hơn mình muốn gì. Bạn dám mở lời hơn trước. Bạn bớt sợ hãi. Và bạn vẫn làm việc, vẫn đi khám, vẫn tiết kiệm như bình thường. Manifestation là thứ được thêm vào cuộc sống của bạn, chứ không thay thế nó.', en: 'You are clearer about what you want. You speak up more than before. You are less afraid. And you still work, still see the doctor, still save money as usual. Manifestation is something added to your life, not something that replaces it.' } }
   ] },
 
 /* ---------------------------------------------------------- fortune ---- */
 { id: 'fort-numerology', cat: 'fortune', badge: 'conv', tags: ['fortune'],
   title: { vi: 'Thần số học: số đường đời', en: 'Numerology: your life path number' },
-  intro: { vi: 'Số đường đời tính từ ngày sinh. Cộng ngày, tháng, năm về một chữ số, giữ nguyên 11, 22, 33. App tính sẵn cho bạn ở mục Tôi.', en: 'The life path number comes from your birth date. Add day, month and year down to one digit, keeping 11, 22 and 33. The app works it out for you under Me.' },
+  intro: { vi: 'Số đường đời được tính từ ngày sinh của bạn. Bạn cộng các chữ số của ngày, tháng và năm cho đến khi còn một chữ số, nhưng giữ nguyên các số 11, 22 và 33. Ứng dụng sẽ tính sẵn cho bạn ở mục Tôi.', en: 'Your life path number comes from your date of birth. You add the digits of the day, the month and the year until a single digit remains, keeping 11, 22 and 33 as they are. The app works it out for you under Me.' },
   sections: [
-    { h: { vi: 'Cách tính', en: 'How to count' }, p: { vi: 'Sinh 12/03/1995. Ngày: 1+2 = 3. Tháng: 3. Năm: 1+9+9+5 = 24 → 2+4 = 6. Cộng: 3+3+6 = 12 → 1+2 = 3. Số đường đời là 3. Tháng 11 và ngày 11, 22 giữ nguyên, không rút gọn.', en: 'Born 12/03/1995. Day: 1+2 = 3. Month: 3. Year: 1+9+9+5 = 24 → 2+4 = 6. Total: 3+3+6 = 12 → 1+2 = 3. Life path 3. Month 11 and days 11 and 22 stay as they are.' } },
-    { h: { vi: 'Đọc thế nào', en: 'How to read it' }, p: { vi: 'Xem số như một chủ đề của đời bạn, không phải bản án. Số 1 học tự lập, số 2 học hợp tác, số 7 học tin người. Số bậc thầy 11, 22, 33 mang cả bài học của số rút gọn (2, 4, 6) cộng thêm áp lực lớn hơn.', en: 'Treat the number as a theme of your life, not a verdict. 1 learns independence, 2 learns cooperation, 7 learns trust. Master numbers 11, 22, 33 carry the lesson of their reduced digit (2, 4, 6) plus extra pressure.' } },
-    { h: { vi: 'Nguồn', en: 'Source' }, p: { vi: 'Thần số học hiện đại đến từ L. Dow Balliett và Juno Jordan đầu thế kỷ 20, dựa trên ý tưởng gán số cho chữ của Pythagoras. Không có nghiên cứu nào chứng minh nó dự đoán được đời người; hãy dùng như một tấm gương để nghĩ về mình.', en: 'Modern numerology comes from L. Dow Balliett and Juno Jordan in the early 1900s, built on Pythagorean ideas of numbers and letters. No study shows it predicts a life; use it as a mirror for thinking about yourself.' } }
+    { h: { vi: 'Cách tính', en: 'How to count' }, p: { vi: 'Giả sử bạn sinh ngày 12 tháng 3 năm 1995. Ngày là 1 cộng 2 bằng 3. Tháng là 3. Năm là 1 cộng 9 cộng 9 cộng 5 bằng 24, rút gọn thành 2 cộng 4 bằng 6. Cộng ba kết quả lại, ta được 3 cộng 3 cộng 6 bằng 12, rút gọn thành 3. Vậy số đường đời của bạn là 3. Riêng tháng 11 và các ngày 11, 22 thì giữ nguyên, không rút gọn.', en: 'Suppose you were born on 12 March 1995. The day is 1 plus 2, which gives 3. The month is 3. The year is 1 plus 9 plus 9 plus 5, which gives 24, reduced to 2 plus 4, which gives 6. Add the three results and you get 3 plus 3 plus 6, which is 12, reduced to 3. So your life path is 3. Month 11 and days 11 and 22 stay as they are and are not reduced.' } },
+    { h: { vi: 'Đọc con số thế nào', en: 'How to read the number' }, p: { vi: 'Hãy xem con số như một chủ đề xuyên suốt cuộc đời bạn, chứ không phải một bản án. Số 1 học cách tự lập, số 2 học cách hợp tác, số 7 học cách tin người. Các số bậc thầy 11, 22 và 33 mang bài học của số rút gọn tương ứng là 2, 4 và 6, nhưng với áp lực lớn hơn.', en: 'Treat the number as a theme running through your life, not as a verdict. A 1 learns independence, a 2 learns cooperation, a 7 learns to trust people. The master numbers 11, 22 and 33 carry the lessons of their reduced digits, 2, 4 and 6, but with greater pressure.' } },
+    { h: { vi: 'Nên hiểu nó ra sao', en: 'How to hold it' }, p: { vi: 'Thần số học hiện đại ra đời vào đầu thế kỷ hai mươi, dựa trên ý tưởng gán số cho chữ cái có từ thời Pythagoras. Chưa có nghiên cứu nào chứng minh rằng nó dự đoán được đời người, nên bạn hãy dùng nó như một tấm gương để suy nghĩ về chính mình.', en: 'Modern numerology arose in the early twentieth century, built on the Pythagorean idea of giving numbers to letters. No study has shown that it predicts a life, so use it as a mirror for thinking about yourself.' } }
   ] },
 { id: 'fort-palm', cat: 'fortune', badge: 'conv', tags: ['fortune'],
   title: { vi: 'Xem chỉ tay cơ bản', en: 'Palm reading basics' },
-  intro: { vi: 'Ba đường chính trên lòng bàn tay: đường tim, đường trí, đường sinh mệnh. Xem tay thuận là "hiện tại", tay kia là "bẩm sinh".', en: 'Three main lines on the palm: heart line, head line, life line. Read the dominant hand as "now" and the other as "given".' },
+  intro: { vi: 'Trên lòng bàn tay có ba đường chính: đường tim, đường trí và đường sinh mệnh. Theo cách xem phổ biến, tay thuận cho biết "hiện tại" của bạn, còn tay kia cho biết những gì bạn mang theo từ khi sinh ra.', en: 'The palm has three main lines: the heart line, the head line and the life line. In the common way of reading, your dominant hand shows your "present", while the other hand shows what you were born with.' },
   sections: [
-    { h: { vi: 'Đường tim', en: 'Heart line' }, p: { vi: 'Nằm trên cùng, chạy dưới các ngón. Cong và dài: cảm xúc cởi mở, thể hiện dễ. Thẳng và ngắn: kín đáo, thực tế trong tình yêu. Kết thúc dưới ngón trỏ: yêu bằng lý tưởng, dễ hài lòng. Kết thúc dưới ngón giữa: yêu bằng lý trí, đặt mình trước.', en: 'Topmost, running under the fingers. Curved and long: open, expressive feelings. Straight and short: private, practical in love. Ends under the index finger: idealistic, content in love. Ends under the middle finger: loves with the head, self first.' } },
-    { h: { vi: 'Đường trí', en: 'Head line' }, p: { vi: 'Ở giữa. Dài: nghĩ nhiều, phân tích. Ngắn: quyết nhanh, thực tế. Cong xuống: giàu tưởng tượng. Thẳng: logic. Tách rời đường sinh mệnh ở đầu: độc lập sớm.', en: 'In the middle. Long: thinks a lot, analytical. Short: decides fast, practical. Curving down: imaginative. Straight: logical. Separate from the life line at the start: independent early.' } },
-    { h: { vi: 'Đường sinh mệnh', en: 'Life line' }, p: { vi: 'Vòng quanh gốc ngón cái. Nó không nói bạn sống bao lâu. Nó nói về sức sống và những thay đổi lớn: đứt đoạn hay rẽ nhánh thường là một lần đổi đời.', en: 'Curves around the base of the thumb. It does not say how long you live. It speaks of vitality and big changes: a break or a fork is usually a life change.' } },
-    { h: { vi: 'Nguồn', en: 'Source' }, p: { vi: 'Xem chỉ tay có ở Ấn Độ, Trung Quốc và châu Âu từ hàng ngàn năm, mỗi nơi một cách. Bản trên là cách phổ thông ở phương Tây (Cheiro, cuối thế kỷ 19). Không có bằng chứng khoa học; hãy xem như trò chuyện về tính cách.', en: 'Palmistry exists in India, China and Europe going back thousands of years, each with its own rules. The version above is the common Western one (Cheiro, late 1800s). No scientific evidence; treat it as a conversation about character.' } }
+    { h: { vi: 'Đường tim', en: 'The heart line' }, p: { vi: 'Đường tim nằm trên cùng và chạy ngang dưới các ngón tay. Nếu nó cong và dài, bạn là người cởi mở và dễ thể hiện cảm xúc. Nếu nó thẳng và ngắn, bạn kín đáo và thực tế hơn trong tình yêu. Đường tim kết thúc dưới ngón trỏ cho thấy một người yêu bằng lý tưởng và dễ hài lòng, còn kết thúc dưới ngón giữa thì cho thấy một người yêu bằng lý trí và hay đặt mình lên trước.', en: 'The heart line sits at the top and runs across under the fingers. If it is curved and long, you are open and show your feelings easily. If it is straight and short, you are more private and practical in love. A heart line that ends under the index finger points to someone idealistic and content in love, while one that ends under the middle finger points to someone who loves with the head and puts themselves first.' } },
+    { h: { vi: 'Đường trí', en: 'The head line' }, p: { vi: 'Đường trí nằm ở giữa lòng bàn tay. Đường dài thuộc về người nghĩ nhiều và thích phân tích; đường ngắn thuộc về người quyết định nhanh và thực tế. Nếu đường cong xuống, bạn giàu trí tưởng tượng; nếu nó thẳng, bạn thiên về logic. Khi đường trí tách rời đường sinh mệnh ngay từ đầu, đó là dấu hiệu của một người độc lập từ sớm.', en: 'The head line runs through the middle of the palm. A long line belongs to someone who thinks a lot and likes to analyse; a short line belongs to someone who decides fast and stays practical. If the line curves downward, you are imaginative; if it runs straight, you lean toward logic. When the head line is separate from the life line right from the start, it points to someone who became independent early.' } },
+    { h: { vi: 'Đường sinh mệnh', en: 'The life line' }, p: { vi: 'Đường sinh mệnh vòng quanh gốc ngón cái. Nó không nói bạn sống bao lâu, mà nói về sức sống và những thay đổi lớn. Một chỗ đứt đoạn hay rẽ nhánh thường đánh dấu một lần đổi đời.', en: 'The life line curves around the base of the thumb. It does not say how long you will live; it speaks of vitality and of big changes. A break or a fork usually marks a turning point in life.' } },
+    { h: { vi: 'Nên hiểu nó ra sao', en: 'How to hold it' }, p: { vi: 'Xem chỉ tay đã có ở Ấn Độ, Trung Quốc và châu Âu từ hàng nghìn năm, và mỗi nơi có cách xem riêng. Cách được mô tả ở đây là cách phổ biến ở phương Tây. Chưa có bằng chứng khoa học cho nó, vì vậy bạn hãy xem đây như một cuộc trò chuyện thú vị về tính cách.', en: 'Palm reading has existed in India, China and Europe for thousands of years, and each place has its own rules. The version described here is the common Western one. There is no scientific evidence for it, so treat it as an enjoyable conversation about character.' } }
   ] },
 { id: 'fort-playing', cat: 'fortune', badge: 'conv', tags: ['fortune', 'tarot'],
   title: { vi: 'Bói bài Tây 52 lá', en: 'Reading with playing cards' },
-  intro: { vi: 'Bộ bài Tây là bộ tarot không có Ẩn Chính và không có Kỵ Sĩ. Biết tarot là bạn đọc được bài Tây.', en: 'A playing-card deck is a tarot deck without the Majors and without the Knights. If you know tarot, you can read playing cards.' },
+  intro: { vi: 'Bộ bài Tây thực chất là một bộ tarot đã bỏ đi các lá Ẩn Chính và các lá Kỵ Sĩ. Vì vậy, nếu bạn đã biết tarot, bạn có thể đọc bài Tây gần như ngay lập tức.', en: 'A playing-card deck is really a tarot deck with the Majors and the Knights removed. So if you already know tarot, you can read playing cards almost right away.' },
   sections: [
-    { h: { vi: 'Bốn chất', en: 'Four suits' }, p: { vi: 'Cơ = Cốc: tình cảm, gia đình. Rô = Tiền: tiền bạc, công việc. Chuồn = Gậy: hành động, kế hoạch, bạn bè. Bích = Kiếm: khó khăn, suy nghĩ, tin xấu.', en: 'Hearts = Cups: love, family. Diamonds = Pentacles: money, work. Clubs = Wands: action, plans, friends. Spades = Swords: trouble, thought, bad news.' } },
-    { h: { vi: 'Số và hình', en: 'Numbers and faces' }, p: { vi: 'Át là khởi đầu của chất đó. 10 là kết thúc, trọn vẹn. J là người trẻ hoặc tin tức. Q là phụ nữ hoặc người chăm sóc. K là đàn ông hoặc người có quyền. Số nghĩa gần giống lá Ẩn Phụ cùng số.', en: 'Ace is the beginning of the suit. Ten is completion. Jack is a young person or news. Queen a woman or a carer. King a man or someone in authority. Numbers mean roughly what the same-numbered Minor means.' } },
-    { h: { vi: 'Lenormand dùng chúng thế nào', en: 'How Lenormand uses them' }, p: { vi: 'Mỗi lá Lenormand in kèm một lá bài Tây từ bộ 36 lá (6 đến Át). Đó là tương ứng thật duy nhất của Lenormand, in trên bài từ 1799.', en: 'Each Lenormand card carries a playing card from the 36-card pack (6 to Ace). That is Lenormand\'s only real correspondence, printed on the cards since 1799.' } }
+    { h: { vi: 'Bốn chất', en: 'The four suits' }, p: { vi: 'Cơ tương ứng với Cốc và nói về tình cảm, gia đình. Rô tương ứng với Tiền và nói về tiền bạc, công việc. Chuồn tương ứng với Gậy và nói về hành động, kế hoạch, bạn bè. Bích tương ứng với Kiếm và nói về khó khăn, suy nghĩ và tin xấu.', en: 'Hearts match Cups and speak of love and family. Diamonds match Pentacles and speak of money and work. Clubs match Wands and speak of action, plans and friends. Spades match Swords and speak of trouble, thought and bad news.' } },
+    { h: { vi: 'Số và hình', en: 'Numbers and faces' }, p: { vi: 'Át là khởi đầu của chất đó, còn Mười là kết thúc trọn vẹn. J là một người trẻ hoặc một tin tức, Q là một người phụ nữ hoặc người chăm sóc, và K là một người đàn ông hoặc người có quyền. Các lá số có nghĩa gần giống lá Ẩn Phụ cùng số trong tarot.', en: 'The Ace is the beginning of the suit, and the Ten is its full completion. The Jack is a young person or a piece of news, the Queen a woman or a carer, and the King a man or someone in authority. The number cards mean roughly what the same-numbered Minors mean in tarot.' } },
+    { h: { vi: 'Lenormand dùng bài Tây ra sao', en: 'How Lenormand uses playing cards' }, p: { vi: 'Mỗi lá Lenormand đều in kèm một lá bài Tây từ bộ 36 lá, từ Sáu đến Át. Đó là tương ứng thật sự duy nhất của Lenormand, và nó đã có trên bài từ năm 1799.', en: 'Every Lenormand card carries a playing card from the 36-card pack, from Six to Ace. That is Lenormand\'s only real correspondence, and it has been printed on the cards since 1799.' } }
   ] },
 { id: 'fort-animals', cat: 'fortune', badge: 'doc', tags: ['fortune', 'astro'],
   title: { vi: '12 con giáp', en: 'The 12 zodiac animals' },
-  intro: { vi: 'Mỗi năm âm lịch mang một con giáp, lặp lại sau 12 năm. App tính con giáp của bạn theo năm sinh ở mục Tôi.', en: 'Each lunar year carries an animal, repeating every 12 years. The app works out yours from your birth year under Me.' },
+  intro: { vi: 'Mỗi năm âm lịch mang tên một con giáp, và vòng con giáp lặp lại sau mười hai năm. Ứng dụng tính con giáp của bạn theo năm sinh ở mục Tôi, còn vòng con giáp đầy đủ nằm trong phần Bói toán.', en: 'Each lunar year carries the name of an animal, and the cycle repeats every twelve years. The app works out your animal from your birth year under Me, and the full wheel lives in the Fortune telling section.' },
   sections: [
-    { h: { vi: 'Lưu ý về Tết', en: 'The Tết boundary' }, p: { vi: 'Năm con giáp bắt đầu từ Tết, không phải 1/1. Sinh tháng 1 hoặc đầu tháng 2, bạn có thể thuộc con giáp của năm trước. App tính theo năm dương nên hãy kiểm lại nếu bạn sinh trước Tết.', en: 'The animal year starts at Lunar New Year, not 1 January. Born in January or early February, you may belong to the previous animal. The app counts by calendar year, so double-check if you were born before Tết.' } },
-    { h: { vi: 'Đọc thế nào', en: 'How to read it' }, p: { vi: 'Con giáp là chuyện tính cách chung và "hợp tuổi" trong văn hóa. Nó là truyền thống lâu đời, không phải khoa học. Đừng để "khắc tuổi" quyết định chuyện cưới hỏi thay hai người trong cuộc.', en: 'Animals speak of general character and cultural "compatibility". It is a long tradition, not science. Do not let "clashing years" decide a marriage instead of the two people involved.' } },
-    { h: { vi: 'Tử vi thì khác', en: 'Tử vi is different' }, p: { vi: 'Tử vi đẩu số cần giờ sinh và lập lá số 12 cung với hơn 100 sao. Đó là hệ thống riêng, sâu hơn nhiều so với con giáp. Nabu không xem tử vi trong app này.', en: 'Tử vi (Vietnamese astrology) needs the birth hour and builds a 12-palace chart with over 100 stars. It is a separate, much deeper system. Nabu does not offer tử vi in this app.' } }
+    { h: { vi: 'Lưu ý về Tết', en: 'A note about Tết' }, p: { vi: 'Năm con giáp bắt đầu từ Tết chứ không phải từ ngày 1 tháng 1. Vì vậy, nếu bạn sinh vào tháng 1 hoặc đầu tháng 2, bạn có thể thuộc con giáp của năm trước. Ứng dụng tính theo năm dương, nên bạn hãy kiểm tra lại nếu sinh trước Tết.', en: 'The animal year begins at Lunar New Year, not on 1 January. So if you were born in January or early February, you may belong to the previous year\'s animal. The app counts by the calendar year, so double-check if you were born before Tết.' } },
+    { h: { vi: 'Tam hợp và tứ hành xung', en: 'Trios and clashes' }, p: { vi: 'Theo truyền thống, mười hai con giáp chia thành bốn nhóm tam hợp, là những bộ ba dễ hợp nhau, và ba nhóm tứ hành xung, là những bộ bốn dễ va chạm. Đây là chuyện tính cách chung và "hợp tuổi" trong văn hóa, chứ không phải khoa học. Bạn đừng để chuyện "khắc tuổi" quyết định hôn nhân thay cho hai người trong cuộc.', en: 'By tradition, the twelve animals form four trios that get on easily, and three groups of four that tend to clash. This is about general character and cultural "compatibility", not science. Do not let a "clashing year" decide a marriage instead of the two people involved.' } },
+    { h: { vi: 'Tử vi thì khác', en: 'Tử vi is something else' }, p: { vi: 'Tử vi đẩu số cần giờ sinh và lập một lá số gồm mười hai cung với hơn một trăm sao. Đó là một hệ thống riêng và sâu hơn con giáp rất nhiều. Nabu xem tử vi trong buổi hẹn riêng, chứ không tính trong ứng dụng này.', en: 'Tử vi, Vietnamese astrology, needs the hour of birth and builds a chart of twelve palaces with more than a hundred stars. It is a separate and much deeper system than the animals. Nabu reads tử vi in a private session, not inside this app.' } }
   ] },
 { id: 'fort-tea', cat: 'fortune', badge: 'conv', tags: ['fortune'],
-  title: { vi: 'Bói lá trà', en: 'Tea leaf reading' },
-  intro: { vi: 'Bạn uống một tách trà lá gần cạn, xoay tách ba vòng, úp lên đĩa, rồi nhìn hình lá trà còn lại trong lòng tách. Cách xem này đến từ châu Âu thế kỷ 17, khi trà mới sang từ Trung Quốc.', en: 'Drink a cup of loose-leaf tea nearly to the bottom, swirl it three times, turn it onto the saucer, then read the shapes the leaves left inside. The practice comes from 17th-century Europe, when tea arrived from China.' },
+  title: { vi: 'Bài trà', en: 'Tealeaf fortune telling' },
+  intro: { vi: 'Bạn uống một tách trà lá cho đến gần cạn, xoay tách ba vòng, úp lên đĩa, rồi nhìn những hình mà lá trà để lại trong lòng tách. Cách xem này đến từ châu Âu thế kỷ mười bảy, khi trà mới được đưa sang từ Trung Quốc.', en: 'You drink a cup of loose-leaf tea almost to the bottom, swirl it three times, turn it over onto the saucer, then look at the shapes the leaves have left inside. The practice comes from seventeenth-century Europe, when tea had just arrived from China.' },
   sections: [
-    { h: { vi: 'Cách chuẩn bị', en: 'How to prepare' }, p: { vi: 'Dùng trà lá rời, không dùng túi lọc. Tách sáng màu, lòng tròn. Vừa uống vừa nghĩ về câu hỏi. Chừa lại một chút nước, xoay tách bằng tay trái ba vòng, úp nhanh lên đĩa, đợi vài giây rồi lật lên.', en: 'Use loose leaves, not a bag. A light-coloured, round cup. Think about your question while you drink. Leave a sip, swirl three times with your left hand, flip onto the saucer, wait a few seconds, turn it back.' } },
-    { h: { vi: 'Đọc theo vị trí', en: 'Reading by position' }, p: { vi: 'Gần miệng tách: chuyện sắp tới. Giữa tách: vài tuần nữa. Đáy tách: xa hơn, hoặc chuyện gốc rễ. Gần quai: chuyện liên quan trực tiếp đến bạn. Đối diện quai: người khác, bên ngoài.', en: 'Near the rim: soon. Middle: a few weeks out. Bottom: further away, or the root of the matter. Near the handle: directly about you. Opposite the handle: other people, outside events.' } },
-    { h: { vi: 'Vài hình thường gặp', en: 'Common shapes' }, p: { vi: 'Chim: tin tức. Tim: tình cảm. Nhẫn: cam kết, hôn nhân. Chìa khoá: cửa mở, cơ hội. Đường thẳng: chuyến đi. Cây: thành công dần dần. Mây: rối, chưa rõ. Chữ cái: tên một người. Số: ngày hoặc tháng.', en: 'Bird: news. Heart: love. Ring: commitment, marriage. Key: a door opening. Straight line: a journey. Tree: gradual success. Cloud: confusion. A letter: someone\'s name. A number: days or months.' } },
-    { h: { vi: 'Đọc thế nào cho đúng tinh thần', en: 'The right spirit' }, p: { vi: 'Bói lá trà là cách kể chuyện qua hình ảnh, giống nhìn mây. Nó gợi ý, không phán. Hình bạn thấy đầu tiên thường là hình quan trọng nhất.', en: 'Tea leaves tell a story through pictures, like cloud-watching. They suggest; they do not rule. The shape you notice first is usually the one that matters.' } }
+    { h: { vi: 'Chuẩn bị', en: 'Getting ready' }, p: { vi: 'Bạn dùng trà lá rời, không dùng túi lọc, và chọn một chiếc tách sáng màu có lòng tròn. Trong lúc uống, bạn nghĩ về câu hỏi của mình. Khi còn một ngụm cuối, bạn xoay tách ba vòng bằng tay trái, úp nhanh lên đĩa, đợi vài giây rồi lật lại.', en: 'Use loose leaves rather than a tea bag, and pick a light-coloured cup with a round bowl. While you drink, think about your question. When one sip remains, swirl the cup three times with your left hand, turn it quickly onto the saucer, wait a few seconds, then turn it back.' } },
+    { h: { vi: 'Đọc theo vị trí', en: 'Reading by position' }, p: { vi: 'Hình nằm gần miệng tách nói về chuyện sắp tới. Hình ở giữa tách nói về vài tuần sau. Hình dưới đáy nói về chuyện xa hơn, hoặc về gốc rễ của vấn đề. Hình gần quai liên quan trực tiếp đến bạn, còn hình đối diện quai nói về người khác và những chuyện bên ngoài.', en: 'Shapes near the rim speak of what is coming soon. Shapes in the middle speak of a few weeks ahead. Shapes at the bottom speak of things further away, or of the root of the matter. Shapes near the handle concern you directly, while shapes opposite the handle speak of other people and outside events.' } },
+    { h: { vi: 'Vài hình thường gặp', en: 'Some common shapes' }, p: { vi: 'Con chim là tin tức. Trái tim là tình cảm. Chiếc nhẫn là cam kết hay hôn nhân. Chìa khóa là một cánh cửa đang mở. Đường thẳng là một chuyến đi. Cái cây là thành công đến dần. Đám mây là sự rối rắm, chưa rõ ràng. Một chữ cái là tên của ai đó, và một con số là số ngày hoặc số tháng.', en: 'A bird is news. A heart is love. A ring is commitment or marriage. A key is a door opening. A straight line is a journey. A tree is success arriving gradually. A cloud is confusion, something not yet clear. A letter is someone\'s name, and a number is a count of days or months.' } },
+    { h: { vi: 'Đọc với tinh thần nào', en: 'The right spirit' }, p: { vi: 'Bài trà là một cách kể chuyện qua hình ảnh, giống như nhìn mây trên trời. Nó gợi ý chứ không phán xét. Hình mà bạn nhìn thấy đầu tiên thường là hình quan trọng nhất.', en: 'Tealeaf fortune telling is a way of telling a story through pictures, much like watching clouds. It suggests; it does not judge. The shape you notice first is usually the one that matters most.' } }
   ] },
 { id: 'fort-oracle', cat: 'fortune', badge: 'conv', tags: ['fortune', 'tarot'],
   title: { vi: 'Bài oracle và bài "Pick a Card"', en: 'Oracle decks and "Pick a Card"' },
-  intro: { vi: 'Oracle là bộ bài tự do: số lá, hình, nghĩa do tác giả đặt. Không có cấu trúc chung như tarot. Nabu dùng oracle như lời nhắn thêm, luôn một lá, xào riêng.', en: 'An oracle deck is free-form: card count, images and meanings are the author\'s. No shared structure like tarot. Nabu uses oracle as an extra message, always one card, shuffled separately.' },
+  intro: { vi: 'Oracle là loại bài tự do: số lá, hình vẽ và ý nghĩa đều do tác giả đặt ra, không có cấu trúc chung như tarot. Nabu dùng oracle như một lời nhắn thêm, luôn chỉ rút một lá và xào riêng.', en: 'An oracle deck is a free-form deck: the number of cards, the pictures and the meanings are all the author\'s own, with no shared structure like tarot. Nabu uses oracle as an extra message, always drawing one card from a separate shuffle.' },
   sections: [
-    { h: { vi: 'Pick a Card là gì', en: 'What a Pick a Card post is' }, p: { vi: 'Một thông điệp cho nhiều người. Người xem chọn một trong vài nhóm (số, hình, chữ cái). Nabu rút bài cho từng nhóm. Đây là bài chung, không phải bài riêng cho bạn: cái nào không khớp thì bỏ qua.', en: 'One message for many people. Viewers choose one of a few piles (numbers, images, letters). Nabu draws for each pile. It is a collective reading, not your personal one: skip what does not fit.' } },
-    { h: { vi: 'Đọc dấu hiệu tên và cung', en: 'Initials and signs' }, p: { vi: 'Đọc chữ cái đầu tên từ lá bài không có nguồn gốc lịch sử nào; đó là hệ thống riêng của người đọc. Trong app này, các bài có ghi "dành cho bạn nếu…" là gợi ý của Nabu để bạn nhận ra mình, không phải dự đoán chắc chắn.', en: 'Reading name initials from cards has no historical basis; it is the reader\'s own system. In this app, posts marked "for you if…" are Nabu\'s hint to help you recognise yourself, not a firm prediction.' } }
+    { h: { vi: 'Pick a Card là gì', en: 'What a Pick a Card post is' }, p: { vi: 'Pick a Card là một thông điệp dành cho nhiều người cùng lúc. Người xem chọn một trong vài nhóm, thường được đánh dấu bằng số, hình hoặc chữ cái, rồi Nabu rút bài cho từng nhóm. Vì đây là bài chung chứ không phải bài riêng cho bạn, phần nào không khớp thì bạn cứ bỏ qua.', en: 'A Pick a Card post is one message for many people at once. Viewers choose one of a few piles, usually marked with numbers, pictures or letters, and Nabu draws for each pile. Because it is a collective reading rather than your personal one, feel free to skip whatever does not fit.' } },
+    { h: { vi: 'Dấu hiệu tên và cung', en: 'Initials and signs' }, p: { vi: 'Việc đọc chữ cái đầu của tên từ lá bài không có nguồn gốc lịch sử; đó là hệ thống riêng của mỗi người đọc bài. Trong ứng dụng này, những bài có ghi "dành cho bạn nếu…" chỉ là gợi ý để bạn dễ nhận ra mình, chứ không phải một lời tiên đoán chắc chắn.', en: 'Reading the initials of a name from the cards has no historical basis; it is each reader\'s own system. In this app, posts marked "for you if…" are only hints to help you recognise yourself, not a firm prediction.' } }
   ] }
 ];
 
@@ -8983,16 +9327,16 @@ const miniHTML = (id, link) => {
 };
 
 /* The logo: cream disc, three fanned cards (blue, purple, pink), gold crescent. */
-const LOGO = '<svg viewBox="0 0 100 100" aria-hidden="true">'
-  + '<circle cx="50" cy="50" r="48" fill="#FBF3F5"/><circle cx="50" cy="50" r="44" fill="none" stroke="#3B2A5E" stroke-width="1.6"/>'
-  + '<g transform="rotate(-18 50 62)"><rect x="34" y="30" width="26" height="42" rx="4" fill="#AFC8F0" stroke="#3B2A5E" stroke-width="2"/></g>'
-  + '<g transform="rotate(18 50 62)"><rect x="40" y="30" width="26" height="42" rx="4" fill="#F6BBCB" stroke="#3B2A5E" stroke-width="2"/></g>'
-  + '<rect x="37" y="26" width="26" height="44" rx="4" fill="#3D2A6E" stroke="#3B2A5E" stroke-width="2"/>'
-  + '<rect x="40" y="29" width="20" height="38" rx="2.5" fill="none" stroke="#E5BE5E" stroke-width="1"/>'
-  + '<path d="M52 38 A9 9 0 1 0 52 56 A7 7 0 1 1 52 38 Z" fill="#E5BE5E"/>'
-  + '<circle cx="43.5" cy="33" r="1.3" fill="#E5BE5E"/><circle cx="44" cy="63" r="1.3" fill="#E5BE5E"/><circle cx="56.5" cy="62" r="1.3" fill="#E5BE5E"/>'
-  + '<path d="M22 24 l1.6 3.4 3.4 1.6 -3.4 1.6 -1.6 3.4 -1.6 -3.4 -3.4 -1.6 3.4 -1.6z" fill="#E5BE5E"/>'
-  + '<path d="M80 70 l1.2 2.6 2.6 1.2 -2.6 1.2 -1.2 2.6 -1.2 -2.6 -2.6 -1.2 2.6 -1.2z" fill="#F6BBCB"/>'
+const LOGO = '<svg viewBox="0 0 250 64" aria-label="Nabu Tarot" class="lockup">'
+  + '<circle cx="32" cy="32" r="30" fill="#FBF3F5"/><circle cx="32" cy="32" r="27.5" fill="none" stroke="#3B2A5E" stroke-width="1.2"/>'
+  + '<g transform="rotate(-18 32 40)"><rect x="21" y="16" width="17.5" height="29" rx="3" fill="#AFC8F0" stroke="#3B2A5E" stroke-width="1.5"/></g>'
+  + '<g transform="rotate(18 32 40)"><rect x="25.5" y="16" width="17.5" height="29" rx="3" fill="#F6BBCB" stroke="#3B2A5E" stroke-width="1.5"/></g>'
+  + '<rect x="23.5" y="13" width="17.5" height="31" rx="3" fill="#3D2A6E" stroke="#3B2A5E" stroke-width="1.5"/>'
+  + '<rect x="25.5" y="15" width="13.5" height="27" rx="2" fill="none" stroke="#E5BE5E" stroke-width=".8"/>'
+  + '<path d="M33.5 22 A6 6 0 1 0 33.5 34 A4.6 4.6 0 1 1 33.5 22 Z" fill="#E5BE5E"/>'
+  + '<circle cx="28" cy="18" r=".9" fill="#E5BE5E"/><circle cx="28.5" cy="39" r=".9" fill="#E5BE5E"/><circle cx="37" cy="38.5" r=".9" fill="#E5BE5E"/>'
+  + '<path d="M14 14 l1 2.2 2.2 1 -2.2 1 -1 2.2 -1 -2.2 -2.2 -1 2.2 -1z" fill="#E5BE5E"/><path d="M52 44 l.8 1.8 1.8 .8 -1.8 .8 -.8 1.8 -.8 -1.8 -1.8 -.8 1.8 -.8z" fill="#F6BBCB"/>'
+  + '<text x="74" y="41" font-family="Playfair Display, Georgia, serif" font-size="27" font-weight="500" fill="currentColor" letter-spacing=".3">Nabu Tarot</text>'
   + '</svg>';
 
 /* ---- chrome ---- */
@@ -9009,12 +9353,12 @@ function renderFooter() {
   if (CONFIG.instagram) links.push('<a href="https://instagram.com/' + esc(CONFIG.instagram) + '" target="_blank" rel="noopener">Instagram</a>');
   if (CONFIG.facebookUrl) links.push('<a href="' + esc(CONFIG.facebookUrl) + '" target="_blank" rel="noopener">Facebook</a>');
   links.push('<a href="#/report">' + esc(S.reportLink) + '</a>');
-  $('#foot').innerHTML = '<div class="wrap">' + LOGO + '<div><b>' + esc(CONFIG.brand) + '</b> · ' + esc(L(CONFIG.tagline)) + '<div class="links">' + links.join(' · ') + '</div><div class="copy">© ' + new Date().getFullYear() + ' ' + esc(CONFIG.brand) + '. ' + esc(S.rights) + '</div></div></div>';
+  $('#foot').innerHTML = '<div class="wrap">' + LOGO + '<div>' + esc(L(CONFIG.tagline)) + '<div class="links">' + links.join(' · ') + '</div><div class="copy">© ' + new Date().getFullYear() + ' ' + esc(CONFIG.brand) + '. ' + esc(S.rights) + '</div></div></div>';
 }
 function renderChrome(route) {
   document.documentElement.setAttribute('lang', lang);
   renderFooter();
-  $('#brand').innerHTML = LOGO + esc(CONFIG.brand);
+  $('#brand').innerHTML = LOGO;
   $('#lang').textContent = T().lang;
   $('#nav').innerHTML = ['home', 'pick', 'learn', 'book', 'me'].map((k) =>
     '<a href="#/' + k + '" class="' + (route === k ? 'on' : '') + '">' + ICONS[k] + '<span>' + esc(T().nav[k]) + '</span>'
@@ -9103,6 +9447,11 @@ function boot() {
    Firestore) when CONFIG.firebase is set. Without it, BE.enabled is false and
    every screen falls back to the device-only profile and to Instagram.
    The SDK is loaded on demand so the app shell stays offline-capable. */
+/* Mail the booking to Nabu as a calendar invitation (through the worker). Best effort. */
+function notifyBooking(b) {
+  if (!CONFIG.bookingEndpoint) return Promise.resolve();
+  return fetch(CONFIG.bookingEndpoint, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ booking: b, tz: CONFIG.timezone, to: CONFIG.adminNotifyEmail, lang: lang }) }).catch(() => {});
+}
 const BE = {
   enabled: !!CONFIG.firebase,
   ready: false, user: null, db: null, auth: null,
@@ -9113,11 +9462,11 @@ const BE = {
   async init() {
     if (!this.enabled) return;
     const V = '10.14.1';
-    for (const f of ['firebase-app-compat.js', 'firebase-auth-compat.js', 'firebase-firestore-compat.js']) {
+    for (const f of ['firebase-app-compat.js', 'firebase-auth-compat.js', 'firebase-firestore-compat.js', 'firebase-storage-compat.js']) {
       await new Promise((res, rej) => { const s = document.createElement('script'); s.src = 'https://www.gstatic.com/firebasejs/' + V + '/' + f; s.onload = res; s.onerror = rej; document.head.appendChild(s); });
     }
     firebase.initializeApp(CONFIG.firebase);
-    this.auth = firebase.auth(); this.db = firebase.firestore();
+    this.auth = firebase.auth(); this.db = firebase.firestore(); this.storage = firebase.storage();
     try { await this.db.enablePersistence({ synchronizeTabs: true }); } catch (e) { /* fine without */ }
     this.auth.onAuthStateChanged(async (u) => {
       this.user = u; this.ready = true;
@@ -9152,11 +9501,21 @@ const BE = {
 
   /* ---- messages: one thread per user ---- */
   thread() { return this.db.collection('threads').doc(this.user.uid); },
-  async sendMessage(text, asAdminTo) {
+  /* Upload a photo or a voice note for the thread; returns { url, kind }. */
+  async uploadAttachment(file, uid, kind) {
+    const path = 'threads/' + (uid || this.user.uid) + '/' + Date.now() + '-' + Math.random().toString(36).slice(2, 6) + (kind === 'audio' ? '.webm' : '.jpg');
+    const ref = this.storage.ref(path);
+    await ref.put(file, { contentType: file.type || (kind === 'audio' ? 'audio/webm' : 'image/jpeg') });
+    return { url: await ref.getDownloadURL(), kind: kind, path: path };
+  },
+  async sendMessage(text, asAdminTo, attachment) {
     const uid = asAdminTo || this.user.uid, from = asAdminTo ? 'nabu' : 'user';
     const ref = this.db.collection('threads').doc(uid);
-    await ref.collection('messages').add({ from: from, text: text, at: firebase.firestore.FieldValue.serverTimestamp() });
-    const meta = { lastText: text, lastAt: firebase.firestore.FieldValue.serverTimestamp(), lastFrom: from };
+    const msg = { from: from, text: text || '', at: firebase.firestore.FieldValue.serverTimestamp() };
+    if (attachment) { msg.kind = attachment.kind; msg.url = attachment.url; }
+    await ref.collection('messages').add(msg);
+    const preview = text || (attachment ? (attachment.kind === 'audio' ? '🎤' : '📷') : '');
+    const meta = { lastText: preview, lastAt: firebase.firestore.FieldValue.serverTimestamp(), lastFrom: from };
     if (from === 'user') { meta.name = PROFILE.name || this.user.displayName || ''; meta.email = this.user.email || ''; meta.adminUnread = firebase.firestore.FieldValue.increment(1); meta.userUnread = 0; }
     else { meta.userUnread = firebase.firestore.FieldValue.increment(1); meta.adminUnread = 0; }
     await ref.set(meta, { merge: true });
@@ -9185,6 +9544,7 @@ const BE = {
     const doc = Object.assign({ uid: this.user.uid, email: this.user.email || '', status: 'requested', at: firebase.firestore.FieldValue.serverTimestamp() }, b);
     const ref = await this.db.collection('bookings').add(doc);
     await this.db.collection('taken').doc(b.slot.replace(/[^0-9T]/g, '')).set({ bookingId: ref.id, at: firebase.firestore.FieldValue.serverTimestamp() });
+    notifyBooking(Object.assign({ id: ref.id }, b));
     return ref.id;
   },
   watchMyBookings(cb) { return this.db.collection('bookings').where('uid', '==', this.user.uid).onSnapshot((s) => cb(s.docs.map((d) => Object.assign({ id: d.id }, d.data())).sort((a, b) => String(b.slot).localeCompare(String(a.slot))))); },
@@ -9230,6 +9590,24 @@ function cardsMentioned(q) {
   DECK.vi.forEach((c, i) => { const en = DECK.en[i]; if (f.indexOf(fold(c.name)) > -1 || f.indexOf(fold(en.name)) > -1) out.push(c.id); });
   return out.slice(0, 3);
 }
+/* Compatibility verdict for two signs: verdict key + why. */
+function compatVerdict(a, b) {
+  const ia = ZKEYS.indexOf(a), ib = ZKEYS.indexOf(b), diff = Math.abs(ia - ib) % 12, d = Math.min(diff, 12 - diff);
+  const chem = signChemistry(a, b), listed = ZDEEP[a].compat.indexOf(b) > -1 || ZDEEP[b].compat.indexOf(a) > -1;
+  if (a === b) return 'same';
+  if (d === 6) return 'opposite';
+  if (chem === 'same' || listed) return 'good';
+  if (chem === 'support') return 'ok';
+  if (d === 3) return 'work';
+  return 'neutral';
+}
+function compatAnswer(a, b) {
+  const S = T(), v = compatVerdict(a, b), na = ZSIGN[a][lang], nb = ZSIGN[b][lang], za = ZODIAC[a][lang], zb = ZODIAC[b][lang];
+  const head = S.compatHead[v](na, nb), why = S.compatWhy[v] + ' ' + CHEM_TEXT[signChemistry(a, b)][lang] + '.';
+  const bring = S.compatBring(na, za.kw.slice(0, 2).join(', '), nb, zb.kw.slice(0, 2).join(', '));
+  const tip = v === 'good' || v === 'same' ? S.compatTipGood : v === 'opposite' ? S.compatTipOpp : S.compatTipWork;
+  return head + '\n\n' + why + ' ' + bring + '\n\n' + tip;
+}
 function signMentioned(q) { const f = fold(q); return ZKEYS.filter((k) => f.indexOf(fold(ZSIGN[k].vi)) > -1 || f.indexOf(fold(ZSIGN[k].en)) > -1); }
 function lenMentioned(q) { const f = fold(q), out = []; for (let i = 1; i <= 36; i++) { if (f.indexOf(fold(LEN.vi[i].name)) > -1 || f.indexOf(fold(LEN.en[i].name)) > -1) out.push(i); } return out.slice(0, 2); }
 function planetMentioned(q) { const f = fold(q); return PLANETS.filter((p) => f.indexOf(fold(p.name.vi)) > -1 || f.indexOf(fold(p.name.en)) > -1).slice(0, 2); }
@@ -9243,7 +9621,7 @@ function topicHelp(q) {
   if (/manifest|khang dinh|affirmation|369|scripting|kich ban/.test(f)) { const id = /369/.test(f) ? 'mani-369' : /script|kich ban/.test(f) ? 'mani-script' : /khang dinh|affirmation|biet on|gratitude/.test(f) ? 'mani-gratitude' : 'mani-what'; const g = GUIDES.filter((x) => x.id === id)[0]; return L(g.intro) + ' ' + L(g.sections[0].p); }
   if (/la nguoc|reversed/.test(f)) { const g = GUIDES.filter((x) => x.id === 'tarot-reversed')[0]; return L(g.intro) + ' ' + L(g.sections[0].p); }
   if (/hoang gia|court/.test(f)) { const g = GUIDES.filter((x) => x.id === 'tarot-court')[0]; return L(g.intro) + ' ' + L(g.sections[0].p); }
-  if (/mat trang|moon|trang non|trang tron|full moon|new moon/.test(f)) { const g = GUIDES.filter((x) => x.id === 'astro-moon')[0]; const mp = moonPhase(new Date()); return (lang === 'vi' ? 'Hôm nay là ' : 'Today is ') + MOON_NAMES[lang][mp.idx] + '. ' + L(g.intro); }
+  if (/mat trang|moon|trang non|trang tron|full moon|new moon|\btrang\b|\btrăng\b/.test(f)) { const g = GUIDES.filter((x) => x.id === 'astro-moon')[0]; const mp = moonPhase(new Date()); return (lang === 'vi' ? 'Hôm nay là ' : 'Today is ') + MOON_NAMES[lang][mp.idx] + '. ' + L(g.intro); }
   if (/nghich hanh|retrograde/.test(f)) { const g = GUIDES.filter((x) => x.id === 'astro-retro')[0]; return L(g.intro) + ' ' + L(g.sections[1].p); }
   if (/cung moc|rising|ascendant|cung mat trang|moon sign|big three|ba cung/.test(f)) { const g = GUIDES.filter((x) => x.id === 'astro-big3')[0]; return L(g.intro) + ' ' + L(g.sections[2].p); }
   if (/chi tay|palm/.test(f)) { const g = GUIDES.filter((x) => x.id === 'fort-palm')[0]; return L(g.intro); }
@@ -9318,7 +9696,8 @@ function localAnswer(q, ctx) {
   } else if (ctx.type === 'sign') {
     const zp = ZODIAC[ctx.key][lang], dp = ZDEEP[ctx.key][lang], z = ZSIGN[ctx.key];
     const other = signs.filter((k) => k !== ctx.key)[0];
-    if (other) { const ch = signChemistry(ctx.key, other); out.push(S.aiChem(z[lang], ZSIGN[other][lang]) + ' ' + CHEM_TEXT[ch][lang] + '. ' + (ZDEEP[ctx.key].compat.indexOf(other) > -1 ? S.aiCompatYes : S.aiCompatWork)); }
+    if (other) out.push(compatAnswer(ctx.key, other));
+    else if (/hop|compat|match|get along|suit/.test(fold(q))) out.push(S.compatWhich(z[lang]) + ' ' + ZDEEP[ctx.key].compat.map((k) => ZSIGN[k][lang]).join(', ') + '. ' + S.compatAsk);
     else if (d.cat === 'love') out.push(zp.love);
     else if (d.cat === 'work' || d.cat === 'study' || d.cat === 'money') out.push(zp.work);
     else if (/mat trang|moon/.test(fold(q))) out.push(dp.moon);
@@ -9349,7 +9728,8 @@ function localAnswer(q, ctx) {
     else out.push(S.aiGeneralHelp, S.aiOfflineHint);
   }
   mentioned.forEach((id) => { const c = cardById(id), I = insightOf(id); out.push(S.aiAbout(c.name) + ' ' + I.pos.slice(0, 3).join(', ') + '. ' + (d.cat && d.cat !== 'general' ? I[d.cat] : I.now)); });
-  if (ctx.type !== 'sign') signs.slice(0, 2).forEach((k) => out.push(S.aiAbout(ZSIGN[k][lang]) + ' ' + (d.cat === 'love' ? ZODIAC[k][lang].love : d.cat === 'work' ? ZODIAC[k][lang].work : ZODIAC[k][lang].about)));
+  if (ctx.type !== 'sign' && signs.length >= 2 && /hop|compat|match|get along|suit|with/.test(fold(q))) out.unshift(compatAnswer(signs[0], signs[1]));
+  else if (ctx.type !== 'sign') signs.slice(0, 2).forEach((k) => out.push(S.aiAbout(ZSIGN[k][lang]) + ' ' + (d.cat === 'love' ? ZODIAC[k][lang].love : d.cat === 'work' ? ZODIAC[k][lang].work : ZODIAC[k][lang].about)));
   return out.filter(Boolean).join('\n\n');
 }
 function searchAll(q) {
@@ -9441,13 +9821,15 @@ function bindAI(root) {
    Today in several calendars, a greeting, quick links, what fits the
    visitor's sign and interests, then the feed (Nabu's posts plus anything
    synced from Facebook / Instagram into fb.json). */
-let POSTS = null, POSTS_CACHED = false, FBPOSTS = [];
+let POSTS = null, POSTS_CACHED = false, FBPOSTS = [], HORO = null;
 
 async function loadPosts() {
   const p = await loadJSON(CONFIG.postsPath, 'nabu-posts');
   POSTS = (p.data && p.data.posts) || []; POSTS_CACHED = p.fromCache;
   const f = await loadJSON('fb.json', 'nabu-fb');
   FBPOSTS = (f.data && f.data.posts) || [];
+  const h = await loadJSON('horoscope.json', 'nabu-horo');
+  HORO = h.data || null;
   return POSTS;
 }
 
@@ -9476,7 +9858,7 @@ function todayHTML() {
 
 /* ---- tour ---- */
 const TOUR = [
-  { ic: PICK_ICON, vi: ['Rút bài', 'Chạm một lá để xem năng lượng của bạn hôm nay. Chọn chủ đề trước: tình cảm, công việc, học tập, tiền bạc.'], en: ['Pick a card', 'Tap one card to see your energy today. Choose a focus first: love, work, study, money.'] },
+  { ic: DRAW_ICON, vi: ['Rút bài', 'Chạm một lá để xem năng lượng của bạn hôm nay. Chọn chủ đề trước: tình cảm, công việc, học tập, tiền bạc.'], en: ['Pick a card', 'Tap one card to see your energy today. Choose a focus first: love, work, study, money.'] },
   { ic: '✨', vi: ['Dự đoán', 'Bài mới của Nabu nằm ở trang chủ. Bài có ghi "dành cho bạn" là hợp với cung của bạn.'], en: ['Readings', 'Nabu\'s new posts live on the home screen. Posts marked "for you" match your sign.'] },
   { ic: '📚', vi: ['Học', 'Tarot, Lenormand, chiêm tinh, manifestation và bói toán. Bấm vào một lá hay một cung để đọc.'], en: ['Learn', 'Tarot, Lenormand, astrology, manifestation and fortune telling. Tap a card or a sign to read.'] },
   { ic: '📅', vi: ['Đặt lịch', 'Chọn chủ đề, chọn giờ trên lịch, gửi cho Nabu.'], en: ['Book', 'Choose a topic, pick a time on the calendar, send it to Nabu.'] },
@@ -9565,19 +9947,31 @@ function pickCtaHTML() {
 }
 function quickLinksHTML() {
   const S = T();
-  const tiles = [['#/pick', PICK_ICON, S.nav.pick, lang === 'vi' ? 'năng lượng hôm nay' : 'your energy today'],
+  const tiles = [['#/pick', DRAW_ICON, S.nav.pick, lang === 'vi' ? 'năng lượng hôm nay' : 'your energy today'],
     ['#/home?go=feed', '✨', S.feedTitle, lang === 'vi' ? 'bài mới của Nabu' : 'new posts from Nabu'],
     ['#/learn/astro', '🔮', S.cats.astro, lang === 'vi' ? '12 cung, hành tinh, nhà' : '12 signs, planets, houses'],
-    ['#/learn/tarot', '📚', S.cats.tarot, lang === 'vi' ? '78 lá, ý nghĩa' : '78 cards, meanings'],
+    ['#/learn/tarot', PICK_ICON, S.cats.tarot, lang === 'vi' ? '78 lá, ý nghĩa' : '78 cards, meanings'],
     ['#/book', '📅', S.nav.book, lang === 'vi' ? 'chọn giờ với Nabu' : 'pick a time with Nabu'],
     ['#/prices', '💜', S.priceTitle, lang === 'vi' ? 'các gói xem bài' : 'reading packages']];
   return '<div class="tiles">' + tiles.map((t) => '<a class="tile" href="' + t[0] + '"><div class="ic">' + t[1] + '</div><b>' + esc(t[2]) + '</b><span>' + esc(t[3]) + '</span></a>').join('') + '</div>';
 }
+const SIGN_EN = ['aries', 'taurus', 'gemini', 'cancer', 'leo', 'virgo', 'libra', 'scorpio', 'sagittarius', 'capricorn', 'aquarius', 'pisces'];
+function horoCardHTML(period) {
+  const S = T(), si = mySign();
+  if (si < 0) return '<div class="horo"><h3>' + esc(period === 'monthly' ? S.horoMonth : S.horoWeek) + '</h3><p class="muted">' + esc(S.horoNeedBirthday) + '</p><a class="btn sm" href="#/me">' + esc(S.setupBtn) + '</a></div>';
+  const key = ZKEYS[si], data = HORO && HORO[period] && HORO[period][SIGN_EN[si]];
+  const glyph = '<span class="hg" style="background:' + EL_COLOR[ZSIGN[key].el] + '">' + ZSIGN[key].g + '</span>';
+  if (!data) return '<div class="horo"><div class="hh">' + glyph + '<div><h3>' + esc(period === 'monthly' ? S.horoMonth : S.horoWeek) + '</h3><span class="faint">' + esc(S.zodiac[si]) + '</span></div></div><p class="muted">' + esc(S.horoUpdating) + '</p></div>';
+  const text = (lang === 'vi' && data.vi) ? data.vi : data.en, long = text.length > 380;
+  return '<div class="horo"><div class="hh">' + glyph + '<div><h3>' + esc(period === 'monthly' ? S.horoMonth : S.horoWeek) + '</h3><span class="faint">' + esc(S.zodiac[si]) + (data.range ? ' · ' + esc(data.range) : '') + '</span></div></div>'
+    + '<div class="body' + (long ? ' clamp' : '') + '"><p>' + esc(text) + '</p></div>' + (long ? '<button class="more" data-more>' + esc(S.readMore) + '</button>' : '')
+    + '<p class="faint" style="margin:8px 0 0">' + esc(S.horoSource) + ' ' + esc((HORO && HORO.source) || 'Horoscope.com') + (HORO && HORO.updated ? ' · ' + esc(S.horoUpdated) + ' ' + esc(HORO.updated) : '') + '</p></div>';
+}
 function suggestedGuidesHTML(limit) {
   const ints = PROFILE.interests || [];
-  const list = GUIDES.filter((g) => g.tags.some((t) => ints.indexOf(t) > -1) && !((g.cat === 'tarot' || g.cat === 'lenormand') && !ACCESS.has(g.cat))).slice(0, limit || 3);
-  if (!list.length) return '';
-  return '<div class="sec"><div class="eyebrow">' + esc(T().forInterests) + '</div>' + list.map((g) => '<a class="acc" href="#/learn/guide/' + g.id + '" style="display:block;text-decoration:none;color:inherit"><button style="pointer-events:none"><span>' + esc(L(g.title)) + '</span></button></a>').join('') + '</div>';
+  const list = GUIDES.filter((g) => g.tags.some((t) => ints.indexOf(t) > -1) && !((g.cat === 'tarot' || g.cat === 'lenormand') && !ACCESS.has(g.cat))).slice(0, 1);
+  const guide = list.length ? list.map((g) => '<a class="acc" href="#/learn/guide/' + g.id + '" style="display:block;text-decoration:none;color:inherit"><button style="pointer-events:none"><span>' + esc(L(g.title)) + '</span></button></a>').join('') : '';
+  return '<div class="sec" id="foryou"><div class="eyebrow">' + esc(T().forInterests) + '</div>' + guide + horoCardHTML('monthly') + horoCardHTML('weekly') + '</div>';
 }
 
 async function renderHome(args, params) {
@@ -9590,11 +9984,12 @@ async function renderHome(args, params) {
     + pickCtaHTML()
     + quickLinksHTML()
     + personalHTML()
-    + suggestedGuidesHTML(3)
+    + '<div id="foryouwrap"></div>'
     + '<div class="sec" id="feed"><p class="muted">…</p></div>';
   bindAccordions(m); bindCardLinks(m);
   if (!PROFILE.tourDone) bindTour(m, 0);
   if (POSTS == null) await loadPosts();
+  const fy = $('#foryouwrap'); if (fy) { fy.innerHTML = suggestedGuidesHTML(); bindPost(fy); }
   const feed = $('#feed'); if (!feed) return;
   const all = sortedPosts(), welcome = all.filter((p) => p.welcome)[0], list = all.filter((p) => !p.welcome);
   feed.innerHTML = (welcome ? '<section class="welcome"><h2>' + esc(L(welcome.title)) + '</h2>' + paras(L(welcome.body)) + '<div class="sig">' + LOGO + '</div></section>' : '')
@@ -9741,7 +10136,7 @@ function renderLearn(args, params) {
     m.innerHTML = '<div class="eyebrow">' + esc(S.nav.learn) + '</div><h1 style="margin-bottom:6px">' + esc(S.learnTitle) + '</h1><p class="muted">' + esc(S.learnIntro) + '</p>'
       + '<div class="eyebrow">' + esc(S.courses) + '</div><div class="tiles">' + tile('tarot', !ACCESS.has('tarot')) + tile('lenormand', !ACCESS.has('lenormand')) + '</div>'
       + '<div class="eyebrow">' + esc(S.freeReads) + '</div><div class="tiles">' + tile('astro') + tile('manifest') + tile('fortune') + '</div>'
-      + suggestedGuidesHTML(4);
+      + (function () { const ints = PROFILE.interests || []; const list = GUIDES.filter((g) => g.tags.some((t) => ints.indexOf(t) > -1) && !((g.cat === 'tarot' || g.cat === 'lenormand') && !ACCESS.has(g.cat))).slice(0, 4); return list.length ? '<div class="sec"><div class="eyebrow">' + esc(S.forInterests) + '</div>' + list.map(guideRow).join('') + '</div>' : ''; }());
     return;
   }
   if (sub === 'tarot') return renderCourse('tarot', params.tab);
@@ -10149,7 +10544,7 @@ const FT = {
   numbers: { ic: '🔢', vi: ['Thần số học', 'Số của bạn, từ ngày sinh và tên'], en: ['Numerology', 'Your numbers, from birth date and name'] },
   palm: { ic: '🖐️', vi: ['Xem chỉ tay', 'Bản đồ bàn tay, chạm từng đường'], en: ['Palm reading', 'A map of the hand, tap each line'] },
   cards: { ic: '🂡', vi: ['Bói bài Tây', '52 lá đọc bằng tarot'], en: ['Playing cards', '52 cards read through tarot'] },
-  tea: { ic: '🍵', vi: ['Bói lá trà', 'Bản đồ tách trà và các hình'], en: ['Tea leaves', 'Cup map and the shapes'] },
+  tea: { ic: '🍵', vi: ['Bài trà', 'Bản đồ tách trà và các hình'], en: ['Tealeaf fortune telling', 'Cup map and the shapes'] },
   animals: { ic: '🐉', vi: ['12 con giáp', 'Vòng con giáp, tam hợp, tứ hành xung'], en: ['12 animals', 'The wheel, trios and clashes'] }
 };
 const NUM_ICON = { 1: '🚀', 2: '🤝', 3: '🎨', 4: '🏛️', 5: '🧭', 6: '🏡', 7: '🔭', 8: '👑', 9: '🌍', 11: '⚡', 22: '🏗️', 33: '💞' };
@@ -10615,7 +11010,50 @@ function bindAuth(root) {
 function chatHTML(msgs, mine) {
   const S = T();
   if (!msgs.length) return '<p class="empty">' + esc(S.noMsgs) + '</p>';
-  return msgs.map((m) => { const at = m.at && m.at.toDate ? m.at.toDate() : null; return '<div class="msg ' + (m.from === mine ? 'me' : 'them') + '">' + esc(m.text).replace(/\n/g, '<br>') + (at ? '<span class="t">' + esc(T().dateShort(at)) + ' ' + pad2(at.getHours()) + ':' + pad2(at.getMinutes()) + '</span>' : '') + '</div>'; }).join('');
+  return msgs.map((m) => {
+    const at = m.at && m.at.toDate ? m.at.toDate() : null;
+    const att = m.kind === 'image' && m.url ? '<a href="' + esc(m.url) + '" target="_blank" rel="noopener"><img src="' + esc(m.url) + '" alt="" class="att"></a>' : m.kind === 'audio' && m.url ? '<audio controls src="' + esc(m.url) + '" class="att"></audio>' : '';
+    return '<div class="msg ' + (m.from === mine ? 'me' : 'them') + '">' + att + esc(m.text || '').replace(/\n/g, '<br>') + (at ? '<span class="t">' + esc(T().dateShort(at)) + ' ' + pad2(at.getHours()) + ':' + pad2(at.getMinutes()) + '</span>' : '') + '</div>';
+  }).join('');
+}
+/* Chat bar with text, a photo button and a hold-to-record voice button. */
+function chatBarHTML(idText, idSend, label) {
+  const S = T();
+  return '<div class="chatbar"><label class="btn sm att-btn" title="' + esc(S.sendPhoto) + '">📷<input type="file" accept="image/*" data-chat-img hidden></label><button class="btn sm att-btn" data-chat-voice title="' + esc(S.holdToRecord) + '">🎤</button><textarea id="' + idText + '" placeholder="' + esc(S.typeMsg) + '"></textarea><button class="btn primary" id="' + idSend + '">' + esc(label) + '</button></div><p class="hint" data-chat-status></p>';
+}
+function bindChatBar(root, sendFn) {
+  const S = T(), status = $('[data-chat-status]', root);
+  const say = (t) => { if (status) status.textContent = t || ''; };
+  const img = $('[data-chat-img]', root);
+  if (img) img.addEventListener('change', async () => {
+    const f = img.files && img.files[0]; if (!f) return;
+    if (f.size > 8 * 1024 * 1024) { say(S.fileTooBig); return; }
+    say(S.uploading);
+    try { await sendFn('', f, 'image'); say(''); } catch (e) { say(S.publishFail + ': ' + e.message); }
+    img.value = '';
+  });
+  const mic = $('[data-chat-voice]', root);
+  if (mic) {
+    let rec = null, chunks = [];
+    const stop = () => { if (rec && rec.state !== 'inactive') rec.stop(); };
+    const start = async () => {
+      if (!navigator.mediaDevices || !window.MediaRecorder) { say(S.noMic); return; }
+      try {
+        const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+        chunks = []; rec = new MediaRecorder(stream);
+        rec.ondataavailable = (e) => { if (e.data.size) chunks.push(e.data); };
+        rec.onstop = async () => {
+          stream.getTracks().forEach((t) => t.stop()); mic.classList.remove('rec');
+          const blob = new Blob(chunks, { type: rec.mimeType || 'audio/webm' });
+          if (blob.size < 2000) { say(''); return; }
+          say(S.uploading);
+          try { await sendFn('', blob, 'audio'); say(''); } catch (e) { say(S.publishFail + ': ' + e.message); }
+        };
+        rec.start(); mic.classList.add('rec'); say(S.recording);
+      } catch (e) { say(S.noMic); }
+    };
+    mic.addEventListener('click', () => { if (rec && rec.state === 'recording') stop(); else start(); });
+  }
 }
 function bookingRow(b, admin) {
   const S = T();
@@ -10638,7 +11076,7 @@ function renderMe(args, params) {
     h += authHTML() + profileFormHTML();
     if (BE.enabled) {
       h += '<div class="card"><h3 style="margin-bottom:4px">' + esc(S.messages) + '</h3><p class="hint" style="margin-bottom:8px">' + esc(S.messagesIntro) + '</p>'
-        + (BE.user ? '<div class="chat" id="chat"></div><div class="chatbar"><textarea id="mtext" placeholder="' + esc(S.typeMsg) + '"></textarea><button class="btn primary" id="msend">' + esc(S.send) + '</button></div>' : '<p class="muted">' + esc(S.needLogin) + '</p>') + '</div>';
+        + (BE.user ? '<div class="chat" id="chat"></div>' + chatBarHTML('mtext', 'msend', S.send) : '<p class="muted">' + esc(S.needLogin) + '</p>') + '</div>';
       if (BE.user) h += '<div class="card"><h3 style="margin-bottom:8px">' + esc(S.myBookings) + '</h3><div id="mybk"><p class="hint">…</p></div></div>';
     } else if (CONFIG.instagram) {
       h += '<div class="card"><h3 style="margin-bottom:4px">' + esc(S.messages) + '</h3><p class="muted" style="font-size:14px">' + esc(S.messagesSoon) + '</p><a class="btn block" href="https://ig.me/m/' + esc(CONFIG.instagram) + '" target="_blank" rel="noopener">' + esc(S.viaInstagram) + '</a></div>';
@@ -10647,7 +11085,6 @@ function renderMe(args, params) {
     h += '<div class="card"><h3 style="margin-bottom:8px">' + esc(S.myCourses) + '</h3>' + COURSES.map((c) => { const a = ACCESS.get()[c.id]; return '<div class="course"><span>' + esc(L(c.name)) + '</span><span class="faint">' + (a ? (ACCESS.has(c.id) ? '✓ ' + esc(S.activeUntil(fmtDate(a))) : esc(S.expiredOn(fmtDate(a)))) : '🔒 ' + fmtPrice(c.price)) + '</span></div>'; }).join('')
       + '<label class="f" for="mcode">' + esc(S.enterCode) + '</label><div class="row"><input id="mcode" placeholder="NABU-T-…" autocapitalize="characters" style="flex:1"><button class="btn" id="munlock">' + esc(S.unlock) + '</button></div><p class="hint" id="mcstatus"></p></div>';
     h += '<div class="card"><h3 style="margin-bottom:8px">' + esc(S.themeTitle) + '</h3><div class="chips">' + ['auto', 'light', 'dark'].map((t) => '<button class="chip' + (themeChoice() === t ? ' on' : '') + '" data-theme-pick="' + t + '">' + esc(S.themes[t]) + '</button>').join('') + '</div><p class="hint">' + esc(S.themeHint) + '</p></div>';
-    h += '<div class="card"><h3 style="margin-bottom:6px">' + esc(S.installTitle) + '</h3><p class="muted" style="font-size:14px">' + esc(S.install) + '</p></div>';
     h += '<div class="row">' + (BE.user ? '<button class="btn" id="signout">' + esc(S.signOut) + '</button>' : '') + '<a class="btn" href="#/report">🐞 ' + esc(S.reportLink) + '</a><button class="btn" id="retour">' + (lang === 'vi' ? 'Xem lại hướng dẫn' : 'Replay the tour') + '</button>' + (BE.isAdmin() ? '<a class="btn gold" href="#/admin">' + esc(S.adminTitle) + '</a>' : '') + '</div>';
     body.innerHTML = h;
     bindAuth(body); bindAI(body);
@@ -10659,7 +11096,9 @@ function renderMe(args, params) {
     if (BE.enabled && BE.user) {
       const chat = $('#chat');
       meUnsubs.push(BE.watchMessages(BE.user.uid, (msgs) => { chat.innerHTML = chatHTML(msgs, 'user'); chat.scrollTop = chat.scrollHeight; BE.markRead(BE.user.uid, 'user'); }));
-      $('#msend').addEventListener('click', async () => { const t = $('#mtext').value.trim(); if (!t) return; $('#mtext').value = ''; try { await BE.sendMessage(t); } catch (e) { toast(e.message); } });
+      const sendUser = async (text, file, kind) => { let att = null; if (file) att = await BE.uploadAttachment(file, BE.user.uid, kind); await BE.sendMessage(text, null, att); };
+      $('#msend').addEventListener('click', async () => { const t = $('#mtext').value.trim(); if (!t) return; $('#mtext').value = ''; try { await sendUser(t); } catch (e) { toast(e.message); } });
+      bindChatBar(body, sendUser);
       meUnsubs.push(BE.watchMyBookings((list) => { $('#mybk').innerHTML = list.length ? list.map((b) => bookingRow(b, false)).join('') : '<p class="hint">' + esc(S.noBookings) + '</p>'; }));
     }
   };
@@ -10875,11 +11314,13 @@ function adminInbox(p) {
   };
   const open = (uid, t) => {
     adminCleanup();
-    p.innerHTML = '<p><a href="#/admin" id="backin">← ' + esc(S.back) + '</a></p><h3 style="margin-bottom:8px">' + esc(t.name || t.email || uid) + ' <span class="faint">' + esc(t.email || '') + '</span></h3><div class="chat" id="achat"></div><div class="chatbar"><textarea id="atext" placeholder="' + esc(S.typeMsg) + '"></textarea><button class="btn primary" id="asend">' + esc(S.reply) + '</button></div>';
+    p.innerHTML = '<p><a href="#/admin" id="backin">← ' + esc(S.back) + '</a></p><h3 style="margin-bottom:8px">' + esc(t.name || t.email || uid) + ' <span class="faint">' + esc(t.email || '') + '</span></h3><div class="chat" id="achat"></div>' + chatBarHTML('atext', 'asend', S.reply);
     $('#backin').addEventListener('click', (e) => { e.preventDefault(); p.innerHTML = '<div id="threads"></div>'; list(); });
     const chat = $('#achat');
     admin.unsubs.push(BE.watchMessages(uid, (msgs) => { chat.innerHTML = chatHTML(msgs, 'nabu'); chat.scrollTop = chat.scrollHeight; BE.markRead(uid, 'admin'); }));
-    $('#asend').addEventListener('click', async () => { const tx = $('#atext').value.trim(); if (!tx) return; $('#atext').value = ''; try { await BE.sendMessage(tx, uid); } catch (e) { toast(e.message); } });
+    const sendAdmin = async (text, file, kind) => { let att = null; if (file) att = await BE.uploadAttachment(file, uid, kind); await BE.sendMessage(text, uid, att); };
+    $('#asend').addEventListener('click', async () => { const tx = $('#atext').value.trim(); if (!tx) return; $('#atext').value = ''; try { await sendAdmin(tx); } catch (e) { toast(e.message); } });
+    bindChatBar(p, sendAdmin);
   };
   list();
 }
@@ -10899,8 +11340,8 @@ function adminCodes(p) {
 ROUTES.admin = { nav: '', render: renderAdmin };
 
 /* ============================ boot ============================ */
-window.APP_VERSION = 'v22';
-window.NABU = { LESSONS: LESSONS, localAnswer: localAnswer, numerologyOf: numerologyOf, ZDEEP: ZDEEP, lunarToday: lunarToday, solarToLunar: solarToLunar, DECK: DECK, INSIGHT: INSIGHT, KW: KW, ASK: ASK, TOPICS: TOPICS, GUIDES: GUIDES, SERVICES: SERVICES, COURSES: COURSES, ACCESS: ACCESS, makeCode: makeCode, parseCode: parseCode, ZODIAC: ZODIAC, pick: pick, book: book,
+window.APP_VERSION = 'v25';
+window.NABU = { LESSONS: LESSONS, localAnswer: localAnswer, compatVerdict: compatVerdict, numerologyOf: numerologyOf, ZDEEP: ZDEEP, lunarToday: lunarToday, solarToLunar: solarToLunar, DECK: DECK, INSIGHT: INSIGHT, KW: KW, ASK: ASK, TOPICS: TOPICS, GUIDES: GUIDES, SERVICES: SERVICES, COURSES: COURSES, ACCESS: ACCESS, makeCode: makeCode, parseCode: parseCode, ZODIAC: ZODIAC, pick: pick, book: book,
   insightHTML: insightHTML, insightOf: insightOf, sunSignIndex: sunSignIndex, lifePath: lifePath, PROFILE: () => PROFILE, BE: BE };
 BE.init().catch(() => { /* backend unreachable: the app runs device-only */ });
 boot();

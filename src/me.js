@@ -53,7 +53,50 @@ function bindAuth(root) {
 function chatHTML(msgs, mine) {
   const S = T();
   if (!msgs.length) return '<p class="empty">' + esc(S.noMsgs) + '</p>';
-  return msgs.map((m) => { const at = m.at && m.at.toDate ? m.at.toDate() : null; return '<div class="msg ' + (m.from === mine ? 'me' : 'them') + '">' + esc(m.text).replace(/\n/g, '<br>') + (at ? '<span class="t">' + esc(T().dateShort(at)) + ' ' + pad2(at.getHours()) + ':' + pad2(at.getMinutes()) + '</span>' : '') + '</div>'; }).join('');
+  return msgs.map((m) => {
+    const at = m.at && m.at.toDate ? m.at.toDate() : null;
+    const att = m.kind === 'image' && m.url ? '<a href="' + esc(m.url) + '" target="_blank" rel="noopener"><img src="' + esc(m.url) + '" alt="" class="att"></a>' : m.kind === 'audio' && m.url ? '<audio controls src="' + esc(m.url) + '" class="att"></audio>' : '';
+    return '<div class="msg ' + (m.from === mine ? 'me' : 'them') + '">' + att + esc(m.text || '').replace(/\n/g, '<br>') + (at ? '<span class="t">' + esc(T().dateShort(at)) + ' ' + pad2(at.getHours()) + ':' + pad2(at.getMinutes()) + '</span>' : '') + '</div>';
+  }).join('');
+}
+/* Chat bar with text, a photo button and a hold-to-record voice button. */
+function chatBarHTML(idText, idSend, label) {
+  const S = T();
+  return '<div class="chatbar"><label class="btn sm att-btn" title="' + esc(S.sendPhoto) + '">📷<input type="file" accept="image/*" data-chat-img hidden></label><button class="btn sm att-btn" data-chat-voice title="' + esc(S.holdToRecord) + '">🎤</button><textarea id="' + idText + '" placeholder="' + esc(S.typeMsg) + '"></textarea><button class="btn primary" id="' + idSend + '">' + esc(label) + '</button></div><p class="hint" data-chat-status></p>';
+}
+function bindChatBar(root, sendFn) {
+  const S = T(), status = $('[data-chat-status]', root);
+  const say = (t) => { if (status) status.textContent = t || ''; };
+  const img = $('[data-chat-img]', root);
+  if (img) img.addEventListener('change', async () => {
+    const f = img.files && img.files[0]; if (!f) return;
+    if (f.size > 8 * 1024 * 1024) { say(S.fileTooBig); return; }
+    say(S.uploading);
+    try { await sendFn('', f, 'image'); say(''); } catch (e) { say(S.publishFail + ': ' + e.message); }
+    img.value = '';
+  });
+  const mic = $('[data-chat-voice]', root);
+  if (mic) {
+    let rec = null, chunks = [];
+    const stop = () => { if (rec && rec.state !== 'inactive') rec.stop(); };
+    const start = async () => {
+      if (!navigator.mediaDevices || !window.MediaRecorder) { say(S.noMic); return; }
+      try {
+        const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+        chunks = []; rec = new MediaRecorder(stream);
+        rec.ondataavailable = (e) => { if (e.data.size) chunks.push(e.data); };
+        rec.onstop = async () => {
+          stream.getTracks().forEach((t) => t.stop()); mic.classList.remove('rec');
+          const blob = new Blob(chunks, { type: rec.mimeType || 'audio/webm' });
+          if (blob.size < 2000) { say(''); return; }
+          say(S.uploading);
+          try { await sendFn('', blob, 'audio'); say(''); } catch (e) { say(S.publishFail + ': ' + e.message); }
+        };
+        rec.start(); mic.classList.add('rec'); say(S.recording);
+      } catch (e) { say(S.noMic); }
+    };
+    mic.addEventListener('click', () => { if (rec && rec.state === 'recording') stop(); else start(); });
+  }
 }
 function bookingRow(b, admin) {
   const S = T();
@@ -76,7 +119,7 @@ function renderMe(args, params) {
     h += authHTML() + profileFormHTML();
     if (BE.enabled) {
       h += '<div class="card"><h3 style="margin-bottom:4px">' + esc(S.messages) + '</h3><p class="hint" style="margin-bottom:8px">' + esc(S.messagesIntro) + '</p>'
-        + (BE.user ? '<div class="chat" id="chat"></div><div class="chatbar"><textarea id="mtext" placeholder="' + esc(S.typeMsg) + '"></textarea><button class="btn primary" id="msend">' + esc(S.send) + '</button></div>' : '<p class="muted">' + esc(S.needLogin) + '</p>') + '</div>';
+        + (BE.user ? '<div class="chat" id="chat"></div>' + chatBarHTML('mtext', 'msend', S.send) : '<p class="muted">' + esc(S.needLogin) + '</p>') + '</div>';
       if (BE.user) h += '<div class="card"><h3 style="margin-bottom:8px">' + esc(S.myBookings) + '</h3><div id="mybk"><p class="hint">…</p></div></div>';
     } else if (CONFIG.instagram) {
       h += '<div class="card"><h3 style="margin-bottom:4px">' + esc(S.messages) + '</h3><p class="muted" style="font-size:14px">' + esc(S.messagesSoon) + '</p><a class="btn block" href="https://ig.me/m/' + esc(CONFIG.instagram) + '" target="_blank" rel="noopener">' + esc(S.viaInstagram) + '</a></div>';
@@ -85,7 +128,6 @@ function renderMe(args, params) {
     h += '<div class="card"><h3 style="margin-bottom:8px">' + esc(S.myCourses) + '</h3>' + COURSES.map((c) => { const a = ACCESS.get()[c.id]; return '<div class="course"><span>' + esc(L(c.name)) + '</span><span class="faint">' + (a ? (ACCESS.has(c.id) ? '✓ ' + esc(S.activeUntil(fmtDate(a))) : esc(S.expiredOn(fmtDate(a)))) : '🔒 ' + fmtPrice(c.price)) + '</span></div>'; }).join('')
       + '<label class="f" for="mcode">' + esc(S.enterCode) + '</label><div class="row"><input id="mcode" placeholder="NABU-T-…" autocapitalize="characters" style="flex:1"><button class="btn" id="munlock">' + esc(S.unlock) + '</button></div><p class="hint" id="mcstatus"></p></div>';
     h += '<div class="card"><h3 style="margin-bottom:8px">' + esc(S.themeTitle) + '</h3><div class="chips">' + ['auto', 'light', 'dark'].map((t) => '<button class="chip' + (themeChoice() === t ? ' on' : '') + '" data-theme-pick="' + t + '">' + esc(S.themes[t]) + '</button>').join('') + '</div><p class="hint">' + esc(S.themeHint) + '</p></div>';
-    h += '<div class="card"><h3 style="margin-bottom:6px">' + esc(S.installTitle) + '</h3><p class="muted" style="font-size:14px">' + esc(S.install) + '</p></div>';
     h += '<div class="row">' + (BE.user ? '<button class="btn" id="signout">' + esc(S.signOut) + '</button>' : '') + '<a class="btn" href="#/report">🐞 ' + esc(S.reportLink) + '</a><button class="btn" id="retour">' + (lang === 'vi' ? 'Xem lại hướng dẫn' : 'Replay the tour') + '</button>' + (BE.isAdmin() ? '<a class="btn gold" href="#/admin">' + esc(S.adminTitle) + '</a>' : '') + '</div>';
     body.innerHTML = h;
     bindAuth(body); bindAI(body);
@@ -97,7 +139,9 @@ function renderMe(args, params) {
     if (BE.enabled && BE.user) {
       const chat = $('#chat');
       meUnsubs.push(BE.watchMessages(BE.user.uid, (msgs) => { chat.innerHTML = chatHTML(msgs, 'user'); chat.scrollTop = chat.scrollHeight; BE.markRead(BE.user.uid, 'user'); }));
-      $('#msend').addEventListener('click', async () => { const t = $('#mtext').value.trim(); if (!t) return; $('#mtext').value = ''; try { await BE.sendMessage(t); } catch (e) { toast(e.message); } });
+      const sendUser = async (text, file, kind) => { let att = null; if (file) att = await BE.uploadAttachment(file, BE.user.uid, kind); await BE.sendMessage(text, null, att); };
+      $('#msend').addEventListener('click', async () => { const t = $('#mtext').value.trim(); if (!t) return; $('#mtext').value = ''; try { await sendUser(t); } catch (e) { toast(e.message); } });
+      bindChatBar(body, sendUser);
       meUnsubs.push(BE.watchMyBookings((list) => { $('#mybk').innerHTML = list.length ? list.map((b) => bookingRow(b, false)).join('') : '<p class="hint">' + esc(S.noBookings) + '</p>'; }));
     }
   };

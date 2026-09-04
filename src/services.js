@@ -9,7 +9,7 @@ const SERVICES = [
       { id: 'yn', name: { vi: '1 câu Yes/No', en: '1 yes/no question' }, price: 10000 },
       { id: 'q1', name: { vi: '1 câu chi tiết', en: '1 question in detail' }, price: 20000 },
       { id: 'q3', name: { vi: '3 câu chi tiết', en: '3 questions in detail' }, price: 50000 },
-      { id: 'topic', name: { vi: 'Xem chủ đề sẵn (chỉ áp dụng với 5 chủ đề)', en: 'Set topic (five preset topics only)' }, price: 60000, needsTopic: true },
+      { id: 'topic', name: { vi: 'Xem 1 chủ đề sẵn (chọn trong 5 chủ đề)', en: '1 preset topic (choose from the 5 set topics)' }, price: 60000, needsTopic: true },
       { id: 't40', name: { vi: '40 phút', en: '40 minutes' }, price: 80000 }
     ] },
   { id: 'lenormand', icon: '🗝️', tone: 'lav', name: { vi: 'Lenormand', en: 'Lenormand' },
@@ -18,10 +18,10 @@ const SERVICES = [
       { id: 'yn', name: { vi: '1 câu Yes/No', en: '1 yes/no question' }, price: 12000 },
       { id: 'q1', name: { vi: '1 câu chi tiết', en: '1 question in detail' }, price: 25000 },
       { id: 'q3', name: { vi: '3 câu chi tiết', en: '3 questions in detail' }, price: 50000 },
-      { id: 'topic', name: { vi: 'Xem chủ đề sẵn (chỉ áp dụng với 5 chủ đề)', en: 'Set topic (five preset topics only)' }, price: 60000, needsTopic: true },
+      { id: 'topic', name: { vi: 'Xem 1 chủ đề sẵn (chọn trong 5 chủ đề)', en: '1 preset topic (choose from the 5 set topics)' }, price: 60000, needsTopic: true },
       { id: 't40', name: { vi: '40 phút', en: '40 minutes' }, price: 90000 }
     ] },
-  { id: 'tea', icon: '🍵', tone: 'gold', name: { vi: 'Bói lá trà', en: 'Tea leaf reading' },
+  { id: 'tea', icon: '🍵', tone: 'gold', name: { vi: 'Bài trà', en: 'Tealeaf fortune telling' },
     tagline: { vi: 'Một tách trà, một câu chuyện.', en: 'One cup of tea, one story.' },
     note: { vi: 'Bạn pha một tách trà lá, uống gần cạn, chụp ảnh lòng tách gửi Nabu.', en: 'Brew loose-leaf tea, drink it nearly to the bottom, send Nabu a photo of the cup.' },
     packages: [
@@ -34,7 +34,7 @@ const SERVICES = [
     packages: [
       { id: 'q1', name: { vi: '1 câu chi tiết', en: '1 question in detail' }, price: 30000 },
       { id: 'q3', name: { vi: '3 câu chi tiết', en: '3 questions in detail' }, price: 60000 },
-      { id: 'topic', name: { vi: 'Xem chủ đề sẵn (chỉ áp dụng với 5 chủ đề)', en: 'Set topic (five preset topics only)' }, price: 70000, needsTopic: true },
+      { id: 'topic', name: { vi: 'Xem 1 chủ đề sẵn (chọn trong 5 chủ đề)', en: '1 preset topic (choose from the 5 set topics)' }, price: 70000, needsTopic: true },
       { id: 't40', name: { vi: '40 phút', en: '40 minutes' }, price: 100000 }
     ] },
   { id: 'lenormand-oracle', icon: '✨', tone: 'lav', name: { vi: 'Lenormand + Oracle', en: 'Lenormand + Oracle' },
@@ -42,7 +42,7 @@ const SERVICES = [
     packages: [
       { id: 'q1', name: { vi: '1 câu chi tiết', en: '1 question in detail' }, price: 35000 },
       { id: 'q3', name: { vi: '3 câu chi tiết', en: '3 questions in detail' }, price: 65000 },
-      { id: 'topic', name: { vi: 'Xem chủ đề sẵn (chỉ áp dụng với 5 chủ đề)', en: 'Set topic (five preset topics only)' }, price: 75000, needsTopic: true },
+      { id: 'topic', name: { vi: 'Xem 1 chủ đề sẵn (chọn trong 5 chủ đề)', en: '1 preset topic (choose from the 5 set topics)' }, price: 75000, needsTopic: true },
       { id: 't40', name: { vi: '40 phút', en: '40 minutes' }, price: 110000 }
     ] },
   { id: 'tuvi', icon: '🌸', tone: 'pink', name: { vi: 'Tử vi', en: 'Tử vi (Vietnamese astrology)' },

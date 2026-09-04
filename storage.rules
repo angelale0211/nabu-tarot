@@ -1,0 +1,13 @@
+rules_version = '2';
+service firebase.storage {
+  match /b/{bucket}/o {
+    // Chat attachments: a visitor writes into their own thread folder; the
+    // reader (admin) can read and write every thread. Put the same admin
+    // emails here as in firestore.rules.
+    function isAdmin() { return request.auth != null && request.auth.token.email in ['nabu@example.com']; }
+    match /threads/{uid}/{file} {
+      allow read: if request.auth != null && (request.auth.uid == uid || isAdmin());
+      allow write: if request.auth != null && (request.auth.uid == uid || isAdmin()) && request.resource.size < 8 * 1024 * 1024;
+    }
+  }
+}

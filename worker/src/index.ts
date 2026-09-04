@@ -10,6 +10,7 @@ export interface Env {
   ANTHROPIC_API_KEY?: string;
   AI?: { run: (model: string, input: unknown) => Promise<{ response?: string }> }; // Workers AI binding (free tier, open models)
   ALLOWED_ORIGIN?: string; // e.g. https://angelale0211.github.io
+  RESEND_API_KEY?: string; // for /booking: mails the reader a calendar invitation
 }
 
 interface AskBody {
@@ -34,11 +35,38 @@ const cors = (origin: string | undefined, env: Env) => ({
   "Access-Control-Allow-Headers": "Content-Type",
 });
 
+/* Build an iCalendar invitation for a booking and mail it (Resend). Outlook and
+   most mail apps add a METHOD:REQUEST invitation to the calendar on arrival. */
+async function bookingMail(request: Request, env: Env, headers: Record<string, string>): Promise<Response> {
+  if (!env.RESEND_API_KEY) return new Response(JSON.stringify({ error: "no mail key" }), { status: 500, headers });
+  let b: { booking: Record<string, string>; tz?: string; to?: string; lang?: string };
+  try { b = await request.json(); } catch { return new Response(JSON.stringify({ error: "bad json" }), { status: 400, headers }); }
+  const bk = b.booking || {}, to = (b.to || "").trim();
+  if (!to || !bk.slot) return new Response(JSON.stringify({ error: "missing" }), { status: 400, headers });
+  const start = bk.slot.replace(/[^0-9T]/g, "") + "00"; // YYYYMMDDTHHMM00 local time
+  const [d, t] = bk.slot.split("T"), hh = Number(t.slice(0, 2)) + 1;
+  const end = d.replace(/-/g, "") + "T" + String(hh).padStart(2, "0") + t.slice(3, 5) + "00";
+  const tz = b.tz || "Asia/Ho_Chi_Minh";
+  const summary = "Nabu Tarot: " + (bk.service || "") + (bk.pkg ? " – " + bk.pkg : "") + (bk.name ? " · " + bk.name : "");
+  const desc = [bk.service && bk.pkg ? bk.service + " – " + bk.pkg + (bk.price ? " (" + bk.price + "đ)" : "") : "", bk.topic ? "Chủ đề: " + bk.topic : "", bk.name ? "Khách: " + bk.name : "", bk.email ? "Email: " + bk.email : "", bk.birth ? "Ngày giờ sinh: " + bk.birth : "", bk.card ? "Lá đã rút: " + bk.card : "", bk.note ? "Ghi chú: " + bk.note : "", bk.id ? "Mã đặt lịch: " + bk.id : ""].filter(Boolean).join("\n");
+  const esc = (s: string) => s.replace(/\\/g, "\\\\").replace(/;/g, "\\;").replace(/,/g, "\\,").replace(/\n/g, "\\n");
+  const uid = (bk.id || start) + "@nabu-tarot";
+  const ics = ["BEGIN:VCALENDAR", "VERSION:2.0", "PRODID:-//Nabu Tarot//Booking//VI", "METHOD:REQUEST", "BEGIN:VEVENT", "UID:" + uid, "DTSTAMP:" + new Date().toISOString().replace(/[-:]/g, "").slice(0, 15) + "Z", "DTSTART;TZID=" + tz + ":" + start, "DTEND;TZID=" + tz + ":" + end, "SUMMARY:" + esc(summary), "DESCRIPTION:" + esc(desc), "ORGANIZER;CN=Nabu Tarot:mailto:" + to, "ATTENDEE;CN=Nabu;ROLE=REQ-PARTICIPANT;PARTSTAT=ACCEPTED:mailto:" + to, "STATUS:CONFIRMED", "END:VEVENT", "END:VCALENDAR"].join("\r\n");
+  const r = await fetch("https://api.resend.com/emails", { method: "POST", headers: { Authorization: "Bearer " + env.RESEND_API_KEY, "Content-Type": "application/json" }, body: JSON.stringify({
+    from: "Nabu Tarot <onboarding@resend.dev>", to: [to], subject: summary,
+    text: desc + "\n\nLịch hẹn đã được thêm vào lịch (file .ics đính kèm).",
+    attachments: [{ filename: "nabu-booking.ics", content: btoa(unescape(encodeURIComponent(ics))), content_type: "text/calendar; method=REQUEST" }],
+  }) });
+  if (!r.ok) return new Response(JSON.stringify({ error: "mail " + r.status }), { status: 502, headers });
+  return new Response(JSON.stringify({ ok: true }), { headers });
+}
+
 export default {
   async fetch(request: Request, env: Env): Promise<Response> {
     const headers = { ...cors(request.headers.get("Origin") || undefined, env), "Content-Type": "application/json" };
     if (request.method === "OPTIONS") return new Response(null, { headers });
     if (request.method !== "POST") return new Response(JSON.stringify({ error: "POST only" }), { status: 405, headers });
+    if (new URL(request.url).pathname.endsWith("/booking")) return bookingMail(request, env, headers);
     let body: AskBody;
     try { body = (await request.json()) as AskBody; } catch { return new Response(JSON.stringify({ error: "bad json" }), { status: 400, headers }); }
     const question = (body.question || "").trim().slice(0, 1000);

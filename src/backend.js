@@ -3,6 +3,11 @@
    Firestore) when CONFIG.firebase is set. Without it, BE.enabled is false and
    every screen falls back to the device-only profile and to Instagram.
    The SDK is loaded on demand so the app shell stays offline-capable. */
+/* Mail the booking to Nabu as a calendar invitation (through the worker). Best effort. */
+function notifyBooking(b) {
+  if (!CONFIG.bookingEndpoint) return Promise.resolve();
+  return fetch(CONFIG.bookingEndpoint, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ booking: b, tz: CONFIG.timezone, to: CONFIG.adminNotifyEmail, lang: lang }) }).catch(() => {});
+}
 const BE = {
   enabled: !!CONFIG.firebase,
   ready: false, user: null, db: null, auth: null,
@@ -13,11 +18,11 @@ const BE = {
   async init() {
     if (!this.enabled) return;
     const V = '10.14.1';
-    for (const f of ['firebase-app-compat.js', 'firebase-auth-compat.js', 'firebase-firestore-compat.js']) {
+    for (const f of ['firebase-app-compat.js', 'firebase-auth-compat.js', 'firebase-firestore-compat.js', 'firebase-storage-compat.js']) {
       await new Promise((res, rej) => { const s = document.createElement('script'); s.src = 'https://www.gstatic.com/firebasejs/' + V + '/' + f; s.onload = res; s.onerror = rej; document.head.appendChild(s); });
     }
     firebase.initializeApp(CONFIG.firebase);
-    this.auth = firebase.auth(); this.db = firebase.firestore();
+    this.auth = firebase.auth(); this.db = firebase.firestore(); this.storage = firebase.storage();
     try { await this.db.enablePersistence({ synchronizeTabs: true }); } catch (e) { /* fine without */ }
     this.auth.onAuthStateChanged(async (u) => {
       this.user = u; this.ready = true;
@@ -52,11 +57,21 @@ const BE = {
 
   /* ---- messages: one thread per user ---- */
   thread() { return this.db.collection('threads').doc(this.user.uid); },
-  async sendMessage(text, asAdminTo) {
+  /* Upload a photo or a voice note for the thread; returns { url, kind }. */
+  async uploadAttachment(file, uid, kind) {
+    const path = 'threads/' + (uid || this.user.uid) + '/' + Date.now() + '-' + Math.random().toString(36).slice(2, 6) + (kind === 'audio' ? '.webm' : '.jpg');
+    const ref = this.storage.ref(path);
+    await ref.put(file, { contentType: file.type || (kind === 'audio' ? 'audio/webm' : 'image/jpeg') });
+    return { url: await ref.getDownloadURL(), kind: kind, path: path };
+  },
+  async sendMessage(text, asAdminTo, attachment) {
     const uid = asAdminTo || this.user.uid, from = asAdminTo ? 'nabu' : 'user';
     const ref = this.db.collection('threads').doc(uid);
-    await ref.collection('messages').add({ from: from, text: text, at: firebase.firestore.FieldValue.serverTimestamp() });
-    const meta = { lastText: text, lastAt: firebase.firestore.FieldValue.serverTimestamp(), lastFrom: from };
+    const msg = { from: from, text: text || '', at: firebase.firestore.FieldValue.serverTimestamp() };
+    if (attachment) { msg.kind = attachment.kind; msg.url = attachment.url; }
+    await ref.collection('messages').add(msg);
+    const preview = text || (attachment ? (attachment.kind === 'audio' ? '🎤' : '📷') : '');
+    const meta = { lastText: preview, lastAt: firebase.firestore.FieldValue.serverTimestamp(), lastFrom: from };
     if (from === 'user') { meta.name = PROFILE.name || this.user.displayName || ''; meta.email = this.user.email || ''; meta.adminUnread = firebase.firestore.FieldValue.increment(1); meta.userUnread = 0; }
     else { meta.userUnread = firebase.firestore.FieldValue.increment(1); meta.adminUnread = 0; }
     await ref.set(meta, { merge: true });
@@ -85,6 +100,7 @@ const BE = {
     const doc = Object.assign({ uid: this.user.uid, email: this.user.email || '', status: 'requested', at: firebase.firestore.FieldValue.serverTimestamp() }, b);
     const ref = await this.db.collection('bookings').add(doc);
     await this.db.collection('taken').doc(b.slot.replace(/[^0-9T]/g, '')).set({ bookingId: ref.id, at: firebase.firestore.FieldValue.serverTimestamp() });
+    notifyBooking(Object.assign({ id: ref.id }, b));
     return ref.id;
   },
   watchMyBookings(cb) { return this.db.collection('bookings').where('uid', '==', this.user.uid).onSnapshot((s) => cb(s.docs.map((d) => Object.assign({ id: d.id }, d.data())).sort((a, b) => String(b.slot).localeCompare(String(a.slot))))); },

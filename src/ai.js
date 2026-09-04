@@ -26,6 +26,24 @@ function cardsMentioned(q) {
   DECK.vi.forEach((c, i) => { const en = DECK.en[i]; if (f.indexOf(fold(c.name)) > -1 || f.indexOf(fold(en.name)) > -1) out.push(c.id); });
   return out.slice(0, 3);
 }
+/* Compatibility verdict for two signs: verdict key + why. */
+function compatVerdict(a, b) {
+  const ia = ZKEYS.indexOf(a), ib = ZKEYS.indexOf(b), diff = Math.abs(ia - ib) % 12, d = Math.min(diff, 12 - diff);
+  const chem = signChemistry(a, b), listed = ZDEEP[a].compat.indexOf(b) > -1 || ZDEEP[b].compat.indexOf(a) > -1;
+  if (a === b) return 'same';
+  if (d === 6) return 'opposite';
+  if (chem === 'same' || listed) return 'good';
+  if (chem === 'support') return 'ok';
+  if (d === 3) return 'work';
+  return 'neutral';
+}
+function compatAnswer(a, b) {
+  const S = T(), v = compatVerdict(a, b), na = ZSIGN[a][lang], nb = ZSIGN[b][lang], za = ZODIAC[a][lang], zb = ZODIAC[b][lang];
+  const head = S.compatHead[v](na, nb), why = S.compatWhy[v] + ' ' + CHEM_TEXT[signChemistry(a, b)][lang] + '.';
+  const bring = S.compatBring(na, za.kw.slice(0, 2).join(', '), nb, zb.kw.slice(0, 2).join(', '));
+  const tip = v === 'good' || v === 'same' ? S.compatTipGood : v === 'opposite' ? S.compatTipOpp : S.compatTipWork;
+  return head + '\n\n' + why + ' ' + bring + '\n\n' + tip;
+}
 function signMentioned(q) { const f = fold(q); return ZKEYS.filter((k) => f.indexOf(fold(ZSIGN[k].vi)) > -1 || f.indexOf(fold(ZSIGN[k].en)) > -1); }
 function lenMentioned(q) { const f = fold(q), out = []; for (let i = 1; i <= 36; i++) { if (f.indexOf(fold(LEN.vi[i].name)) > -1 || f.indexOf(fold(LEN.en[i].name)) > -1) out.push(i); } return out.slice(0, 2); }
 function planetMentioned(q) { const f = fold(q); return PLANETS.filter((p) => f.indexOf(fold(p.name.vi)) > -1 || f.indexOf(fold(p.name.en)) > -1).slice(0, 2); }
@@ -39,7 +57,7 @@ function topicHelp(q) {
   if (/manifest|khang dinh|affirmation|369|scripting|kich ban/.test(f)) { const id = /369/.test(f) ? 'mani-369' : /script|kich ban/.test(f) ? 'mani-script' : /khang dinh|affirmation|biet on|gratitude/.test(f) ? 'mani-gratitude' : 'mani-what'; const g = GUIDES.filter((x) => x.id === id)[0]; return L(g.intro) + ' ' + L(g.sections[0].p); }
   if (/la nguoc|reversed/.test(f)) { const g = GUIDES.filter((x) => x.id === 'tarot-reversed')[0]; return L(g.intro) + ' ' + L(g.sections[0].p); }
   if (/hoang gia|court/.test(f)) { const g = GUIDES.filter((x) => x.id === 'tarot-court')[0]; return L(g.intro) + ' ' + L(g.sections[0].p); }
-  if (/mat trang|moon|trang non|trang tron|full moon|new moon/.test(f)) { const g = GUIDES.filter((x) => x.id === 'astro-moon')[0]; const mp = moonPhase(new Date()); return (lang === 'vi' ? 'Hôm nay là ' : 'Today is ') + MOON_NAMES[lang][mp.idx] + '. ' + L(g.intro); }
+  if (/mat trang|moon|trang non|trang tron|full moon|new moon|\btrang\b|\btrăng\b/.test(f)) { const g = GUIDES.filter((x) => x.id === 'astro-moon')[0]; const mp = moonPhase(new Date()); return (lang === 'vi' ? 'Hôm nay là ' : 'Today is ') + MOON_NAMES[lang][mp.idx] + '. ' + L(g.intro); }
   if (/nghich hanh|retrograde/.test(f)) { const g = GUIDES.filter((x) => x.id === 'astro-retro')[0]; return L(g.intro) + ' ' + L(g.sections[1].p); }
   if (/cung moc|rising|ascendant|cung mat trang|moon sign|big three|ba cung/.test(f)) { const g = GUIDES.filter((x) => x.id === 'astro-big3')[0]; return L(g.intro) + ' ' + L(g.sections[2].p); }
   if (/chi tay|palm/.test(f)) { const g = GUIDES.filter((x) => x.id === 'fort-palm')[0]; return L(g.intro); }
@@ -114,7 +132,8 @@ function localAnswer(q, ctx) {
   } else if (ctx.type === 'sign') {
     const zp = ZODIAC[ctx.key][lang], dp = ZDEEP[ctx.key][lang], z = ZSIGN[ctx.key];
     const other = signs.filter((k) => k !== ctx.key)[0];
-    if (other) { const ch = signChemistry(ctx.key, other); out.push(S.aiChem(z[lang], ZSIGN[other][lang]) + ' ' + CHEM_TEXT[ch][lang] + '. ' + (ZDEEP[ctx.key].compat.indexOf(other) > -1 ? S.aiCompatYes : S.aiCompatWork)); }
+    if (other) out.push(compatAnswer(ctx.key, other));
+    else if (/hop|compat|match|get along|suit/.test(fold(q))) out.push(S.compatWhich(z[lang]) + ' ' + ZDEEP[ctx.key].compat.map((k) => ZSIGN[k][lang]).join(', ') + '. ' + S.compatAsk);
     else if (d.cat === 'love') out.push(zp.love);
     else if (d.cat === 'work' || d.cat === 'study' || d.cat === 'money') out.push(zp.work);
     else if (/mat trang|moon/.test(fold(q))) out.push(dp.moon);
@@ -145,7 +164,8 @@ function localAnswer(q, ctx) {
     else out.push(S.aiGeneralHelp, S.aiOfflineHint);
   }
   mentioned.forEach((id) => { const c = cardById(id), I = insightOf(id); out.push(S.aiAbout(c.name) + ' ' + I.pos.slice(0, 3).join(', ') + '. ' + (d.cat && d.cat !== 'general' ? I[d.cat] : I.now)); });
-  if (ctx.type !== 'sign') signs.slice(0, 2).forEach((k) => out.push(S.aiAbout(ZSIGN[k][lang]) + ' ' + (d.cat === 'love' ? ZODIAC[k][lang].love : d.cat === 'work' ? ZODIAC[k][lang].work : ZODIAC[k][lang].about)));
+  if (ctx.type !== 'sign' && signs.length >= 2 && /hop|compat|match|get along|suit|with/.test(fold(q))) out.unshift(compatAnswer(signs[0], signs[1]));
+  else if (ctx.type !== 'sign') signs.slice(0, 2).forEach((k) => out.push(S.aiAbout(ZSIGN[k][lang]) + ' ' + (d.cat === 'love' ? ZODIAC[k][lang].love : d.cat === 'work' ? ZODIAC[k][lang].work : ZODIAC[k][lang].about)));
   return out.filter(Boolean).join('\n\n');
 }
 function searchAll(q) {
