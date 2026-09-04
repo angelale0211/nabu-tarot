@@ -72,9 +72,10 @@ function renderLearn(args, params) {
   if (sub === 'astro') return renderAstro();
   if (sub === 'sign') return renderSign(args[1]);
   if (sub === 'spread') return renderSpread(args[1]);
-  if (sub === 'manifest' || sub === 'fortune') return renderGuideList(sub);
+  if (sub === 'fortune') return renderFortune(args[1]);
+  if (sub === 'manifest') return renderGuideList(sub);
   if (sub === 'guide') return renderGuide(args[1]);
-  if (sub === 'numbers') return renderNumbers();
+  if (sub === 'numbers') return renderFortune('numbers');
   location.hash = '#/learn';
 }
 
@@ -180,7 +181,6 @@ function lenBodyHTML(n) {
   return '<div class="detail">'
     + '<div class="hero"><span class="face">' + lenFace(n) + '</span><div><div class="name">' + n + '. ' + esc(d.name) + '</div><div class="en">' + esc(other.name) + '</div>'
     + '<div class="meta"><span class="chip tag">' + esc(S.lenTone[d.tone]) + '</span> <span class="chip tag">' + esc(S.lenCard) + ': ' + esc(d.card) + '</span></div></div></div>'
-    + (d.tnote ? '<p class="faint">' + esc(d.tnote) + '</p>' : '')
     + '<div class="ins"><h3>' + esc(S.onTheCard) + '</h3><p class="scene">' + esc(d.scene) + '</p></div>'
     + '<div class="ins"><h3>' + esc(S.kwPos) + '</h3><div class="kwl">' + (d.kw.pos || []).map((k) => '<span>' + esc(k) + '</span>').join('') + '</div>'
     + ((d.kw.neg || []).length ? '<h3>' + esc(S.kwNeg) + '</h3><div class="kwl neg">' + d.kw.neg.map((k) => '<span>' + esc(k) + '</span>').join('') + '</div>' : '') + '</div>'
