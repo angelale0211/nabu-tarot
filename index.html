@@ -717,6 +717,18 @@ const CONFIG = {
   // Nabu AI. Leave empty to answer from the built-in knowledge base; set the
   // URL of the deployed worker (see worker/) to answer with Claude.
   aiEndpoint: '',
+  // Free option: a Google AI Studio key (aistudio.google.com -> Get API key),
+  // restricted to this site's address in Google Cloud console. Gemini then
+  // answers straight from the browser and can search the web for facts the
+  // app does not have. Leave empty to skip.
+  geminiKey: '',
+  geminiModel: 'gemini-2.5-flash',
+  // Free option: a Google AI Studio key (aistudio.google.com -> Get API key),
+  // restricted to this site's address in Google Cloud console. Gemini then
+  // answers straight from the browser and can search the web for facts the
+  // app does not have. Leave empty to skip.
+  geminiKey: '',
+  geminiModel: 'gemini-2.5-flash',
 
   // Access codes for the paid courses are signed with this. Change it once
   // (any long phrase); codes made before the change stop working.
@@ -892,7 +904,7 @@ const STR = {
     courses: 'Khóa học', freeReads: 'Đọc miễn phí', lessonsIntro: (n) => 'Khóa học gồm ' + n + ' bài. Học theo thứ tự, mỗi bài một tuần là vừa.', markDone: 'Đánh dấu đã học xong', lessonDone: 'Đã học xong', journeyHint: 'Chạm vào một lá để mở trang của lá đó.', lenGridHint: 'Cả 36 lá. Chạm để xem từng lá.',
     aiIntro: 'Hỏi Nabu AI về điều bạn đang xem. Càng cụ thể càng tốt.', aiIntroLesson: 'Chỗ nào trong bài chưa hiểu, hỏi Nabu AI ở đây.', aiPlaceholder: 'Ví dụ: lá này nói gì về chuyện tình cảm của mình?', aiAsk: 'Hỏi', aiOnline: 'trả lời bằng AI', aiBuiltin: 'trả lời từ kho kiến thức', aiNote: 'Nabu AI trả lời từ ý nghĩa lá bài và kiến thức trong app. Chuyện quan trọng, bạn đặt lịch với Nabu.', aiFallback: 'AI đang bận, đây là câu trả lời từ kho kiến thức.',
     aiSugCard: ['Lá này nói gì về tình cảm của mình?', 'Mình có nên tiếp tục không?', 'Khi nào chuyện này xảy ra?'], aiSugLesson: ['Ẩn Chính khác Ẩn Phụ thế nào?', 'Lá hoàng gia là ai?', 'Nếu mình không hiểu một lá thì làm sao?'], aiSugSign: ['Cung này hợp với cung nào?', 'Cung này trong tình yêu thế nào?', 'Mặt Trăng ở cung này là sao?'], aiSugNumbers: ['Số đường đời của mình nói gì?', 'Năm nay của mình là năm gì?', 'Số vận mệnh theo tên mình là gì?'], aiSugGeneral: ['Gã Khờ nghĩa là gì?', 'Sư Tử hợp với Bảo Bình không?', 'Số đường đời của mình?'],
-    aiCardGeneral: (n) => 'Lá ' + n + ' đang nói về năng lượng chung của bạn lúc này.', aiCardFocus: (n, f) => 'Với câu hỏi về ' + f.toLowerCase() + ', lá ' + n + ' nói thế này:', aiCardWhy: 'Lá này mang năng lượng:', aiCardShadow: 'Mặt trái cần để ý:', aiYes: (n) => 'Nếu hỏi có hay không: ' + n + ' thiên về CÓ, nhưng một lá không quyết định được. Muốn rõ hơn, hãy đặt lịch xem bài.', aiNo: (n) => 'Nếu hỏi có hay không: ' + n + ' thiên về KHÔNG, hoặc chưa phải lúc. Một lá không quyết định được; muốn rõ hơn, hãy đặt lịch xem bài.', aiMaybe: (n) => 'Nếu hỏi có hay không: ' + n + ' không nghiêng hẳn về bên nào. Câu trả lời tuỳ vào việc bạn làm tiếp theo.', aiTiming: 'Về thời gian, một lá chỉ gợi ý nhịp, không cho ngày chính xác.', aiFound: 'Mình tìm thấy trong khóa học:', aiLessonNone: 'Mình chưa thấy phần nào khớp. Bạn thử hỏi bằng tên lá bài, hoặc một từ khóa trong bài học nhé.', aiChem: (a, b) => a + ' và ' + b + ':', aiCompatYes: 'Đây là một trong những cặp thường được xem là hợp.', aiCompatWork: 'Không nằm trong nhóm dễ hợp nhất, nhưng cung chỉ là một phần; bản đồ sao đầy đủ mới nói được nhiều hơn.', aiAbout: (n) => 'Về ' + n + ':', aiGeneralHelp: 'Mình trả lời được về một lá bài, một cung hoàng đạo, hoặc các con số của bạn. Bạn thử nhắc tên lá bài hay cung trong câu hỏi nhé.',
+    aiCardGeneral: (n) => 'Lá ' + n + ' đang nói về năng lượng chung của bạn lúc này.', aiCardFocus: (n, f) => 'Với câu hỏi về ' + f.toLowerCase() + ', lá ' + n + ' nói thế này:', aiCardWhy: 'Lá này mang năng lượng:', aiCardShadow: 'Mặt trái cần để ý:', aiYes: (n) => 'Nếu hỏi có hay không: ' + n + ' thiên về CÓ, nhưng một lá không quyết định được. Muốn rõ hơn, hãy đặt lịch xem bài.', aiNo: (n) => 'Nếu hỏi có hay không: ' + n + ' thiên về KHÔNG, hoặc chưa phải lúc. Một lá không quyết định được; muốn rõ hơn, hãy đặt lịch xem bài.', aiMaybe: (n) => 'Nếu hỏi có hay không: ' + n + ' không nghiêng hẳn về bên nào. Câu trả lời tuỳ vào việc bạn làm tiếp theo.', aiTiming: 'Về thời gian, một lá chỉ gợi ý nhịp, không cho ngày chính xác.', aiFound: 'Mình tìm thấy trong khóa học:', aiLessonNone: 'Mình chưa thấy phần nào khớp. Bạn thử hỏi bằng tên lá bài, hoặc một từ khóa trong bài học nhé.', aiChem: (a, b) => a + ' và ' + b + ':', aiCompatYes: 'Đây là một trong những cặp thường được xem là hợp.', aiCompatWork: 'Không nằm trong nhóm dễ hợp nhất, nhưng cung chỉ là một phần; bản đồ sao đầy đủ mới nói được nhiều hơn.', aiAbout: (n) => 'Về ' + n + ':', aiGeneralHelp: 'Mình chưa có câu trả lời sẵn cho câu này. Mình trả lời tốt nhất khi câu hỏi nhắc đến một lá bài, một cung hoàng đạo, một hành tinh, một nhà, một con giáp hay một con số.', aiOfflineHint: 'Chuyện riêng của bạn thì đặt lịch với Nabu để được xem kỹ.', aiBooking: 'Bạn xem bảng giá và chọn giờ ở mục Đặt lịch. Chọn gói, chọn giờ trống trên lịch, rồi gửi cho Nabu.',
     strengths: 'Điểm mạnh', challenges: 'Điểm cần để ý', compat: 'Thường hợp với', moonSign: 'Mặt Trăng ở cung này', risingSign: 'Cung Mọc ở cung này',
     numExpr: 'Số vận mệnh (theo tên)', numSoul: 'Số linh hồn', numPers: 'Số nhân cách', numYear: 'Năm cá nhân', numBirthday: 'Số ngày sinh', numName: 'Họ tên đầy đủ (khai sinh)', numNameHint: 'Tính theo bảng Pythagoras, bỏ dấu tiếng Việt, Đ đọc là D.',
     fortuneIntro: 'Năm cách xem cũ, làm mới bằng hình. Chạm để chơi thử.', readMoreTitle: 'Đọc thêm', numIntro: 'Chạm vào một số để xem nó nói gì. Số của bạn được đánh dấu.', numTap: 'Chạm vào một số ở trên.', numYours: 'Số của bạn', numCycle: 'Vòng 9 năm của bạn', numCycleHint: 'Mỗi năm cá nhân là một bước trong vòng 9 năm. Năm 1 gieo, năm 9 gặt và buông.', numHow: 'Cách tính',
@@ -1117,7 +1129,7 @@ const STR = {
     courses: 'Courses', freeReads: 'Free to read', lessonsIntro: (n) => 'The course has ' + n + ' sessions. Take them in order, about one a week.', markDone: 'Mark as done', lessonDone: 'Done', journeyHint: 'Tap a card to open its page.', lenGridHint: 'All 36 cards. Tap one to open it.',
     aiIntro: 'Ask Nabu AI about what you are looking at. The more specific, the better.', aiIntroLesson: 'Anything in this lesson unclear? Ask Nabu AI here.', aiPlaceholder: 'For example: what does this card say about my love life?', aiAsk: 'Ask', aiOnline: 'answered by AI', aiBuiltin: 'answered from the knowledge base', aiNote: 'Nabu AI answers from the card meanings and the knowledge in this app. For anything important, book a reading with Nabu.', aiFallback: 'AI is busy; this answer comes from the knowledge base.',
     aiSugCard: ['What does this card say about my love life?', 'Should I keep going?', 'When will this happen?'], aiSugLesson: ['How do Majors differ from Minors?', 'Who are the court cards?', 'What if I do not understand a card?'], aiSugSign: ['Which signs suit this sign?', 'How is this sign in love?', 'What does the Moon in this sign mean?'], aiSugNumbers: ['What does my life path say?', 'What kind of year is this for me?', 'What is my destiny number from my name?'], aiSugGeneral: ['What does The Fool mean?', 'Do Leo and Aquarius get along?', 'What is my life path?'],
-    aiCardGeneral: (n) => n + ' speaks about your general energy right now.', aiCardFocus: (n, f) => 'For a question about ' + f.toLowerCase() + ', ' + n + ' says:', aiCardWhy: 'The card carries this energy:', aiCardShadow: 'The shadow to watch:', aiYes: (n) => 'As a yes-or-no: ' + n + ' leans YES, but one card cannot decide it. For a clear answer, book a reading.', aiNo: (n) => 'As a yes-or-no: ' + n + ' leans NO, or not yet. One card cannot decide it; for a clear answer, book a reading.', aiMaybe: (n) => 'As a yes-or-no: ' + n + ' does not lean either way. The answer depends on what you do next.', aiTiming: 'On timing, one card only hints at a pace, never an exact date.', aiFound: 'Found in the course:', aiLessonNone: 'Nothing matched yet. Try a card name or a keyword from the lesson.', aiChem: (a, b) => a + ' and ' + b + ':', aiCompatYes: 'This is one of the pairs usually seen as a good match.', aiCompatWork: 'Not among the easiest pairs, but the Sun sign is one part; the full chart says much more.', aiAbout: (n) => 'About ' + n + ':', aiGeneralHelp: 'I can answer about a card, a zodiac sign, or your numbers. Try naming the card or sign in your question.',
+    aiCardGeneral: (n) => n + ' speaks about your general energy right now.', aiCardFocus: (n, f) => 'For a question about ' + f.toLowerCase() + ', ' + n + ' says:', aiCardWhy: 'The card carries this energy:', aiCardShadow: 'The shadow to watch:', aiYes: (n) => 'As a yes-or-no: ' + n + ' leans YES, but one card cannot decide it. For a clear answer, book a reading.', aiNo: (n) => 'As a yes-or-no: ' + n + ' leans NO, or not yet. One card cannot decide it; for a clear answer, book a reading.', aiMaybe: (n) => 'As a yes-or-no: ' + n + ' does not lean either way. The answer depends on what you do next.', aiTiming: 'On timing, one card only hints at a pace, never an exact date.', aiFound: 'Found in the course:', aiLessonNone: 'Nothing matched yet. Try a card name or a keyword from the lesson.', aiChem: (a, b) => a + ' and ' + b + ':', aiCompatYes: 'This is one of the pairs usually seen as a good match.', aiCompatWork: 'Not among the easiest pairs, but the Sun sign is one part; the full chart says much more.', aiAbout: (n) => 'About ' + n + ':', aiGeneralHelp: 'I do not have a ready answer for that. I answer best when the question names a card, a sign, a planet, a house, a zodiac animal or a number.', aiOfflineHint: 'For your own situation, book a reading with Nabu.', aiBooking: 'See the price list and pick a time under Book. Choose a package, a free slot on the calendar, then send it to Nabu.',
     strengths: 'Strengths', challenges: 'Watch out for', compat: 'Usually gets on with', moonSign: 'Moon in this sign', risingSign: 'Rising in this sign',
     numExpr: 'Expression number (from your name)', numSoul: 'Soul urge number', numPers: 'Personality number', numYear: 'Personal year', numBirthday: 'Birthday number', numName: 'Full name (as on your birth certificate)', numNameHint: 'Pythagorean table; Vietnamese tone marks dropped, Đ read as D.',
     fortuneIntro: 'Five old ways of reading, made visual. Tap to try one.', readMoreTitle: 'Read more', numIntro: 'Tap a number to see what it says. Your number is marked.', numTap: 'Tap a number above.', numYours: 'Your numbers', numCycle: 'Your 9-year cycle', numCycleHint: 'Each personal year is a step in a 9-year cycle. Year 1 plants, year 9 harvests and lets go.', numHow: 'How it is counted',
@@ -9219,6 +9231,28 @@ function cardsMentioned(q) {
   return out.slice(0, 3);
 }
 function signMentioned(q) { const f = fold(q); return ZKEYS.filter((k) => f.indexOf(fold(ZSIGN[k].vi)) > -1 || f.indexOf(fold(ZSIGN[k].en)) > -1); }
+function lenMentioned(q) { const f = fold(q), out = []; for (let i = 1; i <= 36; i++) { if (f.indexOf(fold(LEN.vi[i].name)) > -1 || f.indexOf(fold(LEN.en[i].name)) > -1) out.push(i); } return out.slice(0, 2); }
+function planetMentioned(q) { const f = fold(q); return PLANETS.filter((p) => f.indexOf(fold(p.name.vi)) > -1 || f.indexOf(fold(p.name.en)) > -1).slice(0, 2); }
+function houseMentioned(q) { const m = /(?:nha|house)\s*(\d{1,2})/.exec(fold(q)); const n = m ? Number(m[1]) : 0; return n >= 1 && n <= 12 ? n : 0; }
+function animalMentioned(q) { const f = fold(q); return ANIMALS.map((a, i) => (f.indexOf(fold(a.vi.split(' ')[0])) > -1 || f.indexOf(fold(a.en)) > -1) ? i : -1).filter((i) => i > -1).slice(0, 2); }
+function numberMentioned(q) { const m = /(?:so|number|duong doi|life path)\s*(\d{1,2})/.exec(fold(q)); const n = m ? Number(m[1]) : 0; return LIFEPATH[n] ? n : 0; }
+function topicHelp(q) {
+  const f = fold(q), S = T();
+  if (/tarot la gi|what is tarot|hoc tarot|learn tarot|bat dau/.test(f)) { const g = GUIDES.filter((x) => x.id === 'tarot-start')[0]; return L(g.intro) + ' ' + L(g.sections[0].p); }
+  if (/lenormand/.test(f)) { const g = GUIDES.filter((x) => x.id === 'len-vs-tarot')[0]; return L(g.intro) + ' ' + L(g.sections[0].p); }
+  if (/manifest|khang dinh|affirmation|369|scripting|kich ban/.test(f)) { const id = /369/.test(f) ? 'mani-369' : /script|kich ban/.test(f) ? 'mani-script' : /khang dinh|affirmation|biet on|gratitude/.test(f) ? 'mani-gratitude' : 'mani-what'; const g = GUIDES.filter((x) => x.id === id)[0]; return L(g.intro) + ' ' + L(g.sections[0].p); }
+  if (/la nguoc|reversed/.test(f)) { const g = GUIDES.filter((x) => x.id === 'tarot-reversed')[0]; return L(g.intro) + ' ' + L(g.sections[0].p); }
+  if (/hoang gia|court/.test(f)) { const g = GUIDES.filter((x) => x.id === 'tarot-court')[0]; return L(g.intro) + ' ' + L(g.sections[0].p); }
+  if (/mat trang|moon|trang non|trang tron|full moon|new moon/.test(f)) { const g = GUIDES.filter((x) => x.id === 'astro-moon')[0]; const mp = moonPhase(new Date()); return (lang === 'vi' ? 'Hôm nay là ' : 'Today is ') + MOON_NAMES[lang][mp.idx] + '. ' + L(g.intro); }
+  if (/nghich hanh|retrograde/.test(f)) { const g = GUIDES.filter((x) => x.id === 'astro-retro')[0]; return L(g.intro) + ' ' + L(g.sections[1].p); }
+  if (/cung moc|rising|ascendant|cung mat trang|moon sign|big three|ba cung/.test(f)) { const g = GUIDES.filter((x) => x.id === 'astro-big3')[0]; return L(g.intro) + ' ' + L(g.sections[2].p); }
+  if (/chi tay|palm/.test(f)) { const g = GUIDES.filter((x) => x.id === 'fort-palm')[0]; return L(g.intro); }
+  if (/la tra|tea/.test(f)) { const g = GUIDES.filter((x) => x.id === 'fort-tea')[0]; return L(g.intro); }
+  if (/con giap|zodiac animal|tu vi/.test(f)) { const g = GUIDES.filter((x) => x.id === 'fort-animals')[0]; return L(g.intro) + ' ' + L(g.sections[2].p); }
+  if (/than so|numerology|duong doi|life path/.test(f)) { const g = GUIDES.filter((x) => x.id === 'fort-numerology')[0]; return L(g.intro); }
+  if (/dat lich|book|gia|price|bao nhieu tien|how much/.test(f)) return S.aiBooking;
+  return '';
+}
 const SUIT_TIMING = {
   vi: { wands: 'Gậy đi nhanh: vài ngày đến vài tuần.', cups: 'Cốc đi theo cảm xúc: vài tuần, đôi khi một mùa.', swords: 'Kiếm đi rất nhanh, thường tính bằng ngày, nhưng hay đến bất ngờ.', pentacles: 'Tiền đi chậm: tính bằng tháng, có khi cả năm.', major: 'Ẩn Chính không tính theo lịch: chuyện xảy ra khi bài học đã đủ, không sớm hơn.' },
   en: { wands: 'Wands move fast: days to a few weeks.', cups: 'Cups move with feeling: weeks, sometimes a season.', swords: 'Swords move very fast, usually days, and often arrive unexpectedly.', pentacles: 'Pentacles are slow: months, sometimes a year.', major: 'A Major is not on the calendar: it happens when the lesson is complete, not before.' }
@@ -9301,11 +9335,30 @@ function localAnswer(q, ctx) {
     else if (d.cat) out.push(S.lifePathOf(n.lifePath) + ': ' + LIFEPATH[n.lifePath][lang], n.expression ? S.numExpr + ' ' + n.expression + ': ' + NUM[n.expression][lang].expr : '');
     else out.push(S.lifePathOf(n.lifePath) + ': ' + LIFEPATH[n.lifePath][lang], n.personalYear ? S.numYear + ' ' + n.personalYear + ': ' + PYEAR[n.personalYear][lang] : '');
   } else {
-    if (!mentioned.length && !signs.length) out.push(S.aiGeneralHelp);
+    const help = topicHelp(q);
+    if (help) out.push(help);
+  }
+  lenMentioned(q).forEach((n) => { const d = lenCard(n); out.push(S.aiAbout(d.name) + ' ' + (d.kw.pos || []).slice(0, 3).join(', ') + '. ' + (d.cat === 'love' && d.love ? d.love : d.core)); });
+  planetMentioned(q).forEach((p) => out.push(S.aiAbout(p.name[lang]) + ' ' + p[lang]));
+  { const h = houseMentioned(q); if (h) out.push(S.aiAbout((lang === 'vi' ? 'nhà ' : 'house ') + h) + ' ' + HOUSES[h - 1][lang][0] + '. ' + HOUSES[h - 1][lang][1]); }
+  animalMentioned(q).forEach((i) => out.push(S.aiAbout(ANIMALS[i][lang]) + ' ' + ANIMAL_INFO[lang][i][3]));
+  { const n = numberMentioned(q); if (n && ctx.type !== 'numbers') out.push(S.lifePathOf(n) + ': ' + LIFEPATH[n][lang]); }
+  if (ctx.type !== 'card' && ctx.type !== 'lesson' && ctx.type !== 'numbers' && !mentioned.length && !signs.length && !out.length) {
+    const hits = searchAll(q);
+    if (hits.length) { out.push(S.aiFound); hits.forEach((h) => out.push('• ' + h)); }
+    else out.push(S.aiGeneralHelp, S.aiOfflineHint);
   }
   mentioned.forEach((id) => { const c = cardById(id), I = insightOf(id); out.push(S.aiAbout(c.name) + ' ' + I.pos.slice(0, 3).join(', ') + '. ' + (d.cat && d.cat !== 'general' ? I[d.cat] : I.now)); });
   if (ctx.type !== 'sign') signs.slice(0, 2).forEach((k) => out.push(S.aiAbout(ZSIGN[k][lang]) + ' ' + (d.cat === 'love' ? ZODIAC[k][lang].love : d.cat === 'work' ? ZODIAC[k][lang].work : ZODIAC[k][lang].about)));
   return out.filter(Boolean).join('\n\n');
+}
+function searchAll(q) {
+  const words = fold(q).split(/[^a-z0-9]+/).filter((w) => w.length >= 3 && ['ban', 'nao', 'gi', 'la', 'the', 'what', 'does', 'mean', 'nghia', 'sao', 'thi', 'toi', 'minh', 'cua', 'nhu', 'co', 'khong', 'the', 'nao', 'and', 'for', 'with'].indexOf(w) < 0);
+  if (!words.length) return [];
+  const docs = [];
+  GUIDES.forEach((g) => g.sections.forEach((s) => docs.push([L(g.title) + ' › ' + L(s.h), L(s.p)])));
+  return docs.map((doc) => { const f = fold(doc[0] + ' ' + doc[1]); let sc = 0; words.forEach((w) => { if (f.indexOf(w) > -1) sc += (fold(doc[0]).indexOf(w) > -1 ? 3 : 1); }); return [sc, doc]; })
+    .filter((x) => x[0] > 1).sort((a, b) => b[0] - a[0]).slice(0, 2).map((x) => x[1][0] + ': ' + x[1][1]);
 }
 function searchCourse(q, course) {
   const words = fold(q).split(/[^a-z0-9]+/).filter((w) => w.length >= 3 && ['ban', 'nao', 'gi', 'la', 'the', 'what', 'does', 'mean', 'nghia', 'sao', 'thi', 'toi', 'minh'].indexOf(w) < 0);
@@ -9316,6 +9369,26 @@ function searchCourse(q, course) {
   else for (let i = 1; i <= 36; i++) { const d = lenCard(i); docs.push([i + '. ' + d.name, (d.kw.pos || []).join(', ') + '. ' + d.core]); }
   return docs.map((doc) => { const f = fold(doc[0] + ' ' + doc[1]); let sc = 0; words.forEach((w) => { if (f.indexOf(w) > -1) sc += (fold(doc[0]).indexOf(w) > -1 ? 3 : 1); }); return [sc, doc]; })
     .filter((x) => x[0] > 0).sort((a, b) => b[0] - a[0]).slice(0, 2).map((x) => x[1][0] + ': ' + x[1][1]);
+}
+
+/* ---- Gemini (browser-side, free tier, web grounding) ---- */
+function aiSystemPrompt() {
+  return lang === 'vi'
+    ? 'Bạn là Nabu AI, trợ lý của Nabu Tarot (một reader tarot người Việt). Trả lời bằng tiếng Việt đời thường, ấm áp, ngắn gọn: 4 đến 8 câu, câu ngắn, xưng "mình", gọi người dùng là "bạn". Ưu tiên KIẾN THỨC được cung cấp; nếu câu hỏi cần thông tin ngoài đó (ví dụ lịch sử, sự kiện, kiến thức chung về tarot, chiêm tinh, thần số học), hãy tìm kiếm và tổng hợp, rồi nói rõ phần nào là kiến thức chung. Không chẩn đoán bệnh, không tư vấn pháp lý hay đầu tư cụ thể, không hứa điều gì chắc chắn xảy ra. Chuyện riêng quan trọng, gợi ý đặt lịch xem bài với Nabu.'
+    : 'You are Nabu AI, the assistant of Nabu Tarot (a Vietnamese tarot reader). Answer in plain, warm English: 4 to 8 short sentences. Prefer the KNOWLEDGE provided; if the question needs outside facts (history, events, general tarot, astrology or numerology knowledge), search and summarise, and say which part is general knowledge. No medical diagnosis, no specific legal or investment advice, no promises. For important personal matters, suggest booking a reading with Nabu.';
+}
+async function geminiAnswer(q, ctx, history) {
+  const url = 'https://generativelanguage.googleapis.com/v1beta/models/' + encodeURIComponent(CONFIG.geminiModel || 'gemini-2.5-flash') + ':generateContent?key=' + encodeURIComponent(CONFIG.geminiKey);
+  const contents = history.slice(-6).map((h) => ({ role: h.role === 'user' ? 'user' : 'model', parts: [{ text: h.text }] }));
+  if (contents.length && contents[contents.length - 1].role === 'user') contents.pop();
+  contents.push({ role: 'user', parts: [{ text: 'KNOWLEDGE (' + ctx.type + '):\n' + contextText(ctx).slice(0, 12000) + '\n\nQUESTION: ' + q }] });
+  const r = await fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ system_instruction: { parts: [{ text: aiSystemPrompt() }] }, contents: contents, tools: [{ google_search: {} }], generationConfig: { temperature: 0.7, maxOutputTokens: 900 } }) });
+  if (!r.ok) throw new Error('Gemini ' + r.status);
+  const j = await r.json(), cand = (j.candidates || [])[0];
+  const text = ((cand && cand.content && cand.content.parts) || []).map((p) => p.text || '').join('').trim();
+  if (!text) throw new Error('Gemini empty');
+  const chunks = ((cand.groundingMetadata || {}).groundingChunks || []).map((c) => c.web).filter(Boolean).slice(0, 3);
+  return text + (chunks.length ? '\n\n' + (lang === 'vi' ? 'Tham khảo: ' : 'Sources: ') + chunks.map((c) => c.title || c.uri).join(' · ') : '');
 }
 
 /* ---- online engine ---- */
@@ -9338,7 +9411,7 @@ function aiSuggestions(ctx) {
 }
 function aiPanelHTML(ctx) {
   const S = T(), key = JSON.stringify(ctx), hist = AI.history[key] || [];
-  return '<div class="ai" data-ai=\'' + esc(key) + '\'><div class="ai-h"><span class="ai-logo">✦</span><b>Nabu AI</b><span class="faint">' + esc(CONFIG.aiEndpoint ? S.aiOnline : S.aiBuiltin) + '</span></div>'
+  return '<div class="ai" data-ai=\'' + esc(key) + '\'><div class="ai-h"><span class="ai-logo">✦</span><b>Nabu AI</b><span class="faint">' + esc(CONFIG.geminiKey || CONFIG.aiEndpoint ? S.aiOnline : S.aiBuiltin) + '</span></div>'
     + '<p class="hint">' + esc(ctx.type === 'lesson' ? S.aiIntroLesson : S.aiIntro) + '</p>'
     + '<div class="chips">' + aiSuggestions(ctx).map((s) => '<button class="chip" data-ai-sug>' + esc(s) + '</button>').join('') + '</div>'
     + '<div class="chat ai-chat">' + hist.map((m) => '<div class="msg ' + (m.role === 'user' ? 'me' : 'them') + '">' + esc(m.text).replace(/\n/g, '<br>') + '</div>').join('') + '</div>'
@@ -9354,7 +9427,7 @@ function bindAI(root) {
       AI.busy = true; ta.value = ''; push('user', q);
       const thinking = document.createElement('div'); thinking.className = 'msg them ai-wait'; thinking.textContent = '…'; chat.appendChild(thinking);
       let a;
-      try { a = CONFIG.aiEndpoint ? await remoteAnswer(q, ctx, AI.history[key]) : localAnswer(q, ctx); }
+      try { a = CONFIG.geminiKey ? await geminiAnswer(q, ctx, AI.history[key]) : CONFIG.aiEndpoint ? await remoteAnswer(q, ctx, AI.history[key]) : localAnswer(q, ctx); }
       catch (e) { a = localAnswer(q, ctx) + '\n\n(' + T().aiFallback + ')'; }
       thinking.remove(); push('assistant', a); AI.busy = false;
     };
@@ -9989,7 +10062,16 @@ function journeyHTML() {
   return '<div class="journey">' + stages.map((st, i) => {
     const ids = []; for (let k = st[1]; k <= st[2]; k++) ids.push('major-' + k);
     return '<div class="stage s' + i + '"><div class="stage-h"><span class="num">' + (i + 1) + '</span>' + esc(st[0]) + '</div><div class="vstrip">' + ids.map((id) => { const c = cardById(id); return '<button class="vt" data-open-card="' + id + '">' + faceSVG(c) + '<b>' + esc(c.badge + ' · ' + c.name) + '</b></button>'; }).join('') + '</div></div>';
-  }).join('') + '<p class="faint">' + esc(S.journeyHint) + '</p></div>';
+  }).join('') + '<p class="faint">' + esc(S.journeyHint) + '</p></div>' + minorsByElementHTML();
+}
+/* The 56 Minors in four element groups, Ace to King. */
+function minorsByElementHTML() {
+  const X = LEX[lang];
+  return '<div class="journey minors"><h3 style="margin:16px 0 8px">' + esc(lang === 'vi' ? '56 lá Ẩn Phụ · bốn nguyên tố' : 'The 56 Minor Arcana · four elements') + '</h3>' + SUIT_KEYS.map((s) => {
+    const ids = []; for (let i = 1; i <= 10; i++) ids.push(s + '-' + i); for (let i = 0; i < 4; i++) ids.push(s + '-c' + i);
+    const el = { wands: 'fire', cups: 'water', swords: 'air', pentacles: 'earth' }[s];
+    return '<div class="stage" style="border-color:' + EL_COLOR[el] + '"><div class="stage-h"><span class="num" style="background:' + EL_COLOR[el] + '">' + ZELEM[el].g + '</span>' + esc(X.suitNames[s]) + ' · ' + esc(X.elements[s]) + '</div><div class="vstrip">' + ids.map((id) => { const c = cardById(id); return '<button class="vt" data-open-card="' + id + '">' + faceSVG(c) + '<b>' + esc(c.name) + '</b></button>'; }).join('') + '</div></div>';
+  }).join('') + '</div>';
 }
 function suitsHTML(suits) {
   const S = T(), X = LEX[lang];
@@ -10817,7 +10899,7 @@ function adminCodes(p) {
 ROUTES.admin = { nav: '', render: renderAdmin };
 
 /* ============================ boot ============================ */
-window.APP_VERSION = 'v21';
+window.APP_VERSION = 'v22';
 window.NABU = { LESSONS: LESSONS, localAnswer: localAnswer, numerologyOf: numerologyOf, ZDEEP: ZDEEP, lunarToday: lunarToday, solarToLunar: solarToLunar, DECK: DECK, INSIGHT: INSIGHT, KW: KW, ASK: ASK, TOPICS: TOPICS, GUIDES: GUIDES, SERVICES: SERVICES, COURSES: COURSES, ACCESS: ACCESS, makeCode: makeCode, parseCode: parseCode, ZODIAC: ZODIAC, pick: pick, book: book,
   insightHTML: insightHTML, insightOf: insightOf, sunSignIndex: sunSignIndex, lifePath: lifePath, PROFILE: () => PROFILE, BE: BE };
 BE.init().catch(() => { /* backend unreachable: the app runs device-only */ });

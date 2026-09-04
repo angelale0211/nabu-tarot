@@ -107,9 +107,9 @@ async function go(hash, sel) { W().location.hash = hash; await sleep(30); return
     await waitFor(() => d.querySelector('#ctabs'), 4000);
     ok(N.ACCESS.has('tarot') && d.querySelectorAll('#ctabs button').length === 4 && d.querySelectorAll('.lsn').length === 8, 'valid code unlocks the course: 8 sessions listed first');
     await go('#/learn/lesson/tarot/1', '.journey');
-    ok(d.querySelectorAll('.journey .stage').length === 3 && d.querySelectorAll('.journey .vt').length === 22, 'session 1 draws the Fool\'s Journey as three stages of card faces');
+    ok(d.querySelectorAll('.journey .stage').length === 7 && d.querySelectorAll('.journey .vt').length === 78, 'session 1 draws the Fool journey (3 stages) and the 56 Minors in four element groups');
     ok(!!d.querySelector('.ai') && /Lá hoàng gia/.test(N.localAnswer('Lá hoàng gia là ai?', { type: 'lesson', course: 'tarot', n: 1 })), 'Nabu AI in the lesson finds course material');
-    { const tops = Array.from(d.querySelectorAll('.journey .stage:nth-child(2) .vt svg')).map((s) => Math.round(s.getBoundingClientRect().top)); ok(Math.max(...tops) - Math.min(...tops) <= 1, 'card faces in a strip sit on one line even when a name wraps (' + tops.join(',') + ')'); }
+    { const tops = Array.from(d.querySelectorAll('.journey:not(.minors) .stage:nth-child(2) .vt svg')).map((s) => Math.round(s.getBoundingClientRect().top)); ok(Math.max(...tops) - Math.min(...tops) <= 1, 'card faces in a strip sit on one line even when a name wraps (' + tops.join(',') + ')'); }
     await go('#/learn/lesson/tarot/5', '.wheel');
     ok(d.querySelectorAll('.wheel .w.on').length === 2 && d.querySelectorAll('.vstrip .vt').length === 20, 'session 5: element wheel and two suit strips');
     await go('#/learn/lesson/tarot/7', '.court');
