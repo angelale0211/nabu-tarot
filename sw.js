@@ -1,5 +1,5 @@
 /* Nabu Tarot -- offline cache. Bump CACHE on every release. */
-const CACHE = 'nabu-tarot-v10';
+const CACHE = 'nabu-tarot-v11';
 const SHELL = ['./', './index.html', './manifest.webmanifest', './icon-180.png', './icon-512.png', './icon-512-maskable.png', './posts.json', './schedule.json', './fb.json'];
 const LIVE = /\/(posts|schedule|fb)\.json$/;
 
@@ -20,6 +20,15 @@ self.addEventListener('fetch', (e) => {
       if (res && res.ok) { const copy = res.clone(); caches.open(CACHE).then((c) => c.put(key, copy)).catch(() => {}); }
       return res;
     }).catch(() => caches.match(key)));
+    return;
+  }
+  // The page itself is network-first: online visitors always get the newest
+  // release, the cached copy is only for offline use.
+  if (e.request.mode === 'navigate' || /\/(index\.html)?$/.test(url.pathname)) {
+    e.respondWith(fetch(e.request).then((res) => {
+      if (res && res.ok) { const copy = res.clone(); caches.open(CACHE).then((c) => c.put('./index.html', copy)).catch(() => {}); }
+      return res;
+    }).catch(() => caches.match('./index.html')));
     return;
   }
   e.respondWith(caches.match(e.request, { ignoreSearch: true }).then((hit) => hit || fetch(e.request).then((res) => {
