@@ -2,6 +2,9 @@
    Everything client-facing that is specific to Nabu Tarot lives here, so a
    change of handle, link or wording never touches the app code.
    After editing, run  python build.py  and push. */
+/* Small purple logo card used as the 'pick a card' icon in tiles and lists (needed before services.js). */
+const PICK_ICON = '<svg class="pickico" viewBox="0 0 100 172" aria-hidden="true"><rect x="3" y="3" width="94" height="166" rx="12" fill="#3D2A6E" stroke="#3B2A5E" stroke-width="4"/><rect x="14" y="14" width="72" height="144" rx="7" fill="none" stroke="#E5BE5E" stroke-width="2"/><path d="M58 58 A28 28 0 1 0 58 114 A22 22 0 1 1 58 58 Z" fill="#E5BE5E"/><circle cx="30" cy="36" r="4" fill="#E5BE5E"/><circle cx="32" cy="138" r="4" fill="#E5BE5E"/><circle cx="72" cy="132" r="4" fill="#E5BE5E"/></svg>';
+
 const CONFIG = {
   brand: 'Nabu Tarot',
   // Social handles. Leave a value empty ('') to hide that button.

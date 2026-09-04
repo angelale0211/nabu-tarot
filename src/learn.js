@@ -4,7 +4,7 @@
    #/learn/lenormand?tab=…                     the Lenormand course (paid)
    #/learn/card/<id>  #/learn/len/<n>  #/learn/spread/<id>  #/learn/guide/<id>
    #/learn/astro, #/learn/sign/<key>, #/learn/manifest, #/learn/fortune, #/learn/numbers  (free) */
-const CAT_ICONS = { tarot: '🃏', lenormand: '🗝️', astro: '🔮', manifest: '🌙', fortune: '🔢' };
+const CAT_ICONS = { tarot: PICK_ICON, lenormand: '🗝️', astro: '🔮', manifest: '🌙', fortune: '🔢' };
 const badgeHTML = (b) => '<span class="badge-src ' + b + '">' + esc(T().badges[b]) + '</span>';
 const backLink = (href, label) => '<p><a href="' + href + '">← ' + esc(label) + '</a></p>';
 const courseOf = (id) => COURSES.filter((c) => c.id === id)[0];

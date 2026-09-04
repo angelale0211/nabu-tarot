@@ -491,6 +491,9 @@ main{padding:22px 0 30px}
 .paywall .inc li{margin-bottom:4px}
 .paywall .price{font-family:var(--display);font-size:28px;margin:10px 0 14px}
 .paywall .price span{font-family:var(--body);font-size:14px;color:var(--fg-faint)}
+.pickico{width:22px;height:38px;vertical-align:middle;display:inline-block;filter:drop-shadow(0 2px 4px var(--shade))}
+.tile .ic .pickico{width:24px;height:41px}
+.svc .t .ic .pickico{width:20px;height:34px}
 .tile .lock{font-size:16px;vertical-align:middle}
 .course{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--rule-soft);font-size:14.5px}
 .codebox{font-family:Georgia,serif;font-size:22px;letter-spacing:.06em;background:var(--surface-2);border-radius:12px;padding:12px;text-align:center;margin:10px 0;user-select:all}
@@ -583,6 +586,9 @@ main{padding:22px 0 30px}
    Everything client-facing that is specific to Nabu Tarot lives here, so a
    change of handle, link or wording never touches the app code.
    After editing, run  python build.py  and push. */
+/* Small purple logo card used as the 'pick a card' icon in tiles and lists (needed before services.js). */
+const PICK_ICON = '<svg class="pickico" viewBox="0 0 100 172" aria-hidden="true"><rect x="3" y="3" width="94" height="166" rx="12" fill="#3D2A6E" stroke="#3B2A5E" stroke-width="4"/><rect x="14" y="14" width="72" height="144" rx="7" fill="none" stroke="#E5BE5E" stroke-width="2"/><path d="M58 58 A28 28 0 1 0 58 114 A22 22 0 1 1 58 58 Z" fill="#E5BE5E"/><circle cx="30" cy="36" r="4" fill="#E5BE5E"/><circle cx="32" cy="138" r="4" fill="#E5BE5E"/><circle cx="72" cy="132" r="4" fill="#E5BE5E"/></svg>';
+
 const CONFIG = {
   brand: 'Nabu Tarot',
   // Social handles. Leave a value empty ('') to hide that button.
@@ -649,7 +655,7 @@ const INTERESTS = [
    with needsTopic asks the client to choose one of the five preset topics.
    Edit here, then  python build.py  and push. */
 const SERVICES = [
-  { id: 'tarot', icon: '🃏', tone: 'blue', name: { vi: 'Tarot', en: 'Tarot' },
+  { id: 'tarot', icon: PICK_ICON, tone: 'blue', name: { vi: 'Tarot', en: 'Tarot' },
     tagline: { vi: 'Bạn hỏi được thì Tarot trả lời được.', en: 'If you can ask it, Tarot can answer it.' },
     packages: [
       { id: 'yn', name: { vi: '1 câu Yes/No', en: '1 yes/no question' }, price: 10000 },
@@ -8933,7 +8939,7 @@ function todayHTML() {
 
 /* ---- tour ---- */
 const TOUR = [
-  { ic: '🃏', vi: ['Rút bài', 'Chạm một lá để xem năng lượng của bạn hôm nay. Chọn chủ đề trước: tình cảm, công việc, học tập, tiền bạc.'], en: ['Pick a card', 'Tap one card to see your energy today. Choose a focus first: love, work, study, money.'] },
+  { ic: PICK_ICON, vi: ['Rút bài', 'Chạm một lá để xem năng lượng của bạn hôm nay. Chọn chủ đề trước: tình cảm, công việc, học tập, tiền bạc.'], en: ['Pick a card', 'Tap one card to see your energy today. Choose a focus first: love, work, study, money.'] },
   { ic: '✨', vi: ['Dự đoán', 'Bài mới của Nabu nằm ở trang chủ. Bài có ghi "dành cho bạn" là hợp với cung của bạn.'], en: ['Readings', 'Nabu\'s new posts live on the home screen. Posts marked "for you" match your sign.'] },
   { ic: '📚', vi: ['Học', 'Tarot, Lenormand, chiêm tinh, manifestation và bói toán. Bấm vào một lá hay một cung để đọc.'], en: ['Learn', 'Tarot, Lenormand, astrology, manifestation and fortune telling. Tap a card or a sign to read.'] },
   { ic: '📅', vi: ['Đặt lịch', 'Chọn chủ đề, chọn giờ trên lịch, gửi cho Nabu.'], en: ['Book', 'Choose a topic, pick a time on the calendar, send it to Nabu.'] },
@@ -9022,7 +9028,7 @@ function pickCtaHTML() {
 }
 function quickLinksHTML() {
   const S = T();
-  const tiles = [['#/pick', '🃏', S.nav.pick, lang === 'vi' ? 'năng lượng hôm nay' : 'your energy today'],
+  const tiles = [['#/pick', PICK_ICON, S.nav.pick, lang === 'vi' ? 'năng lượng hôm nay' : 'your energy today'],
     ['#/home?go=feed', '✨', S.feedTitle, lang === 'vi' ? 'bài mới của Nabu' : 'new posts from Nabu'],
     ['#/learn/astro', '🔮', S.cats.astro, lang === 'vi' ? '12 cung, hành tinh, nhà' : '12 signs, planets, houses'],
     ['#/learn/tarot', '📚', S.cats.tarot, lang === 'vi' ? '78 lá, ý nghĩa' : '78 cards, meanings'],
@@ -9084,8 +9090,8 @@ function insightHTML(id, focus) {
     + '<p>' + esc(S.energyLine(I.pos.slice(0, 3).join(', '))) + '</p><p>' + esc(I.now) + '</p>'
     + '<p class="scene">' + esc(c.scene) + '</p></div>';
   h += '<div class="ins"><h3>' + esc(S.shadow) + '</h3><p>' + esc(S.shadowLine(I.neg.slice(0, 3).join(', '))) + '</p><p>' + esc(c.rev) + '</p></div>';
-  h += '<div class="ins"><h3>' + esc(S.focusHead(S.focus[focus])) + '</h3><p>' + esc(focusText) + '</p>'
-    + (focus !== 'general' ? '<p class="muted">' + esc(I.advice) + '</p>' : '') + '</div>';
+  if (focus === 'general') h = h.replace('<p class="scene">', '<p>' + esc(I.advice) + '</p><p class="scene">');
+  else h += '<div class="ins"><h3>' + esc(S.focusHead(S.focus[focus])) + '</h3><p>' + esc(focusText) + '</p><p class="muted">' + esc(I.advice) + '</p></div>';
   return h;
 }
 function renderPick() {
@@ -9139,7 +9145,7 @@ ROUTES.pick = { nav: 'pick', render: renderPick };
    #/learn/lenormand?tab=…                     the Lenormand course (paid)
    #/learn/card/<id>  #/learn/len/<n>  #/learn/spread/<id>  #/learn/guide/<id>
    #/learn/astro, #/learn/sign/<key>, #/learn/manifest, #/learn/fortune, #/learn/numbers  (free) */
-const CAT_ICONS = { tarot: '🃏', lenormand: '🗝️', astro: '🔮', manifest: '🌙', fortune: '🔢' };
+const CAT_ICONS = { tarot: PICK_ICON, lenormand: '🗝️', astro: '🔮', manifest: '🌙', fortune: '🔢' };
 const badgeHTML = (b) => '<span class="badge-src ' + b + '">' + esc(T().badges[b]) + '</span>';
 const backLink = (href, label) => '<p><a href="' + href + '">← ' + esc(label) + '</a></p>';
 const courseOf = (id) => COURSES.filter((c) => c.id === id)[0];
@@ -9643,7 +9649,7 @@ function renderPrices() {
   const S = T(), m = $('#main');
   m.innerHTML = '<div class="eyebrow">' + esc(CONFIG.brand) + '</div><h1 style="margin-bottom:6px">' + esc(S.priceTitle) + '</h1><p class="muted">' + esc(S.priceIntro) + '</p>'
     + priceSheetHTML(false) + '<a class="btn primary block" href="#/book">' + esc(S.ctaBook) + '</a>'
-    + '<h2 style="margin:24px 0 10px">' + esc(S.courses) + '</h2>' + COURSES.map((c) => '<div class="svc lav"><div class="t"><span class="ic">' + (c.id === 'tarot' ? '🃏' : '🗝️') + '</span><div><b>' + esc(L(c.name)) + '</b><div class="tag">' + esc(L(c.blurb)) + '</div></div></div>'
+    + '<h2 style="margin:24px 0 10px">' + esc(S.courses) + '</h2>' + COURSES.map((c) => '<div class="svc lav"><div class="t"><span class="ic">' + (c.id === 'tarot' ? PICK_ICON : '🗝️') + '</span><div><b>' + esc(L(c.name)) + '</b><div class="tag">' + esc(L(c.blurb)) + '</div></div></div>'
       + '<div class="pk"><div class="pkg"><span>' + c.months + ' ' + esc(S.months6) + '</span><b>' + fmtPrice(c.price) + '</b></div></div><a class="btn sm block" href="#/learn/' + c.id + '" style="margin-top:8px">' + esc(S.cats[c.id]) + ' →</a></div>').join('');
 }
 
@@ -10082,7 +10088,7 @@ function adminCodes(p) {
 ROUTES.admin = { nav: '', render: renderAdmin };
 
 /* ============================ boot ============================ */
-window.APP_VERSION = 'v15';
+window.APP_VERSION = 'v16';
 window.NABU = { LESSONS: LESSONS, lunarToday: lunarToday, solarToLunar: solarToLunar, DECK: DECK, INSIGHT: INSIGHT, KW: KW, ASK: ASK, TOPICS: TOPICS, GUIDES: GUIDES, SERVICES: SERVICES, COURSES: COURSES, ACCESS: ACCESS, makeCode: makeCode, parseCode: parseCode, ZODIAC: ZODIAC, pick: pick, book: book,
   insightHTML: insightHTML, insightOf: insightOf, sunSignIndex: sunSignIndex, lifePath: lifePath, PROFILE: () => PROFILE, BE: BE };
 BE.init().catch(() => { /* backend unreachable: the app runs device-only */ });

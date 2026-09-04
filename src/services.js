@@ -3,7 +3,7 @@
    with needsTopic asks the client to choose one of the five preset topics.
    Edit here, then  python build.py  and push. */
 const SERVICES = [
-  { id: 'tarot', icon: '🃏', tone: 'blue', name: { vi: 'Tarot', en: 'Tarot' },
+  { id: 'tarot', icon: PICK_ICON, tone: 'blue', name: { vi: 'Tarot', en: 'Tarot' },
     tagline: { vi: 'Bạn hỏi được thì Tarot trả lời được.', en: 'If you can ask it, Tarot can answer it.' },
     packages: [
       { id: 'yn', name: { vi: '1 câu Yes/No', en: '1 yes/no question' }, price: 10000 },

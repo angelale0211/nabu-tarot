@@ -1,5 +1,5 @@
 /* Nabu Tarot -- offline cache. Bump CACHE on every release. */
-const CACHE = 'nabu-tarot-v15';
+const CACHE = 'nabu-tarot-v16';
 const SHELL = ['./', './index.html', './manifest.webmanifest', './icon-180.png', './icon-512.png', './icon-512-maskable.png', './posts.json', './schedule.json', './fb.json'];
 const LIVE = /\/(posts|schedule|fb)\.json$/;
 

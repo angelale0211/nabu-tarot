@@ -37,7 +37,7 @@ function todayHTML() {
 
 /* ---- tour ---- */
 const TOUR = [
-  { ic: '🃏', vi: ['Rút bài', 'Chạm một lá để xem năng lượng của bạn hôm nay. Chọn chủ đề trước: tình cảm, công việc, học tập, tiền bạc.'], en: ['Pick a card', 'Tap one card to see your energy today. Choose a focus first: love, work, study, money.'] },
+  { ic: PICK_ICON, vi: ['Rút bài', 'Chạm một lá để xem năng lượng của bạn hôm nay. Chọn chủ đề trước: tình cảm, công việc, học tập, tiền bạc.'], en: ['Pick a card', 'Tap one card to see your energy today. Choose a focus first: love, work, study, money.'] },
   { ic: '✨', vi: ['Dự đoán', 'Bài mới của Nabu nằm ở trang chủ. Bài có ghi "dành cho bạn" là hợp với cung của bạn.'], en: ['Readings', 'Nabu\'s new posts live on the home screen. Posts marked "for you" match your sign.'] },
   { ic: '📚', vi: ['Học', 'Tarot, Lenormand, chiêm tinh, manifestation và bói toán. Bấm vào một lá hay một cung để đọc.'], en: ['Learn', 'Tarot, Lenormand, astrology, manifestation and fortune telling. Tap a card or a sign to read.'] },
   { ic: '📅', vi: ['Đặt lịch', 'Chọn chủ đề, chọn giờ trên lịch, gửi cho Nabu.'], en: ['Book', 'Choose a topic, pick a time on the calendar, send it to Nabu.'] },
@@ -126,7 +126,7 @@ function pickCtaHTML() {
 }
 function quickLinksHTML() {
   const S = T();
-  const tiles = [['#/pick', '🃏', S.nav.pick, lang === 'vi' ? 'năng lượng hôm nay' : 'your energy today'],
+  const tiles = [['#/pick', PICK_ICON, S.nav.pick, lang === 'vi' ? 'năng lượng hôm nay' : 'your energy today'],
     ['#/home?go=feed', '✨', S.feedTitle, lang === 'vi' ? 'bài mới của Nabu' : 'new posts from Nabu'],
     ['#/learn/astro', '🔮', S.cats.astro, lang === 'vi' ? '12 cung, hành tinh, nhà' : '12 signs, planets, houses'],
     ['#/learn/tarot', '📚', S.cats.tarot, lang === 'vi' ? '78 lá, ý nghĩa' : '78 cards, meanings'],

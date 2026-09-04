@@ -12,8 +12,8 @@ function insightHTML(id, focus) {
     + '<p>' + esc(S.energyLine(I.pos.slice(0, 3).join(', '))) + '</p><p>' + esc(I.now) + '</p>'
     + '<p class="scene">' + esc(c.scene) + '</p></div>';
   h += '<div class="ins"><h3>' + esc(S.shadow) + '</h3><p>' + esc(S.shadowLine(I.neg.slice(0, 3).join(', '))) + '</p><p>' + esc(c.rev) + '</p></div>';
-  h += '<div class="ins"><h3>' + esc(S.focusHead(S.focus[focus])) + '</h3><p>' + esc(focusText) + '</p>'
-    + (focus !== 'general' ? '<p class="muted">' + esc(I.advice) + '</p>' : '') + '</div>';
+  if (focus === 'general') h = h.replace('<p class="scene">', '<p>' + esc(I.advice) + '</p><p class="scene">');
+  else h += '<div class="ins"><h3>' + esc(S.focusHead(S.focus[focus])) + '</h3><p>' + esc(focusText) + '</p><p class="muted">' + esc(I.advice) + '</p></div>';
   return h;
 }
 function renderPick() {
