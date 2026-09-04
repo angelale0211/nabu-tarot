@@ -427,11 +427,18 @@ main{padding:22px 0 30px}
 .paynote{background:var(--tag-gold-bg);color:var(--tag-gold-ink);border-radius:12px;padding:10px 14px;font-size:14px;font-weight:600;text-align:center}
 
 /* ---- demo lessons ---- */
-.demo-head{margin-bottom:12px}
-.demo-head .chip{margin-bottom:8px}
-.lesson>button{background:var(--lav-soft);font-family:var(--display);font-weight:500;font-size:17px}
-.lesson .in{padding-top:12px}
-.lesson .in .detail .hero{margin-top:4px}
+.demo-head{margin:6px 0 20px;padding:14px 16px;background:var(--surface);border:1px solid var(--rule-soft);border-radius:16px}
+.demo-head .chip{display:inline-block;margin-bottom:10px}
+.demo-head p{margin:0}
+.lesson{margin-bottom:18px}
+.lesson>button{background:var(--lav-soft);font-family:var(--display);font-weight:500;font-size:17px;padding:16px 18px}
+.lesson .in{padding:18px 16px 20px}
+.lesson .in .guide .lead{margin-top:0}
+.lesson .in .visual{margin:18px 0}
+.lesson .in .detail .hero{margin:4px 0 18px}
+.lesson .in .ai{margin-top:18px}
+#unlockwrap{margin-top:28px!important}
+#unlockwrap .paywall{margin-top:0}
 
 /* ---- footer ---- */
 .foot{border-top:1px solid var(--rule-soft);padding:22px 0 26px;color:var(--fg-soft);font-size:13px}
@@ -533,6 +540,45 @@ main{padding:22px 0 30px}
 .tsym.big{padding:14px}.tsym.big .ic{font-size:44px}.tsym.big b{font-size:16px}.tsym.big span{font-size:13px}
 .awrapper{text-align:center}.awheel{width:min(320px,86vw);height:auto;display:block;margin:0 auto}
 @media (max-width:380px){.pcresult{grid-template-columns:52px 16px 80px 1fr}.ringwrap{grid-template-columns:120px 1fr}.ring{width:120px;height:120px}}
+
+/* ---- guide visuals ---- */
+.gsec{display:flex;gap:12px;background:var(--surface);border:1px solid var(--rule-soft);border-radius:16px;padding:14px;margin-bottom:10px}
+.gsec .n{flex:none;width:28px;height:28px;border-radius:50%;background:var(--lav-soft);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px}
+.gsec h2{font-size:17px;margin:2px 0 6px}.gsec p{margin:0;font-size:15px}
+.zring{width:min(300px,84vw);height:auto;display:block;margin:0 auto}
+.ellegend{display:flex;justify-content:center;gap:12px;font-size:12px;color:var(--fg-soft);margin-top:6px}
+.ellegend i{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:4px;vertical-align:middle}
+.orbit{width:100%;height:auto;display:block}
+.aspect{display:grid;grid-template-columns:72px 1fr;gap:12px;align-items:center;background:var(--surface);border:1px solid var(--rule-soft);border-radius:14px;padding:10px;margin-bottom:8px}
+.asp{width:72px;height:72px}.aspect p{margin:2px 0 0;font-size:14px}
+.stepsv{display:flex;flex-wrap:wrap;align-items:center;gap:6px}
+.stp{background:var(--surface);border:1px solid var(--rule-soft);border-radius:12px;padding:8px 10px;display:flex;align-items:center;gap:8px;font-size:13px}
+.stp .n{width:22px;height:22px;border-radius:50%;background:var(--primary);color:var(--primary-ink);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex:none}
+.stepsv .arr{color:var(--fg-faint)}
+.cmp{display:flex;justify-content:center;gap:18px;text-align:center}
+.cmp b{display:block;margin-top:6px}.cmp span:last-child{font-size:12px;color:var(--fg-faint)}
+.face.flipped svg{transform:rotate(180deg)}
+.big3{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.disc{background:var(--surface);border:1px solid var(--rule-soft);border-radius:14px;padding:12px 6px;text-align:center}
+.disc .g{display:block;font-size:30px;color:var(--link)}.disc b{display:block;font-size:14px}.disc span:last-child{font-size:11px;color:var(--fg-faint)}
+.elgrid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.elc{border:2px solid;border-radius:14px;padding:10px;background:var(--surface)}
+.elc b{display:block;margin-bottom:4px}.elc a{display:block;font-size:13px;text-decoration:none;color:var(--fg);padding:2px 0}
+.phases{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}
+.ph{background:var(--surface);border:1px solid var(--rule-soft);border-radius:12px;padding:8px 4px;text-align:center;font-size:10.5px;color:var(--fg-faint)}
+.ph .ic{display:block;font-size:26px}.ph.on{border-color:var(--primary);box-shadow:0 0 0 1px var(--primary) inset;color:var(--fg)}
+.script .paper{background:#FFFDF5;color:#3B2A5E;border:1px solid #E8DFC4;border-radius:6px;padding:16px 18px;font-family:Georgia,serif;box-shadow:0 4px 12px var(--shade);max-width:340px;margin:0 auto}
+.script .paper p{margin:0 0 8px;border-bottom:1px dashed #D9CFB0;padding-bottom:4px}
+.t369{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.t3{background:var(--surface);border:1px solid var(--rule-soft);border-radius:14px;padding:12px 6px;text-align:center}
+.t3 b{display:block}.t3 .cnt{display:block;font-size:20px;font-family:var(--display)}.t3 .dots{display:block;font-size:11px;letter-spacing:1px;color:var(--primary)}
+.grat{background:var(--surface);border:1px solid var(--rule-soft);border-radius:16px;padding:14px}
+.grat b{display:block;margin-bottom:8px}.grat input{margin-bottom:8px}
+.chk2{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.chk2 .col{border-radius:14px;padding:10px;font-size:12.5px;background:var(--surface)}
+.chk2 .bad{border:1.5px solid var(--tag-pink-bg)}.chk2 .good{border:1.5px solid var(--tag-green-bg)}
+.chk2 b{display:block;margin-bottom:6px}.chk2 label{display:block;margin-bottom:4px}
+@media (max-width:380px){.chk2{grid-template-columns:1fr}.cmp{gap:10px}}
 
 /* ---- paywall ---- */
 .paywall{background:var(--surface);border:1.5px solid var(--lav);border-radius:20px;padding:22px 18px;text-align:center}
@@ -815,7 +861,7 @@ const STR = {
     signCard: 'Lá tarot của cung bạn',
     lifePath: 'Số đường đời',
     readSign: 'Đọc về cung của bạn',
-    forInterests: 'Theo điều bạn quan tâm',
+    forInterests: 'Có thể bạn quan tâm',
 
     pickToday: 'Rút một lá bài hôm nay',
     pickTitle: 'Năng lượng hiện tại của bạn',
@@ -1040,7 +1086,7 @@ const STR = {
     signCard: 'The tarot card of your sign',
     lifePath: 'Life path number',
     readSign: 'Read about your sign',
-    forInterests: 'Based on your interests',
+    forInterests: 'You may also like',
 
     pickToday: 'Pick a card today',
     pickTitle: 'Your energy right now',
@@ -9770,16 +9816,20 @@ function renderAstro() {
   const panel = $('#apanel');
   const show = (t) => {
     if (t === 'signs') {
-      panel.innerHTML = '<div class="signlist">' + ZKEYS.map((k, i) => { const z = ZSIGN[k]; return '<button data-sign="' + k + '" class="' + (i === me ? 'me' : '') + '"><span class="g">' + z.g + '</span><b>' + esc(z[lang]) + '</b><span>' + esc(lang === 'vi' ? z.dvi : z.den) + '</span></button>'; }).join('') + '</div>';
-      $$('[data-sign]', panel).forEach((b) => b.addEventListener('click', () => { location.hash = '#/learn/sign/' + b.getAttribute('data-sign'); }));
+      panel.innerHTML = '<div class="visual">' + zodiacRingSVG(me > -1 ? ZKEYS[me] : null) + '<div class="ellegend">' + ['fire', 'earth', 'air', 'water'].map((el) => '<span><i style="background:' + EL_COLOR[el] + '"></i>' + esc(ZELEM[el][lang]) + '</span>').join('') + '</div></div>'
+        + '<div class="signlist">' + ZKEYS.map((k, i) => { const z = ZSIGN[k]; return '<button data-sign="' + k + '" class="' + (i === me ? 'me' : '') + '"><span class="g" style="color:' + EL_COLOR[z.el] + '">' + z.g + '</span><b>' + esc(z[lang]) + '</b><span>' + esc(lang === 'vi' ? z.dvi : z.den) + '</span></button>'; }).join('') + '</div>';
+      $$('[data-sign],[data-zsign]', panel).forEach((b) => b.addEventListener('click', () => { location.hash = '#/learn/sign/' + (b.getAttribute('data-sign') || b.getAttribute('data-zsign')); }));
     } else if (t === 'planets') {
-      panel.innerHTML = PLANETS.map((p) => '<div class="acc"><button><span>' + p.g + ' ' + esc(p.name[lang]) + ' <span class="faint">· ' + esc(lang === 'vi' ? 'chủ cung ' : 'rules ') + esc(ZSIGN[p.rules][lang]) + '</span></span></button><div class="in"><p>' + esc(p[lang]) + '</p></div></div>').join('');
-      bindAccordions(panel);
+      const showPlanet = (id) => { const p = PLANETS.filter((x) => x.id === id)[0]; $('#porbit', panel).innerHTML = planetOrbitSVG(id); $('#pout', panel).innerHTML = '<div class="nrow"><span class="ic">' + p.g + '</span><div><b>' + esc(p.name[lang]) + ' · ' + esc(lang === 'vi' ? 'chủ cung ' : 'rules ') + ZSIGN[p.rules].g + ' ' + esc(ZSIGN[p.rules][lang]) + '</b><p>' + esc(p[lang]) + '</p></div></div>'; $$('[data-pl]', panel).forEach((b) => b.classList.toggle('on', b.getAttribute('data-pl') === id)); };
+      panel.innerHTML = '<div class="visual"><div id="porbit"></div><div class="chips">' + PLANETS.map((p) => '<button class="chip" data-pl="' + p.id + '">' + p.g + ' ' + esc(p.name[lang]) + '</button>').join('') + '</div></div><div class="ins" id="pout"></div>';
+      $$('[data-pl]', panel).forEach((b) => b.addEventListener('click', () => showPlanet(b.getAttribute('data-pl'))));
+      showPlanet('sun');
     } else if (t === 'houses') {
-      panel.innerHTML = HOUSES.map((h) => '<div class="acc"><button><span>' + h.n + '. ' + esc(h[lang][0]) + '</span></button><div class="in"><p>' + esc(h[lang][1]) + '</p></div></div>').join('');
-      bindAccordions(panel);
+      const showHouse = (n) => { const h = HOUSES[n - 1]; $('#hwheel', panel).innerHTML = houseWheelSVG(n); $('#hout', panel).innerHTML = '<div class="nrow"><span class="ic" style="font-family:var(--display);font-size:30px">' + n + '</span><div><b>' + esc(h[lang][0]) + '</b><p>' + esc(h[lang][1]) + '</p></div></div>'; $$('[data-house]', panel).forEach((p) => p.addEventListener('click', () => showHouse(Number(p.getAttribute('data-house'))))); };
+      panel.innerHTML = '<div class="visual awrapper"><div id="hwheel"></div><p class="faint">' + esc(lang === 'vi' ? 'Chạm vào một nhà trên bánh xe. Nhà 1 bắt đầu ở bên trái, chỗ cung Mọc.' : 'Tap a house on the wheel. House 1 starts on the left, at the Ascendant.') + '</p></div><div class="ins" id="hout"></div>';
+      showHouse(1);
     } else if (t === 'aspects') {
-      panel.innerHTML = '<table class="tbl">' + ASPECTS.map((a) => '<tr><td>' + a.g + ' ' + esc(a.name[lang]) + '<br><span class="faint">' + a.deg + '</span></td><td>' + esc(a[lang]) + '</td></tr>').join('') + '</table>';
+      panel.innerHTML = ASPECTS.map((a) => '<div class="aspect">' + aspectSVG(parseInt(a.deg, 10)) + '<div><b>' + a.g + ' ' + esc(a.name[lang]) + ' · ' + a.deg + '</b><p>' + esc(a[lang]) + '</p></div></div>').join('');
     } else {
       panel.innerHTML = GUIDES.filter((g) => g.cat === 'astro').map((g) => guideRow(g)).join('');
     }
@@ -9793,16 +9843,17 @@ function renderSign(key) {
   const zp = ZODIAC[key][lang], ruler = ZPLANET[ZRULER[key]];
   const cards = Object.keys(ASTRO).filter((id) => ASTRO[id].sign === key);
   m.innerHTML = backLink('#/learn/astro', S.cats.astro) + '<div class="detail">'
-    + '<div class="hero" style="grid-template-columns:72px 1fr"><div class="glyph" style="width:72px;height:72px;border-radius:50%;background:var(--surface);display:flex;align-items:center;justify-content:center;font-size:40px;color:var(--link)">' + z.g + '</div>'
+    + '<div class="hero" style="grid-template-columns:72px 1fr"><div class="glyph" style="width:72px;height:72px;border-radius:50%;background:' + EL_COLOR[z.el] + ';display:flex;align-items:center;justify-content:center;font-size:40px;color:#fff">' + z.g + '</div>'
     + '<div><div class="name">' + esc(z[lang]) + '</div><div class="en">' + esc(lang === 'vi' ? z.en : z.vi) + '</div><div class="meta"><i>' + esc(lang === 'vi' ? z.dvi : z.den) + '</i></div></div></div>'
     + '<div class="row" style="margin-bottom:12px"><span class="chip tag">' + esc(S.element) + ': ' + ZELEM[z.el].g + ' ' + esc(ZELEM[z.el][lang]) + '</span><span class="chip tag">' + esc(S.mode) + ': ' + esc(ZMODE[z.mod][lang]) + '</span><span class="chip tag">' + esc(S.ruler) + ': ' + ruler.g + ' ' + esc(ruler[lang]) + '</span></div>'
     + '<div class="kwl">' + zp.kw.map((k) => '<span>' + esc(k) + '</span>').join('') + '</div>'
     + '<div class="ins"><h3>' + esc(S.signAbout) + '</h3><p>' + esc(zp.about) + '</p><h3>' + esc(S.signLove) + '</h3><p>' + esc(zp.love) + '</p><h3>' + esc(S.signWork) + '</h3><p>' + esc(zp.work) + '</p><h3>' + esc(S.signTip) + '</h3><p>' + esc(zp.tip) + '</p></div>'
-    + '<div class="ins"><h3>' + esc(S.strengths) + '</h3><div class="kwl">' + ZDEEP[key][lang].strengths.map((k) => '<span>' + esc(k) + '</span>').join('') + '</div><h3>' + esc(S.challenges) + '</h3><div class="kwl neg">' + ZDEEP[key][lang].challenges.map((k) => '<span>' + esc(k) + '</span>').join('') + '</div><h3>' + esc(S.compat) + '</h3><div class="chips">' + ZDEEP[key].compat.map((k) => '<a class="chip lav" href="#/learn/sign/' + k + '">' + ZSIGN[k].g + ' ' + esc(ZSIGN[k][lang]) + '</a>').join('') + '</div></div>'
+    + '<div class="ins"><h3>' + esc(S.strengths) + '</h3><div class="kwl">' + ZDEEP[key][lang].strengths.map((k) => '<span>' + esc(k) + '</span>').join('') + '</div><h3>' + esc(S.challenges) + '</h3><div class="kwl neg">' + ZDEEP[key][lang].challenges.map((k) => '<span>' + esc(k) + '</span>').join('') + '</div><h3>' + esc(S.compat) + '</h3><div class="awrapper">' + zodiacRingSVG(key, ZDEEP[key].compat) + '</div><div class="chips">' + ZDEEP[key].compat.map((k) => '<a class="chip lav" href="#/learn/sign/' + k + '">' + ZSIGN[k].g + ' ' + esc(ZSIGN[k][lang]) + '</a>').join('') + '</div></div>'
     + '<div class="ins"><h3>' + esc(S.moonSign) + '</h3><p>' + esc(ZDEEP[key][lang].moon) + '</p><h3>' + esc(S.risingSign) + '</h3><p>' + esc(ZDEEP[key][lang].rising) + '</p></div>'
     + '<div class="ins"><h3>' + esc(S.signCards) + '</h3><div class="mini">' + cards.map((id) => miniHTML(id, true)).join('') + '</div><p class="faint">' + cards.map((id) => cardById(id).name + ': ' + astroLine(id)).map(esc).join('<br>') + '</p></div>'
     + aiPanelHTML({ type: 'sign', key: key }) + '</div>';
   bindCardLinks(m); bindAI(m);
+  $$('[data-zsign]', m).forEach((b) => b.addEventListener('click', () => { location.hash = '#/learn/sign/' + b.getAttribute('data-zsign'); }));
 }
 
 /* ---- spreads (inside each course) ---- */
@@ -9852,7 +9903,11 @@ function renderGuide(id) {
   if (!g) { location.hash = '#/learn'; return; }
   const back = g.cat === 'tarot' || g.cat === 'lenormand' ? '#/learn/' + g.cat + '?tab=guides' : g.cat === 'astro' ? '#/learn/astro' : '#/learn/' + g.cat;
   if ((g.cat === 'tarot' || g.cat === 'lenormand') && g.id !== DEMO[g.cat].guide && gate(g.cat, back)) return;
-  m.innerHTML = backLink(back, S.cats[g.cat]) + '<div class="guide"><h1 style="margin:8px 0">' + esc(L(g.title)) + '</h1>' + guideBodyHTML(g) + '</div>';
+  const vis = guideVisualHTML(g.id);
+  m.innerHTML = backLink(back, S.cats[g.cat]) + '<div class="guide"><h1 style="margin:8px 0">' + esc(L(g.title)) + '</h1><p class="lead">' + esc(L(g.intro)) + '</p>'
+    + (vis ? '<div class="visual">' + vis + '</div>' : '')
+    + g.sections.map((s, i) => '<div class="gsec"><span class="n">' + (i + 1) + '</span><div><h2>' + esc(L(s.h)) + '</h2><p>' + esc(L(s.p)) + '</p></div></div>').join('') + '</div>';
+  bindGuideVisual(m);
 }
 function guideBodyHTML(g) {
   return '<p class="lead">' + esc(L(g.intro)) + '</p>' + g.sections.map((s) => '<h2>' + esc(L(s.h)) + '</h2><p>' + esc(L(s.p)) + '</p>').join('');
@@ -9978,7 +10033,7 @@ function renderLesson(courseId, n) {
   if (!l) { location.hash = '#/learn/' + courseId; return; }
   if (!(n === '1' || n === 1) && gate(courseId, '#/learn/' + courseId)) return;
   let body = l.intro ? '<p class="lead">' + esc(L(l.intro)) + '</p>' : '';
-  if (l.guide) { const g = GUIDES.filter((x) => x.id === l.guide)[0]; body += '<div class="guide">' + guideBodyHTML(g) + '</div>'; }
+  if (l.guide) { const g = GUIDES.filter((x) => x.id === l.guide)[0]; body += '<div class="guide">' + guideBodyHTML(g) + '</div>'; if (l.visual === 'court' || l.visual === 'journey' || l.visual === 'lenintro' || l.visual === 'pairs') { /* the lesson draws its own */ } else { const gv = guideVisualHTML(g.id); if (gv) body += '<div class="visual">' + gv + '</div>'; } }
   if (l.extra) { const g = GUIDES.filter((x) => x.id === l.extra[0])[0], sct = g.sections[l.extra[1]]; body += '<div class="guide"><h2>' + esc(L(sct.h)) + '</h2><p>' + esc(L(sct.p)) + '</p></div>'; }
   let vis = '';
   if (l.visual === 'journey') vis = journeyHTML();
@@ -10167,6 +10222,80 @@ function renderAnimals(m, head) {
   m.innerHTML = head + '<p class="muted">' + esc(S.animalIntro) + '</p><div class="awrapper"><div id="awrap"></div></div><div class="ins" id="aout"></div><p class="hint">' + esc(S.animalNote) + '</p>'
     + '<div class="acc"><button><span>' + esc(S.readMoreTitle) + '</span></button><div class="in">' + guideBodyHTML(GUIDES.filter((g) => g.id === 'fort-animals')[0]) + '</div></div>';
   draw(mine > -1 ? mine : 4); bindAccordions(m);
+}
+
+/* ============================ visuals for guides and astrology ============================
+   Every guide gets a picture or a small interactive block at the top, and the
+   astrology tab gets wheels instead of lists. All drawn from the app's own data. */
+const GUIDE_VISUAL = { 'tarot-start': 'steps', 'tarot-reversed': 'reversed', 'tarot-court': 'court', 'tarot-overview': 'journey', 'len-vs-tarot': 'lenvstarot', 'len-pairs': 'pairs',
+  'astro-big3': 'big3', 'astro-elements': 'elements', 'astro-moon': 'moonphases', 'astro-retro': 'retro',
+  'mani-what': 'steps', 'mani-script': 'script', 'mani-369': 'tracker369', 'mani-gratitude': 'gratitude', 'mani-limits': 'checklist',
+  'fort-numerology': 'numwheel', 'fort-palm': 'hand', 'fort-playing': 'pcmap', 'fort-animals': 'animals', 'fort-tea': 'cup', 'fort-oracle': 'oracle' };
+const EL_COLOR = { fire: '#E07A5F', earth: '#6A994E', air: '#7FB3E6', water: '#5B7DB1' };
+
+function zodiacRingSVG(active, highlight) {
+  let s = '<svg viewBox="0 0 240 240" class="zring">';
+  s += '<circle cx="120" cy="120" r="100" fill="none" stroke="var(--rule)" stroke-width="1.5"/><circle cx="120" cy="120" r="66" fill="none" stroke="var(--rule-soft)" stroke-dasharray="3 5"/>';
+  ZKEYS.forEach((k, i) => {
+    const a = i / 12 * Math.PI * 2 - Math.PI / 2, x = 120 + 100 * Math.cos(a), y = 120 + 100 * Math.sin(a), z = ZSIGN[k];
+    const on = k === active, hi = highlight && highlight.indexOf(k) > -1;
+    s += '<g data-zsign="' + k + '" style="cursor:pointer"><circle cx="' + x.toFixed(1) + '" cy="' + y.toFixed(1) + '" r="' + (on ? 19 : 15) + '" fill="' + (on || hi ? EL_COLOR[z.el] : 'var(--surface)') + '" stroke="' + EL_COLOR[z.el] + '" stroke-width="2"/>'
+      + '<text x="' + x.toFixed(1) + '" y="' + (y + 6).toFixed(1) + '" text-anchor="middle" font-size="' + (on ? 18 : 15) + '" fill="' + (on || hi ? '#fff' : 'var(--fg)') + '">' + z.g + '</text></g>';
+  });
+  return s + '</svg>';
+}
+function houseWheelSVG(active) {
+  let s = '<svg viewBox="0 0 240 240" class="zring">';
+  for (let h = 1; h <= 12; h++) {
+    const a0 = Math.PI - (h - 1) / 12 * Math.PI * 2, a1 = a0 - Math.PI / 6; // houses run counter-clockwise from the left (the Ascendant)
+    const x0 = 120 + 100 * Math.cos(a0), y0 = 120 + 100 * Math.sin(a0), x1 = 120 + 100 * Math.cos(a1), y1 = 120 + 100 * Math.sin(a1);
+    const am = (a0 + a1) / 2, tx = 120 + 72 * Math.cos(am), ty = 120 + 72 * Math.sin(am);
+    s += '<path d="M120 120 L' + x0.toFixed(1) + ' ' + y0.toFixed(1) + ' A100 100 0 0 0 ' + x1.toFixed(1) + ' ' + y1.toFixed(1) + ' Z" fill="' + (h === active ? 'var(--primary)' : (h % 2 ? 'var(--surface-2)' : 'var(--surface)')) + '" stroke="var(--rule)" data-house="' + h + '" style="cursor:pointer"/>'
+      + '<text x="' + tx.toFixed(1) + '" y="' + (ty + 5).toFixed(1) + '" text-anchor="middle" font-size="13" font-weight="700" fill="' + (h === active ? 'var(--primary-ink)' : 'var(--fg)') + '" pointer-events="none">' + h + '</text>';
+  }
+  return s + '<circle cx="120" cy="120" r="34" fill="var(--surface)" stroke="var(--rule)"/><text x="120" y="116" text-anchor="middle" font-size="9" fill="var(--fg-faint)">AC</text><text x="120" y="128" text-anchor="middle" font-size="9" fill="var(--fg-faint)">←</text></svg>';
+}
+function aspectSVG(deg) {
+  const a = -Math.PI / 2, b = a + deg * Math.PI / 180, x0 = 40 + 30 * Math.cos(a), y0 = 40 + 30 * Math.sin(a), x1 = 40 + 30 * Math.cos(b), y1 = 40 + 30 * Math.sin(b);
+  return '<svg viewBox="0 0 80 80" class="asp"><circle cx="40" cy="40" r="30" fill="none" stroke="var(--rule)"/><line x1="' + x0.toFixed(1) + '" y1="' + y0.toFixed(1) + '" x2="' + x1.toFixed(1) + '" y2="' + y1.toFixed(1) + '" stroke="var(--primary)" stroke-width="2.5"/><circle cx="' + x0.toFixed(1) + '" cy="' + y0.toFixed(1) + '" r="5" fill="var(--primary)"/><circle cx="' + x1.toFixed(1) + '" cy="' + y1.toFixed(1) + '" r="5" fill="' + (deg ? 'var(--pink)' : 'var(--primary)') + '"/></svg>';
+}
+function planetOrbitSVG(activeId) {
+  const order = ['sun', 'mer', 'ven', 'moo', 'mar', 'jup', 'sat', 'ura', 'nep', 'plu'];
+  let s = '<svg viewBox="0 0 320 90" class="orbit">';
+  order.forEach((id, i) => { const p = PLANETS.filter((x) => x.id === id)[0], x = 22 + i * 31, on = id === activeId; s += '<circle cx="' + x + '" cy="45" r="' + (on ? 16 : 12) + '" fill="' + (on ? 'var(--primary)' : 'var(--surface-2)') + '" stroke="var(--rule)"/><text x="' + x + '" y="50" text-anchor="middle" font-size="' + (on ? 16 : 13) + '" fill="' + (on ? 'var(--primary-ink)' : 'var(--fg)') + '">' + p.g + '</text><text x="' + x + '" y="78" text-anchor="middle" font-size="7.5" fill="var(--fg-faint)">' + esc(p.name[lang].replace('Sao ', '')) + '</text>'; });
+  return s + '</svg>';
+}
+
+function guideVisualHTML(id) {
+  const S = T(), v = GUIDE_VISUAL[id];
+  if (!v) return '';
+  if (v === 'journey') return journeyHTML();
+  if (v === 'court') return courtHTML();
+  if (v === 'pairs') return pairsHTML();
+  if (v === 'numwheel') return '<div class="nwheel">' + [1, 2, 3, 4, 5, 6, 7, 8, 9].map((n) => '<a class="nw" href="#/learn/fortune/numbers"><span class="ic">' + NUM_ICON[n] + '</span><b>' + n + '</b><span>' + esc(NUM_KW[lang][n]) + '</span></a>').join('') + '</div>';
+  if (v === 'hand') return '<div class="palmwrap"><a href="#/learn/fortune/palm">' + handSVG('heart') + '</a></div>';
+  if (v === 'cup') return '<div class="teawrap"><a href="#/learn/fortune/tea">' + cupSVG('rim') + '</a></div>';
+  if (v === 'animals') return '<div class="awrapper"><a href="#/learn/fortune/animals">' + animalsWheelSVG(-1) + '</a></div>';
+  if (v === 'pcmap') return '<div class="pcmap">' + PC_SUITS.map((s) => '<a class="pcs" href="#/learn/fortune/cards"><span class="pip ' + (s[0] === 'h' || s[0] === 'd' ? 'red' : '') + '">' + s[1] + '</span><span>=</span><svg viewBox="-20 -22 40 44"><g stroke="var(--card-ink)" stroke-linejoin="round" stroke-linecap="round" fill="none">' + emblem(s[2], 0, 0, 1) + '</g></svg><b>' + esc(LEX[lang].suitNames[s[2]]) + '</b></a>').join('') + '</div>';
+  if (v === 'steps') { const g = GUIDES.filter((x) => x.id === id)[0]; return '<div class="stepsv">' + g.sections.map((s, i) => '<div class="stp"><span class="n">' + (i + 1) + '</span><b>' + esc(L(s.h)) + '</b></div>').join('<span class="arr">→</span>') + '</div>'; }
+  if (v === 'reversed') { const c = cardById('major-19'); return '<div class="cmp"><div><span class="face" style="width:110px">' + faceSVG(c) + '</span><b>' + esc(S.upright) + '</b></div><div><span class="face flipped" style="width:110px">' + faceSVG(c) + '</span><b>' + esc(S.reversed) + '</b></div></div>'; }
+  if (v === 'lenvstarot') { return '<div class="cmp"><div><span class="face" style="width:110px">' + faceSVG(cardById('major-17')) + '</span><b>Tarot</b><span>' + esc(lang === 'vi' ? 'một cảnh, nhiều tầng' : 'a scene, many layers') + '</span></div><div><span class="face" style="width:110px">' + lenFace(16) + '</span><b>Lenormand</b><span>' + esc(lang === 'vi' ? 'một vật, một từ' : 'one thing, one word') + '</span></div></div>'; }
+  if (v === 'big3') { const si = mySign(), k = si > -1 ? ZKEYS[si] : null; const disc = (lbl, g, sub) => '<div class="disc"><span class="g">' + g + '</span><b>' + esc(lbl) + '</b><span>' + esc(sub) + '</span></div>'; return '<div class="big3">' + disc(lang === 'vi' ? 'Mặt Trời' : 'Sun', k ? ZSIGN[k].g : '☉', k ? ZSIGN[k][lang] : (lang === 'vi' ? 'nhập ngày sinh' : 'add your birthday')) + disc(lang === 'vi' ? 'Mặt Trăng' : 'Moon', '☽', lang === 'vi' ? 'cần giờ sinh' : 'needs birth time') + disc(lang === 'vi' ? 'Mọc' : 'Rising', '↑', lang === 'vi' ? 'cần giờ + nơi sinh' : 'needs time + place') + '</div>'; }
+  if (v === 'elements') return '<div class="elgrid">' + ['fire', 'earth', 'air', 'water'].map((el) => '<div class="elc" style="border-color:' + EL_COLOR[el] + '"><b style="color:' + EL_COLOR[el] + '">' + ZELEM[el].g + ' ' + esc(ZELEM[el][lang]) + '</b>' + ZKEYS.filter((k) => ZSIGN[k].el === el).map((k) => '<a href="#/learn/sign/' + k + '">' + ZSIGN[k].g + ' ' + esc(ZSIGN[k][lang]) + '</a>').join('') + '</div>').join('') + '</div>';
+  if (v === 'moonphases') { const idx = moonPhase(new Date()).idx; return '<div class="phases">' + MOON_ICONS.map((ic, i) => '<div class="ph' + (i === idx ? ' on' : '') + '"><span class="ic">' + ic + '</span><span>' + esc(MOON_NAMES[lang][i]) + '</span></div>').join('') + '</div><p class="faint" style="text-align:center">' + esc(lang === 'vi' ? 'Hôm nay: ' : 'Today: ') + MOON_NAMES[lang][idx] + '</p>'; }
+  if (v === 'retro') return '<svg viewBox="0 0 320 120" class="orbit"><circle cx="60" cy="60" r="22" fill="#F6C453"/><text x="60" y="66" text-anchor="middle" font-size="16">☉</text><ellipse cx="60" cy="60" rx="110" ry="40" fill="none" stroke="var(--rule)" stroke-dasharray="4 4"/><path d="M150 40 C 175 30, 190 55, 170 62 C 150 70, 160 90, 185 82" fill="none" stroke="var(--primary)" stroke-width="3" stroke-linecap="round"/><text x="230" y="60" font-size="13" fill="var(--fg)">☿ ' + esc(lang === 'vi' ? 'nhìn từ Trái Đất' : 'seen from Earth') + '</text><text x="230" y="78" font-size="10" fill="var(--fg-faint)">' + esc(lang === 'vi' ? 'có vẻ đi lùi' : 'appears to go backwards') + '</text></svg>';
+  if (v === 'script') return '<div class="script"><div class="paper"><b>' + esc(lang === 'vi' ? 'Hôm nay, ___ / ___' : 'Today, ___ / ___') + '</b><p>' + esc(lang === 'vi' ? 'Mình vừa ______________________.' : 'I just ______________________.') + '</p><p>' + esc(lang === 'vi' ? 'Mình thấy __________ và nghe __________.' : 'I saw __________ and heard __________.') + '</p><p>' + esc(lang === 'vi' ? 'Cảm giác lúc đó là __________.' : 'It felt __________.') + '</p><p>' + esc(lang === 'vi' ? 'Cảm ơn vì điều này. ♡' : 'Thank you for this. ♡') + '</p></div></div>';
+  if (v === 'tracker369') { const t = store.get('nabu-369', { d: '', a: 0, b: 0, c: 0 }), today = isoDate(new Date()); if (t.d !== today) { t.d = today; t.a = t.b = t.c = 0; } return '<div class="t369">' + [['a', 3, lang === 'vi' ? 'Sáng' : 'Morning'], ['b', 6, lang === 'vi' ? 'Chiều' : 'Afternoon'], ['c', 9, lang === 'vi' ? 'Tối' : 'Night']].map((x) => '<button class="t3" data-t369="' + x[0] + '" data-max="' + x[1] + '"><b>' + x[2] + '</b><span class="cnt">' + t[x[0]] + ' / ' + x[1] + '</span><span class="dots">' + '●'.repeat(t[x[0]]) + '○'.repeat(x[1] - t[x[0]]) + '</span></button>').join('') + '</div><p class="faint" style="text-align:center">' + esc(lang === 'vi' ? 'Mỗi lần viết xong một câu, chạm một lần. Tự về 0 mỗi ngày.' : 'Tap once for each line you write. Resets every day.') + '</p>'; }
+  if (v === 'gratitude') { const g = store.get('nabu-gratitude', ['', '', '']); return '<div class="grat"><b>' + esc(lang === 'vi' ? 'Ba điều biết ơn hôm nay' : 'Three things I am grateful for today') + '</b>' + [0, 1, 2].map((i) => '<input data-grat="' + i + '" value="' + esc(g[i] || '') + '" placeholder="' + (i + 1) + '. ' + esc(lang === 'vi' ? 'cụ thể nhé…' : 'be specific…') + '">').join('') + '<p class="faint">' + esc(lang === 'vi' ? 'Lưu trên máy này.' : 'Saved on this device.') + '</p></div>'; }
+  if (v === 'checklist') { const g = GUIDES.filter((x) => x.id === id)[0]; return '<div class="chk2">' + g.sections.slice(0, 2).map((s, i) => '<div class="col ' + (i ? 'good' : 'bad') + '"><b>' + (i ? '✓ ' : '✗ ') + esc(L(s.h)) + '</b>' + L(s.p).split(/\.\s+/).filter(Boolean).slice(0, 4).map((line) => '<label><input type="checkbox"> ' + esc(line.replace(/\.$/, '')) + '</label>').join('') + '</div>').join('') + '</div>'; }
+  if (v === 'oracle') return '<div class="cmp"><div><span class="face" style="width:110px">' + BACK + '</span><b>Tarot · 78</b><span>' + esc(lang === 'vi' ? 'cấu trúc chung' : 'shared structure') + '</span></div><div><span class="face" style="width:110px">' + logoCardSVG('pink') + '</span><b>Oracle</b><span>' + esc(lang === 'vi' ? 'tự do, một lá' : 'free-form, one card') + '</span></div></div>';
+  return '';
+}
+function bindGuideVisual(root) {
+  bindCardLinks(root);
+  $$('[data-t369]', root).forEach((b) => b.addEventListener('click', () => { const t = store.get('nabu-369', { d: isoDate(new Date()), a: 0, b: 0, c: 0 }), k = b.getAttribute('data-t369'), mx = Number(b.getAttribute('data-max')); t[k] = (t[k] + 1) % (mx + 1); t.d = isoDate(new Date()); store.set('nabu-369', t); $('.cnt', b).textContent = t[k] + ' / ' + mx; $('.dots', b).textContent = '●'.repeat(t[k]) + '○'.repeat(mx - t[k]); }));
+  $$('[data-grat]', root).forEach((inp) => inp.addEventListener('input', () => { store.set('nabu-gratitude', $$('[data-grat]', root).map((x) => x.value)); }));
+  $$('[data-len]', root).forEach((b) => b.addEventListener('click', () => { location.hash = '#/learn/len/' + b.getAttribute('data-len'); }));
 }
 
 /* ============================ booking ============================
@@ -10688,7 +10817,7 @@ function adminCodes(p) {
 ROUTES.admin = { nav: '', render: renderAdmin };
 
 /* ============================ boot ============================ */
-window.APP_VERSION = 'v19';
+window.APP_VERSION = 'v21';
 window.NABU = { LESSONS: LESSONS, localAnswer: localAnswer, numerologyOf: numerologyOf, ZDEEP: ZDEEP, lunarToday: lunarToday, solarToLunar: solarToLunar, DECK: DECK, INSIGHT: INSIGHT, KW: KW, ASK: ASK, TOPICS: TOPICS, GUIDES: GUIDES, SERVICES: SERVICES, COURSES: COURSES, ACCESS: ACCESS, makeCode: makeCode, parseCode: parseCode, ZODIAC: ZODIAC, pick: pick, book: book,
   insightHTML: insightHTML, insightOf: insightOf, sunSignIndex: sunSignIndex, lifePath: lifePath, PROFILE: () => PROFILE, BE: BE };
 BE.init().catch(() => { /* backend unreachable: the app runs device-only */ });

@@ -31,7 +31,7 @@ const STR = {
     signCard: 'Lá tarot của cung bạn',
     lifePath: 'Số đường đời',
     readSign: 'Đọc về cung của bạn',
-    forInterests: 'Theo điều bạn quan tâm',
+    forInterests: 'Có thể bạn quan tâm',
 
     pickToday: 'Rút một lá bài hôm nay',
     pickTitle: 'Năng lượng hiện tại của bạn',
@@ -256,7 +256,7 @@ const STR = {
     signCard: 'The tarot card of your sign',
     lifePath: 'Life path number',
     readSign: 'Read about your sign',
-    forInterests: 'Based on your interests',
+    forInterests: 'You may also like',
 
     pickToday: 'Pick a card today',
     pickTitle: 'Your energy right now',
