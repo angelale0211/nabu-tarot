@@ -427,6 +427,62 @@ main{padding:22px 0 30px}
 .lesson .in{padding-top:12px}
 .lesson .in .detail .hero{margin-top:4px}
 
+/* ---- footer ---- */
+.foot{border-top:1px solid var(--rule-soft);padding:22px 0 26px;color:var(--fg-soft);font-size:13px}
+.foot .wrap{display:flex;gap:12px;align-items:flex-start}
+.foot svg{width:44px;height:44px;flex:none}
+.foot b{color:var(--fg)}
+.foot .links{margin-top:4px}
+.foot .links a{font-weight:600}
+.foot .copy{margin-top:4px;color:var(--fg-faint);font-size:12px}
+
+/* ---- lessons ---- */
+.lessons{display:flex;flex-direction:column;gap:8px}
+.lsn{display:flex;align-items:center;gap:12px;background:var(--surface);border:1px solid var(--rule-soft);border-radius:14px;padding:12px 14px;text-decoration:none;color:inherit}
+.lsn .num{width:30px;height:30px;border-radius:50%;background:var(--lav-soft);display:flex;align-items:center;justify-content:center;font-weight:700;flex:none}
+.lsn .tt{flex:1;font-weight:600}
+.lsn .chk{color:var(--fg-faint);font-size:18px}
+.lsn.done .num{background:#CFEBD6;color:#1F5A32}
+.lsn.done .chk{color:#2E7D46}
+.visual{margin:14px 0 18px}
+.visual h3{margin:16px 0 8px}
+.vstrip{display:flex;gap:10px;overflow-x:auto;padding:4px 2px 10px;-webkit-overflow-scrolling:touch;scroll-snap-type:x proximity}
+.vstrip::-webkit-scrollbar{height:6px}.vstrip::-webkit-scrollbar-thumb{background:var(--rule);border-radius:3px}
+.vt{flex:none;width:112px;text-align:center;scroll-snap-align:start;position:relative}
+.vt svg{display:block;width:100%;height:auto;border-radius:6px;box-shadow:0 3px 10px var(--shade);margin-bottom:6px}
+.vt b{display:block;font-size:12.5px;line-height:1.2;font-weight:600}
+.vt span{display:block;font-size:11px;color:var(--fg-faint);line-height:1.2;margin-top:2px}
+.vt .tone{display:inline-block;font-style:normal;font-size:10px;font-weight:700;border-radius:6px;padding:2px 6px;margin-top:4px}
+.tone-pos .tone,.tk.tone-pos{background:#CFEBD6;color:#1F5A32}.tone-neu .tone,.tk.tone-neu{background:var(--surface-3);color:var(--fg-soft)}.tone-neg .tone,.tk.tone-neg{background:var(--pink);color:#5B2340}
+.tonekey{display:flex;gap:6px;margin-bottom:8px}.tk{font-size:11px;font-weight:700;border-radius:6px;padding:3px 8px}
+.journey .stage{background:var(--surface);border:1px solid var(--rule-soft);border-radius:16px;padding:12px 12px 4px;margin-bottom:12px}
+.journey .stage-h{display:flex;align-items:center;gap:8px;font-family:var(--display);font-size:17px;margin-bottom:8px}
+.journey .stage-h .num{width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:var(--body);font-size:13px;font-weight:700;color:#fff}
+.journey .s0 .num{background:#5B8DD6}.journey .s1 .num{background:#8A5CB8}.journey .s2 .num{background:#C4557A}
+.wheel{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:8px}
+.wheel .w{background:var(--surface);border:1px solid var(--rule-soft);border-radius:14px;padding:10px 4px;text-align:center;opacity:.45}
+.wheel .w.on{opacity:1;border-color:var(--lav)}
+.wheel svg{width:44px;height:48px;display:block;margin:0 auto 4px}
+.wheel b{display:block;font-size:13px}.wheel span{font-size:11px;color:var(--fg-faint)}
+.court{display:grid;grid-template-columns:52px repeat(4,1fr);gap:6px;align-items:center}
+.court .ch{text-align:center;font-size:11px;font-weight:700;color:var(--fg-soft)}
+.court .rh{font-size:12px;font-weight:700;writing-mode:vertical-rl;transform:rotate(180deg);text-align:center}
+.court .cc svg{display:block;width:100%;height:auto;border-radius:5px;box-shadow:0 2px 8px var(--shade)}
+.vgrid{display:grid;grid-template-columns:repeat(6,1fr);gap:6px}
+.vgrid .vg svg{display:block;width:100%;height:auto;border-radius:4px;box-shadow:0 2px 6px var(--shade)}
+.pairs{display:flex;flex-direction:column;gap:10px}
+.pair{background:var(--surface);border:1px solid var(--rule-soft);border-radius:14px;padding:12px;display:grid;grid-template-columns:150px 1fr;gap:12px;align-items:center}
+.pair .pf{display:flex;align-items:center;gap:6px}
+.pair .pf svg{width:64px;height:auto;border-radius:4px;box-shadow:0 2px 8px var(--shade)}
+.pair .pf span{font-size:20px;color:var(--fg-faint)}
+.pair p{margin:0;font-size:14px}
+.spreads-v{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.spv{background:var(--surface);border:1px solid var(--rule-soft);border-radius:14px;padding:12px;text-decoration:none;color:inherit;text-align:center}
+.spv .spd{display:flex;justify-content:center;align-items:center;height:110px;margin-bottom:8px}
+.spv .spd svg{max-width:100%;max-height:110px;height:auto;width:auto}
+.spv b{display:block;font-size:14px}.spv span{font-size:12px;color:var(--fg-faint)}
+@media (max-width:380px){.pair{grid-template-columns:120px 1fr}.pair .pf svg{width:52px}}
+
 /* ---- paywall ---- */
 .paywall{background:var(--surface);border:1.5px solid var(--lav);border-radius:20px;padding:22px 18px;text-align:center}
 .paywall .ic{font-size:40px}
@@ -517,6 +573,8 @@ main{padding:22px 0 30px}
 
 <main><div class="wrap" id="main"></div></main>
 
+<footer class="foot" id="foot"></footer>
+
 <nav class="nav"><div class="wrap" id="nav"></div></nav>
 <div class="toast" id="toast" role="status"></div>
 
@@ -530,6 +588,7 @@ const CONFIG = {
   // Social handles. Leave a value empty ('') to hide that button.
   instagram: 'nabutarot',          // https://instagram.com/nabutarot  (DM: https://ig.me/m/nabutarot)
   facebookPage: '',                // the page's username, e.g. 'nabutarot' -> https://m.me/nabutarot
+  facebookUrl: 'https://www.facebook.com/search/top?q=Nabu%20Tarot', // replace with the page's real address, e.g. https://www.facebook.com/nabutarot
   zalo: '',                        // phone number or Zalo id -> https://zalo.me/<id>
   email: '',                       // optional: shows a mail button on the booking screen
 
@@ -562,6 +621,7 @@ const CONFIG = {
     vi: 'Bạn chọn chủ đề và giờ hẹn, rồi gửi cho Nabu. Nabu xác nhận lại với bạn trước buổi xem.',
     en: 'Choose a topic and a time, then send it to Nabu. Nabu confirms with you before the session.'
   },
+  tagline: { vi: 'Lắng nghe và thấu hiểu', en: 'Listening and understanding' },
   about: {
     vi: 'Nabu Tarot xem bài về tình cảm, người cũ, crush, công việc và học tập. Mỗi chủ đề là một trải bài 5 lá với 5 câu hỏi rõ ràng.',
     en: 'Nabu Tarot reads on relationships, exes, crushes, career and study. Each topic is a five-card spread with five clear questions.'
@@ -641,7 +701,7 @@ const SERVICES = [
       { id: 'all', name: { vi: 'Tổng quan mọi vấn đề', en: 'Full overview of everything' }, price: 666000 }
     ] },
   { id: 'talk', icon: '💬', tone: 'blue', name: { vi: 'Chỉ tâm sự', en: 'Just talk' },
-    tagline: { vi: 'Không bài, không dự đoán. Chỉ có người lắng nghe.', en: 'No cards, no predictions. Just someone who listens.' },
+    tagline: { vi: 'Không có trải bài, không đưa dự đoán, nhưng luôn sẵn lòng lắng nghe.', en: 'No spread and no predictions, but always ready to listen.' },
     packages: [
       { id: 't30', name: { vi: '30 phút', en: '30 minutes' }, price: 30000 },
       { id: 't60', name: { vi: '1 tiếng', en: '1 hour' }, price: 60000 }
@@ -720,7 +780,8 @@ const STR = {
     learnIntro: 'Tarot, Lenormand, chiêm tinh, manifestation và bói toán. Đọc từng phần ngắn, không cần theo thứ tự.',
     cats: { tarot: 'Tarot', lenormand: 'Lenormand', astro: 'Chiêm tinh', manifest: 'Manifestation', fortune: 'Bói toán' },
     catSub: { tarot: '78 lá + 13 trải bài · 200.000đ / 6 tháng', lenormand: '36 lá + 7 trải bài · 200.000đ / 6 tháng', astro: '12 cung, hành tinh, nhà', manifest: 'cách làm + giới hạn', fortune: 'thần số, chỉ tay, bài Tây' },
-    courses: 'Khóa học', freeReads: 'Đọc miễn phí', demoTag: 'Học thử miễn phí', demoIntro: 'Hai bài đầu mở sẵn để bạn xem cách học. Mở khóa để xem trọn bộ.', lessonN: (n) => 'Bài ' + n, lesson1: 'Tổng quan và cách học', lesson2: 'Lá bài đầu tiên', courseTabs: { cards: 'Các lá bài', spreads: 'Trải bài', guides: 'Bài đọc' },
+    courses: 'Khóa học', freeReads: 'Đọc miễn phí', lessonsIntro: (n) => 'Khóa học gồm ' + n + ' bài. Học theo thứ tự, mỗi bài một tuần là vừa.', markDone: 'Đánh dấu đã học xong', lessonDone: 'Đã học xong', journeyHint: 'Chạm vào một lá để mở trang của lá đó.', lenGridHint: 'Cả 36 lá. Chạm để xem từng lá.',
+    reportTitle: 'Báo lỗi app', reportIntro: 'Có gì hiển thị sai, bấm không được, hay chữ khó hiểu? Kể cho Nabu ở đây.', reportWhat: 'Bạn gặp lỗi gì?', reportPlaceholder: 'Bạn đang ở màn hình nào, bấm vào đâu, và điều gì xảy ra?', reportContact: 'Cách liên lạc lại (không bắt buộc)', reportAuto: 'App tự đính kèm thông tin này để Nabu tìm lỗi nhanh hơn:', reportSend: 'Gửi báo lỗi', reportViaIg: 'Gửi qua Instagram', reportNeed: 'Bạn mô tả lỗi trước nhé.', reportSent: 'Đã gửi. Cảm ơn bạn!', reportMsgHead: 'Báo lỗi app Nabu Tarot:', reportLink: 'Báo lỗi', rights: 'Giữ mọi quyền.', demoTag: 'Học thử miễn phí', demoIntro: 'Hai bài đầu mở sẵn để bạn xem cách học. Mở khóa để xem trọn bộ.', lessonN: (n) => 'Bài ' + n, lesson1: 'Tổng quan và cách học', lesson2: 'Lá bài đầu tiên', courseTabs: { cards: 'Các lá bài', spreads: 'Trải bài', guides: 'Bài đọc' },
     months6: 'tháng', accessUntil: (d) => 'Bạn có quyền xem đến ' + d + '.', courseExpired: (d) => 'Mã của bạn đã hết hạn ngày ' + d + '. Mua lại để xem tiếp.',
     buyCourse: 'Mua khóa học qua Instagram', buyHint: 'Tin nhắn mua khóa đã được sao chép. Sau khi chuyển khoản, Nabu gửi bạn mã mở khóa. Nhập mã ở dưới.',
     buyMsg: (n, p, m) => 'Chào Nabu, mình muốn mua ' + n + ' (' + p + ', ' + m + ' tháng).', unlock: 'Mở khóa', unlocked: 'Đã mở khóa', badCode: 'Mã không đúng. Bạn kiểm tra lại nhé.',
@@ -754,7 +815,7 @@ const STR = {
     msgService: 'Dịch vụ', msgBirth: 'Ngày giờ sinh',
     chooseTopic: '2. Chọn chủ đề',
     presetTopics: 'Chủ đề sẵn',
-    topicHint: 'Mỗi chủ đề là trải bài 5 lá. Bấm để xem 5 câu hỏi.',
+    topicHint: 'Chỉ áp dụng cho gói Xem chủ đề sẵn, với 5 chủ đề có sẵn dưới đây. Mỗi chủ đề là trải bài 5 lá. Bấm để xem 5 câu hỏi. Câu hỏi khác bạn ghi ở phần thông tin bên dưới.',
     ownTopic: 'Câu hỏi riêng',
     ownTopicHint: 'Bạn tự viết câu hỏi của mình.',
     chooseTime: '3. Chọn giờ hẹn',
@@ -935,7 +996,8 @@ const STR = {
     learnIntro: 'Tarot, Lenormand, astrology, manifestation and fortune telling. Short pieces, read in any order.',
     cats: { tarot: 'Tarot', lenormand: 'Lenormand', astro: 'Astrology', manifest: 'Manifestation', fortune: 'Fortune telling' },
     catSub: { tarot: '78 cards + 13 spreads · 200.000đ / 6 months', lenormand: '36 cards + 7 spreads · 200.000đ / 6 months', astro: '12 signs, planets, houses', manifest: 'methods + limits', fortune: 'numbers, palms, playing cards' },
-    courses: 'Courses', freeReads: 'Free to read', demoTag: 'Free preview', demoIntro: 'The first two lessons are open so you can see how the course works. Unlock to read everything.', lessonN: (n) => 'Lesson ' + n, lesson1: 'Overview and how to learn', lesson2: 'The first card', courseTabs: { cards: 'The cards', spreads: 'Spreads', guides: 'Guides' },
+    courses: 'Courses', freeReads: 'Free to read', lessonsIntro: (n) => 'The course has ' + n + ' sessions. Take them in order, about one a week.', markDone: 'Mark as done', lessonDone: 'Done', journeyHint: 'Tap a card to open its page.', lenGridHint: 'All 36 cards. Tap one to open it.',
+    reportTitle: 'Report a problem', reportIntro: 'Something looks wrong, a button does nothing, or a text is confusing? Tell Nabu here.', reportWhat: 'What went wrong?', reportPlaceholder: 'Which screen you were on, what you tapped, and what happened.', reportContact: 'How to reach you (optional)', reportAuto: 'The app attaches this so Nabu can find the bug faster:', reportSend: 'Send report', reportViaIg: 'Send through Instagram', reportNeed: 'Describe the problem first.', reportSent: 'Sent. Thank you!', reportMsgHead: 'Nabu Tarot app bug report:', reportLink: 'Report a problem', rights: 'All rights reserved.', demoTag: 'Free preview', demoIntro: 'The first two lessons are open so you can see how the course works. Unlock to read everything.', lessonN: (n) => 'Lesson ' + n, lesson1: 'Overview and how to learn', lesson2: 'The first card', courseTabs: { cards: 'The cards', spreads: 'Spreads', guides: 'Guides' },
     months6: 'months', accessUntil: (d) => 'Your access runs until ' + d + '.', courseExpired: (d) => 'Your code expired on ' + d + '. Buy again to continue.',
     buyCourse: 'Buy the course on Instagram', buyHint: 'The purchase message is copied. After the transfer, Nabu sends you an unlock code. Enter it below.',
     buyMsg: (n, p, m) => 'Hi Nabu, I would like to buy the ' + n + ' (' + p + ', ' + m + ' months).', unlock: 'Unlock', unlocked: 'Unlocked', badCode: 'That code is not right. Please check it.',
@@ -969,7 +1031,7 @@ const STR = {
     msgService: 'Service', msgBirth: 'Birth date and time',
     chooseTopic: '2. Choose a topic',
     presetTopics: 'Set topics',
-    topicHint: 'Each topic is a five-card spread. Tap to see the five questions.',
+    topicHint: 'Only for the Set topic package, with the five preset topics below. Each topic is a five-card spread. Tap to see the five questions. Other questions go in the details section below.',
     ownTopic: 'Your own question',
     ownTopicHint: 'Write your own question.',
     chooseTime: '3. Choose a time',
@@ -7716,6 +7778,78 @@ const CAN = ['Giáp', 'Ất', 'Bính', 'Đinh', 'Mậu', 'Kỷ', 'Canh', 'Tân',
 const CHI = ['Tý', 'Sửu', 'Dần', 'Mão', 'Thìn', 'Tỵ', 'Ngọ', 'Mùi', 'Thân', 'Dậu', 'Tuất', 'Hợi'];
 const canChi = (year) => CAN[((year - 4) % 10 + 10) % 10] + ' ' + CHI[((year - 4) % 12 + 12) % 12];
 
+/* ============================ Vietnamese lunar calendar ============================
+   Hồ Ngọc Đức's algorithm (the one behind the common "lịch vạn niên" sites),
+   computed for UTC+7 so Tết and leap months fall on the Vietnamese dates.
+   Gives lunar day / month / year plus the can chi of day, month and year. */
+const LUNAR_TZ = 7;
+function jdFromDate(dd, mm, yy) {
+  const a = Math.floor((14 - mm) / 12), y = yy + 4800 - a, m = mm + 12 * a - 3;
+  let jd = dd + Math.floor((153 * m + 2) / 5) + 365 * y + Math.floor(y / 4) - Math.floor(y / 100) + Math.floor(y / 400) - 32045;
+  if (jd < 2299161) jd = dd + Math.floor((153 * m + 2) / 5) + 365 * y + Math.floor(y / 4) - 32083;
+  return jd;
+}
+function newMoonDay(k, tz) {
+  const T = k / 1236.85, T2 = T * T, T3 = T2 * T, dr = Math.PI / 180;
+  let Jd1 = 2415020.75933 + 29.53058868 * k + 0.0001178 * T2 - 0.000000155 * T3;
+  Jd1 += 0.00033 * Math.sin((166.56 + 132.87 * T - 0.009173 * T2) * dr);
+  const M = 359.2242 + 29.10535608 * k - 0.0000333 * T2 - 0.00000347 * T3;
+  const Mpr = 306.0253 + 385.81691806 * k + 0.0107306 * T2 + 0.00001236 * T3;
+  const F = 21.2964 + 390.67050646 * k - 0.0016528 * T2 - 0.00000239 * T3;
+  let C1 = (0.1734 - 0.000393 * T) * Math.sin(M * dr) + 0.0021 * Math.sin(2 * dr * M);
+  C1 = C1 - 0.4068 * Math.sin(Mpr * dr) + 0.0161 * Math.sin(dr * 2 * Mpr);
+  C1 = C1 - 0.0004 * Math.sin(dr * 3 * Mpr);
+  C1 = C1 + 0.0104 * Math.sin(dr * 2 * F) - 0.0051 * Math.sin(dr * (M + Mpr));
+  C1 = C1 - 0.0074 * Math.sin(dr * (M - Mpr)) + 0.0004 * Math.sin(dr * (2 * F + M));
+  C1 = C1 - 0.0004 * Math.sin(dr * (2 * F - M)) - 0.0006 * Math.sin(dr * (2 * F + Mpr));
+  C1 = C1 + 0.0010 * Math.sin(dr * (2 * F - Mpr)) + 0.0005 * Math.sin(dr * (2 * Mpr + M));
+  const deltat = T < -11 ? 0.001 + 0.000839 * T + 0.0002261 * T2 - 0.00000845 * T3 - 0.000000081 * T * T3 : -0.000278 + 0.000265 * T + 0.000262 * T2;
+  return Math.floor(Jd1 + C1 - deltat + 0.5 + tz / 24);
+}
+function sunLongitude(jdn, tz) {
+  const T = (jdn - 2451545.5 - tz / 24) / 36525, T2 = T * T, dr = Math.PI / 180;
+  const M = 357.52910 + 35999.05030 * T - 0.0001559 * T2 - 0.00000048 * T * T2;
+  const L0 = 280.46645 + 36000.76983 * T + 0.0003032 * T2;
+  let DL = (1.914600 - 0.004817 * T - 0.000014 * T2) * Math.sin(dr * M) + (0.019993 - 0.000101 * T) * Math.sin(dr * 2 * M) + 0.000290 * Math.sin(dr * 3 * M);
+  let L = (L0 + DL) * dr;
+  L = L - Math.PI * 2 * Math.floor(L / (Math.PI * 2));
+  return Math.floor(L / Math.PI * 6);
+}
+function lunarMonth11(yy, tz) {
+  const off = jdFromDate(31, 12, yy) - 2415021, k = Math.floor(off / 29.530588853);
+  let nm = newMoonDay(k, tz);
+  if (sunLongitude(nm, tz) >= 9) nm = newMoonDay(k - 1, tz);
+  return nm;
+}
+function leapMonthOffset(a11, tz) {
+  const k = Math.floor((a11 - 2415021.076998695) / 29.530588853 + 0.5);
+  let last = 0, i = 1, arc = sunLongitude(newMoonDay(k + i, tz), tz);
+  do { last = arc; i++; arc = sunLongitude(newMoonDay(k + i, tz), tz); } while (arc !== last && i < 14);
+  return i - 1;
+}
+/* Solar (dd, mm, yy) -> { day, month, year, leap } in the Vietnamese lunar calendar. */
+function solarToLunar(dd, mm, yy, tz) {
+  tz = tz == null ? LUNAR_TZ : tz;
+  const dayNumber = jdFromDate(dd, mm, yy), k = Math.floor((dayNumber - 2415021.076998695) / 29.530588853);
+  let monthStart = newMoonDay(k + 1, tz);
+  if (monthStart > dayNumber) monthStart = newMoonDay(k, tz);
+  let a11 = lunarMonth11(yy, tz), b11 = a11, lunarYear;
+  if (a11 >= monthStart) { lunarYear = yy; a11 = lunarMonth11(yy - 1, tz); } else { lunarYear = yy + 1; b11 = lunarMonth11(yy + 1, tz); }
+  const lunarDay = dayNumber - monthStart + 1, diff = Math.floor((monthStart - a11) / 29);
+  let leap = false, lunarMonth = diff + 11;
+  if (b11 - a11 > 365) { const off = leapMonthOffset(a11, tz); if (diff >= off) { lunarMonth = diff + 10; if (diff === off) leap = true; } }
+  if (lunarMonth > 12) lunarMonth -= 12;
+  if (lunarMonth >= 11 && diff < 4) lunarYear -= 1;
+  return { day: lunarDay, month: lunarMonth, year: lunarYear, leap: leap, jd: dayNumber };
+}
+/* Can chi of the day (from the Julian day number), the month (from the year's stem) and the year. */
+function canChiDay(jd) { return CAN[(jd + 9) % 10] + ' ' + CHI[(jd + 1) % 12]; }
+function canChiMonth(lunarMonth, lunarYear) { return CAN[(lunarYear * 12 + lunarMonth + 3) % 10] + ' ' + CHI[(lunarMonth + 1) % 12]; }
+function lunarToday(date) {
+  const d = date || new Date(), l = solarToLunar(d.getDate(), d.getMonth() + 1, d.getFullYear());
+  return Object.assign(l, { dayCC: canChiDay(l.jd), monthCC: canChiMonth(l.month, l.year), yearCC: canChi(l.year) });
+}
+
 
 
 
@@ -8523,6 +8657,16 @@ function backSVG() {
     + '</svg>';
 }
 const BACK = backSVG();
+/* The logo's three cards, for the home block. */
+function logoCardSVG(kind) {
+  const fill = kind === 'blue' ? '#AFC8F0' : kind === 'pink' ? '#F6BBCB' : '#3D2A6E';
+  let mark = '';
+  if (kind === 'blue') mark = '<path d="M50 60 l4 10 10 4 -10 4 -4 10 -4 -10 -10 -4 10 -4z" fill="#E5BE5E"/><circle cx="50" cy="108" r="3" fill="#E5BE5E"/>';
+  else if (kind === 'pink') mark = '<path d="M50 62 l3 6.5 6.5 3 -6.5 3 -3 6.5 -3 -6.5 -6.5 -3 6.5 -3z" fill="#E5BE5E"/><path d="M50 98 l2 4.4 4.4 2 -4.4 2 -2 4.4 -2 -4.4 -4.4 -2 4.4 -2z" fill="#E5BE5E"/>';
+  else mark = '<path d="M56 60 A26 26 0 1 0 56 112 A21 21 0 1 1 56 60 Z" fill="#E5BE5E"/><circle cx="28" cy="34" r="3.2" fill="#E5BE5E"/><circle cx="30" cy="140" r="3.2" fill="#E5BE5E"/><circle cx="74" cy="134" r="3.2" fill="#E5BE5E"/>';
+  return '<svg viewBox="0 0 100 172" aria-hidden="true"><rect x="1.3" y="1.3" width="97.4" height="169.4" rx="10" fill="' + fill + '" stroke="#3B2A5E" stroke-width="3"/>'
+    + '<rect x="10" y="10" width="80" height="152" rx="6" fill="none" stroke="#E5BE5E" stroke-width="1.6"/>' + mark + '</svg>';
+}
 const miniHTML = (id, link) => {
   const c = cardById(id);
   if (!c) return '';
@@ -8546,14 +8690,22 @@ const LOGO = '<svg viewBox="0 0 100 100" aria-hidden="true">'
 /* ---- chrome ---- */
 const ICONS = {
   home: '<svg viewBox="0 0 24 24"><path d="M3 11l9-7 9 7v9a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/></svg>',
-  pick: '<svg viewBox="0 0 24 24"><rect x="6" y="3" width="12" height="18" rx="2"/><path d="M12 8l1.5 3 3 .4-2.2 2.1.6 3.2L12 15.2 9.1 16.7l.6-3.2L7.5 11.4l3-.4z"/></svg>',
+  pick: '<svg viewBox="0 0 24 24"><rect x="4.5" y="5" width="11" height="16" rx="2" transform="rotate(-10 10 13)"/><rect x="9" y="3.5" width="11" height="16" rx="2" transform="rotate(8 14.5 11.5)"/><path d="M16.2 8.2a2.3 2.3 0 1 0 0 4.2 1.8 1.8 0 1 1 0-4.2z"/></svg>',
   learn: '<svg viewBox="0 0 24 24"><path d="M4 5a2 2 0 0 1 2-2h5v18H6a2 2 0 0 1-2-2zM13 3h5a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-5z"/></svg>',
   book: '<svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></svg>',
   me: '<svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg>'
 };
 let UNREAD = 0;
+function renderFooter() {
+  const S = T(), links = [];
+  if (CONFIG.instagram) links.push('<a href="https://instagram.com/' + esc(CONFIG.instagram) + '" target="_blank" rel="noopener">Instagram</a>');
+  if (CONFIG.facebookUrl) links.push('<a href="' + esc(CONFIG.facebookUrl) + '" target="_blank" rel="noopener">Facebook</a>');
+  links.push('<a href="#/report">' + esc(S.reportLink) + '</a>');
+  $('#foot').innerHTML = '<div class="wrap">' + LOGO + '<div><b>' + esc(CONFIG.brand) + '</b> · ' + esc(L(CONFIG.tagline)) + '<div class="links">' + links.join(' · ') + '</div><div class="copy">© ' + new Date().getFullYear() + ' ' + esc(CONFIG.brand) + '. ' + esc(S.rights) + '</div></div></div>';
+}
 function renderChrome(route) {
   document.documentElement.setAttribute('lang', lang);
+  renderFooter();
   $('#brand').innerHTML = LOGO + esc(CONFIG.brand);
   $('#lang').textContent = T().lang;
   $('#nav').innerHTML = ['home', 'pick', 'learn', 'book', 'me'].map((k) =>
@@ -8764,13 +8916,13 @@ function todayHTML() {
   const S = T(), now = new Date();
   const greg = now.toLocaleDateString(lang === 'vi' ? 'vi-VN' : 'en-GB', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
   const rows = [];
-  // Lunar (Chinese/Vietnamese lunisolar): day and month from Intl, the year in stems and branches.
-  let lunarDay = '', lunarMonth = '', lunarYear = now.getFullYear();
-  try {
-    const parts = new Intl.DateTimeFormat('en-u-ca-chinese', { day: 'numeric', month: 'numeric', year: 'numeric' }).formatToParts(now);
-    parts.forEach((p) => { if (p.type === 'day') lunarDay = p.value; if (p.type === 'month') lunarMonth = p.value; if (p.type === 'relatedYear') lunarYear = Number(p.value); });
-  } catch (e) { /* no chinese calendar */ }
-  if (lunarDay) rows.push([lang === 'vi' ? 'Âm lịch' : 'Lunar', (lang === 'vi' ? 'ngày ' : 'day ') + lunarDay + (lang === 'vi' ? ' tháng ' : ', month ') + lunarMonth + ' · ' + canChi(lunarYear)]);
+  // Vietnamese lunar calendar (Hồ Ngọc Đức's algorithm, UTC+7), as on the lịch vạn niên.
+  const lu = lunarToday(now);
+  const leap = lu.leap ? (lang === 'vi' ? ' (nhuận)' : ' (leap)') : '';
+  rows.push([lang === 'vi' ? 'Âm lịch' : 'Lunar (VN)', lang === 'vi'
+    ? 'Ngày ' + lu.day + ' tháng ' + lu.month + leap + ' năm ' + lu.yearCC + ' (' + lu.year + ')'
+    : 'Day ' + lu.day + ', month ' + lu.month + leap + ', year ' + lu.yearCC + ' (' + lu.year + ')']);
+  rows.push([lang === 'vi' ? 'Can chi' : 'Stems & branches', (lang === 'vi' ? 'Ngày ' : 'Day ') + lu.dayCC + (lang === 'vi' ? ' · tháng ' : ' · month ') + lu.monthCC + (lang === 'vi' ? ' · năm ' : ' · year ') + lu.yearCC]);
   const others = [['islamic-umalqura', lang === 'vi' ? 'Hồi giáo (Hijri)' : 'Islamic (Hijri)'], ['hebrew', lang === 'vi' ? 'Do Thái' : 'Hebrew'], ['persian', lang === 'vi' ? 'Ba Tư' : 'Persian'], ['buddhist', lang === 'vi' ? 'Phật lịch (Thái)' : 'Buddhist (Thai)']];
   others.forEach((o) => { const v = calLine(o[0], lang === 'vi' ? 'vi' : 'en', { day: 'numeric', month: 'long', year: 'numeric' }); if (v) rows.push([o[1], v]); });
   const mp = moonPhase(now);
@@ -8865,7 +9017,7 @@ function personalHTML() {
 /* The big "pick a card today" block: three card backs and one button. */
 function pickCtaHTML() {
   const S = T();
-  return '<a class="pickcta" href="#/pick"><div class="fan3"><span style="transform:rotate(-14deg)">' + BACK + '</span><span>' + BACK + '</span><span style="transform:rotate(14deg)">' + BACK + '</span></div>'
+  return '<a class="pickcta" href="#/pick"><div class="fan3"><span style="transform:rotate(-16deg)">' + logoCardSVG('blue') + '</span><span>' + logoCardSVG('purple') + '</span><span style="transform:rotate(16deg)">' + logoCardSVG('pink') + '</span></div>'
     + '<div><b>' + esc(S.pickToday) + '</b><p>' + esc(S.pickIntro) + '</p><span class="btn primary sm">' + esc(S.nav.pick) + ' →</span></div></a>';
 }
 function quickLinksHTML() {
@@ -9023,6 +9175,7 @@ function demoHTML(courseId) {
   const lesson = (n, title, body) => '<div class="acc open lesson"><button><span>' + esc(S.lessonN(n)) + ' · ' + esc(title) + '</span></button><div class="in">' + body + '</div></div>';
   let l1 = guideBodyHTML(g);
   if (courseId === 'lenormand') { const p = GUIDES.filter((x) => x.id === 'len-pairs')[0]; l1 += '<h2>' + esc(L(p.sections[2].h)) + '</h2><p>' + esc(L(p.sections[2].p)) + '</p>'; }
+  l1 += '<div class="visual">' + (courseId === 'tarot' ? journeyHTML() : lenIntroHTML()) + '</div>'
   const l2 = courseId === 'tarot' ? cardBodyHTML(d.card) : lenBodyHTML(d.card);
   return '<div class="demo-head"><span class="chip pink">' + esc(S.demoTag) + '</span><p class="muted">' + esc(S.demoIntro) + '</p></div>'
     + lesson(1, S.lesson1, '<div class="guide">' + l1 + '</div>') + lesson(2, S.lesson2, l2);
@@ -9048,6 +9201,7 @@ function renderLearn(args, params) {
   }
   if (sub === 'tarot') return renderCourse('tarot', params.tab);
   if (sub === 'lenormand') return renderCourse('lenormand', params.tab);
+  if (sub === 'lesson') return renderLesson(args[1], args[2]);
   if (sub === 'card') return renderCard(args[1]);
   if (sub === 'len') return renderLen(Number(args[1]));
   if (sub === 'astro') return renderAstro();
@@ -9064,18 +9218,20 @@ function renderCourse(courseId, tab) {
   if (!ACCESS.has(courseId)) {
     const S = T(), m = $('#main');
     m.innerHTML = backLink('#/learn', S.learnTitle) + '<h1 style="margin-bottom:8px">' + esc(S.cats[courseId]) + '</h1>' + demoHTML(courseId) + '<div id="unlockwrap" style="margin-top:18px">' + paywallHTML(courseId) + '</div>';
-    bindAccordions(m); bindPaywall(m);
+    bindAccordions(m); bindPaywall(m); bindCardLinks(m);
+    $$('[data-len]', m).forEach((b) => b.addEventListener('click', () => { location.hash = '#/learn/len/' + b.getAttribute('data-len'); }));
     return;
   }
   const S = T(), m = $('#main'), sys = courseId === 'tarot' ? 'tarot' : 'len';
   void sys;
-  tab = ['cards', 'spreads', 'guides'].indexOf(tab) > -1 ? tab : 'cards';
+  tab = ['lessons', 'cards', 'spreads', 'guides'].indexOf(tab) > -1 ? tab : 'lessons';
   const until = ACCESS.get()[courseId];
   m.innerHTML = backLink('#/learn', S.learnTitle) + '<h1 style="margin-bottom:4px">' + esc(S.cats[courseId]) + '</h1><p class="faint">' + esc(S.accessUntil(fmtDate(until))) + '</p>'
-    + '<div class="tabs" id="ctabs">' + ['cards', 'spreads', 'guides'].map((t) => '<button data-t="' + t + '" class="' + (tab === t ? 'on' : '') + '">' + esc(S.courseTabs[t]) + '</button>').join('') + '</div><div id="cpanel"></div>';
+    + '<div class="tabs" id="ctabs">' + ['lessons', 'cards', 'spreads', 'guides'].map((t) => '<button data-t="' + t + '" class="' + (tab === t ? 'on' : '') + '">' + esc(S.courseTabs[t]) + '</button>').join('') + '</div><div id="cpanel"></div>';
   const panel = $('#cpanel');
   const show = (t) => {
-    if (t === 'cards') { panel.innerHTML = courseId === 'tarot' ? tarotGridHTML() : lenGridHTML(); bindGrid(panel, courseId); }
+    if (t === 'lessons') { panel.innerHTML = '<p class="muted" style="font-size:14px">' + esc(S.lessonsIntro(LESSONS[courseId].length)) + '</p>' + lessonListHTML(courseId); }
+    else if (t === 'cards') { panel.innerHTML = courseId === 'tarot' ? tarotGridHTML() : lenGridHTML(); bindGrid(panel, courseId); }
     else if (t === 'spreads') { panel.innerHTML = spreadsListHTML(sys); }
     else { panel.innerHTML = (courseId === 'lenormand' ? '<p class="muted" style="font-size:14px">' + esc(S.lenNote) + '</p>' : '') + GUIDES.filter((g) => g.cat === courseId).map(guideRow).join(''); }
   };
@@ -9285,6 +9441,129 @@ function renderNumbers() {
 }
 ROUTES.learn = { nav: 'learn', render: renderLearn };
 
+/* ============================ course sessions ============================
+   Each course is a short series of sessions, the way beginner courses are
+   usually built: the deck's structure and story first, then the cards in
+   groups, then the court, then spreads and practice. Every session is
+   visual: card faces, strips, grids and diagrams drawn from the app's own
+   artwork, with a line or two of text per card. */
+const LESSONS = {
+  tarot: [
+    { n: 1, title: { vi: 'Tổng quan bộ bài và hành trình của Gã Khờ', en: 'The deck at a glance and the Fool\'s Journey' }, guide: 'tarot-overview', visual: 'journey' },
+    { n: 2, title: { vi: 'Ẩn Chính 0–7: bước ra thế giới', en: 'Majors 0–7: stepping into the world' }, cards: ['major-0', 'major-1', 'major-2', 'major-3', 'major-4', 'major-5', 'major-6', 'major-7'], visual: 'strip',
+      intro: { vi: 'Tám lá đầu là những người thầy đầu tiên trên đường. Học theo thứ tự, mỗi lá một ngày, và tự kể lại vì sao lá sau đứng sau lá trước.', en: 'The first eight cards are the first teachers on the road. Learn them in order, one a day, and retell why each card follows the last.' } },
+    { n: 3, title: { vi: 'Ẩn Chính 8–14: quay vào bên trong', en: 'Majors 8–14: turning inward' }, cards: ['major-8', 'major-9', 'major-10', 'major-11', 'major-12', 'major-13', 'major-14'], visual: 'strip',
+      intro: { vi: 'Sau chiến thắng đầu tiên, Gã Khờ học rằng sức mạnh thật là sức mạnh lặng. Bảy lá này nói về buông, chờ, chịu trách nhiệm và cân bằng.', en: 'After the first victory, the Fool learns that real strength is quiet. These seven cards speak of letting go, waiting, owning your actions and finding balance.' } },
+    { n: 4, title: { vi: 'Ẩn Chính 15–21: bóng tối và ánh sáng', en: 'Majors 15–21: darkness and light' }, cards: ['major-15', 'major-16', 'major-17', 'major-18', 'major-19', 'major-20', 'major-21'], visual: 'strip',
+      intro: { vi: 'Chặng cuối: bị trói, sụp đổ, rồi hy vọng, sương mù, ánh sáng, thức tỉnh và về đích. Đây là những lá mạnh nhất trong bộ.', en: 'The last stretch: bound, toppled, then hope, fog, light, awakening and arrival. These are the strongest cards in the deck.' } },
+    { n: 5, title: { vi: 'Gậy và Cốc: lửa và nước', en: 'Wands and Cups: fire and water' }, suits: ['wands', 'cups'], visual: 'suits',
+      intro: { vi: 'Ẩn Phụ đi từ Át (hạt giống) đến Mười (kết quả). Gậy là hành động và đam mê. Cốc là cảm xúc và tình yêu. Nhìn cả dãy mười lá, bạn sẽ thấy một câu chuyện lên rồi xuống.', en: 'The Minors run from Ace (the seed) to Ten (the outcome). Wands are action and passion. Cups are feeling and love. Look at the ten in a row and you see a story that rises and falls.' } },
+    { n: 6, title: { vi: 'Kiếm và Tiền: khí và đất', en: 'Swords and Pentacles: air and earth' }, suits: ['swords', 'pentacles'], visual: 'suits',
+      intro: { vi: 'Kiếm là suy nghĩ, lời nói và xung đột: chất khó nhất của bộ bài. Tiền là tiền bạc, sức khỏe và việc cụ thể: chất chậm mà chắc.', en: 'Swords are thought, words and conflict: the hardest suit in the deck. Pentacles are money, health and practical work: the slow and steady suit.' } },
+    { n: 7, title: { vi: 'Lá hoàng gia: 16 tính cách', en: 'The court: 16 characters' }, guide: 'tarot-court', visual: 'court',
+      intro: { vi: 'Bốn cấp nhân bốn chất. Đọc theo hàng để thấy chất, theo cột để thấy cấp. Một lá hoàng gia có thể là một người, một phần của bạn, hoặc một cách hành xử.', en: 'Four ranks times four suits. Read across a row for the suit, down a column for the rank. A court card can be a person, a part of you, or a way of acting.' } },
+    { n: 8, title: { vi: 'Trải bài và luyện đọc', en: 'Spreads and reading practice' }, guides: ['tarot-start', 'tarot-reversed'], visual: 'spreads', sys: 'tarot',
+      intro: { vi: 'Bắt đầu với một lá, rồi ba lá. Celtic Cross để dành khi bạn đã đọc quen. Mỗi trải bài có sơ đồ và câu hỏi cho từng vị trí.', en: 'Start with one card, then three. Save the Celtic Cross for when reading feels natural. Every spread has a diagram and a question for each position.' } }
+  ],
+  lenormand: [
+    { n: 1, title: { vi: 'Lenormand là gì và cách học', en: 'What Lenormand is and how to learn it' }, guide: 'len-vs-tarot', extra: ['len-pairs', 2], visual: 'lenintro' },
+    { n: 2, title: { vi: 'Lá 1–12: người đưa tin đến con chim', en: 'Cards 1–12: from the Rider to the Birds' }, len: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12], visual: 'lenstrip',
+      intro: { vi: 'Mỗi lá là một vật, một danh từ. Học tên, sắc thái (tích cực, trung tính, tiêu cực) và một từ khóa. Đừng cố nhớ hết nghĩa; nghĩa đến khi ghép cặp.', en: 'Each card is a thing, a noun. Learn the name, the tone (positive, neutral, negative) and one keyword. Do not try to memorise every meaning; meaning comes when you pair cards.' } },
+    { n: 3, title: { vi: 'Lá 13–24: đứa trẻ đến trái tim', en: 'Cards 13–24: from the Child to the Heart' }, len: [13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24], visual: 'lenstrip',
+      intro: { vi: 'Nhóm này có nhiều lá về người và về chuyện giữa người với người: Đứa Trẻ, Cáo, Gấu, Chuột, Trái Tim.', en: 'This group holds many people cards and cards about what happens between people: the Child, Fox, Bear, Mice, Heart.' } },
+    { n: 4, title: { vi: 'Lá 25–36: chiếc nhẫn đến cây thánh giá', en: 'Cards 25–36: from the Ring to the Cross' }, len: [25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36], visual: 'lenstrip',
+      intro: { vi: 'Nhóm cuối có hai lá chỉ người hỏi (Quý Ông, Quý Bà), các lá thời gian và kết thúc: Mặt Trăng, Chìa Khóa, Mỏ Neo, Thánh Giá.', en: 'The last group has the two significators (Man, Woman), the timing cards and the endings: Moon, Key, Anchor, Cross.' } },
+    { n: 5, title: { vi: 'Ghép cặp: đọc hai lá và ba lá', en: 'Pairs: reading two and three cards' }, guide: 'len-pairs', visual: 'pairs',
+      intro: { vi: 'Đây là kỹ năng chính của Lenormand. Lá đầu là chủ đề, lá sau bổ nghĩa. Bên dưới là những cặp thường gặp, lấy từ trang của từng lá.', en: 'This is the core skill of Lenormand. The first card is the subject, the second describes it. Below are common pairs, taken from the card pages.' } },
+    { n: 6, title: { vi: 'Trải bài: từ ba lá đến Grand Tableau', en: 'Spreads: from three cards to the Grand Tableau' }, visual: 'spreads', sys: 'len',
+      intro: { vi: 'Ba lá là bài tập hằng ngày. Chín lá (hộp 3×3) là trải bài đầy đủ đầu tiên. Grand Tableau 36 lá để dành khi bạn đã đọc cặp lá không cần tra.', en: 'Three cards is the daily exercise. Nine cards (the 3×3 box) is the first full spread. Save the 36-card Grand Tableau for when you read pairs without looking them up.' } }
+  ]
+};
+
+const DONE = {
+  get() { return store.get('nabu-lessons-done', {}); },
+  is(course, n) { return !!(this.get()[course] || {})[n]; },
+  toggle(course, n) { const d = this.get(); d[course] = d[course] || {}; d[course][n] = !d[course][n]; store.set('nabu-lessons-done', d); }
+};
+
+/* ---- visual blocks ---- */
+function cardTile(id) {
+  const c = cardById(id), I = insightOf(id);
+  return '<button class="vt" data-open-card="' + id + '">' + faceSVG(c) + '<b>' + esc(c.name) + '</b><span>' + esc(I ? I.pos.slice(0, 2).join(' · ') : c.kw.slice(0, 2).join(' · ')) + '</span></button>';
+}
+function stripHTML(ids) { return '<div class="vstrip">' + ids.map(cardTile).join('') + '</div>'; }
+function journeyHTML() {
+  const S = T();
+  const stages = [[lang === 'vi' ? 'Chặng một · bước ra thế giới' : 'Part one · into the world', 0, 7], [lang === 'vi' ? 'Chặng hai · quay vào bên trong' : 'Part two · turning inward', 8, 14], [lang === 'vi' ? 'Chặng ba · bóng tối và ánh sáng' : 'Part three · darkness and light', 15, 21]];
+  return '<div class="journey">' + stages.map((st, i) => {
+    const ids = []; for (let k = st[1]; k <= st[2]; k++) ids.push('major-' + k);
+    return '<div class="stage s' + i + '"><div class="stage-h"><span class="num">' + (i + 1) + '</span>' + esc(st[0]) + '</div><div class="vstrip">' + ids.map((id) => { const c = cardById(id); return '<button class="vt" data-open-card="' + id + '">' + faceSVG(c) + '<b>' + esc(c.badge + ' · ' + c.name) + '</b></button>'; }).join('') + '</div></div>';
+  }).join('') + '<p class="faint">' + esc(S.journeyHint) + '</p></div>';
+}
+function suitsHTML(suits) {
+  const S = T(), X = LEX[lang];
+  const wheel = '<div class="wheel">' + SUIT_KEYS.map((s) => '<div class="w ' + s + (suits.indexOf(s) > -1 ? ' on' : '') + '"><svg viewBox="-20 -22 40 44">' + '<g stroke="var(--card-ink)" stroke-linejoin="round" stroke-linecap="round" fill="none">' + emblem(s, 0, 0, 1) + '</g></svg><b>' + esc(X.suitNames[s]) + '</b><span>' + esc(X.elements[s]) + '</span></div>').join('') + '</div>';
+  return wheel + suits.map((s) => { const ids = []; for (let i = 1; i <= 10; i++) ids.push(s + '-' + i); return '<h3 class="m-' + s + '">' + esc(X.suitNames[s]) + ' · ' + esc(X.elements[s]) + '</h3>' + stripHTML(ids); }).join('');
+}
+function courtHTML() {
+  const X = LEX[lang];
+  let h = '<div class="court"><div class="corner"></div>' + X.courts.map((c) => '<div class="ch">' + esc(c) + '</div>').join('');
+  SUIT_KEYS.forEach((s) => { h += '<div class="rh m-' + s + '">' + esc(X.suitNames[s]) + '</div>'; for (let i = 0; i < 4; i++) { const id = s + '-c' + i; h += '<button class="cc" data-open-card="' + id + '">' + faceSVG(cardById(id)) + '</button>'; } });
+  return h + '</div>';
+}
+function lenTile(n) {
+  const d = lenCard(n);
+  return '<button class="vt tone-' + d.tone + '" data-len="' + n + '">' + lenFace(n) + '<b>' + n + '. ' + esc(d.name) + '</b><span>' + esc((d.kw.pos || [])[0] || '') + '</span><i class="tone">' + esc(T().lenTone[d.tone]) + '</i></button>';
+}
+function lenStripHTML(ns) { return '<div class="tonekey">' + ['pos', 'neu', 'neg'].map((t) => '<span class="tk tone-' + t + '">' + esc(T().lenTone[t]) + '</span>').join('') + '</div><div class="vstrip">' + ns.map(lenTile).join('') + '</div>'; }
+function lenIntroHTML() {
+  const ns = []; for (let i = 1; i <= 36; i++) ns.push(i);
+  return '<div class="vgrid">' + ns.map((n) => '<button class="vg" data-len="' + n + '">' + lenFace(n) + '</button>').join('') + '</div><p class="faint">' + esc(T().lenGridHint) + '</p>';
+}
+function pairsHTML() {
+  // Resolve "+ Heart" style combos on a handful of cards into face pairs.
+  const byName = {}; for (let i = 1; i <= 36; i++) byName[LEN.en[i].name.toLowerCase()] = i;
+  const out = [];
+  [1, 3, 5, 24, 27, 33].forEach((n) => { const d = lenCard(n); (d.combo || []).slice(0, 2).forEach((c) => { const m = /\+\s*(.+)$/.exec(LEN.en[n].combo[d.combo.indexOf(c)][0]); const t = m && byName[m[1].trim().toLowerCase()]; if (t) out.push([n, t, c[1]]); }); });
+  return '<div class="pairs">' + out.map((p) => '<div class="pair"><div class="pf">' + lenFace(p[0]) + '<span>+</span>' + lenFace(p[1]) + '</div><p>' + esc(p[2]) + '</p></div>').join('') + '</div>';
+}
+function spreadsVisualHTML(sys) {
+  return SPREADS[lang].filter((s) => s.sys === sys && s.n <= 12).map((s) => '<a class="spv" href="#/learn/spread/' + s.id + '"><div class="spd">' + spreadArt(s.lay) + '</div><b>' + esc(s.name) + '</b><span>' + s.n + (lang === 'vi' ? ' lá' : ' cards') + '</span></a>').join('')
+    + (sys === 'len' ? '<a class="spv" href="#/learn/spread/len-gt"><div class="spd gt">' + spreadArt(LAY.gt) + '</div><b>Grand Tableau</b><span>36 ' + (lang === 'vi' ? 'lá' : 'cards') + '</span></a>' : '');
+}
+
+/* ---- pages ---- */
+function lessonListHTML(courseId) {
+  const S = T();
+  return '<div class="lessons">' + LESSONS[courseId].map((l) => '<a class="lsn' + (DONE.is(courseId, l.n) ? ' done' : '') + '" href="#/learn/lesson/' + courseId + '/' + l.n + '"><span class="num">' + l.n + '</span><span class="tt">' + esc(L(l.title)) + '</span><span class="chk">' + (DONE.is(courseId, l.n) ? '✓' : '›') + '</span></a>').join('') + '</div>';
+}
+function renderLesson(courseId, n) {
+  const S = T(), m = $('#main'), l = (LESSONS[courseId] || []).filter((x) => x.n === Number(n))[0];
+  if (!l) { location.hash = '#/learn/' + courseId; return; }
+  if (!(n === '1' || n === 1) && gate(courseId, '#/learn/' + courseId)) return;
+  let body = l.intro ? '<p class="lead">' + esc(L(l.intro)) + '</p>' : '';
+  if (l.guide) { const g = GUIDES.filter((x) => x.id === l.guide)[0]; body += '<div class="guide">' + guideBodyHTML(g) + '</div>'; }
+  if (l.extra) { const g = GUIDES.filter((x) => x.id === l.extra[0])[0], sct = g.sections[l.extra[1]]; body += '<div class="guide"><h2>' + esc(L(sct.h)) + '</h2><p>' + esc(L(sct.p)) + '</p></div>'; }
+  let vis = '';
+  if (l.visual === 'journey') vis = journeyHTML();
+  else if (l.visual === 'strip') vis = stripHTML(l.cards);
+  else if (l.visual === 'suits') vis = suitsHTML(l.suits);
+  else if (l.visual === 'court') vis = courtHTML();
+  else if (l.visual === 'lenintro') vis = lenIntroHTML();
+  else if (l.visual === 'lenstrip') vis = lenStripHTML(l.len);
+  else if (l.visual === 'pairs') vis = pairsHTML();
+  else if (l.visual === 'spreads') vis = '<div class="spreads-v">' + spreadsVisualHTML(l.sys) + '</div>';
+  if (l.guides) vis += l.guides.map((id) => guideRow(GUIDES.filter((x) => x.id === id)[0])).join('');
+  const prev = LESSONS[courseId].filter((x) => x.n === l.n - 1)[0], next = LESSONS[courseId].filter((x) => x.n === l.n + 1)[0];
+  m.innerHTML = backLink('#/learn/' + courseId, S.cats[courseId]) + '<div class="eyebrow">' + esc(S.lessonN(l.n)) + ' / ' + LESSONS[courseId].length + '</div><h1 style="margin-bottom:10px">' + esc(L(l.title)) + '</h1>'
+    + body + '<div class="visual">' + vis + '</div>'
+    + '<button class="btn block' + (DONE.is(courseId, l.n) ? '' : ' primary') + '" id="ldone">' + (DONE.is(courseId, l.n) ? '✓ ' + esc(S.lessonDone) : esc(S.markDone)) + '</button>'
+    + '<div class="row" style="margin-top:10px">' + (prev ? '<a class="btn" href="#/learn/lesson/' + courseId + '/' + prev.n + '">← ' + esc(S.lessonN(prev.n)) + '</a>' : '') + (next ? '<a class="btn" href="#/learn/lesson/' + courseId + '/' + next.n + '" style="margin-left:auto">' + esc(S.lessonN(next.n)) + ' →</a>' : '') + '</div>';
+  bindCardLinks(m);
+  $$('[data-len]', m).forEach((b) => b.addEventListener('click', () => { location.hash = '#/learn/len/' + b.getAttribute('data-len'); }));
+  $('#ldone').addEventListener('click', () => { DONE.toggle(courseId, l.n); renderLesson(courseId, n); });
+}
+
 /* ============================ booking ============================
    Service and package, topic (required for "set topic" packages), a
    calendar of Nabu's free slots (schedule.json, minus slots taken in
@@ -9374,7 +9653,7 @@ async function renderBook(args, params) {
   if (params.svc) { book.service = params.svc; book.pkg = null; }
   if (!book.month) book.month = new Date(new Date().getFullYear(), new Date().getMonth(), 1);
   const topics = TOPICS.map((t) => '<button class="topic' + (book.topic === t.id ? ' on open' : '') + '" data-topic="' + t.id + '"><div class="t"><span class="ic">' + t.icon + '</span><span><span class="n">#' + t.id + '</span> ' + esc(L(t.name)) + '</span></div><ol>' + t.q[lang].map((q) => '<li>' + esc(q) + '</li>').join('') + '</ol></button>').join('')
-    + '<button class="topic' + (book.topic === 'own' ? ' on' : '') + '" data-topic="own"><div class="t"><span class="ic">✍️</span><span>' + esc(S.ownTopic) + '</span></div><div class="hint">' + esc(S.ownTopicHint) + '</div></button>';
+    ;
   const links = [];
   if (CONFIG.instagram) links.push(['https://ig.me/m/' + CONFIG.instagram, S.viaInstagram, BE.enabled ? '' : 'primary']);
   if (CONFIG.facebookPage) links.push(['https://m.me/' + CONFIG.facebookPage, S.viaMessenger, '']);
@@ -9552,7 +9831,7 @@ function renderMe(args, params) {
       + '<label class="f" for="mcode">' + esc(S.enterCode) + '</label><div class="row"><input id="mcode" placeholder="NABU-T-…" autocapitalize="characters" style="flex:1"><button class="btn" id="munlock">' + esc(S.unlock) + '</button></div><p class="hint" id="mcstatus"></p></div>';
     h += '<div class="card"><h3 style="margin-bottom:8px">' + esc(S.themeTitle) + '</h3><div class="chips">' + ['auto', 'light', 'dark'].map((t) => '<button class="chip' + (themeChoice() === t ? ' on' : '') + '" data-theme-pick="' + t + '">' + esc(S.themes[t]) + '</button>').join('') + '</div><p class="hint">' + esc(S.themeHint) + '</p></div>';
     h += '<div class="card"><h3 style="margin-bottom:6px">' + esc(S.installTitle) + '</h3><p class="muted" style="font-size:14px">' + esc(S.install) + '</p></div>';
-    h += '<div class="row">' + (BE.user ? '<button class="btn" id="signout">' + esc(S.signOut) + '</button>' : '') + '<button class="btn" id="retour">' + (lang === 'vi' ? 'Xem lại hướng dẫn' : 'Replay the tour') + '</button>' + (BE.isAdmin() ? '<a class="btn gold" href="#/admin">' + esc(S.adminTitle) + '</a>' : '') + '</div>';
+    h += '<div class="row">' + (BE.user ? '<button class="btn" id="signout">' + esc(S.signOut) + '</button>' : '') + '<a class="btn" href="#/report">🐞 ' + esc(S.reportLink) + '</a><button class="btn" id="retour">' + (lang === 'vi' ? 'Xem lại hướng dẫn' : 'Replay the tour') + '</button>' + (BE.isAdmin() ? '<a class="btn gold" href="#/admin">' + esc(S.adminTitle) + '</a>' : '') + '</div>';
     body.innerHTML = h;
     bindAuth(body);
     bindProfileForm(body, () => { if (params.next === 'book') location.hash = '#/book'; });
@@ -9571,6 +9850,40 @@ function renderMe(args, params) {
   if (BE.enabled) { const cb = () => { if (parseHash().route === 'me') { renderChrome('me'); draw(); } }; BE.listeners.push(cb); meUnsubs.push(() => { BE.listeners = BE.listeners.filter((x) => x !== cb); }); }
 }
 ROUTES.me = { nav: 'me', render: renderMe };
+
+/* ============================ bug reports (#/report) ============================
+   A short form plus what the app knows (screen, version, device, the last
+   error it caught). Saved to Firestore when accounts are on and the visitor
+   is signed in; otherwise copied and sent through Instagram. */
+window.__lastError = '';
+window.addEventListener('error', (e) => { window.__lastError = (e.message || '') + ' @ ' + (e.filename || '').split('/').pop() + ':' + (e.lineno || ''); });
+window.addEventListener('unhandledrejection', (e) => { window.__lastError = 'promise: ' + ((e.reason && e.reason.message) || String(e.reason || '')); });
+
+function reportInfo() {
+  return [CONFIG.brand + ' ' + (window.APP_VERSION || ''), location.hash, navigator.userAgent.replace(/\).*$/, ')'), (window.innerWidth + 'x' + window.innerHeight), lang, window.__lastError ? 'error: ' + window.__lastError : ''].filter(Boolean).join(' · ');
+}
+function renderReport(args, params) {
+  const S = T(), m = $('#main');
+  m.innerHTML = '<div class="eyebrow">' + esc(CONFIG.brand) + '</div><h1 style="margin-bottom:6px">' + esc(S.reportTitle) + '</h1><p class="muted">' + esc(S.reportIntro) + '</p>'
+    + '<div class="card"><label class="f" for="rwhat">' + esc(S.reportWhat) + '</label><textarea id="rwhat" placeholder="' + esc(S.reportPlaceholder) + '"></textarea>'
+    + '<label class="f" for="rcontact">' + esc(S.reportContact) + '</label><input id="rcontact" value="' + esc(BE.user ? (BE.user.email || '') : '') + '">'
+    + '<p class="hint" style="margin-top:12px">' + esc(S.reportAuto) + '</p><div class="msgbox" style="font-size:12.5px">' + esc(reportInfo()) + '</div>'
+    + '<div class="row" style="flex-direction:column">'
+    + (BE.enabled && BE.user ? '<button class="btn primary block" id="rsend">' + esc(S.reportSend) + '</button>' : '')
+    + (CONFIG.instagram ? '<a class="btn block' + (BE.enabled && BE.user ? '' : ' primary') + '" id="rig" href="https://ig.me/m/' + esc(CONFIG.instagram) + '" target="_blank" rel="noopener">' + esc(S.reportViaIg) + '</a>' : '')
+    + '<button class="btn block" id="rcopy">' + esc(S.copyMsg) + '</button></div><p class="hint" id="rstatus"></p></div>';
+  const msg = () => S.reportMsgHead + '\n' + $('#rwhat').value.trim() + '\n' + ($('#rcontact').value.trim() ? S.reportContact + ': ' + $('#rcontact').value.trim() + '\n' : '') + '— ' + reportInfo();
+  const need = () => { if (!$('#rwhat').value.trim()) { toast(S.reportNeed); return false; } return true; };
+  $('#rcopy').addEventListener('click', () => { if (need()) copyText(msg()).then(() => toast(S.copied)); });
+  const ig = $('#rig'); if (ig) ig.addEventListener('click', (e) => { if (!need()) { e.preventDefault(); return; } copyText(msg()); toast(S.copied); });
+  const send = $('#rsend'); if (send) send.addEventListener('click', async () => {
+    if (!need()) return; send.disabled = true;
+    try { await BE.db.collection('reports').add({ uid: BE.user.uid, email: BE.user.email || '', text: $('#rwhat').value.trim(), contact: $('#rcontact').value.trim(), info: reportInfo(), at: firebase.firestore.FieldValue.serverTimestamp() }); $('#rstatus').textContent = S.reportSent; $('#rstatus').className = 'hint ok'; $('#rwhat').value = ''; }
+    catch (e) { $('#rstatus').textContent = S.publishFail + ': ' + e.message; $('#rstatus').className = 'hint err'; }
+    send.disabled = false;
+  });
+}
+ROUTES.report = { nav: 'me', render: renderReport };
 
 /* ============================ admin (#/admin) ============================
    Posts and availability are files in the repo, committed through the
@@ -9769,7 +10082,8 @@ function adminCodes(p) {
 ROUTES.admin = { nav: '', render: renderAdmin };
 
 /* ============================ boot ============================ */
-window.NABU = { DECK: DECK, INSIGHT: INSIGHT, KW: KW, ASK: ASK, TOPICS: TOPICS, GUIDES: GUIDES, SERVICES: SERVICES, COURSES: COURSES, ACCESS: ACCESS, makeCode: makeCode, parseCode: parseCode, ZODIAC: ZODIAC, pick: pick, book: book,
+window.APP_VERSION = 'v15';
+window.NABU = { LESSONS: LESSONS, lunarToday: lunarToday, solarToLunar: solarToLunar, DECK: DECK, INSIGHT: INSIGHT, KW: KW, ASK: ASK, TOPICS: TOPICS, GUIDES: GUIDES, SERVICES: SERVICES, COURSES: COURSES, ACCESS: ACCESS, makeCode: makeCode, parseCode: parseCode, ZODIAC: ZODIAC, pick: pick, book: book,
   insightHTML: insightHTML, insightOf: insightOf, sunSignIndex: sunSignIndex, lifePath: lifePath, PROFILE: () => PROFILE, BE: BE };
 BE.init().catch(() => { /* backend unreachable: the app runs device-only */ });
 boot();

@@ -24,6 +24,10 @@ service cloud.firestore {
       allow read: if isAdmin() || (request.auth != null && resource.data.uid == request.auth.uid);
       allow update, delete: if isAdmin();
     }
+    match /reports/{id} {
+      allow create: if request.auth != null && request.resource.data.uid == request.auth.uid;
+      allow read, update, delete: if isAdmin();
+    }
     // Taken slots are public so the calendar can hide them; only signed-in
     // users can claim one, and only if it is still free.
     match /taken/{slot} {

@@ -55,7 +55,7 @@ const SERVICES = [
       { id: 'all', name: { vi: 'Tổng quan mọi vấn đề', en: 'Full overview of everything' }, price: 666000 }
     ] },
   { id: 'talk', icon: '💬', tone: 'blue', name: { vi: 'Chỉ tâm sự', en: 'Just talk' },
-    tagline: { vi: 'Không bài, không dự đoán. Chỉ có người lắng nghe.', en: 'No cards, no predictions. Just someone who listens.' },
+    tagline: { vi: 'Không có trải bài, không đưa dự đoán, nhưng luôn sẵn lòng lắng nghe.', en: 'No spread and no predictions, but always ready to listen.' },
     packages: [
       { id: 't30', name: { vi: '30 phút', en: '30 minutes' }, price: 30000 },
       { id: 't60', name: { vi: '1 tiếng', en: '1 hour' }, price: 60000 }

@@ -151,14 +151,22 @@ const LOGO = '<svg viewBox="0 0 100 100" aria-hidden="true">'
 /* ---- chrome ---- */
 const ICONS = {
   home: '<svg viewBox="0 0 24 24"><path d="M3 11l9-7 9 7v9a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/></svg>',
-  pick: '<svg viewBox="0 0 24 24"><rect x="6" y="3" width="12" height="18" rx="2"/><path d="M12 8l1.5 3 3 .4-2.2 2.1.6 3.2L12 15.2 9.1 16.7l.6-3.2L7.5 11.4l3-.4z"/></svg>',
+  pick: '<svg viewBox="0 0 24 24"><rect x="4.5" y="5" width="11" height="16" rx="2" transform="rotate(-10 10 13)"/><rect x="9" y="3.5" width="11" height="16" rx="2" transform="rotate(8 14.5 11.5)"/><path d="M16.2 8.2a2.3 2.3 0 1 0 0 4.2 1.8 1.8 0 1 1 0-4.2z"/></svg>',
   learn: '<svg viewBox="0 0 24 24"><path d="M4 5a2 2 0 0 1 2-2h5v18H6a2 2 0 0 1-2-2zM13 3h5a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-5z"/></svg>',
   book: '<svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></svg>',
   me: '<svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg>'
 };
 let UNREAD = 0;
+function renderFooter() {
+  const S = T(), links = [];
+  if (CONFIG.instagram) links.push('<a href="https://instagram.com/' + esc(CONFIG.instagram) + '" target="_blank" rel="noopener">Instagram</a>');
+  if (CONFIG.facebookUrl) links.push('<a href="' + esc(CONFIG.facebookUrl) + '" target="_blank" rel="noopener">Facebook</a>');
+  links.push('<a href="#/report">' + esc(S.reportLink) + '</a>');
+  $('#foot').innerHTML = '<div class="wrap">' + LOGO + '<div><b>' + esc(CONFIG.brand) + '</b> · ' + esc(L(CONFIG.tagline)) + '<div class="links">' + links.join(' · ') + '</div><div class="copy">© ' + new Date().getFullYear() + ' ' + esc(CONFIG.brand) + '. ' + esc(S.rights) + '</div></div></div>';
+}
 function renderChrome(route) {
   document.documentElement.setAttribute('lang', lang);
+  renderFooter();
   $('#brand').innerHTML = LOGO + esc(CONFIG.brand);
   $('#lang').textContent = T().lang;
   $('#nav').innerHTML = ['home', 'pick', 'learn', 'book', 'me'].map((k) =>

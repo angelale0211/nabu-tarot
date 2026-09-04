@@ -40,6 +40,7 @@ function demoHTML(courseId) {
   const lesson = (n, title, body) => '<div class="acc open lesson"><button><span>' + esc(S.lessonN(n)) + ' · ' + esc(title) + '</span></button><div class="in">' + body + '</div></div>';
   let l1 = guideBodyHTML(g);
   if (courseId === 'lenormand') { const p = GUIDES.filter((x) => x.id === 'len-pairs')[0]; l1 += '<h2>' + esc(L(p.sections[2].h)) + '</h2><p>' + esc(L(p.sections[2].p)) + '</p>'; }
+  l1 += '<div class="visual">' + (courseId === 'tarot' ? journeyHTML() : lenIntroHTML()) + '</div>'
   const l2 = courseId === 'tarot' ? cardBodyHTML(d.card) : lenBodyHTML(d.card);
   return '<div class="demo-head"><span class="chip pink">' + esc(S.demoTag) + '</span><p class="muted">' + esc(S.demoIntro) + '</p></div>'
     + lesson(1, S.lesson1, '<div class="guide">' + l1 + '</div>') + lesson(2, S.lesson2, l2);
@@ -65,6 +66,7 @@ function renderLearn(args, params) {
   }
   if (sub === 'tarot') return renderCourse('tarot', params.tab);
   if (sub === 'lenormand') return renderCourse('lenormand', params.tab);
+  if (sub === 'lesson') return renderLesson(args[1], args[2]);
   if (sub === 'card') return renderCard(args[1]);
   if (sub === 'len') return renderLen(Number(args[1]));
   if (sub === 'astro') return renderAstro();
@@ -81,18 +83,20 @@ function renderCourse(courseId, tab) {
   if (!ACCESS.has(courseId)) {
     const S = T(), m = $('#main');
     m.innerHTML = backLink('#/learn', S.learnTitle) + '<h1 style="margin-bottom:8px">' + esc(S.cats[courseId]) + '</h1>' + demoHTML(courseId) + '<div id="unlockwrap" style="margin-top:18px">' + paywallHTML(courseId) + '</div>';
-    bindAccordions(m); bindPaywall(m);
+    bindAccordions(m); bindPaywall(m); bindCardLinks(m);
+    $$('[data-len]', m).forEach((b) => b.addEventListener('click', () => { location.hash = '#/learn/len/' + b.getAttribute('data-len'); }));
     return;
   }
   const S = T(), m = $('#main'), sys = courseId === 'tarot' ? 'tarot' : 'len';
   void sys;
-  tab = ['cards', 'spreads', 'guides'].indexOf(tab) > -1 ? tab : 'cards';
+  tab = ['lessons', 'cards', 'spreads', 'guides'].indexOf(tab) > -1 ? tab : 'lessons';
   const until = ACCESS.get()[courseId];
   m.innerHTML = backLink('#/learn', S.learnTitle) + '<h1 style="margin-bottom:4px">' + esc(S.cats[courseId]) + '</h1><p class="faint">' + esc(S.accessUntil(fmtDate(until))) + '</p>'
-    + '<div class="tabs" id="ctabs">' + ['cards', 'spreads', 'guides'].map((t) => '<button data-t="' + t + '" class="' + (tab === t ? 'on' : '') + '">' + esc(S.courseTabs[t]) + '</button>').join('') + '</div><div id="cpanel"></div>';
+    + '<div class="tabs" id="ctabs">' + ['lessons', 'cards', 'spreads', 'guides'].map((t) => '<button data-t="' + t + '" class="' + (tab === t ? 'on' : '') + '">' + esc(S.courseTabs[t]) + '</button>').join('') + '</div><div id="cpanel"></div>';
   const panel = $('#cpanel');
   const show = (t) => {
-    if (t === 'cards') { panel.innerHTML = courseId === 'tarot' ? tarotGridHTML() : lenGridHTML(); bindGrid(panel, courseId); }
+    if (t === 'lessons') { panel.innerHTML = '<p class="muted" style="font-size:14px">' + esc(S.lessonsIntro(LESSONS[courseId].length)) + '</p>' + lessonListHTML(courseId); }
+    else if (t === 'cards') { panel.innerHTML = courseId === 'tarot' ? tarotGridHTML() : lenGridHTML(); bindGrid(panel, courseId); }
     else if (t === 'spreads') { panel.innerHTML = spreadsListHTML(sys); }
     else { panel.innerHTML = (courseId === 'lenormand' ? '<p class="muted" style="font-size:14px">' + esc(S.lenNote) + '</p>' : '') + GUIDES.filter((g) => g.cat === courseId).map(guideRow).join(''); }
   };

@@ -87,7 +87,7 @@ async function renderBook(args, params) {
   if (params.svc) { book.service = params.svc; book.pkg = null; }
   if (!book.month) book.month = new Date(new Date().getFullYear(), new Date().getMonth(), 1);
   const topics = TOPICS.map((t) => '<button class="topic' + (book.topic === t.id ? ' on open' : '') + '" data-topic="' + t.id + '"><div class="t"><span class="ic">' + t.icon + '</span><span><span class="n">#' + t.id + '</span> ' + esc(L(t.name)) + '</span></div><ol>' + t.q[lang].map((q) => '<li>' + esc(q) + '</li>').join('') + '</ol></button>').join('')
-    + '<button class="topic' + (book.topic === 'own' ? ' on' : '') + '" data-topic="own"><div class="t"><span class="ic">✍️</span><span>' + esc(S.ownTopic) + '</span></div><div class="hint">' + esc(S.ownTopicHint) + '</div></button>';
+    ;
   const links = [];
   if (CONFIG.instagram) links.push(['https://ig.me/m/' + CONFIG.instagram, S.viaInstagram, BE.enabled ? '' : 'primary']);
   if (CONFIG.facebookPage) links.push(['https://m.me/' + CONFIG.facebookPage, S.viaMessenger, '']);

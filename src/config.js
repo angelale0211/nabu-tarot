@@ -7,6 +7,7 @@ const CONFIG = {
   // Social handles. Leave a value empty ('') to hide that button.
   instagram: 'nabutarot',          // https://instagram.com/nabutarot  (DM: https://ig.me/m/nabutarot)
   facebookPage: '',                // the page's username, e.g. 'nabutarot' -> https://m.me/nabutarot
+  facebookUrl: 'https://www.facebook.com/search/top?q=Nabu%20Tarot', // replace with the page's real address, e.g. https://www.facebook.com/nabutarot
   zalo: '',                        // phone number or Zalo id -> https://zalo.me/<id>
   email: '',                       // optional: shows a mail button on the booking screen
 
@@ -39,6 +40,7 @@ const CONFIG = {
     vi: 'Bạn chọn chủ đề và giờ hẹn, rồi gửi cho Nabu. Nabu xác nhận lại với bạn trước buổi xem.',
     en: 'Choose a topic and a time, then send it to Nabu. Nabu confirms with you before the session.'
   },
+  tagline: { vi: 'Lắng nghe và thấu hiểu', en: 'Listening and understanding' },
   about: {
     vi: 'Nabu Tarot xem bài về tình cảm, người cũ, crush, công việc và học tập. Mỗi chủ đề là một trải bài 5 lá với 5 câu hỏi rõ ràng.',
     en: 'Nabu Tarot reads on relationships, exes, crushes, career and study. Each topic is a five-card spread with five clear questions.'

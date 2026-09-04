@@ -20,13 +20,13 @@ function todayHTML() {
   const S = T(), now = new Date();
   const greg = now.toLocaleDateString(lang === 'vi' ? 'vi-VN' : 'en-GB', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
   const rows = [];
-  // Lunar (Chinese/Vietnamese lunisolar): day and month from Intl, the year in stems and branches.
-  let lunarDay = '', lunarMonth = '', lunarYear = now.getFullYear();
-  try {
-    const parts = new Intl.DateTimeFormat('en-u-ca-chinese', { day: 'numeric', month: 'numeric', year: 'numeric' }).formatToParts(now);
-    parts.forEach((p) => { if (p.type === 'day') lunarDay = p.value; if (p.type === 'month') lunarMonth = p.value; if (p.type === 'relatedYear') lunarYear = Number(p.value); });
-  } catch (e) { /* no chinese calendar */ }
-  if (lunarDay) rows.push([lang === 'vi' ? 'Âm lịch' : 'Lunar', (lang === 'vi' ? 'ngày ' : 'day ') + lunarDay + (lang === 'vi' ? ' tháng ' : ', month ') + lunarMonth + ' · ' + canChi(lunarYear)]);
+  // Vietnamese lunar calendar (Hồ Ngọc Đức's algorithm, UTC+7), as on the lịch vạn niên.
+  const lu = lunarToday(now);
+  const leap = lu.leap ? (lang === 'vi' ? ' (nhuận)' : ' (leap)') : '';
+  rows.push([lang === 'vi' ? 'Âm lịch' : 'Lunar (VN)', lang === 'vi'
+    ? 'Ngày ' + lu.day + ' tháng ' + lu.month + leap + ' năm ' + lu.yearCC + ' (' + lu.year + ')'
+    : 'Day ' + lu.day + ', month ' + lu.month + leap + ', year ' + lu.yearCC + ' (' + lu.year + ')']);
+  rows.push([lang === 'vi' ? 'Can chi' : 'Stems & branches', (lang === 'vi' ? 'Ngày ' : 'Day ') + lu.dayCC + (lang === 'vi' ? ' · tháng ' : ' · month ') + lu.monthCC + (lang === 'vi' ? ' · năm ' : ' · year ') + lu.yearCC]);
   const others = [['islamic-umalqura', lang === 'vi' ? 'Hồi giáo (Hijri)' : 'Islamic (Hijri)'], ['hebrew', lang === 'vi' ? 'Do Thái' : 'Hebrew'], ['persian', lang === 'vi' ? 'Ba Tư' : 'Persian'], ['buddhist', lang === 'vi' ? 'Phật lịch (Thái)' : 'Buddhist (Thai)']];
   others.forEach((o) => { const v = calLine(o[0], lang === 'vi' ? 'vi' : 'en', { day: 'numeric', month: 'long', year: 'numeric' }); if (v) rows.push([o[1], v]); });
   const mp = moonPhase(now);
@@ -121,7 +121,7 @@ function personalHTML() {
 /* The big "pick a card today" block: three card backs and one button. */
 function pickCtaHTML() {
   const S = T();
-  return '<a class="pickcta" href="#/pick"><div class="fan3"><span style="transform:rotate(-14deg)">' + BACK + '</span><span>' + BACK + '</span><span style="transform:rotate(14deg)">' + BACK + '</span></div>'
+  return '<a class="pickcta" href="#/pick"><div class="fan3"><span style="transform:rotate(-16deg)">' + logoCardSVG('blue') + '</span><span>' + logoCardSVG('purple') + '</span><span style="transform:rotate(16deg)">' + logoCardSVG('pink') + '</span></div>'
     + '<div><b>' + esc(S.pickToday) + '</b><p>' + esc(S.pickIntro) + '</p><span class="btn primary sm">' + esc(S.nav.pick) + ' →</span></div></a>';
 }
 function quickLinksHTML() {
