@@ -118,6 +118,16 @@ function backSVG() {
     + '</svg>';
 }
 const BACK = backSVG();
+/* The logo's three cards, for the home block. */
+function logoCardSVG(kind) {
+  const fill = kind === 'blue' ? '#AFC8F0' : kind === 'pink' ? '#F6BBCB' : '#3D2A6E';
+  let mark = '';
+  if (kind === 'blue') mark = '<path d="M50 60 l4 10 10 4 -10 4 -4 10 -4 -10 -10 -4 10 -4z" fill="#E5BE5E"/><circle cx="50" cy="108" r="3" fill="#E5BE5E"/>';
+  else if (kind === 'pink') mark = '<path d="M50 62 l3 6.5 6.5 3 -6.5 3 -3 6.5 -3 -6.5 -6.5 -3 6.5 -3z" fill="#E5BE5E"/><path d="M50 98 l2 4.4 4.4 2 -4.4 2 -2 4.4 -2 -4.4 -4.4 -2 4.4 -2z" fill="#E5BE5E"/>';
+  else mark = '<path d="M56 60 A26 26 0 1 0 56 112 A21 21 0 1 1 56 60 Z" fill="#E5BE5E"/><circle cx="28" cy="34" r="3.2" fill="#E5BE5E"/><circle cx="30" cy="140" r="3.2" fill="#E5BE5E"/><circle cx="74" cy="134" r="3.2" fill="#E5BE5E"/>';
+  return '<svg viewBox="0 0 100 172" aria-hidden="true"><rect x="1.3" y="1.3" width="97.4" height="169.4" rx="10" fill="' + fill + '" stroke="#3B2A5E" stroke-width="3"/>'
+    + '<rect x="10" y="10" width="80" height="152" rx="6" fill="none" stroke="#E5BE5E" stroke-width="1.6"/>' + mark + '</svg>';
+}
 const miniHTML = (id, link) => {
   const c = cardById(id);
   if (!c) return '';
