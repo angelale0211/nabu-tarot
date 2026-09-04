@@ -33,7 +33,7 @@ async function go(hash, sel) { W().location.hash = hash; await sleep(30); return
     const l1 = N.solarToLunar(29, 1, 2025), l2 = N.solarToLunar(10, 2, 2024), l3 = N.solarToLunar(4, 9, 2026);
     ok(l1.day === 1 && l1.month === 1 && l1.year === 2025 && l2.day === 1 && l2.month === 1 && l2.year === 2024 && l3.day === 23 && l3.month === 7 && l3.year === 2026, 'lunar algorithm matches lịch vạn niên: Tết 2025 = 29/1, Tết 2024 = 10/2, 4/9/2026 = 23/7 âm lịch');
     ok(typeof w.chatBarHTML === 'function' && (/data-chat-img/.test(w.chatBarHTML('a', 'b', 'x')) === !!N.CONFIG.attachments) && typeof w.notifyBooking === 'function' && N.CONFIG.firebase && N.CONFIG.firebase.projectId === 'nabutarot' && N.CONFIG.adminEmails.indexOf('nabutarot@outlook.com') === 0, 'Firebase project wired with admin emails; chat attachments follow CONFIG.attachments; bookings notify the calendar endpoint');
-    ok(/Nabu Tarot/.test(d.querySelector('#brand svg').textContent) && d.querySelectorAll('#brand svg rect').length >= 3, 'header shows the logo lockup with the wordmark inside');
+    ok(/Nabu Tarot/.test(d.querySelector('#brand .lockup').textContent) && /^data:image\/png/.test(d.querySelector('#brand .lockup img').getAttribute('src')) && d.querySelector('#foot .lockup img'), 'header and footer show the real round avatar with the wordmark');
     ok(d.querySelector('#foot') && /Instagram/.test(d.querySelector('#foot').textContent) && /Facebook/.test(d.querySelector('#foot').textContent) && /©/.test(d.querySelector('#foot').textContent) && /Báo lỗi/.test(d.querySelector('#foot').textContent), 'footer with Instagram, Facebook, copyright and the bug-report link');
     ok(!!d.querySelector('#tour'), 'tour shows on first visit');
     ok(d.querySelectorAll('.tile').length === 6 && /Bảng giá/.test(d.querySelector('.tiles').textContent), 'six quick links incl. prices');
@@ -43,7 +43,7 @@ async function go(hash, sel) { W().location.hash = hash; await sleep(30); return
     for (let i = 0; i < 5; i++) { d.querySelector('[data-tour="next"]').click(); await sleep(30); }
     ok(!d.querySelector('#tour') && N.PROFILE().tourDone === true, 'tour completes and is remembered');
     await waitFor(() => d.querySelector('.welcome'), 6000);
-    ok(/Chào mừng bạn đến với Nabu Tarot/.test(d.querySelector('.welcome h2').textContent) && d.querySelector('.welcome .sig svg') && !d.querySelector('.welcome .date') && !/Dự đoán mới/.test(d.querySelector('#feed').textContent), 'welcome post heads the feed with the logo as signature, no date line, no "Dự đoán mới"');
+    ok(/Chào mừng bạn đến với Nabu Tarot/.test(d.querySelector('.welcome h2').textContent) && d.querySelector('.welcome .sig img') && !d.querySelector('.welcome .date') && !/Dự đoán mới/.test(d.querySelector('#feed').textContent), 'welcome post heads the feed with the logo as signature, no date line, no "Dự đoán mới"');
     // profile -> personalisation
     await go('#/me', '#pname');
     d.querySelector('#pname').value = 'Lan'; d.querySelector('#pbday').value = '1998-08-05';
@@ -147,7 +147,7 @@ async function go(hash, sel) { W().location.hash = hash; await sleep(30); return
     await go('#/learn/lesson/lenormand/6', '.spreads-v');
     ok(d.querySelectorAll('.spv').length === 7 && /Grand Tableau/.test(d.querySelector('.spreads-v').textContent), 'lenormand session 6: seven spread diagrams incl. the Grand Tableau');
     await go('#/report', '#rwhat');
-    ok(d.querySelector('#rwhat') && d.querySelector('#rsend') && d.querySelector('#rcopy') && /Nabu Tarot v30/.test(d.querySelector('.msgbox').textContent), 'bug report screen: direct send button, Instagram, copy, auto-attached info');
+    ok(d.querySelector('#rwhat') && d.querySelector('#rsend') && d.querySelector('#rcopy') && /Nabu Tarot v31/.test(d.querySelector('.msgbox').textContent), 'bug report screen: direct send button, Instagram, copy, auto-attached info');
     d.querySelector('#rwhat').value = 'Nút không bấm được'; d.querySelector('#rsend').click(); await sleep(150);
     ok(/chưa bật gửi trực tiếp/.test(d.querySelector('#rstatus').textContent), 'without an endpoint the send button explains and copies the report');
     ok(N.CONFIG.adminNotifyEmails.indexOf('nabutarot@outlook.com') === 0, 'notifications go to nabutarot@outlook.com first');

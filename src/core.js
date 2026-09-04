@@ -136,17 +136,7 @@ const miniHTML = (id, link) => {
 };
 
 /* The logo: cream disc, three fanned cards (blue, purple, pink), gold crescent. */
-const LOGO = '<svg viewBox="0 0 250 64" aria-label="Nabu Tarot" class="lockup">'
-  + '<circle cx="32" cy="32" r="30" fill="#FBF3F5"/><circle cx="32" cy="32" r="27.5" fill="none" stroke="#3B2A5E" stroke-width="1.2"/>'
-  + '<g transform="rotate(-18 32 40)"><rect x="21" y="16" width="17.5" height="29" rx="3" fill="#AFC8F0" stroke="#3B2A5E" stroke-width="1.5"/></g>'
-  + '<g transform="rotate(18 32 40)"><rect x="25.5" y="16" width="17.5" height="29" rx="3" fill="#F6BBCB" stroke="#3B2A5E" stroke-width="1.5"/></g>'
-  + '<rect x="23.5" y="13" width="17.5" height="31" rx="3" fill="#3D2A6E" stroke="#3B2A5E" stroke-width="1.5"/>'
-  + '<rect x="25.5" y="15" width="13.5" height="27" rx="2" fill="none" stroke="#E5BE5E" stroke-width=".8"/>'
-  + '<path d="M33.5 22 A6 6 0 1 0 33.5 34 A4.6 4.6 0 1 1 33.5 22 Z" fill="#E5BE5E"/>'
-  + '<circle cx="28" cy="18" r=".9" fill="#E5BE5E"/><circle cx="28.5" cy="39" r=".9" fill="#E5BE5E"/><circle cx="37" cy="38.5" r=".9" fill="#E5BE5E"/>'
-  + '<path d="M14 14 l1 2.2 2.2 1 -2.2 1 -1 2.2 -1 -2.2 -2.2 -1 2.2 -1z" fill="#E5BE5E"/><path d="M52 44 l.8 1.8 1.8 .8 -1.8 .8 -.8 1.8 -.8 -1.8 -1.8 -.8 1.8 -.8z" fill="#F6BBCB"/>'
-  + '<text x="74" y="41" font-family="Playfair Display, Georgia, serif" font-size="27" font-weight="500" fill="currentColor" letter-spacing=".3">Nabu Tarot</text>'
-  + '</svg>';
+const LOGO = '<span class="lockup" aria-label="Nabu Tarot"><img src="' + LOGO_PNG + '" alt="" class="avatar"><span class="word">Nabu Tarot</span></span>';
 
 /* ---- chrome ---- */
 const ICONS = {

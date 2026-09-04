@@ -162,8 +162,8 @@ function renderPlayingCards(m, head) {
   const show = () => {
     const id = pcToTarot(suit, rank), c = cardById(id), I = insightOf(id);
     const trad = PC_TRAD[suit + rank] || ['', ''];
-    $('#pcout').innerHTML = '<div class="pcresult"><div class="pcard"><span class="' + (suit === 'h' || suit === 'd' ? 'red' : '') + '">' + rank + PC_SUITS.filter((x) => x[0] === suit)[0][1] + '</span></div><div><div class="eyebrow">' + esc(S.pcTrad) + '</div><p class="pctrad">' + esc(lang === 'vi' ? trad[0] : trad[1]) + '</p></div></div>'
-      + '<div class="pcresult"><div class="eyebrow" style="width:100%">' + esc(S.pcTarotWay) + '</div><button class="face" data-open-card="' + id + '" style="width:96px">' + faceSVG(c) + '</button><div><b>' + esc(c.name) + '</b><p>' + esc(I.pos.slice(0, 3).join(' · ')) + '</p><p class="muted">' + esc(c.up) + '</p></div></div>';
+    $('#pcout').innerHTML = '<div class="pcrow"><div class="pcard"><span class="' + (suit === 'h' || suit === 'd' ? 'red' : '') + '">' + rank + PC_SUITS.filter((x) => x[0] === suit)[0][1] + '</span></div><div><div class="eyebrow">' + esc(S.pcTrad) + '</div><p class="pctrad">' + esc(lang === 'vi' ? trad[0] : trad[1]) + '</p></div></div>'
+      + '<div class="pcrow"><button class="face" data-open-card="' + id + '">' + faceSVG(c) + '</button><div><div class="eyebrow">' + esc(S.pcTarotWay) + '</div><b>' + esc(c.name) + '</b><p>' + esc(I.pos.slice(0, 3).join(' · ')) + '</p><p class="muted">' + esc(c.up) + '</p></div></div>';
     bindCardLinks($('#pcout'));
     $$('[data-suit]', m).forEach((b) => b.classList.toggle('on', b.getAttribute('data-suit') === suit));
     $$('[data-rank]', m).forEach((b) => b.classList.toggle('on', b.getAttribute('data-rank') === rank));

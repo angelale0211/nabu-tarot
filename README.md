@@ -101,8 +101,8 @@ src/home.js pick.js learn.js book.js me.js admin.js main.js
 build.py           assembles index.html (strips working comments from data files)
 sw.js              offline cache
 posts.json         the feed        schedule.json  free hours        fb.json  synced social posts
-firestore.rules    database rules  scripts/fb_sync.py  social sync   logo.svg  brand mark
-test/run.py        headless Edge checks (55)     make_icons.py  icons from logo.svg
+firestore.rules    database rules  scripts/fb_sync.py  social sync   logo.png (the real avatar)  brand mark
+test/run.py        headless Edge checks (55)     make_icons.py  icons from logo.png (the real avatar)
 ```
 
 **Better horoscope translations.** `scripts/horoscope_sync.py` strips the site's adverts, splits each forecast into short emoji-led paragraphs, and translates with Google Translate plus an astrology glossary (houses become "nhà số 3 (khu vực giao tiếp)"). For natural Vietnamese add a free Gemini key as the repository secret `GEMINI_API_KEY` (https://aistudio.google.com → Get API key) and add `GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}` under `env:` of the "Fetch forecasts" step in `.github/workflows/horoscope.yml`; the script then rewrites every paragraph through Gemini and falls back to the glossary path if the key stops working.
