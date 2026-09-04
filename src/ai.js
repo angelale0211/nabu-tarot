@@ -27,6 +27,28 @@ function cardsMentioned(q) {
   return out.slice(0, 3);
 }
 function signMentioned(q) { const f = fold(q); return ZKEYS.filter((k) => f.indexOf(fold(ZSIGN[k].vi)) > -1 || f.indexOf(fold(ZSIGN[k].en)) > -1); }
+function lenMentioned(q) { const f = fold(q), out = []; for (let i = 1; i <= 36; i++) { if (f.indexOf(fold(LEN.vi[i].name)) > -1 || f.indexOf(fold(LEN.en[i].name)) > -1) out.push(i); } return out.slice(0, 2); }
+function planetMentioned(q) { const f = fold(q); return PLANETS.filter((p) => f.indexOf(fold(p.name.vi)) > -1 || f.indexOf(fold(p.name.en)) > -1).slice(0, 2); }
+function houseMentioned(q) { const m = /(?:nha|house)\s*(\d{1,2})/.exec(fold(q)); const n = m ? Number(m[1]) : 0; return n >= 1 && n <= 12 ? n : 0; }
+function animalMentioned(q) { const f = fold(q); return ANIMALS.map((a, i) => (f.indexOf(fold(a.vi.split(' ')[0])) > -1 || f.indexOf(fold(a.en)) > -1) ? i : -1).filter((i) => i > -1).slice(0, 2); }
+function numberMentioned(q) { const m = /(?:so|number|duong doi|life path)\s*(\d{1,2})/.exec(fold(q)); const n = m ? Number(m[1]) : 0; return LIFEPATH[n] ? n : 0; }
+function topicHelp(q) {
+  const f = fold(q), S = T();
+  if (/tarot la gi|what is tarot|hoc tarot|learn tarot|bat dau/.test(f)) { const g = GUIDES.filter((x) => x.id === 'tarot-start')[0]; return L(g.intro) + ' ' + L(g.sections[0].p); }
+  if (/lenormand/.test(f)) { const g = GUIDES.filter((x) => x.id === 'len-vs-tarot')[0]; return L(g.intro) + ' ' + L(g.sections[0].p); }
+  if (/manifest|khang dinh|affirmation|369|scripting|kich ban/.test(f)) { const id = /369/.test(f) ? 'mani-369' : /script|kich ban/.test(f) ? 'mani-script' : /khang dinh|affirmation|biet on|gratitude/.test(f) ? 'mani-gratitude' : 'mani-what'; const g = GUIDES.filter((x) => x.id === id)[0]; return L(g.intro) + ' ' + L(g.sections[0].p); }
+  if (/la nguoc|reversed/.test(f)) { const g = GUIDES.filter((x) => x.id === 'tarot-reversed')[0]; return L(g.intro) + ' ' + L(g.sections[0].p); }
+  if (/hoang gia|court/.test(f)) { const g = GUIDES.filter((x) => x.id === 'tarot-court')[0]; return L(g.intro) + ' ' + L(g.sections[0].p); }
+  if (/mat trang|moon|trang non|trang tron|full moon|new moon/.test(f)) { const g = GUIDES.filter((x) => x.id === 'astro-moon')[0]; const mp = moonPhase(new Date()); return (lang === 'vi' ? 'Hôm nay là ' : 'Today is ') + MOON_NAMES[lang][mp.idx] + '. ' + L(g.intro); }
+  if (/nghich hanh|retrograde/.test(f)) { const g = GUIDES.filter((x) => x.id === 'astro-retro')[0]; return L(g.intro) + ' ' + L(g.sections[1].p); }
+  if (/cung moc|rising|ascendant|cung mat trang|moon sign|big three|ba cung/.test(f)) { const g = GUIDES.filter((x) => x.id === 'astro-big3')[0]; return L(g.intro) + ' ' + L(g.sections[2].p); }
+  if (/chi tay|palm/.test(f)) { const g = GUIDES.filter((x) => x.id === 'fort-palm')[0]; return L(g.intro); }
+  if (/la tra|tea/.test(f)) { const g = GUIDES.filter((x) => x.id === 'fort-tea')[0]; return L(g.intro); }
+  if (/con giap|zodiac animal|tu vi/.test(f)) { const g = GUIDES.filter((x) => x.id === 'fort-animals')[0]; return L(g.intro) + ' ' + L(g.sections[2].p); }
+  if (/than so|numerology|duong doi|life path/.test(f)) { const g = GUIDES.filter((x) => x.id === 'fort-numerology')[0]; return L(g.intro); }
+  if (/dat lich|book|gia|price|bao nhieu tien|how much/.test(f)) return S.aiBooking;
+  return '';
+}
 const SUIT_TIMING = {
   vi: { wands: 'Gậy đi nhanh: vài ngày đến vài tuần.', cups: 'Cốc đi theo cảm xúc: vài tuần, đôi khi một mùa.', swords: 'Kiếm đi rất nhanh, thường tính bằng ngày, nhưng hay đến bất ngờ.', pentacles: 'Tiền đi chậm: tính bằng tháng, có khi cả năm.', major: 'Ẩn Chính không tính theo lịch: chuyện xảy ra khi bài học đã đủ, không sớm hơn.' },
   en: { wands: 'Wands move fast: days to a few weeks.', cups: 'Cups move with feeling: weeks, sometimes a season.', swords: 'Swords move very fast, usually days, and often arrive unexpectedly.', pentacles: 'Pentacles are slow: months, sometimes a year.', major: 'A Major is not on the calendar: it happens when the lesson is complete, not before.' }
@@ -109,11 +131,30 @@ function localAnswer(q, ctx) {
     else if (d.cat) out.push(S.lifePathOf(n.lifePath) + ': ' + LIFEPATH[n.lifePath][lang], n.expression ? S.numExpr + ' ' + n.expression + ': ' + NUM[n.expression][lang].expr : '');
     else out.push(S.lifePathOf(n.lifePath) + ': ' + LIFEPATH[n.lifePath][lang], n.personalYear ? S.numYear + ' ' + n.personalYear + ': ' + PYEAR[n.personalYear][lang] : '');
   } else {
-    if (!mentioned.length && !signs.length) out.push(S.aiGeneralHelp);
+    const help = topicHelp(q);
+    if (help) out.push(help);
+  }
+  lenMentioned(q).forEach((n) => { const d = lenCard(n); out.push(S.aiAbout(d.name) + ' ' + (d.kw.pos || []).slice(0, 3).join(', ') + '. ' + (d.cat === 'love' && d.love ? d.love : d.core)); });
+  planetMentioned(q).forEach((p) => out.push(S.aiAbout(p.name[lang]) + ' ' + p[lang]));
+  { const h = houseMentioned(q); if (h) out.push(S.aiAbout((lang === 'vi' ? 'nhà ' : 'house ') + h) + ' ' + HOUSES[h - 1][lang][0] + '. ' + HOUSES[h - 1][lang][1]); }
+  animalMentioned(q).forEach((i) => out.push(S.aiAbout(ANIMALS[i][lang]) + ' ' + ANIMAL_INFO[lang][i][3]));
+  { const n = numberMentioned(q); if (n && ctx.type !== 'numbers') out.push(S.lifePathOf(n) + ': ' + LIFEPATH[n][lang]); }
+  if (ctx.type !== 'card' && ctx.type !== 'lesson' && ctx.type !== 'numbers' && !mentioned.length && !signs.length && !out.length) {
+    const hits = searchAll(q);
+    if (hits.length) { out.push(S.aiFound); hits.forEach((h) => out.push('• ' + h)); }
+    else out.push(S.aiGeneralHelp, S.aiOfflineHint);
   }
   mentioned.forEach((id) => { const c = cardById(id), I = insightOf(id); out.push(S.aiAbout(c.name) + ' ' + I.pos.slice(0, 3).join(', ') + '. ' + (d.cat && d.cat !== 'general' ? I[d.cat] : I.now)); });
   if (ctx.type !== 'sign') signs.slice(0, 2).forEach((k) => out.push(S.aiAbout(ZSIGN[k][lang]) + ' ' + (d.cat === 'love' ? ZODIAC[k][lang].love : d.cat === 'work' ? ZODIAC[k][lang].work : ZODIAC[k][lang].about)));
   return out.filter(Boolean).join('\n\n');
+}
+function searchAll(q) {
+  const words = fold(q).split(/[^a-z0-9]+/).filter((w) => w.length >= 3 && ['ban', 'nao', 'gi', 'la', 'the', 'what', 'does', 'mean', 'nghia', 'sao', 'thi', 'toi', 'minh', 'cua', 'nhu', 'co', 'khong', 'the', 'nao', 'and', 'for', 'with'].indexOf(w) < 0);
+  if (!words.length) return [];
+  const docs = [];
+  GUIDES.forEach((g) => g.sections.forEach((s) => docs.push([L(g.title) + ' › ' + L(s.h), L(s.p)])));
+  return docs.map((doc) => { const f = fold(doc[0] + ' ' + doc[1]); let sc = 0; words.forEach((w) => { if (f.indexOf(w) > -1) sc += (fold(doc[0]).indexOf(w) > -1 ? 3 : 1); }); return [sc, doc]; })
+    .filter((x) => x[0] > 1).sort((a, b) => b[0] - a[0]).slice(0, 2).map((x) => x[1][0] + ': ' + x[1][1]);
 }
 function searchCourse(q, course) {
   const words = fold(q).split(/[^a-z0-9]+/).filter((w) => w.length >= 3 && ['ban', 'nao', 'gi', 'la', 'the', 'what', 'does', 'mean', 'nghia', 'sao', 'thi', 'toi', 'minh'].indexOf(w) < 0);
@@ -124,6 +165,26 @@ function searchCourse(q, course) {
   else for (let i = 1; i <= 36; i++) { const d = lenCard(i); docs.push([i + '. ' + d.name, (d.kw.pos || []).join(', ') + '. ' + d.core]); }
   return docs.map((doc) => { const f = fold(doc[0] + ' ' + doc[1]); let sc = 0; words.forEach((w) => { if (f.indexOf(w) > -1) sc += (fold(doc[0]).indexOf(w) > -1 ? 3 : 1); }); return [sc, doc]; })
     .filter((x) => x[0] > 0).sort((a, b) => b[0] - a[0]).slice(0, 2).map((x) => x[1][0] + ': ' + x[1][1]);
+}
+
+/* ---- Gemini (browser-side, free tier, web grounding) ---- */
+function aiSystemPrompt() {
+  return lang === 'vi'
+    ? 'Bạn là Nabu AI, trợ lý của Nabu Tarot (một reader tarot người Việt). Trả lời bằng tiếng Việt đời thường, ấm áp, ngắn gọn: 4 đến 8 câu, câu ngắn, xưng "mình", gọi người dùng là "bạn". Ưu tiên KIẾN THỨC được cung cấp; nếu câu hỏi cần thông tin ngoài đó (ví dụ lịch sử, sự kiện, kiến thức chung về tarot, chiêm tinh, thần số học), hãy tìm kiếm và tổng hợp, rồi nói rõ phần nào là kiến thức chung. Không chẩn đoán bệnh, không tư vấn pháp lý hay đầu tư cụ thể, không hứa điều gì chắc chắn xảy ra. Chuyện riêng quan trọng, gợi ý đặt lịch xem bài với Nabu.'
+    : 'You are Nabu AI, the assistant of Nabu Tarot (a Vietnamese tarot reader). Answer in plain, warm English: 4 to 8 short sentences. Prefer the KNOWLEDGE provided; if the question needs outside facts (history, events, general tarot, astrology or numerology knowledge), search and summarise, and say which part is general knowledge. No medical diagnosis, no specific legal or investment advice, no promises. For important personal matters, suggest booking a reading with Nabu.';
+}
+async function geminiAnswer(q, ctx, history) {
+  const url = 'https://generativelanguage.googleapis.com/v1beta/models/' + encodeURIComponent(CONFIG.geminiModel || 'gemini-2.5-flash') + ':generateContent?key=' + encodeURIComponent(CONFIG.geminiKey);
+  const contents = history.slice(-6).map((h) => ({ role: h.role === 'user' ? 'user' : 'model', parts: [{ text: h.text }] }));
+  if (contents.length && contents[contents.length - 1].role === 'user') contents.pop();
+  contents.push({ role: 'user', parts: [{ text: 'KNOWLEDGE (' + ctx.type + '):\n' + contextText(ctx).slice(0, 12000) + '\n\nQUESTION: ' + q }] });
+  const r = await fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ system_instruction: { parts: [{ text: aiSystemPrompt() }] }, contents: contents, tools: [{ google_search: {} }], generationConfig: { temperature: 0.7, maxOutputTokens: 900 } }) });
+  if (!r.ok) throw new Error('Gemini ' + r.status);
+  const j = await r.json(), cand = (j.candidates || [])[0];
+  const text = ((cand && cand.content && cand.content.parts) || []).map((p) => p.text || '').join('').trim();
+  if (!text) throw new Error('Gemini empty');
+  const chunks = ((cand.groundingMetadata || {}).groundingChunks || []).map((c) => c.web).filter(Boolean).slice(0, 3);
+  return text + (chunks.length ? '\n\n' + (lang === 'vi' ? 'Tham khảo: ' : 'Sources: ') + chunks.map((c) => c.title || c.uri).join(' · ') : '');
 }
 
 /* ---- online engine ---- */
@@ -146,7 +207,7 @@ function aiSuggestions(ctx) {
 }
 function aiPanelHTML(ctx) {
   const S = T(), key = JSON.stringify(ctx), hist = AI.history[key] || [];
-  return '<div class="ai" data-ai=\'' + esc(key) + '\'><div class="ai-h"><span class="ai-logo">✦</span><b>Nabu AI</b><span class="faint">' + esc(CONFIG.aiEndpoint ? S.aiOnline : S.aiBuiltin) + '</span></div>'
+  return '<div class="ai" data-ai=\'' + esc(key) + '\'><div class="ai-h"><span class="ai-logo">✦</span><b>Nabu AI</b><span class="faint">' + esc(CONFIG.geminiKey || CONFIG.aiEndpoint ? S.aiOnline : S.aiBuiltin) + '</span></div>'
     + '<p class="hint">' + esc(ctx.type === 'lesson' ? S.aiIntroLesson : S.aiIntro) + '</p>'
     + '<div class="chips">' + aiSuggestions(ctx).map((s) => '<button class="chip" data-ai-sug>' + esc(s) + '</button>').join('') + '</div>'
     + '<div class="chat ai-chat">' + hist.map((m) => '<div class="msg ' + (m.role === 'user' ? 'me' : 'them') + '">' + esc(m.text).replace(/\n/g, '<br>') + '</div>').join('') + '</div>'
@@ -162,7 +223,7 @@ function bindAI(root) {
       AI.busy = true; ta.value = ''; push('user', q);
       const thinking = document.createElement('div'); thinking.className = 'msg them ai-wait'; thinking.textContent = '…'; chat.appendChild(thinking);
       let a;
-      try { a = CONFIG.aiEndpoint ? await remoteAnswer(q, ctx, AI.history[key]) : localAnswer(q, ctx); }
+      try { a = CONFIG.geminiKey ? await geminiAnswer(q, ctx, AI.history[key]) : CONFIG.aiEndpoint ? await remoteAnswer(q, ctx, AI.history[key]) : localAnswer(q, ctx); }
       catch (e) { a = localAnswer(q, ctx) + '\n\n(' + T().aiFallback + ')'; }
       thinking.remove(); push('assistant', a); AI.busy = false;
     };

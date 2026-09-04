@@ -55,7 +55,16 @@ function journeyHTML() {
   return '<div class="journey">' + stages.map((st, i) => {
     const ids = []; for (let k = st[1]; k <= st[2]; k++) ids.push('major-' + k);
     return '<div class="stage s' + i + '"><div class="stage-h"><span class="num">' + (i + 1) + '</span>' + esc(st[0]) + '</div><div class="vstrip">' + ids.map((id) => { const c = cardById(id); return '<button class="vt" data-open-card="' + id + '">' + faceSVG(c) + '<b>' + esc(c.badge + ' · ' + c.name) + '</b></button>'; }).join('') + '</div></div>';
-  }).join('') + '<p class="faint">' + esc(S.journeyHint) + '</p></div>';
+  }).join('') + '<p class="faint">' + esc(S.journeyHint) + '</p></div>' + minorsByElementHTML();
+}
+/* The 56 Minors in four element groups, Ace to King. */
+function minorsByElementHTML() {
+  const X = LEX[lang];
+  return '<div class="journey minors"><h3 style="margin:16px 0 8px">' + esc(lang === 'vi' ? '56 lá Ẩn Phụ · bốn nguyên tố' : 'The 56 Minor Arcana · four elements') + '</h3>' + SUIT_KEYS.map((s) => {
+    const ids = []; for (let i = 1; i <= 10; i++) ids.push(s + '-' + i); for (let i = 0; i < 4; i++) ids.push(s + '-c' + i);
+    const el = { wands: 'fire', cups: 'water', swords: 'air', pentacles: 'earth' }[s];
+    return '<div class="stage" style="border-color:' + EL_COLOR[el] + '"><div class="stage-h"><span class="num" style="background:' + EL_COLOR[el] + '">' + ZELEM[el].g + '</span>' + esc(X.suitNames[s]) + ' · ' + esc(X.elements[s]) + '</div><div class="vstrip">' + ids.map((id) => { const c = cardById(id); return '<button class="vt" data-open-card="' + id + '">' + faceSVG(c) + '<b>' + esc(c.name) + '</b></button>'; }).join('') + '</div></div>';
+  }).join('') + '</div>';
 }
 function suitsHTML(suits) {
   const S = T(), X = LEX[lang];
