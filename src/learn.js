@@ -67,7 +67,8 @@ function renderCard(id) {
   if (!c) { location.hash = '#/learn/tarot'; return; }
   const other = cardById(id, lang === 'vi' ? 'en' : 'vi'), I = insightOf(id);
   const kwv = lang === 'vi' ? (KW.vi[id] || null) : null;
-  const pos = kwv ? kwv.pos : (I ? I.pos : c.kw), neg = kwv ? kwv.neg : (I ? I.neg : []);
+  // Some Vietnamese keyword sets carry no negative side (or no positive side).
+  const pos = kwv ? (kwv.pos || []) : (I ? I.pos : c.kw), neg = kwv ? (kwv.neg || []) : (I ? I.neg : []);
   const asks = lang === 'vi' ? (ASK.vi[id] || []) : [];
   const groups = {};
   asks.forEach((a) => { (groups[a[0]] = groups[a[0]] || []).push(a); });

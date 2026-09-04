@@ -169,6 +169,7 @@
   --lav:#B8A4E3; --lav-soft:#D9CDF3; --pink:#F6BBCB; --pink-ink:#8C3A5B; --blue:#AFC8F0; --blue-ink:#2F4E86;
   --gold:#E5BE5E; --gold-soft:#F6E5B3; --gold-ink:#3B2A5E;
   --primary:#3D2A6E; --primary-ink:#FFF7EE;
+  --link:#3D2A6E; --picked-ink:#3B2A5E; --ok:#2E7D46; --err:#B4384E;
   --card-bg:#FBF6F1; --card-ink:#3B2A5E;
   --back-1:#3D2A6E; --back-2:#4B3684;
   --wands-ink:#B04A2E; --cups-ink:#2F5E9A; --swords-ink:#5C6680; --pentacles-ink:#3D6B3F; --major-ink:#5B3F9E;
@@ -178,6 +179,23 @@
   --nav-h:66px;
   color-scheme:light;
 }
+/* Dark: follows the phone unless the visitor picked a theme. */
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+  --bg:#241A45; --surface:#312559; --surface-2:#3B2D6A; --surface-3:#463779;
+  --fg:#F6F0FA; --fg-soft:#CBC0E4; --fg-faint:#9F92C2;
+  --rule:#4D3F80; --rule-soft:#3F3271;
+  --lav:#B8A4E3; --lav-soft:#5A4A92; --pink:#F6BBCB; --pink-ink:#F6BBCB; --blue:#AFC8F0; --blue-ink:#AFC8F0;
+  --gold:#E5BE5E; --gold-soft:#5C4B2A; --gold-ink:#2A1E4A;
+  --primary:#E5BE5E; --primary-ink:#2A1E4A;
+  --link:#E5BE5E; --picked-ink:#F6F0FA; --ok:#8CD79A; --err:#F08A8A;
+  --card-bg:#F4EEE6; --card-ink:#3B2A5E;
+  --back-1:#3D2A6E; --back-2:#4B3684;
+  --wands-ink:#F0937A; --cups-ink:#8FC2F0; --swords-ink:#BDC5D8; --pentacles-ink:#9BCB92; --major-ink:#C7B6F3;
+  --shade:rgba(0,0,0,.5);
+  color-scheme:dark;
+  }
+}
 :root[data-theme="dark"]{
   --bg:#241A45; --surface:#312559; --surface-2:#3B2D6A; --surface-3:#463779;
   --fg:#F6F0FA; --fg-soft:#CBC0E4; --fg-faint:#9F92C2;
@@ -185,6 +203,7 @@
   --lav:#B8A4E3; --lav-soft:#5A4A92; --pink:#F6BBCB; --pink-ink:#F6BBCB; --blue:#AFC8F0; --blue-ink:#AFC8F0;
   --gold:#E5BE5E; --gold-soft:#5C4B2A; --gold-ink:#2A1E4A;
   --primary:#E5BE5E; --primary-ink:#2A1E4A;
+  --link:#E5BE5E; --picked-ink:#F6F0FA; --ok:#8CD79A; --err:#F08A8A;
   --card-bg:#F4EEE6; --card-ink:#3B2A5E;
   --back-1:#3D2A6E; --back-2:#4B3684;
   --wands-ink:#F0937A; --cups-ink:#8FC2F0; --swords-ink:#BDC5D8; --pentacles-ink:#9BCB92; --major-ink:#C7B6F3;
@@ -195,8 +214,7 @@
 html{-webkit-text-size-adjust:100%}
 body{margin:0;background:var(--bg);color:var(--fg);font-family:var(--body);font-size:16px;line-height:1.55;
   -webkit-font-smoothing:antialiased;min-height:100vh;padding-bottom:calc(var(--nav-h) + env(safe-area-inset-bottom))}
-a{color:var(--primary)}
-:root[data-theme="dark"] a{color:var(--gold)}
+a{color:var(--link)}
 button{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:pointer;-webkit-tap-highlight-color:transparent}
 input,textarea,select{font:inherit;color:var(--fg);background:var(--surface);border:1px solid var(--rule);border-radius:12px;padding:12px 14px;width:100%}
 input:focus,textarea:focus,select:focus{outline:2px solid var(--lav);outline-offset:1px;border-color:transparent}
@@ -227,8 +245,7 @@ p{margin:0 0 12px}
 .nav .wrap{display:grid;grid-template-columns:repeat(5,1fr);height:var(--nav-h);padding:0}
 .nav a{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;text-decoration:none;color:var(--fg-faint);font-size:11px;font-weight:600;letter-spacing:.01em;position:relative}
 .nav a svg{width:24px;height:24px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
-.nav a.on{color:var(--primary)}
-:root[data-theme="dark"] .nav a.on{color:var(--gold)}
+.nav a.on{color:var(--link)}
 .nav a .badge{position:absolute;top:8px;right:calc(50% - 20px);background:var(--pink-ink);color:#fff;font-size:10px;border-radius:999px;min-width:16px;height:16px;line-height:16px;text-align:center;padding:0 4px}
 
 /* ---- common ---- */
@@ -301,8 +318,7 @@ main{padding:22px 0 30px}
 .post .body p{margin:0 0 10px}
 .post .body.clamp{max-height:7.6em;overflow:hidden;position:relative}
 .post .body.clamp:after{content:"";position:absolute;left:0;right:0;bottom:0;height:3em;background:linear-gradient(transparent,var(--surface))}
-.post .more{color:var(--primary);font-weight:700;font-size:14px;margin:2px 0 8px}
-:root[data-theme="dark"] .post .more{color:var(--gold)}
+.post .more{color:var(--link);font-weight:700;font-size:14px;margin:2px 0 8px}
 .post .markers{margin:8px 0 6px;font-size:14px;color:var(--fg-soft)}
 .post .markers b{color:var(--fg)}
 .post .foryou{display:inline-block;background:var(--pink);color:#5B2340;font-size:12px;font-weight:700;border-radius:8px;padding:3px 8px;margin-bottom:8px}
@@ -362,8 +378,7 @@ main{padding:22px 0 30px}
 .kwl.neg span{background:transparent;border:1px solid var(--rule)}
 .signlist{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
 .signlist button{background:var(--surface);border:1px solid var(--rule-soft);border-radius:14px;padding:10px 6px;text-align:center}
-.signlist button .g{font-size:26px;color:var(--primary);display:block}
-:root[data-theme="dark"] .signlist button .g{color:var(--gold)}
+.signlist button .g{font-size:26px;color:var(--link);display:block}
 .signlist button b{font-size:13px;display:block;font-weight:600}
 .signlist button span{font-size:11px;color:var(--fg-faint)}
 .signlist button.me{border-color:var(--pink);box-shadow:0 0 0 1px var(--pink) inset}
@@ -405,8 +420,7 @@ main{padding:22px 0 30px}
 .slots button{border:1px solid var(--rule);border-radius:12px;padding:10px 6px;font-weight:600;font-size:14px;background:var(--surface)}
 .slots button.on{background:var(--primary);color:var(--primary-ink);border-color:transparent}
 .slots button.taken{opacity:.35;text-decoration:line-through;pointer-events:none}
-.picked{display:flex;align-items:center;gap:10px;background:var(--gold-soft);color:#3B2A5E;border-radius:12px;padding:10px 14px;font-weight:600;margin-top:10px}
-:root[data-theme="dark"] .picked{color:var(--fg)}
+.picked{display:flex;align-items:center;gap:10px;background:var(--gold-soft);color:var(--picked-ink);border-radius:12px;padding:10px 14px;font-weight:600;margin-top:10px}
 
 /* ---- me / auth / chat ---- */
 .avatar{width:56px;height:56px;border-radius:50%;background:var(--lav-soft);display:flex;align-items:center;justify-content:center;font-family:var(--display);font-size:24px;color:var(--fg)}
@@ -437,8 +451,7 @@ main{padding:22px 0 30px}
 .week .wd{background:var(--surface-2);border-radius:12px;padding:10px 12px}
 .week .wd b{display:block;margin-bottom:6px;font-size:14px}
 .week .wd .chips .chip{padding:5px 10px;font-size:12.5px}
-.ok{color:#2E7D46}.err{color:#B4384E}
-:root[data-theme="dark"] .ok{color:#8CD79A}:root[data-theme="dark"] .err{color:#F08A8A}
+.ok{color:var(--ok)}.err{color:var(--err)}
 
 @media (max-width:380px){.hero{grid-template-columns:96px 1fr}.fan{height:230px}.fan .slot{width:92px;height:150px;margin-left:-46px}.nav a{font-size:10px}}
 @media (min-width:640px){.fan{height:280px}.fan .slot{width:120px;height:196px;margin-left:-60px}.tiles{grid-template-columns:1fr 1fr 1fr}}
@@ -664,6 +677,7 @@ const STR = {
     typeMsg: 'Viết tin nhắn...',
     send: 'Gửi',
     noMsgs: 'Chưa có tin nhắn. Bạn cứ hỏi, Nabu sẽ trả lời.',
+    themeTitle: 'Giao diện', themes: { auto: 'Theo điện thoại', light: 'Sáng', dark: 'Tối' }, themeHint: 'Theo điện thoại: app tự đổi sáng/tối cùng máy của bạn.',
     installTitle: 'Cài app lên điện thoại',
     install: 'Trên iPhone: mở bằng Safari, bấm Chia sẻ, chọn "Thêm vào MH chính". Trên Android: bấm menu ⋮ rồi "Cài đặt ứng dụng".',
     dismiss: 'Đóng',
@@ -867,6 +881,7 @@ const STR = {
     typeMsg: 'Write a message...',
     send: 'Send',
     noMsgs: 'No messages yet. Ask away, Nabu will answer.',
+    themeTitle: 'Appearance', themes: { auto: 'Match my phone', light: 'Light', dark: 'Dark' }, themeHint: 'Match my phone: the app switches with your phone\'s light or dark setting.',
     installTitle: 'Install on your phone',
     install: 'iPhone: open in Safari, tap Share, then "Add to Home Screen". Android: tap the ⋮ menu, then "Install app".',
     dismiss: 'Close',
@@ -8239,13 +8254,18 @@ const T = () => STR[lang];
 const L = (obj) => { if (obj == null) return ''; if (typeof obj === 'string') return obj; return obj[lang] || obj.vi || obj.en || ''; };
 const L2 = (obj, lg) => (obj == null ? '' : typeof obj === 'string' ? obj : (obj[lg] || ''));
 
+const darkMQ = window.matchMedia ? window.matchMedia('(prefers-color-scheme: dark)') : { matches: false, addEventListener: () => {} };
+function themeChoice() { const t = store.get('nabu-theme', ''); return t === 'dark' || t === 'light' ? t : 'auto'; }
+function effectiveTheme() { const t = themeChoice(); return t === 'auto' ? (darkMQ.matches ? 'dark' : 'light') : t; }
+function setTheme(t) { store.set('nabu-theme', t === 'auto' ? '' : t); applyTheme(); }
 function applyTheme() {
-  const th = store.get('nabu-theme', '');
-  if (th) document.documentElement.setAttribute('data-theme', th); else document.documentElement.removeAttribute('data-theme');
-  const dark = th === 'dark';
+  const t = themeChoice();
+  if (t === 'auto') document.documentElement.removeAttribute('data-theme'); else document.documentElement.setAttribute('data-theme', t);
+  const dark = effectiveTheme() === 'dark';
   $('#theme').textContent = dark ? '☀️' : '🌙';
   $('meta[name="theme-color"]').setAttribute('content', dark ? '#241A45' : '#EFE9FA');
 }
+darkMQ.addEventListener('change', applyTheme);
 
 /* ---- profile (local first; backend.js syncs it when signed in) ---- */
 let PROFILE = Object.assign({ name: '', birthday: '', interests: [], tourDone: false }, store.get('nabu-profile', {}));
@@ -8405,7 +8425,7 @@ function route() {
 function boot() {
   window.addEventListener('hashchange', route);
   $('#lang').addEventListener('click', () => { lang = lang === 'vi' ? 'en' : 'vi'; store.set('nabu-lang', lang); route(); });
-  $('#theme').addEventListener('click', () => { store.set('nabu-theme', store.get('nabu-theme', '') === 'dark' ? '' : 'dark'); applyTheme(); });
+  $('#theme').addEventListener('click', () => setTheme(effectiveTheme() === 'dark' ? 'light' : 'dark'));
   applyTheme();
   route();
   if ('serviceWorker' in navigator && location.protocol !== 'file:') {
@@ -8821,7 +8841,8 @@ function renderCard(id) {
   if (!c) { location.hash = '#/learn/tarot'; return; }
   const other = cardById(id, lang === 'vi' ? 'en' : 'vi'), I = insightOf(id);
   const kwv = lang === 'vi' ? (KW.vi[id] || null) : null;
-  const pos = kwv ? kwv.pos : (I ? I.pos : c.kw), neg = kwv ? kwv.neg : (I ? I.neg : []);
+  // Some Vietnamese keyword sets carry no negative side (or no positive side).
+  const pos = kwv ? (kwv.pos || []) : (I ? I.pos : c.kw), neg = kwv ? (kwv.neg || []) : (I ? I.neg : []);
   const asks = lang === 'vi' ? (ASK.vi[id] || []) : [];
   const groups = {};
   asks.forEach((a) => { (groups[a[0]] = groups[a[0]] || []).push(a); });
@@ -9201,11 +9222,13 @@ function renderMe(args, params) {
     } else if (CONFIG.instagram) {
       h += '<div class="card"><h3 style="margin-bottom:4px">' + esc(S.messages) + '</h3><p class="muted" style="font-size:14px">' + esc(S.messagesSoon) + '</p><a class="btn block" href="https://ig.me/m/' + esc(CONFIG.instagram) + '" target="_blank" rel="noopener">' + esc(S.viaInstagram) + '</a></div>';
     }
+    h += '<div class="card"><h3 style="margin-bottom:8px">' + esc(S.themeTitle) + '</h3><div class="chips">' + ['auto', 'light', 'dark'].map((t) => '<button class="chip' + (themeChoice() === t ? ' on' : '') + '" data-theme-pick="' + t + '">' + esc(S.themes[t]) + '</button>').join('') + '</div><p class="hint">' + esc(S.themeHint) + '</p></div>';
     h += '<div class="card"><h3 style="margin-bottom:6px">' + esc(S.installTitle) + '</h3><p class="muted" style="font-size:14px">' + esc(S.install) + '</p></div>';
     h += '<div class="row">' + (BE.user ? '<button class="btn" id="signout">' + esc(S.signOut) + '</button>' : '') + '<button class="btn" id="retour">' + (lang === 'vi' ? 'Xem lại hướng dẫn' : 'Replay the tour') + '</button>' + (BE.isAdmin() ? '<a class="btn gold" href="#/admin">' + esc(S.adminTitle) + '</a>' : '') + '</div>';
     body.innerHTML = h;
     bindAuth(body);
     bindProfileForm(body, () => { if (params.next === 'book') location.hash = '#/book'; });
+    $$('[data-theme-pick]', body).forEach((b) => b.addEventListener('click', () => { setTheme(b.getAttribute('data-theme-pick')); $$('[data-theme-pick]', body).forEach((x) => x.classList.toggle('on', x === b)); }));
     $('#retour').addEventListener('click', () => { saveProfileLocal({ tourDone: false }); location.hash = '#/home'; });
     const so = $('#signout'); if (so) so.addEventListener('click', () => BE.signOut());
     if (BE.enabled && BE.user) {

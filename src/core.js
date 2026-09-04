@@ -19,13 +19,18 @@ const T = () => STR[lang];
 const L = (obj) => { if (obj == null) return ''; if (typeof obj === 'string') return obj; return obj[lang] || obj.vi || obj.en || ''; };
 const L2 = (obj, lg) => (obj == null ? '' : typeof obj === 'string' ? obj : (obj[lg] || ''));
 
+const darkMQ = window.matchMedia ? window.matchMedia('(prefers-color-scheme: dark)') : { matches: false, addEventListener: () => {} };
+function themeChoice() { const t = store.get('nabu-theme', ''); return t === 'dark' || t === 'light' ? t : 'auto'; }
+function effectiveTheme() { const t = themeChoice(); return t === 'auto' ? (darkMQ.matches ? 'dark' : 'light') : t; }
+function setTheme(t) { store.set('nabu-theme', t === 'auto' ? '' : t); applyTheme(); }
 function applyTheme() {
-  const th = store.get('nabu-theme', '');
-  if (th) document.documentElement.setAttribute('data-theme', th); else document.documentElement.removeAttribute('data-theme');
-  const dark = th === 'dark';
+  const t = themeChoice();
+  if (t === 'auto') document.documentElement.removeAttribute('data-theme'); else document.documentElement.setAttribute('data-theme', t);
+  const dark = effectiveTheme() === 'dark';
   $('#theme').textContent = dark ? '☀️' : '🌙';
   $('meta[name="theme-color"]').setAttribute('content', dark ? '#241A45' : '#EFE9FA');
 }
+darkMQ.addEventListener('change', applyTheme);
 
 /* ---- profile (local first; backend.js syncs it when signed in) ---- */
 let PROFILE = Object.assign({ name: '', birthday: '', interests: [], tourDone: false }, store.get('nabu-profile', {}));
@@ -185,7 +190,7 @@ function route() {
 function boot() {
   window.addEventListener('hashchange', route);
   $('#lang').addEventListener('click', () => { lang = lang === 'vi' ? 'en' : 'vi'; store.set('nabu-lang', lang); route(); });
-  $('#theme').addEventListener('click', () => { store.set('nabu-theme', store.get('nabu-theme', '') === 'dark' ? '' : 'dark'); applyTheme(); });
+  $('#theme').addEventListener('click', () => setTheme(effectiveTheme() === 'dark' ? 'light' : 'dark'));
   applyTheme();
   route();
   if ('serviceWorker' in navigator && location.protocol !== 'file:') {
