@@ -34,6 +34,12 @@ const CONFIG = {
   // Nabu AI. Leave empty to answer from the built-in knowledge base; set the
   // URL of the deployed worker (see worker/) to answer with Claude.
   aiEndpoint: '',
+  // Free option: a Google AI Studio key (aistudio.google.com -> Get API key),
+  // restricted to this site's address in Google Cloud console. Gemini then
+  // answers straight from the browser and can search the web for facts the
+  // app does not have. Leave empty to skip.
+  geminiKey: '',
+  geminiModel: 'gemini-2.5-flash',
 
   // Access codes for the paid courses are signed with this. Change it once
   // (any long phrase); codes made before the change stop working.
