@@ -202,9 +202,9 @@ function renderTea(m, head) {
 
 /* ---- 12 animals ---- */
 function animalsWheelSVG(active) {
-  let s = '<svg viewBox="-14 -14 248 254" class="awheel">';
+  let s = '<svg viewBox="-20 -20 260 268" class="awheel">';
   for (let i = 0; i < 12; i++) {
-    const a = i / 12 * Math.PI * 2 - Math.PI / 2, x = 110 + 86 * Math.cos(a), y = 110 + 86 * Math.sin(a), on = i === active;
+    const a = i / 12 * Math.PI * 2 - Math.PI / 2, x = 110 + 94 * Math.cos(a), y = 110 + 94 * Math.sin(a), on = i === active;
     s += '<g data-animal="' + i + '" style="cursor:pointer"><circle cx="' + x.toFixed(1) + '" cy="' + y.toFixed(1) + '" r="' + (on ? 20 : 16) + '" fill="' + (on ? 'var(--primary)' : 'var(--surface)') + '" stroke="var(--rule)"/><text x="' + x.toFixed(1) + '" y="' + (y + 6).toFixed(1) + '" text-anchor="middle" font-size="' + (on ? 20 : 16) + '">' + ANIMAL_EMOJI[i] + '</text><text x="' + x.toFixed(1) + '" y="' + (y + 28).toFixed(1) + '" text-anchor="middle" font-size="8" font-weight="700" fill="var(--fg)">' + CHI[i] + '</text></g>';
   }
   return s + '</svg>';
