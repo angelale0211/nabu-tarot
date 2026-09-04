@@ -11701,7 +11701,8 @@ async function renderBook(args, params) {
   $$('[data-pkg]', m).forEach((b) => b.addEventListener('click', () => { const v = b.getAttribute('data-pkg').split('/'); book.service = v[0]; book.pkg = v[1]; syncService(); }));
   $$('[data-topic]', m).forEach((b) => b.addEventListener('click', () => {
     const v = b.getAttribute('data-topic'), id = v === 'own' ? 'own' : Number(v);
-    if (book.topic === id && v !== 'own') { b.classList.toggle('open'); return; }
+    // A second tap on the chosen topic clears the choice.
+    if (book.topic === id) { book.topic = null; b.classList.remove('on', 'open'); prev(); return; }
     book.topic = id;
     $$('[data-topic]', m).forEach((x) => { const on = x === b; x.classList.toggle('on', on); x.classList.toggle('open', on); });
     prev();
