@@ -328,6 +328,12 @@ main{padding:22px 0 30px}
 .cta h3{margin-bottom:6px}
 .cta p{color:var(--fg-soft);font-size:14.5px}
 
+.welcome{background:var(--surface);border:1px solid var(--rule-soft);border-radius:18px;padding:20px 18px 14px;margin-bottom:16px}
+.welcome h2{margin-bottom:12px}
+.welcome p{margin-bottom:10px}
+.welcome .sig{display:flex;justify-content:center;padding-top:6px}
+.welcome .sig svg{width:72px;height:72px;filter:drop-shadow(0 2px 8px var(--shade))}
+
 /* ---- pick a card ---- */
 .pick-head{text-align:center;margin-bottom:18px}
 .pick-head h1{margin-bottom:8px}
@@ -8860,15 +8866,15 @@ async function renderHome(args, params) {
     + quickLinksHTML()
     + personalHTML()
     + suggestedGuidesHTML(3)
-    + '<div class="sec" id="feed"><div class="eyebrow">' + esc(S.feedTitle) + '</div><p class="muted">…</p></div>';
+    + '<div class="sec" id="feed"><p class="muted">…</p></div>';
   bindAccordions(m); bindCardLinks(m);
   if (!PROFILE.tourDone) bindTour(m, 0);
   if (POSTS == null) await loadPosts();
   const feed = $('#feed'); if (!feed) return;
-  const list = sortedPosts();
-  feed.innerHTML = '<div class="eyebrow">' + esc(S.feedTitle) + '</div>'
-    + (POSTS_CACHED && list.length ? '<div class="banner">' + esc(S.feedOffline) + '</div>' : '')
-    + (list.length ? list.map((p) => postHTML(p, false)).join('') : '<p class="empty">' + esc(S.feedEmpty) + '</p>');
+  const all = sortedPosts(), welcome = all.filter((p) => p.welcome)[0], list = all.filter((p) => !p.welcome);
+  feed.innerHTML = (welcome ? '<section class="welcome"><h2>' + esc(L(welcome.title)) + '</h2>' + paras(L(welcome.body)) + '<div class="sig">' + LOGO + '</div></section>' : '')
+    + (POSTS_CACHED && all.length ? '<div class="banner">' + esc(S.feedOffline) + '</div>' : '')
+    + (list.length ? list.map((p) => postHTML(p, false)).join('') : (welcome ? '' : '<p class="empty">' + esc(S.feedEmpty) + '</p>'));
   bindPost(feed);
   if (params.go === 'feed') feed.scrollIntoView({ behavior: 'smooth' });
 }

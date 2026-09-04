@@ -34,8 +34,8 @@ async function go(hash, sel) { W().location.hash = hash; await sleep(30); return
     ok(d.querySelectorAll('.tile').length === 6 && /Bảng giá/.test(d.querySelector('.tiles').textContent), 'six quick links incl. prices');
     for (let i = 0; i < 5; i++) { d.querySelector('[data-tour="next"]').click(); await sleep(30); }
     ok(!d.querySelector('#tour') && N.PROFILE().tourDone === true, 'tour completes and is remembered');
-    await waitFor(() => d.querySelector('article.post'), 6000);
-    ok(d.querySelectorAll('article.post').length >= 1, 'feed shows posts.json');
+    await waitFor(() => d.querySelector('.welcome'), 6000);
+    ok(/Chào mừng bạn đến với Nabu Tarot/.test(d.querySelector('.welcome h2').textContent) && d.querySelector('.welcome .sig svg') && !d.querySelector('.welcome .date') && !/Dự đoán mới/.test(d.querySelector('#feed').textContent), 'welcome post heads the feed with the logo as signature, no date line, no "Dự đoán mới"');
     // profile -> personalisation
     await go('#/me', '#pname');
     d.querySelector('#pname').value = 'Lan'; d.querySelector('#pbday').value = '1998-08-05';

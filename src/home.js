@@ -145,15 +145,15 @@ async function renderHome(args, params) {
     + quickLinksHTML()
     + personalHTML()
     + suggestedGuidesHTML(3)
-    + '<div class="sec" id="feed"><div class="eyebrow">' + esc(S.feedTitle) + '</div><p class="muted">…</p></div>';
+    + '<div class="sec" id="feed"><p class="muted">…</p></div>';
   bindAccordions(m); bindCardLinks(m);
   if (!PROFILE.tourDone) bindTour(m, 0);
   if (POSTS == null) await loadPosts();
   const feed = $('#feed'); if (!feed) return;
-  const list = sortedPosts();
-  feed.innerHTML = '<div class="eyebrow">' + esc(S.feedTitle) + '</div>'
-    + (POSTS_CACHED && list.length ? '<div class="banner">' + esc(S.feedOffline) + '</div>' : '')
-    + (list.length ? list.map((p) => postHTML(p, false)).join('') : '<p class="empty">' + esc(S.feedEmpty) + '</p>');
+  const all = sortedPosts(), welcome = all.filter((p) => p.welcome)[0], list = all.filter((p) => !p.welcome);
+  feed.innerHTML = (welcome ? '<section class="welcome"><h2>' + esc(L(welcome.title)) + '</h2>' + paras(L(welcome.body)) + '<div class="sig">' + LOGO + '</div></section>' : '')
+    + (POSTS_CACHED && all.length ? '<div class="banner">' + esc(S.feedOffline) + '</div>' : '')
+    + (list.length ? list.map((p) => postHTML(p, false)).join('') : (welcome ? '' : '<p class="empty">' + esc(S.feedEmpty) + '</p>'));
   bindPost(feed);
   if (params.go === 'feed') feed.scrollIntoView({ behavior: 'smooth' });
 }
