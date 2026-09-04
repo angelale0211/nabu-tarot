@@ -28,10 +28,11 @@ async function go(hash, sel) { W().location.hash = hash; await sleep(30); return
     ok(N.sunSignIndex(8, 5) === 4 && N.sunSignIndex(1, 10) === 9 && N.sunSignIndex(3, 21) === 0 && N.sunSignIndex(12, 25) === 9, 'sun sign boundaries');
     ok(N.lifePath(1998, 11, 27) === 11 && N.lifePath(1990, 2, 11) === 5 && N.lifePath(1995, 3, 12) === 3, 'life path arithmetic');
     // home
-    ok(/Chào bạn/.test(d.querySelector('h1').textContent) && d.querySelector('h1').nextElementSibling.nextElementSibling.classList.contains('tiles') && d.querySelector('#today').compareDocumentPosition(d.querySelector('h1')) & 4, 'greeting sits below the date panel, right above the quick links');
+    ok(/Chào bạn/.test(d.querySelector('h1').textContent) && d.querySelector('h1').nextElementSibling.nextElementSibling.classList.contains('pickcta') && d.querySelector('#today').compareDocumentPosition(d.querySelector('h1')) & 4, 'greeting sits below the date panel, right above the quick links');
     ok(d.querySelector('#today') && /Âm lịch/.test(d.querySelector('#today').textContent) && /Trăng/.test(d.querySelector('#today').textContent), 'today panel lists the lunar date and the moon');
     ok(!!d.querySelector('#tour'), 'tour shows on first visit');
     ok(d.querySelectorAll('.tile').length === 6 && /Bảng giá/.test(d.querySelector('.tiles').textContent), 'six quick links incl. prices');
+    ok(d.querySelector('.pickcta') && /Rút một lá bài hôm nay/.test(d.querySelector('.pickcta').textContent) && d.querySelector('.pickcta').getAttribute('href') === '#/pick' && d.querySelectorAll('.pickcta svg').length === 3, 'big pick-a-card block on the home screen leads to the draw');
     for (let i = 0; i < 5; i++) { d.querySelector('[data-tour="next"]').click(); await sleep(30); }
     ok(!d.querySelector('#tour') && N.PROFILE().tourDone === true, 'tour completes and is remembered');
     await waitFor(() => d.querySelector('.welcome'), 6000);

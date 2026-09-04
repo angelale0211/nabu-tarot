@@ -33,6 +33,7 @@ const STR = {
     readSign: 'Đọc về cung của bạn',
     forInterests: 'Theo điều bạn quan tâm',
 
+    pickToday: 'Rút một lá bài hôm nay',
     pickTitle: 'Năng lượng hiện tại của bạn',
     pickIntro: 'Hít một hơi thật sâu. Nghĩ về hôm nay. Rồi chạm vào một lá bài.',
     focusLabel: 'Bạn đang nghĩ về',
@@ -247,6 +248,7 @@ const STR = {
     readSign: 'Read about your sign',
     forInterests: 'Based on your interests',
 
+    pickToday: 'Pick a card today',
     pickTitle: 'Your energy right now',
     pickIntro: 'Take a deep breath. Think about today. Then tap a card.',
     focusLabel: 'On your mind',

@@ -118,6 +118,12 @@ function personalHTML() {
     + '<div class="row" style="margin-top:10px"><a class="btn sm" href="#/learn/sign/' + key + '">' + esc(S.readSign) + '</a><a class="btn sm" href="#/learn/numbers">' + esc(S.numerology) + '</a></div>'
     + '</div>';
 }
+/* The big "pick a card today" block: three card backs and one button. */
+function pickCtaHTML() {
+  const S = T();
+  return '<a class="pickcta" href="#/pick"><div class="fan3"><span style="transform:rotate(-14deg)">' + BACK + '</span><span>' + BACK + '</span><span style="transform:rotate(14deg)">' + BACK + '</span></div>'
+    + '<div><b>' + esc(S.pickToday) + '</b><p>' + esc(S.pickIntro) + '</p><span class="btn primary sm">' + esc(S.nav.pick) + ' →</span></div></a>';
+}
 function quickLinksHTML() {
   const S = T();
   const tiles = [['#/pick', '🃏', S.nav.pick, lang === 'vi' ? 'năng lượng hôm nay' : 'your energy today'],
@@ -142,6 +148,7 @@ async function renderHome(args, params) {
     + todayHTML()
     + (PROFILE.tourDone ? '' : tourHTML(0))
     + '<h1 style="margin:18px 0 4px">' + esc(name ? S.hello(name) : S.helloGuest) + '</h1><p class="muted">' + esc(lang === 'vi' ? 'Hôm nay bạn muốn làm gì?' : 'What would you like to do today?') + '</p>'
+    + pickCtaHTML()
     + quickLinksHTML()
     + personalHTML()
     + suggestedGuidesHTML(3)

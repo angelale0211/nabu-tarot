@@ -334,6 +334,15 @@ main{padding:22px 0 30px}
 .welcome .sig{display:flex;justify-content:center;padding-top:6px}
 .welcome .sig svg{width:72px;height:72px;filter:drop-shadow(0 2px 8px var(--shade))}
 
+.pickcta{display:grid;grid-template-columns:120px 1fr;gap:14px;align-items:center;background:linear-gradient(135deg,var(--lav-soft),var(--surface));border:1.5px solid var(--lav);border-radius:20px;padding:16px;margin-bottom:16px;text-decoration:none;color:inherit}
+.pickcta .fan3{position:relative;height:118px}
+.pickcta .fan3 span{position:absolute;left:50%;bottom:0;width:62px;margin-left:-31px;transform-origin:50% 120%;display:block}
+.pickcta .fan3 span:nth-child(2){z-index:2}
+.pickcta .fan3 svg{width:100%;height:auto;display:block;filter:drop-shadow(0 4px 8px var(--shade))}
+.pickcta b{font-family:var(--display);font-weight:500;font-size:20px;display:block;margin-bottom:4px}
+.pickcta p{color:var(--fg-soft);font-size:14px;margin-bottom:10px}
+@media (max-width:380px){.pickcta{grid-template-columns:100px 1fr}}
+
 /* ---- pick a card ---- */
 .pick-head{text-align:center;margin-bottom:18px}
 .pick-head h1{margin-bottom:8px}
@@ -684,6 +693,7 @@ const STR = {
     readSign: 'Đọc về cung của bạn',
     forInterests: 'Theo điều bạn quan tâm',
 
+    pickToday: 'Rút một lá bài hôm nay',
     pickTitle: 'Năng lượng hiện tại của bạn',
     pickIntro: 'Hít một hơi thật sâu. Nghĩ về hôm nay. Rồi chạm vào một lá bài.',
     focusLabel: 'Bạn đang nghĩ về',
@@ -898,6 +908,7 @@ const STR = {
     readSign: 'Read about your sign',
     forInterests: 'Based on your interests',
 
+    pickToday: 'Pick a card today',
     pickTitle: 'Your energy right now',
     pickIntro: 'Take a deep breath. Think about today. Then tap a card.',
     focusLabel: 'On your mind',
@@ -8839,6 +8850,12 @@ function personalHTML() {
     + '<div class="row" style="margin-top:10px"><a class="btn sm" href="#/learn/sign/' + key + '">' + esc(S.readSign) + '</a><a class="btn sm" href="#/learn/numbers">' + esc(S.numerology) + '</a></div>'
     + '</div>';
 }
+/* The big "pick a card today" block: three card backs and one button. */
+function pickCtaHTML() {
+  const S = T();
+  return '<a class="pickcta" href="#/pick"><div class="fan3"><span style="transform:rotate(-14deg)">' + BACK + '</span><span>' + BACK + '</span><span style="transform:rotate(14deg)">' + BACK + '</span></div>'
+    + '<div><b>' + esc(S.pickToday) + '</b><p>' + esc(S.pickIntro) + '</p><span class="btn primary sm">' + esc(S.nav.pick) + ' →</span></div></a>';
+}
 function quickLinksHTML() {
   const S = T();
   const tiles = [['#/pick', '🃏', S.nav.pick, lang === 'vi' ? 'năng lượng hôm nay' : 'your energy today'],
@@ -8863,6 +8880,7 @@ async function renderHome(args, params) {
     + todayHTML()
     + (PROFILE.tourDone ? '' : tourHTML(0))
     + '<h1 style="margin:18px 0 4px">' + esc(name ? S.hello(name) : S.helloGuest) + '</h1><p class="muted">' + esc(lang === 'vi' ? 'Hôm nay bạn muốn làm gì?' : 'What would you like to do today?') + '</p>'
+    + pickCtaHTML()
     + quickLinksHTML()
     + personalHTML()
     + suggestedGuidesHTML(3)

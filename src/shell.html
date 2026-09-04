@@ -190,6 +190,15 @@ main{padding:22px 0 30px}
 .welcome .sig{display:flex;justify-content:center;padding-top:6px}
 .welcome .sig svg{width:72px;height:72px;filter:drop-shadow(0 2px 8px var(--shade))}
 
+.pickcta{display:grid;grid-template-columns:120px 1fr;gap:14px;align-items:center;background:linear-gradient(135deg,var(--lav-soft),var(--surface));border:1.5px solid var(--lav);border-radius:20px;padding:16px;margin-bottom:16px;text-decoration:none;color:inherit}
+.pickcta .fan3{position:relative;height:118px}
+.pickcta .fan3 span{position:absolute;left:50%;bottom:0;width:62px;margin-left:-31px;transform-origin:50% 120%;display:block}
+.pickcta .fan3 span:nth-child(2){z-index:2}
+.pickcta .fan3 svg{width:100%;height:auto;display:block;filter:drop-shadow(0 4px 8px var(--shade))}
+.pickcta b{font-family:var(--display);font-weight:500;font-size:20px;display:block;margin-bottom:4px}
+.pickcta p{color:var(--fg-soft);font-size:14px;margin-bottom:10px}
+@media (max-width:380px){.pickcta{grid-template-columns:100px 1fr}}
+
 /* ---- pick a card ---- */
 .pick-head{text-align:center;margin-bottom:18px}
 .pick-head h1{margin-bottom:8px}
