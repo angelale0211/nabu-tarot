@@ -40,13 +40,13 @@ const BE = {
   /* ---- profile ---- */
   async pullProfile() {
     const snap = await this.db.collection('users').doc(this.user.uid).get();
-    if (snap.exists) saveProfileLocal(snap.data());
+    if (snap.exists) { const d = snap.data(); if (d.access) { const a = ACCESS.get(); Object.keys(d.access).forEach((k) => { if (!a[k] || d.access[k] > a[k]) a[k] = d.access[k]; }); store.set('nabu-access', a); } delete d.access; saveProfileLocal(d); }
     else await this.pushProfile();
   },
   async pushProfile() {
     if (!this.user) return;
     const p = { name: PROFILE.name || this.user.displayName || '', birthday: PROFILE.birthday || '', interests: PROFILE.interests || [],
-      tourDone: !!PROFILE.tourDone, email: this.user.email || '', updatedAt: firebase.firestore.FieldValue.serverTimestamp() };
+      tourDone: !!PROFILE.tourDone, email: this.user.email || '', access: ACCESS.get(), updatedAt: firebase.firestore.FieldValue.serverTimestamp() };
     await this.db.collection('users').doc(this.user.uid).set(p, { merge: true });
   },
 

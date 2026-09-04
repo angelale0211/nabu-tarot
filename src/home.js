@@ -130,7 +130,7 @@ function quickLinksHTML() {
 }
 function suggestedGuidesHTML(limit) {
   const ints = PROFILE.interests || [];
-  const list = GUIDES.filter((g) => g.tags.some((t) => ints.indexOf(t) > -1)).slice(0, limit || 3);
+  const list = GUIDES.filter((g) => g.tags.some((t) => ints.indexOf(t) > -1) && !((g.cat === 'tarot' || g.cat === 'lenormand') && !ACCESS.has(g.cat))).slice(0, limit || 3);
   if (!list.length) return '';
   return '<div class="sec"><div class="eyebrow">' + esc(T().forInterests) + '</div>' + list.map((g) => '<a class="acc" href="#/learn/guide/' + g.id + '" style="display:block;text-decoration:none;color:inherit"><button style="pointer-events:none"><span>' + esc(L(g.title)) + '</span></button></a>').join('') + '</div>';
 }
@@ -138,9 +138,10 @@ function suggestedGuidesHTML(limit) {
 async function renderHome(args, params) {
   const S = T(), m = $('#main');
   const name = (PROFILE.name || '').trim();
-  m.innerHTML = '<h1 style="margin-bottom:4px">' + esc(name ? S.hello(name) : S.helloGuest) + '</h1><p class="muted">' + esc(lang === 'vi' ? 'Hôm nay bạn muốn làm gì?' : 'What would you like to do today?') + '</p>'
+  m.innerHTML = '<div class="eyebrow">' + esc(CONFIG.brand) + '</div>'
     + todayHTML()
     + (PROFILE.tourDone ? '' : tourHTML(0))
+    + '<h1 style="margin:18px 0 4px">' + esc(name ? S.hello(name) : S.helloGuest) + '</h1><p class="muted">' + esc(lang === 'vi' ? 'Hôm nay bạn muốn làm gì?' : 'What would you like to do today?') + '</p>'
     + quickLinksHTML()
     + personalHTML()
     + suggestedGuidesHTML(3)

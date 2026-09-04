@@ -404,6 +404,18 @@ main{padding:22px 0 30px}
 .svc button.pkg.on{background:var(--primary);color:var(--primary-ink);border-color:transparent}
 .paynote{background:var(--gold-soft);color:var(--picked-ink);border-radius:12px;padding:10px 14px;font-size:14px;font-weight:600;text-align:center}
 
+/* ---- paywall ---- */
+.paywall{background:var(--surface);border:1.5px solid var(--lav);border-radius:20px;padding:22px 18px;text-align:center}
+.paywall .ic{font-size:40px}
+.paywall h2{margin:6px 0}
+.paywall .inc{text-align:left;margin:12px auto;padding-left:22px;color:var(--fg-soft);font-size:14.5px;max-width:340px}
+.paywall .inc li{margin-bottom:4px}
+.paywall .price{font-family:var(--display);font-size:28px;margin:10px 0 14px}
+.paywall .price span{font-family:var(--body);font-size:14px;color:var(--fg-faint)}
+.tile .lock{font-size:16px;vertical-align:middle}
+.course{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--rule-soft);font-size:14.5px}
+.codebox{font-family:Georgia,serif;font-size:22px;letter-spacing:.06em;background:var(--surface-2);border-radius:12px;padding:12px;text-align:center;margin:10px 0;user-select:all}
+
 /* ---- booking ---- */
 .topic{display:block;width:100%;text-align:left;background:var(--surface);border:1px solid var(--rule-soft);border-radius:16px;padding:14px 16px;margin-bottom:10px}
 .topic.on{border-color:var(--primary);box-shadow:0 0 0 1px var(--primary) inset}
@@ -515,6 +527,10 @@ const CONFIG = {
   adminEmails: [],
   authProviders: ['google', 'facebook', 'email'],
 
+  // Access codes for the paid courses are signed with this. Change it once
+  // (any long phrase); codes made before the change stop working.
+  courseSecret: 'nabu-moon-2026-lavender-cards',
+
   timezone: 'Asia/Ho_Chi_Minh',
   tzLabel: { vi: 'giờ Việt Nam', en: 'Vietnam time' },
 
@@ -555,8 +571,8 @@ const SERVICES = [
     packages: [
       { id: 'yn', name: { vi: '1 câu Yes/No', en: '1 yes/no question' }, price: 10000 },
       { id: 'q1', name: { vi: '1 câu chi tiết', en: '1 question in detail' }, price: 20000 },
-      { id: 'q3', name: { vi: '3 câu chi tiết', en: '3 questions in detail' }, price: 45000 },
-      { id: 'topic', name: { vi: 'Xem chủ đề sẵn (5 lá)', en: 'Set topic (5 cards)' }, price: 55000, needsTopic: true },
+      { id: 'q3', name: { vi: '3 câu chi tiết', en: '3 questions in detail' }, price: 50000 },
+      { id: 'topic', name: { vi: 'Xem chủ đề sẵn (5 lá)', en: 'Set topic (5 cards)' }, price: 60000, needsTopic: true },
       { id: 't40', name: { vi: '40 phút', en: '40 minutes' }, price: 80000 }
     ] },
   { id: 'lenormand', icon: '🗝️', tone: 'lav', name: { vi: 'Lenormand', en: 'Lenormand' },
@@ -597,10 +613,25 @@ const SERVICES = [
     note: { vi: 'Cần ngày, tháng, năm sinh và giờ sinh chính xác.', en: 'Needs your exact date and hour of birth.' },
     needsBirth: true,
     packages: [
-      { id: 'one', name: { vi: '1 vấn đề', en: '1 matter' }, price: 66000 },
-      { id: 'year', name: { vi: 'Vận hạn năm', en: 'The year ahead' }, price: 139000 },
-      { id: 'all', name: { vi: 'Tổng quan', en: 'Full overview' }, price: 250000 }
+      { id: 'one', name: { vi: '1 vấn đề', en: '1 matter' }, price: 111000 },
+      { id: 'year', name: { vi: 'Vận hạn năm', en: 'The year ahead' }, price: 222000 },
+      { id: 'all', name: { vi: 'Tổng quan mọi vấn đề', en: 'Full overview of everything' }, price: 666000 }
+    ] },
+  { id: 'talk', icon: '💬', tone: 'blue', name: { vi: 'Chỉ tâm sự', en: 'Just talk' },
+    tagline: { vi: 'Không bài, không dự đoán. Chỉ có người lắng nghe.', en: 'No cards, no predictions. Just someone who listens.' },
+    packages: [
+      { id: 't30', name: { vi: '30 phút', en: '30 minutes' }, price: 30000 },
+      { id: 't60', name: { vi: '1 tiếng', en: '1 hour' }, price: 60000 }
     ] }
+];
+/* Paid courses in the Học tab. Access codes are made in the dashboard. */
+const COURSES = [
+  { id: 'tarot', price: 200000, months: 6, name: { vi: 'Khóa Tarot', en: 'Tarot course' },
+    blurb: { vi: 'Toàn bộ 78 lá, mỗi lá có hình, từ khóa, nghĩa xuôi ngược, nghĩa theo tình cảm, công việc, học tập, tiền bạc, và các câu hỏi thường gặp. Kèm 13 cách trải bài và các bài đọc.', en: 'All 78 cards with art, keywords, upright and reversed meanings, love / work / study / money readings and frequently asked questions. Plus 13 spreads and the guides.' },
+    includes: { vi: ['78 lá bài, mỗi lá một trang', '13 cách trải bài có sơ đồ', 'Bài đọc: bắt đầu, lá ngược, lá hoàng gia', 'Dùng 6 tháng, xem offline'], en: ['78 cards, one page each', '13 spreads with diagrams', 'Guides: starting out, reversals, court cards', '6 months of access, works offline'] } },
+  { id: 'lenormand', price: 200000, months: 6, name: { vi: 'Khóa Lenormand', en: 'Lenormand course' },
+    blurb: { vi: 'Toàn bộ 36 lá, mỗi lá có hình, sắc thái, nghĩa chính, tình cảm, công việc, chỉ người, thời gian và các cặp lá. Kèm 7 cách trải bài và các bài đọc.', en: 'All 36 cards with art, tone, core meaning, love, work, person, timing and pairs. Plus 7 spreads and the guides.' },
+    includes: { vi: ['36 lá bài, mỗi lá một trang', 'Cặp lá thường gặp', '7 cách trải bài, có Grand Tableau', 'Dùng 6 tháng, xem offline'], en: ['36 cards, one page each', 'Common pairs', '7 spreads including the Grand Tableau', '6 months of access, works offline'] } }
 ];
 const PAYMENT_NOTE = { vi: 'Bạn thân mến vui lòng chuyển khoản trước khi xem.', en: 'Please transfer the fee before the reading.' };
 const fmtPrice = (n) => String(n).replace(/\B(?=(\d{3})+(?!\d))/g, '.') + 'đ';
@@ -663,14 +694,19 @@ const STR = {
 
     learnTitle: 'Kho kiến thức',
     learnIntro: 'Tarot, Lenormand, chiêm tinh, manifestation và bói toán. Đọc từng phần ngắn, không cần theo thứ tự.',
-    cats: { tarot: 'Tarot', lenormand: 'Lenormand', astro: 'Chiêm tinh', manifest: 'Manifestation', fortune: 'Bói toán', spreads: 'Trải bài' },
-    catSub: { tarot: '78 lá + bài giảng', lenormand: '36 lá + cặp lá', astro: '12 cung + tương ứng', manifest: 'cách làm + giới hạn', fortune: 'thần số, chỉ tay, bài Tây', spreads: '20 cách trải' },
+    cats: { tarot: 'Tarot', lenormand: 'Lenormand', astro: 'Chiêm tinh', manifest: 'Manifestation', fortune: 'Bói toán' },
+    catSub: { tarot: '78 lá + 13 trải bài · 200.000đ / 6 tháng', lenormand: '36 lá + 7 trải bài · 200.000đ / 6 tháng', astro: '12 cung, hành tinh, nhà', manifest: 'cách làm + giới hạn', fortune: 'thần số, chỉ tay, bài Tây' },
+    courses: 'Khóa học', freeReads: 'Đọc miễn phí', courseTabs: { cards: 'Các lá bài', spreads: 'Trải bài', guides: 'Bài đọc' },
+    months6: 'tháng', accessUntil: (d) => 'Bạn có quyền xem đến ' + d + '.', courseExpired: (d) => 'Mã của bạn đã hết hạn ngày ' + d + '. Mua lại để xem tiếp.',
+    buyCourse: 'Mua khóa học qua Instagram', buyHint: 'Tin nhắn mua khóa đã được sao chép. Sau khi chuyển khoản, Nabu gửi bạn mã mở khóa. Nhập mã ở dưới.',
+    buyMsg: (n, p, m) => 'Chào Nabu, mình muốn mua ' + n + ' (' + p + ', ' + m + ' tháng).', unlock: 'Mở khóa', unlocked: 'Đã mở khóa', badCode: 'Mã không đúng. Bạn kiểm tra lại nhé.',
+    myCourses: 'Khóa học của tôi', enterCode: 'Nhập mã mở khóa', noCourses: 'Bạn chưa có khóa học nào.', activeUntil: (d) => 'đang mở, đến ' + d, expiredOn: (d) => 'hết hạn ' + d,
     recommended: 'Gợi ý cho bạn',
     allCards: 'Tất cả các lá',
     majors: 'Ẩn Chính', minors: 'Ẩn Phụ',
     upright: 'Nghĩa xuôi', reversed: 'Nghĩa ngược',
     kwPos: 'Từ khóa tích cực', kwNeg: 'Từ khóa tiêu cực',
-    questions: 'Hỏi gì, lá này trả lời sao',
+    questions: 'Các câu hỏi thường gặp',
     astroOf: 'Tương ứng chiêm tinh',
     lenTone: { pos: 'Tích cực', neu: 'Trung tính', neg: 'Tiêu cực' },
     lenCore: 'Nghĩa chính', lenLove: 'Tình cảm', lenWork: 'Công việc', lenWho: 'Chỉ người', lenTime: 'Thời gian', lenCombo: 'Cặp lá', lenCard: 'Lá bài Tây',
@@ -763,7 +799,8 @@ const STR = {
 
     adminTitle: 'Bảng điều khiển',
     adminIntro: 'Trang này chỉ dành cho Nabu.',
-    adminTabs: { posts: 'Bài đăng', schedule: 'Lịch rảnh', bookings: 'Đặt lịch', inbox: 'Tin nhắn' },
+    adminTabs: { posts: 'Bài đăng', schedule: 'Lịch rảnh', bookings: 'Đặt lịch', inbox: 'Tin nhắn', codes: 'Mã học' },
+    codesIntro: 'Khách chuyển khoản xong, bạn tạo mã ở đây và gửi cho họ. Mã có ngày hết hạn ghi sẵn bên trong.', codeCourse: 'Khóa', codeStart: 'Bắt đầu từ', codeMonths: 'Số tháng', makeCode: 'Tạo mã', codeUntil: 'Hết hạn',
     token: 'GitHub token',
     tokenHint: 'Token chỉ lưu trên máy này. Xem README để tạo token.',
     saveToken: 'Lưu token',
@@ -871,14 +908,19 @@ const STR = {
 
     learnTitle: 'Knowledge library',
     learnIntro: 'Tarot, Lenormand, astrology, manifestation and fortune telling. Short pieces, read in any order.',
-    cats: { tarot: 'Tarot', lenormand: 'Lenormand', astro: 'Astrology', manifest: 'Manifestation', fortune: 'Fortune telling', spreads: 'Spreads' },
-    catSub: { tarot: '78 cards + lectures', lenormand: '36 cards + pairs', astro: '12 signs + links', manifest: 'methods + limits', fortune: 'numbers, palms, playing cards', spreads: '20 layouts' },
+    cats: { tarot: 'Tarot', lenormand: 'Lenormand', astro: 'Astrology', manifest: 'Manifestation', fortune: 'Fortune telling' },
+    catSub: { tarot: '78 cards + 13 spreads · 200.000đ / 6 months', lenormand: '36 cards + 7 spreads · 200.000đ / 6 months', astro: '12 signs, planets, houses', manifest: 'methods + limits', fortune: 'numbers, palms, playing cards' },
+    courses: 'Courses', freeReads: 'Free to read', courseTabs: { cards: 'The cards', spreads: 'Spreads', guides: 'Guides' },
+    months6: 'months', accessUntil: (d) => 'Your access runs until ' + d + '.', courseExpired: (d) => 'Your code expired on ' + d + '. Buy again to continue.',
+    buyCourse: 'Buy the course on Instagram', buyHint: 'The purchase message is copied. After the transfer, Nabu sends you an unlock code. Enter it below.',
+    buyMsg: (n, p, m) => 'Hi Nabu, I would like to buy the ' + n + ' (' + p + ', ' + m + ' months).', unlock: 'Unlock', unlocked: 'Unlocked', badCode: 'That code is not right. Please check it.',
+    myCourses: 'My courses', enterCode: 'Enter an unlock code', noCourses: 'You have no courses yet.', activeUntil: (d) => 'active until ' + d, expiredOn: (d) => 'expired ' + d,
     recommended: 'Suggested for you',
     allCards: 'All cards',
     majors: 'Major Arcana', minors: 'Minor Arcana',
     upright: 'Upright', reversed: 'Reversed',
     kwPos: 'Positive keywords', kwNeg: 'Negative keywords',
-    questions: 'Questions this card answers',
+    questions: 'Frequently asked questions',
     astroOf: 'Astrological link',
     lenTone: { pos: 'Positive', neu: 'Neutral', neg: 'Negative' },
     lenCore: 'Core meaning', lenLove: 'Love', lenWork: 'Work', lenWho: 'As a person', lenTime: 'Timing', lenCombo: 'Pairs', lenCard: 'Playing card',
@@ -971,7 +1013,8 @@ const STR = {
 
     adminTitle: 'Dashboard',
     adminIntro: 'This page is for Nabu only.',
-    adminTabs: { posts: 'Posts', schedule: 'Availability', bookings: 'Bookings', inbox: 'Inbox' },
+    adminTabs: { posts: 'Posts', schedule: 'Availability', bookings: 'Bookings', inbox: 'Inbox', codes: 'Codes' },
+    codesIntro: 'Once a client has paid, make a code here and send it to them. The expiry date is built into the code.', codeCourse: 'Course', codeStart: 'Starts', codeMonths: 'Months', makeCode: 'Make code', codeUntil: 'Expires',
     token: 'GitHub token',
     tokenHint: 'The token stays on this device only. See the README to create one.',
     saveToken: 'Save token',
@@ -8367,6 +8410,31 @@ function birthParts() {
 }
 function mySign() { const b = birthParts(); return b ? sunSignIndex(b.m, b.d) : -1; }
 
+/* ---- course access ----
+   Codes: NABU-T-YYMMDD-XXXX (T = tarot, L = lenormand), the date is the expiry
+   and XXXX a checksum over date + CONFIG.courseSecret. Checked on the device;
+   good enough to keep casual sharing in check, not a bank vault. */
+const ACCESS = {
+  get() { return store.get('nabu-access', {}); },
+  has(course) { const a = this.get()[course]; return !!a && a >= isoDate(new Date()); },
+  grant(course, until) { const a = this.get(); a[course] = until; store.set('nabu-access', a); if (window.BE && BE.user) BE.pushProfile(); }
+};
+function courseHash(str) {
+  let h1 = 0x811c9dc5, h2 = 5381;
+  for (let i = 0; i < str.length; i++) { const c = str.charCodeAt(i); h1 = Math.imul(h1 ^ c, 16777619) >>> 0; h2 = (Math.imul(h2, 33) + c) >>> 0; }
+  return (h1.toString(36) + h2.toString(36)).toUpperCase().replace(/[^A-Z0-9]/g, '').slice(-4).padStart(4, 'X');
+}
+function makeCode(course, untilISO) {
+  const d = untilISO.replace(/-/g, '').slice(2), Lt = course === 'tarot' ? 'T' : 'L';
+  return 'NABU-' + Lt + '-' + d + '-' + courseHash(Lt + d + CONFIG.courseSecret);
+}
+function parseCode(code) {
+  const m = /^NABU-([TL])-(\d{6})-([A-Z0-9]{4})$/.exec(String(code || '').trim().toUpperCase().replace(/\s+/g, ''));
+  if (!m || courseHash(m[1] + m[2] + CONFIG.courseSecret) !== m[3]) return null;
+  return { course: m[1] === 'T' ? 'tarot' : 'lenormand', until: '20' + m[2].slice(0, 2) + '-' + m[2].slice(2, 4) + '-' + m[2].slice(4, 6) };
+}
+function addMonths(iso, n) { const d = new Date(iso + 'T00:00:00'); d.setMonth(d.getMonth() + n); return isoDate(d); }
+
 /* ---- the deck ---- */
 function buildDeck(lg) {
   const X = LEX[lg], D = DECKTEXT[lg], out = [];
@@ -8572,13 +8640,13 @@ const BE = {
   /* ---- profile ---- */
   async pullProfile() {
     const snap = await this.db.collection('users').doc(this.user.uid).get();
-    if (snap.exists) saveProfileLocal(snap.data());
+    if (snap.exists) { const d = snap.data(); if (d.access) { const a = ACCESS.get(); Object.keys(d.access).forEach((k) => { if (!a[k] || d.access[k] > a[k]) a[k] = d.access[k]; }); store.set('nabu-access', a); } delete d.access; saveProfileLocal(d); }
     else await this.pushProfile();
   },
   async pushProfile() {
     if (!this.user) return;
     const p = { name: PROFILE.name || this.user.displayName || '', birthday: PROFILE.birthday || '', interests: PROFILE.interests || [],
-      tourDone: !!PROFILE.tourDone, email: this.user.email || '', updatedAt: firebase.firestore.FieldValue.serverTimestamp() };
+      tourDone: !!PROFILE.tourDone, email: this.user.email || '', access: ACCESS.get(), updatedAt: firebase.firestore.FieldValue.serverTimestamp() };
     await this.db.collection('users').doc(this.user.uid).set(p, { merge: true });
   },
 
@@ -8766,7 +8834,7 @@ function quickLinksHTML() {
 }
 function suggestedGuidesHTML(limit) {
   const ints = PROFILE.interests || [];
-  const list = GUIDES.filter((g) => g.tags.some((t) => ints.indexOf(t) > -1)).slice(0, limit || 3);
+  const list = GUIDES.filter((g) => g.tags.some((t) => ints.indexOf(t) > -1) && !((g.cat === 'tarot' || g.cat === 'lenormand') && !ACCESS.has(g.cat))).slice(0, limit || 3);
   if (!list.length) return '';
   return '<div class="sec"><div class="eyebrow">' + esc(T().forInterests) + '</div>' + list.map((g) => '<a class="acc" href="#/learn/guide/' + g.id + '" style="display:block;text-decoration:none;color:inherit"><button style="pointer-events:none"><span>' + esc(L(g.title)) + '</span></button></a>').join('') + '</div>';
 }
@@ -8774,9 +8842,10 @@ function suggestedGuidesHTML(limit) {
 async function renderHome(args, params) {
   const S = T(), m = $('#main');
   const name = (PROFILE.name || '').trim();
-  m.innerHTML = '<h1 style="margin-bottom:4px">' + esc(name ? S.hello(name) : S.helloGuest) + '</h1><p class="muted">' + esc(lang === 'vi' ? 'Hôm nay bạn muốn làm gì?' : 'What would you like to do today?') + '</p>'
+  m.innerHTML = '<div class="eyebrow">' + esc(CONFIG.brand) + '</div>'
     + todayHTML()
     + (PROFILE.tourDone ? '' : tourHTML(0))
+    + '<h1 style="margin:18px 0 4px">' + esc(name ? S.hello(name) : S.helloGuest) + '</h1><p class="muted">' + esc(lang === 'vi' ? 'Hôm nay bạn muốn làm gì?' : 'What would you like to do today?') + '</p>'
     + quickLinksHTML()
     + personalHTML()
     + suggestedGuidesHTML(3)
@@ -8864,35 +8933,65 @@ function renderReveal(animate) {
 ROUTES.pick = { nav: 'pick', render: renderPick };
 
 /* ============================ learn ============================
-   #/learn                 categories
-   #/learn/tarot           78 cards        #/learn/card/<id>
-   #/learn/lenormand       36 cards        #/learn/len/<n>
-   #/learn/astro           signs, planets, houses, aspects   #/learn/sign/<key>
-   #/learn/spreads         layouts         #/learn/spread/<id>
-   #/learn/manifest, #/learn/fortune       guides   #/learn/guide/<id>
-   #/learn/numbers         the visitor's numbers */
-const CAT_ICONS = { tarot: '🃏', lenormand: '🗝️', astro: '🔮', spreads: '🧩', manifest: '🌙', fortune: '🔢' };
+   #/learn                  overview
+   #/learn/tarot?tab=cards|spreads|guides      the Tarot course (paid)
+   #/learn/lenormand?tab=…                     the Lenormand course (paid)
+   #/learn/card/<id>  #/learn/len/<n>  #/learn/spread/<id>  #/learn/guide/<id>
+   #/learn/astro, #/learn/sign/<key>, #/learn/manifest, #/learn/fortune, #/learn/numbers  (free) */
+const CAT_ICONS = { tarot: '🃏', lenormand: '🗝️', astro: '🔮', manifest: '🌙', fortune: '🔢' };
 const badgeHTML = (b) => '<span class="badge-src ' + b + '">' + esc(T().badges[b]) + '</span>';
 const backLink = (href, label) => '<p><a href="' + href + '">← ' + esc(label) + '</a></p>';
+const courseOf = (id) => COURSES.filter((c) => c.id === id)[0];
 
-function renderLearn(args) {
+/* ---- paywall ---- */
+function paywallHTML(courseId) {
+  const S = T(), c = courseOf(courseId), a = ACCESS.get()[courseId];
+  const expired = a && a < isoDate(new Date());
+  return '<div class="paywall"><div class="ic">🔒</div><h2>' + esc(L(c.name)) + '</h2><p class="muted">' + esc(L(c.blurb)) + '</p>'
+    + '<ul class="inc">' + L(c.includes).map((x) => '<li>' + esc(x) + '</li>').join('') + '</ul>'
+    + '<div class="price">' + fmtPrice(c.price) + ' <span>/ ' + c.months + ' ' + esc(S.months6) + '</span></div>'
+    + (expired ? '<p class="hint err">' + esc(S.courseExpired(a)) + '</p>' : '')
+    + '<a class="btn primary block" data-buy="' + courseId + '" href="' + (CONFIG.instagram ? 'https://ig.me/m/' + esc(CONFIG.instagram) : '#/me') + '" target="_blank" rel="noopener">' + esc(S.buyCourse) + '</a>'
+    + '<p class="hint" style="margin:8px 0">' + esc(S.buyHint) + '</p>'
+    + '<div class="row"><input id="ccode" placeholder="NABU-T-…" autocapitalize="characters" style="flex:1"><button class="btn" id="cunlock">' + esc(S.unlock) + '</button></div><p class="hint" id="cstatus"></p></div>';
+}
+function bindPaywall(root, after) {
+  const S = T();
+  $$('[data-buy]', root).forEach((a) => a.addEventListener('click', () => { const c = courseOf(a.getAttribute('data-buy')); copyText(S.buyMsg(L(c.name), fmtPrice(c.price), c.months)); toast(S.copied); }));
+  const btn = $('#cunlock', root);
+  if (btn) btn.addEventListener('click', () => {
+    const r = parseCode($('#ccode', root).value);
+    const st = $('#cstatus', root);
+    if (!r) { st.textContent = S.badCode; st.className = 'hint err'; return; }
+    ACCESS.grant(r.course, r.until);
+    toast(S.unlocked); if (after) after(); else route();
+  });
+}
+function gate(courseId, back) {
+  if (ACCESS.has(courseId)) return false;
+  const m = $('#main');
+  m.innerHTML = backLink(back || '#/learn', T().learnTitle) + paywallHTML(courseId);
+  bindPaywall(m);
+  return true;
+}
+
+function renderLearn(args, params) {
   const S = T(), m = $('#main'), sub = args[0];
   if (!sub) {
     const ints = PROFILE.interests || [];
-    const rec = { tarot: ints.indexOf('tarot') > -1, lenormand: ints.indexOf('lenormand') > -1, astro: ints.indexOf('astro') > -1, manifest: ints.indexOf('manifest') > -1, fortune: ints.indexOf('fortune') > -1, spreads: ints.indexOf('tarot') > -1 };
+    const tile = (k, locked) => '<a class="tile' + (ints.indexOf(k) > -1 ? ' rec' : '') + '" href="#/learn/' + k + '"><div class="ic">' + CAT_ICONS[k] + (locked ? ' <span class="lock">🔒</span>' : '') + '</div><b>' + esc(S.cats[k]) + '</b><span>' + esc(S.catSub[k]) + '</span></a>';
     m.innerHTML = '<div class="eyebrow">' + esc(S.nav.learn) + '</div><h1 style="margin-bottom:6px">' + esc(S.learnTitle) + '</h1><p class="muted">' + esc(S.learnIntro) + '</p>'
-      + '<div class="tiles">' + ['tarot', 'lenormand', 'astro', 'spreads', 'manifest', 'fortune'].map((k) =>
-        '<a class="tile' + (rec[k] ? ' rec' : '') + '" href="#/learn/' + k + '"><div class="ic">' + CAT_ICONS[k] + '</div><b>' + esc(S.cats[k]) + '</b><span>' + esc(S.catSub[k]) + '</span></a>').join('') + '</div>'
+      + '<div class="eyebrow">' + esc(S.courses) + '</div><div class="tiles">' + tile('tarot', !ACCESS.has('tarot')) + tile('lenormand', !ACCESS.has('lenormand')) + '</div>'
+      + '<div class="eyebrow">' + esc(S.freeReads) + '</div><div class="tiles">' + tile('astro') + tile('manifest') + tile('fortune') + '</div>'
       + suggestedGuidesHTML(4);
     return;
   }
-  if (sub === 'tarot') return renderTarotList();
+  if (sub === 'tarot') return renderCourse('tarot', params.tab);
+  if (sub === 'lenormand') return renderCourse('lenormand', params.tab);
   if (sub === 'card') return renderCard(args[1]);
-  if (sub === 'lenormand') return renderLenList();
   if (sub === 'len') return renderLen(Number(args[1]));
   if (sub === 'astro') return renderAstro();
   if (sub === 'sign') return renderSign(args[1]);
-  if (sub === 'spreads') return renderSpreads();
   if (sub === 'spread') return renderSpread(args[1]);
   if (sub === 'manifest' || sub === 'fortune') return renderGuideList(sub);
   if (sub === 'guide') return renderGuide(args[1]);
@@ -8900,34 +8999,50 @@ function renderLearn(args) {
   location.hash = '#/learn';
 }
 
-/* ---- tarot ---- */
-function renderTarotList() {
-  const S = T(), m = $('#main');
+/* ---- the two courses: cards | spreads | guides ---- */
+function renderCourse(courseId, tab) {
+  if (gate(courseId)) return;
+  const S = T(), m = $('#main'), sys = courseId === 'tarot' ? 'tarot' : 'len';
+  tab = ['cards', 'spreads', 'guides'].indexOf(tab) > -1 ? tab : 'cards';
+  const until = ACCESS.get()[courseId];
+  m.innerHTML = backLink('#/learn', S.learnTitle) + '<h1 style="margin-bottom:4px">' + esc(S.cats[courseId]) + '</h1><p class="faint">' + esc(S.accessUntil(fmtDate(until))) + '</p>'
+    + '<div class="tabs" id="ctabs">' + ['cards', 'spreads', 'guides'].map((t) => '<button data-t="' + t + '" class="' + (tab === t ? 'on' : '') + '">' + esc(S.courseTabs[t]) + '</button>').join('') + '</div><div id="cpanel"></div>';
+  const panel = $('#cpanel');
+  const show = (t) => {
+    if (t === 'cards') { panel.innerHTML = courseId === 'tarot' ? tarotGridHTML() : lenGridHTML(); bindGrid(panel, courseId); }
+    else if (t === 'spreads') { panel.innerHTML = spreadsListHTML(sys); }
+    else { panel.innerHTML = (courseId === 'lenormand' ? '<p class="muted" style="font-size:14px">' + esc(S.lenNote) + '</p>' : '') + GUIDES.filter((g) => g.cat === courseId).map(guideRow).join(''); }
+  };
+  show(tab);
+  $$('#ctabs button').forEach((b) => b.addEventListener('click', () => { $$('#ctabs button').forEach((x) => x.classList.toggle('on', x === b)); history.replaceState(null, '', '#/learn/' + courseId + '?tab=' + b.getAttribute('data-t')); show(b.getAttribute('data-t')); }));
+}
+function tarotGridHTML() {
+  const S = T(), D = DECK[lang];
   const grid = (list) => '<div class="deckgrid">' + list.map((c) => '<button data-open-card="' + c.id + '">' + faceSVG(c) + esc(c.name) + '</button>').join('') + '</div>';
-  const D = DECK[lang];
-  m.innerHTML = backLink('#/learn', S.learnTitle) + '<h1 style="margin-bottom:12px">' + esc(S.cats.tarot) + '</h1>'
-    + '<div class="tabs" id="ttabs"><button class="on" data-suit="major">' + esc(S.majors) + '</button>' + SUIT_KEYS.map((s) => '<button data-suit="' + s + '">' + esc(S.suitOf[s]) + '</button>').join('') + '</div>'
+  return '<div class="tabs" id="ttabs"><button class="on" data-suit="major">' + esc(S.majors) + '</button>' + SUIT_KEYS.map((s) => '<button data-suit="' + s + '">' + esc(S.suitOf[s]) + '</button>').join('') + '</div>'
     + '<div id="tgrid">' + grid(D.filter((c) => c.suit === 'major')) + '</div>';
-  bindCardLinks(m);
-  $$('#ttabs button').forEach((b) => b.addEventListener('click', () => {
-    $$('#ttabs button').forEach((x) => x.classList.toggle('on', x === b));
-    $('#tgrid').innerHTML = grid(D.filter((c) => c.suit === b.getAttribute('data-suit'))); bindCardLinks($('#tgrid'));
-  }));
 }
-function astroLine(id) {
-  const a = ASTRO[id]; if (!a) return '';
-  const sign = a.sign ? ZSIGN[a.sign] : null, planet = a.planet ? ZPLANET[a.planet] : null, el = a.el ? ZELEM[a.el] : null;
-  const nm = (o) => o ? (o.g + ' ' + o[lang]) : '';
-  if (a.k === 'sign') return nm(sign);
-  if (a.k === 'planet') return nm(planet) + (el ? ' · ' + nm(el) : '');
-  if (a.k === 'elem') return nm(el) + (a.outer ? ' · ' + nm(ZPLANET[a.outer]) : '');
-  if (a.k === 'decan') return nm(planet) + ' ' + (lang === 'vi' ? 'trong' : 'in') + ' ' + nm(sign) + ' · ' + (lang === 'vi' ? a.dvi : a.den) + ' · ' + (lang === 'vi' ? a.tvi : a.ten);
-  if (a.k === 'court') return nm(sign) + ' (' + (lang === 'vi' ? 'cuối ' : 'late ') + ZSIGN[a.prev][lang] + ' → ' + sign[lang] + ')';
-  if (a.k === 'ace') return nm(el) + (lang === 'vi' ? ' · gốc của chất, không có cung' : ' · root of the suit, no sign');
-  if (a.k === 'quad') return nm(el) + (lang === 'vi' ? ' · lá đất của chất, không có cung' : ' · earthy part of the suit, no sign');
-  return '';
+function lenGridHTML() {
+  let grid = '';
+  for (let i = 1; i <= 36; i++) { const d = lenCard(i); if (d) grid += '<button data-len="' + i + '">' + lenFace(i) + esc(d.name) + '</button>'; }
+  return '<div class="deckgrid">' + grid + '</div>';
 }
+function bindGrid(panel, courseId) {
+  if (courseId === 'tarot') {
+    const D = DECK[lang], grid = (list) => '<div class="deckgrid">' + list.map((c) => '<button data-open-card="' + c.id + '">' + faceSVG(c) + esc(c.name) + '</button>').join('') + '</div>';
+    bindCardLinks(panel);
+    $$('#ttabs button', panel).forEach((b) => b.addEventListener('click', () => {
+      $$('#ttabs button', panel).forEach((x) => x.classList.toggle('on', x === b));
+      $('#tgrid', panel).innerHTML = grid(D.filter((c) => c.suit === b.getAttribute('data-suit'))); bindCardLinks($('#tgrid', panel));
+    }));
+  } else {
+    $$('[data-len]', panel).forEach((b) => b.addEventListener('click', () => { location.hash = '#/learn/len/' + b.getAttribute('data-len'); }));
+  }
+}
+
+/* ---- tarot card page ---- */
 function renderCard(id) {
+  if (gate('tarot', '#/learn/tarot')) return;
   const S = T(), m = $('#main'), c = cardById(id);
   if (!c) { location.hash = '#/learn/tarot'; return; }
   const other = cardById(id, lang === 'vi' ? 'en' : 'vi'), I = insightOf(id);
@@ -8947,7 +9062,6 @@ function renderCard(id) {
     + (I ? '<div class="ins"><h3>' + esc(S.focus.love) + '</h3><p>' + esc(I.love) + '</p><h3>' + esc(S.focus.work) + '</h3><p>' + esc(I.work) + '</p><h3>' + esc(S.focus.study) + '</h3><p>' + esc(I.study) + '</p><h3>' + esc(S.focus.money) + '</h3><p>' + esc(I.money) + '</p></div>' : '')
     + (asks.length ? '<div class="ins"><h3>' + esc(S.questions) + '</h3>' + Object.keys(groups).map((g) => '<div class="acc"><button><span>' + esc(catName[g] || g) + ' (' + groups[g].length + ')</span></button><div class="in">'
       + groups[g].map((a) => '<div class="qa"><div class="q">' + esc(a[1]) + '</div><p class="a">' + esc(a[2]) + '</p></div>').join('') + '</div></div>').join('') + '</div>' : '')
-    + (ASTRO[id] ? '<div class="ins"><h3>' + esc(S.astroOf) + '</h3><p>' + esc(astroLine(id)) + '</p></div>' : '')
     + '<div class="row"><a class="btn primary" href="#/pick">' + esc(S.nav.pick) + '</a><a class="btn" href="#/book?card=' + id + '">' + esc(S.ctaBook) + '</a></div></div>';
   bindAccordions(m);
 }
@@ -8961,14 +9075,8 @@ function lenFace(n) {
     + '<g><rect x="41" y="6" width="18" height="15" fill="var(--card-bg)" stroke="var(--card-ink)" stroke-width="1"/><text x="50" y="17.2" text-anchor="middle" font-family="Georgia,serif" font-size="9.5" fill="var(--card-ink)">' + n + '</text></g>'
     + '<text x="50" y="157" text-anchor="middle" font-family="Be Vietnam Pro, sans-serif" font-size="7.4" fill="var(--card-ink)">' + esc(d.name) + '</text></svg>';
 }
-function renderLenList() {
-  const S = T(), m = $('#main');
-  let grid = '';
-  for (let i = 1; i <= 36; i++) { const d = lenCard(i); if (d) grid += '<button data-len="' + i + '">' + lenFace(i) + esc(d.name) + '</button>'; }
-  m.innerHTML = backLink('#/learn', S.learnTitle) + '<h1 style="margin-bottom:6px">' + esc(S.cats.lenormand) + '</h1><p class="muted" style="font-size:14px">' + esc(S.lenNote) + '</p><div class="deckgrid">' + grid + '</div>';
-  $$('[data-len]', m).forEach((b) => b.addEventListener('click', () => { location.hash = '#/learn/len/' + b.getAttribute('data-len'); }));
-}
 function renderLen(n) {
+  if (gate('lenormand', '#/learn/lenormand')) return;
   const S = T(), m = $('#main'), d = lenCard(n);
   if (!d) { location.hash = '#/learn/lenormand'; return; }
   const other = lenCard(n, lang === 'vi' ? 'en' : 'vi');
@@ -8985,7 +9093,18 @@ function renderLen(n) {
     + '</div>';
 }
 
-/* ---- astrology ---- */
+/* ---- astrology (free) ---- */
+function astroLine(id) {
+  const a = ASTRO[id]; if (!a) return '';
+  const sign = a.sign ? ZSIGN[a.sign] : null, planet = a.planet ? ZPLANET[a.planet] : null, el = a.el ? ZELEM[a.el] : null;
+  const nm = (o) => o ? (o.g + ' ' + o[lang]) : '';
+  if (a.k === 'sign') return nm(sign);
+  if (a.k === 'planet') return nm(planet) + (el ? ' · ' + nm(el) : '');
+  if (a.k === 'elem') return nm(el) + (a.outer ? ' · ' + nm(ZPLANET[a.outer]) : '');
+  if (a.k === 'decan') return nm(planet) + ' ' + (lang === 'vi' ? 'trong' : 'in') + ' ' + nm(sign) + ' · ' + (lang === 'vi' ? a.dvi : a.den) + ' · ' + (lang === 'vi' ? a.tvi : a.ten);
+  if (a.k === 'court') return nm(sign) + ' (' + (lang === 'vi' ? 'cuối ' : 'late ') + ZSIGN[a.prev][lang] + ' → ' + sign[lang] + ')';
+  return nm(el);
+}
 function renderAstro() {
   const S = T(), m = $('#main'), me = mySign();
   m.innerHTML = backLink('#/learn', S.learnTitle) + '<h1 style="margin-bottom:6px">' + esc(S.cats.astro) + '</h1><p class="muted" style="font-size:14px">' + esc(S.astroNote) + '</p>'
@@ -9017,7 +9136,7 @@ function renderSign(key) {
   const zp = ZODIAC[key][lang], ruler = ZPLANET[ZRULER[key]];
   const cards = Object.keys(ASTRO).filter((id) => ASTRO[id].sign === key);
   m.innerHTML = backLink('#/learn/astro', S.cats.astro) + '<div class="detail">'
-    + '<div class="hero" style="grid-template-columns:72px 1fr"><div class="glyph" style="width:72px;height:72px;border-radius:50%;background:var(--surface);display:flex;align-items:center;justify-content:center;font-size:40px;color:var(--primary)">' + z.g + '</div>'
+    + '<div class="hero" style="grid-template-columns:72px 1fr"><div class="glyph" style="width:72px;height:72px;border-radius:50%;background:var(--surface);display:flex;align-items:center;justify-content:center;font-size:40px;color:var(--link)">' + z.g + '</div>'
     + '<div><div class="name">' + esc(z[lang]) + '</div><div class="en">' + esc(lang === 'vi' ? z.en : z.vi) + '</div><div class="meta"><i>' + esc(lang === 'vi' ? z.dvi : z.den) + '</i></div></div></div>'
     + '<div class="row" style="margin-bottom:12px"><span class="chip tag">' + esc(S.element) + ': ' + ZELEM[z.el].g + ' ' + esc(ZELEM[z.el][lang]) + '</span><span class="chip tag">' + esc(S.mode) + ': ' + esc(ZMODE[z.mod][lang]) + '</span><span class="chip tag">' + esc(S.ruler) + ': ' + ruler.g + ' ' + esc(ruler[lang]) + '</span></div>'
     + '<div class="kwl">' + zp.kw.map((k) => '<span>' + esc(k) + '</span>').join('') + '</div>'
@@ -9026,7 +9145,7 @@ function renderSign(key) {
   bindCardLinks(m);
 }
 
-/* ---- spreads ---- */
+/* ---- spreads (inside each course) ---- */
 function spreadArt(lay) {
   const U = 23, CW = 1, CH = 1.5, SX = 1.3, SY = 1.86, DROP = 6, crossed = {};
   lay.forEach((p) => { if (p[2] === 'r') crossed[p[0] + ',' + p[1]] = true; });
@@ -9040,18 +9159,17 @@ function spreadArt(lay) {
   });
   return s + '</svg>';
 }
-function renderSpreads() {
-  const S = T(), m = $('#main'), list = SPREADS[lang];
-  const row = (s) => '<a class="acc" href="#/learn/spread/' + s.id + '" style="display:block;text-decoration:none;color:inherit"><button style="pointer-events:none"><span>' + esc(s.name) + ' <span class="faint">· ' + s.n + (lang === 'vi' ? ' lá' : ' cards') + '</span></span></button></a>';
-  m.innerHTML = backLink('#/learn', S.learnTitle) + '<h1 style="margin-bottom:12px">' + esc(S.cats.spreads) + '</h1>'
-    + '<div class="eyebrow">Tarot</div>' + list.filter((s) => s.sys === 'tarot').map(row).join('')
-    + '<div class="eyebrow" style="margin-top:16px">Lenormand</div>' + list.filter((s) => s.sys === 'len').map(row).join('');
+function spreadsListHTML(sys) {
+  const list = SPREADS[lang].filter((s) => s.sys === sys);
+  return list.map((s) => '<a class="acc" href="#/learn/spread/' + s.id + '" style="display:block;text-decoration:none;color:inherit"><button style="pointer-events:none"><span>' + esc(s.name) + ' <span class="faint">· ' + s.n + (lang === 'vi' ? ' lá' : ' cards') + '</span></span></button></a>').join('');
 }
 function renderSpread(id) {
   const S = T(), m = $('#main'), s = SPREADS[lang].filter((x) => x.id === id)[0];
-  if (!s) { location.hash = '#/learn/spreads'; return; }
+  if (!s) { location.hash = '#/learn'; return; }
+  const courseId = s.sys === 'len' ? 'lenormand' : 'tarot', back = '#/learn/' + courseId + '?tab=spreads';
+  if (gate(courseId, back)) return;
   const sec = (h, t) => t ? '<h3>' + esc(h) + '</h3><p>' + esc(t).replace(/\*([^*]+)\*/g, '<i>$1</i>') + '</p>' : '';
-  m.innerHTML = backLink('#/learn/spreads', S.cats.spreads) + '<div class="guide"><h1>' + esc(s.name) + '</h1><p class="faint">' + s.n + (lang === 'vi' ? ' lá' : ' cards') + '</p>'
+  m.innerHTML = backLink(back, S.courseTabs.spreads) + '<div class="guide"><h1>' + esc(s.name) + '</h1><p class="faint">' + s.n + (lang === 'vi' ? ' lá' : ' cards') + '</p>'
     + '<div class="spread-d">' + (s.n <= 12 ? spreadArt(s.lay) : '') + '</div>'
     + '<div class="ins">' + sec(S.spreadWhen, s.when) + sec(S.spreadAsk, s.ask) + '</div>'
     + '<div class="ins"><h3>' + esc(S.spreadPos) + '</h3>' + s.pos.map((p, i) => '<div class="qa"><div class="q">' + (i + 1) + '. ' + esc(p[0]) + '</div><p class="a">' + esc(p[1]) + '</p></div>').join('') + '</div>'
@@ -9061,7 +9179,8 @@ function renderSpread(id) {
 
 /* ---- guides ---- */
 function guideRow(g) {
-  return '<a class="acc" href="#/learn/guide/' + g.id + '" style="display:block;text-decoration:none;color:inherit"><button style="pointer-events:none"><span>' + esc(L(g.title)) + '<br>' + badgeHTML(g.badge) + '</span></button></a>';
+  const locked = (g.cat === 'tarot' || g.cat === 'lenormand') && !ACCESS.has(g.cat);
+  return '<a class="acc" href="#/learn/guide/' + g.id + '" style="display:block;text-decoration:none;color:inherit"><button style="pointer-events:none"><span>' + (locked ? '🔒 ' : '') + esc(L(g.title)) + '<br>' + badgeHTML(g.badge) + '</span></button></a>';
 }
 function renderGuideList(cat) {
   const S = T(), m = $('#main');
@@ -9071,12 +9190,13 @@ function renderGuideList(cat) {
 function renderGuide(id) {
   const S = T(), m = $('#main'), g = GUIDES.filter((x) => x.id === id)[0];
   if (!g) { location.hash = '#/learn'; return; }
-  const back = g.cat === 'tarot' ? '#/learn/tarot' : g.cat === 'lenormand' ? '#/learn/lenormand' : g.cat === 'astro' ? '#/learn/astro' : '#/learn/' + g.cat;
+  const back = g.cat === 'tarot' || g.cat === 'lenormand' ? '#/learn/' + g.cat + '?tab=guides' : g.cat === 'astro' ? '#/learn/astro' : '#/learn/' + g.cat;
+  if ((g.cat === 'tarot' || g.cat === 'lenormand') && gate(g.cat, back)) return;
   m.innerHTML = backLink(back, S.cats[g.cat]) + '<div class="guide">' + badgeHTML(g.badge) + '<h1 style="margin:8px 0">' + esc(L(g.title)) + '</h1><p class="lead">' + esc(L(g.intro)) + '</p>'
     + g.sections.map((s) => '<h2>' + esc(L(s.h)) + '</h2><p>' + esc(L(s.p)) + '</p>').join('') + '</div>';
 }
 
-/* ---- numbers ---- */
+/* ---- numbers (free) ---- */
 function renderNumbers() {
   const S = T(), m = $('#main'), b = birthParts();
   if (!b) { m.innerHTML = backLink('#/learn/fortune', S.cats.fortune) + '<h1>' + esc(S.numerology) + '</h1><p class="muted">' + esc(S.enterBirthday) + '</p><a class="btn primary" href="#/me">' + esc(S.setupBtn) + '</a>'; return; }
@@ -9167,7 +9287,9 @@ function priceSheetHTML(interactive) {
 function renderPrices() {
   const S = T(), m = $('#main');
   m.innerHTML = '<div class="eyebrow">' + esc(CONFIG.brand) + '</div><h1 style="margin-bottom:6px">' + esc(S.priceTitle) + '</h1><p class="muted">' + esc(S.priceIntro) + '</p>'
-    + priceSheetHTML(false) + '<a class="btn primary block" href="#/book">' + esc(S.ctaBook) + '</a>';
+    + priceSheetHTML(false) + '<a class="btn primary block" href="#/book">' + esc(S.ctaBook) + '</a>'
+    + '<h2 style="margin:24px 0 10px">' + esc(S.courses) + '</h2>' + COURSES.map((c) => '<div class="svc lav"><div class="t"><span class="ic">' + (c.id === 'tarot' ? '🃏' : '🗝️') + '</span><div><b>' + esc(L(c.name)) + '</b><div class="tag">' + esc(L(c.blurb)) + '</div></div></div>'
+      + '<div class="pk"><div class="pkg"><span>' + c.months + ' ' + esc(S.months6) + '</span><b>' + fmtPrice(c.price) + '</b></div></div><a class="btn sm block" href="#/learn/' + c.id + '" style="margin-top:8px">' + esc(S.cats[c.id]) + ' →</a></div>').join('');
 }
 
 async function renderBook(args, params) {
@@ -9350,12 +9472,15 @@ function renderMe(args, params) {
     } else if (CONFIG.instagram) {
       h += '<div class="card"><h3 style="margin-bottom:4px">' + esc(S.messages) + '</h3><p class="muted" style="font-size:14px">' + esc(S.messagesSoon) + '</p><a class="btn block" href="https://ig.me/m/' + esc(CONFIG.instagram) + '" target="_blank" rel="noopener">' + esc(S.viaInstagram) + '</a></div>';
     }
+    h += '<div class="card"><h3 style="margin-bottom:8px">' + esc(S.myCourses) + '</h3>' + COURSES.map((c) => { const a = ACCESS.get()[c.id]; return '<div class="course"><span>' + esc(L(c.name)) + '</span><span class="faint">' + (a ? (ACCESS.has(c.id) ? '✓ ' + esc(S.activeUntil(fmtDate(a))) : esc(S.expiredOn(fmtDate(a)))) : '🔒 ' + fmtPrice(c.price)) + '</span></div>'; }).join('')
+      + '<label class="f" for="mcode">' + esc(S.enterCode) + '</label><div class="row"><input id="mcode" placeholder="NABU-T-…" autocapitalize="characters" style="flex:1"><button class="btn" id="munlock">' + esc(S.unlock) + '</button></div><p class="hint" id="mcstatus"></p></div>';
     h += '<div class="card"><h3 style="margin-bottom:8px">' + esc(S.themeTitle) + '</h3><div class="chips">' + ['auto', 'light', 'dark'].map((t) => '<button class="chip' + (themeChoice() === t ? ' on' : '') + '" data-theme-pick="' + t + '">' + esc(S.themes[t]) + '</button>').join('') + '</div><p class="hint">' + esc(S.themeHint) + '</p></div>';
     h += '<div class="card"><h3 style="margin-bottom:6px">' + esc(S.installTitle) + '</h3><p class="muted" style="font-size:14px">' + esc(S.install) + '</p></div>';
     h += '<div class="row">' + (BE.user ? '<button class="btn" id="signout">' + esc(S.signOut) + '</button>' : '') + '<button class="btn" id="retour">' + (lang === 'vi' ? 'Xem lại hướng dẫn' : 'Replay the tour') + '</button>' + (BE.isAdmin() ? '<a class="btn gold" href="#/admin">' + esc(S.adminTitle) + '</a>' : '') + '</div>';
     body.innerHTML = h;
     bindAuth(body);
     bindProfileForm(body, () => { if (params.next === 'book') location.hash = '#/book'; });
+    $('#munlock').addEventListener('click', () => { const r = parseCode($('#mcode').value); const st = $('#mcstatus'); if (!r) { st.textContent = S.badCode; st.className = 'hint err'; return; } ACCESS.grant(r.course, r.until); toast(S.unlocked); draw(); });
     $$('[data-theme-pick]', body).forEach((b) => b.addEventListener('click', () => { setTheme(b.getAttribute('data-theme-pick')); $$('[data-theme-pick]', body).forEach((x) => x.classList.toggle('on', x === b)); }));
     $('#retour').addEventListener('click', () => { saveProfileLocal({ tourDone: false }); location.hash = '#/home'; });
     const so = $('#signout'); if (so) so.addEventListener('click', () => BE.signOut());
@@ -9399,12 +9524,12 @@ function renderAdmin() {
   adminCleanup();
   const S = T(), m = $('#main');
   m.innerHTML = '<div class="eyebrow">' + esc(CONFIG.brand) + '</div><h1 style="margin-bottom:6px">' + esc(S.adminTitle) + '</h1><p class="muted">' + esc(S.adminIntro) + '</p>'
-    + '<div class="tabs" id="atabs">' + ['posts', 'schedule', 'bookings', 'inbox'].map((k) => '<button data-t="' + k + '" class="' + (admin.tab === k ? 'on' : '') + '">' + esc(S.adminTabs[k]) + '</button>').join('') + '</div>'
+    + '<div class="tabs" id="atabs">' + ['posts', 'schedule', 'bookings', 'inbox', 'codes'].map((k) => '<button data-t="' + k + '" class="' + (admin.tab === k ? 'on' : '') + '">' + esc(S.adminTabs[k]) + '</button>').join('') + '</div>'
     + '<div class="card"><label class="f" for="gtoken">' + esc(S.token) + '</label><div class="row"><input id="gtoken" type="password" value="' + esc(ghToken()) + '" style="flex:1" autocomplete="off"><button class="btn sm" id="savetoken">' + esc(S.saveToken) + '</button></div><p class="hint">' + esc(S.tokenHint) + ' (' + esc(CONFIG.repo) + ')</p></div>'
     + '<div id="apanel"></div>';
   $('#savetoken').addEventListener('click', () => { store.set('nabu-gh-token', $('#gtoken').value.trim()); toast('✓'); show(admin.tab); });
   $$('#atabs button').forEach((b) => b.addEventListener('click', () => { admin.tab = b.getAttribute('data-t'); $$('#atabs button').forEach((x) => x.classList.toggle('on', x === b)); show(admin.tab); }));
-  const show = (t) => { adminCleanup(); const p = $('#apanel'); if (t === 'posts') adminPosts(p); else if (t === 'schedule') adminSchedule(p); else if (t === 'bookings') adminBookings(p); else adminInbox(p); };
+  const show = (t) => { adminCleanup(); const p = $('#apanel'); if (t === 'posts') adminPosts(p); else if (t === 'schedule') adminSchedule(p); else if (t === 'bookings') adminBookings(p); else if (t === 'codes') adminCodes(p); else adminInbox(p); };
   show(admin.tab);
 }
 
@@ -9552,10 +9677,23 @@ function adminInbox(p) {
   };
   list();
 }
+/* ---- access codes for the courses ---- */
+function adminCodes(p) {
+  const S = T();
+  p.innerHTML = '<div class="card"><p class="hint" style="margin-bottom:10px">' + esc(S.codesIntro) + '</p>'
+    + '<label class="f" for="ccourse">' + esc(S.codeCourse) + '</label><select id="ccourse">' + COURSES.map((c) => '<option value="' + c.id + '">' + esc(L(c.name)) + ' · ' + fmtPrice(c.price) + '</option>').join('') + '</select>'
+    + '<div class="row"><div style="flex:1"><label class="f" for="cstart">' + esc(S.codeStart) + '</label><input id="cstart" type="date" value="' + isoDate(new Date()) + '"></div><div style="flex:1"><label class="f" for="cmonths">' + esc(S.codeMonths) + '</label><input id="cmonths" type="number" min="1" value="6"></div></div>'
+    + '<button class="btn primary block" id="cmake" style="margin-top:14px">' + esc(S.makeCode) + '</button><div id="cout"></div></div>';
+  $('#cmake').addEventListener('click', () => {
+    const until = addMonths($('#cstart').value || isoDate(new Date()), Number($('#cmonths').value) || 6), code = makeCode($('#ccourse').value, until);
+    $('#cout').innerHTML = '<div class="codebox" id="codeval">' + code + '</div><p class="hint" style="text-align:center">' + esc(S.codeUntil) + ': ' + esc(fmtDate(until)) + '</p><button class="btn block" id="ccopy">' + esc(S.copyMsg.replace(/tin nhắn|the message/i, 'mã')) + '</button>';
+    $('#ccopy').addEventListener('click', () => copyText(code).then(() => toast(S.copied)));
+  });
+}
 ROUTES.admin = { nav: '', render: renderAdmin };
 
 /* ============================ boot ============================ */
-window.NABU = { DECK: DECK, INSIGHT: INSIGHT, KW: KW, ASK: ASK, TOPICS: TOPICS, GUIDES: GUIDES, SERVICES: SERVICES, ZODIAC: ZODIAC, pick: pick, book: book,
+window.NABU = { DECK: DECK, INSIGHT: INSIGHT, KW: KW, ASK: ASK, TOPICS: TOPICS, GUIDES: GUIDES, SERVICES: SERVICES, COURSES: COURSES, ACCESS: ACCESS, makeCode: makeCode, parseCode: parseCode, ZODIAC: ZODIAC, pick: pick, book: book,
   insightHTML: insightHTML, insightOf: insightOf, sunSignIndex: sunSignIndex, lifePath: lifePath, PROFILE: () => PROFILE, BE: BE };
 BE.init().catch(() => { /* backend unreachable: the app runs device-only */ });
 boot();

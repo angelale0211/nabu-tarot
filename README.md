@@ -6,7 +6,7 @@ Five tabs:
 
 - **Trang chủ** – greeting by name, today's date in the Gregorian, lunar (with the can chi year), Islamic, Hebrew, Persian and Buddhist calendars plus the moon phase, quick links, the visitor's Sun sign / life-path number / zodiac animal, guides matched to their interests, and the feed (Nabu's posts, plus Facebook and Instagram posts once the sync is turned on).
 - **Rút bài** – tap one of seven cards; the app writes a reading of the visitor's current energy for the focus they chose (general, love, work, study, money). Fully Vietnamese or fully English.
-- **Học** – the knowledge library: 78 tarot cards, 36 Lenormand cards, 12 signs + planets + houses + aspects, 20 spreads, and guides on manifestation and fortune telling (numerology, palmistry, playing cards, zodiac animals, oracle decks).
+- **Học** – two paid courses (Tarot: 78 cards + 13 spreads + guides; Lenormand: 36 cards + 7 spreads + guides; 200.000đ for 6 months each, unlocked with a code) and three free areas: astrology (12 signs, planets, houses, aspects), manifestation, fortune telling.
 - **Đặt lịch** – topic, a calendar of Nabu's free hours, details, then send (in the app when accounts are on, otherwise through Instagram with the message pre-copied).
 - **Tôi** – profile (name, birthday, interests), sign-in, messages with Nabu, my bookings, install hint, replay the tour.
 
@@ -21,6 +21,8 @@ Installs to the home screen on iPhone (Safari → Share → Add to Home Screen) 
 **Change free hours** – `#/admin` → *Lịch rảnh*. Tap hours per weekday, add days off, add slots already booked through Instagram, save.
 
 **GitHub token** – GitHub → Settings → Developer settings → Personal access tokens → Fine-grained tokens → Generate. Repository access: only `nabu-tarot`. Permissions: Contents → Read and write. The token stays in that phone's browser.
+
+**Course codes** – after a client pays, open `#/admin` → *Mã học*, pick the course and start date, press *Tạo mã*, send the code. The client enters it on the course page or under Tôi → Khóa học của tôi. Codes are checked on the device against `CONFIG.courseSecret` (change it once to something private; older codes then stop working).
 
 **Services and prices** – `src/services.js` (six services with their packages and VND prices, the payment note). The booking screen and the `#/prices` page read from it.
 

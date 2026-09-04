@@ -1,33 +1,63 @@
 /* ============================ learn ============================
-   #/learn                 categories
-   #/learn/tarot           78 cards        #/learn/card/<id>
-   #/learn/lenormand       36 cards        #/learn/len/<n>
-   #/learn/astro           signs, planets, houses, aspects   #/learn/sign/<key>
-   #/learn/spreads         layouts         #/learn/spread/<id>
-   #/learn/manifest, #/learn/fortune       guides   #/learn/guide/<id>
-   #/learn/numbers         the visitor's numbers */
-const CAT_ICONS = { tarot: '🃏', lenormand: '🗝️', astro: '🔮', spreads: '🧩', manifest: '🌙', fortune: '🔢' };
+   #/learn                  overview
+   #/learn/tarot?tab=cards|spreads|guides      the Tarot course (paid)
+   #/learn/lenormand?tab=…                     the Lenormand course (paid)
+   #/learn/card/<id>  #/learn/len/<n>  #/learn/spread/<id>  #/learn/guide/<id>
+   #/learn/astro, #/learn/sign/<key>, #/learn/manifest, #/learn/fortune, #/learn/numbers  (free) */
+const CAT_ICONS = { tarot: '🃏', lenormand: '🗝️', astro: '🔮', manifest: '🌙', fortune: '🔢' };
 const badgeHTML = (b) => '<span class="badge-src ' + b + '">' + esc(T().badges[b]) + '</span>';
 const backLink = (href, label) => '<p><a href="' + href + '">← ' + esc(label) + '</a></p>';
+const courseOf = (id) => COURSES.filter((c) => c.id === id)[0];
 
-function renderLearn(args) {
+/* ---- paywall ---- */
+function paywallHTML(courseId) {
+  const S = T(), c = courseOf(courseId), a = ACCESS.get()[courseId];
+  const expired = a && a < isoDate(new Date());
+  return '<div class="paywall"><div class="ic">🔒</div><h2>' + esc(L(c.name)) + '</h2><p class="muted">' + esc(L(c.blurb)) + '</p>'
+    + '<ul class="inc">' + L(c.includes).map((x) => '<li>' + esc(x) + '</li>').join('') + '</ul>'
+    + '<div class="price">' + fmtPrice(c.price) + ' <span>/ ' + c.months + ' ' + esc(S.months6) + '</span></div>'
+    + (expired ? '<p class="hint err">' + esc(S.courseExpired(a)) + '</p>' : '')
+    + '<a class="btn primary block" data-buy="' + courseId + '" href="' + (CONFIG.instagram ? 'https://ig.me/m/' + esc(CONFIG.instagram) : '#/me') + '" target="_blank" rel="noopener">' + esc(S.buyCourse) + '</a>'
+    + '<p class="hint" style="margin:8px 0">' + esc(S.buyHint) + '</p>'
+    + '<div class="row"><input id="ccode" placeholder="NABU-T-…" autocapitalize="characters" style="flex:1"><button class="btn" id="cunlock">' + esc(S.unlock) + '</button></div><p class="hint" id="cstatus"></p></div>';
+}
+function bindPaywall(root, after) {
+  const S = T();
+  $$('[data-buy]', root).forEach((a) => a.addEventListener('click', () => { const c = courseOf(a.getAttribute('data-buy')); copyText(S.buyMsg(L(c.name), fmtPrice(c.price), c.months)); toast(S.copied); }));
+  const btn = $('#cunlock', root);
+  if (btn) btn.addEventListener('click', () => {
+    const r = parseCode($('#ccode', root).value);
+    const st = $('#cstatus', root);
+    if (!r) { st.textContent = S.badCode; st.className = 'hint err'; return; }
+    ACCESS.grant(r.course, r.until);
+    toast(S.unlocked); if (after) after(); else route();
+  });
+}
+function gate(courseId, back) {
+  if (ACCESS.has(courseId)) return false;
+  const m = $('#main');
+  m.innerHTML = backLink(back || '#/learn', T().learnTitle) + paywallHTML(courseId);
+  bindPaywall(m);
+  return true;
+}
+
+function renderLearn(args, params) {
   const S = T(), m = $('#main'), sub = args[0];
   if (!sub) {
     const ints = PROFILE.interests || [];
-    const rec = { tarot: ints.indexOf('tarot') > -1, lenormand: ints.indexOf('lenormand') > -1, astro: ints.indexOf('astro') > -1, manifest: ints.indexOf('manifest') > -1, fortune: ints.indexOf('fortune') > -1, spreads: ints.indexOf('tarot') > -1 };
+    const tile = (k, locked) => '<a class="tile' + (ints.indexOf(k) > -1 ? ' rec' : '') + '" href="#/learn/' + k + '"><div class="ic">' + CAT_ICONS[k] + (locked ? ' <span class="lock">🔒</span>' : '') + '</div><b>' + esc(S.cats[k]) + '</b><span>' + esc(S.catSub[k]) + '</span></a>';
     m.innerHTML = '<div class="eyebrow">' + esc(S.nav.learn) + '</div><h1 style="margin-bottom:6px">' + esc(S.learnTitle) + '</h1><p class="muted">' + esc(S.learnIntro) + '</p>'
-      + '<div class="tiles">' + ['tarot', 'lenormand', 'astro', 'spreads', 'manifest', 'fortune'].map((k) =>
-        '<a class="tile' + (rec[k] ? ' rec' : '') + '" href="#/learn/' + k + '"><div class="ic">' + CAT_ICONS[k] + '</div><b>' + esc(S.cats[k]) + '</b><span>' + esc(S.catSub[k]) + '</span></a>').join('') + '</div>'
+      + '<div class="eyebrow">' + esc(S.courses) + '</div><div class="tiles">' + tile('tarot', !ACCESS.has('tarot')) + tile('lenormand', !ACCESS.has('lenormand')) + '</div>'
+      + '<div class="eyebrow">' + esc(S.freeReads) + '</div><div class="tiles">' + tile('astro') + tile('manifest') + tile('fortune') + '</div>'
       + suggestedGuidesHTML(4);
     return;
   }
-  if (sub === 'tarot') return renderTarotList();
+  if (sub === 'tarot') return renderCourse('tarot', params.tab);
+  if (sub === 'lenormand') return renderCourse('lenormand', params.tab);
   if (sub === 'card') return renderCard(args[1]);
-  if (sub === 'lenormand') return renderLenList();
   if (sub === 'len') return renderLen(Number(args[1]));
   if (sub === 'astro') return renderAstro();
   if (sub === 'sign') return renderSign(args[1]);
-  if (sub === 'spreads') return renderSpreads();
   if (sub === 'spread') return renderSpread(args[1]);
   if (sub === 'manifest' || sub === 'fortune') return renderGuideList(sub);
   if (sub === 'guide') return renderGuide(args[1]);
@@ -35,34 +65,50 @@ function renderLearn(args) {
   location.hash = '#/learn';
 }
 
-/* ---- tarot ---- */
-function renderTarotList() {
-  const S = T(), m = $('#main');
+/* ---- the two courses: cards | spreads | guides ---- */
+function renderCourse(courseId, tab) {
+  if (gate(courseId)) return;
+  const S = T(), m = $('#main'), sys = courseId === 'tarot' ? 'tarot' : 'len';
+  tab = ['cards', 'spreads', 'guides'].indexOf(tab) > -1 ? tab : 'cards';
+  const until = ACCESS.get()[courseId];
+  m.innerHTML = backLink('#/learn', S.learnTitle) + '<h1 style="margin-bottom:4px">' + esc(S.cats[courseId]) + '</h1><p class="faint">' + esc(S.accessUntil(fmtDate(until))) + '</p>'
+    + '<div class="tabs" id="ctabs">' + ['cards', 'spreads', 'guides'].map((t) => '<button data-t="' + t + '" class="' + (tab === t ? 'on' : '') + '">' + esc(S.courseTabs[t]) + '</button>').join('') + '</div><div id="cpanel"></div>';
+  const panel = $('#cpanel');
+  const show = (t) => {
+    if (t === 'cards') { panel.innerHTML = courseId === 'tarot' ? tarotGridHTML() : lenGridHTML(); bindGrid(panel, courseId); }
+    else if (t === 'spreads') { panel.innerHTML = spreadsListHTML(sys); }
+    else { panel.innerHTML = (courseId === 'lenormand' ? '<p class="muted" style="font-size:14px">' + esc(S.lenNote) + '</p>' : '') + GUIDES.filter((g) => g.cat === courseId).map(guideRow).join(''); }
+  };
+  show(tab);
+  $$('#ctabs button').forEach((b) => b.addEventListener('click', () => { $$('#ctabs button').forEach((x) => x.classList.toggle('on', x === b)); history.replaceState(null, '', '#/learn/' + courseId + '?tab=' + b.getAttribute('data-t')); show(b.getAttribute('data-t')); }));
+}
+function tarotGridHTML() {
+  const S = T(), D = DECK[lang];
   const grid = (list) => '<div class="deckgrid">' + list.map((c) => '<button data-open-card="' + c.id + '">' + faceSVG(c) + esc(c.name) + '</button>').join('') + '</div>';
-  const D = DECK[lang];
-  m.innerHTML = backLink('#/learn', S.learnTitle) + '<h1 style="margin-bottom:12px">' + esc(S.cats.tarot) + '</h1>'
-    + '<div class="tabs" id="ttabs"><button class="on" data-suit="major">' + esc(S.majors) + '</button>' + SUIT_KEYS.map((s) => '<button data-suit="' + s + '">' + esc(S.suitOf[s]) + '</button>').join('') + '</div>'
+  return '<div class="tabs" id="ttabs"><button class="on" data-suit="major">' + esc(S.majors) + '</button>' + SUIT_KEYS.map((s) => '<button data-suit="' + s + '">' + esc(S.suitOf[s]) + '</button>').join('') + '</div>'
     + '<div id="tgrid">' + grid(D.filter((c) => c.suit === 'major')) + '</div>';
-  bindCardLinks(m);
-  $$('#ttabs button').forEach((b) => b.addEventListener('click', () => {
-    $$('#ttabs button').forEach((x) => x.classList.toggle('on', x === b));
-    $('#tgrid').innerHTML = grid(D.filter((c) => c.suit === b.getAttribute('data-suit'))); bindCardLinks($('#tgrid'));
-  }));
 }
-function astroLine(id) {
-  const a = ASTRO[id]; if (!a) return '';
-  const sign = a.sign ? ZSIGN[a.sign] : null, planet = a.planet ? ZPLANET[a.planet] : null, el = a.el ? ZELEM[a.el] : null;
-  const nm = (o) => o ? (o.g + ' ' + o[lang]) : '';
-  if (a.k === 'sign') return nm(sign);
-  if (a.k === 'planet') return nm(planet) + (el ? ' · ' + nm(el) : '');
-  if (a.k === 'elem') return nm(el) + (a.outer ? ' · ' + nm(ZPLANET[a.outer]) : '');
-  if (a.k === 'decan') return nm(planet) + ' ' + (lang === 'vi' ? 'trong' : 'in') + ' ' + nm(sign) + ' · ' + (lang === 'vi' ? a.dvi : a.den) + ' · ' + (lang === 'vi' ? a.tvi : a.ten);
-  if (a.k === 'court') return nm(sign) + ' (' + (lang === 'vi' ? 'cuối ' : 'late ') + ZSIGN[a.prev][lang] + ' → ' + sign[lang] + ')';
-  if (a.k === 'ace') return nm(el) + (lang === 'vi' ? ' · gốc của chất, không có cung' : ' · root of the suit, no sign');
-  if (a.k === 'quad') return nm(el) + (lang === 'vi' ? ' · lá đất của chất, không có cung' : ' · earthy part of the suit, no sign');
-  return '';
+function lenGridHTML() {
+  let grid = '';
+  for (let i = 1; i <= 36; i++) { const d = lenCard(i); if (d) grid += '<button data-len="' + i + '">' + lenFace(i) + esc(d.name) + '</button>'; }
+  return '<div class="deckgrid">' + grid + '</div>';
 }
+function bindGrid(panel, courseId) {
+  if (courseId === 'tarot') {
+    const D = DECK[lang], grid = (list) => '<div class="deckgrid">' + list.map((c) => '<button data-open-card="' + c.id + '">' + faceSVG(c) + esc(c.name) + '</button>').join('') + '</div>';
+    bindCardLinks(panel);
+    $$('#ttabs button', panel).forEach((b) => b.addEventListener('click', () => {
+      $$('#ttabs button', panel).forEach((x) => x.classList.toggle('on', x === b));
+      $('#tgrid', panel).innerHTML = grid(D.filter((c) => c.suit === b.getAttribute('data-suit'))); bindCardLinks($('#tgrid', panel));
+    }));
+  } else {
+    $$('[data-len]', panel).forEach((b) => b.addEventListener('click', () => { location.hash = '#/learn/len/' + b.getAttribute('data-len'); }));
+  }
+}
+
+/* ---- tarot card page ---- */
 function renderCard(id) {
+  if (gate('tarot', '#/learn/tarot')) return;
   const S = T(), m = $('#main'), c = cardById(id);
   if (!c) { location.hash = '#/learn/tarot'; return; }
   const other = cardById(id, lang === 'vi' ? 'en' : 'vi'), I = insightOf(id);
@@ -82,7 +128,6 @@ function renderCard(id) {
     + (I ? '<div class="ins"><h3>' + esc(S.focus.love) + '</h3><p>' + esc(I.love) + '</p><h3>' + esc(S.focus.work) + '</h3><p>' + esc(I.work) + '</p><h3>' + esc(S.focus.study) + '</h3><p>' + esc(I.study) + '</p><h3>' + esc(S.focus.money) + '</h3><p>' + esc(I.money) + '</p></div>' : '')
     + (asks.length ? '<div class="ins"><h3>' + esc(S.questions) + '</h3>' + Object.keys(groups).map((g) => '<div class="acc"><button><span>' + esc(catName[g] || g) + ' (' + groups[g].length + ')</span></button><div class="in">'
       + groups[g].map((a) => '<div class="qa"><div class="q">' + esc(a[1]) + '</div><p class="a">' + esc(a[2]) + '</p></div>').join('') + '</div></div>').join('') + '</div>' : '')
-    + (ASTRO[id] ? '<div class="ins"><h3>' + esc(S.astroOf) + '</h3><p>' + esc(astroLine(id)) + '</p></div>' : '')
     + '<div class="row"><a class="btn primary" href="#/pick">' + esc(S.nav.pick) + '</a><a class="btn" href="#/book?card=' + id + '">' + esc(S.ctaBook) + '</a></div></div>';
   bindAccordions(m);
 }
@@ -96,14 +141,8 @@ function lenFace(n) {
     + '<g><rect x="41" y="6" width="18" height="15" fill="var(--card-bg)" stroke="var(--card-ink)" stroke-width="1"/><text x="50" y="17.2" text-anchor="middle" font-family="Georgia,serif" font-size="9.5" fill="var(--card-ink)">' + n + '</text></g>'
     + '<text x="50" y="157" text-anchor="middle" font-family="Be Vietnam Pro, sans-serif" font-size="7.4" fill="var(--card-ink)">' + esc(d.name) + '</text></svg>';
 }
-function renderLenList() {
-  const S = T(), m = $('#main');
-  let grid = '';
-  for (let i = 1; i <= 36; i++) { const d = lenCard(i); if (d) grid += '<button data-len="' + i + '">' + lenFace(i) + esc(d.name) + '</button>'; }
-  m.innerHTML = backLink('#/learn', S.learnTitle) + '<h1 style="margin-bottom:6px">' + esc(S.cats.lenormand) + '</h1><p class="muted" style="font-size:14px">' + esc(S.lenNote) + '</p><div class="deckgrid">' + grid + '</div>';
-  $$('[data-len]', m).forEach((b) => b.addEventListener('click', () => { location.hash = '#/learn/len/' + b.getAttribute('data-len'); }));
-}
 function renderLen(n) {
+  if (gate('lenormand', '#/learn/lenormand')) return;
   const S = T(), m = $('#main'), d = lenCard(n);
   if (!d) { location.hash = '#/learn/lenormand'; return; }
   const other = lenCard(n, lang === 'vi' ? 'en' : 'vi');
@@ -120,7 +159,18 @@ function renderLen(n) {
     + '</div>';
 }
 
-/* ---- astrology ---- */
+/* ---- astrology (free) ---- */
+function astroLine(id) {
+  const a = ASTRO[id]; if (!a) return '';
+  const sign = a.sign ? ZSIGN[a.sign] : null, planet = a.planet ? ZPLANET[a.planet] : null, el = a.el ? ZELEM[a.el] : null;
+  const nm = (o) => o ? (o.g + ' ' + o[lang]) : '';
+  if (a.k === 'sign') return nm(sign);
+  if (a.k === 'planet') return nm(planet) + (el ? ' · ' + nm(el) : '');
+  if (a.k === 'elem') return nm(el) + (a.outer ? ' · ' + nm(ZPLANET[a.outer]) : '');
+  if (a.k === 'decan') return nm(planet) + ' ' + (lang === 'vi' ? 'trong' : 'in') + ' ' + nm(sign) + ' · ' + (lang === 'vi' ? a.dvi : a.den) + ' · ' + (lang === 'vi' ? a.tvi : a.ten);
+  if (a.k === 'court') return nm(sign) + ' (' + (lang === 'vi' ? 'cuối ' : 'late ') + ZSIGN[a.prev][lang] + ' → ' + sign[lang] + ')';
+  return nm(el);
+}
 function renderAstro() {
   const S = T(), m = $('#main'), me = mySign();
   m.innerHTML = backLink('#/learn', S.learnTitle) + '<h1 style="margin-bottom:6px">' + esc(S.cats.astro) + '</h1><p class="muted" style="font-size:14px">' + esc(S.astroNote) + '</p>'
@@ -152,7 +202,7 @@ function renderSign(key) {
   const zp = ZODIAC[key][lang], ruler = ZPLANET[ZRULER[key]];
   const cards = Object.keys(ASTRO).filter((id) => ASTRO[id].sign === key);
   m.innerHTML = backLink('#/learn/astro', S.cats.astro) + '<div class="detail">'
-    + '<div class="hero" style="grid-template-columns:72px 1fr"><div class="glyph" style="width:72px;height:72px;border-radius:50%;background:var(--surface);display:flex;align-items:center;justify-content:center;font-size:40px;color:var(--primary)">' + z.g + '</div>'
+    + '<div class="hero" style="grid-template-columns:72px 1fr"><div class="glyph" style="width:72px;height:72px;border-radius:50%;background:var(--surface);display:flex;align-items:center;justify-content:center;font-size:40px;color:var(--link)">' + z.g + '</div>'
     + '<div><div class="name">' + esc(z[lang]) + '</div><div class="en">' + esc(lang === 'vi' ? z.en : z.vi) + '</div><div class="meta"><i>' + esc(lang === 'vi' ? z.dvi : z.den) + '</i></div></div></div>'
     + '<div class="row" style="margin-bottom:12px"><span class="chip tag">' + esc(S.element) + ': ' + ZELEM[z.el].g + ' ' + esc(ZELEM[z.el][lang]) + '</span><span class="chip tag">' + esc(S.mode) + ': ' + esc(ZMODE[z.mod][lang]) + '</span><span class="chip tag">' + esc(S.ruler) + ': ' + ruler.g + ' ' + esc(ruler[lang]) + '</span></div>'
     + '<div class="kwl">' + zp.kw.map((k) => '<span>' + esc(k) + '</span>').join('') + '</div>'
@@ -161,7 +211,7 @@ function renderSign(key) {
   bindCardLinks(m);
 }
 
-/* ---- spreads ---- */
+/* ---- spreads (inside each course) ---- */
 function spreadArt(lay) {
   const U = 23, CW = 1, CH = 1.5, SX = 1.3, SY = 1.86, DROP = 6, crossed = {};
   lay.forEach((p) => { if (p[2] === 'r') crossed[p[0] + ',' + p[1]] = true; });
@@ -175,18 +225,17 @@ function spreadArt(lay) {
   });
   return s + '</svg>';
 }
-function renderSpreads() {
-  const S = T(), m = $('#main'), list = SPREADS[lang];
-  const row = (s) => '<a class="acc" href="#/learn/spread/' + s.id + '" style="display:block;text-decoration:none;color:inherit"><button style="pointer-events:none"><span>' + esc(s.name) + ' <span class="faint">· ' + s.n + (lang === 'vi' ? ' lá' : ' cards') + '</span></span></button></a>';
-  m.innerHTML = backLink('#/learn', S.learnTitle) + '<h1 style="margin-bottom:12px">' + esc(S.cats.spreads) + '</h1>'
-    + '<div class="eyebrow">Tarot</div>' + list.filter((s) => s.sys === 'tarot').map(row).join('')
-    + '<div class="eyebrow" style="margin-top:16px">Lenormand</div>' + list.filter((s) => s.sys === 'len').map(row).join('');
+function spreadsListHTML(sys) {
+  const list = SPREADS[lang].filter((s) => s.sys === sys);
+  return list.map((s) => '<a class="acc" href="#/learn/spread/' + s.id + '" style="display:block;text-decoration:none;color:inherit"><button style="pointer-events:none"><span>' + esc(s.name) + ' <span class="faint">· ' + s.n + (lang === 'vi' ? ' lá' : ' cards') + '</span></span></button></a>').join('');
 }
 function renderSpread(id) {
   const S = T(), m = $('#main'), s = SPREADS[lang].filter((x) => x.id === id)[0];
-  if (!s) { location.hash = '#/learn/spreads'; return; }
+  if (!s) { location.hash = '#/learn'; return; }
+  const courseId = s.sys === 'len' ? 'lenormand' : 'tarot', back = '#/learn/' + courseId + '?tab=spreads';
+  if (gate(courseId, back)) return;
   const sec = (h, t) => t ? '<h3>' + esc(h) + '</h3><p>' + esc(t).replace(/\*([^*]+)\*/g, '<i>$1</i>') + '</p>' : '';
-  m.innerHTML = backLink('#/learn/spreads', S.cats.spreads) + '<div class="guide"><h1>' + esc(s.name) + '</h1><p class="faint">' + s.n + (lang === 'vi' ? ' lá' : ' cards') + '</p>'
+  m.innerHTML = backLink(back, S.courseTabs.spreads) + '<div class="guide"><h1>' + esc(s.name) + '</h1><p class="faint">' + s.n + (lang === 'vi' ? ' lá' : ' cards') + '</p>'
     + '<div class="spread-d">' + (s.n <= 12 ? spreadArt(s.lay) : '') + '</div>'
     + '<div class="ins">' + sec(S.spreadWhen, s.when) + sec(S.spreadAsk, s.ask) + '</div>'
     + '<div class="ins"><h3>' + esc(S.spreadPos) + '</h3>' + s.pos.map((p, i) => '<div class="qa"><div class="q">' + (i + 1) + '. ' + esc(p[0]) + '</div><p class="a">' + esc(p[1]) + '</p></div>').join('') + '</div>'
@@ -196,7 +245,8 @@ function renderSpread(id) {
 
 /* ---- guides ---- */
 function guideRow(g) {
-  return '<a class="acc" href="#/learn/guide/' + g.id + '" style="display:block;text-decoration:none;color:inherit"><button style="pointer-events:none"><span>' + esc(L(g.title)) + '<br>' + badgeHTML(g.badge) + '</span></button></a>';
+  const locked = (g.cat === 'tarot' || g.cat === 'lenormand') && !ACCESS.has(g.cat);
+  return '<a class="acc" href="#/learn/guide/' + g.id + '" style="display:block;text-decoration:none;color:inherit"><button style="pointer-events:none"><span>' + (locked ? '🔒 ' : '') + esc(L(g.title)) + '<br>' + badgeHTML(g.badge) + '</span></button></a>';
 }
 function renderGuideList(cat) {
   const S = T(), m = $('#main');
@@ -206,12 +256,13 @@ function renderGuideList(cat) {
 function renderGuide(id) {
   const S = T(), m = $('#main'), g = GUIDES.filter((x) => x.id === id)[0];
   if (!g) { location.hash = '#/learn'; return; }
-  const back = g.cat === 'tarot' ? '#/learn/tarot' : g.cat === 'lenormand' ? '#/learn/lenormand' : g.cat === 'astro' ? '#/learn/astro' : '#/learn/' + g.cat;
+  const back = g.cat === 'tarot' || g.cat === 'lenormand' ? '#/learn/' + g.cat + '?tab=guides' : g.cat === 'astro' ? '#/learn/astro' : '#/learn/' + g.cat;
+  if ((g.cat === 'tarot' || g.cat === 'lenormand') && gate(g.cat, back)) return;
   m.innerHTML = backLink(back, S.cats[g.cat]) + '<div class="guide">' + badgeHTML(g.badge) + '<h1 style="margin:8px 0">' + esc(L(g.title)) + '</h1><p class="lead">' + esc(L(g.intro)) + '</p>'
     + g.sections.map((s) => '<h2>' + esc(L(s.h)) + '</h2><p>' + esc(L(s.p)) + '</p>').join('') + '</div>';
 }
 
-/* ---- numbers ---- */
+/* ---- numbers (free) ---- */
 function renderNumbers() {
   const S = T(), m = $('#main'), b = birthParts();
   if (!b) { m.innerHTML = backLink('#/learn/fortune', S.cats.fortune) + '<h1>' + esc(S.numerology) + '</h1><p class="muted">' + esc(S.enterBirthday) + '</p><a class="btn primary" href="#/me">' + esc(S.setupBtn) + '</a>'; return; }

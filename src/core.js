@@ -41,6 +41,31 @@ function birthParts() {
 }
 function mySign() { const b = birthParts(); return b ? sunSignIndex(b.m, b.d) : -1; }
 
+/* ---- course access ----
+   Codes: NABU-T-YYMMDD-XXXX (T = tarot, L = lenormand), the date is the expiry
+   and XXXX a checksum over date + CONFIG.courseSecret. Checked on the device;
+   good enough to keep casual sharing in check, not a bank vault. */
+const ACCESS = {
+  get() { return store.get('nabu-access', {}); },
+  has(course) { const a = this.get()[course]; return !!a && a >= isoDate(new Date()); },
+  grant(course, until) { const a = this.get(); a[course] = until; store.set('nabu-access', a); if (window.BE && BE.user) BE.pushProfile(); }
+};
+function courseHash(str) {
+  let h1 = 0x811c9dc5, h2 = 5381;
+  for (let i = 0; i < str.length; i++) { const c = str.charCodeAt(i); h1 = Math.imul(h1 ^ c, 16777619) >>> 0; h2 = (Math.imul(h2, 33) + c) >>> 0; }
+  return (h1.toString(36) + h2.toString(36)).toUpperCase().replace(/[^A-Z0-9]/g, '').slice(-4).padStart(4, 'X');
+}
+function makeCode(course, untilISO) {
+  const d = untilISO.replace(/-/g, '').slice(2), Lt = course === 'tarot' ? 'T' : 'L';
+  return 'NABU-' + Lt + '-' + d + '-' + courseHash(Lt + d + CONFIG.courseSecret);
+}
+function parseCode(code) {
+  const m = /^NABU-([TL])-(\d{6})-([A-Z0-9]{4})$/.exec(String(code || '').trim().toUpperCase().replace(/\s+/g, ''));
+  if (!m || courseHash(m[1] + m[2] + CONFIG.courseSecret) !== m[3]) return null;
+  return { course: m[1] === 'T' ? 'tarot' : 'lenormand', until: '20' + m[2].slice(0, 2) + '-' + m[2].slice(2, 4) + '-' + m[2].slice(4, 6) };
+}
+function addMonths(iso, n) { const d = new Date(iso + 'T00:00:00'); d.setMonth(d.getMonth() + n); return isoDate(d); }
+
 /* ---- the deck ---- */
 function buildDeck(lg) {
   const X = LEX[lg], D = DECKTEXT[lg], out = [];
