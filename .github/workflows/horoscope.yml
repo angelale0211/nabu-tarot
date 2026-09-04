@@ -19,6 +19,8 @@ jobs:
         with:
           python-version: '3.12'
       - name: Fetch forecasts
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
         run: python scripts/horoscope_sync.py
       - name: Commit if changed
         run: |

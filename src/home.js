@@ -143,9 +143,9 @@ function horoCardHTML(period) {
   const key = ZKEYS[si], data = HORO && HORO[period] && HORO[period][SIGN_EN[si]];
   const glyph = '<span class="hg" style="background:' + EL_COLOR[ZSIGN[key].el] + '">' + ZSIGN[key].g + '</span>';
   if (!data) return '<div class="horo"><div class="hh">' + glyph + '<div><h3>' + esc(period === 'monthly' ? S.horoMonth : S.horoWeek) + '</h3><span class="faint">' + esc(S.zodiac[si]) + '</span></div></div><p class="muted">' + esc(S.horoUpdating) + '</p></div>';
-  const text = (lang === 'vi' && data.vi) ? data.vi : data.en, long = text.length > 380;
+  const text = (lang === 'vi' && data.vi) ? data.vi : data.en, long = text.length > 420;
   return '<div class="horo"><div class="hh">' + glyph + '<div><h3>' + esc(period === 'monthly' ? S.horoMonth : S.horoWeek) + '</h3><span class="faint">' + esc(S.zodiac[si]) + (data.range ? ' · ' + esc(data.range) : '') + '</span></div></div>'
-    + '<div class="body' + (long ? ' clamp' : '') + '"><p>' + esc(text) + '</p></div>' + (long ? '<button class="more" data-more>' + esc(S.readMore) + '</button>' : '')
+    + '<div class="body' + (long ? ' clamp' : '') + '">' + paras(text) + '</div>' + (long ? '<button class="more" data-more>' + esc(S.readMore) + '</button>' : '')
     + '<p class="faint" style="margin:8px 0 0">' + esc(S.horoSource) + ' ' + esc((HORO && HORO.source) || 'Horoscope.com') + (HORO && HORO.updated ? ' · ' + esc(S.horoUpdated) + ' ' + esc(HORO.updated) : '') + '</p></div>';
 }
 function suggestedGuidesHTML(limit) {

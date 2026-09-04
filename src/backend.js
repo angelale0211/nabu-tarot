@@ -18,11 +18,11 @@ const BE = {
   async init() {
     if (!this.enabled) return;
     const V = '10.14.1';
-    for (const f of ['firebase-app-compat.js', 'firebase-auth-compat.js', 'firebase-firestore-compat.js', 'firebase-storage-compat.js']) {
+    for (const f of ['firebase-app-compat.js', 'firebase-auth-compat.js', 'firebase-firestore-compat.js'].concat(CONFIG.attachments ? ['firebase-storage-compat.js'] : [])) {
       await new Promise((res, rej) => { const s = document.createElement('script'); s.src = 'https://www.gstatic.com/firebasejs/' + V + '/' + f; s.onload = res; s.onerror = rej; document.head.appendChild(s); });
     }
     firebase.initializeApp(CONFIG.firebase);
-    this.auth = firebase.auth(); this.db = firebase.firestore(); this.storage = firebase.storage();
+    this.auth = firebase.auth(); this.db = firebase.firestore(); this.storage = CONFIG.attachments ? firebase.storage() : null;
     try { await this.db.enablePersistence({ synchronizeTabs: true }); } catch (e) { /* fine without */ }
     this.auth.onAuthStateChanged(async (u) => {
       this.user = u; this.ready = true;
@@ -113,7 +113,10 @@ const BE = {
   },
   async takenSlots() {
     const out = {};
-    try { const s = await this.db.collection('taken').get(); s.forEach((d) => { out[d.id] = true; }); } catch (e) { /* offline or rules */ }
+    try {
+      const s = await Promise.race([this.db.collection('taken').get(), new Promise((_, rej) => setTimeout(() => rej(new Error('timeout')), 3000))]);
+      s.forEach((d) => { out[d.id] = true; });
+    } catch (e) { /* offline, slow, or rules */ }
     return out;
   }
 };

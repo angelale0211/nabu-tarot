@@ -353,7 +353,7 @@ main{padding:22px 0 30px}
 .horo .hh{display:flex;gap:12px;align-items:center;margin-bottom:8px}
 .horo .hg{width:44px;height:44px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:24px;color:#fff;flex:none}
 .horo h3{font-size:17px}
-.horo .body p{margin:0;font-size:15px}
+.horo .body p{margin:0 0 10px;font-size:15px;line-height:1.55}.horo .body p:last-child{margin-bottom:0}
 .horo .body.clamp{max-height:7.5em;overflow:hidden;position:relative}
 .horo .body.clamp:after{content:"";position:absolute;left:0;right:0;bottom:0;height:3em;background:linear-gradient(transparent,var(--surface))}
 .horo .more{color:var(--link);font-weight:700;font-size:14px;margin-top:4px}
@@ -726,9 +726,12 @@ const CONFIG = {
   // list the reader's login emails; see README "Turning on accounts".
   // Until this is filled in, profiles stay on the device, messaging opens
   // Instagram, and booking requests go out as a message.
-  firebase: null,
-  // e.g. firebase: { apiKey: '...', authDomain: 'nabu-tarot.firebaseapp.com', projectId: 'nabu-tarot', appId: '...' },
-  adminEmails: [],
+  firebase: { apiKey: 'AIzaSyBGi9OEnYlMk7SIp0UD7w7PgffSwTgiKR0', authDomain: 'nabutarot.firebaseapp.com', projectId: 'nabutarot', storageBucket: 'nabutarot.firebasestorage.app', messagingSenderId: '609592701892', appId: '1:609592701892:web:55445b2a35cbaa5d1e6a91' },
+  adminEmails: ['nabutarot@outlook.com', 'angela_le_@outlook.com'],
+  // Photo and voice attachments in chat need Firebase Storage, which new
+  // projects can only switch on with the pay-as-you-go plan. Set to true
+  // once Build -> Storage exists and storage.rules is published.
+  attachments: false,
   // Where booking requests are mailed as calendar invitations (an .ics the
   // mail app adds to the calendar). Sent by the worker in worker/ through
   // Resend; set bookingEndpoint to '<worker url>/booking' once deployed.
@@ -10264,11 +10267,11 @@ const BE = {
   async init() {
     if (!this.enabled) return;
     const V = '10.14.1';
-    for (const f of ['firebase-app-compat.js', 'firebase-auth-compat.js', 'firebase-firestore-compat.js', 'firebase-storage-compat.js']) {
+    for (const f of ['firebase-app-compat.js', 'firebase-auth-compat.js', 'firebase-firestore-compat.js'].concat(CONFIG.attachments ? ['firebase-storage-compat.js'] : [])) {
       await new Promise((res, rej) => { const s = document.createElement('script'); s.src = 'https://www.gstatic.com/firebasejs/' + V + '/' + f; s.onload = res; s.onerror = rej; document.head.appendChild(s); });
     }
     firebase.initializeApp(CONFIG.firebase);
-    this.auth = firebase.auth(); this.db = firebase.firestore(); this.storage = firebase.storage();
+    this.auth = firebase.auth(); this.db = firebase.firestore(); this.storage = CONFIG.attachments ? firebase.storage() : null;
     try { await this.db.enablePersistence({ synchronizeTabs: true }); } catch (e) { /* fine without */ }
     this.auth.onAuthStateChanged(async (u) => {
       this.user = u; this.ready = true;
@@ -10359,7 +10362,10 @@ const BE = {
   },
   async takenSlots() {
     const out = {};
-    try { const s = await this.db.collection('taken').get(); s.forEach((d) => { out[d.id] = true; }); } catch (e) { /* offline or rules */ }
+    try {
+      const s = await Promise.race([this.db.collection('taken').get(), new Promise((_, rej) => setTimeout(() => rej(new Error('timeout')), 3000))]);
+      s.forEach((d) => { out[d.id] = true; });
+    } catch (e) { /* offline, slow, or rules */ }
     return out;
   }
 };
@@ -10764,9 +10770,9 @@ function horoCardHTML(period) {
   const key = ZKEYS[si], data = HORO && HORO[period] && HORO[period][SIGN_EN[si]];
   const glyph = '<span class="hg" style="background:' + EL_COLOR[ZSIGN[key].el] + '">' + ZSIGN[key].g + '</span>';
   if (!data) return '<div class="horo"><div class="hh">' + glyph + '<div><h3>' + esc(period === 'monthly' ? S.horoMonth : S.horoWeek) + '</h3><span class="faint">' + esc(S.zodiac[si]) + '</span></div></div><p class="muted">' + esc(S.horoUpdating) + '</p></div>';
-  const text = (lang === 'vi' && data.vi) ? data.vi : data.en, long = text.length > 380;
+  const text = (lang === 'vi' && data.vi) ? data.vi : data.en, long = text.length > 420;
   return '<div class="horo"><div class="hh">' + glyph + '<div><h3>' + esc(period === 'monthly' ? S.horoMonth : S.horoWeek) + '</h3><span class="faint">' + esc(S.zodiac[si]) + (data.range ? ' · ' + esc(data.range) : '') + '</span></div></div>'
-    + '<div class="body' + (long ? ' clamp' : '') + '"><p>' + esc(text) + '</p></div>' + (long ? '<button class="more" data-more>' + esc(S.readMore) + '</button>' : '')
+    + '<div class="body' + (long ? ' clamp' : '') + '">' + paras(text) + '</div>' + (long ? '<button class="more" data-more>' + esc(S.readMore) + '</button>' : '')
     + '<p class="faint" style="margin:8px 0 0">' + esc(S.horoSource) + ' ' + esc((HORO && HORO.source) || 'Horoscope.com') + (HORO && HORO.updated ? ' · ' + esc(S.horoUpdated) + ' ' + esc(HORO.updated) : '') + '</p></div>';
 }
 function suggestedGuidesHTML(limit) {
@@ -11822,7 +11828,8 @@ function chatHTML(msgs, mine) {
 /* Chat bar with text, a photo button and a hold-to-record voice button. */
 function chatBarHTML(idText, idSend, label) {
   const S = T();
-  return '<div class="chatbar"><label class="btn sm att-btn" title="' + esc(S.sendPhoto) + '">📷<input type="file" accept="image/*" data-chat-img hidden></label><button class="btn sm att-btn" data-chat-voice title="' + esc(S.holdToRecord) + '">🎤</button><textarea id="' + idText + '" placeholder="' + esc(S.typeMsg) + '"></textarea><button class="btn primary" id="' + idSend + '">' + esc(label) + '</button></div><p class="hint" data-chat-status></p>';
+  const att = CONFIG.attachments ? '<label class="btn sm att-btn" title="' + esc(S.sendPhoto) + '">📷<input type="file" accept="image/*" data-chat-img hidden></label><button class="btn sm att-btn" data-chat-voice title="' + esc(S.holdToRecord) + '">🎤</button>' : '';
+  return '<div class="chatbar">' + att + '<textarea id="' + idText + '" placeholder="' + esc(S.typeMsg) + '"></textarea><button class="btn primary" id="' + idSend + '">' + esc(label) + '</button></div><p class="hint" data-chat-status></p>';
 }
 function bindChatBar(root, sendFn) {
   const S = T(), status = $('[data-chat-status]', root);
@@ -12153,7 +12160,7 @@ function adminCodes(p) {
 ROUTES.admin = { nav: '', render: renderAdmin };
 
 /* ============================ boot ============================ */
-window.APP_VERSION = 'v27';
+window.APP_VERSION = 'v28';
 window.NABU = { CONFIG: CONFIG, LESSONS: LESSONS, localAnswer: localAnswer, compatVerdict: compatVerdict, numerologyOf: numerologyOf, ZDEEP: ZDEEP, lunarToday: lunarToday, solarToLunar: solarToLunar, DECK: DECK, INSIGHT: INSIGHT, KW: KW, ASK: ASK, TOPICS: TOPICS, GUIDES: GUIDES, SERVICES: SERVICES, COURSES: COURSES, ACCESS: ACCESS, makeCode: makeCode, parseCode: parseCode, ZODIAC: ZODIAC, pick: pick, book: book,
   insightHTML: insightHTML, insightOf: insightOf, sunSignIndex: sunSignIndex, lifePath: lifePath, PROFILE: () => PROFILE, BE: BE };
 BE.init().catch(() => { /* backend unreachable: the app runs device-only */ });

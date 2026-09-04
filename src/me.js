@@ -62,7 +62,8 @@ function chatHTML(msgs, mine) {
 /* Chat bar with text, a photo button and a hold-to-record voice button. */
 function chatBarHTML(idText, idSend, label) {
   const S = T();
-  return '<div class="chatbar"><label class="btn sm att-btn" title="' + esc(S.sendPhoto) + '">📷<input type="file" accept="image/*" data-chat-img hidden></label><button class="btn sm att-btn" data-chat-voice title="' + esc(S.holdToRecord) + '">🎤</button><textarea id="' + idText + '" placeholder="' + esc(S.typeMsg) + '"></textarea><button class="btn primary" id="' + idSend + '">' + esc(label) + '</button></div><p class="hint" data-chat-status></p>';
+  const att = CONFIG.attachments ? '<label class="btn sm att-btn" title="' + esc(S.sendPhoto) + '">📷<input type="file" accept="image/*" data-chat-img hidden></label><button class="btn sm att-btn" data-chat-voice title="' + esc(S.holdToRecord) + '">🎤</button>' : '';
+  return '<div class="chatbar">' + att + '<textarea id="' + idText + '" placeholder="' + esc(S.typeMsg) + '"></textarea><button class="btn primary" id="' + idSend + '">' + esc(label) + '</button></div><p class="hint" data-chat-status></p>';
 }
 function bindChatBar(root, sendFn) {
   const S = T(), status = $('[data-chat-status]', root);
