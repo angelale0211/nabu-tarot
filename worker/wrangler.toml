@@ -3,6 +3,10 @@ main = "src/index.ts"
 compatibility_date = "2026-06-01"
 compatibility_flags = ["nodejs_compat"]
 
+# Free open-model option: uncomment to answer with Llama on Workers AI when no Anthropic key is set.
+# [ai]
+# binding = "AI"
+
 [vars]
 ALLOWED_ORIGIN = "https://angelale0211.github.io"
 

@@ -37,14 +37,20 @@ Bump `CACHE` in `sw.js` whenever `index.html` changes, so installed copies refre
 
 ## Nabu AI
 
-Every card, lesson, sign and numbers page has a "Nabu AI" box. Out of the box it answers from the app's own knowledge base (no key, no cost, works offline). To answer with Claude instead:
+Every card, lesson, sign and numbers page has a "Nabu AI" box. Out of the box it answers from the app's own knowledge base (no key, no cost, works offline, but it only knows what the app knows). Three ways to make it a real AI, in order of effort:
+
+**A. Gemini, free, with web search (about 5 minutes).** Go to https://aistudio.google.com → *Get API key* → create a key. Then in https://console.cloud.google.com → APIs & Services → Credentials → open that key → *Application restrictions: Websites* → add `https://angelale0211.github.io/*`. Paste the key into `CONFIG.geminiKey` in `src/config.js`, rebuild, push. The app calls Gemini straight from the browser, and Gemini can search the web to answer questions the app's knowledge does not cover. The free tier is enough for a small audience; the referrer restriction stops other sites from using your key.
+
+**B. Open model on Cloudflare Workers AI, free.** In `worker/wrangler.toml` uncomment the `[ai]` binding, then `cd worker && npm install && npx wrangler login && npx wrangler deploy`. Put the printed URL into `CONFIG.aiEndpoint`. Answers come from Llama 3.3 (open weights) without any key; no web search.
+
+**C. Claude (paid, best quality):**
 
 1. `cd worker && npm install`
 2. `npx wrangler login`, then `npx wrangler secret put ANTHROPIC_API_KEY` (paste an Anthropic API key from console.anthropic.com).
 3. `npx wrangler deploy` prints a URL like `https://nabu-ai.<you>.workers.dev`.
 4. Put that URL into `CONFIG.aiEndpoint` in `src/config.js`, rebuild, push.
 
-The worker keeps the key server-side, sends Claude the same knowledge the page shows plus the question, and answers in the app's language. If the worker is down the app falls back to the built-in answers.
+The worker keeps the key server-side, sends the model the same knowledge the page shows plus the question, and answers in the app's language. Whatever option is on, if the call fails the app falls back to the built-in answers.
 
 ## Turning on accounts, messages and in-app bookings (Firebase, free tier)
 

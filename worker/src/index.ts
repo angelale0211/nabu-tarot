@@ -7,7 +7,8 @@
 import Anthropic from "@anthropic-ai/sdk";
 
 export interface Env {
-  ANTHROPIC_API_KEY: string;
+  ANTHROPIC_API_KEY?: string;
+  AI?: { run: (model: string, input: unknown) => Promise<{ response?: string }> }; // Workers AI binding (free tier, open models)
   ALLOWED_ORIGIN?: string; // e.g. https://angelale0211.github.io
 }
 
@@ -43,6 +44,19 @@ export default {
     const question = (body.question || "").trim().slice(0, 1000);
     if (!question) return new Response(JSON.stringify({ error: "empty question" }), { status: 400, headers });
 
+    const knowledge = `KIND: ${body.kind}\nVISITOR: ${body.profile?.name || "-"} ${body.profile?.sign ? "(" + body.profile.sign + ")" : ""}\nKNOWLEDGE:\n${(body.context || "").slice(0, 12000)}`;
+    // No Anthropic key: answer with an open model on Workers AI (free tier).
+    if (!env.ANTHROPIC_API_KEY && env.AI) {
+      const msgs: { role: string; content: string }[] = [{ role: "system", content: (body.lang === "en" ? SYSTEM_EN : SYSTEM_VI) + "\n\n" + knowledge }];
+      for (const h of (body.history || []).slice(-6)) if (h && h.text) msgs.push({ role: h.role === "assistant" ? "assistant" : "user", content: h.text.slice(0, 2000) });
+      if (msgs[msgs.length - 1].role === "user") msgs.pop();
+      msgs.push({ role: "user", content: question });
+      try {
+        const out = await env.AI.run("@cf/meta/llama-3.3-70b-instruct-fp8-fast", { messages: msgs, max_tokens: 700 });
+        return new Response(JSON.stringify({ answer: (out.response || "").trim() }), { headers });
+      } catch { return new Response(JSON.stringify({ error: "workers-ai" }), { status: 502, headers }); }
+    }
+    if (!env.ANTHROPIC_API_KEY) return new Response(JSON.stringify({ error: "no provider" }), { status: 500, headers });
     const client = new Anthropic({ apiKey: env.ANTHROPIC_API_KEY });
     const messages: Anthropic.MessageParam[] = [];
     for (const h of (body.history || []).slice(-6)) {
@@ -59,7 +73,7 @@ export default {
         output_config: { effort: "low" },
         system: [
           { type: "text", text: body.lang === "en" ? SYSTEM_EN : SYSTEM_VI, cache_control: { type: "ephemeral" } },
-          { type: "text", text: `KIND: ${body.kind}\nVISITOR: ${body.profile?.name || "-"} ${body.profile?.sign ? "(" + body.profile.sign + ")" : ""}\nKNOWLEDGE:\n${(body.context || "").slice(0, 12000)}` },
+          { type: "text", text: knowledge },
         ],
         messages,
       });

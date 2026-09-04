@@ -70,6 +70,8 @@ async function go(hash, sel) { W().location.hash = hash; await sleep(30); return
     const yn = N.localAnswer('Mình có nên tiếp tục không?', { type: 'card', id: 'major-19' }), tm = N.localAnswer('Khi nào chuyện này xảy ra?', { type: 'card', id: 'wands-8' });
     ok(/thiên về CÓ/.test(yn) && /Gậy đi nhanh/.test(tm), 'yes/no lean and timing hints');
     ok(/Gã Khờ/.test(N.localAnswer('Gã Khờ nghĩa là gì?', { type: 'general' })) && /Sư Tử và Bảo Bình/.test(N.localAnswer('Sư Tử hợp với Bảo Bình không?', { type: 'sign', key: 'leo' })), 'mentions of cards and signs are picked up');
+    ok(/Kỵ Mã/.test(N.localAnswer('Lá Kỵ Mã trong Lenormand nghĩa là gì?', { type: 'general' })) && /Sao Thổ/.test(N.localAnswer('Sao Thổ có ý nghĩa gì?', { type: 'general' })) && /Đối tác/.test(N.localAnswer('Nhà 7 là gì?', { type: 'general' })) && /Rồng/.test(N.localAnswer('Tuổi Thìn tính cách thế nào?', { type: 'general' })), 'built-in engine knows Lenormand cards, planets, houses and animals');
+    ok(/Trăng/.test(N.localAnswer('Hôm nay trăng gì?', { type: 'general' })) && /Đặt lịch/.test(N.localAnswer('Đặt lịch xem bài giá bao nhiêu?', { type: 'general' })) && /78 lá/.test(N.localAnswer('Học tarot bắt đầu từ đâu?', { type: 'general' })), 'built-in engine handles moon, booking and how-to-start questions');
     ok(d.querySelectorAll('[data-focus][disabled]').length === 4 && !d.querySelector('[data-focus="love"]').disabled, 'after the draw the other focus chips are switched off but still visible');
     d.querySelector('[data-focus="work"]').click(); await sleep(30);
     ok(N.pick.focus === 'love' && /Nếu bạn đang nghĩ về tình cảm/.test(d.querySelector('#reveal').textContent), 'a switched-off chip does nothing');
@@ -140,7 +142,7 @@ async function go(hash, sel) { W().location.hash = hash; await sleep(30); return
     await go('#/learn/lesson/lenormand/6', '.spreads-v');
     ok(d.querySelectorAll('.spv').length === 7 && /Grand Tableau/.test(d.querySelector('.spreads-v').textContent), 'lenormand session 6: seven spread diagrams incl. the Grand Tableau');
     await go('#/report', '#rwhat');
-    ok(d.querySelector('#rwhat') && d.querySelector('#rcopy') && /Nabu Tarot v21/.test(d.querySelector('.msgbox').textContent), 'bug report screen with auto-attached info');
+    ok(d.querySelector('#rwhat') && d.querySelector('#rcopy') && /Nabu Tarot v22/.test(d.querySelector('.msgbox').textContent), 'bug report screen with auto-attached info');
     await go('#/learn/len/1', '.detail .hero');
     ok(/Kỵ Mã/.test(d.querySelector('.name').textContent) && /Cặp lá/.test(d.body.textContent), 'Lenormand card page');
     await go('#/learn/astro', '.signlist button');
