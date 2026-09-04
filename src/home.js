@@ -27,8 +27,9 @@ function todayHTML() {
   const leap = lu.leap ? (lang === 'vi' ? ' (nhuận)' : ' (leap)') : '';
   rows.push([lang === 'vi' ? 'Âm lịch' : 'Lunar (VN)', lang === 'vi'
     ? 'Ngày ' + lu.day + ' tháng ' + lu.month + leap + ' năm ' + lu.yearCC + ' (' + lu.year + ')'
-    : 'Day ' + lu.day + ', month ' + lu.month + leap + ', year ' + lu.yearCC + ' (' + lu.year + ')']);
-  rows.push([lang === 'vi' ? 'Can chi' : 'Stems & branches', (lang === 'vi' ? 'Ngày ' : 'Day ') + lu.dayCC + (lang === 'vi' ? ' · tháng ' : ' · month ') + lu.monthCC + (lang === 'vi' ? ' · năm ' : ' · year ') + lu.yearCC]);
+    : 'Day ' + lu.day + ' of lunar month ' + lu.month + leap + ', year of the ' + lu.yearAn + ' (' + lu.year + ')']);
+  rows.push(lang === 'vi' ? ['Can chi', 'Ngày ' + lu.dayCC + ' · tháng ' + lu.monthCC + ' · năm ' + lu.yearCC]
+    : ['Animal signs', 'Day of the ' + lu.dayAn + ' · month of the ' + lu.monthAn + ' · year of the ' + lu.yearAn]);
   const others = [['islamic-umalqura', lang === 'vi' ? 'Hồi giáo (Hijri)' : 'Islamic (Hijri)'], ['hebrew', lang === 'vi' ? 'Do Thái' : 'Hebrew'], ['persian', lang === 'vi' ? 'Ba Tư' : 'Persian'], ['buddhist', lang === 'vi' ? 'Phật lịch (Thái)' : 'Buddhist (Thai)']];
   others.forEach((o) => { const v = calLine(o[0], lang === 'vi' ? 'vi' : 'en', { day: 'numeric', month: 'long', year: 'numeric' }); if (v) rows.push([o[1], v]); });
   const mp = moonPhase(now);

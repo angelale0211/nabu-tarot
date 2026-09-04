@@ -318,7 +318,7 @@ function renderNumbers() {
     + '<div class="ins"><label class="f" for="nname">' + esc(S.numName) + '</label><input id="nname" value="' + esc(PROFILE.name || '') + '"><p class="hint">' + esc(S.numNameHint) + '</p><div id="nameout">' + (nm.expression ? numRow(S.numExpr, nm.expression, NUM[nm.expression][lang].expr) + numRow(S.numSoul, nm.soul, NUM[nm.soul][lang].soul) + numRow(S.numPers, nm.personality, NUM[nm.personality][lang].pers) : '') + '</div></div>'
     + aiPanelHTML({ type: 'numbers' })
     + '<div class="ins"><h3>' + esc(S.yourSign) + '</h3><p>' + ZSIGN[key].g + ' ' + esc(S.zodiac[si]) + ' · ' + esc(ZODIAC[key][lang].kw.join(', ')) + '</p><a href="#/learn/sign/' + key + '">' + esc(S.readSign) + ' →</a></div>'
-    + '<div class="ins"><h3>' + esc(S.animal) + '</h3><p>' + esc(animalOf(b.y)[lang]) + ' · ' + esc(canChi(b.y)) + '</p><p class="faint">' + esc(S.animalNote) + '</p></div>'
+    + '<div class="ins"><h3>' + esc(S.animal) + '</h3><p>' + (lang === 'vi' ? esc(animalOf(b.y).vi) + ' · ' + esc(canChi(b.y)) : 'Year of the ' + esc(animalOf(b.y).en) + ' (' + b.y + ')') + '</p><p class="faint">' + esc(S.animalNote) + '</p></div>'
     + GUIDES.filter((g) => g.id === 'fort-numerology' || g.id === 'fort-animals').map(guideRow).join('');
   bindAI(m);
   $('#nname').addEventListener('input', (e) => { const x = numerologyOf(e.target.value, PROFILE.birthday); $('#nameout').innerHTML = x.expression ? numRow(S.numExpr, x.expression, NUM[x.expression][lang].expr) + numRow(S.numSoul, x.soul, NUM[x.soul][lang].soul) + numRow(S.numPers, x.personality, NUM[x.personality][lang].pers) : ''; });

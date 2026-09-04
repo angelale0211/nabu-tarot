@@ -65,7 +65,9 @@ function solarToLunar(dd, mm, yy, tz) {
 /* Can chi of the day (from the Julian day number), the month (from the year's stem) and the year. */
 function canChiDay(jd) { return CAN[(jd + 9) % 10] + ' ' + CHI[(jd + 1) % 12]; }
 function canChiMonth(lunarMonth, lunarYear) { return CAN[(lunarYear * 12 + lunarMonth + 3) % 10] + ' ' + CHI[(lunarMonth + 1) % 12]; }
+const branchAnimal = (i) => ANIMALS[((i % 12) + 12) % 12].en;
 function lunarToday(date) {
   const d = date || new Date(), l = solarToLunar(d.getDate(), d.getMonth() + 1, d.getFullYear());
-  return Object.assign(l, { dayCC: canChiDay(l.jd), monthCC: canChiMonth(l.month, l.year), yearCC: canChi(l.year) });
+  return Object.assign(l, { dayCC: canChiDay(l.jd), monthCC: canChiMonth(l.month, l.year), yearCC: canChi(l.year),
+    dayAn: branchAnimal(l.jd + 1), monthAn: branchAnimal(l.month + 1), yearAn: branchAnimal(l.year - 4) });
 }
