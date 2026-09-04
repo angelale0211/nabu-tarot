@@ -5,7 +5,7 @@
    #/learn/card/<id>  #/learn/len/<n>  #/learn/spread/<id>  #/learn/guide/<id>
    #/learn/astro, #/learn/sign/<key>, #/learn/manifest, #/learn/fortune, #/learn/numbers  (free) */
 const CAT_ICONS = { tarot: PICK_ICON, lenormand: '🗝️', astro: '🔮', manifest: '🌙', fortune: '🔢' };
-const badgeHTML = (b) => '<span class="badge-src ' + b + '">' + esc(T().badges[b]) + '</span>';
+const badgeHTML = () => '';
 const backLink = (href, label) => '<p><a href="' + href + '">← ' + esc(label) + '</a></p>';
 const courseOf = (id) => COURSES.filter((c) => c.id === id)[0];
 
@@ -43,7 +43,7 @@ function demoHTML(courseId) {
   l1 += '<div class="visual">' + (courseId === 'tarot' ? journeyHTML() : lenIntroHTML()) + '</div>'
   const l2 = courseId === 'tarot' ? cardBodyHTML(d.card) : lenBodyHTML(d.card);
   return '<div class="demo-head"><span class="chip pink">' + esc(S.demoTag) + '</span><p class="muted">' + esc(S.demoIntro) + '</p></div>'
-    + lesson(1, S.lesson1, '<div class="guide">' + l1 + '</div>') + lesson(2, S.lesson2, l2);
+    + lesson(1, S.lesson1, '<div class="guide">' + l1 + '</div>' + aiPanelHTML({ type: 'lesson', course: courseId, n: 1 })) + lesson(2, S.lesson2, l2);
 }
 function gate(courseId, back) {
   if (ACCESS.has(courseId)) return false;
@@ -83,7 +83,7 @@ function renderCourse(courseId, tab) {
   if (!ACCESS.has(courseId)) {
     const S = T(), m = $('#main');
     m.innerHTML = backLink('#/learn', S.learnTitle) + '<h1 style="margin-bottom:8px">' + esc(S.cats[courseId]) + '</h1>' + demoHTML(courseId) + '<div id="unlockwrap" style="margin-top:18px">' + paywallHTML(courseId) + '</div>';
-    bindAccordions(m); bindPaywall(m); bindCardLinks(m);
+    bindAccordions(m); bindPaywall(m); bindCardLinks(m); bindAI(m);
     $$('[data-len]', m).forEach((b) => b.addEventListener('click', () => { location.hash = '#/learn/len/' + b.getAttribute('data-len'); }));
     return;
   }
@@ -133,7 +133,7 @@ function renderCard(id) {
   const S = T(), m = $('#main');
   if (!cardById(id)) { location.hash = '#/learn/tarot'; return; }
   m.innerHTML = backLink('#/learn/tarot', S.cats.tarot) + cardBodyHTML(id);
-  bindAccordions(m);
+  bindAccordions(m); bindAI(m);
 }
 function cardBodyHTML(id) {
   const S = T(), c = cardById(id);
@@ -154,6 +154,7 @@ function cardBodyHTML(id) {
     + (I ? '<div class="ins"><h3>' + esc(S.focus.love) + '</h3><p>' + esc(I.love) + '</p><h3>' + esc(S.focus.work) + '</h3><p>' + esc(I.work) + '</p><h3>' + esc(S.focus.study) + '</h3><p>' + esc(I.study) + '</p><h3>' + esc(S.focus.money) + '</h3><p>' + esc(I.money) + '</p></div>' : '')
     + (asks.length ? '<div class="ins"><h3>' + esc(S.questions) + '</h3>' + Object.keys(groups).map((g) => '<div class="acc"><button><span>' + esc(catName[g] || g) + ' (' + groups[g].length + ')</span></button><div class="in">'
       + groups[g].map((a) => '<div class="qa"><div class="q">' + esc(a[1]) + '</div><p class="a">' + esc(a[2]) + '</p></div>').join('') + '</div></div>').join('') + '</div>' : '')
+    + aiPanelHTML({ type: 'card', id: id, focus: 'general' })
     + '<div class="row"><a class="btn primary" href="#/pick">' + esc(S.nav.pick) + '</a><a class="btn" href="#/book?card=' + id + '">' + esc(S.ctaBook) + '</a></div></div>';
 }
 
@@ -236,8 +237,11 @@ function renderSign(key) {
     + '<div class="row" style="margin-bottom:12px"><span class="chip tag">' + esc(S.element) + ': ' + ZELEM[z.el].g + ' ' + esc(ZELEM[z.el][lang]) + '</span><span class="chip tag">' + esc(S.mode) + ': ' + esc(ZMODE[z.mod][lang]) + '</span><span class="chip tag">' + esc(S.ruler) + ': ' + ruler.g + ' ' + esc(ruler[lang]) + '</span></div>'
     + '<div class="kwl">' + zp.kw.map((k) => '<span>' + esc(k) + '</span>').join('') + '</div>'
     + '<div class="ins"><h3>' + esc(S.signAbout) + '</h3><p>' + esc(zp.about) + '</p><h3>' + esc(S.signLove) + '</h3><p>' + esc(zp.love) + '</p><h3>' + esc(S.signWork) + '</h3><p>' + esc(zp.work) + '</p><h3>' + esc(S.signTip) + '</h3><p>' + esc(zp.tip) + '</p></div>'
-    + '<div class="ins"><h3>' + esc(S.signCards) + '</h3><div class="mini">' + cards.map((id) => miniHTML(id, true)).join('') + '</div><p class="faint">' + cards.map((id) => cardById(id).name + ': ' + astroLine(id)).map(esc).join('<br>') + '</p></div></div>';
-  bindCardLinks(m);
+    + '<div class="ins"><h3>' + esc(S.strengths) + '</h3><div class="kwl">' + ZDEEP[key][lang].strengths.map((k) => '<span>' + esc(k) + '</span>').join('') + '</div><h3>' + esc(S.challenges) + '</h3><div class="kwl neg">' + ZDEEP[key][lang].challenges.map((k) => '<span>' + esc(k) + '</span>').join('') + '</div><h3>' + esc(S.compat) + '</h3><div class="chips">' + ZDEEP[key].compat.map((k) => '<a class="chip lav" href="#/learn/sign/' + k + '">' + ZSIGN[k].g + ' ' + esc(ZSIGN[k][lang]) + '</a>').join('') + '</div></div>'
+    + '<div class="ins"><h3>' + esc(S.moonSign) + '</h3><p>' + esc(ZDEEP[key][lang].moon) + '</p><h3>' + esc(S.risingSign) + '</h3><p>' + esc(ZDEEP[key][lang].rising) + '</p></div>'
+    + '<div class="ins"><h3>' + esc(S.signCards) + '</h3><div class="mini">' + cards.map((id) => miniHTML(id, true)).join('') + '</div><p class="faint">' + cards.map((id) => cardById(id).name + ': ' + astroLine(id)).map(esc).join('<br>') + '</p></div>'
+    + aiPanelHTML({ type: 'sign', key: key }) + '</div>';
+  bindCardLinks(m); bindAI(m);
 }
 
 /* ---- spreads (inside each course) ---- */
@@ -275,7 +279,7 @@ function renderSpread(id) {
 /* ---- guides ---- */
 function guideRow(g) {
   const locked = (g.cat === 'tarot' || g.cat === 'lenormand') && !ACCESS.has(g.cat);
-  return '<a class="acc" href="#/learn/guide/' + g.id + '" style="display:block;text-decoration:none;color:inherit"><button style="pointer-events:none"><span>' + (locked ? '🔒 ' : '') + esc(L(g.title)) + '<br>' + badgeHTML(g.badge) + '</span></button></a>';
+  return '<a class="acc" href="#/learn/guide/' + g.id + '" style="display:block;text-decoration:none;color:inherit"><button style="pointer-events:none"><span>' + (locked ? '🔒 ' : '') + esc(L(g.title)) + '</span></button></a>';
 }
 function renderGuideList(cat) {
   const S = T(), m = $('#main');
@@ -287,7 +291,7 @@ function renderGuide(id) {
   if (!g) { location.hash = '#/learn'; return; }
   const back = g.cat === 'tarot' || g.cat === 'lenormand' ? '#/learn/' + g.cat + '?tab=guides' : g.cat === 'astro' ? '#/learn/astro' : '#/learn/' + g.cat;
   if ((g.cat === 'tarot' || g.cat === 'lenormand') && g.id !== DEMO[g.cat].guide && gate(g.cat, back)) return;
-  m.innerHTML = backLink(back, S.cats[g.cat]) + '<div class="guide">' + badgeHTML(g.badge) + '<h1 style="margin:8px 0">' + esc(L(g.title)) + '</h1>' + guideBodyHTML(g) + '</div>';
+  m.innerHTML = backLink(back, S.cats[g.cat]) + '<div class="guide"><h1 style="margin:8px 0">' + esc(L(g.title)) + '</h1>' + guideBodyHTML(g) + '</div>';
 }
 function guideBodyHTML(g) {
   return '<p class="lead">' + esc(L(g.intro)) + '</p>' + g.sections.map((s) => '<h2>' + esc(L(s.h)) + '</h2><p>' + esc(L(s.p)) + '</p>').join('');
@@ -297,11 +301,17 @@ function guideBodyHTML(g) {
 function renderNumbers() {
   const S = T(), m = $('#main'), b = birthParts();
   if (!b) { m.innerHTML = backLink('#/learn/fortune', S.cats.fortune) + '<h1>' + esc(S.numerology) + '</h1><p class="muted">' + esc(S.enterBirthday) + '</p><a class="btn primary" href="#/me">' + esc(S.setupBtn) + '</a>'; return; }
-  const lp = lifePath(b.y, b.m, b.d), si = mySign(), key = ZKEYS[si];
+  const lp = lifePath(b.y, b.m, b.d), si = mySign(), key = ZKEYS[si], nm = numerologyOf(PROFILE.name, PROFILE.birthday);
+  const numRow = (label, n, text) => n ? '<div class="ins"><h3>' + esc(label) + ' · ' + n + '</h3><p>' + esc(text) + '</p></div>' : '';
   m.innerHTML = backLink('#/learn/fortune', S.cats.fortune) + '<h1 style="margin-bottom:12px">' + esc(S.numerology) + '</h1>'
     + '<div class="ins"><h3>' + esc(S.lifePathOf(lp)) + '</h3><p>' + esc(LIFEPATH[lp][lang]) + '</p><p class="faint">' + b.d + '/' + b.m + '/' + b.y + '</p></div>'
+    + numRow(S.numBirthday, nm.birthday, (NUM[nm.birthday] || NUM[1])[lang].expr) + numRow(S.numYear, nm.personalYear, (PYEAR[nm.personalYear] || PYEAR[1])[lang])
+    + '<div class="ins"><label class="f" for="nname">' + esc(S.numName) + '</label><input id="nname" value="' + esc(PROFILE.name || '') + '"><p class="hint">' + esc(S.numNameHint) + '</p><div id="nameout">' + (nm.expression ? numRow(S.numExpr, nm.expression, NUM[nm.expression][lang].expr) + numRow(S.numSoul, nm.soul, NUM[nm.soul][lang].soul) + numRow(S.numPers, nm.personality, NUM[nm.personality][lang].pers) : '') + '</div></div>'
+    + aiPanelHTML({ type: 'numbers' })
     + '<div class="ins"><h3>' + esc(S.yourSign) + '</h3><p>' + ZSIGN[key].g + ' ' + esc(S.zodiac[si]) + ' · ' + esc(ZODIAC[key][lang].kw.join(', ')) + '</p><a href="#/learn/sign/' + key + '">' + esc(S.readSign) + ' →</a></div>'
     + '<div class="ins"><h3>' + esc(S.animal) + '</h3><p>' + esc(animalOf(b.y)[lang]) + ' · ' + esc(canChi(b.y)) + '</p><p class="faint">' + esc(S.animalNote) + '</p></div>'
     + GUIDES.filter((g) => g.id === 'fort-numerology' || g.id === 'fort-animals').map(guideRow).join('');
+  bindAI(m);
+  $('#nname').addEventListener('input', (e) => { const x = numerologyOf(e.target.value, PROFILE.birthday); $('#nameout').innerHTML = x.expression ? numRow(S.numExpr, x.expression, NUM[x.expression][lang].expr) + numRow(S.numSoul, x.soul, NUM[x.soul][lang].soul) + numRow(S.numPers, x.personality, NUM[x.personality][lang].pers) : ''; });
 }
 ROUTES.learn = { nav: 'learn', render: renderLearn };

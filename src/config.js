@@ -31,6 +31,10 @@ const CONFIG = {
   adminEmails: [],
   authProviders: ['google', 'facebook', 'email'],
 
+  // Nabu AI. Leave empty to answer from the built-in knowledge base; set the
+  // URL of the deployed worker (see worker/) to answer with Claude.
+  aiEndpoint: '',
+
   // Access codes for the paid courses are signed with this. Change it once
   // (any long phrase); codes made before the change stop working.
   courseSecret: 'nabu-moon-2026-lavender-cards',

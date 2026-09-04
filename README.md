@@ -35,6 +35,17 @@ git add -A && git commit -m "..." && git push
 
 Bump `CACHE` in `sw.js` whenever `index.html` changes, so installed copies refresh.
 
+## Nabu AI
+
+Every card, lesson, sign and numbers page has a "Nabu AI" box. Out of the box it answers from the app's own knowledge base (no key, no cost, works offline). To answer with Claude instead:
+
+1. `cd worker && npm install`
+2. `npx wrangler login`, then `npx wrangler secret put ANTHROPIC_API_KEY` (paste an Anthropic API key from console.anthropic.com).
+3. `npx wrangler deploy` prints a URL like `https://nabu-ai.<you>.workers.dev`.
+4. Put that URL into `CONFIG.aiEndpoint` in `src/config.js`, rebuild, push.
+
+The worker keeps the key server-side, sends Claude the same knowledge the page shows plus the question, and answers in the app's language. If the worker is down the app falls back to the built-in answers.
+
 ## Turning on accounts, messages and in-app bookings (Firebase, free tier)
 
 1. https://console.firebase.google.com → Add project (e.g. `nabu-tarot`).

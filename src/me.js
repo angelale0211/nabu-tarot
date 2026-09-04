@@ -23,7 +23,6 @@ function bindProfileForm(root, after) {
 }
 function authHTML() {
   const S = T();
-  if (!BE.enabled) return '<div class="card"><h3 style="margin-bottom:6px">' + esc(S.signIn) + '</h3><p class="muted" style="font-size:14px">' + esc(S.accountsSoon) + '</p></div>';
   if (BE.user) return '';
   const prov = CONFIG.authProviders;
   return '<div class="card"><h3 style="margin-bottom:10px">' + esc(S.signIn) + '</h3><div class="providers">'
@@ -32,19 +31,20 @@ function authHTML() {
     + (prov.indexOf('email') > -1 ? '<button class="btn block" data-auth="email">' + esc(S.signInWith.email) + '</button>' : '')
     + '</div><div id="emailform" hidden style="margin-top:12px"><label class="f" for="aemail">' + esc(S.emailLabel) + '</label><input id="aemail" type="email" autocomplete="email"><label class="f" for="apw">' + esc(S.passwordLabel) + '</label><input id="apw" type="password" autocomplete="current-password">'
     + '<div class="row" style="margin-top:12px"><button class="btn primary" id="alogin">' + esc(S.signIn) + '</button><button class="btn" id="acreate">' + esc(S.createAccount) + '</button><button class="btn sm" id="aforgot">' + esc(S.forgot) + '</button></div></div>'
-    + '<p class="hint" id="astatus"></p></div>';
+    + '<p class="hint" id="astatus">' + (BE.enabled ? '' : esc(S.accountsSoon)) + '</p></div>';
 }
 function bindAuth(root) {
   const S = T();
   const status = (msg, cls) => { const s = $('#astatus', root); if (s) { s.textContent = msg; s.className = 'hint ' + (cls || ''); } };
   $$('[data-auth]', root).forEach((b) => b.addEventListener('click', async () => {
     const p = b.getAttribute('data-auth');
+    if (!BE.enabled) { status(S.accountsSoon, 'err'); toast(S.accountsOff); return; }
     if (p === 'email') { $('#emailform').hidden = !$('#emailform').hidden; return; }
     try { await BE.signIn(p); } catch (e) { status(S.authFail + ': ' + (e.message || e.code), 'err'); }
   }));
   const em = () => $('#aemail').value.trim(), pw = () => $('#apw').value;
   const el = $('#alogin', root);
-  if (el) {
+  if (el && BE.enabled) {
     el.addEventListener('click', async () => { try { await BE.signInEmail(em(), pw(), false); } catch (e) { status(S.authFail + ': ' + (e.message || e.code), 'err'); } });
     $('#acreate', root).addEventListener('click', async () => { try { await BE.signInEmail(em(), pw(), true); } catch (e) { status(S.authFail + ': ' + (e.message || e.code), 'err'); } });
     $('#aforgot', root).addEventListener('click', async () => { try { await BE.resetPassword(em()); status(S.resetSent, 'ok'); } catch (e) { status(e.message, 'err'); } });
@@ -81,13 +81,14 @@ function renderMe(args, params) {
     } else if (CONFIG.instagram) {
       h += '<div class="card"><h3 style="margin-bottom:4px">' + esc(S.messages) + '</h3><p class="muted" style="font-size:14px">' + esc(S.messagesSoon) + '</p><a class="btn block" href="https://ig.me/m/' + esc(CONFIG.instagram) + '" target="_blank" rel="noopener">' + esc(S.viaInstagram) + '</a></div>';
     }
+    h += aiPanelHTML({ type: 'general' });
     h += '<div class="card"><h3 style="margin-bottom:8px">' + esc(S.myCourses) + '</h3>' + COURSES.map((c) => { const a = ACCESS.get()[c.id]; return '<div class="course"><span>' + esc(L(c.name)) + '</span><span class="faint">' + (a ? (ACCESS.has(c.id) ? '✓ ' + esc(S.activeUntil(fmtDate(a))) : esc(S.expiredOn(fmtDate(a)))) : '🔒 ' + fmtPrice(c.price)) + '</span></div>'; }).join('')
       + '<label class="f" for="mcode">' + esc(S.enterCode) + '</label><div class="row"><input id="mcode" placeholder="NABU-T-…" autocapitalize="characters" style="flex:1"><button class="btn" id="munlock">' + esc(S.unlock) + '</button></div><p class="hint" id="mcstatus"></p></div>';
     h += '<div class="card"><h3 style="margin-bottom:8px">' + esc(S.themeTitle) + '</h3><div class="chips">' + ['auto', 'light', 'dark'].map((t) => '<button class="chip' + (themeChoice() === t ? ' on' : '') + '" data-theme-pick="' + t + '">' + esc(S.themes[t]) + '</button>').join('') + '</div><p class="hint">' + esc(S.themeHint) + '</p></div>';
     h += '<div class="card"><h3 style="margin-bottom:6px">' + esc(S.installTitle) + '</h3><p class="muted" style="font-size:14px">' + esc(S.install) + '</p></div>';
     h += '<div class="row">' + (BE.user ? '<button class="btn" id="signout">' + esc(S.signOut) + '</button>' : '') + '<a class="btn" href="#/report">🐞 ' + esc(S.reportLink) + '</a><button class="btn" id="retour">' + (lang === 'vi' ? 'Xem lại hướng dẫn' : 'Replay the tour') + '</button>' + (BE.isAdmin() ? '<a class="btn gold" href="#/admin">' + esc(S.adminTitle) + '</a>' : '') + '</div>';
     body.innerHTML = h;
-    bindAuth(body);
+    bindAuth(body); bindAI(body);
     bindProfileForm(body, () => { if (params.next === 'book') location.hash = '#/book'; });
     $('#munlock').addEventListener('click', () => { const r = parseCode($('#mcode').value); const st = $('#mcstatus'); if (!r) { st.textContent = S.badCode; st.className = 'hint err'; return; } ACCESS.grant(r.course, r.until); toast(S.unlocked); draw(); });
     $$('[data-theme-pick]', body).forEach((b) => b.addEventListener('click', () => { setTheme(b.getAttribute('data-theme-pick')); $$('[data-theme-pick]', body).forEach((x) => x.classList.toggle('on', x === b)); }));

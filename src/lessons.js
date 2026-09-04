@@ -114,9 +114,10 @@ function renderLesson(courseId, n) {
   const prev = LESSONS[courseId].filter((x) => x.n === l.n - 1)[0], next = LESSONS[courseId].filter((x) => x.n === l.n + 1)[0];
   m.innerHTML = backLink('#/learn/' + courseId, S.cats[courseId]) + '<div class="eyebrow">' + esc(S.lessonN(l.n)) + ' / ' + LESSONS[courseId].length + '</div><h1 style="margin-bottom:10px">' + esc(L(l.title)) + '</h1>'
     + body + '<div class="visual">' + vis + '</div>'
+    + aiPanelHTML({ type: 'lesson', course: courseId, n: l.n })
     + '<button class="btn block' + (DONE.is(courseId, l.n) ? '' : ' primary') + '" id="ldone">' + (DONE.is(courseId, l.n) ? '✓ ' + esc(S.lessonDone) : esc(S.markDone)) + '</button>'
     + '<div class="row" style="margin-top:10px">' + (prev ? '<a class="btn" href="#/learn/lesson/' + courseId + '/' + prev.n + '">← ' + esc(S.lessonN(prev.n)) + '</a>' : '') + (next ? '<a class="btn" href="#/learn/lesson/' + courseId + '/' + next.n + '" style="margin-left:auto">' + esc(S.lessonN(next.n)) + ' →</a>' : '') + '</div>';
-  bindCardLinks(m);
+  bindCardLinks(m); bindAI(m);
   $$('[data-len]', m).forEach((b) => b.addEventListener('click', () => { location.hash = '#/learn/len/' + b.getAttribute('data-len'); }));
   $('#ldone').addEventListener('click', () => { DONE.toggle(courseId, l.n); renderLesson(courseId, n); });
 }

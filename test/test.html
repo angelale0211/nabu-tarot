@@ -63,6 +63,12 @@ async function go(hash, sel) { W().location.hash = hash; await sleep(30); return
     ok(!/🃏/.test(d.querySelector('#main').innerHTML) && !/🃏/.test(d.querySelector('#nav').innerHTML), 'no joker emoji on the draw screen');
     ok(/Lúc này bạn đang mang năng lượng/.test(d.querySelector('#reveal').textContent) && /Nếu bạn đang nghĩ về tình cảm/.test(d.querySelector('#reveal').textContent), 'Vietnamese insight sections');
     ok(!/Thu Anh/.test(d.querySelector('#reveal').textContent), 'no source line under the insight');
+    ok(!!d.querySelector('#reveal .ai') && d.querySelectorAll('#reveal .ai [data-ai-sug]').length === 3, 'Nabu AI panel under the drawn card');
+    d.querySelector('#reveal .ai [data-ai-q]').value = 'Lá này nói gì về chuyện tình cảm của mình?'; d.querySelector('#reveal .ai [data-ai-send]').click(); await sleep(150);
+    ok(d.querySelectorAll('#reveal .ai-chat .msg').length === 2 && /Với câu hỏi về tình cảm/.test(d.querySelector('#reveal .ai-chat').textContent), 'built-in engine answers a love question from the card');
+    const yn = N.localAnswer('Mình có nên tiếp tục không?', { type: 'card', id: 'major-19' }), tm = N.localAnswer('Khi nào chuyện này xảy ra?', { type: 'card', id: 'wands-8' });
+    ok(/thiên về CÓ/.test(yn) && /Gậy đi nhanh/.test(tm), 'yes/no lean and timing hints');
+    ok(/Gã Khờ/.test(N.localAnswer('Gã Khờ nghĩa là gì?', { type: 'general' })) && /Sư Tử và Bảo Bình/.test(N.localAnswer('Sư Tử hợp với Bảo Bình không?', { type: 'sign', key: 'leo' })), 'mentions of cards and signs are picked up');
     ok(d.querySelectorAll('[data-focus][disabled]').length === 4 && !d.querySelector('[data-focus="love"]').disabled, 'after the draw the other focus chips are switched off but still visible');
     d.querySelector('[data-focus="work"]').click(); await sleep(30);
     ok(N.pick.focus === 'love' && /Nếu bạn đang nghĩ về tình cảm/.test(d.querySelector('#reveal').textContent), 'a switched-off chip does nothing');
@@ -84,7 +90,7 @@ async function go(hash, sel) { W().location.hash = hash; await sleep(30); return
     ok(d.querySelectorAll('.tile').length === 5 && d.querySelectorAll('.tile .lock').length === 2 && !/Trải bài/.test(d.querySelector('.tiles').textContent), 'learn shows two locked courses and three free areas; no separate spreads tile');
     await go('#/learn/tarot', '.paywall');
     ok(d.querySelectorAll('.lesson').length === 2 && /Gã Khờ/.test(d.querySelectorAll('.lesson')[1].textContent) && /22 lá Ẩn Chính/.test(d.querySelectorAll('.lesson')[0].textContent) && /56 lá Ẩn Phụ/.test(d.querySelectorAll('.lesson')[0].textContent) && /Hành trình của Gã Khờ/.test(d.querySelectorAll('.lesson')[0].textContent) && /Thế Giới \(21\)/.test(d.querySelectorAll('.lesson')[0].textContent), 'lesson 1 introduces 22 Majors, 56 Minors and the Fool\'s Journey; lesson 2 is The Fool');
-    ok(d.querySelector('.lesson').compareDocumentPosition(d.querySelector('.paywall')) & 4 && /200\.000đ/.test(d.querySelector('.paywall').textContent) && d.querySelector('#ccode'), 'price and code entry sit below the demo');
+    ok(d.querySelector('.lesson').compareDocumentPosition(d.querySelector('.paywall')) & 4 && /300\.000đ/.test(d.querySelector('.paywall').textContent) && d.querySelector('#ccode'), 'price and code entry sit below the demo');
     await go('#/learn/card/major-0', '.detail .hero');
     ok(/Gã Khờ/.test(d.querySelector('.name').textContent) && !d.querySelector('.paywall'), 'the demo card opens directly while locked');
     await go('#/learn/card/major-1', '.paywall');
@@ -99,6 +105,8 @@ async function go(hash, sel) { W().location.hash = hash; await sleep(30); return
     ok(N.ACCESS.has('tarot') && d.querySelectorAll('#ctabs button').length === 4 && d.querySelectorAll('.lsn').length === 8, 'valid code unlocks the course: 8 sessions listed first');
     await go('#/learn/lesson/tarot/1', '.journey');
     ok(d.querySelectorAll('.journey .stage').length === 3 && d.querySelectorAll('.journey .vt').length === 22, 'session 1 draws the Fool\'s Journey as three stages of card faces');
+    ok(!!d.querySelector('.ai') && /Lá hoàng gia/.test(N.localAnswer('Lá hoàng gia là ai?', { type: 'lesson', course: 'tarot', n: 1 })), 'Nabu AI in the lesson finds course material');
+    { const tops = Array.from(d.querySelectorAll('.journey .stage:nth-child(2) .vt svg')).map((s) => Math.round(s.getBoundingClientRect().top)); ok(Math.max(...tops) - Math.min(...tops) <= 1, 'card faces in a strip sit on one line even when a name wraps (' + tops.join(',') + ')'); }
     await go('#/learn/lesson/tarot/5', '.wheel');
     ok(d.querySelectorAll('.wheel .w.on').length === 2 && d.querySelectorAll('.vstrip .vt').length === 20, 'session 5: element wheel and two suit strips');
     await go('#/learn/lesson/tarot/7', '.court');
@@ -131,7 +139,7 @@ async function go(hash, sel) { W().location.hash = hash; await sleep(30); return
     await go('#/learn/lesson/lenormand/6', '.spreads-v');
     ok(d.querySelectorAll('.spv').length === 7 && /Grand Tableau/.test(d.querySelector('.spreads-v').textContent), 'lenormand session 6: seven spread diagrams incl. the Grand Tableau');
     await go('#/report', '#rwhat');
-    ok(d.querySelector('#rwhat') && d.querySelector('#rcopy') && /Nabu Tarot v16/.test(d.querySelector('.msgbox').textContent), 'bug report screen with auto-attached info');
+    ok(d.querySelector('#rwhat') && d.querySelector('#rcopy') && /Nabu Tarot v17/.test(d.querySelector('.msgbox').textContent), 'bug report screen with auto-attached info');
     await go('#/learn/len/1', '.detail .hero');
     ok(/Kỵ Mã/.test(d.querySelector('.name').textContent) && /Cặp lá/.test(d.body.textContent), 'Lenormand card page');
     await go('#/learn/astro', '.signlist button');
@@ -141,21 +149,24 @@ async function go(hash, sel) { W().location.hash = hash; await sleep(30); return
     d.querySelector('[data-t="houses"]').click(); await sleep(50);
     ok(d.querySelectorAll('#apanel .acc').length === 12, 'twelve houses');
     await go('#/learn/sign/leo', '.detail');
-    ok(/Sao chủ/.test(d.body.textContent) && d.querySelectorAll('.mini .m').length >= 4, 'sign page with ruler and its tarot cards');
+    ok(/Sao chủ/.test(d.body.textContent) && d.querySelectorAll('.mini .m').length >= 4 && /Mặt Trăng ở cung này/.test(d.body.textContent) && d.querySelectorAll('.chips a.chip').length === 4 && d.querySelector('.ai'), 'sign page: ruler, cards, Moon/Rising, compatible signs, Nabu AI');
     await go('#/learn/spread/nabu-2', '.spread-d svg');
     ok(d.querySelectorAll('.qa').length === 5 && /Người cũ/.test(d.body.textContent), 'preset spread page with five positions');
     await go('#/learn/manifest', '.acc');
-    ok(d.querySelectorAll('.acc').length >= 5 && d.querySelectorAll('.badge-src').length >= 5, 'manifestation guides with badges');
+    ok(d.querySelectorAll('.acc').length >= 5 && d.querySelectorAll('.badge-src').length === 0, 'manifestation guides listed, no grounding badges');
     await go('#/learn/guide/fort-palm', '.guide h2');
     ok(d.querySelectorAll('.guide h2').length >= 3, 'guide renders its sections');
     await go('#/learn/numbers', '.ins');
-    ok(/Số đường đời 22/.test(d.body.textContent) && /Dần/.test(d.body.textContent), 'numbers page for the saved birthday');
+    ok(/Số đường đời 22/.test(d.body.textContent) && /Dần/.test(d.body.textContent) && /Năm cá nhân/.test(d.body.textContent) && d.querySelector('#nname') && d.querySelector('.ai'), 'numbers page: life path, personal year, name numbers, Nabu AI');
+    d.querySelector('#nname').value = 'Nguyễn Thị Lan'; d.querySelector('#nname').dispatchEvent(new w.Event('input'));
+    const nn = N.numerologyOf('Nguyễn Thị Lan', '1998-08-05');
+    ok(nn.expression === 6 && nn.soul === 9 && nn.personality === 6 && /Số vận mệnh/.test(d.querySelector('#nameout').textContent), 'name numbers computed with tone marks dropped');
     // booking with calendar
     await go('#/book?card=' + chosen, '.cal .days');
     await waitFor(() => d.querySelector('.cal .d.has'), 4000);
     ok(w.NABU.SERVICES.length === 7 && !w.NABU.SERVICES.some((x) => x.id === 'oracle') && w.NABU.SERVICES.some((x) => x.id === 'tea') && w.NABU.SERVICES.some((x) => x.id === 'talk'), 'seven services: no standalone oracle; tea, combos and just-talk present');
     ok(d.querySelectorAll('.svc').length === 7 && d.querySelectorAll('[data-pkg]').length === 26, 'price sheet renders every package');
-    ok(/50\.000đ/.test(d.querySelector('.svc.blue').textContent) && /666\.000đ/.test(d.querySelectorAll('.svc')[5].textContent) && /60\.000đ/.test(d.querySelectorAll('.svc')[6].textContent), 'prices formatted in VND');
+    ok(/50\.000đ/.test(d.querySelector('.svc.blue').textContent) && /chỉ áp dụng với 5 chủ đề/.test(d.querySelector('.svc.blue').textContent) && /666\.000đ/.test(d.querySelectorAll('.svc')[5].textContent) && /60\.000đ/.test(d.querySelectorAll('.svc')[6].textContent), 'prices formatted in VND');
     ok(d.querySelectorAll('[data-topic]').length === 5 && /Chỉ áp dụng cho gói Xem chủ đề sẵn/.test(d.querySelector('#main').textContent), 'five preset topics only, with the note that they apply to the set-topic package');
     d.querySelector('[data-pkg="tarot/q3"]').click();
     ok(d.querySelector('[data-pkg="tarot/q3"]').classList.contains('on') && /Dịch vụ: Tarot – 3 câu chi tiết \(50\.000đ\)/.test(d.querySelector('#msgprev').textContent) && /không bắt buộc/.test(d.querySelector('#topicopt').textContent), 'package goes into the message; topic becomes optional');
@@ -173,9 +184,9 @@ async function go(hash, sel) { W().location.hash = hash; await sleep(30); return
     ok(/ig\.me\/m\/nabutarot/.test(d.querySelector('[data-send][href]').getAttribute('href')), 'instagram send link');
     // me: accounts off
     await go('#/prices', '.svc');
-    ok(d.querySelectorAll('.svc').length === 9 && /Khóa Tarot/.test(d.querySelector('#main').textContent) && /chuyển khoản/.test(d.querySelector('.paynote').textContent), 'price sheet screen with the payment note');
+    ok(d.querySelectorAll('.svc').length === 9 && /300\.000đ/.test(d.querySelector('#main').textContent) && /Khóa Tarot/.test(d.querySelector('#main').textContent) && /chuyển khoản/.test(d.querySelector('.paynote').textContent), 'price sheet screen with the payment note');
     await go('#/me', '#pname');
-    ok(/Hồ sơ đang lưu trên máy này/.test(d.body.textContent) && /Instagram/.test(d.body.textContent) && d.querySelectorAll('.course').length === 2 && /đang mở/.test(d.querySelector('.course').textContent), 'me tab: device-only profile, Instagram, my courses with status');
+    ok(/Hồ sơ đang lưu trên máy này/.test(d.body.textContent) && /Instagram/.test(d.body.textContent) && d.querySelectorAll('[data-auth]').length === 3 && /Nabu chưa bật đăng nhập/.test(d.body.textContent) && d.querySelectorAll('.course').length === 2 && /đang mở/.test(d.querySelector('.course').textContent), 'me tab: device-only profile, Instagram, my courses with status');
     // admin
     await go('#/admin', '#atabs');
     ok(d.querySelectorAll('#atabs button').length === 5 && d.querySelectorAll('#cgrid button').length === 78, 'admin has five tabs and the 78-card picker');

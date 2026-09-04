@@ -210,7 +210,8 @@
   --shade:rgba(0,0,0,.5);
   color-scheme:dark;
 }
-*{box-sizing:border-box}
+*{box-sizing:border-box;min-width:0}
+img,svg{max-width:100%}
 html{-webkit-text-size-adjust:100%}
 body{margin:0;background:var(--bg);color:var(--fg);font-family:var(--body);font-size:16px;line-height:1.55;
   -webkit-font-smoothing:antialiased;min-height:100vh;padding-bottom:calc(var(--nav-h) + env(safe-area-inset-bottom))}
@@ -289,6 +290,8 @@ main{padding:22px 0 30px}
 .empty{text-align:center;color:var(--fg-faint);padding:24px 0}
 .acc{border:1px solid var(--rule-soft);border-radius:14px;background:var(--surface);margin-bottom:10px;overflow:hidden}
 .acc>button{display:flex;width:100%;justify-content:space-between;align-items:center;gap:10px;padding:14px 16px;text-align:left;font-weight:600}
+.acc>button>span{flex:1;min-width:0;overflow-wrap:anywhere}
+.acc>button:after{flex:none}
 .acc>button:after{content:"+";color:var(--fg-faint);font-size:20px;line-height:1}
 .acc.open>button:after{content:"–"}
 .acc .in{display:none;padding:0 16px 14px;color:var(--fg-soft);font-size:15px}
@@ -363,7 +366,8 @@ main{padding:22px 0 30px}
 .hero .flip .fr,.hero .flip .bk{backface-visibility:hidden;-webkit-backface-visibility:hidden}
 .hero .flip .bk{position:absolute;inset:0;transform:rotateY(180deg)}
 @keyframes flip{from{transform:rotateY(180deg)}to{transform:rotateY(0)}}
-.hero .name{font-family:var(--display);font-size:26px;line-height:1.15}
+.hero .name{font-family:var(--display);font-size:26px;line-height:1.15;overflow-wrap:anywhere}
+.hero>div:last-child{min-width:0}
 .hero .en{color:var(--fg-soft);font-size:14px;margin-top:4px}
 .hero .meta{margin-top:8px;font-size:12.5px;color:var(--fg-faint)}
 .hero .meta i{font-style:normal;font-weight:700}
@@ -382,7 +386,7 @@ main{padding:22px 0 30px}
 .tiles{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:18px}
 .tile{background:var(--surface);border:1px solid var(--rule-soft);border-radius:16px;padding:14px;text-align:left;display:block;text-decoration:none;color:inherit}
 .tile .ic{font-size:26px;margin-bottom:6px}
-.tile b{display:block;font-family:var(--display);font-weight:500;font-size:17px}
+.tile b{display:block;font-family:var(--display);font-weight:500;font-size:17px;overflow-wrap:anywhere}
 .tile span{font-size:12.5px;color:var(--fg-faint)}
 .tile.rec{border-color:var(--pink);box-shadow:0 0 0 1px var(--pink) inset}
 .deckgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(88px,1fr));gap:10px}
@@ -417,6 +421,7 @@ main{padding:22px 0 30px}
 .svc .pk{display:flex;flex-direction:column;gap:6px}
 .svc .pkg{display:flex;justify-content:space-between;align-items:center;gap:10px;width:100%;text-align:left;background:var(--surface-2);border:1px solid transparent;border-radius:12px;padding:9px 12px;font-size:14.5px}
 .svc .pkg b{font-family:var(--body);font-weight:700;white-space:nowrap}
+.svc .pkg span{min-width:0;overflow-wrap:anywhere}
 .svc button.pkg.on{background:var(--primary);color:var(--primary-ink);border-color:transparent}
 .paynote{background:var(--gold-soft);color:var(--picked-ink);border-radius:12px;padding:10px 14px;font-size:14px;font-weight:600;text-align:center}
 
@@ -440,18 +445,18 @@ main{padding:22px 0 30px}
 .lessons{display:flex;flex-direction:column;gap:8px}
 .lsn{display:flex;align-items:center;gap:12px;background:var(--surface);border:1px solid var(--rule-soft);border-radius:14px;padding:12px 14px;text-decoration:none;color:inherit}
 .lsn .num{width:30px;height:30px;border-radius:50%;background:var(--lav-soft);display:flex;align-items:center;justify-content:center;font-weight:700;flex:none}
-.lsn .tt{flex:1;font-weight:600}
+.lsn .tt{flex:1;min-width:0;font-weight:600;overflow-wrap:anywhere}
 .lsn .chk{color:var(--fg-faint);font-size:18px}
 .lsn.done .num{background:#CFEBD6;color:#1F5A32}
 .lsn.done .chk{color:#2E7D46}
 .visual{margin:14px 0 18px}
 .visual h3{margin:16px 0 8px}
-.vstrip{display:flex;gap:10px;overflow-x:auto;padding:4px 2px 10px;-webkit-overflow-scrolling:touch;scroll-snap-type:x proximity}
+.vstrip{display:flex;align-items:flex-start;gap:10px;overflow-x:auto;padding:4px 2px 10px;-webkit-overflow-scrolling:touch;scroll-snap-type:x proximity}
 .vstrip::-webkit-scrollbar{height:6px}.vstrip::-webkit-scrollbar-thumb{background:var(--rule);border-radius:3px}
-.vt{flex:none;width:112px;text-align:center;scroll-snap-align:start;position:relative}
+.vt{flex:none;width:112px;text-align:center;scroll-snap-align:start;position:relative;display:flex;flex-direction:column;align-items:center}
 .vt svg{display:block;width:100%;height:auto;border-radius:6px;box-shadow:0 3px 10px var(--shade);margin-bottom:6px}
-.vt b{display:block;font-size:12.5px;line-height:1.2;font-weight:600}
-.vt span{display:block;font-size:11px;color:var(--fg-faint);line-height:1.2;margin-top:2px}
+.vt b{display:block;width:100%;font-size:12.5px;line-height:1.2;font-weight:600;min-height:2.4em;overflow-wrap:anywhere}
+.vt span{display:block;width:100%;font-size:11px;color:var(--fg-faint);line-height:1.2;margin-top:2px;overflow-wrap:anywhere}
 .vt .tone{display:inline-block;font-style:normal;font-size:10px;font-weight:700;border-radius:6px;padding:2px 6px;margin-top:4px}
 .tone-pos .tone,.tk.tone-pos{background:#CFEBD6;color:#1F5A32}.tone-neu .tone,.tk.tone-neu{background:var(--surface-3);color:var(--fg-soft)}.tone-neg .tone,.tk.tone-neg{background:var(--pink);color:#5B2340}
 .tonekey{display:flex;gap:6px;margin-bottom:8px}.tk{font-size:11px;font-weight:700;border-radius:6px;padding:3px 8px}
@@ -475,13 +480,24 @@ main{padding:22px 0 30px}
 .pair .pf{display:flex;align-items:center;gap:6px}
 .pair .pf svg{width:64px;height:auto;border-radius:4px;box-shadow:0 2px 8px var(--shade)}
 .pair .pf span{font-size:20px;color:var(--fg-faint)}
-.pair p{margin:0;font-size:14px}
+.pair p{margin:0;font-size:14px;min-width:0;overflow-wrap:anywhere}
 .spreads-v{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 .spv{background:var(--surface);border:1px solid var(--rule-soft);border-radius:14px;padding:12px;text-decoration:none;color:inherit;text-align:center}
 .spv .spd{display:flex;justify-content:center;align-items:center;height:110px;margin-bottom:8px}
 .spv .spd svg{max-width:100%;max-height:110px;height:auto;width:auto}
-.spv b{display:block;font-size:14px}.spv span{font-size:12px;color:var(--fg-faint)}
+.spv b{display:block;font-size:14px;overflow-wrap:anywhere}.spv span{font-size:12px;color:var(--fg-faint)}
 @media (max-width:380px){.pair{grid-template-columns:120px 1fr}.pair .pf svg{width:52px}}
+
+/* ---- Nabu AI ---- */
+.ai{background:linear-gradient(160deg,var(--surface),var(--lav-soft));border:1.5px solid var(--lav);border-radius:18px;padding:16px;margin:14px 0}
+.ai-h{display:flex;align-items:center;gap:8px;margin-bottom:4px}
+.ai-h b{font-family:var(--display);font-weight:500;font-size:18px}
+.ai-logo{width:26px;height:26px;border-radius:50%;background:var(--primary);color:var(--primary-ink);display:flex;align-items:center;justify-content:center;font-size:14px}
+.ai .chips{margin:8px 0}
+.ai .chips .chip{font-weight:500;font-size:12.5px}
+.ai-chat{min-height:0;max-height:50vh;background:var(--surface);border-radius:12px;padding:8px}
+.ai-chat:empty{display:none}
+.ai-wait{opacity:.6}
 
 /* ---- paywall ---- */
 .paywall{background:var(--surface);border:1.5px solid var(--lav);border-radius:20px;padding:22px 18px;text-align:center}
@@ -502,6 +518,7 @@ main{padding:22px 0 30px}
 .topic{display:block;width:100%;text-align:left;background:var(--surface);border:1px solid var(--rule-soft);border-radius:16px;padding:14px 16px;margin-bottom:10px}
 .topic.on{border-color:var(--primary);box-shadow:0 0 0 1px var(--primary) inset}
 .topic .t{display:flex;align-items:center;gap:10px;font-weight:600;font-size:16px}
+.topic .t>span:last-child{min-width:0;overflow-wrap:anywhere}
 .topic .t .n{color:var(--fg-faint);font-weight:500;font-size:13px}
 .topic .t .ic{font-size:20px}
 .topic ol{margin:10px 0 0;padding-left:20px;color:var(--fg-soft);font-size:14.5px;display:none}
@@ -544,6 +561,7 @@ main{padding:22px 0 30px}
 .chatbar textarea{min-height:44px;max-height:120px;border-radius:14px;padding:10px 14px}
 .chatbar button{flex:none}
 .bk{display:flex;justify-content:space-between;gap:10px;align-items:center;padding:12px 0;border-bottom:1px solid var(--rule-soft);font-size:14px}
+.bk>div:first-child{min-width:0;overflow-wrap:anywhere}
 .bk .st{font-size:12px;font-weight:700;border-radius:8px;padding:3px 8px;background:var(--surface-3)}
 .bk .st.confirmed{background:#CFEBD6;color:#1F5A32}.bk .st.declined{background:var(--pink);color:#5B2340}.bk .st.requested{background:var(--gold-soft);color:#5C4312}
 
@@ -615,6 +633,10 @@ const CONFIG = {
   adminEmails: [],
   authProviders: ['google', 'facebook', 'email'],
 
+  // Nabu AI. Leave empty to answer from the built-in knowledge base; set the
+  // URL of the deployed worker (see worker/) to answer with Claude.
+  aiEndpoint: '',
+
   // Access codes for the paid courses are signed with this. Change it once
   // (any long phrase); codes made before the change stop working.
   courseSecret: 'nabu-moon-2026-lavender-cards',
@@ -661,7 +683,7 @@ const SERVICES = [
       { id: 'yn', name: { vi: '1 câu Yes/No', en: '1 yes/no question' }, price: 10000 },
       { id: 'q1', name: { vi: '1 câu chi tiết', en: '1 question in detail' }, price: 20000 },
       { id: 'q3', name: { vi: '3 câu chi tiết', en: '3 questions in detail' }, price: 50000 },
-      { id: 'topic', name: { vi: 'Xem chủ đề sẵn (5 lá)', en: 'Set topic (5 cards)' }, price: 60000, needsTopic: true },
+      { id: 'topic', name: { vi: 'Xem chủ đề sẵn (chỉ áp dụng với 5 chủ đề)', en: 'Set topic (five preset topics only)' }, price: 60000, needsTopic: true },
       { id: 't40', name: { vi: '40 phút', en: '40 minutes' }, price: 80000 }
     ] },
   { id: 'lenormand', icon: '🗝️', tone: 'lav', name: { vi: 'Lenormand', en: 'Lenormand' },
@@ -670,7 +692,7 @@ const SERVICES = [
       { id: 'yn', name: { vi: '1 câu Yes/No', en: '1 yes/no question' }, price: 12000 },
       { id: 'q1', name: { vi: '1 câu chi tiết', en: '1 question in detail' }, price: 25000 },
       { id: 'q3', name: { vi: '3 câu chi tiết', en: '3 questions in detail' }, price: 50000 },
-      { id: 'topic', name: { vi: 'Xem chủ đề sẵn', en: 'Set topic' }, price: 60000, needsTopic: true },
+      { id: 'topic', name: { vi: 'Xem chủ đề sẵn (chỉ áp dụng với 5 chủ đề)', en: 'Set topic (five preset topics only)' }, price: 60000, needsTopic: true },
       { id: 't40', name: { vi: '40 phút', en: '40 minutes' }, price: 90000 }
     ] },
   { id: 'tea', icon: '🍵', tone: 'gold', name: { vi: 'Bói lá trà', en: 'Tea leaf reading' },
@@ -686,7 +708,7 @@ const SERVICES = [
     packages: [
       { id: 'q1', name: { vi: '1 câu chi tiết', en: '1 question in detail' }, price: 30000 },
       { id: 'q3', name: { vi: '3 câu chi tiết', en: '3 questions in detail' }, price: 60000 },
-      { id: 'topic', name: { vi: 'Xem chủ đề sẵn', en: 'Set topic' }, price: 70000, needsTopic: true },
+      { id: 'topic', name: { vi: 'Xem chủ đề sẵn (chỉ áp dụng với 5 chủ đề)', en: 'Set topic (five preset topics only)' }, price: 70000, needsTopic: true },
       { id: 't40', name: { vi: '40 phút', en: '40 minutes' }, price: 100000 }
     ] },
   { id: 'lenormand-oracle', icon: '✨', tone: 'lav', name: { vi: 'Lenormand + Oracle', en: 'Lenormand + Oracle' },
@@ -694,7 +716,7 @@ const SERVICES = [
     packages: [
       { id: 'q1', name: { vi: '1 câu chi tiết', en: '1 question in detail' }, price: 35000 },
       { id: 'q3', name: { vi: '3 câu chi tiết', en: '3 questions in detail' }, price: 65000 },
-      { id: 'topic', name: { vi: 'Xem chủ đề sẵn', en: 'Set topic' }, price: 75000, needsTopic: true },
+      { id: 'topic', name: { vi: 'Xem chủ đề sẵn (chỉ áp dụng với 5 chủ đề)', en: 'Set topic (five preset topics only)' }, price: 75000, needsTopic: true },
       { id: 't40', name: { vi: '40 phút', en: '40 minutes' }, price: 110000 }
     ] },
   { id: 'tuvi', icon: '🌸', tone: 'pink', name: { vi: 'Tử vi', en: 'Tử vi (Vietnamese astrology)' },
@@ -715,10 +737,10 @@ const SERVICES = [
 ];
 /* Paid courses in the Học tab. Access codes are made in the dashboard. */
 const COURSES = [
-  { id: 'tarot', price: 200000, months: 6, name: { vi: 'Khóa Tarot', en: 'Tarot course' },
+  { id: 'tarot', price: 300000, months: 6, name: { vi: 'Khóa Tarot', en: 'Tarot course' },
     blurb: { vi: 'Toàn bộ 78 lá, mỗi lá có hình, từ khóa, nghĩa xuôi ngược, nghĩa theo tình cảm, công việc, học tập, tiền bạc, và các câu hỏi thường gặp. Kèm 13 cách trải bài và các bài đọc.', en: 'All 78 cards with art, keywords, upright and reversed meanings, love / work / study / money readings and frequently asked questions. Plus 13 spreads and the guides.' },
     includes: { vi: ['78 lá bài, mỗi lá một trang', '13 cách trải bài có sơ đồ', 'Bài đọc: bắt đầu, lá ngược, lá hoàng gia', 'Dùng 6 tháng, xem offline'], en: ['78 cards, one page each', '13 spreads with diagrams', 'Guides: starting out, reversals, court cards', '6 months of access, works offline'] } },
-  { id: 'lenormand', price: 200000, months: 6, name: { vi: 'Khóa Lenormand', en: 'Lenormand course' },
+  { id: 'lenormand', price: 300000, months: 6, name: { vi: 'Khóa Lenormand', en: 'Lenormand course' },
     blurb: { vi: 'Toàn bộ 36 lá, mỗi lá có hình, sắc thái, nghĩa chính, tình cảm, công việc, chỉ người, thời gian và các cặp lá. Kèm 7 cách trải bài và các bài đọc.', en: 'All 36 cards with art, tone, core meaning, love, work, person, timing and pairs. Plus 7 spreads and the guides.' },
     includes: { vi: ['36 lá bài, mỗi lá một trang', 'Cặp lá thường gặp', '7 cách trải bài, có Grand Tableau', 'Dùng 6 tháng, xem offline'], en: ['36 cards, one page each', 'Common pairs', '7 spreads including the Grand Tableau', '6 months of access, works offline'] } }
 ];
@@ -785,8 +807,13 @@ const STR = {
     learnTitle: 'Kho kiến thức',
     learnIntro: 'Tarot, Lenormand, chiêm tinh, manifestation và bói toán. Đọc từng phần ngắn, không cần theo thứ tự.',
     cats: { tarot: 'Tarot', lenormand: 'Lenormand', astro: 'Chiêm tinh', manifest: 'Manifestation', fortune: 'Bói toán' },
-    catSub: { tarot: '78 lá + 13 trải bài · 200.000đ / 6 tháng', lenormand: '36 lá + 7 trải bài · 200.000đ / 6 tháng', astro: '12 cung, hành tinh, nhà', manifest: 'cách làm + giới hạn', fortune: 'thần số, chỉ tay, bài Tây' },
+    catSub: { tarot: '78 lá + 13 trải bài · 300.000đ / 6 tháng', lenormand: '36 lá + 7 trải bài · 300.000đ / 6 tháng', astro: '12 cung, hành tinh, nhà', manifest: 'cách làm + giới hạn', fortune: 'thần số, chỉ tay, bài Tây' },
     courses: 'Khóa học', freeReads: 'Đọc miễn phí', lessonsIntro: (n) => 'Khóa học gồm ' + n + ' bài. Học theo thứ tự, mỗi bài một tuần là vừa.', markDone: 'Đánh dấu đã học xong', lessonDone: 'Đã học xong', journeyHint: 'Chạm vào một lá để mở trang của lá đó.', lenGridHint: 'Cả 36 lá. Chạm để xem từng lá.',
+    aiIntro: 'Hỏi Nabu AI về điều bạn đang xem. Càng cụ thể càng tốt.', aiIntroLesson: 'Chỗ nào trong bài chưa hiểu, hỏi Nabu AI ở đây.', aiPlaceholder: 'Ví dụ: lá này nói gì về chuyện tình cảm của mình?', aiAsk: 'Hỏi', aiOnline: 'trả lời bằng AI', aiBuiltin: 'trả lời từ kho kiến thức', aiNote: 'Nabu AI trả lời từ ý nghĩa lá bài và kiến thức trong app. Chuyện quan trọng, bạn đặt lịch với Nabu.', aiFallback: 'AI đang bận, đây là câu trả lời từ kho kiến thức.',
+    aiSugCard: ['Lá này nói gì về tình cảm của mình?', 'Mình có nên tiếp tục không?', 'Khi nào chuyện này xảy ra?'], aiSugLesson: ['Ẩn Chính khác Ẩn Phụ thế nào?', 'Lá hoàng gia là ai?', 'Nếu mình không hiểu một lá thì làm sao?'], aiSugSign: ['Cung này hợp với cung nào?', 'Cung này trong tình yêu thế nào?', 'Mặt Trăng ở cung này là sao?'], aiSugNumbers: ['Số đường đời của mình nói gì?', 'Năm nay của mình là năm gì?', 'Số vận mệnh theo tên mình là gì?'], aiSugGeneral: ['Gã Khờ nghĩa là gì?', 'Sư Tử hợp với Bảo Bình không?', 'Số đường đời của mình?'],
+    aiCardGeneral: (n) => 'Lá ' + n + ' đang nói về năng lượng chung của bạn lúc này.', aiCardFocus: (n, f) => 'Với câu hỏi về ' + f.toLowerCase() + ', lá ' + n + ' nói thế này:', aiCardWhy: 'Lá này mang năng lượng:', aiCardShadow: 'Mặt trái cần để ý:', aiYes: (n) => 'Nếu hỏi có hay không: ' + n + ' thiên về CÓ, nhưng một lá không quyết định được. Muốn rõ hơn, hãy đặt lịch xem bài.', aiNo: (n) => 'Nếu hỏi có hay không: ' + n + ' thiên về KHÔNG, hoặc chưa phải lúc. Một lá không quyết định được; muốn rõ hơn, hãy đặt lịch xem bài.', aiMaybe: (n) => 'Nếu hỏi có hay không: ' + n + ' không nghiêng hẳn về bên nào. Câu trả lời tuỳ vào việc bạn làm tiếp theo.', aiTiming: 'Về thời gian, một lá chỉ gợi ý nhịp, không cho ngày chính xác.', aiFound: 'Mình tìm thấy trong khóa học:', aiLessonNone: 'Mình chưa thấy phần nào khớp. Bạn thử hỏi bằng tên lá bài, hoặc một từ khóa trong bài học nhé.', aiChem: (a, b) => a + ' và ' + b + ':', aiCompatYes: 'Đây là một trong những cặp thường được xem là hợp.', aiCompatWork: 'Không nằm trong nhóm dễ hợp nhất, nhưng cung chỉ là một phần; bản đồ sao đầy đủ mới nói được nhiều hơn.', aiAbout: (n) => 'Về ' + n + ':', aiGeneralHelp: 'Mình trả lời được về một lá bài, một cung hoàng đạo, hoặc các con số của bạn. Bạn thử nhắc tên lá bài hay cung trong câu hỏi nhé.',
+    strengths: 'Điểm mạnh', challenges: 'Điểm cần để ý', compat: 'Thường hợp với', moonSign: 'Mặt Trăng ở cung này', risingSign: 'Cung Mọc ở cung này',
+    numExpr: 'Số vận mệnh (theo tên)', numSoul: 'Số linh hồn', numPers: 'Số nhân cách', numYear: 'Năm cá nhân', numBirthday: 'Số ngày sinh', numName: 'Họ tên đầy đủ (khai sinh)', numNameHint: 'Tính theo bảng Pythagoras, bỏ dấu tiếng Việt, Đ đọc là D.',
     reportTitle: 'Báo lỗi app', reportIntro: 'Có gì hiển thị sai, bấm không được, hay chữ khó hiểu? Kể cho Nabu ở đây.', reportWhat: 'Bạn gặp lỗi gì?', reportPlaceholder: 'Bạn đang ở màn hình nào, bấm vào đâu, và điều gì xảy ra?', reportContact: 'Cách liên lạc lại (không bắt buộc)', reportAuto: 'App tự đính kèm thông tin này để Nabu tìm lỗi nhanh hơn:', reportSend: 'Gửi báo lỗi', reportViaIg: 'Gửi qua Instagram', reportNeed: 'Bạn mô tả lỗi trước nhé.', reportSent: 'Đã gửi. Cảm ơn bạn!', reportMsgHead: 'Báo lỗi app Nabu Tarot:', reportLink: 'Báo lỗi', rights: 'Giữ mọi quyền.', demoTag: 'Học thử miễn phí', demoIntro: 'Hai bài đầu mở sẵn để bạn xem cách học. Mở khóa để xem trọn bộ.', lessonN: (n) => 'Bài ' + n, lesson1: 'Tổng quan và cách học', lesson2: 'Lá bài đầu tiên', courseTabs: { cards: 'Các lá bài', spreads: 'Trải bài', guides: 'Bài đọc' },
     months6: 'tháng', accessUntil: (d) => 'Bạn có quyền xem đến ' + d + '.', courseExpired: (d) => 'Mã của bạn đã hết hạn ngày ' + d + '. Mua lại để xem tiếp.',
     buyCourse: 'Mua khóa học qua Instagram', buyHint: 'Tin nhắn mua khóa đã được sao chép. Sau khi chuyển khoản, Nabu gửi bạn mã mở khóa. Nhập mã ở dưới.',
@@ -860,7 +887,7 @@ const STR = {
     meTitle: 'Hồ sơ của bạn',
     meIntro: 'Ngày sinh và điều bạn quan tâm giúp trang chủ chọn đúng nội dung cho bạn.',
     localOnly: 'Hồ sơ đang lưu trên máy này.',
-    accountsSoon: 'Đăng nhập để lưu hồ sơ, nhắn tin và xem lịch hẹn đang được Nabu chuẩn bị. Hiện hồ sơ lưu trên máy này.',
+    accountsSoon: 'Nabu chưa bật đăng nhập. Khi bật, bạn đăng nhập bằng Google, Facebook hoặc email và mật khẩu; hồ sơ, tin nhắn và lịch hẹn sẽ đi theo bạn. Hiện hồ sơ lưu trên máy này.', accountsOff: 'Đăng nhập chưa mở.',
     signIn: 'Đăng nhập',
     signInWith: { google: 'Tiếp tục với Google', facebook: 'Tiếp tục với Facebook', email: 'Tiếp tục với email' },
     signOut: 'Đăng xuất',
@@ -1001,8 +1028,13 @@ const STR = {
     learnTitle: 'Knowledge library',
     learnIntro: 'Tarot, Lenormand, astrology, manifestation and fortune telling. Short pieces, read in any order.',
     cats: { tarot: 'Tarot', lenormand: 'Lenormand', astro: 'Astrology', manifest: 'Manifestation', fortune: 'Fortune telling' },
-    catSub: { tarot: '78 cards + 13 spreads · 200.000đ / 6 months', lenormand: '36 cards + 7 spreads · 200.000đ / 6 months', astro: '12 signs, planets, houses', manifest: 'methods + limits', fortune: 'numbers, palms, playing cards' },
+    catSub: { tarot: '78 cards + 13 spreads · 300.000đ / 6 months', lenormand: '36 cards + 7 spreads · 300.000đ / 6 months', astro: '12 signs, planets, houses', manifest: 'methods + limits', fortune: 'numbers, palms, playing cards' },
     courses: 'Courses', freeReads: 'Free to read', lessonsIntro: (n) => 'The course has ' + n + ' sessions. Take them in order, about one a week.', markDone: 'Mark as done', lessonDone: 'Done', journeyHint: 'Tap a card to open its page.', lenGridHint: 'All 36 cards. Tap one to open it.',
+    aiIntro: 'Ask Nabu AI about what you are looking at. The more specific, the better.', aiIntroLesson: 'Anything in this lesson unclear? Ask Nabu AI here.', aiPlaceholder: 'For example: what does this card say about my love life?', aiAsk: 'Ask', aiOnline: 'answered by AI', aiBuiltin: 'answered from the knowledge base', aiNote: 'Nabu AI answers from the card meanings and the knowledge in this app. For anything important, book a reading with Nabu.', aiFallback: 'AI is busy; this answer comes from the knowledge base.',
+    aiSugCard: ['What does this card say about my love life?', 'Should I keep going?', 'When will this happen?'], aiSugLesson: ['How do Majors differ from Minors?', 'Who are the court cards?', 'What if I do not understand a card?'], aiSugSign: ['Which signs suit this sign?', 'How is this sign in love?', 'What does the Moon in this sign mean?'], aiSugNumbers: ['What does my life path say?', 'What kind of year is this for me?', 'What is my destiny number from my name?'], aiSugGeneral: ['What does The Fool mean?', 'Do Leo and Aquarius get along?', 'What is my life path?'],
+    aiCardGeneral: (n) => n + ' speaks about your general energy right now.', aiCardFocus: (n, f) => 'For a question about ' + f.toLowerCase() + ', ' + n + ' says:', aiCardWhy: 'The card carries this energy:', aiCardShadow: 'The shadow to watch:', aiYes: (n) => 'As a yes-or-no: ' + n + ' leans YES, but one card cannot decide it. For a clear answer, book a reading.', aiNo: (n) => 'As a yes-or-no: ' + n + ' leans NO, or not yet. One card cannot decide it; for a clear answer, book a reading.', aiMaybe: (n) => 'As a yes-or-no: ' + n + ' does not lean either way. The answer depends on what you do next.', aiTiming: 'On timing, one card only hints at a pace, never an exact date.', aiFound: 'Found in the course:', aiLessonNone: 'Nothing matched yet. Try a card name or a keyword from the lesson.', aiChem: (a, b) => a + ' and ' + b + ':', aiCompatYes: 'This is one of the pairs usually seen as a good match.', aiCompatWork: 'Not among the easiest pairs, but the Sun sign is one part; the full chart says much more.', aiAbout: (n) => 'About ' + n + ':', aiGeneralHelp: 'I can answer about a card, a zodiac sign, or your numbers. Try naming the card or sign in your question.',
+    strengths: 'Strengths', challenges: 'Watch out for', compat: 'Usually gets on with', moonSign: 'Moon in this sign', risingSign: 'Rising in this sign',
+    numExpr: 'Expression number (from your name)', numSoul: 'Soul urge number', numPers: 'Personality number', numYear: 'Personal year', numBirthday: 'Birthday number', numName: 'Full name (as on your birth certificate)', numNameHint: 'Pythagorean table; Vietnamese tone marks dropped, Đ read as D.',
     reportTitle: 'Report a problem', reportIntro: 'Something looks wrong, a button does nothing, or a text is confusing? Tell Nabu here.', reportWhat: 'What went wrong?', reportPlaceholder: 'Which screen you were on, what you tapped, and what happened.', reportContact: 'How to reach you (optional)', reportAuto: 'The app attaches this so Nabu can find the bug faster:', reportSend: 'Send report', reportViaIg: 'Send through Instagram', reportNeed: 'Describe the problem first.', reportSent: 'Sent. Thank you!', reportMsgHead: 'Nabu Tarot app bug report:', reportLink: 'Report a problem', rights: 'All rights reserved.', demoTag: 'Free preview', demoIntro: 'The first two lessons are open so you can see how the course works. Unlock to read everything.', lessonN: (n) => 'Lesson ' + n, lesson1: 'Overview and how to learn', lesson2: 'The first card', courseTabs: { cards: 'The cards', spreads: 'Spreads', guides: 'Guides' },
     months6: 'months', accessUntil: (d) => 'Your access runs until ' + d + '.', courseExpired: (d) => 'Your code expired on ' + d + '. Buy again to continue.',
     buyCourse: 'Buy the course on Instagram', buyHint: 'The purchase message is copied. After the transfer, Nabu sends you an unlock code. Enter it below.',
@@ -1076,7 +1108,7 @@ const STR = {
     meTitle: 'Your profile',
     meIntro: 'Your birthday and interests help the home screen pick the right content for you.',
     localOnly: 'Your profile is saved on this device.',
-    accountsSoon: 'Sign-in for saving your profile, messaging and bookings is being set up by Nabu. For now the profile stays on this device.',
+    accountsSoon: 'Nabu has not switched sign-in on yet. Once on, you sign in with Google, Facebook or email and password, and your profile, messages and bookings follow you. For now the profile stays on this device.', accountsOff: 'Sign-in is not open yet.',
     signIn: 'Sign in',
     signInWith: { google: 'Continue with Google', facebook: 'Continue with Facebook', email: 'Continue with email' },
     signOut: 'Sign out',
@@ -1903,7 +1935,7 @@ Object.assign(ASK.vi, {
        'Sắp có một dự án mới mà bạn chưa từng có kinh nghiệm bao giờ.'],
       ['career', 'Nhận công việc mới rồi thì nên làm gì?',
        'Chưa có kinh nghiệm thì rất dễ vấp. Hãy học nhiều, hỏi han đồng nghiệp và cấp trên, đi từng bước một, đừng nóng vội. Thông điệp của lá bài chỉ chiếm khoảng 30%; phần lời khuyên sau khi suy luận mới là 70% còn lại.'],
-      ['health', 'Trải bài về sức khỏe?',
+      ['other', 'Trải bài về năng lượng?',
        'Phải chủ động lên. Năng lượng của Gã Khờ là tự mình đi tìm, tự mình tìm tòi — đừng ngồi đợi.']
     ],
 
@@ -7784,6 +7816,175 @@ const CAN = ['Giáp', 'Ất', 'Bính', 'Đinh', 'Mậu', 'Kỷ', 'Canh', 'Tân',
 const CHI = ['Tý', 'Sửu', 'Dần', 'Mão', 'Thìn', 'Tỵ', 'Ngọ', 'Mùi', 'Thân', 'Dậu', 'Tuất', 'Hợi'];
 const canChi = (year) => CAN[((year - 4) % 10 + 10) % 10] + ' ' + CHI[((year - 4) % 12 + 12) % 12];
 
+/* ============================ astrology, deeper ============================
+   Per sign: strengths, challenges, the sign as a Moon sign (how you feel and
+   what you need), as a Rising sign (how you come across), and which signs
+   tend to get along with it. Mainstream Western astrology, plain language. */
+const ZDEEP = {
+  ari: { compat: ['leo', 'sag', 'gem', 'aqu'],
+    vi: { strengths: ['dám bắt đầu', 'thẳng thắn', 'nhiệt tình'], challenges: ['nóng vội', 'dễ chán', 'ít kiên nhẫn'],
+      moon: 'Mặt Trăng Bạch Dương: cảm xúc đến nhanh và bùng nhanh. Bạn cần được tự do phản ứng và cần chuyện gì đó để lao vào. Giận dữ qua mau, nhưng người xung quanh có thể chưa kịp quên.',
+      rising: 'Mọc Bạch Dương: người ta thấy bạn nhanh, thẳng, tự tin, hơi thiếu kiên nhẫn. Bạn bước vào phòng là muốn làm ngay việc gì đó. Cơ thể thường gọn, dáng đi dứt khoát.' },
+    en: { strengths: ['starts things', 'direct', 'enthusiastic'], challenges: ['impatient', 'bored easily', 'short fuse'],
+      moon: 'Moon in Aries: feelings arrive fast and burn fast. You need freedom to react and something to throw yourself into. Anger passes quickly, though others may not forget as fast.',
+      rising: 'Aries rising: people see you as quick, direct, confident, a little impatient. You walk into a room ready to do something. Often a lean build and a decisive walk.' } },
+  tau: { compat: ['vir', 'cap', 'can', 'pis'],
+    vi: { strengths: ['bền bỉ', 'đáng tin', 'biết tận hưởng'], challenges: ['bướng', 'ngại thay đổi', 'giữ của'],
+      moon: 'Mặt Trăng Kim Ngưu: bạn cần cảm giác chắc chắn để thấy yên. Ăn ngon, ngủ đủ, tiền có sẵn, người quen bên cạnh. Bạn ít khi khóc, nhưng khi tổn thương thì rất lâu lành.',
+      rising: 'Mọc Kim Ngưu: bạn trông điềm tĩnh, ấm, dễ chịu, không vội. Giọng nói thường trầm và dễ nghe. Người ta tin bạn ngay từ ấn tượng đầu.' },
+    en: { strengths: ['steady', 'reliable', 'enjoys life'], challenges: ['stubborn', 'resists change', 'possessive'],
+      moon: 'Moon in Taurus: you need solid ground to feel calm. Good food, enough sleep, money in the account, familiar people. You rarely cry, but a hurt takes a long time to heal.',
+      rising: 'Taurus rising: you come across calm, warm, easy, unhurried. Often a low, pleasant voice. People trust you at first sight.' } },
+  gem: { compat: ['lib', 'aqu', 'ari', 'leo'],
+    vi: { strengths: ['học nhanh', 'nói chuyện hay', 'thích nghi'], challenges: ['hay đổi ý', 'nông', 'lo lắng vặt'],
+      moon: 'Mặt Trăng Song Tử: bạn xử lý cảm xúc bằng cách nói ra hoặc nghĩ về nó. Bạn cần được trò chuyện và được thay đổi không khí. Buồn mà ngồi im là tệ nhất với bạn.',
+      rising: 'Mọc Song Tử: bạn trông trẻ, nhanh nhẹn, tò mò, hay cười. Tay và mắt chuyển động nhiều. Người ta thấy bạn dễ bắt chuyện.' },
+    en: { strengths: ['learns fast', 'good talker', 'adaptable'], challenges: ['changes mind', 'skims the surface', 'nervous'],
+      moon: 'Moon in Gemini: you process feelings by talking or thinking them through. You need conversation and a change of air. Sitting still while sad is the worst thing for you.',
+      rising: 'Gemini rising: you look young, quick, curious, often smiling. Hands and eyes move a lot. People find you easy to start talking to.' } },
+  can: { compat: ['sco', 'pis', 'tau', 'vir'],
+    vi: { strengths: ['quan tâm', 'trực giác', 'trung thành'], challenges: ['hay giận dỗi', 'sống với quá khứ', 'khó nói thẳng'],
+      moon: 'Mặt Trăng Cự Giải: Mặt Trăng ở nhà của nó. Cảm xúc của bạn rất mạnh và đổi theo từng ngày. Bạn cần một nơi an toàn để về, và cần được người thân cần đến.',
+      rising: 'Mọc Cự Giải: bạn trông mềm, dịu, hơi kín, khuôn mặt tròn và dễ biểu cảm. Người ta thấy an tâm khi ở gần bạn, và hay kể chuyện cho bạn nghe.' },
+    en: { strengths: ['caring', 'intuitive', 'loyal'], challenges: ['sulks', 'lives in the past', 'indirect'],
+      moon: 'Moon in Cancer: the Moon is at home here. Your feelings are strong and shift day by day. You need a safe place to return to, and to be needed by the people you love.',
+      rising: 'Cancer rising: you look soft, gentle, a little guarded, often a round and expressive face. People feel safe near you and tell you their stories.' } },
+  leo: { compat: ['ari', 'sag', 'gem', 'lib'],
+    vi: { strengths: ['ấm áp', 'rộng rãi', 'tự tin'], challenges: ['cần được khen', 'kiêu', 'kịch tính'],
+      moon: 'Mặt Trăng Sư Tử: bạn cần được nhìn thấy và được trân trọng để thấy ổn. Bạn yêu bằng cả trái tim và bị tổn thương khi bị lơ. Vui thì cả nhà vui theo.',
+      rising: 'Mọc Sư Tử: bạn bước vào là người ta để ý. Tóc hoặc phong thái nổi bật, nụ cười rộng. Bạn trông tự tin hơn bạn thật sự cảm thấy.' },
+    en: { strengths: ['warm', 'generous', 'confident'], challenges: ['needs praise', 'proud', 'dramatic'],
+      moon: 'Moon in Leo: you need to be seen and appreciated to feel right. You love wholeheartedly and hurt when ignored. When you are happy the whole house is.',
+      rising: 'Leo rising: people notice when you walk in. Striking hair or bearing, a wide smile. You look more confident than you may feel.' } },
+  vir: { compat: ['tau', 'cap', 'can', 'sco'],
+    vi: { strengths: ['tỉ mỉ', 'giúp ích', 'thực tế'], challenges: ['lo lắng', 'khó tính', 'tự trách'],
+      moon: 'Mặt Trăng Xử Nữ: bạn thấy yên khi mọi thứ ngăn nắp và hữu ích. Lo lắng là cách bạn quan tâm. Bạn cần được làm việc có ích và cần một thói quen ổn định.',
+      rising: 'Mọc Xử Nữ: bạn trông gọn gàng, kín đáo, thông minh, hơi dè dặt. Người ta thấy bạn đáng tin và hay hỏi ý kiến bạn.' },
+    en: { strengths: ['meticulous', 'helpful', 'practical'], challenges: ['worries', 'critical', 'hard on self'],
+      moon: 'Moon in Virgo: you feel calm when things are in order and useful. Worry is how you care. You need useful work and a steady routine.',
+      rising: 'Virgo rising: you look neat, reserved, intelligent, a little cautious. People find you reliable and ask your opinion.' } },
+  lib: { compat: ['gem', 'aqu', 'leo', 'sag'],
+    vi: { strengths: ['công bằng', 'duyên dáng', 'biết lắng nghe'], challenges: ['do dự', 'né xung đột', 'lệ thuộc ý người khác'],
+      moon: 'Mặt Trăng Thiên Bình: bạn cần hoà thuận để thấy yên. Cãi nhau làm bạn mất ngủ. Bạn thấy rõ mình hơn khi có người bên cạnh, và cần cái đẹp xung quanh.',
+      rising: 'Mọc Thiên Bình: bạn trông dễ mến, lịch sự, cân đối, ăn mặc có gu. Người ta thấy bạn dễ gần và hay được chọn làm người hoà giải.' },
+    en: { strengths: ['fair', 'charming', 'listens'], challenges: ['indecisive', 'avoids conflict', 'leans on others'],
+      moon: 'Moon in Libra: you need harmony to feel calm. Arguments cost you sleep. You see yourself more clearly with someone beside you, and you need beauty around you.',
+      rising: 'Libra rising: you look likeable, polite, well-proportioned, well dressed. People find you approachable and pick you to make peace.' } },
+  sco: { compat: ['can', 'pis', 'vir', 'cap'],
+    vi: { strengths: ['sâu sắc', 'trung thành', 'bền gan'], challenges: ['ghen', 'giữ bí mật', 'khó tha thứ'],
+      moon: 'Mặt Trăng Bọ Cạp: cảm xúc của bạn mạnh và kín. Bạn cần sự thật và sự trung thành tuyệt đối để thấy an toàn. Bạn nhớ rất lâu và tha thứ rất chậm.',
+      rising: 'Mọc Bọ Cạp: ánh mắt của bạn là thứ người ta nhớ. Bạn trông bí ẩn, mạnh, hơi khó đoán. Người ta hoặc rất tin bạn hoặc hơi e dè.' },
+    en: { strengths: ['deep', 'loyal', 'resilient'], challenges: ['jealous', 'secretive', 'slow to forgive'],
+      moon: 'Moon in Scorpio: your feelings are intense and private. You need truth and total loyalty to feel safe. You remember for a long time and forgive slowly.',
+      rising: 'Scorpio rising: your eyes are what people remember. You look mysterious, strong, hard to read. People either trust you completely or keep a little distance.' } },
+  sag: { compat: ['ari', 'leo', 'lib', 'aqu'],
+    vi: { strengths: ['lạc quan', 'thật thà', 'ham học'], challenges: ['thiếu tế nhị', 'hứa nhiều', 'sợ ràng buộc'],
+      moon: 'Mặt Trăng Nhân Mã: bạn cần tự do và cần niềm tin rằng ngày mai tốt hơn. Buồn thì đi đâu đó, học gì đó. Bị bó buộc là điều làm bạn khổ nhất.',
+      rising: 'Mọc Nhân Mã: bạn trông cởi mở, vui, thẳng, hay cười to. Dáng cao hoặc bước đi rộng. Người ta thấy bạn dễ kết bạn.' },
+    en: { strengths: ['optimistic', 'honest', 'loves learning'], challenges: ['tactless', 'over-promises', 'fears ties'],
+      moon: 'Moon in Sagittarius: you need freedom and faith that tomorrow will be better. When sad you travel or learn something. Being tied down hurts you most.',
+      rising: 'Sagittarius rising: you look open, cheerful, direct, a loud laugh. Often tall or with a wide stride. People find you easy to befriend.' } },
+  cap: { compat: ['tau', 'vir', 'sco', 'pis'],
+    vi: { strengths: ['kỷ luật', 'trách nhiệm', 'kiên trì'], challenges: ['lạnh', 'nghiêm khắc', 'khó nhờ vả'],
+      moon: 'Mặt Trăng Ma Kết: bạn giữ cảm xúc rất kỹ và thấy yên khi mọi việc trong tầm kiểm soát. Bạn cần được tôn trọng và cần thấy mình có ích. Học cách nghỉ là bài học của bạn.',
+      rising: 'Mọc Ma Kết: bạn trông nghiêm túc, chững chạc, có phần già dặn khi còn trẻ và trẻ ra khi có tuổi. Người ta thấy bạn đáng tin và có thẩm quyền.' },
+    en: { strengths: ['disciplined', 'responsible', 'persistent'], challenges: ['cold', 'stern', 'hates asking for help'],
+      moon: 'Moon in Capricorn: you keep feelings well guarded and feel calm when things are under control. You need respect and to feel useful. Learning to rest is your lesson.',
+      rising: 'Capricorn rising: you look serious, composed, older than your years when young and younger when older. People find you trustworthy and in charge.' } },
+  aqu: { compat: ['gem', 'lib', 'ari', 'sag'],
+    vi: { strengths: ['độc lập', 'sáng tạo', 'công tâm'], challenges: ['xa cách', 'cứng đầu', 'khó nói cảm xúc'],
+      moon: 'Mặt Trăng Bảo Bình: bạn xử lý cảm xúc bằng lý trí và khoảng cách. Bạn cần không gian riêng và bạn bè hơn là gần gũi quá mức. Người ta hay tưởng bạn lạnh; thật ra bạn chỉ cần thời gian.',
+      rising: 'Mọc Bảo Bình: bạn trông khác biệt, thân thiện nhưng hơi xa, có gu riêng. Người ta thấy bạn thú vị và khó đoán.' },
+    en: { strengths: ['independent', 'inventive', 'fair-minded'], challenges: ['aloof', 'stubborn', 'struggles to voice feelings'],
+      moon: 'Moon in Aquarius: you handle feelings with reason and distance. You need your own space and friends more than closeness. People think you are cold; you just need time.',
+      rising: 'Aquarius rising: you look different, friendly but a little distant, with a style of your own. People find you interesting and hard to predict.' } },
+  pis: { compat: ['can', 'sco', 'tau', 'cap'],
+    vi: { strengths: ['thấu cảm', 'sáng tạo', 'bao dung'], challenges: ['trốn tránh', 'mơ hồ', 'dễ bị lợi dụng'],
+      moon: 'Mặt Trăng Song Ngư: bạn cảm được cảm xúc của người khác như của mình. Bạn cần thời gian một mình để lọc lại, và cần nghệ thuật, nước, giấc ngủ. Ranh giới là bài học của bạn.',
+      rising: 'Mọc Song Ngư: bạn trông mơ màng, dịu, đôi mắt to hoặc ướt, dễ thay đổi theo người đối diện. Người ta thấy bạn dễ thương và hay muốn bảo vệ bạn.' },
+    en: { strengths: ['empathetic', 'creative', 'forgiving'], challenges: ['escapes', 'vague', 'easily used'],
+      moon: 'Moon in Pisces: you feel other people\'s feelings as your own. You need time alone to filter them out, plus art, water and sleep. Boundaries are your lesson.',
+      rising: 'Pisces rising: you look dreamy, gentle, big or liquid eyes, and you shift with whoever is in front of you. People find you lovable and want to protect you.' } }
+};
+/* Element pairs: same element flows; fire-air and earth-water support each other; the rest takes work. */
+function signChemistry(a, b) {
+  const ea = ZSIGN[a].el, eb = ZSIGN[b].el;
+  if (ea === eb) return 'same';
+  if ((ea === 'fire' && eb === 'air') || (ea === 'air' && eb === 'fire') || (ea === 'earth' && eb === 'water') || (ea === 'water' && eb === 'earth')) return 'support';
+  return 'work';
+}
+const CHEM_TEXT = {
+  same: { vi: 'cùng nguyên tố, dễ hiểu nhau nhưng cũng dễ giống nhau cả tật xấu', en: 'same element: easy to understand each other, and easy to share the same faults' },
+  support: { vi: 'hai nguyên tố nuôi nhau, một bên cho năng lượng, một bên cho nền', en: 'two elements that feed each other, one bringing energy, the other ground' },
+  work: { vi: 'hai nguyên tố khác nhịp, hợp được nhưng phải cố ý học cách của nhau', en: 'two elements with different rhythms; it works when both learn the other\'s way on purpose' }
+};
+
+/* ============================ numerology ============================
+   Pythagorean system: life path (birth date), expression / destiny (full
+   name), soul urge (vowels), personality (consonants), birthday number,
+   personal year. Vietnamese names are read without tone marks (Đ = D), which
+   is how Vietnamese numerology readers do it. */
+const PYTH = { a: 1, j: 1, s: 1, b: 2, k: 2, t: 2, c: 3, l: 3, u: 3, d: 4, m: 4, v: 4, e: 5, n: 5, w: 5, f: 6, o: 6, x: 6, g: 7, p: 7, y: 7, h: 8, q: 8, z: 8, i: 9, r: 9 };
+const VOWELS = 'aeiou';
+function plainName(name) { return String(name || '').normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/[đĐ]/g, 'd').toLowerCase().replace(/[^a-z]/g, ''); }
+function reduceNum(n) { while (n > 9 && n !== 11 && n !== 22 && n !== 33) n = String(n).split('').reduce((a, c) => a + Number(c), 0); return n; }
+function sumLetters(name, filter) { let s = 0; for (const ch of plainName(name)) { if (!filter || filter(ch)) s += PYTH[ch] || 0; } return s; }
+function numerologyOf(name, birthday) {
+  const b = /^(\d{4})-(\d{2})-(\d{2})$/.exec(birthday || '');
+  const out = {};
+  if (b) {
+    const y = Number(b[1]), m = Number(b[2]), d = Number(b[3]);
+    out.lifePath = lifePath(y, m, d);
+    out.birthday = reduceNum(d);
+    const now = new Date();
+    out.personalYear = reduceNum(reduceNum(m) + reduceNum(d) + reduceNum(now.getFullYear()));
+    if (out.personalYear > 9) out.personalYear = reduceNum(String(out.personalYear).split('').reduce((a, c) => a + Number(c), 0));
+  }
+  if (plainName(name)) {
+    out.expression = reduceNum(sumLetters(name));
+    out.soul = reduceNum(sumLetters(name, (c) => VOWELS.indexOf(c) > -1));
+    out.personality = reduceNum(sumLetters(name, (c) => VOWELS.indexOf(c) < 0));
+  }
+  return out;
+}
+const NUM = {
+  1: { vi: { expr: 'Sinh ra để dẫn đầu và tự làm. Bạn giỏi khởi xướng, ghét bị sai bảo.', soul: 'Trong lòng bạn muốn được độc lập và được công nhận là người đi đầu.', pers: 'Người ta thấy bạn tự tin, quyết đoán, hơi cứng.' },
+       en: { expr: 'Made to lead and do things yourself. Good at starting; dislikes being told what to do.', soul: 'Deep down you want independence and to be recognised as first.', pers: 'People see you as confident, decisive, a little hard.' } },
+  2: { vi: { expr: 'Sinh ra để kết nối và làm việc cùng người khác. Nhạy, khéo, giỏi hoà giải.', soul: 'Trong lòng bạn muốn được yêu thương và có ai đó bên cạnh.', pers: 'Người ta thấy bạn dịu dàng, dễ gần, đáng tin.' },
+       en: { expr: 'Made to connect and work with others. Sensitive, tactful, a peacemaker.', soul: 'Deep down you want love and someone beside you.', pers: 'People see you as gentle, approachable, trustworthy.' } },
+  3: { vi: { expr: 'Sinh ra để biểu đạt: nói, viết, diễn, làm người khác vui.', soul: 'Trong lòng bạn muốn được sáng tạo và được nghe.', pers: 'Người ta thấy bạn vui, có duyên, hơi tản mạn.' },
+       en: { expr: 'Made to express: speak, write, perform, make people happy.', soul: 'Deep down you want to create and to be heard.', pers: 'People see you as fun, charming, a bit scattered.' } },
+  4: { vi: { expr: 'Sinh ra để xây: hệ thống, gia đình, việc lâu dài. Chăm và đáng tin.', soul: 'Trong lòng bạn muốn sự ổn định và trật tự.', pers: 'Người ta thấy bạn thực tế, chắc chắn, đôi khi cứng nhắc.' },
+       en: { expr: 'Made to build: systems, family, lasting work. Hard-working and reliable.', soul: 'Deep down you want stability and order.', pers: 'People see you as practical, solid, sometimes rigid.' } },
+  5: { vi: { expr: 'Sinh ra để trải nghiệm: đi, đổi, thử. Thích tự do và nhiều mối quan hệ.', soul: 'Trong lòng bạn muốn tự do và điều mới.', pers: 'Người ta thấy bạn năng động, cuốn hút, khó đoán.' },
+       en: { expr: 'Made to experience: travel, change, try. Loves freedom and many connections.', soul: 'Deep down you want freedom and novelty.', pers: 'People see you as lively, magnetic, hard to pin down.' } },
+  6: { vi: { expr: 'Sinh ra để chăm sóc: gia đình, cộng đồng, cái đẹp. Có trách nhiệm.', soul: 'Trong lòng bạn muốn một mái nhà ấm và được cần đến.', pers: 'Người ta thấy bạn ấm áp, chu đáo, hơi hay lo cho người khác.' },
+       en: { expr: 'Made to care: family, community, beauty. Responsible.', soul: 'Deep down you want a warm home and to be needed.', pers: 'People see you as warm, attentive, a little over-caring.' } },
+  7: { vi: { expr: 'Sinh ra để tìm hiểu: nghiên cứu, tâm linh, một mình. Sâu và kín.', soul: 'Trong lòng bạn muốn hiểu sự thật và có thời gian riêng.', pers: 'Người ta thấy bạn bí ẩn, thông minh, hơi xa cách.' },
+       en: { expr: 'Made to seek: research, spirituality, solitude. Deep and private.', soul: 'Deep down you want the truth and time to yourself.', pers: 'People see you as mysterious, intelligent, a bit distant.' } },
+  8: { vi: { expr: 'Sinh ra để làm chủ: kinh doanh, quyền lực, tiền bạc. Tham vọng và giỏi tổ chức.', soul: 'Trong lòng bạn muốn thành công và được tôn trọng.', pers: 'Người ta thấy bạn mạnh, có uy, đôi khi áp đảo.' },
+       en: { expr: 'Made to master: business, power, money. Ambitious and organised.', soul: 'Deep down you want success and respect.', pers: 'People see you as strong, authoritative, sometimes overpowering.' } },
+  9: { vi: { expr: 'Sinh ra để cho đi: nghệ thuật, nhân ái, chuyện lớn hơn mình.', soul: 'Trong lòng bạn muốn giúp đời và buông được quá khứ.', pers: 'Người ta thấy bạn rộng lượng, lãng mạn, hơi lý tưởng.' },
+       en: { expr: 'Made to give: art, compassion, causes bigger than yourself.', soul: 'Deep down you want to help and to let the past go.', pers: 'People see you as generous, romantic, a little idealistic.' } },
+  11: { vi: { expr: 'Số bậc thầy: truyền cảm hứng, trực giác mạnh, nhiều căng thẳng bên trong.', soul: 'Trong lòng bạn muốn thắp sáng điều gì đó cho người khác.', pers: 'Người ta thấy bạn nhạy, khác thường, có sức hút lạ.' },
+        en: { expr: 'Master number: inspiring, strong intuition, a lot of inner tension.', soul: 'Deep down you want to light something up for others.', pers: 'People see you as sensitive, unusual, oddly magnetic.' } },
+  22: { vi: { expr: 'Số bậc thầy: người xây điều lớn, biến ý tưởng thành công trình.', soul: 'Trong lòng bạn muốn để lại thứ gì bền hơn mình.', pers: 'Người ta thấy bạn vững, có tầm, đáng nể.' },
+        en: { expr: 'Master number: the builder of big things, turning vision into structure.', soul: 'Deep down you want to leave something that outlasts you.', pers: 'People see you as solid, far-sighted, impressive.' } },
+  33: { vi: { expr: 'Số bậc thầy: dạy dỗ, chữa lành, yêu thương không điều kiện.', soul: 'Trong lòng bạn muốn nâng đỡ mọi người, đôi khi quên mình.', pers: 'Người ta thấy bạn ấm áp lạ thường và rất được tin.' },
+        en: { expr: 'Master number: teaching, healing, unconditional love.', soul: 'Deep down you want to lift everyone, sometimes forgetting yourself.', pers: 'People see you as unusually warm and deeply trusted.' } }
+};
+const PYEAR = {
+  1: { vi: 'Năm bắt đầu. Gieo hạt, mở việc mới, tự đứng lên.', en: 'A year of beginnings. Plant seeds, start things, stand on your own.' },
+  2: { vi: 'Năm chờ và hợp tác. Chậm lại, xây mối quan hệ, kiên nhẫn.', en: 'A year of waiting and partnership. Slow down, build relationships, be patient.' },
+  3: { vi: 'Năm nở hoa. Sáng tạo, giao tiếp, vui chơi, ra mắt.', en: 'A year of blossoming. Create, communicate, play, show your work.' },
+  4: { vi: 'Năm làm việc. Xây nền, kỷ luật, sức khỏe, giấy tờ.', en: 'A year of work. Foundations, discipline, health, paperwork.' },
+  5: { vi: 'Năm thay đổi. Đi lại, đổi việc, tự do, bất ngờ.', en: 'A year of change. Travel, job moves, freedom, surprises.' },
+  6: { vi: 'Năm gia đình. Trách nhiệm, tình yêu, nhà cửa, chăm sóc.', en: 'A year of home. Responsibility, love, house, care.' },
+  7: { vi: 'Năm nhìn vào trong. Học, nghỉ, tâm linh, ít ồn ào.', en: 'A year of looking inward. Study, rest, spirit, less noise.' },
+  8: { vi: 'Năm gặt. Tiền bạc, quyền hạn, kết quả của những năm trước.', en: 'A year of harvest. Money, authority, the results of earlier years.' },
+  9: { vi: 'Năm kết thúc. Dọn dẹp, buông, tha thứ, chuẩn bị vòng mới.', en: 'A year of endings. Clear out, let go, forgive, prepare the next cycle.' }
+};
+
 /* ============================ Vietnamese lunar calendar ============================
    Hồ Ngọc Đức's algorithm (the one behind the common "lịch vạn niên" sites),
    computed for UTC+7 so Tết and leap months fall on the Vietnamese dates.
@@ -8900,6 +9101,180 @@ const BE = {
   }
 };
 
+/* ============================ Nabu AI ============================
+   A question box that knows what the visitor is looking at: the card they
+   drew, the lesson they are reading, their sign, their numbers. Two engines:
+   - online: CONFIG.aiEndpoint (the Cloudflare Worker in worker/) calls Claude
+     with the same context and the visitor's question;
+   - built-in: when no endpoint is set, answers are assembled here from the
+     app's own knowledge base, so the feature works offline and costs nothing. */
+const AI = { history: {}, busy: false };
+const fold = (s) => String(s || '').normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/đ/g, 'd').replace(/Đ/g, 'D').toLowerCase();
+const CATS = {
+  love: ['yeu', 'tinh cam', 'nguoi ay', 'crush', 'nguoi cu', 'chia tay', 'hen ho', 'ket hon', 'cuoi', 'ban trai', 'ban gai', 'chong', 'vo', 'love', 'relationship', 'partner', 'boyfriend', 'girlfriend', 'ex ', 'marriage', 'date'],
+  work: ['cong viec', 'viec lam', 'sep', 'nghe', 'su nghiep', 'thang chuc', 'dong nghiep', 'kinh doanh', 'du an', 'work', 'job', 'career', 'boss', 'promotion', 'business', 'colleague'],
+  study: ['hoc', 'thi', 'truong', 'diem', 'bai vo', 'ky thi', 'study', 'exam', 'school', 'university', 'grade', 'test'],
+  money: ['tien', 'luong', 'dau tu', 'no', 'tai chinh', 'mua nha', 'money', 'salary', 'invest', 'debt', 'finance', 'buy'],
+  timing: ['khi nao', 'bao gio', 'bao lau', 'luc nao', 'when', 'how long', 'how soon'],
+  yesno: ['co nen', 'co duoc', ' khong?', 'co ... khong', 'should i', 'will i', 'will he', 'will she', 'is he', 'is she', 'do they', 'does he', 'does she', 'can i']
+};
+function detectCat(q) {
+  const f = ' ' + fold(q) + ' ';
+  const hit = (list) => list.some((k) => f.indexOf(k) > -1);
+  const cat = ['love', 'work', 'study', 'money'].filter((c) => hit(CATS[c]))[0] || null;
+  return { cat: cat, timing: hit(CATS.timing), yesno: hit(CATS.yesno) || /\bco\b.*\bkhong\b/.test(f) };
+}
+function cardsMentioned(q) {
+  const f = fold(q), out = [];
+  DECK.vi.forEach((c, i) => { const en = DECK.en[i]; if (f.indexOf(fold(c.name)) > -1 || f.indexOf(fold(en.name)) > -1) out.push(c.id); });
+  return out.slice(0, 3);
+}
+function signMentioned(q) { const f = fold(q); return ZKEYS.filter((k) => f.indexOf(fold(ZSIGN[k].vi)) > -1 || f.indexOf(fold(ZSIGN[k].en)) > -1); }
+const SUIT_TIMING = {
+  vi: { wands: 'Gậy đi nhanh: vài ngày đến vài tuần.', cups: 'Cốc đi theo cảm xúc: vài tuần, đôi khi một mùa.', swords: 'Kiếm đi rất nhanh, thường tính bằng ngày, nhưng hay đến bất ngờ.', pentacles: 'Tiền đi chậm: tính bằng tháng, có khi cả năm.', major: 'Ẩn Chính không tính theo lịch: chuyện xảy ra khi bài học đã đủ, không sớm hơn.' },
+  en: { wands: 'Wands move fast: days to a few weeks.', cups: 'Cups move with feeling: weeks, sometimes a season.', swords: 'Swords move very fast, usually days, and often arrive unexpectedly.', pentacles: 'Pentacles are slow: months, sometimes a year.', major: 'A Major is not on the calendar: it happens when the lesson is complete, not before.' }
+};
+const YES = { 'major-0': 1, 'major-1': 1, 'major-3': 1, 'major-6': 1, 'major-7': 1, 'major-8': 1, 'major-10': 1, 'major-14': 1, 'major-17': 1, 'major-19': 1, 'major-20': 1, 'major-21': 1, 'major-2': 0, 'major-9': 0, 'major-12': 0, 'major-13': -1, 'major-15': -1, 'major-16': -1, 'major-18': 0, 'major-4': 1, 'major-5': 1, 'major-11': 0 };
+function leanOf(id) {
+  if (id in YES) return YES[id];
+  const m = /^(\w+)-(c?)(\d+)$/.exec(id), suit = m[1], court = m[2] === 'c', n = Number(m[3]);
+  if (court) return suit === 'swords' ? 0 : 1;
+  if (suit === 'swords') return [1, 6].indexOf(n) > -1 ? 1 : ([2, 4, 7].indexOf(n) > -1 ? 0 : -1);
+  if (suit === 'cups') return [4, 5, 7, 8].indexOf(n) > -1 ? ([4, 7].indexOf(n) > -1 ? 0 : -1) : 1;
+  if (suit === 'wands') return [5, 7, 9, 10].indexOf(n) > -1 ? 0 : 1;
+  return [4, 5, 7].indexOf(n) > -1 ? (n === 5 ? -1 : 0) : 1;
+}
+
+/* ---- context text (shared by both engines) ---- */
+function contextText(ctx) {
+  const S = T();
+  if (ctx.type === 'card') {
+    const c = cardById(ctx.id), I = insightOf(ctx.id);
+    return [c.name + ' (' + cardById(ctx.id, lang === 'vi' ? 'en' : 'vi').name + ') · ' + c.meta, S.onTheCard + ': ' + c.scene, S.kwPos + ': ' + I.pos.join(', '), S.kwNeg + ': ' + I.neg.join(', '),
+      S.upright + ': ' + c.up + ' ' + I.now, S.reversed + ': ' + c.rev, S.focus.love + ': ' + I.love, S.focus.work + ': ' + I.work, S.focus.study + ': ' + I.study, S.focus.money + ': ' + I.money, 'Advice: ' + I.advice].join('\n');
+  }
+  if (ctx.type === 'lesson') {
+    const l = LESSONS[ctx.course].filter((x) => x.n === Number(ctx.n))[0], parts = [L(l.title)];
+    if (l.intro) parts.push(L(l.intro));
+    if (l.guide) { const g = GUIDES.filter((x) => x.id === l.guide)[0]; parts.push(L(g.intro)); g.sections.forEach((s) => parts.push(L(s.h) + ': ' + L(s.p))); }
+    (l.cards || []).forEach((id) => { const c = cardById(id), I = insightOf(id); parts.push(c.name + ': ' + I.pos.join(', ') + '. ' + c.up); });
+    (l.len || []).forEach((n) => { const d = lenCard(n); parts.push(n + '. ' + d.name + ' (' + S.lenTone[d.tone] + '): ' + d.core); });
+    return parts.join('\n');
+  }
+  if (ctx.type === 'sign') {
+    const z = ZSIGN[ctx.key], zp = ZODIAC[ctx.key][lang], dp = ZDEEP[ctx.key][lang];
+    return [z[lang] + ' · ' + (lang === 'vi' ? z.dvi : z.den) + ' · ' + ZELEM[z.el][lang] + ' · ' + ZMODE[z.mod][lang] + ' · ' + S.ruler + ' ' + ZPLANET[ZRULER[ctx.key]][lang],
+      S.signAbout + ': ' + zp.about, S.signLove + ': ' + zp.love, S.signWork + ': ' + zp.work, S.signTip + ': ' + zp.tip, S.strengths + ': ' + dp.strengths.join(', '), S.challenges + ': ' + dp.challenges.join(', '), dp.moon, dp.rising].join('\n');
+  }
+  if (ctx.type === 'numbers') {
+    const n = numerologyOf(PROFILE.name, PROFILE.birthday), parts = [];
+    if (n.lifePath) parts.push(S.lifePath + ' ' + n.lifePath + ': ' + LIFEPATH[n.lifePath][lang]);
+    if (n.expression) parts.push(S.numExpr + ' ' + n.expression + ': ' + NUM[n.expression][lang].expr, S.numSoul + ' ' + n.soul + ': ' + NUM[n.soul][lang].soul, S.numPers + ' ' + n.personality + ': ' + NUM[n.personality][lang].pers);
+    if (n.personalYear) parts.push(S.numYear + ' ' + n.personalYear + ': ' + PYEAR[n.personalYear][lang]);
+    return parts.join('\n');
+  }
+  return '';
+}
+
+/* ---- built-in engine ---- */
+function localAnswer(q, ctx) {
+  const S = T(), d = detectCat(q), out = [];
+  const mentioned = cardsMentioned(q).filter((id) => !(ctx.type === 'card' && id === ctx.id));
+  const signs = signMentioned(q);
+  if (ctx.type === 'card') {
+    const c = cardById(ctx.id), I = insightOf(ctx.id);
+    const cat = d.cat || 'general';
+    if (cat === 'general') out.push(S.aiCardGeneral(c.name) + ' ' + I.now, I.advice);
+    else out.push(S.aiCardFocus(c.name, S.focus[cat]) + ' ' + I[cat], S.aiCardWhy + ' ' + I.pos.slice(0, 3).join(', ') + '. ' + S.aiCardShadow + ' ' + I.neg.slice(0, 2).join(', ') + '.');
+    if (d.yesno) { const lean = leanOf(ctx.id); out.push(lean > 0 ? S.aiYes(c.name) : lean < 0 ? S.aiNo(c.name) : S.aiMaybe(c.name)); }
+    if (d.timing) out.push(S.aiTiming + ' ' + SUIT_TIMING[lang][c.suit]);
+  } else if (ctx.type === 'lesson') {
+    const hits = searchCourse(q, ctx.course);
+    if (hits.length) out.push(S.aiFound); hits.forEach((h) => out.push('• ' + h));
+    if (!hits.length && !mentioned.length) out.push(S.aiLessonNone);
+  } else if (ctx.type === 'sign') {
+    const zp = ZODIAC[ctx.key][lang], dp = ZDEEP[ctx.key][lang], z = ZSIGN[ctx.key];
+    const other = signs.filter((k) => k !== ctx.key)[0];
+    if (other) { const ch = signChemistry(ctx.key, other); out.push(S.aiChem(z[lang], ZSIGN[other][lang]) + ' ' + CHEM_TEXT[ch][lang] + '. ' + (ZDEEP[ctx.key].compat.indexOf(other) > -1 ? S.aiCompatYes : S.aiCompatWork)); }
+    else if (d.cat === 'love') out.push(zp.love);
+    else if (d.cat === 'work' || d.cat === 'study' || d.cat === 'money') out.push(zp.work);
+    else if (/mat trang|moon/.test(fold(q))) out.push(dp.moon);
+    else if (/moc|rising|ascendant/.test(fold(q))) out.push(dp.rising);
+    else out.push(zp.about, S.strengths + ': ' + dp.strengths.join(', ') + '. ' + S.challenges + ': ' + dp.challenges.join(', ') + '.', zp.tip);
+  } else if (ctx.type === 'numbers') {
+    const n = numerologyOf(PROFILE.name, PROFILE.birthday), f = fold(q);
+    if (!n.lifePath) out.push(S.enterBirthday);
+    else if (/nam nay|personal year|year/.test(f)) out.push(S.numYear + ' ' + n.personalYear + ': ' + PYEAR[n.personalYear][lang]);
+    else if (n.expression && /ten|name|van menh|expression|destiny/.test(f)) out.push(S.numExpr + ' ' + n.expression + ': ' + NUM[n.expression][lang].expr);
+    else if (n.soul && /linh hon|soul|mong muon|desire/.test(f)) out.push(S.numSoul + ' ' + n.soul + ': ' + NUM[n.soul][lang].soul);
+    else if (n.personality && /nhan cach|personality|nguoi khac thay/.test(f)) out.push(S.numPers + ' ' + n.personality + ': ' + NUM[n.personality][lang].pers);
+    else if (d.cat === 'love') out.push(S.lifePathOf(n.lifePath) + ': ' + LIFEPATH[n.lifePath][lang], n.soul ? S.numSoul + ' ' + n.soul + ': ' + NUM[n.soul][lang].soul : '');
+    else if (d.cat) out.push(S.lifePathOf(n.lifePath) + ': ' + LIFEPATH[n.lifePath][lang], n.expression ? S.numExpr + ' ' + n.expression + ': ' + NUM[n.expression][lang].expr : '');
+    else out.push(S.lifePathOf(n.lifePath) + ': ' + LIFEPATH[n.lifePath][lang], n.personalYear ? S.numYear + ' ' + n.personalYear + ': ' + PYEAR[n.personalYear][lang] : '');
+  } else {
+    if (!mentioned.length && !signs.length) out.push(S.aiGeneralHelp);
+  }
+  mentioned.forEach((id) => { const c = cardById(id), I = insightOf(id); out.push(S.aiAbout(c.name) + ' ' + I.pos.slice(0, 3).join(', ') + '. ' + (d.cat && d.cat !== 'general' ? I[d.cat] : I.now)); });
+  if (ctx.type !== 'sign') signs.slice(0, 2).forEach((k) => out.push(S.aiAbout(ZSIGN[k][lang]) + ' ' + (d.cat === 'love' ? ZODIAC[k][lang].love : d.cat === 'work' ? ZODIAC[k][lang].work : ZODIAC[k][lang].about)));
+  return out.filter(Boolean).join('\n\n');
+}
+function searchCourse(q, course) {
+  const words = fold(q).split(/[^a-z0-9]+/).filter((w) => w.length >= 3 && ['ban', 'nao', 'gi', 'la', 'the', 'what', 'does', 'mean', 'nghia', 'sao', 'thi', 'toi', 'minh'].indexOf(w) < 0);
+  if (!words.length) return [];
+  const docs = [];
+  GUIDES.filter((g) => g.cat === course).forEach((g) => g.sections.forEach((s) => docs.push([L(g.title) + ' › ' + L(s.h), L(s.p)])));
+  if (course === 'tarot') DECK[lang].forEach((c) => { const I = insightOf(c.id); docs.push([c.name, I.pos.join(', ') + '. ' + c.up]); });
+  else for (let i = 1; i <= 36; i++) { const d = lenCard(i); docs.push([i + '. ' + d.name, (d.kw.pos || []).join(', ') + '. ' + d.core]); }
+  return docs.map((doc) => { const f = fold(doc[0] + ' ' + doc[1]); let sc = 0; words.forEach((w) => { if (f.indexOf(w) > -1) sc += (fold(doc[0]).indexOf(w) > -1 ? 3 : 1); }); return [sc, doc]; })
+    .filter((x) => x[0] > 0).sort((a, b) => b[0] - a[0]).slice(0, 2).map((x) => x[1][0] + ': ' + x[1][1]);
+}
+
+/* ---- online engine ---- */
+async function remoteAnswer(q, ctx, history) {
+  const r = await fetch(CONFIG.aiEndpoint, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ lang: lang, question: q, context: contextText(ctx), kind: ctx.type, history: history.slice(-6), profile: { name: PROFILE.name || '', sign: mySign() > -1 ? ZSIGN[ZKEYS[mySign()]].en : '' } }) });
+  if (!r.ok) throw new Error('AI ' + r.status);
+  const j = await r.json();
+  if (!j.answer) throw new Error(j.error || 'AI');
+  return j.answer;
+}
+
+/* ---- panel ---- */
+function aiSuggestions(ctx) {
+  const S = T();
+  if (ctx.type === 'card') return S.aiSugCard;
+  if (ctx.type === 'lesson') return S.aiSugLesson;
+  if (ctx.type === 'sign') return S.aiSugSign;
+  if (ctx.type === 'numbers') return S.aiSugNumbers;
+  return S.aiSugGeneral;
+}
+function aiPanelHTML(ctx) {
+  const S = T(), key = JSON.stringify(ctx), hist = AI.history[key] || [];
+  return '<div class="ai" data-ai=\'' + esc(key) + '\'><div class="ai-h"><span class="ai-logo">✦</span><b>Nabu AI</b><span class="faint">' + esc(CONFIG.aiEndpoint ? S.aiOnline : S.aiBuiltin) + '</span></div>'
+    + '<p class="hint">' + esc(ctx.type === 'lesson' ? S.aiIntroLesson : S.aiIntro) + '</p>'
+    + '<div class="chips">' + aiSuggestions(ctx).map((s) => '<button class="chip" data-ai-sug>' + esc(s) + '</button>').join('') + '</div>'
+    + '<div class="chat ai-chat">' + hist.map((m) => '<div class="msg ' + (m.role === 'user' ? 'me' : 'them') + '">' + esc(m.text).replace(/\n/g, '<br>') + '</div>').join('') + '</div>'
+    + '<div class="chatbar"><textarea data-ai-q placeholder="' + esc(S.aiPlaceholder) + '"></textarea><button class="btn primary" data-ai-send>' + esc(S.aiAsk) + '</button></div>'
+    + '<p class="faint" style="margin-top:8px">' + esc(S.aiNote) + '</p></div>';
+}
+function bindAI(root) {
+  $$('.ai', root).forEach((panel) => {
+    const ctx = JSON.parse(panel.getAttribute('data-ai')), key = panel.getAttribute('data-ai'), ta = $('[data-ai-q]', panel), chat = $('.ai-chat', panel);
+    const push = (role, text) => { AI.history[key] = AI.history[key] || []; AI.history[key].push({ role: role, text: text }); chat.innerHTML += '<div class="msg ' + (role === 'user' ? 'me' : 'them') + '">' + esc(text).replace(/\n/g, '<br>') + '</div>'; chat.scrollTop = chat.scrollHeight; };
+    const ask = async (q) => {
+      q = (q || '').trim(); if (!q || AI.busy) return;
+      AI.busy = true; ta.value = ''; push('user', q);
+      const thinking = document.createElement('div'); thinking.className = 'msg them ai-wait'; thinking.textContent = '…'; chat.appendChild(thinking);
+      let a;
+      try { a = CONFIG.aiEndpoint ? await remoteAnswer(q, ctx, AI.history[key]) : localAnswer(q, ctx); }
+      catch (e) { a = localAnswer(q, ctx) + '\n\n(' + T().aiFallback + ')'; }
+      thinking.remove(); push('assistant', a); AI.busy = false;
+    };
+    $('[data-ai-send]', panel).addEventListener('click', () => ask(ta.value));
+    ta.addEventListener('keydown', (e) => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); ask(ta.value); } });
+    $$('[data-ai-sug]', panel).forEach((b) => b.addEventListener('click', () => ask(b.textContent)));
+  });
+}
+
 /* ============================ home ============================
    Today in several calendars, a greeting, quick links, what fits the
    visitor's sign and interests, then the feed (Nabu's posts plus anything
@@ -9133,7 +9508,9 @@ function renderReveal(animate) {
     + '<div class="ins" style="border-color:var(--gold)"><p class="muted" style="margin-bottom:12px">' + esc(S.quickNote) + '</p>'
     + '<div class="row"><a class="btn primary" href="#/book?card=' + id + '">' + esc(S.bookWithCard) + '</a><a class="btn" href="#/learn/card/' + id + '">' + esc(S.learnCard) + '</a>'
     + '<button class="btn" id="shareCard">' + esc(S.shareCard) + '</button></div></div>'
+    + aiPanelHTML({ type: 'card', id: id, focus: pick.focus })
     + '<button class="btn block" id="redraw" style="margin-top:6px">' + esc(S.redraw) + '</button>';
+  bindAI(r);
   $('#shareCard').addEventListener('click', () => shareOrCopy(S.shareText(c.name, kws), appURL()));
   $('#redraw').addEventListener('click', () => { newHand(); renderPick(); window.scrollTo({ top: 0, behavior: 'smooth' }); });
 }
@@ -9146,7 +9523,7 @@ ROUTES.pick = { nav: 'pick', render: renderPick };
    #/learn/card/<id>  #/learn/len/<n>  #/learn/spread/<id>  #/learn/guide/<id>
    #/learn/astro, #/learn/sign/<key>, #/learn/manifest, #/learn/fortune, #/learn/numbers  (free) */
 const CAT_ICONS = { tarot: PICK_ICON, lenormand: '🗝️', astro: '🔮', manifest: '🌙', fortune: '🔢' };
-const badgeHTML = (b) => '<span class="badge-src ' + b + '">' + esc(T().badges[b]) + '</span>';
+const badgeHTML = () => '';
 const backLink = (href, label) => '<p><a href="' + href + '">← ' + esc(label) + '</a></p>';
 const courseOf = (id) => COURSES.filter((c) => c.id === id)[0];
 
@@ -9184,7 +9561,7 @@ function demoHTML(courseId) {
   l1 += '<div class="visual">' + (courseId === 'tarot' ? journeyHTML() : lenIntroHTML()) + '</div>'
   const l2 = courseId === 'tarot' ? cardBodyHTML(d.card) : lenBodyHTML(d.card);
   return '<div class="demo-head"><span class="chip pink">' + esc(S.demoTag) + '</span><p class="muted">' + esc(S.demoIntro) + '</p></div>'
-    + lesson(1, S.lesson1, '<div class="guide">' + l1 + '</div>') + lesson(2, S.lesson2, l2);
+    + lesson(1, S.lesson1, '<div class="guide">' + l1 + '</div>' + aiPanelHTML({ type: 'lesson', course: courseId, n: 1 })) + lesson(2, S.lesson2, l2);
 }
 function gate(courseId, back) {
   if (ACCESS.has(courseId)) return false;
@@ -9224,7 +9601,7 @@ function renderCourse(courseId, tab) {
   if (!ACCESS.has(courseId)) {
     const S = T(), m = $('#main');
     m.innerHTML = backLink('#/learn', S.learnTitle) + '<h1 style="margin-bottom:8px">' + esc(S.cats[courseId]) + '</h1>' + demoHTML(courseId) + '<div id="unlockwrap" style="margin-top:18px">' + paywallHTML(courseId) + '</div>';
-    bindAccordions(m); bindPaywall(m); bindCardLinks(m);
+    bindAccordions(m); bindPaywall(m); bindCardLinks(m); bindAI(m);
     $$('[data-len]', m).forEach((b) => b.addEventListener('click', () => { location.hash = '#/learn/len/' + b.getAttribute('data-len'); }));
     return;
   }
@@ -9274,7 +9651,7 @@ function renderCard(id) {
   const S = T(), m = $('#main');
   if (!cardById(id)) { location.hash = '#/learn/tarot'; return; }
   m.innerHTML = backLink('#/learn/tarot', S.cats.tarot) + cardBodyHTML(id);
-  bindAccordions(m);
+  bindAccordions(m); bindAI(m);
 }
 function cardBodyHTML(id) {
   const S = T(), c = cardById(id);
@@ -9295,6 +9672,7 @@ function cardBodyHTML(id) {
     + (I ? '<div class="ins"><h3>' + esc(S.focus.love) + '</h3><p>' + esc(I.love) + '</p><h3>' + esc(S.focus.work) + '</h3><p>' + esc(I.work) + '</p><h3>' + esc(S.focus.study) + '</h3><p>' + esc(I.study) + '</p><h3>' + esc(S.focus.money) + '</h3><p>' + esc(I.money) + '</p></div>' : '')
     + (asks.length ? '<div class="ins"><h3>' + esc(S.questions) + '</h3>' + Object.keys(groups).map((g) => '<div class="acc"><button><span>' + esc(catName[g] || g) + ' (' + groups[g].length + ')</span></button><div class="in">'
       + groups[g].map((a) => '<div class="qa"><div class="q">' + esc(a[1]) + '</div><p class="a">' + esc(a[2]) + '</p></div>').join('') + '</div></div>').join('') + '</div>' : '')
+    + aiPanelHTML({ type: 'card', id: id, focus: 'general' })
     + '<div class="row"><a class="btn primary" href="#/pick">' + esc(S.nav.pick) + '</a><a class="btn" href="#/book?card=' + id + '">' + esc(S.ctaBook) + '</a></div></div>';
 }
 
@@ -9377,8 +9755,11 @@ function renderSign(key) {
     + '<div class="row" style="margin-bottom:12px"><span class="chip tag">' + esc(S.element) + ': ' + ZELEM[z.el].g + ' ' + esc(ZELEM[z.el][lang]) + '</span><span class="chip tag">' + esc(S.mode) + ': ' + esc(ZMODE[z.mod][lang]) + '</span><span class="chip tag">' + esc(S.ruler) + ': ' + ruler.g + ' ' + esc(ruler[lang]) + '</span></div>'
     + '<div class="kwl">' + zp.kw.map((k) => '<span>' + esc(k) + '</span>').join('') + '</div>'
     + '<div class="ins"><h3>' + esc(S.signAbout) + '</h3><p>' + esc(zp.about) + '</p><h3>' + esc(S.signLove) + '</h3><p>' + esc(zp.love) + '</p><h3>' + esc(S.signWork) + '</h3><p>' + esc(zp.work) + '</p><h3>' + esc(S.signTip) + '</h3><p>' + esc(zp.tip) + '</p></div>'
-    + '<div class="ins"><h3>' + esc(S.signCards) + '</h3><div class="mini">' + cards.map((id) => miniHTML(id, true)).join('') + '</div><p class="faint">' + cards.map((id) => cardById(id).name + ': ' + astroLine(id)).map(esc).join('<br>') + '</p></div></div>';
-  bindCardLinks(m);
+    + '<div class="ins"><h3>' + esc(S.strengths) + '</h3><div class="kwl">' + ZDEEP[key][lang].strengths.map((k) => '<span>' + esc(k) + '</span>').join('') + '</div><h3>' + esc(S.challenges) + '</h3><div class="kwl neg">' + ZDEEP[key][lang].challenges.map((k) => '<span>' + esc(k) + '</span>').join('') + '</div><h3>' + esc(S.compat) + '</h3><div class="chips">' + ZDEEP[key].compat.map((k) => '<a class="chip lav" href="#/learn/sign/' + k + '">' + ZSIGN[k].g + ' ' + esc(ZSIGN[k][lang]) + '</a>').join('') + '</div></div>'
+    + '<div class="ins"><h3>' + esc(S.moonSign) + '</h3><p>' + esc(ZDEEP[key][lang].moon) + '</p><h3>' + esc(S.risingSign) + '</h3><p>' + esc(ZDEEP[key][lang].rising) + '</p></div>'
+    + '<div class="ins"><h3>' + esc(S.signCards) + '</h3><div class="mini">' + cards.map((id) => miniHTML(id, true)).join('') + '</div><p class="faint">' + cards.map((id) => cardById(id).name + ': ' + astroLine(id)).map(esc).join('<br>') + '</p></div>'
+    + aiPanelHTML({ type: 'sign', key: key }) + '</div>';
+  bindCardLinks(m); bindAI(m);
 }
 
 /* ---- spreads (inside each course) ---- */
@@ -9416,7 +9797,7 @@ function renderSpread(id) {
 /* ---- guides ---- */
 function guideRow(g) {
   const locked = (g.cat === 'tarot' || g.cat === 'lenormand') && !ACCESS.has(g.cat);
-  return '<a class="acc" href="#/learn/guide/' + g.id + '" style="display:block;text-decoration:none;color:inherit"><button style="pointer-events:none"><span>' + (locked ? '🔒 ' : '') + esc(L(g.title)) + '<br>' + badgeHTML(g.badge) + '</span></button></a>';
+  return '<a class="acc" href="#/learn/guide/' + g.id + '" style="display:block;text-decoration:none;color:inherit"><button style="pointer-events:none"><span>' + (locked ? '🔒 ' : '') + esc(L(g.title)) + '</span></button></a>';
 }
 function renderGuideList(cat) {
   const S = T(), m = $('#main');
@@ -9428,7 +9809,7 @@ function renderGuide(id) {
   if (!g) { location.hash = '#/learn'; return; }
   const back = g.cat === 'tarot' || g.cat === 'lenormand' ? '#/learn/' + g.cat + '?tab=guides' : g.cat === 'astro' ? '#/learn/astro' : '#/learn/' + g.cat;
   if ((g.cat === 'tarot' || g.cat === 'lenormand') && g.id !== DEMO[g.cat].guide && gate(g.cat, back)) return;
-  m.innerHTML = backLink(back, S.cats[g.cat]) + '<div class="guide">' + badgeHTML(g.badge) + '<h1 style="margin:8px 0">' + esc(L(g.title)) + '</h1>' + guideBodyHTML(g) + '</div>';
+  m.innerHTML = backLink(back, S.cats[g.cat]) + '<div class="guide"><h1 style="margin:8px 0">' + esc(L(g.title)) + '</h1>' + guideBodyHTML(g) + '</div>';
 }
 function guideBodyHTML(g) {
   return '<p class="lead">' + esc(L(g.intro)) + '</p>' + g.sections.map((s) => '<h2>' + esc(L(s.h)) + '</h2><p>' + esc(L(s.p)) + '</p>').join('');
@@ -9438,12 +9819,18 @@ function guideBodyHTML(g) {
 function renderNumbers() {
   const S = T(), m = $('#main'), b = birthParts();
   if (!b) { m.innerHTML = backLink('#/learn/fortune', S.cats.fortune) + '<h1>' + esc(S.numerology) + '</h1><p class="muted">' + esc(S.enterBirthday) + '</p><a class="btn primary" href="#/me">' + esc(S.setupBtn) + '</a>'; return; }
-  const lp = lifePath(b.y, b.m, b.d), si = mySign(), key = ZKEYS[si];
+  const lp = lifePath(b.y, b.m, b.d), si = mySign(), key = ZKEYS[si], nm = numerologyOf(PROFILE.name, PROFILE.birthday);
+  const numRow = (label, n, text) => n ? '<div class="ins"><h3>' + esc(label) + ' · ' + n + '</h3><p>' + esc(text) + '</p></div>' : '';
   m.innerHTML = backLink('#/learn/fortune', S.cats.fortune) + '<h1 style="margin-bottom:12px">' + esc(S.numerology) + '</h1>'
     + '<div class="ins"><h3>' + esc(S.lifePathOf(lp)) + '</h3><p>' + esc(LIFEPATH[lp][lang]) + '</p><p class="faint">' + b.d + '/' + b.m + '/' + b.y + '</p></div>'
+    + numRow(S.numBirthday, nm.birthday, (NUM[nm.birthday] || NUM[1])[lang].expr) + numRow(S.numYear, nm.personalYear, (PYEAR[nm.personalYear] || PYEAR[1])[lang])
+    + '<div class="ins"><label class="f" for="nname">' + esc(S.numName) + '</label><input id="nname" value="' + esc(PROFILE.name || '') + '"><p class="hint">' + esc(S.numNameHint) + '</p><div id="nameout">' + (nm.expression ? numRow(S.numExpr, nm.expression, NUM[nm.expression][lang].expr) + numRow(S.numSoul, nm.soul, NUM[nm.soul][lang].soul) + numRow(S.numPers, nm.personality, NUM[nm.personality][lang].pers) : '') + '</div></div>'
+    + aiPanelHTML({ type: 'numbers' })
     + '<div class="ins"><h3>' + esc(S.yourSign) + '</h3><p>' + ZSIGN[key].g + ' ' + esc(S.zodiac[si]) + ' · ' + esc(ZODIAC[key][lang].kw.join(', ')) + '</p><a href="#/learn/sign/' + key + '">' + esc(S.readSign) + ' →</a></div>'
     + '<div class="ins"><h3>' + esc(S.animal) + '</h3><p>' + esc(animalOf(b.y)[lang]) + ' · ' + esc(canChi(b.y)) + '</p><p class="faint">' + esc(S.animalNote) + '</p></div>'
     + GUIDES.filter((g) => g.id === 'fort-numerology' || g.id === 'fort-animals').map(guideRow).join('');
+  bindAI(m);
+  $('#nname').addEventListener('input', (e) => { const x = numerologyOf(e.target.value, PROFILE.birthday); $('#nameout').innerHTML = x.expression ? numRow(S.numExpr, x.expression, NUM[x.expression][lang].expr) + numRow(S.numSoul, x.soul, NUM[x.soul][lang].soul) + numRow(S.numPers, x.personality, NUM[x.personality][lang].pers) : ''; });
 }
 ROUTES.learn = { nav: 'learn', render: renderLearn };
 
@@ -9563,9 +9950,10 @@ function renderLesson(courseId, n) {
   const prev = LESSONS[courseId].filter((x) => x.n === l.n - 1)[0], next = LESSONS[courseId].filter((x) => x.n === l.n + 1)[0];
   m.innerHTML = backLink('#/learn/' + courseId, S.cats[courseId]) + '<div class="eyebrow">' + esc(S.lessonN(l.n)) + ' / ' + LESSONS[courseId].length + '</div><h1 style="margin-bottom:10px">' + esc(L(l.title)) + '</h1>'
     + body + '<div class="visual">' + vis + '</div>'
+    + aiPanelHTML({ type: 'lesson', course: courseId, n: l.n })
     + '<button class="btn block' + (DONE.is(courseId, l.n) ? '' : ' primary') + '" id="ldone">' + (DONE.is(courseId, l.n) ? '✓ ' + esc(S.lessonDone) : esc(S.markDone)) + '</button>'
     + '<div class="row" style="margin-top:10px">' + (prev ? '<a class="btn" href="#/learn/lesson/' + courseId + '/' + prev.n + '">← ' + esc(S.lessonN(prev.n)) + '</a>' : '') + (next ? '<a class="btn" href="#/learn/lesson/' + courseId + '/' + next.n + '" style="margin-left:auto">' + esc(S.lessonN(next.n)) + ' →</a>' : '') + '</div>';
-  bindCardLinks(m);
+  bindCardLinks(m); bindAI(m);
   $$('[data-len]', m).forEach((b) => b.addEventListener('click', () => { location.hash = '#/learn/len/' + b.getAttribute('data-len'); }));
   $('#ldone').addEventListener('click', () => { DONE.toggle(courseId, l.n); renderLesson(courseId, n); });
 }
@@ -9775,7 +10163,6 @@ function bindProfileForm(root, after) {
 }
 function authHTML() {
   const S = T();
-  if (!BE.enabled) return '<div class="card"><h3 style="margin-bottom:6px">' + esc(S.signIn) + '</h3><p class="muted" style="font-size:14px">' + esc(S.accountsSoon) + '</p></div>';
   if (BE.user) return '';
   const prov = CONFIG.authProviders;
   return '<div class="card"><h3 style="margin-bottom:10px">' + esc(S.signIn) + '</h3><div class="providers">'
@@ -9784,19 +10171,20 @@ function authHTML() {
     + (prov.indexOf('email') > -1 ? '<button class="btn block" data-auth="email">' + esc(S.signInWith.email) + '</button>' : '')
     + '</div><div id="emailform" hidden style="margin-top:12px"><label class="f" for="aemail">' + esc(S.emailLabel) + '</label><input id="aemail" type="email" autocomplete="email"><label class="f" for="apw">' + esc(S.passwordLabel) + '</label><input id="apw" type="password" autocomplete="current-password">'
     + '<div class="row" style="margin-top:12px"><button class="btn primary" id="alogin">' + esc(S.signIn) + '</button><button class="btn" id="acreate">' + esc(S.createAccount) + '</button><button class="btn sm" id="aforgot">' + esc(S.forgot) + '</button></div></div>'
-    + '<p class="hint" id="astatus"></p></div>';
+    + '<p class="hint" id="astatus">' + (BE.enabled ? '' : esc(S.accountsSoon)) + '</p></div>';
 }
 function bindAuth(root) {
   const S = T();
   const status = (msg, cls) => { const s = $('#astatus', root); if (s) { s.textContent = msg; s.className = 'hint ' + (cls || ''); } };
   $$('[data-auth]', root).forEach((b) => b.addEventListener('click', async () => {
     const p = b.getAttribute('data-auth');
+    if (!BE.enabled) { status(S.accountsSoon, 'err'); toast(S.accountsOff); return; }
     if (p === 'email') { $('#emailform').hidden = !$('#emailform').hidden; return; }
     try { await BE.signIn(p); } catch (e) { status(S.authFail + ': ' + (e.message || e.code), 'err'); }
   }));
   const em = () => $('#aemail').value.trim(), pw = () => $('#apw').value;
   const el = $('#alogin', root);
-  if (el) {
+  if (el && BE.enabled) {
     el.addEventListener('click', async () => { try { await BE.signInEmail(em(), pw(), false); } catch (e) { status(S.authFail + ': ' + (e.message || e.code), 'err'); } });
     $('#acreate', root).addEventListener('click', async () => { try { await BE.signInEmail(em(), pw(), true); } catch (e) { status(S.authFail + ': ' + (e.message || e.code), 'err'); } });
     $('#aforgot', root).addEventListener('click', async () => { try { await BE.resetPassword(em()); status(S.resetSent, 'ok'); } catch (e) { status(e.message, 'err'); } });
@@ -9833,13 +10221,14 @@ function renderMe(args, params) {
     } else if (CONFIG.instagram) {
       h += '<div class="card"><h3 style="margin-bottom:4px">' + esc(S.messages) + '</h3><p class="muted" style="font-size:14px">' + esc(S.messagesSoon) + '</p><a class="btn block" href="https://ig.me/m/' + esc(CONFIG.instagram) + '" target="_blank" rel="noopener">' + esc(S.viaInstagram) + '</a></div>';
     }
+    h += aiPanelHTML({ type: 'general' });
     h += '<div class="card"><h3 style="margin-bottom:8px">' + esc(S.myCourses) + '</h3>' + COURSES.map((c) => { const a = ACCESS.get()[c.id]; return '<div class="course"><span>' + esc(L(c.name)) + '</span><span class="faint">' + (a ? (ACCESS.has(c.id) ? '✓ ' + esc(S.activeUntil(fmtDate(a))) : esc(S.expiredOn(fmtDate(a)))) : '🔒 ' + fmtPrice(c.price)) + '</span></div>'; }).join('')
       + '<label class="f" for="mcode">' + esc(S.enterCode) + '</label><div class="row"><input id="mcode" placeholder="NABU-T-…" autocapitalize="characters" style="flex:1"><button class="btn" id="munlock">' + esc(S.unlock) + '</button></div><p class="hint" id="mcstatus"></p></div>';
     h += '<div class="card"><h3 style="margin-bottom:8px">' + esc(S.themeTitle) + '</h3><div class="chips">' + ['auto', 'light', 'dark'].map((t) => '<button class="chip' + (themeChoice() === t ? ' on' : '') + '" data-theme-pick="' + t + '">' + esc(S.themes[t]) + '</button>').join('') + '</div><p class="hint">' + esc(S.themeHint) + '</p></div>';
     h += '<div class="card"><h3 style="margin-bottom:6px">' + esc(S.installTitle) + '</h3><p class="muted" style="font-size:14px">' + esc(S.install) + '</p></div>';
     h += '<div class="row">' + (BE.user ? '<button class="btn" id="signout">' + esc(S.signOut) + '</button>' : '') + '<a class="btn" href="#/report">🐞 ' + esc(S.reportLink) + '</a><button class="btn" id="retour">' + (lang === 'vi' ? 'Xem lại hướng dẫn' : 'Replay the tour') + '</button>' + (BE.isAdmin() ? '<a class="btn gold" href="#/admin">' + esc(S.adminTitle) + '</a>' : '') + '</div>';
     body.innerHTML = h;
-    bindAuth(body);
+    bindAuth(body); bindAI(body);
     bindProfileForm(body, () => { if (params.next === 'book') location.hash = '#/book'; });
     $('#munlock').addEventListener('click', () => { const r = parseCode($('#mcode').value); const st = $('#mcstatus'); if (!r) { st.textContent = S.badCode; st.className = 'hint err'; return; } ACCESS.grant(r.course, r.until); toast(S.unlocked); draw(); });
     $$('[data-theme-pick]', body).forEach((b) => b.addEventListener('click', () => { setTheme(b.getAttribute('data-theme-pick')); $$('[data-theme-pick]', body).forEach((x) => x.classList.toggle('on', x === b)); }));
@@ -10088,8 +10477,8 @@ function adminCodes(p) {
 ROUTES.admin = { nav: '', render: renderAdmin };
 
 /* ============================ boot ============================ */
-window.APP_VERSION = 'v16';
-window.NABU = { LESSONS: LESSONS, lunarToday: lunarToday, solarToLunar: solarToLunar, DECK: DECK, INSIGHT: INSIGHT, KW: KW, ASK: ASK, TOPICS: TOPICS, GUIDES: GUIDES, SERVICES: SERVICES, COURSES: COURSES, ACCESS: ACCESS, makeCode: makeCode, parseCode: parseCode, ZODIAC: ZODIAC, pick: pick, book: book,
+window.APP_VERSION = 'v17';
+window.NABU = { LESSONS: LESSONS, localAnswer: localAnswer, numerologyOf: numerologyOf, ZDEEP: ZDEEP, lunarToday: lunarToday, solarToLunar: solarToLunar, DECK: DECK, INSIGHT: INSIGHT, KW: KW, ASK: ASK, TOPICS: TOPICS, GUIDES: GUIDES, SERVICES: SERVICES, COURSES: COURSES, ACCESS: ACCESS, makeCode: makeCode, parseCode: parseCode, ZODIAC: ZODIAC, pick: pick, book: book,
   insightHTML: insightHTML, insightOf: insightOf, sunSignIndex: sunSignIndex, lifePath: lifePath, PROFILE: () => PROFILE, BE: BE };
 BE.init().catch(() => { /* backend unreachable: the app runs device-only */ });
 boot();

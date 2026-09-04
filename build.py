@@ -10,8 +10,8 @@ SRC = os.path.join(HERE, 'src')
 OUT = os.environ.get('NABU_OUT', HERE)
 SCRIPTS = ['config.js', 'services.js', 'strings.js', 'art.js', 'tarot-en.js', 'tarot-vi.js', 'kb-thuanh.js',
            'insight-en.js', 'insight-vi.js', 'len-art.js', 'len-en.js', 'len-vi.js', 'astro.js',
-           'zodiac.js', 'astro-kb.js', 'lunar.js', 'spreads.js', 'kb-guides.js',
-           'core.js', 'backend.js', 'home.js', 'pick.js', 'learn.js', 'lessons.js', 'book.js', 'me.js', 'report.js', 'admin.js', 'main.js']
+           'zodiac.js', 'astro-kb.js', 'astro-deep.js', 'numerology.js', 'lunar.js', 'spreads.js', 'kb-guides.js',
+           'core.js', 'backend.js', 'ai.js', 'home.js', 'pick.js', 'learn.js', 'lessons.js', 'book.js', 'me.js', 'report.js', 'admin.js', 'main.js']
 
 
 # Data files transcribed from outside sources carry working notes in block

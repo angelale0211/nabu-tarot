@@ -29,7 +29,7 @@ Object.assign(ASK.vi, {
        'Sắp có một dự án mới mà bạn chưa từng có kinh nghiệm bao giờ.'],
       ['career', 'Nhận công việc mới rồi thì nên làm gì?',
        'Chưa có kinh nghiệm thì rất dễ vấp. Hãy học nhiều, hỏi han đồng nghiệp và cấp trên, đi từng bước một, đừng nóng vội. Thông điệp của lá bài chỉ chiếm khoảng 30%; phần lời khuyên sau khi suy luận mới là 70% còn lại.'],
-      ['health', 'Trải bài về sức khỏe?',
+      ['other', 'Trải bài về năng lượng?',
        'Phải chủ động lên. Năng lượng của Gã Khờ là tự mình đi tìm, tự mình tìm tòi — đừng ngồi đợi.']
     ],
 
