@@ -1,0 +1,34 @@
+name: Sync Facebook and Instagram posts
+
+# Pulls the page's latest posts into fb.json so the app feed shows them.
+# Needs repository secrets: FB_PAGE_ID, FB_PAGE_TOKEN (a Page access token
+# with pages_read_engagement / pages_read_user_content), and optionally
+# IG_USER_ID (the Instagram professional account linked to the page).
+on:
+  schedule:
+    - cron: '*/30 * * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Fetch posts
+        env:
+          FB_PAGE_ID: ${{ secrets.FB_PAGE_ID }}
+          FB_PAGE_TOKEN: ${{ secrets.FB_PAGE_TOKEN }}
+          IG_USER_ID: ${{ secrets.IG_USER_ID }}
+        run: python scripts/fb_sync.py
+      - name: Commit if changed
+        run: |
+          git config user.name "nabu-sync"
+          git config user.email "nabu-sync@users.noreply.github.com"
+          git add fb.json
+          git diff --cached --quiet || git commit -m "Sync social posts" && git push

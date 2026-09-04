@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html><head><meta charset="utf-8"><title>Nabu Tarot tests</title></head>
 <body>
-<iframe id="f" src="../index.html#/feed" style="width:430px;height:900px"></iframe>
+<iframe id="f" src="../index.html#/home" style="width:430px;height:900px"></iframe>
 <pre id="results">running</pre>
 <script>
 const out = [];
@@ -9,91 +9,118 @@ const ok = (cond, msg) => out.push((cond ? 'PASS ' : 'FAIL ') + msg);
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 const f = document.getElementById('f');
 const W = () => f.contentWindow, D = () => f.contentDocument;
-
-async function waitFor(fn, ms) {
-  const t0 = Date.now();
-  while (Date.now() - t0 < (ms || 6000)) { try { if (fn()) return true; } catch (e) {} await sleep(60); }
-  return false;
-}
+const VI = /[ăâđêôơưàảãáạằẳẵắặầẩẫấậèẻẽéẹềểễếệìỉĩíịòỏõóọồổỗốộờởỡớợùủũúụừửữứựỳỷỹýỵ]/i;
+async function waitFor(fn, ms) { const t0 = Date.now(); while (Date.now() - t0 < (ms || 6000)) { try { if (fn()) return true; } catch (e) {} await sleep(60); } return false; }
+async function go(hash, sel) { W().location.hash = hash; await sleep(30); return waitFor(() => D().querySelector(sel), 5000); }
 
 (async () => {
   try {
     await waitFor(() => D() && D().querySelector('#nav a'), 8000);
-    const w = W(), d = D();
-    // deck + knowledge base
-    ok(w.NABU.DECK && w.NABU.DECK.vi.length === 78 && w.NABU.DECK.en.length === 78, 'deck has 78 cards in both languages');
-    const kwCount = Object.keys(w.NABU.KW.vi).length, askCount = Object.keys(w.NABU.ASK.vi).length;
-    ok(kwCount === 78, 'Thu Anh keywords cover all 78 cards (' + kwCount + ')');
-    ok(askCount >= 70, 'question readings cover ' + askCount + ' cards');
-    ok(w.NABU.DECK.vi.every((c) => c.art && c.art.length > 50 && c.name && c.up && c.rev && c.scene), 'every card has art, name, upright, reversed and scene text');
-    ok(w.NABU.TOPICS.length === 5 && w.NABU.TOPICS.every((t) => t.q.vi.length === 5 && t.q.en.length === 5), 'five preset topics with five questions each');
-    ok(w.NABU.TOPICS[1].q.vi[4] === 'Mình nên tiếp tục chờ đợi hay buông bỏ?', 'preset wording is verbatim');
-    // feed
+    const w = W(), d = D(), N = w.NABU;
+    // data
+    ok(N.DECK.vi.length === 78 && N.DECK.en.length === 78, 'deck has 78 cards in both languages');
+    ok(Object.keys(N.INSIGHT.en).length === 78 && Object.keys(N.INSIGHT.vi).length === 78, 'insights cover 78 cards in EN and VI');
+    ok(N.DECK.vi.every((c) => { const i = N.insightOf(c.id, 'vi'), j = N.insightOf(c.id, 'en'); return i && j && i.pos.length >= 3 && i.neg.length >= 3 && j.pos.length >= 3 && [i.now, i.love, i.work, i.study, i.money, i.advice, j.now, j.love, j.work, j.study, j.money, j.advice].every((t) => t && t.length > 10); }), 'every insight has keywords and six texts in both languages');
+    ok(Object.keys(N.KW.vi).length === 78 && Object.keys(N.ASK.vi).length === 78, 'Vietnamese lecture keywords and questions cover 78 cards');
+    ok(N.TOPICS.length === 5 && N.TOPICS[1].q.vi[4] === 'Mình nên tiếp tục chờ đợi hay buông bỏ?', 'preset topics verbatim');
+    ok(N.GUIDES.length >= 18 && N.GUIDES.every((g) => g.sections.length >= 2 && g.title.vi && g.title.en), 'guides present in both languages (' + N.GUIDES.length + ')');
+    ok(!JSON.stringify(N.GUIDES).match(/Thu Anh/) && !d.querySelector('#main').textContent.match(/Thu Anh/), 'no source names in guides or on screen');
+    ok(N.sunSignIndex(8, 5) === 4 && N.sunSignIndex(1, 10) === 9 && N.sunSignIndex(3, 21) === 0 && N.sunSignIndex(12, 25) === 9, 'sun sign boundaries');
+    ok(N.lifePath(1998, 11, 27) === 11 && N.lifePath(1990, 2, 11) === 5 && N.lifePath(1995, 3, 12) === 3, 'life path arithmetic');
+    // home
+    ok(/Chào bạn/.test(d.querySelector('h1').textContent), 'greeting for a guest');
+    ok(d.querySelector('#today') && /Âm lịch/.test(d.querySelector('#today').textContent) && /Trăng/.test(d.querySelector('#today').textContent), 'today panel lists the lunar date and the moon');
+    ok(!!d.querySelector('#tour'), 'tour shows on first visit');
+    ok(d.querySelectorAll('.tile').length === 6, 'six quick links');
+    for (let i = 0; i < 5; i++) { d.querySelector('[data-tour="next"]').click(); await sleep(30); }
+    ok(!d.querySelector('#tour') && N.PROFILE().tourDone === true, 'tour completes and is remembered');
     await waitFor(() => d.querySelector('article.post'), 6000);
-    ok(d.querySelectorAll('article.post').length >= 1, 'feed shows posts from posts.json');
-    ok(!!d.querySelector('article.post .mini svg'), 'post shows the drawn card art');
-    ok(d.documentElement.lang === 'vi', 'default language is Vietnamese');
-    ok(d.querySelector('#nav a.on span').textContent === 'Dự đoán', 'feed tab is active');
-    // pick a card
-    w.location.hash = '#/pick';
-    await waitFor(() => d.querySelector('#fan .slot'), 4000);
-    ok(d.querySelectorAll('#fan .slot').length === 7, 'seven face-down cards in the fan');
-    ok(d.querySelectorAll('[data-focus]').length === 5, 'five focus chips');
-    d.querySelector('[data-focus="love"]').click();
-    d.querySelectorAll('#fan button')[3].click();
+    ok(d.querySelectorAll('article.post').length >= 1, 'feed shows posts.json');
+    // profile -> personalisation
+    await go('#/me', '#pname');
+    d.querySelector('#pname').value = 'Lan'; d.querySelector('#pbday').value = '1998-08-05';
+    d.querySelector('[data-int="love"]').click(); d.querySelector('[data-int="astro"]').click();
+    d.querySelector('#psave').click(); await sleep(100);
+    ok(N.PROFILE().name === 'Lan' && N.PROFILE().birthday === '1998-08-05' && N.PROFILE().interests.length === 2, 'profile saved on device');
+    await go('#/home', '.hello .sign');
+    ok(/Chào Lan/.test(d.querySelector('h1').textContent), 'greeting uses the name');
+    ok(/Sư Tử/.test(d.querySelector('.hello').textContent) && /Số đường đời 22/.test(d.querySelector('.hello').textContent) && /Dần/.test(d.querySelector('.hello').textContent), 'home shows sign (Leo), life path and animal');
+    ok(/Sức Mạnh/.test(d.querySelector('.hello .cardline').textContent), 'home links the sign to its tarot card');
+    ok(/Theo điều bạn quan tâm/.test(d.body.textContent), 'guides suggested by interest');
+    // pick a card, Vietnamese
+    await go('#/pick', '#fan .slot');
+    ok(d.querySelectorAll('#fan .slot').length === 7 && d.querySelectorAll('[data-focus]').length === 5, 'seven cards, five focuses');
+    d.querySelector('[data-focus="love"]').click(); d.querySelectorAll('#fan button')[2].click();
     await waitFor(() => d.querySelector('#reveal .hero'), 4000);
-    ok(!!d.querySelector('#reveal .hero .name') && d.querySelector('#reveal .hero .name').textContent.length > 2, 'chosen card revealed with its name');
-    ok(d.querySelectorAll('#reveal .ins').length >= 4, 'insight has energy, shadow, focus and CTA blocks');
-    ok(/Lúc này bạn đang mang năng lượng/.test(d.querySelector('#reveal').textContent), 'energy line built from Thu Anh keywords');
-    ok(/Thu Anh/.test(d.querySelector('#reveal .src').textContent), 'source line credits Thu Anh');
-    ok(d.querySelector('#fan .slot.chosen') && d.querySelectorAll('#fan .slot.dim').length === 6, 'chosen card lifts, the other six dim');
-    const chosen = w.NABU.pick.chosen;
-    ok(d.querySelector('#reveal a.btn.primary').getAttribute('href') === '#/book?card=' + chosen, 'booking CTA carries the drawn card');
-    // every card renders an insight without throwing, in both languages and all focuses
-    let bad = 0;
-    for (const c of w.NABU.DECK.vi) for (const fo of ['general', 'love', 'work', 'study', 'money']) {
-      try { const h = w.NABU.insightHTML(c.id, fo); if (h.length < 200) bad++; } catch (e) { bad++; }
-    }
-    ok(bad === 0, 'insight generates for all 78 cards x 5 focuses (' + bad + ' failures)');
-    // second tap does nothing; redraw resets
-    d.querySelector('#redraw').click();
-    await sleep(100);
-    ok(w.NABU.pick.chosen === null && d.querySelectorAll('#fan .slot.dim').length === 0, 'redraw reshuffles and clears the choice');
-    // booking
-    w.location.hash = '#/book?card=' + chosen;
-    await waitFor(() => d.querySelector('[data-topic]'), 4000);
-    ok(d.querySelectorAll('[data-topic]').length === 6, 'five preset topics plus own question');
-    ok(d.querySelectorAll('[data-send]').length >= 2, 'send buttons present (instagram + copy)');
-    ok(/ig\.me\/m\/nabutarot/.test(d.querySelector('[data-send][href]').getAttribute('href')), 'instagram DM link');
+    const chosen = N.pick.chosen;
+    ok(!!d.querySelector('#reveal .hero .name') && d.querySelectorAll('#reveal .ins').length === 4, 'card revealed with energy, shadow, focus and CTA blocks');
+    ok(/Lúc này bạn đang mang năng lượng/.test(d.querySelector('#reveal').textContent) && /Nếu bạn đang nghĩ về tình cảm/.test(d.querySelector('#reveal').textContent), 'Vietnamese insight sections');
+    ok(!/Thu Anh/.test(d.querySelector('#reveal').textContent), 'no source line under the insight');
+    // english mode: no Vietnamese in the insight
+    d.querySelector('#lang').click(); await sleep(150);
+    await waitFor(() => d.querySelector('#reveal .hero'), 4000);
+    const enText = Array.from(d.querySelectorAll('#reveal .ins')).slice(0, 3).map((x) => x.textContent).join(' ');
+    ok(/Right now you carry this energy/.test(enText) && !VI.test(enText), 'English insight is fully English');
+    let mixed = 0;
+    for (const c of N.DECK.en) for (const fo of ['general', 'love', 'work', 'study', 'money']) { const h = N.insightHTML(c.id, fo); if (VI.test(h.replace(/<[^>]+>/g, '')) || h.length < 200) mixed++; }
+    ok(mixed === 0, 'all 78 x 5 English insights are English (' + mixed + ' mixed)');
+    d.querySelector('#lang').click(); await sleep(100);
+    // learn
+    await go('#/learn', '.tile');
+    ok(d.querySelectorAll('.tile').length === 6 && d.querySelectorAll('.tile.rec').length >= 1, 'learn shows six areas, recommended ones marked');
+    await go('#/learn/tarot', '.deckgrid button');
+    ok(d.querySelectorAll('.deckgrid button').length === 22, 'tarot list starts with 22 majors');
+    d.querySelector('[data-suit="cups"]').click(); await sleep(50);
+    ok(d.querySelectorAll('.deckgrid button').length === 14, 'suit tab shows 14 cards');
+    await go('#/learn/card/' + chosen, '.detail .hero');
+    ok(/Nghĩa xuôi/.test(d.body.textContent) && /Hỏi gì, lá này trả lời sao/.test(d.body.textContent) && d.querySelectorAll('.qa').length >= 1, 'card page: meanings, focus texts and lecture questions (lang=' + d.documentElement.lang + ' qa=' + d.querySelectorAll('.qa').length + ' id=' + chosen + ' hash=' + w.location.hash + ')');
+    await go('#/learn/lenormand', '.deckgrid button');
+    ok(d.querySelectorAll('.deckgrid button').length === 36, '36 Lenormand cards');
+    await go('#/learn/len/1', '.detail .hero');
+    ok(/Kỵ Mã/.test(d.querySelector('.name').textContent) && /Cặp lá/.test(d.body.textContent), 'Lenormand card page');
+    await go('#/learn/astro', '.signlist button');
+    ok(d.querySelectorAll('.signlist button').length === 12 && d.querySelector('.signlist button.me') && /Sư Tử/.test(d.querySelector('.signlist button.me').textContent), 'twelve signs, mine marked');
+    d.querySelector('[data-t="planets"]').click(); await sleep(50);
+    ok(d.querySelectorAll('#apanel .acc').length === 10, 'ten planets');
+    d.querySelector('[data-t="houses"]').click(); await sleep(50);
+    ok(d.querySelectorAll('#apanel .acc').length === 12, 'twelve houses');
+    await go('#/learn/sign/leo', '.detail');
+    ok(/Sao chủ/.test(d.body.textContent) && d.querySelectorAll('.mini .m').length >= 4, 'sign page with ruler and its tarot cards');
+    await go('#/learn/spreads', '.acc');
+    ok(d.querySelectorAll('.acc').length === 20, 'twenty spreads');
+    await go('#/learn/spread/nabu-2', '.spread-d svg');
+    ok(d.querySelectorAll('.qa').length === 5 && /Người cũ/.test(d.body.textContent), 'preset spread page with five positions');
+    await go('#/learn/manifest', '.acc');
+    ok(d.querySelectorAll('.acc').length >= 5 && d.querySelectorAll('.badge-src').length >= 5, 'manifestation guides with badges');
+    await go('#/learn/guide/fort-palm', '.guide h2');
+    ok(d.querySelectorAll('.guide h2').length >= 3, 'guide renders its sections');
+    await go('#/learn/numbers', '.ins');
+    ok(/Số đường đời 22/.test(d.body.textContent) && /Dần/.test(d.body.textContent), 'numbers page for the saved birthday');
+    // booking with calendar
+    await go('#/book?card=' + chosen, '.cal .days');
+    await waitFor(() => d.querySelector('.cal .d.has'), 4000);
+    ok(d.querySelectorAll('[data-topic]').length === 6, 'six topic choices');
+    ok(d.querySelectorAll('.cal .d.has').length >= 5, 'calendar has days with free slots');
     d.querySelector('[data-topic="2"]').click();
-    ok(d.querySelector('[data-topic="2"]').classList.contains('open') && d.querySelectorAll('[data-topic="2"] li').length === 5, 'topic expands to its five questions');
-    d.querySelector('#bname').value = 'Lan'; d.querySelector('#bname').dispatchEvent(new w.Event('input'));
-    const msg = d.querySelector('#msgprev').textContent;
-    ok(/Chủ đề: #2 Người cũ/.test(msg) && /Tên: Lan/.test(msg) && /Lá mình vừa rút/.test(msg), 'message preview has topic, name and drawn card: ' + msg.replace(/\n/g, ' | '));
-    // language switch
-    d.querySelector('#lang').click();
-    await sleep(150);
-    ok(d.documentElement.lang === 'en' && /Book a reading/.test(d.querySelector('h1').textContent), 'english switch re-renders the screen');
-    ok(/Topic: #2 An ex/.test(d.querySelector('#msgprev').textContent), 'message follows the language');
-    d.querySelector('#lang').click();
-    await sleep(100);
+    d.querySelector('.cal .d.has').click(); await sleep(50);
+    ok(d.querySelectorAll('.slots button').length >= 1, 'day shows time slots');
+    d.querySelector('.slots button').click(); await sleep(50);
+    ok(!!d.querySelector('.picked') && /Giờ hẹn/.test(d.querySelector('#msgprev').textContent) && /giờ Việt Nam/.test(d.querySelector('#msgprev').textContent), 'chosen slot appears in the message');
+    ok(/Chủ đề: #2 Người cũ/.test(d.querySelector('#msgprev').textContent) && /Tên: Lan/.test(d.querySelector('#msgprev').textContent), 'message has topic and name from profile');
+    ok(/ig\.me\/m\/nabutarot/.test(d.querySelector('[data-send][href]').getAttribute('href')), 'instagram send link');
+    // me: accounts off
+    await go('#/me', '#pname');
+    ok(/Hồ sơ đang lưu trên máy này/.test(d.body.textContent) && /Instagram/.test(d.body.textContent), 'me tab explains device-only profile and offers Instagram');
     // admin
-    w.location.hash = '#/admin';
-    await waitFor(() => d.querySelector('#cgrid'), 4000);
-    ok(d.querySelectorAll('#cgrid button').length === 78, 'composer card grid lists 78 cards');
-    d.querySelector('#ptitle').value = 'Thử'; d.querySelector('#pbody').value = 'Một.\n\nHai.';
-    d.querySelector('#cgrid button[data-cid="cups-2"]').click();
-    d.querySelector('[data-sign="4"]').click();
-    d.querySelector('#pinit').value = 'c, e';
-    d.querySelector('#preview').click();
-    const pv = d.querySelector('#pprev');
-    ok(pv.querySelectorAll('.body p').length === 2 && /Sư Tử/.test(pv.textContent) && /C, E/.test(pv.textContent) && pv.querySelector('.mini svg'), 'preview renders paragraphs, sign, initials and card');
-    // theme toggle
-    d.querySelector('#theme').click();
-    ok(d.documentElement.getAttribute('data-theme') === 'light', 'theme toggles to light');
-    d.querySelector('#theme').click();
-    ok(!d.documentElement.getAttribute('data-theme'), 'theme toggles back to dark');
-    // no horizontal overflow on a phone
+    await go('#/admin', '#atabs');
+    ok(d.querySelectorAll('#atabs button').length === 4 && d.querySelectorAll('#cgrid button').length === 78, 'admin has four tabs and the 78-card picker');
+    d.querySelector('[data-t="schedule"]').click(); await waitFor(() => d.querySelector('.week .wd'), 4000);
+    ok(d.querySelectorAll('.week .wd').length === 7 && d.querySelectorAll('.week .chip.on').length >= 15, 'availability editor shows the weekly hours');
+    d.querySelector('[data-t="bookings"]').click(); await sleep(50);
+    ok(/Firebase/.test(d.querySelector('#apanel').textContent), 'bookings tab explains that accounts are off');
+    // theme
+    d.querySelector('#theme').click(); ok(d.documentElement.getAttribute('data-theme') === 'dark', 'dark theme toggles on');
+    d.querySelector('#theme').click(); ok(!d.documentElement.getAttribute('data-theme'), 'back to light');
     ok(d.documentElement.scrollWidth <= 431, 'no horizontal overflow (' + d.documentElement.scrollWidth + ')');
   } catch (e) { out.push('FAIL exception: ' + (e && e.stack || e)); }
   document.getElementById('results').textContent = out.join('\n');

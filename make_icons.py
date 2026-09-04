@@ -1,44 +1,23 @@
 # -*- coding: utf-8 -*-
-"""App icons: an eight-pointed gold star with a crescent on deep indigo.
+"""App icons from logo.svg: headless Edge renders the SVG, Pillow resizes.
 Run once (python make_icons.py); the PNGs are committed."""
-import math, os
-from PIL import Image, ImageDraw
+import os, subprocess, tempfile
+from PIL import Image
 
 HERE = os.path.dirname(os.path.abspath(__file__))
-BG, BG2, GOLD = (0x12, 0x0F, 0x24), (0x2B, 0x23, 0x60), (0xE9, 0xC4, 0x6A)
-
-
-def star(cx, cy, ro, ri, n=8, rot=-90.0):
-    pts = []
-    for i in range(n * 2):
-        r = ri if i % 2 else ro
-        a = math.radians(rot + i * 180.0 / n)
-        pts.append((cx + r * math.cos(a), cy + r * math.sin(a)))
-    return pts
-
-
-def draw(size, pad):
-    S = size * 4  # supersample
-    im = Image.new('RGB', (S, S), BG)
-    d = ImageDraw.Draw(im)
-    # soft radial glow
-    for i in range(40, 0, -1):
-        t = i / 40.0
-        r = S * 0.62 * t
-        col = tuple(int(BG[k] + (BG2[k] - BG[k]) * (1 - t) * 0.9) for k in range(3))
-        d.ellipse([S / 2 - r, S / 2 - r, S / 2 + r, S / 2 + r], fill=col)
-    c = S / 2
-    R = S * (0.5 - pad)
-    # crescent: big circle minus offset circle
-    d.ellipse([c - R * 0.78, c - R * 0.78, c + R * 0.78, c + R * 0.78], fill=GOLD)
-    off = R * 0.28
-    d.ellipse([c - R * 0.66 + off, c - R * 0.66 - off * 0.2, c + R * 0.66 + off, c + R * 0.66 - off * 0.2], fill=BG)
-    # star in the crescent's hollow
-    d.polygon(star(c + R * 0.22, c - R * 0.12, R * 0.34, R * 0.14), fill=GOLD)
-    return im.resize((size, size), Image.LANCZOS)
-
-
-for name, size, pad in [('icon-180.png', 180, 0.10), ('icon-512.png', 512, 0.10), ('icon-512-maskable.png', 512, 0.22)]:
+EDGE = r'C:\Program Files (x86)\Microsoft\Edge\Application\msedge.exe'
+SIZE = 1024
+html = os.path.join(tempfile.mkdtemp(prefix='nabu-icon-'), 'icon.html')
+svg = open(os.path.join(HERE, 'logo.svg'), encoding='utf-8').read()
+open(html, 'w', encoding='utf-8').write('<!doctype html><html><head><meta charset="utf-8"><style>html,body{margin:0;background:#B8A4E3}svg{display:block;width:%dpx;height:%dpx}</style></head><body>%s</body></html>' % (SIZE, SIZE, svg))
+shot = os.path.join(os.path.dirname(html), 'icon.png')
+subprocess.run([EDGE, '--headless=new', '--disable-gpu', '--no-first-run', '--hide-scrollbars', '--window-size=%d,%d' % (SIZE, SIZE),
+                '--screenshot=' + shot, 'file:///' + html.replace('\\', '/')], capture_output=True, timeout=120)
+im = Image.open(shot).convert('RGB')
+for name, size, pad in [('icon-180.png', 180, 0.0), ('icon-512.png', 512, 0.0), ('icon-512-maskable.png', 512, 0.12)]:
+    canvas = Image.new('RGB', (SIZE, SIZE), (0xB8, 0xA4, 0xE3))
+    inner = int(SIZE * (1 - 2 * pad))
+    canvas.paste(im.resize((inner, inner), Image.LANCZOS), ((SIZE - inner) // 2, (SIZE - inner) // 2))
     p = os.path.join(HERE, name)
-    draw(size, pad).save(p, optimize=True)
+    canvas.resize((size, size), Image.LANCZOS).save(p, optimize=True)
     print(name, os.path.getsize(p))

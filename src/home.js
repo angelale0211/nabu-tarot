@@ -1,0 +1,167 @@
+/* ============================ home ============================
+   Today in several calendars, a greeting, quick links, what fits the
+   visitor's sign and interests, then the feed (Nabu's posts plus anything
+   synced from Facebook / Instagram into fb.json). */
+let POSTS = null, POSTS_CACHED = false, FBPOSTS = [];
+
+async function loadPosts() {
+  const p = await loadJSON(CONFIG.postsPath, 'nabu-posts');
+  POSTS = (p.data && p.data.posts) || []; POSTS_CACHED = p.fromCache;
+  const f = await loadJSON('fb.json', 'nabu-fb');
+  FBPOSTS = (f.data && f.data.posts) || [];
+  return POSTS;
+}
+
+/* ---- today ---- */
+function calLine(calendar, locale, opts) {
+  try { return new Intl.DateTimeFormat(locale + '-u-ca-' + calendar, opts).format(new Date()); } catch (e) { return ''; }
+}
+function todayHTML() {
+  const S = T(), now = new Date();
+  const greg = now.toLocaleDateString(lang === 'vi' ? 'vi-VN' : 'en-GB', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
+  const rows = [];
+  // Lunar (Chinese/Vietnamese lunisolar): day and month from Intl, the year in stems and branches.
+  let lunarDay = '', lunarMonth = '', lunarYear = now.getFullYear();
+  try {
+    const parts = new Intl.DateTimeFormat('en-u-ca-chinese', { day: 'numeric', month: 'numeric', year: 'numeric' }).formatToParts(now);
+    parts.forEach((p) => { if (p.type === 'day') lunarDay = p.value; if (p.type === 'month') lunarMonth = p.value; if (p.type === 'relatedYear') lunarYear = Number(p.value); });
+  } catch (e) { /* no chinese calendar */ }
+  if (lunarDay) rows.push([lang === 'vi' ? 'Âm lịch' : 'Lunar', (lang === 'vi' ? 'ngày ' : 'day ') + lunarDay + (lang === 'vi' ? ' tháng ' : ', month ') + lunarMonth + ' · ' + canChi(lunarYear)]);
+  const others = [['islamic-umalqura', lang === 'vi' ? 'Hồi giáo (Hijri)' : 'Islamic (Hijri)'], ['hebrew', lang === 'vi' ? 'Do Thái' : 'Hebrew'], ['persian', lang === 'vi' ? 'Ba Tư' : 'Persian'], ['buddhist', lang === 'vi' ? 'Phật lịch (Thái)' : 'Buddhist (Thai)']];
+  others.forEach((o) => { const v = calLine(o[0], lang === 'vi' ? 'vi' : 'en', { day: 'numeric', month: 'long', year: 'numeric' }); if (v) rows.push([o[1], v]); });
+  const mp = moonPhase(now);
+  rows.push([lang === 'vi' ? 'Trăng' : 'Moon', MOON_ICONS[mp.idx] + ' ' + MOON_NAMES[lang][mp.idx] + ' · ' + (lang === 'vi' ? 'ngày ' : 'day ') + Math.round(mp.age)]);
+  return '<div class="acc open" id="today"><button><span>📅 ' + esc(greg) + '</span></button><div class="in"><table class="tbl">'
+    + rows.map((r) => '<tr><td>' + esc(r[0]) + '</td><td>' + esc(r[1]) + '</td></tr>').join('') + '</table></div></div>';
+}
+
+/* ---- tour ---- */
+const TOUR = [
+  { ic: '🃏', vi: ['Rút bài', 'Chạm một lá để xem năng lượng của bạn hôm nay. Chọn chủ đề trước: tình cảm, công việc, học tập, tiền bạc.'], en: ['Pick a card', 'Tap one card to see your energy today. Choose a focus first: love, work, study, money.'] },
+  { ic: '✨', vi: ['Dự đoán', 'Bài mới của Nabu nằm ở trang chủ. Bài có ghi "dành cho bạn" là hợp với cung của bạn.'], en: ['Readings', 'Nabu\'s new posts live on the home screen. Posts marked "for you" match your sign.'] },
+  { ic: '📚', vi: ['Học', 'Tarot, Lenormand, chiêm tinh, manifestation và bói toán. Bấm vào một lá hay một cung để đọc.'], en: ['Learn', 'Tarot, Lenormand, astrology, manifestation and fortune telling. Tap a card or a sign to read.'] },
+  { ic: '📅', vi: ['Đặt lịch', 'Chọn chủ đề, chọn giờ trên lịch, gửi cho Nabu.'], en: ['Book', 'Choose a topic, pick a time on the calendar, send it to Nabu.'] },
+  { ic: '👤', vi: ['Tôi', 'Nhập tên và ngày sinh để app chọn nội dung cho bạn. Đăng nhập để lưu hồ sơ, nhắn tin và xem lịch hẹn.'], en: ['Me', 'Enter your name and birthday so the app picks content for you. Sign in to keep your profile, message Nabu and see bookings.'] }
+];
+function tourHTML(step) {
+  const t = TOUR[step], txt = t[lang];
+  return '<div class="card" id="tour" style="text-align:center;border-color:var(--lav)"><div style="font-size:40px">' + t.ic + '</div>'
+    + '<h3 style="margin:6px 0">' + esc(txt[0]) + '</h3><p class="muted" style="font-size:14.5px">' + esc(txt[1]) + '</p>'
+    + '<div class="row" style="justify-content:center"><span class="faint">' + (step + 1) + ' / ' + TOUR.length + '</span></div>'
+    + '<div class="row" style="justify-content:center;margin-top:10px"><button class="btn sm" data-tour="skip">' + esc(T().dismiss) + '</button>'
+    + '<button class="btn sm primary" data-tour="next">' + (step === TOUR.length - 1 ? '✓' : '→') + '</button></div></div>';
+}
+function bindTour(root, step) {
+  $$('[data-tour]', root).forEach((b) => b.addEventListener('click', () => {
+    if (b.getAttribute('data-tour') === 'next' && step < TOUR.length - 1) { $('#tour').outerHTML = tourHTML(step + 1); bindTour(root, step + 1); return; }
+    saveProfileLocal({ tourDone: true }); if (BE.user) BE.pushProfile();
+    $('#tour').remove();
+  }));
+}
+
+/* ---- feed pieces ---- */
+function markersHTML(p) {
+  const m = p.markers || {}; const bits = [];
+  if (m.initials && m.initials.length) bits.push(T().initials + ' <b>' + esc(m.initials.join(', ')) + '</b>');
+  if (m.signs && m.signs.length) bits.push(T().signs + ' <b>' + esc(m.signs.map((i) => T().zodiac[i]).filter(Boolean).join(', ')) + '</b>');
+  return bits.length ? '<div class="markers">' + T().forYouIf + ' ' + bits.join(' · ') + '</div>' : '';
+}
+function postScore(p) {
+  let s = 0; const sign = mySign(), ints = PROFILE.interests || [];
+  if (p.markers && p.markers.signs && sign > -1 && p.markers.signs.indexOf(sign) > -1) s += 3;
+  if (p.markers && p.markers.initials && PROFILE.name && p.markers.initials.indexOf(PROFILE.name.trim().charAt(0).toUpperCase()) > -1) s += 2;
+  if (p.topics && p.topics.some((t) => ints.indexOf(t) > -1)) s += 1;
+  return s;
+}
+function postHTML(p, full) {
+  const body = L(p.body), long = !full && body.length > 320, score = postScore(p);
+  return '<article class="post" data-id="' + esc(p.id) + '">'
+    + '<div class="date"><span>' + fmtDate(p.date) + (p.source ? ' · ' + esc(p.source) : '') + '</span>' + (p.pinned ? '<span class="pin">★ ' + T().pinned + '</span>' : '') + '</div>'
+    + (score >= 2 ? '<span class="foryou">✦ ' + esc(T().forYou) + '</span>' : '')
+    + '<h2>' + esc(L(p.title)) + '</h2>' + markersHTML(p)
+    + (p.image ? '<img src="' + esc(p.image) + '" alt="" style="border-radius:12px;margin-bottom:10px">' : '')
+    + '<div class="body' + (long ? ' clamp' : '') + '">' + paras(body) + '</div>'
+    + (long ? '<button class="more" data-more>' + T().readMore + '</button>' : '')
+    + (p.cards && p.cards.length ? '<div class="faint">' + T().cardsDrawn + '</div><div class="mini">' + p.cards.map((c) => miniHTML(c, true)).join('') + '</div>' : '')
+    + '<div class="foot">' + (p.link ? '<a class="btn sm" href="' + esc(p.link) + '" target="_blank" rel="noopener">' + esc(p.source || 'Facebook') + ' ↗</a>' : '') + '<button data-share>' + T().share + '</button></div>'
+    + '</article>';
+}
+function bindPost(root) {
+  $$('[data-more]', root).forEach((b) => b.addEventListener('click', () => {
+    const body = b.previousElementSibling; const open = body.classList.toggle('clamp'); b.textContent = open ? T().readMore : T().readLess;
+  }));
+  $$('[data-share]', root).forEach((b) => b.addEventListener('click', () => {
+    const art = b.closest('article'), p = allPosts().filter((x) => x.id === art.getAttribute('data-id'))[0];
+    if (p) shareOrCopy(L(p.title) + '\n' + L(p.body), p.link || (appURL() + '#/post/' + p.id));
+  }));
+  bindCardLinks(root);
+}
+function allPosts() { return (POSTS || []).concat(FBPOSTS.map((f) => Object.assign({ source: f.source || 'Facebook' }, f))); }
+function sortedPosts() {
+  return allPosts().sort((a, b) => (b.pinned ? 1 : 0) - (a.pinned ? 1 : 0) || postScore(b) - postScore(a) || String(b.date).localeCompare(String(a.date)));
+}
+
+/* ---- personal block ---- */
+function personalHTML() {
+  const S = T(), b = birthParts();
+  if (!b) return '<div class="hello"><p class="muted" style="margin-bottom:10px">' + esc(S.setupProfile) + '</p><a class="btn primary" href="#/me">' + esc(S.setupBtn) + '</a></div>';
+  const si = mySign(), key = ZKEYS[si], z = ZSIGN[key], zp = ZODIAC[key][lang];
+  const majorId = Object.keys(ASTRO).filter((id) => ASTRO[id].k === 'sign' && ASTRO[id].sign === key)[0];
+  const c = majorId ? cardById(majorId) : null;
+  const lp = lifePath(b.y, b.m, b.d);
+  return '<div class="hello">'
+    + '<div class="sign"><div class="glyph">' + z.g + '</div><div><div class="faint">' + esc(S.yourSign) + '</div><b>' + esc(S.zodiac[si]) + '</b> · ' + esc(lang === 'vi' ? z.dvi : z.den)
+    + '<div class="faint">' + esc(zp.kw.join(' · ')) + '</div></div></div>'
+    + '<p style="font-size:14.5px;margin:6px 0 0">' + esc(zp.tip) + '</p>'
+    + (c ? '<button class="cardline" data-open-card="' + c.id + '" style="width:100%;text-align:left"><span class="face">' + faceSVG(c) + '</span><span><span class="faint">' + esc(S.signCard) + '</span><br><b>' + esc(c.name) + '</b></span></button>' : '')
+    + '<div class="row" style="margin-top:10px"><span class="chip lav">' + esc(S.lifePath) + ' ' + lp + '</span><span class="chip lav">' + esc(S.animal) + ': ' + esc(animalOf(b.y)[lang]) + '</span></div>'
+    + '<div class="row" style="margin-top:10px"><a class="btn sm" href="#/learn/sign/' + key + '">' + esc(S.readSign) + '</a><a class="btn sm" href="#/learn/numbers">' + esc(S.numerology) + '</a></div>'
+    + '</div>';
+}
+function quickLinksHTML() {
+  const S = T();
+  const tiles = [['#/pick', '🃏', S.nav.pick, lang === 'vi' ? 'năng lượng hôm nay' : 'your energy today'],
+    ['#/home?go=feed', '✨', S.feedTitle, lang === 'vi' ? 'bài mới của Nabu' : 'new posts from Nabu'],
+    ['#/learn/astro', '🔮', S.cats.astro, lang === 'vi' ? '12 cung, hành tinh, nhà' : '12 signs, planets, houses'],
+    ['#/learn/tarot', '📚', S.cats.tarot, lang === 'vi' ? '78 lá, ý nghĩa' : '78 cards, meanings'],
+    ['#/book', '📅', S.nav.book, lang === 'vi' ? 'chọn giờ với Nabu' : 'pick a time with Nabu'],
+    ['#/me', '👤', S.nav.me, lang === 'vi' ? 'hồ sơ, tin nhắn' : 'profile, messages']];
+  return '<div class="tiles">' + tiles.map((t) => '<a class="tile" href="' + t[0] + '"><div class="ic">' + t[1] + '</div><b>' + esc(t[2]) + '</b><span>' + esc(t[3]) + '</span></a>').join('') + '</div>';
+}
+function suggestedGuidesHTML(limit) {
+  const ints = PROFILE.interests || [];
+  const list = GUIDES.filter((g) => g.tags.some((t) => ints.indexOf(t) > -1)).slice(0, limit || 3);
+  if (!list.length) return '';
+  return '<div class="sec"><div class="eyebrow">' + esc(T().forInterests) + '</div>' + list.map((g) => '<a class="acc" href="#/learn/guide/' + g.id + '" style="display:block;text-decoration:none;color:inherit"><button style="pointer-events:none"><span>' + esc(L(g.title)) + '</span></button></a>').join('') + '</div>';
+}
+
+async function renderHome(args, params) {
+  const S = T(), m = $('#main');
+  const name = (PROFILE.name || '').trim();
+  m.innerHTML = '<h1 style="margin-bottom:4px">' + esc(name ? S.hello(name) : S.helloGuest) + '</h1><p class="muted">' + esc(lang === 'vi' ? 'Hôm nay bạn muốn làm gì?' : 'What would you like to do today?') + '</p>'
+    + todayHTML()
+    + (PROFILE.tourDone ? '' : tourHTML(0))
+    + quickLinksHTML()
+    + personalHTML()
+    + suggestedGuidesHTML(3)
+    + '<div class="sec" id="feed"><div class="eyebrow">' + esc(S.feedTitle) + '</div><p class="muted">…</p></div>';
+  bindAccordions(m); bindCardLinks(m);
+  if (!PROFILE.tourDone) bindTour(m, 0);
+  if (POSTS == null) await loadPosts();
+  const feed = $('#feed'); if (!feed) return;
+  const list = sortedPosts();
+  feed.innerHTML = '<div class="eyebrow">' + esc(S.feedTitle) + '</div>'
+    + (POSTS_CACHED && list.length ? '<div class="banner">' + esc(S.feedOffline) + '</div>' : '')
+    + (list.length ? list.map((p) => postHTML(p, false)).join('') : '<p class="empty">' + esc(S.feedEmpty) + '</p>');
+  bindPost(feed);
+  if (params.go === 'feed') feed.scrollIntoView({ behavior: 'smooth' });
+}
+async function renderPost(args) {
+  const m = $('#main');
+  if (POSTS == null) await loadPosts();
+  const p = allPosts().filter((x) => x.id === args[0])[0];
+  m.innerHTML = '<p><a href="#/home">← ' + esc(T().backToFeed) + '</a></p>' + (p ? postHTML(p, true) : '<p class="empty">' + esc(T().notFound) + '</p>');
+  bindPost(m);
+}
+ROUTES.home = { nav: 'home', render: renderHome };
+ROUTES.post = { nav: 'home', render: renderPost };

@@ -1,23 +1,25 @@
 <!DOCTYPE html>
 <html><head><meta charset="utf-8"><style>body{margin:0}iframe{border:0;display:block}</style></head>
 <body>
-<iframe id="f" style="width:430px;height:1500px"></iframe>
+<iframe id="f" style="width:430px;height:2600px"></iframe>
 <script>
 const q = new URLSearchParams(location.search);
 const f = document.getElementById('f');
-f.src = '../index.html#/' + (q.get('r') || 'feed');
+f.src = '../index.html#/' + (q.get('r') || 'home');
 f.addEventListener('load', () => {
   const w = f.contentWindow, d = f.contentDocument;
-  if (q.get('theme') === 'light') { try { localStorage.setItem('nabu-theme', '"light"'); } catch (e) {} w.localStorage.setItem('nabu-theme', '"light"'); }
-  if (q.get('lang')) w.localStorage.setItem('nabu-lang', '"' + q.get('lang') + '"');
-  if ((q.get('theme') || q.get('lang')) && !sessionStorage.getItem('reloaded')) { sessionStorage.setItem('reloaded', '1'); w.location.reload(); return; }
+  const prof = { name: q.get('name') || 'Lan', birthday: q.get('bday') || '1998-08-05', interests: ['love', 'astro', 'manifest'], tourDone: q.get('tour') ? false : true };
+  if (!sessionStorage.getItem('seeded')) {
+    sessionStorage.setItem('seeded', '1');
+    w.localStorage.setItem('nabu-profile', JSON.stringify(prof));
+    if (q.get('theme')) w.localStorage.setItem('nabu-theme', '"' + q.get('theme') + '"');
+    if (q.get('lang')) w.localStorage.setItem('nabu-lang', '"' + q.get('lang') + '"');
+    w.location.reload(); return;
+  }
   setTimeout(() => {
-    if (q.get('r') === 'pick' && q.get('tap')) {
-      const b = d.querySelector('[data-focus="' + (q.get('focus') || 'love') + '"]'); if (b) b.click();
-      const btn = d.querySelectorAll('#fan button')[3]; if (btn) btn.click();
-    }
-    if (q.get('r') === 'book') { const t = d.querySelector('[data-topic="1"]'); if (t) t.click(); }
-  }, 600);
+    if (q.get('r') === 'pick' && q.get('tap')) { const b = d.querySelector('[data-focus="' + (q.get('focus') || 'love') + '"]'); if (b) b.click(); const btn = d.querySelectorAll('#fan button')[3]; if (btn) btn.click(); }
+    if (q.get('r') === 'book') { const t = d.querySelector('[data-topic="1"]'); if (t) t.click(); setTimeout(() => { const day = d.querySelector('.cal .d.has'); if (day) day.click(); setTimeout(() => { const s = d.querySelector('.slots button'); if (s) s.click(); }, 150); }, 800); }
+  }, 700);
 });
 </script>
 </body></html>

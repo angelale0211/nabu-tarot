@@ -1,0 +1,35 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Put the reader's login emails here (same list as CONFIG.adminEmails).
+    function isAdmin() {
+      return request.auth != null && request.auth.token.email in ['nabu@example.com'];
+    }
+    function isOwner(uid) { return request.auth != null && request.auth.uid == uid; }
+
+    match /users/{uid} {
+      allow read, write: if isOwner(uid) || isAdmin();
+    }
+    match /threads/{uid} {
+      allow read: if isOwner(uid) || isAdmin();
+      allow write: if isOwner(uid) || isAdmin();
+      match /messages/{mid} {
+        allow read: if isOwner(uid) || isAdmin();
+        allow create: if (isOwner(uid) && request.resource.data.from == 'user')
+                      || (isAdmin() && request.resource.data.from == 'nabu');
+      }
+    }
+    match /bookings/{id} {
+      allow create: if request.auth != null && request.resource.data.uid == request.auth.uid;
+      allow read: if isAdmin() || (request.auth != null && resource.data.uid == request.auth.uid);
+      allow update, delete: if isAdmin();
+    }
+    // Taken slots are public so the calendar can hide them; only signed-in
+    // users can claim one, and only if it is still free.
+    match /taken/{slot} {
+      allow read: if true;
+      allow create: if request.auth != null && !exists(/databases/$(database)/documents/taken/$(slot));
+      allow update, delete: if isAdmin();
+    }
+  }
+}
