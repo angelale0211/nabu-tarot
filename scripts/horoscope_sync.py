@@ -178,10 +178,16 @@ def translate_paras(paras, sign, period):
     if not paras:
         return []
     if GEMINI_KEY:
-        try:
-            return gemini_translate(paras, sign, period)
-        except Exception as e:
-            print('gemini failed, falling back:', e)
+        # The free tier rate-limits bursts; wait and retry before giving up.
+        for attempt in range(4):
+            try:
+                out = gemini_translate(paras, sign, period)
+                time.sleep(4)
+                return out
+            except Exception as e:
+                print('gemini attempt', attempt + 1, 'failed:', e)
+                time.sleep(15 * (attempt + 1))
+        print('gemini gave up for', period, sign, '- using the glossary translation')
     out = []
     for p in paras:
         try:
@@ -194,18 +200,19 @@ def translate_paras(paras, sign, period):
 
 
 def gemini_translate(paras, sign, period):
-    prompt = ('Bạn là biên tập viên chiêm tinh người Việt. Dịch các đoạn dự đoán %s cho cung %s sau sang tiếng Việt tự nhiên, ấm áp, dễ hiểu, xưng "bạn". '
+    prompt = ('Bạn là biên tập viên chiêm tinh người Việt. Dịch các đoạn dự đoán %s cho cung %s dưới đây sang tiếng Việt tự nhiên, ấm áp, dễ hiểu, xưng "bạn". '
               'Dùng thuật ngữ chiêm tinh tiếng Việt thông dụng: "nhà số 3 (khu vực giao tiếp)" thay vì "cung giao tiếp thứ ba", "trăng non", "trăng tròn", "nghịch hành", "sao Kim đi vào Bọ Cạp". '
-              'Không thêm hay bớt ý, không quảng cáo. Trả về đúng %d đoạn, mỗi đoạn trên một dòng, giữ nguyên thứ tự, không đánh số.\n\n' % ('tuần' if period == 'weekly' else 'tháng', SIGN_VI[sign], len(paras)))
-    prompt += '\n\n'.join(paras)
-    body = json.dumps({'contents': [{'parts': [{'text': prompt}]}], 'generationConfig': {'temperature': 0.3}}).encode('utf-8')
-    url = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=' + GEMINI_KEY
+              'Không thêm hay bớt ý, không quảng cáo, không bình luận. Trả về DUY NHẤT một mảng JSON gồm đúng %d chuỗi, mỗi chuỗi là bản dịch của một đoạn, đúng thứ tự.\n\n' % ('tuần' if period == 'weekly' else 'tháng', SIGN_VI[sign], len(paras)))
+    prompt += json.dumps(paras, ensure_ascii=False)
+    body = json.dumps({'contents': [{'parts': [{'text': prompt}]}], 'generationConfig': {'temperature': 0.3, 'responseMimeType': 'application/json'}}).encode('utf-8')
+    url = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent?key=' + GEMINI_KEY
     j = json.loads(fetch(url, data=body, headers={'Content-Type': 'application/json'}))
     text = j['candidates'][0]['content']['parts'][0]['text'].strip()
-    lines = [l.strip() for l in text.split('\n') if l.strip()]
-    if len(lines) != len(paras):
-        raise ValueError('paragraph count %d != %d' % (len(lines), len(paras)))
-    return [post_vi(l) for l in lines]
+    text = re.sub(r'^```(?:json)?\s*|\s*```$', '', text)
+    lines = json.loads(text)
+    if not isinstance(lines, list) or len(lines) != len(paras):
+        raise ValueError('paragraph count mismatch')
+    return [post_vi(str(l).strip()) for l in lines]
 
 
 def build(entry, sign, period):

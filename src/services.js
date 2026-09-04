@@ -15,10 +15,10 @@ const SERVICES = [
   { id: 'lenormand', icon: '🗝️', tone: 'lav', name: { vi: 'Lenormand', en: 'Lenormand' },
     tagline: { vi: 'Hỏi chuyện cụ thể, trả lời cụ thể.', en: 'Concrete questions, concrete answers.' },
     packages: [
-      { id: 'yn', name: { vi: '1 câu Yes/No', en: '1 yes/no question' }, price: 12000 },
+      { id: 'yn', name: { vi: '1 câu Yes/No', en: '1 yes/no question' }, price: 15000 },
       { id: 'q1', name: { vi: '1 câu chi tiết', en: '1 question in detail' }, price: 25000 },
-      { id: 'q3', name: { vi: '3 câu chi tiết', en: '3 questions in detail' }, price: 50000 },
-      { id: 'topic', name: { vi: '1 chủ đề sẵn (chọn trong 5 chủ đề)', en: '1 preset topic (choose from the 5 set topics)' }, price: 60000, needsTopic: true },
+      { id: 'q3', name: { vi: '3 câu chi tiết', en: '3 questions in detail' }, price: 60000 },
+      { id: 'topic', name: { vi: '1 chủ đề sẵn (chọn trong 5 chủ đề)', en: '1 preset topic (choose from the 5 set topics)' }, price: 75000, needsTopic: true },
       { id: 't40', name: { vi: '40 phút', en: '40 minutes' }, price: 90000 }
     ] },
   { id: 'tea', icon: '🍵', tone: 'gold', name: { vi: 'Bài trà', en: 'Tealeaf fortune telling' },
@@ -33,29 +33,29 @@ const SERVICES = [
     tagline: { vi: 'Tarot trả lời, Oracle nhắn thêm một lời.', en: 'Tarot answers, Oracle adds a message.' },
     packages: [
       { id: 'q1', name: { vi: '1 câu chi tiết', en: '1 question in detail' }, price: 30000 },
-      { id: 'q3', name: { vi: '3 câu chi tiết', en: '3 questions in detail' }, price: 60000 },
-      { id: 'topic', name: { vi: '1 chủ đề sẵn (chọn trong 5 chủ đề)', en: '1 preset topic (choose from the 5 set topics)' }, price: 70000, needsTopic: true },
-      { id: 't40', name: { vi: '40 phút', en: '40 minutes' }, price: 100000 }
+      { id: 'q3', name: { vi: '3 câu chi tiết', en: '3 questions in detail' }, price: 75000 },
+      { id: 'topic', name: { vi: '1 chủ đề sẵn (chọn trong 5 chủ đề)', en: '1 preset topic (choose from the 5 set topics)' }, price: 95000, needsTopic: true },
+      { id: 't60', name: { vi: '60 phút', en: '60 minutes' }, price: 120000 }
     ] },
   { id: 'lenormand-oracle', icon: '✨', tone: 'lav', name: { vi: 'Lenormand + Oracle', en: 'Lenormand + Oracle' },
     tagline: { vi: 'Chuyện cụ thể, thêm một lời nhắn.', en: 'The concrete story, plus a message.' },
     packages: [
       { id: 'q1', name: { vi: '1 câu chi tiết', en: '1 question in detail' }, price: 35000 },
-      { id: 'q3', name: { vi: '3 câu chi tiết', en: '3 questions in detail' }, price: 65000 },
-      { id: 'topic', name: { vi: '1 chủ đề sẵn (chọn trong 5 chủ đề)', en: '1 preset topic (choose from the 5 set topics)' }, price: 75000, needsTopic: true },
-      { id: 't40', name: { vi: '40 phút', en: '40 minutes' }, price: 110000 }
+      { id: 'q3', name: { vi: '3 câu chi tiết', en: '3 questions in detail' }, price: 90000 },
+      { id: 'topic', name: { vi: '1 chủ đề sẵn (chọn trong 5 chủ đề)', en: '1 preset topic (choose from the 5 set topics)' }, price: 110000, needsTopic: true },
+      { id: 't60', name: { vi: '60 phút', en: '60 minutes' }, price: 145000 }
     ] },
   { id: 'tuvi', icon: '🌸', tone: 'pink', name: { vi: 'Tử vi', en: 'Tử vi (Vietnamese astrology)' },
     tagline: { vi: 'Không phải chuyện hôm nay, mà là cả đường dài.', en: 'Not about today, but the long road.' },
     note: { vi: 'Cần ngày, tháng, năm sinh và giờ sinh chính xác.', en: 'Needs your exact date and hour of birth.' },
     needsBirth: true,
     packages: [
-      { id: 'one', name: { vi: '1 vấn đề', en: '1 matter' }, price: 111000 },
-      { id: 'year', name: { vi: 'Vận hạn năm', en: 'The year ahead' }, price: 222000 },
+      { id: 'one', name: { vi: '1 vấn đề', en: '1 matter' }, price: 99000 },
+      { id: 'year', name: { vi: 'Vận hạn năm', en: 'The year ahead' }, price: 333000 },
       { id: 'all', name: { vi: 'Tổng quan mọi vấn đề', en: 'Full overview of everything' }, price: 666000 }
     ] },
   { id: 'talk', icon: '💬', tone: 'blue', name: { vi: 'Chỉ tâm sự', en: 'Just talk' },
-    tagline: { vi: 'Không có trải bài, không đưa dự đoán, nhưng luôn sẵn lòng lắng nghe.', en: 'No spread and no predictions, but always ready to listen.' },
+    tagline: { vi: 'Không có trải bài, không đưa dự đoán, nhưng luôn sẵn lòng lắng nghe.', en: 'No readings or predictions, but always ready to listen.' },
     packages: [
       { id: 't30', name: { vi: '30 phút', en: '30 minutes' }, price: 30000 },
       { id: 't60', name: { vi: '1 tiếng', en: '1 hour' }, price: 60000 }

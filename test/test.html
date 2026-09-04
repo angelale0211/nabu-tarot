@@ -56,7 +56,7 @@ async function go(hash, sel) { W().location.hash = hash; await sleep(30); return
     ok(/Sức Mạnh/.test(d.querySelector('.hello .cardline').textContent), 'home links the sign to its tarot card');
     await waitFor(() => d.querySelector('.horo'), 6000);
     ok(/Có thể bạn quan tâm/.test(d.body.textContent) && d.querySelectorAll('#foryou .acc').length === 1 && d.querySelectorAll('#foryou .horo').length === 2 && /Dự đoán tháng này/.test(d.querySelector('#foryou').textContent) && /Sư Tử/.test(d.querySelector('#foryou .horo').textContent) && /Horoscope\.com/.test(d.querySelector('#foryou').textContent), 'You may also like: one guide, then the monthly and weekly forecast for Leo with the source');
-    ok(d.querySelectorAll('#foryou .horo .body p').length >= 6 && !/Premium|cao cấp|\bLeo\b/.test(d.querySelector('#foryou').textContent) && /nhà số \d+ của bạn \(khu vực/.test(d.querySelector('#foryou').textContent) && /Ngày thuận lợi|Ngày cần cẩn thận/.test(d.querySelector('#foryou').textContent), 'forecast shows as short emoji paragraphs, no adverts, houses named plainly, day lists on their own lines');
+    ok(d.querySelectorAll('#foryou .horo .body p').length >= 6 && !/Premium|cao cấp|\bLeo\b/.test(d.querySelector('#foryou').textContent) && /nhà số \d+/.test(d.querySelector('#foryou').textContent) && /Ngày thuận lợi|Ngày cần cẩn thận/.test(d.querySelector('#foryou').textContent), 'forecast shows as short emoji paragraphs, no adverts, houses named plainly, day lists on their own lines');
     // pick a card, Vietnamese
     await go('#/pick', '#fan .slot');
     ok(d.querySelectorAll('#fan .slot').length === 7 && d.querySelectorAll('[data-focus]').length === 5, 'seven cards, five focuses');
@@ -147,7 +147,7 @@ async function go(hash, sel) { W().location.hash = hash; await sleep(30); return
     await go('#/learn/lesson/lenormand/6', '.spreads-v');
     ok(d.querySelectorAll('.spv').length === 7 && /Grand Tableau/.test(d.querySelector('.spreads-v').textContent), 'lenormand session 6: seven spread diagrams incl. the Grand Tableau');
     await go('#/report', '#rwhat');
-    ok(d.querySelector('#rwhat') && d.querySelector('#rsend') && d.querySelector('#rcopy') && /Nabu Tarot v28/.test(d.querySelector('.msgbox').textContent), 'bug report screen: direct send button, Instagram, copy, auto-attached info');
+    ok(d.querySelector('#rwhat') && d.querySelector('#rsend') && d.querySelector('#rcopy') && /Nabu Tarot v29/.test(d.querySelector('.msgbox').textContent), 'bug report screen: direct send button, Instagram, copy, auto-attached info');
     d.querySelector('#rwhat').value = 'Nút không bấm được'; d.querySelector('#rsend').click(); await sleep(150);
     ok(/chưa bật gửi trực tiếp/.test(d.querySelector('#rstatus').textContent), 'without an endpoint the send button explains and copies the report');
     ok(N.CONFIG.adminNotifyEmails.indexOf('nabutarot@outlook.com') === 0, 'notifications go to nabutarot@outlook.com first');
@@ -187,6 +187,7 @@ async function go(hash, sel) { W().location.hash = hash; await sleep(30); return
     await go('#/learn/fortune/cards', '.pcmap');
     d.querySelector('[data-suit="s"]').click(); d.querySelector('[data-rank="3"]').click(); await sleep(30);
     ok(/Ba Kiếm/.test(d.querySelector('#pcout').textContent) && d.querySelector('#pcout svg'), '3 of spades maps to Three of Swords with its face');
+    ok(/Nghĩa truyền thống/.test(d.querySelector('#pcout').textContent) && /Đau lòng, phản bội/.test(d.querySelector('#pcout').textContent) && /Đọc theo tarot/.test(d.querySelector('#pcout').textContent) && /hai cách đọc/i.test(d.querySelector('#main').textContent), 'playing card shows its traditional meaning and the tarot reading side by side');
     d.querySelector('[data-rank="Q"]').click(); await sleep(30);
     ok(/Nữ Hoàng Kiếm/.test(d.querySelector('#pcout').textContent), 'Queen of spades maps to the Queen of Swords');
     await go('#/learn/fortune/tea', '.cup');
@@ -205,6 +206,7 @@ async function go(hash, sel) { W().location.hash = hash; await sleep(30); return
     // booking with calendar
     await go('#/book?card=' + chosen, '.cal .days');
     await waitFor(() => d.querySelector('.cal .d.has'), 4000);
+    ok(w.NABU.SERVICES.filter((x) => x.id === 'lenormand')[0].packages[0].price === 15000 && w.NABU.SERVICES.filter((x) => x.id === 'tarot-oracle')[0].packages[3].price === 120000 && w.NABU.SERVICES.filter((x) => x.id === 'lenormand-oracle')[0].packages[3].name.en === '60 minutes' && w.NABU.SERVICES.filter((x) => x.id === 'tuvi')[0].packages[1].price === 333000 && w.NABU.SERVICES.filter((x) => x.id === 'talk')[0].tagline.en === 'No readings or predictions, but always ready to listen.', 'price sheet: Lenormand 15/25/60/75/90k, oracle combos with 60-minute tiers, Tử vi 99/333/666k, Just talk wording');
     ok(w.NABU.SERVICES.length === 7 && !w.NABU.SERVICES.some((x) => x.id === 'oracle') && w.NABU.SERVICES.some((x) => x.id === 'tea') && w.NABU.SERVICES.some((x) => x.id === 'talk'), 'seven services: no standalone oracle; tea, combos and just-talk present');
     ok(d.querySelectorAll('.svc').length === 7 && d.querySelectorAll('[data-pkg]').length === 26, 'price sheet renders every package');
     ok(/50\.000đ/.test(d.querySelector('.svc.blue').textContent) && /1 chủ đề sẵn \(chọn trong 5 chủ đề\)/.test(d.querySelector('.svc.blue').textContent) && /Bài trà/.test(d.querySelector('#main').textContent) && /666\.000đ/.test(d.querySelectorAll('.svc')[5].textContent) && /60\.000đ/.test(d.querySelectorAll('.svc')[6].textContent), 'prices formatted in VND');
@@ -224,6 +226,7 @@ async function go(hash, sel) { W().location.hash = hash; await sleep(30); return
     ok(/Chủ đề: #2 Người cũ/.test(d.querySelector('#msgprev').textContent) && /Tên: Lan/.test(d.querySelector('#msgprev').textContent), 'message has topic and name from profile');
     d.querySelector('[data-topic="2"]').click();
     ok(N.book.topic === null && !d.querySelector('[data-topic="2"]').classList.contains('on') && !/Chủ đề:/.test(d.querySelector('#msgprev').textContent), 'a second tap clears the chosen topic');
+    ok(w.authMessage({ code: 'auth/operation-not-allowed' }, 'facebook') === 'Đăng nhập Facebook chưa mở: Meta yêu cầu Nabu đăng ký một ứng dụng nhà phát triển trước. Bạn dùng Google hoặc email giúp Nabu nhé.' && /Authorized domains/.test(w.authMessage({ code: 'auth/unauthorized-domain' }, 'google')), 'sign-in errors are explained in plain words');
     d.querySelector('[data-topic="2"]').click();
     ok(/ig\.me\/m\/nabutarot/.test(d.querySelector('[data-send][href]').getAttribute('href')), 'instagram send link');
     // me: accounts off

@@ -40,7 +40,7 @@ function bindAuth(root) {
     const p = b.getAttribute('data-auth');
     if (!BE.enabled) { status(S.accountsSoon, 'err'); toast(S.accountsOff); return; }
     if (p === 'email') { $('#emailform').hidden = !$('#emailform').hidden; return; }
-    try { await BE.signIn(p); } catch (e) { status(S.authFail + ': ' + (e.message || e.code), 'err'); }
+    try { await BE.signIn(p); } catch (e) { status(authMessage(e, p), 'err'); }
   }));
   const em = () => $('#aemail').value.trim(), pw = () => $('#apw').value;
   const el = $('#alogin', root);
@@ -60,6 +60,16 @@ function chatHTML(msgs, mine) {
   }).join('');
 }
 /* Chat bar with text, a photo button and a hold-to-record voice button. */
+/* Firebase error codes in plain words. */
+function authMessage(e, provider) {
+  const S = T(), code = (e && e.code) || '';
+  if (code === 'auth/operation-not-allowed') return provider === 'facebook' ? S.authFbOff : S.authProviderOff;
+  if (code === 'auth/unauthorized-domain') return S.authDomain;
+  if (code === 'auth/popup-closed-by-user' || code === 'auth/cancelled-popup-request') return S.authCancelled;
+  if (code === 'auth/account-exists-with-different-credential') return S.authOtherProvider;
+  if (code === 'auth/network-request-failed') return S.authNetwork;
+  return S.authFail + ': ' + ((e && (e.message || e.code)) || '');
+}
 function chatBarHTML(idText, idSend, label) {
   const S = T();
   const att = CONFIG.attachments ? '<label class="btn sm att-btn" title="' + esc(S.sendPhoto) + '">📷<input type="file" accept="image/*" data-chat-img hidden></label><button class="btn sm att-btn" data-chat-voice title="' + esc(S.holdToRecord) + '">🎤</button>' : '';

@@ -8,7 +8,7 @@
 const FT = {
   numbers: { ic: '🔢', vi: ['Thần số học', 'Số của bạn, từ ngày sinh và tên'], en: ['Numerology', 'Your numbers, from birth date and name'] },
   palm: { ic: '🖐️', vi: ['Xem chỉ tay', 'Bản đồ bàn tay, chạm từng đường'], en: ['Palm reading', 'A map of the hand, tap each line'] },
-  cards: { ic: '🂡', vi: ['Bói bài Tây', '52 lá đọc bằng tarot'], en: ['Playing cards', '52 cards read through tarot'] },
+  cards: { ic: '🂡', vi: ['Bói bài Tây', '52 lá, nghĩa truyền thống + tarot'], en: ['Playing cards', '52 cards, traditional meanings + tarot'] },
   tea: { ic: '🍵', vi: ['Bài trà', 'Bản đồ tách trà và các hình'], en: ['Tealeaf fortune telling', 'Cup map and the shapes'] },
   animals: { ic: '🐉', vi: ['12 con giáp', 'Vòng con giáp, tam hợp, tứ hành xung'], en: ['12 animals', 'The wheel, trios and clashes'] }
 };
@@ -98,6 +98,62 @@ function renderPalm(m, head) {
   draw('heart'); bindAccordions(m);
 }
 
+/* Traditional cartomancy meanings for the 52 cards, the way fortune tellers
+   read them before tarot decks were common. [vi, en] per card. */
+const PC_TRAD = {
+  hA: ['Mái nhà, tình yêu mới, niềm vui trong gia đình', 'Home, a new love, happiness in the family'],
+  h2: ['Đôi lứa, tình cảm đáp lại, hứa hẹn gắn bó', 'A couple, love returned, a promise to commit'],
+  h3: ['Cẩn thận trong tình cảm, người thứ ba, lựa chọn của trái tim', 'Care in love, a third person, a choice of the heart'],
+  h4: ['Thay đổi trong nhà, một chuyến đi, hôn nhân bị hoãn', 'A change at home, a journey, a marriage delayed'],
+  h5: ['Ghen tuông, do dự, một quyết định về tình cảm', 'Jealousy, hesitation, a decision about love'],
+  h6: ['Kỷ niệm, người cũ quay lại, lòng rộng lượng', 'Memories, someone from the past returns, generosity'],
+  h7: ['Thất vọng, lời hứa không giữ, người hay đổi ý', 'Disappointment, a broken promise, a fickle person'],
+  h8: ['Lời mời, cuộc thăm hỏi, quà tặng, tiệc tùng', 'An invitation, a visit, a gift, a celebration'],
+  h9: ['Lá ước nguyện: điều mong muốn thành hiện thực', 'The wish card: what you hope for comes true'],
+  h10: ['May mắn lớn, gia đình hạnh phúc, thành công', 'Great luck, a happy family, success'],
+  hJ: ['Một người bạn thân, một người trẻ tốt bụng và chân thành', 'A close friend, a kind and sincere young person'],
+  hQ: ['Một người phụ nữ dịu dàng, yêu thương; người mẹ', 'A gentle, loving woman; the mother'],
+  hK: ['Một người đàn ông ấm áp, rộng lượng; lời khuyên tốt', 'A warm, generous man; good advice'],
+  dA: ['Thư từ, tin nhắn, chiếc nhẫn, tin về tiền bạc', 'A letter, a message, a ring, news about money'],
+  d2: ['Chuyện tình bị phản đối, bất đồng về tiền, cần chọn một trong hai', 'A romance others disapprove of, a money disagreement, choosing between two'],
+  d3: ['Giấy tờ, pháp lý, tranh cãi, cãi vã trong nhà', 'Paperwork, legal matters, quarrels, arguments at home'],
+  d4: ['Thừa kế, tiền bạc ổn định, sự an toàn', 'An inheritance, steady money, security'],
+  d5: ['Tin vui, thay đổi tốt lên, công việc thuận lợi', 'Good news, a change for the better, business goes well'],
+  d6: ['Hôn nhân sớm, cơ hội thứ hai, cẩn thận với chi tiêu', 'An early marriage, a second chance, care with spending'],
+  d7: ['Lời đàm tiếu, chỉ trích, lo lắng tiền bạc, mất mát nhỏ', 'Gossip, criticism, money worries, a small loss'],
+  d8: ['Hôn nhân muộn, chuyến đi ngắn, tiền đến rồi đi', 'A late marriage, a short trip, money that comes and goes'],
+  d9: ['Bất ngờ, phiêu lưu, khoản tiền ngoài dự tính, bồn chồn', 'A surprise, adventure, unexpected money, restlessness'],
+  d10: ['Tiền bạc, chuyến đi xa, đám cưới, vận may', 'Money, a long journey, a wedding, good fortune'],
+  dJ: ['Người đưa tin, một người trẻ mang tin; người giúp nhưng không đáng tin lắm', 'A messenger, a young person bringing news; a helper who is not fully reliable'],
+  dQ: ['Người phụ nữ sành sỏi, hay nói; sự chen ngang', 'A worldly woman, a talker; interference'],
+  dK: ['Người đàn ông làm ăn, có quyền, cứng đầu', 'A businessman, a man of authority, stubborn'],
+  cA: ['Của cải, thành công, một khởi đầu tốt', 'Wealth, success, a good beginning'],
+  c2: ['Đối đầu, lời đồn, thất vọng, tranh cãi', 'Opposition, rumours, disappointment, arguments'],
+  c3: ['Hôn nhân, hợp tác lâu dài, cơ hội thứ hai', 'Marriage, a long partnership, a second chance'],
+  c4: ['Thay đổi, vận rủi bất ngờ; lời nhắc tránh xung đột', 'A change, a sudden misfortune; a reminder to avoid conflict'],
+  c5: ['Bạn mới, một liên minh có ích, hôn nhân', 'New friends, a helpful alliance, marriage'],
+  c6: ['Việc làm ăn thuận lợi, được hỗ trợ tài chính', 'Business success, financial support'],
+  c7: ['Thịnh vượng, một người bạn tốt; đề phòng người ganh đua', 'Prosperity, a good friend; watch out for a rival'],
+  c8: ['Làm việc quá sức, ham may rủi; một lời đề nghị', 'Overwork, a taste for gambling; a proposal'],
+  c9: ['Tình cảm mới; bất đồng với bạn bè', 'A new romance; disagreement with friends'],
+  c10: ['Đi xa, thành công trong công việc, may mắn sau nỗ lực', 'Travel, success at work, luck after effort'],
+  cJ: ['Người bạn đáng tin, chàng trai chân thành', 'A reliable friend, a sincere young man'],
+  cQ: ['Người phụ nữ tự tin, ấm áp, hay giúp đỡ', 'A confident, warm, helpful woman'],
+  cK: ['Người đàn ông rộng rãi, trung thành; người cố vấn tốt', 'A generous, loyal man; a good adviser'],
+  sA: ['Kết thúc, quyết định khó, chuyện không may', 'An ending, a hard decision, misfortune'],
+  s2: ['Chia ly, tạm dừng, lựa chọn khó, lời nói dối', 'Separation, a pause, a hard choice, a lie'],
+  s3: ['Đau lòng, phản bội, nước mắt', 'Heartbreak, betrayal, tears'],
+  s4: ['Ốm đau, thụt lùi; cần nghỉ ngơi để hồi phục', 'Illness, a setback; rest to recover'],
+  s5: ['Trở ngại, lo âu; vượt qua rồi sẽ thành', 'Obstacles, anxiety; success after they pass'],
+  s6: ['Tiến bộ nhỏ, một chuyến đi để bỏ lại rắc rối', 'Small progress, a journey to leave trouble behind'],
+  s7: ['Mất mát, lời cảnh báo; đừng tin người quá dễ', 'A loss, a warning; do not trust too easily'],
+  s8: ['Rắc rối, thất vọng, nguy cơ bệnh tật hay kiện tụng', 'Trouble, disappointment, a risk of illness or a lawsuit'],
+  s9: ['Tin xấu, lo lắng, muộn phiền: lá nặng nhất bộ', 'Bad news, worry, sorrow: the heaviest card in the pack'],
+  s10: ['Lo âu, bị ràng buộc, một giai đoạn khó đang khép lại', 'Anxiety, feeling trapped, a hard period coming to a close'],
+  sJ: ['Người trẻ không đáng tin, đối thủ', 'An untrustworthy young person, a rival'],
+  sQ: ['Người phụ nữ lạnh lùng hoặc góa bụa; lời phê bình gắt', 'A cold or widowed woman; harsh criticism'],
+  sK: ['Luật sư, quan tòa, người có quyền và tham vọng', 'A lawyer, a judge, an ambitious man of authority']
+};
 /* ---- playing cards ---- */
 function renderPlayingCards(m, head) {
   const S = T(), X = LEX[lang];
@@ -105,7 +161,9 @@ function renderPlayingCards(m, head) {
   const legend = '<div class="pcmap">' + PC_SUITS.map((s) => '<div class="pcs"><span class="pip ' + (s[0] === 'h' || s[0] === 'd' ? 'red' : '') + '">' + s[1] + '</span><span>=</span><svg viewBox="-20 -22 40 44"><g stroke="var(--card-ink)" stroke-linejoin="round" stroke-linecap="round" fill="none">' + emblem(s[2], 0, 0, 1) + '</g></svg><b>' + esc(X.suitNames[s[2]]) + '</b></div>').join('') + '</div>';
   const show = () => {
     const id = pcToTarot(suit, rank), c = cardById(id), I = insightOf(id);
-    $('#pcout').innerHTML = '<div class="pcresult"><div class="pcard"><span class="' + (suit === 'h' || suit === 'd' ? 'red' : '') + '">' + rank + PC_SUITS.filter((x) => x[0] === suit)[0][1] + '</span></div><span class="arrow">→</span><button class="face" data-open-card="' + id + '" style="width:96px">' + faceSVG(c) + '</button><div><b>' + esc(c.name) + '</b><p>' + esc(I.pos.slice(0, 3).join(' · ')) + '</p><p class="muted">' + esc(c.up) + '</p></div></div>';
+    const trad = PC_TRAD[suit + rank] || ['', ''];
+    $('#pcout').innerHTML = '<div class="pcresult"><div class="pcard"><span class="' + (suit === 'h' || suit === 'd' ? 'red' : '') + '">' + rank + PC_SUITS.filter((x) => x[0] === suit)[0][1] + '</span></div><div><div class="eyebrow">' + esc(S.pcTrad) + '</div><p class="pctrad">' + esc(lang === 'vi' ? trad[0] : trad[1]) + '</p></div></div>'
+      + '<div class="pcresult"><div class="eyebrow" style="width:100%">' + esc(S.pcTarotWay) + '</div><button class="face" data-open-card="' + id + '" style="width:96px">' + faceSVG(c) + '</button><div><b>' + esc(c.name) + '</b><p>' + esc(I.pos.slice(0, 3).join(' · ')) + '</p><p class="muted">' + esc(c.up) + '</p></div></div>';
     bindCardLinks($('#pcout'));
     $$('[data-suit]', m).forEach((b) => b.classList.toggle('on', b.getAttribute('data-suit') === suit));
     $$('[data-rank]', m).forEach((b) => b.classList.toggle('on', b.getAttribute('data-rank') === rank));
