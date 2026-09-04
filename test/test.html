@@ -146,7 +146,7 @@ async function go(hash, sel) { W().location.hash = hash; await sleep(30); return
     await go('#/learn/lesson/lenormand/6', '.spreads-v');
     ok(d.querySelectorAll('.spv').length === 7 && /Grand Tableau/.test(d.querySelector('.spreads-v').textContent), 'lenormand session 6: seven spread diagrams incl. the Grand Tableau');
     await go('#/report', '#rwhat');
-    ok(d.querySelector('#rwhat') && d.querySelector('#rcopy') && /Nabu Tarot v25/.test(d.querySelector('.msgbox').textContent), 'bug report screen with auto-attached info');
+    ok(d.querySelector('#rwhat') && d.querySelector('#rcopy') && /Nabu Tarot v26/.test(d.querySelector('.msgbox').textContent), 'bug report screen with auto-attached info');
     await go('#/learn/len/1', '.detail .hero');
     ok(/Kỵ Mã/.test(d.querySelector('.name').textContent) && /Cặp lá/.test(d.body.textContent), 'Lenormand card page');
     await go('#/learn/astro', '.signlist button');
@@ -203,8 +203,8 @@ async function go(hash, sel) { W().location.hash = hash; await sleep(30); return
     await waitFor(() => d.querySelector('.cal .d.has'), 4000);
     ok(w.NABU.SERVICES.length === 7 && !w.NABU.SERVICES.some((x) => x.id === 'oracle') && w.NABU.SERVICES.some((x) => x.id === 'tea') && w.NABU.SERVICES.some((x) => x.id === 'talk'), 'seven services: no standalone oracle; tea, combos and just-talk present');
     ok(d.querySelectorAll('.svc').length === 7 && d.querySelectorAll('[data-pkg]').length === 26, 'price sheet renders every package');
-    ok(/50\.000đ/.test(d.querySelector('.svc.blue').textContent) && /Xem 1 chủ đề sẵn \(chọn trong 5 chủ đề\)/.test(d.querySelector('.svc.blue').textContent) && /Bài trà/.test(d.querySelector('#main').textContent) && /666\.000đ/.test(d.querySelectorAll('.svc')[5].textContent) && /60\.000đ/.test(d.querySelectorAll('.svc')[6].textContent), 'prices formatted in VND');
-    ok(d.querySelectorAll('[data-topic]').length === 5 && /Chỉ áp dụng cho gói Xem 1 chủ đề sẵn/.test(d.querySelector('#main').textContent), 'five preset topics only, with the note that they apply to the 1-preset-topic package');
+    ok(/50\.000đ/.test(d.querySelector('.svc.blue').textContent) && /1 chủ đề sẵn \(chọn trong 5 chủ đề\)/.test(d.querySelector('.svc.blue').textContent) && /Bài trà/.test(d.querySelector('#main').textContent) && /666\.000đ/.test(d.querySelectorAll('.svc')[5].textContent) && /60\.000đ/.test(d.querySelectorAll('.svc')[6].textContent), 'prices formatted in VND');
+    ok(d.querySelectorAll('[data-topic]').length === 5 && /Chỉ áp dụng cho gói 1 chủ đề sẵn/.test(d.querySelector('#main').textContent), 'five preset topics only, with the note that they apply to the 1-preset-topic package');
     d.querySelector('[data-pkg="tarot/q3"]').click();
     ok(d.querySelector('[data-pkg="tarot/q3"]').classList.contains('on') && /Dịch vụ: Tarot – 3 câu chi tiết \(50\.000đ\)/.test(d.querySelector('#msgprev').textContent) && /không bắt buộc/.test(d.querySelector('#topicopt').textContent), 'package goes into the message; topic becomes optional');
     d.querySelector('[data-pkg="tuvi/year"]').click();

@@ -107,7 +107,7 @@ const STR = {
     msgService: 'Dịch vụ', msgBirth: 'Ngày giờ sinh',
     chooseTopic: '2. Chọn 1 chủ đề sẵn',
     presetTopics: 'Chủ đề sẵn',
-    topicHint: 'Chỉ áp dụng cho gói Xem 1 chủ đề sẵn: bạn chọn một trong 5 chủ đề dưới đây. Mỗi chủ đề là trải bài 5 lá. Bấm để xem 5 câu hỏi. Câu hỏi khác bạn ghi ở phần thông tin bên dưới.',
+    topicHint: 'Chỉ áp dụng cho gói 1 chủ đề sẵn: bạn chọn một trong 5 chủ đề dưới đây. Mỗi chủ đề là trải bài 5 lá. Bấm để xem 5 câu hỏi. Câu hỏi khác bạn ghi ở phần thông tin bên dưới.',
     ownTopic: 'Câu hỏi riêng',
     ownTopicHint: 'Bạn tự viết câu hỏi của mình.',
     chooseTime: '3. Chọn giờ hẹn',
