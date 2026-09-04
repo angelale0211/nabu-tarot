@@ -6,7 +6,7 @@
 /* Mail the booking to Nabu as a calendar invitation (through the worker). Best effort. */
 function notifyBooking(b) {
   if (!CONFIG.bookingEndpoint) return Promise.resolve();
-  return fetch(CONFIG.bookingEndpoint, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ booking: b, tz: CONFIG.timezone, to: CONFIG.adminNotifyEmail, lang: lang }) }).catch(() => {});
+  return fetch(CONFIG.bookingEndpoint, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ booking: b, tz: CONFIG.timezone, to: CONFIG.adminNotifyEmails, lang: lang }) }).catch(() => {});
 }
 const BE = {
   enabled: !!CONFIG.firebase,

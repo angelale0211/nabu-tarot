@@ -34,8 +34,11 @@ const CONFIG = {
   // Where booking requests are mailed as calendar invitations (an .ics the
   // mail app adds to the calendar). Sent by the worker in worker/ through
   // Resend; set bookingEndpoint to '<worker url>/booking' once deployed.
-  adminNotifyEmail: 'angela_le_@outlook.com',
+  adminNotifyEmails: ['nabutarot@outlook.com', 'angela_le_@outlook.com'],
   bookingEndpoint: '',
+  // Bug reports from #/report are mailed to the same addresses through the
+  // worker: set reportEndpoint to '<worker url>/report' once deployed.
+  reportEndpoint: '',
   authProviders: ['google', 'facebook', 'email'],
 
   // Nabu AI. Leave empty to answer from the built-in knowledge base; set the
