@@ -21,15 +21,17 @@ const L = (obj) => { if (obj == null) return ''; if (typeof obj === 'string') re
 const L2 = (obj, lg) => (obj == null ? '' : typeof obj === 'string' ? obj : (obj[lg] || ''));
 
 const darkMQ = window.matchMedia ? window.matchMedia('(prefers-color-scheme: dark)') : { matches: false, addEventListener: () => {} };
-function themeChoice() { const t = store.get('nabu-theme', ''); return t === 'dark' || t === 'light' ? t : 'auto'; }
+const THEMES = ['light', 'dark', 'pink'];
+function themeChoice() { const t = store.get('nabu-theme', ''); return THEMES.indexOf(t) > -1 ? t : 'auto'; }
 function effectiveTheme() { const t = themeChoice(); return t === 'auto' ? (darkMQ.matches ? 'dark' : 'light') : t; }
 function setTheme(t) { store.set('nabu-theme', t === 'auto' ? '' : t); applyTheme(); }
 function applyTheme() {
   const t = themeChoice();
   if (t === 'auto') document.documentElement.removeAttribute('data-theme'); else document.documentElement.setAttribute('data-theme', t);
-  const dark = effectiveTheme() === 'dark';
-  $('#theme').textContent = dark ? '☀️' : '🌙';
-  $('meta[name="theme-color"]').setAttribute('content', dark ? '#241A45' : '#EFE9FA');
+  const cur = effectiveTheme();
+  // The pill shows the theme that comes next: light → dark → pink → light.
+  $('#theme').textContent = cur === 'light' ? '🌙' : cur === 'dark' ? '🌸' : '☀️';
+  $('meta[name="theme-color"]').setAttribute('content', cur === 'dark' ? '#241A45' : cur === 'pink' ? '#FBEEF2' : '#EFE9FA');
 }
 darkMQ.addEventListener('change', applyTheme);
 
@@ -366,7 +368,7 @@ function boot() {
     e.preventDefault(); NAV.popping = true; location.hash = a.getAttribute('href');
   });
   $('#lang').addEventListener('click', () => { lang = lang === 'vi' ? 'en' : 'vi'; store.set('nabu-lang', lang); route(); });
-  $('#theme').addEventListener('click', () => setTheme(effectiveTheme() === 'dark' ? 'light' : 'dark'));
+  $('#theme').addEventListener('click', () => { const cur = effectiveTheme(); setTheme(THEMES[(THEMES.indexOf(cur) + 1) % THEMES.length]); });
   applyTheme();
   route();
   if ('serviceWorker' in navigator && location.protocol !== 'file:') {

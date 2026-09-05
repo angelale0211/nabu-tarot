@@ -213,6 +213,23 @@
   --tag-pink-bg:#6E2F49; --tag-pink-ink:#FFD6E1; --tag-blue-bg:#2F4E86; --tag-blue-ink:#DCE8FF; --tag-gold-bg:#6B5320; --tag-gold-ink:#FFE9B0; --tag-green-bg:#245C36; --tag-green-ink:#D2F2DB; --tag-neu-bg:#463779; --tag-neu-ink:#EDE6FA;
   color-scheme:dark;
 }
+/* Pastel pink: blush ground, cream cards, plum-rose text, one rose accent.
+   Every pair below keeps at least 4.5:1 contrast for body text. */
+:root[data-theme="pink"]{
+  --bg:#FBEEF2; --surface:#FFF9FB; --surface-2:#F9E6EC; --surface-3:#F2D8E1;
+  --fg:#55293F; --fg-soft:#845266; --fg-faint:#AE8496;
+  --rule:#EFD2DC; --rule-soft:#F6E3EA;
+  --lav:#D8B9E4; --lav-soft:#F0DFF3; --pink:#F7C3D2; --pink-ink:#9E3C5C; --blue:#C3D8F1; --blue-ink:#3A5C8C;
+  --gold:#E9C784; --gold-soft:#F9EBCC; --gold-ink:#55293F;
+  --primary:#B8496D; --primary-ink:#FFF7F9;
+  --link:#A93F63; --picked-ink:#55293F; --ok:#2E7D46; --err:#B4384E;
+  --card-bg:#FFF6F2; --card-ink:#55293F;
+  --back-1:#B8496D; --back-2:#CF6A8B;
+  --wands-ink:#B04A2E; --cups-ink:#3A6BA8; --swords-ink:#6B6F86; --pentacles-ink:#3D7A48; --major-ink:#8A4B9E;
+  --shade:rgba(85,41,63,.16);
+  --tag-pink-bg:#F9D3DE; --tag-pink-ink:#6A2440; --tag-blue-bg:#D8E4F7; --tag-blue-ink:#2A4A78; --tag-gold-bg:#F9EBCC; --tag-gold-ink:#5C4312; --tag-green-bg:#D6EEDC; --tag-green-ink:#1F5A32; --tag-neu-bg:#F2D8E1; --tag-neu-ink:#55293F;
+  color-scheme:light;
+}
 *{box-sizing:border-box;min-width:0}
 body{overflow-x:clip}
 img,svg{max-width:100%}
@@ -1135,7 +1152,7 @@ const STR = {
     typeMsg: 'Viết tin nhắn...', sendPhoto: 'Gửi ảnh', holdToRecord: 'Bấm để ghi âm, bấm lại để gửi', recording: 'Đang ghi âm… bấm 🎤 lần nữa để gửi.', uploading: 'Đang gửi…', noMic: 'Máy này không cho ghi âm.', fileTooBig: 'Ảnh quá lớn (tối đa 8 MB).',
     send: 'Gửi',
     noMsgs: 'Chưa có tin nhắn. Bạn cứ hỏi, Nabu sẽ trả lời.',
-    themeTitle: 'Giao diện', themes: { auto: 'Theo điện thoại', light: 'Sáng', dark: 'Tối' }, themeHint: 'Theo điện thoại: app tự đổi sáng/tối cùng máy của bạn.',
+    themeTitle: 'Giao diện', themes: { auto: 'Theo điện thoại', light: 'Sáng', dark: 'Tối', pink: 'Hồng pastel' }, themeHint: 'Theo điện thoại: app tự đổi sáng/tối cùng máy của bạn. Nút ở góc trên xoay vòng sáng → tối → hồng.',
     installTitle: 'Cài app lên điện thoại',
     install: 'Trên iPhone: mở bằng Safari, bấm Chia sẻ, chọn "Thêm vào MH chính". Trên Android: bấm menu ⋮ rồi "Cài đặt ứng dụng".',
     dismiss: 'Đóng', tourMini: 'Hướng dẫn dùng app', tourOpen: 'Xem lại',
@@ -1374,7 +1391,7 @@ const STR = {
     typeMsg: 'Write a message...', sendPhoto: 'Send a photo', holdToRecord: 'Tap to record, tap again to send', recording: 'Recording… tap 🎤 again to send.', uploading: 'Sending…', noMic: 'This device does not allow recording.', fileTooBig: 'Photo too large (8 MB max).',
     send: 'Send',
     noMsgs: 'No messages yet. Ask away, Nabu will answer.',
-    themeTitle: 'Appearance', themes: { auto: 'Match my phone', light: 'Light', dark: 'Dark' }, themeHint: 'Match my phone: the app switches with your phone\'s light or dark setting.',
+    themeTitle: 'Appearance', themes: { auto: 'Match my phone', light: 'Light', dark: 'Dark', pink: 'Pastel pink' }, themeHint: 'Match my phone: the app switches with your phone\'s light or dark setting. The top button cycles light → dark → pink.',
     installTitle: 'Install on your phone',
     install: 'iPhone: open in Safari, tap Share, then "Add to Home Screen". Android: tap the ⋮ menu, then "Install app".',
     dismiss: 'Close', tourMini: 'How to use the app', tourOpen: 'Show again',
@@ -10058,15 +10075,17 @@ const L = (obj) => { if (obj == null) return ''; if (typeof obj === 'string') re
 const L2 = (obj, lg) => (obj == null ? '' : typeof obj === 'string' ? obj : (obj[lg] || ''));
 
 const darkMQ = window.matchMedia ? window.matchMedia('(prefers-color-scheme: dark)') : { matches: false, addEventListener: () => {} };
-function themeChoice() { const t = store.get('nabu-theme', ''); return t === 'dark' || t === 'light' ? t : 'auto'; }
+const THEMES = ['light', 'dark', 'pink'];
+function themeChoice() { const t = store.get('nabu-theme', ''); return THEMES.indexOf(t) > -1 ? t : 'auto'; }
 function effectiveTheme() { const t = themeChoice(); return t === 'auto' ? (darkMQ.matches ? 'dark' : 'light') : t; }
 function setTheme(t) { store.set('nabu-theme', t === 'auto' ? '' : t); applyTheme(); }
 function applyTheme() {
   const t = themeChoice();
   if (t === 'auto') document.documentElement.removeAttribute('data-theme'); else document.documentElement.setAttribute('data-theme', t);
-  const dark = effectiveTheme() === 'dark';
-  $('#theme').textContent = dark ? '☀️' : '🌙';
-  $('meta[name="theme-color"]').setAttribute('content', dark ? '#241A45' : '#EFE9FA');
+  const cur = effectiveTheme();
+  // The pill shows the theme that comes next: light → dark → pink → light.
+  $('#theme').textContent = cur === 'light' ? '🌙' : cur === 'dark' ? '🌸' : '☀️';
+  $('meta[name="theme-color"]').setAttribute('content', cur === 'dark' ? '#241A45' : cur === 'pink' ? '#FBEEF2' : '#EFE9FA');
 }
 darkMQ.addEventListener('change', applyTheme);
 
@@ -10403,7 +10422,7 @@ function boot() {
     e.preventDefault(); NAV.popping = true; location.hash = a.getAttribute('href');
   });
   $('#lang').addEventListener('click', () => { lang = lang === 'vi' ? 'en' : 'vi'; store.set('nabu-lang', lang); route(); });
-  $('#theme').addEventListener('click', () => setTheme(effectiveTheme() === 'dark' ? 'light' : 'dark'));
+  $('#theme').addEventListener('click', () => { const cur = effectiveTheme(); setTheme(THEMES[(THEMES.indexOf(cur) + 1) % THEMES.length]); });
   applyTheme();
   route();
   if ('serviceWorker' in navigator && location.protocol !== 'file:') {
@@ -12500,7 +12519,7 @@ function renderMe(args, params) {
     h += aiPanelHTML({ type: 'general' });
     h += '<div class="card"><h3 style="margin-bottom:8px">' + esc(S.myCourses) + '</h3>' + COURSES.map((c) => { const a = ACCESS.isAdmin() ? '9999-12-31' : ACCESS.get()[c.id]; return '<div class="course"><span>' + esc(L(c.name)) + '</span><span class="faint">' + (a ? (ACCESS.has(c.id) ? '✓ ' + esc(S.activeUntil(fmtDate(a))) : esc(S.expiredOn(fmtDate(a)))) : '🔒 ' + fmtPrice(c.price)) + '</span></div>'; }).join('')
       + '<label class="f" for="mcode">' + esc(S.enterCode) + '</label><div class="row nw"><input id="mcode" placeholder="NABU-T-…" autocapitalize="characters"><button class="btn" id="munlock">' + esc(S.unlock) + '</button></div><p class="hint" id="mcstatus"></p></div>';
-    h += '<div class="card"><h3 style="margin-bottom:8px">' + esc(S.themeTitle) + '</h3><div class="chips">' + ['auto', 'light', 'dark'].map((t) => '<button class="chip' + (themeChoice() === t ? ' on' : '') + '" data-theme-pick="' + t + '">' + esc(S.themes[t]) + '</button>').join('') + '</div><p class="hint">' + esc(S.themeHint) + '</p></div>';
+    h += '<div class="card"><h3 style="margin-bottom:8px">' + esc(S.themeTitle) + '</h3><div class="chips">' + ['auto', 'light', 'dark', 'pink'].map((t) => '<button class="chip' + (themeChoice() === t ? ' on' : '') + '" data-theme-pick="' + t + '">' + esc(S.themes[t]) + '</button>').join('') + '</div><p class="hint">' + esc(S.themeHint) + '</p></div>';
     h += '<div class="row">' + (BE.user ? '<button class="btn" id="signout">' + esc(S.signOut) + '</button>' : '') + '<a class="btn" href="#/contact">💬 ' + esc(S.contactLink) + '</a><a class="btn" href="#/report">🐞 ' + esc(S.reportLink) + '</a><button class="btn" id="retour">' + (lang === 'vi' ? 'Xem lại hướng dẫn' : 'Replay the tour') + '</button>' + (BE.isAdmin() ? '<a class="btn gold" href="#/admin">' + esc(S.adminTitle) + '</a>' : '') + '</div>';
     body.innerHTML = h;
     bindAuth(body); bindAI(body); bindNotify(body);
@@ -12870,7 +12889,7 @@ function adminCodes(p) {
 ROUTES.admin = { nav: '', render: renderAdmin };
 
 /* ============================ boot ============================ */
-window.APP_VERSION = 'v50';
+window.APP_VERSION = 'v51';
 window.NABU = { CONFIG: CONFIG, LESSONS: LESSONS, localAnswer: localAnswer, compatVerdict: compatVerdict, numerologyOf: numerologyOf, ZDEEP: ZDEEP, lunarToday: lunarToday, solarToLunar: solarToLunar, DECK: DECK, INSIGHT: INSIGHT, KW: KW, ASK: ASK, TOPICS: TOPICS, GUIDES: GUIDES, SERVICES: SERVICES, COURSES: COURSES, ACCESS: ACCESS, makeCode: makeCode, parseCode: parseCode, ZODIAC: ZODIAC, pick: pick, book: book,
   insightHTML: insightHTML, insightOf: insightOf, sunSignIndex: sunSignIndex, lifePath: lifePath, PROFILE: () => PROFILE, BE: BE };
 BE.initP = BE.init().catch(() => { /* backend unreachable: the app runs device-only */ });
