@@ -690,10 +690,12 @@ main{padding:22px 0 30px}
 @keyframes pulse{50%{opacity:.6}}
 .msg .att{display:block;max-width:220px;border-radius:10px;margin-bottom:6px}
 .msg audio.att{width:220px}
-.bk{display:flex;justify-content:space-between;gap:10px;align-items:center;padding:12px 0;border-bottom:1px solid var(--rule-soft);font-size:14px}
-.bk>div:first-child{min-width:0;overflow-wrap:anywhere}
-.bk .st{font-size:12px;font-weight:700;border-radius:8px;padding:3px 8px;background:var(--surface-3)}
-.bk .st.confirmed{background:var(--tag-green-bg);color:var(--tag-green-ink)}.bk .st.declined{background:var(--tag-pink-bg);color:var(--tag-pink-ink)}.bk .st.requested{background:var(--tag-gold-bg);color:var(--tag-gold-ink)}
+/* A booking as a card: when, status, every package on its own line, the total, then the details. */
+.bk{display:block;background:var(--surface);border:1px solid var(--rule-soft);border-radius:14px;padding:12px 14px;margin-bottom:10px;font-size:14px;overflow-wrap:anywhere}
+.bk .bkh{display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap}.bk ul{margin:8px 0 4px;padding-left:18px}.bk li{margin:3px 0}.bk li small{color:var(--fg-soft)}
+.bk .tot{display:flex;justify-content:space-between;border-top:1px solid var(--rule-soft);padding-top:6px;margin-top:4px;font-weight:700}.bk .meta{margin:6px 0 0;color:var(--fg-soft);font-size:13px}.bk .acts{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px}
+.st{font-size:12px;font-weight:700;border-radius:8px;padding:3px 8px;background:var(--surface-3);white-space:nowrap}
+.st.confirmed{background:var(--tag-green-bg);color:var(--tag-green-ink)}.st.declined{background:var(--tag-pink-bg);color:var(--tag-pink-ink)}.st.requested{background:var(--tag-gold-bg);color:var(--tag-gold-ink)}
 
 /* ---- admin ---- */
 .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(64px,1fr));gap:8px;max-height:260px;overflow:auto;padding:4px;border:1px solid var(--rule-soft);border-radius:12px}
@@ -706,7 +708,22 @@ main{padding:22px 0 30px}
 .week{display:grid;grid-template-columns:1fr;gap:8px}
 .week .wd{background:var(--surface-2);border-radius:12px;padding:10px 12px}
 .week .wd b{display:block;margin-bottom:6px;font-size:14px}
-.week .wd .chips .chip{padding:5px 10px;font-size:12.5px}
+.week .wd .chips{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}.week .wd .chips .chip{padding:6px 2px;font-size:12.5px;text-align:center}
+/* Dashboard rows: a field and its button on one line, two fields side by side, buttons in a tidy grid. */
+.row.nw{flex-wrap:nowrap;align-items:center}.row.nw>input,.row.nw>select{flex:1;min-width:0}.row.nw>.btn,.row.nw>button{flex:none}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:10px}.two label.f{margin-top:8px}.btns{display:grid;grid-template-columns:1fr 1fr;gap:8px}.btns .btn{width:100%}
+/* Booking summary card and the done screen. */
+.sum{background:var(--surface);border:1px solid var(--rule);border-radius:14px;padding:4px 14px;font-size:14.5px;margin:10px 0;text-align:left}.sum .r{display:flex;gap:10px;padding:9px 0;border-top:1px solid var(--rule-soft)}.sum .r:first-child{border-top:0}
+.sum .k{flex:none;width:86px;color:var(--fg-faint);font-size:12.5px;font-weight:600;padding-top:2px}.sum .v{flex:1;min-width:0;overflow-wrap:anywhere}.sum ul{margin:0;padding-left:16px}.sum li{margin:2px 0}.sum li small{font-size:12.5px}.sum .warn{color:#B04A2E;font-weight:600}.sum .ok{color:#2E7D46;font-weight:600}
+.msgd{margin:6px 0 12px}.msgd summary{cursor:pointer;font-size:13.5px;color:var(--fg-soft);font-weight:600;padding:6px 0}
+.done{text-align:center;padding:16px 0 8px}.done .big{font-size:60px;line-height:1;margin-bottom:10px}.done h1{margin-bottom:8px}
+.picked.saved{justify-content:space-between}.picked.saved .btn{flex:none}
+/* Guide opened in place on the home screen. */
+.fyg .in h2{font-size:17px;margin:12px 0 4px;font-family:var(--display);font-weight:500;color:var(--fg)}.fyg .in .lead{color:var(--fg);font-weight:500}
+/* Nabu AI: one scrolling row of suggestions, a real chat column, a bar that stays usable. */
+.ai{padding:14px}.ai .sugs{display:flex;gap:6px;overflow-x:auto;flex-wrap:nowrap;margin:8px -14px 8px;padding:0 14px 4px;-webkit-overflow-scrolling:touch;scrollbar-width:none}.ai .sugs::-webkit-scrollbar{display:none}.ai .sugs .chip{white-space:nowrap;flex:none}
+.ai-chat{display:flex;flex-direction:column;gap:8px;max-height:55vh;overflow:auto;padding:10px;border:1px solid var(--rule-soft)}.ai-chat .msg{max-width:94%}.ai-chat .msg p{margin:0 0 6px}.ai-chat .msg p:last-child{margin:0}
+.ai .chatbar{align-items:flex-end}.ai .chatbar textarea{flex:1;min-height:46px;resize:none}.ai .chatbar .btn{min-height:46px;padding:0 16px}.ai .chatbar .btn[disabled]{opacity:.5}
 .ok{color:var(--ok)}.err{color:var(--err)}
 
 @media (max-width:380px){.hero{grid-template-columns:96px 1fr}.fan{height:230px}.fan .slot{width:92px;height:150px;margin-left:-46px}.nav a{font-size:10px}}
@@ -786,13 +803,13 @@ const CONFIG = {
   // answers straight from the browser and can search the web for facts the
   // app does not have. Leave empty to skip.
   geminiKey: '',
-  geminiModel: 'gemini-2.5-flash',
+  geminiModel: 'gemini-3.6-flash',
   // Free option: a Google AI Studio key (aistudio.google.com -> Get API key),
   // restricted to this site's address in Google Cloud console. Gemini then
   // answers straight from the browser and can search the web for facts the
   // app does not have. Leave empty to skip.
   geminiKey: '',
-  geminiModel: 'gemini-2.5-flash',
+  geminiModel: 'gemini-3.6-flash',
 
   // Access codes for the paid courses are signed with this. Change it once
   // (any long phrase); codes made before the change stop working.
@@ -1033,6 +1050,10 @@ const STR = {
     sendInApp: 'Gửi yêu cầu đặt lịch',
     sending: 'Đang gửi...',
     sentOk: 'Đã gửi. Nabu sẽ xác nhận sớm. Bạn xem lại trong mục Tôi.',
+    saveSlot: 'Lưu giờ hẹn', changeSlot: 'Đổi giờ', slotSaved: 'Đã lưu giờ hẹn', summaryTitle: 'Tóm tắt yêu cầu', showMsg: 'Xem tin nhắn sẽ gửi', bkItems: 'Gói đã chọn',
+    doneTitle: 'Đã gửi yêu cầu đặt lịch', doneBody: 'Nabu sẽ xem và xác nhận sớm. Bạn theo dõi trạng thái trong mục Tôi và sẽ nhận thông báo khi Nabu trả lời.', doneMe: 'Xem lịch hẹn của tôi', doneHome: 'Về trang chủ', doneMore: 'Đặt thêm lịch khác',
+    draftKept: 'Lựa chọn của bạn được lưu tự động trên máy này, rời đi rồi quay lại vẫn còn.', openInLibrary: 'Đọc đầy đủ trong Kho kiến thức',
+    aiGreet: 'Chào bạn! Mình là Nabu AI. Bạn có thể hỏi mình về một lá bài, một cung hoàng đạo, con số của bạn, hay bảo mình rút một lá cho hôm nay.', aiDrew: (n) => 'Mình rút cho bạn một lá: ' + n + '.', aiDrawHint: 'Muốn rút bài đầy đủ hơn, bạn vào mục Rút bài nhé.', aiSignOf: (s) => 'Với cung ' + s + ' của bạn:', aiThanks: 'Không có gì! Bạn cần gì cứ hỏi tiếp nhé.', aiTodayMoon: (m) => 'Hôm nay trăng đang ở pha ' + m + '.',
     needLogin: 'Bạn cần đăng nhập để gửi trong app. Hoặc gửi qua Instagram bên dưới.',
     viaInstagram: 'Nhắn qua Instagram',
     viaMessenger: 'Nhắn qua Messenger',
@@ -1262,6 +1283,10 @@ const STR = {
     sendInApp: 'Send booking request',
     sending: 'Sending...',
     sentOk: 'Sent. Nabu will confirm soon. You can check it under Me.',
+    saveSlot: 'Save this time', changeSlot: 'Change', slotSaved: 'Time saved', summaryTitle: 'Your request', showMsg: 'Show the message that will be sent', bkItems: 'Packages',
+    doneTitle: 'Booking request sent', doneBody: 'Nabu will review it and confirm soon. Follow the status under Me; you will be notified when Nabu replies.', doneMe: 'See my bookings', doneHome: 'Back to home', doneMore: 'Book another reading',
+    draftKept: 'Your choices are saved on this device automatically, so you can leave and come back.', openInLibrary: 'Read the full guide in the library',
+    aiGreet: 'Hi! I am Nabu AI. Ask me about a card, a zodiac sign, your numbers, or tell me to draw a card for today.', aiDrew: (n) => 'I drew a card for you: ' + n + '.', aiDrawHint: 'For a fuller draw, open the Pick a card tab.', aiSignOf: (s) => 'For your sign, ' + s + ':', aiThanks: 'You are welcome! Ask me anything else.', aiTodayMoon: (m) => 'Today the Moon is in its ' + m + ' phase.',
     needLogin: 'Sign in to send inside the app, or send through Instagram below.',
     viaInstagram: 'Message on Instagram',
     viaMessenger: 'Message on Messenger',
@@ -9472,67 +9497,6 @@ SPREADS.en = [
   note: 'Drawing until you like the answer is the most common way readers lose their own trust in the deck. Two clarifiers, then stop.' },
 
 
-{ id: 'nabu-1', sys: 'tarot', kinds: ['love', 'preset'], n: 5, lay: LAY.five,
-  name: 'Preset · Current relationship',
-  when: 'An established relationship — the two of you are together and the question is how it stands.',
-  ask: 'Deal five cards in a row, left to right. Each position is a fixed question, and the questions do not change between clients.',
-  pos: [['1', 'What is the current energy of this relationship?'],
-        ['2', 'How does the other person feel about me right now?'],
-        ['3', 'How do they see me, and how do they see this relationship?'],
-        ['4', 'What is the biggest obstacle between us at the moment?'],
-        ['5', 'How is this relationship likely to develop over the next one to three months?']],
-  read: 'Survey the whole row before reading any single card: how many Majors against Minors, which suits are present, which are missing, how many court cards. Then read each position against its fixed question, and finish with a verdict that answers the client\'s actual worry.',
-  note: 'These five questions are fixed brand wording. Read the positions in order and keep each client\'s reading separate from every other.' },
-
-{ id: 'nabu-2', sys: 'tarot', kinds: ['love', 'preset'], n: 5, lay: LAY.five,
-  name: 'Preset · An ex',
-  when: 'A relationship that has ended, where the question is about the person who left or was left.',
-  ask: 'Five cards in a row, left to right, one per fixed question.',
-  pos: [['1', 'What is the other person thinking about me now?'],
-        ['2', 'Do they still have feelings for me?'],
-        ['3', 'Why have they not reached out?'],
-        ['4', 'Is there any chance we make contact or meet again?'],
-        ['5', 'Should I keep waiting, or let go?']],
-  read: 'Position 5 is where honesty matters most. Answer it from the cards, including when the cards say let go — a reading that only tells people what they want is not a reading.',
-  note: 'Cards 1 and 2 often disagree: someone can think about you constantly and still not want you back. Say both.' },
-
-{ id: 'nabu-3', sys: 'tarot', kinds: ['love', 'preset'], n: 5, lay: LAY.five,
-  name: 'Preset · Situationship / crush',
-  when: 'Undefined territory — a crush, a talking stage, something that has not been named. The most requested reading, and the one that most needs plain speech.',
-  ask: 'Five cards in a row, left to right, one per fixed question.',
-  pos: [['1', 'What feelings does this person have towards me?'],
-        ['2', 'Do they realise how I feel?'],
-        ['3', 'What are their intentions towards me?'],
-        ['4', 'What is stopping this relationship from developing further?'],
-        ['5', 'How likely are we to become a couple in the near future?']],
-  read: 'Positions 1 and 3 are different questions and the answers frequently differ: feeling is not intent. Read them apart, then let position 4 explain the gap between them.',
-  note: 'An absence of Swords in this spread is itself the finding — nobody is going to force clarity into words, which is exactly why the situation stays undefined.' },
-
-{ id: 'nabu-4', sys: 'tarot', kinds: ['career', 'preset'], n: 5, lay: LAY.five,
-  name: 'Preset · Career',
-  when: 'Work: where it stands, what to use, what is blocking it, and what to do next.',
-  ask: 'Five cards in a row, left to right, one per fixed question.',
-  pos: [['1', 'Where does my work situation currently stand?'],
-        ['2', 'What strength should I be making use of?'],
-        ['3', 'What is the biggest obstacle in my work right now?'],
-        ['4', 'What notable opportunity might appear soon?'],
-        ['5', 'What should I do to develop my career further?']],
-  read: 'Positions 2 and 5 are advice, so read them as instructions. Pentacles here mean the practical result, Wands mean the drive to start, Swords mean the decision or the conversation, Cups mean whether the work is something you actually want.',
-  note: 'If the row is mostly Cups in a career question, the real subject is usually satisfaction rather than strategy.' },
-
-{ id: 'nabu-5', sys: 'tarot', kinds: ['career', 'preset'], n: 5, lay: LAY.five,
-  name: 'Preset · Study',
-  when: 'Learning, exams, courses, and the direction of a student\'s effort.',
-  ask: 'Five cards in a row, left to right, one per fixed question.',
-  pos: [['1', 'What is my current study situation?'],
-        ['2', 'What weakness is affecting my results?'],
-        ['3', 'What strength should I be making use of?'],
-        ['4', 'Which direction of study suits me better?'],
-        ['5', 'What should I change to get better results?']],
-  read: 'Read 2 and 3 as a pair — the weakness and the strength are often two faces of one trait. Position 5 should come out as something the student can actually do this week.',
-  note: 'Resist predicting exam results. Read the effort and the method; those are the parts a student can change.' },
-
-
 { id: 'len-1', sys: 'len', kinds: ['general'], n: 1, lay: LAY.one,
   name: 'One card',
   when: 'A card of the day, or one very narrow question. Lenormand cards are nouns, so a single card gives you a subject with no sentence around it.',
@@ -9708,67 +9672,6 @@ SPREADS.vi = [
         ['2 · Lá làm rõ thứ hai', 'Chỉ rút khi lá đầu thật sự không giải quyết được. Hai là giới hạn.']],
   read: 'Trước khi rút, hãy nói to xem thế nào thì được tính là một câu trả lời. Chỉ riêng thói quen đó đã tách bạch giữa việc làm rõ và việc rút bừa cho tới khi vừa ý.',
   note: 'Rút mãi cho tới khi thích câu trả lời là cách phổ biến nhất khiến người luận mất niềm tin vào chính bộ bài của mình. Hai lá làm rõ, rồi dừng.' },
-
-
-{ id: 'nabu-1', sys: 'tarot', kinds: ['love', 'preset'], n: 5, lay: LAY.five,
-  name: 'Chủ đề sẵn · Tình cảm hiện tại',
-  when: 'Một mối quan hệ đã xác định — hai người đang bên nhau và câu hỏi là mối quan hệ đang ra sao.',
-  ask: 'Rút năm lá thành một hàng, từ trái sang phải. Mỗi vị trí là một câu hỏi cố định, và các câu hỏi này không đổi giữa các khách.',
-  pos: [['1', 'Năng lượng hiện tại của mối quan hệ này là gì?'],
-        ['2', 'Người ấy hiện đang có cảm xúc như thế nào với mình?'],
-        ['3', 'Người ấy nhìn nhận mình và mối quan hệ này ra sao?'],
-        ['4', 'Trở ngại lớn nhất giữa hai người hiện tại là gì?'],
-        ['5', 'Mối quan hệ có xu hướng phát triển thế nào trong 1–3 tháng tới?']],
-  read: 'Hãy quét toàn hàng trước khi luận bất kỳ lá đơn nào: bao nhiêu Ẩn Chính so với Ẩn Phụ, có những chất nào, thiếu chất nào, bao nhiêu lá Hoàng gia. Rồi mới luận từng vị trí theo đúng câu hỏi cố định của nó, và kết lại bằng một câu chốt trả lời đúng nỗi lo thật sự của khách.',
-  note: 'Năm câu hỏi này là chữ cố định của thương hiệu. Hãy luận các vị trí theo đúng thứ tự, và giữ trải bài của mỗi khách tách hẳn khỏi mọi khách khác.' },
-
-{ id: 'nabu-2', sys: 'tarot', kinds: ['love', 'preset'], n: 5, lay: LAY.five,
-  name: 'Chủ đề sẵn · Người cũ',
-  when: 'Một mối quan hệ đã kết thúc, câu hỏi xoay quanh người đã rời đi hoặc bị rời bỏ.',
-  ask: 'Năm lá thành một hàng, trái sang phải, mỗi lá cho một câu hỏi cố định.',
-  pos: [['1', 'Người ấy hiện nghĩ gì về mình?'],
-        ['2', 'Họ còn tình cảm với mình không?'],
-        ['3', 'Vì sao họ chưa chủ động liên lạc?'],
-        ['4', 'Có khả năng hai người liên lạc hoặc gặp lại nhau không?'],
-        ['5', 'Mình nên tiếp tục chờ đợi hay buông bỏ?']],
-  read: 'Vị trí 5 là chỗ cần trung thực nhất. Hãy trả lời từ bài, kể cả khi bài nói là hãy buông — một trải bài chỉ nói điều người ta muốn nghe thì không phải là luận bài.',
-  note: 'Lá 1 và lá 2 thường không khớp nhau: một người có thể nghĩ về bạn suốt mà vẫn không muốn quay lại. Hãy nói cả hai.' },
-
-{ id: 'nabu-3', sys: 'tarot', kinds: ['love', 'preset'], n: 5, lay: LAY.five,
-  name: 'Chủ đề sẵn · Mập mờ – Crush',
-  when: 'Vùng đất chưa gọi tên — một crush, một giai đoạn tìm hiểu, một thứ chưa được định nghĩa. Đây là trải bài được hỏi nhiều nhất, và cũng là trải bài cần nói thẳng nhất.',
-  ask: 'Năm lá thành một hàng, trái sang phải, mỗi lá cho một câu hỏi cố định.',
-  pos: [['1', 'Người ấy có cảm xúc gì với mình?'],
-        ['2', 'Họ có nhận ra tình cảm của mình không?'],
-        ['3', 'Ý định của họ đối với mình là gì?'],
-        ['4', 'Điều gì đang ngăn mối quan hệ này tiến triển thêm?'],
-        ['5', 'Khả năng hai người trở thành một cặp trong thời gian tới như thế nào?']],
-  read: 'Vị trí 1 và vị trí 3 là hai câu hỏi khác nhau và câu trả lời rất hay khác nhau: có tình cảm không đồng nghĩa với có ý định. Hãy luận tách bạch, rồi để vị trí 4 giải thích khoảng cách giữa hai điều đó.',
-  note: 'Việc trải bài này vắng bóng chất Kiếm tự nó đã là một kết luận — sẽ không có ai ép mọi thứ thành lời cho rõ ràng, và đó chính là lý do tình trạng cứ mập mờ mãi.' },
-
-{ id: 'nabu-4', sys: 'tarot', kinds: ['career', 'preset'], n: 5, lay: LAY.five,
-  name: 'Chủ đề sẵn · Công việc',
-  when: 'Công việc: đang ở đâu, nên tận dụng gì, đang bị chặn ở đâu, và bước tiếp theo là gì.',
-  ask: 'Năm lá thành một hàng, trái sang phải, mỗi lá cho một câu hỏi cố định.',
-  pos: [['1', 'Tình hình công việc hiện tại của mình đang ở đâu?'],
-        ['2', 'Điểm mạnh nào mình nên tận dụng?'],
-        ['3', 'Trở ngại lớn nhất trong công việc hiện tại là gì?'],
-        ['4', 'Cơ hội đáng chú ý nào có thể xuất hiện sắp tới?'],
-        ['5', 'Mình nên làm gì để phát triển sự nghiệp tốt hơn?']],
-  read: 'Vị trí 2 và 5 là lời khuyên, nên hãy đọc chúng như chỉ dẫn. Ở đây Tiền là kết quả sờ được, Gậy là động lực để bắt đầu, Kiếm là quyết định hoặc cuộc nói chuyện, Cốc là việc bạn có thật sự muốn công việc đó hay không.',
-  note: 'Nếu một câu hỏi công việc mà cả hàng toàn Cốc, thì chủ đề thật sự thường là sự hài lòng chứ không phải chiến lược.' },
-
-{ id: 'nabu-5', sys: 'tarot', kinds: ['career', 'preset'], n: 5, lay: LAY.five,
-  name: 'Chủ đề sẵn · Học tập',
-  when: 'Việc học, thi cử, khóa học, và hướng nỗ lực của người học.',
-  ask: 'Năm lá thành một hàng, trái sang phải, mỗi lá cho một câu hỏi cố định.',
-  pos: [['1', 'Tình trạng học tập hiện tại của mình như thế nào?'],
-        ['2', 'Điểm yếu nào đang ảnh hưởng đến kết quả học tập?'],
-        ['3', 'Điểm mạnh nào mình nên tận dụng?'],
-        ['4', 'Hướng học tập nào phù hợp hơn với bản thân mình?'],
-        ['5', 'Mình nên thay đổi gì để đạt kết quả tốt hơn?']],
-  read: 'Hãy đọc lá 2 và lá 3 thành một cặp — điểm yếu và điểm mạnh thường là hai mặt của cùng một tính cách. Vị trí 5 nên ra được một việc mà người học có thể làm ngay trong tuần này.',
-  note: 'Đừng cố đoán điểm thi. Hãy luận về nỗ lực và phương pháp; đó mới là phần người học thay đổi được.' },
 
 
 { id: 'len-1', sys: 'len', kinds: ['general'], n: 1, lay: LAY.one,
@@ -10705,8 +10608,25 @@ function localAnswer(q, ctx) {
     else if (d.cat) out.push(S.lifePathOf(n.lifePath) + ': ' + LIFEPATH[n.lifePath][lang], n.expression ? S.numExpr + ' ' + n.expression + ': ' + NUM[n.expression][lang].expr : '');
     else out.push(S.lifePathOf(n.lifePath) + ': ' + LIFEPATH[n.lifePath][lang], n.personalYear ? S.numYear + ' ' + n.personalYear + ': ' + PYEAR[n.personalYear][lang] : '');
   } else {
+    const f = fold(q).trim(), specific = mentioned.length || signs.length || lenMentioned(q).length || planetMentioned(q).length || houseMentioned(q) || numberMentioned(q);
     const help = topicHelp(q);
-    if (help) out.push(help);
+    const si = mySign(), myKey = si > -1 ? ZKEYS[si] : '';
+    const drawOne = () => {
+      const id = DECK.vi[Math.floor(Math.random() * DECK.vi.length)].id, c = cardById(id), I = insightOf(id);
+      out.push(S.aiDrew(c.name) + ' ' + (d.cat ? I[d.cat] : I.now));
+      if (d.yesno) { const lean = leanOf(id); out.push(lean > 0 ? S.aiYes(c.name) : lean < 0 ? S.aiNo(c.name) : S.aiMaybe(c.name)); }
+      if (d.timing) out.push(S.aiTiming + ' ' + SUIT_TIMING[lang][c.suit]);
+      out.push(I.advice, S.aiDrawHint);
+    };
+    if (/^(chao|hi|hello|xin chao|alo|hey|yo)\b/.test(f) || f.length < 3) out.push(S.aiGreet);
+    else if (/cam on|thank/.test(f)) out.push(S.aiThanks);
+    else if (help) out.push(help);
+    else if (!specific && /rut (cho minh |giup minh |giup |cho )?(mot |1 )?la|rut bai|draw (me )?(a |one )?card|pick a card|la bai (cua |cho )?hom nay|card (of the day|for today)/.test(f)) drawOne();
+    else if (!specific && /(hom nay|today).*(trang|moon)|(trang|moon).*(hom nay|today)/.test(f)) { const mp = moonPhase(new Date()); out.push(S.aiTodayMoon(MOON_NAMES[lang][mp.idx])); }
+    else if (!specific && (d.yesno || d.timing || d.cat)) {
+      if (myKey && d.cat) out.push(S.aiSignOf(ZSIGN[myKey][lang]) + ' ' + (d.cat === 'love' ? ZODIAC[myKey][lang].love : ZODIAC[myKey][lang].work));
+      drawOne();
+    }
   }
   lenMentioned(q).forEach((n) => { const d = lenCard(n); out.push(S.aiAbout(d.name) + ' ' + (d.kw.pos || []).slice(0, 3).join(', ') + '. ' + (d.cat === 'love' && d.love ? d.love : d.core)); });
   planetMentioned(q).forEach((p) => out.push(S.aiAbout(p.name[lang]) + ' ' + p[lang]));
@@ -10748,12 +10668,13 @@ function aiSystemPrompt() {
     ? 'Bạn là Nabu AI, trợ lý của Nabu Tarot (một reader tarot người Việt). Trả lời bằng tiếng Việt đời thường, ấm áp, ngắn gọn: 4 đến 8 câu, câu ngắn, xưng "mình", gọi người dùng là "bạn". Ưu tiên KIẾN THỨC được cung cấp; nếu câu hỏi cần thông tin ngoài đó (ví dụ lịch sử, sự kiện, kiến thức chung về tarot, chiêm tinh, thần số học), hãy tìm kiếm và tổng hợp, rồi nói rõ phần nào là kiến thức chung. Không chẩn đoán bệnh, không tư vấn pháp lý hay đầu tư cụ thể, không hứa điều gì chắc chắn xảy ra. Chuyện riêng quan trọng, gợi ý đặt lịch xem bài với Nabu.'
     : 'You are Nabu AI, the assistant of Nabu Tarot (a Vietnamese tarot reader). Answer in plain, warm English: 4 to 8 short sentences. Prefer the KNOWLEDGE provided; if the question needs outside facts (history, events, general tarot, astrology or numerology knowledge), search and summarise, and say which part is general knowledge. No medical diagnosis, no specific legal or investment advice, no promises. For important personal matters, suggest booking a reading with Nabu.';
 }
+const withTimeout = (p, ms) => Promise.race([p, new Promise((_, rej) => setTimeout(() => rej(new Error('timeout')), ms))]);
 async function geminiAnswer(q, ctx, history) {
   const url = 'https://generativelanguage.googleapis.com/v1beta/models/' + encodeURIComponent(CONFIG.geminiModel || 'gemini-2.5-flash') + ':generateContent?key=' + encodeURIComponent(CONFIG.geminiKey);
   const contents = history.slice(-6).map((h) => ({ role: h.role === 'user' ? 'user' : 'model', parts: [{ text: h.text }] }));
   if (contents.length && contents[contents.length - 1].role === 'user') contents.pop();
   contents.push({ role: 'user', parts: [{ text: 'KNOWLEDGE (' + ctx.type + '):\n' + contextText(ctx).slice(0, 12000) + '\n\nQUESTION: ' + q }] });
-  const r = await fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ system_instruction: { parts: [{ text: aiSystemPrompt() }] }, contents: contents, tools: [{ google_search: {} }], generationConfig: { temperature: 0.7, maxOutputTokens: 900 } }) });
+  const r = await withTimeout(fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ system_instruction: { parts: [{ text: aiSystemPrompt() }] }, contents: contents, tools: [{ google_search: {} }], generationConfig: { temperature: 0.7, maxOutputTokens: 900 } }) }), 25000);
   if (!r.ok) throw new Error('Gemini ' + r.status);
   const j = await r.json(), cand = (j.candidates || [])[0];
   const text = ((cand && cand.content && cand.content.parts) || []).map((p) => p.text || '').join('').trim();
@@ -10764,7 +10685,7 @@ async function geminiAnswer(q, ctx, history) {
 
 /* ---- online engine ---- */
 async function remoteAnswer(q, ctx, history) {
-  const r = await fetch(CONFIG.aiEndpoint, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ lang: lang, question: q, context: contextText(ctx), kind: ctx.type, history: history.slice(-6), profile: { name: PROFILE.name || '', sign: mySign() > -1 ? ZSIGN[ZKEYS[mySign()]].en : '' } }) });
+  const r = await withTimeout(fetch(CONFIG.aiEndpoint, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ lang: lang, question: q, context: contextText(ctx), kind: ctx.type, history: history.slice(-6), profile: { name: PROFILE.name || '', sign: mySign() > -1 ? ZSIGN[ZKEYS[mySign()]].en : '' } }) }), 25000);
   if (!r.ok) throw new Error('AI ' + r.status);
   const j = await r.json();
   if (!j.answer) throw new Error(j.error || 'AI');
@@ -10784,23 +10705,26 @@ function aiPanelHTML(ctx) {
   const S = T(), key = JSON.stringify(ctx), hist = AI.history[key] || [];
   return '<div class="ai" data-ai=\'' + esc(key) + '\'><div class="ai-h"><span class="ai-logo">✦</span><b>Nabu AI</b><span class="faint">' + esc(CONFIG.geminiKey || CONFIG.aiEndpoint ? S.aiOnline : S.aiBuiltin) + '</span></div>'
     + '<p class="hint">' + esc(ctx.type === 'lesson' ? S.aiIntroLesson : S.aiIntro) + '</p>'
-    + '<div class="chips">' + aiSuggestions(ctx).map((s) => '<button class="chip" data-ai-sug>' + esc(s) + '</button>').join('') + '</div>'
-    + '<div class="chat ai-chat">' + hist.map((m) => '<div class="msg ' + (m.role === 'user' ? 'me' : 'them') + '">' + esc(m.text).replace(/\n/g, '<br>') + '</div>').join('') + '</div>'
+    + '<div class="chips sugs">' + aiSuggestions(ctx).map((s) => '<button class="chip" data-ai-sug>' + esc(s) + '</button>').join('') + '</div>'
+    + '<div class="chat ai-chat">' + hist.map((m) => aiMsgHTML(m.role, m.text)).join('') + '</div>'
     + '<div class="chatbar"><textarea data-ai-q placeholder="' + esc(S.aiPlaceholder) + '"></textarea><button class="btn primary" data-ai-send>' + esc(S.aiAsk) + '</button></div>'
     + '<p class="faint" style="margin-top:8px">' + esc(S.aiNote) + '</p></div>';
 }
+const aiMsgHTML = (role, text) => '<div class="msg ' + (role === 'user' ? 'me' : 'them') + '">' + paras(text) + '</div>';
 function bindAI(root) {
   $$('.ai', root).forEach((panel) => {
-    const ctx = JSON.parse(panel.getAttribute('data-ai')), key = panel.getAttribute('data-ai'), ta = $('[data-ai-q]', panel), chat = $('.ai-chat', panel);
-    const push = (role, text) => { AI.history[key] = AI.history[key] || []; AI.history[key].push({ role: role, text: text }); chat.innerHTML += '<div class="msg ' + (role === 'user' ? 'me' : 'them') + '">' + esc(text).replace(/\n/g, '<br>') + '</div>'; chat.scrollTop = chat.scrollHeight; };
+    const ctx = JSON.parse(panel.getAttribute('data-ai')), key = panel.getAttribute('data-ai'), ta = $('[data-ai-q]', panel), chat = $('.ai-chat', panel), send = $('[data-ai-send]', panel);
+    let busy = false;  // per box, and always released, so a slow answer can never lock typing
+    const push = (role, text) => { AI.history[key] = AI.history[key] || []; AI.history[key].push({ role: role, text: text }); chat.insertAdjacentHTML('beforeend', aiMsgHTML(role, text)); chat.scrollTop = chat.scrollHeight; };
     const ask = async (q) => {
-      q = (q || '').trim(); if (!q || AI.busy) return;
-      AI.busy = true; ta.value = ''; push('user', q);
-      const thinking = document.createElement('div'); thinking.className = 'msg them ai-wait'; thinking.textContent = '…'; chat.appendChild(thinking);
+      q = (q || '').trim(); if (!q || busy) return;
+      busy = true; send.disabled = true; ta.value = ''; push('user', q);
+      const thinking = document.createElement('div'); thinking.className = 'msg them ai-wait'; thinking.textContent = '…'; chat.appendChild(thinking); chat.scrollTop = chat.scrollHeight;
       let a;
       try { a = CONFIG.geminiKey ? await geminiAnswer(q, ctx, AI.history[key]) : CONFIG.aiEndpoint ? await remoteAnswer(q, ctx, AI.history[key]) : localAnswer(q, ctx); }
-      catch (e) { a = localAnswer(q, ctx) + '\n\n(' + T().aiFallback + ')'; }
-      thinking.remove(); push('assistant', a); AI.busy = false;
+      catch (e) { try { a = localAnswer(q, ctx) + '\n\n(' + T().aiFallback + ')'; } catch (e2) { a = T().aiGeneralHelp; } }
+      finally { thinking.remove(); busy = false; send.disabled = false; }
+      push('assistant', a); ta.focus();
     };
     $('[data-ai-send]', panel).addEventListener('click', () => ask(ta.value));
     ta.addEventListener('keydown', (e) => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); ask(ta.value); } });
@@ -10970,7 +10894,8 @@ function horoCardHTML(period) {
 function suggestedGuidesHTML(limit) {
   const ints = PROFILE.interests || [];
   const list = GUIDES.filter((g) => g.tags.some((t) => ints.indexOf(t) > -1) && !((g.cat === 'tarot' || g.cat === 'lenormand') && !ACCESS.has(g.cat))).slice(0, 1);
-  const guide = list.length ? list.map((g) => '<a class="acc" href="#/learn/guide/' + g.id + '" style="display:block;text-decoration:none;color:inherit"><button style="pointer-events:none"><span>' + esc(L(g.title)) + '</span></button></a>').join('') : '';
+  // Opens right here: tap to read, tap again to fold it away. The same guide stays in the library.
+  const guide = list.length ? list.map((g) => '<div class="acc fyg"><button type="button"><span>📖 ' + esc(L(g.title)) + '</span></button><div class="in">' + guideBodyHTML(g) + '<p><a href="#/learn/guide/' + g.id + '">' + esc(T().openInLibrary) + ' →</a></p></div></div>').join('') : '';
   return '<div class="sec" id="foryou"><div class="eyebrow">' + esc(T().forInterests) + '</div>' + guide + horoCardHTML('monthly') + horoCardHTML('weekly') + '</div>';
 }
 
@@ -10989,7 +10914,7 @@ async function renderHome(args, params) {
   bindAccordions(m); bindCardLinks(m);
   bindTour(m, 0);
   if (POSTS == null) await loadPosts();
-  const fy = $('#foryouwrap'); if (fy) { fy.innerHTML = suggestedGuidesHTML(); bindPost(fy); }
+  const fy = $('#foryouwrap'); if (fy) { fy.innerHTML = suggestedGuidesHTML(); bindPost(fy); bindAccordions(fy); }
   const feed = $('#feed'); if (!feed) return;
   const all = sortedPosts(), welcome = all.filter((p) => p.welcome)[0], list = all.filter((p) => !p.welcome);
   feed.innerHTML = (welcome ? '<section class="welcome"><h2>' + esc(L(welcome.title)) + '</h2>' + paras(L(welcome.body)) + '<div class="sig">' + LOGO + '</div></section>' : '')
@@ -11896,7 +11821,12 @@ function bindGuideVisual(root) {
    Service and package, topic (required for "set topic" packages), a
    calendar of Nabu's free slots (schedule.json, minus slots taken in
    Firestore when accounts are on), details, then send. */
-const book = { items: [], name: '', note: '', birth: '', birthTime: '', card: null, slot: null, month: null, day: null };
+const book = { items: [], name: '', note: '', birth: '', birthTime: '', card: null, slot: null, month: null, day: null, timeSaved: false, restored: false };
+/* The draft lives on the device: leave the screen, come back, everything is still chosen. */
+const BOOK_KEYS = ['items', 'name', 'note', 'birth', 'birthTime', 'slot', 'day', 'timeSaved'];
+function saveBook() { const o = {}; BOOK_KEYS.forEach((k) => { o[k] = book[k]; }); store.set('nabu-book', o); }
+function restoreBook() { if (book.restored) return; book.restored = true; const o = store.get('nabu-book', null); if (!o) return; BOOK_KEYS.forEach((k) => { if (o[k] != null) book[k] = o[k]; }); if (!Array.isArray(book.items)) book.items = []; }
+function clearBook() { book.items = []; book.slot = null; book.day = null; book.timeSaved = false; book.note = ''; book.card = null; store.set('nabu-book', null); }
 let SCHEDULE = null, TAKEN = {};
 
 async function loadSchedule() {
@@ -11919,6 +11849,7 @@ function slotsFor(dateStr) {
 }
 function calendarHTML() {
   const S = T(), m = book.month;
+  if (book.timeSaved && book.slot) return '<div class="picked saved"><span>📅 ' + esc(slotLabel(book.slot)) + '</span><button class="btn sm" id="changeslot">' + esc(S.changeSlot) + '</button></div>';
   const start = new Date(m.getFullYear(), m.getMonth(), 1).getDay(), days = new Date(m.getFullYear(), m.getMonth() + 1, 0).getDate(), todayStr = isoDate(new Date());
   let cells = '';
   for (let i = 0; i < start; i++) cells += '<div class="d off"></div>';
@@ -11935,7 +11866,7 @@ function slotsHTML() {
   const list = slotsFor(book.day);
   if (!list.length) return '<p class="hint">' + esc(S.noSlots) + '</p>';
   return '<div class="slots">' + list.map((s) => '<button data-slot="' + s.key + '" class="' + (s.taken ? 'taken' : '') + (book.slot === s.key ? ' on' : '') + '">' + s.time + '</button>').join('') + '</div>'
-    + (book.slot ? '<div class="picked">📅 ' + esc(slotLabel(book.slot)) + '</div>' : '');
+    + (book.slot ? '<div class="picked">📅 ' + esc(slotLabel(book.slot)) + '</div><button class="btn primary block" id="saveslot" style="margin-top:8px">✓ ' + esc(S.saveSlot) + '</button>' : '');
 }
 function slotLabel(key) { return T().dateFmt(new Date(key.slice(0, 10) + 'T00:00:00')) + ' · ' + key.slice(11) + ' (' + L(CONFIG.tzLabel) + ')'; }
 
@@ -11964,6 +11895,19 @@ function composeMessage() {
   if (book.card) { const c = cardById(book.card); if (c) out.push('🃏 ' + S.msgCard + ': ' + c.name); }
   while (out[out.length - 1] === '') out.pop();
   return out.join('\n');
+}
+/* The request as a labelled card: packages one per line, total, time, details. */
+function summaryHTML() {
+  const S = T(), rows = [];
+  const items = book.items.map((it) => { const s = serviceOf(it.svc), p = pkgOfItem(it); if (!s || !p) return ''; return '<li>' + esc(L(s.name) + ' – ' + L(p.name)) + ' <b>' + fmtPrice(p.price) + '</b>' + (p.needsTopic ? '<br><small class="' + (it.topic ? 'ok' : 'warn') + '">' + esc(it.topic ? S.msgTopic + ': ' + topicLabel(it.topic) : S.cartNeedsTopic) + '</small>' : '') + '</li>'; }).join('');
+  rows.push([S.bkItems, items ? '<ul>' + items + '</ul>' : '<span class="warn">' + esc(S.cartEmpty) + '</span>']);
+  if (book.items.length > 1) rows.push([S.msgTotal, '<b>' + fmtPrice(cartTotal()) + '</b>']);
+  rows.push([S.msgTime, book.slot ? esc(slotLabel(book.slot)) : '<span class="warn">' + esc(S.pickDay) + '</span>']);
+  if (book.name.trim()) rows.push([S.msgName, esc(book.name.trim())]);
+  if (needsBirth()) rows.push([S.msgBirth, book.birth ? esc(book.birth + (book.birthTime ? ' ' + book.birthTime : '')) : '<span class="warn">' + esc(S.needBirth) + '</span>']);
+  if (book.note.trim()) rows.push([S.msgNote, esc(book.note.trim())]);
+  if (book.card) { const c = cardById(book.card); if (c) rows.push([S.msgCard, esc(c.name)]); }
+  return '<div class="sum">' + rows.map((r) => '<div class="r"><span class="k">' + esc(r[0]) + '</span><span class="v">' + r[1] + '</span></div>').join('') + '</div>';
 }
 /* The basket under the price list: every chosen package, its topic, the total. */
 function cartHTML() {
@@ -12002,14 +11946,15 @@ function renderPrices() {
 
 async function renderBook(args, params) {
   const S = T(), m = $('#main');
-  book.card = params.card || null; book.name = book.name || PROFILE.name || ''; book.birth = book.birth || PROFILE.birthday || '';
+  restoreBook();
+  book.card = params.card || book.card || null; book.name = book.name || PROFILE.name || ''; book.birth = book.birth || PROFILE.birthday || '';
   if (!book.month) book.month = new Date(new Date().getFullYear(), new Date().getMonth(), 1);
   const links = [];
   if (CONFIG.instagram) links.push(['https://ig.me/m/' + CONFIG.instagram, S.viaInstagram, BE.enabled ? '' : 'primary']);
   if (CONFIG.facebookPage) links.push(['https://m.me/' + CONFIG.facebookPage, S.viaMessenger, '']);
   if (CONFIG.zalo) links.push(['https://zalo.me/' + CONFIG.zalo, S.viaZalo, '']);
   if (CONFIG.email) links.push(['mailto:' + CONFIG.email, S.viaEmail, '']);
-  m.innerHTML = '<div class="eyebrow">' + esc(CONFIG.brand) + '</div><h1 style="margin-bottom:6px">' + esc(S.bookTitle) + '</h1><p class="muted">' + esc(L(CONFIG.bookingNote)) + '</p><p class="tip">👆 ' + esc(S.bookTip) + '</p>'
+  m.innerHTML = '<div class="eyebrow">' + esc(CONFIG.brand) + '</div><h1 style="margin-bottom:6px">' + esc(S.bookTitle) + '</h1><p class="muted">' + esc(L(CONFIG.bookingNote)) + '</p><p class="tip">👆 ' + esc(S.bookTip) + '</p><p class="hint" style="margin:0 0 4px">💾 ' + esc(S.draftKept) + '</p>'
     + '<div class="sec"><h2 style="margin:18px 0 4px">' + esc(S.chooseService) + '</h2><p class="hint" style="margin-bottom:12px">' + esc(S.serviceHint) + '</p><div id="svcwrap">' + priceSheetHTML(true) + '</div><div id="cartwrap">' + cartHTML() + '</div></div>'
     + '<div class="sec"><h2 style="margin:18px 0 4px">' + esc(S.chooseTopic) + '</h2><div id="topicwrap">' + topicSectionHTML() + '</div></div>'
     + '<div class="sec"><h2 style="margin-bottom:4px">' + esc(S.chooseTime) + '</h2><p class="hint" style="margin-bottom:10px">' + esc(S.timeHint(L(CONFIG.tzLabel))) + '</p><div id="calwrap"><p class="hint">…</p></div></div>'
@@ -12017,7 +11962,7 @@ async function renderBook(args, params) {
     + '<div id="birthwrap" hidden><label class="f" for="bbirth">' + esc(S.birthday) + '</label><input id="bbirth" type="date" value="' + esc(book.birth) + '"><label class="f" for="btime">' + esc(S.birthTime) + '</label><input id="btime" type="time" value="' + esc(book.birthTime) + '"><p class="hint">' + esc(S.birthHint) + '</p></div>'
     + '<label class="f" for="bnote">' + esc(S.yourNote) + '</label><textarea id="bnote" placeholder="' + esc(S.notePlaceholder) + '">' + esc(book.note) + '</textarea>'
     + (book.card ? '<p class="hint">' + esc(S.msgCard) + ': <b>' + esc(cardById(book.card).name) + '</b></p>' : '') + '</div>'
-    + '<div class="sec"><h2 style="margin-bottom:6px">' + esc(S.sendVia) + '</h2><div class="msgbox" id="msgprev"></div><p class="hint" style="margin:0 0 10px">' + esc(L(PAYMENT_NOTE)) + '</p>'
+    + '<div class="sec"><h2 style="margin-bottom:6px">' + esc(S.sendVia) + '</h2><p class="hint">' + esc(S.summaryTitle) + '</p><div id="msgprev"></div><details class="msgd"><summary>' + esc(S.showMsg) + '</summary><div class="msgbox" id="msgtext"></div></details><p class="hint" style="margin:0 0 10px">' + esc(L(PAYMENT_NOTE)) + '</p>'
     + '<div class="row" style="flex-direction:column">'
     + (BE.enabled ? '<button class="btn block primary" id="sendapp">' + esc(S.sendInApp) + '</button><p class="hint" id="sendstatus"></p>' : '')
     + '<p class="hint">' + esc(S.sendHint) + '</p>'
@@ -12025,7 +11970,13 @@ async function renderBook(args, params) {
     + '<button class="btn block" data-send="copy">' + esc(S.copyMsg) + '</button></div></div>'
     + '<div class="sec card"><h3 style="margin-bottom:10px">' + esc(S.howItWorks) + '</h3><ol class="steps">' + [S.chooseService.slice(3), S.chooseTopic.slice(3), S.chooseTime.slice(3), S.sendVia.slice(3), L(PAYMENT_NOTE)].map((x) => '<li>' + esc(x) + '</li>').join('') + '</ol></div>'
     + '<div class="sec"><h3 style="margin-bottom:6px">' + esc(S.aboutTitle) + '</h3><p class="muted">' + esc(L(CONFIG.about)) + '</p></div>';
-  const prev = () => { $('#msgprev').textContent = composeMessage(); };
+  const prev = () => { const p = $('#msgprev'); if (!p) return; p.innerHTML = summaryHTML(); $('#msgtext').textContent = composeMessage(); saveBook(); };
+  const done = () => {
+    m.innerHTML = '<div class="done"><div class="big">✅</div><h1>' + esc(S.doneTitle) + '</h1><p class="muted">' + esc(S.doneBody) + '</p><p><span class="st requested">' + esc(S.status.requested) + '</span></p>' + summaryHTML()
+      + '<div class="row" style="flex-direction:column;margin-top:16px"><a class="btn primary block" href="#/me">' + esc(S.doneMe) + '</a><a class="btn block" href="#/home">' + esc(S.doneHome) + '</a><button class="btn block" id="bookmore">' + esc(S.doneMore) + '</button></div></div>';
+    clearBook(); window.scrollTo(0, 0);
+    $('#bookmore').addEventListener('click', () => { renderBook([], {}); });
+  };
   const bindTopics = () => {
     $$('[data-topic]', m).forEach((btn) => btn.addEventListener('click', () => {
       const v = btn.getAttribute('data-topic').split('/'), k = Number(v[0]), id = Number(v[1]), it = book.items[k];
@@ -12081,17 +12032,21 @@ async function renderBook(args, params) {
       await BE.createBooking({ name: book.name.trim() || PROFILE.name || '', slot: book.slot,
         service: items.map((x) => x.service + ' – ' + x.pkg + (x.topic ? ' (' + x.topic + ')' : '')).join(' + '), pkg: '', price: cartTotal(), topic: items.map((x) => x.topic).filter(Boolean).join('; '), items: items,
         note: book.note.trim(), birth: needsBirth() ? (book.birth + (book.birthTime ? ' ' + book.birthTime : '')) : '', card: book.card ? cardById(book.card).name : '' });
-      $('#sendstatus').textContent = S.sentOk; $('#sendstatus').className = 'hint ok'; toast('✓');
-      TAKEN = await BE.takenSlots(); book.slot = null; book.note = ''; drawCal();
+      toast('✓'); try { TAKEN = await BE.takenSlots(); } catch (e2) { /* refreshed on the next visit */ }
+      done(); return;
     } catch (e) { $('#sendstatus').textContent = S.publishFail + ': ' + e.message; $('#sendstatus').className = 'hint err'; }
     sendBtn.disabled = false; sendBtn.textContent = S.sendInApp;
   });
-  const bindSlots = () => { $$('[data-slot]', m).forEach((b) => b.addEventListener('click', () => { book.slot = b.getAttribute('data-slot'); $('#slots').innerHTML = slotsHTML(); bindSlots(); prev(); })); };
+  const bindSlots = () => {
+    $$('[data-slot]', m).forEach((b) => b.addEventListener('click', () => { book.slot = b.getAttribute('data-slot'); book.timeSaved = false; $('#slots').innerHTML = slotsHTML(); bindSlots(); prev(); }));
+    const sv = $('#saveslot'); if (sv) sv.addEventListener('click', () => { book.timeSaved = true; drawCal(); toast(S.slotSaved); const n = $('#bname'); if (n) n.scrollIntoView({ behavior: 'smooth', block: 'center' }); });
+  };
   const drawCal = () => {
     const w = $('#calwrap'); if (!w) return;
     w.innerHTML = calendarHTML();
     $$('[data-cal]', w).forEach((b) => b.addEventListener('click', () => { book.month = new Date(book.month.getFullYear(), book.month.getMonth() + Number(b.getAttribute('data-cal')), 1); drawCal(); }));
-    $$('[data-day]', w).forEach((b) => b.addEventListener('click', () => { book.day = b.getAttribute('data-day'); book.slot = null; drawCal(); }));
+    $$('[data-day]', w).forEach((b) => b.addEventListener('click', () => { book.day = b.getAttribute('data-day'); book.slot = null; book.timeSaved = false; drawCal(); }));
+    const ch = $('#changeslot'); if (ch) ch.addEventListener('click', () => { book.timeSaved = false; drawCal(); });
     bindSlots(); prev();
   };
   await loadSchedule();
@@ -12230,9 +12185,13 @@ function bindChatBar(root, sendFn) {
 }
 function bookingRow(b, admin) {
   const S = T();
-  return '<div class="bk"><div><b>' + esc(slotLabel(b.slot)) + '</b><br><span class="faint">' + (b.service ? esc(b.service + (b.pkg ? ' – ' + b.pkg : '') + (b.price ? ' (' + fmtPrice(b.price) + ')' : '')) + '<br>' : '') + esc(b.topic || '') + (b.birth ? '<br>🎂 ' + esc(b.birth) : '') + (admin ? ' · ' + esc(b.name || '') + ' ' + esc(b.email || '') : '') + (b.note ? '<br>' + esc(b.note) : '') + (b.card ? '<br>🃏 ' + esc(b.card) : '') + '</span></div>'
-    + (admin && b.status === 'requested' ? '<div class="row" style="flex-direction:column"><button class="btn sm primary" data-bk="confirmed" data-id="' + b.id + '">' + esc(S.confirm) + '</button><button class="btn sm" data-bk="declined" data-id="' + b.id + '">' + esc(S.decline) + '</button></div>'
-      : '<span class="st ' + esc(b.status) + '">' + esc(S.status[b.status] || b.status) + '</span>') + '</div>';
+  const items = Array.isArray(b.items) && b.items.length ? b.items : (b.service ? [{ service: b.service, pkg: b.pkg || '', price: b.price || 0, topic: b.topic || '' }] : []);
+  const list = items.map((it) => '<li>' + esc(String(it.service || '') + (it.pkg ? ' – ' + it.pkg : '')) + (it.price ? ' <b>' + fmtPrice(it.price) + '</b>' : '') + (it.topic ? '<br><small>' + esc(S.msgTopic) + ': ' + esc(it.topic) + '</small>' : '') + '</li>').join('');
+  const total = items.length > 1 ? '<div class="tot"><span>' + esc(S.msgTotal) + '</span><b>' + fmtPrice(b.price || items.reduce((n, x) => n + (x.price || 0), 0)) + '</b></div>' : '';
+  const meta = [admin && (b.name || b.email) ? '🙋 ' + esc([b.name, b.email].filter(Boolean).join(' · ')) : '', b.birth ? '🎂 ' + esc(b.birth) : '', b.note ? '📝 ' + esc(b.note) : '', b.card ? '🃏 ' + esc(b.card) : ''].filter(Boolean).join('<br>');
+  return '<div class="bk"><div class="bkh"><b>📅 ' + esc(slotLabel(b.slot)) + '</b><span class="st ' + esc(b.status) + '">' + esc(S.status[b.status] || b.status) + '</span></div>'
+    + (list ? '<ul>' + list + '</ul>' : '') + total + (meta ? '<p class="meta">' + meta + '</p>' : '')
+    + (admin && b.status === 'requested' ? '<div class="acts"><button class="btn sm primary" data-bk="confirmed" data-id="' + b.id + '">' + esc(S.confirm) + '</button><button class="btn sm" data-bk="declined" data-id="' + b.id + '">' + esc(S.decline) + '</button></div>' : '') + '</div>';
 }
 
 function renderMe(args, params) {
@@ -12257,7 +12216,7 @@ function renderMe(args, params) {
     }
     h += aiPanelHTML({ type: 'general' });
     h += '<div class="card"><h3 style="margin-bottom:8px">' + esc(S.myCourses) + '</h3>' + COURSES.map((c) => { const a = ACCESS.isAdmin() ? '9999-12-31' : ACCESS.get()[c.id]; return '<div class="course"><span>' + esc(L(c.name)) + '</span><span class="faint">' + (a ? (ACCESS.has(c.id) ? '✓ ' + esc(S.activeUntil(fmtDate(a))) : esc(S.expiredOn(fmtDate(a)))) : '🔒 ' + fmtPrice(c.price)) + '</span></div>'; }).join('')
-      + '<label class="f" for="mcode">' + esc(S.enterCode) + '</label><div class="row"><input id="mcode" placeholder="NABU-T-…" autocapitalize="characters" style="flex:1"><button class="btn" id="munlock">' + esc(S.unlock) + '</button></div><p class="hint" id="mcstatus"></p></div>';
+      + '<label class="f" for="mcode">' + esc(S.enterCode) + '</label><div class="row nw"><input id="mcode" placeholder="NABU-T-…" autocapitalize="characters"><button class="btn" id="munlock">' + esc(S.unlock) + '</button></div><p class="hint" id="mcstatus"></p></div>';
     h += '<div class="card"><h3 style="margin-bottom:8px">' + esc(S.themeTitle) + '</h3><div class="chips">' + ['auto', 'light', 'dark'].map((t) => '<button class="chip' + (themeChoice() === t ? ' on' : '') + '" data-theme-pick="' + t + '">' + esc(S.themes[t]) + '</button>').join('') + '</div><p class="hint">' + esc(S.themeHint) + '</p></div>';
     h += '<div class="row">' + (BE.user ? '<button class="btn" id="signout">' + esc(S.signOut) + '</button>' : '') + '<a class="btn" href="#/report">🐞 ' + esc(S.reportLink) + '</a><button class="btn" id="retour">' + (lang === 'vi' ? 'Xem lại hướng dẫn' : 'Replay the tour') + '</button>' + (BE.isAdmin() ? '<a class="btn gold" href="#/admin">' + esc(S.adminTitle) + '</a>' : '') + '</div>';
     body.innerHTML = h;
@@ -12358,7 +12317,7 @@ function renderAdmin(args, params) {
   if (params && params.tab && ['posts', 'schedule', 'bookings', 'inbox', 'codes'].indexOf(params.tab) > -1) admin.tab = params.tab;
   m.innerHTML = '<div class="eyebrow">' + esc(CONFIG.brand) + '</div><h1 style="margin-bottom:6px">' + esc(S.adminTitle) + '</h1><p class="muted">' + esc(S.adminIntro) + '</p>'
     + '<div class="tabs" id="atabs">' + ['posts', 'schedule', 'bookings', 'inbox', 'codes'].map((k) => '<button data-t="' + k + '" class="' + (admin.tab === k ? 'on' : '') + '">' + esc(S.adminTabs[k]) + '<span class="tb" data-tb="' + k + '" hidden></span></button>').join('') + '</div>'
-    + (BE.enabled ? '<p class="hint" style="margin-bottom:12px">☁️ ' + esc(S.cloudContent) + '</p>' : '<div class="card"><label class="f" for="gtoken">' + esc(S.token) + '</label><div class="row"><input id="gtoken" type="password" value="' + esc(ghToken()) + '" style="flex:1" autocomplete="off"><button class="btn sm" id="savetoken">' + esc(S.saveToken) + '</button></div><p class="hint">' + esc(S.tokenHint) + ' (' + esc(CONFIG.repo) + ')</p></div>')
+    + (BE.enabled ? '<p class="hint" style="margin-bottom:12px">☁️ ' + esc(S.cloudContent) + '</p>' : '<div class="card"><label class="f" for="gtoken">' + esc(S.token) + '</label><div class="row nw"><input id="gtoken" type="password" value="' + esc(ghToken()) + '" style="flex:1" autocomplete="off"><button class="btn sm" id="savetoken">' + esc(S.saveToken) + '</button></div><p class="hint">' + esc(S.tokenHint) + ' (' + esc(CONFIG.repo) + ')</p></div>')
     + '<div id="apanel"></div>';
   const stb = $('#savetoken'); if (stb) stb.addEventListener('click', () => { store.set('nabu-gh-token', $('#gtoken').value.trim()); toast('✓'); show(admin.tab); });
   $$('#atabs button').forEach((b) => b.addEventListener('click', () => { admin.tab = b.getAttribute('data-t'); $$('#atabs button').forEach((x) => x.classList.toggle('on', x === b)); show(admin.tab); }));
@@ -12380,15 +12339,16 @@ function adminPosts(p) {
     + '<label class="f" for="pbody">' + esc(S.postBody) + '</label><textarea id="pbody" style="min-height:160px"></textarea><p class="hint">' + esc(S.bodyHint) + '</p>'
     + '<label class="f" for="ptitle_en">' + esc(S.postTitleEn) + '</label><input id="ptitle_en">'
     + '<label class="f" for="pbody_en">' + esc(S.postBodyEn) + '</label><textarea id="pbody_en"></textarea>'
-    + '<label class="f" for="csearch">' + esc(S.postCards) + '</label><input id="csearch" placeholder="' + esc(S.searchCard) + '" style="margin-bottom:8px">'
-    + '<div class="grid" id="cgrid">' + DECK[lang].map((c) => '<button data-cid="' + c.id + '" data-name="' + esc((c.name + ' ' + cardById(c.id, lang === 'vi' ? 'en' : 'vi').name).toLowerCase()) + '">' + faceSVG(c) + '</button>').join('') + '</div><div class="mini" id="csel"></div>'
+    + '<div class="acc" id="cardpick" style="margin-top:14px"><button type="button"><span>🃏 ' + esc(S.postCards) + '</span></button><div class="in"><input id="csearch" placeholder="' + esc(S.searchCard) + '" style="margin-bottom:8px">'
+    + '<div class="grid" id="cgrid">' + DECK[lang].map((c) => '<button data-cid="' + c.id + '" data-name="' + esc((c.name + ' ' + cardById(c.id, lang === 'vi' ? 'en' : 'vi').name).toLowerCase()) + '">' + faceSVG(c) + '</button>').join('') + '</div></div></div><div class="mini" id="csel"></div>'
     + '<label class="f">' + esc(S.postTopics) + '</label><div class="chips">' + INTERESTS.map((i) => '<button class="chip" data-topic-id="' + i.id + '">' + esc(i[lang]) + '</button>').join('') + '</div>'
     + '<label class="f" for="pinit">' + esc(S.markInitials) + '</label><input id="pinit" placeholder="C, E, H">'
     + '<label class="f">' + esc(S.markSigns) + '</label><div class="chips">' + S.zodiac.map((z, i) => '<button class="chip" data-sign="' + i + '">' + esc(z) + '</button>').join('') + '</div>'
     + '<label class="f" style="display:flex;gap:8px;align-items:center;margin-top:16px"><input type="checkbox" id="ppin" style="width:auto">' + esc(S.pinPost) + '</label>'
-    + '<div class="row" style="margin-top:16px"><button class="btn primary" id="publish">' + esc(S.publish) + '</button><button class="btn" id="preview">' + esc(S.preview) + '</button><button class="btn" id="copyjson">' + esc(S.copyJson) + '</button><button class="btn" id="clear">' + esc(S.newPost) + '</button></div>'
+    + '<div class="btns" style="margin-top:16px"><button class="btn primary" id="publish">' + esc(S.publish) + '</button><button class="btn" id="preview">' + esc(S.preview) + '</button><button class="btn" id="copyjson">' + esc(S.copyJson) + '</button><button class="btn" id="clear">' + esc(S.newPost) + '</button></div>'
     + '<p id="status" class="hint"></p><div id="pprev"></div></div>'
     + '<div class="card"><h3 style="margin-bottom:6px">' + esc(S.existing) + '</h3><div class="plist" id="plist"><p class="hint">…</p></div></div>';
+  bindAccordions(p);
   const status = (msg, cls) => { const s = $('#status'); s.textContent = msg; s.className = 'hint ' + (cls || ''); };
   const syncSel = () => { $$('#cgrid button').forEach((b) => b.classList.toggle('on', admin.cards.indexOf(b.getAttribute('data-cid')) > -1)); $('#csel').innerHTML = admin.cards.map((c) => miniHTML(c)).join(''); };
   const formPost = () => {
@@ -12465,9 +12425,9 @@ async function adminSchedule(p) {
   const draw = () => {
     p.innerHTML = '<div class="card"><h3 style="margin-bottom:4px">' + esc(S.weekly) + '</h3><p class="hint" style="margin-bottom:10px">' + esc(S.weeklyHint) + '</p><div class="week">'
       + [1, 2, 3, 4, 5, 6, 0].map((d) => '<div class="wd"><b>' + esc(dn[d]) + '</b><div class="chips">' + HOURS.map((h) => '<button class="chip' + ((sch.weekly[String(d)] || []).indexOf(h) > -1 ? ' on' : '') + '" data-wd="' + d + '" data-h="' + h + '">' + h + '</button>').join('') + '</div></div>').join('') + '</div></div>'
-      + '<div class="card"><h3 style="margin-bottom:4px">' + esc(S.blocked) + '</h3><p class="hint">' + esc(S.blockedHint) + '</p><div class="chips" id="blist">' + sch.blocked.sort().map((d) => '<button class="chip on" data-unblock="' + d + '">' + d + ' ✕</button>').join('') + '</div><div class="row" style="margin-top:8px"><input type="date" id="bday" style="flex:1"><button class="btn sm" id="badd">' + esc(S.addDay) + '</button></div></div>'
-      + '<div class="card"><h3 style="margin-bottom:4px">' + esc(S.bookedSlots) + '</h3><p class="hint">' + esc(S.bookedHint) + '</p><div class="chips">' + sch.booked.sort().map((k) => '<button class="chip on" data-unbook="' + k + '">' + k.replace('T', ' ') + ' ✕</button>').join('') + '</div><div class="row" style="margin-top:8px"><input type="date" id="kday" style="flex:1"><select id="khour" style="width:auto">' + HOURS.map((h) => '<option>' + h + '</option>').join('') + '</select><button class="btn sm" id="kadd">+</button></div></div>'
-      + '<div class="card"><div class="row"><div style="flex:1"><label class="f">' + esc(S.leadDays) + '</label><input type="number" id="lead" min="0" value="' + (sch.leadDays == null ? 1 : sch.leadDays) + '"></div><div style="flex:1"><label class="f">' + esc(S.horizonDays) + '</label><input type="number" id="horizon" min="7" value="' + (sch.horizonDays || 42) + '"></div></div>'
+      + '<div class="card"><h3 style="margin-bottom:4px">' + esc(S.blocked) + '</h3><p class="hint">' + esc(S.blockedHint) + '</p><div class="chips" id="blist">' + sch.blocked.sort().map((d) => '<button class="chip on" data-unblock="' + d + '">' + d + ' ✕</button>').join('') + '</div><div class="row nw" style="margin-top:8px"><input type="date" id="bday"><button class="btn sm" id="badd">' + esc(S.addDay) + '</button></div></div>'
+      + '<div class="card"><h3 style="margin-bottom:4px">' + esc(S.bookedSlots) + '</h3><p class="hint">' + esc(S.bookedHint) + '</p><div class="chips">' + sch.booked.sort().map((k) => '<button class="chip on" data-unbook="' + k + '">' + k.replace('T', ' ') + ' ✕</button>').join('') + '</div><div class="row nw" style="margin-top:8px"><input type="date" id="kday"><select id="khour" style="flex:0 0 96px">' + HOURS.map((h) => '<option>' + h + '</option>').join('') + '</select><button class="btn sm" id="kadd">+</button></div></div>'
+      + '<div class="card"><div class="two"><div><label class="f">' + esc(S.leadDays) + '</label><input type="number" id="lead" min="0" value="' + (sch.leadDays == null ? 1 : sch.leadDays) + '"></div><div><label class="f">' + esc(S.horizonDays) + '</label><input type="number" id="horizon" min="7" value="' + (sch.horizonDays || 42) + '"></div></div>'
       + '<button class="btn primary block" id="ssave" style="margin-top:14px">' + esc(S.saveSchedule) + '</button><p class="hint" id="sstatus"></p></div>';
     $$('[data-wd]', p).forEach((b) => b.addEventListener('click', () => { const d = b.getAttribute('data-wd'), h = b.getAttribute('data-h'); const arr = sch.weekly[d] = sch.weekly[d] || []; const i = arr.indexOf(h); if (i > -1) arr.splice(i, 1); else arr.push(h); arr.sort(); b.classList.toggle('on'); }));
     $$('[data-unblock]', p).forEach((b) => b.addEventListener('click', () => { sch.blocked = sch.blocked.filter((x) => x !== b.getAttribute('data-unblock')); draw(); }));
@@ -12537,7 +12497,7 @@ function adminCodes(p) {
   const S = T();
   p.innerHTML = '<div class="card"><p class="hint" style="margin-bottom:10px">' + esc(S.codesIntro) + '</p>'
     + '<label class="f" for="ccourse">' + esc(S.codeCourse) + '</label><select id="ccourse">' + COURSES.map((c) => '<option value="' + c.id + '">' + esc(L(c.name)) + ' · ' + fmtPrice(c.price) + '</option>').join('') + '</select>'
-    + '<div class="row"><div style="flex:1"><label class="f" for="cstart">' + esc(S.codeStart) + '</label><input id="cstart" type="date" value="' + isoDate(new Date()) + '"></div><div style="flex:1"><label class="f" for="cmonths">' + esc(S.codeMonths) + '</label><input id="cmonths" type="number" min="1" value="6"></div></div>'
+    + '<div class="two"><div><label class="f" for="cstart">' + esc(S.codeStart) + '</label><input id="cstart" type="date" value="' + isoDate(new Date()) + '"></div><div><label class="f" for="cmonths">' + esc(S.codeMonths) + '</label><input id="cmonths" type="number" min="1" value="6"></div></div>'
     + '<button class="btn primary block" id="cmake" style="margin-top:14px">' + esc(S.makeCode) + '</button><div id="cout"></div></div>';
   $('#cmake').addEventListener('click', () => {
     const until = addMonths($('#cstart').value || isoDate(new Date()), Number($('#cmonths').value) || 6), code = makeCode($('#ccourse').value, until);
@@ -12548,7 +12508,7 @@ function adminCodes(p) {
 ROUTES.admin = { nav: '', render: renderAdmin };
 
 /* ============================ boot ============================ */
-window.APP_VERSION = 'v46';
+window.APP_VERSION = 'v47';
 window.NABU = { CONFIG: CONFIG, LESSONS: LESSONS, localAnswer: localAnswer, compatVerdict: compatVerdict, numerologyOf: numerologyOf, ZDEEP: ZDEEP, lunarToday: lunarToday, solarToLunar: solarToLunar, DECK: DECK, INSIGHT: INSIGHT, KW: KW, ASK: ASK, TOPICS: TOPICS, GUIDES: GUIDES, SERVICES: SERVICES, COURSES: COURSES, ACCESS: ACCESS, makeCode: makeCode, parseCode: parseCode, ZODIAC: ZODIAC, pick: pick, book: book,
   insightHTML: insightHTML, insightOf: insightOf, sunSignIndex: sunSignIndex, lifePath: lifePath, PROFILE: () => PROFILE, BE: BE };
 BE.initP = BE.init().catch(() => { /* backend unreachable: the app runs device-only */ });

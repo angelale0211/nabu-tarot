@@ -546,10 +546,12 @@ main{padding:22px 0 30px}
 @keyframes pulse{50%{opacity:.6}}
 .msg .att{display:block;max-width:220px;border-radius:10px;margin-bottom:6px}
 .msg audio.att{width:220px}
-.bk{display:flex;justify-content:space-between;gap:10px;align-items:center;padding:12px 0;border-bottom:1px solid var(--rule-soft);font-size:14px}
-.bk>div:first-child{min-width:0;overflow-wrap:anywhere}
-.bk .st{font-size:12px;font-weight:700;border-radius:8px;padding:3px 8px;background:var(--surface-3)}
-.bk .st.confirmed{background:var(--tag-green-bg);color:var(--tag-green-ink)}.bk .st.declined{background:var(--tag-pink-bg);color:var(--tag-pink-ink)}.bk .st.requested{background:var(--tag-gold-bg);color:var(--tag-gold-ink)}
+/* A booking as a card: when, status, every package on its own line, the total, then the details. */
+.bk{display:block;background:var(--surface);border:1px solid var(--rule-soft);border-radius:14px;padding:12px 14px;margin-bottom:10px;font-size:14px;overflow-wrap:anywhere}
+.bk .bkh{display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap}.bk ul{margin:8px 0 4px;padding-left:18px}.bk li{margin:3px 0}.bk li small{color:var(--fg-soft)}
+.bk .tot{display:flex;justify-content:space-between;border-top:1px solid var(--rule-soft);padding-top:6px;margin-top:4px;font-weight:700}.bk .meta{margin:6px 0 0;color:var(--fg-soft);font-size:13px}.bk .acts{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px}
+.st{font-size:12px;font-weight:700;border-radius:8px;padding:3px 8px;background:var(--surface-3);white-space:nowrap}
+.st.confirmed{background:var(--tag-green-bg);color:var(--tag-green-ink)}.st.declined{background:var(--tag-pink-bg);color:var(--tag-pink-ink)}.st.requested{background:var(--tag-gold-bg);color:var(--tag-gold-ink)}
 
 /* ---- admin ---- */
 .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(64px,1fr));gap:8px;max-height:260px;overflow:auto;padding:4px;border:1px solid var(--rule-soft);border-radius:12px}
@@ -562,7 +564,22 @@ main{padding:22px 0 30px}
 .week{display:grid;grid-template-columns:1fr;gap:8px}
 .week .wd{background:var(--surface-2);border-radius:12px;padding:10px 12px}
 .week .wd b{display:block;margin-bottom:6px;font-size:14px}
-.week .wd .chips .chip{padding:5px 10px;font-size:12.5px}
+.week .wd .chips{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}.week .wd .chips .chip{padding:6px 2px;font-size:12.5px;text-align:center}
+/* Dashboard rows: a field and its button on one line, two fields side by side, buttons in a tidy grid. */
+.row.nw{flex-wrap:nowrap;align-items:center}.row.nw>input,.row.nw>select{flex:1;min-width:0}.row.nw>.btn,.row.nw>button{flex:none}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:10px}.two label.f{margin-top:8px}.btns{display:grid;grid-template-columns:1fr 1fr;gap:8px}.btns .btn{width:100%}
+/* Booking summary card and the done screen. */
+.sum{background:var(--surface);border:1px solid var(--rule);border-radius:14px;padding:4px 14px;font-size:14.5px;margin:10px 0;text-align:left}.sum .r{display:flex;gap:10px;padding:9px 0;border-top:1px solid var(--rule-soft)}.sum .r:first-child{border-top:0}
+.sum .k{flex:none;width:86px;color:var(--fg-faint);font-size:12.5px;font-weight:600;padding-top:2px}.sum .v{flex:1;min-width:0;overflow-wrap:anywhere}.sum ul{margin:0;padding-left:16px}.sum li{margin:2px 0}.sum li small{font-size:12.5px}.sum .warn{color:#B04A2E;font-weight:600}.sum .ok{color:#2E7D46;font-weight:600}
+.msgd{margin:6px 0 12px}.msgd summary{cursor:pointer;font-size:13.5px;color:var(--fg-soft);font-weight:600;padding:6px 0}
+.done{text-align:center;padding:16px 0 8px}.done .big{font-size:60px;line-height:1;margin-bottom:10px}.done h1{margin-bottom:8px}
+.picked.saved{justify-content:space-between}.picked.saved .btn{flex:none}
+/* Guide opened in place on the home screen. */
+.fyg .in h2{font-size:17px;margin:12px 0 4px;font-family:var(--display);font-weight:500;color:var(--fg)}.fyg .in .lead{color:var(--fg);font-weight:500}
+/* Nabu AI: one scrolling row of suggestions, a real chat column, a bar that stays usable. */
+.ai{padding:14px}.ai .sugs{display:flex;gap:6px;overflow-x:auto;flex-wrap:nowrap;margin:8px -14px 8px;padding:0 14px 4px;-webkit-overflow-scrolling:touch;scrollbar-width:none}.ai .sugs::-webkit-scrollbar{display:none}.ai .sugs .chip{white-space:nowrap;flex:none}
+.ai-chat{display:flex;flex-direction:column;gap:8px;max-height:55vh;overflow:auto;padding:10px;border:1px solid var(--rule-soft)}.ai-chat .msg{max-width:94%}.ai-chat .msg p{margin:0 0 6px}.ai-chat .msg p:last-child{margin:0}
+.ai .chatbar{align-items:flex-end}.ai .chatbar textarea{flex:1;min-height:46px;resize:none}.ai .chatbar .btn{min-height:46px;padding:0 16px}.ai .chatbar .btn[disabled]{opacity:.5}
 .ok{color:var(--ok)}.err{color:var(--err)}
 
 @media (max-width:380px){.hero{grid-template-columns:96px 1fr}.fan{height:230px}.fan .slot{width:92px;height:150px;margin-left:-46px}.nav a{font-size:10px}}

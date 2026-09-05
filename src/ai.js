@@ -150,8 +150,25 @@ function localAnswer(q, ctx) {
     else if (d.cat) out.push(S.lifePathOf(n.lifePath) + ': ' + LIFEPATH[n.lifePath][lang], n.expression ? S.numExpr + ' ' + n.expression + ': ' + NUM[n.expression][lang].expr : '');
     else out.push(S.lifePathOf(n.lifePath) + ': ' + LIFEPATH[n.lifePath][lang], n.personalYear ? S.numYear + ' ' + n.personalYear + ': ' + PYEAR[n.personalYear][lang] : '');
   } else {
+    const f = fold(q).trim(), specific = mentioned.length || signs.length || lenMentioned(q).length || planetMentioned(q).length || houseMentioned(q) || numberMentioned(q);
     const help = topicHelp(q);
-    if (help) out.push(help);
+    const si = mySign(), myKey = si > -1 ? ZKEYS[si] : '';
+    const drawOne = () => {
+      const id = DECK.vi[Math.floor(Math.random() * DECK.vi.length)].id, c = cardById(id), I = insightOf(id);
+      out.push(S.aiDrew(c.name) + ' ' + (d.cat ? I[d.cat] : I.now));
+      if (d.yesno) { const lean = leanOf(id); out.push(lean > 0 ? S.aiYes(c.name) : lean < 0 ? S.aiNo(c.name) : S.aiMaybe(c.name)); }
+      if (d.timing) out.push(S.aiTiming + ' ' + SUIT_TIMING[lang][c.suit]);
+      out.push(I.advice, S.aiDrawHint);
+    };
+    if (/^(chao|hi|hello|xin chao|alo|hey|yo)\b/.test(f) || f.length < 3) out.push(S.aiGreet);
+    else if (/cam on|thank/.test(f)) out.push(S.aiThanks);
+    else if (help) out.push(help);
+    else if (!specific && /rut (cho minh |giup minh |giup |cho )?(mot |1 )?la|rut bai|draw (me )?(a |one )?card|pick a card|la bai (cua |cho )?hom nay|card (of the day|for today)/.test(f)) drawOne();
+    else if (!specific && /(hom nay|today).*(trang|moon)|(trang|moon).*(hom nay|today)/.test(f)) { const mp = moonPhase(new Date()); out.push(S.aiTodayMoon(MOON_NAMES[lang][mp.idx])); }
+    else if (!specific && (d.yesno || d.timing || d.cat)) {
+      if (myKey && d.cat) out.push(S.aiSignOf(ZSIGN[myKey][lang]) + ' ' + (d.cat === 'love' ? ZODIAC[myKey][lang].love : ZODIAC[myKey][lang].work));
+      drawOne();
+    }
   }
   lenMentioned(q).forEach((n) => { const d = lenCard(n); out.push(S.aiAbout(d.name) + ' ' + (d.kw.pos || []).slice(0, 3).join(', ') + '. ' + (d.cat === 'love' && d.love ? d.love : d.core)); });
   planetMentioned(q).forEach((p) => out.push(S.aiAbout(p.name[lang]) + ' ' + p[lang]));
@@ -193,12 +210,13 @@ function aiSystemPrompt() {
     ? 'Bạn là Nabu AI, trợ lý của Nabu Tarot (một reader tarot người Việt). Trả lời bằng tiếng Việt đời thường, ấm áp, ngắn gọn: 4 đến 8 câu, câu ngắn, xưng "mình", gọi người dùng là "bạn". Ưu tiên KIẾN THỨC được cung cấp; nếu câu hỏi cần thông tin ngoài đó (ví dụ lịch sử, sự kiện, kiến thức chung về tarot, chiêm tinh, thần số học), hãy tìm kiếm và tổng hợp, rồi nói rõ phần nào là kiến thức chung. Không chẩn đoán bệnh, không tư vấn pháp lý hay đầu tư cụ thể, không hứa điều gì chắc chắn xảy ra. Chuyện riêng quan trọng, gợi ý đặt lịch xem bài với Nabu.'
     : 'You are Nabu AI, the assistant of Nabu Tarot (a Vietnamese tarot reader). Answer in plain, warm English: 4 to 8 short sentences. Prefer the KNOWLEDGE provided; if the question needs outside facts (history, events, general tarot, astrology or numerology knowledge), search and summarise, and say which part is general knowledge. No medical diagnosis, no specific legal or investment advice, no promises. For important personal matters, suggest booking a reading with Nabu.';
 }
+const withTimeout = (p, ms) => Promise.race([p, new Promise((_, rej) => setTimeout(() => rej(new Error('timeout')), ms))]);
 async function geminiAnswer(q, ctx, history) {
   const url = 'https://generativelanguage.googleapis.com/v1beta/models/' + encodeURIComponent(CONFIG.geminiModel || 'gemini-2.5-flash') + ':generateContent?key=' + encodeURIComponent(CONFIG.geminiKey);
   const contents = history.slice(-6).map((h) => ({ role: h.role === 'user' ? 'user' : 'model', parts: [{ text: h.text }] }));
   if (contents.length && contents[contents.length - 1].role === 'user') contents.pop();
   contents.push({ role: 'user', parts: [{ text: 'KNOWLEDGE (' + ctx.type + '):\n' + contextText(ctx).slice(0, 12000) + '\n\nQUESTION: ' + q }] });
-  const r = await fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ system_instruction: { parts: [{ text: aiSystemPrompt() }] }, contents: contents, tools: [{ google_search: {} }], generationConfig: { temperature: 0.7, maxOutputTokens: 900 } }) });
+  const r = await withTimeout(fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ system_instruction: { parts: [{ text: aiSystemPrompt() }] }, contents: contents, tools: [{ google_search: {} }], generationConfig: { temperature: 0.7, maxOutputTokens: 900 } }) }), 25000);
   if (!r.ok) throw new Error('Gemini ' + r.status);
   const j = await r.json(), cand = (j.candidates || [])[0];
   const text = ((cand && cand.content && cand.content.parts) || []).map((p) => p.text || '').join('').trim();
@@ -209,7 +227,7 @@ async function geminiAnswer(q, ctx, history) {
 
 /* ---- online engine ---- */
 async function remoteAnswer(q, ctx, history) {
-  const r = await fetch(CONFIG.aiEndpoint, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ lang: lang, question: q, context: contextText(ctx), kind: ctx.type, history: history.slice(-6), profile: { name: PROFILE.name || '', sign: mySign() > -1 ? ZSIGN[ZKEYS[mySign()]].en : '' } }) });
+  const r = await withTimeout(fetch(CONFIG.aiEndpoint, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ lang: lang, question: q, context: contextText(ctx), kind: ctx.type, history: history.slice(-6), profile: { name: PROFILE.name || '', sign: mySign() > -1 ? ZSIGN[ZKEYS[mySign()]].en : '' } }) }), 25000);
   if (!r.ok) throw new Error('AI ' + r.status);
   const j = await r.json();
   if (!j.answer) throw new Error(j.error || 'AI');
@@ -229,23 +247,26 @@ function aiPanelHTML(ctx) {
   const S = T(), key = JSON.stringify(ctx), hist = AI.history[key] || [];
   return '<div class="ai" data-ai=\'' + esc(key) + '\'><div class="ai-h"><span class="ai-logo">✦</span><b>Nabu AI</b><span class="faint">' + esc(CONFIG.geminiKey || CONFIG.aiEndpoint ? S.aiOnline : S.aiBuiltin) + '</span></div>'
     + '<p class="hint">' + esc(ctx.type === 'lesson' ? S.aiIntroLesson : S.aiIntro) + '</p>'
-    + '<div class="chips">' + aiSuggestions(ctx).map((s) => '<button class="chip" data-ai-sug>' + esc(s) + '</button>').join('') + '</div>'
-    + '<div class="chat ai-chat">' + hist.map((m) => '<div class="msg ' + (m.role === 'user' ? 'me' : 'them') + '">' + esc(m.text).replace(/\n/g, '<br>') + '</div>').join('') + '</div>'
+    + '<div class="chips sugs">' + aiSuggestions(ctx).map((s) => '<button class="chip" data-ai-sug>' + esc(s) + '</button>').join('') + '</div>'
+    + '<div class="chat ai-chat">' + hist.map((m) => aiMsgHTML(m.role, m.text)).join('') + '</div>'
     + '<div class="chatbar"><textarea data-ai-q placeholder="' + esc(S.aiPlaceholder) + '"></textarea><button class="btn primary" data-ai-send>' + esc(S.aiAsk) + '</button></div>'
     + '<p class="faint" style="margin-top:8px">' + esc(S.aiNote) + '</p></div>';
 }
+const aiMsgHTML = (role, text) => '<div class="msg ' + (role === 'user' ? 'me' : 'them') + '">' + paras(text) + '</div>';
 function bindAI(root) {
   $$('.ai', root).forEach((panel) => {
-    const ctx = JSON.parse(panel.getAttribute('data-ai')), key = panel.getAttribute('data-ai'), ta = $('[data-ai-q]', panel), chat = $('.ai-chat', panel);
-    const push = (role, text) => { AI.history[key] = AI.history[key] || []; AI.history[key].push({ role: role, text: text }); chat.innerHTML += '<div class="msg ' + (role === 'user' ? 'me' : 'them') + '">' + esc(text).replace(/\n/g, '<br>') + '</div>'; chat.scrollTop = chat.scrollHeight; };
+    const ctx = JSON.parse(panel.getAttribute('data-ai')), key = panel.getAttribute('data-ai'), ta = $('[data-ai-q]', panel), chat = $('.ai-chat', panel), send = $('[data-ai-send]', panel);
+    let busy = false;  // per box, and always released, so a slow answer can never lock typing
+    const push = (role, text) => { AI.history[key] = AI.history[key] || []; AI.history[key].push({ role: role, text: text }); chat.insertAdjacentHTML('beforeend', aiMsgHTML(role, text)); chat.scrollTop = chat.scrollHeight; };
     const ask = async (q) => {
-      q = (q || '').trim(); if (!q || AI.busy) return;
-      AI.busy = true; ta.value = ''; push('user', q);
-      const thinking = document.createElement('div'); thinking.className = 'msg them ai-wait'; thinking.textContent = '…'; chat.appendChild(thinking);
+      q = (q || '').trim(); if (!q || busy) return;
+      busy = true; send.disabled = true; ta.value = ''; push('user', q);
+      const thinking = document.createElement('div'); thinking.className = 'msg them ai-wait'; thinking.textContent = '…'; chat.appendChild(thinking); chat.scrollTop = chat.scrollHeight;
       let a;
       try { a = CONFIG.geminiKey ? await geminiAnswer(q, ctx, AI.history[key]) : CONFIG.aiEndpoint ? await remoteAnswer(q, ctx, AI.history[key]) : localAnswer(q, ctx); }
-      catch (e) { a = localAnswer(q, ctx) + '\n\n(' + T().aiFallback + ')'; }
-      thinking.remove(); push('assistant', a); AI.busy = false;
+      catch (e) { try { a = localAnswer(q, ctx) + '\n\n(' + T().aiFallback + ')'; } catch (e2) { a = T().aiGeneralHelp; } }
+      finally { thinking.remove(); busy = false; send.disabled = false; }
+      push('assistant', a); ta.focus();
     };
     $('[data-ai-send]', panel).addEventListener('click', () => ask(ta.value));
     ta.addEventListener('keydown', (e) => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); ask(ta.value); } });

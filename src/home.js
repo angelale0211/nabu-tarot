@@ -160,7 +160,8 @@ function horoCardHTML(period) {
 function suggestedGuidesHTML(limit) {
   const ints = PROFILE.interests || [];
   const list = GUIDES.filter((g) => g.tags.some((t) => ints.indexOf(t) > -1) && !((g.cat === 'tarot' || g.cat === 'lenormand') && !ACCESS.has(g.cat))).slice(0, 1);
-  const guide = list.length ? list.map((g) => '<a class="acc" href="#/learn/guide/' + g.id + '" style="display:block;text-decoration:none;color:inherit"><button style="pointer-events:none"><span>' + esc(L(g.title)) + '</span></button></a>').join('') : '';
+  // Opens right here: tap to read, tap again to fold it away. The same guide stays in the library.
+  const guide = list.length ? list.map((g) => '<div class="acc fyg"><button type="button"><span>📖 ' + esc(L(g.title)) + '</span></button><div class="in">' + guideBodyHTML(g) + '<p><a href="#/learn/guide/' + g.id + '">' + esc(T().openInLibrary) + ' →</a></p></div></div>').join('') : '';
   return '<div class="sec" id="foryou"><div class="eyebrow">' + esc(T().forInterests) + '</div>' + guide + horoCardHTML('monthly') + horoCardHTML('weekly') + '</div>';
 }
 
@@ -179,7 +180,7 @@ async function renderHome(args, params) {
   bindAccordions(m); bindCardLinks(m);
   bindTour(m, 0);
   if (POSTS == null) await loadPosts();
-  const fy = $('#foryouwrap'); if (fy) { fy.innerHTML = suggestedGuidesHTML(); bindPost(fy); }
+  const fy = $('#foryouwrap'); if (fy) { fy.innerHTML = suggestedGuidesHTML(); bindPost(fy); bindAccordions(fy); }
   const feed = $('#feed'); if (!feed) return;
   const all = sortedPosts(), welcome = all.filter((p) => p.welcome)[0], list = all.filter((p) => !p.welcome);
   feed.innerHTML = (welcome ? '<section class="welcome"><h2>' + esc(L(welcome.title)) + '</h2>' + paras(L(welcome.body)) + '<div class="sig">' + LOGO + '</div></section>' : '')

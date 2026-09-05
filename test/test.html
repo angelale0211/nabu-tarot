@@ -131,7 +131,7 @@ async function go(hash, sel) { W().location.hash = hash; await sleep(30); return
     await go('#/learn/lesson/tarot/7', '.court');
     ok(d.querySelectorAll('.court .cc').length === 16, 'session 7: the 4x4 court grid');
     await go('#/learn/lesson/tarot/8', '.spreads-v');
-    ok(d.querySelectorAll('.spv').length >= 10, 'session 8: spread diagrams');
+    ok(d.querySelectorAll('.spv').length >= 8, 'session 8: spread diagrams');
     d.querySelector('#ldone').click(); await sleep(30);
     ok(/Đã học xong/.test(d.querySelector('#ldone').textContent), 'a session can be marked done');
     await go('#/learn/tarot?tab=cards', '.deckgrid button');
@@ -139,7 +139,7 @@ async function go(hash, sel) { W().location.hash = hash; await sleep(30); return
     d.querySelector('[data-suit="cups"]').click(); await sleep(50);
     ok(d.querySelectorAll('.deckgrid button').length === 14, 'suit tab shows 14 cards');
     d.querySelector('#ctabs [data-t="spreads"]').click(); await sleep(50);
-    ok(d.querySelectorAll('#cpanel .acc').length === 13, 'thirteen tarot spreads inside the course');
+    ok(d.querySelectorAll('#cpanel .acc').length === 8, 'eight tarot spreads inside the course, none of the preset topics');
     d.querySelector('#ctabs [data-t="guides"]').click(); await sleep(50);
     ok(d.querySelectorAll('#cpanel .acc').length === 4, 'tarot guides inside the course');
     await go('#/learn/card/' + chosen, '.detail .hero');
@@ -158,7 +158,7 @@ async function go(hash, sel) { W().location.hash = hash; await sleep(30); return
     await go('#/learn/lesson/lenormand/6', '.spreads-v');
     ok(d.querySelectorAll('.spv').length === 7 && /Grand Tableau/.test(d.querySelector('.spreads-v').textContent), 'lenormand session 6: seven spread diagrams incl. the Grand Tableau');
     await go('#/report', '#rwhat');
-    ok(d.querySelector('#rwhat') && d.querySelector('#rsend') && d.querySelector('#rcopy') && /Nabu Tarot v46/.test(d.querySelector('.msgbox').textContent), 'bug report screen: direct send button, Instagram, copy, auto-attached info');
+    ok(d.querySelector('#rwhat') && d.querySelector('#rsend') && d.querySelector('#rcopy') && /Nabu Tarot v47/.test(d.querySelector('.msgbox').textContent), 'bug report screen: direct send button, Instagram, copy, auto-attached info');
     d.querySelector('#rwhat').value = 'Nút không bấm được'; d.querySelector('#rsend').click(); await sleep(150);
     ok(/chưa bật gửi trực tiếp/.test(d.querySelector('#rstatus').textContent), 'without an endpoint the send button explains and copies the report');
     ok(N.CONFIG.adminNotifyEmails.indexOf('nabutarot@outlook.com') === 0, 'notifications go to nabutarot@outlook.com first');
@@ -178,8 +178,8 @@ async function go(hash, sel) { W().location.hash = hash; await sleep(30); return
     ok(d.querySelectorAll('.aspect .asp').length === 5, 'aspects drawn as five diagrams');
     await go('#/learn/sign/leo', '.detail');
     ok(/Sao chủ/.test(d.body.textContent) && d.querySelectorAll('.mini .m').length >= 4 && /Mặt Trăng ở cung này/.test(d.body.textContent) && d.querySelectorAll('.chips a.chip').length === 4 && d.querySelectorAll('.zring [data-zsign]').length === 12 && d.querySelector('.ai'), 'sign page: ruler, cards, Moon/Rising, compatibility ring, Nabu AI');
-    await go('#/learn/spread/nabu-2', '.spread-d svg');
-    ok(d.querySelectorAll('.qa').length === 5 && /Người cũ/.test(d.body.textContent), 'preset spread page with five positions');
+    await go('#/learn/spread/nabu-2', '.tiles');
+    ok(w.location.hash === '#/learn' && !/Chủ đề sẵn ·/.test(d.body.textContent), 'the five preset-topic spreads are no longer in the library');
     await go('#/learn/manifest', '.acc');
     ok(d.querySelectorAll('.acc').length >= 10 && d.querySelectorAll('.badge-src').length === 0 && !N.GUIDES.some((g) => g.id === 'fort-oracle'), 'ten manifestation guides listed, no grounding badges, oracle guide removed');
     await go('#/learn/guide/mani-woop', '.woop');
@@ -202,6 +202,12 @@ async function go(hash, sel) { W().location.hash = hash; await sleep(30); return
     ok(!d.querySelector('#backbar').hidden && /Trang chủ/.test(d.querySelector('#backbar').textContent), 'the draw tab opened from home shows a back arrow to home');
     d.querySelector('#backbar .backlink').click(); await sleep(60); await waitFor(() => d.querySelector('.tiles'), 4000);
     ok(w.location.hash === '#/home' && d.querySelector('#backbar').hidden, 'back from the draw tab lands on home, where the bar is hidden');
+    { const acc = d.querySelector('#foryou .acc.fyg'); ok(!!acc && !acc.classList.contains('open'), 'the suggested guide on home is a folded card, not a link away'); acc.querySelector('button').click(); await sleep(40);
+      ok(acc.classList.contains('open') && acc.querySelector('.in h2') && acc.querySelector('.in a[href^="#/learn/guide/"]') && w.location.hash === '#/home', 'it opens in place with the full guide and a link to the library'); acc.querySelector('button').click(); await sleep(20); }
+    ok(/Mình rút cho bạn một lá/.test(N.localAnswer('Mình có nên đổi việc không?', { type: 'general' })) && /Chào bạn/.test(N.localAnswer('chào', { type: 'general' })) && /Sư Tử và Bảo Bình/.test(N.localAnswer('Sư Tử hợp với Bảo Bình không?', { type: 'general' })), 'the built-in Nabu AI greets, draws a card for a yes-or-no question, and still answers sign matches');
+    await go('#/admin', '#atabs'); await sleep(60);
+    ok(d.querySelector('.btns #publish') && d.querySelector('#cardpick.acc') && !d.querySelector('#cardpick.open'), 'dashboard actions sit in a grid and the 78-card picker is folded until needed');
+    await go('#/home', '.tiles'); await sleep(60);
     ok(d.querySelector('#homefoot').hidden, 'home has no bottom back bar');
     await go('#/learn', '.tiles'); await sleep(60);
     ok(!d.querySelector('#homefoot').hidden && d.querySelector('#homefoot a[href="#/home"]') && /Trang chủ/.test(d.querySelector('#homefoot').textContent) && d.querySelector('#homefoot').compareDocumentPosition(d.querySelector('#main')) & 2, 'a main tab also has a back-to-home link under its content');
@@ -268,31 +274,38 @@ async function go(hash, sel) { W().location.hash = hash; await sleep(30); return
     ok(d.querySelectorAll('[data-topic]').length === 0 && /Chỉ áp dụng cho gói 1 chủ đề sẵn/.test(d.querySelector('#main').textContent) && /chưa chọn gói nào/i.test(d.querySelector('#cartwrap').textContent), 'no topic pickers until a preset-topic package is chosen; the basket starts empty');
     ok(/chạm vào gói đó thêm một lần nữa/.test(d.querySelector('.tip').textContent), 'the booking page opens with the tap-again-to-deselect tip');
     d.querySelector('[data-pkg="tarot/q3"]').click();
-    ok(d.querySelector('[data-pkg="tarot/q3"]').classList.contains('on') && /• Tarot – 3 câu chi tiết: 50\.000đ/.test(d.querySelector('#msgprev').textContent) && d.querySelectorAll('#cartwrap .ci').length === 1, 'a package goes into the basket and the message');
+    ok(d.querySelector('[data-pkg="tarot/q3"]').classList.contains('on') && /• Tarot – 3 câu chi tiết: 50\.000đ/.test(d.querySelector('#msgtext').textContent) && d.querySelectorAll('#cartwrap .ci').length === 1, 'a package goes into the basket and the message');
     d.querySelector('[data-pkg="tuvi/year"]').click();
-    ok(!d.querySelector('#birthwrap').hidden && d.querySelector('#bbirth').value === '1998-08-05' && /• Tử vi – Vận hạn năm: 333\.000đ/.test(d.querySelector('#msgprev').textContent) && /Tổng: 383\.000đ/.test(d.querySelector('#msgprev').textContent), 'two packages at once: numbered lines, a total, and tử vi asks for the birth date');
+    ok(!d.querySelector('#birthwrap').hidden && d.querySelector('#bbirth').value === '1998-08-05' && /• Tử vi – Vận hạn năm: 333\.000đ/.test(d.querySelector('#msgtext').textContent) && /Tổng: 383\.000đ/.test(d.querySelector('#msgtext').textContent), 'two packages at once: numbered lines, a total, and tử vi asks for the birth date');
     d.querySelector('[data-pkg="tuvi/year"]').click();
-    ok(d.querySelectorAll('#cartwrap .ci').length === 1 && d.querySelector('#birthwrap').hidden && !/Tổng/.test(d.querySelector('#msgprev').textContent), 'tapping a chosen package again removes it');
+    ok(d.querySelectorAll('#cartwrap .ci').length === 1 && d.querySelector('#birthwrap').hidden && !/Tổng/.test(d.querySelector('#msgtext').textContent), 'tapping a chosen package again removes it');
     d.querySelector('[data-pkg="tarot/topic"]').click();
     d.querySelector('[data-pkg="lenormand/topic"]').click();
     ok(d.querySelectorAll('.tpick').length === 2 && d.querySelectorAll('[data-topic]').length === 10 && /Chủ đề cho Tarot – 1 chủ đề sẵn/.test(d.querySelector('#topicwrap').textContent) && /Chủ đề cho Lenormand – 1 chủ đề sẵn/.test(d.querySelector('#topicwrap').textContent) && d.querySelectorAll('#cartwrap .warn').length === 2, 'each preset-topic package gets its own topic picker and is flagged until a topic is chosen');
     ok(d.querySelectorAll('.cal .d.has').length >= 5, 'calendar has days with free slots');
     d.querySelector('[data-topic="1/2"]').click(); await sleep(20);
     d.querySelector('[data-topic="2/4"]').click(); await sleep(20);
-    ok(/• Tarot – 1 chủ đề sẵn \(chọn trong 5 chủ đề\): 60\.000đ\n\s*↳ Chủ đề: #2 Người cũ/.test(d.querySelector('#msgprev').textContent) && /• Lenormand – 1 chủ đề sẵn \(chọn trong 5 chủ đề\): 75\.000đ\n\s*↳ Chủ đề: #4/.test(d.querySelector('#msgprev').textContent) && /Tổng: 185\.000đ/.test(d.querySelector('#msgprev').textContent) && d.querySelectorAll('#cartwrap .warn').length === 0, 'two preset topics booked together, each with its own topic, and the total adds up');
+    ok(/• Tarot – 1 chủ đề sẵn \(chọn trong 5 chủ đề\): 60\.000đ\n\s*↳ Chủ đề: #2 Người cũ/.test(d.querySelector('#msgtext').textContent) && /• Lenormand – 1 chủ đề sẵn \(chọn trong 5 chủ đề\): 75\.000đ\n\s*↳ Chủ đề: #4/.test(d.querySelector('#msgtext').textContent) && /Tổng: 185\.000đ/.test(d.querySelector('#msgtext').textContent) && d.querySelectorAll('#cartwrap .warn').length === 0, 'two preset topics booked together, each with its own topic, and the total adds up');
     d.querySelector('.cal .d.has').click(); await sleep(50);
     ok(d.querySelectorAll('.slots button').length >= 1, 'day shows time slots');
     d.querySelector('.slots button').click(); await sleep(50);
-    ok(!!d.querySelector('.picked') && /Giờ hẹn/.test(d.querySelector('#msgprev').textContent) && /giờ Việt Nam/.test(d.querySelector('#msgprev').textContent) && /Tên: Lan/.test(d.querySelector('#msgprev').textContent), 'chosen slot and the name from the profile appear in the message');
+    ok(!!d.querySelector('.picked') && /Giờ hẹn/.test(d.querySelector('#msgtext').textContent) && /giờ Việt Nam/.test(d.querySelector('#msgtext').textContent) && /Tên: Lan/.test(d.querySelector('#msgtext').textContent), 'chosen slot and the name from the profile appear in the message');
+    ok(d.querySelector('#saveslot') && d.querySelector('#msgprev .sum') && d.querySelectorAll('#msgprev .sum .r').length >= 3 && /Gói đã chọn/.test(d.querySelector('#msgprev').textContent), 'the request is shown as a labelled summary card and the chosen slot offers a save button');
+    d.querySelector('#saveslot').click(); await sleep(80);
+    ok(!d.querySelector('#calwrap .cal') && d.querySelector('#changeslot') && N.book.timeSaved === true && (JSON.parse(w.localStorage.getItem('nabu-book')) || {}).slot === N.book.slot, 'saving the time folds the calendar away and the draft is kept on the device');
+    d.querySelector('#changeslot').click(); await sleep(80);
+    ok(d.querySelector('#calwrap .cal') && d.querySelector('.slots') && !!d.querySelector('.picked'), 'change brings the calendar back with the slot still marked');
+    { const h = w.bookingRow({ id: 'x', slot: '2026-09-12T10:00', status: 'requested', items: [{ service: 'Tarot', pkg: '3 câu chi tiết', price: 50000 }, { service: 'Tử vi', pkg: 'Vận hạn năm', price: 333000, topic: '' }], price: 383000, name: 'Lan', note: 'hi' }, true);
+      ok(/<ul>/.test(h) && (h.match(/<li>/g) || []).length === 2 && /383\.000đ/.test(h) && /data-bk="confirmed"/.test(h) && /class="acts"/.test(h) && /class="st requested"/.test(h), 'a booking card lists every package, the total, the status and the admin actions in a row'); }
     d.querySelector('[data-topic="1/2"]').click(); await sleep(20);
-    ok(N.book.items[1].topic === null && !d.querySelector('[data-topic="1/2"]').classList.contains('on') && !/#2 Người cũ/.test(d.querySelector('#msgprev').textContent) && d.querySelectorAll('#cartwrap .warn').length === 1, 'a second tap clears that package\'s topic and flags it again');
+    ok(N.book.items[1].topic === null && !d.querySelector('[data-topic="1/2"]').classList.contains('on') && !/#2 Người cũ/.test(d.querySelector('#msgtext').textContent) && d.querySelectorAll('#cartwrap .warn').length === 1, 'a second tap clears that package\'s topic and flags it again');
     { const html = w.chatHTML([{ from: 'user', text: 'Chào Nabu', name: 'Lan' }, { from: 'nabu', text: 'Chào Lan' }], 'nabu'); ok(/class="who">Lan</.test(html) && /class="who">Bạn</.test(html) && typeof w.notifyAdmin === 'function' && typeof w.askNotify === 'function' && typeof w.adminTabBadges === 'function', 'every bubble names its sender; admin notification helpers exist'); }
     { const html = w.chatHTML([{ from: 'user', text: 'hi', name: 'Lan' }, { from: 'nabu', text: 'yo' }], 'user'); ok(/class="who">Bạn</.test(html) && /class="who">Nabu</.test(html), 'in the client view the reply is labelled Nabu'); }
     ok(typeof w.loadContent === 'function' && typeof N.BE.getContent === 'function' && typeof N.BE.setContent === 'function', 'dashboard content goes through the cloud helpers, no token needed');
     ok(w.authMessage({ code: 'auth/operation-not-allowed' }, 'facebook') === 'Đăng nhập Facebook chưa mở: Meta yêu cầu Nabu đăng ký một ứng dụng nhà phát triển trước. Bạn dùng Google hoặc email giúp Nabu nhé.' && /Authorized domains/.test(w.authMessage({ code: 'auth/unauthorized-domain' }, 'google')), 'sign-in errors are explained in plain words');
     d.querySelector('[data-topic="1/2"]').click(); await sleep(20);
     d.querySelector('[data-remove="0"]').click(); await sleep(20);
-    ok(d.querySelectorAll('#cartwrap .ci:not(.total)').length === 2 && /• Tarot – 1 chủ đề sẵn/.test(d.querySelector('#msgprev').textContent) && !/3 câu chi tiết:/.test(d.querySelector('#msgprev').textContent) && /\n\n🧺/.test(d.querySelector('#msgprev').textContent), 'the ✕ in the basket removes a package and the rest renumber');
+    ok(d.querySelectorAll('#cartwrap .ci:not(.total)').length === 2 && /• Tarot – 1 chủ đề sẵn/.test(d.querySelector('#msgtext').textContent) && !/3 câu chi tiết:/.test(d.querySelector('#msgtext').textContent) && /\n\n🧺/.test(d.querySelector('#msgtext').textContent), 'the ✕ in the basket removes a package and the rest renumber');
     ok(/ig\.me\/m\/nabutarot/.test(d.querySelector('[data-send][href]').getAttribute('href')), 'instagram send link');
     await go('#/pick', '.fan'); d.querySelector('[data-card]').click(); await sleep(300);
     ok(d.querySelector('#redrawTop') && d.querySelector('#redraw') && d.querySelector('#redrawTop').compareDocumentPosition(d.querySelector('.reveal .hero')) & 4, 'the reveal has a shuffle-and-draw-again button at the top as well as at the bottom');
