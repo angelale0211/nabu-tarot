@@ -208,11 +208,15 @@ async function loadJSON(path, key) {
 const ROUTES = {};
 /* In-app history: the back arrow on a screen returns to the screen the
    visitor actually came from (home, a tab, a list), not to a fixed parent. */
-const NAV = { current: '', stack: [], popping: false, skip: false };
+const NAV = { current: '', stack: [], popping: false, skip: false, scroll: {}, restore: null };
 try { NAV.stack = JSON.parse(sessionStorage.getItem('nabu-nav') || '[]'); } catch (e) { NAV.stack = []; }
 function navRemember(h) {
+  // Where the visitor was on the screen they are leaving, so a return lands there.
+  if (NAV.current) NAV.scroll[NAV.current] = window.scrollY || 0;
+  const top = NAV.stack[NAV.stack.length - 1];
+  NAV.restore = null;
   if (NAV.skip) { NAV.skip = false; }
-  else if (NAV.popping) { NAV.popping = false; }
+  else if (NAV.popping || (top && top === h && NAV.current !== h)) { NAV.popping = false; NAV.stack.pop(); NAV.restore = NAV.scroll[h] || 0; }
   else if (NAV.current && NAV.current !== h) { NAV.stack.push(NAV.current); if (NAV.stack.length > 40) NAV.stack.shift(); }
   NAV.current = h;
   try { sessionStorage.setItem('nabu-nav', JSON.stringify(NAV.stack)); } catch (e) { /* private mode */ }
@@ -252,8 +256,14 @@ function route() {
   navRemember(location.hash || '#/home');
   renderChrome(def.nav);
   renderBackBar(r.route);
-  window.scrollTo(0, 0);
-  def.render(r.args, r.params);
+  const y = NAV.restore;
+  if (y == null) window.scrollTo(0, 0);
+  Promise.resolve(def.render(r.args, r.params)).then(() => {
+    if (y == null) return;
+    window.scrollTo(0, y);
+    requestAnimationFrame(() => window.scrollTo(0, y));
+    setTimeout(() => { if (Math.abs(window.scrollY - y) > 4) window.scrollTo(0, y); }, 120);
+  });
 }
 function boot() {
   window.addEventListener('hashchange', route);

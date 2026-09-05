@@ -178,7 +178,7 @@ async function renderHome(args, params) {
     + (POSTS_CACHED && all.length ? '<div class="banner">' + esc(S.feedOffline) + '</div>' : '')
     + (list.length ? list.map((p) => postHTML(p, false)).join('') : (welcome ? '' : '<p class="empty">' + esc(S.feedEmpty) + '</p>'));
   bindPost(feed);
-  if (params.go === 'feed') feed.scrollIntoView({ behavior: 'smooth' });
+  if (params.go === 'feed' && NAV.restore == null) feed.scrollIntoView({ behavior: 'smooth' });
 }
 async function renderPost(args) {
   const m = $('#main');
