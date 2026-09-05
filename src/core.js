@@ -230,6 +230,28 @@ function icsFor(b) {
     'SUMMARY:' + what, 'DESCRIPTION:' + clean((b.topic ? b.topic + '\n' : '') + (b.note || '') + (who ? '\n' + who : '')), 'URL:' + appURL() + '#/me', alarms, 'END:VEVENT', 'END:VCALENDAR'].join('\r\n');
 }
 const icsLink = (b) => 'data:text/calendar;charset=utf-8,' + encodeURIComponent(icsFor(b));
+/* Google Calendar's "add event" page, for people who keep their calendar there. */
+function gcalLink(b) {
+  const m = /^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2})/.exec(String(b.slot || ''));
+  if (!m) return '';
+  const start = new Date(Date.UTC(+m[1], +m[2] - 1, +m[3], +m[4] - 7, +m[5])), end = new Date(start.getTime() + 3600000);
+  const f = (d) => d.toISOString().replace(/[-:]/g, '').replace(/\.\d{3}/, '');
+  return 'https://calendar.google.com/calendar/render?action=TEMPLATE&text=' + encodeURIComponent(CONFIG.brand + (b.service ? ' · ' + b.service : '')) + '&dates=' + f(start) + '/' + f(end) + '&ctz=Asia%2FHo_Chi_Minh&details=' + encodeURIComponent((b.topic ? b.topic + '\n' : '') + (b.note || '') + '\n' + appURL() + '#/me');
+}
+/* Hand the .ics to the phone: the share sheet (Calendar, Files…) where it exists, otherwise a download. */
+async function addToCalendar(b) {
+  const S = T(), ics = icsFor(b); if (!ics) return;
+  const name = 'nabu-tarot-' + String(b.slot || '').slice(0, 10) + '.ics';
+  try {
+    const file = new File([ics], name, { type: 'text/calendar' });
+    if (navigator.canShare && navigator.canShare({ files: [file] })) { await navigator.share({ files: [file], title: CONFIG.brand }); return; }
+  } catch (e) { if (e && e.name === 'AbortError') return; }
+  try {
+    const url = URL.createObjectURL(new Blob([ics], { type: 'text/calendar;charset=utf-8' })), a = document.createElement('a');
+    a.href = url; a.download = name; a.rel = 'noopener'; document.body.appendChild(a); a.click(); setTimeout(() => { document.body.removeChild(a); URL.revokeObjectURL(url); }, 4000);
+    toast(S.icsDownloaded);
+  } catch (e) { window.open(gcalLink(b), '_blank', 'noopener'); }
+}
 const slotDate = (slot) => { const m = /^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2})/.exec(String(slot || '')); return m ? new Date(+m[1], +m[2] - 1, +m[3], +m[4], +m[5]) : null; };
 /* Reminders while the app is open: 24 h, 6 h, 1 h and 15 min before every upcoming booking. */
 const REM = { timers: [] };

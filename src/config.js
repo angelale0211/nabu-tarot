@@ -54,13 +54,13 @@ const CONFIG = {
   // answers straight from the browser and can search the web for facts the
   // app does not have. Leave empty to skip.
   geminiKey: '',
-  geminiModel: 'gemini-3.6-flash',
+  geminiModel: 'gemini-3.5-flash-lite',
   // Free option: a Google AI Studio key (aistudio.google.com -> Get API key),
   // restricted to this site's address in Google Cloud console. Gemini then
   // answers straight from the browser and can search the web for facts the
   // app does not have. Leave empty to skip.
   geminiKey: '',
-  geminiModel: 'gemini-3.6-flash',
+  geminiModel: 'gemini-3.5-flash-lite',
 
   // Access codes for the paid courses are signed with this. Change it once
   // (any long phrase); codes made before the change stop working.

@@ -215,6 +215,7 @@ function adminBookings(p) {
     $('#bklist').innerHTML = list.length ? list.map((b) => bookingRow(b, true)).join('') : '<p class="empty">' + esc(S.noBookings) + '</p>';
     $$('[data-bcal]', p).forEach((b) => b.addEventListener('click', () => { month = new Date(month.getFullYear(), month.getMonth() + Number(b.getAttribute('data-bcal')), 1); draw(); }));
     $$('[data-bday]', p).forEach((b) => b.addEventListener('click', () => { day = b.getAttribute('data-bday') === day ? '' : b.getAttribute('data-bday'); draw(); }));
+    $$('[data-ics]', p).forEach((b) => b.addEventListener('click', () => { const bk = all.filter((x) => x.id === b.getAttribute('data-ics'))[0]; if (bk) addToCalendar(bk); }));
     $$('[data-bk]', p).forEach((b) => b.addEventListener('click', async () => { const bk = all.filter((x) => x.id === b.getAttribute('data-id'))[0]; try { await BE.setBookingStatus(bk, b.getAttribute('data-bk')); toast('✓'); } catch (e) { toast(e.message); } }));
   };
   admin.unsubs.push(BE.watchAllBookings((list) => { all = list; draw(); }));

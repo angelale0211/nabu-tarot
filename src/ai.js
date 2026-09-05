@@ -5,7 +5,7 @@
      with the same context and the visitor's question;
    - built-in: when no endpoint is set, answers are assembled here from the
      app's own knowledge base, so the feature works offline and costs nothing. */
-const AI = { history: {}, busy: false };
+const AI = { history: {}, busy: false, model: '', noSearchUntil: 0 };
 const fold = (s) => String(s || '').normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/đ/g, 'd').replace(/Đ/g, 'D').toLowerCase();
 const CATS = {
   love: ['yeu', 'tinh cam', 'nguoi ay', 'crush', 'nguoi cu', 'chia tay', 'hen ho', 'ket hon', 'cuoi', 'ban trai', 'ban gai', 'chong', 'vo', 'love', 'relationship', 'partner', 'boyfriend', 'girlfriend', 'ex ', 'marriage', 'date'],
@@ -21,9 +21,19 @@ function detectCat(q) {
   const cat = ['love', 'work', 'study', 'money'].filter((c) => hit(CATS[c]))[0] || null;
   return { cat: cat, timing: hit(CATS.timing), yesno: hit(CATS.yesno) || /\bco\b.*\bkhong\b/.test(f) };
 }
+/* Whole-word match that keeps Vietnamese accents ("mấy" is not "Mây"); an unaccented
+   spelling still matches when the name is long enough to be unambiguous. */
+const hasWord = (q, name) => {
+  const rx = (t) => t.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  const low = String(q || '').normalize('NFC').toLowerCase(), n = String(name || '').normalize('NFC').toLowerCase().trim();
+  if (!n) return false;
+  if (new RegExp('(^|[^\\p{L}\\p{N}])' + rx(n) + '(?=$|[^\\p{L}\\p{N}])', 'u').test(low)) return true;
+  const fn = fold(n);
+  return fn.length >= 5 && new RegExp('(^|[^a-z0-9])' + rx(fn) + '(?=$|[^a-z0-9])').test(fold(q));
+};
 function cardsMentioned(q) {
   const f = fold(q), out = [];
-  DECK.vi.forEach((c, i) => { const en = DECK.en[i]; if (f.indexOf(fold(c.name)) > -1 || f.indexOf(fold(en.name)) > -1) out.push(c.id); });
+  DECK.vi.forEach((c, i) => { const en = DECK.en[i]; if (hasWord(q, c.name) || hasWord(q, en.name)) out.push(c.id); });
   return out.slice(0, 3);
 }
 /* Compatibility verdict for two signs: verdict key + why. */
@@ -44,11 +54,11 @@ function compatAnswer(a, b) {
   const tip = v === 'good' || v === 'same' ? S.compatTipGood : v === 'opposite' ? S.compatTipOpp : S.compatTipWork;
   return head + '\n\n' + why + ' ' + bring + '\n\n' + tip;
 }
-function signMentioned(q) { const f = fold(q); return ZKEYS.filter((k) => f.indexOf(fold(ZSIGN[k].vi)) > -1 || f.indexOf(fold(ZSIGN[k].en)) > -1); }
-function lenMentioned(q) { const f = fold(q), out = []; for (let i = 1; i <= 36; i++) { if (f.indexOf(fold(LEN.vi[i].name)) > -1 || f.indexOf(fold(LEN.en[i].name)) > -1) out.push(i); } return out.slice(0, 2); }
-function planetMentioned(q) { const f = fold(q); return PLANETS.filter((p) => f.indexOf(fold(p.name.vi)) > -1 || f.indexOf(fold(p.name.en)) > -1).slice(0, 2); }
+function signMentioned(q) { const f = fold(q); return ZKEYS.filter((k) => hasWord(q, ZSIGN[k].vi) || hasWord(q, ZSIGN[k].en)); }
+function lenMentioned(q) { const f = fold(q), out = []; for (let i = 1; i <= 36; i++) { if (hasWord(q, LEN.vi[i].name) || hasWord(q, LEN.en[i].name)) out.push(i); } return out.slice(0, 2); }
+function planetMentioned(q) { const f = fold(q); return PLANETS.filter((p) => hasWord(q, p.name.vi) || hasWord(q, p.name.en)).slice(0, 2); }
 function houseMentioned(q) { const m = /(?:nha|house)\s*(\d{1,2})/.exec(fold(q)); const n = m ? Number(m[1]) : 0; return n >= 1 && n <= 12 ? n : 0; }
-function animalMentioned(q) { const f = fold(q); return ANIMALS.map((a, i) => (f.indexOf(fold(a.vi.split(' ')[0])) > -1 || f.indexOf(fold(a.en)) > -1) ? i : -1).filter((i) => i > -1).slice(0, 2); }
+function animalMentioned(q) { const f = fold(q); return ANIMALS.map((a, i) => (hasWord(q, a.vi.split(' ')[0]) || hasWord(q, a.en)) ? i : -1).filter((i) => i > -1).slice(0, 2); }
 function numberMentioned(q) { const m = /(?:so|number|duong doi|life path)\s*(\d{1,2})/.exec(fold(q)); const n = m ? Number(m[1]) : 0; return LIFEPATH[n] ? n : 0; }
 function topicHelp(q) {
   const f = fold(q), S = T();
@@ -116,7 +126,7 @@ function contextText(ctx) {
 /* ---- built-in engine ---- */
 /* A sum typed into the box gets a sum back, even offline. Only digits and operators reach the evaluator. */
 function calcAnswer(f) {
-  const t = String(f || '').replace(/[=?:\s]+$/, '').trim();
+  const t = String(f || '').replace(/\b(bang may|bang bao nhieu|la bao nhieu|bang gi|bang|tinh giup|tinh|equals?|what is|what's|how much is)\b/g, ' ').replace(/\b(cong|plus)\b/g, ' + ').replace(/\b(tru|minus)\b/g, ' - ').replace(/\b(nhan|times|multiplied by)\b/g, ' * ').replace(/\b(chia|divided by|over)\b/g, ' / ').replace(/[=?:\s]+$/, '').trim();
   if (!/\d/.test(t) || !/^[\d\s+\-*/().,xX×÷^%]+$/.test(t) || !/[+\-*/xX×÷^%]/.test(t)) return '';
   const expr = t.replace(/[xX×]/g, '*').replace(/÷/g, '/').replace(/\^/g, '**').replace(/,/g, '.').replace(/\s+/g, '');
   try { const v = Function('"use strict"; return (' + expr + ')')(); if (typeof v !== 'number' || !isFinite(v)) return ''; return t.replace(/\s+/g, ' ') + ' = ' + String(Math.round(v * 1e6) / 1e6); } catch (e) { return ''; }
@@ -220,22 +230,32 @@ function aiSystemPrompt() {
     : 'You are Nabu AI, the assistant inside the Nabu Tarot app (a Vietnamese tarot reader). You answer ANY question like a general assistant: maths, general knowledge, news, translation, writing, and of course tarot, Lenormand, astrology and numerology. Answer simple questions directly and precisely (for example "1 + 1 = 2"); search when a question needs current information. Answer in plain, warm English, 2 to 8 short sentences. When the question is about what the user is looking at, prefer the KNOWLEDGE provided. No medical diagnosis, no specific legal or investment advice, no promises. For important personal matters, suggest booking a reading with Nabu.';
 }
 const withTimeout = (p, ms) => Promise.race([p, new Promise((_, rej) => setTimeout(() => rej(new Error('timeout')), ms))]);
+/* Models are tried in order: the free quota of one runs out (HTTP 429) or a name
+   retires (404), and the next one answers. The one that works is remembered. */
+const GEMINI_MODELS = window.GEMINI_MODELS = ['gemini-3.5-flash-lite', 'gemini-3.7-flash', 'gemini-3.5-flash', 'gemini-flash-lite-latest', 'gemini-3.1-flash-lite', 'gemini-3.6-flash', 'gemini-3.8-flash'];
 async function geminiAnswer(q, ctx, history) {
-  const url = 'https://generativelanguage.googleapis.com/v1beta/models/' + encodeURIComponent(CONFIG.geminiModel || 'gemini-2.5-flash') + ':generateContent?key=' + encodeURIComponent(CONFIG.geminiKey);
   const contents = history.slice(-6).map((h) => ({ role: h.role === 'user' ? 'user' : 'model', parts: [{ text: h.text }] }));
   if (contents.length && contents[contents.length - 1].role === 'user') contents.pop();
   contents.push({ role: 'user', parts: [{ text: 'KNOWLEDGE (' + ctx.type + '):\n' + contextText(ctx).slice(0, 12000) + '\n\nQUESTION: ' + q }] });
   const base = { system_instruction: { parts: [{ text: aiSystemPrompt() }] }, contents: contents, generationConfig: { temperature: 0.7, maxOutputTokens: 900 } };
-  const call = (search) => withTimeout(fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(search ? Object.assign({ tools: [{ google_search: {} }] }, base) : base) }), 25000);
-  // Web search has its own small free quota: when it is used up, answer from the model alone.
-  let r = await call(true);
-  if (!r.ok && [400, 403, 429].indexOf(r.status) > -1) r = await call(false);
-  if (!r.ok) throw new Error('Gemini ' + r.status);
-  const j = await r.json(), cand = (j.candidates || [])[0];
-  const text = ((cand && cand.content && cand.content.parts) || []).map((p) => p.text || '').join('').trim();
-  if (!text) throw new Error('Gemini empty');
-  const chunks = ((cand.groundingMetadata || {}).groundingChunks || []).map((c) => c.web).filter(Boolean).slice(0, 3);
-  return text + (chunks.length ? '\n\n' + (lang === 'vi' ? 'Tham khảo: ' : 'Sources: ') + chunks.map((c) => c.title || c.uri).join(' · ') : '');
+  const order = [AI.model, CONFIG.geminiModel].concat(GEMINI_MODELS).filter((m, k, arr) => m && arr.indexOf(m) === k);
+  const call = (model, search) => withTimeout(fetch('https://generativelanguage.googleapis.com/v1beta/models/' + encodeURIComponent(model) + ':generateContent?key=' + encodeURIComponent(CONFIG.geminiKey), { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(search ? Object.assign({ tools: [{ google_search: {} }] }, base) : base) }), 25000);
+  let last = 'Gemini';
+  for (const model of order) {
+    // Web search has its own small quota: try it once in a while, otherwise answer from the model alone.
+    const trySearch = !AI.noSearchUntil || Date.now() > AI.noSearchUntil;
+    let r = trySearch ? await call(model, true) : null;
+    if (r && !r.ok && [400, 403, 429].indexOf(r.status) > -1) { AI.noSearchUntil = Date.now() + 15 * 60000; r = null; }
+    if (!r) r = await call(model, false);
+    if (!r.ok) { last = 'Gemini ' + r.status; if ([404, 429, 503].indexOf(r.status) > -1) continue; throw new Error(last); }
+    const j = await r.json(), cand = (j.candidates || [])[0];
+    const text = ((cand && cand.content && cand.content.parts) || []).map((p) => p.text || '').join('').trim();
+    if (!text) { last = 'Gemini empty'; continue; }
+    AI.model = model;
+    const chunks = ((cand.groundingMetadata || {}).groundingChunks || []).map((c) => c.web).filter(Boolean).slice(0, 3);
+    return text + (chunks.length ? '\n\n' + (lang === 'vi' ? 'Tham khảo: ' : 'Sources: ') + chunks.map((c) => c.title || c.uri).join(' · ') : '');
+  }
+  throw new Error(last);
 }
 
 /* ---- online engine ---- */
