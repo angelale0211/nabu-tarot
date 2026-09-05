@@ -794,6 +794,18 @@ main{padding:22px 0 30px}
 
 @media (max-width:380px){.hero{grid-template-columns:96px 1fr}.fan{height:230px}.fan .slot{width:92px;height:150px;margin-left:-46px}.nav a{font-size:10px}}
 @media (min-width:640px){.fan{height:280px}.fan .slot{width:120px;height:196px;margin-left:-60px}.tiles{grid-template-columns:1fr 1fr 1fr}}
+/* Activities: piles that flip, polls with bars, the wish jar. */
+.piles{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:10px 0}.piles.n2{grid-template-columns:repeat(2,1fr)}
+.pile{perspective:900px;cursor:pointer;min-height:150px}.pile-inner{position:relative;width:100%;min-height:150px;transform-style:preserve-3d;transition:transform .7s cubic-bezier(.4,.2,.2,1)}.pile.open .pile-inner{transform:rotateY(180deg)}
+.pile .pf,.pile .pb{position:absolute;inset:0;backface-visibility:hidden;-webkit-backface-visibility:hidden;border-radius:12px;transition:visibility 0s .35s}.pile .pb{visibility:hidden}.pile.open .pb{visibility:visible}.pile.open .pf{visibility:hidden}
+.pile .pf{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;background:var(--surface);border:1.5px solid var(--rule)}.pile .pf svg{width:64px;height:auto;filter:drop-shadow(0 4px 8px var(--shade))}.pile .pf b{font-size:15px}.pile .pf span{font-size:11.5px;color:var(--fg-faint);text-align:center;padding:0 4px}
+.pile.chosen .pf{border-color:var(--primary);box-shadow:0 0 0 2px var(--primary) inset}.pile.chosen .pf:after{content:'✓';position:absolute;top:6px;right:8px;font-weight:700;color:var(--primary)}
+.pile .pb{transform:rotateY(180deg);background:var(--tag-gold-bg);color:var(--tag-gold-ink);border:1.5px solid var(--gold);padding:10px;overflow:auto;font-size:13.5px;position:relative;min-height:150px}.pile .pb p{margin:0 0 6px}.pile.open{grid-column:1/-1}.pile.open .pile-inner{min-height:120px}.pile.open .pb{position:relative;transform:rotateY(180deg)}.pile.open .pf{position:absolute}
+.pollopts{display:grid;gap:8px;margin:10px 0 6px}.pollopt{position:relative;display:flex;align-items:center;gap:8px;width:100%;text-align:left;background:var(--surface-2);border:1px solid var(--rule);border-radius:12px;padding:11px 12px;font-weight:600;overflow:hidden}.pollopt .bar{position:absolute;left:0;top:0;bottom:0;width:0;background:var(--lav-soft);transition:width .6s;z-index:0}.pollopt .lbl{position:relative;flex:1;min-width:0}.pollopt .pct{position:relative;color:var(--fg-soft);font-size:13px}.pollopt.on{border-color:var(--primary);box-shadow:0 0 0 1px var(--primary) inset}.pollopt[disabled]{opacity:1;cursor:default}
+.wishjar{text-align:center}.wishjar .jar{position:relative;font-size:64px;line-height:1;height:110px;display:flex;align-items:flex-end;justify-content:center;margin-bottom:8px}.wishjar .note{position:absolute;bottom:60px;left:50%;transform:translateX(-50%);background:#FFFDF5;color:#3B2A5E;border:1px solid #E8DFC4;border-radius:6px;padding:6px 10px;font-size:12px;font-family:Georgia,serif;max-width:220px;opacity:0}.wishjar .jar.fly .note{animation:wishfly 2.4s ease-out forwards}.wishjar .star{position:absolute;font-size:16px;color:var(--gold);opacity:0}.wishjar .s1{left:30%;bottom:70px}.wishjar .s2{right:28%;bottom:40px}.wishjar .s3{left:52%;bottom:96px}.wishjar .jar.fly .star{animation:twinkle 1.6s ease-in-out .3s 2}
+.wishjar textarea{min-height:70px;text-align:center}.wishjar .btn{margin-top:8px}
+@keyframes wishfly{0%{opacity:0;transform:translate(-50%,10px) scale(.9)}15%{opacity:1}100%{opacity:0;transform:translate(-50%,-120px) scale(1.05)}}@keyframes twinkle{0%,100%{opacity:0;transform:scale(.6)}50%{opacity:1;transform:scale(1.2)}}
+.act .foot{justify-content:flex-start}
 </style>
 </head>
 <body>
@@ -1127,6 +1139,11 @@ const STR = {
     sentOk: 'Đã gửi. Nabu sẽ xác nhận sớm. Bạn xem lại trong mục Tôi.',
     nabuPosts: 'Bài viết của Nabu', versionLine: (v) => 'Phiên bản ' + v, checkUpdate: 'Kiểm tra cập nhật', updating: 'Đang tải bản mới…',
     privacyTitle: 'Chính sách quyền riêng tư', privacyLink: 'Quyền riêng tư', delAccount: 'Xoá tài khoản', delHint: 'Xoá tài khoản đăng nhập, hồ sơ, tin nhắn và lịch hẹn của bạn. Không hoàn lại được.', delConfirm: 'Xoá tài khoản và toàn bộ dữ liệu của bạn? Việc này không hoàn lại được.', delDone: 'Đã xoá tài khoản. Cảm ơn bạn đã ghé Nabu Tarot.', delRelogin: 'Để chắc là bạn, hãy đăng nhập lại rồi bấm Xoá tài khoản một lần nữa.', aiFlag: 'Báo cáo câu trả lời này', aiFlagged: 'Đã ghi nhận. Cảm ơn bạn, Nabu sẽ xem lại.', storeCodeHint: 'Nhập mã mở khoá mà Nabu đã gửi cho bạn.',
+    actTitle: 'Hoạt động', actIntro: 'Chọn một tụ bài rồi quay lại xem thông điệp, bình chọn mỗi tuần, hay gửi một điều ước. Chơi là chính, bài nói về xu hướng chứ không phải số phận.', actEmpty: 'Chưa có hoạt động nào. Quay lại sau nhé.', actAll: 'Tất cả hoạt động', actOpen: 'Đang mở', actClosed: 'Đã đóng', actHasResults: 'Đã có kết quả',
+    actPickHint: 'Chạm vào một tụ bài mà bạn thấy hút mình. Nabu sẽ đăng thông điệp của từng tụ sau vài ngày.', actPicked: (n) => 'Bạn đã chọn tụ ' + n + '.', actComeBack: (d) => 'Quay lại vào ' + d + ' để lật bài xem thông điệp.', actChangePile: 'Đổi sang tụ khác?', actPickToSee: 'Thông điệp đã có. Chạm vào một tụ để lật lên.', actTapOthers: 'Tụ bạn chọn đã lật lên. Bạn có thể chạm vào tụ khác để xem thử.',
+    actVoteHint: 'Chạm vào một lựa chọn. Mỗi người một phiếu.', actVoteLogin: 'Đăng nhập để bình chọn và xem kết quả.', actVoted: 'Cảm ơn bạn đã bình chọn!', actClosedNote: 'Bình chọn đã đóng. Đây là kết quả.', actVotes: (n) => n + ' phiếu',
+    actWishPh: 'Điều mình ước lúc này là…', actWishSend: 'Gửi vào vũ trụ', actWishHint: 'Viết ngắn, ở thì hiện tại, rồi gửi. Điều ước lưu trên máy bạn, không ai đọc được.', actWishCount: (n) => 'Bạn đã gửi ' + n + ' điều ước ở đây.', actWishSent: 'Đã gửi. Giờ đến lượt bạn làm bước đầu tiên. ✨', actWishEmpty: 'Bạn viết điều ước trước nhé.', actWishClear: 'Xoá các điều ước đã lưu trên máy', actWishClearConfirm: 'Xoá các điều ước đã lưu trên máy này?',
+    actNew: 'Hoạt động mới', actType: 'Loại', actTypes: { pile: 'Chọn tụ bài', poll: 'Bình chọn', wish: 'Điều ước' }, actResultsDate: 'Ngày đăng kết quả', actIntroLabel: 'Lời dẫn (có thể dùng ảnh, in đậm như bài đăng)', actPilesHint: 'Từ 2 đến 5 tụ. Bạn có thể đăng trước với nhãn trống; vài ngày sau quay lại điền thông điệp và bật "Đã có kết quả".', actPileN: (n) => 'Tụ ' + n, actPileLabel: 'Nhãn ngắn (không bắt buộc), ví dụ: Trái · Giữa · Phải', actPileMsg: 'Thông điệp cho tụ này (đăng sau cũng được)', actPileMsgEn: 'English message (optional)', actPileAdd: 'Thêm tụ', actPileDel: 'Bớt tụ', actResultsOn: 'Đã có kết quả: cho phép lật bài', actOptions: 'Các lựa chọn, mỗi dòng một lựa chọn', actCloseOn: 'Đóng bình chọn', actExisting: 'Hoạt động đã đăng', actNeedPiles: 'Bạn điền ít nhất một tụ nhé.', actNeedOptions: 'Cần ít nhất hai lựa chọn.',
     newsTitle: 'Bài viết', newsIntro: 'Tất cả bài Nabu đã đăng: dự đoán, chia sẻ, thông báo. Gõ để tìm.', searchPosts: 'Tìm trong bài viết…', noMatch: 'Không có bài nào khớp.', allPostsBtn: (n) => 'Xem tất cả bài viết (' + n + ')', watchOn: (s) => 'Xem video trên ' + s,
     addImage: 'Ảnh', addVideo: 'Video', videoPrompt: 'Dán link video (YouTube, Facebook, TikTok, Instagram):', imgNeedCloud: 'Bạn cần đăng nhập tài khoản admin để tải ảnh lên.', imgTooBig: 'Ảnh quá lớn, thử ảnh nhỏ hơn.', imgAdded: 'Đã thêm ảnh vào bài.', wrapPlaceholder: 'chữ', boxLabel: 'Hộp', formatHint: 'Chọn chữ rồi bấm B / U / H để in đậm, gạch dưới, tô sáng. H2 là tiêu đề nhỏ, Hộp là ô tiêu đề riêng. Ảnh tải thẳng vào bài; video dán link.',
     contactTitle: 'Liên hệ', contactLink: 'Liên hệ', contactIntro: 'Viết vài dòng cho Nabu, rồi chọn kênh bạn muốn gửi.', contactWhat: 'Bạn muốn nhắn gì?', contactPlaceholder: 'Ví dụ: mình muốn hỏi về gói xem bài, hoặc góp ý cho app…', contactChoose: 'Gửi qua:', contactApp: 'Nhắn trong app Nabu Tarot', contactIg: 'Sao chép tin nhắn và mở Instagram', contactFb: 'Sao chép tin nhắn và mở Facebook', contactCopyHint: 'Với Instagram và Facebook: tin nhắn của bạn được sao chép sẵn khi bấm nút, sang bên đó bạn chỉ cần dán vào ô chat và gửi.', contactNeed: 'Bạn viết vài dòng trước nhé.', contactSent: 'Đã gửi tới Nabu. Bạn xem trả lời trong mục Tôi.', contactCopied: 'Tin nhắn đã được sao chép. Dán vào ô chat khi ứng dụng mở lên.',
@@ -1192,7 +1209,7 @@ const STR = {
 
     adminTitle: 'Bảng điều khiển',
     adminIntro: 'Trang này chỉ dành cho Nabu.',
-    adminTabs: { posts: 'Bài đăng', schedule: 'Lịch rảnh', bookings: 'Đặt lịch', inbox: 'Tin nhắn', codes: 'Mã học' },
+    adminTabs: { posts: 'Bài đăng', acts: 'Hoạt động', schedule: 'Lịch rảnh', bookings: 'Đặt lịch', inbox: 'Tin nhắn', codes: 'Mã học' },
     codesIntro: 'Khách chuyển khoản xong, bạn tạo mã ở đây và gửi cho họ. Mã có ngày hết hạn ghi sẵn bên trong.', codeCourse: 'Khóa', codeStart: 'Bắt đầu từ', codeMonths: 'Số tháng', makeCode: 'Tạo mã', codeUntil: 'Hết hạn',
     token: 'GitHub token',
     tokenHint: 'Token chỉ lưu trên máy này. Xem README để tạo token.',
@@ -1372,6 +1389,11 @@ const STR = {
     sentOk: 'Sent. Nabu will confirm soon. You can check it under Me.',
     nabuPosts: 'Nabu Posts', versionLine: (v) => 'Version ' + v, checkUpdate: 'Check for updates', updating: 'Loading the new version…',
     privacyTitle: 'Privacy policy', privacyLink: 'Privacy', delAccount: 'Delete account', delHint: 'Removes your login, profile, messages and bookings. This cannot be undone.', delConfirm: 'Delete your account and all your data? This cannot be undone.', delDone: 'Account deleted. Thank you for visiting Nabu Tarot.', delRelogin: 'To be sure it is you, sign in again and tap Delete account once more.', aiFlag: 'Report this answer', aiFlagged: 'Noted. Thank you, Nabu will review it.', storeCodeHint: 'Enter the unlock code Nabu sent you.',
+    actTitle: 'Activities', actIntro: 'Pick a pile and come back for its message, vote in the weekly poll, or send a wish. It is play: the cards speak about tendencies, not fate.', actEmpty: 'No activities yet. Come back soon.', actAll: 'All activities', actOpen: 'Open', actClosed: 'Closed', actHasResults: 'Answered',
+    actPickHint: 'Tap the pile that pulls you. Nabu posts each pile\'s message a few days later.', actPicked: (n) => 'You chose pile ' + n + '.', actComeBack: (d) => 'Come back on ' + d + ' to flip it over.', actChangePile: 'Switch to another pile?', actPickToSee: 'The messages are in. Tap a pile to flip it.', actTapOthers: 'Your pile is open. Tap another pile to peek.',
+    actVoteHint: 'Tap an option. One vote per person.', actVoteLogin: 'Sign in to vote and see the results.', actVoted: 'Thank you for voting!', actClosedNote: 'Voting is closed. Here are the results.', actVotes: (n) => n + ' votes',
+    actWishPh: 'Right now I wish…', actWishSend: 'Send it to the universe', actWishHint: 'Keep it short, in the present tense, then send. Wishes stay on your device; nobody reads them.', actWishCount: (n) => 'You have sent ' + n + ' wishes here.', actWishSent: 'Sent. Now the first step is yours. ✨', actWishEmpty: 'Write your wish first.', actWishClear: 'Clear the wishes saved on this device', actWishClearConfirm: 'Clear the wishes saved on this device?',
+    actNew: 'New activity', actType: 'Type', actTypes: { pile: 'Pick a pile', poll: 'Poll', wish: 'Wish' }, actResultsDate: 'Results date', actIntroLabel: 'Intro (images and bold work like in posts)', actPilesHint: 'Two to five piles. You can publish with empty labels; come back days later, fill in the messages and switch on "Answered".', actPileN: (n) => 'Pile ' + n, actPileLabel: 'Short label (optional), e.g. Left · Middle · Right', actPileMsg: 'Message for this pile (can be added later)', actPileMsgEn: 'English message (optional)', actPileAdd: 'Add a pile', actPileDel: 'Remove a pile', actResultsOn: 'Answered: let people flip the piles', actOptions: 'Options, one per line', actCloseOn: 'Close the poll', actExisting: 'Published activities', actNeedPiles: 'Fill in at least one pile.', actNeedOptions: 'At least two options are needed.',
     newsTitle: 'Posts', newsIntro: 'Everything Nabu has posted: readings, thoughts, announcements. Type to search.', searchPosts: 'Search the posts…', noMatch: 'No post matches.', allPostsBtn: (n) => 'See all posts (' + n + ')', watchOn: (s) => 'Watch on ' + s,
     addImage: 'Image', addVideo: 'Video', videoPrompt: 'Paste a video link (YouTube, Facebook, TikTok, Instagram):', imgNeedCloud: 'Sign in with the admin account to upload images.', imgTooBig: 'Image too large, try a smaller one.', imgAdded: 'Image added to the post.', wrapPlaceholder: 'text', boxLabel: 'Box', formatHint: 'Select text, then tap B / U / H for bold, underline, highlight. H2 is a small heading, Box a separate title box. Images upload straight into the post; videos are pasted as links.',
     contactTitle: 'Contact us', contactLink: 'Contact', contactIntro: 'Write a few lines to Nabu, then choose where to send them.', contactWhat: 'Your message', contactPlaceholder: 'For example: a question about a package, or feedback on the app…', contactChoose: 'Send via:', contactApp: 'Message inside the Nabu Tarot app', contactIg: 'Copy the message and open Instagram', contactFb: 'Copy the message and open Facebook', contactCopyHint: 'For Instagram and Facebook: your message is copied when you tap the button, so over there you only paste it into the chat and send.', contactNeed: 'Write a few lines first.', contactSent: 'Sent to Nabu. Replies show under Me.', contactCopied: 'Your message is copied. Paste it into the chat when the app opens.',
@@ -1437,7 +1459,7 @@ const STR = {
 
     adminTitle: 'Dashboard',
     adminIntro: 'This page is for Nabu only.',
-    adminTabs: { posts: 'Posts', schedule: 'Availability', bookings: 'Bookings', inbox: 'Inbox', codes: 'Codes' },
+    adminTabs: { posts: 'Posts', acts: 'Activities', schedule: 'Availability', bookings: 'Bookings', inbox: 'Inbox', codes: 'Codes' },
     codesIntro: 'Once a client has paid, make a code here and send it to them. The expiry date is built into the code.', codeCourse: 'Course', codeStart: 'Starts', codeMonths: 'Months', makeCode: 'Make code', codeUntil: 'Expires',
     token: 'GitHub token',
     tokenHint: 'The token stays on this device only. See the README to create one.',
@@ -10438,6 +10460,7 @@ function screenLabel(h) {
   if (r === 'contact') return S.contactTitle;
   if (r === 'privacy') return S.privacyTitle;
   if (r === 'install') return S.installTitle;
+  if (r === 'play') return S.actTitle;
   if (r === 'me') return S.nav.me;
   if (r === 'learn') { if (!a.length) return S.learnTitle; if (a.length === 1 && S.cats[a[0]]) return S.cats[a[0]]; if (a[0] === 'fortune' && a.length === 2) return S.cats.fortune; }
   return S.back;
@@ -11189,7 +11212,8 @@ function quickLinksHTML() {
     ['#/learn/astro', '🔮', S.cats.astro, lang === 'vi' ? '12 cung, hành tinh, nhà' : '12 signs, planets, houses'],
     ['#/learn/tarot', PICK_ICON, S.cats.tarot, lang === 'vi' ? '78 lá, ý nghĩa' : '78 cards, meanings'],
     ['#/book', '📅', S.nav.book, lang === 'vi' ? 'chọn giờ với Nabu' : 'pick a time with Nabu'],
-    ['#/prices', '💜', S.priceTitle, lang === 'vi' ? 'các gói xem bài' : 'reading packages']];
+    ['#/prices', '💜', S.priceTitle, lang === 'vi' ? 'các gói xem bài' : 'reading packages'],
+    ['#/play', '🎲', S.actTitle, lang === 'vi' ? 'chọn tụ bài, bình chọn, điều ước' : 'piles, polls, wishes']];
   return '<div class="tiles">' + tiles.map((t) => '<a class="tile" href="' + t[0] + '"><div class="ic">' + t[1] + '</div><b>' + esc(t[2]) + '</b><span>' + esc(t[3]) + '</span></a>').join('') + '</div>'
     + (isStandalone() || isTWA() ? '' : '<a class="upnext" href="#/install" style="margin-top:-8px"><span class="ic">📲</span><span><b>' + esc(S.installTitle) + '</b><br>' + esc(S.instAndroidIntro) + '</span></a>');
 }
@@ -11226,11 +11250,13 @@ async function renderHome(args, params) {
     + upcomingHTML()
     + pickCtaHTML()
     + quickLinksHTML()
+    + '<div id="actwrap"></div>'
     + personalHTML()
     + '<div id="foryouwrap"></div>'
     + '<div class="sec" id="feed"><p class="muted">…</p></div>';
   bindAccordions(m); bindCardLinks(m);
   bindTour(m, 0);
+  homeActHTML($('#actwrap')).catch(() => {});
   if (POSTS == null) await loadPosts();
   const fy = $('#foryouwrap'); if (fy) { fy.innerHTML = suggestedGuidesHTML(); bindPost(fy); bindAccordions(fy); }
   const feed = $('#feed'); if (!feed) return;
@@ -13024,6 +13050,170 @@ function renderReport(args, params) {
 }
 ROUTES.report = { nav: 'me', render: renderReport };
 
+/* ============================ activities (#/play) ============================
+   Small things to take part in: "pick a pile" readings that Nabu posts a few
+   days ahead and answers later (the chosen pile flips over to show its
+   message), weekly polls, and a wish jar. Nabu creates them in the dashboard
+   (content/activities, public read, admin write); votes and pile choices of
+   signed-in people go to votes/{activityId_uid} so results can be counted;
+   guests keep their choice on the device. */
+const ACTS = { items: null, loaded: false, votes: {} };
+async function loadActs() {
+  if (ACTS.loaded && ACTS.items) return ACTS.items;
+  const r = await loadContent('activities', 'activities.json', 'nabu-acts');
+  ACTS.items = (r.data && r.data.items) || []; ACTS.loaded = true;
+  return ACTS.items;
+}
+const myChoices = () => store.get('nabu-act-choices', {}) || {};
+function setChoice(aid, choice) { const c = myChoices(); c[aid] = choice; store.set('nabu-act-choices', c); }
+async function sendVote(a, choice) {
+  if (!(BE.enabled && BE.user)) return false;
+  try { await BE.db.collection('votes').doc(a.id + '_' + BE.user.uid).set({ aid: a.id, uid: BE.user.uid, choice: String(choice), at: firebase.firestore.FieldValue.serverTimestamp() }); return true; }
+  catch (e) { return false; }
+}
+async function countVotes(aid) {
+  if (!(BE.enabled && BE.db)) return null;
+  try {
+    const s = await Promise.race([BE.db.collection('votes').where('aid', '==', aid).get(), new Promise((_, rej) => setTimeout(() => rej(new Error('timeout')), 4000))]);
+    const out = { total: 0 }; s.forEach((d) => { const c = String(d.data().choice); out[c] = (out[c] || 0) + 1; out.total++; }); ACTS.votes[aid] = out; return out;
+  } catch (e) { return ACTS.votes[aid] || null; }
+}
+const actOpen = (a) => !a.closed && !a.results;
+function actDateLine(a) { const S = T(); return '<div class="date"><span>' + fmtDate(a.date) + '</span>' + (a.results ? '<span class="pin">✓ ' + esc(S.actHasResults) + '</span>' : a.closed ? '<span class="pin">' + esc(S.actClosed) + '</span>' : '<span class="pin">' + esc(S.actOpen) + '</span>') + '</div>'; }
+
+/* ---- one activity card ---- */
+function actHTML(a, compact) {
+  const S = T(), mine = myChoices()[a.id];
+  let body = '';
+  if (a.type === 'pile') {
+    const piles = a.piles || [];
+    body = '<div class="piles' + (piles.length === 2 ? ' n2' : '') + '">' + piles.map((p, i) => { const chosen = String(mine) === String(i), open = chosen && a.results; return '<div class="pile' + (chosen ? ' chosen' : '') + (open ? ' open' : '') + '" data-pile="' + i + '"><div class="pile-inner"><div class="pf">' + BACK + '<b>' + (i + 1) + '</b><span>' + esc(p.label || '') + '</span></div><div class="pb"><div class="pbs">' + richHTML(L(p.msg)) + '</div></div></div></div>'; }).join('') + '</div>'
+      + (a.results ? (mine == null ? '<p class="hint">' + esc(S.actPickToSee) + '</p>' : '<p class="hint">' + esc(S.actTapOthers) + '</p>') : (mine == null ? '<p class="hint">' + esc(S.actPickHint) + '</p>' : '<p class="hint ok">' + esc(S.actPicked(Number(mine) + 1)) + ' ' + esc(S.actComeBack(fmtDate(a.resultsDate || a.date))) + '</p>'));
+  } else if (a.type === 'poll') {
+    const opts = a.options || [], voted = mine != null, show = voted || a.closed;
+    body = '<div class="pollopts" data-poll="' + a.id + '">' + opts.map((o, i) => '<button type="button" class="pollopt' + (String(mine) === String(i) ? ' on' : '') + '" data-opt="' + i + '"' + (show ? ' disabled' : '') + '><span class="bar"></span><span class="lbl">' + esc(L(o)) + '</span><span class="pct"></span></button>').join('') + '</div>'
+      + '<p class="hint pollnote">' + esc(voted ? S.actVoted : a.closed ? S.actClosedNote : (BE.enabled && BE.user ? S.actVoteHint : S.actVoteLogin)) + '</p>';
+  } else if (a.type === 'wish') {
+    const wishes = (store.get('nabu-wishes', []) || []).filter((w) => w.aid === a.id);
+    body = '<div class="wishjar" data-wish="' + a.id + '"><div class="jar"><span class="star s1">✦</span><span class="star s2">✧</span><span class="star s3">✦</span><div class="note" hidden></div>🫙</div>'
+      + '<textarea class="wishtext" placeholder="' + esc(S.actWishPh) + '"></textarea><button type="button" class="btn primary block" data-wishsend>🌠 ' + esc(S.actWishSend) + '</button>'
+      + '<p class="hint wishcount">' + esc(wishes.length ? S.actWishCount(wishes.length) : S.actWishHint) + '</p>' + (wishes.length ? '<button type="button" class="linkbtn" data-wishclear>' + esc(S.actWishClear) + '</button>' : '') + '</div>';
+  }
+  return '<article class="post act act-' + esc(a.type) + '" data-act="' + esc(a.id) + '">' + actDateLine(a) + '<h2>' + esc(L(a.title)) + '</h2>' + (a.intro ? '<div class="body">' + richHTML(L(a.intro)) + '</div>' : '') + body
+    + (compact ? '<div class="foot"><a class="btn sm" href="#/play">' + esc(S.actAll) + ' →</a></div>' : '') + '</article>';
+}
+function bindActs(root, list) {
+  const S = T();
+  $$('.act', root).forEach((card) => {
+    const a = list.filter((x) => x.id === card.getAttribute('data-act'))[0]; if (!a) return;
+    if (a.type === 'pile') {
+      $$('[data-pile]', card).forEach((el) => el.addEventListener('click', async () => {
+        const i = Number(el.getAttribute('data-pile')), mine = myChoices()[a.id];
+        if (a.results) {  // after the answer: the chosen pile is open; any pile can be peeked at
+          if (mine == null) { setChoice(a.id, i); sendVote(a, i); }
+          el.classList.toggle('open'); if (el.classList.contains('open')) { hydrateImages(el); el.scrollIntoView({ behavior: 'smooth', block: 'nearest' }); }
+          return;
+        }
+        if (mine != null && String(mine) !== String(i) && !confirm(S.actChangePile)) return;
+        setChoice(a.id, i); await sendVote(a, i);
+        $$('[data-pile]', card).forEach((x) => x.classList.toggle('chosen', x === el));
+        const h = $('.hint', card); if (h) { h.className = 'hint ok'; h.textContent = S.actPicked(i + 1) + ' ' + S.actComeBack(fmtDate(a.resultsDate || a.date)); }
+        toast('✓');
+      }));
+    } else if (a.type === 'poll') {
+      const draw = (counts) => { const total = counts && counts.total || 0; $$('[data-opt]', card).forEach((b) => { const n = counts ? (counts[b.getAttribute('data-opt')] || 0) : 0, pct = total ? Math.round(n * 100 / total) : 0; $('.bar', b).style.width = pct + '%'; $('.pct', b).textContent = total ? pct + '%' : ''; }); const note = $('.pollnote', card); if (note && total) note.textContent += ' · ' + S.actVotes(total); };
+      if (myChoices()[a.id] != null || a.closed) countVotes(a.id).then(draw);
+      $$('[data-opt]', card).forEach((b) => b.addEventListener('click', async () => {
+        if (!(BE.enabled && BE.user)) { toast(S.actVoteLogin); location.hash = '#/me?next=play'; return; }
+        const i = Number(b.getAttribute('data-opt')); setChoice(a.id, i); await sendVote(a, i);
+        $$('[data-opt]', card).forEach((x) => { x.classList.toggle('on', x === b); x.disabled = true; });
+        $('.pollnote', card).textContent = S.actVoted; countVotes(a.id).then(draw);
+      }));
+    } else if (a.type === 'wish') {
+      const ta = $('.wishtext', card), note = $('.note', card), jar = $('.jar', card);
+      $('[data-wishsend]', card).addEventListener('click', async () => {
+        const text = (ta.value || '').trim(); if (!text) { toast(S.actWishEmpty); ta.focus(); return; }
+        note.textContent = text.slice(0, 60); note.hidden = false; jar.classList.remove('fly'); void jar.offsetWidth; jar.classList.add('fly');
+        const list = store.get('nabu-wishes', []) || []; list.push({ aid: a.id, text: text, at: new Date().toISOString() }); store.set('nabu-wishes', list.slice(-100));
+        ta.value = ''; sendVote(a, 'wish');
+        const mine = list.filter((w) => w.aid === a.id).length; $('.wishcount', card).textContent = S.actWishCount(mine); toast(S.actWishSent);
+        setTimeout(() => { note.hidden = true; }, 2600);
+      });
+      const cl = $('[data-wishclear]', card); if (cl) cl.addEventListener('click', () => { if (!confirm(S.actWishClearConfirm)) return; store.set('nabu-wishes', (store.get('nabu-wishes', []) || []).filter((w) => w.aid !== a.id)); $('.wishcount', card).textContent = S.actWishHint; cl.remove(); });
+    }
+  });
+  hydrateImages(root);
+}
+async function renderPlay() {
+  const S = T(), m = $('#main');
+  m.innerHTML = '<div class="eyebrow">' + esc(CONFIG.brand) + '</div><h1 style="margin-bottom:6px">' + esc(S.actTitle) + '</h1><p class="muted">' + esc(S.actIntro) + '</p><div id="acts"><p class="hint">…</p></div>';
+  const list = (await loadActs()).slice().sort((a, b) => String(b.date).localeCompare(String(a.date)));
+  const box = $('#acts'); if (!box) return;
+  box.innerHTML = list.length ? list.map((a) => actHTML(a, false)).join('') : '<p class="empty">' + esc(S.actEmpty) + '</p>';
+  bindActs(box, list);
+}
+/* The newest open activity, shown on the home screen. */
+async function homeActHTML(root) {
+  const list = (await loadActs()).slice().sort((a, b) => String(b.date).localeCompare(String(a.date)));
+  const a = list.filter(actOpen)[0] || list[0];
+  if (!a || !root) return;
+  root.innerHTML = '<div class="sec"><div class="eyebrow">🎲 ' + esc(T().actTitle) + '</div>' + actHTML(a, true) + '</div>';
+  bindActs(root, list);
+}
+ROUTES.play = { nav: 'home', render: renderPlay };
+
+/* ---- dashboard: create and answer activities ---- */
+function adminActivities(p) {
+  const S = T();
+  let items = [], editing = null;
+  const form = (a) => {
+    a = a || { type: 'pile', date: isoDate(new Date()), title: { vi: '', en: '' }, intro: { vi: '', en: '' }, piles: [{ label: '', msg: { vi: '', en: '' } }, { label: '', msg: { vi: '', en: '' } }, { label: '', msg: { vi: '', en: '' } }], options: [], results: false, closed: false, resultsDate: '' };
+    const pileRows = (a.piles || []).map((pl, i) => '<div class="card" style="padding:12px"><b>' + esc(S.actPileN(i + 1)) + '</b><input data-pl="' + i + '" placeholder="' + esc(S.actPileLabel) + '" value="' + esc(pl.label || '') + '" style="margin:6px 0"><textarea data-pmsg="' + i + '" placeholder="' + esc(S.actPileMsg) + '">' + esc(L2(pl.msg, 'vi')) + '</textarea><textarea data-pmsgen="' + i + '" placeholder="' + esc(S.actPileMsgEn) + '" style="min-height:60px;margin-top:6px">' + esc(L2(pl.msg, 'en')) + '</textarea></div>').join('');
+    return '<div class="card"><h3 id="ahead" style="margin-bottom:6px">' + esc(editing ? S.edit : S.actNew) + '</h3>'
+      + '<label class="f">' + esc(S.actType) + '</label><div class="chips">' + ['pile', 'poll', 'wish'].map((t) => '<button type="button" class="chip' + (a.type === t ? ' on' : '') + '" data-atype="' + t + '">' + esc(S.actTypes[t]) + '</button>').join('') + '</div>'
+      + '<div class="two"><div><label class="f" for="adate">' + esc(S.postDate) + '</label><input id="adate" type="date" value="' + esc(a.date) + '"></div><div><label class="f" for="ardate">' + esc(S.actResultsDate) + '</label><input id="ardate" type="date" value="' + esc(a.resultsDate || '') + '"></div></div>'
+      + '<label class="f" for="atitle">' + esc(S.postTitle) + '</label><input id="atitle" value="' + esc(L2(a.title, 'vi')) + '"><label class="f" for="atitle_en">' + esc(S.postTitleEn) + '</label><input id="atitle_en" value="' + esc(L2(a.title, 'en')) + '">'
+      + '<label class="f" for="aintro">' + esc(S.actIntroLabel) + '</label><textarea id="aintro">' + esc(L2(a.intro, 'vi')) + '</textarea>'
+      + '<div id="apiles"' + (a.type === 'pile' ? '' : ' hidden') + '><p class="hint" style="margin:12px 0 8px">' + esc(S.actPilesHint) + '</p>' + pileRows + '<div class="row nw"><button type="button" class="btn sm" id="apadd">+ ' + esc(S.actPileAdd) + '</button><button type="button" class="btn sm" id="apdel">− ' + esc(S.actPileDel) + '</button></div>'
+      + '<label class="f" style="display:flex;gap:8px;align-items:center;margin-top:14px"><input type="checkbox" id="aresults" style="width:auto"' + (a.results ? ' checked' : '') + '>' + esc(S.actResultsOn) + '</label></div>'
+      + '<div id="apoll"' + (a.type === 'poll' ? '' : ' hidden') + '><label class="f" for="aopts">' + esc(S.actOptions) + '</label><textarea id="aopts">' + esc((a.options || []).map((o) => L2(o, 'vi')).join('\n')) + '</textarea><label class="f" style="display:flex;gap:8px;align-items:center;margin-top:10px"><input type="checkbox" id="aclosed" style="width:auto"' + (a.closed ? ' checked' : '') + '>' + esc(S.actCloseOn) + '</label></div>'
+      + '<div class="btns" style="margin-top:16px"><button class="btn primary" id="apub">' + esc(S.publish) + '</button><button class="btn" id="anew">' + esc(S.actNew) + '</button></div><p id="astatus" class="hint"></p></div>'
+      + '<div class="card"><h3 style="margin-bottom:6px">' + esc(S.actExisting) + '</h3><div class="plist" id="alist">' + (items.length ? items.map((x) => '<div class="it"><div class="tt"><div>' + esc(S.actTypes[x.type] || x.type) + ' · ' + esc(L2(x.title, 'vi') || L2(x.title, 'en')) + '</div><div class="d">' + esc(x.date) + (x.results ? ' · ✓' : '') + '</div></div><button class="btn sm" data-aedit="' + esc(x.id) + '">' + esc(S.edit) + '</button><button class="btn sm" data-adel="' + esc(x.id) + '">' + esc(S.del) + '</button></div>').join('') : '<p class="hint">' + esc(S.actEmpty) + '</p>') + '</div></div>';
+  };
+  let cur = null;
+  const draw = () => {
+    p.innerHTML = form(cur);
+    const status = (t, cls) => { const s = $('#astatus'); s.textContent = t; s.className = 'hint ' + (cls || ''); };
+    const read = () => {
+      const type = $('.chip.on[data-atype]') ? $('.chip.on[data-atype]').getAttribute('data-atype') : 'pile';
+      const a = { id: (cur && cur.id) || ($('#adate').value || isoDate(new Date())) + '-' + Math.random().toString(36).slice(2, 6), type: type, date: $('#adate').value || isoDate(new Date()), resultsDate: $('#ardate').value || '',
+        title: { vi: $('#atitle').value.trim(), en: $('#atitle_en').value.trim() }, intro: { vi: $('#aintro').value.trim() }, results: !!$('#aresults').checked, closed: !!$('#aclosed').checked };
+      if (type === 'pile') a.piles = $$('[data-pl]', p).map((inp, i) => ({ label: inp.value.trim(), msg: { vi: $('[data-pmsg="' + i + '"]', p).value.trim(), en: $('[data-pmsgen="' + i + '"]', p).value.trim() } }));
+      if (type === 'poll') a.options = $('#aopts').value.split('\n').map((x) => x.trim()).filter(Boolean).map((x) => ({ vi: x }));
+      if (!a.title.en) delete a.title.en;
+      return a;
+    };
+    $$('[data-atype]', p).forEach((b) => b.addEventListener('click', () => { cur = read(); cur.type = b.getAttribute('data-atype'); if (cur.type === 'pile' && !(cur.piles || []).length) cur.piles = [{ label: '', msg: {} }, { label: '', msg: {} }, { label: '', msg: {} }]; draw(); }));
+    $('#apadd').addEventListener('click', () => { cur = read(); if ((cur.piles || []).length < 5) cur.piles.push({ label: '', msg: {} }); draw(); });
+    $('#apdel').addEventListener('click', () => { cur = read(); if ((cur.piles || []).length > 2) cur.piles.pop(); draw(); });
+    $('#anew').addEventListener('click', () => { cur = null; editing = null; draw(); });
+    $$('[data-aedit]', p).forEach((b) => b.addEventListener('click', () => { cur = JSON.parse(JSON.stringify(items.filter((x) => x.id === b.getAttribute('data-aedit'))[0])); editing = cur.id; draw(); $('#ahead').scrollIntoView({ behavior: 'smooth' }); }));
+    $$('[data-adel]', p).forEach((b) => b.addEventListener('click', async () => { if (!confirm(S.confirmDel)) return; items = items.filter((x) => x.id !== b.getAttribute('data-adel')); try { await BE.setContent('activities', { items: items }); ACTS.items = items; toast('✓'); draw(); } catch (e) { status(S.publishFail + ': ' + e.message, 'err'); } }));
+    $('#apub').addEventListener('click', async () => {
+      const a = read();
+      if (!a.title.vi) { status(S.needBody, 'err'); return; }
+      if (a.type === 'pile' && !(a.piles || []).some((x) => x.msg.vi || x.label)) { status(S.actNeedPiles, 'err'); return; }
+      if (a.type === 'poll' && (a.options || []).length < 2) { status(S.actNeedOptions, 'err'); return; }
+      if (!cloud()) { status(S.adminLogin, 'err'); return; }
+      items = [a].concat(items.filter((x) => x.id !== a.id));
+      try { await BE.setContent('activities', { items: items }); ACTS.items = items; ACTS.loaded = true; status(S.published, 'ok'); cur = null; editing = null; draw(); }
+      catch (e) { status(S.publishFail + ': ' + e.message, 'err'); }
+    });
+  };
+  p.innerHTML = '<p class="hint">…</p>';
+  loadActs().then((list) => { items = list.slice(); draw(); });
+}
+
 /* ============================ admin (#/admin) ============================
    Posts and availability are files in the repo, committed through the
    GitHub API with a fine-grained token. Bookings and the inbox live in
@@ -13054,14 +13244,14 @@ function adminCleanup() { admin.unsubs.forEach((u) => { try { u(); } catch (e) {
 function renderAdmin(args, params) {
   adminCleanup();
   const S = T(), m = $('#main');
-  if (params && params.tab && ['posts', 'schedule', 'bookings', 'inbox', 'codes'].indexOf(params.tab) > -1) admin.tab = params.tab;
+  if (params && params.tab && ['posts', 'acts', 'schedule', 'bookings', 'inbox', 'codes'].indexOf(params.tab) > -1) admin.tab = params.tab;
   m.innerHTML = '<div class="eyebrow">' + esc(CONFIG.brand) + '</div><h1 style="margin-bottom:6px">' + esc(S.adminTitle) + '</h1><p class="muted">' + esc(S.adminIntro) + '</p>'
-    + '<div class="tabs" id="atabs">' + ['posts', 'schedule', 'bookings', 'inbox', 'codes'].map((k) => '<button data-t="' + k + '" class="' + (admin.tab === k ? 'on' : '') + '">' + esc(S.adminTabs[k]) + '<span class="tb" data-tb="' + k + '" hidden></span></button>').join('') + '</div>'
+    + '<div class="tabs" id="atabs">' + ['posts', 'acts', 'schedule', 'bookings', 'inbox', 'codes'].map((k) => '<button data-t="' + k + '" class="' + (admin.tab === k ? 'on' : '') + '">' + esc(S.adminTabs[k]) + '<span class="tb" data-tb="' + k + '" hidden></span></button>').join('') + '</div>'
     + (BE.enabled ? '<p class="hint" style="margin-bottom:12px">☁️ ' + esc(S.cloudContent) + '</p>' : '<div class="card"><label class="f" for="gtoken">' + esc(S.token) + '</label><div class="row nw"><input id="gtoken" type="password" value="' + esc(ghToken()) + '" style="flex:1" autocomplete="off"><button class="btn sm" id="savetoken">' + esc(S.saveToken) + '</button></div><p class="hint">' + esc(S.tokenHint) + ' (' + esc(CONFIG.repo) + ')</p></div>')
     + '<div id="apanel"></div>';
   const stb = $('#savetoken'); if (stb) stb.addEventListener('click', () => { store.set('nabu-gh-token', $('#gtoken').value.trim()); toast('✓'); show(admin.tab); });
   $$('#atabs button').forEach((b) => b.addEventListener('click', () => { admin.tab = b.getAttribute('data-t'); $$('#atabs button').forEach((x) => x.classList.toggle('on', x === b)); show(admin.tab); }));
-  const show = (t) => { adminCleanup(); const p = $('#apanel'); if (t === 'posts') adminPosts(p); else if (t === 'schedule') adminSchedule(p); else if (t === 'bookings') adminBookings(p); else if (t === 'codes') adminCodes(p); else adminInbox(p); };
+  const show = (t) => { adminCleanup(); const p = $('#apanel'); if (t === 'posts') adminPosts(p); else if (t === 'acts') adminActivities(p); else if (t === 'schedule') adminSchedule(p); else if (t === 'bookings') adminBookings(p); else if (t === 'codes') adminCodes(p); else adminInbox(p); };
   show(admin.tab);
 }
 
@@ -13295,9 +13485,9 @@ function adminCodes(p) {
 ROUTES.admin = { nav: '', render: renderAdmin };
 
 /* ============================ boot ============================ */
-window.APP_VERSION = 'v61';
+window.APP_VERSION = 'v62';
 window.NABU = { CONFIG: CONFIG, LESSONS: LESSONS, localAnswer: localAnswer, compatVerdict: compatVerdict, numerologyOf: numerologyOf, ZDEEP: ZDEEP, lunarToday: lunarToday, solarToLunar: solarToLunar, DECK: DECK, INSIGHT: INSIGHT, KW: KW, ASK: ASK, TOPICS: TOPICS, GUIDES: GUIDES, SERVICES: SERVICES, COURSES: COURSES, ACCESS: ACCESS, makeCode: makeCode, parseCode: parseCode, ZODIAC: ZODIAC, pick: pick, book: book,
-  insightHTML: insightHTML, insightOf: insightOf, sunSignIndex: sunSignIndex, lifePath: lifePath, PROFILE: () => PROFILE, BE: BE };
+  insightHTML: insightHTML, insightOf: insightOf, sunSignIndex: sunSignIndex, lifePath: lifePath, PROFILE: () => PROFILE, BE: BE, ACTS: ACTS };
 BE.initP = BE.init().catch(() => { /* backend unreachable: the app runs device-only */ });
 // The Gemini key is a dashboard setting kept in the app cloud (content/ai), never in the source.
 loadContent('ai', 'ai.json', 'nabu-ai').then((r) => { if (r && r.data && typeof r.data.geminiKey === 'string') { CONFIG.geminiKey = r.data.geminiKey.trim(); if (CONFIG.geminiKey) $$('.ai .ai-h .faint').forEach((el) => { el.textContent = T().aiOnline; }); } }).catch(() => {});

@@ -178,7 +178,8 @@ function quickLinksHTML() {
     ['#/learn/astro', '🔮', S.cats.astro, lang === 'vi' ? '12 cung, hành tinh, nhà' : '12 signs, planets, houses'],
     ['#/learn/tarot', PICK_ICON, S.cats.tarot, lang === 'vi' ? '78 lá, ý nghĩa' : '78 cards, meanings'],
     ['#/book', '📅', S.nav.book, lang === 'vi' ? 'chọn giờ với Nabu' : 'pick a time with Nabu'],
-    ['#/prices', '💜', S.priceTitle, lang === 'vi' ? 'các gói xem bài' : 'reading packages']];
+    ['#/prices', '💜', S.priceTitle, lang === 'vi' ? 'các gói xem bài' : 'reading packages'],
+    ['#/play', '🎲', S.actTitle, lang === 'vi' ? 'chọn tụ bài, bình chọn, điều ước' : 'piles, polls, wishes']];
   return '<div class="tiles">' + tiles.map((t) => '<a class="tile" href="' + t[0] + '"><div class="ic">' + t[1] + '</div><b>' + esc(t[2]) + '</b><span>' + esc(t[3]) + '</span></a>').join('') + '</div>'
     + (isStandalone() || isTWA() ? '' : '<a class="upnext" href="#/install" style="margin-top:-8px"><span class="ic">📲</span><span><b>' + esc(S.installTitle) + '</b><br>' + esc(S.instAndroidIntro) + '</span></a>');
 }
@@ -215,11 +216,13 @@ async function renderHome(args, params) {
     + upcomingHTML()
     + pickCtaHTML()
     + quickLinksHTML()
+    + '<div id="actwrap"></div>'
     + personalHTML()
     + '<div id="foryouwrap"></div>'
     + '<div class="sec" id="feed"><p class="muted">…</p></div>';
   bindAccordions(m); bindCardLinks(m);
   bindTour(m, 0);
+  homeActHTML($('#actwrap')).catch(() => {});
   if (POSTS == null) await loadPosts();
   const fy = $('#foryouwrap'); if (fy) { fy.innerHTML = suggestedGuidesHTML(); bindPost(fy); bindAccordions(fy); }
   const feed = $('#feed'); if (!feed) return;

@@ -8,7 +8,7 @@ import io, json, os, sys, urllib.request
 
 PROJECT = 'nabutarot'
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-DOCS = {'posts': 'posts.json', 'schedule': 'schedule.json'}
+DOCS = {'posts': 'posts.json', 'schedule': 'schedule.json', 'activities': 'activities.json'}
 
 
 def plain(v):

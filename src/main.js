@@ -1,7 +1,7 @@
 /* ============================ boot ============================ */
-window.APP_VERSION = 'v61';
+window.APP_VERSION = 'v62';
 window.NABU = { CONFIG: CONFIG, LESSONS: LESSONS, localAnswer: localAnswer, compatVerdict: compatVerdict, numerologyOf: numerologyOf, ZDEEP: ZDEEP, lunarToday: lunarToday, solarToLunar: solarToLunar, DECK: DECK, INSIGHT: INSIGHT, KW: KW, ASK: ASK, TOPICS: TOPICS, GUIDES: GUIDES, SERVICES: SERVICES, COURSES: COURSES, ACCESS: ACCESS, makeCode: makeCode, parseCode: parseCode, ZODIAC: ZODIAC, pick: pick, book: book,
-  insightHTML: insightHTML, insightOf: insightOf, sunSignIndex: sunSignIndex, lifePath: lifePath, PROFILE: () => PROFILE, BE: BE };
+  insightHTML: insightHTML, insightOf: insightOf, sunSignIndex: sunSignIndex, lifePath: lifePath, PROFILE: () => PROFILE, BE: BE, ACTS: ACTS };
 BE.initP = BE.init().catch(() => { /* backend unreachable: the app runs device-only */ });
 // The Gemini key is a dashboard setting kept in the app cloud (content/ai), never in the source.
 loadContent('ai', 'ai.json', 'nabu-ai').then((r) => { if (r && r.data && typeof r.data.geminiKey === 'string') { CONFIG.geminiKey = r.data.geminiKey.trim(); if (CONFIG.geminiKey) $$('.ai .ai-h .faint').forEach((el) => { el.textContent = T().aiOnline; }); } }).catch(() => {});

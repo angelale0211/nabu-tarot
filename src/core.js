@@ -346,6 +346,7 @@ function screenLabel(h) {
   if (r === 'contact') return S.contactTitle;
   if (r === 'privacy') return S.privacyTitle;
   if (r === 'install') return S.installTitle;
+  if (r === 'play') return S.actTitle;
   if (r === 'me') return S.nav.me;
   if (r === 'learn') { if (!a.length) return S.learnTitle; if (a.length === 1 && S.cats[a[0]]) return S.cats[a[0]]; if (a[0] === 'fortune' && a.length === 2) return S.cats.fortune; }
   return S.back;
