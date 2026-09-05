@@ -4,7 +4,7 @@
 const STR = {
   vi: {
     lang: 'EN',
-    nav: { home: 'Trang chủ', pick: 'Rút bài', learn: 'Học', book: 'Đặt lịch', me: 'Tôi' },
+    nav: { home: 'Trang chủ', pick: 'Rút bài', play: 'Hoạt động', learn: 'Học', book: 'Đặt lịch', me: 'Tôi' },
 
     feedTitle: 'Dự đoán mới',
     feedEmpty: 'Chưa có bài nào. Quay lại sau nhé.',
@@ -255,7 +255,7 @@ const STR = {
 
   en: {
     lang: 'VI',
-    nav: { home: 'Home', pick: 'Pick a card', learn: 'Learn', book: 'Book', me: 'Me' },
+    nav: { home: 'Home', pick: 'Pick a card', play: 'Activities', learn: 'Learn', book: 'Book', me: 'Me' },
 
     feedTitle: 'Latest readings',
     feedEmpty: 'Nothing posted yet. Come back soon.',

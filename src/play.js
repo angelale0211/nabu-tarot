@@ -127,7 +127,7 @@ async function homeActHTML(root) {
   root.innerHTML = '<div class="sec"><div class="eyebrow">🎲 ' + esc(S.actTitle) + '</div><article class="post act act-' + esc(a.type) + '">' + actDateLine(a) + '<h2>' + esc(L(a.title)) + '</h2>' + (a.intro ? '<div class="body">' + richHTML(L(a.intro)) + '</div>' : '') + '<div class="foot"><a class="btn sm primary" href="#/play/' + esc(a.id) + '">' + esc(S.actJoin) + ' →</a><a class="btn sm" href="#/play">' + esc(S.actAll) + '</a></div></article></div>';
   hydrateImages(root);
 }
-ROUTES.play = { nav: 'home', render: renderPlay };
+ROUTES.play = { nav: 'play', render: renderPlay };
 
 /* ---- dashboard: create and answer activities ---- */
 function adminActivities(p) {

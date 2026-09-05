@@ -152,6 +152,7 @@ const ICONS = {
   pick: '<svg viewBox="0 0 24 24"><rect x="4.5" y="5" width="11" height="16" rx="2" transform="rotate(-10 10 13)"/><rect x="9" y="3.5" width="11" height="16" rx="2" transform="rotate(8 14.5 11.5)"/><path d="M16.2 8.2a2.3 2.3 0 1 0 0 4.2 1.8 1.8 0 1 1 0-4.2z"/></svg>',
   learn: '<svg viewBox="0 0 24 24"><path d="M4 5a2 2 0 0 1 2-2h5v18H6a2 2 0 0 1-2-2zM13 3h5a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-5z"/></svg>',
   book: '<svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></svg>',
+  play: '<svg viewBox="0 0 24 24"><rect x="3.5" y="3.5" width="17" height="17" rx="4"/><circle cx="8.5" cy="8.5" r="1.3" fill="currentColor"/><circle cx="15.5" cy="8.5" r="1.3" fill="currentColor"/><circle cx="12" cy="12" r="1.3" fill="currentColor"/><circle cx="8.5" cy="15.5" r="1.3" fill="currentColor"/><circle cx="15.5" cy="15.5" r="1.3" fill="currentColor"/></svg>',
   me: '<svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg>'
 };
 let UNREAD = 0, NEWBK = 0;
@@ -183,7 +184,7 @@ function renderChrome(route) {
   renderFooter();
   $('#brand').innerHTML = LOGO;
   $('#lang').textContent = T().lang;
-  $('#nav').innerHTML = ['home', 'pick', 'learn', 'book', 'me'].map((k) =>
+  $('#nav').innerHTML = ['home', 'pick', 'play', 'learn', 'book', 'me'].map((k) =>
     '<a href="#/' + k + '" class="' + (route === k ? 'on' : '') + '">' + ICONS[k] + '<span>' + esc(T().nav[k]) + '</span>'
     + (k === 'me' && (UNREAD + NEWBK) ? '<span class="badge">' + (UNREAD + NEWBK) + '</span>' : '') + '</a>').join('');
   if (typeof adminTabBadges === 'function') adminTabBadges();
@@ -358,7 +359,7 @@ function backLink(href, label) {
 }
 /* The main tabs always lead back to home; deeper screens lead back to where
    the visitor came from. */
-const TAB_ROOTS = { pick: 1, learn: 1, book: 1, prices: 1, me: 1 };
+const TAB_ROOTS = { pick: 1, play: 1, learn: 1, book: 1, prices: 1, me: 1 };
 function renderBackBar(r) {
   const bar = $('#backbar');
   const isTab = TAB_ROOTS[r.route] && !r.args.length;
