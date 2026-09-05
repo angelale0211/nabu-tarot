@@ -260,10 +260,13 @@ main{padding:22px 0 30px}
 .fan .slot.dim{opacity:.35;transform:translateY(20px) scale(.9)!important}
 .fan .slot.chosen{z-index:5;transform:translateY(-30px) scale(1.05)!important}
 /* The whole deck: 78 backs in a grid, tap any one. */
-.fan.deck{position:static;height:auto;max-width:none;perspective:none;display:grid;grid-template-columns:repeat(8,1fr);gap:5px;margin:0 0 18px}
-.fan.deck .slot{position:static;width:auto;height:auto;margin:0;aspect-ratio:104/170;transform:none!important;transition:opacity .3s,box-shadow .3s;border-radius:6px}
-.fan.deck .slot svg{filter:drop-shadow(0 2px 4px var(--shade))}.fan.deck .slot.chosen{box-shadow:0 0 0 3px var(--primary);transform:scale(1.08)!important;z-index:2}.fan.deck .slot.dim{opacity:.3;transform:none!important}
-@media (min-width:640px){.fan.deck{grid-template-columns:repeat(13,1fr)}}
+/* The deck as a carousel: swipe, the middle card grows, tap to pick. */
+.fan.deck{position:static;height:auto;max-width:none;perspective:none;display:flex;gap:6px;overflow-x:auto;overflow-y:hidden;scroll-snap-type:x mandatory;scroll-behavior:smooth;padding:16px calc(50% - 46px) 14px;margin:0 -18px 4px;scrollbar-width:none;-webkit-overflow-scrolling:touch}
+.fan.deck::-webkit-scrollbar{display:none}
+.fan.deck .slot{position:relative;flex:0 0 92px;width:92px;height:150px;margin:0;scroll-snap-align:center;transform:scale(.68);opacity:.45;transition:transform .12s linear,opacity .12s linear;border-radius:6px;left:auto;bottom:auto}
+.fan.deck .slot svg{filter:drop-shadow(0 4px 8px var(--shade))}.fan.deck .slot.near{box-shadow:0 0 0 2px var(--lav)}
+.fan.deck .slot.chosen{box-shadow:0 0 0 3px var(--primary);transform:scale(1.1)!important;opacity:1!important;z-index:5}.fan.deck .slot.dim{opacity:.25!important}
+.deckbar{display:flex;align-items:center;justify-content:center;gap:14px;margin:0 0 8px}.deckbar .btn{min-height:36px;padding:0 14px;font-size:18px;border-radius:999px}.deckbar span{min-width:64px;text-align:center;font-weight:600}
 .tap-hint{text-align:center;color:var(--fg-faint);font-size:13.5px;margin:0 0 12px;min-height:1.4em}
 .reveal{margin-top:10px}
 .hero{display:grid;grid-template-columns:112px 1fr;gap:16px;align-items:center;margin-bottom:18px}

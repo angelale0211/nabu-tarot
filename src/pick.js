@@ -34,7 +34,10 @@ function renderPick(args, params) {
   }).join('');
   m.innerHTML = '<div class="pick-head"><div class="eyebrow">' + esc(S.nav.pick) + '</div><h1>' + esc(S.pickTitle) + '</h1><p>' + esc(S.pickIntro) + '</p></div>'
     + '<div class="faint" style="text-align:center">' + esc(S.focusLabel) + '</div><div class="chips focus">' + chips + '</div>'
-    + '<div class="fan deck" id="fan">' + fan + '</div><div class="tap-hint">' + (pick.chosen == null ? esc(S.tapACard) : '') + '</div><div class="reveal" id="reveal"></div>';
+    + '<div class="fan deck" id="fan">' + fan + '</div>'
+    + '<div class="deckbar"><button type="button" class="btn sm" data-step="-1" aria-label="prev">‹</button><span id="deckpos" class="faint"></span><button type="button" class="btn sm" data-step="1" aria-label="next">›</button></div>'
+    + '<div class="tap-hint">' + (pick.chosen == null ? esc(S.tapACard) : '') + '</div><div class="reveal" id="reveal"></div>';
+  bindDeck(m);
   $$('[data-focus]', m).forEach((b) => b.addEventListener('click', () => {
     if (pick.chosen != null) return;
     pick.focus = b.getAttribute('data-focus'); store.set('nabu-focus', pick.focus);
@@ -50,6 +53,35 @@ function renderPick(args, params) {
     setTimeout(() => { const r = $('#reveal'); if (r) r.scrollIntoView({ behavior: 'smooth', block: 'start' }); }, 250);
   }));
   if (pick.chosen != null) renderReveal(false);
+}
+/* The deck as a carousel: the card nearest the middle grows, the rest shrink
+   and fade, arrows step one card at a time. Tapping any card still picks it. */
+function bindDeck(m) {
+  const fan = $('#fan', m); if (!fan) return;
+  const S = T(), slots = $$('.slot', fan), pos = $('#deckpos', m);
+  let raf = 0;
+  const update = () => {
+    raf = 0;
+    const fr = fan.getBoundingClientRect(), cx = fr.left + fr.width / 2, span = Math.max(120, fr.width * 0.55);
+    let best = 0, bd = Infinity;
+    slots.forEach((s, i) => {
+      const r = s.getBoundingClientRect(), dx = r.left + r.width / 2 - cx, k = Math.max(0, 1 - Math.abs(dx) / span);
+      s.style.transform = 'scale(' + (0.68 + 0.42 * k).toFixed(3) + ')'; s.style.opacity = (0.45 + 0.55 * k).toFixed(2); s.style.zIndex = String(Math.round(10 * k));
+      if (Math.abs(dx) < bd) { bd = Math.abs(dx); best = i; }
+    });
+    slots.forEach((s, i) => s.classList.toggle('near', i === best));
+    pick.center = best; if (pos) pos.textContent = S.deckPos(best + 1, slots.length);
+  };
+  fan.addEventListener('scroll', () => { if (!raf) raf = requestAnimationFrame(update); }, { passive: true });
+  // Smoothness comes from CSS scroll-behavior; the counter is refreshed right away and again once the glide ends.
+  const to = (i) => {
+    const idx = Math.max(0, Math.min(slots.length - 1, i)), s = slots[idx]; if (!s) return;
+    pick.center = idx; slots.forEach((x, k) => x.classList.toggle('near', k === idx)); if (pos) pos.textContent = S.deckPos(idx + 1, slots.length);
+    fan.scrollLeft = s.offsetLeft - (fan.clientWidth - s.offsetWidth) / 2; setTimeout(update, 450);
+  };
+  $$('[data-step]', m).forEach((b) => b.addEventListener('click', () => to((pick.center || 0) + Number(b.getAttribute('data-step')))));
+  fan.style.scrollBehavior = 'auto'; to(pick.chosen != null ? Math.max(0, pick.hand.indexOf(pick.chosen)) : Math.floor(slots.length / 2)); fan.style.scrollBehavior = '';
+  update(); requestAnimationFrame(update);
 }
 function renderReveal(animate) {
   const S = T(), id = pick.chosen, c = cardById(id), other = cardById(id, lang === 'vi' ? 'en' : 'vi'), I = insightOf(id);
