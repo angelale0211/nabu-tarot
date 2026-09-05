@@ -50,9 +50,10 @@ const ACCESS = {
   // Nabu (any admin email) always has every course open.
   // Admins: true as soon as sign-in resolves, and remembered on the device so a
   // cold start does not flash the paywall before Firebase answers.
-  isAdmin() { return !!((window.BE && BE.user && BE.isAdmin()) || (!(window.BE && BE.ready) && store.get('nabu-admin', ''))); },
+  // BE is a top-level const (not on window), so test for it with typeof.
+  isAdmin() { const be = typeof BE !== 'undefined' ? BE : null; return !!((be && be.user && be.isAdmin()) || (!(be && be.ready) && store.get('nabu-admin', ''))); },
   has(course) { if (this.isAdmin()) return true; const a = this.get()[course]; return !!a && a >= isoDate(new Date()); },
-  grant(course, until) { const a = this.get(); a[course] = until; store.set('nabu-access', a); if (window.BE && BE.user) BE.pushProfile(); }
+  grant(course, until) { const a = this.get(); a[course] = until; store.set('nabu-access', a); if (typeof BE !== 'undefined' && BE.user) BE.pushProfile(); }
 };
 function courseHash(str) {
   let h1 = 0x811c9dc5, h2 = 5381;
