@@ -234,6 +234,11 @@
 body{overflow-x:clip}
 img,svg{max-width:100%}
 html{-webkit-text-size-adjust:100%;touch-action:manipulation}
+/* Type scale (one for the whole app):
+   display face for titles, body face for everything else.
+   h1 28/1.2 (-.01em)  screen title        h2 21/1.25  section      h3 17/1.3  card title
+   body 16/1.55        paragraphs          .note/.tip 14.5/1.5  instructions  .hint/.faint 13.5/1.45  secondary
+   .eyebrow 12/1.3 bold, +.06em uppercase (VI: normal case, +.02em)   nav 10.5 bold */
 body{margin:0;background:var(--bg);color:var(--fg);font-family:var(--body);font-size:16px;line-height:1.55;
   -webkit-font-smoothing:antialiased;min-height:100vh;padding-bottom:calc(var(--nav-h) + env(safe-area-inset-bottom))}
 a{color:var(--link)}
@@ -246,11 +251,11 @@ button{-webkit-appearance:none;appearance:none;max-width:100%}
 input:focus,textarea:focus,select:focus{outline:2px solid var(--lav);outline-offset:1px;border-color:transparent}
 textarea{min-height:110px;resize:vertical}
 label.f{display:block;font-size:13px;color:var(--fg-soft);margin:14px 0 6px;font-weight:600}
-.hint{font-size:13px;color:var(--fg-faint);margin:6px 0 0}
+.hint{font-size:13.5px;line-height:1.45;color:var(--fg-faint);margin:6px 0 0}
 h1,h2,h3{font-family:var(--display);font-weight:500;margin:0;line-height:1.2}
-h1{font-size:30px;letter-spacing:-.01em}
-h2{font-size:22px}
-h3{font-size:17px}
+h1{font-size:28px;letter-spacing:-.01em}
+h2{font-size:21px;line-height:1.25}
+h3{font-size:17px;line-height:1.3}
 p{margin:0 0 12px}
 .wrap{max-width:600px;margin:0 auto;padding:0 18px}
 
@@ -280,7 +285,7 @@ main{padding:22px 0 30px}
 #backbar{padding-top:12px}#backbar+main{padding-top:6px}#backbar .backlink{margin:0 0 0 -4px}
 #homefoot{display:flex;gap:18px;flex-wrap:wrap;padding-bottom:26px;margin-top:-6px}#homefoot[hidden]{display:none}#homefoot .backlink{margin:0}
 .sec{margin-bottom:26px}
-.eyebrow{font-size:12px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--pink-ink);margin-bottom:8px}
+.eyebrow{font-size:12px;line-height:1.3;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--pink-ink);margin-bottom:8px}
 :root[lang="vi"] .eyebrow{text-transform:none;letter-spacing:.02em}
 .btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;border-radius:14px;padding:13px 18px;font-weight:600;font-size:15px;
   background:var(--surface-2);color:var(--fg);border:1px solid var(--rule);text-decoration:none;text-align:center;min-height:48px}
@@ -303,7 +308,7 @@ main{padding:22px 0 30px}
 .chip.lav{background:var(--lav-soft);color:var(--fg);border-color:transparent}
 .card{background:var(--surface);border:1px solid var(--rule-soft);border-radius:18px;padding:18px;margin-bottom:14px;box-shadow:0 1px 0 var(--rule-soft)}
 .muted{color:var(--fg-soft)}
-.faint{color:var(--fg-faint);font-size:13px}
+.faint{color:var(--fg-faint);font-size:13.5px;line-height:1.45}
 .toast{position:fixed;left:50%;bottom:calc(var(--nav-h) + env(safe-area-inset-bottom) + 14px);transform:translateX(-50%);z-index:30;
   background:var(--fg);color:var(--bg);padding:10px 16px;border-radius:999px;font-size:14px;font-weight:600;box-shadow:0 8px 24px var(--shade);opacity:0;pointer-events:none;transition:opacity .2s;max-width:88vw;text-align:center}
 .toast.show{opacity:1}
@@ -694,7 +699,11 @@ main{padding:22px 0 30px}
 .codebox{font-family:Georgia,serif;font-size:22px;letter-spacing:.06em;background:var(--surface-2);border-radius:12px;padding:12px;text-align:center;margin:10px 0;user-select:all}
 
 /* ---- booking ---- */
-.tip{background:var(--tag-lav-bg,var(--surface-2));color:var(--fg);border-radius:12px;padding:10px 12px;font-size:14px;margin:10px 0 4px}
+.tip{background:var(--tag-lav-bg,var(--surface-2));color:var(--fg);border-radius:12px;padding:10px 12px;font-size:14.5px;line-height:1.5;margin:10px 0 4px}
+/* instruction rows: icon column + text, every row starts at the same edge */
+.notes{margin:2px 0 8px}.note{display:flex;gap:10px;align-items:flex-start;font-size:14.5px;line-height:1.5;color:var(--fg-soft);margin:0 0 8px}.note .ni{flex:none;width:22px;text-align:center;font-size:16px;line-height:1.35}
+.row3{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.row3 .btn{padding:11px 4px;font-size:13.5px;white-space:nowrap;text-align:center;min-width:0}
+.themes{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}.themes .chip{padding:8px 2px;font-size:12.5px;white-space:nowrap;text-align:center;min-width:0}
 .cart{background:var(--surface);border:1.5px solid var(--primary);border-radius:16px;padding:12px 14px;margin:4px 0 6px;font-size:14.5px;max-width:100%;overflow:hidden}.cart.empty{border-style:dashed;border-color:var(--rule);color:var(--fg-faint)}.cart>b{display:block;margin-bottom:8px}
 .ci{display:flex;align-items:center;flex-wrap:wrap;gap:4px 10px;padding:7px 0;border-top:1px solid var(--rule-soft)}.ci>span{flex:1 1 140px}.ci b{margin-left:auto}.ci>span{flex:1;min-width:0}.ci b{white-space:nowrap}.ci .x{background:none;border:1px solid var(--rule);border-radius:50%;width:28px;height:28px;font-size:12px;color:var(--fg-soft)}.ci.total{border-top:2px solid var(--rule);font-weight:700}.ci small.warn,.tpick .warn{color:#B04A2E;font-size:12.5px;font-weight:600}.ci small.ok,.tpick .ok{color:#2E7D46;font-size:12.5px;font-weight:600}
 .tpick{margin:14px 0 18px}.tpick h3{margin:0 0 8px;font-size:15.5px}
@@ -908,8 +917,8 @@ const CONFIG = {
 
   // Booking page copy. Short sentences; this is what clients read.
   bookingNote: {
-    vi: 'Bốn bước: chọn gói, chọn chủ đề (nếu gói cần), chọn giờ, bấm gửi. Nabu xác nhận lại trong ngày, và bạn theo dõi ở mục Tôi.',
-    en: 'Four steps: pick a package, pick a topic (if the package needs one), pick a time, tap send. Nabu confirms within the day, and you follow it under Me.'
+    vi: 'Bốn bước: chọn gói, chọn chủ đề (nếu gói cần), chọn giờ, bấm gửi. Nabu xác nhận lại trong ngày, và bạn theo dõi ở mục Hồ sơ.',
+    en: 'Four steps: pick a package, pick a topic (if the package needs one), pick a time, tap send. Nabu confirms within the day, and you follow it under Profile.'
   },
   tagline: { vi: 'Lắng nghe và thấu hiểu', en: 'Listening and understanding' },
   about: {
@@ -1024,7 +1033,7 @@ const fmtPrice = (n) => String(n).replace(/\B(?=(\d{3})+(?!\d))/g, '.') + 'đ';
 const STR = {
   vi: {
     lang: 'EN',
-    nav: { home: 'Trang chủ', pick: 'Rút bài', play: 'Hoạt động', learn: 'Học', book: 'Đặt lịch', me: 'Tôi' },
+    nav: { home: 'Trang chủ', pick: 'Rút bài', play: 'Hoạt động', learn: 'Học', book: 'Đặt lịch', me: 'Hồ sơ' },
 
     feedTitle: 'Dự đoán mới',
     feedEmpty: 'Chưa có bài nào. Quay lại sau nhé.',
@@ -1051,7 +1060,7 @@ const STR = {
     signCard: 'Lá tarot của cung bạn',
     lifePath: 'Số đường đời',
     readSign: 'Đọc về cung của bạn',
-    forInterests: 'Có thể bạn quan tâm', horoMonth: 'Dự đoán tháng này', horoWeek: 'Dự đoán tuần này', horoNeedBirthday: 'Nhập ngày sinh ở mục Tôi để xem dự đoán theo cung của bạn.', horoUpdating: 'Dự đoán đang được cập nhật. Bạn quay lại sau nhé.', horoSource: 'Theo', horoUpdated: 'cập nhật',
+    forInterests: 'Có thể bạn quan tâm', horoMonth: 'Dự đoán tháng này', horoWeek: 'Dự đoán tuần này', horoNeedBirthday: 'Nhập ngày sinh ở mục Hồ sơ để xem dự đoán theo cung của bạn.', horoUpdating: 'Dự đoán đang được cập nhật. Bạn quay lại sau nhé.', horoSource: 'Theo', horoUpdated: 'cập nhật',
 
     pickToday: 'Rút một lá bài hôm nay',
     pickTitle: 'Năng lượng hiện tại của bạn',
@@ -1117,7 +1126,7 @@ const STR = {
     spreadWhen: 'Dùng khi nào', spreadAsk: 'Hỏi thế nào', spreadPos: 'Các vị trí', spreadRead: 'Cách đọc', spreadNote: 'Lưu ý',
     numerology: 'Thần số học của bạn',
     lifePathOf: (n) => 'Số đường đời ' + n,
-    enterBirthday: 'Nhập ngày sinh ở mục Tôi để xem số đường đời và cung của bạn.',
+    enterBirthday: 'Nhập ngày sinh ở mục Hồ sơ để xem số đường đời và cung của bạn.',
     animal: 'Con giáp',
     animalNote: 'Tính theo năm dương lịch. Nếu bạn sinh trước Tết thì thuộc con giáp của năm trước.',
 
@@ -1144,7 +1153,7 @@ const STR = {
     sendHint: 'Tin nhắn được sao chép sẵn. Bấm vào ứng dụng, rồi dán vào ô chat.',
     sendInApp: 'Gửi yêu cầu đặt lịch',
     sending: 'Đang gửi...',
-    sentOk: 'Đã gửi. Nabu sẽ xác nhận sớm. Bạn xem lại trong mục Tôi.',
+    sentOk: 'Đã gửi. Nabu sẽ xác nhận sớm. Bạn xem lại trong mục Hồ sơ.',
     nabuPosts: 'Bài viết của Nabu', versionLine: (v) => 'Phiên bản ' + v, checkUpdate: 'Kiểm tra cập nhật', updating: 'Đang tải bản mới…',
     privacyTitle: 'Chính sách quyền riêng tư', privacyLink: 'Riêng tư', delAccount: 'Xoá tài khoản', delHint: 'Xoá tài khoản đăng nhập, hồ sơ, tin nhắn và lịch hẹn của bạn. Không hoàn lại được.', delConfirm: 'Xoá tài khoản và toàn bộ dữ liệu của bạn? Việc này không hoàn lại được.', delDone: 'Đã xoá tài khoản. Cảm ơn bạn đã ghé Nabu Tarot.', delRelogin: 'Để chắc là bạn, hãy đăng nhập lại rồi bấm Xoá tài khoản một lần nữa.', aiFlag: 'Báo cáo câu trả lời này', aiFlagged: 'Đã ghi nhận. Cảm ơn bạn, Nabu sẽ xem lại.', storeCodeHint: 'Nhập mã mở khoá mà Nabu đã gửi cho bạn.',
     actTitle: 'Hoạt động', actIntro: 'Chọn một tụ bài rồi quay lại xem thông điệp, bình chọn mỗi tuần, hay gửi một điều ước. Chơi là chính, bài nói về xu hướng chứ không phải số phận.', actEmpty: 'Chưa có hoạt động nào. Quay lại sau nhé.', actAll: 'Tất cả hoạt động', actOpen: 'Đang mở', actClosed: 'Đã đóng', actHasResults: 'Đã có kết quả',
@@ -1158,12 +1167,12 @@ const STR = {
     actNew: 'Hoạt động mới', actType: 'Loại', actTypes: { pile: 'Chọn tụ bài', poll: 'Bình chọn', wish: 'Điều ước' }, actResultsDate: 'Ngày đăng kết quả (chỉ cho tụ bài)', actIntroLabel: 'Lời dẫn (thanh công cụ bên trên ô: đậm, nghiêng, tô sáng, ảnh, video, emoji)', actPilesHint: 'Từ 2 đến 5 tụ. Bạn có thể đăng trước với nhãn trống; vài ngày sau quay lại điền thông điệp và bật "Đã có kết quả".', actPileN: (n) => 'Tụ ' + n, actPileLabel: 'Nhãn ngắn (không bắt buộc), ví dụ: Trái · Giữa · Phải', actPileMsg: 'Thông điệp cho tụ này (đăng sau cũng được)', actPileMsgEn: 'English message (optional)', actPileAdd: 'Thêm tụ', actPileDel: 'Bớt tụ', actResultsOn: 'Đã có kết quả: cho phép lật bài', actOptions: 'Các lựa chọn, mỗi dòng một lựa chọn', actCloseOn: 'Đóng bình chọn', actExisting: 'Hoạt động đã đăng', actNeedPiles: 'Bạn điền ít nhất một tụ nhé.', actNeedOptions: 'Cần ít nhất hai lựa chọn.',
     newsTitle: 'Bài viết', newsIntro: 'Tất cả bài Nabu đã đăng: dự đoán, chia sẻ, thông báo. Gõ để tìm.', searchPosts: 'Tìm trong bài viết…', noMatch: 'Không có bài nào khớp.', allPostsBtn: (n) => 'Xem tất cả bài viết (' + n + ')', watchOn: (s) => 'Xem video trên ' + s,
     addImage: 'Ảnh', addVideo: 'Video', videoPrompt: 'Dán link video (YouTube, Facebook, TikTok, Instagram):', imgNeedCloud: 'Bạn cần đăng nhập tài khoản admin để tải ảnh lên.', imgTooBig: 'Ảnh quá lớn, thử ảnh nhỏ hơn.', imgAdded: 'Đã thêm ảnh vào bài.', wrapPlaceholder: 'chữ', boxLabel: 'Hộp', formatHint: 'Chọn chữ rồi bấm B / I / U / H để in đậm, in nghiêng, gạch dưới, tô sáng. H2 là tiêu đề nhỏ, Hộp là ô tiêu đề riêng. Ảnh tải thẳng vào bài; video dán link.',
-    contactTitle: 'Liên hệ', contactLink: 'Liên hệ', contactIntro: 'Viết vài dòng cho Nabu, rồi chọn kênh bạn muốn gửi.', contactWhat: 'Bạn muốn nhắn gì?', contactPlaceholder: 'Ví dụ: mình muốn hỏi về gói xem bài, hoặc góp ý cho app…', contactChoose: 'Gửi qua:', contactApp: 'Nhắn trong app Nabu Tarot', contactIg: 'Sao chép tin nhắn và mở Instagram', contactFb: 'Sao chép tin nhắn và mở Facebook', contactCopyHint: 'Với Instagram và Facebook: tin nhắn của bạn được sao chép sẵn khi bấm nút, sang bên đó bạn chỉ cần dán vào ô chat và gửi.', contactNeed: 'Bạn viết vài dòng trước nhé.', contactSent: 'Đã gửi tới Nabu. Bạn xem trả lời trong mục Tôi.', contactCopied: 'Tin nhắn đã được sao chép. Dán vào ô chat khi ứng dụng mở lên.',
+    contactTitle: 'Liên hệ', contactLink: 'Liên hệ', contactIntro: 'Viết vài dòng cho Nabu, rồi chọn kênh bạn muốn gửi.', contactWhat: 'Bạn muốn nhắn gì?', contactPlaceholder: 'Ví dụ: mình muốn hỏi về gói xem bài, hoặc góp ý cho app…', contactChoose: 'Gửi qua:', contactApp: 'Nhắn trong app Nabu Tarot', contactIg: 'Sao chép tin nhắn và mở Instagram', contactFb: 'Sao chép tin nhắn và mở Facebook', contactCopyHint: 'Với Instagram và Facebook: tin nhắn của bạn được sao chép sẵn khi bấm nút, sang bên đó bạn chỉ cần dán vào ô chat và gửi.', contactNeed: 'Bạn viết vài dòng trước nhé.', contactSent: 'Đã gửi tới Nabu. Bạn xem trả lời trong mục Hồ sơ.', contactCopied: 'Tin nhắn đã được sao chép. Dán vào ô chat khi ứng dụng mở lên.',
     addToCalendar: 'Thêm vào lịch điện thoại', gcal: 'Google Calendar', icsDownloaded: 'Đã tải tệp lịch. Mở tệp để thêm vào Lịch.', calendarHint: 'Lịch điện thoại sẽ nhắc bạn trước 24 giờ, 6 giờ, 1 giờ và 15 phút.', cancelBooking: 'Huỷ lịch', changeTitle: 'Đổi giờ hẹn', changeIntro: 'Chọn giờ mới bên dưới. Nabu sẽ duyệt lại trước khi giờ mới có hiệu lực.', currentSlot: 'Giờ hiện tại', sendChange: 'Gửi yêu cầu đổi giờ', changeSent: 'Đã gửi yêu cầu đổi giờ. Nabu sẽ duyệt lại sớm.', cancelSent: 'Đã gửi yêu cầu huỷ. Nabu sẽ xác nhận lại.', confirmCancel: 'Bạn muốn huỷ lịch hẹn này?', newSlotLabel: 'Giờ mới', adminApplyChange: 'Duyệt giờ mới', adminKeep: 'Giữ giờ cũ', adminApplyCancel: 'Duyệt huỷ', adminKeepBooking: 'Giữ lịch', reminderOn: 'Bật nhắc lịch hẹn trên máy này', reminderHint: 'Khi app đang mở, bạn sẽ được nhắc trước 24 giờ, 6 giờ, 1 giờ và 15 phút. Để chắc chắn, hãy thêm lịch hẹn vào lịch điện thoại.', upcoming: 'Lịch hẹn sắp tới', remindTitle: (w) => 'Lịch hẹn với Nabu ' + w, inHours: (h) => 'còn ' + h + ' giờ nữa', inMinutes: (m) => 'còn ' + m + ' phút nữa', allDays: 'Tất cả', bkOn: (d) => 'Lịch ngày ' + d, aiSettings: 'Cài đặt Nabu AI', aiKeyLabel: 'Khoá Gemini API (Google AI Studio)', aiKeyHint: 'Dán khoá vào đây và bấm lưu: mọi người dùng app sẽ được Nabu AI trả lời bằng Gemini, có tra cứu mạng khi còn hạn mức. Khoá được lưu trên đám mây của app, không nằm trong mã nguồn. Để trống thì app dùng bộ trả lời sẵn có.', aiKeySaved: 'Đã lưu. Nabu AI đang dùng Gemini.', saveKey: 'Lưu khoá', emojiBtn: 'Biểu tượng cảm xúc', imgTooBigChat: 'Ảnh quá lớn cho tin nhắn, thử ảnh nhỏ hơn.',
     maniIntro: 'Manifestation là đặt mục tiêu cho rõ, hình dung cho đúng và hành động cho đều. Bốn bài đầu miễn phí, có cả viết kịch bản. Trọn bộ mở thêm bảy phương pháp, mỗi bài có công cụ làm ngay trong app.', maniFree: 'Miễn phí', maniFull: 'Trọn bộ Manifestation', perYear: (p) => p + ' / năm', maniUnlock: 'Mở khoá trọn bộ', maniIncl: ['WOOP, kế hoạch nếu-thì, bảng tầm nhìn có ảnh của bạn', 'Nghi thức trăng non, trăng tròn và công cụ buông bỏ', 'Nến và đá theo từng mục đích, dùng sao cho an toàn'],
     toolClear: 'Xoá làm lại', toolSaved: 'Lưu trên máy này.', toolTemplate: 'Mẫu mới', toolAdd: 'Thêm dòng', toolRelease: 'Buông', toolReleased: 'Đã buông. Nhẹ hơn rồi. 🍃', releasedTimes: (n) => 'Bạn đã buông ' + n + ' lần', tapPhoto: 'thêm ảnh', caption: 'ghi chú ngắn', clearedToast: 'Đã xoá, bạn làm lại từ đầu nhé.',
     saveSlot: 'Lưu giờ hẹn', changeSlot: 'Đổi giờ', slotSaved: 'Đã lưu giờ hẹn', summaryTitle: 'Tóm tắt yêu cầu', showMsg: 'Xem tin nhắn sẽ gửi', bkItems: 'Gói đã chọn',
-    doneTitle: 'Đã gửi yêu cầu đặt lịch', doneBody: 'Nabu sẽ xem và xác nhận sớm. Bạn theo dõi trạng thái trong mục Tôi và sẽ nhận thông báo khi Nabu trả lời.', doneMe: 'Xem lịch hẹn của tôi', doneHome: 'Về trang chủ', doneMore: 'Đặt thêm lịch khác',
+    doneTitle: 'Đã gửi yêu cầu đặt lịch', doneBody: 'Nabu sẽ xem và xác nhận sớm. Bạn theo dõi trạng thái trong mục Hồ sơ và sẽ nhận thông báo khi Nabu trả lời.', doneMe: 'Xem lịch hẹn của tôi', doneHome: 'Về trang chủ', doneMore: 'Đặt thêm lịch khác',
     draftKept: 'Lựa chọn của bạn được lưu tự động trên máy này, rời đi rồi quay lại vẫn còn.', openInLibrary: 'Đọc đầy đủ trong Kho kiến thức',
     aiGreet: 'Chào bạn! Mình là Nabu AI. Bạn có thể hỏi mình về một lá bài, một cung hoàng đạo, con số của bạn, hay bảo mình rút một lá cho hôm nay.', aiDrew: (n) => 'Mình rút cho bạn một lá: ' + n + '.', aiDrawHint: 'Muốn rút bài đầy đủ hơn, bạn vào mục Rút bài nhé.', aiSignOf: (s) => 'Với cung ' + s + ' của bạn:', aiThanks: 'Không có gì! Bạn cần gì cứ hỏi tiếp nhé.', aiTodayMoon: (m) => 'Hôm nay trăng đang ở pha ' + m + '.',
     needLogin: 'Bạn cần đăng nhập để gửi trong app. Hoặc gửi qua Instagram bên dưới.',
@@ -1191,7 +1200,7 @@ const STR = {
     accountsSoon: 'Nabu chưa bật đăng nhập. Khi bật, bạn đăng nhập bằng Google, Facebook hoặc email và mật khẩu; hồ sơ, tin nhắn và lịch hẹn sẽ đi theo bạn. Hiện hồ sơ lưu trên máy này.', accountsOff: 'Đăng nhập chưa mở.',
     signIn: 'Đăng nhập',
     signInWith: { google: 'Tiếp tục với Google', facebook: 'Tiếp tục với Facebook', email: 'Tiếp tục với email' },
-    signOut: 'Đăng xuất',
+    signOut: 'Đăng xuất', tourLink: 'Hướng dẫn', themeShort: { auto: '📱 Máy', light: '☀️ Sáng', dark: '🌙 Tối', pink: '🌸 Hồng' },
     emailLabel: 'Email', passwordLabel: 'Mật khẩu',
     createAccount: 'Tạo tài khoản', haveAccount: 'Đã có tài khoản? Đăng nhập', noAccount: 'Chưa có tài khoản? Tạo mới',
     forgot: 'Quên mật khẩu', resetSent: 'Đã gửi email đặt lại mật khẩu.', authFbOff: 'Đăng nhập Facebook chưa mở: Meta yêu cầu Nabu đăng ký một ứng dụng nhà phát triển trước. Bạn dùng Google hoặc email giúp Nabu nhé.', authProviderOff: 'Cách đăng nhập này chưa được bật. Bạn dùng Google hoặc email nhé.', authDomain: 'Địa chỉ app chưa được Firebase cho phép. Nabu cần thêm angelale0211.github.io vào Authorized domains.', authCancelled: 'Bạn đã đóng cửa sổ đăng nhập.', authOtherProvider: 'Email này đã đăng ký bằng cách khác. Bạn đăng nhập bằng cách đó nhé.', authNetwork: 'Không có kết nối mạng. Bạn thử lại sau nhé.',
@@ -1278,7 +1287,7 @@ const STR = {
 
   en: {
     lang: 'VI',
-    nav: { home: 'Home', pick: 'Pick a card', play: 'Activities', learn: 'Learn', book: 'Book', me: 'Me' },
+    nav: { home: 'Home', pick: 'Pick a card', play: 'Activities', learn: 'Learn', book: 'Book', me: 'Profile' },
 
     feedTitle: 'Latest readings',
     feedEmpty: 'Nothing posted yet. Come back soon.',
@@ -1305,7 +1314,7 @@ const STR = {
     signCard: 'The tarot card of your sign',
     lifePath: 'Life path number',
     readSign: 'Read about your sign',
-    forInterests: 'You may also like', horoMonth: 'This month\'s forecast', horoWeek: 'This week\'s forecast', horoNeedBirthday: 'Enter your birthday under Me to see the forecast for your sign.', horoUpdating: 'The forecast is being updated. Please check back soon.', horoSource: 'From', horoUpdated: 'updated',
+    forInterests: 'You may also like', horoMonth: 'This month\'s forecast', horoWeek: 'This week\'s forecast', horoNeedBirthday: 'Enter your birthday under Profile to see the forecast for your sign.', horoUpdating: 'The forecast is being updated. Please check back soon.', horoSource: 'From', horoUpdated: 'updated',
 
     pickToday: 'Pick a card today',
     pickTitle: 'Your energy right now',
@@ -1371,7 +1380,7 @@ const STR = {
     spreadWhen: 'When to use it', spreadAsk: 'How to ask', spreadPos: 'Positions', spreadRead: 'How to read it', spreadNote: 'Note',
     numerology: 'Your numerology',
     lifePathOf: (n) => 'Life path ' + n,
-    enterBirthday: 'Enter your birthday under Me to see your life path number and sign.',
+    enterBirthday: 'Enter your birthday under Profile to see your life path number and sign.',
     animal: 'Zodiac animal',
     animalNote: 'Counted by calendar year. If you were born before Lunar New Year, you belong to the previous animal.',
 
@@ -1398,7 +1407,7 @@ const STR = {
     sendHint: 'The message is copied for you. Open the app, then paste it into the chat.',
     sendInApp: 'Send booking request',
     sending: 'Sending...',
-    sentOk: 'Sent. Nabu will confirm soon. You can check it under Me.',
+    sentOk: 'Sent. Nabu will confirm soon. You can check it under Profile.',
     nabuPosts: 'Nabu Posts', versionLine: (v) => 'Version ' + v, checkUpdate: 'Check for updates', updating: 'Loading the new version…',
     privacyTitle: 'Privacy policy', privacyLink: 'Privacy', delAccount: 'Delete account', delHint: 'Removes your login, profile, messages and bookings. This cannot be undone.', delConfirm: 'Delete your account and all your data? This cannot be undone.', delDone: 'Account deleted. Thank you for visiting Nabu Tarot.', delRelogin: 'To be sure it is you, sign in again and tap Delete account once more.', aiFlag: 'Report this answer', aiFlagged: 'Noted. Thank you, Nabu will review it.', storeCodeHint: 'Enter the unlock code Nabu sent you.',
     actTitle: 'Activities', actIntro: 'Pick a pile and come back for its message, vote in the weekly poll, or send a wish. It is play: the cards speak about tendencies, not fate.', actEmpty: 'No activities yet. Come back soon.', actAll: 'All activities', actOpen: 'Open', actClosed: 'Closed', actHasResults: 'Answered',
@@ -1412,12 +1421,12 @@ const STR = {
     actNew: 'New activity', actType: 'Type', actTypes: { pile: 'Pick a pile', poll: 'Poll', wish: 'Wish' }, actResultsDate: 'Results date (piles only)', actIntroLabel: 'Intro (the bar above the box: bold, italic, highlight, images, video, emoji)', actPilesHint: 'Two to five piles. You can publish with empty labels; come back days later, fill in the messages and switch on "Answered".', actPileN: (n) => 'Pile ' + n, actPileLabel: 'Short label (optional), e.g. Left · Middle · Right', actPileMsg: 'Message for this pile (can be added later)', actPileMsgEn: 'English message (optional)', actPileAdd: 'Add a pile', actPileDel: 'Remove a pile', actResultsOn: 'Answered: let people flip the piles', actOptions: 'Options, one per line', actCloseOn: 'Close the poll', actExisting: 'Published activities', actNeedPiles: 'Fill in at least one pile.', actNeedOptions: 'At least two options are needed.',
     newsTitle: 'Posts', newsIntro: 'Everything Nabu has posted: readings, thoughts, announcements. Type to search.', searchPosts: 'Search the posts…', noMatch: 'No post matches.', allPostsBtn: (n) => 'See all posts (' + n + ')', watchOn: (s) => 'Watch on ' + s,
     addImage: 'Image', addVideo: 'Video', videoPrompt: 'Paste a video link (YouTube, Facebook, TikTok, Instagram):', imgNeedCloud: 'Sign in with the admin account to upload images.', imgTooBig: 'Image too large, try a smaller one.', imgAdded: 'Image added to the post.', wrapPlaceholder: 'text', boxLabel: 'Box', formatHint: 'Select text, then tap B / I / U / H for bold, italic, underline, highlight. H2 is a small heading, Box a separate title box. Images upload straight into the post; videos are pasted as links.',
-    contactTitle: 'Contact us', contactLink: 'Contact', contactIntro: 'Write a few lines to Nabu, then choose where to send them.', contactWhat: 'Your message', contactPlaceholder: 'For example: a question about a package, or feedback on the app…', contactChoose: 'Send via:', contactApp: 'Message inside the Nabu Tarot app', contactIg: 'Copy the message and open Instagram', contactFb: 'Copy the message and open Facebook', contactCopyHint: 'For Instagram and Facebook: your message is copied when you tap the button, so over there you only paste it into the chat and send.', contactNeed: 'Write a few lines first.', contactSent: 'Sent to Nabu. Replies show under Me.', contactCopied: 'Your message is copied. Paste it into the chat when the app opens.',
+    contactTitle: 'Contact us', contactLink: 'Contact', contactIntro: 'Write a few lines to Nabu, then choose where to send them.', contactWhat: 'Your message', contactPlaceholder: 'For example: a question about a package, or feedback on the app…', contactChoose: 'Send via:', contactApp: 'Message inside the Nabu Tarot app', contactIg: 'Copy the message and open Instagram', contactFb: 'Copy the message and open Facebook', contactCopyHint: 'For Instagram and Facebook: your message is copied when you tap the button, so over there you only paste it into the chat and send.', contactNeed: 'Write a few lines first.', contactSent: 'Sent to Nabu. Replies show under Profile.', contactCopied: 'Your message is copied. Paste it into the chat when the app opens.',
     addToCalendar: 'Add to my phone calendar', gcal: 'Google Calendar', icsDownloaded: 'Calendar file downloaded. Open it to add the event.', calendarHint: 'Your phone calendar will remind you 24 hours, 6 hours, 1 hour and 15 minutes before.', cancelBooking: 'Cancel booking', changeTitle: 'Change the time', changeIntro: 'Pick a new time below. Nabu reviews it before the new time takes effect.', currentSlot: 'Current time', sendChange: 'Send the change request', changeSent: 'Change request sent. Nabu will review it soon.', cancelSent: 'Cancellation request sent. Nabu will confirm it.', confirmCancel: 'Cancel this booking?', newSlotLabel: 'New time', adminApplyChange: 'Approve new time', adminKeep: 'Keep old time', adminApplyCancel: 'Approve cancellation', adminKeepBooking: 'Keep booking', reminderOn: 'Turn on booking reminders on this device', reminderHint: 'While the app is open you are reminded 24 hours, 6 hours, 1 hour and 15 minutes before. To be safe, add the booking to your phone calendar.', upcoming: 'Upcoming booking', remindTitle: (w) => 'Reading with Nabu ' + w, inHours: (h) => 'in ' + h + ' hours', inMinutes: (m) => 'in ' + m + ' minutes', allDays: 'All', bkOn: (d) => 'Bookings on ' + d, aiSettings: 'Nabu AI settings', aiKeyLabel: 'Gemini API key (Google AI Studio)', aiKeyHint: 'Paste the key here and save: every user gets Nabu AI answered by Gemini, with web search while the quota lasts. The key lives in the app cloud, not in the source code. Leave it empty to use the built-in answers.', aiKeySaved: 'Saved. Nabu AI now uses Gemini.', saveKey: 'Save key', emojiBtn: 'Emoji', imgTooBigChat: 'Image too large for a message, try a smaller one.',
     maniIntro: 'Manifestation means naming a goal clearly, picturing it the right way and acting steadily. The first four guides are free, scripting included. The full set adds seven methods, each with a tool you use right in the app.', maniFree: 'Free', maniFull: 'Manifestation set', perYear: (p) => p + ' / year', maniUnlock: 'Unlock the full set', maniIncl: ['WOOP, if-then plans, a vision board with your own photos', 'New and full Moon rituals and a letting-go tool', 'Candles and stones by purpose, used safely'],
     toolClear: 'Clear and redo', toolSaved: 'Saved on this device.', toolTemplate: 'New template', toolAdd: 'Add a line', toolRelease: 'Let go', toolReleased: 'Released. Lighter now. 🍃', releasedTimes: (n) => 'You have let go ' + n + ' times', tapPhoto: 'add photo', caption: 'short note', clearedToast: 'Cleared. Start again whenever you like.',
     saveSlot: 'Save this time', changeSlot: 'Change', slotSaved: 'Time saved', summaryTitle: 'Your request', showMsg: 'Show the message that will be sent', bkItems: 'Packages',
-    doneTitle: 'Booking request sent', doneBody: 'Nabu will review it and confirm soon. Follow the status under Me; you will be notified when Nabu replies.', doneMe: 'See my bookings', doneHome: 'Back to home', doneMore: 'Book another reading',
+    doneTitle: 'Booking request sent', doneBody: 'Nabu will review it and confirm soon. Follow the status under Profile; you will be notified when Nabu replies.', doneMe: 'See my bookings', doneHome: 'Back to home', doneMore: 'Book another reading',
     draftKept: 'Your choices are saved on this device automatically, so you can leave and come back.', openInLibrary: 'Read the full guide in the library',
     aiGreet: 'Hi! I am Nabu AI. Ask me about a card, a zodiac sign, your numbers, or tell me to draw a card for today.', aiDrew: (n) => 'I drew a card for you: ' + n + '.', aiDrawHint: 'For a fuller draw, open the Pick a card tab.', aiSignOf: (s) => 'For your sign, ' + s + ':', aiThanks: 'You are welcome! Ask me anything else.', aiTodayMoon: (m) => 'Today the Moon is in its ' + m + ' phase.',
     needLogin: 'Sign in to send inside the app, or send through Instagram below.',
@@ -1445,7 +1454,7 @@ const STR = {
     accountsSoon: 'Nabu has not switched sign-in on yet. Once on, you sign in with Google, Facebook or email and password, and your profile, messages and bookings follow you. For now the profile stays on this device.', accountsOff: 'Sign-in is not open yet.',
     signIn: 'Sign in',
     signInWith: { google: 'Continue with Google', facebook: 'Continue with Facebook', email: 'Continue with email' },
-    signOut: 'Sign out',
+    signOut: 'Sign out', tourLink: 'Tour', themeShort: { auto: '📱 Auto', light: '☀️ Light', dark: '🌙 Dark', pink: '🌸 Pink' },
     emailLabel: 'Email', passwordLabel: 'Password',
     createAccount: 'Create account', haveAccount: 'Have an account? Sign in', noAccount: 'No account? Create one',
     forgot: 'Forgot password', resetSent: 'Password reset email sent.', authFbOff: 'Facebook sign-in is not open yet: Meta requires Nabu to register a developer app first. Please use Google or email.', authProviderOff: 'This sign-in method is not switched on. Please use Google or email.', authDomain: 'Firebase has not allowed this address yet. Nabu needs to add angelale0211.github.io to Authorized domains.', authCancelled: 'You closed the sign-in window.', authOtherProvider: 'This email is registered with a different method. Please sign in that way.', authNetwork: 'No network connection. Please try again.',
@@ -11116,7 +11125,7 @@ const TOUR = [
   { ic: '✨', vi: ['Dự đoán', 'Bài mới của Nabu nằm ở trang chủ. Bài có ghi "dành cho bạn" là hợp với cung của bạn.'], en: ['Readings', 'Nabu\'s new posts live on the home screen. Posts marked "for you" match your sign.'] },
   { ic: '📚', vi: ['Học', 'Tarot, Lenormand, chiêm tinh, manifestation và bói toán. Bấm vào một lá hay một cung để đọc.'], en: ['Learn', 'Tarot, Lenormand, astrology, manifestation and fortune telling. Tap a card or a sign to read.'] },
   { ic: '📅', vi: ['Đặt lịch', 'Chọn chủ đề, chọn giờ trên lịch, gửi cho Nabu.'], en: ['Book', 'Choose a topic, pick a time on the calendar, send it to Nabu.'] },
-  { ic: '👤', vi: ['Tôi', 'Nhập tên và ngày sinh để app chọn nội dung cho bạn. Đăng nhập để lưu hồ sơ, nhắn tin và xem lịch hẹn.'], en: ['Me', 'Enter your name and birthday so the app picks content for you. Sign in to keep your profile, message Nabu and see bookings.'] }
+  { ic: '👤', vi: ['Hồ sơ', 'Nhập tên và ngày sinh để app chọn nội dung cho bạn. Đăng nhập để lưu hồ sơ, nhắn tin và xem lịch hẹn.'], en: ['Profile', 'Enter your name and birthday so the app picks content for you. Sign in to keep your profile, message Nabu and see bookings.'] }
 ];
 function tourHTML(step) {
   const t = TOUR[step], txt = t[lang];
@@ -12619,7 +12628,7 @@ async function renderBook(args, params) {
   restoreBook();
   book.card = params.card || book.card || null; book.name = book.name || PROFILE.name || ''; book.birth = book.birth || PROFILE.birthday || '';
   if (!book.month) book.month = new Date(new Date().getFullYear(), new Date().getMonth(), 1);
-  m.innerHTML = '<div class="eyebrow">' + esc(CONFIG.brand) + '</div><h1 style="margin-bottom:6px">' + esc(S.bookTitle) + '</h1><p class="muted">' + esc(L(CONFIG.bookingNote)) + '</p><p class="tip">👆 ' + esc(S.bookTip) + '</p><p class="hint" style="margin:0 0 4px">💾 ' + esc(S.draftKept) + '</p>'
+  m.innerHTML = '<div class="eyebrow">' + esc(CONFIG.brand) + '</div><h1 style="margin-bottom:6px">' + esc(S.bookTitle) + '</h1><p class="muted">' + esc(L(CONFIG.bookingNote)) + '</p><div class="notes"><div class="note"><span class="ni">👆</span><span>' + esc(S.bookTip) + '</span></div><div class="note"><span class="ni">💾</span><span>' + esc(S.draftKept) + '</span></div></div>'
     + '<div class="sec"><h2 style="margin:18px 0 4px">' + esc(S.chooseService) + '</h2><p class="hint" style="margin-bottom:12px">' + esc(S.serviceHint) + '</p><div id="svcwrap">' + priceSheetHTML(true) + '</div><div id="cartwrap">' + cartHTML() + '</div></div>'
     + '<div class="sec"><h2 style="margin:18px 0 4px">' + esc(S.chooseTopic) + '</h2><div id="topicwrap">' + topicSectionHTML() + '</div></div>'
     + '<div class="sec"><h2 style="margin-bottom:4px">' + esc(S.chooseTime) + '</h2><p class="hint" style="margin-bottom:10px">' + esc(S.timeHint(L(CONFIG.tzLabel))) + '</p><div id="calwrap"><p class="hint">…</p></div></div>'
@@ -12631,8 +12640,7 @@ async function renderBook(args, params) {
     + '<div class="row" style="flex-direction:column">'
     + (BE.enabled ? '<button class="btn block primary" id="sendapp">' + esc(S.sendInApp) + '</button><p class="hint" id="sendstatus"></p>' : '<p class="hint">' + esc(S.needLogin) + '</p>')
     + '<a class="btn block" href="#/contact">💬 ' + esc(S.contactTitle) + '</a></div></div>'
-    + '<div class="sec card"><h3 style="margin-bottom:10px">' + esc(S.howItWorks) + '</h3><ol class="steps">' + [S.chooseService.slice(3), S.chooseTopic.slice(3), S.chooseTime.slice(3), S.sendVia.slice(3), L(PAYMENT_NOTE)].map((x) => '<li>' + esc(x) + '</li>').join('') + '</ol></div>'
-    + '<div class="sec"><h3 style="margin-bottom:6px">' + esc(S.aboutTitle) + '</h3><p class="muted">' + esc(L(CONFIG.about)) + '</p></div>';
+    + '<div class="sec card"><h3 style="margin-bottom:10px">' + esc(S.howItWorks) + '</h3><ol class="steps">' + [S.chooseService.slice(3), S.chooseTopic.slice(3), S.chooseTime.slice(3), S.sendVia.slice(3), L(PAYMENT_NOTE)].map((x) => '<li>' + esc(x) + '</li>').join('') + '</ol></div>';
   const prev = () => { const p = $('#msgprev'); if (!p) return; p.innerHTML = summaryHTML(); $('#msgtext').textContent = composeMessage(); saveBook(); };
   const done = () => {
     m.innerHTML = '<div class="done"><div class="big">✅</div><h1>' + esc(S.doneTitle) + '</h1><p class="muted">' + esc(S.doneBody) + '</p><p><span class="st requested">' + esc(S.status.requested) + '</span></p>' + summaryHTML()
@@ -12930,8 +12938,9 @@ function renderMe(args, params) {
     h += aiPanelHTML({ type: 'general' });
     h += '<div class="card"><h3 style="margin-bottom:8px">' + esc(S.myCourses) + '</h3>' + COURSES.map((c) => { const a = ACCESS.isAdmin() ? '9999-12-31' : ACCESS.get()[c.id]; return '<div class="course"><span>' + esc(L(c.name)) + '</span><span class="faint">' + (a ? (ACCESS.has(c.id) ? '✓ ' + esc(S.activeUntil(fmtDate(a))) : esc(S.expiredOn(fmtDate(a)))) : (isTWA() ? '🔒' : '🔒 ' + fmtPrice(c.price))) + '</span></div>'; }).join('')
       + '<label class="f" for="mcode">' + esc(S.enterCode) + '</label><div class="row nw"><input id="mcode" placeholder="NABU-T-…" autocapitalize="characters"><button class="btn" id="munlock">' + esc(S.unlock) + '</button></div><p class="hint" id="mcstatus"></p></div>';
-    h += '<div class="card"><h3 style="margin-bottom:8px">' + esc(S.themeTitle) + '</h3><div class="chips">' + ['auto', 'light', 'dark', 'pink'].map((t) => '<button class="chip' + (themeChoice() === t ? ' on' : '') + '" data-theme-pick="' + t + '">' + esc(S.themes[t]) + '</button>').join('') + '</div><p class="hint">' + esc(S.themeHint) + '</p></div>';
-    h += '<div class="row">' + (BE.user ? '<button class="btn" id="signout">' + esc(S.signOut) + '</button>' : '') + '<a class="btn" href="#/contact">💬 ' + esc(S.contactLink) + '</a><a class="btn" href="#/report">🐞 ' + esc(S.reportLink) + '</a><button class="btn" id="retour">' + (lang === 'vi' ? 'Xem lại hướng dẫn' : 'Replay the tour') + '</button>' + (BE.isAdmin() ? '<a class="btn gold" href="#/admin">' + esc(S.adminTitle) + '</a>' : '') + '</div>';
+    h += '<div class="card"><h3 style="margin-bottom:8px">' + esc(S.themeTitle) + '</h3><div class="themes">' + ['auto', 'light', 'dark', 'pink'].map((t) => '<button class="chip' + (themeChoice() === t ? ' on' : '') + '" data-theme-pick="' + t + '" title="' + esc(S.themes[t]) + '">' + esc(S.themeShort[t]) + '</button>').join('') + '</div><p class="hint">' + esc(S.themeHint) + '</p></div>';
+    h += '<div class="row3"><a class="btn" href="#/contact">💬 ' + esc(S.contactLink) + '</a><a class="btn" href="#/report">🐞 ' + esc(S.reportLink) + '</a><button class="btn" id="retour">🎓 ' + esc(S.tourLink) + '</button></div>'
+      + (BE.user || BE.isAdmin() ? '<div class="row" style="margin-top:8px">' + (BE.user ? '<button class="btn" id="signout" style="flex:1">🚪 ' + esc(S.signOut) + '</button>' : '') + (BE.isAdmin() ? '<a class="btn gold" href="#/admin" style="flex:1">🛠 ' + esc(S.adminTitle) + '</a>' : '') + '</div>' : '');
     if (BE.enabled && BE.user) h += '<div class="card danger"><h3 style="margin-bottom:4px">' + esc(S.delAccount) + '</h3><p class="hint" style="margin-bottom:10px">' + esc(S.delHint) + '</p><button class="btn block" id="delacct">🗑 ' + esc(S.delAccount) + '</button><p class="hint" id="delstatus"></p></div>';
     h += '<p class="hint" style="text-align:center;margin-top:16px">' + esc(S.versionLine(window.APP_VERSION || '')) + ' · <button type="button" class="linkbtn" id="chkupd">' + esc(S.checkUpdate) + '</button> · <a href="#/privacy">' + esc(S.privacyLink) + '</a></p>';
     body.innerHTML = h;
@@ -13657,7 +13666,7 @@ function adminCodes(p) {
 ROUTES.admin = { nav: '', render: renderAdmin };
 
 /* ============================ boot ============================ */
-window.APP_VERSION = 'v69';
+window.APP_VERSION = 'v70';
 window.NABU = { CONFIG: CONFIG, loadActs: loadActs, LESSONS: LESSONS, localAnswer: localAnswer, compatVerdict: compatVerdict, numerologyOf: numerologyOf, ZDEEP: ZDEEP, lunarToday: lunarToday, solarToLunar: solarToLunar, DECK: DECK, INSIGHT: INSIGHT, KW: KW, ASK: ASK, TOPICS: TOPICS, GUIDES: GUIDES, SERVICES: SERVICES, COURSES: COURSES, ACCESS: ACCESS, makeCode: makeCode, parseCode: parseCode, ZODIAC: ZODIAC, pick: pick, book: book,
   insightHTML: insightHTML, insightOf: insightOf, sunSignIndex: sunSignIndex, lifePath: lifePath, PROFILE: () => PROFILE, BE: BE, ACTS: ACTS };
 BE.initP = BE.init().catch(() => { /* backend unreachable: the app runs device-only */ });
