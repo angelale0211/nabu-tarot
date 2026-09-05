@@ -95,6 +95,11 @@ function leanOf(id) {
 /* ---- context text (shared by both engines) ---- */
 function contextText(ctx) {
   const S = T();
+  if (ctx.type === 'card' && ctx.lite) {
+    const c = cardById(ctx.id), I = insightOf(ctx.id), f = ctx.focus && ctx.focus !== 'general' ? ctx.focus : '';
+    return [c.name + ' (' + cardById(ctx.id, lang === 'vi' ? 'en' : 'vi').name + ') · ' + c.meta, S.kwPos + ': ' + I.pos.slice(0, 3).join(', '), S.energyNow + ': ' + I.now, f ? S.focus[f] + ': ' + I[f] : 'Advice: ' + I.advice,
+      'RULE: this is the free daily draw. Answer only from the lines above. Do not give the reversed meaning, the picture, or this card\'s meaning for other topics (love, work, study, money) unless it is the focus above; say those are in the Tarot course, and suggest booking a reading with Nabu for personal questions.'].join('\n');
+  }
   if (ctx.type === 'card') {
     const c = cardById(ctx.id), I = insightOf(ctx.id);
     return [c.name + ' (' + cardById(ctx.id, lang === 'vi' ? 'en' : 'vi').name + ') · ' + c.meta, S.onTheCard + ': ' + c.scene, S.kwPos + ': ' + I.pos.join(', '), S.kwNeg + ': ' + I.neg.join(', '),
@@ -137,9 +142,10 @@ function localAnswer(q, ctx) {
   const signs = signMentioned(q);
   if (ctx.type === 'card') {
     const c = cardById(ctx.id), I = insightOf(ctx.id);
-    const cat = d.cat || 'general';
+    const cat = d.cat || 'general', lite = !!ctx.lite, allowed = !lite || cat === 'general' || cat === ctx.focus;
     if (cat === 'general') out.push(S.aiCardGeneral(c.name) + ' ' + I.now, I.advice);
-    else out.push(S.aiCardFocus(c.name, S.focus[cat]) + ' ' + I[cat], S.aiCardWhy + ' ' + I.pos.slice(0, 3).join(', ') + '. ' + S.aiCardShadow + ' ' + I.neg.slice(0, 2).join(', ') + '.');
+    else if (allowed) out.push(S.aiCardFocus(c.name, S.focus[cat]) + ' ' + I[cat], S.aiCardWhy + ' ' + I.pos.slice(0, 3).join(', ') + '.' + (lite ? '' : ' ' + S.aiCardShadow + ' ' + I.neg.slice(0, 2).join(', ') + '.'));
+    else out.push(S.aiLiteRedirect(c.name, S.focus[ctx.focus && ctx.focus !== 'general' ? ctx.focus : 'general']));
     if (d.yesno) { const lean = leanOf(ctx.id); out.push(lean > 0 ? S.aiYes(c.name) : lean < 0 ? S.aiNo(c.name) : S.aiMaybe(c.name)); }
     if (d.timing) out.push(S.aiTiming + ' ' + SUIT_TIMING[lang][c.suit]);
   } else if (ctx.type === 'lesson') {
@@ -270,7 +276,7 @@ async function remoteAnswer(q, ctx, history) {
 /* ---- panel ---- */
 function aiSuggestions(ctx) {
   const S = T();
-  if (ctx.type === 'card') return S.aiSugCard;
+  if (ctx.type === 'card') return ctx.lite && ctx.focus && ctx.focus !== 'general' ? [S.aiSugFocus(S.focus[ctx.focus])].concat(S.aiSugCard.slice(1)) : S.aiSugCard;
   if (ctx.type === 'lesson') return S.aiSugLesson;
   if (ctx.type === 'sign') return S.aiSugSign;
   if (ctx.type === 'numbers') return S.aiSugNumbers;

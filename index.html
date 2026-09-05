@@ -413,6 +413,7 @@ main{padding:22px 0 30px}
 .fan.deck .slot svg{filter:drop-shadow(0 4px 8px var(--shade))}.fan.deck .slot.near{box-shadow:0 0 0 2px var(--lav)}
 .fan.deck .slot.chosen{box-shadow:0 0 0 3px var(--primary);transform:scale(1.1)!important;opacity:1!important;z-index:5}.fan.deck .slot.dim{opacity:.25!important}
 .deckbar{display:flex;align-items:center;justify-content:center;gap:14px;margin:0 0 8px}.deckbar .btn{min-height:36px;padding:0 14px;font-size:18px;border-radius:999px}.deckbar span{min-width:64px;text-align:center;font-weight:600}
+.teaser{display:flex;flex-wrap:wrap;align-items:center;gap:10px;background:var(--tag-gold-bg);color:var(--tag-gold-ink);border-radius:14px;padding:12px 14px;margin:0 0 14px;font-size:14px}.teaser span{flex:1 1 200px}.teaser .btn{flex:none}
 .tap-hint{text-align:center;color:var(--fg-faint);font-size:13.5px;margin:0 0 12px;min-height:1.4em}
 .reveal{margin-top:10px}
 .hero{display:grid;grid-template-columns:112px 1fr;gap:16px;align-items:center;margin-bottom:18px}
@@ -1028,7 +1029,8 @@ const STR = {
     tapACard: 'Lướt trái phải để xem cả bộ, rồi chạm vào lá bạn thấy hợp.', deckPos: (i, n) => i + ' / ' + n,
     redraw: 'Xào lại và rút lá khác',
     yourCard: 'Lá bài của bạn',
-    energyNow: 'Năng lượng lúc này',
+    aiSugFocus: (f) => 'Lá này nói gì về ' + f.toLowerCase() + ' của mình?',
+    energyNow: 'Năng lượng lúc này', adviceHead: 'Lời nhắn cho hôm nay', pickTeaser: 'Đây chỉ là phần đọc nhanh cho hôm nay. Nghĩa đầy đủ của lá này (xuôi, ngược, hình ảnh trên lá, tình cảm, công việc, học tập, tiền bạc và các câu hỏi thường gặp) nằm trong Khóa Tarot.', pickTeaserBtn: 'Xem Khóa Tarot', aiLiteRedirect: (n, f) => 'Ở phần rút bài, mình chỉ đọc lá ' + n + ' theo góc bạn đã chọn (' + f.toLowerCase() + '). Nghĩa của lá này về các chủ đề khác, cùng nghĩa xuôi và ngược, có trong Khóa Tarot; muốn hỏi riêng chuyện của bạn thì đặt lịch với Nabu nhé.',
     energyLine: (kws) => 'Lúc này bạn đang mang năng lượng: ' + kws + '.',
     cardSays: 'Lá bài nói gì',
     onTheCard: 'Trên lá bài',
@@ -1268,7 +1270,8 @@ const STR = {
     tapACard: 'Swipe left and right through the deck, then tap the card that calls you.', deckPos: (i, n) => i + ' / ' + n,
     redraw: 'Shuffle and pick again',
     yourCard: 'Your card',
-    energyNow: 'Energy right now',
+    aiSugFocus: (f) => 'What does this card say about my ' + f.toLowerCase() + '?',
+    energyNow: 'Energy right now', adviceHead: 'A note for today', pickTeaser: 'This is only a quick reading for today. The full meaning of this card (upright, reversed, the picture, love, work, study, money and common questions) is in the Tarot course.', pickTeaserBtn: 'See the Tarot course', aiLiteRedirect: (n, f) => 'In the daily draw I read ' + n + ' only through the focus you chose (' + f.toLowerCase() + '). Its meaning for other topics, and its upright and reversed readings, are in the Tarot course; for your own situation, book a reading with Nabu.',
     energyLine: (kws) => 'Right now you carry this energy: ' + kws + '.',
     cardSays: 'What the card says',
     onTheCard: 'On the card',
@@ -10736,6 +10739,11 @@ function leanOf(id) {
 /* ---- context text (shared by both engines) ---- */
 function contextText(ctx) {
   const S = T();
+  if (ctx.type === 'card' && ctx.lite) {
+    const c = cardById(ctx.id), I = insightOf(ctx.id), f = ctx.focus && ctx.focus !== 'general' ? ctx.focus : '';
+    return [c.name + ' (' + cardById(ctx.id, lang === 'vi' ? 'en' : 'vi').name + ') · ' + c.meta, S.kwPos + ': ' + I.pos.slice(0, 3).join(', '), S.energyNow + ': ' + I.now, f ? S.focus[f] + ': ' + I[f] : 'Advice: ' + I.advice,
+      'RULE: this is the free daily draw. Answer only from the lines above. Do not give the reversed meaning, the picture, or this card\'s meaning for other topics (love, work, study, money) unless it is the focus above; say those are in the Tarot course, and suggest booking a reading with Nabu for personal questions.'].join('\n');
+  }
   if (ctx.type === 'card') {
     const c = cardById(ctx.id), I = insightOf(ctx.id);
     return [c.name + ' (' + cardById(ctx.id, lang === 'vi' ? 'en' : 'vi').name + ') · ' + c.meta, S.onTheCard + ': ' + c.scene, S.kwPos + ': ' + I.pos.join(', '), S.kwNeg + ': ' + I.neg.join(', '),
@@ -10778,9 +10786,10 @@ function localAnswer(q, ctx) {
   const signs = signMentioned(q);
   if (ctx.type === 'card') {
     const c = cardById(ctx.id), I = insightOf(ctx.id);
-    const cat = d.cat || 'general';
+    const cat = d.cat || 'general', lite = !!ctx.lite, allowed = !lite || cat === 'general' || cat === ctx.focus;
     if (cat === 'general') out.push(S.aiCardGeneral(c.name) + ' ' + I.now, I.advice);
-    else out.push(S.aiCardFocus(c.name, S.focus[cat]) + ' ' + I[cat], S.aiCardWhy + ' ' + I.pos.slice(0, 3).join(', ') + '. ' + S.aiCardShadow + ' ' + I.neg.slice(0, 2).join(', ') + '.');
+    else if (allowed) out.push(S.aiCardFocus(c.name, S.focus[cat]) + ' ' + I[cat], S.aiCardWhy + ' ' + I.pos.slice(0, 3).join(', ') + '.' + (lite ? '' : ' ' + S.aiCardShadow + ' ' + I.neg.slice(0, 2).join(', ') + '.'));
+    else out.push(S.aiLiteRedirect(c.name, S.focus[ctx.focus && ctx.focus !== 'general' ? ctx.focus : 'general']));
     if (d.yesno) { const lean = leanOf(ctx.id); out.push(lean > 0 ? S.aiYes(c.name) : lean < 0 ? S.aiNo(c.name) : S.aiMaybe(c.name)); }
     if (d.timing) out.push(S.aiTiming + ' ' + SUIT_TIMING[lang][c.suit]);
   } else if (ctx.type === 'lesson') {
@@ -10911,7 +10920,7 @@ async function remoteAnswer(q, ctx, history) {
 /* ---- panel ---- */
 function aiSuggestions(ctx) {
   const S = T();
-  if (ctx.type === 'card') return S.aiSugCard;
+  if (ctx.type === 'card') return ctx.lite && ctx.focus && ctx.focus !== 'general' ? [S.aiSugFocus(S.focus[ctx.focus])].concat(S.aiSugCard.slice(1)) : S.aiSugCard;
   if (ctx.type === 'lesson') return S.aiSugLesson;
   if (ctx.type === 'sign') return S.aiSugSign;
   if (ctx.type === 'numbers') return S.aiSugNumbers;
@@ -11217,15 +11226,15 @@ function newHand() { pick.hand = shuffle(DECK.vi.map((c) => c.id)); pick.chosen 
 function insightHTML(id, focus) {
   const S = T(), c = cardById(id), I = insightOf(id);
   if (!I) return '';
-  const focusText = focus === 'general' ? I.advice : I[focus === 'work' ? 'work' : focus];
-  let h = '<div class="ins"><h3>' + esc(S.energyNow) + '</h3>'
-    + '<p>' + esc(S.energyLine(I.pos.slice(0, 3).join(', '))) + '</p><p>' + esc(I.now) + '</p>'
-    + '<p class="scene">' + esc(c.scene) + '</p></div>';
-  h += '<div class="ins"><h3>' + esc(S.shadow) + '</h3><p>' + esc(S.shadowLine(I.neg.slice(0, 3).join(', '))) + '</p><p>' + esc(c.rev) + '</p></div>';
-  if (focus === 'general') h = h.replace('<p class="scene">', '<p>' + esc(I.advice) + '</p><p class="scene">');
-  else h += '<div class="ins"><h3>' + esc(S.focusHead(S.focus[focus])) + '</h3><p>' + esc(focusText) + '</p><p class="muted">' + esc(I.advice) + '</p></div>';
+  // A quick reading only: two keywords, the energy, the focus the visitor chose (or one note).
+  // The picture, the reversed meaning, the other topics and the questions stay in the course.
+  let h = '<div class="ins"><h3>' + esc(S.energyNow) + '</h3><p>' + esc(S.energyLine(I.pos.slice(0, 2).join(', '))) + '</p><p>' + esc(I.now) + '</p></div>';
+  if (focus === 'general') h += '<div class="ins"><h3>' + esc(S.adviceHead) + '</h3><p>' + esc(I.advice) + '</p></div>';
+  else h += '<div class="ins"><h3>' + esc(S.focusHead(S.focus[focus])) + '</h3><p>' + esc(I[focus === 'work' ? 'work' : focus]) + '</p></div>';
+  h += '<div class="teaser">🔒 <span>' + esc(S.pickTeaser) + '</span><a class="btn sm" href="#/learn/tarot">' + esc(S.pickTeaserBtn) + ' →</a></div>';
   return h;
 }
+
 function renderPick(args, params) {
   // A shared link (#/pick?card=…) opens straight on that card, in the focus it was drawn with.
   const want = params && params.card && cardById(params.card) ? params.card : '';
@@ -11311,7 +11320,7 @@ function renderReveal(animate) {
     + '<div class="ins" style="border-color:var(--gold)"><p class="muted" style="margin-bottom:12px">' + esc(S.quickNote) + '</p>'
     + '<div class="row"><a class="btn primary" href="#/book?card=' + id + '">' + esc(S.bookWithCard) + '</a><a class="btn" href="#/learn/card/' + id + '">' + esc(S.learnCard) + '</a>'
     + '<button class="btn" id="shareCard">' + esc(S.shareCard) + '</button></div></div>'
-    + aiPanelHTML({ type: 'card', id: id, focus: pick.focus })
+    + aiPanelHTML({ type: 'card', id: id, focus: pick.focus, lite: 1 })
     + '<button class="btn block" id="redraw" style="margin-top:6px">' + esc(S.redraw) + '</button>';
   bindAI(r);
   $('#shareCard').addEventListener('click', () => shareOrCopy(S.shareText(c.name, kws), appURL() + '#/pick?card=' + encodeURIComponent(id) + '&focus=' + pick.focus));
@@ -13027,7 +13036,7 @@ function adminCodes(p) {
 ROUTES.admin = { nav: '', render: renderAdmin };
 
 /* ============================ boot ============================ */
-window.APP_VERSION = 'v57';
+window.APP_VERSION = 'v58';
 window.NABU = { CONFIG: CONFIG, LESSONS: LESSONS, localAnswer: localAnswer, compatVerdict: compatVerdict, numerologyOf: numerologyOf, ZDEEP: ZDEEP, lunarToday: lunarToday, solarToLunar: solarToLunar, DECK: DECK, INSIGHT: INSIGHT, KW: KW, ASK: ASK, TOPICS: TOPICS, GUIDES: GUIDES, SERVICES: SERVICES, COURSES: COURSES, ACCESS: ACCESS, makeCode: makeCode, parseCode: parseCode, ZODIAC: ZODIAC, pick: pick, book: book,
   insightHTML: insightHTML, insightOf: insightOf, sunSignIndex: sunSignIndex, lifePath: lifePath, PROFILE: () => PROFILE, BE: BE };
 BE.initP = BE.init().catch(() => { /* backend unreachable: the app runs device-only */ });

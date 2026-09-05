@@ -8,15 +8,15 @@ function newHand() { pick.hand = shuffle(DECK.vi.map((c) => c.id)); pick.chosen 
 function insightHTML(id, focus) {
   const S = T(), c = cardById(id), I = insightOf(id);
   if (!I) return '';
-  const focusText = focus === 'general' ? I.advice : I[focus === 'work' ? 'work' : focus];
-  let h = '<div class="ins"><h3>' + esc(S.energyNow) + '</h3>'
-    + '<p>' + esc(S.energyLine(I.pos.slice(0, 3).join(', '))) + '</p><p>' + esc(I.now) + '</p>'
-    + '<p class="scene">' + esc(c.scene) + '</p></div>';
-  h += '<div class="ins"><h3>' + esc(S.shadow) + '</h3><p>' + esc(S.shadowLine(I.neg.slice(0, 3).join(', '))) + '</p><p>' + esc(c.rev) + '</p></div>';
-  if (focus === 'general') h = h.replace('<p class="scene">', '<p>' + esc(I.advice) + '</p><p class="scene">');
-  else h += '<div class="ins"><h3>' + esc(S.focusHead(S.focus[focus])) + '</h3><p>' + esc(focusText) + '</p><p class="muted">' + esc(I.advice) + '</p></div>';
+  // A quick reading only: two keywords, the energy, the focus the visitor chose (or one note).
+  // The picture, the reversed meaning, the other topics and the questions stay in the course.
+  let h = '<div class="ins"><h3>' + esc(S.energyNow) + '</h3><p>' + esc(S.energyLine(I.pos.slice(0, 2).join(', '))) + '</p><p>' + esc(I.now) + '</p></div>';
+  if (focus === 'general') h += '<div class="ins"><h3>' + esc(S.adviceHead) + '</h3><p>' + esc(I.advice) + '</p></div>';
+  else h += '<div class="ins"><h3>' + esc(S.focusHead(S.focus[focus])) + '</h3><p>' + esc(I[focus === 'work' ? 'work' : focus]) + '</p></div>';
+  h += '<div class="teaser">🔒 <span>' + esc(S.pickTeaser) + '</span><a class="btn sm" href="#/learn/tarot">' + esc(S.pickTeaserBtn) + ' →</a></div>';
   return h;
 }
+
 function renderPick(args, params) {
   // A shared link (#/pick?card=…) opens straight on that card, in the focus it was drawn with.
   const want = params && params.card && cardById(params.card) ? params.card : '';
@@ -102,7 +102,7 @@ function renderReveal(animate) {
     + '<div class="ins" style="border-color:var(--gold)"><p class="muted" style="margin-bottom:12px">' + esc(S.quickNote) + '</p>'
     + '<div class="row"><a class="btn primary" href="#/book?card=' + id + '">' + esc(S.bookWithCard) + '</a><a class="btn" href="#/learn/card/' + id + '">' + esc(S.learnCard) + '</a>'
     + '<button class="btn" id="shareCard">' + esc(S.shareCard) + '</button></div></div>'
-    + aiPanelHTML({ type: 'card', id: id, focus: pick.focus })
+    + aiPanelHTML({ type: 'card', id: id, focus: pick.focus, lite: 1 })
     + '<button class="btn block" id="redraw" style="margin-top:6px">' + esc(S.redraw) + '</button>';
   bindAI(r);
   $('#shareCard').addEventListener('click', () => shareOrCopy(S.shareText(c.name, kws), appURL() + '#/pick?card=' + encodeURIComponent(id) + '&focus=' + pick.focus));
