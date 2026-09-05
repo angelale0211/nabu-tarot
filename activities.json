@@ -1,37 +1,132 @@
-{"items": [
- {
-  "id": "2026-09-05-pile-tuan-toi",
-  "type": "pile",
-  "date": "2026-09-05",
-  "resultsDate": "2026-09-09",
-  "title": {"vi": "Chọn 1 tụ bài: tuần tới vũ trụ muốn nhắn bạn điều gì?", "en": "Pick a pile: what does the universe want to tell you next week?"},
-  "intro": {"vi": "Hít một hơi thật sâu. Nhìn ba tụ bài bên dưới và chạm vào tụ **hút ánh mắt bạn trước tiên**, đừng nghĩ lâu.\n\nThông điệp của từng tụ sẽ được lật lên vào **thứ Tư 9/9**. Bạn chỉ cần quay lại và chạm vào tụ mình đã chọn. 🌙", "en": "Take a deep breath. Look at the three piles below and tap the one **your eyes land on first**, without thinking too long.\n\nEach pile's message flips open on **Wednesday 9 September**. Just come back and tap the pile you chose. 🌙"},
-  "piles": [
-   {"label": "Trái", "msg": {"vi": "## Tụ 1 · Ngôi Sao, Sáu Cốc, Hiệp Sĩ Gậy\n\nTuần tới của bạn có màu của **hy vọng vừa nhen lại**. Ngôi Sao nói rằng một chuyện từng làm bạn mệt đang dịu xuống, và bạn được phép tin vào chính mình thêm một lần.\n\nSáu Cốc mang về một người hoặc một kỷ niệm cũ: tin nhắn bất ngờ, một câu chuyện xưa được nhắc lại, hoặc chính bạn thấy nhớ một phiên bản hồn nhiên hơn của mình.\n\nHiệp Sĩ Gậy bảo: đừng chỉ ngồi nhớ. Có một việc bạn đã định làm từ lâu, tuần này hãy bắt đầu nó, dù chỉ là bước nhỏ đầu tiên.\n\n> Lời nhắn: **bạn đã đủ tốt để bước tiếp**. Tuần này, hãy nói có với một lời mời.", "en": "## Pile 1 · The Star, Six of Cups, Knight of Wands\n\nYour week has the colour of **hope kindling again**. The Star says something that wore you out is easing, and you are allowed to trust yourself once more.\n\nThe Six of Cups brings back a person or an old memory: an unexpected message, an old story retold, or simply missing a more innocent version of yourself.\n\nThe Knight of Wands says: do not just sit and remember. There is something you have meant to do for a long time; start it this week, even with the smallest first step.\n\n> Message: **you are already good enough to move on**. This week, say yes to one invitation."}},
-   {"label": "Giữa", "msg": {"vi": "## Tụ 2 · Bốn Kiếm, Nữ Hoàng Tiền, Bánh Xe\n\nTụ này chọn bạn vì bạn **đang cần được nghỉ**. Bốn Kiếm không phải là dừng hẳn, mà là tạm gác thanh kiếm xuống: ngủ đủ, tắt bớt thông báo, đừng trả lời ngay mọi tin nhắn.\n\nNữ Hoàng Tiền nhắc chuyện thực tế: tiền bạc, nhà cửa, sức khỏe. Có một việc nhỏ về tiền hay sức khỏe bạn cứ để đó, giải quyết nó tuần này sẽ nhẹ lòng hơn nhiều so với bạn nghĩ.\n\nBánh Xe khép lại tụ bài với một tin tốt: một chuyện bạn không kiểm soát được đang tự xoay theo hướng có lợi. Bạn không cần đẩy, chỉ cần đừng cản.\n\n> Lời nhắn: **nghỉ cũng là làm việc**. Tuần này, hãy để một chuyện tự đến.", "en": "## Pile 2 · Four of Swords, Queen of Pentacles, Wheel of Fortune\n\nThis pile chose you because you **need rest**. The Four of Swords is not a full stop, it is laying the sword down for a while: sleep enough, silence some notifications, do not answer every message at once.\n\nThe Queen of Pentacles points to practical life: money, home, health. There is one small money or health matter you keep leaving; sorting it this week lightens you more than you expect.\n\nThe Wheel closes the pile with good news: something outside your control is turning your way on its own. You do not need to push, only not to block it.\n\n> Message: **rest is also work**. This week, let one thing come to you."}},
-   {"label": "Phải", "msg": {"vi": "## Tụ 3 · Hai Cốc, Bảy Gậy, Mặt Trời\n\nTuần tới của bạn xoay quanh **một người**. Hai Cốc là một cuộc gặp, một lời làm lành hay một sự hiểu nhau vừa mới bắt đầu; nếu bạn đang chờ ai đó, hãy để ý một cuộc trò chuyện tưởng như bình thường.\n\nBảy Gậy cảnh báo một chút: sẽ có lúc bạn phải giữ lập trường của mình, có thể trong công việc, có thể trong gia đình. Giữ nó nhẹ nhàng nhưng đừng lùi.\n\nMặt Trời là lá kết đẹp nhất bộ bài: chuyện bạn lo đang sáng dần. Cuối tuần có một niềm vui nhỏ nhưng rất thật, kiểu niềm vui khiến bạn tự cười một mình.\n\n> Lời nhắn: **bạn không cần chứng minh gì cả**. Tuần này, hãy nói thật một điều bạn muốn.", "en": "## Pile 3 · Two of Cups, Seven of Wands, The Sun\n\nYour week turns around **one person**. The Two of Cups is a meeting, a making-up, or an understanding that has only just begun; if you are waiting for someone, watch an ordinary-looking conversation.\n\nThe Seven of Wands warns a little: at some point you will have to hold your ground, perhaps at work, perhaps in the family. Hold it gently, but do not step back.\n\nThe Sun is the finest closing card in the deck: what you worry about is brightening. The weekend brings a small but very real joy, the kind that makes you smile to yourself.\n\n> Message: **you have nothing to prove**. This week, say one true thing you want."}}
-  ],
-  "results": false
- },
- {
-  "id": "2026-09-05-poll-da-nghi",
-  "type": "poll",
-  "date": "2026-09-05",
-  "title": {"vi": "Bình chọn tuần này: cung nào hay đa nghi nhất theo bạn?", "en": "This week's poll: which sign is the most suspicious, in your view?"},
-  "intro": {"vi": "Chỉ để vui thôi, không có đáp án đúng. Chọn theo kinh nghiệm của bạn với bạn bè, người yêu, đồng nghiệp. Kết quả hiện ngay sau khi bạn bình chọn. 👀", "en": "Just for fun, there is no right answer. Choose from your experience with friends, partners and colleagues. Results show as soon as you vote. 👀"},
-  "options": [
-   {"vi": "♏ Bọ Cạp", "en": "♏ Scorpio"},
-   {"vi": "♍ Xử Nữ", "en": "♍ Virgo"},
-   {"vi": "♑ Ma Kết", "en": "♑ Capricorn"},
-   {"vi": "♋ Cự Giải", "en": "♋ Cancer"}
-  ],
-  "closed": false
- },
- {
-  "id": "2026-09-05-wish-thang-9",
-  "type": "wish",
-  "date": "2026-09-05",
-  "title": {"vi": "Điều ước đầu tháng 9 🌙", "en": "A wish for the start of September 🌙"},
-  "intro": {"vi": "Tháng 9 mở ra với một trăng non vào ngày 21. Viết một điều ước cho tháng này: **ngắn, ở thì hiện tại, và về chính bạn** (\"mình đang…\" thay vì \"mong người ấy…\"). Gửi vào lọ, rồi làm một bước nhỏ đầu tiên ngay hôm nay.", "en": "September opens with a New Moon on the 21st. Write one wish for the month: **short, in the present tense, and about yourself** (\"I am…\" rather than \"I hope they…\"). Send it into the jar, then take one small first step today."}
- }
-]}
+{
+ "items": [
+  {
+   "id": "2026-09-04-6pir",
+   "resultsDate": "2026-09-06",
+   "title": {
+    "en": "🔮 WHAT ARE THEY THINKING ABOUT YOU?",
+    "vi": "🔮 Người ấy đang nghĩ gì về bạn?"
+   },
+   "date": "2026-09-04",
+   "intro": {
+    "vi": "🔮 Chọn 1 tụ bài — Người ấy đang nghĩ gì về bạn?\n\nHít sâu, nghĩ về người ấy và chọn tụ bạn cảm thấy bị thu hút nhất:\n🕯️ 1 • 🌸 2 • 🌙 3 • 💎 4\n\n💌 Comment số tụ bạn chọn.\n📅 Quay lại phần bình luận vào 06/09/2026 để xem kết quả nhé. ✨\n\n💌 Đây là trải bài tổng quát, vì vậy hãy đón nhận những thông điệp khiến bạn cảm thấy kết nối và nhẹ nhàng bỏ qua những phần không phù hợp.\n\nNABU — Lắng nghe và thấu hiểu ♡ 🔮✨"
+   },
+   "type": "pile",
+   "results": true,
+   "piles": [
+    {
+     "label": "🕯️",
+     "msg": {
+      "en": "In their eyes, you may be someone who has experienced a sense of lack or not having enough, whether emotionally, financially, or in terms of security. Even so, what they especially appreciate about you is that you still manage to remain hopeful, optimistic, and open-hearted despite everything you have been through. ✨\n\nThey also see your personality and way of thinking as quite different from others. Not “different” in a strange or difficult way, but in a way that makes you interesting and never boring. Being around you may have helped them discover new perspectives or ideas they had never considered before.\n\nThey also see you as someone who is curious, eager to explore new things, enthusiastic, and perhaps a little innocent at times. 🌱\n\nThis person seems to understand quite a lot about the pain and lessons you have experienced in the past. They have noticed how you have changed over time and recognize that whenever you transform, it is usually because you are trying to become a better version of yourself.\n\n💞 If the two of you are in a situationship or share feelings beyond friendship, this reading suggests that they may genuinely have feelings for you. However, they also seem to idealize you quite strongly. In their eyes, you may appear more perfect, beautiful, or exceptional than you really see yourself.\n\nAt the same time, this person may still carry unfinished feelings or attachments to people and situations from their past. They are trying to let go, but that process may not be completely finished yet. 🌙",
+      "vi": "Trong mắt người ấy, bạn có thể là một người từng mang trong mình cảm giác thiếu thốn hoặc chưa đủ đầy, có thể về tình cảm, sự an toàn hay cả phương diện vật chất. Tuy nhiên, điều họ đặc biệt yêu thích ở bạn là dù đã trải qua những khoảng thời gian như vậy, bạn vẫn giữ được sự lạc quan, hy vọng và cởi mở với cuộc sống. ✨\n\nHọ cũng cảm thấy bạn có cách suy nghĩ khá khác biệt. Không phải kiểu “khác người” khiến người khác khó hiểu, mà ngược lại, chính sự độc đáo ấy khiến bạn trở nên thú vị và không hề nhàm chán. Khi ở bên bạn, họ có thể học được nhiều góc nhìn mới hoặc khám phá những điều trước đây họ chưa từng nghĩ tới.\n\nTrong mắt họ, bạn còn là người tò mò, thích khám phá, hào hứng với những điều mới mẻ, đôi lúc có một chút ngây thơ rất riêng. 🌱\n\nNgười này dường như cũng hiểu khá rõ những tổn thương và bài học bạn từng trải qua. Họ nhìn thấy sự thay đổi của bạn theo thời gian và nhận ra rằng mỗi lần bạn thay đổi, đó thường là vì bạn đang cố gắng trở thành một phiên bản tốt hơn của chính mình.\n\n💞 Nếu hai bạn đang mập mờ hoặc có tình cảm trên mức bạn bè, trải bài cho thấy người ấy có thể thực sự có cảm xúc dành cho bạn. Tuy nhiên, họ đang có xu hướng lý tưởng hóa bạn khá nhiều. Trong mắt họ, bạn đẹp đẽ, đặc biệt và gần như hoàn hảo hơn so với con người thực tế của bạn.\n\nĐồng thời, bản thân người này vẫn còn một vài vương vấn với người hoặc chuyện trong quá khứ. Họ đang cố gắng buông bỏ, nhưng có lẽ quá trình đó vẫn chưa hoàn toàn kết thúc. 🌙"
+     }
+    },
+    {
+     "msg": {
+      "en": "They see you as someone who is patient, persistent, dependable, and capable of long-term commitment. Once you choose something—or someone—you tend to take it seriously and invest in it for the long run.\n\nThey also view you as hardworking, practical, and fairly good at managing money. At the same time, you carry a passionate side: you are enthusiastic, romantic, imaginative, and full of ideas when something truly excites you. ✨\n\nHowever, you may sometimes expect too much. When your hopes become very high, you can easily fall into anxiety, disappointment, or sadness if reality does not match what you imagined.\n\nEven so, this person believes you are capable of finding balance again. In their eyes, you are naturally diplomatic and often prefer to keep the peace and find harmony rather than let situations become more complicated. 🌿\n\n💞 As for their feelings, this person may genuinely care about you, but they also seem to have a dreamy, romantic, artistic nature.\n\nWhen their emotions are strong, they may express affection very openly—through attention, sweet words, creative gestures, or romantic acts. However, their feelings may also shift depending on the phase they are in.\n\nIn simple terms, they may be the type to fully immerse themselves in whatever they feel in the moment, but once the dreamy phase fades, that same inspiration could eventually be directed elsewhere.\n\nIf you are looking for something stable and long-term, pay more attention to consistency in their actions than to intense romantic moments alone. 🌙",
+      "vi": "Người ấy nhìn bạn là một người kiên trì, nhẫn nại và đáng tin cậy. Khi đã lựa chọn điều gì hoặc gắn bó với một ai đó, bạn thường có xu hướng nghiêm túc và hướng đến sự lâu dài.\n\nBạn cũng được đánh giá là người chăm chỉ, biết tính toán và quản lý tài chính khá hợp lý. Bên cạnh sự ổn định ấy, bạn vẫn có một nguồn năng lượng rất nhiệt huyết: nhiều đam mê, nhiều ý tưởng, khá lãng mạn và luôn hào hứng với những điều mình yêu thích. ✨\n\nTuy nhiên, đôi khi bạn lại đặt kỳ vọng quá cao. Khi mong chờ một điều gì đó quá nhiều, bạn dễ rơi vào trạng thái lo âu, thất vọng hoặc buồn bã nếu thực tế không diễn ra đúng như mình hình dung.\n\nDù vậy, người ấy tin rằng bạn có khả năng tự tìm lại sự cân bằng. Trong mắt họ, bạn vốn là người khá khéo léo, biết “dĩ hòa vi quý” và thường cố gắng dung hòa mọi thứ thay vì đẩy vấn đề đi quá xa. 🌿\n\n💞 Về tình cảm, người này có thể thực sự thương và có cảm xúc với bạn, nhưng họ lại sở hữu một tâm hồn khá bay bổng, lãng mạn và nghệ sĩ.\n\nKhi cảm xúc đang mạnh, họ có thể thể hiện tình cảm rất rõ ràng — dành cho bạn nhiều sự chú ý, lời nói ngọt ngào hoặc những hành động cực kỳ lãng mạn. Nhưng cảm xúc của người này cũng có khả năng thay đổi theo từng giai đoạn.\n\nNói một cách dễ hiểu, đây có thể là kiểu người rất dễ sống hết mình với cảm xúc ở hiện tại, nhưng khi sự mộng mơ qua đi, nguồn cảm hứng ấy cũng có thể được họ hướng sang một nơi khác. Vì vậy, nếu đang tìm kiếm sự ổn định lâu dài, hãy quan sát sự nhất quán trong hành động của họ nhiều hơn là những khoảnh khắc lãng mạn nhất thời. 🌙"
+     },
+     "label": "🌸"
+    },
+    {
+     "msg": {
+      "en": "In their eyes, you are someone who is highly capable, especially when it comes to your profession, technical skills, or work. They seem to have very little to criticize about your competence.\n\nYou also appear financially and materially stable to them—someone who knows how to earn money, build a solid foundation, and create success through your own abilities. 💼✨\n\nThey see you as a person who knows what you want and where you are going. To some extent, they may even admire you.\n\nHowever, they may also feel that you have a lot of drive and sometimes set very high standards for yourself and others. Because of this, you may become disappointed when things do not meet your expectations. From their point of view, you may also come across as slightly practical or materialistic in certain situations.\n\n💞 If the two of you are in a situationship or romantic connection, this reading suggests that they do have feelings for you.\n\nEven so, they may still choose to leave—or they may have already left, or be considering taking a different path.\n\nIt is not necessarily because they do not value you. Rather, they may have realized that the paths and destinations the two of you are heading toward are different.\n\nThere may still be regret and lingering feelings, but once this person makes a decision, they are more likely to continue moving forward than to turn back. 🍂",
+      "vi": "Trong mắt người ấy, bạn là một người rất có năng lực, đặc biệt ở phương diện chuyên môn, kỹ thuật hoặc công việc. Họ gần như không có quá nhiều điều để chê về khả năng của bạn.\n\nBạn cũng tạo cho họ cảm giác khá ổn định về tài chính và vật chất — một người biết kiếm tiền, biết xây dựng nền tảng cho mình và có khả năng tự tạo nên thành công. 💼✨\n\nHọ nhìn bạn như một người biết mình muốn gì và đang đi đâu. Thậm chí, ở một mức độ nào đó, họ còn có sự ngưỡng mộ dành cho bạn.\n\nTuy nhiên, họ cũng cảm thấy bạn có rất nhiều nhiệt huyết và đôi khi đặt tiêu chuẩn khá cao. Chính vì vậy, bạn có thể dễ thất vọng khi mọi thứ không đạt được mức mình kỳ vọng. Trong một vài tình huống, họ cũng có thể thấy bạn hơi thiên về thực tế hoặc vật chất hơn so với góc nhìn của họ.\n\n💞 Nếu hai bạn đang trong mối quan hệ mập mờ hoặc có tình cảm với nhau, trải bài cho thấy người ấy có cảm xúc dành cho bạn.\n\nNhưng dù có tình cảm, họ vẫn có thể lựa chọn rời đi — hoặc đã rời đi, hoặc đang nghĩ đến việc bước sang một hướng khác.\n\nKhông hẳn vì họ không trân trọng bạn, mà bởi họ nhận ra con đường và đích đến của hai người có thể không giống nhau. Có thể vẫn còn tiếc nuối, vẫn còn tình cảm, nhưng một khi đã quyết định, người này có xu hướng tiếp tục tiến về phía trước thay vì ngoảnh lại. 🍂"
+     },
+     "label": "🌙"
+    },
+    {
+     "label": "💎",
+     "msg": {
+      "en": "In their eyes, you are someone who enjoys exploring new things and may have a strong connection to intuition, spirituality, or things that cannot always be logically explained. 🔮\n\nWhat they admire most about you is your ability to understand yourself. You know who you are, what you want, what your strengths are, and where your weaknesses lie.\n\nIn other words: “Know yourself, know the situation, and you are already halfway to success.” ✨\n\nOnce you decide on a goal, you also have the determination and persistence to pursue it until the end. However, that certainty may sometimes make you a little too trusting or stubborn about your own opinions.\n\nThey also think you enjoy keeping up with what is happening around you and may like a little gossip here and there 😆, but sometimes that curiosity can unintentionally pull you into drama that has nothing to do with you.\n\n💞 If the two of you are in a situationship or romantic connection, this person’s feelings toward you are probably not too difficult to read.\n\nThey seem to be fairly straightforward. If they like you, they are likely to show it. If they do not, their attitude will usually make that clear too. Even if they do not say anything directly, their actions and signals may already tell you quite a lot.\n\nSo for this pile, trust your intuition. 🌙\n\nThere is, however, one small thing to keep in mind: one of you may currently be in an emotionally unstable or unbalanced state.\n\nBefore drawing any final conclusions about the relationship, give both of you enough time to understand your feelings more clearly. 🤍",
+      "vi": "Trong mắt người ấy, bạn là người thích khám phá những điều mới mẻ, có niềm tin khá mạnh vào trực giác, tâm linh hoặc những điều khó lý giải. 🔮\n\nĐiều họ đánh giá cao nhất ở bạn là khả năng hiểu chính mình. Bạn biết mình là ai, muốn gì, đâu là điểm mạnh và đâu là điều mình còn thiếu.\n\nKiểu như: “Biết mình biết ta, trăm trận trăm thắng.” ✨\n\nKhi đã xác định được mục tiêu, bạn cũng có ý chí và sự kiên trì để theo đuổi đến cùng. Tuy nhiên, chính sự chắc chắn ấy đôi lúc lại khiến bạn hơi cả tin hoặc bảo thủ với quan điểm của mình.\n\nNgười ấy cũng thấy bạn khá thích cập nhật chuyện xung quanh, “hóng” một chút cũng vui 😆, nhưng đôi khi sự tò mò này vô tình khiến bạn bị kéo vào những thị phi hoặc câu chuyện vốn chẳng liên quan đến mình.\n\n💞 Nếu hai bạn đang mập mờ hoặc có tình cảm với nhau, cảm xúc của người này dành cho bạn khá dễ nhận biết.\n\nĐây có vẻ là một người tương đối thẳng thắn: thích thì họ sẽ thể hiện, còn nếu không có cảm xúc thì thái độ cũng thường khá rõ. Ngay cả khi họ không trực tiếp nói ra, hành động và những tín hiệu họ gửi đến cũng đủ để bạn phần nào cảm nhận được.\n\nVì vậy, ở tụ này, hãy tin vào trực giác của mình. 🌙\n\nTuy nhiên, có một điều cần lưu ý: một trong hai người hiện có thể đang ở trạng thái cảm xúc chưa thực sự ổn định hoặc cân bằng. Vì thế, trước khi vội vàng kết luận về mối quan hệ, hãy để cả hai có thêm thời gian nhìn rõ cảm xúc của chính mình. 🤍"
+     }
+    }
+   ],
+   "closed": false
+  },
+  {
+   "resultsDate": "2026-09-09",
+   "piles": [
+    {
+     "msg": {
+      "en": "## Pile 1 · The Star, Six of Cups, Knight of Wands\n\nYour week has the colour of **hope kindling again**. The Star says something that wore you out is easing, and you are allowed to trust yourself once more.\n\nThe Six of Cups brings back a person or an old memory: an unexpected message, an old story retold, or simply missing a more innocent version of yourself.\n\nThe Knight of Wands says: do not just sit and remember. There is something you have meant to do for a long time; start it this week, even with the smallest first step.\n\n> Message: **you are already good enough to move on**. This week, say yes to one invitation.",
+      "vi": "## Tụ 1 · Ngôi Sao, Sáu Cốc, Hiệp Sĩ Gậy\n\nTuần tới của bạn có màu của **hy vọng vừa nhen lại**. Ngôi Sao nói rằng một chuyện từng làm bạn mệt đang dịu xuống, và bạn được phép tin vào chính mình thêm một lần.\n\nSáu Cốc mang về một người hoặc một kỷ niệm cũ: tin nhắn bất ngờ, một câu chuyện xưa được nhắc lại, hoặc chính bạn thấy nhớ một phiên bản hồn nhiên hơn của mình.\n\nHiệp Sĩ Gậy bảo: đừng chỉ ngồi nhớ. Có một việc bạn đã định làm từ lâu, tuần này hãy bắt đầu nó, dù chỉ là bước nhỏ đầu tiên.\n\n> Lời nhắn: **bạn đã đủ tốt để bước tiếp**. Tuần này, hãy nói có với một lời mời."
+     },
+     "label": "Trái"
+    },
+    {
+     "msg": {
+      "en": "## Pile 2 · Four of Swords, Queen of Pentacles, Wheel of Fortune\n\nThis pile chose you because you **need rest**. The Four of Swords is not a full stop, it is laying the sword down for a while: sleep enough, silence some notifications, do not answer every message at once.\n\nThe Queen of Pentacles points to practical life: money, home, health. There is one small money or health matter you keep leaving; sorting it this week lightens you more than you expect.\n\nThe Wheel closes the pile with good news: something outside your control is turning your way on its own. You do not need to push, only not to block it.\n\n> Message: **rest is also work**. This week, let one thing come to you.",
+      "vi": "## Tụ 2 · Bốn Kiếm, Nữ Hoàng Tiền, Bánh Xe\n\nTụ này chọn bạn vì bạn **đang cần được nghỉ**. Bốn Kiếm không phải là dừng hẳn, mà là tạm gác thanh kiếm xuống: ngủ đủ, tắt bớt thông báo, đừng trả lời ngay mọi tin nhắn.\n\nNữ Hoàng Tiền nhắc chuyện thực tế: tiền bạc, nhà cửa, sức khỏe. Có một việc nhỏ về tiền hay sức khỏe bạn cứ để đó, giải quyết nó tuần này sẽ nhẹ lòng hơn nhiều so với bạn nghĩ.\n\nBánh Xe khép lại tụ bài với một tin tốt: một chuyện bạn không kiểm soát được đang tự xoay theo hướng có lợi. Bạn không cần đẩy, chỉ cần đừng cản.\n\n> Lời nhắn: **nghỉ cũng là làm việc**. Tuần này, hãy để một chuyện tự đến."
+     },
+     "label": "Giữa"
+    },
+    {
+     "label": "Phải",
+     "msg": {
+      "en": "## Pile 3 · Two of Cups, Seven of Wands, The Sun\n\nYour week turns around **one person**. The Two of Cups is a meeting, a making-up, or an understanding that has only just begun; if you are waiting for someone, watch an ordinary-looking conversation.\n\nThe Seven of Wands warns a little: at some point you will have to hold your ground, perhaps at work, perhaps in the family. Hold it gently, but do not step back.\n\nThe Sun is the finest closing card in the deck: what you worry about is brightening. The weekend brings a small but very real joy, the kind that makes you smile to yourself.\n\n> Message: **you have nothing to prove**. This week, say one true thing you want.",
+      "vi": "## Tụ 3 · Hai Cốc, Bảy Gậy, Mặt Trời\n\nTuần tới của bạn xoay quanh **một người**. Hai Cốc là một cuộc gặp, một lời làm lành hay một sự hiểu nhau vừa mới bắt đầu; nếu bạn đang chờ ai đó, hãy để ý một cuộc trò chuyện tưởng như bình thường.\n\nBảy Gậy cảnh báo một chút: sẽ có lúc bạn phải giữ lập trường của mình, có thể trong công việc, có thể trong gia đình. Giữ nó nhẹ nhàng nhưng đừng lùi.\n\nMặt Trời là lá kết đẹp nhất bộ bài: chuyện bạn lo đang sáng dần. Cuối tuần có một niềm vui nhỏ nhưng rất thật, kiểu niềm vui khiến bạn tự cười một mình.\n\n> Lời nhắn: **bạn không cần chứng minh gì cả**. Tuần này, hãy nói thật một điều bạn muốn."
+     }
+    }
+   ],
+   "intro": {
+    "en": "Take a deep breath. Look at the three piles below and tap the one **your eyes land on first**, without thinking too long.\n\nEach pile's message flips open on **Wednesday 9 September**. Just come back and tap the pile you chose. 🌙",
+    "vi": "Hít một hơi thật sâu. Nhìn ba tụ bài bên dưới và chạm vào tụ **hút ánh mắt bạn trước tiên**, đừng nghĩ lâu.\n\nThông điệp của từng tụ sẽ được lật lên vào **thứ Tư 9/9**. Bạn chỉ cần quay lại và chạm vào tụ mình đã chọn. 🌙"
+   },
+   "type": "pile",
+   "results": false,
+   "title": {
+    "en": "Pick a pile: what does the universe want to tell you next week?",
+    "vi": "Chọn 1 tụ bài: tuần tới vũ trụ muốn nhắn bạn điều gì?"
+   },
+   "date": "2026-09-05",
+   "id": "2026-09-05-pile-tuan-toi"
+  },
+  {
+   "id": "2026-09-05-poll-da-nghi",
+   "title": {
+    "en": "This week's poll: which sign is the most suspicious, in your view?",
+    "vi": "Bình chọn tuần này: cung nào hay đa nghi nhất theo bạn?"
+   },
+   "closed": false,
+   "intro": {
+    "en": "Just for fun, there is no right answer. Choose from your experience with friends, partners and colleagues. Results show as soon as you vote. 👀",
+    "vi": "Chỉ để vui thôi, không có đáp án đúng. Chọn theo kinh nghiệm của bạn với bạn bè, người yêu, đồng nghiệp. Kết quả hiện ngay sau khi bạn bình chọn. 👀"
+   },
+   "date": "2026-09-05",
+   "type": "poll",
+   "options": [
+    {
+     "en": "♏ Scorpio",
+     "vi": "♏ Bọ Cạp"
+    },
+    {
+     "en": "♍ Virgo",
+     "vi": "♍ Xử Nữ"
+    },
+    {
+     "en": "♑ Capricorn",
+     "vi": "♑ Ma Kết"
+    },
+    {
+     "en": "♋ Cancer",
+     "vi": "♋ Cự Giải"
+    }
+   ]
+  },
+  {
+   "type": "wish",
+   "date": "2026-09-05",
+   "intro": {
+    "en": "September opens with a New Moon on the 21st. Write one wish for the month: **short, in the present tense, and about yourself** (\"I am…\" rather than \"I hope they…\"). Send it into the jar, then take one small first step today.",
+    "vi": "Tháng 9 mở ra với một trăng non vào ngày 21. Viết một điều ước cho tháng này: **ngắn, ở thì hiện tại, và về chính bạn** (\"mình đang…\" thay vì \"mong người ấy…\"). Gửi vào lọ, rồi làm một bước nhỏ đầu tiên ngay hôm nay."
+   },
+   "title": {
+    "en": "A wish for the start of September 🌙",
+    "vi": "Điều ước đầu tháng 9 🌙"
+   },
+   "id": "2026-09-05-wish-thang-9"
+  }
+ ]
+}
