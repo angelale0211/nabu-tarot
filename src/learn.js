@@ -28,7 +28,7 @@ function bindPaywall(root, after) {
     const r = parseCode($('#ccode', root).value);
     const st = $('#cstatus', root);
     if (!r) { st.textContent = S.badCode; st.className = 'hint err'; return; }
-    ACCESS.grant(r.course, r.until);
+    ACCESS.grant(r.courses || [r.course], r.until);
     toast(S.unlocked); if (after) after(); else route();
   });
 }

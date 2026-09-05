@@ -45,9 +45,11 @@ function birthParts() {
 function mySign() { const b = birthParts(); return b ? sunSignIndex(b.m, b.d) : -1; }
 
 /* ---- course access ----
-   Codes: NABU-T-YYMMDD-XXXX (T = tarot, L = lenormand), the date is the expiry
-   and XXXX a checksum over date + CONFIG.courseSecret. Checked on the device;
-   good enough to keep casual sharing in check, not a bank vault. */
+   Codes: NABU-T-YYMMDD-XXXX (T = tarot, L = lenormand, M = manifestation,
+   P = playing cards, C = coin, Y = message tree, B = both of those two), the
+   date is the expiry and XXXX a checksum over date + CONFIG.courseSecret.
+   Checked on the device; good enough to keep casual sharing in check, not a
+   bank vault. */
 const ACCESS = {
   get() { return store.get('nabu-access', {}); },
   // Nabu (any admin email) always has every course open.
@@ -56,21 +58,33 @@ const ACCESS = {
   // BE is a top-level const (not on window), so test for it with typeof.
   isAdmin() { const be = typeof BE !== 'undefined' ? BE : null; return !!((be && be.user && be.isAdmin()) || (!(be && be.ready) && store.get('nabu-admin', ''))); },
   has(course) { if (this.isAdmin()) return true; const a = this.get()[course]; return !!a && a >= isoDate(new Date()); },
-  grant(course, until) { const a = this.get(); a[course] = until; store.set('nabu-access', a); if (typeof BE !== 'undefined' && BE.user) BE.pushProfile(); }
+  grant(course, until) { const a = this.get(); (Array.isArray(course) ? course : [course]).forEach((c) => { a[c] = until; }); store.set('nabu-access', a); if (typeof BE !== 'undefined' && BE.user) BE.pushProfile(); }
 };
+
+/* ---- one free turn a week for the coin and the message tree ----
+   Weeks run Monday to Sunday on the device clock. A code (or the bundle code,
+   or an admin account) lifts the limit entirely. */
+function weekStart(when) { const x = new Date(when || Date.now()); x.setHours(0, 0, 0, 0); x.setDate(x.getDate() - ((x.getDay() + 6) % 7)); return isoDate(x); }
+function weekNext() { const x = new Date(); x.setHours(0, 0, 0, 0); x.setDate(x.getDate() + (7 - ((x.getDay() + 6) % 7))); return isoDate(x); }
+const luckUnlimited = (kind) => ACCESS.has(kind) || ACCESS.has('luck');
+const luckSpent = (kind) => !luckUnlimited(kind) && (store.get('nabu-luck', {}) || {})[kind] === weekStart();
+function luckSpend(kind) { if (luckUnlimited(kind)) return; const a = store.get('nabu-luck', {}) || {}; a[kind] = weekStart(); store.set('nabu-luck', a); }
 function courseHash(str) {
   let h1 = 0x811c9dc5, h2 = 5381;
   for (let i = 0; i < str.length; i++) { const c = str.charCodeAt(i); h1 = Math.imul(h1 ^ c, 16777619) >>> 0; h2 = (Math.imul(h2, 33) + c) >>> 0; }
   return (h1.toString(36) + h2.toString(36)).toUpperCase().replace(/[^A-Z0-9]/g, '').slice(-4).padStart(4, 'X');
 }
+const CODE_LETTER = { tarot: 'T', manifest: 'M', playing: 'P', coin: 'C', tree: 'Y', luck: 'B', lenormand: 'L' };
+const CODE_COURSE = { T: 'tarot', M: 'manifest', P: 'playing', C: 'coin', Y: 'tree', B: 'luck', L: 'lenormand' };
 function makeCode(course, untilISO) {
-  const d = untilISO.replace(/-/g, '').slice(2), Lt = course === 'tarot' ? 'T' : course === 'manifest' ? 'M' : course === 'playing' ? 'P' : 'L';
+  const d = untilISO.replace(/-/g, '').slice(2), Lt = CODE_LETTER[course] || 'L';
   return 'NABU-' + Lt + '-' + d + '-' + courseHash(Lt + d + CONFIG.courseSecret);
 }
 function parseCode(code) {
-  const m = /^NABU-([TLMP])-(\d{6})-([A-Z0-9]{4})$/.exec(String(code || '').trim().toUpperCase().replace(/\s+/g, ''));
+  const m = /^NABU-([TLMPCYB])-(\d{6})-([A-Z0-9]{4})$/.exec(String(code || '').trim().toUpperCase().replace(/\s+/g, ''));
   if (!m || courseHash(m[1] + m[2] + CONFIG.courseSecret) !== m[3]) return null;
-  return { course: m[1] === 'T' ? 'tarot' : m[1] === 'M' ? 'manifest' : m[1] === 'P' ? 'playing' : 'lenormand', until: '20' + m[2].slice(0, 2) + '-' + m[2].slice(2, 4) + '-' + m[2].slice(4, 6) };
+  const course = CODE_COURSE[m[1]];
+  return { course: course, courses: course === 'luck' ? ['coin', 'tree', 'luck'] : [course], until: '20' + m[2].slice(0, 2) + '-' + m[2].slice(2, 4) + '-' + m[2].slice(4, 6) };
 }
 function addMonths(iso, n) { const d = new Date(iso + 'T00:00:00'); d.setMonth(d.getMonth() + n); return isoDate(d); }
 

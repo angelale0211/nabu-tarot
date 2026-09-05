@@ -175,6 +175,29 @@ async function renderPlay(args) {
     + (list.length ? actGroupsHTML(list) : '<p class="empty">' + esc(S.actEmpty) + '</p>') + '</div>';
   bindActGroups(m);
 }
+/* ---- one free turn a week, or a code for unlimited ----
+   Shown under the coin and under the tree: where the visitor stands this week,
+   and, when the free turn is gone, what unlimited costs and where the code goes. */
+function luckPanelHTML(kind) {
+  const S = T();
+  if (luckUnlimited(kind)) return '<p class="hint">✓ ' + esc(S.luckOpen) + '</p>';
+  if (!luckSpent(kind)) return '<p class="hint">' + esc(S.luckFree) + '</p>';
+  return '<div class="card luckbox"><p class="lead">' + esc(S.luckSpent(fmtDate(weekNext()))) + '</p>'
+    + '<p class="hint" style="margin-bottom:10px">' + esc(S.luckOffer) + '</p>'
+    + '<div class="row nw"><input id="luckcode" placeholder="' + esc(S.luckCodePh) + '" autocapitalize="characters"><button class="btn" id="luckgo">' + esc(S.unlock) + '</button></div>'
+    + '<p class="hint" id="luckstatus"></p>'
+    + '<a class="btn block" href="#/contact">' + esc(S.luckGet) + '</a></div>';
+}
+function bindLuck(root, redraw) {
+  const S = T(), go = $('#luckgo', root);
+  if (!go) return;
+  go.addEventListener('click', () => {
+    const r = parseCode($('#luckcode', root).value), st = $('#luckstatus', root);
+    if (!r) { st.textContent = S.badCode; st.className = 'hint err'; return; }
+    ACCESS.grant(r.courses || [r.course], r.until); toast(S.unlocked); redraw();
+  });
+}
+
 /* ---- the message tree ----
    A blossom tree you shake for one of sixty blessings. The messages are written
    for this app, not taken from a published oracle deck. */
@@ -270,14 +293,16 @@ function renderTree() {
   const draw = () => {
     m.innerHTML = '<div class="eyebrow">' + esc(S.actTitle) + '</div><h1 style="margin-bottom:6px">🌸 ' + esc(S.treeTitle) + '</h1><p class="muted">' + esc(S.treeIntro) + '</p>'
       + '<div class="card treewrap"><button type="button" class="tree" id="tree" aria-label="' + esc(S.treeShake) + '">' + treeSVG() + '<span class="petals" id="petals"></span></button>'
-      + '<div class="treemsg" id="treemsg" hidden><div class="eyebrow">' + esc(S.treeFor) + '</div><p id="treetext"></p></div>'
-      + '<button class="btn primary block" id="shake">' + esc(S.treeShake) + '</button></div>'
+      + '<div class="treemsg" id="treemsg"' + (msg ? '' : ' hidden') + '><div class="eyebrow">' + esc(S.treeFor) + '</div><p id="treetext">' + (msg ? esc(L(msg)) : '') + '</p></div>'
+      + (luckSpent('tree') ? '' : '<button class="btn primary block" id="shake">' + esc(msg ? S.treeAgain : S.treeShake) + '</button>') + '</div>'
+      + luckPanelHTML('tree')
       + '<p class="hint">' + esc(S.treeNote) + '</p>'
       + '<p style="margin-top:14px"><a href="#/play" class="backlink">← ' + esc(S.actTitle) + '</a></p>';
     const shake = () => {
       if (busy) return;
       busy = true;
       const tree = $('#tree'), pet = $('#petals'), btn = $('#shake'), box = $('#treemsg');
+      luckSpend('tree');
       btn.disabled = true; box.hidden = true;
       tree.classList.remove('sway'); void tree.offsetWidth; tree.classList.add('sway');
       let html = '';
@@ -294,11 +319,14 @@ function renderTree() {
         msg = TREE_MSGS[k];
         $('#treetext').textContent = L(msg); box.hidden = false;
         tree.classList.remove('sway'); pet.innerHTML = '';
-        btn.disabled = false; btn.textContent = S.treeAgain; busy = false;
+        busy = false;
+        if (luckSpent('tree')) { draw(); $('#treemsg').hidden = false; $('#treetext').textContent = L(msg); return; }
+        btn.disabled = false; btn.textContent = S.treeAgain;
       }, 1400);
     };
-    $('#shake').addEventListener('click', shake);
-    $('#tree').addEventListener('click', shake);
+    const sb = $('#shake'); if (sb) sb.addEventListener('click', shake);
+    $('#tree').addEventListener('click', () => { if (sb) shake(); });
+    bindLuck(m, draw);
   };
   draw();
 }
@@ -323,19 +351,28 @@ function renderCoin() {
       + '<div class="card coinwrap"><label class="f" for="coinq">' + esc(S.coinQ) + '</label><input id="coinq" placeholder="' + esc(S.coinQPh) + '" value="' + esc(store.get('nabu-coinq', '') || '') + '">'
       + '<div class="coin" id="coin">' + coinFaceSVG(side) + '</div>'
       + '<div class="coinres' + (side ? ' ' + side : '') + '" id="coinres">' + (side ? esc(side === 'yes' ? S.coinYes : S.coinNo) : '') + '</div>'
-      + '<button class="btn primary block" id="coinflip">' + esc(side ? S.coinAgain : S.coinFlip) + '</button></div>'
+      + (luckSpent('coin') ? '' : '<button class="btn primary block" id="coinflip">' + esc(side ? S.coinAgain : S.coinFlip) + '</button>') + '</div>'
+      + luckPanelHTML('coin')
       + '<p class="hint">' + esc(S.coinNote) + '</p>'
       + '<p style="margin-top:14px"><a href="#/play" class="backlink">← ' + esc(S.actTitle) + '</a></p>';
     const q = $('#coinq'); q.addEventListener('input', () => store.set('nabu-coinq', q.value));
-    $('#coinflip').addEventListener('click', () => {
+    bindLuck(m, draw);
+    const fb = $('#coinflip'); if (!fb) return;
+    fb.addEventListener('click', () => {
       const el = $('#coin'), btn = $('#coinflip');
       if (el.classList.contains('spin')) return;
+      luckSpend('coin');
       btn.disabled = true; $('#coinres').textContent = ''; $('#coinres').className = 'coinres';
       el.classList.add('spin');
       let bits = 0;
       try { const a = new Uint8Array(1); crypto.getRandomValues(a); bits = a[0] & 1; }
       catch (e) { bits = Math.random() < 0.5 ? 0 : 1; }
-      setTimeout(() => { side = bits ? 'yes' : 'no'; el.classList.remove('spin'); el.innerHTML = coinFaceSVG(side); const r = $('#coinres'); r.textContent = side === 'yes' ? S.coinYes : S.coinNo; r.className = 'coinres ' + side; btn.disabled = false; btn.textContent = S.coinAgain; }, 1000);
+      setTimeout(() => {
+        side = bits ? 'yes' : 'no'; el.classList.remove('spin'); el.innerHTML = coinFaceSVG(side);
+        const r = $('#coinres'); r.textContent = side === 'yes' ? S.coinYes : S.coinNo; r.className = 'coinres ' + side;
+        if (luckSpent('coin')) { draw(); $('#coin').innerHTML = coinFaceSVG(side); const r2 = $('#coinres'); r2.textContent = side === 'yes' ? S.coinYes : S.coinNo; r2.className = 'coinres ' + side; return; }
+        btn.disabled = false; btn.textContent = S.coinAgain;
+      }, 1000);
     });
   };
   draw();

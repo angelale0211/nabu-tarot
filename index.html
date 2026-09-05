@@ -851,7 +851,8 @@ main{padding:22px 0 30px}
 @keyframes petalfall{0%{opacity:0;transform:translate3d(0,0,0) rotate(0)}12%{opacity:1}100%{opacity:0;transform:translate3d(var(--dx),150px,0) rotate(460deg)}}
 .treemsg{background:var(--tag-gold-bg);color:var(--tag-gold-ink);border:1.5px solid var(--gold);border-radius:16px;padding:14px 16px;margin:8px 0 14px}
 .treemsg .eyebrow{color:inherit;opacity:.75;margin-bottom:6px}
-.treemsg p{margin:0;font-family:var(--display);font-size:19px;line-height:1.45}.btns{display:grid;grid-template-columns:1fr 1fr;gap:8px}.btns .btn{width:100%}
+.treemsg p{margin:0;font-family:var(--display);font-size:19px;line-height:1.45}
+.luckbox{margin-top:12px}.luckbox .lead{font-weight:600;margin:0 0 4px}.luckbox .btn.block{margin-top:8px}.btns{display:grid;grid-template-columns:1fr 1fr;gap:8px}.btns .btn{width:100%}
 /* Booking summary card and the done screen. */
 .sum{background:var(--surface);border:1px solid var(--rule);border-radius:14px;padding:4px 14px;font-size:14.5px;margin:10px 0;text-align:left}.sum .r{display:flex;gap:10px;padding:9px 0;border-top:1px solid var(--rule-soft)}.sum .r:first-child{border-top:0}
 .sum .k{flex:none;width:86px;color:var(--fg-faint);font-size:12.5px;font-weight:600;padding-top:2px}.sum .v{flex:1;min-width:0;overflow-wrap:anywhere}.sum ul{margin:0;padding-left:16px}.sum li{margin:2px 0}.sum li small{font-size:12.5px}.sum .warn{color:#B04A2E;font-weight:600}.sum .ok{color:#2E7D46;font-weight:600}
@@ -1087,7 +1088,16 @@ const COURSES = [
     includes: { vi: ['9 bài học có hình', '52 lá, mỗi lá một trang', 'Cặp lá, thời gian, trải bài điều ước', 'Dùng 6 tháng, xem offline'], en: ['9 illustrated sessions', '52 cards, one page each', 'Pairs, timing, the wish spread', '6 months of access, works offline'] } },
   { id: 'manifest', price: 75000, months: 12, name: { vi: 'Bộ Manifestation', en: 'Manifestation set' },
     blurb: { vi: 'Bảy phương pháp có công cụ làm ngay trong app: WOOP, bảng tầm nhìn có ảnh, nghi thức trăng, kế hoạch nếu-thì, buông bỏ, giới hạn, nến và đá. Mọi thứ bạn viết được lưu trên máy và có thể xoá làm lại bất cứ lúc nào.', en: 'Seven methods with tools you use right in the app: WOOP, a vision board with photos, Moon rituals, if-then plans, letting go, limits, candles and stones. Everything you write is saved on your device and can be cleared and redone any time.' },
-    includes: { vi: ['7 bài hướng dẫn nâng cao', 'Bảng ảnh, kế hoạch, nghi thức, buông bỏ', 'Nến và đá theo mục đích', 'Dùng 12 tháng, xem offline'], en: ['7 advanced guides', 'Photo board, plans, ritual and letting-go tools', 'Candles and stones by purpose', '12 months of access, works offline'] } }
+    includes: { vi: ['7 bài hướng dẫn nâng cao', 'Bảng ảnh, kế hoạch, nghi thức, buông bỏ', 'Nến và đá theo mục đích', 'Dùng 12 tháng, xem offline'], en: ['7 advanced guides', 'Photo board, plans, ritual and letting-go tools', 'Candles and stones by purpose', '12 months of access, works offline'] } },
+  { id: 'luck', price: 65000, months: 12, name: { vi: 'Đồng xu và cây thông điệp', en: 'Coin and message tree' },
+    blurb: { vi: 'Mở không giới hạn cả hai hoạt động trong một năm: tung đồng xu và rung cây thông điệp bao nhiêu lần tuỳ bạn.', en: 'Unlimited turns at both for a year: flip the coin and shake the message tree as often as you like.' },
+    includes: { vi: ['Tung đồng xu không giới hạn', 'Rung cây thông điệp không giới hạn', 'Dùng 12 tháng'], en: ['Unlimited coin flips', 'Unlimited tree shakes', '12 months of access'] } },
+  { id: 'coin', price: 40000, months: 12, name: { vi: 'Tung đồng xu không giới hạn', en: 'Unlimited coin flips' },
+    blurb: { vi: 'Tung đồng xu bao nhiêu lần tuỳ bạn trong một năm.', en: 'Flip the coin as often as you like for a year.' },
+    includes: { vi: ['Tung đồng xu không giới hạn', 'Dùng 12 tháng'], en: ['Unlimited coin flips', '12 months of access'] } },
+  { id: 'tree', price: 40000, months: 12, name: { vi: 'Rung cây không giới hạn', en: 'Unlimited tree shakes' },
+    blurb: { vi: 'Rung cây thông điệp bao nhiêu lần tuỳ bạn trong một năm.', en: 'Shake the message tree as often as you like for a year.' },
+    includes: { vi: ['Rung cây thông điệp không giới hạn', 'Dùng 12 tháng'], en: ['Unlimited tree shakes', '12 months of access'] } },
 ];
 const PAYMENT_NOTE = { vi: 'Bạn thân mến vui lòng chuyển khoản trước khi xem.', en: 'Please transfer the fee before the reading.' };
 const fmtPrice = (n) => String(n).replace(/\B(?=(\d{3})+(?!\d))/g, '.') + 'đ';
@@ -1229,6 +1239,7 @@ const STR = {
     actPileArt: 'Hình của tụ', actArtAuto: 'Tự chọn', actArts: ['Nến', 'Hoa đào', 'Trăng non', 'Thạch anh tím', 'Mặt trời', 'Chìa khoá', 'Lông vũ', 'Sóng biển'],
     translating: 'Đang dịch sang tiếng Anh…', translated: 'Đã có bản tiếng Anh (dịch tự động).', translateFail: 'Chưa dịch được sang tiếng Anh; bản tiếng Việt vẫn hiện cho mọi người.',
     actFilterAll: 'Tất cả', actMore: (n) => 'Xem thêm ' + n, actLess: 'Thu gọn', actResultsPublic: 'Kết quả chung', actNoVotes: 'Chưa có phiếu nào. Bạn mở hàng nhé!', wishHistory: (n) => 'Xem ' + n + ' điều ước đã gửi', wishHide: 'Ẩn danh sách', diaryTitle: 'Nhật ký mỗi ngày', diarySub: 'hôm nay của bạn thế nào?', diaryIntro: 'Mỗi tối bạn viết vài dòng về ngày hôm nay: cảm giác của bạn, một điều đáng nhớ và một điều bạn thấy biết ơn. Nhật ký chỉ được lưu trên máy của bạn và không ai đọc được.', diaryMood: 'Hôm nay bạn thấy', diaryPh: 'Hôm nay…', diaryToday: 'Hôm nay', diarySaved: 'Đã lưu', diaryPast: 'Những ngày trước', diaryEmpty: 'Chưa có ngày nào. Bắt đầu từ hôm nay nhé.', diaryDel: 'Xoá ngày này', diaryCount: (n) => n + ' ngày đã ghi',
+    luckFree: 'Bạn có 1 lượt miễn phí mỗi tuần.', luckLeft: 'Lượt tuần này của bạn vẫn còn.', luckSpent: (d) => 'Bạn đã dùng lượt tuần này. Lượt mới mở vào ' + d + '.', luckOpen: 'Bạn đang mở không giới hạn.', luckOffer: 'Muốn dùng không giới hạn cả năm: 40.000đ cho một mục, hoặc 65.000đ cho cả đồng xu và cây thông điệp.', luckGet: 'Nhắn Nabu để lấy mã', luckCodePh: 'NABU-B-…',
     treeTitle: 'Rung cây thông điệp', treeSub: 'một lời nhắn từ vũ trụ', treeIntro: 'Bạn đứng trước cây, nghĩ về điều đang ở trong lòng mình, rồi rung nhẹ một cái. Cây sẽ thả xuống cho bạn một lời nhắn.', treeShake: 'Rung cây', treeAgain: 'Rung thêm một lần nữa', treeFor: 'Lời nhắn dành cho bạn', treeNote: 'Mỗi lần rung, cây chọn ngẫu nhiên một lời nhắn trong sáu mươi lời. Bạn hãy đọc chậm và giữ lại câu nào chạm vào mình.',
     coinTitle: 'Tung đồng xu', coinSub: 'cho câu hỏi có hoặc không', coinIntro: 'Khi bạn có một câu hỏi chỉ cần trả lời có hoặc không, bạn hãy nghĩ thật rõ về câu hỏi đó rồi tung đồng xu.', coinQ: 'Câu hỏi của bạn', coinQPh: 'Ví dụ: mình có nên nhắn trước không?', coinFlip: 'Tung đồng xu', coinAgain: 'Tung lại', coinYes: 'CÓ', coinNo: 'KHÔNG', coinNote: 'Đồng xu chỉ cho bạn một trong hai câu trả lời. Điều đáng chú ý là cảm giác của bạn ngay khi nhìn thấy kết quả: nếu bạn thấy hụt hẫng, bạn đã biết mình muốn gì.',
     actNew: 'Hoạt động mới', actType: 'Loại', actTypes: { pile: 'Chọn tụ bài', poll: 'Bình chọn', wish: 'Điều ước' }, actResultsDate: 'Ngày đăng kết quả', actIntroLabel: 'Lời dẫn (thanh công cụ phía trên ô cho phép in đậm, in nghiêng, tô sáng, chèn ảnh, video và emoji)', actPilesHint: 'Từ 2 đến 5 tụ. Bạn có thể đăng trước với nhãn trống; vài ngày sau quay lại điền thông điệp và bật "Đã có kết quả".', actPileN: (n) => 'Tụ ' + n, actPileLabel: 'Nhãn ngắn (không bắt buộc), ví dụ: Trái · Giữa · Phải', actPileMsg: 'Thông điệp cho tụ này (đăng sau cũng được)', actPileMsgEn: 'English message (optional)', actPileAdd: 'Thêm tụ', actPileDel: 'Bớt tụ', actResultsOn: 'Đã có kết quả: cho phép lật bài', actOptions: 'Các lựa chọn, mỗi dòng một lựa chọn', actCloseOn: 'Đóng bình chọn', actExisting: 'Hoạt động đã đăng', actNeedPiles: 'Bạn điền ít nhất một tụ nhé.', actNeedOptions: 'Cần ít nhất hai lựa chọn.',
@@ -1485,6 +1496,7 @@ const STR = {
     actPileArt: 'Pile picture', actArtAuto: 'Automatic', actArts: ['Candle', 'Blossom', 'Crescent', 'Amethyst', 'Sun', 'Key', 'Feather', 'Waves'],
     translating: 'Translating into English…', translated: 'English version added (automatic translation).', translateFail: 'Could not translate into English; the Vietnamese text shows for everyone.',
     actFilterAll: 'All', actMore: (n) => 'See ' + n + ' more', actLess: 'Show less', actResultsPublic: 'Overall results', actNoVotes: 'No votes yet. Be the first!', wishHistory: (n) => 'See the ' + n + ' wishes you sent', wishHide: 'Hide the list', diaryTitle: 'Daily diary', diarySub: 'how was your day?', diaryIntro: 'A few lines each evening about today: how it felt, one thing worth remembering, one thing to be grateful for. Saved only on your device; nobody can read it.', diaryMood: 'Today you feel', diaryPh: 'Today…', diaryToday: 'Today', diarySaved: 'Saved', diaryPast: 'Earlier days', diaryEmpty: 'No days yet. Start with today.', diaryDel: 'Delete this day', diaryCount: (n) => n + ' days written',
+    luckFree: 'You get one free turn a week.', luckLeft: 'Your turn for this week is still open.', luckSpent: (d) => 'You have had your turn this week. The next one opens on ' + d + '.', luckOpen: 'You have unlimited turns.', luckOffer: 'For unlimited turns all year: 40,000đ for one, or 65,000đ for both the coin and the message tree.', luckGet: 'Message Nabu for a code', luckCodePh: 'NABU-B-…',
     treeTitle: 'Shake the message tree', treeSub: 'a message from the universe', treeIntro: 'Stand in front of the tree, hold in mind whatever you are carrying, and give it a gentle shake. The tree will let a message fall for you.', treeShake: 'Shake the tree', treeAgain: 'Shake it once more', treeFor: 'A message for you', treeNote: 'Each shake picks one of sixty messages at random. Read it slowly and keep whichever line reaches you.',
     coinTitle: 'Flip a coin', coinSub: 'for a yes or no question', coinIntro: 'When a question needs nothing more than a yes or a no, hold the question clearly in mind and flip the coin.', coinQ: 'Your question', coinQPh: 'For example: should I message first?', coinFlip: 'Flip the coin', coinAgain: 'Flip again', coinYes: 'YES', coinNo: 'NO', coinNote: 'The coin gives you one of two answers. What matters is how you feel the moment you see it: if the result disappoints you, you already know what you want.',
     actNew: 'New activity', actType: 'Type', actTypes: { pile: 'Pick a pile', poll: 'Poll', wish: 'Wish' }, actResultsDate: 'Results date', actIntroLabel: 'Intro (the bar above the box: bold, italic, highlight, images, video, emoji)', actPilesHint: 'Two to five piles. You can publish with empty labels; come back days later, fill in the messages and switch on "Answered".', actPileN: (n) => 'Pile ' + n, actPileLabel: 'Short label (optional), e.g. Left · Middle · Right', actPileMsg: 'Message for this pile (can be added later)', actPileMsgEn: 'English message (optional)', actPileAdd: 'Add a pile', actPileDel: 'Remove a pile', actResultsOn: 'Answered: let people flip the piles', actOptions: 'Options, one per line', actCloseOn: 'Close the poll', actExisting: 'Published activities', actNeedPiles: 'Fill in at least one pile.', actNeedOptions: 'At least two options are needed.',
@@ -8550,9 +8562,11 @@ function birthParts() {
 function mySign() { const b = birthParts(); return b ? sunSignIndex(b.m, b.d) : -1; }
 
 /* ---- course access ----
-   Codes: NABU-T-YYMMDD-XXXX (T = tarot, L = lenormand), the date is the expiry
-   and XXXX a checksum over date + CONFIG.courseSecret. Checked on the device;
-   good enough to keep casual sharing in check, not a bank vault. */
+   Codes: NABU-T-YYMMDD-XXXX (T = tarot, L = lenormand, M = manifestation,
+   P = playing cards, C = coin, Y = message tree, B = both of those two), the
+   date is the expiry and XXXX a checksum over date + CONFIG.courseSecret.
+   Checked on the device; good enough to keep casual sharing in check, not a
+   bank vault. */
 const ACCESS = {
   get() { return store.get('nabu-access', {}); },
   // Nabu (any admin email) always has every course open.
@@ -8561,21 +8575,33 @@ const ACCESS = {
   // BE is a top-level const (not on window), so test for it with typeof.
   isAdmin() { const be = typeof BE !== 'undefined' ? BE : null; return !!((be && be.user && be.isAdmin()) || (!(be && be.ready) && store.get('nabu-admin', ''))); },
   has(course) { if (this.isAdmin()) return true; const a = this.get()[course]; return !!a && a >= isoDate(new Date()); },
-  grant(course, until) { const a = this.get(); a[course] = until; store.set('nabu-access', a); if (typeof BE !== 'undefined' && BE.user) BE.pushProfile(); }
+  grant(course, until) { const a = this.get(); (Array.isArray(course) ? course : [course]).forEach((c) => { a[c] = until; }); store.set('nabu-access', a); if (typeof BE !== 'undefined' && BE.user) BE.pushProfile(); }
 };
+
+/* ---- one free turn a week for the coin and the message tree ----
+   Weeks run Monday to Sunday on the device clock. A code (or the bundle code,
+   or an admin account) lifts the limit entirely. */
+function weekStart(when) { const x = new Date(when || Date.now()); x.setHours(0, 0, 0, 0); x.setDate(x.getDate() - ((x.getDay() + 6) % 7)); return isoDate(x); }
+function weekNext() { const x = new Date(); x.setHours(0, 0, 0, 0); x.setDate(x.getDate() + (7 - ((x.getDay() + 6) % 7))); return isoDate(x); }
+const luckUnlimited = (kind) => ACCESS.has(kind) || ACCESS.has('luck');
+const luckSpent = (kind) => !luckUnlimited(kind) && (store.get('nabu-luck', {}) || {})[kind] === weekStart();
+function luckSpend(kind) { if (luckUnlimited(kind)) return; const a = store.get('nabu-luck', {}) || {}; a[kind] = weekStart(); store.set('nabu-luck', a); }
 function courseHash(str) {
   let h1 = 0x811c9dc5, h2 = 5381;
   for (let i = 0; i < str.length; i++) { const c = str.charCodeAt(i); h1 = Math.imul(h1 ^ c, 16777619) >>> 0; h2 = (Math.imul(h2, 33) + c) >>> 0; }
   return (h1.toString(36) + h2.toString(36)).toUpperCase().replace(/[^A-Z0-9]/g, '').slice(-4).padStart(4, 'X');
 }
+const CODE_LETTER = { tarot: 'T', manifest: 'M', playing: 'P', coin: 'C', tree: 'Y', luck: 'B', lenormand: 'L' };
+const CODE_COURSE = { T: 'tarot', M: 'manifest', P: 'playing', C: 'coin', Y: 'tree', B: 'luck', L: 'lenormand' };
 function makeCode(course, untilISO) {
-  const d = untilISO.replace(/-/g, '').slice(2), Lt = course === 'tarot' ? 'T' : course === 'manifest' ? 'M' : course === 'playing' ? 'P' : 'L';
+  const d = untilISO.replace(/-/g, '').slice(2), Lt = CODE_LETTER[course] || 'L';
   return 'NABU-' + Lt + '-' + d + '-' + courseHash(Lt + d + CONFIG.courseSecret);
 }
 function parseCode(code) {
-  const m = /^NABU-([TLMP])-(\d{6})-([A-Z0-9]{4})$/.exec(String(code || '').trim().toUpperCase().replace(/\s+/g, ''));
+  const m = /^NABU-([TLMPCYB])-(\d{6})-([A-Z0-9]{4})$/.exec(String(code || '').trim().toUpperCase().replace(/\s+/g, ''));
   if (!m || courseHash(m[1] + m[2] + CONFIG.courseSecret) !== m[3]) return null;
-  return { course: m[1] === 'T' ? 'tarot' : m[1] === 'M' ? 'manifest' : m[1] === 'P' ? 'playing' : 'lenormand', until: '20' + m[2].slice(0, 2) + '-' + m[2].slice(2, 4) + '-' + m[2].slice(4, 6) };
+  const course = CODE_COURSE[m[1]];
+  return { course: course, courses: course === 'luck' ? ['coin', 'tree', 'luck'] : [course], until: '20' + m[2].slice(0, 2) + '-' + m[2].slice(2, 4) + '-' + m[2].slice(4, 6) };
 }
 function addMonths(iso, n) { const d = new Date(iso + 'T00:00:00'); d.setMonth(d.getMonth() + n); return isoDate(d); }
 
@@ -9857,7 +9883,7 @@ function bindPaywall(root, after) {
     const r = parseCode($('#ccode', root).value);
     const st = $('#cstatus', root);
     if (!r) { st.textContent = S.badCode; st.className = 'hint err'; return; }
-    ACCESS.grant(r.course, r.until);
+    ACCESS.grant(r.courses || [r.course], r.until);
     toast(S.unlocked); if (after) after(); else route();
   });
 }
@@ -11343,7 +11369,7 @@ function renderMe(args, params) {
       setTimeout(() => location.reload(), 800);
     });
     bindProfileForm(body, () => { if (params.next === 'book') location.hash = '#/book'; });
-    $('#munlock').addEventListener('click', () => { const r = parseCode($('#mcode').value); const st = $('#mcstatus'); if (!r) { st.textContent = S.badCode; st.className = 'hint err'; return; } ACCESS.grant(r.course, r.until); toast(S.unlocked); draw(); });
+    $('#munlock').addEventListener('click', () => { const r = parseCode($('#mcode').value); const st = $('#mcstatus'); if (!r) { st.textContent = S.badCode; st.className = 'hint err'; return; } ACCESS.grant(r.courses || [r.course], r.until); toast(S.unlocked); draw(); });
     $$('[data-theme-pick]', body).forEach((b) => b.addEventListener('click', () => { setTheme(b.getAttribute('data-theme-pick')); $$('[data-theme-pick]', body).forEach((x) => x.classList.toggle('on', x === b)); }));
     $('#retour').addEventListener('click', () => { saveProfileLocal({ tourDone: false }); location.hash = '#/home'; });
     const so = $('#signout'); if (so) so.addEventListener('click', () => BE.signOut());
@@ -11665,6 +11691,29 @@ async function renderPlay(args) {
     + (list.length ? actGroupsHTML(list) : '<p class="empty">' + esc(S.actEmpty) + '</p>') + '</div>';
   bindActGroups(m);
 }
+/* ---- one free turn a week, or a code for unlimited ----
+   Shown under the coin and under the tree: where the visitor stands this week,
+   and, when the free turn is gone, what unlimited costs and where the code goes. */
+function luckPanelHTML(kind) {
+  const S = T();
+  if (luckUnlimited(kind)) return '<p class="hint">✓ ' + esc(S.luckOpen) + '</p>';
+  if (!luckSpent(kind)) return '<p class="hint">' + esc(S.luckFree) + '</p>';
+  return '<div class="card luckbox"><p class="lead">' + esc(S.luckSpent(fmtDate(weekNext()))) + '</p>'
+    + '<p class="hint" style="margin-bottom:10px">' + esc(S.luckOffer) + '</p>'
+    + '<div class="row nw"><input id="luckcode" placeholder="' + esc(S.luckCodePh) + '" autocapitalize="characters"><button class="btn" id="luckgo">' + esc(S.unlock) + '</button></div>'
+    + '<p class="hint" id="luckstatus"></p>'
+    + '<a class="btn block" href="#/contact">' + esc(S.luckGet) + '</a></div>';
+}
+function bindLuck(root, redraw) {
+  const S = T(), go = $('#luckgo', root);
+  if (!go) return;
+  go.addEventListener('click', () => {
+    const r = parseCode($('#luckcode', root).value), st = $('#luckstatus', root);
+    if (!r) { st.textContent = S.badCode; st.className = 'hint err'; return; }
+    ACCESS.grant(r.courses || [r.course], r.until); toast(S.unlocked); redraw();
+  });
+}
+
 /* ---- the message tree ----
    A blossom tree you shake for one of sixty blessings. The messages are written
    for this app, not taken from a published oracle deck. */
@@ -11760,14 +11809,16 @@ function renderTree() {
   const draw = () => {
     m.innerHTML = '<div class="eyebrow">' + esc(S.actTitle) + '</div><h1 style="margin-bottom:6px">🌸 ' + esc(S.treeTitle) + '</h1><p class="muted">' + esc(S.treeIntro) + '</p>'
       + '<div class="card treewrap"><button type="button" class="tree" id="tree" aria-label="' + esc(S.treeShake) + '">' + treeSVG() + '<span class="petals" id="petals"></span></button>'
-      + '<div class="treemsg" id="treemsg" hidden><div class="eyebrow">' + esc(S.treeFor) + '</div><p id="treetext"></p></div>'
-      + '<button class="btn primary block" id="shake">' + esc(S.treeShake) + '</button></div>'
+      + '<div class="treemsg" id="treemsg"' + (msg ? '' : ' hidden') + '><div class="eyebrow">' + esc(S.treeFor) + '</div><p id="treetext">' + (msg ? esc(L(msg)) : '') + '</p></div>'
+      + (luckSpent('tree') ? '' : '<button class="btn primary block" id="shake">' + esc(msg ? S.treeAgain : S.treeShake) + '</button>') + '</div>'
+      + luckPanelHTML('tree')
       + '<p class="hint">' + esc(S.treeNote) + '</p>'
       + '<p style="margin-top:14px"><a href="#/play" class="backlink">← ' + esc(S.actTitle) + '</a></p>';
     const shake = () => {
       if (busy) return;
       busy = true;
       const tree = $('#tree'), pet = $('#petals'), btn = $('#shake'), box = $('#treemsg');
+      luckSpend('tree');
       btn.disabled = true; box.hidden = true;
       tree.classList.remove('sway'); void tree.offsetWidth; tree.classList.add('sway');
       let html = '';
@@ -11784,11 +11835,14 @@ function renderTree() {
         msg = TREE_MSGS[k];
         $('#treetext').textContent = L(msg); box.hidden = false;
         tree.classList.remove('sway'); pet.innerHTML = '';
-        btn.disabled = false; btn.textContent = S.treeAgain; busy = false;
+        busy = false;
+        if (luckSpent('tree')) { draw(); $('#treemsg').hidden = false; $('#treetext').textContent = L(msg); return; }
+        btn.disabled = false; btn.textContent = S.treeAgain;
       }, 1400);
     };
-    $('#shake').addEventListener('click', shake);
-    $('#tree').addEventListener('click', shake);
+    const sb = $('#shake'); if (sb) sb.addEventListener('click', shake);
+    $('#tree').addEventListener('click', () => { if (sb) shake(); });
+    bindLuck(m, draw);
   };
   draw();
 }
@@ -11813,19 +11867,28 @@ function renderCoin() {
       + '<div class="card coinwrap"><label class="f" for="coinq">' + esc(S.coinQ) + '</label><input id="coinq" placeholder="' + esc(S.coinQPh) + '" value="' + esc(store.get('nabu-coinq', '') || '') + '">'
       + '<div class="coin" id="coin">' + coinFaceSVG(side) + '</div>'
       + '<div class="coinres' + (side ? ' ' + side : '') + '" id="coinres">' + (side ? esc(side === 'yes' ? S.coinYes : S.coinNo) : '') + '</div>'
-      + '<button class="btn primary block" id="coinflip">' + esc(side ? S.coinAgain : S.coinFlip) + '</button></div>'
+      + (luckSpent('coin') ? '' : '<button class="btn primary block" id="coinflip">' + esc(side ? S.coinAgain : S.coinFlip) + '</button>') + '</div>'
+      + luckPanelHTML('coin')
       + '<p class="hint">' + esc(S.coinNote) + '</p>'
       + '<p style="margin-top:14px"><a href="#/play" class="backlink">← ' + esc(S.actTitle) + '</a></p>';
     const q = $('#coinq'); q.addEventListener('input', () => store.set('nabu-coinq', q.value));
-    $('#coinflip').addEventListener('click', () => {
+    bindLuck(m, draw);
+    const fb = $('#coinflip'); if (!fb) return;
+    fb.addEventListener('click', () => {
       const el = $('#coin'), btn = $('#coinflip');
       if (el.classList.contains('spin')) return;
+      luckSpend('coin');
       btn.disabled = true; $('#coinres').textContent = ''; $('#coinres').className = 'coinres';
       el.classList.add('spin');
       let bits = 0;
       try { const a = new Uint8Array(1); crypto.getRandomValues(a); bits = a[0] & 1; }
       catch (e) { bits = Math.random() < 0.5 ? 0 : 1; }
-      setTimeout(() => { side = bits ? 'yes' : 'no'; el.classList.remove('spin'); el.innerHTML = coinFaceSVG(side); const r = $('#coinres'); r.textContent = side === 'yes' ? S.coinYes : S.coinNo; r.className = 'coinres ' + side; btn.disabled = false; btn.textContent = S.coinAgain; }, 1000);
+      setTimeout(() => {
+        side = bits ? 'yes' : 'no'; el.classList.remove('spin'); el.innerHTML = coinFaceSVG(side);
+        const r = $('#coinres'); r.textContent = side === 'yes' ? S.coinYes : S.coinNo; r.className = 'coinres ' + side;
+        if (luckSpent('coin')) { draw(); $('#coin').innerHTML = coinFaceSVG(side); const r2 = $('#coinres'); r2.textContent = side === 'yes' ? S.coinYes : S.coinNo; r2.className = 'coinres ' + side; return; }
+        btn.disabled = false; btn.textContent = S.coinAgain;
+      }, 1000);
     });
   };
   draw();
@@ -12228,7 +12291,7 @@ function adminCodes(p) {
 ROUTES.admin = { nav: '', render: renderAdmin };
 
 /* ============================ boot ============================ */
-window.APP_VERSION = 'v73';
+window.APP_VERSION = 'v74';
 window.NABU = { CONFIG: CONFIG, loadActs: loadActs, BACK: BACK, LESSONS: LESSONS, localAnswer: localAnswer, compatVerdict: compatVerdict, numerologyOf: numerologyOf, ZDEEP: ZDEEP, lunarToday: lunarToday, solarToLunar: solarToLunar, DECK: DECK, INSIGHT: INSIGHT, KW: KW, ASK: ASK, TOPICS: TOPICS, GUIDES: GUIDES, SERVICES: SERVICES, COURSES: COURSES, ACCESS: ACCESS, makeCode: makeCode, parseCode: parseCode, ZODIAC: ZODIAC, pick: pick, book: book,
   insightHTML: insightHTML, insightOf: insightOf, sunSignIndex: sunSignIndex, lifePath: lifePath, PROFILE: () => PROFILE, BE: BE, ACTS: ACTS };
 BE.initP = BE.init().catch(() => { /* backend unreachable: the app runs device-only */ });

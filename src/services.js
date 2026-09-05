@@ -74,7 +74,16 @@ const COURSES = [
     includes: { vi: ['9 bài học có hình', '52 lá, mỗi lá một trang', 'Cặp lá, thời gian, trải bài điều ước', 'Dùng 6 tháng, xem offline'], en: ['9 illustrated sessions', '52 cards, one page each', 'Pairs, timing, the wish spread', '6 months of access, works offline'] } },
   { id: 'manifest', price: 75000, months: 12, name: { vi: 'Bộ Manifestation', en: 'Manifestation set' },
     blurb: { vi: 'Bảy phương pháp có công cụ làm ngay trong app: WOOP, bảng tầm nhìn có ảnh, nghi thức trăng, kế hoạch nếu-thì, buông bỏ, giới hạn, nến và đá. Mọi thứ bạn viết được lưu trên máy và có thể xoá làm lại bất cứ lúc nào.', en: 'Seven methods with tools you use right in the app: WOOP, a vision board with photos, Moon rituals, if-then plans, letting go, limits, candles and stones. Everything you write is saved on your device and can be cleared and redone any time.' },
-    includes: { vi: ['7 bài hướng dẫn nâng cao', 'Bảng ảnh, kế hoạch, nghi thức, buông bỏ', 'Nến và đá theo mục đích', 'Dùng 12 tháng, xem offline'], en: ['7 advanced guides', 'Photo board, plans, ritual and letting-go tools', 'Candles and stones by purpose', '12 months of access, works offline'] } }
+    includes: { vi: ['7 bài hướng dẫn nâng cao', 'Bảng ảnh, kế hoạch, nghi thức, buông bỏ', 'Nến và đá theo mục đích', 'Dùng 12 tháng, xem offline'], en: ['7 advanced guides', 'Photo board, plans, ritual and letting-go tools', 'Candles and stones by purpose', '12 months of access, works offline'] } },
+  { id: 'luck', price: 65000, months: 12, name: { vi: 'Đồng xu và cây thông điệp', en: 'Coin and message tree' },
+    blurb: { vi: 'Mở không giới hạn cả hai hoạt động trong một năm: tung đồng xu và rung cây thông điệp bao nhiêu lần tuỳ bạn.', en: 'Unlimited turns at both for a year: flip the coin and shake the message tree as often as you like.' },
+    includes: { vi: ['Tung đồng xu không giới hạn', 'Rung cây thông điệp không giới hạn', 'Dùng 12 tháng'], en: ['Unlimited coin flips', 'Unlimited tree shakes', '12 months of access'] } },
+  { id: 'coin', price: 40000, months: 12, name: { vi: 'Tung đồng xu không giới hạn', en: 'Unlimited coin flips' },
+    blurb: { vi: 'Tung đồng xu bao nhiêu lần tuỳ bạn trong một năm.', en: 'Flip the coin as often as you like for a year.' },
+    includes: { vi: ['Tung đồng xu không giới hạn', 'Dùng 12 tháng'], en: ['Unlimited coin flips', '12 months of access'] } },
+  { id: 'tree', price: 40000, months: 12, name: { vi: 'Rung cây không giới hạn', en: 'Unlimited tree shakes' },
+    blurb: { vi: 'Rung cây thông điệp bao nhiêu lần tuỳ bạn trong một năm.', en: 'Shake the message tree as often as you like for a year.' },
+    includes: { vi: ['Rung cây thông điệp không giới hạn', 'Dùng 12 tháng'], en: ['Unlimited tree shakes', '12 months of access'] } },
 ];
 const PAYMENT_NOTE = { vi: 'Bạn thân mến vui lòng chuyển khoản trước khi xem.', en: 'Please transfer the fee before the reading.' };
 const fmtPrice = (n) => String(n).replace(/\B(?=(\d{3})+(?!\d))/g, '.') + 'đ';

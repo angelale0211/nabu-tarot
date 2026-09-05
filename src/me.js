@@ -193,7 +193,7 @@ function renderMe(args, params) {
       setTimeout(() => location.reload(), 800);
     });
     bindProfileForm(body, () => { if (params.next === 'book') location.hash = '#/book'; });
-    $('#munlock').addEventListener('click', () => { const r = parseCode($('#mcode').value); const st = $('#mcstatus'); if (!r) { st.textContent = S.badCode; st.className = 'hint err'; return; } ACCESS.grant(r.course, r.until); toast(S.unlocked); draw(); });
+    $('#munlock').addEventListener('click', () => { const r = parseCode($('#mcode').value); const st = $('#mcstatus'); if (!r) { st.textContent = S.badCode; st.className = 'hint err'; return; } ACCESS.grant(r.courses || [r.course], r.until); toast(S.unlocked); draw(); });
     $$('[data-theme-pick]', body).forEach((b) => b.addEventListener('click', () => { setTheme(b.getAttribute('data-theme-pick')); $$('[data-theme-pick]', body).forEach((x) => x.classList.toggle('on', x === b)); }));
     $('#retour').addEventListener('click', () => { saveProfileLocal({ tourDone: false }); location.hash = '#/home'; });
     const so = $('#signout'); if (so) so.addEventListener('click', () => BE.signOut());
