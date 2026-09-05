@@ -264,10 +264,10 @@ function route() {
   const y = NAV.restore;
   if (y == null) window.scrollTo(0, 0);
   Promise.resolve(def.render(r.args, r.params)).then(() => {
-    if (y == null) return;
+    if (!y) return;  // nothing to restore, and never fight a visitor who has started scrolling
     window.scrollTo(0, y);
     requestAnimationFrame(() => window.scrollTo(0, y));
-    setTimeout(() => { if (Math.abs(window.scrollY - y) > 4) window.scrollTo(0, y); }, 120);
+    setTimeout(() => { if (window.scrollY < 4) window.scrollTo(0, y); }, 120);
   });
 }
 function boot() {
@@ -275,7 +275,7 @@ function boot() {
   document.addEventListener('click', (e) => {
     const a = e.target.closest && e.target.closest('a[data-back]');
     if (!a) return;
-    e.preventDefault(); NAV.stack.pop(); NAV.popping = true; location.hash = a.getAttribute('href');
+    e.preventDefault(); NAV.popping = true; location.hash = a.getAttribute('href');
   });
   $('#lang').addEventListener('click', () => { lang = lang === 'vi' ? 'en' : 'vi'; store.set('nabu-lang', lang); route(); });
   $('#theme').addEventListener('click', () => setTheme(effectiveTheme() === 'dark' ? 'light' : 'dark'));

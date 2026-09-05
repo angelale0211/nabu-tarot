@@ -43,7 +43,11 @@ async function go(hash, sel) { W().location.hash = hash; await sleep(30); return
     ok(d.querySelector('.pickcta') && /Rút một lá bài hôm nay/.test(d.querySelector('.pickcta').textContent) && d.querySelector('.pickcta').getAttribute('href') === '#/pick' && d.querySelectorAll('.pickcta svg').length === 3 && /#AFC8F0/.test(d.querySelector('.pickcta').innerHTML) && /#F6BBCB/.test(d.querySelector('.pickcta').innerHTML), 'big pick-a-card block shows the three logo cards and leads to the draw');
     ok(/rotate\(-10/.test(d.querySelector('#nav a[href="#/pick"] svg').innerHTML), 'pick tab uses the two-card line icon');
     for (let i = 0; i < 5; i++) { d.querySelector('[data-tour="next"]').click(); await sleep(30); }
-    ok(!d.querySelector('#tour') && N.PROFILE().tourDone === true, 'tour completes and is remembered');
+    ok(d.querySelector('#tour.tourmini') && N.PROFILE().tourDone === true, 'tour completes, is remembered, and shrinks to a one-line bar');
+    d.querySelector('[data-tour="open"]').click(); await sleep(30);
+    ok(d.querySelector('#tour.card') && /1 \/ 5/.test(d.querySelector('#tour').textContent), 'the bar reopens the tour from step one');
+    d.querySelector('[data-tour="skip"]').click(); await sleep(30);
+    ok(d.querySelector('#tour.tourmini'), 'closing shrinks it again');
     await waitFor(() => d.querySelector('.welcome'), 6000);
     ok(/Chào mừng bạn đến với Nabu Tarot/.test(d.querySelector('.welcome h2').textContent) && d.querySelector('.welcome .sig img') && !d.querySelector('.welcome .date') && !/Dự đoán mới/.test(d.querySelector('#feed').textContent), 'welcome post heads the feed with the logo as signature, no date line, no "Dự đoán mới"');
     // profile -> personalisation
@@ -149,7 +153,7 @@ async function go(hash, sel) { W().location.hash = hash; await sleep(30); return
     await go('#/learn/lesson/lenormand/6', '.spreads-v');
     ok(d.querySelectorAll('.spv').length === 7 && /Grand Tableau/.test(d.querySelector('.spreads-v').textContent), 'lenormand session 6: seven spread diagrams incl. the Grand Tableau');
     await go('#/report', '#rwhat');
-    ok(d.querySelector('#rwhat') && d.querySelector('#rsend') && d.querySelector('#rcopy') && /Nabu Tarot v39/.test(d.querySelector('.msgbox').textContent), 'bug report screen: direct send button, Instagram, copy, auto-attached info');
+    ok(d.querySelector('#rwhat') && d.querySelector('#rsend') && d.querySelector('#rcopy') && /Nabu Tarot v40/.test(d.querySelector('.msgbox').textContent), 'bug report screen: direct send button, Instagram, copy, auto-attached info');
     d.querySelector('#rwhat').value = 'Nút không bấm được'; d.querySelector('#rsend').click(); await sleep(150);
     ok(/chưa bật gửi trực tiếp/.test(d.querySelector('#rstatus').textContent), 'without an endpoint the send button explains and copies the report');
     ok(N.CONFIG.adminNotifyEmails.indexOf('nabutarot@outlook.com') === 0, 'notifications go to nabutarot@outlook.com first');
@@ -193,7 +197,8 @@ async function go(hash, sel) { W().location.hash = hash; await sleep(30); return
     ok(!d.querySelector('#backbar').hidden && /Trang chủ/.test(d.querySelector('#backbar').textContent), 'the draw tab opened from home shows a back arrow to home');
     d.querySelector('#backbar .backlink').click(); await sleep(60); await waitFor(() => d.querySelector('.tiles'), 4000);
     ok(w.location.hash === '#/home' && d.querySelector('#backbar').hidden, 'back from the draw tab lands on home, where the bar is hidden');
-    await sleep(200); w.scrollTo(0, 500); await sleep(60);
+    await waitFor(() => d.body.scrollHeight > w.innerHeight + 700, 5000); await sleep(250); w.scrollTo(0, 500); await sleep(80);
+    ok(w.scrollY > 300, 'home is scrolled down before leaving (' + w.scrollY + ')');
     await go('#/learn/astro', '#backbar .backlink'); await sleep(60);
     ok(w.scrollY === 0, 'a new screen opens at the top');
     d.querySelector('#backbar .backlink').click(); await sleep(60); await waitFor(() => d.querySelector('.tiles'), 4000); await sleep(250);

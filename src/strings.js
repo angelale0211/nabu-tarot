@@ -171,7 +171,7 @@ const STR = {
     themeTitle: 'Giao diện', themes: { auto: 'Theo điện thoại', light: 'Sáng', dark: 'Tối' }, themeHint: 'Theo điện thoại: app tự đổi sáng/tối cùng máy của bạn.',
     installTitle: 'Cài app lên điện thoại',
     install: 'Trên iPhone: mở bằng Safari, bấm Chia sẻ, chọn "Thêm vào MH chính". Trên Android: bấm menu ⋮ rồi "Cài đặt ứng dụng".',
-    dismiss: 'Đóng',
+    dismiss: 'Đóng', tourMini: 'Hướng dẫn dùng app', tourOpen: 'Xem lại',
     offlineReady: 'App đã sẵn sàng dùng offline.',
 
     adminTitle: 'Bảng điều khiển',
@@ -400,7 +400,7 @@ const STR = {
     themeTitle: 'Appearance', themes: { auto: 'Match my phone', light: 'Light', dark: 'Dark' }, themeHint: 'Match my phone: the app switches with your phone\'s light or dark setting.',
     installTitle: 'Install on your phone',
     install: 'iPhone: open in Safari, tap Share, then "Add to Home Screen". Android: tap the ⋮ menu, then "Install app".',
-    dismiss: 'Close',
+    dismiss: 'Close', tourMini: 'How to use the app', tourOpen: 'Show again',
     offlineReady: 'The app is ready to use offline.',
 
     adminTitle: 'Dashboard',

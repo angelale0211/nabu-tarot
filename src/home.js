@@ -54,11 +54,18 @@ function tourHTML(step) {
     + '<div class="row" style="justify-content:center;margin-top:10px"><button class="btn sm" data-tour="skip">' + esc(T().dismiss) + '</button>'
     + '<button class="btn sm primary" data-tour="next">' + (step === TOUR.length - 1 ? '✓' : '→') + '</button></div></div>';
 }
+/* Once the tour is done or closed it shrinks to a one-line bar that can reopen it. */
+function tourMiniHTML() {
+  const S = T();
+  return '<div class="tourmini" id="tour"><span>💡 ' + esc(S.tourMini) + '</span><button class="btn sm" data-tour="open">' + esc(S.tourOpen) + '</button></div>';
+}
 function bindTour(root, step) {
   $$('[data-tour]', root).forEach((b) => b.addEventListener('click', () => {
-    if (b.getAttribute('data-tour') === 'next' && step < TOUR.length - 1) { $('#tour').outerHTML = tourHTML(step + 1); bindTour(root, step + 1); return; }
+    const act = b.getAttribute('data-tour');
+    if (act === 'open') { $('#tour').outerHTML = tourHTML(0); bindTour(root, 0); return; }
+    if (act === 'next' && step < TOUR.length - 1) { $('#tour').outerHTML = tourHTML(step + 1); bindTour(root, step + 1); return; }
     saveProfileLocal({ tourDone: true }); if (BE.user) BE.pushProfile();
-    $('#tour').remove();
+    $('#tour').outerHTML = tourMiniHTML(); bindTour(root, 0);
   }));
 }
 
@@ -161,7 +168,7 @@ async function renderHome(args, params) {
   const name = (PROFILE.name || '').trim();
   m.innerHTML = '<div class="eyebrow">' + esc(CONFIG.brand) + '</div>'
     + todayHTML()
-    + (PROFILE.tourDone ? '' : tourHTML(0))
+    + (PROFILE.tourDone ? tourMiniHTML() : tourHTML(0))
     + '<h1 style="margin:18px 0 4px">' + esc(name ? S.hello(name) : S.helloGuest) + '</h1><p class="muted">' + esc(lang === 'vi' ? 'Hôm nay bạn muốn làm gì?' : 'What would you like to do today?') + '</p>'
     + pickCtaHTML()
     + quickLinksHTML()
@@ -169,7 +176,7 @@ async function renderHome(args, params) {
     + '<div id="foryouwrap"></div>'
     + '<div class="sec" id="feed"><p class="muted">…</p></div>';
   bindAccordions(m); bindCardLinks(m);
-  if (!PROFILE.tourDone) bindTour(m, 0);
+  bindTour(m, 0);
   if (POSTS == null) await loadPosts();
   const fy = $('#foryouwrap'); if (fy) { fy.innerHTML = suggestedGuidesHTML(); bindPost(fy); }
   const feed = $('#feed'); if (!feed) return;

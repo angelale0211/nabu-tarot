@@ -586,6 +586,7 @@ main{padding:22px 0 30px}
 .ritual{display:flex;align-items:center;gap:8px;flex-wrap:wrap;justify-content:center}.rt{flex:1;min-width:130px;background:var(--surface);border:1px solid var(--rule-soft);border-radius:14px;padding:12px;text-align:center;font-size:12.5px}.rt .ic{font-size:30px;display:block}.rt b{display:block;margin:4px 0}.ritual .arr{color:var(--fg-faint);font-size:12px}
 .ifthen{display:grid;gap:8px}.it{display:grid;grid-template-columns:1fr 1fr;gap:6px;font-size:13px}.it span{border-radius:12px;padding:10px 12px}.it .if{background:var(--tag-pink-bg);color:var(--tag-pink-fg)}.it .then{background:var(--tag-green-bg);color:var(--tag-green-fg)}
 [hidden]{display:none!important}
+.tourmini{display:flex;align-items:center;justify-content:space-between;gap:10px;background:var(--surface);border:1px dashed var(--lav);border-radius:14px;padding:8px 8px 8px 14px;margin-bottom:14px;font-size:14px;font-weight:600}
 .backlink{display:inline-flex;align-items:center;gap:4px;min-height:36px;padding:0 4px;margin-left:-4px;border-radius:10px;font-weight:600;text-decoration:none}.backlink:active{background:var(--surface-2)}
 .hshapes{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin:10px 0}.hs{background:var(--surface);border:1.5px solid;border-radius:14px;padding:10px;text-align:center;font-size:12px}.hshape{width:64px;height:auto;display:block;margin:0 auto 4px}.hs b{display:block;font-size:14px}.hs span{color:var(--fg-faint);display:block}.hs p{margin:4px 0 0;font-size:12.5px;text-align:left}
 @media (max-width:380px){.woop{grid-template-columns:repeat(2,1fr)}.vboard{grid-template-columns:repeat(2,1fr)}}
@@ -1052,7 +1053,7 @@ const STR = {
     themeTitle: 'Giao diện', themes: { auto: 'Theo điện thoại', light: 'Sáng', dark: 'Tối' }, themeHint: 'Theo điện thoại: app tự đổi sáng/tối cùng máy của bạn.',
     installTitle: 'Cài app lên điện thoại',
     install: 'Trên iPhone: mở bằng Safari, bấm Chia sẻ, chọn "Thêm vào MH chính". Trên Android: bấm menu ⋮ rồi "Cài đặt ứng dụng".',
-    dismiss: 'Đóng',
+    dismiss: 'Đóng', tourMini: 'Hướng dẫn dùng app', tourOpen: 'Xem lại',
     offlineReady: 'App đã sẵn sàng dùng offline.',
 
     adminTitle: 'Bảng điều khiển',
@@ -1281,7 +1282,7 @@ const STR = {
     themeTitle: 'Appearance', themes: { auto: 'Match my phone', light: 'Light', dark: 'Dark' }, themeHint: 'Match my phone: the app switches with your phone\'s light or dark setting.',
     installTitle: 'Install on your phone',
     install: 'iPhone: open in Safari, tap Share, then "Add to Home Screen". Android: tap the ⋮ menu, then "Install app".',
-    dismiss: 'Close',
+    dismiss: 'Close', tourMini: 'How to use the app', tourOpen: 'Show again',
     offlineReady: 'The app is ready to use offline.',
 
     adminTitle: 'Dashboard',
@@ -10314,10 +10315,10 @@ function route() {
   const y = NAV.restore;
   if (y == null) window.scrollTo(0, 0);
   Promise.resolve(def.render(r.args, r.params)).then(() => {
-    if (y == null) return;
+    if (!y) return;  // nothing to restore, and never fight a visitor who has started scrolling
     window.scrollTo(0, y);
     requestAnimationFrame(() => window.scrollTo(0, y));
-    setTimeout(() => { if (Math.abs(window.scrollY - y) > 4) window.scrollTo(0, y); }, 120);
+    setTimeout(() => { if (window.scrollY < 4) window.scrollTo(0, y); }, 120);
   });
 }
 function boot() {
@@ -10325,7 +10326,7 @@ function boot() {
   document.addEventListener('click', (e) => {
     const a = e.target.closest && e.target.closest('a[data-back]');
     if (!a) return;
-    e.preventDefault(); NAV.stack.pop(); NAV.popping = true; location.hash = a.getAttribute('href');
+    e.preventDefault(); NAV.popping = true; location.hash = a.getAttribute('href');
   });
   $('#lang').addEventListener('click', () => { lang = lang === 'vi' ? 'en' : 'vi'; store.set('nabu-lang', lang); route(); });
   $('#theme').addEventListener('click', () => setTheme(effectiveTheme() === 'dark' ? 'light' : 'dark'));
@@ -10780,11 +10781,18 @@ function tourHTML(step) {
     + '<div class="row" style="justify-content:center;margin-top:10px"><button class="btn sm" data-tour="skip">' + esc(T().dismiss) + '</button>'
     + '<button class="btn sm primary" data-tour="next">' + (step === TOUR.length - 1 ? '✓' : '→') + '</button></div></div>';
 }
+/* Once the tour is done or closed it shrinks to a one-line bar that can reopen it. */
+function tourMiniHTML() {
+  const S = T();
+  return '<div class="tourmini" id="tour"><span>💡 ' + esc(S.tourMini) + '</span><button class="btn sm" data-tour="open">' + esc(S.tourOpen) + '</button></div>';
+}
 function bindTour(root, step) {
   $$('[data-tour]', root).forEach((b) => b.addEventListener('click', () => {
-    if (b.getAttribute('data-tour') === 'next' && step < TOUR.length - 1) { $('#tour').outerHTML = tourHTML(step + 1); bindTour(root, step + 1); return; }
+    const act = b.getAttribute('data-tour');
+    if (act === 'open') { $('#tour').outerHTML = tourHTML(0); bindTour(root, 0); return; }
+    if (act === 'next' && step < TOUR.length - 1) { $('#tour').outerHTML = tourHTML(step + 1); bindTour(root, step + 1); return; }
     saveProfileLocal({ tourDone: true }); if (BE.user) BE.pushProfile();
-    $('#tour').remove();
+    $('#tour').outerHTML = tourMiniHTML(); bindTour(root, 0);
   }));
 }
 
@@ -10887,7 +10895,7 @@ async function renderHome(args, params) {
   const name = (PROFILE.name || '').trim();
   m.innerHTML = '<div class="eyebrow">' + esc(CONFIG.brand) + '</div>'
     + todayHTML()
-    + (PROFILE.tourDone ? '' : tourHTML(0))
+    + (PROFILE.tourDone ? tourMiniHTML() : tourHTML(0))
     + '<h1 style="margin:18px 0 4px">' + esc(name ? S.hello(name) : S.helloGuest) + '</h1><p class="muted">' + esc(lang === 'vi' ? 'Hôm nay bạn muốn làm gì?' : 'What would you like to do today?') + '</p>'
     + pickCtaHTML()
     + quickLinksHTML()
@@ -10895,7 +10903,7 @@ async function renderHome(args, params) {
     + '<div id="foryouwrap"></div>'
     + '<div class="sec" id="feed"><p class="muted">…</p></div>';
   bindAccordions(m); bindCardLinks(m);
-  if (!PROFILE.tourDone) bindTour(m, 0);
+  bindTour(m, 0);
   if (POSTS == null) await loadPosts();
   const fy = $('#foryouwrap'); if (fy) { fy.innerHTML = suggestedGuidesHTML(); bindPost(fy); }
   const feed = $('#feed'); if (!feed) return;
@@ -12379,7 +12387,7 @@ function adminCodes(p) {
 ROUTES.admin = { nav: '', render: renderAdmin };
 
 /* ============================ boot ============================ */
-window.APP_VERSION = 'v39';
+window.APP_VERSION = 'v40';
 window.NABU = { CONFIG: CONFIG, LESSONS: LESSONS, localAnswer: localAnswer, compatVerdict: compatVerdict, numerologyOf: numerologyOf, ZDEEP: ZDEEP, lunarToday: lunarToday, solarToLunar: solarToLunar, DECK: DECK, INSIGHT: INSIGHT, KW: KW, ASK: ASK, TOPICS: TOPICS, GUIDES: GUIDES, SERVICES: SERVICES, COURSES: COURSES, ACCESS: ACCESS, makeCode: makeCode, parseCode: parseCode, ZODIAC: ZODIAC, pick: pick, book: book,
   insightHTML: insightHTML, insightOf: insightOf, sunSignIndex: sunSignIndex, lifePath: lifePath, PROFILE: () => PROFILE, BE: BE };
 BE.init().catch(() => { /* backend unreachable: the app runs device-only */ });
