@@ -106,6 +106,10 @@ const BE = {
   },
   _unsubBk: null,
   stopUnread() { if (this._unsubUnread) { this._unsubUnread(); this._unsubUnread = null; } if (this._unsubBk) { this._unsubBk(); this._unsubBk = null; } UNREAD = 0; NEWBK = 0; },
+  /* Posts and availability live in content/{posts,schedule} once Nabu has
+     saved them from the dashboard; until then the JSON files in the repo are used. */
+  async getContent(name) { const d = await this.db.collection('content').doc(name).get(); return d.exists ? d.data() : null; },
+  setContent(name, obj) { return this.db.collection('content').doc(name).set(Object.assign({}, obj, { updatedAt: firebase.firestore.FieldValue.serverTimestamp() })); },
   watchThreads(cb) { return this.db.collection('threads').orderBy('lastAt', 'desc').limit(100).onSnapshot((s) => cb(s.docs.map((d) => Object.assign({ id: d.id }, d.data())))); },
 
   /* ---- bookings ---- */

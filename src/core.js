@@ -223,6 +223,22 @@ async function loadJSON(path, key) {
   return { data: store.get(key, null), fromCache: true };
 }
 
+/* Content that Nabu edits in the dashboard: the cloud copy wins when it
+   exists, the repo file is the fallback (and the offline cache after that). */
+async function loadContent(name, path, key) {
+  const be = typeof BE !== 'undefined' ? BE : null;
+  if (be && be.enabled) {
+    try {
+      await Promise.race([be.initP || Promise.resolve(), new Promise((r) => setTimeout(r, 2500))]);
+      if (be.db) {
+        const d = await Promise.race([be.getContent(name), new Promise((_, rej) => setTimeout(() => rej(new Error('timeout')), 2500))]);
+        if (d) { delete d.updatedAt; store.set(key, d); return { data: d, fromCache: false }; }
+      }
+    } catch (e) { /* offline, rules, or not saved yet: use the file */ }
+  }
+  return loadJSON(path, key);
+}
+
 /* ---- router ---- */
 const ROUTES = {};
 /* In-app history: the back arrow on a screen returns to the screen the

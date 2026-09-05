@@ -7,6 +7,9 @@ const ghHeaders = (token) => ({ Authorization: 'Bearer ' + token, Accept: 'appli
 const b64enc = (s) => btoa(unescape(encodeURIComponent(s)));
 const b64dec = (s) => decodeURIComponent(escape(atob(s.replace(/\n/g, ''))));
 const ghToken = () => store.get('nabu-gh-token', '');
+/* With Firebase on, Nabu's dashboard writes straight to Firestore: no token, and changes show at once. */
+const cloud = () => BE.enabled && BE.isAdmin();
+async function cloudPosts() { const d = await BE.getContent('posts'); if (d && d.posts) return d.posts; if (POSTS == null) await loadPosts(); return POSTS || []; }
 async function ghRead(path) {
   const r = await fetch('https://api.github.com/repos/' + CONFIG.repo + '/contents/' + path + '?ref=' + CONFIG.branch, { headers: ghHeaders(ghToken()), cache: 'no-store' });
   if (r.status === 404) return { sha: null, json: null };
@@ -28,9 +31,9 @@ function renderAdmin(args, params) {
   if (params && params.tab && ['posts', 'schedule', 'bookings', 'inbox', 'codes'].indexOf(params.tab) > -1) admin.tab = params.tab;
   m.innerHTML = '<div class="eyebrow">' + esc(CONFIG.brand) + '</div><h1 style="margin-bottom:6px">' + esc(S.adminTitle) + '</h1><p class="muted">' + esc(S.adminIntro) + '</p>'
     + '<div class="tabs" id="atabs">' + ['posts', 'schedule', 'bookings', 'inbox', 'codes'].map((k) => '<button data-t="' + k + '" class="' + (admin.tab === k ? 'on' : '') + '">' + esc(S.adminTabs[k]) + '<span class="tb" data-tb="' + k + '" hidden></span></button>').join('') + '</div>'
-    + '<div class="card"><label class="f" for="gtoken">' + esc(S.token) + '</label><div class="row"><input id="gtoken" type="password" value="' + esc(ghToken()) + '" style="flex:1" autocomplete="off"><button class="btn sm" id="savetoken">' + esc(S.saveToken) + '</button></div><p class="hint">' + esc(S.tokenHint) + ' (' + esc(CONFIG.repo) + ')</p></div>'
+    + (BE.enabled ? '<p class="hint" style="margin-bottom:12px">☁️ ' + esc(S.cloudContent) + '</p>' : '<div class="card"><label class="f" for="gtoken">' + esc(S.token) + '</label><div class="row"><input id="gtoken" type="password" value="' + esc(ghToken()) + '" style="flex:1" autocomplete="off"><button class="btn sm" id="savetoken">' + esc(S.saveToken) + '</button></div><p class="hint">' + esc(S.tokenHint) + ' (' + esc(CONFIG.repo) + ')</p></div>')
     + '<div id="apanel"></div>';
-  $('#savetoken').addEventListener('click', () => { store.set('nabu-gh-token', $('#gtoken').value.trim()); toast('✓'); show(admin.tab); });
+  const stb = $('#savetoken'); if (stb) stb.addEventListener('click', () => { store.set('nabu-gh-token', $('#gtoken').value.trim()); toast('✓'); show(admin.tab); });
   $$('#atabs button').forEach((b) => b.addEventListener('click', () => { admin.tab = b.getAttribute('data-t'); $$('#atabs button').forEach((x) => x.classList.toggle('on', x === b)); show(admin.tab); }));
   const show = (t) => { adminCleanup(); const p = $('#apanel'); if (t === 'posts') adminPosts(p); else if (t === 'schedule') adminSchedule(p); else if (t === 'bookings') adminBookings(p); else if (t === 'codes') adminCodes(p); else adminInbox(p); };
   show(admin.tab);
@@ -88,26 +91,32 @@ function adminPosts(p) {
   $('#clear').addEventListener('click', () => { fillForm(null); $('#pprev').innerHTML = ''; });
   async function refreshList() {
     const box = $('#plist'); let posts;
-    if (ghToken()) { try { posts = ((await ghRead(CONFIG.postsPath)).json || { posts: [] }).posts; } catch (e) { box.innerHTML = '<p class="hint err">' + esc(String(e.message)) + '</p>'; return; } }
+    if (cloud()) { try { posts = await cloudPosts(); } catch (e) { box.innerHTML = '<p class="hint err">' + esc(String(e.message)) + '</p>'; return; } }
+    else if (ghToken()) { try { posts = ((await ghRead(CONFIG.postsPath)).json || { posts: [] }).posts; } catch (e) { box.innerHTML = '<p class="hint err">' + esc(String(e.message)) + '</p>'; return; } }
     else { if (POSTS == null) await loadPosts(); posts = POSTS; }
     box.innerHTML = posts.length ? posts.slice().sort((a, b) => String(b.date).localeCompare(String(a.date))).map((x) =>
       '<div class="it"><div class="tt"><div>' + (x.pinned ? '★ ' : '') + esc(L2(x.title, 'vi') || L2(x.title, 'en')) + '</div><div class="d">' + esc(x.date) + '</div></div><button class="btn sm" data-edit="' + esc(x.id) + '">' + esc(S.edit) + '</button><button class="btn sm" data-del="' + esc(x.id) + '">' + esc(S.del) + '</button></div>').join('') : '<p class="hint">' + esc(S.feedEmpty) + '</p>';
     $$('[data-edit]', box).forEach((b) => b.addEventListener('click', () => { fillForm(posts.filter((x) => x.id === b.getAttribute('data-edit'))[0]); $('#formhead').scrollIntoView({ behavior: 'smooth' }); }));
     $$('[data-del]', box).forEach((b) => b.addEventListener('click', async () => {
-      if (!confirm(S.confirmDel)) return; if (!ghToken()) { status(S.needToken, 'err'); return; }
-      try { const cur = await ghRead(CONFIG.postsPath); await ghWrite(CONFIG.postsPath, { posts: (cur.json.posts || []).filter((x) => x.id !== b.getAttribute('data-del')) }, cur.sha, 'Remove post'); POSTS = null; toast('✓'); refreshList(); }
+      if (!confirm(S.confirmDel)) return; if (!cloud() && !ghToken()) { status(S.needToken, 'err'); return; }
+      try {
+        if (cloud()) { const list = await cloudPosts(); await BE.setContent('posts', { posts: list.filter((x) => x.id !== b.getAttribute('data-del')) }); }
+        else { const cur = await ghRead(CONFIG.postsPath); await ghWrite(CONFIG.postsPath, { posts: (cur.json.posts || []).filter((x) => x.id !== b.getAttribute('data-del')) }, cur.sha, 'Remove post'); }
+        POSTS = null; toast('✓'); refreshList();
+      }
       catch (e) { status(S.publishFail + ': ' + e.message, 'err'); }
     }));
   }
   $('#publish').addEventListener('click', async () => {
     if (admin.busy) return;
-    if (!ghToken()) { status(S.needToken, 'err'); return; }
+    if (!cloud() && !ghToken()) { status(S.needToken, 'err'); return; }
     const post = formPost();
     if (!L2(post.title, 'vi') && !L2(post.title, 'en') || !L2(post.body, 'vi') && !L2(post.body, 'en')) { status(S.needBody, 'err'); return; }
     admin.busy = true; $('#publish').textContent = S.publishing; status('');
     try {
-      const cur = await ghRead(CONFIG.postsPath), rest = ((cur.json || {}).posts || []).filter((x) => x.id !== post.id);
-      await ghWrite(CONFIG.postsPath, { posts: [post].concat(rest) }, cur.sha, (admin.editing ? 'Update post: ' : 'New post: ') + (L2(post.title, 'vi') || L2(post.title, 'en')));
+      if (cloud()) { const list = await cloudPosts(); await BE.setContent('posts', { posts: [post].concat(list.filter((x) => x.id !== post.id)) }); }
+      else { const cur = await ghRead(CONFIG.postsPath), rest = ((cur.json || {}).posts || []).filter((x) => x.id !== post.id);
+        await ghWrite(CONFIG.postsPath, { posts: [post].concat(rest) }, cur.sha, (admin.editing ? 'Update post: ' : 'New post: ') + (L2(post.title, 'vi') || L2(post.title, 'en'))); }
       status(S.published, 'ok'); POSTS = null; fillForm(null); refreshList();
     } catch (e) { status(S.publishFail + ': ' + e.message, 'err'); }
     admin.busy = false; $('#publish').textContent = S.publish;
@@ -121,7 +130,8 @@ async function adminSchedule(p) {
   const S = T();
   p.innerHTML = '<p class="hint">…</p>';
   let sha = null, sch;
-  if (ghToken()) { try { const r = await ghRead(CONFIG.schedulePath); sha = r.sha; sch = r.json; } catch (e) { p.innerHTML = '<p class="hint err">' + esc(e.message) + '</p>'; return; } }
+  if (cloud()) { try { sch = await BE.getContent('schedule'); if (sch) delete sch.updatedAt; } catch (e) { /* fall back to the file */ } }
+  else if (ghToken()) { try { const r = await ghRead(CONFIG.schedulePath); sha = r.sha; sch = r.json; } catch (e) { p.innerHTML = '<p class="hint err">' + esc(e.message) + '</p>'; return; } }
   sch = sch || (await loadSchedule());
   sch.weekly = sch.weekly || {}; sch.blocked = sch.blocked || []; sch.booked = sch.booked || []; sch.extra = sch.extra || {};
   const dn = lang === 'vi' ? ['Chủ nhật', 'Thứ hai', 'Thứ ba', 'Thứ tư', 'Thứ năm', 'Thứ sáu', 'Thứ bảy'] : ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
@@ -140,8 +150,12 @@ async function adminSchedule(p) {
     $('#ssave').addEventListener('click', async () => {
       sch.leadDays = Number($('#lead').value) || 0; sch.horizonDays = Number($('#horizon').value) || 42; sch.slotMinutes = sch.slotMinutes || 60;
       const st = $('#sstatus');
-      if (!ghToken()) { st.textContent = S.needToken; st.className = 'hint err'; return; }
-      try { await ghWrite(CONFIG.schedulePath, sch, sha, 'Update availability'); const r = await ghRead(CONFIG.schedulePath); sha = r.sha; st.textContent = S.scheduleSaved; st.className = 'hint ok'; SCHEDULE = null; }
+      if (!cloud() && !ghToken()) { st.textContent = S.needToken; st.className = 'hint err'; return; }
+      try {
+        if (cloud()) await BE.setContent('schedule', sch);
+        else { await ghWrite(CONFIG.schedulePath, sch, sha, 'Update availability'); const r = await ghRead(CONFIG.schedulePath); sha = r.sha; }
+        st.textContent = S.scheduleSaved; st.className = 'hint ok'; SCHEDULE = null;
+      }
       catch (e) { st.textContent = S.publishFail + ': ' + e.message; st.className = 'hint err'; }
     });
   };

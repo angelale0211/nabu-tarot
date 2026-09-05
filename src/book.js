@@ -6,7 +6,7 @@ const book = { items: [], name: '', note: '', birth: '', birthTime: '', card: nu
 let SCHEDULE = null, TAKEN = {};
 
 async function loadSchedule() {
-  const s = await loadJSON(CONFIG.schedulePath, 'nabu-schedule');
+  const s = await loadContent('schedule', CONFIG.schedulePath, 'nabu-schedule');
   SCHEDULE = s.data || { slotMinutes: 60, weekly: {}, blocked: [], extra: {}, booked: [], leadDays: 1, horizonDays: 42 };
   if (BE.enabled && BE.ready) TAKEN = await BE.takenSlots();
   return SCHEDULE;

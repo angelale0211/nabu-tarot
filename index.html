@@ -1108,7 +1108,7 @@ const STR = {
     bookedHint: 'Khách đặt qua Instagram thì bạn thêm vào đây để giờ đó không hiện nữa.',
     leadDays: 'Nhận lịch sớm nhất sau (ngày)',
     horizonDays: 'Mở lịch trước (ngày)',
-    saveSchedule: 'Lưu lịch rảnh',
+    saveSchedule: 'Lưu lịch rảnh', cloudContent: 'Bài đăng và lịch rảnh được lưu thẳng lên đám mây của app. Bạn bấm lưu là khách thấy ngay, không cần mã GitHub.',
     scheduleSaved: 'Đã lưu lịch. Khách sẽ thấy sau vài phút.',
     bookingsIntro: 'Yêu cầu khách gửi trong app. Xác nhận thì giờ đó tự khoá.',
     confirm: 'Xác nhận', decline: 'Từ chối',
@@ -1337,7 +1337,7 @@ const STR = {
     bookedHint: 'Bookings made through Instagram go here so the slot disappears.',
     leadDays: 'Earliest booking after (days)',
     horizonDays: 'Open calendar ahead (days)',
-    saveSchedule: 'Save availability',
+    saveSchedule: 'Save availability', cloudContent: 'Posts and availability are saved straight to the app cloud. Save, and clients see it at once; no GitHub token needed.',
     scheduleSaved: 'Saved. Clients see it within a few minutes.',
     bookingsIntro: 'Requests sent inside the app. Confirming locks the slot.',
     confirm: 'Confirm', decline: 'Decline',
@@ -10285,6 +10285,22 @@ async function loadJSON(path, key) {
   return { data: store.get(key, null), fromCache: true };
 }
 
+/* Content that Nabu edits in the dashboard: the cloud copy wins when it
+   exists, the repo file is the fallback (and the offline cache after that). */
+async function loadContent(name, path, key) {
+  const be = typeof BE !== 'undefined' ? BE : null;
+  if (be && be.enabled) {
+    try {
+      await Promise.race([be.initP || Promise.resolve(), new Promise((r) => setTimeout(r, 2500))]);
+      if (be.db) {
+        const d = await Promise.race([be.getContent(name), new Promise((_, rej) => setTimeout(() => rej(new Error('timeout')), 2500))]);
+        if (d) { delete d.updatedAt; store.set(key, d); return { data: d, fromCache: false }; }
+      }
+    } catch (e) { /* offline, rules, or not saved yet: use the file */ }
+  }
+  return loadJSON(path, key);
+}
+
 /* ---- router ---- */
 const ROUTES = {};
 /* In-app history: the back arrow on a screen returns to the screen the
@@ -10485,6 +10501,10 @@ const BE = {
   },
   _unsubBk: null,
   stopUnread() { if (this._unsubUnread) { this._unsubUnread(); this._unsubUnread = null; } if (this._unsubBk) { this._unsubBk(); this._unsubBk = null; } UNREAD = 0; NEWBK = 0; },
+  /* Posts and availability live in content/{posts,schedule} once Nabu has
+     saved them from the dashboard; until then the JSON files in the repo are used. */
+  async getContent(name) { const d = await this.db.collection('content').doc(name).get(); return d.exists ? d.data() : null; },
+  setContent(name, obj) { return this.db.collection('content').doc(name).set(Object.assign({}, obj, { updatedAt: firebase.firestore.FieldValue.serverTimestamp() })); },
   watchThreads(cb) { return this.db.collection('threads').orderBy('lastAt', 'desc').limit(100).onSnapshot((s) => cb(s.docs.map((d) => Object.assign({ id: d.id }, d.data())))); },
 
   /* ---- bookings ---- */
@@ -10775,7 +10795,7 @@ function bindAI(root) {
 let POSTS = null, POSTS_CACHED = false, FBPOSTS = [], HORO = null;
 
 async function loadPosts() {
-  const p = await loadJSON(CONFIG.postsPath, 'nabu-posts');
+  const p = await loadContent('posts', CONFIG.postsPath, 'nabu-posts');
   POSTS = (p.data && p.data.posts) || []; POSTS_CACHED = p.fromCache;
   const f = await loadJSON('fb.json', 'nabu-fb');
   FBPOSTS = (f.data && f.data.posts) || [];
@@ -10821,7 +10841,7 @@ function tourHTML(step) {
   return '<div class="card" id="tour" style="text-align:center;border-color:var(--lav)"><div style="font-size:40px">' + t.ic + '</div>'
     + '<h3 style="margin:6px 0">' + esc(txt[0]) + '</h3><p class="muted" style="font-size:14.5px">' + esc(txt[1]) + '</p>'
     + '<div class="row" style="justify-content:center"><span class="faint">' + (step + 1) + ' / ' + TOUR.length + '</span></div>'
-    + '<div class="row" style="justify-content:center;margin-top:10px"><button class="btn sm" data-tour="skip">' + esc(T().dismiss) + '</button>'
+    + '<div class="row" style="justify-content:center;margin-top:10px"><button class="btn sm" data-tour="skip">' + esc(T().dismiss) + '</button>' + (step > 0 ? '<button class="btn sm" data-tour="prev" aria-label="back">←</button>' : '')
     + '<button class="btn sm primary" data-tour="next">' + (step === TOUR.length - 1 ? '✓' : '→') + '</button></div></div>';
 }
 /* Once the tour is done or closed it shrinks to a one-line bar that can reopen it. */
@@ -10834,6 +10854,7 @@ function bindTour(root, step) {
     const act = b.getAttribute('data-tour');
     if (act === 'open') { $('#tour').outerHTML = tourHTML(0); bindTour(root, 0); return; }
     if (act === 'next' && step < TOUR.length - 1) { $('#tour').outerHTML = tourHTML(step + 1); bindTour(root, step + 1); return; }
+    if (act === 'prev') { $('#tour').outerHTML = tourHTML(Math.max(0, step - 1)); bindTour(root, Math.max(0, step - 1)); return; }
     saveProfileLocal({ tourDone: true }); if (BE.user) BE.pushProfile();
     $('#tour').outerHTML = tourMiniHTML(); bindTour(root, 0);
   }));
@@ -11853,7 +11874,7 @@ const book = { items: [], name: '', note: '', birth: '', birthTime: '', card: nu
 let SCHEDULE = null, TAKEN = {};
 
 async function loadSchedule() {
-  const s = await loadJSON(CONFIG.schedulePath, 'nabu-schedule');
+  const s = await loadContent('schedule', CONFIG.schedulePath, 'nabu-schedule');
   SCHEDULE = s.data || { slotMinutes: 60, weekly: {}, blocked: [], extra: {}, booked: [], leadDays: 1, horizonDays: 42 };
   if (BE.enabled && BE.ready) TAKEN = await BE.takenSlots();
   return SCHEDULE;
@@ -12284,6 +12305,9 @@ const ghHeaders = (token) => ({ Authorization: 'Bearer ' + token, Accept: 'appli
 const b64enc = (s) => btoa(unescape(encodeURIComponent(s)));
 const b64dec = (s) => decodeURIComponent(escape(atob(s.replace(/\n/g, ''))));
 const ghToken = () => store.get('nabu-gh-token', '');
+/* With Firebase on, Nabu's dashboard writes straight to Firestore: no token, and changes show at once. */
+const cloud = () => BE.enabled && BE.isAdmin();
+async function cloudPosts() { const d = await BE.getContent('posts'); if (d && d.posts) return d.posts; if (POSTS == null) await loadPosts(); return POSTS || []; }
 async function ghRead(path) {
   const r = await fetch('https://api.github.com/repos/' + CONFIG.repo + '/contents/' + path + '?ref=' + CONFIG.branch, { headers: ghHeaders(ghToken()), cache: 'no-store' });
   if (r.status === 404) return { sha: null, json: null };
@@ -12305,9 +12329,9 @@ function renderAdmin(args, params) {
   if (params && params.tab && ['posts', 'schedule', 'bookings', 'inbox', 'codes'].indexOf(params.tab) > -1) admin.tab = params.tab;
   m.innerHTML = '<div class="eyebrow">' + esc(CONFIG.brand) + '</div><h1 style="margin-bottom:6px">' + esc(S.adminTitle) + '</h1><p class="muted">' + esc(S.adminIntro) + '</p>'
     + '<div class="tabs" id="atabs">' + ['posts', 'schedule', 'bookings', 'inbox', 'codes'].map((k) => '<button data-t="' + k + '" class="' + (admin.tab === k ? 'on' : '') + '">' + esc(S.adminTabs[k]) + '<span class="tb" data-tb="' + k + '" hidden></span></button>').join('') + '</div>'
-    + '<div class="card"><label class="f" for="gtoken">' + esc(S.token) + '</label><div class="row"><input id="gtoken" type="password" value="' + esc(ghToken()) + '" style="flex:1" autocomplete="off"><button class="btn sm" id="savetoken">' + esc(S.saveToken) + '</button></div><p class="hint">' + esc(S.tokenHint) + ' (' + esc(CONFIG.repo) + ')</p></div>'
+    + (BE.enabled ? '<p class="hint" style="margin-bottom:12px">☁️ ' + esc(S.cloudContent) + '</p>' : '<div class="card"><label class="f" for="gtoken">' + esc(S.token) + '</label><div class="row"><input id="gtoken" type="password" value="' + esc(ghToken()) + '" style="flex:1" autocomplete="off"><button class="btn sm" id="savetoken">' + esc(S.saveToken) + '</button></div><p class="hint">' + esc(S.tokenHint) + ' (' + esc(CONFIG.repo) + ')</p></div>')
     + '<div id="apanel"></div>';
-  $('#savetoken').addEventListener('click', () => { store.set('nabu-gh-token', $('#gtoken').value.trim()); toast('✓'); show(admin.tab); });
+  const stb = $('#savetoken'); if (stb) stb.addEventListener('click', () => { store.set('nabu-gh-token', $('#gtoken').value.trim()); toast('✓'); show(admin.tab); });
   $$('#atabs button').forEach((b) => b.addEventListener('click', () => { admin.tab = b.getAttribute('data-t'); $$('#atabs button').forEach((x) => x.classList.toggle('on', x === b)); show(admin.tab); }));
   const show = (t) => { adminCleanup(); const p = $('#apanel'); if (t === 'posts') adminPosts(p); else if (t === 'schedule') adminSchedule(p); else if (t === 'bookings') adminBookings(p); else if (t === 'codes') adminCodes(p); else adminInbox(p); };
   show(admin.tab);
@@ -12365,26 +12389,32 @@ function adminPosts(p) {
   $('#clear').addEventListener('click', () => { fillForm(null); $('#pprev').innerHTML = ''; });
   async function refreshList() {
     const box = $('#plist'); let posts;
-    if (ghToken()) { try { posts = ((await ghRead(CONFIG.postsPath)).json || { posts: [] }).posts; } catch (e) { box.innerHTML = '<p class="hint err">' + esc(String(e.message)) + '</p>'; return; } }
+    if (cloud()) { try { posts = await cloudPosts(); } catch (e) { box.innerHTML = '<p class="hint err">' + esc(String(e.message)) + '</p>'; return; } }
+    else if (ghToken()) { try { posts = ((await ghRead(CONFIG.postsPath)).json || { posts: [] }).posts; } catch (e) { box.innerHTML = '<p class="hint err">' + esc(String(e.message)) + '</p>'; return; } }
     else { if (POSTS == null) await loadPosts(); posts = POSTS; }
     box.innerHTML = posts.length ? posts.slice().sort((a, b) => String(b.date).localeCompare(String(a.date))).map((x) =>
       '<div class="it"><div class="tt"><div>' + (x.pinned ? '★ ' : '') + esc(L2(x.title, 'vi') || L2(x.title, 'en')) + '</div><div class="d">' + esc(x.date) + '</div></div><button class="btn sm" data-edit="' + esc(x.id) + '">' + esc(S.edit) + '</button><button class="btn sm" data-del="' + esc(x.id) + '">' + esc(S.del) + '</button></div>').join('') : '<p class="hint">' + esc(S.feedEmpty) + '</p>';
     $$('[data-edit]', box).forEach((b) => b.addEventListener('click', () => { fillForm(posts.filter((x) => x.id === b.getAttribute('data-edit'))[0]); $('#formhead').scrollIntoView({ behavior: 'smooth' }); }));
     $$('[data-del]', box).forEach((b) => b.addEventListener('click', async () => {
-      if (!confirm(S.confirmDel)) return; if (!ghToken()) { status(S.needToken, 'err'); return; }
-      try { const cur = await ghRead(CONFIG.postsPath); await ghWrite(CONFIG.postsPath, { posts: (cur.json.posts || []).filter((x) => x.id !== b.getAttribute('data-del')) }, cur.sha, 'Remove post'); POSTS = null; toast('✓'); refreshList(); }
+      if (!confirm(S.confirmDel)) return; if (!cloud() && !ghToken()) { status(S.needToken, 'err'); return; }
+      try {
+        if (cloud()) { const list = await cloudPosts(); await BE.setContent('posts', { posts: list.filter((x) => x.id !== b.getAttribute('data-del')) }); }
+        else { const cur = await ghRead(CONFIG.postsPath); await ghWrite(CONFIG.postsPath, { posts: (cur.json.posts || []).filter((x) => x.id !== b.getAttribute('data-del')) }, cur.sha, 'Remove post'); }
+        POSTS = null; toast('✓'); refreshList();
+      }
       catch (e) { status(S.publishFail + ': ' + e.message, 'err'); }
     }));
   }
   $('#publish').addEventListener('click', async () => {
     if (admin.busy) return;
-    if (!ghToken()) { status(S.needToken, 'err'); return; }
+    if (!cloud() && !ghToken()) { status(S.needToken, 'err'); return; }
     const post = formPost();
     if (!L2(post.title, 'vi') && !L2(post.title, 'en') || !L2(post.body, 'vi') && !L2(post.body, 'en')) { status(S.needBody, 'err'); return; }
     admin.busy = true; $('#publish').textContent = S.publishing; status('');
     try {
-      const cur = await ghRead(CONFIG.postsPath), rest = ((cur.json || {}).posts || []).filter((x) => x.id !== post.id);
-      await ghWrite(CONFIG.postsPath, { posts: [post].concat(rest) }, cur.sha, (admin.editing ? 'Update post: ' : 'New post: ') + (L2(post.title, 'vi') || L2(post.title, 'en')));
+      if (cloud()) { const list = await cloudPosts(); await BE.setContent('posts', { posts: [post].concat(list.filter((x) => x.id !== post.id)) }); }
+      else { const cur = await ghRead(CONFIG.postsPath), rest = ((cur.json || {}).posts || []).filter((x) => x.id !== post.id);
+        await ghWrite(CONFIG.postsPath, { posts: [post].concat(rest) }, cur.sha, (admin.editing ? 'Update post: ' : 'New post: ') + (L2(post.title, 'vi') || L2(post.title, 'en'))); }
       status(S.published, 'ok'); POSTS = null; fillForm(null); refreshList();
     } catch (e) { status(S.publishFail + ': ' + e.message, 'err'); }
     admin.busy = false; $('#publish').textContent = S.publish;
@@ -12398,7 +12428,8 @@ async function adminSchedule(p) {
   const S = T();
   p.innerHTML = '<p class="hint">…</p>';
   let sha = null, sch;
-  if (ghToken()) { try { const r = await ghRead(CONFIG.schedulePath); sha = r.sha; sch = r.json; } catch (e) { p.innerHTML = '<p class="hint err">' + esc(e.message) + '</p>'; return; } }
+  if (cloud()) { try { sch = await BE.getContent('schedule'); if (sch) delete sch.updatedAt; } catch (e) { /* fall back to the file */ } }
+  else if (ghToken()) { try { const r = await ghRead(CONFIG.schedulePath); sha = r.sha; sch = r.json; } catch (e) { p.innerHTML = '<p class="hint err">' + esc(e.message) + '</p>'; return; } }
   sch = sch || (await loadSchedule());
   sch.weekly = sch.weekly || {}; sch.blocked = sch.blocked || []; sch.booked = sch.booked || []; sch.extra = sch.extra || {};
   const dn = lang === 'vi' ? ['Chủ nhật', 'Thứ hai', 'Thứ ba', 'Thứ tư', 'Thứ năm', 'Thứ sáu', 'Thứ bảy'] : ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
@@ -12417,8 +12448,12 @@ async function adminSchedule(p) {
     $('#ssave').addEventListener('click', async () => {
       sch.leadDays = Number($('#lead').value) || 0; sch.horizonDays = Number($('#horizon').value) || 42; sch.slotMinutes = sch.slotMinutes || 60;
       const st = $('#sstatus');
-      if (!ghToken()) { st.textContent = S.needToken; st.className = 'hint err'; return; }
-      try { await ghWrite(CONFIG.schedulePath, sch, sha, 'Update availability'); const r = await ghRead(CONFIG.schedulePath); sha = r.sha; st.textContent = S.scheduleSaved; st.className = 'hint ok'; SCHEDULE = null; }
+      if (!cloud() && !ghToken()) { st.textContent = S.needToken; st.className = 'hint err'; return; }
+      try {
+        if (cloud()) await BE.setContent('schedule', sch);
+        else { await ghWrite(CONFIG.schedulePath, sch, sha, 'Update availability'); const r = await ghRead(CONFIG.schedulePath); sha = r.sha; }
+        st.textContent = S.scheduleSaved; st.className = 'hint ok'; SCHEDULE = null;
+      }
       catch (e) { st.textContent = S.publishFail + ': ' + e.message; st.className = 'hint err'; }
     });
   };
@@ -12484,10 +12519,10 @@ function adminCodes(p) {
 ROUTES.admin = { nav: '', render: renderAdmin };
 
 /* ============================ boot ============================ */
-window.APP_VERSION = 'v44';
+window.APP_VERSION = 'v45';
 window.NABU = { CONFIG: CONFIG, LESSONS: LESSONS, localAnswer: localAnswer, compatVerdict: compatVerdict, numerologyOf: numerologyOf, ZDEEP: ZDEEP, lunarToday: lunarToday, solarToLunar: solarToLunar, DECK: DECK, INSIGHT: INSIGHT, KW: KW, ASK: ASK, TOPICS: TOPICS, GUIDES: GUIDES, SERVICES: SERVICES, COURSES: COURSES, ACCESS: ACCESS, makeCode: makeCode, parseCode: parseCode, ZODIAC: ZODIAC, pick: pick, book: book,
   insightHTML: insightHTML, insightOf: insightOf, sunSignIndex: sunSignIndex, lifePath: lifePath, PROFILE: () => PROFILE, BE: BE };
-BE.init().catch(() => { /* backend unreachable: the app runs device-only */ });
+BE.initP = BE.init().catch(() => { /* backend unreachable: the app runs device-only */ });
 // Signing in can unlock things (admin sees every course), so redraw the open screen.
 BE.onAuth(() => { if (['learn', 'me', 'home'].indexOf(parseHash().route) > -1) route(); });
 boot();

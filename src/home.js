@@ -5,7 +5,7 @@
 let POSTS = null, POSTS_CACHED = false, FBPOSTS = [], HORO = null;
 
 async function loadPosts() {
-  const p = await loadJSON(CONFIG.postsPath, 'nabu-posts');
+  const p = await loadContent('posts', CONFIG.postsPath, 'nabu-posts');
   POSTS = (p.data && p.data.posts) || []; POSTS_CACHED = p.fromCache;
   const f = await loadJSON('fb.json', 'nabu-fb');
   FBPOSTS = (f.data && f.data.posts) || [];
@@ -51,7 +51,7 @@ function tourHTML(step) {
   return '<div class="card" id="tour" style="text-align:center;border-color:var(--lav)"><div style="font-size:40px">' + t.ic + '</div>'
     + '<h3 style="margin:6px 0">' + esc(txt[0]) + '</h3><p class="muted" style="font-size:14.5px">' + esc(txt[1]) + '</p>'
     + '<div class="row" style="justify-content:center"><span class="faint">' + (step + 1) + ' / ' + TOUR.length + '</span></div>'
-    + '<div class="row" style="justify-content:center;margin-top:10px"><button class="btn sm" data-tour="skip">' + esc(T().dismiss) + '</button>'
+    + '<div class="row" style="justify-content:center;margin-top:10px"><button class="btn sm" data-tour="skip">' + esc(T().dismiss) + '</button>' + (step > 0 ? '<button class="btn sm" data-tour="prev" aria-label="back">←</button>' : '')
     + '<button class="btn sm primary" data-tour="next">' + (step === TOUR.length - 1 ? '✓' : '→') + '</button></div></div>';
 }
 /* Once the tour is done or closed it shrinks to a one-line bar that can reopen it. */
@@ -64,6 +64,7 @@ function bindTour(root, step) {
     const act = b.getAttribute('data-tour');
     if (act === 'open') { $('#tour').outerHTML = tourHTML(0); bindTour(root, 0); return; }
     if (act === 'next' && step < TOUR.length - 1) { $('#tour').outerHTML = tourHTML(step + 1); bindTour(root, step + 1); return; }
+    if (act === 'prev') { $('#tour').outerHTML = tourHTML(Math.max(0, step - 1)); bindTour(root, Math.max(0, step - 1)); return; }
     saveProfileLocal({ tourDone: true }); if (BE.user) BE.pushProfile();
     $('#tour').outerHTML = tourMiniHTML(); bindTour(root, 0);
   }));

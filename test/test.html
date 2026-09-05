@@ -42,7 +42,12 @@ async function go(hash, sel) { W().location.hash = hash; await sleep(30); return
     ok(d.querySelectorAll('.tiles .pickico').length >= 2 && /#FBF3F5/.test(d.querySelector('.tiles a[href="#/pick"]').innerHTML) && /#3D2A6E/.test(d.querySelector('.tiles a[href="#/learn/tarot"]').innerHTML) && !/🃏/.test(d.querySelector('#main').innerHTML), 'draw tile has the lifted cream card, Tarot tile the purple logo card');
     ok(d.querySelector('.pickcta') && /Rút một lá bài hôm nay/.test(d.querySelector('.pickcta').textContent) && d.querySelector('.pickcta').getAttribute('href') === '#/pick' && d.querySelectorAll('.pickcta svg').length === 3 && /#AFC8F0/.test(d.querySelector('.pickcta').innerHTML) && /#F6BBCB/.test(d.querySelector('.pickcta').innerHTML), 'big pick-a-card block shows the three logo cards and leads to the draw');
     ok(/rotate\(-10/.test(d.querySelector('#nav a[href="#/pick"] svg').innerHTML), 'pick tab uses the two-card line icon');
-    for (let i = 0; i < 5; i++) { d.querySelector('[data-tour="next"]').click(); await sleep(30); }
+    ok(!d.querySelector('[data-tour="prev"]'), 'step one of the tour has no back arrow');
+    d.querySelector('[data-tour="next"]').click(); await sleep(30); d.querySelector('[data-tour="next"]').click(); await sleep(30);
+    ok(/3 \/ 5/.test(d.querySelector('#tour').textContent) && d.querySelector('[data-tour="prev"]'), 'later steps show a back arrow');
+    d.querySelector('[data-tour="prev"]').click(); await sleep(30);
+    ok(/2 \/ 5/.test(d.querySelector('#tour').textContent), 'the back arrow steps back');
+    for (let i = 0; i < 6 && d.querySelector('[data-tour="next"]'); i++) { d.querySelector('[data-tour="next"]').click(); await sleep(30); }
     ok(d.querySelector('#tour.tourmini') && N.PROFILE().tourDone === true, 'tour completes, is remembered, and shrinks to a one-line bar');
     d.querySelector('[data-tour="open"]').click(); await sleep(30);
     ok(d.querySelector('#tour.card') && /1 \/ 5/.test(d.querySelector('#tour').textContent), 'the bar reopens the tour from step one');
@@ -153,7 +158,7 @@ async function go(hash, sel) { W().location.hash = hash; await sleep(30); return
     await go('#/learn/lesson/lenormand/6', '.spreads-v');
     ok(d.querySelectorAll('.spv').length === 7 && /Grand Tableau/.test(d.querySelector('.spreads-v').textContent), 'lenormand session 6: seven spread diagrams incl. the Grand Tableau');
     await go('#/report', '#rwhat');
-    ok(d.querySelector('#rwhat') && d.querySelector('#rsend') && d.querySelector('#rcopy') && /Nabu Tarot v44/.test(d.querySelector('.msgbox').textContent), 'bug report screen: direct send button, Instagram, copy, auto-attached info');
+    ok(d.querySelector('#rwhat') && d.querySelector('#rsend') && d.querySelector('#rcopy') && /Nabu Tarot v45/.test(d.querySelector('.msgbox').textContent), 'bug report screen: direct send button, Instagram, copy, auto-attached info');
     d.querySelector('#rwhat').value = 'Nút không bấm được'; d.querySelector('#rsend').click(); await sleep(150);
     ok(/chưa bật gửi trực tiếp/.test(d.querySelector('#rstatus').textContent), 'without an endpoint the send button explains and copies the report');
     ok(N.CONFIG.adminNotifyEmails.indexOf('nabutarot@outlook.com') === 0, 'notifications go to nabutarot@outlook.com first');
@@ -272,6 +277,7 @@ async function go(hash, sel) { W().location.hash = hash; await sleep(30); return
     ok(N.book.items[1].topic === null && !d.querySelector('[data-topic="1/2"]').classList.contains('on') && !/#2 Người cũ/.test(d.querySelector('#msgprev').textContent) && d.querySelectorAll('#cartwrap .warn').length === 1, 'a second tap clears that package\'s topic and flags it again');
     { const html = w.chatHTML([{ from: 'user', text: 'Chào Nabu', name: 'Lan' }, { from: 'nabu', text: 'Chào Lan' }], 'nabu'); ok(/class="who">Lan</.test(html) && /class="who">Bạn</.test(html) && typeof w.notifyAdmin === 'function' && typeof w.askNotify === 'function' && typeof w.adminTabBadges === 'function', 'every bubble names its sender; admin notification helpers exist'); }
     { const html = w.chatHTML([{ from: 'user', text: 'hi', name: 'Lan' }, { from: 'nabu', text: 'yo' }], 'user'); ok(/class="who">Bạn</.test(html) && /class="who">Nabu</.test(html), 'in the client view the reply is labelled Nabu'); }
+    ok(typeof w.loadContent === 'function' && typeof N.BE.getContent === 'function' && typeof N.BE.setContent === 'function', 'dashboard content goes through the cloud helpers, no token needed');
     ok(w.authMessage({ code: 'auth/operation-not-allowed' }, 'facebook') === 'Đăng nhập Facebook chưa mở: Meta yêu cầu Nabu đăng ký một ứng dụng nhà phát triển trước. Bạn dùng Google hoặc email giúp Nabu nhé.' && /Authorized domains/.test(w.authMessage({ code: 'auth/unauthorized-domain' }, 'google')), 'sign-in errors are explained in plain words');
     d.querySelector('[data-topic="1/2"]').click(); await sleep(20);
     d.querySelector('[data-remove="0"]').click(); await sleep(20);
@@ -315,7 +321,7 @@ async function go(hash, sel) { W().location.hash = hash; await sleep(30); return
     d.querySelector('[data-t="codes"]').click(); await waitFor(() => d.querySelector('#cmake'), 4000);
     d.querySelector('#cstart').value = '2026-09-04'; d.querySelector('#cmake').click(); await sleep(50);
     ok(/^NABU-T-270304-[A-Z0-9]{4}$/.test(d.querySelector('#codeval').textContent) && N.parseCode(d.querySelector('#codeval').textContent).course === 'tarot', 'dashboard makes a six-month tarot code that the app accepts');
-    d.querySelector('[data-t="schedule"]').click(); await waitFor(() => d.querySelector('.week .wd'), 4000);
+    d.querySelector('[data-t="schedule"]').click(); await waitFor(() => d.querySelector('.week .wd'), 12000);
     ok(d.querySelectorAll('.week .wd').length === 7 && d.querySelectorAll('.week .chip.on').length >= 15, 'availability editor shows the weekly hours');
     d.querySelector('[data-t="bookings"]').click(); await sleep(50);
     ok(/email quản trị/.test(d.querySelector('#apanel').textContent) && d.querySelector('#apanel a[href="#/me"]'), 'bookings tab asks for an admin sign-in now that accounts are on');
