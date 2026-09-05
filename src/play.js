@@ -37,7 +37,9 @@ function actHTML(a, compact) {
   let body = '';
   if (a.type === 'pile') {
     const piles = a.piles || [];
-    body = '<div class="piles' + (piles.length === 2 ? ' n2' : '') + '">' + piles.map((p, i) => { const chosen = String(mine) === String(i), open = chosen && actAnswered(a); return '<div class="pile' + (chosen ? ' chosen' : '') + (open ? ' open' : '') + '" data-pile="' + i + '"><div class="pile-inner"><div class="pf">' + BACK + '<b>' + (i + 1) + '</b><span>' + esc(p.label || '') + '</span></div><div class="pb"><div class="pbs">' + richHTML(L(p.msg)) + '</div></div></div></div>'; }).join('') + '</div>'
+    const openIdx = mine != null && actAnswered(a) ? Number(mine) : -1;
+    body = '<div class="piles n' + Math.max(2, Math.min(5, piles.length)) + '">' + piles.map((p, i) => { const chosen = String(mine) === String(i), open = i === openIdx; return '<div class="pile' + (chosen ? ' chosen' : '') + (open ? ' open' : '') + '" data-pile="' + i + '"><div class="pile-inner"><div class="pf">' + BACK + '<b>' + (i + 1) + '</b><span>' + esc(p.label || '') + '</span></div><div class="pb"><b>' + (i + 1) + '</b><span>✓</span></div></div></div>'; }).join('') + '</div>'
+      + '<div class="pmsg"' + (openIdx > -1 ? '' : ' hidden') + '>' + (openIdx > -1 ? '<div class="eyebrow">' + esc(S.actPileMsgOf(openIdx + 1)) + '</div>' + richHTML(L(piles[openIdx].msg)) : '') + '</div>'
       + (actAnswered(a) ? (mine == null ? '<p class="hint">' + esc(S.actPickToSee) + '</p>' : '<p class="hint">' + esc(S.actTapOthers) + '</p>') : (mine == null ? '<p class="hint">' + esc(S.actPickHint) + '</p>' : '<p class="hint ok">' + esc(S.actPicked(Number(mine) + 1)) + ' ' + esc(S.actComeBack(fmtDate(a.resultsDate || a.date))) + '</p>'));
   } else if (a.type === 'poll') {
     const opts = a.options || [], voted = mine != null, show = voted || a.closed;
@@ -50,7 +52,7 @@ function actHTML(a, compact) {
       + '<p class="hint wishcount">' + esc(wishes.length ? S.actWishCount(wishes.length) : S.actWishHint) + '</p>' + (wishes.length ? '<button type="button" class="linkbtn" data-wishclear>' + esc(S.actWishClear) + '</button>' : '') + '</div>';
   }
   return '<article class="post act act-' + esc(a.type) + '" data-act="' + esc(a.id) + '">' + actDateLine(a) + '<h2>' + esc(L(a.title)) + '</h2>' + (a.intro ? '<div class="body">' + richHTML(L(a.intro)) + '</div>' : '') + body
-    + (compact ? '<div class="foot"><a class="btn sm" href="#/play">' + esc(S.actAll) + ' →</a></div>' : '') + '</article>';
+    + (compact ? '<div class="foot"><a class="btn sm primary" href="#/play/' + esc(a.id) + '">' + esc(S.actJoin) + ' →</a><a class="btn sm" href="#/play">' + esc(S.actAll) + '</a></div>' : '') + '</article>';
 }
 function bindActs(root, list) {
   const S = T();
@@ -61,7 +63,11 @@ function bindActs(root, list) {
         const i = Number(el.getAttribute('data-pile')), mine = myChoices()[a.id];
         if (actAnswered(a)) {  // after the answer: the chosen pile is open; any pile can be peeked at
           if (mine == null) { setChoice(a.id, i); sendVote(a, i); }
-          el.classList.toggle('open'); if (el.classList.contains('open')) { hydrateImages(el); el.scrollIntoView({ behavior: 'smooth', block: 'nearest' }); }
+          const pm = $('.pmsg', card), was = el.classList.contains('open');
+          $$('[data-pile]', card).forEach((x) => x.classList.remove('open'));
+          if (was) { pm.hidden = true; pm.innerHTML = ''; return; }
+          el.classList.add('open'); pm.hidden = false; pm.innerHTML = '<div class="eyebrow">' + esc(S.actPileMsgOf(i + 1)) + '</div>' + richHTML(L((a.piles[i] || {}).msg)); hydrateImages(pm);
+          setTimeout(() => pm.scrollIntoView({ behavior: 'smooth', block: 'nearest' }), 350);
           return;
         }
         if (mine != null && String(mine) !== String(i) && !confirm(S.actChangePile)) return;
@@ -94,21 +100,32 @@ function bindActs(root, list) {
   });
   hydrateImages(root);
 }
-async function renderPlay() {
+function actStatus(a) { const S = T(); return actAnswered(a) ? '✓ ' + S.actHasResults : a.closed ? S.actClosed : S.actOpen; }
+function actButtonHTML(a) {
+  const S = T(), mine = myChoices()[a.id];
+  return '<a class="actbtn act-' + esc(a.type) + (actOpen(a) ? ' live' : '') + '" href="#/play/' + esc(a.id) + '"><span class="ic">' + (S.actTypeIcon[a.type] || '🎲') + '</span><span class="body"><b>' + esc(L(a.title)) + '</b><span class="meta">' + esc(fmtDate(a.date)) + ' · ' + esc(S.actTypes[a.type] || a.type) + ' · ' + esc(actStatus(a)) + (a.type === 'pile' && mine != null ? ' · ' + esc(S.actPicked(Number(mine) + 1)) : '') + '</span></span><span class="chev">›</span></a>';
+}
+async function renderPlay(args) {
   const S = T(), m = $('#main');
-  m.innerHTML = '<div class="eyebrow">' + esc(CONFIG.brand) + '</div><h1 style="margin-bottom:6px">' + esc(S.actTitle) + '</h1><p class="muted">' + esc(S.actIntro) + '</p><div id="acts"><p class="hint">…</p></div>';
   const list = (await loadActs()).slice().sort((a, b) => String(b.date).localeCompare(String(a.date)));
-  const box = $('#acts'); if (!box) return;
-  box.innerHTML = list.length ? list.map((a) => actHTML(a, false)).join('') : '<p class="empty">' + esc(S.actEmpty) + '</p>';
-  bindActs(box, list);
+  if (args && args[0]) {
+    const a = list.filter((x) => x.id === args[0])[0];
+    if (!a) { redirect('#/play'); return; }
+    m.innerHTML = '<div class="eyebrow">' + esc(S.actTitle) + '</div><div id="acts">' + actHTML(a, false) + '</div><p style="margin-top:12px"><a href="#/play" class="backlink">← ' + esc(S.actBack) + '</a></p>';
+    bindActs($('#acts'), list);
+    return;
+  }
+  m.innerHTML = '<div class="eyebrow">' + esc(CONFIG.brand) + '</div><h1 style="margin-bottom:6px">' + esc(S.actTitle) + '</h1><p class="muted">' + esc(S.actIntro) + '</p><div id="acts" class="actlist">'
+    + (list.length ? list.map(actButtonHTML).join('') : '<p class="empty">' + esc(S.actEmpty) + '</p>') + '</div>';
 }
 /* The newest open activity, shown on the home screen. */
 async function homeActHTML(root) {
   const list = (await loadActs()).slice().sort((a, b) => String(b.date).localeCompare(String(a.date)));
   const a = list.filter(actOpen)[0] || list[0];
   if (!a || !root) return;
-  root.innerHTML = '<div class="sec"><div class="eyebrow">🎲 ' + esc(T().actTitle) + '</div>' + actHTML(a, true) + '</div>';
-  bindActs(root, list);
+  const S = T();
+  root.innerHTML = '<div class="sec"><div class="eyebrow">🎲 ' + esc(S.actTitle) + '</div><article class="post act act-' + esc(a.type) + '">' + actDateLine(a) + '<h2>' + esc(L(a.title)) + '</h2>' + (a.intro ? '<div class="body">' + richHTML(L(a.intro)) + '</div>' : '') + '<div class="foot"><a class="btn sm primary" href="#/play/' + esc(a.id) + '">' + esc(S.actJoin) + ' →</a><a class="btn sm" href="#/play">' + esc(S.actAll) + '</a></div></article></div>';
+  hydrateImages(root);
 }
 ROUTES.play = { nav: 'home', render: renderPlay };
 

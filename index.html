@@ -795,12 +795,14 @@ main{padding:22px 0 30px}
 @media (max-width:380px){.hero{grid-template-columns:96px 1fr}.fan{height:230px}.fan .slot{width:92px;height:150px;margin-left:-46px}.nav a{font-size:10px}}
 @media (min-width:640px){.fan{height:280px}.fan .slot{width:120px;height:196px;margin-left:-60px}.tiles{grid-template-columns:1fr 1fr 1fr}}
 /* Activities: piles that flip, polls with bars, the wish jar. */
-.piles{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:10px 0}.piles.n2{grid-template-columns:repeat(2,1fr)}
-.pile{perspective:900px;cursor:pointer;min-height:150px}.pile-inner{position:relative;width:100%;min-height:150px;transform-style:preserve-3d;transition:transform .7s cubic-bezier(.4,.2,.2,1)}.pile.open .pile-inner{transform:rotateY(180deg)}
+.piles{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin:10px 0;align-items:stretch}.piles.n2{grid-template-columns:repeat(2,minmax(0,1fr))}.piles.n4{grid-template-columns:repeat(4,minmax(0,1fr))}.piles.n5{grid-template-columns:repeat(5,minmax(0,1fr))}
+.pmsg{background:var(--tag-gold-bg);color:var(--tag-gold-ink);border:1.5px solid var(--gold);border-radius:14px;padding:12px 14px;margin:4px 0 10px;font-size:14.5px}.pmsg .eyebrow{color:inherit;opacity:.8}.pmsg p{margin:0 0 8px}.pmsg h3{margin:4px 0 6px}
+.actlist{display:grid;gap:10px}.actbtn{display:flex;align-items:center;gap:12px;background:var(--surface);border:1px solid var(--rule-soft);border-radius:16px;padding:12px 14px;text-decoration:none;color:inherit}.actbtn.live{border-color:var(--lav)}.actbtn .ic{font-size:26px;flex:none;width:40px;text-align:center}.actbtn .body{flex:1;min-width:0}.actbtn b{display:block;font-size:15.5px;line-height:1.3}.actbtn .meta{display:block;font-size:12.5px;color:var(--fg-faint);margin-top:2px}.actbtn .chev{color:var(--fg-faint);font-size:22px;flex:none}
+.pile{perspective:900px;cursor:pointer;position:relative;min-width:0;height:0;padding-top:146%}.pile-inner{position:absolute;inset:0;transform-style:preserve-3d;transition:transform .7s cubic-bezier(.4,.2,.2,1)}.pile.open .pile-inner{transform:rotateY(180deg)}
 .pile .pf,.pile .pb{position:absolute;inset:0;backface-visibility:hidden;-webkit-backface-visibility:hidden;border-radius:12px;transition:visibility 0s .35s}.pile .pb{visibility:hidden}.pile.open .pb{visibility:visible}.pile.open .pf{visibility:hidden}
-.pile .pf{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;background:var(--surface);border:1.5px solid var(--rule)}.pile .pf svg{width:64px;height:auto;filter:drop-shadow(0 4px 8px var(--shade))}.pile .pf b{font-size:15px}.pile .pf span{font-size:11.5px;color:var(--fg-faint);text-align:center;padding:0 4px}
+.pile .pf{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;background:var(--surface);border:1.5px solid var(--rule);padding:6px 4px}.pile .pf svg{width:56%;max-width:64px;height:auto;filter:drop-shadow(0 4px 8px var(--shade))}.pile .pf b{font-size:15px;line-height:1}.pile .pf span{font-size:11px;line-height:1.2;color:var(--fg-faint);text-align:center;padding:0 2px;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .pile.chosen .pf{border-color:var(--primary);box-shadow:0 0 0 2px var(--primary) inset}.pile.chosen .pf:after{content:'✓';position:absolute;top:6px;right:8px;font-weight:700;color:var(--primary)}
-.pile .pb{transform:rotateY(180deg);background:var(--tag-gold-bg);color:var(--tag-gold-ink);border:1.5px solid var(--gold);padding:10px;overflow:auto;font-size:13.5px;position:relative;min-height:150px}.pile .pb p{margin:0 0 6px}.pile.open{grid-column:1/-1}.pile.open .pile-inner{min-height:120px}.pile.open .pb{position:relative;transform:rotateY(180deg)}.pile.open .pf{position:absolute}
+.pile .pb{transform:rotateY(180deg);background:var(--tag-gold-bg);color:var(--tag-gold-ink);border:1.5px solid var(--gold);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px}.pile .pb b{font-size:26px;font-family:var(--display)}.pile .pb span{font-size:18px}
 .pollopts{display:grid;gap:8px;margin:10px 0 6px}.pollopt{position:relative;display:flex;align-items:center;gap:8px;width:100%;text-align:left;background:var(--surface-2);border:1px solid var(--rule);border-radius:12px;padding:11px 12px;font-weight:600;overflow:hidden}.pollopt .bar{position:absolute;left:0;top:0;bottom:0;width:0;background:var(--lav-soft);transition:width .6s;z-index:0}.pollopt .lbl{position:relative;flex:1;min-width:0}.pollopt .pct{position:relative;color:var(--fg-soft);font-size:13px}.pollopt.on{border-color:var(--primary);box-shadow:0 0 0 1px var(--primary) inset}.pollopt[disabled]{opacity:1;cursor:default}
 .wishjar{text-align:center}.wishjar .jar{position:relative;font-size:64px;line-height:1;height:110px;display:flex;align-items:flex-end;justify-content:center;margin-bottom:8px}.wishjar .note{position:absolute;bottom:60px;left:50%;transform:translateX(-50%);background:#FFFDF5;color:#3B2A5E;border:1px solid #E8DFC4;border-radius:6px;padding:6px 10px;font-size:12px;font-family:Georgia,serif;max-width:220px;opacity:0}.wishjar .jar.fly .note{animation:wishfly 2.4s ease-out forwards}.wishjar .star{position:absolute;font-size:16px;color:var(--gold);opacity:0}.wishjar .s1{left:30%;bottom:70px}.wishjar .s2{right:28%;bottom:40px}.wishjar .s3{left:52%;bottom:96px}.wishjar .jar.fly .star{animation:twinkle 1.6s ease-in-out .3s 2}
 .wishjar textarea{min-height:70px;text-align:center}.wishjar .btn{margin-top:8px}
@@ -1143,6 +1145,7 @@ const STR = {
     actPickHint: 'Chạm vào một tụ bài mà bạn thấy hút mình. Nabu sẽ đăng thông điệp của từng tụ sau vài ngày.', actPicked: (n) => 'Bạn đã chọn tụ ' + n + '.', actComeBack: (d) => 'Quay lại vào ' + d + ' để lật bài xem thông điệp.', actChangePile: 'Đổi sang tụ khác?', actPickToSee: 'Thông điệp đã có. Chạm vào một tụ để lật lên.', actTapOthers: 'Tụ bạn chọn đã lật lên. Bạn có thể chạm vào tụ khác để xem thử.',
     actVoteHint: 'Chạm vào một lựa chọn. Mỗi người một phiếu.', actVoteLogin: 'Đăng nhập để bình chọn và xem kết quả.', actVoted: 'Cảm ơn bạn đã bình chọn!', actClosedNote: 'Bình chọn đã đóng. Đây là kết quả.', actVotes: (n) => n + ' phiếu',
     actWishPh: 'Điều mình ước lúc này là…', actWishSend: 'Gửi vào vũ trụ', actWishHint: 'Viết ngắn, ở thì hiện tại, rồi gửi. Điều ước lưu trên máy bạn, không ai đọc được.', actWishCount: (n) => 'Bạn đã gửi ' + n + ' điều ước ở đây.', actWishSent: 'Đã gửi. Giờ đến lượt bạn làm bước đầu tiên. ✨', actWishEmpty: 'Bạn viết điều ước trước nhé.', actWishClear: 'Xoá các điều ước đã lưu trên máy', actWishClearConfirm: 'Xoá các điều ước đã lưu trên máy này?',
+    actJoin: 'Tham gia', actBack: 'Tất cả hoạt động', actPileMsgOf: (n) => 'Thông điệp tụ ' + n, actTypeIcon: { pile: '🃏', poll: '📊', wish: '🌠' },
     actNew: 'Hoạt động mới', actType: 'Loại', actTypes: { pile: 'Chọn tụ bài', poll: 'Bình chọn', wish: 'Điều ước' }, actResultsDate: 'Ngày đăng kết quả', actIntroLabel: 'Lời dẫn (có thể dùng ảnh, in đậm như bài đăng)', actPilesHint: 'Từ 2 đến 5 tụ. Bạn có thể đăng trước với nhãn trống; vài ngày sau quay lại điền thông điệp và bật "Đã có kết quả".', actPileN: (n) => 'Tụ ' + n, actPileLabel: 'Nhãn ngắn (không bắt buộc), ví dụ: Trái · Giữa · Phải', actPileMsg: 'Thông điệp cho tụ này (đăng sau cũng được)', actPileMsgEn: 'English message (optional)', actPileAdd: 'Thêm tụ', actPileDel: 'Bớt tụ', actResultsOn: 'Đã có kết quả: cho phép lật bài', actOptions: 'Các lựa chọn, mỗi dòng một lựa chọn', actCloseOn: 'Đóng bình chọn', actExisting: 'Hoạt động đã đăng', actNeedPiles: 'Bạn điền ít nhất một tụ nhé.', actNeedOptions: 'Cần ít nhất hai lựa chọn.',
     newsTitle: 'Bài viết', newsIntro: 'Tất cả bài Nabu đã đăng: dự đoán, chia sẻ, thông báo. Gõ để tìm.', searchPosts: 'Tìm trong bài viết…', noMatch: 'Không có bài nào khớp.', allPostsBtn: (n) => 'Xem tất cả bài viết (' + n + ')', watchOn: (s) => 'Xem video trên ' + s,
     addImage: 'Ảnh', addVideo: 'Video', videoPrompt: 'Dán link video (YouTube, Facebook, TikTok, Instagram):', imgNeedCloud: 'Bạn cần đăng nhập tài khoản admin để tải ảnh lên.', imgTooBig: 'Ảnh quá lớn, thử ảnh nhỏ hơn.', imgAdded: 'Đã thêm ảnh vào bài.', wrapPlaceholder: 'chữ', boxLabel: 'Hộp', formatHint: 'Chọn chữ rồi bấm B / U / H để in đậm, gạch dưới, tô sáng. H2 là tiêu đề nhỏ, Hộp là ô tiêu đề riêng. Ảnh tải thẳng vào bài; video dán link.',
@@ -1393,6 +1396,7 @@ const STR = {
     actPickHint: 'Tap the pile that pulls you. Nabu posts each pile\'s message a few days later.', actPicked: (n) => 'You chose pile ' + n + '.', actComeBack: (d) => 'Come back on ' + d + ' to flip it over.', actChangePile: 'Switch to another pile?', actPickToSee: 'The messages are in. Tap a pile to flip it.', actTapOthers: 'Your pile is open. Tap another pile to peek.',
     actVoteHint: 'Tap an option. One vote per person.', actVoteLogin: 'Sign in to vote and see the results.', actVoted: 'Thank you for voting!', actClosedNote: 'Voting is closed. Here are the results.', actVotes: (n) => n + ' votes',
     actWishPh: 'Right now I wish…', actWishSend: 'Send it to the universe', actWishHint: 'Keep it short, in the present tense, then send. Wishes stay on your device; nobody reads them.', actWishCount: (n) => 'You have sent ' + n + ' wishes here.', actWishSent: 'Sent. Now the first step is yours. ✨', actWishEmpty: 'Write your wish first.', actWishClear: 'Clear the wishes saved on this device', actWishClearConfirm: 'Clear the wishes saved on this device?',
+    actJoin: 'Join in', actBack: 'All activities', actPileMsgOf: (n) => 'Message of pile ' + n, actTypeIcon: { pile: '🃏', poll: '📊', wish: '🌠' },
     actNew: 'New activity', actType: 'Type', actTypes: { pile: 'Pick a pile', poll: 'Poll', wish: 'Wish' }, actResultsDate: 'Results date', actIntroLabel: 'Intro (images and bold work like in posts)', actPilesHint: 'Two to five piles. You can publish with empty labels; come back days later, fill in the messages and switch on "Answered".', actPileN: (n) => 'Pile ' + n, actPileLabel: 'Short label (optional), e.g. Left · Middle · Right', actPileMsg: 'Message for this pile (can be added later)', actPileMsgEn: 'English message (optional)', actPileAdd: 'Add a pile', actPileDel: 'Remove a pile', actResultsOn: 'Answered: let people flip the piles', actOptions: 'Options, one per line', actCloseOn: 'Close the poll', actExisting: 'Published activities', actNeedPiles: 'Fill in at least one pile.', actNeedOptions: 'At least two options are needed.',
     newsTitle: 'Posts', newsIntro: 'Everything Nabu has posted: readings, thoughts, announcements. Type to search.', searchPosts: 'Search the posts…', noMatch: 'No post matches.', allPostsBtn: (n) => 'See all posts (' + n + ')', watchOn: (s) => 'Watch on ' + s,
     addImage: 'Image', addVideo: 'Video', videoPrompt: 'Paste a video link (YouTube, Facebook, TikTok, Instagram):', imgNeedCloud: 'Sign in with the admin account to upload images.', imgTooBig: 'Image too large, try a smaller one.', imgAdded: 'Image added to the post.', wrapPlaceholder: 'text', boxLabel: 'Box', formatHint: 'Select text, then tap B / U / H for bold, underline, highlight. H2 is a small heading, Box a separate title box. Images upload straight into the post; videos are pasted as links.',
@@ -13089,7 +13093,9 @@ function actHTML(a, compact) {
   let body = '';
   if (a.type === 'pile') {
     const piles = a.piles || [];
-    body = '<div class="piles' + (piles.length === 2 ? ' n2' : '') + '">' + piles.map((p, i) => { const chosen = String(mine) === String(i), open = chosen && actAnswered(a); return '<div class="pile' + (chosen ? ' chosen' : '') + (open ? ' open' : '') + '" data-pile="' + i + '"><div class="pile-inner"><div class="pf">' + BACK + '<b>' + (i + 1) + '</b><span>' + esc(p.label || '') + '</span></div><div class="pb"><div class="pbs">' + richHTML(L(p.msg)) + '</div></div></div></div>'; }).join('') + '</div>'
+    const openIdx = mine != null && actAnswered(a) ? Number(mine) : -1;
+    body = '<div class="piles n' + Math.max(2, Math.min(5, piles.length)) + '">' + piles.map((p, i) => { const chosen = String(mine) === String(i), open = i === openIdx; return '<div class="pile' + (chosen ? ' chosen' : '') + (open ? ' open' : '') + '" data-pile="' + i + '"><div class="pile-inner"><div class="pf">' + BACK + '<b>' + (i + 1) + '</b><span>' + esc(p.label || '') + '</span></div><div class="pb"><b>' + (i + 1) + '</b><span>✓</span></div></div></div>'; }).join('') + '</div>'
+      + '<div class="pmsg"' + (openIdx > -1 ? '' : ' hidden') + '>' + (openIdx > -1 ? '<div class="eyebrow">' + esc(S.actPileMsgOf(openIdx + 1)) + '</div>' + richHTML(L(piles[openIdx].msg)) : '') + '</div>'
       + (actAnswered(a) ? (mine == null ? '<p class="hint">' + esc(S.actPickToSee) + '</p>' : '<p class="hint">' + esc(S.actTapOthers) + '</p>') : (mine == null ? '<p class="hint">' + esc(S.actPickHint) + '</p>' : '<p class="hint ok">' + esc(S.actPicked(Number(mine) + 1)) + ' ' + esc(S.actComeBack(fmtDate(a.resultsDate || a.date))) + '</p>'));
   } else if (a.type === 'poll') {
     const opts = a.options || [], voted = mine != null, show = voted || a.closed;
@@ -13102,7 +13108,7 @@ function actHTML(a, compact) {
       + '<p class="hint wishcount">' + esc(wishes.length ? S.actWishCount(wishes.length) : S.actWishHint) + '</p>' + (wishes.length ? '<button type="button" class="linkbtn" data-wishclear>' + esc(S.actWishClear) + '</button>' : '') + '</div>';
   }
   return '<article class="post act act-' + esc(a.type) + '" data-act="' + esc(a.id) + '">' + actDateLine(a) + '<h2>' + esc(L(a.title)) + '</h2>' + (a.intro ? '<div class="body">' + richHTML(L(a.intro)) + '</div>' : '') + body
-    + (compact ? '<div class="foot"><a class="btn sm" href="#/play">' + esc(S.actAll) + ' →</a></div>' : '') + '</article>';
+    + (compact ? '<div class="foot"><a class="btn sm primary" href="#/play/' + esc(a.id) + '">' + esc(S.actJoin) + ' →</a><a class="btn sm" href="#/play">' + esc(S.actAll) + '</a></div>' : '') + '</article>';
 }
 function bindActs(root, list) {
   const S = T();
@@ -13113,7 +13119,11 @@ function bindActs(root, list) {
         const i = Number(el.getAttribute('data-pile')), mine = myChoices()[a.id];
         if (actAnswered(a)) {  // after the answer: the chosen pile is open; any pile can be peeked at
           if (mine == null) { setChoice(a.id, i); sendVote(a, i); }
-          el.classList.toggle('open'); if (el.classList.contains('open')) { hydrateImages(el); el.scrollIntoView({ behavior: 'smooth', block: 'nearest' }); }
+          const pm = $('.pmsg', card), was = el.classList.contains('open');
+          $$('[data-pile]', card).forEach((x) => x.classList.remove('open'));
+          if (was) { pm.hidden = true; pm.innerHTML = ''; return; }
+          el.classList.add('open'); pm.hidden = false; pm.innerHTML = '<div class="eyebrow">' + esc(S.actPileMsgOf(i + 1)) + '</div>' + richHTML(L((a.piles[i] || {}).msg)); hydrateImages(pm);
+          setTimeout(() => pm.scrollIntoView({ behavior: 'smooth', block: 'nearest' }), 350);
           return;
         }
         if (mine != null && String(mine) !== String(i) && !confirm(S.actChangePile)) return;
@@ -13146,21 +13156,32 @@ function bindActs(root, list) {
   });
   hydrateImages(root);
 }
-async function renderPlay() {
+function actStatus(a) { const S = T(); return actAnswered(a) ? '✓ ' + S.actHasResults : a.closed ? S.actClosed : S.actOpen; }
+function actButtonHTML(a) {
+  const S = T(), mine = myChoices()[a.id];
+  return '<a class="actbtn act-' + esc(a.type) + (actOpen(a) ? ' live' : '') + '" href="#/play/' + esc(a.id) + '"><span class="ic">' + (S.actTypeIcon[a.type] || '🎲') + '</span><span class="body"><b>' + esc(L(a.title)) + '</b><span class="meta">' + esc(fmtDate(a.date)) + ' · ' + esc(S.actTypes[a.type] || a.type) + ' · ' + esc(actStatus(a)) + (a.type === 'pile' && mine != null ? ' · ' + esc(S.actPicked(Number(mine) + 1)) : '') + '</span></span><span class="chev">›</span></a>';
+}
+async function renderPlay(args) {
   const S = T(), m = $('#main');
-  m.innerHTML = '<div class="eyebrow">' + esc(CONFIG.brand) + '</div><h1 style="margin-bottom:6px">' + esc(S.actTitle) + '</h1><p class="muted">' + esc(S.actIntro) + '</p><div id="acts"><p class="hint">…</p></div>';
   const list = (await loadActs()).slice().sort((a, b) => String(b.date).localeCompare(String(a.date)));
-  const box = $('#acts'); if (!box) return;
-  box.innerHTML = list.length ? list.map((a) => actHTML(a, false)).join('') : '<p class="empty">' + esc(S.actEmpty) + '</p>';
-  bindActs(box, list);
+  if (args && args[0]) {
+    const a = list.filter((x) => x.id === args[0])[0];
+    if (!a) { redirect('#/play'); return; }
+    m.innerHTML = '<div class="eyebrow">' + esc(S.actTitle) + '</div><div id="acts">' + actHTML(a, false) + '</div><p style="margin-top:12px"><a href="#/play" class="backlink">← ' + esc(S.actBack) + '</a></p>';
+    bindActs($('#acts'), list);
+    return;
+  }
+  m.innerHTML = '<div class="eyebrow">' + esc(CONFIG.brand) + '</div><h1 style="margin-bottom:6px">' + esc(S.actTitle) + '</h1><p class="muted">' + esc(S.actIntro) + '</p><div id="acts" class="actlist">'
+    + (list.length ? list.map(actButtonHTML).join('') : '<p class="empty">' + esc(S.actEmpty) + '</p>') + '</div>';
 }
 /* The newest open activity, shown on the home screen. */
 async function homeActHTML(root) {
   const list = (await loadActs()).slice().sort((a, b) => String(b.date).localeCompare(String(a.date)));
   const a = list.filter(actOpen)[0] || list[0];
   if (!a || !root) return;
-  root.innerHTML = '<div class="sec"><div class="eyebrow">🎲 ' + esc(T().actTitle) + '</div>' + actHTML(a, true) + '</div>';
-  bindActs(root, list);
+  const S = T();
+  root.innerHTML = '<div class="sec"><div class="eyebrow">🎲 ' + esc(S.actTitle) + '</div><article class="post act act-' + esc(a.type) + '">' + actDateLine(a) + '<h2>' + esc(L(a.title)) + '</h2>' + (a.intro ? '<div class="body">' + richHTML(L(a.intro)) + '</div>' : '') + '<div class="foot"><a class="btn sm primary" href="#/play/' + esc(a.id) + '">' + esc(S.actJoin) + ' →</a><a class="btn sm" href="#/play">' + esc(S.actAll) + '</a></div></article></div>';
+  hydrateImages(root);
 }
 ROUTES.play = { nav: 'home', render: renderPlay };
 
@@ -13487,7 +13508,7 @@ function adminCodes(p) {
 ROUTES.admin = { nav: '', render: renderAdmin };
 
 /* ============================ boot ============================ */
-window.APP_VERSION = 'v63';
+window.APP_VERSION = 'v64';
 window.NABU = { CONFIG: CONFIG, LESSONS: LESSONS, localAnswer: localAnswer, compatVerdict: compatVerdict, numerologyOf: numerologyOf, ZDEEP: ZDEEP, lunarToday: lunarToday, solarToLunar: solarToLunar, DECK: DECK, INSIGHT: INSIGHT, KW: KW, ASK: ASK, TOPICS: TOPICS, GUIDES: GUIDES, SERVICES: SERVICES, COURSES: COURSES, ACCESS: ACCESS, makeCode: makeCode, parseCode: parseCode, ZODIAC: ZODIAC, pick: pick, book: book,
   insightHTML: insightHTML, insightOf: insightOf, sunSignIndex: sunSignIndex, lifePath: lifePath, PROFILE: () => PROFILE, BE: BE, ACTS: ACTS };
 BE.initP = BE.init().catch(() => { /* backend unreachable: the app runs device-only */ });
