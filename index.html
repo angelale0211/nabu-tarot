@@ -214,13 +214,18 @@
   color-scheme:dark;
 }
 *{box-sizing:border-box;min-width:0}
+body{overflow-x:clip}
 img,svg{max-width:100%}
 html{-webkit-text-size-adjust:100%}
 body{margin:0;background:var(--bg);color:var(--fg);font-family:var(--body);font-size:16px;line-height:1.55;
   -webkit-font-smoothing:antialiased;min-height:100vh;padding-bottom:calc(var(--nav-h) + env(safe-area-inset-bottom))}
 a{color:var(--link)}
 button{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:pointer;-webkit-tap-highlight-color:transparent}
-input,textarea,select{font:inherit;color:var(--fg);background:var(--surface);border:1px solid var(--rule);border-radius:12px;padding:12px 14px;width:100%}
+input,textarea,select{font:inherit;color:var(--fg);background:var(--surface);border:1px solid var(--rule);border-radius:12px;padding:12px 14px;width:100%;max-width:100%;-webkit-appearance:none;appearance:none;margin:0}
+/* iOS renders date and time fields as small centred pills: give them the same box as every other field. */
+input[type=date],input[type=time]{display:flex;align-items:center;min-height:50px;line-height:1.3;text-align:left}
+input::-webkit-date-and-time-value{text-align:left;min-height:1.3em}
+button{-webkit-appearance:none;appearance:none;max-width:100%}
 input:focus,textarea:focus,select:focus{outline:2px solid var(--lav);outline-offset:1px;border-color:transparent}
 textarea{min-height:110px;resize:vertical}
 label.f{display:block;font-size:13px;color:var(--fg-soft);margin:14px 0 6px;font-weight:600}
@@ -256,6 +261,7 @@ p{margin:0 0 12px}
 /* ---- common ---- */
 main{padding:22px 0 30px}
 #backbar{padding-top:12px}#backbar+main{padding-top:6px}#backbar .backlink{margin:0 0 0 -4px}
+#homefoot{display:flex;gap:18px;flex-wrap:wrap;padding-bottom:26px;margin-top:-6px}#homefoot[hidden]{display:none}#homefoot .backlink{margin:0}
 .sec{margin-bottom:26px}
 .eyebrow{font-size:12px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--pink-ink);margin-bottom:8px}
 :root[lang="vi"] .eyebrow{text-transform:none;letter-spacing:.02em}
@@ -423,7 +429,8 @@ main{padding:22px 0 30px}
 .tbl td:first-child{font-weight:600;white-space:nowrap}
 
 /* ---- services / prices ---- */
-.svc{background:var(--surface);border:1.5px solid var(--rule);border-radius:18px;padding:14px 14px 10px;margin-bottom:12px}
+.svc{background:var(--surface);border:1.5px solid var(--rule);border-radius:18px;padding:14px 14px 10px;margin-bottom:12px;max-width:100%;overflow:hidden}
+.svc .t>div{min-width:0}
 .svc.blue{border-color:var(--blue)}.svc.lav{border-color:var(--lav)}.svc.pink{border-color:var(--pink)}.svc.gold{border-color:var(--gold)}
 .svc.on{box-shadow:0 0 0 2px var(--primary) inset}
 .svc .t{display:flex;gap:10px;align-items:center;margin-bottom:8px}
@@ -431,8 +438,9 @@ main{padding:22px 0 30px}
 .svc .t b{font-family:var(--display);font-weight:500;font-size:18px;display:block}
 .svc .t .tag{font-size:12.5px;color:var(--fg-faint);font-style:italic}
 .svc .pk{display:flex;flex-direction:column;gap:6px}
-.svc .pkg{display:flex;justify-content:space-between;align-items:center;gap:10px;width:100%;text-align:left;background:var(--surface-2);border:1px solid transparent;border-radius:12px;padding:9px 12px;font-size:14.5px}
-.svc .pkg b{font-family:var(--body);font-weight:700;white-space:nowrap}
+.svc .pkg{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:4px 10px;width:100%;max-width:100%;text-align:left;background:var(--surface-2);border:1px solid transparent;border-radius:12px;padding:9px 12px;font-size:14.5px;overflow:hidden}
+.svc .pkg b{font-family:var(--body);font-weight:700;white-space:nowrap;margin-left:auto}
+.svc .pkg>span{flex:1 1 150px}
 .svc .pkg span{min-width:0;overflow-wrap:anywhere}
 .svc button.pkg.on{background:var(--primary);color:var(--primary-ink);border-color:transparent}
 .paynote{background:var(--tag-gold-bg);color:var(--tag-gold-ink);border-radius:12px;padding:10px 14px;font-size:14px;font-weight:600;text-align:center}
@@ -547,7 +555,14 @@ main{padding:22px 0 30px}
 .tsym{background:var(--surface);border:1px solid var(--rule-soft);border-radius:14px;padding:10px 4px;text-align:center}
 .tsym .ic{font-size:26px;display:block}.tsym b{display:block;font-size:12px}.tsym span:last-child{font-size:10.5px;color:var(--fg-faint);display:block}
 .tsym.big{padding:14px}.tsym.big .ic{font-size:44px}.tsym.big b{font-size:16px}.tsym.big span{font-size:13px}
-.awrapper{text-align:center;margin-bottom:14px}.awheel{width:min(340px,90vw);height:auto;display:block;margin:0 auto;overflow:visible}
+.awrapper{text-align:center;margin-bottom:14px}
+/* The animals wheel is plain HTML: emoji sit inside real circles and every name is on its own line, whatever font the phone uses. */
+.awheel{position:relative;width:min(330px,88vw);height:min(330px,88vw);margin:0 auto 6px}
+.awheel .aw{position:absolute;width:74px;display:flex;flex-direction:column;align-items:center;gap:3px;transform:translate(-50%,-20px);padding:0}
+.awheel .aw.on{transform:translate(-50%,-24px)}
+.awheel .aw .e{width:40px;height:40px;border-radius:50%;background:var(--surface);border:1px solid var(--rule);display:flex;align-items:center;justify-content:center;font-size:21px;line-height:1;box-shadow:0 1px 3px var(--shade)}
+.awheel .aw.on .e{width:48px;height:48px;background:var(--primary);font-size:25px;border-color:transparent}
+.awheel .aw b{font-size:12.5px;line-height:1.1;white-space:nowrap}.awheel .aw.on b{color:var(--primary)}
 @media (max-width:380px){.ringwrap{grid-template-columns:120px 1fr}.ring{width:120px;height:120px}}
 
 /* ---- guide visuals ---- */
@@ -615,22 +630,22 @@ main{padding:22px 0 30px}
 
 /* ---- booking ---- */
 .tip{background:var(--tag-lav-bg,var(--surface-2));color:var(--fg);border-radius:12px;padding:10px 12px;font-size:14px;margin:10px 0 4px}
-.cart{background:var(--surface);border:1.5px solid var(--primary);border-radius:16px;padding:12px 14px;margin:4px 0 6px;font-size:14.5px}.cart.empty{border-style:dashed;border-color:var(--rule);color:var(--fg-faint)}.cart>b{display:block;margin-bottom:8px}
-.ci{display:flex;align-items:center;gap:10px;padding:7px 0;border-top:1px solid var(--rule-soft)}.ci>span{flex:1;min-width:0}.ci b{white-space:nowrap}.ci .x{background:none;border:1px solid var(--rule);border-radius:50%;width:28px;height:28px;font-size:12px;color:var(--fg-soft)}.ci.total{border-top:2px solid var(--rule);font-weight:700}.ci small.warn,.tpick .warn{color:#B04A2E;font-size:12.5px;font-weight:600}.ci small.ok,.tpick .ok{color:#2E7D46;font-size:12.5px;font-weight:600}
+.cart{background:var(--surface);border:1.5px solid var(--primary);border-radius:16px;padding:12px 14px;margin:4px 0 6px;font-size:14.5px;max-width:100%;overflow:hidden}.cart.empty{border-style:dashed;border-color:var(--rule);color:var(--fg-faint)}.cart>b{display:block;margin-bottom:8px}
+.ci{display:flex;align-items:center;flex-wrap:wrap;gap:4px 10px;padding:7px 0;border-top:1px solid var(--rule-soft)}.ci>span{flex:1 1 140px}.ci b{margin-left:auto}.ci>span{flex:1;min-width:0}.ci b{white-space:nowrap}.ci .x{background:none;border:1px solid var(--rule);border-radius:50%;width:28px;height:28px;font-size:12px;color:var(--fg-soft)}.ci.total{border-top:2px solid var(--rule);font-weight:700}.ci small.warn,.tpick .warn{color:#B04A2E;font-size:12.5px;font-weight:600}.ci small.ok,.tpick .ok{color:#2E7D46;font-size:12.5px;font-weight:600}
 .tpick{margin:14px 0 18px}.tpick h3{margin:0 0 8px;font-size:15.5px}
-.topic{display:block;width:100%;text-align:left;background:var(--surface);border:1px solid var(--rule-soft);border-radius:16px;padding:14px 16px;margin-bottom:10px}
+.topic{display:block;width:100%;max-width:100%;text-align:left;background:var(--surface);border:1px solid var(--rule-soft);border-radius:16px;padding:14px 16px;margin-bottom:10px;overflow:hidden}
 .topic.on{border-color:var(--primary);box-shadow:0 0 0 1px var(--primary) inset}
 .topic .t{display:flex;align-items:center;gap:10px;font-weight:600;font-size:16px}
 .topic .t>span:last-child{min-width:0;overflow-wrap:anywhere}
 .topic .t .n{color:var(--fg-faint);font-weight:500;font-size:13px}
 .topic .t .ic{font-size:20px}
-.topic ol{margin:10px 0 0;padding-left:20px;color:var(--fg-soft);font-size:14.5px;display:none}
+.topic ol{margin:10px 0 0;padding-left:22px;color:var(--fg-soft);font-size:14.5px;display:none;text-align:left;list-style:decimal outside}
 .topic.open ol{display:block}
 .topic ol li{margin-bottom:4px}
 .steps{counter-reset:s;list-style:none;padding:0;margin:0}
 .steps li{position:relative;padding-left:36px;margin-bottom:10px;color:var(--fg-soft)}
 .steps li:before{counter-increment:s;content:counter(s);position:absolute;left:0;top:0;width:26px;height:26px;border-radius:50%;background:var(--lav-soft);color:var(--fg);font-weight:700;font-size:13px;display:flex;align-items:center;justify-content:center}
-.msgbox{white-space:pre-wrap;background:var(--surface-2);border:1px dashed var(--rule);border-radius:12px;padding:12px 14px;font-size:14px;color:var(--fg-soft);margin:12px 0}
+.msgbox{white-space:pre-wrap;overflow-wrap:anywhere;word-break:break-word;max-width:100%;line-height:1.5;background:var(--surface-2);border:1px dashed var(--rule);border-radius:12px;padding:12px 14px;font-size:14px;color:var(--fg-soft);margin:12px 0}
 .cal{background:var(--surface);border:1px solid var(--rule-soft);border-radius:18px;padding:14px;margin-bottom:12px}
 .cal .head{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
 .cal .head b{font-family:var(--display);font-weight:500;font-size:18px}
@@ -709,6 +724,7 @@ main{padding:22px 0 30px}
 
 <div id="backbar" class="wrap" hidden></div>
 <main><div class="wrap" id="main"></div></main>
+<div id="homefoot" class="wrap" hidden></div>
 
 <footer class="foot" id="foot"></footer>
 
@@ -946,7 +962,7 @@ const STR = {
     shareCard: 'Chia sẻ lá bài',
     bookWithCard: 'Đặt lịch xem sâu hơn',
     learnCard: 'Đọc kỹ về lá này',
-    shareText: (name, kws) => 'Lá bài hôm nay của mình: ' + name + '. Năng lượng: ' + kws + '. Rút thử ở ',
+    shareText: (name, kws) => 'Lá bài hôm nay của mình: ' + name + '. Năng lượng: ' + kws + '. Xem lá bài này và rút thử tại ',
 
     learnTitle: 'Kho kiến thức',
     learnIntro: 'Tarot, Lenormand, chiêm tinh, manifestation và bói toán.',
@@ -1175,7 +1191,7 @@ const STR = {
     shareCard: 'Share this card',
     bookWithCard: 'Book a deeper reading',
     learnCard: 'Read about this card',
-    shareText: (name, kws) => 'My card today: ' + name + '. Energy: ' + kws + '. Try it at ',
+    shareText: (name, kws) => 'My card today: ' + name + '. Energy: ' + kws + '. See this card and draw your own at ',
 
     learnTitle: 'Knowledge library',
     learnIntro: 'Tarot, Lenormand, astrology, manifestation and fortune telling.',
@@ -10343,7 +10359,11 @@ function renderBackBar(r) {
   const isTab = TAB_ROOTS[r.route] && !r.args.length;
   const prev = r.route === 'home' ? '' : isTab ? '#/home' : backTarget();
   bar.hidden = !prev;
-  bar.innerHTML = prev ? '<a href="' + esc(prev) + '" class="backlink"' + (isTab ? '' : ' data-back="1"') + '>← ' + esc(screenLabel(prev)) + '</a>' : '';
+  const link = prev ? '<a href="' + esc(prev) + '" class="backlink"' + (isTab ? '' : ' data-back="1"') + '>← ' + esc(screenLabel(prev)) + '</a>' : '';
+  bar.innerHTML = link;
+  // The same way back sits under the screen too, so nobody has to scroll up after a long read; deeper screens add a straight jump home.
+  const foot = $('#homefoot');
+  if (foot) { foot.hidden = !prev; foot.innerHTML = link + (prev && prev !== '#/home' ? '<a href="#/home" class="backlink">🏠 ' + esc(T().nav.home) + '</a>' : ''); }
 }
 function parseHash() {
   const h = location.hash.replace(/^#\/?/, '');
@@ -11006,7 +11026,13 @@ function insightHTML(id, focus) {
   else h += '<div class="ins"><h3>' + esc(S.focusHead(S.focus[focus])) + '</h3><p>' + esc(focusText) + '</p><p class="muted">' + esc(I.advice) + '</p></div>';
   return h;
 }
-function renderPick() {
+function renderPick(args, params) {
+  // A shared link (#/pick?card=…) opens straight on that card, in the focus it was drawn with.
+  const want = params && params.card && cardById(params.card) ? params.card : '';
+  if (want && pick.chosen !== want) {
+    newHand(); if (pick.hand.indexOf(want) < 0) pick.hand[3] = want; pick.chosen = want;
+    if (params.focus && T().focus[params.focus]) pick.focus = params.focus;
+  }
   if (!pick.hand.length) newHand();
   const S = T(), m = $('#main');
   // Once a card is drawn the focus is fixed for that draw: the other chips stay visible but off until a redraw.
@@ -11048,8 +11074,8 @@ function renderReveal(animate) {
     + aiPanelHTML({ type: 'card', id: id, focus: pick.focus })
     + '<button class="btn block" id="redraw" style="margin-top:6px">' + esc(S.redraw) + '</button>';
   bindAI(r);
-  $('#shareCard').addEventListener('click', () => shareOrCopy(S.shareText(c.name, kws), appURL()));
-  const again = () => { newHand(); renderPick(); window.scrollTo({ top: 0, behavior: 'smooth' }); };
+  $('#shareCard').addEventListener('click', () => shareOrCopy(S.shareText(c.name, kws), appURL() + '#/pick?card=' + encodeURIComponent(id) + '&focus=' + pick.focus));
+  const again = () => { newHand(); if (/\?/.test(location.hash)) redirect('#/pick'); else renderPick(); window.scrollTo({ top: 0, behavior: 'smooth' }); };
   $('#redraw').addEventListener('click', again);
   $('#redrawTop').addEventListener('click', again);
 }
@@ -11766,12 +11792,12 @@ function renderTea(m, head) {
 
 /* ---- 12 animals ---- */
 function animalsWheelSVG(active) {
-  let s = '<svg viewBox="-20 -20 260 268" class="awheel">';
+  let s = '<div class="awheel">';
   for (let i = 0; i < 12; i++) {
-    const a = i / 12 * Math.PI * 2 - Math.PI / 2, x = 110 + 94 * Math.cos(a), y = 110 + 94 * Math.sin(a), on = i === active;
-    s += '<g data-animal="' + i + '" style="cursor:pointer"><circle cx="' + x.toFixed(1) + '" cy="' + y.toFixed(1) + '" r="' + (on ? 20 : 16) + '" fill="' + (on ? 'var(--primary)' : 'var(--surface)') + '" stroke="var(--rule)"/><text x="' + x.toFixed(1) + '" y="' + (y + 6).toFixed(1) + '" text-anchor="middle" font-size="' + (on ? 20 : 16) + '">' + ANIMAL_EMOJI[i] + '</text><text x="' + x.toFixed(1) + '" y="' + (y + 28).toFixed(1) + '" text-anchor="middle" font-size="8" font-weight="700" fill="var(--fg)">' + CHI[i] + '</text></g>';
+    const a = i / 12 * Math.PI * 2 - Math.PI / 2, x = 50 + 39 * Math.cos(a), y = 50 + 39 * Math.sin(a), on = i === active;
+    s += '<button class="aw' + (on ? ' on' : '') + '" data-animal="' + i + '" style="left:' + x.toFixed(1) + '%;top:' + y.toFixed(1) + '%" aria-label="' + CHI[i] + '"><span class="e">' + ANIMAL_EMOJI[i] + '</span><b>' + CHI[i] + '</b></button>';
   }
-  return s + '</svg>';
+  return s + '</div>';
 }
 function renderAnimals(m, head) {
   const S = T(), b = birthParts(), mine = b ? ((b.y - 4) % 12 + 12) % 12 : -1;
@@ -11919,22 +11945,25 @@ const itemIndex = (svc, pkg) => book.items.findIndex((x) => x.svc === svc && x.p
 const cartTotal = () => book.items.reduce((sum, it) => { const p = pkgOfItem(it); return sum + (p ? p.price : 0); }, 0);
 const needsBirth = () => book.items.some((it) => { const s = serviceOf(it.svc); return s && s.needsBirth; });
 const topicLabel = (n, l) => { const t = TOPICS[n - 1]; return t ? '#' + t.id + ' ' + (l ? L2(t.name, l) : L(t.name)) : ''; };
-function itemLine(it, l) {
-  const s = serviceOf(it.svc), p = pkgOfItem(it); if (!s || !p) return '';
-  const name = l ? L2(s.name, l) + ' – ' + L2(p.name, l) : L(s.name) + ' – ' + L(p.name);
-  return name + ' (' + fmtPrice(p.price) + ')' + (p.needsTopic && it.topic ? ' · ' + (l === 'vi' ? 'Chủ đề' : T().msgTopic) + ': ' + topicLabel(it.topic, l) : '');
-}
 function composeMessage() {
-  const S = T(), lines = [S.msgHello];
-  if (book.items.length === 1) lines.push(S.msgService + ': ' + itemLine(book.items[0]));
-  else book.items.forEach((it, k) => lines.push(S.msgService + ' ' + (k + 1) + ': ' + itemLine(it)));
-  if (book.items.length > 1) lines.push(S.msgTotal + ': ' + fmtPrice(cartTotal()));
-  if (book.slot) lines.push(S.msgTime + ': ' + slotLabel(book.slot));
-  if (book.name.trim()) lines.push(S.msgName + ': ' + book.name.trim());
-  if (needsBirth() && (book.birth || book.birthTime)) lines.push(S.msgBirth + ': ' + (book.birth || '?') + (book.birthTime ? ' ' + book.birthTime : ''));
-  if (book.note.trim()) lines.push(S.msgNote + ': ' + book.note.trim());
-  if (book.card) { const c = cardById(book.card); if (c) lines.push(S.msgCard + ': ' + c.name); }
-  return lines.join('\n');
+  const S = T(), out = [S.msgHello, ''];
+  if (book.items.length) {
+    out.push('🧺 ' + S.msgService + (book.items.length > 1 ? ' (' + book.items.length + ')' : '') + ':');
+    book.items.forEach((it) => {
+      const s = serviceOf(it.svc), p = pkgOfItem(it); if (!s || !p) return;
+      out.push('• ' + L(s.name) + ' – ' + L(p.name) + ': ' + fmtPrice(p.price));
+      if (p.needsTopic && it.topic) out.push('   ↳ ' + S.msgTopic + ': ' + topicLabel(it.topic));
+    });
+    if (book.items.length > 1) out.push('💰 ' + S.msgTotal + ': ' + fmtPrice(cartTotal()));
+    out.push('');
+  }
+  if (book.slot) out.push('📅 ' + S.msgTime + ': ' + slotLabel(book.slot));
+  if (book.name.trim()) out.push('🙋 ' + S.msgName + ': ' + book.name.trim());
+  if (needsBirth() && (book.birth || book.birthTime)) out.push('🎂 ' + S.msgBirth + ': ' + (book.birth || '?') + (book.birthTime ? ' ' + book.birthTime : ''));
+  if (book.note.trim()) out.push('📝 ' + S.msgNote + ': ' + book.note.trim());
+  if (book.card) { const c = cardById(book.card); if (c) out.push('🃏 ' + S.msgCard + ': ' + c.name); }
+  while (out[out.length - 1] === '') out.pop();
+  return out.join('\n');
 }
 /* The basket under the price list: every chosen package, its topic, the total. */
 function cartHTML() {
@@ -12519,7 +12548,7 @@ function adminCodes(p) {
 ROUTES.admin = { nav: '', render: renderAdmin };
 
 /* ============================ boot ============================ */
-window.APP_VERSION = 'v45';
+window.APP_VERSION = 'v46';
 window.NABU = { CONFIG: CONFIG, LESSONS: LESSONS, localAnswer: localAnswer, compatVerdict: compatVerdict, numerologyOf: numerologyOf, ZDEEP: ZDEEP, lunarToday: lunarToday, solarToLunar: solarToLunar, DECK: DECK, INSIGHT: INSIGHT, KW: KW, ASK: ASK, TOPICS: TOPICS, GUIDES: GUIDES, SERVICES: SERVICES, COURSES: COURSES, ACCESS: ACCESS, makeCode: makeCode, parseCode: parseCode, ZODIAC: ZODIAC, pick: pick, book: book,
   insightHTML: insightHTML, insightOf: insightOf, sunSignIndex: sunSignIndex, lifePath: lifePath, PROFILE: () => PROFILE, BE: BE };
 BE.initP = BE.init().catch(() => { /* backend unreachable: the app runs device-only */ });

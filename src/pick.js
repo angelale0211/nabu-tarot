@@ -16,7 +16,13 @@ function insightHTML(id, focus) {
   else h += '<div class="ins"><h3>' + esc(S.focusHead(S.focus[focus])) + '</h3><p>' + esc(focusText) + '</p><p class="muted">' + esc(I.advice) + '</p></div>';
   return h;
 }
-function renderPick() {
+function renderPick(args, params) {
+  // A shared link (#/pick?card=…) opens straight on that card, in the focus it was drawn with.
+  const want = params && params.card && cardById(params.card) ? params.card : '';
+  if (want && pick.chosen !== want) {
+    newHand(); if (pick.hand.indexOf(want) < 0) pick.hand[3] = want; pick.chosen = want;
+    if (params.focus && T().focus[params.focus]) pick.focus = params.focus;
+  }
   if (!pick.hand.length) newHand();
   const S = T(), m = $('#main');
   // Once a card is drawn the focus is fixed for that draw: the other chips stay visible but off until a redraw.
@@ -58,8 +64,8 @@ function renderReveal(animate) {
     + aiPanelHTML({ type: 'card', id: id, focus: pick.focus })
     + '<button class="btn block" id="redraw" style="margin-top:6px">' + esc(S.redraw) + '</button>';
   bindAI(r);
-  $('#shareCard').addEventListener('click', () => shareOrCopy(S.shareText(c.name, kws), appURL()));
-  const again = () => { newHand(); renderPick(); window.scrollTo({ top: 0, behavior: 'smooth' }); };
+  $('#shareCard').addEventListener('click', () => shareOrCopy(S.shareText(c.name, kws), appURL() + '#/pick?card=' + encodeURIComponent(id) + '&focus=' + pick.focus));
+  const again = () => { newHand(); if (/\?/.test(location.hash)) redirect('#/pick'); else renderPick(); window.scrollTo({ top: 0, behavior: 'smooth' }); };
   $('#redraw').addEventListener('click', again);
   $('#redrawTop').addEventListener('click', again);
 }

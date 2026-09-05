@@ -53,7 +53,7 @@ const STR = {
     shareCard: 'Chia sẻ lá bài',
     bookWithCard: 'Đặt lịch xem sâu hơn',
     learnCard: 'Đọc kỹ về lá này',
-    shareText: (name, kws) => 'Lá bài hôm nay của mình: ' + name + '. Năng lượng: ' + kws + '. Rút thử ở ',
+    shareText: (name, kws) => 'Lá bài hôm nay của mình: ' + name + '. Năng lượng: ' + kws + '. Xem lá bài này và rút thử tại ',
 
     learnTitle: 'Kho kiến thức',
     learnIntro: 'Tarot, Lenormand, chiêm tinh, manifestation và bói toán.',
@@ -282,7 +282,7 @@ const STR = {
     shareCard: 'Share this card',
     bookWithCard: 'Book a deeper reading',
     learnCard: 'Read about this card',
-    shareText: (name, kws) => 'My card today: ' + name + '. Energy: ' + kws + '. Try it at ',
+    shareText: (name, kws) => 'My card today: ' + name + '. Energy: ' + kws + '. See this card and draw your own at ',
 
     learnTitle: 'Knowledge library',
     learnIntro: 'Tarot, Lenormand, astrology, manifestation and fortune telling.',

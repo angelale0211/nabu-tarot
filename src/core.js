@@ -281,7 +281,11 @@ function renderBackBar(r) {
   const isTab = TAB_ROOTS[r.route] && !r.args.length;
   const prev = r.route === 'home' ? '' : isTab ? '#/home' : backTarget();
   bar.hidden = !prev;
-  bar.innerHTML = prev ? '<a href="' + esc(prev) + '" class="backlink"' + (isTab ? '' : ' data-back="1"') + '>← ' + esc(screenLabel(prev)) + '</a>' : '';
+  const link = prev ? '<a href="' + esc(prev) + '" class="backlink"' + (isTab ? '' : ' data-back="1"') + '>← ' + esc(screenLabel(prev)) + '</a>' : '';
+  bar.innerHTML = link;
+  // The same way back sits under the screen too, so nobody has to scroll up after a long read; deeper screens add a straight jump home.
+  const foot = $('#homefoot');
+  if (foot) { foot.hidden = !prev; foot.innerHTML = link + (prev && prev !== '#/home' ? '<a href="#/home" class="backlink">🏠 ' + esc(T().nav.home) + '</a>' : ''); }
 }
 function parseHash() {
   const h = location.hash.replace(/^#\/?/, '');

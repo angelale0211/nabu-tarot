@@ -250,12 +250,12 @@ function renderTea(m, head) {
 
 /* ---- 12 animals ---- */
 function animalsWheelSVG(active) {
-  let s = '<svg viewBox="-20 -20 260 268" class="awheel">';
+  let s = '<div class="awheel">';
   for (let i = 0; i < 12; i++) {
-    const a = i / 12 * Math.PI * 2 - Math.PI / 2, x = 110 + 94 * Math.cos(a), y = 110 + 94 * Math.sin(a), on = i === active;
-    s += '<g data-animal="' + i + '" style="cursor:pointer"><circle cx="' + x.toFixed(1) + '" cy="' + y.toFixed(1) + '" r="' + (on ? 20 : 16) + '" fill="' + (on ? 'var(--primary)' : 'var(--surface)') + '" stroke="var(--rule)"/><text x="' + x.toFixed(1) + '" y="' + (y + 6).toFixed(1) + '" text-anchor="middle" font-size="' + (on ? 20 : 16) + '">' + ANIMAL_EMOJI[i] + '</text><text x="' + x.toFixed(1) + '" y="' + (y + 28).toFixed(1) + '" text-anchor="middle" font-size="8" font-weight="700" fill="var(--fg)">' + CHI[i] + '</text></g>';
+    const a = i / 12 * Math.PI * 2 - Math.PI / 2, x = 50 + 39 * Math.cos(a), y = 50 + 39 * Math.sin(a), on = i === active;
+    s += '<button class="aw' + (on ? ' on' : '') + '" data-animal="' + i + '" style="left:' + x.toFixed(1) + '%;top:' + y.toFixed(1) + '%" aria-label="' + CHI[i] + '"><span class="e">' + ANIMAL_EMOJI[i] + '</span><b>' + CHI[i] + '</b></button>';
   }
-  return s + '</svg>';
+  return s + '</div>';
 }
 function renderAnimals(m, head) {
   const S = T(), b = birthParts(), mine = b ? ((b.y - 4) % 12 + 12) % 12 : -1;

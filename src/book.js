@@ -51,22 +51,25 @@ const itemIndex = (svc, pkg) => book.items.findIndex((x) => x.svc === svc && x.p
 const cartTotal = () => book.items.reduce((sum, it) => { const p = pkgOfItem(it); return sum + (p ? p.price : 0); }, 0);
 const needsBirth = () => book.items.some((it) => { const s = serviceOf(it.svc); return s && s.needsBirth; });
 const topicLabel = (n, l) => { const t = TOPICS[n - 1]; return t ? '#' + t.id + ' ' + (l ? L2(t.name, l) : L(t.name)) : ''; };
-function itemLine(it, l) {
-  const s = serviceOf(it.svc), p = pkgOfItem(it); if (!s || !p) return '';
-  const name = l ? L2(s.name, l) + ' – ' + L2(p.name, l) : L(s.name) + ' – ' + L(p.name);
-  return name + ' (' + fmtPrice(p.price) + ')' + (p.needsTopic && it.topic ? ' · ' + (l === 'vi' ? 'Chủ đề' : T().msgTopic) + ': ' + topicLabel(it.topic, l) : '');
-}
 function composeMessage() {
-  const S = T(), lines = [S.msgHello];
-  if (book.items.length === 1) lines.push(S.msgService + ': ' + itemLine(book.items[0]));
-  else book.items.forEach((it, k) => lines.push(S.msgService + ' ' + (k + 1) + ': ' + itemLine(it)));
-  if (book.items.length > 1) lines.push(S.msgTotal + ': ' + fmtPrice(cartTotal()));
-  if (book.slot) lines.push(S.msgTime + ': ' + slotLabel(book.slot));
-  if (book.name.trim()) lines.push(S.msgName + ': ' + book.name.trim());
-  if (needsBirth() && (book.birth || book.birthTime)) lines.push(S.msgBirth + ': ' + (book.birth || '?') + (book.birthTime ? ' ' + book.birthTime : ''));
-  if (book.note.trim()) lines.push(S.msgNote + ': ' + book.note.trim());
-  if (book.card) { const c = cardById(book.card); if (c) lines.push(S.msgCard + ': ' + c.name); }
-  return lines.join('\n');
+  const S = T(), out = [S.msgHello, ''];
+  if (book.items.length) {
+    out.push('🧺 ' + S.msgService + (book.items.length > 1 ? ' (' + book.items.length + ')' : '') + ':');
+    book.items.forEach((it) => {
+      const s = serviceOf(it.svc), p = pkgOfItem(it); if (!s || !p) return;
+      out.push('• ' + L(s.name) + ' – ' + L(p.name) + ': ' + fmtPrice(p.price));
+      if (p.needsTopic && it.topic) out.push('   ↳ ' + S.msgTopic + ': ' + topicLabel(it.topic));
+    });
+    if (book.items.length > 1) out.push('💰 ' + S.msgTotal + ': ' + fmtPrice(cartTotal()));
+    out.push('');
+  }
+  if (book.slot) out.push('📅 ' + S.msgTime + ': ' + slotLabel(book.slot));
+  if (book.name.trim()) out.push('🙋 ' + S.msgName + ': ' + book.name.trim());
+  if (needsBirth() && (book.birth || book.birthTime)) out.push('🎂 ' + S.msgBirth + ': ' + (book.birth || '?') + (book.birthTime ? ' ' + book.birthTime : ''));
+  if (book.note.trim()) out.push('📝 ' + S.msgNote + ': ' + book.note.trim());
+  if (book.card) { const c = cardById(book.card); if (c) out.push('🃏 ' + S.msgCard + ': ' + c.name); }
+  while (out[out.length - 1] === '') out.pop();
+  return out.join('\n');
 }
 /* The basket under the price list: every chosen package, its topic, the total. */
 function cartHTML() {
