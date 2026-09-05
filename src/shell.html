@@ -437,6 +437,14 @@ main{padding:22px 0 30px}
 .ring{width:150px;height:150px}
 .palmwrap{text-align:center}.hand{width:min(300px,80vw);height:auto;margin:0 auto;display:block}
 .pl{text-align:left;padding-left:18px;margin:6px 0 0;font-size:14.5px}.pl li{margin-bottom:4px}
+/* Playing-card course */
+.pcface{width:100%;height:auto;display:block;filter:drop-shadow(0 2px 4px var(--shade))}.pct .pcface{width:72px;margin:0 auto 4px}
+.pcsuits{display:grid;gap:10px}.pcsuit{background:var(--surface);border:1px solid var(--rule-soft);border-radius:14px;padding:12px}.pcs2{display:flex;gap:12px;align-items:center;margin-bottom:6px}.pcs2 .pcface{width:52px;flex:none}.pcs2 b{display:block;font-size:17px}.pcsuit p{margin:0;font-size:14px;color:var(--fg-soft)}
+.pcgrid{display:grid;gap:8px}.pcrowb{display:flex;gap:12px;align-items:center;width:100%;text-align:left;background:var(--surface);border:1px solid var(--rule-soft);border-radius:14px;padding:8px 12px}.pcrowb .pcface{width:52px;flex:none}.pcrowb>span{min-width:0}.pcrowb b{display:block;font-size:15px}.pcrowb span span{font-size:13px;color:var(--fg-soft)}
+.pccourt{display:grid;gap:12px}.pcc-row>b{display:block;margin-bottom:4px}.pcc-row .faint{margin:4px 0 0}
+.pcpairs{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px}.pcpair{background:var(--surface);border:1px solid var(--rule-soft);border-radius:14px;padding:10px;text-align:center}.pcpair .two{display:flex;align-items:center;justify-content:center;gap:6px}.pcpair .two .pcface{width:44px}.pcpair p{margin:6px 0 0;font-size:13px;color:var(--fg-soft)}
+.pcbig .pcface{width:112px}.deckgrid .pcface{width:100%;margin-bottom:4px}.spv-list .spread-d svg{max-height:120px}
+@media (max-width:380px){.pcpairs{grid-template-columns:1fr}}
 .pcmap{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
 .pcs{background:var(--surface);border:1px solid var(--rule-soft);border-radius:14px;padding:10px 4px;display:flex;flex-direction:column;align-items:center;gap:2px;font-size:12px}
 .pcs .pip{font-size:28px}.pcs svg{width:36px;height:40px}.pcs b{font-size:12px}
@@ -504,7 +512,7 @@ main{padding:22px 0 30px}
 /* Manifestation tools: editable, saved on the device. */
 .toolbar{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-top:10px}
 .woop.edit .wp{padding:10px 8px}.woop.edit .wp textarea{margin-top:6px;min-height:76px;font-size:13px;padding:8px;text-align:left}
-.vb{position:relative}.vb .vtap{cursor:pointer}.vb img{width:100%;height:88px;object-fit:cover;border-radius:10px;display:block;margin-bottom:4px}.vb input{font-size:12px;padding:6px 8px;margin-top:4px;border-radius:8px}.vb .x{position:absolute;top:4px;right:4px;background:var(--surface);border-radius:50%;width:24px;height:24px;font-size:11px;border:1px solid var(--rule);display:flex;align-items:center;justify-content:center}.vb.has{border-style:solid;border-color:var(--lav)}
+.vb{position:relative;min-height:0}.vb .vtap{cursor:pointer;display:block}.vb .ph{display:block;font-size:11px;line-height:1.25;margin-top:4px;padding:3px 6px;border-radius:8px;background:var(--surface-2);color:var(--fg-soft)}.vb img{width:100%;height:88px;object-fit:cover;border-radius:10px;display:block;margin-bottom:4px}.vb input{font-size:12px;padding:6px 8px;margin-top:4px;border-radius:8px}.vb .x{position:absolute;top:4px;right:4px;background:var(--surface);border-radius:50%;width:24px;height:24px;font-size:11px;border:1px solid var(--rule);display:flex;align-items:center;justify-content:center}.vb.has{border-style:solid;border-color:var(--lav)}
 .script textarea{border:0;background:transparent;font-family:Georgia,serif;font-size:15px;line-height:1.7;padding:0;min-height:240px;color:inherit;resize:vertical;width:100%}
 .it.edit{grid-template-columns:1fr 1fr 30px;align-items:center}.it.edit input{font-size:13px;padding:8px 10px;border-radius:10px}.it .x{background:none;border:1px solid var(--rule);border-radius:50%;width:26px;height:26px;font-size:11px;color:var(--fg-soft)}
 .moonio{display:grid;gap:10px;margin-top:12px}.mi{background:var(--surface);border:1px solid var(--rule-soft);border-radius:14px;padding:12px}.mi b{display:block;margin-bottom:6px}.mi input{margin-bottom:6px}.mi textarea{min-height:80px;margin-bottom:8px}

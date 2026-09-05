@@ -581,6 +581,14 @@ main{padding:22px 0 30px}
 .ring{width:150px;height:150px}
 .palmwrap{text-align:center}.hand{width:min(300px,80vw);height:auto;margin:0 auto;display:block}
 .pl{text-align:left;padding-left:18px;margin:6px 0 0;font-size:14.5px}.pl li{margin-bottom:4px}
+/* Playing-card course */
+.pcface{width:100%;height:auto;display:block;filter:drop-shadow(0 2px 4px var(--shade))}.pct .pcface{width:72px;margin:0 auto 4px}
+.pcsuits{display:grid;gap:10px}.pcsuit{background:var(--surface);border:1px solid var(--rule-soft);border-radius:14px;padding:12px}.pcs2{display:flex;gap:12px;align-items:center;margin-bottom:6px}.pcs2 .pcface{width:52px;flex:none}.pcs2 b{display:block;font-size:17px}.pcsuit p{margin:0;font-size:14px;color:var(--fg-soft)}
+.pcgrid{display:grid;gap:8px}.pcrowb{display:flex;gap:12px;align-items:center;width:100%;text-align:left;background:var(--surface);border:1px solid var(--rule-soft);border-radius:14px;padding:8px 12px}.pcrowb .pcface{width:52px;flex:none}.pcrowb>span{min-width:0}.pcrowb b{display:block;font-size:15px}.pcrowb span span{font-size:13px;color:var(--fg-soft)}
+.pccourt{display:grid;gap:12px}.pcc-row>b{display:block;margin-bottom:4px}.pcc-row .faint{margin:4px 0 0}
+.pcpairs{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px}.pcpair{background:var(--surface);border:1px solid var(--rule-soft);border-radius:14px;padding:10px;text-align:center}.pcpair .two{display:flex;align-items:center;justify-content:center;gap:6px}.pcpair .two .pcface{width:44px}.pcpair p{margin:6px 0 0;font-size:13px;color:var(--fg-soft)}
+.pcbig .pcface{width:112px}.deckgrid .pcface{width:100%;margin-bottom:4px}.spv-list .spread-d svg{max-height:120px}
+@media (max-width:380px){.pcpairs{grid-template-columns:1fr}}
 .pcmap{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
 .pcs{background:var(--surface);border:1px solid var(--rule-soft);border-radius:14px;padding:10px 4px;display:flex;flex-direction:column;align-items:center;gap:2px;font-size:12px}
 .pcs .pip{font-size:28px}.pcs svg{width:36px;height:40px}.pcs b{font-size:12px}
@@ -648,7 +656,7 @@ main{padding:22px 0 30px}
 /* Manifestation tools: editable, saved on the device. */
 .toolbar{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-top:10px}
 .woop.edit .wp{padding:10px 8px}.woop.edit .wp textarea{margin-top:6px;min-height:76px;font-size:13px;padding:8px;text-align:left}
-.vb{position:relative}.vb .vtap{cursor:pointer}.vb img{width:100%;height:88px;object-fit:cover;border-radius:10px;display:block;margin-bottom:4px}.vb input{font-size:12px;padding:6px 8px;margin-top:4px;border-radius:8px}.vb .x{position:absolute;top:4px;right:4px;background:var(--surface);border-radius:50%;width:24px;height:24px;font-size:11px;border:1px solid var(--rule);display:flex;align-items:center;justify-content:center}.vb.has{border-style:solid;border-color:var(--lav)}
+.vb{position:relative;min-height:0}.vb .vtap{cursor:pointer;display:block}.vb .ph{display:block;font-size:11px;line-height:1.25;margin-top:4px;padding:3px 6px;border-radius:8px;background:var(--surface-2);color:var(--fg-soft)}.vb img{width:100%;height:88px;object-fit:cover;border-radius:10px;display:block;margin-bottom:4px}.vb input{font-size:12px;padding:6px 8px;margin-top:4px;border-radius:8px}.vb .x{position:absolute;top:4px;right:4px;background:var(--surface);border-radius:50%;width:24px;height:24px;font-size:11px;border:1px solid var(--rule);display:flex;align-items:center;justify-content:center}.vb.has{border-style:solid;border-color:var(--lav)}
 .script textarea{border:0;background:transparent;font-family:Georgia,serif;font-size:15px;line-height:1.7;padding:0;min-height:240px;color:inherit;resize:vertical;width:100%}
 .it.edit{grid-template-columns:1fr 1fr 30px;align-items:center}.it.edit input{font-size:13px;padding:8px 10px;border-radius:10px}.it .x{background:none;border:1px solid var(--rule);border-radius:50%;width:26px;height:26px;font-size:11px;color:var(--fg-soft)}
 .moonio{display:grid;gap:10px;margin-top:12px}.mi{background:var(--surface);border:1px solid var(--rule-soft);border-radius:14px;padding:12px}.mi b{display:block;margin-bottom:6px}.mi input{margin-bottom:6px}.mi textarea{min-height:80px;margin-bottom:8px}
@@ -980,6 +988,9 @@ const COURSES = [
   { id: 'lenormand', price: 300000, months: 6, name: { vi: 'Khóa Lenormand', en: 'Lenormand course' },
     blurb: { vi: 'Toàn bộ 36 lá, mỗi lá có hình, sắc thái, nghĩa chính, tình cảm, công việc, chỉ người, thời gian và các cặp lá. Kèm 7 cách trải bài và các bài đọc.', en: 'All 36 cards with art, tone, core meaning, love, work, person, timing and pairs. Plus 7 spreads and the guides.' },
     includes: { vi: ['36 lá bài, mỗi lá một trang', 'Cặp lá thường gặp', '7 cách trải bài, có Grand Tableau', 'Dùng 6 tháng, xem offline'], en: ['36 cards, one page each', 'Common pairs', '7 spreads including the Grand Tableau', '6 months of access, works offline'] } },
+  { id: 'playing', price: 150000, months: 6, name: { vi: 'Khóa Bài Tây', en: 'Playing-card course' },
+    blurb: { vi: 'Bói bài Tây 52 lá theo lối truyền thống: bốn chất, câu chuyện từ Át tới Mười, 12 lá hình, cặp lá, thời gian và bốn trải bài. Mỗi lá có hình vẽ, nghĩa truyền thống, lý do của nghĩa ấy và lá tarot tương ứng.', en: 'Traditional 52-card cartomancy: four suits, the Ace-to-Ten story, the 12 court cards, pairs, timing and four spreads. Every card has a drawn face, its traditional meaning, why it means that, and its tarot twin.' },
+    includes: { vi: ['9 bài học có hình', '52 lá, mỗi lá một trang', 'Cặp lá, thời gian, trải bài điều ước', 'Dùng 6 tháng, xem offline'], en: ['9 illustrated sessions', '52 cards, one page each', 'Pairs, timing, the wish spread', '6 months of access, works offline'] } },
   { id: 'manifest', price: 75000, months: 12, name: { vi: 'Bộ Manifestation', en: 'Manifestation set' },
     blurb: { vi: 'Bảy phương pháp có công cụ làm ngay trong app: WOOP, bảng tầm nhìn có ảnh, nghi thức trăng, kế hoạch nếu-thì, buông bỏ, giới hạn, nến và đá. Mọi thứ bạn viết được lưu trên máy và có thể xoá làm lại bất cứ lúc nào.', en: 'Seven methods with tools you use right in the app: WOOP, a vision board with photos, Moon rituals, if-then plans, letting go, limits, candles and stones. Everything you write is saved on your device and can be cleared and redone any time.' },
     includes: { vi: ['7 bài hướng dẫn nâng cao', 'Bảng ảnh, kế hoạch, nghi thức, buông bỏ', 'Nến và đá theo mục đích', 'Dùng 12 tháng, xem offline'], en: ['7 advanced guides', 'Photo board, plans, ritual and letting-go tools', 'Candles and stones by purpose', '12 months of access, works offline'] } }
@@ -1047,8 +1058,8 @@ const STR = {
 
     learnTitle: 'Kho kiến thức',
     learnIntro: 'Tarot, Lenormand, chiêm tinh, manifestation và bói toán.',
-    cats: { tarot: 'Tarot', lenormand: 'Lenormand', astro: 'Chiêm tinh', manifest: 'Manifestation', fortune: 'Bói toán' },
-    catSub: { tarot: '78 lá + 8 trải bài', lenormand: '36 lá + 7 trải bài', astro: '12 cung, hành tinh, nhà', manifest: 'cách làm + giới hạn', fortune: 'thần số, chỉ tay, bài Tây' },
+    cats: { tarot: 'Tarot', lenormand: 'Lenormand', playing: 'Bài Tây', astro: 'Chiêm tinh', manifest: 'Manifestation', fortune: 'Bói toán' },
+    catSub: { tarot: '78 lá + 8 trải bài', lenormand: '36 lá + 7 trải bài', playing: '52 lá + 4 trải bài', astro: '12 cung, hành tinh, nhà', manifest: 'cách làm + giới hạn', fortune: 'thần số, chỉ tay, bài Tây' },
     courses: 'Khóa học', freeReads: 'Đọc miễn phí', practice: 'Thực hành', lessonsIntro: (n) => 'Khóa học gồm ' + n + ' bài. Học theo thứ tự, mỗi bài một tuần là vừa.', markDone: 'Đánh dấu đã học xong', lessonDone: 'Đã học xong', journeyHint: 'Chạm vào một lá để mở trang của lá đó.', lenGridHint: 'Cả 36 lá. Chạm để xem từng lá.',
     aiIntro: 'Hỏi Nabu AI về điều bạn đang xem. Càng cụ thể càng tốt.', aiIntroLesson: 'Chỗ nào trong bài chưa hiểu, hỏi Nabu AI ở đây.', aiPlaceholder: 'Ví dụ: lá này nói gì về chuyện tình cảm của mình?', aiAsk: 'Hỏi', aiOnline: 'trả lời bằng AI', aiBuiltin: 'trả lời từ kho kiến thức', aiNote: 'Nabu AI trả lời cả câu hỏi thường lẫn tarot, chiêm tinh, thần số học, và tra cứu mạng khi cần. Chuyện riêng quan trọng, bạn đặt lịch với Nabu.', aiFallback: 'AI đang bận, đây là câu trả lời từ kho kiến thức.',
     aiSugCard: ['Lá này nói gì về tình cảm của mình?', 'Mình có nên tiếp tục không?', 'Khi nào chuyện này xảy ra?'], aiSugLesson: ['Ẩn Chính khác Ẩn Phụ thế nào?', 'Lá hoàng gia là ai?', 'Nếu mình không hiểu một lá thì làm sao?'], aiSugSign: ['Cung này hợp với cung nào?', 'Cung này trong tình yêu thế nào?', 'Mặt Trăng ở cung này là sao?'], aiSugNumbers: ['Số đường đời của mình nói gì?', 'Năm nay của mình là năm gì?', 'Số vận mệnh theo tên mình là gì?'], aiSugGeneral: ['Gã Khờ nghĩa là gì?', 'Sư Tử hợp với Bảo Bình không?', 'Số đường đời của mình?'],
@@ -1121,7 +1132,7 @@ const STR = {
     contactTitle: 'Liên hệ', contactLink: 'Liên hệ', contactIntro: 'Viết vài dòng cho Nabu, rồi chọn kênh bạn muốn gửi.', contactWhat: 'Bạn muốn nhắn gì?', contactPlaceholder: 'Ví dụ: mình muốn hỏi về gói xem bài, hoặc góp ý cho app…', contactChoose: 'Gửi qua:', contactApp: 'Nhắn trong app Nabu Tarot', contactIg: 'Sao chép tin nhắn và mở Instagram', contactFb: 'Sao chép tin nhắn và mở Facebook', contactCopyHint: 'Với Instagram và Facebook: tin nhắn của bạn được sao chép sẵn khi bấm nút, sang bên đó bạn chỉ cần dán vào ô chat và gửi.', contactNeed: 'Bạn viết vài dòng trước nhé.', contactSent: 'Đã gửi tới Nabu. Bạn xem trả lời trong mục Tôi.', contactCopied: 'Tin nhắn đã được sao chép. Dán vào ô chat khi ứng dụng mở lên.',
     addToCalendar: 'Thêm vào lịch điện thoại', gcal: 'Google Calendar', icsDownloaded: 'Đã tải tệp lịch. Mở tệp để thêm vào Lịch.', calendarHint: 'Lịch điện thoại sẽ nhắc bạn trước 24 giờ, 6 giờ, 1 giờ và 15 phút.', cancelBooking: 'Huỷ lịch', changeTitle: 'Đổi giờ hẹn', changeIntro: 'Chọn giờ mới bên dưới. Nabu sẽ duyệt lại trước khi giờ mới có hiệu lực.', currentSlot: 'Giờ hiện tại', sendChange: 'Gửi yêu cầu đổi giờ', changeSent: 'Đã gửi yêu cầu đổi giờ. Nabu sẽ duyệt lại sớm.', cancelSent: 'Đã gửi yêu cầu huỷ. Nabu sẽ xác nhận lại.', confirmCancel: 'Bạn muốn huỷ lịch hẹn này?', newSlotLabel: 'Giờ mới', adminApplyChange: 'Duyệt giờ mới', adminKeep: 'Giữ giờ cũ', adminApplyCancel: 'Duyệt huỷ', adminKeepBooking: 'Giữ lịch', reminderOn: 'Bật nhắc lịch hẹn trên máy này', reminderHint: 'Khi app đang mở, bạn sẽ được nhắc trước 24 giờ, 6 giờ, 1 giờ và 15 phút. Để chắc chắn, hãy thêm lịch hẹn vào lịch điện thoại.', upcoming: 'Lịch hẹn sắp tới', remindTitle: (w) => 'Lịch hẹn với Nabu ' + w, inHours: (h) => 'còn ' + h + ' giờ nữa', inMinutes: (m) => 'còn ' + m + ' phút nữa', allDays: 'Tất cả', bkOn: (d) => 'Lịch ngày ' + d, aiSettings: 'Cài đặt Nabu AI', aiKeyLabel: 'Khoá Gemini API (Google AI Studio)', aiKeyHint: 'Dán khoá vào đây và bấm lưu: mọi người dùng app sẽ được Nabu AI trả lời bằng Gemini, có tra cứu mạng khi còn hạn mức. Khoá được lưu trên đám mây của app, không nằm trong mã nguồn. Để trống thì app dùng bộ trả lời sẵn có.', aiKeySaved: 'Đã lưu. Nabu AI đang dùng Gemini.', saveKey: 'Lưu khoá', emojiBtn: 'Biểu tượng cảm xúc', imgTooBigChat: 'Ảnh quá lớn cho tin nhắn, thử ảnh nhỏ hơn.',
     maniIntro: 'Manifestation là đặt mục tiêu cho rõ, hình dung cho đúng và hành động cho đều. Bốn bài đầu miễn phí, có cả viết kịch bản. Trọn bộ mở thêm bảy phương pháp, mỗi bài có công cụ làm ngay trong app.', maniFree: 'Miễn phí', maniFull: 'Trọn bộ Manifestation', perYear: (p) => p + ' / năm', maniUnlock: 'Mở khoá trọn bộ', maniIncl: ['WOOP, kế hoạch nếu-thì, bảng tầm nhìn có ảnh của bạn', 'Nghi thức trăng non, trăng tròn và công cụ buông bỏ', 'Nến và đá theo từng mục đích, dùng sao cho an toàn'],
-    toolClear: 'Xoá làm lại', toolSaved: 'Lưu trên máy này.', toolTemplate: 'Mẫu mới', toolAdd: 'Thêm dòng', toolRelease: 'Buông', toolReleased: 'Đã buông. Nhẹ hơn rồi. 🍃', releasedTimes: (n) => 'Bạn đã buông ' + n + ' lần', tapPhoto: 'chạm để thêm ảnh', caption: 'ghi chú ngắn', clearedToast: 'Đã xoá, bạn làm lại từ đầu nhé.',
+    toolClear: 'Xoá làm lại', toolSaved: 'Lưu trên máy này.', toolTemplate: 'Mẫu mới', toolAdd: 'Thêm dòng', toolRelease: 'Buông', toolReleased: 'Đã buông. Nhẹ hơn rồi. 🍃', releasedTimes: (n) => 'Bạn đã buông ' + n + ' lần', tapPhoto: 'thêm ảnh', caption: 'ghi chú ngắn', clearedToast: 'Đã xoá, bạn làm lại từ đầu nhé.',
     saveSlot: 'Lưu giờ hẹn', changeSlot: 'Đổi giờ', slotSaved: 'Đã lưu giờ hẹn', summaryTitle: 'Tóm tắt yêu cầu', showMsg: 'Xem tin nhắn sẽ gửi', bkItems: 'Gói đã chọn',
     doneTitle: 'Đã gửi yêu cầu đặt lịch', doneBody: 'Nabu sẽ xem và xác nhận sớm. Bạn theo dõi trạng thái trong mục Tôi và sẽ nhận thông báo khi Nabu trả lời.', doneMe: 'Xem lịch hẹn của tôi', doneHome: 'Về trang chủ', doneMore: 'Đặt thêm lịch khác',
     draftKept: 'Lựa chọn của bạn được lưu tự động trên máy này, rời đi rồi quay lại vẫn còn.', openInLibrary: 'Đọc đầy đủ trong Kho kiến thức',
@@ -1292,8 +1303,8 @@ const STR = {
 
     learnTitle: 'Knowledge library',
     learnIntro: 'Tarot, Lenormand, astrology, manifestation and fortune telling.',
-    cats: { tarot: 'Tarot', lenormand: 'Lenormand', astro: 'Astrology', manifest: 'Manifestation', fortune: 'Fortune telling' },
-    catSub: { tarot: '78 cards + 8 spreads', lenormand: '36 cards + 7 spreads', astro: '12 signs, planets, houses', manifest: 'methods + limits', fortune: 'numbers, palms, playing cards' },
+    cats: { tarot: 'Tarot', lenormand: 'Lenormand', playing: 'Playing cards', astro: 'Astrology', manifest: 'Manifestation', fortune: 'Fortune telling' },
+    catSub: { tarot: '78 cards + 8 spreads', lenormand: '36 cards + 7 spreads', playing: '52 cards + 4 spreads', astro: '12 signs, planets, houses', manifest: 'methods + limits', fortune: 'numbers, palms, playing cards' },
     courses: 'Courses', freeReads: 'Free to read', practice: 'Practice', lessonsIntro: (n) => 'The course has ' + n + ' sessions. Take them in order, about one a week.', markDone: 'Mark as done', lessonDone: 'Done', journeyHint: 'Tap a card to open its page.', lenGridHint: 'All 36 cards. Tap one to open it.',
     aiIntro: 'Ask Nabu AI about what you are looking at. The more specific, the better.', aiIntroLesson: 'Anything in this lesson unclear? Ask Nabu AI here.', aiPlaceholder: 'For example: what does this card say about my love life?', aiAsk: 'Ask', aiOnline: 'answered by AI', aiBuiltin: 'answered from the knowledge base', aiNote: 'Nabu AI answers everyday questions as well as tarot, astrology and numerology, and looks things up online when needed. For anything personal and important, book a reading with Nabu.', aiFallback: 'AI is busy; this answer comes from the knowledge base.',
     aiSugCard: ['What does this card say about my love life?', 'Should I keep going?', 'When will this happen?'], aiSugLesson: ['How do Majors differ from Minors?', 'Who are the court cards?', 'What if I do not understand a card?'], aiSugSign: ['Which signs suit this sign?', 'How is this sign in love?', 'What does the Moon in this sign mean?'], aiSugNumbers: ['What does my life path say?', 'What kind of year is this for me?', 'What is my destiny number from my name?'], aiSugGeneral: ['What does The Fool mean?', 'Do Leo and Aquarius get along?', 'What is my life path?'],
@@ -1366,7 +1377,7 @@ const STR = {
     contactTitle: 'Contact us', contactLink: 'Contact', contactIntro: 'Write a few lines to Nabu, then choose where to send them.', contactWhat: 'Your message', contactPlaceholder: 'For example: a question about a package, or feedback on the app…', contactChoose: 'Send via:', contactApp: 'Message inside the Nabu Tarot app', contactIg: 'Copy the message and open Instagram', contactFb: 'Copy the message and open Facebook', contactCopyHint: 'For Instagram and Facebook: your message is copied when you tap the button, so over there you only paste it into the chat and send.', contactNeed: 'Write a few lines first.', contactSent: 'Sent to Nabu. Replies show under Me.', contactCopied: 'Your message is copied. Paste it into the chat when the app opens.',
     addToCalendar: 'Add to my phone calendar', gcal: 'Google Calendar', icsDownloaded: 'Calendar file downloaded. Open it to add the event.', calendarHint: 'Your phone calendar will remind you 24 hours, 6 hours, 1 hour and 15 minutes before.', cancelBooking: 'Cancel booking', changeTitle: 'Change the time', changeIntro: 'Pick a new time below. Nabu reviews it before the new time takes effect.', currentSlot: 'Current time', sendChange: 'Send the change request', changeSent: 'Change request sent. Nabu will review it soon.', cancelSent: 'Cancellation request sent. Nabu will confirm it.', confirmCancel: 'Cancel this booking?', newSlotLabel: 'New time', adminApplyChange: 'Approve new time', adminKeep: 'Keep old time', adminApplyCancel: 'Approve cancellation', adminKeepBooking: 'Keep booking', reminderOn: 'Turn on booking reminders on this device', reminderHint: 'While the app is open you are reminded 24 hours, 6 hours, 1 hour and 15 minutes before. To be safe, add the booking to your phone calendar.', upcoming: 'Upcoming booking', remindTitle: (w) => 'Reading with Nabu ' + w, inHours: (h) => 'in ' + h + ' hours', inMinutes: (m) => 'in ' + m + ' minutes', allDays: 'All', bkOn: (d) => 'Bookings on ' + d, aiSettings: 'Nabu AI settings', aiKeyLabel: 'Gemini API key (Google AI Studio)', aiKeyHint: 'Paste the key here and save: every user gets Nabu AI answered by Gemini, with web search while the quota lasts. The key lives in the app cloud, not in the source code. Leave it empty to use the built-in answers.', aiKeySaved: 'Saved. Nabu AI now uses Gemini.', saveKey: 'Save key', emojiBtn: 'Emoji', imgTooBigChat: 'Image too large for a message, try a smaller one.',
     maniIntro: 'Manifestation means naming a goal clearly, picturing it the right way and acting steadily. The first four guides are free, scripting included. The full set adds seven methods, each with a tool you use right in the app.', maniFree: 'Free', maniFull: 'Manifestation set', perYear: (p) => p + ' / year', maniUnlock: 'Unlock the full set', maniIncl: ['WOOP, if-then plans, a vision board with your own photos', 'New and full Moon rituals and a letting-go tool', 'Candles and stones by purpose, used safely'],
-    toolClear: 'Clear and redo', toolSaved: 'Saved on this device.', toolTemplate: 'New template', toolAdd: 'Add a line', toolRelease: 'Let go', toolReleased: 'Released. Lighter now. 🍃', releasedTimes: (n) => 'You have let go ' + n + ' times', tapPhoto: 'tap to add a photo', caption: 'short note', clearedToast: 'Cleared. Start again whenever you like.',
+    toolClear: 'Clear and redo', toolSaved: 'Saved on this device.', toolTemplate: 'New template', toolAdd: 'Add a line', toolRelease: 'Let go', toolReleased: 'Released. Lighter now. 🍃', releasedTimes: (n) => 'You have let go ' + n + ' times', tapPhoto: 'add photo', caption: 'short note', clearedToast: 'Cleared. Start again whenever you like.',
     saveSlot: 'Save this time', changeSlot: 'Change', slotSaved: 'Time saved', summaryTitle: 'Your request', showMsg: 'Show the message that will be sent', bkItems: 'Packages',
     doneTitle: 'Booking request sent', doneBody: 'Nabu will review it and confirm soon. Follow the status under Me; you will be notified when Nabu replies.', doneMe: 'See my bookings', doneHome: 'Back to home', doneMore: 'Book another reading',
     draftKept: 'Your choices are saved on this device automatically, so you can leave and come back.', openInLibrary: 'Read the full guide in the library',
@@ -10145,13 +10156,13 @@ function courseHash(str) {
   return (h1.toString(36) + h2.toString(36)).toUpperCase().replace(/[^A-Z0-9]/g, '').slice(-4).padStart(4, 'X');
 }
 function makeCode(course, untilISO) {
-  const d = untilISO.replace(/-/g, '').slice(2), Lt = course === 'tarot' ? 'T' : course === 'manifest' ? 'M' : 'L';
+  const d = untilISO.replace(/-/g, '').slice(2), Lt = course === 'tarot' ? 'T' : course === 'manifest' ? 'M' : course === 'playing' ? 'P' : 'L';
   return 'NABU-' + Lt + '-' + d + '-' + courseHash(Lt + d + CONFIG.courseSecret);
 }
 function parseCode(code) {
-  const m = /^NABU-([TLM])-(\d{6})-([A-Z0-9]{4})$/.exec(String(code || '').trim().toUpperCase().replace(/\s+/g, ''));
+  const m = /^NABU-([TLMP])-(\d{6})-([A-Z0-9]{4})$/.exec(String(code || '').trim().toUpperCase().replace(/\s+/g, ''));
   if (!m || courseHash(m[1] + m[2] + CONFIG.courseSecret) !== m[3]) return null;
-  return { course: m[1] === 'T' ? 'tarot' : m[1] === 'M' ? 'manifest' : 'lenormand', until: '20' + m[2].slice(0, 2) + '-' + m[2].slice(2, 4) + '-' + m[2].slice(4, 6) };
+  return { course: m[1] === 'T' ? 'tarot' : m[1] === 'M' ? 'manifest' : m[1] === 'P' ? 'playing' : 'lenormand', until: '20' + m[2].slice(0, 2) + '-' + m[2].slice(2, 4) + '-' + m[2].slice(4, 6) };
 }
 function addMonths(iso, n) { const d = new Date(iso + 'T00:00:00'); d.setMonth(d.getMonth() + n); return isoDate(d); }
 
@@ -11329,6 +11340,7 @@ function bindDeck(m) {
       s.style.transform = 'scale(' + (0.68 + 0.42 * k).toFixed(3) + ')'; s.style.opacity = (0.45 + 0.55 * k).toFixed(2); s.style.zIndex = String(Math.round(10 * k));
       if (Math.abs(dx) < bd) { bd = Math.abs(dx); best = i; }
     });
+    if (Date.now() < (pick.lockUntil || 0)) return;  // an arrow step announced its card; let the glide finish
     slots.forEach((s, i) => s.classList.toggle('near', i === best));
     pick.center = best; if (pos) pos.textContent = S.deckPos(best + 1, slots.length);
   };
@@ -11336,8 +11348,8 @@ function bindDeck(m) {
   // Smoothness comes from CSS scroll-behavior; the counter is refreshed right away and again once the glide ends.
   const to = (i) => {
     const idx = Math.max(0, Math.min(slots.length - 1, i)), s = slots[idx]; if (!s) return;
-    pick.center = idx; slots.forEach((x, k) => x.classList.toggle('near', k === idx)); if (pos) pos.textContent = S.deckPos(idx + 1, slots.length);
-    fan.scrollLeft = s.offsetLeft - (fan.clientWidth - s.offsetWidth) / 2; setTimeout(update, 450);
+    pick.center = idx; pick.lockUntil = Date.now() + 700; slots.forEach((x, k) => x.classList.toggle('near', k === idx)); if (pos) pos.textContent = S.deckPos(idx + 1, slots.length);
+    fan.scrollLeft = s.offsetLeft - (fan.clientWidth - s.offsetWidth) / 2; setTimeout(() => { pick.lockUntil = 0; update(); }, 750);
   };
   $$('[data-step]', m).forEach((b) => b.addEventListener('click', () => to((pick.center || 0) + Number(b.getAttribute('data-step')))));
   // Mouse: press and drag to slide the deck, wheel to move it, hover to lift a card (CSS).
@@ -11378,7 +11390,7 @@ ROUTES.pick = { nav: 'pick', render: renderPick };
    #/learn/lenormand?tab=…                     the Lenormand course (paid)
    #/learn/card/<id>  #/learn/len/<n>  #/learn/spread/<id>  #/learn/guide/<id>
    #/learn/astro, #/learn/sign/<key>, #/learn/manifest, #/learn/fortune, #/learn/numbers  (free) */
-const CAT_ICONS = { tarot: PICK_ICON, lenormand: '🗝️', astro: '🔮', manifest: '🌙', fortune: '🔢' };
+const CAT_ICONS = { tarot: PICK_ICON, lenormand: '🗝️', astro: '🔮', manifest: '🌙', fortune: '🔢', playing: '🂡' };
 const badgeHTML = () => '';
 const courseOf = (id) => COURSES.filter((c) => c.id === id)[0];
 
@@ -11407,14 +11419,14 @@ function bindPaywall(root, after) {
   });
 }
 /* What a locked course shows: lesson 1 = the overview guide, lesson 2 = the first card. */
-const DEMO = { tarot: { guide: 'tarot-overview', card: 'major-0' }, lenormand: { guide: 'len-vs-tarot', card: 1 } };
+const DEMO = { tarot: { guide: 'tarot-overview', card: 'major-0' }, lenormand: { guide: 'len-vs-tarot', card: 1 }, playing: { guide: 'fort-playing', card: 'hA' } };
 function demoHTML(courseId) {
   const S = T(), d = DEMO[courseId], g = GUIDES.filter((x) => x.id === d.guide)[0];
   const lesson = (n, title, body) => '<div class="acc open lesson"><button><span>' + esc(S.lessonN(n)) + ' · ' + esc(title) + '</span></button><div class="in">' + body + '</div></div>';
   let l1 = guideBodyHTML(g);
   if (courseId === 'lenormand') { const p = GUIDES.filter((x) => x.id === 'len-pairs')[0]; l1 += '<h2>' + esc(L(p.sections[2].h)) + '</h2><p>' + esc(L(p.sections[2].p)) + '</p>'; }
-  l1 += '<div class="visual">' + (courseId === 'tarot' ? journeyHTML() : lenIntroHTML()) + '</div>'
-  const l2 = courseId === 'tarot' ? cardBodyHTML(d.card) : lenBodyHTML(d.card);
+  l1 += '<div class="visual">' + (courseId === 'tarot' ? journeyHTML() : courseId === 'playing' ? pcSuitsHTML() : lenIntroHTML()) + '</div>'
+  const l2 = courseId === 'tarot' ? cardBodyHTML(d.card) : courseId === 'playing' ? pcCardBodyHTML(d.card) : lenBodyHTML(d.card);
   return '<div class="demo-head"><span class="chip pink">' + esc(S.demoTag) + '</span><p class="muted">' + esc(S.demoIntro) + '</p></div>'
     + lesson(1, S.lesson1, '<div class="guide">' + l1 + '</div>' + aiPanelHTML({ type: 'lesson', course: courseId, n: 1 })) + lesson(2, S.lesson2, l2);
 }
@@ -11432,13 +11444,15 @@ function renderLearn(args, params) {
     const ints = PROFILE.interests || [];
     const tile = (k, locked) => '<a class="tile' + (ints.indexOf(k) > -1 ? ' rec' : '') + '" href="#/learn/' + k + '"><div class="ic">' + CAT_ICONS[k] + (locked ? ' <span class="lock">🔒</span>' : '') + '</div><b>' + esc(S.cats[k]) + '</b><span>' + esc(S.catSub[k]) + '</span></a>';
     m.innerHTML = '<div class="eyebrow">' + esc(S.nav.learn) + '</div><h1 style="margin-bottom:6px">' + esc(S.learnTitle) + '</h1><p class="muted">' + esc(S.learnIntro) + '</p>'
-      + '<div class="eyebrow">' + esc(S.courses) + '</div><div class="tiles">' + tile('tarot', !ACCESS.has('tarot')) + tile('lenormand', !ACCESS.has('lenormand')) + '</div>'
+      + '<div class="eyebrow">' + esc(S.courses) + '</div><div class="tiles">' + tile('tarot', !ACCESS.has('tarot')) + tile('lenormand', !ACCESS.has('lenormand')) + tile('playing', !ACCESS.has('playing')) + '</div>'
       + '<div class="eyebrow">' + esc(S.freeReads) + '</div><div class="tiles">' + tile('astro') + tile('fortune') + '</div>'
       + '<div class="eyebrow">' + esc(S.practice) + '</div><div class="tiles">' + tile('manifest', !ACCESS.has('manifest')) + '</div>'
       + (function () { const ints = PROFILE.interests || []; const list = GUIDES.filter((g) => g.tags.some((t) => ints.indexOf(t) > -1) && !((g.cat === 'tarot' || g.cat === 'lenormand') && !ACCESS.has(g.cat))).slice(0, 4); return list.length ? '<div class="sec"><div class="eyebrow">' + esc(S.forInterests) + '</div>' + list.map(guideRow).join('') + '</div>' : ''; }());
     return;
   }
   if (sub === 'tarot') return renderCourse('tarot', params.tab);
+  if (sub === 'playing') return renderCourse('playing', params.tab);
+  if (sub === 'pc') return renderPCCard(args[1]);
   if (sub === 'lenormand') return renderCourse('lenormand', params.tab);
   if (sub === 'lesson') return renderLesson(args[1], args[2]);
   if (sub === 'card') return renderCard(args[1]);
@@ -11459,22 +11473,21 @@ function renderCourse(courseId, tab) {
   if (!ACCESS.has(courseId)) {
     const S = T(), m = $('#main');
     m.innerHTML = backLink('#/learn', S.learnTitle) + '<h1 style="margin-bottom:8px">' + esc(S.cats[courseId]) + '</h1>' + demoHTML(courseId) + '<div id="unlockwrap" style="margin-top:18px">' + paywallHTML(courseId) + '</div>';
-    bindAccordions(m); bindPaywall(m); bindCardLinks(m); bindAI(m);
+    bindAccordions(m); bindPaywall(m); bindCardLinks(m); bindAI(m); bindPC(m);
     $$('[data-len]', m).forEach((b) => b.addEventListener('click', () => { location.hash = '#/learn/len/' + b.getAttribute('data-len'); }));
     return;
   }
-  const S = T(), m = $('#main'), sys = courseId === 'tarot' ? 'tarot' : 'len';
-  void sys;
-  tab = ['lessons', 'cards', 'spreads', 'guides'].indexOf(tab) > -1 ? tab : 'lessons';
+  const S = T(), m = $('#main'), sys = courseId === 'tarot' ? 'tarot' : 'len', tabs = courseId === 'playing' ? ['lessons', 'cards', 'guides'] : ['lessons', 'cards', 'spreads', 'guides'];
+  tab = tabs.indexOf(tab) > -1 ? tab : 'lessons';
   const until = ACCESS.get()[courseId];
   m.innerHTML = backLink('#/learn', S.learnTitle) + '<h1 style="margin-bottom:4px">' + esc(S.cats[courseId]) + '</h1><p class="faint">' + esc(ACCESS.isAdmin() ? S.adminAccess : S.accessUntil(fmtDate(until))) + '</p>'
-    + '<div class="tabs" id="ctabs">' + ['lessons', 'cards', 'spreads', 'guides'].map((t) => '<button data-t="' + t + '" class="' + (tab === t ? 'on' : '') + '">' + esc(S.courseTabs[t]) + '</button>').join('') + '</div><div id="cpanel"></div>';
+    + '<div class="tabs" id="ctabs">' + tabs.map((t) => '<button data-t="' + t + '" class="' + (tab === t ? 'on' : '') + '">' + esc(S.courseTabs[t]) + '</button>').join('') + '</div><div id="cpanel"></div>';
   const panel = $('#cpanel');
   const show = (t) => {
     if (t === 'lessons') { panel.innerHTML = '<p class="muted" style="font-size:14px">' + esc(S.lessonsIntro(LESSONS[courseId].length)) + '</p>' + lessonListHTML(courseId); }
-    else if (t === 'cards') { panel.innerHTML = courseId === 'tarot' ? tarotGridHTML() : lenGridHTML(); bindGrid(panel, courseId); }
+    else if (t === 'cards') { panel.innerHTML = courseId === 'tarot' ? tarotGridHTML() : courseId === 'playing' ? pcGridHTML() : lenGridHTML(); if (courseId === 'playing') bindPC(panel); else bindGrid(panel, courseId); }
     else if (t === 'spreads') { panel.innerHTML = spreadsListHTML(sys); }
-    else { panel.innerHTML = (courseId === 'lenormand' ? '<p class="muted" style="font-size:14px">' + esc(S.lenNote) + '</p>' : '') + GUIDES.filter((g) => g.cat === courseId).map(guideRow).join(''); }
+    else { panel.innerHTML = (courseId === 'lenormand' ? '<p class="muted" style="font-size:14px">' + esc(S.lenNote) + '</p>' : '') + GUIDES.filter((g) => g.cat === courseId || (courseId === 'playing' && g.id === 'fort-playing')).map(guideRow).join(''); }
   };
   show(tab);
   $$('#ctabs button').forEach((b) => b.addEventListener('click', () => { $$('#ctabs button').forEach((x) => x.classList.toggle('on', x === b)); history.replaceState(null, '', '#/learn/' + courseId + '?tab=' + b.getAttribute('data-t')); show(b.getAttribute('data-t')); }));
@@ -11661,7 +11674,7 @@ function renderSpread(id) {
 const FREE_MANI = ['mani-what', 'mani-gratitude', 'mani-369', 'mani-script'];
 const maniLocked = (g) => g.cat === 'manifest' && FREE_MANI.indexOf(g.id) < 0 && !ACCESS.has('manifest');
 function guideRow(g) {
-  const locked = ((g.cat === 'tarot' || g.cat === 'lenormand') && !ACCESS.has(g.cat)) || maniLocked(g);
+  const locked = ((g.cat === 'tarot' || g.cat === 'lenormand') && !ACCESS.has(g.cat)) || maniLocked(g) || (g.id === 'fort-playing' && !ACCESS.has('playing'));
   return '<a class="acc" href="#/learn/guide/' + g.id + '" style="display:block;text-decoration:none;color:inherit"><button style="pointer-events:none"><span>' + (locked ? '🔒 ' : '') + esc(L(g.title)) + '</span></button></a>';
 }
 function renderManifest() {
@@ -11683,6 +11696,7 @@ function renderGuide(id) {
   const back = g.cat === 'tarot' || g.cat === 'lenormand' ? '#/learn/' + g.cat + '?tab=guides' : g.cat === 'astro' ? '#/learn/astro' : '#/learn/' + g.cat;
   if ((g.cat === 'tarot' || g.cat === 'lenormand') && g.id !== DEMO[g.cat].guide && gate(g.cat, back)) return;
   if (g.cat === 'manifest' && FREE_MANI.indexOf(g.id) < 0 && gate('manifest', back)) return;
+  if (g.id === 'fort-playing' && gate('playing', '#/learn/playing')) return;
   const flow = flowGuideHTML(g), vis = flow ? '' : guideVisualHTML(g.id);
   m.innerHTML = backLink(back, S.cats[g.cat]) + '<div class="guide"><h1 style="margin:8px 0">' + esc(L(g.title)) + '</h1><p class="lead">' + esc(L(g.intro)) + '</p>'
     + (flow ? '<div class="visual" data-vid="' + g.id + '">' + flow + '</div>' : (vis ? '<div class="visual" data-vid="' + g.id + '">' + vis + '</div>' : '')
@@ -11719,6 +11733,7 @@ ROUTES.learn = { nav: 'learn', render: renderLearn };
    visual: card faces, strips, grids and diagrams drawn from the app's own
    artwork, with a line or two of text per card. */
 const LESSONS = {
+  playing: [],  // filled from playing.js (PC_LESSONS_VI) once that file has loaded
   tarot: [
     { n: 1, title: { vi: 'Tổng quan bộ bài và hành trình của Gã Khờ', en: 'The deck at a glance and the Fool\'s Journey' }, guide: 'tarot-overview', visual: 'journey' },
     { n: 2, title: { vi: 'Ẩn Chính 0–7: bước ra thế giới', en: 'Majors 0–7: stepping into the world' }, cards: ['major-0', 'major-1', 'major-2', 'major-3', 'major-4', 'major-5', 'major-6', 'major-7'], visual: 'strip',
@@ -11822,7 +11837,7 @@ function renderLesson(courseId, n) {
   if (!l) { redirect('#/learn/' + courseId); return; }
   if (!(n === '1' || n === 1) && gate(courseId, '#/learn/' + courseId)) return;
   let body = l.intro ? '<p class="lead">' + esc(L(l.intro)) + '</p>' : '';
-  if (l.guide) { const g = GUIDES.filter((x) => x.id === l.guide)[0]; body += '<div class="guide">' + guideBodyHTML(g) + '</div>'; if (l.visual === 'court' || l.visual === 'journey' || l.visual === 'lenintro' || l.visual === 'pairs') { /* the lesson draws its own */ } else { const gv = guideVisualHTML(g.id); if (gv) body += '<div class="visual">' + gv + '</div>'; } }
+  if (l.guide) { const g = GUIDES.filter((x) => x.id === l.guide)[0]; body += '<div class="guide">' + guideBodyHTML(g) + '</div>'; if (l.visual === 'court' || l.visual === 'journey' || l.visual === 'lenintro' || l.visual === 'pairs' || l.visual === 'pcsuits') { /* the lesson draws its own */ } else { const gv = guideVisualHTML(g.id); if (gv) body += '<div class="visual">' + gv + '</div>'; } }
   if (l.extra) { const g = GUIDES.filter((x) => x.id === l.extra[0])[0], sct = g.sections[l.extra[1]]; body += '<div class="guide"><h2>' + esc(L(sct.h)) + '</h2><p>' + esc(L(sct.p)) + '</p></div>'; }
   let vis = '';
   if (l.visual === 'journey') vis = journeyHTML();
@@ -11833,6 +11848,12 @@ function renderLesson(courseId, n) {
   else if (l.visual === 'lenstrip') vis = lenStripHTML(l.len);
   else if (l.visual === 'pairs') vis = pairsHTML();
   else if (l.visual === 'spreads') vis = '<div class="spreads-v">' + spreadsVisualHTML(l.sys) + '</div>';
+  else if (l.visual === 'pcsuits') vis = pcSuitsHTML();
+  else if (l.visual === 'pcranks') vis = pcRanksHTML();
+  else if (l.visual === 'pcstrip') vis = pcStripHTML(l.suit);
+  else if (l.visual === 'pccourt') vis = pcCourtHTML();
+  else if (l.visual === 'pccombo') vis = pcComboHTML();
+  else if (l.visual === 'pcspreads') vis = pcSpreadsHTML();
   if (l.guides) vis += l.guides.map((id) => guideRow(GUIDES.filter((x) => x.id === id)[0])).join('');
   const prev = LESSONS[courseId].filter((x) => x.n === l.n - 1)[0], next = LESSONS[courseId].filter((x) => x.n === l.n + 1)[0];
   m.innerHTML = backLink('#/learn/' + courseId, S.cats[courseId]) + '<div class="eyebrow">' + esc(S.lessonN(l.n)) + ' / ' + LESSONS[courseId].length + '</div><h1 style="margin-bottom:10px">' + esc(L(l.title)) + '</h1>'
@@ -11840,7 +11861,7 @@ function renderLesson(courseId, n) {
     + aiPanelHTML({ type: 'lesson', course: courseId, n: l.n })
     + '<button class="btn block' + (DONE.is(courseId, l.n) ? '' : ' primary') + '" id="ldone">' + (DONE.is(courseId, l.n) ? '✓ ' + esc(S.lessonDone) : esc(S.markDone)) + '</button>'
     + '<div class="row" style="margin-top:10px">' + (prev ? '<a class="btn" href="#/learn/lesson/' + courseId + '/' + prev.n + '">← ' + esc(S.lessonN(prev.n)) + '</a>' : '') + (next ? '<a class="btn" href="#/learn/lesson/' + courseId + '/' + next.n + '" style="margin-left:auto">' + esc(S.lessonN(next.n)) + ' →</a>' : '') + '</div>';
-  bindCardLinks(m); bindAI(m);
+  bindCardLinks(m); bindAI(m); bindPC(m);
   $$('[data-len]', m).forEach((b) => b.addEventListener('click', () => { location.hash = '#/learn/len/' + b.getAttribute('data-len'); }));
   $('#ldone').addEventListener('click', () => { DONE.toggle(courseId, l.n); renderLesson(courseId, n); });
 }
@@ -11880,6 +11901,7 @@ const PALM = {
   mercury: { d: 'M46 130 C 62 118, 80 104, 96 84', vi: ['Đường sức khỏe', 'Đường chéo từ gần cổ tay lên gò ngón út. Nói về sức khỏe, làm ăn và cách bạn nói chuyện.', ['Rõ và thẳng: nói năng rõ ràng, nhạy trong kinh doanh.', 'Gợn sóng hoặc đứt: cơ thể hay báo động khi căng thẳng, cần nghỉ đủ.', 'Không có: theo cách xem truyền thống, đây là dấu hiệu tốt về sức khỏe.']], en: ['Health line', 'A diagonal line from near the wrist up to the little-finger mount. It speaks of health, business and how you communicate.', ['Clear and straight: speaks clearly, sharp in business.', 'Wavy or broken: the body signals under stress, so rest enough.', 'Absent: in the traditional reading this is a good sign for health.']] },
   marriage: { d: 'M90 76 L 103 75 M91 82 L 100 81', vi: ['Đường hôn nhân', 'Những vạch ngắn nằm ngang ở cạnh bàn tay, dưới ngón út. Nói về các mối quan hệ sâu sắc.', ['Một đường rõ và dài: một mối quan hệ lớn, bền.', 'Hai hay ba đường: vài mối quan hệ quan trọng trong đời, không nhất thiết là hôn nhân.', 'Đường cong xuống: mối quan hệ cần được chăm sóc.', 'Chẻ đôi ở cuối: có giai đoạn xa cách rồi quay lại hoặc tách hẳn.']], en: ['Marriage lines', 'Short horizontal marks on the edge of the palm under the little finger. They speak of deep relationships.', ['One clear, long line: one major, lasting relationship.', 'Two or three lines: a few important relationships in life, not necessarily marriages.', 'Curving downward: a relationship that needs care.', 'Forked at the end: a period apart, then a return or a parting.']] }
 };
+const MOUNT_GLYPH = { jupiter: '♃', saturn: '♄', apollo: '☉', mercury: '☿', venus: '♀', luna: '☽', mars: '♂' };
 const MOUNTS = {
   jupiter: { x: 52, y: 66, vi: ['Gò Mộc Tinh', 'Dưới ngón trỏ. Tham vọng, tự tin, khả năng dẫn dắt.', ['Đầy đặn: tự tin, thích dẫn đầu, có uy.', 'Phẳng: khiêm tốn, ngại đứng đầu.', 'Quá cao: kiêu, thích chỉ huy.']], en: ['Mount of Jupiter', 'Under the index finger. Ambition, confidence, leadership.', ['Full: confident, likes to lead, has authority.', 'Flat: modest, shy of the front row.', 'Too high: proud, bossy.']] },
   saturn: { x: 68, y: 62, vi: ['Gò Thổ Tinh', 'Dưới ngón giữa. Kỷ luật, trách nhiệm, sự nghiêm túc.', ['Vừa phải: chín chắn, đáng tin.', 'Phẳng: vô tư, sống thoải mái.', 'Quá cao: hay lo, u sầu, khép kín.']], en: ['Mount of Saturn', 'Under the middle finger. Discipline, responsibility, seriousness.', ['Moderate: mature, reliable.', 'Flat: carefree, easy-going.', 'Too high: worries, gloomy, withdrawn.']] },
@@ -11923,7 +11945,7 @@ function renderFortune(tool) {
   const back = backLink('#/learn/fortune', S.cats.fortune), title = (k) => '<div class="eyebrow">' + esc(S.cats.fortune) + '</div><h1 style="margin-bottom:8px">' + FT[k].ic + ' ' + esc(FT[k][lang][0]) + '</h1>';
   if (tool === 'numbers') return renderNumbersTool(m, back + title('numbers'));
   if (tool === 'palm') return renderPalm(m, back + title('palm'));
-  if (tool === 'cards') return renderPlayingCards(m, back + title('cards'));
+  if (tool === 'cards') { if (gate('playing', '#/learn/playing')) return; return renderPlayingCards(m, back + title('cards')); }
   if (tool === 'tea') return renderTea(m, back + title('tea'));
   if (tool === 'animals') return renderAnimals(m, back + title('animals'));
   redirect('#/learn/fortune');
@@ -11960,7 +11982,7 @@ function handSVG(active, mode, activeMount) {
     + '<path d="M30 70 C 26 50, 30 30, 38 30 C 46 30, 46 55, 46 62 C 46 40, 44 18, 54 18 C 64 18, 62 44, 62 60 C 62 40, 62 22, 72 22 C 82 22, 78 46, 78 62 C 80 46, 80 34, 88 34 C 96 34, 92 56, 92 70 C 100 60, 108 64, 104 74 C 96 84, 92 94, 90 106 C 86 130, 76 140, 60 140 C 40 140, 30 126, 28 108 C 26 92, 26 82, 30 70 Z" fill="#F6DCC9" stroke="#3B2A5E" stroke-width="2"/>'
     + ['life', 'head', 'heart', 'fate', 'sun', 'mercury', 'marriage'].map(line).join('');
   if (mode === 'mounts') {
-    Object.keys(MOUNTS).forEach((k) => { const mt = MOUNTS[k], on = k === activeMount; s += '<g data-mount="' + k + '" style="cursor:pointer"><circle cx="' + mt.x + '" cy="' + mt.y + '" r="' + (on ? 11 : 9) + '" fill="' + (on ? 'var(--primary)' : 'rgba(255,255,255,.55)') + '" stroke="#3B2A5E" stroke-width="1.2"/><text x="' + mt.x + '" y="' + (mt.y + 3.5) + '" text-anchor="middle" font-size="9" font-weight="700" fill="' + (on ? 'var(--primary-ink)' : '#3B2A5E') + '" pointer-events="none">' + mt[lang][0].replace(/^(Gò|Mount of the|Mount of) /, '').slice(0, 2) + '</text></g>'; });
+    Object.keys(MOUNTS).forEach((k) => { const mt = MOUNTS[k], on = k === activeMount; s += '<g data-mount="' + k + '" style="cursor:pointer"><circle cx="' + mt.x + '" cy="' + mt.y + '" r="' + (on ? 11 : 9) + '" fill="' + (on ? 'var(--primary)' : 'rgba(255,255,255,.55)') + '" stroke="#3B2A5E" stroke-width="1.2"/><text x="' + mt.x + '" y="' + (mt.y + 3.5) + '" text-anchor="middle" font-size="11" font-weight="700" fill="' + (on ? 'var(--primary-ink)' : '#3B2A5E') + '" pointer-events="none">' + MOUNT_GLYPH[k] + '</text></g>'; });
   }
   return s + '</svg>';
 }
@@ -11971,7 +11993,7 @@ function renderPalm(m, head) {
   const draw = () => {
     $('#handwrap').innerHTML = handSVG(line, mode, mount);
     const p = mode === 'lines' ? PALM[line][lang] : MOUNTS[mount][lang];
-    $('#palmout').innerHTML = '<h3 style="color:' + (mode === 'lines' ? PALM_COLS[line] : 'var(--link)') + '">' + esc(p[0]) + '</h3><p>' + esc(p[1]) + '</p><ul class="pl">' + p[2].map((x) => '<li>' + esc(x) + '</li>').join('') + '</ul>';
+    $('#palmout').innerHTML = '<h3 style="color:' + (mode === 'lines' ? PALM_COLS[line] : 'var(--link)') + '">' + (mode === 'mounts' ? MOUNT_GLYPH[mount] + ' ' : '') + esc(p[0]) + '</h3><p>' + esc(p[1]) + '</p><ul class="pl">' + p[2].map((x) => '<li>' + esc(x) + '</li>').join('') + '</ul>';
     $$('[data-pl]', m).forEach((b) => b.classList.toggle('on', mode === 'lines' && b.getAttribute('data-pl') === line));
     $$('[data-pm]', m).forEach((b) => b.classList.toggle('on', mode === 'mounts' && b.getAttribute('data-pm') === mount));
     $$('[data-pmode]', m).forEach((b) => b.classList.toggle('on', b.getAttribute('data-pmode') === mode));
@@ -11983,7 +12005,7 @@ function renderPalm(m, head) {
     + '<div class="chips" style="justify-content:center;margin-bottom:8px"><button class="chip on" data-pmode="lines">' + esc(S.palmLines) + '</button><button class="chip" data-pmode="mounts">' + esc(S.palmMounts) + '</button></div>'
     + '<div class="palmwrap"><div id="handwrap"></div>'
     + '<div class="chips" style="justify-content:center;margin:8px 0" id="plines">' + keys.map((k) => '<button class="chip" data-pl="' + k + '" style="border-color:' + PALM_COLS[k] + '">' + esc(PALM[k][lang][0]) + '</button>').join('') + '</div>'
-    + '<div class="chips" style="justify-content:center;margin:8px 0" id="pmounts" hidden>' + mkeys.map((k) => '<button class="chip" data-pm="' + k + '">' + esc(MOUNTS[k][lang][0]) + '</button>').join('') + '</div>'
+    + '<div class="chips" style="justify-content:center;margin:8px 0" id="pmounts" hidden>' + mkeys.map((k) => '<button class="chip" data-pm="' + k + '">' + MOUNT_GLYPH[k] + ' ' + esc(MOUNTS[k][lang][0]) + '</button>').join('') + '</div>'
     + '<div class="ins" id="palmout"></div></div>'
     + '<h3 style="margin:18px 0 8px">' + esc(S.palmShapes) + '</h3><p class="muted">' + esc(S.palmShapesHint) + '</p>' + handShapesHTML()
     + '<div class="acc"><button><span>' + esc(S.readMoreTitle) + '</span></button><div class="in">' + guideBodyHTML(GUIDES.filter((g) => g.id === 'fort-palm')[0]) + '</div></div>';
@@ -12118,6 +12140,150 @@ function renderAnimals(m, head) {
     + '<div class="acc"><button><span>' + esc(S.readMoreTitle) + '</span></button><div class="in">' + guideBodyHTML(GUIDES.filter((g) => g.id === 'fort-animals')[0]) + '</div></div>';
   draw(mine > -1 ? mine : 4); bindAccordions(m);
 }
+
+/* ============================ playing-card course (Bài Tây) ============================
+   A 52-card course in the same shape as the tarot and Lenormand ones: sessions
+   with drawn card faces, one page per card, the traditional meanings from
+   fortune.js plus suit, number and court logic, pairs, timing and spreads.
+   Text is original; the meanings follow the common cartomancy tradition. */
+const PC_SUIT_TEXT = {
+  h: { vi: ['Cơ', 'Tình cảm, gia đình, niềm vui và những gì bạn yêu. Tương ứng với Cốc trong tarot. Người: da sáng, tóc sáng, tính ấm áp. Mùa: xuân.', '♥ = Cốc · nước · cảm xúc'],
+       en: ['Hearts', 'Love, family, joy and what you care for. The tarot twin is Cups. People: fair, warm-natured. Season: spring.', '♥ = Cups · water · feeling'] },
+  d: { vi: ['Rô', 'Tiền bạc, công việc, tin tức và chuyện thực tế. Tương ứng với Tiền. Người: tóc rất sáng hoặc hung, nhanh nhẹn. Mùa: thu.', '♦ = Tiền · đất · vật chất'],
+       en: ['Diamonds', 'Money, work, news and practical matters. The tarot twin is Pentacles. People: very fair or red-haired, quick. Season: autumn.', '♦ = Pentacles · earth · the material'] },
+  c: { vi: ['Chuồn', 'Hành động, việc làm ăn, bạn bè và may mắn. Tương ứng với Gậy. Người: tóc nâu, cởi mở, năng động. Mùa: hè.', '♣ = Gậy · lửa · hành động'],
+       en: ['Clubs', 'Action, business, friends and luck. The tarot twin is Wands. People: brown-haired, open, energetic. Season: summer.', '♣ = Wands · fire · action'] },
+  s: { vi: ['Bích', 'Thử thách, lo âu, tin không vui và những quyết định khó. Tương ứng với Kiếm. Người: tóc sẫm, kín đáo, nghiêm. Mùa: đông.', '♠ = Kiếm · khí · suy nghĩ'],
+       en: ['Spades', 'Challenges, worry, unwelcome news and hard decisions. The tarot twin is Swords. People: dark-haired, reserved, serious. Season: winter.', '♠ = Swords · air · thought'] }
+};
+const PC_RANK_TEXT = {
+  A: { vi: ['Khởi đầu', 'Át là hạt giống của chất: điều tinh khiết nhất của chất ấy vừa xuất hiện.'], en: ['Beginning', 'The Ace is the seed of the suit: its purest form, just appearing.'] },
+  2: { vi: ['Cặp đôi, lựa chọn', 'Hai là hai người hoặc hai con đường. Cân bằng, hoặc phải chọn.'], en: ['A pair, a choice', 'Two is two people or two roads. Balance, or a choice to make.'] },
+  3: { vi: ['Mọc lên, nhóm nhỏ', 'Ba là điều gì đó bắt đầu lớn, hoặc thêm một người thứ ba.'], en: ['Growth, a small group', 'Three is something starting to grow, or a third person joining.'] },
+  4: { vi: ['Ổn định', 'Bốn là nền móng: chắc, yên, đôi khi hơi cứng.'], en: ['Stability', 'Four is a foundation: solid, quiet, sometimes a little stiff.'] },
+  5: { vi: ['Thay đổi, va chạm', 'Năm phá thế yên của Bốn: xáo trộn, tranh cãi, hoặc một quyết định.'], en: ['Change, friction', 'Five breaks the calm of Four: disruption, argument, or a decision.'] },
+  6: { vi: ['Hài hoà, điều chỉnh', 'Sáu sửa lại sau Năm: hoà giải, kỷ niệm, một sự giúp đỡ.'], en: ['Harmony, adjustment', 'Six repairs after Five: reconciliation, memories, help offered.'] },
+  7: { vi: ['Thử thách, cân nhắc', 'Bảy là bài kiểm tra: đánh giá, thất vọng nhỏ, hoặc một cám dỗ.'], en: ['A test, a weighing up', 'Seven is the examination: assessment, a small disappointment, or a temptation.'] },
+  8: { vi: ['Chuyển động', 'Tám là đi và đổi: chuyến đi, tiến bộ, tin tức đang tới.'], en: ['Movement', 'Eight is going and changing: a journey, progress, news on the way.'] },
+  9: { vi: ['Gần trọn vẹn', 'Chín là điều ước và kết quả: ở Cơ là lá ước nguyện, ở Bích là thất vọng.'], en: ['Nearly complete', 'Nine is the wish and the result: in Hearts the wish card, in Spades the disappointment.'] },
+  10: { vi: ['Trọn vẹn, đầy', 'Mười là chất ấy đến mức tối đa: hạnh phúc trọn (Cơ), tiền lớn (Rô), thành công (Chuồn), kết thúc (Bích).'], en: ['Complete, full', 'Ten is the suit at its fullest: full happiness (Hearts), big money (Diamonds), success (Clubs), an ending (Spades).'] },
+  J: { vi: ['Người trẻ, tin nhắn', 'J là một người trẻ hoặc một thông điệp mang tính cách của chất.'], en: ['A young person, a message', 'The Jack is a young person, or a message carrying the suit’s character.'] },
+  Q: { vi: ['Người phụ nữ', 'Q là một người phụ nữ trưởng thành, hoặc phần chăm sóc và cảm nhận trong bạn.'], en: ['A woman', 'The Queen is a grown woman, or the caring, sensing side of you.'] },
+  K: { vi: ['Người đàn ông, quyền uy', 'K là một người đàn ông trưởng thành, người có quyền, hoặc phần quyết đoán trong bạn.'], en: ['A man, authority', 'The King is a grown man, someone in charge, or the decisive side of you.'] }
+};
+const PC_COURT_TEXT = {
+  hJ: { vi: 'Bạn thân, người yêu trẻ, một người hiền và tình cảm. Tin vui về tình cảm.', en: 'A close friend, a young lover, a gentle and affectionate person. Good news in love.' },
+  hQ: { vi: 'Người phụ nữ ấm áp, đáng tin, hay là mẹ. Người đứng về phía bạn.', en: 'A warm, trustworthy woman, often a mother figure. Someone on your side.' },
+  hK: { vi: 'Người đàn ông tốt bụng, rộng lượng, đôi khi hơi mềm lòng. Lời khuyên hiền.', en: 'A kind, generous man, sometimes soft-hearted. Gentle advice.' },
+  dJ: { vi: 'Người trẻ mang tin về tiền hay công việc, đôi khi không đáng tin lắm.', en: 'A young person bringing news about money or work, sometimes not quite reliable.' },
+  dQ: { vi: 'Người phụ nữ thực tế, giỏi tính toán, hay là người ưa tán chuyện.', en: 'A practical, calculating woman, sometimes the one who gossips.' },
+  dK: { vi: 'Người đàn ông có tiền hoặc chức, quyết đoán về việc làm ăn.', en: 'A man with money or position, decisive in business.' },
+  cJ: { vi: 'Người bạn trung thành, người trẻ đầy nhiệt huyết, một lời mời.', en: 'A loyal friend, an energetic young person, an invitation.' },
+  cQ: { vi: 'Người phụ nữ tự tin, hay giúp người, có tiếng nói trong nhóm.', en: 'A confident, helpful woman with a voice in the group.' },
+  cK: { vi: 'Người đàn ông thẳng thắn, đáng tin, giỏi gây dựng. Người cố vấn.', en: 'A straight, dependable man who builds things. A mentor.' },
+  sJ: { vi: 'Người trẻ khó lường, tin kém vui, hoặc một người đang do thám.', en: 'An unpredictable young person, unwelcome news, or someone watching you.' },
+  sQ: { vi: 'Người phụ nữ sắc sảo, từng trải, có thể goá hoặc cô đơn, đôi khi khắt khe.', en: 'A sharp, experienced woman, perhaps widowed or alone, sometimes harsh.' },
+  sK: { vi: 'Người đàn ông có quyền và lạnh: luật sư, sếp, người phán xét.', en: 'A cold man with power: a lawyer, a boss, a judge.' }
+};
+const PC_COMBOS = [
+  ['hA', 'h9', { vi: 'Điều ước thành sự thật, niềm vui trong nhà.', en: 'A wish coming true, happiness at home.' }],
+  ['hQ', 'hK', { vi: 'Một cặp đôi, hôn nhân, gia đình yên.', en: 'A couple, a marriage, a settled home.' }],
+  ['h2', 'hA', { vi: 'Đính ước, lời hứa gắn bó.', en: 'An engagement, a promise to commit.' }],
+  ['dA', 'd9', { vi: 'Tin tốt về tiền, một khoản đến.', en: 'Good news about money, a sum arriving.' }],
+  ['dA', 'd10', { vi: 'Hợp đồng lớn, chuyến đi vì công việc.', en: 'A big contract, a journey for work.' }],
+  ['cA', 'c10', { vi: 'Việc làm ăn thành, thành công qua bạn bè.', en: 'Business succeeding, success through friends.' }],
+  ['c9', 'h9', { vi: 'May mắn cộng với niềm vui: một kỳ vọng được đáp.', en: 'Luck plus joy: an expectation met.' }],
+  ['sA', 's10', { vi: 'Một kết thúc lớn; đóng lại để mở ra.', en: 'A big ending; closing to open again.' }],
+  ['s9', 'h9', { vi: 'Ước mà chưa được: chờ thêm, hoặc điều ước cần đổi.', en: 'A wish not yet granted: wait, or change the wish.' }],
+  ['s8', 's9', { vi: 'Lo âu chồng lo âu; nghỉ, đừng quyết gì lúc này.', en: 'Worry on worry; rest, decide nothing now.' }],
+  ['d7', 'c7', { vi: 'Tiền và việc đang được cân: một quyết định thực tế.', en: 'Money and work being weighed: a practical decision.' }],
+  ['hJ', 'cJ', { vi: 'Hai người bạn trẻ, một lời mời vui.', en: 'Two young friends, a cheerful invitation.' }]
+];
+const PC_SPECIAL = { h9: { vi: 'Lá ước nguyện', en: 'The wish card' }, s9: { vi: 'Lá thất vọng', en: 'The disappointment card' }, sA: { vi: 'Lá kết thúc', en: 'The ending card' }, d10: { vi: 'Lá tiền lớn', en: 'The big-money card' }, c10: { vi: 'Lá thành công', en: 'The success card' }, h10: { vi: 'Lá hạnh phúc', en: 'The happiness card' } };
+const PC_TIMING = { vi: ['Chốt đơn vị trước khi xào: ngày, tuần hay tháng.', 'Số trên lá là số đơn vị ấy: Ba Cơ trong khung tuần là khoảng ba tuần.', 'Cơ và Rô thường đến nhanh hơn Chuồn và Bích.', 'Mùa theo chất: Cơ xuân, Chuồn hè, Rô thu, Bích đông.', 'Không có quy ước nào được mọi sách đồng ý; giữ một cách và dùng đều.'],
+                    en: ['Fix the unit before you shuffle: days, weeks or months.', 'The number on the card is that many units: a Three of Hearts in a weekly frame is about three weeks.', 'Hearts and Diamonds tend to arrive faster than Clubs and Spades.', 'Seasons by suit: Hearts spring, Clubs summer, Diamonds autumn, Spades winter.', 'No convention is shared by every book; keep one and use it consistently.'] };
+const PC_SPREADS = [
+  { n: 3, lay: 'three', vi: ['Ba lá', 'Quá khứ, hiện tại, tương lai. Trải bài hằng ngày.'], en: ['Three cards', 'Past, present, future. The daily spread.'] },
+  { n: 5, lay: 'five', vi: ['Năm lá', 'Quá khứ, hiện tại, điều cản, lời khuyên, kết quả. Đọc trái sang phải như một câu.'], en: ['Five cards', 'Past, present, what blocks, advice, outcome. Read left to right as a sentence.'] },
+  { n: 9, lay: 'box9', vi: ['Chín lá', 'Ba hàng: trên là hoàn cảnh, giữa là bạn lúc này, dưới là kết quả. Lá giữa là trọng tâm.'], en: ['Nine cards', 'Three rows: the situation above, you now in the middle, the outcome below. The centre card is the heart.'] },
+  { n: 15, lay: 'wish', vi: ['Trải bài điều ước', 'Nghĩ tới một điều ước, xào, đếm ra 15 lá. Có Chín Cơ: điều ước đến. Có Chín Bích: chưa phải lúc. Không có cả hai: tuỳ ở bạn.'], en: ['The wish spread', 'Think of a wish, shuffle, deal 15 cards. The Nine of Hearts present: the wish comes. The Nine of Spades: not now. Neither: it is up to you.'] }
+];
+const PC_LESSONS_VI = [
+  { n: 1, title: { vi: 'Tổng quan: 52 lá và bốn chất', en: 'The deck at a glance: 52 cards, four suits' }, guide: 'fort-playing', visual: 'pcsuits' },
+  { n: 2, title: { vi: 'Số từ Át tới Mười: một câu chuyện', en: 'Ace to Ten: one story' }, visual: 'pcranks', intro: { vi: 'Mười số kể cùng một câu chuyện trong cả bốn chất: hạt giống, cặp đôi, mọc lên, ổn định, va chạm, sửa lại, thử thách, chuyển động, gần trọn, trọn vẹn. Thuộc câu chuyện này là bạn đoán được 40 lá mà chưa cần tra.', en: 'The ten numbers tell the same story in all four suits: seed, pair, growth, stability, friction, repair, test, movement, nearly complete, complete. Know this story and you can guess 40 cards before looking anything up.' } },
+  { n: 3, title: { vi: 'Cơ: tình cảm và gia đình', en: 'Hearts: love and family' }, visual: 'pcstrip', suit: 'h', intro: { vi: 'Mười ba lá Cơ, từ mái nhà mới của Át tới hạnh phúc trọn của Mười. Chín Cơ là lá ước nguyện, lá được mong nhất trong bộ.', en: 'The thirteen Hearts, from the new home of the Ace to the full happiness of the Ten. The Nine of Hearts is the wish card, the most hoped-for card in the deck.' } },
+  { n: 4, title: { vi: 'Rô: tiền bạc và tin tức', en: 'Diamonds: money and news' }, visual: 'pcstrip', suit: 'd', intro: { vi: 'Rô nói về thứ đếm được: tiền, giấy tờ, chuyến đi, tin tức. Đọc Rô theo nghĩa đen trước rồi mới nghĩ xa.', en: 'Diamonds speak about what can be counted: money, papers, journeys, news. Read Diamonds literally first, then more widely.' } },
+  { n: 5, title: { vi: 'Chuồn: việc làm và may mắn', en: 'Clubs: work and luck' }, visual: 'pcstrip', suit: 'c', intro: { vi: 'Chuồn là chất của hành động, bạn bè và cơ hội. Nhiều Chuồn trong một trải bài là chuyện đang chuyển động.', en: 'Clubs are the suit of action, friends and opportunity. Many Clubs in a spread means things are moving.' } },
+  { n: 6, title: { vi: 'Bích: thử thách và quyết định', en: 'Spades: challenges and decisions' }, visual: 'pcstrip', suit: 's', intro: { vi: 'Bích là chất khó nhất, nhưng cũng thật nhất: nó gọi tên điều đang cản. Đọc Bích như lời cảnh báo có ích, không phải lời nguyền.', en: 'Spades are the hardest suit and the most honest: they name what is in the way. Read Spades as a useful warning, never a curse.' } },
+  { n: 7, title: { vi: 'Lá hình: 12 người', en: 'The court: 12 people' }, visual: 'pccourt', intro: { vi: 'J, Q, K của mỗi chất là ba người: trẻ, phụ nữ, đàn ông, mang tính cách của chất ấy. Lá hình cũng có thể là một phần trong bạn hoặc một cách hành xử.', en: 'The Jack, Queen and King of each suit are three people: young, a woman, a man, with the suit’s character. A court card can also be a side of you or a way of acting.' } },
+  { n: 8, title: { vi: 'Cặp lá và thời gian', en: 'Pairs and timing' }, visual: 'pccombo', intro: { vi: 'Bài Tây đọc theo cặp và theo số đông: hai lá cạnh nhau đổi nghĩa cho nhau, và chất nào chiếm nhiều thì chuyện nằm ở đó. Thời gian tính bằng số trên lá trong khung bạn đã chốt.', en: 'Playing cards are read in pairs and by majority: two neighbours change each other’s meaning, and the suit that dominates says where the matter lives. Timing is the number on the card inside the frame you fixed.' } },
+  { n: 9, title: { vi: 'Trải bài và luyện tập', en: 'Spreads and practice' }, visual: 'pcspreads', intro: { vi: 'Bắt đầu với ba lá mỗi sáng. Năm lá khi có câu hỏi rõ. Chín lá cho một chuyện lớn. Trải bài điều ước để vui, và để nhớ rằng bộ bài nói về xu hướng, không phải số phận.', en: 'Start with three cards each morning. Five when the question is clear. Nine for a big matter. The wish spread for fun, and to remember that the deck speaks about tendencies, not fate.' } }
+];
+
+/* ---- a drawn card face ---- */
+const PC_PIP = { h: '♥', d: '♦', c: '♣', s: '♠' };
+const PC_LAYOUT = { A: [[30, 44]], 2: [[30, 22], [30, 66]], 3: [[30, 20], [30, 44], [30, 68]], 4: [[20, 22], [40, 22], [20, 66], [40, 66]], 5: [[20, 22], [40, 22], [30, 44], [20, 66], [40, 66]],
+  6: [[20, 22], [40, 22], [20, 44], [40, 44], [20, 66], [40, 66]], 7: [[20, 20], [40, 20], [30, 33], [20, 46], [40, 46], [20, 68], [40, 68]], 8: [[20, 18], [40, 18], [20, 36], [40, 36], [20, 52], [40, 52], [20, 70], [40, 70]],
+  9: [[20, 18], [40, 18], [20, 34], [40, 34], [30, 44], [20, 54], [40, 54], [20, 70], [40, 70]], 10: [[20, 16], [40, 16], [30, 27], [20, 38], [40, 38], [20, 50], [40, 50], [30, 61], [20, 72], [40, 72]] };
+function pcFaceSVG(suit, rank) {
+  const red = suit === 'h' || suit === 'd', col = red ? '#C4302B' : '#2A2A3A', pip = PC_PIP[suit], court = /[JQK]/.test(rank);
+  let inner = '';
+  if (court) inner = '<text x="30" y="52" text-anchor="middle" font-family="Georgia,serif" font-size="30" font-weight="700" fill="' + col + '">' + rank + '</text><text x="30" y="70" text-anchor="middle" font-size="12" fill="' + col + '">' + pip + '</text><path d="M18 24 L22 16 L26 22 L30 14 L34 22 L38 16 L42 24 Z" fill="' + (suit === 'h' || suit === 'd' ? '#E9C784' : '#CBD2DA') + '" stroke="' + col + '" stroke-width="1"/>';
+  else if (rank === 'A') inner = '<text x="30" y="55" text-anchor="middle" font-size="30" fill="' + col + '">' + pip + '</text>';
+  else inner = (PC_LAYOUT[rank] || []).map((p) => '<text x="' + p[0] + '" y="' + (p[1] + 4) + '" text-anchor="middle" font-size="11" fill="' + col + '">' + pip + '</text>').join('');
+  const corner = (x, y, rot) => '<g transform="translate(' + x + ',' + y + ') rotate(' + rot + ')"><text x="0" y="0" text-anchor="middle" font-family="Georgia,serif" font-size="9" font-weight="700" fill="' + col + '">' + rank + '</text><text x="0" y="9" text-anchor="middle" font-size="8" fill="' + col + '">' + pip + '</text></g>';
+  return '<svg viewBox="0 0 60 84" class="pcface"><rect x="1" y="1" width="58" height="82" rx="6" fill="#FFFDF8" stroke="#3B2A5E" stroke-width="1.6"/>' + corner(8, 11, 0) + corner(52, 73, 180) + inner + '</svg>';
+}
+const pcId = (suit, rank) => suit + rank;
+const pcName = (suit, rank) => { const X = LEX[lang], r = /[JQK]/.test(rank) ? (lang === 'vi' ? { J: 'J', Q: 'Q', K: 'K' }[rank] : { J: 'Jack', Q: 'Queen', K: 'King' }[rank]) : (rank === 'A' ? (lang === 'vi' ? 'Át' : 'Ace') : rank); return lang === 'vi' ? r + ' ' + PC_SUIT_TEXT[suit].vi[0] : r + ' of ' + PC_SUIT_TEXT[suit].en[0]; };
+const pcTile = (suit, rank) => '<button class="vt pct" data-pc="' + pcId(suit, rank) + '">' + pcFaceSVG(suit, rank) + '<b>' + esc(pcName(suit, rank)) + '</b></button>';
+
+/* ---- visuals for the sessions ---- */
+function pcSuitsHTML() {
+  return '<div class="pcsuits">' + PC_SUITS.map((s) => { const t = PC_SUIT_TEXT[s[0]][lang]; return '<div class="pcsuit"><div class="pcs2">' + pcFaceSVG(s[0], 'A') + '<div><b class="' + (s[0] === 'h' || s[0] === 'd' ? 'red' : '') + '">' + s[1] + ' ' + esc(t[0]) + '</b><span class="faint">' + esc(t[2]) + '</span></div></div><p>' + esc(t[1]) + '</p></div>'; }).join('') + '</div>';
+}
+function pcRanksHTML() {
+  return '<div class="vstrip">' + PC_RANKS.slice(0, 10).map((r) => '<button class="vt pct" data-pc="' + pcId('h', r) + '">' + pcFaceSVG('h', r) + '<b>' + esc(PC_RANK_TEXT[r][lang][0]) + '</b></button>').join('') + '</div>';
+}
+function pcStripHTML(suit) {
+  return '<div class="pcgrid">' + PC_RANKS.map((r) => { const tr = PC_TRAD[pcId(suit, r)] || ['', '']; return '<button class="pcrowb" data-pc="' + pcId(suit, r) + '">' + pcFaceSVG(suit, r) + '<span><b>' + esc(pcName(suit, r)) + '</b><span>' + esc(lang === 'vi' ? tr[0] : tr[1]) + '</span></span></button>'; }).join('') + '</div>';
+}
+function pcCourtHTML() {
+  return '<div class="pccourt">' + PC_SUITS.map((s) => '<div class="pcc-row"><b class="' + (s[0] === 'h' || s[0] === 'd' ? 'red' : '') + '">' + s[1] + ' ' + esc(PC_SUIT_TEXT[s[0]][lang][0]) + '</b><div class="vstrip">' + ['J', 'Q', 'K'].map((r) => '<button class="vt pct" data-pc="' + pcId(s[0], r) + '">' + pcFaceSVG(s[0], r) + '<b>' + esc(PC_RANK_TEXT[r][lang][0]) + '</b></button>').join('') + '</div><p class="faint">' + esc(PC_COURT_TEXT[s[0] + 'Q'][lang]) + '</p></div>').join('') + '</div>';
+}
+function pcComboHTML() {
+  return '<div class="pcpairs">' + PC_COMBOS.map((c) => '<div class="pcpair"><div class="two">' + pcFaceSVG(c[0][0], c[0].slice(1)) + '<span>+</span>' + pcFaceSVG(c[1][0], c[1].slice(1)) + '</div><p>' + esc(c[2][lang]) + '</p></div>').join('') + '</div>'
+    + '<div class="ins"><h3>⏳ ' + esc(lang === 'vi' ? 'Thời gian' : 'Timing') + '</h3><ul class="pl">' + PC_TIMING[lang].map((x) => '<li>' + esc(x) + '</li>').join('') + '</ul></div>';
+}
+function pcSpreadsHTML() {
+  const wishLay = (function () { const a = []; for (let r = 0; r < 3; r++) for (let c = 0; c < 5; c++) a.push([c, r]); return a; }());
+  return '<div class="spv-list">' + PC_SPREADS.map((s) => '<div class="ins"><h3>' + esc(s[lang][0]) + ' · ' + s.n + (lang === 'vi' ? ' lá' : ' cards') + '</h3><div class="spread-d">' + spreadArt(s.lay === 'wish' ? wishLay : LAY[s.lay]) + '</div><p>' + esc(s[lang][1]) + '</p></div>').join('') + '</div>'
+    + '<a class="btn primary block" href="#/learn/fortune/cards">🃏 ' + esc(lang === 'vi' ? 'Tra một lá bất kỳ và so với tarot' : 'Look up any card and compare with tarot') + '</a>';
+}
+function pcGridHTML() {
+  return PC_SUITS.map((s) => '<h3 style="margin:14px 0 8px" class="' + (s[0] === 'h' || s[0] === 'd' ? 'red' : '') + '">' + s[1] + ' ' + esc(PC_SUIT_TEXT[s[0]][lang][0]) + '</h3><div class="deckgrid">' + PC_RANKS.map((r) => '<button data-pc="' + pcId(s[0], r) + '">' + pcFaceSVG(s[0], r) + esc(pcName(s[0], r)) + '</button>').join('') + '</div>').join('');
+}
+function bindPC(root) { $$('[data-pc]', root).forEach((b) => b.addEventListener('click', () => { location.hash = '#/learn/pc/' + b.getAttribute('data-pc'); })); }
+
+/* ---- one page per card ---- */
+function pcCardBodyHTML(id) {
+  const S = T(), suit = id[0], rank = id.slice(1), st = PC_SUIT_TEXT[suit][lang], rk = PC_RANK_TEXT[rank][lang], tr = PC_TRAD[id] || ['', ''], tw = pcToTarot(suit, rank), c = cardById(tw), I = insightOf(tw), sp = PC_SPECIAL[id];
+  const pairs = PC_COMBOS.filter((x) => x[0] === id || x[1] === id);
+  return '<div class="hero"><div class="pcbig">' + pcFaceSVG(suit, rank) + '</div><div><div class="name">' + esc(pcName(suit, rank)) + '</div>' + (sp ? '<div class="en">★ ' + esc(sp[lang]) + '</div>' : '') + '<div class="meta"><i>' + esc(st[2]) + '</i></div></div></div>'
+    + '<div class="ins"><h3>' + esc(S.pcTrad) + '</h3><p class="pctrad">' + esc(lang === 'vi' ? tr[0] : tr[1]) + '</p></div>'
+    + '<div class="ins"><h3>' + esc(lang === 'vi' ? 'Vì sao lá này nghĩa vậy' : 'Why the card means this') + '</h3><p><b>' + esc(st[0]) + ':</b> ' + esc(st[1]) + '</p><p><b>' + esc(rk[0]) + ':</b> ' + esc(rk[1]) + '</p>' + (PC_COURT_TEXT[id] ? '<p><b>' + esc(lang === 'vi' ? 'Người' : 'The person') + ':</b> ' + esc(PC_COURT_TEXT[id][lang]) + '</p>' : '') + '</div>'
+    + (pairs.length ? '<div class="ins"><h3>' + esc(lang === 'vi' ? 'Cặp lá thường gặp' : 'Common pairs') + '</h3>' + pairs.map((p) => { const o = p[0] === id ? p[1] : p[0]; return '<p>+ <b>' + esc(pcName(o[0], o.slice(1))) + '</b>: ' + esc(p[2][lang]) + '</p>'; }).join('') + '</div>' : '')
+    + '<div class="pcrow"><button class="face" data-open-card="' + tw + '">' + faceSVG(c) + '</button><div><div class="eyebrow">' + esc(S.pcTarotWay) + '</div><b>' + esc(c.name) + '</b><p>' + esc(I.pos.slice(0, 3).join(' · ')) + '</p></div></div>';
+}
+function renderPCCard(id) {
+  const S = T(), m = $('#main');
+  if (!/^[hdcs](A|[2-9]|10|J|Q|K)$/.test(id || '')) { redirect('#/learn/playing'); return; }
+  if (id !== DEMO.playing.card && gate('playing', '#/learn/playing?tab=cards')) return;
+  m.innerHTML = backLink('#/learn/playing?tab=cards', S.cats.playing) + '<div class="detail">' + pcCardBodyHTML(id) + '</div>' + aiPanelHTML({ type: 'general' });
+  bindCardLinks(m); bindAI(m);
+}
+
+LESSONS.playing = PC_LESSONS_VI;
 
 /* ============================ visuals for guides and astrology ============================
    Every guide gets a picture or a small interactive block at the top, and the
@@ -13129,7 +13295,7 @@ function adminCodes(p) {
 ROUTES.admin = { nav: '', render: renderAdmin };
 
 /* ============================ boot ============================ */
-window.APP_VERSION = 'v60';
+window.APP_VERSION = 'v61';
 window.NABU = { CONFIG: CONFIG, LESSONS: LESSONS, localAnswer: localAnswer, compatVerdict: compatVerdict, numerologyOf: numerologyOf, ZDEEP: ZDEEP, lunarToday: lunarToday, solarToLunar: solarToLunar, DECK: DECK, INSIGHT: INSIGHT, KW: KW, ASK: ASK, TOPICS: TOPICS, GUIDES: GUIDES, SERVICES: SERVICES, COURSES: COURSES, ACCESS: ACCESS, makeCode: makeCode, parseCode: parseCode, ZODIAC: ZODIAC, pick: pick, book: book,
   insightHTML: insightHTML, insightOf: insightOf, sunSignIndex: sunSignIndex, lifePath: lifePath, PROFILE: () => PROFILE, BE: BE };
 BE.initP = BE.init().catch(() => { /* backend unreachable: the app runs device-only */ });

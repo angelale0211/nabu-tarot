@@ -64,13 +64,13 @@ function courseHash(str) {
   return (h1.toString(36) + h2.toString(36)).toUpperCase().replace(/[^A-Z0-9]/g, '').slice(-4).padStart(4, 'X');
 }
 function makeCode(course, untilISO) {
-  const d = untilISO.replace(/-/g, '').slice(2), Lt = course === 'tarot' ? 'T' : course === 'manifest' ? 'M' : 'L';
+  const d = untilISO.replace(/-/g, '').slice(2), Lt = course === 'tarot' ? 'T' : course === 'manifest' ? 'M' : course === 'playing' ? 'P' : 'L';
   return 'NABU-' + Lt + '-' + d + '-' + courseHash(Lt + d + CONFIG.courseSecret);
 }
 function parseCode(code) {
-  const m = /^NABU-([TLM])-(\d{6})-([A-Z0-9]{4})$/.exec(String(code || '').trim().toUpperCase().replace(/\s+/g, ''));
+  const m = /^NABU-([TLMP])-(\d{6})-([A-Z0-9]{4})$/.exec(String(code || '').trim().toUpperCase().replace(/\s+/g, ''));
   if (!m || courseHash(m[1] + m[2] + CONFIG.courseSecret) !== m[3]) return null;
-  return { course: m[1] === 'T' ? 'tarot' : m[1] === 'M' ? 'manifest' : 'lenormand', until: '20' + m[2].slice(0, 2) + '-' + m[2].slice(2, 4) + '-' + m[2].slice(4, 6) };
+  return { course: m[1] === 'T' ? 'tarot' : m[1] === 'M' ? 'manifest' : m[1] === 'P' ? 'playing' : 'lenormand', until: '20' + m[2].slice(0, 2) + '-' + m[2].slice(2, 4) + '-' + m[2].slice(4, 6) };
 }
 function addMonths(iso, n) { const d = new Date(iso + 'T00:00:00'); d.setMonth(d.getMonth() + n); return isoDate(d); }
 

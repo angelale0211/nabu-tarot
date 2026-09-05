@@ -33,6 +33,7 @@ const PALM = {
   mercury: { d: 'M46 130 C 62 118, 80 104, 96 84', vi: ['Đường sức khỏe', 'Đường chéo từ gần cổ tay lên gò ngón út. Nói về sức khỏe, làm ăn và cách bạn nói chuyện.', ['Rõ và thẳng: nói năng rõ ràng, nhạy trong kinh doanh.', 'Gợn sóng hoặc đứt: cơ thể hay báo động khi căng thẳng, cần nghỉ đủ.', 'Không có: theo cách xem truyền thống, đây là dấu hiệu tốt về sức khỏe.']], en: ['Health line', 'A diagonal line from near the wrist up to the little-finger mount. It speaks of health, business and how you communicate.', ['Clear and straight: speaks clearly, sharp in business.', 'Wavy or broken: the body signals under stress, so rest enough.', 'Absent: in the traditional reading this is a good sign for health.']] },
   marriage: { d: 'M90 76 L 103 75 M91 82 L 100 81', vi: ['Đường hôn nhân', 'Những vạch ngắn nằm ngang ở cạnh bàn tay, dưới ngón út. Nói về các mối quan hệ sâu sắc.', ['Một đường rõ và dài: một mối quan hệ lớn, bền.', 'Hai hay ba đường: vài mối quan hệ quan trọng trong đời, không nhất thiết là hôn nhân.', 'Đường cong xuống: mối quan hệ cần được chăm sóc.', 'Chẻ đôi ở cuối: có giai đoạn xa cách rồi quay lại hoặc tách hẳn.']], en: ['Marriage lines', 'Short horizontal marks on the edge of the palm under the little finger. They speak of deep relationships.', ['One clear, long line: one major, lasting relationship.', 'Two or three lines: a few important relationships in life, not necessarily marriages.', 'Curving downward: a relationship that needs care.', 'Forked at the end: a period apart, then a return or a parting.']] }
 };
+const MOUNT_GLYPH = { jupiter: '♃', saturn: '♄', apollo: '☉', mercury: '☿', venus: '♀', luna: '☽', mars: '♂' };
 const MOUNTS = {
   jupiter: { x: 52, y: 66, vi: ['Gò Mộc Tinh', 'Dưới ngón trỏ. Tham vọng, tự tin, khả năng dẫn dắt.', ['Đầy đặn: tự tin, thích dẫn đầu, có uy.', 'Phẳng: khiêm tốn, ngại đứng đầu.', 'Quá cao: kiêu, thích chỉ huy.']], en: ['Mount of Jupiter', 'Under the index finger. Ambition, confidence, leadership.', ['Full: confident, likes to lead, has authority.', 'Flat: modest, shy of the front row.', 'Too high: proud, bossy.']] },
   saturn: { x: 68, y: 62, vi: ['Gò Thổ Tinh', 'Dưới ngón giữa. Kỷ luật, trách nhiệm, sự nghiêm túc.', ['Vừa phải: chín chắn, đáng tin.', 'Phẳng: vô tư, sống thoải mái.', 'Quá cao: hay lo, u sầu, khép kín.']], en: ['Mount of Saturn', 'Under the middle finger. Discipline, responsibility, seriousness.', ['Moderate: mature, reliable.', 'Flat: carefree, easy-going.', 'Too high: worries, gloomy, withdrawn.']] },
@@ -76,7 +77,7 @@ function renderFortune(tool) {
   const back = backLink('#/learn/fortune', S.cats.fortune), title = (k) => '<div class="eyebrow">' + esc(S.cats.fortune) + '</div><h1 style="margin-bottom:8px">' + FT[k].ic + ' ' + esc(FT[k][lang][0]) + '</h1>';
   if (tool === 'numbers') return renderNumbersTool(m, back + title('numbers'));
   if (tool === 'palm') return renderPalm(m, back + title('palm'));
-  if (tool === 'cards') return renderPlayingCards(m, back + title('cards'));
+  if (tool === 'cards') { if (gate('playing', '#/learn/playing')) return; return renderPlayingCards(m, back + title('cards')); }
   if (tool === 'tea') return renderTea(m, back + title('tea'));
   if (tool === 'animals') return renderAnimals(m, back + title('animals'));
   redirect('#/learn/fortune');
@@ -113,7 +114,7 @@ function handSVG(active, mode, activeMount) {
     + '<path d="M30 70 C 26 50, 30 30, 38 30 C 46 30, 46 55, 46 62 C 46 40, 44 18, 54 18 C 64 18, 62 44, 62 60 C 62 40, 62 22, 72 22 C 82 22, 78 46, 78 62 C 80 46, 80 34, 88 34 C 96 34, 92 56, 92 70 C 100 60, 108 64, 104 74 C 96 84, 92 94, 90 106 C 86 130, 76 140, 60 140 C 40 140, 30 126, 28 108 C 26 92, 26 82, 30 70 Z" fill="#F6DCC9" stroke="#3B2A5E" stroke-width="2"/>'
     + ['life', 'head', 'heart', 'fate', 'sun', 'mercury', 'marriage'].map(line).join('');
   if (mode === 'mounts') {
-    Object.keys(MOUNTS).forEach((k) => { const mt = MOUNTS[k], on = k === activeMount; s += '<g data-mount="' + k + '" style="cursor:pointer"><circle cx="' + mt.x + '" cy="' + mt.y + '" r="' + (on ? 11 : 9) + '" fill="' + (on ? 'var(--primary)' : 'rgba(255,255,255,.55)') + '" stroke="#3B2A5E" stroke-width="1.2"/><text x="' + mt.x + '" y="' + (mt.y + 3.5) + '" text-anchor="middle" font-size="9" font-weight="700" fill="' + (on ? 'var(--primary-ink)' : '#3B2A5E') + '" pointer-events="none">' + mt[lang][0].replace(/^(Gò|Mount of the|Mount of) /, '').slice(0, 2) + '</text></g>'; });
+    Object.keys(MOUNTS).forEach((k) => { const mt = MOUNTS[k], on = k === activeMount; s += '<g data-mount="' + k + '" style="cursor:pointer"><circle cx="' + mt.x + '" cy="' + mt.y + '" r="' + (on ? 11 : 9) + '" fill="' + (on ? 'var(--primary)' : 'rgba(255,255,255,.55)') + '" stroke="#3B2A5E" stroke-width="1.2"/><text x="' + mt.x + '" y="' + (mt.y + 3.5) + '" text-anchor="middle" font-size="11" font-weight="700" fill="' + (on ? 'var(--primary-ink)' : '#3B2A5E') + '" pointer-events="none">' + MOUNT_GLYPH[k] + '</text></g>'; });
   }
   return s + '</svg>';
 }
@@ -124,7 +125,7 @@ function renderPalm(m, head) {
   const draw = () => {
     $('#handwrap').innerHTML = handSVG(line, mode, mount);
     const p = mode === 'lines' ? PALM[line][lang] : MOUNTS[mount][lang];
-    $('#palmout').innerHTML = '<h3 style="color:' + (mode === 'lines' ? PALM_COLS[line] : 'var(--link)') + '">' + esc(p[0]) + '</h3><p>' + esc(p[1]) + '</p><ul class="pl">' + p[2].map((x) => '<li>' + esc(x) + '</li>').join('') + '</ul>';
+    $('#palmout').innerHTML = '<h3 style="color:' + (mode === 'lines' ? PALM_COLS[line] : 'var(--link)') + '">' + (mode === 'mounts' ? MOUNT_GLYPH[mount] + ' ' : '') + esc(p[0]) + '</h3><p>' + esc(p[1]) + '</p><ul class="pl">' + p[2].map((x) => '<li>' + esc(x) + '</li>').join('') + '</ul>';
     $$('[data-pl]', m).forEach((b) => b.classList.toggle('on', mode === 'lines' && b.getAttribute('data-pl') === line));
     $$('[data-pm]', m).forEach((b) => b.classList.toggle('on', mode === 'mounts' && b.getAttribute('data-pm') === mount));
     $$('[data-pmode]', m).forEach((b) => b.classList.toggle('on', b.getAttribute('data-pmode') === mode));
@@ -136,7 +137,7 @@ function renderPalm(m, head) {
     + '<div class="chips" style="justify-content:center;margin-bottom:8px"><button class="chip on" data-pmode="lines">' + esc(S.palmLines) + '</button><button class="chip" data-pmode="mounts">' + esc(S.palmMounts) + '</button></div>'
     + '<div class="palmwrap"><div id="handwrap"></div>'
     + '<div class="chips" style="justify-content:center;margin:8px 0" id="plines">' + keys.map((k) => '<button class="chip" data-pl="' + k + '" style="border-color:' + PALM_COLS[k] + '">' + esc(PALM[k][lang][0]) + '</button>').join('') + '</div>'
-    + '<div class="chips" style="justify-content:center;margin:8px 0" id="pmounts" hidden>' + mkeys.map((k) => '<button class="chip" data-pm="' + k + '">' + esc(MOUNTS[k][lang][0]) + '</button>').join('') + '</div>'
+    + '<div class="chips" style="justify-content:center;margin:8px 0" id="pmounts" hidden>' + mkeys.map((k) => '<button class="chip" data-pm="' + k + '">' + MOUNT_GLYPH[k] + ' ' + esc(MOUNTS[k][lang][0]) + '</button>').join('') + '</div>'
     + '<div class="ins" id="palmout"></div></div>'
     + '<h3 style="margin:18px 0 8px">' + esc(S.palmShapes) + '</h3><p class="muted">' + esc(S.palmShapesHint) + '</p>' + handShapesHTML()
     + '<div class="acc"><button><span>' + esc(S.readMoreTitle) + '</span></button><div class="in">' + guideBodyHTML(GUIDES.filter((g) => g.id === 'fort-palm')[0]) + '</div></div>';

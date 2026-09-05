@@ -4,7 +4,7 @@
    #/learn/lenormand?tab=…                     the Lenormand course (paid)
    #/learn/card/<id>  #/learn/len/<n>  #/learn/spread/<id>  #/learn/guide/<id>
    #/learn/astro, #/learn/sign/<key>, #/learn/manifest, #/learn/fortune, #/learn/numbers  (free) */
-const CAT_ICONS = { tarot: PICK_ICON, lenormand: '🗝️', astro: '🔮', manifest: '🌙', fortune: '🔢' };
+const CAT_ICONS = { tarot: PICK_ICON, lenormand: '🗝️', astro: '🔮', manifest: '🌙', fortune: '🔢', playing: '🂡' };
 const badgeHTML = () => '';
 const courseOf = (id) => COURSES.filter((c) => c.id === id)[0];
 
@@ -33,14 +33,14 @@ function bindPaywall(root, after) {
   });
 }
 /* What a locked course shows: lesson 1 = the overview guide, lesson 2 = the first card. */
-const DEMO = { tarot: { guide: 'tarot-overview', card: 'major-0' }, lenormand: { guide: 'len-vs-tarot', card: 1 } };
+const DEMO = { tarot: { guide: 'tarot-overview', card: 'major-0' }, lenormand: { guide: 'len-vs-tarot', card: 1 }, playing: { guide: 'fort-playing', card: 'hA' } };
 function demoHTML(courseId) {
   const S = T(), d = DEMO[courseId], g = GUIDES.filter((x) => x.id === d.guide)[0];
   const lesson = (n, title, body) => '<div class="acc open lesson"><button><span>' + esc(S.lessonN(n)) + ' · ' + esc(title) + '</span></button><div class="in">' + body + '</div></div>';
   let l1 = guideBodyHTML(g);
   if (courseId === 'lenormand') { const p = GUIDES.filter((x) => x.id === 'len-pairs')[0]; l1 += '<h2>' + esc(L(p.sections[2].h)) + '</h2><p>' + esc(L(p.sections[2].p)) + '</p>'; }
-  l1 += '<div class="visual">' + (courseId === 'tarot' ? journeyHTML() : lenIntroHTML()) + '</div>'
-  const l2 = courseId === 'tarot' ? cardBodyHTML(d.card) : lenBodyHTML(d.card);
+  l1 += '<div class="visual">' + (courseId === 'tarot' ? journeyHTML() : courseId === 'playing' ? pcSuitsHTML() : lenIntroHTML()) + '</div>'
+  const l2 = courseId === 'tarot' ? cardBodyHTML(d.card) : courseId === 'playing' ? pcCardBodyHTML(d.card) : lenBodyHTML(d.card);
   return '<div class="demo-head"><span class="chip pink">' + esc(S.demoTag) + '</span><p class="muted">' + esc(S.demoIntro) + '</p></div>'
     + lesson(1, S.lesson1, '<div class="guide">' + l1 + '</div>' + aiPanelHTML({ type: 'lesson', course: courseId, n: 1 })) + lesson(2, S.lesson2, l2);
 }
@@ -58,13 +58,15 @@ function renderLearn(args, params) {
     const ints = PROFILE.interests || [];
     const tile = (k, locked) => '<a class="tile' + (ints.indexOf(k) > -1 ? ' rec' : '') + '" href="#/learn/' + k + '"><div class="ic">' + CAT_ICONS[k] + (locked ? ' <span class="lock">🔒</span>' : '') + '</div><b>' + esc(S.cats[k]) + '</b><span>' + esc(S.catSub[k]) + '</span></a>';
     m.innerHTML = '<div class="eyebrow">' + esc(S.nav.learn) + '</div><h1 style="margin-bottom:6px">' + esc(S.learnTitle) + '</h1><p class="muted">' + esc(S.learnIntro) + '</p>'
-      + '<div class="eyebrow">' + esc(S.courses) + '</div><div class="tiles">' + tile('tarot', !ACCESS.has('tarot')) + tile('lenormand', !ACCESS.has('lenormand')) + '</div>'
+      + '<div class="eyebrow">' + esc(S.courses) + '</div><div class="tiles">' + tile('tarot', !ACCESS.has('tarot')) + tile('lenormand', !ACCESS.has('lenormand')) + tile('playing', !ACCESS.has('playing')) + '</div>'
       + '<div class="eyebrow">' + esc(S.freeReads) + '</div><div class="tiles">' + tile('astro') + tile('fortune') + '</div>'
       + '<div class="eyebrow">' + esc(S.practice) + '</div><div class="tiles">' + tile('manifest', !ACCESS.has('manifest')) + '</div>'
       + (function () { const ints = PROFILE.interests || []; const list = GUIDES.filter((g) => g.tags.some((t) => ints.indexOf(t) > -1) && !((g.cat === 'tarot' || g.cat === 'lenormand') && !ACCESS.has(g.cat))).slice(0, 4); return list.length ? '<div class="sec"><div class="eyebrow">' + esc(S.forInterests) + '</div>' + list.map(guideRow).join('') + '</div>' : ''; }());
     return;
   }
   if (sub === 'tarot') return renderCourse('tarot', params.tab);
+  if (sub === 'playing') return renderCourse('playing', params.tab);
+  if (sub === 'pc') return renderPCCard(args[1]);
   if (sub === 'lenormand') return renderCourse('lenormand', params.tab);
   if (sub === 'lesson') return renderLesson(args[1], args[2]);
   if (sub === 'card') return renderCard(args[1]);
@@ -85,22 +87,21 @@ function renderCourse(courseId, tab) {
   if (!ACCESS.has(courseId)) {
     const S = T(), m = $('#main');
     m.innerHTML = backLink('#/learn', S.learnTitle) + '<h1 style="margin-bottom:8px">' + esc(S.cats[courseId]) + '</h1>' + demoHTML(courseId) + '<div id="unlockwrap" style="margin-top:18px">' + paywallHTML(courseId) + '</div>';
-    bindAccordions(m); bindPaywall(m); bindCardLinks(m); bindAI(m);
+    bindAccordions(m); bindPaywall(m); bindCardLinks(m); bindAI(m); bindPC(m);
     $$('[data-len]', m).forEach((b) => b.addEventListener('click', () => { location.hash = '#/learn/len/' + b.getAttribute('data-len'); }));
     return;
   }
-  const S = T(), m = $('#main'), sys = courseId === 'tarot' ? 'tarot' : 'len';
-  void sys;
-  tab = ['lessons', 'cards', 'spreads', 'guides'].indexOf(tab) > -1 ? tab : 'lessons';
+  const S = T(), m = $('#main'), sys = courseId === 'tarot' ? 'tarot' : 'len', tabs = courseId === 'playing' ? ['lessons', 'cards', 'guides'] : ['lessons', 'cards', 'spreads', 'guides'];
+  tab = tabs.indexOf(tab) > -1 ? tab : 'lessons';
   const until = ACCESS.get()[courseId];
   m.innerHTML = backLink('#/learn', S.learnTitle) + '<h1 style="margin-bottom:4px">' + esc(S.cats[courseId]) + '</h1><p class="faint">' + esc(ACCESS.isAdmin() ? S.adminAccess : S.accessUntil(fmtDate(until))) + '</p>'
-    + '<div class="tabs" id="ctabs">' + ['lessons', 'cards', 'spreads', 'guides'].map((t) => '<button data-t="' + t + '" class="' + (tab === t ? 'on' : '') + '">' + esc(S.courseTabs[t]) + '</button>').join('') + '</div><div id="cpanel"></div>';
+    + '<div class="tabs" id="ctabs">' + tabs.map((t) => '<button data-t="' + t + '" class="' + (tab === t ? 'on' : '') + '">' + esc(S.courseTabs[t]) + '</button>').join('') + '</div><div id="cpanel"></div>';
   const panel = $('#cpanel');
   const show = (t) => {
     if (t === 'lessons') { panel.innerHTML = '<p class="muted" style="font-size:14px">' + esc(S.lessonsIntro(LESSONS[courseId].length)) + '</p>' + lessonListHTML(courseId); }
-    else if (t === 'cards') { panel.innerHTML = courseId === 'tarot' ? tarotGridHTML() : lenGridHTML(); bindGrid(panel, courseId); }
+    else if (t === 'cards') { panel.innerHTML = courseId === 'tarot' ? tarotGridHTML() : courseId === 'playing' ? pcGridHTML() : lenGridHTML(); if (courseId === 'playing') bindPC(panel); else bindGrid(panel, courseId); }
     else if (t === 'spreads') { panel.innerHTML = spreadsListHTML(sys); }
-    else { panel.innerHTML = (courseId === 'lenormand' ? '<p class="muted" style="font-size:14px">' + esc(S.lenNote) + '</p>' : '') + GUIDES.filter((g) => g.cat === courseId).map(guideRow).join(''); }
+    else { panel.innerHTML = (courseId === 'lenormand' ? '<p class="muted" style="font-size:14px">' + esc(S.lenNote) + '</p>' : '') + GUIDES.filter((g) => g.cat === courseId || (courseId === 'playing' && g.id === 'fort-playing')).map(guideRow).join(''); }
   };
   show(tab);
   $$('#ctabs button').forEach((b) => b.addEventListener('click', () => { $$('#ctabs button').forEach((x) => x.classList.toggle('on', x === b)); history.replaceState(null, '', '#/learn/' + courseId + '?tab=' + b.getAttribute('data-t')); show(b.getAttribute('data-t')); }));
@@ -287,7 +288,7 @@ function renderSpread(id) {
 const FREE_MANI = ['mani-what', 'mani-gratitude', 'mani-369', 'mani-script'];
 const maniLocked = (g) => g.cat === 'manifest' && FREE_MANI.indexOf(g.id) < 0 && !ACCESS.has('manifest');
 function guideRow(g) {
-  const locked = ((g.cat === 'tarot' || g.cat === 'lenormand') && !ACCESS.has(g.cat)) || maniLocked(g);
+  const locked = ((g.cat === 'tarot' || g.cat === 'lenormand') && !ACCESS.has(g.cat)) || maniLocked(g) || (g.id === 'fort-playing' && !ACCESS.has('playing'));
   return '<a class="acc" href="#/learn/guide/' + g.id + '" style="display:block;text-decoration:none;color:inherit"><button style="pointer-events:none"><span>' + (locked ? '🔒 ' : '') + esc(L(g.title)) + '</span></button></a>';
 }
 function renderManifest() {
@@ -309,6 +310,7 @@ function renderGuide(id) {
   const back = g.cat === 'tarot' || g.cat === 'lenormand' ? '#/learn/' + g.cat + '?tab=guides' : g.cat === 'astro' ? '#/learn/astro' : '#/learn/' + g.cat;
   if ((g.cat === 'tarot' || g.cat === 'lenormand') && g.id !== DEMO[g.cat].guide && gate(g.cat, back)) return;
   if (g.cat === 'manifest' && FREE_MANI.indexOf(g.id) < 0 && gate('manifest', back)) return;
+  if (g.id === 'fort-playing' && gate('playing', '#/learn/playing')) return;
   const flow = flowGuideHTML(g), vis = flow ? '' : guideVisualHTML(g.id);
   m.innerHTML = backLink(back, S.cats[g.cat]) + '<div class="guide"><h1 style="margin:8px 0">' + esc(L(g.title)) + '</h1><p class="lead">' + esc(L(g.intro)) + '</p>'
     + (flow ? '<div class="visual" data-vid="' + g.id + '">' + flow + '</div>' : (vis ? '<div class="visual" data-vid="' + g.id + '">' + vis + '</div>' : '')

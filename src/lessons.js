@@ -5,6 +5,7 @@
    visual: card faces, strips, grids and diagrams drawn from the app's own
    artwork, with a line or two of text per card. */
 const LESSONS = {
+  playing: [],  // filled from playing.js (PC_LESSONS_VI) once that file has loaded
   tarot: [
     { n: 1, title: { vi: 'Tổng quan bộ bài và hành trình của Gã Khờ', en: 'The deck at a glance and the Fool\'s Journey' }, guide: 'tarot-overview', visual: 'journey' },
     { n: 2, title: { vi: 'Ẩn Chính 0–7: bước ra thế giới', en: 'Majors 0–7: stepping into the world' }, cards: ['major-0', 'major-1', 'major-2', 'major-3', 'major-4', 'major-5', 'major-6', 'major-7'], visual: 'strip',
@@ -108,7 +109,7 @@ function renderLesson(courseId, n) {
   if (!l) { redirect('#/learn/' + courseId); return; }
   if (!(n === '1' || n === 1) && gate(courseId, '#/learn/' + courseId)) return;
   let body = l.intro ? '<p class="lead">' + esc(L(l.intro)) + '</p>' : '';
-  if (l.guide) { const g = GUIDES.filter((x) => x.id === l.guide)[0]; body += '<div class="guide">' + guideBodyHTML(g) + '</div>'; if (l.visual === 'court' || l.visual === 'journey' || l.visual === 'lenintro' || l.visual === 'pairs') { /* the lesson draws its own */ } else { const gv = guideVisualHTML(g.id); if (gv) body += '<div class="visual">' + gv + '</div>'; } }
+  if (l.guide) { const g = GUIDES.filter((x) => x.id === l.guide)[0]; body += '<div class="guide">' + guideBodyHTML(g) + '</div>'; if (l.visual === 'court' || l.visual === 'journey' || l.visual === 'lenintro' || l.visual === 'pairs' || l.visual === 'pcsuits') { /* the lesson draws its own */ } else { const gv = guideVisualHTML(g.id); if (gv) body += '<div class="visual">' + gv + '</div>'; } }
   if (l.extra) { const g = GUIDES.filter((x) => x.id === l.extra[0])[0], sct = g.sections[l.extra[1]]; body += '<div class="guide"><h2>' + esc(L(sct.h)) + '</h2><p>' + esc(L(sct.p)) + '</p></div>'; }
   let vis = '';
   if (l.visual === 'journey') vis = journeyHTML();
@@ -119,6 +120,12 @@ function renderLesson(courseId, n) {
   else if (l.visual === 'lenstrip') vis = lenStripHTML(l.len);
   else if (l.visual === 'pairs') vis = pairsHTML();
   else if (l.visual === 'spreads') vis = '<div class="spreads-v">' + spreadsVisualHTML(l.sys) + '</div>';
+  else if (l.visual === 'pcsuits') vis = pcSuitsHTML();
+  else if (l.visual === 'pcranks') vis = pcRanksHTML();
+  else if (l.visual === 'pcstrip') vis = pcStripHTML(l.suit);
+  else if (l.visual === 'pccourt') vis = pcCourtHTML();
+  else if (l.visual === 'pccombo') vis = pcComboHTML();
+  else if (l.visual === 'pcspreads') vis = pcSpreadsHTML();
   if (l.guides) vis += l.guides.map((id) => guideRow(GUIDES.filter((x) => x.id === id)[0])).join('');
   const prev = LESSONS[courseId].filter((x) => x.n === l.n - 1)[0], next = LESSONS[courseId].filter((x) => x.n === l.n + 1)[0];
   m.innerHTML = backLink('#/learn/' + courseId, S.cats[courseId]) + '<div class="eyebrow">' + esc(S.lessonN(l.n)) + ' / ' + LESSONS[courseId].length + '</div><h1 style="margin-bottom:10px">' + esc(L(l.title)) + '</h1>'
@@ -126,7 +133,7 @@ function renderLesson(courseId, n) {
     + aiPanelHTML({ type: 'lesson', course: courseId, n: l.n })
     + '<button class="btn block' + (DONE.is(courseId, l.n) ? '' : ' primary') + '" id="ldone">' + (DONE.is(courseId, l.n) ? '✓ ' + esc(S.lessonDone) : esc(S.markDone)) + '</button>'
     + '<div class="row" style="margin-top:10px">' + (prev ? '<a class="btn" href="#/learn/lesson/' + courseId + '/' + prev.n + '">← ' + esc(S.lessonN(prev.n)) + '</a>' : '') + (next ? '<a class="btn" href="#/learn/lesson/' + courseId + '/' + next.n + '" style="margin-left:auto">' + esc(S.lessonN(next.n)) + ' →</a>' : '') + '</div>';
-  bindCardLinks(m); bindAI(m);
+  bindCardLinks(m); bindAI(m); bindPC(m);
   $$('[data-len]', m).forEach((b) => b.addEventListener('click', () => { location.hash = '#/learn/len/' + b.getAttribute('data-len'); }));
   $('#ldone').addEventListener('click', () => { DONE.toggle(courseId, l.n); renderLesson(courseId, n); });
 }

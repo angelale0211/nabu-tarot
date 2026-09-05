@@ -69,6 +69,7 @@ function bindDeck(m) {
       s.style.transform = 'scale(' + (0.68 + 0.42 * k).toFixed(3) + ')'; s.style.opacity = (0.45 + 0.55 * k).toFixed(2); s.style.zIndex = String(Math.round(10 * k));
       if (Math.abs(dx) < bd) { bd = Math.abs(dx); best = i; }
     });
+    if (Date.now() < (pick.lockUntil || 0)) return;  // an arrow step announced its card; let the glide finish
     slots.forEach((s, i) => s.classList.toggle('near', i === best));
     pick.center = best; if (pos) pos.textContent = S.deckPos(best + 1, slots.length);
   };
@@ -76,8 +77,8 @@ function bindDeck(m) {
   // Smoothness comes from CSS scroll-behavior; the counter is refreshed right away and again once the glide ends.
   const to = (i) => {
     const idx = Math.max(0, Math.min(slots.length - 1, i)), s = slots[idx]; if (!s) return;
-    pick.center = idx; slots.forEach((x, k) => x.classList.toggle('near', k === idx)); if (pos) pos.textContent = S.deckPos(idx + 1, slots.length);
-    fan.scrollLeft = s.offsetLeft - (fan.clientWidth - s.offsetWidth) / 2; setTimeout(update, 450);
+    pick.center = idx; pick.lockUntil = Date.now() + 700; slots.forEach((x, k) => x.classList.toggle('near', k === idx)); if (pos) pos.textContent = S.deckPos(idx + 1, slots.length);
+    fan.scrollLeft = s.offsetLeft - (fan.clientWidth - s.offsetWidth) / 2; setTimeout(() => { pick.lockUntil = 0; update(); }, 750);
   };
   $$('[data-step]', m).forEach((b) => b.addEventListener('click', () => to((pick.center || 0) + Number(b.getAttribute('data-step')))));
   // Mouse: press and drag to slide the deck, wheel to move it, hover to lift a card (CSS).
