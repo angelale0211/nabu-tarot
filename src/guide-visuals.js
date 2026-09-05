@@ -51,7 +51,36 @@ function scriptTemplate() {
 function redrawVisual(el) {
   const box = el.closest('.visual'), id = box && box.getAttribute('data-vid');
   if (!id) { route(); return; }
-  box.innerHTML = guideVisualHTML(id); bindGuideVisual(box);
+  const g = GUIDES.filter((x) => x.id === id)[0];
+  box.innerHTML = (g && flowGuideHTML(g)) || guideVisualHTML(id); bindGuideVisual(box);
+}
+/* ---- guides that read as one flow ----
+   Each step is a node with its explanation and, where there is one, the tool
+   for that step. The old "1 2 3 4 →" strip and the repeated list below it are
+   gone: one chart, read top to bottom. */
+const FLOW_GUIDES = { 'mani-what': 1, 'tarot-start': 1, 'mani-letgo': 1, 'mani-woop': 1, 'mani-moon': 1, 'mani-action': 1, 'mani-script': 1, 'mani-vision': 1, 'mani-gratitude': 1, 'mani-369': 1, 'mani-limits': 1, 'mani-tools': 1 };
+function nodeTool(id, i) {
+  if (id === 'mani-woop') { const w = store.get('nabu-woop', {}) || {}, k = ['wish', 'outcome', 'obstacle', 'plan'][i]; return k ? '<textarea data-save="nabu-woop" data-k="' + k + '" placeholder="' + esc(TV('Viết của bạn ở đây…', 'Write yours here…')) + '">' + esc(w[k] || '') + '</textarea>' : ''; }
+  if (id === 'mani-moon') {
+    const mo = store.get('nabu-moon', {}) || {};
+    if (i === 0) return '<div class="mi"><b>🌑 ' + esc(TV('Ba ý định của bạn', 'Your three intentions')) + '</b>' + [0, 1, 2].map((j) => '<input data-save="nabu-moon" data-k="int' + j + '" placeholder="' + (j + 1) + '. ' + esc(TV('mình đang…', 'I am…')) + '" value="' + esc(mo['int' + j] || '') + '">').join('') + '</div>';
+    if (i === 1) return '<div class="mi"><b>🌕 ' + esc(TV('Điều mình buông kỳ này', 'What I release this time')) + '</b><textarea data-save="nabu-moon" data-k="rel" placeholder="' + esc(TV('viết ra, rồi xé đi…', 'write it, then tear it up…')) + '">' + esc(mo.rel || '') + '</textarea><button type="button" class="btn sm primary" data-release="nabu-moon:rel">🍃 ' + esc(TV('Xé đi', 'Tear it up')) + '</button></div>';
+    return '';
+  }
+  if (id === 'mani-action' && i === 0) return guideVisualHTML('mani-action');
+  if (id === 'mani-letgo' && i === 1) { const lg = store.get('nabu-letgo', {}) || {}; return '<div class="letgo"><b>🍃 ' + esc(TV('Điều mình buông hôm nay', 'What I let go of today')) + '</b><textarea data-save="nabu-letgo" data-k="text" placeholder="' + esc(TV('một người, một chuyện, một kỳ vọng…', 'a person, a matter, an expectation…')) + '">' + esc(lg.text || '') + '</textarea><div class="toolbar"><button type="button" class="btn sm primary" data-release="nabu-letgo:text">🍃 ' + esc(T().toolRelease) + '</button><span class="faint">' + esc(T().releasedTimes(Number(store.get('nabu-letgo-n', 0)) || 0)) + '</span></div></div>'; }
+  return '';
+}
+function flowGuideHTML(g) {
+  const id = g.id; if (!FLOW_GUIDES[id]) return '';
+  let secs = g.sections, pre = '', post = '', bar = '';
+  if (id === 'mani-limits') { pre = guideVisualHTML(id); secs = secs.slice(2); }        // the checklist already holds those two lists
+  else if (id === 'mani-script') post = guideVisualHTML(id);                             // the page to write on comes after the how
+  else if (id === 'mani-vision' || id === 'mani-369' || id === 'mani-gratitude' || id === 'mani-tools') pre = guideVisualHTML(id);
+  if (id === 'mani-woop') bar = toolbar('nabu-woop');
+  if (id === 'mani-moon') bar = toolbar('nabu-moon');
+  if (id === 'mani-letgo') bar = toolbar('nabu-letgo');
+  return pre + '<div class="flow">' + secs.map((s, i) => '<div class="fnode"><span class="n">' + (i + 1) + '</span><div><h2>' + esc(L(s.h)) + '</h2><p>' + esc(L(s.p)) + '</p>' + nodeTool(id, i) + '</div></div>').join('<div class="farrow">↓</div>') + '</div>' + bar + post;
 }
 function guideVisualHTML(id) {
   const S = T(), v = GUIDE_VISUAL[id];

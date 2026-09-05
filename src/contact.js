@@ -8,10 +8,10 @@ function renderContact() {
     + '<div class="card"><label class="f" for="ctext">' + esc(S.contactWhat) + '</label><textarea id="ctext" placeholder="' + esc(S.contactPlaceholder) + '"></textarea>'
     + '<p class="hint" style="margin:12px 0 8px">' + esc(S.contactChoose) + '</p><div class="row" style="flex-direction:column">'
     + (BE.enabled ? '<button class="btn primary block" data-ch="app">💬 ' + esc(S.contactApp) + '</button>' : '')
-    + (CONFIG.instagram ? '<button class="btn block" data-ch="ig">📸 Instagram</button>' : '')
-    + (fb ? '<button class="btn block" data-ch="fb">📘 Facebook</button>' : '')
+    + (CONFIG.instagram ? '<button class="btn block" data-ch="ig">📸 ' + esc(S.contactIg) + '</button>' : '')
+    + (fb ? '<button class="btn block" data-ch="fb">📘 ' + esc(S.contactFb) + '</button>' : '')
     + (CONFIG.email ? '<button class="btn block" data-ch="mail">✉️ Email</button>' : '')
-    + '</div><p class="hint" id="cstatus"></p></div>';
+    + '</div><p class="hint" style="margin-top:10px">📋 ' + esc(S.contactCopyHint) + '</p><p class="hint" id="cstatus"></p></div>';
   const text = () => $('#ctext').value.trim();
   const st = (t, cls) => { $('#cstatus').textContent = t; $('#cstatus').className = 'hint ' + (cls || ''); };
   const need = () => { if (!text()) { toast(S.contactNeed); $('#ctext').focus(); return false; } return true; };

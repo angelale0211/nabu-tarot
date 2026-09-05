@@ -109,7 +109,8 @@ async function go(hash, sel) { W().location.hash = hash; await sleep(30); return
     d.querySelector('#lang').click(); await sleep(100);
     // learn: courses are locked until a code is entered
     await go('#/learn', '.tile');
-    ok(d.querySelectorAll('.tile').length === 5 && d.querySelectorAll('.tile .lock').length === 2 && !/Trải bài/.test(d.querySelector('.tiles').textContent), 'learn shows two locked courses and three free areas; no separate spreads tile');
+    ok(/Thực hành/.test(d.querySelector('#main').textContent) && d.querySelectorAll('.tiles').length === 3, 'Manifestation sits in its own Practice group, not under free reads');
+    ok(d.querySelectorAll('.tile').length === 5 && d.querySelectorAll('.tile .lock').length === 3 && !/Trải bài/.test(d.querySelector('.tiles').textContent), 'learn shows two locked courses and three free areas; no separate spreads tile');
     await go('#/learn/tarot', '.paywall');
     ok(d.querySelectorAll('.lesson').length === 2 && /Gã Khờ/.test(d.querySelectorAll('.lesson')[1].textContent) && /22 lá Ẩn Chính/.test(d.querySelectorAll('.lesson')[0].textContent) && /56 lá Ẩn Phụ/.test(d.querySelectorAll('.lesson')[0].textContent) && /Hành trình của Gã Khờ/.test(d.querySelectorAll('.lesson')[0].textContent) && /Thế Giới \(21\)/.test(d.querySelectorAll('.lesson')[0].textContent), 'lesson 1 introduces 22 Majors, 56 Minors and the Fool\'s Journey; lesson 2 is The Fool');
     ok(d.querySelector('.lesson').compareDocumentPosition(d.querySelector('.paywall')) & 4 && /300\.000đ/.test(d.querySelector('.paywall').textContent) && d.querySelector('#ccode'), 'price and code entry sit below the demo');
@@ -161,7 +162,7 @@ async function go(hash, sel) { W().location.hash = hash; await sleep(30); return
     await go('#/learn/lesson/lenormand/6', '.spreads-v');
     ok(d.querySelectorAll('.spv').length === 7 && /Grand Tableau/.test(d.querySelector('.spreads-v').textContent), 'lenormand session 6: seven spread diagrams incl. the Grand Tableau');
     await go('#/report', '#rwhat');
-    ok(d.querySelector('#rwhat') && d.querySelector('#rsend') && !d.querySelector('#rcopy') && !d.querySelector('#rig') && d.querySelector('a[href="#/contact"]') && /Nabu Tarot v51/.test(d.querySelector('.msgbox').textContent), 'bug report screen: direct send button, Instagram, copy, auto-attached info');
+    ok(d.querySelector('#rwhat') && d.querySelector('#rsend') && !d.querySelector('#rcopy') && !d.querySelector('#rig') && d.querySelector('a[href="#/contact"]') && /Nabu Tarot v52/.test(d.querySelector('.msgbox').textContent), 'bug report screen: direct send button, Instagram, copy, auto-attached info');
     d.querySelector('#rwhat').value = 'Nút không bấm được'; d.querySelector('#rsend').click(); await sleep(150);
     ok(/đăng nhập|Liên hệ/.test(d.querySelector('#rstatus').textContent), 'without a sign-in the send button explains and points at the contact screen');
     ok(N.CONFIG.adminNotifyEmails.indexOf('nabutarot@outlook.com') === 0, 'notifications go to nabutarot@outlook.com first');
@@ -197,12 +198,13 @@ async function go(hash, sel) { W().location.hash = hash; await sleep(30); return
     await go('#/learn/guide/mani-action', '.ifthen'); ok(d.querySelector('[data-iadd]') && d.querySelectorAll('.it.edit').length === 3, 'if-then plans are editable rows');
     d.querySelector('[data-iadd]').click(); await sleep(50); ok(d.querySelectorAll('.it.edit').length === 4, 'a row can be added');
     await go('#/learn/guide/mani-tools', '.tgrid'); ok(d.querySelectorAll('.tc').length === 19 && /Nến theo màu/.test(d.querySelector('#main').textContent), 'candles and stones guide with a visual grid');
-    await go('#/learn/guide/mani-woop', '.woop'); ok(d.querySelectorAll('.woop textarea[data-save="nabu-woop"]').length === 4, 'WOOP has four editable boxes');
-    ok(d.querySelectorAll('.woop .wp').length === 4 && /Trở ngại/.test(d.querySelector('.woop').textContent), 'WOOP guide opens with its four-step visual');
+    await go('#/learn/guide/mani-woop', '.flow'); ok(d.querySelectorAll('.flow textarea[data-save="nabu-woop"]').length === 4, 'WOOP has four editable boxes, one inside each step');
+    ok(d.querySelectorAll('.flow .fnode').length === 4 && d.querySelectorAll('.farrow').length === 3 && /trở ngại/i.test(d.querySelector('.flow').textContent) && !d.querySelector('.gsec') && !d.querySelector('.woop'), 'WOOP reads as one four-step flow chart with arrows and no repeated list');
+    await go('#/learn/guide/mani-what', '.flow'); ok(d.querySelectorAll('.flow .fnode').length === 4 && !d.querySelector('.stepsv') && !d.querySelector('.gsec'), 'the overview is a flow chart instead of a step strip plus a repeated list');
     await go('#/learn/guide/mani-vision', '.vboard');
     ok(d.querySelectorAll('.vboard .vb').length === 6 && d.querySelectorAll('[data-vtile]').length === 6 && d.querySelector('[data-vfile]'), 'vision board has six life areas that take photos');
-    await go('#/learn/guide/mani-moon', '.ritual');
-    ok(d.querySelectorAll('.ritual .rt').length === 2 && d.querySelectorAll('.moonio input[data-save="nabu-moon"]').length === 3 && d.querySelector('[data-release="nabu-moon:rel"]'), 'moon ritual shows new and full Moon with three intentions and a release box');
+    await go('#/learn/guide/mani-moon', '.flow');
+    ok(d.querySelectorAll('.flow .fnode').length === 3 && d.querySelectorAll('.flow input[data-save="nabu-moon"]').length === 3 && d.querySelector('.flow [data-release="nabu-moon:rel"]') && !d.querySelector('.ritual'), 'the Moon ritual is a three-step flow: intentions inside the New Moon step, the release box inside the Full Moon step');
     // back arrow returns to where the visitor came from
     await go('#/home', '.tiles'); await go('#/learn/astro', '.backlink');
     ok(/Trang chủ/.test(d.querySelector('.backlink').textContent) && d.querySelector('.backlink').getAttribute('href') === '#/home', 'opened from home, the astrology screen points its back arrow at home');
@@ -322,6 +324,7 @@ async function go(hash, sel) { W().location.hash = hash; await sleep(30); return
     ok(!d.querySelector('[data-send]') && d.querySelector('#main a[href="#/contact"]') && d.querySelector('#msgtext').hidden, 'booking keeps only the in-app send and a contact link; no Instagram or copy buttons');
     await go('#/contact', '#ctext');
     ok(d.querySelector('[data-ch="app"]') && d.querySelector('[data-ch="ig"]') && d.querySelector('[data-ch="fb"]') && !d.querySelector('[data-ch="mail"]') && /Liên hệ/.test(d.querySelector('#foot').textContent), 'contact screen: a text box with in-app, Instagram and Facebook channels, linked from the footer');
+    ok(/Sao chép tin nhắn và mở Instagram/.test(d.querySelector('[data-ch="ig"]').textContent) && /Sao chép tin nhắn và mở Facebook/.test(d.querySelector('[data-ch="fb"]').textContent) && /sao chép sẵn/.test(d.querySelector('#main').textContent), 'the Instagram and Facebook buttons say the message is copied first');
     { const h = w.richHTML('## Tiêu đề\n**đậm** __gạch__ ==nổi== 💜\n\n> Hộp riêng\n[video:https://youtu.be/abc12345]\n[img:test1]');
       ok(/<h3>Tiêu đề<\/h3>/.test(h) && /<b>đậm<\/b>/.test(h) && /<u>gạch<\/u>/.test(h) && /<mark>nổi<\/mark>/.test(h) && /class="callout"/.test(h) && /youtube\.com\/embed\/abc12345/.test(h) && /data-img="test1"/.test(h) && !/<script/.test(w.richHTML('<scr' + 'ipt>x</scr' + 'ipt>')), 'posts render headings, bold, underline, highlight, title boxes, video embeds and images, and never raw HTML'); }
     await go('#/news', '#nsearch'); await sleep(150);
