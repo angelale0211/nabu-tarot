@@ -92,7 +92,7 @@ src/services.js    services, packages, prices
 src/strings.js     UI strings (vi/en), the five preset topics (verbatim)
 src/art.js, tarot-en.js, tarot-vi.js      card artwork and card text
 src/insight-en.js, insight-vi.js          the reading generator's text, 78 cards x 8 fields per language
-src/kb-thuanh.js   Vietnamese keyword sets and question readings per card
+src/kb-questions.js  question readings per card (Vietnamese)
 src/len-*.js       Lenormand text and artwork
 src/astro.js, astro-kb.js, zodiac.js      correspondences, planets/houses/aspects, sign profiles, numerology
 src/spreads.js     20 layouts

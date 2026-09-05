@@ -40,11 +40,11 @@ function todayHTML() {
 
 /* ---- tour ---- */
 const TOUR = [
-  { ic: DRAW_ICON, vi: ['Rút bài', 'Chạm một lá để xem năng lượng của bạn hôm nay. Chọn chủ đề trước: tình cảm, công việc, học tập, tiền bạc.'], en: ['Pick a card', 'Tap one card to see your energy today. Choose a focus first: love, work, study, money.'] },
-  { ic: '✨', vi: ['Dự đoán', 'Bài mới của Nabu nằm ở trang chủ. Bài có ghi "dành cho bạn" là hợp với cung của bạn.'], en: ['Readings', 'Nabu\'s new posts live on the home screen. Posts marked "for you" match your sign.'] },
-  { ic: '📚', vi: ['Học', 'Tarot, Lenormand, chiêm tinh, manifestation và bói toán. Bấm vào một lá hay một cung để đọc.'], en: ['Learn', 'Tarot, Lenormand, astrology, manifestation and fortune telling. Tap a card or a sign to read.'] },
-  { ic: '📅', vi: ['Đặt lịch', 'Chọn chủ đề, chọn giờ trên lịch, gửi cho Nabu.'], en: ['Book', 'Choose a topic, pick a time on the calendar, send it to Nabu.'] },
-  { ic: '👤', vi: ['Hồ sơ', 'Nhập tên và ngày sinh để app chọn nội dung cho bạn. Đăng nhập để lưu hồ sơ, nhắn tin và xem lịch hẹn.'], en: ['Profile', 'Enter your name and birthday so the app picks content for you. Sign in to keep your profile, message Nabu and see bookings.'] }
+  { ic: DRAW_ICON, vi: ['Rút bài', 'Chọn chủ đề trước, rồi lật một lá để xem năng lượng hôm nay của bạn.'], en: ['Pick a card', 'Tap one card to see your energy today. Choose a focus first: love, work, study, money.'] },
+  { ic: '✨', vi: ['Dự đoán', 'Bài mới của Nabu nằm ở trang chủ. Bài ghi "dành cho bạn" hợp với cung của bạn.'], en: ['Readings', 'Nabu\'s new posts live on the home screen. Posts marked "for you" match your sign.'] },
+  { ic: '📚', vi: ['Học', 'Tarot, Lenormand, chiêm tinh và manifestation. Bạn bấm vào một lá bài hoặc một cung để đọc.'], en: ['Learn', 'Tarot, Lenormand, astrology, manifestation and fortune telling. Tap a card or a sign to read.'] },
+  { ic: '📅', vi: ['Đặt lịch', 'Bạn chọn gói, chọn giờ trên lịch rồi gửi yêu cầu cho Nabu.'], en: ['Book', 'Choose a topic, pick a time on the calendar, send it to Nabu.'] },
+  { ic: '👤', vi: ['Hồ sơ', 'Nhập tên và ngày sinh để app chọn nội dung hợp với bạn. Đăng nhập để lưu hồ sơ và xem lịch hẹn.'], en: ['Profile', 'Enter your name and birthday so the app picks content for you. Sign in to keep your profile, message Nabu and see bookings.'] }
 ];
 function tourHTML(step) {
   const t = TOUR[step], txt = t[lang];
@@ -227,7 +227,7 @@ async function renderHome(args, params) {
   const feed = $('#feed'); if (!feed) return;
   const all = sortedPosts(), welcome = all.filter((p) => p.welcome)[0], list = all.filter((p) => !p.welcome);
   const wopen = store.get('nabu-welcome-open', true) !== false;
-  feed.innerHTML = (welcome ? '<section class="welcome' + (wopen ? ' open' : '') + '"><button type="button" class="wtoggle" data-wtoggle><h2>' + esc(L(welcome.title)) + '</h2><span class="chev">' + (wopen ? '–' : '+') + '</span></button><div class="in">' + paras(L(welcome.body)) + '<div class="sig">' + LOGO + '</div></div></section>' : '')
+  feed.innerHTML = (welcome ? '<section class="welcome' + (wopen ? ' open' : '') + '"><button type="button" class="wtoggle" data-wtoggle><h2>' + esc(L(welcome.title).replace(/\s+(\S{1,2})$/, '\u00A0$1')) + '</h2><span class="chev">' + (wopen ? '–' : '+') + '</span></button><div class="in">' + paras(L(welcome.body)) + '<div class="sig">' + LOGO + '</div></div></section>' : '')
     + (POSTS_CACHED && all.length ? '<div class="banner">' + esc(S.feedOffline) + '</div>' : '')
     + (list.length ? '<div class="eyebrow" style="margin-top:4px">📰 ' + esc(S.nabuPosts) + '</div>' + list.slice(0, 3).map((p) => postHTML(p, false)).join('') + '<a class="btn block" href="#/news">' + esc(S.allPostsBtn(list.length)) + '</a>' : (welcome ? '' : '<p class="empty">' + esc(S.feedEmpty) + '</p>'));
   bindPost(feed);

@@ -21,7 +21,7 @@ async function go(hash, sel) { W().location.hash = hash; await sleep(30); return
     ok(N.DECK.vi.length === 78 && N.DECK.en.length === 78, 'deck has 78 cards in both languages');
     ok(Object.keys(N.INSIGHT.en).length === 78 && Object.keys(N.INSIGHT.vi).length === 78, 'insights cover 78 cards in EN and VI');
     ok(N.DECK.vi.every((c) => { const i = N.insightOf(c.id, 'vi'), j = N.insightOf(c.id, 'en'); return i && j && i.pos.length >= 3 && i.neg.length >= 3 && j.pos.length >= 3 && [i.now, i.love, i.work, i.study, i.money, i.advice, j.now, j.love, j.work, j.study, j.money, j.advice].every((t) => t && t.length > 10); }), 'every insight has keywords and six texts in both languages');
-    ok(Object.keys(N.KW.vi).length === 78 && Object.keys(N.ASK.vi).length === 78, 'Vietnamese lecture keywords and questions cover 78 cards');
+    ok(Object.keys(N.ASK.vi).length === 78 && Object.keys(N.KW.vi).length === 0, 'the Vietnamese question readings cover 78 cards and no lecture keyword sets remain');
     ok(N.TOPICS.length === 5 && N.TOPICS[1].q.vi[4] === 'Mình nên tiếp tục chờ đợi hay buông bỏ?', 'preset topics verbatim');
     ok(N.GUIDES.length >= 20 && N.GUIDES.every((g) => g.sections.length >= 2 && g.title.vi && g.title.en), 'guides present in both languages (' + N.GUIDES.length + ')');
     ok(!JSON.stringify(N.GUIDES).match(/Thu Anh/) && !d.querySelector('#main').textContent.match(/Thu Anh/), 'no source names in guides or on screen');
@@ -119,7 +119,7 @@ async function go(hash, sel) { W().location.hash = hash; await sleep(30); return
     d.querySelector('#lang').click(); await sleep(100);
     // learn: courses are locked until a code is entered
     await go('#/learn', '.tile');
-    ok(/Thực hành/.test(d.querySelector('#main').textContent) && d.querySelectorAll('.tiles').length === 3, 'Manifestation sits in its own Practice group, not under free reads');
+    ok(/Khóa học và thực hành/.test(d.querySelector('#main').textContent) && d.querySelectorAll('.tiles').length === 2 && d.querySelectorAll('.tiles')[0].querySelectorAll('.tile').length === 4, 'the three courses and manifestation share one group of four, above the free reads');
     ok(d.querySelectorAll('.tile').length === 6 && d.querySelectorAll('.tile .lock').length === 4 && !/Trải bài/.test(d.querySelector('.tiles').textContent), 'learn shows two locked courses and three free areas; no separate spreads tile');
     await go('#/learn/tarot', '.paywall');
     ok(d.querySelectorAll('.lesson').length === 2 && /Gã Khờ/.test(d.querySelectorAll('.lesson')[1].textContent) && /22 lá Ẩn Chính/.test(d.querySelectorAll('.lesson')[0].textContent) && /56 lá Ẩn Phụ/.test(d.querySelectorAll('.lesson')[0].textContent) && /Hành trình của Gã Khờ/.test(d.querySelectorAll('.lesson')[0].textContent) && /Thế Giới \(21\)/.test(d.querySelectorAll('.lesson')[0].textContent), 'lesson 1 introduces 22 Majors, 56 Minors and the Fool\'s Journey; lesson 2 is The Fool');
@@ -172,7 +172,7 @@ async function go(hash, sel) { W().location.hash = hash; await sleep(30); return
     await go('#/learn/lesson/lenormand/6', '.spreads-v');
     ok(d.querySelectorAll('.spv').length === 7 && /Grand Tableau/.test(d.querySelector('.spreads-v').textContent), 'lenormand session 6: seven spread diagrams incl. the Grand Tableau');
     await go('#/report', '#rwhat');
-    ok(d.querySelector('#rwhat') && d.querySelector('#rsend') && !d.querySelector('#rcopy') && !d.querySelector('#rig') && d.querySelector('a[href="#/contact"]') && /Nabu Tarot v70/.test(d.querySelector('.msgbox').textContent), 'bug report screen: direct send button, Instagram, copy, auto-attached info');
+    ok(d.querySelector('#rwhat') && d.querySelector('#rsend') && !d.querySelector('#rcopy') && !d.querySelector('#rig') && d.querySelector('a[href="#/contact"]') && /Nabu Tarot v71/.test(d.querySelector('.msgbox').textContent), 'bug report screen: direct send button, Instagram, copy, auto-attached info');
     d.querySelector('#rwhat').value = 'Nút không bấm được'; d.querySelector('#rsend').click(); await sleep(150);
     ok(/đăng nhập|Liên hệ/.test(d.querySelector('#rstatus').textContent), 'without a sign-in the send button explains and points at the contact screen');
     ok(N.CONFIG.adminNotifyEmails.indexOf('nabutarot@outlook.com') === 0, 'notifications go to nabutarot@outlook.com first');
@@ -312,8 +312,8 @@ async function go(hash, sel) { W().location.hash = hash; await sleep(30); return
     ok(w.NABU.SERVICES.length === 7 && !w.NABU.SERVICES.some((x) => x.id === 'oracle') && w.NABU.SERVICES.some((x) => x.id === 'tea') && w.NABU.SERVICES.some((x) => x.id === 'talk'), 'seven services: no standalone oracle; tea, combos and just-talk present');
     ok(d.querySelectorAll('.svc').length === 7 && d.querySelectorAll('[data-pkg]').length === 26, 'price sheet renders every package');
     ok(/50\.000đ/.test(d.querySelector('.svc.blue').textContent) && /1 chủ đề sẵn \(chọn trong 5 chủ đề\)/.test(d.querySelector('.svc.blue').textContent) && /Bài trà/.test(d.querySelector('#main').textContent) && /666\.000đ/.test(d.querySelectorAll('.svc')[5].textContent) && /60\.000đ/.test(d.querySelectorAll('.svc')[6].textContent), 'prices formatted in VND');
-    ok(d.querySelectorAll('[data-topic]').length === 0 && /Chỉ dành cho gói/.test(d.querySelector('#main').textContent) && /chưa chọn gói nào/i.test(d.querySelector('#cartwrap').textContent), 'no topic pickers until a preset-topic package is chosen; the basket starts empty');
-    ok(/chạm vào gói đó thêm một lần nữa/.test(d.querySelector('.notes .note').textContent), 'the booking page opens with the tap-again-to-deselect note');
+    ok(d.querySelectorAll('[data-topic]').length === 0 && /dành riêng cho gói/.test(d.querySelector('#main').textContent) && /chưa chọn gói nào/i.test(d.querySelector('#cartwrap').textContent), 'no topic pickers until a preset-topic package is chosen; the basket starts empty');
+    ok(/chọn nhiều gói cho cùng một buổi/.test(d.querySelector('.notes .note').textContent) && /chạm thêm một lần nữa/.test(d.querySelector('#svcwrap').parentNode.textContent), 'the booking notes say each thing once: many packages up top, tap-again-to-deselect at the service list');
     d.querySelector('[data-pkg="tarot/q3"]').click();
     ok(d.querySelector('[data-pkg="tarot/q3"]').classList.contains('on') && /• Tarot – 3 câu chi tiết: 50\.000đ/.test(d.querySelector('#msgtext').textContent) && d.querySelectorAll('#cartwrap .ci').length === 1, 'a package goes into the basket and the message');
     d.querySelector('[data-pkg="tuvi/year"]').click();
@@ -421,7 +421,7 @@ async function go(hash, sel) { W().location.hash = hash; await sleep(30); return
     ok(bgOf() === (wasDark ? DARK : LIGHT), 'and flips back');
     await go('#/me', '[data-theme-pick]');
     ok(d.querySelectorAll('[data-theme-pick]').length === 4 && d.querySelector('[data-theme-pick].on'), 'Me tab offers auto / light / dark / pastel pink with the current one marked');
-    ok(d.querySelector('#chkupd') && /Phiên bản v70/.test(d.querySelector('#main').textContent), 'Me shows the version with a check-for-updates button');
+    ok(d.querySelector('#chkupd') && /Phiên bản v71/.test(d.querySelector('#main').textContent), 'Me shows the version with a check-for-updates button');
     ok(d.querySelectorAll('.themes [data-theme-pick]').length === 4 && /📱/.test(d.querySelector('.themes').textContent) && d.querySelector('.themes').getBoundingClientRect().height < 60, 'the four themes sit on one line as icon chips');
     ok(d.querySelectorAll('.row3 .btn').length === 3 && /💬/.test(d.querySelector('.row3').textContent) && /🎓/.test(d.querySelector('.row3').textContent) && d.querySelector('.row3').getBoundingClientRect().height < 60, 'contact, report and tour share one line, each with an icon');
     ok(/Hồ sơ/.test(d.querySelector('.nav a[href="#/me"]').textContent) && !/Tôi/.test(d.querySelector('.nav').textContent), 'the Me tab is called Hồ sơ (Profile)');
@@ -452,7 +452,7 @@ async function go(hash, sel) { W().location.hash = hash; await sleep(30); return
       w.localStorage.removeItem('nabu-diary'); await go('#/play/diary', '#dtext'); d.querySelector('[data-mood="🙂"]').click(); d.querySelector('#dtext').value = 'Một ngày yên.'; d.querySelector('#dtext').dispatchEvent(new w.Event('input')); await sleep(20);
       { const dd = JSON.parse(w.localStorage.getItem('nabu-diary')); const k = Object.keys(dd)[0]; ok(Object.keys(dd).length === 1 && dd[k].m === '🙂' && dd[k].t === 'Một ngày yên.' && /Đã lưu/.test(d.querySelector('#dsaved').textContent), 'the daily diary saves today\'s mood and text on the device'); }
       await go('#/play/q1', '#acts .act-poll'); await sleep(40);
-      ok(d.querySelectorAll('.act-poll [data-opt]').length === 3 && /Đăng nhập để bình chọn/.test(d.querySelector('.act-poll .pollnote').textContent) && d.querySelector('.act-poll .pollstat') && d.querySelectorAll('.act-poll .bar').length === 3, 'a guest is told to sign in to vote but still sees the overall results');
+      ok(d.querySelectorAll('.act-poll [data-opt]').length === 3 && /đăng nhập để bình chọn/.test(d.querySelector('.act-poll .pollnote').textContent) && d.querySelector('.act-poll .pollstat') && d.querySelectorAll('.act-poll .bar').length === 3, 'a guest is told to sign in to vote but still sees the overall results');
       await go('#/home', '#actwrap .act'); ok(d.querySelector('#actwrap .act-poll') && d.querySelector('#actwrap a[href="#/play/q1"]') && d.querySelector('#actwrap a[href="#/play"]') && !d.querySelector('#actwrap [data-opt]'), 'home shows the newest open activity as a teaser with a join button');
       N.ACTS.items = [{ id: 'p2', type: 'pile', date: '2026-01-01', resultsDate: '2026-01-04', title: { vi: 'Tụ cũ' }, piles: [{ msg: { vi: 'A' } }, { msg: { vi: 'B' } }], results: false }]; w.localStorage.setItem('nabu-act-choices', JSON.stringify({ p2: 0 }));
       await go('#/home', '.tiles'); await go('#/play/p2', '#acts .act-pile'); await waitFor(() => d.querySelector('.act-pile .pile.open'), 3000);

@@ -58,8 +58,7 @@ function renderLearn(args, params) {
     const ints = PROFILE.interests || [];
     const tile = (k, locked) => '<a class="tile' + (ints.indexOf(k) > -1 || k === 'tarot' || k === 'lenormand' || k === 'playing' || k === 'manifest' ? ' rec' : '') + '" href="#/learn/' + k + '"><div class="ic">' + CAT_ICONS[k] + (locked ? ' <span class="lock">🔒</span>' : '') + '</div><b>' + esc(S.cats[k]) + '</b><span>' + esc(S.catSub[k]) + '</span></a>';
     m.innerHTML = '<div class="eyebrow">' + esc(S.nav.learn) + '</div><h1 style="margin-bottom:6px">' + esc(S.learnTitle) + '</h1><p class="muted">' + esc(S.learnIntro) + '</p>'
-      + '<div class="eyebrow">' + esc(S.courses) + '</div><div class="tiles">' + tile('tarot', !ACCESS.has('tarot')) + tile('lenormand', !ACCESS.has('lenormand')) + tile('playing', !ACCESS.has('playing')) + '</div>'
-      + '<div class="eyebrow">' + esc(S.practice) + '</div><div class="tiles">' + tile('manifest', !ACCESS.has('manifest')) + '</div>'
+      + '<div class="eyebrow">' + esc(S.coursesPractice) + '</div><div class="tiles">' + tile('tarot', !ACCESS.has('tarot')) + tile('lenormand', !ACCESS.has('lenormand')) + tile('playing', !ACCESS.has('playing')) + tile('manifest', !ACCESS.has('manifest')) + '</div>'
       + '<div class="eyebrow">' + esc(S.freeReads) + '</div><div class="tiles">' + tile('astro') + tile('fortune') + '</div>'
       + (function () { const ints = PROFILE.interests || []; const list = GUIDES.filter((g) => g.tags.some((t) => ints.indexOf(t) > -1) && !((g.cat === 'tarot' || g.cat === 'lenormand') && !ACCESS.has(g.cat))).slice(0, 4); return list.length ? '<div class="sec"><div class="eyebrow">' + esc(S.forInterests) + '</div>' + list.map(guideRow).join('') + '</div>' : ''; }());
     return;
@@ -112,10 +111,17 @@ function tarotGridHTML() {
   return '<div class="tabs" id="ttabs"><button class="on" data-suit="major">' + esc(S.majors) + '</button>' + SUIT_KEYS.map((s) => '<button data-suit="' + s + '">' + esc(S.suitOf[s]) + '</button>').join('') + '</div>'
     + '<div id="tgrid">' + grid(D.filter((c) => c.suit === 'major')) + '</div>';
 }
-function lenGridHTML() {
+/* Thirty-six cards at once is a wall of pictures, so they are split into the
+   same three groups the lessons use, with a tab for each. */
+const LEN_GROUPS = [[1, 12], [13, 24], [25, 36]];
+function lenGroupHTML(g) {
   let grid = '';
-  for (let i = 1; i <= 36; i++) { const d = lenCard(i); if (d) grid += '<button data-len="' + i + '">' + lenFace(i) + esc(d.name) + '</button>'; }
+  for (let i = LEN_GROUPS[g][0]; i <= LEN_GROUPS[g][1]; i++) { const d = lenCard(i); if (d) grid += '<button data-len="' + i + '">' + lenFace(i) + esc(i + '. ' + d.name) + '</button>'; }
   return '<div class="deckgrid">' + grid + '</div>';
+}
+function lenGridHTML() {
+  return '<div class="tabs" id="ltabs">' + LEN_GROUPS.map((r, i) => '<button data-lg="' + i + '"' + (i ? '' : ' class="on"') + '>' + r[0] + '–' + r[1] + '</button>').join('') + '</div>'
+    + '<div id="lgrid">' + lenGroupHTML(0) + '</div>';
 }
 function bindGrid(panel, courseId) {
   if (courseId === 'tarot') {
@@ -126,7 +132,12 @@ function bindGrid(panel, courseId) {
       $('#tgrid', panel).innerHTML = grid(D.filter((c) => c.suit === b.getAttribute('data-suit'))); bindCardLinks($('#tgrid', panel));
     }));
   } else {
-    $$('[data-len]', panel).forEach((b) => b.addEventListener('click', () => { location.hash = '#/learn/len/' + b.getAttribute('data-len'); }));
+    const bindLen = (root) => $$('[data-len]', root).forEach((b) => b.addEventListener('click', () => { location.hash = '#/learn/len/' + b.getAttribute('data-len'); }));
+    bindLen(panel);
+    $$('#ltabs button', panel).forEach((b) => b.addEventListener('click', () => {
+      $$('#ltabs button', panel).forEach((x) => x.classList.toggle('on', x === b));
+      $('#lgrid', panel).innerHTML = lenGroupHTML(Number(b.getAttribute('data-lg'))); bindLen($('#lgrid', panel));
+    }));
   }
 }
 
@@ -141,9 +152,7 @@ function renderCard(id) {
 function cardBodyHTML(id) {
   const S = T(), c = cardById(id);
   const other = cardById(id, lang === 'vi' ? 'en' : 'vi'), I = insightOf(id);
-  const kwv = lang === 'vi' ? (KW.vi[id] || null) : null;
-  // Some Vietnamese keyword sets carry no negative side (or no positive side).
-  const pos = kwv ? (kwv.pos || []) : (I ? I.pos : c.kw), neg = kwv ? (kwv.neg || []) : (I ? I.neg : []);
+  const pos = I ? I.pos : c.kw, neg = I ? I.neg : [];
   const asks = lang === 'vi' ? (ASK.vi[id] || []) : [];
   const groups = {};
   asks.forEach((a) => { (groups[a[0]] = groups[a[0]] || []).push(a); });
@@ -188,7 +197,19 @@ function lenBodyHTML(n) {
     + ((d.kw.neg || []).length ? '<h3>' + esc(S.kwNeg) + '</h3><div class="kwl neg">' + d.kw.neg.map((k) => '<span>' + esc(k) + '</span>').join('') + '</div>' : '') + '</div>'
     + '<div class="ins">' + sec(S.lenCore, d.core) + sec(S.lenLove, d.love) + sec(S.lenWork, d.work) + sec(S.lenWho, d.who) + sec(S.lenTime, d.time) + '</div>'
     + ((d.combo || []).length ? '<div class="ins"><h3>' + esc(S.lenCombo) + '</h3>' + d.combo.map((c) => '<div class="qa"><div class="q">' + esc(c[0]) + '</div><p class="a">' + esc(c[1]) + '</p></div>').join('') + '</div>' : '')
+    + lenNavHTML(n)
     + '</div>';
+}
+
+/* Straight to the card before and the card after, so the 36 can be read in
+   order without going back to the grid every time. */
+function lenNavHTML(n) {
+  const link = (to, dir) => {
+    const d = lenCard(to);
+    if (!d) return '<span class="cn-sp"></span>';
+    return '<a class="' + (dir < 0 ? 'prev' : 'next') + '" href="#/learn/len/' + to + '">' + (dir < 0 ? '<span class="ar">←</span>' : '') + '<b>' + esc(to + '. ' + d.name) + '</b>' + (dir > 0 ? '<span class="ar">→</span>' : '') + '</a>';
+  };
+  return '<div class="cardnav">' + link(n - 1, -1) + link(n + 1, 1) + '</div>';
 }
 
 /* ---- astrology (free) ---- */

@@ -116,13 +116,14 @@ function faceSVG(card) {
     + '<rect x="5" y="5" width="90" height="135" fill="none" stroke-width="1"/><rect x="5" y="140" width="90" height="27" fill="none" stroke-width="1"/></g>' + numeral
     + '<text x="50" y="157" text-anchor="middle" font-family="Be Vietnam Pro, sans-serif" font-size="' + (card.name.length > 16 ? 6.2 : 7.4) + '" fill="var(--card-ink)">' + esc(card.name) + '</text></svg>';
 }
-/* Card back drawn after the logo: purple card, gold crescent, three gold dots. */
+/* Card back drawn after the logo: purple card, gold crescent, and a gold dot
+   toward each of the four corners of the frame. */
 function backSVG() {
   return '<svg viewBox="0 0 100 172" aria-hidden="true">'
     + '<rect x="1.3" y="1.3" width="97.4" height="169.4" rx="8" fill="var(--back-1)" stroke="#2A1D4E" stroke-width="2.6"/>'
     + '<rect x="9" y="9" width="82" height="154" rx="5" fill="var(--back-2)" stroke="#E5BE5E" stroke-width="1.4"/>'
     + '<path d="M56 60 A26 26 0 1 0 56 112 A21 21 0 1 1 56 60 Z" fill="#E5BE5E"/>'
-    + '<circle cx="28" cy="34" r="3.2" fill="#E5BE5E"/><circle cx="30" cy="140" r="3.2" fill="#E5BE5E"/><circle cx="74" cy="134" r="3.2" fill="#E5BE5E"/>'
+    + [[26, 32], [74, 32], [26, 140], [74, 140]].map((p) => '<circle cx="' + p[0] + '" cy="' + p[1] + '" r="3.4" fill="#E5BE5E"/>').join('')
     + '</svg>';
 }
 const BACK = backSVG();

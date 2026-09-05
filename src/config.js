@@ -71,7 +71,7 @@ const CONFIG = {
 
   // Booking page copy. Short sentences; this is what clients read.
   bookingNote: {
-    vi: 'Bốn bước: chọn gói, chọn chủ đề (nếu gói cần), chọn giờ, bấm gửi. Nabu xác nhận lại trong ngày, và bạn theo dõi ở mục Hồ sơ.',
+    vi: 'Bạn chọn gói, chọn chủ đề nếu gói yêu cầu, chọn giờ rồi gửi yêu cầu. Nabu xác nhận lại trong ngày, và bạn theo dõi ở mục Hồ sơ.',
     en: 'Four steps: pick a package, pick a topic (if the package needs one), pick a time, tap send. Nabu confirms within the day, and you follow it under Profile.'
   },
   tagline: { vi: 'Lắng nghe và thấu hiểu', en: 'Listening and understanding' },

@@ -20,7 +20,7 @@ const ZRULER = { ari: 'mar', tau: 'ven', gem: 'mer', can: 'moo', leo: 'sun', vir
 
 const ZODIAC = {
   ari: {
-    vi: { kw: ['thẳng thắn', 'nhanh', 'dám làm', 'nóng tính'],
+    vi: { kw: ['thẳng thắn', 'nhanh nhẹn', 'dám làm', 'nóng tính'],
       about: 'Bạch Dương đi trước, nghĩ sau. Bạn thích bắt đầu, thích được là người đầu tiên. Năng lượng của bạn nóng và nhanh, nên bạn dễ chán khi mọi thứ chậm lại.',
       love: 'Bạn theo đuổi rõ ràng, không úp mở. Người yêu bạn cần chịu được sự thẳng thắn và cần giữ chút thử thách, vì bạn dễ mất hứng khi mọi thứ quá dễ.',
       work: 'Hợp việc cần khởi động, dẫn dắt, cạnh tranh. Bạn giỏi mở đường, nhưng khâu hoàn thiện nên giao cho người khác hoặc tự ép mình kiên nhẫn hơn.',
@@ -31,7 +31,7 @@ const ZODIAC = {
       work: 'Good at launching, leading, competing. You open the road; finishing is best handed to someone else or forced through with patience.',
       tip: 'Count to three before speaking while angry. Those three seconds save a lot of relationships.' } },
   tau: {
-    vi: { kw: ['bền', 'thực tế', 'thích dễ chịu', 'bướng'],
+    vi: { kw: ['bền bỉ', 'thực tế', 'thích dễ chịu', 'bướng bỉnh'],
       about: 'Kim Ngưu cần cảm giác chắc chắn: tiền trong tài khoản, người bên cạnh, bữa ăn ngon. Bạn chậm mà chắc, đã quyết thì khó đổi.',
       love: 'Bạn yêu bằng sự có mặt, bằng chăm sóc và đồ ăn ngon hơn là lời hoa mỹ. Bạn cần thời gian để tin, nhưng khi đã tin thì rất chung thủy. Điểm yếu là ghen và giữ chặt.',
       work: 'Hợp việc cần kiên nhẫn, làm lâu dài, có kết quả sờ được: tài chính, ẩm thực, thiết kế, đất đai. Bạn không thích thay đổi liên tục.',
@@ -75,7 +75,7 @@ const ZODIAC = {
       work: 'Suited to being in front of people, leading, creating, entertainment, branding. You are the one who gives a team its spirit.',
       tip: 'Silence is not always indifference. Ask before you feel hurt.' } },
   vir: {
-    vi: { kw: ['kỹ', 'giúp ích', 'phân tích', 'tự trách'],
+    vi: { kw: ['kỹ tính', 'giúp ích', 'phân tích', 'tự trách'],
       about: 'Xử Nữ nhìn thấy chi tiết mà người khác bỏ qua. Bạn thích sửa, thích làm cho tốt hơn. Bạn thể hiện quan tâm bằng việc làm, không bằng lời.',
       love: 'Bạn yêu bằng cách để ý: nhớ người kia thích gì, sửa cái ghế gãy, nhắc uống thuốc. Điểm yếu là hay chê, cả người khác lẫn chính mình.',
       work: 'Hợp việc cần chính xác: y tế, kế toán, biên tập, phân tích, kỹ thuật, tổ chức. Bạn là người làm cho hệ thống chạy.',
@@ -97,7 +97,7 @@ const ZODIAC = {
       work: 'Suited to diplomacy, aesthetics, fairness: law, design, HR, consulting. You work best with a partner.',
       tip: 'A wrong decision beats no decision. You can fix a mistake, not lost time.' } },
   sco: {
-    vi: { kw: ['sâu', 'kín', 'trung thành', 'không quên'],
+    vi: { kw: ['sâu sắc', 'kín đáo', 'trung thành', 'không quên'],
       about: 'Bọ Cạp không làm gì nửa vời. Bạn cảm nhận mạnh, giữ kín, và nhìn thấu người khác. Bạn cần sự thật, ngay cả khi nó đau.',
       love: 'Bạn yêu là hết mình và đòi hỏi sự hết mình từ người kia. Sự phản bội là điều bạn không bỏ qua. Bạn cần người không sợ chiều sâu của bạn.',
       work: 'Hợp việc cần đào sâu: điều tra, tâm lý, nghiên cứu, tài chính, y khoa, khủng hoảng. Bạn giỏi trong việc người khác né tránh.',
@@ -108,7 +108,7 @@ const ZODIAC = {
       work: 'Suited to digging: investigation, psychology, research, finance, medicine, crisis work. You are good at what others avoid.',
       tip: 'Not every secret needs keeping. Try telling one small thing to someone you trust.' } },
   sag: {
-    vi: { kw: ['tự do', 'lạc quan', 'thẳng', 'thiếu kiên nhẫn'],
+    vi: { kw: ['tự do', 'lạc quan', 'nói thẳng', 'thiếu kiên nhẫn'],
       about: 'Nhân Mã cần chân trời. Bạn tin ngày mai sẽ tốt hơn, thích đi, thích học điều mới, thích nói thật. Bạn không chịu được bị bó buộc.',
       love: 'Bạn yêu vui vẻ, không ghen nhiều, nhưng khó cam kết sớm. Người yêu bạn phải là bạn đồng hành, không phải người giữ bạn lại.',
       work: 'Hợp việc có di chuyển, học hỏi, chia sẻ: du lịch, giáo dục, xuất bản, luật, ngoại thương. Bạn làm việc tốt khi thấy ý nghĩa lớn.',
@@ -119,7 +119,7 @@ const ZODIAC = {
       work: 'Suited to movement, learning, sharing: travel, education, publishing, law, trade. You work best when you see the bigger meaning.',
       tip: 'Honesty is good. Honesty without tact leaves people remembering the hurt, not the truth.' } },
   cap: {
-    vi: { kw: ['kỷ luật', 'tham vọng', 'chịu khó', 'khô'],
+    vi: { kw: ['kỷ luật', 'tham vọng', 'chịu khó', 'khô khan'],
       about: 'Ma Kết leo núi từng bước. Bạn nghĩ dài hạn, chịu được khổ, và không thích phô trương. Bạn tin vào kết quả hơn lời hứa.',
       love: 'Bạn yêu chậm và chắc, hay lo cho tương lai chung hơn là lãng mạn hiện tại. Người yêu bạn cần hiểu rằng bạn thể hiện tình cảm bằng sự ổn định.',
       work: 'Hợp việc cần bền bỉ và đi lên: quản lý, kinh doanh, kiến trúc, tài chính, chính sách. Bạn thường thành công muộn hơn nhưng lâu hơn.',

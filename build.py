@@ -8,7 +8,7 @@ import io, os, re
 HERE = os.path.dirname(os.path.abspath(__file__))
 SRC = os.path.join(HERE, 'src')
 OUT = os.environ.get('NABU_OUT', HERE)
-SCRIPTS = ['config.js', 'logo-data.js', 'services.js', 'strings.js', 'art.js', 'tarot-en.js', 'tarot-vi.js', 'kb-thuanh.js',
+SCRIPTS = ['config.js', 'logo-data.js', 'services.js', 'strings.js', 'art.js', 'tarot-en.js', 'tarot-vi.js', 'kb-questions.js',
            'insight-en.js', 'insight-vi.js', 'insight-majors.js', 'insight-minors.js', 'len-art.js', 'len-en.js', 'len-vi.js', 'astro.js',
            'zodiac.js', 'astro-kb.js', 'astro-deep.js', 'numerology.js', 'lunar.js', 'spreads.js', 'kb-guides.js',
            'core.js', 'backend.js', 'ai.js', 'home.js', 'pick.js', 'learn.js', 'lessons.js', 'fortune.js', 'playing.js', 'guide-visuals.js', 'book.js', 'me.js', 'contact.js', 'privacy.js', 'install.js', 'report.js', 'play.js', 'admin.js', 'main.js']
@@ -17,7 +17,7 @@ SCRIPTS = ['config.js', 'logo-data.js', 'services.js', 'strings.js', 'art.js', '
 # Data files transcribed from outside sources carry working notes in block
 # comments; the shipped page mentions no sources, so those comments are
 # dropped at build time (string literals in these files never contain '/*').
-STRIP = {'kb-thuanh.js', 'len-en.js', 'len-vi.js', 'len-art.js', 'astro.js', 'spreads.js', 'art.js', 'tarot-en.js', 'tarot-vi.js'}
+STRIP = {'kb-questions.js', 'len-en.js', 'len-vi.js', 'len-art.js', 'astro.js', 'spreads.js', 'art.js', 'tarot-en.js', 'tarot-vi.js'}
 
 
 def read(name):
