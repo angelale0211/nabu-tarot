@@ -159,6 +159,7 @@ async function renderPlay(args) {
   const list = (await loadActs()).slice().sort((a, b) => String(b.date).localeCompare(String(a.date)));
   if (args && args[0] === 'diary') { renderDiary(); return; }
   if (args && args[0] === 'coin') { renderCoin(); return; }
+  if (args && args[0] === 'tree') { renderTree(); return; }
   if (args && args[0]) {
     const a = list.filter((x) => x.id === args[0])[0];
     if (!a) { redirect('#/play'); return; }
@@ -168,11 +169,140 @@ async function renderPlay(args) {
   }
   const diaryN = Object.keys(store.get('nabu-diary', {}) || {}).length;
   m.innerHTML = '<div class="eyebrow">' + esc(CONFIG.brand) + '</div><h1 style="margin-bottom:6px">' + esc(S.actTitle) + '</h1><p class="muted">' + esc(S.actIntro) + '</p><div id="acts" class="actlist">'
+    + '<a class="actbtn act-tree live" href="#/play/tree"><span class="ic">🌸</span><span class="body"><b>' + esc(S.treeTitle) + '</b><span class="meta">' + esc(S.treeSub) + '</span></span><span class="go">›</span></a>'
     + '<a class="actbtn act-coin live" href="#/play/coin"><span class="ic">🪙</span><span class="body"><b>' + esc(S.coinTitle) + '</b><span class="meta">' + esc(S.coinSub) + '</span></span><span class="go">›</span></a>'
     + '<a class="actbtn act-diary live" href="#/play/diary"><span class="ic">📔</span><span class="body"><b>' + esc(S.diaryTitle) + '</b><span class="meta">' + esc(S.diarySub) + (diaryN ? ' · ' + esc(S.diaryCount(diaryN)) : '') + '</span></span><span class="chev">›</span></a>'
     + (list.length ? actGroupsHTML(list) : '<p class="empty">' + esc(S.actEmpty) + '</p>') + '</div>';
   bindActGroups(m);
 }
+/* ---- the message tree ----
+   A blossom tree you shake for one of sixty blessings. The messages are written
+   for this app, not taken from a published oracle deck. */
+const TREE_MSGS = [
+  { vi: 'Điều bạn đang chờ vẫn đang trên đường tới bạn.', en: 'What you are waiting for is still on its way to you.' },
+  { vi: 'Bạn không đi chậm. Bạn chỉ đang đi một con đường dài hơn.', en: 'You are not slow. You are simply walking a longer road.' },
+  { vi: 'Một cánh cửa vừa khép lại để bạn nhìn thấy cánh cửa bên cạnh.', en: 'A door has closed so that you can see the one beside it.' },
+  { vi: 'Hôm nay bạn được phép nghỉ ngơi mà không cần thấy có lỗi.', en: 'Today you are allowed to rest without feeling guilty.' },
+  { vi: 'Bạn được thương nhiều hơn bạn vẫn nghĩ.', en: 'You are loved more than you have realised.' },
+  { vi: 'Điều bạn lo lắng sẽ không diễn ra theo cách bạn đang sợ.', en: 'What worries you will not unfold the way you fear.' },
+  { vi: 'Bạn của hôm nay đã mạnh hơn bạn của một năm trước rất nhiều.', en: 'You today are far stronger than you were a year ago.' },
+  { vi: 'Vũ trụ đã nghe thấy điều bạn cầu mong.', en: 'The universe has heard what you asked for.' },
+  { vi: 'Một điều tốt lành đang được chuẩn bị sẵn cho bạn.', en: 'Something good is already being prepared for you.' },
+  { vi: 'Bạn không cần giỏi mọi thứ mới xứng đáng được yêu thương.', en: 'You do not have to be good at everything to deserve love.' },
+  { vi: 'Việc bạn đang làm có ý nghĩa, kể cả khi chưa ai nói ra điều đó.', en: 'What you are doing matters, even if nobody has said so yet.' },
+  { vi: 'Hãy tin vào cảm giác đầu tiên của bạn trong tuần này.', en: 'Trust your first instinct this week.' },
+  { vi: 'Một người đang nghĩ về bạn với lòng biết ơn.', en: 'Someone is thinking of you with gratitude.' },
+  { vi: 'Bạn không phải gánh chuyện này một mình.', en: 'You do not have to carry this alone.' },
+  { vi: 'Điều bạn buông bỏ hôm nay sẽ mở chỗ cho điều đến ngày mai.', en: 'What you let go of today makes room for what comes tomorrow.' },
+  { vi: 'Sự chậm rãi của bạn lúc này là đang giữ gìn, không phải đang lùi lại.', en: 'Your slowness right now is care, not retreat.' },
+  { vi: 'Có một cơ hội đang đến gần hơn bạn tưởng.', en: 'An opportunity is closer than you think.' },
+  { vi: 'Bạn đã làm đúng khi chọn giữ sự tử tế của mình.', en: 'You were right to keep your kindness.' },
+  { vi: 'Hãy nói ra điều bạn muốn. Lần này sẽ có người lắng nghe.', en: 'Say what you want. This time someone will listen.' },
+  { vi: 'Nỗi buồn này có thời hạn của nó, và thời hạn ấy sắp hết.', en: 'This sadness has an end, and the end is near.' },
+  { vi: 'Bạn đang ở gần câu trả lời hơn bạn nghĩ rất nhiều.', en: 'You are much closer to the answer than you think.' },
+  { vi: 'Hãy tự hào về những lần bạn đã đứng dậy mà không ai nhìn thấy.', en: 'Be proud of every time you got up when nobody saw.' },
+  { vi: 'Một tin vui nhỏ sẽ đến trong những ngày tới.', en: 'A small piece of good news is coming in the days ahead.' },
+  { vi: 'Điều bạn tưởng là mất mát hoá ra lại là được bảo vệ.', en: 'What felt like a loss turns out to have been protection.' },
+  { vi: 'Hãy cho phép mình bắt đầu lại, dù đã bắt đầu bao nhiêu lần.', en: 'Allow yourself to begin again, however many times you have begun.' },
+  { vi: 'Có người sẽ ở lại với bạn, không phải vì bạn hoàn hảo.', en: 'Someone will stay with you, and not because you are perfect.' },
+  { vi: 'Bạn không cần chứng minh giá trị của mình với bất kỳ ai.', en: 'You do not need to prove your worth to anyone.' },
+  { vi: 'Hãy chăm cho cơ thể bạn tuần này. Nó đã cố gắng rất nhiều.', en: 'Look after your body this week. It has been trying hard.' },
+  { vi: 'Một mối quan hệ cũ sẽ dịu lại, theo cách bạn không ngờ.', en: 'An old relationship will soften, in a way you do not expect.' },
+  { vi: 'Sự bình yên bạn tìm không ở nơi nào xa cả.', en: 'The peace you are looking for is not somewhere far away.' },
+  { vi: 'Bạn được phép đổi ý.', en: 'You are allowed to change your mind.' },
+  { vi: 'Điều tốt bạn làm cho người khác đang quay về với bạn.', en: 'The good you did for others is finding its way back to you.' },
+  { vi: 'Đừng vội. Thứ thuộc về bạn sẽ không đi mất.', en: 'Do not rush. What belongs to you will not leave.' },
+  { vi: 'Hãy nhìn lại quãng đường bạn đã đi, chứ không chỉ quãng còn lại.', en: 'Look back at how far you have come, not only at what is left.' },
+  { vi: 'Một người sẽ nói với bạn đúng câu bạn cần nghe.', en: 'Someone will say the exact words you need to hear.' },
+  { vi: 'Bạn có quyền giữ khoảng cách với điều làm bạn mệt.', en: 'You have every right to keep your distance from what drains you.' },
+  { vi: 'Tiền bạc sẽ dễ thở hơn sau giai đoạn này.', en: 'Money will breathe easier after this stretch.' },
+  { vi: 'Sự thay đổi bạn đang sợ hoá ra là điều bạn cần.', en: 'The change you fear turns out to be the one you needed.' },
+  { vi: 'Hôm nay hãy làm một việc nhỏ chỉ vì nó khiến bạn vui.', en: 'Do one small thing today only because it makes you happy.' },
+  { vi: 'Bạn không muộn. Bạn đang đúng nhịp của mình.', en: 'You are not late. You are on your own timing.' },
+  { vi: 'Một người bạn cũ sẽ xuất hiện trở lại.', en: 'An old friend will come back into view.' },
+  { vi: 'Điều bạn học được từ lần vấp ngã đó sẽ cứu bạn lần sau.', en: 'What you learned from that fall will save you the next time.' },
+  { vi: 'Hãy để người khác giúp bạn. Họ thật lòng muốn giúp.', en: 'Let people help you. They genuinely want to.' },
+  { vi: 'Có một điều đẹp đẽ đang lớn lên trong im lặng.', en: 'Something beautiful is growing quietly.' },
+  { vi: 'Bạn đang được dẫn đi, kể cả khi bạn không thấy đường.', en: 'You are being led, even when you cannot see the path.' },
+  { vi: 'Hãy tha thứ cho chính mình trước đã.', en: 'Forgive yourself first.' },
+  { vi: 'Câu trả lời sẽ đến khi bạn thôi hỏi liên tục.', en: 'The answer arrives when you stop asking constantly.' },
+  { vi: 'Một chuyện bạn tưởng đã kết thúc vẫn còn một chương nữa.', en: 'Something you thought was over still has one more chapter.' },
+  { vi: 'Bạn xứng đáng với một tình cảm không làm bạn phải đoán.', en: 'You deserve a love that does not leave you guessing.' },
+  { vi: 'Sức khoẻ của bạn sẽ khá lên nếu bạn ngủ đủ tuần này.', en: 'Your health will improve if you sleep enough this week.' },
+  { vi: 'Hãy giữ lấy ước mơ đó thêm một thời gian nữa.', en: 'Hold on to that dream a little longer.' },
+  { vi: 'Người thật lòng với bạn sẽ không bắt bạn phải chờ mãi.', en: 'Someone who means it will not keep you waiting forever.' },
+  { vi: 'Bạn đã đủ. Ngay lúc này, đúng như bạn đang là.', en: 'You are enough, right now, exactly as you are.' },
+  { vi: 'Một lời xin lỗi bạn đang chờ có thể sẽ đến.', en: 'An apology you have been waiting for may arrive.' },
+  { vi: 'Hãy tin rằng bạn có thể xây lại, vì bạn đã từng xây được.', en: 'Trust that you can rebuild, because you have built before.' },
+  { vi: 'Công việc của bạn sắp có người nhìn thấy.', en: 'Your work is about to be seen.' },
+  { vi: 'Đừng đóng lòng mình lại chỉ vì một người.', en: 'Do not close your heart because of one person.' },
+  { vi: 'Có một mùa nhẹ nhàng đang đợi bạn ở phía trước.', en: 'A gentler season is waiting for you up ahead.' },
+  { vi: 'Điều bạn cầu mong không bị bỏ quên, chỉ là chưa tới lúc.', en: 'What you asked for is not forgotten, only not yet due.' },
+  { vi: 'Hãy đi ngủ sớm hôm nay. Ngày mai sẽ khác.', en: 'Go to bed early tonight. Tomorrow will feel different.' }
+];
+function treeSVG() {
+  const petal5 = (x, y, r) => [0, 72, 144, 216, 288].map((a) => '<ellipse cx="' + x + '" cy="' + (y - r * 0.66) + '" rx="' + (r * 0.44).toFixed(1) + '" ry="' + (r * 0.66).toFixed(1) + '" fill="#F7A9C6" transform="rotate(' + a + ' ' + x + ' ' + y + ')"/>').join('') + '<circle cx="' + x + '" cy="' + y + '" r="' + (r * 0.3).toFixed(1) + '" fill="#FFE9A8"/>';
+  // canopy: many soft puffs in three pinks, so the edge reads as blossom, not as circles
+  const puffs = [[86, 92, 40, '#F3BFD4', .55], [136, 68, 46, '#F7CBDD', .6], [190, 88, 42, '#F3BFD4', .55],
+                 [60, 122, 32, '#EFB3CB', .5], [110, 116, 40, '#F7CBDD', .55], [168, 120, 38, '#EFB3CB', .5],
+                 [216, 118, 30, '#F3BFD4', .5], [140, 104, 48, '#FAD8E6', .55], [98, 60, 30, '#FAD8E6', .5],
+                 [178, 58, 28, '#FAD8E6', .5], [240, 96, 22, '#F3BFD4', .45], [40, 96, 22, '#F3BFD4', .45]];
+  const blooms = [[70, 66, 9], [112, 44, 10], [156, 40, 9], [198, 60, 9], [232, 86, 8], [46, 100, 8],
+                  [92, 92, 10], [136, 78, 10], [180, 92, 9], [218, 112, 8], [66, 132, 8], [110, 130, 9],
+                  [152, 122, 10], [196, 132, 8], [128, 106, 8], [172, 66, 8], [88, 118, 7], [244, 118, 7]];
+  return '<svg viewBox="0 0 280 250" role="img" aria-hidden="true">'
+    + '<defs><radialGradient id="tglow" cx="50%" cy="36%" r="62%"><stop offset="0%" stop-color="#FFF3C4" stop-opacity=".7"/><stop offset="100%" stop-color="#FFF3C4" stop-opacity="0"/></radialGradient></defs>'
+    + '<circle cx="140" cy="94" r="118" fill="url(#tglow)"/>'
+    + '<ellipse cx="140" cy="238" rx="76" ry="9" fill="#C9A5D8" opacity=".3"/>'
+    // trunk: one filled shape, wide at the root and splitting into two limbs
+    + '<path d="M126 238 C124 210 122 190 116 172 C110 154 100 140 88 128 L96 120 C110 132 122 146 130 162 C132 150 133 140 134 130 L146 130 C147 142 149 154 152 166 C160 148 174 132 190 120 L197 128 C182 141 170 156 162 174 C155 192 154 214 154 238 Z" fill="#7A5539"/>'
+    + '<path d="M134 130 C133 150 132 176 133 200 C134 216 135 228 136 238 L146 238 C145 226 144 212 144 196 C144 172 145 150 146 130 Z" fill="#6B4A32"/>'
+    + '<path d="M136 168 C142 156 152 146 164 138" stroke="#7A5539" stroke-width="4" fill="none" stroke-linecap="round"/>'
+    + '<path d="M133 152 C126 143 116 136 106 131" stroke="#7A5539" stroke-width="3.6" fill="none" stroke-linecap="round"/>'
+    + puffs.map((p) => '<circle cx="' + p[0] + '" cy="' + p[1] + '" r="' + p[2] + '" fill="' + p[3] + '" opacity="' + p[4] + '"/>').join('')
+    + blooms.map((b) => '<g>' + petal5(b[0], b[1], b[2]) + '</g>').join('')
+    + '<g fill="#FFF3C4"><circle cx="34" cy="58" r="2.2"/><circle cx="252" cy="70" r="2.4"/><circle cx="246" cy="34" r="1.6"/><circle cx="26" cy="140" r="1.8"/><circle cx="258" cy="150" r="1.6"/></g>'
+    + '</svg>';
+}
+function renderTree() {
+  const S = T(), m = $('#main');
+  let msg = null, busy = false;
+  const draw = () => {
+    m.innerHTML = '<div class="eyebrow">' + esc(S.actTitle) + '</div><h1 style="margin-bottom:6px">🌸 ' + esc(S.treeTitle) + '</h1><p class="muted">' + esc(S.treeIntro) + '</p>'
+      + '<div class="card treewrap"><button type="button" class="tree" id="tree" aria-label="' + esc(S.treeShake) + '">' + treeSVG() + '<span class="petals" id="petals"></span></button>'
+      + '<div class="treemsg" id="treemsg" hidden><div class="eyebrow">' + esc(S.treeFor) + '</div><p id="treetext"></p></div>'
+      + '<button class="btn primary block" id="shake">' + esc(S.treeShake) + '</button></div>'
+      + '<p class="hint">' + esc(S.treeNote) + '</p>'
+      + '<p style="margin-top:14px"><a href="#/play" class="backlink">← ' + esc(S.actTitle) + '</a></p>';
+    const shake = () => {
+      if (busy) return;
+      busy = true;
+      const tree = $('#tree'), pet = $('#petals'), btn = $('#shake'), box = $('#treemsg');
+      btn.disabled = true; box.hidden = true;
+      tree.classList.remove('sway'); void tree.offsetWidth; tree.classList.add('sway');
+      let html = '';
+      for (let i = 0; i < 16; i++) {
+        const left = 12 + Math.round(Math.random() * 76), dx = Math.round(Math.random() * 60 - 30);
+        const delay = Math.round(Math.random() * 420), dur = 1100 + Math.round(Math.random() * 700);
+        html += '<i style="left:' + left + '%;--dx:' + dx + 'px;animation-delay:' + delay + 'ms;animation-duration:' + dur + 'ms"></i>';
+      }
+      pet.innerHTML = html;
+      let k = 0;
+      try { const a = new Uint32Array(1); crypto.getRandomValues(a); k = a[0] % TREE_MSGS.length; }
+      catch (e) { k = Math.floor(Math.random() * TREE_MSGS.length); }
+      setTimeout(() => {
+        msg = TREE_MSGS[k];
+        $('#treetext').textContent = L(msg); box.hidden = false;
+        tree.classList.remove('sway'); pet.innerHTML = '';
+        btn.disabled = false; btn.textContent = S.treeAgain; busy = false;
+      }, 1400);
+    };
+    $('#shake').addEventListener('click', shake);
+    $('#tree').addEventListener('click', shake);
+  };
+  draw();
+}
+
 /* ---- a coin for questions that only need yes or no ----
    The coin decides nothing. It puts one of the two answers in front of you so
    your own reaction to it becomes visible. */
