@@ -147,7 +147,20 @@ const ICONS = {
   book: '<svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></svg>',
   me: '<svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg>'
 };
-let UNREAD = 0;
+let UNREAD = 0, NEWBK = 0;
+/* Notifications for Nabu: a system notification when the browser allows it
+   (Android, desktop, and iPhone once the app is on the home screen), and
+   always a toast while the app is open. */
+function notifyAdmin(title, body, hash) {
+  toast(title + (body ? ': ' + body : ''));
+  if (!('Notification' in window) || Notification.permission !== 'granted') return;
+  try {
+    const n = new Notification(title, { body: body || '', icon: 'icon-180.png', badge: 'icon-180.png', tag: hash || 'nabu' });
+    n.onclick = () => { window.focus(); if (hash) location.hash = hash; n.close(); };
+  } catch (e) { /* some browsers only allow this from a service worker */ }
+}
+function notifyState() { return !('Notification' in window) ? 'unsupported' : Notification.permission; }
+async function askNotify() { if (!('Notification' in window)) return 'unsupported'; try { return await Notification.requestPermission(); } catch (e) { return Notification.permission; } }
 function renderFooter() {
   const S = T(), links = [];
   if (CONFIG.instagram) links.push('<a href="https://instagram.com/' + esc(CONFIG.instagram) + '" target="_blank" rel="noopener">Instagram</a>');
@@ -162,7 +175,8 @@ function renderChrome(route) {
   $('#lang').textContent = T().lang;
   $('#nav').innerHTML = ['home', 'pick', 'learn', 'book', 'me'].map((k) =>
     '<a href="#/' + k + '" class="' + (route === k ? 'on' : '') + '">' + ICONS[k] + '<span>' + esc(T().nav[k]) + '</span>'
-    + (k === 'me' && UNREAD ? '<span class="badge">' + UNREAD + '</span>' : '') + '</a>').join('');
+    + (k === 'me' && (UNREAD + NEWBK) ? '<span class="badge">' + (UNREAD + NEWBK) + '</span>' : '') + '</a>').join('');
+  if (typeof adminTabBadges === 'function') adminTabBadges();
 }
 let toastTimer = null;
 function toast(msg) {

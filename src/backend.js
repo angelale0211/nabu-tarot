@@ -67,7 +67,7 @@ const BE = {
   async sendMessage(text, asAdminTo, attachment) {
     const uid = asAdminTo || this.user.uid, from = asAdminTo ? 'nabu' : 'user';
     const ref = this.db.collection('threads').doc(uid);
-    const msg = { from: from, text: text || '', at: firebase.firestore.FieldValue.serverTimestamp() };
+    const msg = { from: from, text: text || '', at: firebase.firestore.FieldValue.serverTimestamp(), name: from === 'nabu' ? 'Nabu' : (PROFILE.name || this.user.displayName || this.user.email || ''), email: this.user.email || '' };
     if (attachment) { msg.kind = attachment.kind; msg.url = attachment.url; }
     await ref.collection('messages').add(msg);
     const preview = text || (attachment ? (attachment.kind === 'audio' ? '🎤' : '📷') : '');
@@ -86,13 +86,25 @@ const BE = {
     this.stopUnread();
     const self = this;
     if (this.isAdmin()) {
-      this._unsubUnread = this.db.collection('threads').where('adminUnread', '>', 0).onSnapshot((s) => { UNREAD = s.size; renderChrome(parseHash().route === 'post' ? 'home' : (ROUTES[parseHash().route] || {}).nav); });
+      const S = T(), nav = () => renderChrome(parseHash().route === 'post' ? 'home' : (ROUTES[parseHash().route] || {}).nav);
+      let firstT = true, firstB = true;
+      this._unsubUnread = this.db.collection('threads').where('adminUnread', '>', 0).onSnapshot((s) => {
+        UNREAD = s.size; nav();
+        if (!firstT) s.docChanges().forEach((c) => { if (c.type === 'added' || c.type === 'modified') { const t = c.doc.data(); if (t.lastFrom === 'user') notifyAdmin(S.notifNewMsg + (t.name || t.email || S.guestLabel), t.lastText || '', '#/admin?tab=inbox'); } });
+        firstT = false;
+      });
+      this._unsubBk = this.db.collection('bookings').where('status', '==', 'requested').onSnapshot((s) => {
+        NEWBK = s.size; nav();
+        if (!firstB) s.docChanges().forEach((c) => { if (c.type === 'added') { const b = c.doc.data(); notifyAdmin(S.notifNewBooking + (b.name || b.email || S.guestLabel), (b.service || '') + (b.slot ? ' · ' + b.slot.replace('T', ' ') : ''), '#/admin?tab=bookings'); } });
+        firstB = false;
+      });
     } else {
       this._unsubUnread = this.thread().onSnapshot((d) => { UNREAD = (d.exists && d.data().userUnread) || 0; renderChrome((ROUTES[parseHash().route] || {}).nav); });
     }
     void self;
   },
-  stopUnread() { if (this._unsubUnread) { this._unsubUnread(); this._unsubUnread = null; } UNREAD = 0; },
+  _unsubBk: null,
+  stopUnread() { if (this._unsubUnread) { this._unsubUnread(); this._unsubUnread = null; } if (this._unsubBk) { this._unsubBk(); this._unsubBk = null; } UNREAD = 0; NEWBK = 0; },
   watchThreads(cb) { return this.db.collection('threads').orderBy('lastAt', 'desc').limit(100).onSnapshot((s) => cb(s.docs.map((d) => Object.assign({ id: d.id }, d.data())))); },
 
   /* ---- bookings ---- */

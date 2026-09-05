@@ -22,11 +22,12 @@ async function ghWrite(path, obj, sha, message) {
 }
 function adminCleanup() { admin.unsubs.forEach((u) => { try { u(); } catch (e) { /* gone */ } }); admin.unsubs = []; }
 
-function renderAdmin() {
+function renderAdmin(args, params) {
   adminCleanup();
   const S = T(), m = $('#main');
+  if (params && params.tab && ['posts', 'schedule', 'bookings', 'inbox', 'codes'].indexOf(params.tab) > -1) admin.tab = params.tab;
   m.innerHTML = '<div class="eyebrow">' + esc(CONFIG.brand) + '</div><h1 style="margin-bottom:6px">' + esc(S.adminTitle) + '</h1><p class="muted">' + esc(S.adminIntro) + '</p>'
-    + '<div class="tabs" id="atabs">' + ['posts', 'schedule', 'bookings', 'inbox', 'codes'].map((k) => '<button data-t="' + k + '" class="' + (admin.tab === k ? 'on' : '') + '">' + esc(S.adminTabs[k]) + '</button>').join('') + '</div>'
+    + '<div class="tabs" id="atabs">' + ['posts', 'schedule', 'bookings', 'inbox', 'codes'].map((k) => '<button data-t="' + k + '" class="' + (admin.tab === k ? 'on' : '') + '">' + esc(S.adminTabs[k]) + '<span class="tb" data-tb="' + k + '" hidden></span></button>').join('') + '</div>'
     + '<div class="card"><label class="f" for="gtoken">' + esc(S.token) + '</label><div class="row"><input id="gtoken" type="password" value="' + esc(ghToken()) + '" style="flex:1" autocomplete="off"><button class="btn sm" id="savetoken">' + esc(S.saveToken) + '</button></div><p class="hint">' + esc(S.tokenHint) + ' (' + esc(CONFIG.repo) + ')</p></div>'
     + '<div id="apanel"></div>';
   $('#savetoken').addEventListener('click', () => { store.set('nabu-gh-token', $('#gtoken').value.trim()); toast('✓'); show(admin.tab); });
@@ -35,6 +36,11 @@ function renderAdmin() {
   show(admin.tab);
 }
 
+/* Unread counts on the Inbox and Bookings tabs, refreshed whenever the counts change. */
+function adminTabBadges() {
+  const map = { inbox: UNREAD, bookings: NEWBK };
+  $$('[data-tb]').forEach((el) => { const n = map[el.getAttribute('data-tb')] || 0; el.hidden = !n; el.textContent = n; });
+}
 /* ---- posts ---- */
 function adminPosts(p) {
   const S = T();
@@ -165,13 +171,17 @@ function adminInbox(p) {
   const list = () => {
     adminCleanup();
     admin.unsubs.push(BE.watchThreads((ts) => {
-      $('#threads').innerHTML = ts.length ? ts.map((t) => '<button class="topic" data-th="' + t.id + '"><div class="t"><span>' + (t.adminUnread ? '🔴 ' : '') + esc(t.name || t.email || t.id) + '</span></div><div class="hint">' + esc(t.lastText || '') + '</div></button>').join('') : '<p class="empty">' + esc(S.inboxEmpty) + '</p>';
+      $('#threads').innerHTML = (ts.length ? '<p class="hint" style="margin-bottom:10px">' + esc(S.inboxIntro) + '</p>' : '') + (ts.length ? ts.map((t) => {
+        const who = t.name || t.email || t.id, own = BE.user && t.id === BE.user.uid, at = t.lastAt && t.lastAt.toDate ? t.lastAt.toDate() : null;
+        return '<button class="thr' + (t.adminUnread ? ' unread' : '') + '" data-th="' + t.id + '"><span class="av">' + esc(who.charAt(0).toUpperCase()) + '</span><span class="body"><b>' + esc(who) + (own ? ' <i>(' + esc(S.ownThread) + ')</i>' : '') + '</b><span class="mail">' + esc(t.email && t.email !== who ? t.email : '') + '</span><span class="prev">' + (t.lastFrom === 'nabu' ? esc(S.youLabel) + ': ' : '') + esc(t.lastText || '') + '</span></span><span class="meta">' + (at ? '<span class="when">' + esc(T().dateShort(at)) + '</span>' : '') + (t.adminUnread ? '<span class="n">' + t.adminUnread + '</span>' : '') + '</span></button>';
+      }).join('') : '<p class="empty">' + esc(S.inboxEmpty) + '</p>');
       $$('[data-th]', p).forEach((b) => b.addEventListener('click', () => open(b.getAttribute('data-th'), ts.filter((x) => x.id === b.getAttribute('data-th'))[0])));
     }));
   };
   const open = (uid, t) => {
     adminCleanup();
-    p.innerHTML = '<p><a href="#/admin" id="backin">← ' + esc(S.back) + '</a></p><h3 style="margin-bottom:8px">' + esc(t.name || t.email || uid) + ' <span class="faint">' + esc(t.email || '') + '</span></h3><div class="chat" id="achat"></div>' + chatBarHTML('atext', 'asend', S.reply);
+    const own = BE.user && uid === BE.user.uid;
+    p.innerHTML = '<p><a href="#/admin" id="backin" class="backlink">← ' + esc(S.adminTabs.inbox) + '</a></p><div class="thr-head"><span class="av">' + esc((t.name || t.email || uid).charAt(0).toUpperCase()) + '</span><div><b>' + esc(t.name || t.email || uid) + (own ? ' <i>(' + esc(S.ownThread) + ')</i>' : '') + '</b><span class="faint">' + esc(t.email || '') + '</span></div></div><div class="chat" id="achat"></div>' + chatBarHTML('atext', 'asend', S.reply);
     $('#backin').addEventListener('click', (e) => { e.preventDefault(); p.innerHTML = '<div id="threads"></div>'; list(); });
     const chat = $('#achat');
     admin.unsubs.push(BE.watchMessages(uid, (msgs) => { chat.innerHTML = chatHTML(msgs, 'nabu'); chat.scrollTop = chat.scrollHeight; BE.markRead(uid, 'admin'); }));

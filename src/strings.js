@@ -221,7 +221,7 @@ const STR = {
     confirm: 'Xác nhận', decline: 'Từ chối',
     needFirebase: 'Mục này cần bật tài khoản (Firebase). Xem README.',
     adminLogin: 'Đăng nhập bằng email quản trị để xem mục này.',
-    inboxEmpty: 'Chưa có cuộc trò chuyện nào.',
+    inboxEmpty: 'Chưa có cuộc trò chuyện nào.', inboxIntro: 'Mỗi dòng là một người. Chạm vào để mở riêng cuộc trò chuyện với người đó.', youLabel: 'Bạn', guestLabel: 'Khách', ownThread: 'tài khoản của bạn', ownThreadHint: 'Đây là hộp thư thử của chính tài khoản bạn. Tin nhắn của khách nằm trong bảng điều khiển, mục Tin nhắn, mỗi người một cuộc trò chuyện riêng.', adminSummary: 'Dành cho Nabu', unreadMsgs: 'tin nhắn chưa đọc', newBookings: 'lịch hẹn mới chờ xác nhận', openAdmin: 'Mở bảng điều khiển', enableNotif: 'Bật thông báo', notifOn: 'Thông báo đã bật. Bạn sẽ được báo khi có tin nhắn hoặc lịch hẹn mới.', notifDenied: 'Trình duyệt đang chặn thông báo của app. Bạn mở cài đặt trang web và cho phép thông báo nhé.', notifUnsupported: 'Trình duyệt này chưa hỗ trợ thông báo. Trên iPhone, bạn thêm app vào màn hình chính rồi mở lại từ đó.', notifHint: 'Bạn sẽ nhận thông báo khi có tin nhắn hoặc lịch hẹn mới, kể cả khi app đang chạy nền. Trên iPhone cần thêm app vào màn hình chính trước.', notifNewMsg: 'Tin nhắn mới từ ', notifNewBooking: 'Lịch hẹn mới từ ',
     reply: 'Trả lời',
     back: 'Quay lại',
 
@@ -450,7 +450,7 @@ const STR = {
     confirm: 'Confirm', decline: 'Decline',
     needFirebase: 'This section needs accounts turned on (Firebase). See the README.',
     adminLogin: 'Sign in with an admin email to see this section.',
-    inboxEmpty: 'No conversations yet.',
+    inboxEmpty: 'No conversations yet.', inboxIntro: 'One row per person. Tap a row to open that conversation on its own.', youLabel: 'You', guestLabel: 'Guest', ownThread: 'your own account', ownThreadHint: 'This is the test inbox of your own account. Messages from clients live in the dashboard under Inbox, one conversation per person.', adminSummary: 'For Nabu', unreadMsgs: 'unread messages', newBookings: 'new bookings awaiting confirmation', openAdmin: 'Open the dashboard', enableNotif: 'Turn on notifications', notifOn: 'Notifications are on. You will be told about new messages and bookings.', notifDenied: 'The browser is blocking notifications for the app. Open the site settings and allow them.', notifUnsupported: 'This browser does not support notifications. On iPhone, add the app to the home screen and open it from there.', notifHint: 'You will be notified about new messages and bookings, even when the app is in the background. On iPhone, add the app to the home screen first.', notifNewMsg: 'New message from ', notifNewBooking: 'New booking from ',
     reply: 'Reply',
     back: 'Back',
 

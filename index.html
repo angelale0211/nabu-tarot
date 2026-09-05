@@ -659,7 +659,14 @@ main{padding:22px 0 30px}
 .msg{max-width:82%;padding:10px 14px;border-radius:16px;font-size:15px;line-height:1.45}
 .msg.me{align-self:flex-end;background:var(--primary);color:var(--primary-ink);border-bottom-right-radius:4px}
 .msg.them{align-self:flex-start;background:var(--surface-2);border-bottom-left-radius:4px}
-.msg .t{display:block;font-size:10.5px;opacity:.7;margin-top:3px}
+.reveal-top{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:6px}.reveal-top .eyebrow{margin:0}
+.msg .t{display:block;font-size:10.5px;opacity:.7;margin-top:3px}.msg .who{display:block;font-size:11px;font-weight:700;opacity:.75;margin-bottom:2px}
+.thr{display:flex;align-items:center;gap:12px;width:100%;text-align:left;background:var(--surface);border:1px solid var(--rule-soft);border-radius:16px;padding:12px 14px;margin-bottom:8px}.thr.unread{border-color:var(--primary);box-shadow:0 0 0 1px var(--primary) inset}
+.thr .av,.thr-head .av{width:40px;height:40px;border-radius:50%;background:var(--lav-soft);color:var(--fg);display:flex;align-items:center;justify-content:center;font-weight:700;flex:none}.thr .body{flex:1;min-width:0;display:flex;flex-direction:column}.thr b{font-size:15px}.thr i{font-style:normal;font-weight:500;color:var(--fg-faint);font-size:12.5px}.thr .mail{font-size:12px;color:var(--fg-faint)}.thr .prev{font-size:13.5px;color:var(--fg-soft);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.thr.unread .prev{color:var(--fg);font-weight:600}
+.thr .meta{display:flex;flex-direction:column;align-items:flex-end;gap:4px;flex:none}.thr .when{font-size:11px;color:var(--fg-faint)}.thr .n{background:var(--pink-ink);color:#fff;font-size:11px;border-radius:999px;min-width:20px;height:20px;line-height:20px;text-align:center;padding:0 6px;font-weight:700}
+.thr-head{display:flex;align-items:center;gap:12px;margin-bottom:10px}.thr-head b{display:block}.thr-head i{font-style:normal;color:var(--fg-faint);font-size:12.5px;font-weight:500}
+.tabs button{position:relative}.tabs .tb{display:inline-block;margin-left:6px;background:var(--pink-ink);color:#fff;font-size:10.5px;border-radius:999px;min-width:17px;height:17px;line-height:17px;text-align:center;padding:0 5px;vertical-align:1px}
+.admin-sum .cnt{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:8px 0 10px}.admin-sum .cnt a{background:var(--surface-2);border-radius:14px;padding:12px;text-align:center;text-decoration:none;color:inherit}.admin-sum .cnt b{display:block;font-size:26px;font-family:var(--display);color:var(--link)}.admin-sum .cnt span{font-size:12.5px;color:var(--fg-soft)}
 .chatbar{display:flex;gap:8px;margin-top:10px}
 .chatbar textarea{min-height:44px;max-height:120px;border-radius:14px;padding:10px 14px}
 .chatbar button{flex:none}
@@ -1107,7 +1114,7 @@ const STR = {
     confirm: 'Xác nhận', decline: 'Từ chối',
     needFirebase: 'Mục này cần bật tài khoản (Firebase). Xem README.',
     adminLogin: 'Đăng nhập bằng email quản trị để xem mục này.',
-    inboxEmpty: 'Chưa có cuộc trò chuyện nào.',
+    inboxEmpty: 'Chưa có cuộc trò chuyện nào.', inboxIntro: 'Mỗi dòng là một người. Chạm vào để mở riêng cuộc trò chuyện với người đó.', youLabel: 'Bạn', guestLabel: 'Khách', ownThread: 'tài khoản của bạn', ownThreadHint: 'Đây là hộp thư thử của chính tài khoản bạn. Tin nhắn của khách nằm trong bảng điều khiển, mục Tin nhắn, mỗi người một cuộc trò chuyện riêng.', adminSummary: 'Dành cho Nabu', unreadMsgs: 'tin nhắn chưa đọc', newBookings: 'lịch hẹn mới chờ xác nhận', openAdmin: 'Mở bảng điều khiển', enableNotif: 'Bật thông báo', notifOn: 'Thông báo đã bật. Bạn sẽ được báo khi có tin nhắn hoặc lịch hẹn mới.', notifDenied: 'Trình duyệt đang chặn thông báo của app. Bạn mở cài đặt trang web và cho phép thông báo nhé.', notifUnsupported: 'Trình duyệt này chưa hỗ trợ thông báo. Trên iPhone, bạn thêm app vào màn hình chính rồi mở lại từ đó.', notifHint: 'Bạn sẽ nhận thông báo khi có tin nhắn hoặc lịch hẹn mới, kể cả khi app đang chạy nền. Trên iPhone cần thêm app vào màn hình chính trước.', notifNewMsg: 'Tin nhắn mới từ ', notifNewBooking: 'Lịch hẹn mới từ ',
     reply: 'Trả lời',
     back: 'Quay lại',
 
@@ -1336,7 +1343,7 @@ const STR = {
     confirm: 'Confirm', decline: 'Decline',
     needFirebase: 'This section needs accounts turned on (Firebase). See the README.',
     adminLogin: 'Sign in with an admin email to see this section.',
-    inboxEmpty: 'No conversations yet.',
+    inboxEmpty: 'No conversations yet.', inboxIntro: 'One row per person. Tap a row to open that conversation on its own.', youLabel: 'You', guestLabel: 'Guest', ownThread: 'your own account', ownThreadHint: 'This is the test inbox of your own account. Messages from clients live in the dashboard under Inbox, one conversation per person.', adminSummary: 'For Nabu', unreadMsgs: 'unread messages', newBookings: 'new bookings awaiting confirmation', openAdmin: 'Open the dashboard', enableNotif: 'Turn on notifications', notifOn: 'Notifications are on. You will be told about new messages and bookings.', notifDenied: 'The browser is blocking notifications for the app. Open the site settings and allow them.', notifUnsupported: 'This browser does not support notifications. On iPhone, add the app to the home screen and open it from there.', notifHint: 'You will be notified about new messages and bookings, even when the app is in the background. On iPhone, add the app to the home screen first.', notifNewMsg: 'New message from ', notifNewBooking: 'New booking from ',
     reply: 'Reply',
     back: 'Back',
 
@@ -10202,7 +10209,20 @@ const ICONS = {
   book: '<svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></svg>',
   me: '<svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg>'
 };
-let UNREAD = 0;
+let UNREAD = 0, NEWBK = 0;
+/* Notifications for Nabu: a system notification when the browser allows it
+   (Android, desktop, and iPhone once the app is on the home screen), and
+   always a toast while the app is open. */
+function notifyAdmin(title, body, hash) {
+  toast(title + (body ? ': ' + body : ''));
+  if (!('Notification' in window) || Notification.permission !== 'granted') return;
+  try {
+    const n = new Notification(title, { body: body || '', icon: 'icon-180.png', badge: 'icon-180.png', tag: hash || 'nabu' });
+    n.onclick = () => { window.focus(); if (hash) location.hash = hash; n.close(); };
+  } catch (e) { /* some browsers only allow this from a service worker */ }
+}
+function notifyState() { return !('Notification' in window) ? 'unsupported' : Notification.permission; }
+async function askNotify() { if (!('Notification' in window)) return 'unsupported'; try { return await Notification.requestPermission(); } catch (e) { return Notification.permission; } }
 function renderFooter() {
   const S = T(), links = [];
   if (CONFIG.instagram) links.push('<a href="https://instagram.com/' + esc(CONFIG.instagram) + '" target="_blank" rel="noopener">Instagram</a>');
@@ -10217,7 +10237,8 @@ function renderChrome(route) {
   $('#lang').textContent = T().lang;
   $('#nav').innerHTML = ['home', 'pick', 'learn', 'book', 'me'].map((k) =>
     '<a href="#/' + k + '" class="' + (route === k ? 'on' : '') + '">' + ICONS[k] + '<span>' + esc(T().nav[k]) + '</span>'
-    + (k === 'me' && UNREAD ? '<span class="badge">' + UNREAD + '</span>' : '') + '</a>').join('');
+    + (k === 'me' && (UNREAD + NEWBK) ? '<span class="badge">' + (UNREAD + NEWBK) + '</span>' : '') + '</a>').join('');
+  if (typeof adminTabBadges === 'function') adminTabBadges();
 }
 let toastTimer = null;
 function toast(msg) {
@@ -10421,7 +10442,7 @@ const BE = {
   async sendMessage(text, asAdminTo, attachment) {
     const uid = asAdminTo || this.user.uid, from = asAdminTo ? 'nabu' : 'user';
     const ref = this.db.collection('threads').doc(uid);
-    const msg = { from: from, text: text || '', at: firebase.firestore.FieldValue.serverTimestamp() };
+    const msg = { from: from, text: text || '', at: firebase.firestore.FieldValue.serverTimestamp(), name: from === 'nabu' ? 'Nabu' : (PROFILE.name || this.user.displayName || this.user.email || ''), email: this.user.email || '' };
     if (attachment) { msg.kind = attachment.kind; msg.url = attachment.url; }
     await ref.collection('messages').add(msg);
     const preview = text || (attachment ? (attachment.kind === 'audio' ? '🎤' : '📷') : '');
@@ -10440,13 +10461,25 @@ const BE = {
     this.stopUnread();
     const self = this;
     if (this.isAdmin()) {
-      this._unsubUnread = this.db.collection('threads').where('adminUnread', '>', 0).onSnapshot((s) => { UNREAD = s.size; renderChrome(parseHash().route === 'post' ? 'home' : (ROUTES[parseHash().route] || {}).nav); });
+      const S = T(), nav = () => renderChrome(parseHash().route === 'post' ? 'home' : (ROUTES[parseHash().route] || {}).nav);
+      let firstT = true, firstB = true;
+      this._unsubUnread = this.db.collection('threads').where('adminUnread', '>', 0).onSnapshot((s) => {
+        UNREAD = s.size; nav();
+        if (!firstT) s.docChanges().forEach((c) => { if (c.type === 'added' || c.type === 'modified') { const t = c.doc.data(); if (t.lastFrom === 'user') notifyAdmin(S.notifNewMsg + (t.name || t.email || S.guestLabel), t.lastText || '', '#/admin?tab=inbox'); } });
+        firstT = false;
+      });
+      this._unsubBk = this.db.collection('bookings').where('status', '==', 'requested').onSnapshot((s) => {
+        NEWBK = s.size; nav();
+        if (!firstB) s.docChanges().forEach((c) => { if (c.type === 'added') { const b = c.doc.data(); notifyAdmin(S.notifNewBooking + (b.name || b.email || S.guestLabel), (b.service || '') + (b.slot ? ' · ' + b.slot.replace('T', ' ') : ''), '#/admin?tab=bookings'); } });
+        firstB = false;
+      });
     } else {
       this._unsubUnread = this.thread().onSnapshot((d) => { UNREAD = (d.exists && d.data().userUnread) || 0; renderChrome((ROUTES[parseHash().route] || {}).nav); });
     }
     void self;
   },
-  stopUnread() { if (this._unsubUnread) { this._unsubUnread(); this._unsubUnread = null; } UNREAD = 0; },
+  _unsubBk: null,
+  stopUnread() { if (this._unsubUnread) { this._unsubUnread(); this._unsubUnread = null; } if (this._unsubBk) { this._unsubBk(); this._unsubBk = null; } UNREAD = 0; NEWBK = 0; },
   watchThreads(cb) { return this.db.collection('threads').orderBy('lastAt', 'desc').limit(100).onSnapshot((s) => cb(s.docs.map((d) => Object.assign({ id: d.id }, d.data())))); },
 
   /* ---- bookings ---- */
@@ -10979,7 +11012,7 @@ function renderReveal(animate) {
   const S = T(), id = pick.chosen, c = cardById(id), other = cardById(id, lang === 'vi' ? 'en' : 'vi'), I = insightOf(id);
   const kws = I ? I.pos.slice(0, 3).join(', ') : '';
   const r = $('#reveal');
-  r.innerHTML = '<div class="eyebrow">' + esc(S.yourCard) + '</div>'
+  r.innerHTML = '<div class="reveal-top"><div class="eyebrow">' + esc(S.yourCard) + '</div><button class="btn sm" id="redrawTop">🔄 ' + esc(S.redraw) + '</button></div>'
     + '<div class="hero"><div class="flip"><div class="inner"' + (animate ? '' : ' style="animation:none"') + '><span class="face fr">' + faceSVG(c) + '</span><span class="face bk">' + BACK + '</span></div></div>'
     + '<div><div class="name">' + esc(c.name) + '</div><div class="en">' + esc(other.name) + '</div><div class="meta m-' + c.suit + '"><i>' + esc(c.meta) + '</i></div></div></div>'
     + insightHTML(id, pick.focus)
@@ -10990,7 +11023,9 @@ function renderReveal(animate) {
     + '<button class="btn block" id="redraw" style="margin-top:6px">' + esc(S.redraw) + '</button>';
   bindAI(r);
   $('#shareCard').addEventListener('click', () => shareOrCopy(S.shareText(c.name, kws), appURL()));
-  $('#redraw').addEventListener('click', () => { newHand(); renderPick(); window.scrollTo({ top: 0, behavior: 'smooth' }); });
+  const again = () => { newHand(); renderPick(); window.scrollTo({ top: 0, behavior: 'smooth' }); };
+  $('#redraw').addEventListener('click', again);
+  $('#redrawTop').addEventListener('click', again);
 }
 ROUTES.pick = { nav: 'pick', render: renderPick };
 
@@ -12065,13 +12100,27 @@ function bindAuth(root) {
     $('#aforgot', root).addEventListener('click', async () => { try { await BE.resetPassword(em()); status(S.resetSent, 'ok'); } catch (e) { status(e.message, 'err'); } });
   }
 }
+/* Nabu's own card on the Me tab: what is waiting, and the notification switch. */
+function adminSummaryHTML() {
+  const S = T(), st = notifyState();
+  return '<div class="card admin-sum"><div class="eyebrow">' + esc(S.adminSummary) + '</div>'
+    + '<div class="cnt"><a href="#/admin?tab=inbox"><b>' + UNREAD + '</b><span>' + esc(S.unreadMsgs) + '</span></a><a href="#/admin?tab=bookings"><b>' + NEWBK + '</b><span>' + esc(S.newBookings) + '</span></a></div>'
+    + '<a class="btn primary block" href="#/admin">' + esc(S.openAdmin) + '</a>'
+    + (st === 'granted' ? '<p class="hint ok">🔔 ' + esc(S.notifOn) + '</p>' : st === 'denied' ? '<p class="hint err">' + esc(S.notifDenied) + '</p>' : st === 'unsupported' ? '<p class="hint">' + esc(S.notifUnsupported) + '</p>' : '<button class="btn block" id="notifon">🔔 ' + esc(S.enableNotif) + '</button><p class="hint">' + esc(S.notifHint) + '</p>')
+    + '</div>';
+}
+function bindNotify(root) {
+  const b = $('#notifon', root); if (!b) return;
+  b.addEventListener('click', async () => { const r = await askNotify(); toast(r === 'granted' ? T().notifOn : T().notifDenied); if (r === 'granted') route(); });
+}
 function chatHTML(msgs, mine) {
   const S = T();
   if (!msgs.length) return '<p class="empty">' + esc(S.noMsgs) + '</p>';
   return msgs.map((m) => {
     const at = m.at && m.at.toDate ? m.at.toDate() : null;
     const att = m.kind === 'image' && m.url ? '<a href="' + esc(m.url) + '" target="_blank" rel="noopener"><img src="' + esc(m.url) + '" alt="" class="att"></a>' : m.kind === 'audio' && m.url ? '<audio controls src="' + esc(m.url) + '" class="att"></audio>' : '';
-    return '<div class="msg ' + (m.from === mine ? 'me' : 'them') + '">' + att + esc(m.text || '').replace(/\n/g, '<br>') + (at ? '<span class="t">' + esc(T().dateShort(at)) + ' ' + pad2(at.getHours()) + ':' + pad2(at.getMinutes()) + '</span>' : '') + '</div>';
+    const who = m.from === mine ? S.youLabel : (m.from === 'nabu' ? 'Nabu' : (m.name || S.guestLabel));
+    return '<div class="msg ' + (m.from === mine ? 'me' : 'them') + '"><span class="who">' + esc(who) + '</span>' + att + esc(m.text || '').replace(/\n/g, '<br>') + (at ? '<span class="t">' + esc(T().dateShort(at)) + ' ' + pad2(at.getHours()) + ':' + pad2(at.getMinutes()) + '</span>' : '') + '</div>';
   }).join('');
 }
 /* Chat bar with text, a photo button and a hold-to-record voice button. */
@@ -12142,9 +12191,10 @@ function renderMe(args, params) {
     meCleanup();
     let h = '';
     if (params.next === 'book' && !BE.user) h += '<div class="banner">' + esc(S.needLogin) + '</div>';
+    if (BE.isAdmin()) h += adminSummaryHTML();
     h += authHTML() + profileFormHTML();
     if (BE.enabled) {
-      h += '<div class="card"><h3 style="margin-bottom:4px">' + esc(S.messages) + '</h3><p class="hint" style="margin-bottom:8px">' + esc(S.messagesIntro) + '</p>'
+      h += '<div class="card"><h3 style="margin-bottom:4px">' + esc(S.messages) + '</h3><p class="hint" style="margin-bottom:8px">' + esc(BE.isAdmin() ? S.ownThreadHint : S.messagesIntro) + '</p>'
         + (BE.user ? '<div class="chat" id="chat"></div>' + chatBarHTML('mtext', 'msend', S.send) : '<p class="muted">' + esc(S.needLogin) + '</p>') + '</div>';
       if (BE.user) h += '<div class="card"><h3 style="margin-bottom:8px">' + esc(S.myBookings) + '</h3><div id="mybk"><p class="hint">…</p></div></div>';
     } else if (CONFIG.instagram) {
@@ -12156,7 +12206,7 @@ function renderMe(args, params) {
     h += '<div class="card"><h3 style="margin-bottom:8px">' + esc(S.themeTitle) + '</h3><div class="chips">' + ['auto', 'light', 'dark'].map((t) => '<button class="chip' + (themeChoice() === t ? ' on' : '') + '" data-theme-pick="' + t + '">' + esc(S.themes[t]) + '</button>').join('') + '</div><p class="hint">' + esc(S.themeHint) + '</p></div>';
     h += '<div class="row">' + (BE.user ? '<button class="btn" id="signout">' + esc(S.signOut) + '</button>' : '') + '<a class="btn" href="#/report">🐞 ' + esc(S.reportLink) + '</a><button class="btn" id="retour">' + (lang === 'vi' ? 'Xem lại hướng dẫn' : 'Replay the tour') + '</button>' + (BE.isAdmin() ? '<a class="btn gold" href="#/admin">' + esc(S.adminTitle) + '</a>' : '') + '</div>';
     body.innerHTML = h;
-    bindAuth(body); bindAI(body);
+    bindAuth(body); bindAI(body); bindNotify(body);
     bindProfileForm(body, () => { if (params.next === 'book') location.hash = '#/book'; });
     $('#munlock').addEventListener('click', () => { const r = parseCode($('#mcode').value); const st = $('#mcstatus'); if (!r) { st.textContent = S.badCode; st.className = 'hint err'; return; } ACCESS.grant(r.course, r.until); toast(S.unlocked); draw(); });
     $$('[data-theme-pick]', body).forEach((b) => b.addEventListener('click', () => { setTheme(b.getAttribute('data-theme-pick')); $$('[data-theme-pick]', body).forEach((x) => x.classList.toggle('on', x === b)); }));
@@ -12244,11 +12294,12 @@ async function ghWrite(path, obj, sha, message) {
 }
 function adminCleanup() { admin.unsubs.forEach((u) => { try { u(); } catch (e) { /* gone */ } }); admin.unsubs = []; }
 
-function renderAdmin() {
+function renderAdmin(args, params) {
   adminCleanup();
   const S = T(), m = $('#main');
+  if (params && params.tab && ['posts', 'schedule', 'bookings', 'inbox', 'codes'].indexOf(params.tab) > -1) admin.tab = params.tab;
   m.innerHTML = '<div class="eyebrow">' + esc(CONFIG.brand) + '</div><h1 style="margin-bottom:6px">' + esc(S.adminTitle) + '</h1><p class="muted">' + esc(S.adminIntro) + '</p>'
-    + '<div class="tabs" id="atabs">' + ['posts', 'schedule', 'bookings', 'inbox', 'codes'].map((k) => '<button data-t="' + k + '" class="' + (admin.tab === k ? 'on' : '') + '">' + esc(S.adminTabs[k]) + '</button>').join('') + '</div>'
+    + '<div class="tabs" id="atabs">' + ['posts', 'schedule', 'bookings', 'inbox', 'codes'].map((k) => '<button data-t="' + k + '" class="' + (admin.tab === k ? 'on' : '') + '">' + esc(S.adminTabs[k]) + '<span class="tb" data-tb="' + k + '" hidden></span></button>').join('') + '</div>'
     + '<div class="card"><label class="f" for="gtoken">' + esc(S.token) + '</label><div class="row"><input id="gtoken" type="password" value="' + esc(ghToken()) + '" style="flex:1" autocomplete="off"><button class="btn sm" id="savetoken">' + esc(S.saveToken) + '</button></div><p class="hint">' + esc(S.tokenHint) + ' (' + esc(CONFIG.repo) + ')</p></div>'
     + '<div id="apanel"></div>';
   $('#savetoken').addEventListener('click', () => { store.set('nabu-gh-token', $('#gtoken').value.trim()); toast('✓'); show(admin.tab); });
@@ -12257,6 +12308,11 @@ function renderAdmin() {
   show(admin.tab);
 }
 
+/* Unread counts on the Inbox and Bookings tabs, refreshed whenever the counts change. */
+function adminTabBadges() {
+  const map = { inbox: UNREAD, bookings: NEWBK };
+  $$('[data-tb]').forEach((el) => { const n = map[el.getAttribute('data-tb')] || 0; el.hidden = !n; el.textContent = n; });
+}
 /* ---- posts ---- */
 function adminPosts(p) {
   const S = T();
@@ -12387,13 +12443,17 @@ function adminInbox(p) {
   const list = () => {
     adminCleanup();
     admin.unsubs.push(BE.watchThreads((ts) => {
-      $('#threads').innerHTML = ts.length ? ts.map((t) => '<button class="topic" data-th="' + t.id + '"><div class="t"><span>' + (t.adminUnread ? '🔴 ' : '') + esc(t.name || t.email || t.id) + '</span></div><div class="hint">' + esc(t.lastText || '') + '</div></button>').join('') : '<p class="empty">' + esc(S.inboxEmpty) + '</p>';
+      $('#threads').innerHTML = (ts.length ? '<p class="hint" style="margin-bottom:10px">' + esc(S.inboxIntro) + '</p>' : '') + (ts.length ? ts.map((t) => {
+        const who = t.name || t.email || t.id, own = BE.user && t.id === BE.user.uid, at = t.lastAt && t.lastAt.toDate ? t.lastAt.toDate() : null;
+        return '<button class="thr' + (t.adminUnread ? ' unread' : '') + '" data-th="' + t.id + '"><span class="av">' + esc(who.charAt(0).toUpperCase()) + '</span><span class="body"><b>' + esc(who) + (own ? ' <i>(' + esc(S.ownThread) + ')</i>' : '') + '</b><span class="mail">' + esc(t.email && t.email !== who ? t.email : '') + '</span><span class="prev">' + (t.lastFrom === 'nabu' ? esc(S.youLabel) + ': ' : '') + esc(t.lastText || '') + '</span></span><span class="meta">' + (at ? '<span class="when">' + esc(T().dateShort(at)) + '</span>' : '') + (t.adminUnread ? '<span class="n">' + t.adminUnread + '</span>' : '') + '</span></button>';
+      }).join('') : '<p class="empty">' + esc(S.inboxEmpty) + '</p>');
       $$('[data-th]', p).forEach((b) => b.addEventListener('click', () => open(b.getAttribute('data-th'), ts.filter((x) => x.id === b.getAttribute('data-th'))[0])));
     }));
   };
   const open = (uid, t) => {
     adminCleanup();
-    p.innerHTML = '<p><a href="#/admin" id="backin">← ' + esc(S.back) + '</a></p><h3 style="margin-bottom:8px">' + esc(t.name || t.email || uid) + ' <span class="faint">' + esc(t.email || '') + '</span></h3><div class="chat" id="achat"></div>' + chatBarHTML('atext', 'asend', S.reply);
+    const own = BE.user && uid === BE.user.uid;
+    p.innerHTML = '<p><a href="#/admin" id="backin" class="backlink">← ' + esc(S.adminTabs.inbox) + '</a></p><div class="thr-head"><span class="av">' + esc((t.name || t.email || uid).charAt(0).toUpperCase()) + '</span><div><b>' + esc(t.name || t.email || uid) + (own ? ' <i>(' + esc(S.ownThread) + ')</i>' : '') + '</b><span class="faint">' + esc(t.email || '') + '</span></div></div><div class="chat" id="achat"></div>' + chatBarHTML('atext', 'asend', S.reply);
     $('#backin').addEventListener('click', (e) => { e.preventDefault(); p.innerHTML = '<div id="threads"></div>'; list(); });
     const chat = $('#achat');
     admin.unsubs.push(BE.watchMessages(uid, (msgs) => { chat.innerHTML = chatHTML(msgs, 'nabu'); chat.scrollTop = chat.scrollHeight; BE.markRead(uid, 'admin'); }));
@@ -12419,7 +12479,7 @@ function adminCodes(p) {
 ROUTES.admin = { nav: '', render: renderAdmin };
 
 /* ============================ boot ============================ */
-window.APP_VERSION = 'v42';
+window.APP_VERSION = 'v43';
 window.NABU = { CONFIG: CONFIG, LESSONS: LESSONS, localAnswer: localAnswer, compatVerdict: compatVerdict, numerologyOf: numerologyOf, ZDEEP: ZDEEP, lunarToday: lunarToday, solarToLunar: solarToLunar, DECK: DECK, INSIGHT: INSIGHT, KW: KW, ASK: ASK, TOPICS: TOPICS, GUIDES: GUIDES, SERVICES: SERVICES, COURSES: COURSES, ACCESS: ACCESS, makeCode: makeCode, parseCode: parseCode, ZODIAC: ZODIAC, pick: pick, book: book,
   insightHTML: insightHTML, insightOf: insightOf, sunSignIndex: sunSignIndex, lifePath: lifePath, PROFILE: () => PROFILE, BE: BE };
 BE.init().catch(() => { /* backend unreachable: the app runs device-only */ });

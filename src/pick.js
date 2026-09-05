@@ -48,7 +48,7 @@ function renderReveal(animate) {
   const S = T(), id = pick.chosen, c = cardById(id), other = cardById(id, lang === 'vi' ? 'en' : 'vi'), I = insightOf(id);
   const kws = I ? I.pos.slice(0, 3).join(', ') : '';
   const r = $('#reveal');
-  r.innerHTML = '<div class="eyebrow">' + esc(S.yourCard) + '</div>'
+  r.innerHTML = '<div class="reveal-top"><div class="eyebrow">' + esc(S.yourCard) + '</div><button class="btn sm" id="redrawTop">🔄 ' + esc(S.redraw) + '</button></div>'
     + '<div class="hero"><div class="flip"><div class="inner"' + (animate ? '' : ' style="animation:none"') + '><span class="face fr">' + faceSVG(c) + '</span><span class="face bk">' + BACK + '</span></div></div>'
     + '<div><div class="name">' + esc(c.name) + '</div><div class="en">' + esc(other.name) + '</div><div class="meta m-' + c.suit + '"><i>' + esc(c.meta) + '</i></div></div></div>'
     + insightHTML(id, pick.focus)
@@ -59,6 +59,8 @@ function renderReveal(animate) {
     + '<button class="btn block" id="redraw" style="margin-top:6px">' + esc(S.redraw) + '</button>';
   bindAI(r);
   $('#shareCard').addEventListener('click', () => shareOrCopy(S.shareText(c.name, kws), appURL()));
-  $('#redraw').addEventListener('click', () => { newHand(); renderPick(); window.scrollTo({ top: 0, behavior: 'smooth' }); });
+  const again = () => { newHand(); renderPick(); window.scrollTo({ top: 0, behavior: 'smooth' }); };
+  $('#redraw').addEventListener('click', again);
+  $('#redrawTop').addEventListener('click', again);
 }
 ROUTES.pick = { nav: 'pick', render: renderPick };
