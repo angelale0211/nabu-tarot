@@ -585,6 +585,7 @@ main{padding:22px 0 30px}
 .ritual{display:flex;align-items:center;gap:8px;flex-wrap:wrap;justify-content:center}.rt{flex:1;min-width:130px;background:var(--surface);border:1px solid var(--rule-soft);border-radius:14px;padding:12px;text-align:center;font-size:12.5px}.rt .ic{font-size:30px;display:block}.rt b{display:block;margin:4px 0}.ritual .arr{color:var(--fg-faint);font-size:12px}
 .ifthen{display:grid;gap:8px}.it{display:grid;grid-template-columns:1fr 1fr;gap:6px;font-size:13px}.it span{border-radius:12px;padding:10px 12px}.it .if{background:var(--tag-pink-bg);color:var(--tag-pink-fg)}.it .then{background:var(--tag-green-bg);color:var(--tag-green-fg)}
 [hidden]{display:none!important}
+.backlink{display:inline-flex;align-items:center;gap:4px;min-height:36px;padding:0 4px;margin-left:-4px;border-radius:10px;font-weight:600;text-decoration:none}.backlink:active{background:var(--surface-2)}
 .hshapes{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin:10px 0}.hs{background:var(--surface);border:1.5px solid;border-radius:14px;padding:10px;text-align:center;font-size:12px}.hshape{width:64px;height:auto;display:block;margin:0 auto 4px}.hs b{display:block;font-size:14px}.hs span{color:var(--fg-faint);display:block}.hs p{margin:4px 0 0;font-size:12.5px;text-align:left}
 @media (max-width:380px){.woop{grid-template-columns:repeat(2,1fr)}.vboard{grid-template-columns:repeat(2,1fr)}}
 .grat{background:var(--surface);border:1px solid var(--rule-soft);border-radius:16px;padding:14px}
@@ -10253,6 +10254,34 @@ async function loadJSON(path, key) {
 
 /* ---- router ---- */
 const ROUTES = {};
+/* In-app history: the back arrow on a screen returns to the screen the
+   visitor actually came from (home, a tab, a list), not to a fixed parent. */
+const NAV = { current: '', stack: [], popping: false, skip: false };
+try { NAV.stack = JSON.parse(sessionStorage.getItem('nabu-nav') || '[]'); } catch (e) { NAV.stack = []; }
+function navRemember(h) {
+  if (NAV.skip) { NAV.skip = false; }
+  else if (NAV.popping) { NAV.popping = false; }
+  else if (NAV.current && NAV.current !== h) { NAV.stack.push(NAV.current); if (NAV.stack.length > 40) NAV.stack.shift(); }
+  NAV.current = h;
+  try { sessionStorage.setItem('nabu-nav', JSON.stringify(NAV.stack)); } catch (e) { /* private mode */ }
+}
+function redirect(h) { NAV.skip = true; location.replace(h); }
+/* A short name for a hash, used as the back arrow's label. */
+function screenLabel(h) {
+  const S = T(), p = String(h || '').replace(/^#\/?/, '').split('?')[0].split('/'), r = p[0] || 'home', a = p.slice(1);
+  if (r === 'home') return S.nav.home;
+  if (r === 'pick') return S.nav.pick;
+  if (r === 'book') return S.nav.book;
+  if (r === 'prices') return S.priceTitle;
+  if (r === 'me') return S.nav.me;
+  if (r === 'learn') { if (!a.length) return S.learnTitle; if (a.length === 1 && S.cats[a[0]]) return S.cats[a[0]]; if (a[0] === 'fortune' && a.length === 2) return S.cats.fortune; }
+  return S.back;
+}
+function backLink(href, label) {
+  const prev = NAV.stack[NAV.stack.length - 1];
+  const useStack = prev && prev !== NAV.current;
+  return '<p><a href="' + esc(useStack ? prev : href) + '" class="backlink"' + (useStack ? ' data-back="1"' : '') + '>← ' + esc(useStack ? screenLabel(prev) : label) + '</a></p>';
+}
 function parseHash() {
   const h = location.hash.replace(/^#\/?/, '');
   const q = h.split('?'), path = q[0].split('/'), params = {};
@@ -10262,13 +10291,19 @@ function parseHash() {
 function route() {
   const r = parseHash();
   const def = ROUTES[r.route];
-  if (!def) { location.hash = '#/home'; return; }
+  if (!def) { redirect('#/home'); return; }
+  navRemember(location.hash || '#/home');
   renderChrome(def.nav);
   window.scrollTo(0, 0);
   def.render(r.args, r.params);
 }
 function boot() {
   window.addEventListener('hashchange', route);
+  document.addEventListener('click', (e) => {
+    const a = e.target.closest && e.target.closest('a[data-back]');
+    if (!a) return;
+    e.preventDefault(); NAV.stack.pop(); NAV.popping = true; location.hash = a.getAttribute('href');
+  });
   $('#lang').addEventListener('click', () => { lang = lang === 'vi' ? 'en' : 'vi'; store.set('nabu-lang', lang); route(); });
   $('#theme').addEventListener('click', () => setTheme(effectiveTheme() === 'dark' ? 'light' : 'dark'));
   applyTheme();
@@ -10931,7 +10966,6 @@ ROUTES.pick = { nav: 'pick', render: renderPick };
    #/learn/astro, #/learn/sign/<key>, #/learn/manifest, #/learn/fortune, #/learn/numbers  (free) */
 const CAT_ICONS = { tarot: PICK_ICON, lenormand: '🗝️', astro: '🔮', manifest: '🌙', fortune: '🔢' };
 const badgeHTML = () => '';
-const backLink = (href, label) => '<p><a href="' + href + '">← ' + esc(label) + '</a></p>';
 const courseOf = (id) => COURSES.filter((c) => c.id === id)[0];
 
 /* ---- paywall ---- */
@@ -11001,7 +11035,7 @@ function renderLearn(args, params) {
   if (sub === 'manifest') return renderGuideList(sub);
   if (sub === 'guide') return renderGuide(args[1]);
   if (sub === 'numbers') return renderFortune('numbers');
-  location.hash = '#/learn';
+  redirect('#/learn');
 }
 
 /* ---- the two courses: cards | spreads | guides ---- */
@@ -11057,7 +11091,7 @@ function bindGrid(panel, courseId) {
 function renderCard(id) {
   if (id !== DEMO.tarot.card && gate('tarot', '#/learn/tarot')) return;
   const S = T(), m = $('#main');
-  if (!cardById(id)) { location.hash = '#/learn/tarot'; return; }
+  if (!cardById(id)) { redirect('#/learn/tarot'); return; }
   m.innerHTML = backLink('#/learn/tarot', S.cats.tarot) + cardBodyHTML(id);
   bindAccordions(m); bindAI(m);
 }
@@ -11096,7 +11130,7 @@ function lenFace(n) {
 function renderLen(n) {
   if (n !== DEMO.lenormand.card && gate('lenormand', '#/learn/lenormand')) return;
   const S = T(), m = $('#main');
-  if (!lenCard(n)) { location.hash = '#/learn/lenormand'; return; }
+  if (!lenCard(n)) { redirect('#/learn/lenormand'); return; }
   m.innerHTML = backLink('#/learn/lenormand', S.cats.lenormand) + lenBodyHTML(n);
 }
 function lenBodyHTML(n) {
@@ -11157,7 +11191,7 @@ function renderAstro() {
 }
 function renderSign(key) {
   const S = T(), m = $('#main'), z = ZSIGN[key];
-  if (!z) { location.hash = '#/learn/astro'; return; }
+  if (!z) { redirect('#/learn/astro'); return; }
   const zp = ZODIAC[key][lang], ruler = ZPLANET[ZRULER[key]];
   const cards = Object.keys(ASTRO).filter((id) => ASTRO[id].sign === key);
   m.innerHTML = backLink('#/learn/astro', S.cats.astro) + '<div class="detail">'
@@ -11194,7 +11228,7 @@ function spreadsListHTML(sys) {
 }
 function renderSpread(id) {
   const S = T(), m = $('#main'), s = SPREADS[lang].filter((x) => x.id === id)[0];
-  if (!s) { location.hash = '#/learn'; return; }
+  if (!s) { redirect('#/learn'); return; }
   const courseId = s.sys === 'len' ? 'lenormand' : 'tarot', back = '#/learn/' + courseId + '?tab=spreads';
   if (gate(courseId, back)) return;
   const sec = (h, t) => t ? '<h3>' + esc(h) + '</h3><p>' + esc(t).replace(/\*([^*]+)\*/g, '<i>$1</i>') + '</p>' : '';
@@ -11218,7 +11252,7 @@ function renderGuideList(cat) {
 }
 function renderGuide(id) {
   const S = T(), m = $('#main'), g = GUIDES.filter((x) => x.id === id)[0];
-  if (!g) { location.hash = '#/learn'; return; }
+  if (!g) { redirect('#/learn'); return; }
   const back = g.cat === 'tarot' || g.cat === 'lenormand' ? '#/learn/' + g.cat + '?tab=guides' : g.cat === 'astro' ? '#/learn/astro' : '#/learn/' + g.cat;
   if ((g.cat === 'tarot' || g.cat === 'lenormand') && g.id !== DEMO[g.cat].guide && gate(g.cat, back)) return;
   const vis = guideVisualHTML(g.id);
@@ -11357,7 +11391,7 @@ function lessonListHTML(courseId) {
 }
 function renderLesson(courseId, n) {
   const S = T(), m = $('#main'), l = (LESSONS[courseId] || []).filter((x) => x.n === Number(n))[0];
-  if (!l) { location.hash = '#/learn/' + courseId; return; }
+  if (!l) { redirect('#/learn/' + courseId); return; }
   if (!(n === '1' || n === 1) && gate(courseId, '#/learn/' + courseId)) return;
   let body = l.intro ? '<p class="lead">' + esc(L(l.intro)) + '</p>' : '';
   if (l.guide) { const g = GUIDES.filter((x) => x.id === l.guide)[0]; body += '<div class="guide">' + guideBodyHTML(g) + '</div>'; if (l.visual === 'court' || l.visual === 'journey' || l.visual === 'lenintro' || l.visual === 'pairs') { /* the lesson draws its own */ } else { const gv = guideVisualHTML(g.id); if (gv) body += '<div class="visual">' + gv + '</div>'; } }
@@ -11464,7 +11498,7 @@ function renderFortune(tool) {
   if (tool === 'cards') return renderPlayingCards(m, back + title('cards'));
   if (tool === 'tea') return renderTea(m, back + title('tea'));
   if (tool === 'animals') return renderAnimals(m, back + title('animals'));
-  location.hash = '#/learn/fortune';
+  redirect('#/learn/fortune');
 }
 
 /* ---- numerology ---- */
@@ -12322,7 +12356,7 @@ function adminCodes(p) {
 ROUTES.admin = { nav: '', render: renderAdmin };
 
 /* ============================ boot ============================ */
-window.APP_VERSION = 'v35';
+window.APP_VERSION = 'v36';
 window.NABU = { CONFIG: CONFIG, LESSONS: LESSONS, localAnswer: localAnswer, compatVerdict: compatVerdict, numerologyOf: numerologyOf, ZDEEP: ZDEEP, lunarToday: lunarToday, solarToLunar: solarToLunar, DECK: DECK, INSIGHT: INSIGHT, KW: KW, ASK: ASK, TOPICS: TOPICS, GUIDES: GUIDES, SERVICES: SERVICES, COURSES: COURSES, ACCESS: ACCESS, makeCode: makeCode, parseCode: parseCode, ZODIAC: ZODIAC, pick: pick, book: book,
   insightHTML: insightHTML, insightOf: insightOf, sunSignIndex: sunSignIndex, lifePath: lifePath, PROFILE: () => PROFILE, BE: BE };
 BE.init().catch(() => { /* backend unreachable: the app runs device-only */ });

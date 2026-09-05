@@ -6,7 +6,6 @@
    #/learn/astro, #/learn/sign/<key>, #/learn/manifest, #/learn/fortune, #/learn/numbers  (free) */
 const CAT_ICONS = { tarot: PICK_ICON, lenormand: '🗝️', astro: '🔮', manifest: '🌙', fortune: '🔢' };
 const badgeHTML = () => '';
-const backLink = (href, label) => '<p><a href="' + href + '">← ' + esc(label) + '</a></p>';
 const courseOf = (id) => COURSES.filter((c) => c.id === id)[0];
 
 /* ---- paywall ---- */
@@ -76,7 +75,7 @@ function renderLearn(args, params) {
   if (sub === 'manifest') return renderGuideList(sub);
   if (sub === 'guide') return renderGuide(args[1]);
   if (sub === 'numbers') return renderFortune('numbers');
-  location.hash = '#/learn';
+  redirect('#/learn');
 }
 
 /* ---- the two courses: cards | spreads | guides ---- */
@@ -132,7 +131,7 @@ function bindGrid(panel, courseId) {
 function renderCard(id) {
   if (id !== DEMO.tarot.card && gate('tarot', '#/learn/tarot')) return;
   const S = T(), m = $('#main');
-  if (!cardById(id)) { location.hash = '#/learn/tarot'; return; }
+  if (!cardById(id)) { redirect('#/learn/tarot'); return; }
   m.innerHTML = backLink('#/learn/tarot', S.cats.tarot) + cardBodyHTML(id);
   bindAccordions(m); bindAI(m);
 }
@@ -171,7 +170,7 @@ function lenFace(n) {
 function renderLen(n) {
   if (n !== DEMO.lenormand.card && gate('lenormand', '#/learn/lenormand')) return;
   const S = T(), m = $('#main');
-  if (!lenCard(n)) { location.hash = '#/learn/lenormand'; return; }
+  if (!lenCard(n)) { redirect('#/learn/lenormand'); return; }
   m.innerHTML = backLink('#/learn/lenormand', S.cats.lenormand) + lenBodyHTML(n);
 }
 function lenBodyHTML(n) {
@@ -232,7 +231,7 @@ function renderAstro() {
 }
 function renderSign(key) {
   const S = T(), m = $('#main'), z = ZSIGN[key];
-  if (!z) { location.hash = '#/learn/astro'; return; }
+  if (!z) { redirect('#/learn/astro'); return; }
   const zp = ZODIAC[key][lang], ruler = ZPLANET[ZRULER[key]];
   const cards = Object.keys(ASTRO).filter((id) => ASTRO[id].sign === key);
   m.innerHTML = backLink('#/learn/astro', S.cats.astro) + '<div class="detail">'
@@ -269,7 +268,7 @@ function spreadsListHTML(sys) {
 }
 function renderSpread(id) {
   const S = T(), m = $('#main'), s = SPREADS[lang].filter((x) => x.id === id)[0];
-  if (!s) { location.hash = '#/learn'; return; }
+  if (!s) { redirect('#/learn'); return; }
   const courseId = s.sys === 'len' ? 'lenormand' : 'tarot', back = '#/learn/' + courseId + '?tab=spreads';
   if (gate(courseId, back)) return;
   const sec = (h, t) => t ? '<h3>' + esc(h) + '</h3><p>' + esc(t).replace(/\*([^*]+)\*/g, '<i>$1</i>') + '</p>' : '';
@@ -293,7 +292,7 @@ function renderGuideList(cat) {
 }
 function renderGuide(id) {
   const S = T(), m = $('#main'), g = GUIDES.filter((x) => x.id === id)[0];
-  if (!g) { location.hash = '#/learn'; return; }
+  if (!g) { redirect('#/learn'); return; }
   const back = g.cat === 'tarot' || g.cat === 'lenormand' ? '#/learn/' + g.cat + '?tab=guides' : g.cat === 'astro' ? '#/learn/astro' : '#/learn/' + g.cat;
   if ((g.cat === 'tarot' || g.cat === 'lenormand') && g.id !== DEMO[g.cat].guide && gate(g.cat, back)) return;
   const vis = guideVisualHTML(g.id);

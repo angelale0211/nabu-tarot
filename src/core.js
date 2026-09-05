@@ -206,6 +206,34 @@ async function loadJSON(path, key) {
 
 /* ---- router ---- */
 const ROUTES = {};
+/* In-app history: the back arrow on a screen returns to the screen the
+   visitor actually came from (home, a tab, a list), not to a fixed parent. */
+const NAV = { current: '', stack: [], popping: false, skip: false };
+try { NAV.stack = JSON.parse(sessionStorage.getItem('nabu-nav') || '[]'); } catch (e) { NAV.stack = []; }
+function navRemember(h) {
+  if (NAV.skip) { NAV.skip = false; }
+  else if (NAV.popping) { NAV.popping = false; }
+  else if (NAV.current && NAV.current !== h) { NAV.stack.push(NAV.current); if (NAV.stack.length > 40) NAV.stack.shift(); }
+  NAV.current = h;
+  try { sessionStorage.setItem('nabu-nav', JSON.stringify(NAV.stack)); } catch (e) { /* private mode */ }
+}
+function redirect(h) { NAV.skip = true; location.replace(h); }
+/* A short name for a hash, used as the back arrow's label. */
+function screenLabel(h) {
+  const S = T(), p = String(h || '').replace(/^#\/?/, '').split('?')[0].split('/'), r = p[0] || 'home', a = p.slice(1);
+  if (r === 'home') return S.nav.home;
+  if (r === 'pick') return S.nav.pick;
+  if (r === 'book') return S.nav.book;
+  if (r === 'prices') return S.priceTitle;
+  if (r === 'me') return S.nav.me;
+  if (r === 'learn') { if (!a.length) return S.learnTitle; if (a.length === 1 && S.cats[a[0]]) return S.cats[a[0]]; if (a[0] === 'fortune' && a.length === 2) return S.cats.fortune; }
+  return S.back;
+}
+function backLink(href, label) {
+  const prev = NAV.stack[NAV.stack.length - 1];
+  const useStack = prev && prev !== NAV.current;
+  return '<p><a href="' + esc(useStack ? prev : href) + '" class="backlink"' + (useStack ? ' data-back="1"' : '') + '>← ' + esc(useStack ? screenLabel(prev) : label) + '</a></p>';
+}
 function parseHash() {
   const h = location.hash.replace(/^#\/?/, '');
   const q = h.split('?'), path = q[0].split('/'), params = {};
@@ -215,13 +243,19 @@ function parseHash() {
 function route() {
   const r = parseHash();
   const def = ROUTES[r.route];
-  if (!def) { location.hash = '#/home'; return; }
+  if (!def) { redirect('#/home'); return; }
+  navRemember(location.hash || '#/home');
   renderChrome(def.nav);
   window.scrollTo(0, 0);
   def.render(r.args, r.params);
 }
 function boot() {
   window.addEventListener('hashchange', route);
+  document.addEventListener('click', (e) => {
+    const a = e.target.closest && e.target.closest('a[data-back]');
+    if (!a) return;
+    e.preventDefault(); NAV.stack.pop(); NAV.popping = true; location.hash = a.getAttribute('href');
+  });
   $('#lang').addEventListener('click', () => { lang = lang === 'vi' ? 'en' : 'vi'; store.set('nabu-lang', lang); route(); });
   $('#theme').addEventListener('click', () => setTheme(effectiveTheme() === 'dark' ? 'light' : 'dark'));
   applyTheme();

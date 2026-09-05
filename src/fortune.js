@@ -79,7 +79,7 @@ function renderFortune(tool) {
   if (tool === 'cards') return renderPlayingCards(m, back + title('cards'));
   if (tool === 'tea') return renderTea(m, back + title('tea'));
   if (tool === 'animals') return renderAnimals(m, back + title('animals'));
-  location.hash = '#/learn/fortune';
+  redirect('#/learn/fortune');
 }
 
 /* ---- numerology ---- */

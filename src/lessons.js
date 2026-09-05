@@ -105,7 +105,7 @@ function lessonListHTML(courseId) {
 }
 function renderLesson(courseId, n) {
   const S = T(), m = $('#main'), l = (LESSONS[courseId] || []).filter((x) => x.n === Number(n))[0];
-  if (!l) { location.hash = '#/learn/' + courseId; return; }
+  if (!l) { redirect('#/learn/' + courseId); return; }
   if (!(n === '1' || n === 1) && gate(courseId, '#/learn/' + courseId)) return;
   let body = l.intro ? '<p class="lead">' + esc(L(l.intro)) + '</p>' : '';
   if (l.guide) { const g = GUIDES.filter((x) => x.id === l.guide)[0]; body += '<div class="guide">' + guideBodyHTML(g) + '</div>'; if (l.visual === 'court' || l.visual === 'journey' || l.visual === 'lenintro' || l.visual === 'pairs') { /* the lesson draws its own */ } else { const gv = guideVisualHTML(g.id); if (gv) body += '<div class="visual">' + gv + '</div>'; } }
