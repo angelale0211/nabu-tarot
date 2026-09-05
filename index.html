@@ -407,7 +407,9 @@ main{padding:22px 0 30px}
 /* The deck as a carousel: swipe, the middle card grows, tap to pick. */
 .fan.deck{position:static;height:auto;max-width:none;perspective:none;display:flex;gap:6px;overflow-x:auto;overflow-y:hidden;scroll-snap-type:x mandatory;scroll-behavior:smooth;padding:16px calc(50% - 46px) 14px;margin:0 -18px 4px;scrollbar-width:none;-webkit-overflow-scrolling:touch}
 .fan.deck::-webkit-scrollbar{display:none}
-.fan.deck .slot{position:relative;flex:0 0 92px;width:92px;height:150px;margin:0;scroll-snap-align:center;transform:scale(.68);opacity:.45;transition:transform .12s linear,opacity .12s linear;border-radius:6px;left:auto;bottom:auto}
+.fan.deck .slot{position:relative;flex:0 0 92px;width:92px;height:150px;margin:0;scroll-snap-align:center;transform:scale(.68);transform-origin:50% 50%;opacity:.45;transition:transform .12s linear,opacity .12s linear;border-radius:6px;left:auto;bottom:auto}
+.fan.deck{cursor:grab}.fan.deck.grabbing{cursor:grabbing}.fan.deck .slot button{cursor:pointer}
+@media (hover:hover){.fan.deck .slot:hover{transform:scale(1.12)!important;opacity:1!important;z-index:6}}
 .fan.deck .slot svg{filter:drop-shadow(0 4px 8px var(--shade))}.fan.deck .slot.near{box-shadow:0 0 0 2px var(--lav)}
 .fan.deck .slot.chosen{box-shadow:0 0 0 3px var(--primary);transform:scale(1.1)!important;opacity:1!important;z-index:5}.fan.deck .slot.dim{opacity:.25!important}
 .deckbar{display:flex;align-items:center;justify-content:center;gap:14px;margin:0 0 8px}.deckbar .btn{min-height:36px;padding:0 14px;font-size:18px;border-radius:999px}.deckbar span{min-width:64px;text-align:center;font-weight:600}
@@ -11287,6 +11289,14 @@ function bindDeck(m) {
     fan.scrollLeft = s.offsetLeft - (fan.clientWidth - s.offsetWidth) / 2; setTimeout(update, 450);
   };
   $$('[data-step]', m).forEach((b) => b.addEventListener('click', () => to((pick.center || 0) + Number(b.getAttribute('data-step')))));
+  // Mouse: press and drag to slide the deck, wheel to move it, hover to lift a card (CSS).
+  let drag = null, moved = false;
+  fan.addEventListener('mousedown', (e) => { if (e.button !== 0) return; drag = { x: e.clientX, left: fan.scrollLeft }; moved = false; fan.style.scrollSnapType = 'none'; fan.style.scrollBehavior = 'auto'; fan.classList.add('grabbing'); e.preventDefault(); });
+  window.addEventListener('mousemove', (e) => { if (!drag) return; const dx = e.clientX - drag.x; if (Math.abs(dx) > 4) moved = true; fan.scrollLeft = drag.left - dx; });
+  const endDrag = () => { if (!drag) return; drag = null; fan.classList.remove('grabbing'); fan.style.scrollSnapType = ''; fan.style.scrollBehavior = ''; update(); if (moved) { to(pick.center || 0); setTimeout(() => { moved = false; }, 50); } };
+  window.addEventListener('mouseup', endDrag); fan.addEventListener('mouseleave', endDrag);
+  fan.addEventListener('click', (e) => { if (moved) { e.stopPropagation(); e.preventDefault(); } }, true);
+  fan.addEventListener('wheel', (e) => { if (Math.abs(e.deltaY) > Math.abs(e.deltaX)) { fan.scrollLeft += e.deltaY; e.preventDefault(); } }, { passive: false });
   fan.style.scrollBehavior = 'auto'; to(pick.chosen != null ? Math.max(0, pick.hand.indexOf(pick.chosen)) : Math.floor(slots.length / 2)); fan.style.scrollBehavior = '';
   update(); requestAnimationFrame(update);
 }
@@ -13017,7 +13027,7 @@ function adminCodes(p) {
 ROUTES.admin = { nav: '', render: renderAdmin };
 
 /* ============================ boot ============================ */
-window.APP_VERSION = 'v56';
+window.APP_VERSION = 'v57';
 window.NABU = { CONFIG: CONFIG, LESSONS: LESSONS, localAnswer: localAnswer, compatVerdict: compatVerdict, numerologyOf: numerologyOf, ZDEEP: ZDEEP, lunarToday: lunarToday, solarToLunar: solarToLunar, DECK: DECK, INSIGHT: INSIGHT, KW: KW, ASK: ASK, TOPICS: TOPICS, GUIDES: GUIDES, SERVICES: SERVICES, COURSES: COURSES, ACCESS: ACCESS, makeCode: makeCode, parseCode: parseCode, ZODIAC: ZODIAC, pick: pick, book: book,
   insightHTML: insightHTML, insightOf: insightOf, sunSignIndex: sunSignIndex, lifePath: lifePath, PROFILE: () => PROFILE, BE: BE };
 BE.initP = BE.init().catch(() => { /* backend unreachable: the app runs device-only */ });

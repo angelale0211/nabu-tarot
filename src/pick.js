@@ -80,6 +80,14 @@ function bindDeck(m) {
     fan.scrollLeft = s.offsetLeft - (fan.clientWidth - s.offsetWidth) / 2; setTimeout(update, 450);
   };
   $$('[data-step]', m).forEach((b) => b.addEventListener('click', () => to((pick.center || 0) + Number(b.getAttribute('data-step')))));
+  // Mouse: press and drag to slide the deck, wheel to move it, hover to lift a card (CSS).
+  let drag = null, moved = false;
+  fan.addEventListener('mousedown', (e) => { if (e.button !== 0) return; drag = { x: e.clientX, left: fan.scrollLeft }; moved = false; fan.style.scrollSnapType = 'none'; fan.style.scrollBehavior = 'auto'; fan.classList.add('grabbing'); e.preventDefault(); });
+  window.addEventListener('mousemove', (e) => { if (!drag) return; const dx = e.clientX - drag.x; if (Math.abs(dx) > 4) moved = true; fan.scrollLeft = drag.left - dx; });
+  const endDrag = () => { if (!drag) return; drag = null; fan.classList.remove('grabbing'); fan.style.scrollSnapType = ''; fan.style.scrollBehavior = ''; update(); if (moved) { to(pick.center || 0); setTimeout(() => { moved = false; }, 50); } };
+  window.addEventListener('mouseup', endDrag); fan.addEventListener('mouseleave', endDrag);
+  fan.addEventListener('click', (e) => { if (moved) { e.stopPropagation(); e.preventDefault(); } }, true);
+  fan.addEventListener('wheel', (e) => { if (Math.abs(e.deltaY) > Math.abs(e.deltaX)) { fan.scrollLeft += e.deltaY; e.preventDefault(); } }, { passive: false });
   fan.style.scrollBehavior = 'auto'; to(pick.chosen != null ? Math.max(0, pick.hand.indexOf(pick.chosen)) : Math.floor(slots.length / 2)); fan.style.scrollBehavior = '';
   update(); requestAnimationFrame(update);
 }

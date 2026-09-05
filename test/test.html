@@ -79,6 +79,7 @@ async function go(hash, sel) { W().location.hash = hash; await sleep(30); return
     ok(d.querySelectorAll('#fan .slot').length === 78 && d.querySelectorAll('[data-focus]').length === 5, 'the whole deck of 78 cards, five focuses');
     ok(d.querySelector('#fan.deck').scrollWidth > d.querySelector('#fan.deck').clientWidth * 3 && d.querySelectorAll('#fan .slot.near').length === 1 && /\d+ \/ 78/.test(d.querySelector('#deckpos').textContent) && d.querySelectorAll('[data-step]').length === 2, 'the deck is a swipeable carousel with one highlighted middle card, arrows and a position counter');
     { const before = d.querySelector('#deckpos').textContent; d.querySelector('[data-step="1"]').click(); await sleep(400); ok(d.querySelector('#deckpos').textContent !== before, 'the arrow steps to the next card'); }
+    { const fan = d.querySelector('#fan.deck'), l0 = fan.scrollLeft; fan.dispatchEvent(new w.MouseEvent('mousedown', { clientX: 200, button: 0, bubbles: true })); w.dispatchEvent(new w.MouseEvent('mousemove', { clientX: 60, bubbles: true })); w.dispatchEvent(new w.MouseEvent('mouseup', { bubbles: true })); await sleep(80); ok(fan.scrollLeft !== l0 && w.getComputedStyle(fan).cursor === 'grab', 'pressing and dragging with the mouse slides the deck'); }
     d.querySelector('[data-focus="love"]').click(); d.querySelectorAll('#fan button')[2].click();
     await waitFor(() => d.querySelector('#reveal .hero'), 4000);
     const chosen = N.pick.chosen;
@@ -169,7 +170,7 @@ async function go(hash, sel) { W().location.hash = hash; await sleep(30); return
     await go('#/learn/lesson/lenormand/6', '.spreads-v');
     ok(d.querySelectorAll('.spv').length === 7 && /Grand Tableau/.test(d.querySelector('.spreads-v').textContent), 'lenormand session 6: seven spread diagrams incl. the Grand Tableau');
     await go('#/report', '#rwhat');
-    ok(d.querySelector('#rwhat') && d.querySelector('#rsend') && !d.querySelector('#rcopy') && !d.querySelector('#rig') && d.querySelector('a[href="#/contact"]') && /Nabu Tarot v56/.test(d.querySelector('.msgbox').textContent), 'bug report screen: direct send button, Instagram, copy, auto-attached info');
+    ok(d.querySelector('#rwhat') && d.querySelector('#rsend') && !d.querySelector('#rcopy') && !d.querySelector('#rig') && d.querySelector('a[href="#/contact"]') && /Nabu Tarot v57/.test(d.querySelector('.msgbox').textContent), 'bug report screen: direct send button, Instagram, copy, auto-attached info');
     d.querySelector('#rwhat').value = 'Nút không bấm được'; d.querySelector('#rsend').click(); await sleep(150);
     ok(/đăng nhập|Liên hệ/.test(d.querySelector('#rstatus').textContent), 'without a sign-in the send button explains and points at the contact screen');
     ok(N.CONFIG.adminNotifyEmails.indexOf('nabutarot@outlook.com') === 0, 'notifications go to nabutarot@outlook.com first');
@@ -400,7 +401,7 @@ async function go(hash, sel) { W().location.hash = hash; await sleep(30); return
     ok(bgOf() === (wasDark ? DARK : LIGHT), 'and flips back');
     await go('#/me', '[data-theme-pick]');
     ok(d.querySelectorAll('[data-theme-pick]').length === 4 && d.querySelector('[data-theme-pick].on'), 'Me tab offers auto / light / dark / pastel pink with the current one marked');
-    ok(d.querySelector('#chkupd') && /Phiên bản v56/.test(d.querySelector('#main').textContent), 'Me shows the version with a check-for-updates button');
+    ok(d.querySelector('#chkupd') && /Phiên bản v57/.test(d.querySelector('#main').textContent), 'Me shows the version with a check-for-updates button');
     d.querySelector('[data-theme-pick="pink"]').click();
     ok(d.documentElement.getAttribute('data-theme') === 'pink' && bgOf() === PINK && w.getComputedStyle(d.querySelector('.btn.primary') || d.body).backgroundColor !== '', 'pastel pink choice paints the blush palette');
     d.querySelector('[data-theme-pick="dark"]').click();
