@@ -179,7 +179,8 @@ function quickLinksHTML() {
     ['#/learn/tarot', PICK_ICON, S.cats.tarot, lang === 'vi' ? '78 lá, ý nghĩa' : '78 cards, meanings'],
     ['#/book', '📅', S.nav.book, lang === 'vi' ? 'chọn giờ với Nabu' : 'pick a time with Nabu'],
     ['#/prices', '💜', S.priceTitle, lang === 'vi' ? 'các gói xem bài' : 'reading packages']];
-  return '<div class="tiles">' + tiles.map((t) => '<a class="tile" href="' + t[0] + '"><div class="ic">' + t[1] + '</div><b>' + esc(t[2]) + '</b><span>' + esc(t[3]) + '</span></a>').join('') + '</div>';
+  return '<div class="tiles">' + tiles.map((t) => '<a class="tile" href="' + t[0] + '"><div class="ic">' + t[1] + '</div><b>' + esc(t[2]) + '</b><span>' + esc(t[3]) + '</span></a>').join('') + '</div>'
+    + (isStandalone() || isTWA() ? '' : '<a class="upnext" href="#/install" style="margin-top:-8px"><span class="ic">📲</span><span><b>' + esc(S.installTitle) + '</b><br>' + esc(S.instAndroidIntro) + '</span></a>');
 }
 const SIGN_EN = ['aries', 'taurus', 'gemini', 'cancer', 'leo', 'virgo', 'libra', 'scorpio', 'sagittarius', 'capricorn', 'aquarius', 'pisces'];
 function horoCardHTML(period) {

@@ -1171,7 +1171,10 @@ const STR = {
     send: 'Gửi',
     noMsgs: 'Chưa có tin nhắn. Bạn cứ hỏi, Nabu sẽ trả lời.',
     themeTitle: 'Giao diện', themes: { auto: 'Theo điện thoại', light: 'Sáng', dark: 'Tối', pink: 'Hồng pastel' }, themeHint: 'Theo điện thoại: app tự đổi sáng/tối cùng máy của bạn. Nút ở góc trên xoay vòng sáng → tối → hồng.',
-    installTitle: 'Cài app lên điện thoại',
+    installTitle: 'Cài app lên điện thoại', installLink: 'Tải app', instIntro: 'Nabu Tarot chạy như một app thật trên điện thoại: có biểu tượng riêng, mở toàn màn hình, dùng được cả khi mất mạng, và tự cập nhật.', instAlready: 'Bạn đang dùng bản app rồi. Gửi trang này cho bạn bè để họ cài nhé.',
+    instAndroidIntro: 'Tải tệp cài đặt, mở tệp, bấm Cài đặt. Xong.', instDownload: 'Tải app cho Android (2 MB)', instAndroidSteps: ['Bấm nút tải ở trên. Chrome sẽ hỏi có tải tệp không, chọn Tải xuống.', 'Mở tệp nabu-tarot.apk từ thanh thông báo hoặc mục Tệp đã tải.', 'Nếu điện thoại hỏi "Cho phép cài từ nguồn này?", bật cho phép rồi quay lại.', 'Bấm Cài đặt. Biểu tượng Nabu Tarot xuất hiện trên màn hình chính.'], instAndroidNote: 'App do Nabu ký, an toàn. Điện thoại cảnh báo vì tệp tải ngoài Google Play; bản trên Google Play sẽ có sau.',
+    instIosIntro: 'iPhone không cho tải tệp cài đặt ngoài App Store, nhưng Safari cài được app này chỉ với ba bước.', instIosSteps: ['Mở trang này bằng Safari (không phải trong Instagram hay Facebook).', 'Bấm nút Chia sẻ (hình ô vuông có mũi tên đi lên) ở thanh dưới.', 'Cuộn xuống, chọn "Thêm vào MH chính", rồi bấm Thêm.'], instIosNote: 'Biểu tượng Nabu Tarot xuất hiện như mọi app khác và mở toàn màn hình.',
+    instUpdatesTitle: 'Cập nhật tự động', instUpdates: 'Cả hai bản đều mở nội dung mới nhất mỗi lần bạn vào: bài viết, khoá học, tính năng mới. Bạn không phải cài lại bao giờ.', instShareHint: 'Muốn giới thiệu cho bạn bè?', instShare: 'Gửi link cài app', instShareText: 'Cài app Nabu Tarot: rút bài mỗi ngày, học tarot, đặt lịch xem bài.',
     install: 'Trên iPhone: mở bằng Safari, bấm Chia sẻ, chọn "Thêm vào MH chính". Trên Android: bấm menu ⋮ rồi "Cài đặt ứng dụng".',
     dismiss: 'Đóng', tourMini: 'Hướng dẫn dùng app', tourOpen: 'Xem lại',
     offlineReady: 'App đã sẵn sàng dùng offline.',
@@ -1413,7 +1416,10 @@ const STR = {
     send: 'Send',
     noMsgs: 'No messages yet. Ask away, Nabu will answer.',
     themeTitle: 'Appearance', themes: { auto: 'Match my phone', light: 'Light', dark: 'Dark', pink: 'Pastel pink' }, themeHint: 'Match my phone: the app switches with your phone\'s light or dark setting. The top button cycles light → dark → pink.',
-    installTitle: 'Install on your phone',
+    installTitle: 'Install on your phone', installLink: 'Get the app', instIntro: 'Nabu Tarot runs as a real app on your phone: its own icon, full screen, works offline, and updates itself.', instAlready: 'You are already using the app. Send this page to friends so they can install it.',
+    instAndroidIntro: 'Download the installer, open it, tap Install. Done.', instDownload: 'Download for Android (2 MB)', instAndroidSteps: ['Tap the download button above. Chrome asks whether to download the file: choose Download.', 'Open nabu-tarot.apk from the notification bar or your Downloads.', 'If the phone asks "Allow from this source?", allow it and come back.', 'Tap Install. The Nabu Tarot icon appears on your home screen.'], instAndroidNote: 'The app is signed by Nabu and safe. The phone warns because the file comes from outside Google Play; the Play version follows later.',
+    instIosIntro: 'iPhone does not allow installers outside the App Store, but Safari installs this app in three steps.', instIosSteps: ['Open this page in Safari (not inside Instagram or Facebook).', 'Tap the Share button (the square with an arrow) in the bottom bar.', 'Scroll down, choose "Add to Home Screen", then tap Add.'], instIosNote: 'The Nabu Tarot icon appears like any other app and opens full screen.',
+    instUpdatesTitle: 'Automatic updates', instUpdates: 'Both versions open the newest content every time: posts, courses, new features. You never reinstall.', instShareHint: 'Want to tell friends?', instShare: 'Send the install link', instShareText: 'Install the Nabu Tarot app: a card a day, tarot lessons, book a reading.',
     install: 'iPhone: open in Safari, tap Share, then "Add to Home Screen". Android: tap the ⋮ menu, then "Install app".',
     dismiss: 'Close', tourMini: 'How to use the app', tourOpen: 'Show again',
     offlineReady: 'The app is ready to use offline.',
@@ -10248,6 +10254,7 @@ function renderFooter() {
   if (CONFIG.instagram) links.push('<a href="https://instagram.com/' + esc(CONFIG.instagram) + '" target="_blank" rel="noopener">Instagram</a>');
   if (CONFIG.facebookUrl) links.push('<a href="' + esc(CONFIG.facebookUrl) + '" target="_blank" rel="noopener">Facebook</a>');
   links.push('<a href="#/contact">' + esc(S.contactLink) + '</a>');
+  links.push('<a href="#/install">' + esc(S.installLink) + '</a>');
   links.push('<a href="#/privacy">' + esc(S.privacyLink) + '</a>');
   links.push('<a href="#/report">' + esc(S.reportLink) + '</a>');
   $('#foot').innerHTML = '<div class="wrap">' + LOGO + '<div>' + esc(L(CONFIG.tagline)) + '<div class="links">' + links.join(' · ') + '</div><div class="copy">© ' + new Date().getFullYear() + ' ' + esc(CONFIG.brand) + '. ' + esc(S.rights) + '</div></div></div>';
@@ -10419,6 +10426,7 @@ function screenLabel(h) {
   if (r === 'news') return S.newsTitle;
   if (r === 'contact') return S.contactTitle;
   if (r === 'privacy') return S.privacyTitle;
+  if (r === 'install') return S.installTitle;
   if (r === 'me') return S.nav.me;
   if (r === 'learn') { if (!a.length) return S.learnTitle; if (a.length === 1 && S.cats[a[0]]) return S.cats[a[0]]; if (a[0] === 'fortune' && a.length === 2) return S.cats.fortune; }
   return S.back;
@@ -11171,7 +11179,8 @@ function quickLinksHTML() {
     ['#/learn/tarot', PICK_ICON, S.cats.tarot, lang === 'vi' ? '78 lá, ý nghĩa' : '78 cards, meanings'],
     ['#/book', '📅', S.nav.book, lang === 'vi' ? 'chọn giờ với Nabu' : 'pick a time with Nabu'],
     ['#/prices', '💜', S.priceTitle, lang === 'vi' ? 'các gói xem bài' : 'reading packages']];
-  return '<div class="tiles">' + tiles.map((t) => '<a class="tile" href="' + t[0] + '"><div class="ic">' + t[1] + '</div><b>' + esc(t[2]) + '</b><span>' + esc(t[3]) + '</span></a>').join('') + '</div>';
+  return '<div class="tiles">' + tiles.map((t) => '<a class="tile" href="' + t[0] + '"><div class="ic">' + t[1] + '</div><b>' + esc(t[2]) + '</b><span>' + esc(t[3]) + '</span></a>').join('') + '</div>'
+    + (isStandalone() || isTWA() ? '' : '<a class="upnext" href="#/install" style="margin-top:-8px"><span class="ic">📲</span><span><b>' + esc(S.installTitle) + '</b><br>' + esc(S.instAndroidIntro) + '</span></a>');
 }
 const SIGN_EN = ['aries', 'taurus', 'gemini', 'cancer', 'leo', 'virgo', 'libra', 'scorpio', 'sagittarius', 'capricorn', 'aquarius', 'pisces'];
 function horoCardHTML(period) {
@@ -12688,6 +12697,7 @@ function renderMe(args, params) {
     } else if (CONFIG.instagram) {
       h += '<div class="card"><h3 style="margin-bottom:4px">' + esc(S.messages) + '</h3><p class="muted" style="font-size:14px">' + esc(S.messagesSoon) + '</p><a class="btn block" href="https://ig.me/m/' + esc(CONFIG.instagram) + '" target="_blank" rel="noopener">' + esc(S.viaInstagram) + '</a></div>';
     }
+    if (!(isStandalone() || isTWA())) h += '<a class="card" href="#/install" style="display:block;text-decoration:none;color:inherit"><h3 style="margin-bottom:4px">📲 ' + esc(S.installTitle) + '</h3><p class="hint">' + esc(S.instIntro) + '</p></a>';
     h += aiPanelHTML({ type: 'general' });
     h += '<div class="card"><h3 style="margin-bottom:8px">' + esc(S.myCourses) + '</h3>' + COURSES.map((c) => { const a = ACCESS.isAdmin() ? '9999-12-31' : ACCESS.get()[c.id]; return '<div class="course"><span>' + esc(L(c.name)) + '</span><span class="faint">' + (a ? (ACCESS.has(c.id) ? '✓ ' + esc(S.activeUntil(fmtDate(a))) : esc(S.expiredOn(fmtDate(a)))) : (isTWA() ? '🔒' : '🔒 ' + fmtPrice(c.price))) + '</span></div>'; }).join('')
       + '<label class="f" for="mcode">' + esc(S.enterCode) + '</label><div class="row nw"><input id="mcode" placeholder="NABU-T-…" autocapitalize="characters"><button class="btn" id="munlock">' + esc(S.unlock) + '</button></div><p class="hint" id="mcstatus"></p></div>';
@@ -12779,6 +12789,34 @@ async function renderPrivacy() {
     + '<p class="hint" style="margin-top:14px"><a href="privacy.html" target="_blank" rel="noopener">privacy.html</a></p></div>';
 }
 ROUTES.privacy = { nav: 'me', render: renderPrivacy };
+
+/* ============================ install (#/install) ============================
+   How to get the app on a phone. Android: a signed package (nabu-tarot.apk,
+   built from the live site as a Trusted Web Activity) downloads and installs
+   in two taps; it opens this site full screen, so every update is picked up
+   at once. iPhone: Safari's Add to Home Screen, which is the same app. */
+function platformOf() {
+  const ua = navigator.userAgent || '';
+  if (/android/i.test(ua)) return 'android';
+  if (/iphone|ipad|ipod/i.test(ua) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1)) return 'ios';
+  return 'other';
+}
+const isStandalone = () => window.matchMedia('(display-mode: standalone)').matches || navigator.standalone === true;
+function renderInstall() {
+  const S = T(), m = $('#main'), pf = platformOf(), inApp = isStandalone() || isTWA();
+  const android = '<div class="card"><h3>🤖 Android</h3><p class="muted" style="margin:6px 0 10px">' + esc(S.instAndroidIntro) + '</p>'
+    + '<a class="btn primary block" href="nabu-tarot.apk" download="nabu-tarot.apk">⬇️ ' + esc(S.instDownload) + '</a>'
+    + '<ol class="steps" style="margin-top:12px">' + S.instAndroidSteps.map((x) => '<li>' + esc(x) + '</li>').join('') + '</ol><p class="hint">' + esc(S.instAndroidNote) + '</p></div>';
+  const ios = '<div class="card"><h3>🍎 iPhone / iPad</h3><p class="muted" style="margin:6px 0 10px">' + esc(S.instIosIntro) + '</p>'
+    + '<ol class="steps">' + S.instIosSteps.map((x) => '<li>' + esc(x) + '</li>').join('') + '</ol><p class="hint">' + esc(S.instIosNote) + '</p></div>';
+  m.innerHTML = '<div class="eyebrow">' + esc(CONFIG.brand) + '</div><h1 style="margin-bottom:6px">' + esc(S.installTitle) + '</h1><p class="muted">' + esc(S.instIntro) + '</p>'
+    + (inApp ? '<div class="banner">✅ ' + esc(S.instAlready) + '</div>' : '')
+    + (pf === 'ios' ? ios + android : android + ios)
+    + '<div class="card"><h3>🔄 ' + esc(S.instUpdatesTitle) + '</h3><p class="muted" style="margin-top:6px">' + esc(S.instUpdates) + '</p></div>'
+    + '<p class="hint" style="text-align:center">' + esc(S.instShareHint) + '</p><button class="btn block" id="instshare">🔗 ' + esc(S.instShare) + '</button>';
+  $('#instshare').addEventListener('click', () => shareOrCopy(S.instShareText, appURL() + '#/install'));
+}
+ROUTES.install = { nav: 'me', render: renderInstall };
 
 /* ============================ bug reports (#/report) ============================
    A short form plus what the app knows (screen, version, device, the last
@@ -13091,7 +13129,7 @@ function adminCodes(p) {
 ROUTES.admin = { nav: '', render: renderAdmin };
 
 /* ============================ boot ============================ */
-window.APP_VERSION = 'v59';
+window.APP_VERSION = 'v60';
 window.NABU = { CONFIG: CONFIG, LESSONS: LESSONS, localAnswer: localAnswer, compatVerdict: compatVerdict, numerologyOf: numerologyOf, ZDEEP: ZDEEP, lunarToday: lunarToday, solarToLunar: solarToLunar, DECK: DECK, INSIGHT: INSIGHT, KW: KW, ASK: ASK, TOPICS: TOPICS, GUIDES: GUIDES, SERVICES: SERVICES, COURSES: COURSES, ACCESS: ACCESS, makeCode: makeCode, parseCode: parseCode, ZODIAC: ZODIAC, pick: pick, book: book,
   insightHTML: insightHTML, insightOf: insightOf, sunSignIndex: sunSignIndex, lifePath: lifePath, PROFILE: () => PROFILE, BE: BE };
 BE.initP = BE.init().catch(() => { /* backend unreachable: the app runs device-only */ });

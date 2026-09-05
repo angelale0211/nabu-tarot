@@ -176,6 +176,7 @@ function renderMe(args, params) {
     } else if (CONFIG.instagram) {
       h += '<div class="card"><h3 style="margin-bottom:4px">' + esc(S.messages) + '</h3><p class="muted" style="font-size:14px">' + esc(S.messagesSoon) + '</p><a class="btn block" href="https://ig.me/m/' + esc(CONFIG.instagram) + '" target="_blank" rel="noopener">' + esc(S.viaInstagram) + '</a></div>';
     }
+    if (!(isStandalone() || isTWA())) h += '<a class="card" href="#/install" style="display:block;text-decoration:none;color:inherit"><h3 style="margin-bottom:4px">📲 ' + esc(S.installTitle) + '</h3><p class="hint">' + esc(S.instIntro) + '</p></a>';
     h += aiPanelHTML({ type: 'general' });
     h += '<div class="card"><h3 style="margin-bottom:8px">' + esc(S.myCourses) + '</h3>' + COURSES.map((c) => { const a = ACCESS.isAdmin() ? '9999-12-31' : ACCESS.get()[c.id]; return '<div class="course"><span>' + esc(L(c.name)) + '</span><span class="faint">' + (a ? (ACCESS.has(c.id) ? '✓ ' + esc(S.activeUntil(fmtDate(a))) : esc(S.expiredOn(fmtDate(a)))) : (isTWA() ? '🔒' : '🔒 ' + fmtPrice(c.price))) + '</span></div>'; }).join('')
       + '<label class="f" for="mcode">' + esc(S.enterCode) + '</label><div class="row nw"><input id="mcode" placeholder="NABU-T-…" autocapitalize="characters"><button class="btn" id="munlock">' + esc(S.unlock) + '</button></div><p class="hint" id="mcstatus"></p></div>';

@@ -1,5 +1,5 @@
 /* Nabu Tarot -- offline cache. Bump CACHE on every release. */
-const CACHE = 'nabu-tarot-v59';
+const CACHE = 'nabu-tarot-v60';
 const SHELL = ['./', './index.html', './manifest.webmanifest', './icon-180.png', './icon-512.png', './icon-512-maskable.png', './posts.json', './schedule.json', './fb.json', './horoscope.json'];
 const LIVE = /\/(posts|schedule|fb|horoscope)\.json$/;
 
@@ -14,6 +14,7 @@ self.addEventListener('fetch', (e) => {
   if (e.request.method !== 'GET') return;
   const url = new URL(e.request.url);
   if (url.origin !== location.origin) return; // Firebase, GitHub API, social links: straight through
+  if (/\.apk$/.test(url.pathname)) return;        // the Android installer downloads straight from the site
   if (LIVE.test(url.pathname)) {
     const key = './' + url.pathname.split('/').pop();
     e.respondWith(fetch(e.request).then((res) => {
