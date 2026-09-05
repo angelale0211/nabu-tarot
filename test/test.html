@@ -149,7 +149,7 @@ async function go(hash, sel) { W().location.hash = hash; await sleep(30); return
     await go('#/learn/lesson/lenormand/6', '.spreads-v');
     ok(d.querySelectorAll('.spv').length === 7 && /Grand Tableau/.test(d.querySelector('.spreads-v').textContent), 'lenormand session 6: seven spread diagrams incl. the Grand Tableau');
     await go('#/report', '#rwhat');
-    ok(d.querySelector('#rwhat') && d.querySelector('#rsend') && d.querySelector('#rcopy') && /Nabu Tarot v33/.test(d.querySelector('.msgbox').textContent), 'bug report screen: direct send button, Instagram, copy, auto-attached info');
+    ok(d.querySelector('#rwhat') && d.querySelector('#rsend') && d.querySelector('#rcopy') && /Nabu Tarot v34/.test(d.querySelector('.msgbox').textContent), 'bug report screen: direct send button, Instagram, copy, auto-attached info');
     d.querySelector('#rwhat').value = 'Nút không bấm được'; d.querySelector('#rsend').click(); await sleep(150);
     ok(/chưa bật gửi trực tiếp/.test(d.querySelector('#rstatus').textContent), 'without an endpoint the send button explains and copies the report');
     ok(N.CONFIG.adminNotifyEmails.indexOf('nabutarot@outlook.com') === 0, 'notifications go to nabutarot@outlook.com first');
@@ -172,7 +172,13 @@ async function go(hash, sel) { W().location.hash = hash; await sleep(30); return
     await go('#/learn/spread/nabu-2', '.spread-d svg');
     ok(d.querySelectorAll('.qa').length === 5 && /Người cũ/.test(d.body.textContent), 'preset spread page with five positions');
     await go('#/learn/manifest', '.acc');
-    ok(d.querySelectorAll('.acc').length >= 5 && d.querySelectorAll('.badge-src').length === 0, 'manifestation guides listed, no grounding badges');
+    ok(d.querySelectorAll('.acc').length >= 10 && d.querySelectorAll('.badge-src').length === 0 && !N.GUIDES.some((g) => g.id === 'fort-oracle'), 'ten manifestation guides listed, no grounding badges, oracle guide removed');
+    await go('#/learn/guide/mani-woop', '.woop');
+    ok(d.querySelectorAll('.woop .wp').length === 4 && /Trở ngại/.test(d.querySelector('.woop').textContent), 'WOOP guide opens with its four-step visual');
+    await go('#/learn/guide/mani-vision', '.vboard');
+    ok(d.querySelectorAll('.vboard .vb').length === 6, 'vision board visual has six life areas');
+    await go('#/learn/guide/mani-moon', '.ritual');
+    ok(d.querySelectorAll('.ritual .rt').length === 2, 'moon ritual visual shows new and full Moon');
     await go('#/learn/guide/fort-palm', '.guide h2');
     ok(d.querySelectorAll('.guide .gsec').length >= 3 && d.querySelector('.guide .visual .hand'), 'guide renders numbered section cards with a visual on top');
     await go('#/learn/guide/mani-369', '.t369');
@@ -183,7 +189,12 @@ async function go(hash, sel) { W().location.hash = hash; await sleep(30); return
     await go('#/learn/fortune', '.ftile');
     ok(d.querySelectorAll('.ftile').length === 5, 'fortune hub shows five illustrated tools');
     await go('#/learn/fortune/palm', '.hand');
-    ok(d.querySelectorAll('.hand [data-line]').length === 4 && /Đường tim/.test(d.querySelector('#palmout').textContent), 'palm map with four tappable lines');
+    ok(d.querySelectorAll('.hand [data-line]').length === 7 && /Đường tim/.test(d.querySelector('#palmout').textContent) && d.querySelectorAll('.hshapes .hs').length === 4, 'palm map with seven tappable lines and the four hand shapes');
+    d.querySelector('[data-pmode="mounts"]').click(); await sleep(30);
+    ok(d.querySelectorAll('.hand [data-mount]').length === 7 && /Gò Mộc Tinh/.test(d.querySelector('#palmout').textContent), 'mounts mode shows seven tappable mounts');
+    d.querySelector('[data-pm="luna"]').click(); await sleep(30);
+    ok(/Gò Mặt Trăng/.test(d.querySelector('#palmout').textContent), 'tapping a mount explains it');
+    d.querySelector('[data-pmode="lines"]').click(); await sleep(30);
     d.querySelector('[data-pl="life"]').click(); await sleep(30);
     ok(/Đường sinh mệnh/.test(d.querySelector('#palmout').textContent) && /không phải tuổi thọ/.test(d.querySelector('#palmout').textContent), 'tapping a line explains it');
     await go('#/learn/fortune/cards', '.pcmap');
