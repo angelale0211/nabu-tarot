@@ -283,8 +283,8 @@ function renderSpread(id) {
 }
 
 /* ---- guides ---- */
-/* The manifestation set: three guides free, the rest behind the yearly code. */
-const FREE_MANI = ['mani-what', 'mani-gratitude', 'mani-369'];
+/* The manifestation set: four guides free (overview, gratitude, 369, scripting), the rest behind the yearly code. */
+const FREE_MANI = ['mani-what', 'mani-gratitude', 'mani-369', 'mani-script'];
 const maniLocked = (g) => g.cat === 'manifest' && FREE_MANI.indexOf(g.id) < 0 && !ACCESS.has('manifest');
 function guideRow(g) {
   const locked = ((g.cat === 'tarot' || g.cat === 'lenormand') && !ACCESS.has(g.cat)) || maniLocked(g);
