@@ -153,7 +153,7 @@ async function go(hash, sel) { W().location.hash = hash; await sleep(30); return
     await go('#/learn/lesson/lenormand/6', '.spreads-v');
     ok(d.querySelectorAll('.spv').length === 7 && /Grand Tableau/.test(d.querySelector('.spreads-v').textContent), 'lenormand session 6: seven spread diagrams incl. the Grand Tableau');
     await go('#/report', '#rwhat');
-    ok(d.querySelector('#rwhat') && d.querySelector('#rsend') && d.querySelector('#rcopy') && /Nabu Tarot v41/.test(d.querySelector('.msgbox').textContent), 'bug report screen: direct send button, Instagram, copy, auto-attached info');
+    ok(d.querySelector('#rwhat') && d.querySelector('#rsend') && d.querySelector('#rcopy') && /Nabu Tarot v42/.test(d.querySelector('.msgbox').textContent), 'bug report screen: direct send button, Instagram, copy, auto-attached info');
     d.querySelector('#rwhat').value = 'Nút không bấm được'; d.querySelector('#rsend').click(); await sleep(150);
     ok(/chưa bật gửi trực tiếp/.test(d.querySelector('#rstatus').textContent), 'without an endpoint the send button explains and copies the report');
     ok(N.CONFIG.adminNotifyEmails.indexOf('nabutarot@outlook.com') === 0, 'notifications go to nabutarot@outlook.com first');
@@ -270,6 +270,9 @@ async function go(hash, sel) { W().location.hash = hash; await sleep(30); return
     ok(!!d.querySelector('.picked') && /Giờ hẹn/.test(d.querySelector('#msgprev').textContent) && /giờ Việt Nam/.test(d.querySelector('#msgprev').textContent) && /Tên: Lan/.test(d.querySelector('#msgprev').textContent), 'chosen slot and the name from the profile appear in the message');
     d.querySelector('[data-topic="1/2"]').click(); await sleep(20);
     ok(N.book.items[1].topic === null && !d.querySelector('[data-topic="1/2"]').classList.contains('on') && !/#2 Người cũ/.test(d.querySelector('#msgprev').textContent) && d.querySelectorAll('#cartwrap .warn').length === 1, 'a second tap clears that package\'s topic and flags it again');
+    N.BE.user = { uid: 'x', email: 'angela_le_@outlook.com' };
+    ok(N.ACCESS.has('tarot') && N.ACCESS.has('lenormand'), 'an admin email opens every course without a code');
+    N.BE.user = null;
     ok(w.authMessage({ code: 'auth/operation-not-allowed' }, 'facebook') === 'Đăng nhập Facebook chưa mở: Meta yêu cầu Nabu đăng ký một ứng dụng nhà phát triển trước. Bạn dùng Google hoặc email giúp Nabu nhé.' && /Authorized domains/.test(w.authMessage({ code: 'auth/unauthorized-domain' }, 'google')), 'sign-in errors are explained in plain words');
     d.querySelector('[data-topic="1/2"]').click(); await sleep(20);
     d.querySelector('[data-remove="0"]').click(); await sleep(20);

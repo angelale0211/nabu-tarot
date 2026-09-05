@@ -29,7 +29,7 @@ const CONFIG = {
   // Until this is filled in, profiles stay on the device, messaging opens
   // Instagram, and booking requests go out as a message.
   firebase: { apiKey: 'AIzaSyBGi9OEnYlMk7SIp0UD7w7PgffSwTgiKR0', authDomain: 'nabutarot.firebaseapp.com', projectId: 'nabutarot', storageBucket: 'nabutarot.firebasestorage.app', messagingSenderId: '609592701892', appId: '1:609592701892:web:55445b2a35cbaa5d1e6a91' },
-  adminEmails: ['nabutarot@outlook.com', 'angela_le_@outlook.com'],
+  adminEmails: ['nabutarot@outlook.com', 'angela_le_@outlook.com', 'angelale_le_@outlook.com'],
   // Photo and voice attachments in chat need Firebase Storage, which new
   // projects can only switch on with the pay-as-you-go plan. Set to true
   // once Build -> Storage exists and storage.rules is published.

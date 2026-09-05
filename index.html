@@ -740,7 +740,7 @@ const CONFIG = {
   // Until this is filled in, profiles stay on the device, messaging opens
   // Instagram, and booking requests go out as a message.
   firebase: { apiKey: 'AIzaSyBGi9OEnYlMk7SIp0UD7w7PgffSwTgiKR0', authDomain: 'nabutarot.firebaseapp.com', projectId: 'nabutarot', storageBucket: 'nabutarot.firebasestorage.app', messagingSenderId: '609592701892', appId: '1:609592701892:web:55445b2a35cbaa5d1e6a91' },
-  adminEmails: ['nabutarot@outlook.com', 'angela_le_@outlook.com'],
+  adminEmails: ['nabutarot@outlook.com', 'angela_le_@outlook.com', 'angelale_le_@outlook.com'],
   // Photo and voice attachments in chat need Firebase Storage, which new
   // projects can only switch on with the pay-as-you-go plan. Set to true
   // once Build -> Storage exists and storage.rules is published.
@@ -10102,7 +10102,8 @@ function mySign() { const b = birthParts(); return b ? sunSignIndex(b.m, b.d) : 
    good enough to keep casual sharing in check, not a bank vault. */
 const ACCESS = {
   get() { return store.get('nabu-access', {}); },
-  has(course) { const a = this.get()[course]; return !!a && a >= isoDate(new Date()); },
+  // Nabu (any admin email) always has every course open.
+  has(course) { if (window.BE && BE.isAdmin()) return true; const a = this.get()[course]; return !!a && a >= isoDate(new Date()); },
   grant(course, until) { const a = this.get(); a[course] = until; store.set('nabu-access', a); if (window.BE && BE.user) BE.pushProfile(); }
 };
 function courseHash(str) {
@@ -12150,7 +12151,7 @@ function renderMe(args, params) {
       h += '<div class="card"><h3 style="margin-bottom:4px">' + esc(S.messages) + '</h3><p class="muted" style="font-size:14px">' + esc(S.messagesSoon) + '</p><a class="btn block" href="https://ig.me/m/' + esc(CONFIG.instagram) + '" target="_blank" rel="noopener">' + esc(S.viaInstagram) + '</a></div>';
     }
     h += aiPanelHTML({ type: 'general' });
-    h += '<div class="card"><h3 style="margin-bottom:8px">' + esc(S.myCourses) + '</h3>' + COURSES.map((c) => { const a = ACCESS.get()[c.id]; return '<div class="course"><span>' + esc(L(c.name)) + '</span><span class="faint">' + (a ? (ACCESS.has(c.id) ? '✓ ' + esc(S.activeUntil(fmtDate(a))) : esc(S.expiredOn(fmtDate(a)))) : '🔒 ' + fmtPrice(c.price)) + '</span></div>'; }).join('')
+    h += '<div class="card"><h3 style="margin-bottom:8px">' + esc(S.myCourses) + '</h3>' + COURSES.map((c) => { const a = BE.isAdmin() ? '9999-12-31' : ACCESS.get()[c.id]; return '<div class="course"><span>' + esc(L(c.name)) + '</span><span class="faint">' + (a ? (ACCESS.has(c.id) ? '✓ ' + esc(S.activeUntil(fmtDate(a))) : esc(S.expiredOn(fmtDate(a)))) : '🔒 ' + fmtPrice(c.price)) + '</span></div>'; }).join('')
       + '<label class="f" for="mcode">' + esc(S.enterCode) + '</label><div class="row"><input id="mcode" placeholder="NABU-T-…" autocapitalize="characters" style="flex:1"><button class="btn" id="munlock">' + esc(S.unlock) + '</button></div><p class="hint" id="mcstatus"></p></div>';
     h += '<div class="card"><h3 style="margin-bottom:8px">' + esc(S.themeTitle) + '</h3><div class="chips">' + ['auto', 'light', 'dark'].map((t) => '<button class="chip' + (themeChoice() === t ? ' on' : '') + '" data-theme-pick="' + t + '">' + esc(S.themes[t]) + '</button>').join('') + '</div><p class="hint">' + esc(S.themeHint) + '</p></div>';
     h += '<div class="row">' + (BE.user ? '<button class="btn" id="signout">' + esc(S.signOut) + '</button>' : '') + '<a class="btn" href="#/report">🐞 ' + esc(S.reportLink) + '</a><button class="btn" id="retour">' + (lang === 'vi' ? 'Xem lại hướng dẫn' : 'Replay the tour') + '</button>' + (BE.isAdmin() ? '<a class="btn gold" href="#/admin">' + esc(S.adminTitle) + '</a>' : '') + '</div>';
@@ -12418,10 +12419,12 @@ function adminCodes(p) {
 ROUTES.admin = { nav: '', render: renderAdmin };
 
 /* ============================ boot ============================ */
-window.APP_VERSION = 'v41';
+window.APP_VERSION = 'v42';
 window.NABU = { CONFIG: CONFIG, LESSONS: LESSONS, localAnswer: localAnswer, compatVerdict: compatVerdict, numerologyOf: numerologyOf, ZDEEP: ZDEEP, lunarToday: lunarToday, solarToLunar: solarToLunar, DECK: DECK, INSIGHT: INSIGHT, KW: KW, ASK: ASK, TOPICS: TOPICS, GUIDES: GUIDES, SERVICES: SERVICES, COURSES: COURSES, ACCESS: ACCESS, makeCode: makeCode, parseCode: parseCode, ZODIAC: ZODIAC, pick: pick, book: book,
   insightHTML: insightHTML, insightOf: insightOf, sunSignIndex: sunSignIndex, lifePath: lifePath, PROFILE: () => PROFILE, BE: BE };
 BE.init().catch(() => { /* backend unreachable: the app runs device-only */ });
+// Signing in can unlock things (admin sees every course), so redraw the open screen.
+BE.onAuth(() => { if (parseHash().route === 'learn') route(); });
 boot();
 </script>
 </body>

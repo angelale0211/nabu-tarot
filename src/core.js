@@ -47,7 +47,8 @@ function mySign() { const b = birthParts(); return b ? sunSignIndex(b.m, b.d) : 
    good enough to keep casual sharing in check, not a bank vault. */
 const ACCESS = {
   get() { return store.get('nabu-access', {}); },
-  has(course) { const a = this.get()[course]; return !!a && a >= isoDate(new Date()); },
+  // Nabu (any admin email) always has every course open.
+  has(course) { if (window.BE && BE.isAdmin()) return true; const a = this.get()[course]; return !!a && a >= isoDate(new Date()); },
   grant(course, until) { const a = this.get(); a[course] = until; store.set('nabu-access', a); if (window.BE && BE.user) BE.pushProfile(); }
 };
 function courseHash(str) {
