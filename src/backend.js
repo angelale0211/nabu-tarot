@@ -26,6 +26,7 @@ const BE = {
     try { await this.db.enablePersistence({ synchronizeTabs: true }); } catch (e) { /* fine without */ }
     this.auth.onAuthStateChanged(async (u) => {
       this.user = u; this.ready = true;
+      store.set('nabu-admin', u && this.isAdmin() ? (u.email || 'admin') : '');
       if (u) { await this.pullProfile(); this.watchUnread(); } else { this.stopUnread(); }
       this.listeners.forEach((cb) => cb(u));
     });

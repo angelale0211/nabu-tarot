@@ -48,7 +48,10 @@ function mySign() { const b = birthParts(); return b ? sunSignIndex(b.m, b.d) : 
 const ACCESS = {
   get() { return store.get('nabu-access', {}); },
   // Nabu (any admin email) always has every course open.
-  has(course) { if (window.BE && BE.isAdmin()) return true; const a = this.get()[course]; return !!a && a >= isoDate(new Date()); },
+  // Admins: true as soon as sign-in resolves, and remembered on the device so a
+  // cold start does not flash the paywall before Firebase answers.
+  isAdmin() { return !!((window.BE && BE.user && BE.isAdmin()) || (!(window.BE && BE.ready) && store.get('nabu-admin', ''))); },
+  has(course) { if (this.isAdmin()) return true; const a = this.get()[course]; return !!a && a >= isoDate(new Date()); },
   grant(course, until) { const a = this.get(); a[course] = until; store.set('nabu-access', a); if (window.BE && BE.user) BE.pushProfile(); }
 };
 function courseHash(str) {
