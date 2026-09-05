@@ -72,7 +72,8 @@ function renderLearn(args, params) {
   if (sub === 'sign') return renderSign(args[1]);
   if (sub === 'spread') return renderSpread(args[1]);
   if (sub === 'fortune') return renderFortune(args[1]);
-  if (sub === 'manifest') return renderGuideList(sub);
+  if (sub === 'manifest' && args[1] === 'unlock') { const S2 = T(); m.innerHTML = backLink('#/learn/manifest', S2.cats.manifest) + paywallHTML('manifest'); bindPaywall(m); return; }
+  if (sub === 'manifest') return renderManifest();
   if (sub === 'guide') return renderGuide(args[1]);
   if (sub === 'numbers') return renderFortune('numbers');
   redirect('#/learn');
@@ -281,9 +282,20 @@ function renderSpread(id) {
 }
 
 /* ---- guides ---- */
+/* The manifestation set: three guides free, the rest behind the yearly code. */
+const FREE_MANI = ['mani-what', 'mani-gratitude', 'mani-369'];
+const maniLocked = (g) => g.cat === 'manifest' && FREE_MANI.indexOf(g.id) < 0 && !ACCESS.has('manifest');
 function guideRow(g) {
-  const locked = (g.cat === 'tarot' || g.cat === 'lenormand') && !ACCESS.has(g.cat);
+  const locked = ((g.cat === 'tarot' || g.cat === 'lenormand') && !ACCESS.has(g.cat)) || maniLocked(g);
   return '<a class="acc" href="#/learn/guide/' + g.id + '" style="display:block;text-decoration:none;color:inherit"><button style="pointer-events:none"><span>' + (locked ? '🔒 ' : '') + esc(L(g.title)) + '</span></button></a>';
+}
+function renderManifest() {
+  const S = T(), m = $('#main'), all = GUIDES.filter((g) => g.cat === 'manifest'), free = all.filter((g) => FREE_MANI.indexOf(g.id) > -1), rest = all.filter((g) => FREE_MANI.indexOf(g.id) < 0), has = ACCESS.has('manifest'), c = courseOf('manifest');
+  m.innerHTML = backLink('#/learn', S.learnTitle) + '<h1 style="margin-bottom:6px">' + esc(S.cats.manifest) + '</h1><p class="muted">' + esc(S.maniIntro) + '</p>'
+    + '<div class="eyebrow">' + esc(S.maniFree) + '</div>' + free.map(guideRow).join('')
+    + '<div class="eyebrow" style="margin-top:18px">' + esc(S.maniFull) + (has ? ' ✓' : ' · ' + esc(S.perYear(fmtPrice(c.price)))) + '</div>'
+    + (has ? '' : '<div class="mani-banner"><b>✨ ' + esc(L(c.name)) + '</b><ul>' + S.maniIncl.map((x) => '<li>' + esc(x) + '</li>').join('') + '</ul><a class="btn primary block" href="#/learn/manifest/unlock">🔓 ' + esc(S.maniUnlock) + ' · ' + esc(S.perYear(fmtPrice(c.price))) + '</a></div>')
+    + rest.map(guideRow).join('');
 }
 function renderGuideList(cat) {
   const S = T(), m = $('#main');
@@ -295,9 +307,10 @@ function renderGuide(id) {
   if (!g) { redirect('#/learn'); return; }
   const back = g.cat === 'tarot' || g.cat === 'lenormand' ? '#/learn/' + g.cat + '?tab=guides' : g.cat === 'astro' ? '#/learn/astro' : '#/learn/' + g.cat;
   if ((g.cat === 'tarot' || g.cat === 'lenormand') && g.id !== DEMO[g.cat].guide && gate(g.cat, back)) return;
+  if (g.cat === 'manifest' && FREE_MANI.indexOf(g.id) < 0 && gate('manifest', back)) return;
   const vis = guideVisualHTML(g.id);
   m.innerHTML = backLink(back, S.cats[g.cat]) + '<div class="guide"><h1 style="margin:8px 0">' + esc(L(g.title)) + '</h1><p class="lead">' + esc(L(g.intro)) + '</p>'
-    + (vis ? '<div class="visual">' + vis + '</div>' : '')
+    + (vis ? '<div class="visual" data-vid="' + g.id + '">' + vis + '</div>' : '')
     + g.sections.map((s, i) => '<div class="gsec"><span class="n">' + (i + 1) + '</span><div><h2>' + esc(L(s.h)) + '</h2><p>' + esc(L(s.p)) + '</p></div></div>').join('') + '</div>';
   bindGuideVisual(m);
 }
