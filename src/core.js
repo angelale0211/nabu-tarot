@@ -238,10 +238,15 @@ function backLink(href, label) {
   if (backTarget()) return '';  // the bar above the screen already shows the way back
   return '<p><a href="' + esc(href) + '" class="backlink">← ' + esc(label) + '</a></p>';
 }
-function renderBackBar(route) {
-  const bar = $('#backbar'), prev = route === 'home' ? '' : backTarget();
+/* The main tabs always lead back to home; deeper screens lead back to where
+   the visitor came from. */
+const TAB_ROOTS = { pick: 1, learn: 1, book: 1, prices: 1, me: 1 };
+function renderBackBar(r) {
+  const bar = $('#backbar');
+  const isTab = TAB_ROOTS[r.route] && !r.args.length;
+  const prev = r.route === 'home' ? '' : isTab ? '#/home' : backTarget();
   bar.hidden = !prev;
-  bar.innerHTML = prev ? '<a href="' + esc(prev) + '" class="backlink" data-back="1">← ' + esc(screenLabel(prev)) + '</a>' : '';
+  bar.innerHTML = prev ? '<a href="' + esc(prev) + '" class="backlink"' + (isTab ? '' : ' data-back="1"') + '>← ' + esc(screenLabel(prev)) + '</a>' : '';
 }
 function parseHash() {
   const h = location.hash.replace(/^#\/?/, '');
@@ -255,7 +260,7 @@ function route() {
   if (!def) { redirect('#/home'); return; }
   navRemember(location.hash || '#/home');
   renderChrome(def.nav);
-  renderBackBar(r.route);
+  renderBackBar(r);
   const y = NAV.restore;
   if (y == null) window.scrollTo(0, 0);
   Promise.resolve(def.render(r.args, r.params)).then(() => {
