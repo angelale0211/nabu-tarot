@@ -2,7 +2,7 @@
 <html lang="vi">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
 <title>Nabu Tarot</title>
 <meta name="description" content="Nabu Tarot: dự đoán mới, rút một lá bài xem năng lượng hiện tại, học tarot, Lenormand, chiêm tinh, và đặt lịch xem bài.">
 <meta name="theme-color" content="#EFE9FA">
@@ -72,7 +72,7 @@
 *{box-sizing:border-box;min-width:0}
 body{overflow-x:clip}
 img,svg{max-width:100%}
-html{-webkit-text-size-adjust:100%}
+html{-webkit-text-size-adjust:100%;touch-action:manipulation}
 body{margin:0;background:var(--bg);color:var(--fg);font-family:var(--body);font-size:16px;line-height:1.55;
   -webkit-font-smoothing:antialiased;min-height:100vh;padding-bottom:calc(var(--nav-h) + env(safe-area-inset-bottom))}
 a{color:var(--link)}
@@ -150,7 +150,7 @@ main{padding:22px 0 30px}
 .banner button{color:var(--primary);font-weight:700;white-space:nowrap}
 .tabs{display:flex;gap:6px;overflow-x:auto;padding-bottom:6px;margin-bottom:14px;-webkit-overflow-scrolling:touch}
 .tabs::-webkit-scrollbar{display:none}
-.tabs button{white-space:nowrap;border:1px solid var(--rule);border-radius:999px;padding:8px 14px;font-size:13.5px;font-weight:600;color:var(--fg-soft);background:var(--surface)}
+.tabs button{white-space:nowrap;border:1px solid var(--rule);border-radius:999px;padding:0 14px;min-height:38px;display:inline-flex;align-items:center;justify-content:center;line-height:1.2;font-size:13.5px;font-weight:600;color:var(--fg-soft);background:var(--surface)}
 .tabs button.on{background:var(--primary);color:var(--primary-ink);border-color:transparent}
 .empty{text-align:center;color:var(--fg-faint);padding:24px 0}
 .acc{border:1px solid var(--rule-soft);border-radius:14px;background:var(--surface);margin-bottom:10px;overflow:hidden}
@@ -190,6 +190,15 @@ main{padding:22px 0 30px}
 .post .more{color:var(--link);font-weight:700;font-size:14px;margin:2px 0 8px}
 .post .markers{margin:8px 0 6px;font-size:14px;color:var(--fg-soft)}
 .post .markers b{color:var(--fg)}
+/* Rich post bodies: small headings, marks, title boxes, images and embedded video. */
+.post .body h3{font-size:17px;margin:12px 0 6px;font-family:var(--display);font-weight:500}.post .body mark{background:var(--tag-gold-bg);color:var(--tag-gold-ink);padding:0 4px;border-radius:4px}.post .body u{text-decoration-thickness:2px;text-underline-offset:2px}
+.post .body .callout{background:var(--surface-2);border-left:4px solid var(--lav);border-radius:10px;padding:10px 12px;margin:10px 0;font-weight:600}
+.post .body img.pimg{display:block;max-width:100%;border-radius:12px;margin:8px 0;min-height:40px;background:var(--surface-2)}
+.post .body .video{position:relative;padding-top:56.25%;border-radius:12px;overflow:hidden;margin:8px 0;background:#000}.post .body .video iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
+.vlink{display:flex;gap:10px;align-items:center;background:var(--surface-2);border-radius:12px;padding:10px 12px;text-decoration:none;color:inherit;font-weight:600;margin:8px 0}
+/* Editor toolbar in the dashboard. */
+.tb{display:flex;gap:6px;flex-wrap:wrap;margin:6px 0 8px}.tb .tbl{width:auto;flex:none}.tb button,.tb .tbl{border:1px solid var(--rule);border-radius:8px;padding:6px 10px;font-size:13px;font-weight:700;background:var(--surface);cursor:pointer;color:var(--fg);min-height:34px;display:inline-flex;align-items:center;gap:4px}.tb mark{background:var(--tag-gold-bg);color:var(--tag-gold-ink);padding:0 3px;border-radius:3px}
+.emojis{display:flex;flex-wrap:wrap;gap:2px;margin:0 0 8px}.emojis button{font-size:22px;padding:4px 6px;border-radius:8px}.emojis button:active{background:var(--surface-2)}
 .post .foryou{display:inline-block;background:var(--tag-pink-bg);color:var(--tag-pink-ink);font-size:12px;font-weight:700;border-radius:8px;padding:3px 8px;margin-bottom:8px}
 .post .foot{display:flex;gap:8px;justify-content:flex-end;border-top:1px solid var(--rule-soft);margin-top:8px;padding-top:8px}
 .post .foot button{color:var(--fg-soft);font-size:13.5px;font-weight:600;padding:6px 10px;border-radius:8px}
@@ -232,6 +241,11 @@ main{padding:22px 0 30px}
 .fan .slot svg{width:100%;height:100%;display:block;filter:drop-shadow(0 6px 12px var(--shade))}
 .fan .slot.dim{opacity:.35;transform:translateY(20px) scale(.9)!important}
 .fan .slot.chosen{z-index:5;transform:translateY(-30px) scale(1.05)!important}
+/* The whole deck: 78 backs in a grid, tap any one. */
+.fan.deck{position:static;height:auto;max-width:none;perspective:none;display:grid;grid-template-columns:repeat(8,1fr);gap:5px;margin:0 0 18px}
+.fan.deck .slot{position:static;width:auto;height:auto;margin:0;aspect-ratio:104/170;transform:none!important;transition:opacity .3s,box-shadow .3s;border-radius:6px}
+.fan.deck .slot svg{filter:drop-shadow(0 2px 4px var(--shade))}.fan.deck .slot.chosen{box-shadow:0 0 0 3px var(--primary);transform:scale(1.08)!important;z-index:2}.fan.deck .slot.dim{opacity:.3;transform:none!important}
+@media (min-width:640px){.fan.deck{grid-template-columns:repeat(13,1fr)}}
 .tap-hint{text-align:center;color:var(--fg-faint);font-size:13.5px;margin:0 0 12px;min-height:1.4em}
 .reveal{margin-top:10px}
 .hero{display:grid;grid-template-columns:112px 1fr;gap:16px;align-items:center;margin-bottom:18px}
@@ -538,7 +552,7 @@ main{padding:22px 0 30px}
 .thr-head{display:flex;align-items:center;gap:12px;margin-bottom:10px}.thr-head b{display:block}.thr-head i{font-style:normal;color:var(--fg-faint);font-size:12.5px;font-weight:500}
 .tabs button{position:relative}.tabs .tb{display:inline-block;margin-left:6px;background:var(--pink-ink);color:#fff;font-size:10.5px;border-radius:999px;min-width:17px;height:17px;line-height:17px;text-align:center;padding:0 5px;vertical-align:1px}
 .admin-sum .cnt{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:8px 0 10px}.admin-sum .cnt a{background:var(--surface-2);border-radius:14px;padding:12px;text-align:center;text-decoration:none;color:inherit}.admin-sum .cnt b{display:block;font-size:26px;font-family:var(--display);color:var(--link)}.admin-sum .cnt span{font-size:12.5px;color:var(--fg-soft)}
-.chatbar{display:flex;gap:8px;margin-top:10px}
+.chatbar{display:flex;gap:8px;margin-top:10px;align-items:flex-end}.chatbar .emojis{width:100%}
 .chatbar textarea{min-height:44px;max-height:120px;border-radius:14px;padding:10px 14px}
 .chatbar button{flex:none}
 .chatbar .att-btn{padding:8px 10px;min-height:44px;font-size:18px;cursor:pointer}
@@ -549,7 +563,9 @@ main{padding:22px 0 30px}
 /* A booking as a card: when, status, every package on its own line, the total, then the details. */
 .bk{display:block;background:var(--surface);border:1px solid var(--rule-soft);border-radius:14px;padding:12px 14px;margin-bottom:10px;font-size:14px;overflow-wrap:anywhere}
 .bk .bkh{display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap}.bk ul{margin:8px 0 4px;padding-left:18px}.bk li{margin:3px 0}.bk li small{color:var(--fg-soft)}
-.bk .tot{display:flex;justify-content:space-between;border-top:1px solid var(--rule-soft);padding-top:6px;margin-top:4px;font-weight:700}.bk .meta{margin:6px 0 0;color:var(--fg-soft);font-size:13px}.bk .acts{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px}
+.bk .tot{display:flex;justify-content:space-between;border-top:1px solid var(--rule-soft);padding-top:6px;margin-top:4px;font-weight:700}.bk .meta{margin:6px 0 0;color:var(--fg-soft);font-size:13px}.bk .acts{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px}.bk .acts .wide{grid-column:1/-1}.bk .chg{background:var(--tag-gold-bg);color:var(--tag-gold-ink);border-radius:10px;padding:8px 10px;margin-top:8px;font-weight:600}
+.bkcal{margin-bottom:12px}.bkcal .d.has:after{background:var(--pink-ink)}.bkcal .d .n{position:absolute;top:3px;right:5px;font-size:9px;font-weight:700;color:var(--pink-ink)}
+.upnext{display:flex;gap:10px;align-items:center;background:var(--tag-gold-bg);color:var(--tag-gold-ink);border-radius:14px;padding:12px 14px;margin-bottom:14px;text-decoration:none;font-weight:600}.upnext .ic{font-size:24px}
 .st{font-size:12px;font-weight:700;border-radius:8px;padding:3px 8px;background:var(--surface-3);white-space:nowrap}
 .st.confirmed{background:var(--tag-green-bg);color:var(--tag-green-ink)}.st.declined{background:var(--tag-pink-bg);color:var(--tag-pink-ink)}.st.requested{background:var(--tag-gold-bg);color:var(--tag-gold-ink)}
 

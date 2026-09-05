@@ -50,7 +50,10 @@ function adminPosts(p) {
   p.innerHTML = '<div class="card"><h3 id="formhead" style="margin-bottom:4px">' + esc(S.newPost) + '</h3>'
     + '<label class="f" for="pdate">' + esc(S.postDate) + '</label><input id="pdate" type="date">'
     + '<label class="f" for="ptitle">' + esc(S.postTitle) + '</label><input id="ptitle">'
-    + '<label class="f" for="pbody">' + esc(S.postBody) + '</label><textarea id="pbody" style="min-height:160px"></textarea><p class="hint">' + esc(S.bodyHint) + '</p>'
+    + '<label class="f" for="pbody">' + esc(S.postBody) + '</label>'
+    + '<div class="tb" id="ptb"><button type="button" data-w="b"><b>B</b></button><button type="button" data-w="u"><u>U</u></button><button type="button" data-w="h"><mark>H</mark></button><button type="button" data-w="h2">H2</button><button type="button" data-w="box">▭ ' + esc(S.boxLabel) + '</button><button type="button" id="temoji">😊</button><label class="tbl">🖼 ' + esc(S.addImage) + '<input type="file" accept="image/*" id="timg" hidden></label><button type="button" id="tvideo">▶ ' + esc(S.addVideo) + '</button></div>'
+    + '<div class="emojis" id="emojis" hidden>' + EMOJIS.map((e) => '<button type="button">' + e + '</button>').join('') + '</div>'
+    + '<textarea id="pbody" style="min-height:160px"></textarea><p class="hint">' + esc(S.formatHint) + ' ' + esc(S.bodyHint) + '</p>'
     + '<label class="f" for="ptitle_en">' + esc(S.postTitleEn) + '</label><input id="ptitle_en">'
     + '<label class="f" for="pbody_en">' + esc(S.postBodyEn) + '</label><textarea id="pbody_en"></textarea>'
     + '<div class="acc" id="cardpick" style="margin-top:14px"><button type="button"><span>🃏 ' + esc(S.postCards) + '</span></button><div class="in"><input id="csearch" placeholder="' + esc(S.searchCard) + '" style="margin-bottom:8px">'
@@ -64,6 +67,32 @@ function adminPosts(p) {
     + '<div class="card"><h3 style="margin-bottom:6px">' + esc(S.existing) + '</h3><div class="plist" id="plist"><p class="hint">…</p></div></div>';
   bindAccordions(p);
   const status = (msg, cls) => { const s = $('#status'); s.textContent = msg; s.className = 'hint ' + (cls || ''); };
+  // The toolbar works on whichever body box was focused last (Vietnamese or English).
+  let lastTa = $('#pbody');
+  ['#pbody', '#pbody_en'].forEach((id) => $(id).addEventListener('focus', () => { lastTa = $(id); }));
+  const insertAt = (before, after, placeholder) => {
+    const ta = lastTa, st = ta.selectionStart || 0, en = ta.selectionEnd || 0, sel = ta.value.slice(st, en) || placeholder || '';
+    ta.value = ta.value.slice(0, st) + before + sel + after + ta.value.slice(en); ta.focus();
+    const pos = st + before.length + sel.length; try { ta.setSelectionRange(pos, pos); } catch (e) { /* not focusable yet */ }
+  };
+  const WRAP = { b: ['**', '**'], u: ['__', '__'], h: ['==', '=='], h2: ['\n## ', '\n'], box: ['\n> ', '\n'] };
+  $$('[data-w]', p).forEach((b) => b.addEventListener('click', () => { const w = WRAP[b.getAttribute('data-w')]; insertAt(w[0], w[1], S.wrapPlaceholder); }));
+  $('#temoji').addEventListener('click', () => { $('#emojis').hidden = !$('#emojis').hidden; });
+  $$('#emojis button').forEach((b) => b.addEventListener('click', () => insertAt(b.textContent, '', '')));
+  $('#tvideo').addEventListener('click', () => { const u = prompt(S.videoPrompt); if (u && /^https?:\/\//.test(u.trim())) insertAt('\n[video:' + u.trim() + ']\n', '', ''); });
+  $('#timg').addEventListener('change', async () => {
+    const f = $('#timg').files && $('#timg').files[0]; if (!f) return;
+    if (!cloud()) { status(S.imgNeedCloud, 'err'); $('#timg').value = ''; return; }
+    status(S.uploading);
+    try {
+      const data = await shrinkImage(f, 1100, 0.82);
+      if (data.length > 900000) throw new Error(S.imgTooBig);
+      const id = Date.now().toString(36) + Math.random().toString(36).slice(2, 5);
+      await BE.setContent('img_' + id, { data: data }); IMGS[id] = data;
+      insertAt('\n[img:' + id + ']\n', '', ''); status(S.imgAdded, 'ok');
+    } catch (e) { status(S.publishFail + ': ' + e.message, 'err'); }
+    $('#timg').value = '';
+  });
   const syncSel = () => { $$('#cgrid button').forEach((b) => b.classList.toggle('on', admin.cards.indexOf(b.getAttribute('data-cid')) > -1)); $('#csel').innerHTML = admin.cards.map((c) => miniHTML(c)).join(''); };
   const formPost = () => {
     const v = (id) => $(id).value.trim(), iso = isoDate(new Date());
@@ -126,7 +155,7 @@ function adminPosts(p) {
 }
 
 /* ---- availability ---- */
-const HOURS = []; for (let h = 7; h <= 23; h++) HOURS.push(pad2(h) + ':00');
+const HOURS = []; for (let h = 7; h <= 23; h++) { HOURS.push(pad2(h) + ':00'); HOURS.push(pad2(h) + ':30'); }
 async function adminSchedule(p) {
   const S = T();
   p.innerHTML = '<p class="hint">…</p>';
@@ -173,11 +202,22 @@ function needAdmin(p) {
 function adminBookings(p) {
   const S = T();
   if (!needAdmin(p)) return;
-  p.innerHTML = '<p class="hint">' + esc(S.bookingsIntro) + '</p><div id="bklist"></div>';
-  admin.unsubs.push(BE.watchAllBookings((list) => {
+  p.innerHTML = '<p class="hint">' + esc(S.bookingsIntro) + '</p><div id="bkcal" class="bkcal"></div><div id="bklist"></div>';
+  let all = [], month = new Date(new Date().getFullYear(), new Date().getMonth(), 1), day = '';
+  const draw = () => {
+    const byDay = {}; all.forEach((b) => { if (['declined', 'cancelled'].indexOf(b.status) > -1) return; const k = String(b.slot).slice(0, 10); (byDay[k] = byDay[k] || []).push(b); });
+    const start = new Date(month.getFullYear(), month.getMonth(), 1).getDay(), days = new Date(month.getFullYear(), month.getMonth() + 1, 0).getDate(), todayStr = isoDate(new Date());
+    let cells = ''; for (let i = 0; i < start; i++) cells += '<div class="d off"></div>';
+    for (let d = 1; d <= days; d++) { const ds = isoDate(new Date(month.getFullYear(), month.getMonth(), d)), n = (byDay[ds] || []).length; cells += '<button class="d' + (n ? ' has' : '') + (ds === todayStr ? ' today' : '') + (ds === day ? ' sel' : '') + '" data-bday="' + ds + '">' + d + (n ? '<span class="n">' + n + '</span>' : '') + '</button>'; }
+    $('#bkcal').innerHTML = '<div class="cal"><div class="head"><button data-bcal="-1" aria-label="prev">‹</button><b>' + esc(S.months[month.getMonth()]) + ' ' + month.getFullYear() + '</b><button data-bcal="1" aria-label="next">›</button></div><div class="dow">' + S.dow.map((x) => '<span>' + x + '</span>').join('') + '</div><div class="days">' + cells + '</div>'
+      + (day ? '<div class="picked" style="justify-content:space-between"><span>' + esc(S.bkOn(fmtDate(day))) + '</span><button class="btn sm" data-bday="">' + esc(S.allDays) + '</button></div>' : '') + '</div>';
+    const list = day ? all.filter((b) => String(b.slot).slice(0, 10) === day) : all;
     $('#bklist').innerHTML = list.length ? list.map((b) => bookingRow(b, true)).join('') : '<p class="empty">' + esc(S.noBookings) + '</p>';
-    $$('[data-bk]', p).forEach((b) => b.addEventListener('click', async () => { const bk = list.filter((x) => x.id === b.getAttribute('data-id'))[0]; try { await BE.setBookingStatus(bk, b.getAttribute('data-bk')); toast('✓'); } catch (e) { toast(e.message); } }));
-  }));
+    $$('[data-bcal]', p).forEach((b) => b.addEventListener('click', () => { month = new Date(month.getFullYear(), month.getMonth() + Number(b.getAttribute('data-bcal')), 1); draw(); }));
+    $$('[data-bday]', p).forEach((b) => b.addEventListener('click', () => { day = b.getAttribute('data-bday') === day ? '' : b.getAttribute('data-bday'); draw(); }));
+    $$('[data-bk]', p).forEach((b) => b.addEventListener('click', async () => { const bk = all.filter((x) => x.id === b.getAttribute('data-id'))[0]; try { await BE.setBookingStatus(bk, b.getAttribute('data-bk')); toast('✓'); } catch (e) { toast(e.message); } }));
+  };
+  admin.unsubs.push(BE.watchAllBookings((list) => { all = list; draw(); }));
 }
 function adminInbox(p) {
   const S = T();
@@ -200,7 +240,7 @@ function adminInbox(p) {
     $('#backin').addEventListener('click', (e) => { e.preventDefault(); p.innerHTML = '<div id="threads"></div>'; list(); });
     const chat = $('#achat');
     admin.unsubs.push(BE.watchMessages(uid, (msgs) => { chat.innerHTML = chatHTML(msgs, 'nabu'); chat.scrollTop = chat.scrollHeight; BE.markRead(uid, 'admin'); }));
-    const sendAdmin = async (text, file, kind) => { let att = null; if (file) att = await BE.uploadAttachment(file, uid, kind); await BE.sendMessage(text, uid, att); };
+    const sendAdmin = async (text, file, kind) => { let att = null; if (file) att = await chatAttachment(file, uid, kind); await BE.sendMessage(text, uid, att); };
     $('#asend').addEventListener('click', async () => { const tx = $('#atext').value.trim(); if (!tx) return; $('#atext').value = ''; try { await sendAdmin(tx); } catch (e) { toast(e.message); } });
     bindChatBar(p, sendAdmin);
   };
@@ -212,7 +252,13 @@ function adminCodes(p) {
   p.innerHTML = '<div class="card"><p class="hint" style="margin-bottom:10px">' + esc(S.codesIntro) + '</p>'
     + '<label class="f" for="ccourse">' + esc(S.codeCourse) + '</label><select id="ccourse">' + COURSES.map((c) => '<option value="' + c.id + '">' + esc(L(c.name)) + ' · ' + fmtPrice(c.price) + '</option>').join('') + '</select>'
     + '<div class="two"><div><label class="f" for="cstart">' + esc(S.codeStart) + '</label><input id="cstart" type="date" value="' + isoDate(new Date()) + '"></div><div><label class="f" for="cmonths">' + esc(S.codeMonths) + '</label><input id="cmonths" type="number" min="1" value="6"></div></div>'
-    + '<button class="btn primary block" id="cmake" style="margin-top:14px">' + esc(S.makeCode) + '</button><div id="cout"></div></div>';
+    + '<button class="btn primary block" id="cmake" style="margin-top:14px">' + esc(S.makeCode) + '</button><div id="cout"></div></div>'
+    + '<div class="card"><h3 style="margin-bottom:4px">✦ ' + esc(S.aiSettings) + '</h3><p class="hint" style="margin-bottom:8px">' + esc(S.aiKeyHint) + '</p><label class="f" for="gkey">' + esc(S.aiKeyLabel) + '</label><div class="row nw"><input id="gkey" type="password" value="' + esc(CONFIG.geminiKey || '') + '" autocomplete="off"><button class="btn sm" id="gsave">' + esc(S.saveKey) + '</button></div><p class="hint" id="gstatus"></p></div>';
+  $('#gsave').addEventListener('click', async () => {
+    const st = $('#gstatus'), key = $('#gkey').value.trim();
+    if (!cloud()) { st.textContent = S.adminLogin; st.className = 'hint err'; return; }
+    try { await BE.setContent('ai', { geminiKey: key }); CONFIG.geminiKey = key; st.textContent = key ? S.aiKeySaved : '✓'; st.className = 'hint ok'; } catch (e) { st.textContent = S.publishFail + ': ' + e.message; st.className = 'hint err'; }
+  });
   $('#cmake').addEventListener('click', () => {
     const until = addMonths($('#cstart').value || isoDate(new Date()), Number($('#cmonths').value) || 6), code = makeCode($('#ccourse').value, until);
     $('#cout').innerHTML = '<div class="codebox" id="codeval">' + code + '</div><p class="hint" style="text-align:center">' + esc(S.codeUntil) + ': ' + esc(fmtDate(until)) + '</p><button class="btn block" id="ccopy">' + esc(S.copyMsg.replace(/tin nhắn|the message/i, 'mã')) + '</button>';

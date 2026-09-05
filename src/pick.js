@@ -1,7 +1,8 @@
 /* ============================ pick a card ============================ */
 const pick = { focus: store.get('nabu-focus', 'general'), hand: [], chosen: null };
 function shuffle(a) { for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); const t = a[i]; a[i] = a[j]; a[j] = t; } return a; }
-function newHand() { pick.hand = shuffle(DECK.vi.map((c) => c.id)).slice(0, 7); pick.chosen = null; }
+/* All 78 cards, shuffled, face down: the visitor picks any one of them. */
+function newHand() { pick.hand = shuffle(DECK.vi.map((c) => c.id)); pick.chosen = null; }
 
 /* Everything in one language: keywords, energy, focus reading, advice. */
 function insightHTML(id, focus) {
@@ -20,7 +21,7 @@ function renderPick(args, params) {
   // A shared link (#/pick?card=…) opens straight on that card, in the focus it was drawn with.
   const want = params && params.card && cardById(params.card) ? params.card : '';
   if (want && pick.chosen !== want) {
-    newHand(); if (pick.hand.indexOf(want) < 0) pick.hand[3] = want; pick.chosen = want;
+    newHand(); pick.chosen = want;
     if (params.focus && T().focus[params.focus]) pick.focus = params.focus;
   }
   if (!pick.hand.length) newHand();
@@ -29,11 +30,11 @@ function renderPick(args, params) {
   const chips = Object.keys(S.focus).map((f) => '<button class="chip' + (pick.focus === f ? ' on' : '') + '" data-focus="' + f + '"' + (pick.chosen != null && pick.focus !== f ? ' disabled' : '') + '>' + esc(S.focus[f]) + '</button>').join('');
   const fan = pick.hand.map((id, i) => {
     const cls = pick.chosen == null ? '' : (pick.chosen === id ? ' chosen' : ' dim');
-    return '<div class="slot' + cls + '" style="transform:rotate(' + ((i - 3) * 9) + 'deg)"><button data-card="' + id + '" aria-label="' + (i + 1) + '">' + BACK + '</button></div>';
+    return '<div class="slot' + cls + '"><button data-card="' + id + '" aria-label="' + (i + 1) + '">' + BACK + '</button></div>';
   }).join('');
   m.innerHTML = '<div class="pick-head"><div class="eyebrow">' + esc(S.nav.pick) + '</div><h1>' + esc(S.pickTitle) + '</h1><p>' + esc(S.pickIntro) + '</p></div>'
     + '<div class="faint" style="text-align:center">' + esc(S.focusLabel) + '</div><div class="chips focus">' + chips + '</div>'
-    + '<div class="fan" id="fan">' + fan + '</div><div class="tap-hint">' + (pick.chosen == null ? esc(S.tapACard) : '') + '</div><div class="reveal" id="reveal"></div>';
+    + '<div class="fan deck" id="fan">' + fan + '</div><div class="tap-hint">' + (pick.chosen == null ? esc(S.tapACard) : '') + '</div><div class="reveal" id="reveal"></div>';
   $$('[data-focus]', m).forEach((b) => b.addEventListener('click', () => {
     if (pick.chosen != null) return;
     pick.focus = b.getAttribute('data-focus'); store.set('nabu-focus', pick.focus);

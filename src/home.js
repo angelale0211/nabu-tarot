@@ -84,14 +84,50 @@ function postScore(p) {
   if (p.topics && p.topics.some((t) => ints.indexOf(t) > -1)) s += 1;
   return s;
 }
+/* ---- rich post bodies ----
+   Plain text with light marks the dashboard toolbar inserts: **bold**,
+   __underline__, ==highlight==, "## " small heading, "> " title box,
+   [img:ID] for a photo stored in the cloud, [video:URL] for an embed. */
+const IMGS = {};
+async function loadImg(id) {
+  if (IMGS[id] != null) return IMGS[id];
+  IMGS[id] = '';
+  try { if (typeof BE !== 'undefined' && BE.enabled) { await Promise.race([BE.initP || Promise.resolve(), new Promise((r) => setTimeout(r, 4000))]); if (BE.db) { const d = await BE.getContent('img_' + id); if (d && d.data) IMGS[id] = d.data; } } } catch (e) { /* offline: the picture stays blank */ }
+  return IMGS[id];
+}
+function videoHTML(url) {
+  const u = String(url).trim(), m = /(?:youtube\.com\/(?:watch\?v=|shorts\/|embed\/)|youtu\.be\/)([A-Za-z0-9_-]{6,})/.exec(u);
+  if (m) return '<div class="video"><iframe src="https://www.youtube.com/embed/' + m[1] + '" allow="accelerometer; autoplay; encrypted-media; picture-in-picture" allowfullscreen loading="lazy"></iframe></div>';
+  if (/facebook\.com\/.*\/videos\/|fb\.watch\//.test(u)) return '<div class="video"><iframe src="https://www.facebook.com/plugins/video.php?href=' + encodeURIComponent(u) + '&show_text=false" allowfullscreen loading="lazy"></iframe></div>';
+  const site = /tiktok/.test(u) ? 'TikTok' : /instagram/.test(u) ? 'Instagram' : /facebook|fb\./.test(u) ? 'Facebook' : 'video';
+  return '<a class="vlink" href="' + esc(u) + '" target="_blank" rel="noopener">▶ ' + esc(T().watchOn(site)) + '</a>';
+}
+function richHTML(text) {
+  const inline = (s) => esc(s).replace(/\*\*([^*\n]+)\*\*/g, '<b>$1</b>').replace(/__([^_\n]+)__/g, '<u>$1</u>').replace(/==([^=\n]+)==/g, '<mark>$1</mark>');
+  const block = (b) => {
+    const t = b.trim(); let m;
+    if (!t) return '';
+    if ((m = /^\[img:([^\]\s]+)\]$/.exec(t))) return '<img class="pimg" data-img="' + esc(m[1]) + '"' + (IMGS[m[1]] ? ' src="' + esc(IMGS[m[1]]) + '"' : '') + ' alt="">';
+    if ((m = /^\[video:([^\]\s]+)\]$/.exec(t))) return videoHTML(m[1]);
+    if (/^##\s/.test(t)) return '<h3>' + inline(t.replace(/^##\s+/, '')) + '</h3>';
+    if (/^>/.test(t)) return '<div class="callout">' + inline(t.replace(/^>\s?/gm, '')).replace(/\n/g, '<br>') + '</div>';
+    return '<p>' + inline(t).replace(/\n/g, '<br>') + '</p>';
+  };
+  // Tokens and heading lines stand on their own even without blank lines around them.
+  return String(text || '').replace(/\n?(\[(?:img|video):[^\]\s]+\])\n?/g, '\n\n$1\n\n').replace(/^(##\s.*)$/gm, '\n$1\n').split(/\n\s*\n/).map(block).join('');
+}
+const plainText = (s) => String(s || '').replace(/\[(?:img|video):[^\]\s]+\]/g, '').replace(/\*\*|__|==/g, '').replace(/^##\s+|^>\s?/gm, '').trim();
+function hydrateImages(root) {
+  $$('img.pimg[data-img]', root).forEach((img) => { const id = img.getAttribute('data-img'); if (IMGS[id]) { img.src = IMGS[id]; return; } loadImg(id).then((d) => { if (d) img.src = d; }); });
+}
 function postHTML(p, full) {
-  const body = L(p.body), long = !full && body.length > 320, score = postScore(p);
+  const raw = L(p.body), body = plainText(raw), long = !full && body.length > 320, score = postScore(p);
   return '<article class="post" data-id="' + esc(p.id) + '">'
     + '<div class="date"><span>' + fmtDate(p.date) + (p.source ? ' · ' + esc(p.source) : '') + '</span>' + (p.pinned ? '<span class="pin">★ ' + T().pinned + '</span>' : '') + '</div>'
     + (score >= 2 ? '<span class="foryou">✦ ' + esc(T().forYou) + '</span>' : '')
     + '<h2>' + esc(L(p.title)) + '</h2>' + markersHTML(p)
     + (p.image ? '<img src="' + esc(p.image) + '" alt="" style="border-radius:12px;margin-bottom:10px">' : '')
-    + '<div class="body' + (long ? ' clamp' : '') + '">' + paras(body) + '</div>'
+    + '<div class="body' + (long ? ' clamp' : '') + '">' + richHTML(raw) + '</div>'
     + (long ? '<button class="more" data-more>' + T().readMore + '</button>' : '')
     + (p.cards && p.cards.length ? '<div class="faint">' + T().cardsDrawn + '</div><div class="mini">' + p.cards.map((c) => miniHTML(c, true)).join('') + '</div>' : '')
     + '<div class="foot">' + (p.link ? '<a class="btn sm" href="' + esc(p.link) + '" target="_blank" rel="noopener">' + esc(p.source || 'Facebook') + ' ↗</a>' : '') + '<button data-share>' + T().share + '</button></div>'
@@ -103,9 +139,9 @@ function bindPost(root) {
   }));
   $$('[data-share]', root).forEach((b) => b.addEventListener('click', () => {
     const art = b.closest('article'), p = allPosts().filter((x) => x.id === art.getAttribute('data-id'))[0];
-    if (p) shareOrCopy(L(p.title) + '\n' + L(p.body), p.link || (appURL() + '#/post/' + p.id));
+    if (p) shareOrCopy(L(p.title) + '\n' + plainText(L(p.body)), p.link || (appURL() + '#/post/' + p.id));
   }));
-  bindCardLinks(root);
+  bindCardLinks(root); hydrateImages(root);
 }
 function allPosts() { return (POSTS || []).concat(FBPOSTS.map((f) => Object.assign({ source: f.source || 'Facebook' }, f))); }
 function sortedPosts() {
@@ -138,7 +174,7 @@ function pickCtaHTML() {
 function quickLinksHTML() {
   const S = T();
   const tiles = [['#/pick', DRAW_ICON, S.nav.pick, lang === 'vi' ? 'năng lượng hôm nay' : 'your energy today'],
-    ['#/home?go=feed', '✨', S.feedTitle, lang === 'vi' ? 'bài mới của Nabu' : 'new posts from Nabu'],
+    ['#/news', '✨', S.newsTitle, lang === 'vi' ? 'bài mới của Nabu' : 'new posts from Nabu'],
     ['#/learn/astro', '🔮', S.cats.astro, lang === 'vi' ? '12 cung, hành tinh, nhà' : '12 signs, planets, houses'],
     ['#/learn/tarot', PICK_ICON, S.cats.tarot, lang === 'vi' ? '78 lá, ý nghĩa' : '78 cards, meanings'],
     ['#/book', '📅', S.nav.book, lang === 'vi' ? 'chọn giờ với Nabu' : 'pick a time with Nabu'],
@@ -158,13 +194,16 @@ function horoCardHTML(period) {
     + '<p class="faint" style="margin:8px 0 0">' + esc(S.horoSource) + ' ' + esc((HORO && HORO.source) || 'Horoscope.com') + (HORO && HORO.updated ? ' · ' + esc(S.horoUpdated) + ' ' + esc(HORO.updated) : '') + '</p></div>';
 }
 function suggestedGuidesHTML(limit) {
-  const ints = PROFILE.interests || [];
-  const list = GUIDES.filter((g) => g.tags.some((t) => ints.indexOf(t) > -1) && !((g.cat === 'tarot' || g.cat === 'lenormand') && !ACCESS.has(g.cat))).slice(0, 1);
-  // Opens right here: tap to read, tap again to fold it away. The same guide stays in the library.
-  const guide = list.length ? list.map((g) => '<div class="acc fyg"><button type="button"><span>📖 ' + esc(L(g.title)) + '</span></button><div class="in">' + guideBodyHTML(g) + '<p><a href="#/learn/guide/' + g.id + '">' + esc(T().openInLibrary) + ' →</a></p></div></div>').join('') : '';
-  return '<div class="sec" id="foryou"><div class="eyebrow">' + esc(T().forInterests) + '</div>' + guide + horoCardHTML('monthly') + horoCardHTML('weekly') + '</div>';
+  // Only the two horoscopes: the guide overview that used to sit here was removed at Nabu's request.
+  return '<div class="sec" id="foryou"><div class="eyebrow">' + esc(T().forInterests) + '</div>' + horoCardHTML('monthly') + horoCardHTML('weekly') + '</div>';
 }
 
+/* The next booking, when it is within two days, sits right under the greeting. */
+function upcomingHTML() {
+  const S = T(), nb = store.get('nabu-nextbk', null), d = nb && slotDate(nb.slot);
+  if (!d || d.getTime() < Date.now() || d.getTime() - Date.now() > 48 * 3600000) return '';
+  return '<a class="upnext" href="#/me"><span class="ic">⏰</span><span><b>' + esc(S.upcoming) + '</b><br>' + esc(slotLabel(nb.slot)) + ' · ' + esc(S.status[nb.status] || '') + '</span></a>';
+}
 async function renderHome(args, params) {
   const S = T(), m = $('#main');
   const name = (PROFILE.name || '').trim();
@@ -172,6 +211,7 @@ async function renderHome(args, params) {
     + todayHTML()
     + (PROFILE.tourDone ? tourMiniHTML() : tourHTML(0))
     + '<h1 style="margin:18px 0 4px">' + esc(name ? S.hello(name) : S.helloGuest) + '</h1><p class="muted">' + esc(lang === 'vi' ? 'Hôm nay bạn muốn làm gì?' : 'What would you like to do today?') + '</p>'
+    + upcomingHTML()
     + pickCtaHTML()
     + quickLinksHTML()
     + personalHTML()
@@ -185,7 +225,7 @@ async function renderHome(args, params) {
   const all = sortedPosts(), welcome = all.filter((p) => p.welcome)[0], list = all.filter((p) => !p.welcome);
   feed.innerHTML = (welcome ? '<section class="welcome"><h2>' + esc(L(welcome.title)) + '</h2>' + paras(L(welcome.body)) + '<div class="sig">' + LOGO + '</div></section>' : '')
     + (POSTS_CACHED && all.length ? '<div class="banner">' + esc(S.feedOffline) + '</div>' : '')
-    + (list.length ? list.map((p) => postHTML(p, false)).join('') : (welcome ? '' : '<p class="empty">' + esc(S.feedEmpty) + '</p>'));
+    + (list.length ? list.slice(0, 3).map((p) => postHTML(p, false)).join('') + '<a class="btn block" href="#/news">📰 ' + esc(S.allPostsBtn(list.length)) + '</a>' : (welcome ? '' : '<p class="empty">' + esc(S.feedEmpty) + '</p>'));
   bindPost(feed);
   if (params.go === 'feed' && NAV.restore == null) feed.scrollIntoView({ behavior: 'smooth' });
 }
@@ -196,5 +236,20 @@ async function renderPost(args) {
   m.innerHTML = '<p><a href="#/home">← ' + esc(T().backToFeed) + '</a></p>' + (p ? postHTML(p, true) : '<p class="empty">' + esc(T().notFound) + '</p>');
   bindPost(m);
 }
+/* ---- all posts, with search (#/news) ---- */
+async function renderNews() {
+  const S = T(), m = $('#main');
+  if (POSTS == null) await loadPosts();
+  m.innerHTML = '<div class="eyebrow">' + esc(CONFIG.brand) + '</div><h1 style="margin-bottom:6px">' + esc(S.newsTitle) + '</h1><p class="muted">' + esc(S.newsIntro) + '</p>'
+    + '<input id="nsearch" type="search" placeholder="' + esc(S.searchPosts) + '" autocomplete="off"><div id="news" style="margin-top:12px"></div>';
+  const draw = () => {
+    const q = fold($('#nsearch').value.trim());
+    const list = sortedPosts().filter((p) => !p.welcome).filter((p) => !q || fold(L(p.title) + ' ' + plainText(L(p.body))).indexOf(q) > -1);
+    $('#news').innerHTML = list.length ? list.map((p) => postHTML(p, false)).join('') : '<p class="empty">' + esc(q ? S.noMatch : S.feedEmpty) + '</p>';
+    bindPost($('#news'));
+  };
+  $('#nsearch').addEventListener('input', draw); draw();
+}
 ROUTES.home = { nav: 'home', render: renderHome };
+ROUTES.news = { nav: 'home', render: renderNews };
 ROUTES.post = { nav: 'home', render: renderPost };

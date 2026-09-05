@@ -13,7 +13,7 @@ let SCHEDULE = null, TAKEN = {};
 async function loadSchedule() {
   const s = await loadContent('schedule', CONFIG.schedulePath, 'nabu-schedule');
   SCHEDULE = s.data || { slotMinutes: 60, weekly: {}, blocked: [], extra: {}, booked: [], leadDays: 1, horizonDays: 42 };
-  if (BE.enabled && BE.ready) TAKEN = await BE.takenSlots();
+  if (BE.enabled) { await Promise.race([BE.initP || Promise.resolve(), new Promise((r) => setTimeout(r, 3000))]); if (BE.db) TAKEN = await BE.takenSlots(); }
   return SCHEDULE;
 }
 const slotKey = (dateStr, time) => dateStr + 'T' + time;
@@ -127,14 +127,10 @@ function renderPrices() {
 
 async function renderBook(args, params) {
   const S = T(), m = $('#main');
+  if (params.change) return renderChange(params.change);
   restoreBook();
   book.card = params.card || book.card || null; book.name = book.name || PROFILE.name || ''; book.birth = book.birth || PROFILE.birthday || '';
   if (!book.month) book.month = new Date(new Date().getFullYear(), new Date().getMonth(), 1);
-  const links = [];
-  if (CONFIG.instagram) links.push(['https://ig.me/m/' + CONFIG.instagram, S.viaInstagram, BE.enabled ? '' : 'primary']);
-  if (CONFIG.facebookPage) links.push(['https://m.me/' + CONFIG.facebookPage, S.viaMessenger, '']);
-  if (CONFIG.zalo) links.push(['https://zalo.me/' + CONFIG.zalo, S.viaZalo, '']);
-  if (CONFIG.email) links.push(['mailto:' + CONFIG.email, S.viaEmail, '']);
   m.innerHTML = '<div class="eyebrow">' + esc(CONFIG.brand) + '</div><h1 style="margin-bottom:6px">' + esc(S.bookTitle) + '</h1><p class="muted">' + esc(L(CONFIG.bookingNote)) + '</p><p class="tip">👆 ' + esc(S.bookTip) + '</p><p class="hint" style="margin:0 0 4px">💾 ' + esc(S.draftKept) + '</p>'
     + '<div class="sec"><h2 style="margin:18px 0 4px">' + esc(S.chooseService) + '</h2><p class="hint" style="margin-bottom:12px">' + esc(S.serviceHint) + '</p><div id="svcwrap">' + priceSheetHTML(true) + '</div><div id="cartwrap">' + cartHTML() + '</div></div>'
     + '<div class="sec"><h2 style="margin:18px 0 4px">' + esc(S.chooseTopic) + '</h2><div id="topicwrap">' + topicSectionHTML() + '</div></div>'
@@ -143,12 +139,10 @@ async function renderBook(args, params) {
     + '<div id="birthwrap" hidden><label class="f" for="bbirth">' + esc(S.birthday) + '</label><input id="bbirth" type="date" value="' + esc(book.birth) + '"><label class="f" for="btime">' + esc(S.birthTime) + '</label><input id="btime" type="time" value="' + esc(book.birthTime) + '"><p class="hint">' + esc(S.birthHint) + '</p></div>'
     + '<label class="f" for="bnote">' + esc(S.yourNote) + '</label><textarea id="bnote" placeholder="' + esc(S.notePlaceholder) + '">' + esc(book.note) + '</textarea>'
     + (book.card ? '<p class="hint">' + esc(S.msgCard) + ': <b>' + esc(cardById(book.card).name) + '</b></p>' : '') + '</div>'
-    + '<div class="sec"><h2 style="margin-bottom:6px">' + esc(S.sendVia) + '</h2><p class="hint">' + esc(S.summaryTitle) + '</p><div id="msgprev"></div><details class="msgd"><summary>' + esc(S.showMsg) + '</summary><div class="msgbox" id="msgtext"></div></details><p class="hint" style="margin:0 0 10px">' + esc(L(PAYMENT_NOTE)) + '</p>'
+    + '<div class="sec"><h2 style="margin-bottom:6px">' + esc(S.sendVia) + '</h2><p class="hint">' + esc(S.summaryTitle) + '</p><div id="msgprev"></div><div id="msgtext" hidden></div><p class="hint" style="margin:0 0 10px">' + esc(L(PAYMENT_NOTE)) + '</p>'
     + '<div class="row" style="flex-direction:column">'
-    + (BE.enabled ? '<button class="btn block primary" id="sendapp">' + esc(S.sendInApp) + '</button><p class="hint" id="sendstatus"></p>' : '')
-    + '<p class="hint">' + esc(S.sendHint) + '</p>'
-    + links.map((l) => '<a class="btn block ' + l[2] + '" data-send href="' + esc(l[0]) + '" target="_blank" rel="noopener">' + esc(l[1]) + '</a>').join('')
-    + '<button class="btn block" data-send="copy">' + esc(S.copyMsg) + '</button></div></div>'
+    + (BE.enabled ? '<button class="btn block primary" id="sendapp">' + esc(S.sendInApp) + '</button><p class="hint" id="sendstatus"></p>' : '<p class="hint">' + esc(S.needLogin) + '</p>')
+    + '<a class="btn block" href="#/contact">💬 ' + esc(S.contactTitle) + '</a></div></div>'
     + '<div class="sec card"><h3 style="margin-bottom:10px">' + esc(S.howItWorks) + '</h3><ol class="steps">' + [S.chooseService.slice(3), S.chooseTopic.slice(3), S.chooseTime.slice(3), S.sendVia.slice(3), L(PAYMENT_NOTE)].map((x) => '<li>' + esc(x) + '</li>').join('') + '</ol></div>'
     + '<div class="sec"><h3 style="margin-bottom:6px">' + esc(S.aboutTitle) + '</h3><p class="muted">' + esc(L(CONFIG.about)) + '</p></div>';
   const prev = () => { const p = $('#msgprev'); if (!p) return; p.innerHTML = summaryHTML(); $('#msgtext').textContent = composeMessage(); saveBook(); };
@@ -196,13 +190,6 @@ async function renderBook(args, params) {
     if (needsBirth() && !book.birth) { toast(S.needBirth); $('#birthwrap').scrollIntoView({ behavior: 'smooth', block: 'center' }); return false; }
     return true;
   };
-  $$('[data-send]', m).forEach((el) => el.addEventListener('click', (e) => {
-    if (!need()) { e.preventDefault(); return; }
-    const msg = composeMessage();
-    if (el.getAttribute('data-send') === 'copy') { copyText(msg).then(() => toast(S.copied)); return; }
-    if (el.getAttribute('href').indexOf('mailto:') === 0) { el.setAttribute('href', 'mailto:' + CONFIG.email + '?subject=' + encodeURIComponent(CONFIG.brand) + '&body=' + encodeURIComponent(msg)); return; }
-    copyText(msg); toast(S.copied);
-  }));
   const sendBtn = $('#sendapp');
   if (sendBtn) sendBtn.addEventListener('click', async () => {
     if (!need()) return;
@@ -212,7 +199,7 @@ async function renderBook(args, params) {
       const items = book.items.map((it) => { const s = serviceOf(it.svc), p = pkgOfItem(it); return { service: L2(s.name, 'vi'), pkg: L2(p.name, 'vi'), price: p.price, topic: p.needsTopic && it.topic ? topicLabel(it.topic, 'vi') : '' }; });
       await BE.createBooking({ name: book.name.trim() || PROFILE.name || '', slot: book.slot,
         service: items.map((x) => x.service + ' – ' + x.pkg + (x.topic ? ' (' + x.topic + ')' : '')).join(' + '), pkg: '', price: cartTotal(), topic: items.map((x) => x.topic).filter(Boolean).join('; '), items: items,
-        note: book.note.trim(), birth: needsBirth() ? (book.birth + (book.birthTime ? ' ' + book.birthTime : '')) : '', card: book.card ? cardById(book.card).name : '' });
+        note: book.note.trim(), message: composeMessage(), birth: needsBirth() ? (book.birth + (book.birthTime ? ' ' + book.birthTime : '')) : '', card: book.card ? cardById(book.card).name : '' });
       toast('✓'); try { TAKEN = await BE.takenSlots(); } catch (e2) { /* refreshed on the next visit */ }
       done(); return;
     } catch (e) { $('#sendstatus').textContent = S.publishFail + ': ' + e.message; $('#sendstatus').className = 'hint err'; }
@@ -235,6 +222,40 @@ async function renderBook(args, params) {
     for (let i = 0; i < 3; i++) { const mm = new Date(book.month.getFullYear(), book.month.getMonth() + i, 1); const days = new Date(mm.getFullYear(), mm.getMonth() + 1, 0).getDate(); let any = false; for (let d = 1; d <= days && !any; d++) any = slotsFor(isoDate(new Date(mm.getFullYear(), mm.getMonth(), d))).some((s) => !s.taken); if (any) { book.month = mm; break; } }
   }
   drawCal();
+}
+/* Moving an existing booking: only the calendar, then a request Nabu approves. */
+async function renderChange(id) {
+  const S = T(), m = $('#main');
+  m.innerHTML = '<div class="eyebrow">' + esc(CONFIG.brand) + '</div><h1 style="margin-bottom:6px">' + esc(S.changeTitle) + '</h1><p class="muted">…</p>';
+  if (!BE.enabled) { redirect('#/me'); return; }
+  await Promise.race([BE.initP || Promise.resolve(), new Promise((r) => setTimeout(r, 4000))]);
+  if (!BE.user) { location.hash = '#/me'; return; }
+  let bk = null; try { bk = await BE.getBooking(id); } catch (e) { /* shown below */ }
+  if (!bk || bk.uid !== BE.user.uid) { redirect('#/me'); return; }
+  const keep = { slot: book.slot, day: book.day, timeSaved: book.timeSaved, month: book.month };
+  book.slot = null; book.day = String(bk.slot).slice(0, 10); book.timeSaved = false; book.month = new Date(book.day + 'T00:00:00'); book.month = new Date(book.month.getFullYear(), book.month.getMonth(), 1);
+  m.innerHTML = '<div class="eyebrow">' + esc(CONFIG.brand) + '</div><h1 style="margin-bottom:6px">' + esc(S.changeTitle) + '</h1><p class="muted">' + esc(S.changeIntro) + '</p>'
+    + '<div class="picked"><span>' + esc(S.currentSlot) + ': ' + esc(slotLabel(bk.slot)) + '</span></div>'
+    + '<div class="sec" style="margin-top:14px"><p class="hint" style="margin-bottom:10px">' + esc(S.timeHint(L(CONFIG.tzLabel))) + '</p><div id="calwrap"><p class="hint">…</p></div></div>'
+    + '<button class="btn primary block" id="sendchange">' + esc(S.sendChange) + '</button><p class="hint" id="chstatus"></p><p style="margin-top:10px"><a href="#/me" class="backlink">← ' + esc(S.nav.me) + '</a></p>';
+  const restore = () => { book.slot = keep.slot; book.day = keep.day; book.timeSaved = keep.timeSaved; book.month = keep.month; };
+  const bindSlots = () => { $$('[data-slot]', m).forEach((b) => b.addEventListener('click', () => { book.slot = b.getAttribute('data-slot'); $('#slots').innerHTML = slotsHTML().replace(/<button class="btn primary block" id="saveslot"[^]*?<\/button>/, ''); bindSlots(); })); };
+  const drawCal = () => {
+    const w = $('#calwrap'); if (!w) return;
+    w.innerHTML = calendarHTML().replace(/<button class="btn primary block" id="saveslot"[^]*?<\/button>/, '');
+    $$('[data-cal]', w).forEach((b) => b.addEventListener('click', () => { book.month = new Date(book.month.getFullYear(), book.month.getMonth() + Number(b.getAttribute('data-cal')), 1); drawCal(); }));
+    $$('[data-day]', w).forEach((b) => b.addEventListener('click', () => { book.day = b.getAttribute('data-day'); book.slot = null; drawCal(); }));
+    bindSlots();
+  };
+  await loadSchedule(); drawCal();
+  $('#sendchange').addEventListener('click', async () => {
+    const st = $('#chstatus');
+    if (!book.slot) { toast(S.needSlot); return; }
+    if (book.slot === bk.slot) { toast(S.needSlot); return; }
+    $('#sendchange').disabled = true;
+    try { await BE.requestChange(bk, book.slot); restore(); st.textContent = S.changeSent; st.className = 'hint ok'; toast('✓'); setTimeout(() => { location.hash = '#/me'; }, 900); }
+    catch (e) { st.textContent = S.publishFail + ': ' + e.message; st.className = 'hint err'; $('#sendchange').disabled = false; }
+  });
 }
 ROUTES.book = { nav: 'book', render: renderBook };
 ROUTES.prices = { nav: 'book', render: renderPrices };

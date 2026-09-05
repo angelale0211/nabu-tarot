@@ -34,6 +34,8 @@ const CONFIG = {
   // projects can only switch on with the pay-as-you-go plan. Set to true
   // once Build -> Storage exists and storage.rules is published.
   attachments: false,
+  // Photos in chat without Storage: shrunk on the phone and kept inside the message itself.
+  chatImages: true,
   // Where booking requests are mailed as calendar invitations (an .ics the
   // mail app adds to the calendar). Sent by the worker in worker/ through
   // Resend; set bookingEndpoint to '<worker url>/booking' once deployed.
@@ -69,8 +71,8 @@ const CONFIG = {
 
   // Booking page copy. Short sentences; this is what clients read.
   bookingNote: {
-    vi: 'Bạn chọn chủ đề và giờ hẹn, rồi gửi cho Nabu. Nabu xác nhận lại với bạn trước buổi xem.',
-    en: 'Choose a topic and a time, then send it to Nabu. Nabu confirms with you before the session.'
+    vi: 'Bốn bước: chọn gói, chọn chủ đề (nếu gói cần), chọn giờ, bấm gửi. Nabu xác nhận lại trong ngày, và bạn theo dõi ở mục Tôi.',
+    en: 'Four steps: pick a package, pick a topic (if the package needs one), pick a time, tap send. Nabu confirms within the day, and you follow it under Me.'
   },
   tagline: { vi: 'Lắng nghe và thấu hiểu', en: 'Listening and understanding' },
   about: {

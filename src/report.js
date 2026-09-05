@@ -17,12 +17,8 @@ function renderReport(args, params) {
     + '<p class="hint" style="margin-top:12px">' + esc(S.reportAuto) + '</p><div class="msgbox" style="font-size:12.5px">' + esc(reportInfo()) + '</div>'
     + '<div class="row" style="flex-direction:column">'
     + '<button class="btn primary block" id="rsend">' + esc(S.reportSend) + '</button>'
-    + (CONFIG.instagram ? '<a class="btn block" id="rig" href="https://ig.me/m/' + esc(CONFIG.instagram) + '" target="_blank" rel="noopener">' + esc(S.reportViaIg) + '</a>' : '')
-    + '<button class="btn block" id="rcopy">' + esc(S.copyMsg) + '</button></div><p class="hint" id="rstatus"></p></div>';
-  const msg = () => S.reportMsgHead + '\n' + $('#rwhat').value.trim() + '\n' + ($('#rcontact').value.trim() ? S.reportContact + ': ' + $('#rcontact').value.trim() + '\n' : '') + '— ' + reportInfo();
+    + '<a class="btn block" href="#/contact">💬 ' + esc(S.contactTitle) + '</a></div><p class="hint" id="rstatus"></p></div>';
   const need = () => { if (!$('#rwhat').value.trim()) { toast(S.reportNeed); return false; } return true; };
-  $('#rcopy').addEventListener('click', () => { if (need()) copyText(msg()).then(() => toast(S.copied)); });
-  const ig = $('#rig'); if (ig) ig.addEventListener('click', (e) => { if (!need()) { e.preventDefault(); return; } copyText(msg()); toast(S.copied); });
   const send = $('#rsend'); if (send) send.addEventListener('click', async () => {
     if (!need()) return;
     const text = $('#rwhat').value.trim(), contact = $('#rcontact').value.trim(), st = $('#rstatus');
@@ -35,7 +31,7 @@ function renderReport(args, params) {
       }
       if (BE.enabled && BE.user) { await BE.db.collection('reports').add({ uid: BE.user.uid, email: BE.user.email || '', text: text, contact: contact, info: reportInfo(), at: firebase.firestore.FieldValue.serverTimestamp() }); delivered = true; }
       if (delivered) { st.textContent = S.reportSent; st.className = 'hint ok'; $('#rwhat').value = ''; }
-      else { st.textContent = S.reportNoChannel; st.className = 'hint err'; copyText(msg()); }
+      else { st.textContent = S.reportNoChannel; st.className = 'hint err'; }
     } catch (e) { st.textContent = S.publishFail + ': ' + e.message; st.className = 'hint err'; }
     send.disabled = false;
   });

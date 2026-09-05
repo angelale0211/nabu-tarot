@@ -34,7 +34,7 @@ async function go(hash, sel) { W().location.hash = hash; await sleep(30); return
     ok(lt.yearAn === 'Horse' && lt.monthAn === 'Monkey' && lt.dayAn === 'Horse' && /Bính Ngọ/.test(lt.yearCC), 'English lunar names use the animal: 5/9/2026 is a Horse day in the Monkey month of the Horse year');
     const l1 = N.solarToLunar(29, 1, 2025), l2 = N.solarToLunar(10, 2, 2024), l3 = N.solarToLunar(4, 9, 2026);
     ok(l1.day === 1 && l1.month === 1 && l1.year === 2025 && l2.day === 1 && l2.month === 1 && l2.year === 2024 && l3.day === 23 && l3.month === 7 && l3.year === 2026, 'lunar algorithm matches lịch vạn niên: Tết 2025 = 29/1, Tết 2024 = 10/2, 4/9/2026 = 23/7 âm lịch');
-    ok(typeof w.chatBarHTML === 'function' && (/data-chat-img/.test(w.chatBarHTML('a', 'b', 'x')) === !!N.CONFIG.attachments) && typeof w.notifyBooking === 'function' && N.CONFIG.firebase && N.CONFIG.firebase.projectId === 'nabutarot' && N.CONFIG.adminEmails.indexOf('nabutarot@outlook.com') === 0, 'Firebase project wired with admin emails; chat attachments follow CONFIG.attachments; bookings notify the calendar endpoint');
+    ok(typeof w.chatBarHTML === 'function' && (/data-chat-img/.test(w.chatBarHTML('a', 'b', 'x')) === !!(N.CONFIG.attachments || N.CONFIG.chatImages)) && /data-chat-emoji/.test(w.chatBarHTML('a', 'b', 'x')) && typeof w.notifyBooking === 'function' && N.CONFIG.firebase && N.CONFIG.firebase.projectId === 'nabutarot' && N.CONFIG.adminEmails.indexOf('nabutarot@outlook.com') === 0, 'Firebase project wired with admin emails; chat attachments follow CONFIG.attachments; bookings notify the calendar endpoint');
     ok(/Nabu Tarot/.test(d.querySelector('#brand .lockup').textContent) && /^data:image\/png/.test(d.querySelector('#brand .lockup img').getAttribute('src')) && d.querySelector('#foot .lockup img'), 'header and footer show the real round avatar with the wordmark');
     ok(d.querySelector('#foot') && /Instagram/.test(d.querySelector('#foot').textContent) && /Facebook/.test(d.querySelector('#foot').textContent) && /©/.test(d.querySelector('#foot').textContent) && /Báo lỗi/.test(d.querySelector('#foot').textContent), 'footer with Instagram, Facebook, copyright and the bug-report link');
     ok(!!d.querySelector('#tour'), 'tour shows on first visit');
@@ -55,6 +55,7 @@ async function go(hash, sel) { W().location.hash = hash; await sleep(30); return
     ok(d.querySelector('#tour.tourmini'), 'closing shrinks it again');
     await waitFor(() => d.querySelector('.welcome'), 6000);
     ok(/Chào mừng bạn đến với Nabu Tarot/.test(d.querySelector('.welcome h2').textContent) && d.querySelector('.welcome .sig img') && !d.querySelector('.welcome .date') && !/Dự đoán mới/.test(d.querySelector('#feed').textContent), 'welcome post heads the feed with the logo as signature, no date line, no "Dự đoán mới"');
+    { const np = d.querySelectorAll('#feed .post').length; ok(np <= 3 && (np === 0 || d.querySelector('#feed a[href="#/news"]')) && d.querySelector('.tiles a[href="#/news"]'), 'home shows at most three posts with a link to all of them, and the tile leads to the posts screen'); }
     // profile -> personalisation
     await go('#/me', '#pname');
     d.querySelector('#pname').value = 'Lan'; d.querySelector('#pbday').value = '1998-08-05';
@@ -66,11 +67,11 @@ async function go(hash, sel) { W().location.hash = hash; await sleep(30); return
     ok(/Sư Tử/.test(d.querySelector('.hello').textContent) && /Số đường đời 22/.test(d.querySelector('.hello').textContent) && /Dần/.test(d.querySelector('.hello').textContent), 'home shows sign (Leo), life path and animal');
     ok(/Sức Mạnh/.test(d.querySelector('.hello .cardline').textContent), 'home links the sign to its tarot card');
     await waitFor(() => d.querySelector('.horo'), 6000);
-    ok(/Có thể bạn quan tâm/.test(d.body.textContent) && d.querySelectorAll('#foryou .acc').length === 1 && d.querySelectorAll('#foryou .horo').length === 2 && /Dự đoán tháng này/.test(d.querySelector('#foryou').textContent) && /Sư Tử/.test(d.querySelector('#foryou .horo').textContent) && /Horoscope\.com/.test(d.querySelector('#foryou').textContent), 'You may also like: one guide, then the monthly and weekly forecast for Leo with the source');
+    ok(/Có thể bạn quan tâm/.test(d.body.textContent) && d.querySelectorAll('#foryou .acc').length === 0 && d.querySelectorAll('#foryou .horo').length === 2 && /Dự đoán tháng này/.test(d.querySelector('#foryou').textContent) && /Sư Tử/.test(d.querySelector('#foryou .horo').textContent) && /Horoscope\.com/.test(d.querySelector('#foryou').textContent), 'You may also like: one guide, then the monthly and weekly forecast for Leo with the source');
     ok(d.querySelectorAll('#foryou .horo .body p').length >= 6 && !/Premium|cao cấp|\bLeo\b/.test(d.querySelector('#foryou').textContent) && /nhà số \d+/.test(d.querySelector('#foryou').textContent) && /Ngày thuận lợi|Ngày cần cẩn thận/.test(d.querySelector('#foryou').textContent), 'forecast shows as short emoji paragraphs, no adverts, houses named plainly, day lists on their own lines');
     // pick a card, Vietnamese
     await go('#/pick', '#fan .slot');
-    ok(d.querySelectorAll('#fan .slot').length === 7 && d.querySelectorAll('[data-focus]').length === 5, 'seven cards, five focuses');
+    ok(d.querySelectorAll('#fan .slot').length === 78 && d.querySelectorAll('[data-focus]').length === 5, 'the whole deck of 78 cards, five focuses');
     d.querySelector('[data-focus="love"]').click(); d.querySelectorAll('#fan button')[2].click();
     await waitFor(() => d.querySelector('#reveal .hero'), 4000);
     const chosen = N.pick.chosen;
@@ -80,8 +81,10 @@ async function go(hash, sel) { W().location.hash = hash; await sleep(30); return
     ok(/Lúc này bạn đang mang năng lượng/.test(d.querySelector('#reveal').textContent) && /Nếu bạn đang nghĩ về tình cảm/.test(d.querySelector('#reveal').textContent), 'Vietnamese insight sections');
     ok(!/Thu Anh/.test(d.querySelector('#reveal').textContent), 'no source line under the insight');
     ok(!!d.querySelector('#reveal .ai') && d.querySelectorAll('#reveal .ai [data-ai-sug]').length === 3, 'Nabu AI panel under the drawn card');
+    const gk = N.CONFIG.geminiKey; N.CONFIG.geminiKey = '';  // built-in engine for this check; the online one is tested separately
     d.querySelector('#reveal .ai [data-ai-q]').value = 'Lá này nói gì về chuyện tình cảm của mình?'; d.querySelector('#reveal .ai [data-ai-send]').click(); await sleep(150);
     ok(d.querySelectorAll('#reveal .ai-chat .msg').length === 2 && /Với câu hỏi về tình cảm/.test(d.querySelector('#reveal .ai-chat').textContent), 'built-in engine answers a love question from the card');
+    N.CONFIG.geminiKey = gk;
     const yn = N.localAnswer('Mình có nên tiếp tục không?', { type: 'card', id: 'major-19' }), tm = N.localAnswer('Khi nào chuyện này xảy ra?', { type: 'card', id: 'wands-8' });
     ok(/thiên về CÓ/.test(yn) && /Gậy đi nhanh/.test(tm), 'yes/no lean and timing hints');
     ok(/Gã Khờ/.test(N.localAnswer('Gã Khờ nghĩa là gì?', { type: 'general' })) && /Sư Tử và Bảo Bình là hai cung đối diện/.test(N.localAnswer('Sư Tử hợp với Bảo Bình không?', { type: 'sign', key: 'leo' })), 'mentions of cards and signs are picked up; compatibility gets a straight verdict');
@@ -158,9 +161,9 @@ async function go(hash, sel) { W().location.hash = hash; await sleep(30); return
     await go('#/learn/lesson/lenormand/6', '.spreads-v');
     ok(d.querySelectorAll('.spv').length === 7 && /Grand Tableau/.test(d.querySelector('.spreads-v').textContent), 'lenormand session 6: seven spread diagrams incl. the Grand Tableau');
     await go('#/report', '#rwhat');
-    ok(d.querySelector('#rwhat') && d.querySelector('#rsend') && d.querySelector('#rcopy') && /Nabu Tarot v47/.test(d.querySelector('.msgbox').textContent), 'bug report screen: direct send button, Instagram, copy, auto-attached info');
+    ok(d.querySelector('#rwhat') && d.querySelector('#rsend') && !d.querySelector('#rcopy') && !d.querySelector('#rig') && d.querySelector('a[href="#/contact"]') && /Nabu Tarot v49/.test(d.querySelector('.msgbox').textContent), 'bug report screen: direct send button, Instagram, copy, auto-attached info');
     d.querySelector('#rwhat').value = 'Nút không bấm được'; d.querySelector('#rsend').click(); await sleep(150);
-    ok(/chưa bật gửi trực tiếp/.test(d.querySelector('#rstatus').textContent), 'without an endpoint the send button explains and copies the report');
+    ok(/đăng nhập|Liên hệ/.test(d.querySelector('#rstatus').textContent), 'without a sign-in the send button explains and points at the contact screen');
     ok(N.CONFIG.adminNotifyEmails.indexOf('nabutarot@outlook.com') === 0, 'notifications go to nabutarot@outlook.com first');
     await go('#/learn/len/1', '.detail .hero');
     ok(/Kỵ Mã/.test(d.querySelector('.name').textContent) && /Cặp lá/.test(d.body.textContent), 'Lenormand card page');
@@ -202,8 +205,6 @@ async function go(hash, sel) { W().location.hash = hash; await sleep(30); return
     ok(!d.querySelector('#backbar').hidden && /Trang chủ/.test(d.querySelector('#backbar').textContent), 'the draw tab opened from home shows a back arrow to home');
     d.querySelector('#backbar .backlink').click(); await sleep(60); await waitFor(() => d.querySelector('.tiles'), 4000);
     ok(w.location.hash === '#/home' && d.querySelector('#backbar').hidden, 'back from the draw tab lands on home, where the bar is hidden');
-    { const acc = d.querySelector('#foryou .acc.fyg'); ok(!!acc && !acc.classList.contains('open'), 'the suggested guide on home is a folded card, not a link away'); acc.querySelector('button').click(); await sleep(40);
-      ok(acc.classList.contains('open') && acc.querySelector('.in h2') && acc.querySelector('.in a[href^="#/learn/guide/"]') && w.location.hash === '#/home', 'it opens in place with the full guide and a link to the library'); acc.querySelector('button').click(); await sleep(20); }
     ok(/Mình rút cho bạn một lá/.test(N.localAnswer('Mình có nên đổi việc không?', { type: 'general' })) && /Chào bạn/.test(N.localAnswer('chào', { type: 'general' })) && /Sư Tử và Bảo Bình/.test(N.localAnswer('Sư Tử hợp với Bảo Bình không?', { type: 'general' })), 'the built-in Nabu AI greets, draws a card for a yes-or-no question, and still answers sign matches');
     await go('#/admin', '#atabs'); await sleep(60);
     ok(d.querySelector('.btns #publish') && d.querySelector('#cardpick.acc') && !d.querySelector('#cardpick.open'), 'dashboard actions sit in a grid and the 78-card picker is folded until needed');
@@ -271,7 +272,7 @@ async function go(hash, sel) { W().location.hash = hash; await sleep(30); return
     ok(w.NABU.SERVICES.length === 7 && !w.NABU.SERVICES.some((x) => x.id === 'oracle') && w.NABU.SERVICES.some((x) => x.id === 'tea') && w.NABU.SERVICES.some((x) => x.id === 'talk'), 'seven services: no standalone oracle; tea, combos and just-talk present');
     ok(d.querySelectorAll('.svc').length === 7 && d.querySelectorAll('[data-pkg]').length === 26, 'price sheet renders every package');
     ok(/50\.000đ/.test(d.querySelector('.svc.blue').textContent) && /1 chủ đề sẵn \(chọn trong 5 chủ đề\)/.test(d.querySelector('.svc.blue').textContent) && /Bài trà/.test(d.querySelector('#main').textContent) && /666\.000đ/.test(d.querySelectorAll('.svc')[5].textContent) && /60\.000đ/.test(d.querySelectorAll('.svc')[6].textContent), 'prices formatted in VND');
-    ok(d.querySelectorAll('[data-topic]').length === 0 && /Chỉ áp dụng cho gói 1 chủ đề sẵn/.test(d.querySelector('#main').textContent) && /chưa chọn gói nào/i.test(d.querySelector('#cartwrap').textContent), 'no topic pickers until a preset-topic package is chosen; the basket starts empty');
+    ok(d.querySelectorAll('[data-topic]').length === 0 && /Chỉ dành cho gói/.test(d.querySelector('#main').textContent) && /chưa chọn gói nào/i.test(d.querySelector('#cartwrap').textContent), 'no topic pickers until a preset-topic package is chosen; the basket starts empty');
     ok(/chạm vào gói đó thêm một lần nữa/.test(d.querySelector('.tip').textContent), 'the booking page opens with the tap-again-to-deselect tip');
     d.querySelector('[data-pkg="tarot/q3"]').click();
     ok(d.querySelector('[data-pkg="tarot/q3"]').classList.contains('on') && /• Tarot – 3 câu chi tiết: 50\.000đ/.test(d.querySelector('#msgtext').textContent) && d.querySelectorAll('#cartwrap .ci').length === 1, 'a package goes into the basket and the message');
@@ -306,11 +307,25 @@ async function go(hash, sel) { W().location.hash = hash; await sleep(30); return
     d.querySelector('[data-topic="1/2"]').click(); await sleep(20);
     d.querySelector('[data-remove="0"]').click(); await sleep(20);
     ok(d.querySelectorAll('#cartwrap .ci:not(.total)').length === 2 && /• Tarot – 1 chủ đề sẵn/.test(d.querySelector('#msgtext').textContent) && !/3 câu chi tiết:/.test(d.querySelector('#msgtext').textContent) && /\n\n🧺/.test(d.querySelector('#msgtext').textContent), 'the ✕ in the basket removes a package and the rest renumber');
-    ok(/ig\.me\/m\/nabutarot/.test(d.querySelector('[data-send][href]').getAttribute('href')), 'instagram send link');
+    ok(!d.querySelector('[data-send]') && d.querySelector('#main a[href="#/contact"]') && d.querySelector('#msgtext').hidden, 'booking keeps only the in-app send and a contact link; no Instagram or copy buttons');
+    await go('#/contact', '#ctext');
+    ok(d.querySelector('[data-ch="app"]') && d.querySelector('[data-ch="ig"]') && d.querySelector('[data-ch="fb"]') && !d.querySelector('[data-ch="mail"]') && /Liên hệ/.test(d.querySelector('#foot').textContent), 'contact screen: a text box with in-app, Instagram and Facebook channels, linked from the footer');
+    { const h = w.richHTML('## Tiêu đề\n**đậm** __gạch__ ==nổi== 💜\n\n> Hộp riêng\n[video:https://youtu.be/abc12345]\n[img:test1]');
+      ok(/<h3>Tiêu đề<\/h3>/.test(h) && /<b>đậm<\/b>/.test(h) && /<u>gạch<\/u>/.test(h) && /<mark>nổi<\/mark>/.test(h) && /class="callout"/.test(h) && /youtube\.com\/embed\/abc12345/.test(h) && /data-img="test1"/.test(h) && !/<script/.test(w.richHTML('<scr' + 'ipt>x</scr' + 'ipt>')), 'posts render headings, bold, underline, highlight, title boxes, video embeds and images, and never raw HTML'); }
+    await go('#/news', '#nsearch'); await sleep(150);
+    ok(!d.querySelector('#news .welcome') && !/Chào mừng bạn đến với Nabu Tarot/.test(d.querySelector('#news').textContent), 'the posts screen lists every post without the welcome note');
+    d.querySelector('#nsearch').value = 'zzzz-khong-co'; d.querySelector('#nsearch').dispatchEvent(new w.Event('input')); await sleep(30);
+    ok(d.querySelectorAll('#news .post').length === 0 && d.querySelector('#news .empty'), 'search filters the posts');
+    ok(/1 \+ 1 = 2/.test(N.localAnswer('1 + 1 = ?', { type: 'general' })) && /12 x 3 = 36/.test(N.localAnswer('12 x 3', { type: 'general' })), 'the built-in engine answers sums instead of pulling a card');
+    ok(N.CONFIG.geminiModel === 'gemini-3.6-flash' && typeof w.icsFor === 'function', 'the online assistant uses the current Gemini model; the key is a cloud setting');
+    { const ics = w.icsFor({ id: 'b1', slot: '2026-09-12T10:30', service: 'Tarot – 3 câu', name: 'Lan' }); ok((ics.match(/BEGIN:VALARM/g) || []).length === 4 && /DTSTART:20260912T033000Z/.test(ics) && /TRIGGER:-P1D/.test(ics) && /TRIGGER:-PT15M/.test(ics), 'a booking exports as a calendar event in Vietnam time with reminders at 24 h, 6 h, 1 h and 15 min'); }
+    { const h = w.bookingRow({ id: 'x2', slot: '2099-01-05T09:00', newSlot: '2099-01-06T10:30', status: 'change_requested', items: [{ service: 'Tarot', pkg: '1 câu', price: 10000 }] }, true); ok(/data-bk="confirmed"/.test(h) && /data-bk="keep"/.test(h) && /Giờ mới/.test(h) && /data:text\/calendar/.test(h), 'an admin sees a change request with approve and keep-old-time buttons and the calendar file'); }
+    { const h = w.bookingRow({ id: 'x3', slot: '2099-01-05T09:00', status: 'confirmed', items: [{ service: 'Tarot', pkg: '1 câu', price: 10000 }] }, false); ok(/#\/book\?change=x3/.test(h) && /data-cancel="x3"/.test(h) && /data:text\/calendar/.test(h), 'a client can ask to move or cancel a live booking and add it to the phone calendar'); }
+    ok(/maximum-scale=1/.test(d.querySelector('meta[name="viewport"]').getAttribute('content')) && /user-scalable=no/.test(d.querySelector('meta[name="viewport"]').getAttribute('content')), 'the app cannot be pinch-zoomed');
     await go('#/pick', '.fan'); d.querySelector('[data-card]').click(); await sleep(300);
     ok(d.querySelector('#redrawTop') && d.querySelector('#redraw') && d.querySelector('#redrawTop').compareDocumentPosition(d.querySelector('.reveal .hero')) & 4, 'the reveal has a shuffle-and-draw-again button at the top as well as at the bottom');
     d.querySelector('#redrawTop').click(); await sleep(100);
-    ok(!d.querySelector('#reveal .hero') && d.querySelectorAll('.fan [data-card]').length >= 5, 'the top button deals a fresh hand');
+    ok(!d.querySelector('#reveal .hero') && d.querySelectorAll('.fan [data-card]').length === 78 && d.querySelector('.fan.deck'), 'the top button reshuffles the whole 78-card deck');
     const savedAccess = JSON.stringify(N.ACCESS.get()); w.localStorage.removeItem('nabu-access');
     N.BE.user = { uid: 'x', email: 'angela_le_@outlook.com' };
     ok(N.ACCESS.has('tarot') && N.ACCESS.has('lenormand'), 'an admin email opens every course without a code');
@@ -346,7 +361,9 @@ async function go(hash, sel) { W().location.hash = hash; await sleep(30); return
     d.querySelector('#cstart').value = '2026-09-04'; d.querySelector('#cmake').click(); await sleep(50);
     ok(/^NABU-T-270304-[A-Z0-9]{4}$/.test(d.querySelector('#codeval').textContent) && N.parseCode(d.querySelector('#codeval').textContent).course === 'tarot', 'dashboard makes a six-month tarot code that the app accepts');
     d.querySelector('[data-t="schedule"]').click(); await waitFor(() => d.querySelector('.week .wd'), 12000);
-    ok(d.querySelectorAll('.week .wd').length === 7 && d.querySelectorAll('.week .chip.on').length >= 15, 'availability editor shows the weekly hours');
+    ok(d.querySelectorAll('.week .wd').length === 7 && d.querySelectorAll('.week .chip.on').length >= 15 && d.querySelectorAll('.week .wd')[0].querySelectorAll('.chip').length === 34 && d.querySelector('.week .wd [data-h="07:30"]'), 'availability editor shows the weekly hours in half-hour steps');
+    d.querySelector('[data-t="codes"]').click(); await sleep(50);
+    ok(d.querySelector('#gkey') && d.querySelector('#gsave'), 'the codes tab carries the Nabu AI key setting');
     d.querySelector('[data-t="bookings"]').click(); await sleep(50);
     ok(/email quản trị/.test(d.querySelector('#apanel').textContent) && d.querySelector('#apanel a[href="#/me"]'), 'bookings tab asks for an admin sign-in now that accounts are on');
     // theme

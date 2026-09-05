@@ -2,7 +2,7 @@
 <html lang="vi">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
 <title>Nabu Tarot</title>
 <meta name="description" content="Nabu Tarot: dự đoán mới, rút một lá bài xem năng lượng hiện tại, học tarot, Lenormand, chiêm tinh, và đặt lịch xem bài.">
 <meta name="theme-color" content="#EFE9FA">
@@ -216,7 +216,7 @@
 *{box-sizing:border-box;min-width:0}
 body{overflow-x:clip}
 img,svg{max-width:100%}
-html{-webkit-text-size-adjust:100%}
+html{-webkit-text-size-adjust:100%;touch-action:manipulation}
 body{margin:0;background:var(--bg);color:var(--fg);font-family:var(--body);font-size:16px;line-height:1.55;
   -webkit-font-smoothing:antialiased;min-height:100vh;padding-bottom:calc(var(--nav-h) + env(safe-area-inset-bottom))}
 a{color:var(--link)}
@@ -294,7 +294,7 @@ main{padding:22px 0 30px}
 .banner button{color:var(--primary);font-weight:700;white-space:nowrap}
 .tabs{display:flex;gap:6px;overflow-x:auto;padding-bottom:6px;margin-bottom:14px;-webkit-overflow-scrolling:touch}
 .tabs::-webkit-scrollbar{display:none}
-.tabs button{white-space:nowrap;border:1px solid var(--rule);border-radius:999px;padding:8px 14px;font-size:13.5px;font-weight:600;color:var(--fg-soft);background:var(--surface)}
+.tabs button{white-space:nowrap;border:1px solid var(--rule);border-radius:999px;padding:0 14px;min-height:38px;display:inline-flex;align-items:center;justify-content:center;line-height:1.2;font-size:13.5px;font-weight:600;color:var(--fg-soft);background:var(--surface)}
 .tabs button.on{background:var(--primary);color:var(--primary-ink);border-color:transparent}
 .empty{text-align:center;color:var(--fg-faint);padding:24px 0}
 .acc{border:1px solid var(--rule-soft);border-radius:14px;background:var(--surface);margin-bottom:10px;overflow:hidden}
@@ -334,6 +334,15 @@ main{padding:22px 0 30px}
 .post .more{color:var(--link);font-weight:700;font-size:14px;margin:2px 0 8px}
 .post .markers{margin:8px 0 6px;font-size:14px;color:var(--fg-soft)}
 .post .markers b{color:var(--fg)}
+/* Rich post bodies: small headings, marks, title boxes, images and embedded video. */
+.post .body h3{font-size:17px;margin:12px 0 6px;font-family:var(--display);font-weight:500}.post .body mark{background:var(--tag-gold-bg);color:var(--tag-gold-ink);padding:0 4px;border-radius:4px}.post .body u{text-decoration-thickness:2px;text-underline-offset:2px}
+.post .body .callout{background:var(--surface-2);border-left:4px solid var(--lav);border-radius:10px;padding:10px 12px;margin:10px 0;font-weight:600}
+.post .body img.pimg{display:block;max-width:100%;border-radius:12px;margin:8px 0;min-height:40px;background:var(--surface-2)}
+.post .body .video{position:relative;padding-top:56.25%;border-radius:12px;overflow:hidden;margin:8px 0;background:#000}.post .body .video iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
+.vlink{display:flex;gap:10px;align-items:center;background:var(--surface-2);border-radius:12px;padding:10px 12px;text-decoration:none;color:inherit;font-weight:600;margin:8px 0}
+/* Editor toolbar in the dashboard. */
+.tb{display:flex;gap:6px;flex-wrap:wrap;margin:6px 0 8px}.tb .tbl{width:auto;flex:none}.tb button,.tb .tbl{border:1px solid var(--rule);border-radius:8px;padding:6px 10px;font-size:13px;font-weight:700;background:var(--surface);cursor:pointer;color:var(--fg);min-height:34px;display:inline-flex;align-items:center;gap:4px}.tb mark{background:var(--tag-gold-bg);color:var(--tag-gold-ink);padding:0 3px;border-radius:3px}
+.emojis{display:flex;flex-wrap:wrap;gap:2px;margin:0 0 8px}.emojis button{font-size:22px;padding:4px 6px;border-radius:8px}.emojis button:active{background:var(--surface-2)}
 .post .foryou{display:inline-block;background:var(--tag-pink-bg);color:var(--tag-pink-ink);font-size:12px;font-weight:700;border-radius:8px;padding:3px 8px;margin-bottom:8px}
 .post .foot{display:flex;gap:8px;justify-content:flex-end;border-top:1px solid var(--rule-soft);margin-top:8px;padding-top:8px}
 .post .foot button{color:var(--fg-soft);font-size:13.5px;font-weight:600;padding:6px 10px;border-radius:8px}
@@ -376,6 +385,11 @@ main{padding:22px 0 30px}
 .fan .slot svg{width:100%;height:100%;display:block;filter:drop-shadow(0 6px 12px var(--shade))}
 .fan .slot.dim{opacity:.35;transform:translateY(20px) scale(.9)!important}
 .fan .slot.chosen{z-index:5;transform:translateY(-30px) scale(1.05)!important}
+/* The whole deck: 78 backs in a grid, tap any one. */
+.fan.deck{position:static;height:auto;max-width:none;perspective:none;display:grid;grid-template-columns:repeat(8,1fr);gap:5px;margin:0 0 18px}
+.fan.deck .slot{position:static;width:auto;height:auto;margin:0;aspect-ratio:104/170;transform:none!important;transition:opacity .3s,box-shadow .3s;border-radius:6px}
+.fan.deck .slot svg{filter:drop-shadow(0 2px 4px var(--shade))}.fan.deck .slot.chosen{box-shadow:0 0 0 3px var(--primary);transform:scale(1.08)!important;z-index:2}.fan.deck .slot.dim{opacity:.3;transform:none!important}
+@media (min-width:640px){.fan.deck{grid-template-columns:repeat(13,1fr)}}
 .tap-hint{text-align:center;color:var(--fg-faint);font-size:13.5px;margin:0 0 12px;min-height:1.4em}
 .reveal{margin-top:10px}
 .hero{display:grid;grid-template-columns:112px 1fr;gap:16px;align-items:center;margin-bottom:18px}
@@ -682,7 +696,7 @@ main{padding:22px 0 30px}
 .thr-head{display:flex;align-items:center;gap:12px;margin-bottom:10px}.thr-head b{display:block}.thr-head i{font-style:normal;color:var(--fg-faint);font-size:12.5px;font-weight:500}
 .tabs button{position:relative}.tabs .tb{display:inline-block;margin-left:6px;background:var(--pink-ink);color:#fff;font-size:10.5px;border-radius:999px;min-width:17px;height:17px;line-height:17px;text-align:center;padding:0 5px;vertical-align:1px}
 .admin-sum .cnt{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:8px 0 10px}.admin-sum .cnt a{background:var(--surface-2);border-radius:14px;padding:12px;text-align:center;text-decoration:none;color:inherit}.admin-sum .cnt b{display:block;font-size:26px;font-family:var(--display);color:var(--link)}.admin-sum .cnt span{font-size:12.5px;color:var(--fg-soft)}
-.chatbar{display:flex;gap:8px;margin-top:10px}
+.chatbar{display:flex;gap:8px;margin-top:10px;align-items:flex-end}.chatbar .emojis{width:100%}
 .chatbar textarea{min-height:44px;max-height:120px;border-radius:14px;padding:10px 14px}
 .chatbar button{flex:none}
 .chatbar .att-btn{padding:8px 10px;min-height:44px;font-size:18px;cursor:pointer}
@@ -693,7 +707,9 @@ main{padding:22px 0 30px}
 /* A booking as a card: when, status, every package on its own line, the total, then the details. */
 .bk{display:block;background:var(--surface);border:1px solid var(--rule-soft);border-radius:14px;padding:12px 14px;margin-bottom:10px;font-size:14px;overflow-wrap:anywhere}
 .bk .bkh{display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap}.bk ul{margin:8px 0 4px;padding-left:18px}.bk li{margin:3px 0}.bk li small{color:var(--fg-soft)}
-.bk .tot{display:flex;justify-content:space-between;border-top:1px solid var(--rule-soft);padding-top:6px;margin-top:4px;font-weight:700}.bk .meta{margin:6px 0 0;color:var(--fg-soft);font-size:13px}.bk .acts{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px}
+.bk .tot{display:flex;justify-content:space-between;border-top:1px solid var(--rule-soft);padding-top:6px;margin-top:4px;font-weight:700}.bk .meta{margin:6px 0 0;color:var(--fg-soft);font-size:13px}.bk .acts{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px}.bk .acts .wide{grid-column:1/-1}.bk .chg{background:var(--tag-gold-bg);color:var(--tag-gold-ink);border-radius:10px;padding:8px 10px;margin-top:8px;font-weight:600}
+.bkcal{margin-bottom:12px}.bkcal .d.has:after{background:var(--pink-ink)}.bkcal .d .n{position:absolute;top:3px;right:5px;font-size:9px;font-weight:700;color:var(--pink-ink)}
+.upnext{display:flex;gap:10px;align-items:center;background:var(--tag-gold-bg);color:var(--tag-gold-ink);border-radius:14px;padding:12px 14px;margin-bottom:14px;text-decoration:none;font-weight:600}.upnext .ic{font-size:24px}
 .st{font-size:12px;font-weight:700;border-radius:8px;padding:3px 8px;background:var(--surface-3);white-space:nowrap}
 .st.confirmed{background:var(--tag-green-bg);color:var(--tag-green-ink)}.st.declined{background:var(--tag-pink-bg);color:var(--tag-pink-ink)}.st.requested{background:var(--tag-gold-bg);color:var(--tag-gold-ink)}
 
@@ -785,6 +801,8 @@ const CONFIG = {
   // projects can only switch on with the pay-as-you-go plan. Set to true
   // once Build -> Storage exists and storage.rules is published.
   attachments: false,
+  // Photos in chat without Storage: shrunk on the phone and kept inside the message itself.
+  chatImages: true,
   // Where booking requests are mailed as calendar invitations (an .ics the
   // mail app adds to the calendar). Sent by the worker in worker/ through
   // Resend; set bookingEndpoint to '<worker url>/booking' once deployed.
@@ -820,8 +838,8 @@ const CONFIG = {
 
   // Booking page copy. Short sentences; this is what clients read.
   bookingNote: {
-    vi: 'Bạn chọn chủ đề và giờ hẹn, rồi gửi cho Nabu. Nabu xác nhận lại với bạn trước buổi xem.',
-    en: 'Choose a topic and a time, then send it to Nabu. Nabu confirms with you before the session.'
+    vi: 'Bốn bước: chọn gói, chọn chủ đề (nếu gói cần), chọn giờ, bấm gửi. Nabu xác nhận lại trong ngày, và bạn theo dõi ở mục Tôi.',
+    en: 'Four steps: pick a package, pick a topic (if the package needs one), pick a time, tap send. Nabu confirms within the day, and you follow it under Me.'
   },
   tagline: { vi: 'Lắng nghe và thấu hiểu', en: 'Listening and understanding' },
   about: {
@@ -986,7 +1004,7 @@ const STR = {
     cats: { tarot: 'Tarot', lenormand: 'Lenormand', astro: 'Chiêm tinh', manifest: 'Manifestation', fortune: 'Bói toán' },
     catSub: { tarot: '78 lá + 13 trải bài · 300.000đ / 6 tháng', lenormand: '36 lá + 7 trải bài · 300.000đ / 6 tháng', astro: '12 cung, hành tinh, nhà', manifest: 'cách làm + giới hạn', fortune: 'thần số, chỉ tay, bài Tây' },
     courses: 'Khóa học', freeReads: 'Đọc miễn phí', lessonsIntro: (n) => 'Khóa học gồm ' + n + ' bài. Học theo thứ tự, mỗi bài một tuần là vừa.', markDone: 'Đánh dấu đã học xong', lessonDone: 'Đã học xong', journeyHint: 'Chạm vào một lá để mở trang của lá đó.', lenGridHint: 'Cả 36 lá. Chạm để xem từng lá.',
-    aiIntro: 'Hỏi Nabu AI về điều bạn đang xem. Càng cụ thể càng tốt.', aiIntroLesson: 'Chỗ nào trong bài chưa hiểu, hỏi Nabu AI ở đây.', aiPlaceholder: 'Ví dụ: lá này nói gì về chuyện tình cảm của mình?', aiAsk: 'Hỏi', aiOnline: 'trả lời bằng AI', aiBuiltin: 'trả lời từ kho kiến thức', aiNote: 'Nabu AI trả lời từ ý nghĩa lá bài và kiến thức trong app. Chuyện quan trọng, bạn đặt lịch với Nabu.', aiFallback: 'AI đang bận, đây là câu trả lời từ kho kiến thức.',
+    aiIntro: 'Hỏi Nabu AI về điều bạn đang xem. Càng cụ thể càng tốt.', aiIntroLesson: 'Chỗ nào trong bài chưa hiểu, hỏi Nabu AI ở đây.', aiPlaceholder: 'Ví dụ: lá này nói gì về chuyện tình cảm của mình?', aiAsk: 'Hỏi', aiOnline: 'trả lời bằng AI', aiBuiltin: 'trả lời từ kho kiến thức', aiNote: 'Nabu AI trả lời cả câu hỏi thường lẫn tarot, chiêm tinh, thần số học, và tra cứu mạng khi cần. Chuyện riêng quan trọng, bạn đặt lịch với Nabu.', aiFallback: 'AI đang bận, đây là câu trả lời từ kho kiến thức.',
     aiSugCard: ['Lá này nói gì về tình cảm của mình?', 'Mình có nên tiếp tục không?', 'Khi nào chuyện này xảy ra?'], aiSugLesson: ['Ẩn Chính khác Ẩn Phụ thế nào?', 'Lá hoàng gia là ai?', 'Nếu mình không hiểu một lá thì làm sao?'], aiSugSign: ['Cung này hợp với cung nào?', 'Cung này trong tình yêu thế nào?', 'Mặt Trăng ở cung này là sao?'], aiSugNumbers: ['Số đường đời của mình nói gì?', 'Năm nay của mình là năm gì?', 'Số vận mệnh theo tên mình là gì?'], aiSugGeneral: ['Gã Khờ nghĩa là gì?', 'Sư Tử hợp với Bảo Bình không?', 'Số đường đời của mình?'],
     aiCardGeneral: (n) => 'Lá ' + n + ' đang nói về năng lượng chung của bạn lúc này.', aiCardFocus: (n, f) => 'Với câu hỏi về ' + f.toLowerCase() + ', lá ' + n + ' nói thế này:', aiCardWhy: 'Lá này mang năng lượng:', aiCardShadow: 'Mặt trái cần để ý:', aiYes: (n) => 'Nếu hỏi có hay không: ' + n + ' thiên về CÓ, nhưng một lá không quyết định được. Muốn rõ hơn, hãy đặt lịch xem bài.', aiNo: (n) => 'Nếu hỏi có hay không: ' + n + ' thiên về KHÔNG, hoặc chưa phải lúc. Một lá không quyết định được; muốn rõ hơn, hãy đặt lịch xem bài.', aiMaybe: (n) => 'Nếu hỏi có hay không: ' + n + ' không nghiêng hẳn về bên nào. Câu trả lời tuỳ vào việc bạn làm tiếp theo.', aiTiming: 'Về thời gian, một lá chỉ gợi ý nhịp, không cho ngày chính xác.', aiFound: 'Mình tìm thấy trong khóa học:', aiLessonNone: 'Mình chưa thấy phần nào khớp. Bạn thử hỏi bằng tên lá bài, hoặc một từ khóa trong bài học nhé.', aiChem: (a, b) => a + ' và ' + b + ':', aiCompatYes: 'Đây là một trong những cặp thường được xem là hợp.', aiCompatWork: 'Không nằm trong nhóm dễ hợp nhất, nhưng cung chỉ là một phần; bản đồ sao đầy đủ mới nói được nhiều hơn.', aiAbout: (n) => 'Về ' + n + ':', aiGeneralHelp: 'Mình chưa có câu trả lời sẵn cho câu này. Mình trả lời tốt nhất khi câu hỏi nhắc đến một lá bài, một cung hoàng đạo, một hành tinh, một nhà, một con giáp hay một con số.', aiOfflineHint: 'Chuyện riêng của bạn thì đặt lịch với Nabu để được xem kỹ.', aiBooking: 'Bạn xem bảng giá và chọn giờ ở mục Đặt lịch. Chọn gói, chọn giờ trống trên lịch, rồi gửi cho Nabu.',
     compatHead: { same: (a, b) => a + ' và ' + b + ': cùng một cung, nên rất dễ hiểu nhau. Câu trả lời ngắn là có, hai bạn hợp, miễn là đừng giống nhau cả ở tật xấu.', opposite: (a, b) => a + ' và ' + b + ' là hai cung đối diện nhau trên vòng hoàng đạo. Câu trả lời ngắn là có, hai bạn hút nhau rất mạnh, nhưng phải học cách cân bằng vì mỗi bên là mặt còn thiếu của bên kia.', good: (a, b) => a + ' và ' + b + ': câu trả lời ngắn là có, đây là một trong những cặp được xem là hợp nhau.', ok: (a, b) => a + ' và ' + b + ': khá hợp. Hai cung không cùng nguyên tố nhưng nuôi được nhau.', work: (a, b) => a + ' và ' + b + ': hợp được, nhưng phải cố gắng. Hai cung đứng ở góc vuông với nhau, nên dễ va chạm về cách làm.', neutral: (a, b) => a + ' và ' + b + ': ở mức trung bình. Không thuộc nhóm dễ hợp nhất, cũng không thuộc nhóm hay xung đột.' },
@@ -1000,7 +1018,7 @@ const STR = {
     pcIntro: 'Bài Tây có hai cách đọc. Cách truyền thống có bộ nghĩa riêng cho 52 lá, đã dùng từ trước khi tarot phổ biến. Cách thứ hai mượn nghĩa Ẩn Phụ của tarot, vì hai bộ bài cùng một gốc: Cơ là Cốc, Rô là Tiền, Chuồn là Gậy, Bích là Kiếm. Chọn một lá để xem cả hai.', pcPick: 'Chọn một lá bài Tây', pcNote: 'Bài Tây thiếu Ẩn Chính và chỉ có ba lá hình mỗi chất, nên J thường được đọc như Kỵ Sĩ (một số người đọc như Tiểu Đồng), Q như Nữ Hoàng, K như Đức Vua.', pcTrad: 'Nghĩa truyền thống', pcTarotWay: 'Đọc theo tarot',
     teaIntro: 'Chạm vào từng vùng của tách để biết vị trí nói gì. Bên dưới là các hình thường gặp.', teaZones: { rim: 'Gần miệng', mid: 'Giữa tách', bottom: 'Đáy tách', handle: 'Gần quai' }, teaZoneText: { rim: 'Gần miệng tách: chuyện sắp tới, trong vài ngày hay vài tuần.', mid: 'Giữa tách: vài tuần đến vài tháng nữa.', bottom: 'Đáy tách: chuyện xa hơn, hoặc gốc rễ của vấn đề.', handle: 'Gần quai: chuyện liên quan trực tiếp đến bạn. Đối diện quai: người khác, bên ngoài.' }, teaSymbols: 'Các hình thường gặp', teaPractice: 'Thử một lần', teaPracticeHint: 'Bấm để nhận một hình ngẫu nhiên ở một vị trí, rồi tập đọc.', teaDraw: 'Rút một hình',
     animalIntro: 'Chạm vào một con giáp trên vòng. Con giáp của bạn được đánh dấu.', animalYours: 'con giáp của bạn', animalTrio: 'Tam hợp', animalClash: 'Tứ hành xung', animalYears: 'Các năm',
-    reportTitle: 'Báo lỗi app', reportIntro: 'Có gì hiển thị sai, bấm không được, hay chữ khó hiểu? Kể cho Nabu ở đây.', reportWhat: 'Bạn gặp lỗi gì?', reportPlaceholder: 'Bạn đang ở màn hình nào, bấm vào đâu, và điều gì xảy ra?', reportContact: 'Cách liên lạc lại (không bắt buộc)', reportAuto: 'App tự đính kèm thông tin này để Nabu tìm lỗi nhanh hơn:', reportSend: 'Gửi báo lỗi', reportViaIg: 'Gửi qua Instagram', reportNeed: 'Bạn mô tả lỗi trước nhé.', reportSent: 'Đã gửi tới Nabu. Cảm ơn bạn!', reportNoChannel: 'Nabu chưa bật gửi trực tiếp. Tin nhắn đã được sao chép, bạn gửi qua Instagram giúp Nabu nhé.', reportMsgHead: 'Báo lỗi app Nabu Tarot:', reportLink: 'Báo lỗi', rights: 'All rights reserved.', demoTag: 'Học thử miễn phí', demoIntro: 'Hai bài đầu mở sẵn để bạn xem cách học. Mở khóa để xem trọn bộ.', lessonN: (n) => 'Bài ' + n, lesson1: 'Tổng quan và cách học', lesson2: 'Lá bài đầu tiên', courseTabs: { cards: 'Các lá bài', spreads: 'Trải bài', guides: 'Bài đọc' },
+    reportTitle: 'Báo lỗi app', reportIntro: 'Có gì hiển thị sai, bấm không được, hay chữ khó hiểu? Kể cho Nabu ở đây.', reportWhat: 'Bạn gặp lỗi gì?', reportPlaceholder: 'Bạn đang ở màn hình nào, bấm vào đâu, và điều gì xảy ra?', reportContact: 'Cách liên lạc lại (không bắt buộc)', reportAuto: 'App tự đính kèm thông tin này để Nabu tìm lỗi nhanh hơn:', reportSend: 'Gửi báo lỗi', reportViaIg: 'Gửi qua Instagram', reportNeed: 'Bạn mô tả lỗi trước nhé.', reportSent: 'Đã gửi tới Nabu. Cảm ơn bạn!', reportNoChannel: 'Bạn cần đăng nhập để gửi trực tiếp, hoặc dùng mục Liên hệ bên dưới.', reportMsgHead: 'Báo lỗi app Nabu Tarot:', reportLink: 'Báo lỗi', rights: 'All rights reserved.', demoTag: 'Học thử miễn phí', demoIntro: 'Hai bài đầu mở sẵn để bạn xem cách học. Mở khóa để xem trọn bộ.', lessonN: (n) => 'Bài ' + n, lesson1: 'Tổng quan và cách học', lesson2: 'Lá bài đầu tiên', courseTabs: { cards: 'Các lá bài', spreads: 'Trải bài', guides: 'Bài đọc' },
     months6: 'tháng', adminAccess: 'Tài khoản quản trị của Nabu: toàn bộ khóa học đang mở.', accessUntil: (d) => 'Bạn có quyền xem đến ' + d + '.', courseExpired: (d) => 'Mã của bạn đã hết hạn ngày ' + d + '. Mua lại để xem tiếp.',
     buyCourse: 'Mua khóa học qua Instagram', buyHint: 'Tin nhắn mua khóa đã được sao chép. Sau khi chuyển khoản, Nabu gửi bạn mã mở khóa. Nhập mã ở dưới.',
     buyMsg: (n, p, m) => 'Chào Nabu, mình muốn mua ' + n + ' (' + p + ', ' + m + ' tháng).', unlock: 'Mở khóa', unlocked: 'Đã mở khóa', badCode: 'Mã không đúng. Bạn kiểm tra lại nhé.',
@@ -1028,16 +1046,16 @@ const STR = {
 
     bookTitle: 'Đặt lịch xem bài',
     priceTitle: 'Bảng giá', priceIntro: 'Chọn gói hợp với câu hỏi của bạn. Giá tính theo buổi, thanh toán chuyển khoản.',
-    chooseService: '1. Chọn dịch vụ', serviceHint: 'Chạm vào gói bạn muốn. Bạn có thể chọn nhiều gói cùng lúc, ví dụ một gói Tarot và một gói Lenormand. Chạm lần nữa để bỏ.', needService: 'Bạn chọn ít nhất một gói dịch vụ trước nhé.', bookTip: 'Chạm vào một gói để chọn. Bạn có thể chọn nhiều gói cùng lúc. Nếu đổi ý, chỉ cần chạm vào gói đó thêm một lần nữa để bỏ chọn.', cartTitle: 'Các gói bạn đã chọn', cartEmpty: 'Bạn chưa chọn gói nào.', cartNeedsTopic: 'chưa chọn chủ đề', msgTotal: 'Tổng', topicFor: 'Chủ đề cho', topicNone: 'Phần này chỉ hiện khi bạn chọn một gói 1 chủ đề sẵn ở bước 1. Mỗi gói như vậy sẽ có một ô chọn chủ đề riêng.',
+    chooseService: '1. Chọn dịch vụ', serviceHint: 'Chạm vào gói bạn muốn xem. Chọn được nhiều gói một lúc. Chạm lại để bỏ.', needService: 'Bạn chọn ít nhất một gói dịch vụ trước nhé.', bookTip: 'Chạm vào một gói để chọn. Bạn có thể chọn nhiều gói cùng lúc. Nếu đổi ý, chỉ cần chạm vào gói đó thêm một lần nữa để bỏ chọn.', cartTitle: 'Các gói bạn đã chọn', cartEmpty: 'Bạn chưa chọn gói nào.', cartNeedsTopic: 'chưa chọn chủ đề', msgTotal: 'Tổng', topicFor: 'Chủ đề cho', topicNone: 'Phần này chỉ hiện khi bạn chọn một gói 1 chủ đề sẵn ở bước 1. Mỗi gói như vậy sẽ có một ô chọn chủ đề riêng.',
     optional: 'không bắt buộc', birthTime: 'Giờ sinh', birthHint: 'Tử vi cần giờ sinh càng chính xác càng tốt.', needBirth: 'Tử vi cần ngày sinh của bạn.',
     msgService: 'Dịch vụ', msgBirth: 'Ngày giờ sinh',
     chooseTopic: '2. Chọn chủ đề cho gói 1 chủ đề sẵn',
     presetTopics: 'Chủ đề sẵn',
-    topicHint: 'Chỉ áp dụng cho gói 1 chủ đề sẵn: với mỗi gói như vậy, bạn chọn một trong 5 chủ đề. Mỗi chủ đề là trải bài 5 lá. Bấm để xem 5 câu hỏi. Câu hỏi khác bạn ghi ở phần thông tin bên dưới.',
+    topicHint: 'Chỉ dành cho gói "1 chủ đề sẵn": chọn một trong 5 chủ đề, mỗi chủ đề là 5 câu hỏi Nabu sẽ trải bài. Bấm vào chủ đề để xem câu hỏi. Chuyện khác bạn ghi ở phần thông tin bên dưới.',
     ownTopic: 'Câu hỏi riêng',
     ownTopicHint: 'Bạn tự viết câu hỏi của mình.',
     chooseTime: '3. Chọn giờ hẹn',
-    timeHint: (tz) => 'Giờ hiển thị theo ' + tz + '. Chấm hồng là ngày còn chỗ.',
+    timeHint: (tz) => 'Chạm vào một ngày có chấm hồng, rồi chọn giờ (' + tz + '). Giờ nào đã có người đặt sẽ bị gạch.',
     noSlots: 'Ngày này không còn chỗ.',
     pickDay: 'Chọn một ngày có chấm hồng.',
     yourPick: 'Bạn chọn',
@@ -1050,6 +1068,10 @@ const STR = {
     sendInApp: 'Gửi yêu cầu đặt lịch',
     sending: 'Đang gửi...',
     sentOk: 'Đã gửi. Nabu sẽ xác nhận sớm. Bạn xem lại trong mục Tôi.',
+    newsTitle: 'Bài viết', newsIntro: 'Tất cả bài Nabu đã đăng: dự đoán, chia sẻ, thông báo. Gõ để tìm.', searchPosts: 'Tìm trong bài viết…', noMatch: 'Không có bài nào khớp.', allPostsBtn: (n) => 'Xem tất cả bài viết (' + n + ')', watchOn: (s) => 'Xem video trên ' + s,
+    addImage: 'Ảnh', addVideo: 'Video', videoPrompt: 'Dán link video (YouTube, Facebook, TikTok, Instagram):', imgNeedCloud: 'Bạn cần đăng nhập tài khoản admin để tải ảnh lên.', imgTooBig: 'Ảnh quá lớn, thử ảnh nhỏ hơn.', imgAdded: 'Đã thêm ảnh vào bài.', wrapPlaceholder: 'chữ', boxLabel: 'Hộp', formatHint: 'Chọn chữ rồi bấm B / U / H để in đậm, gạch dưới, tô sáng. H2 là tiêu đề nhỏ, Hộp là ô tiêu đề riêng. Ảnh tải thẳng vào bài; video dán link.',
+    contactTitle: 'Liên hệ', contactLink: 'Liên hệ', contactIntro: 'Viết vài dòng cho Nabu, rồi chọn kênh bạn muốn gửi.', contactWhat: 'Bạn muốn nhắn gì?', contactPlaceholder: 'Ví dụ: mình muốn hỏi về gói xem bài, hoặc góp ý cho app…', contactChoose: 'Gửi qua:', contactApp: 'Nhắn trong app Nabu Tarot', contactNeed: 'Bạn viết vài dòng trước nhé.', contactSent: 'Đã gửi tới Nabu. Bạn xem trả lời trong mục Tôi.', contactCopied: 'Tin nhắn đã được sao chép. Dán vào ô chat khi ứng dụng mở lên.',
+    addToCalendar: 'Thêm vào lịch điện thoại', calendarHint: 'Lịch điện thoại sẽ nhắc bạn trước 24 giờ, 6 giờ, 1 giờ và 15 phút.', cancelBooking: 'Huỷ lịch', changeTitle: 'Đổi giờ hẹn', changeIntro: 'Chọn giờ mới bên dưới. Nabu sẽ duyệt lại trước khi giờ mới có hiệu lực.', currentSlot: 'Giờ hiện tại', sendChange: 'Gửi yêu cầu đổi giờ', changeSent: 'Đã gửi yêu cầu đổi giờ. Nabu sẽ duyệt lại sớm.', cancelSent: 'Đã gửi yêu cầu huỷ. Nabu sẽ xác nhận lại.', confirmCancel: 'Bạn muốn huỷ lịch hẹn này?', newSlotLabel: 'Giờ mới', adminApplyChange: 'Duyệt giờ mới', adminKeep: 'Giữ giờ cũ', adminApplyCancel: 'Duyệt huỷ', adminKeepBooking: 'Giữ lịch', reminderOn: 'Bật nhắc lịch hẹn trên máy này', reminderHint: 'Khi app đang mở, bạn sẽ được nhắc trước 24 giờ, 6 giờ, 1 giờ và 15 phút. Để chắc chắn, hãy thêm lịch hẹn vào lịch điện thoại.', upcoming: 'Lịch hẹn sắp tới', remindTitle: (w) => 'Lịch hẹn với Nabu ' + w, inHours: (h) => 'còn ' + h + ' giờ nữa', inMinutes: (m) => 'còn ' + m + ' phút nữa', allDays: 'Tất cả', bkOn: (d) => 'Lịch ngày ' + d, aiSettings: 'Cài đặt Nabu AI', aiKeyLabel: 'Khoá Gemini API (Google AI Studio)', aiKeyHint: 'Dán khoá vào đây và bấm lưu: mọi người dùng app sẽ được Nabu AI trả lời bằng Gemini, có tra cứu mạng khi còn hạn mức. Khoá được lưu trên đám mây của app, không nằm trong mã nguồn. Để trống thì app dùng bộ trả lời sẵn có.', aiKeySaved: 'Đã lưu. Nabu AI đang dùng Gemini.', saveKey: 'Lưu khoá', emojiBtn: 'Biểu tượng cảm xúc', imgTooBigChat: 'Ảnh quá lớn cho tin nhắn, thử ảnh nhỏ hơn.',
     saveSlot: 'Lưu giờ hẹn', changeSlot: 'Đổi giờ', slotSaved: 'Đã lưu giờ hẹn', summaryTitle: 'Tóm tắt yêu cầu', showMsg: 'Xem tin nhắn sẽ gửi', bkItems: 'Gói đã chọn',
     doneTitle: 'Đã gửi yêu cầu đặt lịch', doneBody: 'Nabu sẽ xem và xác nhận sớm. Bạn theo dõi trạng thái trong mục Tôi và sẽ nhận thông báo khi Nabu trả lời.', doneMe: 'Xem lịch hẹn của tôi', doneHome: 'Về trang chủ', doneMore: 'Đặt thêm lịch khác',
     draftKept: 'Lựa chọn của bạn được lưu tự động trên máy này, rời đi rồi quay lại vẫn còn.', openInLibrary: 'Đọc đầy đủ trong Kho kiến thức',
@@ -1091,7 +1113,7 @@ const STR = {
     saved: 'Đã lưu',
     myBookings: 'Lịch hẹn của tôi',
     noBookings: 'Bạn chưa có lịch hẹn nào.',
-    status: { requested: 'Chờ xác nhận', confirmed: 'Đã xác nhận', declined: 'Không nhận', cancelled: 'Đã huỷ' },
+    status: { requested: 'Chờ xác nhận', confirmed: 'Đã xác nhận', declined: 'Không nhận', cancelled: 'Đã huỷ', change_requested: 'Chờ duyệt giờ mới', cancel_requested: 'Chờ duyệt huỷ' },
     messages: 'Nhắn tin với Nabu',
     messagesIntro: 'Nabu trả lời trong app. Bạn sẽ thấy chấm đỏ khi có tin mới.',
     messagesSoon: 'Nhắn tin trong app sẽ mở khi Nabu bật tài khoản. Bây giờ bạn nhắn qua Instagram nhé.',
@@ -1219,7 +1241,7 @@ const STR = {
     cats: { tarot: 'Tarot', lenormand: 'Lenormand', astro: 'Astrology', manifest: 'Manifestation', fortune: 'Fortune telling' },
     catSub: { tarot: '78 cards + 13 spreads · 300.000đ / 6 months', lenormand: '36 cards + 7 spreads · 300.000đ / 6 months', astro: '12 signs, planets, houses', manifest: 'methods + limits', fortune: 'numbers, palms, playing cards' },
     courses: 'Courses', freeReads: 'Free to read', lessonsIntro: (n) => 'The course has ' + n + ' sessions. Take them in order, about one a week.', markDone: 'Mark as done', lessonDone: 'Done', journeyHint: 'Tap a card to open its page.', lenGridHint: 'All 36 cards. Tap one to open it.',
-    aiIntro: 'Ask Nabu AI about what you are looking at. The more specific, the better.', aiIntroLesson: 'Anything in this lesson unclear? Ask Nabu AI here.', aiPlaceholder: 'For example: what does this card say about my love life?', aiAsk: 'Ask', aiOnline: 'answered by AI', aiBuiltin: 'answered from the knowledge base', aiNote: 'Nabu AI answers from the card meanings and the knowledge in this app. For anything important, book a reading with Nabu.', aiFallback: 'AI is busy; this answer comes from the knowledge base.',
+    aiIntro: 'Ask Nabu AI about what you are looking at. The more specific, the better.', aiIntroLesson: 'Anything in this lesson unclear? Ask Nabu AI here.', aiPlaceholder: 'For example: what does this card say about my love life?', aiAsk: 'Ask', aiOnline: 'answered by AI', aiBuiltin: 'answered from the knowledge base', aiNote: 'Nabu AI answers everyday questions as well as tarot, astrology and numerology, and looks things up online when needed. For anything personal and important, book a reading with Nabu.', aiFallback: 'AI is busy; this answer comes from the knowledge base.',
     aiSugCard: ['What does this card say about my love life?', 'Should I keep going?', 'When will this happen?'], aiSugLesson: ['How do Majors differ from Minors?', 'Who are the court cards?', 'What if I do not understand a card?'], aiSugSign: ['Which signs suit this sign?', 'How is this sign in love?', 'What does the Moon in this sign mean?'], aiSugNumbers: ['What does my life path say?', 'What kind of year is this for me?', 'What is my destiny number from my name?'], aiSugGeneral: ['What does The Fool mean?', 'Do Leo and Aquarius get along?', 'What is my life path?'],
     aiCardGeneral: (n) => n + ' speaks about your general energy right now.', aiCardFocus: (n, f) => 'For a question about ' + f.toLowerCase() + ', ' + n + ' says:', aiCardWhy: 'The card carries this energy:', aiCardShadow: 'The shadow to watch:', aiYes: (n) => 'As a yes-or-no: ' + n + ' leans YES, but one card cannot decide it. For a clear answer, book a reading.', aiNo: (n) => 'As a yes-or-no: ' + n + ' leans NO, or not yet. One card cannot decide it; for a clear answer, book a reading.', aiMaybe: (n) => 'As a yes-or-no: ' + n + ' does not lean either way. The answer depends on what you do next.', aiTiming: 'On timing, one card only hints at a pace, never an exact date.', aiFound: 'Found in the course:', aiLessonNone: 'Nothing matched yet. Try a card name or a keyword from the lesson.', aiChem: (a, b) => a + ' and ' + b + ':', aiCompatYes: 'This is one of the pairs usually seen as a good match.', aiCompatWork: 'Not among the easiest pairs, but the Sun sign is one part; the full chart says much more.', aiAbout: (n) => 'About ' + n + ':', aiGeneralHelp: 'I do not have a ready answer for that. I answer best when the question names a card, a sign, a planet, a house, a zodiac animal or a number.', aiOfflineHint: 'For your own situation, book a reading with Nabu.', aiBooking: 'See the price list and pick a time under Book. Choose a package, a free slot on the calendar, then send it to Nabu.',
     compatHead: { same: (a, b) => a + ' and ' + b + ' are the same sign, so you understand each other easily. The short answer is yes, you match, as long as you do not share the same faults.', opposite: (a, b) => a + ' and ' + b + ' sit opposite each other on the zodiac. The short answer is yes, the attraction is strong, but you have to learn balance, because each of you is the missing half of the other.', good: (a, b) => a + ' and ' + b + ': the short answer is yes, this is one of the pairs usually seen as a good match.', ok: (a, b) => a + ' and ' + b + ': a fairly good match. The two signs are not the same element, but they feed each other.', work: (a, b) => a + ' and ' + b + ': it can work, but it takes effort. The two signs sit at a square angle, so you tend to clash over how things should be done.', neutral: (a, b) => a + ' and ' + b + ': an average match. Not among the easiest pairs, and not among the ones that clash most either.' },
@@ -1261,16 +1283,16 @@ const STR = {
 
     bookTitle: 'Book a reading',
     priceTitle: 'Prices', priceIntro: 'Pick the package that fits your question. Prices are per session, paid by bank transfer.',
-    chooseService: '1. Choose a service', serviceHint: 'Tap the package you want. You can choose several at once, for example one Tarot and one Lenormand package. Tap again to remove.', needService: 'Choose at least one package first.', bookTip: 'Tap a package to select it. You can choose as many as you like. Changed your mind? Simply tap the package once more to deselect it.', cartTitle: 'Your chosen packages', cartEmpty: 'No package chosen yet.', cartNeedsTopic: 'topic not chosen', msgTotal: 'Total', topicFor: 'Topic for', topicNone: 'This step appears once you choose a 1 preset topic package in step 1. Each such package gets its own topic picker.',
+    chooseService: '1. Choose a service', serviceHint: 'Tap the package you want. You can pick several. Tap again to remove one.', needService: 'Choose at least one package first.', bookTip: 'Tap a package to select it. You can choose as many as you like. Changed your mind? Simply tap the package once more to deselect it.', cartTitle: 'Your chosen packages', cartEmpty: 'No package chosen yet.', cartNeedsTopic: 'topic not chosen', msgTotal: 'Total', topicFor: 'Topic for', topicNone: 'This step appears once you choose a 1 preset topic package in step 1. Each such package gets its own topic picker.',
     optional: 'optional', birthTime: 'Time of birth', birthHint: 'Tử vi needs the birth time as exact as possible.', needBirth: 'Tử vi needs your birth date.',
     msgService: 'Service', msgBirth: 'Birth date and time',
     chooseTopic: '2. Choose the topic for each preset-topic package',
     presetTopics: 'Set topics',
-    topicHint: 'Only for the 1 preset topic package: for each such package, pick one of the five topics. Each topic is a five-card spread. Tap to see the five questions. Other questions go in the details section below.',
+    topicHint: 'Only for the "1 preset topic" package: pick one of the five topics, each a set of five questions Nabu lays cards for. Tap a topic to see its questions. Anything else goes in the details below.',
     ownTopic: 'Your own question',
     ownTopicHint: 'Write your own question.',
     chooseTime: '3. Choose a time',
-    timeHint: (tz) => 'Times are in ' + tz + '. A pink dot means free slots.',
+    timeHint: (tz) => 'Tap a day with a pink dot, then a time (' + tz + '). Times already taken are crossed out.',
     noSlots: 'No free slots on this day.',
     pickDay: 'Choose a day with a pink dot.',
     yourPick: 'Your pick',
@@ -1283,6 +1305,10 @@ const STR = {
     sendInApp: 'Send booking request',
     sending: 'Sending...',
     sentOk: 'Sent. Nabu will confirm soon. You can check it under Me.',
+    newsTitle: 'Posts', newsIntro: 'Everything Nabu has posted: readings, thoughts, announcements. Type to search.', searchPosts: 'Search the posts…', noMatch: 'No post matches.', allPostsBtn: (n) => 'See all posts (' + n + ')', watchOn: (s) => 'Watch on ' + s,
+    addImage: 'Image', addVideo: 'Video', videoPrompt: 'Paste a video link (YouTube, Facebook, TikTok, Instagram):', imgNeedCloud: 'Sign in with the admin account to upload images.', imgTooBig: 'Image too large, try a smaller one.', imgAdded: 'Image added to the post.', wrapPlaceholder: 'text', boxLabel: 'Box', formatHint: 'Select text, then tap B / U / H for bold, underline, highlight. H2 is a small heading, Box a separate title box. Images upload straight into the post; videos are pasted as links.',
+    contactTitle: 'Contact us', contactLink: 'Contact', contactIntro: 'Write a few lines to Nabu, then choose where to send them.', contactWhat: 'Your message', contactPlaceholder: 'For example: a question about a package, or feedback on the app…', contactChoose: 'Send via:', contactApp: 'Message inside the Nabu Tarot app', contactNeed: 'Write a few lines first.', contactSent: 'Sent to Nabu. Replies show under Me.', contactCopied: 'Your message is copied. Paste it into the chat when the app opens.',
+    addToCalendar: 'Add to my phone calendar', calendarHint: 'Your phone calendar will remind you 24 hours, 6 hours, 1 hour and 15 minutes before.', cancelBooking: 'Cancel booking', changeTitle: 'Change the time', changeIntro: 'Pick a new time below. Nabu reviews it before the new time takes effect.', currentSlot: 'Current time', sendChange: 'Send the change request', changeSent: 'Change request sent. Nabu will review it soon.', cancelSent: 'Cancellation request sent. Nabu will confirm it.', confirmCancel: 'Cancel this booking?', newSlotLabel: 'New time', adminApplyChange: 'Approve new time', adminKeep: 'Keep old time', adminApplyCancel: 'Approve cancellation', adminKeepBooking: 'Keep booking', reminderOn: 'Turn on booking reminders on this device', reminderHint: 'While the app is open you are reminded 24 hours, 6 hours, 1 hour and 15 minutes before. To be safe, add the booking to your phone calendar.', upcoming: 'Upcoming booking', remindTitle: (w) => 'Reading with Nabu ' + w, inHours: (h) => 'in ' + h + ' hours', inMinutes: (m) => 'in ' + m + ' minutes', allDays: 'All', bkOn: (d) => 'Bookings on ' + d, aiSettings: 'Nabu AI settings', aiKeyLabel: 'Gemini API key (Google AI Studio)', aiKeyHint: 'Paste the key here and save: every user gets Nabu AI answered by Gemini, with web search while the quota lasts. The key lives in the app cloud, not in the source code. Leave it empty to use the built-in answers.', aiKeySaved: 'Saved. Nabu AI now uses Gemini.', saveKey: 'Save key', emojiBtn: 'Emoji', imgTooBigChat: 'Image too large for a message, try a smaller one.',
     saveSlot: 'Save this time', changeSlot: 'Change', slotSaved: 'Time saved', summaryTitle: 'Your request', showMsg: 'Show the message that will be sent', bkItems: 'Packages',
     doneTitle: 'Booking request sent', doneBody: 'Nabu will review it and confirm soon. Follow the status under Me; you will be notified when Nabu replies.', doneMe: 'See my bookings', doneHome: 'Back to home', doneMore: 'Book another reading',
     draftKept: 'Your choices are saved on this device automatically, so you can leave and come back.', openInLibrary: 'Read the full guide in the library',
@@ -1324,7 +1350,7 @@ const STR = {
     saved: 'Saved',
     myBookings: 'My bookings',
     noBookings: 'You have no bookings yet.',
-    status: { requested: 'Awaiting confirmation', confirmed: 'Confirmed', declined: 'Declined', cancelled: 'Cancelled' },
+    status: { requested: 'Awaiting confirmation', confirmed: 'Confirmed', declined: 'Declined', cancelled: 'Cancelled', change_requested: 'New time awaiting approval', cancel_requested: 'Cancellation awaiting approval' },
     messages: 'Message Nabu',
     messagesIntro: 'Nabu replies inside the app. A red dot shows when there is something new.',
     messagesSoon: 'In-app messaging opens once Nabu turns on accounts. For now, message on Instagram.',
@@ -9769,6 +9795,7 @@ const GUIDES = [
     { h: { vi: 'Hành trình của Gã Khờ: chặng một (0–7)', en: 'The Fool\'s Journey, part one (0–7)' }, p: { vi: 'Bạn có thể xem 22 lá Ẩn Chính như một câu chuyện liền mạch. Gã Khờ (0) là chính bạn lúc mới lên đường, tay trắng nhưng tin đời. Trên đường đi, cậu gặp những người dạy cậu cách sống trong thế giới bên ngoài. Nhà Ảo Thuật (1) cho cậu thấy mình đã có đủ công cụ. Nữ Tư Tế (2) dạy cậu lắng nghe trực giác. Hoàng Hậu (3) là tình thương và sự nuôi dưỡng, còn Hoàng Đế (4) là kỷ luật và trật tự. Giáo Hoàng (5) đại diện cho truyền thống và người thầy. Đến Người Yêu (6), cậu đứng trước lựa chọn đầu tiên của trái tim, và với Cỗ Xe (7), cậu lần đầu tự cầm cương và giành chiến thắng.', en: 'You can read the 22 Majors as one continuous story. The Fool (0) is you at the start of the road, empty-handed but trusting life. Along the way he meets the people who teach him how to live in the outer world. The Magician (1) shows him that he already has every tool he needs. The High Priestess (2) teaches him to listen inward. The Empress (3) is love and nurture, and The Emperor (4) is discipline and order. The Hierophant (5) stands for tradition and the teacher. With The Lovers (6) he faces the heart\'s first real choice, and with The Chariot (7) he takes the reins for the first time and wins.' } },
     { h: { vi: 'Chặng hai (8–14): quay vào bên trong', en: 'Part two (8–14): turning inward' }, p: { vi: 'Sau khi thắng, cậu học được rằng sức mạnh thật sự không ồn ào. Sức Mạnh (8) là sự dịu dàng đủ để thuần một con sư tử. Ẩn Sĩ (9) là lúc cậu rút về một mình để hiểu chính mình. Bánh Xe (10) nhắc cậu rằng đời có lúc lên lúc xuống, và không phải điều gì cũng do mình quyết. Công Lý (11) buộc cậu chịu trách nhiệm cho những việc đã làm. Người Treo Ngược (12) dạy cậu biết dừng lại và nhìn theo một cách khác. Tử Thần (13) là một kết thúc cần thiết để bắt đầu lại, và Tiết Độ (14) là sự cân bằng cậu tìm thấy sau tất cả.', en: 'Having won, he learns that real strength makes no noise. Strength (8) is the gentleness that can tame a lion. The Hermit (9) is his retreat into solitude to understand himself. The Wheel (10) reminds him that life rises and falls, and that not everything is his to decide. Justice (11) makes him answer for what he has done. The Hanged Man (12) teaches him to stop and look at things another way. Death (13) is the ending that makes a new start possible, and Temperance (14) is the balance he finds after all of it.' } },
     { h: { vi: 'Chặng ba (15–21): bóng tối và ánh sáng', en: 'Part three (15–21): darkness and light' }, p: { vi: 'Chặng cuối là phần khó nhất, nhưng cũng đẹp nhất. Ác Quỷ (15) là những thứ đang trói cậu: thói quen, ham muốn và nỗi sợ. Tòa Tháp (16) là cú sập của tất cả những gì được xây trên nền giả. Sau cơn bão, Ngôi Sao (17) mang hy vọng trở lại. Mặt Trăng (18) là đoạn đường mờ sương mà cậu phải đi bằng linh cảm. Rồi Mặt Trời (19) mang đến niềm vui trong sáng khi bóng tối đã ở lại phía sau. Phán Xét (20) là tiếng gọi thức tỉnh, khi cậu nhìn lại cả hành trình. Và Thế Giới (21) là lúc cậu về đến nơi, trọn vẹn, sẵn sàng lên đường lần nữa với con số 0.', en: 'The last stretch is the hardest, and also the most beautiful. The Devil (15) is everything that binds him: habits, cravings and fears. The Tower (16) is the collapse of all that was built on false ground. After the storm, The Star (17) brings hope back. The Moon (18) is the foggy road he must walk by instinct. Then The Sun (19) brings clear joy once the darkness is behind him. Judgement (20) is the wake-up call, when he looks back over the whole road. And The World (21) is his arrival, whole and ready to set out once more as 0.' } },
+    { h: { vi: 'Một lần xem bài đúng được bao lâu', en: 'How long a reading holds true' }, p: { vi: 'Tarot không đoán cả một đời. Theo cách hiểu chung của những người đọc bài lâu năm, một trải bài thường phản ánh khoảng ba tháng tới, tức một mùa. Những trải bài lớn như Celtic Cross có thể nhìn xa tới sáu tháng, còn một lá rút mỗi sáng chỉ nói về ngày hôm đó. Sau mốc ấy, hoặc ngay khi bạn đã đổi quyết định và hoàn cảnh đã khác, bài cũng đổi theo. Vì vậy đừng hỏi lại cùng một câu quá sớm, nhưng sau vài tháng thì hoàn toàn nên xem lại. Nếu muốn chắc, hãy nói to khung thời gian trước khi xào bài: "bài này cho ba tháng tới".', en: 'Tarot does not predict a whole life. By the common understanding of long-time readers, a spread usually reflects the next three months or so, one season. Large spreads like the Celtic Cross can look up to six months ahead, while a card drawn each morning speaks only about that day. Past that point, or as soon as you have changed your decision and your circumstances have changed, the cards change too. So do not ask the same question again too soon, but after a few months a fresh reading is entirely reasonable. To be sure, say the time frame out loud before you shuffle: "this reading is for the next three months".' } },
     { h: { vi: 'Cách học trong khóa này', en: 'How to learn in this course' }, p: { vi: 'Hãy học Ẩn Chính trước, theo đúng thứ tự của câu chuyện ở trên. Mỗi ngày bạn mở một lá, đọc trang của lá đó, rồi tự kể lại vì sao lá này lại đứng sau lá trước. Sau hai mươi hai ngày, bạn chuyển sang Ẩn Phụ và học theo từng chất, từ Át đến Đức Vua. Mỗi sáng, bạn rút một lá và viết một câu về điều bạn nghĩ nó muốn nói, rồi mới đọc trang của nó. Phần Trải bài nên để sau cùng, khi các lá đã trở thành những gương mặt quen.', en: 'Learn the Majors first, in the order of the story above. Each day, open one card, read its page, then retell in your own words why this card follows the one before. After twenty-two days, move on to the Minors and take them one suit at a time, from Ace to King. Each morning, draw a card and write one line about what you think it is saying, and only then read its page. Leave the Spreads section for last, once the cards have become familiar faces.' } }
   ] },
 { id: 'tarot-start', cat: 'tarot', badge: 'conv', tags: ['tarot'],
@@ -9803,7 +9830,8 @@ const GUIDES = [
   sections: [
     { h: { vi: 'Mỗi lá là một danh từ', en: 'Each card is a noun' }, p: { vi: 'Tarot cho bạn một khung cảnh với nhiều tầng nghĩa, còn Lenormand chỉ cho bạn một từ. Lá Thư nghĩa là một lá thư, và Chìa Khóa nghĩa là mở ra, là điều chắc chắn. Nghĩa thật sự chỉ xuất hiện khi bạn ghép các từ lại với nhau. Chẳng hạn, Kỵ Mã đứng cạnh Lá Thư nghĩa là một tin nhắn đang trên đường đến.', en: 'Tarot gives you a scene with many layers of meaning, while Lenormand gives you a single word. The Letter means a letter, and the Key means opening, or certainty. The real meaning only appears when you join the words together. The Rider next to the Letter, for instance, means a message that is on its way.' } },
     { h: { vi: 'Không có lá ngược', en: 'There are no reversals' }, p: { vi: 'Lenormand không đọc lá ngược. Thay vào đó, mỗi lá mang sẵn một sắc thái: tích cực, trung tính hoặc tiêu cực. Lá đứng bên cạnh sẽ làm dịu đi hoặc làm nặng thêm sắc thái ấy.', en: 'Lenormand does not use reversals. Instead, every card carries a built-in tone: positive, neutral or negative. The card beside it softens or sharpens that tone.' } },
-    { h: { vi: 'Bộ bài đến từ đâu', en: 'Where the deck comes from' }, p: { vi: 'Bộ bài này bắt nguồn từ một trò chơi bàn cờ ở Đức vào năm 1799 và chỉ mang tên bà Lenormand sau khi bà qua đời. Trên mỗi lá đều in kèm một lá bài Tây từ bộ 36 lá, và đó là tương ứng thật sự duy nhất của Lenormand. Lenormand không có tương ứng với cung hoàng đạo; những bảng cung mà bạn thấy trên mạng là do từng tác giả tự đặt ra.', en: 'The deck began as a German board game in 1799 and only took Mlle Lenormand\'s name after her death. Every card carries a playing card from the 36-card pack, and that is Lenormand\'s only real correspondence. Lenormand has no zodiac correspondences; the sign tables you see online are each author\'s own invention.' } }
+    { h: { vi: 'Bộ bài đến từ đâu', en: 'Where the deck comes from' }, p: { vi: 'Bộ bài này bắt nguồn từ một trò chơi bàn cờ ở Đức vào năm 1799 và chỉ mang tên bà Lenormand sau khi bà qua đời. Trên mỗi lá đều in kèm một lá bài Tây từ bộ 36 lá, và đó là tương ứng thật sự duy nhất của Lenormand. Lenormand không có tương ứng với cung hoàng đạo; những bảng cung mà bạn thấy trên mạng là do từng tác giả tự đặt ra.', en: 'The deck began as a German board game in 1799 and only took Mlle Lenormand\'s name after her death. Every card carries a playing card from the 36-card pack, and that is Lenormand\'s only real correspondence. Lenormand has no zodiac correspondences; the sign tables you see online are each author\'s own invention.' } },
+    { h: { vi: 'Lenormand nhìn được bao xa', en: 'How far Lenormand sees' }, p: { vi: 'Lenormand nói về chuyện cụ thể và gần. Một dòng ba hay năm lá thường ứng với vài ngày tới vài tuần, hộp chín lá khoảng một đến ba tháng, còn Grand Tableau 36 lá thường được đọc cho sáu tháng tới một năm. Chính các lá cũng mang thời gian: Kỵ Mã là vài ngày, Con Thuyền là vài tuần đến vài tháng, Cây là chậm và tính bằng tháng, Mỏ Neo là lâu dài. Muốn rõ, hãy nói to khung thời gian trước khi xào bài, rồi đọc mọi lá trong khung đó.', en: 'Lenormand speaks about concrete, near things. A line of three or five cards usually covers the next days to weeks, the nine-card box about one to three months, and the 36-card Grand Tableau is generally read for six months to a year. The cards themselves carry time: the Rider is days, the Ship weeks to months, the Tree slow and counted in months, the Anchor lasting. To be clear, say the time frame out loud before you shuffle, then read every card inside it.' } }
   ] },
 { id: 'len-pairs', cat: 'lenormand', badge: 'doc', tags: ['lenormand'],
   title: { vi: 'Đọc hai lá và ba lá', en: 'Reading two and three cards' },
@@ -9958,7 +9986,8 @@ const GUIDES = [
     { h: { vi: 'Bốn chất', en: 'The four suits' }, p: { vi: 'Cơ nói về tình cảm, gia đình và những gì bạn yêu; tương ứng với Cốc. Rô nói về tiền bạc, công việc và tin tức; tương ứng với Tiền. Chuồn nói về hành động, kế hoạch và bạn bè; tương ứng với Gậy. Bích nói về khó khăn, lo lắng và những lời cảnh báo; tương ứng với Kiếm. Hầu hết người đọc bài, dù theo cách nào, đều bắt đầu bằng việc thuộc bốn chất này trước.', en: 'Hearts speak of love, family and what you care for; they match Cups. Diamonds speak of money, work and news; they match Pentacles. Clubs speak of action, plans and friends; they match Wands. Spades speak of trouble, worry and warnings; they match Swords. Whichever way they read, most readers begin by learning these four suits by heart.' } },
     { h: { vi: 'Số và lá hình', en: 'Numbers and court cards' }, p: { vi: 'Át là khởi đầu của chất, các lá từ Hai đến Mười kể một câu chuyện từ mở đầu tới trọn vẹn, và Mười là kết quả đầy đủ. Ba lá hình chỉ người: J là người trẻ hoặc một tin tức, Q là người phụ nữ, K là người đàn ông hoặc người có quyền. Trong bộ nghĩa truyền thống, màu của lá hình cũng gợi ý ngoại hình hoặc tính cách: lá đỏ chỉ người tóc sáng hay tính ấm áp, lá đen chỉ người tóc sẫm hay tính nghiêm nghị.', en: 'The Ace begins a suit, Two to Ten tell a story from start to completion, and the Ten is the full result. The three court cards stand for people: the Jack is a young person or a piece of news, the Queen a woman, the King a man or someone in authority. In the traditional meanings the colour of a court card also hints at looks or temperament: red cards for fair or warm people, black cards for dark or stern ones.' } },
     { h: { vi: 'Cách học được người đọc bài lâu năm khuyên', en: 'How experienced readers suggest learning' }, p: { vi: 'Bước một: thuộc bốn chất và câu chuyện từ Át tới Mười, vì với hai điều này bạn đã đoán được nghĩa gần đúng của mọi lá. Bước hai: học riêng mười hai lá hình như mười hai con người. Bước ba: học những lá đặc biệt của bộ nghĩa truyền thống, như Chín Cơ, Át Bích, Chín Bích, Mười Rô. Bước bốn: tập trải ba lá cho một câu hỏi rồi mới tăng dần, và ghi lại từng lần xem để so với thực tế. Bước năm: tập đọc cặp lá, vì trong bói bài Tây lá bên cạnh đổi nghĩa lá đứng giữa, giống như trong Lenormand.', en: 'Step one: learn the four suits and the Ace-to-Ten story, because with those two things you can already guess a fair meaning for every card. Step two: learn the twelve court cards as twelve people. Step three: learn the special cards of the traditional set, such as the Nine of Hearts, the Ace of Spades, the Nine of Spades and the Ten of Diamonds. Step four: practise three-card readings for one question before you grow the spread, and write each reading down to compare with what happens. Step five: practise pairs, because in playing-card reading the neighbouring card changes the card in the middle, just as in Lenormand.' } },
-    { h: { vi: 'Lenormand dùng bài Tây ra sao', en: 'How Lenormand uses playing cards' }, p: { vi: 'Mỗi lá Lenormand đều in kèm một lá bài Tây từ bộ 36 lá, từ Sáu đến Át. Đó là tương ứng thật sự duy nhất của Lenormand, và nó đã có trên bài từ năm 1799. Bộ 36 lá này cũng là bộ mà nhiều người bói bài Tây ở châu Âu dùng thay cho bộ 52 lá.', en: 'Every Lenormand card carries a playing card from the 36-card pack, from Six to Ace. That is Lenormand\'s only real correspondence, and it has been printed on the cards since 1799. The same 36-card pack is what many European playing-card readers use instead of the full 52.' } }
+    { h: { vi: 'Lenormand dùng bài Tây ra sao', en: 'How Lenormand uses playing cards' }, p: { vi: 'Mỗi lá Lenormand đều in kèm một lá bài Tây từ bộ 36 lá, từ Sáu đến Át. Đó là tương ứng thật sự duy nhất của Lenormand, và nó đã có trên bài từ năm 1799. Bộ 36 lá này cũng là bộ mà nhiều người bói bài Tây ở châu Âu dùng thay cho bộ 52 lá.', en: 'Every Lenormand card carries a playing card from the 36-card pack, from Six to Ace. That is Lenormand\'s only real correspondence, and it has been printed on the cards since 1799. The same 36-card pack is what many European playing-card readers use instead of the full 52.' } },
+    { h: { vi: 'Bói bài Tây nhìn được bao lâu', en: 'How long a playing-card reading holds' }, p: { vi: 'Bói bài Tây theo lối truyền thống thường được xem là nói về vài tuần tới khoảng ba tháng, giống tarot. Không có quy ước thời gian nào được mọi sách đồng ý: có người đọc Cơ và Rô là chuyện đến nhanh, Chuồn và Bích là chuyện chậm hơn; có người lấy số trên lá làm số ngày hay tuần. Cách an toàn mà người đọc lâu năm khuyên là tự chốt khung thời gian ngay trước khi xào, ví dụ "bài này cho tháng tới", rồi đọc mọi lá trong khung ấy, và xem lại khi khung ấy đã qua.', en: 'A traditional playing-card reading is usually taken to cover the next few weeks to about three months, much like tarot. No timing convention is shared by every book: some readers take Hearts and Diamonds as fast and Clubs and Spades as slower, others read the number on a card as days or weeks. The safe habit experienced readers suggest is to fix the time frame just before you shuffle, for example "this reading is for the coming month", read every card inside it, and read again once that window has passed.' } }
   ] },
 { id: 'fort-animals', cat: 'fortune', badge: 'doc', tags: ['fortune', 'astro'],
   title: { vi: '12 con giáp', en: 'The 12 zodiac animals' },
@@ -10150,6 +10179,7 @@ function renderFooter() {
   const S = T(), links = [];
   if (CONFIG.instagram) links.push('<a href="https://instagram.com/' + esc(CONFIG.instagram) + '" target="_blank" rel="noopener">Instagram</a>');
   if (CONFIG.facebookUrl) links.push('<a href="' + esc(CONFIG.facebookUrl) + '" target="_blank" rel="noopener">Facebook</a>');
+  links.push('<a href="#/contact">' + esc(S.contactLink) + '</a>');
   links.push('<a href="#/report">' + esc(S.reportLink) + '</a>');
   $('#foot').innerHTML = '<div class="wrap">' + LOGO + '<div>' + esc(L(CONFIG.tagline)) + '<div class="links">' + links.join(' · ') + '</div><div class="copy">© ' + new Date().getFullYear() + ' ' + esc(CONFIG.brand) + '. ' + esc(S.rights) + '</div></div></div>';
 }
@@ -10178,6 +10208,51 @@ function copyFallback(text) {
   document.body.appendChild(ta); ta.select();
   try { document.execCommand('copy'); } catch (e) { /* nothing more to try */ }
   document.body.removeChild(ta);
+}
+/* Photos for posts are shrunk on the phone before they go to the cloud, so each stays well under the 1 MB document limit. */
+function shrinkImage(file, max, quality) {
+  return new Promise((resolve, reject) => {
+    const url = URL.createObjectURL(file), img = new Image();
+    img.onload = () => {
+      const k = Math.min(1, (max || 1100) / Math.max(img.width, img.height)), w = Math.round(img.width * k), h = Math.round(img.height * k);
+      const c = document.createElement('canvas'); c.width = w; c.height = h; c.getContext('2d').drawImage(img, 0, 0, w, h);
+      URL.revokeObjectURL(url); resolve(c.toDataURL('image/jpeg', quality || 0.82));
+    };
+    img.onerror = () => { URL.revokeObjectURL(url); reject(new Error('image')); };
+    img.src = url;
+  });
+}
+const EMOJIS = ['✨', '💜', '🔮', '🌙', '☀️', '⭐', '🌟', '💫', '🃏', '🗝️', '🌸', '🌿', '🕯️', '🧿', '💌', '❤️', '💔', '💰', '💼', '📚', '😊', '🙏', '👉', '⚠️', '✅', '📅', '🎁', '🎉'];
+/* A booking as a calendar file with four reminders (24 h, 6 h, 1 h, 15 min).
+   Times are Vietnam time (UTC+7, no daylight saving), written as UTC. */
+function icsFor(b) {
+  const m = /^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2})/.exec(String(b.slot || ''));
+  if (!m) return '';
+  const start = new Date(Date.UTC(+m[1], +m[2] - 1, +m[3], +m[4] - 7, +m[5])), end = new Date(start.getTime() + 60 * 60000);
+  const f = (d) => d.toISOString().replace(/[-:]/g, '').replace(/\.\d{3}/, '');
+  const clean = (s) => String(s || '').replace(/[\\;,]/g, (c) => '\\' + c).replace(/\n/g, '\\n');
+  const alarms = [['-P1D', '24 h'], ['-PT6H', '6 h'], ['-PT1H', '1 h'], ['-PT15M', '15 min']].map((a) => 'BEGIN:VALARM\r\nTRIGGER:' + a[0] + '\r\nACTION:DISPLAY\r\nDESCRIPTION:Nabu Tarot ' + a[1] + '\r\nEND:VALARM').join('\r\n');
+  const what = clean(CONFIG.brand + (b.service ? ' · ' + b.service : '')), who = clean(b.name ? b.name : '');
+  return ['BEGIN:VCALENDAR', 'VERSION:2.0', 'PRODID:-//Nabu Tarot//app//VI', 'BEGIN:VEVENT', 'UID:' + (b.id || Date.now()) + '@nabutarot', 'DTSTAMP:' + f(new Date()), 'DTSTART:' + f(start), 'DTEND:' + f(end),
+    'SUMMARY:' + what, 'DESCRIPTION:' + clean((b.topic ? b.topic + '\n' : '') + (b.note || '') + (who ? '\n' + who : '')), 'URL:' + appURL() + '#/me', alarms, 'END:VEVENT', 'END:VCALENDAR'].join('\r\n');
+}
+const icsLink = (b) => 'data:text/calendar;charset=utf-8,' + encodeURIComponent(icsFor(b));
+const slotDate = (slot) => { const m = /^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2})/.exec(String(slot || '')); return m ? new Date(+m[1], +m[2] - 1, +m[3], +m[4], +m[5]) : null; };
+/* Reminders while the app is open: 24 h, 6 h, 1 h and 15 min before every upcoming booking. */
+const REM = { timers: [] };
+function scheduleReminders(list) {
+  REM.timers.forEach(clearTimeout); REM.timers = [];
+  const S = T(), now = Date.now(), soon = [];
+  (list || []).filter((b) => ['requested', 'confirmed', 'change_requested'].indexOf(b.status) > -1).forEach((b) => {
+    const d = slotDate(b.slot); if (!d || d.getTime() < now) return;
+    soon.push(b);
+    [[24 * 60, S.inHours(24)], [6 * 60, S.inHours(6)], [60, S.inHours(1)], [15, S.inMinutes(15)]].forEach((r) => {
+      const at = d.getTime() - r[0] * 60000, wait = at - now;
+      if (wait > 0 && wait < 36 * 3600000) REM.timers.push(setTimeout(() => notifyAdmin(S.remindTitle(r[1]), slotLabel(b.slot), '#/me'), wait));
+    });
+  });
+  soon.sort((a, b) => String(a.slot).localeCompare(String(b.slot)));
+  store.set('nabu-nextbk', soon[0] ? { slot: soon[0].slot, status: soon[0].status, service: soon[0].service || '' } : null);
 }
 function shareOrCopy(text, url) {
   if (navigator.share) return navigator.share({ text: text, url: url }).catch(() => {});
@@ -10245,6 +10320,8 @@ function screenLabel(h) {
   if (r === 'pick') return S.nav.pick;
   if (r === 'book') return S.nav.book;
   if (r === 'prices') return S.priceTitle;
+  if (r === 'news') return S.newsTitle;
+  if (r === 'contact') return S.contactTitle;
   if (r === 'me') return S.nav.me;
   if (r === 'learn') { if (!a.length) return S.learnTitle; if (a.length === 1 && S.cats[a[0]]) return S.cats[a[0]]; if (a[0] === 'fortune' && a.length === 2) return S.cats.fortune; }
   return S.back;
@@ -10412,7 +10489,7 @@ const BE = {
         if (!firstT) s.docChanges().forEach((c) => { if (c.type === 'added' || c.type === 'modified') { const t = c.doc.data(); if (t.lastFrom === 'user') notifyAdmin(S.notifNewMsg + (t.name || t.email || S.guestLabel), t.lastText || '', '#/admin?tab=inbox'); } });
         firstT = false;
       });
-      this._unsubBk = this.db.collection('bookings').where('status', '==', 'requested').onSnapshot((s) => {
+      this._unsubBk = this.db.collection('bookings').where('status', 'in', ['requested', 'change_requested', 'cancel_requested']).onSnapshot((s) => {
         NEWBK = s.size; nav();
         if (!firstB) s.docChanges().forEach((c) => { if (c.type === 'added') { const b = c.doc.data(); notifyAdmin(S.notifNewBooking + (b.name || b.email || S.guestLabel), (b.service || '') + (b.slot ? ' · ' + b.slot.replace('T', ' ') : ''), '#/admin?tab=bookings'); } });
         firstB = false;
@@ -10441,11 +10518,33 @@ const BE = {
   watchMyBookings(cb) { return this.db.collection('bookings').where('uid', '==', this.user.uid).onSnapshot((s) => cb(s.docs.map((d) => Object.assign({ id: d.id }, d.data())).sort((a, b) => String(b.slot).localeCompare(String(a.slot))))); },
   watchAllBookings(cb) { return this.db.collection('bookings').orderBy('slot', 'desc').limit(200).onSnapshot((s) => cb(s.docs.map((d) => Object.assign({ id: d.id }, d.data())))); },
   async setBookingStatus(b, status) {
-    await this.db.collection('bookings').doc(b.id).set({ status: status }, { merge: true });
-    const key = String(b.slot).replace(/[^0-9T]/g, '');
-    if (status === 'declined' || status === 'cancelled') await this.db.collection('taken').doc(key).delete().catch(() => {});
+    const ref = this.db.collection('bookings').doc(b.id), key = String(b.slot).replace(/[^0-9T]/g, ''), newKey = b.newSlot ? String(b.newSlot).replace(/[^0-9T]/g, '') : '';
+    if (status === 'keep') {  // the client asked for a change or a cancellation; Nabu keeps the booking as it was
+      await ref.set({ status: b.prevStatus || 'confirmed', newSlot: firebase.firestore.FieldValue.delete(), prevStatus: firebase.firestore.FieldValue.delete() }, { merge: true });
+      if (newKey) await this.db.collection('taken').doc(newKey).delete().catch(() => {});
+      return;
+    }
+    if (status === 'confirmed' && b.status === 'change_requested' && b.newSlot) {  // the new time takes over
+      await ref.set({ status: 'confirmed', slot: b.newSlot, newSlot: firebase.firestore.FieldValue.delete(), prevStatus: firebase.firestore.FieldValue.delete() }, { merge: true });
+      await this.db.collection('taken').doc(key).delete().catch(() => {});
+      await this.db.collection('taken').doc(newKey).set({ bookingId: b.id }, { merge: true });
+      return;
+    }
+    await ref.set({ status: status }, { merge: true });
+    if (status === 'declined' || status === 'cancelled') { await this.db.collection('taken').doc(key).delete().catch(() => {}); if (newKey) await this.db.collection('taken').doc(newKey).delete().catch(() => {}); }
     else await this.db.collection('taken').doc(key).set({ bookingId: b.id }, { merge: true });
   },
+  /* The client asks to move the booking: the new slot is reserved at once, Nabu approves or keeps the old time. */
+  async requestChange(b, newSlot) {
+    await this.db.collection('bookings').doc(b.id).set({ status: 'change_requested', newSlot: newSlot, prevStatus: b.status === 'change_requested' || b.status === 'cancel_requested' ? (b.prevStatus || 'confirmed') : b.status }, { merge: true });
+    await this.db.collection('taken').doc(String(newSlot).replace(/[^0-9T]/g, '')).set({ bookingId: b.id, pending: true }, { merge: true });
+    notifyBooking(Object.assign({}, b, { newSlot: newSlot, status: 'change_requested' }));
+  },
+  async requestCancel(b) {
+    await this.db.collection('bookings').doc(b.id).set({ status: 'cancel_requested', prevStatus: b.status === 'change_requested' || b.status === 'cancel_requested' ? (b.prevStatus || 'confirmed') : b.status }, { merge: true });
+    notifyBooking(Object.assign({}, b, { status: 'cancel_requested' }));
+  },
+  async getBooking(id) { const d = await this.db.collection('bookings').doc(id).get(); return d.exists ? Object.assign({ id: d.id }, d.data()) : null; },
   async takenSlots() {
     const out = {};
     try {
@@ -10572,6 +10671,13 @@ function contextText(ctx) {
 }
 
 /* ---- built-in engine ---- */
+/* A sum typed into the box gets a sum back, even offline. Only digits and operators reach the evaluator. */
+function calcAnswer(f) {
+  const t = String(f || '').replace(/[=?:\s]+$/, '').trim();
+  if (!/\d/.test(t) || !/^[\d\s+\-*/().,xX×÷^%]+$/.test(t) || !/[+\-*/xX×÷^%]/.test(t)) return '';
+  const expr = t.replace(/[xX×]/g, '*').replace(/÷/g, '/').replace(/\^/g, '**').replace(/,/g, '.').replace(/\s+/g, '');
+  try { const v = Function('"use strict"; return (' + expr + ')')(); if (typeof v !== 'number' || !isFinite(v)) return ''; return t.replace(/\s+/g, ' ') + ' = ' + String(Math.round(v * 1e6) / 1e6); } catch (e) { return ''; }
+}
 function localAnswer(q, ctx) {
   const S = T(), d = detectCat(q), out = [];
   const mentioned = cardsMentioned(q).filter((id) => !(ctx.type === 'card' && id === ctx.id));
@@ -10618,7 +10724,9 @@ function localAnswer(q, ctx) {
       if (d.timing) out.push(S.aiTiming + ' ' + SUIT_TIMING[lang][c.suit]);
       out.push(I.advice, S.aiDrawHint);
     };
-    if (/^(chao|hi|hello|xin chao|alo|hey|yo)\b/.test(f) || f.length < 3) out.push(S.aiGreet);
+    const sum = calcAnswer(f);
+    if (sum) out.push(sum);
+    else if (/^(chao|hi|hello|xin chao|alo|hey|yo)\b/.test(f) || f.length < 3) out.push(S.aiGreet);
     else if (/cam on|thank/.test(f)) out.push(S.aiThanks);
     else if (help) out.push(help);
     else if (!specific && /rut (cho minh |giup minh |giup |cho )?(mot |1 )?la|rut bai|draw (me )?(a |one )?card|pick a card|la bai (cua |cho )?hom nay|card (of the day|for today)/.test(f)) drawOne();
@@ -10665,8 +10773,8 @@ function searchCourse(q, course) {
 /* ---- Gemini (browser-side, free tier, web grounding) ---- */
 function aiSystemPrompt() {
   return lang === 'vi'
-    ? 'Bạn là Nabu AI, trợ lý của Nabu Tarot (một reader tarot người Việt). Trả lời bằng tiếng Việt đời thường, ấm áp, ngắn gọn: 4 đến 8 câu, câu ngắn, xưng "mình", gọi người dùng là "bạn". Ưu tiên KIẾN THỨC được cung cấp; nếu câu hỏi cần thông tin ngoài đó (ví dụ lịch sử, sự kiện, kiến thức chung về tarot, chiêm tinh, thần số học), hãy tìm kiếm và tổng hợp, rồi nói rõ phần nào là kiến thức chung. Không chẩn đoán bệnh, không tư vấn pháp lý hay đầu tư cụ thể, không hứa điều gì chắc chắn xảy ra. Chuyện riêng quan trọng, gợi ý đặt lịch xem bài với Nabu.'
-    : 'You are Nabu AI, the assistant of Nabu Tarot (a Vietnamese tarot reader). Answer in plain, warm English: 4 to 8 short sentences. Prefer the KNOWLEDGE provided; if the question needs outside facts (history, events, general tarot, astrology or numerology knowledge), search and summarise, and say which part is general knowledge. No medical diagnosis, no specific legal or investment advice, no promises. For important personal matters, suggest booking a reading with Nabu.';
+    ? 'Bạn là Nabu AI, trợ lý trong app Nabu Tarot (một reader tarot người Việt). Bạn trả lời MỌI câu hỏi như một trợ lý AI thông thường: toán, kiến thức chung, tin tức, dịch thuật, viết lách, và tất nhiên là tarot, Lenormand, chiêm tinh, thần số học. Câu hỏi đơn giản thì trả lời thẳng và chính xác (ví dụ "1 + 1 = 2"); câu hỏi cần thông tin mới thì tìm kiếm khi có thể. Trả lời bằng tiếng Việt đời thường, ấm áp, ngắn gọn (2 đến 8 câu ngắn), xưng "mình", gọi người dùng là "bạn". Khi câu hỏi liên quan tới thứ người dùng đang xem, ưu tiên KIẾN THỨC được cung cấp. Không chẩn đoán bệnh, không tư vấn pháp lý hay đầu tư cụ thể, không hứa điều gì chắc chắn xảy ra. Chuyện riêng quan trọng, gợi ý đặt lịch xem bài với Nabu.'
+    : 'You are Nabu AI, the assistant inside the Nabu Tarot app (a Vietnamese tarot reader). You answer ANY question like a general assistant: maths, general knowledge, news, translation, writing, and of course tarot, Lenormand, astrology and numerology. Answer simple questions directly and precisely (for example "1 + 1 = 2"); search when a question needs current information. Answer in plain, warm English, 2 to 8 short sentences. When the question is about what the user is looking at, prefer the KNOWLEDGE provided. No medical diagnosis, no specific legal or investment advice, no promises. For important personal matters, suggest booking a reading with Nabu.';
 }
 const withTimeout = (p, ms) => Promise.race([p, new Promise((_, rej) => setTimeout(() => rej(new Error('timeout')), ms))]);
 async function geminiAnswer(q, ctx, history) {
@@ -10674,7 +10782,11 @@ async function geminiAnswer(q, ctx, history) {
   const contents = history.slice(-6).map((h) => ({ role: h.role === 'user' ? 'user' : 'model', parts: [{ text: h.text }] }));
   if (contents.length && contents[contents.length - 1].role === 'user') contents.pop();
   contents.push({ role: 'user', parts: [{ text: 'KNOWLEDGE (' + ctx.type + '):\n' + contextText(ctx).slice(0, 12000) + '\n\nQUESTION: ' + q }] });
-  const r = await withTimeout(fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ system_instruction: { parts: [{ text: aiSystemPrompt() }] }, contents: contents, tools: [{ google_search: {} }], generationConfig: { temperature: 0.7, maxOutputTokens: 900 } }) }), 25000);
+  const base = { system_instruction: { parts: [{ text: aiSystemPrompt() }] }, contents: contents, generationConfig: { temperature: 0.7, maxOutputTokens: 900 } };
+  const call = (search) => withTimeout(fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(search ? Object.assign({ tools: [{ google_search: {} }] }, base) : base) }), 25000);
+  // Web search has its own small free quota: when it is used up, answer from the model alone.
+  let r = await call(true);
+  if (!r.ok && [400, 403, 429].indexOf(r.status) > -1) r = await call(false);
   if (!r.ok) throw new Error('Gemini ' + r.status);
   const j = await r.json(), cand = (j.candidates || [])[0];
   const text = ((cand && cand.content && cand.content.parts) || []).map((p) => p.text || '').join('').trim();
@@ -10818,14 +10930,50 @@ function postScore(p) {
   if (p.topics && p.topics.some((t) => ints.indexOf(t) > -1)) s += 1;
   return s;
 }
+/* ---- rich post bodies ----
+   Plain text with light marks the dashboard toolbar inserts: **bold**,
+   __underline__, ==highlight==, "## " small heading, "> " title box,
+   [img:ID] for a photo stored in the cloud, [video:URL] for an embed. */
+const IMGS = {};
+async function loadImg(id) {
+  if (IMGS[id] != null) return IMGS[id];
+  IMGS[id] = '';
+  try { if (typeof BE !== 'undefined' && BE.enabled) { await Promise.race([BE.initP || Promise.resolve(), new Promise((r) => setTimeout(r, 4000))]); if (BE.db) { const d = await BE.getContent('img_' + id); if (d && d.data) IMGS[id] = d.data; } } } catch (e) { /* offline: the picture stays blank */ }
+  return IMGS[id];
+}
+function videoHTML(url) {
+  const u = String(url).trim(), m = /(?:youtube\.com\/(?:watch\?v=|shorts\/|embed\/)|youtu\.be\/)([A-Za-z0-9_-]{6,})/.exec(u);
+  if (m) return '<div class="video"><iframe src="https://www.youtube.com/embed/' + m[1] + '" allow="accelerometer; autoplay; encrypted-media; picture-in-picture" allowfullscreen loading="lazy"></iframe></div>';
+  if (/facebook\.com\/.*\/videos\/|fb\.watch\//.test(u)) return '<div class="video"><iframe src="https://www.facebook.com/plugins/video.php?href=' + encodeURIComponent(u) + '&show_text=false" allowfullscreen loading="lazy"></iframe></div>';
+  const site = /tiktok/.test(u) ? 'TikTok' : /instagram/.test(u) ? 'Instagram' : /facebook|fb\./.test(u) ? 'Facebook' : 'video';
+  return '<a class="vlink" href="' + esc(u) + '" target="_blank" rel="noopener">▶ ' + esc(T().watchOn(site)) + '</a>';
+}
+function richHTML(text) {
+  const inline = (s) => esc(s).replace(/\*\*([^*\n]+)\*\*/g, '<b>$1</b>').replace(/__([^_\n]+)__/g, '<u>$1</u>').replace(/==([^=\n]+)==/g, '<mark>$1</mark>');
+  const block = (b) => {
+    const t = b.trim(); let m;
+    if (!t) return '';
+    if ((m = /^\[img:([^\]\s]+)\]$/.exec(t))) return '<img class="pimg" data-img="' + esc(m[1]) + '"' + (IMGS[m[1]] ? ' src="' + esc(IMGS[m[1]]) + '"' : '') + ' alt="">';
+    if ((m = /^\[video:([^\]\s]+)\]$/.exec(t))) return videoHTML(m[1]);
+    if (/^##\s/.test(t)) return '<h3>' + inline(t.replace(/^##\s+/, '')) + '</h3>';
+    if (/^>/.test(t)) return '<div class="callout">' + inline(t.replace(/^>\s?/gm, '')).replace(/\n/g, '<br>') + '</div>';
+    return '<p>' + inline(t).replace(/\n/g, '<br>') + '</p>';
+  };
+  // Tokens and heading lines stand on their own even without blank lines around them.
+  return String(text || '').replace(/\n?(\[(?:img|video):[^\]\s]+\])\n?/g, '\n\n$1\n\n').replace(/^(##\s.*)$/gm, '\n$1\n').split(/\n\s*\n/).map(block).join('');
+}
+const plainText = (s) => String(s || '').replace(/\[(?:img|video):[^\]\s]+\]/g, '').replace(/\*\*|__|==/g, '').replace(/^##\s+|^>\s?/gm, '').trim();
+function hydrateImages(root) {
+  $$('img.pimg[data-img]', root).forEach((img) => { const id = img.getAttribute('data-img'); if (IMGS[id]) { img.src = IMGS[id]; return; } loadImg(id).then((d) => { if (d) img.src = d; }); });
+}
 function postHTML(p, full) {
-  const body = L(p.body), long = !full && body.length > 320, score = postScore(p);
+  const raw = L(p.body), body = plainText(raw), long = !full && body.length > 320, score = postScore(p);
   return '<article class="post" data-id="' + esc(p.id) + '">'
     + '<div class="date"><span>' + fmtDate(p.date) + (p.source ? ' · ' + esc(p.source) : '') + '</span>' + (p.pinned ? '<span class="pin">★ ' + T().pinned + '</span>' : '') + '</div>'
     + (score >= 2 ? '<span class="foryou">✦ ' + esc(T().forYou) + '</span>' : '')
     + '<h2>' + esc(L(p.title)) + '</h2>' + markersHTML(p)
     + (p.image ? '<img src="' + esc(p.image) + '" alt="" style="border-radius:12px;margin-bottom:10px">' : '')
-    + '<div class="body' + (long ? ' clamp' : '') + '">' + paras(body) + '</div>'
+    + '<div class="body' + (long ? ' clamp' : '') + '">' + richHTML(raw) + '</div>'
     + (long ? '<button class="more" data-more>' + T().readMore + '</button>' : '')
     + (p.cards && p.cards.length ? '<div class="faint">' + T().cardsDrawn + '</div><div class="mini">' + p.cards.map((c) => miniHTML(c, true)).join('') + '</div>' : '')
     + '<div class="foot">' + (p.link ? '<a class="btn sm" href="' + esc(p.link) + '" target="_blank" rel="noopener">' + esc(p.source || 'Facebook') + ' ↗</a>' : '') + '<button data-share>' + T().share + '</button></div>'
@@ -10837,9 +10985,9 @@ function bindPost(root) {
   }));
   $$('[data-share]', root).forEach((b) => b.addEventListener('click', () => {
     const art = b.closest('article'), p = allPosts().filter((x) => x.id === art.getAttribute('data-id'))[0];
-    if (p) shareOrCopy(L(p.title) + '\n' + L(p.body), p.link || (appURL() + '#/post/' + p.id));
+    if (p) shareOrCopy(L(p.title) + '\n' + plainText(L(p.body)), p.link || (appURL() + '#/post/' + p.id));
   }));
-  bindCardLinks(root);
+  bindCardLinks(root); hydrateImages(root);
 }
 function allPosts() { return (POSTS || []).concat(FBPOSTS.map((f) => Object.assign({ source: f.source || 'Facebook' }, f))); }
 function sortedPosts() {
@@ -10872,7 +11020,7 @@ function pickCtaHTML() {
 function quickLinksHTML() {
   const S = T();
   const tiles = [['#/pick', DRAW_ICON, S.nav.pick, lang === 'vi' ? 'năng lượng hôm nay' : 'your energy today'],
-    ['#/home?go=feed', '✨', S.feedTitle, lang === 'vi' ? 'bài mới của Nabu' : 'new posts from Nabu'],
+    ['#/news', '✨', S.newsTitle, lang === 'vi' ? 'bài mới của Nabu' : 'new posts from Nabu'],
     ['#/learn/astro', '🔮', S.cats.astro, lang === 'vi' ? '12 cung, hành tinh, nhà' : '12 signs, planets, houses'],
     ['#/learn/tarot', PICK_ICON, S.cats.tarot, lang === 'vi' ? '78 lá, ý nghĩa' : '78 cards, meanings'],
     ['#/book', '📅', S.nav.book, lang === 'vi' ? 'chọn giờ với Nabu' : 'pick a time with Nabu'],
@@ -10892,13 +11040,16 @@ function horoCardHTML(period) {
     + '<p class="faint" style="margin:8px 0 0">' + esc(S.horoSource) + ' ' + esc((HORO && HORO.source) || 'Horoscope.com') + (HORO && HORO.updated ? ' · ' + esc(S.horoUpdated) + ' ' + esc(HORO.updated) : '') + '</p></div>';
 }
 function suggestedGuidesHTML(limit) {
-  const ints = PROFILE.interests || [];
-  const list = GUIDES.filter((g) => g.tags.some((t) => ints.indexOf(t) > -1) && !((g.cat === 'tarot' || g.cat === 'lenormand') && !ACCESS.has(g.cat))).slice(0, 1);
-  // Opens right here: tap to read, tap again to fold it away. The same guide stays in the library.
-  const guide = list.length ? list.map((g) => '<div class="acc fyg"><button type="button"><span>📖 ' + esc(L(g.title)) + '</span></button><div class="in">' + guideBodyHTML(g) + '<p><a href="#/learn/guide/' + g.id + '">' + esc(T().openInLibrary) + ' →</a></p></div></div>').join('') : '';
-  return '<div class="sec" id="foryou"><div class="eyebrow">' + esc(T().forInterests) + '</div>' + guide + horoCardHTML('monthly') + horoCardHTML('weekly') + '</div>';
+  // Only the two horoscopes: the guide overview that used to sit here was removed at Nabu's request.
+  return '<div class="sec" id="foryou"><div class="eyebrow">' + esc(T().forInterests) + '</div>' + horoCardHTML('monthly') + horoCardHTML('weekly') + '</div>';
 }
 
+/* The next booking, when it is within two days, sits right under the greeting. */
+function upcomingHTML() {
+  const S = T(), nb = store.get('nabu-nextbk', null), d = nb && slotDate(nb.slot);
+  if (!d || d.getTime() < Date.now() || d.getTime() - Date.now() > 48 * 3600000) return '';
+  return '<a class="upnext" href="#/me"><span class="ic">⏰</span><span><b>' + esc(S.upcoming) + '</b><br>' + esc(slotLabel(nb.slot)) + ' · ' + esc(S.status[nb.status] || '') + '</span></a>';
+}
 async function renderHome(args, params) {
   const S = T(), m = $('#main');
   const name = (PROFILE.name || '').trim();
@@ -10906,6 +11057,7 @@ async function renderHome(args, params) {
     + todayHTML()
     + (PROFILE.tourDone ? tourMiniHTML() : tourHTML(0))
     + '<h1 style="margin:18px 0 4px">' + esc(name ? S.hello(name) : S.helloGuest) + '</h1><p class="muted">' + esc(lang === 'vi' ? 'Hôm nay bạn muốn làm gì?' : 'What would you like to do today?') + '</p>'
+    + upcomingHTML()
     + pickCtaHTML()
     + quickLinksHTML()
     + personalHTML()
@@ -10919,7 +11071,7 @@ async function renderHome(args, params) {
   const all = sortedPosts(), welcome = all.filter((p) => p.welcome)[0], list = all.filter((p) => !p.welcome);
   feed.innerHTML = (welcome ? '<section class="welcome"><h2>' + esc(L(welcome.title)) + '</h2>' + paras(L(welcome.body)) + '<div class="sig">' + LOGO + '</div></section>' : '')
     + (POSTS_CACHED && all.length ? '<div class="banner">' + esc(S.feedOffline) + '</div>' : '')
-    + (list.length ? list.map((p) => postHTML(p, false)).join('') : (welcome ? '' : '<p class="empty">' + esc(S.feedEmpty) + '</p>'));
+    + (list.length ? list.slice(0, 3).map((p) => postHTML(p, false)).join('') + '<a class="btn block" href="#/news">📰 ' + esc(S.allPostsBtn(list.length)) + '</a>' : (welcome ? '' : '<p class="empty">' + esc(S.feedEmpty) + '</p>'));
   bindPost(feed);
   if (params.go === 'feed' && NAV.restore == null) feed.scrollIntoView({ behavior: 'smooth' });
 }
@@ -10930,13 +11082,29 @@ async function renderPost(args) {
   m.innerHTML = '<p><a href="#/home">← ' + esc(T().backToFeed) + '</a></p>' + (p ? postHTML(p, true) : '<p class="empty">' + esc(T().notFound) + '</p>');
   bindPost(m);
 }
+/* ---- all posts, with search (#/news) ---- */
+async function renderNews() {
+  const S = T(), m = $('#main');
+  if (POSTS == null) await loadPosts();
+  m.innerHTML = '<div class="eyebrow">' + esc(CONFIG.brand) + '</div><h1 style="margin-bottom:6px">' + esc(S.newsTitle) + '</h1><p class="muted">' + esc(S.newsIntro) + '</p>'
+    + '<input id="nsearch" type="search" placeholder="' + esc(S.searchPosts) + '" autocomplete="off"><div id="news" style="margin-top:12px"></div>';
+  const draw = () => {
+    const q = fold($('#nsearch').value.trim());
+    const list = sortedPosts().filter((p) => !p.welcome).filter((p) => !q || fold(L(p.title) + ' ' + plainText(L(p.body))).indexOf(q) > -1);
+    $('#news').innerHTML = list.length ? list.map((p) => postHTML(p, false)).join('') : '<p class="empty">' + esc(q ? S.noMatch : S.feedEmpty) + '</p>';
+    bindPost($('#news'));
+  };
+  $('#nsearch').addEventListener('input', draw); draw();
+}
 ROUTES.home = { nav: 'home', render: renderHome };
+ROUTES.news = { nav: 'home', render: renderNews };
 ROUTES.post = { nav: 'home', render: renderPost };
 
 /* ============================ pick a card ============================ */
 const pick = { focus: store.get('nabu-focus', 'general'), hand: [], chosen: null };
 function shuffle(a) { for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); const t = a[i]; a[i] = a[j]; a[j] = t; } return a; }
-function newHand() { pick.hand = shuffle(DECK.vi.map((c) => c.id)).slice(0, 7); pick.chosen = null; }
+/* All 78 cards, shuffled, face down: the visitor picks any one of them. */
+function newHand() { pick.hand = shuffle(DECK.vi.map((c) => c.id)); pick.chosen = null; }
 
 /* Everything in one language: keywords, energy, focus reading, advice. */
 function insightHTML(id, focus) {
@@ -10955,7 +11123,7 @@ function renderPick(args, params) {
   // A shared link (#/pick?card=…) opens straight on that card, in the focus it was drawn with.
   const want = params && params.card && cardById(params.card) ? params.card : '';
   if (want && pick.chosen !== want) {
-    newHand(); if (pick.hand.indexOf(want) < 0) pick.hand[3] = want; pick.chosen = want;
+    newHand(); pick.chosen = want;
     if (params.focus && T().focus[params.focus]) pick.focus = params.focus;
   }
   if (!pick.hand.length) newHand();
@@ -10964,11 +11132,11 @@ function renderPick(args, params) {
   const chips = Object.keys(S.focus).map((f) => '<button class="chip' + (pick.focus === f ? ' on' : '') + '" data-focus="' + f + '"' + (pick.chosen != null && pick.focus !== f ? ' disabled' : '') + '>' + esc(S.focus[f]) + '</button>').join('');
   const fan = pick.hand.map((id, i) => {
     const cls = pick.chosen == null ? '' : (pick.chosen === id ? ' chosen' : ' dim');
-    return '<div class="slot' + cls + '" style="transform:rotate(' + ((i - 3) * 9) + 'deg)"><button data-card="' + id + '" aria-label="' + (i + 1) + '">' + BACK + '</button></div>';
+    return '<div class="slot' + cls + '"><button data-card="' + id + '" aria-label="' + (i + 1) + '">' + BACK + '</button></div>';
   }).join('');
   m.innerHTML = '<div class="pick-head"><div class="eyebrow">' + esc(S.nav.pick) + '</div><h1>' + esc(S.pickTitle) + '</h1><p>' + esc(S.pickIntro) + '</p></div>'
     + '<div class="faint" style="text-align:center">' + esc(S.focusLabel) + '</div><div class="chips focus">' + chips + '</div>'
-    + '<div class="fan" id="fan">' + fan + '</div><div class="tap-hint">' + (pick.chosen == null ? esc(S.tapACard) : '') + '</div><div class="reveal" id="reveal"></div>';
+    + '<div class="fan deck" id="fan">' + fan + '</div><div class="tap-hint">' + (pick.chosen == null ? esc(S.tapACard) : '') + '</div><div class="reveal" id="reveal"></div>';
   $$('[data-focus]', m).forEach((b) => b.addEventListener('click', () => {
     if (pick.chosen != null) return;
     pick.focus = b.getAttribute('data-focus'); store.set('nabu-focus', pick.focus);
@@ -11832,7 +12000,7 @@ let SCHEDULE = null, TAKEN = {};
 async function loadSchedule() {
   const s = await loadContent('schedule', CONFIG.schedulePath, 'nabu-schedule');
   SCHEDULE = s.data || { slotMinutes: 60, weekly: {}, blocked: [], extra: {}, booked: [], leadDays: 1, horizonDays: 42 };
-  if (BE.enabled && BE.ready) TAKEN = await BE.takenSlots();
+  if (BE.enabled) { await Promise.race([BE.initP || Promise.resolve(), new Promise((r) => setTimeout(r, 3000))]); if (BE.db) TAKEN = await BE.takenSlots(); }
   return SCHEDULE;
 }
 const slotKey = (dateStr, time) => dateStr + 'T' + time;
@@ -11946,14 +12114,10 @@ function renderPrices() {
 
 async function renderBook(args, params) {
   const S = T(), m = $('#main');
+  if (params.change) return renderChange(params.change);
   restoreBook();
   book.card = params.card || book.card || null; book.name = book.name || PROFILE.name || ''; book.birth = book.birth || PROFILE.birthday || '';
   if (!book.month) book.month = new Date(new Date().getFullYear(), new Date().getMonth(), 1);
-  const links = [];
-  if (CONFIG.instagram) links.push(['https://ig.me/m/' + CONFIG.instagram, S.viaInstagram, BE.enabled ? '' : 'primary']);
-  if (CONFIG.facebookPage) links.push(['https://m.me/' + CONFIG.facebookPage, S.viaMessenger, '']);
-  if (CONFIG.zalo) links.push(['https://zalo.me/' + CONFIG.zalo, S.viaZalo, '']);
-  if (CONFIG.email) links.push(['mailto:' + CONFIG.email, S.viaEmail, '']);
   m.innerHTML = '<div class="eyebrow">' + esc(CONFIG.brand) + '</div><h1 style="margin-bottom:6px">' + esc(S.bookTitle) + '</h1><p class="muted">' + esc(L(CONFIG.bookingNote)) + '</p><p class="tip">👆 ' + esc(S.bookTip) + '</p><p class="hint" style="margin:0 0 4px">💾 ' + esc(S.draftKept) + '</p>'
     + '<div class="sec"><h2 style="margin:18px 0 4px">' + esc(S.chooseService) + '</h2><p class="hint" style="margin-bottom:12px">' + esc(S.serviceHint) + '</p><div id="svcwrap">' + priceSheetHTML(true) + '</div><div id="cartwrap">' + cartHTML() + '</div></div>'
     + '<div class="sec"><h2 style="margin:18px 0 4px">' + esc(S.chooseTopic) + '</h2><div id="topicwrap">' + topicSectionHTML() + '</div></div>'
@@ -11962,12 +12126,10 @@ async function renderBook(args, params) {
     + '<div id="birthwrap" hidden><label class="f" for="bbirth">' + esc(S.birthday) + '</label><input id="bbirth" type="date" value="' + esc(book.birth) + '"><label class="f" for="btime">' + esc(S.birthTime) + '</label><input id="btime" type="time" value="' + esc(book.birthTime) + '"><p class="hint">' + esc(S.birthHint) + '</p></div>'
     + '<label class="f" for="bnote">' + esc(S.yourNote) + '</label><textarea id="bnote" placeholder="' + esc(S.notePlaceholder) + '">' + esc(book.note) + '</textarea>'
     + (book.card ? '<p class="hint">' + esc(S.msgCard) + ': <b>' + esc(cardById(book.card).name) + '</b></p>' : '') + '</div>'
-    + '<div class="sec"><h2 style="margin-bottom:6px">' + esc(S.sendVia) + '</h2><p class="hint">' + esc(S.summaryTitle) + '</p><div id="msgprev"></div><details class="msgd"><summary>' + esc(S.showMsg) + '</summary><div class="msgbox" id="msgtext"></div></details><p class="hint" style="margin:0 0 10px">' + esc(L(PAYMENT_NOTE)) + '</p>'
+    + '<div class="sec"><h2 style="margin-bottom:6px">' + esc(S.sendVia) + '</h2><p class="hint">' + esc(S.summaryTitle) + '</p><div id="msgprev"></div><div id="msgtext" hidden></div><p class="hint" style="margin:0 0 10px">' + esc(L(PAYMENT_NOTE)) + '</p>'
     + '<div class="row" style="flex-direction:column">'
-    + (BE.enabled ? '<button class="btn block primary" id="sendapp">' + esc(S.sendInApp) + '</button><p class="hint" id="sendstatus"></p>' : '')
-    + '<p class="hint">' + esc(S.sendHint) + '</p>'
-    + links.map((l) => '<a class="btn block ' + l[2] + '" data-send href="' + esc(l[0]) + '" target="_blank" rel="noopener">' + esc(l[1]) + '</a>').join('')
-    + '<button class="btn block" data-send="copy">' + esc(S.copyMsg) + '</button></div></div>'
+    + (BE.enabled ? '<button class="btn block primary" id="sendapp">' + esc(S.sendInApp) + '</button><p class="hint" id="sendstatus"></p>' : '<p class="hint">' + esc(S.needLogin) + '</p>')
+    + '<a class="btn block" href="#/contact">💬 ' + esc(S.contactTitle) + '</a></div></div>'
     + '<div class="sec card"><h3 style="margin-bottom:10px">' + esc(S.howItWorks) + '</h3><ol class="steps">' + [S.chooseService.slice(3), S.chooseTopic.slice(3), S.chooseTime.slice(3), S.sendVia.slice(3), L(PAYMENT_NOTE)].map((x) => '<li>' + esc(x) + '</li>').join('') + '</ol></div>'
     + '<div class="sec"><h3 style="margin-bottom:6px">' + esc(S.aboutTitle) + '</h3><p class="muted">' + esc(L(CONFIG.about)) + '</p></div>';
   const prev = () => { const p = $('#msgprev'); if (!p) return; p.innerHTML = summaryHTML(); $('#msgtext').textContent = composeMessage(); saveBook(); };
@@ -12015,13 +12177,6 @@ async function renderBook(args, params) {
     if (needsBirth() && !book.birth) { toast(S.needBirth); $('#birthwrap').scrollIntoView({ behavior: 'smooth', block: 'center' }); return false; }
     return true;
   };
-  $$('[data-send]', m).forEach((el) => el.addEventListener('click', (e) => {
-    if (!need()) { e.preventDefault(); return; }
-    const msg = composeMessage();
-    if (el.getAttribute('data-send') === 'copy') { copyText(msg).then(() => toast(S.copied)); return; }
-    if (el.getAttribute('href').indexOf('mailto:') === 0) { el.setAttribute('href', 'mailto:' + CONFIG.email + '?subject=' + encodeURIComponent(CONFIG.brand) + '&body=' + encodeURIComponent(msg)); return; }
-    copyText(msg); toast(S.copied);
-  }));
   const sendBtn = $('#sendapp');
   if (sendBtn) sendBtn.addEventListener('click', async () => {
     if (!need()) return;
@@ -12031,7 +12186,7 @@ async function renderBook(args, params) {
       const items = book.items.map((it) => { const s = serviceOf(it.svc), p = pkgOfItem(it); return { service: L2(s.name, 'vi'), pkg: L2(p.name, 'vi'), price: p.price, topic: p.needsTopic && it.topic ? topicLabel(it.topic, 'vi') : '' }; });
       await BE.createBooking({ name: book.name.trim() || PROFILE.name || '', slot: book.slot,
         service: items.map((x) => x.service + ' – ' + x.pkg + (x.topic ? ' (' + x.topic + ')' : '')).join(' + '), pkg: '', price: cartTotal(), topic: items.map((x) => x.topic).filter(Boolean).join('; '), items: items,
-        note: book.note.trim(), birth: needsBirth() ? (book.birth + (book.birthTime ? ' ' + book.birthTime : '')) : '', card: book.card ? cardById(book.card).name : '' });
+        note: book.note.trim(), message: composeMessage(), birth: needsBirth() ? (book.birth + (book.birthTime ? ' ' + book.birthTime : '')) : '', card: book.card ? cardById(book.card).name : '' });
       toast('✓'); try { TAKEN = await BE.takenSlots(); } catch (e2) { /* refreshed on the next visit */ }
       done(); return;
     } catch (e) { $('#sendstatus').textContent = S.publishFail + ': ' + e.message; $('#sendstatus').className = 'hint err'; }
@@ -12054,6 +12209,40 @@ async function renderBook(args, params) {
     for (let i = 0; i < 3; i++) { const mm = new Date(book.month.getFullYear(), book.month.getMonth() + i, 1); const days = new Date(mm.getFullYear(), mm.getMonth() + 1, 0).getDate(); let any = false; for (let d = 1; d <= days && !any; d++) any = slotsFor(isoDate(new Date(mm.getFullYear(), mm.getMonth(), d))).some((s) => !s.taken); if (any) { book.month = mm; break; } }
   }
   drawCal();
+}
+/* Moving an existing booking: only the calendar, then a request Nabu approves. */
+async function renderChange(id) {
+  const S = T(), m = $('#main');
+  m.innerHTML = '<div class="eyebrow">' + esc(CONFIG.brand) + '</div><h1 style="margin-bottom:6px">' + esc(S.changeTitle) + '</h1><p class="muted">…</p>';
+  if (!BE.enabled) { redirect('#/me'); return; }
+  await Promise.race([BE.initP || Promise.resolve(), new Promise((r) => setTimeout(r, 4000))]);
+  if (!BE.user) { location.hash = '#/me'; return; }
+  let bk = null; try { bk = await BE.getBooking(id); } catch (e) { /* shown below */ }
+  if (!bk || bk.uid !== BE.user.uid) { redirect('#/me'); return; }
+  const keep = { slot: book.slot, day: book.day, timeSaved: book.timeSaved, month: book.month };
+  book.slot = null; book.day = String(bk.slot).slice(0, 10); book.timeSaved = false; book.month = new Date(book.day + 'T00:00:00'); book.month = new Date(book.month.getFullYear(), book.month.getMonth(), 1);
+  m.innerHTML = '<div class="eyebrow">' + esc(CONFIG.brand) + '</div><h1 style="margin-bottom:6px">' + esc(S.changeTitle) + '</h1><p class="muted">' + esc(S.changeIntro) + '</p>'
+    + '<div class="picked"><span>' + esc(S.currentSlot) + ': ' + esc(slotLabel(bk.slot)) + '</span></div>'
+    + '<div class="sec" style="margin-top:14px"><p class="hint" style="margin-bottom:10px">' + esc(S.timeHint(L(CONFIG.tzLabel))) + '</p><div id="calwrap"><p class="hint">…</p></div></div>'
+    + '<button class="btn primary block" id="sendchange">' + esc(S.sendChange) + '</button><p class="hint" id="chstatus"></p><p style="margin-top:10px"><a href="#/me" class="backlink">← ' + esc(S.nav.me) + '</a></p>';
+  const restore = () => { book.slot = keep.slot; book.day = keep.day; book.timeSaved = keep.timeSaved; book.month = keep.month; };
+  const bindSlots = () => { $$('[data-slot]', m).forEach((b) => b.addEventListener('click', () => { book.slot = b.getAttribute('data-slot'); $('#slots').innerHTML = slotsHTML().replace(/<button class="btn primary block" id="saveslot"[^]*?<\/button>/, ''); bindSlots(); })); };
+  const drawCal = () => {
+    const w = $('#calwrap'); if (!w) return;
+    w.innerHTML = calendarHTML().replace(/<button class="btn primary block" id="saveslot"[^]*?<\/button>/, '');
+    $$('[data-cal]', w).forEach((b) => b.addEventListener('click', () => { book.month = new Date(book.month.getFullYear(), book.month.getMonth() + Number(b.getAttribute('data-cal')), 1); drawCal(); }));
+    $$('[data-day]', w).forEach((b) => b.addEventListener('click', () => { book.day = b.getAttribute('data-day'); book.slot = null; drawCal(); }));
+    bindSlots();
+  };
+  await loadSchedule(); drawCal();
+  $('#sendchange').addEventListener('click', async () => {
+    const st = $('#chstatus');
+    if (!book.slot) { toast(S.needSlot); return; }
+    if (book.slot === bk.slot) { toast(S.needSlot); return; }
+    $('#sendchange').disabled = true;
+    try { await BE.requestChange(bk, book.slot); restore(); st.textContent = S.changeSent; st.className = 'hint ok'; toast('✓'); setTimeout(() => { location.hash = '#/me'; }, 900); }
+    catch (e) { st.textContent = S.publishFail + ': ' + e.message; st.className = 'hint err'; $('#sendchange').disabled = false; }
+  });
 }
 ROUTES.book = { nav: 'book', render: renderBook };
 ROUTES.prices = { nav: 'book', render: renderPrices };
@@ -12146,16 +12335,18 @@ function authMessage(e, provider) {
 }
 function chatBarHTML(idText, idSend, label) {
   const S = T();
-  const att = CONFIG.attachments ? '<label class="btn sm att-btn" title="' + esc(S.sendPhoto) + '">📷<input type="file" accept="image/*" data-chat-img hidden></label><button class="btn sm att-btn" data-chat-voice title="' + esc(S.holdToRecord) + '">🎤</button>' : '';
-  return '<div class="chatbar">' + att + '<textarea id="' + idText + '" placeholder="' + esc(S.typeMsg) + '"></textarea><button class="btn primary" id="' + idSend + '">' + esc(label) + '</button></div><p class="hint" data-chat-status></p>';
+  const att = (CONFIG.attachments || CONFIG.chatImages ? '<label class="btn sm att-btn" title="' + esc(S.sendPhoto) + '">📷<input type="file" accept="image/*" data-chat-img hidden></label>' : '') + (CONFIG.attachments ? '<button class="btn sm att-btn" data-chat-voice title="' + esc(S.holdToRecord) + '">🎤</button>' : '');
+  return '<div class="emojis" data-chat-emojis hidden>' + EMOJIS.map((e) => '<button type="button">' + e + '</button>').join('') + '</div><div class="chatbar"><button class="btn sm att-btn" data-chat-emoji title="' + esc(S.emojiBtn) + '">😊</button>' + att + '<textarea id="' + idText + '" placeholder="' + esc(S.typeMsg) + '"></textarea><button class="btn primary" id="' + idSend + '">' + esc(label) + '</button></div><p class="hint" data-chat-status></p>';
 }
 function bindChatBar(root, sendFn) {
   const S = T(), status = $('[data-chat-status]', root);
   const say = (t) => { if (status) status.textContent = t || ''; };
+  const em = $('[data-chat-emoji]', root), pal = $('[data-chat-emojis]', root), ta = $('.chatbar textarea', root);
+  if (em && pal) { em.addEventListener('click', () => { pal.hidden = !pal.hidden; }); $$('button', pal).forEach((b) => b.addEventListener('click', () => { const st = ta.selectionStart || ta.value.length; ta.value = ta.value.slice(0, st) + b.textContent + ta.value.slice(st); ta.focus(); })); }
   const img = $('[data-chat-img]', root);
   if (img) img.addEventListener('change', async () => {
     const f = img.files && img.files[0]; if (!f) return;
-    if (f.size > 8 * 1024 * 1024) { say(S.fileTooBig); return; }
+    if (f.size > 12 * 1024 * 1024) { say(S.fileTooBig); return; }
     say(S.uploading);
     try { await sendFn('', f, 'image'); say(''); } catch (e) { say(S.publishFail + ': ' + e.message); }
     img.value = '';
@@ -12183,15 +12374,35 @@ function bindChatBar(root, sendFn) {
     mic.addEventListener('click', () => { if (rec && rec.state === 'recording') stop(); else start(); });
   }
 }
+/* Without Storage a photo is shrunk and travels inside the message document. */
+async function chatAttachment(file, uid, kind) {
+  if (BE.storage) return BE.uploadAttachment(file, uid, kind);
+  if (kind !== 'image') throw new Error(T().noMic);
+  const data = await shrinkImage(file, 900, 0.72);
+  if (data.length > 700000) throw new Error(T().imgTooBigChat);
+  return { url: data, kind: 'image' };
+}
 function bookingRow(b, admin) {
   const S = T();
   const items = Array.isArray(b.items) && b.items.length ? b.items : (b.service ? [{ service: b.service, pkg: b.pkg || '', price: b.price || 0, topic: b.topic || '' }] : []);
   const list = items.map((it) => '<li>' + esc(String(it.service || '') + (it.pkg ? ' – ' + it.pkg : '')) + (it.price ? ' <b>' + fmtPrice(it.price) + '</b>' : '') + (it.topic ? '<br><small>' + esc(S.msgTopic) + ': ' + esc(it.topic) + '</small>' : '') + '</li>').join('');
   const total = items.length > 1 ? '<div class="tot"><span>' + esc(S.msgTotal) + '</span><b>' + fmtPrice(b.price || items.reduce((n, x) => n + (x.price || 0), 0)) + '</b></div>' : '';
   const meta = [admin && (b.name || b.email) ? '🙋 ' + esc([b.name, b.email].filter(Boolean).join(' · ')) : '', b.birth ? '🎂 ' + esc(b.birth) : '', b.note ? '📝 ' + esc(b.note) : '', b.card ? '🃏 ' + esc(b.card) : ''].filter(Boolean).join('<br>');
-  return '<div class="bk"><div class="bkh"><b>📅 ' + esc(slotLabel(b.slot)) + '</b><span class="st ' + esc(b.status) + '">' + esc(S.status[b.status] || b.status) + '</span></div>'
+  const d = slotDate(b.slot), future = d && d.getTime() > Date.now(), live = ['requested', 'confirmed', 'change_requested', 'cancel_requested'].indexOf(b.status) > -1;
+  const change = b.status === 'change_requested' && b.newSlot ? '<div class="chg">🔁 ' + esc(S.newSlotLabel) + ': ' + esc(slotLabel(b.newSlot)) + '</div>' : '';
+  let acts = '';
+  if (admin) {
+    if (b.status === 'requested') acts = '<button class="btn sm primary" data-bk="confirmed" data-id="' + b.id + '">' + esc(S.confirm) + '</button><button class="btn sm" data-bk="declined" data-id="' + b.id + '">' + esc(S.decline) + '</button>';
+    else if (b.status === 'change_requested') acts = '<button class="btn sm primary" data-bk="confirmed" data-id="' + b.id + '">' + esc(S.adminApplyChange) + '</button><button class="btn sm" data-bk="keep" data-id="' + b.id + '">' + esc(S.adminKeep) + '</button>';
+    else if (b.status === 'cancel_requested') acts = '<button class="btn sm primary" data-bk="cancelled" data-id="' + b.id + '">' + esc(S.adminApplyCancel) + '</button><button class="btn sm" data-bk="keep" data-id="' + b.id + '">' + esc(S.adminKeepBooking) + '</button>';
+    if (live && future) acts += '<a class="btn sm wide" href="' + icsLink(b) + '" target="_blank" rel="noopener">📅 ' + esc(S.addToCalendar) + '</a>';
+  } else if (live && future) {
+    acts = '<a class="btn sm" href="#/book?change=' + esc(b.id) + '">🔁 ' + esc(S.changeSlot) + '</a><button class="btn sm" data-cancel="' + b.id + '">✕ ' + esc(S.cancelBooking) + '</button>'
+      + '<a class="btn sm wide" href="' + icsLink(b) + '" target="_blank" rel="noopener">📅 ' + esc(S.addToCalendar) + '</a>';
+  }
+  return '<div class="bk"><div class="bkh"><b>📅 ' + esc(slotLabel(b.slot)) + '</b><span class="st ' + esc(b.status) + '">' + esc(S.status[b.status] || b.status) + '</span></div>' + change
     + (list ? '<ul>' + list + '</ul>' : '') + total + (meta ? '<p class="meta">' + meta + '</p>' : '')
-    + (admin && b.status === 'requested' ? '<div class="acts"><button class="btn sm primary" data-bk="confirmed" data-id="' + b.id + '">' + esc(S.confirm) + '</button><button class="btn sm" data-bk="declined" data-id="' + b.id + '">' + esc(S.decline) + '</button></div>' : '') + '</div>';
+    + (acts ? '<div class="acts">' + acts + '</div>' : '') + '</div>';
 }
 
 function renderMe(args, params) {
@@ -12210,7 +12421,7 @@ function renderMe(args, params) {
     if (BE.enabled) {
       h += '<div class="card"><h3 style="margin-bottom:4px">' + esc(S.messages) + '</h3><p class="hint" style="margin-bottom:8px">' + esc(BE.isAdmin() ? S.ownThreadHint : S.messagesIntro) + '</p>'
         + (BE.user ? '<div class="chat" id="chat"></div>' + chatBarHTML('mtext', 'msend', S.send) : '<p class="muted">' + esc(S.needLogin) + '</p>') + '</div>';
-      if (BE.user) h += '<div class="card"><h3 style="margin-bottom:8px">' + esc(S.myBookings) + '</h3><div id="mybk"><p class="hint">…</p></div></div>';
+      if (BE.user) h += '<div class="card"><h3 style="margin-bottom:8px">' + esc(S.myBookings) + '</h3><div id="mybk"><p class="hint">…</p></div>' + (notifyState() === 'default' ? '<button class="btn block" id="notifon" style="margin-top:8px">🔔 ' + esc(S.reminderOn) + '</button>' : '') + '<p class="hint">' + esc(S.reminderHint) + ' ' + esc(S.calendarHint) + '</p></div>';
     } else if (CONFIG.instagram) {
       h += '<div class="card"><h3 style="margin-bottom:4px">' + esc(S.messages) + '</h3><p class="muted" style="font-size:14px">' + esc(S.messagesSoon) + '</p><a class="btn block" href="https://ig.me/m/' + esc(CONFIG.instagram) + '" target="_blank" rel="noopener">' + esc(S.viaInstagram) + '</a></div>';
     }
@@ -12218,7 +12429,7 @@ function renderMe(args, params) {
     h += '<div class="card"><h3 style="margin-bottom:8px">' + esc(S.myCourses) + '</h3>' + COURSES.map((c) => { const a = ACCESS.isAdmin() ? '9999-12-31' : ACCESS.get()[c.id]; return '<div class="course"><span>' + esc(L(c.name)) + '</span><span class="faint">' + (a ? (ACCESS.has(c.id) ? '✓ ' + esc(S.activeUntil(fmtDate(a))) : esc(S.expiredOn(fmtDate(a)))) : '🔒 ' + fmtPrice(c.price)) + '</span></div>'; }).join('')
       + '<label class="f" for="mcode">' + esc(S.enterCode) + '</label><div class="row nw"><input id="mcode" placeholder="NABU-T-…" autocapitalize="characters"><button class="btn" id="munlock">' + esc(S.unlock) + '</button></div><p class="hint" id="mcstatus"></p></div>';
     h += '<div class="card"><h3 style="margin-bottom:8px">' + esc(S.themeTitle) + '</h3><div class="chips">' + ['auto', 'light', 'dark'].map((t) => '<button class="chip' + (themeChoice() === t ? ' on' : '') + '" data-theme-pick="' + t + '">' + esc(S.themes[t]) + '</button>').join('') + '</div><p class="hint">' + esc(S.themeHint) + '</p></div>';
-    h += '<div class="row">' + (BE.user ? '<button class="btn" id="signout">' + esc(S.signOut) + '</button>' : '') + '<a class="btn" href="#/report">🐞 ' + esc(S.reportLink) + '</a><button class="btn" id="retour">' + (lang === 'vi' ? 'Xem lại hướng dẫn' : 'Replay the tour') + '</button>' + (BE.isAdmin() ? '<a class="btn gold" href="#/admin">' + esc(S.adminTitle) + '</a>' : '') + '</div>';
+    h += '<div class="row">' + (BE.user ? '<button class="btn" id="signout">' + esc(S.signOut) + '</button>' : '') + '<a class="btn" href="#/contact">💬 ' + esc(S.contactLink) + '</a><a class="btn" href="#/report">🐞 ' + esc(S.reportLink) + '</a><button class="btn" id="retour">' + (lang === 'vi' ? 'Xem lại hướng dẫn' : 'Replay the tour') + '</button>' + (BE.isAdmin() ? '<a class="btn gold" href="#/admin">' + esc(S.adminTitle) + '</a>' : '') + '</div>';
     body.innerHTML = h;
     bindAuth(body); bindAI(body); bindNotify(body);
     bindProfileForm(body, () => { if (params.next === 'book') location.hash = '#/book'; });
@@ -12229,16 +12440,53 @@ function renderMe(args, params) {
     if (BE.enabled && BE.user) {
       const chat = $('#chat');
       meUnsubs.push(BE.watchMessages(BE.user.uid, (msgs) => { chat.innerHTML = chatHTML(msgs, 'user'); chat.scrollTop = chat.scrollHeight; BE.markRead(BE.user.uid, 'user'); }));
-      const sendUser = async (text, file, kind) => { let att = null; if (file) att = await BE.uploadAttachment(file, BE.user.uid, kind); await BE.sendMessage(text, null, att); };
+      const sendUser = async (text, file, kind) => { let att = null; if (file) att = await chatAttachment(file, BE.user.uid, kind); await BE.sendMessage(text, null, att); };
       $('#msend').addEventListener('click', async () => { const t = $('#mtext').value.trim(); if (!t) return; $('#mtext').value = ''; try { await sendUser(t); } catch (e) { toast(e.message); } });
       bindChatBar(body, sendUser);
-      meUnsubs.push(BE.watchMyBookings((list) => { $('#mybk').innerHTML = list.length ? list.map((b) => bookingRow(b, false)).join('') : '<p class="hint">' + esc(S.noBookings) + '</p>'; }));
+      meUnsubs.push(BE.watchMyBookings((list) => {
+        $('#mybk').innerHTML = list.length ? list.map((b) => bookingRow(b, false)).join('') : '<p class="hint">' + esc(S.noBookings) + '</p>';
+        $$('[data-cancel]', body).forEach((x) => x.addEventListener('click', async () => { const bk = list.filter((y) => y.id === x.getAttribute('data-cancel'))[0]; if (!bk || !confirm(S.confirmCancel)) return; try { await BE.requestCancel(bk); toast(S.cancelSent); } catch (e) { toast(e.message); } }));
+        scheduleReminders(list);
+      }));
     }
   };
   draw();
   if (BE.enabled) { const cb = () => { if (parseHash().route === 'me') { renderChrome('me'); draw(); } }; BE.listeners.push(cb); meUnsubs.push(() => { BE.listeners = BE.listeners.filter((x) => x !== cb); }); }
 }
 ROUTES.me = { nav: 'me', render: renderMe };
+
+/* ============================ contact (#/contact) ============================
+   One text box, then the channel: a message inside the app (needs a sign-in),
+   Instagram, Facebook or email. The text is copied before an outside app opens. */
+function renderContact() {
+  const S = T(), m = $('#main');
+  const fb = CONFIG.facebookPage ? 'https://m.me/' + CONFIG.facebookPage : CONFIG.facebookUrl;
+  m.innerHTML = '<div class="eyebrow">' + esc(CONFIG.brand) + '</div><h1 style="margin-bottom:6px">' + esc(S.contactTitle) + '</h1><p class="muted">' + esc(S.contactIntro) + '</p>'
+    + '<div class="card"><label class="f" for="ctext">' + esc(S.contactWhat) + '</label><textarea id="ctext" placeholder="' + esc(S.contactPlaceholder) + '"></textarea>'
+    + '<p class="hint" style="margin:12px 0 8px">' + esc(S.contactChoose) + '</p><div class="row" style="flex-direction:column">'
+    + (BE.enabled ? '<button class="btn primary block" data-ch="app">💬 ' + esc(S.contactApp) + '</button>' : '')
+    + (CONFIG.instagram ? '<button class="btn block" data-ch="ig">📸 Instagram</button>' : '')
+    + (fb ? '<button class="btn block" data-ch="fb">📘 Facebook</button>' : '')
+    + (CONFIG.email ? '<button class="btn block" data-ch="mail">✉️ Email</button>' : '')
+    + '</div><p class="hint" id="cstatus"></p></div>';
+  const text = () => $('#ctext').value.trim();
+  const st = (t, cls) => { $('#cstatus').textContent = t; $('#cstatus').className = 'hint ' + (cls || ''); };
+  const need = () => { if (!text()) { toast(S.contactNeed); $('#ctext').focus(); return false; } return true; };
+  $$('[data-ch]', m).forEach((b) => b.addEventListener('click', async () => {
+    if (!need()) return;
+    const ch = b.getAttribute('data-ch');
+    if (ch === 'app') {
+      if (!BE.user) { st(S.needLogin); location.hash = '#/me?next=contact'; return; }
+      b.disabled = true;
+      try { await BE.sendMessage(text(), null); st(S.contactSent, 'ok'); $('#ctext').value = ''; } catch (e) { st(S.publishFail + ': ' + e.message, 'err'); }
+      b.disabled = false; return;
+    }
+    if (ch === 'mail') { location.href = 'mailto:' + CONFIG.email + '?subject=' + encodeURIComponent(CONFIG.brand) + '&body=' + encodeURIComponent(text()); return; }
+    copyText(text()); st(S.contactCopied, 'ok');
+    window.open(ch === 'ig' ? 'https://ig.me/m/' + CONFIG.instagram : fb, '_blank', 'noopener');
+  }));
+}
+ROUTES.contact = { nav: 'me', render: renderContact };
 
 /* ============================ bug reports (#/report) ============================
    A short form plus what the app knows (screen, version, device, the last
@@ -12259,12 +12507,8 @@ function renderReport(args, params) {
     + '<p class="hint" style="margin-top:12px">' + esc(S.reportAuto) + '</p><div class="msgbox" style="font-size:12.5px">' + esc(reportInfo()) + '</div>'
     + '<div class="row" style="flex-direction:column">'
     + '<button class="btn primary block" id="rsend">' + esc(S.reportSend) + '</button>'
-    + (CONFIG.instagram ? '<a class="btn block" id="rig" href="https://ig.me/m/' + esc(CONFIG.instagram) + '" target="_blank" rel="noopener">' + esc(S.reportViaIg) + '</a>' : '')
-    + '<button class="btn block" id="rcopy">' + esc(S.copyMsg) + '</button></div><p class="hint" id="rstatus"></p></div>';
-  const msg = () => S.reportMsgHead + '\n' + $('#rwhat').value.trim() + '\n' + ($('#rcontact').value.trim() ? S.reportContact + ': ' + $('#rcontact').value.trim() + '\n' : '') + '— ' + reportInfo();
+    + '<a class="btn block" href="#/contact">💬 ' + esc(S.contactTitle) + '</a></div><p class="hint" id="rstatus"></p></div>';
   const need = () => { if (!$('#rwhat').value.trim()) { toast(S.reportNeed); return false; } return true; };
-  $('#rcopy').addEventListener('click', () => { if (need()) copyText(msg()).then(() => toast(S.copied)); });
-  const ig = $('#rig'); if (ig) ig.addEventListener('click', (e) => { if (!need()) { e.preventDefault(); return; } copyText(msg()); toast(S.copied); });
   const send = $('#rsend'); if (send) send.addEventListener('click', async () => {
     if (!need()) return;
     const text = $('#rwhat').value.trim(), contact = $('#rcontact').value.trim(), st = $('#rstatus');
@@ -12277,7 +12521,7 @@ function renderReport(args, params) {
       }
       if (BE.enabled && BE.user) { await BE.db.collection('reports').add({ uid: BE.user.uid, email: BE.user.email || '', text: text, contact: contact, info: reportInfo(), at: firebase.firestore.FieldValue.serverTimestamp() }); delivered = true; }
       if (delivered) { st.textContent = S.reportSent; st.className = 'hint ok'; $('#rwhat').value = ''; }
-      else { st.textContent = S.reportNoChannel; st.className = 'hint err'; copyText(msg()); }
+      else { st.textContent = S.reportNoChannel; st.className = 'hint err'; }
     } catch (e) { st.textContent = S.publishFail + ': ' + e.message; st.className = 'hint err'; }
     send.disabled = false;
   });
@@ -12336,7 +12580,10 @@ function adminPosts(p) {
   p.innerHTML = '<div class="card"><h3 id="formhead" style="margin-bottom:4px">' + esc(S.newPost) + '</h3>'
     + '<label class="f" for="pdate">' + esc(S.postDate) + '</label><input id="pdate" type="date">'
     + '<label class="f" for="ptitle">' + esc(S.postTitle) + '</label><input id="ptitle">'
-    + '<label class="f" for="pbody">' + esc(S.postBody) + '</label><textarea id="pbody" style="min-height:160px"></textarea><p class="hint">' + esc(S.bodyHint) + '</p>'
+    + '<label class="f" for="pbody">' + esc(S.postBody) + '</label>'
+    + '<div class="tb" id="ptb"><button type="button" data-w="b"><b>B</b></button><button type="button" data-w="u"><u>U</u></button><button type="button" data-w="h"><mark>H</mark></button><button type="button" data-w="h2">H2</button><button type="button" data-w="box">▭ ' + esc(S.boxLabel) + '</button><button type="button" id="temoji">😊</button><label class="tbl">🖼 ' + esc(S.addImage) + '<input type="file" accept="image/*" id="timg" hidden></label><button type="button" id="tvideo">▶ ' + esc(S.addVideo) + '</button></div>'
+    + '<div class="emojis" id="emojis" hidden>' + EMOJIS.map((e) => '<button type="button">' + e + '</button>').join('') + '</div>'
+    + '<textarea id="pbody" style="min-height:160px"></textarea><p class="hint">' + esc(S.formatHint) + ' ' + esc(S.bodyHint) + '</p>'
     + '<label class="f" for="ptitle_en">' + esc(S.postTitleEn) + '</label><input id="ptitle_en">'
     + '<label class="f" for="pbody_en">' + esc(S.postBodyEn) + '</label><textarea id="pbody_en"></textarea>'
     + '<div class="acc" id="cardpick" style="margin-top:14px"><button type="button"><span>🃏 ' + esc(S.postCards) + '</span></button><div class="in"><input id="csearch" placeholder="' + esc(S.searchCard) + '" style="margin-bottom:8px">'
@@ -12350,6 +12597,32 @@ function adminPosts(p) {
     + '<div class="card"><h3 style="margin-bottom:6px">' + esc(S.existing) + '</h3><div class="plist" id="plist"><p class="hint">…</p></div></div>';
   bindAccordions(p);
   const status = (msg, cls) => { const s = $('#status'); s.textContent = msg; s.className = 'hint ' + (cls || ''); };
+  // The toolbar works on whichever body box was focused last (Vietnamese or English).
+  let lastTa = $('#pbody');
+  ['#pbody', '#pbody_en'].forEach((id) => $(id).addEventListener('focus', () => { lastTa = $(id); }));
+  const insertAt = (before, after, placeholder) => {
+    const ta = lastTa, st = ta.selectionStart || 0, en = ta.selectionEnd || 0, sel = ta.value.slice(st, en) || placeholder || '';
+    ta.value = ta.value.slice(0, st) + before + sel + after + ta.value.slice(en); ta.focus();
+    const pos = st + before.length + sel.length; try { ta.setSelectionRange(pos, pos); } catch (e) { /* not focusable yet */ }
+  };
+  const WRAP = { b: ['**', '**'], u: ['__', '__'], h: ['==', '=='], h2: ['\n## ', '\n'], box: ['\n> ', '\n'] };
+  $$('[data-w]', p).forEach((b) => b.addEventListener('click', () => { const w = WRAP[b.getAttribute('data-w')]; insertAt(w[0], w[1], S.wrapPlaceholder); }));
+  $('#temoji').addEventListener('click', () => { $('#emojis').hidden = !$('#emojis').hidden; });
+  $$('#emojis button').forEach((b) => b.addEventListener('click', () => insertAt(b.textContent, '', '')));
+  $('#tvideo').addEventListener('click', () => { const u = prompt(S.videoPrompt); if (u && /^https?:\/\//.test(u.trim())) insertAt('\n[video:' + u.trim() + ']\n', '', ''); });
+  $('#timg').addEventListener('change', async () => {
+    const f = $('#timg').files && $('#timg').files[0]; if (!f) return;
+    if (!cloud()) { status(S.imgNeedCloud, 'err'); $('#timg').value = ''; return; }
+    status(S.uploading);
+    try {
+      const data = await shrinkImage(f, 1100, 0.82);
+      if (data.length > 900000) throw new Error(S.imgTooBig);
+      const id = Date.now().toString(36) + Math.random().toString(36).slice(2, 5);
+      await BE.setContent('img_' + id, { data: data }); IMGS[id] = data;
+      insertAt('\n[img:' + id + ']\n', '', ''); status(S.imgAdded, 'ok');
+    } catch (e) { status(S.publishFail + ': ' + e.message, 'err'); }
+    $('#timg').value = '';
+  });
   const syncSel = () => { $$('#cgrid button').forEach((b) => b.classList.toggle('on', admin.cards.indexOf(b.getAttribute('data-cid')) > -1)); $('#csel').innerHTML = admin.cards.map((c) => miniHTML(c)).join(''); };
   const formPost = () => {
     const v = (id) => $(id).value.trim(), iso = isoDate(new Date());
@@ -12412,7 +12685,7 @@ function adminPosts(p) {
 }
 
 /* ---- availability ---- */
-const HOURS = []; for (let h = 7; h <= 23; h++) HOURS.push(pad2(h) + ':00');
+const HOURS = []; for (let h = 7; h <= 23; h++) { HOURS.push(pad2(h) + ':00'); HOURS.push(pad2(h) + ':30'); }
 async function adminSchedule(p) {
   const S = T();
   p.innerHTML = '<p class="hint">…</p>';
@@ -12459,11 +12732,22 @@ function needAdmin(p) {
 function adminBookings(p) {
   const S = T();
   if (!needAdmin(p)) return;
-  p.innerHTML = '<p class="hint">' + esc(S.bookingsIntro) + '</p><div id="bklist"></div>';
-  admin.unsubs.push(BE.watchAllBookings((list) => {
+  p.innerHTML = '<p class="hint">' + esc(S.bookingsIntro) + '</p><div id="bkcal" class="bkcal"></div><div id="bklist"></div>';
+  let all = [], month = new Date(new Date().getFullYear(), new Date().getMonth(), 1), day = '';
+  const draw = () => {
+    const byDay = {}; all.forEach((b) => { if (['declined', 'cancelled'].indexOf(b.status) > -1) return; const k = String(b.slot).slice(0, 10); (byDay[k] = byDay[k] || []).push(b); });
+    const start = new Date(month.getFullYear(), month.getMonth(), 1).getDay(), days = new Date(month.getFullYear(), month.getMonth() + 1, 0).getDate(), todayStr = isoDate(new Date());
+    let cells = ''; for (let i = 0; i < start; i++) cells += '<div class="d off"></div>';
+    for (let d = 1; d <= days; d++) { const ds = isoDate(new Date(month.getFullYear(), month.getMonth(), d)), n = (byDay[ds] || []).length; cells += '<button class="d' + (n ? ' has' : '') + (ds === todayStr ? ' today' : '') + (ds === day ? ' sel' : '') + '" data-bday="' + ds + '">' + d + (n ? '<span class="n">' + n + '</span>' : '') + '</button>'; }
+    $('#bkcal').innerHTML = '<div class="cal"><div class="head"><button data-bcal="-1" aria-label="prev">‹</button><b>' + esc(S.months[month.getMonth()]) + ' ' + month.getFullYear() + '</b><button data-bcal="1" aria-label="next">›</button></div><div class="dow">' + S.dow.map((x) => '<span>' + x + '</span>').join('') + '</div><div class="days">' + cells + '</div>'
+      + (day ? '<div class="picked" style="justify-content:space-between"><span>' + esc(S.bkOn(fmtDate(day))) + '</span><button class="btn sm" data-bday="">' + esc(S.allDays) + '</button></div>' : '') + '</div>';
+    const list = day ? all.filter((b) => String(b.slot).slice(0, 10) === day) : all;
     $('#bklist').innerHTML = list.length ? list.map((b) => bookingRow(b, true)).join('') : '<p class="empty">' + esc(S.noBookings) + '</p>';
-    $$('[data-bk]', p).forEach((b) => b.addEventListener('click', async () => { const bk = list.filter((x) => x.id === b.getAttribute('data-id'))[0]; try { await BE.setBookingStatus(bk, b.getAttribute('data-bk')); toast('✓'); } catch (e) { toast(e.message); } }));
-  }));
+    $$('[data-bcal]', p).forEach((b) => b.addEventListener('click', () => { month = new Date(month.getFullYear(), month.getMonth() + Number(b.getAttribute('data-bcal')), 1); draw(); }));
+    $$('[data-bday]', p).forEach((b) => b.addEventListener('click', () => { day = b.getAttribute('data-bday') === day ? '' : b.getAttribute('data-bday'); draw(); }));
+    $$('[data-bk]', p).forEach((b) => b.addEventListener('click', async () => { const bk = all.filter((x) => x.id === b.getAttribute('data-id'))[0]; try { await BE.setBookingStatus(bk, b.getAttribute('data-bk')); toast('✓'); } catch (e) { toast(e.message); } }));
+  };
+  admin.unsubs.push(BE.watchAllBookings((list) => { all = list; draw(); }));
 }
 function adminInbox(p) {
   const S = T();
@@ -12486,7 +12770,7 @@ function adminInbox(p) {
     $('#backin').addEventListener('click', (e) => { e.preventDefault(); p.innerHTML = '<div id="threads"></div>'; list(); });
     const chat = $('#achat');
     admin.unsubs.push(BE.watchMessages(uid, (msgs) => { chat.innerHTML = chatHTML(msgs, 'nabu'); chat.scrollTop = chat.scrollHeight; BE.markRead(uid, 'admin'); }));
-    const sendAdmin = async (text, file, kind) => { let att = null; if (file) att = await BE.uploadAttachment(file, uid, kind); await BE.sendMessage(text, uid, att); };
+    const sendAdmin = async (text, file, kind) => { let att = null; if (file) att = await chatAttachment(file, uid, kind); await BE.sendMessage(text, uid, att); };
     $('#asend').addEventListener('click', async () => { const tx = $('#atext').value.trim(); if (!tx) return; $('#atext').value = ''; try { await sendAdmin(tx); } catch (e) { toast(e.message); } });
     bindChatBar(p, sendAdmin);
   };
@@ -12498,7 +12782,13 @@ function adminCodes(p) {
   p.innerHTML = '<div class="card"><p class="hint" style="margin-bottom:10px">' + esc(S.codesIntro) + '</p>'
     + '<label class="f" for="ccourse">' + esc(S.codeCourse) + '</label><select id="ccourse">' + COURSES.map((c) => '<option value="' + c.id + '">' + esc(L(c.name)) + ' · ' + fmtPrice(c.price) + '</option>').join('') + '</select>'
     + '<div class="two"><div><label class="f" for="cstart">' + esc(S.codeStart) + '</label><input id="cstart" type="date" value="' + isoDate(new Date()) + '"></div><div><label class="f" for="cmonths">' + esc(S.codeMonths) + '</label><input id="cmonths" type="number" min="1" value="6"></div></div>'
-    + '<button class="btn primary block" id="cmake" style="margin-top:14px">' + esc(S.makeCode) + '</button><div id="cout"></div></div>';
+    + '<button class="btn primary block" id="cmake" style="margin-top:14px">' + esc(S.makeCode) + '</button><div id="cout"></div></div>'
+    + '<div class="card"><h3 style="margin-bottom:4px">✦ ' + esc(S.aiSettings) + '</h3><p class="hint" style="margin-bottom:8px">' + esc(S.aiKeyHint) + '</p><label class="f" for="gkey">' + esc(S.aiKeyLabel) + '</label><div class="row nw"><input id="gkey" type="password" value="' + esc(CONFIG.geminiKey || '') + '" autocomplete="off"><button class="btn sm" id="gsave">' + esc(S.saveKey) + '</button></div><p class="hint" id="gstatus"></p></div>';
+  $('#gsave').addEventListener('click', async () => {
+    const st = $('#gstatus'), key = $('#gkey').value.trim();
+    if (!cloud()) { st.textContent = S.adminLogin; st.className = 'hint err'; return; }
+    try { await BE.setContent('ai', { geminiKey: key }); CONFIG.geminiKey = key; st.textContent = key ? S.aiKeySaved : '✓'; st.className = 'hint ok'; } catch (e) { st.textContent = S.publishFail + ': ' + e.message; st.className = 'hint err'; }
+  });
   $('#cmake').addEventListener('click', () => {
     const until = addMonths($('#cstart').value || isoDate(new Date()), Number($('#cmonths').value) || 6), code = makeCode($('#ccourse').value, until);
     $('#cout').innerHTML = '<div class="codebox" id="codeval">' + code + '</div><p class="hint" style="text-align:center">' + esc(S.codeUntil) + ': ' + esc(fmtDate(until)) + '</p><button class="btn block" id="ccopy">' + esc(S.copyMsg.replace(/tin nhắn|the message/i, 'mã')) + '</button>';
@@ -12508,10 +12798,15 @@ function adminCodes(p) {
 ROUTES.admin = { nav: '', render: renderAdmin };
 
 /* ============================ boot ============================ */
-window.APP_VERSION = 'v47';
+window.APP_VERSION = 'v49';
 window.NABU = { CONFIG: CONFIG, LESSONS: LESSONS, localAnswer: localAnswer, compatVerdict: compatVerdict, numerologyOf: numerologyOf, ZDEEP: ZDEEP, lunarToday: lunarToday, solarToLunar: solarToLunar, DECK: DECK, INSIGHT: INSIGHT, KW: KW, ASK: ASK, TOPICS: TOPICS, GUIDES: GUIDES, SERVICES: SERVICES, COURSES: COURSES, ACCESS: ACCESS, makeCode: makeCode, parseCode: parseCode, ZODIAC: ZODIAC, pick: pick, book: book,
   insightHTML: insightHTML, insightOf: insightOf, sunSignIndex: sunSignIndex, lifePath: lifePath, PROFILE: () => PROFILE, BE: BE };
 BE.initP = BE.init().catch(() => { /* backend unreachable: the app runs device-only */ });
+// The Gemini key is a dashboard setting kept in the app cloud (content/ai), never in the source.
+loadContent('ai', 'ai.json', 'nabu-ai').then((r) => { if (r && r.data && typeof r.data.geminiKey === 'string') CONFIG.geminiKey = r.data.geminiKey.trim(); }).catch(() => {});
+// The app is not a web page: no pinch or double-tap zoom.
+document.addEventListener('gesturestart', (e) => e.preventDefault(), { passive: false });
+let lastTouch = 0; document.addEventListener('touchend', (e) => { const now = Date.now(); if (now - lastTouch < 300 && !(e.target.closest && e.target.closest('input,textarea'))) e.preventDefault(); lastTouch = now; }, { passive: false });
 // Signing in can unlock things (admin sees every course), so redraw the open screen.
 BE.onAuth(() => { if (['learn', 'me', 'home'].indexOf(parseHash().route) > -1) route(); });
 boot();

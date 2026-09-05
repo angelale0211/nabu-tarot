@@ -114,6 +114,13 @@ function contextText(ctx) {
 }
 
 /* ---- built-in engine ---- */
+/* A sum typed into the box gets a sum back, even offline. Only digits and operators reach the evaluator. */
+function calcAnswer(f) {
+  const t = String(f || '').replace(/[=?:\s]+$/, '').trim();
+  if (!/\d/.test(t) || !/^[\d\s+\-*/().,xX×÷^%]+$/.test(t) || !/[+\-*/xX×÷^%]/.test(t)) return '';
+  const expr = t.replace(/[xX×]/g, '*').replace(/÷/g, '/').replace(/\^/g, '**').replace(/,/g, '.').replace(/\s+/g, '');
+  try { const v = Function('"use strict"; return (' + expr + ')')(); if (typeof v !== 'number' || !isFinite(v)) return ''; return t.replace(/\s+/g, ' ') + ' = ' + String(Math.round(v * 1e6) / 1e6); } catch (e) { return ''; }
+}
 function localAnswer(q, ctx) {
   const S = T(), d = detectCat(q), out = [];
   const mentioned = cardsMentioned(q).filter((id) => !(ctx.type === 'card' && id === ctx.id));
@@ -160,7 +167,9 @@ function localAnswer(q, ctx) {
       if (d.timing) out.push(S.aiTiming + ' ' + SUIT_TIMING[lang][c.suit]);
       out.push(I.advice, S.aiDrawHint);
     };
-    if (/^(chao|hi|hello|xin chao|alo|hey|yo)\b/.test(f) || f.length < 3) out.push(S.aiGreet);
+    const sum = calcAnswer(f);
+    if (sum) out.push(sum);
+    else if (/^(chao|hi|hello|xin chao|alo|hey|yo)\b/.test(f) || f.length < 3) out.push(S.aiGreet);
     else if (/cam on|thank/.test(f)) out.push(S.aiThanks);
     else if (help) out.push(help);
     else if (!specific && /rut (cho minh |giup minh |giup |cho )?(mot |1 )?la|rut bai|draw (me )?(a |one )?card|pick a card|la bai (cua |cho )?hom nay|card (of the day|for today)/.test(f)) drawOne();
@@ -207,8 +216,8 @@ function searchCourse(q, course) {
 /* ---- Gemini (browser-side, free tier, web grounding) ---- */
 function aiSystemPrompt() {
   return lang === 'vi'
-    ? 'Bạn là Nabu AI, trợ lý của Nabu Tarot (một reader tarot người Việt). Trả lời bằng tiếng Việt đời thường, ấm áp, ngắn gọn: 4 đến 8 câu, câu ngắn, xưng "mình", gọi người dùng là "bạn". Ưu tiên KIẾN THỨC được cung cấp; nếu câu hỏi cần thông tin ngoài đó (ví dụ lịch sử, sự kiện, kiến thức chung về tarot, chiêm tinh, thần số học), hãy tìm kiếm và tổng hợp, rồi nói rõ phần nào là kiến thức chung. Không chẩn đoán bệnh, không tư vấn pháp lý hay đầu tư cụ thể, không hứa điều gì chắc chắn xảy ra. Chuyện riêng quan trọng, gợi ý đặt lịch xem bài với Nabu.'
-    : 'You are Nabu AI, the assistant of Nabu Tarot (a Vietnamese tarot reader). Answer in plain, warm English: 4 to 8 short sentences. Prefer the KNOWLEDGE provided; if the question needs outside facts (history, events, general tarot, astrology or numerology knowledge), search and summarise, and say which part is general knowledge. No medical diagnosis, no specific legal or investment advice, no promises. For important personal matters, suggest booking a reading with Nabu.';
+    ? 'Bạn là Nabu AI, trợ lý trong app Nabu Tarot (một reader tarot người Việt). Bạn trả lời MỌI câu hỏi như một trợ lý AI thông thường: toán, kiến thức chung, tin tức, dịch thuật, viết lách, và tất nhiên là tarot, Lenormand, chiêm tinh, thần số học. Câu hỏi đơn giản thì trả lời thẳng và chính xác (ví dụ "1 + 1 = 2"); câu hỏi cần thông tin mới thì tìm kiếm khi có thể. Trả lời bằng tiếng Việt đời thường, ấm áp, ngắn gọn (2 đến 8 câu ngắn), xưng "mình", gọi người dùng là "bạn". Khi câu hỏi liên quan tới thứ người dùng đang xem, ưu tiên KIẾN THỨC được cung cấp. Không chẩn đoán bệnh, không tư vấn pháp lý hay đầu tư cụ thể, không hứa điều gì chắc chắn xảy ra. Chuyện riêng quan trọng, gợi ý đặt lịch xem bài với Nabu.'
+    : 'You are Nabu AI, the assistant inside the Nabu Tarot app (a Vietnamese tarot reader). You answer ANY question like a general assistant: maths, general knowledge, news, translation, writing, and of course tarot, Lenormand, astrology and numerology. Answer simple questions directly and precisely (for example "1 + 1 = 2"); search when a question needs current information. Answer in plain, warm English, 2 to 8 short sentences. When the question is about what the user is looking at, prefer the KNOWLEDGE provided. No medical diagnosis, no specific legal or investment advice, no promises. For important personal matters, suggest booking a reading with Nabu.';
 }
 const withTimeout = (p, ms) => Promise.race([p, new Promise((_, rej) => setTimeout(() => rej(new Error('timeout')), ms))]);
 async function geminiAnswer(q, ctx, history) {
@@ -216,7 +225,11 @@ async function geminiAnswer(q, ctx, history) {
   const contents = history.slice(-6).map((h) => ({ role: h.role === 'user' ? 'user' : 'model', parts: [{ text: h.text }] }));
   if (contents.length && contents[contents.length - 1].role === 'user') contents.pop();
   contents.push({ role: 'user', parts: [{ text: 'KNOWLEDGE (' + ctx.type + '):\n' + contextText(ctx).slice(0, 12000) + '\n\nQUESTION: ' + q }] });
-  const r = await withTimeout(fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ system_instruction: { parts: [{ text: aiSystemPrompt() }] }, contents: contents, tools: [{ google_search: {} }], generationConfig: { temperature: 0.7, maxOutputTokens: 900 } }) }), 25000);
+  const base = { system_instruction: { parts: [{ text: aiSystemPrompt() }] }, contents: contents, generationConfig: { temperature: 0.7, maxOutputTokens: 900 } };
+  const call = (search) => withTimeout(fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(search ? Object.assign({ tools: [{ google_search: {} }] }, base) : base) }), 25000);
+  // Web search has its own small free quota: when it is used up, answer from the model alone.
+  let r = await call(true);
+  if (!r.ok && [400, 403, 429].indexOf(r.status) > -1) r = await call(false);
   if (!r.ok) throw new Error('Gemini ' + r.status);
   const j = await r.json(), cand = (j.candidates || [])[0];
   const text = ((cand && cand.content && cand.content.parts) || []).map((p) => p.text || '').join('').trim();

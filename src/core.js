@@ -169,6 +169,7 @@ function renderFooter() {
   const S = T(), links = [];
   if (CONFIG.instagram) links.push('<a href="https://instagram.com/' + esc(CONFIG.instagram) + '" target="_blank" rel="noopener">Instagram</a>');
   if (CONFIG.facebookUrl) links.push('<a href="' + esc(CONFIG.facebookUrl) + '" target="_blank" rel="noopener">Facebook</a>');
+  links.push('<a href="#/contact">' + esc(S.contactLink) + '</a>');
   links.push('<a href="#/report">' + esc(S.reportLink) + '</a>');
   $('#foot').innerHTML = '<div class="wrap">' + LOGO + '<div>' + esc(L(CONFIG.tagline)) + '<div class="links">' + links.join(' · ') + '</div><div class="copy">© ' + new Date().getFullYear() + ' ' + esc(CONFIG.brand) + '. ' + esc(S.rights) + '</div></div></div>';
 }
@@ -197,6 +198,51 @@ function copyFallback(text) {
   document.body.appendChild(ta); ta.select();
   try { document.execCommand('copy'); } catch (e) { /* nothing more to try */ }
   document.body.removeChild(ta);
+}
+/* Photos for posts are shrunk on the phone before they go to the cloud, so each stays well under the 1 MB document limit. */
+function shrinkImage(file, max, quality) {
+  return new Promise((resolve, reject) => {
+    const url = URL.createObjectURL(file), img = new Image();
+    img.onload = () => {
+      const k = Math.min(1, (max || 1100) / Math.max(img.width, img.height)), w = Math.round(img.width * k), h = Math.round(img.height * k);
+      const c = document.createElement('canvas'); c.width = w; c.height = h; c.getContext('2d').drawImage(img, 0, 0, w, h);
+      URL.revokeObjectURL(url); resolve(c.toDataURL('image/jpeg', quality || 0.82));
+    };
+    img.onerror = () => { URL.revokeObjectURL(url); reject(new Error('image')); };
+    img.src = url;
+  });
+}
+const EMOJIS = ['✨', '💜', '🔮', '🌙', '☀️', '⭐', '🌟', '💫', '🃏', '🗝️', '🌸', '🌿', '🕯️', '🧿', '💌', '❤️', '💔', '💰', '💼', '📚', '😊', '🙏', '👉', '⚠️', '✅', '📅', '🎁', '🎉'];
+/* A booking as a calendar file with four reminders (24 h, 6 h, 1 h, 15 min).
+   Times are Vietnam time (UTC+7, no daylight saving), written as UTC. */
+function icsFor(b) {
+  const m = /^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2})/.exec(String(b.slot || ''));
+  if (!m) return '';
+  const start = new Date(Date.UTC(+m[1], +m[2] - 1, +m[3], +m[4] - 7, +m[5])), end = new Date(start.getTime() + 60 * 60000);
+  const f = (d) => d.toISOString().replace(/[-:]/g, '').replace(/\.\d{3}/, '');
+  const clean = (s) => String(s || '').replace(/[\\;,]/g, (c) => '\\' + c).replace(/\n/g, '\\n');
+  const alarms = [['-P1D', '24 h'], ['-PT6H', '6 h'], ['-PT1H', '1 h'], ['-PT15M', '15 min']].map((a) => 'BEGIN:VALARM\r\nTRIGGER:' + a[0] + '\r\nACTION:DISPLAY\r\nDESCRIPTION:Nabu Tarot ' + a[1] + '\r\nEND:VALARM').join('\r\n');
+  const what = clean(CONFIG.brand + (b.service ? ' · ' + b.service : '')), who = clean(b.name ? b.name : '');
+  return ['BEGIN:VCALENDAR', 'VERSION:2.0', 'PRODID:-//Nabu Tarot//app//VI', 'BEGIN:VEVENT', 'UID:' + (b.id || Date.now()) + '@nabutarot', 'DTSTAMP:' + f(new Date()), 'DTSTART:' + f(start), 'DTEND:' + f(end),
+    'SUMMARY:' + what, 'DESCRIPTION:' + clean((b.topic ? b.topic + '\n' : '') + (b.note || '') + (who ? '\n' + who : '')), 'URL:' + appURL() + '#/me', alarms, 'END:VEVENT', 'END:VCALENDAR'].join('\r\n');
+}
+const icsLink = (b) => 'data:text/calendar;charset=utf-8,' + encodeURIComponent(icsFor(b));
+const slotDate = (slot) => { const m = /^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2})/.exec(String(slot || '')); return m ? new Date(+m[1], +m[2] - 1, +m[3], +m[4], +m[5]) : null; };
+/* Reminders while the app is open: 24 h, 6 h, 1 h and 15 min before every upcoming booking. */
+const REM = { timers: [] };
+function scheduleReminders(list) {
+  REM.timers.forEach(clearTimeout); REM.timers = [];
+  const S = T(), now = Date.now(), soon = [];
+  (list || []).filter((b) => ['requested', 'confirmed', 'change_requested'].indexOf(b.status) > -1).forEach((b) => {
+    const d = slotDate(b.slot); if (!d || d.getTime() < now) return;
+    soon.push(b);
+    [[24 * 60, S.inHours(24)], [6 * 60, S.inHours(6)], [60, S.inHours(1)], [15, S.inMinutes(15)]].forEach((r) => {
+      const at = d.getTime() - r[0] * 60000, wait = at - now;
+      if (wait > 0 && wait < 36 * 3600000) REM.timers.push(setTimeout(() => notifyAdmin(S.remindTitle(r[1]), slotLabel(b.slot), '#/me'), wait));
+    });
+  });
+  soon.sort((a, b) => String(a.slot).localeCompare(String(b.slot)));
+  store.set('nabu-nextbk', soon[0] ? { slot: soon[0].slot, status: soon[0].status, service: soon[0].service || '' } : null);
 }
 function shareOrCopy(text, url) {
   if (navigator.share) return navigator.share({ text: text, url: url }).catch(() => {});
@@ -264,6 +310,8 @@ function screenLabel(h) {
   if (r === 'pick') return S.nav.pick;
   if (r === 'book') return S.nav.book;
   if (r === 'prices') return S.priceTitle;
+  if (r === 'news') return S.newsTitle;
+  if (r === 'contact') return S.contactTitle;
   if (r === 'me') return S.nav.me;
   if (r === 'learn') { if (!a.length) return S.learnTitle; if (a.length === 1 && S.cats[a[0]]) return S.cats[a[0]]; if (a[0] === 'fortune' && a.length === 2) return S.cats.fortune; }
   return S.back;

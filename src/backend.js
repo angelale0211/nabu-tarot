@@ -94,7 +94,7 @@ const BE = {
         if (!firstT) s.docChanges().forEach((c) => { if (c.type === 'added' || c.type === 'modified') { const t = c.doc.data(); if (t.lastFrom === 'user') notifyAdmin(S.notifNewMsg + (t.name || t.email || S.guestLabel), t.lastText || '', '#/admin?tab=inbox'); } });
         firstT = false;
       });
-      this._unsubBk = this.db.collection('bookings').where('status', '==', 'requested').onSnapshot((s) => {
+      this._unsubBk = this.db.collection('bookings').where('status', 'in', ['requested', 'change_requested', 'cancel_requested']).onSnapshot((s) => {
         NEWBK = s.size; nav();
         if (!firstB) s.docChanges().forEach((c) => { if (c.type === 'added') { const b = c.doc.data(); notifyAdmin(S.notifNewBooking + (b.name || b.email || S.guestLabel), (b.service || '') + (b.slot ? ' · ' + b.slot.replace('T', ' ') : ''), '#/admin?tab=bookings'); } });
         firstB = false;
@@ -123,11 +123,33 @@ const BE = {
   watchMyBookings(cb) { return this.db.collection('bookings').where('uid', '==', this.user.uid).onSnapshot((s) => cb(s.docs.map((d) => Object.assign({ id: d.id }, d.data())).sort((a, b) => String(b.slot).localeCompare(String(a.slot))))); },
   watchAllBookings(cb) { return this.db.collection('bookings').orderBy('slot', 'desc').limit(200).onSnapshot((s) => cb(s.docs.map((d) => Object.assign({ id: d.id }, d.data())))); },
   async setBookingStatus(b, status) {
-    await this.db.collection('bookings').doc(b.id).set({ status: status }, { merge: true });
-    const key = String(b.slot).replace(/[^0-9T]/g, '');
-    if (status === 'declined' || status === 'cancelled') await this.db.collection('taken').doc(key).delete().catch(() => {});
+    const ref = this.db.collection('bookings').doc(b.id), key = String(b.slot).replace(/[^0-9T]/g, ''), newKey = b.newSlot ? String(b.newSlot).replace(/[^0-9T]/g, '') : '';
+    if (status === 'keep') {  // the client asked for a change or a cancellation; Nabu keeps the booking as it was
+      await ref.set({ status: b.prevStatus || 'confirmed', newSlot: firebase.firestore.FieldValue.delete(), prevStatus: firebase.firestore.FieldValue.delete() }, { merge: true });
+      if (newKey) await this.db.collection('taken').doc(newKey).delete().catch(() => {});
+      return;
+    }
+    if (status === 'confirmed' && b.status === 'change_requested' && b.newSlot) {  // the new time takes over
+      await ref.set({ status: 'confirmed', slot: b.newSlot, newSlot: firebase.firestore.FieldValue.delete(), prevStatus: firebase.firestore.FieldValue.delete() }, { merge: true });
+      await this.db.collection('taken').doc(key).delete().catch(() => {});
+      await this.db.collection('taken').doc(newKey).set({ bookingId: b.id }, { merge: true });
+      return;
+    }
+    await ref.set({ status: status }, { merge: true });
+    if (status === 'declined' || status === 'cancelled') { await this.db.collection('taken').doc(key).delete().catch(() => {}); if (newKey) await this.db.collection('taken').doc(newKey).delete().catch(() => {}); }
     else await this.db.collection('taken').doc(key).set({ bookingId: b.id }, { merge: true });
   },
+  /* The client asks to move the booking: the new slot is reserved at once, Nabu approves or keeps the old time. */
+  async requestChange(b, newSlot) {
+    await this.db.collection('bookings').doc(b.id).set({ status: 'change_requested', newSlot: newSlot, prevStatus: b.status === 'change_requested' || b.status === 'cancel_requested' ? (b.prevStatus || 'confirmed') : b.status }, { merge: true });
+    await this.db.collection('taken').doc(String(newSlot).replace(/[^0-9T]/g, '')).set({ bookingId: b.id, pending: true }, { merge: true });
+    notifyBooking(Object.assign({}, b, { newSlot: newSlot, status: 'change_requested' }));
+  },
+  async requestCancel(b) {
+    await this.db.collection('bookings').doc(b.id).set({ status: 'cancel_requested', prevStatus: b.status === 'change_requested' || b.status === 'cancel_requested' ? (b.prevStatus || 'confirmed') : b.status }, { merge: true });
+    notifyBooking(Object.assign({}, b, { status: 'cancel_requested' }));
+  },
+  async getBooking(id) { const d = await this.db.collection('bookings').doc(id).get(); return d.exists ? Object.assign({ id: d.id }, d.data()) : null; },
   async takenSlots() {
     const out = {};
     try {
