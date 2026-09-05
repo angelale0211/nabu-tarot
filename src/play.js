@@ -158,6 +158,7 @@ async function renderPlay(args) {
   const S = T(), m = $('#main');
   const list = (await loadActs()).slice().sort((a, b) => String(b.date).localeCompare(String(a.date)));
   if (args && args[0] === 'diary') { renderDiary(); return; }
+  if (args && args[0] === 'coin') { renderCoin(); return; }
   if (args && args[0]) {
     const a = list.filter((x) => x.id === args[0])[0];
     if (!a) { redirect('#/play'); return; }
@@ -167,10 +168,49 @@ async function renderPlay(args) {
   }
   const diaryN = Object.keys(store.get('nabu-diary', {}) || {}).length;
   m.innerHTML = '<div class="eyebrow">' + esc(CONFIG.brand) + '</div><h1 style="margin-bottom:6px">' + esc(S.actTitle) + '</h1><p class="muted">' + esc(S.actIntro) + '</p><div id="acts" class="actlist">'
+    + '<a class="actbtn act-coin live" href="#/play/coin"><span class="ic">🪙</span><span class="body"><b>' + esc(S.coinTitle) + '</b><span class="meta">' + esc(S.coinSub) + '</span></span><span class="go">›</span></a>'
     + '<a class="actbtn act-diary live" href="#/play/diary"><span class="ic">📔</span><span class="body"><b>' + esc(S.diaryTitle) + '</b><span class="meta">' + esc(S.diarySub) + (diaryN ? ' · ' + esc(S.diaryCount(diaryN)) : '') + '</span></span><span class="chev">›</span></a>'
     + (list.length ? actGroupsHTML(list) : '<p class="empty">' + esc(S.actEmpty) + '</p>') + '</div>';
   bindActGroups(m);
 }
+/* ---- a coin for questions that only need yes or no ----
+   The coin decides nothing. It puts one of the two answers in front of you so
+   your own reaction to it becomes visible. */
+function coinFaceSVG(side) {
+  const face = side === 'yes' ? '<path d="M40 58 A22 22 0 1 0 40 102 A17 17 0 1 1 40 58 Z" fill="#FFF3C4"/>'
+    : '<path d="M56 62 l5 12 12 5 -12 5 -5 12 -5 -12 -12 -5 12 -5z" fill="#FFF3C4"/>';
+  return '<svg viewBox="0 0 160 160" aria-hidden="true">'
+    + '<circle cx="80" cy="80" r="74" fill="#E5BE5E" stroke="#B9913B" stroke-width="5"/>'
+    + '<circle cx="80" cy="80" r="60" fill="none" stroke="#B9913B" stroke-width="2"/>'
+    + '<g transform="translate(0,0)">' + (side ? face : '<text x="80" y="102" text-anchor="middle" font-family="Georgia,serif" font-size="62" fill="#B9913B">?</text>') + '</g>'
+    + '</svg>';
+}
+function renderCoin() {
+  const S = T(), m = $('#main');
+  let side = '';
+  const draw = () => {
+    m.innerHTML = '<div class="eyebrow">' + esc(S.actTitle) + '</div><h1 style="margin-bottom:6px">🪙 ' + esc(S.coinTitle) + '</h1><p class="muted">' + esc(S.coinIntro) + '</p>'
+      + '<div class="card coinwrap"><label class="f" for="coinq">' + esc(S.coinQ) + '</label><input id="coinq" placeholder="' + esc(S.coinQPh) + '" value="' + esc(store.get('nabu-coinq', '') || '') + '">'
+      + '<div class="coin" id="coin">' + coinFaceSVG(side) + '</div>'
+      + '<div class="coinres' + (side ? ' ' + side : '') + '" id="coinres">' + (side ? esc(side === 'yes' ? S.coinYes : S.coinNo) : '') + '</div>'
+      + '<button class="btn primary block" id="coinflip">' + esc(side ? S.coinAgain : S.coinFlip) + '</button></div>'
+      + '<p class="hint">' + esc(S.coinNote) + '</p>'
+      + '<p style="margin-top:14px"><a href="#/play" class="backlink">← ' + esc(S.actTitle) + '</a></p>';
+    const q = $('#coinq'); q.addEventListener('input', () => store.set('nabu-coinq', q.value));
+    $('#coinflip').addEventListener('click', () => {
+      const el = $('#coin'), btn = $('#coinflip');
+      if (el.classList.contains('spin')) return;
+      btn.disabled = true; $('#coinres').textContent = ''; $('#coinres').className = 'coinres';
+      el.classList.add('spin');
+      let bits = 0;
+      try { const a = new Uint8Array(1); crypto.getRandomValues(a); bits = a[0] & 1; }
+      catch (e) { bits = Math.random() < 0.5 ? 0 : 1; }
+      setTimeout(() => { side = bits ? 'yes' : 'no'; el.classList.remove('spin'); el.innerHTML = coinFaceSVG(side); const r = $('#coinres'); r.textContent = side === 'yes' ? S.coinYes : S.coinNo; r.className = 'coinres ' + side; btn.disabled = false; btn.textContent = S.coinAgain; }, 1000);
+    });
+  };
+  draw();
+}
+
 /* ---- the daily diary: one entry per day, on the device only ---- */
 const MOODS = ['😄', '🙂', '😐', '😔', '😢', '😤', '😴', '🥰'];
 function renderDiary() {

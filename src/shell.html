@@ -665,7 +665,16 @@ main{padding:22px 0 30px}
 .cardnav{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:18px}
 .cardnav a{display:flex;align-items:center;gap:7px;min-width:0;padding:11px 12px;border:1px solid var(--rule);border-radius:14px;background:var(--surface);color:var(--fg);text-decoration:none;font-size:13.5px;font-weight:600}
 .cardnav a.next{justify-content:flex-end;text-align:right}.cardnav a b{font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.cardnav .ar{flex:none;color:var(--fg-faint)}.cardnav .cn-sp{display:block}
-.meacts{margin-bottom:14px}.meacts .row{margin-top:8px}.btns{display:grid;grid-template-columns:1fr 1fr;gap:8px}.btns .btn{width:100%}
+.meacts{margin-bottom:14px}.meacts .row{margin-top:8px}
+/* Shows itself once a screen has scrolled far enough to be worth a shortcut. */
+#totop{position:fixed;right:14px;bottom:calc(74px + env(safe-area-inset-bottom,0px));z-index:40;width:44px;height:44px;border-radius:50%;border:1px solid var(--rule);background:var(--surface);color:var(--fg);font-size:19px;line-height:1;box-shadow:0 3px 12px var(--shade);cursor:pointer}
+#totop:active{transform:scale(.94)}
+.coinwrap{text-align:center}.coinwrap input{text-align:center}
+.coin{width:150px;height:150px;margin:16px auto 4px}.coin svg{width:100%;height:100%;display:block}
+.coin.spin{animation:coinflip 1s cubic-bezier(.34,.85,.3,1)}
+@keyframes coinflip{0%{transform:rotateY(0deg) scale(1)}55%{transform:rotateY(1080deg) scale(1.1)}100%{transform:rotateY(1800deg) scale(1)}}
+.coinres{font-family:var(--display);font-size:30px;line-height:1.2;min-height:36px;margin:2px 0 12px;letter-spacing:.02em}
+.coinres.yes{color:var(--pink-ink)}.coinres.no{color:var(--fg-soft)}.btns{display:grid;grid-template-columns:1fr 1fr;gap:8px}.btns .btn{width:100%}
 /* Booking summary card and the done screen. */
 .sum{background:var(--surface);border:1px solid var(--rule);border-radius:14px;padding:4px 14px;font-size:14.5px;margin:10px 0;text-align:left}.sum .r{display:flex;gap:10px;padding:9px 0;border-top:1px solid var(--rule-soft)}.sum .r:first-child{border-top:0}
 .sum .k{flex:none;width:86px;color:var(--fg-faint);font-size:12.5px;font-weight:600;padding-top:2px}.sum .v{flex:1;min-width:0;overflow-wrap:anywhere}.sum ul{margin:0;padding-left:16px}.sum li{margin:2px 0}.sum li small{font-size:12.5px}.sum .warn{color:#B04A2E;font-weight:600}.sum .ok{color:#2E7D46;font-weight:600}
@@ -715,6 +724,7 @@ main{padding:22px 0 30px}
 <div id="backbar" class="wrap" hidden></div>
 <main><div class="wrap" id="main"></div></main>
 <div id="homefoot" class="wrap" hidden></div>
+<button type="button" id="totop" aria-label="Top" hidden>↑</button>
 
 <footer class="foot" id="foot"></footer>
 

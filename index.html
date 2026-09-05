@@ -831,7 +831,16 @@ main{padding:22px 0 30px}
 .cardnav{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:18px}
 .cardnav a{display:flex;align-items:center;gap:7px;min-width:0;padding:11px 12px;border:1px solid var(--rule);border-radius:14px;background:var(--surface);color:var(--fg);text-decoration:none;font-size:13.5px;font-weight:600}
 .cardnav a.next{justify-content:flex-end;text-align:right}.cardnav a b{font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.cardnav .ar{flex:none;color:var(--fg-faint)}.cardnav .cn-sp{display:block}
-.meacts{margin-bottom:14px}.meacts .row{margin-top:8px}.btns{display:grid;grid-template-columns:1fr 1fr;gap:8px}.btns .btn{width:100%}
+.meacts{margin-bottom:14px}.meacts .row{margin-top:8px}
+/* Shows itself once a screen has scrolled far enough to be worth a shortcut. */
+#totop{position:fixed;right:14px;bottom:calc(74px + env(safe-area-inset-bottom,0px));z-index:40;width:44px;height:44px;border-radius:50%;border:1px solid var(--rule);background:var(--surface);color:var(--fg);font-size:19px;line-height:1;box-shadow:0 3px 12px var(--shade);cursor:pointer}
+#totop:active{transform:scale(.94)}
+.coinwrap{text-align:center}.coinwrap input{text-align:center}
+.coin{width:150px;height:150px;margin:16px auto 4px}.coin svg{width:100%;height:100%;display:block}
+.coin.spin{animation:coinflip 1s cubic-bezier(.34,.85,.3,1)}
+@keyframes coinflip{0%{transform:rotateY(0deg) scale(1)}55%{transform:rotateY(1080deg) scale(1.1)}100%{transform:rotateY(1800deg) scale(1)}}
+.coinres{font-family:var(--display);font-size:30px;line-height:1.2;min-height:36px;margin:2px 0 12px;letter-spacing:.02em}
+.coinres.yes{color:var(--pink-ink)}.coinres.no{color:var(--fg-soft)}.btns{display:grid;grid-template-columns:1fr 1fr;gap:8px}.btns .btn{width:100%}
 /* Booking summary card and the done screen. */
 .sum{background:var(--surface);border:1px solid var(--rule);border-radius:14px;padding:4px 14px;font-size:14.5px;margin:10px 0;text-align:left}.sum .r{display:flex;gap:10px;padding:9px 0;border-top:1px solid var(--rule-soft)}.sum .r:first-child{border-top:0}
 .sum .k{flex:none;width:86px;color:var(--fg-faint);font-size:12.5px;font-weight:600;padding-top:2px}.sum .v{flex:1;min-width:0;overflow-wrap:anywhere}.sum ul{margin:0;padding-left:16px}.sum li{margin:2px 0}.sum li small{font-size:12.5px}.sum .warn{color:#B04A2E;font-weight:600}.sum .ok{color:#2E7D46;font-weight:600}
@@ -881,6 +890,7 @@ main{padding:22px 0 30px}
 <div id="backbar" class="wrap" hidden></div>
 <main><div class="wrap" id="main"></div></main>
 <div id="homefoot" class="wrap" hidden></div>
+<button type="button" id="totop" aria-label="Top" hidden>↑</button>
 
 <footer class="foot" id="foot"></footer>
 
@@ -893,7 +903,7 @@ main{padding:22px 0 30px}
    change of handle, link or wording never touches the app code.
    After editing, run  python build.py  and push. */
 /* Small purple logo card used as the 'pick a card' icon in tiles and lists (needed before services.js). */
-const PICK_ICON = '<svg class="pickico" viewBox="0 0 100 172" aria-hidden="true"><rect x="3" y="3" width="94" height="166" rx="12" fill="#3D2A6E" stroke="#3B2A5E" stroke-width="4"/><rect x="14" y="14" width="72" height="144" rx="7" fill="none" stroke="#E5BE5E" stroke-width="2"/><path d="M58 58 A28 28 0 1 0 58 114 A22 22 0 1 1 58 58 Z" fill="#E5BE5E"/><circle cx="30" cy="36" r="4" fill="#E5BE5E"/><circle cx="32" cy="138" r="4" fill="#E5BE5E"/><circle cx="72" cy="132" r="4" fill="#E5BE5E"/></svg>';
+const PICK_ICON = '<svg class="pickico" viewBox="0 0 100 172" aria-hidden="true"><rect x="3" y="3" width="94" height="166" rx="12" fill="#3D2A6E" stroke="#3B2A5E" stroke-width="4"/><rect x="14" y="14" width="72" height="144" rx="7" fill="none" stroke="#E5BE5E" stroke-width="2"/><path d="M58 58 A28 28 0 1 0 58 114 A22 22 0 1 1 58 58 Z" fill="#E5BE5E"/><circle cx="30" cy="36" r="4" fill="#E5BE5E"/><circle cx="70" cy="36" r="4" fill="#E5BE5E"/><circle cx="30" cy="136" r="4" fill="#E5BE5E"/><circle cx="70" cy="136" r="4" fill="#E5BE5E"/></svg>';
 
 /* Draw icon for 'Rút bài': a cream card lifted at an angle with a gold sparkle. */
 const DRAW_ICON = '<svg class="pickico" viewBox="0 0 100 172" aria-hidden="true"><g transform="rotate(-8 50 86)"><rect x="8" y="8" width="84" height="156" rx="12" fill="#FBF3F5" stroke="#3B2A5E" stroke-width="4"/><rect x="18" y="18" width="64" height="136" rx="7" fill="none" stroke="#E5BE5E" stroke-width="2"/><path d="M50 52 l8 22 22 8 -22 8 -8 22 -8 -22 -22 -8 22 -8z" fill="#E5BE5E"/><path d="M72 30 l3 7 7 3 -7 3 -3 7 -3 -7 -7 -3 7 -3z" fill="#F6BBCB"/><path d="M28 132 l2.5 5.5 5.5 2.5 -5.5 2.5 -2.5 5.5 -2.5 -5.5 -5.5 -2.5 5.5 -2.5z" fill="#AFC8F0"/></g></svg>';
@@ -1200,7 +1210,7 @@ const STR = {
     sentOk: 'Đã gửi. Nabu sẽ xác nhận sớm. Bạn xem lại trong mục Hồ sơ.',
     nabuPosts: 'Bài viết của Nabu', versionLine: (v) => 'Phiên bản ' + v, checkUpdate: 'Kiểm tra cập nhật', updating: 'Đang tải bản mới…',
     privacyTitle: 'Chính sách quyền riêng tư', privacyLink: 'Riêng tư', delAccount: 'Xoá tài khoản', delHint: 'Thao tác này xoá tài khoản đăng nhập, hồ sơ, tin nhắn và lịch hẹn của bạn, và không thể hoàn lại.', delConfirm: 'Xoá tài khoản và toàn bộ dữ liệu của bạn? Việc này không hoàn lại được.', delDone: 'Đã xoá tài khoản. Cảm ơn bạn đã ghé Nabu Tarot.', delRelogin: 'Để chắc là bạn, hãy đăng nhập lại rồi bấm Xoá tài khoản một lần nữa.', aiFlag: 'Báo cáo câu trả lời này', aiFlagged: 'Đã ghi nhận. Cảm ơn bạn, Nabu sẽ xem lại.', storeCodeHint: 'Nhập mã mở khoá mà Nabu đã gửi cho bạn.',
-    actTitle: 'Hoạt động', actIntro: 'Bạn chọn một tụ bài rồi quay lại xem thông điệp, tham gia bình chọn mỗi tuần, hoặc gửi một điều ước. Đây là phần để chơi cho vui, và lá bài nói về xu hướng chứ không nói về số phận.', actEmpty: 'Chưa có hoạt động nào. Quay lại sau nhé.', actAll: 'Tất cả hoạt động', actOpen: 'Đang mở', actClosed: 'Đã đóng', actHasResults: 'Đã có kết quả',
+    actTitle: 'Hoạt động', actIntro: 'Những việc nhỏ để bạn ghé qua mỗi ngày: chọn một tụ bài rồi quay lại xem thông điệp, bình chọn cùng mọi người, hoặc gửi một điều ước vào lọ.', actEmpty: 'Chưa có hoạt động nào. Quay lại sau nhé.', actAll: 'Tất cả hoạt động', actOpen: 'Đang mở', actClosed: 'Đã đóng', actHasResults: 'Đã có kết quả',
     actPickHint: 'Bạn chạm vào tụ bài mà mình thấy bị thu hút nhất. Nabu sẽ đăng thông điệp của từng tụ sau vài ngày.', actPicked: (n) => 'Bạn đã chọn tụ ' + n + '.', actComeBack: (d) => 'Quay lại vào ' + d + ' để lật bài xem thông điệp.', actChangePile: 'Đổi sang tụ khác?', actPickToSee: 'Thông điệp đã có. Chạm vào một tụ để lật lên.', actTapOthers: 'Tụ bạn chọn đã lật lên. Bạn có thể chạm vào tụ khác để xem thử.',
     actVoteHint: 'Bạn chạm vào một lựa chọn. Mỗi người chỉ được bình chọn một lần.', actVoteLogin: 'Bạn cần đăng nhập để bình chọn và xem kết quả.', actVoted: 'Cảm ơn bạn đã bình chọn!', actClosedNote: 'Bình chọn đã đóng. Đây là kết quả.', actVotes: (n) => n + ' phiếu',
     actWishPh: 'Điều mình ước lúc này là…', actWishSend: 'Gửi vào vũ trụ', actWishHint: 'Bạn viết ngắn gọn, ở thì hiện tại, rồi gửi đi. Điều ước chỉ được lưu trên máy của bạn và không ai đọc được.', actWishCount: (n) => 'Bạn đã gửi ' + n + ' điều ước ở đây.', actWishSent: 'Đã gửi. Giờ đến lượt bạn làm bước đầu tiên. ✨', actWishEmpty: 'Bạn viết điều ước trước nhé.', actWishClear: 'Xoá các điều ước đã lưu trên máy', actWishClearConfirm: 'Xoá các điều ước đã lưu trên máy này?',
@@ -1208,6 +1218,7 @@ const STR = {
     actPileArt: 'Hình của tụ', actArtAuto: 'Tự chọn', actArts: ['Nến', 'Hoa đào', 'Trăng non', 'Thạch anh tím', 'Mặt trời', 'Chìa khoá', 'Lông vũ', 'Sóng biển'],
     translating: 'Đang dịch sang tiếng Anh…', translated: 'Đã có bản tiếng Anh (dịch tự động).', translateFail: 'Chưa dịch được sang tiếng Anh; bản tiếng Việt vẫn hiện cho mọi người.',
     actFilterAll: 'Tất cả', actMore: (n) => 'Xem thêm ' + n, actLess: 'Thu gọn', actResultsPublic: 'Kết quả chung', actNoVotes: 'Chưa có phiếu nào. Bạn mở hàng nhé!', wishHistory: (n) => 'Xem ' + n + ' điều ước đã gửi', wishHide: 'Ẩn danh sách', diaryTitle: 'Nhật ký mỗi ngày', diarySub: 'hôm nay của bạn thế nào?', diaryIntro: 'Mỗi tối bạn viết vài dòng về ngày hôm nay: cảm giác của bạn, một điều đáng nhớ và một điều bạn thấy biết ơn. Nhật ký chỉ được lưu trên máy của bạn và không ai đọc được.', diaryMood: 'Hôm nay bạn thấy', diaryPh: 'Hôm nay…', diaryToday: 'Hôm nay', diarySaved: 'Đã lưu', diaryPast: 'Những ngày trước', diaryEmpty: 'Chưa có ngày nào. Bắt đầu từ hôm nay nhé.', diaryDel: 'Xoá ngày này', diaryCount: (n) => n + ' ngày đã ghi',
+    coinTitle: 'Tung đồng xu', coinSub: 'cho câu hỏi có hoặc không', coinIntro: 'Khi bạn có một câu hỏi chỉ cần trả lời có hoặc không, bạn hãy nghĩ thật rõ về câu hỏi đó rồi tung đồng xu.', coinQ: 'Câu hỏi của bạn', coinQPh: 'Ví dụ: mình có nên nhắn trước không?', coinFlip: 'Tung đồng xu', coinAgain: 'Tung lại', coinYes: 'CÓ', coinNo: 'KHÔNG', coinNote: 'Đồng xu chỉ cho bạn một trong hai câu trả lời. Điều đáng chú ý là cảm giác của bạn ngay khi nhìn thấy kết quả: nếu bạn thấy hụt hẫng, bạn đã biết mình muốn gì.',
     actNew: 'Hoạt động mới', actType: 'Loại', actTypes: { pile: 'Chọn tụ bài', poll: 'Bình chọn', wish: 'Điều ước' }, actResultsDate: 'Ngày đăng kết quả', actIntroLabel: 'Lời dẫn (thanh công cụ phía trên ô cho phép in đậm, in nghiêng, tô sáng, chèn ảnh, video và emoji)', actPilesHint: 'Từ 2 đến 5 tụ. Bạn có thể đăng trước với nhãn trống; vài ngày sau quay lại điền thông điệp và bật "Đã có kết quả".', actPileN: (n) => 'Tụ ' + n, actPileLabel: 'Nhãn ngắn (không bắt buộc), ví dụ: Trái · Giữa · Phải', actPileMsg: 'Thông điệp cho tụ này (đăng sau cũng được)', actPileMsgEn: 'English message (optional)', actPileAdd: 'Thêm tụ', actPileDel: 'Bớt tụ', actResultsOn: 'Đã có kết quả: cho phép lật bài', actOptions: 'Các lựa chọn, mỗi dòng một lựa chọn', actCloseOn: 'Đóng bình chọn', actExisting: 'Hoạt động đã đăng', actNeedPiles: 'Bạn điền ít nhất một tụ nhé.', actNeedOptions: 'Cần ít nhất hai lựa chọn.',
     newsTitle: 'Bài viết', newsIntro: 'Tất cả bài Nabu đã đăng, gồm dự đoán, chia sẻ và thông báo. Bạn gõ từ khóa để tìm nhanh.', searchPosts: 'Tìm trong bài viết…', noMatch: 'Không có bài nào khớp.', allPostsBtn: (n) => 'Xem tất cả bài viết (' + n + ')', watchOn: (s) => 'Xem video trên ' + s,
     addImage: 'Ảnh', addVideo: 'Video', videoPrompt: 'Dán link video (YouTube, Facebook, TikTok, Instagram):', imgNeedCloud: 'Bạn cần đăng nhập tài khoản admin để tải ảnh lên.', imgTooBig: 'Ảnh quá lớn, thử ảnh nhỏ hơn.', imgAdded: 'Đã thêm ảnh vào bài.', wrapPlaceholder: 'chữ', boxLabel: 'Hộp', formatHint: 'Chọn chữ rồi bấm B / I / U / H để in đậm, in nghiêng, gạch dưới, tô sáng. H2 là tiêu đề nhỏ, Hộp là ô tiêu đề riêng. Ảnh tải thẳng vào bài; video dán link.',
@@ -1454,7 +1465,7 @@ const STR = {
     sentOk: 'Sent. Nabu will confirm soon. You can check it under Profile.',
     nabuPosts: 'Nabu Posts', versionLine: (v) => 'Version ' + v, checkUpdate: 'Check for updates', updating: 'Loading the new version…',
     privacyTitle: 'Privacy policy', privacyLink: 'Privacy', delAccount: 'Delete account', delHint: 'Removes your login, profile, messages and bookings. This cannot be undone.', delConfirm: 'Delete your account and all your data? This cannot be undone.', delDone: 'Account deleted. Thank you for visiting Nabu Tarot.', delRelogin: 'To be sure it is you, sign in again and tap Delete account once more.', aiFlag: 'Report this answer', aiFlagged: 'Noted. Thank you, Nabu will review it.', storeCodeHint: 'Enter the unlock code Nabu sent you.',
-    actTitle: 'Activities', actIntro: 'Pick a pile and come back for its message, vote in the weekly poll, or send a wish. It is play: the cards speak about tendencies, not fate.', actEmpty: 'No activities yet. Come back soon.', actAll: 'All activities', actOpen: 'Open', actClosed: 'Closed', actHasResults: 'Answered',
+    actTitle: 'Activities', actIntro: 'Small things to drop in on: pick a pile and come back for its message, vote alongside everyone else, or send a wish into the jar.', actEmpty: 'No activities yet. Come back soon.', actAll: 'All activities', actOpen: 'Open', actClosed: 'Closed', actHasResults: 'Answered',
     actPickHint: 'Tap the pile that pulls you. Nabu posts each pile\'s message a few days later.', actPicked: (n) => 'You chose pile ' + n + '.', actComeBack: (d) => 'Come back on ' + d + ' to flip it over.', actChangePile: 'Switch to another pile?', actPickToSee: 'The messages are in. Tap a pile to flip it.', actTapOthers: 'Your pile is open. Tap another pile to peek.',
     actVoteHint: 'Tap an option. One vote per person.', actVoteLogin: 'Sign in to vote and see the results.', actVoted: 'Thank you for voting!', actClosedNote: 'Voting is closed. Here are the results.', actVotes: (n) => n + ' votes',
     actWishPh: 'Right now I wish…', actWishSend: 'Send it to the universe', actWishHint: 'Keep it short, in the present tense, then send. Wishes stay on your device; nobody reads them.', actWishCount: (n) => 'You have sent ' + n + ' wishes here.', actWishSent: 'Sent. Now the first step is yours. ✨', actWishEmpty: 'Write your wish first.', actWishClear: 'Clear the wishes saved on this device', actWishClearConfirm: 'Clear the wishes saved on this device?',
@@ -1462,6 +1473,7 @@ const STR = {
     actPileArt: 'Pile picture', actArtAuto: 'Automatic', actArts: ['Candle', 'Blossom', 'Crescent', 'Amethyst', 'Sun', 'Key', 'Feather', 'Waves'],
     translating: 'Translating into English…', translated: 'English version added (automatic translation).', translateFail: 'Could not translate into English; the Vietnamese text shows for everyone.',
     actFilterAll: 'All', actMore: (n) => 'See ' + n + ' more', actLess: 'Show less', actResultsPublic: 'Overall results', actNoVotes: 'No votes yet. Be the first!', wishHistory: (n) => 'See the ' + n + ' wishes you sent', wishHide: 'Hide the list', diaryTitle: 'Daily diary', diarySub: 'how was your day?', diaryIntro: 'A few lines each evening about today: how it felt, one thing worth remembering, one thing to be grateful for. Saved only on your device; nobody can read it.', diaryMood: 'Today you feel', diaryPh: 'Today…', diaryToday: 'Today', diarySaved: 'Saved', diaryPast: 'Earlier days', diaryEmpty: 'No days yet. Start with today.', diaryDel: 'Delete this day', diaryCount: (n) => n + ' days written',
+    coinTitle: 'Flip a coin', coinSub: 'for a yes or no question', coinIntro: 'When a question needs nothing more than a yes or a no, hold the question clearly in mind and flip the coin.', coinQ: 'Your question', coinQPh: 'For example: should I message first?', coinFlip: 'Flip the coin', coinAgain: 'Flip again', coinYes: 'YES', coinNo: 'NO', coinNote: 'The coin gives you one of two answers. What matters is how you feel the moment you see it: if the result disappoints you, you already know what you want.',
     actNew: 'New activity', actType: 'Type', actTypes: { pile: 'Pick a pile', poll: 'Poll', wish: 'Wish' }, actResultsDate: 'Results date', actIntroLabel: 'Intro (the bar above the box: bold, italic, highlight, images, video, emoji)', actPilesHint: 'Two to five piles. You can publish with empty labels; come back days later, fill in the messages and switch on "Answered".', actPileN: (n) => 'Pile ' + n, actPileLabel: 'Short label (optional), e.g. Left · Middle · Right', actPileMsg: 'Message for this pile (can be added later)', actPileMsgEn: 'English message (optional)', actPileAdd: 'Add a pile', actPileDel: 'Remove a pile', actResultsOn: 'Answered: let people flip the piles', actOptions: 'Options, one per line', actCloseOn: 'Close the poll', actExisting: 'Published activities', actNeedPiles: 'Fill in at least one pile.', actNeedOptions: 'At least two options are needed.',
     newsTitle: 'Posts', newsIntro: 'Everything Nabu has posted: readings, thoughts, announcements. Type to search.', searchPosts: 'Search the posts…', noMatch: 'No post matches.', allPostsBtn: (n) => 'See all posts (' + n + ')', watchOn: (s) => 'Watch on ' + s,
     addImage: 'Image', addVideo: 'Video', videoPrompt: 'Paste a video link (YouTube, Facebook, TikTok, Instagram):', imgNeedCloud: 'Sign in with the admin account to upload images.', imgTooBig: 'Image too large, try a smaller one.', imgAdded: 'Image added to the post.', wrapPlaceholder: 'text', boxLabel: 'Box', formatHint: 'Select text, then tap B / I / U / H for bold, italic, underline, highlight. H2 is a small heading, Box a separate title box. Images upload straight into the post; videos are pasted as links.',
@@ -8613,7 +8625,7 @@ function logoCardSVG(kind) {
   let mark = '';
   if (kind === 'blue') mark = '<path d="M50 60 l4 10 10 4 -10 4 -4 10 -4 -10 -10 -4 10 -4z" fill="#E5BE5E"/><circle cx="50" cy="108" r="3" fill="#E5BE5E"/>';
   else if (kind === 'pink') mark = '<path d="M50 62 l3 6.5 6.5 3 -6.5 3 -3 6.5 -3 -6.5 -6.5 -3 6.5 -3z" fill="#E5BE5E"/><path d="M50 98 l2 4.4 4.4 2 -4.4 2 -2 4.4 -2 -4.4 -4.4 -2 4.4 -2z" fill="#E5BE5E"/>';
-  else mark = '<path d="M56 60 A26 26 0 1 0 56 112 A21 21 0 1 1 56 60 Z" fill="#E5BE5E"/><circle cx="28" cy="34" r="3.2" fill="#E5BE5E"/><circle cx="30" cy="140" r="3.2" fill="#E5BE5E"/><circle cx="74" cy="134" r="3.2" fill="#E5BE5E"/>';
+  else mark = '<path d="M56 60 A26 26 0 1 0 56 112 A21 21 0 1 1 56 60 Z" fill="#E5BE5E"/>' + [[26, 32], [74, 32], [26, 140], [74, 140]].map((p) => '<circle cx="' + p[0] + '" cy="' + p[1] + '" r="3.4" fill="#E5BE5E"/>').join('');
   return '<svg viewBox="0 0 100 172" aria-hidden="true"><rect x="1.3" y="1.3" width="97.4" height="169.4" rx="10" fill="' + fill + '" stroke="#3B2A5E" stroke-width="3"/>'
     + '<rect x="10" y="10" width="80" height="152" rx="6" fill="none" stroke="#E5BE5E" stroke-width="1.6"/>' + mark + '</svg>';
 }
@@ -8882,6 +8894,10 @@ function boot() {
     e.preventDefault(); NAV.popping = true; location.hash = a.getAttribute('href');
   });
   $('#lang').addEventListener('click', () => { lang = lang === 'vi' ? 'en' : 'vi'; store.set('nabu-lang', lang); route(); });
+  { const bt = $('#totop');
+    const seen = () => { bt.hidden = (window.scrollY || document.documentElement.scrollTop || 0) < 700; };
+    window.addEventListener('scroll', seen, { passive: true }); seen();
+    bt.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' })); }
   $('#theme').addEventListener('click', () => { const cur = effectiveTheme(); setTheme(THEMES[(THEMES.indexOf(cur) + 1) % THEMES.length]); });
   applyTheme();
   route();
@@ -11619,6 +11635,7 @@ async function renderPlay(args) {
   const S = T(), m = $('#main');
   const list = (await loadActs()).slice().sort((a, b) => String(b.date).localeCompare(String(a.date)));
   if (args && args[0] === 'diary') { renderDiary(); return; }
+  if (args && args[0] === 'coin') { renderCoin(); return; }
   if (args && args[0]) {
     const a = list.filter((x) => x.id === args[0])[0];
     if (!a) { redirect('#/play'); return; }
@@ -11628,10 +11645,49 @@ async function renderPlay(args) {
   }
   const diaryN = Object.keys(store.get('nabu-diary', {}) || {}).length;
   m.innerHTML = '<div class="eyebrow">' + esc(CONFIG.brand) + '</div><h1 style="margin-bottom:6px">' + esc(S.actTitle) + '</h1><p class="muted">' + esc(S.actIntro) + '</p><div id="acts" class="actlist">'
+    + '<a class="actbtn act-coin live" href="#/play/coin"><span class="ic">🪙</span><span class="body"><b>' + esc(S.coinTitle) + '</b><span class="meta">' + esc(S.coinSub) + '</span></span><span class="go">›</span></a>'
     + '<a class="actbtn act-diary live" href="#/play/diary"><span class="ic">📔</span><span class="body"><b>' + esc(S.diaryTitle) + '</b><span class="meta">' + esc(S.diarySub) + (diaryN ? ' · ' + esc(S.diaryCount(diaryN)) : '') + '</span></span><span class="chev">›</span></a>'
     + (list.length ? actGroupsHTML(list) : '<p class="empty">' + esc(S.actEmpty) + '</p>') + '</div>';
   bindActGroups(m);
 }
+/* ---- a coin for questions that only need yes or no ----
+   The coin decides nothing. It puts one of the two answers in front of you so
+   your own reaction to it becomes visible. */
+function coinFaceSVG(side) {
+  const face = side === 'yes' ? '<path d="M40 58 A22 22 0 1 0 40 102 A17 17 0 1 1 40 58 Z" fill="#FFF3C4"/>'
+    : '<path d="M56 62 l5 12 12 5 -12 5 -5 12 -5 -12 -12 -5 12 -5z" fill="#FFF3C4"/>';
+  return '<svg viewBox="0 0 160 160" aria-hidden="true">'
+    + '<circle cx="80" cy="80" r="74" fill="#E5BE5E" stroke="#B9913B" stroke-width="5"/>'
+    + '<circle cx="80" cy="80" r="60" fill="none" stroke="#B9913B" stroke-width="2"/>'
+    + '<g transform="translate(0,0)">' + (side ? face : '<text x="80" y="102" text-anchor="middle" font-family="Georgia,serif" font-size="62" fill="#B9913B">?</text>') + '</g>'
+    + '</svg>';
+}
+function renderCoin() {
+  const S = T(), m = $('#main');
+  let side = '';
+  const draw = () => {
+    m.innerHTML = '<div class="eyebrow">' + esc(S.actTitle) + '</div><h1 style="margin-bottom:6px">🪙 ' + esc(S.coinTitle) + '</h1><p class="muted">' + esc(S.coinIntro) + '</p>'
+      + '<div class="card coinwrap"><label class="f" for="coinq">' + esc(S.coinQ) + '</label><input id="coinq" placeholder="' + esc(S.coinQPh) + '" value="' + esc(store.get('nabu-coinq', '') || '') + '">'
+      + '<div class="coin" id="coin">' + coinFaceSVG(side) + '</div>'
+      + '<div class="coinres' + (side ? ' ' + side : '') + '" id="coinres">' + (side ? esc(side === 'yes' ? S.coinYes : S.coinNo) : '') + '</div>'
+      + '<button class="btn primary block" id="coinflip">' + esc(side ? S.coinAgain : S.coinFlip) + '</button></div>'
+      + '<p class="hint">' + esc(S.coinNote) + '</p>'
+      + '<p style="margin-top:14px"><a href="#/play" class="backlink">← ' + esc(S.actTitle) + '</a></p>';
+    const q = $('#coinq'); q.addEventListener('input', () => store.set('nabu-coinq', q.value));
+    $('#coinflip').addEventListener('click', () => {
+      const el = $('#coin'), btn = $('#coinflip');
+      if (el.classList.contains('spin')) return;
+      btn.disabled = true; $('#coinres').textContent = ''; $('#coinres').className = 'coinres';
+      el.classList.add('spin');
+      let bits = 0;
+      try { const a = new Uint8Array(1); crypto.getRandomValues(a); bits = a[0] & 1; }
+      catch (e) { bits = Math.random() < 0.5 ? 0 : 1; }
+      setTimeout(() => { side = bits ? 'yes' : 'no'; el.classList.remove('spin'); el.innerHTML = coinFaceSVG(side); const r = $('#coinres'); r.textContent = side === 'yes' ? S.coinYes : S.coinNo; r.className = 'coinres ' + side; btn.disabled = false; btn.textContent = S.coinAgain; }, 1000);
+    });
+  };
+  draw();
+}
+
 /* ---- the daily diary: one entry per day, on the device only ---- */
 const MOODS = ['😄', '🙂', '😐', '😔', '😢', '😤', '😴', '🥰'];
 function renderDiary() {
@@ -12029,8 +12085,8 @@ function adminCodes(p) {
 ROUTES.admin = { nav: '', render: renderAdmin };
 
 /* ============================ boot ============================ */
-window.APP_VERSION = 'v71';
-window.NABU = { CONFIG: CONFIG, loadActs: loadActs, LESSONS: LESSONS, localAnswer: localAnswer, compatVerdict: compatVerdict, numerologyOf: numerologyOf, ZDEEP: ZDEEP, lunarToday: lunarToday, solarToLunar: solarToLunar, DECK: DECK, INSIGHT: INSIGHT, KW: KW, ASK: ASK, TOPICS: TOPICS, GUIDES: GUIDES, SERVICES: SERVICES, COURSES: COURSES, ACCESS: ACCESS, makeCode: makeCode, parseCode: parseCode, ZODIAC: ZODIAC, pick: pick, book: book,
+window.APP_VERSION = 'v72';
+window.NABU = { CONFIG: CONFIG, loadActs: loadActs, BACK: BACK, LESSONS: LESSONS, localAnswer: localAnswer, compatVerdict: compatVerdict, numerologyOf: numerologyOf, ZDEEP: ZDEEP, lunarToday: lunarToday, solarToLunar: solarToLunar, DECK: DECK, INSIGHT: INSIGHT, KW: KW, ASK: ASK, TOPICS: TOPICS, GUIDES: GUIDES, SERVICES: SERVICES, COURSES: COURSES, ACCESS: ACCESS, makeCode: makeCode, parseCode: parseCode, ZODIAC: ZODIAC, pick: pick, book: book,
   insightHTML: insightHTML, insightOf: insightOf, sunSignIndex: sunSignIndex, lifePath: lifePath, PROFILE: () => PROFILE, BE: BE, ACTS: ACTS };
 BE.initP = BE.init().catch(() => { /* backend unreachable: the app runs device-only */ });
 // The Gemini key is a dashboard setting kept in the app cloud (content/ai), never in the source.
