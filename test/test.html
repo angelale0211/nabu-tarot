@@ -149,7 +149,7 @@ async function go(hash, sel) { W().location.hash = hash; await sleep(30); return
     await go('#/learn/lesson/lenormand/6', '.spreads-v');
     ok(d.querySelectorAll('.spv').length === 7 && /Grand Tableau/.test(d.querySelector('.spreads-v').textContent), 'lenormand session 6: seven spread diagrams incl. the Grand Tableau');
     await go('#/report', '#rwhat');
-    ok(d.querySelector('#rwhat') && d.querySelector('#rsend') && d.querySelector('#rcopy') && /Nabu Tarot v34/.test(d.querySelector('.msgbox').textContent), 'bug report screen: direct send button, Instagram, copy, auto-attached info');
+    ok(d.querySelector('#rwhat') && d.querySelector('#rsend') && d.querySelector('#rcopy') && /Nabu Tarot v35/.test(d.querySelector('.msgbox').textContent), 'bug report screen: direct send button, Instagram, copy, auto-attached info');
     d.querySelector('#rwhat').value = 'Nút không bấm được'; d.querySelector('#rsend').click(); await sleep(150);
     ok(/chưa bật gửi trực tiếp/.test(d.querySelector('#rstatus').textContent), 'without an endpoint the send button explains and copies the report');
     ok(N.CONFIG.adminNotifyEmails.indexOf('nabutarot@outlook.com') === 0, 'notifications go to nabutarot@outlook.com first');
@@ -192,6 +192,7 @@ async function go(hash, sel) { W().location.hash = hash; await sleep(30); return
     ok(d.querySelectorAll('.hand [data-line]').length === 7 && /Đường tim/.test(d.querySelector('#palmout').textContent) && d.querySelectorAll('.hshapes .hs').length === 4, 'palm map with seven tappable lines and the four hand shapes');
     d.querySelector('[data-pmode="mounts"]').click(); await sleep(30);
     ok(d.querySelectorAll('.hand [data-mount]').length === 7 && /Gò Mộc Tinh/.test(d.querySelector('#palmout').textContent), 'mounts mode shows seven tappable mounts');
+    ok(d.querySelector('#plines').offsetParent === null && d.querySelector('#pmounts').offsetParent !== null, 'only the active chip row is visible');
     d.querySelector('[data-pm="luna"]').click(); await sleep(30);
     ok(/Gò Mặt Trăng/.test(d.querySelector('#palmout').textContent), 'tapping a mount explains it');
     d.querySelector('[data-pmode="lines"]').click(); await sleep(30);
