@@ -311,7 +311,7 @@ main{padding:22px 0 30px}
 .banner button{color:var(--primary);font-weight:700;white-space:nowrap}
 .tabs{display:flex;gap:6px;overflow-x:auto;padding-bottom:6px;margin-bottom:14px;-webkit-overflow-scrolling:touch}
 .tabs::-webkit-scrollbar{display:none}
-.tabs button{white-space:nowrap;border:1px solid var(--rule);border-radius:999px;padding:0 14px;min-height:38px;display:inline-flex;align-items:center;justify-content:center;line-height:1.2;font-size:13.5px;font-weight:600;color:var(--fg-soft);background:var(--surface)}
+.tabs button{flex:none;white-space:nowrap;border:1px solid var(--rule);border-radius:999px;padding:0 14px;min-height:38px;display:inline-flex;align-items:center;justify-content:center;line-height:1.2;font-size:13.5px;font-weight:600;color:var(--fg-soft);background:var(--surface)}
 .tabs button.on{background:var(--primary);color:var(--primary-ink);border-color:transparent}
 .empty{text-align:center;color:var(--fg-faint);padding:24px 0}
 .acc{border:1px solid var(--rule-soft);border-radius:14px;background:var(--surface);margin-bottom:10px;overflow:hidden}
@@ -807,6 +807,10 @@ main{padding:22px 0 30px}
 .pile .pb{transform:rotateY(180deg);background:var(--tag-gold-bg);color:var(--tag-gold-ink);border:1.5px solid var(--gold);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px}.pile .pb b{font-size:26px;font-family:var(--display)}.pile .pb span{font-size:18px}
 .pollopts{display:grid;gap:8px;margin:10px 0 6px}.pollopt{position:relative;display:flex;align-items:center;gap:8px;width:100%;text-align:left;background:var(--surface-2);border:1px solid var(--rule);border-radius:12px;padding:11px 12px;font-weight:600;overflow:hidden}.pollopt .bar{position:absolute;left:0;top:0;bottom:0;width:0;background:var(--lav-soft);transition:width .6s;z-index:0}.pollopt .lbl{position:relative;flex:1;min-width:0}.pollopt .pct{position:relative;color:var(--fg-soft);font-size:13px}.pollopt.on{border-color:var(--primary);box-shadow:0 0 0 1px var(--primary) inset}.pollopt[disabled]{opacity:1;cursor:default}
 .wishjar{text-align:center}.wishjar .jar{position:relative;font-size:64px;line-height:1;height:110px;display:flex;align-items:flex-end;justify-content:center;margin-bottom:8px}.wishjar .note{position:absolute;bottom:60px;left:50%;transform:translateX(-50%);background:#FFFDF5;color:#3B2A5E;border:1px solid #E8DFC4;border-radius:6px;padding:6px 10px;font-size:12px;font-family:Georgia,serif;max-width:220px;opacity:0}.wishjar .jar.fly .note{animation:wishfly 2.4s ease-out forwards}.wishjar .star{position:absolute;font-size:16px;color:var(--gold);opacity:0}.wishjar .s1{left:30%;bottom:70px}.wishjar .s2{right:28%;bottom:40px}.wishjar .s3{left:52%;bottom:96px}.wishjar .jar.fly .star{animation:twinkle 1.6s ease-in-out .3s 2}
+.wishlist{text-align:left;margin:8px 0;padding-left:0;list-style:none;font-size:13.5px}.wishlist li{padding:6px 0;border-top:1px solid var(--rule-soft)}.wishlist .d{display:block;font-size:11.5px;color:var(--fg-faint)}
+.actgroup{margin-top:14px}.actgroup .eyebrow{text-align:left;margin-bottom:8px}.actgroup .eyebrow .cnt,.actfilter .cnt{display:inline-block;background:var(--surface-3);color:var(--fg-soft);border-radius:999px;padding:0 7px;font-size:11px;margin-left:4px;vertical-align:1px}.actgroup .actbtn{margin-bottom:8px}.actgroup .more{margin-top:0}.actgroup .btn.block{margin-top:2px}.actfilter{margin-bottom:4px}
+.actbtn b{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.pollstat{margin-top:2px}.diary .date{display:flex;justify-content:space-between;align-items:center;gap:8px;font-size:13px;color:var(--fg-soft)}.moods{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px}.mood{font-size:24px;padding:4px 8px;border-radius:12px;border:1px solid transparent}.mood.on{border-color:var(--primary);background:var(--surface-2)}.diary textarea{min-height:120px}.diary.past p{margin:6px 0 0;font-size:14.5px}
 .wishjar textarea{min-height:70px;text-align:center}.wishjar .btn{margin-top:8px}
 @keyframes wishfly{0%{opacity:0;transform:translate(-50%,10px) scale(.9)}15%{opacity:1}100%{opacity:0;transform:translate(-50%,-120px) scale(1.05)}}@keyframes twinkle{0%,100%{opacity:0;transform:scale(.6)}50%{opacity:1;transform:scale(1.2)}}
 .act .foot{justify-content:flex-start}
@@ -1150,7 +1154,8 @@ const STR = {
     actJoin: 'Tham gia', actBack: 'Tất cả hoạt động', actPileMsgOf: (n) => 'Thông điệp tụ ' + n, actTypeIcon: { pile: '🃏', poll: '📊', wish: '🌠' },
     actPileArt: 'Hình của tụ', actArtAuto: 'Tự chọn', actArts: ['Nến', 'Hoa đào', 'Trăng non', 'Thạch anh tím', 'Mặt trời', 'Chìa khoá', 'Lông vũ', 'Sóng biển'],
     translating: 'Đang dịch sang tiếng Anh…', translated: 'Đã có bản tiếng Anh (dịch tự động).', translateFail: 'Chưa dịch được sang tiếng Anh; bản tiếng Việt vẫn hiện cho mọi người.',
-    actNew: 'Hoạt động mới', actType: 'Loại', actTypes: { pile: 'Chọn tụ bài', poll: 'Bình chọn', wish: 'Điều ước' }, actResultsDate: 'Ngày đăng kết quả', actIntroLabel: 'Lời dẫn (thanh công cụ bên trên ô: đậm, nghiêng, tô sáng, ảnh, video, emoji)', actPilesHint: 'Từ 2 đến 5 tụ. Bạn có thể đăng trước với nhãn trống; vài ngày sau quay lại điền thông điệp và bật "Đã có kết quả".', actPileN: (n) => 'Tụ ' + n, actPileLabel: 'Nhãn ngắn (không bắt buộc), ví dụ: Trái · Giữa · Phải', actPileMsg: 'Thông điệp cho tụ này (đăng sau cũng được)', actPileMsgEn: 'English message (optional)', actPileAdd: 'Thêm tụ', actPileDel: 'Bớt tụ', actResultsOn: 'Đã có kết quả: cho phép lật bài', actOptions: 'Các lựa chọn, mỗi dòng một lựa chọn', actCloseOn: 'Đóng bình chọn', actExisting: 'Hoạt động đã đăng', actNeedPiles: 'Bạn điền ít nhất một tụ nhé.', actNeedOptions: 'Cần ít nhất hai lựa chọn.',
+    actFilterAll: 'Tất cả', actMore: (n) => 'Xem thêm ' + n, actLess: 'Thu gọn', actResultsPublic: 'Kết quả chung', actNoVotes: 'Chưa có phiếu nào. Bạn mở hàng nhé!', wishHistory: (n) => 'Xem ' + n + ' điều ước đã gửi', wishHide: 'Ẩn danh sách', diaryTitle: 'Nhật ký mỗi ngày', diarySub: 'hôm nay của bạn thế nào?', diaryIntro: 'Vài dòng mỗi tối về ngày hôm nay: cảm giác, một điều đáng nhớ, một điều biết ơn. Chỉ lưu trên máy bạn, không ai đọc được.', diaryMood: 'Hôm nay bạn thấy', diaryPh: 'Hôm nay…', diaryToday: 'Hôm nay', diarySaved: 'Đã lưu', diaryPast: 'Những ngày trước', diaryEmpty: 'Chưa có ngày nào. Bắt đầu từ hôm nay nhé.', diaryDel: 'Xoá ngày này', diaryCount: (n) => n + ' ngày đã ghi',
+    actNew: 'Hoạt động mới', actType: 'Loại', actTypes: { pile: 'Chọn tụ bài', poll: 'Bình chọn', wish: 'Điều ước' }, actResultsDate: 'Ngày đăng kết quả (chỉ cho tụ bài)', actIntroLabel: 'Lời dẫn (thanh công cụ bên trên ô: đậm, nghiêng, tô sáng, ảnh, video, emoji)', actPilesHint: 'Từ 2 đến 5 tụ. Bạn có thể đăng trước với nhãn trống; vài ngày sau quay lại điền thông điệp và bật "Đã có kết quả".', actPileN: (n) => 'Tụ ' + n, actPileLabel: 'Nhãn ngắn (không bắt buộc), ví dụ: Trái · Giữa · Phải', actPileMsg: 'Thông điệp cho tụ này (đăng sau cũng được)', actPileMsgEn: 'English message (optional)', actPileAdd: 'Thêm tụ', actPileDel: 'Bớt tụ', actResultsOn: 'Đã có kết quả: cho phép lật bài', actOptions: 'Các lựa chọn, mỗi dòng một lựa chọn', actCloseOn: 'Đóng bình chọn', actExisting: 'Hoạt động đã đăng', actNeedPiles: 'Bạn điền ít nhất một tụ nhé.', actNeedOptions: 'Cần ít nhất hai lựa chọn.',
     newsTitle: 'Bài viết', newsIntro: 'Tất cả bài Nabu đã đăng: dự đoán, chia sẻ, thông báo. Gõ để tìm.', searchPosts: 'Tìm trong bài viết…', noMatch: 'Không có bài nào khớp.', allPostsBtn: (n) => 'Xem tất cả bài viết (' + n + ')', watchOn: (s) => 'Xem video trên ' + s,
     addImage: 'Ảnh', addVideo: 'Video', videoPrompt: 'Dán link video (YouTube, Facebook, TikTok, Instagram):', imgNeedCloud: 'Bạn cần đăng nhập tài khoản admin để tải ảnh lên.', imgTooBig: 'Ảnh quá lớn, thử ảnh nhỏ hơn.', imgAdded: 'Đã thêm ảnh vào bài.', wrapPlaceholder: 'chữ', boxLabel: 'Hộp', formatHint: 'Chọn chữ rồi bấm B / I / U / H để in đậm, in nghiêng, gạch dưới, tô sáng. H2 là tiêu đề nhỏ, Hộp là ô tiêu đề riêng. Ảnh tải thẳng vào bài; video dán link.',
     contactTitle: 'Liên hệ', contactLink: 'Liên hệ', contactIntro: 'Viết vài dòng cho Nabu, rồi chọn kênh bạn muốn gửi.', contactWhat: 'Bạn muốn nhắn gì?', contactPlaceholder: 'Ví dụ: mình muốn hỏi về gói xem bài, hoặc góp ý cho app…', contactChoose: 'Gửi qua:', contactApp: 'Nhắn trong app Nabu Tarot', contactIg: 'Sao chép tin nhắn và mở Instagram', contactFb: 'Sao chép tin nhắn và mở Facebook', contactCopyHint: 'Với Instagram và Facebook: tin nhắn của bạn được sao chép sẵn khi bấm nút, sang bên đó bạn chỉ cần dán vào ô chat và gửi.', contactNeed: 'Bạn viết vài dòng trước nhé.', contactSent: 'Đã gửi tới Nabu. Bạn xem trả lời trong mục Tôi.', contactCopied: 'Tin nhắn đã được sao chép. Dán vào ô chat khi ứng dụng mở lên.',
@@ -1216,7 +1221,7 @@ const STR = {
 
     adminTitle: 'Bảng điều khiển',
     adminIntro: 'Trang này chỉ dành cho Nabu.',
-    adminTabs: { posts: 'Bài đăng', acts: 'Hoạt động', schedule: 'Lịch rảnh', bookings: 'Đặt lịch', inbox: 'Tin nhắn', codes: 'Mã học' },
+    adminTabs: { posts: '📝 Bài đăng', acts: '🎲 Hoạt động', schedule: '🕒 Lịch rảnh', bookings: '📅 Đặt lịch', inbox: '💬 Tin nhắn', codes: '🔑 Mã học' },
     codesIntro: 'Khách chuyển khoản xong, bạn tạo mã ở đây và gửi cho họ. Mã có ngày hết hạn ghi sẵn bên trong.', codeCourse: 'Khóa', codeStart: 'Bắt đầu từ', codeMonths: 'Số tháng', makeCode: 'Tạo mã', codeUntil: 'Hết hạn',
     token: 'GitHub token',
     tokenHint: 'Token chỉ lưu trên máy này. Xem README để tạo token.',
@@ -1403,7 +1408,8 @@ const STR = {
     actJoin: 'Join in', actBack: 'All activities', actPileMsgOf: (n) => 'Message of pile ' + n, actTypeIcon: { pile: '🃏', poll: '📊', wish: '🌠' },
     actPileArt: 'Pile picture', actArtAuto: 'Automatic', actArts: ['Candle', 'Blossom', 'Crescent', 'Amethyst', 'Sun', 'Key', 'Feather', 'Waves'],
     translating: 'Translating into English…', translated: 'English version added (automatic translation).', translateFail: 'Could not translate into English; the Vietnamese text shows for everyone.',
-    actNew: 'New activity', actType: 'Type', actTypes: { pile: 'Pick a pile', poll: 'Poll', wish: 'Wish' }, actResultsDate: 'Results date', actIntroLabel: 'Intro (the bar above the box: bold, italic, highlight, images, video, emoji)', actPilesHint: 'Two to five piles. You can publish with empty labels; come back days later, fill in the messages and switch on "Answered".', actPileN: (n) => 'Pile ' + n, actPileLabel: 'Short label (optional), e.g. Left · Middle · Right', actPileMsg: 'Message for this pile (can be added later)', actPileMsgEn: 'English message (optional)', actPileAdd: 'Add a pile', actPileDel: 'Remove a pile', actResultsOn: 'Answered: let people flip the piles', actOptions: 'Options, one per line', actCloseOn: 'Close the poll', actExisting: 'Published activities', actNeedPiles: 'Fill in at least one pile.', actNeedOptions: 'At least two options are needed.',
+    actFilterAll: 'All', actMore: (n) => 'See ' + n + ' more', actLess: 'Show less', actResultsPublic: 'Overall results', actNoVotes: 'No votes yet. Be the first!', wishHistory: (n) => 'See the ' + n + ' wishes you sent', wishHide: 'Hide the list', diaryTitle: 'Daily diary', diarySub: 'how was your day?', diaryIntro: 'A few lines each evening about today: how it felt, one thing worth remembering, one thing to be grateful for. Saved only on your device; nobody can read it.', diaryMood: 'Today you feel', diaryPh: 'Today…', diaryToday: 'Today', diarySaved: 'Saved', diaryPast: 'Earlier days', diaryEmpty: 'No days yet. Start with today.', diaryDel: 'Delete this day', diaryCount: (n) => n + ' days written',
+    actNew: 'New activity', actType: 'Type', actTypes: { pile: 'Pick a pile', poll: 'Poll', wish: 'Wish' }, actResultsDate: 'Results date (piles only)', actIntroLabel: 'Intro (the bar above the box: bold, italic, highlight, images, video, emoji)', actPilesHint: 'Two to five piles. You can publish with empty labels; come back days later, fill in the messages and switch on "Answered".', actPileN: (n) => 'Pile ' + n, actPileLabel: 'Short label (optional), e.g. Left · Middle · Right', actPileMsg: 'Message for this pile (can be added later)', actPileMsgEn: 'English message (optional)', actPileAdd: 'Add a pile', actPileDel: 'Remove a pile', actResultsOn: 'Answered: let people flip the piles', actOptions: 'Options, one per line', actCloseOn: 'Close the poll', actExisting: 'Published activities', actNeedPiles: 'Fill in at least one pile.', actNeedOptions: 'At least two options are needed.',
     newsTitle: 'Posts', newsIntro: 'Everything Nabu has posted: readings, thoughts, announcements. Type to search.', searchPosts: 'Search the posts…', noMatch: 'No post matches.', allPostsBtn: (n) => 'See all posts (' + n + ')', watchOn: (s) => 'Watch on ' + s,
     addImage: 'Image', addVideo: 'Video', videoPrompt: 'Paste a video link (YouTube, Facebook, TikTok, Instagram):', imgNeedCloud: 'Sign in with the admin account to upload images.', imgTooBig: 'Image too large, try a smaller one.', imgAdded: 'Image added to the post.', wrapPlaceholder: 'text', boxLabel: 'Box', formatHint: 'Select text, then tap B / I / U / H for bold, italic, underline, highlight. H2 is a small heading, Box a separate title box. Images upload straight into the post; videos are pasted as links.',
     contactTitle: 'Contact us', contactLink: 'Contact', contactIntro: 'Write a few lines to Nabu, then choose where to send them.', contactWhat: 'Your message', contactPlaceholder: 'For example: a question about a package, or feedback on the app…', contactChoose: 'Send via:', contactApp: 'Message inside the Nabu Tarot app', contactIg: 'Copy the message and open Instagram', contactFb: 'Copy the message and open Facebook', contactCopyHint: 'For Instagram and Facebook: your message is copied when you tap the button, so over there you only paste it into the chat and send.', contactNeed: 'Write a few lines first.', contactSent: 'Sent to Nabu. Replies show under Me.', contactCopied: 'Your message is copied. Paste it into the chat when the app opens.',
@@ -1469,7 +1475,7 @@ const STR = {
 
     adminTitle: 'Dashboard',
     adminIntro: 'This page is for Nabu only.',
-    adminTabs: { posts: 'Posts', acts: 'Activities', schedule: 'Availability', bookings: 'Bookings', inbox: 'Inbox', codes: 'Codes' },
+    adminTabs: { posts: '📝 Posts', acts: '🎲 Activities', schedule: '🕒 Hours', bookings: '📅 Bookings', inbox: '💬 Inbox', codes: '🔑 Codes' },
     codesIntro: 'Once a client has paid, make a code here and send it to them. The expiry date is built into the code.', codeCourse: 'Course', codeStart: 'Starts', codeMonths: 'Months', makeCode: 'Make code', codeUntil: 'Expires',
     token: 'GitHub token',
     tokenHint: 'The token stays on this device only. See the README to create one.',
@@ -13089,12 +13095,24 @@ ROUTES.report = { nav: 'me', render: renderReport };
    signed-in people go to votes/{activityId_uid} so results can be counted;
    guests keep their choice on the device. */
 const ACTS = { items: null, loaded: false, votes: {} };
+/* Two sources: what Nabu publishes from the dashboard (cloud, or the mirrored
+   activities.json) and the stock that ships with the app (activities-stock.json:
+   polls and wish jars written in advance). A stock item shows unless the cloud
+   has an item with the same id (edited copy wins) or lists it under hidden
+   (deleted in the dashboard). */
 async function loadActs() {
   if (ACTS.loaded && ACTS.items) return ACTS.items;
-  const r = await loadContent('activities', 'activities.json', 'nabu-acts');
-  ACTS.items = (r.data && r.data.items) || []; ACTS.loaded = true;
+  const [r, s] = await Promise.all([loadContent('activities', 'activities.json', 'nabu-acts'), loadJSON('activities-stock.json', 'nabu-acts-stock')]);
+  const items = ((r.data && r.data.items) || []).slice();
+  const hidden = (r.data && r.data.hidden) || [];
+  const have = {}; items.forEach((a) => { have[a.id] = true; });
+  ACTS.stock = {};
+  ((s.data && s.data.items) || []).forEach((a) => { ACTS.stock[a.id] = true; if (!have[a.id] && hidden.indexOf(a.id) < 0) items.push(a); });
+  ACTS.hidden = hidden.slice();
+  ACTS.items = items; ACTS.loaded = true;
   return ACTS.items;
 }
+const actsDoc = (items) => { const doc = { items: items }; if (ACTS.hidden && ACTS.hidden.length) doc.hidden = ACTS.hidden; return doc; };
 const myChoices = () => store.get('nabu-act-choices', {}) || {};
 function setChoice(aid, choice) { const c = myChoices(); c[aid] = choice; store.set('nabu-act-choices', c); }
 async function sendVote(a, choice) {
@@ -13146,12 +13164,13 @@ function actHTML(a, compact) {
   } else if (a.type === 'poll') {
     const opts = a.options || [], voted = mine != null, show = voted || a.closed;
     body = '<div class="pollopts" data-poll="' + a.id + '">' + opts.map((o, i) => '<button type="button" class="pollopt' + (String(mine) === String(i) ? ' on' : '') + '" data-opt="' + i + '"' + (show ? ' disabled' : '') + '><span class="bar"></span><span class="lbl">' + esc(L(o)) + '</span><span class="pct"></span></button>').join('') + '</div>'
-      + '<p class="hint pollnote">' + esc(voted ? S.actVoted : a.closed ? S.actClosedNote : (BE.enabled && BE.user ? S.actVoteHint : S.actVoteLogin)) + '</p>';
+      + '<p class="hint pollnote">' + esc(voted ? S.actVoted : a.closed ? S.actClosedNote : (BE.enabled && BE.user ? S.actVoteHint : S.actVoteLogin)) + '</p><p class="hint pollstat">' + esc(S.actResultsPublic) + ': …</p>';
   } else if (a.type === 'wish') {
     const wishes = (store.get('nabu-wishes', []) || []).filter((w) => w.aid === a.id);
     body = '<div class="wishjar" data-wish="' + a.id + '"><div class="jar"><span class="star s1">✦</span><span class="star s2">✧</span><span class="star s3">✦</span><div class="note" hidden></div>🫙</div>'
       + '<textarea class="wishtext" placeholder="' + esc(S.actWishPh) + '"></textarea><button type="button" class="btn primary block" data-wishsend>🌠 ' + esc(S.actWishSend) + '</button>'
-      + '<p class="hint wishcount">' + esc(wishes.length ? S.actWishCount(wishes.length) : S.actWishHint) + '</p>' + (wishes.length ? '<button type="button" class="linkbtn" data-wishclear>' + esc(S.actWishClear) + '</button>' : '') + '</div>';
+      + '<p class="hint wishcount">' + esc(wishes.length ? S.actWishCount(wishes.length) : S.actWishHint) + '</p>'
+      + (wishes.length ? '<button type="button" class="linkbtn" data-wishlist>' + esc(S.wishHistory(wishes.length)) + '</button><ul class="wishlist" hidden>' + wishes.slice().reverse().map((w) => '<li><span class="d">' + esc(fmtDate(String(w.at).slice(0, 10))) + '</span>' + esc(w.text) + '</li>').join('') + '</ul> · <button type="button" class="linkbtn" data-wishclear>' + esc(S.actWishClear) + '</button>' : '') + '</div>';
   }
   return '<article class="post act act-' + esc(a.type) + '" data-act="' + esc(a.id) + '">' + actDateLine(a) + '<h2>' + esc(L(a.title)) + '</h2>' + (a.intro ? '<div class="body">' + richHTML(L(a.intro)) + '</div>' : '') + body
     + (compact ? '<div class="foot"><a class="btn sm primary" href="#/play/' + esc(a.id) + '">' + esc(S.actJoin) + ' →</a><a class="btn sm" href="#/play">' + esc(S.actAll) + '</a></div>' : '') + '</article>';
@@ -13179,8 +13198,8 @@ function bindActs(root, list) {
         toast('✓');
       }));
     } else if (a.type === 'poll') {
-      const draw = (counts) => { const total = counts && counts.total || 0; $$('[data-opt]', card).forEach((b) => { const n = counts ? (counts[b.getAttribute('data-opt')] || 0) : 0, pct = total ? Math.round(n * 100 / total) : 0; $('.bar', b).style.width = pct + '%'; $('.pct', b).textContent = total ? pct + '%' : ''; }); const note = $('.pollnote', card); if (note && total) note.textContent += ' · ' + S.actVotes(total); };
-      if (myChoices()[a.id] != null || a.closed) countVotes(a.id).then(draw);
+      const draw = (counts) => { const total = counts && counts.total || 0; $$('[data-opt]', card).forEach((b) => { const n = counts ? (counts[b.getAttribute('data-opt')] || 0) : 0, pct = total ? Math.round(n * 100 / total) : 0; $('.bar', b).style.width = pct + '%'; $('.pct', b).textContent = total ? pct + '%' : ''; }); const st = $('.pollstat', card); if (st) st.textContent = S.actResultsPublic + ': ' + (total ? S.actVotes(total) : S.actNoVotes); };
+      countVotes(a.id).then(draw);
       $$('[data-opt]', card).forEach((b) => b.addEventListener('click', async () => {
         if (!(BE.enabled && BE.user)) { toast(S.actVoteLogin); location.hash = '#/me?next=play'; return; }
         const i = Number(b.getAttribute('data-opt')); setChoice(a.id, i); await sendVote(a, i);
@@ -13197,12 +13216,29 @@ function bindActs(root, list) {
         const mine = list.filter((w) => w.aid === a.id).length; $('.wishcount', card).textContent = S.actWishCount(mine); toast(S.actWishSent);
         setTimeout(() => { note.hidden = true; }, 2600);
       });
+      const wl = $('[data-wishlist]', card); if (wl) wl.addEventListener('click', () => { const ul = $('.wishlist', card); ul.hidden = !ul.hidden; wl.textContent = ul.hidden ? S.wishHistory(ul.children.length) : S.wishHide; });
       const cl = $('[data-wishclear]', card); if (cl) cl.addEventListener('click', () => { if (!confirm(S.actWishClearConfirm)) return; store.set('nabu-wishes', (store.get('nabu-wishes', []) || []).filter((w) => w.aid !== a.id)); $('.wishcount', card).textContent = S.actWishHint; cl.remove(); });
     }
   });
   hydrateImages(root);
 }
 function actStatus(a) { const S = T(); return actAnswered(a) ? '✓ ' + S.actHasResults : a.closed ? S.actClosed : S.actOpen; }
+/* The list grows: one labelled group per kind, the newest five shown, the rest behind "see more", plus filter chips. */
+const ACT_GROUPS = [['pile', '🃏'], ['poll', '📊'], ['wish', '🌠']];
+function actGroupsHTML(list) {
+  const S = T(), SHOW = 5;
+  const chips = '<div class="chips actfilter"><button type="button" class="chip on" data-filter="all">' + esc(S.actFilterAll) + '</button>' + ACT_GROUPS.map((g) => { const n = list.filter((a) => a.type === g[0]).length; return n ? '<button type="button" class="chip" data-filter="' + g[0] + '">' + g[1] + ' ' + esc(S.actTypes[g[0]]) + ' <span class="cnt">' + n + '</span></button>' : ''; }).join('') + '</div>';
+  return chips + ACT_GROUPS.map((g) => {
+    const gl = list.filter((a) => a.type === g[0]); if (!gl.length) return '';
+    return '<div class="actgroup" data-group="' + g[0] + '"><div class="eyebrow">' + g[1] + ' ' + esc(S.actTypes[g[0]]) + ' <span class="cnt">' + gl.length + '</span></div>' + gl.slice(0, SHOW).map(actButtonHTML).join('')
+      + (gl.length > SHOW ? '<div class="more" hidden>' + gl.slice(SHOW).map(actButtonHTML).join('') + '</div><button type="button" class="btn sm block" data-more>' + esc(S.actMore(gl.length - SHOW)) + '</button>' : '') + '</div>';
+  }).join('');
+}
+function bindActGroups(root) {
+  const S = T();
+  $$('[data-filter]', root).forEach((b) => b.addEventListener('click', () => { const f = b.getAttribute('data-filter'); $$('[data-filter]', root).forEach((x) => x.classList.toggle('on', x === b)); $$('.actgroup', root).forEach((g) => { g.hidden = f !== 'all' && g.getAttribute('data-group') !== f; }); }));
+  $$('[data-more]', root).forEach((b) => b.addEventListener('click', () => { const more = b.previousElementSibling; more.hidden = !more.hidden; b.textContent = more.hidden ? S.actMore(more.children.length) : S.actLess; }));
+}
 function actButtonHTML(a) {
   const S = T(), mine = myChoices()[a.id];
   return '<a class="actbtn act-' + esc(a.type) + (actOpen(a) ? ' live' : '') + '" href="#/play/' + esc(a.id) + '"><span class="ic">' + (S.actTypeIcon[a.type] || '🎲') + '</span><span class="body"><b>' + esc(L(a.title)) + '</b><span class="meta">' + esc(fmtDate(a.date)) + ' · ' + esc(S.actTypes[a.type] || a.type) + ' · ' + esc(actStatus(a)) + (a.type === 'pile' && mine != null ? ' · ' + esc(S.actPicked(Number(mine) + 1)) : '') + '</span></span><span class="chev">›</span></a>';
@@ -13210,6 +13246,7 @@ function actButtonHTML(a) {
 async function renderPlay(args) {
   const S = T(), m = $('#main');
   const list = (await loadActs()).slice().sort((a, b) => String(b.date).localeCompare(String(a.date)));
+  if (args && args[0] === 'diary') { renderDiary(); return; }
   if (args && args[0]) {
     const a = list.filter((x) => x.id === args[0])[0];
     if (!a) { redirect('#/play'); return; }
@@ -13217,8 +13254,32 @@ async function renderPlay(args) {
     bindActs($('#acts'), list);
     return;
   }
+  const diaryN = Object.keys(store.get('nabu-diary', {}) || {}).length;
   m.innerHTML = '<div class="eyebrow">' + esc(CONFIG.brand) + '</div><h1 style="margin-bottom:6px">' + esc(S.actTitle) + '</h1><p class="muted">' + esc(S.actIntro) + '</p><div id="acts" class="actlist">'
-    + (list.length ? list.map(actButtonHTML).join('') : '<p class="empty">' + esc(S.actEmpty) + '</p>') + '</div>';
+    + '<a class="actbtn act-diary live" href="#/play/diary"><span class="ic">📔</span><span class="body"><b>' + esc(S.diaryTitle) + '</b><span class="meta">' + esc(S.diarySub) + (diaryN ? ' · ' + esc(S.diaryCount(diaryN)) : '') + '</span></span><span class="chev">›</span></a>'
+    + (list.length ? actGroupsHTML(list) : '<p class="empty">' + esc(S.actEmpty) + '</p>') + '</div>';
+  bindActGroups(m);
+}
+/* ---- the daily diary: one entry per day, on the device only ---- */
+const MOODS = ['😄', '🙂', '😐', '😔', '😢', '😤', '😴', '🥰'];
+function renderDiary() {
+  const S = T(), m = $('#main'), today = isoDate(new Date());
+  const all = () => store.get('nabu-diary', {}) || {};
+  const draw = () => {
+    const d = all(), cur = d[today] || { m: '', t: '' }, days = Object.keys(d).filter((k) => k !== today).sort().reverse();
+    m.innerHTML = '<div class="eyebrow">' + esc(S.actTitle) + '</div><h1 style="margin-bottom:6px">📔 ' + esc(S.diaryTitle) + '</h1><p class="muted">' + esc(S.diaryIntro) + '</p>'
+      + '<div class="card diary"><div class="date"><span>' + esc(S.diaryToday) + ' · ' + esc(fmtDate(today)) + '</span><span class="faint" id="dsaved">' + (cur.t || cur.m ? esc(S.diarySaved) : '') + '</span></div>'
+      + '<p class="hint" style="margin:8px 0 6px">' + esc(S.diaryMood) + '</p><div class="moods">' + MOODS.map((x) => '<button type="button" class="mood' + (cur.m === x ? ' on' : '') + '" data-mood="' + x + '">' + x + '</button>').join('') + '</div>'
+      + '<textarea id="dtext" placeholder="' + esc(S.diaryPh) + '">' + esc(cur.t || '') + '</textarea></div>'
+      + '<h3 style="margin:16px 0 8px">' + esc(S.diaryPast) + (days.length ? ' <span class="faint">· ' + esc(S.diaryCount(days.length + (cur.t || cur.m ? 1 : 0))) + '</span>' : '') + '</h3>'
+      + (days.length ? days.map((k) => '<div class="card diary past" data-day="' + k + '"><div class="date"><span>' + (d[k].m ? d[k].m + ' ' : '') + esc(fmtDate(k)) + '</span><button type="button" class="linkbtn" data-ddel="' + k + '">' + esc(S.diaryDel) + '</button></div><p>' + esc(d[k].t || '').replace(/\n/g, '<br>') + '</p></div>').join('') : '<p class="hint">' + esc(S.diaryEmpty) + '</p>')
+      + '<p style="margin-top:12px"><a href="#/play" class="backlink">← ' + esc(S.actBack) + '</a></p>';
+    const save = () => { const d2 = all(); const t = $('#dtext').value, mo = ($('.mood.on', m) || {}).getAttribute ? $('.mood.on', m).getAttribute('data-mood') : ''; if (t.trim() || mo) d2[today] = { m: mo || '', t: t }; else delete d2[today]; store.set('nabu-diary', d2); $('#dsaved').textContent = t.trim() || mo ? S.diarySaved : ''; };
+    $('#dtext').addEventListener('input', save);
+    $$('[data-mood]', m).forEach((b) => b.addEventListener('click', () => { const on = b.classList.contains('on'); $$('[data-mood]', m).forEach((x) => x.classList.remove('on')); if (!on) b.classList.add('on'); save(); }));
+    $$('[data-ddel]', m).forEach((b) => b.addEventListener('click', () => { if (!confirm(S.confirmDel)) return; const d2 = all(); delete d2[b.getAttribute('data-ddel')]; store.set('nabu-diary', d2); draw(); }));
+  };
+  draw();
 }
 /* The newest open activity, shown on the home screen. */
 async function homeActHTML(root) {
@@ -13268,7 +13329,7 @@ function adminActivities(p) {
     $('#apdel').addEventListener('click', () => { cur = read(); if ((cur.piles || []).length > 2) cur.piles.pop(); draw(); });
     $('#anew').addEventListener('click', () => { cur = null; editing = null; draw(); });
     $$('[data-aedit]', p).forEach((b) => b.addEventListener('click', () => { cur = JSON.parse(JSON.stringify(items.filter((x) => x.id === b.getAttribute('data-aedit'))[0])); editing = cur.id; draw(); $('#ahead').scrollIntoView({ behavior: 'smooth' }); }));
-    $$('[data-adel]', p).forEach((b) => b.addEventListener('click', async () => { if (!confirm(S.confirmDel)) return; items = items.filter((x) => x.id !== b.getAttribute('data-adel')); try { await BE.setContent('activities', { items: items }); ACTS.items = items; toast('✓'); draw(); } catch (e) { status(S.publishFail + ': ' + e.message, 'err'); } }));
+    $$('[data-adel]', p).forEach((b) => b.addEventListener('click', async () => { if (!confirm(S.confirmDel)) return; const id = b.getAttribute('data-adel'); items = items.filter((x) => x.id !== id); if (ACTS.stock && ACTS.stock[id]) ACTS.hidden = (ACTS.hidden || []).concat(id); try { await BE.setContent('activities', actsDoc(items)); ACTS.items = items; toast('✓'); draw(); } catch (e) { status(S.publishFail + ': ' + e.message, 'err'); } }));
     $('#apub').addEventListener('click', async () => {
       const a = read();
       if (!a.title.vi) { status(S.needBody, 'err'); return; }
@@ -13281,7 +13342,7 @@ function adminActivities(p) {
         catch (e) { status(S.translateFail, 'err'); }
       }
       items = [a].concat(items.filter((x) => x.id !== a.id));
-      try { await BE.setContent('activities', { items: items }); ACTS.items = items; ACTS.loaded = true; status(S.published, 'ok'); cur = null; editing = null; draw(); }
+      try { await BE.setContent('activities', actsDoc(items)); ACTS.items = items; ACTS.loaded = true; status(S.published, 'ok'); cur = null; editing = null; draw(); }
       catch (e) { status(S.publishFail + ': ' + e.message, 'err'); }
     });
   };
@@ -13596,8 +13657,8 @@ function adminCodes(p) {
 ROUTES.admin = { nav: '', render: renderAdmin };
 
 /* ============================ boot ============================ */
-window.APP_VERSION = 'v68';
-window.NABU = { CONFIG: CONFIG, LESSONS: LESSONS, localAnswer: localAnswer, compatVerdict: compatVerdict, numerologyOf: numerologyOf, ZDEEP: ZDEEP, lunarToday: lunarToday, solarToLunar: solarToLunar, DECK: DECK, INSIGHT: INSIGHT, KW: KW, ASK: ASK, TOPICS: TOPICS, GUIDES: GUIDES, SERVICES: SERVICES, COURSES: COURSES, ACCESS: ACCESS, makeCode: makeCode, parseCode: parseCode, ZODIAC: ZODIAC, pick: pick, book: book,
+window.APP_VERSION = 'v69';
+window.NABU = { CONFIG: CONFIG, loadActs: loadActs, LESSONS: LESSONS, localAnswer: localAnswer, compatVerdict: compatVerdict, numerologyOf: numerologyOf, ZDEEP: ZDEEP, lunarToday: lunarToday, solarToLunar: solarToLunar, DECK: DECK, INSIGHT: INSIGHT, KW: KW, ASK: ASK, TOPICS: TOPICS, GUIDES: GUIDES, SERVICES: SERVICES, COURSES: COURSES, ACCESS: ACCESS, makeCode: makeCode, parseCode: parseCode, ZODIAC: ZODIAC, pick: pick, book: book,
   insightHTML: insightHTML, insightOf: insightOf, sunSignIndex: sunSignIndex, lifePath: lifePath, PROFILE: () => PROFILE, BE: BE, ACTS: ACTS };
 BE.initP = BE.init().catch(() => { /* backend unreachable: the app runs device-only */ });
 // The Gemini key is a dashboard setting kept in the app cloud (content/ai), never in the source.
