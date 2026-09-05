@@ -171,8 +171,8 @@ function notifyState() { return !('Notification' in window) ? 'unsupported' : No
 async function askNotify() { if (!('Notification' in window)) return 'unsupported'; try { return await Notification.requestPermission(); } catch (e) { return Notification.permission; } }
 function renderFooter() {
   const S = T(), links = [];
-  if (CONFIG.instagram) links.push('<a href="https://instagram.com/' + esc(CONFIG.instagram) + '" target="_blank" rel="noopener">Instagram</a>');
-  if (CONFIG.facebookUrl) links.push('<a href="' + esc(CONFIG.facebookUrl) + '" target="_blank" rel="noopener">Facebook</a>');
+  if (CONFIG.instagram) links.push('<a href="https://instagram.com/' + esc(CONFIG.instagram) + '" target="_blank" rel="noopener" title="Instagram">IG</a>');
+  if (CONFIG.facebookUrl) links.push('<a href="' + esc(CONFIG.facebookUrl) + '" target="_blank" rel="noopener" title="Facebook">FB</a>');
   links.push('<a href="#/contact">' + esc(S.contactLink) + '</a>');
   links.push('<a href="#/install">' + esc(S.installLink) + '</a>');
   links.push('<a href="#/privacy">' + esc(S.privacyLink) + '</a>');

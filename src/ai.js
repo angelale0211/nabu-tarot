@@ -273,7 +273,7 @@ async function translateToEN(text) {
   const order = [AI.model, CONFIG.geminiModel].concat(GEMINI_MODELS).filter((m, k, arr) => m && arr.indexOf(m) === k);
   for (const model of order) {
     const r = await withTimeout(fetch('https://generativelanguage.googleapis.com/v1beta/models/' + encodeURIComponent(model) + ':generateContent?key=' + encodeURIComponent(CONFIG.geminiKey), { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ contents: [{ role: 'user', parts: [{ text: prompt }] }], generationConfig: { temperature: 0.2, maxOutputTokens: 3000 } }) }), 40000);
-    if (!r.ok) { if ([404, 429, 503].indexOf(r.status) > -1) continue; throw new Error('Gemini ' + r.status); }
+    if (!r.ok) { if ([404, 429, 503].indexOf(r.status) > -1) { await new Promise((res) => setTimeout(res, 1500)); continue; } throw new Error('Gemini ' + r.status); }
     const j = await r.json(), cand = (j.candidates || [])[0], out = ((cand && cand.content && cand.content.parts) || []).map((p) => p.text || '').join('').trim();
     if (out) { AI.model = model; return out; }
   }
