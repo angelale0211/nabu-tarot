@@ -50,9 +50,9 @@ function tourHTML(step) {
   const t = TOUR[step], txt = t[lang];
   return '<div class="card" id="tour" style="text-align:center;border-color:var(--lav)"><div style="font-size:40px">' + t.ic + '</div>'
     + '<h3 style="margin:6px 0">' + esc(txt[0]) + '</h3><p class="muted" style="font-size:14.5px">' + esc(txt[1]) + '</p>'
-    + '<div class="row" style="justify-content:center"><span class="faint">' + (step + 1) + ' / ' + TOUR.length + '</span></div>'
-    + '<div class="row" style="justify-content:center;margin-top:10px"><button class="btn sm" data-tour="skip">' + esc(T().dismiss) + '</button>' + (step > 0 ? '<button class="btn sm" data-tour="prev" aria-label="back">←</button>' : '')
-    + '<button class="btn sm primary" data-tour="next">' + (step === TOUR.length - 1 ? '✓' : '→') + '</button></div></div>';
+    // Both arrows are always there, in the same place: back is greyed out on the first step, forward becomes a tick on the last.
+    + '<div class="tournav"><button class="btn sm" data-tour="prev" aria-label="back"' + (step === 0 ? ' disabled' : '') + '>←</button><span class="faint">' + (step + 1) + ' / ' + TOUR.length + '</span><button class="btn sm primary" data-tour="next" aria-label="next">' + (step === TOUR.length - 1 ? '✓' : '→') + '</button></div>'
+    + '<button class="linkbtn" data-tour="skip" style="margin-top:8px;font-size:13px">' + esc(T().dismiss) + '</button></div>';
 }
 /* Once the tour is done or closed it shrinks to a one-line bar that can reopen it. */
 function tourMiniHTML() {
