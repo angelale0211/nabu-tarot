@@ -173,6 +173,7 @@ function renderFooter() {
   if (CONFIG.instagram) links.push('<a href="https://instagram.com/' + esc(CONFIG.instagram) + '" target="_blank" rel="noopener">Instagram</a>');
   if (CONFIG.facebookUrl) links.push('<a href="' + esc(CONFIG.facebookUrl) + '" target="_blank" rel="noopener">Facebook</a>');
   links.push('<a href="#/contact">' + esc(S.contactLink) + '</a>');
+  links.push('<a href="#/privacy">' + esc(S.privacyLink) + '</a>');
   links.push('<a href="#/report">' + esc(S.reportLink) + '</a>');
   $('#foot').innerHTML = '<div class="wrap">' + LOGO + '<div>' + esc(L(CONFIG.tagline)) + '<div class="links">' + links.join(' · ') + '</div><div class="copy">© ' + new Date().getFullYear() + ' ' + esc(CONFIG.brand) + '. ' + esc(S.rights) + '</div></div></div>';
 }
@@ -215,6 +216,11 @@ function shrinkImage(file, max, quality) {
     img.src = url;
   });
 }
+/* Inside the Google Play build (a Trusted Web Activity) the page is opened with an android-app:// referrer. Play's
+   rules forbid pointing people to outside payment for digital content, so that build hides course prices and
+   the "buy" buttons and only takes an unlock code. Remembered on the device after the first launch. */
+try { if (/^android-app:\/\//.test(document.referrer || '')) store.set('nabu-twa', true); } catch (e) { /* no referrer */ }
+const isTWA = () => store.get('nabu-twa', false) === true;
 const EMOJIS = ['✨', '💜', '🔮', '🌙', '☀️', '⭐', '🌟', '💫', '🃏', '🗝️', '🌸', '🌿', '🕯️', '🧿', '💌', '❤️', '💔', '💰', '💼', '📚', '😊', '🙏', '👉', '⚠️', '✅', '📅', '🎁', '🎉'];
 /* A booking as a calendar file with four reminders (24 h, 6 h, 1 h, 15 min).
    Times are Vietnam time (UTC+7, no daylight saving), written as UTC. */
@@ -337,6 +343,7 @@ function screenLabel(h) {
   if (r === 'prices') return S.priceTitle;
   if (r === 'news') return S.newsTitle;
   if (r === 'contact') return S.contactTitle;
+  if (r === 'privacy') return S.privacyTitle;
   if (r === 'me') return S.nav.me;
   if (r === 'learn') { if (!a.length) return S.learnTitle; if (a.length === 1 && S.cats[a[0]]) return S.cats[a[0]]; if (a[0] === 'fortune' && a.length === 2) return S.cats.fortune; }
   return S.back;

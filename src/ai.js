@@ -291,7 +291,13 @@ function aiPanelHTML(ctx) {
     + '<div class="chatbar"><textarea data-ai-q placeholder="' + esc(S.aiPlaceholder) + '"></textarea><button class="btn primary" data-ai-send>' + esc(S.aiAsk) + '</button></div>'
     + '<p class="faint" style="margin-top:8px">' + esc(S.aiNote) + '</p></div>';
 }
-const aiMsgHTML = (role, text) => '<div class="msg ' + (role === 'user' ? 'me' : 'them') + '">' + paras(text) + '</div>';
+const aiMsgHTML = (role, text) => '<div class="msg ' + (role === 'user' ? 'me' : 'them') + '">' + (role === 'user' ? '' : '<button type="button" class="flag" data-ai-flag title="' + esc(T().aiFlag) + '" aria-label="' + esc(T().aiFlag) + '">⚑</button>') + paras(text) + '</div>';
+/* A flagged answer goes to Nabu's reports (signed in) or waits on the device; either way the person is thanked. */
+async function flagAnswer(question, answer) {
+  const rec = { type: 'ai', question: question, text: answer, info: typeof reportInfo === 'function' ? reportInfo() : '', lang: lang };
+  try { if (BE.enabled && BE.user) { await BE.db.collection('reports').add(Object.assign({ uid: BE.user.uid, email: BE.user.email || '', at: firebase.firestore.FieldValue.serverTimestamp() }, rec)); return; } } catch (e) { /* kept locally below */ }
+  const list = store.get('nabu-ai-flags', []) || []; list.push(Object.assign({ at: new Date().toISOString() }, rec)); store.set('nabu-ai-flags', list.slice(-20));
+}
 function bindAI(root) {
   $$('.ai', root).forEach((panel) => {
     const ctx = JSON.parse(panel.getAttribute('data-ai')), key = panel.getAttribute('data-ai'), ta = $('[data-ai-q]', panel), chat = $('.ai-chat', panel), send = $('[data-ai-send]', panel);
@@ -308,6 +314,11 @@ function bindAI(root) {
       push('assistant', a); ta.focus();
     };
     $('[data-ai-send]', panel).addEventListener('click', () => ask(ta.value));
+    chat.addEventListener('click', (e) => {
+      const b = e.target.closest && e.target.closest('[data-ai-flag]'); if (!b) return;
+      const bubble = b.closest('.msg'), prev = bubble && bubble.previousElementSibling;
+      flagAnswer(prev && prev.classList.contains('me') ? prev.textContent : '', bubble ? bubble.textContent.replace(/^⚑/, '').trim() : ''); b.disabled = true; b.textContent = '✓'; toast(T().aiFlagged);
+    });
     ta.addEventListener('keydown', (e) => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); ask(ta.value); } });
     $$('[data-ai-sug]', panel).forEach((b) => b.addEventListener('click', () => ask(b.textContent)));
   });

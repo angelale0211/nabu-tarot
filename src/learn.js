@@ -14,10 +14,10 @@ function paywallHTML(courseId) {
   const expired = a && a < isoDate(new Date());
   return '<div class="paywall"><div class="ic">🔒</div><h2>' + esc(L(c.name)) + '</h2><p class="muted">' + esc(L(c.blurb)) + '</p>'
     + '<ul class="inc">' + L(c.includes).map((x) => '<li>' + esc(x) + '</li>').join('') + '</ul>'
-    + '<div class="price">' + fmtPrice(c.price) + ' <span>/ ' + c.months + ' ' + esc(S.months6) + '</span></div>'
+    + (isTWA() ? '' : '<div class="price">' + fmtPrice(c.price) + ' <span>/ ' + c.months + ' ' + esc(S.months6) + '</span></div>')
     + (expired ? '<p class="hint err">' + esc(S.courseExpired(a)) + '</p>' : '')
-    + '<a class="btn primary block" data-buy="' + courseId + '" href="' + (CONFIG.instagram ? 'https://ig.me/m/' + esc(CONFIG.instagram) : '#/me') + '" target="_blank" rel="noopener">' + esc(S.buyCourse) + '</a>'
-    + '<p class="hint" style="margin:8px 0">' + esc(S.buyHint) + '</p>'
+    + (isTWA() ? '<p class="hint" style="margin:8px 0">' + esc(S.storeCodeHint) + '</p>' : '<a class="btn primary block" data-buy="' + courseId + '" href="' + (CONFIG.instagram ? 'https://ig.me/m/' + esc(CONFIG.instagram) : '#/me') + '" target="_blank" rel="noopener">' + esc(S.buyCourse) + '</a>'
+    + '<p class="hint" style="margin:8px 0">' + esc(S.buyHint) + '</p>')
     + '<div class="row"><input id="ccode" placeholder="NABU-T-…" autocapitalize="characters" style="flex:1"><button class="btn" id="cunlock">' + esc(S.unlock) + '</button></div><p class="hint" id="cstatus"></p></div>';
 }
 function bindPaywall(root, after) {
@@ -294,8 +294,8 @@ function renderManifest() {
   const S = T(), m = $('#main'), all = GUIDES.filter((g) => g.cat === 'manifest'), free = all.filter((g) => FREE_MANI.indexOf(g.id) > -1), rest = all.filter((g) => FREE_MANI.indexOf(g.id) < 0), has = ACCESS.has('manifest'), c = courseOf('manifest');
   m.innerHTML = backLink('#/learn', S.learnTitle) + '<h1 style="margin-bottom:6px">' + esc(S.cats.manifest) + '</h1><p class="muted">' + esc(S.maniIntro) + '</p>'
     + '<div class="eyebrow">' + esc(S.maniFree) + '</div>' + free.map(guideRow).join('')
-    + '<div class="eyebrow" style="margin-top:18px">' + esc(S.maniFull) + (has ? ' ✓' : ' · ' + esc(S.perYear(fmtPrice(c.price)))) + '</div>'
-    + (has ? '' : '<div class="mani-banner"><b>✨ ' + esc(L(c.name)) + '</b><ul>' + S.maniIncl.map((x) => '<li>' + esc(x) + '</li>').join('') + '</ul><a class="btn primary block" href="#/learn/manifest/unlock">🔓 ' + esc(S.maniUnlock) + ' · ' + esc(S.perYear(fmtPrice(c.price))) + '</a></div>')
+    + '<div class="eyebrow" style="margin-top:18px">' + esc(S.maniFull) + (has ? ' ✓' : (isTWA() ? '' : ' · ' + esc(S.perYear(fmtPrice(c.price))))) + '</div>'
+    + (has ? '' : '<div class="mani-banner"><b>✨ ' + esc(L(c.name)) + '</b><ul>' + S.maniIncl.map((x) => '<li>' + esc(x) + '</li>').join('') + '</ul><a class="btn primary block" href="#/learn/manifest/unlock">🔓 ' + esc(S.maniUnlock) + (isTWA() ? '' : ' · ' + esc(S.perYear(fmtPrice(c.price)))) + '</a></div>')
     + rest.map(guideRow).join('');
 }
 function renderGuideList(cat) {

@@ -17,12 +17,16 @@ service cloud.firestore {
         allow read: if isOwner(uid) || isAdmin();
         allow create: if (isOwner(uid) && request.resource.data.from == 'user')
                       || (isAdmin() && request.resource.data.from == 'nabu');
+        // Account deletion inside the app removes the person's own messages.
+        allow delete: if isOwner(uid) || isAdmin();
       }
     }
     match /bookings/{id} {
       allow create: if request.auth != null && request.resource.data.uid == request.auth.uid;
       allow read: if isAdmin() || (request.auth != null && resource.data.uid == request.auth.uid);
-      allow update, delete: if isAdmin();
+      allow update: if isAdmin();
+      // Nabu manages bookings; a person may remove their own when deleting the account.
+      allow delete: if isAdmin() || (request.auth != null && resource.data.uid == request.auth.uid);
     }
     // Posts and availability edited in the dashboard: everyone reads, Nabu writes.
     match /content/{doc} {

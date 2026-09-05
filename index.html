@@ -640,6 +640,7 @@ main{padding:22px 0 30px}
 .ifthen{display:grid;gap:8px}.it{display:grid;grid-template-columns:1fr 1fr;gap:6px;font-size:13px}.it span{border-radius:12px;padding:10px 12px}.it .if{background:var(--tag-pink-bg);color:var(--tag-pink-fg)}.it .then{background:var(--tag-green-bg);color:var(--tag-green-fg)}
 [hidden]{display:none!important}
 .tourmini{display:flex;align-items:center;justify-content:space-between;gap:10px;background:var(--surface);border:1px dashed var(--lav);border-radius:14px;padding:8px 8px 8px 14px;margin-bottom:14px;font-size:14px;font-weight:600}
+.msg .flag{float:right;margin:0 0 4px 8px;font-size:12px;opacity:.55;padding:2px 6px;border-radius:8px;background:none;color:inherit}.msg .flag[disabled]{opacity:.9}.card.danger{border-color:var(--err)}
 .linkbtn{color:var(--link);font-weight:700;text-decoration:underline;font-size:inherit}
 .backlink{display:inline-flex;align-items:center;gap:4px;min-height:36px;padding:0 4px;margin-left:-4px;border-radius:10px;font-weight:600;text-decoration:none}.backlink:active{background:var(--surface-2)}
 .hshapes{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin:10px 0}.hs{background:var(--surface);border:1.5px solid;border-radius:14px;padding:10px;text-align:center;font-size:12px}.hshape{width:64px;height:auto;display:block;margin:0 auto 4px}.hs b{display:block;font-size:14px}.hs span{color:var(--fg-faint);display:block}.hs p{margin:4px 0 0;font-size:12.5px;text-align:left}
@@ -1047,7 +1048,7 @@ const STR = {
     learnTitle: 'Kho kiến thức',
     learnIntro: 'Tarot, Lenormand, chiêm tinh, manifestation và bói toán.',
     cats: { tarot: 'Tarot', lenormand: 'Lenormand', astro: 'Chiêm tinh', manifest: 'Manifestation', fortune: 'Bói toán' },
-    catSub: { tarot: '78 lá + 8 trải bài · 300.000đ / 6 tháng', lenormand: '36 lá + 7 trải bài · 300.000đ / 6 tháng', astro: '12 cung, hành tinh, nhà', manifest: 'cách làm + giới hạn', fortune: 'thần số, chỉ tay, bài Tây' },
+    catSub: { tarot: '78 lá + 8 trải bài', lenormand: '36 lá + 7 trải bài', astro: '12 cung, hành tinh, nhà', manifest: 'cách làm + giới hạn', fortune: 'thần số, chỉ tay, bài Tây' },
     courses: 'Khóa học', freeReads: 'Đọc miễn phí', practice: 'Thực hành', lessonsIntro: (n) => 'Khóa học gồm ' + n + ' bài. Học theo thứ tự, mỗi bài một tuần là vừa.', markDone: 'Đánh dấu đã học xong', lessonDone: 'Đã học xong', journeyHint: 'Chạm vào một lá để mở trang của lá đó.', lenGridHint: 'Cả 36 lá. Chạm để xem từng lá.',
     aiIntro: 'Hỏi Nabu AI về điều bạn đang xem. Càng cụ thể càng tốt.', aiIntroLesson: 'Chỗ nào trong bài chưa hiểu, hỏi Nabu AI ở đây.', aiPlaceholder: 'Ví dụ: lá này nói gì về chuyện tình cảm của mình?', aiAsk: 'Hỏi', aiOnline: 'trả lời bằng AI', aiBuiltin: 'trả lời từ kho kiến thức', aiNote: 'Nabu AI trả lời cả câu hỏi thường lẫn tarot, chiêm tinh, thần số học, và tra cứu mạng khi cần. Chuyện riêng quan trọng, bạn đặt lịch với Nabu.', aiFallback: 'AI đang bận, đây là câu trả lời từ kho kiến thức.',
     aiSugCard: ['Lá này nói gì về tình cảm của mình?', 'Mình có nên tiếp tục không?', 'Khi nào chuyện này xảy ra?'], aiSugLesson: ['Ẩn Chính khác Ẩn Phụ thế nào?', 'Lá hoàng gia là ai?', 'Nếu mình không hiểu một lá thì làm sao?'], aiSugSign: ['Cung này hợp với cung nào?', 'Cung này trong tình yêu thế nào?', 'Mặt Trăng ở cung này là sao?'], aiSugNumbers: ['Số đường đời của mình nói gì?', 'Năm nay của mình là năm gì?', 'Số vận mệnh theo tên mình là gì?'], aiSugGeneral: ['Gã Khờ nghĩa là gì?', 'Sư Tử hợp với Bảo Bình không?', 'Số đường đời của mình?'],
@@ -1114,6 +1115,7 @@ const STR = {
     sending: 'Đang gửi...',
     sentOk: 'Đã gửi. Nabu sẽ xác nhận sớm. Bạn xem lại trong mục Tôi.',
     nabuPosts: 'Bài viết của Nabu', versionLine: (v) => 'Phiên bản ' + v, checkUpdate: 'Kiểm tra cập nhật', updating: 'Đang tải bản mới…',
+    privacyTitle: 'Chính sách quyền riêng tư', privacyLink: 'Quyền riêng tư', delAccount: 'Xoá tài khoản', delHint: 'Xoá tài khoản đăng nhập, hồ sơ, tin nhắn và lịch hẹn của bạn. Không hoàn lại được.', delConfirm: 'Xoá tài khoản và toàn bộ dữ liệu của bạn? Việc này không hoàn lại được.', delDone: 'Đã xoá tài khoản. Cảm ơn bạn đã ghé Nabu Tarot.', delRelogin: 'Để chắc là bạn, hãy đăng nhập lại rồi bấm Xoá tài khoản một lần nữa.', aiFlag: 'Báo cáo câu trả lời này', aiFlagged: 'Đã ghi nhận. Cảm ơn bạn, Nabu sẽ xem lại.', storeCodeHint: 'Nhập mã mở khoá mà Nabu đã gửi cho bạn.',
     newsTitle: 'Bài viết', newsIntro: 'Tất cả bài Nabu đã đăng: dự đoán, chia sẻ, thông báo. Gõ để tìm.', searchPosts: 'Tìm trong bài viết…', noMatch: 'Không có bài nào khớp.', allPostsBtn: (n) => 'Xem tất cả bài viết (' + n + ')', watchOn: (s) => 'Xem video trên ' + s,
     addImage: 'Ảnh', addVideo: 'Video', videoPrompt: 'Dán link video (YouTube, Facebook, TikTok, Instagram):', imgNeedCloud: 'Bạn cần đăng nhập tài khoản admin để tải ảnh lên.', imgTooBig: 'Ảnh quá lớn, thử ảnh nhỏ hơn.', imgAdded: 'Đã thêm ảnh vào bài.', wrapPlaceholder: 'chữ', boxLabel: 'Hộp', formatHint: 'Chọn chữ rồi bấm B / U / H để in đậm, gạch dưới, tô sáng. H2 là tiêu đề nhỏ, Hộp là ô tiêu đề riêng. Ảnh tải thẳng vào bài; video dán link.',
     contactTitle: 'Liên hệ', contactLink: 'Liên hệ', contactIntro: 'Viết vài dòng cho Nabu, rồi chọn kênh bạn muốn gửi.', contactWhat: 'Bạn muốn nhắn gì?', contactPlaceholder: 'Ví dụ: mình muốn hỏi về gói xem bài, hoặc góp ý cho app…', contactChoose: 'Gửi qua:', contactApp: 'Nhắn trong app Nabu Tarot', contactIg: 'Sao chép tin nhắn và mở Instagram', contactFb: 'Sao chép tin nhắn và mở Facebook', contactCopyHint: 'Với Instagram và Facebook: tin nhắn của bạn được sao chép sẵn khi bấm nút, sang bên đó bạn chỉ cần dán vào ô chat và gửi.', contactNeed: 'Bạn viết vài dòng trước nhé.', contactSent: 'Đã gửi tới Nabu. Bạn xem trả lời trong mục Tôi.', contactCopied: 'Tin nhắn đã được sao chép. Dán vào ô chat khi ứng dụng mở lên.',
@@ -1288,7 +1290,7 @@ const STR = {
     learnTitle: 'Knowledge library',
     learnIntro: 'Tarot, Lenormand, astrology, manifestation and fortune telling.',
     cats: { tarot: 'Tarot', lenormand: 'Lenormand', astro: 'Astrology', manifest: 'Manifestation', fortune: 'Fortune telling' },
-    catSub: { tarot: '78 cards + 8 spreads · 300.000đ / 6 months', lenormand: '36 cards + 7 spreads · 300.000đ / 6 months', astro: '12 signs, planets, houses', manifest: 'methods + limits', fortune: 'numbers, palms, playing cards' },
+    catSub: { tarot: '78 cards + 8 spreads', lenormand: '36 cards + 7 spreads', astro: '12 signs, planets, houses', manifest: 'methods + limits', fortune: 'numbers, palms, playing cards' },
     courses: 'Courses', freeReads: 'Free to read', practice: 'Practice', lessonsIntro: (n) => 'The course has ' + n + ' sessions. Take them in order, about one a week.', markDone: 'Mark as done', lessonDone: 'Done', journeyHint: 'Tap a card to open its page.', lenGridHint: 'All 36 cards. Tap one to open it.',
     aiIntro: 'Ask Nabu AI about what you are looking at. The more specific, the better.', aiIntroLesson: 'Anything in this lesson unclear? Ask Nabu AI here.', aiPlaceholder: 'For example: what does this card say about my love life?', aiAsk: 'Ask', aiOnline: 'answered by AI', aiBuiltin: 'answered from the knowledge base', aiNote: 'Nabu AI answers everyday questions as well as tarot, astrology and numerology, and looks things up online when needed. For anything personal and important, book a reading with Nabu.', aiFallback: 'AI is busy; this answer comes from the knowledge base.',
     aiSugCard: ['What does this card say about my love life?', 'Should I keep going?', 'When will this happen?'], aiSugLesson: ['How do Majors differ from Minors?', 'Who are the court cards?', 'What if I do not understand a card?'], aiSugSign: ['Which signs suit this sign?', 'How is this sign in love?', 'What does the Moon in this sign mean?'], aiSugNumbers: ['What does my life path say?', 'What kind of year is this for me?', 'What is my destiny number from my name?'], aiSugGeneral: ['What does The Fool mean?', 'Do Leo and Aquarius get along?', 'What is my life path?'],
@@ -1355,6 +1357,7 @@ const STR = {
     sending: 'Sending...',
     sentOk: 'Sent. Nabu will confirm soon. You can check it under Me.',
     nabuPosts: 'Nabu Posts', versionLine: (v) => 'Version ' + v, checkUpdate: 'Check for updates', updating: 'Loading the new version…',
+    privacyTitle: 'Privacy policy', privacyLink: 'Privacy', delAccount: 'Delete account', delHint: 'Removes your login, profile, messages and bookings. This cannot be undone.', delConfirm: 'Delete your account and all your data? This cannot be undone.', delDone: 'Account deleted. Thank you for visiting Nabu Tarot.', delRelogin: 'To be sure it is you, sign in again and tap Delete account once more.', aiFlag: 'Report this answer', aiFlagged: 'Noted. Thank you, Nabu will review it.', storeCodeHint: 'Enter the unlock code Nabu sent you.',
     newsTitle: 'Posts', newsIntro: 'Everything Nabu has posted: readings, thoughts, announcements. Type to search.', searchPosts: 'Search the posts…', noMatch: 'No post matches.', allPostsBtn: (n) => 'See all posts (' + n + ')', watchOn: (s) => 'Watch on ' + s,
     addImage: 'Image', addVideo: 'Video', videoPrompt: 'Paste a video link (YouTube, Facebook, TikTok, Instagram):', imgNeedCloud: 'Sign in with the admin account to upload images.', imgTooBig: 'Image too large, try a smaller one.', imgAdded: 'Image added to the post.', wrapPlaceholder: 'text', boxLabel: 'Box', formatHint: 'Select text, then tap B / U / H for bold, underline, highlight. H2 is a small heading, Box a separate title box. Images upload straight into the post; videos are pasted as links.',
     contactTitle: 'Contact us', contactLink: 'Contact', contactIntro: 'Write a few lines to Nabu, then choose where to send them.', contactWhat: 'Your message', contactPlaceholder: 'For example: a question about a package, or feedback on the app…', contactChoose: 'Send via:', contactApp: 'Message inside the Nabu Tarot app', contactIg: 'Copy the message and open Instagram', contactFb: 'Copy the message and open Facebook', contactCopyHint: 'For Instagram and Facebook: your message is copied when you tap the button, so over there you only paste it into the chat and send.', contactNeed: 'Write a few lines first.', contactSent: 'Sent to Nabu. Replies show under Me.', contactCopied: 'Your message is copied. Paste it into the chat when the app opens.',
@@ -10245,6 +10248,7 @@ function renderFooter() {
   if (CONFIG.instagram) links.push('<a href="https://instagram.com/' + esc(CONFIG.instagram) + '" target="_blank" rel="noopener">Instagram</a>');
   if (CONFIG.facebookUrl) links.push('<a href="' + esc(CONFIG.facebookUrl) + '" target="_blank" rel="noopener">Facebook</a>');
   links.push('<a href="#/contact">' + esc(S.contactLink) + '</a>');
+  links.push('<a href="#/privacy">' + esc(S.privacyLink) + '</a>');
   links.push('<a href="#/report">' + esc(S.reportLink) + '</a>');
   $('#foot').innerHTML = '<div class="wrap">' + LOGO + '<div>' + esc(L(CONFIG.tagline)) + '<div class="links">' + links.join(' · ') + '</div><div class="copy">© ' + new Date().getFullYear() + ' ' + esc(CONFIG.brand) + '. ' + esc(S.rights) + '</div></div></div>';
 }
@@ -10287,6 +10291,11 @@ function shrinkImage(file, max, quality) {
     img.src = url;
   });
 }
+/* Inside the Google Play build (a Trusted Web Activity) the page is opened with an android-app:// referrer. Play's
+   rules forbid pointing people to outside payment for digital content, so that build hides course prices and
+   the "buy" buttons and only takes an unlock code. Remembered on the device after the first launch. */
+try { if (/^android-app:\/\//.test(document.referrer || '')) store.set('nabu-twa', true); } catch (e) { /* no referrer */ }
+const isTWA = () => store.get('nabu-twa', false) === true;
 const EMOJIS = ['✨', '💜', '🔮', '🌙', '☀️', '⭐', '🌟', '💫', '🃏', '🗝️', '🌸', '🌿', '🕯️', '🧿', '💌', '❤️', '💔', '💰', '💼', '📚', '😊', '🙏', '👉', '⚠️', '✅', '📅', '🎁', '🎉'];
 /* A booking as a calendar file with four reminders (24 h, 6 h, 1 h, 15 min).
    Times are Vietnam time (UTC+7, no daylight saving), written as UTC. */
@@ -10409,6 +10418,7 @@ function screenLabel(h) {
   if (r === 'prices') return S.priceTitle;
   if (r === 'news') return S.newsTitle;
   if (r === 'contact') return S.contactTitle;
+  if (r === 'privacy') return S.privacyTitle;
   if (r === 'me') return S.nav.me;
   if (r === 'learn') { if (!a.length) return S.learnTitle; if (a.length === 1 && S.cats[a[0]]) return S.cats[a[0]]; if (a[0] === 'fortune' && a.length === 2) return S.cats.fortune; }
   return S.back;
@@ -10524,6 +10534,18 @@ const BE = {
   },
   resetPassword(email) { return this.auth.sendPasswordResetEmail(email); },
   signOut() { return this.auth.signOut(); },
+  /* Account deletion (a store requirement): profile, thread and messages, bookings, then the login itself.
+     Firebase asks for a recent sign-in before deleting a login; the caller handles that error. */
+  async deleteAccount() {
+    const uid = this.user.uid, db = this.db;
+    const wipe = async (q) => { const s = await q.get(); await Promise.all(s.docs.map((d) => d.ref.delete().catch(() => {}))); };
+    try { await wipe(db.collection('threads').doc(uid).collection('messages')); } catch (e) { /* rules or offline */ }
+    try { await db.collection('threads').doc(uid).delete(); } catch (e) { /* nothing there */ }
+    try { await wipe(db.collection('bookings').where('uid', '==', uid)); } catch (e) { /* rules or offline */ }
+    try { await db.collection('users').doc(uid).delete(); } catch (e) { /* nothing there */ }
+    await this.user.delete();
+    store.set('nabu-access', {});
+  },
 
   /* ---- profile ---- */
   async pullProfile() {
@@ -10935,7 +10957,13 @@ function aiPanelHTML(ctx) {
     + '<div class="chatbar"><textarea data-ai-q placeholder="' + esc(S.aiPlaceholder) + '"></textarea><button class="btn primary" data-ai-send>' + esc(S.aiAsk) + '</button></div>'
     + '<p class="faint" style="margin-top:8px">' + esc(S.aiNote) + '</p></div>';
 }
-const aiMsgHTML = (role, text) => '<div class="msg ' + (role === 'user' ? 'me' : 'them') + '">' + paras(text) + '</div>';
+const aiMsgHTML = (role, text) => '<div class="msg ' + (role === 'user' ? 'me' : 'them') + '">' + (role === 'user' ? '' : '<button type="button" class="flag" data-ai-flag title="' + esc(T().aiFlag) + '" aria-label="' + esc(T().aiFlag) + '">⚑</button>') + paras(text) + '</div>';
+/* A flagged answer goes to Nabu's reports (signed in) or waits on the device; either way the person is thanked. */
+async function flagAnswer(question, answer) {
+  const rec = { type: 'ai', question: question, text: answer, info: typeof reportInfo === 'function' ? reportInfo() : '', lang: lang };
+  try { if (BE.enabled && BE.user) { await BE.db.collection('reports').add(Object.assign({ uid: BE.user.uid, email: BE.user.email || '', at: firebase.firestore.FieldValue.serverTimestamp() }, rec)); return; } } catch (e) { /* kept locally below */ }
+  const list = store.get('nabu-ai-flags', []) || []; list.push(Object.assign({ at: new Date().toISOString() }, rec)); store.set('nabu-ai-flags', list.slice(-20));
+}
 function bindAI(root) {
   $$('.ai', root).forEach((panel) => {
     const ctx = JSON.parse(panel.getAttribute('data-ai')), key = panel.getAttribute('data-ai'), ta = $('[data-ai-q]', panel), chat = $('.ai-chat', panel), send = $('[data-ai-send]', panel);
@@ -10952,6 +10980,11 @@ function bindAI(root) {
       push('assistant', a); ta.focus();
     };
     $('[data-ai-send]', panel).addEventListener('click', () => ask(ta.value));
+    chat.addEventListener('click', (e) => {
+      const b = e.target.closest && e.target.closest('[data-ai-flag]'); if (!b) return;
+      const bubble = b.closest('.msg'), prev = bubble && bubble.previousElementSibling;
+      flagAnswer(prev && prev.classList.contains('me') ? prev.textContent : '', bubble ? bubble.textContent.replace(/^⚑/, '').trim() : ''); b.disabled = true; b.textContent = '✓'; toast(T().aiFlagged);
+    });
     ta.addEventListener('keydown', (e) => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); ask(ta.value); } });
     $$('[data-ai-sug]', panel).forEach((b) => b.addEventListener('click', () => ask(b.textContent)));
   });
@@ -11346,10 +11379,10 @@ function paywallHTML(courseId) {
   const expired = a && a < isoDate(new Date());
   return '<div class="paywall"><div class="ic">🔒</div><h2>' + esc(L(c.name)) + '</h2><p class="muted">' + esc(L(c.blurb)) + '</p>'
     + '<ul class="inc">' + L(c.includes).map((x) => '<li>' + esc(x) + '</li>').join('') + '</ul>'
-    + '<div class="price">' + fmtPrice(c.price) + ' <span>/ ' + c.months + ' ' + esc(S.months6) + '</span></div>'
+    + (isTWA() ? '' : '<div class="price">' + fmtPrice(c.price) + ' <span>/ ' + c.months + ' ' + esc(S.months6) + '</span></div>')
     + (expired ? '<p class="hint err">' + esc(S.courseExpired(a)) + '</p>' : '')
-    + '<a class="btn primary block" data-buy="' + courseId + '" href="' + (CONFIG.instagram ? 'https://ig.me/m/' + esc(CONFIG.instagram) : '#/me') + '" target="_blank" rel="noopener">' + esc(S.buyCourse) + '</a>'
-    + '<p class="hint" style="margin:8px 0">' + esc(S.buyHint) + '</p>'
+    + (isTWA() ? '<p class="hint" style="margin:8px 0">' + esc(S.storeCodeHint) + '</p>' : '<a class="btn primary block" data-buy="' + courseId + '" href="' + (CONFIG.instagram ? 'https://ig.me/m/' + esc(CONFIG.instagram) : '#/me') + '" target="_blank" rel="noopener">' + esc(S.buyCourse) + '</a>'
+    + '<p class="hint" style="margin:8px 0">' + esc(S.buyHint) + '</p>')
     + '<div class="row"><input id="ccode" placeholder="NABU-T-…" autocapitalize="characters" style="flex:1"><button class="btn" id="cunlock">' + esc(S.unlock) + '</button></div><p class="hint" id="cstatus"></p></div>';
 }
 function bindPaywall(root, after) {
@@ -11626,8 +11659,8 @@ function renderManifest() {
   const S = T(), m = $('#main'), all = GUIDES.filter((g) => g.cat === 'manifest'), free = all.filter((g) => FREE_MANI.indexOf(g.id) > -1), rest = all.filter((g) => FREE_MANI.indexOf(g.id) < 0), has = ACCESS.has('manifest'), c = courseOf('manifest');
   m.innerHTML = backLink('#/learn', S.learnTitle) + '<h1 style="margin-bottom:6px">' + esc(S.cats.manifest) + '</h1><p class="muted">' + esc(S.maniIntro) + '</p>'
     + '<div class="eyebrow">' + esc(S.maniFree) + '</div>' + free.map(guideRow).join('')
-    + '<div class="eyebrow" style="margin-top:18px">' + esc(S.maniFull) + (has ? ' ✓' : ' · ' + esc(S.perYear(fmtPrice(c.price)))) + '</div>'
-    + (has ? '' : '<div class="mani-banner"><b>✨ ' + esc(L(c.name)) + '</b><ul>' + S.maniIncl.map((x) => '<li>' + esc(x) + '</li>').join('') + '</ul><a class="btn primary block" href="#/learn/manifest/unlock">🔓 ' + esc(S.maniUnlock) + ' · ' + esc(S.perYear(fmtPrice(c.price))) + '</a></div>')
+    + '<div class="eyebrow" style="margin-top:18px">' + esc(S.maniFull) + (has ? ' ✓' : (isTWA() ? '' : ' · ' + esc(S.perYear(fmtPrice(c.price))))) + '</div>'
+    + (has ? '' : '<div class="mani-banner"><b>✨ ' + esc(L(c.name)) + '</b><ul>' + S.maniIncl.map((x) => '<li>' + esc(x) + '</li>').join('') + '</ul><a class="btn primary block" href="#/learn/manifest/unlock">🔓 ' + esc(S.maniUnlock) + (isTWA() ? '' : ' · ' + esc(S.perYear(fmtPrice(c.price)))) + '</a></div>')
     + rest.map(guideRow).join('');
 }
 function renderGuideList(cat) {
@@ -12339,7 +12372,7 @@ function renderPrices() {
   m.innerHTML = '<div class="eyebrow">' + esc(CONFIG.brand) + '</div><h1 style="margin-bottom:6px">' + esc(S.priceTitle) + '</h1><p class="muted">' + esc(S.priceIntro) + '</p>'
     + priceSheetHTML(false) + '<a class="btn primary block" href="#/book">' + esc(S.ctaBook) + '</a>'
     + '<h2 style="margin:24px 0 10px">' + esc(S.courses) + '</h2>' + COURSES.map((c) => '<div class="svc lav"><div class="t"><span class="ic">' + (c.id === 'tarot' ? PICK_ICON : '🗝️') + '</span><div><b>' + esc(L(c.name)) + '</b><div class="tag">' + esc(L(c.blurb)) + '</div></div></div>'
-      + '<div class="pk"><div class="pkg"><span>' + c.months + ' ' + esc(S.months6) + '</span><b>' + fmtPrice(c.price) + '</b></div></div><a class="btn sm block" href="#/learn/' + c.id + '" style="margin-top:8px">' + esc(S.cats[c.id]) + ' →</a></div>').join('');
+      + (isTWA() ? '' : '<div class="pk"><div class="pkg"><span>' + c.months + ' ' + esc(S.months6) + '</span><b>' + fmtPrice(c.price) + '</b></div></div>') + '<a class="btn sm block" href="#/learn/' + c.id + '" style="margin-top:8px">' + esc(S.cats[c.id]) + ' →</a></div>').join('');
 }
 
 async function renderBook(args, params) {
@@ -12656,11 +12689,12 @@ function renderMe(args, params) {
       h += '<div class="card"><h3 style="margin-bottom:4px">' + esc(S.messages) + '</h3><p class="muted" style="font-size:14px">' + esc(S.messagesSoon) + '</p><a class="btn block" href="https://ig.me/m/' + esc(CONFIG.instagram) + '" target="_blank" rel="noopener">' + esc(S.viaInstagram) + '</a></div>';
     }
     h += aiPanelHTML({ type: 'general' });
-    h += '<div class="card"><h3 style="margin-bottom:8px">' + esc(S.myCourses) + '</h3>' + COURSES.map((c) => { const a = ACCESS.isAdmin() ? '9999-12-31' : ACCESS.get()[c.id]; return '<div class="course"><span>' + esc(L(c.name)) + '</span><span class="faint">' + (a ? (ACCESS.has(c.id) ? '✓ ' + esc(S.activeUntil(fmtDate(a))) : esc(S.expiredOn(fmtDate(a)))) : '🔒 ' + fmtPrice(c.price)) + '</span></div>'; }).join('')
+    h += '<div class="card"><h3 style="margin-bottom:8px">' + esc(S.myCourses) + '</h3>' + COURSES.map((c) => { const a = ACCESS.isAdmin() ? '9999-12-31' : ACCESS.get()[c.id]; return '<div class="course"><span>' + esc(L(c.name)) + '</span><span class="faint">' + (a ? (ACCESS.has(c.id) ? '✓ ' + esc(S.activeUntil(fmtDate(a))) : esc(S.expiredOn(fmtDate(a)))) : (isTWA() ? '🔒' : '🔒 ' + fmtPrice(c.price))) + '</span></div>'; }).join('')
       + '<label class="f" for="mcode">' + esc(S.enterCode) + '</label><div class="row nw"><input id="mcode" placeholder="NABU-T-…" autocapitalize="characters"><button class="btn" id="munlock">' + esc(S.unlock) + '</button></div><p class="hint" id="mcstatus"></p></div>';
     h += '<div class="card"><h3 style="margin-bottom:8px">' + esc(S.themeTitle) + '</h3><div class="chips">' + ['auto', 'light', 'dark', 'pink'].map((t) => '<button class="chip' + (themeChoice() === t ? ' on' : '') + '" data-theme-pick="' + t + '">' + esc(S.themes[t]) + '</button>').join('') + '</div><p class="hint">' + esc(S.themeHint) + '</p></div>';
     h += '<div class="row">' + (BE.user ? '<button class="btn" id="signout">' + esc(S.signOut) + '</button>' : '') + '<a class="btn" href="#/contact">💬 ' + esc(S.contactLink) + '</a><a class="btn" href="#/report">🐞 ' + esc(S.reportLink) + '</a><button class="btn" id="retour">' + (lang === 'vi' ? 'Xem lại hướng dẫn' : 'Replay the tour') + '</button>' + (BE.isAdmin() ? '<a class="btn gold" href="#/admin">' + esc(S.adminTitle) + '</a>' : '') + '</div>';
-    h += '<p class="hint" style="text-align:center;margin-top:16px">' + esc(S.versionLine(window.APP_VERSION || '')) + ' · <button type="button" class="linkbtn" id="chkupd">' + esc(S.checkUpdate) + '</button></p>';
+    if (BE.enabled && BE.user) h += '<div class="card danger"><h3 style="margin-bottom:4px">' + esc(S.delAccount) + '</h3><p class="hint" style="margin-bottom:10px">' + esc(S.delHint) + '</p><button class="btn block" id="delacct">🗑 ' + esc(S.delAccount) + '</button><p class="hint" id="delstatus"></p></div>';
+    h += '<p class="hint" style="text-align:center;margin-top:16px">' + esc(S.versionLine(window.APP_VERSION || '')) + ' · <button type="button" class="linkbtn" id="chkupd">' + esc(S.checkUpdate) + '</button> · <a href="#/privacy">' + esc(S.privacyLink) + '</a></p>';
     body.innerHTML = h;
     bindAuth(body); bindAI(body); bindNotify(body);
     $('#chkupd').addEventListener('click', async () => {
@@ -12673,6 +12707,12 @@ function renderMe(args, params) {
     $$('[data-theme-pick]', body).forEach((b) => b.addEventListener('click', () => { setTheme(b.getAttribute('data-theme-pick')); $$('[data-theme-pick]', body).forEach((x) => x.classList.toggle('on', x === b)); }));
     $('#retour').addEventListener('click', () => { saveProfileLocal({ tourDone: false }); location.hash = '#/home'; });
     const so = $('#signout'); if (so) so.addEventListener('click', () => BE.signOut());
+    const da = $('#delacct'); if (da) da.addEventListener('click', async () => {
+      if (!confirm(S.delConfirm)) return;
+      da.disabled = true; const st = $('#delstatus'); st.textContent = S.sending;
+      try { await BE.deleteAccount(); toast(S.delDone); location.hash = '#/home'; }
+      catch (e) { da.disabled = false; if (e && e.code === 'auth/requires-recent-login') { st.textContent = S.delRelogin; st.className = 'hint err'; try { await BE.signOut(); } catch (e2) { /* already out */ } } else { st.textContent = S.publishFail + ': ' + (e && e.message || e); st.className = 'hint err'; } }
+    });
     if (BE.enabled && BE.user) {
       const chat = $('#chat');
       meUnsubs.push(BE.watchMessages(BE.user.uid, (msgs) => { chat.innerHTML = chatHTML(msgs, 'user'); chat.scrollTop = chat.scrollHeight; BE.markRead(BE.user.uid, 'user'); }));
@@ -12724,6 +12764,21 @@ function renderContact() {
   }));
 }
 ROUTES.contact = { nav: 'me', render: renderContact };
+
+/* ============================ privacy policy (#/privacy) ============================
+   The same text as privacy.html (built from privacy.json), shown inside the
+   app in the visitor's language. Google Play and the App Store both ask for
+   a policy reachable from inside the app and at a public address. */
+async function renderPrivacy() {
+  const S = T(), m = $('#main');
+  m.innerHTML = '<div class="eyebrow">' + esc(CONFIG.brand) + '</div><h1>' + esc(S.privacyTitle) + '</h1><p class="muted">…</p>';
+  const r = await loadJSON('privacy.json', 'nabu-privacy'), p = r.data;
+  if (!p) { m.innerHTML += '<p class="hint">' + esc(S.feedOffline) + '</p>'; return; }
+  m.innerHTML = '<div class="eyebrow">' + esc(CONFIG.brand) + '</div><div class="guide privacy"><h1 style="margin-bottom:6px">' + esc(L(p.title)) + '</h1><p class="faint">' + esc(S.horoUpdated) + ' ' + esc(p.updated) + '</p><p class="lead">' + esc(L(p.intro)) + '</p>'
+    + p.sections.map((s, i) => '<div class="gsec"><span class="n">' + (i + 1) + '</span><div><h2>' + esc(L(s.h)) + '</h2><p>' + esc(L(s.p)) + '</p></div></div>').join('')
+    + '<p class="hint" style="margin-top:14px"><a href="privacy.html" target="_blank" rel="noopener">privacy.html</a></p></div>';
+}
+ROUTES.privacy = { nav: 'me', render: renderPrivacy };
 
 /* ============================ bug reports (#/report) ============================
    A short form plus what the app knows (screen, version, device, the last
@@ -13036,7 +13091,7 @@ function adminCodes(p) {
 ROUTES.admin = { nav: '', render: renderAdmin };
 
 /* ============================ boot ============================ */
-window.APP_VERSION = 'v58';
+window.APP_VERSION = 'v59';
 window.NABU = { CONFIG: CONFIG, LESSONS: LESSONS, localAnswer: localAnswer, compatVerdict: compatVerdict, numerologyOf: numerologyOf, ZDEEP: ZDEEP, lunarToday: lunarToday, solarToLunar: solarToLunar, DECK: DECK, INSIGHT: INSIGHT, KW: KW, ASK: ASK, TOPICS: TOPICS, GUIDES: GUIDES, SERVICES: SERVICES, COURSES: COURSES, ACCESS: ACCESS, makeCode: makeCode, parseCode: parseCode, ZODIAC: ZODIAC, pick: pick, book: book,
   insightHTML: insightHTML, insightOf: insightOf, sunSignIndex: sunSignIndex, lifePath: lifePath, PROFILE: () => PROFILE, BE: BE };
 BE.initP = BE.init().catch(() => { /* backend unreachable: the app runs device-only */ });

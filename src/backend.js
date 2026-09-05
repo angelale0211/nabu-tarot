@@ -42,6 +42,18 @@ const BE = {
   },
   resetPassword(email) { return this.auth.sendPasswordResetEmail(email); },
   signOut() { return this.auth.signOut(); },
+  /* Account deletion (a store requirement): profile, thread and messages, bookings, then the login itself.
+     Firebase asks for a recent sign-in before deleting a login; the caller handles that error. */
+  async deleteAccount() {
+    const uid = this.user.uid, db = this.db;
+    const wipe = async (q) => { const s = await q.get(); await Promise.all(s.docs.map((d) => d.ref.delete().catch(() => {}))); };
+    try { await wipe(db.collection('threads').doc(uid).collection('messages')); } catch (e) { /* rules or offline */ }
+    try { await db.collection('threads').doc(uid).delete(); } catch (e) { /* nothing there */ }
+    try { await wipe(db.collection('bookings').where('uid', '==', uid)); } catch (e) { /* rules or offline */ }
+    try { await db.collection('users').doc(uid).delete(); } catch (e) { /* nothing there */ }
+    await this.user.delete();
+    store.set('nabu-access', {});
+  },
 
   /* ---- profile ---- */
   async pullProfile() {
