@@ -264,6 +264,27 @@ async function geminiAnswer(q, ctx, history) {
   throw new Error(last);
 }
 
+/* Vietnamese to English for published content (posts, activities): precise, fluent, markers kept.
+   Uses the same Gemini key and model chain, no web search, low temperature. Empty when no key. */
+async function translateToEN(text) {
+  text = String(text || '').trim();
+  if (!text || !CONFIG.geminiKey) return '';
+  const prompt = 'Translate the following Vietnamese text into natural, precise and fluent English for an English-speaking reader, as a skilled human translator would. Keep the meaning exact and the tone warm. Keep every line break, emoji and formatting marker unchanged: **bold**, *italic*, __underline__, ==highlight==, lines starting with "## " or "> ", and tokens such as [img:abc] or [video:url] must stay exactly as they are. Output only the translation, nothing else.\n\n' + text;
+  const order = [AI.model, CONFIG.geminiModel].concat(GEMINI_MODELS).filter((m, k, arr) => m && arr.indexOf(m) === k);
+  for (const model of order) {
+    const r = await withTimeout(fetch('https://generativelanguage.googleapis.com/v1beta/models/' + encodeURIComponent(model) + ':generateContent?key=' + encodeURIComponent(CONFIG.geminiKey), { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ contents: [{ role: 'user', parts: [{ text: prompt }] }], generationConfig: { temperature: 0.2, maxOutputTokens: 3000 } }) }), 40000);
+    if (!r.ok) { if ([404, 429, 503].indexOf(r.status) > -1) continue; throw new Error('Gemini ' + r.status); }
+    const j = await r.json(), cand = (j.candidates || [])[0], out = ((cand && cand.content && cand.content.parts) || []).map((p) => p.text || '').join('').trim();
+    if (out) { AI.model = model; return out; }
+  }
+  return '';
+}
+/* Fill the English half of a {vi, en} pair when it is missing. Returns true when something was added. */
+async function fillEN(obj) {
+  if (!obj || typeof obj !== 'object' || (obj.en && obj.en.trim()) || !(obj.vi && obj.vi.trim())) return false;
+  const en = await translateToEN(obj.vi); if (!en) return false;
+  obj.en = en; return true;
+}
 /* ---- online engine ---- */
 async function remoteAnswer(q, ctx, history) {
   const r = await withTimeout(fetch(CONFIG.aiEndpoint, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ lang: lang, question: q, context: contextText(ctx), kind: ctx.type, history: history.slice(-6), profile: { name: PROFILE.name || '', sign: mySign() > -1 ? ZSIGN[ZKEYS[mySign()]].en : '' } }) }), 25000);

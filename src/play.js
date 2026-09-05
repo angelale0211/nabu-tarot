@@ -31,6 +31,25 @@ const actAnswered = (a) => !!(a.results || (a.type === 'pile' && a.resultsDate &
 const actOpen = (a) => !a.closed && !actAnswered(a);
 function actDateLine(a) { const S = T(); return '<div class="date"><span>' + fmtDate(a.date) + '</span>' + (actAnswered(a) ? '<span class="pin">✓ ' + esc(S.actHasResults) + '</span>' : a.closed ? '<span class="pin">' + esc(S.actClosed) + '</span>' : '<span class="pin">' + esc(S.actOpen) + '</span>') + '</div>'; }
 
+/* ---- pile pictures: eight drawn motifs, each pile gets a different one ---- */
+const pileSeed = (id) => { let h = 0; for (let i = 0; i < String(id).length; i++) h = (h * 31 + String(id).charCodeAt(i)) >>> 0; return h % 8; };
+const PILE_ARTS = [
+  { bg: ['#2B1D4A', '#4A2C6E'], fan: '#E9C784', draw: '<rect x="38" y="78" width="24" height="30" rx="4" fill="#F2D6A2"/><rect x="38" y="78" width="24" height="6" rx="3" fill="#FFF0C9"/><path d="M50 74 C 44 66, 46 58, 50 52 C 54 58, 56 66, 50 74 Z" fill="#FFB347"/><path d="M50 72 C 47 67, 48 62, 50 58 C 52 62, 53 67, 50 72 Z" fill="#FFF3B0"/><circle cx="50" cy="60" r="18" fill="#FFB347" opacity=".18"/>' },
+  { bg: ['#F8D5E0', '#F3B4C8'], fan: '#F6BBCB', draw: '<path d="M20 110 C 40 90, 60 70, 84 40" stroke="#8A5A3C" stroke-width="3" fill="none" stroke-linecap="round"/>' + [[34, 92], [52, 74], [70, 56]].map((c) => [0, 72, 144, 216, 288].map((r) => '<ellipse cx="' + c[0] + '" cy="' + (c[1] - 8) + '" rx="5" ry="8" fill="#FF9EBB" transform="rotate(' + r + ' ' + c[0] + ' ' + c[1] + ')"/>').join('') + '<circle cx="' + c[0] + '" cy="' + c[1] + '" r="3" fill="#FFE07A"/>').join('') },
+  { bg: ['#1E2A57', '#3A4B8A'], fan: '#AFC8F0', draw: '<circle cx="54" cy="66" r="24" fill="#FFF3C4"/><circle cx="64" cy="60" r="22" fill="#2A3A72"/><circle cx="26" cy="36" r="1.6" fill="#fff"/><circle cx="76" cy="26" r="1.2" fill="#fff"/><circle cx="20" cy="96" r="1.4" fill="#fff"/><circle cx="82" cy="104" r="1.8" fill="#fff"/><path d="M40 108 h6 M43 105 v6" stroke="#fff" stroke-width="1"/>' },
+  { bg: ['#3B2A5E', '#6E4FA8'], fan: '#C7B6F3', draw: '<path d="M18 118 L 30 70 L 42 118 Z" fill="#B48CE0"/><path d="M34 118 L 50 44 L 66 118 Z" fill="#CBA6F0"/><path d="M58 118 L 72 62 L 86 118 Z" fill="#A67BD8"/><path d="M50 44 L 58 118 L 42 118 Z" fill="#E4D2F8" opacity=".55"/><rect x="12" y="116" width="76" height="8" rx="3" fill="#8F86A8"/>' },
+  { bg: ['#F7D98A', '#F0B24A'], fan: '#E5BE5E', draw: [0, 30, 60, 90, 120, 150, 180, 210, 240, 270, 300, 330].map((r) => '<line x1="50" y1="30" x2="50" y2="20" stroke="#FFF6D2" stroke-width="3" stroke-linecap="round" transform="rotate(' + r + ' 50 66)"/>').join('') + '<circle cx="50" cy="66" r="20" fill="#FFF1B8"/><circle cx="50" cy="66" r="14" fill="#FFD966"/>' },
+  { bg: ['#1F5F63', '#3B8F8E'], fan: '#9BD3CF', draw: '<circle cx="42" cy="52" r="16" fill="none" stroke="#F2D6A2" stroke-width="6"/><rect x="52" y="54" width="34" height="7" rx="3" fill="#F2D6A2" transform="rotate(35 52 54)"/><rect x="70" y="72" width="7" height="12" rx="2" fill="#F2D6A2" transform="rotate(35 70 72)"/><rect x="78" y="82" width="7" height="9" rx="2" fill="#F2D6A2" transform="rotate(35 78 82)"/>' },
+  { bg: ['#E7DDF7', '#C9B8EE'], fan: '#D9CDF3', draw: '<path d="M30 116 C 40 80, 56 52, 78 28 C 74 60, 62 92, 36 114 Z" fill="#8E7CC3"/><path d="M30 116 C 46 84, 60 60, 78 28" stroke="#F4EEFB" stroke-width="2" fill="none"/>' + [40, 52, 64, 76].map((y) => '<path d="M' + (86 - (y - 40) * 0.55) + ' ' + y + ' L ' + (58 - (y - 40) * 0.2) + ' ' + (y + 14) + '" stroke="#F4EEFB" stroke-width="1.2" opacity=".8"/>').join('') },
+  { bg: ['#2F4E86', '#5A8FD0'], fan: '#AFC8F0', draw: [0, 1, 2, 3].map((k) => '<path d="M0 ' + (70 + k * 14) + ' C 15 ' + (60 + k * 14) + ', 25 ' + (80 + k * 14) + ', 40 ' + (70 + k * 14) + ' S 65 ' + (60 + k * 14) + ', 80 ' + (70 + k * 14) + ' S 100 ' + (76 + k * 14) + ', 110 ' + (70 + k * 14) + '" fill="none" stroke="#EAF3FF" stroke-width="3" opacity="' + (0.9 - k * 0.2) + '"/>').join('') + '<circle cx="74" cy="34" r="8" fill="#FFF3C4"/>' }
+];
+function pileArtSVG(k) {
+  const a = PILE_ARTS[((k % PILE_ARTS.length) + PILE_ARTS.length) % PILE_ARTS.length], g = 'pg' + k;
+  return '<svg viewBox="0 0 100 140" class="pileart" data-art="' + k + '"><defs><linearGradient id="' + g + '" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="' + a.bg[0] + '"/><stop offset="1" stop-color="' + a.bg[1] + '"/></linearGradient></defs>'
+    + '<rect x="14" y="10" width="72" height="104" rx="8" fill="' + a.fan + '" opacity=".55" transform="rotate(-9 50 62)"/><rect x="14" y="10" width="72" height="104" rx="8" fill="' + a.fan + '" opacity=".75" transform="rotate(7 50 62)"/>'
+    + '<rect x="10" y="8" width="80" height="124" rx="10" fill="url(#' + g + ')" stroke="#FFF7EE" stroke-width="2"/><g clip-path="inset(0 round 10px)">' + a.draw + '</g>'
+    + '<path d="M80 18 l1.6 3.4 3.4 1.6 -3.4 1.6 -1.6 3.4 -1.6 -3.4 -3.4 -1.6 3.4 -1.6 Z" fill="#FFF7EE" opacity=".9"/><path d="M20 118 l1.2 2.6 2.6 1.2 -2.6 1.2 -1.2 2.6 -1.2 -2.6 -2.6 -1.2 2.6 -1.2 Z" fill="#FFF7EE" opacity=".8"/></svg>';
+}
 /* ---- one activity card ---- */
 function actHTML(a, compact) {
   const S = T(), mine = myChoices()[a.id];
@@ -38,7 +57,7 @@ function actHTML(a, compact) {
   if (a.type === 'pile') {
     const piles = a.piles || [];
     const openIdx = mine != null && actAnswered(a) ? Number(mine) : -1;
-    body = '<div class="piles n' + Math.max(2, Math.min(5, piles.length)) + '">' + piles.map((p, i) => { const chosen = String(mine) === String(i), open = i === openIdx; return '<div class="pile' + (chosen ? ' chosen' : '') + (open ? ' open' : '') + '" data-pile="' + i + '"><div class="pile-inner"><div class="pf">' + BACK + '<b>' + (i + 1) + '</b><span>' + esc(p.label || '') + '</span></div><div class="pb"><b>' + (i + 1) + '</b><span>✓</span></div></div></div>'; }).join('') + '</div>'
+    body = '<div class="piles n' + Math.max(2, Math.min(5, piles.length)) + '">' + piles.map((p, i) => { const chosen = String(mine) === String(i), open = i === openIdx; const art = p.art != null ? Number(p.art) : (pileSeed(a.id) + i) % PILE_ARTS.length; return '<div class="pile' + (chosen ? ' chosen' : '') + (open ? ' open' : '') + '" data-pile="' + i + '"><div class="pile-inner"><div class="pf">' + pileArtSVG(art) + '<div class="pfl"><b>' + (i + 1) + '</b>' + (p.label ? '<span>' + esc(p.label) + '</span>' : '') + '</div></div><div class="pb"><b>' + (i + 1) + '</b><span>✓</span></div></div></div>'; }).join('') + '</div>'
       + '<div class="pmsg"' + (openIdx > -1 ? '' : ' hidden') + '>' + (openIdx > -1 ? '<div class="eyebrow">' + esc(S.actPileMsgOf(openIdx + 1)) + '</div>' + richHTML(L(piles[openIdx].msg)) : '') + '</div>'
       + (actAnswered(a) ? (mine == null ? '<p class="hint">' + esc(S.actPickToSee) + '</p>' : '<p class="hint">' + esc(S.actTapOthers) + '</p>') : (mine == null ? '<p class="hint">' + esc(S.actPickHint) + '</p>' : '<p class="hint ok">' + esc(S.actPicked(Number(mine) + 1)) + ' ' + esc(S.actComeBack(fmtDate(a.resultsDate || a.date))) + '</p>'));
   } else if (a.type === 'poll') {
@@ -135,7 +154,7 @@ function adminActivities(p) {
   let items = [], editing = null;
   const form = (a) => {
     a = a || { type: 'pile', date: isoDate(new Date()), title: { vi: '', en: '' }, intro: { vi: '', en: '' }, piles: [{ label: '', msg: { vi: '', en: '' } }, { label: '', msg: { vi: '', en: '' } }, { label: '', msg: { vi: '', en: '' } }], options: [], results: false, closed: false, resultsDate: '' };
-    const pileRows = (a.piles || []).map((pl, i) => '<div class="card" style="padding:12px"><b>' + esc(S.actPileN(i + 1)) + '</b><input data-pl="' + i + '" placeholder="' + esc(S.actPileLabel) + '" value="' + esc(pl.label || '') + '" style="margin:6px 0"><textarea data-pmsg="' + i + '" placeholder="' + esc(S.actPileMsg) + '">' + esc(L2(pl.msg, 'vi')) + '</textarea><textarea data-pmsgen="' + i + '" placeholder="' + esc(S.actPileMsgEn) + '" style="min-height:60px;margin-top:6px">' + esc(L2(pl.msg, 'en')) + '</textarea></div>').join('');
+    const pileRows = (a.piles || []).map((pl, i) => '<div class="card" style="padding:12px"><b>' + esc(S.actPileN(i + 1)) + '</b><input data-pl="' + i + '" placeholder="' + esc(S.actPileLabel) + '" value="' + esc(pl.label || '') + '" style="margin:6px 0"><label class="f" style="margin-top:6px">' + esc(S.actPileArt) + '</label><select data-part="' + i + '"><option value="">' + esc(S.actArtAuto) + '</option>' + S.actArts.map((n, k) => '<option value="' + k + '"' + (pl.art === k ? ' selected' : '') + '>' + esc(n) + '</option>').join('') + '</select><textarea data-pmsg="' + i + '" placeholder="' + esc(S.actPileMsg) + '">' + esc(L2(pl.msg, 'vi')) + '</textarea><textarea data-pmsgen="' + i + '" placeholder="' + esc(S.actPileMsgEn) + '" style="min-height:60px;margin-top:6px">' + esc(L2(pl.msg, 'en')) + '</textarea></div>').join('');
     return '<div class="card"><h3 id="ahead" style="margin-bottom:6px">' + esc(editing ? S.edit : S.actNew) + '</h3>'
       + '<label class="f">' + esc(S.actType) + '</label><div class="chips">' + ['pile', 'poll', 'wish'].map((t) => '<button type="button" class="chip' + (a.type === t ? ' on' : '') + '" data-atype="' + t + '">' + esc(S.actTypes[t]) + '</button>').join('') + '</div>'
       + '<div class="two"><div><label class="f" for="adate">' + esc(S.postDate) + '</label><input id="adate" type="date" value="' + esc(a.date) + '"></div><div><label class="f" for="ardate">' + esc(S.actResultsDate) + '</label><input id="ardate" type="date" value="' + esc(a.resultsDate || '') + '"></div></div>'
@@ -151,12 +170,13 @@ function adminActivities(p) {
   const draw = () => {
     p.innerHTML = form(cur);
     const status = (t, cls) => { const s = $('#astatus'); s.textContent = t; s.className = 'hint ' + (cls || ''); };
+    $$('#aintro, [data-pmsg], [data-pmsgen]', p).forEach((ta) => attachToolbar(ta, status));
     const read = () => {
       const type = $('.chip.on[data-atype]') ? $('.chip.on[data-atype]').getAttribute('data-atype') : 'pile';
       const a = { id: (cur && cur.id) || ($('#adate').value || isoDate(new Date())) + '-' + Math.random().toString(36).slice(2, 6), type: type, date: $('#adate').value || isoDate(new Date()), resultsDate: $('#ardate').value || '',
-        title: { vi: $('#atitle').value.trim(), en: $('#atitle_en').value.trim() }, intro: { vi: $('#aintro').value.trim() }, results: !!$('#aresults').checked, closed: !!$('#aclosed').checked };
-      if (type === 'pile') a.piles = $$('[data-pl]', p).map((inp, i) => ({ label: inp.value.trim(), msg: { vi: $('[data-pmsg="' + i + '"]', p).value.trim(), en: $('[data-pmsgen="' + i + '"]', p).value.trim() } }));
-      if (type === 'poll') a.options = $('#aopts').value.split('\n').map((x) => x.trim()).filter(Boolean).map((x) => ({ vi: x }));
+        title: { vi: $('#atitle').value.trim(), en: $('#atitle_en').value.trim() }, intro: { vi: $('#aintro').value.trim(), en: (cur && cur.intro && cur.intro.en) || '' }, results: !!$('#aresults').checked, closed: !!$('#aclosed').checked };
+      if (type === 'pile') a.piles = $$('[data-pl]', p).map((inp, i) => { const art = $('[data-part="' + i + '"]', p).value; const o = { label: inp.value.trim(), msg: { vi: $('[data-pmsg="' + i + '"]', p).value.trim(), en: $('[data-pmsgen="' + i + '"]', p).value.trim() } }; if (art !== '') o.art = Number(art); return o; });
+      if (type === 'poll') a.options = $('#aopts').value.split('\n').map((x) => x.trim()).filter(Boolean).map((x) => { const old = ((cur && cur.options) || []).filter((o) => L2(o, 'vi') === x)[0]; return old && old.en ? { vi: x, en: old.en } : { vi: x }; });
       if (!a.title.en) delete a.title.en;
       return a;
     };
@@ -172,6 +192,11 @@ function adminActivities(p) {
       if (a.type === 'pile' && !(a.piles || []).some((x) => x.msg.vi || x.label)) { status(S.actNeedPiles, 'err'); return; }
       if (a.type === 'poll' && (a.options || []).length < 2) { status(S.actNeedOptions, 'err'); return; }
       if (!cloud()) { status(S.adminLogin, 'err'); return; }
+      if (CONFIG.geminiKey) {
+        status(S.translating);
+        try { await fillEN(a.title); await fillEN(a.intro); for (const pl of (a.piles || [])) await fillEN(pl.msg); for (const o of (a.options || [])) await fillEN(o); toast(S.translated); }
+        catch (e) { status(S.translateFail, 'err'); }
+      }
       items = [a].concat(items.filter((x) => x.id !== a.id));
       try { await BE.setContent('activities', { items: items }); ACTS.items = items; ACTS.loaded = true; status(S.published, 'ok'); cur = null; editing = null; draw(); }
       catch (e) { status(S.publishFail + ': ' + e.message, 'err'); }

@@ -23,6 +23,41 @@ async function ghWrite(path, obj, sha, message) {
   const r = await fetch('https://api.github.com/repos/' + CONFIG.repo + '/contents/' + path, { method: 'PUT', headers: ghHeaders(ghToken()), body: JSON.stringify(body) });
   if (!r.ok) { let t = ''; try { t = (await r.json()).message; } catch (e) { /* ignore */ } throw new Error('PUT ' + r.status + ' ' + t); }
 }
+const TB_WRAP = { b: ['**', '**'], i: ['*', '*'], u: ['__', '__'], h: ['==', '=='], h2: ['\n## ', '\n'], box: ['\n> ', '\n'] };
+/* The same formatting bar for any text box: bold, italic, underline, highlight, heading, box, emoji, image, video. */
+function attachToolbar(ta, status) {
+  const S = T();
+  if (!ta || ta.previousElementSibling && ta.previousElementSibling.classList && ta.previousElementSibling.classList.contains('emojis')) return;
+  const bar = document.createElement('div'); bar.className = 'tb';
+  bar.innerHTML = '<button type="button" data-w="b"><b>B</b></button><button type="button" data-w="i"><i>I</i></button><button type="button" data-w="u"><u>U</u></button><button type="button" data-w="h"><mark>H</mark></button><button type="button" data-w="h2">H2</button><button type="button" data-w="box">▭ ' + esc(S.boxLabel) + '</button><button type="button" data-emo>😊</button><label class="tbl">🖼 ' + esc(S.addImage) + '<input type="file" accept="image/*" data-img hidden></label><button type="button" data-vid>▶ ' + esc(S.addVideo) + '</button>';
+  const pal = document.createElement('div'); pal.className = 'emojis'; pal.hidden = true; pal.innerHTML = EMOJIS.map((e) => '<button type="button">' + e + '</button>').join('');
+  ta.parentNode.insertBefore(bar, ta); ta.parentNode.insertBefore(pal, ta);
+  const say = (t, cls) => { if (status) status(t, cls); else toast(t); };
+  const insertAt = (before, after, placeholder) => {
+    const st = ta.selectionStart || 0, en = ta.selectionEnd || 0, sel = ta.value.slice(st, en) || placeholder || '';
+    ta.value = ta.value.slice(0, st) + before + sel + after + ta.value.slice(en); ta.focus();
+    const pos = st + before.length + sel.length; try { ta.setSelectionRange(pos, pos); } catch (e) { /* fine */ }
+    ta.dispatchEvent(new Event('input'));
+  };
+  $$('[data-w]', bar).forEach((b) => b.addEventListener('click', () => { const w = TB_WRAP[b.getAttribute('data-w')]; insertAt(w[0], w[1], S.wrapPlaceholder); }));
+  $('[data-emo]', bar).addEventListener('click', () => { pal.hidden = !pal.hidden; });
+  $$('button', pal).forEach((b) => b.addEventListener('click', () => insertAt(b.textContent, '', '')));
+  $('[data-vid]', bar).addEventListener('click', () => { const u = prompt(S.videoPrompt); if (u && /^https?:\/\//.test(u.trim())) insertAt('\n[video:' + u.trim() + ']\n', '', ''); });
+  const fi = $('[data-img]', bar);
+  fi.addEventListener('change', async () => {
+    const f = fi.files && fi.files[0]; if (!f) return;
+    if (!cloud()) { say(S.imgNeedCloud, 'err'); fi.value = ''; return; }
+    say(S.uploading);
+    try {
+      const data = await shrinkImage(f, 1100, 0.82);
+      if (data.length > 900000) throw new Error(S.imgTooBig);
+      const id = Date.now().toString(36) + Math.random().toString(36).slice(2, 5);
+      await BE.setContent('img_' + id, { data: data }); IMGS[id] = data;
+      insertAt('\n[img:' + id + ']\n', '', ''); say(S.imgAdded, 'ok');
+    } catch (e) { say(S.publishFail + ': ' + e.message, 'err'); }
+    fi.value = '';
+  });
+}
 function adminCleanup() { admin.unsubs.forEach((u) => { try { u(); } catch (e) { /* gone */ } }); admin.unsubs = []; }
 
 function renderAdmin(args, params) {
@@ -51,7 +86,7 @@ function adminPosts(p) {
     + '<label class="f" for="pdate">' + esc(S.postDate) + '</label><input id="pdate" type="date">'
     + '<label class="f" for="ptitle">' + esc(S.postTitle) + '</label><input id="ptitle">'
     + '<label class="f" for="pbody">' + esc(S.postBody) + '</label>'
-    + '<div class="tb" id="ptb"><button type="button" data-w="b"><b>B</b></button><button type="button" data-w="u"><u>U</u></button><button type="button" data-w="h"><mark>H</mark></button><button type="button" data-w="h2">H2</button><button type="button" data-w="box">▭ ' + esc(S.boxLabel) + '</button><button type="button" id="temoji">😊</button><label class="tbl">🖼 ' + esc(S.addImage) + '<input type="file" accept="image/*" id="timg" hidden></label><button type="button" id="tvideo">▶ ' + esc(S.addVideo) + '</button></div>'
+    + '<div class="tb" id="ptb"><button type="button" data-w="b"><b>B</b></button><button type="button" data-w="i"><i>I</i></button><button type="button" data-w="u"><u>U</u></button><button type="button" data-w="h"><mark>H</mark></button><button type="button" data-w="h2">H2</button><button type="button" data-w="box">▭ ' + esc(S.boxLabel) + '</button><button type="button" id="temoji">😊</button><label class="tbl">🖼 ' + esc(S.addImage) + '<input type="file" accept="image/*" id="timg" hidden></label><button type="button" id="tvideo">▶ ' + esc(S.addVideo) + '</button></div>'
     + '<div class="emojis" id="emojis" hidden>' + EMOJIS.map((e) => '<button type="button">' + e + '</button>').join('') + '</div>'
     + '<textarea id="pbody" style="min-height:160px"></textarea><p class="hint">' + esc(S.formatHint) + ' ' + esc(S.bodyHint) + '</p>'
     + '<label class="f" for="ptitle_en">' + esc(S.postTitleEn) + '</label><input id="ptitle_en">'
@@ -75,7 +110,7 @@ function adminPosts(p) {
     ta.value = ta.value.slice(0, st) + before + sel + after + ta.value.slice(en); ta.focus();
     const pos = st + before.length + sel.length; try { ta.setSelectionRange(pos, pos); } catch (e) { /* not focusable yet */ }
   };
-  const WRAP = { b: ['**', '**'], u: ['__', '__'], h: ['==', '=='], h2: ['\n## ', '\n'], box: ['\n> ', '\n'] };
+  const WRAP = TB_WRAP;
   $$('[data-w]', p).forEach((b) => b.addEventListener('click', () => { const w = WRAP[b.getAttribute('data-w')]; insertAt(w[0], w[1], S.wrapPlaceholder); }));
   $('#temoji').addEventListener('click', () => { $('#emojis').hidden = !$('#emojis').hidden; });
   $$('#emojis button').forEach((b) => b.addEventListener('click', () => insertAt(b.textContent, '', '')));
@@ -144,6 +179,7 @@ function adminPosts(p) {
     if (!L2(post.title, 'vi') && !L2(post.title, 'en') || !L2(post.body, 'vi') && !L2(post.body, 'en')) { status(S.needBody, 'err'); return; }
     admin.busy = true; $('#publish').textContent = S.publishing; status('');
     try {
+      if (CONFIG.geminiKey && (!post.title.en || !post.body.en)) { status(S.translating); try { const t1 = await fillEN(post.title), t2 = await fillEN(post.body); if (t1 || t2) toast(S.translated); } catch (e) { status(S.translateFail, 'err'); } }
       if (cloud()) { const list = await cloudPosts(); await BE.setContent('posts', { posts: [post].concat(list.filter((x) => x.id !== post.id)) }); }
       else { const cur = await ghRead(CONFIG.postsPath), rest = ((cur.json || {}).posts || []).filter((x) => x.id !== post.id);
         await ghWrite(CONFIG.postsPath, { posts: [post].concat(rest) }, cur.sha, (admin.editing ? 'Update post: ' : 'New post: ') + (L2(post.title, 'vi') || L2(post.title, 'en'))); }

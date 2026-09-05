@@ -103,7 +103,7 @@ function videoHTML(url) {
   return '<a class="vlink" href="' + esc(u) + '" target="_blank" rel="noopener">▶ ' + esc(T().watchOn(site)) + '</a>';
 }
 function richHTML(text) {
-  const inline = (s) => esc(s).replace(/\*\*([^*\n]+)\*\*/g, '<b>$1</b>').replace(/__([^_\n]+)__/g, '<u>$1</u>').replace(/==([^=\n]+)==/g, '<mark>$1</mark>');
+  const inline = (s) => esc(s).replace(/\*\*([^*\n]+)\*\*/g, '<b>$1</b>').replace(/(^|[^*])\*([^*\n]+)\*(?=[^*]|$)/g, '$1<i>$2</i>').replace(/__([^_\n]+)__/g, '<u>$1</u>').replace(/==([^=\n]+)==/g, '<mark>$1</mark>');
   const block = (b) => {
     const t = b.trim(); let m;
     if (!t) return '';
@@ -116,7 +116,7 @@ function richHTML(text) {
   // Tokens and heading lines stand on their own even without blank lines around them.
   return String(text || '').replace(/\n?(\[(?:img|video):[^\]\s]+\])\n?/g, '\n\n$1\n\n').replace(/^(##\s.*)$/gm, '\n$1\n').split(/\n\s*\n/).map(block).join('');
 }
-const plainText = (s) => String(s || '').replace(/\[(?:img|video):[^\]\s]+\]/g, '').replace(/\*\*|__|==/g, '').replace(/^##\s+|^>\s?/gm, '').trim();
+const plainText = (s) => String(s || '').replace(/\[(?:img|video):[^\]\s]+\]/g, '').replace(/\*\*|__|==|\*/g, '').replace(/^##\s+|^>\s?/gm, '').trim();
 function hydrateImages(root) {
   $$('img.pimg[data-img]', root).forEach((img) => { const id = img.getAttribute('data-img'); if (IMGS[id]) { img.src = IMGS[id]; return; } loadImg(id).then((d) => { if (d) img.src = d; }); });
 }

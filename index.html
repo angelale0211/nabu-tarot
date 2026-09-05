@@ -327,10 +327,10 @@ main{padding:22px 0 30px}
 /* ---- card faces ---- */
 .face{display:block;position:relative}
 .face svg{display:block;width:100%;height:auto;border-radius:6px;box-shadow:0 2px 10px var(--shade)}
-.mini{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0 4px}
-.mini .m{width:64px;text-align:center;font-size:11px;color:var(--fg-soft);line-height:1.25}
-.mini .m svg{margin-bottom:4px}
-.mini button.m{display:block}
+.mini{display:grid;grid-template-columns:repeat(auto-fill,minmax(68px,1fr));gap:8px;margin:10px 0 4px;justify-items:center}
+.mini .m{width:100%;max-width:84px;text-align:center;font-size:11px;color:var(--fg-soft);line-height:1.25;display:flex;flex-direction:column;align-items:center}
+.mini .m .face{display:block;width:100%}.mini .m svg{width:100%;height:auto;display:block;margin-bottom:4px}
+.mini button.m{display:flex}
 
 /* ---- home / feed ---- */
 .hello{background:linear-gradient(135deg,var(--lav-soft),var(--surface-2));border:1px solid var(--rule);border-radius:20px;padding:18px;margin-bottom:16px}
@@ -801,7 +801,8 @@ main{padding:22px 0 30px}
 .actlist{display:grid;gap:10px}.actbtn{display:flex;align-items:center;gap:12px;background:var(--surface);border:1px solid var(--rule-soft);border-radius:16px;padding:12px 14px;text-decoration:none;color:inherit}.actbtn.live{border-color:var(--lav)}.actbtn .ic{font-size:26px;flex:none;width:40px;text-align:center}.actbtn .body{flex:1;min-width:0}.actbtn b{display:block;font-size:15.5px;line-height:1.3}.actbtn .meta{display:block;font-size:12.5px;color:var(--fg-faint);margin-top:2px}.actbtn .chev{color:var(--fg-faint);font-size:22px;flex:none}
 .pile{perspective:900px;cursor:pointer;position:relative;min-width:0;height:0;padding-top:146%}.pile-inner{position:absolute;inset:0;transform-style:preserve-3d;transition:transform .7s cubic-bezier(.4,.2,.2,1)}.pile.open .pile-inner{transform:rotateY(180deg)}
 .pile .pf,.pile .pb{position:absolute;inset:0;backface-visibility:hidden;-webkit-backface-visibility:hidden;border-radius:12px;transition:visibility 0s .35s}.pile .pb{visibility:hidden}.pile.open .pb{visibility:visible}.pile.open .pf{visibility:hidden}
-.pile .pf{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;background:var(--surface);border:1.5px solid var(--rule);padding:6px 4px}.pile .pf svg{width:56%;max-width:64px;height:auto;filter:drop-shadow(0 4px 8px var(--shade))}.pile .pf b{font-size:15px;line-height:1}.pile .pf span{font-size:11px;line-height:1.2;color:var(--fg-faint);text-align:center;padding:0 2px;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.pile .pf{background:var(--surface);border:1.5px solid var(--rule);overflow:hidden}.pile .pf .pileart{position:absolute;inset:0;width:100%;height:100%;display:block}.pile .pfl{position:absolute;left:0;right:0;bottom:0;padding:5px 4px;background:rgba(255,247,238,.9);color:#3B2A5E;text-align:center;display:flex;flex-direction:column;line-height:1.1}.pile .pfl b{font-size:14px}.pile .pfl span{font-size:10.5px;color:#6B5C8A;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.pile.chosen .pf{border-color:var(--primary);box-shadow:0 0 0 2px var(--primary) inset,0 6px 16px var(--shade);transform:translateY(-3px)}
 .pile.chosen .pf{border-color:var(--primary);box-shadow:0 0 0 2px var(--primary) inset}.pile.chosen .pf:after{content:'✓';position:absolute;top:6px;right:8px;font-weight:700;color:var(--primary)}
 .pile .pb{transform:rotateY(180deg);background:var(--tag-gold-bg);color:var(--tag-gold-ink);border:1.5px solid var(--gold);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px}.pile .pb b{font-size:26px;font-family:var(--display)}.pile .pb span{font-size:18px}
 .pollopts{display:grid;gap:8px;margin:10px 0 6px}.pollopt{position:relative;display:flex;align-items:center;gap:8px;width:100%;text-align:left;background:var(--surface-2);border:1px solid var(--rule);border-radius:12px;padding:11px 12px;font-weight:600;overflow:hidden}.pollopt .bar{position:absolute;left:0;top:0;bottom:0;width:0;background:var(--lav-soft);transition:width .6s;z-index:0}.pollopt .lbl{position:relative;flex:1;min-width:0}.pollopt .pct{position:relative;color:var(--fg-soft);font-size:13px}.pollopt.on{border-color:var(--primary);box-shadow:0 0 0 1px var(--primary) inset}.pollopt[disabled]{opacity:1;cursor:default}
@@ -1003,7 +1004,7 @@ const COURSES = [
   { id: 'lenormand', price: 300000, months: 6, name: { vi: 'Khóa Lenormand', en: 'Lenormand course' },
     blurb: { vi: 'Toàn bộ 36 lá, mỗi lá có hình, sắc thái, nghĩa chính, tình cảm, công việc, chỉ người, thời gian và các cặp lá. Kèm 7 cách trải bài và các bài đọc.', en: 'All 36 cards with art, tone, core meaning, love, work, person, timing and pairs. Plus 7 spreads and the guides.' },
     includes: { vi: ['36 lá bài, mỗi lá một trang', 'Cặp lá thường gặp', '7 cách trải bài, có Grand Tableau', 'Dùng 6 tháng, xem offline'], en: ['36 cards, one page each', 'Common pairs', '7 spreads including the Grand Tableau', '6 months of access, works offline'] } },
-  { id: 'playing', price: 150000, months: 6, name: { vi: 'Khóa Bài Tây', en: 'Playing-card course' },
+  { id: 'playing', price: 150000, months: 6, name: { vi: 'Khóa Bài Tây', en: 'Cartomancy course (playing cards)' },
     blurb: { vi: 'Bói bài Tây 52 lá theo lối truyền thống: bốn chất, câu chuyện từ Át tới Mười, 12 lá hình, cặp lá, thời gian và bốn trải bài. Mỗi lá có hình vẽ, nghĩa truyền thống, lý do của nghĩa ấy và lá tarot tương ứng.', en: 'Traditional 52-card cartomancy: four suits, the Ace-to-Ten story, the 12 court cards, pairs, timing and four spreads. Every card has a drawn face, its traditional meaning, why it means that, and its tarot twin.' },
     includes: { vi: ['9 bài học có hình', '52 lá, mỗi lá một trang', 'Cặp lá, thời gian, trải bài điều ước', 'Dùng 6 tháng, xem offline'], en: ['9 illustrated sessions', '52 cards, one page each', 'Pairs, timing, the wish spread', '6 months of access, works offline'] } },
   { id: 'manifest', price: 75000, months: 12, name: { vi: 'Bộ Manifestation', en: 'Manifestation set' },
@@ -1147,9 +1148,11 @@ const STR = {
     actVoteHint: 'Chạm vào một lựa chọn. Mỗi người một phiếu.', actVoteLogin: 'Đăng nhập để bình chọn và xem kết quả.', actVoted: 'Cảm ơn bạn đã bình chọn!', actClosedNote: 'Bình chọn đã đóng. Đây là kết quả.', actVotes: (n) => n + ' phiếu',
     actWishPh: 'Điều mình ước lúc này là…', actWishSend: 'Gửi vào vũ trụ', actWishHint: 'Viết ngắn, ở thì hiện tại, rồi gửi. Điều ước lưu trên máy bạn, không ai đọc được.', actWishCount: (n) => 'Bạn đã gửi ' + n + ' điều ước ở đây.', actWishSent: 'Đã gửi. Giờ đến lượt bạn làm bước đầu tiên. ✨', actWishEmpty: 'Bạn viết điều ước trước nhé.', actWishClear: 'Xoá các điều ước đã lưu trên máy', actWishClearConfirm: 'Xoá các điều ước đã lưu trên máy này?',
     actJoin: 'Tham gia', actBack: 'Tất cả hoạt động', actPileMsgOf: (n) => 'Thông điệp tụ ' + n, actTypeIcon: { pile: '🃏', poll: '📊', wish: '🌠' },
-    actNew: 'Hoạt động mới', actType: 'Loại', actTypes: { pile: 'Chọn tụ bài', poll: 'Bình chọn', wish: 'Điều ước' }, actResultsDate: 'Ngày đăng kết quả', actIntroLabel: 'Lời dẫn (có thể dùng ảnh, in đậm như bài đăng)', actPilesHint: 'Từ 2 đến 5 tụ. Bạn có thể đăng trước với nhãn trống; vài ngày sau quay lại điền thông điệp và bật "Đã có kết quả".', actPileN: (n) => 'Tụ ' + n, actPileLabel: 'Nhãn ngắn (không bắt buộc), ví dụ: Trái · Giữa · Phải', actPileMsg: 'Thông điệp cho tụ này (đăng sau cũng được)', actPileMsgEn: 'English message (optional)', actPileAdd: 'Thêm tụ', actPileDel: 'Bớt tụ', actResultsOn: 'Đã có kết quả: cho phép lật bài', actOptions: 'Các lựa chọn, mỗi dòng một lựa chọn', actCloseOn: 'Đóng bình chọn', actExisting: 'Hoạt động đã đăng', actNeedPiles: 'Bạn điền ít nhất một tụ nhé.', actNeedOptions: 'Cần ít nhất hai lựa chọn.',
+    actPileArt: 'Hình của tụ', actArtAuto: 'Tự chọn', actArts: ['Nến', 'Hoa đào', 'Trăng non', 'Thạch anh tím', 'Mặt trời', 'Chìa khoá', 'Lông vũ', 'Sóng biển'],
+    translating: 'Đang dịch sang tiếng Anh…', translated: 'Đã có bản tiếng Anh (dịch tự động).', translateFail: 'Chưa dịch được sang tiếng Anh; bản tiếng Việt vẫn hiện cho mọi người.',
+    actNew: 'Hoạt động mới', actType: 'Loại', actTypes: { pile: 'Chọn tụ bài', poll: 'Bình chọn', wish: 'Điều ước' }, actResultsDate: 'Ngày đăng kết quả', actIntroLabel: 'Lời dẫn (thanh công cụ bên trên ô: đậm, nghiêng, tô sáng, ảnh, video, emoji)', actPilesHint: 'Từ 2 đến 5 tụ. Bạn có thể đăng trước với nhãn trống; vài ngày sau quay lại điền thông điệp và bật "Đã có kết quả".', actPileN: (n) => 'Tụ ' + n, actPileLabel: 'Nhãn ngắn (không bắt buộc), ví dụ: Trái · Giữa · Phải', actPileMsg: 'Thông điệp cho tụ này (đăng sau cũng được)', actPileMsgEn: 'English message (optional)', actPileAdd: 'Thêm tụ', actPileDel: 'Bớt tụ', actResultsOn: 'Đã có kết quả: cho phép lật bài', actOptions: 'Các lựa chọn, mỗi dòng một lựa chọn', actCloseOn: 'Đóng bình chọn', actExisting: 'Hoạt động đã đăng', actNeedPiles: 'Bạn điền ít nhất một tụ nhé.', actNeedOptions: 'Cần ít nhất hai lựa chọn.',
     newsTitle: 'Bài viết', newsIntro: 'Tất cả bài Nabu đã đăng: dự đoán, chia sẻ, thông báo. Gõ để tìm.', searchPosts: 'Tìm trong bài viết…', noMatch: 'Không có bài nào khớp.', allPostsBtn: (n) => 'Xem tất cả bài viết (' + n + ')', watchOn: (s) => 'Xem video trên ' + s,
-    addImage: 'Ảnh', addVideo: 'Video', videoPrompt: 'Dán link video (YouTube, Facebook, TikTok, Instagram):', imgNeedCloud: 'Bạn cần đăng nhập tài khoản admin để tải ảnh lên.', imgTooBig: 'Ảnh quá lớn, thử ảnh nhỏ hơn.', imgAdded: 'Đã thêm ảnh vào bài.', wrapPlaceholder: 'chữ', boxLabel: 'Hộp', formatHint: 'Chọn chữ rồi bấm B / U / H để in đậm, gạch dưới, tô sáng. H2 là tiêu đề nhỏ, Hộp là ô tiêu đề riêng. Ảnh tải thẳng vào bài; video dán link.',
+    addImage: 'Ảnh', addVideo: 'Video', videoPrompt: 'Dán link video (YouTube, Facebook, TikTok, Instagram):', imgNeedCloud: 'Bạn cần đăng nhập tài khoản admin để tải ảnh lên.', imgTooBig: 'Ảnh quá lớn, thử ảnh nhỏ hơn.', imgAdded: 'Đã thêm ảnh vào bài.', wrapPlaceholder: 'chữ', boxLabel: 'Hộp', formatHint: 'Chọn chữ rồi bấm B / I / U / H để in đậm, in nghiêng, gạch dưới, tô sáng. H2 là tiêu đề nhỏ, Hộp là ô tiêu đề riêng. Ảnh tải thẳng vào bài; video dán link.',
     contactTitle: 'Liên hệ', contactLink: 'Liên hệ', contactIntro: 'Viết vài dòng cho Nabu, rồi chọn kênh bạn muốn gửi.', contactWhat: 'Bạn muốn nhắn gì?', contactPlaceholder: 'Ví dụ: mình muốn hỏi về gói xem bài, hoặc góp ý cho app…', contactChoose: 'Gửi qua:', contactApp: 'Nhắn trong app Nabu Tarot', contactIg: 'Sao chép tin nhắn và mở Instagram', contactFb: 'Sao chép tin nhắn và mở Facebook', contactCopyHint: 'Với Instagram và Facebook: tin nhắn của bạn được sao chép sẵn khi bấm nút, sang bên đó bạn chỉ cần dán vào ô chat và gửi.', contactNeed: 'Bạn viết vài dòng trước nhé.', contactSent: 'Đã gửi tới Nabu. Bạn xem trả lời trong mục Tôi.', contactCopied: 'Tin nhắn đã được sao chép. Dán vào ô chat khi ứng dụng mở lên.',
     addToCalendar: 'Thêm vào lịch điện thoại', gcal: 'Google Calendar', icsDownloaded: 'Đã tải tệp lịch. Mở tệp để thêm vào Lịch.', calendarHint: 'Lịch điện thoại sẽ nhắc bạn trước 24 giờ, 6 giờ, 1 giờ và 15 phút.', cancelBooking: 'Huỷ lịch', changeTitle: 'Đổi giờ hẹn', changeIntro: 'Chọn giờ mới bên dưới. Nabu sẽ duyệt lại trước khi giờ mới có hiệu lực.', currentSlot: 'Giờ hiện tại', sendChange: 'Gửi yêu cầu đổi giờ', changeSent: 'Đã gửi yêu cầu đổi giờ. Nabu sẽ duyệt lại sớm.', cancelSent: 'Đã gửi yêu cầu huỷ. Nabu sẽ xác nhận lại.', confirmCancel: 'Bạn muốn huỷ lịch hẹn này?', newSlotLabel: 'Giờ mới', adminApplyChange: 'Duyệt giờ mới', adminKeep: 'Giữ giờ cũ', adminApplyCancel: 'Duyệt huỷ', adminKeepBooking: 'Giữ lịch', reminderOn: 'Bật nhắc lịch hẹn trên máy này', reminderHint: 'Khi app đang mở, bạn sẽ được nhắc trước 24 giờ, 6 giờ, 1 giờ và 15 phút. Để chắc chắn, hãy thêm lịch hẹn vào lịch điện thoại.', upcoming: 'Lịch hẹn sắp tới', remindTitle: (w) => 'Lịch hẹn với Nabu ' + w, inHours: (h) => 'còn ' + h + ' giờ nữa', inMinutes: (m) => 'còn ' + m + ' phút nữa', allDays: 'Tất cả', bkOn: (d) => 'Lịch ngày ' + d, aiSettings: 'Cài đặt Nabu AI', aiKeyLabel: 'Khoá Gemini API (Google AI Studio)', aiKeyHint: 'Dán khoá vào đây và bấm lưu: mọi người dùng app sẽ được Nabu AI trả lời bằng Gemini, có tra cứu mạng khi còn hạn mức. Khoá được lưu trên đám mây của app, không nằm trong mã nguồn. Để trống thì app dùng bộ trả lời sẵn có.', aiKeySaved: 'Đã lưu. Nabu AI đang dùng Gemini.', saveKey: 'Lưu khoá', emojiBtn: 'Biểu tượng cảm xúc', imgTooBigChat: 'Ảnh quá lớn cho tin nhắn, thử ảnh nhỏ hơn.',
     maniIntro: 'Manifestation là đặt mục tiêu cho rõ, hình dung cho đúng và hành động cho đều. Bốn bài đầu miễn phí, có cả viết kịch bản. Trọn bộ mở thêm bảy phương pháp, mỗi bài có công cụ làm ngay trong app.', maniFree: 'Miễn phí', maniFull: 'Trọn bộ Manifestation', perYear: (p) => p + ' / năm', maniUnlock: 'Mở khoá trọn bộ', maniIncl: ['WOOP, kế hoạch nếu-thì, bảng tầm nhìn có ảnh của bạn', 'Nghi thức trăng non, trăng tròn và công cụ buông bỏ', 'Nến và đá theo từng mục đích, dùng sao cho an toàn'],
@@ -1324,8 +1327,8 @@ const STR = {
 
     learnTitle: 'Knowledge library',
     learnIntro: 'Tarot, Lenormand, astrology, manifestation and fortune telling.',
-    cats: { tarot: 'Tarot', lenormand: 'Lenormand', playing: 'Playing cards', astro: 'Astrology', manifest: 'Manifestation', fortune: 'Fortune telling' },
-    catSub: { tarot: '78 cards + 8 spreads', lenormand: '36 cards + 7 spreads', playing: '52 cards + 4 spreads', astro: '12 signs, planets, houses', manifest: 'methods + limits', fortune: 'numbers, palms, playing cards' },
+    cats: { tarot: 'Tarot', lenormand: 'Lenormand', playing: 'Cartomancy', astro: 'Astrology', manifest: 'Manifestation', fortune: 'Fortune telling' },
+    catSub: { tarot: '78 cards + 8 spreads', lenormand: '36 cards + 7 spreads', playing: 'playing cards · 52 cards + 4 spreads', astro: '12 signs, planets, houses', manifest: 'methods + limits', fortune: 'numbers, palms, playing cards' },
     courses: 'Courses', freeReads: 'Free to read', practice: 'Practice', lessonsIntro: (n) => 'The course has ' + n + ' sessions. Take them in order, about one a week.', markDone: 'Mark as done', lessonDone: 'Done', journeyHint: 'Tap a card to open its page.', lenGridHint: 'All 36 cards. Tap one to open it.',
     aiIntro: 'Ask Nabu AI about what you are looking at. The more specific, the better.', aiIntroLesson: 'Anything in this lesson unclear? Ask Nabu AI here.', aiPlaceholder: 'For example: what does this card say about my love life?', aiAsk: 'Ask', aiOnline: 'answered by AI', aiBuiltin: 'answered from the knowledge base', aiNote: 'Nabu AI answers everyday questions as well as tarot, astrology and numerology, and looks things up online when needed. For anything personal and important, book a reading with Nabu.', aiFallback: 'AI is busy; this answer comes from the knowledge base.',
     aiSugCard: ['What does this card say about my love life?', 'Should I keep going?', 'When will this happen?'], aiSugLesson: ['How do Majors differ from Minors?', 'Who are the court cards?', 'What if I do not understand a card?'], aiSugSign: ['Which signs suit this sign?', 'How is this sign in love?', 'What does the Moon in this sign mean?'], aiSugNumbers: ['What does my life path say?', 'What kind of year is this for me?', 'What is my destiny number from my name?'], aiSugGeneral: ['What does The Fool mean?', 'Do Leo and Aquarius get along?', 'What is my life path?'],
@@ -1398,9 +1401,11 @@ const STR = {
     actVoteHint: 'Tap an option. One vote per person.', actVoteLogin: 'Sign in to vote and see the results.', actVoted: 'Thank you for voting!', actClosedNote: 'Voting is closed. Here are the results.', actVotes: (n) => n + ' votes',
     actWishPh: 'Right now I wish…', actWishSend: 'Send it to the universe', actWishHint: 'Keep it short, in the present tense, then send. Wishes stay on your device; nobody reads them.', actWishCount: (n) => 'You have sent ' + n + ' wishes here.', actWishSent: 'Sent. Now the first step is yours. ✨', actWishEmpty: 'Write your wish first.', actWishClear: 'Clear the wishes saved on this device', actWishClearConfirm: 'Clear the wishes saved on this device?',
     actJoin: 'Join in', actBack: 'All activities', actPileMsgOf: (n) => 'Message of pile ' + n, actTypeIcon: { pile: '🃏', poll: '📊', wish: '🌠' },
-    actNew: 'New activity', actType: 'Type', actTypes: { pile: 'Pick a pile', poll: 'Poll', wish: 'Wish' }, actResultsDate: 'Results date', actIntroLabel: 'Intro (images and bold work like in posts)', actPilesHint: 'Two to five piles. You can publish with empty labels; come back days later, fill in the messages and switch on "Answered".', actPileN: (n) => 'Pile ' + n, actPileLabel: 'Short label (optional), e.g. Left · Middle · Right', actPileMsg: 'Message for this pile (can be added later)', actPileMsgEn: 'English message (optional)', actPileAdd: 'Add a pile', actPileDel: 'Remove a pile', actResultsOn: 'Answered: let people flip the piles', actOptions: 'Options, one per line', actCloseOn: 'Close the poll', actExisting: 'Published activities', actNeedPiles: 'Fill in at least one pile.', actNeedOptions: 'At least two options are needed.',
+    actPileArt: 'Pile picture', actArtAuto: 'Automatic', actArts: ['Candle', 'Blossom', 'Crescent', 'Amethyst', 'Sun', 'Key', 'Feather', 'Waves'],
+    translating: 'Translating into English…', translated: 'English version added (automatic translation).', translateFail: 'Could not translate into English; the Vietnamese text shows for everyone.',
+    actNew: 'New activity', actType: 'Type', actTypes: { pile: 'Pick a pile', poll: 'Poll', wish: 'Wish' }, actResultsDate: 'Results date', actIntroLabel: 'Intro (the bar above the box: bold, italic, highlight, images, video, emoji)', actPilesHint: 'Two to five piles. You can publish with empty labels; come back days later, fill in the messages and switch on "Answered".', actPileN: (n) => 'Pile ' + n, actPileLabel: 'Short label (optional), e.g. Left · Middle · Right', actPileMsg: 'Message for this pile (can be added later)', actPileMsgEn: 'English message (optional)', actPileAdd: 'Add a pile', actPileDel: 'Remove a pile', actResultsOn: 'Answered: let people flip the piles', actOptions: 'Options, one per line', actCloseOn: 'Close the poll', actExisting: 'Published activities', actNeedPiles: 'Fill in at least one pile.', actNeedOptions: 'At least two options are needed.',
     newsTitle: 'Posts', newsIntro: 'Everything Nabu has posted: readings, thoughts, announcements. Type to search.', searchPosts: 'Search the posts…', noMatch: 'No post matches.', allPostsBtn: (n) => 'See all posts (' + n + ')', watchOn: (s) => 'Watch on ' + s,
-    addImage: 'Image', addVideo: 'Video', videoPrompt: 'Paste a video link (YouTube, Facebook, TikTok, Instagram):', imgNeedCloud: 'Sign in with the admin account to upload images.', imgTooBig: 'Image too large, try a smaller one.', imgAdded: 'Image added to the post.', wrapPlaceholder: 'text', boxLabel: 'Box', formatHint: 'Select text, then tap B / U / H for bold, underline, highlight. H2 is a small heading, Box a separate title box. Images upload straight into the post; videos are pasted as links.',
+    addImage: 'Image', addVideo: 'Video', videoPrompt: 'Paste a video link (YouTube, Facebook, TikTok, Instagram):', imgNeedCloud: 'Sign in with the admin account to upload images.', imgTooBig: 'Image too large, try a smaller one.', imgAdded: 'Image added to the post.', wrapPlaceholder: 'text', boxLabel: 'Box', formatHint: 'Select text, then tap B / I / U / H for bold, italic, underline, highlight. H2 is a small heading, Box a separate title box. Images upload straight into the post; videos are pasted as links.',
     contactTitle: 'Contact us', contactLink: 'Contact', contactIntro: 'Write a few lines to Nabu, then choose where to send them.', contactWhat: 'Your message', contactPlaceholder: 'For example: a question about a package, or feedback on the app…', contactChoose: 'Send via:', contactApp: 'Message inside the Nabu Tarot app', contactIg: 'Copy the message and open Instagram', contactFb: 'Copy the message and open Facebook', contactCopyHint: 'For Instagram and Facebook: your message is copied when you tap the button, so over there you only paste it into the chat and send.', contactNeed: 'Write a few lines first.', contactSent: 'Sent to Nabu. Replies show under Me.', contactCopied: 'Your message is copied. Paste it into the chat when the app opens.',
     addToCalendar: 'Add to my phone calendar', gcal: 'Google Calendar', icsDownloaded: 'Calendar file downloaded. Open it to add the event.', calendarHint: 'Your phone calendar will remind you 24 hours, 6 hours, 1 hour and 15 minutes before.', cancelBooking: 'Cancel booking', changeTitle: 'Change the time', changeIntro: 'Pick a new time below. Nabu reviews it before the new time takes effect.', currentSlot: 'Current time', sendChange: 'Send the change request', changeSent: 'Change request sent. Nabu will review it soon.', cancelSent: 'Cancellation request sent. Nabu will confirm it.', confirmCancel: 'Cancel this booking?', newSlotLabel: 'New time', adminApplyChange: 'Approve new time', adminKeep: 'Keep old time', adminApplyCancel: 'Approve cancellation', adminKeepBooking: 'Keep booking', reminderOn: 'Turn on booking reminders on this device', reminderHint: 'While the app is open you are reminded 24 hours, 6 hours, 1 hour and 15 minutes before. To be safe, add the booking to your phone calendar.', upcoming: 'Upcoming booking', remindTitle: (w) => 'Reading with Nabu ' + w, inHours: (h) => 'in ' + h + ' hours', inMinutes: (m) => 'in ' + m + ' minutes', allDays: 'All', bkOn: (d) => 'Bookings on ' + d, aiSettings: 'Nabu AI settings', aiKeyLabel: 'Gemini API key (Google AI Studio)', aiKeyHint: 'Paste the key here and save: every user gets Nabu AI answered by Gemini, with web search while the quota lasts. The key lives in the app cloud, not in the source code. Leave it empty to use the built-in answers.', aiKeySaved: 'Saved. Nabu AI now uses Gemini.', saveKey: 'Save key', emojiBtn: 'Emoji', imgTooBigChat: 'Image too large for a message, try a smaller one.',
     maniIntro: 'Manifestation means naming a goal clearly, picturing it the right way and acting steadily. The first four guides are free, scripting included. The full set adds seven methods, each with a tool you use right in the app.', maniFree: 'Free', maniFull: 'Manifestation set', perYear: (p) => p + ' / year', maniUnlock: 'Unlock the full set', maniIncl: ['WOOP, if-then plans, a vision board with your own photos', 'New and full Moon rituals and a letting-go tool', 'Candles and stones by purpose, used safely'],
@@ -10978,6 +10983,27 @@ async function geminiAnswer(q, ctx, history) {
   throw new Error(last);
 }
 
+/* Vietnamese to English for published content (posts, activities): precise, fluent, markers kept.
+   Uses the same Gemini key and model chain, no web search, low temperature. Empty when no key. */
+async function translateToEN(text) {
+  text = String(text || '').trim();
+  if (!text || !CONFIG.geminiKey) return '';
+  const prompt = 'Translate the following Vietnamese text into natural, precise and fluent English for an English-speaking reader, as a skilled human translator would. Keep the meaning exact and the tone warm. Keep every line break, emoji and formatting marker unchanged: **bold**, *italic*, __underline__, ==highlight==, lines starting with "## " or "> ", and tokens such as [img:abc] or [video:url] must stay exactly as they are. Output only the translation, nothing else.\n\n' + text;
+  const order = [AI.model, CONFIG.geminiModel].concat(GEMINI_MODELS).filter((m, k, arr) => m && arr.indexOf(m) === k);
+  for (const model of order) {
+    const r = await withTimeout(fetch('https://generativelanguage.googleapis.com/v1beta/models/' + encodeURIComponent(model) + ':generateContent?key=' + encodeURIComponent(CONFIG.geminiKey), { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ contents: [{ role: 'user', parts: [{ text: prompt }] }], generationConfig: { temperature: 0.2, maxOutputTokens: 3000 } }) }), 40000);
+    if (!r.ok) { if ([404, 429, 503].indexOf(r.status) > -1) continue; throw new Error('Gemini ' + r.status); }
+    const j = await r.json(), cand = (j.candidates || [])[0], out = ((cand && cand.content && cand.content.parts) || []).map((p) => p.text || '').join('').trim();
+    if (out) { AI.model = model; return out; }
+  }
+  return '';
+}
+/* Fill the English half of a {vi, en} pair when it is missing. Returns true when something was added. */
+async function fillEN(obj) {
+  if (!obj || typeof obj !== 'object' || (obj.en && obj.en.trim()) || !(obj.vi && obj.vi.trim())) return false;
+  const en = await translateToEN(obj.vi); if (!en) return false;
+  obj.en = en; return true;
+}
 /* ---- online engine ---- */
 async function remoteAnswer(q, ctx, history) {
   const r = await withTimeout(fetch(CONFIG.aiEndpoint, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ lang: lang, question: q, context: contextText(ctx), kind: ctx.type, history: history.slice(-6), profile: { name: PROFILE.name || '', sign: mySign() > -1 ? ZSIGN[ZKEYS[mySign()]].en : '' } }) }), 25000);
@@ -11143,7 +11169,7 @@ function videoHTML(url) {
   return '<a class="vlink" href="' + esc(u) + '" target="_blank" rel="noopener">▶ ' + esc(T().watchOn(site)) + '</a>';
 }
 function richHTML(text) {
-  const inline = (s) => esc(s).replace(/\*\*([^*\n]+)\*\*/g, '<b>$1</b>').replace(/__([^_\n]+)__/g, '<u>$1</u>').replace(/==([^=\n]+)==/g, '<mark>$1</mark>');
+  const inline = (s) => esc(s).replace(/\*\*([^*\n]+)\*\*/g, '<b>$1</b>').replace(/(^|[^*])\*([^*\n]+)\*(?=[^*]|$)/g, '$1<i>$2</i>').replace(/__([^_\n]+)__/g, '<u>$1</u>').replace(/==([^=\n]+)==/g, '<mark>$1</mark>');
   const block = (b) => {
     const t = b.trim(); let m;
     if (!t) return '';
@@ -11156,7 +11182,7 @@ function richHTML(text) {
   // Tokens and heading lines stand on their own even without blank lines around them.
   return String(text || '').replace(/\n?(\[(?:img|video):[^\]\s]+\])\n?/g, '\n\n$1\n\n').replace(/^(##\s.*)$/gm, '\n$1\n').split(/\n\s*\n/).map(block).join('');
 }
-const plainText = (s) => String(s || '').replace(/\[(?:img|video):[^\]\s]+\]/g, '').replace(/\*\*|__|==/g, '').replace(/^##\s+|^>\s?/gm, '').trim();
+const plainText = (s) => String(s || '').replace(/\[(?:img|video):[^\]\s]+\]/g, '').replace(/\*\*|__|==|\*/g, '').replace(/^##\s+|^>\s?/gm, '').trim();
 function hydrateImages(root) {
   $$('img.pimg[data-img]', root).forEach((img) => { const id = img.getAttribute('data-img'); if (IMGS[id]) { img.src = IMGS[id]; return; } loadImg(id).then((d) => { if (d) img.src = d; }); });
 }
@@ -11473,11 +11499,11 @@ function renderLearn(args, params) {
   const S = T(), m = $('#main'), sub = args[0];
   if (!sub) {
     const ints = PROFILE.interests || [];
-    const tile = (k, locked) => '<a class="tile' + (ints.indexOf(k) > -1 ? ' rec' : '') + '" href="#/learn/' + k + '"><div class="ic">' + CAT_ICONS[k] + (locked ? ' <span class="lock">🔒</span>' : '') + '</div><b>' + esc(S.cats[k]) + '</b><span>' + esc(S.catSub[k]) + '</span></a>';
+    const tile = (k, locked) => '<a class="tile' + (ints.indexOf(k) > -1 || k === 'tarot' || k === 'lenormand' || k === 'playing' || k === 'manifest' ? ' rec' : '') + '" href="#/learn/' + k + '"><div class="ic">' + CAT_ICONS[k] + (locked ? ' <span class="lock">🔒</span>' : '') + '</div><b>' + esc(S.cats[k]) + '</b><span>' + esc(S.catSub[k]) + '</span></a>';
     m.innerHTML = '<div class="eyebrow">' + esc(S.nav.learn) + '</div><h1 style="margin-bottom:6px">' + esc(S.learnTitle) + '</h1><p class="muted">' + esc(S.learnIntro) + '</p>'
       + '<div class="eyebrow">' + esc(S.courses) + '</div><div class="tiles">' + tile('tarot', !ACCESS.has('tarot')) + tile('lenormand', !ACCESS.has('lenormand')) + tile('playing', !ACCESS.has('playing')) + '</div>'
-      + '<div class="eyebrow">' + esc(S.freeReads) + '</div><div class="tiles">' + tile('astro') + tile('fortune') + '</div>'
       + '<div class="eyebrow">' + esc(S.practice) + '</div><div class="tiles">' + tile('manifest', !ACCESS.has('manifest')) + '</div>'
+      + '<div class="eyebrow">' + esc(S.freeReads) + '</div><div class="tiles">' + tile('astro') + tile('fortune') + '</div>'
       + (function () { const ints = PROFILE.interests || []; const list = GUIDES.filter((g) => g.tags.some((t) => ints.indexOf(t) > -1) && !((g.cat === 'tarot' || g.cat === 'lenormand') && !ACCESS.has(g.cat))).slice(0, 4); return list.length ? '<div class="sec"><div class="eyebrow">' + esc(S.forInterests) + '</div>' + list.map(guideRow).join('') + '</div>' : ''; }());
     return;
   }
@@ -13088,6 +13114,25 @@ const actAnswered = (a) => !!(a.results || (a.type === 'pile' && a.resultsDate &
 const actOpen = (a) => !a.closed && !actAnswered(a);
 function actDateLine(a) { const S = T(); return '<div class="date"><span>' + fmtDate(a.date) + '</span>' + (actAnswered(a) ? '<span class="pin">✓ ' + esc(S.actHasResults) + '</span>' : a.closed ? '<span class="pin">' + esc(S.actClosed) + '</span>' : '<span class="pin">' + esc(S.actOpen) + '</span>') + '</div>'; }
 
+/* ---- pile pictures: eight drawn motifs, each pile gets a different one ---- */
+const pileSeed = (id) => { let h = 0; for (let i = 0; i < String(id).length; i++) h = (h * 31 + String(id).charCodeAt(i)) >>> 0; return h % 8; };
+const PILE_ARTS = [
+  { bg: ['#2B1D4A', '#4A2C6E'], fan: '#E9C784', draw: '<rect x="38" y="78" width="24" height="30" rx="4" fill="#F2D6A2"/><rect x="38" y="78" width="24" height="6" rx="3" fill="#FFF0C9"/><path d="M50 74 C 44 66, 46 58, 50 52 C 54 58, 56 66, 50 74 Z" fill="#FFB347"/><path d="M50 72 C 47 67, 48 62, 50 58 C 52 62, 53 67, 50 72 Z" fill="#FFF3B0"/><circle cx="50" cy="60" r="18" fill="#FFB347" opacity=".18"/>' },
+  { bg: ['#F8D5E0', '#F3B4C8'], fan: '#F6BBCB', draw: '<path d="M20 110 C 40 90, 60 70, 84 40" stroke="#8A5A3C" stroke-width="3" fill="none" stroke-linecap="round"/>' + [[34, 92], [52, 74], [70, 56]].map((c) => [0, 72, 144, 216, 288].map((r) => '<ellipse cx="' + c[0] + '" cy="' + (c[1] - 8) + '" rx="5" ry="8" fill="#FF9EBB" transform="rotate(' + r + ' ' + c[0] + ' ' + c[1] + ')"/>').join('') + '<circle cx="' + c[0] + '" cy="' + c[1] + '" r="3" fill="#FFE07A"/>').join('') },
+  { bg: ['#1E2A57', '#3A4B8A'], fan: '#AFC8F0', draw: '<circle cx="54" cy="66" r="24" fill="#FFF3C4"/><circle cx="64" cy="60" r="22" fill="#2A3A72"/><circle cx="26" cy="36" r="1.6" fill="#fff"/><circle cx="76" cy="26" r="1.2" fill="#fff"/><circle cx="20" cy="96" r="1.4" fill="#fff"/><circle cx="82" cy="104" r="1.8" fill="#fff"/><path d="M40 108 h6 M43 105 v6" stroke="#fff" stroke-width="1"/>' },
+  { bg: ['#3B2A5E', '#6E4FA8'], fan: '#C7B6F3', draw: '<path d="M18 118 L 30 70 L 42 118 Z" fill="#B48CE0"/><path d="M34 118 L 50 44 L 66 118 Z" fill="#CBA6F0"/><path d="M58 118 L 72 62 L 86 118 Z" fill="#A67BD8"/><path d="M50 44 L 58 118 L 42 118 Z" fill="#E4D2F8" opacity=".55"/><rect x="12" y="116" width="76" height="8" rx="3" fill="#8F86A8"/>' },
+  { bg: ['#F7D98A', '#F0B24A'], fan: '#E5BE5E', draw: [0, 30, 60, 90, 120, 150, 180, 210, 240, 270, 300, 330].map((r) => '<line x1="50" y1="30" x2="50" y2="20" stroke="#FFF6D2" stroke-width="3" stroke-linecap="round" transform="rotate(' + r + ' 50 66)"/>').join('') + '<circle cx="50" cy="66" r="20" fill="#FFF1B8"/><circle cx="50" cy="66" r="14" fill="#FFD966"/>' },
+  { bg: ['#1F5F63', '#3B8F8E'], fan: '#9BD3CF', draw: '<circle cx="42" cy="52" r="16" fill="none" stroke="#F2D6A2" stroke-width="6"/><rect x="52" y="54" width="34" height="7" rx="3" fill="#F2D6A2" transform="rotate(35 52 54)"/><rect x="70" y="72" width="7" height="12" rx="2" fill="#F2D6A2" transform="rotate(35 70 72)"/><rect x="78" y="82" width="7" height="9" rx="2" fill="#F2D6A2" transform="rotate(35 78 82)"/>' },
+  { bg: ['#E7DDF7', '#C9B8EE'], fan: '#D9CDF3', draw: '<path d="M30 116 C 40 80, 56 52, 78 28 C 74 60, 62 92, 36 114 Z" fill="#8E7CC3"/><path d="M30 116 C 46 84, 60 60, 78 28" stroke="#F4EEFB" stroke-width="2" fill="none"/>' + [40, 52, 64, 76].map((y) => '<path d="M' + (86 - (y - 40) * 0.55) + ' ' + y + ' L ' + (58 - (y - 40) * 0.2) + ' ' + (y + 14) + '" stroke="#F4EEFB" stroke-width="1.2" opacity=".8"/>').join('') },
+  { bg: ['#2F4E86', '#5A8FD0'], fan: '#AFC8F0', draw: [0, 1, 2, 3].map((k) => '<path d="M0 ' + (70 + k * 14) + ' C 15 ' + (60 + k * 14) + ', 25 ' + (80 + k * 14) + ', 40 ' + (70 + k * 14) + ' S 65 ' + (60 + k * 14) + ', 80 ' + (70 + k * 14) + ' S 100 ' + (76 + k * 14) + ', 110 ' + (70 + k * 14) + '" fill="none" stroke="#EAF3FF" stroke-width="3" opacity="' + (0.9 - k * 0.2) + '"/>').join('') + '<circle cx="74" cy="34" r="8" fill="#FFF3C4"/>' }
+];
+function pileArtSVG(k) {
+  const a = PILE_ARTS[((k % PILE_ARTS.length) + PILE_ARTS.length) % PILE_ARTS.length], g = 'pg' + k;
+  return '<svg viewBox="0 0 100 140" class="pileart" data-art="' + k + '"><defs><linearGradient id="' + g + '" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="' + a.bg[0] + '"/><stop offset="1" stop-color="' + a.bg[1] + '"/></linearGradient></defs>'
+    + '<rect x="14" y="10" width="72" height="104" rx="8" fill="' + a.fan + '" opacity=".55" transform="rotate(-9 50 62)"/><rect x="14" y="10" width="72" height="104" rx="8" fill="' + a.fan + '" opacity=".75" transform="rotate(7 50 62)"/>'
+    + '<rect x="10" y="8" width="80" height="124" rx="10" fill="url(#' + g + ')" stroke="#FFF7EE" stroke-width="2"/><g clip-path="inset(0 round 10px)">' + a.draw + '</g>'
+    + '<path d="M80 18 l1.6 3.4 3.4 1.6 -3.4 1.6 -1.6 3.4 -1.6 -3.4 -3.4 -1.6 3.4 -1.6 Z" fill="#FFF7EE" opacity=".9"/><path d="M20 118 l1.2 2.6 2.6 1.2 -2.6 1.2 -1.2 2.6 -1.2 -2.6 -2.6 -1.2 2.6 -1.2 Z" fill="#FFF7EE" opacity=".8"/></svg>';
+}
 /* ---- one activity card ---- */
 function actHTML(a, compact) {
   const S = T(), mine = myChoices()[a.id];
@@ -13095,7 +13140,7 @@ function actHTML(a, compact) {
   if (a.type === 'pile') {
     const piles = a.piles || [];
     const openIdx = mine != null && actAnswered(a) ? Number(mine) : -1;
-    body = '<div class="piles n' + Math.max(2, Math.min(5, piles.length)) + '">' + piles.map((p, i) => { const chosen = String(mine) === String(i), open = i === openIdx; return '<div class="pile' + (chosen ? ' chosen' : '') + (open ? ' open' : '') + '" data-pile="' + i + '"><div class="pile-inner"><div class="pf">' + BACK + '<b>' + (i + 1) + '</b><span>' + esc(p.label || '') + '</span></div><div class="pb"><b>' + (i + 1) + '</b><span>✓</span></div></div></div>'; }).join('') + '</div>'
+    body = '<div class="piles n' + Math.max(2, Math.min(5, piles.length)) + '">' + piles.map((p, i) => { const chosen = String(mine) === String(i), open = i === openIdx; const art = p.art != null ? Number(p.art) : (pileSeed(a.id) + i) % PILE_ARTS.length; return '<div class="pile' + (chosen ? ' chosen' : '') + (open ? ' open' : '') + '" data-pile="' + i + '"><div class="pile-inner"><div class="pf">' + pileArtSVG(art) + '<div class="pfl"><b>' + (i + 1) + '</b>' + (p.label ? '<span>' + esc(p.label) + '</span>' : '') + '</div></div><div class="pb"><b>' + (i + 1) + '</b><span>✓</span></div></div></div>'; }).join('') + '</div>'
       + '<div class="pmsg"' + (openIdx > -1 ? '' : ' hidden') + '>' + (openIdx > -1 ? '<div class="eyebrow">' + esc(S.actPileMsgOf(openIdx + 1)) + '</div>' + richHTML(L(piles[openIdx].msg)) : '') + '</div>'
       + (actAnswered(a) ? (mine == null ? '<p class="hint">' + esc(S.actPickToSee) + '</p>' : '<p class="hint">' + esc(S.actTapOthers) + '</p>') : (mine == null ? '<p class="hint">' + esc(S.actPickHint) + '</p>' : '<p class="hint ok">' + esc(S.actPicked(Number(mine) + 1)) + ' ' + esc(S.actComeBack(fmtDate(a.resultsDate || a.date))) + '</p>'));
   } else if (a.type === 'poll') {
@@ -13192,7 +13237,7 @@ function adminActivities(p) {
   let items = [], editing = null;
   const form = (a) => {
     a = a || { type: 'pile', date: isoDate(new Date()), title: { vi: '', en: '' }, intro: { vi: '', en: '' }, piles: [{ label: '', msg: { vi: '', en: '' } }, { label: '', msg: { vi: '', en: '' } }, { label: '', msg: { vi: '', en: '' } }], options: [], results: false, closed: false, resultsDate: '' };
-    const pileRows = (a.piles || []).map((pl, i) => '<div class="card" style="padding:12px"><b>' + esc(S.actPileN(i + 1)) + '</b><input data-pl="' + i + '" placeholder="' + esc(S.actPileLabel) + '" value="' + esc(pl.label || '') + '" style="margin:6px 0"><textarea data-pmsg="' + i + '" placeholder="' + esc(S.actPileMsg) + '">' + esc(L2(pl.msg, 'vi')) + '</textarea><textarea data-pmsgen="' + i + '" placeholder="' + esc(S.actPileMsgEn) + '" style="min-height:60px;margin-top:6px">' + esc(L2(pl.msg, 'en')) + '</textarea></div>').join('');
+    const pileRows = (a.piles || []).map((pl, i) => '<div class="card" style="padding:12px"><b>' + esc(S.actPileN(i + 1)) + '</b><input data-pl="' + i + '" placeholder="' + esc(S.actPileLabel) + '" value="' + esc(pl.label || '') + '" style="margin:6px 0"><label class="f" style="margin-top:6px">' + esc(S.actPileArt) + '</label><select data-part="' + i + '"><option value="">' + esc(S.actArtAuto) + '</option>' + S.actArts.map((n, k) => '<option value="' + k + '"' + (pl.art === k ? ' selected' : '') + '>' + esc(n) + '</option>').join('') + '</select><textarea data-pmsg="' + i + '" placeholder="' + esc(S.actPileMsg) + '">' + esc(L2(pl.msg, 'vi')) + '</textarea><textarea data-pmsgen="' + i + '" placeholder="' + esc(S.actPileMsgEn) + '" style="min-height:60px;margin-top:6px">' + esc(L2(pl.msg, 'en')) + '</textarea></div>').join('');
     return '<div class="card"><h3 id="ahead" style="margin-bottom:6px">' + esc(editing ? S.edit : S.actNew) + '</h3>'
       + '<label class="f">' + esc(S.actType) + '</label><div class="chips">' + ['pile', 'poll', 'wish'].map((t) => '<button type="button" class="chip' + (a.type === t ? ' on' : '') + '" data-atype="' + t + '">' + esc(S.actTypes[t]) + '</button>').join('') + '</div>'
       + '<div class="two"><div><label class="f" for="adate">' + esc(S.postDate) + '</label><input id="adate" type="date" value="' + esc(a.date) + '"></div><div><label class="f" for="ardate">' + esc(S.actResultsDate) + '</label><input id="ardate" type="date" value="' + esc(a.resultsDate || '') + '"></div></div>'
@@ -13208,12 +13253,13 @@ function adminActivities(p) {
   const draw = () => {
     p.innerHTML = form(cur);
     const status = (t, cls) => { const s = $('#astatus'); s.textContent = t; s.className = 'hint ' + (cls || ''); };
+    $$('#aintro, [data-pmsg], [data-pmsgen]', p).forEach((ta) => attachToolbar(ta, status));
     const read = () => {
       const type = $('.chip.on[data-atype]') ? $('.chip.on[data-atype]').getAttribute('data-atype') : 'pile';
       const a = { id: (cur && cur.id) || ($('#adate').value || isoDate(new Date())) + '-' + Math.random().toString(36).slice(2, 6), type: type, date: $('#adate').value || isoDate(new Date()), resultsDate: $('#ardate').value || '',
-        title: { vi: $('#atitle').value.trim(), en: $('#atitle_en').value.trim() }, intro: { vi: $('#aintro').value.trim() }, results: !!$('#aresults').checked, closed: !!$('#aclosed').checked };
-      if (type === 'pile') a.piles = $$('[data-pl]', p).map((inp, i) => ({ label: inp.value.trim(), msg: { vi: $('[data-pmsg="' + i + '"]', p).value.trim(), en: $('[data-pmsgen="' + i + '"]', p).value.trim() } }));
-      if (type === 'poll') a.options = $('#aopts').value.split('\n').map((x) => x.trim()).filter(Boolean).map((x) => ({ vi: x }));
+        title: { vi: $('#atitle').value.trim(), en: $('#atitle_en').value.trim() }, intro: { vi: $('#aintro').value.trim(), en: (cur && cur.intro && cur.intro.en) || '' }, results: !!$('#aresults').checked, closed: !!$('#aclosed').checked };
+      if (type === 'pile') a.piles = $$('[data-pl]', p).map((inp, i) => { const art = $('[data-part="' + i + '"]', p).value; const o = { label: inp.value.trim(), msg: { vi: $('[data-pmsg="' + i + '"]', p).value.trim(), en: $('[data-pmsgen="' + i + '"]', p).value.trim() } }; if (art !== '') o.art = Number(art); return o; });
+      if (type === 'poll') a.options = $('#aopts').value.split('\n').map((x) => x.trim()).filter(Boolean).map((x) => { const old = ((cur && cur.options) || []).filter((o) => L2(o, 'vi') === x)[0]; return old && old.en ? { vi: x, en: old.en } : { vi: x }; });
       if (!a.title.en) delete a.title.en;
       return a;
     };
@@ -13229,6 +13275,11 @@ function adminActivities(p) {
       if (a.type === 'pile' && !(a.piles || []).some((x) => x.msg.vi || x.label)) { status(S.actNeedPiles, 'err'); return; }
       if (a.type === 'poll' && (a.options || []).length < 2) { status(S.actNeedOptions, 'err'); return; }
       if (!cloud()) { status(S.adminLogin, 'err'); return; }
+      if (CONFIG.geminiKey) {
+        status(S.translating);
+        try { await fillEN(a.title); await fillEN(a.intro); for (const pl of (a.piles || [])) await fillEN(pl.msg); for (const o of (a.options || [])) await fillEN(o); toast(S.translated); }
+        catch (e) { status(S.translateFail, 'err'); }
+      }
       items = [a].concat(items.filter((x) => x.id !== a.id));
       try { await BE.setContent('activities', { items: items }); ACTS.items = items; ACTS.loaded = true; status(S.published, 'ok'); cur = null; editing = null; draw(); }
       catch (e) { status(S.publishFail + ': ' + e.message, 'err'); }
@@ -13263,6 +13314,41 @@ async function ghWrite(path, obj, sha, message) {
   const r = await fetch('https://api.github.com/repos/' + CONFIG.repo + '/contents/' + path, { method: 'PUT', headers: ghHeaders(ghToken()), body: JSON.stringify(body) });
   if (!r.ok) { let t = ''; try { t = (await r.json()).message; } catch (e) { /* ignore */ } throw new Error('PUT ' + r.status + ' ' + t); }
 }
+const TB_WRAP = { b: ['**', '**'], i: ['*', '*'], u: ['__', '__'], h: ['==', '=='], h2: ['\n## ', '\n'], box: ['\n> ', '\n'] };
+/* The same formatting bar for any text box: bold, italic, underline, highlight, heading, box, emoji, image, video. */
+function attachToolbar(ta, status) {
+  const S = T();
+  if (!ta || ta.previousElementSibling && ta.previousElementSibling.classList && ta.previousElementSibling.classList.contains('emojis')) return;
+  const bar = document.createElement('div'); bar.className = 'tb';
+  bar.innerHTML = '<button type="button" data-w="b"><b>B</b></button><button type="button" data-w="i"><i>I</i></button><button type="button" data-w="u"><u>U</u></button><button type="button" data-w="h"><mark>H</mark></button><button type="button" data-w="h2">H2</button><button type="button" data-w="box">▭ ' + esc(S.boxLabel) + '</button><button type="button" data-emo>😊</button><label class="tbl">🖼 ' + esc(S.addImage) + '<input type="file" accept="image/*" data-img hidden></label><button type="button" data-vid>▶ ' + esc(S.addVideo) + '</button>';
+  const pal = document.createElement('div'); pal.className = 'emojis'; pal.hidden = true; pal.innerHTML = EMOJIS.map((e) => '<button type="button">' + e + '</button>').join('');
+  ta.parentNode.insertBefore(bar, ta); ta.parentNode.insertBefore(pal, ta);
+  const say = (t, cls) => { if (status) status(t, cls); else toast(t); };
+  const insertAt = (before, after, placeholder) => {
+    const st = ta.selectionStart || 0, en = ta.selectionEnd || 0, sel = ta.value.slice(st, en) || placeholder || '';
+    ta.value = ta.value.slice(0, st) + before + sel + after + ta.value.slice(en); ta.focus();
+    const pos = st + before.length + sel.length; try { ta.setSelectionRange(pos, pos); } catch (e) { /* fine */ }
+    ta.dispatchEvent(new Event('input'));
+  };
+  $$('[data-w]', bar).forEach((b) => b.addEventListener('click', () => { const w = TB_WRAP[b.getAttribute('data-w')]; insertAt(w[0], w[1], S.wrapPlaceholder); }));
+  $('[data-emo]', bar).addEventListener('click', () => { pal.hidden = !pal.hidden; });
+  $$('button', pal).forEach((b) => b.addEventListener('click', () => insertAt(b.textContent, '', '')));
+  $('[data-vid]', bar).addEventListener('click', () => { const u = prompt(S.videoPrompt); if (u && /^https?:\/\//.test(u.trim())) insertAt('\n[video:' + u.trim() + ']\n', '', ''); });
+  const fi = $('[data-img]', bar);
+  fi.addEventListener('change', async () => {
+    const f = fi.files && fi.files[0]; if (!f) return;
+    if (!cloud()) { say(S.imgNeedCloud, 'err'); fi.value = ''; return; }
+    say(S.uploading);
+    try {
+      const data = await shrinkImage(f, 1100, 0.82);
+      if (data.length > 900000) throw new Error(S.imgTooBig);
+      const id = Date.now().toString(36) + Math.random().toString(36).slice(2, 5);
+      await BE.setContent('img_' + id, { data: data }); IMGS[id] = data;
+      insertAt('\n[img:' + id + ']\n', '', ''); say(S.imgAdded, 'ok');
+    } catch (e) { say(S.publishFail + ': ' + e.message, 'err'); }
+    fi.value = '';
+  });
+}
 function adminCleanup() { admin.unsubs.forEach((u) => { try { u(); } catch (e) { /* gone */ } }); admin.unsubs = []; }
 
 function renderAdmin(args, params) {
@@ -13291,7 +13377,7 @@ function adminPosts(p) {
     + '<label class="f" for="pdate">' + esc(S.postDate) + '</label><input id="pdate" type="date">'
     + '<label class="f" for="ptitle">' + esc(S.postTitle) + '</label><input id="ptitle">'
     + '<label class="f" for="pbody">' + esc(S.postBody) + '</label>'
-    + '<div class="tb" id="ptb"><button type="button" data-w="b"><b>B</b></button><button type="button" data-w="u"><u>U</u></button><button type="button" data-w="h"><mark>H</mark></button><button type="button" data-w="h2">H2</button><button type="button" data-w="box">▭ ' + esc(S.boxLabel) + '</button><button type="button" id="temoji">😊</button><label class="tbl">🖼 ' + esc(S.addImage) + '<input type="file" accept="image/*" id="timg" hidden></label><button type="button" id="tvideo">▶ ' + esc(S.addVideo) + '</button></div>'
+    + '<div class="tb" id="ptb"><button type="button" data-w="b"><b>B</b></button><button type="button" data-w="i"><i>I</i></button><button type="button" data-w="u"><u>U</u></button><button type="button" data-w="h"><mark>H</mark></button><button type="button" data-w="h2">H2</button><button type="button" data-w="box">▭ ' + esc(S.boxLabel) + '</button><button type="button" id="temoji">😊</button><label class="tbl">🖼 ' + esc(S.addImage) + '<input type="file" accept="image/*" id="timg" hidden></label><button type="button" id="tvideo">▶ ' + esc(S.addVideo) + '</button></div>'
     + '<div class="emojis" id="emojis" hidden>' + EMOJIS.map((e) => '<button type="button">' + e + '</button>').join('') + '</div>'
     + '<textarea id="pbody" style="min-height:160px"></textarea><p class="hint">' + esc(S.formatHint) + ' ' + esc(S.bodyHint) + '</p>'
     + '<label class="f" for="ptitle_en">' + esc(S.postTitleEn) + '</label><input id="ptitle_en">'
@@ -13315,7 +13401,7 @@ function adminPosts(p) {
     ta.value = ta.value.slice(0, st) + before + sel + after + ta.value.slice(en); ta.focus();
     const pos = st + before.length + sel.length; try { ta.setSelectionRange(pos, pos); } catch (e) { /* not focusable yet */ }
   };
-  const WRAP = { b: ['**', '**'], u: ['__', '__'], h: ['==', '=='], h2: ['\n## ', '\n'], box: ['\n> ', '\n'] };
+  const WRAP = TB_WRAP;
   $$('[data-w]', p).forEach((b) => b.addEventListener('click', () => { const w = WRAP[b.getAttribute('data-w')]; insertAt(w[0], w[1], S.wrapPlaceholder); }));
   $('#temoji').addEventListener('click', () => { $('#emojis').hidden = !$('#emojis').hidden; });
   $$('#emojis button').forEach((b) => b.addEventListener('click', () => insertAt(b.textContent, '', '')));
@@ -13384,6 +13470,7 @@ function adminPosts(p) {
     if (!L2(post.title, 'vi') && !L2(post.title, 'en') || !L2(post.body, 'vi') && !L2(post.body, 'en')) { status(S.needBody, 'err'); return; }
     admin.busy = true; $('#publish').textContent = S.publishing; status('');
     try {
+      if (CONFIG.geminiKey && (!post.title.en || !post.body.en)) { status(S.translating); try { const t1 = await fillEN(post.title), t2 = await fillEN(post.body); if (t1 || t2) toast(S.translated); } catch (e) { status(S.translateFail, 'err'); } }
       if (cloud()) { const list = await cloudPosts(); await BE.setContent('posts', { posts: [post].concat(list.filter((x) => x.id !== post.id)) }); }
       else { const cur = await ghRead(CONFIG.postsPath), rest = ((cur.json || {}).posts || []).filter((x) => x.id !== post.id);
         await ghWrite(CONFIG.postsPath, { posts: [post].concat(rest) }, cur.sha, (admin.editing ? 'Update post: ' : 'New post: ') + (L2(post.title, 'vi') || L2(post.title, 'en'))); }
@@ -13509,7 +13596,7 @@ function adminCodes(p) {
 ROUTES.admin = { nav: '', render: renderAdmin };
 
 /* ============================ boot ============================ */
-window.APP_VERSION = 'v66';
+window.APP_VERSION = 'v67';
 window.NABU = { CONFIG: CONFIG, LESSONS: LESSONS, localAnswer: localAnswer, compatVerdict: compatVerdict, numerologyOf: numerologyOf, ZDEEP: ZDEEP, lunarToday: lunarToday, solarToLunar: solarToLunar, DECK: DECK, INSIGHT: INSIGHT, KW: KW, ASK: ASK, TOPICS: TOPICS, GUIDES: GUIDES, SERVICES: SERVICES, COURSES: COURSES, ACCESS: ACCESS, makeCode: makeCode, parseCode: parseCode, ZODIAC: ZODIAC, pick: pick, book: book,
   insightHTML: insightHTML, insightOf: insightOf, sunSignIndex: sunSignIndex, lifePath: lifePath, PROFILE: () => PROFILE, BE: BE, ACTS: ACTS };
 BE.initP = BE.init().catch(() => { /* backend unreachable: the app runs device-only */ });
