@@ -1,1 +1,37 @@
-{"items": []}
+{"items": [
+ {
+  "id": "2026-09-05-pile-tuan-toi",
+  "type": "pile",
+  "date": "2026-09-05",
+  "resultsDate": "2026-09-09",
+  "title": {"vi": "Chọn 1 tụ bài: tuần tới vũ trụ muốn nhắn bạn điều gì?", "en": "Pick a pile: what does the universe want to tell you next week?"},
+  "intro": {"vi": "Hít một hơi thật sâu. Nhìn ba tụ bài bên dưới và chạm vào tụ **hút ánh mắt bạn trước tiên**, đừng nghĩ lâu.\n\nThông điệp của từng tụ sẽ được lật lên vào **thứ Tư 9/9**. Bạn chỉ cần quay lại và chạm vào tụ mình đã chọn. 🌙", "en": "Take a deep breath. Look at the three piles below and tap the one **your eyes land on first**, without thinking too long.\n\nEach pile's message flips open on **Wednesday 9 September**. Just come back and tap the pile you chose. 🌙"},
+  "piles": [
+   {"label": "Trái", "msg": {"vi": "## Tụ 1 · Ngôi Sao, Sáu Cốc, Hiệp Sĩ Gậy\n\nTuần tới của bạn có màu của **hy vọng vừa nhen lại**. Ngôi Sao nói rằng một chuyện từng làm bạn mệt đang dịu xuống, và bạn được phép tin vào chính mình thêm một lần.\n\nSáu Cốc mang về một người hoặc một kỷ niệm cũ: tin nhắn bất ngờ, một câu chuyện xưa được nhắc lại, hoặc chính bạn thấy nhớ một phiên bản hồn nhiên hơn của mình.\n\nHiệp Sĩ Gậy bảo: đừng chỉ ngồi nhớ. Có một việc bạn đã định làm từ lâu, tuần này hãy bắt đầu nó, dù chỉ là bước nhỏ đầu tiên.\n\n> Lời nhắn: **bạn đã đủ tốt để bước tiếp**. Tuần này, hãy nói có với một lời mời.", "en": "## Pile 1 · The Star, Six of Cups, Knight of Wands\n\nYour week has the colour of **hope kindling again**. The Star says something that wore you out is easing, and you are allowed to trust yourself once more.\n\nThe Six of Cups brings back a person or an old memory: an unexpected message, an old story retold, or simply missing a more innocent version of yourself.\n\nThe Knight of Wands says: do not just sit and remember. There is something you have meant to do for a long time; start it this week, even with the smallest first step.\n\n> Message: **you are already good enough to move on**. This week, say yes to one invitation."}},
+   {"label": "Giữa", "msg": {"vi": "## Tụ 2 · Bốn Kiếm, Nữ Hoàng Tiền, Bánh Xe\n\nTụ này chọn bạn vì bạn **đang cần được nghỉ**. Bốn Kiếm không phải là dừng hẳn, mà là tạm gác thanh kiếm xuống: ngủ đủ, tắt bớt thông báo, đừng trả lời ngay mọi tin nhắn.\n\nNữ Hoàng Tiền nhắc chuyện thực tế: tiền bạc, nhà cửa, sức khỏe. Có một việc nhỏ về tiền hay sức khỏe bạn cứ để đó, giải quyết nó tuần này sẽ nhẹ lòng hơn nhiều so với bạn nghĩ.\n\nBánh Xe khép lại tụ bài với một tin tốt: một chuyện bạn không kiểm soát được đang tự xoay theo hướng có lợi. Bạn không cần đẩy, chỉ cần đừng cản.\n\n> Lời nhắn: **nghỉ cũng là làm việc**. Tuần này, hãy để một chuyện tự đến.", "en": "## Pile 2 · Four of Swords, Queen of Pentacles, Wheel of Fortune\n\nThis pile chose you because you **need rest**. The Four of Swords is not a full stop, it is laying the sword down for a while: sleep enough, silence some notifications, do not answer every message at once.\n\nThe Queen of Pentacles points to practical life: money, home, health. There is one small money or health matter you keep leaving; sorting it this week lightens you more than you expect.\n\nThe Wheel closes the pile with good news: something outside your control is turning your way on its own. You do not need to push, only not to block it.\n\n> Message: **rest is also work**. This week, let one thing come to you."}},
+   {"label": "Phải", "msg": {"vi": "## Tụ 3 · Hai Cốc, Bảy Gậy, Mặt Trời\n\nTuần tới của bạn xoay quanh **một người**. Hai Cốc là một cuộc gặp, một lời làm lành hay một sự hiểu nhau vừa mới bắt đầu; nếu bạn đang chờ ai đó, hãy để ý một cuộc trò chuyện tưởng như bình thường.\n\nBảy Gậy cảnh báo một chút: sẽ có lúc bạn phải giữ lập trường của mình, có thể trong công việc, có thể trong gia đình. Giữ nó nhẹ nhàng nhưng đừng lùi.\n\nMặt Trời là lá kết đẹp nhất bộ bài: chuyện bạn lo đang sáng dần. Cuối tuần có một niềm vui nhỏ nhưng rất thật, kiểu niềm vui khiến bạn tự cười một mình.\n\n> Lời nhắn: **bạn không cần chứng minh gì cả**. Tuần này, hãy nói thật một điều bạn muốn.", "en": "## Pile 3 · Two of Cups, Seven of Wands, The Sun\n\nYour week turns around **one person**. The Two of Cups is a meeting, a making-up, or an understanding that has only just begun; if you are waiting for someone, watch an ordinary-looking conversation.\n\nThe Seven of Wands warns a little: at some point you will have to hold your ground, perhaps at work, perhaps in the family. Hold it gently, but do not step back.\n\nThe Sun is the finest closing card in the deck: what you worry about is brightening. The weekend brings a small but very real joy, the kind that makes you smile to yourself.\n\n> Message: **you have nothing to prove**. This week, say one true thing you want."}}
+  ],
+  "results": false
+ },
+ {
+  "id": "2026-09-05-poll-da-nghi",
+  "type": "poll",
+  "date": "2026-09-05",
+  "title": {"vi": "Bình chọn tuần này: cung nào hay đa nghi nhất theo bạn?", "en": "This week's poll: which sign is the most suspicious, in your view?"},
+  "intro": {"vi": "Chỉ để vui thôi, không có đáp án đúng. Chọn theo kinh nghiệm của bạn với bạn bè, người yêu, đồng nghiệp. Kết quả hiện ngay sau khi bạn bình chọn. 👀", "en": "Just for fun, there is no right answer. Choose from your experience with friends, partners and colleagues. Results show as soon as you vote. 👀"},
+  "options": [
+   {"vi": "♏ Bọ Cạp", "en": "♏ Scorpio"},
+   {"vi": "♍ Xử Nữ", "en": "♍ Virgo"},
+   {"vi": "♑ Ma Kết", "en": "♑ Capricorn"},
+   {"vi": "♋ Cự Giải", "en": "♋ Cancer"}
+  ],
+  "closed": false
+ },
+ {
+  "id": "2026-09-05-wish-thang-9",
+  "type": "wish",
+  "date": "2026-09-05",
+  "title": {"vi": "Điều ước đầu tháng 9 🌙", "en": "A wish for the start of September 🌙"},
+  "intro": {"vi": "Tháng 9 mở ra với một trăng non vào ngày 21. Viết một điều ước cho tháng này: **ngắn, ở thì hiện tại, và về chính bạn** (\"mình đang…\" thay vì \"mong người ấy…\"). Gửi vào lọ, rồi làm một bước nhỏ đầu tiên ngay hôm nay.", "en": "September opens with a New Moon on the 21st. Write one wish for the month: **short, in the present tense, and about yourself** (\"I am…\" rather than \"I hope they…\"). Send it into the jar, then take one small first step today."}
+ }
+]}

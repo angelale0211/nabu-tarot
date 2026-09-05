@@ -26,8 +26,10 @@ async function countVotes(aid) {
     const out = { total: 0 }; s.forEach((d) => { const c = String(d.data().choice); out[c] = (out[c] || 0) + 1; out.total++; }); ACTS.votes[aid] = out; return out;
   } catch (e) { return ACTS.votes[aid] || null; }
 }
-const actOpen = (a) => !a.closed && !a.results;
-function actDateLine(a) { const S = T(); return '<div class="date"><span>' + fmtDate(a.date) + '</span>' + (a.results ? '<span class="pin">✓ ' + esc(S.actHasResults) + '</span>' : a.closed ? '<span class="pin">' + esc(S.actClosed) + '</span>' : '<span class="pin">' + esc(S.actOpen) + '</span>') + '</div>'; }
+/* A pile reading is answered when Nabu switches it on, or by itself on the results date once the messages are written. */
+const actAnswered = (a) => !!(a.results || (a.type === 'pile' && actAnswered(a)Date && actAnswered(a)Date <= isoDate(new Date()) && (a.piles || []).some((p) => L(p.msg))));
+const actOpen = (a) => !a.closed && !actAnswered(a);
+function actDateLine(a) { const S = T(); return '<div class="date"><span>' + fmtDate(a.date) + '</span>' + (actAnswered(a) ? '<span class="pin">✓ ' + esc(S.actHasResults) + '</span>' : a.closed ? '<span class="pin">' + esc(S.actClosed) + '</span>' : '<span class="pin">' + esc(S.actOpen) + '</span>') + '</div>'; }
 
 /* ---- one activity card ---- */
 function actHTML(a, compact) {
@@ -35,8 +37,8 @@ function actHTML(a, compact) {
   let body = '';
   if (a.type === 'pile') {
     const piles = a.piles || [];
-    body = '<div class="piles' + (piles.length === 2 ? ' n2' : '') + '">' + piles.map((p, i) => { const chosen = String(mine) === String(i), open = chosen && a.results; return '<div class="pile' + (chosen ? ' chosen' : '') + (open ? ' open' : '') + '" data-pile="' + i + '"><div class="pile-inner"><div class="pf">' + BACK + '<b>' + (i + 1) + '</b><span>' + esc(p.label || '') + '</span></div><div class="pb"><div class="pbs">' + richHTML(L(p.msg)) + '</div></div></div></div>'; }).join('') + '</div>'
-      + (a.results ? (mine == null ? '<p class="hint">' + esc(S.actPickToSee) + '</p>' : '<p class="hint">' + esc(S.actTapOthers) + '</p>') : (mine == null ? '<p class="hint">' + esc(S.actPickHint) + '</p>' : '<p class="hint ok">' + esc(S.actPicked(Number(mine) + 1)) + ' ' + esc(S.actComeBack(fmtDate(a.resultsDate || a.date))) + '</p>'));
+    body = '<div class="piles' + (piles.length === 2 ? ' n2' : '') + '">' + piles.map((p, i) => { const chosen = String(mine) === String(i), open = chosen && actAnswered(a); return '<div class="pile' + (chosen ? ' chosen' : '') + (open ? ' open' : '') + '" data-pile="' + i + '"><div class="pile-inner"><div class="pf">' + BACK + '<b>' + (i + 1) + '</b><span>' + esc(p.label || '') + '</span></div><div class="pb"><div class="pbs">' + richHTML(L(p.msg)) + '</div></div></div></div>'; }).join('') + '</div>'
+      + (actAnswered(a) ? (mine == null ? '<p class="hint">' + esc(S.actPickToSee) + '</p>' : '<p class="hint">' + esc(S.actTapOthers) + '</p>') : (mine == null ? '<p class="hint">' + esc(S.actPickHint) + '</p>' : '<p class="hint ok">' + esc(S.actPicked(Number(mine) + 1)) + ' ' + esc(S.actComeBack(fmtDate(actAnswered(a)Date || a.date))) + '</p>'));
   } else if (a.type === 'poll') {
     const opts = a.options || [], voted = mine != null, show = voted || a.closed;
     body = '<div class="pollopts" data-poll="' + a.id + '">' + opts.map((o, i) => '<button type="button" class="pollopt' + (String(mine) === String(i) ? ' on' : '') + '" data-opt="' + i + '"' + (show ? ' disabled' : '') + '><span class="bar"></span><span class="lbl">' + esc(L(o)) + '</span><span class="pct"></span></button>').join('') + '</div>'
@@ -57,7 +59,7 @@ function bindActs(root, list) {
     if (a.type === 'pile') {
       $$('[data-pile]', card).forEach((el) => el.addEventListener('click', async () => {
         const i = Number(el.getAttribute('data-pile')), mine = myChoices()[a.id];
-        if (a.results) {  // after the answer: the chosen pile is open; any pile can be peeked at
+        if (actAnswered(a)) {  // after the answer: the chosen pile is open; any pile can be peeked at
           if (mine == null) { setChoice(a.id, i); sendVote(a, i); }
           el.classList.toggle('open'); if (el.classList.contains('open')) { hydrateImages(el); el.scrollIntoView({ behavior: 'smooth', block: 'nearest' }); }
           return;
@@ -65,7 +67,7 @@ function bindActs(root, list) {
         if (mine != null && String(mine) !== String(i) && !confirm(S.actChangePile)) return;
         setChoice(a.id, i); await sendVote(a, i);
         $$('[data-pile]', card).forEach((x) => x.classList.toggle('chosen', x === el));
-        const h = $('.hint', card); if (h) { h.className = 'hint ok'; h.textContent = S.actPicked(i + 1) + ' ' + S.actComeBack(fmtDate(a.resultsDate || a.date)); }
+        const h = $('.hint', card); if (h) { h.className = 'hint ok'; h.textContent = S.actPicked(i + 1) + ' ' + S.actComeBack(fmtDate(actAnswered(a)Date || a.date)); }
         toast('✓');
       }));
     } else if (a.type === 'poll') {
@@ -119,11 +121,11 @@ function adminActivities(p) {
     const pileRows = (a.piles || []).map((pl, i) => '<div class="card" style="padding:12px"><b>' + esc(S.actPileN(i + 1)) + '</b><input data-pl="' + i + '" placeholder="' + esc(S.actPileLabel) + '" value="' + esc(pl.label || '') + '" style="margin:6px 0"><textarea data-pmsg="' + i + '" placeholder="' + esc(S.actPileMsg) + '">' + esc(L2(pl.msg, 'vi')) + '</textarea><textarea data-pmsgen="' + i + '" placeholder="' + esc(S.actPileMsgEn) + '" style="min-height:60px;margin-top:6px">' + esc(L2(pl.msg, 'en')) + '</textarea></div>').join('');
     return '<div class="card"><h3 id="ahead" style="margin-bottom:6px">' + esc(editing ? S.edit : S.actNew) + '</h3>'
       + '<label class="f">' + esc(S.actType) + '</label><div class="chips">' + ['pile', 'poll', 'wish'].map((t) => '<button type="button" class="chip' + (a.type === t ? ' on' : '') + '" data-atype="' + t + '">' + esc(S.actTypes[t]) + '</button>').join('') + '</div>'
-      + '<div class="two"><div><label class="f" for="adate">' + esc(S.postDate) + '</label><input id="adate" type="date" value="' + esc(a.date) + '"></div><div><label class="f" for="ardate">' + esc(S.actResultsDate) + '</label><input id="ardate" type="date" value="' + esc(a.resultsDate || '') + '"></div></div>'
+      + '<div class="two"><div><label class="f" for="adate">' + esc(S.postDate) + '</label><input id="adate" type="date" value="' + esc(a.date) + '"></div><div><label class="f" for="ardate">' + esc(S.actResultsDate) + '</label><input id="ardate" type="date" value="' + esc(actAnswered(a)Date || '') + '"></div></div>'
       + '<label class="f" for="atitle">' + esc(S.postTitle) + '</label><input id="atitle" value="' + esc(L2(a.title, 'vi')) + '"><label class="f" for="atitle_en">' + esc(S.postTitleEn) + '</label><input id="atitle_en" value="' + esc(L2(a.title, 'en')) + '">'
       + '<label class="f" for="aintro">' + esc(S.actIntroLabel) + '</label><textarea id="aintro">' + esc(L2(a.intro, 'vi')) + '</textarea>'
       + '<div id="apiles"' + (a.type === 'pile' ? '' : ' hidden') + '><p class="hint" style="margin:12px 0 8px">' + esc(S.actPilesHint) + '</p>' + pileRows + '<div class="row nw"><button type="button" class="btn sm" id="apadd">+ ' + esc(S.actPileAdd) + '</button><button type="button" class="btn sm" id="apdel">− ' + esc(S.actPileDel) + '</button></div>'
-      + '<label class="f" style="display:flex;gap:8px;align-items:center;margin-top:14px"><input type="checkbox" id="aresults" style="width:auto"' + (a.results ? ' checked' : '') + '>' + esc(S.actResultsOn) + '</label></div>'
+      + '<label class="f" style="display:flex;gap:8px;align-items:center;margin-top:14px"><input type="checkbox" id="aresults" style="width:auto"' + (actAnswered(a) ? ' checked' : '') + '>' + esc(S.actResultsOn) + '</label></div>'
       + '<div id="apoll"' + (a.type === 'poll' ? '' : ' hidden') + '><label class="f" for="aopts">' + esc(S.actOptions) + '</label><textarea id="aopts">' + esc((a.options || []).map((o) => L2(o, 'vi')).join('\n')) + '</textarea><label class="f" style="display:flex;gap:8px;align-items:center;margin-top:10px"><input type="checkbox" id="aclosed" style="width:auto"' + (a.closed ? ' checked' : '') + '>' + esc(S.actCloseOn) + '</label></div>'
       + '<div class="btns" style="margin-top:16px"><button class="btn primary" id="apub">' + esc(S.publish) + '</button><button class="btn" id="anew">' + esc(S.actNew) + '</button></div><p id="astatus" class="hint"></p></div>'
       + '<div class="card"><h3 style="margin-bottom:6px">' + esc(S.actExisting) + '</h3><div class="plist" id="alist">' + (items.length ? items.map((x) => '<div class="it"><div class="tt"><div>' + esc(S.actTypes[x.type] || x.type) + ' · ' + esc(L2(x.title, 'vi') || L2(x.title, 'en')) + '</div><div class="d">' + esc(x.date) + (x.results ? ' · ✓' : '') + '</div></div><button class="btn sm" data-aedit="' + esc(x.id) + '">' + esc(S.edit) + '</button><button class="btn sm" data-adel="' + esc(x.id) + '">' + esc(S.del) + '</button></div>').join('') : '<p class="hint">' + esc(S.actEmpty) + '</p>') + '</div></div>';
