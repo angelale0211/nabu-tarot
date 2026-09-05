@@ -255,6 +255,7 @@ p{margin:0 0 12px}
 
 /* ---- common ---- */
 main{padding:22px 0 30px}
+#backbar{padding-top:12px}#backbar+main{padding-top:6px}#backbar .backlink{margin:0 0 0 -4px}
 .sec{margin-bottom:26px}
 .eyebrow{font-size:12px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--pink-ink);margin-bottom:8px}
 :root[lang="vi"] .eyebrow{text-transform:none;letter-spacing:.02em}
@@ -694,6 +695,7 @@ main{padding:22px 0 30px}
   </div>
 </div></header>
 
+<div id="backbar" class="wrap" hidden></div>
 <main><div class="wrap" id="main"></div></main>
 
 <footer class="foot" id="foot"></footer>
@@ -10277,10 +10279,15 @@ function screenLabel(h) {
   if (r === 'learn') { if (!a.length) return S.learnTitle; if (a.length === 1 && S.cats[a[0]]) return S.cats[a[0]]; if (a[0] === 'fortune' && a.length === 2) return S.cats.fortune; }
   return S.back;
 }
+function backTarget() { const prev = NAV.stack[NAV.stack.length - 1]; return prev && prev !== NAV.current ? prev : ''; }
 function backLink(href, label) {
-  const prev = NAV.stack[NAV.stack.length - 1];
-  const useStack = prev && prev !== NAV.current;
-  return '<p><a href="' + esc(useStack ? prev : href) + '" class="backlink"' + (useStack ? ' data-back="1"' : '') + '>← ' + esc(useStack ? screenLabel(prev) : label) + '</a></p>';
+  if (backTarget()) return '';  // the bar above the screen already shows the way back
+  return '<p><a href="' + esc(href) + '" class="backlink">← ' + esc(label) + '</a></p>';
+}
+function renderBackBar(route) {
+  const bar = $('#backbar'), prev = route === 'home' ? '' : backTarget();
+  bar.hidden = !prev;
+  bar.innerHTML = prev ? '<a href="' + esc(prev) + '" class="backlink" data-back="1">← ' + esc(screenLabel(prev)) + '</a>' : '';
 }
 function parseHash() {
   const h = location.hash.replace(/^#\/?/, '');
@@ -10294,6 +10301,7 @@ function route() {
   if (!def) { redirect('#/home'); return; }
   navRemember(location.hash || '#/home');
   renderChrome(def.nav);
+  renderBackBar(r.route);
   window.scrollTo(0, 0);
   def.render(r.args, r.params);
 }
@@ -12356,7 +12364,7 @@ function adminCodes(p) {
 ROUTES.admin = { nav: '', render: renderAdmin };
 
 /* ============================ boot ============================ */
-window.APP_VERSION = 'v36';
+window.APP_VERSION = 'v37';
 window.NABU = { CONFIG: CONFIG, LESSONS: LESSONS, localAnswer: localAnswer, compatVerdict: compatVerdict, numerologyOf: numerologyOf, ZDEEP: ZDEEP, lunarToday: lunarToday, solarToLunar: solarToLunar, DECK: DECK, INSIGHT: INSIGHT, KW: KW, ASK: ASK, TOPICS: TOPICS, GUIDES: GUIDES, SERVICES: SERVICES, COURSES: COURSES, ACCESS: ACCESS, makeCode: makeCode, parseCode: parseCode, ZODIAC: ZODIAC, pick: pick, book: book,
   insightHTML: insightHTML, insightOf: insightOf, sunSignIndex: sunSignIndex, lifePath: lifePath, PROFILE: () => PROFILE, BE: BE };
 BE.init().catch(() => { /* backend unreachable: the app runs device-only */ });

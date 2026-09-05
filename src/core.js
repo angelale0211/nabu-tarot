@@ -229,10 +229,15 @@ function screenLabel(h) {
   if (r === 'learn') { if (!a.length) return S.learnTitle; if (a.length === 1 && S.cats[a[0]]) return S.cats[a[0]]; if (a[0] === 'fortune' && a.length === 2) return S.cats.fortune; }
   return S.back;
 }
+function backTarget() { const prev = NAV.stack[NAV.stack.length - 1]; return prev && prev !== NAV.current ? prev : ''; }
 function backLink(href, label) {
-  const prev = NAV.stack[NAV.stack.length - 1];
-  const useStack = prev && prev !== NAV.current;
-  return '<p><a href="' + esc(useStack ? prev : href) + '" class="backlink"' + (useStack ? ' data-back="1"' : '') + '>← ' + esc(useStack ? screenLabel(prev) : label) + '</a></p>';
+  if (backTarget()) return '';  // the bar above the screen already shows the way back
+  return '<p><a href="' + esc(href) + '" class="backlink">← ' + esc(label) + '</a></p>';
+}
+function renderBackBar(route) {
+  const bar = $('#backbar'), prev = route === 'home' ? '' : backTarget();
+  bar.hidden = !prev;
+  bar.innerHTML = prev ? '<a href="' + esc(prev) + '" class="backlink" data-back="1">← ' + esc(screenLabel(prev)) + '</a>' : '';
 }
 function parseHash() {
   const h = location.hash.replace(/^#\/?/, '');
@@ -246,6 +251,7 @@ function route() {
   if (!def) { redirect('#/home'); return; }
   navRemember(location.hash || '#/home');
   renderChrome(def.nav);
+  renderBackBar(r.route);
   window.scrollTo(0, 0);
   def.render(r.args, r.params);
 }
