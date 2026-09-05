@@ -2,7 +2,7 @@
    Service and package, topic (required for "set topic" packages), a
    calendar of Nabu's free slots (schedule.json, minus slots taken in
    Firestore when accounts are on), details, then send. */
-const book = { service: null, pkg: null, topic: null, name: '', note: '', birth: '', birthTime: '', card: null, slot: null, month: null, day: null };
+const book = { items: [], name: '', note: '', birth: '', birthTime: '', card: null, slot: null, month: null, day: null };
 let SCHEDULE = null, TAKEN = {};
 
 async function loadSchedule() {
@@ -46,30 +46,52 @@ function slotsHTML() {
 function slotLabel(key) { return T().dateFmt(new Date(key.slice(0, 10) + 'T00:00:00')) + ' · ' + key.slice(11) + ' (' + L(CONFIG.tzLabel) + ')'; }
 
 const serviceOf = (id) => SERVICES.filter((s) => s.id === id)[0];
-const pkgOf = () => { const s = serviceOf(book.service); return s ? s.packages.filter((p) => p.id === book.pkg)[0] : null; };
-function serviceLine() { const s = serviceOf(book.service), p = pkgOf(); return s && p ? L(s.name) + ' – ' + L(p.name) + ' (' + fmtPrice(p.price) + ')' : ''; }
+const pkgOfItem = (it) => { const s = serviceOf(it.svc); return s ? s.packages.filter((p) => p.id === it.pkg)[0] : null; };
+const itemIndex = (svc, pkg) => book.items.findIndex((x) => x.svc === svc && x.pkg === pkg);
+const cartTotal = () => book.items.reduce((sum, it) => { const p = pkgOfItem(it); return sum + (p ? p.price : 0); }, 0);
+const needsBirth = () => book.items.some((it) => { const s = serviceOf(it.svc); return s && s.needsBirth; });
+const topicLabel = (n, l) => { const t = TOPICS[n - 1]; return t ? '#' + t.id + ' ' + (l ? L2(t.name, l) : L(t.name)) : ''; };
+function itemLine(it, l) {
+  const s = serviceOf(it.svc), p = pkgOfItem(it); if (!s || !p) return '';
+  const name = l ? L2(s.name, l) + ' – ' + L2(p.name, l) : L(s.name) + ' – ' + L(p.name);
+  return name + ' (' + fmtPrice(p.price) + ')' + (p.needsTopic && it.topic ? ' · ' + (l === 'vi' ? 'Chủ đề' : T().msgTopic) + ': ' + topicLabel(it.topic, l) : '');
+}
 function composeMessage() {
   const S = T(), lines = [S.msgHello];
-  if (book.service && book.pkg) lines.push(S.msgService + ': ' + serviceLine());
-  if (book.topic === 'own') lines.push(S.msgTopic + ': ' + S.ownTopic);
-  else if (book.topic) { const t = TOPICS[book.topic - 1]; lines.push(S.msgTopic + ': #' + t.id + ' ' + L(t.name)); }
+  if (book.items.length === 1) lines.push(S.msgService + ': ' + itemLine(book.items[0]));
+  else book.items.forEach((it, k) => lines.push(S.msgService + ' ' + (k + 1) + ': ' + itemLine(it)));
+  if (book.items.length > 1) lines.push(S.msgTotal + ': ' + fmtPrice(cartTotal()));
   if (book.slot) lines.push(S.msgTime + ': ' + slotLabel(book.slot));
   if (book.name.trim()) lines.push(S.msgName + ': ' + book.name.trim());
-  const s = serviceOf(book.service);
-  if (s && s.needsBirth && (book.birth || book.birthTime)) lines.push(S.msgBirth + ': ' + (book.birth || '?') + (book.birthTime ? ' ' + book.birthTime : ''));
+  if (needsBirth() && (book.birth || book.birthTime)) lines.push(S.msgBirth + ': ' + (book.birth || '?') + (book.birthTime ? ' ' + book.birthTime : ''));
   if (book.note.trim()) lines.push(S.msgNote + ': ' + book.note.trim());
   if (book.card) { const c = cardById(book.card); if (c) lines.push(S.msgCard + ': ' + c.name); }
   return lines.join('\n');
+}
+/* The basket under the price list: every chosen package, its topic, the total. */
+function cartHTML() {
+  const S = T();
+  if (!book.items.length) return '<div class="cart empty"><span>🧺 ' + esc(S.cartEmpty) + '</span></div>';
+  return '<div class="cart"><b>🧺 ' + esc(S.cartTitle) + '</b>' + book.items.map((it, k) => { const s = serviceOf(it.svc), p = pkgOfItem(it); return '<div class="ci"><span>' + esc(L(s.name) + ' – ' + L(p.name)) + (p.needsTopic ? '<br><small class="' + (it.topic ? 'ok' : 'warn') + '">' + esc(it.topic ? S.msgTopic + ': ' + topicLabel(it.topic) : S.cartNeedsTopic) + '</small>' : '') + '</span><b>' + fmtPrice(p.price) + '</b><button class="x" data-remove="' + k + '" aria-label="remove">✕</button></div>'; }).join('')
+    + (book.items.length > 1 ? '<div class="ci total"><span>' + esc(S.msgTotal) + '</span><b>' + fmtPrice(cartTotal()) + '</b></div>' : '') + '</div>';
+}
+/* Step 2: one topic picker per "1 preset topic" package in the basket. */
+function topicSectionHTML() {
+  const S = T();
+  const need = book.items.map((it, k) => ({ it: it, k: k })).filter((x) => { const p = pkgOfItem(x.it); return p && p.needsTopic; });
+  const cards = (k, chosen) => TOPICS.map((t) => '<button class="topic' + (chosen === t.id ? ' on open' : '') + '" data-topic="' + k + '/' + t.id + '"><div class="t"><span class="ic">' + t.icon + '</span><span><span class="n">#' + t.id + '</span> ' + esc(L(t.name)) + '</span></div><ol>' + t.q[lang].map((q) => '<li>' + esc(q) + '</li>').join('') + '</ol></button>').join('');
+  if (!need.length) return '<p class="hint" style="margin-bottom:12px">' + esc(S.topicHint) + '</p><p class="hint faint">' + esc(S.topicNone) + '</p>';
+  return '<p class="hint" style="margin-bottom:12px">' + esc(S.topicHint) + '</p>' + need.map((x) => { const s = serviceOf(x.it.svc), p = pkgOfItem(x.it); return '<div class="tpick" data-tpick="' + x.k + '"><h3>' + esc(S.topicFor) + ' ' + esc(L(s.name) + ' – ' + L(p.name)) + (x.it.topic ? ' <span class="ok">✓</span>' : ' <span class="warn">' + esc(S.cartNeedsTopic) + '</span>') + '</h3>' + cards(x.k, x.it.topic) + '</div>'; }).join('');
 }
 
 /* ---- price sheet (also its own screen at #/prices) ---- */
 function priceSheetHTML(interactive) {
   const S = T();
-  return SERVICES.map((s) => '<div class="svc ' + s.tone + (interactive && book.service === s.id ? ' on' : '') + '" data-svc="' + s.id + '">'
+  return SERVICES.map((s) => '<div class="svc ' + s.tone + (interactive && book.items.some((it) => it.svc === s.id) ? ' on' : '') + '" data-svc="' + s.id + '">'
     + '<div class="t"><span class="ic">' + s.icon + '</span><div><b>' + esc(L(s.name)) + '</b><div class="tag">' + esc(L(s.tagline)) + '</div></div></div>'
     + (s.note ? '<p class="hint">' + esc(L(s.note)) + '</p>' : '')
     + '<div class="pk">' + s.packages.map((p) => (interactive
-      ? '<button class="pkg' + (book.service === s.id && book.pkg === p.id ? ' on' : '') + '" data-pkg="' + s.id + '/' + p.id + '"><span>' + esc(L(p.name)) + '</span><b>' + fmtPrice(p.price) + '</b></button>'
+      ? '<button class="pkg' + (itemIndex(s.id, p.id) > -1 ? ' on' : '') + '" data-pkg="' + s.id + '/' + p.id + '"><span>' + (itemIndex(s.id, p.id) > -1 ? '✓ ' : '') + esc(L(p.name)) + '</span><b>' + fmtPrice(p.price) + '</b></button>'
       : '<div class="pkg"><span>' + esc(L(p.name)) + '</span><b>' + fmtPrice(p.price) + '</b></div>')).join('') + '</div></div>').join('')
     + '<p class="paynote">💜 ' + esc(L(PAYMENT_NOTE)) + '</p>';
 }
@@ -84,18 +106,15 @@ function renderPrices() {
 async function renderBook(args, params) {
   const S = T(), m = $('#main');
   book.card = params.card || null; book.name = book.name || PROFILE.name || ''; book.birth = book.birth || PROFILE.birthday || '';
-  if (params.svc) { book.service = params.svc; book.pkg = null; }
   if (!book.month) book.month = new Date(new Date().getFullYear(), new Date().getMonth(), 1);
-  const topics = TOPICS.map((t) => '<button class="topic' + (book.topic === t.id ? ' on open' : '') + '" data-topic="' + t.id + '"><div class="t"><span class="ic">' + t.icon + '</span><span><span class="n">#' + t.id + '</span> ' + esc(L(t.name)) + '</span></div><ol>' + t.q[lang].map((q) => '<li>' + esc(q) + '</li>').join('') + '</ol></button>').join('')
-    ;
   const links = [];
   if (CONFIG.instagram) links.push(['https://ig.me/m/' + CONFIG.instagram, S.viaInstagram, BE.enabled ? '' : 'primary']);
   if (CONFIG.facebookPage) links.push(['https://m.me/' + CONFIG.facebookPage, S.viaMessenger, '']);
   if (CONFIG.zalo) links.push(['https://zalo.me/' + CONFIG.zalo, S.viaZalo, '']);
   if (CONFIG.email) links.push(['mailto:' + CONFIG.email, S.viaEmail, '']);
-  m.innerHTML = '<div class="eyebrow">' + esc(CONFIG.brand) + '</div><h1 style="margin-bottom:6px">' + esc(S.bookTitle) + '</h1><p class="muted">' + esc(L(CONFIG.bookingNote)) + '</p>'
-    + '<div class="sec"><h2 style="margin:18px 0 4px">' + esc(S.chooseService) + '</h2><p class="hint" style="margin-bottom:12px">' + esc(S.serviceHint) + '</p><div id="svcwrap">' + priceSheetHTML(true) + '</div></div>'
-    + '<div class="sec"><h2 style="margin:18px 0 4px">' + esc(S.chooseTopic) + ' <span class="faint" id="topicopt"></span></h2><p class="hint" style="margin-bottom:12px">' + esc(S.topicHint) + '</p>' + topics + '</div>'
+  m.innerHTML = '<div class="eyebrow">' + esc(CONFIG.brand) + '</div><h1 style="margin-bottom:6px">' + esc(S.bookTitle) + '</h1><p class="muted">' + esc(L(CONFIG.bookingNote)) + '</p><p class="tip">👆 ' + esc(S.bookTip) + '</p>'
+    + '<div class="sec"><h2 style="margin:18px 0 4px">' + esc(S.chooseService) + '</h2><p class="hint" style="margin-bottom:12px">' + esc(S.serviceHint) + '</p><div id="svcwrap">' + priceSheetHTML(true) + '</div><div id="cartwrap">' + cartHTML() + '</div></div>'
+    + '<div class="sec"><h2 style="margin:18px 0 4px">' + esc(S.chooseTopic) + '</h2><div id="topicwrap">' + topicSectionHTML() + '</div></div>'
     + '<div class="sec"><h2 style="margin-bottom:4px">' + esc(S.chooseTime) + '</h2><p class="hint" style="margin-bottom:10px">' + esc(S.timeHint(L(CONFIG.tzLabel))) + '</p><div id="calwrap"><p class="hint">…</p></div></div>'
     + '<div class="sec"><h2>' + esc(S.yourDetails) + '</h2><label class="f" for="bname">' + esc(S.yourName) + '</label><input id="bname" value="' + esc(book.name) + '" autocomplete="nickname">'
     + '<div id="birthwrap" hidden><label class="f" for="bbirth">' + esc(S.birthday) + '</label><input id="bbirth" type="date" value="' + esc(book.birth) + '"><label class="f" for="btime">' + esc(S.birthTime) + '</label><input id="btime" type="time" value="' + esc(book.birthTime) + '"><p class="hint">' + esc(S.birthHint) + '</p></div>'
@@ -110,34 +129,42 @@ async function renderBook(args, params) {
     + '<div class="sec card"><h3 style="margin-bottom:10px">' + esc(S.howItWorks) + '</h3><ol class="steps">' + [S.chooseService.slice(3), S.chooseTopic.slice(3), S.chooseTime.slice(3), S.sendVia.slice(3), L(PAYMENT_NOTE)].map((x) => '<li>' + esc(x) + '</li>').join('') + '</ol></div>'
     + '<div class="sec"><h3 style="margin-bottom:6px">' + esc(S.aboutTitle) + '</h3><p class="muted">' + esc(L(CONFIG.about)) + '</p></div>';
   const prev = () => { $('#msgprev').textContent = composeMessage(); };
-  const syncService = () => {
-    const s = serviceOf(book.service), p = pkgOf();
-    $$('.svc', m).forEach((el) => el.classList.toggle('on', el.getAttribute('data-svc') === book.service));
-    $$('[data-pkg]', m).forEach((el) => el.classList.toggle('on', el.getAttribute('data-pkg') === book.service + '/' + book.pkg));
-    $('#topicopt').textContent = p && p.needsTopic ? '' : '(' + S.optional + ')';
-    $('#birthwrap').hidden = !(s && s.needsBirth);
-    prev();
+  const bindTopics = () => {
+    $$('[data-topic]', m).forEach((btn) => btn.addEventListener('click', () => {
+      const v = btn.getAttribute('data-topic').split('/'), k = Number(v[0]), id = Number(v[1]), it = book.items[k];
+      if (!it) return;
+      it.topic = it.topic === id ? null : id;   // a second tap clears the choice
+      syncCart(false);
+    }));
   };
-  syncService();
-  $$('[data-pkg]', m).forEach((b) => b.addEventListener('click', () => { const v = b.getAttribute('data-pkg').split('/'); book.service = v[0]; book.pkg = v[1]; syncService(); }));
-  $$('[data-topic]', m).forEach((b) => b.addEventListener('click', () => {
-    const v = b.getAttribute('data-topic'), id = v === 'own' ? 'own' : Number(v);
-    // A second tap on the chosen topic clears the choice.
-    if (book.topic === id) { book.topic = null; b.classList.remove('on', 'open'); prev(); return; }
-    book.topic = id;
-    $$('[data-topic]', m).forEach((x) => { const on = x === b; x.classList.toggle('on', on); x.classList.toggle('open', on); });
+  const syncCart = (scrollTopics) => {
+    $$('.svc', m).forEach((el) => el.classList.toggle('on', book.items.some((it) => it.svc === el.getAttribute('data-svc'))));
+    $$('[data-pkg]', m).forEach((el) => { const v = el.getAttribute('data-pkg').split('/'), on = itemIndex(v[0], v[1]) > -1; el.classList.toggle('on', on); el.querySelector('span').textContent = (on ? '✓ ' : '') + L(serviceOf(v[0]).packages.filter((p) => p.id === v[1])[0].name); });
+    $('#cartwrap').innerHTML = cartHTML();
+    $$('[data-remove]', m).forEach((x) => x.addEventListener('click', () => { book.items.splice(Number(x.getAttribute('data-remove')), 1); syncCart(false); }));
+    $('#topicwrap').innerHTML = topicSectionHTML(); bindTopics();
+    $('#birthwrap').hidden = !needsBirth();
     prev();
+    if (scrollTopics) { const t = $('.tpick:not(:has(.topic.on))', m); if (t) t.scrollIntoView({ behavior: 'smooth', block: 'start' }); }
+  };
+  syncCart(false);
+  $$('[data-pkg]', m).forEach((btn) => btn.addEventListener('click', () => {
+    const v = btn.getAttribute('data-pkg').split('/'), k = itemIndex(v[0], v[1]);
+    if (k > -1) { book.items.splice(k, 1); syncCart(false); return; }
+    const p = serviceOf(v[0]).packages.filter((x) => x.id === v[1])[0];
+    book.items.push({ svc: v[0], pkg: v[1], topic: null });
+    syncCart(!!p.needsTopic);
   }));
   $('#bname').addEventListener('input', (e) => { book.name = e.target.value; prev(); });
   $('#bnote').addEventListener('input', (e) => { book.note = e.target.value; prev(); });
   $('#bbirth').addEventListener('input', (e) => { book.birth = e.target.value; prev(); });
   $('#btime').addEventListener('input', (e) => { book.birthTime = e.target.value; prev(); });
   const need = () => {
-    const p = pkgOf(), s = serviceOf(book.service);
-    if (!p) { toast(S.needService); $('#svcwrap').scrollIntoView({ behavior: 'smooth', block: 'start' }); return false; }
-    if (p.needsTopic && (!book.topic || book.topic === 'own')) { toast(S.needTopic); $$('[data-topic]', m)[0].scrollIntoView({ behavior: 'smooth', block: 'center' }); return false; }
+    if (!book.items.length) { toast(S.needService); $('#svcwrap').scrollIntoView({ behavior: 'smooth', block: 'start' }); return false; }
+    const missing = book.items.findIndex((it) => { const p = pkgOfItem(it); return p && p.needsTopic && !it.topic; });
+    if (missing > -1) { toast(S.needTopic); const t = $('.tpick[data-tpick="' + missing + '"]', m); if (t) t.scrollIntoView({ behavior: 'smooth', block: 'start' }); return false; }
     if (!book.slot) { toast(S.needSlot); $('#calwrap').scrollIntoView({ behavior: 'smooth', block: 'center' }); return false; }
-    if (s && s.needsBirth && !book.birth) { toast(S.needBirth); $('#birthwrap').scrollIntoView({ behavior: 'smooth', block: 'center' }); return false; }
+    if (needsBirth() && !book.birth) { toast(S.needBirth); $('#birthwrap').scrollIntoView({ behavior: 'smooth', block: 'center' }); return false; }
     return true;
   };
   $$('[data-send]', m).forEach((el) => el.addEventListener('click', (e) => {
@@ -153,10 +180,10 @@ async function renderBook(args, params) {
     if (!BE.user) { $('#sendstatus').textContent = S.needLogin; location.hash = '#/me?next=book'; return; }
     sendBtn.disabled = true; sendBtn.textContent = S.sending;
     try {
-      const p = pkgOf(), s = serviceOf(book.service);
-      const t = book.topic === 'own' ? S.ownTopic : book.topic ? ('#' + book.topic + ' ' + L(TOPICS[book.topic - 1].name)) : '';
-      await BE.createBooking({ name: book.name.trim() || PROFILE.name || '', slot: book.slot, service: L2(s.name, 'vi'), pkg: L2(p.name, 'vi'), price: p.price, topic: t,
-        note: book.note.trim(), birth: s.needsBirth ? (book.birth + (book.birthTime ? ' ' + book.birthTime : '')) : '', card: book.card ? cardById(book.card).name : '' });
+      const items = book.items.map((it) => { const s = serviceOf(it.svc), p = pkgOfItem(it); return { service: L2(s.name, 'vi'), pkg: L2(p.name, 'vi'), price: p.price, topic: p.needsTopic && it.topic ? topicLabel(it.topic, 'vi') : '' }; });
+      await BE.createBooking({ name: book.name.trim() || PROFILE.name || '', slot: book.slot,
+        service: items.map((x) => x.service + ' – ' + x.pkg + (x.topic ? ' (' + x.topic + ')' : '')).join(' + '), pkg: '', price: cartTotal(), topic: items.map((x) => x.topic).filter(Boolean).join('; '), items: items,
+        note: book.note.trim(), birth: needsBirth() ? (book.birth + (book.birthTime ? ' ' + book.birthTime : '')) : '', card: book.card ? cardById(book.card).name : '' });
       $('#sendstatus').textContent = S.sentOk; $('#sendstatus').className = 'hint ok'; toast('✓');
       TAKEN = await BE.takenSlots(); book.slot = null; book.note = ''; drawCal();
     } catch (e) { $('#sendstatus').textContent = S.publishFail + ': ' + e.message; $('#sendstatus').className = 'hint err'; }
