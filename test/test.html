@@ -461,7 +461,14 @@ async function go(hash, sel) { W().location.hash = hash; await sleep(30); return
         { id: 'q1', type: 'poll', date: '2026-09-04', title: { vi: 'Cung nào nhạy cảm nhất?' }, options: [{ vi: 'Cự Giải' }, { vi: 'Song Ngư' }, { vi: 'Bọ Cạp' }], closed: false },
         { id: 'w1', type: 'wish', date: '2026-09-03', title: { vi: 'Trăng non tháng 9: ước gì?' } }]; N.ACTS.loaded = true; w.localStorage.removeItem('nabu-act-choices'); w.localStorage.removeItem('nabu-wishes');
       await go('#/play', '#acts .actbtn'); await sleep(80);
-      ok(d.querySelectorAll('#acts .actbtn').length === 7 && !d.querySelector('.actbtn[href="#/unlock"]') && d.querySelector('.actbtn[href="#/play/tree"]') && d.querySelector('.actbtn[href="#/play/coin"]') && d.querySelector('.actbtn[href="#/play/diary"]') && d.querySelector('.actbtn[href="#/play/p1"]') && d.querySelector('.actbtn[href="#/play/w1"]') && !d.querySelector('[data-pile]'), 'the activities screen is a list of buttons: the pet, the coin and the diary first, then one per activity');
+      ok(d.querySelectorAll('#acts .actbtn').length === 4 && d.querySelector('.actbtn[href="#/play/pet"]') && d.querySelector('.actbtn[href="#/play/tree"]') && d.querySelector('.actbtn[href="#/play/coin"]') && d.querySelector('.actbtn[href="#/play/diary"]')
+        && d.querySelectorAll('.actquick.three .aq').length === 3 && d.querySelector('.aq[href="#/play/piles"]') && d.querySelector('.aq[href="#/play/polls"]') && d.querySelector('.aq[href="#/play/wishes"]')
+        && !d.querySelector('.actgroup') && !d.querySelector('[data-pile]'),
+        'the activities screen is four everyday buttons and one line of three, with nothing spelled out in full');
+      await go('#/play/polls', '#acts');
+      ok(d.querySelectorAll('#acts .actbtn').length >= 1 && d.querySelectorAll('#acts .actbtn').length === d.querySelectorAll('#acts .act-poll').length && d.querySelector('#main a[href="#/play"]'),
+        'each of the three opens its own page with only that kind on it');
+      await go('#/play', '#acts');
       w.localStorage.removeItem('nabu-luck'); w.localStorage.removeItem('nabu-access');
       { // A detail page must never truncate its own text; only teasers may.
         const bad = [];
@@ -537,8 +544,9 @@ async function go(hash, sel) { W().location.hash = hash; await sleep(30); return
       await go('#/play/pet', '.petpick');
       d.querySelector('[data-kind="cat"]').click(); await sleep(60);
       ok(d.querySelector('#petkeep') && d.querySelector('.petstage .petart') && !w.localStorage.getItem('nabu-pets')
-        && /mỗi 6 giờ một bữa/.test(d.querySelector('.carelist').textContent),
-        'tapping a companion shows it at full size with what caring for it involves, and keeps nothing yet');
+        && /mỗi 6 giờ một bữa/.test(d.querySelector('.carelist').textContent)
+        && d.querySelectorAll('.petstage .stagebtn.locked').length === 4 && /🔒/.test(d.querySelector('.carelist').textContent),
+        'tapping a companion shows it at full size, with what caring for it involves and the four things it can be given, locked');
       d.querySelector('#petback2').click(); await sleep(40);
       ok(d.querySelectorAll('.petpick [data-kind]').length === 18 && !w.localStorage.getItem('nabu-pets'), 'the visitor can go back and look at another');
       d.querySelector('[data-kind="cat"]').click(); await sleep(40);

@@ -1003,6 +1003,8 @@ main{padding:22px 0 30px}
 .stagebtn{display:flex;align-items:center;gap:5px;background:rgba(255,255,255,.86);border:1px solid var(--rule-soft);border-radius:999px;padding:5px 9px;font:inherit;color:var(--fg);cursor:pointer;box-shadow:0 2px 8px rgba(60,40,90,.14);backdrop-filter:blur(3px)}
 .stagebtn .ic{font-size:15px;line-height:1}
 .stagebtn .lb{font-size:11.5px;font-weight:600;white-space:nowrap}
+.stagebtn.locked{opacity:.9;border-style:dashed;cursor:default}
+.stagebtn .lk{font-size:11px}
 @media (max-width:360px){.stagebtn .lb{display:none}.stagebtn{padding:6px 7px}}
 /* The sheet that those buttons lift. */
 .sheet{position:fixed;inset:0;z-index:60;display:flex;align-items:flex-end;justify-content:center}
@@ -1078,6 +1080,9 @@ main{padding:22px 0 30px}
 .sum .r.cut b{font-weight:600}
 /* The four everyday activities, offered on the home page as well. */
 .actquick{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:12px}
+.actquick.three{grid-template-columns:repeat(3,1fr);margin-top:10px}
+.actquick .aq{position:relative}
+.actquick .aq .cnt{position:absolute;top:5px;right:6px;background:var(--tag-gold-bg);color:var(--tag-gold-ink);border-radius:999px;padding:0 6px;font-size:10.5px;font-weight:700}
 .actquick .aq{display:flex;flex-direction:column;align-items:center;gap:5px;background:var(--surface);border:1px solid var(--rule-soft);border-radius:14px;padding:10px 4px;text-decoration:none;color:inherit;min-width:0}
 .actquick .aq .ic{font-size:21px;line-height:1}
 .actquick .aq b{font-size:11px;font-weight:600;line-height:1.25;text-align:center;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
@@ -1585,7 +1590,7 @@ const STR = {
     looksStripNote: 'Bạn chạm để đổi. Ba mẫu có ổ khoá thuộc Nabu Tarot Plus.',
     looksHere: '🎨 Đổi giao diện của mục này', looksLocked: 'Mở tất cả giao diện đẹp hơn', looksPlusOn: 'Bạn đang có Nabu Tarot Plus, tất cả giao diện đều mở.', looksNeedPlus: 'Giao diện này thuộc Nabu Tarot Plus.',
     lookKinds: { cardback: 'Mặt sau lá bài', tree: 'Cây thông điệp', coin: 'Đồng xu', diary: 'Trang nhật ký' },
-    petTitle: 'Nuôi bạn nhỏ may mắn', petSub: 'mỗi ngày một bữa ăn và một lời khấn',
+    petTitle: 'Thú cưng may mắn', petSub: 'mỗi ngày một bữa ăn và một lời khấn',
     petPick: 'Mỗi bạn nhỏ trông giữ một phần khác nhau trong cuộc sống của bạn: tình duyên, sự nghiệp, học hành, tiền tài, sức khỏe và chuyện đi lại.',
     petIntro: 'Bạn cho bạn nhỏ ăn mỗi ngày một lần, rồi khấn một lời. Bạn chăm sóc càng đều đặn thì vận may càng đầy.',
     petBrings: (n) => 'Trông giữ chuyện ' + n.toLowerCase(), petCharm: 'Vận may',
@@ -1616,6 +1621,8 @@ const STR = {
     petChangeAsk: 'Bạn nhỏ mới sẽ bắt đầu lại từ cấp 1, và bạn chỉ đổi được sau mỗi hai tuần. Bạn đồng ý đổi?',
     petChangeWait: (d) => 'Bạn đổi bạn nhỏ được sau mỗi hai tuần. Lần đổi tiếp theo mở vào ' + d + '.',
     petChangeFree: 'Bạn đang được đổi bạn nhỏ. Bạn nhỏ mới sẽ bắt đầu lại từ cấp 1.',
+    actGroupIntro: { pile: 'Bạn chọn một tụ bài, rồi quay lại khi Nabu lật tụ để xem thông điệp dành cho bạn.', poll: 'Bạn bình chọn cùng mọi người và xem kết quả chung ngay sau đó.', wish: 'Bạn gửi một điều ước vào lọ. Điều ước của bạn được giữ riêng trên máy.' },
+    petPreviewCan: 'Khi bạn nhận bạn nhỏ này, bạn sẽ mở được:',
     petPickFree: 'Sáu bạn nhỏ miễn phí', petPickFreeNote: 'Bạn chọn một bạn nhỏ để nuôi miễn phí, và đổi được bất cứ lúc nào.',
     petPickPro: 'Linh thú Nabu Tarot Plus', petPickProNote: 'Mười hai linh thú trong truyền thuyết, hai vị cho mỗi phần đời. Linh thú nhận gấp đôi điểm mỗi lần bạn cho ăn hoặc chơi cùng, nên lên cấp nhanh gấp đôi và đổi ra xu Nabu cũng nhanh gấp đôi. Nabu Tarot Plus mở cả mười hai và cho bạn nuôi nhiều vị cùng lúc.',
     petXpWord: 'điểm', petMythBonus: (n) => 'Linh thú nhận gấp ' + n + ' lần điểm mỗi khi ăn và mỗi khi chơi.',
@@ -1919,7 +1926,7 @@ const STR = {
     looksStripNote: 'Tap to change. The three with a padlock come with Nabu Tarot Plus.',
     looksHere: '🎨 Change how this looks', looksLocked: 'Open every look', looksPlusOn: 'You have Nabu Tarot Plus, so every look is open.', looksNeedPlus: 'That look comes with Nabu Tarot Plus.',
     lookKinds: { cardback: 'Card backs', tree: 'The message tree', coin: 'The coin', diary: 'Diary paper' },
-    petTitle: 'Keep a luck companion', petSub: 'one meal and one wish a day',
+    petTitle: 'Lucky pets', petSub: 'one meal and one wish a day',
     petPick: 'Each companion looks after a different part of your life: love, work, study, money, health and travel.',
     petIntro: 'Feed your companion once a day, then say one wish over it. The more steadily you care for it, the fuller its luck grows.',
     petBrings: (n) => 'Looks after your ' + n.toLowerCase(), petCharm: 'Luck',
@@ -1950,6 +1957,8 @@ const STR = {
     petChangeAsk: 'The new companion starts again at level 1, and you can only change once a fortnight. Change anyway?',
     petChangeWait: (d) => 'A companion can be changed once a fortnight. The next change opens on ' + d + '.',
     petChangeFree: 'You can change companion now. The new one starts again at level 1.',
+    actGroupIntro: { pile: 'Choose a pile, then come back when Nabu turns it over to read what it holds for you.', poll: 'Vote with everyone else and see how the answers fall.', wish: 'Send a wish into the jar. Your wishes stay on your own device.' },
+    petPreviewCan: 'When you keep this companion you can:',
     petPickFree: 'Six everyday companions', petPickFreeNote: 'Keep one of them for free, and change your mind whenever you like.',
     petPickPro: 'Nabu Tarot Plus spirit beasts', petPickProNote: 'Twelve creatures out of legend, two for each corner of life. A spirit beast earns double from every meal and every game, so it levels twice as fast and turns into Nabu coins twice as fast. Plus opens all twelve and lets you keep several at once.',
     petXpWord: 'XP', petMythBonus: (n) => 'A spirit beast earns ' + n + '× the points from every meal and every game.',
@@ -12722,39 +12731,59 @@ const PET_ART = {
   /* Nine tails, drawn full and fanned, and a fox's short sharp muzzle rather
      than the long jaw that made her a dog. */
   ninetails: () => ({
-    glow: true, feet: false, pal: { body: '#FFFDF8', dark: '#F0C6D6', ink: '#7A3550' },
-    bodyRX: 26, headRX: 27, headRY: 24,
+    glow: true, feet: false, pal: { body: '#FFFDF8', dark: '#F0C6D6', ink: '#6E2B44' },
+    bodyRX: 25, bodyRY: 22,
+    /* Nine plumes fanned behind her. Each is as long as it can be at its own
+       angle without leaving the square, so the fan fills the frame instead of
+       being cropped into stubs. */
     behind: (() => {
-      const tail = (a, len) => {
-        const rad = a * Math.PI / 180;
-        const tx = 60 + Math.sin(rad) * len, ty = 96 - Math.cos(rad) * len;
-        const cx = 60 + Math.sin(rad) * len * 0.55 - Math.cos(rad) * 16;
-        const cy = 96 - Math.cos(rad) * len * 0.55 - Math.sin(rad) * 16;
-        const dx = 60 + Math.sin(rad) * len * 0.55 + Math.cos(rad) * 16;
-        const dy = 96 - Math.cos(rad) * len * 0.55 + Math.sin(rad) * 16;
-        return '<path d="M60 96 Q' + cx.toFixed(1) + ' ' + cy.toFixed(1) + ' ' + tx.toFixed(1) + ' ' + ty.toFixed(1)
-          + ' Q' + dx.toFixed(1) + ' ' + dy.toFixed(1) + ' 60 96 Z" fill="#FFFDF8" stroke="#EBB9CE" stroke-width="1.4"/>'
-          + '<circle cx="' + tx.toFixed(1) + '" cy="' + ty.toFixed(1) + '" r="6" fill="#F2789F" opacity=".9"/>'
-          + '<circle cx="' + tx.toFixed(1) + '" cy="' + ty.toFixed(1) + '" r="2.4" fill="#FFF3C4"/>';
-      };
-      let s = '';
-      [-76, -57, -38, -19, 0, 19, 38, 57, 76].forEach((a, i) => { s += tail(a, i === 4 ? 74 : 68 - Math.abs(a) * 0.12); });
-      return s;
+      const R = Math.PI / 180;
+      let out = '';
+      [-74, -56, -37, -18, 0, 18, 37, 56, 74].forEach((a) => {
+        const s0 = Math.sin(a * R), c0 = Math.cos(a * R);
+        const bx = 60, by = 102;
+        const room = Math.min(Math.abs(s0) > 0.05 ? 54 / Math.abs(s0) : 999, Math.abs(c0) > 0.05 ? 92 / Math.abs(c0) : 999);
+        const len = Math.min(88, room);
+        const tipX = bx + s0 * len, tipY = by - c0 * len;
+        const midX = bx + s0 * len * 0.5, midY = by - c0 * len * 0.5;
+        const w = 13;
+        const p = (k) => [midX + c0 * w * k, midY + s0 * w * k];
+        const l = p(1), r = p(-1);
+        out += '<path d="M' + bx + ' ' + by + ' Q' + l[0].toFixed(1) + ' ' + l[1].toFixed(1) + ' ' + tipX.toFixed(1) + ' ' + tipY.toFixed(1)
+          + ' Q' + r[0].toFixed(1) + ' ' + r[1].toFixed(1) + ' ' + bx + ' ' + by + ' Z" fill="#FFFDF8" stroke="#EFC3D4" stroke-width="1.3"/>';
+        const nx = bx + s0 * len * 0.72, ny = by - c0 * len * 0.72;
+        const q = (k) => [nx + c0 * 7 * k, ny + s0 * 7 * k];
+        const ql = q(1), qr = q(-1);
+        out += '<path d="M' + nx.toFixed(1) + ' ' + ny.toFixed(1) + ' Q' + ql[0].toFixed(1) + ' ' + ql[1].toFixed(1) + ' ' + tipX.toFixed(1) + ' ' + tipY.toFixed(1)
+          + ' Q' + qr[0].toFixed(1) + ' ' + qr[1].toFixed(1) + ' ' + nx.toFixed(1) + ' ' + ny.toFixed(1) + ' Z" fill="#F2789F" opacity=".9"/>';
+      });
+      return out;
     })(),
-    ears: '<path d="M36 32 L30 2 L58 24 Z" fill="#FFFDF8" stroke="#EBB9CE" stroke-width="1.2"/>'
-      + '<path d="M84 32 L90 2 L62 24 Z" fill="#FFFDF8" stroke="#EBB9CE" stroke-width="1.2"/>'
-      + '<path d="M40 29 L36 12 L52 24 Z" fill="#F2789F" opacity=".6"/><path d="M80 29 L84 12 L68 24 Z" fill="#F2789F" opacity=".6"/>',
-    overBody: '<path d="M60 72 q-11 15 -10 30 q10 5 20 0 q1 -15 -10 -30 Z" fill="#FDEFF4"/>'
-      + '<g stroke="#EBB9CE" stroke-width="1.2" fill="none" opacity=".8"><path d="M48 96 q12 -5 24 0"/></g>',
-    // A fox muzzle: it starts high, narrows fast and stops well above the chin.
-    front: '<path d="M33 50 q-11 8 -8 19 q11 -4 15 -11 Z" fill="#FFFDF8" stroke="#EBB9CE" stroke-width="1"/>'
-      + '<path d="M87 50 q11 8 8 19 q-11 -4 -15 -11 Z" fill="#FFFDF8" stroke="#EBB9CE" stroke-width="1"/>'
-      + '<path d="M60 56 Q51 64 50 73 Q60 80 70 73 Q69 64 60 56 Z" fill="#FFFDF8" stroke="#E0A6BE" stroke-width="1.1"/>'
-      + '<ellipse cx="60" cy="70" rx="4.2" ry="3" fill="#5A2036"/>'
-      + '<path d="M60 74 q-5 4 -8 1 M60 74 q5 4 8 1" stroke="#5A2036" stroke-width="1.4" fill="none" stroke-linecap="round"/>'
-      + '<path d="M52 40 q8 -4 16 0" stroke="#E5BE5E" stroke-width="2.2" fill="none" stroke-linecap="round"/>'
-      + '<circle cx="60" cy="36" r="3" fill="#E5BE5E"/>',
-    eyeY: 50, noMouth: true, blushY: 58, charmY: 96
+    // A wedge: wide at the brow, cheeks flared, narrowing to a small chin.
+    headPath: 'M60 24 Q35 26 31 47 Q28 62 42 69 Q51 74 55 83 Q58 88 60 88 Q62 88 65 83 Q69 74 78 69 Q92 62 89 47 Q85 26 60 24 Z',
+    ears: '<path d="M34 30 L26 0 L58 20 Z" fill="#FFFDF8" stroke="#EFC3D4" stroke-width="1.2"/>'
+      + '<path d="M86 30 L94 0 L62 20 Z" fill="#FFFDF8" stroke="#EFC3D4" stroke-width="1.2"/>'
+      + '<path d="M38 27 L33 9 L51 21 Z" fill="#F2789F" opacity=".55"/><path d="M82 27 L87 9 L69 21 Z" fill="#F2789F" opacity=".55"/>',
+    overBody: '<path d="M60 74 q-10 14 -9 28 q9 5 18 0 q1 -14 -9 -28 Z" fill="#FDEFF4"/>',
+    front: (() => {
+      // The ruff at each cheek, which is what a fox has and a dog does not.
+      const ruff = '<path d="M34 57 q-10 5 -12 14 q9 -2 13 -8 q-3 7 -10 12 q11 -1 16 -11 Z" fill="#FFFDF8" stroke="#EFC3D4" stroke-width="1"/>'
+        + '<path d="M86 57 q10 5 12 14 q-9 -2 -13 -8 q3 7 10 12 q-11 -1 -16 -11 Z" fill="#FFFDF8" stroke="#EFC3D4" stroke-width="1"/>';
+      // Slanted eyes with liner running back towards the ears.
+      const eyes = '<g class="eyes">'
+        + '<path d="M41 50 Q48 44 56 52 Q47 55.5 41 50 Z" fill="#6E2B44"/>'
+        + '<path d="M79 50 Q72 44 64 52 Q73 55.5 79 50 Z" fill="#6E2B44"/>'
+        + '<circle cx="47" cy="49" r="1.5" fill="#fff"/><circle cx="73" cy="49" r="1.5" fill="#fff"/>'
+        + '<path d="M41 50 q-6 -3 -9 -7 M79 50 q6 -3 9 -7" stroke="#6E2B44" stroke-width="1.8" fill="none" stroke-linecap="round"/>'
+        + '</g>';
+      const snout = '<path d="M54 60 Q53 71 57 78 Q60 81 63 78 Q67 71 66 60 Z" fill="#FFFDF8" stroke="#E8B4C8" stroke-width="1"/>'
+        + '<path d="M56.5 73 Q60 72 63.5 73 Q61.5 79 60 79 Q58.5 79 56.5 73 Z" fill="#4E1E32"/>'
+        + '<path d="M60 79 q-4 4 -7 1 M60 79 q4 4 7 1" stroke="#4E1E32" stroke-width="1.2" fill="none" stroke-linecap="round"/>';
+      const mark = '<path d="M53 34 q7 -4 14 0" stroke="#E5BE5E" stroke-width="2.2" fill="none" stroke-linecap="round"/>'
+        + '<circle cx="60" cy="30" r="3" fill="#E5BE5E"/>';
+      return ruff + eyes + snout + mark;
+    })(),
+    noFace: true, noMouth: true, charmY: 98
   }),
   dragon: () => ({
     glow: true, pal: { body: '#C6EEDA', dark: '#7FC9A8', ink: '#12452F' },
@@ -13006,7 +13035,10 @@ function petSVG(kind, coat, mood, wear) {
       + '<path d="M46 28 q14 -6 28 0" fill="none" stroke="#C6A98A" stroke-width="1.4"/>'
       + '<path d="M60 8 A9 9 0 1 0 60 26 A7 7 0 1 1 60 8 Z" fill="#E5BE5E"/>';
   }
-  const head = '<ellipse cx="60" cy="56" rx="' + hRX + '" ry="' + hRY + '" fill="' + c.body + '"/>' + face + (art.front || '');
+  const headShape = art.headPath
+    ? '<path d="' + art.headPath + '" fill="' + c.body + '"/>'
+    : '<ellipse cx="60" cy="56" rx="' + hRX + '" ry="' + hRY + '" fill="' + c.body + '"/>';
+  const head = headShape + face + (art.front || '');
   const headed = art.head
     ? '<g transform="translate(60,' + (56 + (art.headY || 0)) + ') scale(' + art.head + ') translate(-60,-56)">' + head + '</g>'
     : head;
@@ -13310,6 +13342,9 @@ function renderPet(want) {
 
   /* Nothing is chosen by tapping a tile. The tile opens this, and only the
      button at the bottom of it keeps the creature. */
+  /* The same four buttons the kept companion has, shown with a padlock so a
+     visitor can see what comes with keeping one before they keep it. */
+  const prevBtn = (icon, label) => '<span class="stagebtn locked"><span class="ic">' + icon + '</span><span class="lb">' + esc(label) + '</span><span class="lk">🔒</span></span>';
   const drawPreview = (kind) => {
     const luck = petLuck(kind), have = !!PETS.one(kind), pets = PETS.all();
     const swap = !have && !PETS.room();
@@ -13317,14 +13352,18 @@ function renderPet(want) {
     m.innerHTML = '<div class="eyebrow">' + esc(S.actTitle) + '</div><h1 style="margin-bottom:6px">' + esc(L(PET_NAMES[kind])) + '</h1>'
       + '<p class="muted">' + esc(S.petPreviewIntro) + '</p>'
       + '<div class="card petwrap luck-' + luck.id + '">'
-      + '<div class="petstage">' + petHomeSVG('mat') + petAuraHTML(kind) + petSVG(kind, PET_COATS[0], 'happy') + '</div>'
+      + '<div class="petstage">' + petHomeSVG('mat') + petAuraHTML(kind) + petSVG(kind, PET_COATS[0], 'happy')
+      + '<span class="stagebtns left">' + prevBtn('🍚', S.petFoodTitle) + prevBtn('👑', S.petWearTitle) + '</span>'
+      + '<span class="stagebtns right">' + prevBtn('🏠', S.petHomeShort) + prevBtn('🎨', S.petCoat) + '</span></div>'
       + '<div class="lucktag" style="--ink:' + luck.ink + ';--aura:' + luck.aura + '">' + luck.sym + ' ' + esc(S.petBrings(L(luck.name))) + '</div>'
       + '<p class="petline">' + esc(L(petLine(kind))) + '</p>'
       + (petIsPro(kind) ? '<p class="mythline">✨ ' + esc(S.petMythBonus(MYTH_XP)) + '</p>' : '')
+      + '<p class="hint" style="text-align:center;margin-bottom:6px">' + esc(S.petPreviewCan) + '</p>'
       + '<ul class="carelist">'
       + '<li><span>' + esc(S.petPrevFeed) + '</span><b>' + esc(S.petPrevFeedN(proOn() ? 2 : 6)) + '</b></li>'
       + '<li><span>' + esc(S.petPrevPlay) + '</span><b>' + esc(S.petPrevPlayN(proOn() ? 3 : 1)) + '</b></li>'
       + '<li><span>' + esc(S.petPrevWish) + '</span><b>' + esc(S.petPrevWishN) + '</b></li>'
+      + '<li><span>' + esc(S.petFoodTitle) + ' · ' + esc(S.petHomeShort) + ' · ' + esc(S.petWearTitle) + ' · ' + esc(S.petCoat) + '</span><b>🔒</b></li>'
       + '</ul></div>'
       + '<p class="hint">' + esc(have ? S.petPrevHave : (swap ? S.petPrevSwap : S.petPrevKeep)) + '</p>'
       + (blocked ? '<p class="hint err">' + esc(S.petChangeWait(fmtDate(PETS.changeOn()))) + '</p>' : '')
@@ -14195,7 +14234,7 @@ function bindActs(root, list) {
 }
 function actStatus(a) { const S = T(); return actAnswered(a) ? '✓ ' + S.actHasResults : a.closed ? S.actClosed : S.actOpen; }
 /* The list grows: one labelled group per kind, the newest five shown, the rest behind "see more", plus filter chips. */
-const ACT_GROUPS = [['pile', '🃏'], ['poll', '📊'], ['wish', '🌠']];
+const ACT_GROUPS = [['pile', '🃏', 'piles'], ['poll', '📊', 'polls'], ['wish', '🌠', 'wishes']];
 function actGroupsHTML(list) {
   const S = T(), SHOW = 5;
   const chips = '<div class="chips actfilter"><button type="button" class="chip on" data-filter="all">' + esc(S.actFilterAll) + '</button>' + ACT_GROUPS.map((g) => { const n = list.filter((a) => a.type === g[0]).length; return n ? '<button type="button" class="chip" data-filter="' + g[0] + '">' + g[1] + ' ' + esc(S.actTypes[g[0]]) + ' <span class="cnt">' + n + '</span></button>' : ''; }).join('') + '</div>';
@@ -14229,8 +14268,18 @@ async function renderPlay(args) {
   if (args && args[0] === 'diary') { renderDiary(); return; }
   if (args && args[0] === 'coin') { renderCoin(); return; }
   if (args && args[0] === 'tree') { renderTree(); return; }
-  if (args && args[0] === 'pet') { renderPet(); return; }
+  if (args && args[0] === 'pet') { renderPet(args[1]); return; }
   const list = (await loadActs()).slice().sort((a, b) => String(b.date).localeCompare(String(a.date)));
+  /* One page per kind, reached from the row of buttons on the main screen. */
+  const GROUP_OF = { piles: 'pile', polls: 'poll', wishes: 'wish' };
+  if (args && GROUP_OF[args[0]]) {
+    const kind = GROUP_OF[args[0]], gl = list.filter((x) => x.type === kind);
+    m.innerHTML = '<div class="eyebrow">' + esc(S.actTitle) + '</div><h1 style="margin-bottom:6px">' + esc(S.actTypeIcon[kind] + ' ' + S.actTypes[kind]) + '</h1>'
+      + '<p class="muted">' + esc(S.actGroupIntro[kind]) + '</p>'
+      + '<div id="acts" class="actlist">' + (gl.length ? gl.map(actButtonHTML).join('') : '<p class="empty">' + esc(S.actEmpty) + '</p>') + '</div>'
+      + '<p style="margin-top:14px"><a href="#/play" class="backlink">← ' + esc(S.actTitle) + '</a></p>';
+    return;
+  }
   if (args && args[0]) {
     const a = list.filter((x) => x.id === args[0])[0];
     if (!a) { redirect('#/play'); return; }
@@ -14244,8 +14293,11 @@ async function renderPlay(args) {
     + '<a class="actbtn act-tree live" href="#/play/tree"><span class="ic">🌸</span><span class="body"><b>' + esc(S.treeTitle) + '</b><span class="meta">' + esc(S.treeSub) + '</span></span><span class="go">›</span></a>'
     + '<a class="actbtn act-coin live" href="#/play/coin"><span class="ic">🪙</span><span class="body"><b>' + esc(S.coinTitle) + '</b><span class="meta">' + esc(S.coinSub) + '</span></span><span class="go">›</span></a>'
     + '<a class="actbtn act-diary live" href="#/play/diary"><span class="ic">📔</span><span class="body"><b>' + esc(S.diaryTitle) + '</b><span class="meta">' + esc(S.diarySub) + (diaryN ? ' · ' + esc(S.diaryCount(diaryN)) : '') + '</span></span><span class="chev">›</span></a>'
-    + (list.length ? actGroupsHTML(list) : '<p class="empty">' + esc(S.actEmpty) + '</p>') + '</div>';
-  bindActGroups(m);
+    + '</div>'
+    + '<div class="actquick three">' + ACT_GROUPS.map((g) => {
+      const n = list.filter((a2) => a2.type === g[0]).length;
+      return '<a class="aq" href="#/play/' + esc(g[2]) + '"><span class="ic">' + g[1] + '</span><b>' + esc(S.actTypes[g[0]]) + '</b>' + (n ? '<span class="cnt">' + n + '</span>' : '') + '</a>';
+    }).join('') + '</div>';
 }
 /* ---- one free turn a week, or a code for unlimited ----
    Shown under the coin and under the tree: where the visitor stands this week,

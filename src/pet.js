@@ -590,39 +590,59 @@ const PET_ART = {
   /* Nine tails, drawn full and fanned, and a fox's short sharp muzzle rather
      than the long jaw that made her a dog. */
   ninetails: () => ({
-    glow: true, feet: false, pal: { body: '#FFFDF8', dark: '#F0C6D6', ink: '#7A3550' },
-    bodyRX: 26, headRX: 27, headRY: 24,
+    glow: true, feet: false, pal: { body: '#FFFDF8', dark: '#F0C6D6', ink: '#6E2B44' },
+    bodyRX: 25, bodyRY: 22,
+    /* Nine plumes fanned behind her. Each is as long as it can be at its own
+       angle without leaving the square, so the fan fills the frame instead of
+       being cropped into stubs. */
     behind: (() => {
-      const tail = (a, len) => {
-        const rad = a * Math.PI / 180;
-        const tx = 60 + Math.sin(rad) * len, ty = 96 - Math.cos(rad) * len;
-        const cx = 60 + Math.sin(rad) * len * 0.55 - Math.cos(rad) * 16;
-        const cy = 96 - Math.cos(rad) * len * 0.55 - Math.sin(rad) * 16;
-        const dx = 60 + Math.sin(rad) * len * 0.55 + Math.cos(rad) * 16;
-        const dy = 96 - Math.cos(rad) * len * 0.55 + Math.sin(rad) * 16;
-        return '<path d="M60 96 Q' + cx.toFixed(1) + ' ' + cy.toFixed(1) + ' ' + tx.toFixed(1) + ' ' + ty.toFixed(1)
-          + ' Q' + dx.toFixed(1) + ' ' + dy.toFixed(1) + ' 60 96 Z" fill="#FFFDF8" stroke="#EBB9CE" stroke-width="1.4"/>'
-          + '<circle cx="' + tx.toFixed(1) + '" cy="' + ty.toFixed(1) + '" r="6" fill="#F2789F" opacity=".9"/>'
-          + '<circle cx="' + tx.toFixed(1) + '" cy="' + ty.toFixed(1) + '" r="2.4" fill="#FFF3C4"/>';
-      };
-      let s = '';
-      [-76, -57, -38, -19, 0, 19, 38, 57, 76].forEach((a, i) => { s += tail(a, i === 4 ? 74 : 68 - Math.abs(a) * 0.12); });
-      return s;
+      const R = Math.PI / 180;
+      let out = '';
+      [-74, -56, -37, -18, 0, 18, 37, 56, 74].forEach((a) => {
+        const s0 = Math.sin(a * R), c0 = Math.cos(a * R);
+        const bx = 60, by = 102;
+        const room = Math.min(Math.abs(s0) > 0.05 ? 54 / Math.abs(s0) : 999, Math.abs(c0) > 0.05 ? 92 / Math.abs(c0) : 999);
+        const len = Math.min(88, room);
+        const tipX = bx + s0 * len, tipY = by - c0 * len;
+        const midX = bx + s0 * len * 0.5, midY = by - c0 * len * 0.5;
+        const w = 13;
+        const p = (k) => [midX + c0 * w * k, midY + s0 * w * k];
+        const l = p(1), r = p(-1);
+        out += '<path d="M' + bx + ' ' + by + ' Q' + l[0].toFixed(1) + ' ' + l[1].toFixed(1) + ' ' + tipX.toFixed(1) + ' ' + tipY.toFixed(1)
+          + ' Q' + r[0].toFixed(1) + ' ' + r[1].toFixed(1) + ' ' + bx + ' ' + by + ' Z" fill="#FFFDF8" stroke="#EFC3D4" stroke-width="1.3"/>';
+        const nx = bx + s0 * len * 0.72, ny = by - c0 * len * 0.72;
+        const q = (k) => [nx + c0 * 7 * k, ny + s0 * 7 * k];
+        const ql = q(1), qr = q(-1);
+        out += '<path d="M' + nx.toFixed(1) + ' ' + ny.toFixed(1) + ' Q' + ql[0].toFixed(1) + ' ' + ql[1].toFixed(1) + ' ' + tipX.toFixed(1) + ' ' + tipY.toFixed(1)
+          + ' Q' + qr[0].toFixed(1) + ' ' + qr[1].toFixed(1) + ' ' + nx.toFixed(1) + ' ' + ny.toFixed(1) + ' Z" fill="#F2789F" opacity=".9"/>';
+      });
+      return out;
     })(),
-    ears: '<path d="M36 32 L30 2 L58 24 Z" fill="#FFFDF8" stroke="#EBB9CE" stroke-width="1.2"/>'
-      + '<path d="M84 32 L90 2 L62 24 Z" fill="#FFFDF8" stroke="#EBB9CE" stroke-width="1.2"/>'
-      + '<path d="M40 29 L36 12 L52 24 Z" fill="#F2789F" opacity=".6"/><path d="M80 29 L84 12 L68 24 Z" fill="#F2789F" opacity=".6"/>',
-    overBody: '<path d="M60 72 q-11 15 -10 30 q10 5 20 0 q1 -15 -10 -30 Z" fill="#FDEFF4"/>'
-      + '<g stroke="#EBB9CE" stroke-width="1.2" fill="none" opacity=".8"><path d="M48 96 q12 -5 24 0"/></g>',
-    // A fox muzzle: it starts high, narrows fast and stops well above the chin.
-    front: '<path d="M33 50 q-11 8 -8 19 q11 -4 15 -11 Z" fill="#FFFDF8" stroke="#EBB9CE" stroke-width="1"/>'
-      + '<path d="M87 50 q11 8 8 19 q-11 -4 -15 -11 Z" fill="#FFFDF8" stroke="#EBB9CE" stroke-width="1"/>'
-      + '<path d="M60 56 Q51 64 50 73 Q60 80 70 73 Q69 64 60 56 Z" fill="#FFFDF8" stroke="#E0A6BE" stroke-width="1.1"/>'
-      + '<ellipse cx="60" cy="70" rx="4.2" ry="3" fill="#5A2036"/>'
-      + '<path d="M60 74 q-5 4 -8 1 M60 74 q5 4 8 1" stroke="#5A2036" stroke-width="1.4" fill="none" stroke-linecap="round"/>'
-      + '<path d="M52 40 q8 -4 16 0" stroke="#E5BE5E" stroke-width="2.2" fill="none" stroke-linecap="round"/>'
-      + '<circle cx="60" cy="36" r="3" fill="#E5BE5E"/>',
-    eyeY: 50, noMouth: true, blushY: 58, charmY: 96
+    // A wedge: wide at the brow, cheeks flared, narrowing to a small chin.
+    headPath: 'M60 24 Q35 26 31 47 Q28 62 42 69 Q51 74 55 83 Q58 88 60 88 Q62 88 65 83 Q69 74 78 69 Q92 62 89 47 Q85 26 60 24 Z',
+    ears: '<path d="M34 30 L26 0 L58 20 Z" fill="#FFFDF8" stroke="#EFC3D4" stroke-width="1.2"/>'
+      + '<path d="M86 30 L94 0 L62 20 Z" fill="#FFFDF8" stroke="#EFC3D4" stroke-width="1.2"/>'
+      + '<path d="M38 27 L33 9 L51 21 Z" fill="#F2789F" opacity=".55"/><path d="M82 27 L87 9 L69 21 Z" fill="#F2789F" opacity=".55"/>',
+    overBody: '<path d="M60 74 q-10 14 -9 28 q9 5 18 0 q1 -14 -9 -28 Z" fill="#FDEFF4"/>',
+    front: (() => {
+      // The ruff at each cheek, which is what a fox has and a dog does not.
+      const ruff = '<path d="M34 57 q-10 5 -12 14 q9 -2 13 -8 q-3 7 -10 12 q11 -1 16 -11 Z" fill="#FFFDF8" stroke="#EFC3D4" stroke-width="1"/>'
+        + '<path d="M86 57 q10 5 12 14 q-9 -2 -13 -8 q3 7 10 12 q-11 -1 -16 -11 Z" fill="#FFFDF8" stroke="#EFC3D4" stroke-width="1"/>';
+      // Slanted eyes with liner running back towards the ears.
+      const eyes = '<g class="eyes">'
+        + '<path d="M41 50 Q48 44 56 52 Q47 55.5 41 50 Z" fill="#6E2B44"/>'
+        + '<path d="M79 50 Q72 44 64 52 Q73 55.5 79 50 Z" fill="#6E2B44"/>'
+        + '<circle cx="47" cy="49" r="1.5" fill="#fff"/><circle cx="73" cy="49" r="1.5" fill="#fff"/>'
+        + '<path d="M41 50 q-6 -3 -9 -7 M79 50 q6 -3 9 -7" stroke="#6E2B44" stroke-width="1.8" fill="none" stroke-linecap="round"/>'
+        + '</g>';
+      const snout = '<path d="M54 60 Q53 71 57 78 Q60 81 63 78 Q67 71 66 60 Z" fill="#FFFDF8" stroke="#E8B4C8" stroke-width="1"/>'
+        + '<path d="M56.5 73 Q60 72 63.5 73 Q61.5 79 60 79 Q58.5 79 56.5 73 Z" fill="#4E1E32"/>'
+        + '<path d="M60 79 q-4 4 -7 1 M60 79 q4 4 7 1" stroke="#4E1E32" stroke-width="1.2" fill="none" stroke-linecap="round"/>';
+      const mark = '<path d="M53 34 q7 -4 14 0" stroke="#E5BE5E" stroke-width="2.2" fill="none" stroke-linecap="round"/>'
+        + '<circle cx="60" cy="30" r="3" fill="#E5BE5E"/>';
+      return ruff + eyes + snout + mark;
+    })(),
+    noFace: true, noMouth: true, charmY: 98
   }),
   dragon: () => ({
     glow: true, pal: { body: '#C6EEDA', dark: '#7FC9A8', ink: '#12452F' },
@@ -874,7 +894,10 @@ function petSVG(kind, coat, mood, wear) {
       + '<path d="M46 28 q14 -6 28 0" fill="none" stroke="#C6A98A" stroke-width="1.4"/>'
       + '<path d="M60 8 A9 9 0 1 0 60 26 A7 7 0 1 1 60 8 Z" fill="#E5BE5E"/>';
   }
-  const head = '<ellipse cx="60" cy="56" rx="' + hRX + '" ry="' + hRY + '" fill="' + c.body + '"/>' + face + (art.front || '');
+  const headShape = art.headPath
+    ? '<path d="' + art.headPath + '" fill="' + c.body + '"/>'
+    : '<ellipse cx="60" cy="56" rx="' + hRX + '" ry="' + hRY + '" fill="' + c.body + '"/>';
+  const head = headShape + face + (art.front || '');
   const headed = art.head
     ? '<g transform="translate(60,' + (56 + (art.headY || 0)) + ') scale(' + art.head + ') translate(-60,-56)">' + head + '</g>'
     : head;
@@ -1178,6 +1201,9 @@ function renderPet(want) {
 
   /* Nothing is chosen by tapping a tile. The tile opens this, and only the
      button at the bottom of it keeps the creature. */
+  /* The same four buttons the kept companion has, shown with a padlock so a
+     visitor can see what comes with keeping one before they keep it. */
+  const prevBtn = (icon, label) => '<span class="stagebtn locked"><span class="ic">' + icon + '</span><span class="lb">' + esc(label) + '</span><span class="lk">🔒</span></span>';
   const drawPreview = (kind) => {
     const luck = petLuck(kind), have = !!PETS.one(kind), pets = PETS.all();
     const swap = !have && !PETS.room();
@@ -1185,14 +1211,18 @@ function renderPet(want) {
     m.innerHTML = '<div class="eyebrow">' + esc(S.actTitle) + '</div><h1 style="margin-bottom:6px">' + esc(L(PET_NAMES[kind])) + '</h1>'
       + '<p class="muted">' + esc(S.petPreviewIntro) + '</p>'
       + '<div class="card petwrap luck-' + luck.id + '">'
-      + '<div class="petstage">' + petHomeSVG('mat') + petAuraHTML(kind) + petSVG(kind, PET_COATS[0], 'happy') + '</div>'
+      + '<div class="petstage">' + petHomeSVG('mat') + petAuraHTML(kind) + petSVG(kind, PET_COATS[0], 'happy')
+      + '<span class="stagebtns left">' + prevBtn('🍚', S.petFoodTitle) + prevBtn('👑', S.petWearTitle) + '</span>'
+      + '<span class="stagebtns right">' + prevBtn('🏠', S.petHomeShort) + prevBtn('🎨', S.petCoat) + '</span></div>'
       + '<div class="lucktag" style="--ink:' + luck.ink + ';--aura:' + luck.aura + '">' + luck.sym + ' ' + esc(S.petBrings(L(luck.name))) + '</div>'
       + '<p class="petline">' + esc(L(petLine(kind))) + '</p>'
       + (petIsPro(kind) ? '<p class="mythline">✨ ' + esc(S.petMythBonus(MYTH_XP)) + '</p>' : '')
+      + '<p class="hint" style="text-align:center;margin-bottom:6px">' + esc(S.petPreviewCan) + '</p>'
       + '<ul class="carelist">'
       + '<li><span>' + esc(S.petPrevFeed) + '</span><b>' + esc(S.petPrevFeedN(proOn() ? 2 : 6)) + '</b></li>'
       + '<li><span>' + esc(S.petPrevPlay) + '</span><b>' + esc(S.petPrevPlayN(proOn() ? 3 : 1)) + '</b></li>'
       + '<li><span>' + esc(S.petPrevWish) + '</span><b>' + esc(S.petPrevWishN) + '</b></li>'
+      + '<li><span>' + esc(S.petFoodTitle) + ' · ' + esc(S.petHomeShort) + ' · ' + esc(S.petWearTitle) + ' · ' + esc(S.petCoat) + '</span><b>🔒</b></li>'
       + '</ul></div>'
       + '<p class="hint">' + esc(have ? S.petPrevHave : (swap ? S.petPrevSwap : S.petPrevKeep)) + '</p>'
       + (blocked ? '<p class="hint err">' + esc(S.petChangeWait(fmtDate(PETS.changeOn()))) + '</p>' : '')
