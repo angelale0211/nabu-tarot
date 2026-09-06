@@ -138,7 +138,7 @@ const STR = {
     unlockTitle: 'Mở khoá thêm trong app', unlockLink: 'Bảng giá mở khoá',
     unlockIntro: 'Đây là những phần bạn trả một lần để mở trong app. Xem bài riêng với Nabu là dịch vụ khác và có bảng giá riêng.',
     unlockCourses: 'Khóa học và thực hành', unlockActs: 'Hoạt động không giới hạn', unlockBest: 'Đáng chọn nhất',
-    unlockOpenUntil: (d) => 'Đang mở đến ' + d, unlockNot: 'Chưa mở', unlockHow: 'Cách mở khoá',
+    unlockOpenUntil: (d) => 'Đang mở đến ' + d, unlockNot: 'Chưa mở khoá', unlockHow: 'Cách mở khoá',
     unlockStep1: 'Bạn chuyển khoản đúng số tiền của mục mình chọn.', unlockStep2: 'Bạn nhắn cho Nabu tên mục đó kèm ảnh chuyển khoản.', unlockStep3: 'Nabu gửi lại mã. Bạn dán mã vào ô bên dưới là xong.',
     unlockPick: 'Bạn chạm vào mục muốn mở. Chọn được nhiều mục, chạm lần nữa để bỏ.', unlockCart: 'Mục bạn đã chọn', unlockEmpty: 'Bạn chưa chọn mục nào.', unlockTotal: 'Tổng cộng', unlockSend: 'Gửi yêu cầu cho Nabu', unlockMsgHead: 'Mình muốn mở khoá trong app Nabu Tarot:', unlockChosen: 'Đã chọn',
     reqKindBooking: 'Đặt lịch', reqKindUnlock: 'Mở khoá', reqAll: 'Tất cả', reqNone: 'Chưa có yêu cầu nào ở mục này.',
