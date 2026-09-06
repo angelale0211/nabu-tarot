@@ -71,6 +71,7 @@ function renderLearn(args, params) {
   if (sub === 'pc') return renderPCCard(args[1]);
   if (sub === 'lenormand') return renderCourse('lenormand', params.tab);
   if (sub === 'lesson') return renderLesson(args[1], args[2]);
+  if (sub === 'quiz') return renderQuiz(args[1], args[2]);
   if (sub === 'card') return renderCard(args[1]);
   if (sub === 'len') return renderLen(Number(args[1]));
   if (sub === 'astro') return renderAstro();
@@ -101,7 +102,9 @@ function renderCourse(courseId, tab) {
     + '<div class="tabs" id="ctabs">' + tabs.map((t) => '<button data-t="' + t + '" class="' + (tab === t ? 'on' : '') + '">' + esc(S.courseTabs[t]) + '</button>').join('') + '</div><div id="cpanel"></div>';
   const panel = $('#cpanel');
   const show = (t) => {
-    if (t === 'lessons') { panel.innerHTML = '<p class="muted" style="font-size:14px">' + esc(S.lessonsIntro(LESSONS[courseId].length)) + '</p>' + lessonListHTML(courseId); }
+    if (t === 'lessons') { panel.innerHTML = '<p class="muted" style="font-size:14px">' + esc(S.lessonsIntro(LESSONS[courseId].length)) + '</p>'
+      + (QSCORE.total(courseId) ? '<p class="hint quizsum">' + esc(S.quizProgress(QSCORE.done(courseId), QSCORE.total(courseId))) + '</p>' : '')
+      + lessonListHTML(courseId); }
     else if (t === 'cards') { panel.innerHTML = courseId === 'tarot' ? tarotGridHTML() : courseId === 'playing' ? pcGridHTML() : lenGridHTML(); if (courseId === 'playing') bindPC(panel); else bindGrid(panel, courseId); }
     else if (t === 'spreads') { panel.innerHTML = spreadsListHTML(sys); }
     else { panel.innerHTML = (courseId === 'lenormand' ? '<p class="muted" style="font-size:14px">' + esc(S.lenNote) + '</p>' : '') + GUIDES.filter((g) => g.cat === courseId || (courseId === 'playing' && g.id === 'fort-playing')).map(guideRow).join(''); }

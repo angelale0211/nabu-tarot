@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
 <title>Nabu Tarot</title>
 <meta name="description" content="Nabu Tarot: dự đoán mới, rút một lá bài xem năng lượng hiện tại, học tarot, Lenormand, chiêm tinh, và đặt lịch xem bài.">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'none'; object-src 'none'; form-action 'self'; script-src 'self' 'sha256-hZKSPaGeOlJJNBamwnON24TDigRlgJInC4dm2z4gsB8=' https://www.gstatic.com https://apis.google.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; font-src 'self' data:; media-src 'self' data: blob:; worker-src 'self'; connect-src 'self' https://*.googleapis.com https://*.google.com https://*.firebaseio.com https://*.cloudfunctions.net https://*.workers.dev https://generativelanguage.googleapis.com; frame-src https://*.firebaseapp.com https://accounts.google.com https://*.facebook.com">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'none'; object-src 'none'; form-action 'self'; script-src 'self' 'sha256-0b6dZMhQD4dpUuBkb+nKlyjzGR7a0wuCCeFVXupEe2s=' https://www.gstatic.com https://apis.google.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; font-src 'self' data:; media-src 'self' data: blob:; worker-src 'self'; connect-src 'self' https://*.googleapis.com https://*.google.com https://*.firebaseio.com https://*.cloudfunctions.net https://*.workers.dev https://generativelanguage.googleapis.com; frame-src https://*.firebaseapp.com https://accounts.google.com https://*.facebook.com">
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <meta name="theme-color" content="#EFE9FA">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -575,6 +575,38 @@ main{padding:22px 0 30px}
 .wherepick .wp .tick{position:absolute;right:13px;top:50%;transform:translateY(-50%);width:22px;height:22px;border-radius:50%;border:1.5px solid var(--rule);color:transparent;font-size:12px;display:grid;place-content:center}
 .wherepick .wp.on{border-color:var(--primary);box-shadow:0 0 0 1px var(--primary) inset}
 .wherepick .wp.on .tick{background:var(--primary);border-color:var(--primary);color:var(--primary-ink)}
+/* ---- lesson quizzes ---- */
+.quizlink{display:flex;align-items:center;gap:12px;background:var(--surface);border:1.5px solid var(--lav);border-radius:16px;padding:13px 14px;margin:14px 0;text-decoration:none;color:inherit}
+.quizlink.passed{border-color:var(--ok)}
+.quizlink.tried{border-color:var(--gold)}
+.quizlink .ic{flex:none;width:34px;height:34px;border-radius:11px;background:var(--surface-2);display:grid;place-content:center;font-size:16px}
+.quizlink.passed .ic{background:var(--tag-green-bg);color:var(--tag-green-ink)}
+.quizlink .b{flex:1;min-width:0}
+.quizlink .b b{display:block;font-size:15px;font-weight:600}
+.quizlink .b span{font-size:12.5px;color:var(--fg-soft)}
+.quizlink .go{color:var(--fg-faint);font-size:20px;flex:none}
+.qbadge{display:inline-grid;place-content:center;width:17px;height:17px;border-radius:50%;background:var(--tag-green-bg);color:var(--tag-green-ink);font-size:10px;font-weight:700;margin-left:6px;vertical-align:1px}
+#main p.quizsum{margin:-4px 0 12px;font-weight:600;color:var(--fg-soft)}
+.quizresult{border-radius:16px;padding:14px;margin:12px 0 6px;text-align:center}
+.quizresult b{display:block;font-family:var(--display);font-size:24px}
+.quizresult p{margin:4px 0 0;font-size:14px}
+.quizresult.pass{background:var(--tag-green-bg);color:var(--tag-green-ink)}
+.quizresult.fail{background:var(--tag-gold-bg);color:var(--tag-gold-ink)}
+.quizq{background:var(--surface);border:1px solid var(--rule-soft);border-radius:18px;padding:15px;margin-bottom:12px}
+.quizq.ok{border-color:var(--ok)}
+.quizq.no{border-color:var(--err)}
+.quizq .qh{display:flex;align-items:flex-start;gap:10px;flex-wrap:wrap}
+.quizq .qn{flex:none;width:24px;height:24px;border-radius:50%;background:var(--surface-3);color:var(--fg-soft);font-size:12.5px;font-weight:700;display:grid;place-content:center}
+#main .quizq .qh p{flex:1 1 200px;margin:0;font-size:15px;font-weight:600;line-height:1.4}
+.qhard{flex:none;background:var(--tag-gold-bg);color:var(--tag-gold-ink);border-radius:999px;padding:2px 9px;font-size:11px;font-weight:700}
+.qopts{display:grid;gap:7px;margin-top:11px}
+.qopt{display:flex;align-items:center;gap:9px;text-align:left;background:var(--surface-2);border:1.5px solid transparent;border-radius:13px;padding:10px 12px;font-size:14.5px;line-height:1.35;color:inherit}
+.qopt .mk{flex:none;width:18px;font-weight:700}
+.qopt.on{border-color:var(--primary);background:var(--surface-3)}
+.qopt.right{border-color:var(--ok);background:var(--tag-green-bg);color:var(--tag-green-ink)}
+.qopt.wrong{border-color:var(--err);background:var(--tag-pink-bg);color:var(--tag-pink-ink)}
+.qopt:disabled{opacity:1}
+#main p.qwhy{margin:11px 0 0;font-size:13.5px;line-height:1.5;color:var(--fg-soft);border-left:2.5px solid var(--rule);padding-left:11px}
 .signlist{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
 .signlist button{background:var(--surface);border:1px solid var(--rule-soft);border-radius:14px;padding:10px 6px;text-align:center}
 .signlist button .g{font-size:26px;color:var(--link);display:block}
@@ -1929,6 +1961,18 @@ const STR = {
     pcIntro: 'Bài Tây có hai cách đọc. Cách truyền thống dùng bộ nghĩa riêng cho 52 lá và đã có từ trước khi tarot phổ biến. Cách thứ hai mượn nghĩa Ẩn Phụ của tarot, vì hai bộ bài cùng một gốc: Cơ ứng với Cốc, Rô ứng với Tiền, Chuồn ứng với Gậy, Bích ứng với Kiếm. Bạn chọn một lá để xem cả hai cách.', pcPick: 'Chọn một lá bài Tây', pcNote: 'Bài Tây thiếu Ẩn Chính và chỉ có ba lá hình mỗi chất, nên J thường được đọc như Kỵ Sĩ (một số người đọc như Tiểu Đồng), Q như Nữ Hoàng, K như Đức Vua.', pcTrad: 'Nghĩa truyền thống', pcTarotWay: 'Đọc theo tarot',
     teaIntro: 'Bạn chạm vào từng vùng của tách để biết vị trí đó nói gì. Bên dưới là những hình thường gặp.', teaZones: { rim: 'Gần miệng', mid: 'Giữa tách', bottom: 'Đáy tách', handle: 'Gần quai' }, teaZoneText: { rim: 'Gần miệng tách: chuyện sắp tới, trong vài ngày hay vài tuần.', mid: 'Giữa tách: vài tuần đến vài tháng nữa.', bottom: 'Đáy tách: chuyện xa hơn, hoặc gốc rễ của vấn đề.', handle: 'Gần quai: chuyện liên quan trực tiếp đến bạn. Đối diện quai: người khác, bên ngoài.' }, teaSymbols: 'Các hình thường gặp', teaPractice: 'Thử một lần', teaPracticeHint: 'Bấm để nhận một hình ngẫu nhiên ở một vị trí, rồi tập đọc.', teaDraw: 'Rút một hình',
     animalIntro: 'Bạn chạm vào một con giáp trên vòng tròn. Con giáp của bạn đã được đánh dấu sẵn.', animalYours: 'con giáp của bạn', animalTrio: 'Tam hợp', animalClash: 'Tứ hành xung', animalYears: 'Các năm',
+    quizTitle: 'Bài kiểm tra',
+    quizIntro: (n, p) => n + ' câu hỏi · đạt từ ' + p + '%',
+    quizBest: (p) => 'Kết quả tốt nhất của bạn: ' + p + '%',
+    quizHow: (n, p) => n + ' câu trắc nghiệm. Bạn cần đúng từ ' + p + '% trở lên để đạt, và làm lại bao nhiêu lần cũng được.',
+    quizHard: 'Câu khó',
+    quizSubmit: 'Nộp bài', quizAgain: 'Làm lại', quizBackLesson: 'Quay lại bài học',
+    quizNeedAll: 'Bạn trả lời hết các câu trước đã nhé.',
+    quizScore: (r, n, p) => 'Đúng ' + r + '/' + n + ' · ' + p + '%',
+    quizPassed: 'Bạn đã đạt. Chúc mừng bạn.',
+    quizFailed: (p) => 'Bạn cần từ ' + p + '% trở lên. Bạn đọc lại phần giải thích bên dưới rồi làm lại nhé.',
+    quizProgress: (d, t) => 'Đã đạt ' + d + '/' + t + ' bài kiểm tra.',
+    quizKept: 'Kết quả chỉ được lưu trên máy của bạn. Nabu không nhận được điểm này.',
     reportTitle: 'Báo lỗi app', reportIntro: 'Nếu có chỗ nào hiển thị sai, bấm không được hoặc khó hiểu, bạn hãy kể lại cho Nabu ở đây.', reportWhat: 'Bạn gặp lỗi gì?', reportPlaceholder: 'Bạn đang ở màn hình nào, bấm vào đâu, và điều gì xảy ra?', reportContact: 'Cách liên lạc lại (không bắt buộc)', reportAuto: 'App tự đính kèm thông tin này để Nabu tìm lỗi nhanh hơn:', reportSend: 'Gửi báo lỗi', reportViaIg: 'Gửi qua Instagram', reportNeed: 'Bạn mô tả lỗi trước nhé.', reportSent: 'Đã gửi tới Nabu. Cảm ơn bạn!', reportNoChannel: 'Bạn cần đăng nhập để gửi trực tiếp, hoặc dùng mục Liên hệ bên dưới.', reportMsgHead: 'Báo lỗi app Nabu Tarot:', reportLink: 'Báo lỗi', rights: 'All rights reserved.', demoTag: 'Học thử miễn phí', demoIntro: 'Hai bài đầu mở sẵn để bạn xem cách học. Mở khóa để xem trọn bộ.', lessonN: (n) => 'Bài ' + n, lesson1: 'Tổng quan và cách học', lesson2: 'Lá bài đầu tiên', courseTabs: { cards: 'Các lá bài', spreads: 'Trải bài', guides: 'Bài đọc' },
     months6: 'tháng', adminAccess: 'Tài khoản quản trị của Nabu: toàn bộ khóa học đang mở.', accessUntil: (d) => 'Bạn có quyền xem đến ' + d + '.', courseExpired: (d) => 'Mã của bạn đã hết hạn ngày ' + d + '. Mua lại để xem tiếp.',
     buyCourse: 'Mua khóa học qua Instagram', buyHint: 'Tin nhắn mua khóa đã được sao chép. Sau khi chuyển khoản, Nabu gửi bạn mã mở khóa. Nhập mã ở dưới.',
@@ -2368,6 +2412,18 @@ const STR = {
     pcIntro: 'Playing cards can be read two ways. Traditional cartomancy has its own set of meanings for the 52 cards, in use since before tarot decks were common. The second way borrows the tarot Minors, because both decks share one root: Hearts are Cups, Diamonds Pentacles, Clubs Wands, Spades Swords. Pick a card to see both.', pcPick: 'Pick a playing card', pcNote: 'A playing-card deck has no Majors and only three court cards per suit, so the Jack is usually read as the Knight (some readers use the Page), the Queen as the Queen and the King as the King.', pcTrad: 'Traditional meaning', pcTarotWay: 'Read through tarot',
     teaIntro: 'Tap each zone of the cup to see what the position means. The common shapes are below.', teaZones: { rim: 'Near the rim', mid: 'Middle', bottom: 'Bottom', handle: 'Near the handle' }, teaZoneText: { rim: 'Near the rim: soon, within days or weeks.', mid: 'Middle of the cup: weeks to months away.', bottom: 'Bottom: further away, or the root of the matter.', handle: 'Near the handle: about you directly. Opposite the handle: other people, outside events.' }, teaSymbols: 'Common shapes', teaPractice: 'Try one', teaPracticeHint: 'Tap for a random shape in a random zone, then practise reading it.', teaDraw: 'Draw a shape',
     animalIntro: 'Tap an animal on the wheel. Yours is marked.', animalYours: 'your animal', animalTrio: 'Trio (tam hợp)', animalClash: 'Clash (tứ hành xung)', animalYears: 'Years',
+    quizTitle: 'Test yourself',
+    quizIntro: (n, p) => n + ' questions · pass at ' + p + '%',
+    quizBest: (p) => 'Your best so far: ' + p + '%',
+    quizHow: (n, p) => n + ' multiple-choice questions. You need ' + p + '% or more to pass, and you may retake it as often as you like.',
+    quizHard: 'Harder',
+    quizSubmit: 'Hand it in', quizAgain: 'Try again', quizBackLesson: 'Back to the lesson',
+    quizNeedAll: 'Answer every question first.',
+    quizScore: (r, n, p) => r + ' of ' + n + ' · ' + p + '%',
+    quizPassed: 'You passed. Well done.',
+    quizFailed: (p) => 'You need ' + p + '% or more. Read the notes below and take it again.',
+    quizProgress: (d, t) => d + ' of ' + t + ' tests passed.',
+    quizKept: 'Your score is kept on this device only. Nabu never receives it.',
     reportTitle: 'Report a problem', reportIntro: 'Something looks wrong, a button does nothing, or a text is confusing? Tell Nabu here.', reportWhat: 'What went wrong?', reportPlaceholder: 'Which screen you were on, what you tapped, and what happened.', reportContact: 'How to reach you (optional)', reportAuto: 'The app attaches this so Nabu can find the bug faster:', reportSend: 'Send report', reportViaIg: 'Send through Instagram', reportNeed: 'Describe the problem first.', reportSent: 'Sent to Nabu. Thank you!', reportNoChannel: 'Direct sending is not switched on yet. The message is copied; please send it through Instagram.', reportMsgHead: 'Nabu Tarot app bug report:', reportLink: 'Report', rights: 'All rights reserved.', demoTag: 'Free preview', demoIntro: 'The first two lessons are open so you can see how the course works. Unlock to read everything.', lessonN: (n) => 'Lesson ' + n, lesson1: 'Overview and how to learn', lesson2: 'The first card', courseTabs: { cards: 'The cards', spreads: 'Spreads', guides: 'Guides' },
     months6: 'months', adminAccess: 'Admin account: every course is open for Nabu.', accessUntil: (d) => 'Your access runs until ' + d + '.', courseExpired: (d) => 'Your code expired on ' + d + '. Buy again to continue.',
     buyCourse: 'Buy the course on Instagram', buyHint: 'The purchase message is copied. After the transfer, Nabu sends you an unlock code. Enter it below.',
@@ -11196,6 +11252,7 @@ function renderLearn(args, params) {
   if (sub === 'pc') return renderPCCard(args[1]);
   if (sub === 'lenormand') return renderCourse('lenormand', params.tab);
   if (sub === 'lesson') return renderLesson(args[1], args[2]);
+  if (sub === 'quiz') return renderQuiz(args[1], args[2]);
   if (sub === 'card') return renderCard(args[1]);
   if (sub === 'len') return renderLen(Number(args[1]));
   if (sub === 'astro') return renderAstro();
@@ -11226,7 +11283,9 @@ function renderCourse(courseId, tab) {
     + '<div class="tabs" id="ctabs">' + tabs.map((t) => '<button data-t="' + t + '" class="' + (tab === t ? 'on' : '') + '">' + esc(S.courseTabs[t]) + '</button>').join('') + '</div><div id="cpanel"></div>';
   const panel = $('#cpanel');
   const show = (t) => {
-    if (t === 'lessons') { panel.innerHTML = '<p class="muted" style="font-size:14px">' + esc(S.lessonsIntro(LESSONS[courseId].length)) + '</p>' + lessonListHTML(courseId); }
+    if (t === 'lessons') { panel.innerHTML = '<p class="muted" style="font-size:14px">' + esc(S.lessonsIntro(LESSONS[courseId].length)) + '</p>'
+      + (QSCORE.total(courseId) ? '<p class="hint quizsum">' + esc(S.quizProgress(QSCORE.done(courseId), QSCORE.total(courseId))) + '</p>' : '')
+      + lessonListHTML(courseId); }
     else if (t === 'cards') { panel.innerHTML = courseId === 'tarot' ? tarotGridHTML() : courseId === 'playing' ? pcGridHTML() : lenGridHTML(); if (courseId === 'playing') bindPC(panel); else bindGrid(panel, courseId); }
     else if (t === 'spreads') { panel.innerHTML = spreadsListHTML(sys); }
     else { panel.innerHTML = (courseId === 'lenormand' ? '<p class="muted" style="font-size:14px">' + esc(S.lenNote) + '</p>' : '') + GUIDES.filter((g) => g.cat === courseId || (courseId === 'playing' && g.id === 'fort-playing')).map(guideRow).join(''); }
@@ -11748,7 +11807,7 @@ function spreadsVisualHTML(sys) {
 /* ---- pages ---- */
 function lessonListHTML(courseId) {
   const S = T();
-  return '<div class="lessons">' + LESSONS[courseId].map((l) => '<a class="lsn' + (DONE.is(courseId, l.n) ? ' done' : '') + '" href="#/learn/lesson/' + courseId + '/' + l.n + '"><span class="num">' + l.n + '</span><span class="tt">' + esc(L(l.title)) + '</span><span class="chk">' + (DONE.is(courseId, l.n) ? '✓' : '›') + '</span></a>').join('') + '</div>';
+  return '<div class="lessons">' + LESSONS[courseId].map((l) => '<a class="lsn' + (DONE.is(courseId, l.n) ? ' done' : '') + '" href="#/learn/lesson/' + courseId + '/' + l.n + '"><span class="num">' + l.n + '</span><span class="tt">' + esc(L(l.title)) + quizBadge(courseId, l.n) + '</span><span class="chk">' + (DONE.is(courseId, l.n) ? '✓' : '›') + '</span></a>').join('') + '</div>';
 }
 function renderLesson(courseId, n) {
   const S = T(), m = $('#main'), l = (LESSONS[courseId] || []).filter((x) => x.n === Number(n))[0];
@@ -11776,6 +11835,7 @@ function renderLesson(courseId, n) {
   const prev = LESSONS[courseId].filter((x) => x.n === l.n - 1)[0], next = LESSONS[courseId].filter((x) => x.n === l.n + 1)[0];
   m.innerHTML = backLink('#/learn/' + courseId, S.cats[courseId]) + '<div class="eyebrow">' + esc(S.lessonN(l.n)) + ' / ' + LESSONS[courseId].length + '</div><h1 style="margin-bottom:10px">' + esc(L(l.title)) + '</h1>'
     + body + '<div class="visual">' + vis + '</div>'
+    + quizLinkHTML(courseId, l.n)
     + aiPanelHTML({ type: 'lesson', course: courseId, n: l.n })
     + '<button class="btn block' + (DONE.is(courseId, l.n) ? '' : ' primary') + '" id="ldone">' + (DONE.is(courseId, l.n) ? '✓ ' + esc(S.lessonDone) : esc(S.markDone)) + '</button>'
     + '<div class="row" style="margin-top:10px">' + (prev ? '<a class="btn" href="#/learn/lesson/' + courseId + '/' + prev.n + '">← ' + esc(S.lessonN(prev.n)) + '</a>' : '') + (next ? '<a class="btn" href="#/learn/lesson/' + courseId + '/' + next.n + '" style="margin-left:auto">' + esc(S.lessonN(next.n)) + ' →</a>' : '') + '</div>';
@@ -13730,6 +13790,619 @@ ROUTES.love = {
     if (a === 'join') return renderLoveJoin(args[1]);
     return renderLove(a === 'handle');
   }
+};
+
+/* ============================ lesson quizzes ============================
+   Five questions after every lesson of the three paid courses, and you pass at
+   eighty per cent - which with five questions means four of them. There is no
+   partial credit and no half mark, so the threshold is a real one.
+
+   Three of the five check that the lesson was read. The last two are harder on
+   purpose: they ask for something the lesson does not say in as many words, so
+   that passing means having thought about the material rather than having
+   scrolled past it. Those two are marked, so nobody mistakes a hard question
+   for a badly written one.
+
+   Every answer here is checkable against the app's own card data - the decan
+   table in astro.js, the playing-card inserts in the Lenormand text, the suit
+   correspondences in the cartomancy course - so a learner who disagrees with a
+   mark can go and look it up rather than take our word for it.
+
+   What is kept is the best score, on the device. Nothing about a quiz is sent
+   anywhere: this is a way to test yourself, not a way to be graded by Nabu. */
+
+const QUIZ_PASS = 80;
+const QUIZ_LEN = 5;
+/* Filled by quiz-tarot.js, quiz-len.js and quiz-play.js, which load after this. */
+const QUIZ = { tarot: {}, lenormand: {}, playing: {} };
+
+const QSCORE = {
+  key: (c, n) => c + '-' + n,
+  all() { return store.get('nabu-quiz', {}) || {}; },
+  best(c, n) { return Number(this.all()[this.key(c, n)] || 0); },
+  tried(c, n) { return this.all()[this.key(c, n)] != null; },
+  passed(c, n) { return this.best(c, n) >= QUIZ_PASS; },
+  /* Only ever upward: a worse retry does not take away a pass already earned. */
+  put(c, n, pct) {
+    const a = this.all(), k = this.key(c, n);
+    if (!(k in a) || pct > a[k]) { a[k] = pct; store.set('nabu-quiz', a); }
+  },
+  done(c) { return Object.keys(QUIZ[c] || {}).filter((n) => this.passed(c, n)).length; },
+  total(c) { return Object.keys(QUIZ[c] || {}).length; }
+};
+
+const quizOf = (c, n) => ((QUIZ[c] || {})[String(n)] || []);
+
+/* A fresh order every attempt, from the machine's own randomness, so nobody
+   passes by remembering that the answer was the third one. */
+function quizShuffle(k) {
+  const idx = [];
+  for (let i = 0; i < k; i++) idx.push(i);
+  let r;
+  try { r = new Uint32Array(k); (window.crypto || window.msCrypto).getRandomValues(r); }
+  catch (e) { r = null; }
+  for (let i = k - 1; i > 0; i--) {
+    const j = (r ? r[i] : Math.floor(Math.random() * 4294967296)) % (i + 1);
+    const t = idx[i]; idx[i] = idx[j]; idx[j] = t;
+  }
+  return idx;
+}
+
+/* The line on a lesson page, and on the list of lessons. */
+function quizLinkHTML(c, n) {
+  const S = T();
+  if (!quizOf(c, n).length) return '';
+  const best = QSCORE.best(c, n), tried = QSCORE.tried(c, n), ok = QSCORE.passed(c, n);
+  return '<a class="quizlink' + (ok ? ' passed' : tried ? ' tried' : '') + '" href="#/learn/quiz/' + esc(c) + '/' + n + '">'
+    + '<span class="ic">' + (ok ? '✓' : '✎') + '</span>'
+    + '<span class="b"><b>' + esc(S.quizTitle) + '</b><span>' + esc(tried ? S.quizBest(best) : S.quizIntro(QUIZ_LEN, QUIZ_PASS)) + '</span></span>'
+    + '<span class="go">›</span></a>';
+}
+function quizBadge(c, n) {
+  return QSCORE.passed(c, n) ? '<span class="qbadge" title="' + esc(T().quizTitle) + '">✓</span>' : '';
+}
+
+function renderQuiz(courseId, n) {
+  const S = T(), m = $('#main');
+  const lesson = (LESSONS[courseId] || []).filter((x) => x.n === Number(n))[0];
+  const qs = quizOf(courseId, n);
+  if (!lesson || !qs.length) { redirect('#/learn/' + courseId); return; }
+  /* The first lesson of every course is open to everyone, and so is its quiz. */
+  if (Number(n) !== 1 && gate(courseId, '#/learn/' + courseId)) return;
+
+  let order = qs.map((q) => quizShuffle(q.a.length));   // how the options are laid out
+  let pick = qs.map(() => -1);                          // what has been chosen
+  let marked = false;
+
+  const draw = () => {
+    const right = qs.filter((q, i) => marked && order[i][pick[i]] === 0).length;
+    const pct = Math.round(right / qs.length * 100);
+    const passed = pct >= QUIZ_PASS;
+    m.innerHTML = backLink('#/learn/lesson/' + courseId + '/' + n, S.lessonN(lesson.n))
+      + '<div class="eyebrow">' + esc(S.cats[courseId]) + ' · ' + esc(S.lessonN(lesson.n)) + '</div>'
+      + '<h1 style="margin-bottom:6px">' + esc(S.quizTitle) + '</h1>'
+      + '<p class="muted">' + esc(L(lesson.title)) + '</p>'
+      + (marked
+        ? '<div class="quizresult ' + (passed ? 'pass' : 'fail') + '"><b>' + esc(S.quizScore(right, qs.length, pct)) + '</b>'
+          + '<p>' + esc(passed ? S.quizPassed : S.quizFailed(QUIZ_PASS)) + '</p></div>'
+        : '<p class="hint">' + esc(S.quizHow(qs.length, QUIZ_PASS)) + '</p>')
+      + qs.map((q, i) => {
+        const opts = order[i].map((oi, slot) => {
+          const chosen = pick[i] === slot;
+          const isRight = marked && oi === 0;
+          const cls = 'qopt' + (chosen ? ' on' : '') + (marked && isRight ? ' right' : '') + (marked && chosen && !isRight ? ' wrong' : '');
+          return '<button type="button" class="' + cls + '" data-q="' + i + '" data-o="' + slot + '"' + (marked ? ' disabled' : '')
+            + '><span class="mk">' + (marked ? (isRight ? '✓' : (chosen ? '✕' : '')) : '') + '</span>' + esc(L(q.a[oi])) + '</button>';
+        }).join('');
+        return '<div class="quizq' + (marked ? (order[i][pick[i]] === 0 ? ' ok' : ' no') : '') + '">'
+          + '<div class="qh"><span class="qn">' + (i + 1) + '</span><p>' + esc(L(q.q)) + '</p>'
+          + (q.hard ? '<span class="qhard">' + esc(S.quizHard) + '</span>' : '') + '</div>'
+          + '<div class="qopts">' + opts + '</div>'
+          + (marked ? '<p class="qwhy">' + esc(L(q.why)) + '</p>' : '') + '</div>';
+      }).join('')
+      + (marked
+        ? '<button type="button" class="btn primary block" id="qretry">' + esc(S.quizAgain) + '</button>'
+          + '<a class="btn block" href="#/learn/lesson/' + courseId + '/' + n + '" style="margin-top:10px">' + esc(S.quizBackLesson) + '</a>'
+        : '<button type="button" class="btn primary block" id="qsend">' + esc(S.quizSubmit) + '</button>')
+      + '<p class="hint">' + esc(S.quizKept) + '</p>';
+
+    $$('[data-q]', m).forEach((b) => b.addEventListener('click', () => {
+      pick[Number(b.getAttribute('data-q'))] = Number(b.getAttribute('data-o'));
+      draw();
+    }));
+    const send = $('#qsend');
+    if (send) send.addEventListener('click', () => {
+      if (pick.some((p) => p < 0)) { toast(S.quizNeedAll); return; }
+      marked = true;
+      const got = qs.filter((q, i) => order[i][pick[i]] === 0).length;
+      QSCORE.put(courseId, n, Math.round(got / qs.length * 100));
+      draw();
+      window.scrollTo(0, 0);
+    });
+    const again = $('#qretry');
+    if (again) again.addEventListener('click', () => {
+      order = qs.map((q) => quizShuffle(q.a.length));
+      pick = qs.map(() => -1); marked = false;
+      draw(); window.scrollTo(0, 0);
+    });
+  };
+  draw();
+}
+
+/* ==================== quiz bank: the tarot course ====================
+   Five questions to a lesson. The first option written is always the correct
+   one; the screen shuffles them, so the order here is only for reading.
+
+   The two marked hard: true in each set ask for something the lesson does not
+   state outright - the Golden Dawn attributions the app carries in its own
+   decan table, or a piece of the deck's history that anyone going further into
+   tarot will meet early. Every one of them can be checked inside the app. */
+
+QUIZ.tarot = {
+  1: [
+    { q: { vi: 'Một bộ tarot đầy đủ có bao nhiêu lá?', en: 'How many cards are in a full tarot deck?' },
+      a: [{ vi: '78', en: '78' }, { vi: '52', en: '52' }, { vi: '36', en: '36' }, { vi: '22', en: '22' }],
+      why: { vi: '78 lá: 22 lá Ẩn Chính và 56 lá Ẩn Phụ.', en: '78 cards: 22 Majors and 56 Minors.' } },
+    { q: { vi: 'Bộ Ẩn Chính gồm bao nhiêu lá?', en: 'How many cards make up the Major Arcana?' },
+      a: [{ vi: '22', en: '22' }, { vi: '16', en: '16' }, { vi: '40', en: '40' }, { vi: '56', en: '56' }],
+      why: { vi: 'Ẩn Chính chạy từ số 0 tới số 21, tức 22 lá.', en: 'The Majors run from 0 to 21, which is 22 cards.' } },
+    { q: { vi: 'Lá Gã Khờ mang số mấy?', en: 'What number does the Fool carry?' },
+      a: [{ vi: '0', en: '0' }, { vi: '1', en: '1' }, { vi: '21', en: '21' }, { vi: '22', en: '22' }],
+      why: { vi: 'Gã Khờ mang số 0, vì hành trình chưa bắt đầu.', en: 'The Fool is 0: the journey has not begun yet.' } },
+    { hard: true,
+      q: { vi: 'Ẩn Phụ có 56 lá. Ngoài 40 lá số, phần còn lại là gì?', en: 'The Minors number 56. Beyond the 40 pip cards, what makes up the rest?' },
+      a: [{ vi: '16 lá hoàng gia', en: '16 court cards' }, { vi: '16 lá Ẩn Chính', en: '16 more Majors' }, { vi: '14 lá hoàng gia', en: '14 court cards' }, { vi: '12 lá hoàng gia', en: '12 court cards' }],
+      why: { vi: '40 lá số (Át tới Mười của bốn chất) cộng 16 lá hoàng gia (bốn thứ bậc nhân bốn chất) là 56.', en: '40 pips (Ace to Ten in four suits) plus 16 court cards (four ranks in four suits) makes 56.' } },
+    { hard: true,
+      q: { vi: 'Trong thứ tự Rider–Waite, lá số 8 và lá số 11 lần lượt là gì?', en: 'In the Rider–Waite ordering, which cards are numbered 8 and 11?' },
+      a: [{ vi: 'Sức Mạnh là 8, Công Lý là 11', en: 'Strength is 8, Justice is 11' }, { vi: 'Công Lý là 8, Sức Mạnh là 11', en: 'Justice is 8, Strength is 11' }, { vi: 'Ẩn Sĩ là 8, Bánh Xe là 11', en: 'The Hermit is 8, the Wheel is 11' }, { vi: 'Cỗ Xe là 8, Người Treo Ngược là 11', en: 'The Chariot is 8, the Hanged Man is 11' }],
+      why: { vi: 'Waite đã đổi chỗ hai lá này so với bộ Marseille để Sức Mạnh khớp với Sư Tử và Công Lý khớp với Thiên Bình. App này dùng thứ tự của Waite.', en: 'Waite swapped these two from the Marseille order so that Strength lines up with Leo and Justice with Libra. This app follows Waite.' } }
+  ],
+  2: [
+    { q: { vi: 'Lá số 3 trong Ẩn Chính là lá nào?', en: 'Which card is number 3 in the Majors?' },
+      a: [{ vi: 'Nữ Hoàng', en: 'The Empress' }, { vi: 'Nữ Tư Tế', en: 'The High Priestess' }, { vi: 'Hoàng Đế', en: 'The Emperor' }, { vi: 'Giáo Hoàng', en: 'The Hierophant' }],
+      why: { vi: 'Nữ Hoàng là số 3, đứng giữa Nữ Tư Tế (2) và Hoàng Đế (4).', en: 'The Empress is 3, between the High Priestess (2) and the Emperor (4).' } },
+    { q: { vi: 'Lá Người Yêu mang số mấy?', en: 'What number is the Lovers?' },
+      a: [{ vi: '6', en: '6' }, { vi: '2', en: '2' }, { vi: '7', en: '7' }, { vi: '5', en: '5' }],
+      why: { vi: 'Người Yêu là số 6, ngay trước Cỗ Xe.', en: 'The Lovers is 6, just before the Chariot.' } },
+    { q: { vi: 'Nữ Tư Tế nói về điều gì rõ nhất?', en: 'What does the High Priestess speak of most clearly?' },
+      a: [{ vi: 'Trực giác và điều chưa nói ra', en: 'Intuition and what is not yet said' }, { vi: 'Quyền lực và luật lệ', en: 'Power and rules' }, { vi: 'Tiền bạc và công việc', en: 'Money and work' }, { vi: 'Chuyến đi xa', en: 'A long journey' }],
+      why: { vi: 'Nữ Tư Tế giữ điều chưa được nói ra: bà biết nhưng chưa trả lời.', en: 'The High Priestess holds what has not been spoken: she knows, but does not answer yet.' } },
+    { hard: true,
+      q: { vi: 'Pháp Sư ứng với hành tinh nào?', en: 'Which planet belongs to the Magician?' },
+      a: [{ vi: 'Sao Thuỷ', en: 'Mercury' }, { vi: 'Mặt Trăng', en: 'The Moon' }, { vi: 'Sao Kim', en: 'Venus' }, { vi: 'Mặt Trời', en: 'The Sun' }],
+      why: { vi: 'Pháp Sư ứng với Sao Thuỷ: lời nói, tay nghề và sự khéo léo. Bạn xem lại ở mục Chiêm tinh của lá bài.', en: 'The Magician takes Mercury: speech, craft and dexterity. The card\'s astrology panel says so.' } },
+    { hard: true,
+      q: { vi: 'Cỗ Xe ứng với cung hoàng đạo nào?', en: 'Which zodiac sign belongs to the Chariot?' },
+      a: [{ vi: 'Cự Giải', en: 'Cancer' }, { vi: 'Bạch Dương', en: 'Aries' }, { vi: 'Sư Tử', en: 'Leo' }, { vi: 'Nhân Mã', en: 'Sagittarius' }],
+      why: { vi: 'Cỗ Xe ứng với Cự Giải: lớp vỏ cứng bên ngoài che một bên trong mềm, và đó chính là chiếc xe.', en: 'The Chariot is Cancer: a hard shell around something soft, which is exactly what a chariot is.' } }
+  ],
+  3: [
+    { q: { vi: 'Ẩn Sĩ mang số mấy?', en: 'What number is the Hermit?' },
+      a: [{ vi: '9', en: '9' }, { vi: '8', en: '8' }, { vi: '10', en: '10' }, { vi: '12', en: '12' }],
+      why: { vi: 'Ẩn Sĩ là số 9, ngay trước Bánh Xe Số Phận.', en: 'The Hermit is 9, just before the Wheel of Fortune.' } },
+    { q: { vi: 'Lá số 13 là lá nào?', en: 'Which card is number 13?' },
+      a: [{ vi: 'Cái Chết', en: 'Death' }, { vi: 'Tiết Độ', en: 'Temperance' }, { vi: 'Người Treo Ngược', en: 'The Hanged Man' }, { vi: 'Ác Quỷ', en: 'The Devil' }],
+      why: { vi: 'Cái Chết là số 13, và trong tarot nó nói về một kết thúc dứt khoát chứ không phải cái chết thật.', en: 'Death is 13, and in tarot it speaks of a decisive ending rather than a literal death.' } },
+    { q: { vi: 'Người Treo Ngược dạy điều gì?', en: 'What does the Hanged Man teach?' },
+      a: [{ vi: 'Dừng lại và nhìn mọi việc theo chiều khác', en: 'Stopping, and seeing things the other way up' }, { vi: 'Hành động thật nhanh', en: 'Acting quickly' }, { vi: 'Tích luỹ tiền bạc', en: 'Building up money' }, { vi: 'Tranh luận cho tới khi thắng', en: 'Arguing until you win' }],
+      why: { vi: 'Người Treo Ngược tự nguyện treo mình: cái giá của một góc nhìn mới là phải chịu đứng yên.', en: 'The Hanged Man hangs willingly: the price of a new view is holding still for it.' } },
+    { hard: true,
+      q: { vi: 'Bánh Xe Số Phận ứng với hành tinh nào?', en: 'Which planet belongs to the Wheel of Fortune?' },
+      a: [{ vi: 'Sao Mộc', en: 'Jupiter' }, { vi: 'Sao Thổ', en: 'Saturn' }, { vi: 'Sao Hoả', en: 'Mars' }, { vi: 'Sao Kim', en: 'Venus' }],
+      why: { vi: 'Bánh Xe ứng với Sao Mộc: hành tinh của sự mở rộng và của vận may đến từ bên ngoài.', en: 'The Wheel takes Jupiter: the planet of expansion and of luck arriving from outside.' } },
+    { hard: true,
+      q: { vi: 'Tiết Độ ứng với cung hoàng đạo nào?', en: 'Which zodiac sign belongs to Temperance?' },
+      a: [{ vi: 'Nhân Mã', en: 'Sagittarius' }, { vi: 'Bảo Bình', en: 'Aquarius' }, { vi: 'Xử Nữ', en: 'Virgo' }, { vi: 'Thiên Bình', en: 'Libra' }],
+      why: { vi: 'Tiết Độ ứng với Nhân Mã: mũi tên nhắm xa, pha trộn hai thứ để tới được đích.', en: 'Temperance is Sagittarius: an arrow aimed far off, blending two things to carry it there.' } }
+  ],
+  4: [
+    { q: { vi: 'Lá số 16 là lá nào?', en: 'Which card is number 16?' },
+      a: [{ vi: 'Tòa Tháp', en: 'The Tower' }, { vi: 'Ác Quỷ', en: 'The Devil' }, { vi: 'Ngôi Sao', en: 'The Star' }, { vi: 'Mặt Trăng', en: 'The Moon' }],
+      why: { vi: 'Tòa Tháp là số 16, ngay sau Ác Quỷ và ngay trước Ngôi Sao.', en: 'The Tower is 16, straight after the Devil and straight before the Star.' } },
+    { q: { vi: 'Lá cuối cùng của Ẩn Chính là lá nào?', en: 'Which card closes the Major Arcana?' },
+      a: [{ vi: 'Thế Giới', en: 'The World' }, { vi: 'Phán Xét', en: 'Judgement' }, { vi: 'Mặt Trời', en: 'The Sun' }, { vi: 'Gã Khờ', en: 'The Fool' }],
+      why: { vi: 'Thế Giới là số 21, lá cuối cùng: vòng đi đã trọn.', en: 'The World is 21, the last card: the round is complete.' } },
+    { q: { vi: 'Ngôi Sao đến ngay sau lá nào, và vì sao điều đó quan trọng?', en: 'Which card comes immediately before the Star, and why does that matter?' },
+      a: [{ vi: 'Tòa Tháp — hy vọng đến ngay sau khi mọi thứ sụp đổ', en: 'The Tower — hope arrives right after everything falls' }, { vi: 'Mặt Trăng — ánh sáng đến sau sương mù', en: 'The Moon — light arrives after the fog' }, { vi: 'Mặt Trời — niềm vui nối tiếp niềm vui', en: 'The Sun — one joy follows another' }, { vi: 'Phán Xét — tỉnh thức rồi mới hy vọng', en: 'Judgement — waking first, then hope' }],
+      why: { vi: 'Ngôi Sao (17) đứng ngay sau Tòa Tháp (16). Thứ tự ấy là cả bài học: hy vọng đến sau đổ vỡ, chứ không phải trước.', en: 'The Star (17) follows the Tower (16). That order is the lesson: hope comes after the wreck, not before it.' } },
+    { hard: true,
+      q: { vi: 'Tòa Tháp ứng với hành tinh nào?', en: 'Which planet belongs to the Tower?' },
+      a: [{ vi: 'Sao Hoả', en: 'Mars' }, { vi: 'Sao Thiên Vương', en: 'Uranus' }, { vi: 'Sao Thổ', en: 'Saturn' }, { vi: 'Sao Diêm Vương', en: 'Pluto' }],
+      why: { vi: 'Tòa Tháp ứng với Sao Hoả: cú đánh thẳng, nhanh và không báo trước.', en: 'The Tower takes Mars: the blow that lands straight, fast and unannounced.' } },
+    { hard: true,
+      q: { vi: 'Thế Giới ứng với hành tinh nào?', en: 'Which planet belongs to the World?' },
+      a: [{ vi: 'Sao Thổ', en: 'Saturn' }, { vi: 'Sao Mộc', en: 'Jupiter' }, { vi: 'Mặt Trời', en: 'The Sun' }, { vi: 'Sao Hải Vương', en: 'Neptune' }],
+      why: { vi: 'Thế Giới ứng với Sao Thổ: hành tinh của giới hạn, của thời gian và của việc hoàn tất.', en: 'The World takes Saturn: the planet of limits, of time, and of finishing.' } }
+  ],
+  5: [
+    { q: { vi: 'Chất Gậy ứng với nguyên tố nào?', en: 'Which element belongs to Wands?' },
+      a: [{ vi: 'Lửa', en: 'Fire' }, { vi: 'Nước', en: 'Water' }, { vi: 'Khí', en: 'Air' }, { vi: 'Đất', en: 'Earth' }],
+      why: { vi: 'Gậy là lửa: hành động, đam mê và ý chí.', en: 'Wands are fire: action, passion and will.' } },
+    { q: { vi: 'Chất Cốc ứng với nguyên tố nào?', en: 'Which element belongs to Cups?' },
+      a: [{ vi: 'Nước', en: 'Water' }, { vi: 'Lửa', en: 'Fire' }, { vi: 'Đất', en: 'Earth' }, { vi: 'Khí', en: 'Air' }],
+      why: { vi: 'Cốc là nước: cảm xúc, tình cảm và các mối quan hệ.', en: 'Cups are water: feeling, love and relationships.' } },
+    { q: { vi: 'Trong mỗi chất, dãy lá số chạy từ đâu tới đâu?', en: 'Within each suit, where does the run of pip cards begin and end?' },
+      a: [{ vi: 'Từ Át tới Mười', en: 'From the Ace to the Ten' }, { vi: 'Từ Hai tới Vua', en: 'From the Two to the King' }, { vi: 'Từ Át tới Vua', en: 'From the Ace to the King' }, { vi: 'Từ Một tới Hai Mươi Mốt', en: 'From One to Twenty-one' }],
+      why: { vi: 'Át là hạt giống của chất, Mười là chất ấy ở mức đầy nhất. Bốn lá hoàng gia đứng riêng.', en: 'The Ace is the seed of the suit and the Ten is the suit at its fullest. The four court cards stand apart.' } },
+    { hard: true,
+      q: { vi: 'Lá Hai Gậy ứng với decan nào?', en: 'Which decan does the Two of Wands take?' },
+      a: [{ vi: 'Sao Hoả trong Bạch Dương', en: 'Mars in Aries' }, { vi: 'Sao Kim trong Kim Ngưu', en: 'Venus in Taurus' }, { vi: 'Mặt Trời trong Sư Tử', en: 'The Sun in Leo' }, { vi: 'Sao Thuỷ trong Song Tử', en: 'Mercury in Gemini' }],
+      why: { vi: 'Hai Gậy là Sao Hoả trong Bạch Dương, decan đầu tiên của vòng hoàng đạo, và tên cổ của nó là “Thống Lĩnh”. Bạn xem lại ở mục Chiêm tinh của lá bài.', en: 'The Two of Wands is Mars in Aries, the first decan of the zodiac, and its old title is “Dominion”. The card\'s astrology panel says so.' } },
+    { hard: true,
+      q: { vi: 'Bốn lá Át không được gán một decan. Vậy chúng được gán gì?', en: 'The four Aces are not given a decan. What are they given instead?' },
+      a: [{ vi: 'Chính nguyên tố của chất đó', en: 'The element of their suit itself' }, { vi: 'Ba decan đầu của chất', en: 'The first three decans of the suit' }, { vi: 'Một hành tinh riêng', en: 'A planet of their own' }, { vi: 'Một lá Ẩn Chính tương ứng', en: 'A matching Major' }],
+      why: { vi: 'Ba mươi sáu lá số từ Hai tới Mười phủ kín 36 decan. Bốn lá Át đứng ngoài hệ đó và mang chính nguyên tố của chất: lửa, nước, khí, đất.', en: 'The thirty-six pips from Two to Ten cover all thirty-six decans. The four Aces sit outside that scheme and carry the raw element of the suit: fire, water, air, earth.' } }
+  ],
+  6: [
+    { q: { vi: 'Chất Kiếm ứng với nguyên tố nào?', en: 'Which element belongs to Swords?' },
+      a: [{ vi: 'Khí', en: 'Air' }, { vi: 'Lửa', en: 'Fire' }, { vi: 'Đất', en: 'Earth' }, { vi: 'Nước', en: 'Water' }],
+      why: { vi: 'Kiếm là khí: suy nghĩ, lời nói và xung đột.', en: 'Swords are air: thought, words and conflict.' } },
+    { q: { vi: 'Chất Tiền ứng với nguyên tố nào?', en: 'Which element belongs to Pentacles?' },
+      a: [{ vi: 'Đất', en: 'Earth' }, { vi: 'Khí', en: 'Air' }, { vi: 'Nước', en: 'Water' }, { vi: 'Lửa', en: 'Fire' }],
+      why: { vi: 'Tiền là đất: tiền bạc, sức khỏe và những việc cụ thể.', en: 'Pentacles are earth: money, health and practical work.' } },
+    { q: { vi: 'Vì sao Kiếm được xem là chất khó đọc nhất?', en: 'Why are Swords held to be the hardest suit to read?' },
+      a: [{ vi: 'Vì phần lớn các lá nói về khó khăn trong suy nghĩ và lời nói', en: 'Because most of them speak of trouble in thought and speech' }, { vi: 'Vì chúng có nhiều lá hơn các chất khác', en: 'Because there are more of them than in other suits' }, { vi: 'Vì chúng không có lá hoàng gia', en: 'Because they have no court cards' }, { vi: 'Vì chúng không bao giờ nói về con người', en: 'Because they never speak of people' }],
+      why: { vi: 'Mỗi chất có mười lá số như nhau. Kiếm khó vì nội dung của chúng: lo âu, tranh cãi và những quyết định phải trả giá.', en: 'Every suit has the same ten pips. Swords are hard because of what they carry: worry, argument and decisions that cost something.' } },
+    { hard: true,
+      q: { vi: 'Lá Mười Kiếm ứng với decan nào?', en: 'Which decan does the Ten of Swords take?' },
+      a: [{ vi: 'Mặt Trời trong Song Tử', en: 'The Sun in Gemini' }, { vi: 'Sao Thổ trong Song Ngư', en: 'Saturn in Pisces' }, { vi: 'Sao Hoả trong Bọ Cạp', en: 'Mars in Scorpio' }, { vi: 'Sao Thuỷ trong Xử Nữ', en: 'Mercury in Virgo' }],
+      why: { vi: 'Mười Kiếm là Mặt Trời trong Song Tử, decan cuối của Song Tử, tên cổ là “Sụp Đổ”.', en: 'The Ten of Swords is the Sun in Gemini, the last decan of Gemini, and its old title is “Ruin”.' } },
+    { hard: true,
+      q: { vi: 'Mười lá số của chất Kiếm trải trên ba cung nào?', en: 'The ten pips of Swords run across which three signs?' },
+      a: [{ vi: 'Thiên Bình, Bảo Bình, Song Tử', en: 'Libra, Aquarius, Gemini' }, { vi: 'Bạch Dương, Sư Tử, Nhân Mã', en: 'Aries, Leo, Sagittarius' }, { vi: 'Cự Giải, Bọ Cạp, Song Ngư', en: 'Cancer, Scorpio, Pisces' }, { vi: 'Kim Ngưu, Xử Nữ, Ma Kết', en: 'Taurus, Virgo, Capricorn' }],
+      why: { vi: 'Kiếm là khí, nên chúng trải trên ba cung khí: Thiên Bình, Bảo Bình và Song Tử. Mỗi cung nhận ba lá.', en: 'Swords are air, so they run across the three air signs: Libra, Aquarius and Gemini, three cards to each.' } }
+  ],
+  7: [
+    { q: { vi: 'Bộ hoàng gia gồm bao nhiêu lá?', en: 'How many court cards are there?' },
+      a: [{ vi: '16', en: '16' }, { vi: '12', en: '12' }, { vi: '4', en: '4' }, { vi: '22', en: '22' }],
+      why: { vi: 'Bốn thứ bậc nhân bốn chất là 16 lá.', en: 'Four ranks in four suits makes 16.' } },
+    { q: { vi: 'Bốn thứ bậc hoàng gia là gì?', en: 'What are the four court ranks?' },
+      a: [{ vi: 'Tiểu Đồng, Hiệp Sĩ, Hoàng Hậu, Vua', en: 'Page, Knight, Queen, King' }, { vi: 'Át, Hoàng Hậu, Vua, Joker', en: 'Ace, Queen, King, Joker' }, { vi: 'Tiểu Đồng, Hoàng Tử, Công Chúa, Vua', en: 'Page, Prince, Princess, King' }, { vi: 'Hiệp Sĩ, Vua, Hoàng Hậu, Ẩn Sĩ', en: 'Knight, King, Queen, Hermit' }],
+      why: { vi: 'Tiểu Đồng, Hiệp Sĩ, Hoàng Hậu và Vua, lặp lại trong cả bốn chất.', en: 'Page, Knight, Queen and King, repeated in all four suits.' } },
+    { q: { vi: 'Một lá Vua thường chỉ điều gì trong một trải bài?', en: 'What does a King usually point to in a reading?' },
+      a: [{ vi: 'Một người trưởng thành đang nắm quyền quyết định', en: 'A grown person who holds the decision' }, { vi: 'Một tin nhắn sắp đến', en: 'A message on its way' }, { vi: 'Một khoản tiền', en: 'A sum of money' }, { vi: 'Một khoảng thời gian dài', en: 'A long stretch of time' }],
+      why: { vi: 'Vua là thứ bậc của quyền và của quyết định đã chín. Tin nhắn thường là Tiểu Đồng.', en: 'The King is the rank of authority and settled decision. A message is usually the Page.' } },
+    { hard: true,
+      q: { vi: 'Trong hệ Golden Dawn, mỗi lá hoàng gia được gán một khoảng hoàng đạo như thế nào?', en: 'In the Golden Dawn scheme, what stretch of the zodiac does a court card cover?' },
+      a: [{ vi: 'Mười độ cuối của một cung và hai mươi độ đầu của cung kế tiếp', en: 'The last ten degrees of one sign and the first twenty of the next' }, { vi: 'Trọn một cung', en: 'One whole sign' }, { vi: 'Trọn hai cung liền nhau', en: 'Two whole signs in a row' }, { vi: 'Một decan duy nhất', en: 'A single decan' }],
+      why: { vi: 'Mỗi lá hoàng gia bắc cầu qua hai cung: decan cuối của cung trước và hai decan đầu của cung sau. Vì thế lá bài mang tính chất của cả hai.', en: 'Each court card bridges two signs: the last decan of one and the first two of the next. That is why it carries something of both.' } },
+    { hard: true,
+      q: { vi: 'Thứ bậc nào trong bộ hoàng gia không được gán một khoảng hoàng đạo?', en: 'Which court rank is given no stretch of the zodiac at all?' },
+      a: [{ vi: 'Tiểu Đồng', en: 'The Page' }, { vi: 'Hiệp Sĩ', en: 'The Knight' }, { vi: 'Hoàng Hậu', en: 'The Queen' }, { vi: 'Vua', en: 'The King' }],
+      why: { vi: 'Ba thứ bậc kia phủ kín vòng hoàng đạo. Tiểu Đồng đứng ngoài: trong hệ này Tiểu Đồng được gán một phần tư của địa cầu chứ không phải một khoảng hoàng đạo.', en: 'The other three ranks cover the zodiac between them. The Page stands outside it: in this scheme the Page is given a quarter of the earth rather than a stretch of the sky.' } }
+  ],
+  8: [
+    { q: { vi: 'Trải ba lá thường được đọc theo thứ tự nào?', en: 'How is a three-card spread usually read?' },
+      a: [{ vi: 'Quá khứ – hiện tại – tương lai', en: 'Past – present – future' }, { vi: 'Tốt – xấu – trung tính', en: 'Good – bad – neutral' }, { vi: 'Tiền – tình – sức khỏe', en: 'Money – love – health' }, { vi: 'Sáng – trưa – tối', en: 'Morning – noon – night' }],
+      why: { vi: 'Ba lá theo dòng thời gian là cách trải đầu tiên nên học, và cũng là cách dễ kiểm chứng nhất.', en: 'Three cards along a timeline is the first spread to learn and the easiest to check against life.' } },
+    { q: { vi: 'Việc quan trọng nhất cần làm trước khi trải bài là gì?', en: 'What matters most before laying any cards?' },
+      a: [{ vi: 'Đặt một câu hỏi rõ ràng', en: 'Settling on a clear question' }, { vi: 'Xáo bài thật lâu', en: 'Shuffling for a long time' }, { vi: 'Chọn đúng khăn trải', en: 'Choosing the right cloth' }, { vi: 'Rút thật nhiều lá', en: 'Drawing as many cards as possible' }],
+      why: { vi: 'Một câu hỏi mơ hồ chỉ cho ra một câu trả lời mơ hồ. Câu hỏi là phần khó nhất của việc trải bài.', en: 'A vague question can only produce a vague answer. The question is the hardest part of any reading.' } },
+    { q: { vi: 'Khi một trải bài cho ra câu trả lời bạn không muốn nghe, cách làm đúng là gì?', en: 'When a spread gives an answer you did not want, what is the right thing to do?' },
+      a: [{ vi: 'Ghi lại và đối chiếu về sau', en: 'Write it down and check it against what happens' }, { vi: 'Rút lại cho tới khi ra kết quả khác', en: 'Draw again until it changes' }, { vi: 'Bỏ lá không thích ra ngoài', en: 'Take the unwanted card out' }, { vi: 'Đổi sang bộ bài khác', en: 'Switch to a different deck' }],
+      why: { vi: 'Rút lại cùng một câu hỏi cho tới khi vừa ý là cách nhanh nhất để mất khả năng đọc bài. Ghi lại rồi đối chiếu mới là cách học.', en: 'Redrawing the same question until it pleases you is the fastest way to lose the ability to read at all. Recording and checking is how the skill is built.' } },
+    { hard: true,
+      q: { vi: 'Trải bài Celtic Cross gồm bao nhiêu vị trí?', en: 'How many positions make up the Celtic Cross?' },
+      a: [{ vi: '10', en: '10' }, { vi: '7', en: '7' }, { vi: '12', en: '12' }, { vi: '5', en: '5' }],
+      why: { vi: 'Celtic Cross có 10 vị trí: sáu lá làm thành hình thập giá và bốn lá xếp thành cột bên phải.', en: 'The Celtic Cross has 10: six making the cross itself and four in a staff up the right-hand side.' } },
+    { hard: true,
+      q: { vi: 'Trong lối trải bài cổ điển, “significator” là gì?', en: 'In the older spreads, what is a significator?' },
+      a: [{ vi: 'Lá được chọn trước để đại diện cho người hỏi', en: 'A card chosen in advance to stand for the querent' }, { vi: 'Lá cuối cùng rút ra', en: 'The last card drawn' }, { vi: 'Lá rơi ra khi xáo bài', en: 'A card that falls out while shuffling' }, { vi: 'Lá Ẩn Chính đầu tiên xuất hiện', en: 'The first Major to appear' }],
+      why: { vi: 'Significator được chọn có chủ ý, thường là một lá hoàng gia hợp với tuổi và tính cách người hỏi, rồi đặt làm trung tâm cho phần còn lại đọc quanh nó.', en: 'The significator is chosen deliberately, usually a court card matching the querent, and laid first so the rest of the spread is read around it.' } }
+  ]
+};
+
+/* ==================== quiz bank: the Lenormand course ====================
+   Five questions to a lesson, the correct option written first and shuffled on
+   screen.
+
+   The hard pair in each set leans on two things the app already carries and the
+   lesson does not spell out: the playing-card inset printed on every Petit
+   Lenormand card, and the grammar of the system - which card in a pair is the
+   noun, how far a card sits from the significator, what a house is. These are
+   the first things a Lenormand reader meets after the card list, and they are
+   what separates reading Lenormand from reading tarot with different pictures. */
+
+QUIZ.lenormand = {
+  1: [
+    { q: { vi: 'Bộ Petit Lenormand gồm bao nhiêu lá?', en: 'How many cards are in a Petit Lenormand deck?' },
+      a: [{ vi: '36', en: '36' }, { vi: '78', en: '78' }, { vi: '52', en: '52' }, { vi: '22', en: '22' }],
+      why: { vi: 'Đúng 36 lá, đánh số từ 1 tới 36.', en: 'Exactly 36, numbered 1 to 36.' } },
+    { q: { vi: 'Trong lối đọc Lenormand truyền thống, một lá đứng một mình có ý nghĩa đầy đủ không?', en: 'In traditional Lenormand, does a single card carry a complete meaning on its own?' },
+      a: [{ vi: 'Không — lá chỉ có nghĩa khi ghép với lá bên cạnh', en: 'No — a card takes its meaning from the card beside it' }, { vi: 'Có — mỗi lá là một lời khuyên trọn vẹn', en: 'Yes — each card is a complete piece of advice' }, { vi: 'Có, nếu đó là lá số lẻ', en: 'Yes, if it is an odd-numbered card' }, { vi: 'Chỉ khi lá đó bị ngược', en: 'Only when the card is reversed' }],
+      why: { vi: 'Lenormand đọc thành câu. Một lá là một từ; nghĩa nằm ở chỗ các từ đứng cạnh nhau.', en: 'Lenormand is read as a sentence. One card is one word; the meaning lives in how the words sit together.' } },
+    { q: { vi: 'Lenormand có dùng lá ngược không?', en: 'Does Lenormand use reversed cards?' },
+      a: [{ vi: 'Không, theo truyền thống thì không', en: 'No, not in the tradition' }, { vi: 'Có, giống hệt tarot', en: 'Yes, exactly as in tarot' }, { vi: 'Chỉ với các lá người', en: 'Only with the people cards' }, { vi: 'Chỉ trong Grand Tableau', en: 'Only in the Grand Tableau' }],
+      why: { vi: 'Lá ngược không thuộc hệ Lenormand. Sắc thái tốt hay xấu đến từ các lá đứng quanh nó.', en: 'Reversals are not part of the system. Whether a card reads well or badly comes from its neighbours.' } },
+    { hard: true,
+      q: { vi: 'Bộ 36 lá Lenormand bắt nguồn từ bộ bài Tây rút gọn. Những lá số nào đã bị bỏ đi?', en: 'The 36-card deck comes from a shortened pack of playing cards. Which pips were removed?' },
+      a: [{ vi: 'Các lá 2, 3, 4 và 5 của cả bốn chất', en: 'The 2, 3, 4 and 5 of every suit' }, { vi: 'Các lá 6, 7, 8 và 9 của cả bốn chất', en: 'The 6, 7, 8 and 9 of every suit' }, { vi: 'Toàn bộ chất Bích', en: 'The whole spade suit' }, { vi: 'Các lá hình', en: 'All the court cards' }],
+      why: { vi: 'Bỏ 2, 3, 4 và 5 của mỗi chất khỏi bộ 52 lá thì còn 36 lá — đúng bằng bộ piquet, và đúng bằng số lá Lenormand.', en: 'Take the 2, 3, 4 and 5 out of each suit of a 52-card pack and 36 remain — a piquet deck, and exactly the number of Lenormand cards.' } },
+    { hard: true,
+      q: { vi: 'Trên mỗi lá Petit Lenormand thường in kèm một hình nhỏ. Đó là hình gì?', en: 'A small inset is printed on most Petit Lenormand cards. What does it show?' },
+      a: [{ vi: 'Lá bài Tây tương ứng với lá đó', en: 'The playing card that belongs to it' }, { vi: 'Cung hoàng đạo của lá đó', en: 'Its zodiac sign' }, { vi: 'Số thứ tự viết bằng chữ La Mã', en: 'Its number in Roman figures' }, { vi: 'Lá tarot tương ứng', en: 'Its matching tarot card' }],
+      why: { vi: 'Mỗi lá mang một lá bài Tây: Kỵ Mã là 9 Cơ, Trái Tim là J Cơ, và Người Đàn Ông là Át Cơ. Bạn xem lại ở trang của từng lá.', en: 'Every card carries a playing card: the Rider is the Nine of Hearts, the Heart is the Jack of Hearts, the Man is the Ace of Hearts. Each card page shows it.' } }
+  ],
+  2: [
+    { q: { vi: 'Lá số 1 của bộ Lenormand là lá nào?', en: 'Which card is number 1 in the Lenormand deck?' },
+      a: [{ vi: 'Kỵ Mã', en: 'The Rider' }, { vi: 'Cỏ Ba Lá', en: 'The Clover' }, { vi: 'Con Thuyền', en: 'The Ship' }, { vi: 'Ngôi Nhà', en: 'The House' }],
+      why: { vi: 'Kỵ Mã mở đầu bộ bài, và nó nói về tin tức đang trên đường tới.', en: 'The Rider opens the deck, and it speaks of news on its way.' } },
+    { q: { vi: 'Lá Ngôi Nhà (số 4) nói về điều gì?', en: 'What does the House (4) speak of?' },
+      a: [{ vi: 'Gia đình, nơi ở và sự ổn định', en: 'Family, home and stability' }, { vi: 'Một chuyến đi xa', en: 'A journey far away' }, { vi: 'Một khoản tiền lớn', en: 'A large sum of money' }, { vi: 'Một lời nói dối', en: 'A lie' }],
+      why: { vi: 'Ngôi Nhà là mái nhà, người trong nhà và những gì bền vững.', en: 'The House is the roof, the people under it, and what is built to last.' } },
+    { q: { vi: 'Lá Mây (số 6) mang sắc thái gì?', en: 'What tone does the Clouds (6) carry?' },
+      a: [{ vi: 'Sự mù mờ và nghi ngờ', en: 'Confusion and doubt' }, { vi: 'Niềm vui trọn vẹn', en: 'Complete joy' }, { vi: 'Sự chắc chắn', en: 'Certainty' }, { vi: 'Một món quà', en: 'A gift' }],
+      why: { vi: 'Mây làm mờ thứ nó che. Bên nào của lá quay về đâu cũng có ý nghĩa trong nhiều dòng truyền thống.', en: 'Clouds obscure whatever they sit over. In many traditions even which way they face carries meaning.' } },
+    { hard: true,
+      q: { vi: 'Lá Kỵ Mã mang lá bài Tây nào?', en: 'Which playing card belongs to the Rider?' },
+      a: [{ vi: '9 Cơ', en: 'The Nine of Hearts' }, { vi: 'Át Cơ', en: 'The Ace of Hearts' }, { vi: 'J Chuồn', en: 'The Jack of Clubs' }, { vi: '10 Bích', en: 'The Ten of Spades' }],
+      why: { vi: 'Kỵ Mã là 9 Cơ. Trong bói bài Tây, 9 Cơ là lá điều ước — nên Kỵ Mã mang tin lành đang tới.', en: 'The Rider is the Nine of Hearts. In cartomancy the Nine of Hearts is the wish card, which is why the Rider brings news you want.' } },
+    { hard: true,
+      q: { vi: 'Lá Rắn (số 7) và lá Cáo (số 14) khác nhau ở chỗ nào?', en: 'What separates the Snake (7) from the Fox (14)?' },
+      a: [{ vi: 'Rắn là một người hoặc một chuyện phức tạp; Cáo là sự khôn lỏi và chuyện công việc', en: 'The Snake is a person or a complication; the Fox is cunning and matters of work' }, { vi: 'Rắn nói về tiền, Cáo nói về tình', en: 'The Snake is money, the Fox is love' }, { vi: 'Hai lá có nghĩa hoàn toàn giống nhau', en: 'They mean exactly the same thing' }, { vi: 'Rắn luôn tốt, Cáo luôn xấu', en: 'The Snake is always good, the Fox always bad' }],
+      why: { vi: 'Cả hai đều cảnh báo, nhưng khác hướng: Rắn là đường vòng và người không thẳng thắn, còn Cáo là sự tính toán, thường gắn với công việc.', en: 'Both warn, but differently: the Snake is a detour and someone not straight with you, the Fox is calculation, and it usually concerns work.' } }
+  ],
+  3: [
+    { q: { vi: 'Lá số 24 là lá nào?', en: 'Which card is number 24?' },
+      a: [{ vi: 'Trái Tim', en: 'The Heart' }, { vi: 'Chiếc Nhẫn', en: 'The Ring' }, { vi: 'Ngôi Sao', en: 'The Stars' }, { vi: 'Con Chó', en: 'The Dog' }],
+      why: { vi: 'Trái Tim là số 24, và đó là lá của tình cảm.', en: 'The Heart is 24, and it is the card of love.' } },
+    { q: { vi: 'Lá Con Chó (số 18) nói về điều gì?', en: 'What does the Dog (18) speak of?' },
+      a: [{ vi: 'Một người bạn và lòng trung thành', en: 'A friend, and loyalty' }, { vi: 'Một kẻ thù', en: 'An enemy' }, { vi: 'Một khoản nợ', en: 'A debt' }, { vi: 'Một chuyến đi', en: 'A journey' }],
+      why: { vi: 'Con Chó là người ở lại bên bạn: bạn bè, người đáng tin.', en: 'The Dog is the one who stays: a friend, someone to be trusted.' } },
+    { q: { vi: 'Lá Ngọn Núi (số 21) mang ý gì?', en: 'What does the Mountain (21) carry?' },
+      a: [{ vi: 'Một trở ngại và sự chậm trễ', en: 'An obstacle, and delay' }, { vi: 'Một tin vui', en: 'Good news' }, { vi: 'Một cuộc gặp đông người', en: 'A crowded gathering' }, { vi: 'Một lời hứa', en: 'A promise' }],
+      why: { vi: 'Ngọn Núi chặn đường. Nó không nói không, nó nói chưa và nói khó.', en: 'The Mountain blocks the road. It does not say no; it says not yet, and not easily.' } },
+    { hard: true,
+      q: { vi: 'Hai lá nào trong bộ Lenormand thường được dùng làm lá đại diện cho người hỏi?', en: 'Which two cards are traditionally used to stand for the querent?' },
+      a: [{ vi: 'Người Đàn Ông (28) và Người Phụ Nữ (29)', en: 'The Man (28) and the Woman (29)' }, { vi: 'Trái Tim (24) và Chiếc Nhẫn (25)', en: 'The Heart (24) and the Ring (25)' }, { vi: 'Kỵ Mã (1) và Lá Thư (27)', en: 'The Rider (1) and the Letter (27)' }, { vi: 'Mặt Trời (31) và Mặt Trăng (32)', en: 'The Sun (31) and the Moon (32)' }],
+      why: { vi: 'Người Đàn Ông và Người Phụ Nữ là hai lá đại diện. Vị trí của chúng trong Grand Tableau quyết định phần lớn cách đọc.', en: 'The Man and the Woman are the significators. Where they fall in a Grand Tableau decides most of how it is read.' } },
+    { hard: true,
+      q: { vi: 'Lá Trái Tim mang lá bài Tây nào?', en: 'Which playing card belongs to the Heart?' },
+      a: [{ vi: 'J Cơ', en: 'The Jack of Hearts' }, { vi: 'Át Cơ', en: 'The Ace of Hearts' }, { vi: 'K Cơ', en: 'The King of Hearts' }, { vi: 'Q Cơ', en: 'The Queen of Hearts' }],
+      why: { vi: 'Trái Tim là J Cơ. Át Cơ thuộc về Người Đàn Ông, K Cơ thuộc về Ngôi Nhà, còn Q Cơ thuộc về Con Cò.', en: 'The Heart is the Jack of Hearts. The Ace of Hearts belongs to the Man, the King to the House and the Queen to the Stork.' } }
+  ],
+  4: [
+    { q: { vi: 'Lá số 25 là lá nào?', en: 'Which card is number 25?' },
+      a: [{ vi: 'Chiếc Nhẫn', en: 'The Ring' }, { vi: 'Quyển Sách', en: 'The Book' }, { vi: 'Lá Thư', en: 'The Letter' }, { vi: 'Hoa Huệ', en: 'The Lily' }],
+      why: { vi: 'Chiếc Nhẫn là số 25: cam kết, hợp đồng, một vòng khép kín.', en: 'The Ring is 25: commitment, a contract, a closed circle.' } },
+    { q: { vi: 'Lá Quyển Sách (số 26) nói về điều gì?', en: 'What does the Book (26) speak of?' },
+      a: [{ vi: 'Một điều còn giữ kín, hoặc việc học', en: 'Something kept secret, or study' }, { vi: 'Một chuyến đi biển', en: 'A voyage' }, { vi: 'Một cuộc cãi vã', en: 'A quarrel' }, { vi: 'Một đám đông', en: 'A crowd' }],
+      why: { vi: 'Quyển Sách đóng lại là bí mật, mở ra là kiến thức. Lá bên cạnh cho biết nó đang đóng hay mở.', en: 'Closed, the Book is a secret; open, it is knowledge. The neighbouring card says which.' } },
+    { q: { vi: 'Lá cuối cùng của bộ bài, số 36, là lá nào?', en: 'Which card closes the deck at number 36?' },
+      a: [{ vi: 'Cây Thánh Giá', en: 'The Cross' }, { vi: 'Mỏ Neo', en: 'The Anchor' }, { vi: 'Con Cá', en: 'The Fish' }, { vi: 'Chiếc Chìa Khoá', en: 'The Key' }],
+      why: { vi: 'Cây Thánh Giá là lá số 36: gánh nặng, thử thách, điều phải đi qua.', en: 'The Cross is 36: a burden, a trial, something to be gone through.' } },
+    { hard: true,
+      q: { vi: 'Trong một câu hỏi có/không, lá nào được xem là lá “có” rõ ràng nhất?', en: 'In a yes-or-no question, which card reads as the clearest yes?' },
+      a: [{ vi: 'Chiếc Chìa Khoá (33)', en: 'The Key (33)' }, { vi: 'Con Cá (34)', en: 'The Fish (34)' }, { vi: 'Mặt Trăng (32)', en: 'The Moon (32)' }, { vi: 'Quyển Sách (26)', en: 'The Book (26)' }],
+      why: { vi: 'Chiếc Chìa Khoá là lá của sự chắc chắn: nó mở cửa và nó xác nhận. Nhiều người đọc coi đây là lá “có” mạnh nhất trong bộ.', en: 'The Key is the card of certainty: it opens, and it confirms. Most readers treat it as the strongest yes in the deck.' } },
+    { hard: true,
+      q: { vi: 'Lá Con Cá (34) và lá Mỏ Neo (35) khác nhau thế nào khi nói về công việc?', en: 'On the subject of work, how do the Fish (34) and the Anchor (35) differ?' },
+      a: [{ vi: 'Con Cá là dòng tiền và việc kinh doanh; Mỏ Neo là công việc ổn định và sự bám trụ', en: 'The Fish is money moving and business; the Anchor is steady work and holding fast' }, { vi: 'Con Cá là thất nghiệp; Mỏ Neo là thăng chức', en: 'The Fish is unemployment; the Anchor is promotion' }, { vi: 'Hai lá có nghĩa như nhau', en: 'They mean the same thing' }, { vi: 'Con Cá nói về sức khỏe; Mỏ Neo nói về tình cảm', en: 'The Fish is health; the Anchor is love' }],
+      why: { vi: 'Con Cá chảy: tiền vào, tiền ra, việc buôn bán. Mỏ Neo giữ lại: chỗ làm lâu dài, điều không dời đi.', en: 'The Fish flows: money in, money out, trade. The Anchor holds: the long job, the thing that does not move.' } }
+  ],
+  5: [
+    { q: { vi: 'Khi đọc hai lá, lá đứng trước thường đóng vai gì?', en: 'When two cards are read together, what part does the first one play?' },
+      a: [{ vi: 'Chủ thể — điều đang được nói tới', en: 'The subject — the thing being spoken about' }, { vi: 'Kết quả cuối cùng', en: 'The final outcome' }, { vi: 'Người hỏi, luôn luôn', en: 'The querent, always' }, { vi: 'Thời gian xảy ra', en: 'The timing' }],
+      why: { vi: 'Lá trước là danh từ, lá sau mô tả nó. Đổi thứ tự thì đổi nghĩa: Trái Tim + Con Cá khác Con Cá + Trái Tim.', en: 'The first card is the noun and the second describes it. Swap them and the meaning changes: Heart + Fish is not Fish + Heart.' } },
+    { q: { vi: 'Khi đọc ba lá, lá ở giữa thường giữ vai trò gì?', en: 'In a three-card line, what does the middle card usually hold?' },
+      a: [{ vi: 'Chủ đề chính, được hai lá kia làm rõ', en: 'The main subject, with the other two qualifying it' }, { vi: 'Điều đã qua', en: 'What is already past' }, { vi: 'Lời khuyên', en: 'The advice' }, { vi: 'Điều nên tránh', en: 'What to avoid' }],
+      why: { vi: 'Trong lối đọc Lenormand, lá giữa là trung tâm câu, còn hai lá bên là những gì tô cho nó.', en: 'In Lenormand the middle card is the centre of the sentence and the two beside it colour it.' } },
+    { q: { vi: 'Ghép Mây (6) với Con Cá (34) hợp lý nhất là gì?', en: 'What is the most sensible reading of Clouds (6) with Fish (34)?' },
+      a: [{ vi: 'Chuyện tiền bạc đang không rõ ràng', en: 'Money matters that are not clear' }, { vi: 'Một chuyến đi biển vui vẻ', en: 'A happy sea voyage' }, { vi: 'Một đám cưới', en: 'A wedding' }, { vi: 'Một người bạn thân', en: 'A close friend' }],
+      why: { vi: 'Mây làm mờ thứ nó đứng cạnh, và Con Cá là tiền. Ghép lại: tài chính mù mờ, hoặc thu nhập chưa chắc chắn.', en: 'Clouds obscure whatever they stand next to, and the Fish is money. Together: unclear finances, or income you cannot count on.' } },
+    { hard: true,
+      q: { vi: 'Vì sao không nên đọc một lá Lenormand theo kiểu “lá này khuyên bạn nên…”?', en: 'Why is “this card advises you to…” the wrong way to read a Lenormand card?' },
+      a: [{ vi: 'Vì Lenormand mô tả tình huống chứ không đưa lời khuyên', en: 'Because Lenormand describes a situation rather than giving advice' }, { vi: 'Vì lá bài luôn nói ngược lại', en: 'Because the cards always mean the opposite' }, { vi: 'Vì chỉ lá ngược mới khuyên được', en: 'Because only reversed cards can advise' }, { vi: 'Vì phải có ít nhất chín lá', en: 'Because you need at least nine cards' }],
+      why: { vi: 'Đây là khác biệt lớn nhất với tarot. Lenormand trả lời “việc gì đang xảy ra”, không trả lời “bạn nên cảm thấy thế nào”. Lời khuyên là do người đọc rút ra, không phải do lá bài nói.', en: 'This is the sharpest difference from tarot. Lenormand answers what is happening, not how you should feel about it. Any advice is the reader\'s, not the card\'s.' } },
+    { hard: true,
+      q: { vi: 'Khi một lá người (28 hoặc 29) quay mặt về phía một lá khác, điều đó thường được đọc là gì?', en: 'When a people card (28 or 29) faces towards another card, how is that usually read?' },
+      a: [{ vi: 'Người ấy đang hướng về điều đó; điều sau lưng là đã qua', en: 'They are turned towards it; what lies behind them is past' }, { vi: 'Người ấy đang tránh điều đó', en: 'They are avoiding it' }, { vi: 'Không có ý nghĩa gì', en: 'It carries no meaning' }, { vi: 'Lá đó phải bỏ ra khỏi trải bài', en: 'That card must be taken out of the spread' }],
+      why: { vi: 'Hướng nhìn là một phần ngữ pháp của Lenormand: cái người ấy nhìn về là điều đang tới, cái ở sau lưng là điều đã ở lại.', en: 'Facing is part of Lenormand grammar: what a figure looks towards is what is coming, and what sits behind them is what has been left.' } }
+  ],
+  6: [
+    { q: { vi: 'Grand Tableau dùng bao nhiêu lá?', en: 'How many cards does a Grand Tableau use?' },
+      a: [{ vi: 'Toàn bộ 36 lá', en: 'All 36' }, { vi: '9 lá', en: '9' }, { vi: '10 lá', en: '10' }, { vi: '21 lá', en: '21' }],
+      why: { vi: 'Grand Tableau trải cả bộ bài, thường là bốn hàng chín lá, hoặc bốn hàng tám lá cộng bốn lá cuối.', en: 'The Grand Tableau lays the whole deck, usually four rows of nine, or four rows of eight with the last four beneath.' } },
+    { q: { vi: 'Việc đầu tiên cần làm khi đọc một Grand Tableau là gì?', en: 'What is the first thing to do when reading a Grand Tableau?' },
+      a: [{ vi: 'Tìm lá đại diện cho người hỏi', en: 'Find the card that stands for the querent' }, { vi: 'Đếm số lá đỏ', en: 'Count the red cards' }, { vi: 'Lật lá cuối cùng lên trước', en: 'Turn the last card over first' }, { vi: 'Bỏ các lá xấu ra', en: 'Take the difficult cards out' }],
+      why: { vi: 'Mọi thứ được đọc quanh lá đại diện: cái gì gần, cái gì ở trên, cái gì người ấy đang nhìn về.', en: 'Everything is read around the significator: what is near it, what is above it, what it looks towards.' } },
+    { q: { vi: 'Trải ba lá trong Lenormand trả lời tốt nhất loại câu hỏi nào?', en: 'What kind of question does a three-card Lenormand line answer best?' },
+      a: [{ vi: 'Một câu hỏi hẹp và cụ thể', en: 'A narrow, specific one' }, { vi: 'Một câu hỏi về cả cuộc đời', en: 'One about a whole life' }, { vi: 'Một câu hỏi không có chủ đề', en: 'One with no subject at all' }, { vi: 'Chỉ câu hỏi về tiền', en: 'Only questions about money' }],
+      why: { vi: 'Ba lá là một câu ngắn, nên câu hỏi cũng phải ngắn. Câu hỏi rộng thì cần trải rộng.', en: 'Three cards make a short sentence, so the question has to be short too. A wide question needs a wide spread.' } },
+    { hard: true,
+      q: { vi: 'Trong Grand Tableau, “nhà” (house) của một vị trí nghĩa là gì?', en: 'In a Grand Tableau, what is meant by the “house” of a position?' },
+      a: [{ vi: 'Ý nghĩa cố định gắn với vị trí đó, đánh số từ 1 tới 36', en: 'The fixed meaning attached to that position, numbered 1 to 36' }, { vi: 'Lá Ngôi Nhà, số 4', en: 'The House card, number 4' }, { vi: 'Hàng thứ tư của trải bài', en: 'The fourth row of the layout' }, { vi: 'Lá nằm ngay dưới lá đại diện', en: 'The card directly under the significator' }],
+      why: { vi: 'Mỗi ô trong Grand Tableau mang sẵn một ý nghĩa theo số thứ tự của nó. Lá rơi vào ô số 24 là chuyện tình cảm, dù lá ấy là lá gì. Ô là câu hỏi, lá là câu trả lời.', en: 'Every slot in the Grand Tableau carries a meaning of its own by its number. A card landing in slot 24 concerns love, whatever card it is. The slot asks; the card answers.' } },
+    { hard: true,
+      q: { vi: 'Trong Grand Tableau, khoảng cách giữa một lá và lá đại diện cho biết điều gì?', en: 'In a Grand Tableau, what does the distance between a card and the significator tell you?' },
+      a: [{ vi: 'Càng gần thì càng sớm và càng quan trọng', en: 'The closer it lies, the sooner and the more it matters' }, { vi: 'Càng gần thì càng ít quan trọng', en: 'The closer it lies, the less it matters' }, { vi: 'Khoảng cách không có ý nghĩa', en: 'Distance carries no meaning' }, { vi: 'Chỉ khoảng cách theo hàng ngang mới tính', en: 'Only distance along the row counts' }],
+      why: { vi: 'Đây là “phép khoảng cách”: lá kề bên nói chuyện đang xảy ra, lá ở cuối bàn nói chuyện xa hoặc chuyện nhỏ. Kề theo đường chéo cũng tính là kề.', en: 'This is the distance method: a card touching the significator is happening now, a card across the table is far off or slight. Diagonal touching counts as touching.' } }
+  ]
+};
+
+/* ==================== quiz bank: the cartomancy course ====================
+   Five questions to a lesson, the correct option written first and shuffled on
+   screen.
+
+   The hard pair in each set is drawn from what the course itself carries but
+   states in passing: the tarot twin of each suit, the season each suit rules,
+   the two nines that decide a wish, and the rule that the unit of time must be
+   fixed before the cards are shuffled rather than after they are seen. All of
+   it can be checked on the course pages. */
+
+QUIZ.playing = {
+  1: [
+    { q: { vi: 'Bộ bài Tây có bao nhiêu lá?', en: 'How many cards are in a pack of playing cards?' },
+      a: [{ vi: '52', en: '52' }, { vi: '36', en: '36' }, { vi: '78', en: '78' }, { vi: '54', en: '54' }],
+      why: { vi: '52 lá: bốn chất, mỗi chất mười ba lá.', en: '52: four suits of thirteen.' } },
+    { q: { vi: 'Chất Cơ nói về điều gì?', en: 'What does the suit of Hearts speak of?' },
+      a: [{ vi: 'Tình cảm, gia đình và niềm vui', en: 'Love, family and joy' }, { vi: 'Tiền bạc và tin tức', en: 'Money and news' }, { vi: 'Việc làm và may mắn', en: 'Work and luck' }, { vi: 'Thử thách và lo âu', en: 'Challenges and worry' }],
+      why: { vi: 'Cơ là chất của tình cảm và của những người bạn yêu.', en: 'Hearts is the suit of feeling and of the people you care for.' } },
+    { q: { vi: 'Chất Bích nói về điều gì?', en: 'What does the suit of Spades speak of?' },
+      a: [{ vi: 'Thử thách, lo âu và quyết định khó', en: 'Challenges, worry and hard decisions' }, { vi: 'Tình cảm và gia đình', en: 'Love and family' }, { vi: 'Tiền bạc', en: 'Money' }, { vi: 'Bạn bè', en: 'Friends' }],
+      why: { vi: 'Bích là chất nặng nhất: tin không vui, lo lắng, và những việc phải cân nhắc.', en: 'Spades is the heaviest suit: unwelcome news, worry, and things that must be weighed.' } },
+    { hard: true,
+      q: { vi: 'Chất Rô tương ứng với chất nào trong tarot?', en: 'Which tarot suit is the twin of Diamonds?' },
+      a: [{ vi: 'Tiền', en: 'Pentacles' }, { vi: 'Gậy', en: 'Wands' }, { vi: 'Cốc', en: 'Cups' }, { vi: 'Kiếm', en: 'Swords' }],
+      why: { vi: 'Rô ứng với Tiền, tức đất và chuyện vật chất. Chuồn ứng với Gậy, Cơ ứng với Cốc, Bích ứng với Kiếm.', en: 'Diamonds answers to Pentacles: earth and material things. Clubs is Wands, Hearts is Cups, Spades is Swords.' } },
+    { hard: true,
+      q: { vi: 'Bài Tây có 12 lá hình, còn tarot có 16 lá hoàng gia. Vì sao lại lệch bốn lá?', en: 'A playing pack has 12 court cards, tarot has 16. Where do the four extra come from?' },
+      a: [{ vi: 'Tarot có thêm một thứ bậc là Hiệp Sĩ', en: 'Tarot keeps a fourth rank, the Knight' }, { vi: 'Tarot có năm chất', en: 'Tarot has five suits' }, { vi: 'Bài Tây bỏ mất bốn lá Át', en: 'The playing pack has lost its four Aces' }, { vi: 'Tarot đếm cả hai lá Joker', en: 'Tarot counts the two Jokers' }],
+      why: { vi: 'Bài Tây giữ ba thứ bậc: J, Q, K. Tarot giữ bốn: Tiểu Đồng, Hiệp Sĩ, Hoàng Hậu, Vua. Chính lá Hiệp Sĩ đã rơi mất khi bộ bài đi vào lối chơi bài Tây.', en: 'The playing pack keeps three ranks: Jack, Queen, King. Tarot keeps four: Page, Knight, Queen, King. It is the Knight that fell away as the pack became a gaming deck.' } }
+  ],
+  2: [
+    { q: { vi: 'Lá Át mang ý gì trong dãy số?', en: 'What does the Ace carry in the run of numbers?' },
+      a: [{ vi: 'Hạt giống của chất, điều tinh khiết nhất vừa xuất hiện', en: 'The seed of the suit, its purest form just appearing' }, { vi: 'Kết quả cuối cùng', en: 'The final outcome' }, { vi: 'Một người trưởng thành', en: 'A grown person' }, { vi: 'Một khoảng thời gian dài', en: 'A long stretch of time' }],
+      why: { vi: 'Át là khởi đầu: chất ấy ở dạng thuần nhất, chưa pha gì.', en: 'The Ace is the beginning: the suit in its purest form, not yet mixed with anything.' } },
+    { q: { vi: 'Lá Mười mang ý gì?', en: 'What does the Ten carry?' },
+      a: [{ vi: 'Chất ấy ở mức đầy nhất', en: 'The suit at its fullest' }, { vi: 'Một khởi đầu mới', en: 'A fresh start' }, { vi: 'Một lời nhắn', en: 'A message' }, { vi: 'Một sự do dự', en: 'Hesitation' }],
+      why: { vi: 'Mười là điểm cuối của dãy: hạnh phúc trọn với Cơ, tiền lớn với Rô, thành công với Chuồn, kết thúc với Bích.', en: 'The Ten ends the run: full happiness in Hearts, big money in Diamonds, success in Clubs, an ending in Spades.' } },
+    { q: { vi: 'Số nào phá vỡ thế yên của số Bốn?', en: 'Which number breaks the calm of the Four?' },
+      a: [{ vi: 'Năm', en: 'The Five' }, { vi: 'Sáu', en: 'The Six' }, { vi: 'Bảy', en: 'The Seven' }, { vi: 'Tám', en: 'The Eight' }],
+      why: { vi: 'Bốn là nền móng; Năm làm nó rung: xáo trộn, tranh cãi hoặc một quyết định. Sáu sửa lại sau đó.', en: 'The Four is a foundation; the Five shakes it: disruption, argument, a decision. The Six repairs afterwards.' } },
+    { hard: true,
+      q: { vi: 'Trong bói bài Tây, lá nào được gọi là lá điều ước?', en: 'In cartomancy, which card is known as the wish card?' },
+      a: [{ vi: 'Chín Cơ', en: 'The Nine of Hearts' }, { vi: 'Chín Rô', en: 'The Nine of Diamonds' }, { vi: 'Át Cơ', en: 'The Ace of Hearts' }, { vi: 'Mười Cơ', en: 'The Ten of Hearts' }],
+      why: { vi: 'Chín Cơ là lá điều ước. Ở chất Bích, chính lá Chín lại là lá thất vọng — cùng một con số, hai đầu đối nhau.', en: 'The Nine of Hearts is the wish card. In Spades the same number is the card of disappointment: one number, two opposite ends.' } },
+    { hard: true,
+      q: { vi: 'Lá Chín Bích mang ý gì?', en: 'What does the Nine of Spades carry?' },
+      a: [{ vi: 'Thất vọng, lo âu, chưa phải lúc', en: 'Disappointment, worry, not now' }, { vi: 'Một chuyến đi vui', en: 'A happy journey' }, { vi: 'Một khoản tiền', en: 'A sum of money' }, { vi: 'Một đám cưới', en: 'A wedding' }],
+      why: { vi: 'Chín Bích là lá thất vọng, và trong trải bài điều ước nó có nghĩa là chưa phải lúc.', en: 'The Nine of Spades is the card of disappointment, and in the wish spread it means not now.' } }
+  ],
+  3: [
+    { q: { vi: 'Người mang tính chất của Cơ thường được mô tả thế nào?', en: 'How are people of the Hearts suit usually described?' },
+      a: [{ vi: 'Da sáng, tóc sáng, tính ấm áp', en: 'Fair, light-haired, warm-natured' }, { vi: 'Tóc sẫm, kín đáo, nghiêm', en: 'Dark-haired, reserved, serious' }, { vi: 'Tóc nâu, cởi mở, năng động', en: 'Brown-haired, open, energetic' }, { vi: 'Tóc hung, nhanh nhẹn', en: 'Red-haired and quick' }],
+      why: { vi: 'Cơ là chất ấm: người của Cơ được tả là sáng và dễ gần.', en: 'Hearts is the warm suit: its people are described as fair and easy to be near.' } },
+    { q: { vi: 'Lá Mười Cơ báo điều gì?', en: 'What does the Ten of Hearts announce?' },
+      a: [{ vi: 'Hạnh phúc trọn vẹn', en: 'Full happiness' }, { vi: 'Một kết thúc', en: 'An ending' }, { vi: 'Một khoản nợ', en: 'A debt' }, { vi: 'Một cuộc cãi vã', en: 'A quarrel' }],
+      why: { vi: 'Mười là chất ở mức đầy nhất, và chất ấy là tình cảm.', en: 'The Ten is the suit at its fullest, and the suit is love.' } },
+    { q: { vi: 'Cặp Q Cơ đi cùng K Cơ thường được đọc là gì?', en: 'What does the Queen of Hearts beside the King of Hearts usually read as?' },
+      a: [{ vi: 'Một cặp đôi, hôn nhân, gia đình yên ấm', en: 'A couple, a marriage, a settled home' }, { vi: 'Hai người xa lạ', en: 'Two strangers' }, { vi: 'Một cuộc chia tay', en: 'A parting' }, { vi: 'Một chuyến đi', en: 'A journey' }],
+      why: { vi: 'Hai lá hình cùng chất Cơ đứng cạnh nhau là hình ảnh của một đôi và một mái nhà yên.', en: 'Two Hearts court cards side by side are the picture of a pair and a settled home.' } },
+    { hard: true,
+      q: { vi: 'Chất Cơ ứng với mùa nào?', en: 'Which season belongs to Hearts?' },
+      a: [{ vi: 'Mùa xuân', en: 'Spring' }, { vi: 'Mùa hè', en: 'Summer' }, { vi: 'Mùa thu', en: 'Autumn' }, { vi: 'Mùa đông', en: 'Winter' }],
+      why: { vi: 'Cơ là xuân, Chuồn là hè, Rô là thu, Bích là đông. Đây là cách tính mùa dùng trong khoá học này.', en: 'Hearts is spring, Clubs summer, Diamonds autumn, Spades winter. That is the scheme this course uses.' } },
+    { hard: true,
+      q: { vi: 'Cặp Át Cơ đi cùng Chín Cơ báo điều gì?', en: 'What do the Ace of Hearts and the Nine of Hearts announce together?' },
+      a: [{ vi: 'Một điều ước thành sự thật, niềm vui trong nhà', en: 'A wish coming true, happiness at home' }, { vi: 'Một khoản tiền lớn', en: 'A large sum of money' }, { vi: 'Một chuyến đi công tác', en: 'A journey for work' }, { vi: 'Một kết thúc lớn', en: 'A big ending' }],
+      why: { vi: 'Át Cơ là mái nhà và khởi đầu của tình cảm; Chín Cơ là điều ước. Ghép lại là điều mong đã tới.', en: 'The Ace of Hearts is the home and the start of feeling; the Nine is the wish. Together: the thing hoped for has arrived.' } }
+  ],
+  4: [
+    { q: { vi: 'Chất Rô nói về điều gì?', en: 'What does the suit of Diamonds speak of?' },
+      a: [{ vi: 'Tiền bạc, công việc và tin tức', en: 'Money, work and news' }, { vi: 'Tình cảm', en: 'Love' }, { vi: 'Bạn bè và may mắn', en: 'Friends and luck' }, { vi: 'Bệnh tật', en: 'Illness' }],
+      why: { vi: 'Rô là chất của chuyện thực tế: tiền, giấy tờ và tin tức.', en: 'Diamonds is the practical suit: money, paperwork and news.' } },
+    { q: { vi: 'Lá Mười Rô báo điều gì?', en: 'What does the Ten of Diamonds announce?' },
+      a: [{ vi: 'Một khoản tiền lớn', en: 'Big money' }, { vi: 'Một lời hứa', en: 'A promise' }, { vi: 'Một cuộc chia tay', en: 'A parting' }, { vi: 'Một giấc mơ', en: 'A dream' }],
+      why: { vi: 'Mười là chất ở mức đầy nhất, và chất ấy là tiền.', en: 'The Ten is the suit at its fullest, and the suit is money.' } },
+    { q: { vi: 'Lá J Rô thường chỉ điều gì?', en: 'What does the Jack of Diamonds usually point to?' },
+      a: [{ vi: 'Một người trẻ hoặc một tin nhắn về chuyện tiền bạc', en: 'A young person, or a message about money' }, { vi: 'Một người lớn tuổi có quyền', en: 'An older person in authority' }, { vi: 'Một khoản thừa kế', en: 'An inheritance' }, { vi: 'Một cuộc hôn nhân', en: 'A marriage' }],
+      why: { vi: 'J là người trẻ hoặc một thông điệp, mang tính chất của chất mình.', en: 'The Jack is a young person or a message, carrying the character of its suit.' } },
+    { hard: true,
+      q: { vi: 'Chất Rô ứng với mùa nào?', en: 'Which season belongs to Diamonds?' },
+      a: [{ vi: 'Mùa thu', en: 'Autumn' }, { vi: 'Mùa xuân', en: 'Spring' }, { vi: 'Mùa hè', en: 'Summer' }, { vi: 'Mùa đông', en: 'Winter' }],
+      why: { vi: 'Rô là mùa thu, mùa của thu hoạch và của kết toán.', en: 'Diamonds is autumn: the season of harvest and of settling accounts.' } },
+    { hard: true,
+      q: { vi: 'Cặp Át Rô đi cùng Mười Rô báo điều gì?', en: 'What do the Ace of Diamonds and the Ten of Diamonds announce together?' },
+      a: [{ vi: 'Một hợp đồng lớn, hoặc một chuyến đi vì công việc', en: 'A big contract, or a journey for work' }, { vi: 'Một điều ước thành sự thật', en: 'A wish coming true' }, { vi: 'Một tình bạn mới', en: 'A new friendship' }, { vi: 'Một kết thúc', en: 'An ending' }],
+      why: { vi: 'Át Rô mở một việc tiền bạc, Mười Rô đưa nó tới mức lớn nhất. Ghép lại thường là hợp đồng, hoặc chuyến đi làm ăn.', en: 'The Ace of Diamonds opens a money matter and the Ten carries it to its fullest. Together that is usually a contract, or travel for business.' } }
+  ],
+  5: [
+    { q: { vi: 'Chất Chuồn nói về điều gì?', en: 'What does the suit of Clubs speak of?' },
+      a: [{ vi: 'Hành động, việc làm ăn, bạn bè và may mắn', en: 'Action, business, friends and luck' }, { vi: 'Tình cảm và gia đình', en: 'Love and family' }, { vi: 'Lo âu và mất mát', en: 'Worry and loss' }, { vi: 'Giấy tờ và tin tức', en: 'Paperwork and news' }],
+      why: { vi: 'Chuồn là chất của việc đang làm và của những người cùng làm với bạn.', en: 'Clubs is the suit of work in motion and of the people doing it with you.' } },
+    { q: { vi: 'Chất Chuồn tương ứng với chất nào trong tarot?', en: 'Which tarot suit is the twin of Clubs?' },
+      a: [{ vi: 'Gậy', en: 'Wands' }, { vi: 'Tiền', en: 'Pentacles' }, { vi: 'Cốc', en: 'Cups' }, { vi: 'Kiếm', en: 'Swords' }],
+      why: { vi: 'Chuồn ứng với Gậy: lửa, hành động, ý chí.', en: 'Clubs answers to Wands: fire, action, will.' } },
+    { q: { vi: 'Người mang tính chất của Chuồn thường được mô tả thế nào?', en: 'How are people of the Clubs suit usually described?' },
+      a: [{ vi: 'Tóc nâu, cởi mở, năng động', en: 'Brown-haired, open, energetic' }, { vi: 'Tóc sẫm, kín đáo', en: 'Dark-haired and reserved' }, { vi: 'Da rất sáng, nhanh nhẹn', en: 'Very fair and quick' }, { vi: 'Tóc sáng, ấm áp', en: 'Light-haired and warm' }],
+      why: { vi: 'Chuồn là chất của lửa, nên người của Chuồn được tả là sôi nổi và dễ bắt chuyện.', en: 'Clubs is the fire suit, so its people are described as lively and easy to talk to.' } },
+    { hard: true,
+      q: { vi: 'Chất Chuồn ứng với mùa nào?', en: 'Which season belongs to Clubs?' },
+      a: [{ vi: 'Mùa hè', en: 'Summer' }, { vi: 'Mùa xuân', en: 'Spring' }, { vi: 'Mùa thu', en: 'Autumn' }, { vi: 'Mùa đông', en: 'Winter' }],
+      why: { vi: 'Chuồn là mùa hè: mùa nóng nhất, và cũng là chất năng nổ nhất.', en: 'Clubs is summer: the hottest season, and the most driven suit.' } },
+    { hard: true,
+      q: { vi: 'Cặp Chín Chuồn đi cùng Chín Cơ được đọc là gì?', en: 'How are the Nine of Clubs and the Nine of Hearts read together?' },
+      a: [{ vi: 'May mắn gộp với niềm vui: một kỳ vọng được đáp', en: 'Luck plus joy: an expectation met' }, { vi: 'Hai tin xấu liền nhau', en: 'Two pieces of bad news together' }, { vi: 'Một khoản nợ phải trả', en: 'A debt to be paid' }, { vi: 'Một chuyến đi bị hoãn', en: 'A journey postponed' }],
+      why: { vi: 'Chín Chuồn mang may mắn, Chín Cơ là điều ước. Hai lá Chín cạnh nhau làm mạnh lẫn nhau.', en: 'The Nine of Clubs brings luck and the Nine of Hearts is the wish. Two Nines beside each other strengthen one another.' } }
+  ],
+  6: [
+    { q: { vi: 'Chất Bích tương ứng với chất nào trong tarot?', en: 'Which tarot suit is the twin of Spades?' },
+      a: [{ vi: 'Kiếm', en: 'Swords' }, { vi: 'Cốc', en: 'Cups' }, { vi: 'Gậy', en: 'Wands' }, { vi: 'Tiền', en: 'Pentacles' }],
+      why: { vi: 'Bích ứng với Kiếm: khí, suy nghĩ, lời nói.', en: 'Spades answers to Swords: air, thought, speech.' } },
+    { q: { vi: 'Lá Mười Bích báo điều gì?', en: 'What does the Ten of Spades announce?' },
+      a: [{ vi: 'Một kết thúc', en: 'An ending' }, { vi: 'Một khởi đầu', en: 'A beginning' }, { vi: 'Một khoản tiền', en: 'A sum of money' }, { vi: 'Một cuộc hẹn', en: 'A meeting' }],
+      why: { vi: 'Mười là chất ở mức đầy nhất, và chất ấy là thử thách: điều gì đó đã đi hết đường của nó.', en: 'The Ten is the suit at its fullest, and the suit is difficulty: something has run its full course.' } },
+    { q: { vi: 'Khi phần lớn các lá trong trải bài là Bích, điều đó nói lên gì?', en: 'When most of a spread comes up Spades, what does that say?' },
+      a: [{ vi: 'Vấn đề đang nằm ở chỗ khó khăn và cần cân nhắc', en: 'The matter sits in difficulty and calls for weighing up' }, { vi: 'Người hỏi sắp giàu', en: 'The querent is about to be rich' }, { vi: 'Trải bài phải xào lại', en: 'The spread must be shuffled again' }, { vi: 'Câu hỏi đã bị đặt sai', en: 'The question was asked wrongly' }],
+      why: { vi: 'Bài Tây đọc theo số đông: chất chiếm nhiều lá nhất cho biết vấn đề đang sống ở đâu.', en: 'Playing cards are read by majority: the suit that dominates says where the matter lives.' } },
+    { hard: true,
+      q: { vi: 'Chất Bích ứng với mùa nào?', en: 'Which season belongs to Spades?' },
+      a: [{ vi: 'Mùa đông', en: 'Winter' }, { vi: 'Mùa thu', en: 'Autumn' }, { vi: 'Mùa hè', en: 'Summer' }, { vi: 'Mùa xuân', en: 'Spring' }],
+      why: { vi: 'Bích là mùa đông: mùa chậm nhất, và chất nặng nhất.', en: 'Spades is winter: the slowest season, and the heaviest suit.' } },
+    { hard: true,
+      q: { vi: 'Cặp Át Bích đi cùng Mười Bích được đọc là gì?', en: 'How are the Ace of Spades and the Ten of Spades read together?' },
+      a: [{ vi: 'Một kết thúc lớn: đóng lại để mở ra', en: 'A big ending: closing so that something can open' }, { vi: 'Một khoản tiền bất ngờ', en: 'Unexpected money' }, { vi: 'Một lời cầu hôn', en: 'A proposal of marriage' }, { vi: 'Một chuyến đi ngắn', en: 'A short trip' }],
+      why: { vi: 'Hai lá nặng nhất của chất nặng nhất. Truyền thống không đọc nó là tai hoạ, mà là một chương khép lại dứt khoát.', en: 'The two heaviest cards of the heaviest suit. The tradition does not read this as catastrophe but as a chapter closing for good.' } }
+  ],
+  7: [
+    { q: { vi: 'Bài Tây có bao nhiêu lá hình?', en: 'How many court cards are in a playing pack?' },
+      a: [{ vi: '12', en: '12' }, { vi: '16', en: '16' }, { vi: '4', en: '4' }, { vi: '8', en: '8' }],
+      why: { vi: 'Ba thứ bậc J, Q, K nhân bốn chất là 12 lá.', en: 'Three ranks — Jack, Queen, King — in four suits makes 12.' } },
+    { q: { vi: 'Lá K thường chỉ điều gì?', en: 'What does a King usually point to?' },
+      a: [{ vi: 'Một người đàn ông trưởng thành hoặc người có quyền', en: 'A grown man, or someone in charge' }, { vi: 'Một đứa trẻ', en: 'A child' }, { vi: 'Một lá thư', en: 'A letter' }, { vi: 'Một mùa trong năm', en: 'A season of the year' }],
+      why: { vi: 'K là thứ bậc của quyền quyết định, hoặc phần quyết đoán trong chính người hỏi.', en: 'The King is the rank of decision, or the decisive side of the querent themselves.' } },
+    { q: { vi: 'Lá Q thường chỉ điều gì?', en: 'What does a Queen usually point to?' },
+      a: [{ vi: 'Một người phụ nữ trưởng thành, hoặc phần chăm sóc và cảm nhận', en: 'A grown woman, or the caring, sensing side' }, { vi: 'Một khoản tiền', en: 'A sum of money' }, { vi: 'Một chuyến đi', en: 'A journey' }, { vi: 'Một tin xấu', en: 'Bad news' }],
+      why: { vi: 'Q là người phụ nữ trưởng thành, hoặc phần biết lắng nghe và chăm sóc trong bạn.', en: 'The Queen is a grown woman, or the part of you that listens and takes care.' } },
+    { hard: true,
+      q: { vi: 'Một lá J trong trải bài không nhất thiết là một con người. Nó còn có thể là gì?', en: 'A Jack in a spread need not be a person at all. What else can it be?' },
+      a: [{ vi: 'Một tin nhắn mang tính chất của chất đó', en: 'A message carrying the character of its suit' }, { vi: 'Một khoảng thời gian mười một ngày', en: 'A stretch of eleven days' }, { vi: 'Một địa điểm', en: 'A place' }, { vi: 'Một con số may mắn', en: 'A lucky number' }],
+      why: { vi: 'J là người trẻ, nhưng cũng là thông điệp. J Rô là tin về tiền; J Bích là tin không vui. Lá bên cạnh cho biết đó là người hay tin.', en: 'The Jack is a young person, but also a message. The Jack of Diamonds is news about money; the Jack of Spades is unwelcome news. The neighbouring card says which it is.' } },
+    { hard: true,
+      q: { vi: 'Người mang tính chất của Bích thường được mô tả thế nào?', en: 'How are people of the Spades suit usually described?' },
+      a: [{ vi: 'Tóc sẫm, kín đáo, nghiêm', en: 'Dark-haired, reserved, serious' }, { vi: 'Tóc sáng, ấm áp', en: 'Light-haired and warm' }, { vi: 'Tóc nâu, cởi mở', en: 'Brown-haired and open' }, { vi: 'Tóc hung, nhanh nhẹn', en: 'Red-haired and quick' }],
+      why: { vi: 'Bích là chất khí và là chất nghiêm nhất, nên người của Bích được tả là sẫm màu và kín tiếng. Đây là cách mô tả cổ, dùng để nhận ra người, không phải để phán xét.', en: 'Spades is the air suit and the most serious, so its people are described as dark and reserved. This is an old way of identifying a person, not of judging one.' } }
+  ],
+  8: [
+    { q: { vi: 'Khi hai lá đứng cạnh nhau, điều gì xảy ra?', en: 'When two cards sit side by side, what happens?' },
+      a: [{ vi: 'Chúng đổi nghĩa cho nhau', en: 'They change each other\'s meaning' }, { vi: 'Chỉ lá bên trái được tính', en: 'Only the left-hand card counts' }, { vi: 'Cả hai đều bị bỏ qua', en: 'Both are set aside' }, { vi: 'Lá mạnh hơn xoá lá yếu hơn', en: 'The stronger cancels the weaker' }],
+      why: { vi: 'Bài Tây đọc theo cặp: nghĩa của một lá luôn chịu ảnh hưởng của lá bên cạnh.', en: 'Playing cards are read in pairs: a card\'s meaning is always coloured by its neighbour.' } },
+    { q: { vi: 'Con số trên lá được dùng để tính thời gian như thế nào?', en: 'How is the number on a card used for timing?' },
+      a: [{ vi: 'Là số đơn vị thời gian đã chốt từ trước', en: 'It is that many of the unit fixed beforehand' }, { vi: 'Luôn luôn là số ngày', en: 'It is always that many days' }, { vi: 'Luôn luôn là số tháng', en: 'It is always that many months' }, { vi: 'Không dùng để tính thời gian', en: 'It is not used for timing at all' }],
+      why: { vi: 'Ba Cơ trong khung tuần là khoảng ba tuần; trong khung tháng là khoảng ba tháng. Khung do bạn chốt.', en: 'A Three of Hearts in a weekly frame is about three weeks; in a monthly frame, three months. The frame is yours to set.' } },
+    { q: { vi: 'Chất nào thường được xem là đến nhanh hơn?', en: 'Which suits are held to arrive faster?' },
+      a: [{ vi: 'Cơ và Rô', en: 'Hearts and Diamonds' }, { vi: 'Chuồn và Bích', en: 'Clubs and Spades' }, { vi: 'Chỉ Bích', en: 'Spades alone' }, { vi: 'Cả bốn chất đều như nhau', en: 'All four the same' }],
+      why: { vi: 'Cơ và Rô thường đến nhanh hơn Chuồn và Bích. Đây là quy ước của khoá học này.', en: 'Hearts and Diamonds tend to arrive sooner than Clubs and Spades. That is the convention this course uses.' } },
+    { hard: true,
+      q: { vi: 'Đơn vị thời gian phải được chốt vào lúc nào?', en: 'When must the unit of time be fixed?' },
+      a: [{ vi: 'Trước khi xào bài', en: 'Before the cards are shuffled' }, { vi: 'Sau khi đã lật bài lên', en: 'After the cards have been turned over' }, { vi: 'Khi lá cuối cùng được rút', en: 'When the last card is drawn' }, { vi: 'Không cần chốt', en: 'It does not need fixing' }],
+      why: { vi: 'Chốt sau khi đã nhìn thấy lá là tự chiều mình: bạn sẽ chọn đơn vị nào cho ra câu trả lời dễ chịu nhất. Chốt trước thì câu trả lời mới có giá trị.', en: 'Fixing it after you have seen the cards is flattering yourself: you will pick whichever unit gives the answer you want. Fixed beforehand, the answer means something.' } },
+    { hard: true,
+      q: { vi: 'Vì sao khoá học nhắc rằng không có quy ước thời gian nào được mọi sách đồng ý?', en: 'Why does the course note that no timing convention is shared by every book?' },
+      a: [{ vi: 'Vì điều quan trọng là giữ một cách và dùng đều, chứ không phải tìm cách đúng duy nhất', en: 'Because what matters is keeping one method and using it consistently, not finding the one true one' }, { vi: 'Vì thời gian không thể đọc được', en: 'Because timing cannot be read at all' }, { vi: 'Vì chỉ có bài tarot mới tính được thời gian', en: 'Because only tarot can time anything' }, { vi: 'Vì mỗi bộ bài có quy ước riêng in kèm', en: 'Because each deck comes with its own printed convention' }],
+      why: { vi: 'Các truyền thống khác nhau gán đơn vị khác nhau cho từng chất. Một hệ thống nhất quán, dùng lâu và đối chiếu lại, sẽ chính xác hơn nhiều hệ trộn lẫn.', en: 'Different traditions assign different units to the suits. One consistent system, used for a long time and checked against what happened, will beat a mixture of several.' } }
+  ],
+  9: [
+    { q: { vi: 'Trải ba lá đọc theo thứ tự nào?', en: 'How is the three-card spread read?' },
+      a: [{ vi: 'Quá khứ, hiện tại, tương lai', en: 'Past, present, future' }, { vi: 'Tốt, xấu, trung tính', en: 'Good, bad, neutral' }, { vi: 'Người, việc, nơi chốn', en: 'Person, thing, place' }, { vi: 'Sáng, trưa, tối', en: 'Morning, noon, night' }],
+      why: { vi: 'Ba lá theo dòng thời gian là trải bài hằng ngày.', en: 'Three cards along a timeline is the daily spread.' } },
+    { q: { vi: 'Trải năm lá gồm những vị trí nào?', en: 'What are the five positions in the five-card spread?' },
+      a: [{ vi: 'Quá khứ, hiện tại, điều cản, lời khuyên, kết quả', en: 'Past, present, what blocks, advice, outcome' }, { vi: 'Năm người thân trong nhà', en: 'Five people in the family' }, { vi: 'Năm năm sắp tới', en: 'The next five years' }, { vi: 'Năm chất của bộ bài', en: 'The five suits of the pack' }],
+      why: { vi: 'Năm lá đọc từ trái sang phải như một câu.', en: 'The five are read left to right as a sentence.' } },
+    { q: { vi: 'Trong trải chín lá, lá nào là trọng tâm?', en: 'In the nine-card spread, which card is the heart of it?' },
+      a: [{ vi: 'Lá ở giữa', en: 'The middle one' }, { vi: 'Lá góc trên bên trái', en: 'The top left' }, { vi: 'Lá cuối cùng', en: 'The last one' }, { vi: 'Lá đầu tiên', en: 'The first one' }],
+      why: { vi: 'Ba hàng: trên là hoàn cảnh, giữa là bạn lúc này, dưới là kết quả. Lá giữa là bạn.', en: 'Three rows: the situation above, you now in the middle, the outcome below. The middle card is you.' } },
+    { hard: true,
+      q: { vi: 'Trải bài điều ước đếm ra bao nhiêu lá?', en: 'How many cards are dealt in the wish spread?' },
+      a: [{ vi: '15', en: '15' }, { vi: '9', en: '9' }, { vi: '21', en: '21' }, { vi: '12', en: '12' }],
+      why: { vi: 'Bạn nghĩ tới một điều ước, xào bài, rồi đếm ra 15 lá.', en: 'Think of a wish, shuffle, and deal fifteen.' } },
+    { hard: true,
+      q: { vi: 'Trong trải bài điều ước, nếu không có cả Chín Cơ lẫn Chín Bích thì đọc thế nào?', en: 'In the wish spread, what does it mean if neither the Nine of Hearts nor the Nine of Spades appears?' },
+      a: [{ vi: 'Kết quả tuỳ ở chính người hỏi', en: 'The outcome rests with the querent themselves' }, { vi: 'Điều ước chắc chắn không thành', en: 'The wish will certainly not come' }, { vi: 'Phải xào lại và đếm lần nữa', en: 'You must shuffle and deal again' }, { vi: 'Điều ước sẽ thành sau đúng chín năm', en: 'The wish comes in exactly nine years' }],
+      why: { vi: 'Chín Cơ nghĩa là điều ước sẽ đến; Chín Bích nghĩa là chưa phải lúc. Không có lá nào thì bài không quyết thay bạn — việc còn lại là của bạn.', en: 'The Nine of Hearts says the wish comes; the Nine of Spades says not now. With neither, the cards decline to decide for you: the rest is your own doing.' } }
+  ]
 };
 
 /* ============================ looks ============================
@@ -17851,12 +18524,12 @@ function adminSale(p) {
 ROUTES.admin = { nav: '', render: renderAdmin };
 
 /* ============================ boot ============================ */
-window.APP_VERSION = 'v123';
+window.APP_VERSION = 'v124';
 window.NABU = { CONFIG: CONFIG, SALE: SALE, salePrice: salePrice, loadActs: loadActs, BACK: BACK, LESSONS: LESSONS, localAnswer: localAnswer, compatVerdict: compatVerdict, numerologyOf: numerologyOf, ZDEEP: ZDEEP, lunarToday: lunarToday, solarToLunar: solarToLunar, DECK: DECK, INSIGHT: INSIGHT, KW: KW, ASK: ASK, TOPICS: TOPICS, GUIDES: GUIDES, SERVICES: SERVICES, COURSES: COURSES, ACCESS: ACCESS, ZODIAC: ZODIAC, pick: pick, book: book,
   insightHTML: insightHTML, insightOf: insightOf, sunSignIndex: sunSignIndex, lifePath: lifePath, PROFILE: () => PROFILE, BE: BE, ACTS: ACTS,
   ANGELS: ANGELS, angelRead: angelRead, CODEBOOK: CODEBOOK, verifyCode: verifyCode, petHomeSVG: petHomeSVG, PET_HOMES: PET_HOMES, PET_WEARS: PET_WEARS, codeDigest: codeDigest, randomCode: randomCode, BANK: BANK, PETS: PETS, petSVG: petSVG, PET_COATS: PET_COATS, PET_KINDS: PET_KINDS, luckCut: luckCut, petLevel: petLevel, petStep: petStep, VOUCHERS: VOUCHERS, levelCoins: levelCoins, LOOKS: LOOKS,
   LOVE: LOVE, LOVEDB: LOVEDB, HANDLE_RE: HANDLE_RE, loveBadgeHTML: loveBadgeHTML,
-  loveMarkSVG: loveMarkSVG, pileArtSVG: pileArtSVG, PILE_ARTS: PILE_ARTS, threadSVG: threadSVG, petParentsHTML: petParentsHTML, GIFTS: GIFTS };
+  loveMarkSVG: loveMarkSVG, QUIZ: QUIZ, QSCORE: QSCORE, QUIZ_PASS: QUIZ_PASS, QUIZ_LEN: QUIZ_LEN, pileArtSVG: pileArtSVG, PILE_ARTS: PILE_ARTS, threadSVG: threadSVG, petParentsHTML: petParentsHTML, GIFTS: GIFTS };
 try { petRemindCheck(); } catch (e) { /* nothing kept yet */ }
 BE.initP = BE.init().catch(() => { /* backend unreachable: the app runs device-only */ });
 // The Gemini key is a dashboard setting kept in the app cloud (content/ai), never in the source.

@@ -989,6 +989,64 @@ async function go(hash, sel) { W().location.hash = hash; await sleep(30); return
       holder.remove();
     }
     await go('#/me', '[data-theme-pick]');
+    { /* the lesson quizzes: the bank first, then one taken end to end */
+      const courses = ['tarot', 'lenormand', 'playing'];
+      let bad = [];
+      courses.forEach((c) => {
+        const lessons = N.LESSONS[c] || [];
+        lessons.forEach((l) => {
+          const qs = (N.QUIZ[c] || {})[String(l.n)];
+          if (!qs) { bad.push(c + '/' + l.n + ' missing'); return; }
+          if (qs.length !== N.QUIZ_LEN) bad.push(c + '/' + l.n + ' has ' + qs.length);
+          if (qs.filter((q) => q.hard).length !== 2) bad.push(c + '/' + l.n + ' hard=' + qs.filter((q) => q.hard).length);
+          qs.forEach((q, i) => {
+            if (q.a.length !== 4) bad.push(c + '/' + l.n + '/' + i + ' options=' + q.a.length);
+            if (!q.q.vi || !q.q.en || !q.why.vi || !q.why.en) bad.push(c + '/' + l.n + '/' + i + ' language');
+            if (q.a.some((o) => !o.vi || !o.en)) bad.push(c + '/' + l.n + '/' + i + ' option language');
+            const seen = q.a.map((o) => o.vi);
+            if (seen.filter((x, k) => seen.indexOf(x) === k).length !== 4) bad.push(c + '/' + l.n + '/' + i + ' repeats an option');
+          });
+        });
+      });
+      ok(bad.length === 0, 'every lesson of all three courses carries five questions, four options each, both languages, no repeats, exactly two marked harder' + (bad.length ? ' [' + bad.slice(0, 3).join('; ') + ']' : ''));
+      ok(N.QUIZ_PASS === 80, 'the pass mark is eighty per cent');
+
+      w.localStorage.removeItem('nabu-quiz');
+      await go('#/learn/lesson/tarot/1', '.quizlink');
+      ok(d.querySelector('.quizlink[href="#/learn/quiz/tarot/1"]') && !d.querySelector('.quizlink.passed'),
+        'a lesson offers its quiz, and it is not marked passed before it has been taken');
+      await go('#/learn/quiz/tarot/1', '.quizq');
+      ok(d.querySelectorAll('.quizq').length === 5 && d.querySelectorAll('.quizq .qhard').length === 2
+        && d.querySelectorAll('.quizq')[0].querySelectorAll('.qopt').length === 4,
+        'the quiz screen shows five questions, four answers each, with the two harder ones marked');
+      /* Answer three wrongly and two rightly: three out of five is sixty per
+         cent, which must not pass. */
+      const answer = (correct) => {
+        N.QUIZ.tarot['1'].forEach((q, i) => {
+          const want = correct[i] ? q.a[0].vi : q.a[1].vi;
+          const btns = d.querySelectorAll('.quizq')[i].querySelectorAll('.qopt');
+          for (let k = 0; k < btns.length; k++) if (btns[k].textContent.trim() === want) { btns[k].click(); break; }
+        });
+      };
+      answer([true, true, true, false, false]);
+      d.querySelector('#qsend').click(); await sleep(120);
+      ok(d.querySelector('.quizresult.fail') && !N.QSCORE.passed('tarot', 1) && N.QSCORE.best('tarot', 1) === 60,
+        'three right out of five is sixty per cent and does not pass');
+      ok(d.querySelectorAll('.qopt.right').length === 5 && d.querySelectorAll('.qwhy').length === 5,
+        'after marking, the right answer is shown on every question along with why it is right');
+      d.querySelector('#qretry').click(); await sleep(120);
+      answer([true, true, true, true, false]);
+      d.querySelector('#qsend').click(); await sleep(120);
+      ok(d.querySelector('.quizresult.pass') && N.QSCORE.passed('tarot', 1) && N.QSCORE.best('tarot', 1) === 80,
+        'four right out of five is exactly eighty per cent and passes');
+      d.querySelector('#qretry').click(); await sleep(120);
+      answer([true, false, false, false, false]);
+      d.querySelector('#qsend').click(); await sleep(120);
+      ok(N.QSCORE.best('tarot', 1) === 80 && N.QSCORE.passed('tarot', 1),
+        'a worse retry never takes away a pass already earned');
+      await go('#/learn/lesson/tarot/1', '.quizlink');
+      ok(d.querySelector('.quizlink.passed'), 'and the lesson shows it as passed afterwards');
+      w.localStorage.removeItem('nabu-quiz'); }
     { /* the faces of the piles */
       const box = d.createElement('div');
       box.innerHTML = N.PILE_ARTS.map((a2, i2) => N.pileArtSVG(i2)).join('');

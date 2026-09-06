@@ -102,7 +102,7 @@ function spreadsVisualHTML(sys) {
 /* ---- pages ---- */
 function lessonListHTML(courseId) {
   const S = T();
-  return '<div class="lessons">' + LESSONS[courseId].map((l) => '<a class="lsn' + (DONE.is(courseId, l.n) ? ' done' : '') + '" href="#/learn/lesson/' + courseId + '/' + l.n + '"><span class="num">' + l.n + '</span><span class="tt">' + esc(L(l.title)) + '</span><span class="chk">' + (DONE.is(courseId, l.n) ? '✓' : '›') + '</span></a>').join('') + '</div>';
+  return '<div class="lessons">' + LESSONS[courseId].map((l) => '<a class="lsn' + (DONE.is(courseId, l.n) ? ' done' : '') + '" href="#/learn/lesson/' + courseId + '/' + l.n + '"><span class="num">' + l.n + '</span><span class="tt">' + esc(L(l.title)) + quizBadge(courseId, l.n) + '</span><span class="chk">' + (DONE.is(courseId, l.n) ? '✓' : '›') + '</span></a>').join('') + '</div>';
 }
 function renderLesson(courseId, n) {
   const S = T(), m = $('#main'), l = (LESSONS[courseId] || []).filter((x) => x.n === Number(n))[0];
@@ -130,6 +130,7 @@ function renderLesson(courseId, n) {
   const prev = LESSONS[courseId].filter((x) => x.n === l.n - 1)[0], next = LESSONS[courseId].filter((x) => x.n === l.n + 1)[0];
   m.innerHTML = backLink('#/learn/' + courseId, S.cats[courseId]) + '<div class="eyebrow">' + esc(S.lessonN(l.n)) + ' / ' + LESSONS[courseId].length + '</div><h1 style="margin-bottom:10px">' + esc(L(l.title)) + '</h1>'
     + body + '<div class="visual">' + vis + '</div>'
+    + quizLinkHTML(courseId, l.n)
     + aiPanelHTML({ type: 'lesson', course: courseId, n: l.n })
     + '<button class="btn block' + (DONE.is(courseId, l.n) ? '' : ' primary') + '" id="ldone">' + (DONE.is(courseId, l.n) ? '✓ ' + esc(S.lessonDone) : esc(S.markDone)) + '</button>'
     + '<div class="row" style="margin-top:10px">' + (prev ? '<a class="btn" href="#/learn/lesson/' + courseId + '/' + prev.n + '">← ' + esc(S.lessonN(prev.n)) + '</a>' : '') + (next ? '<a class="btn" href="#/learn/lesson/' + courseId + '/' + next.n + '" style="margin-left:auto">' + esc(S.lessonN(next.n)) + ' →</a>' : '') + '</div>';

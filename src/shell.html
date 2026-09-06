@@ -409,6 +409,38 @@ main{padding:22px 0 30px}
 .wherepick .wp .tick{position:absolute;right:13px;top:50%;transform:translateY(-50%);width:22px;height:22px;border-radius:50%;border:1.5px solid var(--rule);color:transparent;font-size:12px;display:grid;place-content:center}
 .wherepick .wp.on{border-color:var(--primary);box-shadow:0 0 0 1px var(--primary) inset}
 .wherepick .wp.on .tick{background:var(--primary);border-color:var(--primary);color:var(--primary-ink)}
+/* ---- lesson quizzes ---- */
+.quizlink{display:flex;align-items:center;gap:12px;background:var(--surface);border:1.5px solid var(--lav);border-radius:16px;padding:13px 14px;margin:14px 0;text-decoration:none;color:inherit}
+.quizlink.passed{border-color:var(--ok)}
+.quizlink.tried{border-color:var(--gold)}
+.quizlink .ic{flex:none;width:34px;height:34px;border-radius:11px;background:var(--surface-2);display:grid;place-content:center;font-size:16px}
+.quizlink.passed .ic{background:var(--tag-green-bg);color:var(--tag-green-ink)}
+.quizlink .b{flex:1;min-width:0}
+.quizlink .b b{display:block;font-size:15px;font-weight:600}
+.quizlink .b span{font-size:12.5px;color:var(--fg-soft)}
+.quizlink .go{color:var(--fg-faint);font-size:20px;flex:none}
+.qbadge{display:inline-grid;place-content:center;width:17px;height:17px;border-radius:50%;background:var(--tag-green-bg);color:var(--tag-green-ink);font-size:10px;font-weight:700;margin-left:6px;vertical-align:1px}
+#main p.quizsum{margin:-4px 0 12px;font-weight:600;color:var(--fg-soft)}
+.quizresult{border-radius:16px;padding:14px;margin:12px 0 6px;text-align:center}
+.quizresult b{display:block;font-family:var(--display);font-size:24px}
+.quizresult p{margin:4px 0 0;font-size:14px}
+.quizresult.pass{background:var(--tag-green-bg);color:var(--tag-green-ink)}
+.quizresult.fail{background:var(--tag-gold-bg);color:var(--tag-gold-ink)}
+.quizq{background:var(--surface);border:1px solid var(--rule-soft);border-radius:18px;padding:15px;margin-bottom:12px}
+.quizq.ok{border-color:var(--ok)}
+.quizq.no{border-color:var(--err)}
+.quizq .qh{display:flex;align-items:flex-start;gap:10px;flex-wrap:wrap}
+.quizq .qn{flex:none;width:24px;height:24px;border-radius:50%;background:var(--surface-3);color:var(--fg-soft);font-size:12.5px;font-weight:700;display:grid;place-content:center}
+#main .quizq .qh p{flex:1 1 200px;margin:0;font-size:15px;font-weight:600;line-height:1.4}
+.qhard{flex:none;background:var(--tag-gold-bg);color:var(--tag-gold-ink);border-radius:999px;padding:2px 9px;font-size:11px;font-weight:700}
+.qopts{display:grid;gap:7px;margin-top:11px}
+.qopt{display:flex;align-items:center;gap:9px;text-align:left;background:var(--surface-2);border:1.5px solid transparent;border-radius:13px;padding:10px 12px;font-size:14.5px;line-height:1.35;color:inherit}
+.qopt .mk{flex:none;width:18px;font-weight:700}
+.qopt.on{border-color:var(--primary);background:var(--surface-3)}
+.qopt.right{border-color:var(--ok);background:var(--tag-green-bg);color:var(--tag-green-ink)}
+.qopt.wrong{border-color:var(--err);background:var(--tag-pink-bg);color:var(--tag-pink-ink)}
+.qopt:disabled{opacity:1}
+#main p.qwhy{margin:11px 0 0;font-size:13.5px;line-height:1.5;color:var(--fg-soft);border-left:2.5px solid var(--rule);padding-left:11px}
 .signlist{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
 .signlist button{background:var(--surface);border:1px solid var(--rule-soft);border-radius:14px;padding:10px 6px;text-align:center}
 .signlist button .g{font-size:26px;color:var(--link);display:block}
