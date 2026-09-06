@@ -177,7 +177,7 @@ function renderMe(args, params) {
   const S = T(), m = $('#main');
   const name = (PROFILE.name || '').trim();
   const head = '<div class="me-head"><div class="avatar">' + esc((name || '?').charAt(0).toUpperCase()) + '</div><div><b>' + esc(name || S.helloGuest) + '</b><span class="faint">' + esc(BE.user ? (BE.user.email || '') : S.localOnly) + '</span></div></div>';
-  m.innerHTML = head + '<div id="mebody"></div>';
+  m.innerHTML = head + loveBadgeHTML() + '<div id="mebody"></div>';
   const body = $('#mebody');
   const draw = () => {
     meCleanup();

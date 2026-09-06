@@ -474,10 +474,10 @@ async function go(hash, sel) { W().location.hash = hash; await sleep(30); return
         { id: 'q1', type: 'poll', date: '2026-09-04', title: { vi: 'Cung nào nhạy cảm nhất?' }, options: [{ vi: 'Cự Giải' }, { vi: 'Song Ngư' }, { vi: 'Bọ Cạp' }], closed: false },
         { id: 'w1', type: 'wish', date: '2026-09-03', title: { vi: 'Trăng non tháng 9: ước gì?' } }]; N.ACTS.loaded = true; w.localStorage.removeItem('nabu-act-choices'); w.localStorage.removeItem('nabu-wishes');
       await go('#/play', '#acts .actbtn'); await sleep(80);
-      ok(d.querySelectorAll('#acts .actbtn').length === 4 && d.querySelector('.actbtn[href="#/play/pet"]') && d.querySelector('.actbtn[href="#/play/tree"]') && d.querySelector('.actbtn[href="#/play/coin"]') && d.querySelector('.actbtn[href="#/play/diary"]')
+      ok(d.querySelectorAll('#acts .actbtn').length === 5 && d.querySelector('.actbtn[href="#/play/pet"]') && d.querySelector('.actbtn[href="#/love"]') && d.querySelector('.actbtn[href="#/play/tree"]') && d.querySelector('.actbtn[href="#/play/coin"]') && d.querySelector('.actbtn[href="#/play/diary"]')
         && d.querySelectorAll('.actquick.three .aq').length === 3 && d.querySelector('.aq[href="#/play/piles"]') && d.querySelector('.aq[href="#/play/polls"]') && d.querySelector('.aq[href="#/play/wishes"]')
         && !d.querySelector('.actgroup') && !d.querySelector('[data-pile]'),
-        'the activities screen is four everyday buttons and one line of three, with nothing spelled out in full');
+        'the activities screen is five everyday buttons and one line of three, with nothing spelled out in full');
       await go('#/play/polls', '#acts');
       ok(d.querySelectorAll('#acts .actbtn').length >= 1 && d.querySelectorAll('#acts .actbtn').length === d.querySelectorAll('#acts .act-poll').length && d.querySelector('#main a[href="#/play"]'),
         'each of the three opens its own page with only that kind on it');
@@ -573,12 +573,12 @@ async function go(hash, sel) { W().location.hash = hash; await sleep(30); return
         'the chosen companion arrives with a home, a halo, four ways to dress it on the scene itself, and four locked ways to earn more');
       d.querySelector('[data-open-sheet="food"]').click(); await sleep(40);
       ok(d.querySelector('.sheet') && d.querySelectorAll('[data-sheet-tab]').length === 4
-        && d.querySelectorAll('[data-shelf^="food"]').length === 8 && d.querySelectorAll('[data-shelf^="food"].locked').length === 6,
-        'a button on the scene lifts one sheet holding all four groups; two plain foods are free and six need Plus');
+        && d.querySelectorAll('[data-shelf^="food"]').length === 9 && d.querySelectorAll('[data-shelf^="food"].locked').length === 7,
+        'a button on the scene lifts one sheet holding all four groups; two plain foods are free and seven need Plus');
       d.querySelector('[data-sheet-tab="home"]').click(); await sleep(40);
-      ok(d.querySelectorAll('[data-shelf^="home"]').length === 7 && d.querySelectorAll('[data-shelf^="home"].locked').length === 6, 'the grass mat is free and the six homes need Plus');
+      ok(d.querySelectorAll('[data-shelf^="home"]').length === 9 && d.querySelectorAll('[data-shelf^="home"].locked').length === 8, 'the grass mat is free and the eight homes need Plus');
       d.querySelector('[data-sheet-tab="wear"]').click(); await sleep(40);
-      ok(d.querySelectorAll('[data-shelf^="wear"]').length === 8 && d.querySelectorAll('[data-shelf^="wear"].locked').length === 7 && d.querySelectorAll('[data-shelf^="wear"] .shart svg').length === 8, 'every garment and charm needs Plus, and each has a picture of its own on the shelf');
+      ok(d.querySelectorAll('[data-shelf^="wear"]').length === 9 && d.querySelectorAll('[data-shelf^="wear"].locked').length === 8 && d.querySelectorAll('[data-shelf^="wear"] .shart svg').length === 9, 'every garment and charm needs Plus, and each has a picture of its own on the shelf');
       d.querySelector('[data-close-sheet]').click(); await sleep(40);
       ok(!d.querySelector('.sheet'), 'the sheet closes again');
       { /* stroking: hearts follow the finger and the stroke earns a little */
@@ -729,6 +729,115 @@ async function go(hash, sel) { W().location.hash = hash; await sleep(30); return
       await go('#/learn/guide/mani-woop', '.paywall'); ok(!d.querySelector('.paywall [data-buy]') && !/75\.000đ/.test(d.querySelector('.paywall').textContent) && d.querySelector('#ccode'), 'the Play build shows no outside-payment button or price on a paywall, only the code field');
       w.localStorage.removeItem('nabu-twa'); if (acc != null) w.localStorage.setItem('nabu-access', acc);
       await go('#/learn/manifest', '.acc'); await go('#/learn/guide/mani-woop', '.paywall, .flow'); await go('#/me', '[data-theme-pick]'); }
+    /* ---- the red thread ---- */
+    { /* A stand-in for Firestore: documents in an object, and listeners told
+         when one changes. Paths are the real ones, so the code under test is
+         the code that ships. */
+      const mkdb = () => {
+        const docs = {}, ls = [];
+        const notify = () => ls.slice().forEach((f) => f());
+        const snap = (k) => ({ exists: docs[k] !== undefined, id: k.split('/').pop(), data: () => docs[k] });
+        const watch = (make) => (cb) => { const f = () => cb(make()); ls.push(f); f(); return () => { const i = ls.indexOf(f); if (i > -1) ls.splice(i, 1); }; };
+        const docRef = (k) => ({
+          get: async () => snap(k),
+          set: async (v, o) => { docs[k] = (o && o.merge) ? Object.assign({}, docs[k] || {}, v) : v; notify(); },
+          update: async (v) => { docs[k] = Object.assign({}, docs[k] || {}, v); notify(); },
+          delete: async () => { delete docs[k]; notify(); },
+          collection: (c) => colRef(k + '/' + c),
+          onSnapshot: watch(() => snap(k))
+        });
+        const colRef = (base, f) => {
+          const pick = () => Object.keys(docs)
+            .filter((k) => k.indexOf(base + '/') === 0 && k.slice(base.length + 1).indexOf('/') < 0)
+            .filter((k) => !f || ((docs[k][f[0]] || []).indexOf(f[2]) > -1))
+            .map(snap);
+          const q = { doc: (id) => docRef(base + '/' + id), where: (fl, op, v) => colRef(base, [fl, op, v]),
+            limit: () => q, get: async () => ({ docs: pick() }), onSnapshot: watch(() => ({ docs: pick() })) };
+          return q;
+        };
+        return { collection: (c) => colRef(c), docs: docs,
+          put: (k, v) => { docs[k] = v; notify(); } };
+      };
+      const keep = { db: N.BE.db, user: N.BE.user, on: N.BE.enabled, confirm: w.confirm };
+      const db = mkdb();
+      N.BE.db = db; N.BE.enabled = true; N.BE.user = { uid: 'uidA', email: 'a@test' };
+      w.confirm = () => true;
+      w.localStorage.removeItem('nabu-love');
+
+      await go('#/love', '#lvhandle');
+      ok(d.querySelector('#lvhandle') && d.querySelector('#lvname') && /\u0111\u1ed5i|later|sau/i.test(d.querySelector('#main').textContent),
+        'the thread asks for a handle before anything else, and says it can be changed');
+      d.querySelector('#lvname').value = 'Mai'; d.querySelector('#lvhandle').value = '@MAI.09';
+      d.querySelector('#lvsave').click(); await sleep(120);
+      ok(db.docs['handles/mai.09'] && db.docs['handles/mai.09'].uid === 'uidA'
+        && db.docs['people/uidA'].handle === 'mai.09' && db.docs['people/uidA'].name === 'Mai'
+        && d.querySelector('#lvfind'),
+        'a handle is claimed in lower case for one account, and the screen moves on to finding someone');
+
+      db.put('handles/nam', { uid: 'uidB' }); db.put('people/uidB', { name: 'Nam', handle: 'nam' });
+      d.querySelector('#lvfind').value = '@nam'; d.querySelector('#lvgo').click(); await sleep(120);
+      ok(/Nam/.test(d.querySelector('#lvfound').textContent) && d.querySelector('#lvoffer'),
+        'someone is found by their handle alone, and can be offered the thread');
+      d.querySelector('#lvnote').value = 'g\u1eedi b\u1ea1n'; d.querySelector('#lvoffer').click(); await sleep(120);
+      ok(db.docs['requests/uidB/from/uidA'] && db.docs['requests/uidB/from/uidA'].note === 'g\u1eedi b\u1ea1n'
+        && !db.docs['bonds/uidA__uidB'],
+        'an offer is only an invitation under the other person: nothing is shown as tied until they answer');
+
+      db.put('requests/uidA/from/uidB', { uid: 'uidB', name: 'Nam', handle: 'nam', note: 'ch\u00e0o', at: 1 });
+      await sleep(60);
+      ok(d.querySelector('[data-accept="uidB"]') && d.querySelector('[data-decline="uidB"]') && /ch\u00e0o/.test(d.querySelector('.reqcard').textContent),
+        'an invitation arrives with the line that came with it, and can be taken or refused');
+      d.querySelector('[data-accept="uidB"]').click(); await sleep(160);
+      const bond = db.docs['bonds/uidA__uidB'];
+      ok(bond && bond.uids.length === 2 && bond.uids[0] === 'uidA' && bond.aName === 'Mai' && bond.bName === 'Nam'
+        && !db.docs['requests/uidA/from/uidB'] && d.querySelector('.lovecard.tied') && d.querySelector('.daysbig b').textContent === '0',
+        'accepting writes one bond holding both people, clears the invitation, and the page starts counting from nought');
+      ok(N.LOVE.days({ since: '2026-08-07' }) === 30 && N.LOVE.nextMark(30).at === 100 && N.LOVE.nextMark(3650) === null,
+        'the days are counted from the day it began, and the next round number is named');
+      ok(/T\u00ed|Tied|bu\u1ed9c/i.test(N.loveBadgeHTML()) && /Nam/.test(N.loveBadgeHTML()),
+        'the tag says where someone stands without asking the cloud again');
+
+      d.querySelector('#lvuntie').click(); await sleep(160);
+      ok(!db.docs['bonds/uidA__uidB'] && d.querySelector('#lvfind') && N.loveBadgeHTML() === '',
+        'either of them unties alone, and the page and the tag go back to how they were');
+
+      ok(N.HANDLE_RE.test('mai.09') && N.HANDLE_RE.test('a_b') && !N.HANDLE_RE.test('ab') && !N.HANDLE_RE.test('Mai')
+        && !N.HANDLE_RE.test('.mai') && !N.HANDLE_RE.test('mai..') && !N.HANDLE_RE.test('a'.repeat(21)),
+        'a handle is lower case, three to twenty, and neither starts nor ends with a dot');
+
+      N.BE.db = keep.db; N.BE.user = keep.user; N.BE.enabled = keep.on; w.confirm = keep.confirm;
+      w.localStorage.removeItem('nabu-love');
+      await go('#/love', '.lovecard');
+      ok(d.querySelector('.lovecard .threadart') && d.querySelector('a[href="#/me"]') && /ph\u00e1p l\u00fd|legal/i.test(d.querySelector('#main').textContent),
+        'signed out it asks you to sign in, and it says on every screen that this carries no legal weight');
+      /* A short screen is where the footer used to float up the page. */
+      /* Emptied of its content the page is shorter than the screen, which is
+         where the footer used to ride up; it should stay put. */
+      const mn = d.querySelector('main'); mn.style.display = 'none';
+      const ft = d.querySelector('.foot').getBoundingClientRect(); mn.style.display = '';
+      ok(w.getComputedStyle(d.body).display === 'flex' && w.getComputedStyle(d.body).flexDirection === 'column'
+        && Math.abs(ft.bottom - (w.innerHeight - 66)) < 8,
+        'the footer sits the same distance above the navigation bar however short the screen is');
+    }
+    { /* the joker is gone from picking a pile, and a checkbox shows its tick */
+      await go('#/play', '.actquick .aq');
+      ok(d.querySelector('.aq[href="#/play/piles"] .pileico') && !/\ud83c\udccf/.test(d.querySelector('.actquick').textContent),
+        'picking a pile is marked with fanned card backs, not a joker');
+      const box = d.createElement('input'); box.type = 'checkbox'; d.body.appendChild(box);
+      /* The fade between the two states never advances under a frozen clock, so
+         it is switched off while the two states are measured. */
+      const still = d.createElement('style');
+      still.textContent = 'input[type=checkbox],input[type=checkbox]::before{transition:none!important}';
+      d.head.appendChild(still);
+      const off = w.getComputedStyle(box).backgroundColor, offTick = w.getComputedStyle(box, '::before').transform;
+      box.checked = true;
+      const on = w.getComputedStyle(box).backgroundColor, onTick = w.getComputedStyle(box, '::before').transform;
+      still.remove();
+      ok(off !== on && offTick !== onTick && onTick === 'matrix(1, 0, 0, 1, 0, 0)',
+        'a checkbox fills in and shows a tick when it is ticked');
+      box.remove();
+    }
+    await go('#/me', '[data-theme-pick]');
     d.querySelector('[data-theme-pick="pink"]').click();
     ok(d.documentElement.getAttribute('data-theme') === 'pink' && bgOf() === PINK && w.getComputedStyle(d.querySelector('.btn.primary') || d.body).backgroundColor !== '', 'pastel pink choice paints the blush palette');
     d.querySelector('[data-theme-pick="dark"]').click();

@@ -17,6 +17,8 @@ service cloud.firestore {
         && request.auth.token.email_verified == true
         && request.auth.token.email in ['nabutarot@outlook.com', 'angela_le_@outlook.com', 'angelale_le_@outlook.com'];
     }
+    // The one of a pair that is not me, used to find the invitation they sent.
+    function otherIn(uids) { return uids[0] == request.auth.uid ? uids[1] : uids[0]; }
     function isOwner(uid) { return request.auth != null && request.auth.uid == uid; }
     function shorterThan(field, n) {
       return !(field in request.resource.data) || !(request.resource.data[field] is string) || request.resource.data[field].size() < n;
@@ -69,6 +71,61 @@ service cloud.firestore {
                             && id == request.resource.data.aid + '_' + request.auth.uid
                             && shorterThan('aid', 120);
       allow delete: if isAdmin() || (request.auth != null && resource.data.uid == request.auth.uid);
+    }
+    /* ---- the red thread ----
+       A handle points at one account and is claimed by that account alone.
+       Readable one at a time by anyone signed in, because that is how you find
+       the person who gave you their handle; not listable, so the app never
+       becomes a directory of everyone who uses it. */
+    match /handles/{handle} {
+      allow get: if request.auth != null;
+      allow list: if isAdmin();
+      allow create: if request.auth != null && request.resource.data.uid == request.auth.uid;
+      allow update, delete: if request.auth != null && resource.data.uid == request.auth.uid;
+    }
+    /* The public card: a chosen name and a handle, nothing else. Same reading
+       rule, and only its owner writes it. */
+    match /people/{uid} {
+      allow get: if request.auth != null;
+      allow list: if isAdmin();
+      allow write: if isOwner(uid) && shorterThan('name', 40) && shorterThan('handle', 30);
+    }
+    /* An invitation lives under the person invited, so only they can read what
+       has been sent to them. The sender may withdraw it, the receiver may
+       refuse it, and either way it is the same delete. */
+    match /requests/{to}/from/{from} {
+      allow read: if isOwner(to);
+      allow create: if isOwner(from) && request.resource.data.uid == request.auth.uid
+                    && shorterThan('note', 300) && shorterThan('name', 40) && shorterThan('handle', 30);
+      allow delete: if isOwner(to) || isOwner(from);
+    }
+    /* A bond is two people who both agreed, and the agreement is checked here
+       rather than trusted from the phone: creating one requires that the other
+       person's invitation to me actually exists. Its id is the two account ids
+       in order, so a pair can hold only one.
+
+       It is readable by anyone signed in on purpose - being shown as a couple
+       is the whole point of it - and it carries only two display names, two
+       handles and a date.
+
+       Either person can delete it, alone, at any time. That is deliberate: no
+       app should be able to hold someone in a relationship. */
+    match /bonds/{id} {
+      allow read: if request.auth != null;
+      allow create: if request.auth != null
+                    && request.resource.data.uids is list
+                    && request.resource.data.uids.size() == 2
+                    && request.auth.uid in request.resource.data.uids
+                    && id == request.resource.data.uids[0] + '__' + request.resource.data.uids[1]
+                    && request.resource.data.uids[0] < request.resource.data.uids[1]
+                    && exists(/databases/$(database)/documents/requests/$(request.auth.uid)/from/$(otherIn(request.resource.data.uids)))
+                    && shorterThan('aName', 40) && shorterThan('bName', 40)
+                    && shorterThan('aHandle', 30) && shorterThan('bHandle', 30);
+      // Either of them may correct the day it began, and nothing else.
+      allow update: if request.auth != null && request.auth.uid in resource.data.uids
+                    && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['since', 'state'])
+                    && request.resource.data.uids == resource.data.uids;
+      allow delete: if request.auth != null && request.auth.uid in resource.data.uids;
     }
     match /reports/{id} {
       allow create: if request.auth != null && request.resource.data.uid == request.auth.uid

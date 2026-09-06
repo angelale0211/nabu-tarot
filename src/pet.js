@@ -182,7 +182,8 @@ const PET_FOODS = [
   { id: 'honey', pro: true, add: 2, sym: '🍯', name: { vi: 'Mật hoa rừng', en: 'Wild flower honey' } },
   { id: 'berry', pro: true, add: 2, sym: '🍓', name: { vi: 'Dâu sương sớm', en: 'Morning-dew berries' } },
   { id: 'cake', pro: true, add: 2, sym: '🍥', name: { vi: 'Bánh trăng rằm', en: 'Full-moon cake' } },
-  { id: 'star', pro: true, add: 2, sym: '🧁', name: { vi: 'Bánh kem sao', en: 'Star cream cake' } }
+  { id: 'star', pro: true, add: 2, sym: '🧁', name: { vi: 'Bánh kem sao', en: 'Star cream cake' } },
+  { id: 'tea', pro: true, add: 2, sym: '🍵', name: { vi: 'Trà sen ướp sương', en: 'Dew-steeped lotus tea' } }
 ];
 const PET_HOMES = [
   { id: 'mat', pro: false, add: 0, name: { vi: 'Chiếu cỏ', en: 'Grass mat' } },
@@ -191,7 +192,9 @@ const PET_HOMES = [
   { id: 'moon', pro: true, add: 12, name: { vi: 'Vườn trăng', en: 'Moon garden' } },
   { id: 'heaven', pro: true, add: 12, name: { vi: 'Cổng trời', en: 'Gate of heaven' } },
   { id: 'palace', pro: true, add: 12, name: { vi: 'Cung điện', en: 'The palace' } },
-  { id: 'castle', pro: true, add: 12, name: { vi: 'Lâu đài phép', en: 'Magic castle' } }
+  { id: 'castle', pro: true, add: 12, name: { vi: 'Lâu đài phép', en: 'Magic castle' } },
+  { id: 'lotus', pro: true, add: 12, name: { vi: 'Thủy tạ đầm sen', en: 'Lotus pavilion' } },
+  { id: 'isle', pro: true, add: 12, name: { vi: 'Đảo trời', en: 'Floating isle' } }
 ];
 const PET_WEARS = [
   { id: 'none', pro: false, add: 0, name: { vi: 'Để mộc', en: 'Nothing' } },
@@ -202,7 +205,9 @@ const PET_WEARS = [
   /* Clothes rather than accessories: these are worn on the body. */
   { id: 'jumper', pro: true, add: 10, name: { vi: 'Áo len', en: 'Knitted jumper' } },
   { id: 'cloak', pro: true, add: 10, name: { vi: 'Áo choàng sao', en: 'Star cloak' } },
-  { id: 'armour', pro: true, add: 10, name: { vi: 'Giáp vàng', en: 'Gold armour' } }
+  { id: 'armour', pro: true, add: 10, name: { vi: 'Giáp vàng', en: 'Gold armour' } },
+  /* The only thing worn behind the companion rather than in front of it. */
+  { id: 'wings', pro: true, add: 10, name: { vi: 'Đôi cánh thần', en: 'Feathered wings' } }
 ];
 /* What gets thrown when the two of you play. */
 const PET_PAT_XP = 4;
@@ -446,6 +451,76 @@ function petHomeSVG(id) {
       + '<path d="M182 74 q10 -12 22 -8" stroke="#C7B4EC" stroke-width="2.4" fill="none" stroke-linecap="round"/>'
       + '<g fill="#FFFFFF"><ellipse cx="26" cy="212" rx="46" ry="26"/><ellipse cx="96" cy="220" rx="56" ry="28"/><ellipse cx="176" cy="214" rx="50" ry="26"/><ellipse cx="232" cy="222" rx="34" ry="20"/></g>'
       + '<g fill="#F0E9FF"><ellipse cx="60" cy="228" rx="40" ry="16"/><ellipse cx="150" cy="230" rx="46" ry="16"/></g></svg>';
+  }
+  /* Dawn over still water: a pavilion on stilts, lotus pads, and the sky
+     lying on the surface. */
+  if (id === 'lotus') {
+    let pads = '';
+    [[34, 190, 24, 8], [78, 206, 20, 7], [18, 216, 18, 6], [104, 184, 16, 6], [120, 220, 22, 7]].forEach((p) => {
+      pads += '<ellipse cx="' + p[0] + '" cy="' + p[1] + '" rx="' + p[2] + '" ry="' + p[3] + '" fill="#7FBF95"/>'
+        + '<path d="M' + p[0] + ' ' + p[1] + ' l' + p[2] + ' -2" stroke="#5E9E76" stroke-width="1.4"/>';
+    });
+    const bloom = (x, y, s2) => '<g transform="translate(' + x + ',' + y + ') scale(' + s2 + ')">'
+      + '<path d="M0 0 Q-13 -6 -16 -18 Q-6 -14 0 -4 Z" fill="#F7A9C6"/><path d="M0 0 Q13 -6 16 -18 Q6 -14 0 -4 Z" fill="#F7A9C6"/>'
+      + '<path d="M0 -2 Q-8 -14 -6 -28 Q2 -18 0 -2 Z" fill="#FBC7DA"/><path d="M0 -2 Q8 -14 6 -28 Q-2 -18 0 -2 Z" fill="#FBC7DA"/>'
+      + '<path d="M0 -4 Q-4 -18 0 -30 Q4 -18 0 -4 Z" fill="#FFF0F5"/><circle cx="0" cy="-8" r="3" fill="#E5BE5E"/></g>';
+    return open
+      + '<defs><linearGradient id="hgl" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#FFD9E4"/><stop offset="58%" stop-color="#FFEDDF"/><stop offset="100%" stop-color="#FFF7F0"/></linearGradient>'
+      + '<linearGradient id="hgw" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#CFE4EE"/><stop offset="100%" stop-color="#AFCEDF"/></linearGradient></defs>'
+      + '<rect width="240" height="240" fill="url(#hgl)"/>'
+      + '<circle cx="188" cy="48" r="24" fill="#FFC9A8" opacity=".85"/>'
+      + '<path d="M0 118 Q38 94 80 116 Q120 134 162 110 Q202 88 240 114 L240 136 L0 136 Z" fill="#EFBFD2" opacity=".65"/>'
+      + '<rect y="134" width="240" height="106" fill="url(#hgw)"/>'
+      + '<g fill="#FFFFFF" opacity=".4"><rect y="146" width="240" height="3"/><rect x="20" y="162" width="200" height="2.4"/><rect x="8" y="178" width="180" height="2"/><rect x="60" y="200" width="170" height="2"/></g>'
+      /* the pavilion, standing in the water on its own legs */
+      /* stilts standing in the water, then the floor they carry */
+      + '<g stroke="#8F4A38" stroke-width="5" stroke-linecap="round"><path d="M150 216 v-44 M188 220 v-48 M226 216 v-44"/></g>'
+      + '<rect x="138" y="164" width="102" height="11" rx="3" fill="#C9704F"/>'
+      + '<rect x="138" y="164" width="102" height="4" rx="2" fill="#E09069"/>'
+      /* the rail, with its balusters */
+      + '<g stroke="#B0553F" stroke-width="2.6" stroke-linecap="round"><path d="M146 164 v-13 M160 164 v-13 M174 164 v-13 M204 164 v-13 M218 164 v-13 M232 164 v-13"/></g>'
+      + '<rect x="142" y="147" width="94" height="4.5" rx="2" fill="#C9704F"/>'
+      /* four posts, the back pair set in a little */
+      + '<g stroke="#8F4A38" stroke-width="5" stroke-linecap="round"><path d="M146 150 v-26 M234 150 v-26"/></g>'
+      + '<g stroke="#A85B45" stroke-width="4" stroke-linecap="round" opacity=".8"><path d="M162 146 v-24 M218 146 v-24"/></g>'
+      + '<rect x="176" y="124" width="28" height="26" rx="2" fill="#F3D9C4" opacity=".8"/>'
+      /* the roof, overhanging the posts, its corners turned up */
+      + '<path d="M118 128 Q126 118 138 116 Q160 100 190 92 Q220 100 242 116 Q254 118 262 128 Q244 122 232 124 Q210 114 190 112 Q170 114 148 124 Q136 122 118 128 Z" fill="#C6485C"/>'
+      + '<path d="M136 122 Q160 106 190 98 Q220 106 244 122 Q216 112 190 110 Q164 112 136 122 Z" fill="#DF6076"/>'
+      + '<g stroke="#A83247" stroke-width="1.4" fill="none" opacity=".55"><path d="M190 96 v22 M168 104 l-14 16 M212 104 l14 16"/></g>'
+      + '<path d="M190 92 v-9" stroke="#E5BE5E" stroke-width="3"/><circle cx="190" cy="81" r="4.5" fill="#E5BE5E"/>'
+      + pads + bloom(44, 188, 1) + bloom(96, 210, .8) + bloom(16, 214, .7)
+      + '<g fill="#FBC7DA" opacity=".9"><ellipse cx="140" cy="196" rx="4" ry="2.4"/><ellipse cx="70" cy="176" rx="3.4" ry="2"/><ellipse cx="112" cy="228" rx="4" ry="2.2"/></g></svg>';
+  }
+  /* An isle that hangs in the night with nothing under it but its own
+     waterfall, going down into cloud. */
+  if (id === 'isle') {
+    let stars = '';
+    [[22, 30], [64, 18], [108, 40], [150, 22], [204, 34], [232, 66], [16, 82], [88, 70]].forEach((p, k) => {
+      stars += '<circle class="twinkle" cx="' + p[0] + '" cy="' + p[1] + '" r="' + (1.3 + (k % 3) * 0.6) + '" fill="#FFF7EE" style="animation-delay:' + (k * 240) + 'ms"/>';
+    });
+    return open
+      + '<defs><linearGradient id="hgi" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#251B4C"/><stop offset="60%" stop-color="#3E2F78"/><stop offset="100%" stop-color="#57459B"/></linearGradient>'
+      + '<linearGradient id="hgf" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#CFEFF8"/><stop offset="100%" stop-color="#CFEFF8" stop-opacity="0"/></linearGradient></defs>'
+      + '<rect width="240" height="240" fill="url(#hgi)"/>' + stars
+      + '<circle cx="52" cy="46" r="18" fill="#FFF3C4" opacity=".9"/><circle cx="44" cy="42" r="16" fill="#2C2158" opacity=".9"/>'
+      /* the far, smaller isles */
+      + '<g opacity=".55"><path d="M20 128 L58 128 L48 146 Q38 156 32 146 Z" fill="#6E5AA8"/><ellipse cx="39" cy="128" rx="19" ry="5" fill="#7FBF95"/></g>'
+      + '<g opacity=".4"><path d="M96 100 L124 100 L117 113 Q110 121 105 113 Z" fill="#6E5AA8"/><ellipse cx="110" cy="100" rx="14" ry="4" fill="#7FBF95"/></g>'
+      /* the isle itself */
+      + '<path d="M132 150 L240 150 L226 178 Q206 214 186 190 Q160 172 132 150 Z" fill="#6E5AA8"/>'
+      + '<path d="M132 150 Q158 174 178 196 Q190 210 198 190 Q186 176 176 150 Z" fill="#5A4A92"/>'
+      + '<ellipse cx="186" cy="150" rx="54" ry="13" fill="#7FBF95"/>'
+      + '<ellipse cx="186" cy="147" rx="50" ry="10" fill="#96D3AB"/>'
+      /* the waterfall, and the cloud it falls into */
+      + '<path d="M166 154 q-5 34 1 62 q7 -28 5 -62 Z" fill="url(#hgf)"/>'
+      + '<g fill="#FFFFFF" opacity=".5"><ellipse cx="164" cy="216" rx="26" ry="9"/><ellipse cx="190" cy="222" rx="22" ry="8"/><ellipse cx="140" cy="224" rx="20" ry="7"/></g>'
+      /* a tree and a lantern on the grass */
+      + '<path d="M212 148 v-22" stroke="#7A5A44" stroke-width="4.5" stroke-linecap="round"/>'
+      + '<g fill="#8FD1A6"><ellipse cx="212" cy="120" rx="17" ry="12"/><ellipse cx="202" cy="126" rx="11" ry="8"/><ellipse cx="222" cy="126" rx="11" ry="8"/></g>'
+      + '<g fill="#F7A9C6" opacity=".9"><circle cx="205" cy="116" r="2"/><circle cx="218" cy="122" r="2"/><circle cx="212" cy="110" r="1.8"/></g>'
+      + '<path d="M150 148 v-16" stroke="#B9913B" stroke-width="2.4"/>'
+      + '<ellipse cx="150" cy="128" rx="6" ry="8" fill="#FFE9A8"/><ellipse cx="150" cy="128" rx="3" ry="4.6" fill="#FFF7EE"/></svg>';
   }
   if (id === 'shrine') {
     return open
@@ -694,7 +769,11 @@ const PET_ART = {
      than the long jaw that made her a dog. */
   ninetails: () => ({
     glow: true, pal: { body: '#FFFDF8', dark: '#F0C6D6', ink: '#5E2138' },
-    bodyRX: 27, bodyRY: 22, headRX: 30, headRY: 27, charmY: 82,
+    bodyRX: 27, bodyRY: 22, headRX: 30, headRY: 27,
+    /* Her chin reaches y=95, lower than any other face here, so the charm goes
+       down onto the white ruff of her chest. At the usual height it sat right
+       across her nose and mouth. */
+    charmY: 101,
     /* Nine flames fanned behind her, each as long as it can be at its own
        angle without leaving the square. */
     behind: (() => {
@@ -984,7 +1063,9 @@ function petSVG(kind, coat, mood, wear) {
   const charmY = art.charmY || 80;
   const neck = (art.charmY ? '' : '<path d="M42 74 q18 9 36 0" fill="none" stroke="' + luck.ink + '" stroke-width="2.4" stroke-linecap="round" opacity=".9"/>')
     + '<circle cx="60" cy="' + charmY + '" r="6.4" fill="' + luck.ink + '"/><circle cx="60" cy="' + charmY + '" r="3" fill="' + luck.aura + '"/>';
-  let worn = '';
+  /* Almost everything worn goes in front of the companion. Wings do not, so
+     there is a second slot for what belongs behind it. */
+  let worn = '', wornBack = '';
   const w = (wear && wear.id) || 'none';
   if (w === 'scarf') {
     worn = '<path d="M38 72 q22 14 44 0 q2 8 -4 12 q-18 9 -36 0 q-6 -4 -4 -12 Z" fill="#E1607F"/>'
@@ -1024,6 +1105,19 @@ function petSVG(kind, coat, mood, wear) {
       + '<path d="M30 74 q10 -8 18 -2 q-4 10 -18 10 Z" fill="#EDD08A" stroke="#B9913B" stroke-width="1.2"/>'
       + '<path d="M90 74 q-10 -8 -18 -2 q4 10 18 10 Z" fill="#EDD08A" stroke="#B9913B" stroke-width="1.2"/>'
       + '<path d="M60 88 l5 7 -5 7 -5 -7 Z" fill="#FFF3C4"/>';
+  } else if (w === 'wings') {
+    /* Each wing is a fan of long feathers turned about the shoulder, so it
+       opens the way a wing does instead of sitting there as a flat shape. The
+       beat lives on a group with no transform of its own: put it on one that
+       is already placed and the placement is thrown away. */
+    const fan = (flip) => {
+      const feath = [[-70, 34], [-56, 39], [-42, 40], [-28, 36], [-15, 28]].map((f, i) =>
+        '<ellipse cx="0" cy="' + (-f[1]) + '" rx="7.6" ry="' + f[1] + '" fill="' + (i % 2 ? '#FFFDF8' : '#F1E9FF')
+        + '" stroke="#D9C7F2" stroke-width="1" transform="rotate(' + f[0] + ')"/>').join('');
+      return '<g transform="translate(' + (flip ? 68 : 52) + ',84)' + (flip ? ' scale(-1,1)' : '') + '">' + feath + '</g>';
+    };
+    wornBack = '<g class="wingpair">' + fan(false) + fan(true) + '</g>';
+    worn = '<circle cx="60" cy="80" r="4.6" fill="#E5BE5E"/><circle cx="60" cy="80" r="2" fill="#FFF3C4"/>';
   }
   const headShape = art.headPath
     ? '<path d="' + art.headPath + '" fill="' + c.body + '"/>'
@@ -1047,12 +1141,12 @@ function petSVG(kind, coat, mood, wear) {
   if (art.only) {
     return '<svg viewBox="0 0 120 120" class="petart' + (art.glow ? ' myth' : '') + '" role="img" aria-label="' + esc(L(PET_NAMES[kind])) + '">'
       + (art.noHalo ? '' : halo) + '<ellipse cx="60" cy="112" rx="32" ry="6" fill="#C9A5D8" opacity=".28"/>'
-      + art.only + (art.noCharm ? '' : neck) + worn + '</svg>';
+      + wornBack + art.only + (art.noCharm ? '' : neck) + worn + '</svg>';
   }
   return '<svg viewBox="0 0 120 120" class="petart' + (art.glow ? ' myth' : '') + '" role="img" aria-label="' + esc(L(PET_NAMES[kind])) + '">'
     + halo
     + '<ellipse cx="60" cy="112" rx="32" ry="6" fill="#C9A5D8" opacity=".28"/>'
-    + (art.behind || '')
+    + (art.behind || '') + wornBack
     + '<ellipse cx="60" cy="88" rx="' + bRX + '" ry="' + bRY + '" fill="' + c.body + '"/>'
     + '<ellipse cx="60" cy="92" rx="' + (bRX * 0.6).toFixed(1) + '" ry="' + (bRY * 0.61).toFixed(1) + '" fill="#FFF7EE" opacity=".5"/>'
     + (art.feet === false ? '' : '<ellipse class="ft" cx="38" cy="104" rx="8" ry="5" fill="' + c.dark + '"/><ellipse class="ft wav" cx="82" cy="104" rx="8" ry="5" fill="' + c.dark + '"/>')
@@ -1132,7 +1226,7 @@ function renderPet(want) {
       + (prayed ? '<span class="done">✓ ' + esc(S.petPrevWish) + '</span>' : '<button class="btn' + (PETS.fedToday(p) ? '' : ' off') + '" id="pray">🙏 ' + esc(S.petPrevWish) + '</button>')
       + '</div>'
       + (bless ? '<div class="bless"><span class="q">' + luck.sym + '</span><p>' + esc(L(bless)) + '</p><span class="who">' + esc(p.name || L(PET_NAMES[p.kind])) + '</span></div>'
-        : '<p class="hint">' + esc(PETS.fedToday(p) ? S.petPrayHint : S.petNeedFeed) + '</p>')
+        : '<p class="hint prayhint">' + esc(PETS.fedToday(p) ? S.petPrayHint : S.petNeedFeed) + '</p>')
       + '<div class="lucktag" style="--ink:' + (luck.deep || luck.ink) + ';--aura:' + luck.aura + '">' + luck.sym + ' ' + esc(S.petBrings(L(luck.name))) + '</div>'
       + '<p class="petline">' + esc(L(petLine(p.kind))) + '</p>'
       + (petIsPro(p.kind) ? '<p class="mythline">✨ ' + esc(S.petMythBonus(MYTH_XP)) + '</p>' : '')
@@ -1193,14 +1287,16 @@ function renderPet(want) {
       ? '<div class="pettabs">' + pets.map((x) => '<button type="button" class="pt' + (x.kind === open ? ' on' : '') + '" data-open="' + x.kind + '">' + petSVG(x.kind, PETS.coat(x), 'happy', PETS.wear(x)) + '<b>' + esc(x.name || L(PET_NAMES[x.kind])) + '</b></button>').join('') + '</div>'
       : '';
     const room = PETS.room(), left = PETS.cap() - pets.length;
-    m.innerHTML = '<div class="eyebrow">' + esc(S.actTitle) + '</div><h1 style="margin-bottom:6px">🐾 ' + esc(p.name || L(PET_NAMES[p.kind])) + '</h1>'
+    m.innerHTML = '<div class="eyebrow">' + esc(S.actTitle) + '</div>'
+      + '<h1 class="pettitle" style="margin-bottom:6px"><span>🐾 ' + esc(p.name || L(PET_NAMES[p.kind])) + '</span>'
+      + '<button type="button" class="renamebtn" id="petrename" aria-label="' + esc(S.petRename) + '" title="' + esc(S.petRename) + '">✏️</button></h1>'
       + '<p class="muted">' + esc(S.petIntro) + '</p>'
       + tabs + petCardHTML(p)
       + (pets.length > 1 ? '<p class="hint ok" style="text-align:center">✨ ' + esc(S.petLuckTotal(pets.length)) + '</p>' : '')
       + (room
         ? '<button type="button" class="btn block" id="addpet" style="margin-top:12px">➕ ' + esc(S.petAdd) + (left > 1 ? ' · ' + esc(S.petRoomLeft(left)) : '') + '</button>'
         : (proOn() ? '' : '<a class="salebar" href="#/unlock"><span class="tag">✨ ' + esc(S.plusName) + '</span><span class="txt">' + esc(S.petPlusPitch) + '</span><span class="go">' + esc(S.unlockLink) + ' ›</span></a>'))
-      + '<div class="card"><label class="f" for="petname">' + esc(S.petName) + '</label><input id="petname" maxlength="24" value="' + esc(p.name || '') + '" placeholder="' + esc(L(PET_NAMES[p.kind])) + '">'
+      + '<div class="card petsetcard">'
       + '<label class="remind"><input type="checkbox" id="petremind"' + (petRemindOn() ? ' checked' : '') + '><span>' + esc(S.petRemind) + '</span></label>'
       + '<p class="hint">' + esc(S.petRemindHint) + '</p>'
       + '<button class="btn block" id="petswap" style="margin-top:10px">' + esc(pets.length > 1 ? S.petLetGo : S.petSwap) + '</button>'
@@ -1381,7 +1477,18 @@ function renderPet(want) {
       if (item.pro && !proOn()) { toast(S.petPlusItem); location.hash = '#/unlock'; return; }
       p[key] = id; PETS.put(p); draw();
     }));
-    $('#petname').addEventListener('input', () => { p.name = $('#petname').value.trim(); PETS.put(p); });
+    /* The pencil turns the title into a field and back again, so a name can be
+       changed from the top of the screen instead of the bottom. */
+    $('#petrename').addEventListener('click', () => {
+      const h = $('.pettitle');
+      h.innerHTML = '<input id="petname" maxlength="24" value="' + esc(p.name || '') + '" placeholder="' + esc(L(PET_NAMES[p.kind])) + '" aria-label="' + esc(S.petName) + '">'
+        + '<button type="button" class="renamebtn" id="petnameok" aria-label="' + esc(S.petRenameOk) + '" title="' + esc(S.petRenameOk) + '">\u2713</button>';
+      const inp = $('#petname');
+      const done = () => { p.name = inp.value.trim(); PETS.put(p); draw(); };
+      $('#petnameok').addEventListener('click', done);
+      inp.addEventListener('keydown', (e) => { if (e.key === 'Enter') { e.preventDefault(); done(); } });
+      inp.focus(); inp.select();
+    });
     const rem = $('#petremind');
     if (rem) rem.addEventListener('change', async () => {
       if (!rem.checked) { petRemindSet(false); return; }
@@ -1486,6 +1593,13 @@ function petWearArt(id) {
     return open + '<path d="M8 40 Q30 20 52 40" fill="none" stroke="#8FBF7F" stroke-width="3"/>' + bud(13, 38, '#F7A9C6') + bud(30, 26, '#FFF3C4') + bud(47, 38, '#C9B0EA') + '</svg>';
   }
   if (id === 'hat') return open + '<ellipse cx="30" cy="42" rx="24" ry="6" fill="#E8CFA0"/><path d="M12 42 L30 12 L48 42 Z" fill="#F0DFC8" stroke="#C6A98A" stroke-width="2"/><path d="M30 14 A9 9 0 1 0 30 32 A7 7 0 1 1 30 14 Z" fill="#E5BE5E"/></svg>';
+  if (id === 'wings') {
+    const fan = (flip) => '<g transform="translate(' + (flip ? 34 : 26) + ',44)' + (flip ? ' scale(-1,1)' : '') + '">'
+      + [[-70, 22], [-56, 25], [-42, 26], [-28, 23], [-15, 18]].map((f, i) =>
+        '<ellipse cx="0" cy="' + (-f[1]) + '" rx="5" ry="' + f[1] + '" fill="' + (i % 2 ? '#FFFDF8' : '#F1E9FF')
+        + '" stroke="#D9C7F2" stroke-width="1" transform="rotate(' + f[0] + ')"/>').join('') + '</g>';
+    return open + fan(false) + fan(true) + '<circle cx="30" cy="42" r="4" fill="#E5BE5E"/></svg>';
+  }
   /* The clothes get a picture of their own on the shelf; without one they fell
      through to the empty dashed circle. */
   if (id === 'jumper') return open + '<path d="M12 24 Q10 14 20 12 Q30 9 40 12 Q50 14 48 24 Q50 40 46 50 L14 50 Q10 40 12 24 Z" fill="#E1607F"/>'

@@ -151,7 +151,7 @@ function bindActs(root, list) {
 }
 function actStatus(a) { const S = T(); return actAnswered(a) ? '✓ ' + S.actHasResults : a.closed ? S.actClosed : S.actOpen; }
 /* The list grows: one labelled group per kind, the newest five shown, the rest behind "see more", plus filter chips. */
-const ACT_GROUPS = [['pile', '🃏', 'piles'], ['poll', '📊', 'polls'], ['wish', '🌠', 'wishes']];
+const ACT_GROUPS = [['pile', PILE_ICON, 'piles'], ['poll', '📊', 'polls'], ['wish', '🌠', 'wishes']];
 function actGroupsHTML(list) {
   const S = T(), SHOW = 5;
   const chips = '<div class="chips actfilter"><button type="button" class="chip on" data-filter="all">' + esc(S.actFilterAll) + '</button>' + ACT_GROUPS.map((g) => { const n = list.filter((a) => a.type === g[0]).length; return n ? '<button type="button" class="chip" data-filter="' + g[0] + '">' + g[1] + ' ' + esc(S.actTypes[g[0]]) + ' <span class="cnt">' + n + '</span></button>' : ''; }).join('') + '</div>';
@@ -191,7 +191,7 @@ async function renderPlay(args) {
   const GROUP_OF = { piles: 'pile', polls: 'poll', wishes: 'wish' };
   if (args && GROUP_OF[args[0]]) {
     const kind = GROUP_OF[args[0]], gl = list.filter((x) => x.type === kind);
-    m.innerHTML = '<div class="eyebrow">' + esc(S.actTitle) + '</div><h1 style="margin-bottom:6px">' + esc(S.actTypeIcon[kind] + ' ' + S.actTypes[kind]) + '</h1>'
+    m.innerHTML = '<div class="eyebrow">' + esc(S.actTitle) + '</div><h1 style="margin-bottom:6px">' + S.actTypeIcon[kind] + ' ' + esc(S.actTypes[kind]) + '</h1>'
       + '<p class="muted">' + esc(S.actGroupIntro[kind]) + '</p>'
       + '<div id="acts" class="actlist">' + (gl.length ? gl.map(actButtonHTML).join('') : '<p class="empty">' + esc(S.actEmpty) + '</p>') + '</div>'
       + '<p style="margin-top:14px"><a href="#/play" class="backlink">← ' + esc(S.actTitle) + '</a></p>';
@@ -207,6 +207,7 @@ async function renderPlay(args) {
   const diaryN = Object.keys(store.get('nabu-diary', {}) || {}).length;
   m.innerHTML = '<div class="eyebrow">' + esc(CONFIG.brand) + '</div><h1 style="margin-bottom:6px">' + esc(S.actTitle) + '</h1><p class="muted">' + esc(S.actIntro) + '</p><div id="acts" class="actlist">'
     + petRowHTML(S)
+    + '<a class="actbtn act-love live" href="#/love"><span class="ic">🧵</span><span class="body"><b>' + esc(S.loveTitle) + '</b><span class="meta">' + esc(S.loveSub) + '</span></span><span class="go">›</span></a>'
     + '<a class="actbtn act-tree live" href="#/play/tree"><span class="ic">🌸</span><span class="body"><b>' + esc(S.treeTitle) + '</b><span class="meta">' + esc(S.treeSub) + '</span></span><span class="go">›</span></a>'
     + '<a class="actbtn act-coin live" href="#/play/coin"><span class="ic">🪙</span><span class="body"><b>' + esc(S.coinTitle) + '</b><span class="meta">' + esc(S.coinSub) + '</span></span><span class="go">›</span></a>'
     + '<a class="actbtn act-diary live" href="#/play/diary"><span class="ic">📔</span><span class="body"><b>' + esc(S.diaryTitle) + '</b><span class="meta">' + esc(S.diarySub) + (diaryN ? ' · ' + esc(S.diaryCount(diaryN)) : '') + '</span></span><span class="chev">›</span></a>'

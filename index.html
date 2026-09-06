@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
 <title>Nabu Tarot</title>
 <meta name="description" content="Nabu Tarot: dự đoán mới, rút một lá bài xem năng lượng hiện tại, học tarot, Lenormand, chiêm tinh, và đặt lịch xem bài.">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'none'; object-src 'none'; form-action 'self'; script-src 'self' 'sha256-acECCYT13UBLtwDs1hW7g5pD5xt/jXfM/XuKqwSmE34=' https://www.gstatic.com https://apis.google.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; font-src 'self' data:; media-src 'self' data: blob:; worker-src 'self'; connect-src 'self' https://*.googleapis.com https://*.google.com https://*.firebaseio.com https://*.cloudfunctions.net https://*.workers.dev https://generativelanguage.googleapis.com; frame-src https://*.firebaseapp.com https://accounts.google.com https://*.facebook.com">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'none'; object-src 'none'; form-action 'self'; script-src 'self' 'sha256-VruVtOk7t1YEI0Kxs5XMoA/R7RROQKWMTIE80F27oTM=' https://www.gstatic.com https://apis.google.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; font-src 'self' data:; media-src 'self' data: blob:; worker-src 'self'; connect-src 'self' https://*.googleapis.com https://*.google.com https://*.firebaseio.com https://*.cloudfunctions.net https://*.workers.dev https://generativelanguage.googleapis.com; frame-src https://*.firebaseapp.com https://accounts.google.com https://*.facebook.com">
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <meta name="theme-color" content="#EFE9FA">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -268,12 +268,27 @@ html{-webkit-text-size-adjust:100%;touch-action:manipulation}
    h1 28/1.2 (-.01em)  screen title        h2 21/1.25  section      h3 17/1.3  card title
    body 16/1.55        paragraphs          .note/.tip 14.5/1.5  instructions  .hint/.faint 13.5/1.45  secondary
    .eyebrow 12/1.3 bold, +.06em uppercase (VI: normal case, +.02em)   nav 10.5 bold */
+/* A column, so the footer can be pushed to the foot of the screen on a short
+   page instead of floating up under the last card. The padding is the height
+   of the navigation bar, and because every box here measures border to
+   border, the footer's last line always ends the same distance above it. */
 body{margin:0;background:var(--bg);color:var(--fg);font-family:var(--body);font-size:16px;line-height:1.55;
-  -webkit-font-smoothing:antialiased;min-height:100vh;padding-bottom:calc(var(--nav-h) + env(safe-area-inset-bottom))}
+  -webkit-font-smoothing:antialiased;display:flex;flex-direction:column;min-height:100vh;min-height:100dvh;
+  padding-bottom:calc(var(--nav-h) + env(safe-area-inset-bottom))}
 a{color:var(--link)}
 button{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:pointer;-webkit-tap-highlight-color:transparent}
 input,textarea,select{font:inherit;color:var(--fg);background:var(--surface);border:1px solid var(--rule);border-radius:12px;padding:12px 14px;width:100%;max-width:100%;-webkit-appearance:none;appearance:none;margin:0}
 /* iOS renders date and time fields as small centred pills: give them the same box as every other field. */
+/* Every field here has the native look stripped, which for a checkbox also
+   takes the tick with it. So the box draws its own: a filled square in the
+   theme's accent with the tick cut out of it, which stays legible in the
+   light theme, the dark one and the pink one. */
+input[type=checkbox]{width:22px;height:22px;flex:none;padding:0;border:1.6px solid var(--rule);border-radius:7px;background:var(--surface);display:inline-grid;place-content:center;cursor:pointer;transition:background .12s,border-color .12s}
+input[type=checkbox]::before{content:'';width:12px;height:12px;transform:scale(0);transition:transform .12s ease-out;background:var(--primary-ink);clip-path:polygon(14% 46%,2% 60%,38% 96%,98% 20%,86% 8%,38% 70%)}
+input[type=checkbox]:checked{background:var(--primary);border-color:var(--primary)}
+input[type=checkbox]:checked::before{transform:scale(1)}
+input[type=checkbox]:focus-visible{outline:2px solid var(--link);outline-offset:2px}
+@media (prefers-reduced-motion:reduce){input[type=checkbox],input[type=checkbox]::before{transition:none}}
 input[type=date],input[type=time]{display:flex;align-items:center;min-height:50px;line-height:1.3;text-align:left}
 input::-webkit-date-and-time-value{text-align:left;min-height:1.3em}
 button{-webkit-appearance:none;appearance:none;max-width:100%}
@@ -567,7 +582,7 @@ main{padding:22px 0 30px}
 #unlockwrap .paywall{margin-top:0}
 
 /* ---- footer ---- */
-.foot{border-top:1px solid var(--rule-soft);padding:22px 0 26px;color:var(--fg-soft);font-size:13px}
+.foot{margin-top:auto;border-top:1px solid var(--rule-soft);padding:22px 0 26px;color:var(--fg-soft);font-size:13px}
 .foot .wrap{display:flex;flex-direction:column;gap:6px;align-items:flex-start}
 .foot svg{width:150px;height:40px;flex:none}
 .foot b{color:var(--fg)}
@@ -757,6 +772,12 @@ main{padding:22px 0 30px}
 .paywall .price{font-family:var(--display);font-size:28px;margin:10px 0 14px}
 .paywall .price span{font-family:var(--body);font-size:14px;color:var(--fg-faint)}
 .pickico{width:22px;height:38px;vertical-align:middle;display:inline-block;filter:drop-shadow(0 2px 4px var(--shade))}
+/* The fanned piles: wider than it is tall, so it needs its own sizes in each
+   place it appears rather than the row's font size. */
+.pileico{width:36px;height:29px;vertical-align:middle;display:inline-block;filter:drop-shadow(0 2px 4px var(--shade))}
+.actquick .aq .ic .pileico{width:30px;height:24px}
+.actfilter .chip .pileico{width:22px;height:18px;vertical-align:-4px;margin-right:1px}
+h1 .pileico{width:34px;height:27px;vertical-align:-3px;margin-right:2px}
 .tile .ic .pickico{width:24px;height:41px}
 .svc .t .ic .pickico{width:20px;height:34px}
 .tile .lock{font-size:16px;vertical-align:middle}
@@ -1051,11 +1072,32 @@ main{padding:22px 0 30px}
 @keyframes blinking{0%,90%,100%{transform:scaleY(1)}93%{transform:scaleY(.08)}96%{transform:scaleY(1)}}
 .petstage .petart .ft.wav{transform-box:fill-box;transform-origin:20% 60%;animation:pawwave 5.8s ease-in-out infinite}
 @keyframes pawwave{0%,62%,100%{transform:rotate(0) translateY(0)}70%{transform:rotate(-24deg) translateY(-5px)}78%{transform:rotate(6deg) translateY(-5px)}86%{transform:rotate(-20deg) translateY(-5px)}94%{transform:rotate(0) translateY(0)}}
-@media (prefers-reduced-motion:reduce){.petstage .petart,.petpick .petart,.petstage .petart .ft.wav,.petstage .petart .eyes{animation:none}}
+@media (prefers-reduced-motion:reduce){.petstage .petart,.petpick .petart,.petstage .petart.myth,.petpick .petart.myth,.petstage .petart .ft.wav,.petstage .petart .eyes{animation:none}}
 /* The companion stands to the left of centre, in front of its own place. */
 .petstage .petart{position:absolute;left:5%;bottom:1%;width:68%;height:auto}
 /* A spirit beast is lit from within, so it reads as the rarer thing. */
-.petart.myth{filter:drop-shadow(0 0 6px rgba(229,190,94,.55));animation:mythglow 3.6s ease-in-out infinite}
+/* The glow used to be set on its own and replaced the breathing, which left
+   the paid companions as the only still ones. Both run now, on different
+   properties, and the spirit beast's timeline is the livelier of the two:
+   it sways as it breathes and hovers at the top of its hop. */
+.petart.myth{filter:drop-shadow(0 0 6px rgba(229,190,94,.55))}
+.petstage .petart.myth,.petpick .petart.myth{animation:mythalive 6.6s cubic-bezier(.37,0,.63,1) infinite,mythglow 3.6s ease-in-out infinite}
+@keyframes mythalive{
+  0%{transform:translateY(0) rotate(0deg) scaleY(1)}
+  8%{transform:translateY(-5px) rotate(-1.2deg) scaleY(1.03)}
+  16%{transform:translateY(-1px) rotate(0deg) scaleY(1)}
+  24%{transform:translateY(-6px) rotate(1.2deg) scaleY(1.03)}
+  32%{transform:translateY(0) rotate(0deg) scaleY(1)}
+  40%{transform:translateY(-4px) rotate(-1deg) scaleY(1.02)}
+  48%{transform:translateY(0) rotate(0deg) scaleY(1)}
+  56%{transform:translateY(2px) scaleY(.92)}
+  64%{transform:translateY(-22px) rotate(2deg) scaleY(1.08)}
+  71%{transform:translateY(-15px) rotate(-2deg) scaleY(1.04)}
+  78%{transform:translateY(0) scaleY(.94)}
+  84%{transform:translateY(0) scaleY(1.02)}
+  92%{transform:translateY(-5px) rotate(0deg) scaleY(1.03)}
+  100%{transform:translateY(0) rotate(0deg) scaleY(1)}
+}
 @keyframes mythglow{0%,100%{filter:drop-shadow(0 0 4px rgba(229,190,94,.4))}50%{filter:drop-shadow(0 0 10px rgba(229,190,94,.75))}}
 .petstage .aura{left:12%;top:26%;width:64%;height:58%}
 /* What can be given to a companion, on the edge of its own scene. */
@@ -1184,6 +1226,32 @@ main{padding:22px 0 30px}
 .actquick .aq{display:flex;flex-direction:column;align-items:center;gap:5px;background:var(--surface);border:1px solid var(--rule-soft);border-radius:14px;padding:10px 4px;text-decoration:none;color:inherit;min-width:0}
 .actquick .aq .ic{font-size:21px;line-height:1}
 .actquick .aq b{font-size:11px;font-weight:600;line-height:1.25;text-align:center;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
+/* ---- the red thread ---- */
+.lovecard{text-align:center}
+.threadart{display:block;width:100%;max-width:250px;margin:0 auto 4px}
+@keyframes knotbeat{0%,100%{transform:scale(1)}50%{transform:scale(1.13)}}
+.knot.beat{transform-origin:120px 109px;animation:knotbeat 2.8s ease-in-out infinite}
+@media (prefers-reduced-motion:reduce){.knot.beat{animation:none}}
+.lovecard .lead{margin:0 0 10px;color:var(--fg-soft)}
+.lovecard .pair{display:flex;align-items:center;justify-content:center;gap:10px;flex-wrap:wrap;font-family:var(--display);font-size:16px;font-weight:600}
+.lovecard .pair i{font-style:normal;font-size:14px}
+.lovecard .daysbig{display:flex;flex-direction:column;align-items:center;margin:12px 0 2px}
+.lovecard .daysbig b{font-family:var(--display);font-size:44px;line-height:1;color:#C41F3A}
+.lovecard .daysbig span{font-size:12.5px;color:var(--fg-soft);letter-spacing:.04em}
+.lovecard .since{margin:2px 0 0;font-size:13.5px;color:var(--fg-soft)}
+/* The number is drawn in the thread's own red, which is too deep to read on a
+   dark ground, so the dark themes take a lighter one. */
+:root[data-theme="dark"] .lovecard .daysbig b{color:#FF8FA3}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .lovecard .daysbig b{color:#FF8FA3}}
+.reqcard b{display:block;font-family:var(--display);font-size:15.5px}
+.reqcard .note{margin:8px 0 0;font-size:14px;background:var(--surface-2);border-radius:12px;padding:9px 12px;text-align:left}
+.reqcard.found{margin:12px 0 0;border-color:var(--lav)}
+.athandle .at{flex:none;color:var(--fg-faint);font-weight:600;font-size:17px}
+/* The tag on the profile: a fixed blush ground, so a fixed ink to go on it. */
+.lovetag{display:inline-flex;align-items:center;gap:7px;background:#FCE4E9;color:#8A1F33;border:1px solid #F3B7C3;border-radius:999px;padding:5px 13px;font-size:13px;font-weight:600;text-decoration:none;margin:0 0 14px}
+.lovetag .d{color:#A85267;font-weight:500}
+.actbtn.act-love{border-color:#F3B7C3}
+
 /* ---- angel numbers ---- */
 .sr{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0}
 .angelpad{text-align:center}
@@ -1193,7 +1261,16 @@ main{padding:22px 0 30px}
 .keypad .key:active{background:var(--surface);transform:scale(.96)}
 .keypad .key.go{background:var(--primary);color:var(--primary-ink);border-color:var(--primary)}
 .sigil{display:block;height:auto}
-.angelanswer{border:1.5px solid var(--ink);background:linear-gradient(180deg,var(--aura),var(--surface))}
+/* The wash is the number's own pastel and never changes; the text follows
+   the theme. So the pastel is laid on as a layer rather than painted as the
+   background: in the light it reads as before, and in the dark it thins to a
+   tint of the same colour over the dark surface, which the pale ink can sit
+   on. */
+.angelanswer{position:relative;border:1.5px solid var(--ink);background:var(--surface);overflow:hidden}
+.angelanswer::before{content:'';position:absolute;inset:0;background:linear-gradient(180deg,var(--aura),transparent 82%);pointer-events:none}
+.angelanswer>*{position:relative}
+:root[data-theme="dark"] .angelanswer::before{opacity:.22}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .angelanswer::before{opacity:.22}}
 .angelanswer .head{display:flex;align-items:center;gap:12px;margin-bottom:8px}
 .angelanswer .head b{display:block;font-family:var(--display);font-size:17px;font-weight:600}
 .angelanswer .head span{font-size:13px;color:var(--fg-soft)}
@@ -1236,13 +1313,25 @@ main{padding:22px 0 30px}
 /* What the companion answers with, once a day. */
 /* Its own space at both ends, so neither the marker above nor the badge
    below it ever collides with the text. */
+/* Everything the card says about the day - fed, still full, feed before you
+   pray - is one voice and sits in the middle of the card. */
+#main .petwrap p.hint{text-align:center}
+#main .petwrap p.prayhint{margin:14px 0 4px}
+.petwrap .lucktag{display:flex;width:max-content;max-width:100%;margin:16px auto 0}
 .bless{position:relative;margin:22px 0 18px;padding:18px 16px 14px;border-radius:14px;background:var(--surface-2);border:1px solid var(--rule-soft)}
 .bless .q{position:absolute;top:-13px;left:14px;background:var(--surface);border:1px solid var(--rule-soft);border-radius:999px;padding:2px 8px;font-size:15px;line-height:1.2}
 #main .bless p{margin:0 0 8px;font-size:14.5px;line-height:1.65;text-align:center;text-wrap:balance;hyphens:none}
 .bless .who{display:block;text-align:center;font-size:12px;color:var(--fg-soft)}
 .btn.off{opacity:.55}
 /* Switching between the companions you keep. */
-.pettabs{display:flex;gap:8px;margin-bottom:12px;overflow-x:auto;padding-bottom:2px}
+/* The title holds the name and the pencil that edits it in place. */
+#main h1.pettitle{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.pettitle input{flex:1 1 160px;min-width:0;max-width:260px;font-size:17px;padding:8px 12px}
+.renamebtn{flex:none;width:34px;height:34px;border:1px solid var(--rule);border-radius:50%;background:var(--surface);font-size:15px;line-height:1;display:grid;place-content:center}
+.petsetcard{margin-top:18px}
+/* Six at most, so they fit on two rows and sit in the middle rather than
+   sliding off to the left. */
+.pettabs{display:flex;flex-wrap:wrap;justify-content:center;gap:8px;margin-bottom:12px;padding-bottom:2px}
 .pettabs .pt{flex:0 0 auto;display:flex;flex-direction:column;align-items:center;gap:2px;width:74px;background:var(--surface);border:1px solid var(--rule-soft);border-radius:14px;padding:6px 4px;font:inherit;color:inherit;cursor:pointer}
 .pettabs .pt svg{width:42px;height:42px}
 .pettabs .pt b{font-size:11px;font-weight:600;line-height:1.25;text-align:center}
@@ -1274,6 +1363,10 @@ main{padding:22px 0 30px}
 #main p.mythline{text-align:center;margin:0 0 10px;font-size:13px;font-weight:600;color:var(--gold-deep)}
 /* The sparks on a spirit beast, and its steadier glow. */
 .petart .sparks .twinkle{animation:twinkling 2.8s ease-in-out infinite}
+/* A slow beat, from a group that carries no placement of its own. */
+@keyframes wingbeat{0%,100%{transform:scaleX(1) translateY(0)}50%{transform:scaleX(.9) translateY(-1.5px)}}
+.petart .wingpair{transform-box:view-box;transform-origin:60px 84px;animation:wingbeat 3.2s ease-in-out infinite}
+@media (prefers-reduced-motion:reduce){.petart .wingpair{animation:none}}
 .petpick .pp-lock{position:absolute;top:8px;right:9px;font-size:14px}
 .petpick .pp-on{position:absolute;top:8px;left:9px;color:var(--primary);font-weight:700}
 /* The companions stand at the foot of the tree rather than in the branches. */
@@ -1392,6 +1485,20 @@ button.unl{display:block;width:100%;text-align:left;font:inherit;color:inherit;c
 const PICK_ICON = '<svg class="pickico" viewBox="0 0 100 172" aria-hidden="true"><rect x="3" y="3" width="94" height="166" rx="12" fill="#3D2A6E" stroke="#3B2A5E" stroke-width="4"/><rect x="14" y="14" width="72" height="144" rx="7" fill="none" stroke="#E5BE5E" stroke-width="2"/><path d="M58 58 A28 28 0 1 0 58 114 A22 22 0 1 1 58 58 Z" fill="#E5BE5E"/><circle cx="30" cy="36" r="4" fill="#E5BE5E"/><circle cx="70" cy="36" r="4" fill="#E5BE5E"/><circle cx="30" cy="136" r="4" fill="#E5BE5E"/><circle cx="70" cy="136" r="4" fill="#E5BE5E"/></svg>';
 
 /* Draw icon for 'Rút bài': a cream card lifted at an angle with a gold sparkle. */
+/* Picking a pile: three card backs fanned face down, the middle one carrying
+   the crescent used on the back of every card in the app. The crescent is cut
+   as one path with two circles and an even-odd fill, because an arc whose
+   radius is too small for its ends is quietly widened by the renderer into a
+   full circle. */
+const PILE_ICON = '<svg class="pileico" viewBox="0 0 120 96" aria-hidden="true">'
+  + '<g transform="rotate(-19 60 90)"><rect x="40" y="22" width="40" height="64" rx="7" fill="#4B3684" stroke="#E5BE5E" stroke-width="2.5"/><circle cx="60" cy="54" r="4.5" fill="#E5BE5E" opacity=".7"/></g>'
+  + '<g transform="rotate(19 60 90)"><rect x="40" y="22" width="40" height="64" rx="7" fill="#4B3684" stroke="#E5BE5E" stroke-width="2.5"/><circle cx="60" cy="54" r="4.5" fill="#E5BE5E" opacity=".7"/></g>'
+  + '<rect x="39" y="12" width="42" height="72" rx="8" fill="#3D2A6E" stroke="#E5BE5E" stroke-width="2.5"/>'
+  + '<rect x="45" y="18" width="30" height="60" rx="5" fill="none" stroke="#E5BE5E" stroke-width="1" opacity=".55"/>'
+  + '<path fill-rule="evenodd" fill="#E5BE5E" d="M60 48 m-13 0 a13 13 0 1 0 26 0 a13 13 0 1 0 -26 0 M66 43 m-11.5 0 a11.5 11.5 0 1 0 23 0 a11.5 11.5 0 1 0 -23 0"/>'
+  + '<path d="M52 26 l1.8 4 4 1.8 -4 1.8 -1.8 4 -1.8 -4 -4 -1.8 4 -1.8z" fill="#F6BBCB"/>'
+  + '<path d="M69 68 l1.6 3.6 3.6 1.6 -3.6 1.6 -1.6 3.6 -1.6 -3.6 -3.6 -1.6 3.6 -1.6z" fill="#AFC8F0"/>'
+  + '</svg>';
 const DRAW_ICON = '<svg class="pickico" viewBox="0 0 100 172" aria-hidden="true"><g transform="rotate(-8 50 86)"><rect x="8" y="8" width="84" height="156" rx="12" fill="#FBF3F5" stroke="#3B2A5E" stroke-width="4"/><rect x="18" y="18" width="64" height="136" rx="7" fill="none" stroke="#E5BE5E" stroke-width="2"/><path d="M50 52 l8 22 22 8 -22 8 -8 22 -8 -22 -22 -8 22 -8z" fill="#E5BE5E"/><path d="M72 30 l3 7 7 3 -7 3 -3 7 -3 -7 -7 -3 7 -3z" fill="#F6BBCB"/><path d="M28 132 l2.5 5.5 5.5 2.5 -5.5 2.5 -2.5 5.5 -2.5 -5.5 -5.5 -2.5 5.5 -2.5z" fill="#AFC8F0"/></g></svg>';
 const CONFIG = {
   brand: 'Nabu Tarot',
@@ -1722,7 +1829,32 @@ const STR = {
     actPickHint: 'Bạn chạm vào tụ bài mà mình thấy bị thu hút nhất. Nabu sẽ đăng thông điệp của từng tụ sau vài ngày.', actPicked: (n) => 'Bạn đã chọn tụ ' + n + '.', actComeBack: (d) => 'Quay lại vào ' + d + ' để lật bài xem thông điệp.', actChangePile: 'Đổi sang tụ khác?', actPickToSee: 'Thông điệp đã có. Chạm vào một tụ để lật lên.', actTapOthers: 'Tụ bạn chọn đã lật lên. Bạn có thể chạm vào tụ khác để xem thử.',
     actVoteHint: 'Bạn chạm vào một lựa chọn. Mỗi người chỉ được bình chọn một lần.', actVoteLogin: 'Bạn cần đăng nhập để bình chọn và xem kết quả.', actVoted: 'Cảm ơn bạn đã bình chọn!', actClosedNote: 'Bình chọn đã đóng. Đây là kết quả.', actVotes: (n) => n + ' phiếu',
     actWishPh: 'Điều mình ước lúc này là…', actWishSend: 'Gửi vào vũ trụ', actWishHint: 'Bạn viết ngắn gọn, ở thì hiện tại, rồi gửi đi. Điều ước chỉ được lưu trên máy của bạn và không ai đọc được.', actWishCount: (n) => 'Bạn đã gửi ' + n + ' điều ước ở đây.', actWishSent: 'Đã gửi. Giờ đến lượt bạn làm bước đầu tiên. ✨', actWishEmpty: 'Bạn viết điều ước trước nhé.', actWishClear: 'Xoá các điều ước đã lưu trên máy', actWishClearConfirm: 'Xoá các điều ước đã lưu trên máy này?',
-    actJoin: 'Tham gia', actBack: 'Tất cả hoạt động', actPileMsgOf: (n) => 'Thông điệp tụ ' + n, actTypeIcon: { pile: '🃏', poll: '📊', wish: '🌠' },
+    loveTitle: 'Sợi chỉ đỏ', loveSub: 'Buộc sợi chỉ đỏ với người ấy',
+    loveIntro: 'Chuyện xưa kể rằng hai người có duyên gặp nhau đã được buộc vào nhau bằng một sợi chỉ đỏ ở ngón út. Sợi chỉ có thể rối, có thể căng, nhưng không đứt.',
+    loveNote: 'Đây là một kỉ niệm trong app, không phải giấy tờ. Nó không có giá trị pháp lý ở bất kỳ đâu. Ai cũng tháo được sợi chỉ của mình bất cứ lúc nào mà không cần hỏi người kia.',
+    loveNeedAccount: 'Bạn đăng nhập trước đã, để Nabu biết hai người là ai.',
+    loveHandleTitle: 'Chọn tên tìm kiếm của bạn', loveHandleHint: 'Người kia sẽ gõ đúng tên này để tìm bạn. Chỉ chữ thường, số, dấu chấm và gạch dưới, từ 3 đến 20 ký tự. Bạn đổi được sau.',
+    loveYourName: 'Tên hiển thị', loveHandle: 'Tên tìm kiếm', loveClaim: 'Lưu tên', loveSaving: 'Đang lưu…',
+    loveHandleBad: 'Tên này chưa hợp lệ. Dùng chữ thường, số, dấu chấm hoặc gạch dưới, từ 3 đến 20 ký tự.',
+    loveHandleTaken: 'Tên này có người dùng rồi. Bạn thử tên khác nhé.',
+    loveSingle: 'Sợi chỉ của bạn chưa buộc với ai.', loveYouAre: 'Tên tìm kiếm của bạn là',
+    loveRequests: 'Lời mời đang chờ', loveAccept: 'Nhận chỉ', loveDecline: 'Từ chối',
+    loveAcceptAsk: (n) => 'Buộc chỉ với ' + n + '? Cả hai sẽ cùng hiện trên trang này.',
+    loveTied: 'Đã buộc chỉ 🧵', loveTheyTied: 'Người này vừa buộc chỉ với người khác.',
+    loveFindTitle: 'Tìm người ấy', loveFindHint: 'Gõ đúng tên tìm kiếm của người ấy. Nabu không có danh sách để lướt, nên không ai tìm thấy bạn nếu bạn không đưa tên.',
+    loveHandlePh: 'tennguoiay', loveFind: 'Tìm', loveChangeHandle: 'Đổi tên tìm kiếm', loveLooking: 'Đang tìm…',
+    loveNoOne: 'Không có ai mang tên này.', loveThatsYou: 'Đó là bạn.', loveAlreadyTied: 'Người này đã buộc chỉ với người khác rồi.',
+    loveNoteLabel: 'Lời nhắn (không bắt buộc)', loveNotePh: 'Viết một câu cho người ấy…',
+    loveOffer: 'Gửi sợi chỉ', loveOffered: 'Đã gửi. Đợi người ấy nhận nhé.', loveSomeone: 'Người ấy',
+    loveDaysWord: 'ngày bên nhau', loveDaysN: (n) => n + ' ngày', loveSince: (d) => 'Từ ngày ' + d,
+    loveNextMark: (n, d) => 'Còn ' + d + ' ngày nữa là tròn ' + n + ' ngày.',
+    loveDayTitle: 'Ngày bắt đầu', loveDayHint: 'Nếu hai bạn bắt đầu trước hôm nay, chọn đúng ngày đó. Cả hai đều sửa được, và không chọn được ngày trong tương lai.',
+    loveDayBad: 'Chọn một ngày không muộn hơn hôm nay.', loveDaySaved: 'Đã lưu ngày bắt đầu.',
+    loveNextTitle: 'Sắp có', loveNextSoon: 'Lễ trao lời hẹn, thiệp mời bạn bè tới dự và lời chúc của mọi người sẽ tới ở bản sau.',
+    loveUntie: 'Tháo chỉ', loveUntieHint: 'Bạn tháo được bất cứ lúc nào, không cần người kia đồng ý. Trang này sẽ trở lại như cũ với cả hai.',
+    loveUntieAsk: 'Tháo sợi chỉ này? Cả hai sẽ không còn hiện là một đôi nữa.', loveUntied: 'Đã tháo chỉ.',
+    loveTagTied: 'Đang buộc chỉ',
+    actJoin: 'Tham gia', actBack: 'Tất cả hoạt động', actPileMsgOf: (n) => 'Thông điệp tụ ' + n, actTypeIcon: { pile: PILE_ICON, poll: '📊', wish: '🌠' },
     actPileArt: 'Hình của tụ', actArtAuto: 'Tự chọn', actArts: ['Nến', 'Hoa đào', 'Trăng non', 'Thạch anh tím', 'Mặt trời', 'Chìa khoá', 'Lông vũ', 'Sóng biển'],
     translating: 'Đang dịch sang tiếng Anh…', translated: 'Đã có bản tiếng Anh (dịch tự động).', translateFail: 'Chưa dịch được sang tiếng Anh; bản tiếng Việt vẫn hiện cho mọi người.',
     actFilterAll: 'Tất cả', actMore: (n) => 'Xem thêm ' + n, actLess: 'Thu gọn', actResultsPublic: 'Kết quả chung', actNoVotes: 'Chưa có phiếu nào. Bạn mở hàng nhé!', wishHistory: (n) => 'Xem ' + n + ' điều ước đã gửi', wishHide: 'Ẩn danh sách', diaryTitle: 'Nhật ký mỗi ngày', diarySub: 'hôm nay của bạn thế nào?', diaryIntro: 'Mỗi tối bạn viết vài dòng về ngày hôm nay: cảm giác của bạn, một điều đáng nhớ và một điều bạn thấy biết ơn. Nhật ký chỉ được lưu trên máy của bạn và không ai đọc được.', diaryMood: 'Hôm nay bạn thấy', diaryPh: 'Hôm nay…', diaryToday: 'Hôm nay', diarySaved: 'Đã lưu', diaryPast: 'Những ngày trước', diaryEmpty: 'Chưa có ngày nào. Bắt đầu từ hôm nay nhé.', diaryDel: 'Xoá ngày này', diaryCount: (n) => n + ' ngày đã ghi',
@@ -1781,6 +1913,7 @@ const STR = {
     petPickPro: 'Linh thú Nabu Tarot Plus', petPickProNote: 'Mười hai linh thú trong truyền thuyết, hai vị cho mỗi phần đời. Linh thú nhận gấp đôi điểm mỗi lần bạn cho ăn hoặc chơi cùng, nên lên cấp nhanh gấp đôi và đổi ra xu Nabu cũng nhanh gấp đôi. Nabu Tarot Plus mở cả mười hai và cho bạn nuôi nhiều vị cùng lúc.',
     petXpWord: 'điểm', petMythBonus: (n) => 'Linh thú nhận gấp ' + n + ' lần điểm mỗi khi ăn và mỗi khi chơi.',
     petMythPlus: 'Linh thú này thuộc Nabu Tarot Plus.',
+    petRename: 'Đổi tên bạn nhỏ', petRenameOk: 'Lưu tên',
     petRemind: 'Nhắc tôi cho bạn nhỏ ăn', petRemindHint: 'Khi bạn mở app mà bạn nhỏ đã nhịn hơn một ngày, app sẽ nhắc bạn một lần trong ngày. App không gửi được thông báo khi bạn chưa mở app.',
     petRemindOk: 'App sẽ nhắc bạn khi bạn nhỏ đói.', petRemindNoPerm: 'Điện thoại chưa cho phép thông báo, app sẽ nhắc bạn ngay trong app.',
     petHungryTitle: 'Bạn nhỏ đang đói', petHungryOne: (n) => n + ' đã nhịn hơn một ngày rồi. Bạn cho bạn ấy ăn nhé.', petHungryMany: (n) => n + ' bạn nhỏ đang đợi bạn cho ăn.',
@@ -2082,7 +2215,32 @@ const STR = {
     actPickHint: 'Tap the pile that pulls you. Nabu posts each pile\'s message a few days later.', actPicked: (n) => 'You chose pile ' + n + '.', actComeBack: (d) => 'Come back on ' + d + ' to flip it over.', actChangePile: 'Switch to another pile?', actPickToSee: 'The messages are in. Tap a pile to flip it.', actTapOthers: 'Your pile is open. Tap another pile to peek.',
     actVoteHint: 'Tap an option. One vote per person.', actVoteLogin: 'Sign in to vote and see the results.', actVoted: 'Thank you for voting!', actClosedNote: 'Voting is closed. Here are the results.', actVotes: (n) => n + ' votes',
     actWishPh: 'Right now I wish…', actWishSend: 'Send it to the universe', actWishHint: 'Keep it short, in the present tense, then send. Wishes stay on your device; nobody reads them.', actWishCount: (n) => 'You have sent ' + n + ' wishes here.', actWishSent: 'Sent. Now the first step is yours. ✨', actWishEmpty: 'Write your wish first.', actWishClear: 'Clear the wishes saved on this device', actWishClearConfirm: 'Clear the wishes saved on this device?',
-    actJoin: 'Join in', actBack: 'All activities', actPileMsgOf: (n) => 'Message of pile ' + n, actTypeIcon: { pile: '🃏', poll: '📊', wish: '🌠' },
+    loveTitle: 'The red thread', loveSub: 'Tie the red thread with someone',
+    loveIntro: 'An old story says two people meant to meet are tied at the little finger by a red thread. It can tangle and it can stretch, but it does not break.',
+    loveNote: 'This is a keepsake inside the app, not a document. It carries no legal weight anywhere. Either of you can untie your own thread at any time without asking the other.',
+    loveNeedAccount: 'Sign in first, so Nabu knows which two people this is.',
+    loveHandleTitle: 'Choose your handle', loveHandleHint: 'This is what the other person types to find you. Lower case letters, numbers, dots and underscores, 3 to 20 characters. You can change it later.',
+    loveYourName: 'Name to show', loveHandle: 'Handle', loveClaim: 'Save', loveSaving: 'Saving…',
+    loveHandleBad: 'That handle will not work. Use lower case letters, numbers, dots or underscores, 3 to 20 characters.',
+    loveHandleTaken: 'Someone already has that handle. Try another.',
+    loveSingle: 'Your thread is not tied to anyone yet.', loveYouAre: 'Your handle is',
+    loveRequests: 'Waiting for you', loveAccept: 'Take the thread', loveDecline: 'No thank you',
+    loveAcceptAsk: (n) => 'Tie the thread with ' + n + '? You will both be shown here.',
+    loveTied: 'Tied 🧵', loveTheyTied: 'They have just tied the thread with someone else.',
+    loveFindTitle: 'Find them', loveFindHint: 'Type their handle exactly. There is no list to browse here, so nobody finds you unless you give them your handle.',
+    loveHandlePh: 'theirhandle', loveFind: 'Find', loveChangeHandle: 'Change my handle', loveLooking: 'Looking…',
+    loveNoOne: 'Nobody has that handle.', loveThatsYou: 'That is you.', loveAlreadyTied: 'They are already tied to someone.',
+    loveNoteLabel: 'A line for them (optional)', loveNotePh: 'Say something…',
+    loveOffer: 'Send the thread', loveOffered: 'Sent. It is theirs to accept.', loveSomeone: 'Them',
+    loveDaysWord: 'days together', loveDaysN: (n) => n + ' days', loveSince: (d) => 'Since ' + d,
+    loveNextMark: (n, d) => d + ' days until you reach ' + n + '.',
+    loveDayTitle: 'The day it began', loveDayHint: 'If it began before today, set the real day. Either of you can change it, and it cannot be a day in the future.',
+    loveDayBad: 'Pick a day no later than today.', loveDaySaved: 'Saved.',
+    loveNextTitle: 'Coming next', loveNextSoon: 'The ceremony, invitations for the friends you want there, and their blessings are coming in a later release.',
+    loveUntie: 'Untie the thread', loveUntieHint: 'You can untie at any time without the other person agreeing. The page goes back to how it was for both of you.',
+    loveUntieAsk: 'Untie this thread? Neither of you will be shown as a couple any more.', loveUntied: 'Untied.',
+    loveTagTied: 'Tied',
+    actJoin: 'Join in', actBack: 'All activities', actPileMsgOf: (n) => 'Message of pile ' + n, actTypeIcon: { pile: PILE_ICON, poll: '📊', wish: '🌠' },
     actPileArt: 'Pile picture', actArtAuto: 'Automatic', actArts: ['Candle', 'Blossom', 'Crescent', 'Amethyst', 'Sun', 'Key', 'Feather', 'Waves'],
     translating: 'Translating into English…', translated: 'English version added (automatic translation).', translateFail: 'Could not translate into English; the Vietnamese text shows for everyone.',
     actFilterAll: 'All', actMore: (n) => 'See ' + n + ' more', actLess: 'Show less', actResultsPublic: 'Overall results', actNoVotes: 'No votes yet. Be the first!', wishHistory: (n) => 'See the ' + n + ' wishes you sent', wishHide: 'Hide the list', diaryTitle: 'Daily diary', diarySub: 'how was your day?', diaryIntro: 'A few lines each evening about today: how it felt, one thing worth remembering, one thing to be grateful for. Saved only on your device; nobody can read it.', diaryMood: 'Today you feel', diaryPh: 'Today…', diaryToday: 'Today', diarySaved: 'Saved', diaryPast: 'Earlier days', diaryEmpty: 'No days yet. Start with today.', diaryDel: 'Delete this day', diaryCount: (n) => n + ' days written',
@@ -2141,6 +2299,7 @@ const STR = {
     petPickPro: 'Nabu Tarot Plus spirit beasts', petPickProNote: 'Twelve creatures out of legend, two for each corner of life. A spirit beast earns double from every meal and every game, so it levels twice as fast and turns into Nabu coins twice as fast. Plus opens all twelve and lets you keep several at once.',
     petXpWord: 'XP', petMythBonus: (n) => 'A spirit beast earns ' + n + '× the points from every meal and every game.',
     petMythPlus: 'That spirit beast comes with Nabu Tarot Plus.',
+    petRename: 'Rename', petRenameOk: 'Save the name',
     petRemind: 'Remind me to feed it', petRemindHint: 'When you open the app and a companion has gone more than a day without a meal, it says so, once a day. The app cannot reach you while it is closed.',
     petRemindOk: 'You will be reminded when it is hungry.', petRemindNoPerm: 'Your phone has not allowed notifications, so the reminder appears inside the app.',
     petHungryTitle: 'Your companion is hungry', petHungryOne: (n) => n + ' has gone more than a day without a meal.', petHungryMany: (n) => n + ' companions are waiting to be fed.',
@@ -9629,7 +9788,10 @@ window.addEventListener('unhandledrejection', (e) => {
 const ROUTES = {};
 /* In-app history: the back arrow on a screen returns to the screen the
    visitor actually came from (home, a tab, a list), not to a fixed parent. */
-const NAV = { current: '', stack: [], popping: false, skip: false, scroll: {}, restore: null };
+/* cleanup: a screen that opens a live listener leaves one here, and the
+   router calls it on the way out so the listener does not outlive the
+   screen that wanted it. */
+const NAV = { current: '', stack: [], popping: false, skip: false, scroll: {}, restore: null, cleanup: null };
 try { NAV.stack = JSON.parse(sessionStorage.getItem('nabu-nav') || '[]'); } catch (e) { NAV.stack = []; }
 function navRemember(h) {
   // Where the visitor was on the screen they are leaving, so a return lands there.
@@ -9655,6 +9817,7 @@ function screenLabel(h) {
   if (r === 'privacy') return S.privacyTitle;
   if (r === 'install') return S.installTitle;
   if (r === 'play') return S.actTitle;
+  if (r === 'love') return S.loveTitle;
   if (r === 'me') return S.nav.me;
   if (r === 'learn') { if (!a.length) return S.learnTitle; if (a.length === 1 && S.cats[a[0]]) return S.cats[a[0]]; if (a[0] === 'fortune' && a.length === 2) return S.cats.fortune; }
   return S.back;
@@ -9688,6 +9851,7 @@ function route() {
   const r = parseHash();
   const def = ROUTES[r.route];
   if (!def) { redirect('#/home'); return; }
+  if (NAV.cleanup) { const c = NAV.cleanup; NAV.cleanup = null; try { c(); } catch (e) { /* already gone */ } }
   navRemember(location.hash || '#/home');
   renderChrome(def.nav);
   renderBackBar(r);
@@ -12413,6 +12577,360 @@ function renderAngelOne(id) {
     + '<p class="hint">' + esc(S.angelNote) + '</p></div>';
 }
 
+/* ======================= the red thread =======================
+   An old story says two people who are meant to meet are tied at the little
+   finger by a red thread. It may tangle or stretch; it does not break.
+
+   This is that, in the app: two people who both agree are shown as tied, with
+   the day it began and the days since.
+
+   Three rules shape everything here, and they are not decoration.
+
+     Nothing is shown until both agree. A thread is offered by one and has to
+     be accepted by the other. Until then it exists only as a request, which
+     the sender can withdraw and the receiver can refuse.
+
+     Anyone may untie alone, at any moment, without asking and without giving a
+     reason. No app should be able to hold someone in a relationship.
+
+     It is a keepsake, not a document. The page says so: nothing here carries
+     legal weight anywhere.
+
+   What other people can see is deliberately small - a chosen name, a handle,
+   whether you are tied and since when. Not an email, not a birthday, not a
+   location. And you are found only by someone typing your handle exactly, so
+   this never becomes a directory of strangers to browse. */
+
+const HANDLE_RE = /^[a-z0-9][a-z0-9._]{1,18}[a-z0-9]$/;
+
+const LOVE = {
+  /* What this device remembers: the handle claimed and the bond last seen, so
+     the screen and the badge can draw before the cloud answers. */
+  local() { return store.get('nabu-love', {}) || {}; },
+  save(o) { store.set('nabu-love', Object.assign(this.local(), o)); },
+  handle() { return this.local().handle || ''; },
+  /* The other person, from my side of a bond. */
+  other(bond, uid) {
+    if (!bond) return null;
+    return bond.a === uid
+      ? { uid: bond.b, name: bond.bName, handle: bond.bHandle }
+      : { uid: bond.a, name: bond.aName, handle: bond.aHandle };
+  },
+  mine(bond, uid) {
+    if (!bond) return null;
+    return bond.a === uid
+      ? { uid: bond.a, name: bond.aName, handle: bond.aHandle }
+      : { uid: bond.b, name: bond.bName, handle: bond.bHandle };
+  },
+  days(bond) {
+    if (!bond || !bond.since) return 0;
+    const from = new Date(bond.since + 'T00:00:00');
+    if (isNaN(from)) return 0;
+    return Math.max(0, Math.floor((Date.now() - from.getTime()) / 86400000));
+  },
+  /* Round numbers worth noticing, and the next one coming. */
+  marks: [7, 30, 100, 200, 365, 500, 730, 1000, 1461, 3650],
+  nextMark(days) {
+    const m = this.marks.filter((n) => n > days)[0];
+    return m ? { at: m, inDays: m - days } : null;
+  }
+};
+
+/* ---- the thread itself ----
+   Two hands, little fingers reaching towards each other, and the knot between
+   them. The knot beats slowly, because a thread that is alive is the point. */
+function threadSVG(state, still) {
+  const RED = '#D6314B', SOFT = '#F2789F', SKIN = '#F6DCC6', SKIN2 = '#E9C4A6';
+  /* A closed hand with one finger out of it: the wrist coming in from the
+     edge, the fist, the fingers curled along its lower edge, the thumb over
+     them, and the little finger reaching to the middle with the thread wound
+     twice round it. */
+  const hand = (flip) => '<g transform="' + (flip ? 'translate(240,0) scale(-1,1)' : '') + '">'
+    + '<path d="M0 98 L30 92 L34 144 L0 150 Z" fill="' + SKIN2 + '" opacity=".85"/>'
+    + '<path d="M24 92 Q54 78 78 92 Q94 101 94 117 Q94 136 74 144 Q48 152 30 141 Q18 132 18 115 Q18 99 24 92 Z" fill="' + SKIN + '"/>'
+    + '<g stroke="' + SKIN2 + '" stroke-width="2" fill="none" opacity=".55" stroke-linecap="round">'
+    + '<path d="M42 148 q7 -15 3 -31 M60 150 q7 -15 3 -32 M78 143 q6 -13 2 -27"/></g>'
+    + '<g stroke="' + SKIN2 + '" stroke-width="1.6" fill="none" opacity=".5" stroke-linecap="round">'
+    + '<path d="M32 100 q9 -6 18 -2 M56 94 q9 -5 18 1"/></g>'
+    + '<path d="M28 134 Q20 146 30 152 Q42 156 48 144 Q44 138 28 134 Z" fill="' + SKIN + '" stroke="' + SKIN2 + '" stroke-width="1.2"/>'
+    + '<path d="M88 104 Q106 98 120 102 Q126 104 124 111 Q122 118 112 118 Q100 118 88 114 Z" fill="' + SKIN + '" stroke="' + SKIN2 + '" stroke-width="1.3"/>'
+    + '<g stroke="' + RED + '" fill="none" stroke-linecap="round"><path d="M103 100 q5 9 0 18" stroke-width="2.6"/>'
+    + '<path d="M110 100 q5 9 0 18" stroke-width="2.2" opacity=".9"/></g>'
+    + '</g>';
+  const knot = '<g class="knot' + (still ? '' : ' beat') + '">'
+    + '<circle cx="120" cy="109" r="8.5" fill="' + RED + '"/><circle cx="120" cy="109" r="3.6" fill="' + SOFT + '"/>'
+    + '<path d="M112 101 q8 -7 16 0 M112 117 q8 7 16 0" stroke="' + RED + '" stroke-width="3" fill="none" stroke-linecap="round"/>'
+    + '</g>';
+  const rings = state === 'married'
+    ? '<g fill="none" stroke="#E5BE5E" stroke-width="3"><circle cx="107" cy="150" r="9"/><circle cx="133" cy="150" r="9"/></g>'
+    : '';
+  return '<svg viewBox="0 0 240 178" class="threadart" role="img" aria-hidden="true">'
+    + '<ellipse cx="120" cy="168" rx="80" ry="7" fill="#C9A5D8" opacity=".2"/>'
+    + hand(false) + hand(true)
+    + '<path d="M120 114 q-26 22 -58 26" stroke="' + RED + '" stroke-width="2.2" fill="none" stroke-linecap="round" opacity=".55"/>'
+    + '<path d="M120 114 q26 22 58 26" stroke="' + RED + '" stroke-width="2.2" fill="none" stroke-linecap="round" opacity=".55"/>'
+    + knot + rings
+    + '</svg>';
+}
+
+/* ---- the cloud side ----
+   All of this needs an account, because it is about two people and the app has
+   to know which two. */
+const LOVEDB = {
+  ok() { return !!(BE && BE.enabled && BE.db && BE.user); },
+  me() { return BE.user ? BE.user.uid : ''; },
+  /* A handle is claimed once and points at one account. The old one is given
+     back so nobody has to hold a name they no longer use. */
+  async claimHandle(handle, name) {
+    const h = String(handle || '').toLowerCase().trim().replace(/^@/, '');
+    if (!HANDLE_RE.test(h)) throw new Error('handle');
+    const ref = BE.db.collection('handles').doc(h);
+    const snap = await ref.get();
+    if (snap.exists && snap.data().uid !== this.me()) throw new Error('taken');
+    const old = LOVE.handle();
+    const nm = String(name || '').slice(0, 24);
+    await ref.set({ uid: this.me() });
+    await BE.db.collection('people').doc(this.me()).set({ name: nm, handle: h }, { merge: true });
+    if (old && old !== h) await BE.db.collection('handles').doc(old).delete().catch(() => {});
+    LOVE.save({ handle: h, name: nm });
+    return h;
+  },
+  async findByHandle(handle) {
+    const h = String(handle || '').toLowerCase().trim().replace(/^@/, '');
+    if (!HANDLE_RE.test(h)) return null;
+    const snap = await BE.db.collection('handles').doc(h).get();
+    if (!snap.exists) return null;
+    const uid = snap.data().uid;
+    if (uid === this.me()) return { uid: uid, self: true };
+    const p = await BE.db.collection('people').doc(uid).get();
+    const tied = await this.bondOf(uid);
+    return Object.assign({ uid: uid, tied: !!tied }, p.exists ? p.data() : {});
+  },
+  async myPerson() {
+    if (!this.ok()) return null;
+    const d = await BE.db.collection('people').doc(this.me()).get();
+    return d.exists ? d.data() : null;
+  },
+  /* A bond carries both people, so either side can draw the page without
+     reading the other's card, and it is found from either side by the pair of
+     ids it holds. */
+  async bondOf(uid) {
+    const s = await BE.db.collection('bonds').where('uids', 'array-contains', uid).limit(1).get();
+    return s.docs.length ? Object.assign({ id: s.docs[0].id }, s.docs[0].data()) : null;
+  },
+  watchMine(cb) {
+    if (!this.ok()) return () => {};
+    return BE.db.collection('bonds').where('uids', 'array-contains', this.me()).limit(1)
+      .onSnapshot((s) => cb(s.docs.length ? Object.assign({ id: s.docs[0].id }, s.docs[0].data()) : null), () => cb(null));
+  },
+  /* A request is one person offering, and carries who is offering so the other
+     side sees a name without another read. */
+  async offer(toUid, note) {
+    const me = this.me(), mine = (await this.myPerson()) || {};
+    await BE.db.collection('requests').doc(toUid).collection('from').doc(me).set({
+      uid: me, name: mine.name || '', handle: mine.handle || LOVE.handle(),
+      note: String(note || '').slice(0, 200), at: Date.now()
+    });
+  },
+  watchRequests(cb) {
+    if (!this.ok()) return () => {};
+    return BE.db.collection('requests').doc(this.me()).collection('from')
+      .onSnapshot((s) => cb(s.docs.map((d) => d.data())), () => cb([]));
+  },
+  async accept(req) {
+    const me = this.me(), other = req.uid;
+    if (await this.bondOf(other)) throw new Error('taken');
+    const mine = (await this.myPerson()) || {};
+    const pair = [me, other].sort();
+    const bond = {
+      uids: pair, a: pair[0], b: pair[1], state: 'tied',
+      since: isoDate(new Date()), at: Date.now(),
+      aName: pair[0] === me ? (mine.name || '') : (req.name || ''),
+      bName: pair[1] === me ? (mine.name || '') : (req.name || ''),
+      aHandle: pair[0] === me ? (mine.handle || '') : (req.handle || ''),
+      bHandle: pair[1] === me ? (mine.handle || '') : (req.handle || '')
+    };
+    const id = pair.join('__');
+    await BE.db.collection('bonds').doc(id).set(bond);
+    await BE.db.collection('requests').doc(me).collection('from').doc(other).delete().catch(() => {});
+    LOVE.save({ bond: id, since: bond.since, withName: (LOVE.other(bond, me) || {}).name || '' });
+    return id;
+  },
+  async decline(fromUid) {
+    await BE.db.collection('requests').doc(this.me()).collection('from').doc(fromUid).delete().catch(() => {});
+  },
+  /* The day it began can be moved back to the day it really began, by either
+     of them, and never forward past today. */
+  async setSince(id, iso) {
+    await BE.db.collection('bonds').doc(id).update({ since: iso });
+    LOVE.save({ since: iso });
+  },
+  /* Untying is one person's decision and needs nobody's permission. */
+  async untie(id) {
+    await BE.db.collection('bonds').doc(id).delete();
+    LOVE.save({ bond: '', since: '', withName: '' });
+  }
+};
+
+/* The little tag that says where someone stands, drawn from what this device
+   already knows so it costs nothing to show. */
+function loveBadgeHTML() {
+  const S = T(), l = LOVE.local();
+  if (!l.bond) return '';
+  return '<a class="lovetag" href="#/love"><span class="k">🧵</span><b>' + esc(S.loveTagTied) + '</b>'
+    + (l.withName ? '<span class="w">' + esc(l.withName) + '</span>' : '')
+    + '<span class="d">' + esc(S.loveDaysN(LOVE.days({ since: l.since }))) + '</span></a>';
+}
+
+/* ---- the screen ---- */
+function renderLove(wantHandle) {
+  const S = T(), m = $('#main');
+  let stop = [], forceHandle = !!wantHandle;
+  const cleanup = () => { stop.forEach((f) => { try { f(); } catch (e) { /* already gone */ } }); stop = []; };
+  NAV.cleanup = cleanup;
+
+  const head = () => '<div class="eyebrow">' + esc(CONFIG.brand) + '</div><h1 style="margin-bottom:6px">🧵 ' + esc(S.loveTitle) + '</h1>'
+    + '<p class="muted">' + esc(S.loveIntro) + '</p>';
+  const foot = () => '<p class="hint" style="margin-top:16px">' + esc(S.loveNote) + '</p>';
+
+  const drawGuest = () => {
+    m.innerHTML = head()
+      + '<div class="card lovecard">' + threadSVG('tied', true)
+      + '<p class="lead">' + esc(S.loveNeedAccount) + '</p>'
+      + '<a class="btn primary block" href="#/me">' + esc(S.signIn) + '</a></div>' + foot();
+  };
+
+  const drawHandle = (err) => {
+    m.innerHTML = head()
+      + '<div class="card"><h3 style="margin-bottom:4px">' + esc(S.loveHandleTitle) + '</h3>'
+      + '<p class="hint" style="margin-bottom:10px">' + esc(S.loveHandleHint) + '</p>'
+      + '<label class="f" for="lvname">' + esc(S.loveYourName) + '</label>'
+      + '<input id="lvname" maxlength="24" value="' + esc(LOVE.local().name || PROFILE.name || '') + '">'
+      + '<label class="f" for="lvhandle" style="margin-top:10px">' + esc(S.loveHandle) + '</label>'
+      + '<div class="row nw athandle"><span class="at">@</span><input id="lvhandle" maxlength="20" autocapitalize="none" spellcheck="false" value="' + esc(LOVE.handle()) + '"></div>'
+      + '<button type="button" class="btn primary block" id="lvsave" style="margin-top:12px">' + esc(S.loveClaim) + '</button>'
+      + '<p class="hint' + (err ? ' err' : '') + '" id="lvstatus">' + esc(err || '') + '</p></div>' + foot();
+    $('#lvsave').addEventListener('click', async () => {
+      const b = $('#lvsave'), st = $('#lvstatus');
+      const h = $('#lvhandle').value.toLowerCase().replace(/^@/, '').trim();
+      if (!HANDLE_RE.test(h)) { drawHandle(S.loveHandleBad); return; }
+      b.disabled = true; st.className = 'hint'; st.textContent = S.loveSaving;
+      try { await LOVEDB.claimHandle(h, $('#lvname').value.trim()); forceHandle = false; draw(); }
+      catch (e) { drawHandle(e.message === 'taken' ? S.loveHandleTaken : e.message === 'handle' ? S.loveHandleBad : S.publishFail); }
+    });
+  };
+
+  const drawSingle = (reqs) => {
+    const list = reqs || [];
+    m.innerHTML = head()
+      + '<div class="card lovecard">' + threadSVG('tied', true)
+      + '<p class="lead">' + esc(S.loveSingle) + '</p>'
+      + '<p class="hint" style="text-align:center">' + esc(S.loveYouAre) + ' <b>@' + esc(LOVE.handle()) + '</b></p></div>'
+      + (list.length
+        ? '<div class="sec"><div class="eyebrow">' + esc(S.loveRequests) + '</div>'
+          + list.map((r) => '<div class="card reqcard"><b>' + esc(r.name || ('@' + r.handle)) + '</b>'
+            + '<span class="faint">@' + esc(r.handle || '') + '</span>'
+            + (r.note ? '<p class="note">' + esc(r.note) + '</p>' : '')
+            + '<div class="row2"><button type="button" class="btn primary" data-accept="' + esc(r.uid) + '">' + esc(S.loveAccept) + '</button>'
+            + '<button type="button" class="btn" data-decline="' + esc(r.uid) + '">' + esc(S.loveDecline) + '</button></div></div>').join('')
+          + '</div>'
+        : '')
+      + '<div class="card"><h3 style="margin-bottom:4px">' + esc(S.loveFindTitle) + '</h3>'
+      + '<p class="hint" style="margin-bottom:10px">' + esc(S.loveFindHint) + '</p>'
+      + '<div class="row nw athandle"><span class="at">@</span><input id="lvfind" maxlength="20" autocapitalize="none" spellcheck="false" placeholder="' + esc(S.loveHandlePh) + '"><button type="button" class="btn" id="lvgo">' + esc(S.loveFind) + '</button></div>'
+      + '<div id="lvfound"></div><p class="hint" id="lvfstatus"></p></div>'
+      + '<p><a class="backlink" href="#/love/handle">' + esc(S.loveChangeHandle) + '</a></p>'
+      + foot();
+
+    $$('[data-accept]', m).forEach((b) => b.addEventListener('click', async () => {
+      const r = list.filter((x) => x.uid === b.getAttribute('data-accept'))[0];
+      if (!r || !confirm(S.loveAcceptAsk(r.name || ('@' + r.handle)))) return;
+      b.disabled = true;
+      try { await LOVEDB.accept(r); toast(S.loveTied); }
+      catch (e) { toast(e.message === 'taken' ? S.loveTheyTied : S.publishFail); b.disabled = false; }
+    }));
+    $$('[data-decline]', m).forEach((b) => b.addEventListener('click', async () => {
+      b.disabled = true;
+      await LOVEDB.decline(b.getAttribute('data-decline'));
+    }));
+    $('#lvgo').addEventListener('click', async () => {
+      const st = $('#lvfstatus'), out = $('#lvfound');
+      out.innerHTML = ''; st.className = 'hint'; st.textContent = S.loveLooking;
+      let who = null;
+      try { who = await LOVEDB.findByHandle($('#lvfind').value); } catch (e) { who = null; }
+      if (!who) { st.className = 'hint err'; st.textContent = S.loveNoOne; return; }
+      if (who.self) { st.className = 'hint err'; st.textContent = S.loveThatsYou; return; }
+      st.textContent = '';
+      out.innerHTML = '<div class="card reqcard found"><b>' + esc(who.name || ('@' + who.handle)) + '</b><span class="faint">@' + esc(who.handle || '') + '</span>'
+        + (who.tied ? '<p class="hint">' + esc(S.loveAlreadyTied) + '</p>'
+          : '<label class="f" for="lvnote" style="margin-top:8px">' + esc(S.loveNoteLabel) + '</label>'
+            + '<input id="lvnote" maxlength="200" placeholder="' + esc(S.loveNotePh) + '">'
+            + '<button type="button" class="btn primary block" id="lvoffer" style="margin-top:10px">🧵 ' + esc(S.loveOffer) + '</button>')
+        + '</div>';
+      const off = $('#lvoffer');
+      if (off) off.addEventListener('click', async () => {
+        off.disabled = true;
+        try { await LOVEDB.offer(who.uid, $('#lvnote').value); st.className = 'hint ok'; st.textContent = S.loveOffered; }
+        catch (e) { st.className = 'hint err'; st.textContent = S.publishFail; off.disabled = false; }
+      });
+    });
+  };
+
+  const drawBond = (bond) => {
+    const me = LOVEDB.me(), you = LOVE.other(bond, me), mine = LOVE.mine(bond, me);
+    const days = LOVE.days(bond), next = LOVE.nextMark(days);
+    const nameOf = (p) => (p && (p.name || (p.handle ? '@' + p.handle : ''))) || S.loveSomeone;
+    m.innerHTML = head()
+      + '<div class="card lovecard tied">' + threadSVG(bond.state)
+      + '<div class="pair"><span>' + esc(nameOf(mine)) + '</span><i>🧵</i><span>' + esc(nameOf(you)) + '</span></div>'
+      + '<div class="daysbig"><b>' + days + '</b><span>' + esc(S.loveDaysWord) + '</span></div>'
+      + '<p class="since">' + esc(S.loveSince(fmtDate(bond.since))) + '</p>'
+      + (next ? '<p class="hint" style="text-align:center">' + esc(S.loveNextMark(next.at, next.inDays)) + '</p>' : '')
+      + '</div>'
+      + '<div class="card"><h3 style="margin-bottom:6px">' + esc(S.loveDayTitle) + '</h3>'
+      + '<p class="hint" style="margin-bottom:8px">' + esc(S.loveDayHint) + '</p>'
+      + '<input type="date" id="lvsince" max="' + esc(isoDate(new Date())) + '" value="' + esc(bond.since || '') + '">'
+      + '<p class="hint" id="lvsincest"></p></div>'
+      + '<div class="card"><h3 style="margin-bottom:6px">' + esc(S.loveNextTitle) + '</h3><p class="hint">' + esc(S.loveNextSoon) + '</p></div>'
+      + '<button type="button" class="btn block" id="lvuntie">' + esc(S.loveUntie) + '</button>'
+      + '<p class="hint">' + esc(S.loveUntieHint) + '</p>'
+      + foot();
+    $('#lvsince').addEventListener('change', async () => {
+      const st = $('#lvsincest'), v = $('#lvsince').value;
+      if (!v || v > isoDate(new Date())) { st.className = 'hint err'; st.textContent = S.loveDayBad; return; }
+      st.className = 'hint'; st.textContent = S.loveSaving;
+      try { await LOVEDB.setSince(bond.id, v); st.className = 'hint ok'; st.textContent = S.loveDaySaved; }
+      catch (e) { st.className = 'hint err'; st.textContent = S.publishFail; }
+    });
+    $('#lvuntie').addEventListener('click', async () => {
+      if (!confirm(S.loveUntieAsk)) return;
+      try { await LOVEDB.untie(bond.id); toast(S.loveUntied); } catch (e) { toast(S.publishFail); }
+    });
+  };
+
+  const draw = async () => {
+    cleanup();
+    if (!LOVEDB.ok()) { drawGuest(); return; }
+    let person = null;
+    try { person = await LOVEDB.myPerson(); } catch (e) { person = null; }
+    if (person) LOVE.save({ handle: person.handle || '', name: person.name || '' });
+    if (forceHandle || !LOVE.handle()) { drawHandle(); return; }
+    /* Two listeners, one screen: the bond decides which half is drawn, and
+       either of them arriving repaints it. */
+    let reqs = [], bond = null, ready = false;
+    const paint = () => { if (!ready) return; if (bond) drawBond(bond); else drawSingle(reqs); };
+    stop.push(LOVEDB.watchMine((b) => {
+      bond = b; ready = true;
+      LOVE.save(b ? { bond: b.id, since: b.since, withName: (LOVE.other(b, LOVEDB.me()) || {}).name || '' } : { bond: '', since: '', withName: '' });
+      paint();
+    }));
+    stop.push(LOVEDB.watchRequests((l) => { reqs = l; paint(); }));
+  };
+  draw();
+}
+
+ROUTES.love = { nav: 'play', render: (args) => renderLove(args && args[0] === 'handle') };
+
 /* ============================ looks ============================
    Four things in the app can be dressed differently: the back of the cards you
    draw, the message tree, the coin, and the paper the diary is written on.
@@ -13042,7 +13560,8 @@ const PET_FOODS = [
   { id: 'honey', pro: true, add: 2, sym: '🍯', name: { vi: 'Mật hoa rừng', en: 'Wild flower honey' } },
   { id: 'berry', pro: true, add: 2, sym: '🍓', name: { vi: 'Dâu sương sớm', en: 'Morning-dew berries' } },
   { id: 'cake', pro: true, add: 2, sym: '🍥', name: { vi: 'Bánh trăng rằm', en: 'Full-moon cake' } },
-  { id: 'star', pro: true, add: 2, sym: '🧁', name: { vi: 'Bánh kem sao', en: 'Star cream cake' } }
+  { id: 'star', pro: true, add: 2, sym: '🧁', name: { vi: 'Bánh kem sao', en: 'Star cream cake' } },
+  { id: 'tea', pro: true, add: 2, sym: '🍵', name: { vi: 'Trà sen ướp sương', en: 'Dew-steeped lotus tea' } }
 ];
 const PET_HOMES = [
   { id: 'mat', pro: false, add: 0, name: { vi: 'Chiếu cỏ', en: 'Grass mat' } },
@@ -13051,7 +13570,9 @@ const PET_HOMES = [
   { id: 'moon', pro: true, add: 12, name: { vi: 'Vườn trăng', en: 'Moon garden' } },
   { id: 'heaven', pro: true, add: 12, name: { vi: 'Cổng trời', en: 'Gate of heaven' } },
   { id: 'palace', pro: true, add: 12, name: { vi: 'Cung điện', en: 'The palace' } },
-  { id: 'castle', pro: true, add: 12, name: { vi: 'Lâu đài phép', en: 'Magic castle' } }
+  { id: 'castle', pro: true, add: 12, name: { vi: 'Lâu đài phép', en: 'Magic castle' } },
+  { id: 'lotus', pro: true, add: 12, name: { vi: 'Thủy tạ đầm sen', en: 'Lotus pavilion' } },
+  { id: 'isle', pro: true, add: 12, name: { vi: 'Đảo trời', en: 'Floating isle' } }
 ];
 const PET_WEARS = [
   { id: 'none', pro: false, add: 0, name: { vi: 'Để mộc', en: 'Nothing' } },
@@ -13062,7 +13583,9 @@ const PET_WEARS = [
   /* Clothes rather than accessories: these are worn on the body. */
   { id: 'jumper', pro: true, add: 10, name: { vi: 'Áo len', en: 'Knitted jumper' } },
   { id: 'cloak', pro: true, add: 10, name: { vi: 'Áo choàng sao', en: 'Star cloak' } },
-  { id: 'armour', pro: true, add: 10, name: { vi: 'Giáp vàng', en: 'Gold armour' } }
+  { id: 'armour', pro: true, add: 10, name: { vi: 'Giáp vàng', en: 'Gold armour' } },
+  /* The only thing worn behind the companion rather than in front of it. */
+  { id: 'wings', pro: true, add: 10, name: { vi: 'Đôi cánh thần', en: 'Feathered wings' } }
 ];
 /* What gets thrown when the two of you play. */
 const PET_PAT_XP = 4;
@@ -13306,6 +13829,76 @@ function petHomeSVG(id) {
       + '<path d="M182 74 q10 -12 22 -8" stroke="#C7B4EC" stroke-width="2.4" fill="none" stroke-linecap="round"/>'
       + '<g fill="#FFFFFF"><ellipse cx="26" cy="212" rx="46" ry="26"/><ellipse cx="96" cy="220" rx="56" ry="28"/><ellipse cx="176" cy="214" rx="50" ry="26"/><ellipse cx="232" cy="222" rx="34" ry="20"/></g>'
       + '<g fill="#F0E9FF"><ellipse cx="60" cy="228" rx="40" ry="16"/><ellipse cx="150" cy="230" rx="46" ry="16"/></g></svg>';
+  }
+  /* Dawn over still water: a pavilion on stilts, lotus pads, and the sky
+     lying on the surface. */
+  if (id === 'lotus') {
+    let pads = '';
+    [[34, 190, 24, 8], [78, 206, 20, 7], [18, 216, 18, 6], [104, 184, 16, 6], [120, 220, 22, 7]].forEach((p) => {
+      pads += '<ellipse cx="' + p[0] + '" cy="' + p[1] + '" rx="' + p[2] + '" ry="' + p[3] + '" fill="#7FBF95"/>'
+        + '<path d="M' + p[0] + ' ' + p[1] + ' l' + p[2] + ' -2" stroke="#5E9E76" stroke-width="1.4"/>';
+    });
+    const bloom = (x, y, s2) => '<g transform="translate(' + x + ',' + y + ') scale(' + s2 + ')">'
+      + '<path d="M0 0 Q-13 -6 -16 -18 Q-6 -14 0 -4 Z" fill="#F7A9C6"/><path d="M0 0 Q13 -6 16 -18 Q6 -14 0 -4 Z" fill="#F7A9C6"/>'
+      + '<path d="M0 -2 Q-8 -14 -6 -28 Q2 -18 0 -2 Z" fill="#FBC7DA"/><path d="M0 -2 Q8 -14 6 -28 Q-2 -18 0 -2 Z" fill="#FBC7DA"/>'
+      + '<path d="M0 -4 Q-4 -18 0 -30 Q4 -18 0 -4 Z" fill="#FFF0F5"/><circle cx="0" cy="-8" r="3" fill="#E5BE5E"/></g>';
+    return open
+      + '<defs><linearGradient id="hgl" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#FFD9E4"/><stop offset="58%" stop-color="#FFEDDF"/><stop offset="100%" stop-color="#FFF7F0"/></linearGradient>'
+      + '<linearGradient id="hgw" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#CFE4EE"/><stop offset="100%" stop-color="#AFCEDF"/></linearGradient></defs>'
+      + '<rect width="240" height="240" fill="url(#hgl)"/>'
+      + '<circle cx="188" cy="48" r="24" fill="#FFC9A8" opacity=".85"/>'
+      + '<path d="M0 118 Q38 94 80 116 Q120 134 162 110 Q202 88 240 114 L240 136 L0 136 Z" fill="#EFBFD2" opacity=".65"/>'
+      + '<rect y="134" width="240" height="106" fill="url(#hgw)"/>'
+      + '<g fill="#FFFFFF" opacity=".4"><rect y="146" width="240" height="3"/><rect x="20" y="162" width="200" height="2.4"/><rect x="8" y="178" width="180" height="2"/><rect x="60" y="200" width="170" height="2"/></g>'
+      /* the pavilion, standing in the water on its own legs */
+      /* stilts standing in the water, then the floor they carry */
+      + '<g stroke="#8F4A38" stroke-width="5" stroke-linecap="round"><path d="M150 216 v-44 M188 220 v-48 M226 216 v-44"/></g>'
+      + '<rect x="138" y="164" width="102" height="11" rx="3" fill="#C9704F"/>'
+      + '<rect x="138" y="164" width="102" height="4" rx="2" fill="#E09069"/>'
+      /* the rail, with its balusters */
+      + '<g stroke="#B0553F" stroke-width="2.6" stroke-linecap="round"><path d="M146 164 v-13 M160 164 v-13 M174 164 v-13 M204 164 v-13 M218 164 v-13 M232 164 v-13"/></g>'
+      + '<rect x="142" y="147" width="94" height="4.5" rx="2" fill="#C9704F"/>'
+      /* four posts, the back pair set in a little */
+      + '<g stroke="#8F4A38" stroke-width="5" stroke-linecap="round"><path d="M146 150 v-26 M234 150 v-26"/></g>'
+      + '<g stroke="#A85B45" stroke-width="4" stroke-linecap="round" opacity=".8"><path d="M162 146 v-24 M218 146 v-24"/></g>'
+      + '<rect x="176" y="124" width="28" height="26" rx="2" fill="#F3D9C4" opacity=".8"/>'
+      /* the roof, overhanging the posts, its corners turned up */
+      + '<path d="M118 128 Q126 118 138 116 Q160 100 190 92 Q220 100 242 116 Q254 118 262 128 Q244 122 232 124 Q210 114 190 112 Q170 114 148 124 Q136 122 118 128 Z" fill="#C6485C"/>'
+      + '<path d="M136 122 Q160 106 190 98 Q220 106 244 122 Q216 112 190 110 Q164 112 136 122 Z" fill="#DF6076"/>'
+      + '<g stroke="#A83247" stroke-width="1.4" fill="none" opacity=".55"><path d="M190 96 v22 M168 104 l-14 16 M212 104 l14 16"/></g>'
+      + '<path d="M190 92 v-9" stroke="#E5BE5E" stroke-width="3"/><circle cx="190" cy="81" r="4.5" fill="#E5BE5E"/>'
+      + pads + bloom(44, 188, 1) + bloom(96, 210, .8) + bloom(16, 214, .7)
+      + '<g fill="#FBC7DA" opacity=".9"><ellipse cx="140" cy="196" rx="4" ry="2.4"/><ellipse cx="70" cy="176" rx="3.4" ry="2"/><ellipse cx="112" cy="228" rx="4" ry="2.2"/></g></svg>';
+  }
+  /* An isle that hangs in the night with nothing under it but its own
+     waterfall, going down into cloud. */
+  if (id === 'isle') {
+    let stars = '';
+    [[22, 30], [64, 18], [108, 40], [150, 22], [204, 34], [232, 66], [16, 82], [88, 70]].forEach((p, k) => {
+      stars += '<circle class="twinkle" cx="' + p[0] + '" cy="' + p[1] + '" r="' + (1.3 + (k % 3) * 0.6) + '" fill="#FFF7EE" style="animation-delay:' + (k * 240) + 'ms"/>';
+    });
+    return open
+      + '<defs><linearGradient id="hgi" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#251B4C"/><stop offset="60%" stop-color="#3E2F78"/><stop offset="100%" stop-color="#57459B"/></linearGradient>'
+      + '<linearGradient id="hgf" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#CFEFF8"/><stop offset="100%" stop-color="#CFEFF8" stop-opacity="0"/></linearGradient></defs>'
+      + '<rect width="240" height="240" fill="url(#hgi)"/>' + stars
+      + '<circle cx="52" cy="46" r="18" fill="#FFF3C4" opacity=".9"/><circle cx="44" cy="42" r="16" fill="#2C2158" opacity=".9"/>'
+      /* the far, smaller isles */
+      + '<g opacity=".55"><path d="M20 128 L58 128 L48 146 Q38 156 32 146 Z" fill="#6E5AA8"/><ellipse cx="39" cy="128" rx="19" ry="5" fill="#7FBF95"/></g>'
+      + '<g opacity=".4"><path d="M96 100 L124 100 L117 113 Q110 121 105 113 Z" fill="#6E5AA8"/><ellipse cx="110" cy="100" rx="14" ry="4" fill="#7FBF95"/></g>'
+      /* the isle itself */
+      + '<path d="M132 150 L240 150 L226 178 Q206 214 186 190 Q160 172 132 150 Z" fill="#6E5AA8"/>'
+      + '<path d="M132 150 Q158 174 178 196 Q190 210 198 190 Q186 176 176 150 Z" fill="#5A4A92"/>'
+      + '<ellipse cx="186" cy="150" rx="54" ry="13" fill="#7FBF95"/>'
+      + '<ellipse cx="186" cy="147" rx="50" ry="10" fill="#96D3AB"/>'
+      /* the waterfall, and the cloud it falls into */
+      + '<path d="M166 154 q-5 34 1 62 q7 -28 5 -62 Z" fill="url(#hgf)"/>'
+      + '<g fill="#FFFFFF" opacity=".5"><ellipse cx="164" cy="216" rx="26" ry="9"/><ellipse cx="190" cy="222" rx="22" ry="8"/><ellipse cx="140" cy="224" rx="20" ry="7"/></g>'
+      /* a tree and a lantern on the grass */
+      + '<path d="M212 148 v-22" stroke="#7A5A44" stroke-width="4.5" stroke-linecap="round"/>'
+      + '<g fill="#8FD1A6"><ellipse cx="212" cy="120" rx="17" ry="12"/><ellipse cx="202" cy="126" rx="11" ry="8"/><ellipse cx="222" cy="126" rx="11" ry="8"/></g>'
+      + '<g fill="#F7A9C6" opacity=".9"><circle cx="205" cy="116" r="2"/><circle cx="218" cy="122" r="2"/><circle cx="212" cy="110" r="1.8"/></g>'
+      + '<path d="M150 148 v-16" stroke="#B9913B" stroke-width="2.4"/>'
+      + '<ellipse cx="150" cy="128" rx="6" ry="8" fill="#FFE9A8"/><ellipse cx="150" cy="128" rx="3" ry="4.6" fill="#FFF7EE"/></svg>';
   }
   if (id === 'shrine') {
     return open
@@ -13554,7 +14147,11 @@ const PET_ART = {
      than the long jaw that made her a dog. */
   ninetails: () => ({
     glow: true, pal: { body: '#FFFDF8', dark: '#F0C6D6', ink: '#5E2138' },
-    bodyRX: 27, bodyRY: 22, headRX: 30, headRY: 27, charmY: 82,
+    bodyRX: 27, bodyRY: 22, headRX: 30, headRY: 27,
+    /* Her chin reaches y=95, lower than any other face here, so the charm goes
+       down onto the white ruff of her chest. At the usual height it sat right
+       across her nose and mouth. */
+    charmY: 101,
     /* Nine flames fanned behind her, each as long as it can be at its own
        angle without leaving the square. */
     behind: (() => {
@@ -13844,7 +14441,9 @@ function petSVG(kind, coat, mood, wear) {
   const charmY = art.charmY || 80;
   const neck = (art.charmY ? '' : '<path d="M42 74 q18 9 36 0" fill="none" stroke="' + luck.ink + '" stroke-width="2.4" stroke-linecap="round" opacity=".9"/>')
     + '<circle cx="60" cy="' + charmY + '" r="6.4" fill="' + luck.ink + '"/><circle cx="60" cy="' + charmY + '" r="3" fill="' + luck.aura + '"/>';
-  let worn = '';
+  /* Almost everything worn goes in front of the companion. Wings do not, so
+     there is a second slot for what belongs behind it. */
+  let worn = '', wornBack = '';
   const w = (wear && wear.id) || 'none';
   if (w === 'scarf') {
     worn = '<path d="M38 72 q22 14 44 0 q2 8 -4 12 q-18 9 -36 0 q-6 -4 -4 -12 Z" fill="#E1607F"/>'
@@ -13884,6 +14483,19 @@ function petSVG(kind, coat, mood, wear) {
       + '<path d="M30 74 q10 -8 18 -2 q-4 10 -18 10 Z" fill="#EDD08A" stroke="#B9913B" stroke-width="1.2"/>'
       + '<path d="M90 74 q-10 -8 -18 -2 q4 10 18 10 Z" fill="#EDD08A" stroke="#B9913B" stroke-width="1.2"/>'
       + '<path d="M60 88 l5 7 -5 7 -5 -7 Z" fill="#FFF3C4"/>';
+  } else if (w === 'wings') {
+    /* Each wing is a fan of long feathers turned about the shoulder, so it
+       opens the way a wing does instead of sitting there as a flat shape. The
+       beat lives on a group with no transform of its own: put it on one that
+       is already placed and the placement is thrown away. */
+    const fan = (flip) => {
+      const feath = [[-70, 34], [-56, 39], [-42, 40], [-28, 36], [-15, 28]].map((f, i) =>
+        '<ellipse cx="0" cy="' + (-f[1]) + '" rx="7.6" ry="' + f[1] + '" fill="' + (i % 2 ? '#FFFDF8' : '#F1E9FF')
+        + '" stroke="#D9C7F2" stroke-width="1" transform="rotate(' + f[0] + ')"/>').join('');
+      return '<g transform="translate(' + (flip ? 68 : 52) + ',84)' + (flip ? ' scale(-1,1)' : '') + '">' + feath + '</g>';
+    };
+    wornBack = '<g class="wingpair">' + fan(false) + fan(true) + '</g>';
+    worn = '<circle cx="60" cy="80" r="4.6" fill="#E5BE5E"/><circle cx="60" cy="80" r="2" fill="#FFF3C4"/>';
   }
   const headShape = art.headPath
     ? '<path d="' + art.headPath + '" fill="' + c.body + '"/>'
@@ -13907,12 +14519,12 @@ function petSVG(kind, coat, mood, wear) {
   if (art.only) {
     return '<svg viewBox="0 0 120 120" class="petart' + (art.glow ? ' myth' : '') + '" role="img" aria-label="' + esc(L(PET_NAMES[kind])) + '">'
       + (art.noHalo ? '' : halo) + '<ellipse cx="60" cy="112" rx="32" ry="6" fill="#C9A5D8" opacity=".28"/>'
-      + art.only + (art.noCharm ? '' : neck) + worn + '</svg>';
+      + wornBack + art.only + (art.noCharm ? '' : neck) + worn + '</svg>';
   }
   return '<svg viewBox="0 0 120 120" class="petart' + (art.glow ? ' myth' : '') + '" role="img" aria-label="' + esc(L(PET_NAMES[kind])) + '">'
     + halo
     + '<ellipse cx="60" cy="112" rx="32" ry="6" fill="#C9A5D8" opacity=".28"/>'
-    + (art.behind || '')
+    + (art.behind || '') + wornBack
     + '<ellipse cx="60" cy="88" rx="' + bRX + '" ry="' + bRY + '" fill="' + c.body + '"/>'
     + '<ellipse cx="60" cy="92" rx="' + (bRX * 0.6).toFixed(1) + '" ry="' + (bRY * 0.61).toFixed(1) + '" fill="#FFF7EE" opacity=".5"/>'
     + (art.feet === false ? '' : '<ellipse class="ft" cx="38" cy="104" rx="8" ry="5" fill="' + c.dark + '"/><ellipse class="ft wav" cx="82" cy="104" rx="8" ry="5" fill="' + c.dark + '"/>')
@@ -13992,7 +14604,7 @@ function renderPet(want) {
       + (prayed ? '<span class="done">✓ ' + esc(S.petPrevWish) + '</span>' : '<button class="btn' + (PETS.fedToday(p) ? '' : ' off') + '" id="pray">🙏 ' + esc(S.petPrevWish) + '</button>')
       + '</div>'
       + (bless ? '<div class="bless"><span class="q">' + luck.sym + '</span><p>' + esc(L(bless)) + '</p><span class="who">' + esc(p.name || L(PET_NAMES[p.kind])) + '</span></div>'
-        : '<p class="hint">' + esc(PETS.fedToday(p) ? S.petPrayHint : S.petNeedFeed) + '</p>')
+        : '<p class="hint prayhint">' + esc(PETS.fedToday(p) ? S.petPrayHint : S.petNeedFeed) + '</p>')
       + '<div class="lucktag" style="--ink:' + (luck.deep || luck.ink) + ';--aura:' + luck.aura + '">' + luck.sym + ' ' + esc(S.petBrings(L(luck.name))) + '</div>'
       + '<p class="petline">' + esc(L(petLine(p.kind))) + '</p>'
       + (petIsPro(p.kind) ? '<p class="mythline">✨ ' + esc(S.petMythBonus(MYTH_XP)) + '</p>' : '')
@@ -14053,14 +14665,16 @@ function renderPet(want) {
       ? '<div class="pettabs">' + pets.map((x) => '<button type="button" class="pt' + (x.kind === open ? ' on' : '') + '" data-open="' + x.kind + '">' + petSVG(x.kind, PETS.coat(x), 'happy', PETS.wear(x)) + '<b>' + esc(x.name || L(PET_NAMES[x.kind])) + '</b></button>').join('') + '</div>'
       : '';
     const room = PETS.room(), left = PETS.cap() - pets.length;
-    m.innerHTML = '<div class="eyebrow">' + esc(S.actTitle) + '</div><h1 style="margin-bottom:6px">🐾 ' + esc(p.name || L(PET_NAMES[p.kind])) + '</h1>'
+    m.innerHTML = '<div class="eyebrow">' + esc(S.actTitle) + '</div>'
+      + '<h1 class="pettitle" style="margin-bottom:6px"><span>🐾 ' + esc(p.name || L(PET_NAMES[p.kind])) + '</span>'
+      + '<button type="button" class="renamebtn" id="petrename" aria-label="' + esc(S.petRename) + '" title="' + esc(S.petRename) + '">✏️</button></h1>'
       + '<p class="muted">' + esc(S.petIntro) + '</p>'
       + tabs + petCardHTML(p)
       + (pets.length > 1 ? '<p class="hint ok" style="text-align:center">✨ ' + esc(S.petLuckTotal(pets.length)) + '</p>' : '')
       + (room
         ? '<button type="button" class="btn block" id="addpet" style="margin-top:12px">➕ ' + esc(S.petAdd) + (left > 1 ? ' · ' + esc(S.petRoomLeft(left)) : '') + '</button>'
         : (proOn() ? '' : '<a class="salebar" href="#/unlock"><span class="tag">✨ ' + esc(S.plusName) + '</span><span class="txt">' + esc(S.petPlusPitch) + '</span><span class="go">' + esc(S.unlockLink) + ' ›</span></a>'))
-      + '<div class="card"><label class="f" for="petname">' + esc(S.petName) + '</label><input id="petname" maxlength="24" value="' + esc(p.name || '') + '" placeholder="' + esc(L(PET_NAMES[p.kind])) + '">'
+      + '<div class="card petsetcard">'
       + '<label class="remind"><input type="checkbox" id="petremind"' + (petRemindOn() ? ' checked' : '') + '><span>' + esc(S.petRemind) + '</span></label>'
       + '<p class="hint">' + esc(S.petRemindHint) + '</p>'
       + '<button class="btn block" id="petswap" style="margin-top:10px">' + esc(pets.length > 1 ? S.petLetGo : S.petSwap) + '</button>'
@@ -14241,7 +14855,18 @@ function renderPet(want) {
       if (item.pro && !proOn()) { toast(S.petPlusItem); location.hash = '#/unlock'; return; }
       p[key] = id; PETS.put(p); draw();
     }));
-    $('#petname').addEventListener('input', () => { p.name = $('#petname').value.trim(); PETS.put(p); });
+    /* The pencil turns the title into a field and back again, so a name can be
+       changed from the top of the screen instead of the bottom. */
+    $('#petrename').addEventListener('click', () => {
+      const h = $('.pettitle');
+      h.innerHTML = '<input id="petname" maxlength="24" value="' + esc(p.name || '') + '" placeholder="' + esc(L(PET_NAMES[p.kind])) + '" aria-label="' + esc(S.petName) + '">'
+        + '<button type="button" class="renamebtn" id="petnameok" aria-label="' + esc(S.petRenameOk) + '" title="' + esc(S.petRenameOk) + '">\u2713</button>';
+      const inp = $('#petname');
+      const done = () => { p.name = inp.value.trim(); PETS.put(p); draw(); };
+      $('#petnameok').addEventListener('click', done);
+      inp.addEventListener('keydown', (e) => { if (e.key === 'Enter') { e.preventDefault(); done(); } });
+      inp.focus(); inp.select();
+    });
     const rem = $('#petremind');
     if (rem) rem.addEventListener('change', async () => {
       if (!rem.checked) { petRemindSet(false); return; }
@@ -14346,6 +14971,13 @@ function petWearArt(id) {
     return open + '<path d="M8 40 Q30 20 52 40" fill="none" stroke="#8FBF7F" stroke-width="3"/>' + bud(13, 38, '#F7A9C6') + bud(30, 26, '#FFF3C4') + bud(47, 38, '#C9B0EA') + '</svg>';
   }
   if (id === 'hat') return open + '<ellipse cx="30" cy="42" rx="24" ry="6" fill="#E8CFA0"/><path d="M12 42 L30 12 L48 42 Z" fill="#F0DFC8" stroke="#C6A98A" stroke-width="2"/><path d="M30 14 A9 9 0 1 0 30 32 A7 7 0 1 1 30 14 Z" fill="#E5BE5E"/></svg>';
+  if (id === 'wings') {
+    const fan = (flip) => '<g transform="translate(' + (flip ? 34 : 26) + ',44)' + (flip ? ' scale(-1,1)' : '') + '">'
+      + [[-70, 22], [-56, 25], [-42, 26], [-28, 23], [-15, 18]].map((f, i) =>
+        '<ellipse cx="0" cy="' + (-f[1]) + '" rx="5" ry="' + f[1] + '" fill="' + (i % 2 ? '#FFFDF8' : '#F1E9FF')
+        + '" stroke="#D9C7F2" stroke-width="1" transform="rotate(' + f[0] + ')"/>').join('') + '</g>';
+    return open + fan(false) + fan(true) + '<circle cx="30" cy="42" r="4" fill="#E5BE5E"/></svg>';
+  }
   /* The clothes get a picture of their own on the shelf; without one they fell
      through to the empty dashed circle. */
   if (id === 'jumper') return open + '<path d="M12 24 Q10 14 20 12 Q30 9 40 12 Q50 14 48 24 Q50 40 46 50 L14 50 Q10 40 12 24 Z" fill="#E1607F"/>'
@@ -14846,7 +15478,7 @@ function renderMe(args, params) {
   const S = T(), m = $('#main');
   const name = (PROFILE.name || '').trim();
   const head = '<div class="me-head"><div class="avatar">' + esc((name || '?').charAt(0).toUpperCase()) + '</div><div><b>' + esc(name || S.helloGuest) + '</b><span class="faint">' + esc(BE.user ? (BE.user.email || '') : S.localOnly) + '</span></div></div>';
-  m.innerHTML = head + '<div id="mebody"></div>';
+  m.innerHTML = head + loveBadgeHTML() + '<div id="mebody"></div>';
   const body = $('#mebody');
   const draw = () => {
     meCleanup();
@@ -15199,7 +15831,7 @@ function bindActs(root, list) {
 }
 function actStatus(a) { const S = T(); return actAnswered(a) ? '✓ ' + S.actHasResults : a.closed ? S.actClosed : S.actOpen; }
 /* The list grows: one labelled group per kind, the newest five shown, the rest behind "see more", plus filter chips. */
-const ACT_GROUPS = [['pile', '🃏', 'piles'], ['poll', '📊', 'polls'], ['wish', '🌠', 'wishes']];
+const ACT_GROUPS = [['pile', PILE_ICON, 'piles'], ['poll', '📊', 'polls'], ['wish', '🌠', 'wishes']];
 function actGroupsHTML(list) {
   const S = T(), SHOW = 5;
   const chips = '<div class="chips actfilter"><button type="button" class="chip on" data-filter="all">' + esc(S.actFilterAll) + '</button>' + ACT_GROUPS.map((g) => { const n = list.filter((a) => a.type === g[0]).length; return n ? '<button type="button" class="chip" data-filter="' + g[0] + '">' + g[1] + ' ' + esc(S.actTypes[g[0]]) + ' <span class="cnt">' + n + '</span></button>' : ''; }).join('') + '</div>';
@@ -15239,7 +15871,7 @@ async function renderPlay(args) {
   const GROUP_OF = { piles: 'pile', polls: 'poll', wishes: 'wish' };
   if (args && GROUP_OF[args[0]]) {
     const kind = GROUP_OF[args[0]], gl = list.filter((x) => x.type === kind);
-    m.innerHTML = '<div class="eyebrow">' + esc(S.actTitle) + '</div><h1 style="margin-bottom:6px">' + esc(S.actTypeIcon[kind] + ' ' + S.actTypes[kind]) + '</h1>'
+    m.innerHTML = '<div class="eyebrow">' + esc(S.actTitle) + '</div><h1 style="margin-bottom:6px">' + S.actTypeIcon[kind] + ' ' + esc(S.actTypes[kind]) + '</h1>'
       + '<p class="muted">' + esc(S.actGroupIntro[kind]) + '</p>'
       + '<div id="acts" class="actlist">' + (gl.length ? gl.map(actButtonHTML).join('') : '<p class="empty">' + esc(S.actEmpty) + '</p>') + '</div>'
       + '<p style="margin-top:14px"><a href="#/play" class="backlink">← ' + esc(S.actTitle) + '</a></p>';
@@ -15255,6 +15887,7 @@ async function renderPlay(args) {
   const diaryN = Object.keys(store.get('nabu-diary', {}) || {}).length;
   m.innerHTML = '<div class="eyebrow">' + esc(CONFIG.brand) + '</div><h1 style="margin-bottom:6px">' + esc(S.actTitle) + '</h1><p class="muted">' + esc(S.actIntro) + '</p><div id="acts" class="actlist">'
     + petRowHTML(S)
+    + '<a class="actbtn act-love live" href="#/love"><span class="ic">🧵</span><span class="body"><b>' + esc(S.loveTitle) + '</b><span class="meta">' + esc(S.loveSub) + '</span></span><span class="go">›</span></a>'
     + '<a class="actbtn act-tree live" href="#/play/tree"><span class="ic">🌸</span><span class="body"><b>' + esc(S.treeTitle) + '</b><span class="meta">' + esc(S.treeSub) + '</span></span><span class="go">›</span></a>'
     + '<a class="actbtn act-coin live" href="#/play/coin"><span class="ic">🪙</span><span class="body"><b>' + esc(S.coinTitle) + '</b><span class="meta">' + esc(S.coinSub) + '</span></span><span class="go">›</span></a>'
     + '<a class="actbtn act-diary live" href="#/play/diary"><span class="ic">📔</span><span class="body"><b>' + esc(S.diaryTitle) + '</b><span class="meta">' + esc(S.diarySub) + (diaryN ? ' · ' + esc(S.diaryCount(diaryN)) : '') + '</span></span><span class="chev">›</span></a>'
@@ -16131,10 +16764,11 @@ function adminSale(p) {
 ROUTES.admin = { nav: '', render: renderAdmin };
 
 /* ============================ boot ============================ */
-window.APP_VERSION = 'v110';
+window.APP_VERSION = 'v111';
 window.NABU = { CONFIG: CONFIG, SALE: SALE, salePrice: salePrice, loadActs: loadActs, BACK: BACK, LESSONS: LESSONS, localAnswer: localAnswer, compatVerdict: compatVerdict, numerologyOf: numerologyOf, ZDEEP: ZDEEP, lunarToday: lunarToday, solarToLunar: solarToLunar, DECK: DECK, INSIGHT: INSIGHT, KW: KW, ASK: ASK, TOPICS: TOPICS, GUIDES: GUIDES, SERVICES: SERVICES, COURSES: COURSES, ACCESS: ACCESS, ZODIAC: ZODIAC, pick: pick, book: book,
   insightHTML: insightHTML, insightOf: insightOf, sunSignIndex: sunSignIndex, lifePath: lifePath, PROFILE: () => PROFILE, BE: BE, ACTS: ACTS,
-  ANGELS: ANGELS, angelRead: angelRead, CODEBOOK: CODEBOOK, verifyCode: verifyCode, petHomeSVG: petHomeSVG, PET_HOMES: PET_HOMES, PET_WEARS: PET_WEARS, codeDigest: codeDigest, randomCode: randomCode, BANK: BANK, PETS: PETS, petSVG: petSVG, PET_COATS: PET_COATS, PET_KINDS: PET_KINDS, luckCut: luckCut, petLevel: petLevel, petStep: petStep, VOUCHERS: VOUCHERS, levelCoins: levelCoins, LOOKS: LOOKS };
+  ANGELS: ANGELS, angelRead: angelRead, CODEBOOK: CODEBOOK, verifyCode: verifyCode, petHomeSVG: petHomeSVG, PET_HOMES: PET_HOMES, PET_WEARS: PET_WEARS, codeDigest: codeDigest, randomCode: randomCode, BANK: BANK, PETS: PETS, petSVG: petSVG, PET_COATS: PET_COATS, PET_KINDS: PET_KINDS, luckCut: luckCut, petLevel: petLevel, petStep: petStep, VOUCHERS: VOUCHERS, levelCoins: levelCoins, LOOKS: LOOKS,
+  LOVE: LOVE, LOVEDB: LOVEDB, HANDLE_RE: HANDLE_RE, loveBadgeHTML: loveBadgeHTML };
 try { petRemindCheck(); } catch (e) { /* nothing kept yet */ }
 BE.initP = BE.init().catch(() => { /* backend unreachable: the app runs device-only */ });
 // The Gemini key is a dashboard setting kept in the app cloud (content/ai), never in the source.

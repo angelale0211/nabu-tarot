@@ -405,7 +405,10 @@ window.addEventListener('unhandledrejection', (e) => {
 const ROUTES = {};
 /* In-app history: the back arrow on a screen returns to the screen the
    visitor actually came from (home, a tab, a list), not to a fixed parent. */
-const NAV = { current: '', stack: [], popping: false, skip: false, scroll: {}, restore: null };
+/* cleanup: a screen that opens a live listener leaves one here, and the
+   router calls it on the way out so the listener does not outlive the
+   screen that wanted it. */
+const NAV = { current: '', stack: [], popping: false, skip: false, scroll: {}, restore: null, cleanup: null };
 try { NAV.stack = JSON.parse(sessionStorage.getItem('nabu-nav') || '[]'); } catch (e) { NAV.stack = []; }
 function navRemember(h) {
   // Where the visitor was on the screen they are leaving, so a return lands there.
@@ -431,6 +434,7 @@ function screenLabel(h) {
   if (r === 'privacy') return S.privacyTitle;
   if (r === 'install') return S.installTitle;
   if (r === 'play') return S.actTitle;
+  if (r === 'love') return S.loveTitle;
   if (r === 'me') return S.nav.me;
   if (r === 'learn') { if (!a.length) return S.learnTitle; if (a.length === 1 && S.cats[a[0]]) return S.cats[a[0]]; if (a[0] === 'fortune' && a.length === 2) return S.cats.fortune; }
   return S.back;
@@ -464,6 +468,7 @@ function route() {
   const r = parseHash();
   const def = ROUTES[r.route];
   if (!def) { redirect('#/home'); return; }
+  if (NAV.cleanup) { const c = NAV.cleanup; NAV.cleanup = null; try { c(); } catch (e) { /* already gone */ } }
   navRemember(location.hash || '#/home');
   renderChrome(def.nav);
   renderBackBar(r);

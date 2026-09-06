@@ -6,6 +6,20 @@
 const PICK_ICON = '<svg class="pickico" viewBox="0 0 100 172" aria-hidden="true"><rect x="3" y="3" width="94" height="166" rx="12" fill="#3D2A6E" stroke="#3B2A5E" stroke-width="4"/><rect x="14" y="14" width="72" height="144" rx="7" fill="none" stroke="#E5BE5E" stroke-width="2"/><path d="M58 58 A28 28 0 1 0 58 114 A22 22 0 1 1 58 58 Z" fill="#E5BE5E"/><circle cx="30" cy="36" r="4" fill="#E5BE5E"/><circle cx="70" cy="36" r="4" fill="#E5BE5E"/><circle cx="30" cy="136" r="4" fill="#E5BE5E"/><circle cx="70" cy="136" r="4" fill="#E5BE5E"/></svg>';
 
 /* Draw icon for 'Rút bài': a cream card lifted at an angle with a gold sparkle. */
+/* Picking a pile: three card backs fanned face down, the middle one carrying
+   the crescent used on the back of every card in the app. The crescent is cut
+   as one path with two circles and an even-odd fill, because an arc whose
+   radius is too small for its ends is quietly widened by the renderer into a
+   full circle. */
+const PILE_ICON = '<svg class="pileico" viewBox="0 0 120 96" aria-hidden="true">'
+  + '<g transform="rotate(-19 60 90)"><rect x="40" y="22" width="40" height="64" rx="7" fill="#4B3684" stroke="#E5BE5E" stroke-width="2.5"/><circle cx="60" cy="54" r="4.5" fill="#E5BE5E" opacity=".7"/></g>'
+  + '<g transform="rotate(19 60 90)"><rect x="40" y="22" width="40" height="64" rx="7" fill="#4B3684" stroke="#E5BE5E" stroke-width="2.5"/><circle cx="60" cy="54" r="4.5" fill="#E5BE5E" opacity=".7"/></g>'
+  + '<rect x="39" y="12" width="42" height="72" rx="8" fill="#3D2A6E" stroke="#E5BE5E" stroke-width="2.5"/>'
+  + '<rect x="45" y="18" width="30" height="60" rx="5" fill="none" stroke="#E5BE5E" stroke-width="1" opacity=".55"/>'
+  + '<path fill-rule="evenodd" fill="#E5BE5E" d="M60 48 m-13 0 a13 13 0 1 0 26 0 a13 13 0 1 0 -26 0 M66 43 m-11.5 0 a11.5 11.5 0 1 0 23 0 a11.5 11.5 0 1 0 -23 0"/>'
+  + '<path d="M52 26 l1.8 4 4 1.8 -4 1.8 -1.8 4 -1.8 -4 -4 -1.8 4 -1.8z" fill="#F6BBCB"/>'
+  + '<path d="M69 68 l1.6 3.6 3.6 1.6 -3.6 1.6 -1.6 3.6 -1.6 -3.6 -3.6 -1.6 3.6 -1.6z" fill="#AFC8F0"/>'
+  + '</svg>';
 const DRAW_ICON = '<svg class="pickico" viewBox="0 0 100 172" aria-hidden="true"><g transform="rotate(-8 50 86)"><rect x="8" y="8" width="84" height="156" rx="12" fill="#FBF3F5" stroke="#3B2A5E" stroke-width="4"/><rect x="18" y="18" width="64" height="136" rx="7" fill="none" stroke="#E5BE5E" stroke-width="2"/><path d="M50 52 l8 22 22 8 -22 8 -8 22 -8 -22 -22 -8 22 -8z" fill="#E5BE5E"/><path d="M72 30 l3 7 7 3 -7 3 -3 7 -3 -7 -7 -3 7 -3z" fill="#F6BBCB"/><path d="M28 132 l2.5 5.5 5.5 2.5 -5.5 2.5 -2.5 5.5 -2.5 -5.5 -5.5 -2.5 5.5 -2.5z" fill="#AFC8F0"/></g></svg>';
 const CONFIG = {
   brand: 'Nabu Tarot',

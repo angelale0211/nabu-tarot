@@ -102,12 +102,27 @@ html{-webkit-text-size-adjust:100%;touch-action:manipulation}
    h1 28/1.2 (-.01em)  screen title        h2 21/1.25  section      h3 17/1.3  card title
    body 16/1.55        paragraphs          .note/.tip 14.5/1.5  instructions  .hint/.faint 13.5/1.45  secondary
    .eyebrow 12/1.3 bold, +.06em uppercase (VI: normal case, +.02em)   nav 10.5 bold */
+/* A column, so the footer can be pushed to the foot of the screen on a short
+   page instead of floating up under the last card. The padding is the height
+   of the navigation bar, and because every box here measures border to
+   border, the footer's last line always ends the same distance above it. */
 body{margin:0;background:var(--bg);color:var(--fg);font-family:var(--body);font-size:16px;line-height:1.55;
-  -webkit-font-smoothing:antialiased;min-height:100vh;padding-bottom:calc(var(--nav-h) + env(safe-area-inset-bottom))}
+  -webkit-font-smoothing:antialiased;display:flex;flex-direction:column;min-height:100vh;min-height:100dvh;
+  padding-bottom:calc(var(--nav-h) + env(safe-area-inset-bottom))}
 a{color:var(--link)}
 button{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:pointer;-webkit-tap-highlight-color:transparent}
 input,textarea,select{font:inherit;color:var(--fg);background:var(--surface);border:1px solid var(--rule);border-radius:12px;padding:12px 14px;width:100%;max-width:100%;-webkit-appearance:none;appearance:none;margin:0}
 /* iOS renders date and time fields as small centred pills: give them the same box as every other field. */
+/* Every field here has the native look stripped, which for a checkbox also
+   takes the tick with it. So the box draws its own: a filled square in the
+   theme's accent with the tick cut out of it, which stays legible in the
+   light theme, the dark one and the pink one. */
+input[type=checkbox]{width:22px;height:22px;flex:none;padding:0;border:1.6px solid var(--rule);border-radius:7px;background:var(--surface);display:inline-grid;place-content:center;cursor:pointer;transition:background .12s,border-color .12s}
+input[type=checkbox]::before{content:'';width:12px;height:12px;transform:scale(0);transition:transform .12s ease-out;background:var(--primary-ink);clip-path:polygon(14% 46%,2% 60%,38% 96%,98% 20%,86% 8%,38% 70%)}
+input[type=checkbox]:checked{background:var(--primary);border-color:var(--primary)}
+input[type=checkbox]:checked::before{transform:scale(1)}
+input[type=checkbox]:focus-visible{outline:2px solid var(--link);outline-offset:2px}
+@media (prefers-reduced-motion:reduce){input[type=checkbox],input[type=checkbox]::before{transition:none}}
 input[type=date],input[type=time]{display:flex;align-items:center;min-height:50px;line-height:1.3;text-align:left}
 input::-webkit-date-and-time-value{text-align:left;min-height:1.3em}
 button{-webkit-appearance:none;appearance:none;max-width:100%}
@@ -401,7 +416,7 @@ main{padding:22px 0 30px}
 #unlockwrap .paywall{margin-top:0}
 
 /* ---- footer ---- */
-.foot{border-top:1px solid var(--rule-soft);padding:22px 0 26px;color:var(--fg-soft);font-size:13px}
+.foot{margin-top:auto;border-top:1px solid var(--rule-soft);padding:22px 0 26px;color:var(--fg-soft);font-size:13px}
 .foot .wrap{display:flex;flex-direction:column;gap:6px;align-items:flex-start}
 .foot svg{width:150px;height:40px;flex:none}
 .foot b{color:var(--fg)}
@@ -591,6 +606,12 @@ main{padding:22px 0 30px}
 .paywall .price{font-family:var(--display);font-size:28px;margin:10px 0 14px}
 .paywall .price span{font-family:var(--body);font-size:14px;color:var(--fg-faint)}
 .pickico{width:22px;height:38px;vertical-align:middle;display:inline-block;filter:drop-shadow(0 2px 4px var(--shade))}
+/* The fanned piles: wider than it is tall, so it needs its own sizes in each
+   place it appears rather than the row's font size. */
+.pileico{width:36px;height:29px;vertical-align:middle;display:inline-block;filter:drop-shadow(0 2px 4px var(--shade))}
+.actquick .aq .ic .pileico{width:30px;height:24px}
+.actfilter .chip .pileico{width:22px;height:18px;vertical-align:-4px;margin-right:1px}
+h1 .pileico{width:34px;height:27px;vertical-align:-3px;margin-right:2px}
 .tile .ic .pickico{width:24px;height:41px}
 .svc .t .ic .pickico{width:20px;height:34px}
 .tile .lock{font-size:16px;vertical-align:middle}
@@ -885,11 +906,32 @@ main{padding:22px 0 30px}
 @keyframes blinking{0%,90%,100%{transform:scaleY(1)}93%{transform:scaleY(.08)}96%{transform:scaleY(1)}}
 .petstage .petart .ft.wav{transform-box:fill-box;transform-origin:20% 60%;animation:pawwave 5.8s ease-in-out infinite}
 @keyframes pawwave{0%,62%,100%{transform:rotate(0) translateY(0)}70%{transform:rotate(-24deg) translateY(-5px)}78%{transform:rotate(6deg) translateY(-5px)}86%{transform:rotate(-20deg) translateY(-5px)}94%{transform:rotate(0) translateY(0)}}
-@media (prefers-reduced-motion:reduce){.petstage .petart,.petpick .petart,.petstage .petart .ft.wav,.petstage .petart .eyes{animation:none}}
+@media (prefers-reduced-motion:reduce){.petstage .petart,.petpick .petart,.petstage .petart.myth,.petpick .petart.myth,.petstage .petart .ft.wav,.petstage .petart .eyes{animation:none}}
 /* The companion stands to the left of centre, in front of its own place. */
 .petstage .petart{position:absolute;left:5%;bottom:1%;width:68%;height:auto}
 /* A spirit beast is lit from within, so it reads as the rarer thing. */
-.petart.myth{filter:drop-shadow(0 0 6px rgba(229,190,94,.55));animation:mythglow 3.6s ease-in-out infinite}
+/* The glow used to be set on its own and replaced the breathing, which left
+   the paid companions as the only still ones. Both run now, on different
+   properties, and the spirit beast's timeline is the livelier of the two:
+   it sways as it breathes and hovers at the top of its hop. */
+.petart.myth{filter:drop-shadow(0 0 6px rgba(229,190,94,.55))}
+.petstage .petart.myth,.petpick .petart.myth{animation:mythalive 6.6s cubic-bezier(.37,0,.63,1) infinite,mythglow 3.6s ease-in-out infinite}
+@keyframes mythalive{
+  0%{transform:translateY(0) rotate(0deg) scaleY(1)}
+  8%{transform:translateY(-5px) rotate(-1.2deg) scaleY(1.03)}
+  16%{transform:translateY(-1px) rotate(0deg) scaleY(1)}
+  24%{transform:translateY(-6px) rotate(1.2deg) scaleY(1.03)}
+  32%{transform:translateY(0) rotate(0deg) scaleY(1)}
+  40%{transform:translateY(-4px) rotate(-1deg) scaleY(1.02)}
+  48%{transform:translateY(0) rotate(0deg) scaleY(1)}
+  56%{transform:translateY(2px) scaleY(.92)}
+  64%{transform:translateY(-22px) rotate(2deg) scaleY(1.08)}
+  71%{transform:translateY(-15px) rotate(-2deg) scaleY(1.04)}
+  78%{transform:translateY(0) scaleY(.94)}
+  84%{transform:translateY(0) scaleY(1.02)}
+  92%{transform:translateY(-5px) rotate(0deg) scaleY(1.03)}
+  100%{transform:translateY(0) rotate(0deg) scaleY(1)}
+}
 @keyframes mythglow{0%,100%{filter:drop-shadow(0 0 4px rgba(229,190,94,.4))}50%{filter:drop-shadow(0 0 10px rgba(229,190,94,.75))}}
 .petstage .aura{left:12%;top:26%;width:64%;height:58%}
 /* What can be given to a companion, on the edge of its own scene. */
@@ -1018,6 +1060,32 @@ main{padding:22px 0 30px}
 .actquick .aq{display:flex;flex-direction:column;align-items:center;gap:5px;background:var(--surface);border:1px solid var(--rule-soft);border-radius:14px;padding:10px 4px;text-decoration:none;color:inherit;min-width:0}
 .actquick .aq .ic{font-size:21px;line-height:1}
 .actquick .aq b{font-size:11px;font-weight:600;line-height:1.25;text-align:center;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
+/* ---- the red thread ---- */
+.lovecard{text-align:center}
+.threadart{display:block;width:100%;max-width:250px;margin:0 auto 4px}
+@keyframes knotbeat{0%,100%{transform:scale(1)}50%{transform:scale(1.13)}}
+.knot.beat{transform-origin:120px 109px;animation:knotbeat 2.8s ease-in-out infinite}
+@media (prefers-reduced-motion:reduce){.knot.beat{animation:none}}
+.lovecard .lead{margin:0 0 10px;color:var(--fg-soft)}
+.lovecard .pair{display:flex;align-items:center;justify-content:center;gap:10px;flex-wrap:wrap;font-family:var(--display);font-size:16px;font-weight:600}
+.lovecard .pair i{font-style:normal;font-size:14px}
+.lovecard .daysbig{display:flex;flex-direction:column;align-items:center;margin:12px 0 2px}
+.lovecard .daysbig b{font-family:var(--display);font-size:44px;line-height:1;color:#C41F3A}
+.lovecard .daysbig span{font-size:12.5px;color:var(--fg-soft);letter-spacing:.04em}
+.lovecard .since{margin:2px 0 0;font-size:13.5px;color:var(--fg-soft)}
+/* The number is drawn in the thread's own red, which is too deep to read on a
+   dark ground, so the dark themes take a lighter one. */
+:root[data-theme="dark"] .lovecard .daysbig b{color:#FF8FA3}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .lovecard .daysbig b{color:#FF8FA3}}
+.reqcard b{display:block;font-family:var(--display);font-size:15.5px}
+.reqcard .note{margin:8px 0 0;font-size:14px;background:var(--surface-2);border-radius:12px;padding:9px 12px;text-align:left}
+.reqcard.found{margin:12px 0 0;border-color:var(--lav)}
+.athandle .at{flex:none;color:var(--fg-faint);font-weight:600;font-size:17px}
+/* The tag on the profile: a fixed blush ground, so a fixed ink to go on it. */
+.lovetag{display:inline-flex;align-items:center;gap:7px;background:#FCE4E9;color:#8A1F33;border:1px solid #F3B7C3;border-radius:999px;padding:5px 13px;font-size:13px;font-weight:600;text-decoration:none;margin:0 0 14px}
+.lovetag .d{color:#A85267;font-weight:500}
+.actbtn.act-love{border-color:#F3B7C3}
+
 /* ---- angel numbers ---- */
 .sr{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0}
 .angelpad{text-align:center}
@@ -1027,7 +1095,16 @@ main{padding:22px 0 30px}
 .keypad .key:active{background:var(--surface);transform:scale(.96)}
 .keypad .key.go{background:var(--primary);color:var(--primary-ink);border-color:var(--primary)}
 .sigil{display:block;height:auto}
-.angelanswer{border:1.5px solid var(--ink);background:linear-gradient(180deg,var(--aura),var(--surface))}
+/* The wash is the number's own pastel and never changes; the text follows
+   the theme. So the pastel is laid on as a layer rather than painted as the
+   background: in the light it reads as before, and in the dark it thins to a
+   tint of the same colour over the dark surface, which the pale ink can sit
+   on. */
+.angelanswer{position:relative;border:1.5px solid var(--ink);background:var(--surface);overflow:hidden}
+.angelanswer::before{content:'';position:absolute;inset:0;background:linear-gradient(180deg,var(--aura),transparent 82%);pointer-events:none}
+.angelanswer>*{position:relative}
+:root[data-theme="dark"] .angelanswer::before{opacity:.22}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .angelanswer::before{opacity:.22}}
 .angelanswer .head{display:flex;align-items:center;gap:12px;margin-bottom:8px}
 .angelanswer .head b{display:block;font-family:var(--display);font-size:17px;font-weight:600}
 .angelanswer .head span{font-size:13px;color:var(--fg-soft)}
@@ -1070,13 +1147,25 @@ main{padding:22px 0 30px}
 /* What the companion answers with, once a day. */
 /* Its own space at both ends, so neither the marker above nor the badge
    below it ever collides with the text. */
+/* Everything the card says about the day - fed, still full, feed before you
+   pray - is one voice and sits in the middle of the card. */
+#main .petwrap p.hint{text-align:center}
+#main .petwrap p.prayhint{margin:14px 0 4px}
+.petwrap .lucktag{display:flex;width:max-content;max-width:100%;margin:16px auto 0}
 .bless{position:relative;margin:22px 0 18px;padding:18px 16px 14px;border-radius:14px;background:var(--surface-2);border:1px solid var(--rule-soft)}
 .bless .q{position:absolute;top:-13px;left:14px;background:var(--surface);border:1px solid var(--rule-soft);border-radius:999px;padding:2px 8px;font-size:15px;line-height:1.2}
 #main .bless p{margin:0 0 8px;font-size:14.5px;line-height:1.65;text-align:center;text-wrap:balance;hyphens:none}
 .bless .who{display:block;text-align:center;font-size:12px;color:var(--fg-soft)}
 .btn.off{opacity:.55}
 /* Switching between the companions you keep. */
-.pettabs{display:flex;gap:8px;margin-bottom:12px;overflow-x:auto;padding-bottom:2px}
+/* The title holds the name and the pencil that edits it in place. */
+#main h1.pettitle{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.pettitle input{flex:1 1 160px;min-width:0;max-width:260px;font-size:17px;padding:8px 12px}
+.renamebtn{flex:none;width:34px;height:34px;border:1px solid var(--rule);border-radius:50%;background:var(--surface);font-size:15px;line-height:1;display:grid;place-content:center}
+.petsetcard{margin-top:18px}
+/* Six at most, so they fit on two rows and sit in the middle rather than
+   sliding off to the left. */
+.pettabs{display:flex;flex-wrap:wrap;justify-content:center;gap:8px;margin-bottom:12px;padding-bottom:2px}
 .pettabs .pt{flex:0 0 auto;display:flex;flex-direction:column;align-items:center;gap:2px;width:74px;background:var(--surface);border:1px solid var(--rule-soft);border-radius:14px;padding:6px 4px;font:inherit;color:inherit;cursor:pointer}
 .pettabs .pt svg{width:42px;height:42px}
 .pettabs .pt b{font-size:11px;font-weight:600;line-height:1.25;text-align:center}
@@ -1108,6 +1197,10 @@ main{padding:22px 0 30px}
 #main p.mythline{text-align:center;margin:0 0 10px;font-size:13px;font-weight:600;color:var(--gold-deep)}
 /* The sparks on a spirit beast, and its steadier glow. */
 .petart .sparks .twinkle{animation:twinkling 2.8s ease-in-out infinite}
+/* A slow beat, from a group that carries no placement of its own. */
+@keyframes wingbeat{0%,100%{transform:scaleX(1) translateY(0)}50%{transform:scaleX(.9) translateY(-1.5px)}}
+.petart .wingpair{transform-box:view-box;transform-origin:60px 84px;animation:wingbeat 3.2s ease-in-out infinite}
+@media (prefers-reduced-motion:reduce){.petart .wingpair{animation:none}}
 .petpick .pp-lock{position:absolute;top:8px;right:9px;font-size:14px}
 .petpick .pp-on{position:absolute;top:8px;left:9px;color:var(--primary);font-weight:700}
 /* The companions stand at the foot of the tree rather than in the branches. */
