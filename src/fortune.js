@@ -5,10 +5,12 @@
    #/learn/fortune/cards      playing cards -> the matching tarot card
    #/learn/fortune/tea        tea-leaf cup map + symbol glossary + practice draw
    #/learn/fortune/animals    the 12 animals wheel, trios and clashes */
+/* Kept out of FT so it never shows up in the free hub, but it still needs a
+   heading of its own for the people who bought the course. */
+const FT_CARDS = { ic: '🂡', vi: ['Bói bài Tây', '52 lá, nghĩa truyền thống + tarot'], en: ['Playing cards', '52 cards, traditional meanings + tarot'] };
 const FT = {
   numbers: { ic: '🔢', vi: ['Thần số học', 'Số của bạn, từ ngày sinh và tên'], en: ['Numerology', 'Your numbers, from birth date and name'] },
   palm: { ic: '🖐️', vi: ['Xem chỉ tay', 'Bản đồ bàn tay, chạm từng đường'], en: ['Palm reading', 'A map of the hand, tap each line'] },
-  cards: { ic: '🂡', vi: ['Bói bài Tây', '52 lá, nghĩa truyền thống + tarot'], en: ['Playing cards', '52 cards, traditional meanings + tarot'] },
   tea: { ic: '🍵', vi: ['Bài trà', 'Bản đồ tách trà và các hình'], en: ['Tealeaf fortune telling', 'Cup map and the shapes'] },
   animals: { ic: '🐉', vi: ['12 con giáp', 'Vòng con giáp, tam hợp, tứ hành xung'], en: ['12 animals', 'The wheel, trios and clashes'] }
 };
@@ -77,7 +79,12 @@ function renderFortune(tool) {
   const back = backLink('#/learn/fortune', S.cats.fortune), title = (k) => '<div class="eyebrow">' + esc(S.cats.fortune) + '</div><h1 style="margin-bottom:8px">' + FT[k].ic + ' ' + esc(FT[k][lang][0]) + '</h1>';
   if (tool === 'numbers') return renderNumbersTool(m, back + title('numbers'));
   if (tool === 'palm') return renderPalm(m, back + title('palm'));
-  if (tool === 'cards') { if (gate('playing', '#/learn/playing')) return; return renderPlayingCards(m, back + title('cards')); }
+  // Reading playing cards belongs to the course now, not to the free tools:
+  // it is kept for anyone who has the course and hidden from everyone else.
+  if (tool === 'cards') {
+    if (!ACCESS.has('playing')) { redirect('#/learn/playing'); return; }
+    return renderPlayingCards(m, backLink('#/learn/playing', S.cats.playing) + '<div class="eyebrow">' + esc(S.cats.playing) + '</div><h1 style="margin-bottom:8px">' + FT_CARDS.ic + ' ' + esc(FT_CARDS[lang][0]) + '</h1>');
+  }
   if (tool === 'tea') return renderTea(m, back + title('tea'));
   if (tool === 'animals') return renderAnimals(m, back + title('animals'));
   redirect('#/learn/fortune');

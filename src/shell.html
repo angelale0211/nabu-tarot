@@ -124,6 +124,14 @@ p{margin:0 0 12px}
    prettified: both narrow the whole block and leave the right side of the card
    empty, which is far worse than a short last line. */
 h1,h2,h3,.eyebrow{text-wrap:balance}
+/* Paragraphs line up on both edges. Only a line that wraps is stretched and
+   the last line of a block never is, so a one-line caption or a two-word note
+   is untouched; nothing else has to be excluded by length. */
+#main p,#main li,.note span,#foot .tagline{text-align:justify;text-justify:inter-word}
+/* Blocks that are deliberately centred keep their own alignment. */
+#main .pick-head p,#main .paynote,#main #tour p,#main .treewrap p,#main .coinwrap p,#main .done p,#main .paywall p{text-align:center}
+/* And these read as labels rather than prose. */
+#main .eyebrow,#main .date,#main .meta,#main .st,#main .kwl,#main .steps li{text-align:inherit;text-justify:auto}
 .wrap{max-width:600px;margin:0 auto;padding:0 18px}
 
 /* ---- header ---- */
