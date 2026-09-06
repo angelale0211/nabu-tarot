@@ -429,17 +429,31 @@ function renderUnlock() {
       + '<div class="sec"><h2 style="margin-bottom:8px">' + esc(S.unlockCourses) + '</h2>' + group(['tarot', 'lenormand', 'playing', 'manifest']) + '</div>'
       + '<div class="sec"><h2 style="margin-bottom:8px">' + esc(S.unlockActs) + '</h2>' + group(['luck', 'coin', 'tree']) + '</div>'
       + (isTWA() ? '' : '<div class="sec"><h2 style="margin-bottom:8px">' + esc(S.unlockCart) + '</h2><div id="ucart">' + unlockCartHTML() + '</div>'
-        + '<button class="btn primary block" id="usend" style="margin-top:12px">' + esc(S.unlockSend) + '</button></div>')
+        + '<button class="btn primary block" id="usend" style="margin-top:12px">' + esc(S.unlockSend) + '</button>'
+        + '<p class="hint" id="ustatus">' + esc(BE.enabled && BE.user ? '' : S.unlockSendMsg) + '</p></div>')
       + (isTWA() ? '' : '<div class="sec card"><h3 style="margin-bottom:10px">' + esc(S.unlockHow) + '</h3><ol class="steps">'
         + [S.unlockStep1, S.unlockStep2, S.unlockStep3].map((x) => '<li>' + esc(x) + '</li>').join('') + '</ol></div>')
       + '<div class="card"><label class="f" for="ucode">' + esc(S.unlockCodeLabel) + '</label><div class="row nw"><input id="ucode" placeholder="' + esc(S.luckCodePh) + '" autocapitalize="characters"><button class="btn" id="ugo">' + esc(S.unlock) + '</button></div><p class="hint" id="ustatus"></p></div>'
       + (isTWA() ? '' : '<p style="margin-top:14px"><a class="backlink" href="#/prices">' + esc(S.unlockReadings) + ' →</a></p>');
     $$('[data-unl]', m).forEach((b) => b.addEventListener('click', () => { UNL_CART.toggle(b.getAttribute('data-unl')); draw(); }));
     const send = $('#usend');
-    if (send) send.addEventListener('click', () => {
-      const msg = unlockMessage();
-      if (!msg) { toast(S.unlockEmpty); return; }
-      store.set('nabu-contact-draft', msg); location.hash = '#/contact';
+    if (send) send.addEventListener('click', async () => {
+      const ids = UNL_CART.get(), rows = COURSES.filter((c) => ids.indexOf(c.id) > -1 && !ACCESS.has(c.id));
+      if (!rows.length) { toast(S.unlockEmpty); return; }
+      const st = $('#ustatus');
+      if (BE.enabled && BE.user) {
+        send.disabled = true;
+        try {
+          await BE.createUnlockOrder(rows.map((c) => ({ id: c.id, name: L(c.name), price: c.price })), rows.reduce((n, c) => n + c.price, 0));
+          UNL_CART.set([]); toast(S.unlockSent); draw();
+          const s2 = $('#ustatus'); if (s2) { s2.textContent = S.unlockSent; s2.className = 'hint ok'; }
+          return;
+        } catch (e) { st.textContent = S.publishFail + ': ' + e.message; st.className = 'hint err'; }
+        send.disabled = false; return;
+      }
+      // No account yet: keep the message route so the order still reaches Nabu.
+      store.set('nabu-contact-draft', unlockMessage());
+      location.hash = BE.enabled ? '#/me?next=unlock' : '#/contact';
     });
     $('#ugo').addEventListener('click', () => {
       const r = parseCode($('#ucode').value), st = $('#ustatus');
