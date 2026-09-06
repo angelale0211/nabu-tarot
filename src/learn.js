@@ -14,7 +14,7 @@ function paywallHTML(courseId) {
   const expired = a && a < isoDate(new Date());
   return '<div class="paywall"><div class="ic">🔒</div><h2>' + esc(L(c.name)) + '</h2><p class="muted">' + esc(L(c.blurb)) + '</p>'
     + '<ul class="inc">' + L(c.includes).map((x) => '<li>' + esc(x) + '</li>').join('') + '</ul>'
-    + (isTWA() ? '' : '<div class="price">' + fmtPrice(c.price) + ' <span>/ ' + c.months + ' ' + esc(S.months6) + '</span></div>')
+    + (isTWA() ? '' : '<div class="price">' + priceHTML(c.price, 'unlock') + ' <span>/ ' + c.months + ' ' + esc(S.months6) + '</span></div>')
     + (expired ? '<p class="hint err">' + esc(S.courseExpired(a)) + '</p>' : '')
     + (isTWA() ? '<p class="hint" style="margin:8px 0">' + esc(S.storeCodeHint) + '</p>' : '<a class="btn primary block" data-buy="' + courseId + '" href="' + (CONFIG.instagram ? 'https://ig.me/m/' + esc(CONFIG.instagram) : '#/me') + '" target="_blank" rel="noopener">' + esc(S.buyCourse) + '</a>'
     + '<p class="hint" style="margin:8px 0">' + esc(S.buyHint) + '</p>')
@@ -254,7 +254,12 @@ function renderAstro() {
     } else if (t === 'planets') {
       const showPlanet = (id) => { const p = PLANETS.filter((x) => x.id === id)[0]; $('#porbit', panel).innerHTML = planetOrbitSVG(id); $('#pout', panel).innerHTML = '<div class="nrow"><span class="ic">' + p.g + '</span><div><b>' + esc(p.name[lang]) + ' · ' + esc(lang === 'vi' ? 'chủ cung ' : 'rules ') + ZSIGN[p.rules].g + ' ' + esc(ZSIGN[p.rules][lang]) + '</b><p>' + esc(p[lang]) + '</p></div></div>'; $$('[data-pl]', panel).forEach((b) => b.classList.toggle('on', b.getAttribute('data-pl') === id)); };
       panel.innerHTML = '<div class="visual"><div id="porbit"></div><div class="chips">' + PLANETS.map((p) => '<button class="chip" data-pl="' + p.id + '">' + p.g + ' ' + esc(p.name[lang]) + '</button>').join('') + '</div></div><div class="ins" id="pout"></div>';
-      $$('[data-pl]', panel).forEach((b) => b.addEventListener('click', () => showPlanet(b.getAttribute('data-pl'))));
+      // Delegated, because the strip is rebuilt each time a planet is chosen and
+      // handlers bound to the old nodes would be thrown away with them.
+      panel.addEventListener('click', (e) => {
+        const t = e.target.closest ? e.target.closest('[data-pl]') : null;
+        if (t) showPlanet(t.getAttribute('data-pl'));
+      });
       showPlanet('sun');
     } else if (t === 'houses') {
       const showHouse = (n) => { const h = HOUSES[n - 1]; $('#hwheel', panel).innerHTML = houseWheelSVG(n); $('#hout', panel).innerHTML = '<div class="nrow"><span class="ic" style="font-family:var(--display);font-size:30px">' + n + '</span><div><b>' + esc(h[lang][0]) + '</b><p>' + esc(h[lang][1]) + '</p></div></div>'; $$('[data-house]', panel).forEach((p) => p.addEventListener('click', () => showHouse(Number(p.getAttribute('data-house'))))); };
@@ -268,6 +273,19 @@ function renderAstro() {
   };
   show('signs');
   $$('#atabs button').forEach((b) => b.addEventListener('click', () => { $$('#atabs button').forEach((x) => x.classList.toggle('on', x === b)); show(b.getAttribute('data-t')); }));
+}
+/* The twelve signs read as a wheel, so the arrows wrap around: the sign before
+   Aries is Pisces. Free to use, like the rest of the astrology pages. */
+function signNavHTML(key) {
+  const i = ZKEYS.indexOf(key);
+  if (i < 0) return '';
+  const at = (k) => {
+    const z = ZSIGN[ZKEYS[(k + ZKEYS.length) % ZKEYS.length]];
+    return { href: '#/learn/sign/' + ZKEYS[(k + ZKEYS.length) % ZKEYS.length], label: z.g + ' ' + z[lang] };
+  };
+  const link = (it, dir) => '<a class="' + (dir < 0 ? 'prev' : 'next') + '" href="' + it.href + '">'
+    + (dir < 0 ? '<span class="ar">←</span>' : '') + '<b>' + esc(it.label) + '</b>' + (dir > 0 ? '<span class="ar">→</span>' : '') + '</a>';
+  return '<div class="cardnav">' + link(at(i - 1), -1) + link(at(i + 1), 1) + '</div>';
 }
 function renderSign(key) {
   const S = T(), m = $('#main'), z = ZSIGN[key];
@@ -283,7 +301,7 @@ function renderSign(key) {
     + '<div class="ins"><h3>' + esc(S.strengths) + '</h3><div class="kwl">' + ZDEEP[key][lang].strengths.map((k) => '<span>' + esc(k) + '</span>').join('') + '</div><h3>' + esc(S.challenges) + '</h3><div class="kwl neg">' + ZDEEP[key][lang].challenges.map((k) => '<span>' + esc(k) + '</span>').join('') + '</div><h3>' + esc(S.compat) + '</h3><div class="awrapper">' + zodiacRingSVG(key, ZDEEP[key].compat) + '</div><div class="chips">' + ZDEEP[key].compat.map((k) => '<a class="chip lav" href="#/learn/sign/' + k + '">' + ZSIGN[k].g + ' ' + esc(ZSIGN[k][lang]) + '</a>').join('') + '</div></div>'
     + '<div class="ins"><h3>' + esc(S.moonSign) + '</h3><p>' + esc(ZDEEP[key][lang].moon) + '</p><h3>' + esc(S.risingSign) + '</h3><p>' + esc(ZDEEP[key][lang].rising) + '</p></div>'
     + '<div class="ins"><h3>' + esc(S.signCards) + '</h3><div class="mini">' + cards.map((id) => miniHTML(id, true)).join('') + '</div><p class="faint">' + cards.map((id) => cardById(id).name + ': ' + astroLine(id)).map(esc).join('<br>') + '</p></div>'
-    + aiPanelHTML({ type: 'sign', key: key }) + '</div>';
+    + aiPanelHTML({ type: 'sign', key: key }) + signNavHTML(key) + '</div>';
   bindCardLinks(m); bindAI(m);
   $$('[data-zsign]', m).forEach((b) => b.addEventListener('click', () => { location.hash = '#/learn/sign/' + b.getAttribute('data-zsign'); }));
 }
@@ -397,7 +415,7 @@ const UNL_CART = {
 function unlockRowHTML(c) {
   const S = T(), until = ACCESS.get()[c.id], open = ACCESS.has(c.id) || (c.id !== 'luck' && ACCESS.has('luck'));
   const picked = !open && UNL_CART.has(c.id);
-  const body = '<div class="unl-h"><b>' + esc(L(c.name)) + '</b>' + (isTWA() ? '' : '<span class="pr">' + fmtPrice(c.price) + '</span>') + '</div>'
+  const body = '<div class="unl-h"><b>' + esc(L(c.name)) + '</b>' + (isTWA() ? '' : '<span class="pr">' + priceHTML(c.price, 'unlock') + '</span>') + '</div>'
     + '<p class="hint">' + esc(L(c.sum || c.blurb)) + '</p>'
     + '<div class="unl-f">' + (c.id === 'luck' ? '<span class="chip pink">' + esc(S.unlockBest) + '</span>' : '')
     + '<span class="unl-st">' + (open ? '✓ ' + esc(ACCESS.isAdmin() && !until ? S.adminShort : S.unlockOpenUntil(fmtDate(until)))
@@ -409,15 +427,15 @@ function unlockCartHTML() {
   const S = T(), ids = UNL_CART.get().filter((id) => COURSES.some((c) => c.id === id) && !ACCESS.has(id));
   if (!ids.length) return '<p class="hint">' + esc(S.unlockEmpty) + '</p>';
   const rows = COURSES.filter((c) => ids.indexOf(c.id) > -1);
-  const total = rows.reduce((n, c) => n + c.price, 0);
-  return '<div class="sum">' + rows.map((c) => '<div class="r"><span>' + esc(L(c.name)) + '</span><b>' + fmtPrice(c.price) + '</b></div>').join('')
+  const total = rows.reduce((n, c) => n + salePrice(c.price, 'unlock'), 0);
+  return '<div class="sum">' + rows.map((c) => '<div class="r"><span>' + esc(L(c.name)) + '</span><b>' + priceHTML(c.price, 'unlock') + '</b></div>').join('')
     + '<div class="r tot"><span>' + esc(S.unlockTotal) + '</span><b>' + fmtPrice(total) + '</b></div></div>';
 }
 function unlockMessage() {
   const S = T(), ids = UNL_CART.get(), rows = COURSES.filter((c) => ids.indexOf(c.id) > -1 && !ACCESS.has(c.id));
   if (!rows.length) return '';
-  const total = rows.reduce((n, c) => n + c.price, 0);
-  return '🔓 ' + S.unlockMsgHead + '\n' + rows.map((c) => '• ' + L(c.name) + ': ' + fmtPrice(c.price)).join('\n')
+  const total = rows.reduce((n, c) => n + salePrice(c.price, 'unlock'), 0);
+  return '🔓 ' + S.unlockMsgHead + '\n' + rows.map((c) => '• ' + L(c.name) + ': ' + fmtPrice(salePrice(c.price, 'unlock'))).join('\n')
     + '\n💰 ' + S.unlockTotal + ': ' + fmtPrice(total);
 }
 function renderUnlock() {
@@ -444,7 +462,7 @@ function renderUnlock() {
       if (BE.enabled && BE.user) {
         send.disabled = true;
         try {
-          await BE.createUnlockOrder(rows.map((c) => ({ id: c.id, name: L(c.name), price: c.price })), rows.reduce((n, c) => n + c.price, 0));
+          await BE.createUnlockOrder(rows.map((c) => ({ id: c.id, name: L(c.name), price: salePrice(c.price, 'unlock') })), rows.reduce((n, c) => n + salePrice(c.price, 'unlock'), 0));
           UNL_CART.set([]); toast(S.unlockSent); draw();
           const s2 = $('#ustatus'); if (s2) { s2.textContent = S.unlockSent; s2.className = 'hint ok'; }
           return;

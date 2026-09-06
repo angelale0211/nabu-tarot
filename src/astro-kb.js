@@ -71,6 +71,30 @@ const MOON_NAMES = {
   en: ['New Moon', 'Waxing crescent', 'First quarter', 'Waxing gibbous', 'Full Moon', 'Waning gibbous', 'Last quarter', 'Waning crescent']
 };
 const MOON_ICONS = ['🌑', '🌒', '🌓', '🌔', '🌕', '🌖', '🌗', '🌘'];
+/* One short reading per phase: what the sky is doing, and what the phase is
+   usually used for. */
+const MOON_TEXT = {
+  vi: [
+    'Mặt Trăng đi qua giữa Trái Đất và Mặt Trời, nên bầu trời gần như không có trăng. Đây là lúc mọi thứ bắt đầu từ con số không, hợp để bạn đặt một ý định mới và viết ra điều mình muốn.',
+    'Một vành sáng mảnh vừa hiện ra sau khi trời tối. Ý định của bạn đã nhú lên thành việc cụ thể, và đây là lúc làm bước đầu tiên dù nó còn nhỏ.',
+    'Một nửa mặt trăng sáng, một nửa còn tối. Đây thường là lúc gặp trở ngại đầu tiên, và bạn cần quyết định giữ hay đổi cách làm.',
+    'Trăng đã sáng hơn nửa và đang lớn dần về phía tròn. Đây là lúc bạn chỉnh sửa, làm cho tốt hơn và kiên nhẫn với phần việc còn dở.',
+    'Trăng sáng trọn vẹn và nằm đối diện Mặt Trời. Mọi chuyện hiện rõ nhất lúc này, cả điều bạn vui lẫn điều bạn đã né tránh. Đây là lúc để nhìn thẳng và để biết ơn.',
+    'Trăng bắt đầu khuyết dần sau đêm tròn. Đây là lúc chia sẻ điều bạn học được và trả lại những gì không còn thuộc về mình.',
+    'Lại một nửa sáng một nửa tối, nhưng lần này trăng đang nhỏ lại. Đây là lúc buông một thói quen, một mối quan hệ hay một kỳ vọng đã hết hạn.',
+    'Vành trăng cuối cùng trước khi trời tối hẳn. Đây là lúc nghỉ ngơi, ngủ nhiều hơn và để lòng mình trống ra trước một vòng mới.'
+  ],
+  en: [
+    'The Moon passes between the Earth and the Sun, so the sky holds almost no moon at all. Everything starts from nothing here, which makes it the moment to set an intention and write down what you want.',
+    'A thin rim of light appears again after dark. Your intention has surfaced as something concrete, and this is when you take the first step, however small.',
+    'Half the face is lit and half is still dark. This is usually where the first obstacle arrives, and where you decide whether to hold your course or change it.',
+    'More than half is lit and the Moon is filling towards full. This is the time to refine, to improve what you have and to stay patient with what is unfinished.',
+    'The Moon is fully lit, opposite the Sun. Everything shows most clearly now, what delights you and what you have been avoiding alike. A time to look straight at things, and to be grateful.',
+    'The Moon begins to thin after the full night. This is the time to pass on what you learned and to give back what is no longer yours to carry.',
+    'Half lit and half dark again, but shrinking this time. This is the moment to let go of a habit, a tie or an expectation that has run out.',
+    'The last rim of light before the dark. This is the time to rest, to sleep more, and to empty yourself before the next round begins.'
+  ]
+};
 
 /* Heavenly stems and earthly branches for the lunar year. */
 const CAN = ['Giáp', 'Ất', 'Bính', 'Đinh', 'Mậu', 'Kỷ', 'Canh', 'Tân', 'Nhâm', 'Quý'];

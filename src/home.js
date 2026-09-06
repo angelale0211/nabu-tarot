@@ -67,7 +67,10 @@ function bindTour(root, step) {
     if (act === 'next' && step < TOUR.length - 1) { $('#tour').outerHTML = tourHTML(step + 1); bindTour(root, step + 1); return; }
     if (act === 'prev') { $('#tour').outerHTML = tourHTML(Math.max(0, step - 1)); bindTour(root, Math.max(0, step - 1)); return; }
     saveProfileLocal({ tourDone: true }); if (BE.user) BE.pushProfile();
-    $('#tour').outerHTML = tourMiniHTML(); bindTour(root, 0);
+    // On the home screen the card folds into its little bar; anywhere else it
+    // was opened on purpose, so closing it simply removes it.
+    if (parseHash().route === 'home') { $('#tour').outerHTML = tourMiniHTML(); bindTour(root, 0); }
+    else { const el = $('#tour', root); if (el) el.remove(); }
   }));
 }
 
@@ -120,27 +123,6 @@ function richHTML(text) {
 const plainText = (s) => String(s || '').replace(/\[(?:img|video):[^\]\s]+\]/g, '').replace(/\*\*|__|==|\*/g, '').replace(/^##\s+|^>\s?/gm, '').trim();
 function hydrateImages(root) {
   $$('img.pimg[data-img]', root).forEach((img) => { const id = img.getAttribute('data-img'); if (IMGS[id]) { img.src = IMGS[id]; return; } loadImg(id).then((d) => { if (d) img.src = d; }); });
-}
-/* How many lines a piece of text actually occupies. */
-function lineCount(el) {
-  const r = document.createRange();
-  r.selectNodeContents(el);
-  const rects = r.getClientRects(), tops = {};
-  for (let i = 0; i < rects.length; i++) tops[Math.round(rects[i].top)] = 1;
-  return Object.keys(tops).length;
-}
-/* Titles that only just overflow are stepped down until they sit on one line.
-   Nothing below 15px, and a title too long to ever fit keeps the normal size. */
-function fitTitles(root) {
-  $$('.post h2', root || document).forEach((h) => {
-    h.style.fontSize = '';
-    if (lineCount(h) <= 1) return;
-    for (let fs = 18; fs >= 15; fs--) {
-      h.style.fontSize = fs + 'px';
-      if (lineCount(h) <= 1) return;
-    }
-    h.style.fontSize = '';
-  });
 }
 function postHTML(p, full) {
   const raw = L(p.body), body = plainText(raw), long = !full && body.length > 320, score = postScore(p);
@@ -230,7 +212,11 @@ function upcomingHTML() {
 async function renderHome(args, params) {
   const S = T(), m = $('#main');
   const name = (PROFILE.name || '').trim();
-  m.innerHTML = '<div class="eyebrow">' + esc(CONFIG.brand) + '</div>'
+  const sale = SALE.live();
+  const saleBanner = sale
+    ? '<a class="salebar" href="' + (sale.scope === 'unlock' ? '#/unlock' : '#/prices') + '"><span class="tag">🏷️ ' + esc(SALE.off()) + '</span><span class="txt">' + esc(SALE.title() || T().saleDefault) + '</span><span class="go">' + esc(T().saleSee) + ' ›</span></a>'
+    : '';
+  m.innerHTML = saleBanner + '<div class="eyebrow">' + esc(CONFIG.brand) + '</div>'
     + todayHTML()
     + (PROFILE.tourDone ? tourMiniHTML() : tourHTML(0))
     + '<h1 style="margin:18px 0 4px">' + esc(name ? S.hello(name) : S.helloGuest) + '</h1><p class="muted">' + esc(lang === 'vi' ? 'Hôm nay bạn muốn làm gì?' : 'What would you like to do today?') + '</p>'
@@ -253,7 +239,6 @@ async function renderHome(args, params) {
     + (POSTS_CACHED && all.length ? '<div class="banner">' + esc(S.feedOffline) + '</div>' : '')
     + (list.length ? '<div class="eyebrow" style="margin-top:4px">📰 ' + esc(S.nabuPosts) + '</div>' + list.slice(0, 3).map((p) => postHTML(p, false)).join('') + '<a class="btn block" href="#/news">' + esc(S.allPostsBtn(list.length)) + '</a>' : (welcome ? '' : '<p class="empty">' + esc(S.feedEmpty) + '</p>'));
   bindPost(feed);
-  fitTitles(feed);
   const wt = $('[data-wtoggle]', feed);
   if (wt) wt.addEventListener('click', () => { const sec = wt.closest('.welcome'), open = !sec.classList.contains('open'); sec.classList.toggle('open', open); $('.chev', wt).textContent = open ? '–' : '+'; store.set('nabu-welcome-open', open); });
   if (params.go === 'feed' && NAV.restore == null) feed.scrollIntoView({ behavior: 'smooth' });
@@ -276,7 +261,6 @@ async function renderNews() {
     const list = sortedPosts().filter((p) => !p.welcome).filter((p) => !q || fold(L(p.title) + ' ' + plainText(L(p.body))).indexOf(q) > -1);
     const newsBox = $('#news');
     newsBox.innerHTML = list.length ? list.map((p) => postHTML(p, false)).join('') : '<p class="empty">' + esc(q ? S.noMatch : S.feedEmpty) + '</p>';
-    fitTitles(newsBox);
     bindPost($('#news'));
   };
   $('#nsearch').addEventListener('input', draw); draw();

@@ -37,7 +37,17 @@ function aspectSVG(deg) {
 function planetOrbitSVG(activeId) {
   const order = ['sun', 'mer', 'ven', 'moo', 'mar', 'jup', 'sat', 'ura', 'nep', 'plu'];
   let s = '<svg viewBox="0 0 320 90" class="orbit">';
-  order.forEach((id, i) => { const p = PLANETS.filter((x) => x.id === id)[0], x = 22 + i * 31, on = id === activeId; s += '<circle cx="' + x + '" cy="45" r="' + (on ? 16 : 12) + '" fill="' + (on ? 'var(--primary)' : 'var(--surface-2)') + '" stroke="var(--rule)"/><text x="' + x + '" y="50" text-anchor="middle" font-size="' + (on ? 16 : 13) + '" fill="' + (on ? 'var(--primary-ink)' : 'var(--fg)') + '">' + p.g + '</text><text x="' + x + '" y="78" text-anchor="middle" font-size="7.5" fill="var(--fg-faint)">' + esc(p.name[lang].replace('Sao ', '')) + '</text>'; });
+  // Each planet is its own button: the transparent rect gives the glyph and its
+  // label one comfortable tap target covering both.
+  order.forEach((id, i) => {
+    const p = PLANETS.filter((x) => x.id === id)[0], x = 22 + i * 31, on = id === activeId;
+    s += '<g data-pl="' + id + '" style="cursor:pointer" role="button" tabindex="0" aria-label="' + esc(p.name[lang]) + '">'
+      + '<rect x="' + (x - 15) + '" y="24" width="30" height="60" fill="transparent"/>'
+      + '<circle cx="' + x + '" cy="45" r="' + (on ? 16 : 12) + '" fill="' + (on ? 'var(--primary)' : 'var(--surface-2)') + '" stroke="var(--rule)"/>'
+      + '<text x="' + x + '" y="50" text-anchor="middle" font-size="' + (on ? 16 : 13) + '" fill="' + (on ? 'var(--primary-ink)' : 'var(--fg)') + '">' + p.g + '</text>'
+      + '<text x="' + x + '" y="78" text-anchor="middle" font-size="7.5" font-weight="' + (on ? '700' : '400') + '" fill="' + (on ? 'var(--fg)' : 'var(--fg-faint)') + '">' + esc(p.name[lang].replace('Sao ', '')) + '</text>'
+      + '</g>';
+  });
   return s + '</svg>';
 }
 
@@ -101,7 +111,13 @@ function guideVisualHTML(id) {
   if (v === 'lenvstarot') { return '<div class="cmp"><div><span class="face" style="width:110px">' + faceSVG(cardById('major-17')) + '</span><b>Tarot</b><span>' + esc(lang === 'vi' ? 'một cảnh, nhiều tầng' : 'a scene, many layers') + '</span></div><div><span class="face" style="width:110px">' + lenFace(16) + '</span><b>Lenormand</b><span>' + esc(lang === 'vi' ? 'một vật, một từ' : 'one thing, one word') + '</span></div></div>'; }
   if (v === 'big3') { const si = mySign(), k = si > -1 ? ZKEYS[si] : null; const disc = (lbl, g, sub) => '<div class="disc"><span class="g">' + g + '</span><b>' + esc(lbl) + '</b><span>' + esc(sub) + '</span></div>'; return '<div class="big3">' + disc(lang === 'vi' ? 'Mặt Trời' : 'Sun', k ? ZSIGN[k].g : '☉', k ? ZSIGN[k][lang] : (lang === 'vi' ? 'nhập ngày sinh' : 'add your birthday')) + disc(lang === 'vi' ? 'Mặt Trăng' : 'Moon', '☽', lang === 'vi' ? 'cần giờ sinh' : 'needs birth time') + disc(lang === 'vi' ? 'Mọc' : 'Rising', '↑', lang === 'vi' ? 'cần giờ + nơi sinh' : 'needs time + place') + '</div>'; }
   if (v === 'elements') return '<div class="elgrid">' + ['fire', 'earth', 'air', 'water'].map((el) => '<div class="elc" style="border-color:' + EL_COLOR[el] + '"><b style="color:' + EL_COLOR[el] + '">' + ZELEM[el].g + ' ' + esc(ZELEM[el][lang]) + '</b>' + ZKEYS.filter((k) => ZSIGN[k].el === el).map((k) => '<a href="#/learn/sign/' + k + '">' + ZSIGN[k].g + ' ' + esc(ZSIGN[k][lang]) + '</a>').join('') + '</div>').join('') + '</div>';
-  if (v === 'moonphases') { const idx = moonPhase(new Date()).idx; return '<div class="phases">' + MOON_ICONS.map((ic, i) => '<div class="ph' + (i === idx ? ' on' : '') + '"><span class="ic">' + ic + '</span><span>' + esc(MOON_NAMES[lang][i]) + '</span></div>').join('') + '</div><p class="faint" style="text-align:center">' + esc(lang === 'vi' ? 'Hôm nay: ' : 'Today: ') + MOON_NAMES[lang][idx] + '</p>'; }
+  if (v === 'moonphases') {
+    // Each phase is a button, and today's is the one already open.
+    const idx = moonPhase(new Date()).idx;
+    return '<div class="phases">' + MOON_ICONS.map((ic, i) => '<button type="button" class="ph' + (i === idx ? ' on' : '') + '" data-moon="' + i + '"><span class="ic">' + ic + '</span><span>' + esc(MOON_NAMES[lang][i]) + '</span></button>').join('') + '</div>'
+      + '<p class="faint" style="text-align:center">' + esc(lang === 'vi' ? 'Hôm nay: ' : 'Today: ') + esc(MOON_NAMES[lang][idx]) + '</p>'
+      + '<div class="ins" id="moonout">' + moonTextHTML(idx) + '</div>';
+  }
   if (v === 'retro') return '<svg viewBox="0 0 320 120" class="orbit"><circle cx="60" cy="60" r="22" fill="#F6C453"/><text x="60" y="66" text-anchor="middle" font-size="16">☉</text><ellipse cx="60" cy="60" rx="110" ry="40" fill="none" stroke="var(--rule)" stroke-dasharray="4 4"/><path d="M150 40 C 175 30, 190 55, 170 62 C 150 70, 160 90, 185 82" fill="none" stroke="var(--primary)" stroke-width="3" stroke-linecap="round"/><text x="230" y="60" font-size="13" fill="var(--fg)">☿ ' + esc(lang === 'vi' ? 'nhìn từ Trái Đất' : 'seen from Earth') + '</text><text x="230" y="78" font-size="10" fill="var(--fg-faint)">' + esc(lang === 'vi' ? 'có vẻ đi lùi' : 'appears to go backwards') + '</text></svg>';
   if (v === 'woop') { const w = store.get('nabu-woop', {}) || {}; return '<div class="woop edit">' + [['wish', 'W', TV('Mong muốn', 'Wish'), '🌱'], ['outcome', 'O', TV('Kết quả', 'Outcome'), '🌸'], ['obstacle', 'O', TV('Trở ngại', 'Obstacle'), '🪨'], ['plan', 'P', TV('Kế hoạch', 'Plan'), '🗺️']].map((x) => '<div class="wp"><span class="ic">' + x[3] + '</span><b>' + x[1] + '</b><span>' + esc(x[2]) + '</span><textarea data-save="nabu-woop" data-k="' + x[0] + '" placeholder="…">' + esc(w[x[0]] || '') + '</textarea></div>').join('') + '</div>' + toolbar('nabu-woop'); }
   if (v === 'vision') { const b = store.get('nabu-vision', {}) || {}; return '<div class="vboard">' + [['💗', TV('Tình cảm', 'Love')], ['💼', TV('Việc và tiền', 'Work and money')], ['🌿', TV('Sức khỏe', 'Health')], ['🏡', TV('Gia đình, bạn bè', 'Family and friends')], ['📚', TV('Học hỏi', 'Learning')], ['🛌', TV('Nghỉ ngơi', 'Rest')]].map((x, i) => '<div class="vb' + (b['img' + i] ? ' has' : '') + '"><div class="vtap" data-vtile="' + i + '">' + (b['img' + i] ? '<img src="' + esc(b['img' + i]) + '" alt="">' : '<span class="ic">' + x[0] + '</span>') + '<b>' + esc(x[1]) + '</b>' + (b['img' + i] ? '' : '<span class="ph">📷 ' + esc(T().tapPhoto) + '</span>') + '</div><input data-save="nabu-vision" data-k="cap' + i + '" placeholder="' + esc(T().caption) + '" value="' + esc(b['cap' + i] || '') + '">' + (b['img' + i] ? '<button type="button" class="x" data-vclear="' + i + '" aria-label="clear">✕</button>' : '') + '</div>').join('') + '</div><input type="file" accept="image/*" data-vfile hidden>' + toolbar('nabu-vision'); }
@@ -115,8 +131,16 @@ function guideVisualHTML(id) {
   if (v === 'checklist') { const g = GUIDES.filter((x) => x.id === id)[0], ck = store.get('nabu-limits', {}) || {}; return '<div class="chk2">' + g.sections.slice(0, 2).map((s, i) => '<div class="col ' + (i ? 'good' : 'bad') + '"><b>' + (i ? '✓ ' : '✗ ') + esc(L(s.h)) + '</b>' + L(s.p).split(/\.\s+/).filter(Boolean).slice(0, 4).map((line, j) => '<label><input type="checkbox" data-chk="' + i + '-' + j + '"' + (ck[i + '-' + j] ? ' checked' : '') + '> ' + esc(line.replace(/\.$/, '')) + '</label>').join('') + '</div>').join('') + '</div>' + toolbar('nabu-limits'); }
   return '';
 }
+function moonTextHTML(i) {
+  return '<h3>' + MOON_ICONS[i] + ' ' + esc(MOON_NAMES[lang][i]) + '</h3><p>' + esc(MOON_TEXT[lang][i]) + '</p>';
+}
 function bindGuideVisual(root) {
   bindCardLinks(root);
+  $$('[data-moon]', root).forEach((b) => b.addEventListener('click', () => {
+    const i = Number(b.getAttribute('data-moon'));
+    $$('[data-moon]', root).forEach((x) => x.classList.toggle('on', x === b));
+    const out = $('#moonout', root); if (out) out.innerHTML = moonTextHTML(i);
+  }));
   $$('[data-t369]', root).forEach((b) => b.addEventListener('click', () => { const t = store.get('nabu-369', { d: isoDate(new Date()), a: 0, b: 0, c: 0 }), k = b.getAttribute('data-t369'), mx = Number(b.getAttribute('data-max')); t[k] = (t[k] + 1) % (mx + 1); t.d = isoDate(new Date()); store.set('nabu-369', t); $('.cnt', b).textContent = t[k] + ' / ' + mx; $('.dots', b).textContent = '●'.repeat(t[k]) + '○'.repeat(mx - t[k]); }));
   $$('[data-grat]', root).forEach((inp) => inp.addEventListener('input', () => { store.set('nabu-gratitude', $$('[data-grat]', root).map((x) => x.value)); }));
   // Every tool saves as you type, and can be cleared and redone.

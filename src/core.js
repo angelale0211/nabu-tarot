@@ -52,6 +52,46 @@ function birthParts() {
 }
 function mySign() { const b = birthParts(); return b ? sunSignIndex(b.m, b.d) : -1; }
 
+/* ---- a sale ----
+   Held as one record: content/sale = { on, scope, kind, value, from, to, label }.
+   scope is 'reading', 'unlock' or 'all'; kind is 'percent' or 'amount'.
+   Every price shown and every total added up goes through salePrice, so the
+   arithmetic can only be wrong in one place, and it is tested. */
+const SALE = {
+  data: null,
+  set(d) { this.data = d && d.on ? d : null; },
+  live() {
+    const d = this.data;
+    if (!d) return null;
+    const today = isoDate(new Date());
+    if (d.from && today < d.from) return null;
+    if (d.to && today > d.to) return null;
+    return d;
+  },
+  covers(kind) { const d = this.live(); return d && (d.scope === 'all' || d.scope === kind) ? d : null; },
+  price(n, kind) {
+    const d = this.covers(kind), base = Number(n) || 0;
+    if (!d || base <= 0) return base;
+    const v = Math.max(0, Number(d.value) || 0);
+    let out = d.kind === 'amount' ? base - v : base * (100 - Math.min(100, v)) / 100;
+    out = Math.round(Math.max(0, out) / 1000) * 1000;   // Vietnamese prices land on thousands
+    return Math.min(base, out);
+  },
+  off() {
+    const d = this.live();
+    if (!d) return '';
+    return d.kind === 'amount' ? '-' + fmtPrice(Math.max(0, Number(d.value) || 0)) : '-' + Math.max(0, Number(d.value) || 0) + '%';
+  },
+  title() { const d = this.live(); return d && d.label ? L(d.label) : (T().saleDefault || ''); }
+};
+const salePrice = (n, kind) => SALE.price(n, kind);
+/* A price with its old value struck through when a sale is on. */
+function priceHTML(n, kind) {
+  const now = SALE.price(n, kind);
+  if (now === Number(n)) return fmtPrice(n);
+  return '<span class="was">' + fmtPrice(n) + '</span> <span class="now">' + fmtPrice(now) + '</span>';
+}
+
 /* ---- course access ----
    Codes: NABU-T-YYMMDD-XXXX (T = tarot, L = lenormand, M = manifestation,
    P = playing cards, C = coin, Y = message tree, B = both of those two), the
@@ -213,7 +253,10 @@ function renderChrome(route) {
   $('#lang').textContent = T().lang;
   $('#nav').innerHTML = ['home', 'pick', 'play', 'learn', 'book', 'me'].map((k) =>
     '<a href="#/' + k + '" class="' + (route === k ? 'on' : '') + '">' + ICONS[k] + '<span>' + esc(T().nav[k]) + '</span>'
-    + (k === 'me' && (UNREAD + NEWBK) ? '<span class="badge">' + (UNREAD + NEWBK) + '</span>' : '') + '</a>').join('');
+    + (k === 'me' && (UNREAD + NEWBK) ? '<span class="badge">' + (UNREAD + NEWBK) + '</span>' : '')
+    // A sale on readings shows up on the tab where readings are booked.
+    + (k === 'book' && SALE.covers('reading') ? '<span class="saletag" aria-hidden="true">🏷️</span>' : '')
+    + (k === 'learn' && SALE.covers('unlock') ? '<span class="saletag" aria-hidden="true">🏷️</span>' : '') + '</a>').join('');
   if (typeof adminTabBadges === 'function') adminTabBadges();
 }
 let toastTimer = null;

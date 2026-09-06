@@ -224,7 +224,7 @@ main{padding:22px 0 30px}
 .hello .sign .faint{margin-top:2px}
 .hello .cardline{display:grid;grid-template-columns:52px 1fr;gap:12px;align-items:center;margin-top:12px;background:var(--surface);border-radius:14px;padding:10px 12px}
 .hello .cardline .face svg{border-radius:4px}
-.post{background:var(--surface);border:1px solid var(--rule-soft);border-radius:18px;padding:18px 18px 12px;margin-bottom:16px}
+.post{background:var(--surface);border:1px solid var(--rule-soft);border-radius:18px;padding:16px 18px;margin-bottom:16px}
 .post .date{font-size:12.5px;color:var(--fg-faint);display:flex;justify-content:space-between;align-items:center;margin-bottom:6px}
 .post .date .pin{color:var(--pink-ink);font-weight:700}
 .post h2{margin-bottom:10px}
@@ -234,7 +234,10 @@ main{padding:22px 0 30px}
    lines are justified instead: every line but the last fills the width, which
    is what stops a title breaking after three words with the rest of the line
    left empty. */
-.post h2{font-size:19px;text-align:justify;text-justify:inter-word}
+/* One size for every post and activity title, chosen so a title of the length
+   Nabu usually writes sits on a single line. Titles are not resized one by
+   one any more: two posts side by side at different sizes read as a mistake. */
+.post h2{text-align:justify;text-justify:inter-word}
 .nb{white-space:nowrap}
 /* The gap under the share row matches the gap above the date. */
 .post .foot{margin-bottom:0}.post>*:last-child{margin-bottom:0}
@@ -720,6 +723,16 @@ main{padding:22px 0 30px}
 .luckbox{margin-top:12px}.luckbox .lead{font-weight:600;margin:0 0 4px}.luckbox .btn.block{margin-top:8px}
 .sico{width:17px;height:17px;display:block}
 .links .sl{display:inline-flex;align-items:center;text-decoration:none;vertical-align:-3px}
+/* The phases are buttons now, so they need the plain-button reset. */
+.phases .ph{font:inherit;color:inherit;cursor:pointer}
+/* A sale: the old price struck through, the new one beside it, a banner on
+   the home screen and a small tag on the tabs where money is spent. */
+.was{text-decoration:line-through;color:var(--fg-faint);font-weight:400;margin-right:5px}
+.now{color:var(--pink-ink);font-weight:700}
+.salebar{display:flex;align-items:center;gap:9px;background:var(--tag-pink-bg);color:var(--tag-pink-ink);border-radius:14px;padding:10px 12px;margin-bottom:14px;text-decoration:none;font-size:13.5px}
+.salebar .tag{font-weight:700;white-space:nowrap}.salebar .txt{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.salebar .go{white-space:nowrap;font-weight:600;opacity:.85}
+.nav a{position:relative}.nav .saletag{position:absolute;top:-1px;right:calc(50% - 20px);font-size:11px;line-height:1}
 .unlist{display:grid;gap:10px}
 .unl{background:var(--surface);border:1px solid var(--rule-soft);border-radius:16px;padding:14px}
 .unl.best{border-color:var(--pink);border-width:1.5px}.unl.on{border-color:var(--gold)}
@@ -757,7 +770,10 @@ button.unl{display:block;width:100%;text-align:left;font:inherit;color:inherit;c
 /* Activities: piles that flip, polls with bars, the wish jar. */
 .piles{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin:10px 0;align-items:stretch}.piles.n2{grid-template-columns:repeat(2,minmax(0,1fr))}.piles.n4{grid-template-columns:repeat(4,minmax(0,1fr))}.piles.n5{grid-template-columns:repeat(5,minmax(0,1fr))}
 .pmsg{background:var(--tag-gold-bg);color:var(--tag-gold-ink);border:1.5px solid var(--gold);border-radius:14px;padding:12px 14px;margin:4px 0 10px;font-size:14.5px}.pmsg .eyebrow{color:inherit;opacity:.8}.pmsg p{margin:0 0 8px}.pmsg h3{margin:4px 0 6px}
-.actlist{display:grid;gap:10px}.actbtn{display:flex;align-items:center;gap:12px;background:var(--surface);border:1px solid var(--rule-soft);border-radius:16px;padding:12px 14px;text-decoration:none;color:inherit}.actbtn.live{border-color:var(--lav)}.actbtn .ic{font-size:26px;flex:none;width:40px;text-align:center}.actbtn .body{flex:1;min-width:0}.actbtn b{display:block;font-size:15.5px;line-height:1.3}.actbtn .meta{display:block;font-size:12.5px;color:var(--fg-faint);margin-top:2px}.actbtn .chev{color:var(--fg-faint);font-size:22px;flex:none}
+.actlist{display:grid;gap:10px}.actbtn{display:flex;align-items:center;gap:12px;background:var(--surface);border:1px solid var(--rule-soft);border-radius:16px;padding:12px 14px;text-decoration:none;color:inherit}.actbtn.live{border-color:var(--lav)}.actbtn .ic{font-size:26px;flex:none;width:40px;text-align:center}.actbtn .body{flex:1;min-width:0}.actbtn b{display:block}
+/* One size for every post and activity title. Two titles side by side at
+   different sizes read as a mistake, so nothing is resized per title. */
+.post h2,.actbtn b{font-family:var(--display);font-weight:600;font-size:15px;line-height:1.4}.actbtn .meta{display:block;font-size:12.5px;color:var(--fg-faint);margin-top:2px}.actbtn .chev{color:var(--fg-faint);font-size:22px;flex:none}
 .pile{perspective:900px;cursor:pointer;position:relative;min-width:0;height:0;padding-top:146%}.pile-inner{position:absolute;inset:0;transform-style:preserve-3d;transition:transform .7s cubic-bezier(.4,.2,.2,1)}.pile.open .pile-inner{transform:rotateY(180deg)}
 .pile .pf,.pile .pb{position:absolute;inset:0;backface-visibility:hidden;-webkit-backface-visibility:hidden;border-radius:12px;transition:visibility 0s .35s}.pile .pb{visibility:hidden}.pile.open .pb{visibility:visible}.pile.open .pf{visibility:hidden}
 .pile .pf{background:var(--surface);border:1.5px solid var(--rule);overflow:hidden}.pile .pf .pileart{position:absolute;inset:0;width:100%;height:100%;display:block}.pile .pfl{position:absolute;left:0;right:0;bottom:0;padding:5px 4px;background:rgba(255,247,238,.9);color:#3B2A5E;text-align:center;display:flex;flex-direction:column;line-height:1.1}.pile .pfl b{font-size:14px}.pile .pfl span{font-size:10.5px;color:#6B5C8A;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}

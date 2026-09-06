@@ -390,7 +390,7 @@ main{padding:22px 0 30px}
 .hello .sign .faint{margin-top:2px}
 .hello .cardline{display:grid;grid-template-columns:52px 1fr;gap:12px;align-items:center;margin-top:12px;background:var(--surface);border-radius:14px;padding:10px 12px}
 .hello .cardline .face svg{border-radius:4px}
-.post{background:var(--surface);border:1px solid var(--rule-soft);border-radius:18px;padding:18px 18px 12px;margin-bottom:16px}
+.post{background:var(--surface);border:1px solid var(--rule-soft);border-radius:18px;padding:16px 18px;margin-bottom:16px}
 .post .date{font-size:12.5px;color:var(--fg-faint);display:flex;justify-content:space-between;align-items:center;margin-bottom:6px}
 .post .date .pin{color:var(--pink-ink);font-weight:700}
 .post h2{margin-bottom:10px}
@@ -400,7 +400,10 @@ main{padding:22px 0 30px}
    lines are justified instead: every line but the last fills the width, which
    is what stops a title breaking after three words with the rest of the line
    left empty. */
-.post h2{font-size:19px;text-align:justify;text-justify:inter-word}
+/* One size for every post and activity title, chosen so a title of the length
+   Nabu usually writes sits on a single line. Titles are not resized one by
+   one any more: two posts side by side at different sizes read as a mistake. */
+.post h2{text-align:justify;text-justify:inter-word}
 .nb{white-space:nowrap}
 /* The gap under the share row matches the gap above the date. */
 .post .foot{margin-bottom:0}.post>*:last-child{margin-bottom:0}
@@ -886,6 +889,16 @@ main{padding:22px 0 30px}
 .luckbox{margin-top:12px}.luckbox .lead{font-weight:600;margin:0 0 4px}.luckbox .btn.block{margin-top:8px}
 .sico{width:17px;height:17px;display:block}
 .links .sl{display:inline-flex;align-items:center;text-decoration:none;vertical-align:-3px}
+/* The phases are buttons now, so they need the plain-button reset. */
+.phases .ph{font:inherit;color:inherit;cursor:pointer}
+/* A sale: the old price struck through, the new one beside it, a banner on
+   the home screen and a small tag on the tabs where money is spent. */
+.was{text-decoration:line-through;color:var(--fg-faint);font-weight:400;margin-right:5px}
+.now{color:var(--pink-ink);font-weight:700}
+.salebar{display:flex;align-items:center;gap:9px;background:var(--tag-pink-bg);color:var(--tag-pink-ink);border-radius:14px;padding:10px 12px;margin-bottom:14px;text-decoration:none;font-size:13.5px}
+.salebar .tag{font-weight:700;white-space:nowrap}.salebar .txt{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.salebar .go{white-space:nowrap;font-weight:600;opacity:.85}
+.nav a{position:relative}.nav .saletag{position:absolute;top:-1px;right:calc(50% - 20px);font-size:11px;line-height:1}
 .unlist{display:grid;gap:10px}
 .unl{background:var(--surface);border:1px solid var(--rule-soft);border-radius:16px;padding:14px}
 .unl.best{border-color:var(--pink);border-width:1.5px}.unl.on{border-color:var(--gold)}
@@ -923,7 +936,10 @@ button.unl{display:block;width:100%;text-align:left;font:inherit;color:inherit;c
 /* Activities: piles that flip, polls with bars, the wish jar. */
 .piles{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin:10px 0;align-items:stretch}.piles.n2{grid-template-columns:repeat(2,minmax(0,1fr))}.piles.n4{grid-template-columns:repeat(4,minmax(0,1fr))}.piles.n5{grid-template-columns:repeat(5,minmax(0,1fr))}
 .pmsg{background:var(--tag-gold-bg);color:var(--tag-gold-ink);border:1.5px solid var(--gold);border-radius:14px;padding:12px 14px;margin:4px 0 10px;font-size:14.5px}.pmsg .eyebrow{color:inherit;opacity:.8}.pmsg p{margin:0 0 8px}.pmsg h3{margin:4px 0 6px}
-.actlist{display:grid;gap:10px}.actbtn{display:flex;align-items:center;gap:12px;background:var(--surface);border:1px solid var(--rule-soft);border-radius:16px;padding:12px 14px;text-decoration:none;color:inherit}.actbtn.live{border-color:var(--lav)}.actbtn .ic{font-size:26px;flex:none;width:40px;text-align:center}.actbtn .body{flex:1;min-width:0}.actbtn b{display:block;font-size:15.5px;line-height:1.3}.actbtn .meta{display:block;font-size:12.5px;color:var(--fg-faint);margin-top:2px}.actbtn .chev{color:var(--fg-faint);font-size:22px;flex:none}
+.actlist{display:grid;gap:10px}.actbtn{display:flex;align-items:center;gap:12px;background:var(--surface);border:1px solid var(--rule-soft);border-radius:16px;padding:12px 14px;text-decoration:none;color:inherit}.actbtn.live{border-color:var(--lav)}.actbtn .ic{font-size:26px;flex:none;width:40px;text-align:center}.actbtn .body{flex:1;min-width:0}.actbtn b{display:block}
+/* One size for every post and activity title. Two titles side by side at
+   different sizes read as a mistake, so nothing is resized per title. */
+.post h2,.actbtn b{font-family:var(--display);font-weight:600;font-size:15px;line-height:1.4}.actbtn .meta{display:block;font-size:12.5px;color:var(--fg-faint);margin-top:2px}.actbtn .chev{color:var(--fg-faint);font-size:22px;flex:none}
 .pile{perspective:900px;cursor:pointer;position:relative;min-width:0;height:0;padding-top:146%}.pile-inner{position:absolute;inset:0;transform-style:preserve-3d;transition:transform .7s cubic-bezier(.4,.2,.2,1)}.pile.open .pile-inner{transform:rotateY(180deg)}
 .pile .pf,.pile .pb{position:absolute;inset:0;backface-visibility:hidden;-webkit-backface-visibility:hidden;border-radius:12px;transition:visibility 0s .35s}.pile .pb{visibility:hidden}.pile.open .pb{visibility:visible}.pile.open .pf{visibility:hidden}
 .pile .pf{background:var(--surface);border:1.5px solid var(--rule);overflow:hidden}.pile .pf .pileart{position:absolute;inset:0;width:100%;height:100%;display:block}.pile .pfl{position:absolute;left:0;right:0;bottom:0;padding:5px 4px;background:rgba(255,247,238,.9);color:#3B2A5E;text-align:center;display:flex;flex-direction:column;line-height:1.1}.pile .pfl b{font-size:14px}.pile .pfl span{font-size:10.5px;color:#6B5C8A;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
@@ -1302,6 +1318,11 @@ const STR = {
     unlockPick: 'Bạn chạm vào mục muốn mở. Chọn được nhiều mục, chạm lần nữa để bỏ.', unlockCart: 'Mục bạn đã chọn', unlockEmpty: 'Bạn chưa chọn mục nào.', unlockTotal: 'Tổng cộng', unlockSend: 'Gửi yêu cầu cho Nabu', unlockMsgHead: 'Mình muốn mở khoá trong app Nabu Tarot:', unlockChosen: 'Đã chọn',
     reqKindBooking: 'Đặt lịch', reqKindUnlock: 'Mở khoá', reqAll: 'Tất cả', reqNone: 'Chưa có yêu cầu nào ở mục này.',
     unlockSent: 'Đã gửi yêu cầu. Nabu sẽ gửi mã cho bạn sau khi nhận được chuyển khoản.', unlockSendApp: 'Gửi yêu cầu trong app', unlockSendMsg: 'Gửi qua tin nhắn',
+    saleTab: 'Khuyến mãi', saleOn: 'Đang chạy khuyến mãi', saleScope: 'Áp dụng cho', saleScopes: { all: 'Tất cả', reading: 'Xem bài', unlock: 'Mở khoá trong app' },
+    saleKind: 'Kiểu giảm', saleKinds: { percent: 'Theo phần trăm', amount: 'Theo số tiền' }, saleValue: 'Mức giảm', saleFrom: 'Bắt đầu', saleTo: 'Kết thúc',
+    saleLabel: 'Tên đợt khuyến mãi', saleLabelPh: 'Ví dụ: Mừng Trung thu', saleDefault: 'Đang có khuyến mãi', saleNone: 'Hiện không có khuyến mãi nào.',
+    saleSaved: 'Đã lưu khuyến mãi', saleHint: 'Bật, chọn phạm vi và mức giảm, rồi chọn ngày bắt đầu và ngày kết thúc. Giá cũ sẽ bị gạch ngang và giá mới hiện bên cạnh.',
+    saleBanner: (off, what) => 'Khuyến mãi ' + off + ' cho ' + what, saleSee: 'Xem ngay',
     adminShort: 'Tài khoản quản trị', unlockCodeLabel: 'Nhập mã Nabu gửi cho bạn', unlockReadings: 'Xem bảng giá xem bài riêng',
     luckFree: 'Bạn có 1 lượt miễn phí mỗi tuần.', luckLeft: 'Lượt tuần này của bạn vẫn còn.', luckSpent: (d) => 'Bạn đã dùng lượt tuần này. Lượt mới mở vào ' + d + '.', luckOpen: 'Bạn đang mở không giới hạn.', luckOffer: 'Muốn dùng không giới hạn cả năm: 30.000đ cho một mục, hoặc 50.000đ cho cả đồng xu và cây thông điệp.', luckGet: 'Nhắn Nabu để lấy mã', luckCodePh: 'NABU-B-…',
     treeTitle: 'Rung cây thông điệp', treeSub: 'một lời nhắn từ vũ trụ', treeIntro: 'Bạn đứng trước cây, nghĩ về điều đang ở trong lòng mình, rồi rung nhẹ một cái. Cây sẽ thả xuống cho bạn một lời nhắn.', treeShake: 'Rung cây', treeAgain: 'Rung thêm một lần nữa', treeFor: 'Lời nhắn dành cho bạn', treeNote: 'Mỗi lần rung, cây chọn ngẫu nhiên một lời nhắn trong sáu mươi lời. Bạn hãy đọc chậm và giữ lại câu nào chạm vào mình.',
@@ -1372,7 +1393,7 @@ const STR = {
 
     adminTitle: 'Bảng điều khiển',
     adminIntro: 'Trang này chỉ dành cho Nabu.',
-    adminTabs: { posts: '📝 Bài đăng', acts: '🎲 Hoạt động', schedule: '🕒 Lịch rảnh', bookings: '📅 Đặt lịch', inbox: '💬 Tin nhắn', codes: '🔑 Mã học' },
+    adminTabs: { posts: '📝 Bài đăng', acts: '🎲 Hoạt động', schedule: '🕒 Lịch rảnh', bookings: '📅 Đặt lịch', inbox: '💬 Tin nhắn', codes: '🔑 Mã học', sale: '🏷️ Khuyến mãi' },
     codesIntro: 'Sau khi khách chuyển khoản, bạn tạo mã tại đây rồi gửi cho họ. Mỗi mã đã có sẵn ngày hết hạn bên trong.', codeCourse: 'Khóa', codeStart: 'Bắt đầu từ', codeMonths: 'Số tháng', makeCode: 'Tạo mã', codeUntil: 'Hết hạn',
     token: 'GitHub token',
     tokenHint: 'Token chỉ được lưu trên máy này. Bạn xem README để biết cách tạo token.',
@@ -1568,6 +1589,11 @@ const STR = {
     unlockPick: 'Tap what you want to unlock. You can pick several, and tap again to remove one.', unlockCart: 'What you have chosen', unlockEmpty: 'You have not chosen anything yet.', unlockTotal: 'Total', unlockSend: 'Send the request to Nabu', unlockMsgHead: 'I would like to unlock these in the Nabu Tarot app:', unlockChosen: 'Chosen',
     reqKindBooking: 'Booking', reqKindUnlock: 'Unlock', reqAll: 'All', reqNone: 'No requests of this kind yet.',
     unlockSent: 'Request sent. Nabu will send your code once the transfer arrives.', unlockSendApp: 'Send the request in the app', unlockSendMsg: 'Send as a message',
+    saleTab: 'Sale', saleOn: 'A sale is running', saleScope: 'Applies to', saleScopes: { all: 'Everything', reading: 'Readings', unlock: 'Unlocks in the app' },
+    saleKind: 'Kind of discount', saleKinds: { percent: 'A percentage', amount: 'An amount' }, saleValue: 'Discount', saleFrom: 'Starts', saleTo: 'Ends',
+    saleLabel: 'Name of the sale', saleLabelPh: 'For example: Mid-Autumn', saleDefault: 'A sale is on', saleNone: 'No sale is running at the moment.',
+    saleSaved: 'Sale saved', saleHint: 'Switch it on, choose what it covers and how much comes off, then pick the first and last day. Old prices are struck through with the new price beside them.',
+    saleBanner: (off, what) => off + ' off ' + what, saleSee: 'See it',
     adminShort: 'Admin account', unlockCodeLabel: 'Enter the code Nabu sent you', unlockReadings: 'See the prices for a reading',
     luckFree: 'You get one free turn a week.', luckLeft: 'Your turn for this week is still open.', luckSpent: (d) => 'You have had your turn this week. The next one opens on ' + d + '.', luckOpen: 'You have unlimited turns.', luckOffer: 'For unlimited turns all year: 30,000đ for one, or 50,000đ for both the coin and the message tree.', luckGet: 'Message Nabu for a code', luckCodePh: 'NABU-B-…',
     treeTitle: 'Shake the message tree', treeSub: 'a message from the universe', treeIntro: 'Stand in front of the tree, hold in mind whatever you are carrying, and give it a gentle shake. The tree will let a message fall for you.', treeShake: 'Shake the tree', treeAgain: 'Shake it once more', treeFor: 'A message for you', treeNote: 'Each shake picks one of sixty messages at random. Read it slowly and keep whichever line reaches you.',
@@ -1638,7 +1664,7 @@ const STR = {
 
     adminTitle: 'Dashboard',
     adminIntro: 'This page is for Nabu only.',
-    adminTabs: { posts: '📝 Posts', acts: '🎲 Activities', schedule: '🕒 Hours', bookings: '📅 Bookings', inbox: '💬 Inbox', codes: '🔑 Codes' },
+    adminTabs: { posts: '📝 Posts', acts: '🎲 Activities', schedule: '🕒 Hours', bookings: '📅 Bookings', inbox: '💬 Inbox', codes: '🔑 Codes', sale: '🏷️ Sale' },
     codesIntro: 'Once a client has paid, make a code here and send it to them. The expiry date is built into the code.', codeCourse: 'Course', codeStart: 'Starts', codeMonths: 'Months', makeCode: 'Make code', codeUntil: 'Expires',
     token: 'GitHub token',
     tokenHint: 'The token stays on this device only. See the README to create one.',
@@ -7722,6 +7748,30 @@ const MOON_NAMES = {
   en: ['New Moon', 'Waxing crescent', 'First quarter', 'Waxing gibbous', 'Full Moon', 'Waning gibbous', 'Last quarter', 'Waning crescent']
 };
 const MOON_ICONS = ['🌑', '🌒', '🌓', '🌔', '🌕', '🌖', '🌗', '🌘'];
+/* One short reading per phase: what the sky is doing, and what the phase is
+   usually used for. */
+const MOON_TEXT = {
+  vi: [
+    'Mặt Trăng đi qua giữa Trái Đất và Mặt Trời, nên bầu trời gần như không có trăng. Đây là lúc mọi thứ bắt đầu từ con số không, hợp để bạn đặt một ý định mới và viết ra điều mình muốn.',
+    'Một vành sáng mảnh vừa hiện ra sau khi trời tối. Ý định của bạn đã nhú lên thành việc cụ thể, và đây là lúc làm bước đầu tiên dù nó còn nhỏ.',
+    'Một nửa mặt trăng sáng, một nửa còn tối. Đây thường là lúc gặp trở ngại đầu tiên, và bạn cần quyết định giữ hay đổi cách làm.',
+    'Trăng đã sáng hơn nửa và đang lớn dần về phía tròn. Đây là lúc bạn chỉnh sửa, làm cho tốt hơn và kiên nhẫn với phần việc còn dở.',
+    'Trăng sáng trọn vẹn và nằm đối diện Mặt Trời. Mọi chuyện hiện rõ nhất lúc này, cả điều bạn vui lẫn điều bạn đã né tránh. Đây là lúc để nhìn thẳng và để biết ơn.',
+    'Trăng bắt đầu khuyết dần sau đêm tròn. Đây là lúc chia sẻ điều bạn học được và trả lại những gì không còn thuộc về mình.',
+    'Lại một nửa sáng một nửa tối, nhưng lần này trăng đang nhỏ lại. Đây là lúc buông một thói quen, một mối quan hệ hay một kỳ vọng đã hết hạn.',
+    'Vành trăng cuối cùng trước khi trời tối hẳn. Đây là lúc nghỉ ngơi, ngủ nhiều hơn và để lòng mình trống ra trước một vòng mới.'
+  ],
+  en: [
+    'The Moon passes between the Earth and the Sun, so the sky holds almost no moon at all. Everything starts from nothing here, which makes it the moment to set an intention and write down what you want.',
+    'A thin rim of light appears again after dark. Your intention has surfaced as something concrete, and this is when you take the first step, however small.',
+    'Half the face is lit and half is still dark. This is usually where the first obstacle arrives, and where you decide whether to hold your course or change it.',
+    'More than half is lit and the Moon is filling towards full. This is the time to refine, to improve what you have and to stay patient with what is unfinished.',
+    'The Moon is fully lit, opposite the Sun. Everything shows most clearly now, what delights you and what you have been avoiding alike. A time to look straight at things, and to be grateful.',
+    'The Moon begins to thin after the full night. This is the time to pass on what you learned and to give back what is no longer yours to carry.',
+    'Half lit and half dark again, but shrinking this time. This is the moment to let go of a habit, a tie or an expectation that has run out.',
+    'The last rim of light before the dark. This is the time to rest, to sleep more, and to empty yourself before the next round begins.'
+  ]
+};
 
 /* Heavenly stems and earthly branches for the lunar year. */
 const CAN = ['Giáp', 'Ất', 'Bính', 'Đinh', 'Mậu', 'Kỷ', 'Canh', 'Tân', 'Nhâm', 'Quý'];
@@ -8642,6 +8692,46 @@ function birthParts() {
 }
 function mySign() { const b = birthParts(); return b ? sunSignIndex(b.m, b.d) : -1; }
 
+/* ---- a sale ----
+   Held as one record: content/sale = { on, scope, kind, value, from, to, label }.
+   scope is 'reading', 'unlock' or 'all'; kind is 'percent' or 'amount'.
+   Every price shown and every total added up goes through salePrice, so the
+   arithmetic can only be wrong in one place, and it is tested. */
+const SALE = {
+  data: null,
+  set(d) { this.data = d && d.on ? d : null; },
+  live() {
+    const d = this.data;
+    if (!d) return null;
+    const today = isoDate(new Date());
+    if (d.from && today < d.from) return null;
+    if (d.to && today > d.to) return null;
+    return d;
+  },
+  covers(kind) { const d = this.live(); return d && (d.scope === 'all' || d.scope === kind) ? d : null; },
+  price(n, kind) {
+    const d = this.covers(kind), base = Number(n) || 0;
+    if (!d || base <= 0) return base;
+    const v = Math.max(0, Number(d.value) || 0);
+    let out = d.kind === 'amount' ? base - v : base * (100 - Math.min(100, v)) / 100;
+    out = Math.round(Math.max(0, out) / 1000) * 1000;   // Vietnamese prices land on thousands
+    return Math.min(base, out);
+  },
+  off() {
+    const d = this.live();
+    if (!d) return '';
+    return d.kind === 'amount' ? '-' + fmtPrice(Math.max(0, Number(d.value) || 0)) : '-' + Math.max(0, Number(d.value) || 0) + '%';
+  },
+  title() { const d = this.live(); return d && d.label ? L(d.label) : (T().saleDefault || ''); }
+};
+const salePrice = (n, kind) => SALE.price(n, kind);
+/* A price with its old value struck through when a sale is on. */
+function priceHTML(n, kind) {
+  const now = SALE.price(n, kind);
+  if (now === Number(n)) return fmtPrice(n);
+  return '<span class="was">' + fmtPrice(n) + '</span> <span class="now">' + fmtPrice(now) + '</span>';
+}
+
 /* ---- course access ----
    Codes: NABU-T-YYMMDD-XXXX (T = tarot, L = lenormand, M = manifestation,
    P = playing cards, C = coin, Y = message tree, B = both of those two), the
@@ -8803,7 +8893,10 @@ function renderChrome(route) {
   $('#lang').textContent = T().lang;
   $('#nav').innerHTML = ['home', 'pick', 'play', 'learn', 'book', 'me'].map((k) =>
     '<a href="#/' + k + '" class="' + (route === k ? 'on' : '') + '">' + ICONS[k] + '<span>' + esc(T().nav[k]) + '</span>'
-    + (k === 'me' && (UNREAD + NEWBK) ? '<span class="badge">' + (UNREAD + NEWBK) + '</span>' : '') + '</a>').join('');
+    + (k === 'me' && (UNREAD + NEWBK) ? '<span class="badge">' + (UNREAD + NEWBK) + '</span>' : '')
+    // A sale on readings shows up on the tab where readings are booked.
+    + (k === 'book' && SALE.covers('reading') ? '<span class="saletag" aria-hidden="true">🏷️</span>' : '')
+    + (k === 'learn' && SALE.covers('unlock') ? '<span class="saletag" aria-hidden="true">🏷️</span>' : '') + '</a>').join('');
   if (typeof adminTabBadges === 'function') adminTabBadges();
 }
 let toastTimer = null;
@@ -9642,7 +9735,10 @@ function bindTour(root, step) {
     if (act === 'next' && step < TOUR.length - 1) { $('#tour').outerHTML = tourHTML(step + 1); bindTour(root, step + 1); return; }
     if (act === 'prev') { $('#tour').outerHTML = tourHTML(Math.max(0, step - 1)); bindTour(root, Math.max(0, step - 1)); return; }
     saveProfileLocal({ tourDone: true }); if (BE.user) BE.pushProfile();
-    $('#tour').outerHTML = tourMiniHTML(); bindTour(root, 0);
+    // On the home screen the card folds into its little bar; anywhere else it
+    // was opened on purpose, so closing it simply removes it.
+    if (parseHash().route === 'home') { $('#tour').outerHTML = tourMiniHTML(); bindTour(root, 0); }
+    else { const el = $('#tour', root); if (el) el.remove(); }
   }));
 }
 
@@ -9695,27 +9791,6 @@ function richHTML(text) {
 const plainText = (s) => String(s || '').replace(/\[(?:img|video):[^\]\s]+\]/g, '').replace(/\*\*|__|==|\*/g, '').replace(/^##\s+|^>\s?/gm, '').trim();
 function hydrateImages(root) {
   $$('img.pimg[data-img]', root).forEach((img) => { const id = img.getAttribute('data-img'); if (IMGS[id]) { img.src = IMGS[id]; return; } loadImg(id).then((d) => { if (d) img.src = d; }); });
-}
-/* How many lines a piece of text actually occupies. */
-function lineCount(el) {
-  const r = document.createRange();
-  r.selectNodeContents(el);
-  const rects = r.getClientRects(), tops = {};
-  for (let i = 0; i < rects.length; i++) tops[Math.round(rects[i].top)] = 1;
-  return Object.keys(tops).length;
-}
-/* Titles that only just overflow are stepped down until they sit on one line.
-   Nothing below 15px, and a title too long to ever fit keeps the normal size. */
-function fitTitles(root) {
-  $$('.post h2', root || document).forEach((h) => {
-    h.style.fontSize = '';
-    if (lineCount(h) <= 1) return;
-    for (let fs = 18; fs >= 15; fs--) {
-      h.style.fontSize = fs + 'px';
-      if (lineCount(h) <= 1) return;
-    }
-    h.style.fontSize = '';
-  });
 }
 function postHTML(p, full) {
   const raw = L(p.body), body = plainText(raw), long = !full && body.length > 320, score = postScore(p);
@@ -9805,7 +9880,11 @@ function upcomingHTML() {
 async function renderHome(args, params) {
   const S = T(), m = $('#main');
   const name = (PROFILE.name || '').trim();
-  m.innerHTML = '<div class="eyebrow">' + esc(CONFIG.brand) + '</div>'
+  const sale = SALE.live();
+  const saleBanner = sale
+    ? '<a class="salebar" href="' + (sale.scope === 'unlock' ? '#/unlock' : '#/prices') + '"><span class="tag">🏷️ ' + esc(SALE.off()) + '</span><span class="txt">' + esc(SALE.title() || T().saleDefault) + '</span><span class="go">' + esc(T().saleSee) + ' ›</span></a>'
+    : '';
+  m.innerHTML = saleBanner + '<div class="eyebrow">' + esc(CONFIG.brand) + '</div>'
     + todayHTML()
     + (PROFILE.tourDone ? tourMiniHTML() : tourHTML(0))
     + '<h1 style="margin:18px 0 4px">' + esc(name ? S.hello(name) : S.helloGuest) + '</h1><p class="muted">' + esc(lang === 'vi' ? 'Hôm nay bạn muốn làm gì?' : 'What would you like to do today?') + '</p>'
@@ -9828,7 +9907,6 @@ async function renderHome(args, params) {
     + (POSTS_CACHED && all.length ? '<div class="banner">' + esc(S.feedOffline) + '</div>' : '')
     + (list.length ? '<div class="eyebrow" style="margin-top:4px">📰 ' + esc(S.nabuPosts) + '</div>' + list.slice(0, 3).map((p) => postHTML(p, false)).join('') + '<a class="btn block" href="#/news">' + esc(S.allPostsBtn(list.length)) + '</a>' : (welcome ? '' : '<p class="empty">' + esc(S.feedEmpty) + '</p>'));
   bindPost(feed);
-  fitTitles(feed);
   const wt = $('[data-wtoggle]', feed);
   if (wt) wt.addEventListener('click', () => { const sec = wt.closest('.welcome'), open = !sec.classList.contains('open'); sec.classList.toggle('open', open); $('.chev', wt).textContent = open ? '–' : '+'; store.set('nabu-welcome-open', open); });
   if (params.go === 'feed' && NAV.restore == null) feed.scrollIntoView({ behavior: 'smooth' });
@@ -9851,7 +9929,6 @@ async function renderNews() {
     const list = sortedPosts().filter((p) => !p.welcome).filter((p) => !q || fold(L(p.title) + ' ' + plainText(L(p.body))).indexOf(q) > -1);
     const newsBox = $('#news');
     newsBox.innerHTML = list.length ? list.map((p) => postHTML(p, false)).join('') : '<p class="empty">' + esc(q ? S.noMatch : S.feedEmpty) + '</p>';
-    fitTitles(newsBox);
     bindPost($('#news'));
   };
   $('#nsearch').addEventListener('input', draw); draw();
@@ -9991,7 +10068,7 @@ function paywallHTML(courseId) {
   const expired = a && a < isoDate(new Date());
   return '<div class="paywall"><div class="ic">🔒</div><h2>' + esc(L(c.name)) + '</h2><p class="muted">' + esc(L(c.blurb)) + '</p>'
     + '<ul class="inc">' + L(c.includes).map((x) => '<li>' + esc(x) + '</li>').join('') + '</ul>'
-    + (isTWA() ? '' : '<div class="price">' + fmtPrice(c.price) + ' <span>/ ' + c.months + ' ' + esc(S.months6) + '</span></div>')
+    + (isTWA() ? '' : '<div class="price">' + priceHTML(c.price, 'unlock') + ' <span>/ ' + c.months + ' ' + esc(S.months6) + '</span></div>')
     + (expired ? '<p class="hint err">' + esc(S.courseExpired(a)) + '</p>' : '')
     + (isTWA() ? '<p class="hint" style="margin:8px 0">' + esc(S.storeCodeHint) + '</p>' : '<a class="btn primary block" data-buy="' + courseId + '" href="' + (CONFIG.instagram ? 'https://ig.me/m/' + esc(CONFIG.instagram) : '#/me') + '" target="_blank" rel="noopener">' + esc(S.buyCourse) + '</a>'
     + '<p class="hint" style="margin:8px 0">' + esc(S.buyHint) + '</p>')
@@ -10231,7 +10308,12 @@ function renderAstro() {
     } else if (t === 'planets') {
       const showPlanet = (id) => { const p = PLANETS.filter((x) => x.id === id)[0]; $('#porbit', panel).innerHTML = planetOrbitSVG(id); $('#pout', panel).innerHTML = '<div class="nrow"><span class="ic">' + p.g + '</span><div><b>' + esc(p.name[lang]) + ' · ' + esc(lang === 'vi' ? 'chủ cung ' : 'rules ') + ZSIGN[p.rules].g + ' ' + esc(ZSIGN[p.rules][lang]) + '</b><p>' + esc(p[lang]) + '</p></div></div>'; $$('[data-pl]', panel).forEach((b) => b.classList.toggle('on', b.getAttribute('data-pl') === id)); };
       panel.innerHTML = '<div class="visual"><div id="porbit"></div><div class="chips">' + PLANETS.map((p) => '<button class="chip" data-pl="' + p.id + '">' + p.g + ' ' + esc(p.name[lang]) + '</button>').join('') + '</div></div><div class="ins" id="pout"></div>';
-      $$('[data-pl]', panel).forEach((b) => b.addEventListener('click', () => showPlanet(b.getAttribute('data-pl'))));
+      // Delegated, because the strip is rebuilt each time a planet is chosen and
+      // handlers bound to the old nodes would be thrown away with them.
+      panel.addEventListener('click', (e) => {
+        const t = e.target.closest ? e.target.closest('[data-pl]') : null;
+        if (t) showPlanet(t.getAttribute('data-pl'));
+      });
       showPlanet('sun');
     } else if (t === 'houses') {
       const showHouse = (n) => { const h = HOUSES[n - 1]; $('#hwheel', panel).innerHTML = houseWheelSVG(n); $('#hout', panel).innerHTML = '<div class="nrow"><span class="ic" style="font-family:var(--display);font-size:30px">' + n + '</span><div><b>' + esc(h[lang][0]) + '</b><p>' + esc(h[lang][1]) + '</p></div></div>'; $$('[data-house]', panel).forEach((p) => p.addEventListener('click', () => showHouse(Number(p.getAttribute('data-house'))))); };
@@ -10245,6 +10327,19 @@ function renderAstro() {
   };
   show('signs');
   $$('#atabs button').forEach((b) => b.addEventListener('click', () => { $$('#atabs button').forEach((x) => x.classList.toggle('on', x === b)); show(b.getAttribute('data-t')); }));
+}
+/* The twelve signs read as a wheel, so the arrows wrap around: the sign before
+   Aries is Pisces. Free to use, like the rest of the astrology pages. */
+function signNavHTML(key) {
+  const i = ZKEYS.indexOf(key);
+  if (i < 0) return '';
+  const at = (k) => {
+    const z = ZSIGN[ZKEYS[(k + ZKEYS.length) % ZKEYS.length]];
+    return { href: '#/learn/sign/' + ZKEYS[(k + ZKEYS.length) % ZKEYS.length], label: z.g + ' ' + z[lang] };
+  };
+  const link = (it, dir) => '<a class="' + (dir < 0 ? 'prev' : 'next') + '" href="' + it.href + '">'
+    + (dir < 0 ? '<span class="ar">←</span>' : '') + '<b>' + esc(it.label) + '</b>' + (dir > 0 ? '<span class="ar">→</span>' : '') + '</a>';
+  return '<div class="cardnav">' + link(at(i - 1), -1) + link(at(i + 1), 1) + '</div>';
 }
 function renderSign(key) {
   const S = T(), m = $('#main'), z = ZSIGN[key];
@@ -10260,7 +10355,7 @@ function renderSign(key) {
     + '<div class="ins"><h3>' + esc(S.strengths) + '</h3><div class="kwl">' + ZDEEP[key][lang].strengths.map((k) => '<span>' + esc(k) + '</span>').join('') + '</div><h3>' + esc(S.challenges) + '</h3><div class="kwl neg">' + ZDEEP[key][lang].challenges.map((k) => '<span>' + esc(k) + '</span>').join('') + '</div><h3>' + esc(S.compat) + '</h3><div class="awrapper">' + zodiacRingSVG(key, ZDEEP[key].compat) + '</div><div class="chips">' + ZDEEP[key].compat.map((k) => '<a class="chip lav" href="#/learn/sign/' + k + '">' + ZSIGN[k].g + ' ' + esc(ZSIGN[k][lang]) + '</a>').join('') + '</div></div>'
     + '<div class="ins"><h3>' + esc(S.moonSign) + '</h3><p>' + esc(ZDEEP[key][lang].moon) + '</p><h3>' + esc(S.risingSign) + '</h3><p>' + esc(ZDEEP[key][lang].rising) + '</p></div>'
     + '<div class="ins"><h3>' + esc(S.signCards) + '</h3><div class="mini">' + cards.map((id) => miniHTML(id, true)).join('') + '</div><p class="faint">' + cards.map((id) => cardById(id).name + ': ' + astroLine(id)).map(esc).join('<br>') + '</p></div>'
-    + aiPanelHTML({ type: 'sign', key: key }) + '</div>';
+    + aiPanelHTML({ type: 'sign', key: key }) + signNavHTML(key) + '</div>';
   bindCardLinks(m); bindAI(m);
   $$('[data-zsign]', m).forEach((b) => b.addEventListener('click', () => { location.hash = '#/learn/sign/' + b.getAttribute('data-zsign'); }));
 }
@@ -10374,7 +10469,7 @@ const UNL_CART = {
 function unlockRowHTML(c) {
   const S = T(), until = ACCESS.get()[c.id], open = ACCESS.has(c.id) || (c.id !== 'luck' && ACCESS.has('luck'));
   const picked = !open && UNL_CART.has(c.id);
-  const body = '<div class="unl-h"><b>' + esc(L(c.name)) + '</b>' + (isTWA() ? '' : '<span class="pr">' + fmtPrice(c.price) + '</span>') + '</div>'
+  const body = '<div class="unl-h"><b>' + esc(L(c.name)) + '</b>' + (isTWA() ? '' : '<span class="pr">' + priceHTML(c.price, 'unlock') + '</span>') + '</div>'
     + '<p class="hint">' + esc(L(c.sum || c.blurb)) + '</p>'
     + '<div class="unl-f">' + (c.id === 'luck' ? '<span class="chip pink">' + esc(S.unlockBest) + '</span>' : '')
     + '<span class="unl-st">' + (open ? '✓ ' + esc(ACCESS.isAdmin() && !until ? S.adminShort : S.unlockOpenUntil(fmtDate(until)))
@@ -10386,15 +10481,15 @@ function unlockCartHTML() {
   const S = T(), ids = UNL_CART.get().filter((id) => COURSES.some((c) => c.id === id) && !ACCESS.has(id));
   if (!ids.length) return '<p class="hint">' + esc(S.unlockEmpty) + '</p>';
   const rows = COURSES.filter((c) => ids.indexOf(c.id) > -1);
-  const total = rows.reduce((n, c) => n + c.price, 0);
-  return '<div class="sum">' + rows.map((c) => '<div class="r"><span>' + esc(L(c.name)) + '</span><b>' + fmtPrice(c.price) + '</b></div>').join('')
+  const total = rows.reduce((n, c) => n + salePrice(c.price, 'unlock'), 0);
+  return '<div class="sum">' + rows.map((c) => '<div class="r"><span>' + esc(L(c.name)) + '</span><b>' + priceHTML(c.price, 'unlock') + '</b></div>').join('')
     + '<div class="r tot"><span>' + esc(S.unlockTotal) + '</span><b>' + fmtPrice(total) + '</b></div></div>';
 }
 function unlockMessage() {
   const S = T(), ids = UNL_CART.get(), rows = COURSES.filter((c) => ids.indexOf(c.id) > -1 && !ACCESS.has(c.id));
   if (!rows.length) return '';
-  const total = rows.reduce((n, c) => n + c.price, 0);
-  return '🔓 ' + S.unlockMsgHead + '\n' + rows.map((c) => '• ' + L(c.name) + ': ' + fmtPrice(c.price)).join('\n')
+  const total = rows.reduce((n, c) => n + salePrice(c.price, 'unlock'), 0);
+  return '🔓 ' + S.unlockMsgHead + '\n' + rows.map((c) => '• ' + L(c.name) + ': ' + fmtPrice(salePrice(c.price, 'unlock'))).join('\n')
     + '\n💰 ' + S.unlockTotal + ': ' + fmtPrice(total);
 }
 function renderUnlock() {
@@ -10421,7 +10516,7 @@ function renderUnlock() {
       if (BE.enabled && BE.user) {
         send.disabled = true;
         try {
-          await BE.createUnlockOrder(rows.map((c) => ({ id: c.id, name: L(c.name), price: c.price })), rows.reduce((n, c) => n + c.price, 0));
+          await BE.createUnlockOrder(rows.map((c) => ({ id: c.id, name: L(c.name), price: salePrice(c.price, 'unlock') })), rows.reduce((n, c) => n + salePrice(c.price, 'unlock'), 0));
           UNL_CART.set([]); toast(S.unlockSent); draw();
           const s2 = $('#ustatus'); if (s2) { s2.textContent = S.unlockSent; s2.className = 'hint ok'; }
           return;
@@ -11060,7 +11155,17 @@ function aspectSVG(deg) {
 function planetOrbitSVG(activeId) {
   const order = ['sun', 'mer', 'ven', 'moo', 'mar', 'jup', 'sat', 'ura', 'nep', 'plu'];
   let s = '<svg viewBox="0 0 320 90" class="orbit">';
-  order.forEach((id, i) => { const p = PLANETS.filter((x) => x.id === id)[0], x = 22 + i * 31, on = id === activeId; s += '<circle cx="' + x + '" cy="45" r="' + (on ? 16 : 12) + '" fill="' + (on ? 'var(--primary)' : 'var(--surface-2)') + '" stroke="var(--rule)"/><text x="' + x + '" y="50" text-anchor="middle" font-size="' + (on ? 16 : 13) + '" fill="' + (on ? 'var(--primary-ink)' : 'var(--fg)') + '">' + p.g + '</text><text x="' + x + '" y="78" text-anchor="middle" font-size="7.5" fill="var(--fg-faint)">' + esc(p.name[lang].replace('Sao ', '')) + '</text>'; });
+  // Each planet is its own button: the transparent rect gives the glyph and its
+  // label one comfortable tap target covering both.
+  order.forEach((id, i) => {
+    const p = PLANETS.filter((x) => x.id === id)[0], x = 22 + i * 31, on = id === activeId;
+    s += '<g data-pl="' + id + '" style="cursor:pointer" role="button" tabindex="0" aria-label="' + esc(p.name[lang]) + '">'
+      + '<rect x="' + (x - 15) + '" y="24" width="30" height="60" fill="transparent"/>'
+      + '<circle cx="' + x + '" cy="45" r="' + (on ? 16 : 12) + '" fill="' + (on ? 'var(--primary)' : 'var(--surface-2)') + '" stroke="var(--rule)"/>'
+      + '<text x="' + x + '" y="50" text-anchor="middle" font-size="' + (on ? 16 : 13) + '" fill="' + (on ? 'var(--primary-ink)' : 'var(--fg)') + '">' + p.g + '</text>'
+      + '<text x="' + x + '" y="78" text-anchor="middle" font-size="7.5" font-weight="' + (on ? '700' : '400') + '" fill="' + (on ? 'var(--fg)' : 'var(--fg-faint)') + '">' + esc(p.name[lang].replace('Sao ', '')) + '</text>'
+      + '</g>';
+  });
   return s + '</svg>';
 }
 
@@ -11124,7 +11229,13 @@ function guideVisualHTML(id) {
   if (v === 'lenvstarot') { return '<div class="cmp"><div><span class="face" style="width:110px">' + faceSVG(cardById('major-17')) + '</span><b>Tarot</b><span>' + esc(lang === 'vi' ? 'một cảnh, nhiều tầng' : 'a scene, many layers') + '</span></div><div><span class="face" style="width:110px">' + lenFace(16) + '</span><b>Lenormand</b><span>' + esc(lang === 'vi' ? 'một vật, một từ' : 'one thing, one word') + '</span></div></div>'; }
   if (v === 'big3') { const si = mySign(), k = si > -1 ? ZKEYS[si] : null; const disc = (lbl, g, sub) => '<div class="disc"><span class="g">' + g + '</span><b>' + esc(lbl) + '</b><span>' + esc(sub) + '</span></div>'; return '<div class="big3">' + disc(lang === 'vi' ? 'Mặt Trời' : 'Sun', k ? ZSIGN[k].g : '☉', k ? ZSIGN[k][lang] : (lang === 'vi' ? 'nhập ngày sinh' : 'add your birthday')) + disc(lang === 'vi' ? 'Mặt Trăng' : 'Moon', '☽', lang === 'vi' ? 'cần giờ sinh' : 'needs birth time') + disc(lang === 'vi' ? 'Mọc' : 'Rising', '↑', lang === 'vi' ? 'cần giờ + nơi sinh' : 'needs time + place') + '</div>'; }
   if (v === 'elements') return '<div class="elgrid">' + ['fire', 'earth', 'air', 'water'].map((el) => '<div class="elc" style="border-color:' + EL_COLOR[el] + '"><b style="color:' + EL_COLOR[el] + '">' + ZELEM[el].g + ' ' + esc(ZELEM[el][lang]) + '</b>' + ZKEYS.filter((k) => ZSIGN[k].el === el).map((k) => '<a href="#/learn/sign/' + k + '">' + ZSIGN[k].g + ' ' + esc(ZSIGN[k][lang]) + '</a>').join('') + '</div>').join('') + '</div>';
-  if (v === 'moonphases') { const idx = moonPhase(new Date()).idx; return '<div class="phases">' + MOON_ICONS.map((ic, i) => '<div class="ph' + (i === idx ? ' on' : '') + '"><span class="ic">' + ic + '</span><span>' + esc(MOON_NAMES[lang][i]) + '</span></div>').join('') + '</div><p class="faint" style="text-align:center">' + esc(lang === 'vi' ? 'Hôm nay: ' : 'Today: ') + MOON_NAMES[lang][idx] + '</p>'; }
+  if (v === 'moonphases') {
+    // Each phase is a button, and today's is the one already open.
+    const idx = moonPhase(new Date()).idx;
+    return '<div class="phases">' + MOON_ICONS.map((ic, i) => '<button type="button" class="ph' + (i === idx ? ' on' : '') + '" data-moon="' + i + '"><span class="ic">' + ic + '</span><span>' + esc(MOON_NAMES[lang][i]) + '</span></button>').join('') + '</div>'
+      + '<p class="faint" style="text-align:center">' + esc(lang === 'vi' ? 'Hôm nay: ' : 'Today: ') + esc(MOON_NAMES[lang][idx]) + '</p>'
+      + '<div class="ins" id="moonout">' + moonTextHTML(idx) + '</div>';
+  }
   if (v === 'retro') return '<svg viewBox="0 0 320 120" class="orbit"><circle cx="60" cy="60" r="22" fill="#F6C453"/><text x="60" y="66" text-anchor="middle" font-size="16">☉</text><ellipse cx="60" cy="60" rx="110" ry="40" fill="none" stroke="var(--rule)" stroke-dasharray="4 4"/><path d="M150 40 C 175 30, 190 55, 170 62 C 150 70, 160 90, 185 82" fill="none" stroke="var(--primary)" stroke-width="3" stroke-linecap="round"/><text x="230" y="60" font-size="13" fill="var(--fg)">☿ ' + esc(lang === 'vi' ? 'nhìn từ Trái Đất' : 'seen from Earth') + '</text><text x="230" y="78" font-size="10" fill="var(--fg-faint)">' + esc(lang === 'vi' ? 'có vẻ đi lùi' : 'appears to go backwards') + '</text></svg>';
   if (v === 'woop') { const w = store.get('nabu-woop', {}) || {}; return '<div class="woop edit">' + [['wish', 'W', TV('Mong muốn', 'Wish'), '🌱'], ['outcome', 'O', TV('Kết quả', 'Outcome'), '🌸'], ['obstacle', 'O', TV('Trở ngại', 'Obstacle'), '🪨'], ['plan', 'P', TV('Kế hoạch', 'Plan'), '🗺️']].map((x) => '<div class="wp"><span class="ic">' + x[3] + '</span><b>' + x[1] + '</b><span>' + esc(x[2]) + '</span><textarea data-save="nabu-woop" data-k="' + x[0] + '" placeholder="…">' + esc(w[x[0]] || '') + '</textarea></div>').join('') + '</div>' + toolbar('nabu-woop'); }
   if (v === 'vision') { const b = store.get('nabu-vision', {}) || {}; return '<div class="vboard">' + [['💗', TV('Tình cảm', 'Love')], ['💼', TV('Việc và tiền', 'Work and money')], ['🌿', TV('Sức khỏe', 'Health')], ['🏡', TV('Gia đình, bạn bè', 'Family and friends')], ['📚', TV('Học hỏi', 'Learning')], ['🛌', TV('Nghỉ ngơi', 'Rest')]].map((x, i) => '<div class="vb' + (b['img' + i] ? ' has' : '') + '"><div class="vtap" data-vtile="' + i + '">' + (b['img' + i] ? '<img src="' + esc(b['img' + i]) + '" alt="">' : '<span class="ic">' + x[0] + '</span>') + '<b>' + esc(x[1]) + '</b>' + (b['img' + i] ? '' : '<span class="ph">📷 ' + esc(T().tapPhoto) + '</span>') + '</div><input data-save="nabu-vision" data-k="cap' + i + '" placeholder="' + esc(T().caption) + '" value="' + esc(b['cap' + i] || '') + '">' + (b['img' + i] ? '<button type="button" class="x" data-vclear="' + i + '" aria-label="clear">✕</button>' : '') + '</div>').join('') + '</div><input type="file" accept="image/*" data-vfile hidden>' + toolbar('nabu-vision'); }
@@ -11138,8 +11249,16 @@ function guideVisualHTML(id) {
   if (v === 'checklist') { const g = GUIDES.filter((x) => x.id === id)[0], ck = store.get('nabu-limits', {}) || {}; return '<div class="chk2">' + g.sections.slice(0, 2).map((s, i) => '<div class="col ' + (i ? 'good' : 'bad') + '"><b>' + (i ? '✓ ' : '✗ ') + esc(L(s.h)) + '</b>' + L(s.p).split(/\.\s+/).filter(Boolean).slice(0, 4).map((line, j) => '<label><input type="checkbox" data-chk="' + i + '-' + j + '"' + (ck[i + '-' + j] ? ' checked' : '') + '> ' + esc(line.replace(/\.$/, '')) + '</label>').join('') + '</div>').join('') + '</div>' + toolbar('nabu-limits'); }
   return '';
 }
+function moonTextHTML(i) {
+  return '<h3>' + MOON_ICONS[i] + ' ' + esc(MOON_NAMES[lang][i]) + '</h3><p>' + esc(MOON_TEXT[lang][i]) + '</p>';
+}
 function bindGuideVisual(root) {
   bindCardLinks(root);
+  $$('[data-moon]', root).forEach((b) => b.addEventListener('click', () => {
+    const i = Number(b.getAttribute('data-moon'));
+    $$('[data-moon]', root).forEach((x) => x.classList.toggle('on', x === b));
+    const out = $('#moonout', root); if (out) out.innerHTML = moonTextHTML(i);
+  }));
   $$('[data-t369]', root).forEach((b) => b.addEventListener('click', () => { const t = store.get('nabu-369', { d: isoDate(new Date()), a: 0, b: 0, c: 0 }), k = b.getAttribute('data-t369'), mx = Number(b.getAttribute('data-max')); t[k] = (t[k] + 1) % (mx + 1); t.d = isoDate(new Date()); store.set('nabu-369', t); $('.cnt', b).textContent = t[k] + ' / ' + mx; $('.dots', b).textContent = '●'.repeat(t[k]) + '○'.repeat(mx - t[k]); }));
   $$('[data-grat]', root).forEach((inp) => inp.addEventListener('input', () => { store.set('nabu-gratitude', $$('[data-grat]', root).map((x) => x.value)); }));
   // Every tool saves as you type, and can be cleared and redone.
@@ -11215,7 +11334,8 @@ function slotLabel(key) { return T().dateFmt(new Date(key.slice(0, 10) + 'T00:00
 const serviceOf = (id) => SERVICES.filter((s) => s.id === id)[0];
 const pkgOfItem = (it) => { const s = serviceOf(it.svc); return s ? s.packages.filter((p) => p.id === it.pkg)[0] : null; };
 const itemIndex = (svc, pkg) => book.items.findIndex((x) => x.svc === svc && x.pkg === pkg);
-const cartTotal = () => book.items.reduce((sum, it) => { const p = pkgOfItem(it); return sum + (p ? p.price : 0); }, 0);
+// Summed from the prices actually charged, so the total always matches the rows.
+const cartTotal = () => book.items.reduce((sum, it) => { const p = pkgOfItem(it); return sum + (p ? salePrice(p.price, 'reading') : 0); }, 0);
 const needsBirth = () => book.items.some((it) => { const s = serviceOf(it.svc); return s && s.needsBirth; });
 const topicLabel = (n, l) => { const t = TOPICS[n - 1]; return t ? '#' + t.id + ' ' + (l ? L2(t.name, l) : L(t.name)) : ''; };
 function composeMessage() {
@@ -11224,7 +11344,7 @@ function composeMessage() {
     out.push('🧺 ' + S.msgService + (book.items.length > 1 ? ' (' + book.items.length + ')' : '') + ':');
     book.items.forEach((it) => {
       const s = serviceOf(it.svc), p = pkgOfItem(it); if (!s || !p) return;
-      out.push('• ' + L(s.name) + ' – ' + L(p.name) + ': ' + fmtPrice(p.price));
+      out.push('• ' + L(s.name) + ' – ' + L(p.name) + ': ' + fmtPrice(salePrice(p.price, 'reading')));
       if (p.needsTopic && it.topic) out.push('   ↳ ' + S.msgTopic + ': ' + topicLabel(it.topic));
     });
     if (book.items.length > 1) out.push('💰 ' + S.msgTotal + ': ' + fmtPrice(cartTotal()));
@@ -11241,7 +11361,7 @@ function composeMessage() {
 /* The request as a labelled card: packages one per line, total, time, details. */
 function summaryHTML() {
   const S = T(), rows = [];
-  const items = book.items.map((it) => { const s = serviceOf(it.svc), p = pkgOfItem(it); if (!s || !p) return ''; return '<li>' + esc(L(s.name) + ' – ' + L(p.name)) + ' <b>' + fmtPrice(p.price) + '</b>' + (p.needsTopic ? '<br><small class="' + (it.topic ? 'ok' : 'warn') + '">' + esc(it.topic ? S.msgTopic + ': ' + topicLabel(it.topic) : S.cartNeedsTopic) + '</small>' : '') + '</li>'; }).join('');
+  const items = book.items.map((it) => { const s = serviceOf(it.svc), p = pkgOfItem(it); if (!s || !p) return ''; return '<li>' + esc(L(s.name) + ' – ' + L(p.name)) + ' <b>' + priceHTML(p.price, 'reading') + '</b>' + (p.needsTopic ? '<br><small class="' + (it.topic ? 'ok' : 'warn') + '">' + esc(it.topic ? S.msgTopic + ': ' + topicLabel(it.topic) : S.cartNeedsTopic) + '</small>' : '') + '</li>'; }).join('');
   rows.push([S.bkItems, items ? '<ul>' + items + '</ul>' : '<span class="warn">' + esc(S.cartEmpty) + '</span>']);
   if (book.items.length > 1) rows.push([S.msgTotal, '<b>' + fmtPrice(cartTotal()) + '</b>']);
   rows.push([S.msgTime, book.slot ? esc(slotLabel(book.slot)) : '<span class="warn">' + esc(S.pickDay) + '</span>']);
@@ -11274,8 +11394,8 @@ function priceSheetHTML(interactive) {
     + '<div class="t"><span class="ic">' + s.icon + '</span><div><b>' + esc(L(s.name)) + '</b><div class="tag">' + esc(L(s.tagline)) + '</div></div></div>'
     + (s.note ? '<p class="hint">' + esc(L(s.note)) + '</p>' : '')
     + '<div class="pk">' + s.packages.map((p) => (interactive
-      ? '<button class="pkg' + (itemIndex(s.id, p.id) > -1 ? ' on' : '') + '" data-pkg="' + s.id + '/' + p.id + '"><span>' + (itemIndex(s.id, p.id) > -1 ? '✓ ' : '') + esc(L(p.name)) + '</span><b>' + fmtPrice(p.price) + '</b></button>'
-      : '<div class="pkg"><span>' + esc(L(p.name)) + '</span><b>' + fmtPrice(p.price) + '</b></div>')).join('') + '</div></div>').join('')
+      ? '<button class="pkg' + (itemIndex(s.id, p.id) > -1 ? ' on' : '') + '" data-pkg="' + s.id + '/' + p.id + '"><span>' + (itemIndex(s.id, p.id) > -1 ? '✓ ' : '') + esc(L(p.name)) + '</span><b>' + priceHTML(p.price, 'reading') + '</b></button>'
+      : '<div class="pkg"><span>' + esc(L(p.name)) + '</span><b>' + priceHTML(p.price, 'reading') + '</b></div>')).join('') + '</div></div>').join('')
     + '<p class="paynote">💜 ' + esc(L(PAYMENT_NOTE)) + '</p>';
 }
 function renderPrices() {
@@ -11283,7 +11403,7 @@ function renderPrices() {
   m.innerHTML = '<div class="eyebrow">' + esc(CONFIG.brand) + '</div><h1 style="margin-bottom:6px">' + esc(S.priceTitle) + '</h1><p class="muted">' + esc(S.priceIntro) + '</p>'
     + priceSheetHTML(false) + '<a class="btn primary block" href="#/book">' + esc(S.ctaBook) + '</a>'
     + '<h2 style="margin:24px 0 10px">' + esc(S.courses) + '</h2>' + COURSES.map((c) => '<div class="svc lav"><div class="t"><span class="ic">' + (c.id === 'tarot' ? PICK_ICON : '🗝️') + '</span><div><b>' + esc(L(c.name)) + '</b><div class="tag">' + esc(L(c.blurb)) + '</div></div></div>'
-      + (isTWA() ? '' : '<div class="pk"><div class="pkg"><span>' + c.months + ' ' + esc(S.months6) + '</span><b>' + fmtPrice(c.price) + '</b></div></div>') + '<a class="btn sm block" href="#/learn/' + c.id + '" style="margin-top:8px">' + esc(S.cats[c.id]) + ' →</a></div>').join('');
+      + (isTWA() ? '' : '<div class="pk"><div class="pkg"><span>' + c.months + ' ' + esc(S.months6) + '</span><b>' + priceHTML(c.price, 'unlock') + '</b></div></div>') + '<a class="btn sm block" href="#/learn/' + c.id + '" style="margin-top:8px">' + esc(S.cats[c.id]) + ' →</a></div>').join('');
 }
 
 async function renderBook(args, params) {
@@ -11621,7 +11741,7 @@ function renderMe(args, params) {
       // The tick and the hourglass already say open or expired, so the column
       // only carries the date. Spelling it out pushed long course names onto a
       // second line and left the column ragged.
-      const right = a ? esc(a.slice(8, 10) + '/' + a.slice(5, 7) + '/' + a.slice(0, 4)) : (isTWA() ? '' : fmtPrice(c.price));
+      const right = a ? esc(a.slice(8, 10) + '/' + a.slice(5, 7) + '/' + a.slice(0, 4)) : (isTWA() ? '' : priceHTML(c.price, 'unlock'));
       return '<div class="course"><span class="nm">' + esc(L(c.name)) + '</span><span class="ic">' + ic + '</span><span class="pr faint">' + right + '</span></div>'; }).join('')
       + '<label class="f" for="mcode">' + esc(S.enterCode) + '</label><div class="row nw"><input id="mcode" placeholder="NABU-T-…" autocapitalize="characters"><button class="btn" id="munlock">' + esc(S.unlock) + '</button></div><p class="hint" id="mcstatus"></p></div>';
     h += '<div class="card"><h3 style="margin-bottom:8px">' + esc(S.themeTitle) + '</h3><div class="themes">' + ['auto', 'light', 'dark', 'pink'].map((t) => '<button class="chip' + (themeChoice() === t ? ' on' : '') + '" data-theme-pick="' + t + '" title="' + esc(S.themes[t]) + '">' + esc(S.themeShort[t]) + '</button>').join('') + '</div></div>';
@@ -11639,7 +11759,15 @@ function renderMe(args, params) {
     bindProfileForm(body, () => { if (params.next === 'book') location.hash = '#/book'; else if (params.next === 'unlock') location.hash = '#/unlock'; });
     $('#munlock').addEventListener('click', () => { const r = parseCode($('#mcode').value); const st = $('#mcstatus'); if (!r) { st.textContent = S.badCode; st.className = 'hint err'; return; } ACCESS.grant(r.courses || [r.course], r.until); toast(S.unlocked); draw(); });
     $$('[data-theme-pick]', body).forEach((b) => b.addEventListener('click', () => { setTheme(b.getAttribute('data-theme-pick')); $$('[data-theme-pick]', body).forEach((x) => x.classList.toggle('on', x === b)); }));
-    $('#retour').addEventListener('click', () => { saveProfileLocal({ tourDone: false }); location.hash = '#/home'; });
+    // The tour opens here rather than throwing the visitor back to the home
+    // screen. It sits above the row of buttons and closes from its own link.
+    $('#retour').addEventListener('click', () => {
+      const acts = $('.meacts', body);
+      if ($('#tour', body)) { $('#tour', body).remove(); return; }
+      acts.insertAdjacentHTML('beforebegin', tourHTML(0));
+      bindTour(body, 0);
+      $('#tour', body).scrollIntoView({ behavior: 'smooth', block: 'center' });
+    });
     const so = $('#signout'); if (so) so.addEventListener('click', () => BE.signOut());
     const da = $('#delacct'); if (da) da.addEventListener('click', async () => {
       if (!confirm(S.delConfirm)) return;
@@ -11932,7 +12060,6 @@ function bindActs(root, list) {
       const cl = $('[data-wishclear]', card); if (cl) cl.addEventListener('click', () => { if (!confirm(S.actWishClearConfirm)) return; store.set('nabu-wishes', (store.get('nabu-wishes', []) || []).filter((w) => w.aid !== a.id)); $('.wishcount', card).textContent = S.actWishHint; cl.remove(); });
     }
   });
-  fitTitles(root);
   hydrateImages(root);
 }
 function actStatus(a) { const S = T(); return actAnswered(a) ? '✓ ' + S.actHasResults : a.closed ? S.actClosed : S.actOpen; }
@@ -12375,14 +12502,14 @@ function adminCleanup() { admin.unsubs.forEach((u) => { try { u(); } catch (e) {
 function renderAdmin(args, params) {
   adminCleanup();
   const S = T(), m = $('#main');
-  if (params && params.tab && ['posts', 'acts', 'schedule', 'bookings', 'inbox', 'codes'].indexOf(params.tab) > -1) admin.tab = params.tab;
+  if (params && params.tab && ['posts', 'acts', 'schedule', 'bookings', 'inbox', 'codes', 'sale'].indexOf(params.tab) > -1) admin.tab = params.tab;
   m.innerHTML = '<div class="eyebrow">' + esc(CONFIG.brand) + '</div><h1 style="margin-bottom:6px">' + esc(S.adminTitle) + '</h1><p class="muted">' + esc(S.adminIntro) + '</p>'
-    + '<div class="tabs" id="atabs">' + ['posts', 'acts', 'schedule', 'bookings', 'inbox', 'codes'].map((k) => '<button data-t="' + k + '" class="' + (admin.tab === k ? 'on' : '') + '">' + esc(S.adminTabs[k]) + '<span class="tb" data-tb="' + k + '" hidden></span></button>').join('') + '</div>'
+    + '<div class="tabs" id="atabs">' + ['posts', 'acts', 'schedule', 'bookings', 'inbox', 'codes', 'sale'].map((k) => '<button data-t="' + k + '" class="' + (admin.tab === k ? 'on' : '') + '">' + esc(S.adminTabs[k]) + '<span class="tb" data-tb="' + k + '" hidden></span></button>').join('') + '</div>'
     + (BE.enabled ? '<p class="hint" style="margin-bottom:12px">☁️ ' + esc(S.cloudContent) + '</p>' : '<div class="card"><label class="f" for="gtoken">' + esc(S.token) + '</label><div class="row nw"><input id="gtoken" type="password" value="' + esc(ghToken()) + '" style="flex:1" autocomplete="off"><button class="btn sm" id="savetoken">' + esc(S.saveToken) + '</button></div><p class="hint">' + esc(S.tokenHint) + ' (' + esc(CONFIG.repo) + ')</p></div>')
     + '<div id="apanel"></div>';
   const stb = $('#savetoken'); if (stb) stb.addEventListener('click', () => { store.set('nabu-gh-token', $('#gtoken').value.trim()); toast('✓'); show(admin.tab); });
   $$('#atabs button').forEach((b) => b.addEventListener('click', () => { admin.tab = b.getAttribute('data-t'); $$('#atabs button').forEach((x) => x.classList.toggle('on', x === b)); show(admin.tab); }));
-  const show = (t) => { adminCleanup(); const p = $('#apanel'); if (t === 'posts') adminPosts(p); else if (t === 'acts') adminActivities(p); else if (t === 'schedule') adminSchedule(p); else if (t === 'bookings') adminBookings(p); else if (t === 'codes') adminCodes(p); else adminInbox(p); };
+  const show = (t) => { adminCleanup(); const p = $('#apanel'); if (t === 'sale') adminSale(p); else if (t === 'posts') adminPosts(p); else if (t === 'acts') adminActivities(p); else if (t === 'schedule') adminSchedule(p); else if (t === 'bookings') adminBookings(p); else if (t === 'codes') adminCodes(p); else adminInbox(p); };
   show(admin.tab);
 }
 
@@ -12614,14 +12741,59 @@ function adminCodes(p) {
     $('#ccopy').addEventListener('click', () => copyText(code).then(() => toast(S.copied)));
   });
 }
+/* ---- the sale tool ----
+   One record, so a sale can be switched on, aimed at readings or unlockables,
+   given a size and a run of days, and switched off again. */
+function adminSale(p) {
+  const S = T();
+  if (!needAdmin(p)) return;
+  const d = SALE.data || {};
+  const opt = (v, cur, label) => '<option value="' + esc(v) + '"' + (cur === v ? ' selected' : '') + '>' + esc(label) + '</option>';
+  p.innerHTML = '<p class="hint">' + esc(S.saleHint) + '</p>'
+    + '<div class="card"><label class="f" style="display:flex;gap:8px;align-items:center"><input type="checkbox" id="son" style="width:auto"' + (d.on ? ' checked' : '') + '>' + esc(S.saleOn) + '</label>'
+    + '<label class="f" for="sscope">' + esc(S.saleScope) + '</label><select id="sscope">'
+    + ['all', 'reading', 'unlock'].map((k) => opt(k, d.scope || 'all', S.saleScopes[k])).join('') + '</select>'
+    + '<div class="two"><div><label class="f" for="skind">' + esc(S.saleKind) + '</label><select id="skind">'
+    + ['percent', 'amount'].map((k) => opt(k, d.kind || 'percent', S.saleKinds[k])).join('') + '</select></div>'
+    + '<div><label class="f" for="sval">' + esc(S.saleValue) + '</label><input id="sval" type="number" min="0" value="' + esc(d.value == null ? '' : d.value) + '"></div></div>'
+    + '<div class="two"><div><label class="f" for="sfrom">' + esc(S.saleFrom) + '</label><input id="sfrom" type="date" value="' + esc(d.from || '') + '"></div>'
+    + '<div><label class="f" for="sto">' + esc(S.saleTo) + '</label><input id="sto" type="date" value="' + esc(d.to || '') + '"></div></div>'
+    + '<label class="f" for="slabel">' + esc(S.saleLabel) + '</label><input id="slabel" placeholder="' + esc(S.saleLabelPh) + '" value="' + esc((d.label && d.label.vi) || '') + '">'
+    + '<label class="f" for="slabel_en">' + esc(S.saleLabel) + ' (EN)</label><input id="slabel_en" value="' + esc((d.label && d.label.en) || '') + '">'
+    + '<button class="btn primary block" id="ssave" style="margin-top:12px">' + esc(S.publish) + '</button><p class="hint" id="sstatus"></p></div>'
+    + '<div class="card"><h3 style="margin-bottom:6px">' + esc(S.preview) + '</h3><div id="sprev"></div></div>';
+  const read = () => ({
+    on: $('#son').checked, scope: $('#sscope').value, kind: $('#skind').value,
+    value: Number($('#sval').value) || 0, from: $('#sfrom').value, to: $('#sto').value,
+    label: { vi: $('#slabel').value.trim(), en: $('#slabel_en').value.trim() }
+  });
+  const preview = () => {
+    const before = SALE.data;
+    SALE.set(read());
+    const live = SALE.live();
+    $('#sprev').innerHTML = live
+      ? '<p class="hint">' + esc(SALE.off()) + ' · ' + esc(S.saleScopes[live.scope] || '') + '</p><div class="sum"><div class="r"><span>300.000đ</span><b>' + priceHTML(300000, 'unlock') + '</b></div><div class="r"><span>60.000đ</span><b>' + priceHTML(60000, 'reading') + '</b></div></div>'
+      : '<p class="hint">' + esc(S.saleNone) + '</p>';
+    SALE.set(before);
+  };
+  $$('#son,#sscope,#skind,#sval,#sfrom,#sto', p).forEach((el) => el.addEventListener('input', preview));
+  preview();
+  $('#ssave').addEventListener('click', async () => {
+    if (!cloud()) { (function(){ var st=$('#sstatus'); st.textContent=S.adminLogin; st.className='hint err'; })(); return; }
+    const doc = read();
+    try { await BE.setContent('sale', doc); SALE.set(doc); toast(S.saleSaved); renderChrome('me'); preview(); }
+    catch (e) { const st = $('#sstatus'); st.textContent = S.publishFail + ': ' + e.message; st.className = 'hint err'; }
+  });
+}
 ROUTES.admin = { nav: '', render: renderAdmin };
 
 /* ============================ boot ============================ */
-window.APP_VERSION = 'v95';
-window.NABU = { CONFIG: CONFIG, loadActs: loadActs, BACK: BACK, LESSONS: LESSONS, localAnswer: localAnswer, compatVerdict: compatVerdict, numerologyOf: numerologyOf, ZDEEP: ZDEEP, lunarToday: lunarToday, solarToLunar: solarToLunar, DECK: DECK, INSIGHT: INSIGHT, KW: KW, ASK: ASK, TOPICS: TOPICS, GUIDES: GUIDES, SERVICES: SERVICES, COURSES: COURSES, ACCESS: ACCESS, makeCode: makeCode, parseCode: parseCode, ZODIAC: ZODIAC, pick: pick, book: book,
+window.APP_VERSION = 'v96';
+window.NABU = { CONFIG: CONFIG, SALE: SALE, salePrice: salePrice, loadActs: loadActs, BACK: BACK, LESSONS: LESSONS, localAnswer: localAnswer, compatVerdict: compatVerdict, numerologyOf: numerologyOf, ZDEEP: ZDEEP, lunarToday: lunarToday, solarToLunar: solarToLunar, DECK: DECK, INSIGHT: INSIGHT, KW: KW, ASK: ASK, TOPICS: TOPICS, GUIDES: GUIDES, SERVICES: SERVICES, COURSES: COURSES, ACCESS: ACCESS, makeCode: makeCode, parseCode: parseCode, ZODIAC: ZODIAC, pick: pick, book: book,
   insightHTML: insightHTML, insightOf: insightOf, sunSignIndex: sunSignIndex, lifePath: lifePath, PROFILE: () => PROFILE, BE: BE, ACTS: ACTS };
 BE.initP = BE.init().catch(() => { /* backend unreachable: the app runs device-only */ });
 // The Gemini key is a dashboard setting kept in the app cloud (content/ai), never in the source.
+loadContent('sale', 'sale.json', 'nabu-sale').then((r) => { SALE.set(r && r.data); renderChrome((ROUTES[parseHash().route] || {}).nav); route(); });
 loadContent('ai', 'ai.json', 'nabu-ai').then((r) => { if (r && r.data && typeof r.data.geminiKey === 'string') { CONFIG.geminiKey = r.data.geminiKey.trim(); if (CONFIG.geminiKey) $$('.ai .ai-h .faint').forEach((el) => { el.textContent = T().aiOnline; }); } }).catch(() => {});
 // The app is not a web page: no pinch or double-tap zoom.
 document.addEventListener('gesturestart', (e) => e.preventDefault(), { passive: false });

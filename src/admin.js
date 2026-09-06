@@ -63,14 +63,14 @@ function adminCleanup() { admin.unsubs.forEach((u) => { try { u(); } catch (e) {
 function renderAdmin(args, params) {
   adminCleanup();
   const S = T(), m = $('#main');
-  if (params && params.tab && ['posts', 'acts', 'schedule', 'bookings', 'inbox', 'codes'].indexOf(params.tab) > -1) admin.tab = params.tab;
+  if (params && params.tab && ['posts', 'acts', 'schedule', 'bookings', 'inbox', 'codes', 'sale'].indexOf(params.tab) > -1) admin.tab = params.tab;
   m.innerHTML = '<div class="eyebrow">' + esc(CONFIG.brand) + '</div><h1 style="margin-bottom:6px">' + esc(S.adminTitle) + '</h1><p class="muted">' + esc(S.adminIntro) + '</p>'
-    + '<div class="tabs" id="atabs">' + ['posts', 'acts', 'schedule', 'bookings', 'inbox', 'codes'].map((k) => '<button data-t="' + k + '" class="' + (admin.tab === k ? 'on' : '') + '">' + esc(S.adminTabs[k]) + '<span class="tb" data-tb="' + k + '" hidden></span></button>').join('') + '</div>'
+    + '<div class="tabs" id="atabs">' + ['posts', 'acts', 'schedule', 'bookings', 'inbox', 'codes', 'sale'].map((k) => '<button data-t="' + k + '" class="' + (admin.tab === k ? 'on' : '') + '">' + esc(S.adminTabs[k]) + '<span class="tb" data-tb="' + k + '" hidden></span></button>').join('') + '</div>'
     + (BE.enabled ? '<p class="hint" style="margin-bottom:12px">☁️ ' + esc(S.cloudContent) + '</p>' : '<div class="card"><label class="f" for="gtoken">' + esc(S.token) + '</label><div class="row nw"><input id="gtoken" type="password" value="' + esc(ghToken()) + '" style="flex:1" autocomplete="off"><button class="btn sm" id="savetoken">' + esc(S.saveToken) + '</button></div><p class="hint">' + esc(S.tokenHint) + ' (' + esc(CONFIG.repo) + ')</p></div>')
     + '<div id="apanel"></div>';
   const stb = $('#savetoken'); if (stb) stb.addEventListener('click', () => { store.set('nabu-gh-token', $('#gtoken').value.trim()); toast('✓'); show(admin.tab); });
   $$('#atabs button').forEach((b) => b.addEventListener('click', () => { admin.tab = b.getAttribute('data-t'); $$('#atabs button').forEach((x) => x.classList.toggle('on', x === b)); show(admin.tab); }));
-  const show = (t) => { adminCleanup(); const p = $('#apanel'); if (t === 'posts') adminPosts(p); else if (t === 'acts') adminActivities(p); else if (t === 'schedule') adminSchedule(p); else if (t === 'bookings') adminBookings(p); else if (t === 'codes') adminCodes(p); else adminInbox(p); };
+  const show = (t) => { adminCleanup(); const p = $('#apanel'); if (t === 'sale') adminSale(p); else if (t === 'posts') adminPosts(p); else if (t === 'acts') adminActivities(p); else if (t === 'schedule') adminSchedule(p); else if (t === 'bookings') adminBookings(p); else if (t === 'codes') adminCodes(p); else adminInbox(p); };
   show(admin.tab);
 }
 
@@ -300,6 +300,50 @@ function adminCodes(p) {
     const until = addMonths($('#cstart').value || isoDate(new Date()), Number($('#cmonths').value) || 6), code = makeCode($('#ccourse').value, until);
     $('#cout').innerHTML = '<div class="codebox" id="codeval">' + code + '</div><p class="hint" style="text-align:center">' + esc(S.codeUntil) + ': ' + esc(fmtDate(until)) + '</p><button class="btn block" id="ccopy">' + esc(S.copyMsg.replace(/tin nhắn|the message/i, 'mã')) + '</button>';
     $('#ccopy').addEventListener('click', () => copyText(code).then(() => toast(S.copied)));
+  });
+}
+/* ---- the sale tool ----
+   One record, so a sale can be switched on, aimed at readings or unlockables,
+   given a size and a run of days, and switched off again. */
+function adminSale(p) {
+  const S = T();
+  if (!needAdmin(p)) return;
+  const d = SALE.data || {};
+  const opt = (v, cur, label) => '<option value="' + esc(v) + '"' + (cur === v ? ' selected' : '') + '>' + esc(label) + '</option>';
+  p.innerHTML = '<p class="hint">' + esc(S.saleHint) + '</p>'
+    + '<div class="card"><label class="f" style="display:flex;gap:8px;align-items:center"><input type="checkbox" id="son" style="width:auto"' + (d.on ? ' checked' : '') + '>' + esc(S.saleOn) + '</label>'
+    + '<label class="f" for="sscope">' + esc(S.saleScope) + '</label><select id="sscope">'
+    + ['all', 'reading', 'unlock'].map((k) => opt(k, d.scope || 'all', S.saleScopes[k])).join('') + '</select>'
+    + '<div class="two"><div><label class="f" for="skind">' + esc(S.saleKind) + '</label><select id="skind">'
+    + ['percent', 'amount'].map((k) => opt(k, d.kind || 'percent', S.saleKinds[k])).join('') + '</select></div>'
+    + '<div><label class="f" for="sval">' + esc(S.saleValue) + '</label><input id="sval" type="number" min="0" value="' + esc(d.value == null ? '' : d.value) + '"></div></div>'
+    + '<div class="two"><div><label class="f" for="sfrom">' + esc(S.saleFrom) + '</label><input id="sfrom" type="date" value="' + esc(d.from || '') + '"></div>'
+    + '<div><label class="f" for="sto">' + esc(S.saleTo) + '</label><input id="sto" type="date" value="' + esc(d.to || '') + '"></div></div>'
+    + '<label class="f" for="slabel">' + esc(S.saleLabel) + '</label><input id="slabel" placeholder="' + esc(S.saleLabelPh) + '" value="' + esc((d.label && d.label.vi) || '') + '">'
+    + '<label class="f" for="slabel_en">' + esc(S.saleLabel) + ' (EN)</label><input id="slabel_en" value="' + esc((d.label && d.label.en) || '') + '">'
+    + '<button class="btn primary block" id="ssave" style="margin-top:12px">' + esc(S.publish) + '</button><p class="hint" id="sstatus"></p></div>'
+    + '<div class="card"><h3 style="margin-bottom:6px">' + esc(S.preview) + '</h3><div id="sprev"></div></div>';
+  const read = () => ({
+    on: $('#son').checked, scope: $('#sscope').value, kind: $('#skind').value,
+    value: Number($('#sval').value) || 0, from: $('#sfrom').value, to: $('#sto').value,
+    label: { vi: $('#slabel').value.trim(), en: $('#slabel_en').value.trim() }
+  });
+  const preview = () => {
+    const before = SALE.data;
+    SALE.set(read());
+    const live = SALE.live();
+    $('#sprev').innerHTML = live
+      ? '<p class="hint">' + esc(SALE.off()) + ' · ' + esc(S.saleScopes[live.scope] || '') + '</p><div class="sum"><div class="r"><span>300.000đ</span><b>' + priceHTML(300000, 'unlock') + '</b></div><div class="r"><span>60.000đ</span><b>' + priceHTML(60000, 'reading') + '</b></div></div>'
+      : '<p class="hint">' + esc(S.saleNone) + '</p>';
+    SALE.set(before);
+  };
+  $$('#son,#sscope,#skind,#sval,#sfrom,#sto', p).forEach((el) => el.addEventListener('input', preview));
+  preview();
+  $('#ssave').addEventListener('click', async () => {
+    if (!cloud()) { (function(){ var st=$('#sstatus'); st.textContent=S.adminLogin; st.className='hint err'; })(); return; }
+    const doc = read();
+    try { await BE.setContent('sale', doc); SALE.set(doc); toast(S.saleSaved); renderChrome('me'); preview(); }
+    catch (e) { const st = $('#sstatus'); st.textContent = S.publishFail + ': ' + e.message; st.className = 'hint err'; }
   });
 }
 ROUTES.admin = { nav: '', render: renderAdmin };

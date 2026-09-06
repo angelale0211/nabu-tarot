@@ -199,7 +199,7 @@ function renderMe(args, params) {
       // The tick and the hourglass already say open or expired, so the column
       // only carries the date. Spelling it out pushed long course names onto a
       // second line and left the column ragged.
-      const right = a ? esc(a.slice(8, 10) + '/' + a.slice(5, 7) + '/' + a.slice(0, 4)) : (isTWA() ? '' : fmtPrice(c.price));
+      const right = a ? esc(a.slice(8, 10) + '/' + a.slice(5, 7) + '/' + a.slice(0, 4)) : (isTWA() ? '' : priceHTML(c.price, 'unlock'));
       return '<div class="course"><span class="nm">' + esc(L(c.name)) + '</span><span class="ic">' + ic + '</span><span class="pr faint">' + right + '</span></div>'; }).join('')
       + '<label class="f" for="mcode">' + esc(S.enterCode) + '</label><div class="row nw"><input id="mcode" placeholder="NABU-T-…" autocapitalize="characters"><button class="btn" id="munlock">' + esc(S.unlock) + '</button></div><p class="hint" id="mcstatus"></p></div>';
     h += '<div class="card"><h3 style="margin-bottom:8px">' + esc(S.themeTitle) + '</h3><div class="themes">' + ['auto', 'light', 'dark', 'pink'].map((t) => '<button class="chip' + (themeChoice() === t ? ' on' : '') + '" data-theme-pick="' + t + '" title="' + esc(S.themes[t]) + '">' + esc(S.themeShort[t]) + '</button>').join('') + '</div></div>';
@@ -217,7 +217,15 @@ function renderMe(args, params) {
     bindProfileForm(body, () => { if (params.next === 'book') location.hash = '#/book'; else if (params.next === 'unlock') location.hash = '#/unlock'; });
     $('#munlock').addEventListener('click', () => { const r = parseCode($('#mcode').value); const st = $('#mcstatus'); if (!r) { st.textContent = S.badCode; st.className = 'hint err'; return; } ACCESS.grant(r.courses || [r.course], r.until); toast(S.unlocked); draw(); });
     $$('[data-theme-pick]', body).forEach((b) => b.addEventListener('click', () => { setTheme(b.getAttribute('data-theme-pick')); $$('[data-theme-pick]', body).forEach((x) => x.classList.toggle('on', x === b)); }));
-    $('#retour').addEventListener('click', () => { saveProfileLocal({ tourDone: false }); location.hash = '#/home'; });
+    // The tour opens here rather than throwing the visitor back to the home
+    // screen. It sits above the row of buttons and closes from its own link.
+    $('#retour').addEventListener('click', () => {
+      const acts = $('.meacts', body);
+      if ($('#tour', body)) { $('#tour', body).remove(); return; }
+      acts.insertAdjacentHTML('beforebegin', tourHTML(0));
+      bindTour(body, 0);
+      $('#tour', body).scrollIntoView({ behavior: 'smooth', block: 'center' });
+    });
     const so = $('#signout'); if (so) so.addEventListener('click', () => BE.signOut());
     const da = $('#delacct'); if (da) da.addEventListener('click', async () => {
       if (!confirm(S.delConfirm)) return;
