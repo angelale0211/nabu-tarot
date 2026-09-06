@@ -437,6 +437,17 @@ async function go(hash, sel) { W().location.hash = hash; await sleep(30); return
       await go('#/play', '#acts .actbtn'); await sleep(80);
       ok(d.querySelectorAll('#acts .actbtn').length === 6 && !d.querySelector('.actbtn[href="#/unlock"]') && d.querySelector('.actbtn[href="#/play/tree"]') && d.querySelector('.actbtn[href="#/play/coin"]') && d.querySelector('.actbtn[href="#/play/diary"]') && d.querySelector('.actbtn[href="#/play/p1"]') && d.querySelector('.actbtn[href="#/play/w1"]') && !d.querySelector('[data-pile]'), 'the activities screen is a list of buttons: the coin and the diary first, then one per activity');
       w.localStorage.removeItem('nabu-luck'); w.localStorage.removeItem('nabu-access');
+      { // A detail page must never truncate its own text; only teasers may.
+        const bad = [];
+        for (const id of ['p1', 'q1', 'w1']) {
+          await go('#/play/' + id, '#acts .post');
+          const body = d.querySelector('#acts .body'), head = d.querySelector('#acts h2');
+          if (body && /clamp/.test(body.className)) bad.push(id + ' body');
+          if (head && /tclamp/.test(head.className)) bad.push(id + ' title');
+        }
+        ok(bad.length === 0, 'a pile, poll or wish page shows its whole introduction and title, with nothing faded out (' + bad.join(', ') + ')'); }
+      await go('#/home', '#actwrap .act');
+      ok(d.querySelector('#actwrap h2.tclamp') && d.querySelector('#actwrap .body.clamp'), 'the home teaser is the one that shortens the title and the text');
       await go('#/play/tree', '#shake'); ok(d.querySelector('#tree svg') && d.querySelector('#treemsg').hidden, 'the message tree starts with no message shown');
       d.querySelector('#shake').click(); await waitFor(() => !d.querySelector('#treemsg').hidden, 6000);
       ok(d.querySelector('#treetext').textContent.length > 20 && d.querySelectorAll('#tree .petals i').length === 0, 'shaking the tree drops one written message and clears the petals');
