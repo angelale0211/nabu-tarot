@@ -869,32 +869,60 @@ const PET_ART = {
   /* The golden eagle: a brow over the eye is the whole difference between a
      raptor and a soft brown bird. */
   eagle: () => ({
-    glow: true, feet: false, pal: { body: '#8A5F2E', dark: '#6B4620', ink: '#2E1E0E' },
-    headRX: 26, headRY: 24, bodyRX: 29,
-    behind: '<path d="M30 84 Q4 66 2 32 Q22 52 38 76 Z" fill="#6B4620"/>'
-      + '<path d="M32 90 Q10 80 6 50 Q24 66 40 84 Z" fill="#8A5F2E"/>'
-      + '<path d="M34 96 Q16 92 12 70 Q28 82 42 92 Z" fill="#B07C3E"/>'
-      + '<path d="M90 84 Q116 66 118 32 Q98 52 82 76 Z" fill="#6B4620"/>'
-      + '<path d="M88 90 Q110 80 114 50 Q96 66 80 84 Z" fill="#8A5F2E"/>'
-      + '<path d="M86 96 Q104 92 108 70 Q92 82 78 92 Z" fill="#B07C3E"/>'
-      + '<g stroke="#4E3316" stroke-width="1.2" fill="none" opacity=".7">'
-      + '<path d="M10 44 Q22 60 32 80 M12 62 Q24 74 36 90 M110 44 Q98 60 88 80 M108 62 Q96 74 84 90"/></g>'
-      + '<path d="M48 108 q12 14 24 0 q-3 14 -12 16 q-9 -2 -12 -16 Z" fill="#6B4620"/>',
-    ears: '<path d="M36 30 Q48 12 60 8 Q72 12 84 30 Q60 20 36 30 Z" fill="#C9A05A"/>'
-      + '<path d="M42 26 Q52 16 60 14 Q68 16 78 26 Q60 20 42 26 Z" fill="#E8CE9A"/>',
-    overBody: '<path d="M60 66 q-17 17 -15 38 q15 6 30 0 q2 -21 -15 -38 Z" fill="#E8CE9A"/>'
-      + '<g stroke="#B07C3E" stroke-width="1.6" fill="none" opacity=".85"><path d="M48 82 q12 -5 24 0 M46 92 q14 -5 28 0 M50 101 q10 -4 20 0"/></g>'
-      + '<g stroke="#E5BE5E" stroke-width="3.2" stroke-linecap="round"><path d="M50 112 v6 M70 112 v6 M45 118 h9 M66 118 h9"/></g>',
-    // A hooked beak and a heavy brow: the two things that make it a raptor.
-    front: '<path d="M60 52 L52 62 Q52 74 60 78 Q68 74 68 62 Z" fill="#F0B24E"/>'
-      + '<path d="M60 70 Q55 76 58 82 Q62 78 60 70 Z" fill="#C4813C"/>'
-      + '<ellipse cx="49" cy="50" rx="6" ry="6.6" fill="#F7E9C8"/><ellipse cx="71" cy="50" rx="6" ry="6.6" fill="#F7E9C8"/>'
-      + '<circle cx="50" cy="51" r="3.4" fill="#2E1E0E"/><circle cx="70" cy="51" r="3.4" fill="#2E1E0E"/>'
-      + '<circle cx="51" cy="49.6" r="1.2" fill="#fff"/><circle cx="71" cy="49.6" r="1.2" fill="#fff"/>'
-      + '<path d="M40 42 Q50 40 56 46" fill="none" stroke="#6B4620" stroke-width="4" stroke-linecap="round"/>'
-      + '<path d="M80 42 Q70 40 64 46" fill="none" stroke="#6B4620" stroke-width="4" stroke-linecap="round"/>',
-    noFace: true, noMouth: true, charmY: 96
-  })
+    glow: true, noCharm: true,
+    only: (() => {
+      const DARK = '#6B4620', MID = '#8A5F2E', WARM = '#B07C3E', CREAM = '#F2E2C0', PALE = '#FBF3E2', GOLD = '#E5BE5E', DEEP = '#B9913B', INK = '#2E1E0E';
+      /* Wings, drawn as three bands each so the flight feathers separate. The
+         far edge is stepped rather than smooth: that jagged edge is most of
+         what says eagle rather than bird. */
+      const feathers = (dir) => {
+        const f = (i, len, drop) => {
+          const x = 60 + dir * (16 + i * 8.5);
+          return '<path d="M' + (60 + dir * 14) + ' 62 Q' + (x - dir * 2) + ' ' + (52 + drop) + ' ' + (x + dir * len * 0.2) + ' ' + (40 + drop)
+            + ' Q' + (x + dir * 5) + ' ' + (54 + drop) + ' ' + (60 + dir * 14) + ' 70 Z" fill="' + (i % 2 ? MID : DARK) + '"/>';
+        };
+        let out = '';
+        // the broad inner wing
+        out += '<path d="M' + (60 + dir * 12) + ' 58 Q' + (60 + dir * 44) + ' 44 ' + (60 + dir * 56) + ' 22 Q' + (60 + dir * 58) + ' 52 ' + (60 + dir * 26) + ' 76 Z" fill="' + MID + '"/>';
+        out += '<path d="M' + (60 + dir * 12) + ' 62 Q' + (60 + dir * 40) + ' 54 ' + (60 + dir * 52) + ' 38 Q' + (60 + dir * 52) + ' 62 ' + (60 + dir * 24) + ' 80 Z" fill="' + WARM + '"/>';
+        // five long feathers along the leading edge
+        for (let i = 0; i < 5; i++) out += f(i, 26, i * 3);
+        out += '<g stroke="' + DARK + '" stroke-width="1.1" fill="none" opacity=".55">'
+          + '<path d="M' + (60 + dir * 18) + ' 66 Q' + (60 + dir * 34) + ' 58 ' + (60 + dir * 46) + ' 42"/>'
+          + '<path d="M' + (60 + dir * 18) + ' 74 Q' + (60 + dir * 32) + ' 66 ' + (60 + dir * 42) + ' 54"/></g>';
+        return out;
+      };
+      const wings = feathers(-1) + feathers(1);
+      // A fanned tail under the body.
+      let tail = '';
+      [-16, -8, 0, 8, 16].forEach((o, i) => {
+        tail += '<path d="M' + (60 + o * 0.35) + ' 84 Q' + (60 + o) + ' 94 ' + (60 + o * 1.35) + ' 104 L' + (60 + o * 1.35 + 5) + ' 104 Q' + (60 + o + 4) + ' 94 ' + (60 + o * 0.35 + 4) + ' 84 Z" fill="' + (i % 2 ? MID : WARM) + '"/>';
+      });
+      // Chest, feathered in bands, and the shoulders that carry the wings.
+      const body = '<path d="M60 46 Q42 52 40 74 Q39 92 60 98 Q81 92 80 74 Q78 52 60 46 Z" fill="' + CREAM + '"/>'
+        + '<g fill="none" stroke="' + WARM + '" stroke-width="1.5" opacity=".8">'
+        + '<path d="M46 62 Q60 56 74 62 M44 72 Q60 65 76 72 M45 82 Q60 75 75 82 M48 90 Q60 85 72 90"/></g>'
+        + '<path d="M60 46 Q48 50 45 62 Q52 55 60 55 Q68 55 75 62 Q72 50 60 46 Z" fill="' + PALE + '"/>';
+      /* The head, turned to the right, so the hooked beak is seen against the
+         sky. The brow over the eye is what makes a raptor look like one. */
+      const head = '<path d="M56 44 Q46 40 46 30 Q46 18 58 15 Q72 13 78 22 Q82 28 80 36 Q76 44 66 45 Z" fill="' + PALE + '"/>'
+        + '<path d="M56 44 Q47 40 46 31 Q46 22 54 17 Q52 30 58 42 Z" fill="' + CREAM + '"/>'
+        + '<path d="M78 22 Q92 24 96 32 Q90 34 84 32 Q88 38 84 42 Q78 38 77 30 Z" fill="' + GOLD + '"/>'
+        + '<path d="M84 32 Q90 33 96 32 Q90 36 84 35 Z" fill="' + DEEP + '"/>'
+        + '<circle cx="72" cy="27" r="4.4" fill="' + GOLD + '"/><circle cx="72.5" cy="27" r="2.6" fill="' + INK + '"/>'
+        + '<circle cx="73.6" cy="26" r="1" fill="#fff"/>'
+        + '<path d="M64 21 Q71 18 79 22" stroke="' + DARK + '" stroke-width="3.4" fill="none" stroke-linecap="round"/>'
+        + '<path d="M50 22 Q56 14 66 13" stroke="' + WARM + '" stroke-width="2" fill="none" stroke-linecap="round" opacity=".7"/>';
+      // Talons on a branch, which gives her something to stand on.
+      const perch = '<path d="M18 108 Q60 102 102 108" stroke="' + DARK + '" stroke-width="4.5" fill="none" stroke-linecap="round"/>'
+        + '<path d="M96 106 q8 -4 12 -10" stroke="' + DARK + '" stroke-width="3" fill="none" stroke-linecap="round"/>'
+        + '<g stroke="' + GOLD + '" stroke-width="3.4" stroke-linecap="round" fill="none">'
+        + '<path d="M52 96 v8 M68 96 v8"/>'
+        + '<path d="M52 104 l-5 4 M52 104 l0 5 M52 104 l5 4 M68 104 l-5 4 M68 104 l0 5 M68 104 l5 4"/></g>';
+      const sun = '<circle cx="22" cy="20" r="12" fill="#FFF3C4" opacity=".3"/>';
+      return sun + wings + tail + perch + body + head;
+    })()
+  }),
 };
 
 function petSVG(kind, coat, mood, wear) {

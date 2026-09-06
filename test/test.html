@@ -682,8 +682,8 @@ async function go(hash, sel) { W().location.hash = hash; await sleep(30); return
       ok(String(r) === 'n1:same,mirror:mirror,mirror:palindrome,ladder:ladder,n6:root,n7:same',
         'a repeated digit, a mirror, a palindrome, a ladder and anything else reduced to its root all find a reading'); }
     await go('#/learn/angel/n7', '.angelone');
-    ok(d.querySelectorAll('.angelone p').length >= 5 && d.querySelectorAll('.cardnav a').length === 4 && /Số 7 lặp lại/.test(d.querySelector('#main h1').textContent),
-      'a group reads in full, with arrows to the group either side of it');
+    ok(d.querySelectorAll('.angelone .ins').length === 2 && d.querySelectorAll('.angelone .ins p').length >= 4 && d.querySelectorAll('.cardnav a').length === 4 && /Số 7 lặp lại/.test(d.querySelector('#main h1').textContent),
+      'a group reads in full inside the same framed cards the other knowledge pages use, with arrows either side of it');
     w.localStorage.removeItem('nabu-angel-log'); w.localStorage.removeItem('nabu-angel-last');
     await go('#/install', '#instshare'); ok(d.querySelector('a[href="nabu-tarot.apk"][download]') && d.querySelectorAll('.steps li').length >= 7 && /Thêm vào MH chính/.test(d.querySelector('#main').textContent) && /Tải app/.test(d.querySelector('#foot').textContent), 'the install screen offers the Android installer and the iPhone steps, linked from the footer');
     await go('#/privacy', '.privacy .gsec'); ok(d.querySelectorAll('.privacy .gsec').length >= 10 && /Xoá tài khoản/.test(d.querySelector('.privacy').textContent) && /Gemini/.test(d.querySelector('.privacy').textContent), 'the in-app privacy policy lists every kind of data, Gemini, and how to delete the account');
