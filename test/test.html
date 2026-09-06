@@ -194,11 +194,13 @@ async function go(hash, sel) { W().location.hash = hash; await sleep(30); return
     await go('#/learn/astro', '.signlist button');
     ok(d.querySelectorAll('.signlist button').length === 12 && d.querySelector('.signlist button.me') && /Sư Tử/.test(d.querySelector('.signlist button.me').textContent) && d.querySelectorAll('.zring [data-zsign]').length === 12, 'twelve signs on a ring and in a list, mine marked');
     d.querySelector('[data-t="planets"]').click(); await sleep(50);
-    ok(d.querySelectorAll('.chips [data-pl]').length === 10 && d.querySelectorAll('#porbit [data-pl]').length === 10 && /Mặt Trời/.test(d.querySelector('#pout').textContent), 'planets as an orbit strip with a detail card, both of them tappable');
-    d.querySelector('.chips [data-pl="sat"]').click(); await sleep(40);
+    ok(d.querySelectorAll('.plgrid [data-pl]').length === 10 && d.querySelectorAll('#porbit [data-pl]').length === 10 && /Mặt Trời/.test(d.querySelector('#pout').textContent)
+      && w.getComputedStyle(d.querySelector('.plgrid')).gridTemplateColumns.split(' ').length === 3,
+      'planets as an orbit and a grid three to a row, with a detail card, both of them tappable');
+    d.querySelector('.plgrid [data-pl="sat"]').click(); await sleep(40);
     ok(/Sao Thổ/.test(d.querySelector('#pout').textContent), 'tapping a planet chip shows it');
     d.querySelector('#porbit [data-pl="ven"]').dispatchEvent(new w.MouseEvent('click', { bubbles: true })); await sleep(40);
-    ok(/Sao Kim/.test(d.querySelector('#pout').textContent) && d.querySelector('.chips [data-pl="ven"]').classList.contains('on'), 'tapping the planet in the strip selects it and marks its chip too');
+    ok(/Sao Kim/.test(d.querySelector('#pout').textContent) && d.querySelector('.plgrid [data-pl="ven"]').classList.contains('on'), 'tapping the planet in the orbit selects it and marks its tile too');
     d.querySelector('[data-t="houses"]').click(); await sleep(50);
     ok(d.querySelectorAll('#hwheel [data-house]').length === 12 && /Bản thân/.test(d.querySelector('#hout').textContent), 'twelve houses on a wheel');
     d.querySelector('[data-house="7"]').dispatchEvent(new w.Event('click')); await sleep(30);
@@ -684,9 +686,9 @@ async function go(hash, sel) { W().location.hash = hash; await sleep(30); return
       await go('#/play/q1', '#acts .act-poll'); await sleep(40);
       ok(d.querySelectorAll('.act-poll [data-opt]').length === 3 && /đăng nhập để bình chọn/.test(d.querySelector('.act-poll .pollnote').textContent) && d.querySelector('.act-poll .pollstat') && d.querySelectorAll('.act-poll .bar').length === 3, 'a guest is told to sign in to vote but still sees the overall results');
       await go('#/home', '#actwrap .aq'); ok(d.querySelector('#actwrap .aq[href="#/play/polls"]') && d.querySelector('#actwrap a[href="#/play"]') && !d.querySelector('#actwrap [data-opt]') && !d.querySelector('#actwrap .post'), 'home offers the activities as buttons rather than one expanded teaser');
-      ok(d.querySelectorAll('#actwrap .actquick .aq').length === 7 && d.querySelector('#actwrap .aq[href="#/play/pet"]') && d.querySelector('#actwrap .aq[href="#/play/tree"]') && d.querySelector('#actwrap .aq[href="#/play/coin"]') && d.querySelector('#actwrap .aq[href="#/play/diary"]')
-        && d.querySelector('#actwrap .aq[href="#/play/piles"]') && d.querySelector('#actwrap .aq[href="#/play/polls"]') && d.querySelector('#actwrap .aq[href="#/play/wishes"]'),
-        'home offers all seven activities as their own buttons: the four everyday ones and the three published kinds');
+      ok(d.querySelectorAll('#actwrap .actquick .aq').length === 8 && d.querySelector('#actwrap .aq[href="#/play/pet"]') && d.querySelector('#actwrap .aq[href="#/play/tree"]') && d.querySelector('#actwrap .aq[href="#/play/coin"]') && d.querySelector('#actwrap .aq[href="#/play/diary"]')
+        && d.querySelector('#actwrap .aq[href="#/play/piles"]') && d.querySelector('#actwrap .aq[href="#/play/polls"]') && d.querySelector('#actwrap .aq[href="#/play/wishes"]') && d.querySelector('#actwrap .aq[href="#/love"]'),
+        'home offers all eight activities as their own buttons: two rows of four, with the red thread beside picking a pile and voting');
       N.ACTS.items = [{ id: 'p2', type: 'pile', date: '2026-01-01', resultsDate: '2026-01-04', title: { vi: 'Tụ cũ' }, piles: [{ msg: { vi: 'A' } }, { msg: { vi: 'B' } }], results: false }]; w.localStorage.setItem('nabu-act-choices', JSON.stringify({ p2: 0 }));
       await go('#/home', '.tiles'); await go('#/play/p2', '#acts .act-pile'); await waitFor(() => d.querySelector('.act-pile .pile.open'), 3000);
       ok(d.querySelector('.act-pile [data-pile="0"].open') && !d.querySelector('.act-pile .pmsg').hidden && /Đã có kết quả/.test(d.querySelector('.act-pile').textContent), 'a pile reading answers itself once its results date has passed');
@@ -800,6 +802,37 @@ async function go(hash, sel) { W().location.hash = hash; await sleep(30); return
       d.querySelector('#lvuntie').click(); await sleep(160);
       ok(!db.docs['bonds/uidA__uidB'] && d.querySelector('#lvfind') && N.loveBadgeHTML() === '',
         'either of them unties alone, and the page and the tag go back to how they were');
+
+      /* Nobody by that handle is nearly always somebody who has never opened
+         the app, so the empty search has to lead somewhere. */
+      d.querySelector('#lvfind').value = 'khongcoaiten'; d.querySelector('#lvgo').click(); await sleep(140);
+      ok(d.querySelector('.reqcard.nothere') && d.querySelector('#lvmake2') && /Nabu/.test(d.querySelector('.reqcard.nothere').textContent),
+        'a handle nobody holds says they are probably not on Nabu yet and offers a link, instead of a dead end');
+      d.querySelector('#lvmake2').click(); await sleep(200);
+      const url = d.querySelector('#lvurl').value, tok = url.split('#/love/join/')[1];
+      ok(tok && tok.length === 16 && db.docs['invites/' + tok] && db.docs['invites/' + tok].from === 'uidA'
+        && db.docs['invites/' + tok].name === 'Mai' && db.docs['invites/' + tok].handle === 'mai.09',
+        'the link carries a random token, and the invitation under it says who is asking');
+      ok(N.LOVE.local().invite === tok, 'the link is kept, so it can be copied again rather than made afresh every time');
+
+      /* The other end of it, opened by somebody who was not in the app at all. */
+      N.BE.user = { uid: 'uidC', email: 'c@test' };
+      w.localStorage.removeItem('nabu-love');
+      db.put('handles/linh', { uid: 'uidC' }); db.put('people/uidC', { name: 'Linh', handle: 'linh' });
+      await go('#/love/join/' + tok, '#lvtake');
+      ok(/Mai/.test(d.querySelector('#main').textContent) && d.querySelector('#lvtake') && d.querySelector('.threadart'),
+        'opening the link says who is asking before it asks anything, and the answer is theirs to give');
+      d.querySelector('#lvtake').click(); await sleep(260);
+      const linked = db.docs['bonds/uidA__uidC'];
+      ok(linked && linked.invite === tok && linked.aName === 'Mai' && linked.bName === 'Linh'
+        && !db.docs['invites/' + tok] && !N.LOVE.local().join,
+        'taking the thread from a link writes the bond, names the link it came from, and uses the link up');
+
+      w.localStorage.removeItem('nabu-love');
+      N.LOVE.save({ join: 'abcdefgh12345678' });
+      ok(/#\/love\/join\/abcdefgh12345678/.test(N.loveBadgeHTML()),
+        'an invitation opened before there was an account waits on the profile screen afterwards');
+      w.localStorage.removeItem('nabu-love');
 
       ok(N.HANDLE_RE.test('mai.09') && N.HANDLE_RE.test('a_b') && !N.HANDLE_RE.test('ab') && !N.HANDLE_RE.test('Mai')
         && !N.HANDLE_RE.test('.mai') && !N.HANDLE_RE.test('mai..') && !N.HANDLE_RE.test('a'.repeat(21)),

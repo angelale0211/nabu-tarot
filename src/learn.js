@@ -256,7 +256,9 @@ function renderAstro() {
       $$('[data-sign],[data-zsign]', panel).forEach((b) => b.addEventListener('click', () => { location.hash = '#/learn/sign/' + (b.getAttribute('data-sign') || b.getAttribute('data-zsign')); }));
     } else if (t === 'planets') {
       const showPlanet = (id) => { const p = PLANETS.filter((x) => x.id === id)[0]; $('#porbit', panel).innerHTML = planetOrbitSVG(id); $('#pout', panel).innerHTML = '<div class="nrow"><span class="ic">' + p.g + '</span><div><b>' + esc(p.name[lang]) + ' · ' + esc(lang === 'vi' ? 'chủ cung ' : 'rules ') + ZSIGN[p.rules].g + ' ' + esc(ZSIGN[p.rules][lang]) + '</b><p>' + esc(p[lang]) + '</p></div></div>'; $$('[data-pl]', panel).forEach((b) => b.classList.toggle('on', b.getAttribute('data-pl') === id)); };
-      panel.innerHTML = '<div class="visual"><div id="porbit"></div><div class="chips">' + PLANETS.map((p) => '<button class="chip" data-pl="' + p.id + '">' + p.g + ' ' + esc(p.name[lang]) + '</button>').join('') + '</div></div><div class="ins" id="pout"></div>';
+      panel.innerHTML = '<div class="visual"><div id="porbit"></div><div class="plgrid">'
+        + PLANETS.map((p) => '<button class="chip" data-pl="' + p.id + '"><span class="g">' + p.g + '</span><b>' + esc(p.name[lang]) + '</b></button>').join('')
+        + '</div></div><div class="ins" id="pout"></div>';
       // Delegated, because the strip is rebuilt each time a planet is chosen and
       // handlers bound to the old nodes would be thrown away with them.
       panel.addEventListener('click', (e) => {

@@ -370,6 +370,16 @@ main{padding:22px 0 30px}
 .kwl{display:flex;flex-wrap:wrap;gap:6px;margin:4px 0 10px}
 .kwl span{background:var(--surface-2);border-radius:8px;padding:4px 9px;font-size:13.5px}
 .kwl.neg span{background:transparent;border:1px solid var(--rule)}
+/* Three planets to a row, so the rows do not break in a different place in
+   each language the way a wrapping strip of chips did. */
+.plgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:10px}
+.plgrid .chip{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;padding:9px 4px;text-align:center;font-size:12.5px;line-height:1.2;min-width:0}
+.plgrid .chip .g{font-size:21px;line-height:1;color:var(--link)}
+.plgrid .chip b{font-weight:600;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
+.plgrid .chip.on{border-color:var(--primary);background:var(--surface-2);color:var(--fg);box-shadow:0 0 0 1px var(--primary) inset}
+/* Ten of them, so the last row holds one. It goes in the middle rather than
+   hanging off the left. */
+.plgrid > :last-child:nth-child(3n+1){grid-column:2}
 .signlist{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
 .signlist button{background:var(--surface);border:1px solid var(--rule-soft);border-radius:14px;padding:10px 6px;text-align:center}
 .signlist button .g{font-size:26px;color:var(--link);display:block}
@@ -1070,6 +1080,7 @@ h1 .pileico{width:34px;height:27px;vertical-align:-3px;margin-right:2px}
 /* The four everyday activities, offered on the home page as well. */
 .actquick{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:12px}
 .actquick.three{grid-template-columns:repeat(3,1fr);margin-top:10px}
+.actquick.next{margin-top:10px}
 .actquick .aq{position:relative}
 .actquick .aq .cnt{position:absolute;top:5px;right:6px;background:var(--tag-gold-bg);color:var(--tag-gold-ink);border-radius:999px;padding:0 6px;font-size:10.5px;font-weight:700}
 .actquick .aq{display:flex;flex-direction:column;align-items:center;gap:5px;background:var(--surface);border:1px solid var(--rule-soft);border-radius:14px;padding:10px 4px;text-decoration:none;color:inherit;min-width:0}
@@ -1099,6 +1110,16 @@ h1 .pileico{width:34px;height:27px;vertical-align:-3px;margin-right:2px}
 /* The tag on the profile: a fixed blush ground, so a fixed ink to go on it. */
 .lovetag{display:inline-flex;align-items:center;gap:7px;background:#FCE4E9;color:#8A1F33;border:1px solid #F3B7C3;border-radius:999px;padding:5px 13px;font-size:13px;font-weight:600;text-decoration:none;margin:0 0 14px}
 .lovetag .d{color:#A85267;font-weight:500}
+/* An invitation someone opened before they had an account, waiting on the
+   profile screen for them to come back to it. */
+.lovetag.waiting{background:#FFF1DC;border-color:#EFCE9B;color:#7A4E14;display:flex}
+.lovetag.waiting .d{color:#9A6B24}
+/* The link itself: shown in full, because being able to read it before you
+   send it is half of trusting it. */
+.invitecard #lvurl{font-size:12.5px;font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;margin-top:2px;background:var(--surface-2)}
+.invitecard .row2{margin-top:10px}
+.reqcard.nothere{border-color:#EFCE9B;background:linear-gradient(180deg,rgba(255,241,220,.55),var(--surface))}
+.reqcard.nothere .note{background:var(--surface)}
 .actbtn.act-love{border-color:#F3B7C3}
 
 /* ---- angel numbers ---- */

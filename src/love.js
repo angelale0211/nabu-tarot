@@ -23,6 +23,33 @@
    this never becomes a directory of strangers to browse. */
 
 const HANDLE_RE = /^[a-z0-9][a-z0-9._]{1,18}[a-z0-9]$/;
+/* The token in an invitation link is the whole secret, so it is long enough
+   that guessing one is hopeless and drawn from the machine's own randomness. */
+const INVITE_ALPHABET = 'abcdefghijkmnpqrstuvwxyz23456789';
+const INVITE_LEN = 16;
+function loveToken() {
+  const n = new Uint8Array(INVITE_LEN);
+  (window.crypto || window.msCrypto).getRandomValues(n);
+  let out = '';
+  for (let i = 0; i < INVITE_LEN; i++) out += INVITE_ALPHABET[n[i] % INVITE_ALPHABET.length];
+  return out;
+}
+function loveLink(token) {
+  return location.origin + location.pathname + '#/love/join/' + token;
+}
+/* Copying is worth trying three ways: some phones refuse the clipboard unless
+   the page is in the foreground, and some older ones have no clipboard at all.
+   If none of them work the link is on screen to be held and copied by hand. */
+async function copyText(text, field) {
+  try { await navigator.clipboard.writeText(text); return true; } catch (e) { /* try the old way */ }
+  try {
+    if (field) { field.removeAttribute('readonly'); field.select(); field.setSelectionRange(0, 9999); }
+    const done = document.execCommand && document.execCommand('copy');
+    if (field) field.setAttribute('readonly', 'readonly');
+    if (done) return true;
+  } catch (e) { /* nothing left to try */ }
+  return false;
+}
 
 const LOVE = {
   /* What this device remembers: the handle claimed and the bond last seen, so
@@ -177,6 +204,47 @@ const LOVEDB = {
     LOVE.save({ bond: id, since: bond.since, withName: (LOVE.other(bond, me) || {}).name || '' });
     return id;
   },
+  /* A link, rather than a name typed into a box. It carries who is asking so
+     the other end can show a name before they have an account at all. */
+  async makeInvite() {
+    const mine = (await this.myPerson()) || {};
+    const t = loveToken();
+    await BE.db.collection('invites').doc(t).set({
+      from: this.me(), name: mine.name || '', handle: mine.handle || LOVE.handle(), at: Date.now()
+    });
+    LOVE.save({ invite: t });
+    return t;
+  },
+  async readInvite(token) {
+    const t = String(token || '').trim();
+    if (!t || t.length > 40) return null;
+    const d = await BE.db.collection('invites').doc(t).get();
+    return d.exists ? Object.assign({ token: d.id }, d.data()) : null;
+  },
+  /* Taking the thread from a link is the same act as accepting an invitation
+     inside the app, and the server checks it the same way: the bond names the
+     link it came from, and the link says who made it. */
+  async acceptInvite(inv) {
+    const me = this.me(), other = inv.from;
+    if (!other || other === me) throw new Error('self');
+    if (await this.bondOf(me)) throw new Error('mine');
+    if (await this.bondOf(other)) throw new Error('taken');
+    const mine = (await this.myPerson()) || {};
+    const pair = [me, other].sort();
+    const bond = {
+      uids: pair, a: pair[0], b: pair[1], state: 'tied', invite: inv.token,
+      since: isoDate(new Date()), at: Date.now(),
+      aName: pair[0] === me ? (mine.name || '') : (inv.name || ''),
+      bName: pair[1] === me ? (mine.name || '') : (inv.name || ''),
+      aHandle: pair[0] === me ? (mine.handle || '') : (inv.handle || ''),
+      bHandle: pair[1] === me ? (mine.handle || '') : (inv.handle || '')
+    };
+    await BE.db.collection('bonds').doc(pair.join('__')).set(bond);
+    await BE.db.collection('invites').doc(inv.token).delete().catch(() => {});
+    LOVE.save({ bond: pair.join('__'), since: bond.since, join: '', invite: '',
+      withName: (LOVE.other(bond, me) || {}).name || '' });
+    return pair.join('__');
+  },
   async decline(fromUid) {
     await BE.db.collection('requests').doc(this.me()).collection('from').doc(fromUid).delete().catch(() => {});
   },
@@ -197,6 +265,12 @@ const LOVEDB = {
    already knows so it costs nothing to show. */
 function loveBadgeHTML() {
   const S = T(), l = LOVE.local();
+  /* Someone opened an invitation link and then went off to make an account.
+     This is how they find their way back to it. */
+  if (!l.bond && l.join) {
+    return '<a class="lovetag waiting" href="#/love/join/' + esc(l.join) + '"><span class="k">💌</span>'
+      + '<b>' + esc(S.loveJoinWaiting) + '</b><span class="d">' + esc(S.loveJoinOpen) + ' ›</span></a>';
+  }
   if (!l.bond) return '';
   return '<a class="lovetag" href="#/love"><span class="k">🧵</span><b>' + esc(S.loveTagTied) + '</b>'
     + (l.withName ? '<span class="w">' + esc(l.withName) + '</span>' : '')
@@ -260,8 +334,43 @@ function renderLove(wantHandle) {
       + '<p class="hint" style="margin-bottom:10px">' + esc(S.loveFindHint) + '</p>'
       + '<div class="row nw athandle"><span class="at">@</span><input id="lvfind" maxlength="20" autocapitalize="none" spellcheck="false" placeholder="' + esc(S.loveHandlePh) + '"><button type="button" class="btn" id="lvgo">' + esc(S.loveFind) + '</button></div>'
       + '<div id="lvfound"></div><p class="hint" id="lvfstatus"></p></div>'
+      + '<div class="card invitecard"><h3 style="margin-bottom:4px">💌 ' + esc(S.loveInviteTitle) + '</h3>'
+      + '<p class="hint" style="margin-bottom:10px">' + esc(S.loveInviteHint) + '</p>'
+      + '<div id="lvlink"></div></div>'
       + '<p><a class="backlink" href="#/love/handle">' + esc(S.loveChangeHandle) + '</a></p>'
       + foot();
+
+    /* One link at a time, kept on the phone, so it can be copied again later
+       rather than making a new one every time the screen is opened. */
+    const showLink = (t) => {
+      const url = loveLink(t), box = $('#lvlink');
+      box.innerHTML = '<p class="hint ok">' + esc(S.loveLinkReady) + '</p>'
+        + '<input id="lvurl" readonly value="' + esc(url) + '">'
+        + '<div class="row2"><button type="button" class="btn primary" id="lvcopy">' + esc(S.loveCopy) + '</button>'
+        + '<button type="button" class="btn" id="lvsend">' + esc(navigator.share ? S.loveShare : S.loveNewLink) + '</button></div>'
+        + '<p class="hint" id="lvcopyst"></p>';
+      $('#lvcopy').addEventListener('click', async () => {
+        const st = $('#lvcopyst');
+        const done = await copyText(url, $('#lvurl'));
+        st.className = done ? 'hint ok' : 'hint';
+        st.textContent = done ? S.loveCopied : S.loveCopyFail;
+      });
+      $('#lvsend').addEventListener('click', async () => {
+        if (navigator.share) { try { await navigator.share({ title: S.loveTitle, text: S.loveShareText, url: url }); } catch (e) { /* they changed their mind */ } return; }
+        await makeLink(true);
+      });
+    };
+    const makeLink = async (fresh) => {
+      const box = $('#lvlink');
+      const kept = LOVE.local().invite;
+      if (kept && !fresh) { showLink(kept); return; }
+      box.innerHTML = '<p class="hint">' + esc(S.loveSaving) + '</p>';
+      try { showLink(await LOVEDB.makeInvite()); }
+      catch (e) { box.innerHTML = '<p class="hint err">' + esc(S.publishFail) + '</p>'; }
+    };
+    if (LOVE.local().invite) showLink(LOVE.local().invite);
+    else $('#lvlink').innerHTML = '<button type="button" class="btn primary block" id="lvmake">🔗 ' + esc(S.loveMakeLink) + '</button>';
+    { const mk = $('#lvmake'); if (mk) mk.addEventListener('click', () => makeLink(false)); }
 
     $$('[data-accept]', m).forEach((b) => b.addEventListener('click', async () => {
       const r = list.filter((x) => x.uid === b.getAttribute('data-accept'))[0];
@@ -279,7 +388,21 @@ function renderLove(wantHandle) {
       out.innerHTML = ''; st.className = 'hint'; st.textContent = S.loveLooking;
       let who = null;
       try { who = await LOVEDB.findByHandle($('#lvfind').value); } catch (e) { who = null; }
-      if (!who) { st.className = 'hint err'; st.textContent = S.loveNoOne; return; }
+      /* Nobody by that name is almost never a typo - it is someone who has
+         never opened this app. Saying so, and handing over the thing that
+         helps, beats a dead end. */
+      if (!who) {
+        st.textContent = '';
+        out.innerHTML = '<div class="card reqcard nothere"><b>' + esc(S.loveNotHere) + '</b>'
+          + '<p class="note">' + esc(S.loveNotHereWhy) + '</p>'
+          + '<button type="button" class="btn primary block" id="lvmake2" style="margin-top:10px">💌 ' + esc(S.loveMakeLink) + '</button></div>';
+        $('#lvmake2').addEventListener('click', async () => {
+          await makeLink(false);
+          const c = $('.invitecard');
+          if (c && c.scrollIntoView) c.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        });
+        return;
+      }
       if (who.self) { st.className = 'hint err'; st.textContent = S.loveThatsYou; return; }
       st.textContent = '';
       out.innerHTML = '<div class="card reqcard found"><b>' + esc(who.name || ('@' + who.handle)) + '</b><span class="faint">@' + esc(who.handle || '') + '</span>'
@@ -350,4 +473,71 @@ function renderLove(wantHandle) {
   draw();
 }
 
-ROUTES.love = { nav: 'play', render: (args) => renderLove(args && args[0] === 'handle') };
+/* ---- the other end of a link ----
+   Whoever opens this may have no account at all, so it says who is asking
+   before it asks anything of them, and it remembers the invitation while they
+   go and sign up. */
+function renderLoveJoin(token) {
+  const S = T(), m = $('#main'), t = String(token || '');
+  const shell = (inner) => {
+    m.innerHTML = '<div class="eyebrow">' + esc(CONFIG.brand) + '</div>'
+      + '<h1 style="margin-bottom:6px">💌 ' + esc(S.loveJoinTitle) + '</h1>' + inner
+      + '<p class="hint" style="margin-top:16px">' + esc(S.loveNote) + '</p>';
+  };
+  const gone = () => {
+    LOVE.save({ join: '' });
+    shell('<div class="card lovecard">' + threadSVG('tied', true)
+      + '<p class="lead">' + esc(S.loveJoinGone) + '</p>'
+      + '<a class="btn block" href="#/love">' + esc(S.loveTitle) + '</a></div>');
+  };
+  (async () => {
+    if (!t) { gone(); return; }
+    LOVE.save({ join: t });
+    shell('<div class="card lovecard">' + threadSVG('tied', true) + '<p class="lead">' + esc(S.loveLooking) + '</p></div>');
+    if (!(BE && BE.enabled && BE.db)) { gone(); return; }
+    let inv = null;
+    try { inv = await LOVEDB.readInvite(t); } catch (e) { inv = null; }
+    if (!inv) { gone(); return; }
+    const who = inv.name || (inv.handle ? '@' + inv.handle : S.loveSomeone);
+    const card = (body) => shell('<div class="card lovecard">' + threadSVG('tied', true)
+      + '<div class="pair"><span>' + esc(who) + '</span><i>🧵</i><span>' + esc(S.loveYou) + '</span></div>'
+      + '<p class="lead">' + esc(S.loveJoinFrom(who)) + '</p>' + body + '</div>');
+    if (!BE.user) {
+      card('<p class="hint">' + esc(S.loveJoinSignIn) + '</p><a class="btn primary block" href="#/me">' + esc(S.signIn) + '</a>');
+      return;
+    }
+    if (inv.from === BE.user.uid) {
+      card('<p class="hint">' + esc(S.loveJoinYours) + '</p><a class="btn block" href="#/love">' + esc(S.loveTitle) + '</a>');
+      return;
+    }
+    if (!LOVE.handle()) {
+      let p = null;
+      try { p = await LOVEDB.myPerson(); } catch (e) { p = null; }
+      if (p && p.handle) LOVE.save({ handle: p.handle, name: p.name || '' });
+    }
+    if (!LOVE.handle()) {
+      card('<p class="hint">' + esc(S.loveJoinNeedName) + '</p><a class="btn primary block" href="#/love">' + esc(S.loveClaim) + '</a>');
+      return;
+    }
+    card('<button type="button" class="btn primary block" id="lvtake">🧵 ' + esc(S.loveJoinTake) + '</button><p class="hint" id="lvtakest"></p>');
+    $('#lvtake').addEventListener('click', async () => {
+      const b = $('#lvtake'), st = $('#lvtakest');
+      b.disabled = true; st.className = 'hint'; st.textContent = S.loveSaving;
+      try { await LOVEDB.acceptInvite(inv); toast(S.loveTied); location.hash = '#/love'; }
+      catch (e) {
+        st.className = 'hint err';
+        st.textContent = e.message === 'mine' ? S.loveAlreadyMine : e.message === 'taken' ? S.loveTheyTied : S.publishFail;
+        b.disabled = false;
+      }
+    });
+  })();
+}
+
+ROUTES.love = {
+  nav: 'play',
+  render: (args) => {
+    const a = (args && args[0]) || '';
+    if (a === 'join') return renderLoveJoin(args[1]);
+    return renderLove(a === 'handle');
+  }
+};

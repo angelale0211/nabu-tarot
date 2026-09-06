@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
 <title>Nabu Tarot</title>
 <meta name="description" content="Nabu Tarot: dự đoán mới, rút một lá bài xem năng lượng hiện tại, học tarot, Lenormand, chiêm tinh, và đặt lịch xem bài.">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'none'; object-src 'none'; form-action 'self'; script-src 'self' 'sha256-yEXklIJteTuy8bQTsgGm71/UnpcRxLXNzPdFaKJmcEU=' https://www.gstatic.com https://apis.google.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; font-src 'self' data:; media-src 'self' data: blob:; worker-src 'self'; connect-src 'self' https://*.googleapis.com https://*.google.com https://*.firebaseio.com https://*.cloudfunctions.net https://*.workers.dev https://generativelanguage.googleapis.com; frame-src https://*.firebaseapp.com https://accounts.google.com https://*.facebook.com">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'none'; object-src 'none'; form-action 'self'; script-src 'self' 'sha256-ww4SlcOowcN0H5YqjzeKSMroTSEhMpKdhnYHTn5OqWo=' https://www.gstatic.com https://apis.google.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; font-src 'self' data:; media-src 'self' data: blob:; worker-src 'self'; connect-src 'self' https://*.googleapis.com https://*.google.com https://*.firebaseio.com https://*.cloudfunctions.net https://*.workers.dev https://generativelanguage.googleapis.com; frame-src https://*.firebaseapp.com https://accounts.google.com https://*.facebook.com">
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <meta name="theme-color" content="#EFE9FA">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -536,6 +536,16 @@ main{padding:22px 0 30px}
 .kwl{display:flex;flex-wrap:wrap;gap:6px;margin:4px 0 10px}
 .kwl span{background:var(--surface-2);border-radius:8px;padding:4px 9px;font-size:13.5px}
 .kwl.neg span{background:transparent;border:1px solid var(--rule)}
+/* Three planets to a row, so the rows do not break in a different place in
+   each language the way a wrapping strip of chips did. */
+.plgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:10px}
+.plgrid .chip{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;padding:9px 4px;text-align:center;font-size:12.5px;line-height:1.2;min-width:0}
+.plgrid .chip .g{font-size:21px;line-height:1;color:var(--link)}
+.plgrid .chip b{font-weight:600;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
+.plgrid .chip.on{border-color:var(--primary);background:var(--surface-2);color:var(--fg);box-shadow:0 0 0 1px var(--primary) inset}
+/* Ten of them, so the last row holds one. It goes in the middle rather than
+   hanging off the left. */
+.plgrid > :last-child:nth-child(3n+1){grid-column:2}
 .signlist{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
 .signlist button{background:var(--surface);border:1px solid var(--rule-soft);border-radius:14px;padding:10px 6px;text-align:center}
 .signlist button .g{font-size:26px;color:var(--link);display:block}
@@ -1236,6 +1246,7 @@ h1 .pileico{width:34px;height:27px;vertical-align:-3px;margin-right:2px}
 /* The four everyday activities, offered on the home page as well. */
 .actquick{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:12px}
 .actquick.three{grid-template-columns:repeat(3,1fr);margin-top:10px}
+.actquick.next{margin-top:10px}
 .actquick .aq{position:relative}
 .actquick .aq .cnt{position:absolute;top:5px;right:6px;background:var(--tag-gold-bg);color:var(--tag-gold-ink);border-radius:999px;padding:0 6px;font-size:10.5px;font-weight:700}
 .actquick .aq{display:flex;flex-direction:column;align-items:center;gap:5px;background:var(--surface);border:1px solid var(--rule-soft);border-radius:14px;padding:10px 4px;text-decoration:none;color:inherit;min-width:0}
@@ -1265,6 +1276,16 @@ h1 .pileico{width:34px;height:27px;vertical-align:-3px;margin-right:2px}
 /* The tag on the profile: a fixed blush ground, so a fixed ink to go on it. */
 .lovetag{display:inline-flex;align-items:center;gap:7px;background:#FCE4E9;color:#8A1F33;border:1px solid #F3B7C3;border-radius:999px;padding:5px 13px;font-size:13px;font-weight:600;text-decoration:none;margin:0 0 14px}
 .lovetag .d{color:#A85267;font-weight:500}
+/* An invitation someone opened before they had an account, waiting on the
+   profile screen for them to come back to it. */
+.lovetag.waiting{background:#FFF1DC;border-color:#EFCE9B;color:#7A4E14;display:flex}
+.lovetag.waiting .d{color:#9A6B24}
+/* The link itself: shown in full, because being able to read it before you
+   send it is half of trusting it. */
+.invitecard #lvurl{font-size:12.5px;font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;margin-top:2px;background:var(--surface-2)}
+.invitecard .row2{margin-top:10px}
+.reqcard.nothere{border-color:#EFCE9B;background:linear-gradient(180deg,rgba(255,241,220,.55),var(--surface))}
+.reqcard.nothere .note{background:var(--surface)}
 .actbtn.act-love{border-color:#F3B7C3}
 
 /* ---- angel numbers ---- */
@@ -1844,6 +1865,23 @@ const STR = {
     actPickHint: 'Bạn chạm vào tụ bài mà mình thấy bị thu hút nhất. Nabu sẽ đăng thông điệp của từng tụ sau vài ngày.', actPicked: (n) => 'Bạn đã chọn tụ ' + n + '.', actComeBack: (d) => 'Quay lại vào ' + d + ' để lật bài xem thông điệp.', actChangePile: 'Đổi sang tụ khác?', actPickToSee: 'Thông điệp đã có. Chạm vào một tụ để lật lên.', actTapOthers: 'Tụ bạn chọn đã lật lên. Bạn có thể chạm vào tụ khác để xem thử.',
     actVoteHint: 'Bạn chạm vào một lựa chọn. Mỗi người chỉ được bình chọn một lần.', actVoteLogin: 'Bạn cần đăng nhập để bình chọn và xem kết quả.', actVoted: 'Cảm ơn bạn đã bình chọn!', actClosedNote: 'Bình chọn đã đóng. Đây là kết quả.', actVotes: (n) => n + ' phiếu',
     actWishPh: 'Điều mình ước lúc này là…', actWishSend: 'Gửi vào vũ trụ', actWishHint: 'Bạn viết ngắn gọn, ở thì hiện tại, rồi gửi đi. Điều ước chỉ được lưu trên máy của bạn và không ai đọc được.', actWishCount: (n) => 'Bạn đã gửi ' + n + ' điều ước ở đây.', actWishSent: 'Đã gửi. Giờ đến lượt bạn làm bước đầu tiên. ✨', actWishEmpty: 'Bạn viết điều ước trước nhé.', actWishClear: 'Xoá các điều ước đã lưu trên máy', actWishClearConfirm: 'Xoá các điều ước đã lưu trên máy này?',
+    loveYou: 'Bạn',
+    loveNotHere: 'Không tìm thấy ai mang tên này.',
+    loveNotHereWhy: 'Thường là vì người ấy chưa dùng Nabu bao giờ. Bạn tạo một link mời rồi gửi cho người ấy nhé — mở link lên, tạo tài khoản, là nhận được sợi chỉ của bạn.',
+    loveInviteTitle: 'Mời người chưa dùng Nabu',
+    loveInviteHint: 'Link này gửi được qua Messenger, Zalo hay bất cứ đâu. Ai mở link sẽ thấy tên bạn và nhận sợi chỉ sau khi tạo tài khoản. Bạn chỉ gửi cho một người thôi nhé.',
+    loveMakeLink: 'Tạo link mời', loveNewLink: 'Tạo link mới',
+    loveLinkReady: 'Link đã sẵn sàng. Gửi cho người ấy nhé.',
+    loveCopy: 'Sao chép', loveCopied: 'Đã sao chép link.', loveCopyFail: 'Bạn chạm giữ vào ô trên rồi chọn Sao chép nhé.',
+    loveShare: 'Gửi đi', loveShareText: 'Mình muốn buộc sợi chỉ đỏ với bạn trên Nabu.',
+    loveJoinTitle: 'Lời mời buộc chỉ',
+    loveJoinFrom: (n) => n + ' muốn buộc sợi chỉ đỏ với bạn.',
+    loveJoinSignIn: 'Bạn tạo tài khoản hoặc đăng nhập đã. Lời mời này vẫn đợi bạn ở đây.',
+    loveJoinNeedName: 'Bạn chọn tên hiển thị trước đã nhé.',
+    loveJoinGone: 'Lời mời này không còn dùng được nữa.',
+    loveJoinTake: 'Nhận sợi chỉ', loveJoinYours: 'Đây là link của chính bạn. Bạn gửi nó cho người ấy nhé.',
+    loveJoinWaiting: 'Có một lời mời đang đợi bạn', loveJoinOpen: 'Mở',
+    loveAlreadyMine: 'Bạn đang buộc chỉ với người khác rồi.',
     loveTitle: 'Sợi chỉ đỏ', loveSub: 'Buộc sợi chỉ đỏ với người ấy',
     loveIntro: 'Chuyện xưa kể rằng hai người có duyên gặp nhau đã được buộc vào nhau bằng một sợi chỉ đỏ ở ngón út. Sợi chỉ có thể rối, có thể căng, nhưng không đứt.',
     loveNote: 'Đây là một kỉ niệm trong app, không phải giấy tờ. Nó không có giá trị pháp lý ở bất kỳ đâu. Ai cũng tháo được sợi chỉ của mình bất cứ lúc nào mà không cần hỏi người kia.',
@@ -2230,6 +2268,23 @@ const STR = {
     actPickHint: 'Tap the pile that pulls you. Nabu posts each pile\'s message a few days later.', actPicked: (n) => 'You chose pile ' + n + '.', actComeBack: (d) => 'Come back on ' + d + ' to flip it over.', actChangePile: 'Switch to another pile?', actPickToSee: 'The messages are in. Tap a pile to flip it.', actTapOthers: 'Your pile is open. Tap another pile to peek.',
     actVoteHint: 'Tap an option. One vote per person.', actVoteLogin: 'Sign in to vote and see the results.', actVoted: 'Thank you for voting!', actClosedNote: 'Voting is closed. Here are the results.', actVotes: (n) => n + ' votes',
     actWishPh: 'Right now I wish…', actWishSend: 'Send it to the universe', actWishHint: 'Keep it short, in the present tense, then send. Wishes stay on your device; nobody reads them.', actWishCount: (n) => 'You have sent ' + n + ' wishes here.', actWishSent: 'Sent. Now the first step is yours. ✨', actWishEmpty: 'Write your wish first.', actWishClear: 'Clear the wishes saved on this device', actWishClearConfirm: 'Clear the wishes saved on this device?',
+    loveYou: 'You',
+    loveNotHere: 'Nobody here has that handle.',
+    loveNotHereWhy: 'Usually that means they have never opened Nabu. Make an invitation link and send it to them — they open it, make an account, and your thread is waiting for them.',
+    loveInviteTitle: 'Invite someone who is not here yet',
+    loveInviteHint: 'Send this link however you like — Messenger, Zalo, anywhere. Whoever opens it sees your name and can take the thread once they have an account. Send it to one person only.',
+    loveMakeLink: 'Make an invitation link', loveNewLink: 'Make a new link',
+    loveLinkReady: 'The link is ready. Send it to them.',
+    loveCopy: 'Copy', loveCopied: 'The link is copied.', loveCopyFail: 'Press and hold the box above, then choose Copy.',
+    loveShare: 'Send it', loveShareText: 'I would like to tie the red thread with you on Nabu.',
+    loveJoinTitle: 'An invitation',
+    loveJoinFrom: (n) => n + ' would like to tie the red thread with you.',
+    loveJoinSignIn: 'Make an account or sign in first. This invitation will still be here.',
+    loveJoinNeedName: 'Choose the name you want shown first.',
+    loveJoinGone: 'This invitation cannot be used any more.',
+    loveJoinTake: 'Take the thread', loveJoinYours: 'This is your own link. Send it to them.',
+    loveJoinWaiting: 'An invitation is waiting for you', loveJoinOpen: 'Open',
+    loveAlreadyMine: 'You are already tied to someone.',
     loveTitle: 'The red thread', loveSub: 'Tie the red thread with someone',
     loveIntro: 'An old story says two people meant to meet are tied at the little finger by a red thread. It can tangle and it can stretch, but it does not break.',
     loveNote: 'This is a keepsake inside the app, not a document. It carries no legal weight anywhere. Either of you can untie your own thread at any time without asking the other.',
@@ -11139,7 +11194,9 @@ function renderAstro() {
       $$('[data-sign],[data-zsign]', panel).forEach((b) => b.addEventListener('click', () => { location.hash = '#/learn/sign/' + (b.getAttribute('data-sign') || b.getAttribute('data-zsign')); }));
     } else if (t === 'planets') {
       const showPlanet = (id) => { const p = PLANETS.filter((x) => x.id === id)[0]; $('#porbit', panel).innerHTML = planetOrbitSVG(id); $('#pout', panel).innerHTML = '<div class="nrow"><span class="ic">' + p.g + '</span><div><b>' + esc(p.name[lang]) + ' · ' + esc(lang === 'vi' ? 'chủ cung ' : 'rules ') + ZSIGN[p.rules].g + ' ' + esc(ZSIGN[p.rules][lang]) + '</b><p>' + esc(p[lang]) + '</p></div></div>'; $$('[data-pl]', panel).forEach((b) => b.classList.toggle('on', b.getAttribute('data-pl') === id)); };
-      panel.innerHTML = '<div class="visual"><div id="porbit"></div><div class="chips">' + PLANETS.map((p) => '<button class="chip" data-pl="' + p.id + '">' + p.g + ' ' + esc(p.name[lang]) + '</button>').join('') + '</div></div><div class="ins" id="pout"></div>';
+      panel.innerHTML = '<div class="visual"><div id="porbit"></div><div class="plgrid">'
+        + PLANETS.map((p) => '<button class="chip" data-pl="' + p.id + '"><span class="g">' + p.g + '</span><b>' + esc(p.name[lang]) + '</b></button>').join('')
+        + '</div></div><div class="ins" id="pout"></div>';
       // Delegated, because the strip is rebuilt each time a planet is chosen and
       // handlers bound to the old nodes would be thrown away with them.
       panel.addEventListener('click', (e) => {
@@ -12617,6 +12674,33 @@ function renderAngelOne(id) {
    this never becomes a directory of strangers to browse. */
 
 const HANDLE_RE = /^[a-z0-9][a-z0-9._]{1,18}[a-z0-9]$/;
+/* The token in an invitation link is the whole secret, so it is long enough
+   that guessing one is hopeless and drawn from the machine's own randomness. */
+const INVITE_ALPHABET = 'abcdefghijkmnpqrstuvwxyz23456789';
+const INVITE_LEN = 16;
+function loveToken() {
+  const n = new Uint8Array(INVITE_LEN);
+  (window.crypto || window.msCrypto).getRandomValues(n);
+  let out = '';
+  for (let i = 0; i < INVITE_LEN; i++) out += INVITE_ALPHABET[n[i] % INVITE_ALPHABET.length];
+  return out;
+}
+function loveLink(token) {
+  return location.origin + location.pathname + '#/love/join/' + token;
+}
+/* Copying is worth trying three ways: some phones refuse the clipboard unless
+   the page is in the foreground, and some older ones have no clipboard at all.
+   If none of them work the link is on screen to be held and copied by hand. */
+async function copyText(text, field) {
+  try { await navigator.clipboard.writeText(text); return true; } catch (e) { /* try the old way */ }
+  try {
+    if (field) { field.removeAttribute('readonly'); field.select(); field.setSelectionRange(0, 9999); }
+    const done = document.execCommand && document.execCommand('copy');
+    if (field) field.setAttribute('readonly', 'readonly');
+    if (done) return true;
+  } catch (e) { /* nothing left to try */ }
+  return false;
+}
 
 const LOVE = {
   /* What this device remembers: the handle claimed and the bond last seen, so
@@ -12771,6 +12855,47 @@ const LOVEDB = {
     LOVE.save({ bond: id, since: bond.since, withName: (LOVE.other(bond, me) || {}).name || '' });
     return id;
   },
+  /* A link, rather than a name typed into a box. It carries who is asking so
+     the other end can show a name before they have an account at all. */
+  async makeInvite() {
+    const mine = (await this.myPerson()) || {};
+    const t = loveToken();
+    await BE.db.collection('invites').doc(t).set({
+      from: this.me(), name: mine.name || '', handle: mine.handle || LOVE.handle(), at: Date.now()
+    });
+    LOVE.save({ invite: t });
+    return t;
+  },
+  async readInvite(token) {
+    const t = String(token || '').trim();
+    if (!t || t.length > 40) return null;
+    const d = await BE.db.collection('invites').doc(t).get();
+    return d.exists ? Object.assign({ token: d.id }, d.data()) : null;
+  },
+  /* Taking the thread from a link is the same act as accepting an invitation
+     inside the app, and the server checks it the same way: the bond names the
+     link it came from, and the link says who made it. */
+  async acceptInvite(inv) {
+    const me = this.me(), other = inv.from;
+    if (!other || other === me) throw new Error('self');
+    if (await this.bondOf(me)) throw new Error('mine');
+    if (await this.bondOf(other)) throw new Error('taken');
+    const mine = (await this.myPerson()) || {};
+    const pair = [me, other].sort();
+    const bond = {
+      uids: pair, a: pair[0], b: pair[1], state: 'tied', invite: inv.token,
+      since: isoDate(new Date()), at: Date.now(),
+      aName: pair[0] === me ? (mine.name || '') : (inv.name || ''),
+      bName: pair[1] === me ? (mine.name || '') : (inv.name || ''),
+      aHandle: pair[0] === me ? (mine.handle || '') : (inv.handle || ''),
+      bHandle: pair[1] === me ? (mine.handle || '') : (inv.handle || '')
+    };
+    await BE.db.collection('bonds').doc(pair.join('__')).set(bond);
+    await BE.db.collection('invites').doc(inv.token).delete().catch(() => {});
+    LOVE.save({ bond: pair.join('__'), since: bond.since, join: '', invite: '',
+      withName: (LOVE.other(bond, me) || {}).name || '' });
+    return pair.join('__');
+  },
   async decline(fromUid) {
     await BE.db.collection('requests').doc(this.me()).collection('from').doc(fromUid).delete().catch(() => {});
   },
@@ -12791,6 +12916,12 @@ const LOVEDB = {
    already knows so it costs nothing to show. */
 function loveBadgeHTML() {
   const S = T(), l = LOVE.local();
+  /* Someone opened an invitation link and then went off to make an account.
+     This is how they find their way back to it. */
+  if (!l.bond && l.join) {
+    return '<a class="lovetag waiting" href="#/love/join/' + esc(l.join) + '"><span class="k">💌</span>'
+      + '<b>' + esc(S.loveJoinWaiting) + '</b><span class="d">' + esc(S.loveJoinOpen) + ' ›</span></a>';
+  }
   if (!l.bond) return '';
   return '<a class="lovetag" href="#/love"><span class="k">🧵</span><b>' + esc(S.loveTagTied) + '</b>'
     + (l.withName ? '<span class="w">' + esc(l.withName) + '</span>' : '')
@@ -12854,8 +12985,43 @@ function renderLove(wantHandle) {
       + '<p class="hint" style="margin-bottom:10px">' + esc(S.loveFindHint) + '</p>'
       + '<div class="row nw athandle"><span class="at">@</span><input id="lvfind" maxlength="20" autocapitalize="none" spellcheck="false" placeholder="' + esc(S.loveHandlePh) + '"><button type="button" class="btn" id="lvgo">' + esc(S.loveFind) + '</button></div>'
       + '<div id="lvfound"></div><p class="hint" id="lvfstatus"></p></div>'
+      + '<div class="card invitecard"><h3 style="margin-bottom:4px">💌 ' + esc(S.loveInviteTitle) + '</h3>'
+      + '<p class="hint" style="margin-bottom:10px">' + esc(S.loveInviteHint) + '</p>'
+      + '<div id="lvlink"></div></div>'
       + '<p><a class="backlink" href="#/love/handle">' + esc(S.loveChangeHandle) + '</a></p>'
       + foot();
+
+    /* One link at a time, kept on the phone, so it can be copied again later
+       rather than making a new one every time the screen is opened. */
+    const showLink = (t) => {
+      const url = loveLink(t), box = $('#lvlink');
+      box.innerHTML = '<p class="hint ok">' + esc(S.loveLinkReady) + '</p>'
+        + '<input id="lvurl" readonly value="' + esc(url) + '">'
+        + '<div class="row2"><button type="button" class="btn primary" id="lvcopy">' + esc(S.loveCopy) + '</button>'
+        + '<button type="button" class="btn" id="lvsend">' + esc(navigator.share ? S.loveShare : S.loveNewLink) + '</button></div>'
+        + '<p class="hint" id="lvcopyst"></p>';
+      $('#lvcopy').addEventListener('click', async () => {
+        const st = $('#lvcopyst');
+        const done = await copyText(url, $('#lvurl'));
+        st.className = done ? 'hint ok' : 'hint';
+        st.textContent = done ? S.loveCopied : S.loveCopyFail;
+      });
+      $('#lvsend').addEventListener('click', async () => {
+        if (navigator.share) { try { await navigator.share({ title: S.loveTitle, text: S.loveShareText, url: url }); } catch (e) { /* they changed their mind */ } return; }
+        await makeLink(true);
+      });
+    };
+    const makeLink = async (fresh) => {
+      const box = $('#lvlink');
+      const kept = LOVE.local().invite;
+      if (kept && !fresh) { showLink(kept); return; }
+      box.innerHTML = '<p class="hint">' + esc(S.loveSaving) + '</p>';
+      try { showLink(await LOVEDB.makeInvite()); }
+      catch (e) { box.innerHTML = '<p class="hint err">' + esc(S.publishFail) + '</p>'; }
+    };
+    if (LOVE.local().invite) showLink(LOVE.local().invite);
+    else $('#lvlink').innerHTML = '<button type="button" class="btn primary block" id="lvmake">🔗 ' + esc(S.loveMakeLink) + '</button>';
+    { const mk = $('#lvmake'); if (mk) mk.addEventListener('click', () => makeLink(false)); }
 
     $$('[data-accept]', m).forEach((b) => b.addEventListener('click', async () => {
       const r = list.filter((x) => x.uid === b.getAttribute('data-accept'))[0];
@@ -12873,7 +13039,21 @@ function renderLove(wantHandle) {
       out.innerHTML = ''; st.className = 'hint'; st.textContent = S.loveLooking;
       let who = null;
       try { who = await LOVEDB.findByHandle($('#lvfind').value); } catch (e) { who = null; }
-      if (!who) { st.className = 'hint err'; st.textContent = S.loveNoOne; return; }
+      /* Nobody by that name is almost never a typo - it is someone who has
+         never opened this app. Saying so, and handing over the thing that
+         helps, beats a dead end. */
+      if (!who) {
+        st.textContent = '';
+        out.innerHTML = '<div class="card reqcard nothere"><b>' + esc(S.loveNotHere) + '</b>'
+          + '<p class="note">' + esc(S.loveNotHereWhy) + '</p>'
+          + '<button type="button" class="btn primary block" id="lvmake2" style="margin-top:10px">💌 ' + esc(S.loveMakeLink) + '</button></div>';
+        $('#lvmake2').addEventListener('click', async () => {
+          await makeLink(false);
+          const c = $('.invitecard');
+          if (c && c.scrollIntoView) c.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        });
+        return;
+      }
       if (who.self) { st.className = 'hint err'; st.textContent = S.loveThatsYou; return; }
       st.textContent = '';
       out.innerHTML = '<div class="card reqcard found"><b>' + esc(who.name || ('@' + who.handle)) + '</b><span class="faint">@' + esc(who.handle || '') + '</span>'
@@ -12944,7 +13124,74 @@ function renderLove(wantHandle) {
   draw();
 }
 
-ROUTES.love = { nav: 'play', render: (args) => renderLove(args && args[0] === 'handle') };
+/* ---- the other end of a link ----
+   Whoever opens this may have no account at all, so it says who is asking
+   before it asks anything of them, and it remembers the invitation while they
+   go and sign up. */
+function renderLoveJoin(token) {
+  const S = T(), m = $('#main'), t = String(token || '');
+  const shell = (inner) => {
+    m.innerHTML = '<div class="eyebrow">' + esc(CONFIG.brand) + '</div>'
+      + '<h1 style="margin-bottom:6px">💌 ' + esc(S.loveJoinTitle) + '</h1>' + inner
+      + '<p class="hint" style="margin-top:16px">' + esc(S.loveNote) + '</p>';
+  };
+  const gone = () => {
+    LOVE.save({ join: '' });
+    shell('<div class="card lovecard">' + threadSVG('tied', true)
+      + '<p class="lead">' + esc(S.loveJoinGone) + '</p>'
+      + '<a class="btn block" href="#/love">' + esc(S.loveTitle) + '</a></div>');
+  };
+  (async () => {
+    if (!t) { gone(); return; }
+    LOVE.save({ join: t });
+    shell('<div class="card lovecard">' + threadSVG('tied', true) + '<p class="lead">' + esc(S.loveLooking) + '</p></div>');
+    if (!(BE && BE.enabled && BE.db)) { gone(); return; }
+    let inv = null;
+    try { inv = await LOVEDB.readInvite(t); } catch (e) { inv = null; }
+    if (!inv) { gone(); return; }
+    const who = inv.name || (inv.handle ? '@' + inv.handle : S.loveSomeone);
+    const card = (body) => shell('<div class="card lovecard">' + threadSVG('tied', true)
+      + '<div class="pair"><span>' + esc(who) + '</span><i>🧵</i><span>' + esc(S.loveYou) + '</span></div>'
+      + '<p class="lead">' + esc(S.loveJoinFrom(who)) + '</p>' + body + '</div>');
+    if (!BE.user) {
+      card('<p class="hint">' + esc(S.loveJoinSignIn) + '</p><a class="btn primary block" href="#/me">' + esc(S.signIn) + '</a>');
+      return;
+    }
+    if (inv.from === BE.user.uid) {
+      card('<p class="hint">' + esc(S.loveJoinYours) + '</p><a class="btn block" href="#/love">' + esc(S.loveTitle) + '</a>');
+      return;
+    }
+    if (!LOVE.handle()) {
+      let p = null;
+      try { p = await LOVEDB.myPerson(); } catch (e) { p = null; }
+      if (p && p.handle) LOVE.save({ handle: p.handle, name: p.name || '' });
+    }
+    if (!LOVE.handle()) {
+      card('<p class="hint">' + esc(S.loveJoinNeedName) + '</p><a class="btn primary block" href="#/love">' + esc(S.loveClaim) + '</a>');
+      return;
+    }
+    card('<button type="button" class="btn primary block" id="lvtake">🧵 ' + esc(S.loveJoinTake) + '</button><p class="hint" id="lvtakest"></p>');
+    $('#lvtake').addEventListener('click', async () => {
+      const b = $('#lvtake'), st = $('#lvtakest');
+      b.disabled = true; st.className = 'hint'; st.textContent = S.loveSaving;
+      try { await LOVEDB.acceptInvite(inv); toast(S.loveTied); location.hash = '#/love'; }
+      catch (e) {
+        st.className = 'hint err';
+        st.textContent = e.message === 'mine' ? S.loveAlreadyMine : e.message === 'taken' ? S.loveTheyTied : S.publishFail;
+        b.disabled = false;
+      }
+    });
+  })();
+}
+
+ROUTES.love = {
+  nav: 'play',
+  render: (args) => {
+    const a = (args && args[0]) || '';
+    if (a === 'join') return renderLoveJoin(args[1]);
+    return renderLove(a === 'handle');
+  }
+};
 
 /* ============================ looks ============================
    Four things in the app can be dressed differently: the back of the cards you
@@ -16307,10 +16554,16 @@ async function homeActHTML(root) {
   ];
   root.innerHTML = '<div class="sec"><div class="eyebrow">🎲 ' + esc(S.actTitle) + '</div>'
     + '<div class="actquick">' + quick.map((q) => '<a class="aq" href="' + q[0] + '"><span class="ic">' + q[1] + '</span><b>' + esc(q[2]) + '</b></a>').join('') + '</div>'
-    + '<div class="actquick three">' + ACT_GROUPS.map((g) => {
+    /* The three published kinds, and the thread beside them: four across, the
+       same shape as the row of everyday things above. When the thread is tied
+       it carries the days, so the count is on the first screen. */
+    + '<div class="actquick next">' + ACT_GROUPS.map((g) => {
       const n = list.filter((a2) => a2.type === g[0]).length;
       return '<a class="aq" href="#/play/' + esc(g[2]) + '"><span class="ic">' + g[1] + '</span><b>' + esc(S.actTypes[g[0]]) + '</b>' + (n ? '<span class="cnt">' + n + '</span>' : '') + '</a>';
-    }).join('') + '</div>'
+    }).join('')
+    + '<a class="aq" href="#/love"><span class="ic">🧵</span><b>' + esc(S.loveTitle) + '</b>'
+    + (LOVE.local().bond ? '<span class="cnt">' + LOVE.days({ since: LOVE.local().since }) + '</span>' : '') + '</a>'
+    + '</div>'
     + '<p style="margin-top:10px"><a class="btn block" href="#/play">' + esc(S.actAll) + '</a></p></div>';
   hydrateImages(root);
 }
@@ -16788,7 +17041,7 @@ function adminSale(p) {
 ROUTES.admin = { nav: '', render: renderAdmin };
 
 /* ============================ boot ============================ */
-window.APP_VERSION = 'v113';
+window.APP_VERSION = 'v114';
 window.NABU = { CONFIG: CONFIG, SALE: SALE, salePrice: salePrice, loadActs: loadActs, BACK: BACK, LESSONS: LESSONS, localAnswer: localAnswer, compatVerdict: compatVerdict, numerologyOf: numerologyOf, ZDEEP: ZDEEP, lunarToday: lunarToday, solarToLunar: solarToLunar, DECK: DECK, INSIGHT: INSIGHT, KW: KW, ASK: ASK, TOPICS: TOPICS, GUIDES: GUIDES, SERVICES: SERVICES, COURSES: COURSES, ACCESS: ACCESS, ZODIAC: ZODIAC, pick: pick, book: book,
   insightHTML: insightHTML, insightOf: insightOf, sunSignIndex: sunSignIndex, lifePath: lifePath, PROFILE: () => PROFILE, BE: BE, ACTS: ACTS,
   ANGELS: ANGELS, angelRead: angelRead, CODEBOOK: CODEBOOK, verifyCode: verifyCode, petHomeSVG: petHomeSVG, PET_HOMES: PET_HOMES, PET_WEARS: PET_WEARS, codeDigest: codeDigest, randomCode: randomCode, BANK: BANK, PETS: PETS, petSVG: petSVG, PET_COATS: PET_COATS, PET_KINDS: PET_KINDS, luckCut: luckCut, petLevel: petLevel, petStep: petStep, VOUCHERS: VOUCHERS, levelCoins: levelCoins, LOOKS: LOOKS,

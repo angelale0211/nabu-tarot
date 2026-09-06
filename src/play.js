@@ -603,10 +603,16 @@ async function homeActHTML(root) {
   ];
   root.innerHTML = '<div class="sec"><div class="eyebrow">🎲 ' + esc(S.actTitle) + '</div>'
     + '<div class="actquick">' + quick.map((q) => '<a class="aq" href="' + q[0] + '"><span class="ic">' + q[1] + '</span><b>' + esc(q[2]) + '</b></a>').join('') + '</div>'
-    + '<div class="actquick three">' + ACT_GROUPS.map((g) => {
+    /* The three published kinds, and the thread beside them: four across, the
+       same shape as the row of everyday things above. When the thread is tied
+       it carries the days, so the count is on the first screen. */
+    + '<div class="actquick next">' + ACT_GROUPS.map((g) => {
       const n = list.filter((a2) => a2.type === g[0]).length;
       return '<a class="aq" href="#/play/' + esc(g[2]) + '"><span class="ic">' + g[1] + '</span><b>' + esc(S.actTypes[g[0]]) + '</b>' + (n ? '<span class="cnt">' + n + '</span>' : '') + '</a>';
-    }).join('') + '</div>'
+    }).join('')
+    + '<a class="aq" href="#/love"><span class="ic">🧵</span><b>' + esc(S.loveTitle) + '</b>'
+    + (LOVE.local().bond ? '<span class="cnt">' + LOVE.days({ since: LOVE.local().since }) + '</span>' : '') + '</a>'
+    + '</div>'
     + '<p style="margin-top:10px"><a class="btn block" href="#/play">' + esc(S.actAll) + '</a></p></div>';
   hydrateImages(root);
 }
