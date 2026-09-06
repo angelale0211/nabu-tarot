@@ -41,6 +41,11 @@ const VOUCHERS = [
 ];
 /* What a level-up pays into the purse. */
 const levelCoins = (lv) => lv * 200;
+/* The purse is kept on the device, where anyone can edit it. The app cannot
+   prevent that, so it caps what a single order may claim: never more than
+   half the price, and never more than this. Nabu still sees every order
+   before honouring it. */
+const COIN_MAX_PER_ORDER = 100000;
 
 const BANK = {
   coins() { return Math.max(0, Math.round(Number(store.get('nabu-coins', 0)) || 0)); },
@@ -84,8 +89,9 @@ function luckCut(total, use) {
   const pct = (use && use.v && tier) ? tier.pct : 0;
   const pctOff = pct ? Math.round(base * pct / 100 / 1000) * 1000 : 0;
   const afterPct = Math.max(0, base - pctOff);
-  const coins = Math.min(Math.max(0, Math.round((use && use.c) || 0)), BANK.coins(), afterPct);
-  return { pct: pct, pctOff: pctOff, coins: coins, final: Math.max(0, afterPct - coins) };
+  const ceiling = Math.min(COIN_MAX_PER_ORDER, Math.floor(base / 2));
+  const coins = Math.min(Math.max(0, Math.round((use && use.c) || 0)), BANK.coins(), afterPct, ceiling);
+  return { pct: pct, pctOff: pctOff, coins: coins, final: Math.max(0, afterPct - coins), cap: ceiling };
 }
 /* The lines added to the message that is sent to Nabu. */
 function luckLines(cut) {

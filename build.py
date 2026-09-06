@@ -3,7 +3,7 @@
 Order matters: settings and strings first, artwork before the card text
 (ART_CACHE needs pipArt), tarot-en before tarot-vi (DECKTEXT refers to
 MAJORS/MINORS), every data file before core.js, screens before main.js."""
-import io, os, re
+import base64, hashlib, io, os, re
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 SRC = os.path.join(HERE, 'src')
@@ -34,6 +34,35 @@ assert 'fonts.googleapis.com' not in shell
 js = '\n\n'.join(read(s).rstrip() for s in SCRIPTS)
 assert '</script' not in js.lower(), 'a script source contains a closing script tag'
 page = shell.replace('<!-- __SCRIPTS__ -->', '<script>\n' + js + '\n</script>')
+
+# ---- content security policy ----
+# The page runs exactly one inline script, so the policy names it by hash
+# instead of allowing inline script at large: anything injected into the DOM
+# later has a different hash and will not execute. Everything the app talks
+# to at runtime is listed by host.
+inline = '\n' + js + '\n'
+digest = base64.b64encode(hashlib.sha256(inline.encode('utf-8')).digest()).decode('ascii')
+CSP = '; '.join([
+    "default-src 'self'",
+    "base-uri 'none'",
+    "object-src 'none'",
+    "form-action 'self'",
+    # the Firebase SDK comes from gstatic at runtime; apis.google.com is the sign-in popup
+    "script-src 'self' 'sha256-" + digest + "' https://www.gstatic.com https://apis.google.com",
+    "style-src 'self' 'unsafe-inline'",
+    "img-src 'self' data: blob: https:",
+    "font-src 'self' data:",
+    "media-src 'self' data: blob:",
+    "worker-src 'self'",
+    # Firestore, Auth, Storage, Gemini and the Cloudflare worker
+    "connect-src 'self' https://*.googleapis.com https://*.google.com https://*.firebaseio.com https://*.cloudfunctions.net https://*.workers.dev https://generativelanguage.googleapis.com",
+    # the sign-in popup lives on the Firebase auth domain
+    "frame-src https://*.firebaseapp.com https://accounts.google.com https://*.facebook.com",
+])
+page = page.replace('<!-- __CSP__ -->', '<meta http-equiv="Content-Security-Policy" content="' + CSP + '">')
+assert 'Content-Security-Policy' in page, 'the shell lost its CSP placeholder'
+# An inline handler would be blocked by that policy, so the build refuses one.
+assert not re.search(r'\\son(click|load|error|change|input|submit)\\s*=', page), 'inline event handler in the page'
 
 # The shell must work with no network: nothing static may load from elsewhere
 # (the Firebase SDK is fetched at runtime only when accounts are turned on).

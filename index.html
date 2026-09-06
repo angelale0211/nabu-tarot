@@ -5,6 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
 <title>Nabu Tarot</title>
 <meta name="description" content="Nabu Tarot: dự đoán mới, rút một lá bài xem năng lượng hiện tại, học tarot, Lenormand, chiêm tinh, và đặt lịch xem bài.">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'none'; object-src 'none'; form-action 'self'; script-src 'self' 'sha256-jJiRjuZal3ONO3wXrknFNuF0tJ7qlrtAvx1ay1/jvvU=' https://www.gstatic.com https://apis.google.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; font-src 'self' data:; media-src 'self' data: blob:; worker-src 'self'; connect-src 'self' https://*.googleapis.com https://*.google.com https://*.firebaseio.com https://*.cloudfunctions.net https://*.workers.dev https://generativelanguage.googleapis.com; frame-src https://*.firebaseapp.com https://accounts.google.com https://*.facebook.com">
+<meta name="referrer" content="strict-origin-when-cross-origin">
 <meta name="theme-color" content="#EFE9FA">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
@@ -1744,7 +1746,7 @@ const STR = {
     waitMin: (n) => n + ' phút', waitHour: (n) => n + ' giờ', waitHourMin: (h, m) => h + ' giờ ' + m + ' phút',
     luckTitle: 'Xu Nabu và ưu đãi', luckLink: 'Xu và ưu đãi của bạn', luckCoins: 'xu Nabu',
     luckIntro: 'Chăm sóc bạn nhỏ mỗi ngày sẽ tích được xu Nabu và mở ra phiếu giảm giá. Một xu tương đương một đồng khi bạn đặt lịch xem bài hoặc mở một khóa học.',
-    luckHint: 'Bạn có thể dùng ngay hoặc để dành cho lần sau. Xu Nabu không bao giờ hết hạn.',
+    luckHint: 'Bạn có thể dùng ngay hoặc để dành cho lần sau. Xu Nabu không bao giờ hết hạn. Mỗi đơn dùng tối đa 100.000 xu và không quá một nửa giá trị đơn.',
     luckWorth: (s) => 'Tương đương ' + s + ' khi bạn đặt dịch vụ.',
     luckVoucher: 'Phiếu giảm giá theo cấp', luckVoucherHint: 'Cấp cao nhất mà bạn nhỏ của bạn từng đạt sẽ quyết định mức giảm.',
     luckVoucherOf: (p) => 'Phiếu giảm ' + p + '%', luckAtLevel: (n) => 'Từ cấp ' + n,
@@ -2095,7 +2097,7 @@ const STR = {
     waitMin: (n) => n + ' minutes', waitHour: (n) => n + ' hours', waitHourMin: (h, m) => h + ' hours ' + m + ' minutes',
     luckTitle: 'Nabu coins and rewards', luckLink: 'Your coins and rewards', luckCoins: 'Nabu coins',
     luckIntro: 'Caring for your companion every day earns Nabu coins and opens a voucher. One coin is worth one đồng towards a reading or a course.',
-    luckHint: 'Use them now or keep them for next time. Nabu coins never expire.',
+    luckHint: 'Use them now or keep them for next time. Nabu coins never expire. One order takes at most 100,000 coins, and never more than half its price.',
     luckWorth: (s) => 'Worth ' + s + ' towards anything here.',
     luckVoucher: 'Voucher by level', luckVoucherHint: 'The highest level any of your companions has reached sets how much comes off.',
     luckVoucherOf: (p) => p + '% voucher', luckAtLevel: (n) => 'From level ' + n,
@@ -9549,12 +9551,26 @@ async function loadContent(name, path, key) {
       await Promise.race([be.initP || Promise.resolve(), new Promise((r) => setTimeout(r, 2500))]);
       if (be.db) {
         const d = await Promise.race([be.getContent(name), new Promise((_, rej) => setTimeout(() => rej(new Error('timeout')), 2500))]);
-        if (d) { delete d.updatedAt; store.set(key, d); return { data: d, fromCache: false }; }
+        // `key` is falsy for anything that must not be kept on the device.
+        if (d) { delete d.updatedAt; if (key) store.set(key, d); return { data: d, fromCache: false }; }
       }
     } catch (e) { /* offline, rules, or not saved yet: use the file */ }
   }
   return loadJSON(path, key);
 }
+
+/* ---- what went wrong ----
+   The last few errors are kept in memory so the bug report can carry them.
+   Nothing is sent anywhere on its own and nothing is written to the device. */
+const OOPS = [];
+window.addEventListener('error', (e) => {
+  OOPS.unshift(String((e && e.message) || 'error') + (e && e.filename ? ' @' + String(e.filename).split('/').pop() + ':' + e.lineno : ''));
+  OOPS.length = Math.min(OOPS.length, 3);
+});
+window.addEventListener('unhandledrejection', (e) => {
+  OOPS.unshift('promise: ' + String((e && e.reason && e.reason.message) || e.reason || '').slice(0, 200));
+  OOPS.length = Math.min(OOPS.length, 3);
+});
 
 /* ---- router ---- */
 const ROUTES = {};
@@ -9983,7 +9999,57 @@ function calcAnswer(f) {
   const t = String(f || '').replace(/\b(bang may|bang bao nhieu|la bao nhieu|bang gi|bang|tinh giup|tinh|equals?|what is|what's|how much is)\b/g, ' ').replace(/\b(cong|plus)\b/g, ' + ').replace(/\b(tru|minus)\b/g, ' - ').replace(/\b(nhan|times|multiplied by)\b/g, ' * ').replace(/\b(chia|divided by|over)\b/g, ' / ').replace(/[=?:\s]+$/, '').trim();
   if (!/\d/.test(t) || !/^[\d\s+\-*/().,xX×÷^%]+$/.test(t) || !/[+\-*/xX×÷^%]/.test(t)) return '';
   const expr = t.replace(/[xX×]/g, '*').replace(/÷/g, '/').replace(/\^/g, '**').replace(/,/g, '.').replace(/\s+/g, '');
-  try { const v = Function('"use strict"; return (' + expr + ')')(); if (typeof v !== 'number' || !isFinite(v)) return ''; return t.replace(/\s+/g, ' ') + ' = ' + String(Math.round(v * 1e6) / 1e6); } catch (e) { return ''; }
+  const v = evalExpr(expr);
+  if (typeof v !== 'number' || !isFinite(v)) return '';
+  return t.replace(/\s+/g, ' ') + ' = ' + String(Math.round(v * 1e6) / 1e6);
+}
+/* A four-operation calculator, written out rather than handed to eval.
+   grammar:  sum := term (('+'|'-') term)*
+             term := power (('*'|'/'|'%') power)*
+             power := unary ('**' power)?
+             unary := '-'? atom
+             atom := number | '(' sum ')' */
+function evalExpr(src) {
+  let i = 0;
+  const s = String(src);
+  const peek = (n) => s.slice(i, i + (n || 1));
+  const num = () => {
+    const m = /^\d+(\.\d+)?/.exec(s.slice(i));
+    if (!m) return NaN;
+    i += m[0].length;
+    return parseFloat(m[0]);
+  };
+  const atom = () => {
+    if (peek() === '(') { i++; const v = sum(); if (peek() === ')') i++; else return NaN; return v; }
+    return num();
+  };
+  const unary = () => {
+    if (peek() === '-') { i++; return -unary(); }
+    if (peek() === '+') { i++; return unary(); }
+    return atom();
+  };
+  const power = () => {
+    const a = unary();
+    if (peek(2) === '**') { i += 2; return Math.pow(a, power()); }
+    return a;
+  };
+  const term = () => {
+    let a = power();
+    while (peek() === '*' || peek() === '/' || peek() === '%') {
+      if (peek(2) === '**') break;
+      const op = peek(); i++;
+      const b = power();
+      a = op === '*' ? a * b : op === '/' ? a / b : a % b;
+    }
+    return a;
+  };
+  const sum = () => {
+    let a = term();
+    while (peek() === '+' || peek() === '-') { const op = peek(); i++; const b = term(); a = op === '+' ? a + b : a - b; }
+    return a;
+  };
+  const out = sum();
+  return i === s.length ? out : NaN;
 }
 function localAnswer(q, ctx) {
   const S = T(), d = detectCat(q), out = [];
@@ -12494,6 +12560,11 @@ const VOUCHERS = [
 ];
 /* What a level-up pays into the purse. */
 const levelCoins = (lv) => lv * 200;
+/* The purse is kept on the device, where anyone can edit it. The app cannot
+   prevent that, so it caps what a single order may claim: never more than
+   half the price, and never more than this. Nabu still sees every order
+   before honouring it. */
+const COIN_MAX_PER_ORDER = 100000;
 
 const BANK = {
   coins() { return Math.max(0, Math.round(Number(store.get('nabu-coins', 0)) || 0)); },
@@ -12537,8 +12608,9 @@ function luckCut(total, use) {
   const pct = (use && use.v && tier) ? tier.pct : 0;
   const pctOff = pct ? Math.round(base * pct / 100 / 1000) * 1000 : 0;
   const afterPct = Math.max(0, base - pctOff);
-  const coins = Math.min(Math.max(0, Math.round((use && use.c) || 0)), BANK.coins(), afterPct);
-  return { pct: pct, pctOff: pctOff, coins: coins, final: Math.max(0, afterPct - coins) };
+  const ceiling = Math.min(COIN_MAX_PER_ORDER, Math.floor(base / 2));
+  const coins = Math.min(Math.max(0, Math.round((use && use.c) || 0)), BANK.coins(), afterPct, ceiling);
+  return { pct: pct, pctOff: pctOff, coins: coins, final: Math.max(0, afterPct - coins), cap: ceiling };
 }
 /* The lines added to the message that is sent to Nabu. */
 function luckLines(cut) {
@@ -14667,7 +14739,7 @@ window.addEventListener('error', (e) => { window.__lastError = (e.message || '')
 window.addEventListener('unhandledrejection', (e) => { window.__lastError = 'promise: ' + ((e.reason && e.reason.message) || String(e.reason || '')); });
 
 function reportInfo() {
-  return [CONFIG.brand + ' ' + (window.APP_VERSION || ''), location.hash, navigator.userAgent.replace(/\).*$/, ')'), (window.innerWidth + 'x' + window.innerHeight), lang, window.__lastError ? 'error: ' + window.__lastError : ''].filter(Boolean).join(' · ');
+  return [CONFIG.brand + ' ' + (window.APP_VERSION || ''), location.hash, navigator.userAgent.replace(/\).*$/, ')'), (window.innerWidth + 'x' + window.innerHeight), lang, OOPS.length ? 'errors: ' + OOPS.join(' | ') : (window.__lastError ? 'error: ' + window.__lastError : '')].filter(Boolean).join(' · ');
 }
 function renderReport(args, params) {
   const S = T(), m = $('#main');
@@ -15702,14 +15774,16 @@ function adminSale(p) {
 ROUTES.admin = { nav: '', render: renderAdmin };
 
 /* ============================ boot ============================ */
-window.APP_VERSION = 'v107';
+window.APP_VERSION = 'v108';
 window.NABU = { CONFIG: CONFIG, SALE: SALE, salePrice: salePrice, loadActs: loadActs, BACK: BACK, LESSONS: LESSONS, localAnswer: localAnswer, compatVerdict: compatVerdict, numerologyOf: numerologyOf, ZDEEP: ZDEEP, lunarToday: lunarToday, solarToLunar: solarToLunar, DECK: DECK, INSIGHT: INSIGHT, KW: KW, ASK: ASK, TOPICS: TOPICS, GUIDES: GUIDES, SERVICES: SERVICES, COURSES: COURSES, ACCESS: ACCESS, makeCode: makeCode, parseCode: parseCode, ZODIAC: ZODIAC, pick: pick, book: book,
   insightHTML: insightHTML, insightOf: insightOf, sunSignIndex: sunSignIndex, lifePath: lifePath, PROFILE: () => PROFILE, BE: BE, ACTS: ACTS,
   ANGELS: ANGELS, angelRead: angelRead, BANK: BANK, PETS: PETS, petSVG: petSVG, PET_COATS: PET_COATS, PET_KINDS: PET_KINDS, luckCut: luckCut, petLevel: petLevel, petStep: petStep, VOUCHERS: VOUCHERS, levelCoins: levelCoins, LOOKS: LOOKS };
 BE.initP = BE.init().catch(() => { /* backend unreachable: the app runs device-only */ });
 // The Gemini key is a dashboard setting kept in the app cloud (content/ai), never in the source.
 loadContent('sale', 'sale.json', 'nabu-sale').then((r) => { SALE.set(r && r.data); renderChrome((ROUTES[parseHash().route] || {}).nav); route(); });
-loadContent('ai', 'ai.json', 'nabu-ai').then((r) => { if (r && r.data && typeof r.data.geminiKey === 'string') { CONFIG.geminiKey = r.data.geminiKey.trim(); if (CONFIG.geminiKey) $$('.ai .ai-h .faint').forEach((el) => { el.textContent = T().aiOnline; }); } }).catch(() => {});
+store.set('nabu-ai', null);
+/* The AI key is read from the cloud by Nabu only and never cached here. */
+loadContent('ai', 'ai.json', '').then((r) => { if (r && r.data && typeof r.data.geminiKey === 'string') { CONFIG.geminiKey = r.data.geminiKey.trim(); if (CONFIG.geminiKey) $$('.ai .ai-h .faint').forEach((el) => { el.textContent = T().aiOnline; }); } }).catch(() => {});
 // The app is not a web page: no pinch or double-tap zoom.
 document.addEventListener('gesturestart', (e) => e.preventDefault(), { passive: false });
 let lastTouch = 0; document.addEventListener('touchend', (e) => { const now = Date.now(); if (now - lastTouch < 300 && !(e.target.closest && e.target.closest('input,textarea'))) e.preventDefault(); lastTouch = now; }, { passive: false });

@@ -134,7 +134,57 @@ function calcAnswer(f) {
   const t = String(f || '').replace(/\b(bang may|bang bao nhieu|la bao nhieu|bang gi|bang|tinh giup|tinh|equals?|what is|what's|how much is)\b/g, ' ').replace(/\b(cong|plus)\b/g, ' + ').replace(/\b(tru|minus)\b/g, ' - ').replace(/\b(nhan|times|multiplied by)\b/g, ' * ').replace(/\b(chia|divided by|over)\b/g, ' / ').replace(/[=?:\s]+$/, '').trim();
   if (!/\d/.test(t) || !/^[\d\s+\-*/().,xX×÷^%]+$/.test(t) || !/[+\-*/xX×÷^%]/.test(t)) return '';
   const expr = t.replace(/[xX×]/g, '*').replace(/÷/g, '/').replace(/\^/g, '**').replace(/,/g, '.').replace(/\s+/g, '');
-  try { const v = Function('"use strict"; return (' + expr + ')')(); if (typeof v !== 'number' || !isFinite(v)) return ''; return t.replace(/\s+/g, ' ') + ' = ' + String(Math.round(v * 1e6) / 1e6); } catch (e) { return ''; }
+  const v = evalExpr(expr);
+  if (typeof v !== 'number' || !isFinite(v)) return '';
+  return t.replace(/\s+/g, ' ') + ' = ' + String(Math.round(v * 1e6) / 1e6);
+}
+/* A four-operation calculator, written out rather than handed to eval.
+   grammar:  sum := term (('+'|'-') term)*
+             term := power (('*'|'/'|'%') power)*
+             power := unary ('**' power)?
+             unary := '-'? atom
+             atom := number | '(' sum ')' */
+function evalExpr(src) {
+  let i = 0;
+  const s = String(src);
+  const peek = (n) => s.slice(i, i + (n || 1));
+  const num = () => {
+    const m = /^\d+(\.\d+)?/.exec(s.slice(i));
+    if (!m) return NaN;
+    i += m[0].length;
+    return parseFloat(m[0]);
+  };
+  const atom = () => {
+    if (peek() === '(') { i++; const v = sum(); if (peek() === ')') i++; else return NaN; return v; }
+    return num();
+  };
+  const unary = () => {
+    if (peek() === '-') { i++; return -unary(); }
+    if (peek() === '+') { i++; return unary(); }
+    return atom();
+  };
+  const power = () => {
+    const a = unary();
+    if (peek(2) === '**') { i += 2; return Math.pow(a, power()); }
+    return a;
+  };
+  const term = () => {
+    let a = power();
+    while (peek() === '*' || peek() === '/' || peek() === '%') {
+      if (peek(2) === '**') break;
+      const op = peek(); i++;
+      const b = power();
+      a = op === '*' ? a * b : op === '/' ? a / b : a % b;
+    }
+    return a;
+  };
+  const sum = () => {
+    let a = term();
+    while (peek() === '+' || peek() === '-') { const op = peek(); i++; const b = term(); a = op === '+' ? a + b : a - b; }
+    return a;
+  };
+  const out = sum();
+  return i === s.length ? out : NaN;
 }
 function localAnswer(q, ctx) {
   const S = T(), d = detectCat(q), out = [];

@@ -1,0 +1,44 @@
+# The checks that guard the app run on every push and every pull request, so a
+# change that breaks something is caught before it is deployed rather than
+# after. The suite drives the built page in headless Chrome, exactly as
+# test/run.py does on a laptop with Edge.
+name: tests
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  checks:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      # The build must reproduce index.html exactly. If it does not, someone
+      # edited the built file by hand instead of the sources it comes from.
+      - name: Build
+        run: python build.py
+
+      - name: The built page matches its sources
+        run: |
+          if ! git diff --quiet -- index.html privacy.html; then
+            echo "index.html does not match what build.py produces from src/."
+            git --no-pager diff --stat -- index.html privacy.html
+            exit 1
+          fi
+
+      - name: Run the checks
+        env:
+          NABU_BROWSER: /usr/bin/google-chrome
+          PYTHONIOENCODING: utf-8
+        run: python test/run.py

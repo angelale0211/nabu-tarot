@@ -7,7 +7,7 @@ window.addEventListener('error', (e) => { window.__lastError = (e.message || '')
 window.addEventListener('unhandledrejection', (e) => { window.__lastError = 'promise: ' + ((e.reason && e.reason.message) || String(e.reason || '')); });
 
 function reportInfo() {
-  return [CONFIG.brand + ' ' + (window.APP_VERSION || ''), location.hash, navigator.userAgent.replace(/\).*$/, ')'), (window.innerWidth + 'x' + window.innerHeight), lang, window.__lastError ? 'error: ' + window.__lastError : ''].filter(Boolean).join(' · ');
+  return [CONFIG.brand + ' ' + (window.APP_VERSION || ''), location.hash, navigator.userAgent.replace(/\).*$/, ')'), (window.innerWidth + 'x' + window.innerHeight), lang, OOPS.length ? 'errors: ' + OOPS.join(' | ') : (window.__lastError ? 'error: ' + window.__lastError : '')].filter(Boolean).join(' · ');
 }
 function renderReport(args, params) {
   const S = T(), m = $('#main');

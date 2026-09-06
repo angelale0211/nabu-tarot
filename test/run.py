@@ -8,7 +8,11 @@ from http.server import ThreadingHTTPServer, SimpleHTTPRequestHandler
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.dirname(HERE)
-EDGE = r'C:\Program Files (x86)\Microsoft\Edge\Application\msedge.exe'
+# Any Chromium will do: Edge here, Chrome on the build machine.
+BROWSERS = [os.environ.get('NABU_BROWSER'),
+            r'C:\Program Files (x86)\Microsoft\Edge\Application\msedge.exe',
+            '/usr/bin/google-chrome', '/usr/bin/chromium-browser', '/usr/bin/chromium']
+EDGE = next((b for b in BROWSERS if b and os.path.exists(b)), BROWSERS[1])
 PORT = 8765
 
 

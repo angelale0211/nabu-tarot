@@ -640,8 +640,14 @@ async function go(hash, sel) { W().location.hash = hash; await sleep(30); return
         const c2 = N.luckCut(300000, { v: false, c: 0 });
         const c3 = N.luckCut(10000, { v: true, c: 999999 });
         ok(c1.pct === 10 && c1.pctOff === 30000 && c1.coins === 20000 && c1.final === 250000
-          && c2.final === 300000 && c3.pctOff === 1000 && c3.coins === 9000 && c3.final === 0 && N.BANK.tier().pct === 10,
-          'without Plus the voucher stops at ten per cent, and neither it nor the coins can take a price below zero'); }
+          && c2.final === 300000 && c3.pctOff === 1000 && N.BANK.tier().pct === 10,
+          'without Plus the voucher stops at ten per cent'); 
+        N.BANK.put(9999999);
+        ok(c3.coins === 5000 && c3.final === 4000 && c3.cap === 5000
+          && N.luckCut(400000, { v: false, c: 999999 }).coins === 100000
+          && N.luckCut(40000, { v: false, c: 999999 }).coins === 20000,
+          'coins never take more than half an order, and never more than 100.000 in one order, however large the purse claims to be');
+        N.BANK.put(30000); }
       { N.ACCESS.grant(['pro'], '2099-01-01');
         const c4 = N.luckCut(300000, { v: true, c: 0 });
         ok(N.BANK.tier().pct === 15 && c4.pctOff === 45000 && c4.final === 255000, 'Plus opens the fifteen and twenty per cent steps');

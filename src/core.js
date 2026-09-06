@@ -394,12 +394,26 @@ async function loadContent(name, path, key) {
       await Promise.race([be.initP || Promise.resolve(), new Promise((r) => setTimeout(r, 2500))]);
       if (be.db) {
         const d = await Promise.race([be.getContent(name), new Promise((_, rej) => setTimeout(() => rej(new Error('timeout')), 2500))]);
-        if (d) { delete d.updatedAt; store.set(key, d); return { data: d, fromCache: false }; }
+        // `key` is falsy for anything that must not be kept on the device.
+        if (d) { delete d.updatedAt; if (key) store.set(key, d); return { data: d, fromCache: false }; }
       }
     } catch (e) { /* offline, rules, or not saved yet: use the file */ }
   }
   return loadJSON(path, key);
 }
+
+/* ---- what went wrong ----
+   The last few errors are kept in memory so the bug report can carry them.
+   Nothing is sent anywhere on its own and nothing is written to the device. */
+const OOPS = [];
+window.addEventListener('error', (e) => {
+  OOPS.unshift(String((e && e.message) || 'error') + (e && e.filename ? ' @' + String(e.filename).split('/').pop() + ':' + e.lineno : ''));
+  OOPS.length = Math.min(OOPS.length, 3);
+});
+window.addEventListener('unhandledrejection', (e) => {
+  OOPS.unshift('promise: ' + String((e && e.reason && e.reason.message) || e.reason || '').slice(0, 200));
+  OOPS.length = Math.min(OOPS.length, 3);
+});
 
 /* ---- router ---- */
 const ROUTES = {};
