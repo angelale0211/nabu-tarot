@@ -59,22 +59,158 @@ function actDateLine(a) { const S = T(); return '<div class="date"><span>' + fmt
 
 /* ---- pile pictures: eight drawn motifs, each pile gets a different one ---- */
 const pileSeed = (id) => { let h = 0; for (let i = 0; i < String(id).length; i++) h = (h * 31 + String(id).charCodeAt(i)) >>> 0; return h % 8; };
+/* ---- the faces of the piles ----
+   One language for all of them: a lit ground, a glow behind the symbol, the
+   symbol built from three tones and a highlight rather than one flat fill, and
+   a gold frame that is drawn once for every card rather than inside each. */
+const pileGlow = (x, y, r, c) => '<circle cx="' + x + '" cy="' + y + '" r="' + r + '" fill="' + c + '" opacity=".14"/>'
+  + '<circle cx="' + x + '" cy="' + y + '" r="' + (r * 0.6).toFixed(1) + '" fill="' + c + '" opacity=".16"/>';
+const pileStars = (pts) => '<g fill="#FFF7EE">' + pts.map((p) => '<circle cx="' + p[0] + '" cy="' + p[1] + '" r="' + (p[2] || 1.3) + '" opacity="' + (p[3] || 0.9) + '"/>').join('') + '</g>';
+/* A five-petal blossom with a lit side and a shaded side. */
+const pileBloom = (x, y, sc, c1, c2) => '<g transform="translate(' + x + ',' + y + ') scale(' + sc + ')">'
+  + [0, 72, 144, 216, 288].map((a) => '<ellipse cx="0" cy="-7" rx="5.2" ry="7.4" fill="' + c1 + '" transform="rotate(' + a + ')"/>').join('')
+  + [0, 72, 144, 216, 288].map((a) => '<ellipse cx="-1" cy="-7.4" rx="2.6" ry="4.4" fill="' + c2 + '" opacity=".75" transform="rotate(' + a + ')"/>').join('')
+  + '<circle r="3" fill="#FFE07A"/>'
+  + [20, 92, 164, 236, 308].map((a) => '<line x1="0" y1="0" x2="0" y2="-4.6" stroke="#E8A83C" stroke-width="0.8" transform="rotate(' + a + ')"/>').join('')
+  + '</g>';
+/* A six-sided crystal standing on its base, two faces lit differently. */
+const pileCrystal = (x, base, w, h, tip, c1, c2, c3) => '<g>'
+  + '<path d="M' + (x - w) + ' ' + base + ' L' + (x - w) + ' ' + (base - h) + ' L' + x + ' ' + (base - h - tip) + ' L' + x + ' ' + base + ' Z" fill="' + c1 + '"/>'
+  + '<path d="M' + x + ' ' + base + ' L' + x + ' ' + (base - h - tip) + ' L' + (x + w) + ' ' + (base - h) + ' L' + (x + w) + ' ' + base + ' Z" fill="' + c2 + '"/>'
+  + '<path d="M' + (x - w + 1.6) + ' ' + (base - 6) + ' L' + (x - w + 1.6) + ' ' + (base - h + 2) + ' L' + (x - 1.6) + ' ' + (base - h - tip + 5) + ' L' + (x - 1.6) + ' ' + (base - 6) + ' Z" fill="' + c3 + '" opacity=".45"/>'
+  + '</g>';
+
 const PILE_ARTS = [
-  { bg: ['#2B1D4A', '#4A2C6E'], fan: '#E9C784', draw: '<rect x="38" y="78" width="24" height="30" rx="4" fill="#F2D6A2"/><rect x="38" y="78" width="24" height="6" rx="3" fill="#FFF0C9"/><path d="M50 74 C 44 66, 46 58, 50 52 C 54 58, 56 66, 50 74 Z" fill="#FFB347"/><path d="M50 72 C 47 67, 48 62, 50 58 C 52 62, 53 67, 50 72 Z" fill="#FFF3B0"/><circle cx="50" cy="60" r="18" fill="#FFB347" opacity=".18"/>' },
-  { bg: ['#F8D5E0', '#F3B4C8'], fan: '#F6BBCB', draw: '<path d="M20 110 C 40 90, 60 70, 84 40" stroke="#8A5A3C" stroke-width="3" fill="none" stroke-linecap="round"/>' + [[34, 92], [52, 74], [70, 56]].map((c) => [0, 72, 144, 216, 288].map((r) => '<ellipse cx="' + c[0] + '" cy="' + (c[1] - 8) + '" rx="5" ry="8" fill="#FF9EBB" transform="rotate(' + r + ' ' + c[0] + ' ' + c[1] + ')"/>').join('') + '<circle cx="' + c[0] + '" cy="' + c[1] + '" r="3" fill="#FFE07A"/>').join('') },
-  { bg: ['#1E2A57', '#3A4B8A'], fan: '#AFC8F0', draw: '<circle cx="54" cy="66" r="24" fill="#FFF3C4"/><circle cx="64" cy="60" r="22" fill="#2A3A72"/><circle cx="26" cy="36" r="1.6" fill="#fff"/><circle cx="76" cy="26" r="1.2" fill="#fff"/><circle cx="20" cy="96" r="1.4" fill="#fff"/><circle cx="82" cy="104" r="1.8" fill="#fff"/><path d="M40 108 h6 M43 105 v6" stroke="#fff" stroke-width="1"/>' },
-  { bg: ['#3B2A5E', '#6E4FA8'], fan: '#C7B6F3', draw: '<path d="M18 118 L 30 70 L 42 118 Z" fill="#B48CE0"/><path d="M34 118 L 50 44 L 66 118 Z" fill="#CBA6F0"/><path d="M58 118 L 72 62 L 86 118 Z" fill="#A67BD8"/><path d="M50 44 L 58 118 L 42 118 Z" fill="#E4D2F8" opacity=".55"/><rect x="12" y="116" width="76" height="8" rx="3" fill="#8F86A8"/>' },
-  { bg: ['#F7D98A', '#F0B24A'], fan: '#E5BE5E', draw: [0, 30, 60, 90, 120, 150, 180, 210, 240, 270, 300, 330].map((r) => '<line x1="50" y1="30" x2="50" y2="20" stroke="#FFF6D2" stroke-width="3" stroke-linecap="round" transform="rotate(' + r + ' 50 66)"/>').join('') + '<circle cx="50" cy="66" r="20" fill="#FFF1B8"/><circle cx="50" cy="66" r="14" fill="#FFD966"/>' },
-  { bg: ['#1F5F63', '#3B8F8E'], fan: '#9BD3CF', draw: '<circle cx="42" cy="52" r="16" fill="none" stroke="#F2D6A2" stroke-width="6"/><rect x="52" y="54" width="34" height="7" rx="3" fill="#F2D6A2" transform="rotate(35 52 54)"/><rect x="70" y="72" width="7" height="12" rx="2" fill="#F2D6A2" transform="rotate(35 70 72)"/><rect x="78" y="82" width="7" height="9" rx="2" fill="#F2D6A2" transform="rotate(35 78 82)"/>' },
-  { bg: ['#E7DDF7', '#C9B8EE'], fan: '#D9CDF3', draw: '<path d="M30 116 C 40 80, 56 52, 78 28 C 74 60, 62 92, 36 114 Z" fill="#8E7CC3"/><path d="M30 116 C 46 84, 60 60, 78 28" stroke="#F4EEFB" stroke-width="2" fill="none"/>' + [40, 52, 64, 76].map((y) => '<path d="M' + (86 - (y - 40) * 0.55) + ' ' + y + ' L ' + (58 - (y - 40) * 0.2) + ' ' + (y + 14) + '" stroke="#F4EEFB" stroke-width="1.2" opacity=".8"/>').join('') },
-  { bg: ['#2F4E86', '#5A8FD0'], fan: '#AFC8F0', draw: [0, 1, 2, 3].map((k) => '<path d="M0 ' + (70 + k * 14) + ' C 15 ' + (60 + k * 14) + ', 25 ' + (80 + k * 14) + ', 40 ' + (70 + k * 14) + ' S 65 ' + (60 + k * 14) + ', 80 ' + (70 + k * 14) + ' S 100 ' + (76 + k * 14) + ', 110 ' + (70 + k * 14) + '" fill="none" stroke="#EAF3FF" stroke-width="3" opacity="' + (0.9 - k * 0.2) + '"/>').join('') + '<circle cx="74" cy="34" r="8" fill="#FFF3C4"/>' }
+  /* A taper in a dish: wax with a lit side, drips, a wick, and a flame in
+     three layers with a white heart. */
+  { bg: ['#2A1B46', '#4E2E72'], fan: '#E9C784', draw: pileGlow(50, 56, 32, '#FFC46B')
+    + pileStars([[24, 26, 1.2, 0.7], [78, 30, 1, 0.6], [22, 96, 1, 0.55]])
+    + '<ellipse cx="50" cy="119" rx="21" ry="5.4" fill="#B98C46"/>'
+    + '<path d="M31 117 q19 7 38 0 q-3 6 -19 6 q-16 0 -19 -6 Z" fill="#E5BE5E"/>'
+    + '<rect x="41" y="70" width="18" height="48" rx="3" fill="#FBEFD8"/>'
+    + '<rect x="52" y="70" width="7" height="48" fill="#E3CDA8" opacity=".85"/>'
+    + '<ellipse cx="50" cy="70" rx="9" ry="3.2" fill="#FFF9EC"/>'
+    + '<path d="M41.5 76 q-3.4 8 -0.4 15 q4.2 -6.4 3.2 -15 Z" fill="#FFF9EC"/>'
+    + '<path d="M57 82 q3.2 7 0.6 13 q-4 -5.6 -3 -13 Z" fill="#FFF9EC" opacity=".8"/>'
+    + '<path d="M50 68 v-5" stroke="#5E4A2E" stroke-width="1.8" stroke-linecap="round"/>'
+    + '<path d="M50 66 C 41 57, 43 44, 50 33 C 57 44, 59 57, 50 66 Z" fill="#FF9F2E"/>'
+    + '<path d="M50 64 C 44.5 56, 45.5 46, 50 38 C 54.5 46, 55.5 56, 50 64 Z" fill="#FFDC7A"/>'
+    + '<path d="M50 61 C 47.4 56, 47.8 50, 50 45 C 52.2 50, 52.6 56, 50 61 Z" fill="#FFFBEC"/>'
+    + '<g fill="#FFD98A" opacity=".8"><circle cx="42" cy="28" r="1.5"/><circle cx="58" cy="22" r="1.2"/><circle cx="53" cy="15" r="1"/></g>' },
+
+  /* A peach branch: blossoms at four sizes, buds, leaves, and petals falling. */
+  { bg: ['#FCE3EC', '#F5BDD2'], fan: '#F6BBCB', draw: '<circle cx="70" cy="40" r="21" fill="#FFF6FA" opacity=".6"/>'
+    + '<path d="M12 128 C 28 108, 38 94, 50 72 C 58 57, 70 44, 88 32" stroke="#7A4E36" stroke-width="3.2" fill="none" stroke-linecap="round"/>'
+    + '<path d="M38 96 q11 -7 15 -18" stroke="#7A4E36" stroke-width="2.1" fill="none" stroke-linecap="round"/>'
+    + '<path d="M62 60 q-13 -1 -19 -9" stroke="#7A4E36" stroke-width="2" fill="none" stroke-linecap="round"/>'
+    + '<g fill="#8FBF7F"><ellipse cx="34" cy="80" rx="7" ry="3.4" transform="rotate(-28 34 80)"/><ellipse cx="66" cy="82" rx="6.4" ry="3.2" transform="rotate(24 66 82)"/></g>'
+    + pileBloom(28, 106, 1.05, '#FF9EBB', '#FFD1E0') + pileBloom(50, 78, 1.25, '#FF8FB0', '#FFCADB')
+    + pileBloom(70, 52, 0.95, '#FF9EBB', '#FFD1E0') + pileBloom(86, 34, 0.7, '#FFAFC8', '#FFE0EA')
+    + '<g fill="#FFB6CE"><circle cx="53" cy="60" r="3.4"/><circle cx="40" cy="88" r="2.8"/><circle cx="78" cy="44" r="2.4"/></g>'
+    + '<g fill="#FFC9DC" opacity=".85"><ellipse cx="22" cy="60" rx="4" ry="2.4" transform="rotate(-30 22 60)"/><ellipse cx="80" cy="100" rx="3.6" ry="2.2" transform="rotate(20 80 100)"/><ellipse cx="34" cy="122" rx="3.2" ry="2" transform="rotate(-14 34 122)"/></g>' },
+
+  /* A true crescent, cut as one path from two circles, with its own light. */
+  { bg: ['#1A2452', '#37478C'], fan: '#AFC8F0', draw: pileGlow(52, 62, 34, '#FFF3C4')
+    + pileStars([[24, 30, 1.4], [78, 24, 1.1], [20, 92, 1.2], [82, 104, 1.5], [36, 116, 1], [66, 118, 1.2, 0.7], [88, 66, 1]])
+    + '<path fill-rule="evenodd" fill="#FFF3C4" d="M52 62 m-25 0 a25 25 0 1 0 50 0 a25 25 0 1 0 -50 0 M65 51 m-23 0 a23 23 0 1 0 46 0 a23 23 0 1 0 -46 0"/>'
+    + '<g fill="#F0DFA0" opacity=".55"><circle cx="36" cy="60" r="3.4"/><circle cx="42" cy="76" r="2.2"/><circle cx="34" cy="48" r="1.8"/></g>'
+    + '<path d="M72 86 l1.8 3.8 3.8 1.8 -3.8 1.8 -1.8 3.8 -1.8 -3.8 -3.8 -1.8 3.8 -1.8 Z" fill="#FFF3C4"/>' },
+
+  /* A cluster of six-sided crystals on a base, not three triangles. */
+  { bg: ['#33235C', '#6B4BA6'], fan: '#C7B6F3', draw: pileGlow(50, 96, 26, '#D9B8FF')
+    + pileStars([[26, 28, 1.2, 0.6], [76, 26, 1, 0.6]])
+    + '<path d="M20 122 L80 122 L74 111 L26 111 Z" fill="#3E2E70"/>'
+    + pileCrystal(28, 119, 8, 26, 11, '#A87FDD', '#7E58B8', '#E4D2F8')
+    + pileCrystal(72, 119, 9, 32, 13, '#9B6FD0', '#744FAC', '#DCC8F5')
+    + pileCrystal(49, 121, 11, 44, 18, '#C9A6F2', '#9767DC', '#F1E6FF')
+    + '<g fill="#FFF7EE"><path d="M70 60 l1.8 3.8 3.8 1.8 -3.8 1.8 -1.8 3.8 -1.8 -3.8 -3.8 -1.8 3.8 -1.8 Z"/>'
+    + '<path d="M28 74 l1.4 3 3 1.4 -3 1.4 -1.4 3 -1.4 -3 -3 -1.4 3 -1.4 Z" opacity=".85"/></g>' },
+
+  /* Long and short rays, tapered, around a disc lit from its centre. */
+  { bg: ['#F9DE96', '#EDA93E'], fan: '#E5BE5E', draw: pileGlow(50, 66, 34, '#FFF6D2')
+    + [0, 30, 60, 90, 120, 150, 180, 210, 240, 270, 300, 330].map((r) => '<path d="M47 40 L50 18 L53 40 Z" fill="#FFF6D2" transform="rotate(' + r + ' 50 66)"/>').join('')
+    + [15, 45, 75, 105, 135, 165, 195, 225, 255, 285, 315, 345].map((r) => '<path d="M48 42 L50 29 L52 42 Z" fill="#FFF0B8" opacity=".9" transform="rotate(' + r + ' 50 66)"/>').join('')
+    + '<circle cx="50" cy="66" r="21" fill="#FFF1B8"/><circle cx="50" cy="66" r="15" fill="#FFD24A"/>'
+    + '<circle cx="46" cy="61" r="6" fill="#FFF6D2" opacity=".55"/>' },
+
+  /* An ornate key: a heart in its bow, a collar on the shaft, real wards. */
+  { bg: ['#1E3A66', '#456FAC'], fan: '#AFC8F0', draw: pileGlow(50, 48, 28, '#FFE9A8')
+    + pileStars([[24, 100, 1.2, 0.6], [80, 92, 1, 0.6], [26, 26, 1.1, 0.7]])
+    + '<circle cx="50" cy="44" r="15" fill="none" stroke="#C79A2E" stroke-width="7"/>'
+    + '<circle cx="50" cy="44" r="15" fill="none" stroke="#E5BE5E" stroke-width="4.4"/>'
+    + '<path d="M50 40 q-4.6 -5 -7.4 -1 q-2.6 3.6 7.4 9.6 q10 -6 7.4 -9.6 q-2.8 -4 -7.4 1 Z" fill="#E5BE5E"/>'
+    + '<path d="M36 34 q-7 -3 -10 3 q7 2 10 -3 Z M64 34 q7 -3 10 3 q-7 2 -10 -3 Z" fill="#E5BE5E" opacity=".9"/>'
+    + '<rect x="46.6" y="58" width="6.8" height="52" rx="2.4" fill="#C79A2E"/>'
+    + '<rect x="46.6" y="58" width="3.6" height="52" rx="1.8" fill="#E5BE5E"/>'
+    + '<rect x="42" y="74" width="16" height="4.6" rx="2.3" fill="#E5BE5E"/>'
+    + '<path d="M50 84 l3.6 4.6 -3.6 4.6 -3.6 -4.6 Z" fill="#FFF3C4"/>'
+    + '<rect x="53.4" y="96" width="13" height="5.4" rx="1.6" fill="#E5BE5E"/>'
+    + '<rect x="53.4" y="105" width="9" height="5.4" rx="1.6" fill="#E5BE5E"/>' },
+
+  /* A quill: two vanes of different weight, barbs combed over them, and a
+     split near the tip where a real feather always parts. */
+  { bg: ['#EDE4FB', '#C2AAEC'], fan: '#D9CDF3', draw: pileGlow(52, 70, 30, '#FFFFFF')
+    + '<path d="M80 24 C 58 40, 40 72, 30 118 C 30 82, 48 42, 80 24 Z" fill="#9C86D6"/>'
+    + '<path d="M80 24 C 86 48, 70 88, 30 118 C 54 82, 70 50, 80 24 Z" fill="#BAA5E8"/>'
+    + '<g stroke="#F6F1FE" stroke-width="1.15" opacity=".95">'
+    + [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11].map((k) => { var t = k / 11; var x = 80 - 50 * t, y = 24 + 94 * t * t * 0.55 + 30 * t; return '<path d="M' + x.toFixed(1) + ' ' + y.toFixed(1) + ' L' + (x - 16 + k * 0.7).toFixed(1) + ' ' + (y + 5 + k * 0.5).toFixed(1) + '"/>'; }).join('')
+    + [0, 1, 2, 3, 4, 5, 6, 7, 8, 9].map((k) => { var t = k / 9; var x = 80 - 50 * t, y = 24 + 94 * t * t * 0.55 + 30 * t; return '<path d="M' + x.toFixed(1) + ' ' + y.toFixed(1) + ' L' + (x + 9 - k * 0.4).toFixed(1) + ' ' + (y + 9 + k * 0.6).toFixed(1) + '"/>'; }).join('')
+    + '</g>'
+    + '<path d="M80 24 C 58 42, 40 74, 30 118" stroke="#6E56A8" stroke-width="2.4" fill="none" stroke-linecap="round"/>'
+    + '<g stroke="#BAA5E8" stroke-width="1.2" fill="none" opacity=".9"><path d="M22 66 q6 4 4 10"/><path d="M84 92 q-6 3 -5 9"/></g>' },
+
+  /* Water in three layers, each crest curling into foam, under a small moon. */
+  { bg: ['#24406E', '#4B7BC0'], fan: '#AFC8F0', draw: pileStars([[24, 26, 1.2], [70, 20, 1], [86, 40, 1.3, 0.7]])
+    + '<path fill-rule="evenodd" fill="#FFF3C4" d="M74 34 m-13 0 a13 13 0 1 0 26 0 a13 13 0 1 0 -26 0 M81 28 m-11.5 0 a11.5 11.5 0 1 0 23 0 a11.5 11.5 0 1 0 -23 0"/>'
+    + '<path d="M0 66 C 16 48, 34 48, 46 64 C 58 80, 78 78, 100 58 L100 140 L0 140 Z" fill="#2F568F"/>'
+    + '<path d="M46 64 C 40 52, 26 52, 22 64 C 28 56, 40 58, 43 68 Z" fill="#EAF3FF" opacity=".9"/>'
+    + '<path d="M0 88 C 18 70, 38 72, 52 88 C 66 104, 84 100, 100 80 L100 140 L0 140 Z" fill="#4B7BC0"/>'
+    + '<path d="M52 88 C 46 76, 32 76, 28 88 C 34 80, 46 82, 49 92 Z" fill="#EAF3FF" opacity=".85"/>'
+    + '<path d="M0 110 C 20 94, 42 98, 58 112 C 72 124, 88 122, 100 108 L100 140 L0 140 Z" fill="#6FA0DC"/>'
+    + '<path d="M58 112 C 52 102, 40 102, 36 112 C 42 105, 52 107, 55 115 Z" fill="#EAF3FF" opacity=".8"/>'
+    + '<g fill="#EAF3FF" opacity=".8"><circle cx="16" cy="74" r="2.4"/><circle cx="68" cy="70" r="1.9"/><circle cx="84" cy="94" r="2.1"/><circle cx="30" cy="98" r="1.7"/><circle cx="72" cy="118" r="1.8"/></g>' },
+
+  /* A lotus on still water, and its own reflection under it. */
+  { bg: ['#FFE6E4', '#FFC9B0'], fan: '#F7C6B4', draw: '<circle cx="50" cy="46" r="26" fill="#FFF3E4" opacity=".7"/>'
+    + '<rect x="0" y="96" width="100" height="44" fill="#CFE0E8" opacity=".8"/>'
+    + '<g fill="#FFFFFF" opacity=".45"><rect x="10" y="106" width="80" height="2"/><rect x="20" y="116" width="62" height="1.8"/><rect x="14" y="126" width="70" height="1.6"/></g>'
+    + '<g fill="#8FBF7F"><ellipse cx="24" cy="102" rx="15" ry="4.6"/><ellipse cx="76" cy="108" rx="12" ry="4"/></g>'
+    + '<g opacity=".28"><path d="M50 100 q-17 5 -19 17 q13 0 19 -11 Z" fill="#F2789F"/><path d="M50 100 q17 5 19 17 q-13 0 -19 -11 Z" fill="#F2789F"/></g>'
+    + '<path d="M50 96 q-19 -5 -21 -18 q14 0 21 13 Z" fill="#F2789F"/><path d="M50 96 q19 -5 21 -18 q-14 0 -21 13 Z" fill="#F2789F"/>'
+    + '<path d="M50 94 q-13 -10 -10 -26 q11 8 10 24 Z" fill="#FBA9C6"/><path d="M50 94 q13 -10 10 -26 q-11 8 -10 24 Z" fill="#FBA9C6"/>'
+    + '<path d="M50 92 q-6 -15 0 -28 q6 13 0 28 Z" fill="#FFF0F5"/>'
+    + '<circle cx="50" cy="80" r="4.4" fill="#E5BE5E"/><circle cx="50" cy="79" r="2" fill="#FFF3C4"/>' },
+
+  /* A brilliant cut: table, crown facets, pavilion, and three sparks. */
+  { bg: ['#1F2A4D', '#46578F'], fan: '#AFC8F0', draw: pileGlow(50, 68, 30, '#CFE9FF')
+    + pileStars([[24, 30, 1.2], [80, 34, 1], [26, 108, 1.1, 0.7]])
+    + '<path d="M40 48 L60 48 L72 62 L50 106 L28 62 Z" fill="#BFE0F5"/>'
+    + '<path d="M50 106 L28 62 L40 62 Z" fill="#9CCBEA"/>'
+    + '<path d="M50 106 L72 62 L60 62 Z" fill="#D8EEFF"/>'
+    + '<path d="M50 106 L40 62 L50 62 Z" fill="#E7F5FF" opacity=".85"/>'
+    + '<path d="M40 48 L60 48 L64 62 L36 62 Z" fill="#EAF6FF"/>'
+    + '<path d="M40 48 L36 62 L28 62 Z" fill="#A9D4F0"/><path d="M60 48 L64 62 L72 62 Z" fill="#C7E5FA"/>'
+    + '<g fill="none" stroke="#FFFFFF" stroke-width="0.9" opacity=".7"><path d="M40 48 L36 62 M60 48 L64 62 M28 62 H72 M50 62 V106 M40 62 L50 106 M60 62 L50 106"/></g>'
+    + '<path d="M40 48 L60 48 L72 62 L50 106 L28 62 Z" fill="none" stroke="#FFFFFF" stroke-width="1.4" opacity=".85"/>'
+    + '<g fill="#FFFFFF"><path d="M76 78 l1.8 3.8 3.8 1.8 -3.8 1.8 -1.8 3.8 -1.8 -3.8 -3.8 -1.8 3.8 -1.8 Z"/>'
+    + '<path d="M22 76 l1.4 3 3 1.4 -3 1.4 -1.4 3 -1.4 -3 -3 -1.4 3 -1.4 Z" opacity=".85"/>'
+    + '<path d="M50 116 l1.6 3.4 3.4 1.6 -3.4 1.6 -1.6 3.4 -1.6 -3.4 -3.4 -1.6 3.4 -1.6 Z" opacity=".9"/></g>' }
 ];
 function pileArtSVG(k) {
   const a = PILE_ARTS[((k % PILE_ARTS.length) + PILE_ARTS.length) % PILE_ARTS.length], g = 'pg' + k;
-  return '<svg viewBox="0 0 100 140" class="pileart" data-art="' + k + '"><defs><linearGradient id="' + g + '" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="' + a.bg[0] + '"/><stop offset="1" stop-color="' + a.bg[1] + '"/></linearGradient></defs>'
+  /* Drawn once for every face: the frame that makes it the back of a deck
+     rather than a picture on a rectangle. */
+  const frame = '<rect x="17" y="15" width="66" height="110" rx="6" fill="none" stroke="#FFF7EE" stroke-width="0.9" opacity=".5"/>'
+    + '<rect x="20" y="18" width="60" height="104" rx="4" fill="none" stroke="#E5BE5E" stroke-width="0.7" opacity=".55"/>'
+    + '<g fill="#E5BE5E" opacity=".8"><circle cx="20" cy="18" r="1.6"/><circle cx="80" cy="18" r="1.6"/><circle cx="20" cy="122" r="1.6"/><circle cx="80" cy="122" r="1.6"/></g>';
+  /* Clipped to the card itself, not to the edge of the drawing. An inset of
+     nothing cuts at the viewport, which let the water run out past the card. */
+  return '<svg viewBox="0 0 100 140" class="pileart" data-art="' + k + '"><defs>'
+    + '<linearGradient id="' + g + '" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="' + a.bg[0] + '"/><stop offset="1" stop-color="' + a.bg[1] + '"/></linearGradient>'
+    + '<clipPath id="pc' + k + '"><rect x="10" y="8" width="80" height="124" rx="10"/></clipPath></defs>'
     + '<rect x="14" y="10" width="72" height="104" rx="8" fill="' + a.fan + '" opacity=".55" transform="rotate(-9 50 62)"/><rect x="14" y="10" width="72" height="104" rx="8" fill="' + a.fan + '" opacity=".75" transform="rotate(7 50 62)"/>'
-    + '<rect x="10" y="8" width="80" height="124" rx="10" fill="url(#' + g + ')" stroke="#FFF7EE" stroke-width="2"/><g clip-path="inset(0 round 10px)">' + a.draw + '</g>'
-    + '<path d="M80 18 l1.6 3.4 3.4 1.6 -3.4 1.6 -1.6 3.4 -1.6 -3.4 -3.4 -1.6 3.4 -1.6 Z" fill="#FFF7EE" opacity=".9"/><path d="M20 118 l1.2 2.6 2.6 1.2 -2.6 1.2 -1.2 2.6 -1.2 -2.6 -2.6 -1.2 2.6 -1.2 Z" fill="#FFF7EE" opacity=".8"/></svg>';
+    + '<rect x="10" y="8" width="80" height="124" rx="10" fill="url(#' + g + ')" stroke="#FFF7EE" stroke-width="2"/>'
+    + '<g clip-path="url(#pc' + k + ')">' + a.draw + frame + '</g></svg>';
 }
 /* ---- one activity card ---- */
 function actHTML(a, compact) {
