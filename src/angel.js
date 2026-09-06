@@ -328,7 +328,7 @@ function angelAnswerHTML(read, brief) {
   return '<div class="card angelanswer" style="--ink:' + a.ink + ';--aura:' + a.aura + '">'
     + '<div class="head">' + angelSigil(a, 64) + '<div><b>' + esc(L(a.name)) + '</b><span>' + esc(L(a.short)) + '</span></div></div>'
     + '<p class="why">' + esc(why) + '</p>'
-    + '<p>' + esc(L(a.body)[0]) + '</p>'
+    + '<div class="ins"><p>' + esc(L(a.body)[0]) + '</p></div>'
     + (brief ? '<p style="margin-top:10px"><a class="btn block" href="#/learn/angel/' + esc(a.id) + '">' + esc(S.angelMore) + '</a></p>' : '')
     + '</div>';
 }
@@ -344,7 +344,7 @@ function renderAngelOne(id) {
     + '<div class="angelhero">' + angelSigil(a, 110) + '<h1>' + esc(L(a.name)) + '</h1><p class="muted">' + esc(L(a.short)) + '</p>'
     + '<div class="chips seen">' + a.seen.map((x) => '<span class="chip">' + esc(x) + '</span>').join('') + '</div></div>'
     + '<div class="chips keys">' + L(a.keys).map((k) => '<span class="chip pink">' + esc(k) + '</span>').join('') + '</div>'
-    + L(a.body).map((p) => '<p>' + esc(p) + '</p>').join('')
+    + '<div class="ins"><h3>' + esc(S.angelMeaning) + '</h3>' + L(a.body).map((p) => '<p>' + esc(p) + '</p>').join('') + '</div>'
     + '<div class="ins"><h3>' + esc(S.angelTodo) + '</h3><p>' + esc(L(a.todo)) + '</p></div>'
     + arrows
     + '<p class="hint">' + esc(S.angelNote) + '</p></div>';

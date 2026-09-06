@@ -1589,7 +1589,7 @@ const STR = {
     angelAsk: 'Con số bạn hay gặp', angelPadHint: 'Bạn nhập số rồi bấm dấu ✓ để lưu lại. App sẽ nhớ những con số bạn hay gặp nhất.',
     angelToday: 'Con số của hôm nay', angelAll: 'Các nhóm số', angelLog: 'Những số bạn đã gặp', angelClear: 'Xóa danh sách',
     angelTop: (n, c) => 'Bạn gặp số ' + n + ' nhiều nhất: ' + c + ' lần.',
-    angelMore: 'Đọc đầy đủ nhóm số này', angelTodo: 'Việc nhỏ dành cho bạn',
+    angelMore: 'Đọc đầy đủ nhóm số này', angelMeaning: 'Ý nghĩa của nhóm số này', angelTodo: 'Việc nhỏ dành cho bạn',
     angelWhySame: (n) => 'Số ' + n + ' là một chữ số lặp lại, nên bạn đọc theo nhóm số đó.',
     angelWhyMirror: 'Đây là số gương: hai nửa lặp lại hoặc đọc xuôi ngược đều như nhau.',
     angelWhyLadder: 'Đây là số bậc thang: các chữ số tăng dần liền nhau.',
@@ -1940,7 +1940,7 @@ const STR = {
     angelAsk: 'The number you keep seeing', angelPadHint: 'Type a number and press ✓ to keep it. The app remembers which numbers you meet most.',
     angelToday: 'Today’s number', angelAll: 'The groups', angelLog: 'Numbers you have met', angelClear: 'Clear the list',
     angelTop: (n, c) => 'You meet ' + n + ' most often: ' + c + ' times.',
-    angelMore: 'Read this group in full', angelTodo: 'One small thing to do',
+    angelMore: 'Read this group in full', angelMeaning: 'What this group means', angelTodo: 'One small thing to do',
     angelWhySame: (n) => n + ' is one digit repeated, so it is read as that group.',
     angelWhyMirror: 'This is a mirror number: two halves repeating, or the same read either way.',
     angelWhyLadder: 'This is a ladder: the digits rise one after another.',
@@ -12162,7 +12162,7 @@ function angelAnswerHTML(read, brief) {
   return '<div class="card angelanswer" style="--ink:' + a.ink + ';--aura:' + a.aura + '">'
     + '<div class="head">' + angelSigil(a, 64) + '<div><b>' + esc(L(a.name)) + '</b><span>' + esc(L(a.short)) + '</span></div></div>'
     + '<p class="why">' + esc(why) + '</p>'
-    + '<p>' + esc(L(a.body)[0]) + '</p>'
+    + '<div class="ins"><p>' + esc(L(a.body)[0]) + '</p></div>'
     + (brief ? '<p style="margin-top:10px"><a class="btn block" href="#/learn/angel/' + esc(a.id) + '">' + esc(S.angelMore) + '</a></p>' : '')
     + '</div>';
 }
@@ -12178,7 +12178,7 @@ function renderAngelOne(id) {
     + '<div class="angelhero">' + angelSigil(a, 110) + '<h1>' + esc(L(a.name)) + '</h1><p class="muted">' + esc(L(a.short)) + '</p>'
     + '<div class="chips seen">' + a.seen.map((x) => '<span class="chip">' + esc(x) + '</span>').join('') + '</div></div>'
     + '<div class="chips keys">' + L(a.keys).map((k) => '<span class="chip pink">' + esc(k) + '</span>').join('') + '</div>'
-    + L(a.body).map((p) => '<p>' + esc(p) + '</p>').join('')
+    + '<div class="ins"><h3>' + esc(S.angelMeaning) + '</h3>' + L(a.body).map((p) => '<p>' + esc(p) + '</p>').join('') + '</div>'
     + '<div class="ins"><h3>' + esc(S.angelTodo) + '</h3><p>' + esc(L(a.todo)) + '</p></div>'
     + arrows
     + '<p class="hint">' + esc(S.angelNote) + '</p></div>';
