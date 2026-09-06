@@ -1312,7 +1312,7 @@ const STR = {
     toolClear: 'Xoá làm lại', toolSaved: 'Lưu trên máy này.', toolTemplate: 'Mẫu mới', toolAdd: 'Thêm dòng', toolRelease: 'Buông', toolReleased: 'Đã buông. Nhẹ hơn rồi. 🍃', releasedTimes: (n) => 'Bạn đã buông ' + n + ' lần', tapPhoto: 'thêm ảnh', caption: 'ghi chú ngắn', clearedToast: 'Đã xoá, bạn làm lại từ đầu nhé.',
     saveSlot: 'Lưu giờ hẹn', changeSlot: 'Đổi giờ', slotSaved: 'Đã lưu giờ hẹn', summaryTitle: 'Tóm tắt yêu cầu', showMsg: 'Xem tin nhắn sẽ gửi', bkItems: 'Gói đã chọn',
     doneTitle: 'Đã gửi yêu cầu đặt lịch', doneBody: 'Nabu sẽ xem và xác nhận sớm. Bạn theo dõi trạng thái trong mục Hồ sơ và sẽ nhận thông báo khi Nabu trả lời.', doneMe: 'Xem lịch hẹn của tôi', doneHome: 'Về trang chủ', doneMore: 'Đặt thêm lịch khác',
-    draftKept: 'Lựa chọn của bạn được lưu trên máy này, nên bạn có thể rời đi rồi quay lại sau.', openInLibrary: 'Đọc đầy đủ trong Kho kiến thức',
+    draftKept: 'Lựa chọn của bạn được lưu trên máy này, nên bạn có thể rời đi rồi quay lại sau.', topicNote: 'Chọn gói "1 chủ đề sẵn" thì danh sách chủ đề và câu hỏi hiện ở phía dưới.', openInLibrary: 'Đọc đầy đủ trong Kho kiến thức',
     aiGreet: 'Chào bạn! Mình là Nabu AI. Bạn có thể hỏi mình về một lá bài, một cung hoàng đạo, con số của bạn, hay bảo mình rút một lá cho hôm nay.', aiDrew: (n) => 'Mình rút cho bạn một lá: ' + n + '.', aiDrawHint: 'Muốn rút bài đầy đủ hơn, bạn vào mục Rút bài nhé.', aiSignOf: (s) => 'Với cung ' + s + ' của bạn:', aiThanks: 'Không có gì! Bạn cần gì cứ hỏi tiếp nhé.', aiTodayMoon: (m) => 'Hôm nay trăng đang ở pha ' + m + '.',
     needLogin: 'Bạn cần đăng nhập để gửi trong app. Hoặc gửi qua Instagram bên dưới.',
     viaInstagram: 'Nhắn qua Instagram',
@@ -1578,7 +1578,7 @@ const STR = {
     toolClear: 'Clear and redo', toolSaved: 'Saved on this device.', toolTemplate: 'New template', toolAdd: 'Add a line', toolRelease: 'Let go', toolReleased: 'Released. Lighter now. 🍃', releasedTimes: (n) => 'You have let go ' + n + ' times', tapPhoto: 'add photo', caption: 'short note', clearedToast: 'Cleared. Start again whenever you like.',
     saveSlot: 'Save this time', changeSlot: 'Change', slotSaved: 'Time saved', summaryTitle: 'Your request', showMsg: 'Show the message that will be sent', bkItems: 'Packages',
     doneTitle: 'Booking request sent', doneBody: 'Nabu will review it and confirm soon. Follow the status under Profile; you will be notified when Nabu replies.', doneMe: 'See my bookings', doneHome: 'Back to home', doneMore: 'Book another reading',
-    draftKept: 'Your choices are saved on this device automatically, so you can leave and come back.', openInLibrary: 'Read the full guide in the library',
+    draftKept: 'Your choices are saved on this device automatically, so you can leave and come back.', topicNote: 'Choose the preset-topic package and the topics with their questions appear further down.', openInLibrary: 'Read the full guide in the library',
     aiGreet: 'Hi! I am Nabu AI. Ask me about a card, a zodiac sign, your numbers, or tell me to draw a card for today.', aiDrew: (n) => 'I drew a card for you: ' + n + '.', aiDrawHint: 'For a fuller draw, open the Pick a card tab.', aiSignOf: (s) => 'For your sign, ' + s + ':', aiThanks: 'You are welcome! Ask me anything else.', aiTodayMoon: (m) => 'Today the Moon is in its ' + m + ' phase.',
     needLogin: 'Sign in to send inside the app, or send through Instagram below.',
     viaInstagram: 'Message on Instagram',
@@ -11257,7 +11257,7 @@ async function renderBook(args, params) {
   restoreBook();
   book.card = params.card || book.card || null; book.name = book.name || PROFILE.name || ''; book.birth = book.birth || PROFILE.birthday || '';
   if (!book.month) book.month = new Date(new Date().getFullYear(), new Date().getMonth(), 1);
-  m.innerHTML = '<div class="eyebrow">' + esc(CONFIG.brand) + '</div><h1 style="margin-bottom:6px">' + esc(S.bookTitle) + '</h1><p class="muted">' + esc(L(CONFIG.bookingNote)) + '</p><div class="notes"><div class="note"><span class="ni">👆</span><span>' + esc(S.bookTip) + '</span></div><div class="note"><span class="ni">💾</span><span>' + esc(S.draftKept) + '</span></div></div>'
+  m.innerHTML = '<div class="eyebrow">' + esc(CONFIG.brand) + '</div><h1 style="margin-bottom:6px">' + esc(S.bookTitle) + '</h1><p class="muted">' + esc(L(CONFIG.bookingNote)) + '</p><div class="notes"><div class="note"><span class="ni">👆</span><span>' + esc(S.bookTip) + '</span></div><div class="note"><span class="ni">💾</span><span>' + esc(S.draftKept) + '</span></div><div class="note"><span class="ni">📋</span><span>' + esc(S.topicNote) + '</span></div></div>'
     + '<div class="sec"><h2 style="margin:18px 0 4px">' + esc(S.chooseService) + '</h2><p class="hint" style="margin-bottom:12px">' + esc(S.serviceHint) + '</p><div id="svcwrap">' + priceSheetHTML(true) + '</div><div id="cartwrap">' + cartHTML() + '</div></div>'
     + '<div class="sec"><h2 style="margin:18px 0 4px">' + esc(S.chooseTopic) + '</h2><div id="topicwrap">' + topicSectionHTML() + '</div></div>'
     + '<div class="sec"><h2 style="margin-bottom:4px">' + esc(S.chooseTime) + '</h2><p class="hint" style="margin-bottom:10px">' + esc(S.timeHint(L(CONFIG.tzLabel))) + '</p><div id="calwrap"><p class="hint">…</p></div></div>'
@@ -12578,7 +12578,7 @@ function adminCodes(p) {
 ROUTES.admin = { nav: '', render: renderAdmin };
 
 /* ============================ boot ============================ */
-window.APP_VERSION = 'v86';
+window.APP_VERSION = 'v87';
 window.NABU = { CONFIG: CONFIG, loadActs: loadActs, BACK: BACK, LESSONS: LESSONS, localAnswer: localAnswer, compatVerdict: compatVerdict, numerologyOf: numerologyOf, ZDEEP: ZDEEP, lunarToday: lunarToday, solarToLunar: solarToLunar, DECK: DECK, INSIGHT: INSIGHT, KW: KW, ASK: ASK, TOPICS: TOPICS, GUIDES: GUIDES, SERVICES: SERVICES, COURSES: COURSES, ACCESS: ACCESS, makeCode: makeCode, parseCode: parseCode, ZODIAC: ZODIAC, pick: pick, book: book,
   insightHTML: insightHTML, insightOf: insightOf, sunSignIndex: sunSignIndex, lifePath: lifePath, PROFILE: () => PROFILE, BE: BE, ACTS: ACTS };
 BE.initP = BE.init().catch(() => { /* backend unreachable: the app runs device-only */ });
