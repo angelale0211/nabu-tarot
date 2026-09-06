@@ -1129,8 +1129,13 @@ function petSVG(kind, coat, mood, wear) {
   /* Every spirit beast wears the same halo and the same sparks, so the set
      reads as one rank above the ordinary companions. */
   const halo = art.glow
-    ? '<circle cx="60" cy="54" r="40" fill="#FFF3C4" opacity=".22"/>'
-      + '<circle cx="60" cy="54" r="37" fill="none" stroke="#E5BE5E" stroke-width="1.6" opacity=".55"/>'
+    ? /* Three circles of light behind the creature, widest and faintest first.
+         This used to be a drop-shadow in the stylesheet, which forced the whole
+         drawing to be rasterised and then turned soft as soon as it moved. */
+      '<circle class="glowoff out" cx="60" cy="60" r="54" fill="#FFE9A8" opacity=".08"/>'
+      + '<circle class="glowoff mid" cx="60" cy="57" r="45" fill="#FFEEB8" opacity=".14"/>'
+      + '<circle class="glowoff in" cx="60" cy="55" r="35" fill="#FFF3C4" opacity=".22"/>'
+      + '<circle class="mythring" cx="60" cy="54" r="37" fill="none" stroke="#E5BE5E" stroke-width="1.6" opacity=".55"/>'
       + '<g class="sparks" fill="#FFF3C4"><path class="twinkle" d="M16 30 l2.6 5.4 5.4 2.6 -5.4 2.6 -2.6 5.4 -2.6 -5.4 -5.4 -2.6 5.4 -2.6 Z"/>'
       + '<path class="twinkle" style="animation-delay:900ms" d="M104 26 l2.2 4.6 4.6 2.2 -4.6 2.2 -2.2 4.6 -2.2 -4.6 -4.6 -2.2 4.6 -2.2 Z"/>'
       + '<path class="twinkle" style="animation-delay:1800ms" d="M100 108 l2 4 4 2 -4 2 -2 4 -2 -4 -4 -2 4 -2 Z"/></g>'
