@@ -103,7 +103,7 @@ function topicSectionHTML() {
   const need = book.items.map((it, k) => ({ it: it, k: k })).filter((x) => { const p = pkgOfItem(x.it); return p && p.needsTopic; });
   const cards = (k, chosen) => TOPICS.map((t) => '<button class="topic' + (chosen === t.id ? ' on open' : '') + '" data-topic="' + k + '/' + t.id + '"><div class="t"><span class="ic">' + t.icon + '</span><span><span class="n">#' + t.id + '</span> ' + esc(L(t.name)) + '</span></div><ol>' + t.q[lang].map((q) => '<li>' + esc(q) + '</li>').join('') + '</ol></button>').join('');
   if (!need.length) return '<p class="hint" style="margin-bottom:12px">' + esc(S.topicHint) + '</p><p class="hint faint">' + esc(S.topicNone) + '</p>';
-  return '<p class="hint" style="margin-bottom:12px">' + esc(S.topicHint) + '</p>' + need.map((x) => { const s = serviceOf(x.it.svc), p = pkgOfItem(x.it); return '<div class="tpick" data-tpick="' + x.k + '"><h3>' + esc(S.topicFor) + ' ' + esc(L(s.name) + ' – ' + L(p.name)) + (x.it.topic ? ' <span class="ok">✓</span>' : ' <span class="warn">' + esc(S.cartNeedsTopic) + '</span>') + '</h3>' + cards(x.k, x.it.topic) + '</div>'; }).join('');
+  return '<p class="hint" style="margin-bottom:12px">' + esc(S.topicHint) + '</p>' + need.map((x) => { const s = serviceOf(x.it.svc), p = pkgOfItem(x.it); return '<div class="tpick" data-tpick="' + x.k + '"><h3>' + esc(S.topicFor) + ' ' + esc(L(s.name)) + '</h3>' + (x.it.topic ? '<p class="hint ok">✓</p>' : '<p class="hint warn">' + esc(S.cartNeedsTopic) + '</p>') + cards(x.k, x.it.topic) + '</div>'; }).join('');
 }
 
 /* ---- price sheet (also its own screen at #/prices) ---- */

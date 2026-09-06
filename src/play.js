@@ -343,13 +343,15 @@ function coinFaceSVG(side) {
   const S = T();
   const longest = Math.max(String(S.coinYes).length, String(S.coinNo).length);
   const size = longest <= 2 ? 46 : longest === 3 ? 40 : longest === 4 ? 32 : 25;
-  const ornament = '<path d="M84 46 A13 13 0 1 0 84 72 A10 10 0 1 1 84 46 Z" fill="#5A3F18" opacity=".9"/>';
+  // Drawn around the origin, then shifted so the crescent's own middle sits on
+  // the coin's centre line. The same mark is used in every language.
+  const ornament = '<g transform="translate(86.5,58)" fill="#5A3F18" opacity=".9"><path d="M0 -13 A13 13 0 1 0 0 13 A10 10 0 1 1 0 -13 Z"/></g>';
   const word = side ? (side === 'yes' ? S.coinYes : S.coinNo) : '';
   return '<svg viewBox="0 0 160 160" aria-hidden="true">'
     + '<circle cx="80" cy="80" r="74" fill="#E5BE5E" stroke="#B9913B" stroke-width="5"/>'
     + '<circle cx="80" cy="80" r="60" fill="none" stroke="#B9913B" stroke-width="2"/>'
     + (side
-      ? ornament + '<text x="80" y="112" text-anchor="middle" font-family="Georgia,serif" font-weight="700" font-size="' + size + '" letter-spacing="1" fill="#5A3F18">' + esc(word) + '</text>'
+      ? ornament + '<text x="80" y="113" text-anchor="middle" font-family="Georgia,serif" font-weight="700" font-size="' + size + '" letter-spacing="1" fill="#5A3F18">' + esc(word) + '</text>'
       : '<text x="80" y="102" text-anchor="middle" font-family="Georgia,serif" font-size="62" fill="#B9913B">?</text>')
     + '</svg>';
 }
@@ -390,7 +392,8 @@ function renderCoin() {
 }
 
 /* ---- the daily diary: one entry per day, on the device only ---- */
-const MOODS = ['😄', '🙂', '😐', '😔', '😢', '😤', '😴', '🥰'];
+/* Twelve moods, laid out six and six so the two rows are always even. */
+const MOODS = ['😄', '🙂', '😌', '🥰', '🤩', '😐', '😔', '😢', '😤', '😰', '😴', '🤒'];
 function renderDiary() {
   const S = T(), m = $('#main'), today = isoDate(new Date());
   const all = () => store.get('nabu-diary', {}) || {};
