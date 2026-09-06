@@ -1009,6 +1009,18 @@ function renderPet(want) {
       + (ready ? '<span class="foodchip" id="foodchip" title="' + esc(S.petDragFood) + '">' + PETS.food(p).sym + '</span>' : '')
       + '</div>'
       + '<p class="handhint">✋ ' + esc(S.petPatHint) + '</p>'
+      /* The day's four actions, together and right under the companion. */
+      + (ready
+        ? '<button class="btn primary block" id="petfeed">' + PETS.food(p).sym + ' ' + esc(S.petFeedWith(L(PETS.food(p).name))) + '</button>'
+        : '<p class="hint ok">' + esc(S.petFull(waitWord(PETS.waitLeft(p)))) + '</p>'
+          + (pro ? '' : '<p class="hint">' + esc(S.petFasterPlus) + '</p>'))
+      + '<div class="row3 petdo">'
+      + (PETS.canPlay(p) ? '<button class="btn" id="playbtn">🧶 ' + esc(S.petPlayShort) + ' ×' + PETS.playLeft(p) + '</button>' : '<span class="done">✓ ' + esc(S.petPlayDone) + '</span>')
+      + (PETS.canGroom(p) ? '<button class="btn" id="groombtn">🧼 ' + esc(S.petGroom) + ' ×' + PETS.groomLeft(p) + '</button>' : '<span class="done">✓ ' + esc(S.petGroomDone) + '</span>')
+      + (prayed ? '<span class="done">✓ ' + esc(S.petPrevWish) + '</span>' : '<button class="btn' + (PETS.fedToday(p) ? '' : ' off') + '" id="pray">🙏 ' + esc(S.petPrevWish) + '</button>')
+      + '</div>'
+      + (bless ? '<div class="bless"><span class="q">' + luck.sym + '</span><p>' + esc(L(bless)) + '</p><span class="who">' + esc(p.name || L(PET_NAMES[p.kind])) + '</span></div>'
+        : '<p class="hint">' + esc(PETS.fedToday(p) ? S.petPrayHint : S.petNeedFeed) + '</p>')
       + '<div class="lucktag" style="--ink:' + luck.ink + ';--aura:' + luck.aura + '">' + luck.sym + ' ' + esc(S.petBrings(L(luck.name))) + '</div>'
       + '<p class="petline">' + esc(L(petLine(p.kind))) + '</p>'
       + (petIsPro(p.kind) ? '<p class="mythline">✨ ' + esc(S.petMythBonus(MYTH_XP)) + '</p>' : '')
@@ -1019,17 +1031,6 @@ function renderPet(want) {
       + earnGrid(p)
       + '<div class="petstat"><span>🔥 ' + esc(S.petStreak(Number(p.streak) || 0)) + '</span><span>🍽️ ' + esc(S.petMeals(Number(p.meals) || 0)) + '</span><a href="#/rewards">🪙 ' + fmtNum(BANK.coins()) + '</a></div>'
       + '<p class="hint" style="text-align:center">' + esc(PETS.xpLeft() ? S.petDayLeft(PETS.xpToday(), PET_DAY_XP) : S.petDayFull) + '</p>'
-      + (ready
-        ? '<button class="btn primary block" id="petfeed">' + PETS.food(p).sym + ' ' + esc(S.petFeedWith(L(PETS.food(p).name))) + '</button>'
-        : '<p class="hint ok">' + esc(S.petFull(waitWord(PETS.waitLeft(p)))) + '</p>'
-          + (pro ? '' : '<p class="hint">' + esc(S.petFasterPlus) + '</p>'))
-      + '<div class="row2">'
-      + (PETS.canPlay(p) ? '<button class="btn" id="playbtn">🧶 ' + esc(S.petPlayShort) + ' ×' + PETS.playLeft(p) + '</button>' : '<span class="done">✓ ' + esc(S.petPlayDone) + '</span>')
-      + (PETS.canGroom(p) ? '<button class="btn" id="groombtn">🧼 ' + esc(S.petGroom) + ' ×' + PETS.groomLeft(p) + '</button>' : '<span class="done">✓ ' + esc(S.petGroomDone) + '</span>')
-      + '</div>'
-      + (bless ? '<div class="bless"><span class="q">' + luck.sym + '</span><p>' + esc(L(bless)) + '</p><span class="who">' + esc(p.name || L(PET_NAMES[p.kind])) + '</span></div>'
-        : '<button class="btn block' + (PETS.fedToday(p) ? '' : ' off') + '" id="pray" style="margin-top:10px">🙏 ' + esc(S.petPray) + '</button>'
-          + '<p class="hint">' + esc(PETS.fedToday(p) ? S.petPrayHint : S.petNeedFeed) + '</p>')
       + '</div>';
   };
 

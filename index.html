@@ -924,8 +924,9 @@ main{padding:22px 0 30px}
 .lk-card{display:block;width:64px}.lk-card svg{width:100%;height:auto;display:block;border-radius:6px}
 .lk-tree{display:block;width:96px}.lk-tree svg{width:100%;height:auto;display:block}
 .lk-coin{display:block;width:56px}.lk-coin svg{width:100%;height:auto;display:block}
-.lk-diary{display:block;width:64px;height:74px;border-radius:6px;border:1px solid var(--rule);padding:8px 7px;background:#FFFDF5}
-.lk-diary i{display:block;height:3px;border-radius:2px;background:#D8CDB4;margin-bottom:7px}
+.lk-diary{position:relative;display:block;width:64px;height:74px;border-radius:6px;border:1px solid var(--rule);padding:10px 8px;overflow:hidden;background:#FFFCF2}
+.lk-diary i{position:relative;display:block;height:3px;border-radius:2px;background:#D8CDB4;margin-bottom:7px}
+.lk-diary i:nth-child(2){width:78%}.lk-diary i:nth-child(3){width:56%}
 /* Fireflies breathe, stars twinkle, butterflies drift: only on the paid trees. */
 @keyframes flyglow{0%,100%{opacity:.2;r:2.4}50%{opacity:1;r:3.8}}
 .fly.lit{animation:flyglow 2.4s ease-in-out infinite;filter:drop-shadow(0 0 5px rgba(255,233,168,.9))}
@@ -947,10 +948,40 @@ main{padding:22px 0 30px}
 @media (prefers-reduced-motion:reduce){.fly.lit,.drift,.shaft,.shoot,.wing,.leaffall,.twinkle,.flit{animation:none}}
 @keyframes flitting{0%,100%{transform:translateY(0) rotate(-4deg)}50%{transform:translateY(-7px) rotate(5deg)}}
 .flit{animation:flitting 3.4s ease-in-out infinite;transform-box:fill-box;transform-origin:center}.flit.still{animation:none}
-/* The diary papers */
-.diary.paper-ruled{background:repeating-linear-gradient(var(--surface),var(--surface) 26px,var(--rule-soft) 27px)}
-.diary.paper-floral{border:2px solid var(--pink);box-shadow:inset 0 0 0 4px var(--surface),inset 0 0 0 5px var(--tag-pink-bg)}
-.diary.paper-starry{background:radial-gradient(circle at 12% 18%,var(--gold-soft) 1.4px,transparent 1.6px),radial-gradient(circle at 74% 32%,var(--gold-soft) 1.6px,transparent 1.8px),radial-gradient(circle at 42% 76%,var(--gold-soft) 1.2px,transparent 1.4px),var(--surface)}
+/* ---- the four diary papers ----
+   Written as their own classes, not as `.diary.paper-x`, so the picker can
+   show the same paper at preview size. Each is a different sheet rather than
+   the same sheet in a different tint. */
+.paper-plain{background:#FFFCF2}
+/* Ruled ivory, with the red margin a school exercise book has. */
+.paper-ruled{position:relative;background:repeating-linear-gradient(#FFFCEF 0px,#FFFCEF 25px,#DCCFB2 25px,#DCCFB2 26px)}
+.paper-ruled::before{content:'';position:absolute;left:26px;top:0;bottom:0;width:1.5px;background:#E39AA0;opacity:.8}
+/* Blush paper inside a flower frame, blossoms at the corners. */
+.paper-floral{position:relative;background:#FFF7FA;box-shadow:inset 0 0 0 2px #F2A9BE,inset 0 0 0 5px #FFF7FA,inset 0 0 0 6.5px #F7C7D6}
+.paper-floral::before,.paper-floral::after{content:'';position:absolute;width:22px;height:22px;background:radial-gradient(circle at 50% 50%,#F7A9C6 0 4px,transparent 4.5px),radial-gradient(circle at 50% 14%,#FBD3E1 0 5px,transparent 5.5px),radial-gradient(circle at 86% 50%,#FBD3E1 0 5px,transparent 5.5px),radial-gradient(circle at 50% 86%,#FBD3E1 0 5px,transparent 5.5px),radial-gradient(circle at 14% 50%,#FBD3E1 0 5px,transparent 5.5px);pointer-events:none}
+.paper-floral::before{left:9px;top:9px}
+.paper-floral::after{right:9px;bottom:9px}
+/* A midnight page: gold stars, a crescent, and light ink over it. */
+.paper-starry{position:relative;background:radial-gradient(circle at 12% 16%,#FFE9A8 0 1.6px,transparent 2px),radial-gradient(circle at 78% 12%,#FFE9A8 0 1.9px,transparent 2.3px),radial-gradient(circle at 34% 42%,#FFF3C4 0 1.3px,transparent 1.7px),radial-gradient(circle at 88% 56%,#FFE9A8 0 1.6px,transparent 2px),radial-gradient(circle at 22% 74%,#FFF3C4 0 1.5px,transparent 1.9px),radial-gradient(circle at 62% 88%,#FFE9A8 0 1.7px,transparent 2.1px),linear-gradient(160deg,#2E2756,#463C7E);color:#F3EEFF}
+.paper-starry::before{content:'';position:absolute;right:16px;top:14px;width:20px;height:20px;border-radius:50%;background:#FFE9A8;box-shadow:6px 2px 0 -1px #2E2756 inset;pointer-events:none}
+/* The diary in the midnight paper: everything on it goes light. */
+.diary.paper-starry .date,.diary.paper-starry .faint,.diary.paper-starry p{color:#E4DCFA}
+.diary.paper-starry textarea{background:rgba(255,255,255,.08);color:#F7F4FF;border-color:rgba(255,255,255,.28)}
+.diary.paper-starry textarea::placeholder{color:#B8AEDC}
+.diary.paper-starry .mood{background:rgba(255,255,255,.1);border-color:rgba(255,255,255,.22)}
+.diary.paper-starry .mood.on{background:var(--gold);border-color:var(--gold)}
+.diary.paper-starry .linkbtn{color:#FFD9E4}
+/* The same papers at preview size: closer rules, a smaller frame. */
+.lk-diary.paper-ruled{background-size:100% 10px;background-image:repeating-linear-gradient(#FFFCEF 0px,#FFFCEF 9px,#DCCFB2 9px,#DCCFB2 10px)}
+.lk-diary.paper-ruled::before{left:11px}
+.lk-diary.paper-floral{box-shadow:inset 0 0 0 1.5px #F2A9BE,inset 0 0 0 3.5px #FFF7FA,inset 0 0 0 4.5px #F7C7D6}
+.lk-diary.paper-floral::before,.lk-diary.paper-floral::after{width:13px;height:13px}
+.lk-diary.paper-floral::before{left:5px;top:5px}
+.lk-diary.paper-floral::after{right:5px;bottom:5px}
+.lk-diary.paper-starry::before{width:11px;height:11px;right:7px;top:6px;box-shadow:3px 1px 0 -.5px #2E2756 inset}
+.lk-diary.paper-ruled i,.lk-diary.paper-plain i{background:#B7A98A}
+.lk-diary.paper-floral i{background:#EFA7C0}
+.lk-diary.paper-starry i{background:rgba(255,233,168,.75)}
 /* ---- the luck companions ----
    The stage stacks three layers: the home behind, the halo of luck around it,
    and the companion on top. Everything else on the card explains, in the open,
@@ -1056,6 +1087,10 @@ main{padding:22px 0 30px}
 .earngrid .e b{flex:1;font-weight:500;color:var(--fg-soft);min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .earngrid .e u{text-decoration:none;font-weight:700;white-space:nowrap}
 .earngrid .e.locked u{color:var(--gold-deep)}
+/* The day's actions, in one row under the companion. */
+.petdo{margin:10px 0 8px}
+.petdo .btn{padding:10px 4px;font-size:12.5px;white-space:normal;line-height:1.25;min-width:0}
+.petdo .done{display:flex;align-items:center;justify-content:center;font-size:11.5px;color:var(--fg-soft);background:var(--surface-2);border-radius:12px;padding:8px 4px;text-align:center;line-height:1.25}
 .row2{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px}
 .row2 .btn{padding:11px 6px;font-size:13px;white-space:normal;line-height:1.25;min-width:0}
 .row2 .done{display:flex;align-items:center;justify-content:center;font-size:12.5px;color:var(--fg-soft);background:var(--surface-2);border-radius:12px;padding:8px 6px;text-align:center}
@@ -13180,6 +13215,18 @@ function renderPet(want) {
       + (ready ? '<span class="foodchip" id="foodchip" title="' + esc(S.petDragFood) + '">' + PETS.food(p).sym + '</span>' : '')
       + '</div>'
       + '<p class="handhint">✋ ' + esc(S.petPatHint) + '</p>'
+      /* The day's four actions, together and right under the companion. */
+      + (ready
+        ? '<button class="btn primary block" id="petfeed">' + PETS.food(p).sym + ' ' + esc(S.petFeedWith(L(PETS.food(p).name))) + '</button>'
+        : '<p class="hint ok">' + esc(S.petFull(waitWord(PETS.waitLeft(p)))) + '</p>'
+          + (pro ? '' : '<p class="hint">' + esc(S.petFasterPlus) + '</p>'))
+      + '<div class="row3 petdo">'
+      + (PETS.canPlay(p) ? '<button class="btn" id="playbtn">🧶 ' + esc(S.petPlayShort) + ' ×' + PETS.playLeft(p) + '</button>' : '<span class="done">✓ ' + esc(S.petPlayDone) + '</span>')
+      + (PETS.canGroom(p) ? '<button class="btn" id="groombtn">🧼 ' + esc(S.petGroom) + ' ×' + PETS.groomLeft(p) + '</button>' : '<span class="done">✓ ' + esc(S.petGroomDone) + '</span>')
+      + (prayed ? '<span class="done">✓ ' + esc(S.petPrevWish) + '</span>' : '<button class="btn' + (PETS.fedToday(p) ? '' : ' off') + '" id="pray">🙏 ' + esc(S.petPrevWish) + '</button>')
+      + '</div>'
+      + (bless ? '<div class="bless"><span class="q">' + luck.sym + '</span><p>' + esc(L(bless)) + '</p><span class="who">' + esc(p.name || L(PET_NAMES[p.kind])) + '</span></div>'
+        : '<p class="hint">' + esc(PETS.fedToday(p) ? S.petPrayHint : S.petNeedFeed) + '</p>')
       + '<div class="lucktag" style="--ink:' + luck.ink + ';--aura:' + luck.aura + '">' + luck.sym + ' ' + esc(S.petBrings(L(luck.name))) + '</div>'
       + '<p class="petline">' + esc(L(petLine(p.kind))) + '</p>'
       + (petIsPro(p.kind) ? '<p class="mythline">✨ ' + esc(S.petMythBonus(MYTH_XP)) + '</p>' : '')
@@ -13190,17 +13237,6 @@ function renderPet(want) {
       + earnGrid(p)
       + '<div class="petstat"><span>🔥 ' + esc(S.petStreak(Number(p.streak) || 0)) + '</span><span>🍽️ ' + esc(S.petMeals(Number(p.meals) || 0)) + '</span><a href="#/rewards">🪙 ' + fmtNum(BANK.coins()) + '</a></div>'
       + '<p class="hint" style="text-align:center">' + esc(PETS.xpLeft() ? S.petDayLeft(PETS.xpToday(), PET_DAY_XP) : S.petDayFull) + '</p>'
-      + (ready
-        ? '<button class="btn primary block" id="petfeed">' + PETS.food(p).sym + ' ' + esc(S.petFeedWith(L(PETS.food(p).name))) + '</button>'
-        : '<p class="hint ok">' + esc(S.petFull(waitWord(PETS.waitLeft(p)))) + '</p>'
-          + (pro ? '' : '<p class="hint">' + esc(S.petFasterPlus) + '</p>'))
-      + '<div class="row2">'
-      + (PETS.canPlay(p) ? '<button class="btn" id="playbtn">🧶 ' + esc(S.petPlayShort) + ' ×' + PETS.playLeft(p) + '</button>' : '<span class="done">✓ ' + esc(S.petPlayDone) + '</span>')
-      + (PETS.canGroom(p) ? '<button class="btn" id="groombtn">🧼 ' + esc(S.petGroom) + ' ×' + PETS.groomLeft(p) + '</button>' : '<span class="done">✓ ' + esc(S.petGroomDone) + '</span>')
-      + '</div>'
-      + (bless ? '<div class="bless"><span class="q">' + luck.sym + '</span><p>' + esc(L(bless)) + '</p><span class="who">' + esc(p.name || L(PET_NAMES[p.kind])) + '</span></div>'
-        : '<button class="btn block' + (PETS.fedToday(p) ? '' : ' off') + '" id="pray" style="margin-top:10px">🙏 ' + esc(S.petPray) + '</button>'
-          + '<p class="hint">' + esc(PETS.fedToday(p) ? S.petPrayHint : S.petNeedFeed) + '</p>')
       + '</div>';
   };
 
@@ -14708,7 +14744,7 @@ function renderDiary() {
       + '<p class="hint" style="margin:8px 0 6px">' + esc(S.diaryMood) + '</p><div class="moods">' + MOODS.map((x) => '<button type="button" class="mood' + (cur.m === x ? ' on' : '') + '" data-mood="' + x + '">' + x + '</button>').join('') + '</div>'
       + '<textarea id="dtext" placeholder="' + esc(S.diaryPh) + '">' + esc(cur.t || '') + '</textarea></div>'
       + '<h3 style="margin:16px 0 8px">' + esc(S.diaryPast) + (days.length ? ' <span class="faint">· ' + esc(S.diaryCount(days.length + (cur.t || cur.m ? 1 : 0))) + '</span>' : '') + '</h3>'
-      + (days.length ? days.map((k) => '<div class="card diary past" data-day="' + k + '"><div class="date"><span>' + (d[k].m ? d[k].m + ' ' : '') + esc(fmtDate(k)) + '</span><button type="button" class="linkbtn" data-ddel="' + k + '">' + esc(S.diaryDel) + '</button></div><p>' + esc(d[k].t || '').replace(/\n/g, '<br>') + '</p></div>').join('') : '<p class="hint">' + esc(S.diaryEmpty) + '</p>')
+      + (days.length ? days.map((k) => '<div class="card diary past ' + diaryPaperClass() + '" data-day="' + k + '"><div class="date"><span>' + (d[k].m ? d[k].m + ' ' : '') + esc(fmtDate(k)) + '</span><button type="button" class="linkbtn" data-ddel="' + k + '">' + esc(S.diaryDel) + '</button></div><p>' + esc(d[k].t || '').replace(/\n/g, '<br>') + '</p></div>').join('') : '<p class="hint">' + esc(S.diaryEmpty) + '</p>')
       + lookStripHTML('diary')
       + '<p style="margin-top:12px"><a href="#/play" class="backlink">← ' + esc(S.actBack) + '</a></p>';
     bindLookStrip(m, draw);
@@ -15161,7 +15197,7 @@ function adminSale(p) {
 ROUTES.admin = { nav: '', render: renderAdmin };
 
 /* ============================ boot ============================ */
-window.APP_VERSION = 'v104';
+window.APP_VERSION = 'v105';
 window.NABU = { CONFIG: CONFIG, SALE: SALE, salePrice: salePrice, loadActs: loadActs, BACK: BACK, LESSONS: LESSONS, localAnswer: localAnswer, compatVerdict: compatVerdict, numerologyOf: numerologyOf, ZDEEP: ZDEEP, lunarToday: lunarToday, solarToLunar: solarToLunar, DECK: DECK, INSIGHT: INSIGHT, KW: KW, ASK: ASK, TOPICS: TOPICS, GUIDES: GUIDES, SERVICES: SERVICES, COURSES: COURSES, ACCESS: ACCESS, makeCode: makeCode, parseCode: parseCode, ZODIAC: ZODIAC, pick: pick, book: book,
   insightHTML: insightHTML, insightOf: insightOf, sunSignIndex: sunSignIndex, lifePath: lifePath, PROFILE: () => PROFILE, BE: BE, ACTS: ACTS,
   BANK: BANK, PETS: PETS, petSVG: petSVG, PET_COATS: PET_COATS, PET_KINDS: PET_KINDS, luckCut: luckCut, petLevel: petLevel, petStep: petStep, VOUCHERS: VOUCHERS, levelCoins: levelCoins, LOOKS: LOOKS };
