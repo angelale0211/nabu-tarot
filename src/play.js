@@ -352,13 +352,39 @@ function renderTree() {
 /* ---- a coin for questions that only need yes or no ----
    The coin decides nothing. It puts one of the two answers in front of you so
    your own reaction to it becomes visible. */
+/* One type size for both faces, worked out by measuring the two words rather
+   than counting their letters: how wide a word draws depends on the letters and
+   the font, not on how many there are. Measured once per language. */
+const COIN_SIZE = {
+  cache: {},
+  get() {
+    const S = T(), key = lang + '|' + S.coinYes + '|' + S.coinNo;
+    if (this.cache[key]) return this.cache[key];
+    const BASE = 40, ROOM = 104, MAX = 46;
+    let size = 24;
+    try {
+      const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+      svg.setAttribute('style', 'position:absolute;width:0;height:0;overflow:hidden');
+      const t = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+      t.setAttribute('font-family', 'Georgia,serif'); t.setAttribute('font-weight', '700');
+      t.setAttribute('letter-spacing', '1'); t.setAttribute('font-size', String(BASE));
+      svg.appendChild(t); document.body.appendChild(svg);
+      let widest = 0;
+      [S.coinYes, S.coinNo].forEach((w) => { t.textContent = w; widest = Math.max(widest, t.getBBox().width); });
+      document.body.removeChild(svg);
+      if (widest > 0) size = Math.max(16, Math.min(MAX, Math.floor(BASE * ROOM / widest)));
+    } catch (e) { /* no layout yet: the conservative default still fits */ }
+    this.cache[key] = size;
+    return size;
+  }
+};
+
 /* Both faces are struck the same way: one ornament, one type size worked out
    from the longer of the two words, and the pair centred as a block. Turning
    the coin over changes the word and nothing else. */
 function coinFaceSVG(side) {
   const S = T();
-  const longest = Math.max(String(S.coinYes).length, String(S.coinNo).length);
-  const size = longest <= 2 ? 46 : longest === 3 ? 40 : longest === 4 ? 32 : 25;
+  const size = COIN_SIZE.get();
   // Drawn around the origin, then shifted so the crescent's own middle sits on
   // the coin's centre line. The same mark is used in every language.
   const ornament = '<g transform="translate(86.5,58)" fill="#5A3F18" opacity=".9"><path d="M0 -13 A13 13 0 1 0 0 13 A10 10 0 1 1 0 -13 Z"/></g>';

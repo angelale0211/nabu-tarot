@@ -229,7 +229,14 @@ main{padding:22px 0 30px}
 .post .date .pin{color:var(--pink-ink);font-weight:700}
 .post h2{margin-bottom:10px}
 /* A title in a teaser or a list is capped at two lines: three lines of a
-   21px heading swamps the card. The full post keeps its whole title. */
+   21px heading swamps the card. The full post keeps its whole title.
+   Clamping switches the box to -webkit-box, which turns balancing off, so the
+   lines are justified instead: every line but the last fills the width, which
+   is what stops a title breaking after three words with the rest of the line
+   left empty. */
+.post h2{font-size:19px;text-align:justify;text-justify:inter-word}
+/* The gap under the share row matches the gap above the date. */
+.post .foot{margin-bottom:0}.post>*:last-child{margin-bottom:0}
 .post h2.tclamp{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
 .post .body p{margin:0 0 10px}
 .post .body.clamp{max-height:7.6em;overflow:hidden;position:relative}
@@ -486,8 +493,8 @@ main{padding:22px 0 30px}
 .pcchip{font-size:18px;padding:4px 12px}
 .pcrow{display:flex;gap:14px;align-items:center;margin-bottom:14px;text-align:left}.pcrow>div:last-child{flex:1;min-width:0}.pcrow .face{width:84px;flex:none;padding:0;border:0;background:none}.pcrow .face svg{width:84px;height:auto;display:block}.pcrow .eyebrow{margin-bottom:4px}.pcrow b{display:block;font-size:16px}.pcrow p{margin:3px 0 0;font-size:13.5px}.pctrad{font-size:15px;font-weight:600}
 .pcard{width:64px;height:90px;flex:none;border:2px solid #3B2A5E;border-radius:8px;background:#FBF6F1;display:flex;align-items:center;justify-content:center;font-size:26px;font-weight:700;color:#3B2A5E}
-.teawrap{text-align:center}.cup{width:min(320px,86vw);height:auto;display:block;margin:0 auto}
-.teagrid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.teawrap{text-align:center;margin-bottom:22px}.cup{width:min(320px,86vw);height:auto;display:block;margin:0 auto}
+.teagrid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:22px}
 .tsym{background:var(--surface);border:1px solid var(--rule-soft);border-radius:14px;padding:10px 4px;text-align:center}
 .tsym .ic{font-size:26px;display:block}.tsym b{display:block;font-size:12px}.tsym span:last-child{font-size:10.5px;color:var(--fg-faint);display:block}
 .tsym.big{padding:14px}.tsym.big .ic{font-size:44px}.tsym.big b{font-size:16px}.tsym.big span{font-size:13px}

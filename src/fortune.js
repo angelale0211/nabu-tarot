@@ -238,12 +238,14 @@ function cupSVG(active) {
   const S = T();
   return '<svg viewBox="0 0 160 120" class="cup">'
     + '<ellipse cx="70" cy="100" rx="52" ry="10" fill="var(--surface-3)"/>'
-    + zone('rim', 'M18 30 L122 30 L118 52 L22 52 Z', S.teaZones.rim, 70, 44)
-    + zone('mid', 'M22 52 L118 52 L112 76 L28 76 Z', S.teaZones.mid, 70, 67)
-    + zone('bottom', 'M28 76 L112 76 L104 96 L36 96 Z', S.teaZones.bottom, 70, 89)
+    // Each band is sampled from the cup outline itself and inset inside the
+    // wall stroke, so none of them can push through the curve.
+    + zone('rim', 'M20 31.5 L19.6 36.6 L19.6 41.8 L20 46.9 L20.7 52 L119.3 52 L120 46.9 L120.4 41.8 L120.4 36.6 L120 31.5 Z', S.teaZones.rim, 70, 44)
+    + zone('mid', 'M20.7 52 L22 58 L23.9 64 L26.3 70 L29.5 76 L110.5 76 L113.7 70 L116.1 64 L118 58 L119.3 52 Z', S.teaZones.mid, 70, 66.5)
+    + zone('bottom', 'M29.5 76 L32.9 80.9 L37.1 85.8 L42.7 90.6 L50.8 95.5 L89.2 95.5 L97.3 90.6 L102.9 85.8 L107.1 80.9 L110.5 76 Z', S.teaZones.bottom, 70, 88)
     + '<path d="M18 30 C 14 60, 30 100, 70 100 C 110 100, 126 60, 122 30" fill="none" stroke="#3B2A5E" stroke-width="2.5"/>'
     + '<path d="M122 42 C 148 40, 148 78, 118 80" fill="none" stroke="#3B2A5E" stroke-width="2.5" data-zone="handle" style="cursor:pointer"/>'
-    + '<text x="140" y="62" text-anchor="middle" font-size="7" font-weight="700" fill="var(--fg)">' + S.teaZones.handle + '</text></svg>';
+    + '<text x="133" y="95" text-anchor="middle" font-size="6.5" font-weight="700" fill="var(--fg)">' + S.teaZones.handle + '</text></svg>';
 }
 function renderTea(m, head) {
   const S = T();
