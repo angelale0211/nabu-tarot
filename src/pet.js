@@ -1108,7 +1108,7 @@ function renderPet(want) {
     { key: 'food', icon: '🍚', title: () => S.petFoodTitle, note: () => S.petFoodNote, set: () => PET_FOODS, now: (p) => PETS.food(p).id, art: 'food' },
     { key: 'home', icon: '🏠', title: () => S.petHomeTitle, note: () => S.petHomeNote, set: () => PET_HOMES, now: (p) => PETS.home(p).id, art: 'home' },
     { key: 'wear', icon: '👑', title: () => S.petWearTitle, note: () => S.petWearNote, set: () => PET_WEARS, now: (p) => PETS.wear(p).id, art: 'wear' },
-    { key: 'coat', icon: '🎨', title: () => S.petCoat, note: () => S.petCoatNote, set: () => PET_COATS.map((c) => ({ id: c.id, pro: c.pro, add: 3, body: c.body, name: S.coatNames[c.id] || c.id })), now: (p) => PETS.coat(p).id, art: 'coat' }
+    { key: 'coat', icon: '🎨', title: () => S.petCoat, note: (q) => (petIsPro(q.kind) ? S.petCoatMyth : S.petCoatNote), set: () => PET_COATS.map((c) => ({ id: c.id, pro: c.pro, add: 3, body: c.body, name: S.coatNames[c.id] || c.id })), now: (p) => PETS.coat(p).id, art: 'coat' }
   ];
   const sheetHTML = (p, open) => {
     const cur = SHEETS.filter((x) => x.key === open)[0] || SHEETS[0];
@@ -1116,13 +1116,15 @@ function renderPet(want) {
       + '<div class="sh-body" role="dialog" aria-modal="true" aria-label="' + esc(cur.title()) + '">'
       + '<div class="sh-grip"></div>'
       + '<div class="chips sh-tabs">' + SHEETS.map((x) => '<button type="button" class="chip' + (x.key === cur.key ? ' on' : '') + '" data-sheet-tab="' + x.key + '">' + x.icon + ' ' + esc(x.title()) + '</button>').join('') + '</div>'
-      + '<p class="hint">' + esc(cur.note()) + '</p>'
-      + shelfRows(cur.set(), cur.now(p), cur.key, cur.art)
+      + '<p class="hint">' + esc(cur.note(p)) + '</p>'
+      + (cur.key === 'coat' && petIsPro(p.kind) ? '' : shelfRows(cur.set(), cur.now(p), cur.key, cur.art))
       + '<button type="button" class="btn block" data-close-sheet="1" style="margin-top:12px">' + esc(S.sheetClose) + '</button>'
       + '</div></div>';
   };
 
   const draw = () => {
+    // a drag interrupted by a route change can leave its food behind
+    $$('.dragfood').forEach((x) => x.remove());
     const pets = PETS.all();
     if (!pets.length) { drawPicker(); return; }
     if (!open || !PETS.one(open)) open = pets[0].kind;
@@ -1222,35 +1224,62 @@ function renderPet(want) {
        does. The button stays for anyone who would rather tap. */
     const chip = $('#foodchip');
     if (chip && stage) {
-      let ghost = null;
+      let ghost = null, moving = null;
       const over = (e) => {
         const r = stage.getBoundingClientRect();
         return e.clientX >= r.left && e.clientX <= r.right && e.clientY >= r.top && e.clientY <= r.bottom;
       };
+      const clear = () => {
+        if (ghost) { ghost.remove(); ghost = null; }
+        stage.classList.remove('hoverfeed');
+        if (moving) { window.removeEventListener('pointermove', moving); moving = null; }
+        window.removeEventListener('pointerup', drop);
+        window.removeEventListener('pointercancel', drop);
+      };
+      /* The food is carried into the companion's mouth and eaten there, so it
+         is never left lying on the screen. */
+      const swallow = (from) => {
+        const art = $('.petart', stage);
+        if (!art || !ghost) { clear(); const f0 = $('#petfeed'); if (f0) f0.click(); return; }
+        const r = art.getBoundingClientRect();
+        const mouth = { x: r.left + r.width * 0.5, y: r.top + r.height * 0.52 };
+        const fly = ghost; ghost = null;
+        fly.classList.add('eaten');
+        fly.style.left = mouth.x + 'px';
+        fly.style.top = mouth.y + 'px';
+        stage.classList.add('nom');
+        setTimeout(() => {
+          fly.remove();
+          stage.classList.remove('nom');
+          const fb2 = $('#petfeed'); if (fb2) fb2.click();
+        }, 420);
+      };
+      const drop = (e) => {
+        if (!ghost) { clear(); return; }
+        const hit = over(e);
+        if (hit) { const g = ghost; clear(); ghost = g; document.body.appendChild(g); swallow(e); return; }
+        clear();
+      };
       chip.addEventListener('pointerdown', (e) => {
         if (busy) return;
         e.preventDefault();
+        // anything left over from an earlier drag goes first
+        $$('.dragfood').forEach((x) => x.remove());
         ghost = document.createElement('div');
         ghost.className = 'dragfood';
         ghost.textContent = chip.textContent;
         ghost.style.left = e.clientX + 'px'; ghost.style.top = e.clientY + 'px';
         document.body.appendChild(ghost);
-        chip.setPointerCapture && chip.setPointerCapture(e.pointerId);
+        moving = (ev) => {
+          if (!ghost) return;
+          ghost.style.left = ev.clientX + 'px'; ghost.style.top = ev.clientY + 'px';
+          stage.classList.toggle('hoverfeed', over(ev));
+        };
+        // on the window, so letting go anywhere at all still ends the drag
+        window.addEventListener('pointermove', moving);
+        window.addEventListener('pointerup', drop);
+        window.addEventListener('pointercancel', drop);
       });
-      chip.addEventListener('pointermove', (e) => {
-        if (!ghost) return;
-        ghost.style.left = e.clientX + 'px'; ghost.style.top = e.clientY + 'px';
-        stage.classList.toggle('hoverfeed', over(e));
-      });
-      const drop = (e) => {
-        if (!ghost) return;
-        const hit = over(e);
-        ghost.remove(); ghost = null;
-        stage.classList.remove('hoverfeed');
-        if (hit) { const fb2 = $('#petfeed'); if (fb2) fb2.click(); }
-      };
-      chip.addEventListener('pointerup', drop);
-      chip.addEventListener('pointercancel', drop);
     }
 
     const play = $('#playbtn');

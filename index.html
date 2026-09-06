@@ -1103,6 +1103,10 @@ main{padding:22px 0 30px}
 .foodchip:active{cursor:grabbing;transform:scale(1.08)}
 .dragtip{font-size:12.5px;color:var(--fg-soft)}
 .dragfood{position:fixed;z-index:80;font-size:36px;pointer-events:none;transform:translate(-50%,-50%);filter:drop-shadow(0 3px 6px rgba(60,40,90,.3))}
+.dragfood.eaten{transition:left .38s cubic-bezier(.4,0,.7,1),top .38s cubic-bezier(.4,0,.7,1),transform .38s ease-in,opacity .38s ease-in;transform:translate(-50%,-50%) scale(.15) rotate(25deg);opacity:0}
+/* The companion leans in and takes it. */
+@keyframes nomnom{0%{transform:translateY(0) scaleY(1)}40%{transform:translateY(2px) scaleY(.94)}70%{transform:translateY(-3px) scaleY(1.05)}100%{transform:translateY(0) scaleY(1)}}
+.petstage.nom .petart{animation:nomnom .42s ease-in-out}
 .crumbs{position:absolute;inset:0;z-index:4;pointer-events:none;overflow:hidden}
 .crumbs i{position:absolute;top:-6%;font-size:20px;font-style:normal;opacity:0;animation:dropfood 1s ease-in forwards}
 @keyframes dropfood{0%{opacity:0;transform:translateY(-10px)}20%{opacity:1}100%{opacity:0;transform:translateY(62px)}}
@@ -1191,9 +1195,10 @@ main{padding:22px 0 30px}
 .btn.tiny{padding:5px 11px;font-size:12.5px;width:auto;flex:none}
 .petstat{display:flex;justify-content:center;gap:14px;font-size:13.5px;color:var(--fg-soft);margin-bottom:10px}
 /* What the companion answers with, once a day. */
-.bless{position:relative;margin-top:12px;padding:16px 16px 12px;border-radius:14px;background:var(--surface-2);border:1px solid var(--rule-soft)}
-.bless .q{position:absolute;top:-11px;left:14px;background:var(--surface);border-radius:999px;padding:1px 7px;font-size:15px}
-.bless p{margin:0 0 6px;font-size:14.5px;line-height:1.6;text-wrap:balance}
+/* Its own space, so the marker never sits on whatever is above it. */
+.bless{position:relative;margin-top:22px;padding:18px 16px 14px;border-radius:14px;background:var(--surface-2);border:1px solid var(--rule-soft)}
+.bless .q{position:absolute;top:-13px;left:14px;background:var(--surface);border:1px solid var(--rule-soft);border-radius:999px;padding:2px 8px;font-size:15px;line-height:1.2}
+#main .bless p{margin:0 0 8px;font-size:14.5px;line-height:1.65;text-align:left;text-wrap:normal;hyphens:none}
 .bless .who{font-size:12px;color:var(--fg-soft)}
 .btn.off{opacity:.55}
 /* Switching between the companions you keep. */
@@ -1680,13 +1685,13 @@ const STR = {
     unlockSent: 'Đã gửi yêu cầu. Nabu sẽ gửi mã cho bạn sau khi nhận được chuyển khoản.', unlockSendApp: 'Gửi yêu cầu trong app', unlockSendMsg: 'Gửi qua tin nhắn',
     saleTab: 'Khuyến mãi', saleOn: 'Đang chạy khuyến mãi', saleScope: 'Áp dụng cho', saleScopes: { all: 'Tất cả', reading: 'Xem bài', unlock: 'Mở khoá trong app' },
     saleKind: 'Kiểu giảm', saleKinds: { percent: 'Theo phần trăm', amount: 'Theo số tiền' }, saleValue: 'Mức giảm', saleFrom: 'Bắt đầu', saleTo: 'Kết thúc',
-    plusName: 'Nabu Tarot Plus', looksTitle: 'Giao diện của bạn', looksLink: 'Đổi giao diện',
-    looksIntro: 'Chọn cách app trông ra sao: mặt sau bộ bài, cây thông điệp, đồng xu và trang nhật ký.',
+    plusName: 'Nabu Tarot Plus', looksTitle: 'Trang trí trong app', looksLink: 'Đổi kiểu trang trí',
+    looksIntro: 'Bạn chọn kiểu trang trí cho từng thứ trong app: mặt sau bộ bài, cây thông điệp, đồng xu và trang nhật ký. Phần này không liên quan đến chế độ sáng tối của app.',
+    looksAll: 'Tất cả kiểu trang trí', looksYours: 'Bạn đang có Nabu Tarot Plus, bạn chọn mẫu nào cũng được.',
+    looksStripNote: 'Bạn chạm để đổi kiểu. Ba mẫu có ổ khoá thuộc Nabu Tarot Plus.',
     looksAll: 'Tất cả giao diện', looksYours: 'Bạn đang có Nabu Tarot Plus, bạn chọn mẫu nào cũng được.',
     looksStripNote: 'Bạn chạm để đổi. Ba mẫu có ổ khoá thuộc Nabu Tarot Plus.',
-    looksAll: 'Tất cả giao diện', looksYours: 'Bạn đang có Nabu Tarot Plus, bạn chọn mẫu nào cũng được.',
-    looksStripNote: 'Bạn chạm để đổi. Ba mẫu có ổ khoá thuộc Nabu Tarot Plus.',
-    looksHere: '🎨 Đổi giao diện của mục này', looksLocked: 'Mở tất cả giao diện đẹp hơn', looksPlusOn: 'Bạn đang có Nabu Tarot Plus, tất cả giao diện đều mở.', looksNeedPlus: 'Giao diện này thuộc Nabu Tarot Plus.',
+    looksHere: '🎨 Đổi kiểu trang trí của mục này', looksLocked: 'Mở tất cả kiểu trang trí', looksPlusOn: 'Bạn đang có Nabu Tarot Plus, tất cả kiểu trang trí đều mở.', looksNeedPlus: 'Kiểu trang trí này thuộc Nabu Tarot Plus.',
     lookKinds: { cardback: 'Mặt sau lá bài', tree: 'Cây thông điệp', coin: 'Đồng xu', diary: 'Trang nhật ký' },
     petTitle: 'Thú cưng may mắn', petSub: 'mỗi ngày một bữa ăn và một lời khấn',
     petPick: 'Mỗi bạn nhỏ trông giữ một phần khác nhau trong cuộc sống của bạn: tình duyên, sự nghiệp, học hành, tiền tài, sức khỏe và chuyện đi lại.',
@@ -1702,7 +1707,7 @@ const STR = {
     petPlusPitch: 'Người dùng thường nuôi một bạn nhỏ. Nabu Tarot Plus mở sáu linh thú và cho bạn nuôi nhiều vị cùng lúc, để nhiều góc trong đời bạn cùng được trông giữ.',
     petPlusItem: 'Món này thuộc Nabu Tarot Plus.',
     petLuckNote: 'Bạn nhỏ ở đây để mỗi ngày bạn có một việc nhỏ ấm áp. Lời chúc là lời chúc, không phải lời hứa.',
-    sheetClose: 'Xong', petCoatNote: 'Bốn màu đầu miễn phí. Bốn màu đặc biệt thuộc Nabu Tarot Plus.',
+    sheetClose: 'Xong', petCoatMyth: 'Linh thú giữ nguyên màu riêng của mình, nên phần màu lông chỉ dành cho các bạn nhỏ thường.', petCoatNote: 'Bốn màu đầu miễn phí. Bốn màu đặc biệt thuộc Nabu Tarot Plus.',
     coatNames: { cream: 'Kem', lilac: 'Tím nhạt', rose: 'Hồng phấn', sky: 'Xanh trời', mint: 'Bạc hà', ember: 'Cam đất', midnight: 'Tím đêm', gold: 'Vàng ánh' },
     petFoodTitle: 'Bữa ăn', petFoodNote: 'Món ăn ngon hơn làm bạn nhỏ vui hơn, và vận may cũng đầy nhanh hơn.',
     petHomeShort: 'Nhà', petHomeTitle: 'Nhà của bạn nhỏ', petHomeNote: 'Bạn nhỏ có chỗ ở đẹp thì ở lại lâu hơn và mang về nhiều may mắn hơn.',
@@ -1812,7 +1817,7 @@ const STR = {
     typeMsg: 'Viết tin nhắn...', sendPhoto: 'Gửi ảnh', holdToRecord: 'Bấm để ghi âm, bấm lại để gửi', recording: 'Đang ghi âm… bấm 🎤 lần nữa để gửi.', uploading: 'Đang gửi…', noMic: 'Máy này không cho ghi âm.', fileTooBig: 'Ảnh quá lớn (tối đa 8 MB).',
     send: 'Gửi',
     noMsgs: 'Chưa có tin nhắn. Bạn cứ hỏi, Nabu sẽ trả lời.',
-    themeTitle: 'Giao diện', themes: { auto: 'Theo điện thoại', light: 'Sáng', dark: 'Tối', pink: 'Hồng pastel' }, themeHint: 'Theo điện thoại: app tự đổi sáng/tối cùng máy của bạn. Nút ở góc trên xoay vòng sáng → tối → hồng.',
+    themeTitle: 'Chế độ sáng tối', themes: { auto: 'Theo điện thoại', light: 'Sáng', dark: 'Tối', pink: 'Hồng pastel' }, themeHint: 'Theo điện thoại: app tự đổi sáng/tối cùng máy của bạn. Nút ở góc trên xoay vòng sáng → tối → hồng.',
     installTitle: 'Cài app lên điện thoại', installLink: 'Tải app', instIntro: 'Nabu Tarot chạy như một app thật trên điện thoại: có biểu tượng riêng, mở toàn màn hình, dùng được cả khi mất mạng, và tự cập nhật.', instAlready: 'Bạn đang dùng bản app rồi. Gửi trang này cho bạn bè để họ cài nhé.',
     instAndroidIntro: 'Bạn tải tệp cài đặt về máy, mở tệp đó rồi bấm Cài đặt.', instDownload: 'Tải app cho Android (2 MB)', instAndroidSteps: ['Bấm nút tải ở trên. Chrome sẽ hỏi có tải tệp không, chọn Tải xuống.', 'Mở tệp nabu-tarot.apk từ thanh thông báo hoặc mục Tệp đã tải.', 'Nếu điện thoại hỏi "Cho phép cài từ nguồn này?", bật cho phép rồi quay lại.', 'Bấm Cài đặt. Biểu tượng Nabu Tarot xuất hiện trên màn hình chính.'], instAndroidNote: 'App do Nabu ký, an toàn. Điện thoại cảnh báo vì tệp tải ngoài Google Play; bản trên Google Play sẽ có sau.',
     instIosIntro: 'iPhone không cho phép cài tệp ngoài App Store, nhưng Safari vẫn cài được app này chỉ với ba bước.', instIosSteps: ['Mở trang này bằng Safari (không phải trong Instagram hay Facebook).', 'Bấm nút Chia sẻ (hình ô vuông có mũi tên đi lên) ở thanh dưới.', 'Cuộn xuống, chọn "Thêm vào MH chính", rồi bấm Thêm.'], instIosNote: 'Biểu tượng Nabu Tarot xuất hiện như mọi app khác và mở toàn màn hình.',
@@ -2031,13 +2036,13 @@ const STR = {
     unlockSent: 'Request sent. Nabu will send your code once the transfer arrives.', unlockSendApp: 'Send the request in the app', unlockSendMsg: 'Send as a message',
     saleTab: 'Sale', saleOn: 'A sale is running', saleScope: 'Applies to', saleScopes: { all: 'Everything', reading: 'Readings', unlock: 'Unlocks in the app' },
     saleKind: 'Kind of discount', saleKinds: { percent: 'A percentage', amount: 'An amount' }, saleValue: 'Discount', saleFrom: 'Starts', saleTo: 'Ends',
-    plusName: 'Nabu Tarot Plus', looksTitle: 'How your app looks', looksLink: 'Change the look',
-    looksIntro: 'Choose how the app looks: the back of the deck, the message tree, the coin and the diary page.',
-    looksAll: 'All looks', looksYours: 'You have Nabu Tarot Plus, so any of these is yours.',
+    plusName: 'Nabu Tarot Plus', looksTitle: 'Decorations in your app', looksLink: 'Change the decorations',
+    looksIntro: 'Choose the decoration for each thing in the app: the back of the deck, the message tree, the coin and the diary page. This is separate from the light or dark setting.',
+    looksAll: 'All decorations', looksYours: 'You have Nabu Tarot Plus, so any of these is yours.',
     looksStripNote: 'Tap to change. The three with a padlock come with Nabu Tarot Plus.',
     looksAll: 'All looks', looksYours: 'You have Nabu Tarot Plus, so any of these is yours.',
     looksStripNote: 'Tap to change. The three with a padlock come with Nabu Tarot Plus.',
-    looksHere: '🎨 Change how this looks', looksLocked: 'Open every look', looksPlusOn: 'You have Nabu Tarot Plus, so every look is open.', looksNeedPlus: 'That look comes with Nabu Tarot Plus.',
+    looksHere: '🎨 Change this decoration', looksLocked: 'Open every decoration', looksPlusOn: 'You have Nabu Tarot Plus, so every decoration is open.', looksNeedPlus: 'That decoration comes with Nabu Tarot Plus.',
     lookKinds: { cardback: 'Card backs', tree: 'The message tree', coin: 'The coin', diary: 'Diary paper' },
     petTitle: 'Lucky pets', petSub: 'one meal and one wish a day',
     petPick: 'Each companion looks after a different part of your life: love, work, study, money, health and travel.',
@@ -2053,7 +2058,7 @@ const STR = {
     petPlusPitch: 'One companion is free. Nabu Tarot Plus opens the six spirit beasts and lets you keep several at once, so more corners of your life are looked after.',
     petPlusItem: 'That one comes with Nabu Tarot Plus.',
     petLuckNote: 'Your companion is here to give you one warm small thing each day. A blessing is a blessing, not a promise.',
-    sheetClose: 'Done', petCoatNote: 'The first four are free. The four special coats come with Nabu Tarot Plus.',
+    sheetClose: 'Done', petCoatMyth: 'A spirit beast keeps its own colours, so coats are for the everyday companions.', petCoatNote: 'The first four are free. The four special coats come with Nabu Tarot Plus.',
     coatNames: { cream: 'Cream', lilac: 'Lilac', rose: 'Rose', sky: 'Sky', mint: 'Mint', ember: 'Ember', midnight: 'Midnight', gold: 'Gold' },
     petFoodTitle: 'Meals', petFoodNote: 'Better food makes a happier companion, and its luck fills faster.',
     petHomeShort: 'Home', petHomeTitle: 'Its home', petHomeNote: 'A companion with a lovely home settles in and brings back more.',
@@ -2163,7 +2168,7 @@ const STR = {
     typeMsg: 'Write a message...', sendPhoto: 'Send a photo', holdToRecord: 'Tap to record, tap again to send', recording: 'Recording… tap 🎤 again to send.', uploading: 'Sending…', noMic: 'This device does not allow recording.', fileTooBig: 'Photo too large (8 MB max).',
     send: 'Send',
     noMsgs: 'No messages yet. Ask away, Nabu will answer.',
-    themeTitle: 'Appearance', themes: { auto: 'Match my phone', light: 'Light', dark: 'Dark', pink: 'Pastel pink' }, themeHint: 'Match my phone: the app switches with your phone\'s light or dark setting. The top button cycles light → dark → pink.',
+    themeTitle: 'Light or dark', themes: { auto: 'Match my phone', light: 'Light', dark: 'Dark', pink: 'Pastel pink' }, themeHint: 'Match my phone: the app switches with your phone\'s light or dark setting. The top button cycles light → dark → pink.',
     installTitle: 'Install on your phone', installLink: 'App', instIntro: 'Nabu Tarot runs as a real app on your phone: its own icon, full screen, works offline, and updates itself.', instAlready: 'You are already using the app. Send this page to friends so they can install it.',
     instAndroidIntro: 'Download the installer, open it, tap Install. Done.', instDownload: 'Download for Android (2 MB)', instAndroidSteps: ['Tap the download button above. Chrome asks whether to download the file: choose Download.', 'Open nabu-tarot.apk from the notification bar or your Downloads.', 'If the phone asks "Allow from this source?", allow it and come back.', 'Tap Install. The Nabu Tarot icon appears on your home screen.'], instAndroidNote: 'The app is signed by Nabu and safe. The phone warns because the file comes from outside Google Play; the Play version follows later.',
     instIosIntro: 'iPhone does not allow installers outside the App Store, but Safari installs this app in three steps.', instIosSteps: ['Open this page in Safari (not inside Instagram or Facebook).', 'Tap the Share button (the square with an arrow) in the bottom bar.', 'Scroll down, choose "Add to Home Screen", then tap Add.'], instIosNote: 'The Nabu Tarot icon appears like any other app and opens full screen.',
@@ -10636,7 +10641,7 @@ function renderLearn(args, params) {
   const S = T(), m = $('#main'), sub = args[0];
   if (!sub) {
     const ints = PROFILE.interests || [];
-    const tile = (k, locked) => '<a class="tile' + (ints.indexOf(k) > -1 || k === 'tarot' || k === 'lenormand' || k === 'playing' || k === 'manifest' ? ' rec' : '') + '" href="#/learn/' + k + '"><div class="ic">' + CAT_ICONS[k] + (locked ? ' <span class="lock">🔒</span>' : '') + '</div><b>' + esc(S.cats[k]) + '</b><span>' + esc(S.catSub[k]) + '</span></a>';
+    const tile = (k, locked) => '<a class="tile' + (ints.indexOf(k) > -1 || k === 'tarot' || k === 'lenormand' || k === 'playing' || k === 'manifest' || k === 'angel' ? ' rec' : '') + '" href="#/learn/' + k + '"><div class="ic">' + CAT_ICONS[k] + (locked ? ' <span class="lock">🔒</span>' : '') + '</div><b>' + esc(S.cats[k]) + '</b><span>' + esc(S.catSub[k]) + '</span></a>';
     m.innerHTML = '<div class="eyebrow">' + esc(S.nav.learn) + '</div><h1 style="margin-bottom:6px">' + esc(S.learnTitle) + '</h1><p class="muted">' + esc(S.learnIntro) + '</p>'
       + '<div class="eyebrow">' + esc(S.coursesPractice) + '</div><div class="tiles">' + tile('tarot', !ACCESS.has('tarot')) + tile('lenormand', !ACCESS.has('lenormand')) + tile('playing', !ACCESS.has('playing')) + tile('manifest', !ACCESS.has('manifest')) + '</div>'
       + '<div class="eyebrow">' + esc(S.freeReads) + '</div><div class="tiles">' + tile('astro') + tile('angel') + tile('fortune') + '</div>'
@@ -12265,7 +12270,7 @@ const LOOK_SETS = {
     { id: 'gold', pro: false, name: { vi: 'Vàng', en: 'Gold' }, face: '#E5BE5E', rim: '#B9913B', ink: '#5A3F18' },
     { id: 'moonsilver', pro: true, name: { vi: 'Bạc trăng', en: 'Moon silver' }, face: '#DCE3EF', rim: '#94A3BE', ink: '#2C3A52' },
     { id: 'rose', pro: true, name: { vi: 'Vàng hồng', en: 'Rose gold' }, face: '#F0C4C2', rim: '#C98A85', ink: '#63302C' },
-    { id: 'jade', pro: true, name: { vi: 'Ngọc bích', en: 'Jade' }, face: '#A9DCC4', rim: '#5E9E82', ink: '#1E4636' }
+    { id: 'obsidian', pro: true, name: { vi: 'Hắc Ngọc', en: 'Obsidian' }, face: '#2A2340', rim: '#E5BE5E', ink: '#F3E4B8' }
   ],
   diary: [
     { id: 'plain', pro: false, name: { vi: 'Giấy trơn', en: 'Plain paper' } },
@@ -12326,20 +12331,33 @@ const COIN_ART = {
       + bloom(80, 42, 11) + bloom(80, 118, 9)
       + '<g stroke="' + m.rim + '" stroke-width="1.4" fill="none" opacity=".7"><path d="M44 80 q6 -7 12 0 M116 80 q-6 -7 -12 0"/></g>';
   },
-  /* The old cash coin: a square hole made into a frame, with clouds and a
-     tassel, so the answer reads as struck into the jade. */
-  jade(m) {
-    const cloud = (x, y, s) => '<g transform="translate(' + x + ',' + y + ') scale(' + s + ')" fill="none" stroke="' + m.ink + '" stroke-width="2.4" stroke-linecap="round" opacity=".55">'
-      + '<path d="M-9 4 q-3 -7 4 -8 q1 -6 8 -4 q6 -3 8 4 q6 2 2 8 Z"/></g>';
+  /* Obsidian struck with gold: a dark stone disc, a gold rim, a ring of stars
+     and a sun mark at the top. The only dark coin of the four. */
+  obsidian(m) {
+    let stars = '';
+    for (let k = 0; k < 24; k++) {
+      const t = (k / 24) * Math.PI * 2;
+      const x = 80 + Math.cos(t) * 62, y = 80 + Math.sin(t) * 62;
+      stars += '<circle cx="' + x.toFixed(1) + '" cy="' + y.toFixed(1) + '" r="' + (k % 3 === 0 ? 2.2 : 1.2) + '" fill="' + m.rim + '" opacity="' + (k % 3 === 0 ? '.9' : '.5') + '"/>';
+    }
+    const ray = (len, w) => {
+      let out = '';
+      for (let k = 0; k < 8; k++) {
+        out += '<path d="M80 ' + (80 - len) + ' l' + w + ' ' + w + ' l-' + w + ' ' + (len - 80 + 80 - w) + ' l-' + w + ' -' + (len - w) + ' Z" fill="' + m.rim + '" opacity=".9" transform="rotate(' + (k * 45) + ' 80 80)"/>';
+      }
+      return out;
+    };
     return '<circle cx="80" cy="80" r="76" fill="' + m.rim + '"/>'
-      + '<circle cx="80" cy="80" r="70" fill="' + m.face + '"/>'
-      + '<circle cx="80" cy="80" r="70" fill="none" stroke="' + m.ink + '" stroke-width="1.2" opacity=".25"/>'
-      + '<rect x="36" y="36" width="88" height="88" rx="12" fill="none" stroke="' + m.ink + '" stroke-width="3" opacity=".7"/>'
-      + '<rect x="43" y="43" width="74" height="74" rx="9" fill="#F0FAF5" opacity=".35"/>'
-      + cloud(30, 30, 1) + cloud(130, 30, -1) + cloud(30, 130, 1) + cloud(130, 130, -1)
-      + '<g stroke="' + m.ink + '" stroke-width="2" opacity=".6" fill="none"><path d="M80 126 v10"/></g>'
-      + '<g fill="' + m.ink + '" opacity=".6"><path d="M74 136 h12 l-2 12 h-8 Z"/><circle cx="80" cy="134" r="3.4"/></g>';
+      + '<circle cx="80" cy="80" r="71" fill="' + m.face + '"/>'
+      + '<circle cx="80" cy="80" r="71" fill="none" stroke="#4A3F6B" stroke-width="1.4"/>'
+      + stars
+      + '<circle cx="80" cy="80" r="52" fill="none" stroke="' + m.rim + '" stroke-width="1.6" opacity=".7"/>'
+      + '<circle cx="80" cy="80" r="49" fill="#1F1932" opacity=".45"/>'
+      + '<g opacity=".95"><circle cx="80" cy="42" r="7" fill="' + m.rim + '"/>'
+      + '<path d="M80 30 l2.4 6 6 2.4 -6 2.4 -2.4 6 -2.4 -6 -6 -2.4 6 -2.4 Z" fill="' + m.rim + '" opacity=".8"/></g>'
+      + '<g fill="' + m.rim + '" opacity=".85"><circle cx="66" cy="120" r="2.4"/><circle cx="80" cy="122" r="3"/><circle cx="94" cy="120" r="2.4"/></g>';
   }
+
 };
 
 /* ---- the coin, in whichever metal is chosen ---- */
@@ -13720,7 +13738,7 @@ function renderPet(want) {
     { key: 'food', icon: '🍚', title: () => S.petFoodTitle, note: () => S.petFoodNote, set: () => PET_FOODS, now: (p) => PETS.food(p).id, art: 'food' },
     { key: 'home', icon: '🏠', title: () => S.petHomeTitle, note: () => S.petHomeNote, set: () => PET_HOMES, now: (p) => PETS.home(p).id, art: 'home' },
     { key: 'wear', icon: '👑', title: () => S.petWearTitle, note: () => S.petWearNote, set: () => PET_WEARS, now: (p) => PETS.wear(p).id, art: 'wear' },
-    { key: 'coat', icon: '🎨', title: () => S.petCoat, note: () => S.petCoatNote, set: () => PET_COATS.map((c) => ({ id: c.id, pro: c.pro, add: 3, body: c.body, name: S.coatNames[c.id] || c.id })), now: (p) => PETS.coat(p).id, art: 'coat' }
+    { key: 'coat', icon: '🎨', title: () => S.petCoat, note: (q) => (petIsPro(q.kind) ? S.petCoatMyth : S.petCoatNote), set: () => PET_COATS.map((c) => ({ id: c.id, pro: c.pro, add: 3, body: c.body, name: S.coatNames[c.id] || c.id })), now: (p) => PETS.coat(p).id, art: 'coat' }
   ];
   const sheetHTML = (p, open) => {
     const cur = SHEETS.filter((x) => x.key === open)[0] || SHEETS[0];
@@ -13728,13 +13746,15 @@ function renderPet(want) {
       + '<div class="sh-body" role="dialog" aria-modal="true" aria-label="' + esc(cur.title()) + '">'
       + '<div class="sh-grip"></div>'
       + '<div class="chips sh-tabs">' + SHEETS.map((x) => '<button type="button" class="chip' + (x.key === cur.key ? ' on' : '') + '" data-sheet-tab="' + x.key + '">' + x.icon + ' ' + esc(x.title()) + '</button>').join('') + '</div>'
-      + '<p class="hint">' + esc(cur.note()) + '</p>'
-      + shelfRows(cur.set(), cur.now(p), cur.key, cur.art)
+      + '<p class="hint">' + esc(cur.note(p)) + '</p>'
+      + (cur.key === 'coat' && petIsPro(p.kind) ? '' : shelfRows(cur.set(), cur.now(p), cur.key, cur.art))
       + '<button type="button" class="btn block" data-close-sheet="1" style="margin-top:12px">' + esc(S.sheetClose) + '</button>'
       + '</div></div>';
   };
 
   const draw = () => {
+    // a drag interrupted by a route change can leave its food behind
+    $$('.dragfood').forEach((x) => x.remove());
     const pets = PETS.all();
     if (!pets.length) { drawPicker(); return; }
     if (!open || !PETS.one(open)) open = pets[0].kind;
@@ -13834,35 +13854,62 @@ function renderPet(want) {
        does. The button stays for anyone who would rather tap. */
     const chip = $('#foodchip');
     if (chip && stage) {
-      let ghost = null;
+      let ghost = null, moving = null;
       const over = (e) => {
         const r = stage.getBoundingClientRect();
         return e.clientX >= r.left && e.clientX <= r.right && e.clientY >= r.top && e.clientY <= r.bottom;
       };
+      const clear = () => {
+        if (ghost) { ghost.remove(); ghost = null; }
+        stage.classList.remove('hoverfeed');
+        if (moving) { window.removeEventListener('pointermove', moving); moving = null; }
+        window.removeEventListener('pointerup', drop);
+        window.removeEventListener('pointercancel', drop);
+      };
+      /* The food is carried into the companion's mouth and eaten there, so it
+         is never left lying on the screen. */
+      const swallow = (from) => {
+        const art = $('.petart', stage);
+        if (!art || !ghost) { clear(); const f0 = $('#petfeed'); if (f0) f0.click(); return; }
+        const r = art.getBoundingClientRect();
+        const mouth = { x: r.left + r.width * 0.5, y: r.top + r.height * 0.52 };
+        const fly = ghost; ghost = null;
+        fly.classList.add('eaten');
+        fly.style.left = mouth.x + 'px';
+        fly.style.top = mouth.y + 'px';
+        stage.classList.add('nom');
+        setTimeout(() => {
+          fly.remove();
+          stage.classList.remove('nom');
+          const fb2 = $('#petfeed'); if (fb2) fb2.click();
+        }, 420);
+      };
+      const drop = (e) => {
+        if (!ghost) { clear(); return; }
+        const hit = over(e);
+        if (hit) { const g = ghost; clear(); ghost = g; document.body.appendChild(g); swallow(e); return; }
+        clear();
+      };
       chip.addEventListener('pointerdown', (e) => {
         if (busy) return;
         e.preventDefault();
+        // anything left over from an earlier drag goes first
+        $$('.dragfood').forEach((x) => x.remove());
         ghost = document.createElement('div');
         ghost.className = 'dragfood';
         ghost.textContent = chip.textContent;
         ghost.style.left = e.clientX + 'px'; ghost.style.top = e.clientY + 'px';
         document.body.appendChild(ghost);
-        chip.setPointerCapture && chip.setPointerCapture(e.pointerId);
+        moving = (ev) => {
+          if (!ghost) return;
+          ghost.style.left = ev.clientX + 'px'; ghost.style.top = ev.clientY + 'px';
+          stage.classList.toggle('hoverfeed', over(ev));
+        };
+        // on the window, so letting go anywhere at all still ends the drag
+        window.addEventListener('pointermove', moving);
+        window.addEventListener('pointerup', drop);
+        window.addEventListener('pointercancel', drop);
       });
-      chip.addEventListener('pointermove', (e) => {
-        if (!ghost) return;
-        ghost.style.left = e.clientX + 'px'; ghost.style.top = e.clientY + 'px';
-        stage.classList.toggle('hoverfeed', over(e));
-      });
-      const drop = (e) => {
-        if (!ghost) return;
-        const hit = over(e);
-        ghost.remove(); ghost = null;
-        stage.classList.remove('hoverfeed');
-        if (hit) { const fb2 = $('#petfeed'); if (fb2) fb2.click(); }
-      };
-      chip.addEventListener('pointerup', drop);
-      chip.addEventListener('pointercancel', drop);
     }
 
     const play = $('#playbtn');
@@ -15655,7 +15702,7 @@ function adminSale(p) {
 ROUTES.admin = { nav: '', render: renderAdmin };
 
 /* ============================ boot ============================ */
-window.APP_VERSION = 'v106';
+window.APP_VERSION = 'v107';
 window.NABU = { CONFIG: CONFIG, SALE: SALE, salePrice: salePrice, loadActs: loadActs, BACK: BACK, LESSONS: LESSONS, localAnswer: localAnswer, compatVerdict: compatVerdict, numerologyOf: numerologyOf, ZDEEP: ZDEEP, lunarToday: lunarToday, solarToLunar: solarToLunar, DECK: DECK, INSIGHT: INSIGHT, KW: KW, ASK: ASK, TOPICS: TOPICS, GUIDES: GUIDES, SERVICES: SERVICES, COURSES: COURSES, ACCESS: ACCESS, makeCode: makeCode, parseCode: parseCode, ZODIAC: ZODIAC, pick: pick, book: book,
   insightHTML: insightHTML, insightOf: insightOf, sunSignIndex: sunSignIndex, lifePath: lifePath, PROFILE: () => PROFILE, BE: BE, ACTS: ACTS,
   ANGELS: ANGELS, angelRead: angelRead, BANK: BANK, PETS: PETS, petSVG: petSVG, PET_COATS: PET_COATS, PET_KINDS: PET_KINDS, luckCut: luckCut, petLevel: petLevel, petStep: petStep, VOUCHERS: VOUCHERS, levelCoins: levelCoins, LOOKS: LOOKS };

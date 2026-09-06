@@ -79,7 +79,7 @@ const LOOK_SETS = {
     { id: 'gold', pro: false, name: { vi: 'Vàng', en: 'Gold' }, face: '#E5BE5E', rim: '#B9913B', ink: '#5A3F18' },
     { id: 'moonsilver', pro: true, name: { vi: 'Bạc trăng', en: 'Moon silver' }, face: '#DCE3EF', rim: '#94A3BE', ink: '#2C3A52' },
     { id: 'rose', pro: true, name: { vi: 'Vàng hồng', en: 'Rose gold' }, face: '#F0C4C2', rim: '#C98A85', ink: '#63302C' },
-    { id: 'jade', pro: true, name: { vi: 'Ngọc bích', en: 'Jade' }, face: '#A9DCC4', rim: '#5E9E82', ink: '#1E4636' }
+    { id: 'obsidian', pro: true, name: { vi: 'Hắc Ngọc', en: 'Obsidian' }, face: '#2A2340', rim: '#E5BE5E', ink: '#F3E4B8' }
   ],
   diary: [
     { id: 'plain', pro: false, name: { vi: 'Giấy trơn', en: 'Plain paper' } },
@@ -140,20 +140,33 @@ const COIN_ART = {
       + bloom(80, 42, 11) + bloom(80, 118, 9)
       + '<g stroke="' + m.rim + '" stroke-width="1.4" fill="none" opacity=".7"><path d="M44 80 q6 -7 12 0 M116 80 q-6 -7 -12 0"/></g>';
   },
-  /* The old cash coin: a square hole made into a frame, with clouds and a
-     tassel, so the answer reads as struck into the jade. */
-  jade(m) {
-    const cloud = (x, y, s) => '<g transform="translate(' + x + ',' + y + ') scale(' + s + ')" fill="none" stroke="' + m.ink + '" stroke-width="2.4" stroke-linecap="round" opacity=".55">'
-      + '<path d="M-9 4 q-3 -7 4 -8 q1 -6 8 -4 q6 -3 8 4 q6 2 2 8 Z"/></g>';
+  /* Obsidian struck with gold: a dark stone disc, a gold rim, a ring of stars
+     and a sun mark at the top. The only dark coin of the four. */
+  obsidian(m) {
+    let stars = '';
+    for (let k = 0; k < 24; k++) {
+      const t = (k / 24) * Math.PI * 2;
+      const x = 80 + Math.cos(t) * 62, y = 80 + Math.sin(t) * 62;
+      stars += '<circle cx="' + x.toFixed(1) + '" cy="' + y.toFixed(1) + '" r="' + (k % 3 === 0 ? 2.2 : 1.2) + '" fill="' + m.rim + '" opacity="' + (k % 3 === 0 ? '.9' : '.5') + '"/>';
+    }
+    const ray = (len, w) => {
+      let out = '';
+      for (let k = 0; k < 8; k++) {
+        out += '<path d="M80 ' + (80 - len) + ' l' + w + ' ' + w + ' l-' + w + ' ' + (len - 80 + 80 - w) + ' l-' + w + ' -' + (len - w) + ' Z" fill="' + m.rim + '" opacity=".9" transform="rotate(' + (k * 45) + ' 80 80)"/>';
+      }
+      return out;
+    };
     return '<circle cx="80" cy="80" r="76" fill="' + m.rim + '"/>'
-      + '<circle cx="80" cy="80" r="70" fill="' + m.face + '"/>'
-      + '<circle cx="80" cy="80" r="70" fill="none" stroke="' + m.ink + '" stroke-width="1.2" opacity=".25"/>'
-      + '<rect x="36" y="36" width="88" height="88" rx="12" fill="none" stroke="' + m.ink + '" stroke-width="3" opacity=".7"/>'
-      + '<rect x="43" y="43" width="74" height="74" rx="9" fill="#F0FAF5" opacity=".35"/>'
-      + cloud(30, 30, 1) + cloud(130, 30, -1) + cloud(30, 130, 1) + cloud(130, 130, -1)
-      + '<g stroke="' + m.ink + '" stroke-width="2" opacity=".6" fill="none"><path d="M80 126 v10"/></g>'
-      + '<g fill="' + m.ink + '" opacity=".6"><path d="M74 136 h12 l-2 12 h-8 Z"/><circle cx="80" cy="134" r="3.4"/></g>';
+      + '<circle cx="80" cy="80" r="71" fill="' + m.face + '"/>'
+      + '<circle cx="80" cy="80" r="71" fill="none" stroke="#4A3F6B" stroke-width="1.4"/>'
+      + stars
+      + '<circle cx="80" cy="80" r="52" fill="none" stroke="' + m.rim + '" stroke-width="1.6" opacity=".7"/>'
+      + '<circle cx="80" cy="80" r="49" fill="#1F1932" opacity=".45"/>'
+      + '<g opacity=".95"><circle cx="80" cy="42" r="7" fill="' + m.rim + '"/>'
+      + '<path d="M80 30 l2.4 6 6 2.4 -6 2.4 -2.4 6 -2.4 -6 -6 -2.4 6 -2.4 Z" fill="' + m.rim + '" opacity=".8"/></g>'
+      + '<g fill="' + m.rim + '" opacity=".85"><circle cx="66" cy="120" r="2.4"/><circle cx="80" cy="122" r="3"/><circle cx="94" cy="120" r="2.4"/></g>';
   }
+
 };
 
 /* ---- the coin, in whichever metal is chosen ---- */

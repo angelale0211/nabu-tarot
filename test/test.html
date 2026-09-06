@@ -576,6 +576,13 @@ async function go(hash, sel) { W().location.hash = hash; await sleep(30); return
         const hearts = d.querySelectorAll('.pats i').length;
         st.dispatchEvent(new w.PointerEvent('pointerup', { bubbles: true, clientX: r.left + 20, clientY: r.top + 40, pointerId: 3 }));
         ok(hearts > 3 && N.PETS.one('cat').xp > before, 'stroking the companion leaves hearts under the finger and earns a little as it goes'); }
+      { /* a drag let go anywhere at all leaves nothing behind on the screen */
+        const chip0 = d.querySelector('#foodchip');
+        chip0.dispatchEvent(new w.PointerEvent('pointerdown', { bubbles: true, clientX: 5, clientY: 5, pointerId: 9 }));
+        w.dispatchEvent(new w.PointerEvent('pointermove', { bubbles: true, clientX: 400, clientY: 900, pointerId: 9 }));
+        w.dispatchEvent(new w.PointerEvent('pointerup', { bubbles: true, clientX: 400, clientY: 900, pointerId: 9 }));
+        await sleep(40);
+        ok(!d.querySelector('.dragfood'), 'food let go away from the companion is cleared rather than left stuck on the screen'); }
       { /* the food can be carried onto the companion instead of tapping */
         const chip = d.querySelector('#foodchip'), st = d.querySelector('#petstage');
         const r = st.getBoundingClientRect(), meals = N.PETS.one('cat').meals;
@@ -604,6 +611,9 @@ async function go(hash, sel) { W().location.hash = hash; await sleep(30); return
           && pet.left > st.left && pet.right < st.right,
           'the companion stands on the ground under the tree, big enough to see, inside the picture');
         await go('#/play/pet', '.petstage'); }
+      { const bp = d.querySelector('.bless p'), bl = d.querySelector('.bless'), prev = bl.previousElementSibling;
+        ok(w.getComputedStyle(bp).textAlign === 'left' && bl.getBoundingClientRect().top - prev.getBoundingClientRect().bottom >= 16,
+          'the blessing reads left aligned and keeps clear of whatever sits above it'); }
       ok(d.querySelector('.bless p').textContent.length > 20 && JSON.parse(w.localStorage.getItem('nabu-pets'))[0].xp === 16 && !d.querySelector('#pray'),
         'the companion answers with a blessing of its own kind, once a day');
       { const P = N.PETS; w.localStorage.removeItem('nabu-xp-day');
