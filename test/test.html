@@ -799,6 +799,60 @@ async function go(hash, sel) { W().location.hash = hash; await sleep(30); return
       ok(/T\u00ed|Tied|bu\u1ed9c/i.test(N.loveBadgeHTML()) && /Nam/.test(N.loveBadgeHTML()),
         'the tag says where someone stands without asking the cloud again');
 
+      /* ---- the question ---- */
+      d.querySelector('#lvasknote').value = 'lấy anh nhé';
+      d.querySelector('#lvask').click(); await sleep(220);
+      ok(db.docs['bonds/uidA__uidB'].ask && db.docs['bonds/uidA__uidB'].ask.by === 'uidA'
+        && d.querySelector('.askcard.waiting') && d.querySelector('#lvunask'),
+        'proposing records only who is asking, and the asker waits with a way to take it back');
+      ok(/proposed/.test(d.querySelector('.lovecard').className) && d.querySelectorAll('.lovecard .threadart ellipse[stroke]').length > 0,
+        'the scene itself changes: one ring above the knot while the question is out');
+
+      N.BE.user = { uid: 'uidB', email: 'b@test' };
+      w.localStorage.removeItem('nabu-love');
+      /* Setting the hash to where it already is fires nothing, so the screen
+         has to be left before it can be entered as somebody else. */
+      await go('#/home', '#actwrap');
+      await go('#/love', '.askcard.theirs');
+      ok(/lấy anh nhé/.test(d.querySelector('.askcard.theirs').textContent)
+        && d.querySelector('#lvyes') && d.querySelector('#lvnotyet'),
+        'the other one sees the question, the line that came with it, and both answers');
+      d.querySelector('#lvyes').click(); await sleep(240);
+      const eng = db.docs['bonds/uidA__uidB'];
+      ok(eng.state === 'engaged' && !eng.ask && eng.engagedOn && d.querySelector('#lvmarry'),
+        'saying yes moves the stage on and puts the question away');
+      d.querySelector('#lvmarry').click(); await sleep(240);
+      ok(db.docs['bonds/uidA__uidB'].state === 'married' && d.querySelector('[data-role="mother"]') && d.querySelector('#lvshowpar'),
+        'the wedding sets the last stage, and each is asked what they want to be called - and whether to show it at all');
+      d.querySelector('[data-role="mother"]').click(); await sleep(200);
+      ok(db.docs['bonds/uidA__uidB'].bRole === 'mother' && !db.docs['bonds/uidA__uidB'].aRole,
+        'each of them writes only their own name for it');
+
+      /* ---- what they give each other ---- */
+      d.querySelector('#lvgnote').value = 'tặng em';
+      d.querySelector('[data-gift="rose"]').click(); await sleep(240);
+      const gk = Object.keys(db.docs).filter((k) => k.indexOf('bonds/uidA__uidB/gifts/') === 0);
+      ok(gk.length === 1 && db.docs[gk[0]].from === 'uidB' && db.docs[gk[0]].kind === 'rose'
+        && db.docs[gk[0]].note === 'tặng em' && d.querySelector('.lastgift'),
+        'a gift is its own document, signed by whoever gave it, and the newest one is shown large');
+      ok(N.GIFTS.length === 8 && d.querySelectorAll('.giftpick .gp').length === 8,
+        'eight things to give, each with a picture of its own');
+
+      /* ---- the four marks, and the line on the companion page ---- */
+      ok(N.loveMarkSVG('tied') !== N.loveMarkSVG('proposed') && N.loveMarkSVG('proposed') !== N.loveMarkSVG('engaged')
+        && N.loveMarkSVG('engaged') !== N.loveMarkSVG('married'),
+        'each of the four stages has a mark of its own, not one emoji for all of them');
+      w.localStorage.setItem('nabu-love', JSON.stringify({ bond: 'x', stage: 'married', parents: true, role: 'father', otherRole: 'mother', name: 'Nam', withName: 'Mai' }));
+      const fam = N.petParentsHTML();
+      ok(/Nam/.test(fam) && /Mai/.test(fam) && /\u2642/.test(fam) && /\u2640/.test(fam),
+        'a married pair are named on the companion page, each by the sign and the word they chose');
+      w.localStorage.setItem('nabu-love', JSON.stringify({ bond: 'x', stage: 'married', parents: false, role: 'father', otherRole: 'mother', name: 'Nam', withName: 'Mai' }));
+      ok(N.petParentsHTML() === '', 'and nothing is shown there unless it was asked for');
+
+      N.BE.user = { uid: 'uidA', email: 'a@test' };
+      w.localStorage.removeItem('nabu-love');
+      await go('#/home', '#actwrap');
+      await go('#/love', '#lvuntie');
       d.querySelector('#lvuntie').click(); await sleep(160);
       ok(!db.docs['bonds/uidA__uidB'] && d.querySelector('#lvfind') && N.loveBadgeHTML() === '',
         'either of them unties alone, and the page and the tag go back to how they were');

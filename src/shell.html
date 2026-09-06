@@ -1110,6 +1110,48 @@ h1 .pileico{width:34px;height:27px;vertical-align:-3px;margin-right:2px}
 /* The tag on the profile: a fixed blush ground, so a fixed ink to go on it. */
 .lovetag{display:inline-flex;align-items:center;gap:7px;background:#FCE4E9;color:#8A1F33;border:1px solid #F3B7C3;border-radius:999px;padding:5px 13px;font-size:13px;font-weight:600;text-decoration:none;margin:0 0 14px}
 .lovetag .d{color:#A85267;font-weight:500}
+.lovemark{width:26px;height:26px;flex:none;display:block}
+.lovemark.big{width:64px;height:64px;margin:0 auto 6px}
+.lovemark.inline{width:22px;height:22px;display:inline-block;vertical-align:-5px}
+.lovetag.st-engaged{background:#FFF3DC;border-color:#EBCB8E;color:#6B4D0F}
+.lovetag.st-engaged .d{color:#8A6A22}
+.lovetag.st-married{background:#F6ECFF;border-color:#D6BEF0;color:#4B2A6E}
+.lovetag.st-married .d{color:#6C4C94}
+/* The stage, named under the pair. */
+#main .lovecard .stagename{margin:4px 0 0;font-size:12px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--pink-ink)}
+:root[lang="vi"] #main .lovecard .stagename{text-transform:none;letter-spacing:.02em}
+/* The question, and its answer. */
+.askcard{text-align:center}
+.askcard h3{margin-bottom:4px}
+.askcard>b{display:block;font-family:var(--display);font-size:16px;margin-bottom:2px}
+.askcard .note{margin:8px 0;font-size:14px;background:var(--surface-2);border-radius:12px;padding:9px 12px}
+.askcard.theirs{border-color:var(--gold);box-shadow:0 0 0 1px var(--gold) inset}
+.askcard.done{background:linear-gradient(180deg,var(--tag-gold-bg),var(--surface))}
+.askcard .row2{margin-top:12px}
+.rolepick{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:8px 0 4px}
+.rolepick .rp{display:flex;flex-direction:column;align-items:center;gap:3px;background:var(--surface);border:1px solid var(--rule);border-radius:12px;padding:8px 4px;font-size:12.5px;font-weight:600}
+.rolepick .rp i{font-style:normal;font-size:19px;line-height:1;color:var(--link)}
+.rolepick .rp.on{border-color:var(--primary);background:var(--surface-2);box-shadow:0 0 0 1px var(--primary) inset}
+/* What has been given. */
+.giftart{width:34px;height:34px;display:block}
+.giftart.big{width:58px;height:58px}
+.giftcard .lastgift{display:flex;align-items:flex-start;gap:12px;background:var(--surface-2);border-radius:14px;padding:12px}
+.giftcard .lastgift b{display:block;font-size:14.5px}
+.giftcard .lastgift .note{margin:4px 0 2px;font-size:14px}
+.giftcard .lastgift .faint{font-size:12px}
+.giftrow{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
+.giftrow .gi{display:block;padding:4px;border-radius:10px;background:var(--surface-2)}
+.giftrow .gi.mine{background:var(--surface-3)}
+.giftpick{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:12px}
+.giftpick .gp{display:flex;flex-direction:column;align-items:center;gap:3px;background:var(--surface);border:1px solid var(--rule-soft);border-radius:12px;padding:8px 3px}
+.giftpick .gp b{font-size:10.5px;font-weight:600;line-height:1.2;text-align:center;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
+.giftpick .gp:disabled{opacity:.5}
+/* Short, and hard to miss: who this little one belongs to. */
+#main p.petfam{display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:6px;margin:12px 0 2px;font-size:13px}
+#main p.petfam b{font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--fg-faint)}
+:root[lang="vi"] #main p.petfam b{text-transform:none;letter-spacing:.02em}
+#main p.petfam .pp{display:inline-flex;align-items:center;gap:5px;background:var(--tag-pink-bg);color:var(--tag-pink-ink);border-radius:999px;padding:3px 11px;font-weight:600}
+#main p.petfam .pp i{font-style:normal;font-size:14px;opacity:.85}
 /* An invitation someone opened before they had an account, waiting on the
    profile screen for them to come back to it. */
 .lovetag.waiting{background:#FFF1DC;border-color:#EFCE9B;color:#7A4E14;display:flex}

@@ -1237,6 +1237,7 @@ function renderPet(want) {
       + (bless ? '<div class="bless"><span class="q">' + luck.sym + '</span><p>' + esc(L(bless)) + '</p><span class="who">' + esc(p.name || L(PET_NAMES[p.kind])) + '</span></div>'
         : '<p class="hint prayhint">' + esc(PETS.fedToday(p) ? S.petPrayHint : S.petNeedFeed) + '</p>')
       + '<div class="lucktag" style="--ink:' + (luck.deep || luck.ink) + ';--aura:' + luck.aura + '">' + luck.sym + ' ' + esc(S.petBrings(L(luck.name))) + '</div>'
+      + petParentsHTML()
       + '<p class="petline">' + esc(L(petLine(p.kind))) + '</p>'
       + (petIsPro(p.kind) ? '<p class="mythline">✨ ' + esc(S.petMythBonus(MYTH_XP)) + '</p>' : '')
       + '<div class="charm"><span class="lbl">' + esc(S.petLevel(st.lv)) + '</span><span class="bar"><i style="width:' + st.at + '%;background:' + luck.ink + '"></i></span>'
@@ -1628,6 +1629,20 @@ function petWearArt(id) {
     + '<path d="M30 28 l5 7 -5 7 -5 -7 Z" fill="#FFF3C4"/></svg>';
   return open + '<circle cx="30" cy="30" r="16" fill="none" stroke="#C9BFE0" stroke-width="2" stroke-dasharray="4 4"/></svg>';
 }
+/* Two married people, named on each other's companion page - if the person
+   whose phone this is asked for it, and only with the words each of them chose
+   for themselves. A sign, a name, nothing else. */
+function petParentsHTML() {
+  const S = T(), l = LOVE.local();
+  if (!l.parents || l.stage !== 'married' || !l.bond) return '';
+  const sym = { mother: '\u2640', father: '\u2642' };
+  const who = [[l.role, LOVE.local().name || PROFILE.name || ''], [l.otherRole, l.withName || '']]
+    .filter((x) => sym[x[0]] && x[1])
+    .map((x) => '<span class="pp"><i>' + sym[x[0]] + '</i>' + esc(x[1]) + '</span>');
+  if (!who.length) return '';
+  return '<p class="petfam"><b>' + esc(S.petParents) + '</b>' + who.join('') + '</p>';
+}
+
 /* ---- the reminder ----
    Called once when the app starts. It can only reach someone who has the app
    open, since there is no server here to push anything, so it is deliberately

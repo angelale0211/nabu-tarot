@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
 <title>Nabu Tarot</title>
 <meta name="description" content="Nabu Tarot: dự đoán mới, rút một lá bài xem năng lượng hiện tại, học tarot, Lenormand, chiêm tinh, và đặt lịch xem bài.">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'none'; object-src 'none'; form-action 'self'; script-src 'self' 'sha256-ww4SlcOowcN0H5YqjzeKSMroTSEhMpKdhnYHTn5OqWo=' https://www.gstatic.com https://apis.google.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; font-src 'self' data:; media-src 'self' data: blob:; worker-src 'self'; connect-src 'self' https://*.googleapis.com https://*.google.com https://*.firebaseio.com https://*.cloudfunctions.net https://*.workers.dev https://generativelanguage.googleapis.com; frame-src https://*.firebaseapp.com https://accounts.google.com https://*.facebook.com">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'none'; object-src 'none'; form-action 'self'; script-src 'self' 'sha256-UDLpjyGiS1zIWzU0U/HEudKQCXuxT+Lf72wEq4P2FC8=' https://www.gstatic.com https://apis.google.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; font-src 'self' data:; media-src 'self' data: blob:; worker-src 'self'; connect-src 'self' https://*.googleapis.com https://*.google.com https://*.firebaseio.com https://*.cloudfunctions.net https://*.workers.dev https://generativelanguage.googleapis.com; frame-src https://*.firebaseapp.com https://accounts.google.com https://*.facebook.com">
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <meta name="theme-color" content="#EFE9FA">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -1276,6 +1276,48 @@ h1 .pileico{width:34px;height:27px;vertical-align:-3px;margin-right:2px}
 /* The tag on the profile: a fixed blush ground, so a fixed ink to go on it. */
 .lovetag{display:inline-flex;align-items:center;gap:7px;background:#FCE4E9;color:#8A1F33;border:1px solid #F3B7C3;border-radius:999px;padding:5px 13px;font-size:13px;font-weight:600;text-decoration:none;margin:0 0 14px}
 .lovetag .d{color:#A85267;font-weight:500}
+.lovemark{width:26px;height:26px;flex:none;display:block}
+.lovemark.big{width:64px;height:64px;margin:0 auto 6px}
+.lovemark.inline{width:22px;height:22px;display:inline-block;vertical-align:-5px}
+.lovetag.st-engaged{background:#FFF3DC;border-color:#EBCB8E;color:#6B4D0F}
+.lovetag.st-engaged .d{color:#8A6A22}
+.lovetag.st-married{background:#F6ECFF;border-color:#D6BEF0;color:#4B2A6E}
+.lovetag.st-married .d{color:#6C4C94}
+/* The stage, named under the pair. */
+#main .lovecard .stagename{margin:4px 0 0;font-size:12px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--pink-ink)}
+:root[lang="vi"] #main .lovecard .stagename{text-transform:none;letter-spacing:.02em}
+/* The question, and its answer. */
+.askcard{text-align:center}
+.askcard h3{margin-bottom:4px}
+.askcard>b{display:block;font-family:var(--display);font-size:16px;margin-bottom:2px}
+.askcard .note{margin:8px 0;font-size:14px;background:var(--surface-2);border-radius:12px;padding:9px 12px}
+.askcard.theirs{border-color:var(--gold);box-shadow:0 0 0 1px var(--gold) inset}
+.askcard.done{background:linear-gradient(180deg,var(--tag-gold-bg),var(--surface))}
+.askcard .row2{margin-top:12px}
+.rolepick{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:8px 0 4px}
+.rolepick .rp{display:flex;flex-direction:column;align-items:center;gap:3px;background:var(--surface);border:1px solid var(--rule);border-radius:12px;padding:8px 4px;font-size:12.5px;font-weight:600}
+.rolepick .rp i{font-style:normal;font-size:19px;line-height:1;color:var(--link)}
+.rolepick .rp.on{border-color:var(--primary);background:var(--surface-2);box-shadow:0 0 0 1px var(--primary) inset}
+/* What has been given. */
+.giftart{width:34px;height:34px;display:block}
+.giftart.big{width:58px;height:58px}
+.giftcard .lastgift{display:flex;align-items:flex-start;gap:12px;background:var(--surface-2);border-radius:14px;padding:12px}
+.giftcard .lastgift b{display:block;font-size:14.5px}
+.giftcard .lastgift .note{margin:4px 0 2px;font-size:14px}
+.giftcard .lastgift .faint{font-size:12px}
+.giftrow{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
+.giftrow .gi{display:block;padding:4px;border-radius:10px;background:var(--surface-2)}
+.giftrow .gi.mine{background:var(--surface-3)}
+.giftpick{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:12px}
+.giftpick .gp{display:flex;flex-direction:column;align-items:center;gap:3px;background:var(--surface);border:1px solid var(--rule-soft);border-radius:12px;padding:8px 3px}
+.giftpick .gp b{font-size:10.5px;font-weight:600;line-height:1.2;text-align:center;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
+.giftpick .gp:disabled{opacity:.5}
+/* Short, and hard to miss: who this little one belongs to. */
+#main p.petfam{display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:6px;margin:12px 0 2px;font-size:13px}
+#main p.petfam b{font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--fg-faint)}
+:root[lang="vi"] #main p.petfam b{text-transform:none;letter-spacing:.02em}
+#main p.petfam .pp{display:inline-flex;align-items:center;gap:5px;background:var(--tag-pink-bg);color:var(--tag-pink-ink);border-radius:999px;padding:3px 11px;font-weight:600}
+#main p.petfam .pp i{font-style:normal;font-size:14px;opacity:.85}
 /* An invitation someone opened before they had an account, waiting on the
    profile screen for them to come back to it. */
 .lovetag.waiting{background:#FFF1DC;border-color:#EFCE9B;color:#7A4E14;display:flex}
@@ -1865,6 +1907,28 @@ const STR = {
     actPickHint: 'Bạn chạm vào tụ bài mà mình thấy bị thu hút nhất. Nabu sẽ đăng thông điệp của từng tụ sau vài ngày.', actPicked: (n) => 'Bạn đã chọn tụ ' + n + '.', actComeBack: (d) => 'Quay lại vào ' + d + ' để lật bài xem thông điệp.', actChangePile: 'Đổi sang tụ khác?', actPickToSee: 'Thông điệp đã có. Chạm vào một tụ để lật lên.', actTapOthers: 'Tụ bạn chọn đã lật lên. Bạn có thể chạm vào tụ khác để xem thử.',
     actVoteHint: 'Bạn chạm vào một lựa chọn. Mỗi người chỉ được bình chọn một lần.', actVoteLogin: 'Bạn cần đăng nhập để bình chọn và xem kết quả.', actVoted: 'Cảm ơn bạn đã bình chọn!', actClosedNote: 'Bình chọn đã đóng. Đây là kết quả.', actVotes: (n) => n + ' phiếu',
     actWishPh: 'Điều mình ước lúc này là…', actWishSend: 'Gửi vào vũ trụ', actWishHint: 'Bạn viết ngắn gọn, ở thì hiện tại, rồi gửi đi. Điều ước chỉ được lưu trên máy của bạn và không ai đọc được.', actWishCount: (n) => 'Bạn đã gửi ' + n + ' điều ước ở đây.', actWishSent: 'Đã gửi. Giờ đến lượt bạn làm bước đầu tiên. ✨', actWishEmpty: 'Bạn viết điều ước trước nhé.', actWishClear: 'Xoá các điều ước đã lưu trên máy', actWishClearConfirm: 'Xoá các điều ước đã lưu trên máy này?',
+    loveStage: { tied: 'Đang buộc chỉ', proposed: 'Đang đợi câu trả lời', engaged: 'Đã đính ước', married: 'Đã cưới' },
+    loveTagOf: { tied: 'Đang buộc chỉ', proposed: 'Đang đợi trả lời', engaged: 'Đã đính ước', married: 'Đã cưới' },
+    loveAskTitle: 'Cầu hôn', loveAskHint: 'Bạn gửi một chiếc nhẫn sang bên kia. Người ấy trả lời được hoặc chưa trả lời cũng không sao — bạn rút lại lúc nào cũng được.',
+    loveAskNotePh: 'Một câu cho người ấy…', loveAskDo: '💍 Gửi lời cầu hôn', loveAskDone: 'Đã gửi 💍',
+    loveAskSent: 'Bạn đã cầu hôn.', loveAskSentHint: (n) => 'Đang đợi ' + n + ' trả lời.', loveAskTakeBack: 'Rút lại',
+    loveAskGot: (n) => n + ' đã cầu hôn bạn.', loveAskYes: 'Đồng ý', loveAskNotYet: 'Chưa phải lúc này',
+    loveAskNotYetHint: 'Chọn “Chưa phải lúc này” thì mọi thứ giữ nguyên như cũ, chỉ câu hỏi được cất đi.',
+    loveAskYesDone: 'Đã đính ước 💍', loveEngaged: 'Hai bạn đã đính ước.', loveEngagedOn: (d) => 'Từ ngày ' + d,
+    loveMarryDo: 'Làm lễ cưới', loveMarryHint: 'Cả hai cùng chọn ngày, thiệp mời và khách dự sẽ tới ở bản sau.',
+    loveMarried: 'Hai bạn đã cưới.', loveMarriedOn: (d) => 'Từ ngày ' + d, loveMarriedDone: 'Chúc mừng hai bạn 🌿',
+    loveRoleAsk: 'Trên trang bạn nhỏ, bạn muốn được gọi là gì?',
+    loveRoleMother: 'Mẹ', loveRoleFather: 'Bố', loveRoleNone: 'Không hiện',
+    loveShowParents: 'Hiện tên bố mẹ trên trang bạn nhỏ',
+    loveShowParentsHint: 'Chỉ hiện trên máy của bạn thôi. Bạn tắt lúc nào cũng được.',
+    loveShowParentsOn: 'Đã bật.', loveShowParentsOff: 'Đã tắt.',
+    petParents: 'Bố mẹ',
+    loveGiftTitle: 'Tặng quà', loveGiftHint: 'Mỗi ngày bạn tặng được ba món. Quà ở lại đây, không mất đi.',
+    loveGiftNone: 'Chưa có món quà nào. Bạn tặng trước nhé.',
+    loveGiftYouGave: (g) => 'Bạn đã tặng ' + g,
+    loveGiftTheyGave: (n, g) => n + ' đã tặng bạn ' + g,
+    loveGiftNotePh: 'Viết kèm một câu…', loveGiftSent: 'Đã tặng 🌿',
+    loveGiftLeft: (n) => 'Hôm nay bạn còn tặng được ' + n + ' món.', loveGiftDone: 'Hôm nay bạn tặng đủ rồi. Mai tặng tiếp nhé.',
     loveYou: 'Bạn',
     loveNotHere: 'Không tìm thấy ai mang tên này.',
     loveNotHereWhy: 'Thường là vì người ấy chưa dùng Nabu bao giờ. Bạn tạo một link mời rồi gửi cho người ấy nhé — mở link lên, tạo tài khoản, là nhận được sợi chỉ của bạn.',
@@ -2268,6 +2332,28 @@ const STR = {
     actPickHint: 'Tap the pile that pulls you. Nabu posts each pile\'s message a few days later.', actPicked: (n) => 'You chose pile ' + n + '.', actComeBack: (d) => 'Come back on ' + d + ' to flip it over.', actChangePile: 'Switch to another pile?', actPickToSee: 'The messages are in. Tap a pile to flip it.', actTapOthers: 'Your pile is open. Tap another pile to peek.',
     actVoteHint: 'Tap an option. One vote per person.', actVoteLogin: 'Sign in to vote and see the results.', actVoted: 'Thank you for voting!', actClosedNote: 'Voting is closed. Here are the results.', actVotes: (n) => n + ' votes',
     actWishPh: 'Right now I wish…', actWishSend: 'Send it to the universe', actWishHint: 'Keep it short, in the present tense, then send. Wishes stay on your device; nobody reads them.', actWishCount: (n) => 'You have sent ' + n + ' wishes here.', actWishSent: 'Sent. Now the first step is yours. ✨', actWishEmpty: 'Write your wish first.', actWishClear: 'Clear the wishes saved on this device', actWishClearConfirm: 'Clear the wishes saved on this device?',
+    loveStage: { tied: 'Tied by the thread', proposed: 'Waiting for an answer', engaged: 'Engaged', married: 'Married' },
+    loveTagOf: { tied: 'Tied', proposed: 'Waiting for an answer', engaged: 'Engaged', married: 'Married' },
+    loveAskTitle: 'Propose', loveAskHint: 'You send a ring across. They can answer, or not answer yet — and you can take it back at any time.',
+    loveAskNotePh: 'Something to say with it…', loveAskDo: '💍 Send the ring', loveAskDone: 'Sent 💍',
+    loveAskSent: 'You have proposed.', loveAskSentHint: (n) => 'Waiting for ' + n + ' to answer.', loveAskTakeBack: 'Take it back',
+    loveAskGot: (n) => n + ' has proposed to you.', loveAskYes: 'Yes', loveAskNotYet: 'Not yet',
+    loveAskNotYetHint: '“Not yet” leaves everything exactly as it is and simply puts the question away.',
+    loveAskYesDone: 'Engaged 💍', loveEngaged: 'You are engaged.', loveEngagedOn: (d) => 'Since ' + d,
+    loveMarryDo: 'Hold the wedding', loveMarryHint: 'Choosing the day together, the invitation card and the guests are coming in a later release.',
+    loveMarried: 'You are married.', loveMarriedOn: (d) => 'Since ' + d, loveMarriedDone: 'Congratulations 🌿',
+    loveRoleAsk: 'On the companion page, what would you like to be called?',
+    loveRoleMother: 'Mother', loveRoleFather: 'Father', loveRoleNone: 'Do not show me',
+    loveShowParents: 'Show the parents on the companion page',
+    loveShowParentsHint: 'On your phone only. You can turn it off whenever you like.',
+    loveShowParentsOn: 'Turned on.', loveShowParentsOff: 'Turned off.',
+    petParents: 'Parents',
+    loveGiftTitle: 'Give something', loveGiftHint: 'Three a day each. What is given stays here.',
+    loveGiftNone: 'Nothing has been given yet. You could go first.',
+    loveGiftYouGave: (g) => 'You gave ' + g,
+    loveGiftTheyGave: (n, g) => n + ' gave you ' + g,
+    loveGiftNotePh: 'A line to go with it…', loveGiftSent: 'Given 🌿',
+    loveGiftLeft: (n) => n + ' left to give today.', loveGiftDone: 'That is all for today. More tomorrow.',
     loveYou: 'You',
     loveNotHere: 'Nobody here has that handle.',
     loveNotHereWhy: 'Usually that means they have never opened Nabu. Make an invitation link and send it to them — they open it, make an account, and your thread is waiting for them.',
@@ -12727,6 +12813,18 @@ const LOVE = {
     if (isNaN(from)) return 0;
     return Math.max(0, Math.floor((Date.now() - from.getTime()) / 86400000));
   },
+  /* Which of the four stages this is, from the bond and the question on it. */
+  stage(bond) {
+    if (!bond) return 'none';
+    if (bond.state === 'married') return 'married';
+    if (bond.state === 'engaged') return 'engaged';
+    return bond.ask && bond.ask.by ? 'proposed' : 'tied';
+  },
+  role(bond, uid) { return bond && (bond.a === uid ? bond.aRole : bond.bRole) || ''; },
+  giftsToday(gifts, uid) {
+    const day = isoDate(new Date());
+    return (gifts || []).filter((g) => g.from === uid && isoDate(new Date(g.at || 0)) === day).length;
+  },
   /* Round numbers worth noticing, and the next one coming. */
   marks: [7, 30, 100, 200, 365, 500, 730, 1000, 1461, 3650],
   nextMark(days) {
@@ -12734,6 +12832,135 @@ const LOVE = {
     return m ? { at: m, inDays: m - days } : null;
   }
 };
+
+
+
+/* ---- what can be given ----
+   Flowers mostly, because flowers are what people give. Each is drawn, so they
+   sit together as one set rather than as whatever the phone's emoji font
+   happens to do that year. */
+const GIFTS = [
+  { id: 'rose', name: { vi: 'H\u1ed3ng nhung', en: 'A red rose' } },
+  { id: 'lotus', name: { vi: 'Sen h\u1ed3ng', en: 'A lotus' } },
+  { id: 'daisy', name: { vi: 'C\u00fac tr\u1eafng', en: 'A daisy' } },
+  { id: 'tulip', name: { vi: 'Tulip v\u00e0ng', en: 'A tulip' } },
+  { id: 'letter', name: { vi: 'Th\u01b0 tay', en: 'A letter' } },
+  { id: 'cake', name: { vi: 'B\u00e1nh ng\u1ecdt', en: 'Something sweet' } },
+  { id: 'star', name: { vi: 'M\u1ed9t v\u00ec sao', en: 'A star' } },
+  { id: 'moon', name: { vi: 'M\u1ea3nh tr\u0103ng', en: 'A piece of the moon' } }
+];
+const GIFT_PER_DAY = 3;
+function giftName(id) { const g = GIFTS.filter((x) => x.id === id)[0]; return g ? L(g.name) : ''; }
+function giftArt(id, cls) {
+  const open = '<svg viewBox="0 0 48 48" class="giftart ' + (cls || '') + '" aria-hidden="true">';
+  const stem = '<path d="M24 44 q-1 -12 0 -18" stroke="#5E9E76" stroke-width="2.6" fill="none" stroke-linecap="round"/>'
+    + '<path d="M24 36 q-9 -3 -11 -10 q9 0 11 8 Z" fill="#8FD1A6"/>'
+    + '<path d="M24 32 q9 -3 11 -10 q-9 0 -11 8 Z" fill="#7FBF95"/>';
+  if (id === 'rose') return open + stem
+    + '<circle cx="24" cy="17" r="11" fill="#C6485C"/>'
+    + '<path d="M24 8 q11 4 9 14 q-3 8 -12 8 q6 -4 6 -11 q0 -8 -3 -11 Z" fill="#DF6076"/>'
+    + '<path d="M24 12 a5.5 5.5 0 1 1 -.1 0 M20 17 q4 -5 8 -1" stroke="#8E2438" stroke-width="1.6" fill="none"/></svg>';
+  if (id === 'lotus') return open
+    + '<ellipse cx="24" cy="38" rx="17" ry="4.5" fill="#8FD1A6"/>'
+    + '<path d="M24 34 q-15 -4 -17 -14 q11 0 17 10 Z" fill="#F7A9C6"/>'
+    + '<path d="M24 34 q15 -4 17 -14 q-11 0 -17 10 Z" fill="#F7A9C6"/>'
+    + '<path d="M24 32 q-9 -8 -7 -20 q8 6 7 18 Z" fill="#FBC7DA"/>'
+    + '<path d="M24 32 q9 -8 7 -20 q-8 6 -7 18 Z" fill="#FBC7DA"/>'
+    + '<path d="M24 30 q-4 -12 0 -22 q4 10 0 22 Z" fill="#FFF0F5"/><circle cx="24" cy="24" r="3" fill="#E5BE5E"/></svg>';
+  if (id === 'daisy') return open + stem
+    + [0, 45, 90, 135, 180, 225, 270, 315].map((a) => '<ellipse cx="24" cy="10.5" rx="3.6" ry="7.5" fill="#FFFDF8" stroke="#E6DCC8" stroke-width="1" transform="rotate(' + a + ' 24 18)"/>').join('')
+    + '<circle cx="24" cy="18" r="5" fill="#E5BE5E"/></svg>';
+  if (id === 'tulip') return open + stem
+    + '<path d="M14 16 q0 14 10 16 q10 -2 10 -16 q-4 5 -6 1 q-3 6 -8 0 q-2 4 -6 -1 Z" fill="#E5BE5E"/>'
+    + '<path d="M24 32 q-6 -4 -8 -14 q4 3 8 3 Z" fill="#F0D08A"/></svg>';
+  if (id === 'letter') return open
+    + '<rect x="7" y="13" width="34" height="24" rx="3" fill="#FFF9F2" stroke="#D9C7A8" stroke-width="1.6"/>'
+    + '<path d="M7 15 L24 27 L41 15" fill="none" stroke="#D9C7A8" stroke-width="1.8"/>'
+    + '<path d="M24 24 a4 4 0 1 1 4 4 q-4 3 -8 0 a4 4 0 1 1 4 -4 Z" fill="#D6314B"/></svg>';
+  if (id === 'cake') return open
+    + '<rect x="10" y="24" width="28" height="15" rx="3" fill="#F6DCC6"/>'
+    + '<path d="M10 26 q7 5 14 0 q7 5 14 0 v-4 q-7 -5 -14 0 q-7 5 -14 0 Z" fill="#FBC7DA"/>'
+    + '<circle cx="17" cy="33" r="1.8" fill="#C6485C"/><circle cx="24" cy="35" r="1.8" fill="#E5BE5E"/><circle cx="31" cy="33" r="1.8" fill="#C6485C"/>'
+    + '<path d="M24 22 v-6" stroke="#E5BE5E" stroke-width="2"/><ellipse cx="24" cy="13" rx="2.4" ry="3.4" fill="#FFE9A8"/></svg>';
+  if (id === 'moon') return open
+    + '<path fill-rule="evenodd" fill="#FFE9A8" d="M24 24 m-15 0 a15 15 0 1 0 30 0 a15 15 0 1 0 -30 0 M31 18 m-13 0 a13 13 0 1 0 26 0 a13 13 0 1 0 -26 0"/>'
+    + '<circle cx="14" cy="26" r="2" fill="#F0D08A"/><circle cx="19" cy="33" r="1.4" fill="#F0D08A"/></svg>';
+  return open
+    + '<path d="M24 5 l5.4 11.6 12.6 1.8 -9.2 8.8 2.3 12.6 -11.1 -6.1 -11.1 6.1 2.3 -12.6 -9.2 -8.8 12.6 -1.8 Z" fill="#FFE9A8" stroke="#E5BE5E" stroke-width="1.4"/>'
+    + '<path d="M24 12 l3 6.6 7 1 -5 4.8 1.2 7 -6.2 -3.4 Z" fill="#FFF7EE" opacity=".7"/></svg>';
+}
+
+/* ---- rings ----
+   A band seen a little from above: a dark inner edge, gold over it, one lit arc
+   along the top left, and a cut stone standing on the crown. */
+const RING_GOLD = '#E5BE5E', RING_DEEP = '#A87A21', RING_LIT = '#FFF3C4';
+function ringArt(cx, cy, r, tilt, stone) {
+  const ry = r * 0.94;
+  const gem = stone === false ? '' : '<g transform="translate(0,' + (-ry - 6).toFixed(1) + ')">'
+    + '<path d="M-7.4 0 L-4 -6.4 L4 -6.4 L7.4 0 L0 8.8 Z" fill="#FBD3E1"/>'
+    + '<path d="M-7.4 0 L7.4 0 L0 8.8 Z" fill="#F2A9C4"/>'
+    + '<path d="M-4 -6.4 L4 -6.4 L2 0 L-2 0 Z" fill="#FFF9FB"/>'
+    + '<path d="M-7.4 0 L-4 -6.4 L-2 0 Z" fill="#FFEAF1"/>'
+    + '<path d="M7.4 0 L4 -6.4 L2 0 Z" fill="#FFEAF1"/></g>';
+  return '<g transform="translate(' + cx + ',' + cy + ')' + (tilt ? ' rotate(' + tilt + ')' : '') + '">'
+    + '<ellipse rx="' + r + '" ry="' + ry.toFixed(1) + '" fill="none" stroke="' + RING_DEEP + '" stroke-width="7"/>'
+    + '<ellipse rx="' + r + '" ry="' + ry.toFixed(1) + '" fill="none" stroke="' + RING_GOLD + '" stroke-width="4.6"/>'
+    + '<path d="M' + (-r * 0.72).toFixed(1) + ' ' + (-ry * 0.6).toFixed(1) + ' A ' + r + ' ' + ry.toFixed(1)
+    + ' 0 0 1 ' + (r * 0.24).toFixed(1) + ' ' + (-ry * 0.98).toFixed(1) + '" fill="none" stroke="' + RING_LIT
+    + '" stroke-width="1.8" stroke-linecap="round" opacity=".9"/>'
+    + gem + '</g>';
+}
+/* Two of them hooked through one another. The near ring is drawn, then the far
+   one, then the near one's right side again on top - which is what makes them
+   look linked rather than laid side by side. */
+function ringPairArt(cx, cy, r) {
+  const ry = r * 0.94, gap = r * 0.78;
+  const lx = cx - gap, rx2 = cx + gap;
+  const ax = lx + r * 0.766, ay1 = cy - ry * 0.643, ay2 = cy + ry * 0.643;
+  const front = 'M' + ax.toFixed(1) + ' ' + ay1.toFixed(1) + ' A ' + r + ' ' + ry.toFixed(1)
+    + ' 0 0 1 ' + ax.toFixed(1) + ' ' + ay2.toFixed(1);
+  return ringArt(lx, cy, r, -8, false) + ringArt(rx2, cy, r, 8, true)
+    + '<path d="' + front + '" fill="none" stroke="' + RING_DEEP + '" stroke-width="7" stroke-linecap="round"/>'
+    + '<path d="' + front + '" fill="none" stroke="' + RING_GOLD + '" stroke-width="4.6" stroke-linecap="round"/>';
+}
+/* An arch of small blossoms over the top, for the one stage that earns it. */
+function wreathArt(cx, cy, span) {
+  const bud = (x, y, c, s) => '<g transform="translate(' + x.toFixed(1) + ',' + y.toFixed(1) + ') scale(' + s + ')">'
+    + [0, 72, 144, 216, 288].map((a) => '<ellipse cx="0" cy="-3.6" rx="2.4" ry="3.6" fill="' + c + '" transform="rotate(' + a + ')"/>').join('')
+    + '<circle r="1.7" fill="' + RING_LIT + '"/></g>';
+  const cols = ['#F7A9C6', '#FFF3C4', '#C9B0EA', '#FBD3E1', '#F7A9C6'];
+  const sc = Math.max(0.5, Math.min(1, span / 60));
+  /* How far the arch dips at its ends and lifts in the middle follows its
+     width, so the same drawing works at 48 across and at 240. */
+  const drop = span * 0.42, rise = span * 0.28;
+  let out = '<path d="M' + (cx - span) + ' ' + (cy + drop).toFixed(1) + ' Q' + cx + ' ' + (cy - rise).toFixed(1)
+    + ' ' + (cx + span) + ' ' + (cy + drop).toFixed(1)
+    + '" fill="none" stroke="#8FBF7F" stroke-width="' + (span > 30 ? 2.4 : 1.8) + '" stroke-linecap="round"/>';
+  for (let i = 0; i <= 8; i++) {
+    const t = i / 8, mt = 1 - t;
+    const x = mt * mt * (cx - span) + 2 * mt * t * cx + t * t * (cx + span);
+    const y = mt * mt * (cy + drop) + 2 * mt * t * (cy - rise) + t * t * (cy + drop);
+    out += (i % 2)
+      ? '<ellipse cx="' + x.toFixed(1) + '" cy="' + (y + sc * 5).toFixed(1) + '" rx="' + (4.6 * sc).toFixed(1) + '" ry="' + (2.6 * sc).toFixed(1) + '" fill="#8FD1A6" transform="rotate(' + (t * 60 - 30).toFixed(0) + ' ' + x.toFixed(1) + ' ' + (y + sc * 5).toFixed(1) + ')"/>'
+      : bud(x, y, cols[(i / 2) % cols.length], sc);
+  }
+  return out;
+}
+/* The same four marks, small, for the tag on a profile and the tile on the home
+   screen. Whatever says where somebody stands should say it the same way
+   everywhere it appears. */
+function loveMarkSVG(state, cls) {
+  const st = state || 'tied';
+  const open = '<svg viewBox="0 0 48 48" class="lovemark ' + (cls || '') + '" aria-hidden="true">';
+  if (st === 'proposed') return open + ringArt(24, 28, 12, -8, true) + '</svg>';
+  if (st === 'engaged') return open + ringPairArt(24, 27, 11) + '</svg>';
+  if (st === 'married') return open + ringPairArt(24, 33, 10) + wreathArt(24, 11, 18) + '</svg>';
+  return open
+    + '<path d="M8 34 q10 -6 14 -12 M40 34 q-10 -6 -14 -12" stroke="#D6314B" stroke-width="3" fill="none" stroke-linecap="round"/>'
+    + '<circle cx="24" cy="20" r="8" fill="#D6314B"/><circle cx="24" cy="20" r="3.4" fill="#F2789F"/>'
+    + '<path d="M16 12 q8 -7 16 0 M16 28 q8 7 16 0" stroke="#D6314B" stroke-width="3" fill="none" stroke-linecap="round"/>'
+    + '</svg>';
+}
 
 /* ---- the thread itself ----
    Two hands, little fingers reaching towards each other, and the knot between
@@ -12760,15 +12987,29 @@ function threadSVG(state, still) {
     + '<circle cx="120" cy="109" r="8.5" fill="' + RED + '"/><circle cx="120" cy="109" r="3.6" fill="' + SOFT + '"/>'
     + '<path d="M112 101 q8 -7 16 0 M112 117 q8 7 16 0" stroke="' + RED + '" stroke-width="3" fill="none" stroke-linecap="round"/>'
     + '</g>';
-  const rings = state === 'married'
-    ? '<g fill="none" stroke="#E5BE5E" stroke-width="3"><circle cx="107" cy="150" r="9"/><circle cx="133" cy="150" r="9"/></g>'
+  /* What floats above the knot says which stage this is. Nothing while it is
+     only a thread; one ring while the question is out; two hooked together
+     once it has been answered; and an arch of flowers over them at the end. */
+  const st = state || 'tied';
+  const above = st === 'proposed' ? ringArt(120, 44, 24, -8, true)
+    : st === 'engaged' ? ringPairArt(120, 46, 22)
+      : st === 'married' ? ringPairArt(120, 52, 21) + wreathArt(120, 20, 62)
+        : '';
+  /* The thread reaches up to whatever is waiting there. */
+  const reach = above
+    ? '<path class="reach" d="M120 100 q-7 -22 0 -34" stroke="' + RED + '" stroke-width="2" fill="none" stroke-linecap="round" opacity=".5"/>'
+    : '';
+  const spark = st === 'proposed' && !still
+    ? '<g fill="#FFF3C4" class="sparks"><path class="twinkle" d="M86 30 l2.4 5 5 2.4 -5 2.4 -2.4 5 -2.4 -5 -5 -2.4 5 -2.4 Z"/>'
+      + '<path class="twinkle" style="animation-delay:900ms" d="M156 26 l2 4.2 4.2 2 -4.2 2 -2 4.2 -2 -4.2 -4.2 -2 4.2 -2 Z"/>'
+      + '<path class="twinkle" style="animation-delay:1700ms" d="M150 74 l1.8 3.8 3.8 1.8 -3.8 1.8 -1.8 3.8 -1.8 -3.8 -3.8 -1.8 3.8 -1.8 Z"/></g>'
     : '';
   return '<svg viewBox="0 0 240 178" class="threadart" role="img" aria-hidden="true">'
     + '<ellipse cx="120" cy="168" rx="80" ry="7" fill="#C9A5D8" opacity=".2"/>'
     + hand(false) + hand(true)
     + '<path d="M120 114 q-26 22 -58 26" stroke="' + RED + '" stroke-width="2.2" fill="none" stroke-linecap="round" opacity=".55"/>'
     + '<path d="M120 114 q26 22 58 26" stroke="' + RED + '" stroke-width="2.2" fill="none" stroke-linecap="round" opacity=".55"/>'
-    + knot + rings
+    + reach + knot + above + spark
     + '</svg>';
 }
 
@@ -12905,6 +13146,40 @@ const LOVEDB = {
     await BE.db.collection('bonds').doc(id).update({ since: iso });
     LOVE.save({ since: iso });
   },
+  /* A question, written as who is asking. The server will not take an ask
+     that names anybody but the person writing it, so nobody can record that
+     they were asked and then agree with themselves. */
+  async propose(id, note) {
+    await BE.db.collection('bonds').doc(id).update({
+      ask: { by: this.me(), at: Date.now(), note: String(note || '').slice(0, 200) }
+    });
+  },
+  async unask(id) { await BE.db.collection('bonds').doc(id).update({ ask: null }); },
+  /* Yes moves the stage on. Not yet clears the question and changes nothing
+     else, which is the whole point of it being a question. */
+  async sayYes(id) {
+    await BE.db.collection('bonds').doc(id).update({ state: 'engaged', ask: null, engagedOn: isoDate(new Date()) });
+  },
+  async marry(id) {
+    await BE.db.collection('bonds').doc(id).update({ state: 'married', ask: null, marriedOn: isoDate(new Date()) });
+  },
+  /* How each of them is named on the other's companion page, once they are
+     married. Each writes only their own. */
+  async setRole(id, bond, role) {
+    const k = bond.a === this.me() ? 'aRole' : 'bRole';
+    const patch = {}; patch[k] = role;
+    await BE.db.collection('bonds').doc(id).update(patch);
+  },
+  async giveGift(id, kind, note) {
+    await BE.db.collection('bonds').doc(id).collection('gifts').doc(loveToken()).set({
+      from: this.me(), kind: kind, note: String(note || '').slice(0, 200), at: Date.now()
+    });
+  },
+  watchGifts(id, cb) {
+    if (!this.ok() || !id) return () => {};
+    return BE.db.collection('bonds').doc(id).collection('gifts')
+      .onSnapshot((s) => cb(s.docs.map((d) => Object.assign({ id: d.id }, d.data())).sort((x, y) => (y.at || 0) - (x.at || 0))), () => cb([]));
+  },
   /* Untying is one person's decision and needs nobody's permission. */
   async untie(id) {
     await BE.db.collection('bonds').doc(id).delete();
@@ -12923,7 +13198,9 @@ function loveBadgeHTML() {
       + '<b>' + esc(S.loveJoinWaiting) + '</b><span class="d">' + esc(S.loveJoinOpen) + ' ›</span></a>';
   }
   if (!l.bond) return '';
-  return '<a class="lovetag" href="#/love"><span class="k">🧵</span><b>' + esc(S.loveTagTied) + '</b>'
+  const st = l.stage || 'tied';
+  return '<a class="lovetag st-' + esc(st) + '" href="#/love">' + loveMarkSVG(st, 'tag')
+    + '<b>' + esc(S.loveTagOf[st] || S.loveTagTied) + '</b>'
     + (l.withName ? '<span class="w">' + esc(l.withName) + '</span>' : '')
     + '<span class="d">' + esc(S.loveDaysN(LOVE.days({ since: l.since }))) + '</span></a>';
 }
@@ -13071,25 +13348,119 @@ function renderLove(wantHandle) {
     });
   };
 
-  const drawBond = (bond) => {
+  const drawBond = (bond, gifts) => {
     const me = LOVEDB.me(), you = LOVE.other(bond, me), mine = LOVE.mine(bond, me);
     const days = LOVE.days(bond), next = LOVE.nextMark(days);
     const nameOf = (p) => (p && (p.name || (p.handle ? '@' + p.handle : ''))) || S.loveSomeone;
+    const stage = LOVE.stage(bond), asked = bond.ask && bond.ask.by;
+    const mineAsked = asked === me, theyAsked = asked && asked !== me;
+    const given = gifts || [], last = given[0];
+    const leftToday = Math.max(0, GIFT_PER_DAY - LOVE.giftsToday(given, me));
+
+    /* What the couple is offered next depends only on where they stand. */
+    let ask = '';
+    if (stage === 'tied') {
+      ask = '<div class="card askcard"><h3>' + esc(S.loveAskTitle) + '</h3>'
+        + '<p class="hint" style="margin-bottom:10px">' + esc(S.loveAskHint) + '</p>'
+        + '<input id="lvasknote" maxlength="200" placeholder="' + esc(S.loveAskNotePh) + '">'
+        + '<button type="button" class="btn primary block" id="lvask" style="margin-top:10px">' + esc(S.loveAskDo) + '</button>'
+        + '<p class="hint" id="lvaskst"></p></div>';
+    } else if (stage === 'proposed' && mineAsked) {
+      ask = '<div class="card askcard waiting">' + loveMarkSVG('proposed', 'big')
+        + '<b>' + esc(S.loveAskSent) + '</b>'
+        + (bond.ask.note ? '<p class="note">' + esc(bond.ask.note) + '</p>' : '')
+        + '<p class="hint">' + esc(S.loveAskSentHint(nameOf(you))) + '</p>'
+        + '<button type="button" class="btn block" id="lvunask">' + esc(S.loveAskTakeBack) + '</button></div>';
+    } else if (stage === 'proposed' && theyAsked) {
+      ask = '<div class="card askcard theirs">' + loveMarkSVG('proposed', 'big')
+        + '<b>' + esc(S.loveAskGot(nameOf(you))) + '</b>'
+        + (bond.ask.note ? '<p class="note">' + esc(bond.ask.note) + '</p>' : '')
+        + '<div class="row2"><button type="button" class="btn primary" id="lvyes">' + esc(S.loveAskYes) + '</button>'
+        + '<button type="button" class="btn" id="lvnotyet">' + esc(S.loveAskNotYet) + '</button></div>'
+        + '<p class="hint">' + esc(S.loveAskNotYetHint) + '</p></div>';
+    } else if (stage === 'engaged') {
+      ask = '<div class="card askcard done">' + loveMarkSVG('engaged', 'big')
+        + '<b>' + esc(S.loveEngaged) + '</b>'
+        + (bond.engagedOn ? '<p class="hint">' + esc(S.loveEngagedOn(fmtDate(bond.engagedOn))) + '</p>' : '')
+        + '<button type="button" class="btn primary block" id="lvmarry" style="margin-top:10px">' + esc(S.loveMarryDo) + '</button>'
+        + '<p class="hint">' + esc(S.loveMarryHint) + '</p></div>';
+    } else if (stage === 'married') {
+      const myRole = LOVE.role(bond, me);
+      ask = '<div class="card askcard done">' + loveMarkSVG('married', 'big')
+        + '<b>' + esc(S.loveMarried) + '</b>'
+        + (bond.marriedOn ? '<p class="hint">' + esc(S.loveMarriedOn(fmtDate(bond.marriedOn))) + '</p>' : '')
+        + '<p class="hint" style="margin-top:10px">' + esc(S.loveRoleAsk) + '</p>'
+        + '<div class="rolepick">'
+        + [['mother', '\u2640', S.loveRoleMother], ['father', '\u2642', S.loveRoleFather], ['none', '\u2022', S.loveRoleNone]]
+          .map((r) => '<button type="button" class="rp' + (myRole === r[0] || (!myRole && r[0] === 'none') ? ' on' : '') + '" data-role="' + r[0] + '"><i>' + r[1] + '</i>' + esc(r[2]) + '</button>').join('')
+        + '</div>'
+        + '<label class="remind"><input type="checkbox" id="lvshowpar"' + (LOVE.local().parents ? ' checked' : '') + '><span>' + esc(S.loveShowParents) + '</span></label>'
+        + '<p class="hint">' + esc(S.loveShowParentsHint) + '</p></div>';
+    }
+
+    /* Gifts: the newest large, the rest as a shelf underneath. */
+    const shelf = '<div class="card giftcard"><h3 style="margin-bottom:4px">\uD83C\uDF3F ' + esc(S.loveGiftTitle) + '</h3>'
+      + '<p class="hint" style="margin-bottom:10px">' + esc(S.loveGiftHint) + '</p>'
+      + (last
+        ? '<div class="lastgift">' + giftArt(last.kind, 'big')
+          + '<div><b>' + esc(last.from === me ? S.loveGiftYouGave(giftName(last.kind)) : S.loveGiftTheyGave(nameOf(you), giftName(last.kind))) + '</b>'
+          + (last.note ? '<p class="note">' + esc(last.note) + '</p>' : '')
+          + '<span class="faint">' + esc(fmtDate(isoDate(new Date(last.at || Date.now())))) + '</span></div></div>'
+        : '<p class="hint">' + esc(S.loveGiftNone) + '</p>')
+      + (given.length > 1
+        ? '<div class="giftrow">' + given.slice(1, 13).map((g) => '<span class="gi' + (g.from === me ? ' mine' : '') + '" title="' + esc(giftName(g.kind)) + '">' + giftArt(g.kind) + '</span>').join('') + '</div>'
+        : '')
+      + '<div class="giftpick">' + GIFTS.map((g) => '<button type="button" class="gp" data-gift="' + g.id + '" aria-label="' + esc(L(g.name)) + '">' + giftArt(g.id) + '<b>' + esc(L(g.name)) + '</b></button>').join('') + '</div>'
+      + '<input id="lvgnote" maxlength="200" placeholder="' + esc(S.loveGiftNotePh) + '" style="margin-top:10px">'
+      + '<p class="hint" id="lvgst">' + esc(leftToday ? S.loveGiftLeft(leftToday) : S.loveGiftDone) + '</p></div>';
+
     m.innerHTML = head()
-      + '<div class="card lovecard tied">' + threadSVG(bond.state)
-      + '<div class="pair"><span>' + esc(nameOf(mine)) + '</span><i>🧵</i><span>' + esc(nameOf(you)) + '</span></div>'
+      + '<div class="card lovecard tied st-' + esc(stage) + '">' + threadSVG(stage)
+      + '<div class="pair"><span>' + esc(nameOf(mine)) + '</span><i>' + loveMarkSVG(stage, 'inline') + '</i><span>' + esc(nameOf(you)) + '</span></div>'
+      + '<p class="stagename">' + esc(S.loveStage[stage]) + '</p>'
       + '<div class="daysbig"><b>' + days + '</b><span>' + esc(S.loveDaysWord) + '</span></div>'
       + '<p class="since">' + esc(S.loveSince(fmtDate(bond.since))) + '</p>'
       + (next ? '<p class="hint" style="text-align:center">' + esc(S.loveNextMark(next.at, next.inDays)) + '</p>' : '')
       + '</div>'
+      + ask + shelf
       + '<div class="card"><h3 style="margin-bottom:6px">' + esc(S.loveDayTitle) + '</h3>'
       + '<p class="hint" style="margin-bottom:8px">' + esc(S.loveDayHint) + '</p>'
       + '<input type="date" id="lvsince" max="' + esc(isoDate(new Date())) + '" value="' + esc(bond.since || '') + '">'
       + '<p class="hint" id="lvsincest"></p></div>'
-      + '<div class="card"><h3 style="margin-bottom:6px">' + esc(S.loveNextTitle) + '</h3><p class="hint">' + esc(S.loveNextSoon) + '</p></div>'
       + '<button type="button" class="btn block" id="lvuntie">' + esc(S.loveUntie) + '</button>'
       + '<p class="hint">' + esc(S.loveUntieHint) + '</p>'
       + foot();
+
+    const run = async (btn, statusEl, job, okMsg) => {
+      const b = $(btn), st = statusEl ? $(statusEl) : null;
+      if (!b) return;
+      b.addEventListener('click', async () => {
+        b.disabled = true;
+        if (st) { st.className = 'hint'; st.textContent = S.loveSaving; }
+        try { await job(); if (okMsg) toast(okMsg); }
+        catch (e) { b.disabled = false; if (st) { st.className = 'hint err'; st.textContent = S.publishFail; } else toast(S.publishFail); }
+      });
+    };
+    run('#lvask', '#lvaskst', () => LOVEDB.propose(bond.id, $('#lvasknote').value), S.loveAskDone);
+    run('#lvunask', null, () => LOVEDB.unask(bond.id));
+    run('#lvyes', null, () => LOVEDB.sayYes(bond.id), S.loveAskYesDone);
+    run('#lvnotyet', null, () => LOVEDB.unask(bond.id));
+    run('#lvmarry', null, () => LOVEDB.marry(bond.id), S.loveMarriedDone);
+
+    $$('[data-role]', m).forEach((b) => b.addEventListener('click', async () => {
+      try { await LOVEDB.setRole(bond.id, bond, b.getAttribute('data-role')); } catch (e) { toast(S.publishFail); }
+    }));
+    { const sp = $('#lvshowpar');
+      if (sp) sp.addEventListener('change', () => { LOVE.save({ parents: sp.checked }); toast(sp.checked ? S.loveShowParentsOn : S.loveShowParentsOff); }); }
+
+    $$('[data-gift]', m).forEach((b) => b.addEventListener('click', async () => {
+      const st = $('#lvgst');
+      if (!leftToday) { st.className = 'hint err'; st.textContent = S.loveGiftDone; return; }
+      b.disabled = true; st.className = 'hint'; st.textContent = S.loveSaving;
+      try { await LOVEDB.giveGift(bond.id, b.getAttribute('data-gift'), $('#lvgnote').value); toast(S.loveGiftSent); }
+      catch (e) { b.disabled = false; st.className = 'hint err'; st.textContent = S.publishFail; }
+    }));
+
     $('#lvsince').addEventListener('change', async () => {
       const st = $('#lvsincest'), v = $('#lvsince').value;
       if (!v || v > isoDate(new Date())) { st.className = 'hint err'; st.textContent = S.loveDayBad; return; }
@@ -13112,11 +13483,17 @@ function renderLove(wantHandle) {
     if (forceHandle || !LOVE.handle()) { drawHandle(); return; }
     /* Two listeners, one screen: the bond decides which half is drawn, and
        either of them arriving repaints it. */
-    let reqs = [], bond = null, ready = false;
-    const paint = () => { if (!ready) return; if (bond) drawBond(bond); else drawSingle(reqs); };
+    let reqs = [], bond = null, ready = false, gifts = [], giftStop = null;
+    const paint = () => { if (!ready) return; if (bond) drawBond(bond, gifts); else drawSingle(reqs); };
     stop.push(LOVEDB.watchMine((b) => {
       bond = b; ready = true;
-      LOVE.save(b ? { bond: b.id, since: b.since, withName: (LOVE.other(b, LOVEDB.me()) || {}).name || '' } : { bond: '', since: '', withName: '' });
+      LOVE.save(b
+        ? { bond: b.id, since: b.since, stage: LOVE.stage(b), withName: (LOVE.other(b, LOVEDB.me()) || {}).name || '',
+            role: LOVE.role(b, LOVEDB.me()), otherRole: LOVE.role(b, (LOVE.other(b, LOVEDB.me()) || {}).uid) }
+        : { bond: '', since: '', stage: '', withName: '', role: '', otherRole: '' });
+      /* The gifts live under the bond, so they can only be watched once there
+         is one to watch. */
+      if (b && !giftStop) { giftStop = LOVEDB.watchGifts(b.id, (g) => { gifts = g; paint(); }); stop.push(giftStop); }
       paint();
     }));
     stop.push(LOVEDB.watchRequests((l) => { reqs = l; paint(); }));
@@ -14877,6 +15254,7 @@ function renderPet(want) {
       + (bless ? '<div class="bless"><span class="q">' + luck.sym + '</span><p>' + esc(L(bless)) + '</p><span class="who">' + esc(p.name || L(PET_NAMES[p.kind])) + '</span></div>'
         : '<p class="hint prayhint">' + esc(PETS.fedToday(p) ? S.petPrayHint : S.petNeedFeed) + '</p>')
       + '<div class="lucktag" style="--ink:' + (luck.deep || luck.ink) + ';--aura:' + luck.aura + '">' + luck.sym + ' ' + esc(S.petBrings(L(luck.name))) + '</div>'
+      + petParentsHTML()
       + '<p class="petline">' + esc(L(petLine(p.kind))) + '</p>'
       + (petIsPro(p.kind) ? '<p class="mythline">✨ ' + esc(S.petMythBonus(MYTH_XP)) + '</p>' : '')
       + '<div class="charm"><span class="lbl">' + esc(S.petLevel(st.lv)) + '</span><span class="bar"><i style="width:' + st.at + '%;background:' + luck.ink + '"></i></span>'
@@ -15268,6 +15646,20 @@ function petWearArt(id) {
     + '<path d="M30 28 l5 7 -5 7 -5 -7 Z" fill="#FFF3C4"/></svg>';
   return open + '<circle cx="30" cy="30" r="16" fill="none" stroke="#C9BFE0" stroke-width="2" stroke-dasharray="4 4"/></svg>';
 }
+/* Two married people, named on each other's companion page - if the person
+   whose phone this is asked for it, and only with the words each of them chose
+   for themselves. A sign, a name, nothing else. */
+function petParentsHTML() {
+  const S = T(), l = LOVE.local();
+  if (!l.parents || l.stage !== 'married' || !l.bond) return '';
+  const sym = { mother: '\u2640', father: '\u2642' };
+  const who = [[l.role, LOVE.local().name || PROFILE.name || ''], [l.otherRole, l.withName || '']]
+    .filter((x) => sym[x[0]] && x[1])
+    .map((x) => '<span class="pp"><i>' + sym[x[0]] + '</i>' + esc(x[1]) + '</span>');
+  if (!who.length) return '';
+  return '<p class="petfam"><b>' + esc(S.petParents) + '</b>' + who.join('') + '</p>';
+}
+
 /* ---- the reminder ----
    Called once when the app starts. It can only reach someone who has the app
    open, since there is no server here to push anything, so it is deliberately
@@ -17041,11 +17433,12 @@ function adminSale(p) {
 ROUTES.admin = { nav: '', render: renderAdmin };
 
 /* ============================ boot ============================ */
-window.APP_VERSION = 'v114';
+window.APP_VERSION = 'v115';
 window.NABU = { CONFIG: CONFIG, SALE: SALE, salePrice: salePrice, loadActs: loadActs, BACK: BACK, LESSONS: LESSONS, localAnswer: localAnswer, compatVerdict: compatVerdict, numerologyOf: numerologyOf, ZDEEP: ZDEEP, lunarToday: lunarToday, solarToLunar: solarToLunar, DECK: DECK, INSIGHT: INSIGHT, KW: KW, ASK: ASK, TOPICS: TOPICS, GUIDES: GUIDES, SERVICES: SERVICES, COURSES: COURSES, ACCESS: ACCESS, ZODIAC: ZODIAC, pick: pick, book: book,
   insightHTML: insightHTML, insightOf: insightOf, sunSignIndex: sunSignIndex, lifePath: lifePath, PROFILE: () => PROFILE, BE: BE, ACTS: ACTS,
   ANGELS: ANGELS, angelRead: angelRead, CODEBOOK: CODEBOOK, verifyCode: verifyCode, petHomeSVG: petHomeSVG, PET_HOMES: PET_HOMES, PET_WEARS: PET_WEARS, codeDigest: codeDigest, randomCode: randomCode, BANK: BANK, PETS: PETS, petSVG: petSVG, PET_COATS: PET_COATS, PET_KINDS: PET_KINDS, luckCut: luckCut, petLevel: petLevel, petStep: petStep, VOUCHERS: VOUCHERS, levelCoins: levelCoins, LOOKS: LOOKS,
-  LOVE: LOVE, LOVEDB: LOVEDB, HANDLE_RE: HANDLE_RE, loveBadgeHTML: loveBadgeHTML };
+  LOVE: LOVE, LOVEDB: LOVEDB, HANDLE_RE: HANDLE_RE, loveBadgeHTML: loveBadgeHTML,
+  loveMarkSVG: loveMarkSVG, petParentsHTML: petParentsHTML, GIFTS: GIFTS };
 try { petRemindCheck(); } catch (e) { /* nothing kept yet */ }
 BE.initP = BE.init().catch(() => { /* backend unreachable: the app runs device-only */ });
 // The Gemini key is a dashboard setting kept in the app cloud (content/ai), never in the source.

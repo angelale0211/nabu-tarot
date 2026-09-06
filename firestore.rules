@@ -141,11 +141,51 @@ service cloud.firestore {
                     && shorterThan('invite', 60)
                     && shorterThan('aName', 40) && shorterThan('bName', 40)
                     && shorterThan('aHandle', 30) && shorterThan('bHandle', 30);
-      // Either of them may correct the day it began, and nothing else.
+      /* What either of them may change: the day it began, the question on it,
+         the stage, and the word each has chosen for themselves.
+
+         Two guards make the question mean something.
+
+         An ask may only ever name the person writing it. Without that, either
+         of them could write "you asked me" onto the bond and agree with
+         themselves a moment later.
+
+         The stage only moves on when the stored ask names the other one - and
+         because of the guard above, that ask can only have been put there by
+         them. So consent is consent. Everything else about the stage is left
+         where it is. */
       allow update: if request.auth != null && request.auth.uid in resource.data.uids
-                    && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['since', 'state'])
-                    && request.resource.data.uids == resource.data.uids;
+                    && request.resource.data.uids == resource.data.uids
+                    && request.resource.data.diff(resource.data).affectedKeys()
+                         .hasOnly(['since', 'state', 'ask', 'engagedOn', 'marriedOn', 'day', 'aRole', 'bRole'])
+                    && (!('ask' in request.resource.data)
+                        || request.resource.data.ask == null
+                        || request.resource.data.ask.by == request.auth.uid)
+                    && (request.resource.data.state == resource.data.state
+                        || (('ask' in resource.data) && resource.data.ask != null
+                            && resource.data.ask.by == otherIn(resource.data.uids)
+                            && request.resource.data.state == 'engaged' && resource.data.state == 'tied')
+                        || (request.resource.data.state == 'married' && resource.data.state == 'engaged'))
+                    // each of them names only themselves
+                    && (!request.resource.data.diff(resource.data).affectedKeys().hasAny(['aRole'])
+                        || request.auth.uid == resource.data.a)
+                    && (!request.resource.data.diff(resource.data).affectedKeys().hasAny(['bRole'])
+                        || request.auth.uid == resource.data.b);
       allow delete: if request.auth != null && request.auth.uid in resource.data.uids;
+
+      /* What one gives the other. Only the two of them can see them or add to
+         them, and a gift is signed with the id of whoever gave it. Either may
+         clear one; nobody can rewrite one after the fact. */
+      match /gifts/{gid} {
+        allow read: if request.auth != null
+                    && request.auth.uid in get(/databases/$(database)/documents/bonds/$(id)).data.uids;
+        allow create: if request.auth != null
+                    && request.resource.data.from == request.auth.uid
+                    && request.auth.uid in get(/databases/$(database)/documents/bonds/$(id)).data.uids
+                    && shorterThan('note', 300) && shorterThan('kind', 40);
+        allow delete: if request.auth != null
+                    && request.auth.uid in get(/databases/$(database)/documents/bonds/$(id)).data.uids;
+      }
     }
     match /reports/{id} {
       allow create: if request.auth != null && request.resource.data.uid == request.auth.uid
