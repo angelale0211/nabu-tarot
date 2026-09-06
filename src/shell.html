@@ -788,6 +788,15 @@ main{padding:22px 0 30px}
 .wing.still{animation:none}
 @keyframes leaffalling{0%{opacity:0;transform:translate(0,0) rotate(0)}10%{opacity:1}100%{opacity:0;transform:translate(-26px,196px) rotate(320deg)}}
 .leaffall{animation:leaffalling 8s linear infinite}
+/* Spirit lights rising out of the firefly tree. */
+@keyframes risinglight{0%{opacity:0;transform:translateY(0) scale(.6)}15%{opacity:.95}100%{opacity:0;transform:translateY(-120px) scale(1.1)}}
+.rise{animation:risinglight 8s ease-out infinite}
+/* The galaxy's ring of stars turning, and its constellation breathing. */
+@keyframes starwheel{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
+.starwheel{transform-origin:140px 94px;animation:starwheel 60s linear infinite}
+@keyframes constellation{0%,100%{opacity:.18}50%{opacity:.75}}
+.conste{animation:constellation 7s ease-in-out infinite}
+@media (prefers-reduced-motion:reduce){.rise,.starwheel,.conste{animation:none}}
 @keyframes twinkling{0%,100%{opacity:.3;transform:scale(.85)}50%{opacity:1;transform:scale(1.15)}}
 .twinkle{transform-box:fill-box;transform-origin:center;animation:twinkling 3s ease-in-out infinite}.twinkle.still{animation:none}
 @media (prefers-reduced-motion:reduce){.fly.lit,.drift,.shaft,.shoot,.wing,.leaffall,.twinkle,.flit{animation:none}}
@@ -937,6 +946,9 @@ main{padding:22px 0 30px}
 .nextpay{display:flex;align-items:center;gap:8px;margin:0 0 12px;padding:8px 12px;border-radius:12px;background:var(--tag-gold-bg);color:var(--tag-gold-ink);font-size:12.5px;font-weight:600;text-decoration:none}
 .nextpay .go{margin-left:auto;font-weight:700}
 /* Every way to earn, two to a row. */
+/* The reminder switch, under the companion's name. */
+.remind{display:flex;align-items:center;gap:9px;margin-top:12px;font-size:13.5px;cursor:pointer}
+.remind input{width:18px;height:18px;flex:none;margin:0}
 .earnhead{display:flex;justify-content:space-between;align-items:baseline;gap:10px;margin-bottom:6px;font-size:13px}
 .earnhead span{color:var(--fg-soft)}.earnhead b{font-weight:700;white-space:nowrap}
 .earngrid{display:grid;grid-template-columns:1fr 1fr;gap:4px 8px;margin-bottom:12px}
@@ -1060,8 +1072,8 @@ main{padding:22px 0 30px}
    below it ever collides with the text. */
 .bless{position:relative;margin:22px 0 18px;padding:18px 16px 14px;border-radius:14px;background:var(--surface-2);border:1px solid var(--rule-soft)}
 .bless .q{position:absolute;top:-13px;left:14px;background:var(--surface);border:1px solid var(--rule-soft);border-radius:999px;padding:2px 8px;font-size:15px;line-height:1.2}
-#main .bless p{margin:0 0 8px;font-size:14.5px;line-height:1.65;text-align:left;text-wrap:normal;hyphens:none}
-.bless .who{font-size:12px;color:var(--fg-soft)}
+#main .bless p{margin:0 0 8px;font-size:14.5px;line-height:1.65;text-align:center;text-wrap:balance;hyphens:none}
+.bless .who{display:block;text-align:center;font-size:12px;color:var(--fg-soft)}
 .btn.off{opacity:.55}
 /* Switching between the companions you keep. */
 .pettabs{display:flex;gap:8px;margin-bottom:12px;overflow-x:auto;padding-bottom:2px}

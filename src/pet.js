@@ -410,6 +410,10 @@ const PETS = {
     }
     return give;
   },
+  /* Hungry after a day without a meal: long enough that a normal day of
+     forgetting does not nag, short enough to be a real reminder. */
+  hungry(p) { return !!p && Date.now() - (Number(p.last) || 0) > 24 * 3600000; },
+  anyHungry() { return this.all().filter((p) => this.hungry(p)); },
   level(p) { return petLevel(p && p.xp); },
   step(p) { return petStep(p && p.xp); }
 };
@@ -689,71 +693,63 @@ const PET_ART = {
   /* Nine tails, drawn full and fanned, and a fox's short sharp muzzle rather
      than the long jaw that made her a dog. */
   ninetails: () => ({
-    glow: true, noHalo: true, noCharm: true,
-    only: (() => {
-      const WHITE = '#FFFDF8', SHADE = '#F3E6EC', RED = '#E0506E', DEEP = '#B7325A', GOLD = '#E5BE5E', INK = '#4E1E32';
-      /* Nine tails as flames: each is a long curve that starts wide at the
-         haunch and tapers, sweeping up and back rather than radiating. */
+    glow: true, pal: { body: '#FFFDF8', dark: '#F0C6D6', ink: '#5E2138' },
+    bodyRX: 27, bodyRY: 22, headRX: 30, headRY: 27, charmY: 82,
+    /* Nine flames fanned behind her, each as long as it can be at its own
+       angle without leaving the square. */
+    behind: (() => {
       const R = Math.PI / 180;
-      let tails = '';
-      const base = [86, 90];
-      [[-62, 66], [-46, 73], [-31, 78], [-16, 80], [0, 78], [14, 75], [28, 70], [42, 63], [56, 55]].forEach((t, i) => {
-        const a = t[0] * R, len = t[1];
-        const s0 = Math.sin(a), c0 = Math.cos(a);
-        // the tip, curled back on itself the way a flame leans
-        const tx = base[0] + s0 * len * 0.62, ty = base[1] - c0 * len;
-        const w = 13.5 - i * 0.4;
-        const m1x = base[0] + s0 * len * 0.1 + c0 * w, m1y = base[1] - c0 * len * 0.55 + s0 * w;
-        const m2x = base[0] + s0 * len * 0.55 - c0 * w * 1.6, m2y = base[1] - c0 * len * 0.42 - s0 * w * 1.6;
-        tails += '<path d="M' + base[0] + ' ' + base[1] + ' Q' + m1x.toFixed(1) + ' ' + m1y.toFixed(1) + ' ' + tx.toFixed(1) + ' ' + ty.toFixed(1)
-          + ' Q' + m2x.toFixed(1) + ' ' + m2y.toFixed(1) + ' ' + base[0] + ' ' + base[1] + ' Z" fill="' + (i % 2 ? WHITE : SHADE) + '" stroke="#EBC9D6" stroke-width="1.1"/>';
-        // each flame tipped in red, the way a kitsune's tails are drawn
-        const nx = base[0] + s0 * len * 0.5, ny = base[1] - c0 * len * 0.78;
-        tails += '<path d="M' + nx.toFixed(1) + ' ' + ny.toFixed(1) + ' Q' + (nx + c0 * 5).toFixed(1) + ' ' + (ny + s0 * 5).toFixed(1) + ' ' + tx.toFixed(1) + ' ' + ty.toFixed(1)
-          + ' Q' + (nx - c0 * 5).toFixed(1) + ' ' + (ny - s0 * 5).toFixed(1) + ' ' + nx.toFixed(1) + ' ' + ny.toFixed(1) + ' Z" fill="' + (i % 3 === 0 ? DEEP : RED) + '" opacity=".9"/>';
+      let out = '';
+      [-76, -57, -38, -19, 0, 19, 38, 57, 76].forEach((a) => {
+        const s0 = Math.sin(a * R), c0 = Math.cos(a * R);
+        const bx = 60, by = 104;
+        const room = Math.min(Math.abs(s0) > 0.05 ? 55 / Math.abs(s0) : 999, Math.abs(c0) > 0.05 ? 96 / Math.abs(c0) : 999);
+        const len = Math.min(86, room);
+        const tx = bx + s0 * len, ty = by - c0 * len;
+        const mx = bx + s0 * len * 0.5, my = by - c0 * len * 0.5;
+        const p = (k) => [mx + c0 * 13 * k, my + s0 * 13 * k];
+        const l = p(1), r = p(-1);
+        out += '<path d="M' + bx + ' ' + by + ' Q' + l[0].toFixed(1) + ' ' + l[1].toFixed(1) + ' ' + tx.toFixed(1) + ' ' + ty.toFixed(1)
+          + ' Q' + r[0].toFixed(1) + ' ' + r[1].toFixed(1) + ' ' + bx + ' ' + by + ' Z" fill="#FFFDF8" stroke="#EFC3D4" stroke-width="1.3"/>';
+        const nx = bx + s0 * len * 0.7, ny = by - c0 * len * 0.7;
+        const q = (k) => [nx + c0 * 7 * k, ny + s0 * 7 * k];
+        const ql = q(1), qr = q(-1);
+        out += '<path d="M' + nx.toFixed(1) + ' ' + ny.toFixed(1) + ' Q' + ql[0].toFixed(1) + ' ' + ql[1].toFixed(1) + ' ' + tx.toFixed(1) + ' ' + ty.toFixed(1)
+          + ' Q' + qr[0].toFixed(1) + ' ' + qr[1].toFixed(1) + ' ' + nx.toFixed(1) + ' ' + ny.toFixed(1) + ' Z" fill="#F2789F" opacity=".92"/>';
       });
-      /* The body, seated side-on and facing left: haunch, back, chest, and two
-         forelegs straight down to the ground. */
-      /* Seated and side-on: the haunch is the low round mass at the back, the
-         back rises to the shoulder, and the forelegs drop straight down. */
-      const body = '<path d="M92 104 Q98 92 94 80 Q90 66 76 62 Q64 58 56 64 Q49 70 49 82 Q49 94 51 104 Z" fill="' + WHITE + '"/>'
-        + '<ellipse cx="84" cy="90" rx="19" ry="17" fill="' + WHITE + '"/>'
-        + '<ellipse cx="84" cy="90" rx="19" ry="17" fill="' + SHADE + '" opacity=".45"/>'
-        + '<path d="M56 64 Q49 70 49 82 Q49 94 51 104 L58 104 Q55 92 56 82 Q57 71 61 65 Z" fill="' + SHADE + '" opacity=".5"/>'
-        + '<path d="M50 78 Q46 90 47 106 L57 106 Q55 90 57 78 Z" fill="' + WHITE + '"/>'
-        + '<path d="M58 80 Q55 92 56 106 L65 106 Q63 92 65 80 Z" fill="' + SHADE + '" opacity=".55"/>'
-        + '<ellipse cx="52" cy="106" rx="6" ry="3" fill="' + SHADE + '"/><ellipse cx="60.5" cy="106" rx="5.5" ry="3" fill="' + SHADE + '" opacity=".7"/>'
-        + '<ellipse cx="76" cy="105" rx="10" ry="4" fill="' + WHITE + '"/><ellipse cx="76" cy="105" rx="10" ry="4" fill="' + SHADE + '" opacity=".35"/>';
-      /* The neck rises to a head in profile: the muzzle points left, which is
-         the angle at which a fox cannot be mistaken for anything else. */
-      const neckline = '<path d="M58 62 Q50 54 46 44 Q44 36 50 32 L64 40 Q64 52 62 60 Z" fill="' + WHITE + '"/>';
-      const head = '<path d="M50 28 Q34 27 25 36 Q17 43 15 50 Q14 55 19 57 Q27 59 34 58 Q45 57 51 50 Q56 42 55 35 Q54 29 50 28 Z" fill="' + WHITE + '"/>'
-        + '<path d="M25 40 Q17 44 15 50 Q14 55 19 57 Q26 58 31 57 Q25 50 25 40 Z" fill="' + SHADE + '" opacity=".75"/>';
-      /* Both ears sit on the skull and lean back, the far one behind and
-         smaller, which is what makes the head read as turned away. */
-      const ear = '<path d="M53 30 Q58 19 67 16 Q66 26 60 33 Z" fill="' + SHADE + '" stroke="#EBC9D6" stroke-width="1"/>'
-        + '<path d="M42 31 Q44 15 56 11 Q58 23 52 33 Z" fill="' + WHITE + '" stroke="#EBC9D6" stroke-width="1.2"/>'
-        + '<path d="M45 29 Q47 19 54 16 Q55 25 51 31 Z" fill="' + RED + '" opacity=".55"/>';
-      const face = '<g class="eyes"><ellipse cx="31" cy="45" rx="5" ry="5.6" fill="' + INK + '"/>'
-        + '<circle cx="32.8" cy="43" r="2" fill="#fff"/><circle cx="29" cy="47.4" r="1" fill="#fff" opacity=".85"/></g>'
-        + '<ellipse cx="17.5" cy="49.5" rx="2.6" ry="2" fill="' + INK + '"/>'
-        + '<path d="M17.5 52 q3 3.5 6.5 1.5" stroke="' + INK + '" stroke-width="1.2" fill="none" stroke-linecap="round"/>'
-        + '<ellipse cx="27" cy="52" rx="5" ry="3.2" fill="#F7A9C6" opacity=".55"/>'
-        /* the mask marks, lighter now so they do not harden the face */
-        + '<path d="M24 37 Q31 33 40 37" stroke="' + RED + '" stroke-width="2.4" fill="none" stroke-linecap="round"/>'
-        + '<path d="M34 52 q5 2 8 0" stroke="' + RED + '" stroke-width="1.7" fill="none" stroke-linecap="round" opacity=".7"/>'
-        + '<g stroke="#E8C4D2" stroke-width="1" stroke-linecap="round" opacity=".85"><path d="M20 44 h-8 M20 48 h-9"/></g>';
-      /* A gold bell at the throat and a moon behind her, so the frame reads as
-         a scene rather than a sticker. */
-      const charm = '<path d="M50 62 Q58 68 66 62" stroke="' + GOLD + '" stroke-width="2.2" fill="none" stroke-linecap="round"/>'
-        + '<circle cx="58" cy="67" r="5.4" fill="' + GOLD + '"/><path d="M53 67 h10" stroke="#B9913B" stroke-width="1.2"/>'
-        + '<circle cx="58" cy="70" r="1.4" fill="#8A6B22"/>';
-      const moon = '<circle cx="30" cy="26" r="15" fill="#FFF3C4" opacity=".55"/>'
-        + '<circle cx="30" cy="26" r="15" fill="none" stroke="' + GOLD + '" stroke-width="1" opacity=".5"/>';
-      /* A bigger head on a smaller body is most of what reads as cute. */
-      const above = '<g transform="translate(52,58) scale(1.24) translate(-52,-58)">' + ear + head + face + '</g>';
-      return moon + tails + body + neckline + above + charm;
-    })()
+      return out;
+    })(),
+    /* A soft triangle: wide at the ears, rounded at the cheeks, tapering to a
+       small chin. Round enough to be cute, tapered enough to be a fox. */
+    headPath: 'M60 22 Q32 25 28 48 Q26 66 40 76 Q50 82 55 90 Q58 95 60 95 Q62 95 65 90 Q70 82 80 76 Q94 66 92 48 Q88 25 60 22 Z',
+    ears: '<path d="M34 32 L27 2 L58 22 Z" fill="#FFFDF8" stroke="#EFC3D4" stroke-width="1.2"/>'
+      + '<path d="M86 32 L93 2 L62 22 Z" fill="#FFFDF8" stroke="#EFC3D4" stroke-width="1.2"/>'
+      + '<path d="M38 29 L33 10 L52 22 Z" fill="#F2789F" opacity=".6"/><path d="M82 29 L87 10 L68 22 Z" fill="#F2789F" opacity=".6"/>',
+    overBody: '<path d="M60 74 q-11 15 -10 30 q10 5 20 0 q1 -15 -10 -30 Z" fill="#FDEFF4"/>',
+    front: (() => {
+      const MASK = '#F2789F', DEEP = '#DB5C84', INK = '#5E2138';
+      /* The mask across the brow and around the eyes, white below it. This is
+         what says fox before any other marking does. */
+      const mask = '<path d="M60 22 Q32 25 28 48 Q27 58 34 65 Q45 62 50 52 Q56 46 60 57 Q64 46 70 52 Q75 62 86 65 Q93 58 92 48 Q88 25 60 22 Z" fill="' + MASK + '"/>'
+        + '<path d="M60 26 Q42 29 36 44 Q47 38 60 44 Q73 38 84 44 Q78 29 60 26 Z" fill="' + DEEP + '" opacity=".3"/>';
+      // Big round eyes with two highlights: the cute half of the face.
+      const eyes = '<g class="eyes">'
+        + '<ellipse cx="47" cy="52" rx="6.6" ry="7.4" fill="' + INK + '"/><ellipse cx="73" cy="52" rx="6.6" ry="7.4" fill="' + INK + '"/>'
+        + '<circle cx="49.4" cy="49.4" r="2.5" fill="#fff"/><circle cx="75.4" cy="49.4" r="2.5" fill="#fff"/>'
+        + '<circle cx="45" cy="55" r="1.3" fill="#fff" opacity=".85"/><circle cx="71" cy="55" r="1.3" fill="#fff" opacity=".85"/>'
+        + '</g>';
+      // A short blunt snout, a small nose and a smile.
+      const snout = '<path d="M52 68 Q51 78 56 84 Q60 87 64 84 Q69 78 68 68 Z" fill="#FFFDF8"/>'
+        + '<path d="M56.5 74 Q60 73 63.5 74 Q62 80 60 81 Q58 80 56.5 74 Z" fill="' + INK + '"/>'
+        + '<path d="M60 81 q-4 4 -7 1 M60 81 q4 4 7 1" stroke="' + INK + '" stroke-width="1.3" fill="none" stroke-linecap="round"/>'
+        + '<ellipse cx="36" cy="64" rx="6" ry="4" fill="#F7A9C6" opacity=".6"/><ellipse cx="84" cy="64" rx="6" ry="4" fill="#F7A9C6" opacity=".6"/>'
+        + '<g stroke="#E8C4D2" stroke-width="1" stroke-linecap="round" opacity=".9"><path d="M40 70 h-10 M41 75 h-10 M80 70 h10 M79 75 h10"/></g>';
+      // Her mark, and the bell she wears.
+      const mark = '<path d="M53 27 q7 -4 14 0" stroke="#E5BE5E" stroke-width="2.2" fill="none" stroke-linecap="round"/>'
+        + '<circle cx="60" cy="23" r="3" fill="#E5BE5E"/>';
+      return mask + eyes + snout + mark;
+    })(),
+    feet: false, noFace: true, noMouth: true
   }),
   dragon: () => ({
     glow: true, pal: { body: '#C6EEDA', dark: '#7FC9A8', ink: '#12452F' },
@@ -1205,6 +1201,8 @@ function renderPet(want) {
         ? '<button type="button" class="btn block" id="addpet" style="margin-top:12px">➕ ' + esc(S.petAdd) + (left > 1 ? ' · ' + esc(S.petRoomLeft(left)) : '') + '</button>'
         : (proOn() ? '' : '<a class="salebar" href="#/unlock"><span class="tag">✨ ' + esc(S.plusName) + '</span><span class="txt">' + esc(S.petPlusPitch) + '</span><span class="go">' + esc(S.unlockLink) + ' ›</span></a>'))
       + '<div class="card"><label class="f" for="petname">' + esc(S.petName) + '</label><input id="petname" maxlength="24" value="' + esc(p.name || '') + '" placeholder="' + esc(L(PET_NAMES[p.kind])) + '">'
+      + '<label class="remind"><input type="checkbox" id="petremind"' + (petRemindOn() ? ' checked' : '') + '><span>' + esc(S.petRemind) + '</span></label>'
+      + '<p class="hint">' + esc(S.petRemindHint) + '</p>'
       + '<button class="btn block" id="petswap" style="margin-top:10px">' + esc(pets.length > 1 ? S.petLetGo : S.petSwap) + '</button>'
       + (PETS.canChange() ? '<p class="hint">' + esc(S.petChangeFree) + '</p>' : '<p class="hint">' + esc(S.petChangeWait(fmtDate(PETS.changeOn()))) + '</p>') + '</div>'
       + '<p style="margin-top:14px"><a href="#/play" class="backlink">← ' + esc(S.actTitle) + '</a></p>'
@@ -1384,6 +1382,13 @@ function renderPet(want) {
       p[key] = id; PETS.put(p); draw();
     }));
     $('#petname').addEventListener('input', () => { p.name = $('#petname').value.trim(); PETS.put(p); });
+    const rem = $('#petremind');
+    if (rem) rem.addEventListener('change', async () => {
+      if (!rem.checked) { petRemindSet(false); return; }
+      const st = await askNotify();
+      petRemindSet(true);
+      toast(st === 'granted' ? S.petRemindOk : S.petRemindNoPerm);
+    });
     $('#petswap').addEventListener('click', () => {
       if (!PETS.canChange()) { toast(S.petChangeWait(fmtDate(PETS.changeOn()))); return; }
       if (!confirm(PETS.all().length > 1 ? S.petLetGoAsk : S.petChangeAsk)) return;
@@ -1481,6 +1486,48 @@ function petWearArt(id) {
     return open + '<path d="M8 40 Q30 20 52 40" fill="none" stroke="#8FBF7F" stroke-width="3"/>' + bud(13, 38, '#F7A9C6') + bud(30, 26, '#FFF3C4') + bud(47, 38, '#C9B0EA') + '</svg>';
   }
   if (id === 'hat') return open + '<ellipse cx="30" cy="42" rx="24" ry="6" fill="#E8CFA0"/><path d="M12 42 L30 12 L48 42 Z" fill="#F0DFC8" stroke="#C6A98A" stroke-width="2"/><path d="M30 14 A9 9 0 1 0 30 32 A7 7 0 1 1 30 14 Z" fill="#E5BE5E"/></svg>';
+  /* The clothes get a picture of their own on the shelf; without one they fell
+     through to the empty dashed circle. */
+  if (id === 'jumper') return open + '<path d="M12 24 Q10 14 20 12 Q30 9 40 12 Q50 14 48 24 Q50 40 46 50 L14 50 Q10 40 12 24 Z" fill="#E1607F"/>'
+    + '<path d="M18 12 Q30 19 42 12 Q42 17 30 21 Q18 17 18 12 Z" fill="#C94C6C"/>'
+    + '<g stroke="#F5A6BF" stroke-width="1.6" fill="none" opacity=".9"><path d="M16 28 q14 -5 28 0 M15 36 q15 -5 30 0 M16 44 q14 -4 28 0"/></g>'
+    + '<g stroke="#C94C6C" stroke-width="1.3" fill="none" opacity=".7"><path d="M22 24 v26 M30 21 v29 M38 24 v26"/></g></svg>';
+  if (id === 'cloak') return open + '<path d="M14 14 Q4 34 3 52 L57 52 Q56 34 46 14 Q30 22 14 14 Z" fill="#4A3E80"/>'
+    + '<path d="M14 14 Q7 32 6 50 L20 50 Q17 32 19 16 Z" fill="#5E4F9E" opacity=".85"/>'
+    + '<path d="M14 14 Q30 22 46 14 Q48 8 42 6 Q30 14 18 6 Q12 8 14 14 Z" fill="#E5BE5E"/>'
+    + '<g fill="#FFF3C4"><circle cx="16" cy="34" r="1.8"/><circle cx="28" cy="44" r="1.5"/><circle cx="40" cy="36" r="1.6"/><circle cx="46" cy="46" r="1.4"/></g>'
+    + '<circle cx="30" cy="12" r="4.4" fill="#E5BE5E"/><circle cx="30" cy="12" r="2" fill="#4A3E80"/></svg>';
+  if (id === 'armour') return open + '<path d="M14 16 Q30 9 46 16 Q50 34 44 50 L16 50 Q10 34 14 16 Z" fill="#EDD08A"/>'
+    + '<path d="M14 16 Q30 9 46 16 Q44 22 30 26 Q16 22 14 16 Z" fill="#D4B25F"/>'
+    + '<g stroke="#B9913B" stroke-width="1.5" fill="none"><path d="M18 32 q12 -5 24 0 M18 40 q12 -5 24 0 M30 26 v24"/></g>'
+    + '<path d="M6 14 q8 -7 15 -2 q-4 9 -15 8 Z" fill="#EDD08A" stroke="#B9913B" stroke-width="1.2"/>'
+    + '<path d="M54 14 q-8 -7 -15 -2 q4 9 15 8 Z" fill="#EDD08A" stroke="#B9913B" stroke-width="1.2"/>'
+    + '<path d="M30 28 l5 7 -5 7 -5 -7 Z" fill="#FFF3C4"/></svg>';
   return open + '<circle cx="30" cy="30" r="16" fill="none" stroke="#C9BFE0" stroke-width="2" stroke-dasharray="4 4"/></svg>';
+}
+/* ---- the reminder ----
+   Called once when the app starts. It can only reach someone who has the app
+   open, since there is no server here to push anything, so it is deliberately
+   quiet: once a day, and only if it was asked for. */
+const PET_REMIND_KEY = 'nabu-pet-remind';
+const petRemindOn = () => store.get(PET_REMIND_KEY, false) === true;
+function petRemindSet(on) { store.set(PET_REMIND_KEY, !!on); }
+function petRemindCheck() {
+  if (!petRemindOn()) return;
+  const today = isoDate(new Date());
+  if (store.get('nabu-pet-remind-day', '') === today) return;
+  const hungry = PETS.anyHungry();
+  if (!hungry.length) return;
+  store.set('nabu-pet-remind-day', today);
+  const S = T(), p = hungry[0];
+  const name = p.name || L(PET_NAMES[p.kind]);
+  const body = hungry.length > 1 ? S.petHungryMany(hungry.length) : S.petHungryOne(name);
+  toast('🍚 ' + body);
+  if ('Notification' in window && Notification.permission === 'granted') {
+    try {
+      const n = new Notification(S.petHungryTitle, { body: body, icon: 'icon-180.png', badge: 'icon-180.png', tag: 'nabu-pet' });
+      n.onclick = () => { window.focus(); location.hash = '#/play/pet'; n.close(); };
+    } catch (e) { /* some browsers only allow this from a service worker */ }
+  }
 }
 ROUTES.pet = { nav: 'play', render: renderPet };

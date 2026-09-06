@@ -356,11 +356,17 @@ function treeNightSVG(still) {
   [[70, -8], [150, 4], [220, -6]].forEach((p, i) => {
     shafts += '<path class="shaft' + (still ? ' still' : '') + '" d="M' + p[0] + ' -30 l' + (26 + p[1]) + ' 0 l-46 268 l-26 0 Z" fill="#FFF3C4" opacity=".07" style="animation-delay:' + (i * 1700) + 'ms"/>';
   });
+  let rising = '';
+  if (!still) {
+    [[70, 150], [118, 168], [166, 156], [206, 172], [94, 176]].forEach((p, i) => {
+      rising += '<circle class="rise" cx="' + p[0] + '" cy="' + p[1] + '" r="2.6" fill="#FFF3C4" style="animation-delay:' + (i * 1700) + 'ms;animation-duration:' + (7 + i) + 's"/>';
+    });
+  }
   return treeShell(treeCanopy(puffs, TREE_BLOOMS.slice(0, 10), '#8E7FD6')
     + '<circle cx="238" cy="14" r="20" fill="#FFE9A8" opacity=".9"/>'
     + '<circle cx="238" cy="14" r="28" fill="#FFE9A8" opacity=".16"/>'
     + shafts
-    + '<g fill="#FFF3C4" opacity=".9"><circle class="twinkle" cx="30" cy="44" r="1.8"/><circle class="twinkle" style="animation-delay:600ms" cx="250" cy="52" r="2"/><circle class="twinkle" style="animation-delay:1200ms" cx="210" cy="24" r="1.4"/><circle class="twinkle" style="animation-delay:1800ms" cx="60" cy="20" r="1.6"/></g>' + flies, '#2E2756');
+    + '<g fill="#FFF3C4" opacity=".9"><circle class="twinkle" cx="30" cy="44" r="1.8"/><circle class="twinkle" style="animation-delay:600ms" cx="250" cy="52" r="2"/><circle class="twinkle" style="animation-delay:1200ms" cx="210" cy="24" r="1.4"/><circle class="twinkle" style="animation-delay:1800ms" cx="60" cy="20" r="1.6"/></g>' + flies + rising, '#2E2756');
 }
 function treeGalaxySVG(still) {
   const puffs = TREE_PUFFS.map((p, i) => [p[0], p[1], p[2], i % 3 === 0 ? '#4B3A8F' : (i % 3 === 1 ? '#6C4FB8' : '#8A5FD0'), .6]);
@@ -375,8 +381,20 @@ function treeGalaxySVG(still) {
   const nebula = '<ellipse cx="120" cy="76" rx="128" ry="62" fill="#7A4FD0" opacity=".22"/>'
     + '<ellipse cx="176" cy="52" rx="76" ry="38" fill="#C86FC0" opacity=".16"/>'
     + '<ellipse cx="64" cy="104" rx="70" ry="34" fill="#4FA8D0" opacity=".14"/>';
+  /* A ring of stars turning slowly around the crown, drawn as one group so a
+     single rotation carries all of them. */
+  let ring = '';
+  for (let k = 0; k < 14; k++) {
+    const t = (k / 14) * Math.PI * 2;
+    ring += '<circle cx="' + (140 + Math.cos(t) * 118).toFixed(1) + '" cy="' + (94 + Math.sin(t) * 74).toFixed(1) + '" r="' + (k % 3 === 0 ? 2.6 : 1.6) + '" fill="#FFF3C4" opacity="' + (k % 3 === 0 ? '.95' : '.6') + '"/>';
+  }
+  const wheel = still ? '' : '<g class="starwheel">' + ring + '</g>';
+  /* Three lines of a constellation, breathing in and out. */
+  const lines = still ? '' : '<g class="conste" stroke="#FFF3C4" stroke-width="1" fill="none" opacity=".5">'
+    + '<path d="M74 66 L118 44 L162 62 L196 40"/><path d="M118 44 L134 88 L182 96"/><path d="M62 118 L104 104 L134 88"/></g>'
+    + '<g fill="#FFF3C4" class="conste"><circle cx="74" cy="66" r="2.2"/><circle cx="118" cy="44" r="2.6"/><circle cx="162" cy="62" r="2.2"/><circle cx="196" cy="40" r="2"/><circle cx="134" cy="88" r="2.4"/><circle cx="182" cy="96" r="2"/><circle cx="62" cy="118" r="2"/><circle cx="104" cy="104" r="2.2"/></g>';
   const shooter = still ? '' : '<g class="shoot"><path d="M0 0 l30 16" stroke="#FFF3C4" stroke-width="2.2" stroke-linecap="round" opacity=".85"/><circle cx="31" cy="16.5" r="2.6" fill="#FFF3C4"/></g>';
-  return treeShell(nebula + treeCanopy(puffs, [], '#B79BF0') + stars + shine(140, 70, 15) + shine(96, 108, 9) + shine(196, 96, 8) + shooter, '#3A2A72');
+  return treeShell(nebula + wheel + treeCanopy(puffs, [], '#B79BF0') + stars + lines + shine(140, 70, 15) + shine(96, 108, 9) + shine(196, 96, 8) + shooter, '#3A2A72');
 }
 function treeButterflySVG(still) {
   const puffs = TREE_PUFFS.map((p, i) => [p[0], p[1], p[2], i % 2 ? '#CFE7C4' : '#B9DCAC', .6]);
@@ -391,8 +409,9 @@ function treeButterflySVG(still) {
     + '<rect x="-1" y="-7" width="2" height="15" rx="1" fill="#6B4A32"/></g></g></g>';
   let leaves = '';
   if (!still) {
-    [[54, 0], [108, 1], [166, 2], [214, 3], [82, 4]].forEach((p, i) => {
-      leaves += '<ellipse class="leaffall" cx="' + p[0] + '" cy="20" rx="5" ry="3" fill="' + (i % 2 ? '#F5A6C9' : '#F7D488') + '" style="animation-delay:' + (i * 1500) + 'ms;animation-duration:' + (7 + i) + 's"/>';
+    [[48, 0], [86, 1], [124, 2], [162, 3], [200, 4], [232, 5], [66, 6], [144, 7]].forEach((p, i) => {
+      const c = ['#F5A6C9', '#F7D488', '#FFFFFF', '#EFA6E0'][i % 4];
+      leaves += '<ellipse class="leaffall" cx="' + p[0] + '" cy="26" rx="5" ry="3.2" fill="' + c + '" style="animation-delay:' + (i * 1100) + 'ms;animation-duration:' + (7 + (i % 4)) + 's"/>';
     });
   }
   return treeShell(treeCanopy(puffs, TREE_BLOOMS.slice(0, 12), '#F4D06F')
