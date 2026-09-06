@@ -1141,6 +1141,39 @@ main{padding:22px 0 30px}
 .actquick .aq{display:flex;flex-direction:column;align-items:center;gap:5px;background:var(--surface);border:1px solid var(--rule-soft);border-radius:14px;padding:10px 4px;text-decoration:none;color:inherit;min-width:0}
 .actquick .aq .ic{font-size:21px;line-height:1}
 .actquick .aq b{font-size:11px;font-weight:600;line-height:1.25;text-align:center;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
+/* ---- angel numbers ---- */
+.sr{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0}
+.angelpad{text-align:center}
+.angelshow{font-family:var(--display);font-size:38px;font-weight:600;letter-spacing:4px;color:var(--primary);margin:6px 0 12px;min-height:46px}
+.keypad{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;max-width:280px;margin:0 auto}
+.keypad .key{background:var(--surface-2);border:1px solid var(--rule-soft);border-radius:14px;padding:13px 0;font:inherit;font-size:19px;font-weight:600;color:var(--fg);cursor:pointer}
+.keypad .key:active{background:var(--surface);transform:scale(.96)}
+.keypad .key.go{background:var(--primary);color:var(--primary-ink);border-color:var(--primary)}
+.sigil{display:block;height:auto}
+.angelanswer{border:1.5px solid var(--ink);background:linear-gradient(180deg,var(--aura),var(--surface))}
+.angelanswer .head{display:flex;align-items:center;gap:12px;margin-bottom:8px}
+.angelanswer .head b{display:block;font-family:var(--display);font-size:17px;font-weight:600}
+.angelanswer .head span{font-size:13px;color:var(--fg-soft)}
+#main .angelanswer p.why{font-size:12.5px;color:var(--fg-soft);margin-bottom:8px;text-align:left}
+.angelrow{display:flex;align-items:center;gap:12px;background:var(--surface);border:1px solid var(--rule-soft);border-radius:16px;padding:10px 14px;text-decoration:none;color:inherit}
+.angelrow .b{flex:1;min-width:0}
+.angelrow .b b{display:block;font-weight:600;font-size:14px}
+.angelrow .b span{font-size:12.5px;color:var(--fg-soft)}
+.angelrow .go{color:var(--fg-soft);font-size:18px}
+.angelgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.angeltile{display:flex;flex-direction:column;align-items:center;gap:4px;padding:10px 6px;border-radius:16px;background:var(--surface);border:1px solid var(--rule-soft);text-decoration:none;color:inherit;min-width:0}
+.angeltile b{font-size:11.5px;font-weight:600;text-align:center;line-height:1.25}
+.angeltile span{font-size:10.5px;color:var(--fg-soft);text-align:center}
+.angellog{list-style:none;margin:0 0 10px;padding:0;display:grid;gap:6px}
+.angellog li{display:flex;justify-content:space-between;align-items:baseline;gap:10px;font-size:13px;padding:7px 12px;border-radius:10px;background:var(--surface-2)}
+.angellog li b{font-family:var(--display);font-size:15px;letter-spacing:1px}
+.angellog li span{color:var(--fg-soft);font-size:12px}
+.angelhero{text-align:center;margin-bottom:14px}
+.angelhero .sigil{margin:0 auto 8px}
+.angelhero h1{margin-bottom:4px}
+.angelone .seen{justify-content:center;margin-top:8px}
+.angelone .seen .chip{font-family:var(--display);letter-spacing:1px}
+.angelone .keys{margin-bottom:12px}
 /* The way to the looks picker, offered under whatever it changes. */
 .lookslink{text-align:center;margin:10px 0 0}
 .lookslink a{color:var(--gold-deep);font-weight:600;font-size:13.5px;text-decoration:none;border-bottom:1px solid var(--gold-soft);padding-bottom:1px}
@@ -1550,8 +1583,18 @@ const STR = {
 
     learnTitle: 'Kho kiến thức',
     learnIntro: 'Nơi bạn học tarot, Lenormand, chiêm tinh, manifestation và các cách xem truyền thống.',
-    cats: { tarot: 'Tarot', lenormand: 'Lenormand', playing: 'Bài Tây', astro: 'Chiêm tinh', manifest: 'Manifestation', fortune: 'Bói toán' },
-    catSub: { tarot: '78 lá + 8 trải bài', lenormand: '36 lá + 7 trải bài', playing: '52 lá + 4 trải bài', astro: '12 cung, hành tinh, nhà', manifest: 'cách làm + giới hạn', fortune: '4 cách xem dân gian' },
+    cats: { tarot: 'Tarot', lenormand: 'Lenormand', playing: 'Bài Tây', astro: 'Chiêm tinh', angel: 'Con số thiên thần', manifest: 'Manifestation', fortune: 'Bói toán' },
+    catSub: { tarot: '78 lá + 8 trải bài', lenormand: '36 lá + 7 trải bài', playing: '52 lá + 4 trải bài', astro: '12 cung, hành tinh, nhà', angel: 'số bạn hay gặp có ý gì', manifest: 'cách làm + giới hạn', fortune: '4 cách xem dân gian' },
+    angelTitle: 'Con số thiên thần', angelIntro: 'Có những con số cứ hiện ra mãi trong ngày của bạn: trên đồng hồ, trên hóa đơn, trên biển số xe. Bạn nhập con số bạn hay gặp vào bàn phím bên dưới để đọc ý nghĩa của nó.',
+    angelAsk: 'Con số bạn hay gặp', angelPadHint: 'Bạn nhập số rồi bấm dấu ✓ để lưu lại. App sẽ nhớ những con số bạn hay gặp nhất.',
+    angelToday: 'Con số của hôm nay', angelAll: 'Các nhóm số', angelLog: 'Những số bạn đã gặp', angelClear: 'Xóa danh sách',
+    angelTop: (n, c) => 'Bạn gặp số ' + n + ' nhiều nhất: ' + c + ' lần.',
+    angelMore: 'Đọc đầy đủ nhóm số này', angelTodo: 'Việc nhỏ dành cho bạn',
+    angelWhySame: (n) => 'Số ' + n + ' là một chữ số lặp lại, nên bạn đọc theo nhóm số đó.',
+    angelWhyMirror: 'Đây là số gương: hai nửa lặp lại hoặc đọc xuôi ngược đều như nhau.',
+    angelWhyLadder: 'Đây là số bậc thang: các chữ số tăng dần liền nhau.',
+    angelWhyRoot: (r) => 'Cộng các chữ số lại và rút gọn, bạn được số gốc ' + r + '. Bạn đọc theo nhóm số ' + r + '.',
+    angelNote: 'Con số thiên thần là một cách đọc dân gian, được ghi lại ở đây để bạn tham khảo. Con số là lời nhắc bạn nhìn lại một việc, không phải lời tiên đoán.',
     courses: 'Khóa học', coursesPractice: 'Khóa học và thực hành', freeReads: 'Đọc miễn phí', practice: 'Thực hành', lessonsIntro: (n) => 'Khóa học có ' + n + ' bài. Bạn nên học lần lượt và dành khoảng một tuần cho mỗi bài.', markDone: 'Đánh dấu đã học xong', lessonDone: 'Đã học xong', journeyHint: 'Chạm vào một lá để mở trang của lá đó.', lenGridHint: 'Cả 36 lá. Chạm để xem từng lá.',
     aiIntro: 'Bạn có thể hỏi Nabu AI về nội dung đang mở. Câu hỏi càng cụ thể thì câu trả lời càng rõ.', aiIntroLesson: 'Nếu có chỗ nào trong bài bạn chưa hiểu, bạn hãy hỏi Nabu AI tại đây.', aiPlaceholder: 'Ví dụ: lá này nói gì về chuyện tình cảm của mình?', aiAsk: 'Hỏi', aiOnline: 'trả lời bằng AI', aiBuiltin: 'trả lời từ kho kiến thức', aiNote: 'Nabu AI trả lời cả câu hỏi thường lẫn tarot, chiêm tinh, thần số học, và tra cứu mạng khi cần. Chuyện riêng quan trọng, bạn đặt lịch với Nabu.', aiFallback: 'AI đang bận, đây là câu trả lời từ kho kiến thức.',
     aiSugCard: ['Lá này nói gì về tình cảm của mình?', 'Mình có nên tiếp tục không?', 'Khi nào chuyện này xảy ra?'], aiSugLesson: ['Ẩn Chính khác Ẩn Phụ thế nào?', 'Lá hoàng gia là ai?', 'Nếu mình không hiểu một lá thì làm sao?'], aiSugSign: ['Cung này hợp với cung nào?', 'Cung này trong tình yêu thế nào?', 'Mặt Trăng ở cung này là sao?'], aiSugNumbers: ['Số đường đời của mình nói gì?', 'Năm nay của mình là năm gì?', 'Số vận mệnh theo tên mình là gì?'], aiSugGeneral: ['Gã Khờ nghĩa là gì?', 'Sư Tử hợp với Bảo Bình không?', 'Số đường đời của mình?'],
@@ -1891,8 +1934,18 @@ const STR = {
 
     learnTitle: 'Knowledge library',
     learnIntro: 'Tarot, Lenormand, astrology, manifestation and fortune telling.',
-    cats: { tarot: 'Tarot', lenormand: 'Lenormand', playing: 'Cartomancy', astro: 'Astrology', manifest: 'Manifestation', fortune: 'Fortune telling' },
-    catSub: { tarot: '78 cards + 8 spreads', lenormand: '36 cards + 7 spreads', playing: '52 cards + 4 spreads', astro: '12 signs, planets, houses', manifest: 'methods + limits', fortune: 'numbers, palms, tea leaves' },
+    cats: { tarot: 'Tarot', lenormand: 'Lenormand', playing: 'Cartomancy', astro: 'Astrology', angel: 'Angel numbers', manifest: 'Manifestation', fortune: 'Fortune telling' },
+    catSub: { tarot: '78 cards + 8 spreads', lenormand: '36 cards + 7 spreads', playing: '52 cards + 4 spreads', astro: '12 signs, planets, houses', angel: 'the numbers you keep seeing', manifest: 'methods + limits', fortune: 'numbers, palms, tea leaves' },
+    angelTitle: 'Angel numbers', angelIntro: 'Some numbers keep turning up in a day: on a clock, on a receipt, on a number plate. Type the one you keep seeing on the keypad below and read what it is taken to mean.',
+    angelAsk: 'The number you keep seeing', angelPadHint: 'Type a number and press ✓ to keep it. The app remembers which numbers you meet most.',
+    angelToday: 'Today’s number', angelAll: 'The groups', angelLog: 'Numbers you have met', angelClear: 'Clear the list',
+    angelTop: (n, c) => 'You meet ' + n + ' most often: ' + c + ' times.',
+    angelMore: 'Read this group in full', angelTodo: 'One small thing to do',
+    angelWhySame: (n) => n + ' is one digit repeated, so it is read as that group.',
+    angelWhyMirror: 'This is a mirror number: two halves repeating, or the same read either way.',
+    angelWhyLadder: 'This is a ladder: the digits rise one after another.',
+    angelWhyRoot: (r) => 'Adding the digits and reducing gives a root of ' + r + ', so it is read as the ' + r + ' group.',
+    angelNote: 'Angel numbers are folk reading, written down here for interest. A number is a prompt to look at something, not a prediction.',
     courses: 'Courses', coursesPractice: 'Courses and practice', freeReads: 'Free to read', practice: 'Practice', lessonsIntro: (n) => 'The course has ' + n + ' sessions. Take them in order, about one a week.', markDone: 'Mark as done', lessonDone: 'Done', journeyHint: 'Tap a card to open its page.', lenGridHint: 'All 36 cards. Tap one to open it.',
     aiIntro: 'Ask Nabu AI about what you are looking at. The more specific, the better.', aiIntroLesson: 'Anything in this lesson unclear? Ask Nabu AI here.', aiPlaceholder: 'For example: what does this card say about my love life?', aiAsk: 'Ask', aiOnline: 'answered by AI', aiBuiltin: 'answered from the knowledge base', aiNote: 'Nabu AI answers everyday questions as well as tarot, astrology and numerology, and looks things up online when needed. For anything personal and important, book a reading with Nabu.', aiFallback: 'AI is busy; this answer comes from the knowledge base.',
     aiSugCard: ['What does this card say about my love life?', 'Should I keep going?', 'When will this happen?'], aiSugLesson: ['How do Majors differ from Minors?', 'Who are the court cards?', 'What if I do not understand a card?'], aiSugSign: ['Which signs suit this sign?', 'How is this sign in love?', 'What does the Moon in this sign mean?'], aiSugNumbers: ['What does my life path say?', 'What kind of year is this for me?', 'What is my destiny number from my name?'], aiSugGeneral: ['What does The Fool mean?', 'Do Leo and Aquarius get along?', 'What is my life path?'],
@@ -10531,7 +10584,7 @@ ROUTES.pick = { nav: 'pick', render: renderPick };
    #/learn/lenormand?tab=…                     the Lenormand course (paid)
    #/learn/card/<id>  #/learn/len/<n>  #/learn/spread/<id>  #/learn/guide/<id>
    #/learn/astro, #/learn/sign/<key>, #/learn/manifest, #/learn/fortune, #/learn/numbers  (free) */
-const CAT_ICONS = { tarot: PICK_ICON, lenormand: '🗝️', astro: '🔮', manifest: '🌙', fortune: '🔢', playing: '🂡' };
+const CAT_ICONS = { tarot: PICK_ICON, lenormand: '🗝️', astro: '🔮', angel: '👼', manifest: '🌙', fortune: '🔢', playing: '🂡' };
 const badgeHTML = () => '';
 const courseOf = (id) => COURSES.filter((c) => c.id === id)[0];
 
@@ -10586,7 +10639,7 @@ function renderLearn(args, params) {
     const tile = (k, locked) => '<a class="tile' + (ints.indexOf(k) > -1 || k === 'tarot' || k === 'lenormand' || k === 'playing' || k === 'manifest' ? ' rec' : '') + '" href="#/learn/' + k + '"><div class="ic">' + CAT_ICONS[k] + (locked ? ' <span class="lock">🔒</span>' : '') + '</div><b>' + esc(S.cats[k]) + '</b><span>' + esc(S.catSub[k]) + '</span></a>';
     m.innerHTML = '<div class="eyebrow">' + esc(S.nav.learn) + '</div><h1 style="margin-bottom:6px">' + esc(S.learnTitle) + '</h1><p class="muted">' + esc(S.learnIntro) + '</p>'
       + '<div class="eyebrow">' + esc(S.coursesPractice) + '</div><div class="tiles">' + tile('tarot', !ACCESS.has('tarot')) + tile('lenormand', !ACCESS.has('lenormand')) + tile('playing', !ACCESS.has('playing')) + tile('manifest', !ACCESS.has('manifest')) + '</div>'
-      + '<div class="eyebrow">' + esc(S.freeReads) + '</div><div class="tiles">' + tile('astro') + tile('fortune') + '</div>'
+      + '<div class="eyebrow">' + esc(S.freeReads) + '</div><div class="tiles">' + tile('astro') + tile('angel') + tile('fortune') + '</div>'
       + '<p style="margin-top:14px"><a class="btn block" href="#/unlock">💳 ' + esc(S.unlockLink) + '</a></p>'
       + (function () { const ints = PROFILE.interests || []; const list = GUIDES.filter((g) => g.tags.some((t) => ints.indexOf(t) > -1) && !((g.cat === 'tarot' || g.cat === 'lenormand') && !ACCESS.has(g.cat)) && !(g.id === 'fort-playing' && !ACCESS.has('playing'))).slice(0, 4); return list.length ? '<div class="sec"><div class="eyebrow">' + esc(S.forInterests) + '</div>' + list.map(guideRow).join('') + '</div>' : ''; }());
     return;
@@ -10599,6 +10652,7 @@ function renderLearn(args, params) {
   if (sub === 'card') return renderCard(args[1]);
   if (sub === 'len') return renderLen(Number(args[1]));
   if (sub === 'astro') return renderAstro();
+  if (sub === 'angel') return args[1] ? renderAngelOne(args[1]) : renderAngel();
   if (sub === 'sign') return renderSign(args[1]);
   if (sub === 'spread') return renderSpread(args[1]);
   if (sub === 'fortune') return renderFortune(args[1]);
@@ -11778,6 +11832,358 @@ function bindGuideVisual(root) {
   $$('[data-len]', root).forEach((b) => b.addEventListener('click', () => { location.hash = '#/learn/len/' + b.getAttribute('data-len'); }));
 }
 
+/* ======================= angel numbers (free) =======================
+   The numbers people keep seeing: on a clock, on a receipt, on a number plate.
+   They are grouped by pattern rather than listed one by one, because 111 and
+   1111 are the same message said twice as loudly, and because a list of forty
+   numbers is a list nobody reads.
+
+   Everything here is folklore, written down plainly. The app says so on the
+   page: a number is a prompt to look at something, not a prediction.
+
+   The screen is built around one thing a person actually wants to do - type
+   the number they keep seeing and be told what it means - so the keypad comes
+   first and the reading follows it. Whatever is typed matches: a repeated
+   digit, a mirrored pair, a ladder, or, failing all of those, the root the
+   number reduces to. */
+
+const ANGEL_ROOT = { 1: 'n1', 2: 'n2', 3: 'n3', 4: 'n4', 5: 'n5', 6: 'n6', 7: 'n7', 8: 'n8', 9: 'n9' };
+
+const ANGELS = [
+  {
+    id: 'n0', digit: 0, ink: '#6E5AA8', aura: '#E4DCFA', seen: ['000', '0000', '00:00'],
+    name: { vi: 'Số 0 lặp lại', en: 'Repeating zeros' },
+    short: { vi: 'Một vòng mới bắt đầu', en: 'A circle opening' },
+    keys: { vi: ['khởi đầu', 'trở về gốc', 'buông bớt'], en: ['beginning', 'return', 'letting go'] },
+    body: {
+      vi: ['Số 0 không có điểm đầu và cũng không có điểm cuối. Khi bạn liên tục nhìn thấy 000 hoặc 0000, người ta cho rằng bạn đang đứng ở đoạn giữa hai chương: chương cũ đã đóng lại nhưng chương mới thì chưa kịp mở ra. Cảm giác trống trải trong giai đoạn này là bình thường, và nó không có nghĩa là bạn đang đi sai đường.',
+        'Đây thường là lúc những thói quen cũ không còn phù hợp nữa. Bạn có thể thấy mình mất hứng thú với những việc trước đây từng theo đuổi, hoặc thấy cần một khoảng lặng trước khi quyết định điều gì. Số 0 nhắc bạn rằng khoảng lặng ấy là một phần của quá trình, không phải là sự trì trệ.',
+        'Trong nhiều truyền thống, số 0 còn được xem là biểu tượng của sự trọn vẹn: mọi thứ vốn đã đủ, chỉ là bạn đang nhìn nó theo một cách khác. Khi gặp số này, bạn hãy quay về với những điều cơ bản nhất của mình.'],
+      en: ['Zero has no beginning and no end. Seeing 000 or 0000 again and again is read as standing between two chapters: the old one has closed and the new one has not opened yet. The empty feeling that comes with it is normal, and it does not mean you have gone the wrong way.',
+        'This is usually a stretch where old habits stop fitting. You may lose interest in something you used to chase, or find you need a pause before deciding anything. Zero says the pause is part of the process rather than a stall.',
+        'In many traditions zero also stands for wholeness: nothing is missing, you are only looking at it differently. When it appears, go back to your own basics.']
+    },
+    todo: { vi: 'Bạn dọn bớt một thứ đã cũ trong tuần này, dù là một món đồ, một thói quen hay một cuộc trò chuyện chưa dứt.', en: 'Clear one old thing this week: an object, a habit, or a conversation you never finished.' }
+  },
+  {
+    id: 'n1', digit: 1, ink: '#C0872A', aura: '#FBE7BE', seen: ['111', '1111', '11:11'],
+    name: { vi: 'Số 1 lặp lại', en: 'Repeating ones' },
+    short: { vi: 'Cánh cửa vừa mở', en: 'A door standing open' },
+    keys: { vi: ['khởi sự', 'ý nghĩ thành hình', 'đi trước'], en: ['starting', 'thoughts taking shape', 'going first'] },
+    body: {
+      vi: ['111 và 1111 là dãy số được nhắc đến nhiều nhất. Người ta xem đây là dấu hiệu của một cánh cửa vừa mở ra, và điều bạn đang nghĩ trong khoảnh khắc ấy có sức nặng hơn bình thường. Vì vậy mới có thói quen ước một điều gì đó khi đồng hồ chỉ 11:11.',
+        'Ở mức thực tế hơn, số 1 gắn với việc bắt đầu và với việc tự mình đi bước đầu tiên. Nếu bạn đang cân nhắc một việc mới, dãy số này thường xuất hiện đúng vào lúc bạn đã có đủ thông tin nhưng còn thiếu quyết tâm.',
+        'Số 1 cũng nhắc bạn để ý đến giọng nói bên trong của mình. Những câu bạn tự nói với bản thân trong giai đoạn này sẽ định hình cách bạn hành động trong vài tháng tới, nên bạn hãy chọn lời cho tử tế.'],
+      en: ['111 and 1111 are the most talked-about of all. They are read as a door standing open, with whatever you are thinking at that moment carrying more weight than usual - which is where the habit of making a wish at 11:11 comes from.',
+        'More practically, one is the number of beginnings and of taking the first step yourself. If you are weighing something new, this sequence tends to turn up exactly when you have enough information and not quite enough nerve.',
+        'It also asks you to listen to your own voice. What you say to yourself now shapes how you act for months, so choose the words kindly.']
+    },
+    todo: { vi: 'Bạn viết ra một câu về điều bạn muốn, ở thì hiện tại, rồi làm một việc nhỏ nhất có thể để bắt đầu.', en: 'Write one sentence about what you want, in the present tense, then do the smallest thing that starts it.' }
+  },
+  {
+    id: 'n2', digit: 2, ink: '#B0537A', aura: '#FBD3E1', seen: ['222', '2222', '22:22'],
+    name: { vi: 'Số 2 lặp lại', en: 'Repeating twos' },
+    short: { vi: 'Hãy cho mọi việc thêm thời gian', en: 'Give it time' },
+    keys: { vi: ['cân bằng', 'bạn đồng hành', 'đúng thời điểm'], en: ['balance', 'partnership', 'timing'] },
+    body: {
+      vi: ['Số 2 nói về hai phía: bạn và một người khác, công việc và đời sống riêng, điều bạn muốn và điều bạn đang có. Khi 222 xuất hiện nhiều lần, người ta hiểu rằng có một việc trong đời bạn đang cần được cân lại cho đều.',
+        'Đây cũng là dãy số của sự kiên nhẫn. Những gì bạn gieo trước đó chưa kịp nảy mầm, và số 2 khuyên bạn đừng đào lên xem. Nhiều chuyện chỉ cần thêm thời gian chứ không cần thêm nỗ lực.',
+        'Trong chuyện tình cảm và trong hợp tác làm ăn, dãy số này thường được xem là dấu hiệu tốt: một mối quan hệ đang đi đúng hướng, hoặc một người phù hợp sắp bước vào phần việc bạn đang làm.'],
+      en: ['Two is about two sides: you and someone else, work and life, what you want and what you have. When 222 keeps appearing, something in your life is asking to be evened out.',
+        'It is also the number of patience. What you planted has not come up yet, and two says do not dig it back up to look. Some things need more time rather than more effort.',
+        'In love and in partnerships it is usually read as a good sign: a relationship is going the right way, or the right person is about to join what you are building.']
+    },
+    todo: { vi: 'Bạn nhắn cho một người mà bạn đang chờ, hoặc cho họ thêm một tuần nữa mà không hỏi lại.', en: 'Message the person you are waiting on, or give them one more week without asking again.' }
+  },
+  {
+    id: 'n3', digit: 3, ink: '#C46A2C', aura: '#F8D9C6', seen: ['333', '3333', '3:33'],
+    name: { vi: 'Số 3 lặp lại', en: 'Repeating threes' },
+    short: { vi: 'Nói ra điều bạn đang giữ', en: 'Say the thing' },
+    keys: { vi: ['sáng tạo', 'lên tiếng', 'có người bên cạnh'], en: ['creativity', 'speaking up', 'support'] },
+    body: {
+      vi: ['Số 3 gắn với việc thể hiện: viết, vẽ, hát, hoặc đơn giản là nói ra một điều bạn đã giữ trong lòng quá lâu. Khi 333 xuất hiện, thường là lúc bạn đang có điều muốn nói nhưng lại tự thuyết phục mình rằng chưa phải lúc.',
+        'Dãy số này còn được xem là dấu hiệu bạn không đơn độc. Có thể là một người thầy, một người bạn cũ, hoặc một người bạn chưa từng nghĩ tới sẽ giúp bạn trong việc bạn đang làm dở.',
+        'Nếu bạn đang làm công việc sáng tạo, 333 là lời nhắc quay lại với phần việc bạn thích nhất chứ không phải phần việc dễ đo đếm nhất.'],
+      en: ['Three is expression: writing, drawing, singing, or simply saying something you have held too long. When 333 turns up, there is usually something you want to say and keep telling yourself is not timely yet.',
+        'It is also read as a sign that you are not on your own. A teacher, an old friend, or someone you never expected is about to help with the thing you left half-finished.',
+        'If you make things for a living, 333 asks you back to the part of the work you actually like rather than the part that is easiest to measure.']
+    },
+    todo: { vi: 'Bạn gửi đi một tin nhắn hoặc một tác phẩm mà bạn vẫn để trong bản nháp.', en: 'Send one message, or share one piece of work, that has been sitting in drafts.' }
+  },
+  {
+    id: 'n4', digit: 4, ink: '#3E7D5A', aura: '#C6E8D9', seen: ['444', '4444', '4:44'],
+    name: { vi: 'Số 4 lặp lại', en: 'Repeating fours' },
+    short: { vi: 'Bạn đang được che chắn', en: 'You are held' },
+    keys: { vi: ['nền móng', 'được bảo vệ', 'làm cho chắc'], en: ['foundations', 'protection', 'steadiness'] },
+    body: {
+      vi: ['444 là dãy số của sự vững chãi. Người ta tin rằng khi số này xuất hiện, bạn đang được che chắn trong một giai đoạn khó, và những gì bạn đã xây dựng chắc chắn hơn bạn tưởng.',
+        'Số 4 cũng nói về nền móng: sức khỏe, tiền tiết kiệm, chỗ ở, những mối quan hệ lâu năm. Đây là lúc thích hợp để kiểm tra lại phần gốc thay vì chạy theo cơ hội mới.',
+        'Nếu bạn đang lo lắng về một việc cụ thể, dãy số này thường được đọc là lời trấn an: bạn không sai khi kiên trì, chỉ là kết quả đến chậm hơn bạn muốn.'],
+      en: ['444 is the steady one. It is read as being held through a hard stretch, with what you have built standing firmer than you think.',
+        'Four is also foundations: health, savings, where you live, the relationships that have lasted. A good time to check the base rather than chase something new.',
+        'If you are worried about one particular thing, this sequence is usually read as reassurance: you are not wrong to keep going, the result is simply slower than you wanted.']
+    },
+    todo: { vi: 'Bạn kiểm tra lại một việc thuộc phần nền: giấy tờ, sức khỏe, hoặc một khoản chi đều đặn.', en: 'Check one thing at the base: papers, health, or a payment that goes out every month.' }
+  },
+  {
+    id: 'n5', digit: 5, ink: '#2F7E96', aura: '#C7EAEE', seen: ['555', '5555', '5:55'],
+    name: { vi: 'Số 5 lặp lại', en: 'Repeating fives' },
+    short: { vi: 'Có thay đổi đang tới', en: 'Change is coming' },
+    keys: { vi: ['thay đổi', 'tự do', 'nới tay ra'], en: ['change', 'freedom', 'loosening'] },
+    body: {
+      vi: ['555 báo hiệu sự thay đổi. Có thể là công việc, chỗ ở, hoặc cách bạn nhìn một mối quan hệ. Điều đáng nói là thay đổi ấy thường đã bắt đầu từ trước khi bạn kịp nhận ra.',
+        'Người ta khuyên rằng khi gặp dãy số này, bạn nên nới tay với những kế hoạch quá chi tiết. Giai đoạn 5 hiếm khi đi theo đúng lịch, và phần lớn những gì tốt đẹp trong giai đoạn này đến từ chỗ bạn không tính trước.',
+        'Nếu bạn đang sợ thay đổi, số 5 không hứa rằng mọi việc sẽ dễ. Nó chỉ nói rằng đứng yên cũng không còn là lựa chọn thoải mái nữa.'],
+      en: ['555 announces change: work, where you live, or how you see a relationship. What is worth noticing is that it usually began before you noticed it.',
+        'When it appears, loosen your grip on plans that are too detailed. A five stretch rarely keeps to a schedule, and most of the good in it arrives from somewhere you did not account for.',
+        'If change frightens you, five does not promise it will be easy. It only says that standing still has stopped being comfortable.']
+    },
+    todo: { vi: 'Bạn thử đổi một thói quen nhỏ trong tuần này, như đi một đường khác hoặc dậy sớm hơn nửa tiếng.', en: 'Change one small habit this week: a different route, or half an hour earlier.' }
+  },
+  {
+    id: 'n6', digit: 6, ink: '#8B5E3C', aura: '#EFDCC4', seen: ['666', '6666', '6:66'],
+    name: { vi: 'Số 6 lặp lại', en: 'Repeating sixes' },
+    short: { vi: 'Nhìn lại chuyện nhà và chuyện tiền', en: 'Home and money, rebalanced' },
+    keys: { vi: ['gia đình', 'chăm sóc', 'cân lại vật chất'], en: ['family', 'caring', 'material balance'] },
+    body: {
+      vi: ['Trái với những gì nhiều người nghĩ, 666 trong cách đọc này không mang nghĩa xấu. Đây là dãy số nhắc bạn về sự cân bằng giữa phần vật chất và phần còn lại của cuộc sống.',
+        'Số 6 gắn với nhà cửa, gia đình và việc chăm sóc người khác. Khi số này xuất hiện nhiều, thường là lúc bạn đang dồn quá nhiều sức cho một phía: hoặc lo kiếm tiền mà quên người nhà, hoặc lo cho người khác mà quên chính mình.',
+        'Đây cũng là lời nhắc kiểm tra lại các con số thật: chi tiêu, nợ, những khoản đang chảy đi mà bạn không để ý. Số 6 không bảo bạn từ bỏ vật chất, nó chỉ bảo bạn đặt vật chất đúng chỗ.'],
+      en: ['Contrary to what many expect, 666 is not read as an ill omen here. It is the number of balance between the material side of life and everything else.',
+        'Six is home, family and looking after people. When it keeps appearing, you are usually pouring too much into one side: earning and forgetting the people at home, or caring for everyone and forgetting yourself.',
+        'It is also a nudge to check the real numbers: spending, debts, the small amounts leaving without your noticing. Six does not ask you to give up material things, only to put them in their place.']
+    },
+    todo: { vi: 'Bạn dành một buổi tối cho người nhà, và một buổi khác để xem lại các khoản chi trong tháng.', en: 'Give one evening to the people at home, and another to last month’s spending.' }
+  },
+  {
+    id: 'n7', digit: 7, ink: '#5A4BA8', aura: '#DCD4F7', seen: ['777', '7777', '7:77'],
+    name: { vi: 'Số 7 lặp lại', en: 'Repeating sevens' },
+    short: { vi: 'Bạn đang đi đúng hướng', en: 'You are on the right road' },
+    keys: { vi: ['may mắn', 'trực giác', 'học hỏi'], en: ['luck', 'intuition', 'study'] },
+    body: {
+      vi: ['777 được xem là dãy số của sự thuận lợi. Không phải kiểu may mắn trúng thưởng, mà là cảm giác mọi thứ bắt đầu khớp lại sau một thời gian dài rời rạc.',
+        'Số 7 gắn với chiều sâu: đọc, học, suy nghĩ, hoặc theo đuổi một câu hỏi mà bạn không giải thích được vì sao lại quan tâm. Khi số này xuất hiện, những gì bạn học trong giai đoạn này sẽ có ích hơn bạn tưởng.',
+        'Người ta cũng cho rằng 777 là lúc trực giác của bạn đáng tin. Nếu bạn có một linh cảm rõ ràng về ai đó hoặc về một cơ hội, bạn nên ghi lại nó thay vì gạt đi.'],
+      en: ['777 is read as the easy stretch. Not lottery luck, but the feeling of things fitting together after a long time of not fitting.',
+        'Seven is depth: reading, studying, thinking, or following a question you cannot explain your interest in. What you learn now turns out to be more useful than it looks.',
+        'It is also taken as a sign that your instinct is worth trusting. If you have a clear feeling about a person or an opening, write it down rather than dismissing it.']
+    },
+    todo: { vi: 'Bạn ghi lại một linh cảm hôm nay, kèm ngày tháng, rồi đọc lại sau một tháng.', en: 'Write down one hunch today with the date on it, and read it again in a month.' }
+  },
+  {
+    id: 'n8', digit: 8, ink: '#1F7A5E', aura: '#C6E8D9', seen: ['888', '8888', '8:88'],
+    name: { vi: 'Số 8 lặp lại', en: 'Repeating eights' },
+    short: { vi: 'Của cải và sự đền đáp', en: 'Abundance and return' },
+    keys: { vi: ['tiền bạc', 'vòng tuần hoàn', 'cho và nhận'], en: ['money', 'cycles', 'give and take'] },
+    body: {
+      vi: ['Số 8 nằm ngang chính là dấu vô cực, nên 888 thường được đọc là dòng chảy: cái gì đi ra rồi cũng quay về. Trong tiếng Hoa và trong quan niệm dân gian ở Việt Nam, số 8 còn gắn liền với tài lộc.',
+        'Khi dãy số này xuất hiện, người ta xem đó là dấu hiệu của một giai đoạn được đền đáp. Công sức bạn bỏ ra trước đây bắt đầu quay lại, đôi khi từ một hướng hoàn toàn khác với chỗ bạn đã bỏ công.',
+        'Số 8 cũng nhắc về sự công bằng trong trao đổi. Nếu bạn đang cho đi quá nhiều mà không nhận lại, hoặc ngược lại, đây là lúc để chỉnh cho cân.'],
+      en: ['Eight on its side is the infinity sign, so 888 is read as flow: what goes out comes back. In Chinese and Vietnamese folk belief eight is also the number of prosperity.',
+        'When it appears it is taken as a season of return. Effort you put in earlier starts coming back, sometimes from a completely different direction than where you spent it.',
+        'Eight also asks about fairness in the exchange. If you are giving far more than you receive, or the reverse, this is the moment to even it out.']
+    },
+    todo: { vi: 'Bạn gửi hóa đơn còn treo, đòi một khoản người ta nợ bạn, hoặc trả một khoản bạn đang nợ.', en: 'Send the invoice you have not sent, ask for what you are owed, or pay what you owe.' }
+  },
+  {
+    id: 'n9', digit: 9, ink: '#8A4B6E', aura: '#F0D4E4', seen: ['999', '9999', '9:99'],
+    name: { vi: 'Số 9 lặp lại', en: 'Repeating nines' },
+    short: { vi: 'Một chương đang khép lại', en: 'A chapter closing' },
+    keys: { vi: ['kết thúc', 'buông', 'dọn chỗ'], en: ['endings', 'release', 'making room'] },
+    body: {
+      vi: ['999 là dãy số của sự hoàn tất. Một việc trong đời bạn đã đi hết vòng của nó: một công việc, một mối quan hệ, hoặc một cách sống mà bạn đã quen suốt nhiều năm.',
+        'Kết thúc trong cách đọc này không mang nghĩa mất mát. Nó có nghĩa là phần việc ấy đã dạy xong những gì cần dạy, và giữ lại lâu hơn nữa chỉ khiến bạn mệt.',
+        'Người ta cũng gắn số 9 với việc quay lại giúp người khác. Sau khi đi qua một chặng dài, bạn thường có thứ mà người đi sau đang cần: không phải lời khuyên, mà là kinh nghiệm cụ thể.'],
+      en: ['999 is completion. Something in your life has gone all the way round: a job, a relationship, or a way of living you have been used to for years.',
+        'Ending, read this way, is not loss. It means that part has finished teaching what it had to teach, and holding on longer only tires you.',
+        'Nine is also associated with turning back to help. After a long stretch you usually have what the person behind you needs: not advice, but the specifics.']
+    },
+    todo: { vi: 'Bạn kết thúc dứt điểm một việc còn dở, và kể lại kinh nghiệm đó cho một người đang bắt đầu.', en: 'Finish one thing you left hanging, and tell someone starting out what it taught you.' }
+  },
+  {
+    id: 'mirror', digit: -1, ink: '#4173B8', aura: '#CFE0F7', seen: ['1010', '1212', '1313', '2121', '1221'],
+    name: { vi: 'Số gương và số lặp cặp', en: 'Mirror and paired numbers' },
+    short: { vi: 'Hai nửa đang khớp lại', en: 'Two halves lining up' },
+    keys: { vi: ['đối chiếu', 'đồng điệu', 'bước tiếp'], en: ['reflection', 'alignment', 'stepping on'] },
+    body: {
+      vi: ['Số gương là những dãy lặp lại theo cặp như 1010, 1212, 1313, hoặc đọc xuôi đọc ngược đều như nhau như 1221. Người ta xem đây là dấu hiệu của sự đồng điệu: điều bạn nghĩ và điều đang xảy ra bên ngoài đang khớp với nhau.',
+        'Trong nhóm này, 1010 thường được đọc là một vòng mới bắt đầu cùng với một sự tỉnh thức nào đó, còn 1212 là lời nhắc bước tiếp trên con đường bạn đã chọn, kể cả khi bạn chưa nhìn thấy hết đường.',
+        'Số gương cũng hay xuất hiện khi bạn vừa gặp ai đó và có cảm giác quen thuộc khó giải thích. Dân gian gọi đó là những người đi cùng đường với bạn trong một chặng.'],
+      en: ['Mirror numbers repeat in pairs - 1010, 1212, 1313 - or read the same both ways, like 1221. They are taken as a sign of alignment: what you are thinking and what is happening outside are matching.',
+        'Within this group, 1010 is usually read as a new cycle arriving with some kind of waking up, and 1212 as a nudge to keep walking the road you chose even when you cannot see all of it.',
+        'Mirror numbers also turn up when you have just met someone and feel an ease you cannot explain. Folk reading calls those people fellow travellers for a stretch of the road.']
+    },
+    todo: { vi: 'Bạn viết ra hai cột: điều bạn đang nghĩ và điều đang thực sự xảy ra. Xem hai cột ấy có khớp không.', en: 'Write two columns: what you are thinking, and what is actually happening. See whether they match.' }
+  },
+  {
+    id: 'ladder', digit: -2, ink: '#B07C3E', aura: '#F7E6C8', seen: ['123', '1234', '234', '2345'],
+    name: { vi: 'Số bậc thang', en: 'Ladder numbers' },
+    short: { vi: 'Đi từng bước một', en: 'One step at a time' },
+    keys: { vi: ['tuần tự', 'tiến độ', 'kiên trì'], en: ['order', 'progress', 'persistence'] },
+    body: {
+      vi: ['Những dãy số tăng dần như 123, 1234 hay 2345 được xem là dấu hiệu của sự tiến lên theo thứ tự. Bạn không cần nhảy cóc, và cũng không nên.',
+        'Dãy số này thường xuất hiện với người đang làm một việc dài hơi và bắt đầu sốt ruột. Nó nhắc rằng phần bạn đã đi qua là có thật, và bước tiếp theo luôn là bước ngay sau chỗ bạn đang đứng.',
+        'Trong một số cách đọc, 1234 còn được hiểu là lời khuyên đơn giản hóa: bỏ bớt những việc không thuộc về con đường chính, giữ lại bốn năm việc thật sự quan trọng.'],
+      en: ['Rising runs like 123, 1234 or 2345 are read as progress in order. You do not need to skip steps, and you should not.',
+        'They tend to appear to people doing something long and starting to fret. The stretch you have covered is real, and the next step is always the one immediately after where you stand.',
+        'In some readings 1234 is simply advice to simplify: drop what is not on the main road and keep the four or five things that matter.']
+    },
+    todo: { vi: 'Bạn viết ra bốn bước tiếp theo của việc bạn đang làm, rồi chỉ làm bước đầu tiên hôm nay.', en: 'Write the next four steps of what you are doing, then do only the first today.' }
+  }
+];
+
+const angelById = (id) => ANGELS.filter((a) => a.id === id)[0] || null;
+
+/* ---- what a typed number means ----
+   In order: all one digit, an alternating or mirrored pair, a rising run, and
+   failing those the root it reduces to. The reason is returned with it so the
+   screen can say why that reading was chosen. */
+function angelRead(raw) {
+  const s = String(raw || '').replace(/[^0-9]/g, '');
+  if (!s) return null;
+  const digits = s.split('').map(Number);
+  if (s.length >= 2 && digits.every((d) => d === digits[0])) {
+    return { a: angelById('n' + digits[0]), why: 'same', n: s };
+  }
+  const half = s.slice(0, s.length / 2);
+  if (s.length >= 4 && s.length % 2 === 0 && half + half === s && half[0] !== half[1]) {
+    return { a: angelById('mirror'), why: 'mirror', n: s };
+  }
+  if (s.length >= 3 && s === s.split('').reverse().join('')) {
+    return { a: angelById('mirror'), why: 'palindrome', n: s };
+  }
+  if (s.length >= 3 && digits.every((d, i) => i === 0 || d === digits[i - 1] + 1)) {
+    return { a: angelById('ladder'), why: 'ladder', n: s };
+  }
+  let sum = digits.reduce((t, d) => t + d, 0);
+  while (sum > 9) sum = String(sum).split('').reduce((t, d) => t + Number(d), 0);
+  return { a: angelById(ANGEL_ROOT[sum] || 'n9'), why: 'root', n: s, root: sum };
+}
+
+/* ---- the sigil ----
+   A ring for the number, with as many points around it as the digit, so each
+   entry has a picture of its own rather than a coloured square. */
+function angelSigil(a, size) {
+  const n = a.digit > 0 ? a.digit : (a.id === 'mirror' ? 4 : 5);
+  let rays = '';
+  for (let i = 0; i < n; i++) {
+    const t = (i / n) * Math.PI * 2 - Math.PI / 2;
+    const x = 60 + Math.cos(t) * 34, y = 60 + Math.sin(t) * 34;
+    rays += '<circle cx="' + x.toFixed(1) + '" cy="' + y.toFixed(1) + '" r="4.6" fill="' + a.ink + '" opacity=".85"/>'
+      + '<line x1="60" y1="60" x2="' + x.toFixed(1) + '" y2="' + y.toFixed(1) + '" stroke="' + a.ink + '" stroke-width="1.1" opacity=".35"/>';
+  }
+  const face = a.digit >= 0 ? String(a.digit) : (a.id === 'mirror' ? '↔' : '↗');
+  return '<svg viewBox="0 0 120 120" class="sigil" style="width:' + (size || 64) + 'px" aria-hidden="true">'
+    + '<circle cx="60" cy="60" r="46" fill="' + a.aura + '"/>'
+    + '<circle cx="60" cy="60" r="34" fill="none" stroke="' + a.ink + '" stroke-width="1" opacity=".35"/>'
+    + rays
+    + '<text x="60" y="60" text-anchor="middle" dominant-baseline="central" font-family="Georgia,serif" font-weight="700" font-size="30" fill="' + a.ink + '">' + face + '</text>'
+    + '</svg>';
+}
+
+/* ---- what people have been seeing ----
+   Kept on the device, like the wish jar. The count is the useful part: the
+   number you meet most is the one worth reading twice. */
+const ANGEL_LOG = {
+  all() { const a = store.get('nabu-angel-log', []); return Array.isArray(a) ? a : []; },
+  add(n, id) {
+    const a = this.all();
+    a.unshift({ n: n, id: id, at: Date.now() });
+    store.set('nabu-angel-log', a.slice(0, 60));
+  },
+  clear() { store.set('nabu-angel-log', []); },
+  top() {
+    const c = {};
+    this.all().forEach((r) => { c[r.n] = (c[r.n] || 0) + 1; });
+    const keys = Object.keys(c).sort((x, y) => c[y] - c[x]);
+    return keys.length ? { n: keys[0], count: c[keys[0]] } : null;
+  }
+};
+
+/* The number of the day, from today's date, so there is always something to
+   read even before anything has been typed. */
+function angelToday() {
+  const d = new Date();
+  const s = String(d.getDate()) + String(d.getMonth() + 1) + String(d.getFullYear());
+  return angelRead(s);
+}
+
+/* ---- the screens ---- */
+function renderAngel() {
+  const S = T(), m = $('#main');
+  let typed = store.get('nabu-angel-last', '') || '';
+  const draw = () => {
+    const read = typed ? angelRead(typed) : null, today = angelToday(), top = ANGEL_LOG.top();
+    const log = ANGEL_LOG.all().slice(0, 6);
+    m.innerHTML = backLink('#/learn', S.learnTitle)
+      + '<h1 style="margin-bottom:6px">' + esc(S.angelTitle) + '</h1><p class="muted">' + esc(S.angelIntro) + '</p>'
+      + '<div class="card angelpad"><label class="f" for="angelin">' + esc(S.angelAsk) + '</label>'
+      + '<div class="angelshow" id="angelshow">' + esc(typed || '—') + '</div>'
+      + '<div class="keypad">' + ['1', '2', '3', '4', '5', '6', '7', '8', '9', '⌫', '0', '✓'].map((k) => '<button type="button" class="key' + (k === '✓' ? ' go' : '') + '" data-key="' + esc(k) + '">' + k + '</button>').join('') + '</div>'
+      + '<input id="angelin" class="sr" inputmode="numeric" value="' + esc(typed) + '" aria-label="' + esc(S.angelAsk) + '">'
+      + '<p class="hint">' + esc(S.angelPadHint) + '</p></div>'
+      + (read && read.a ? angelAnswerHTML(read, true) : '')
+      + '<div class="sec"><div class="eyebrow">' + esc(S.angelToday) + '</div>'
+      + '<a class="angelrow" href="#/learn/angel/' + esc(today.a.id) + '">' + angelSigil(today.a, 46) + '<span class="b"><b>' + esc(L(today.a.name)) + '</b><span>' + esc(L(today.a.short)) + '</span></span><span class="go">›</span></a></div>'
+      + '<div class="sec"><div class="eyebrow">' + esc(S.angelAll) + '</div><div class="angelgrid">'
+      + ANGELS.map((a) => '<a class="angeltile" href="#/learn/angel/' + esc(a.id) + '" style="--ink:' + a.ink + ';--aura:' + a.aura + '">' + angelSigil(a, 56) + '<b>' + esc(L(a.name)) + '</b><span>' + esc(a.seen.slice(0, 2).join(' · ')) + '</span></a>').join('')
+      + '</div></div>'
+      + (log.length
+        ? '<div class="sec"><div class="eyebrow">' + esc(S.angelLog) + '</div>'
+          + (top && top.count > 1 ? '<p class="hint ok">' + esc(S.angelTop(top.n, top.count)) + '</p>' : '')
+          + '<ul class="angellog">' + log.map((r) => '<li><b>' + esc(r.n) + '</b><span>' + esc(fmtDate(isoDate(new Date(r.at)))) + '</span></li>').join('') + '</ul>'
+          + '<button type="button" class="btn sm" id="angelclear">' + esc(S.angelClear) + '</button></div>'
+        : '')
+      + '<p class="hint" style="margin-top:14px">' + esc(S.angelNote) + '</p>';
+
+    $$('[data-key]', m).forEach((b) => b.addEventListener('click', () => {
+      const k = b.getAttribute('data-key');
+      if (k === '⌫') typed = typed.slice(0, -1);
+      else if (k === '✓') {
+        if (!typed) return;
+        const r = angelRead(typed);
+        if (r && r.a) { ANGEL_LOG.add(typed, r.a.id); store.set('nabu-angel-last', typed); toast('✓'); }
+        draw();
+        const ans = $('.angelanswer', m); if (ans) ans.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        return;
+      } else if (typed.length < 8) typed += k;
+      store.set('nabu-angel-last', typed);
+      const show = $('#angelshow'); if (show) show.textContent = typed || '—';
+    }));
+    const cl = $('#angelclear');
+    if (cl) cl.addEventListener('click', () => { if (!confirm(S.confirmDel)) return; ANGEL_LOG.clear(); draw(); });
+  };
+  draw();
+}
+
+function angelAnswerHTML(read, brief) {
+  const S = T(), a = read.a;
+  const why = { same: S.angelWhySame(read.n), mirror: S.angelWhyMirror, palindrome: S.angelWhyMirror, ladder: S.angelWhyLadder, root: S.angelWhyRoot(read.root) }[read.why];
+  return '<div class="card angelanswer" style="--ink:' + a.ink + ';--aura:' + a.aura + '">'
+    + '<div class="head">' + angelSigil(a, 64) + '<div><b>' + esc(L(a.name)) + '</b><span>' + esc(L(a.short)) + '</span></div></div>'
+    + '<p class="why">' + esc(why) + '</p>'
+    + '<p>' + esc(L(a.body)[0]) + '</p>'
+    + (brief ? '<p style="margin-top:10px"><a class="btn block" href="#/learn/angel/' + esc(a.id) + '">' + esc(S.angelMore) + '</a></p>' : '')
+    + '</div>';
+}
+
+function renderAngelOne(id) {
+  const S = T(), m = $('#main'), a = angelById(id);
+  if (!a) { redirect('#/learn/angel'); return; }
+  const i = ANGELS.indexOf(a), prev = ANGELS[(i - 1 + ANGELS.length) % ANGELS.length], next = ANGELS[(i + 1) % ANGELS.length];
+  const arrows = '<div class="cardnav"><a href="#/learn/angel/' + esc(prev.id) + '">‹ ' + esc(L(prev.name)) + '</a><a href="#/learn/angel/' + esc(next.id) + '">' + esc(L(next.name)) + ' ›</a></div>';
+  m.innerHTML = backLink('#/learn/angel', S.angelTitle)
+    + '<div class="detail angelone" style="--ink:' + a.ink + ';--aura:' + a.aura + '">'
+    + arrows
+    + '<div class="angelhero">' + angelSigil(a, 110) + '<h1>' + esc(L(a.name)) + '</h1><p class="muted">' + esc(L(a.short)) + '</p>'
+    + '<div class="chips seen">' + a.seen.map((x) => '<span class="chip">' + esc(x) + '</span>').join('') + '</div></div>'
+    + '<div class="chips keys">' + L(a.keys).map((k) => '<span class="chip pink">' + esc(k) + '</span>').join('') + '</div>'
+    + L(a.body).map((p) => '<p>' + esc(p) + '</p>').join('')
+    + '<div class="ins"><h3>' + esc(S.angelTodo) + '</h3><p>' + esc(L(a.todo)) + '</p></div>'
+    + arrows
+    + '<p class="hint">' + esc(S.angelNote) + '</p></div>';
+}
+
 /* ============================ looks ============================
    Four things in the app can be dressed differently: the back of the cards you
    draw, the message tree, the coin, and the paper the diary is written on.
@@ -12717,25 +13123,35 @@ const PET_ART = {
   /* A fox is a snout, a ruff and a brush. Without those it is only a cat with
      pointed ears, which is what it used to look like. */
   fox: (c) => ({
-    /* Rounder ears, a small snout and a big curled brush: a fox, but a soft
-       one, because it sits beside a cat and a rabbit. */
-    bodyRX: 29,
-    ears: '<path d="M34 32 Q28 8 34 4 Q52 12 57 25 Z" fill="' + c.body + '"/>'
-      + '<path d="M86 32 Q92 8 86 4 Q68 12 63 25 Z" fill="' + c.body + '"/>'
-      + '<path d="M38 29 Q35 14 40 12 Q50 19 52 26 Z" fill="#F0A97E" opacity=".7"/>'
-      + '<path d="M82 29 Q85 14 80 12 Q70 19 68 26 Z" fill="#F0A97E" opacity=".7"/>'
-      + '<path d="M34 4 Q31 12 34 16 Q40 12 40 8 Z" fill="#6B4A32"/><path d="M86 4 Q89 12 86 16 Q80 12 80 8 Z" fill="#6B4A32"/>',
-    behind: '<path d="M80 102 Q114 100 110 66 Q104 88 78 90 Z" fill="#E08A54"/>'
-      + '<path d="M104 74 Q116 66 112 52 Q100 62 98 74 Z" fill="#FFFDF8"/>',
-    overBody: '<path d="M60 68 q-14 17 -13 36 q13 6 26 0 q1 -19 -13 -36 Z" fill="#FFFDF8"/>'
+    bodyRX: 27, bodyRY: 22,
+    // A triangle from the ears to the nose, like her nine-tailed cousin.
+    headPath: 'M60 20 Q31 23 27 45 Q25 60 39 68 Q48 74 54 85 Q58 93 60 95 Q62 93 66 85 Q72 74 81 68 Q95 60 93 45 Q89 23 60 20 Z',
+    ears: '<path d="M32 34 L23 2 L57 22 Z" fill="' + c.dark + '"/><path d="M88 34 L97 2 L63 22 Z" fill="' + c.dark + '"/>'
+      + '<path d="M23 2 L30 21 L40 13 Z" fill="#6B4A32"/><path d="M97 2 L90 21 L80 13 Z" fill="#6B4A32"/>'
+      + '<path d="M36 30 L30 12 L50 22 Z" fill="#F7C7D6" opacity=".85"/><path d="M84 30 L90 12 L70 22 Z" fill="#F7C7D6" opacity=".85"/>',
+    behind: '<path d="M78 104 Q114 100 110 62 Q104 88 76 92 Z" fill="' + c.dark + '"/>'
+      + '<path d="M104 72 Q116 62 112 46 Q99 58 96 72 Z" fill="#FFFDF8"/>',
+    overBody: '<path d="M60 72 q-12 15 -11 32 q11 5 22 0 q1 -17 -11 -32 Z" fill="#FFFDF8"/>'
       + '<ellipse cx="38" cy="104" rx="8" ry="5" fill="#6B4A32"/><ellipse cx="82" cy="104" rx="8" ry="5" fill="#6B4A32"/>',
-    front: '<path d="M32 50 q-11 8 -8 20 q11 -3 15 -11 Z" fill="#FFFDF8"/>'
-      + '<path d="M88 50 q11 8 8 20 q-11 -3 -15 -11 Z" fill="#FFFDF8"/>'
-      + '<path d="M60 58 Q51 66 50 75 Q60 82 70 75 Q69 66 60 58 Z" fill="#FFFDF8"/>'
-      + '<ellipse cx="60" cy="72" rx="4.4" ry="3.1" fill="#5A3A24"/>'
-      + '<path d="M60 76 q-5 4 -9 1 M60 76 q5 4 9 1" stroke="#5A3A24" stroke-width="1.4" fill="none" stroke-linecap="round"/>'
-      + '<path d="M46 68 h-12 M47 74 h-12 M74 68 h12 M73 74 h12" stroke="#8A6446" stroke-width="1" stroke-linecap="round" opacity=".6"/>',
-    feet: false, eyeY: 50, noMouth: true, blushY: 60, charmY: 94
+    front: (() => {
+      /* The mask: the coat's own darker tone across the brow and around the
+         eyes, white below it, split along a V down the nose. */
+      const mask = '<path d="M60 20 Q31 23 27 45 Q26 55 33 62 Q44 59 49 49 Q55 43 60 55 Q65 43 71 49 Q76 59 87 62 Q94 55 93 45 Q89 23 60 20 Z" fill="' + c.dark + '"/>';
+      const ruff = '<path d="M33 54 q-12 6 -14 18 q10 -3 14 -10 q-3 8 -11 14 q13 -2 18 -14 Z" fill="#FFFDF8"/>'
+        + '<path d="M87 54 q12 6 14 18 q-10 -3 -14 -10 q3 8 11 14 q-13 -2 -18 -14 Z" fill="#FFFDF8"/>';
+      const eyes = '<g class="eyes">'
+        + '<path d="M37 49 Q46 42 54 52 Q45 56 37 49 Z" fill="' + c.ink + '"/>'
+        + '<path d="M83 49 Q74 42 66 52 Q75 56 83 49 Z" fill="' + c.ink + '"/>'
+        + '<circle cx="44" cy="48" r="1.6" fill="#fff"/><circle cx="76" cy="48" r="1.6" fill="#fff"/>'
+        + '</g>';
+      const nose = '<path d="M56 83 Q60 81 64 83 Q62 90 60 91 Q58 90 56 83 Z" fill="#4A3728"/>'
+        + '<path d="M60 91 q-5 4 -9 1 M60 91 q5 4 9 1" stroke="#4A3728" stroke-width="1.3" fill="none" stroke-linecap="round"/>'
+        + '<g stroke="#B79A7E" stroke-width="1.1" stroke-linecap="round"><path d="M41 72 h-13 M42 78 h-12 M79 72 h13 M78 78 h12"/></g>'
+        + '<ellipse cx="35" cy="62" rx="6" ry="4" fill="#F2A9BE" opacity=".5"/><ellipse cx="85" cy="62" rx="6" ry="4" fill="#F2A9BE" opacity=".5"/>';
+      const star = '<path d="M60 12 l2.2 4.6 4.6 2.2 -4.6 2.2 -2.2 4.6 -2.2 -4.6 -4.6 -2.2 4.6 -2.2 Z" fill="#E5BE5E"/>';
+      return mask + ruff + eyes + nose + star;
+    })(),
+    feet: false, noFace: true, noMouth: true, charmY: 100
   }),
   bunny: (c) => ({
     ears: '<ellipse cx="47" cy="22" rx="7.5" ry="19" fill="' + c.body + '" transform="rotate(-8 47 22)"/>'
@@ -15197,10 +15613,10 @@ function adminSale(p) {
 ROUTES.admin = { nav: '', render: renderAdmin };
 
 /* ============================ boot ============================ */
-window.APP_VERSION = 'v105';
+window.APP_VERSION = 'v106';
 window.NABU = { CONFIG: CONFIG, SALE: SALE, salePrice: salePrice, loadActs: loadActs, BACK: BACK, LESSONS: LESSONS, localAnswer: localAnswer, compatVerdict: compatVerdict, numerologyOf: numerologyOf, ZDEEP: ZDEEP, lunarToday: lunarToday, solarToLunar: solarToLunar, DECK: DECK, INSIGHT: INSIGHT, KW: KW, ASK: ASK, TOPICS: TOPICS, GUIDES: GUIDES, SERVICES: SERVICES, COURSES: COURSES, ACCESS: ACCESS, makeCode: makeCode, parseCode: parseCode, ZODIAC: ZODIAC, pick: pick, book: book,
   insightHTML: insightHTML, insightOf: insightOf, sunSignIndex: sunSignIndex, lifePath: lifePath, PROFILE: () => PROFILE, BE: BE, ACTS: ACTS,
-  BANK: BANK, PETS: PETS, petSVG: petSVG, PET_COATS: PET_COATS, PET_KINDS: PET_KINDS, luckCut: luckCut, petLevel: petLevel, petStep: petStep, VOUCHERS: VOUCHERS, levelCoins: levelCoins, LOOKS: LOOKS };
+  ANGELS: ANGELS, angelRead: angelRead, BANK: BANK, PETS: PETS, petSVG: petSVG, PET_COATS: PET_COATS, PET_KINDS: PET_KINDS, luckCut: luckCut, petLevel: petLevel, petStep: petStep, VOUCHERS: VOUCHERS, levelCoins: levelCoins, LOOKS: LOOKS };
 BE.initP = BE.init().catch(() => { /* backend unreachable: the app runs device-only */ });
 // The Gemini key is a dashboard setting kept in the app cloud (content/ai), never in the source.
 loadContent('sale', 'sale.json', 'nabu-sale').then((r) => { SALE.set(r && r.data); renderChrome((ROUTES[parseHash().route] || {}).nav); route(); });

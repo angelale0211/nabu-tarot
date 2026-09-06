@@ -4,7 +4,7 @@
    #/learn/lenormand?tab=…                     the Lenormand course (paid)
    #/learn/card/<id>  #/learn/len/<n>  #/learn/spread/<id>  #/learn/guide/<id>
    #/learn/astro, #/learn/sign/<key>, #/learn/manifest, #/learn/fortune, #/learn/numbers  (free) */
-const CAT_ICONS = { tarot: PICK_ICON, lenormand: '🗝️', astro: '🔮', manifest: '🌙', fortune: '🔢', playing: '🂡' };
+const CAT_ICONS = { tarot: PICK_ICON, lenormand: '🗝️', astro: '🔮', angel: '👼', manifest: '🌙', fortune: '🔢', playing: '🂡' };
 const badgeHTML = () => '';
 const courseOf = (id) => COURSES.filter((c) => c.id === id)[0];
 
@@ -59,7 +59,7 @@ function renderLearn(args, params) {
     const tile = (k, locked) => '<a class="tile' + (ints.indexOf(k) > -1 || k === 'tarot' || k === 'lenormand' || k === 'playing' || k === 'manifest' ? ' rec' : '') + '" href="#/learn/' + k + '"><div class="ic">' + CAT_ICONS[k] + (locked ? ' <span class="lock">🔒</span>' : '') + '</div><b>' + esc(S.cats[k]) + '</b><span>' + esc(S.catSub[k]) + '</span></a>';
     m.innerHTML = '<div class="eyebrow">' + esc(S.nav.learn) + '</div><h1 style="margin-bottom:6px">' + esc(S.learnTitle) + '</h1><p class="muted">' + esc(S.learnIntro) + '</p>'
       + '<div class="eyebrow">' + esc(S.coursesPractice) + '</div><div class="tiles">' + tile('tarot', !ACCESS.has('tarot')) + tile('lenormand', !ACCESS.has('lenormand')) + tile('playing', !ACCESS.has('playing')) + tile('manifest', !ACCESS.has('manifest')) + '</div>'
-      + '<div class="eyebrow">' + esc(S.freeReads) + '</div><div class="tiles">' + tile('astro') + tile('fortune') + '</div>'
+      + '<div class="eyebrow">' + esc(S.freeReads) + '</div><div class="tiles">' + tile('astro') + tile('angel') + tile('fortune') + '</div>'
       + '<p style="margin-top:14px"><a class="btn block" href="#/unlock">💳 ' + esc(S.unlockLink) + '</a></p>'
       + (function () { const ints = PROFILE.interests || []; const list = GUIDES.filter((g) => g.tags.some((t) => ints.indexOf(t) > -1) && !((g.cat === 'tarot' || g.cat === 'lenormand') && !ACCESS.has(g.cat)) && !(g.id === 'fort-playing' && !ACCESS.has('playing'))).slice(0, 4); return list.length ? '<div class="sec"><div class="eyebrow">' + esc(S.forInterests) + '</div>' + list.map(guideRow).join('') + '</div>' : ''; }());
     return;
@@ -72,6 +72,7 @@ function renderLearn(args, params) {
   if (sub === 'card') return renderCard(args[1]);
   if (sub === 'len') return renderLen(Number(args[1]));
   if (sub === 'astro') return renderAstro();
+  if (sub === 'angel') return args[1] ? renderAngelOne(args[1]) : renderAngel();
   if (sub === 'sign') return renderSign(args[1]);
   if (sub === 'spread') return renderSpread(args[1]);
   if (sub === 'fortune') return renderFortune(args[1]);

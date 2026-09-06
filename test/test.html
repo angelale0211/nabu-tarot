@@ -120,7 +120,7 @@ async function go(hash, sel) { W().location.hash = hash; await sleep(30); return
     // learn: courses are locked until a code is entered
     await go('#/learn', '.tile');
     ok(/Khóa học và thực hành/.test(d.querySelector('#main').textContent) && d.querySelectorAll('.tiles').length === 2 && d.querySelectorAll('.tiles')[0].querySelectorAll('.tile').length === 4, 'the three courses and manifestation share one group of four, above the free reads');
-    ok(d.querySelectorAll('.tile').length === 6 && d.querySelectorAll('.tile .lock').length === 4 && !/Trải bài/.test(d.querySelector('.tiles').textContent), 'learn shows two locked courses and three free areas; no separate spreads tile');
+    ok(d.querySelectorAll('.tile').length === 7 && d.querySelectorAll('.tile .lock').length === 4 && d.querySelector('.tile[href="#/learn/angel"]') && !/Trải bài/.test(d.querySelector('.tiles').textContent), 'learn shows four locked courses and three free areas including angel numbers; no separate spreads tile');
     await go('#/learn/tarot', '.paywall');
     ok(d.querySelectorAll('.lesson').length === 2 && /Gã Khờ/.test(d.querySelectorAll('.lesson')[1].textContent) && /22 lá Ẩn Chính/.test(d.querySelectorAll('.lesson')[0].textContent) && /56 lá Ẩn Phụ/.test(d.querySelectorAll('.lesson')[0].textContent) && /hành trình Gã Khờ/.test(d.querySelectorAll('.lesson')[0].textContent) && /Thế Giới \(21\)/.test(d.querySelectorAll('.lesson')[0].textContent), 'lesson 1 introduces 22 Majors, 56 Minors and the Fool\'s Journey; lesson 2 is The Fool');
     ok(d.querySelector('.lesson').compareDocumentPosition(d.querySelector('.paywall')) & 4 && /300\.000đ/.test(d.querySelector('.paywall').textContent) && d.querySelector('#ccode'), 'price and code entry sit below the demo');
@@ -665,6 +665,26 @@ async function go(hash, sel) { W().location.hash = hash; await sleep(30); return
     { N.ACTS.items = null; N.ACTS.loaded = false; const all = await N.loadActs(); const ids = all.map((a) => a.id);
       ok(all.length >= 27 && ids.indexOf('2026-08-13-poll-emoji-su-tu') > -1 && all.filter((a) => a.type === 'poll').length >= 24 && all.filter((a) => a.type === 'wish').length >= 3 && N.ACTS.stock['2026-08-13-poll-emoji-su-tu'], 'the stock of polls and wishes merges into the published activities');
       N.ACTS.items = null; N.ACTS.loaded = false; }
+    /* ---- angel numbers ---- */
+    await go('#/learn', '.tiles');
+    ok(!!d.querySelector('.tiles a[href="#/learn/angel"]'), 'the free knowledge offers angel numbers beside astrology');
+    w.localStorage.removeItem('nabu-angel-log'); w.localStorage.removeItem('nabu-angel-last');
+    await go('#/learn/angel', '.keypad');
+    ok(d.querySelectorAll('.keypad .key').length === 12 && d.querySelectorAll('.angeltile').length === 12 && d.querySelector('.angelrow')
+      && /không phải lời tiên đoán/.test(d.querySelector('#main').textContent),
+      'the angel numbers screen leads with a keypad, twelve groups, a number for today, and says plainly what this is');
+    ['1', '1', '1'].forEach((k) => d.querySelector('[data-key="' + k + '"]').click());
+    d.querySelector('[data-key="✓"]').click(); await sleep(80);
+    ok(/Số 1 lặp lại/.test(d.querySelector('.angelanswer .head b').textContent) && /một chữ số lặp lại/.test(d.querySelector('.angelanswer .why').textContent)
+      && d.querySelectorAll('.angellog li').length === 1 && /111/.test(d.querySelector('.angellog li b').textContent),
+      'typing a number reads it back, says why it was read that way, and keeps it in the list');
+    { const r = ['111', '1212', '1221', '1234', '1437', '77'].map((n) => { const x = N.angelRead(n); return x.a.id + ':' + x.why; });
+      ok(String(r) === 'n1:same,mirror:mirror,mirror:palindrome,ladder:ladder,n6:root,n7:same',
+        'a repeated digit, a mirror, a palindrome, a ladder and anything else reduced to its root all find a reading'); }
+    await go('#/learn/angel/n7', '.angelone');
+    ok(d.querySelectorAll('.angelone p').length >= 5 && d.querySelectorAll('.cardnav a').length === 4 && /Số 7 lặp lại/.test(d.querySelector('#main h1').textContent),
+      'a group reads in full, with arrows to the group either side of it');
+    w.localStorage.removeItem('nabu-angel-log'); w.localStorage.removeItem('nabu-angel-last');
     await go('#/install', '#instshare'); ok(d.querySelector('a[href="nabu-tarot.apk"][download]') && d.querySelectorAll('.steps li').length >= 7 && /Thêm vào MH chính/.test(d.querySelector('#main').textContent) && /Tải app/.test(d.querySelector('#foot').textContent), 'the install screen offers the Android installer and the iPhone steps, linked from the footer');
     await go('#/privacy', '.privacy .gsec'); ok(d.querySelectorAll('.privacy .gsec').length >= 10 && /Xoá tài khoản/.test(d.querySelector('.privacy').textContent) && /Gemini/.test(d.querySelector('.privacy').textContent), 'the in-app privacy policy lists every kind of data, Gemini, and how to delete the account');
     { w.localStorage.setItem('nabu-twa', 'true'); const acc = w.localStorage.getItem('nabu-access'); w.localStorage.removeItem('nabu-access');

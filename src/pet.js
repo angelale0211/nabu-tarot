@@ -511,25 +511,35 @@ const PET_ART = {
   /* A fox is a snout, a ruff and a brush. Without those it is only a cat with
      pointed ears, which is what it used to look like. */
   fox: (c) => ({
-    /* Rounder ears, a small snout and a big curled brush: a fox, but a soft
-       one, because it sits beside a cat and a rabbit. */
-    bodyRX: 29,
-    ears: '<path d="M34 32 Q28 8 34 4 Q52 12 57 25 Z" fill="' + c.body + '"/>'
-      + '<path d="M86 32 Q92 8 86 4 Q68 12 63 25 Z" fill="' + c.body + '"/>'
-      + '<path d="M38 29 Q35 14 40 12 Q50 19 52 26 Z" fill="#F0A97E" opacity=".7"/>'
-      + '<path d="M82 29 Q85 14 80 12 Q70 19 68 26 Z" fill="#F0A97E" opacity=".7"/>'
-      + '<path d="M34 4 Q31 12 34 16 Q40 12 40 8 Z" fill="#6B4A32"/><path d="M86 4 Q89 12 86 16 Q80 12 80 8 Z" fill="#6B4A32"/>',
-    behind: '<path d="M80 102 Q114 100 110 66 Q104 88 78 90 Z" fill="#E08A54"/>'
-      + '<path d="M104 74 Q116 66 112 52 Q100 62 98 74 Z" fill="#FFFDF8"/>',
-    overBody: '<path d="M60 68 q-14 17 -13 36 q13 6 26 0 q1 -19 -13 -36 Z" fill="#FFFDF8"/>'
+    bodyRX: 27, bodyRY: 22,
+    // A triangle from the ears to the nose, like her nine-tailed cousin.
+    headPath: 'M60 20 Q31 23 27 45 Q25 60 39 68 Q48 74 54 85 Q58 93 60 95 Q62 93 66 85 Q72 74 81 68 Q95 60 93 45 Q89 23 60 20 Z',
+    ears: '<path d="M32 34 L23 2 L57 22 Z" fill="' + c.dark + '"/><path d="M88 34 L97 2 L63 22 Z" fill="' + c.dark + '"/>'
+      + '<path d="M23 2 L30 21 L40 13 Z" fill="#6B4A32"/><path d="M97 2 L90 21 L80 13 Z" fill="#6B4A32"/>'
+      + '<path d="M36 30 L30 12 L50 22 Z" fill="#F7C7D6" opacity=".85"/><path d="M84 30 L90 12 L70 22 Z" fill="#F7C7D6" opacity=".85"/>',
+    behind: '<path d="M78 104 Q114 100 110 62 Q104 88 76 92 Z" fill="' + c.dark + '"/>'
+      + '<path d="M104 72 Q116 62 112 46 Q99 58 96 72 Z" fill="#FFFDF8"/>',
+    overBody: '<path d="M60 72 q-12 15 -11 32 q11 5 22 0 q1 -17 -11 -32 Z" fill="#FFFDF8"/>'
       + '<ellipse cx="38" cy="104" rx="8" ry="5" fill="#6B4A32"/><ellipse cx="82" cy="104" rx="8" ry="5" fill="#6B4A32"/>',
-    front: '<path d="M32 50 q-11 8 -8 20 q11 -3 15 -11 Z" fill="#FFFDF8"/>'
-      + '<path d="M88 50 q11 8 8 20 q-11 -3 -15 -11 Z" fill="#FFFDF8"/>'
-      + '<path d="M60 58 Q51 66 50 75 Q60 82 70 75 Q69 66 60 58 Z" fill="#FFFDF8"/>'
-      + '<ellipse cx="60" cy="72" rx="4.4" ry="3.1" fill="#5A3A24"/>'
-      + '<path d="M60 76 q-5 4 -9 1 M60 76 q5 4 9 1" stroke="#5A3A24" stroke-width="1.4" fill="none" stroke-linecap="round"/>'
-      + '<path d="M46 68 h-12 M47 74 h-12 M74 68 h12 M73 74 h12" stroke="#8A6446" stroke-width="1" stroke-linecap="round" opacity=".6"/>',
-    feet: false, eyeY: 50, noMouth: true, blushY: 60, charmY: 94
+    front: (() => {
+      /* The mask: the coat's own darker tone across the brow and around the
+         eyes, white below it, split along a V down the nose. */
+      const mask = '<path d="M60 20 Q31 23 27 45 Q26 55 33 62 Q44 59 49 49 Q55 43 60 55 Q65 43 71 49 Q76 59 87 62 Q94 55 93 45 Q89 23 60 20 Z" fill="' + c.dark + '"/>';
+      const ruff = '<path d="M33 54 q-12 6 -14 18 q10 -3 14 -10 q-3 8 -11 14 q13 -2 18 -14 Z" fill="#FFFDF8"/>'
+        + '<path d="M87 54 q12 6 14 18 q-10 -3 -14 -10 q3 8 11 14 q-13 -2 -18 -14 Z" fill="#FFFDF8"/>';
+      const eyes = '<g class="eyes">'
+        + '<path d="M37 49 Q46 42 54 52 Q45 56 37 49 Z" fill="' + c.ink + '"/>'
+        + '<path d="M83 49 Q74 42 66 52 Q75 56 83 49 Z" fill="' + c.ink + '"/>'
+        + '<circle cx="44" cy="48" r="1.6" fill="#fff"/><circle cx="76" cy="48" r="1.6" fill="#fff"/>'
+        + '</g>';
+      const nose = '<path d="M56 83 Q60 81 64 83 Q62 90 60 91 Q58 90 56 83 Z" fill="#4A3728"/>'
+        + '<path d="M60 91 q-5 4 -9 1 M60 91 q5 4 9 1" stroke="#4A3728" stroke-width="1.3" fill="none" stroke-linecap="round"/>'
+        + '<g stroke="#B79A7E" stroke-width="1.1" stroke-linecap="round"><path d="M41 72 h-13 M42 78 h-12 M79 72 h13 M78 78 h12"/></g>'
+        + '<ellipse cx="35" cy="62" rx="6" ry="4" fill="#F2A9BE" opacity=".5"/><ellipse cx="85" cy="62" rx="6" ry="4" fill="#F2A9BE" opacity=".5"/>';
+      const star = '<path d="M60 12 l2.2 4.6 4.6 2.2 -4.6 2.2 -2.2 4.6 -2.2 -4.6 -4.6 -2.2 4.6 -2.2 Z" fill="#E5BE5E"/>';
+      return mask + ruff + eyes + nose + star;
+    })(),
+    feet: false, noFace: true, noMouth: true, charmY: 100
   }),
   bunny: (c) => ({
     ears: '<ellipse cx="47" cy="22" rx="7.5" ry="19" fill="' + c.body + '" transform="rotate(-8 47 22)"/>'

@@ -975,6 +975,39 @@ main{padding:22px 0 30px}
 .actquick .aq{display:flex;flex-direction:column;align-items:center;gap:5px;background:var(--surface);border:1px solid var(--rule-soft);border-radius:14px;padding:10px 4px;text-decoration:none;color:inherit;min-width:0}
 .actquick .aq .ic{font-size:21px;line-height:1}
 .actquick .aq b{font-size:11px;font-weight:600;line-height:1.25;text-align:center;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
+/* ---- angel numbers ---- */
+.sr{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0}
+.angelpad{text-align:center}
+.angelshow{font-family:var(--display);font-size:38px;font-weight:600;letter-spacing:4px;color:var(--primary);margin:6px 0 12px;min-height:46px}
+.keypad{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;max-width:280px;margin:0 auto}
+.keypad .key{background:var(--surface-2);border:1px solid var(--rule-soft);border-radius:14px;padding:13px 0;font:inherit;font-size:19px;font-weight:600;color:var(--fg);cursor:pointer}
+.keypad .key:active{background:var(--surface);transform:scale(.96)}
+.keypad .key.go{background:var(--primary);color:var(--primary-ink);border-color:var(--primary)}
+.sigil{display:block;height:auto}
+.angelanswer{border:1.5px solid var(--ink);background:linear-gradient(180deg,var(--aura),var(--surface))}
+.angelanswer .head{display:flex;align-items:center;gap:12px;margin-bottom:8px}
+.angelanswer .head b{display:block;font-family:var(--display);font-size:17px;font-weight:600}
+.angelanswer .head span{font-size:13px;color:var(--fg-soft)}
+#main .angelanswer p.why{font-size:12.5px;color:var(--fg-soft);margin-bottom:8px;text-align:left}
+.angelrow{display:flex;align-items:center;gap:12px;background:var(--surface);border:1px solid var(--rule-soft);border-radius:16px;padding:10px 14px;text-decoration:none;color:inherit}
+.angelrow .b{flex:1;min-width:0}
+.angelrow .b b{display:block;font-weight:600;font-size:14px}
+.angelrow .b span{font-size:12.5px;color:var(--fg-soft)}
+.angelrow .go{color:var(--fg-soft);font-size:18px}
+.angelgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.angeltile{display:flex;flex-direction:column;align-items:center;gap:4px;padding:10px 6px;border-radius:16px;background:var(--surface);border:1px solid var(--rule-soft);text-decoration:none;color:inherit;min-width:0}
+.angeltile b{font-size:11.5px;font-weight:600;text-align:center;line-height:1.25}
+.angeltile span{font-size:10.5px;color:var(--fg-soft);text-align:center}
+.angellog{list-style:none;margin:0 0 10px;padding:0;display:grid;gap:6px}
+.angellog li{display:flex;justify-content:space-between;align-items:baseline;gap:10px;font-size:13px;padding:7px 12px;border-radius:10px;background:var(--surface-2)}
+.angellog li b{font-family:var(--display);font-size:15px;letter-spacing:1px}
+.angellog li span{color:var(--fg-soft);font-size:12px}
+.angelhero{text-align:center;margin-bottom:14px}
+.angelhero .sigil{margin:0 auto 8px}
+.angelhero h1{margin-bottom:4px}
+.angelone .seen{justify-content:center;margin-top:8px}
+.angelone .seen .chip{font-family:var(--display);letter-spacing:1px}
+.angelone .keys{margin-bottom:12px}
 /* The way to the looks picker, offered under whatever it changes. */
 .lookslink{text-align:center;margin:10px 0 0}
 .lookslink a{color:var(--gold-deep);font-weight:600;font-size:13.5px;text-decoration:none;border-bottom:1px solid var(--gold-soft);padding-bottom:1px}
