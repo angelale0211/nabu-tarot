@@ -191,7 +191,10 @@ function adminPosts(p) {
 }
 
 /* ---- availability ---- */
-const HOURS = []; for (let h = 7; h <= 23; h++) { HOURS.push(pad2(h) + ':00'); HOURS.push(pad2(h) + ':30'); }
+/* The whole clock, in half hours. It began at seven in the morning, which
+   quietly made the small hours unbookable - and one in the morning is a real
+   time to read for somebody on the other side of the world. */
+const HOURS = []; for (let h = 0; h <= 23; h++) { HOURS.push(pad2(h) + ':00'); HOURS.push(pad2(h) + ':30'); }
 async function adminSchedule(p) {
   const S = T();
   p.innerHTML = '<p class="hint">…</p>';
@@ -203,7 +206,7 @@ async function adminSchedule(p) {
   const dn = lang === 'vi' ? ['Chủ nhật', 'Thứ hai', 'Thứ ba', 'Thứ tư', 'Thứ năm', 'Thứ sáu', 'Thứ bảy'] : ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
   const draw = () => {
     p.innerHTML = '<div class="card"><h3 style="margin-bottom:4px">' + esc(S.weekly) + '</h3><p class="hint" style="margin-bottom:10px">' + esc(S.weeklyHint) + '</p><div class="week">'
-      + [1, 2, 3, 4, 5, 6, 0].map((d) => '<div class="wd"><b>' + esc(dn[d]) + '</b><div class="chips">' + HOURS.map((h) => '<button class="chip' + ((sch.weekly[String(d)] || []).indexOf(h) > -1 ? ' on' : '') + '" data-wd="' + d + '" data-h="' + h + '">' + h + '</button>').join('') + '</div></div>').join('') + '</div></div>'
+      + [1, 2, 3, 4, 5, 6, 0].map((d) => '<div class="wd"><b>' + esc(dn[d]) + '</b><div class="chips hourgrid">' + HOURS.map((h) => '<button class="chip' + ((sch.weekly[String(d)] || []).indexOf(h) > -1 ? ' on' : '') + '" data-wd="' + d + '" data-h="' + h + '">' + h + '</button>').join('') + '</div></div>').join('') + '</div></div>'
       + '<div class="card"><h3 style="margin-bottom:4px">' + esc(S.blocked) + '</h3><p class="hint">' + esc(S.blockedHint) + '</p><div class="chips" id="blist">' + sch.blocked.sort().map((d) => '<button class="chip on" data-unblock="' + d + '">' + d + ' ✕</button>').join('') + '</div><div class="row nw" style="margin-top:8px"><input type="date" id="bday"><button class="btn sm" id="badd">' + esc(S.addDay) + '</button></div></div>'
       + '<div class="card"><h3 style="margin-bottom:4px">' + esc(S.bookedSlots) + '</h3><p class="hint">' + esc(S.bookedHint) + '</p><div class="chips">' + sch.booked.sort().map((k) => '<button class="chip on" data-unbook="' + k + '">' + k.replace('T', ' ') + ' ✕</button>').join('') + '</div><div class="row nw" style="margin-top:8px"><input type="date" id="kday"><select id="khour" style="flex:0 0 96px">' + HOURS.map((h) => '<option>' + h + '</option>').join('') + '</select><button class="btn sm" id="kadd">+</button></div></div>'
       + '<div class="card"><div class="two"><div><label class="f">' + esc(S.leadDays) + '</label><input type="number" id="lead" min="0" value="' + (sch.leadDays == null ? 1 : sch.leadDays) + '"></div><div><label class="f">' + esc(S.horizonDays) + '</label><input type="number" id="horizon" min="7" value="' + (sch.horizonDays || 42) + '"></div></div>'

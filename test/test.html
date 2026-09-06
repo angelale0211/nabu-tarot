@@ -450,7 +450,11 @@ async function go(hash, sel) { W().location.hash = hash; await sleep(30); return
     ok(d.querySelector('#cmake') && d.querySelector('#cold') && d.querySelector('#coldgo') && d.querySelector('#cbook'),
       'the codes tab issues a code, takes in codes handed out earlier, and lists what has been issued so any of it can be revoked');
     d.querySelector('[data-t="schedule"]').click(); await waitFor(() => d.querySelector('.week .wd'), 12000);
-    ok(d.querySelectorAll('.week .wd').length === 7 && d.querySelectorAll('.week .chip.on').length >= 15 && d.querySelectorAll('.week .wd')[0].querySelectorAll('.chip').length === 34 && d.querySelector('.week .wd [data-h="07:30"]'), 'availability editor shows the weekly hours in half-hour steps');
+    ok(d.querySelectorAll('.week .wd').length === 7 && d.querySelectorAll('.week .chip.on').length >= 15
+      && d.querySelectorAll('.week .wd')[0].querySelectorAll('.chip').length === 48
+      && d.querySelector('.week .wd [data-h="07:30"]') && d.querySelector('.week .wd [data-h="01:00"]')
+      && d.querySelector('.week .wd [data-h="03:30"]') && d.querySelector('.week .wd [data-h="00:00"]'),
+      'the availability editor offers the whole clock in half-hour steps, the small hours included');
     d.querySelector('[data-t="codes"]').click(); await sleep(50);
     ok(d.querySelector('#gkey') && d.querySelector('#gsave'), 'the codes tab carries the Nabu AI key setting');
     d.querySelector('[data-t="bookings"]').click(); await sleep(50);
@@ -634,6 +638,19 @@ async function go(hash, sel) { W().location.hash = hash; await sleep(30); return
         ok(pet.width > st.width * 0.26 && Math.abs(pet.bottom - (ground.top + ground.height / 2)) < st.height * 0.06
           && pet.left > st.left && pet.right < st.right,
           'the companion stands on the ground under the tree, big enough to see, inside the picture');
+        /* Some people want the tree by itself. */
+        ok(d.querySelector('#treepets') && d.querySelector('#treepets').checked, 'the companions under the tree come with a switch, on to begin with');
+        d.querySelector('#treepets').click(); await sleep(120);
+        ok(!d.querySelector('.treepet') && d.querySelector('#treepets') && !d.querySelector('#treepets').checked,
+          'turning it off leaves the tree standing on its own, and the switch stays to turn it back');
+        d.querySelector('#treepets').click(); await sleep(120);
+        ok(!!d.querySelector('.treepet'), 'and back on again');
+        await go('#/play/pet', '.petstage'); }
+      { /* The writing that introduces a tab has to name what is on it. */
+        await go('#/play', '#acts .actbtn');
+        const intro = d.querySelector('#main p.muted').textContent;
+        ok(/bạn nhỏ/.test(intro) && /sợi chỉ/.test(intro) && /nhật ký/.test(intro) && /đồng xu/.test(intro),
+          'the activities tab describes the everyday things on it, not only the three Nabu publishes');
         await go('#/play/pet', '.petstage'); }
       { const bp = d.querySelector('.bless p'), bl = d.querySelector('.bless'), prev = bl.previousElementSibling;
         ok(w.getComputedStyle(bp).textAlign === 'center' && bl.getBoundingClientRect().top - prev.getBoundingClientRect().bottom >= 16,

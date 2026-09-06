@@ -396,6 +396,10 @@ main{padding:22px 0 30px}
 .freegrid .fg .ic .pileico{width:26px;height:21px}
 .freegrid .fg b{font-size:11.5px;font-weight:600;line-height:1.25;text-align:center;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
 .freegrid .fg .s{font-size:10.5px;line-height:1.25;color:var(--fg-faint);text-align:center;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
+/* Forty-eight half hours a day: a grid keeps them in columns you can read
+   down, where wrapping chips would be a wall. */
+.chips.hourgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(56px,1fr));gap:5px}
+.chips.hourgrid .chip{padding:6px 2px;font-size:12px;text-align:center;min-width:0}
 .signlist{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
 .signlist button{background:var(--surface);border:1px solid var(--rule-soft);border-radius:14px;padding:10px 6px;text-align:center}
 .signlist button .g{font-size:26px;color:var(--link);display:block}

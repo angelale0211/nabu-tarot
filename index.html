@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
 <title>Nabu Tarot</title>
 <meta name="description" content="Nabu Tarot: dự đoán mới, rút một lá bài xem năng lượng hiện tại, học tarot, Lenormand, chiêm tinh, và đặt lịch xem bài.">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'none'; object-src 'none'; form-action 'self'; script-src 'self' 'sha256-vv0rZekWiu3p4C7m2yplq2IS2Boc2J7a04VOCoJ4zSg=' https://www.gstatic.com https://apis.google.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; font-src 'self' data:; media-src 'self' data: blob:; worker-src 'self'; connect-src 'self' https://*.googleapis.com https://*.google.com https://*.firebaseio.com https://*.cloudfunctions.net https://*.workers.dev https://generativelanguage.googleapis.com; frame-src https://*.firebaseapp.com https://accounts.google.com https://*.facebook.com">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'none'; object-src 'none'; form-action 'self'; script-src 'self' 'sha256-sawv6vwqwryrMiUMhqjx9gOG/LJPusgApiHLFAG8msE=' https://www.gstatic.com https://apis.google.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; font-src 'self' data:; media-src 'self' data: blob:; worker-src 'self'; connect-src 'self' https://*.googleapis.com https://*.google.com https://*.firebaseio.com https://*.cloudfunctions.net https://*.workers.dev https://generativelanguage.googleapis.com; frame-src https://*.firebaseapp.com https://accounts.google.com https://*.facebook.com">
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <meta name="theme-color" content="#EFE9FA">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -562,6 +562,10 @@ main{padding:22px 0 30px}
 .freegrid .fg .ic .pileico{width:26px;height:21px}
 .freegrid .fg b{font-size:11.5px;font-weight:600;line-height:1.25;text-align:center;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
 .freegrid .fg .s{font-size:10.5px;line-height:1.25;color:var(--fg-faint);text-align:center;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
+/* Forty-eight half hours a day: a grid keeps them in columns you can read
+   down, where wrapping chips would be a wall. */
+.chips.hourgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(56px,1fr));gap:5px}
+.chips.hourgrid .chip{padding:6px 2px;font-size:12px;text-align:center;min-width:0}
 .signlist{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
 .signlist button{background:var(--surface);border:1px solid var(--rule-soft);border-radius:14px;padding:10px 6px;text-align:center}
 .signlist button .g{font-size:26px;color:var(--link);display:block}
@@ -1868,7 +1872,7 @@ const STR = {
     shareText: (name, kws) => 'Lá bài hôm nay của mình: ' + name + '. Năng lượng: ' + kws + '. Xem lá bài này và rút thử tại ',
 
     learnTitle: 'Kho kiến thức',
-    learnIntro: 'Nơi bạn học tarot, Lenormand, chiêm tinh, manifestation và các cách xem truyền thống.',
+    learnIntro: 'Nơi bạn học tarot, Lenormand, bài Tây, chiêm tinh, con số thiên thần, manifestation và các cách xem truyền thống.',
     cats: { tarot: 'Tarot', lenormand: 'Lenormand', playing: 'Bài Tây', astro: 'Chiêm tinh', angel: 'Con số thiên thần', manifest: 'Manifestation', fortune: 'Bói toán' },
     catSub: { tarot: '78 lá + 8 trải bài', lenormand: '36 lá + 7 trải bài', playing: '52 lá + 4 trải bài', astro: '12 cung, hành tinh, nhà', angel: 'số bạn hay gặp có ý gì', manifest: 'cách làm + giới hạn', fortune: '4 cách xem dân gian' },
     angelTitle: 'Con số thiên thần', angelIntro: 'Có những con số cứ hiện ra mãi trong ngày của bạn: trên đồng hồ, trên hóa đơn, trên biển số xe. Bạn nhập con số bạn hay gặp vào bàn phím bên dưới để đọc ý nghĩa của nó.',
@@ -1928,7 +1932,7 @@ const STR = {
     animalNote: 'Con giáp ở đây được tính theo năm dương lịch. Nếu bạn sinh trước Tết, bạn thuộc con giáp của năm trước đó.',
 
     bookTitle: 'Đặt lịch xem bài',
-    priceTitle: 'Bảng giá', priceIntro: 'Bạn chọn gói phù hợp với câu hỏi của mình. Giá được tính theo buổi và thanh toán bằng chuyển khoản.',
+    priceTitle: 'Bảng giá', priceIntro: 'Buổi xem bài, khoá học và những phần mở thêm — đủ cả ở đây. Phần lớn app là miễn phí, mục cuối trang liệt kê hết.',
     chooseService: '1. Chọn dịch vụ', serviceHint: 'Bạn chạm vào gói muốn xem để chọn, và chạm thêm một lần nữa nếu muốn bỏ chọn.', needService: 'Bạn chọn ít nhất một gói dịch vụ trước nhé.', bookTip: 'Bạn có thể chọn nhiều gói cho cùng một buổi.', cartTitle: 'Các gói bạn đã chọn', cartEmpty: 'Bạn chưa chọn gói nào.', cartNeedsTopic: 'chưa chọn chủ đề', msgTotal: 'Tổng', topicFor: 'Chủ đề cho', topicNone: 'Phần này chỉ hiện khi bạn chọn một gói 1 chủ đề sẵn ở bước 1. Mỗi gói như vậy sẽ có một ô chọn chủ đề riêng.',
     optional: 'không bắt buộc', birthTime: 'Giờ sinh', birthHint: 'Giờ sinh càng chính xác thì lá số tử vi càng đúng.', needBirth: 'Tử vi cần ngày sinh của bạn.',
     msgService: 'Dịch vụ', msgBirth: 'Ngày giờ sinh',
@@ -1953,7 +1957,7 @@ const STR = {
     sentOk: 'Đã gửi. Nabu sẽ xác nhận sớm. Bạn xem lại trong mục Hồ sơ.',
     welcomeHead: 'Nabu Tarot xin chào! 🌙', nabuPosts: 'Bài viết của Nabu', versionLine: (v) => 'Phiên bản ' + v, checkUpdate: 'Kiểm tra cập nhật', updating: 'Đang tải bản mới…',
     privacyTitle: 'Chính sách quyền riêng tư', privacyLink: 'Riêng tư', delAccount: 'Xoá tài khoản', delHint: 'Thao tác này xoá tài khoản đăng nhập, hồ sơ, tin nhắn và lịch hẹn của bạn, và không thể hoàn lại.', delConfirm: 'Xoá tài khoản và toàn bộ dữ liệu của bạn? Việc này không hoàn lại được.', delDone: 'Đã xoá tài khoản. Cảm ơn bạn đã ghé Nabu Tarot.', delRelogin: 'Để chắc là bạn, hãy đăng nhập lại rồi bấm Xoá tài khoản một lần nữa.', aiFlag: 'Báo cáo câu trả lời này', aiFlagged: 'Đã ghi nhận. Cảm ơn bạn, Nabu sẽ xem lại.', storeCodeHint: 'Nhập mã mở khoá mà Nabu đã gửi cho bạn.',
-    actTitle: 'Hoạt động', actIntro: 'Những việc nhỏ để bạn ghé qua mỗi ngày: chọn một tụ bài rồi quay lại xem thông điệp, bình chọn cùng mọi người, hoặc gửi một điều ước vào lọ.', actEmpty: 'Chưa có hoạt động nào. Quay lại sau nhé.', actAll: 'Tất cả hoạt động', actOpen: 'Đang mở', actClosed: 'Đã đóng', actHasResults: 'Đã có kết quả',
+    actTitle: 'Hoạt động', actIntro: 'Những việc nhỏ để bạn ghé qua mỗi ngày: nuôi bạn nhỏ may mắn, buộc sợi chỉ đỏ với người ấy, rung cây thông điệp, tung đồng xu và viết nhật ký. Khi Nabu đăng thì có thêm tụ bài để chọn, bình chọn để tham gia và điều ước để gửi.', actEmpty: 'Chưa có hoạt động nào. Quay lại sau nhé.', actAll: 'Tất cả hoạt động', actOpen: 'Đang mở', actClosed: 'Đã đóng', actHasResults: 'Đã có kết quả',
     actPickHint: 'Bạn chạm vào tụ bài mà mình thấy bị thu hút nhất. Nabu sẽ đăng thông điệp của từng tụ sau vài ngày.', actPicked: (n) => 'Bạn đã chọn tụ ' + n + '.', actComeBack: (d) => 'Quay lại vào ' + d + ' để lật bài xem thông điệp.', actChangePile: 'Đổi sang tụ khác?', actPickToSee: 'Thông điệp đã có. Chạm vào một tụ để lật lên.', actTapOthers: 'Tụ bạn chọn đã lật lên. Bạn có thể chạm vào tụ khác để xem thử.',
     actVoteHint: 'Bạn chạm vào một lựa chọn. Mỗi người chỉ được bình chọn một lần.', actVoteLogin: 'Bạn cần đăng nhập để bình chọn và xem kết quả.', actVoted: 'Cảm ơn bạn đã bình chọn!', actClosedNote: 'Bình chọn đã đóng. Đây là kết quả.', actVotes: (n) => n + ' phiếu',
     actWishPh: 'Điều mình ước lúc này là…', actWishSend: 'Gửi vào vũ trụ', actWishHint: 'Bạn viết ngắn gọn, ở thì hiện tại, rồi gửi đi. Điều ước chỉ được lưu trên máy của bạn và không ai đọc được.', actWishCount: (n) => 'Bạn đã gửi ' + n + ' điều ước ở đây.', actWishSent: 'Đã gửi. Giờ đến lượt bạn làm bước đầu tiên. ✨', actWishEmpty: 'Bạn viết điều ước trước nhé.', actWishClear: 'Xoá các điều ước đã lưu trên máy', actWishClearConfirm: 'Xoá các điều ước đã lưu trên máy này?',
@@ -2120,7 +2124,8 @@ const STR = {
     saleBanner: (off, what) => 'Khuyến mãi ' + off + ' cho ' + what, saleSee: 'Xem ngay',
     adminShort: 'Tài khoản quản trị', unlockCodeLabel: 'Nhập mã Nabu gửi cho bạn', unlockReadings: 'Xem bảng giá xem bài riêng',
     luckFree: 'Bạn có 1 lượt miễn phí mỗi tuần.', luckLeft: 'Lượt tuần này của bạn vẫn còn.', luckSpent: (d) => 'Bạn đã dùng lượt tuần này. Lượt mới mở vào ' + d + '.', luckOpen: 'Bạn đang mở không giới hạn.', luckOffer: 'Muốn dùng không giới hạn cả năm: 30.000đ cho một mục, hoặc 50.000đ cho cả đồng xu và cây thông điệp.', luckGet: 'Nhắn Nabu để lấy mã', luckCodePh: 'NABU-B-…',
-    treeTitle: 'Rung cây thông điệp', treeSub: 'một lời nhắn từ vũ trụ', treeIntro: 'Bạn đứng trước cây, nghĩ về điều đang ở trong lòng mình, rồi rung nhẹ một cái. Cây sẽ thả xuống cho bạn một lời nhắn.', treeShake: 'Rung cây', treeAgain: 'Rung thêm một lần nữa', treeFor: 'Lời nhắn dành cho bạn', coinTitle: 'Tung đồng xu', coinSub: 'cho câu hỏi có hoặc không', coinIntro: 'Khi bạn có một câu hỏi chỉ cần trả lời có hoặc không, bạn hãy nghĩ thật rõ về câu hỏi đó rồi tung đồng xu.', coinQ: 'Câu hỏi của bạn', coinQPh: 'Ví dụ: mình có nên nhắn trước không?', coinFlip: 'Tung đồng xu', coinAgain: 'Tung lại', coinYes: 'CÓ', coinNo: 'KHÔNG', coinNote: 'Đồng xu chỉ cho bạn một trong hai câu trả lời. Điều đáng chú ý là cảm giác của bạn ngay khi nhìn thấy kết quả: nếu bạn thấy hụt hẫng, bạn đã biết mình muốn gì.',
+    treeTitle: 'Rung cây thông điệp', treeSub: 'một lời nhắn từ vũ trụ', treePets: 'Hiện bạn nhỏ dưới gốc cây', treePetsHint: 'Tắt đi thì chỉ còn cây. Chỉ ảnh hưởng máy của bạn.',
+    treeIntro: 'Bạn đứng trước cây, nghĩ về điều đang ở trong lòng mình, rồi rung nhẹ một cái. Cây sẽ thả xuống cho bạn một lời nhắn.', treeShake: 'Rung cây', treeAgain: 'Rung thêm một lần nữa', treeFor: 'Lời nhắn dành cho bạn', coinTitle: 'Tung đồng xu', coinSub: 'cho câu hỏi có hoặc không', coinIntro: 'Khi bạn có một câu hỏi chỉ cần trả lời có hoặc không, bạn hãy nghĩ thật rõ về câu hỏi đó rồi tung đồng xu.', coinQ: 'Câu hỏi của bạn', coinQPh: 'Ví dụ: mình có nên nhắn trước không?', coinFlip: 'Tung đồng xu', coinAgain: 'Tung lại', coinYes: 'CÓ', coinNo: 'KHÔNG', coinNote: 'Đồng xu chỉ cho bạn một trong hai câu trả lời. Điều đáng chú ý là cảm giác của bạn ngay khi nhìn thấy kết quả: nếu bạn thấy hụt hẫng, bạn đã biết mình muốn gì.',
     actNew: 'Hoạt động mới', actType: 'Loại', actTypes: { pile: 'Chọn tụ bài', poll: 'Bình chọn', wish: 'Điều ước' }, actResultsDate: 'Ngày đăng kết quả', actIntroLabel: 'Lời dẫn (thanh công cụ phía trên ô cho phép in đậm, in nghiêng, tô sáng, chèn ảnh, video và emoji)', actPilesHint: 'Từ 2 đến 5 tụ. Bạn có thể đăng trước với nhãn trống; vài ngày sau quay lại điền thông điệp và bật "Đã có kết quả".', actPileN: (n) => 'Tụ ' + n, actPileLabel: 'Nhãn ngắn (không bắt buộc), ví dụ: Trái · Giữa · Phải', actPileMsg: 'Thông điệp cho tụ này (đăng sau cũng được)', actPileMsgEn: 'English message (optional)', actPileAdd: 'Thêm tụ', actPileDel: 'Bớt tụ', actResultsOn: 'Đã có kết quả: cho phép lật bài', actOptions: 'Các lựa chọn, mỗi dòng một lựa chọn', actCloseOn: 'Đóng bình chọn', actExisting: 'Hoạt động đã đăng', actNeedPiles: 'Bạn điền ít nhất một tụ nhé.', actNeedOptions: 'Cần ít nhất hai lựa chọn.',
     newsTitle: 'Bài viết', newsIntro: 'Tất cả bài Nabu đã đăng, gồm dự đoán, chia sẻ và thông báo. Bạn gõ từ khóa để tìm nhanh.', searchPosts: 'Tìm trong bài viết…', noMatch: 'Không có bài nào khớp.', allPostsBtn: (n) => 'Xem tất cả bài viết (' + n + ')', watchOn: (s) => 'Xem video trên ' + s,
     addImage: 'Ảnh', addVideo: 'Video', videoPrompt: 'Dán link video (YouTube, Facebook, TikTok, Instagram):', imgNeedCloud: 'Bạn cần đăng nhập tài khoản admin để tải ảnh lên.', imgTooBig: 'Ảnh quá lớn, thử ảnh nhỏ hơn.', imgAdded: 'Đã thêm ảnh vào bài.', wrapPlaceholder: 'chữ', boxLabel: 'Hộp', formatHint: 'Chọn chữ rồi bấm B / I / U / H để in đậm, in nghiêng, gạch dưới, tô sáng. H2 là tiêu đề nhỏ, Hộp là ô tiêu đề riêng. Ảnh tải thẳng vào bài; video dán link.',
@@ -2303,7 +2308,7 @@ const STR = {
     shareText: (name, kws) => 'My card today: ' + name + '. Energy: ' + kws + '. See this card and draw your own at ',
 
     learnTitle: 'Knowledge library',
-    learnIntro: 'Tarot, Lenormand, astrology, manifestation and fortune telling.',
+    learnIntro: 'Tarot, Lenormand, cartomancy, astrology, angel numbers, manifestation and fortune telling.',
     cats: { tarot: 'Tarot', lenormand: 'Lenormand', playing: 'Cartomancy', astro: 'Astrology', angel: 'Angel numbers', manifest: 'Manifestation', fortune: 'Fortune telling' },
     catSub: { tarot: '78 cards + 8 spreads', lenormand: '36 cards + 7 spreads', playing: '52 cards + 4 spreads', astro: '12 signs, planets, houses', angel: 'the numbers you keep seeing', manifest: 'methods + limits', fortune: 'numbers, palms, tea leaves' },
     angelTitle: 'Angel numbers', angelIntro: 'Some numbers keep turning up in a day: on a clock, on a receipt, on a number plate. Type the one you keep seeing on the keypad below and read what it is taken to mean.',
@@ -2363,7 +2368,7 @@ const STR = {
     animalNote: 'Counted by calendar year. If you were born before Lunar New Year, you belong to the previous animal.',
 
     bookTitle: 'Book a reading',
-    priceTitle: 'Prices', priceIntro: 'Pick the package that fits your question. Prices are per session, paid by bank transfer.',
+    priceTitle: 'Prices', priceIntro: 'Readings, courses and what you can open, all in one place. Most of the app is free — the last section lists every part of it.',
     chooseService: '1. Choose a service', serviceHint: 'Tap the package you want. You can pick several. Tap again to remove one.', needService: 'Choose at least one package first.', bookTip: 'Tap a package to select it. You can choose as many as you like. Changed your mind? Simply tap the package once more to deselect it.', cartTitle: 'Your chosen packages', cartEmpty: 'No package chosen yet.', cartNeedsTopic: 'topic not chosen', msgTotal: 'Total', topicFor: 'Topic for', topicNone: 'This step appears once you choose a 1 preset topic package in step 1. Each such package gets its own topic picker.',
     optional: 'optional', birthTime: 'Time of birth', birthHint: 'Tử vi needs the birth time as exact as possible.', needBirth: 'Tử vi needs your birth date.',
     msgService: 'Service', msgBirth: 'Birth date and time',
@@ -2388,7 +2393,7 @@ const STR = {
     sentOk: 'Sent. Nabu will confirm soon. You can check it under Profile.',
     welcomeHead: 'Welcome to Nabu Tarot 🌙', nabuPosts: 'Nabu Posts', versionLine: (v) => 'Version ' + v, checkUpdate: 'Check for updates', updating: 'Loading the new version…',
     privacyTitle: 'Privacy policy', privacyLink: 'Privacy', delAccount: 'Delete account', delHint: 'Removes your login, profile, messages and bookings. This cannot be undone.', delConfirm: 'Delete your account and all your data? This cannot be undone.', delDone: 'Account deleted. Thank you for visiting Nabu Tarot.', delRelogin: 'To be sure it is you, sign in again and tap Delete account once more.', aiFlag: 'Report this answer', aiFlagged: 'Noted. Thank you, Nabu will review it.', storeCodeHint: 'Enter the unlock code Nabu sent you.',
-    actTitle: 'Activities', actIntro: 'Small things to drop in on: pick a pile and come back for its message, vote alongside everyone else, or send a wish into the jar.', actEmpty: 'No activities yet. Come back soon.', actAll: 'All activities', actOpen: 'Open', actClosed: 'Closed', actHasResults: 'Answered',
+    actTitle: 'Activities', actIntro: 'Small things to drop in on each day: a lucky companion to keep, the red thread to tie, the message tree, the coin and the diary. When Nabu posts there are piles to pick, polls to vote in and wishes to send.', actEmpty: 'No activities yet. Come back soon.', actAll: 'All activities', actOpen: 'Open', actClosed: 'Closed', actHasResults: 'Answered',
     actPickHint: 'Tap the pile that pulls you. Nabu posts each pile\'s message a few days later.', actPicked: (n) => 'You chose pile ' + n + '.', actComeBack: (d) => 'Come back on ' + d + ' to flip it over.', actChangePile: 'Switch to another pile?', actPickToSee: 'The messages are in. Tap a pile to flip it.', actTapOthers: 'Your pile is open. Tap another pile to peek.',
     actVoteHint: 'Tap an option. One vote per person.', actVoteLogin: 'Sign in to vote and see the results.', actVoted: 'Thank you for voting!', actClosedNote: 'Voting is closed. Here are the results.', actVotes: (n) => n + ' votes',
     actWishPh: 'Right now I wish…', actWishSend: 'Send it to the universe', actWishHint: 'Keep it short, in the present tense, then send. Wishes stay on your device; nobody reads them.', actWishCount: (n) => 'You have sent ' + n + ' wishes here.', actWishSent: 'Sent. Now the first step is yours. ✨', actWishEmpty: 'Write your wish first.', actWishClear: 'Clear the wishes saved on this device', actWishClearConfirm: 'Clear the wishes saved on this device?',
@@ -2555,7 +2560,8 @@ const STR = {
     saleBanner: (off, what) => off + ' off ' + what, saleSee: 'See it',
     adminShort: 'Admin account', unlockCodeLabel: 'Enter the code Nabu sent you', unlockReadings: 'See the prices for a reading',
     luckFree: 'You get one free turn a week.', luckLeft: 'Your turn for this week is still open.', luckSpent: (d) => 'You have had your turn this week. The next one opens on ' + d + '.', luckOpen: 'You have unlimited turns.', luckOffer: 'For unlimited turns all year: 30,000đ for one, or 50,000đ for both the coin and the message tree.', luckGet: 'Message Nabu for a code', luckCodePh: 'NABU-B-…',
-    treeTitle: 'Shake the message tree', treeSub: 'a message from the universe', treeIntro: 'Stand in front of the tree, hold in mind whatever you are carrying, and give it a gentle shake. The tree will let a message fall for you.', treeShake: 'Shake the tree', treeAgain: 'Shake it once more', treeFor: 'A message for you', coinTitle: 'Flip a coin', coinSub: 'for a yes or no question', coinIntro: 'When a question needs nothing more than a yes or a no, hold the question clearly in mind and flip the coin.', coinQ: 'Your question', coinQPh: 'For example: should I message first?', coinFlip: 'Flip the coin', coinAgain: 'Flip again', coinYes: 'YES', coinNo: 'NO', coinNote: 'The coin gives you one of two answers. What matters is how you feel the moment you see it: if the result disappoints you, you already know what you want.',
+    treeTitle: 'Shake the message tree', treeSub: 'a message from the universe', treePets: 'Show your companions under the tree', treePetsHint: 'Turn it off and the tree stands on its own. This phone only.',
+    treeIntro: 'Stand in front of the tree, hold in mind whatever you are carrying, and give it a gentle shake. The tree will let a message fall for you.', treeShake: 'Shake the tree', treeAgain: 'Shake it once more', treeFor: 'A message for you', coinTitle: 'Flip a coin', coinSub: 'for a yes or no question', coinIntro: 'When a question needs nothing more than a yes or a no, hold the question clearly in mind and flip the coin.', coinQ: 'Your question', coinQPh: 'For example: should I message first?', coinFlip: 'Flip the coin', coinAgain: 'Flip again', coinYes: 'YES', coinNo: 'NO', coinNote: 'The coin gives you one of two answers. What matters is how you feel the moment you see it: if the result disappoints you, you already know what you want.',
     actNew: 'New activity', actType: 'Type', actTypes: { pile: 'Pick a pile', poll: 'Poll', wish: 'Wish' }, actResultsDate: 'Results date', actIntroLabel: 'Intro (the bar above the box: bold, italic, highlight, images, video, emoji)', actPilesHint: 'Two to five piles. You can publish with empty labels; come back days later, fill in the messages and switch on "Answered".', actPileN: (n) => 'Pile ' + n, actPileLabel: 'Short label (optional), e.g. Left · Middle · Right', actPileMsg: 'Message for this pile (can be added later)', actPileMsgEn: 'English message (optional)', actPileAdd: 'Add a pile', actPileDel: 'Remove a pile', actResultsOn: 'Answered: let people flip the piles', actOptions: 'Options, one per line', actCloseOn: 'Close the poll', actExisting: 'Published activities', actNeedPiles: 'Fill in at least one pile.', actNeedOptions: 'At least two options are needed.',
     newsTitle: 'Posts', newsIntro: 'Everything Nabu has posted: readings, thoughts, announcements. Type to search.', searchPosts: 'Search the posts…', noMatch: 'No post matches.', allPostsBtn: (n) => 'See all posts (' + n + ')', watchOn: (s) => 'Watch on ' + s,
     addImage: 'Image', addVideo: 'Video', videoPrompt: 'Paste a video link (YouTube, Facebook, TikTok, Instagram):', imgNeedCloud: 'Sign in with the admin account to upload images.', imgTooBig: 'Image too large, try a smaller one.', imgAdded: 'Image added to the post.', wrapPlaceholder: 'text', boxLabel: 'Box', formatHint: 'Select text, then tap B / I / U / H for bold, italic, underline, highlight. H2 is a small heading, Box a separate title box. Images upload straight into the post; videos are pasted as links.',
@@ -10742,8 +10748,8 @@ function todayHTML() {
 const TOUR = [
   { ic: DRAW_ICON, vi: ['Rút bài', 'Chọn chủ đề trước, rồi lật một lá để xem năng lượng hôm nay của bạn.'], en: ['Pick a card', 'Tap one card to see your energy today. Choose a focus first: love, work, study, money.'] },
   { ic: '✨', vi: ['Dự đoán', 'Bài mới của Nabu nằm ở trang chủ. Bài ghi "dành cho bạn" hợp với cung của bạn.'], en: ['Readings', 'Nabu\'s new posts live on the home screen. Posts marked "for you" match your sign.'] },
-  { ic: '🎲', vi: ['Hoạt động', 'Chọn tụ bài, bình chọn, tung đồng xu hay rung cây thông điệp. Mỗi tuần đều có việc mới.'], en: ['Activities', 'Pick a pile, vote, flip the coin or shake the message tree. Something new every week.'] },
-  { ic: '📚', vi: ['Học', 'Tarot, Lenormand, chiêm tinh và manifestation. Bạn bấm vào một lá bài hoặc một cung để đọc.'], en: ['Learn', 'Tarot, Lenormand, astrology, manifestation and fortune telling. Tap a card or a sign to read.'] },
+  { ic: '🎲', vi: ['Hoạt động', 'Nuôi bạn nhỏ may mắn, buộc sợi chỉ đỏ, rung cây thông điệp, tung đồng xu, viết nhật ký. Khi Nabu đăng thì có thêm tụ bài, bình chọn và điều ước.'], en: ['Activities', 'Keep a lucky companion, tie the red thread, shake the message tree, flip the coin, write the diary. When Nabu posts there are piles to pick, polls to vote in and wishes to send.'] },
+  { ic: '📚', vi: ['Học', 'Tarot, Lenormand, bài Tây, chiêm tinh, con số thiên thần, manifestation và bói toán. Bạn bấm vào một lá bài hoặc một cung để đọc.'], en: ['Learn', 'Tarot, Lenormand, cartomancy, astrology, angel numbers, manifestation and fortune telling. Tap a card or a sign to read.'] },
   { ic: '📅', vi: ['Đặt lịch', 'Bạn chọn gói, chọn giờ trên lịch rồi gửi yêu cầu cho Nabu.'], en: ['Book', 'Choose a topic, pick a time on the calendar, send it to Nabu.'] },
   { ic: '👤', vi: ['Hồ sơ', 'Nhập tên và ngày sinh để app chọn nội dung hợp với bạn. Đăng nhập để lưu hồ sơ và xem lịch hẹn.'], en: ['Profile', 'Enter your name and birthday so the app picks content for you. Sign in to keep your profile, message Nabu and see bookings.'] }
 ];
@@ -17097,9 +17103,13 @@ function treeButterflySVG(still) {
 function treeSVG() { return treeSVGFor(); }
 /* The companions stand at the foot of the tree, so the two screens read as one
    garden. Tapping one opens its own page. */
+/* Kept on the phone, on unless it is turned off: some people want the tree
+   by itself. */
+const TREE_PETS_KEY = 'nabu-tree-pets';
+const treePetsOn = () => store.get(TREE_PETS_KEY, true) !== false;
 function treePetHTML() {
   const pets = PETS.all();
-  if (!pets.length) return '';
+  if (!pets.length || !treePetsOn()) return '';
   /* Each one strolls at its own pace, so a row of them never marches in step. */
   return '<span class="treepets">' + pets.map((p, i) => '<a class="treepet" href="#/play/pet" style="animation-delay:' + (i * 1300) + 'ms" aria-label="' + esc(p.name || L(PET_NAMES[p.kind])) + '">'
     + petSVG(p.kind, PETS.coat(p), PETS.fedToday(p) ? 'happy' : '', PETS.wear(p)) + '</a>').join('') + '</span>';
@@ -17112,11 +17122,17 @@ function renderTree() {
       + '<div class="card treewrap"><div class="treestage"><button type="button" class="tree" id="tree" aria-label="' + esc(S.treeShake) + '">' + treeSVG() + '<span class="petals" id="petals"></span></button>' + treePetHTML() + '</div>'
       + '<div class="treemsg" id="treemsg"' + (msg ? '' : ' hidden') + '><div class="eyebrow">' + esc(S.treeFor) + '</div><p id="treetext">' + (msg ? esc(L(msg)) : '') + '</p></div>'
       + (luckSpent('tree') ? '' : '<button class="btn primary block" id="shake">' + esc(msg ? S.treeAgain : S.treeShake) + '</button>') + '</div>'
+      + (PETS.all().length
+        ? '<label class="remind"><input type="checkbox" id="treepets"' + (treePetsOn() ? ' checked' : '') + '><span>' + esc(S.treePets) + '</span></label>'
+          + '<p class="hint">' + esc(S.treePetsHint) + '</p>'
+        : '')
       + luckPanelHTML('tree')
       + lookStripHTML('tree')
       + '<p style="margin-top:14px"><a class="btn block" href="#/unlock">💳 ' + esc(S.unlockLink) + '</a></p>'
       + '<p style="margin-top:14px"><a href="#/play" class="backlink">← ' + esc(S.actTitle) + '</a></p>';
     bindLookStrip(m, draw);
+    { const tp = $('#treepets');
+      if (tp) tp.addEventListener('change', () => { store.set(TREE_PETS_KEY, tp.checked); draw(); }); }
     const shake = () => {
       if (busy) return;
       busy = true;
@@ -17542,7 +17558,10 @@ function adminPosts(p) {
 }
 
 /* ---- availability ---- */
-const HOURS = []; for (let h = 7; h <= 23; h++) { HOURS.push(pad2(h) + ':00'); HOURS.push(pad2(h) + ':30'); }
+/* The whole clock, in half hours. It began at seven in the morning, which
+   quietly made the small hours unbookable - and one in the morning is a real
+   time to read for somebody on the other side of the world. */
+const HOURS = []; for (let h = 0; h <= 23; h++) { HOURS.push(pad2(h) + ':00'); HOURS.push(pad2(h) + ':30'); }
 async function adminSchedule(p) {
   const S = T();
   p.innerHTML = '<p class="hint">…</p>';
@@ -17554,7 +17573,7 @@ async function adminSchedule(p) {
   const dn = lang === 'vi' ? ['Chủ nhật', 'Thứ hai', 'Thứ ba', 'Thứ tư', 'Thứ năm', 'Thứ sáu', 'Thứ bảy'] : ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
   const draw = () => {
     p.innerHTML = '<div class="card"><h3 style="margin-bottom:4px">' + esc(S.weekly) + '</h3><p class="hint" style="margin-bottom:10px">' + esc(S.weeklyHint) + '</p><div class="week">'
-      + [1, 2, 3, 4, 5, 6, 0].map((d) => '<div class="wd"><b>' + esc(dn[d]) + '</b><div class="chips">' + HOURS.map((h) => '<button class="chip' + ((sch.weekly[String(d)] || []).indexOf(h) > -1 ? ' on' : '') + '" data-wd="' + d + '" data-h="' + h + '">' + h + '</button>').join('') + '</div></div>').join('') + '</div></div>'
+      + [1, 2, 3, 4, 5, 6, 0].map((d) => '<div class="wd"><b>' + esc(dn[d]) + '</b><div class="chips hourgrid">' + HOURS.map((h) => '<button class="chip' + ((sch.weekly[String(d)] || []).indexOf(h) > -1 ? ' on' : '') + '" data-wd="' + d + '" data-h="' + h + '">' + h + '</button>').join('') + '</div></div>').join('') + '</div></div>'
       + '<div class="card"><h3 style="margin-bottom:4px">' + esc(S.blocked) + '</h3><p class="hint">' + esc(S.blockedHint) + '</p><div class="chips" id="blist">' + sch.blocked.sort().map((d) => '<button class="chip on" data-unblock="' + d + '">' + d + ' ✕</button>').join('') + '</div><div class="row nw" style="margin-top:8px"><input type="date" id="bday"><button class="btn sm" id="badd">' + esc(S.addDay) + '</button></div></div>'
       + '<div class="card"><h3 style="margin-bottom:4px">' + esc(S.bookedSlots) + '</h3><p class="hint">' + esc(S.bookedHint) + '</p><div class="chips">' + sch.booked.sort().map((k) => '<button class="chip on" data-unbook="' + k + '">' + k.replace('T', ' ') + ' ✕</button>').join('') + '</div><div class="row nw" style="margin-top:8px"><input type="date" id="kday"><select id="khour" style="flex:0 0 96px">' + HOURS.map((h) => '<option>' + h + '</option>').join('') + '</select><button class="btn sm" id="kadd">+</button></div></div>'
       + '<div class="card"><div class="two"><div><label class="f">' + esc(S.leadDays) + '</label><input type="number" id="lead" min="0" value="' + (sch.leadDays == null ? 1 : sch.leadDays) + '"></div><div><label class="f">' + esc(S.horizonDays) + '</label><input type="number" id="horizon" min="7" value="' + (sch.horizonDays || 42) + '"></div></div>'
@@ -17763,7 +17782,7 @@ function adminSale(p) {
 ROUTES.admin = { nav: '', render: renderAdmin };
 
 /* ============================ boot ============================ */
-window.APP_VERSION = 'v121';
+window.APP_VERSION = 'v122';
 window.NABU = { CONFIG: CONFIG, SALE: SALE, salePrice: salePrice, loadActs: loadActs, BACK: BACK, LESSONS: LESSONS, localAnswer: localAnswer, compatVerdict: compatVerdict, numerologyOf: numerologyOf, ZDEEP: ZDEEP, lunarToday: lunarToday, solarToLunar: solarToLunar, DECK: DECK, INSIGHT: INSIGHT, KW: KW, ASK: ASK, TOPICS: TOPICS, GUIDES: GUIDES, SERVICES: SERVICES, COURSES: COURSES, ACCESS: ACCESS, ZODIAC: ZODIAC, pick: pick, book: book,
   insightHTML: insightHTML, insightOf: insightOf, sunSignIndex: sunSignIndex, lifePath: lifePath, PROFILE: () => PROFILE, BE: BE, ACTS: ACTS,
   ANGELS: ANGELS, angelRead: angelRead, CODEBOOK: CODEBOOK, verifyCode: verifyCode, petHomeSVG: petHomeSVG, PET_HOMES: PET_HOMES, PET_WEARS: PET_WEARS, codeDigest: codeDigest, randomCode: randomCode, BANK: BANK, PETS: PETS, petSVG: petSVG, PET_COATS: PET_COATS, PET_KINDS: PET_KINDS, luckCut: luckCut, petLevel: petLevel, petStep: petStep, VOUCHERS: VOUCHERS, levelCoins: levelCoins, LOOKS: LOOKS,

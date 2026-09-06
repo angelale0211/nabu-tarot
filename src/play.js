@@ -560,9 +560,13 @@ function treeButterflySVG(still) {
 function treeSVG() { return treeSVGFor(); }
 /* The companions stand at the foot of the tree, so the two screens read as one
    garden. Tapping one opens its own page. */
+/* Kept on the phone, on unless it is turned off: some people want the tree
+   by itself. */
+const TREE_PETS_KEY = 'nabu-tree-pets';
+const treePetsOn = () => store.get(TREE_PETS_KEY, true) !== false;
 function treePetHTML() {
   const pets = PETS.all();
-  if (!pets.length) return '';
+  if (!pets.length || !treePetsOn()) return '';
   /* Each one strolls at its own pace, so a row of them never marches in step. */
   return '<span class="treepets">' + pets.map((p, i) => '<a class="treepet" href="#/play/pet" style="animation-delay:' + (i * 1300) + 'ms" aria-label="' + esc(p.name || L(PET_NAMES[p.kind])) + '">'
     + petSVG(p.kind, PETS.coat(p), PETS.fedToday(p) ? 'happy' : '', PETS.wear(p)) + '</a>').join('') + '</span>';
@@ -575,11 +579,17 @@ function renderTree() {
       + '<div class="card treewrap"><div class="treestage"><button type="button" class="tree" id="tree" aria-label="' + esc(S.treeShake) + '">' + treeSVG() + '<span class="petals" id="petals"></span></button>' + treePetHTML() + '</div>'
       + '<div class="treemsg" id="treemsg"' + (msg ? '' : ' hidden') + '><div class="eyebrow">' + esc(S.treeFor) + '</div><p id="treetext">' + (msg ? esc(L(msg)) : '') + '</p></div>'
       + (luckSpent('tree') ? '' : '<button class="btn primary block" id="shake">' + esc(msg ? S.treeAgain : S.treeShake) + '</button>') + '</div>'
+      + (PETS.all().length
+        ? '<label class="remind"><input type="checkbox" id="treepets"' + (treePetsOn() ? ' checked' : '') + '><span>' + esc(S.treePets) + '</span></label>'
+          + '<p class="hint">' + esc(S.treePetsHint) + '</p>'
+        : '')
       + luckPanelHTML('tree')
       + lookStripHTML('tree')
       + '<p style="margin-top:14px"><a class="btn block" href="#/unlock">💳 ' + esc(S.unlockLink) + '</a></p>'
       + '<p style="margin-top:14px"><a href="#/play" class="backlink">← ' + esc(S.actTitle) + '</a></p>';
     bindLookStrip(m, draw);
+    { const tp = $('#treepets');
+      if (tp) tp.addEventListener('change', () => { store.set(TREE_PETS_KEY, tp.checked); draw(); }); }
     const shake = () => {
       if (busy) return;
       busy = true;
