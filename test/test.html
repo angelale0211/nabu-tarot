@@ -1019,6 +1019,17 @@ async function go(hash, sel) { W().location.hash = hash; await sleep(30); return
         && d.querySelector('.freegrid .fg[href="#/play/coin"]') && d.querySelector('.freegrid .fg[href="#/learn/astro"]'),
         'the page says what the app gives away, all of it, linked');
       await go('#/me', '[data-theme-pick]'); }
+    { /* where the reading happens, and Nabu calling one off */
+      await go('#/book', '.wherepick');
+      ok(d.querySelectorAll('.wherepick .wp').length === 3 && d.querySelector('[data-where="app"]')
+        && d.querySelector('[data-where="ig"]') && d.querySelector('[data-where="fb"]') && !d.querySelector('.wherepick .wp.on'),
+        'a booking asks where the reading happens: in the app, on Instagram or on Facebook, and none is chosen to begin with');
+      d.querySelector('[data-where="ig"]').click(); await sleep(80);
+      ok(d.querySelector('[data-where="ig"]').classList.contains('on') && /Instagram/.test(d.querySelector('#msgtext').textContent),
+        'the choice is carried in the message that goes to Nabu');
+      { const svc = d.querySelector('[data-pkg]'); if (svc) svc.click(); await sleep(60); }
+      d.querySelector('[data-where="ig"]').click(); await sleep(60);
+      await go('#/me', '[data-theme-pick]'); }
     d.querySelector('[data-theme-pick="pink"]').click();
     ok(d.documentElement.getAttribute('data-theme') === 'pink' && bgOf() === PINK && w.getComputedStyle(d.querySelector('.btn.primary') || d.body).backgroundColor !== '', 'pastel pink choice paints the blush palette');
     d.querySelector('[data-theme-pick="dark"]').click();

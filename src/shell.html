@@ -400,6 +400,15 @@ main{padding:22px 0 30px}
    down, where wrapping chips would be a wall. */
 .chips.hourgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(56px,1fr));gap:5px}
 .chips.hourgrid .chip{padding:6px 2px;font-size:12px;text-align:center;min-width:0}
+/* Where the reading happens: three cards, one chosen. */
+.wherepick{display:grid;gap:8px}
+.wherepick .wp{position:relative;display:grid;grid-template-columns:34px 1fr;grid-template-rows:auto auto;column-gap:11px;align-items:center;text-align:left;background:var(--surface);border:1.5px solid var(--rule);border-radius:16px;padding:12px 42px 12px 13px}
+.wherepick .wp .ic{grid-row:1 / span 2;font-size:23px;line-height:1;text-align:center}
+.wherepick .wp b{font-size:15px;font-weight:600}
+.wherepick .wp .s{font-size:12.5px;color:var(--fg-soft);line-height:1.35}
+.wherepick .wp .tick{position:absolute;right:13px;top:50%;transform:translateY(-50%);width:22px;height:22px;border-radius:50%;border:1.5px solid var(--rule);color:transparent;font-size:12px;display:grid;place-content:center}
+.wherepick .wp.on{border-color:var(--primary);box-shadow:0 0 0 1px var(--primary) inset}
+.wherepick .wp.on .tick{background:var(--primary);border-color:var(--primary);color:var(--primary-ink)}
 .signlist{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
 .signlist button{background:var(--surface);border:1px solid var(--rule-soft);border-radius:14px;padding:10px 6px;text-align:center}
 .signlist button .g{font-size:26px;color:var(--link);display:block}
@@ -1130,6 +1139,10 @@ h1 .pileico{width:34px;height:27px;vertical-align:-3px;margin-right:2px}
 .lovecard .daysbig b{font-family:var(--display);font-size:44px;line-height:1;color:#C41F3A}
 .lovecard .daysbig span{font-size:12.5px;color:var(--fg-soft);letter-spacing:.04em}
 .lovecard .since{margin:2px 0 0;font-size:13.5px;color:var(--fg-soft)}
+/* Your own handle, and the way to change it, centred under the knot rather
+   than left on the page as a stray line of bold text. */
+#main .lovecard p.yours{margin:0 0 10px;font-size:13.5px;color:var(--fg-soft);text-align:center}
+#main .lovecard p.yours b{color:var(--fg);font-weight:700}
 /* The number is drawn in the thread's own red, which is too deep to read on a
    dark ground, so the dark themes take a lighter one. */
 :root[data-theme="dark"] .lovecard .daysbig b{color:#FF8FA3}

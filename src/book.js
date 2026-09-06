@@ -2,12 +2,12 @@
    Service and package, topic (required for "set topic" packages), a
    calendar of Nabu's free slots (schedule.json, minus slots taken in
    Firestore when accounts are on), details, then send. */
-const book = { items: [], name: '', note: '', birth: '', birthTime: '', card: null, slot: null, month: null, day: null, timeSaved: false, restored: false, use: { v: false, c: 0 } };
+const book = { items: [], name: '', note: '', birth: '', birthTime: '', card: null, slot: null, month: null, day: null, where: '', timeSaved: false, restored: false, use: { v: false, c: 0 } };
 /* The draft lives on the device: leave the screen, come back, everything is still chosen. */
-const BOOK_KEYS = ['items', 'name', 'note', 'birth', 'birthTime', 'slot', 'day', 'timeSaved'];
+const BOOK_KEYS = ['items', 'name', 'note', 'birth', 'birthTime', 'slot', 'day', 'where', 'timeSaved'];
 function saveBook() { const o = {}; BOOK_KEYS.forEach((k) => { o[k] = book[k]; }); store.set('nabu-book', o); }
 function restoreBook() { if (book.restored) return; book.restored = true; const o = store.get('nabu-book', null); if (!o) return; BOOK_KEYS.forEach((k) => { if (o[k] != null) book[k] = o[k]; }); if (!Array.isArray(book.items)) book.items = []; }
-function clearBook() { book.items = []; book.slot = null; book.day = null; book.timeSaved = false; book.note = ''; book.card = null; store.set('nabu-book', null); }
+function clearBook() { book.items = []; book.slot = null; book.day = null; book.timeSaved = false; book.note = ''; book.card = null; book.where = ''; store.set('nabu-book', null); }
 let SCHEDULE = null, TAKEN = {};
 
 async function loadSchedule() {
@@ -79,6 +79,7 @@ function composeMessage() {
     out.push('');
   }
   if (book.slot) out.push('📅 ' + S.msgTime + ': ' + slotLabel(book.slot));
+  { const w = whereOf(book.where); if (w) out.push(w.icon + ' ' + S.msgWhere + ': ' + L(w.name)); }
   if (book.name.trim()) out.push('🙋 ' + S.msgName + ': ' + book.name.trim());
   if (needsBirth() && (book.birth || book.birthTime)) out.push('🎂 ' + S.msgBirth + ': ' + (book.birth || '?') + (book.birthTime ? ' ' + book.birthTime : ''));
   if (book.note.trim()) out.push('📝 ' + S.msgNote + ': ' + book.note.trim());
@@ -86,6 +87,15 @@ function composeMessage() {
   while (out[out.length - 1] === '') out.pop();
   return out.join('\n');
 }
+/* Where the reading happens. Three cards, one of which has to be chosen before
+   the request can be sent, because guessing this has been Nabu's job until now. */
+function whereHTML() {
+  const S = T();
+  return '<div class="wherepick">' + BOOK_WHERE.map((w) => '<button type="button" class="wp' + (book.where === w.id ? ' on' : '') + '" data-where="' + w.id + '">'
+    + '<span class="ic">' + w.icon + '</span><b>' + esc(L(w.name)) + '</b><span class="s">' + esc(L(w.sub)) + '</span>'
+    + '<span class="tick">\u2713</span></button>').join('') + '</div>';
+}
+
 /* The request as a labelled card: packages one per line, total, time, details. */
 function summaryHTML(withPanel) {
   const S = T(), rows = [], cut = bookLuck();
@@ -188,6 +198,7 @@ async function renderBook(args, params) {
     + '<div class="sec"><h2 style="margin:18px 0 4px">' + esc(S.chooseService) + '</h2><p class="hint" style="margin-bottom:12px">' + esc(S.serviceHint) + '</p><div id="svcwrap">' + priceSheetHTML(true) + '</div><div id="cartwrap">' + cartHTML() + '</div></div>'
     + '<div class="sec"><h2 style="margin:18px 0 4px">' + esc(S.chooseTopic) + '</h2><div id="topicwrap">' + topicSectionHTML() + '</div></div>'
     + '<div class="sec"><h2 style="margin-bottom:4px">' + esc(S.chooseTime) + '</h2><p class="hint" style="margin-bottom:10px">' + esc(S.timeHint(L(CONFIG.tzLabel))) + '</p><div id="calwrap"><p class="hint">…</p></div></div>'
+    + '<div class="sec"><h2 style="margin:18px 0 4px">' + esc(S.chooseWhere) + '</h2><p class="hint" style="margin-bottom:10px">' + esc(S.whereHint) + '</p><div id="wherewrap">' + whereHTML() + '</div></div>'
     + '<div class="sec"><h2>' + esc(S.yourDetails) + '</h2><label class="f" for="bname">' + esc(S.yourName) + '</label><input id="bname" value="' + esc(book.name) + '" autocomplete="nickname">'
     + '<div id="birthwrap" hidden><label class="f" for="bbirth">' + esc(S.birthday) + '</label><input id="bbirth" type="date" value="' + esc(book.birth) + '"><label class="f" for="btime">' + esc(S.birthTime) + '</label><input id="btime" type="time" value="' + esc(book.birthTime) + '"><p class="hint">' + esc(S.birthHint) + '</p></div>'
     + '<label class="f" for="bnote">' + esc(S.yourNote) + '</label><textarea id="bnote" placeholder="' + esc(S.notePlaceholder) + '">' + esc(book.note) + '</textarea>'
@@ -196,7 +207,7 @@ async function renderBook(args, params) {
     + '<div class="row" style="flex-direction:column">'
     + (BE.enabled ? '<button class="btn block primary" id="sendapp">' + esc(S.sendInApp) + '</button><p class="hint" id="sendstatus"></p>' : '<p class="hint">' + esc(S.needLogin) + '</p>')
     + '<a class="btn block" href="#/contact">💬 ' + esc(S.contactTitle) + '</a></div></div>'
-    + '<div class="sec card"><h3 style="margin-bottom:10px">' + esc(S.howItWorks) + '</h3><ol class="steps">' + [S.chooseService.slice(3), S.chooseTopic.slice(3), S.chooseTime.slice(3), S.sendVia.slice(3), L(PAYMENT_NOTE)].map((x) => '<li>' + esc(x) + '</li>').join('') + '</ol></div>';
+    + '<div class="sec card"><h3 style="margin-bottom:10px">' + esc(S.howItWorks) + '</h3><ol class="steps">' + [S.chooseService.slice(3), S.chooseTopic.slice(3), S.chooseTime.slice(3), S.chooseWhere.slice(3), S.sendVia.slice(3), L(PAYMENT_NOTE)].map((x) => '<li>' + esc(x) + '</li>').join('') + '</ol></div>';
   const prev = () => { const p = $('#msgprev'); if (!p) return; p.innerHTML = summaryHTML(true); bindRewardPanel(p, book.use, prev); $('#msgtext').textContent = composeMessage(); saveBook(); };
   const done = () => {
     m.innerHTML = '<div class="done"><div class="big">✅</div><h1>' + esc(S.doneTitle) + '</h1><p class="muted">' + esc(S.doneBody) + '</p><p><span class="st requested">' + esc(S.status.requested) + '</span></p>' + summaryHTML()
@@ -240,6 +251,7 @@ async function renderBook(args, params) {
     if (missing > -1) { toast(S.needTopic); const t = $('.tpick[data-tpick="' + missing + '"]', m); if (t) t.scrollIntoView({ behavior: 'smooth', block: 'start' }); return false; }
     if (!book.slot) { toast(S.needSlot); $('#calwrap').scrollIntoView({ behavior: 'smooth', block: 'center' }); return false; }
     if (needsBirth() && !book.birth) { toast(S.needBirth); $('#birthwrap').scrollIntoView({ behavior: 'smooth', block: 'center' }); return false; }
+    if (!book.where) { toast(S.needWhere); $('#wherewrap').scrollIntoView({ behavior: 'smooth', block: 'center' }); return false; }
     return true;
   };
   const sendBtn = $('#sendapp');
@@ -251,6 +263,7 @@ async function renderBook(args, params) {
       const items = book.items.map((it) => { const s = serviceOf(it.svc), p = pkgOfItem(it); return { service: L2(s.name, 'vi'), pkg: L2(p.name, 'vi'), price: p.price, topic: p.needsTopic && it.topic ? topicLabel(it.topic, 'vi') : '' }; });
       await BE.createBooking({ name: book.name.trim() || PROFILE.name || '', slot: book.slot,
         service: items.map((x) => x.service + ' – ' + x.pkg + (x.topic ? ' (' + x.topic + ')' : '')).join(' + '), pkg: '', price: bookLuck().final, topic: items.map((x) => x.topic).filter(Boolean).join('; '), items: items,
+        where: book.where, whereName: L2((whereOf(book.where) || { name: {} }).name, 'vi'),
         note: book.note.trim(), message: composeMessage(), luck: bookLuck(), birth: needsBirth() ? (book.birth + (book.birthTime ? ' ' + book.birthTime : '')) : '', card: book.card ? cardById(book.card).name : '' });
       luckCommit(bookLuck(), S.bkItems); book.use.v = false; book.use.c = 0;
       toast('✓'); try { TAKEN = await BE.takenSlots(); } catch (e2) { /* refreshed on the next visit */ }
@@ -258,6 +271,13 @@ async function renderBook(args, params) {
     } catch (e) { $('#sendstatus').textContent = S.publishFail + ': ' + e.message; $('#sendstatus').className = 'hint err'; }
     sendBtn.disabled = false; sendBtn.textContent = S.sendInApp;
   });
+  const bindWhere = () => {
+    $$('[data-where]', m).forEach((b) => b.addEventListener('click', () => {
+      book.where = b.getAttribute('data-where');
+      $('#wherewrap').innerHTML = whereHTML(); bindWhere(); prev();
+    }));
+  };
+  bindWhere();
   const bindSlots = () => {
     $$('[data-slot]', m).forEach((b) => b.addEventListener('click', () => { book.slot = b.getAttribute('data-slot'); book.timeSaved = false; $('#slots').innerHTML = slotsHTML(); bindSlots(); prev(); }));
     const sv = $('#saveslot'); if (sv) sv.addEventListener('click', () => { book.timeSaved = true; drawCal(); toast(S.slotSaved); const n = $('#bname'); if (n) n.scrollIntoView({ behavior: 'smooth', block: 'center' }); });

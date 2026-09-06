@@ -154,7 +154,10 @@ function bookingRow(b, admin) {
   const items = Array.isArray(b.items) && b.items.length ? b.items : (b.service ? [{ service: b.service, pkg: b.pkg || '', price: b.price || 0, topic: b.topic || '' }] : []);
   const list = items.map((it) => '<li>' + esc(String(it.service || '') + (it.pkg ? ' – ' + it.pkg : '')) + (it.price ? ' <b>' + fmtPrice(it.price) + '</b>' : '') + (it.topic ? '<br><small>' + esc(S.msgTopic) + ': ' + esc(it.topic) + '</small>' : '') + '</li>').join('');
   const total = items.length > 1 ? '<div class="tot"><span>' + esc(S.msgTotal) + '</span><b>' + fmtPrice(b.price || items.reduce((n, x) => n + (x.price || 0), 0)) + '</b></div>' : '';
-  const meta = [admin && (b.name || b.email) ? '🙋 ' + esc([b.name, b.email].filter(Boolean).join(' · ')) : '', b.birth ? '🎂 ' + esc(b.birth) : '', b.note ? '📝 ' + esc(b.note) : '', b.card ? '🃏 ' + esc(b.card) : ''].filter(Boolean).join('<br>');
+  const wh = b.where ? whereOf(b.where) : null;
+  const meta = [admin && (b.name || b.email) ? '🙋 ' + esc([b.name, b.email].filter(Boolean).join(' · ')) : '',
+    wh ? wh.icon + ' ' + esc(S.msgWhere) + ': <b>' + esc(L(wh.name)) + '</b>' : (b.whereName ? '💬 ' + esc(S.msgWhere) + ': <b>' + esc(b.whereName) + '</b>' : ''),
+    b.birth ? '🎂 ' + esc(b.birth) : '', b.note ? '📝 ' + esc(b.note) : '', b.card ? '🃏 ' + esc(b.card) : ''].filter(Boolean).join('<br>');
   const d = slotDate(b.slot), future = d && d.getTime() > Date.now(), live = ['requested', 'confirmed', 'change_requested', 'cancel_requested'].indexOf(b.status) > -1;
   const change = b.status === 'change_requested' && b.newSlot ? '<div class="chg">🔁 ' + esc(S.newSlotLabel) + ': ' + esc(slotLabel(b.newSlot)) + '</div>' : '';
   let acts = '';
@@ -162,6 +165,9 @@ function bookingRow(b, admin) {
     if (b.status === 'requested') acts = '<button class="btn sm primary" data-bk="confirmed" data-id="' + b.id + '">' + esc(S.confirm) + '</button><button class="btn sm" data-bk="declined" data-id="' + b.id + '">' + esc(S.decline) + '</button>';
     else if (b.status === 'change_requested') acts = '<button class="btn sm primary" data-bk="confirmed" data-id="' + b.id + '">' + esc(S.adminApplyChange) + '</button><button class="btn sm" data-bk="keep" data-id="' + b.id + '">' + esc(S.adminKeep) + '</button>';
     else if (b.status === 'cancel_requested') acts = '<button class="btn sm primary" data-bk="cancelled" data-id="' + b.id + '">' + esc(S.adminApplyCancel) + '</button><button class="btn sm" data-bk="keep" data-id="' + b.id + '">' + esc(S.adminKeepBooking) + '</button>';
+    /* Nabu could confirm, decline, and agree to a cancellation somebody else
+       asked for - but not call one off. Anyone who takes bookings falls ill. */
+    if (live && b.status !== 'cancel_requested') acts += '<button type="button" class="btn sm" data-bkoff="' + b.id + '">✕ ' + esc(S.adminCancel) + '</button>';
     if (live && future) acts += '<button type="button" class="btn sm" data-ics="' + b.id + '">📅 ' + esc(S.addToCalendar) + '</button><a class="btn sm" href="' + esc(gcalLink(b)) + '" target="_blank" rel="noopener">🗓 ' + esc(S.gcal) + '</a>';
   } else if (live && future) {
     acts = '<a class="btn sm" href="#/book?change=' + esc(b.id) + '">🔁 ' + esc(S.changeSlot) + '</a><button class="btn sm" data-cancel="' + b.id + '">✕ ' + esc(S.cancelBooking) + '</button>'
@@ -250,6 +256,12 @@ function renderMe(args, params) {
       meUnsubs.push(BE.watchMyBookings((list) => {
         $('#mybk').innerHTML = list.length ? list.map((b) => bookingRow(b, false)).join('') : '<p class="hint">' + esc(S.noBookings) + '</p>';
         $$('[data-ics]', body).forEach((x) => x.addEventListener('click', () => { const bk = list.filter((y) => y.id === x.getAttribute('data-ics'))[0]; if (bk) addToCalendar(bk); }));
+        /* Nabu can call one off from here too, behind a question. */
+        $$('[data-bkoff]', body).forEach((x) => x.addEventListener('click', async () => {
+          const bk = list.filter((y) => y.id === x.getAttribute('data-bkoff'))[0];
+          if (!bk || !confirm(S.adminCancelAsk)) return;
+          try { await BE.setBookingStatus(bk, 'cancelled'); toast(S.adminCancelDone); } catch (e) { toast(e.message); }
+        }));
         $$('[data-cancel]', body).forEach((x) => x.addEventListener('click', async () => { const bk = list.filter((y) => y.id === x.getAttribute('data-cancel'))[0]; if (!bk || !confirm(S.confirmCancel)) return; try { await BE.requestCancel(bk); toast(S.cancelSent); } catch (e) { toast(e.message); } }));
         scheduleReminders(list);
       }));

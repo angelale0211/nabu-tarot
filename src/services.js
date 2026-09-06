@@ -90,6 +90,17 @@ const COURSES = [
     blurb: { vi: 'Rung cây thông điệp bao nhiêu lần tuỳ bạn trong một năm.', en: 'Shake the message tree as often as you like for a year.' },
     includes: { vi: ['Rung cây thông điệp không giới hạn', 'Dùng 12 tháng'], en: ['Unlimited tree shakes', '12 months of access'] } },
 ];
+/* Where the reading itself happens. Three, because these are the three
+   places Nabu actually reads. */
+const BOOK_WHERE = [
+  { id: 'app', icon: '💬', name: { vi: 'Trong app Nabu Tarot', en: 'Here in the Nabu Tarot app' },
+    sub: { vi: 'Nabu nhắn trực tiếp trong mục Hồ sơ', en: 'Nabu replies in your Profile tab' } },
+  { id: 'ig', icon: '📷', name: { vi: 'Instagram', en: 'Instagram' },
+    sub: { vi: 'Nabu nhắn qua tin nhắn Instagram', en: 'Nabu writes to you on Instagram' } },
+  { id: 'fb', icon: '🌐', name: { vi: 'Facebook', en: 'Facebook' },
+    sub: { vi: 'Nabu nhắn qua Messenger', en: 'Nabu writes to you on Messenger' } }
+];
+const whereOf = (id) => BOOK_WHERE.filter((w) => w.id === id)[0] || null;
 const PAYMENT_NOTE = { vi: 'Vui lòng chuyển khoản trước khi xem.', en: 'Please transfer the fee in advance.' };
 const fmtNum = (n) => String(Math.round(Number(n) || 0)).replace(/\B(?=(\d{3})+(?!\d))/g, '.');
 const fmtPrice = (n) => fmtNum(n) + 'đ';

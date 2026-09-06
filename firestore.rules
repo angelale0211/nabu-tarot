@@ -43,7 +43,8 @@ service cloud.firestore {
     match /bookings/{id} {
       allow create: if request.auth != null && request.resource.data.uid == request.auth.uid
                     && shorterThan('note', 2000) && shorterThan('message', 8000)
-                    && shorterThan('service', 500) && shorterThan('name', 200);
+                    && shorterThan('service', 500) && shorterThan('name', 200)
+                    && shorterThan('where', 20) && shorterThan('whereName', 60);
       allow read: if isAdmin() || (request.auth != null && resource.data.uid == request.auth.uid);
       /* Nabu manages bookings. The person who made one may ask to move or
          cancel it, which touches those three fields and nothing else - not the

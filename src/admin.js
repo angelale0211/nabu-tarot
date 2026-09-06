@@ -256,6 +256,13 @@ function adminBookings(p) {
     $$('[data-bday]', p).forEach((b) => b.addEventListener('click', () => { day = b.getAttribute('data-bday') === day ? '' : b.getAttribute('data-bday'); draw(); }));
     $$('[data-ics]', p).forEach((b) => b.addEventListener('click', () => { const bk = all.filter((x) => x.id === b.getAttribute('data-ics'))[0]; if (bk) addToCalendar(bk); }));
     $$('[data-bk]', p).forEach((b) => b.addEventListener('click', async () => { const bk = all.filter((x) => x.id === b.getAttribute('data-id'))[0]; try { await BE.setBookingStatus(bk, b.getAttribute('data-bk')); toast('✓'); } catch (e) { toast(e.message); } }));
+    /* Calling one off is behind a question, because the hour goes back on the
+       calendar and the person who booked it is told. */
+    $$('[data-bkoff]', p).forEach((b) => b.addEventListener('click', async () => {
+      const bk = all.filter((x) => x.id === b.getAttribute('data-bkoff'))[0];
+      if (!bk || !confirm(T().adminCancelAsk)) return;
+      try { await BE.setBookingStatus(bk, 'cancelled'); toast(T().adminCancelDone); } catch (e) { toast(e.message); }
+    }));
   };
   admin.unsubs.push(BE.watchAllBookings((list) => { all = list; draw(); }));
 }

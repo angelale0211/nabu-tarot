@@ -571,7 +571,8 @@ function renderLove(wantHandle) {
     m.innerHTML = head()
       + '<div class="card lovecard">' + threadSVG('tied', true)
       + '<p class="lead">' + esc(S.loveSingle) + '</p>'
-      + '<p class="hint" style="text-align:center">' + esc(S.loveYouAre) + ' <b>@' + esc(LOVE.handle()) + '</b></p></div>'
+      + '<p class="yours">' + esc(S.loveYouAre) + ' <b>@' + esc(LOVE.handle()) + '</b></p>'
+      + '<p style="margin:0"><a class="btn sm" href="#/love/handle">' + esc(S.loveChangeHandle) + '</a></p></div>'
       + (list.length
         ? '<div class="sec"><div class="eyebrow">' + esc(S.loveRequests) + '</div>'
           + list.map((r) => '<div class="card reqcard"><b>' + esc(r.name || ('@' + r.handle)) + '</b>'
@@ -589,7 +590,6 @@ function renderLove(wantHandle) {
       + '<div class="card invitecard"><h3 style="margin-bottom:4px">💌 ' + esc(S.loveInviteTitle) + '</h3>'
       + '<p class="hint" style="margin-bottom:10px">' + esc(S.loveInviteHint) + '</p>'
       + '<div id="lvlink"></div></div>'
-      + '<p><a class="backlink" href="#/love/handle">' + esc(S.loveChangeHandle) + '</a></p>'
       + foot();
 
     /* One link at a time, kept on the phone, so it can be copied again later
