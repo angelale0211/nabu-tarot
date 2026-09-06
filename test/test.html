@@ -557,6 +557,28 @@ async function go(hash, sel) { W().location.hash = hash; await sleep(30); return
       ok(d.querySelectorAll('[data-shelf^="wear"].locked').length === 4, 'every charm needs Plus');
       d.querySelector('[data-close-sheet]').click(); await sleep(40);
       ok(!d.querySelector('.sheet'), 'the sheet closes again');
+      { /* stroking: hearts follow the finger and the stroke earns a little */
+        const st = d.querySelector('#petstage'), before = N.PETS.one('cat').xp;
+        const r = st.getBoundingClientRect();
+        st.dispatchEvent(new w.PointerEvent('pointerdown', { bubbles: true, clientX: r.left + 20, clientY: r.top + 40, pointerId: 3 }));
+        for (let i = 0; i < 40; i++) st.dispatchEvent(new w.PointerEvent('pointermove', { bubbles: true, clientX: r.left + 20 + (i % 2) * 90, clientY: r.top + 40, pointerId: 3 }));
+        const hearts = d.querySelectorAll('.pats i').length;
+        st.dispatchEvent(new w.PointerEvent('pointerup', { bubbles: true, clientX: r.left + 20, clientY: r.top + 40, pointerId: 3 }));
+        ok(hearts > 3 && N.PETS.one('cat').xp > before, 'stroking the companion leaves hearts under the finger and earns a little as it goes'); }
+      { /* the food can be carried onto the companion instead of tapping */
+        const chip = d.querySelector('#foodchip'), st = d.querySelector('#petstage');
+        const r = st.getBoundingClientRect(), meals = N.PETS.one('cat').meals;
+        chip.dispatchEvent(new w.PointerEvent('pointerdown', { bubbles: true, clientX: 2, clientY: 2, pointerId: 4 }));
+        const carried = !!d.querySelector('.dragfood');
+        chip.dispatchEvent(new w.PointerEvent('pointermove', { bubbles: true, clientX: r.left + r.width / 2, clientY: r.top + r.height / 2, pointerId: 4 }));
+        const marked = st.classList.contains('hoverfeed');
+        chip.dispatchEvent(new w.PointerEvent('pointerup', { bubbles: true, clientX: r.left + r.width / 2, clientY: r.top + r.height / 2, pointerId: 4 }));
+        await waitFor(() => N.PETS.one('cat').meals > meals, 4000);
+        ok(carried && marked && !d.querySelector('.dragfood') && N.PETS.one('cat').meals === meals + 1,
+          'the food can be picked up and dropped on the companion, which feeds it'); }
+      { const q = N.PETS.one('cat'); q.last = 0; q.fed = ''; q.streak = 0; q.meals = 0; q.xp = 0; N.PETS.put(q);
+        w.localStorage.removeItem('nabu-xp-day'); w.localStorage.removeItem('nabu-coin-day'); N.BANK.put(0); }
+      await go('#/play', '#acts'); await go('#/play/pet', '#feed');
       d.querySelector('#feed').click(); await waitFor(() => !d.querySelector('#feed'), 3000);
       { const p1 = JSON.parse(w.localStorage.getItem('nabu-pets'))[0];
         ok(p1.xp === 10 && p1.meals === 1 && p1.streak === 1 && p1.last > 0 && Number(w.localStorage.getItem('nabu-coins')) === 2

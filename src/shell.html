@@ -866,6 +866,20 @@ main{padding:22px 0 30px}
 @keyframes toyfly{0%{opacity:0;transform:translate(0,0) rotate(0)}16%{opacity:1}50%{transform:translate(var(--tx),-44px) rotate(180deg)}100%{opacity:0;transform:translate(calc(var(--tx) * 2),4px) rotate(360deg)}}
 .petstage.playing .petart{animation:hopping .5s ease-in-out 3}
 @keyframes hopping{0%,100%{transform:translateY(0) rotate(0)}40%{transform:translateY(-13px) rotate(-4deg)}72%{transform:translateY(0) rotate(3deg)}}
+/* Hearts where the finger goes, and the food you can pick up and drop. */
+.pats{position:absolute;inset:0;z-index:6;pointer-events:none;overflow:hidden}
+.pats i{position:absolute;font-size:19px;font-style:normal;opacity:0;transform:translate(-50%,-50%);animation:pathearts 1.15s ease-out forwards}
+@keyframes pathearts{0%{opacity:0;transform:translate(-50%,-50%) scale(.5)}20%{opacity:1}100%{opacity:0;transform:translate(-50%,-190%) scale(1.15)}}
+.petstage{touch-action:pan-y;cursor:grab}
+.petstage.patting{cursor:grabbing}
+.petstage.patting .petart{animation:none;transform:translateY(-3px) rotate(-1.5deg) scale(1.02)}
+.petstage.hoverfeed{box-shadow:inset 0 0 0 3px var(--gold)}
+#main p.pathint{text-align:center;margin:0 0 10px}
+.feedrow{display:flex;align-items:center;justify-content:center;gap:9px;margin-bottom:10px}
+.foodchip{display:inline-flex;align-items:center;justify-content:center;width:46px;height:46px;border-radius:50%;background:var(--surface-2);border:1px dashed var(--gold);font-size:24px;cursor:grab;touch-action:none;user-select:none}
+.foodchip:active{cursor:grabbing;transform:scale(1.08)}
+.dragtip{font-size:12.5px;color:var(--fg-soft)}
+.dragfood{position:fixed;z-index:80;font-size:36px;pointer-events:none;transform:translate(-50%,-50%);filter:drop-shadow(0 3px 6px rgba(60,40,90,.3))}
 .crumbs{position:absolute;inset:0;z-index:4;pointer-events:none;overflow:hidden}
 .crumbs i{position:absolute;top:-6%;font-size:20px;font-style:normal;opacity:0;animation:dropfood 1s ease-in forwards}
 @keyframes dropfood{0%{opacity:0;transform:translateY(-10px)}20%{opacity:1}100%{opacity:0;transform:translateY(62px)}}
