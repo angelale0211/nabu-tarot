@@ -294,8 +294,11 @@ h1,h2,h3,.eyebrow{text-wrap:balance}
    the last line of a block never is, so a one-line caption or a two-word note
    is untouched; nothing else has to be excluded by length. */
 #main p,#main li,.note span,#foot .tagline{text-align:justify;text-justify:inter-word}
-/* Blocks that are deliberately centred keep their own alignment. */
-#main .pick-head p,#main .paynote,#main #tour p,#main .treewrap p,#main .coinwrap p,#main .done p,#main .paywall p{text-align:center}
+/* Blocks that are deliberately centred keep their own alignment. They are also
+   the one place balancing belongs: a short centred block that wraps looks wrong
+   when the second line holds a single word, and balancing evens the two out. */
+#main .pick-head p,#main .paynote,#main #tour p,#main .treewrap p,#main .coinwrap p,#main .done p,#main .paywall p,#main .tap-hint{text-align:center}
+#main .pick-head p,#main .tap-hint,#main #tour p,#main .paynote{text-wrap:balance}
 /* And these read as labels rather than prose. */
 #main .eyebrow,#main .date,#main .meta,#main .st,#main .kwl,#main .steps li{text-align:inherit;text-justify:auto}
 .wrap{max-width:600px;margin:0 auto;padding:0 18px}
@@ -12513,7 +12516,7 @@ function adminCodes(p) {
 ROUTES.admin = { nav: '', render: renderAdmin };
 
 /* ============================ boot ============================ */
-window.APP_VERSION = 'v82';
+window.APP_VERSION = 'v83';
 window.NABU = { CONFIG: CONFIG, loadActs: loadActs, BACK: BACK, LESSONS: LESSONS, localAnswer: localAnswer, compatVerdict: compatVerdict, numerologyOf: numerologyOf, ZDEEP: ZDEEP, lunarToday: lunarToday, solarToLunar: solarToLunar, DECK: DECK, INSIGHT: INSIGHT, KW: KW, ASK: ASK, TOPICS: TOPICS, GUIDES: GUIDES, SERVICES: SERVICES, COURSES: COURSES, ACCESS: ACCESS, makeCode: makeCode, parseCode: parseCode, ZODIAC: ZODIAC, pick: pick, book: book,
   insightHTML: insightHTML, insightOf: insightOf, sunSignIndex: sunSignIndex, lifePath: lifePath, PROFILE: () => PROFILE, BE: BE, ACTS: ACTS };
 BE.initP = BE.init().catch(() => { /* backend unreachable: the app runs device-only */ });
