@@ -330,29 +330,54 @@ function treeSakuraSVG() {
 function treeNightSVG(still) {
   const puffs = TREE_PUFFS.map((p, i) => [p[0], p[1], p[2], i % 2 ? '#3B3168' : '#4A3E80', .72]);
   let flies = '';
-  [[62, 78], [104, 58], [158, 74], [206, 96], [86, 128], [178, 132], [126, 96], [232, 70]].forEach((f, i) => {
-    flies += '<circle class="fly' + (still ? '' : ' lit') + '" cx="' + f[0] + '" cy="' + f[1] + '" r="3.4" fill="#FFE9A8" style="animation-delay:' + (i * 320) + 'ms"/>';
+  [[62, 78], [104, 58], [158, 74], [206, 96], [86, 128], [178, 132], [126, 96], [232, 70], [40, 108], [148, 44]].forEach((f, i) => {
+    // Each firefly drifts on its own small loop as well as breathing, so the
+    // swarm never pulses in time with itself.
+    flies += '<g class="drift' + (still ? ' still' : '') + '" style="animation-delay:' + (i * 470) + 'ms;animation-duration:' + (6 + i % 4) + 's">'
+      + '<circle class="fly' + (still ? '' : ' lit') + '" cx="' + f[0] + '" cy="' + f[1] + '" r="3.4" fill="#FFE9A8" style="animation-delay:' + (i * 320) + 'ms"/></g>';
+  });
+  let shafts = '';
+  [[70, -8], [150, 4], [220, -6]].forEach((p, i) => {
+    shafts += '<path class="shaft' + (still ? ' still' : '') + '" d="M' + p[0] + ' -30 l' + (26 + p[1]) + ' 0 l-46 268 l-26 0 Z" fill="#FFF3C4" opacity=".07" style="animation-delay:' + (i * 1700) + 'ms"/>';
   });
   return treeShell(treeCanopy(puffs, TREE_BLOOMS.slice(0, 10), '#8E7FD6')
-    + '<g fill="#FFF3C4" opacity=".9"><circle cx="30" cy="44" r="1.8"/><circle cx="250" cy="52" r="2"/><circle cx="210" cy="24" r="1.4"/><circle cx="60" cy="20" r="1.6"/></g>' + flies, '#2E2756');
+    + '<circle cx="238" cy="14" r="20" fill="#FFE9A8" opacity=".9"/>'
+    + '<circle cx="238" cy="14" r="28" fill="#FFE9A8" opacity=".16"/>'
+    + shafts
+    + '<g fill="#FFF3C4" opacity=".9"><circle class="twinkle" cx="30" cy="44" r="1.8"/><circle class="twinkle" style="animation-delay:600ms" cx="250" cy="52" r="2"/><circle class="twinkle" style="animation-delay:1200ms" cx="210" cy="24" r="1.4"/><circle class="twinkle" style="animation-delay:1800ms" cx="60" cy="20" r="1.6"/></g>' + flies, '#2E2756');
 }
 function treeGalaxySVG(still) {
   const puffs = TREE_PUFFS.map((p, i) => [p[0], p[1], p[2], i % 3 === 0 ? '#4B3A8F' : (i % 3 === 1 ? '#6C4FB8' : '#8A5FD0'), .6]);
   let stars = '';
-  for (let i = 0; i < 26; i++) {
-    const x = 24 + (i * 37) % 232, y = 26 + (i * 53) % 120, r = 1 + (i % 3) * 0.7;
+  for (let i = 0; i < 34; i++) {
+    const x = 24 + (i * 37) % 232, y = 20 + (i * 53) % 132, r = 1 + (i % 3) * 0.7;
     stars += '<circle class="twinkle' + (still ? ' still' : '') + '" cx="' + x + '" cy="' + y + '" r="' + r + '" fill="#FFF3C4" style="animation-delay:' + (i * 170) + 'ms"/>';
   }
   const shine = (x, y, r) => '<path d="M' + x + ' ' + (y - r) + ' Q' + x + ' ' + y + ' ' + (x + r) + ' ' + y + ' Q' + x + ' ' + y + ' ' + x + ' ' + (y + r) + ' Q' + x + ' ' + y + ' ' + (x - r) + ' ' + y + ' Q' + x + ' ' + y + ' ' + x + ' ' + (y - r) + ' Z" fill="#FFF3C4"/>';
-  return treeShell(treeCanopy(puffs, [], '#B79BF0') + stars + shine(140, 70, 15) + shine(96, 108, 9) + shine(196, 96, 8), '#3A2A72');
+  // A band of nebula behind the crown, and a star that falls across it now and
+  // then: the free tree has neither.
+  const nebula = '<ellipse cx="120" cy="76" rx="128" ry="62" fill="#7A4FD0" opacity=".22"/>'
+    + '<ellipse cx="176" cy="52" rx="76" ry="38" fill="#C86FC0" opacity=".16"/>'
+    + '<ellipse cx="64" cy="104" rx="70" ry="34" fill="#4FA8D0" opacity=".14"/>';
+  const shooter = still ? '' : '<g class="shoot"><path d="M0 0 l30 16" stroke="#FFF3C4" stroke-width="2.2" stroke-linecap="round" opacity=".85"/><circle cx="31" cy="16.5" r="2.6" fill="#FFF3C4"/></g>';
+  return treeShell(nebula + treeCanopy(puffs, [], '#B79BF0') + stars + shine(140, 70, 15) + shine(96, 108, 9) + shine(196, 96, 8) + shooter, '#3A2A72');
 }
 function treeButterflySVG(still) {
   const puffs = TREE_PUFFS.map((p, i) => [p[0], p[1], p[2], i % 2 ? '#CFE7C4' : '#B9DCAC', .6]);
-  const wing = (x, y, c, i) => '<g class="flit' + (still ? ' still' : '') + '" style="animation-delay:' + (i * 430) + 'ms" transform="translate(' + x + ',' + y + ')">'
+  const wing = (x, y, c, i) => '<g class="wing' + (still ? ' still' : '') + '" style="animation-delay:' + (i * 900) + 'ms;animation-duration:' + (9 + i * 1.4) + 's" transform="translate(' + x + ',' + y + ')">'
+    + '<g class="flit' + (still ? ' still' : '') + '" style="animation-delay:' + (i * 430) + 'ms">'
     + '<ellipse cx="-5" cy="0" rx="6" ry="8" fill="' + c + '" opacity=".95"/><ellipse cx="5" cy="0" rx="6" ry="8" fill="' + c + '" opacity=".95"/>'
     + '<ellipse cx="-4" cy="6" rx="4" ry="5" fill="' + c + '" opacity=".8"/><ellipse cx="4" cy="6" rx="4" ry="5" fill="' + c + '" opacity=".8"/>'
-    + '<rect x="-1" y="-7" width="2" height="15" rx="1" fill="#6B4A32"/></g>';
+    + '<rect x="-1" y="-7" width="2" height="15" rx="1" fill="#6B4A32"/></g></g>';
+  let leaves = '';
+  if (!still) {
+    [[54, 0], [108, 1], [166, 2], [214, 3], [82, 4]].forEach((p, i) => {
+      leaves += '<ellipse class="leaffall" cx="' + p[0] + '" cy="20" rx="5" ry="3" fill="' + (i % 2 ? '#F5A6C9' : '#F7D488') + '" style="animation-delay:' + (i * 1500) + 'ms;animation-duration:' + (7 + i) + 's"/>';
+    });
+  }
   return treeShell(treeCanopy(puffs, TREE_BLOOMS.slice(0, 12), '#F4D06F')
+    + '<circle cx="140" cy="80" r="104" fill="#FFF3C4" opacity=".13"/>'
+    + leaves
     + wing(76, 74, '#F5A6C9', 0) + wing(196, 66, '#F7D488', 1) + wing(132, 44, '#A8CFF5', 2) + wing(226, 118, '#F5A6C9', 3) + wing(58, 122, '#F7D488', 4), '#FFF6DA');
 }
 function treeSVG() { return treeSVGFor(); }
@@ -448,24 +473,18 @@ function coinFaceSVG(side) { return coinFaceFor(coinMetal(), side); }
 function coinFaceFor(metal, side) {
   const S = T(), mtl = metal || coinMetal();
   const size = COIN_SIZE.get();
-  // The word itself sits on the middle of the coin. The crescent above it is
-  // balanced by three dots the same distance below, so the face stays even
-  // without pushing the word off centre.
+  // The word sits on the middle of the coin; every face leaves that band clear.
   const cap = size * 0.72;
   const wordY = 80 + cap / 2;
-  const band = (y) => '<path d="M80 ' + (y - 5) + ' l4.5 5 -4.5 5 -4.5 -5 Z"/>'
-    + '<rect x="56" y="' + (y - 0.9) + '" width="16" height="1.8" rx=".9"/>'
-    + '<rect x="88" y="' + (y - 0.9) + '" width="16" height="1.8" rx=".9"/>';
-  const ornament = '<g fill="' + mtl.ink + '" opacity=".6">' + band(44) + band(116) + '</g>';
   const word = side ? (side === 'yes' ? S.coinYes : S.coinNo) : '';
   return '<svg viewBox="0 0 160 160" aria-hidden="true">'
-    + '<circle cx="80" cy="80" r="74" fill="' + mtl.face + '" stroke="' + mtl.rim + '" stroke-width="5"/>'
-    + '<circle cx="80" cy="80" r="60" fill="none" stroke="' + mtl.rim + '" stroke-width="2"/>'
+    + (COIN_ART[mtl.id] || COIN_ART.gold)(mtl)
     + (side
-      ? ornament + '<text x="80" y="' + wordY.toFixed(1) + '" text-anchor="middle" font-family="Georgia,serif" font-weight="700" font-size="' + size + '" letter-spacing="1" fill="' + mtl.ink + '">' + esc(word) + '</text>'
+      ? '<text x="80" y="' + wordY.toFixed(1) + '" text-anchor="middle" font-family="Georgia,serif" font-weight="700" font-size="' + size + '" letter-spacing="1" fill="' + mtl.ink + '">' + esc(word) + '</text>'
       : '<text x="80" y="102" text-anchor="middle" font-family="Georgia,serif" font-size="62" fill="' + mtl.rim + '">?</text>')
     + '</svg>';
 }
+
 function renderCoin() {
   const S = T(), m = $('#main');
   let side = '';
@@ -534,7 +553,16 @@ async function homeActHTML(root) {
   const a = list.filter(actOpen)[0] || list[0];
   if (!a || !root) return;
   const S = T();
-  root.innerHTML = '<div class="sec"><div class="eyebrow">🎲 ' + esc(S.actTitle) + '</div><article class="post act act-' + esc(a.type) + '">' + actDateLine(a) + '<h2 class="tclamp">' + titleHTML(L(a.title)) + '</h2>' + (a.intro ? '<div class="body clamp">' + richHTML(L(a.intro)) + '</div>' : '') + '<div class="foot"><a class="btn sm primary" href="#/play/' + esc(a.id) + '">' + esc(S.actJoin) + ' →</a><a class="btn sm" href="#/play">' + esc(S.actAll) + '</a></div></article></div>';
+  const pets = PETS.all();
+  const quick = [
+    ['#/play/pet', '🐾', pets.length === 1 ? (pets[0].name || L(PET_NAMES[pets[0].kind])) : S.petTitle],
+    ['#/play/tree', '🌸', S.treeTitle],
+    ['#/play/coin', '🪙', S.coinTitle],
+    ['#/play/diary', '📔', S.diaryTitle]
+  ];
+  root.innerHTML = '<div class="sec"><div class="eyebrow">🎲 ' + esc(S.actTitle) + '</div>'
+    + '<div class="actquick">' + quick.map((q) => '<a class="aq" href="' + q[0] + '"><span class="ic">' + q[1] + '</span><b>' + esc(q[2]) + '</b></a>').join('') + '</div>'
+    + '<article class="post act act-' + esc(a.type) + '">' + actDateLine(a) + '<h2 class="tclamp">' + titleHTML(L(a.title)) + '</h2>' + (a.intro ? '<div class="body clamp">' + richHTML(L(a.intro)) + '</div>' : '') + '<div class="foot"><a class="btn sm primary" href="#/play/' + esc(a.id) + '">' + esc(S.actJoin) + ' →</a><a class="btn sm" href="#/play">' + esc(S.actAll) + '</a></div></article></div>';
   hydrateImages(root);
 }
 ROUTES.play = { nav: 'play', render: renderPlay };

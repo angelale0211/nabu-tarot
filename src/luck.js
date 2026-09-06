@@ -12,7 +12,9 @@
    never happens. */
 
 /* Ten levels. The numbers are cumulative experience. */
-const PET_STEPS = [0, 60, 150, 300, 500, 750, 1050, 1400, 1800, 2250];
+const PET_STEPS = [0, 120, 320, 640, 1100, 1750, 2600, 3700, 5100, 6800];
+/* The most a companion can learn in one day, whoever is feeding it. */
+const PET_DAY_XP = 400;
 const PET_MAXLV = PET_STEPS.length;
 function petLevel(xp) {
   const x = Math.max(0, Number(xp) || 0);
@@ -29,14 +31,16 @@ function petStep(xp) {
 }
 
 /* The vouchers the levels unlock, kept in order. */
+/* The last two are held for Plus: reaching level seven without it still
+   counts, but the voucher stays at ten per cent until Plus is on. */
 const VOUCHERS = [
   { lv: 3, pct: 5 },
   { lv: 5, pct: 10 },
-  { lv: 7, pct: 15 },
-  { lv: 10, pct: 20 }
+  { lv: 7, pct: 15, pro: true },
+  { lv: 10, pct: 20, pro: true }
 ];
 /* What a level-up pays into the purse. */
-const levelCoins = (lv) => lv * 500;
+const levelCoins = (lv) => lv * 200;
 
 const BANK = {
   coins() { return Math.max(0, Math.round(Number(store.get('nabu-coins', 0)) || 0)); },
@@ -44,7 +48,8 @@ const BANK = {
   earn(n) { if (n > 0) this.put(this.coins() + n); },
   /* Feeding pays a few coins, but only up to a point each day, so the purse
      grows by coming back for a long time rather than by tapping all evening. */
-  dayCap: 30,
+  /* Plus fills the purse twice as fast, on top of levelling twice as fast. */
+  get dayCap() { return proOn() ? 40 : 20; },
   earnDay(n) {
     const rec = store.get('nabu-coin-day', null) || {}, today = isoDate(new Date());
     const used = rec.d === today ? (Number(rec.n) || 0) : 0;
@@ -57,8 +62,8 @@ const BANK = {
      voucher is based on. It never goes down, even if a companion is let go. */
   best() { return Math.max(1, Number(store.get('nabu-luck-best', 1)) || 1); },
   mark(lv) { if (lv > this.best()) store.set('nabu-luck-best', lv); },
-  tier() { let out = null; VOUCHERS.forEach((v) => { if (BANK.best() >= v.lv) out = v; }); return out; },
-  next() { let out = null; VOUCHERS.slice().reverse().forEach((v) => { if (BANK.best() < v.lv) out = v; }); return out; },
+  tier() { let out = null; VOUCHERS.forEach((v) => { if (BANK.best() >= v.lv && (!v.pro || proOn())) out = v; }); return out; },
+  next() { let out = null; VOUCHERS.slice().reverse().forEach((v) => { if (BANK.best() < v.lv || (v.pro && !proOn())) out = v; }); return out; },
   /* Coins put into an order that has been sent but not yet answered. */
   holds() { const a = store.get('nabu-luck-hold', []); return Array.isArray(a) ? a : []; },
   hold(rec) { const a = this.holds(); a.unshift(rec); store.set('nabu-luck-hold', a.slice(0, 12)); },
@@ -144,15 +149,16 @@ function renderRewards() {
       + '<p class="hint">' + esc(S.luckWorth(fmtPrice(BANK.coins()))) + '</p></div>'
       + '<div class="card"><h3 style="margin-bottom:8px">🎟️ ' + esc(S.luckVoucher) + '</h3>'
       + '<p class="hint" style="margin-bottom:10px">' + esc(S.luckVoucherHint) + '</p>'
-      + '<ul class="vlist">' + VOUCHERS.map((v) => '<li class="' + (best >= v.lv ? 'on' : '') + '"><span>' + esc(S.luckAtLevel(v.lv)) + '</span><b>' + (best >= v.lv ? '✓ ' : '🔒 ') + '-' + v.pct + '%</b></li>').join('') + '</ul>'
+      + '<ul class="vlist">' + VOUCHERS.map((v) => { const open = best >= v.lv && (!v.pro || proOn()); return '<li class="' + (open ? 'on' : '') + '"><span>' + esc(S.luckAtLevel(v.lv)) + (v.pro ? ' · ✨ ' + esc(S.plusName) : '') + '</span><b>' + (open ? '✓ ' : '🔒 ') + '-' + v.pct + '%</b></li>'; }).join('') + '</ul>'
       + (next ? '<p class="hint">' + esc(S.luckNextTier(next.lv, next.pct)) + '</p>' : '<p class="hint ok">' + esc(S.luckTopTier) + '</p>')
       + '</div>'
       + '<div class="card"><h3 style="margin-bottom:8px">' + esc(S.luckEarnTitle) + '</h3><ul class="carelist">'
-      + '<li><span>' + esc(S.luckEarnFeed) + '</span><b>+5</b></li>'
-      + '<li><span>' + esc(S.luckEarnGood) + '</span><b>+10</b></li>'
+      + '<li><span>' + esc(S.luckEarnFeed) + '</span><b>+2</b></li>'
+      + '<li><span>' + esc(S.luckEarnGood) + '</span><b>+5</b></li>'
       + '<li><span>' + esc(S.luckEarnPlay) + '</span><b>+3</b></li>'
-      + '<li><span>' + esc(S.luckEarnLevel) + '</span><b>+500 × ' + esc(S.luckLevelWord) + '</b></li>'
-      + '</ul><p class="hint">' + esc(S.luckEarnNote) + '</p></div>'
+      + '<li><span>' + esc(S.luckEarnLevel) + '</span><b>+200 × ' + esc(S.luckLevelWord) + '</b></li>'
+      + '</ul><p class="hint">' + esc(S.luckEarnNote(BANK.dayCap)) + '</p>'
+      + '<p class="hint">' + esc(S.luckPaceNote) + '</p></div>'
       + (holds.length
         ? '<div class="card"><h3 style="margin-bottom:8px">' + esc(S.luckHoldTitle) + '</h3><ul class="holds">'
           + holds.map((r) => '<li><span>' + esc(fmtDate(isoDate(new Date(r.at)))) + ' · ' + esc(r.what || '') + '</span><b>' + fmtNum(r.coins) + '</b><button type="button" class="btn tiny" data-back="' + r.at + '">' + esc(S.luckTakeBack) + '</button></li>').join('')

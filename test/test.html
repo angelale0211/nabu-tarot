@@ -485,6 +485,8 @@ async function go(hash, sel) { W().location.hash = hash; await sleep(30); return
         ok(Math.abs((tb.y + tb.height / 2) - 80) < 3 && Math.abs((tb.x + tb.width / 2) - 80) < 2,
           'the answer sits on the middle of the coin, not below it'); }
       ok(d.querySelectorAll('.lookstrip .look').length === 4 && d.querySelectorAll('.lookstrip .look.locked').length === 3 && d.querySelector('.lookstrip .lk-coin svg'), 'the coin screen carries the four coins themselves, three of them locked');
+      { const faces = Array.from(d.querySelectorAll('.lookstrip .lk-coin svg')).map((e) => e.innerHTML.replace(/#[0-9A-Fa-f]{6}/g, ''));
+        ok(faces.length === 4 && new Set(faces).size === 4, 'the four coins are four different faces, not one face in four colours'); }
       ok(!d.querySelector('#coinflip') && d.querySelector('.luckbox') && /30\.000đ/.test(d.querySelector('.luckbox').textContent) && /50\.000đ/.test(d.querySelector('.luckbox').textContent) && d.querySelector('#main > p > a[href="#/unlock"]'), 'the free weekly turn is used up, and the price for unlimited plus a code box appear');
       d.querySelector('#luckcode').value = N.makeCode('luck', '2099-01-01'); d.querySelector('#luckgo').click(); await waitFor(() => d.querySelector('#coinflip'), 4000);
       ok(d.querySelector('#coinflip') && !d.querySelector('.luckbox'), 'the bundle code lifts the limit on the coin');
@@ -525,15 +527,22 @@ async function go(hash, sel) { W().location.hash = hash; await sleep(30); return
       w.localStorage.removeItem('nabu-pets'); w.localStorage.removeItem('nabu-pet'); w.localStorage.removeItem('nabu-coins');
       w.localStorage.removeItem('nabu-luck-best'); w.localStorage.removeItem('nabu-coin-day'); w.localStorage.removeItem('nabu-luck-hold');
       await go('#/play/pet', '.petpick');
-      ok(d.querySelectorAll('.petpick [data-kind]').length === 12 && d.querySelectorAll('.petpick .pl').length === 12
-        && d.querySelectorAll('.pp.myth').length === 6 && d.querySelectorAll('.pp.locked').length === 6
+      ok(d.querySelectorAll('.petpick [data-kind]').length === 18 && d.querySelectorAll('.petpick .pl').length === 18
+        && d.querySelectorAll('.pp.myth').length === 12 && d.querySelectorAll('.pp.locked').length === 12 && d.querySelectorAll('.pp .x2').length === 12
         && /Tình duyên/.test(d.querySelector('[data-kind="cat"]').textContent) && /Tiền tài/.test(d.querySelector('[data-kind="turtle"]').textContent)
         && /Sức khỏe/.test(d.querySelector('[data-kind="deer"]').textContent) && /Đi lại/.test(d.querySelector('[data-kind="swallow"]').textContent),
-        'six free companions cover love, work, study, money, health and travel, with six spirit beasts locked behind Plus');
+        'six free companions cover love, work, study, money, health and travel, with twelve spirit beasts locked behind Plus');
       d.querySelector('[data-kind="phoenix"]').click(); await sleep(60);
       ok(!w.localStorage.getItem('nabu-pets') && /unlock/.test(w.location.hash), 'a spirit beast cannot be kept without Plus and sends the visitor to the price list');
       await go('#/play/pet', '.petpick');
       d.querySelector('[data-kind="cat"]').click(); await sleep(60);
+      ok(d.querySelector('#petkeep') && d.querySelector('.petstage .petart') && !w.localStorage.getItem('nabu-pets')
+        && /mỗi 6 giờ một bữa/.test(d.querySelector('.carelist').textContent),
+        'tapping a companion shows it at full size with what caring for it involves, and keeps nothing yet');
+      d.querySelector('#petback2').click(); await sleep(40);
+      ok(d.querySelectorAll('.petpick [data-kind]').length === 18 && !w.localStorage.getItem('nabu-pets'), 'the visitor can go back and look at another');
+      d.querySelector('[data-kind="cat"]').click(); await sleep(40);
+      d.querySelector('#petkeep').click(); await sleep(60);
       ok(JSON.parse(w.localStorage.getItem('nabu-pets')).length === 1 && d.querySelector('.petstage .pethome') && d.querySelector('.petstage .aura')
         && d.querySelectorAll('.petstage .stagebtn').length === 4 && !d.querySelector('.sheet')
         && d.querySelectorAll('.carelist li.locked').length === 4 && d.querySelector('#feed'),
@@ -564,30 +573,48 @@ async function go(hash, sel) { W().location.hash = hash; await sleep(30); return
         await go('#/play/pet', '.petstage'); }
       ok(d.querySelector('.bless p').textContent.length > 20 && JSON.parse(w.localStorage.getItem('nabu-pets'))[0].xp === 16 && !d.querySelector('#pray'),
         'the companion answers with a blessing of its own kind, once a day');
+      { const P = N.PETS; w.localStorage.removeItem('nabu-xp-day');
+        const p2 = P.one('cat'); p2.xp = 0; P.put(p2);
+        let guard = 0;
+        while (P.xpLeft() > 0 && guard++ < 200) { const q = P.one('cat'); q.last = 0; P.put(q); P.feed(P.one('cat')); }
+        const got = P.one('cat').xp;
+        const q2 = P.one('cat'); q2.last = 0; P.put(q2); P.feed(P.one('cat'));
+        ok(got === 400 && P.one('cat').xp === 400 && P.xpLeft() === 0,
+          'a companion learns at most four hundred points a day, however often it is fed');
+        w.localStorage.removeItem('nabu-xp-day'); }
+      { const P = N.PETS; P.markChange();
+        ok(!P.canChange() && P.changeLeft() > 13 * 86400000, 'a companion can only be changed once a fortnight');
+        w.localStorage.removeItem('nabu-pet-change');
+        ok(P.canChange(), 'and the change opens again once the fortnight is up'); }
       { const one = d.querySelectorAll('.pettabs').length;
         ok(!one && /Nabu Tarot Plus/.test(d.querySelector('#main').textContent), 'a free account keeps one companion and is told what Plus opens'); }
-      { const lv = [0, 59, 60, 149, 2250, 9999].map((x) => N.petLevel(x));
+      { const lv = [0, 119, 120, 319, 2600, 9999].map((x) => N.petLevel(x));
         const st = N.petStep(90);
-        ok(String(lv) === '1,1,2,2,10,10' && st.lv === 2 && st.into === 30 && st.need === 90 && st.at === 33 && N.levelCoins(4) === 2000,
+        ok(String(lv) === '1,1,2,2,7,10' && st.lv === 1 && st.into === 90 && st.need === 120 && st.at === 75 && N.levelCoins(4) === 800,
           'ten levels, each one further than the last, and every level reached pays into the purse'); }
       { N.BANK.put(30000); w.localStorage.setItem('nabu-luck-best', '7');
         const c1 = N.luckCut(300000, { v: true, c: 20000 });
         const c2 = N.luckCut(300000, { v: false, c: 0 });
         const c3 = N.luckCut(10000, { v: true, c: 999999 });
-        ok(c1.pct === 15 && c1.pctOff === 45000 && c1.coins === 20000 && c1.final === 235000
-          && c2.final === 300000 && c3.pctOff === 2000 && c3.coins === 8000 && c3.final === 0 && N.BANK.tier().pct === 15,
-          'the voucher comes off first and the coins last, and neither can take a price below zero'); }
+        ok(c1.pct === 10 && c1.pctOff === 30000 && c1.coins === 20000 && c1.final === 250000
+          && c2.final === 300000 && c3.pctOff === 1000 && c3.coins === 9000 && c3.final === 0 && N.BANK.tier().pct === 10,
+          'without Plus the voucher stops at ten per cent, and neither it nor the coins can take a price below zero'); }
+      { N.ACCESS.grant(['pro'], '2099-01-01');
+        const c4 = N.luckCut(300000, { v: true, c: 0 });
+        ok(N.BANK.tier().pct === 15 && c4.pctOff === 45000 && c4.final === 255000, 'Plus opens the fifteen and twenty per cent steps');
+        w.localStorage.removeItem('nabu-access'); }
       await go('#/rewards', '.coinbox');
       ok(/30.000/.test(d.querySelector('.coinbox .n').textContent) && d.querySelectorAll('.vlist li').length === 4
-        && d.querySelectorAll('.vlist li.on').length === 3 && /20%/.test(d.querySelector('#main').textContent),
-        'the rewards screen shows the purse, the four voucher steps and which are open');
+        && d.querySelectorAll('.vlist li.on').length === 2 && /20%/.test(d.querySelector('#main').textContent)
+        && /Nabu Tarot Plus/.test(d.querySelector('.vlist').textContent),
+        'the rewards screen shows the purse, the four voucher steps, which are open, and which need Plus');
       await go('#/unlock', '.unlist');
       d.querySelector('[data-unl="tarot"]').click(); await sleep(40);
       ok(d.querySelector('.luckpanel') && d.querySelector('#luckv') && d.querySelectorAll('[data-coin]').length >= 3,
         'the basket offers the voucher and the coins, with nothing spent unless it is chosen');
       d.querySelector('#luckv').click(); await sleep(40);
       d.querySelector('[data-coin="20000"]').click(); await sleep(40);
-      ok(d.querySelectorAll('#ucart .r.cut').length === 2 && /235.000đ/.test(d.querySelector('#ucart').textContent)
+      ok(d.querySelectorAll('#ucart .r.cut').length === 2 && /250.000đ/.test(d.querySelector('#ucart').textContent)
         && Number(w.localStorage.getItem('nabu-coins')) === 30000,
         'the basket shows what the rewards take off and what is left to pay, and the coins are not spent yet');
       w.localStorage.removeItem('nabu-pets'); w.localStorage.removeItem('nabu-coins'); w.localStorage.removeItem('nabu-luck-best');
@@ -595,6 +622,7 @@ async function go(hash, sel) { W().location.hash = hash; await sleep(30); return
       await go('#/play/q1', '#acts .act-poll'); await sleep(40);
       ok(d.querySelectorAll('.act-poll [data-opt]').length === 3 && /đăng nhập để bình chọn/.test(d.querySelector('.act-poll .pollnote').textContent) && d.querySelector('.act-poll .pollstat') && d.querySelectorAll('.act-poll .bar').length === 3, 'a guest is told to sign in to vote but still sees the overall results');
       await go('#/home', '#actwrap .act'); ok(d.querySelector('#actwrap .act-poll') && d.querySelector('#actwrap a[href="#/play/q1"]') && d.querySelector('#actwrap a[href="#/play"]') && !d.querySelector('#actwrap [data-opt]'), 'home shows the newest open activity as a teaser with a join button');
+      ok(d.querySelectorAll('#actwrap .actquick .aq').length === 4 && d.querySelector('.actquick a[href="#/play/pet"]') && d.querySelector('.actquick a[href="#/play/tree"]') && d.querySelector('.actquick a[href="#/play/coin"]') && d.querySelector('.actquick a[href="#/play/diary"]'), 'home also offers the four everyday activities as their own buttons');
       N.ACTS.items = [{ id: 'p2', type: 'pile', date: '2026-01-01', resultsDate: '2026-01-04', title: { vi: 'Tụ cũ' }, piles: [{ msg: { vi: 'A' } }, { msg: { vi: 'B' } }], results: false }]; w.localStorage.setItem('nabu-act-choices', JSON.stringify({ p2: 0 }));
       await go('#/home', '.tiles'); await go('#/play/p2', '#acts .act-pile'); await waitFor(() => d.querySelector('.act-pile .pile.open'), 3000);
       ok(d.querySelector('.act-pile [data-pile="0"].open') && !d.querySelector('.act-pile .pmsg').hidden && /Đã có kết quả/.test(d.querySelector('.act-pile').textContent), 'a pile reading answers itself once its results date has passed');

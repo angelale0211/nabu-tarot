@@ -99,6 +99,63 @@ function backSVGFor(look) {
     + draw(b.gold) + '</svg>';
 }
 
+/* ---- the four coins ----
+   Each returns everything behind the word: the blank, the rim and whatever is
+   struck into it. The band from y 56 to y 104 is left clear, because that is
+   where the answer goes. */
+const COIN_ART = {
+  gold(m) {
+    const band = (y) => '<path d="M80 ' + (y - 5) + ' l4.5 5 -4.5 5 -4.5 -5 Z"/>'
+      + '<rect x="56" y="' + (y - 0.9) + '" width="16" height="1.8" rx=".9"/>'
+      + '<rect x="88" y="' + (y - 0.9) + '" width="16" height="1.8" rx=".9"/>';
+    return '<circle cx="80" cy="80" r="74" fill="' + m.face + '" stroke="' + m.rim + '" stroke-width="5"/>'
+      + '<circle cx="80" cy="80" r="60" fill="none" stroke="' + m.rim + '" stroke-width="2"/>'
+      + '<g fill="' + m.ink + '" opacity=".6">' + band(44) + band(116) + '</g>';
+  },
+  /* A milled edge, a crescent and a sky of small stars. */
+  moonsilver(m) {
+    let mill = '';
+    for (let i = 0; i < 48; i++) mill += '<rect x="79.2" y="4" width="1.6" height="8" rx=".8" fill="' + m.rim + '" transform="rotate(' + (i * 7.5) + ' 80 80)"/>';
+    const star = (x, y, r) => '<path d="M' + x + ' ' + (y - r) + ' L' + (x + r * 0.3) + ' ' + (y - r * 0.3) + ' L' + (x + r) + ' ' + y + ' L' + (x + r * 0.3) + ' ' + (y + r * 0.3) + ' L' + x + ' ' + (y + r) + ' L' + (x - r * 0.3) + ' ' + (y + r * 0.3) + ' L' + (x - r) + ' ' + y + ' L' + (x - r * 0.3) + ' ' + (y - r * 0.3) + ' Z" fill="' + m.ink + '" opacity=".75"/>';
+    return '<circle cx="80" cy="80" r="76" fill="' + m.rim + '"/>' + mill
+      + '<circle cx="80" cy="80" r="68" fill="' + m.face + '"/>'
+      + '<circle cx="80" cy="80" r="61" fill="none" stroke="' + m.rim + '" stroke-width="1.4" stroke-dasharray="2 5"/>'
+      + '<g fill="' + m.ink + '" opacity=".85"><path fill-rule="evenodd" d="M80 40 m-13 0 a13 13 0 1 0 26 0 a13 13 0 1 0 -26 0 M82.5 40 m-10.5 0 a10.5 10.5 0 1 0 21 0 a10.5 10.5 0 1 0 -21 0"/></g>'
+      + star(52, 50, 4.5) + star(110, 52, 4) + star(40, 96, 3.4) + star(120, 92, 3.8) + star(80, 122, 5)
+      + '<g fill="' + m.ink + '" opacity=".45"><circle cx="62" cy="36" r="1.6"/><circle cx="100" cy="34" r="1.4"/><circle cx="34" cy="76" r="1.6"/><circle cx="126" cy="74" r="1.4"/><circle cx="60" cy="126" r="1.4"/><circle cx="102" cy="124" r="1.6"/></g>';
+  },
+  /* A wreath of petals around an enamel centre. */
+  rose(m) {
+    let wreath = '';
+    for (let i = 0; i < 16; i++) {
+      wreath += '<g transform="rotate(' + (i * 22.5) + ' 80 80)"><ellipse cx="80" cy="16" rx="4.4" ry="7" fill="' + m.ink + '" opacity=".5"/>'
+        + '<ellipse cx="80" cy="24" rx="2.4" ry="3.6" fill="' + m.rim + '" opacity=".7"/></g>';
+    }
+    const bloom = (x, y, r) => [0, 72, 144, 216, 288].map((a) => '<ellipse cx="' + x + '" cy="' + (y - r * 0.62) + '" rx="' + (r * 0.42).toFixed(1) + '" ry="' + (r * 0.62).toFixed(1) + '" fill="' + m.ink + '" opacity=".7" transform="rotate(' + a + ' ' + x + ' ' + y + ')"/>').join('')
+      + '<circle cx="' + x + '" cy="' + y + '" r="' + (r * 0.28).toFixed(1) + '" fill="' + m.rim + '"/>';
+    return '<circle cx="80" cy="80" r="76" fill="' + m.rim + '"/>'
+      + '<circle cx="80" cy="80" r="71" fill="' + m.face + '"/>' + wreath
+      + '<circle cx="80" cy="80" r="54" fill="#FDEFEE"/>'
+      + '<circle cx="80" cy="80" r="54" fill="none" stroke="' + m.rim + '" stroke-width="1.6"/>'
+      + bloom(80, 42, 11) + bloom(80, 118, 9)
+      + '<g stroke="' + m.rim + '" stroke-width="1.4" fill="none" opacity=".7"><path d="M44 80 q6 -7 12 0 M116 80 q-6 -7 -12 0"/></g>';
+  },
+  /* The old cash coin: a square hole made into a frame, with clouds and a
+     tassel, so the answer reads as struck into the jade. */
+  jade(m) {
+    const cloud = (x, y, s) => '<g transform="translate(' + x + ',' + y + ') scale(' + s + ')" fill="none" stroke="' + m.ink + '" stroke-width="2.4" stroke-linecap="round" opacity=".55">'
+      + '<path d="M-9 4 q-3 -7 4 -8 q1 -6 8 -4 q6 -3 8 4 q6 2 2 8 Z"/></g>';
+    return '<circle cx="80" cy="80" r="76" fill="' + m.rim + '"/>'
+      + '<circle cx="80" cy="80" r="70" fill="' + m.face + '"/>'
+      + '<circle cx="80" cy="80" r="70" fill="none" stroke="' + m.ink + '" stroke-width="1.2" opacity=".25"/>'
+      + '<rect x="36" y="36" width="88" height="88" rx="12" fill="none" stroke="' + m.ink + '" stroke-width="3" opacity=".7"/>'
+      + '<rect x="43" y="43" width="74" height="74" rx="9" fill="#F0FAF5" opacity=".35"/>'
+      + cloud(30, 30, 1) + cloud(130, 30, -1) + cloud(30, 130, 1) + cloud(130, 130, -1)
+      + '<g stroke="' + m.ink + '" stroke-width="2" opacity=".6" fill="none"><path d="M80 126 v10"/></g>'
+      + '<g fill="' + m.ink + '" opacity=".6"><path d="M74 136 h12 l-2 12 h-8 Z"/><circle cx="80" cy="134" r="3.4"/></g>';
+  }
+};
+
 /* ---- the coin, in whichever metal is chosen ---- */
 function coinMetal() { return LOOKS.of('coin'); }
 

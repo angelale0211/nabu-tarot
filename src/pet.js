@@ -13,11 +13,15 @@
    blessings are written to comfort and to give the day a shape, the way a
    drawn card does; nothing here promises an outcome. */
 
-const PET_KINDS = ['cat', 'fox', 'bunny', 'turtle', 'deer', 'swallow', 'phoenix', 'dragon', 'qilin', 'pixiu', 'crane', 'pegasus'];
+const PET_KINDS = ['cat', 'fox', 'bunny', 'turtle', 'deer', 'swallow',
+  'phoenix', 'ninetails', 'dragon', 'tiger', 'qilin', 'owl', 'pixiu', 'toad', 'crane', 'kimquy', 'pegasus', 'eagle'];
 /* The six ordinary companions are free, one of them at a time. The six spirit
    beasts below them belong to Nabu Tarot Plus, which also lifts the limit of
    one, so a subscriber can keep every corner of life covered at once. */
-const PET_PRO = { phoenix: true, dragon: true, qilin: true, pixiu: true, crane: true, pegasus: true };
+const PET_PRO = { phoenix: true, ninetails: true, dragon: true, tiger: true, qilin: true, owl: true,
+  pixiu: true, toad: true, crane: true, kimquy: true, pegasus: true, eagle: true };
+/* A spirit beast learns twice as fast from every meal and every game. */
+const MYTH_XP = 2;
 const PET_NAMES = {
   cat: { vi: 'Mèo Trăng', en: 'Moon cat' },
   fox: { vi: 'Cáo Sao', en: 'Star fox' },
@@ -26,17 +30,39 @@ const PET_NAMES = {
   deer: { vi: 'Hươu Lành', en: 'Gentle deer' },
   swallow: { vi: 'Én Gió', en: 'Wind swallow' },
   phoenix: { vi: 'Phượng Hoàng', en: 'Phoenix' },
+  ninetails: { vi: 'Hồ Chín Đuôi', en: 'Nine-tailed fox' },
   dragon: { vi: 'Rồng Mây', en: 'Cloud dragon' },
+  tiger: { vi: 'Bạch Hổ', en: 'White tiger' },
   qilin: { vi: 'Kỳ Lân', en: 'Qilin' },
+  owl: { vi: 'Cú Trăng', en: 'Moon owl' },
   pixiu: { vi: 'Tỳ Hưu', en: 'Pixiu' },
+  toad: { vi: 'Thiềm Thừ', en: 'Money toad' },
   crane: { vi: 'Bạch Hạc', en: 'White crane' },
-  pegasus: { vi: 'Thiên Mã', en: 'Sky horse' }
+  kimquy: { vi: 'Kim Quy', en: 'Golden turtle' },
+  pegasus: { vi: 'Thiên Mã', en: 'Sky horse' },
+  eagle: { vi: 'Đại Bàng Vàng', en: 'Golden eagle' }
 };
 
 /* ---- what each one looks after ---- */
 const PET_LUCK = {
   cat: 'love', fox: 'career', bunny: 'study', turtle: 'money', deer: 'health', swallow: 'travel',
-  phoenix: 'love', dragon: 'career', qilin: 'study', pixiu: 'money', crane: 'health', pegasus: 'travel'
+  phoenix: 'love', ninetails: 'love', dragon: 'career', tiger: 'career', qilin: 'study', owl: 'study',
+  pixiu: 'money', toad: 'money', crane: 'health', kimquy: 'health', pegasus: 'travel', eagle: 'travel'
+};
+/* Each spirit beast says its own version of its corner's promise. */
+const PET_LINES = {
+  phoenix: { vi: 'Phượng Hoàng bay qua những gì đã cũ và mở ra một mùa mới cho trái tim bạn.', en: 'The phoenix flies over what is finished and opens a new season for your heart.' },
+  ninetails: { vi: 'Hồ Chín Đuôi có chín đuôi và chín cách khiến người ta nhớ đến bạn.', en: 'The nine-tailed fox has nine tails and nine ways of making you remembered.' },
+  dragon: { vi: 'Rồng Mây cưỡi gió đưa tên bạn đi xa hơn những gì bạn tự nói về mình.', en: 'The cloud dragon rides the wind and carries your name further than you could speak it.' },
+  tiger: { vi: 'Bạch Hổ đứng sau lưng bạn trong mọi cuộc thương lượng, nên không ai dám coi nhẹ bạn.', en: 'The white tiger stands behind you in every negotiation, so nobody takes you lightly.' },
+  qilin: { vi: 'Kỳ Lân chỉ hiện ra với người chịu học, và nó đang đứng cạnh bàn của bạn.', en: 'The qilin shows itself only to those who keep studying, and it is standing by your desk.' },
+  owl: { vi: 'Cú Trăng thức cùng bạn tới khuya và nhìn thấy những gì bạn còn bỏ sót.', en: 'The moon owl sits up late with you and sees what you are still missing.' },
+  pixiu: { vi: 'Tỳ Hưu chỉ nuốt vào mà không nhả ra, nên của cải ở lại trong nhà bạn.', en: 'The pixiu swallows and never gives back, so what comes in stays in your house.' },
+  toad: { vi: 'Thiềm Thừ ngậm đồng tiền vàng ngay cửa, ai bước vào cũng mang lộc theo.', en: 'The money toad sits at the door with a gold coin in its mouth, and everyone who enters brings something in.' },
+  crane: { vi: 'Bạch Hạc sống rất thọ, và nó đứng canh giấc ngủ của bạn mỗi đêm.', en: 'The white crane lives a long life, and it keeps watch over your sleep.' },
+  kimquy: { vi: 'Kim Quy đi chậm qua trăm năm, nên bên nó chuyện gì cũng kịp lành.', en: 'The golden turtle walks slowly through a hundred years, so beside it everything has time to heal.' },
+  pegasus: { vi: 'Thiên Mã đi cùng người đi xa, dù là đi làm hay đi chơi, để bạn thượng lộ bình an và về đến nhà nguyên vẹn.', en: 'The sky horse rides with whoever goes far, for work or for pleasure, and sees them safely there and safely home.' },
+  eagle: { vi: 'Đại Bàng Vàng nhìn thấy cả chặng đường trước khi bạn cất bước, nên bạn không đi lạc.', en: 'The golden eagle sees the whole road before you take a step, so you do not lose your way.' }
 };
 const LUCKS = {
   love: {
@@ -79,7 +105,7 @@ const LUCKS = {
 const petLuck = (kind) => LUCKS[PET_LUCK[kind] || 'love'];
 const petIsPro = (kind) => !!PET_PRO[kind];
 /* A spirit beast says the grander version of the same promise. */
-const petLine = (kind) => { const l = petLuck(kind); return petIsPro(kind) ? l.proLine : l.line; };
+const petLine = (kind) => PET_LINES[kind] || petLuck(kind).line;
 
 /* ---- what they say when you make a wish over them ----
    Six lines each, so the answer feels like it belongs to that companion. */
@@ -174,6 +200,9 @@ const PET_WEARS = [
 /* What gets thrown when the two of you play. */
 const PET_TOYS = ['🧶', '🦋', '🎈', '🍃', '✨', '🪁'];
 const PET_FREE_MAX = 1;
+/* A companion is a fortnight's commitment. Changing one starts the new one
+   at level one, so the choice is worth making slowly. */
+const PET_CHANGE_GAP = 14 * 86400000;
 const pickFrom = (set, id, free) => {
   const found = set.filter((x) => x.id === id)[0] || set[0];
   return (found.pro && !proOn()) ? (free ? set[0] : found) : found;
@@ -204,6 +233,12 @@ const PETS = {
   /* A spirit beast is never kept without Plus, however much room there is. */
   mayKeep(kind) { return !petIsPro(kind) || proOn(); },
   room() { return this.all().length < this.cap(); },
+  /* When the last change happened, and when the next one is allowed. */
+  changedAt() { return Math.max(0, Number(store.get('nabu-pet-change', 0)) || 0); },
+  markChange() { store.set('nabu-pet-change', Date.now()); },
+  changeLeft() { return this.all().length ? Math.max(0, this.changedAt() + PET_CHANGE_GAP - Date.now()) : 0; },
+  canChange() { return this.changeLeft() <= 0; },
+  changeOn() { const d = new Date(this.changedAt() + PET_CHANGE_GAP); return isoDate(d); },
   fresh(kind) { return { kind: kind, coat: 'cream', wear: 'none', home: 'mat', food: 'rice', name: '', streak: 0, meals: 0, treats: 0, xp: 0, last: 0, fed: '', pray: '', bless: 0, playDay: '', playN: 0 }; },
   /* Anything paid falls back to the free version the day Plus lapses, so a
      lapsed subscription never leaves a companion looking broken. */
@@ -226,8 +261,10 @@ const PETS = {
     const wear = this.wear(p).add ? 4 : 0;
     const home = this.home(p).add ? 5 : 0;
     const coat = this.coat(p).pro ? 3 : 0;
+    const sum = 10 + Math.max(0, days) + food + wear + home + coat;
+    const myth = petIsPro(p.kind) ? MYTH_XP : 1;
     return { meal: 10, days: Math.max(0, days), food: food, wear: wear, home: home, coat: coat,
-      total: 10 + Math.max(0, days) + food + wear + home + coat };
+      myth: myth, total: sum * myth };
   },
   /* A streak counts one day at a time, however many meals are given that day.
      Feeding pays experience and a few coins; crossing a level pays more. */
@@ -237,7 +274,7 @@ const PETS = {
     if (p.fed !== today) p.streak = p.fed === isoDate(y) ? (Number(p.streak) || 0) + 1 : 1;
     const before = petLevel(p.xp);
     const good = !!this.food(p).add;
-    p.xp = (Number(p.xp) || 0) + this.gain(p).total;
+    const learnt = this.addXP(p, this.gain(p).total);
     p.fed = today;
     p.last = Date.now();
     p.meals = (Number(p.meals) || 0) + 1;
@@ -248,7 +285,7 @@ const PETS = {
     for (let lv = before + 1; lv <= after; lv++) { BANK.earn(levelCoins(lv)); up += levelCoins(lv); }
     BANK.mark(after);
     this.put(p);
-    return { coins: coins, up: up, from: before, to: after };
+    return { coins: coins, up: up, from: before, to: after, xp: learnt };
   },
   /* Playing is the other half of caring for one: once a day for everyone,
      three times a day with Plus. It pays more experience than a meal, because
@@ -262,14 +299,14 @@ const PETS = {
     if (p.playDay !== today) { p.playDay = today; p.playN = 0; }
     p.playN = (Number(p.playN) || 0) + 1;
     const before = petLevel(p.xp);
-    p.xp = (Number(p.xp) || 0) + 12;
+    const learnt = this.addXP(p, 12 * (petIsPro(p.kind) ? MYTH_XP : 1));
     const coins = BANK.earnDay(3);
     const after = petLevel(p.xp);
     let up = 0;
     for (let lv = before + 1; lv <= after; lv++) { BANK.earn(levelCoins(lv)); up += levelCoins(lv); }
     BANK.mark(after);
     this.put(p);
-    return { coins: coins, up: up, from: before, to: after };
+    return { coins: coins, up: up, from: before, to: after, xp: learnt };
   },
   /* Playing is the other half of caring for one: once a day for everyone,
      three times a day with Plus. It pays more experience than a meal, because
@@ -278,20 +315,6 @@ const PETS = {
   playedToday(p) { return p && p.playDay === isoDate(new Date()) ? Math.max(0, Number(p.playN) || 0) : 0; },
   playLeft(p) { return Math.max(0, this.playCap() - this.playedToday(p)); },
   canPlay(p) { return this.playLeft(p) > 0; },
-  play(p) {
-    const today = isoDate(new Date());
-    if (p.playDay !== today) { p.playDay = today; p.playN = 0; }
-    p.playN = (Number(p.playN) || 0) + 1;
-    const before = petLevel(p.xp);
-    p.xp = (Number(p.xp) || 0) + 12;
-    const coins = BANK.earnDay(3);
-    const after = petLevel(p.xp);
-    let up = 0;
-    for (let lv = before + 1; lv <= after; lv++) { BANK.earn(levelCoins(lv)); up += levelCoins(lv); }
-    BANK.mark(after);
-    this.put(p);
-    return { coins: coins, up: up, from: before, to: after };
-  },
   /* Playing is the other half of caring for one: once a day for everyone,
      three times a day with Plus. It pays more experience than a meal, because
      it is the thing a person has to make time for. */
@@ -299,30 +322,61 @@ const PETS = {
   playedToday(p) { return p && p.playDay === isoDate(new Date()) ? Math.max(0, Number(p.playN) || 0) : 0; },
   playLeft(p) { return Math.max(0, this.playCap() - this.playedToday(p)); },
   canPlay(p) { return this.playLeft(p) > 0; },
-  play(p) {
-    const today = isoDate(new Date());
-    if (p.playDay !== today) { p.playDay = today; p.playN = 0; }
-    p.playN = (Number(p.playN) || 0) + 1;
-    const before = petLevel(p.xp);
-    p.xp = (Number(p.xp) || 0) + 12;
-    const coins = BANK.earnDay(3);
-    const after = petLevel(p.xp);
-    let up = 0;
-    for (let lv = before + 1; lv <= after; lv++) { BANK.earn(levelCoins(lv)); up += levelCoins(lv); }
-    BANK.mark(after);
-    this.put(p);
-    return { coins: coins, up: up, from: before, to: after };
-  },
   /* One wish a day, and the answer stays on the card until tomorrow. */
   pray(p) {
     const pool = PET_BLESS[petLuck(p.kind).id];
     p.pray = isoDate(new Date());
     p.bless = Math.floor(Math.random() * pool.length);
-    p.xp = (Number(p.xp) || 0) + 6;
+    this.addXP(p, 6);
     BANK.mark(petLevel(p.xp));
     return this.put(p);
   },
   blessing(p) { return PET_BLESS[petLuck(p.kind).id][Number(p.bless) || 0]; },
+  /* Experience is added through here so the daily ceiling is kept in one
+     place, and so the card can say how much of it is left. */
+  xpToday() {
+    const rec = store.get('nabu-xp-day', null) || {};
+    return rec.d === isoDate(new Date()) ? Math.max(0, Number(rec.n) || 0) : 0;
+  },
+  xpLeft() { return Math.max(0, PET_DAY_XP - this.xpToday()); },
+  addXP(p, want) {
+    const give = Math.max(0, Math.min(Math.round(want), this.xpLeft()));
+    if (give) {
+      p.xp = (Number(p.xp) || 0) + give;
+      store.set('nabu-xp-day', { d: isoDate(new Date()), n: this.xpToday() + give });
+    }
+    return give;
+  },
+  /* Experience is added through here so the daily ceiling is kept in one
+     place, and so the card can say how much of it is left. */
+  xpToday() {
+    const rec = store.get('nabu-xp-day', null) || {};
+    return rec.d === isoDate(new Date()) ? Math.max(0, Number(rec.n) || 0) : 0;
+  },
+  xpLeft() { return Math.max(0, PET_DAY_XP - this.xpToday()); },
+  addXP(p, want) {
+    const give = Math.max(0, Math.min(Math.round(want), this.xpLeft()));
+    if (give) {
+      p.xp = (Number(p.xp) || 0) + give;
+      store.set('nabu-xp-day', { d: isoDate(new Date()), n: this.xpToday() + give });
+    }
+    return give;
+  },
+  /* Experience is added through here so the daily ceiling is kept in one
+     place, and so the card can say how much of it is left. */
+  xpToday() {
+    const rec = store.get('nabu-xp-day', null) || {};
+    return rec.d === isoDate(new Date()) ? Math.max(0, Number(rec.n) || 0) : 0;
+  },
+  xpLeft() { return Math.max(0, PET_DAY_XP - this.xpToday()); },
+  addXP(p, want) {
+    const give = Math.max(0, Math.min(Math.round(want), this.xpLeft()));
+    if (give) {
+      p.xp = (Number(p.xp) || 0) + give;
+      store.set('nabu-xp-day', { d: isoDate(new Date()), n: this.xpToday() + give });
+    }
+    return give;
+  },
   level(p) { return petLevel(p && p.xp); },
   step(p) { return petStep(p && p.xp); }
 };
@@ -440,19 +494,19 @@ const PET_ART = {
       + '<path d="M104 80 q10 -8 4 -18 q-12 6 -12 16 Z" fill="#FFFDF8"/>',
     overBody: '<path d="M60 68 q-14 18 -13 36 q13 6 26 0 q1 -18 -13 -36 Z" fill="#FFFDF8"/>'
       + '<ellipse cx="38" cy="104" rx="8" ry="5" fill="#3E2E22"/><ellipse cx="82" cy="104" rx="8" ry="5" fill="#3E2E22"/>',
-    front: '<path d="M30 52 q-13 9 -9 23 q12 -4 17 -13 Z" fill="#FFFDF8" stroke="' + c.dark + '" stroke-width="1.1"/>'
-      + '<path d="M90 52 q13 9 9 23 q-12 -4 -17 -13 Z" fill="#FFFDF8" stroke="' + c.dark + '" stroke-width="1.1"/>'
-      + '<path d="M60 52 Q45 67 44 84 Q60 94 76 84 Q75 67 60 52 Z" fill="#FFFDF8" stroke="' + c.dark + '" stroke-width="1.2"/>'
-      + '<ellipse cx="60" cy="82" rx="6.4" ry="4.4" fill="#3E2E22"/>'
-      + '<path d="M60 86 q-7 6 -12 2 M60 86 q7 6 12 2" stroke="#3E2E22" stroke-width="1.7" fill="none" stroke-linecap="round"/>'
-      + '<path d="M42 76 h-14 M44 82 h-14 M78 76 h14 M76 82 h14" stroke="#3E2E22" stroke-width="1.1" stroke-linecap="round" opacity=".65"/>',
+    front: '<path d="M31 52 q-12 8 -9 20 q11 -3 15 -11 Z" fill="#FFFDF8" stroke="' + c.dark + '" stroke-width="1"/>'
+      + '<path d="M89 52 q12 8 9 20 q-11 -3 -15 -11 Z" fill="#FFFDF8" stroke="' + c.dark + '" stroke-width="1"/>'
+      + '<path d="M60 57 Q50 67 49 78 Q60 86 71 78 Q70 67 60 57 Z" fill="#FFFDF8" stroke="' + c.dark + '" stroke-width="1.1"/>'
+      + '<ellipse cx="60" cy="75" rx="4.6" ry="3.2" fill="#3E2E22"/>'
+      + '<path d="M60 79 q-5 4 -9 1 M60 79 q5 4 9 1" stroke="#3E2E22" stroke-width="1.5" fill="none" stroke-linecap="round"/>'
+      + '<path d="M45 70 h-13 M46 76 h-13 M75 70 h13 M74 76 h13" stroke="#3E2E22" stroke-width="1" stroke-linecap="round" opacity=".6"/>',
     feet: false, eyeY: 48, noMouth: true, blushY: 56, charmY: 96
   }),
   bunny: (c) => ({
-    ears: '<ellipse cx="47" cy="18" rx="7.5" ry="21" fill="' + c.body + '" transform="rotate(-8 47 18)"/>'
-      + '<ellipse cx="73" cy="18" rx="7.5" ry="21" fill="' + c.body + '" transform="rotate(8 73 18)"/>'
-      + '<ellipse cx="47" cy="20" rx="3.6" ry="14" fill="#F7C7D6" transform="rotate(-8 47 20)"/>'
-      + '<ellipse cx="73" cy="20" rx="3.6" ry="14" fill="#F7C7D6" transform="rotate(8 73 20)"/>',
+    ears: '<ellipse cx="47" cy="22" rx="7.5" ry="19" fill="' + c.body + '" transform="rotate(-8 47 22)"/>'
+      + '<ellipse cx="73" cy="22" rx="7.5" ry="19" fill="' + c.body + '" transform="rotate(8 73 22)"/>'
+      + '<ellipse cx="47" cy="23" rx="3.6" ry="12.5" fill="#F7C7D6" transform="rotate(-8 47 23)"/>'
+      + '<ellipse cx="73" cy="23" rx="3.6" ry="12.5" fill="#F7C7D6" transform="rotate(8 73 23)"/>',
     behind: '<circle cx="92" cy="94" r="9" fill="#FFF7EE"/>'
   }),
   turtle: (c) => ({
@@ -498,20 +552,45 @@ const PET_ART = {
       + '<path d="M50 76 q10 6 20 0" fill="#FFFDF8" opacity=".9"/>',
     noMouth: true, eyeY: 52, blushY: 60, charmY: 96
   }),
-  /* ---- the six spirit beasts ---- */
+  /* ---- the twelve spirit beasts ----
+     Two for each corner of life. Every one of them carries the gold halo and
+     the sparks that mark it out, and earns double from every meal and every
+     game, which is the reason to want one. */
   phoenix: (c) => ({
     glow: true, feet: false,
-    ears: '<g fill="#E5BE5E"><path d="M60 30 Q52 8 60 0 Q68 10 60 30 Z"/><path d="M46 34 Q34 16 36 6 Q50 16 46 34 Z" fill="#F2789F"/><path d="M74 34 Q86 16 84 6 Q70 16 74 34 Z" fill="#F2789F"/></g>',
-    behind: '<path d="M84 94 Q116 84 112 46 Q104 78 82 82 Z" fill="#F2789F"/>'
-      + '<path d="M86 100 Q118 104 118 74 Q106 96 84 92 Z" fill="#E5BE5E"/>'
-      + '<circle cx="108" cy="58" r="4.6" fill="#FFF3C4"/><circle cx="110" cy="86" r="4" fill="#FFF3C4"/>'
-      + '<path d="M30 92 Q6 82 8 56 Q18 82 34 84 Z" fill="#F7C89A"/>',
+    ears: '<g fill="#E5BE5E"><path d="M60 30 Q52 8 60 0 Q68 10 60 30 Z"/></g>'
+      + '<path d="M46 34 Q34 16 36 6 Q50 16 46 34 Z" fill="#F2789F"/><path d="M74 34 Q86 16 84 6 Q70 16 74 34 Z" fill="#F2789F"/>',
+    behind: '<path d="M84 94 Q114 84 110 46 Q102 78 82 82 Z" fill="#F2789F"/>'
+      + '<path d="M86 100 Q116 104 116 74 Q104 96 84 92 Z" fill="#E5BE5E"/>'
+      + '<circle cx="106" cy="58" r="4.6" fill="#FFF3C4"/><circle cx="108" cy="86" r="4" fill="#FFF3C4"/>'
+      + '<path d="M32 92 Q8 82 10 56 Q20 82 36 84 Z" fill="#F7C89A"/>',
     overBody: '<path d="M32 80 q-6 18 6 30 q12 -4 16 -16 q-8 -12 -22 -14 Z" fill="#F2789F" opacity=".9"/>'
       + '<path d="M88 80 q6 18 -6 30 q-12 -4 -16 -16 q8 -12 22 -14 Z" fill="#F2789F" opacity=".9"/>'
       + '<g stroke="#E5BE5E" stroke-width="1.6" fill="none" opacity=".8"><path d="M36 90 q10 4 14 12 M84 90 q-10 4 -14 12"/></g>'
       + '<g stroke="#E8A33C" stroke-width="2.6" stroke-linecap="round"><path d="M50 110 v6 M70 110 v6"/></g>',
     front: '<path d="M53 62 L60 74 L67 62 Z" fill="#E8A33C"/>',
     noMouth: true, blushY: 60
+  }),
+  /* Nine tails, laid out in a fan, which is the whole point of her. */
+  ninetails: (c) => ({
+    glow: true,
+    behind: '<g stroke="#F7C7D6" stroke-width="9" stroke-linecap="round" fill="none">'
+      + '<path d="M60 96 Q22 92 12 58"/><path d="M60 96 Q26 82 22 46"/><path d="M60 96 Q36 74 36 38"/>'
+      + '<path d="M60 96 Q50 68 52 32"/><path d="M60 96 Q60 66 60 28"/><path d="M60 96 Q70 68 68 32"/>'
+      + '<path d="M60 96 Q84 74 84 38"/><path d="M60 96 Q94 82 98 46"/><path d="M60 96 Q98 92 108 58"/></g>'
+      + '<g stroke="#FFFDF8" stroke-width="6" stroke-linecap="round" fill="none">'
+      + '<path d="M15 66 Q13 60 12 58"/><path d="M24 54 Q23 49 22 46"/><path d="M36 46 Q36 41 36 38"/>'
+      + '<path d="M52 40 Q52 35 52 32"/><path d="M60 36 Q60 31 60 28"/><path d="M68 40 Q68 35 68 32"/>'
+      + '<path d="M84 46 Q84 41 84 38"/><path d="M96 54 Q97 49 98 46"/><path d="M105 66 Q107 60 108 58"/></g>',
+    ears: '<path d="M35 34 L31 4 L58 24 Z" fill="' + c.body + '"/><path d="M85 34 L89 4 L62 24 Z" fill="' + c.body + '"/>'
+      + '<path d="M39 30 L37 14 L51 25 Z" fill="#F2789F" opacity=".55"/><path d="M81 30 L83 14 L69 25 Z" fill="#F2789F" opacity=".55"/>',
+    overBody: '<path d="M60 70 q-13 17 -12 34 q12 5 24 0 q1 -17 -12 -34 Z" fill="#FFFDF8"/>',
+    front: '<path d="M31 54 q-12 8 -9 21 q11 -3 16 -12 Z" fill="#FFFDF8"/><path d="M89 54 q12 8 9 21 q-11 -3 -16 -12 Z" fill="#FFFDF8"/>'
+      + '<path d="M60 54 Q46 68 45 83 Q60 92 75 83 Q74 68 60 54 Z" fill="#FFFDF8"/>'
+      + '<ellipse cx="60" cy="81" rx="5.6" ry="4" fill="#B8496E"/>'
+      + '<path d="M60 85 q-6 5 -11 2 M60 85 q6 5 11 2" stroke="#B8496E" stroke-width="1.6" fill="none" stroke-linecap="round"/>'
+      + '<path d="M52 44 q8 -5 16 0" stroke="#E5BE5E" stroke-width="2" fill="none" stroke-linecap="round"/>',
+    feet: false, eyeY: 50, noMouth: true, blushY: 58, charmY: 96
   }),
   dragon: (c) => ({
     glow: true,
@@ -528,6 +607,25 @@ const PET_ART = {
       + '<ellipse cx="60" cy="66" rx="9" ry="5" fill="' + c.dark + '"/><circle cx="56" cy="66" r="1.4" fill="#4A3728"/><circle cx="64" cy="66" r="1.4" fill="#4A3728"/>',
     noMouth: true
   }),
+  /* The white tiger: stripes, a heavy jaw and the king mark on the brow. */
+  tiger: (c) => ({
+    glow: true,
+    ears: '<circle cx="36" cy="30" r="11" fill="#FFFDF8"/><circle cx="84" cy="30" r="11" fill="#FFFDF8"/>'
+      + '<circle cx="36" cy="30" r="5.4" fill="#F2A9BE"/><circle cx="84" cy="30" r="5.4" fill="#F2A9BE"/>'
+      + '<path d="M30 24 h12 M78 24 h12" stroke="#3A3348" stroke-width="2.2" stroke-linecap="round"/>',
+    behind: '<path d="M86 98 q28 2 26 -22 q-6 16 -26 14 Z" fill="#FFFDF8"/>'
+      + '<g stroke="#3A3348" stroke-width="3" stroke-linecap="round"><path d="M94 96 l4 -6 M104 90 l3 -6 M110 80 l4 -4"/></g>',
+    overBody: '<path d="M60 70 q-14 16 -13 34 q13 6 26 0 q1 -18 -13 -34 Z" fill="#FFFDF8"/>'
+      + '<g stroke="#3A3348" stroke-width="3.2" stroke-linecap="round" opacity=".9">'
+      + '<path d="M34 78 q6 6 4 12 M32 92 q7 4 7 10 M86 78 q-6 6 -4 12 M88 92 q-7 4 -7 10"/></g>',
+    front: '<path d="M28 50 q-10 8 -8 20 q10 -3 14 -11 Z" fill="#FFFDF8"/><path d="M92 50 q10 8 8 20 q-10 -3 -14 -11 Z" fill="#FFFDF8"/>'
+      + '<ellipse cx="60" cy="72" rx="19" ry="14" fill="#FFFDF8"/>'
+      + '<path d="M60 64 l5 6 -5 5 -5 -5 Z" fill="#3A3348"/>'
+      + '<path d="M60 75 q-7 6 -12 2 M60 75 q7 6 12 2" stroke="#3A3348" stroke-width="1.8" fill="none" stroke-linecap="round"/>'
+      + '<path d="M42 70 h-14 M42 76 h-14 M78 70 h14 M78 76 h14" stroke="#3A3348" stroke-width="1.2" stroke-linecap="round" opacity=".7"/>'
+      + '<g stroke="#E5BE5E" stroke-width="2.4" stroke-linecap="round"><path d="M52 40 h16 M60 34 v14 M54 47 h12"/></g>',
+    eyeY: 52, noMouth: true, blushY: 60
+  }),
   qilin: (c) => ({
     glow: true,
     ears: '<path d="M58 28 Q56 8 60 0 Q66 10 62 28 Z" fill="#E5BE5E"/>'
@@ -539,6 +637,23 @@ const PET_ART = {
       + '<g fill="#E5BE5E" opacity=".9"><path d="M36 100 q-6 6 -2 12 q8 -2 10 -10 Z"/><path d="M84 100 q6 6 2 12 q-8 -2 -10 -10 Z"/></g>',
     front: '<path d="M28 46 q-8 12 -4 24 q10 -8 12 -20 Z" fill="#E5BE5E" opacity=".7"/>'
       + '<path d="M92 46 q8 12 4 24 q-10 -8 -12 -20 Z" fill="#E5BE5E" opacity=".7"/>'
+  }),
+  /* The moon owl: two great eye rings and a small hooked beak. */
+  owl: (c) => ({
+    glow: true, feet: false,
+    ears: '<path d="M38 32 Q34 14 44 8 Q50 20 48 32 Z" fill="' + c.dark + '"/><path d="M82 32 Q86 14 76 8 Q70 20 72 32 Z" fill="' + c.dark + '"/>',
+    behind: '<path d="M86 100 q22 8 22 24 q-18 -2 -26 -12 Z" fill="' + c.dark + '"/>',
+    overBody: '<path d="M32 76 q-10 18 0 34 q15 -4 19 -16 q-6 -14 -19 -18 Z" fill="' + c.dark + '"/>'
+      + '<path d="M88 76 q10 18 0 34 q-15 -4 -19 -16 q6 -14 19 -18 Z" fill="' + c.dark + '"/>'
+      + '<g fill="none" stroke="#FFFDF8" stroke-width="1.3" opacity=".5"><path d="M36 86 q9 6 11 15 M84 86 q-9 6 -11 15"/></g>'
+      + '<g fill="#FFF7EE" opacity=".7"><path d="M50 84 q10 -5 20 0 M48 94 q12 -5 24 0 M50 103 q10 -4 20 0" stroke="#FFF7EE" stroke-width="2" fill="none"/></g>'
+      + '<g stroke="#E8A33C" stroke-width="2.8" stroke-linecap="round"><path d="M52 110 v7 M68 110 v7"/></g>',
+    front: '<circle cx="49" cy="52" r="14" fill="#FFF7EE"/><circle cx="71" cy="52" r="14" fill="#FFF7EE"/>'
+      + '<circle cx="49" cy="52" r="14" fill="none" stroke="#E5BE5E" stroke-width="1.6"/><circle cx="71" cy="52" r="14" fill="none" stroke="#E5BE5E" stroke-width="1.6"/>'
+      + '<circle cx="49" cy="52" r="6" fill="#3A3348"/><circle cx="71" cy="52" r="6" fill="#3A3348"/>'
+      + '<circle cx="51" cy="50" r="2" fill="#fff"/><circle cx="73" cy="50" r="2" fill="#fff"/>'
+      + '<path d="M60 58 L54 68 L60 72 L66 68 Z" fill="#E8A33C"/>',
+    noFace: true, noMouth: true
   }),
   pixiu: (c) => ({
     glow: true,
@@ -555,6 +670,25 @@ const PET_ART = {
       + '<ellipse cx="60" cy="66" rx="8" ry="4.6" fill="' + c.dark + '"/>',
     noMouth: true
   }),
+  /* The money toad sits on coins with one in its mouth. */
+  toad: (c) => ({
+    glow: true, feet: false, head: 0.82, headY: 4,
+    behind: '<g fill="#E5BE5E"><circle cx="20" cy="104" r="9"/><circle cx="20" cy="104" r="3.2" fill="#B9913B"/>'
+      + '<circle cx="100" cy="104" r="9"/><circle cx="100" cy="104" r="3.2" fill="#B9913B"/>'
+      + '<circle cx="60" cy="112" r="8"/><circle cx="60" cy="112" r="3" fill="#B9913B"/></g>',
+    ears: '<circle cx="42" cy="34" r="11" fill="#8FD4A8"/><circle cx="78" cy="34" r="11" fill="#8FD4A8"/>'
+      + '<circle cx="42" cy="34" r="6" fill="#E5BE5E"/><circle cx="78" cy="34" r="6" fill="#E5BE5E"/>'
+      + '<circle cx="42" cy="34" r="2.6" fill="#2A3A2E"/><circle cx="78" cy="34" r="2.6" fill="#2A3A2E"/>',
+    overBody: '<ellipse cx="60" cy="90" rx="33" ry="24" fill="#8FD4A8"/>'
+      + '<ellipse cx="60" cy="96" rx="20" ry="14" fill="#CFEEDB"/>'
+      + '<g fill="#6FBE8E"><circle cx="38" cy="82" r="3"/><circle cx="82" cy="82" r="3"/><circle cx="48" cy="98" r="2.4"/><circle cx="72" cy="98" r="2.4"/></g>'
+      + '<ellipse cx="26" cy="104" rx="12" ry="7" fill="#6FBE8E" transform="rotate(-18 26 104)"/>'
+      + '<ellipse cx="94" cy="104" rx="12" ry="7" fill="#6FBE8E" transform="rotate(18 94 104)"/>',
+    front: '<path d="M40 62 q20 12 40 0" stroke="#2A6B45" stroke-width="2.6" fill="none" stroke-linecap="round"/>'
+      + '<circle cx="60" cy="70" r="9" fill="#E5BE5E" stroke="#B9913B" stroke-width="1.6"/>'
+      + '<rect x="56.5" y="66.5" width="7" height="7" fill="#B9913B"/>',
+    eyeY: 50, noMouth: true, blushY: 58, charmY: 98
+  }),
   crane: (c) => ({
     glow: true, feet: false,
     ears: '<path d="M46 34 Q60 20 74 34 Q60 28 46 34 Z" fill="#D34F4F"/>',
@@ -567,10 +701,26 @@ const PET_ART = {
     front: '<path d="M55 62 L60 82 L65 62 Z" fill="#E8A33C"/><path d="M57 62 L60 74 L63 62 Z" fill="#C4813C"/>',
     noMouth: true, blushY: 58
   }),
+  /* The golden turtle of the lake: the same shell, worked in gold. */
+  kimquy: (c) => ({
+    glow: true, feet: false, head: 0.76, headY: -6,
+    behind: '<ellipse cx="26" cy="100" rx="12" ry="6.5" fill="#D4B25F" transform="rotate(-16 26 100)"/>'
+      + '<ellipse cx="94" cy="100" rx="12" ry="6.5" fill="#D4B25F" transform="rotate(16 94 100)"/>'
+      + '<path d="M92 96 q14 -1 18 6 q-9 5 -18 -1 Z" fill="#D4B25F"/>',
+    overBody: '<path d="M24 106 A36 32 0 0 1 96 106 Z" fill="#EDD08A"/>'
+      + '<ellipse cx="60" cy="106" rx="36" ry="5" fill="#B9913B"/>'
+      + '<path d="M24 106 A36 32 0 0 1 96 106" fill="none" stroke="#B9913B" stroke-width="2.4"/>'
+      + '<g fill="none" stroke="#B9913B" stroke-width="1.6" opacity=".9">'
+      + '<path d="M60 74 L60 106 M40 80 L48 106 M80 80 L72 106 M27 95 L34 106 M93 95 L86 106"/>'
+      + '<path d="M34 92 Q60 82 86 92"/></g>'
+      + '<g fill="#FFF3C4" opacity=".85"><circle cx="60" cy="88" r="4"/><circle cx="46" cy="96" r="2.6"/><circle cx="74" cy="96" r="2.6"/></g>',
+    front: '<path d="M36 46 q6 -8 14 -9 M84 46 q-6 -8 -14 -9" fill="none" stroke="#D4B25F" stroke-width="1.8" stroke-linecap="round"/>',
+    charmY: 92
+  }),
+  /* The sky horse: a long muzzle, not a round snout, which is what made it
+     read as a piglet. */
   pegasus: (c) => ({
-    glow: true,
-    /* Wings spread from the shoulders and stay inside the square; the mane
-       falls down the neck rather than sitting on top of the head. */
+    glow: true, feet: false, head: 0.86, headY: -8,
     behind: '<path d="M34 84 Q10 68 7 36 Q27 54 41 76 Z" fill="#FFFFFF"/>'
       + '<path d="M35 88 Q15 78 10 52 Q27 68 42 84 Z" fill="#EFE8FF"/>'
       + '<path d="M37 92 Q21 88 17 68 Q31 80 43 88 Z" fill="#DCCEF7"/>'
@@ -579,21 +729,39 @@ const PET_ART = {
       + '<path d="M83 92 Q99 88 103 68 Q89 80 77 88 Z" fill="#DCCEF7"/>'
       + '<g stroke="#C9B0EA" stroke-width="1.1" fill="none" opacity=".7">'
       + '<path d="M14 46 Q26 60 34 78 M12 62 Q24 72 36 86 M106 46 Q94 60 86 78 M108 62 Q96 72 84 86"/></g>'
-      + '<path d="M50 28 Q33 32 29 50 Q26 66 34 78 Q31 60 41 47 Q47 37 50 28 Z" fill="#B79BEA"/>'
-      + '<path d="M54 30 Q40 36 37 52 Q35 64 40 74 Q39 58 47 47 Q52 39 54 30 Z" fill="#D3C2F5"/>'
-      + '<path d="M84 100 Q108 104 112 122 Q93 118 82 107 Z" fill="#C9B0EA"/>'
-      + '<path d="M86 96 Q106 96 112 110" stroke="#E0D2F7" stroke-width="4" fill="none" stroke-linecap="round"/>',
-    ears: '<path d="M42 32 Q39 14 47 8 Q54 18 52 31 Z" fill="' + c.body + '"/><path d="M78 32 Q81 14 73 8 Q66 18 68 31 Z" fill="' + c.body + '"/>'
-      + '<path d="M46 26 Q46 18 49 14 Q51 20 50 27 Z" fill="#C9B0EA"/><path d="M74 26 Q74 18 71 14 Q69 20 70 27 Z" fill="#C9B0EA"/>',
-    front: '<ellipse cx="60" cy="72" rx="14" ry="11" fill="#FFF7EE"/>'
-      + '<ellipse cx="60" cy="72" rx="14" ry="11" fill="none" stroke="' + c.dark + '" stroke-width="1.1" opacity=".55"/>'
-      + '<ellipse cx="54" cy="69" rx="2.2" ry="2.8" fill="#7A6250"/><ellipse cx="66" cy="69" rx="2.2" ry="2.8" fill="#7A6250"/>'
-      + '<path d="M54 78 q6 4 12 0" stroke="#7A6250" stroke-width="1.6" fill="none" stroke-linecap="round"/>'
-      + '<path d="M60 32 Q53 40 55 48 Q60 42 64 46 Q65 38 60 32 Z" fill="#D3C2F5"/>',
-    overBody: '<path d="M60 68 q-9 14 -6 26 q9 4 18 0 q3 -12 -6 -26 Z" fill="#FFF7EE" opacity=".9"/>'
-      + '<g fill="#FFF3C4"><circle cx="24" cy="72" r="2.2"/><circle cx="100" cy="68" r="2"/><circle cx="48" cy="42" r="1.6"/><circle cx="94" cy="98" r="1.8"/></g>'
+      + '<path d="M48 26 Q31 32 28 52 Q26 68 34 80 Q31 60 41 47 Q46 36 48 26 Z" fill="#B79BEA"/>'
+      + '<path d="M53 28 Q39 36 36 54 Q35 66 40 76 Q39 58 47 47 Q51 38 53 28 Z" fill="#D3C2F5"/>'
+      + '<path d="M84 100 Q108 104 112 122 Q93 118 82 107 Z" fill="#C9B0EA"/>',
+    ears: '<path d="M43 28 Q40 8 48 2 Q55 14 53 27 Z" fill="' + c.body + '"/><path d="M77 28 Q80 8 72 2 Q65 14 67 27 Z" fill="' + c.body + '"/>'
+      + '<path d="M47 22 Q47 12 50 8 Q52 16 51 23 Z" fill="#C9B0EA"/><path d="M73 22 Q73 12 70 8 Q68 16 69 23 Z" fill="#C9B0EA"/>',
+    // A muzzle that is longer than it is wide, tapering to a squared-off nose.
+    front: '<path d="M48 62 Q47 84 52 96 Q60 101 68 96 Q73 84 72 62 Z" fill="#FFF7EE"/>'
+      + '<path d="M48 62 Q47 84 52 96 Q60 101 68 96 Q73 84 72 62" fill="none" stroke="' + c.dark + '" stroke-width="1.1" opacity=".5"/>'
+      + '<path d="M55 86 q-1 -5 2 -6 M65 86 q1 -5 -2 -6" stroke="#7A6250" stroke-width="2" fill="none" stroke-linecap="round"/>'
+      + '<path d="M54 93 q6 3 12 0" stroke="#7A6250" stroke-width="1.5" fill="none" stroke-linecap="round"/>'
+      + '<path d="M60 30 Q52 40 55 50 Q60 43 65 48 Q66 38 60 30 Z" fill="#D3C2F5"/>',
+    overBody: '<g fill="#FFF3C4"><circle cx="24" cy="72" r="2.2"/><circle cx="100" cy="68" r="2"/><circle cx="94" cy="98" r="1.8"/></g>'
       + '<ellipse cx="38" cy="106" rx="8" ry="4.6" fill="#E5BE5E"/><ellipse cx="82" cy="106" rx="8" ry="4.6" fill="#E5BE5E"/>',
-    feet: false, eyeY: 50, noMouth: true, blushY: 58, charmY: 92
+    eyeY: 48, noMouth: true, blushY: 56, charmY: 96
+  }),
+  /* The golden eagle, wings out, for the long way. */
+  eagle: (c) => ({
+    glow: true, feet: false,
+    behind: '<path d="M32 86 Q6 70 4 38 Q24 56 40 78 Z" fill="#C08B52"/>'
+      + '<path d="M34 92 Q12 82 8 56 Q26 70 42 86 Z" fill="#E0AE6B"/>'
+      + '<path d="M88 86 Q114 70 116 38 Q96 56 80 78 Z" fill="#C08B52"/>'
+      + '<path d="M86 92 Q108 82 112 56 Q94 70 78 86 Z" fill="#E0AE6B"/>'
+      + '<g stroke="#8A5F2E" stroke-width="1.3" fill="none" opacity=".7">'
+      + '<path d="M12 48 Q24 62 33 80 M14 64 Q26 74 36 88 M108 48 Q96 62 87 80 M106 64 Q94 74 84 88"/></g>'
+      + '<path d="M50 108 q10 12 20 0 q-2 12 -10 14 q-8 -2 -10 -14 Z" fill="#C08B52"/>',
+    ears: '<path d="M40 30 Q46 14 60 10 Q74 14 80 30 Q60 22 40 30 Z" fill="#E8D3A8"/>',
+    overBody: '<path d="M60 68 q-16 16 -14 36 q14 6 28 0 q2 -20 -14 -36 Z" fill="#F2E2C0"/>'
+      + '<g stroke="#C08B52" stroke-width="1.6" fill="none" opacity=".8"><path d="M48 84 q12 -5 24 0 M46 94 q14 -5 28 0 M50 103 q10 -4 20 0"/></g>'
+      + '<g stroke="#E5BE5E" stroke-width="3" stroke-linecap="round"><path d="M50 112 v6 M70 112 v6"/></g>',
+    front: '<path d="M60 60 Q52 62 52 70 L60 82 L68 70 Q68 62 60 60 Z" fill="#E8A33C"/>'
+      + '<path d="M60 74 Q56 80 60 84 Q64 80 60 74 Z" fill="#C4813C"/>'
+      + '<circle cx="55" cy="66" r="1.4" fill="#8A5F2E"/><circle cx="65" cy="66" r="1.4" fill="#8A5F2E"/>',
+    eyeY: 50, noMouth: true, blushY: 58, charmY: 96
   })
 };
 
@@ -606,7 +774,7 @@ function petSVG(kind, coat, mood, wear) {
   const eye = (x) => happy
     ? '<path d="M' + (x - 5) + ' ' + eyeY + ' q5 -6 10 0" fill="none" stroke="' + c.ink + '" stroke-width="2.6" stroke-linecap="round"/>'
     : '<ellipse cx="' + x + '" cy="' + eyeY + '" rx="3.4" ry="4.4" fill="' + c.ink + '"/><circle cx="' + (x + 1.2) + '" cy="' + (eyeY - 1.8) + '" r="1.2" fill="#fff"/>';
-  const face = '<g class="eyes">' + eye(50) + eye(70) + '</g>'
+  const face = (art.noFace ? '' : '<g class="eyes">' + eye(50) + eye(70) + '</g>')
     + (art.noMouth ? '' : '<path d="M56 64 q4 4 8 0" fill="none" stroke="' + c.ink + '" stroke-width="2.4" stroke-linecap="round"/>')
     + '<ellipse cx="40" cy="' + blushY + '" rx="5" ry="3.2" fill="#F2A9BE" opacity=".55"/>'
     + '<ellipse cx="80" cy="' + blushY + '" rx="5" ry="3.2" fill="#F2A9BE" opacity=".55"/>';
@@ -636,7 +804,17 @@ function petSVG(kind, coat, mood, wear) {
   const headed = art.head
     ? '<g transform="translate(60,' + (56 + (art.headY || 0)) + ') scale(' + art.head + ') translate(-60,-56)">' + head + '</g>'
     : head;
+  /* Every spirit beast wears the same halo and the same sparks, so the set
+     reads as one rank above the ordinary companions. */
+  const halo = art.glow
+    ? '<circle cx="60" cy="54" r="40" fill="#FFF3C4" opacity=".22"/>'
+      + '<circle cx="60" cy="54" r="37" fill="none" stroke="#E5BE5E" stroke-width="1.6" opacity=".55"/>'
+      + '<g class="sparks" fill="#FFF3C4"><path class="twinkle" d="M16 30 l2.6 5.4 5.4 2.6 -5.4 2.6 -2.6 5.4 -2.6 -5.4 -5.4 -2.6 5.4 -2.6 Z"/>'
+      + '<path class="twinkle" style="animation-delay:900ms" d="M104 26 l2.2 4.6 4.6 2.2 -4.6 2.2 -2.2 4.6 -2.2 -4.6 -4.6 -2.2 4.6 -2.2 Z"/>'
+      + '<path class="twinkle" style="animation-delay:1800ms" d="M100 108 l2 4 4 2 -4 2 -2 4 -2 -4 -4 -2 4 -2 Z"/></g>'
+    : '';
   return '<svg viewBox="0 0 120 120" class="petart' + (art.glow ? ' myth' : '') + '" role="img" aria-label="' + esc(L(PET_NAMES[kind])) + '">'
+    + halo
     + '<ellipse cx="60" cy="112" rx="32" ry="6" fill="#C9A5D8" opacity=".28"/>'
     + (art.behind || '')
     + '<ellipse cx="60" cy="88" rx="30" ry="23" fill="' + c.body + '"/>'
@@ -683,6 +861,7 @@ function renderPet(want) {
       + '<p class="petline">' + esc(L(petLine(p.kind))) + '</p>'
       + '<div class="charm"><span class="lbl">' + esc(S.petLevel(st.lv)) + '</span><span class="bar"><i style="width:' + st.at + '%;background:' + luck.ink + '"></i></span>'
       + '<b>' + (st.need ? st.into + '/' + st.need : '★') + '</b></div>'
+      + (petIsPro(p.kind) ? '<p class="mythline">✨ ' + esc(S.petMythBonus(MYTH_XP)) + '</p>' : '')
       + '<ul class="carelist"><li class="head"><span>' + esc(S.petMealWorth) + '</span><b>+' + gain.total + '</b></li>'
       + gainRow(S.careMeal, gain.meal, 10, false)
       + gainRow(S.careDays, gain.days, 10, false)
@@ -692,6 +871,9 @@ function renderPet(want) {
       + gainRow(S.careCoat, gain.coat, 3, !pro)
       + '</ul>'
       + '<div class="petstat"><span>🔥 ' + esc(S.petStreak(Number(p.streak) || 0)) + '</span><span>🍽️ ' + esc(S.petMeals(Number(p.meals) || 0)) + '</span><a href="#/rewards">🪙 ' + fmtNum(BANK.coins()) + '</a></div>'
+      + '<p class="hint" style="text-align:center">' + esc(PETS.xpLeft() ? S.petDayLeft(PETS.xpToday(), PET_DAY_XP) : S.petDayFull) + '</p>'
+      + '<p class="hint" style="text-align:center">' + esc(PETS.xpLeft() ? S.petDayLeft(PETS.xpToday(), PET_DAY_XP) : S.petDayFull) + '</p>'
+      + '<p class="hint" style="text-align:center">' + esc(PETS.xpLeft() ? S.petDayLeft(PETS.xpToday(), PET_DAY_XP) : S.petDayFull) + '</p>'
       + (ready
         ? '<button class="btn primary block" id="feed">' + PETS.food(p).sym + ' ' + esc(S.petFeedWith(L(PETS.food(p).name))) + '</button>'
         : '<p class="hint ok">' + esc(S.petFull(waitWord(PETS.waitLeft(p)))) + '</p>'
@@ -758,7 +940,8 @@ function renderPet(want) {
         ? '<button type="button" class="btn block" id="addpet" style="margin-top:12px">➕ ' + esc(S.petAdd) + (left > 1 ? ' · ' + esc(S.petRoomLeft(left)) : '') + '</button>'
         : (proOn() ? '' : '<a class="salebar" href="#/unlock"><span class="tag">✨ ' + esc(S.plusName) + '</span><span class="txt">' + esc(S.petPlusPitch) + '</span><span class="go">' + esc(S.unlockLink) + ' ›</span></a>'))
       + '<div class="card"><label class="f" for="petname">' + esc(S.petName) + '</label><input id="petname" maxlength="24" value="' + esc(p.name || '') + '" placeholder="' + esc(L(PET_NAMES[p.kind])) + '">'
-      + '<button class="btn block" id="petswap" style="margin-top:10px">' + esc(pets.length > 1 ? S.petLetGo : S.petSwap) + '</button></div>'
+      + '<button class="btn block" id="petswap" style="margin-top:10px">' + esc(pets.length > 1 ? S.petLetGo : S.petSwap) + '</button>'
+      + (PETS.canChange() ? '<p class="hint">' + esc(S.petChangeFree) + '</p>' : '<p class="hint">' + esc(S.petChangeWait(fmtDate(PETS.changeOn()))) + '</p>') + '</div>'
       + '<p style="margin-top:14px"><a href="#/play" class="backlink">← ' + esc(S.actTitle) + '</a></p>'
       + (sheet ? sheetHTML(p, sheet) : '');
 
@@ -819,12 +1002,49 @@ function renderPet(want) {
     }));
     $('#petname').addEventListener('input', () => { p.name = $('#petname').value.trim(); PETS.put(p); });
     $('#petswap').addEventListener('click', () => {
-      if (!confirm(PETS.all().length > 1 ? S.petLetGoAsk : S.petSwapAsk)) return;
-      PETS.drop(p.kind); open = ''; draw();
+      if (!PETS.canChange()) { toast(S.petChangeWait(fmtDate(PETS.changeOn()))); return; }
+      if (!confirm(PETS.all().length > 1 ? S.petLetGoAsk : S.petChangeAsk)) return;
+      PETS.drop(p.kind); PETS.markChange(); open = ''; draw();
     });
   };
 
-  /* The picker always shows all four, with what each one looks after, because
+  /* Nothing is chosen by tapping a tile. The tile opens this, and only the
+     button at the bottom of it keeps the creature. */
+  const drawPreview = (kind) => {
+    const luck = petLuck(kind), have = !!PETS.one(kind), pets = PETS.all();
+    const swap = !have && !PETS.room();
+    const blocked = swap && !PETS.canChange();
+    m.innerHTML = '<div class="eyebrow">' + esc(S.actTitle) + '</div><h1 style="margin-bottom:6px">' + esc(L(PET_NAMES[kind])) + '</h1>'
+      + '<p class="muted">' + esc(S.petPreviewIntro) + '</p>'
+      + '<div class="card petwrap luck-' + luck.id + '">'
+      + '<div class="petstage">' + petHomeSVG('mat') + petAuraHTML(kind) + petSVG(kind, PET_COATS[0], 'happy') + '</div>'
+      + '<div class="lucktag" style="--ink:' + luck.ink + ';--aura:' + luck.aura + '">' + luck.sym + ' ' + esc(S.petBrings(L(luck.name))) + '</div>'
+      + '<p class="petline">' + esc(L(petLine(kind))) + '</p>'
+      + (petIsPro(kind) ? '<p class="mythline">✨ ' + esc(S.petMythBonus(MYTH_XP)) + '</p>' : '')
+      + '<ul class="carelist">'
+      + '<li><span>' + esc(S.petPrevFeed) + '</span><b>' + esc(S.petPrevFeedN(proOn() ? 2 : 6)) + '</b></li>'
+      + '<li><span>' + esc(S.petPrevPlay) + '</span><b>' + esc(S.petPrevPlayN(proOn() ? 3 : 1)) + '</b></li>'
+      + '<li><span>' + esc(S.petPrevWish) + '</span><b>' + esc(S.petPrevWishN) + '</b></li>'
+      + '</ul></div>'
+      + '<p class="hint">' + esc(have ? S.petPrevHave : (swap ? S.petPrevSwap : S.petPrevKeep)) + '</p>'
+      + (blocked ? '<p class="hint err">' + esc(S.petChangeWait(fmtDate(PETS.changeOn()))) + '</p>' : '')
+      + '<button class="btn primary block" id="petkeep"' + (blocked ? ' disabled' : '') + '>' + esc(have ? S.petPrevOpen : (swap ? S.petPrevChange : S.petPrevTake)) + '</button>'
+      + '<button class="btn block" id="petback2" style="margin-top:10px">' + esc(S.petPrevOther) + '</button>'
+      + '<p style="margin-top:14px"><a href="#/play" class="backlink">← ' + esc(S.actTitle) + '</a></p>';
+    $('#petback2').addEventListener('click', () => drawPicker());
+    $('#petkeep').addEventListener('click', () => {
+      if (have) { open = kind; draw(); return; }
+      if (swap) {
+        if (!PETS.canChange()) { toast(S.petChangeWait(fmtDate(PETS.changeOn()))); return; }
+        if (!confirm(S.petChangeAsk)) return;
+        pets.forEach((x) => PETS.drop(x.kind));
+        PETS.markChange();
+      }
+      PETS.put(PETS.fresh(kind)); open = kind; draw();
+    });
+  };
+
+  /* The picker shows every companion, with what each one looks after, because
      the ones that cannot be kept yet are the reason to look at Plus. */
   const drawPicker = () => {
     const pets = PETS.all();
@@ -834,6 +1054,7 @@ function renderPet(want) {
         + '<span class="ppart">' + petAuraHTML(k, 3) + petSVG(k, PET_COATS[0], 'happy') + '</span>'
         + '<b>' + esc(L(PET_NAMES[k])) + '</b>'
         + '<span class="pl" style="--ink:' + luck.ink + ';--aura:' + luck.aura + '">' + luck.sym + ' ' + esc(L(luck.name)) + '</span>'
+        + (petIsPro(k) ? '<span class="x2">×' + MYTH_XP + ' ' + esc(S.petXpWord) + '</span>' : '')
         + (have ? '<span class="pp-on">✓</span>' : (locked ? '<span class="pp-lock">🔒</span>' : ''))
         + '</button>';
     };
@@ -848,14 +1069,9 @@ function renderPet(want) {
       + '<p style="margin-top:14px"><a href="#/play" class="backlink" id="petback">← ' + esc(pets.length ? S.petBack : S.actTitle) + '</a></p>';
     $$('[data-kind]', m).forEach((b) => b.addEventListener('click', () => {
       const k = b.getAttribute('data-kind');
-      if (PETS.one(k)) { open = k; draw(); return; }
+      // A spirit beast cannot be previewed without Plus; everything else can.
       if (petIsPro(k) && !proOn()) { toast(S.petMythPlus); location.hash = '#/unlock'; return; }
-      // No room and no Plus means this is a swap, not an extra companion.
-      if (!PETS.room()) {
-        if (!confirm(S.petSwapAsk)) return;
-        PETS.all().forEach((x) => PETS.drop(x.kind));
-      }
-      PETS.put(PETS.fresh(k)); open = k; draw();
+      drawPreview(k);
     }));
     const back = $('#petback');
     if (back && pets.length) back.addEventListener('click', (e) => { e.preventDefault(); draw(); });
