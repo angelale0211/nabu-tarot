@@ -97,7 +97,7 @@ function actHTML(a, compact) {
       + '<p class="hint wishcount">' + esc(wishes.length ? S.actWishCount(wishes.length) : S.actWishHint) + '</p>'
       + (wishes.length ? '<button type="button" class="linkbtn" data-wishlist>' + esc(S.wishHistory(wishes.length)) + '</button><ul class="wishlist" hidden>' + wishes.slice().reverse().map((w) => '<li><span class="d">' + esc(fmtDate(String(w.at).slice(0, 10))) + '</span>' + esc(w.text) + '</li>').join('') + '</ul> · <button type="button" class="linkbtn" data-wishclear>' + esc(S.actWishClear) + '</button>' : '') + '</div>';
   }
-  return '<article class="post act act-' + esc(a.type) + '" data-act="' + esc(a.id) + '">' + actDateLine(a) + '<h2>' + esc(keepRanges(L(a.title))) + '</h2>' + (a.intro ? '<div class="body">' + richHTML(L(a.intro)) + '</div>' : '') + body
+  return '<article class="post act act-' + esc(a.type) + '" data-act="' + esc(a.id) + '">' + actDateLine(a) + '<h2>' + titleHTML(L(a.title)) + '</h2>' + (a.intro ? '<div class="body">' + richHTML(L(a.intro)) + '</div>' : '') + body
     + (compact ? '<div class="foot"><a class="btn sm primary" href="#/play/' + esc(a.id) + '">' + esc(S.actJoin) + ' →</a><a class="btn sm" href="#/play">' + esc(S.actAll) + '</a></div>' : '') + '</article>';
 }
 function bindActs(root, list) {
@@ -461,7 +461,7 @@ async function homeActHTML(root) {
   const a = list.filter(actOpen)[0] || list[0];
   if (!a || !root) return;
   const S = T();
-  root.innerHTML = '<div class="sec"><div class="eyebrow">🎲 ' + esc(S.actTitle) + '</div><article class="post act act-' + esc(a.type) + '">' + actDateLine(a) + '<h2 class="tclamp">' + esc(keepRanges(L(a.title))) + '</h2>' + (a.intro ? '<div class="body clamp">' + richHTML(L(a.intro)) + '</div>' : '') + '<div class="foot"><a class="btn sm primary" href="#/play/' + esc(a.id) + '">' + esc(S.actJoin) + ' →</a><a class="btn sm" href="#/play">' + esc(S.actAll) + '</a></div></article></div>';
+  root.innerHTML = '<div class="sec"><div class="eyebrow">🎲 ' + esc(S.actTitle) + '</div><article class="post act act-' + esc(a.type) + '">' + actDateLine(a) + '<h2 class="tclamp">' + titleHTML(L(a.title)) + '</h2>' + (a.intro ? '<div class="body clamp">' + richHTML(L(a.intro)) + '</div>' : '') + '<div class="foot"><a class="btn sm primary" href="#/play/' + esc(a.id) + '">' + esc(S.actJoin) + ' →</a><a class="btn sm" href="#/play">' + esc(S.actAll) + '</a></div></article></div>';
   hydrateImages(root);
 }
 ROUTES.play = { nav: 'play', render: renderPlay };

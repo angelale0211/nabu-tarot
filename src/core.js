@@ -4,12 +4,13 @@
 
 const $ = (s, r) => (r || document).querySelector(s);
 const $$ = (s, r) => Array.prototype.slice.call((r || document).querySelectorAll(s));
-/* Titles often carry a date range. Breaking a line inside one reads as a
-   mistake, so the spaces around the dash are made non-breaking and the range
-   travels to the next line in one piece. */
-function keepRanges(text) {
-  return String(text == null ? '' : text)
-    .replace(/(\d[\d.\/-]*)\s*([–—-])\s*(\d[\d.\/-]*)/g, '$1 $2 $3');
+/* Titles often carry a date range. Non-breaking spaces are not enough on their
+   own, because the dash between the two dates is itself a place a line may
+   break, so the whole range is wrapped in a span that cannot be split.
+   Escaping happens first, and escaping never touches digits, dots, slashes,
+   dashes or spaces, so the pattern still matches afterwards. */
+function titleHTML(text) {
+  return esc(text).replace(/(\d[\d.\/-]*)\s*([–—-])\s*(\d[\d.\/-]*)/g, '<span class="nb">$1 $2 $3</span>');
 }
 const esc = (s) => String(s == null ? '' : s).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 const store = {

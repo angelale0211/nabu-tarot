@@ -401,6 +401,7 @@ main{padding:22px 0 30px}
    is what stops a title breaking after three words with the rest of the line
    left empty. */
 .post h2{font-size:19px;text-align:justify;text-justify:inter-word}
+.nb{white-space:nowrap}
 /* The gap under the share row matches the gap above the date. */
 .post .foot{margin-bottom:0}.post>*:last-child{margin-bottom:0}
 .post h2.tclamp{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
@@ -1134,7 +1135,7 @@ const COURSES = [
   { id: 'lenormand', price: 300000, months: 6, sum: { vi: '36 lá, 7 trải bài và cách ghép cặp.', en: '36 cards, 7 spreads and how to pair them.' }, name: { vi: 'Khóa Lenormand', en: 'Lenormand course' },
     blurb: { vi: 'Toàn bộ 36 lá, mỗi lá có hình, sắc thái, nghĩa chính, tình cảm, công việc, chỉ người, thời gian và các cặp lá. Kèm 7 cách trải bài và các bài đọc.', en: 'All 36 cards with art, tone, core meaning, love, work, person, timing and pairs. Plus 7 spreads and the guides.' },
     includes: { vi: ['36 lá bài, mỗi lá một trang', 'Cặp lá thường gặp', '7 cách trải bài, có Grand Tableau', 'Dùng 6 tháng, xem offline'], en: ['36 cards, one page each', 'Common pairs', '7 spreads including the Grand Tableau', '6 months of access, works offline'] } },
-  { id: 'playing', price: 300000, months: 6, sum: { vi: '52 lá bài Tây, 9 bài học, 4 trải bài.', en: '52 playing cards, 9 lessons, 4 spreads.' }, name: { vi: 'Khóa Bài Tây', en: 'Cartomancy course (playing cards)' },
+  { id: 'playing', price: 300000, months: 6, sum: { vi: '52 lá bài Tây, 9 bài học, 4 trải bài.', en: '52 playing cards, 9 lessons, 4 spreads.' }, name: { vi: 'Khóa Bài Tây', en: 'Cartomancy course' },
     blurb: { vi: 'Bói bài Tây 52 lá theo lối truyền thống: bốn chất, câu chuyện từ Át tới Mười, 12 lá hình, cặp lá, thời gian và bốn trải bài. Mỗi lá có hình vẽ, nghĩa truyền thống, lý do của nghĩa ấy và lá tarot tương ứng.', en: 'Traditional 52-card cartomancy: four suits, the Ace-to-Ten story, the 12 court cards, pairs, timing and four spreads. Every card has a drawn face, its traditional meaning, why it means that, and its tarot twin.' },
     includes: { vi: ['9 bài học có hình', '52 lá, mỗi lá một trang', 'Cặp lá, thời gian, trải bài điều ước', 'Dùng 6 tháng, xem offline'], en: ['9 illustrated sessions', '52 cards, one page each', 'Pairs, timing, the wish spread', '6 months of access, works offline'] } },
   { id: 'manifest', price: 75000, months: 12, sum: { vi: '7 phương pháp, mỗi bài một công cụ.', en: '7 methods, one tool with each.' }, name: { vi: 'Bộ Manifestation', en: 'Manifestation set' },
@@ -1480,7 +1481,7 @@ const STR = {
     learnTitle: 'Knowledge library',
     learnIntro: 'Tarot, Lenormand, astrology, manifestation and fortune telling.',
     cats: { tarot: 'Tarot', lenormand: 'Lenormand', playing: 'Cartomancy', astro: 'Astrology', manifest: 'Manifestation', fortune: 'Fortune telling' },
-    catSub: { tarot: '78 cards + 8 spreads', lenormand: '36 cards + 7 spreads', playing: 'playing cards · 52 cards + 4 spreads', astro: '12 signs, planets, houses', manifest: 'methods + limits', fortune: 'numbers, palms, tea leaves' },
+    catSub: { tarot: '78 cards + 8 spreads', lenormand: '36 cards + 7 spreads', playing: '52 cards + 4 spreads', astro: '12 signs, planets, houses', manifest: 'methods + limits', fortune: 'numbers, palms, tea leaves' },
     courses: 'Courses', coursesPractice: 'Courses and practice', freeReads: 'Free to read', practice: 'Practice', lessonsIntro: (n) => 'The course has ' + n + ' sessions. Take them in order, about one a week.', markDone: 'Mark as done', lessonDone: 'Done', journeyHint: 'Tap a card to open its page.', lenGridHint: 'All 36 cards. Tap one to open it.',
     aiIntro: 'Ask Nabu AI about what you are looking at. The more specific, the better.', aiIntroLesson: 'Anything in this lesson unclear? Ask Nabu AI here.', aiPlaceholder: 'For example: what does this card say about my love life?', aiAsk: 'Ask', aiOnline: 'answered by AI', aiBuiltin: 'answered from the knowledge base', aiNote: 'Nabu AI answers everyday questions as well as tarot, astrology and numerology, and looks things up online when needed. For anything personal and important, book a reading with Nabu.', aiFallback: 'AI is busy; this answer comes from the knowledge base.',
     aiSugCard: ['What does this card say about my love life?', 'Should I keep going?', 'When will this happen?'], aiSugLesson: ['How do Majors differ from Minors?', 'Who are the court cards?', 'What if I do not understand a card?'], aiSugSign: ['Which signs suit this sign?', 'How is this sign in love?', 'What does the Moon in this sign mean?'], aiSugNumbers: ['What does my life path say?', 'What kind of year is this for me?', 'What is my destiny number from my name?'], aiSugGeneral: ['What does The Fool mean?', 'Do Leo and Aquarius get along?', 'What is my life path?'],
@@ -8590,12 +8591,13 @@ const GUIDES = [
 
 const $ = (s, r) => (r || document).querySelector(s);
 const $$ = (s, r) => Array.prototype.slice.call((r || document).querySelectorAll(s));
-/* Titles often carry a date range. Breaking a line inside one reads as a
-   mistake, so the spaces around the dash are made non-breaking and the range
-   travels to the next line in one piece. */
-function keepRanges(text) {
-  return String(text == null ? '' : text)
-    .replace(/(\d[\d.\/-]*)\s*([–—-])\s*(\d[\d.\/-]*)/g, '$1 $2 $3');
+/* Titles often carry a date range. Non-breaking spaces are not enough on their
+   own, because the dash between the two dates is itself a place a line may
+   break, so the whole range is wrapped in a span that cannot be split.
+   Escaping happens first, and escaping never touches digits, dots, slashes,
+   dashes or spaces, so the pattern still matches afterwards. */
+function titleHTML(text) {
+  return esc(text).replace(/(\d[\d.\/-]*)\s*([–—-])\s*(\d[\d.\/-]*)/g, '<span class="nb">$1 $2 $3</span>');
 }
 const esc = (s) => String(s == null ? '' : s).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 const store = {
@@ -9696,7 +9698,7 @@ function postHTML(p, full) {
   return '<article class="post" data-id="' + esc(p.id) + '">'
     + '<div class="date"><span>' + fmtDate(p.date) + (p.source ? ' · ' + esc(p.source) : '') + '</span>' + (p.pinned ? '<span class="pin">★ ' + T().pinned + '</span>' : '') + '</div>'
     + (score >= 2 ? '<span class="foryou">✦ ' + esc(T().forYou) + '</span>' : '')
-    + '<h2' + (full ? '' : ' class="tclamp"') + '>' + esc(keepRanges(L(p.title))) + '</h2>' + markersHTML(p)
+    + '<h2' + (full ? '' : ' class="tclamp"') + '>' + titleHTML(L(p.title)) + '</h2>' + markersHTML(p)
     + (p.image ? '<img src="' + esc(p.image) + '" alt="" style="border-radius:12px;margin-bottom:10px">' : '')
     + '<div class="body' + (long ? ' clamp' : '') + '">' + richHTML(raw) + '</div>'
     + (long ? '<button class="more" data-more>' + T().readMore + '</button>' : '')
@@ -11850,7 +11852,7 @@ function actHTML(a, compact) {
       + '<p class="hint wishcount">' + esc(wishes.length ? S.actWishCount(wishes.length) : S.actWishHint) + '</p>'
       + (wishes.length ? '<button type="button" class="linkbtn" data-wishlist>' + esc(S.wishHistory(wishes.length)) + '</button><ul class="wishlist" hidden>' + wishes.slice().reverse().map((w) => '<li><span class="d">' + esc(fmtDate(String(w.at).slice(0, 10))) + '</span>' + esc(w.text) + '</li>').join('') + '</ul> · <button type="button" class="linkbtn" data-wishclear>' + esc(S.actWishClear) + '</button>' : '') + '</div>';
   }
-  return '<article class="post act act-' + esc(a.type) + '" data-act="' + esc(a.id) + '">' + actDateLine(a) + '<h2>' + esc(keepRanges(L(a.title))) + '</h2>' + (a.intro ? '<div class="body">' + richHTML(L(a.intro)) + '</div>' : '') + body
+  return '<article class="post act act-' + esc(a.type) + '" data-act="' + esc(a.id) + '">' + actDateLine(a) + '<h2>' + titleHTML(L(a.title)) + '</h2>' + (a.intro ? '<div class="body">' + richHTML(L(a.intro)) + '</div>' : '') + body
     + (compact ? '<div class="foot"><a class="btn sm primary" href="#/play/' + esc(a.id) + '">' + esc(S.actJoin) + ' →</a><a class="btn sm" href="#/play">' + esc(S.actAll) + '</a></div>' : '') + '</article>';
 }
 function bindActs(root, list) {
@@ -12214,7 +12216,7 @@ async function homeActHTML(root) {
   const a = list.filter(actOpen)[0] || list[0];
   if (!a || !root) return;
   const S = T();
-  root.innerHTML = '<div class="sec"><div class="eyebrow">🎲 ' + esc(S.actTitle) + '</div><article class="post act act-' + esc(a.type) + '">' + actDateLine(a) + '<h2 class="tclamp">' + esc(keepRanges(L(a.title))) + '</h2>' + (a.intro ? '<div class="body clamp">' + richHTML(L(a.intro)) + '</div>' : '') + '<div class="foot"><a class="btn sm primary" href="#/play/' + esc(a.id) + '">' + esc(S.actJoin) + ' →</a><a class="btn sm" href="#/play">' + esc(S.actAll) + '</a></div></article></div>';
+  root.innerHTML = '<div class="sec"><div class="eyebrow">🎲 ' + esc(S.actTitle) + '</div><article class="post act act-' + esc(a.type) + '">' + actDateLine(a) + '<h2 class="tclamp">' + titleHTML(L(a.title)) + '</h2>' + (a.intro ? '<div class="body clamp">' + richHTML(L(a.intro)) + '</div>' : '') + '<div class="foot"><a class="btn sm primary" href="#/play/' + esc(a.id) + '">' + esc(S.actJoin) + ' →</a><a class="btn sm" href="#/play">' + esc(S.actAll) + '</a></div></article></div>';
   hydrateImages(root);
 }
 ROUTES.play = { nav: 'play', render: renderPlay };
@@ -12584,7 +12586,7 @@ function adminCodes(p) {
 ROUTES.admin = { nav: '', render: renderAdmin };
 
 /* ============================ boot ============================ */
-window.APP_VERSION = 'v90';
+window.APP_VERSION = 'v91';
 window.NABU = { CONFIG: CONFIG, loadActs: loadActs, BACK: BACK, LESSONS: LESSONS, localAnswer: localAnswer, compatVerdict: compatVerdict, numerologyOf: numerologyOf, ZDEEP: ZDEEP, lunarToday: lunarToday, solarToLunar: solarToLunar, DECK: DECK, INSIGHT: INSIGHT, KW: KW, ASK: ASK, TOPICS: TOPICS, GUIDES: GUIDES, SERVICES: SERVICES, COURSES: COURSES, ACCESS: ACCESS, makeCode: makeCode, parseCode: parseCode, ZODIAC: ZODIAC, pick: pick, book: book,
   insightHTML: insightHTML, insightOf: insightOf, sunSignIndex: sunSignIndex, lifePath: lifePath, PROFILE: () => PROFILE, BE: BE, ACTS: ACTS };
 BE.initP = BE.init().catch(() => { /* backend unreachable: the app runs device-only */ });
