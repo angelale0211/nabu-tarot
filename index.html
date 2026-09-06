@@ -8590,6 +8590,13 @@ const GUIDES = [
 
 const $ = (s, r) => (r || document).querySelector(s);
 const $$ = (s, r) => Array.prototype.slice.call((r || document).querySelectorAll(s));
+/* Titles often carry a date range. Breaking a line inside one reads as a
+   mistake, so the spaces around the dash are made non-breaking and the range
+   travels to the next line in one piece. */
+function keepRanges(text) {
+  return String(text == null ? '' : text)
+    .replace(/(\d[\d.\/-]*)\s*([–—-])\s*(\d[\d.\/-]*)/g, '$1 $2 $3');
+}
 const esc = (s) => String(s == null ? '' : s).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 const store = {
   get(k, d) { try { const v = localStorage.getItem(k); return v == null ? d : JSON.parse(v); } catch (e) { return d; } },
@@ -9689,7 +9696,7 @@ function postHTML(p, full) {
   return '<article class="post" data-id="' + esc(p.id) + '">'
     + '<div class="date"><span>' + fmtDate(p.date) + (p.source ? ' · ' + esc(p.source) : '') + '</span>' + (p.pinned ? '<span class="pin">★ ' + T().pinned + '</span>' : '') + '</div>'
     + (score >= 2 ? '<span class="foryou">✦ ' + esc(T().forYou) + '</span>' : '')
-    + '<h2' + (full ? '' : ' class="tclamp"') + '>' + esc(L(p.title)) + '</h2>' + markersHTML(p)
+    + '<h2' + (full ? '' : ' class="tclamp"') + '>' + esc(keepRanges(L(p.title))) + '</h2>' + markersHTML(p)
     + (p.image ? '<img src="' + esc(p.image) + '" alt="" style="border-radius:12px;margin-bottom:10px">' : '')
     + '<div class="body' + (long ? ' clamp' : '') + '">' + richHTML(raw) + '</div>'
     + (long ? '<button class="more" data-more>' + T().readMore + '</button>' : '')
@@ -11843,7 +11850,7 @@ function actHTML(a, compact) {
       + '<p class="hint wishcount">' + esc(wishes.length ? S.actWishCount(wishes.length) : S.actWishHint) + '</p>'
       + (wishes.length ? '<button type="button" class="linkbtn" data-wishlist>' + esc(S.wishHistory(wishes.length)) + '</button><ul class="wishlist" hidden>' + wishes.slice().reverse().map((w) => '<li><span class="d">' + esc(fmtDate(String(w.at).slice(0, 10))) + '</span>' + esc(w.text) + '</li>').join('') + '</ul> · <button type="button" class="linkbtn" data-wishclear>' + esc(S.actWishClear) + '</button>' : '') + '</div>';
   }
-  return '<article class="post act act-' + esc(a.type) + '" data-act="' + esc(a.id) + '">' + actDateLine(a) + '<h2 class="tclamp">' + esc(L(a.title)) + '</h2>' + (a.intro ? '<div class="body clamp">' + richHTML(L(a.intro)) + '</div>' : '') + body
+  return '<article class="post act act-' + esc(a.type) + '" data-act="' + esc(a.id) + '">' + actDateLine(a) + '<h2>' + esc(keepRanges(L(a.title))) + '</h2>' + (a.intro ? '<div class="body">' + richHTML(L(a.intro)) + '</div>' : '') + body
     + (compact ? '<div class="foot"><a class="btn sm primary" href="#/play/' + esc(a.id) + '">' + esc(S.actJoin) + ' →</a><a class="btn sm" href="#/play">' + esc(S.actAll) + '</a></div>' : '') + '</article>';
 }
 function bindActs(root, list) {
@@ -12207,7 +12214,7 @@ async function homeActHTML(root) {
   const a = list.filter(actOpen)[0] || list[0];
   if (!a || !root) return;
   const S = T();
-  root.innerHTML = '<div class="sec"><div class="eyebrow">🎲 ' + esc(S.actTitle) + '</div><article class="post act act-' + esc(a.type) + '">' + actDateLine(a) + '<h2>' + esc(L(a.title)) + '</h2>' + (a.intro ? '<div class="body">' + richHTML(L(a.intro)) + '</div>' : '') + '<div class="foot"><a class="btn sm primary" href="#/play/' + esc(a.id) + '">' + esc(S.actJoin) + ' →</a><a class="btn sm" href="#/play">' + esc(S.actAll) + '</a></div></article></div>';
+  root.innerHTML = '<div class="sec"><div class="eyebrow">🎲 ' + esc(S.actTitle) + '</div><article class="post act act-' + esc(a.type) + '">' + actDateLine(a) + '<h2 class="tclamp">' + esc(keepRanges(L(a.title))) + '</h2>' + (a.intro ? '<div class="body clamp">' + richHTML(L(a.intro)) + '</div>' : '') + '<div class="foot"><a class="btn sm primary" href="#/play/' + esc(a.id) + '">' + esc(S.actJoin) + ' →</a><a class="btn sm" href="#/play">' + esc(S.actAll) + '</a></div></article></div>';
   hydrateImages(root);
 }
 ROUTES.play = { nav: 'play', render: renderPlay };
@@ -12577,7 +12584,7 @@ function adminCodes(p) {
 ROUTES.admin = { nav: '', render: renderAdmin };
 
 /* ============================ boot ============================ */
-window.APP_VERSION = 'v89';
+window.APP_VERSION = 'v90';
 window.NABU = { CONFIG: CONFIG, loadActs: loadActs, BACK: BACK, LESSONS: LESSONS, localAnswer: localAnswer, compatVerdict: compatVerdict, numerologyOf: numerologyOf, ZDEEP: ZDEEP, lunarToday: lunarToday, solarToLunar: solarToLunar, DECK: DECK, INSIGHT: INSIGHT, KW: KW, ASK: ASK, TOPICS: TOPICS, GUIDES: GUIDES, SERVICES: SERVICES, COURSES: COURSES, ACCESS: ACCESS, makeCode: makeCode, parseCode: parseCode, ZODIAC: ZODIAC, pick: pick, book: book,
   insightHTML: insightHTML, insightOf: insightOf, sunSignIndex: sunSignIndex, lifePath: lifePath, PROFILE: () => PROFILE, BE: BE, ACTS: ACTS };
 BE.initP = BE.init().catch(() => { /* backend unreachable: the app runs device-only */ });

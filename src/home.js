@@ -126,7 +126,7 @@ function postHTML(p, full) {
   return '<article class="post" data-id="' + esc(p.id) + '">'
     + '<div class="date"><span>' + fmtDate(p.date) + (p.source ? ' · ' + esc(p.source) : '') + '</span>' + (p.pinned ? '<span class="pin">★ ' + T().pinned + '</span>' : '') + '</div>'
     + (score >= 2 ? '<span class="foryou">✦ ' + esc(T().forYou) + '</span>' : '')
-    + '<h2' + (full ? '' : ' class="tclamp"') + '>' + esc(L(p.title)) + '</h2>' + markersHTML(p)
+    + '<h2' + (full ? '' : ' class="tclamp"') + '>' + esc(keepRanges(L(p.title))) + '</h2>' + markersHTML(p)
     + (p.image ? '<img src="' + esc(p.image) + '" alt="" style="border-radius:12px;margin-bottom:10px">' : '')
     + '<div class="body' + (long ? ' clamp' : '') + '">' + richHTML(raw) + '</div>'
     + (long ? '<button class="more" data-more>' + T().readMore + '</button>' : '')

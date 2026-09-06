@@ -4,6 +4,13 @@
 
 const $ = (s, r) => (r || document).querySelector(s);
 const $$ = (s, r) => Array.prototype.slice.call((r || document).querySelectorAll(s));
+/* Titles often carry a date range. Breaking a line inside one reads as a
+   mistake, so the spaces around the dash are made non-breaking and the range
+   travels to the next line in one piece. */
+function keepRanges(text) {
+  return String(text == null ? '' : text)
+    .replace(/(\d[\d.\/-]*)\s*([–—-])\s*(\d[\d.\/-]*)/g, '$1 $2 $3');
+}
 const esc = (s) => String(s == null ? '' : s).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 const store = {
   get(k, d) { try { const v = localStorage.getItem(k); return v == null ? d : JSON.parse(v); } catch (e) { return d; } },
