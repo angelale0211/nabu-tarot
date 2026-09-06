@@ -129,10 +129,23 @@ async function go(hash, sel) { W().location.hash = hash; await sleep(30); return
     await go('#/learn/card/major-1', '.paywall');
     ok(!!d.querySelector('.paywall'), 'the second card is locked');
     await go('#/learn/tarot', '.paywall');
-    d.querySelector('#ccode').value = 'NABU-T-270101-ZZZZ'; d.querySelector('#cunlock').click(); await waitFor(() => /Mã không đúng/.test(d.querySelector('#cstatus').textContent), 3000).catch(() => null);
+    w.NABU_CODE_ROUNDS = 1000; // the logic is the same; the wait is not
+    N.CODEBOOK.set({ salt: 'testsalt', codes: {} });
+    d.querySelector('#ccode').value = 'NABU-T-270101-ZZZZZZ'; d.querySelector('#cunlock').click(); await waitFor(() => /Mã không đúng/.test(d.querySelector('#cstatus').textContent), 6000).catch(() => null);
     ok(/Mã không đúng/.test(d.querySelector('#cstatus').textContent), 'a forged code is rejected');
-    const codeT = N.makeCode('tarot', '2027-03-04');
-    ok(/^NABU-T-270304-[A-Z0-9]{4}$/.test(codeT) && N.parseCode(codeT.toLowerCase()).until === '2027-03-04', 'code format and parsing');
+    /* Issue a code the way the dashboard does: publish its hash into the book,
+       then hand back the code itself. */
+    const issue = async (course, until) => {
+      const salt = N.CODEBOOK.salt() || 'testsalt';
+      const code = N.randomCode(course, until);
+      const h = await N.codeDigest(code, salt);
+      const codes = Object.assign({}, N.CODEBOOK.all());
+      codes[h] = { c: course, u: until, at: '2026-01-01' };
+      N.CODEBOOK.set({ salt: salt, codes: codes });
+      return code;
+    };
+    const codeT = await issue('tarot', '2027-03-04');
+    ok(/^NABU-T-270304-[A-Z0-9]{6}$/.test(codeT) && (await N.verifyCode(codeT.toLowerCase())).until === '2027-03-04', 'a code carries its course letter and expiry, and is read back from the published book');
     d.querySelector('#ccode').value = codeT; d.querySelector('#cunlock').click();
     await waitFor(() => d.querySelector('#ctabs'), 4000);
     ok(N.ACCESS.has('tarot') && d.querySelectorAll('#ctabs button').length === 4 && d.querySelectorAll('.lsn').length === 8, 'valid code unlocks the course: 8 sessions listed first');
@@ -209,7 +222,7 @@ async function go(hash, sel) { W().location.hash = hash; await sleep(30); return
       await go('#/learn/lesson/playing/1', '.pcsuits'); ok(d.querySelectorAll('.pcsuits .pcsuit').length === 4 && !d.querySelector('.paywall'), 'session 1 of the playing-card course is free and shows the four suits');
       await go('#/learn/lesson/playing/3', '.paywall, .pcgrid'); ok(d.querySelector('.paywall') && !d.querySelector('.pcgrid'), 'session 3 is locked');
       await go('#/learn/pc/h9', '.paywall, .pcbig'); ok(d.querySelector('.paywall'), 'a card page other than the preview card is locked');
-      const pcode = N.makeCode('playing', '2099-01-01'); ok(N.parseCode(pcode).course === 'playing' && /^NABU-P-/.test(pcode), 'playing-card codes carry the P letter');
+      const pcode = await issue('playing', '2099-01-01'); ok((await N.verifyCode(pcode)).course === 'playing' && /^NABU-P-/.test(pcode), 'playing-card codes carry the P letter');
       N.ACCESS.grant('playing', '2099-01-01'); await go('#/learn/playing', '#ctabs'); await sleep(40);
       ok(d.querySelectorAll('#ctabs button').length === 3 && d.querySelectorAll('#cpanel .lsn').length === 9, 'unlocked: three tabs and nine sessions');
       d.querySelector('[data-t="cards"]').click(); await sleep(60); ok(d.querySelectorAll('#cpanel [data-pc]').length === 52 && d.querySelectorAll('#cpanel .pcface').length === 52, 'the cards tab draws all 52 faces');
@@ -218,7 +231,7 @@ async function go(hash, sel) { W().location.hash = hash; await sleep(30); return
       await go('#/learn/lesson/playing/8', '.pcpairs'); ok(d.querySelectorAll('.pcpair').length === 12 && /Thời gian/.test(d.querySelector('#main').textContent), 'pairs and timing session');
       await go('#/learn/lesson/playing/9', '.spv-list'); ok(d.querySelectorAll('.spv-list .ins').length === 4 && d.querySelectorAll('.spv-list svg').length === 4, 'four spreads with diagrams incl. the wish spread');
       if (acc == null) w.localStorage.removeItem('nabu-access'); else w.localStorage.setItem('nabu-access', acc); N.ACCESS.grant('manifest', '2099-01-01'); }
-    { const code = N.makeCode('manifest', '2099-01-01'); ok(N.parseCode(code).course === 'manifest' && /^NABU-M-/.test(code), 'manifestation codes carry the M letter'); }
+    { const code = await issue('manifest', '2099-01-01'); ok((await N.verifyCode(code)).course === 'manifest' && /^NABU-M-/.test(code), 'manifestation codes carry the M letter'); }
     N.ACCESS.grant('manifest', '2099-01-01'); await go('#/learn/manifest', '.mani-banner, .acc'); await sleep(30);
     await go('#/learn/guide/mani-script', '.script textarea'); ok(d.querySelector('[data-clear="nabu-script"]') && d.querySelector('[data-tpl]'), 'scripting has an editable, saved page with template and clear buttons');
     d.querySelector('.script textarea').value = 'Hôm nay mình vui.'; d.querySelector('.script textarea').dispatchEvent(new w.Event('input')); await sleep(20);
@@ -432,8 +445,8 @@ async function go(hash, sel) { W().location.hash = hash; await sleep(30); return
     d.querySelector('[data-t="acts"]').click(); await waitFor(() => d.querySelector('#apub'), 6000);
     ok(d.querySelector('#apub') && d.querySelectorAll('[data-atype]').length === 3 && d.querySelectorAll('[data-pl]').length === 3 && d.querySelector('#aresults') && d.querySelectorAll('#apanel .tb').length === 7 && d.querySelectorAll('#apanel .tb [data-w="i"]').length === 7 && d.querySelectorAll('[data-part]').length === 3, 'the activities tab has a form with three types, three piles with picture choosers, and a formatting bar on every text box');
     d.querySelector('[data-t="codes"]').click(); await waitFor(() => d.querySelector('#cmake'), 4000);
-    d.querySelector('#cstart').value = '2026-09-04'; d.querySelector('#cmake').click(); await sleep(50);
-    ok(/^NABU-T-270304-[A-Z0-9]{4}$/.test(d.querySelector('#codeval').textContent) && N.parseCode(d.querySelector('#codeval').textContent).course === 'tarot', 'dashboard makes a six-month tarot code that the app accepts');
+    ok(d.querySelector('#cmake') && d.querySelector('#cold') && d.querySelector('#coldgo') && d.querySelector('#cbook'),
+      'the codes tab issues a code, takes in codes handed out earlier, and lists what has been issued so any of it can be revoked');
     d.querySelector('[data-t="schedule"]').click(); await waitFor(() => d.querySelector('.week .wd'), 12000);
     ok(d.querySelectorAll('.week .wd').length === 7 && d.querySelectorAll('.week .chip.on').length >= 15 && d.querySelectorAll('.week .wd')[0].querySelectorAll('.chip').length === 34 && d.querySelector('.week .wd [data-h="07:30"]'), 'availability editor shows the weekly hours in half-hour steps');
     d.querySelector('[data-t="codes"]').click(); await sleep(50);
@@ -497,7 +510,7 @@ async function go(hash, sel) { W().location.hash = hash; await sleep(30); return
       { const faces = Array.from(d.querySelectorAll('.lookstrip .lk-coin svg')).map((e) => e.innerHTML.replace(/#[0-9A-Fa-f]{6}/g, ''));
         ok(faces.length === 4 && new Set(faces).size === 4, 'the four coins are four different faces, not one face in four colours'); }
       ok(!d.querySelector('#coinflip') && d.querySelector('.luckbox') && /30\.000đ/.test(d.querySelector('.luckbox').textContent) && /50\.000đ/.test(d.querySelector('.luckbox').textContent) && d.querySelector('#main > p > a[href="#/unlock"]'), 'the free weekly turn is used up, and the price for unlimited plus a code box appear');
-      d.querySelector('#luckcode').value = N.makeCode('luck', '2099-01-01'); d.querySelector('#luckgo').click(); await waitFor(() => d.querySelector('#coinflip'), 4000);
+      d.querySelector('#luckcode').value = await issue('luck', '2099-01-01'); d.querySelector('#luckgo').click(); await waitFor(() => d.querySelector('#coinflip'), 6000);
       ok(d.querySelector('#coinflip') && !d.querySelector('.luckbox'), 'the bundle code lifts the limit on the coin');
       await go('#/play/tree', '#shake'); ok(d.querySelector('#shake') && !d.querySelector('.luckbox'), 'and on the message tree as well');
       w.localStorage.removeItem('nabu-access'); w.localStorage.removeItem('nabu-luck'); w.localStorage.removeItem('nabu-unlock-cart');
@@ -701,6 +714,15 @@ async function go(hash, sel) { W().location.hash = hash; await sleep(30); return
     ok(d.querySelectorAll('.angelone .ins').length === 2 && d.querySelectorAll('.angelone .ins p').length >= 4 && d.querySelectorAll('.cardnav a').length === 4 && /Số 7 lặp lại/.test(d.querySelector('#main h1').textContent),
       'a group reads in full inside the same framed cards the other knowledge pages use, with arrows either side of it');
     w.localStorage.removeItem('nabu-angel-log'); w.localStorage.removeItem('nabu-angel-last');
+    { /* a code nobody issued opens nothing, and neither does one whose expiry
+         or course letter has been edited by hand */
+      const real = await issue('tarot', '2030-01-01');
+      const made = await N.verifyCode('NABU-T-300101-QQQQQQ');
+      const edited = await N.verifyCode(real.replace(/-\d{6}-/, '-991231-'));
+      const swapped = await N.verifyCode(real.replace('NABU-T-', 'NABU-S-'));
+      const opened = await N.verifyCode(real);
+      ok(made === null && edited === null && swapped === null && opened && opened.course === 'tarot' && opened.until === '2030-01-01',
+        'a code only opens what Nabu published for it: invented codes, edited expiries and swapped courses are all refused'); }
     await go('#/install', '#instshare'); ok(d.querySelector('a[href="nabu-tarot.apk"][download]') && d.querySelectorAll('.steps li').length >= 7 && /Thêm vào MH chính/.test(d.querySelector('#main').textContent) && /Tải app/.test(d.querySelector('#foot').textContent), 'the install screen offers the Android installer and the iPhone steps, linked from the footer');
     await go('#/privacy', '.privacy .gsec'); ok(d.querySelectorAll('.privacy .gsec').length >= 10 && /Xoá tài khoản/.test(d.querySelector('.privacy').textContent) && /Gemini/.test(d.querySelector('.privacy').textContent), 'the in-app privacy policy lists every kind of data, Gemini, and how to delete the account');
     { w.localStorage.setItem('nabu-twa', 'true'); const acc = w.localStorage.getItem('nabu-access'); w.localStorage.removeItem('nabu-access');

@@ -232,9 +232,12 @@ function luckPanelHTML(kind) {
 function bindLuck(root, redraw) {
   const S = T(), go = $('#luckgo', root);
   if (!go) return;
-  go.addEventListener('click', () => {
-    const r = parseCode($('#luckcode', root).value), st = $('#luckstatus', root);
-    if (!r) { st.textContent = S.badCode; st.className = 'hint err'; return; }
+  go.addEventListener('click', async () => {
+    const st = $('#luckstatus', root);
+    st.textContent = S.codeChecking; st.className = 'hint'; go.disabled = true;
+    const r = await verifyCode($('#luckcode', root).value).catch(() => null);
+    go.disabled = false;
+    if (!r) { st.textContent = CODEBOOK.ready() ? S.badCode : S.codeOffline; st.className = 'hint err'; return; }
     ACCESS.grant(r.courses || [r.course], r.until); toast(S.unlocked); redraw();
   });
 }
@@ -377,11 +380,15 @@ function treeGalaxySVG(still) {
 }
 function treeButterflySVG(still) {
   const puffs = TREE_PUFFS.map((p, i) => [p[0], p[1], p[2], i % 2 ? '#CFE7C4' : '#B9DCAC', .6]);
-  const wing = (x, y, c, i) => '<g class="wing' + (still ? ' still' : '') + '" style="animation-delay:' + (i * 900) + 'ms;animation-duration:' + (9 + i * 1.4) + 's" transform="translate(' + x + ',' + y + ')">'
+  /* The outer group holds the place, the middle one travels, the inner one
+     beats its wings. Putting the animation on the group that carries the
+     translate would throw the whole swarm back to the origin. */
+  const wing = (x, y, c, i) => '<g transform="translate(' + x + ',' + y + ')">'
+    + '<g class="wing w' + (i % 5) + (still ? ' still' : '') + '" style="animation-delay:' + (i * 900) + 'ms;animation-duration:' + (11 + i * 1.6) + 's">'
     + '<g class="flit' + (still ? ' still' : '') + '" style="animation-delay:' + (i * 430) + 'ms">'
     + '<ellipse cx="-5" cy="0" rx="6" ry="8" fill="' + c + '" opacity=".95"/><ellipse cx="5" cy="0" rx="6" ry="8" fill="' + c + '" opacity=".95"/>'
     + '<ellipse cx="-4" cy="6" rx="4" ry="5" fill="' + c + '" opacity=".8"/><ellipse cx="4" cy="6" rx="4" ry="5" fill="' + c + '" opacity=".8"/>'
-    + '<rect x="-1" y="-7" width="2" height="15" rx="1" fill="#6B4A32"/></g></g>';
+    + '<rect x="-1" y="-7" width="2" height="15" rx="1" fill="#6B4A32"/></g></g></g>';
   let leaves = '';
   if (!still) {
     [[54, 0], [108, 1], [166, 2], [214, 3], [82, 4]].forEach((p, i) => {
@@ -391,7 +398,8 @@ function treeButterflySVG(still) {
   return treeShell(treeCanopy(puffs, TREE_BLOOMS.slice(0, 12), '#F4D06F')
     + '<circle cx="140" cy="80" r="104" fill="#FFF3C4" opacity=".13"/>'
     + leaves
-    + wing(76, 74, '#F5A6C9', 0) + wing(196, 66, '#F7D488', 1) + wing(132, 44, '#A8CFF5', 2) + wing(226, 118, '#F5A6C9', 3) + wing(58, 122, '#F7D488', 4), '#FFF6DA');
+    + wing(70, 84, '#F5A6C9', 0) + wing(186, 72, '#F7D488', 1) + wing(128, 50, '#A8CFF5', 2) + wing(212, 132, '#EFA6E0', 3) + wing(60, 140, '#F7D488', 4)
+    + wing(150, 108, '#A8E6C9', 5) + wing(96, 66, '#F5A6C9', 6), '#FFF6DA');
 }
 function treeSVG() { return treeSVGFor(); }
 /* The companions stand at the foot of the tree, so the two screens read as one

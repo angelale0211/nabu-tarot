@@ -11,7 +11,7 @@ OUT = os.environ.get('NABU_OUT', HERE)
 SCRIPTS = ['config.js', 'logo-data.js', 'services.js', 'strings.js', 'art.js', 'tarot-en.js', 'tarot-vi.js', 'kb-questions.js',
            'insight-en.js', 'insight-vi.js', 'insight-majors.js', 'insight-minors.js', 'len-art.js', 'len-en.js', 'len-vi.js', 'astro.js',
            'zodiac.js', 'astro-kb.js', 'astro-deep.js', 'numerology.js', 'lunar.js', 'spreads.js', 'kb-guides.js',
-           'core.js', 'backend.js', 'ai.js', 'home.js', 'pick.js', 'learn.js', 'lessons.js', 'fortune.js', 'playing.js', 'guide-visuals.js', 'angel.js', 'looks.js', 'luck.js', 'pet.js', 'book.js', 'me.js', 'contact.js', 'privacy.js', 'install.js', 'report.js', 'play.js', 'admin.js', 'main.js']
+           'core.js', 'backend.js', 'ai.js', 'home.js', 'pick.js', 'learn.js', 'lessons.js', 'fortune.js', 'playing.js', 'guide-visuals.js', 'codes.js', 'angel.js', 'looks.js', 'luck.js', 'pet.js', 'book.js', 'me.js', 'contact.js', 'privacy.js', 'install.js', 'report.js', 'play.js', 'admin.js', 'main.js']
 
 
 # Data files transcribed from outside sources carry working notes in block

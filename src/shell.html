@@ -775,8 +775,16 @@ main{padding:22px 0 30px}
 @keyframes shooting{0%,72%{opacity:0;transform:translate(216px,4px) scale(.7)}76%{opacity:1}88%{opacity:0;transform:translate(56px,96px) scale(1)}100%{opacity:0;transform:translate(56px,96px) scale(1)}}
 .shoot{animation:shooting 11s linear infinite}
 /* Butterflies travel; leaves come down. */
-@keyframes winging{0%,100%{transform:translate(0,0)}20%{transform:translate(16px,-14px)}45%{transform:translate(30px,4px)}70%{transform:translate(12px,16px)}}
-.wing{animation:winging 9s ease-in-out infinite}.wing.still{animation:none}
+/* Five paths, so no two butterflies trace the same loop, and none of them
+   wanders far enough to leave the picture. */
+@keyframes wing0{0%,100%{transform:translate(0,0)}25%{transform:translate(22px,-16px)}50%{transform:translate(34px,6px)}75%{transform:translate(10px,18px)}}
+@keyframes wing1{0%,100%{transform:translate(0,0)}25%{transform:translate(-20px,12px)}50%{transform:translate(-30px,-10px)}75%{transform:translate(-8px,-20px)}}
+@keyframes wing2{0%,100%{transform:translate(0,0)}30%{transform:translate(14px,20px)}60%{transform:translate(-16px,26px)}85%{transform:translate(-22px,6px)}}
+@keyframes wing3{0%,100%{transform:translate(0,0)}25%{transform:translate(-24px,-14px)}55%{transform:translate(-10px,-28px)}80%{transform:translate(14px,-12px)}}
+@keyframes wing4{0%,100%{transform:translate(0,0)}30%{transform:translate(26px,10px)}55%{transform:translate(6px,-22px)}80%{transform:translate(-18px,-6px)}}
+.wing{animation-timing-function:ease-in-out;animation-iteration-count:infinite}
+.wing.w0{animation-name:wing0}.wing.w1{animation-name:wing1}.wing.w2{animation-name:wing2}.wing.w3{animation-name:wing3}.wing.w4{animation-name:wing4}
+.wing.still{animation:none}
 @keyframes leaffalling{0%{opacity:0;transform:translate(0,0) rotate(0)}10%{opacity:1}100%{opacity:0;transform:translate(-26px,196px) rotate(320deg)}}
 .leaffall{animation:leaffalling 8s linear infinite}
 @keyframes twinkling{0%,100%{opacity:.3;transform:scale(.85)}50%{opacity:1;transform:scale(1.15)}}
@@ -1031,8 +1039,9 @@ main{padding:22px 0 30px}
 .btn.tiny{padding:5px 11px;font-size:12.5px;width:auto;flex:none}
 .petstat{display:flex;justify-content:center;gap:14px;font-size:13.5px;color:var(--fg-soft);margin-bottom:10px}
 /* What the companion answers with, once a day. */
-/* Its own space, so the marker never sits on whatever is above it. */
-.bless{position:relative;margin-top:22px;padding:18px 16px 14px;border-radius:14px;background:var(--surface-2);border:1px solid var(--rule-soft)}
+/* Its own space at both ends, so neither the marker above nor the badge
+   below it ever collides with the text. */
+.bless{position:relative;margin:22px 0 18px;padding:18px 16px 14px;border-radius:14px;background:var(--surface-2);border:1px solid var(--rule-soft)}
 .bless .q{position:absolute;top:-13px;left:14px;background:var(--surface);border:1px solid var(--rule-soft);border-radius:999px;padding:2px 8px;font-size:15px;line-height:1.2}
 #main .bless p{margin:0 0 8px;font-size:14.5px;line-height:1.65;text-align:left;text-wrap:normal;hyphens:none}
 .bless .who{font-size:12px;color:var(--fg-soft)}
@@ -1078,8 +1087,8 @@ main{padding:22px 0 30px}
    against the ground the tree stands on rather than against the card. */
 .treestage{position:relative;width:100%;max-width:300px;margin:0 auto 6px}
 .treestage .tree{margin:0}
-/* Set a little to the side of the trunk, so the tree is never hidden. */
-.treepets{position:absolute;left:0;right:0;bottom:7%;z-index:2;display:flex;justify-content:center;align-items:flex-end;pointer-events:none;transform:translateX(15%)}
+/* Centred under the tree, on the ground the tree stands on. */
+.treepets{position:absolute;left:0;right:0;bottom:7%;z-index:2;display:flex;justify-content:center;align-items:flex-end;pointer-events:none}
 /* The companion by the tree stands still. Sliding it about looked like a
    shape being moved across a slide rather than an animal. */
 .treepet{width:31%;max-width:96px;display:block;pointer-events:auto}

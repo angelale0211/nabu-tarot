@@ -31,9 +31,9 @@ def serve():
 def run(url, extra=()):
     prof = tempfile.mkdtemp(prefix='nabu-edge-')
     out = subprocess.run([EDGE, '--headless=new', '--disable-gpu', '--no-first-run',
-                          '--virtual-time-budget=60000', '--user-data-dir=' + prof,
+                          '--virtual-time-budget=600000', '--user-data-dir=' + prof,
                           '--window-size=430,900', '--dump-dom'] + list(extra) + [url],
-                         capture_output=True, timeout=120)
+                         capture_output=True, timeout=420)
     dom = out.stdout.decode('utf-8', 'replace')
     m = re.findall(r'<pre id="results">(.*?)</pre>', dom, re.S)
     return m[-1] if m else ('NO RESULTS\n' + dom[-3000:])

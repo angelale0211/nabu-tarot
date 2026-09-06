@@ -106,9 +106,10 @@ function priceHTML(n, kind, id) {
 /* ---- course access ----
    Codes: NABU-T-YYMMDD-XXXX (T = tarot, L = lenormand, M = manifestation,
    P = playing cards, C = coin, Y = message tree, B = both of those two), the
-   date is the expiry and XXXX a checksum over date + CONFIG.courseSecret.
-   Checked on the device; good enough to keep casual sharing in check, not a
-   bank vault. */
+   date is the expiry and the tail is random. A code opens nothing on its own:
+   it is checked against the list of hashes Nabu publishes (see codes.js), so
+   a code that was never issued cannot be made up, and one that was issued can
+   be taken back. */
 const ACCESS = {
   get() { return store.get('nabu-access', {}); },
   // Nabu (any admin email) always has every course open.
@@ -128,23 +129,8 @@ function weekNext() { const x = new Date(); x.setHours(0, 0, 0, 0); x.setDate(x.
 const luckUnlimited = (kind) => ACCESS.has(kind) || ACCESS.has('luck');
 const luckSpent = (kind) => !luckUnlimited(kind) && (store.get('nabu-luck', {}) || {})[kind] === weekStart();
 function luckSpend(kind) { if (luckUnlimited(kind)) return; const a = store.get('nabu-luck', {}) || {}; a[kind] = weekStart(); store.set('nabu-luck', a); }
-function courseHash(str) {
-  let h1 = 0x811c9dc5, h2 = 5381;
-  for (let i = 0; i < str.length; i++) { const c = str.charCodeAt(i); h1 = Math.imul(h1 ^ c, 16777619) >>> 0; h2 = (Math.imul(h2, 33) + c) >>> 0; }
-  return (h1.toString(36) + h2.toString(36)).toUpperCase().replace(/[^A-Z0-9]/g, '').slice(-4).padStart(4, 'X');
-}
 const CODE_LETTER = { tarot: 'T', manifest: 'M', playing: 'P', coin: 'C', tree: 'Y', luck: 'B', pro: 'S', lenormand: 'L' };
 const CODE_COURSE = { T: 'tarot', M: 'manifest', P: 'playing', C: 'coin', Y: 'tree', B: 'luck', S: 'pro', L: 'lenormand' };
-function makeCode(course, untilISO) {
-  const d = untilISO.replace(/-/g, '').slice(2), Lt = CODE_LETTER[course] || 'L';
-  return 'NABU-' + Lt + '-' + d + '-' + courseHash(Lt + d + CONFIG.courseSecret);
-}
-function parseCode(code) {
-  const m = /^NABU-([TLMPCYBS])-(\d{6})-([A-Z0-9]{4})$/.exec(String(code || '').trim().toUpperCase().replace(/\s+/g, ''));
-  if (!m || courseHash(m[1] + m[2] + CONFIG.courseSecret) !== m[3]) return null;
-  const course = CODE_COURSE[m[1]];
-  return { course: course, courses: course === 'luck' ? ['coin', 'tree', 'luck'] : [course], until: '20' + m[2].slice(0, 2) + '-' + m[2].slice(2, 4) + '-' + m[2].slice(4, 6) };
-}
 function addMonths(iso, n) { const d = new Date(iso + 'T00:00:00'); d.setMonth(d.getMonth() + n); return isoDate(d); }
 
 /* ---- the deck ---- */

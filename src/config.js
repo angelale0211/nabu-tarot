@@ -64,7 +64,6 @@ const CONFIG = {
 
   // Access codes for the paid courses are signed with this. Change it once
   // (any long phrase); codes made before the change stop working.
-  courseSecret: 'nabu-moon-2026-lavender-cards',
 
   timezone: 'Asia/Ho_Chi_Minh',
   tzLabel: { vi: 'giờ Việt Nam', en: 'Vietnam time' },

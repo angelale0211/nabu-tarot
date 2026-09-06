@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
 <title>Nabu Tarot</title>
 <meta name="description" content="Nabu Tarot: dự đoán mới, rút một lá bài xem năng lượng hiện tại, học tarot, Lenormand, chiêm tinh, và đặt lịch xem bài.">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'none'; object-src 'none'; form-action 'self'; script-src 'self' 'sha256-jJiRjuZal3ONO3wXrknFNuF0tJ7qlrtAvx1ay1/jvvU=' https://www.gstatic.com https://apis.google.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; font-src 'self' data:; media-src 'self' data: blob:; worker-src 'self'; connect-src 'self' https://*.googleapis.com https://*.google.com https://*.firebaseio.com https://*.cloudfunctions.net https://*.workers.dev https://generativelanguage.googleapis.com; frame-src https://*.firebaseapp.com https://accounts.google.com https://*.facebook.com">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'none'; object-src 'none'; form-action 'self'; script-src 'self' 'sha256-QOdHtkZjluAHbfORL8pFXUwFNoii8NJE9pM5i5lpyK8=' https://www.gstatic.com https://apis.google.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; font-src 'self' data:; media-src 'self' data: blob:; worker-src 'self'; connect-src 'self' https://*.googleapis.com https://*.google.com https://*.firebaseio.com https://*.cloudfunctions.net https://*.workers.dev https://generativelanguage.googleapis.com; frame-src https://*.firebaseapp.com https://accounts.google.com https://*.facebook.com">
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <meta name="theme-color" content="#EFE9FA">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -941,8 +941,16 @@ main{padding:22px 0 30px}
 @keyframes shooting{0%,72%{opacity:0;transform:translate(216px,4px) scale(.7)}76%{opacity:1}88%{opacity:0;transform:translate(56px,96px) scale(1)}100%{opacity:0;transform:translate(56px,96px) scale(1)}}
 .shoot{animation:shooting 11s linear infinite}
 /* Butterflies travel; leaves come down. */
-@keyframes winging{0%,100%{transform:translate(0,0)}20%{transform:translate(16px,-14px)}45%{transform:translate(30px,4px)}70%{transform:translate(12px,16px)}}
-.wing{animation:winging 9s ease-in-out infinite}.wing.still{animation:none}
+/* Five paths, so no two butterflies trace the same loop, and none of them
+   wanders far enough to leave the picture. */
+@keyframes wing0{0%,100%{transform:translate(0,0)}25%{transform:translate(22px,-16px)}50%{transform:translate(34px,6px)}75%{transform:translate(10px,18px)}}
+@keyframes wing1{0%,100%{transform:translate(0,0)}25%{transform:translate(-20px,12px)}50%{transform:translate(-30px,-10px)}75%{transform:translate(-8px,-20px)}}
+@keyframes wing2{0%,100%{transform:translate(0,0)}30%{transform:translate(14px,20px)}60%{transform:translate(-16px,26px)}85%{transform:translate(-22px,6px)}}
+@keyframes wing3{0%,100%{transform:translate(0,0)}25%{transform:translate(-24px,-14px)}55%{transform:translate(-10px,-28px)}80%{transform:translate(14px,-12px)}}
+@keyframes wing4{0%,100%{transform:translate(0,0)}30%{transform:translate(26px,10px)}55%{transform:translate(6px,-22px)}80%{transform:translate(-18px,-6px)}}
+.wing{animation-timing-function:ease-in-out;animation-iteration-count:infinite}
+.wing.w0{animation-name:wing0}.wing.w1{animation-name:wing1}.wing.w2{animation-name:wing2}.wing.w3{animation-name:wing3}.wing.w4{animation-name:wing4}
+.wing.still{animation:none}
 @keyframes leaffalling{0%{opacity:0;transform:translate(0,0) rotate(0)}10%{opacity:1}100%{opacity:0;transform:translate(-26px,196px) rotate(320deg)}}
 .leaffall{animation:leaffalling 8s linear infinite}
 @keyframes twinkling{0%,100%{opacity:.3;transform:scale(.85)}50%{opacity:1;transform:scale(1.15)}}
@@ -1197,8 +1205,9 @@ main{padding:22px 0 30px}
 .btn.tiny{padding:5px 11px;font-size:12.5px;width:auto;flex:none}
 .petstat{display:flex;justify-content:center;gap:14px;font-size:13.5px;color:var(--fg-soft);margin-bottom:10px}
 /* What the companion answers with, once a day. */
-/* Its own space, so the marker never sits on whatever is above it. */
-.bless{position:relative;margin-top:22px;padding:18px 16px 14px;border-radius:14px;background:var(--surface-2);border:1px solid var(--rule-soft)}
+/* Its own space at both ends, so neither the marker above nor the badge
+   below it ever collides with the text. */
+.bless{position:relative;margin:22px 0 18px;padding:18px 16px 14px;border-radius:14px;background:var(--surface-2);border:1px solid var(--rule-soft)}
 .bless .q{position:absolute;top:-13px;left:14px;background:var(--surface);border:1px solid var(--rule-soft);border-radius:999px;padding:2px 8px;font-size:15px;line-height:1.2}
 #main .bless p{margin:0 0 8px;font-size:14.5px;line-height:1.65;text-align:left;text-wrap:normal;hyphens:none}
 .bless .who{font-size:12px;color:var(--fg-soft)}
@@ -1244,8 +1253,8 @@ main{padding:22px 0 30px}
    against the ground the tree stands on rather than against the card. */
 .treestage{position:relative;width:100%;max-width:300px;margin:0 auto 6px}
 .treestage .tree{margin:0}
-/* Set a little to the side of the trunk, so the tree is never hidden. */
-.treepets{position:absolute;left:0;right:0;bottom:7%;z-index:2;display:flex;justify-content:center;align-items:flex-end;pointer-events:none;transform:translateX(15%)}
+/* Centred under the tree, on the ground the tree stands on. */
+.treepets{position:absolute;left:0;right:0;bottom:7%;z-index:2;display:flex;justify-content:center;align-items:flex-end;pointer-events:none}
 /* The companion by the tree stands still. Sliding it about looked like a
    shape being moved across a slide rather than an animal. */
 .treepet{width:31%;max-width:96px;display:block;pointer-events:auto}
@@ -1400,7 +1409,6 @@ const CONFIG = {
 
   // Access codes for the paid courses are signed with this. Change it once
   // (any long phrase); codes made before the change stop working.
-  courseSecret: 'nabu-moon-2026-lavender-cards',
 
   timezone: 'Asia/Ho_Chi_Minh',
   tzLabel: { vi: 'giờ Việt Nam', en: 'Vietnam time' },
@@ -1706,7 +1714,7 @@ const STR = {
     petSwap: 'Đổi bạn nhỏ khác', petSwapAsk: 'Bạn muốn đổi sang một bạn nhỏ khác?', petLetGo: 'Tiễn bạn nhỏ này đi', petLetGoAsk: 'Bạn muốn tiễn bạn nhỏ này đi?',
     petAdd: 'Nhận thêm một bạn nhỏ', petRoomLeft: (n) => 'còn ' + n + ' chỗ', petBack: 'Quay lại với bạn nhỏ',
     petLuckTotal: (n) => 'Bạn đang có ' + n + ' loại may mắn đi cùng.',
-    petPlusPitch: 'Người dùng thường nuôi một bạn nhỏ. Nabu Tarot Plus mở sáu linh thú và cho bạn nuôi nhiều vị cùng lúc, để nhiều góc trong đời bạn cùng được trông giữ.',
+    petPlusPitch: 'Người dùng thường nuôi một bạn nhỏ. Nabu Tarot Plus mở cả mười hai linh thú và cho bạn nuôi cùng lúc tối đa sáu bạn, để nhiều góc trong đời bạn cùng được trông giữ.',
     petPlusItem: 'Món này thuộc Nabu Tarot Plus.',
     petLuckNote: 'Bạn nhỏ ở đây để mỗi ngày bạn có một việc nhỏ ấm áp. Lời chúc là lời chúc, không phải lời hứa.',
     sheetClose: 'Xong', petCoatMyth: 'Linh thú giữ nguyên màu riêng của mình, nên phần màu lông chỉ dành cho các bạn nhỏ thường.', petCoatNote: 'Bốn màu đầu miễn phí. Bốn màu đặc biệt thuộc Nabu Tarot Plus.',
@@ -1831,6 +1839,12 @@ const STR = {
     adminTitle: 'Bảng điều khiển',
     adminIntro: 'Trang này chỉ dành cho Nabu.',
     adminTabs: { posts: '📝 Bài đăng', acts: '🎲 Hoạt động', schedule: '🕒 Lịch rảnh', bookings: '📅 Đặt lịch', inbox: '💬 Tin nhắn', codes: '🔑 Mã học', sale: '🏷️ Khuyến mãi' },
+    codeChecking: 'Đang kiểm tra mã…', codeOffline: 'Chưa kiểm tra được mã lúc này. Bạn thử lại khi có mạng nhé.',
+    copyCode: 'Sao chép mã', codeOnceOnly: 'Bạn hãy lưu mã này lại. App chỉ giữ dấu vân của mã nên sau này không xem lại được mã gốc.',
+    codePublishing: 'Đang lưu mã…', codeOldLabel: 'Thêm mã bạn đã phát trước đây', codeOldAdd: 'Thêm các mã này',
+    codeOldHint: 'Bạn dán các mã cũ vào đây, mỗi mã một dòng. Chúng sẽ dùng khóa học và hạn đã chọn ở trên.',
+    codeAdded: (n) => 'Đã thêm ' + n + ' mã.', codeBook: 'Các mã đã phát', codeNone: 'Chưa có mã nào được phát.',
+    codeMade: 'phát ngày', codeRevoke: 'Thu hồi', codeRevokeAsk: 'Thu hồi mã này? Người đang dùng mã sẽ không mở được nữa.',
     codesIntro: 'Sau khi khách chuyển khoản, bạn tạo mã tại đây rồi gửi cho họ. Mỗi mã đã có sẵn ngày hết hạn bên trong.', codeCourse: 'Khóa', codeStart: 'Bắt đầu từ', codeMonths: 'Số tháng', makeCode: 'Tạo mã', codeUntil: 'Hết hạn',
     token: 'GitHub token',
     tokenHint: 'Token chỉ được lưu trên máy này. Bạn xem README để biết cách tạo token.',
@@ -2057,7 +2071,7 @@ const STR = {
     petSwap: 'Choose a different companion', petSwapAsk: 'Change to a different companion?', petLetGo: 'Let this companion go', petLetGoAsk: 'Let this companion go?',
     petAdd: 'Take in another companion', petRoomLeft: (n) => n + ' places left', petBack: 'Back to your companion',
     petLuckTotal: (n) => n + ' kinds of luck are walking with you.',
-    petPlusPitch: 'One companion is free. Nabu Tarot Plus opens the six spirit beasts and lets you keep several at once, so more corners of your life are looked after.',
+    petPlusPitch: 'One companion is free. Nabu Tarot Plus opens all twelve spirit beasts and lets you keep up to six at once, so more corners of your life are looked after.',
     petPlusItem: 'That one comes with Nabu Tarot Plus.',
     petLuckNote: 'Your companion is here to give you one warm small thing each day. A blessing is a blessing, not a promise.',
     sheetClose: 'Done', petCoatMyth: 'A spirit beast keeps its own colours, so coats are for the everyday companions.', petCoatNote: 'The first four are free. The four special coats come with Nabu Tarot Plus.',
@@ -2182,6 +2196,12 @@ const STR = {
     adminTitle: 'Dashboard',
     adminIntro: 'This page is for Nabu only.',
     adminTabs: { posts: '📝 Posts', acts: '🎲 Activities', schedule: '🕒 Hours', bookings: '📅 Bookings', inbox: '💬 Inbox', codes: '🔑 Codes', sale: '🏷️ Sale' },
+    codeChecking: 'Checking the code…', codeOffline: 'The code cannot be checked right now. Please try again when you are online.',
+    copyCode: 'Copy the code', codeOnceOnly: 'Keep this code somewhere. The app stores only a fingerprint of it, so it cannot be shown again.',
+    codePublishing: 'Saving the code…', codeOldLabel: 'Add codes you handed out before', codeOldAdd: 'Add these codes',
+    codeOldHint: 'Paste old codes here, one per line. They take the course and expiry chosen above.',
+    codeAdded: (n) => n + ' codes added.', codeBook: 'Codes handed out', codeNone: 'No codes have been handed out yet.',
+    codeMade: 'made', codeRevoke: 'Revoke', codeRevokeAsk: 'Revoke this code? Whoever is using it will lose access.',
     codesIntro: 'Once a client has paid, make a code here and send it to them. The expiry date is built into the code.', codeCourse: 'Course', codeStart: 'Starts', codeMonths: 'Months', makeCode: 'Make code', codeUntil: 'Expires',
     token: 'GitHub token',
     tokenHint: 'The token stays on this device only. See the README to create one.',
@@ -9263,9 +9283,10 @@ function priceHTML(n, kind, id) {
 /* ---- course access ----
    Codes: NABU-T-YYMMDD-XXXX (T = tarot, L = lenormand, M = manifestation,
    P = playing cards, C = coin, Y = message tree, B = both of those two), the
-   date is the expiry and XXXX a checksum over date + CONFIG.courseSecret.
-   Checked on the device; good enough to keep casual sharing in check, not a
-   bank vault. */
+   date is the expiry and the tail is random. A code opens nothing on its own:
+   it is checked against the list of hashes Nabu publishes (see codes.js), so
+   a code that was never issued cannot be made up, and one that was issued can
+   be taken back. */
 const ACCESS = {
   get() { return store.get('nabu-access', {}); },
   // Nabu (any admin email) always has every course open.
@@ -9285,23 +9306,8 @@ function weekNext() { const x = new Date(); x.setHours(0, 0, 0, 0); x.setDate(x.
 const luckUnlimited = (kind) => ACCESS.has(kind) || ACCESS.has('luck');
 const luckSpent = (kind) => !luckUnlimited(kind) && (store.get('nabu-luck', {}) || {})[kind] === weekStart();
 function luckSpend(kind) { if (luckUnlimited(kind)) return; const a = store.get('nabu-luck', {}) || {}; a[kind] = weekStart(); store.set('nabu-luck', a); }
-function courseHash(str) {
-  let h1 = 0x811c9dc5, h2 = 5381;
-  for (let i = 0; i < str.length; i++) { const c = str.charCodeAt(i); h1 = Math.imul(h1 ^ c, 16777619) >>> 0; h2 = (Math.imul(h2, 33) + c) >>> 0; }
-  return (h1.toString(36) + h2.toString(36)).toUpperCase().replace(/[^A-Z0-9]/g, '').slice(-4).padStart(4, 'X');
-}
 const CODE_LETTER = { tarot: 'T', manifest: 'M', playing: 'P', coin: 'C', tree: 'Y', luck: 'B', pro: 'S', lenormand: 'L' };
 const CODE_COURSE = { T: 'tarot', M: 'manifest', P: 'playing', C: 'coin', Y: 'tree', B: 'luck', S: 'pro', L: 'lenormand' };
-function makeCode(course, untilISO) {
-  const d = untilISO.replace(/-/g, '').slice(2), Lt = CODE_LETTER[course] || 'L';
-  return 'NABU-' + Lt + '-' + d + '-' + courseHash(Lt + d + CONFIG.courseSecret);
-}
-function parseCode(code) {
-  const m = /^NABU-([TLMPCYBS])-(\d{6})-([A-Z0-9]{4})$/.exec(String(code || '').trim().toUpperCase().replace(/\s+/g, ''));
-  if (!m || courseHash(m[1] + m[2] + CONFIG.courseSecret) !== m[3]) return null;
-  const course = CODE_COURSE[m[1]];
-  return { course: course, courses: course === 'luck' ? ['coin', 'tree', 'luck'] : [course], until: '20' + m[2].slice(0, 2) + '-' + m[2].slice(2, 4) + '-' + m[2].slice(4, 6) };
-}
 function addMonths(iso, n) { const d = new Date(iso + 'T00:00:00'); d.setMonth(d.getMonth() + n); return isoDate(d); }
 
 /* ---- the deck ---- */
@@ -10675,10 +10681,12 @@ function bindPaywall(root, after) {
   const S = T();
   $$('[data-buy]', root).forEach((a) => a.addEventListener('click', () => { const c = courseOf(a.getAttribute('data-buy')); copyText(S.buyMsg(L(c.name), fmtPrice(c.price), c.months)); toast(S.copied); }));
   const btn = $('#cunlock', root);
-  if (btn) btn.addEventListener('click', () => {
-    const r = parseCode($('#ccode', root).value);
+  if (btn) btn.addEventListener('click', async () => {
     const st = $('#cstatus', root);
-    if (!r) { st.textContent = S.badCode; st.className = 'hint err'; return; }
+    st.textContent = S.codeChecking; st.className = 'hint'; btn.disabled = true;
+    const r = await verifyCode($('#ccode', root).value).catch(() => null);
+    btn.disabled = false;
+    if (!r) { st.textContent = CODEBOOK.ready() ? S.badCode : S.codeOffline; st.className = 'hint err'; return; }
     ACCESS.grant(r.courses || [r.course], r.until);
     toast(S.unlocked); if (after) after(); else route();
   });
@@ -11152,9 +11160,12 @@ function renderUnlock() {
       store.set('nabu-contact-draft', unlockMessage());
       location.hash = BE.enabled ? '#/me?next=unlock' : '#/contact';
     });
-    $('#ugo').addEventListener('click', () => {
-      const r = parseCode($('#ucode').value), st = $('#ustatus');
-      if (!r) { st.textContent = S.badCode; st.className = 'hint err'; return; }
+    $('#ugo').addEventListener('click', async () => {
+      const st = $('#ustatus'), btn = $('#ugo');
+      st.textContent = S.codeChecking; st.className = 'hint'; btn.disabled = true;
+      const r = await verifyCode($('#ucode').value).catch(() => null);
+      btn.disabled = false;
+      if (!r) { st.textContent = CODEBOOK.ready() ? S.badCode : S.codeOffline; st.className = 'hint err'; return; }
       ACCESS.grant(r.courses || [r.course], r.until); toast(S.unlocked); draw();
     });
   };
@@ -11901,6 +11912,106 @@ function bindGuideVisual(root) {
   if (vf) vf.addEventListener('change', async () => { const f = vf.files && vf.files[0]; if (!f || vi < 0) return; try { const data = await shrinkImage(f, 520, 0.7); const o = store.get('nabu-vision', {}) || {}; o['img' + vi] = data; store.set('nabu-vision', o); redrawVisual(vf); } catch (e) { toast(T().publishFail); } });
   $$('[data-vclear]', root).forEach((b) => b.addEventListener('click', (e) => { e.stopPropagation(); const o = store.get('nabu-vision', {}) || {}; delete o['img' + b.getAttribute('data-vclear')]; store.set('nabu-vision', o); redrawVisual(b); }));
   $$('[data-len]', root).forEach((b) => b.addEventListener('click', () => { location.hash = '#/learn/len/' + b.getAttribute('data-len'); }));
+}
+
+/* ======================= access codes that cannot be forged =======================
+   The old scheme checked a code against a secret that shipped inside the app,
+   so anyone who read the JavaScript could mint a code for any course with any
+   expiry, and no code could ever be taken back.
+
+   This one keeps no secret in the app. Nabu makes a code; the app publishes
+   only a slow, salted hash of it, together with what that code opens and when
+   it runs out. Redeeming hashes what was typed and looks the result up. A code
+   Nabu never issued hashes to something that is not in the book, so it opens
+   nothing - and what a real code opens is read from the published record
+   rather than from the text of the code, so editing the letter or the date in
+   a real code gets nowhere either.
+
+   Why a slow hash. The book is public, so someone could try every possible
+   code against it offline. The tail is six characters from a 32-letter
+   alphabet - about a billion codes - and PBKDF2 with a quarter of a million
+   rounds makes trying them all a few thousand years of work, while costing the
+   person redeeming one about a seventh of a second.
+
+   One salt covers the book so that redeeming is a single hash and a lookup
+   rather than one hash per code ever issued, which would grow slower with
+   every sale. */
+
+const CODE_ALPHABET = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'; // no I, O, 0, 1
+const CODE_LEN = 6;
+const CODE_ROUNDS = 250000;
+/* Read per call. The checks lower it to keep the suite quick; a lower
+   number can only make a code fail to match, never match wrongly. */
+const codeRounds = () => Number(window.NABU_CODE_ROUNDS) || CODE_ROUNDS;
+
+/* The published book: { salt: hex, codes: { <hash>: { c: course, u: untilISO, at } } } */
+const CODEBOOK = {
+  doc: null,
+  set(doc) { this.doc = doc && typeof doc === 'object' && doc.codes ? doc : null; },
+  all() { return (this.doc && this.doc.codes) || {}; },
+  salt() { return (this.doc && this.doc.salt) || ''; },
+  ready() { return !!(this.doc && this.doc.salt); }
+};
+
+const tidyCode = (s) => String(s || '').toUpperCase().replace(/[^A-Z0-9]/g, '');
+
+function randomHex(n) {
+  const b = new Uint8Array(n);
+  (window.crypto || window.msCrypto).getRandomValues(b);
+  return Array.from(b).map((x) => x.toString(16).padStart(2, '0')).join('');
+}
+
+function randomCode(course, untilISO) {
+  const bytes = new Uint8Array(CODE_LEN);
+  (window.crypto || window.msCrypto).getRandomValues(bytes);
+  let tail = '';
+  for (let i = 0; i < CODE_LEN; i++) tail += CODE_ALPHABET[bytes[i] % CODE_ALPHABET.length];
+  return 'NABU-' + (CODE_LETTER[course] || 'L') + '-' + untilISO.replace(/-/g, '').slice(2) + '-' + tail;
+}
+
+/* PBKDF2-SHA256 over the tidied code. Returns hex, or '' where the browser has
+   no SubtleCrypto, in which case a code simply cannot be redeemed there. */
+async function codeDigest(code, salt) {
+  const subtle = window.crypto && window.crypto.subtle;
+  if (!subtle) return '';
+  const enc = new TextEncoder();
+  const key = await subtle.importKey('raw', enc.encode(tidyCode(code)), 'PBKDF2', false, ['deriveBits']);
+  const bits = await subtle.deriveBits({ name: 'PBKDF2', salt: enc.encode(salt), iterations: codeRounds(), hash: 'SHA-256' }, key, 256);
+  return Array.from(new Uint8Array(bits)).map((x) => x.toString(16).padStart(2, '0')).join('');
+}
+
+/* What a typed code opens, or null: one hash and one lookup, however many
+   codes have been sold. */
+async function verifyCode(typed) {
+  const clean = tidyCode(typed);
+  if (clean.length < 8 || !CODEBOOK.ready()) return null;
+  const h = await codeDigest(clean, CODEBOOK.salt());
+  const rec = h && CODEBOOK.all()[h];
+  if (!rec || !rec.c) return null;
+  return { hash: h, course: rec.c, courses: rec.c === 'luck' ? ['coin', 'tree', 'luck'] : [rec.c], until: rec.u };
+}
+
+/* Publishing merges into the book rather than replacing it, so two dashboards
+   open at once cannot wipe each other's codes. The salt is made once and kept:
+   changing it would invalidate every code already handed out. */
+async function publishCode(code, course, untilISO) {
+  const salt = CODEBOOK.salt() || randomHex(16);
+  const h = await codeDigest(code, salt);
+  if (!h) throw new Error('no crypto');
+  const codes = Object.assign({}, CODEBOOK.all());
+  codes[h] = { c: course, u: untilISO, at: isoDate(new Date()) };
+  const doc = { salt: salt, codes: codes };
+  await BE.setContent('codes', doc);
+  CODEBOOK.set(doc);
+  return h;
+}
+
+async function revokeCode(hash) {
+  const codes = Object.assign({}, CODEBOOK.all());
+  delete codes[hash];
+  const doc = { salt: CODEBOOK.salt(), codes: codes };
+  await BE.setContent('codes', doc);
+  CODEBOOK.set(doc);
 }
 
 /* ======================= angel numbers (free) =======================
@@ -12906,6 +13017,8 @@ const PET_GROOM_XP = 8;
 const PET_PAT_DIST = 260;
 const PET_TOYS = ['🧶', '🦋', '🎈', '🍃', '✨', '🪁'];
 const PET_FREE_MAX = 1;
+/* However many spirit beasts are open, six is a household. */
+const PET_KEEP_MAX = 6;
 /* A companion is a fortnight's commitment. Changing one starts the new one
    at level one, so the choice is worth making slowly. */
 const PET_CHANGE_GAP = 14 * 86400000;
@@ -12935,7 +13048,7 @@ const PETS = {
   drop(kind) { this.save(this.all().filter((p) => p.kind !== kind)); },
   one(kind) { return this.all().filter((p) => p.kind === kind)[0] || null; },
   /* How many may be kept: one, or all of them with Plus. */
-  cap() { return proOn() ? PET_KINDS.length : PET_FREE_MAX; },
+  cap() { return proOn() ? PET_KEEP_MAX : PET_FREE_MAX; },
   /* A spirit beast is never kept without Plus, however much room there is. */
   mayKeep(kind) { return !petIsPro(kind) || proOn(); },
   room() { return this.all().length < this.cap(); },
@@ -13571,60 +13684,32 @@ const PET_ART = {
   /* The golden eagle: a brow over the eye is the whole difference between a
      raptor and a soft brown bird. */
   eagle: () => ({
-    glow: true, noCharm: true,
-    only: (() => {
-      const DARK = '#6B4620', MID = '#8A5F2E', WARM = '#B07C3E', CREAM = '#F2E2C0', PALE = '#FBF3E2', GOLD = '#E5BE5E', DEEP = '#B9913B', INK = '#2E1E0E';
-      /* Wings, drawn as three bands each so the flight feathers separate. The
-         far edge is stepped rather than smooth: that jagged edge is most of
-         what says eagle rather than bird. */
-      const feathers = (dir) => {
-        const f = (i, len, drop) => {
-          const x = 60 + dir * (16 + i * 8.5);
-          return '<path d="M' + (60 + dir * 14) + ' 62 Q' + (x - dir * 2) + ' ' + (52 + drop) + ' ' + (x + dir * len * 0.2) + ' ' + (40 + drop)
-            + ' Q' + (x + dir * 5) + ' ' + (54 + drop) + ' ' + (60 + dir * 14) + ' 70 Z" fill="' + (i % 2 ? MID : DARK) + '"/>';
-        };
-        let out = '';
-        // the broad inner wing
-        out += '<path d="M' + (60 + dir * 12) + ' 58 Q' + (60 + dir * 44) + ' 44 ' + (60 + dir * 56) + ' 22 Q' + (60 + dir * 58) + ' 52 ' + (60 + dir * 26) + ' 76 Z" fill="' + MID + '"/>';
-        out += '<path d="M' + (60 + dir * 12) + ' 62 Q' + (60 + dir * 40) + ' 54 ' + (60 + dir * 52) + ' 38 Q' + (60 + dir * 52) + ' 62 ' + (60 + dir * 24) + ' 80 Z" fill="' + WARM + '"/>';
-        // five long feathers along the leading edge
-        for (let i = 0; i < 5; i++) out += f(i, 26, i * 3);
-        out += '<g stroke="' + DARK + '" stroke-width="1.1" fill="none" opacity=".55">'
-          + '<path d="M' + (60 + dir * 18) + ' 66 Q' + (60 + dir * 34) + ' 58 ' + (60 + dir * 46) + ' 42"/>'
-          + '<path d="M' + (60 + dir * 18) + ' 74 Q' + (60 + dir * 32) + ' 66 ' + (60 + dir * 42) + ' 54"/></g>';
-        return out;
-      };
-      const wings = feathers(-1) + feathers(1);
-      // A fanned tail under the body.
-      let tail = '';
-      [-16, -8, 0, 8, 16].forEach((o, i) => {
-        tail += '<path d="M' + (60 + o * 0.35) + ' 84 Q' + (60 + o) + ' 94 ' + (60 + o * 1.35) + ' 104 L' + (60 + o * 1.35 + 5) + ' 104 Q' + (60 + o + 4) + ' 94 ' + (60 + o * 0.35 + 4) + ' 84 Z" fill="' + (i % 2 ? MID : WARM) + '"/>';
-      });
-      // Chest, feathered in bands, and the shoulders that carry the wings.
-      const body = '<path d="M60 46 Q42 52 40 74 Q39 92 60 98 Q81 92 80 74 Q78 52 60 46 Z" fill="' + CREAM + '"/>'
-        + '<g fill="none" stroke="' + WARM + '" stroke-width="1.5" opacity=".8">'
-        + '<path d="M46 62 Q60 56 74 62 M44 72 Q60 65 76 72 M45 82 Q60 75 75 82 M48 90 Q60 85 72 90"/></g>'
-        + '<path d="M60 46 Q48 50 45 62 Q52 55 60 55 Q68 55 75 62 Q72 50 60 46 Z" fill="' + PALE + '"/>';
-      /* The head, turned to the right, so the hooked beak is seen against the
-         sky. The brow over the eye is what makes a raptor look like one. */
-      const head = '<path d="M56 44 Q46 40 46 30 Q46 18 58 15 Q72 13 78 22 Q82 28 80 36 Q76 44 66 45 Z" fill="' + PALE + '"/>'
-        + '<path d="M56 44 Q47 40 46 31 Q46 22 54 17 Q52 30 58 42 Z" fill="' + CREAM + '"/>'
-        + '<path d="M78 22 Q92 24 96 32 Q90 34 84 32 Q88 38 84 42 Q78 38 77 30 Z" fill="' + GOLD + '"/>'
-        + '<path d="M84 32 Q90 33 96 32 Q90 36 84 35 Z" fill="' + DEEP + '"/>'
-        + '<circle cx="72" cy="27" r="4.4" fill="' + GOLD + '"/><circle cx="72.5" cy="27" r="2.6" fill="' + INK + '"/>'
-        + '<circle cx="73.6" cy="26" r="1" fill="#fff"/>'
-        + '<path d="M64 21 Q71 18 79 22" stroke="' + DARK + '" stroke-width="3.4" fill="none" stroke-linecap="round"/>'
-        + '<path d="M50 22 Q56 14 66 13" stroke="' + WARM + '" stroke-width="2" fill="none" stroke-linecap="round" opacity=".7"/>';
-      // Talons on a branch, which gives her something to stand on.
-      const perch = '<path d="M18 108 Q60 102 102 108" stroke="' + DARK + '" stroke-width="4.5" fill="none" stroke-linecap="round"/>'
-        + '<path d="M96 106 q8 -4 12 -10" stroke="' + DARK + '" stroke-width="3" fill="none" stroke-linecap="round"/>'
-        + '<g stroke="' + GOLD + '" stroke-width="3.4" stroke-linecap="round" fill="none">'
-        + '<path d="M52 96 v8 M68 96 v8"/>'
-        + '<path d="M52 104 l-5 4 M52 104 l0 5 M52 104 l5 4 M68 104 l-5 4 M68 104 l0 5 M68 104 l5 4"/></g>';
-      const sun = '<circle cx="22" cy="20" r="12" fill="#FFF3C4" opacity=".3"/>';
-      return sun + wings + tail + perch + body + head;
-    })()
-  }),
+    glow: true, feet: false, pal: { body: '#8A5F2E', dark: '#6B4620', ink: '#2E1E0E' },
+    headRX: 26, headRY: 24, bodyRX: 29,
+    behind: '<path d="M30 84 Q4 66 2 32 Q22 52 38 76 Z" fill="#6B4620"/>'
+      + '<path d="M32 90 Q10 80 6 50 Q24 66 40 84 Z" fill="#8A5F2E"/>'
+      + '<path d="M34 96 Q16 92 12 70 Q28 82 42 92 Z" fill="#B07C3E"/>'
+      + '<path d="M90 84 Q116 66 118 32 Q98 52 82 76 Z" fill="#6B4620"/>'
+      + '<path d="M88 90 Q110 80 114 50 Q96 66 80 84 Z" fill="#8A5F2E"/>'
+      + '<path d="M86 96 Q104 92 108 70 Q92 82 78 92 Z" fill="#B07C3E"/>'
+      + '<g stroke="#4E3316" stroke-width="1.2" fill="none" opacity=".7">'
+      + '<path d="M10 44 Q22 60 32 80 M12 62 Q24 74 36 90 M110 44 Q98 60 88 80 M108 62 Q96 74 84 90"/></g>'
+      + '<path d="M48 108 q12 14 24 0 q-3 14 -12 16 q-9 -2 -12 -16 Z" fill="#6B4620"/>',
+    ears: '<path d="M36 30 Q48 12 60 8 Q72 12 84 30 Q60 20 36 30 Z" fill="#C9A05A"/>'
+      + '<path d="M42 26 Q52 16 60 14 Q68 16 78 26 Q60 20 42 26 Z" fill="#E8CE9A"/>',
+    overBody: '<path d="M60 66 q-17 17 -15 38 q15 6 30 0 q2 -21 -15 -38 Z" fill="#E8CE9A"/>'
+      + '<g stroke="#B07C3E" stroke-width="1.6" fill="none" opacity=".85"><path d="M48 82 q12 -5 24 0 M46 92 q14 -5 28 0 M50 101 q10 -4 20 0"/></g>'
+      + '<g stroke="#E5BE5E" stroke-width="3.2" stroke-linecap="round"><path d="M50 112 v6 M70 112 v6 M45 118 h9 M66 118 h9"/></g>',
+    // A hooked beak and a heavy brow: the two things that make it a raptor.
+    front: '<path d="M60 52 L52 62 Q52 74 60 78 Q68 74 68 62 Z" fill="#F0B24E"/>'
+      + '<path d="M60 70 Q55 76 58 82 Q62 78 60 70 Z" fill="#C4813C"/>'
+      + '<ellipse cx="49" cy="50" rx="6" ry="6.6" fill="#F7E9C8"/><ellipse cx="71" cy="50" rx="6" ry="6.6" fill="#F7E9C8"/>'
+      + '<circle cx="50" cy="51" r="3.4" fill="#2E1E0E"/><circle cx="70" cy="51" r="3.4" fill="#2E1E0E"/>'
+      + '<circle cx="51" cy="49.6" r="1.2" fill="#fff"/><circle cx="71" cy="49.6" r="1.2" fill="#fff"/>'
+      + '<path d="M40 42 Q50 40 56 46" fill="none" stroke="#6B4620" stroke-width="4" stroke-linecap="round"/>'
+      + '<path d="M80 42 Q70 40 64 46" fill="none" stroke="#6B4620" stroke-width="4" stroke-linecap="round"/>',
+    noFace: true, noMouth: true, charmY: 96
+  })
 };
 
 function petSVG(kind, coat, mood, wear) {
@@ -14616,7 +14701,14 @@ function renderMe(args, params) {
       setTimeout(() => location.reload(), 800);
     });
     bindProfileForm(body, () => { if (params.next === 'book') location.hash = '#/book'; else if (params.next === 'unlock') location.hash = '#/unlock'; });
-    $('#munlock').addEventListener('click', () => { const r = parseCode($('#mcode').value); const st = $('#mcstatus'); if (!r) { st.textContent = S.badCode; st.className = 'hint err'; return; } ACCESS.grant(r.courses || [r.course], r.until); toast(S.unlocked); draw(); });
+    $('#munlock').addEventListener('click', async () => {
+      const st = $('#mcstatus'), btn = $('#munlock');
+      st.textContent = S.codeChecking; st.className = 'hint'; btn.disabled = true;
+      const r = await verifyCode($('#mcode').value).catch(() => null);
+      btn.disabled = false;
+      if (!r) { st.textContent = CODEBOOK.ready() ? S.badCode : S.codeOffline; st.className = 'hint err'; return; }
+      ACCESS.grant(r.courses || [r.course], r.until); toast(S.unlocked); draw();
+    });
     $$('[data-theme-pick]', body).forEach((b) => b.addEventListener('click', () => { setTheme(b.getAttribute('data-theme-pick')); $$('[data-theme-pick]', body).forEach((x) => x.classList.toggle('on', x === b)); }));
     // The tour opens here rather than throwing the visitor back to the home
     // screen. It sits above the row of buttons and closes from its own link.
@@ -15004,9 +15096,12 @@ function luckPanelHTML(kind) {
 function bindLuck(root, redraw) {
   const S = T(), go = $('#luckgo', root);
   if (!go) return;
-  go.addEventListener('click', () => {
-    const r = parseCode($('#luckcode', root).value), st = $('#luckstatus', root);
-    if (!r) { st.textContent = S.badCode; st.className = 'hint err'; return; }
+  go.addEventListener('click', async () => {
+    const st = $('#luckstatus', root);
+    st.textContent = S.codeChecking; st.className = 'hint'; go.disabled = true;
+    const r = await verifyCode($('#luckcode', root).value).catch(() => null);
+    go.disabled = false;
+    if (!r) { st.textContent = CODEBOOK.ready() ? S.badCode : S.codeOffline; st.className = 'hint err'; return; }
     ACCESS.grant(r.courses || [r.course], r.until); toast(S.unlocked); redraw();
   });
 }
@@ -15149,11 +15244,15 @@ function treeGalaxySVG(still) {
 }
 function treeButterflySVG(still) {
   const puffs = TREE_PUFFS.map((p, i) => [p[0], p[1], p[2], i % 2 ? '#CFE7C4' : '#B9DCAC', .6]);
-  const wing = (x, y, c, i) => '<g class="wing' + (still ? ' still' : '') + '" style="animation-delay:' + (i * 900) + 'ms;animation-duration:' + (9 + i * 1.4) + 's" transform="translate(' + x + ',' + y + ')">'
+  /* The outer group holds the place, the middle one travels, the inner one
+     beats its wings. Putting the animation on the group that carries the
+     translate would throw the whole swarm back to the origin. */
+  const wing = (x, y, c, i) => '<g transform="translate(' + x + ',' + y + ')">'
+    + '<g class="wing w' + (i % 5) + (still ? ' still' : '') + '" style="animation-delay:' + (i * 900) + 'ms;animation-duration:' + (11 + i * 1.6) + 's">'
     + '<g class="flit' + (still ? ' still' : '') + '" style="animation-delay:' + (i * 430) + 'ms">'
     + '<ellipse cx="-5" cy="0" rx="6" ry="8" fill="' + c + '" opacity=".95"/><ellipse cx="5" cy="0" rx="6" ry="8" fill="' + c + '" opacity=".95"/>'
     + '<ellipse cx="-4" cy="6" rx="4" ry="5" fill="' + c + '" opacity=".8"/><ellipse cx="4" cy="6" rx="4" ry="5" fill="' + c + '" opacity=".8"/>'
-    + '<rect x="-1" y="-7" width="2" height="15" rx="1" fill="#6B4A32"/></g></g>';
+    + '<rect x="-1" y="-7" width="2" height="15" rx="1" fill="#6B4A32"/></g></g></g>';
   let leaves = '';
   if (!still) {
     [[54, 0], [108, 1], [166, 2], [214, 3], [82, 4]].forEach((p, i) => {
@@ -15163,7 +15262,8 @@ function treeButterflySVG(still) {
   return treeShell(treeCanopy(puffs, TREE_BLOOMS.slice(0, 12), '#F4D06F')
     + '<circle cx="140" cy="80" r="104" fill="#FFF3C4" opacity=".13"/>'
     + leaves
-    + wing(76, 74, '#F5A6C9', 0) + wing(196, 66, '#F7D488', 1) + wing(132, 44, '#A8CFF5', 2) + wing(226, 118, '#F5A6C9', 3) + wing(58, 122, '#F7D488', 4), '#FFF6DA');
+    + wing(70, 84, '#F5A6C9', 0) + wing(186, 72, '#F7D488', 1) + wing(128, 50, '#A8CFF5', 2) + wing(212, 132, '#EFA6E0', 3) + wing(60, 140, '#F7D488', 4)
+    + wing(150, 108, '#A8E6C9', 5) + wing(96, 66, '#F5A6C9', 6), '#FFF6DA');
 }
 function treeSVG() { return treeSVGFor(); }
 /* The companions stand at the foot of the tree, so the two screens read as one
@@ -15705,18 +15805,72 @@ function adminCodes(p) {
   p.innerHTML = '<div class="card"><p class="hint" style="margin-bottom:10px">' + esc(S.codesIntro) + '</p>'
     + '<label class="f" for="ccourse">' + esc(S.codeCourse) + '</label><select id="ccourse">' + COURSES.map((c) => '<option value="' + c.id + '">' + esc(L(c.name)) + ' · ' + fmtPrice(c.price) + '</option>').join('') + '</select>'
     + '<div class="two"><div><label class="f" for="cstart">' + esc(S.codeStart) + '</label><input id="cstart" type="date" value="' + isoDate(new Date()) + '"></div><div><label class="f" for="cmonths">' + esc(S.codeMonths) + '</label><input id="cmonths" type="number" min="1" value="6"></div></div>'
-    + '<button class="btn primary block" id="cmake" style="margin-top:14px">' + esc(S.makeCode) + '</button><div id="cout"></div></div>'
+    + '<button class="btn primary block" id="cmake" style="margin-top:14px">' + esc(S.makeCode) + '</button><div id="cout"></div>'
+    + '<label class="f" for="cold" style="margin-top:16px">' + esc(S.codeOldLabel) + '</label><textarea id="cold" placeholder="NABU-T-260901-ABC234"></textarea>'
+    + '<button class="btn block" id="coldgo" style="margin-top:8px">' + esc(S.codeOldAdd) + '</button><p class="hint" id="coldstatus">' + esc(S.codeOldHint) + '</p></div>'
+    + '<div class="card"><h3 style="margin-bottom:8px">' + esc(S.codeBook) + '</h3><div id="cbook"></div></div>'
     + '<div class="card"><h3 style="margin-bottom:4px">✦ ' + esc(S.aiSettings) + '</h3><p class="hint" style="margin-bottom:8px">' + esc(S.aiKeyHint) + '</p><label class="f" for="gkey">' + esc(S.aiKeyLabel) + '</label><div class="row nw"><input id="gkey" type="password" value="' + esc(CONFIG.geminiKey || '') + '" autocomplete="off"><button class="btn sm" id="gsave">' + esc(S.saveKey) + '</button></div><p class="hint" id="gstatus"></p></div>';
   $('#gsave').addEventListener('click', async () => {
     const st = $('#gstatus'), key = $('#gkey').value.trim();
     if (!cloud()) { st.textContent = S.adminLogin; st.className = 'hint err'; return; }
     try { await BE.setContent('ai', { geminiKey: key }); CONFIG.geminiKey = key; st.textContent = key ? S.aiKeySaved : '✓'; st.className = 'hint ok'; } catch (e) { st.textContent = S.publishFail + ': ' + e.message; st.className = 'hint err'; }
   });
-  $('#cmake').addEventListener('click', () => {
-    const until = addMonths($('#cstart').value || isoDate(new Date()), Number($('#cmonths').value) || 6), code = makeCode($('#ccourse').value, until);
-    $('#cout').innerHTML = '<div class="codebox" id="codeval">' + code + '</div><p class="hint" style="text-align:center">' + esc(S.codeUntil) + ': ' + esc(fmtDate(until)) + '</p><button class="btn block" id="ccopy">' + esc(S.copyMsg.replace(/tin nhắn|the message/i, 'mã')) + '</button>';
+  /* Issuing a code publishes its hash and keeps nothing else, so the code
+     itself exists only in the message Nabu sends. */
+  $('#cmake').addEventListener('click', async () => {
+    const out = $('#cout'), st = $('#cstatus2');
+    if (!cloud()) { out.innerHTML = '<p class="hint err">' + esc(S.adminLogin) + '</p>'; return; }
+    const course = $('#ccourse').value;
+    const until = addMonths($('#cstart').value || isoDate(new Date()), Number($('#cmonths').value) || 6);
+    const code = randomCode(course, until);
+    out.innerHTML = '<p class="hint">' + esc(S.codePublishing) + '</p>';
+    try {
+      await publishCode(code, course, until);
+    } catch (e) {
+      out.innerHTML = '<p class="hint err">' + esc(S.publishFail + ': ' + e.message) + '</p>';
+      return;
+    }
+    out.innerHTML = '<div class="codebox" id="codeval">' + esc(code) + '</div>'
+      + '<p class="hint" style="text-align:center">' + esc(S.codeUntil) + ': ' + esc(fmtDate(until)) + '</p>'
+      + '<button class="btn block" id="ccopy">' + esc(S.copyCode) + '</button>'
+      + '<p class="hint">' + esc(S.codeOnceOnly) + '</p>';
     $('#ccopy').addEventListener('click', () => copyText(code).then(() => toast(S.copied)));
+    drawBook();
   });
+
+  /* Codes handed out before this list existed can be added to it, unchanged,
+     so nobody who already paid is locked out. */
+  $('#coldgo').addEventListener('click', async () => {
+    const st = $('#coldstatus'), lines = $('#cold').value.split(/[\s,;]+/).map((x) => x.trim()).filter(Boolean);
+    if (!cloud()) { st.textContent = S.adminLogin; st.className = 'hint err'; return; }
+    if (!lines.length) return;
+    const course = $('#ccourse').value, until = addMonths($('#cstart').value || isoDate(new Date()), Number($('#cmonths').value) || 6);
+    st.textContent = S.codePublishing; st.className = 'hint';
+    try {
+      for (let i = 0; i < lines.length; i++) await publishCode(lines[i], course, until);
+      st.textContent = S.codeAdded(lines.length); st.className = 'hint ok';
+      $('#cold').value = '';
+      drawBook();
+    } catch (e) { st.textContent = S.publishFail + ': ' + e.message; st.className = 'hint err'; }
+  });
+
+  function drawBook() {
+    const wrap = $('#cbook'), book = CODEBOOK.all(), ids = Object.keys(book).sort((a, b) => String(book[b].at).localeCompare(String(book[a].at)));
+    // the key is the hash of the code, which is all the app ever keeps
+    wrap.innerHTML = !ids.length
+      ? '<p class="hint">' + esc(S.codeNone) + '</p>'
+      : '<ul class="codelist">' + ids.map((id) => {
+        const r = book[id], c = COURSES.filter((x) => x.id === r.c)[0];
+        return '<li><span><b>' + esc(c ? L(c.name) : r.c) + '</b><span class="faint"> · ' + esc(S.codeUntil) + ' ' + esc(fmtDate(r.u)) + ' · ' + esc(S.codeMade) + ' ' + esc(fmtDate(r.at || r.u)) + '</span></span>'
+          + '<button type="button" class="btn tiny" data-revoke="' + esc(id) + '">' + esc(S.codeRevoke) + '</button></li>';
+      }).join('') + '</ul>';
+    $$('[data-revoke]', wrap).forEach((b) => b.addEventListener('click', async () => {
+      if (!confirm(S.codeRevokeAsk)) return;
+      try { await revokeCode(b.getAttribute('data-revoke')); drawBook(); toast('✓'); }
+      catch (e) { toast(S.publishFail); }
+    }));
+  }
+  drawBook();
 }
 /* ---- the sale tool ----
    One record, so a sale can be switched on, aimed at readings or unlockables,
@@ -15774,12 +15928,13 @@ function adminSale(p) {
 ROUTES.admin = { nav: '', render: renderAdmin };
 
 /* ============================ boot ============================ */
-window.APP_VERSION = 'v108';
-window.NABU = { CONFIG: CONFIG, SALE: SALE, salePrice: salePrice, loadActs: loadActs, BACK: BACK, LESSONS: LESSONS, localAnswer: localAnswer, compatVerdict: compatVerdict, numerologyOf: numerologyOf, ZDEEP: ZDEEP, lunarToday: lunarToday, solarToLunar: solarToLunar, DECK: DECK, INSIGHT: INSIGHT, KW: KW, ASK: ASK, TOPICS: TOPICS, GUIDES: GUIDES, SERVICES: SERVICES, COURSES: COURSES, ACCESS: ACCESS, makeCode: makeCode, parseCode: parseCode, ZODIAC: ZODIAC, pick: pick, book: book,
+window.APP_VERSION = 'v109';
+window.NABU = { CONFIG: CONFIG, SALE: SALE, salePrice: salePrice, loadActs: loadActs, BACK: BACK, LESSONS: LESSONS, localAnswer: localAnswer, compatVerdict: compatVerdict, numerologyOf: numerologyOf, ZDEEP: ZDEEP, lunarToday: lunarToday, solarToLunar: solarToLunar, DECK: DECK, INSIGHT: INSIGHT, KW: KW, ASK: ASK, TOPICS: TOPICS, GUIDES: GUIDES, SERVICES: SERVICES, COURSES: COURSES, ACCESS: ACCESS, ZODIAC: ZODIAC, pick: pick, book: book,
   insightHTML: insightHTML, insightOf: insightOf, sunSignIndex: sunSignIndex, lifePath: lifePath, PROFILE: () => PROFILE, BE: BE, ACTS: ACTS,
-  ANGELS: ANGELS, angelRead: angelRead, BANK: BANK, PETS: PETS, petSVG: petSVG, PET_COATS: PET_COATS, PET_KINDS: PET_KINDS, luckCut: luckCut, petLevel: petLevel, petStep: petStep, VOUCHERS: VOUCHERS, levelCoins: levelCoins, LOOKS: LOOKS };
+  ANGELS: ANGELS, angelRead: angelRead, CODEBOOK: CODEBOOK, verifyCode: verifyCode, codeDigest: codeDigest, randomCode: randomCode, BANK: BANK, PETS: PETS, petSVG: petSVG, PET_COATS: PET_COATS, PET_KINDS: PET_KINDS, luckCut: luckCut, petLevel: petLevel, petStep: petStep, VOUCHERS: VOUCHERS, levelCoins: levelCoins, LOOKS: LOOKS };
 BE.initP = BE.init().catch(() => { /* backend unreachable: the app runs device-only */ });
 // The Gemini key is a dashboard setting kept in the app cloud (content/ai), never in the source.
+loadContent('codes', 'codes.json', 'nabu-codes').then((r) => { CODEBOOK.set(r && r.data); }).catch(() => {});
 loadContent('sale', 'sale.json', 'nabu-sale').then((r) => { SALE.set(r && r.data); renderChrome((ROUTES[parseHash().route] || {}).nav); route(); });
 store.set('nabu-ai', null);
 /* The AI key is read from the cloud by Nabu only and never cached here. */

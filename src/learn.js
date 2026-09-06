@@ -24,10 +24,12 @@ function bindPaywall(root, after) {
   const S = T();
   $$('[data-buy]', root).forEach((a) => a.addEventListener('click', () => { const c = courseOf(a.getAttribute('data-buy')); copyText(S.buyMsg(L(c.name), fmtPrice(c.price), c.months)); toast(S.copied); }));
   const btn = $('#cunlock', root);
-  if (btn) btn.addEventListener('click', () => {
-    const r = parseCode($('#ccode', root).value);
+  if (btn) btn.addEventListener('click', async () => {
     const st = $('#cstatus', root);
-    if (!r) { st.textContent = S.badCode; st.className = 'hint err'; return; }
+    st.textContent = S.codeChecking; st.className = 'hint'; btn.disabled = true;
+    const r = await verifyCode($('#ccode', root).value).catch(() => null);
+    btn.disabled = false;
+    if (!r) { st.textContent = CODEBOOK.ready() ? S.badCode : S.codeOffline; st.className = 'hint err'; return; }
     ACCESS.grant(r.courses || [r.course], r.until);
     toast(S.unlocked); if (after) after(); else route();
   });
@@ -501,9 +503,12 @@ function renderUnlock() {
       store.set('nabu-contact-draft', unlockMessage());
       location.hash = BE.enabled ? '#/me?next=unlock' : '#/contact';
     });
-    $('#ugo').addEventListener('click', () => {
-      const r = parseCode($('#ucode').value), st = $('#ustatus');
-      if (!r) { st.textContent = S.badCode; st.className = 'hint err'; return; }
+    $('#ugo').addEventListener('click', async () => {
+      const st = $('#ustatus'), btn = $('#ugo');
+      st.textContent = S.codeChecking; st.className = 'hint'; btn.disabled = true;
+      const r = await verifyCode($('#ucode').value).catch(() => null);
+      btn.disabled = false;
+      if (!r) { st.textContent = CODEBOOK.ready() ? S.badCode : S.codeOffline; st.className = 'hint err'; return; }
       ACCESS.grant(r.courses || [r.course], r.until); toast(S.unlocked); draw();
     });
   };

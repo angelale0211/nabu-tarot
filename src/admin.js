@@ -289,18 +289,72 @@ function adminCodes(p) {
   p.innerHTML = '<div class="card"><p class="hint" style="margin-bottom:10px">' + esc(S.codesIntro) + '</p>'
     + '<label class="f" for="ccourse">' + esc(S.codeCourse) + '</label><select id="ccourse">' + COURSES.map((c) => '<option value="' + c.id + '">' + esc(L(c.name)) + ' · ' + fmtPrice(c.price) + '</option>').join('') + '</select>'
     + '<div class="two"><div><label class="f" for="cstart">' + esc(S.codeStart) + '</label><input id="cstart" type="date" value="' + isoDate(new Date()) + '"></div><div><label class="f" for="cmonths">' + esc(S.codeMonths) + '</label><input id="cmonths" type="number" min="1" value="6"></div></div>'
-    + '<button class="btn primary block" id="cmake" style="margin-top:14px">' + esc(S.makeCode) + '</button><div id="cout"></div></div>'
+    + '<button class="btn primary block" id="cmake" style="margin-top:14px">' + esc(S.makeCode) + '</button><div id="cout"></div>'
+    + '<label class="f" for="cold" style="margin-top:16px">' + esc(S.codeOldLabel) + '</label><textarea id="cold" placeholder="NABU-T-260901-ABC234"></textarea>'
+    + '<button class="btn block" id="coldgo" style="margin-top:8px">' + esc(S.codeOldAdd) + '</button><p class="hint" id="coldstatus">' + esc(S.codeOldHint) + '</p></div>'
+    + '<div class="card"><h3 style="margin-bottom:8px">' + esc(S.codeBook) + '</h3><div id="cbook"></div></div>'
     + '<div class="card"><h3 style="margin-bottom:4px">✦ ' + esc(S.aiSettings) + '</h3><p class="hint" style="margin-bottom:8px">' + esc(S.aiKeyHint) + '</p><label class="f" for="gkey">' + esc(S.aiKeyLabel) + '</label><div class="row nw"><input id="gkey" type="password" value="' + esc(CONFIG.geminiKey || '') + '" autocomplete="off"><button class="btn sm" id="gsave">' + esc(S.saveKey) + '</button></div><p class="hint" id="gstatus"></p></div>';
   $('#gsave').addEventListener('click', async () => {
     const st = $('#gstatus'), key = $('#gkey').value.trim();
     if (!cloud()) { st.textContent = S.adminLogin; st.className = 'hint err'; return; }
     try { await BE.setContent('ai', { geminiKey: key }); CONFIG.geminiKey = key; st.textContent = key ? S.aiKeySaved : '✓'; st.className = 'hint ok'; } catch (e) { st.textContent = S.publishFail + ': ' + e.message; st.className = 'hint err'; }
   });
-  $('#cmake').addEventListener('click', () => {
-    const until = addMonths($('#cstart').value || isoDate(new Date()), Number($('#cmonths').value) || 6), code = makeCode($('#ccourse').value, until);
-    $('#cout').innerHTML = '<div class="codebox" id="codeval">' + code + '</div><p class="hint" style="text-align:center">' + esc(S.codeUntil) + ': ' + esc(fmtDate(until)) + '</p><button class="btn block" id="ccopy">' + esc(S.copyMsg.replace(/tin nhắn|the message/i, 'mã')) + '</button>';
+  /* Issuing a code publishes its hash and keeps nothing else, so the code
+     itself exists only in the message Nabu sends. */
+  $('#cmake').addEventListener('click', async () => {
+    const out = $('#cout'), st = $('#cstatus2');
+    if (!cloud()) { out.innerHTML = '<p class="hint err">' + esc(S.adminLogin) + '</p>'; return; }
+    const course = $('#ccourse').value;
+    const until = addMonths($('#cstart').value || isoDate(new Date()), Number($('#cmonths').value) || 6);
+    const code = randomCode(course, until);
+    out.innerHTML = '<p class="hint">' + esc(S.codePublishing) + '</p>';
+    try {
+      await publishCode(code, course, until);
+    } catch (e) {
+      out.innerHTML = '<p class="hint err">' + esc(S.publishFail + ': ' + e.message) + '</p>';
+      return;
+    }
+    out.innerHTML = '<div class="codebox" id="codeval">' + esc(code) + '</div>'
+      + '<p class="hint" style="text-align:center">' + esc(S.codeUntil) + ': ' + esc(fmtDate(until)) + '</p>'
+      + '<button class="btn block" id="ccopy">' + esc(S.copyCode) + '</button>'
+      + '<p class="hint">' + esc(S.codeOnceOnly) + '</p>';
     $('#ccopy').addEventListener('click', () => copyText(code).then(() => toast(S.copied)));
+    drawBook();
   });
+
+  /* Codes handed out before this list existed can be added to it, unchanged,
+     so nobody who already paid is locked out. */
+  $('#coldgo').addEventListener('click', async () => {
+    const st = $('#coldstatus'), lines = $('#cold').value.split(/[\s,;]+/).map((x) => x.trim()).filter(Boolean);
+    if (!cloud()) { st.textContent = S.adminLogin; st.className = 'hint err'; return; }
+    if (!lines.length) return;
+    const course = $('#ccourse').value, until = addMonths($('#cstart').value || isoDate(new Date()), Number($('#cmonths').value) || 6);
+    st.textContent = S.codePublishing; st.className = 'hint';
+    try {
+      for (let i = 0; i < lines.length; i++) await publishCode(lines[i], course, until);
+      st.textContent = S.codeAdded(lines.length); st.className = 'hint ok';
+      $('#cold').value = '';
+      drawBook();
+    } catch (e) { st.textContent = S.publishFail + ': ' + e.message; st.className = 'hint err'; }
+  });
+
+  function drawBook() {
+    const wrap = $('#cbook'), book = CODEBOOK.all(), ids = Object.keys(book).sort((a, b) => String(book[b].at).localeCompare(String(book[a].at)));
+    // the key is the hash of the code, which is all the app ever keeps
+    wrap.innerHTML = !ids.length
+      ? '<p class="hint">' + esc(S.codeNone) + '</p>'
+      : '<ul class="codelist">' + ids.map((id) => {
+        const r = book[id], c = COURSES.filter((x) => x.id === r.c)[0];
+        return '<li><span><b>' + esc(c ? L(c.name) : r.c) + '</b><span class="faint"> · ' + esc(S.codeUntil) + ' ' + esc(fmtDate(r.u)) + ' · ' + esc(S.codeMade) + ' ' + esc(fmtDate(r.at || r.u)) + '</span></span>'
+          + '<button type="button" class="btn tiny" data-revoke="' + esc(id) + '">' + esc(S.codeRevoke) + '</button></li>';
+      }).join('') + '</ul>';
+    $$('[data-revoke]', wrap).forEach((b) => b.addEventListener('click', async () => {
+      if (!confirm(S.codeRevokeAsk)) return;
+      try { await revokeCode(b.getAttribute('data-revoke')); drawBook(); toast('✓'); }
+      catch (e) { toast(S.publishFail); }
+    }));
+  }
+  drawBook();
 }
 /* ---- the sale tool ----
    One record, so a sale can be switched on, aimed at readings or unlockables,

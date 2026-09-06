@@ -11,5 +11,6 @@ compatibility_flags = ["nodejs_compat"]
 ALLOWED_ORIGIN = "https://angelale0211.github.io"
 
 # Secrets (never in this file):
+#   npx wrangler secret put GEMINI_API_KEY      (Gemini answers, key never in the browser)
 #   npx wrangler secret put ANTHROPIC_API_KEY   (Claude answers; optional)
 #   npx wrangler secret put RESEND_API_KEY      (booking invitations by email; resend.com free tier)

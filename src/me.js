@@ -216,7 +216,14 @@ function renderMe(args, params) {
       setTimeout(() => location.reload(), 800);
     });
     bindProfileForm(body, () => { if (params.next === 'book') location.hash = '#/book'; else if (params.next === 'unlock') location.hash = '#/unlock'; });
-    $('#munlock').addEventListener('click', () => { const r = parseCode($('#mcode').value); const st = $('#mcstatus'); if (!r) { st.textContent = S.badCode; st.className = 'hint err'; return; } ACCESS.grant(r.courses || [r.course], r.until); toast(S.unlocked); draw(); });
+    $('#munlock').addEventListener('click', async () => {
+      const st = $('#mcstatus'), btn = $('#munlock');
+      st.textContent = S.codeChecking; st.className = 'hint'; btn.disabled = true;
+      const r = await verifyCode($('#mcode').value).catch(() => null);
+      btn.disabled = false;
+      if (!r) { st.textContent = CODEBOOK.ready() ? S.badCode : S.codeOffline; st.className = 'hint err'; return; }
+      ACCESS.grant(r.courses || [r.course], r.until); toast(S.unlocked); draw();
+    });
     $$('[data-theme-pick]', body).forEach((b) => b.addEventListener('click', () => { setTheme(b.getAttribute('data-theme-pick')); $$('[data-theme-pick]', body).forEach((x) => x.classList.toggle('on', x === b)); }));
     // The tour opens here rather than throwing the visitor back to the home
     // screen. It sits above the row of buttons and closes from its own link.

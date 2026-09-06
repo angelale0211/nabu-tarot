@@ -8,6 +8,7 @@ import Anthropic from "@anthropic-ai/sdk";
 
 export interface Env {
   ANTHROPIC_API_KEY?: string;
+  GEMINI_API_KEY?: string;
   AI?: { run: (model: string, input: unknown) => Promise<{ response?: string }> }; // Workers AI binding (free tier, open models)
   ALLOWED_ORIGIN?: string; // e.g. https://angelale0211.github.io
   RESEND_API_KEY?: string; // for /booking: mails the reader a calendar invitation
@@ -89,6 +90,34 @@ export default {
     if (!question) return new Response(JSON.stringify({ error: "empty question" }), { status: 400, headers });
 
     const knowledge = `KIND: ${body.kind}\nVISITOR: ${body.profile?.name || "-"} ${body.profile?.sign ? "(" + body.profile.sign + ")" : ""}\nKNOWLEDGE:\n${(body.context || "").slice(0, 12000)}`;
+    /* Gemini, with the key held here rather than in the browser. Set it with
+       npx wrangler secret put GEMINI_API_KEY */
+    if (env.GEMINI_API_KEY) {
+      const sys = (body.lang === "en" ? SYSTEM_EN : SYSTEM_VI) + "
+
+" + knowledge;
+      const contents: { role: string; parts: { text: string }[] }[] = [];
+      for (const h of (body.history || []).slice(-6)) {
+        if (h && h.text) contents.push({ role: h.role === "assistant" ? "model" : "user", parts: [{ text: h.text.slice(0, 2000) }] });
+      }
+      if (contents.length && contents[contents.length - 1].role === "user") contents.pop();
+      contents.push({ role: "user", parts: [{ text: question }] });
+      const models = ["gemini-3.5-flash-lite", "gemini-2.5-flash-lite", "gemini-2.0-flash"];
+      for (const model of models) {
+        try {
+          const r = await fetch("https://generativelanguage.googleapis.com/v1beta/models/" + encodeURIComponent(model) + ":generateContent?key=" + encodeURIComponent(env.GEMINI_API_KEY), {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ systemInstruction: { parts: [{ text: sys }] }, contents, generationConfig: { temperature: 0.6, maxOutputTokens: 900 } }),
+          });
+          if (!r.ok) continue;
+          const j = (await r.json()) as any;
+          const text = (j?.candidates?.[0]?.content?.parts || []).map((p: any) => p.text || "").join("").trim();
+          if (text) return new Response(JSON.stringify({ answer: text }), { headers });
+        } catch { /* try the next model */ }
+      }
+      return new Response(JSON.stringify({ error: "gemini" }), { status: 502, headers });
+    }
     // No Anthropic key: answer with an open model on Workers AI (free tier).
     if (!env.ANTHROPIC_API_KEY && env.AI) {
       const msgs: { role: string; content: string }[] = [{ role: "system", content: (body.lang === "en" ? SYSTEM_EN : SYSTEM_VI) + "\n\n" + knowledge }];
