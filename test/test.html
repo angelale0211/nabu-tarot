@@ -520,9 +520,14 @@ async function go(hash, sel) { W().location.hash = hash; await sleep(30); return
       w.localStorage.removeItem('nabu-pets'); w.localStorage.removeItem('nabu-pet'); w.localStorage.removeItem('nabu-coins');
       w.localStorage.removeItem('nabu-luck-best'); w.localStorage.removeItem('nabu-coin-day'); w.localStorage.removeItem('nabu-luck-hold');
       await go('#/play/pet', '.petpick');
-      ok(d.querySelectorAll('.petpick [data-kind]').length === 4 && d.querySelectorAll('.petpick .pl').length === 4
-        && /Tình duyên/.test(d.querySelector('[data-kind="cat"]').textContent) && /Tiền tài/.test(d.querySelector('[data-kind="turtle"]').textContent),
-        'four companions are offered, each one keeping a different kind of luck');
+      ok(d.querySelectorAll('.petpick [data-kind]').length === 12 && d.querySelectorAll('.petpick .pl').length === 12
+        && d.querySelectorAll('.pp.myth').length === 6 && d.querySelectorAll('.pp.locked').length === 6
+        && /Tình duyên/.test(d.querySelector('[data-kind="cat"]').textContent) && /Tiền tài/.test(d.querySelector('[data-kind="turtle"]').textContent)
+        && /Sức khỏe/.test(d.querySelector('[data-kind="deer"]').textContent) && /Đi lại/.test(d.querySelector('[data-kind="swallow"]').textContent),
+        'six free companions cover love, work, study, money, health and travel, with six spirit beasts locked behind Plus');
+      d.querySelector('[data-kind="phoenix"]').click(); await sleep(60);
+      ok(!w.localStorage.getItem('nabu-pets') && /unlock/.test(w.location.hash), 'a spirit beast cannot be kept without Plus and sends the visitor to the price list');
+      await go('#/play/pet', '.petpick');
       d.querySelector('[data-kind="cat"]').click(); await sleep(60);
       ok(JSON.parse(w.localStorage.getItem('nabu-pets')).length === 1 && d.querySelector('.petstage .pethome') && d.querySelector('.petstage .aura')
         && d.querySelectorAll('.shelf').length === 3 && d.querySelectorAll('.carelist li.locked').length === 4 && d.querySelector('#feed'),

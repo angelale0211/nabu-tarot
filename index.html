@@ -931,12 +931,18 @@ main{padding:22px 0 30px}
    and the companion on top. Everything else on the card explains, in the open,
    what each kind of care is worth. */
 .petwrap{text-align:center}
-.petstage{position:relative;width:min(250px,72vw);margin:0 auto 12px;padding-bottom:4px}
-.petstage .pethome{position:absolute;left:-8%;right:-8%;bottom:-2%;width:116%;height:auto;display:block;z-index:0}
+.petstage{position:relative;width:min(288px,82vw);aspect-ratio:1/1;margin:0 auto 12px;border-radius:18px;overflow:hidden;background:var(--surface-2)}
+.petstage .pethome{position:absolute;inset:0;width:100%;height:100%;display:block;z-index:0}
 .pethome{display:block;width:100%;height:auto}
 .aura{position:absolute;left:8%;top:2%;width:84%;height:84%;border-radius:50%;z-index:1;background:radial-gradient(circle,var(--aura) 0%,transparent 68%);opacity:.85;animation:breathe 4.6s ease-in-out infinite}
 @keyframes breathe{0%,100%{transform:scale(.94);opacity:.6}50%{transform:scale(1.06);opacity:.95}}
 .petart{position:relative;z-index:2;width:100%;height:auto;display:block}
+/* The companion stands to the left of centre, in front of its own place. */
+.petstage .petart{position:absolute;left:5%;bottom:1%;width:68%;height:auto}
+/* A spirit beast is lit from within, so it reads as the rarer thing. */
+.petart.myth{filter:drop-shadow(0 0 6px rgba(229,190,94,.55));animation:mythglow 3.6s ease-in-out infinite}
+@keyframes mythglow{0%,100%{filter:drop-shadow(0 0 4px rgba(229,190,94,.4))}50%{filter:drop-shadow(0 0 10px rgba(229,190,94,.75))}}
+.petstage .aura{left:12%;top:26%;width:64%;height:58%}
 .lucksyms{position:absolute;inset:0;z-index:3;pointer-events:none;overflow:hidden}
 .lucksyms i{position:absolute;bottom:16%;font-size:15px;font-style:normal;opacity:0;animation:luckrise 4.2s ease-in-out infinite}
 @keyframes luckrise{0%{opacity:0;transform:translateY(6px) scale(.7)}18%{opacity:.95}100%{opacity:0;transform:translateY(-64px) scale(1.05)}}
@@ -946,6 +952,12 @@ main{padding:22px 0 30px}
 .petstage.praying .aura{animation:blessing 1.2s ease-in-out}
 @keyframes praying{0%,100%{transform:translateY(0)}30%{transform:translateY(3px) scale(.97)}70%{transform:translateY(-6px) scale(1.04)}}
 @keyframes blessing{0%{transform:scale(.9);opacity:.5}60%{transform:scale(1.3);opacity:1}100%{transform:scale(1);opacity:.8}}
+/* A toy thrown for the companion, once a day or three times with Plus. */
+.toys{position:absolute;inset:0;z-index:4;pointer-events:none;overflow:hidden}
+.toys i{position:absolute;font-size:22px;font-style:normal;opacity:0;animation:toyfly 1.5s ease-in-out forwards}
+@keyframes toyfly{0%{opacity:0;transform:translate(0,0) rotate(0)}16%{opacity:1}50%{transform:translate(var(--tx),-44px) rotate(180deg)}100%{opacity:0;transform:translate(calc(var(--tx) * 2),4px) rotate(360deg)}}
+.petstage.playing .petart{animation:hopping .5s ease-in-out 3}
+@keyframes hopping{0%,100%{transform:translateY(0) rotate(0)}40%{transform:translateY(-13px) rotate(-4deg)}72%{transform:translateY(0) rotate(3deg)}}
 .crumbs{position:absolute;inset:0;z-index:4;pointer-events:none;overflow:hidden}
 .crumbs i{position:absolute;top:-6%;font-size:20px;font-style:normal;opacity:0;animation:dropfood 1s ease-in forwards}
 @keyframes dropfood{0%{opacity:0;transform:translateY(-10px)}20%{opacity:1}100%{opacity:0;transform:translateY(62px)}}
@@ -1007,8 +1019,8 @@ main{padding:22px 0 30px}
 .shelf .sh b{font-size:11.5px;font-weight:600;line-height:1.3;text-align:center}
 .shelf .sh.on{border-color:var(--primary);border-width:1.5px;background:var(--surface)}
 .shelf .sh.locked{border-style:dashed;opacity:.94}
-.shelf .shart{display:flex;align-items:center;justify-content:center;height:40px;font-size:26px;line-height:1;width:100%}
-.shelf .shart svg{position:static;max-width:100%;max-height:40px;width:auto;height:auto}
+.shelf .shart{display:flex;align-items:center;justify-content:center;height:46px;font-size:26px;line-height:1;width:100%}
+.shelf .shart svg{position:static;max-width:100%;max-height:46px;width:auto;height:auto;border-radius:8px}
 .shelf .plus{font-size:11px;font-weight:700;color:var(--gold-deep);background:var(--tag-gold-bg);border-radius:999px;padding:0 6px}
 .shelf .sh-lock{position:absolute;top:6px;right:7px;font-size:13px}
 .shelf .sh-on{position:absolute;top:6px;left:7px;color:var(--primary);font-weight:700;font-size:13px}
@@ -1023,6 +1035,7 @@ main{padding:22px 0 30px}
 .petpick .pl{display:inline-flex;align-items:center;gap:4px;background:var(--aura);color:var(--ink);border-radius:999px;padding:2px 10px;font-size:12px;font-weight:600}
 .petpick .pp.have{border-color:var(--primary);border-width:1.5px}
 .petpick .pp.locked{border-style:dashed}
+.petpick .pp.myth{background:linear-gradient(180deg,var(--tag-gold-bg),var(--surface))}
 .petpick .pp-lock{position:absolute;top:8px;right:9px;font-size:14px}
 .petpick .pp-on{position:absolute;top:8px;left:9px;color:var(--primary);font-weight:700}
 /* The companions stand at the foot of the tree rather than in the branches. */
@@ -1292,10 +1305,10 @@ const COURSES = [
   { id: 'manifest', price: 75000, months: 12, sum: { vi: '7 phương pháp, mỗi bài một công cụ.', en: '7 methods, one tool with each.' }, name: { vi: 'Bộ Manifestation', en: 'Manifestation set' },
     blurb: { vi: 'Bảy phương pháp có công cụ làm ngay trong app: WOOP, bảng tầm nhìn có ảnh, nghi thức trăng, kế hoạch nếu-thì, buông bỏ, giới hạn, nến và đá. Mọi thứ bạn viết được lưu trên máy và có thể xoá làm lại bất cứ lúc nào.', en: 'Seven methods with tools you use right in the app: WOOP, a vision board with photos, Moon rituals, if-then plans, letting go, limits, candles and stones. Everything you write is saved on your device and can be cleared and redone any time.' },
     includes: { vi: ['7 bài hướng dẫn nâng cao', 'Bảng ảnh, kế hoạch, nghi thức, buông bỏ', 'Nến và đá theo mục đích', 'Dùng 12 tháng, xem offline'], en: ['7 advanced guides', 'Photo board, plans, ritual and letting-go tools', 'Candles and stones by purpose', '12 months of access, works offline'] } },
-  { id: 'pro', price: 120000, months: 12, sum: { vi: 'Cả bốn bạn nhỏ may mắn và mọi giao diện đẹp.', en: 'All four luck companions and every look.' },
+  { id: 'pro', price: 120000, months: 12, sum: { vi: 'Sáu linh thú, nuôi nhiều vị cùng lúc, và mọi giao diện đẹp.', en: 'Six spirit beasts, several at once, and every look.' },
     name: { vi: 'Nabu Tarot Plus', en: 'Nabu Tarot Plus' },
-    blurb: { vi: 'Mở cả bốn bạn nhỏ may mắn cùng món ăn ngon, nhà đẹp và phụ kiện cho chúng, thêm toàn bộ giao diện của app trong một năm: ba mặt sau lá bài, ba cây thông điệp, ba đồng xu và ba trang nhật ký.', en: 'Opens all four luck companions with their good food, their homes and their charms, plus every look in the app for a year: three more card backs, three more message trees, three more coins and three more diary pages.' },
-    includes: { vi: ['Nuôi cả 4 bạn nhỏ may mắn', '6 món ăn ngon, 3 ngôi nhà và 4 phụ kiện', '4 màu lông đặc biệt', '3 mặt sau lá bài và 3 cây thông điệp', '3 đồng xu và 3 trang nhật ký', 'Dùng 12 tháng'], en: ['Keep all 4 luck companions', '6 good foods, 3 homes and 4 charms', '4 special coats', '3 more card backs and 3 more message trees', '3 more coins and diary pages', '12 months of access'] } },
+    blurb: { vi: 'Mở sáu linh thú trong truyền thuyết, cho bạn nuôi nhiều vị cùng lúc, kèm món ăn ngon, nhà đẹp và phụ kiện cho chúng, cùng toàn bộ giao diện của app trong một năm.', en: 'Opens the six spirit beasts, lets you keep several companions at once, adds their good food, their homes and their charms, and every look in the app for a year.' },
+    includes: { vi: ['6 linh thú: Phượng Hoàng, Rồng Mây, Kỳ Lân, Tỳ Hưu, Bạch Hạc, Thiên Mã', 'Nuôi nhiều bạn nhỏ cùng lúc', 'Chơi 3 lượt mỗi ngày, chờ 2 giờ giữa hai bữa', '6 món ăn ngon, 3 ngôi nhà và 4 phụ kiện', '3 mặt sau lá bài, 3 cây thông điệp, 3 đồng xu và 3 trang nhật ký', 'Dùng 12 tháng'], en: ['6 spirit beasts: phoenix, dragon, qilin, pixiu, crane and sky horse', 'Keep several companions at once', '3 turns of play a day, 2 hours between meals', '6 good foods, 3 homes and 4 charms', '3 card backs, 3 message trees, 3 coins and 3 diary pages', '12 months of access'] } },
   { id: 'luck', price: 50000, months: 12, sum: { vi: 'Đồng xu và cây thông điệp, không giới hạn.', en: 'Coin and message tree, unlimited.' }, name: { vi: 'Đồng xu và cây thông điệp', en: 'Coin and message tree' },
     blurb: { vi: 'Mở không giới hạn cả hai hoạt động trong một năm: tung đồng xu và rung cây thông điệp bao nhiêu lần tuỳ bạn.', en: 'Unlimited turns at both for a year: flip the coin and shake the message tree as often as you like.' },
     includes: { vi: ['Tung đồng xu không giới hạn', 'Rung cây thông điệp không giới hạn', 'Dùng 12 tháng'], en: ['Unlimited coin flips', 'Unlimited tree shakes', '12 months of access'] } },
@@ -1462,7 +1475,7 @@ const STR = {
     looksLocked: 'Mở tất cả giao diện đẹp hơn', looksPlusOn: 'Bạn đang có Nabu Tarot Plus, tất cả giao diện đều mở.', looksNeedPlus: 'Giao diện này thuộc Nabu Tarot Plus.',
     lookKinds: { cardback: 'Mặt sau lá bài', tree: 'Cây thông điệp', coin: 'Đồng xu', diary: 'Trang nhật ký' },
     petTitle: 'Nuôi bạn nhỏ may mắn', petSub: 'mỗi ngày một bữa ăn và một lời khấn',
-    petPick: 'Mỗi bạn nhỏ trông giữ một phần khác nhau trong cuộc sống của bạn. Bạn hãy chọn người bạn mà bạn muốn có bên cạnh.',
+    petPick: 'Mỗi bạn nhỏ trông giữ một phần khác nhau trong cuộc sống của bạn: tình duyên, sự nghiệp, học hành, tiền tài, sức khỏe và chuyện đi lại.',
     petIntro: 'Bạn cho bạn nhỏ ăn mỗi ngày một lần, rồi khấn một lời. Bạn chăm sóc càng đều đặn thì vận may càng đầy.',
     petBrings: (n) => 'Trông giữ chuyện ' + n.toLowerCase(), petCharm: 'Vận may',
     petFeedWith: (n) => 'Cho ăn ' + n.toLowerCase(), petFedToday: '✓ Hôm nay bạn nhỏ đã được ăn rồi. Ngày mai bạn quay lại nhé.', petThanks: 'Bạn nhỏ vui lắm!',
@@ -1472,7 +1485,7 @@ const STR = {
     petSwap: 'Đổi bạn nhỏ khác', petSwapAsk: 'Bạn muốn đổi sang một bạn nhỏ khác?', petLetGo: 'Tiễn bạn nhỏ này đi', petLetGoAsk: 'Bạn muốn tiễn bạn nhỏ này đi?',
     petAdd: 'Nhận thêm một bạn nhỏ', petRoomLeft: (n) => 'còn ' + n + ' chỗ', petBack: 'Quay lại với bạn nhỏ',
     petLuckTotal: (n) => 'Bạn đang có ' + n + ' loại may mắn đi cùng.',
-    petPlusPitch: 'Người dùng thường nuôi được một bạn nhỏ. Nabu Tarot Plus mở cả bốn, để nhiều góc trong đời bạn cùng được trông giữ.',
+    petPlusPitch: 'Người dùng thường nuôi một bạn nhỏ. Nabu Tarot Plus mở sáu linh thú và cho bạn nuôi nhiều vị cùng lúc, để nhiều góc trong đời bạn cùng được trông giữ.',
     petPlusItem: 'Món này thuộc Nabu Tarot Plus.',
     petLuckNote: 'Bạn nhỏ ở đây để mỗi ngày bạn có một việc nhỏ ấm áp. Lời chúc là lời chúc, không phải lời hứa.',
     petFoodTitle: 'Bữa ăn', petFoodNote: 'Món ăn ngon hơn làm bạn nhỏ vui hơn, và vận may cũng đầy nhanh hơn.',
@@ -1480,6 +1493,11 @@ const STR = {
     petWearTitle: 'Phụ kiện', petWearNote: 'Một chiếc khăn hay một vòng hoa cũng làm bạn nhỏ rạng rỡ hơn hẳn.',
     careDays: 'Chăm đều mỗi ngày', careMeals: 'Số bữa đã cho ăn', careTreats: 'Món ngon', careCoat: 'Màu lông đặc biệt', careWear: 'Phụ kiện', careHome: 'Nhà đẹp',
     careMeal: 'Bữa ăn cơ bản', petMealWorth: 'Mỗi bữa ăn được', petLevel: (n) => 'Cấp ' + n,
+    petPickFree: 'Sáu bạn nhỏ đồng hành', petPickFreeNote: 'Bạn chọn một bạn nhỏ để nuôi miễn phí, và đổi được bất cứ lúc nào.',
+    petPickPro: 'Linh thú Nabu Tarot Plus', petPickProNote: 'Sáu linh thú trong truyền thuyết, mỗi vị trông giữ một phần đời như các bạn nhỏ, nhưng ở mức mạnh hơn. Nabu Tarot Plus mở cả sáu và cho bạn nuôi nhiều vị cùng lúc.',
+    petMythPlus: 'Linh thú này thuộc Nabu Tarot Plus.',
+    petPlay: 'Chơi cùng bạn nhỏ', petPlayLeft: (n) => 'còn ' + n + ' lượt hôm nay', petPlayDone: '✓ Hôm nay bạn đã chơi cùng bạn nhỏ rồi.',
+    petPlayMore: 'Với Nabu Tarot Plus, bạn được chơi 3 lượt mỗi ngày.', petPlayThanks: 'Bạn nhỏ chạy nhảy vui vẻ. Bạn được thêm 12 điểm.', luckEarnPlay: 'Mỗi lượt chơi',
     petFull: (w) => 'Bạn nhỏ đang no. Bạn quay lại sau ' + w + ' nhé.', petFasterPlus: 'Với Nabu Tarot Plus, bạn chỉ phải chờ 2 giờ giữa hai bữa ăn.',
     petLevelUp: (lv, c) => 'Bạn nhỏ lên cấp ' + lv + '. Bạn nhận được ' + c + ' xu Nabu.', petThanksCoins: (c) => 'Bạn nhỏ vui lắm. Bạn nhận được ' + c + ' xu Nabu.',
     waitMin: (n) => n + ' phút', waitHour: (n) => n + ' giờ', waitHourMin: (h, m) => h + ' giờ ' + m + ' phút',
@@ -1770,7 +1788,7 @@ const STR = {
     looksLocked: 'Open every look', looksPlusOn: 'You have Nabu Tarot Plus, so every look is open.', looksNeedPlus: 'That look comes with Nabu Tarot Plus.',
     lookKinds: { cardback: 'Card backs', tree: 'The message tree', coin: 'The coin', diary: 'Diary paper' },
     petTitle: 'Keep a luck companion', petSub: 'one meal and one wish a day',
-    petPick: 'Each companion looks after a different part of your life. Choose the one you would like beside you.',
+    petPick: 'Each companion looks after a different part of your life: love, work, study, money, health and travel.',
     petIntro: 'Feed your companion once a day, then say one wish over it. The more steadily you care for it, the fuller its luck grows.',
     petBrings: (n) => 'Looks after your ' + n.toLowerCase(), petCharm: 'Luck',
     petFeedWith: (n) => 'Feed ' + n.toLowerCase(), petFedToday: '✓ Fed today. Come back tomorrow.', petThanks: 'Very happy!',
@@ -1780,7 +1798,7 @@ const STR = {
     petSwap: 'Choose a different companion', petSwapAsk: 'Change to a different companion?', petLetGo: 'Let this companion go', petLetGoAsk: 'Let this companion go?',
     petAdd: 'Take in another companion', petRoomLeft: (n) => n + ' places left', petBack: 'Back to your companion',
     petLuckTotal: (n) => n + ' kinds of luck are walking with you.',
-    petPlusPitch: 'One companion is free. Nabu Tarot Plus opens all four, so more corners of your life are looked after.',
+    petPlusPitch: 'One companion is free. Nabu Tarot Plus opens the six spirit beasts and lets you keep several at once, so more corners of your life are looked after.',
     petPlusItem: 'That one comes with Nabu Tarot Plus.',
     petLuckNote: 'Your companion is here to give you one warm small thing each day. A blessing is a blessing, not a promise.',
     petFoodTitle: 'Meals', petFoodNote: 'Better food makes a happier companion, and its luck fills faster.',
@@ -1788,6 +1806,11 @@ const STR = {
     petWearTitle: 'Charms', petWearNote: 'A scarf or a flower crown makes a companion shine.',
     careDays: 'Coming back every day', careMeals: 'Meals given', careTreats: 'Good food', careCoat: 'A special coat', careWear: 'A charm', careHome: 'A proper home',
     careMeal: 'A plain meal', petMealWorth: 'Every meal earns', petLevel: (n) => 'Level ' + n,
+    petPickFree: 'Six everyday companions', petPickFreeNote: 'Keep one of them for free, and change your mind whenever you like.',
+    petPickPro: 'Nabu Tarot Plus spirit beasts', petPickProNote: 'Six creatures out of legend, each keeping the same corner of life as its everyday counterpart, only stronger. Plus opens all six and lets you keep several at once.',
+    petMythPlus: 'That spirit beast comes with Nabu Tarot Plus.',
+    petPlay: 'Play together', petPlayLeft: (n) => n + ' turns left today', petPlayDone: '✓ You have played together today.',
+    petPlayMore: 'With Nabu Tarot Plus you get 3 turns a day.', petPlayThanks: 'Happy and bouncing. That is 12 more points.', luckEarnPlay: 'Each turn of play',
     petFull: (w) => 'Full for now. Come back in ' + w + '.', petFasterPlus: 'With Nabu Tarot Plus the wait between meals is only 2 hours.',
     petLevelUp: (lv, c) => 'Level ' + lv + ' reached. You earned ' + c + ' Nabu coins.', petThanksCoins: (c) => 'Very happy! You earned ' + c + ' Nabu coins.',
     waitMin: (n) => n + ' minutes', waitHour: (n) => n + ' hours', waitHourMin: (h, m) => h + ' hours ' + m + ' minutes',
@@ -11821,6 +11844,7 @@ function renderRewards() {
       + '<div class="card"><h3 style="margin-bottom:8px">' + esc(S.luckEarnTitle) + '</h3><ul class="carelist">'
       + '<li><span>' + esc(S.luckEarnFeed) + '</span><b>+5</b></li>'
       + '<li><span>' + esc(S.luckEarnGood) + '</span><b>+10</b></li>'
+      + '<li><span>' + esc(S.luckEarnPlay) + '</span><b>+3</b></li>'
       + '<li><span>' + esc(S.luckEarnLevel) + '</span><b>+500 × ' + esc(S.luckLevelWord) + '</b></li>'
       + '</ul><p class="hint">' + esc(S.luckEarnNote) + '</p></div>'
       + (holds.length
@@ -11854,39 +11878,73 @@ ROUTES.rewards = { nav: '', render: renderRewards };
    blessings are written to comfort and to give the day a shape, the way a
    drawn card does; nothing here promises an outcome. */
 
-const PET_KINDS = ['cat', 'fox', 'bunny', 'turtle'];
+const PET_KINDS = ['cat', 'fox', 'bunny', 'turtle', 'deer', 'swallow', 'phoenix', 'dragon', 'qilin', 'pixiu', 'crane', 'pegasus'];
+/* The six ordinary companions are free, one of them at a time. The six spirit
+   beasts below them belong to Nabu Tarot Plus, which also lifts the limit of
+   one, so a subscriber can keep every corner of life covered at once. */
+const PET_PRO = { phoenix: true, dragon: true, qilin: true, pixiu: true, crane: true, pegasus: true };
 const PET_NAMES = {
   cat: { vi: 'Mèo Trăng', en: 'Moon cat' },
   fox: { vi: 'Cáo Sao', en: 'Star fox' },
   bunny: { vi: 'Thỏ Mây', en: 'Cloud bunny' },
-  turtle: { vi: 'Rùa Ngọc', en: 'Jade turtle' }
+  turtle: { vi: 'Rùa Ngọc', en: 'Jade turtle' },
+  deer: { vi: 'Hươu Lành', en: 'Gentle deer' },
+  swallow: { vi: 'Én Gió', en: 'Wind swallow' },
+  phoenix: { vi: 'Phượng Hoàng', en: 'Phoenix' },
+  dragon: { vi: 'Rồng Mây', en: 'Cloud dragon' },
+  qilin: { vi: 'Kỳ Lân', en: 'Qilin' },
+  pixiu: { vi: 'Tỳ Hưu', en: 'Pixiu' },
+  crane: { vi: 'Bạch Hạc', en: 'White crane' },
+  pegasus: { vi: 'Thiên Mã', en: 'Sky horse' }
 };
 
 /* ---- what each one looks after ---- */
-const PET_LUCK = { cat: 'love', fox: 'career', bunny: 'study', turtle: 'money' };
+const PET_LUCK = {
+  cat: 'love', fox: 'career', bunny: 'study', turtle: 'money', deer: 'health', swallow: 'travel',
+  phoenix: 'love', dragon: 'career', qilin: 'study', pixiu: 'money', crane: 'health', pegasus: 'travel'
+};
 const LUCKS = {
   love: {
     id: 'love', sym: '💗', ink: '#D3557E', aura: '#FBD3E1',
     name: { vi: 'Tình duyên', en: 'Love' },
-    line: { vi: 'Mèo Trăng ngồi canh chuyện tình cảm và giữ cho lòng bạn ấm.', en: 'The moon cat sits with matters of the heart and keeps you warm.' }
+    line: { vi: 'Mèo Trăng ngồi canh chuyện tình cảm và giữ cho lòng bạn ấm.', en: 'The moon cat sits with matters of the heart and keeps you warm.' },
+    proLine: { vi: 'Phượng Hoàng bay qua những gì đã cũ và mở ra một mùa mới cho trái tim bạn.', en: 'The phoenix flies over what is finished and opens a new season for your heart.' }
   },
   career: {
     id: 'career', sym: '⭐', ink: '#B98420', aura: '#FBE7BE',
     name: { vi: 'Sự nghiệp', en: 'Work' },
-    line: { vi: 'Cáo Sao đi trước một bước để mở đường cho công việc của bạn.', en: 'The star fox walks a step ahead and opens the way at work.' }
+    line: { vi: 'Cáo Sao đi trước một bước để mở đường cho công việc của bạn.', en: 'The star fox walks a step ahead and opens the way at work.' },
+    proLine: { vi: 'Rồng Mây cưỡi gió đưa tên bạn đi xa hơn những gì bạn tự nói về mình.', en: 'The cloud dragon rides the wind and carries your name further than you could speak it.' }
   },
   study: {
     id: 'study', sym: '📖', ink: '#4173B8', aura: '#CFE0F7',
     name: { vi: 'Học hành', en: 'Study' },
-    line: { vi: 'Thỏ Mây thức cùng bạn qua những trang sách khó nhất.', en: 'The cloud bunny stays up with you through the hardest pages.' }
+    line: { vi: 'Thỏ Mây thức cùng bạn qua những trang sách khó nhất.', en: 'The cloud bunny stays up with you through the hardest pages.' },
+    proLine: { vi: 'Kỳ Lân chỉ hiện ra với người chịu học, và nó đang đứng cạnh bàn của bạn.', en: 'The qilin shows itself only to those who keep studying, and it is standing by your desk.' }
   },
   money: {
     id: 'money', sym: '🪙', ink: '#2E8A68', aura: '#C6E8D9',
     name: { vi: 'Tiền tài', en: 'Money' },
-    line: { vi: 'Rùa Ngọc đi chậm mà chắc, giữ lại những gì bạn đã có.', en: 'The jade turtle moves slowly and keeps what you already have.' }
+    line: { vi: 'Rùa Ngọc đi chậm mà chắc, giữ lại những gì bạn đã có.', en: 'The jade turtle moves slowly and keeps what you already have.' },
+    proLine: { vi: 'Tỳ Hưu chỉ nuốt vào mà không nhả ra, nên của cải ở lại trong nhà bạn.', en: 'The pixiu swallows and never gives back, so what comes in stays in your house.' }
+  },
+  health: {
+    id: 'health', sym: '🌿', ink: '#1F8A98', aura: '#C7EAEE',
+    name: { vi: 'Sức khỏe', en: 'Health' },
+    line: { vi: 'Hươu Lành nhắc bạn đi chậm lại một chút để người còn theo kịp.', en: 'The gentle deer asks you to slow down so your body can keep up.' },
+    proLine: { vi: 'Bạch Hạc sống rất thọ, và nó đứng canh giấc ngủ của bạn mỗi đêm.', en: 'The white crane lives a long life, and it keeps watch over your sleep.' }
+  },
+  travel: {
+    id: 'travel', sym: '🧭', ink: '#C4643C', aura: '#F8D9C6',
+    name: { vi: 'Đi lại', en: 'Travel' },
+    line: { vi: 'Én Gió biết đường về, nên chuyến đi nào của bạn cũng có lối quay lại.', en: 'The wind swallow knows the way home, so every journey of yours has a way back.' },
+    proLine: { vi: 'Thiên Mã không cần đường, nơi nào bạn muốn đến thì nó đã đứng sẵn ở đó.', en: 'The sky horse needs no road; wherever you mean to go, it is already standing there.' }
   }
 };
 const petLuck = (kind) => LUCKS[PET_LUCK[kind] || 'love'];
+const petIsPro = (kind) => !!PET_PRO[kind];
+/* A spirit beast says the grander version of the same promise. */
+const petLine = (kind) => { const l = petLuck(kind); return petIsPro(kind) ? l.proLine : l.line; };
 
 /* ---- what they say when you make a wish over them ----
    Six lines each, so the answer feels like it belongs to that companion. */
@@ -11922,6 +11980,22 @@ const PET_BLESS = {
     { vi: 'Một cơ hội kiếm thêm đến từ một người quen cũ.', en: 'A chance to earn more comes through someone you already know.' },
     { vi: 'Đừng quyết định chuyện lớn khi trong người đang mệt.', en: 'Do not make a large decision while you are tired.' },
     { vi: 'Tiền vào chậm nhưng chắc. Cứ giữ nhịp của bạn.', en: 'Money comes in slowly and steadily. Keep your rhythm.' }
+  ],
+  health: [
+    { vi: 'Hôm nay bạn hãy uống thêm một cốc nước và ngủ sớm hơn một chút.', en: 'Drink one more glass of water today and go to bed a little earlier.' },
+    { vi: 'Cơ thể bạn đang nhắc một điều nhỏ. Bạn nghe nó trước khi nó phải nói to.', en: 'Your body is mentioning something quietly. Listen before it has to raise its voice.' },
+    { vi: 'Một buổi đi bộ ngắn hôm nay đáng giá hơn một lời hứa tập luyện cả tháng.', en: 'A short walk today is worth more than a month of promises to start.' },
+    { vi: 'Bạn không lười. Bạn đang mệt, và mệt thì cần nghỉ chứ không cần trách.', en: 'You are not lazy. You are tired, and tired needs rest rather than blame.' },
+    { vi: 'Bữa ăn tử tế với chính mình cũng là một cách chữa lành.', en: 'Feeding yourself properly is its own kind of healing.' },
+    { vi: 'Điều bạn lo về sức khỏe nên được hỏi bác sĩ, đừng hỏi mỗi mình bạn.', en: 'The worry you are carrying belongs to a doctor, not only to you.' }
+  ],
+  travel: [
+    { vi: 'Chuyến đi bạn hoãn mãi có thể bắt đầu bằng một việc rất nhỏ hôm nay.', en: 'The trip you keep postponing can start with one small thing today.' },
+    { vi: 'Bạn kiểm tra lại giấy tờ và giờ giấc một lần nữa trước khi đi.', en: 'Check your papers and your times once more before you set out.' },
+    { vi: 'Đường xa nhưng thuận. Bạn cứ đi sớm hơn dự định một chút.', en: 'The way is long but clear. Set out a little earlier than you planned.' },
+    { vi: 'Một nơi bạn từng đến sẽ gọi bạn quay lại trong năm nay.', en: 'A place you have been before will call you back this year.' },
+    { vi: 'Bạn đi nhẹ thôi. Thứ bạn cần ở đó nhiều hơn bạn tưởng.', en: 'Travel light. More of what you need is already there.' },
+    { vi: 'Người bạn gặp trên đường quan trọng hơn nơi bạn đến.', en: 'Who you meet on the way matters more than where you arrive.' }
   ]
 };
 
@@ -11962,6 +12036,8 @@ const PET_WEARS = [
   { id: 'crown', pro: true, add: 10, name: { vi: 'Vòng hoa', en: 'Flower crown' } },
   { id: 'hat', pro: true, add: 10, name: { vi: 'Nón trăng', en: 'Moon hat' } }
 ];
+/* What gets thrown when the two of you play. */
+const PET_TOYS = ['🧶', '🦋', '🎈', '🍃', '✨', '🪁'];
 const PET_FREE_MAX = 1;
 const pickFrom = (set, id, free) => {
   const found = set.filter((x) => x.id === id)[0] || set[0];
@@ -11990,8 +12066,10 @@ const PETS = {
   one(kind) { return this.all().filter((p) => p.kind === kind)[0] || null; },
   /* How many may be kept: one, or all of them with Plus. */
   cap() { return proOn() ? PET_KINDS.length : PET_FREE_MAX; },
+  /* A spirit beast is never kept without Plus, however much room there is. */
+  mayKeep(kind) { return !petIsPro(kind) || proOn(); },
   room() { return this.all().length < this.cap(); },
-  fresh(kind) { return { kind: kind, coat: 'cream', wear: 'none', home: 'mat', food: 'rice', name: '', streak: 0, meals: 0, treats: 0, xp: 0, last: 0, fed: '', pray: '', bless: 0 }; },
+  fresh(kind) { return { kind: kind, coat: 'cream', wear: 'none', home: 'mat', food: 'rice', name: '', streak: 0, meals: 0, treats: 0, xp: 0, last: 0, fed: '', pray: '', bless: 0, playDay: '', playN: 0 }; },
   /* Anything paid falls back to the free version the day Plus lapses, so a
      lapsed subscription never leaves a companion looking broken. */
   coat(p) { return pickFrom(PET_COATS, p && p.coat, true); },
@@ -12037,6 +12115,69 @@ const PETS = {
     this.put(p);
     return { coins: coins, up: up, from: before, to: after };
   },
+  /* Playing is the other half of caring for one: once a day for everyone,
+     three times a day with Plus. It pays more experience than a meal, because
+     it is the thing a person has to make time for. */
+  playCap() { return proOn() ? 3 : 1; },
+  playedToday(p) { return p && p.playDay === isoDate(new Date()) ? Math.max(0, Number(p.playN) || 0) : 0; },
+  playLeft(p) { return Math.max(0, this.playCap() - this.playedToday(p)); },
+  canPlay(p) { return this.playLeft(p) > 0; },
+  play(p) {
+    const today = isoDate(new Date());
+    if (p.playDay !== today) { p.playDay = today; p.playN = 0; }
+    p.playN = (Number(p.playN) || 0) + 1;
+    const before = petLevel(p.xp);
+    p.xp = (Number(p.xp) || 0) + 12;
+    const coins = BANK.earnDay(3);
+    const after = petLevel(p.xp);
+    let up = 0;
+    for (let lv = before + 1; lv <= after; lv++) { BANK.earn(levelCoins(lv)); up += levelCoins(lv); }
+    BANK.mark(after);
+    this.put(p);
+    return { coins: coins, up: up, from: before, to: after };
+  },
+  /* Playing is the other half of caring for one: once a day for everyone,
+     three times a day with Plus. It pays more experience than a meal, because
+     it is the thing a person has to make time for. */
+  playCap() { return proOn() ? 3 : 1; },
+  playedToday(p) { return p && p.playDay === isoDate(new Date()) ? Math.max(0, Number(p.playN) || 0) : 0; },
+  playLeft(p) { return Math.max(0, this.playCap() - this.playedToday(p)); },
+  canPlay(p) { return this.playLeft(p) > 0; },
+  play(p) {
+    const today = isoDate(new Date());
+    if (p.playDay !== today) { p.playDay = today; p.playN = 0; }
+    p.playN = (Number(p.playN) || 0) + 1;
+    const before = petLevel(p.xp);
+    p.xp = (Number(p.xp) || 0) + 12;
+    const coins = BANK.earnDay(3);
+    const after = petLevel(p.xp);
+    let up = 0;
+    for (let lv = before + 1; lv <= after; lv++) { BANK.earn(levelCoins(lv)); up += levelCoins(lv); }
+    BANK.mark(after);
+    this.put(p);
+    return { coins: coins, up: up, from: before, to: after };
+  },
+  /* Playing is the other half of caring for one: once a day for everyone,
+     three times a day with Plus. It pays more experience than a meal, because
+     it is the thing a person has to make time for. */
+  playCap() { return proOn() ? 3 : 1; },
+  playedToday(p) { return p && p.playDay === isoDate(new Date()) ? Math.max(0, Number(p.playN) || 0) : 0; },
+  playLeft(p) { return Math.max(0, this.playCap() - this.playedToday(p)); },
+  canPlay(p) { return this.playLeft(p) > 0; },
+  play(p) {
+    const today = isoDate(new Date());
+    if (p.playDay !== today) { p.playDay = today; p.playN = 0; }
+    p.playN = (Number(p.playN) || 0) + 1;
+    const before = petLevel(p.xp);
+    p.xp = (Number(p.xp) || 0) + 12;
+    const coins = BANK.earnDay(3);
+    const after = petLevel(p.xp);
+    let up = 0;
+    for (let lv = before + 1; lv <= after; lv++) { BANK.earn(levelCoins(lv)); up += levelCoins(lv); }
+    BANK.mark(after);
+    this.put(p);
+    return { coins: coins, up: up, from: before, to: after };
+  },
   /* One wish a day, and the answer stays on the card until tomorrow. */
   pray(p) {
     const pool = PET_BLESS[petLuck(p.kind).id];
@@ -12054,104 +12195,287 @@ const PETS = {
 const PET = PETS;
 
 /* ---- the four homes ----
-   Drawn behind the companion, filling the width of the stage. */
+   A home is the whole picture behind the companion: sky at the top, ground at
+   the bottom, and the place itself standing behind it. The square matches the
+   stage exactly, so the scene fills the frame with nothing floating in it.
+   The companion stands to the left of centre, which is why every building is
+   set to the right. */
 function petHomeSVG(id) {
-  const open = '<svg viewBox="0 0 240 150" class="pethome" aria-hidden="true">';
+  const open = '<svg viewBox="0 0 240 240" class="pethome" preserveAspectRatio="xMidYMax slice" aria-hidden="true">';
   if (id === 'cloud') {
+    let stars = '';
+    [[26, 34], [58, 20], [120, 26], [196, 22], [222, 48], [14, 74]].forEach((p, k) => {
+      stars += '<circle class="twinkle" cx="' + p[0] + '" cy="' + p[1] + '" r="' + (1.4 + (k % 2)) + '" fill="#FFF7EE" style="animation-delay:' + (k * 260) + 'ms"/>';
+    });
     return open
-      + '<circle cx="60" cy="46" r="26" fill="#EDE6FB"/><circle cx="96" cy="34" r="32" fill="#F5F0FF"/><circle cx="140" cy="40" r="28" fill="#EDE6FB"/><circle cx="178" cy="52" r="22" fill="#F5F0FF"/>'
-      + '<path d="M56 96 L120 52 L184 96 Z" fill="#D9C9F2"/><rect x="72" y="94" width="96" height="46" rx="8" fill="#F3EAFE" stroke="#C7B4EC" stroke-width="2"/>'
-      + '<rect x="104" y="110" width="32" height="30" rx="6" fill="#C9B0EA"/>'
-      + '<circle cx="88" cy="112" r="7" fill="#FFF7EE" stroke="#C7B4EC" stroke-width="1.6"/><circle cx="152" cy="112" r="7" fill="#FFF7EE" stroke="#C7B4EC" stroke-width="1.6"/>'
-      + '<ellipse cx="120" cy="146" rx="94" ry="6" fill="#C9A5D8" opacity=".25"/></svg>';
+      + '<defs><linearGradient id="hgc" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#E6DCFB"/><stop offset="100%" stop-color="#F8F4FF"/></linearGradient></defs>'
+      + '<rect width="240" height="240" fill="url(#hgc)"/>' + stars
+      + '<g fill="#F5F0FF" opacity=".9"><ellipse cx="44" cy="96" rx="34" ry="17"/><ellipse cx="74" cy="86" rx="26" ry="14"/><ellipse cx="214" cy="78" rx="28" ry="15"/></g>'
+      + '<path d="M136 130 L182 80 L228 130 Z" fill="#C9B0EA"/>'
+      + '<path d="M182 80 L228 130 L222 130 L182 88 Z" fill="#B49BD8"/>'
+      + '<rect x="148" y="128" width="68" height="76" rx="7" fill="#F6F0FF" stroke="#C7B4EC" stroke-width="2"/>'
+      + '<rect x="170" y="160" width="26" height="44" rx="5" fill="#C9B0EA"/><circle cx="192" cy="182" r="2.4" fill="#7C63B8"/>'
+      + '<rect x="154" y="140" width="16" height="14" rx="3" fill="#FFF7EE" stroke="#C7B4EC" stroke-width="1.6"/>'
+      + '<rect x="198" y="140" width="14" height="14" rx="3" fill="#FFF7EE" stroke="#C7B4EC" stroke-width="1.6"/>'
+      + '<path d="M182 74 q10 -12 22 -8" stroke="#C7B4EC" stroke-width="2.4" fill="none" stroke-linecap="round"/>'
+      + '<g fill="#FFFFFF"><ellipse cx="26" cy="212" rx="46" ry="26"/><ellipse cx="96" cy="220" rx="56" ry="28"/><ellipse cx="176" cy="214" rx="50" ry="26"/><ellipse cx="232" cy="222" rx="34" ry="20"/></g>'
+      + '<g fill="#F0E9FF"><ellipse cx="60" cy="228" rx="40" ry="16"/><ellipse cx="150" cy="230" rx="46" ry="16"/></g></svg>';
   }
   if (id === 'shrine') {
     return open
-      + '<path d="M28 62 L120 26 L212 62 Z" fill="#B0483F"/><rect x="34" y="62" width="172" height="10" rx="4" fill="#8E3A33"/>'
-      + '<rect x="52" y="72" width="136" height="66" rx="6" fill="#F0DFC8" stroke="#C6A98A" stroke-width="2"/>'
-      + '<rect x="96" y="86" width="48" height="52" rx="4" fill="#8E3A33"/><circle cx="120" cy="104" r="10" fill="#E5BE5E"/>'
-      + '<rect x="60" y="72" width="10" height="66" fill="#B0483F"/><rect x="170" y="72" width="10" height="66" fill="#B0483F"/>'
-      + '<g fill="#E5BE5E"><circle cx="44" cy="52" r="4"/><circle cx="196" cy="52" r="4"/></g>'
-      + '<path d="M74 96 q10 -8 20 0" stroke="#C6A98A" stroke-width="2" fill="none"/><path d="M146 96 q10 -8 20 0" stroke="#C6A98A" stroke-width="2" fill="none"/>'
-      + '<ellipse cx="120" cy="146" rx="94" ry="6" fill="#C9A5D8" opacity=".25"/></svg>';
+      + '<defs><linearGradient id="hgs" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#FBDDC2"/><stop offset="60%" stop-color="#FCEEDC"/><stop offset="100%" stop-color="#F6E7CE"/></linearGradient></defs>'
+      + '<rect width="240" height="240" fill="url(#hgs)"/>'
+      + '<circle cx="52" cy="70" r="24" fill="#F8C79A" opacity=".7"/>'
+      + '<g fill="#E7C9A6" opacity=".7"><path d="M0 158 q40 -26 84 -6 q40 20 74 -2 q34 -20 82 0 L240 200 L0 200 Z"/></g>'
+      + '<path d="M120 122 L180 68 L240 122 Z" fill="#B0483F"/>'
+      + '<path d="M114 120 h132 v11 a5 5 0 0 1 -5 5 H119 a5 5 0 0 1 -5 -5 Z" fill="#8E3A33"/>'
+      + '<rect x="142" y="136" width="76" height="66" fill="#F2E3CB" stroke="#CBAE8B" stroke-width="2"/>'
+      + '<rect x="146" y="136" width="11" height="66" fill="#B0483F"/><rect x="203" y="136" width="11" height="66" fill="#B0483F"/>'
+      + '<rect x="166" y="152" width="28" height="50" rx="3" fill="#8E3A33"/>'
+      + '<circle cx="180" cy="146" r="7" fill="#E5BE5E"/>'
+      + '<g><rect x="26" y="112" width="3" height="30" fill="#8E3A33"/><ellipse cx="27.5" cy="152" rx="12" ry="15" fill="#E9705F"/><ellipse cx="27.5" cy="152" rx="12" ry="15" fill="none" stroke="#B0483F" stroke-width="1.6"/><path d="M18 146 h19 M18 158 h19" stroke="#B0483F" stroke-width="1.2"/></g>'
+      + '<rect x="0" y="200" width="240" height="40" fill="#E0D0B4"/>'
+      + '<g fill="#D2BE9C"><ellipse cx="40" cy="216" rx="20" ry="7"/><ellipse cx="104" cy="228" rx="26" ry="8"/><ellipse cx="176" cy="214" rx="22" ry="7"/><ellipse cx="222" cy="230" rx="18" ry="6"/></g>'
+      + '<g fill="#B0483F" opacity=".5"><circle cx="14" cy="196" r="4"/><circle cx="232" cy="196" r="4"/></g></svg>';
   }
   if (id === 'moon') {
     let stars = '';
-    for (let i = 0; i < 16; i++) stars += '<circle class="twinkle" cx="' + (14 + (i * 31) % 214) + '" cy="' + (12 + (i * 43) % 76) + '" r="' + (1 + (i % 3) * 0.6) + '" fill="#FFF3C4" style="animation-delay:' + (i * 190) + 'ms"/>';
+    for (let k = 0; k < 30; k++) {
+      const x = 10 + (k * 47) % 226, y = 8 + (k * 61) % 150, r = 0.9 + (k % 3) * 0.7;
+      stars += '<circle class="twinkle" cx="' + x + '" cy="' + y + '" r="' + r + '" fill="#FFF3C4" style="animation-delay:' + (k * 150) + 'ms"/>';
+    }
+    let flies = '';
+    [[30, 168], [66, 150], [206, 160], [228, 186]].forEach((f, k) => {
+      flies += '<circle class="fly lit" cx="' + f[0] + '" cy="' + f[1] + '" r="3" fill="#FFE9A8" style="animation-delay:' + (k * 380) + 'ms"/>';
+    });
     return open
-      + '<rect x="0" y="0" width="240" height="150" rx="16" fill="#2E2756"/>' + stars
-      + '<path d="M188 40 A24 24 0 1 0 188 88 A19 19 0 1 1 188 40 Z" fill="#FFE9A8"/>'
-      + '<path d="M0 118 q60 -22 120 -4 q60 18 120 -6 L240 150 L0 150 Z" fill="#4A3E80"/>'
-      + '<g fill="#8E7FD6"><ellipse cx="42" cy="122" rx="16" ry="9"/><ellipse cx="196" cy="126" rx="14" ry="8"/></g>'
-      + '<g fill="#F7A9C6"><circle cx="30" cy="112" r="4"/><circle cx="70" cy="118" r="3.4"/><circle cx="206" cy="116" r="3.6"/></g></svg>';
+      + '<defs><linearGradient id="hgm" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#241E4A"/><stop offset="100%" stop-color="#3B3168"/></linearGradient></defs>'
+      + '<rect width="240" height="240" fill="url(#hgm)"/>' + stars
+      + '<circle cx="192" cy="52" r="27" fill="#FFE9A8"/>'
+      + '<g fill="#F0D48C" opacity=".55"><circle cx="184" cy="44" r="6"/><circle cx="201" cy="60" r="4.4"/><circle cx="188" cy="63" r="3"/></g>'
+      + '<path d="M0 172 q54 -40 110 -10 q52 28 130 -8 L240 240 L0 240 Z" fill="#4A3E80"/>'
+      + '<path d="M0 200 q60 -18 122 4 q56 20 118 -4 L240 240 L0 240 Z" fill="#3A3068"/>'
+      + '<ellipse cx="106" cy="228" rx="86" ry="13" fill="#5A4C98" opacity=".55"/>'
+      + '<path d="M150 226 q22 -4 42 0" stroke="#FFE9A8" stroke-width="2" opacity=".5" fill="none"/>'
+      + '<g fill="#8E7FD6"><ellipse cx="20" cy="192" rx="16" ry="8"/><ellipse cx="226" cy="200" rx="14" ry="7"/></g>' + flies + '</svg>';
   }
   return open
-    + '<ellipse cx="120" cy="126" rx="92" ry="20" fill="#CFE3C4"/><ellipse cx="120" cy="126" rx="92" ry="20" fill="none" stroke="#AECFA0" stroke-width="2"/>'
-    + '<g stroke="#AECFA0" stroke-width="2" stroke-linecap="round"><path d="M44 120 v10 M64 116 v12 M176 116 v12 M196 120 v10"/></g>'
-    + '<g fill="#F7A9C6"><circle cx="52" cy="112" r="4"/><circle cx="188" cy="114" r="4"/></g></svg>';
+    + '<defs><linearGradient id="hgg" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#DCEBFB"/><stop offset="70%" stop-color="#F7F1E6"/><stop offset="100%" stop-color="#F2EEDF"/></linearGradient></defs>'
+    + '<rect width="240" height="240" fill="url(#hgg)"/>'
+    + '<circle cx="204" cy="42" r="24" fill="#FFE9A8" opacity=".8"/>'
+    + '<g fill="#FFFFFF" opacity=".9"><ellipse cx="52" cy="48" rx="28" ry="14"/><ellipse cx="78" cy="42" rx="20" ry="11"/><ellipse cx="150" cy="66" rx="20" ry="10"/></g>'
+    + '<path d="M0 164 q48 -34 100 -8 q44 22 82 -2 q32 -18 58 -2 L240 240 L0 240 Z" fill="#CDE3BF"/>'
+    + '<path d="M0 196 q64 -16 126 2 q54 16 114 -2 L240 240 L0 240 Z" fill="#BFDAAE"/>'
+    + '<g stroke="#A8C995" stroke-width="2.2" stroke-linecap="round"><path d="M22 214 v-11 M30 216 v-9 M212 208 v-11 M220 210 v-9 M196 224 v-10"/></g>'
+    + '<circle cx="224" cy="182" r="17" fill="#B4D5A2"/><circle cx="208" cy="190" r="12" fill="#C2DFB0"/>'
+    + '<ellipse cx="106" cy="216" rx="70" ry="16" fill="#E8D9A8"/>'
+    + '<ellipse cx="106" cy="216" rx="70" ry="16" fill="none" stroke="#C9B47F" stroke-width="2"/>'
+    + '<g stroke="#D3C08E" stroke-width="1.6"><path d="M62 210 h88 M52 216 h108 M62 222 h88"/></g>'
+    + '<g fill="#F7A9C6"><circle cx="30" cy="200" r="4"/><circle cx="190" cy="204" r="3.6"/></g>'
+    + '<g fill="#FFF3C4"><circle cx="30" cy="200" r="1.6"/><circle cx="190" cy="204" r="1.5"/></g></svg>';
 }
 
-/* ---- the four creatures ----
-   The same body plan, so they read as one family: a round body, a round head,
-   a face, a charm at the throat in the colour of the luck they carry, and one
-   feature that tells them apart. Drawn on a 120x120 square. */
-function petSVG(kind, coat, mood, wear) {
-  const c = coat || PET_COATS[0];
-  const luck = petLuck(kind);
-  const happy = mood === 'happy';
-  const eye = (x) => happy
-    ? '<path d="M' + (x - 5) + ' 54 q5 -6 10 0" fill="none" stroke="' + c.ink + '" stroke-width="2.6" stroke-linecap="round"/>'
-    : '<ellipse cx="' + x + '" cy="54" rx="3.4" ry="4.4" fill="' + c.ink + '"/><circle cx="' + (x + 1.2) + '" cy="52.2" r="1.2" fill="#fff"/>';
-  const face = eye(50) + eye(70)
-    + '<path d="M56 64 q4 4 8 0" fill="none" stroke="' + c.ink + '" stroke-width="2.4" stroke-linecap="round"/>'
-    + '<ellipse cx="40" cy="62" rx="5" ry="3.2" fill="#F2A9BE" opacity=".55"/>'
-    + '<ellipse cx="80" cy="62" rx="5" ry="3.2" fill="#F2A9BE" opacity=".55"/>';
-  let ears = '', extra = '', behind = '', overBody = '', feet = true;
-  if (kind === 'cat') {
-    ears = '<path d="M36 32 L38 10 L54 24 Z" fill="' + c.body + '"/><path d="M84 32 L82 10 L66 24 Z" fill="' + c.body + '"/>'
-      + '<path d="M40 30 L41 18 L50 26 Z" fill="' + c.dark + '"/><path d="M80 30 L79 18 L70 26 Z" fill="' + c.dark + '"/>';
-    behind = '<path d="M86 96 q24 -4 18 -26" fill="none" stroke="' + c.dark + '" stroke-width="8" stroke-linecap="round"/>';
-    extra = '<path d="M28 56 h-11 M28 61 h-12 M92 56 h11 M92 61 h12" stroke="' + c.dark + '" stroke-width="1.4" stroke-linecap="round"/>';
-  } else if (kind === 'fox') {
-    ears = '<path d="M34 34 L33 8 L56 24 Z" fill="' + c.body + '"/><path d="M86 34 L87 8 L64 24 Z" fill="' + c.body + '"/>'
-      + '<path d="M38 30 L38 16 L50 25 Z" fill="' + c.ink + '" opacity=".4"/><path d="M82 30 L82 16 L70 25 Z" fill="' + c.ink + '" opacity=".4"/>';
-    behind = '<path d="M84 98 q28 4 22 -22 q-5 15 -22 13 Z" fill="' + c.dark + '"/><path d="M102 80 q7 -5 5 -12" stroke="#FFF7EE" stroke-width="6" fill="none" stroke-linecap="round"/>';
-    extra = '<path d="M44 74 q16 7 32 0" fill="none" stroke="' + c.dark + '" stroke-width="2" opacity=".45"/>';
-  } else if (kind === 'bunny') {
-    ears = '<ellipse cx="47" cy="18" rx="7.5" ry="21" fill="' + c.body + '" transform="rotate(-8 47 18)"/>'
+/* ---- the twelve creatures ----
+   One body plan, so they read as one family: a round body, a round head, a
+   face, and a charm in the colour of the luck they carry. Everything that
+   tells them apart is a part in the table below, drawn on a 120x120 square.
+
+   behind   goes under the body: tails, wings, back legs
+   overBody goes over the body: shells, scales, chest markings
+   ears     goes behind the head: ears, horns, crests, antlers
+   front    goes over the face: muzzles, beaks, whiskers, manes
+   feet     false when the creature has no ordinary paws
+   eyeY     moves the eyes for a longer or shorter head
+   noMouth  for a creature whose muzzle or beak carries the mouth
+   head     scales the head about its own centre, for small-headed animals */
+const PET_ART = {
+  cat: (c) => ({
+    ears: '<path d="M36 32 L38 10 L54 24 Z" fill="' + c.body + '"/><path d="M84 32 L82 10 L66 24 Z" fill="' + c.body + '"/>'
+      + '<path d="M40 30 L41 18 L50 26 Z" fill="' + c.dark + '"/><path d="M80 30 L79 18 L70 26 Z" fill="' + c.dark + '"/>',
+    behind: '<path d="M86 96 q24 -4 18 -26" fill="none" stroke="' + c.dark + '" stroke-width="8" stroke-linecap="round"/>',
+    front: '<path d="M28 56 h-11 M28 61 h-12 M92 56 h11 M92 61 h12" stroke="' + c.dark + '" stroke-width="1.4" stroke-linecap="round"/>'
+  }),
+  /* A fox is a snout, a ruff and a brush. Without those it is only a cat with
+     pointed ears, which is what it used to look like. */
+  fox: (c) => ({
+    ears: '<path d="M33 34 L28 2 L57 24 Z" fill="' + c.body + '"/><path d="M87 34 L92 2 L63 24 Z" fill="' + c.body + '"/>'
+      + '<path d="M37 30 L34 12 L50 25 Z" fill="#C4643C" opacity=".55"/><path d="M83 30 L86 12 L70 25 Z" fill="#C4643C" opacity=".55"/>'
+      + '<path d="M28 2 L32 18 L41 11 Z" fill="#3E2E22"/><path d="M92 2 L88 18 L79 11 Z" fill="#3E2E22"/>',
+    behind: '<path d="M80 100 q32 8 28 -26 q-6 20 -28 17 Z" fill="#C4643C"/>'
+      + '<path d="M104 80 q10 -8 4 -18 q-12 6 -12 16 Z" fill="#FFFDF8"/>',
+    overBody: '<path d="M60 68 q-14 18 -13 36 q13 6 26 0 q1 -18 -13 -36 Z" fill="#FFFDF8"/>'
+      + '<ellipse cx="38" cy="104" rx="8" ry="5" fill="#3E2E22"/><ellipse cx="82" cy="104" rx="8" ry="5" fill="#3E2E22"/>',
+    front: '<path d="M30 52 q-13 9 -9 23 q12 -4 17 -13 Z" fill="#FFFDF8" stroke="' + c.dark + '" stroke-width="1.1"/>'
+      + '<path d="M90 52 q13 9 9 23 q-12 -4 -17 -13 Z" fill="#FFFDF8" stroke="' + c.dark + '" stroke-width="1.1"/>'
+      + '<path d="M60 52 Q45 67 44 84 Q60 94 76 84 Q75 67 60 52 Z" fill="#FFFDF8" stroke="' + c.dark + '" stroke-width="1.2"/>'
+      + '<ellipse cx="60" cy="82" rx="6.4" ry="4.4" fill="#3E2E22"/>'
+      + '<path d="M60 86 q-7 6 -12 2 M60 86 q7 6 12 2" stroke="#3E2E22" stroke-width="1.7" fill="none" stroke-linecap="round"/>'
+      + '<path d="M42 76 h-14 M44 82 h-14 M78 76 h14 M76 82 h14" stroke="#3E2E22" stroke-width="1.1" stroke-linecap="round" opacity=".65"/>',
+    feet: false, eyeY: 48, noMouth: true, blushY: 56, charmY: 96
+  }),
+  bunny: (c) => ({
+    ears: '<ellipse cx="47" cy="18" rx="7.5" ry="21" fill="' + c.body + '" transform="rotate(-8 47 18)"/>'
       + '<ellipse cx="73" cy="18" rx="7.5" ry="21" fill="' + c.body + '" transform="rotate(8 73 18)"/>'
       + '<ellipse cx="47" cy="20" rx="3.6" ry="14" fill="#F7C7D6" transform="rotate(-8 47 20)"/>'
-      + '<ellipse cx="73" cy="20" rx="3.6" ry="14" fill="#F7C7D6" transform="rotate(8 73 20)"/>';
-    behind = '<circle cx="92" cy="94" r="9" fill="#FFF7EE"/>';
-  } else {
-    // The turtle is a shell with a head coming out of it: the flippers and the
-    // tail are drawn first so the shell sits over them, and the charm is set
-    // into the shell rather than hung at the throat.
-    feet = false;
-    behind = '<ellipse cx="26" cy="100" rx="12" ry="6.5" fill="' + c.dark + '" transform="rotate(-16 26 100)"/>'
+      + '<ellipse cx="73" cy="20" rx="3.6" ry="14" fill="#F7C7D6" transform="rotate(8 73 20)"/>',
+    behind: '<circle cx="92" cy="94" r="9" fill="#FFF7EE"/>'
+  }),
+  turtle: (c) => ({
+    feet: false, head: 0.76, headY: -6,
+    behind: '<ellipse cx="26" cy="100" rx="12" ry="6.5" fill="' + c.dark + '" transform="rotate(-16 26 100)"/>'
       + '<ellipse cx="94" cy="100" rx="12" ry="6.5" fill="' + c.dark + '" transform="rotate(16 94 100)"/>'
-      + '<path d="M92 96 q14 -1 18 6 q-9 5 -18 -1 Z" fill="' + c.dark + '"/>';
-    overBody = '<path d="M24 106 A36 32 0 0 1 96 106 Z" fill="#7FC9A8"/>'
+      + '<path d="M92 96 q14 -1 18 6 q-9 5 -18 -1 Z" fill="' + c.dark + '"/>',
+    overBody: '<path d="M24 106 A36 32 0 0 1 96 106 Z" fill="#7FC9A8"/>'
       + '<ellipse cx="60" cy="106" rx="36" ry="5" fill="#4E9C7C"/>'
       + '<path d="M24 106 A36 32 0 0 1 96 106" fill="none" stroke="#4E9C7C" stroke-width="2.4"/>'
       + '<g fill="none" stroke="#4E9C7C" stroke-width="1.6" opacity=".9">'
       + '<path d="M60 74 L60 106 M40 80 L48 106 M80 80 L72 106 M27 95 L34 106 M93 95 L86 106"/>'
       + '<path d="M34 92 Q60 82 86 92"/></g>'
-      + '<path d="M40 100 q20 -7 40 0" fill="none" stroke="#B9E8D2" stroke-width="2" opacity=".7"/>';
-    extra = '<path d="M36 46 q6 -8 14 -9 M84 46 q-6 -8 -14 -9" fill="none" stroke="' + c.dark + '" stroke-width="1.8" stroke-linecap="round" opacity=".7"/>';
-  }
-  // The charm at the throat says which luck this one carries.
-  const charmY = kind === 'turtle' ? 92 : 80;
-  let neck = (kind === 'turtle' ? '' : '<path d="M42 74 q18 9 36 0" fill="none" stroke="' + luck.ink + '" stroke-width="2.4" stroke-linecap="round" opacity=".9"/>')
+      + '<path d="M40 100 q20 -7 40 0" fill="none" stroke="#B9E8D2" stroke-width="2" opacity=".7"/>',
+    charmY: 92
+  }),
+  /* A deer is antlers, spots and a small dark nose. */
+  deer: (c) => ({
+    ears: '<ellipse cx="34" cy="40" rx="10" ry="6" fill="' + c.dark + '" transform="rotate(-24 34 40)"/>'
+      + '<ellipse cx="86" cy="40" rx="10" ry="6" fill="' + c.dark + '" transform="rotate(24 86 40)"/>'
+      + '<g stroke="#C08B52" stroke-width="3.4" fill="none" stroke-linecap="round">'
+      + '<path d="M46 32 Q40 16 36 8 M42 20 Q34 16 28 18 M40 13 Q34 8 33 2"/>'
+      + '<path d="M74 32 Q80 16 84 8 M78 20 Q86 16 92 18 M80 13 Q86 8 87 2"/></g>',
+    behind: '<path d="M88 98 q14 2 12 -10 q-4 7 -12 6 Z" fill="#FFF7EE"/>',
+    overBody: '<g fill="#FFF7EE" opacity=".8"><circle cx="46" cy="86" r="3.6"/><circle cx="60" cy="94" r="3"/><circle cx="74" cy="84" r="3.4"/><circle cx="66" cy="78" r="2.4"/></g>',
+    front: '<ellipse cx="60" cy="66" rx="6" ry="4.4" fill="' + c.dark + '"/><ellipse cx="60" cy="65" rx="3" ry="2" fill="#4A3728"/>',
+    noMouth: true
+  }),
+  /* A swallow is a beak, folded wings and a forked tail. */
+  swallow: (c) => ({
+    feet: false,
+    behind: '<path d="M84 96 q28 8 34 26 q-22 2 -32 -12 Z" fill="#3E4C6E"/>'
+      + '<path d="M86 102 q22 14 22 28 q-18 -6 -24 -18 Z" fill="#55648C"/>',
+    overBody: '<path d="M34 78 q-10 17 0 32 q14 -4 18 -15 q-6 -13 -18 -17 Z" fill="#3E4C6E"/>'
+      + '<path d="M86 78 q10 17 0 32 q-14 -4 -18 -15 q6 -13 18 -17 Z" fill="#3E4C6E"/>'
+      + '<g stroke="#8C9AB8" stroke-width="1.3" opacity=".45" fill="none"><path d="M38 88 q9 6 11 15 M82 88 q-9 6 -11 15"/></g>'
+      + '<ellipse cx="60" cy="94" rx="17" ry="14" fill="#FFFDF8"/>'
+      + '<g stroke="#E8A33C" stroke-width="2.6" stroke-linecap="round"><path d="M53 111 v6 M67 111 v6"/></g>',
+    ears: '<path d="M42 34 Q36 22 44 14 Q50 24 49 33 Z" fill="#3E4C6E" opacity=".8"/>'
+      + '<path d="M78 34 Q84 22 76 14 Q70 24 71 33 Z" fill="#3E4C6E" opacity=".8"/>',
+    front: '<path d="M60 60 L48 68 L60 74 Z" fill="#E8A33C"/><path d="M60 60 L72 68 L60 74 Z" fill="#F0B24E"/>'
+      + '<path d="M48 68 L72 68" stroke="#C4813C" stroke-width="1.1"/>'
+      + '<path d="M50 76 q10 6 20 0" fill="#FFFDF8" opacity=".9"/>',
+    noMouth: true, eyeY: 52, blushY: 60, charmY: 96
+  }),
+  /* ---- the six spirit beasts ---- */
+  phoenix: (c) => ({
+    glow: true, feet: false,
+    ears: '<g fill="#E5BE5E"><path d="M60 30 Q52 8 60 0 Q68 10 60 30 Z"/><path d="M46 34 Q34 16 36 6 Q50 16 46 34 Z" fill="#F2789F"/><path d="M74 34 Q86 16 84 6 Q70 16 74 34 Z" fill="#F2789F"/></g>',
+    behind: '<path d="M84 94 Q116 84 112 46 Q104 78 82 82 Z" fill="#F2789F"/>'
+      + '<path d="M86 100 Q118 104 118 74 Q106 96 84 92 Z" fill="#E5BE5E"/>'
+      + '<circle cx="108" cy="58" r="4.6" fill="#FFF3C4"/><circle cx="110" cy="86" r="4" fill="#FFF3C4"/>'
+      + '<path d="M30 92 Q6 82 8 56 Q18 82 34 84 Z" fill="#F7C89A"/>',
+    overBody: '<path d="M32 80 q-6 18 6 30 q12 -4 16 -16 q-8 -12 -22 -14 Z" fill="#F2789F" opacity=".9"/>'
+      + '<path d="M88 80 q6 18 -6 30 q-12 -4 -16 -16 q8 -12 22 -14 Z" fill="#F2789F" opacity=".9"/>'
+      + '<g stroke="#E5BE5E" stroke-width="1.6" fill="none" opacity=".8"><path d="M36 90 q10 4 14 12 M84 90 q-10 4 -14 12"/></g>'
+      + '<g stroke="#E8A33C" stroke-width="2.6" stroke-linecap="round"><path d="M50 110 v6 M70 110 v6"/></g>',
+    front: '<path d="M53 62 L60 74 L67 62 Z" fill="#E8A33C"/>',
+    noMouth: true, blushY: 60
+  }),
+  dragon: (c) => ({
+    glow: true,
+    ears: '<g fill="#E5BE5E"><path d="M40 30 Q26 18 22 4 Q42 12 46 28 Z"/><path d="M80 30 Q94 18 98 4 Q78 12 74 28 Z"/></g>'
+      + '<path d="M50 24 q10 -8 20 0 q-10 -3 -20 0 Z" fill="#7FC9A8"/>',
+    behind: '<path d="M86 98 Q118 96 116 62 Q108 90 84 88 Z" fill="#5FB894"/>'
+      + '<path d="M112 66 q10 -8 8 -18 q-10 6 -12 16 Z" fill="#E5BE5E"/>',
+    overBody: '<g fill="#5FB894"><path d="M60 64 l7 10 l-7 10 l-7 -10 Z" opacity=".55"/></g>'
+      + '<g fill="none" stroke="#4E9C7C" stroke-width="1.8" opacity=".7"><path d="M44 84 q16 -8 32 0 M44 94 q16 -8 32 0 M48 102 q12 -6 24 0"/></g>'
+      + '<path d="M34 72 q-10 12 -4 26 q10 -4 14 -14 Z" fill="#7FC9A8" opacity=".9"/>'
+      + '<path d="M86 72 q10 12 4 26 q-10 -4 -14 -14 Z" fill="#7FC9A8" opacity=".9"/>',
+    front: '<path d="M34 62 q-14 4 -18 16 q12 -2 18 -10" fill="none" stroke="#E5BE5E" stroke-width="2.2" stroke-linecap="round"/>'
+      + '<path d="M86 62 q14 4 18 16 q-12 -2 -18 -10" fill="none" stroke="#E5BE5E" stroke-width="2.2" stroke-linecap="round"/>'
+      + '<ellipse cx="60" cy="66" rx="9" ry="5" fill="' + c.dark + '"/><circle cx="56" cy="66" r="1.4" fill="#4A3728"/><circle cx="64" cy="66" r="1.4" fill="#4A3728"/>',
+    noMouth: true
+  }),
+  qilin: (c) => ({
+    glow: true,
+    ears: '<path d="M58 28 Q56 8 60 0 Q66 10 62 28 Z" fill="#E5BE5E"/>'
+      + '<g stroke="#E5BE5E" stroke-width="1.6" fill="none"><path d="M58 22 q4 -2 4 -6 M58 14 q4 -2 4 -6"/></g>'
+      + '<path d="M30 44 q-8 -14 0 -24 q10 8 10 20 Z" fill="#9FD8F0"/><path d="M90 44 q8 -14 0 -24 q-10 8 -10 20 Z" fill="#9FD8F0"/>',
+    behind: '<path d="M86 94 q26 -2 26 -24 q-8 16 -26 16 Z" fill="#9FD8F0"/>'
+      + '<circle cx="108" cy="66" r="9" fill="#CFEBF8"/><circle cx="118" cy="72" r="6" fill="#CFEBF8"/>',
+    overBody: '<g fill="none" stroke="#9FD8F0" stroke-width="1.8" opacity=".9"><path d="M42 82 q9 -7 18 0 q9 -7 18 0 M40 92 q10 -7 20 0 q10 -7 20 0"/></g>'
+      + '<g fill="#E5BE5E" opacity=".9"><path d="M36 100 q-6 6 -2 12 q8 -2 10 -10 Z"/><path d="M84 100 q6 6 2 12 q-8 -2 -10 -10 Z"/></g>',
+    front: '<path d="M28 46 q-8 12 -4 24 q10 -8 12 -20 Z" fill="#E5BE5E" opacity=".7"/>'
+      + '<path d="M92 46 q8 12 4 24 q-10 -8 -12 -20 Z" fill="#E5BE5E" opacity=".7"/>'
+  }),
+  pixiu: (c) => ({
+    glow: true,
+    ears: '<path d="M52 26 Q56 6 60 0 Q66 8 64 26 Z" fill="#E5BE5E"/>'
+      + '<path d="M32 40 q-6 -12 2 -20 q8 8 8 18 Z" fill="' + c.dark + '"/><path d="M88 40 q6 -12 -2 -20 q-8 8 -8 18 Z" fill="' + c.dark + '"/>',
+    behind: '<g fill="#E5BE5E" opacity=".95"><circle cx="16" cy="66" r="8"/><circle cx="16" cy="66" r="3" fill="#B9913B"/>'
+      + '<circle cx="104" cy="52" r="7"/><circle cx="104" cy="52" r="2.6" fill="#B9913B"/>'
+      + '<circle cx="112" cy="86" r="9"/><circle cx="112" cy="86" r="3.2" fill="#B9913B"/></g>'
+      + '<path d="M28 78 q-18 -10 -18 -28 q14 12 22 22 Z" fill="#F2D18A"/>'
+      + '<path d="M92 78 q18 -10 18 -28 q-14 12 -22 22 Z" fill="#F2D18A"/>',
+    overBody: '<path d="M60 66 q-20 6 -22 22 q22 8 44 0 q-2 -16 -22 -22 Z" fill="#E5BE5E" opacity=".45"/>'
+      + '<g stroke="#B9913B" stroke-width="1.6" fill="none" opacity=".8"><path d="M46 92 q14 -6 28 0"/></g>',
+    front: '<g fill="#E5BE5E"><path d="M24 46 q-10 8 -10 18 q10 -4 14 -14 Z" opacity=".8"/><path d="M96 46 q10 8 10 18 q-10 -4 -14 -14 Z" opacity=".8"/></g>'
+      + '<ellipse cx="60" cy="66" rx="8" ry="4.6" fill="' + c.dark + '"/>',
+    noMouth: true
+  }),
+  crane: (c) => ({
+    glow: true, feet: false,
+    ears: '<path d="M46 34 Q60 20 74 34 Q60 28 46 34 Z" fill="#D34F4F"/>',
+    behind: '<path d="M88 92 q28 10 30 30 q-22 0 -32 -14 Z" fill="#FFFFFF"/>'
+      + '<path d="M100 108 q16 8 18 18 q-14 0 -22 -10 Z" fill="#3A3348"/>',
+    overBody: '<path d="M32 76 q-10 18 0 34 q14 -4 18 -16 q-6 -14 -18 -18 Z" fill="#FFFFFF"/>'
+      + '<path d="M88 76 q10 18 0 34 q-14 -4 -18 -16 q6 -14 18 -18 Z" fill="#FFFFFF"/>'
+      + '<path d="M34 104 q8 6 14 6 q-2 4 -8 4 Z" fill="#3A3348"/><path d="M86 104 q-8 6 -14 6 q2 4 8 4 Z" fill="#3A3348"/>'
+      + '<g stroke="#D9C9A8" stroke-width="2.4" stroke-linecap="round"><path d="M52 110 v8 M68 110 v8"/></g>',
+    front: '<path d="M55 62 L60 82 L65 62 Z" fill="#E8A33C"/><path d="M57 62 L60 74 L63 62 Z" fill="#C4813C"/>',
+    noMouth: true, blushY: 58
+  }),
+  pegasus: (c) => ({
+    glow: true,
+    ears: '<path d="M42 34 Q38 16 44 8 Q52 18 50 32 Z" fill="' + c.body + '"/><path d="M78 34 Q82 16 76 8 Q68 18 70 32 Z" fill="' + c.body + '"/>'
+      + '<path d="M60 26 Q44 18 34 26 Q46 24 52 30 Z" fill="#C9B0EA"/>'
+      + '<path d="M60 20 Q46 10 34 16 Q48 16 56 24 Z" fill="#E0D2F7"/>',
+    behind: '<path d="M28 74 q-26 -14 -24 -38 q18 18 30 30 Z" fill="#FFFFFF"/>'
+      + '<path d="M92 74 q26 -14 24 -38 q-18 18 -30 30 Z" fill="#FFFFFF"/>'
+      + '<path d="M30 80 q-22 -6 -24 -24 q16 12 28 18 Z" fill="#E0D2F7"/>'
+      + '<path d="M90 80 q22 -6 24 -24 q-16 12 -28 18 Z" fill="#E0D2F7"/>'
+      + '<path d="M86 98 q22 4 24 22 q-18 -2 -26 -12 Z" fill="#C9B0EA"/>',
+    front: '<ellipse cx="60" cy="68" rx="11" ry="8" fill="' + c.dark + '"/>'
+      + '<ellipse cx="56" cy="66" rx="1.8" ry="2.4" fill="#4A3728"/><ellipse cx="64" cy="66" rx="1.8" ry="2.4" fill="#4A3728"/>'
+      + '<path d="M40 46 Q28 40 22 46 Q34 46 40 54 Z" fill="#E0D2F7"/>',
+    overBody: '<g fill="#FFF3C4" opacity=".9"><circle cx="44" cy="82" r="2"/><circle cx="76" cy="88" r="1.8"/><circle cx="58" cy="76" r="1.6"/></g>',
+    noMouth: true
+  })
+};
+
+function petSVG(kind, coat, mood, wear) {
+  const c = coat || PET_COATS[0];
+  const luck = petLuck(kind);
+  const art = (PET_ART[kind] || PET_ART.cat)(c);
+  const happy = mood === 'happy';
+  const eyeY = art.eyeY || 54, blushY = art.blushY || 62;
+  const eye = (x) => happy
+    ? '<path d="M' + (x - 5) + ' ' + eyeY + ' q5 -6 10 0" fill="none" stroke="' + c.ink + '" stroke-width="2.6" stroke-linecap="round"/>'
+    : '<ellipse cx="' + x + '" cy="' + eyeY + '" rx="3.4" ry="4.4" fill="' + c.ink + '"/><circle cx="' + (x + 1.2) + '" cy="' + (eyeY - 1.8) + '" r="1.2" fill="#fff"/>';
+  const face = eye(50) + eye(70)
+    + (art.noMouth ? '' : '<path d="M56 64 q4 4 8 0" fill="none" stroke="' + c.ink + '" stroke-width="2.4" stroke-linecap="round"/>')
+    + '<ellipse cx="40" cy="' + blushY + '" rx="5" ry="3.2" fill="#F2A9BE" opacity=".55"/>'
+    + '<ellipse cx="80" cy="' + blushY + '" rx="5" ry="3.2" fill="#F2A9BE" opacity=".55"/>';
+  // The charm at the throat says which luck this one carries. A shelled or
+  // armoured creature wears it lower, where the throat is covered.
+  const charmY = art.charmY || 80;
+  const neck = (art.charmY ? '' : '<path d="M42 74 q18 9 36 0" fill="none" stroke="' + luck.ink + '" stroke-width="2.4" stroke-linecap="round" opacity=".9"/>')
     + '<circle cx="60" cy="' + charmY + '" r="6.4" fill="' + luck.ink + '"/><circle cx="60" cy="' + charmY + '" r="3" fill="' + luck.aura + '"/>';
   let worn = '';
   const w = (wear && wear.id) || 'none';
   if (w === 'scarf') {
-    neck = '<path d="M38 72 q22 14 44 0 q2 8 -4 12 q-18 9 -36 0 q-6 -4 -4 -12 Z" fill="#E1607F"/>'
+    worn = '<path d="M38 72 q22 14 44 0 q2 8 -4 12 q-18 9 -36 0 q-6 -4 -4 -12 Z" fill="#E1607F"/>'
       + '<path d="M74 82 q10 8 6 20 q-8 2 -12 -4 Z" fill="#C94C6C"/>';
   } else if (w === 'bell') {
-    neck += '<circle cx="60" cy="80" r="6.4" fill="#E5BE5E" stroke="#B9913B" stroke-width="1.4"/>'
-      + '<path d="M55 80 h10" stroke="#B9913B" stroke-width="1.4"/><circle cx="60" cy="84" r="1.6" fill="#8A6B22"/>';
+    worn = '<circle cx="60" cy="' + charmY + '" r="6.4" fill="#E5BE5E" stroke="#B9913B" stroke-width="1.4"/>'
+      + '<path d="M55 ' + charmY + ' h10" stroke="#B9913B" stroke-width="1.4"/><circle cx="60" cy="' + (charmY + 4) + '" r="1.6" fill="#8A6B22"/>';
   } else if (w === 'crown') {
     const bud = (x, y, col) => [0, 72, 144, 216, 288].map((a) => '<ellipse cx="' + x + '" cy="' + (y - 3.4) + '" rx="2.2" ry="3.4" fill="' + col + '" transform="rotate(' + a + ' ' + x + ' ' + y + ')"/>').join('') + '<circle cx="' + x + '" cy="' + y + '" r="1.6" fill="#FFE9A8"/>';
     worn = '<path d="M34 36 Q60 22 86 36" fill="none" stroke="#8FBF7F" stroke-width="2.4"/>'
@@ -12161,19 +12485,17 @@ function petSVG(kind, coat, mood, wear) {
       + '<path d="M46 28 q14 -6 28 0" fill="none" stroke="#C6A98A" stroke-width="1.4"/>'
       + '<path d="M60 8 A9 9 0 1 0 60 26 A7 7 0 1 1 60 8 Z" fill="#E5BE5E"/>';
   }
-  // A turtle's head is small and comes out over the shell, so its head and
-  // face are drawn smaller and higher than the rest of the family's.
-  const head = '<ellipse cx="60" cy="56" rx="29" ry="26" fill="' + c.body + '"/>' + face + extra;
-  const headed = kind === 'turtle'
-    ? '<g transform="translate(60,50) scale(.76) translate(-60,-56)">' + head + '</g>'
+  const head = '<ellipse cx="60" cy="56" rx="29" ry="26" fill="' + c.body + '"/>' + face + (art.front || '');
+  const headed = art.head
+    ? '<g transform="translate(60,' + (56 + (art.headY || 0)) + ') scale(' + art.head + ') translate(-60,-56)">' + head + '</g>'
     : head;
-  return '<svg viewBox="0 0 120 120" class="petart" role="img" aria-label="' + esc(L(PET_NAMES[kind])) + '">'
+  return '<svg viewBox="0 0 120 120" class="petart' + (art.glow ? ' myth' : '') + '" role="img" aria-label="' + esc(L(PET_NAMES[kind])) + '">'
     + '<ellipse cx="60" cy="112" rx="32" ry="6" fill="#C9A5D8" opacity=".28"/>'
-    + behind
+    + (art.behind || '')
     + '<ellipse cx="60" cy="88" rx="30" ry="23" fill="' + c.body + '"/>'
     + '<ellipse cx="60" cy="92" rx="18" ry="14" fill="#FFF7EE" opacity=".55"/>'
-    + (feet ? '<ellipse cx="38" cy="104" rx="8" ry="5" fill="' + c.dark + '"/><ellipse cx="82" cy="104" rx="8" ry="5" fill="' + c.dark + '"/>' : '')
-    + overBody + ears + headed + neck + worn
+    + (art.feet === false ? '' : '<ellipse cx="38" cy="104" rx="8" ry="5" fill="' + c.dark + '"/><ellipse cx="82" cy="104" rx="8" ry="5" fill="' + c.dark + '"/>')
+    + (art.overBody || '') + (art.ears || '') + headed + neck + worn
     + '</svg>';
 }
 
@@ -12207,9 +12529,9 @@ function renderPet(want) {
     const st = PETS.step(p), gain = PETS.gain(p), pro = proOn(), ready = PETS.canFeed(p);
     const bless = prayed ? PETS.blessing(p) : null;
     return '<div class="card petwrap luck-' + luck.id + '">'
-      + '<div class="petstage" id="petstage">' + petHomeSVG(PETS.home(p).id) + petAuraHTML(p.kind) + petSVG(p.kind, coat, ready ? '' : 'happy', PETS.wear(p)) + '<span class="crumbs" id="crumbs"></span></div>'
+      + '<div class="petstage" id="petstage">' + petHomeSVG(PETS.home(p).id) + petAuraHTML(p.kind) + petSVG(p.kind, coat, ready ? '' : 'happy', PETS.wear(p)) + '<span class="crumbs" id="crumbs"></span><span class="toys" id="toys"></span></div>'
       + '<div class="lucktag" style="--ink:' + luck.ink + ';--aura:' + luck.aura + '">' + luck.sym + ' ' + esc(S.petBrings(L(luck.name))) + '</div>'
-      + '<p class="petline">' + esc(L(luck.line)) + '</p>'
+      + '<p class="petline">' + esc(L(petLine(p.kind))) + '</p>'
       + '<div class="charm"><span class="lbl">' + esc(S.petLevel(st.lv)) + '</span><span class="bar"><i style="width:' + st.at + '%;background:' + luck.ink + '"></i></span>'
       + '<b>' + (st.need ? st.into + '/' + st.need : '★') + '</b></div>'
       + '<ul class="carelist"><li class="head"><span>' + esc(S.petMealWorth) + '</span><b>+' + gain.total + '</b></li>'
@@ -12225,6 +12547,9 @@ function renderPet(want) {
         ? '<button class="btn primary block" id="feed">' + PETS.food(p).sym + ' ' + esc(S.petFeedWith(L(PETS.food(p).name))) + '</button>'
         : '<p class="hint ok">' + esc(S.petFull(waitWord(PETS.waitLeft(p)))) + '</p>'
           + (pro ? '' : '<p class="hint">' + esc(S.petFasterPlus) + '</p>'))
+      + (PETS.canPlay(p)
+        ? '<button class="btn block" id="playbtn" style="margin-top:10px">🧶 ' + esc(S.petPlay) + ' · ' + esc(S.petPlayLeft(PETS.playLeft(p))) + '</button>'
+        : '<p class="hint ok">' + esc(S.petPlayDone) + '</p>' + (pro ? '' : '<p class="hint">' + esc(S.petPlayMore) + '</p>'))
       + (bless ? '<div class="bless"><span class="q">' + luck.sym + '</span><p>' + esc(L(bless)) + '</p><span class="who">' + esc(p.name || L(PET_NAMES[p.kind])) + '</span></div>'
         : '<button class="btn block' + (PETS.fedToday(p) ? '' : ' off') + '" id="pray" style="margin-top:10px">🙏 ' + esc(S.petPray) + '</button>'
           + '<p class="hint">' + esc(PETS.fedToday(p) ? S.petPrayHint : S.petNeedFeed) + '</p>')
@@ -12287,6 +12612,24 @@ function renderPet(want) {
         toast(got.to > got.from ? S.petLevelUp(got.to, fmtNum(got.up)) : (got.coins ? S.petThanksCoins(fmtNum(got.coins)) : S.petThanks));
       }, 1100);
     });
+    const play = $('#playbtn');
+    if (play) play.addEventListener('click', () => {
+      if (busy) return;
+      busy = true; play.disabled = true;
+      const stage = $('#petstage'), toys = $('#toys');
+      stage.classList.add('playing');
+      let html = '';
+      for (let i = 0; i < 5; i++) {
+        const toy = PET_TOYS[Math.floor(Math.random() * PET_TOYS.length)];
+        html += '<i style="left:' + (10 + i * 17) + '%;bottom:' + (16 + (i % 3) * 8) + '%;--tx:' + (i % 2 ? 34 : -34) + 'px;animation-delay:' + (i * 160) + 'ms">' + toy + '</i>';
+      }
+      toys.innerHTML = html;
+      setTimeout(() => {
+        const got = PETS.play(p);
+        busy = false; draw();
+        toast(got.to > got.from ? S.petLevelUp(got.to, fmtNum(got.up)) : S.petPlayThanks);
+      }, 1500);
+    });
     const pb = $('#pray');
     if (pb) pb.addEventListener('click', () => {
       if (busy) return;
@@ -12317,24 +12660,34 @@ function renderPet(want) {
   /* The picker always shows all four, with what each one looks after, because
      the ones that cannot be kept yet are the reason to look at Plus. */
   const drawPicker = () => {
-    const pets = PETS.all(), room = PETS.room();
+    const pets = PETS.all();
+    const tile = (k) => {
+      const luck = petLuck(k), have = !!PETS.one(k), locked = !have && !PETS.mayKeep(k);
+      return '<button type="button" class="pp luck-' + luck.id + (have ? ' have' : '') + (locked ? ' locked' : '') + (petIsPro(k) ? ' myth' : '') + '" data-kind="' + k + '">'
+        + '<span class="ppart">' + petAuraHTML(k, 3) + petSVG(k, PET_COATS[0], 'happy') + '</span>'
+        + '<b>' + esc(L(PET_NAMES[k])) + '</b>'
+        + '<span class="pl" style="--ink:' + luck.ink + ';--aura:' + luck.aura + '">' + luck.sym + ' ' + esc(L(luck.name)) + '</span>'
+        + (have ? '<span class="pp-on">✓</span>' : (locked ? '<span class="pp-lock">🔒</span>' : ''))
+        + '</button>';
+    };
+    const free = PET_KINDS.filter((k) => !petIsPro(k)), myth = PET_KINDS.filter(petIsPro);
     m.innerHTML = '<div class="eyebrow">' + esc(S.actTitle) + '</div><h1 style="margin-bottom:6px">🐾 ' + esc(pets.length ? S.petAdd : S.petTitle) + '</h1><p class="muted">' + esc(S.petPick) + '</p>'
-      + (room ? '' : '<a class="salebar" href="#/unlock"><span class="tag">✨ ' + esc(S.plusName) + '</span><span class="txt">' + esc(S.petPlusPitch) + '</span><span class="go">' + esc(S.unlockLink) + ' ›</span></a>')
-      + '<div class="petpick">' + PET_KINDS.map((k) => {
-        const luck = petLuck(k), have = !!PETS.one(k), locked = !have && !room;
-        return '<button type="button" class="pp luck-' + luck.id + (have ? ' have' : '') + (locked ? ' locked' : '') + '" data-kind="' + k + '">'
-          + '<span class="ppart">' + petAuraHTML(k, 3) + petSVG(k, PET_COATS[0], 'happy') + '</span>'
-          + '<b>' + esc(L(PET_NAMES[k])) + '</b>'
-          + '<span class="pl" style="--ink:' + luck.ink + ';--aura:' + luck.aura + '">' + luck.sym + ' ' + esc(L(luck.name)) + '</span>'
-          + (have ? '<span class="pp-on">✓</span>' : (locked ? '<span class="pp-lock">🔒</span>' : ''))
-          + '</button>';
-      }).join('') + '</div>'
+      + (PETS.room() ? '' : '<a class="salebar" href="#/unlock"><span class="tag">✨ ' + esc(S.plusName) + '</span><span class="txt">' + esc(S.petPlusPitch) + '</span><span class="go">' + esc(S.unlockLink) + ' ›</span></a>')
+      + '<div class="sec"><h2 style="margin-bottom:4px">' + esc(S.petPickFree) + '</h2><p class="hint" style="margin-bottom:10px">' + esc(S.petPickFreeNote) + '</p>'
+      + '<div class="petpick">' + free.map(tile).join('') + '</div></div>'
+      + '<div class="sec"><h2 style="margin-bottom:4px">✨ ' + esc(S.petPickPro) + '</h2><p class="hint" style="margin-bottom:10px">' + esc(S.petPickProNote) + '</p>'
+      + '<div class="petpick">' + myth.map(tile).join('') + '</div></div>'
       + '<p class="hint">' + esc(S.petLuckNote) + '</p>'
       + '<p style="margin-top:14px"><a href="#/play" class="backlink" id="petback">← ' + esc(pets.length ? S.petBack : S.actTitle) + '</a></p>';
     $$('[data-kind]', m).forEach((b) => b.addEventListener('click', () => {
       const k = b.getAttribute('data-kind');
       if (PETS.one(k)) { open = k; draw(); return; }
-      if (!PETS.room()) { toast(S.petPlusPitch); location.hash = '#/unlock'; return; }
+      if (petIsPro(k) && !proOn()) { toast(S.petMythPlus); location.hash = '#/unlock'; return; }
+      // No room and no Plus means this is a swap, not an extra companion.
+      if (!PETS.room()) {
+        if (!confirm(S.petSwapAsk)) return;
+        PETS.all().forEach((x) => PETS.drop(x.kind));
+      }
       PETS.put(PETS.fresh(k)); open = k; draw();
     }));
     const back = $('#petback');
@@ -13955,7 +14308,7 @@ function adminSale(p) {
 ROUTES.admin = { nav: '', render: renderAdmin };
 
 /* ============================ boot ============================ */
-window.APP_VERSION = 'v98';
+window.APP_VERSION = 'v99';
 window.NABU = { CONFIG: CONFIG, SALE: SALE, salePrice: salePrice, loadActs: loadActs, BACK: BACK, LESSONS: LESSONS, localAnswer: localAnswer, compatVerdict: compatVerdict, numerologyOf: numerologyOf, ZDEEP: ZDEEP, lunarToday: lunarToday, solarToLunar: solarToLunar, DECK: DECK, INSIGHT: INSIGHT, KW: KW, ASK: ASK, TOPICS: TOPICS, GUIDES: GUIDES, SERVICES: SERVICES, COURSES: COURSES, ACCESS: ACCESS, makeCode: makeCode, parseCode: parseCode, ZODIAC: ZODIAC, pick: pick, book: book,
   insightHTML: insightHTML, insightOf: insightOf, sunSignIndex: sunSignIndex, lifePath: lifePath, PROFILE: () => PROFILE, BE: BE, ACTS: ACTS,
   BANK: BANK, PETS: PETS, luckCut: luckCut, petLevel: petLevel, petStep: petStep, VOUCHERS: VOUCHERS, levelCoins: levelCoins, LOOKS: LOOKS };

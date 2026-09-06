@@ -765,12 +765,18 @@ main{padding:22px 0 30px}
    and the companion on top. Everything else on the card explains, in the open,
    what each kind of care is worth. */
 .petwrap{text-align:center}
-.petstage{position:relative;width:min(250px,72vw);margin:0 auto 12px;padding-bottom:4px}
-.petstage .pethome{position:absolute;left:-8%;right:-8%;bottom:-2%;width:116%;height:auto;display:block;z-index:0}
+.petstage{position:relative;width:min(288px,82vw);aspect-ratio:1/1;margin:0 auto 12px;border-radius:18px;overflow:hidden;background:var(--surface-2)}
+.petstage .pethome{position:absolute;inset:0;width:100%;height:100%;display:block;z-index:0}
 .pethome{display:block;width:100%;height:auto}
 .aura{position:absolute;left:8%;top:2%;width:84%;height:84%;border-radius:50%;z-index:1;background:radial-gradient(circle,var(--aura) 0%,transparent 68%);opacity:.85;animation:breathe 4.6s ease-in-out infinite}
 @keyframes breathe{0%,100%{transform:scale(.94);opacity:.6}50%{transform:scale(1.06);opacity:.95}}
 .petart{position:relative;z-index:2;width:100%;height:auto;display:block}
+/* The companion stands to the left of centre, in front of its own place. */
+.petstage .petart{position:absolute;left:5%;bottom:1%;width:68%;height:auto}
+/* A spirit beast is lit from within, so it reads as the rarer thing. */
+.petart.myth{filter:drop-shadow(0 0 6px rgba(229,190,94,.55));animation:mythglow 3.6s ease-in-out infinite}
+@keyframes mythglow{0%,100%{filter:drop-shadow(0 0 4px rgba(229,190,94,.4))}50%{filter:drop-shadow(0 0 10px rgba(229,190,94,.75))}}
+.petstage .aura{left:12%;top:26%;width:64%;height:58%}
 .lucksyms{position:absolute;inset:0;z-index:3;pointer-events:none;overflow:hidden}
 .lucksyms i{position:absolute;bottom:16%;font-size:15px;font-style:normal;opacity:0;animation:luckrise 4.2s ease-in-out infinite}
 @keyframes luckrise{0%{opacity:0;transform:translateY(6px) scale(.7)}18%{opacity:.95}100%{opacity:0;transform:translateY(-64px) scale(1.05)}}
@@ -780,6 +786,12 @@ main{padding:22px 0 30px}
 .petstage.praying .aura{animation:blessing 1.2s ease-in-out}
 @keyframes praying{0%,100%{transform:translateY(0)}30%{transform:translateY(3px) scale(.97)}70%{transform:translateY(-6px) scale(1.04)}}
 @keyframes blessing{0%{transform:scale(.9);opacity:.5}60%{transform:scale(1.3);opacity:1}100%{transform:scale(1);opacity:.8}}
+/* A toy thrown for the companion, once a day or three times with Plus. */
+.toys{position:absolute;inset:0;z-index:4;pointer-events:none;overflow:hidden}
+.toys i{position:absolute;font-size:22px;font-style:normal;opacity:0;animation:toyfly 1.5s ease-in-out forwards}
+@keyframes toyfly{0%{opacity:0;transform:translate(0,0) rotate(0)}16%{opacity:1}50%{transform:translate(var(--tx),-44px) rotate(180deg)}100%{opacity:0;transform:translate(calc(var(--tx) * 2),4px) rotate(360deg)}}
+.petstage.playing .petart{animation:hopping .5s ease-in-out 3}
+@keyframes hopping{0%,100%{transform:translateY(0) rotate(0)}40%{transform:translateY(-13px) rotate(-4deg)}72%{transform:translateY(0) rotate(3deg)}}
 .crumbs{position:absolute;inset:0;z-index:4;pointer-events:none;overflow:hidden}
 .crumbs i{position:absolute;top:-6%;font-size:20px;font-style:normal;opacity:0;animation:dropfood 1s ease-in forwards}
 @keyframes dropfood{0%{opacity:0;transform:translateY(-10px)}20%{opacity:1}100%{opacity:0;transform:translateY(62px)}}
@@ -841,8 +853,8 @@ main{padding:22px 0 30px}
 .shelf .sh b{font-size:11.5px;font-weight:600;line-height:1.3;text-align:center}
 .shelf .sh.on{border-color:var(--primary);border-width:1.5px;background:var(--surface)}
 .shelf .sh.locked{border-style:dashed;opacity:.94}
-.shelf .shart{display:flex;align-items:center;justify-content:center;height:40px;font-size:26px;line-height:1;width:100%}
-.shelf .shart svg{position:static;max-width:100%;max-height:40px;width:auto;height:auto}
+.shelf .shart{display:flex;align-items:center;justify-content:center;height:46px;font-size:26px;line-height:1;width:100%}
+.shelf .shart svg{position:static;max-width:100%;max-height:46px;width:auto;height:auto;border-radius:8px}
 .shelf .plus{font-size:11px;font-weight:700;color:var(--gold-deep);background:var(--tag-gold-bg);border-radius:999px;padding:0 6px}
 .shelf .sh-lock{position:absolute;top:6px;right:7px;font-size:13px}
 .shelf .sh-on{position:absolute;top:6px;left:7px;color:var(--primary);font-weight:700;font-size:13px}
@@ -857,6 +869,7 @@ main{padding:22px 0 30px}
 .petpick .pl{display:inline-flex;align-items:center;gap:4px;background:var(--aura);color:var(--ink);border-radius:999px;padding:2px 10px;font-size:12px;font-weight:600}
 .petpick .pp.have{border-color:var(--primary);border-width:1.5px}
 .petpick .pp.locked{border-style:dashed}
+.petpick .pp.myth{background:linear-gradient(180deg,var(--tag-gold-bg),var(--surface))}
 .petpick .pp-lock{position:absolute;top:8px;right:9px;font-size:14px}
 .petpick .pp-on{position:absolute;top:8px;left:9px;color:var(--primary);font-weight:700}
 /* The companions stand at the foot of the tree rather than in the branches. */

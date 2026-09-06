@@ -150,6 +150,7 @@ function renderRewards() {
       + '<div class="card"><h3 style="margin-bottom:8px">' + esc(S.luckEarnTitle) + '</h3><ul class="carelist">'
       + '<li><span>' + esc(S.luckEarnFeed) + '</span><b>+5</b></li>'
       + '<li><span>' + esc(S.luckEarnGood) + '</span><b>+10</b></li>'
+      + '<li><span>' + esc(S.luckEarnPlay) + '</span><b>+3</b></li>'
       + '<li><span>' + esc(S.luckEarnLevel) + '</span><b>+500 × ' + esc(S.luckLevelWord) + '</b></li>'
       + '</ul><p class="hint">' + esc(S.luckEarnNote) + '</p></div>'
       + (holds.length
