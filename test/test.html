@@ -36,7 +36,7 @@ async function go(hash, sel) { W().location.hash = hash; await sleep(30); return
     ok(l1.day === 1 && l1.month === 1 && l1.year === 2025 && l2.day === 1 && l2.month === 1 && l2.year === 2024 && l3.day === 23 && l3.month === 7 && l3.year === 2026, 'lunar algorithm matches lịch vạn niên: Tết 2025 = 29/1, Tết 2024 = 10/2, 4/9/2026 = 23/7 âm lịch');
     ok(typeof w.chatBarHTML === 'function' && (/data-chat-img/.test(w.chatBarHTML('a', 'b', 'x')) === !!(N.CONFIG.attachments || N.CONFIG.chatImages)) && /data-chat-emoji/.test(w.chatBarHTML('a', 'b', 'x')) && typeof w.notifyBooking === 'function' && N.CONFIG.firebase && N.CONFIG.firebase.projectId === 'nabutarot' && N.CONFIG.adminEmails.indexOf('nabutarot@outlook.com') === 0, 'Firebase project wired with admin emails; chat attachments follow CONFIG.attachments; bookings notify the calendar endpoint');
     ok(/Nabu Tarot/.test(d.querySelector('#brand .lockup').textContent) && /^data:image\/png/.test(d.querySelector('#brand .lockup img').getAttribute('src')) && d.querySelector('#foot .lockup img'), 'header and footer show the real round avatar with the wordmark');
-    ok(d.querySelector('#foot') && /^IG · FB · /.test(d.querySelector('#foot .links').textContent.trim()) && d.querySelector('#foot a[title="Instagram"]') && /©/.test(d.querySelector('#foot').textContent) && /Báo lỗi/.test(d.querySelector('#foot').textContent), 'footer with Instagram, Facebook, copyright and the bug-report link');
+    ok(d.querySelector('#foot') && d.querySelectorAll('#foot .links .sl svg').length === 2 && d.querySelector('#foot a[title="Instagram"]') && d.querySelector('#foot a[title="Facebook"]') && /©/.test(d.querySelector('#foot').textContent) && /Báo lỗi/.test(d.querySelector('#foot').textContent), 'footer with Instagram, Facebook, copyright and the bug-report link');
     ok(!!d.querySelector('#tour'), 'tour shows on first visit');
     ok(d.querySelectorAll('.tile').length === 6 && /Bảng giá/.test(d.querySelector('.tiles').textContent) && d.querySelectorAll('#nav a').length === 6 && d.querySelector('#nav a[href="#/play"]') && /Hoạt động/.test(d.querySelector('#nav').textContent), 'six quick links; activities have their own tab in the bottom bar');
     ok(d.querySelectorAll('.tiles .pickico').length >= 2 && /#FBF3F5/.test(d.querySelector('.tiles a[href="#/pick"]').innerHTML) && /#3D2A6E/.test(d.querySelector('.tiles a[href="#/learn/tarot"]').innerHTML) && !/🃏/.test(d.querySelector('#main').innerHTML), 'draw tile has the lifted cream card, Tarot tile the purple logo card');
@@ -54,7 +54,7 @@ async function go(hash, sel) { W().location.hash = hash; await sleep(30); return
     d.querySelector('[data-tour="skip"]').click(); await sleep(30);
     ok(d.querySelector('#tour.tourmini'), 'closing shrinks it again');
     await waitFor(() => d.querySelector('.welcome'), 6000);
-    ok(/Chào mừng bạn đến với Nabu Tarot/.test(d.querySelector('.welcome h2').textContent) && d.querySelector('.welcome .sig img') && !d.querySelector('.welcome .date') && !/Dự đoán mới/.test(d.querySelector('#feed').textContent), 'welcome post heads the feed with the logo as signature, no date line, no "Dự đoán mới"');
+    ok(/Nabu Tarot xin chào/.test(d.querySelector('.welcome h2').textContent) && d.querySelector('.welcome .sig img') && !d.querySelector('.welcome .date') && !/Dự đoán mới/.test(d.querySelector('#feed').textContent), 'welcome post heads the feed with the logo as signature, no date line, no "Dự đoán mới"');
     ok(d.querySelector('.welcome.open [data-wtoggle]') && d.querySelector('.welcome .in'), 'the welcome note opens folded-out with a toggle');
     d.querySelector('[data-wtoggle]').click(); await sleep(30);
     ok(!d.querySelector('.welcome').classList.contains('open') && JSON.parse(w.localStorage.getItem('nabu-welcome-open')) === false && d.querySelector('.welcome .chev').textContent === '+', 'tapping the welcome title folds it and the choice is remembered');
@@ -172,7 +172,7 @@ async function go(hash, sel) { W().location.hash = hash; await sleep(30); return
     await go('#/learn/lesson/lenormand/6', '.spreads-v');
     ok(d.querySelectorAll('.spv').length === 7 && /Grand Tableau/.test(d.querySelector('.spreads-v').textContent), 'lenormand session 6: seven spread diagrams incl. the Grand Tableau');
     await go('#/report', '#rwhat');
-    ok(d.querySelector('#rwhat') && d.querySelector('#rsend') && !d.querySelector('#rcopy') && !d.querySelector('#rig') && d.querySelector('a[href="#/contact"]') && /Nabu Tarot v74/.test(d.querySelector('.msgbox').textContent), 'bug report screen: direct send button, Instagram, copy, auto-attached info');
+    ok(d.querySelector('#rwhat') && d.querySelector('#rsend') && !d.querySelector('#rcopy') && !d.querySelector('#rig') && d.querySelector('a[href="#/contact"]') && /Nabu Tarot v75/.test(d.querySelector('.msgbox').textContent), 'bug report screen: direct send button, Instagram, copy, auto-attached info');
     d.querySelector('#rwhat').value = 'Nút không bấm được'; d.querySelector('#rsend').click(); await sleep(150);
     ok(/đăng nhập|Liên hệ/.test(d.querySelector('#rstatus').textContent), 'without a sign-in the send button explains and points at the contact screen');
     ok(N.CONFIG.adminNotifyEmails.indexOf('nabutarot@outlook.com') === 0, 'notifications go to nabutarot@outlook.com first');
@@ -421,7 +421,7 @@ async function go(hash, sel) { W().location.hash = hash; await sleep(30); return
     ok(bgOf() === (wasDark ? DARK : LIGHT), 'and flips back');
     await go('#/me', '[data-theme-pick]');
     ok(d.querySelectorAll('[data-theme-pick]').length === 4 && d.querySelector('[data-theme-pick].on'), 'Me tab offers auto / light / dark / pastel pink with the current one marked');
-    ok(d.querySelector('#chkupd') && /Phiên bản v74/.test(d.querySelector('#main').textContent), 'Me shows the version with a check-for-updates button');
+    ok(d.querySelector('#chkupd') && /Phiên bản v75/.test(d.querySelector('#main').textContent), 'Me shows the version with a check-for-updates button');
     ok(d.querySelectorAll('.themes [data-theme-pick]').length === 4 && /📱/.test(d.querySelector('.themes').textContent) && d.querySelector('.themes').getBoundingClientRect().height < 60, 'the four themes sit on one line as icon chips');
     ok(d.querySelectorAll('.row3 .btn').length === 3 && /💬/.test(d.querySelector('.row3').textContent) && /🎓/.test(d.querySelector('.row3').textContent) && d.querySelector('.row3').getBoundingClientRect().height < 60, 'contact, report and tour share one line, each with an icon');
     ok(/Hồ sơ/.test(d.querySelector('.nav a[href="#/me"]').textContent) && !/Tôi/.test(d.querySelector('.nav').textContent), 'the Me tab is called Hồ sơ (Profile)');
@@ -432,18 +432,19 @@ async function go(hash, sel) { W().location.hash = hash; await sleep(30); return
         { id: 'q1', type: 'poll', date: '2026-09-04', title: { vi: 'Cung nào nhạy cảm nhất?' }, options: [{ vi: 'Cự Giải' }, { vi: 'Song Ngư' }, { vi: 'Bọ Cạp' }], closed: false },
         { id: 'w1', type: 'wish', date: '2026-09-03', title: { vi: 'Trăng non tháng 9: ước gì?' } }]; N.ACTS.loaded = true; w.localStorage.removeItem('nabu-act-choices'); w.localStorage.removeItem('nabu-wishes');
       await go('#/play', '#acts .actbtn'); await sleep(80);
-      ok(d.querySelectorAll('#acts .actbtn').length === 6 && d.querySelector('.actbtn[href="#/play/tree"]') && d.querySelector('.actbtn[href="#/play/coin"]') && d.querySelector('.actbtn[href="#/play/diary"]') && d.querySelector('.actbtn[href="#/play/p1"]') && d.querySelector('.actbtn[href="#/play/w1"]') && !d.querySelector('[data-pile]'), 'the activities screen is a list of buttons: the coin and the diary first, then one per activity');
+      ok(d.querySelectorAll('#acts .actbtn').length === 7 && d.querySelector('.actbtn[href="#/unlock"]') && d.querySelector('.actbtn[href="#/play/tree"]') && d.querySelector('.actbtn[href="#/play/coin"]') && d.querySelector('.actbtn[href="#/play/diary"]') && d.querySelector('.actbtn[href="#/play/p1"]') && d.querySelector('.actbtn[href="#/play/w1"]') && !d.querySelector('[data-pile]'), 'the activities screen is a list of buttons: the coin and the diary first, then one per activity');
       w.localStorage.removeItem('nabu-luck'); w.localStorage.removeItem('nabu-access');
       await go('#/play/tree', '#shake'); ok(d.querySelector('#tree svg') && d.querySelector('#treemsg').hidden, 'the message tree starts with no message shown');
       d.querySelector('#shake').click(); await waitFor(() => !d.querySelector('#treemsg').hidden, 6000);
       ok(d.querySelector('#treetext').textContent.length > 20 && d.querySelectorAll('#tree .petals i').length === 0, 'shaking the tree drops one written message and clears the petals');
       await go('#/play/coin', '#coinflip'); ok(d.querySelector('#coin svg') && d.querySelector('#coinres').textContent === '', 'the coin starts unflipped');
       d.querySelector('#coinflip').click(); await waitFor(() => d.querySelector('#coinres').textContent, 6000);
-      ok(/^(CÓ|KHÔNG)$/.test(d.querySelector('#coinres').textContent) && /coinres (yes|no)/.test(d.querySelector('#coinres').className), 'flipping the coin answers either yes or no');
-      ok(!d.querySelector('#coinflip') && d.querySelector('.luckbox') && /40\.000đ/.test(d.querySelector('.luckbox').textContent) && /65\.000đ/.test(d.querySelector('.luckbox').textContent) && d.querySelector('.luckbox a[href="#/contact"]'), 'the free weekly turn is used up, and the price for unlimited plus a code box appear');
+      ok(/^(CÓ|KHÔNG)$/.test(d.querySelector('#coin svg text').textContent) && d.querySelector('#coin svg text').getBBox().width < 120, 'the coin carries its answer on its own face, inside the ring');
+      ok(!d.querySelector('#coinflip') && d.querySelector('.luckbox') && /30\.000đ/.test(d.querySelector('.luckbox').textContent) && /50\.000đ/.test(d.querySelector('.luckbox').textContent) && d.querySelector('.luckbox a[href="#/unlock"]'), 'the free weekly turn is used up, and the price for unlimited plus a code box appear');
       d.querySelector('#luckcode').value = N.makeCode('luck', '2099-01-01'); d.querySelector('#luckgo').click(); await waitFor(() => d.querySelector('#coinflip'), 4000);
       ok(d.querySelector('#coinflip') && !d.querySelector('.luckbox'), 'the bundle code lifts the limit on the coin');
       await go('#/play/tree', '#shake'); ok(d.querySelector('#shake') && !d.querySelector('.luckbox'), 'and on the message tree as well');
+      await go('#/unlock', '.unlist'); ok(d.querySelectorAll('.unl').length === 7 && d.querySelector('.unl.best') && /50\.000đ/.test(d.querySelector('.unl.best').textContent) && d.querySelectorAll('.steps li').length === 3 && d.querySelector('#ucode') && d.querySelector('a[href="#/prices"]'), 'one screen lists all seven unlockables, marks the bundle, and carries the steps plus a code box');
       w.localStorage.removeItem('nabu-access'); w.localStorage.removeItem('nabu-luck');
       { const bt = d.querySelector('#totop'); ok(bt && bt.hidden, 'a back-to-top button exists and stays hidden until the screen is scrolled'); }
       { const dots = d.createElement('div'); dots.innerHTML = N.BACK; ok(dots.querySelectorAll('circle').length === 4, 'the card back carries four dots, one per corner'); dots.remove(); }

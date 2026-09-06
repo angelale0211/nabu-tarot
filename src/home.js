@@ -227,7 +227,7 @@ async function renderHome(args, params) {
   const feed = $('#feed'); if (!feed) return;
   const all = sortedPosts(), welcome = all.filter((p) => p.welcome)[0], list = all.filter((p) => !p.welcome);
   const wopen = store.get('nabu-welcome-open', true) !== false;
-  feed.innerHTML = (welcome ? '<section class="welcome' + (wopen ? ' open' : '') + '"><button type="button" class="wtoggle" data-wtoggle><h2>' + esc(L(welcome.title).replace(/\s+(\S{1,2})$/, '\u00A0$1')) + '</h2><span class="chev">' + (wopen ? '–' : '+') + '</span></button><div class="in">' + paras(L(welcome.body)) + '<div class="sig">' + LOGO + '</div></div></section>' : '')
+  feed.innerHTML = (welcome ? '<section class="welcome' + (wopen ? ' open' : '') + '"><button type="button" class="wtoggle" data-wtoggle><h2>' + esc(S.welcomeHead) + '</h2><span class="chev">' + (wopen ? '–' : '+') + '</span></button><div class="in">' + paras(L(welcome.body)) + '<div class="sig">' + LOGO + '</div></div></section>' : '')
     + (POSTS_CACHED && all.length ? '<div class="banner">' + esc(S.feedOffline) + '</div>' : '')
     + (list.length ? '<div class="eyebrow" style="margin-top:4px">📰 ' + esc(S.nabuPosts) + '</div>' + list.slice(0, 3).map((p) => postHTML(p, false)).join('') + '<a class="btn block" href="#/news">' + esc(S.allPostsBtn(list.length)) + '</a>' : (welcome ? '' : '<p class="empty">' + esc(S.feedEmpty) + '</p>'));
   bindPost(feed);

@@ -60,6 +60,7 @@ function renderLearn(args, params) {
     m.innerHTML = '<div class="eyebrow">' + esc(S.nav.learn) + '</div><h1 style="margin-bottom:6px">' + esc(S.learnTitle) + '</h1><p class="muted">' + esc(S.learnIntro) + '</p>'
       + '<div class="eyebrow">' + esc(S.coursesPractice) + '</div><div class="tiles">' + tile('tarot', !ACCESS.has('tarot')) + tile('lenormand', !ACCESS.has('lenormand')) + tile('playing', !ACCESS.has('playing')) + tile('manifest', !ACCESS.has('manifest')) + '</div>'
       + '<div class="eyebrow">' + esc(S.freeReads) + '</div><div class="tiles">' + tile('astro') + tile('fortune') + '</div>'
+      + '<p style="margin-top:14px"><a class="btn block" href="#/unlock">💳 ' + esc(S.unlockLink) + '</a></p>'
       + (function () { const ints = PROFILE.interests || []; const list = GUIDES.filter((g) => g.tags.some((t) => ints.indexOf(t) > -1) && !((g.cat === 'tarot' || g.cat === 'lenormand') && !ACCESS.has(g.cat))).slice(0, 4); return list.length ? '<div class="sec"><div class="eyebrow">' + esc(S.forInterests) + '</div>' + list.map(guideRow).join('') + '</div>' : ''; }());
     return;
   }
@@ -359,4 +360,39 @@ function renderNumbers() {
   bindAI(m);
   $('#nname').addEventListener('input', (e) => { const x = numerologyOf(e.target.value, PROFILE.birthday); $('#nameout').innerHTML = x.expression ? numRow(S.numExpr, x.expression, NUM[x.expression][lang].expr) + numRow(S.numSoul, x.soul, NUM[x.soul][lang].soul) + numRow(S.numPers, x.personality, NUM[x.personality][lang].pers) : ''; });
 }
+/* ---- everything the app unlocks, in one table ----
+   Grouped the way the visitor meets them: courses in the Learn tab, unlimited
+   turns in the Activities tab. The bundle is marked, since it is the row that
+   makes sense for anyone who wants both. In the Play build prices are hidden
+   and only the code box remains. */
+function unlockRowHTML(c) {
+  const S = T(), until = ACCESS.get()[c.id], open = ACCESS.has(c.id) || (c.id !== 'luck' && ACCESS.has('luck'));
+  return '<div class="unl' + (open ? ' on' : '') + (c.id === 'luck' ? ' best' : '') + '">'
+    + '<div class="unl-h"><b>' + esc(L(c.name)) + '</b>' + (isTWA() ? '' : '<span class="pr">' + fmtPrice(c.price) + '</span>') + '</div>'
+    + '<p class="hint">' + esc(L(c.blurb)) + '</p>'
+    + '<div class="unl-f">' + (c.id === 'luck' ? '<span class="chip pink">' + esc(S.unlockBest) + '</span>' : '')
+    + '<span class="st">' + (open ? '✓ ' + esc(until ? S.unlockOpenUntil(fmtDate(until)) : S.adminAccess) : esc(S.unlockNot) + (isTWA() ? '' : ' · ' + esc(c.months + ' ' + S.months6))) + '</span></div>'
+    + '</div>';
+}
+function renderUnlock() {
+  const S = T(), m = $('#main');
+  const draw = () => {
+    const group = (ids) => '<div class="unlist">' + COURSES.filter((c) => ids.indexOf(c.id) > -1).map(unlockRowHTML).join('') + '</div>';
+    m.innerHTML = '<div class="eyebrow">' + esc(CONFIG.brand) + '</div><h1 style="margin-bottom:6px">' + esc(S.unlockTitle) + '</h1><p class="muted">' + esc(S.unlockIntro) + '</p>'
+      + '<div class="sec"><h2 style="margin-bottom:8px">' + esc(S.unlockCourses) + '</h2>' + group(['tarot', 'lenormand', 'playing', 'manifest']) + '</div>'
+      + '<div class="sec"><h2 style="margin-bottom:8px">' + esc(S.unlockActs) + '</h2>' + group(['luck', 'coin', 'tree']) + '</div>'
+      + (isTWA() ? '' : '<div class="sec card"><h3 style="margin-bottom:10px">' + esc(S.unlockHow) + '</h3><ol class="steps">'
+        + [S.unlockStep1, S.unlockStep2, S.unlockStep3].map((x) => '<li>' + esc(x) + '</li>').join('') + '</ol>'
+        + '<a class="btn block primary" href="#/contact">' + esc(S.luckGet) + '</a></div>')
+      + '<div class="card"><label class="f" for="ucode">' + esc(S.unlockCodeLabel) + '</label><div class="row nw"><input id="ucode" placeholder="' + esc(S.luckCodePh) + '" autocapitalize="characters"><button class="btn" id="ugo">' + esc(S.unlock) + '</button></div><p class="hint" id="ustatus"></p></div>'
+      + (isTWA() ? '' : '<p style="margin-top:14px"><a class="backlink" href="#/prices">' + esc(S.unlockReadings) + ' →</a></p>');
+    $('#ugo').addEventListener('click', () => {
+      const r = parseCode($('#ucode').value), st = $('#ustatus');
+      if (!r) { st.textContent = S.badCode; st.className = 'hint err'; return; }
+      ACCESS.grant(r.courses || [r.course], r.until); toast(S.unlocked); draw();
+    });
+  };
+  draw();
+}
+ROUTES.unlock = { nav: '', render: renderUnlock };
 ROUTES.learn = { nav: 'learn', render: renderLearn };

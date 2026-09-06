@@ -379,6 +379,7 @@ main{padding:22px 0 30px}
 .foot b{color:var(--fg)}
 .foot .links{margin-top:4px;display:flex;flex-wrap:nowrap;gap:6px;white-space:nowrap;font-size:12.5px;overflow:hidden}.foot .links a{flex:none}
 .foot .links a{font-weight:600}
+.foot .links .sico{width:17px;height:17px}
 .foot .copy{margin-top:4px;color:var(--fg-faint);font-size:12px}
 
 /* ---- lessons ---- */
@@ -566,6 +567,8 @@ main{padding:22px 0 30px}
 .svc .t .ic .pickico{width:20px;height:34px}
 .tile .lock{font-size:16px;vertical-align:middle}
 .course{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--rule-soft);font-size:14.5px}
+/* A long product name wraps instead of widening the card. */
+.course>span:first-child{min-width:0;overflow-wrap:anywhere}.course>span:last-child{flex:none;text-align:right}
 .codebox{font-family:Georgia,serif;font-size:22px;letter-spacing:.06em;background:var(--surface-2);border-radius:12px;padding:12px;text-align:center;margin:10px 0;user-select:all}
 
 /* ---- booking ---- */
@@ -673,8 +676,9 @@ main{padding:22px 0 30px}
 .coin{width:150px;height:150px;margin:16px auto 4px}.coin svg{width:100%;height:100%;display:block}
 .coin.spin{animation:coinflip 1s cubic-bezier(.34,.85,.3,1)}
 @keyframes coinflip{0%{transform:rotateY(0deg) scale(1)}55%{transform:rotateY(1080deg) scale(1.1)}100%{transform:rotateY(1800deg) scale(1)}}
-.coinres{font-family:var(--display);font-size:30px;line-height:1.2;min-height:36px;margin:2px 0 12px;letter-spacing:.02em}
-.coinres.yes{color:var(--pink-ink)}.coinres.no{color:var(--fg-soft)}
+/* The answer is drawn on the coin; this only announces it to screen readers. */
+.coinres{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.coin{margin-bottom:14px}
 .treewrap{text-align:center}
 .tree{position:relative;display:block;width:100%;max-width:300px;margin:0 auto 6px;padding:0;border:0;background:none;cursor:pointer}
 .tree svg{width:100%;height:auto;display:block}
@@ -686,7 +690,18 @@ main{padding:22px 0 30px}
 .treemsg{background:var(--tag-gold-bg);color:var(--tag-gold-ink);border:1.5px solid var(--gold);border-radius:16px;padding:14px 16px;margin:8px 0 14px}
 .treemsg .eyebrow{color:inherit;opacity:.75;margin-bottom:6px}
 .treemsg p{margin:0;font-family:var(--display);font-size:19px;line-height:1.45}
-.luckbox{margin-top:12px}.luckbox .lead{font-weight:600;margin:0 0 4px}.luckbox .btn.block{margin-top:8px}.btns{display:grid;grid-template-columns:1fr 1fr;gap:8px}.btns .btn{width:100%}
+.luckbox{margin-top:12px}.luckbox .lead{font-weight:600;margin:0 0 4px}.luckbox .btn.block{margin-top:8px}
+.sico{width:17px;height:17px;display:block}
+.links .sl{display:inline-flex;align-items:center;text-decoration:none;vertical-align:-3px}
+.unlist{display:grid;gap:10px}
+.unl{background:var(--surface);border:1px solid var(--rule-soft);border-radius:16px;padding:14px}
+.unl.best{border-color:var(--pink);border-width:1.5px}.unl.on{border-color:var(--gold)}
+.unl-h{display:flex;align-items:baseline;gap:10px}
+.unl-h b{font-family:var(--display);font-weight:500;font-size:17px;flex:1;min-width:0}
+.unl-h .pr{font-weight:700;white-space:nowrap}
+.unl .hint{margin:6px 0 0}
+.unl-f{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-top:10px}
+.unl-f .st{font-size:12.5px;color:var(--fg-faint)}.unl.on .unl-f .st{color:var(--gold-ink,var(--fg-soft));font-weight:600}.btns{display:grid;grid-template-columns:1fr 1fr;gap:8px}.btns .btn{width:100%}
 /* Booking summary card and the done screen. */
 .sum{background:var(--surface);border:1px solid var(--rule);border-radius:14px;padding:4px 14px;font-size:14.5px;margin:10px 0;text-align:left}.sum .r{display:flex;gap:10px;padding:9px 0;border-top:1px solid var(--rule-soft)}.sum .r:first-child{border-top:0}
 .sum .k{flex:none;width:86px;color:var(--fg-faint);font-size:12.5px;font-weight:600;padding-top:2px}.sum .v{flex:1;min-width:0;overflow-wrap:anywhere}.sum ul{margin:0;padding-left:16px}.sum li{margin:2px 0}.sum li small{font-size:12.5px}.sum .warn{color:#B04A2E;font-weight:600}.sum .ok{color:#2E7D46;font-weight:600}

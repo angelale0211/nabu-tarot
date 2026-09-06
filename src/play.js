@@ -169,6 +169,7 @@ async function renderPlay(args) {
   }
   const diaryN = Object.keys(store.get('nabu-diary', {}) || {}).length;
   m.innerHTML = '<div class="eyebrow">' + esc(CONFIG.brand) + '</div><h1 style="margin-bottom:6px">' + esc(S.actTitle) + '</h1><p class="muted">' + esc(S.actIntro) + '</p><div id="acts" class="actlist">'
+    + '<a class="actbtn act-price live" href="#/unlock"><span class="ic">💳</span><span class="body"><b>' + esc(S.unlockLink) + '</b><span class="meta">' + esc(S.unlockActs) + '</span></span><span class="go">›</span></a>'
     + '<a class="actbtn act-tree live" href="#/play/tree"><span class="ic">🌸</span><span class="body"><b>' + esc(S.treeTitle) + '</b><span class="meta">' + esc(S.treeSub) + '</span></span><span class="go">›</span></a>'
     + '<a class="actbtn act-coin live" href="#/play/coin"><span class="ic">🪙</span><span class="body"><b>' + esc(S.coinTitle) + '</b><span class="meta">' + esc(S.coinSub) + '</span></span><span class="go">›</span></a>'
     + '<a class="actbtn act-diary live" href="#/play/diary"><span class="ic">📔</span><span class="body"><b>' + esc(S.diaryTitle) + '</b><span class="meta">' + esc(S.diarySub) + (diaryN ? ' · ' + esc(S.diaryCount(diaryN)) : '') + '</span></span><span class="chev">›</span></a>'
@@ -186,7 +187,7 @@ function luckPanelHTML(kind) {
     + '<p class="hint" style="margin-bottom:10px">' + esc(S.luckOffer) + '</p>'
     + '<div class="row nw"><input id="luckcode" placeholder="' + esc(S.luckCodePh) + '" autocapitalize="characters"><button class="btn" id="luckgo">' + esc(S.unlock) + '</button></div>'
     + '<p class="hint" id="luckstatus"></p>'
-    + '<a class="btn block" href="#/contact">' + esc(S.luckGet) + '</a></div>';
+    + '<a class="btn block" href="#/unlock">' + esc(S.unlockLink) + '</a></div>';
 }
 function bindLuck(root, redraw) {
   const S = T(), go = $('#luckgo', root);
@@ -202,66 +203,67 @@ function bindLuck(root, redraw) {
    A blossom tree you shake for one of sixty blessings. The messages are written
    for this app, not taken from a published oracle deck. */
 const TREE_MSGS = [
-  { vi: 'Điều bạn đang chờ vẫn đang trên đường tới bạn.', en: 'What you are waiting for is still on its way to you.' },
-  { vi: 'Bạn không đi chậm. Bạn chỉ đang đi một con đường dài hơn.', en: 'You are not slow. You are simply walking a longer road.' },
-  { vi: 'Một cánh cửa vừa khép lại để bạn nhìn thấy cánh cửa bên cạnh.', en: 'A door has closed so that you can see the one beside it.' },
-  { vi: 'Hôm nay bạn được phép nghỉ ngơi mà không cần thấy có lỗi.', en: 'Today you are allowed to rest without feeling guilty.' },
-  { vi: 'Bạn được thương nhiều hơn bạn vẫn nghĩ.', en: 'You are loved more than you have realised.' },
-  { vi: 'Điều bạn lo lắng sẽ không diễn ra theo cách bạn đang sợ.', en: 'What worries you will not unfold the way you fear.' },
-  { vi: 'Bạn của hôm nay đã mạnh hơn bạn của một năm trước rất nhiều.', en: 'You today are far stronger than you were a year ago.' },
-  { vi: 'Vũ trụ đã nghe thấy điều bạn cầu mong.', en: 'The universe has heard what you asked for.' },
-  { vi: 'Một điều tốt lành đang được chuẩn bị sẵn cho bạn.', en: 'Something good is already being prepared for you.' },
-  { vi: 'Bạn không cần giỏi mọi thứ mới xứng đáng được yêu thương.', en: 'You do not have to be good at everything to deserve love.' },
-  { vi: 'Việc bạn đang làm có ý nghĩa, kể cả khi chưa ai nói ra điều đó.', en: 'What you are doing matters, even if nobody has said so yet.' },
-  { vi: 'Hãy tin vào cảm giác đầu tiên của bạn trong tuần này.', en: 'Trust your first instinct this week.' },
-  { vi: 'Một người đang nghĩ về bạn với lòng biết ơn.', en: 'Someone is thinking of you with gratitude.' },
-  { vi: 'Bạn không phải gánh chuyện này một mình.', en: 'You do not have to carry this alone.' },
-  { vi: 'Điều bạn buông bỏ hôm nay sẽ mở chỗ cho điều đến ngày mai.', en: 'What you let go of today makes room for what comes tomorrow.' },
-  { vi: 'Sự chậm rãi của bạn lúc này là đang giữ gìn, không phải đang lùi lại.', en: 'Your slowness right now is care, not retreat.' },
-  { vi: 'Có một cơ hội đang đến gần hơn bạn tưởng.', en: 'An opportunity is closer than you think.' },
-  { vi: 'Bạn đã làm đúng khi chọn giữ sự tử tế của mình.', en: 'You were right to keep your kindness.' },
-  { vi: 'Hãy nói ra điều bạn muốn. Lần này sẽ có người lắng nghe.', en: 'Say what you want. This time someone will listen.' },
-  { vi: 'Nỗi buồn này có thời hạn của nó, và thời hạn ấy sắp hết.', en: 'This sadness has an end, and the end is near.' },
-  { vi: 'Bạn đang ở gần câu trả lời hơn bạn nghĩ rất nhiều.', en: 'You are much closer to the answer than you think.' },
-  { vi: 'Hãy tự hào về những lần bạn đã đứng dậy mà không ai nhìn thấy.', en: 'Be proud of every time you got up when nobody saw.' },
-  { vi: 'Một tin vui nhỏ sẽ đến trong những ngày tới.', en: 'A small piece of good news is coming in the days ahead.' },
-  { vi: 'Điều bạn tưởng là mất mát hoá ra lại là được bảo vệ.', en: 'What felt like a loss turns out to have been protection.' },
-  { vi: 'Hãy cho phép mình bắt đầu lại, dù đã bắt đầu bao nhiêu lần.', en: 'Allow yourself to begin again, however many times you have begun.' },
-  { vi: 'Có người sẽ ở lại với bạn, không phải vì bạn hoàn hảo.', en: 'Someone will stay with you, and not because you are perfect.' },
-  { vi: 'Bạn không cần chứng minh giá trị của mình với bất kỳ ai.', en: 'You do not need to prove your worth to anyone.' },
-  { vi: 'Hãy chăm cho cơ thể bạn tuần này. Nó đã cố gắng rất nhiều.', en: 'Look after your body this week. It has been trying hard.' },
-  { vi: 'Một mối quan hệ cũ sẽ dịu lại, theo cách bạn không ngờ.', en: 'An old relationship will soften, in a way you do not expect.' },
-  { vi: 'Sự bình yên bạn tìm không ở nơi nào xa cả.', en: 'The peace you are looking for is not somewhere far away.' },
-  { vi: 'Bạn được phép đổi ý.', en: 'You are allowed to change your mind.' },
-  { vi: 'Điều tốt bạn làm cho người khác đang quay về với bạn.', en: 'The good you did for others is finding its way back to you.' },
-  { vi: 'Đừng vội. Thứ thuộc về bạn sẽ không đi mất.', en: 'Do not rush. What belongs to you will not leave.' },
-  { vi: 'Hãy nhìn lại quãng đường bạn đã đi, chứ không chỉ quãng còn lại.', en: 'Look back at how far you have come, not only at what is left.' },
-  { vi: 'Một người sẽ nói với bạn đúng câu bạn cần nghe.', en: 'Someone will say the exact words you need to hear.' },
-  { vi: 'Bạn có quyền giữ khoảng cách với điều làm bạn mệt.', en: 'You have every right to keep your distance from what drains you.' },
-  { vi: 'Tiền bạc sẽ dễ thở hơn sau giai đoạn này.', en: 'Money will breathe easier after this stretch.' },
-  { vi: 'Sự thay đổi bạn đang sợ hoá ra là điều bạn cần.', en: 'The change you fear turns out to be the one you needed.' },
-  { vi: 'Hôm nay hãy làm một việc nhỏ chỉ vì nó khiến bạn vui.', en: 'Do one small thing today only because it makes you happy.' },
-  { vi: 'Bạn không muộn. Bạn đang đúng nhịp của mình.', en: 'You are not late. You are on your own timing.' },
-  { vi: 'Một người bạn cũ sẽ xuất hiện trở lại.', en: 'An old friend will come back into view.' },
-  { vi: 'Điều bạn học được từ lần vấp ngã đó sẽ cứu bạn lần sau.', en: 'What you learned from that fall will save you the next time.' },
-  { vi: 'Hãy để người khác giúp bạn. Họ thật lòng muốn giúp.', en: 'Let people help you. They genuinely want to.' },
-  { vi: 'Có một điều đẹp đẽ đang lớn lên trong im lặng.', en: 'Something beautiful is growing quietly.' },
-  { vi: 'Bạn đang được dẫn đi, kể cả khi bạn không thấy đường.', en: 'You are being led, even when you cannot see the path.' },
-  { vi: 'Hãy tha thứ cho chính mình trước đã.', en: 'Forgive yourself first.' },
-  { vi: 'Câu trả lời sẽ đến khi bạn thôi hỏi liên tục.', en: 'The answer arrives when you stop asking constantly.' },
-  { vi: 'Một chuyện bạn tưởng đã kết thúc vẫn còn một chương nữa.', en: 'Something you thought was over still has one more chapter.' },
-  { vi: 'Bạn xứng đáng với một tình cảm không làm bạn phải đoán.', en: 'You deserve a love that does not leave you guessing.' },
-  { vi: 'Sức khoẻ của bạn sẽ khá lên nếu bạn ngủ đủ tuần này.', en: 'Your health will improve if you sleep enough this week.' },
-  { vi: 'Hãy giữ lấy ước mơ đó thêm một thời gian nữa.', en: 'Hold on to that dream a little longer.' },
-  { vi: 'Người thật lòng với bạn sẽ không bắt bạn phải chờ mãi.', en: 'Someone who means it will not keep you waiting forever.' },
-  { vi: 'Bạn đã đủ. Ngay lúc này, đúng như bạn đang là.', en: 'You are enough, right now, exactly as you are.' },
-  { vi: 'Một lời xin lỗi bạn đang chờ có thể sẽ đến.', en: 'An apology you have been waiting for may arrive.' },
-  { vi: 'Hãy tin rằng bạn có thể xây lại, vì bạn đã từng xây được.', en: 'Trust that you can rebuild, because you have built before.' },
-  { vi: 'Công việc của bạn sắp có người nhìn thấy.', en: 'Your work is about to be seen.' },
-  { vi: 'Đừng đóng lòng mình lại chỉ vì một người.', en: 'Do not close your heart because of one person.' },
-  { vi: 'Có một mùa nhẹ nhàng đang đợi bạn ở phía trước.', en: 'A gentler season is waiting for you up ahead.' },
-  { vi: 'Điều bạn cầu mong không bị bỏ quên, chỉ là chưa tới lúc.', en: 'What you asked for is not forgotten, only not yet due.' },
-  { vi: 'Hãy đi ngủ sớm hôm nay. Ngày mai sẽ khác.', en: 'Go to bed early tonight. Tomorrow will feel different.' }
+  { vi: 'Điều bạn đang chờ vẫn đang trên đường tới với bạn, chỉ là nó đi chậm hơn mong đợi của bạn một chút. Bạn hãy giữ lòng mình mềm và đừng vội khép lại.', en: 'What you are waiting for is still making its way to you, only a little slower than you hoped. Keep your heart soft and do not close it just yet.' },
+  { vi: 'Bạn không hề đi chậm. Con đường của bạn dài hơn con đường của nhiều người khác, và những gì bạn học được trên đó rồi sẽ có lúc dùng đến.', en: 'You are not moving slowly. Your road is longer than the roads many other people walk, and everything you gather along it will be needed one day.' },
+  { vi: 'Một cánh cửa vừa khép lại trước mặt bạn, không phải để giữ bạn ở bên ngoài, mà để bạn kịp nhìn thấy cánh cửa khác đang mở ngay bên cạnh.', en: 'A door has just closed in front of you, not to keep you outside, but so that you would notice the other one standing open beside it.' },
+  { vi: 'Hôm nay bạn được phép nghỉ ngơi mà không cần thấy có lỗi với ai. Nghỉ ngơi cũng là một phần của việc đi tới nơi bạn muốn đến.', en: 'Today you are allowed to rest without feeling that you owe anyone an explanation. Rest is part of how you arrive where you are going.' },
+  { vi: 'Bạn được thương nhiều hơn bạn vẫn nghĩ. Có những người giữ bạn trong lòng theo cách rất lặng lẽ mà bạn chưa nhận ra.', en: 'You are loved more than you have realised. Some people hold you in their thoughts quietly, in ways you have not noticed yet.' },
+  { vi: 'Điều bạn đang lo lắng sẽ không diễn ra theo cách bạn sợ. Khi nó đến thật, bạn sẽ thấy mình đủ bình tĩnh để đi qua.', en: 'What worries you will not unfold the way you fear. When it truly arrives, you will find yourself calm enough to walk through it.' },
+  { vi: 'Bạn của hôm nay đã đi xa hơn bạn của một năm trước rất nhiều. Bạn chỉ quên nhìn lại quãng đường mình vừa vượt qua.', en: 'You have come a long way from the person you were a year ago. You have simply forgotten to look back at the distance you crossed.' },
+  { vi: 'Vũ trụ đã nghe thấy điều bạn cầu mong. Có những lời cầu được trả lời chậm, bởi vì câu trả lời cần thời gian để lớn lên.', en: 'The universe has heard what you asked for. Some wishes are answered slowly, because the answer needs time to grow.' },
+  { vi: 'Một điều tốt lành đang được chuẩn bị sẵn cho bạn, ở nơi bạn chưa nhìn tới, vào lúc bạn gần như đã thôi trông đợi.', en: 'Something good is being prepared for you, somewhere you are not looking, at a moment when you have nearly stopped expecting it.' },
+  { vi: 'Bạn không cần giỏi mọi thứ mới xứng đáng được yêu thương. Người thương bạn thật lòng sẽ thương cả những phần bạn còn vụng về.', en: 'You do not have to be good at everything to deserve love. Whoever loves you truly will love the clumsy parts of you as well.' },
+  { vi: 'Việc bạn đang làm có ý nghĩa, kể cả khi chưa có ai nói ra điều đó. Những việc tử tế thường được ghi nhận muộn hơn ta mong.', en: 'What you are doing matters, even if nobody has said so yet. Kind work tends to be recognised later than we would like.' },
+  { vi: 'Tuần này bạn hãy tin vào cảm giác đầu tiên của mình. Nó thường biết trước điều mà lý trí của bạn còn đang tìm cách giải thích.', en: 'Trust your first instinct this week. It usually knows before your reasoning has finished explaining itself.' },
+  { vi: 'Có một người đang nghĩ về bạn với lòng biết ơn, vì một điều bạn đã làm từ lâu và nay chính bạn cũng quên mất.', en: 'Someone is thinking of you with gratitude, for something you did long ago and have since forgotten yourself.' },
+  { vi: 'Bạn không phải gánh chuyện này một mình. Chỉ cần bạn mở lời, sẽ có người sẵn lòng đứng cạnh bạn.', en: 'You do not have to carry this alone. The moment you say it out loud, someone will be willing to stand beside you.' },
+  { vi: 'Điều bạn buông bỏ hôm nay sẽ để lại một khoảng trống, và khoảng trống ấy chính là chỗ dành sẵn cho điều sắp đến.', en: 'What you release today will leave an empty space, and that space is exactly where the next thing will sit.' },
+  { vi: 'Sự chậm rãi của bạn lúc này không phải là lùi lại. Đó là cách bạn giữ gìn chính mình để còn đi được đường dài.', en: 'Your slowness right now is not a retreat. It is how you keep enough of yourself for the long road ahead.' },
+  { vi: 'Có một cơ hội đang tới gần hơn bạn tưởng. Bạn hãy để ý những cuộc trò chuyện tưởng chừng rất bình thường.', en: 'An opportunity is closer than you think. Pay attention to the conversations that look entirely ordinary.' },
+  { vi: 'Bạn đã làm đúng khi chọn giữ lại sự tử tế của mình, ngay cả ở nơi mà sự tử tế ấy chưa được đáp lại.', en: 'You were right to keep your kindness, even in a place where that kindness was not returned.' },
+  { vi: 'Bạn hãy nói ra điều mình muốn. Lần này người nghe sẽ hiểu bạn, và câu chuyện sẽ nhẹ nhàng hơn bạn nghĩ.', en: 'Say what you want. This time the person listening will understand you, and it will go more gently than you expect.' },
+  { vi: 'Nỗi buồn này có thời hạn của riêng nó. Nó sẽ không ở lại trong bạn lâu như bạn đang lo sợ.', en: 'This sadness has a limit of its own. It will not stay in you as long as you are afraid it will.' },
+  { vi: 'Bạn đang ở gần câu trả lời hơn bạn nghĩ. Có khi bạn chỉ cần ngồi yên thêm một chút là nó tự hiện ra.', en: 'You are nearer the answer than you think. Sometimes it appears on its own if you sit still a little longer.' },
+  { vi: 'Bạn hãy tự hào về những lần mình đứng dậy mà không ai nhìn thấy. Đó mới là phần khó nhất, và bạn đã làm được.', en: 'Be proud of the times you got back up with nobody watching. That was the hardest part, and you managed it.' },
+  { vi: 'Một tin vui nhỏ sẽ đến trong những ngày tới. Nó không ồn ào, nhưng đủ để bạn thấy nhẹ lòng.', en: 'A small piece of good news is coming in the days ahead. It will arrive quietly, but it will be enough to lift you.' },
+  { vi: 'Điều bạn từng nghĩ là mất mát, sau này nhìn lại, hoá ra là một lần bạn được giữ lại khỏi con đường không dành cho mình.', en: 'What once felt like a loss turns out, when you look back, to have been the moment you were kept from a road that was never yours.' },
+  { vi: 'Bạn được phép bắt đầu lại, dù đây là lần thứ mấy. Không ai đếm số lần bắt đầu của bạn ngoài chính bạn.', en: 'You are allowed to begin again, however many times this is. Nobody is counting your beginnings except you.' },
+  { vi: 'Sẽ có người ở lại bên bạn, không phải vì bạn hoàn hảo, mà vì họ thấy bình yên khi ở cạnh bạn.', en: 'Someone will stay beside you, not because you are perfect, but because they feel at peace when they are near you.' },
+  { vi: 'Bạn không cần chứng minh giá trị của mình với bất kỳ ai. Những người hiểu bạn đã nhìn thấy điều đó từ lâu.', en: 'You do not need to prove your worth to anyone. The people who understand you saw it a long time ago.' },
+  { vi: 'Tuần này bạn hãy chăm cho cơ thể mình. Nó đã cố gắng rất nhiều và vẫn lặng lẽ đi cùng bạn mỗi ngày.', en: 'Look after your body this week. It has been trying hard, and it goes on walking with you quietly every day.' },
+  { vi: 'Một mối quan hệ cũ sẽ dịu lại theo cách bạn không ngờ tới, vào lúc cả hai đều đã bớt cần phải đúng.', en: 'An old relationship will soften in a way you do not expect, once neither of you needs to be right any more.' },
+  { vi: 'Sự bình yên mà bạn tìm kiếm không nằm ở nơi nào xa xôi. Nó ở ngay trong những buổi tối rất bình thường của bạn.', en: 'The peace you are looking for is not somewhere far away. It lives inside your most ordinary evenings.' },
+  { vi: 'Bạn được phép đổi ý. Người trưởng thành là người dám nhận rằng điều mình từng muốn nay đã khác đi.', en: 'You are allowed to change your mind. Growing up includes admitting that what you once wanted has changed.' },
+  { vi: 'Điều tốt bạn từng làm cho người khác đang tìm đường quay về với bạn, có thể qua một người hoàn toàn xa lạ.', en: 'The good you once did for other people is finding its way back to you, perhaps through a complete stranger.' },
+  { vi: 'Bạn đừng vội. Thứ thuộc về bạn sẽ không đi mất chỉ vì bạn đến chậm hơn người khác vài bước.', en: 'Do not rush. What belongs to you will not disappear simply because you arrived a few steps later than others.' },
+  { vi: 'Bạn hãy nhìn lại quãng đường mình đã đi, chứ không chỉ nhìn phần còn lại phía trước. Bạn đã đi xa hơn bạn nhớ.', en: 'Look back at how far you have come, not only at what remains ahead. You have travelled further than you remember.' },
+  { vi: 'Sẽ có người nói với bạn đúng câu mà bạn đang cần nghe, vào một lúc rất tình cờ.', en: 'Someone will say the exact words you need to hear, at a moment that will feel entirely by chance.' },
+  { vi: 'Bạn có quyền giữ khoảng cách với những gì làm mình mệt. Đó không phải là ích kỷ, đó là biết thương lấy mình.', en: 'You have every right to keep your distance from what wears you out. That is not selfishness, it is care for yourself.' },
+  { vi: 'Chuyện tiền bạc sẽ dễ thở hơn sau giai đoạn này. Bạn hãy giữ vững một thói quen nhỏ và để thời gian làm nốt phần còn lại.', en: 'Money will feel easier after this stretch. Keep one small habit steady and let time do the rest.' },
+  { vi: 'Sự thay đổi mà bạn đang sợ hoá ra lại chính là điều bạn cần. Bạn sẽ thấy điều đó rõ hơn sau vài tháng nữa.', en: 'The change you are afraid of turns out to be the very one you needed. You will see that more clearly in a few months.' },
+  { vi: 'Hôm nay bạn hãy làm một việc nhỏ chỉ vì nó khiến bạn vui, chứ không vì nó có ích cho ai.', en: 'Today, do one small thing only because it makes you happy, and not because it is useful to anyone.' },
+  { vi: 'Bạn không hề muộn. Bạn đang đi đúng nhịp của riêng mình, và nhịp ấy không cần giống nhịp của ai cả.', en: 'You are not late at all. You are keeping your own time, and it does not need to match anyone else.' },
+  { vi: 'Một người bạn cũ sẽ xuất hiện trở lại trong đời bạn, mang theo cảm giác thân quen mà bạn đã lâu không có.', en: 'An old friend will come back into your life, bringing a familiar warmth you have not felt for a long time.' },
+  { vi: 'Điều bạn học được từ lần vấp ngã đó sẽ cứu bạn ở lần sau, đúng vào lúc bạn cần nó nhất.', en: 'What you learned from that fall will save you the next time, exactly when you need it most.' },
+  { vi: 'Bạn hãy để người khác giúp mình. Họ thật lòng muốn giúp, và việc nhận cũng là một cách cho đi.', en: 'Let other people help you. They genuinely want to, and accepting help is its own way of giving.' },
+  { vi: 'Có một điều đẹp đẽ đang lớn lên trong im lặng, ở nơi mà bây giờ bạn còn chưa nhìn thấy gì cả.', en: 'Something beautiful is growing quietly, in a place where you can still see nothing at all.' },
+  { vi: 'Bạn đang được dẫn đi, kể cả trong những ngày bạn không nhìn thấy đường. Bạn chỉ cần bước thêm một bước nữa.', en: 'You are being led, even on the days when you cannot see the path. You only need to take one more step.' },
+  { vi: 'Bạn hãy tha thứ cho chính mình trước đã. Bạn đã mang câu chuyện đó đủ lâu rồi.', en: 'Forgive yourself first. You have carried that story long enough.' },
+  { vi: 'Câu trả lời sẽ đến khi bạn thôi hỏi liên tục. Bạn hãy để lòng mình yên một chút, rồi nó sẽ tự lên tiếng.', en: 'The answer will come when you stop asking constantly. Let yourself be quiet for a while, and it will speak.' },
+  { vi: 'Một chuyện bạn tưởng đã khép lại vẫn còn thêm một chương nữa, và chương ấy dịu dàng hơn chương trước.', en: 'Something you thought was finished still has one more chapter, and that chapter is gentler than the one before.' },
+  { vi: 'Bạn xứng đáng với một tình cảm không khiến bạn phải đoán. Sự rõ ràng cũng là một dạng của tử tế.', en: 'You deserve a love that does not leave you guessing. Clarity is a form of kindness.' },
+  { vi: 'Sức khoẻ của bạn sẽ khá lên nếu tuần này bạn ngủ đủ giấc. Cơ thể bạn hồi phục nhanh hơn bạn tưởng.', en: 'Your health will improve if you sleep enough this week. Your body recovers faster than you think.' },
+  { vi: 'Bạn hãy giữ lấy ước mơ đó thêm một thời gian nữa. Có những giấc mơ cần đợi đúng mùa mới nở được.', en: 'Hold on to that dream a while longer. Some dreams only open when the right season comes.' },
+  { vi: 'Người thật lòng với bạn sẽ không để bạn chờ mãi. Một sự chờ đợi quá dài thường đã là một câu trả lời.', en: 'Someone who truly means it will not keep you waiting forever. Waiting far too long is usually an answer in itself.' },
+  { vi: 'Bạn đã đủ rồi, ngay lúc này, đúng như bạn đang là, chứ không phải sau khi bạn sửa xong điều gì đó.', en: 'You are enough right now, exactly as you are, and not once you have finished fixing something.' },
+  { vi: 'Một lời xin lỗi mà bạn đã chờ rất lâu có thể sẽ đến, và bạn sẽ thấy lòng mình nhẹ đi rất nhiều.', en: 'An apology you have waited a long time for may arrive, and you will feel a great deal lighter for it.' },
+  { vi: 'Bạn hãy tin rằng mình có thể xây lại, bởi vì bạn đã từng xây được một lần rồi.', en: 'Trust that you are able to rebuild, because you have already built it once before.' },
+  { vi: 'Công việc của bạn sắp có người nhìn thấy. Những gì bạn làm lặng lẽ bấy lâu rồi sẽ được gọi đúng tên.', en: 'Your work is about to be seen. What you have been doing quietly for so long will finally be named.' },
+  { vi: 'Bạn đừng đóng lòng mình lại chỉ vì một người. Thế giới còn rất nhiều người dịu dàng đang trên đường tới.', en: 'Do not close your heart because of one person. The world still holds many gentle people who are on their way.' },
+  { vi: 'Có một mùa nhẹ nhàng đang đợi bạn ở phía trước, ngay sau đoạn đường gập ghềnh mà bạn đang đi.', en: 'A gentler season is waiting for you up ahead, just beyond the rough stretch you are walking now.' },
+  { vi: 'Điều bạn cầu mong không hề bị bỏ quên. Nó chỉ đang đợi đúng lúc để đến mà không làm bạn vỡ vụn.', en: 'What you asked for has not been forgotten. It is waiting for the moment when it can arrive without breaking you.' },
+  { vi: 'Tối nay bạn hãy đi ngủ sớm. Ngày mai sẽ mang một màu khác, và bạn sẽ nhìn mọi chuyện rõ ràng hơn.', en: 'Go to bed early tonight. Tomorrow will carry a different colour, and you will see everything more clearly.' },
+  { vi: 'Bạn đã đi qua những ngày khó hơn ngày hôm nay rất nhiều, và bạn vẫn ở đây. Điều đó nói lên rất nhiều về bạn.', en: 'You have walked through days far harder than this one, and you are still here. That says a great deal about you.' }
 ];
 function treeSVG() {
   const petal5 = (x, y, r) => [0, 72, 144, 216, 288].map((a) => '<ellipse cx="' + x + '" cy="' + (y - r * 0.66) + '" rx="' + (r * 0.44).toFixed(1) + '" ry="' + (r * 0.66).toFixed(1) + '" fill="#F7A9C6" transform="rotate(' + a + ' ' + x + ' ' + y + ')"/>').join('') + '<circle cx="' + x + '" cy="' + y + '" r="' + (r * 0.3).toFixed(1) + '" fill="#FFE9A8"/>';
@@ -334,13 +336,19 @@ function renderTree() {
 /* ---- a coin for questions that only need yes or no ----
    The coin decides nothing. It puts one of the two answers in front of you so
    your own reaction to it becomes visible. */
+/* The answer is struck on the coin itself, the way a coin carries its face. */
 function coinFaceSVG(side) {
-  const face = side === 'yes' ? '<path d="M40 58 A22 22 0 1 0 40 102 A17 17 0 1 1 40 58 Z" fill="#FFF3C4"/>'
-    : '<path d="M56 62 l5 12 12 5 -12 5 -5 12 -5 -12 -12 -5 12 -5z" fill="#FFF3C4"/>';
+  const S = T();
+  const word = side ? (side === 'yes' ? S.coinYes : S.coinNo) : '';
+  const size = word.length <= 2 ? 44 : word.length === 3 ? 38 : word.length === 4 ? 31 : 24;
+  const mark = side === 'yes' ? '<path d="M72 44 A15 15 0 1 0 72 74 A11.5 11.5 0 1 1 72 44 Z" fill="#B9913B" opacity=".85"/>'
+    : side === 'no' ? '<path d="M80 46 l3.6 8.4 8.4 3.6 -8.4 3.6 -3.6 8.4 -3.6 -8.4 -8.4 -3.6 8.4 -3.6z" fill="#B9913B" opacity=".85"/>' : '';
   return '<svg viewBox="0 0 160 160" aria-hidden="true">'
     + '<circle cx="80" cy="80" r="74" fill="#E5BE5E" stroke="#B9913B" stroke-width="5"/>'
     + '<circle cx="80" cy="80" r="60" fill="none" stroke="#B9913B" stroke-width="2"/>'
-    + '<g transform="translate(0,0)">' + (side ? face : '<text x="80" y="102" text-anchor="middle" font-family="Georgia,serif" font-size="62" fill="#B9913B">?</text>') + '</g>'
+    + (side
+      ? mark + '<text x="80" y="106" text-anchor="middle" font-family="Georgia,serif" font-weight="700" font-size="' + size + '" letter-spacing="1" fill="#5A3F18">' + esc(word) + '</text>'
+      : '<text x="80" y="102" text-anchor="middle" font-family="Georgia,serif" font-size="62" fill="#B9913B">?</text>')
     + '</svg>';
 }
 function renderCoin() {
@@ -350,7 +358,7 @@ function renderCoin() {
     m.innerHTML = '<div class="eyebrow">' + esc(S.actTitle) + '</div><h1 style="margin-bottom:6px">🪙 ' + esc(S.coinTitle) + '</h1><p class="muted">' + esc(S.coinIntro) + '</p>'
       + '<div class="card coinwrap"><label class="f" for="coinq">' + esc(S.coinQ) + '</label><input id="coinq" placeholder="' + esc(S.coinQPh) + '" value="' + esc(store.get('nabu-coinq', '') || '') + '">'
       + '<div class="coin" id="coin">' + coinFaceSVG(side) + '</div>'
-      + '<div class="coinres' + (side ? ' ' + side : '') + '" id="coinres">' + (side ? esc(side === 'yes' ? S.coinYes : S.coinNo) : '') + '</div>'
+      + '<div class="coinres" id="coinres" aria-live="polite">' + (side ? esc(side === 'yes' ? S.coinYes : S.coinNo) : '') + '</div>'
       + (luckSpent('coin') ? '' : '<button class="btn primary block" id="coinflip">' + esc(side ? S.coinAgain : S.coinFlip) + '</button>') + '</div>'
       + luckPanelHTML('coin')
       + '<p class="hint">' + esc(S.coinNote) + '</p>'
@@ -362,15 +370,15 @@ function renderCoin() {
       const el = $('#coin'), btn = $('#coinflip');
       if (el.classList.contains('spin')) return;
       luckSpend('coin');
-      btn.disabled = true; $('#coinres').textContent = ''; $('#coinres').className = 'coinres';
+      btn.disabled = true; $('#coinres').textContent = '';
       el.classList.add('spin');
       let bits = 0;
       try { const a = new Uint8Array(1); crypto.getRandomValues(a); bits = a[0] & 1; }
       catch (e) { bits = Math.random() < 0.5 ? 0 : 1; }
       setTimeout(() => {
         side = bits ? 'yes' : 'no'; el.classList.remove('spin'); el.innerHTML = coinFaceSVG(side);
-        const r = $('#coinres'); r.textContent = side === 'yes' ? S.coinYes : S.coinNo; r.className = 'coinres ' + side;
-        if (luckSpent('coin')) { draw(); $('#coin').innerHTML = coinFaceSVG(side); const r2 = $('#coinres'); r2.textContent = side === 'yes' ? S.coinYes : S.coinNo; r2.className = 'coinres ' + side; return; }
+        $('#coinres').textContent = side === 'yes' ? S.coinYes : S.coinNo;
+        if (luckSpent('coin')) { draw(); return; }
         btn.disabled = false; btn.textContent = S.coinAgain;
       }, 1000);
     });

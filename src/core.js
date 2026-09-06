@@ -184,10 +184,14 @@ function notifyAdmin(title, body, hash) {
 }
 function notifyState() { return !('Notification' in window) ? 'unsupported' : Notification.permission; }
 async function askNotify() { if (!('Notification' in window)) return 'unsupported'; try { return await Notification.requestPermission(); } catch (e) { return Notification.permission; } }
+/* Drawn in one stroke weight so they sit in the row of text links without
+   shouting, and in currentColor so they follow the theme. */
+const IG_ICON = '<svg class="sico" viewBox="0 0 24 24" aria-hidden="true"><rect x="3.2" y="3.2" width="17.6" height="17.6" rx="5.2" fill="none" stroke="currentColor" stroke-width="1.9"/><circle cx="12" cy="12" r="4.1" fill="none" stroke="currentColor" stroke-width="1.9"/><circle cx="17.1" cy="6.9" r="1.25" fill="currentColor"/></svg>';
+const FB_ICON = '<svg class="sico" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8.8" fill="none" stroke="currentColor" stroke-width="1.9"/><path d="M13.6 21.2v-8.1h2.3l.4-2.8h-2.7V8.5c0-.8.25-1.35 1.4-1.35h1.45V4.65c-.25-.03-1.1-.11-2.1-.11-2.1 0-3.5 1.25-3.5 3.6v2.15H8.5v2.8h2.35v8.1z" fill="currentColor"/></svg>';
 function renderFooter() {
   const S = T(), links = [];
-  if (CONFIG.instagram) links.push('<a href="https://instagram.com/' + esc(CONFIG.instagram) + '" target="_blank" rel="noopener" title="Instagram">IG</a>');
-  if (CONFIG.facebookUrl) links.push('<a href="' + esc(CONFIG.facebookUrl) + '" target="_blank" rel="noopener" title="Facebook">FB</a>');
+  if (CONFIG.instagram) links.push('<a class="sl" href="https://instagram.com/' + esc(CONFIG.instagram) + '" target="_blank" rel="noopener" title="Instagram" aria-label="Instagram">' + IG_ICON + '</a>');
+  if (CONFIG.facebookUrl) links.push('<a class="sl" href="' + esc(CONFIG.facebookUrl) + '" target="_blank" rel="noopener" title="Facebook" aria-label="Facebook">' + FB_ICON + '</a>');
   links.push('<a href="#/contact">' + esc(S.contactLink) + '</a>');
   links.push('<a href="#/install">' + esc(S.installLink) + '</a>');
   links.push('<a href="#/privacy">' + esc(S.privacyLink) + '</a>');
