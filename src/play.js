@@ -575,7 +575,12 @@ async function homeActHTML(root) {
   ];
   root.innerHTML = '<div class="sec"><div class="eyebrow">🎲 ' + esc(S.actTitle) + '</div>'
     + '<div class="actquick">' + quick.map((q) => '<a class="aq" href="' + q[0] + '"><span class="ic">' + q[1] + '</span><b>' + esc(q[2]) + '</b></a>').join('') + '</div>'
-    + '<article class="post act act-' + esc(a.type) + '">' + actDateLine(a) + '<h2 class="tclamp">' + titleHTML(L(a.title)) + '</h2>' + (a.intro ? '<div class="body clamp">' + richHTML(L(a.intro)) + '</div>' : '') + '<div class="foot"><a class="btn sm primary" href="#/play/' + esc(a.id) + '">' + esc(S.actJoin) + ' →</a><a class="btn sm" href="#/play">' + esc(S.actAll) + '</a></div></article></div>';
+    + '<div class="actquick three">' + ACT_GROUPS.map((g) => {
+      const n = list.filter((a2) => a2.type === g[0]).length;
+      return '<a class="aq" href="#/play/' + esc(g[2]) + '"><span class="ic">' + g[1] + '</span><b>' + esc(S.actTypes[g[0]]) + '</b>' + (n ? '<span class="cnt">' + n + '</span>' : '') + '</a>';
+    }).join('') + '</div>'
+    + '<a class="actbtn act-' + esc(a.type) + (actOpen(a) ? ' live' : '') + '" href="#/play/' + esc(a.id) + '"><span class="ic">' + (S.actTypeIcon[a.type] || '🎲') + '</span><span class="body"><b>' + esc(L(a.title)) + '</b><span class="meta">' + esc(S.actNewest) + ' · ' + esc(fmtDate(a.date)) + ' · ' + esc(actStatus(a)) + '</span></span><span class="chev">›</span></a>'
+    + '<p style="margin-top:10px"><a class="btn block" href="#/play">' + esc(S.actAll) + '</a></p></div>';
   hydrateImages(root);
 }
 ROUTES.play = { nav: 'play', render: renderPlay };

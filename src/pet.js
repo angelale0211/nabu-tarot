@@ -30,7 +30,7 @@ const PET_NAMES = {
   deer: { vi: 'Hươu Lành', en: 'Gentle deer' },
   swallow: { vi: 'Én Gió', en: 'Wind swallow' },
   phoenix: { vi: 'Phượng Hoàng', en: 'Phoenix' },
-  ninetails: { vi: 'Hồ Chín Đuôi', en: 'Nine-tailed fox' },
+  ninetails: { vi: 'Hồ Ly Chín Đuôi', en: 'Nine-tailed fox' },
   dragon: { vi: 'Rồng Mây', en: 'Cloud dragon' },
   tiger: { vi: 'Bạch Hổ', en: 'White tiger' },
   qilin: { vi: 'Kỳ Lân', en: 'Qilin' },
@@ -52,7 +52,7 @@ const PET_LUCK = {
 /* Each spirit beast says its own version of its corner's promise. */
 const PET_LINES = {
   phoenix: { vi: 'Phượng Hoàng bay qua những gì đã cũ và mở ra một mùa mới cho trái tim bạn.', en: 'The phoenix flies over what is finished and opens a new season for your heart.' },
-  ninetails: { vi: 'Hồ Chín Đuôi có chín đuôi và chín cách khiến người ta nhớ đến bạn.', en: 'The nine-tailed fox has nine tails and nine ways of making you remembered.' },
+  ninetails: { vi: 'Hồ Ly Chín Đuôi có chín cái đuôi và chín cách khiến người ta nhớ đến bạn.', en: 'The nine-tailed fox has nine tails and nine ways of making you remembered.' },
   dragon: { vi: 'Rồng Mây cưỡi gió đưa tên bạn đi xa hơn những gì bạn tự nói về mình.', en: 'The cloud dragon rides the wind and carries your name further than you could speak it.' },
   tiger: { vi: 'Bạch Hổ đứng sau lưng bạn trong mọi cuộc thương lượng, nên không ai dám coi nhẹ bạn.', en: 'The white tiger stands behind you in every negotiation, so nobody takes you lightly.' },
   qilin: { vi: 'Kỳ Lân chỉ hiện ra với người chịu học, và nó đang đứng cạnh bàn của bạn.', en: 'The qilin shows itself only to those who keep studying, and it is standing by your desk.' },
@@ -618,31 +618,35 @@ const PET_ART = {
       });
       return out;
     })(),
-    // A wedge: wide at the brow, cheeks flared, narrowing to a small chin.
-    headPath: 'M60 24 Q35 26 31 47 Q28 62 42 69 Q51 74 55 83 Q58 88 60 88 Q62 88 65 83 Q69 74 78 69 Q92 62 89 47 Q85 26 60 24 Z',
-    ears: '<path d="M34 30 L26 0 L58 20 Z" fill="#FFFDF8" stroke="#EFC3D4" stroke-width="1.2"/>'
-      + '<path d="M86 30 L94 0 L62 20 Z" fill="#FFFDF8" stroke="#EFC3D4" stroke-width="1.2"/>'
-      + '<path d="M38 27 L33 9 L51 21 Z" fill="#F2789F" opacity=".55"/><path d="M82 27 L87 9 L69 21 Z" fill="#F2789F" opacity=".55"/>',
+    /* One triangle from the ears to the nose. A fox has no separate muzzle
+       patch stuck on a round face, which is what kept making her a dog. */
+    headPath: 'M60 16 Q33 19 29 42 Q26 57 37 65 Q45 71 52 82 Q57 91 60 93 Q63 91 68 82 Q75 71 83 65 Q94 57 91 42 Q87 19 60 16 Z',
+    ears: '<path d="M33 32 L24 -2 L59 18 Z" fill="#FFFDF8" stroke="#EFC3D4" stroke-width="1.2"/>'
+      + '<path d="M87 32 L96 -2 L61 18 Z" fill="#FFFDF8" stroke="#EFC3D4" stroke-width="1.2"/>'
+      + '<path d="M37 28 L31 7 L52 19 Z" fill="#F2789F" opacity=".55"/><path d="M83 28 L89 7 L68 19 Z" fill="#F2789F" opacity=".55"/>',
     overBody: '<path d="M60 74 q-10 14 -9 28 q9 5 18 0 q1 -14 -9 -28 Z" fill="#FDEFF4"/>',
     front: (() => {
-      // The ruff at each cheek, which is what a fox has and a dog does not.
-      const ruff = '<path d="M34 57 q-10 5 -12 14 q9 -2 13 -8 q-3 7 -10 12 q11 -1 16 -11 Z" fill="#FFFDF8" stroke="#EFC3D4" stroke-width="1"/>'
-        + '<path d="M86 57 q10 5 12 14 q-9 -2 -13 -8 q3 7 10 12 q-11 -1 -16 -11 Z" fill="#FFFDF8" stroke="#EFC3D4" stroke-width="1"/>';
-      // Slanted eyes with liner running back towards the ears.
+      /* The bridge of the snout, shaded a shade warmer than the cheeks, so
+         the taper reads as depth rather than as a flat kite. */
+      const bridge = '<path d="M60 40 Q52 60 55 82 Q60 90 60 93 Q60 90 65 82 Q68 60 60 40 Z" fill="#FDF4F7"/>';
+      const ruff = '<path d="M31 52 q-13 6 -15 19 q11 -3 16 -11 q-3 9 -12 16 q15 -2 20 -16 Z" fill="#FFFDF8" stroke="#EFC3D4" stroke-width="1"/>'
+        + '<path d="M89 52 q13 6 15 19 q-11 -3 -16 -11 q3 9 12 16 q-15 -2 -20 -16 Z" fill="#FFFDF8" stroke="#EFC3D4" stroke-width="1"/>';
+      // Small, slanted, set wide: fox eyes sit high on the triangle.
       const eyes = '<g class="eyes">'
-        + '<path d="M41 50 Q48 44 56 52 Q47 55.5 41 50 Z" fill="#6E2B44"/>'
-        + '<path d="M79 50 Q72 44 64 52 Q73 55.5 79 50 Z" fill="#6E2B44"/>'
-        + '<circle cx="47" cy="49" r="1.5" fill="#fff"/><circle cx="73" cy="49" r="1.5" fill="#fff"/>'
-        + '<path d="M41 50 q-6 -3 -9 -7 M79 50 q6 -3 9 -7" stroke="#6E2B44" stroke-width="1.8" fill="none" stroke-linecap="round"/>'
+        + '<path d="M38 47 Q46 41 53 50 Q45 53 38 47 Z" fill="#6E2B44"/>'
+        + '<path d="M82 47 Q74 41 67 50 Q75 53 82 47 Z" fill="#6E2B44"/>'
+        + '<circle cx="45" cy="46" r="1.5" fill="#fff"/><circle cx="75" cy="46" r="1.5" fill="#fff"/>'
+        + '<path d="M38 47 q-6 -3 -8 -8 M82 47 q6 -3 8 -8" stroke="#6E2B44" stroke-width="1.8" fill="none" stroke-linecap="round"/>'
+        + '<path d="M43 55 q3 6 8 8 M77 55 q-3 6 -8 8" stroke="#F0AFC6" stroke-width="2" fill="none" stroke-linecap="round" opacity=".8"/>'
         + '</g>';
-      const snout = '<path d="M54 60 Q53 71 57 78 Q60 81 63 78 Q67 71 66 60 Z" fill="#FFFDF8" stroke="#E8B4C8" stroke-width="1"/>'
-        + '<path d="M56.5 73 Q60 72 63.5 73 Q61.5 79 60 79 Q58.5 79 56.5 73 Z" fill="#4E1E32"/>'
-        + '<path d="M60 79 q-4 4 -7 1 M60 79 q4 4 7 1" stroke="#4E1E32" stroke-width="1.2" fill="none" stroke-linecap="round"/>';
-      const mark = '<path d="M53 34 q7 -4 14 0" stroke="#E5BE5E" stroke-width="2.2" fill="none" stroke-linecap="round"/>'
-        + '<circle cx="60" cy="30" r="3" fill="#E5BE5E"/>';
-      return ruff + eyes + snout + mark;
+      const nose = '<path d="M56 84 Q60 82 64 84 Q62 91 60 92 Q58 91 56 84 Z" fill="#4E1E32"/>'
+        + '<path d="M60 92 q-4 4 -8 1 M60 92 q4 4 8 1" stroke="#4E1E32" stroke-width="1.2" fill="none" stroke-linecap="round"/>'
+        + '<path d="M45 70 h-12 M46 76 h-11 M75 70 h12 M74 76 h11" stroke="#D89BB4" stroke-width="1" stroke-linecap="round" opacity=".8"/>';
+      const mark = '<path d="M53 27 q7 -4 14 0" stroke="#E5BE5E" stroke-width="2.2" fill="none" stroke-linecap="round"/>'
+        + '<circle cx="60" cy="23" r="3" fill="#E5BE5E"/>';
+      return bridge + ruff + eyes + nose + mark;
     })(),
-    noFace: true, noMouth: true, charmY: 98
+    noFace: true, noMouth: true, charmY: 104
   }),
   dragon: () => ({
     glow: true, pal: { body: '#C6EEDA', dark: '#7FC9A8', ink: '#12452F' },
