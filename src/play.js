@@ -169,7 +169,6 @@ async function renderPlay(args) {
   }
   const diaryN = Object.keys(store.get('nabu-diary', {}) || {}).length;
   m.innerHTML = '<div class="eyebrow">' + esc(CONFIG.brand) + '</div><h1 style="margin-bottom:6px">' + esc(S.actTitle) + '</h1><p class="muted">' + esc(S.actIntro) + '</p><div id="acts" class="actlist">'
-    + '<a class="actbtn act-price live" href="#/unlock"><span class="ic">💳</span><span class="body"><b>' + esc(S.unlockLink) + '</b><span class="meta">' + esc(S.unlockActs) + '</span></span><span class="go">›</span></a>'
     + '<a class="actbtn act-tree live" href="#/play/tree"><span class="ic">🌸</span><span class="body"><b>' + esc(S.treeTitle) + '</b><span class="meta">' + esc(S.treeSub) + '</span></span><span class="go">›</span></a>'
     + '<a class="actbtn act-coin live" href="#/play/coin"><span class="ic">🪙</span><span class="body"><b>' + esc(S.coinTitle) + '</b><span class="meta">' + esc(S.coinSub) + '</span></span><span class="go">›</span></a>'
     + '<a class="actbtn act-diary live" href="#/play/diary"><span class="ic">📔</span><span class="body"><b>' + esc(S.diaryTitle) + '</b><span class="meta">' + esc(S.diarySub) + (diaryN ? ' · ' + esc(S.diaryCount(diaryN)) : '') + '</span></span><span class="chev">›</span></a>'
@@ -187,7 +186,7 @@ function luckPanelHTML(kind) {
     + '<p class="hint" style="margin-bottom:10px">' + esc(S.luckOffer) + '</p>'
     + '<div class="row nw"><input id="luckcode" placeholder="' + esc(S.luckCodePh) + '" autocapitalize="characters"><button class="btn" id="luckgo">' + esc(S.unlock) + '</button></div>'
     + '<p class="hint" id="luckstatus"></p>'
-    + '<a class="btn block" href="#/unlock">' + esc(S.unlockLink) + '</a></div>';
+    + '</div>';
 }
 function bindLuck(root, redraw) {
   const S = T(), go = $('#luckgo', root);
@@ -299,6 +298,7 @@ function renderTree() {
       + (luckSpent('tree') ? '' : '<button class="btn primary block" id="shake">' + esc(msg ? S.treeAgain : S.treeShake) + '</button>') + '</div>'
       + luckPanelHTML('tree')
       + '<p class="hint">' + esc(S.treeNote) + '</p>'
+      + '<p style="margin-top:14px"><a class="btn block" href="#/unlock">💳 ' + esc(S.unlockLink) + '</a></p>'
       + '<p style="margin-top:14px"><a href="#/play" class="backlink">← ' + esc(S.actTitle) + '</a></p>';
     const shake = () => {
       if (busy) return;
@@ -362,6 +362,7 @@ function renderCoin() {
       + (luckSpent('coin') ? '' : '<button class="btn primary block" id="coinflip">' + esc(side ? S.coinAgain : S.coinFlip) + '</button>') + '</div>'
       + luckPanelHTML('coin')
       + '<p class="hint">' + esc(S.coinNote) + '</p>'
+      + '<p style="margin-top:14px"><a class="btn block" href="#/unlock">💳 ' + esc(S.unlockLink) + '</a></p>'
       + '<p style="margin-top:14px"><a href="#/play" class="backlink">← ' + esc(S.actTitle) + '</a></p>';
     const q = $('#coinq'); q.addEventListener('input', () => store.set('nabu-coinq', q.value));
     bindLuck(m, draw);
