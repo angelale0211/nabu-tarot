@@ -66,37 +66,37 @@ const PET_LINES = {
 };
 const LUCKS = {
   love: {
-    id: 'love', sym: '💗', ink: '#D3557E', aura: '#FBD3E1',
+    id: 'love', sym: '💗', ink: '#D3557E', deep: '#8E2E4C', aura: '#FBD3E1',
     name: { vi: 'Tình duyên', en: 'Love' },
     line: { vi: 'Mèo Trăng ngồi canh chuyện tình cảm và giữ cho lòng bạn ấm.', en: 'The moon cat sits with matters of the heart and keeps you warm.' },
     proLine: { vi: 'Phượng Hoàng bay qua những gì đã cũ và mở ra một mùa mới cho trái tim bạn.', en: 'The phoenix flies over what is finished and opens a new season for your heart.' }
   },
   career: {
-    id: 'career', sym: '⭐', ink: '#B98420', aura: '#FBE7BE',
+    id: 'career', sym: '⭐', ink: '#B98420', deep: '#775010', aura: '#FBE7BE',
     name: { vi: 'Sự nghiệp', en: 'Work' },
     line: { vi: 'Cáo Sao đi trước một bước để mở đường cho công việc của bạn.', en: 'The star fox walks a step ahead and opens the way at work.' },
     proLine: { vi: 'Rồng Mây cưỡi gió đưa tên bạn đi xa hơn những gì bạn tự nói về mình.', en: 'The cloud dragon rides the wind and carries your name further than you could speak it.' }
   },
   study: {
-    id: 'study', sym: '📖', ink: '#4173B8', aura: '#CFE0F7',
+    id: 'study', sym: '📖', ink: '#4173B8', deep: '#23477F', aura: '#CFE0F7',
     name: { vi: 'Học hành', en: 'Study' },
     line: { vi: 'Thỏ Mây thức cùng bạn qua những trang sách khó nhất.', en: 'The cloud bunny stays up with you through the hardest pages.' },
     proLine: { vi: 'Kỳ Lân chỉ hiện ra với người chịu học, và nó đang đứng cạnh bàn của bạn.', en: 'The qilin shows itself only to those who keep studying, and it is standing by your desk.' }
   },
   money: {
-    id: 'money', sym: '🪙', ink: '#2E8A68', aura: '#C6E8D9',
+    id: 'money', sym: '🪙', ink: '#2E8A68', deep: '#145C43', aura: '#C6E8D9',
     name: { vi: 'Tiền tài', en: 'Money' },
     line: { vi: 'Rùa Ngọc đi chậm mà chắc, giữ lại những gì bạn đã có.', en: 'The jade turtle moves slowly and keeps what you already have.' },
     proLine: { vi: 'Tỳ Hưu chỉ nuốt vào mà không nhả ra, nên của cải ở lại trong nhà bạn.', en: 'The pixiu swallows and never gives back, so what comes in stays in your house.' }
   },
   health: {
-    id: 'health', sym: '🌿', ink: '#1F8A98', aura: '#C7EAEE',
+    id: 'health', sym: '🌿', ink: '#1F8A98', deep: '#14606B', aura: '#C7EAEE',
     name: { vi: 'Sức khỏe', en: 'Health' },
     line: { vi: 'Hươu Lành nhắc bạn đi chậm lại một chút để người còn theo kịp.', en: 'The gentle deer asks you to slow down so your body can keep up.' },
     proLine: { vi: 'Bạch Hạc sống rất thọ, và nó đứng canh giấc ngủ của bạn mỗi đêm.', en: 'The white crane lives a long life, and it keeps watch over your sleep.' }
   },
   travel: {
-    id: 'travel', sym: '🧭', ink: '#C4643C', aura: '#F8D9C6',
+    id: 'travel', sym: '🧭', ink: '#C4643C', deep: '#8A3E1E', aura: '#F8D9C6',
     name: { vi: 'Đi lại', en: 'Travel' },
     line: { vi: 'Én Gió bay rất xa rồi vẫn về đúng tổ, nên đường bạn đi cũng luôn có lối về bình an.', en: 'The wind swallow flies far and still finds its own nest, so your road always has a safe way back.' },
     proLine: { vi: 'Thiên Mã đi cùng người đi xa, dù là đi làm hay đi chơi, để bạn thượng lộ bình an và về đến nhà nguyên vẹn.', en: 'The sky horse rides with whoever goes far, for work or for pleasure, and sees them safely there and safely home.' }
@@ -188,14 +188,21 @@ const PET_HOMES = [
   { id: 'mat', pro: false, add: 0, name: { vi: 'Chiếu cỏ', en: 'Grass mat' } },
   { id: 'cloud', pro: true, add: 12, name: { vi: 'Nhà mây', en: 'Cloud cottage' } },
   { id: 'shrine', pro: true, add: 12, name: { vi: 'Đền nhỏ', en: 'Little shrine' } },
-  { id: 'moon', pro: true, add: 12, name: { vi: 'Vườn trăng', en: 'Moon garden' } }
+  { id: 'moon', pro: true, add: 12, name: { vi: 'Vườn trăng', en: 'Moon garden' } },
+  { id: 'heaven', pro: true, add: 12, name: { vi: 'Cổng trời', en: 'Gate of heaven' } },
+  { id: 'palace', pro: true, add: 12, name: { vi: 'Cung điện', en: 'The palace' } },
+  { id: 'castle', pro: true, add: 12, name: { vi: 'Lâu đài phép', en: 'Magic castle' } }
 ];
 const PET_WEARS = [
   { id: 'none', pro: false, add: 0, name: { vi: 'Để mộc', en: 'Nothing' } },
   { id: 'scarf', pro: true, add: 10, name: { vi: 'Khăn lụa', en: 'Silk scarf' } },
   { id: 'bell', pro: true, add: 10, name: { vi: 'Chuông vàng', en: 'Gold bell' } },
   { id: 'crown', pro: true, add: 10, name: { vi: 'Vòng hoa', en: 'Flower crown' } },
-  { id: 'hat', pro: true, add: 10, name: { vi: 'Nón trăng', en: 'Moon hat' } }
+  { id: 'hat', pro: true, add: 10, name: { vi: 'Nón trăng', en: 'Moon hat' } },
+  /* Clothes rather than accessories: these are worn on the body. */
+  { id: 'jumper', pro: true, add: 10, name: { vi: 'Áo len', en: 'Knitted jumper' } },
+  { id: 'cloak', pro: true, add: 10, name: { vi: 'Áo choàng sao', en: 'Star cloak' } },
+  { id: 'armour', pro: true, add: 10, name: { vi: 'Giáp vàng', en: 'Gold armour' } }
 ];
 /* What gets thrown when the two of you play. */
 const PET_PAT_XP = 4;
@@ -473,6 +480,65 @@ function petHomeSVG(id) {
       + '<ellipse cx="106" cy="228" rx="86" ry="13" fill="#5A4C98" opacity=".55"/>'
       + '<path d="M150 226 q22 -4 42 0" stroke="#FFE9A8" stroke-width="2" opacity=".5" fill="none"/>'
       + '<g fill="#8E7FD6"><ellipse cx="20" cy="192" rx="16" ry="8"/><ellipse cx="226" cy="200" rx="14" ry="7"/></g>' + flies + '</svg>';
+  }
+  if (id === 'heaven') {
+    let rays = '';
+    for (let k = 0; k < 12; k++) rays += '<path d="M120 46 L' + (120 + Math.cos(k * 0.52 - 2.1) * 200).toFixed(0) + ' ' + (46 + Math.sin(k * 0.52 - 2.1) * 200).toFixed(0) + ' L' + (120 + Math.cos(k * 0.52 - 2.02) * 200).toFixed(0) + ' ' + (46 + Math.sin(k * 0.52 - 2.02) * 200).toFixed(0) + ' Z" fill="#FFF3C4" opacity=".35"/>';
+    return open
+      + '<defs><linearGradient id="hgh" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#FDF3D8"/><stop offset="55%" stop-color="#FBE7BE"/><stop offset="100%" stop-color="#F7D9E4"/></linearGradient></defs>'
+      + '<rect width="240" height="240" fill="url(#hgh)"/>'
+      + '<g>' + rays + '</g>'
+      + '<circle cx="120" cy="46" r="30" fill="#FFF7DA"/><circle cx="120" cy="46" r="38" fill="#FFE9A8" opacity=".45"/>'
+      /* a gate of light, standing open on a floor of cloud */
+      + '<path d="M62 176 L62 96 Q120 62 178 96 L178 176 Z" fill="none" stroke="#E5BE5E" stroke-width="5"/>'
+      + '<path d="M74 176 L74 104 Q120 76 166 104 L166 176 Z" fill="#FFF7DA" opacity=".55"/>'
+      + '<g fill="#E5BE5E"><circle cx="62" cy="94" r="5"/><circle cx="178" cy="94" r="5"/><circle cx="120" cy="66" r="5"/></g>'
+      + '<g fill="#FFFFFF" opacity=".95"><ellipse cx="34" cy="196" rx="48" ry="22"/><ellipse cx="112" cy="204" rx="60" ry="26"/><ellipse cx="206" cy="196" rx="46" ry="22"/></g>'
+      + '<g fill="#FBE7BE" opacity=".85"><ellipse cx="70" cy="218" rx="44" ry="16"/><ellipse cx="172" cy="220" rx="46" ry="16"/></g>'
+      + '<g fill="#FFF3C4"><path class="twinkle" d="M40 74 l3 6 6 3 -6 3 -3 6 -3 -6 -6 -3 6 -3 Z"/>'
+      + '<path class="twinkle" style="animation-delay:900ms" d="M198 62 l2.6 5 5 2.6 -5 2.6 -2.6 5 -2.6 -5 -5 -2.6 5 -2.6 Z"/></g></svg>';
+  }
+  if (id === 'palace') {
+    const roof = (cx, w, y, h) => '<path d="M' + (cx - w) + ' ' + (y + h) + ' Q' + (cx - w * 0.55) + ' ' + (y - 4) + ' ' + cx + ' ' + y + ' Q' + (cx + w * 0.55) + ' ' + (y - 4) + ' ' + (cx + w) + ' ' + (y + h) + ' Q' + cx + ' ' + (y + h - 10) + ' ' + (cx - w) + ' ' + (y + h) + ' Z" fill="#B0483F"/>'
+      + '<path d="M' + (cx - w) + ' ' + (y + h) + ' Q' + cx + ' ' + (y + h - 10) + ' ' + (cx + w) + ' ' + (y + h) + '" fill="none" stroke="#E5BE5E" stroke-width="2.4"/>';
+    const lantern = (x, y) => '<path d="M' + x + ' ' + (y - 14) + ' v8" stroke="#8E3A33" stroke-width="2"/>'
+      + '<ellipse cx="' + x + '" cy="' + y + '" rx="9" ry="11" fill="#E9705F" stroke="#B0483F" stroke-width="1.6"/>'
+      + '<path d="M' + (x - 7) + ' ' + (y - 5) + ' h14 M' + (x - 7) + ' ' + (y + 5) + ' h14" stroke="#B0483F" stroke-width="1.2"/>'
+      + '<path d="M' + x + ' ' + (y + 11) + ' v6" stroke="#E5BE5E" stroke-width="2"/>';
+    return open
+      + '<defs><linearGradient id="hgp" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#F7D9C0"/><stop offset="100%" stop-color="#FBEEDC"/></linearGradient></defs>'
+      + '<rect width="240" height="240" fill="url(#hgp)"/>'
+      + '<circle cx="52" cy="52" r="26" fill="#F8C79A" opacity=".55"/>'
+      + roof(120, 74, 40, 26) + '<rect x="58" y="66" width="124" height="8" fill="#8E3A33"/>'
+      + '<rect x="70" y="74" width="100" height="34" fill="#F2E3CB" stroke="#CBAE8B" stroke-width="2"/>'
+      + roof(120, 92, 104, 26) + '<rect x="30" y="130" width="180" height="8" fill="#8E3A33"/>'
+      + '<rect x="46" y="138" width="148" height="62" fill="#F2E3CB" stroke="#CBAE8B" stroke-width="2"/>'
+      + '<g fill="#B0483F"><rect x="52" y="138" width="12" height="62"/><rect x="176" y="138" width="12" height="62"/><rect x="112" y="138" width="16" height="62"/></g>'
+      + '<rect x="94" y="158" width="52" height="42" rx="4" fill="#8E3A33"/>'
+      + '<circle cx="120" cy="176" r="10" fill="#E5BE5E"/><circle cx="120" cy="176" r="4" fill="#B0483F"/>'
+      + '<g fill="#E5BE5E"><circle cx="120" cy="30" r="6"/><circle cx="46" cy="96" r="4"/><circle cx="194" cy="96" r="4"/></g>'
+      + lantern(36, 116) + lantern(204, 116)
+      + '<rect x="0" y="200" width="240" height="40" fill="#E0D0B4"/>'
+      + '<g stroke="#CBAE8B" stroke-width="1.6"><path d="M0 212 h240 M0 226 h240 M60 200 v40 M180 200 v40"/></g></svg>';
+  }
+  if (id === 'castle') {
+    const tower = (x, w, top) => '<rect x="' + (x - w / 2) + '" y="' + top + '" width="' + w + '" height="' + (206 - top) + '" fill="#D9C9F2" stroke="#B79BEA" stroke-width="1.6"/>'
+      + '<path d="M' + (x - w / 2 - 5) + ' ' + top + ' L' + x + ' ' + (top - 34) + ' L' + (x + w / 2 + 5) + ' ' + top + ' Z" fill="#8E7FD6"/>'
+      + '<path d="M' + x + ' ' + (top - 34) + ' l14 6 -14 6 Z" fill="#F2789F"/>'
+      + '<circle cx="' + x + '" cy="' + (top + 22) + '" r="6" fill="#FFF3C4"/>';
+    let stars = '';
+    for (let k = 0; k < 20; k++) stars += '<circle class="twinkle" cx="' + (10 + (k * 41) % 224) + '" cy="' + (8 + (k * 57) % 96) + '" r="' + (1 + (k % 3) * 0.6) + '" fill="#FFF3C4" style="animation-delay:' + (k * 160) + 'ms"/>';
+    return open
+      + '<defs><linearGradient id="hgc2" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#2E2756"/><stop offset="100%" stop-color="#6E5AA8"/></linearGradient></defs>'
+      + '<rect width="240" height="240" fill="url(#hgc2)"/>' + stars
+      + '<path d="M206 34 A20 20 0 1 0 206 74 A16 16 0 1 1 206 34 Z" fill="#FFE9A8"/>'
+      + tower(46, 34, 96) + tower(194, 34, 96) + tower(120, 52, 62)
+      + '<rect x="62" y="140" width="116" height="66" fill="#E4DCFA" stroke="#B79BEA" stroke-width="1.6"/>'
+      + '<path d="M96 206 v-34 a24 24 0 0 1 48 0 v34 Z" fill="#5E4F9E"/>'
+      + '<circle cx="120" cy="176" r="5" fill="#FFE9A8"/>'
+      + '<g fill="#FFF3C4" opacity=".9"><circle cx="46" cy="132" r="4"/><circle cx="194" cy="132" r="4"/><circle cx="120" cy="98" r="4"/></g>'
+      + '<rect x="0" y="206" width="240" height="34" fill="#4A3E80"/>'
+      + '<g fill="#5E4F9E"><ellipse cx="40" cy="212" rx="30" ry="8"/><ellipse cx="190" cy="214" rx="34" ry="9"/></g></svg>';
   }
   return open
     + '<defs><linearGradient id="hgg" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#DCEBFB"/><stop offset="70%" stop-color="#F7F1E6"/><stop offset="100%" stop-color="#F2EEDF"/></linearGradient></defs>'
@@ -938,6 +1004,30 @@ function petSVG(kind, coat, mood, wear) {
     worn = '<ellipse cx="60" cy="34" rx="30" ry="7" fill="#E8CFA0"/><path d="M38 34 L60 6 L82 34 Z" fill="#F0DFC8" stroke="#C6A98A" stroke-width="1.6"/>'
       + '<path d="M46 28 q14 -6 28 0" fill="none" stroke="#C6A98A" stroke-width="1.4"/>'
       + '<path d="M60 8 A9 9 0 1 0 60 26 A7 7 0 1 1 60 8 Z" fill="#E5BE5E"/>';
+  } else if (w === 'jumper') {
+    // A jumper covers the chest and the shoulders, with a rolled collar and cuffs.
+    worn = '<path d="M32 84 Q30 72 42 70 Q60 66 78 70 Q90 72 88 84 Q90 100 84 108 L36 108 Q30 100 32 84 Z" fill="#E1607F"/>'
+      + '<path d="M40 70 Q60 78 80 70 Q80 76 60 82 Q40 76 40 70 Z" fill="#C94C6C"/>'
+      + '<g stroke="#F5A6BF" stroke-width="1.6" fill="none" opacity=".85">'
+      + '<path d="M38 88 q22 -6 44 0 M36 96 q24 -6 48 0 M38 104 q22 -5 44 0"/></g>'
+      + '<g stroke="#C94C6C" stroke-width="1.4" fill="none" opacity=".7"><path d="M46 84 v22 M60 82 v26 M74 84 v22"/></g>'
+      + '<path d="M32 104 h12 v6 h-12 Z M76 104 h12 v6 h-12 Z" fill="#C94C6C"/>';
+  } else if (w === 'cloak') {
+    // A cloak hangs from the shoulders and spreads behind the feet.
+    worn = '<path d="M34 74 Q22 96 20 116 L100 116 Q98 96 86 74 Q60 84 34 74 Z" fill="#4A3E80"/>'
+      + '<path d="M34 74 Q26 92 24 112 L44 112 Q40 92 42 76 Z" fill="#5E4F9E" opacity=".8"/>'
+      + '<path d="M86 74 Q94 92 96 112 L76 112 Q80 92 78 76 Z" fill="#5E4F9E" opacity=".8"/>'
+      + '<path d="M34 74 Q60 84 86 74 Q88 68 82 66 Q60 74 38 66 Q32 68 34 74 Z" fill="#E5BE5E"/>'
+      + '<g fill="#FFF3C4"><circle cx="36" cy="96" r="1.8"/><circle cx="52" cy="106" r="1.4"/><circle cx="70" cy="98" r="1.6"/><circle cx="86" cy="108" r="1.5"/><circle cx="60" cy="90" r="1.3"/></g>'
+      + '<circle cx="60" cy="72" r="5" fill="#E5BE5E"/><circle cx="60" cy="72" r="2.2" fill="#4A3E80"/>';
+  } else if (w === 'armour') {
+    // Plate over the chest, pauldrons on the shoulders.
+    worn = '<path d="M38 76 Q60 70 82 76 Q86 92 80 108 L40 108 Q34 92 38 76 Z" fill="#EDD08A"/>'
+      + '<path d="M38 76 Q60 70 82 76 Q80 82 60 86 Q40 82 38 76 Z" fill="#D4B25F"/>'
+      + '<g stroke="#B9913B" stroke-width="1.5" fill="none"><path d="M42 92 q18 -6 36 0 M42 100 q18 -6 36 0 M60 86 v22"/></g>'
+      + '<path d="M30 74 q10 -8 18 -2 q-4 10 -18 10 Z" fill="#EDD08A" stroke="#B9913B" stroke-width="1.2"/>'
+      + '<path d="M90 74 q-10 -8 -18 -2 q4 10 18 10 Z" fill="#EDD08A" stroke="#B9913B" stroke-width="1.2"/>'
+      + '<path d="M60 88 l5 7 -5 7 -5 -7 Z" fill="#FFF3C4"/>';
   }
   const headShape = art.headPath
     ? '<path d="' + art.headPath + '" fill="' + c.body + '"/>'
@@ -1047,7 +1137,7 @@ function renderPet(want) {
       + '</div>'
       + (bless ? '<div class="bless"><span class="q">' + luck.sym + '</span><p>' + esc(L(bless)) + '</p><span class="who">' + esc(p.name || L(PET_NAMES[p.kind])) + '</span></div>'
         : '<p class="hint">' + esc(PETS.fedToday(p) ? S.petPrayHint : S.petNeedFeed) + '</p>')
-      + '<div class="lucktag" style="--ink:' + luck.ink + ';--aura:' + luck.aura + '">' + luck.sym + ' ' + esc(S.petBrings(L(luck.name))) + '</div>'
+      + '<div class="lucktag" style="--ink:' + (luck.deep || luck.ink) + ';--aura:' + luck.aura + '">' + luck.sym + ' ' + esc(S.petBrings(L(luck.name))) + '</div>'
       + '<p class="petline">' + esc(L(petLine(p.kind))) + '</p>'
       + (petIsPro(p.kind) ? '<p class="mythline">✨ ' + esc(S.petMythBonus(MYTH_XP)) + '</p>' : '')
       + '<div class="charm"><span class="lbl">' + esc(S.petLevel(st.lv)) + '</span><span class="bar"><i style="width:' + st.at + '%;background:' + luck.ink + '"></i></span>'
@@ -1316,7 +1406,7 @@ function renderPet(want) {
       + '<div class="petstage">' + petHomeSVG('mat') + petAuraHTML(kind) + petSVG(kind, PET_COATS[0], 'happy')
       + '<span class="stagebtns left">' + prevBtn('🍚', S.petFoodTitle) + prevBtn('👑', S.petWearTitle) + '</span>'
       + '<span class="stagebtns right">' + prevBtn('🏠', S.petHomeShort) + prevBtn('🎨', S.petCoat) + '</span></div>'
-      + '<div class="lucktag" style="--ink:' + luck.ink + ';--aura:' + luck.aura + '">' + luck.sym + ' ' + esc(S.petBrings(L(luck.name))) + '</div>'
+      + '<div class="lucktag" style="--ink:' + (luck.deep || luck.ink) + ';--aura:' + luck.aura + '">' + luck.sym + ' ' + esc(S.petBrings(L(luck.name))) + '</div>'
       + '<p class="petline">' + esc(L(petLine(kind))) + '</p>'
       + (petIsPro(kind) ? '<p class="mythline">✨ ' + esc(S.petMythBonus(MYTH_XP)) + '</p>' : '')
       + '<p class="hint" style="text-align:center;margin-bottom:6px">' + esc(S.petPreviewCan) + '</p>'
@@ -1353,7 +1443,7 @@ function renderPet(want) {
       return '<button type="button" class="pp luck-' + luck.id + (have ? ' have' : '') + (locked ? ' locked' : '') + (petIsPro(k) ? ' myth' : '') + '" data-kind="' + k + '">'
         + '<span class="ppart">' + petAuraHTML(k, 3) + petSVG(k, PET_COATS[0], 'happy') + '</span>'
         + '<b>' + esc(L(PET_NAMES[k])) + '</b>'
-        + '<span class="pl" style="--ink:' + luck.ink + ';--aura:' + luck.aura + '">' + luck.sym + ' ' + esc(L(luck.name)) + '</span>'
+        + '<span class="pl" style="--ink:' + (luck.deep || luck.ink) + ';--aura:' + luck.aura + '">' + luck.sym + ' ' + esc(L(luck.name)) + '</span>'
         + (petIsPro(k) ? '<span class="x2">×' + MYTH_XP + ' ' + esc(S.petXpWord) + '</span>' : '')
         + (have ? '<span class="pp-on">✓</span>' : (locked ? '<span class="pp-lock">🔒</span>' : ''))
         + '</button>';

@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
 <title>Nabu Tarot</title>
 <meta name="description" content="Nabu Tarot: dự đoán mới, rút một lá bài xem năng lượng hiện tại, học tarot, Lenormand, chiêm tinh, và đặt lịch xem bài.">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'none'; object-src 'none'; form-action 'self'; script-src 'self' 'sha256-QOdHtkZjluAHbfORL8pFXUwFNoii8NJE9pM5i5lpyK8=' https://www.gstatic.com https://apis.google.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; font-src 'self' data:; media-src 'self' data: blob:; worker-src 'self'; connect-src 'self' https://*.googleapis.com https://*.google.com https://*.firebaseio.com https://*.cloudfunctions.net https://*.workers.dev https://generativelanguage.googleapis.com; frame-src https://*.firebaseapp.com https://accounts.google.com https://*.facebook.com">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'none'; object-src 'none'; form-action 'self'; script-src 'self' 'sha256-LL8kQzOXjpEFsAF1YQmKFfLXmJjyLyn0UDsuGRyGhj0=' https://www.gstatic.com https://apis.google.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; font-src 'self' data:; media-src 'self' data: blob:; worker-src 'self'; connect-src 'self' https://*.googleapis.com https://*.google.com https://*.firebaseio.com https://*.cloudfunctions.net https://*.workers.dev https://generativelanguage.googleapis.com; frame-src https://*.firebaseapp.com https://accounts.google.com https://*.facebook.com">
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <meta name="theme-color" content="#EFE9FA">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -227,6 +227,7 @@
   }
 }
 :root[data-theme="dark"]{
+
   --bg:#241A45; --surface:#312559; --surface-2:#3B2D6A; --surface-3:#463779;
   --fg:#F6F0FA; --fg-soft:#CBC0E4; --fg-faint:#9F92C2;
   --rule:#4D3F80; --rule-soft:#3F3271;
@@ -962,6 +963,17 @@ main{padding:22px 0 30px}
    Written as their own classes, not as `.diary.paper-x`, so the picker can
    show the same paper at preview size. Each is a different sheet rather than
    the same sheet in a different tint. */
+/* Each paper is a fixed sheet, so everything written on it takes a fixed
+   ink rather than the theme's. */
+.paper-plain,.paper-ruled,.paper-floral{color:#3B2A5E}
+.diary.paper-plain .date,.diary.paper-ruled .date,.diary.paper-floral .date,
+.diary.paper-plain .faint,.diary.paper-ruled .faint,.diary.paper-floral .faint,
+.diary.paper-plain .hint,.diary.paper-ruled .hint,.diary.paper-floral .hint{color:#6B5A86}
+.diary.paper-plain p,.diary.paper-ruled p,.diary.paper-floral p{color:#3B2A5E}
+.diary.paper-plain textarea,.diary.paper-ruled textarea,.diary.paper-floral textarea{background:rgba(255,255,255,.7);color:#2E2144;border-color:rgba(90,70,120,.25)}
+.diary.paper-plain textarea::placeholder,.diary.paper-ruled textarea::placeholder,.diary.paper-floral textarea::placeholder{color:#8B7BA6}
+.diary.paper-plain .mood,.diary.paper-ruled .mood,.diary.paper-floral .mood{background:rgba(255,255,255,.55);border-color:rgba(90,70,120,.16)}
+.diary.paper-plain .linkbtn,.diary.paper-ruled .linkbtn,.diary.paper-floral .linkbtn{color:#8A3A5E}
 .paper-plain{background:#FFFCF2}
 /* Ruled ivory, with the red margin a school exercise book has. */
 .paper-ruled{position:relative;background:repeating-linear-gradient(#FFFCEF 0px,#FFFCEF 25px,#DCCFB2 25px,#DCCFB2 26px)}
@@ -1041,7 +1053,9 @@ main{padding:22px 0 30px}
 .stagebtns{position:absolute;top:8%;z-index:5;display:flex;flex-direction:column;gap:8px}
 .stagebtns.left{left:6px;align-items:flex-start}
 .stagebtns.right{right:6px;align-items:flex-end}
-.stagebtn{display:flex;align-items:center;gap:5px;background:rgba(255,255,255,.86);border:1px solid var(--rule-soft);border-radius:999px;padding:5px 9px;font:inherit;color:var(--fg);cursor:pointer;box-shadow:0 2px 8px rgba(60,40,90,.14);backdrop-filter:blur(3px)}
+/* The pill is white whatever the theme, so its ink is dark whatever the
+   theme. Following --fg here made these vanish in the dark. */
+.stagebtn{display:flex;align-items:center;gap:5px;background:rgba(255,255,255,.9);border:1px solid rgba(90,70,120,.18);border-radius:999px;padding:5px 9px;font:inherit;color:#3B2A5E;cursor:pointer;box-shadow:0 2px 8px rgba(60,40,90,.18);backdrop-filter:blur(3px)}
 .stagebtn .ic{font-size:15px;line-height:1}
 .stagebtn .lb{font-size:11.5px;font-weight:600;white-space:nowrap}
 .stagebtn.locked{opacity:.9;border-style:dashed;cursor:default}
@@ -1109,7 +1123,7 @@ main{padding:22px 0 30px}
 .feedrow{display:flex;align-items:center;justify-content:center;gap:9px;margin-bottom:10px}
 /* The food sits in the scene, at the companion's feet, so the drag is short. */
 .petstage .foodchip{position:absolute;left:8px;bottom:8px;z-index:7}
-.foodchip{display:inline-flex;align-items:center;justify-content:center;width:46px;height:46px;border-radius:50%;background:rgba(255,255,255,.9);border:2px dashed var(--gold);font-size:24px;cursor:grab;touch-action:none;user-select:none;box-shadow:0 2px 8px rgba(60,40,90,.16)}
+.foodchip{display:inline-flex;align-items:center;justify-content:center;width:46px;height:46px;border-radius:50%;background:rgba(255,255,255,.92);border:2px dashed #B9913B;color:#3B2A5E;font-size:24px;cursor:grab;touch-action:none;user-select:none;box-shadow:0 2px 8px rgba(60,40,90,.2)}
 .foodchip:active{cursor:grabbing;transform:scale(1.08)}
 .dragtip{font-size:12.5px;color:var(--fg-soft)}
 .dragfood{position:fixed;z-index:80;font-size:36px;pointer-events:none;transform:translate(-50%,-50%);filter:drop-shadow(0 3px 6px rgba(60,40,90,.3))}
@@ -1121,7 +1135,10 @@ main{padding:22px 0 30px}
 .crumbs i{position:absolute;top:-6%;font-size:20px;font-style:normal;opacity:0;animation:dropfood 1s ease-in forwards}
 @keyframes dropfood{0%{opacity:0;transform:translateY(-10px)}20%{opacity:1}100%{opacity:0;transform:translateY(62px)}}
 /* What this one looks after, and the line that says it in words. */
-.lucktag{display:inline-flex;align-items:center;gap:5px;background:var(--aura);color:var(--ink);border-radius:999px;padding:4px 12px;font-size:13px;font-weight:600}
+/* The pastel is fixed, so the ink is too - and darker than the line colour,
+   which was chosen to sit on the page rather than on its own pastel. */
+.lucktag{display:inline-flex;align-items:center;gap:5px;background:var(--aura);color:var(--ink);border-radius:999px;padding:4px 12px;font-size:13px;font-weight:700;filter:saturate(1.1)}
+.lucktag,.petpick .pl{text-shadow:none}
 #main p.petline{margin:8px 0 12px;font-size:13.5px;color:var(--fg-soft);text-align:center;text-wrap:balance}
 /* The luck bar, and the list of what fills it. */
 .charm{display:flex;align-items:center;gap:8px;margin-bottom:10px}
@@ -1321,6 +1338,18 @@ button.unl{display:block;width:100%;text-align:left;font:inherit;color:inherit;c
 @keyframes slipdrop{0%{opacity:0;transform:translateX(-50%) translateY(-46px) rotate(0deg)}100%{opacity:1}}
 @keyframes wishfly{0%{opacity:0;transform:translate(-50%,10px) scale(.9)}15%{opacity:1}100%{opacity:0;transform:translate(-50%,-120px) scale(1.05)}}@keyframes twinkle{0%,100%{opacity:0;transform:scale(.6)}50%{opacity:1;transform:scale(1.2)}}
 .act .foot{justify-content:flex-start}
+/* ---- read in the dark ----
+   Last in the sheet on purpose: these lift colours that are legible on a
+   pale page and not on a dark one, and they have to win over the rules
+   that set them. */
+:root:not([data-theme="light"]) .warn,
+:root:not([data-theme="light"]) .ci small.warn,
+:root:not([data-theme="light"]) .tpick .warn,
+:root:not([data-theme="light"]) .sum .warn{color:#FF9E86}
+:root:not([data-theme="light"]) .ci small.ok,
+:root:not([data-theme="light"]) .tpick .ok,
+:root:not([data-theme="light"]) .sum .ok{color:#7BD9A0}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .warn,:root:not([data-theme="light"]) .sum .warn{color:#FF9E86}}
 </style>
 </head>
 <body>
@@ -1523,7 +1552,7 @@ const COURSES = [
   { id: 'pro', price: 120000, months: 12, sum: { vi: 'Sáu linh thú, nuôi nhiều vị cùng lúc, và mọi giao diện đẹp.', en: 'Six spirit beasts, several at once, and every look.' },
     name: { vi: 'Nabu Tarot Plus', en: 'Nabu Tarot Plus' },
     blurb: { vi: 'Mở sáu linh thú trong truyền thuyết, cho bạn nuôi nhiều vị cùng lúc, kèm món ăn ngon, nhà đẹp và phụ kiện cho chúng, cùng toàn bộ giao diện của app trong một năm.', en: 'Opens the six spirit beasts, lets you keep several companions at once, adds their good food, their homes and their charms, and every look in the app for a year.' },
-    includes: { vi: ['6 linh thú: Phượng Hoàng, Rồng Mây, Kỳ Lân, Tỳ Hưu, Bạch Hạc, Thiên Mã', 'Nuôi nhiều bạn nhỏ cùng lúc', 'Chơi 3 lượt mỗi ngày, chờ 2 giờ giữa hai bữa', '6 món ăn ngon, 3 ngôi nhà và 4 phụ kiện', '3 mặt sau lá bài, 3 cây thông điệp, 3 đồng xu và 3 trang nhật ký', 'Dùng 12 tháng'], en: ['6 spirit beasts: phoenix, dragon, qilin, pixiu, crane and sky horse', 'Keep several companions at once', '3 turns of play a day, 2 hours between meals', '6 good foods, 3 homes and 4 charms', '3 card backs, 3 message trees, 3 coins and 3 diary pages', '12 months of access'] } },
+    includes: { vi: ['6 linh thú: Phượng Hoàng, Rồng Mây, Kỳ Lân, Tỳ Hưu, Bạch Hạc, Thiên Mã', 'Nuôi nhiều bạn nhỏ cùng lúc', 'Chơi 3 lượt mỗi ngày, chờ 2 giờ giữa hai bữa', '6 món ăn ngon, 6 ngôi nhà và 7 món đồ mặc', '3 mặt sau lá bài, 3 cây thông điệp, 3 đồng xu và 3 trang nhật ký', 'Dùng 12 tháng'], en: ['6 spirit beasts: phoenix, dragon, qilin, pixiu, crane and sky horse', 'Keep several companions at once', '3 turns of play a day, 2 hours between meals', '6 good foods, 6 homes and 7 things to wear', '3 card backs, 3 message trees, 3 coins and 3 diary pages', '12 months of access'] } },
   { id: 'luck', price: 50000, months: 12, sum: { vi: 'Đồng xu và cây thông điệp, không giới hạn.', en: 'Coin and message tree, unlimited.' }, name: { vi: 'Đồng xu và cây thông điệp', en: 'Coin and message tree' },
     blurb: { vi: 'Mở không giới hạn cả hai hoạt động trong một năm: tung đồng xu và rung cây thông điệp bao nhiêu lần tuỳ bạn.', en: 'Unlimited turns at both for a year: flip the coin and shake the message tree as often as you like.' },
     includes: { vi: ['Tung đồng xu không giới hạn', 'Rung cây thông điệp không giới hạn', 'Dùng 12 tháng'], en: ['Unlimited coin flips', 'Unlimited tree shakes', '12 months of access'] } },
@@ -1721,7 +1750,7 @@ const STR = {
     coatNames: { cream: 'Kem', lilac: 'Tím nhạt', rose: 'Hồng phấn', sky: 'Xanh trời', mint: 'Bạc hà', ember: 'Cam đất', midnight: 'Tím đêm', gold: 'Vàng ánh' },
     petFoodTitle: 'Bữa ăn', petFoodNote: 'Món ăn ngon hơn làm bạn nhỏ vui hơn, và vận may cũng đầy nhanh hơn.',
     petHomeShort: 'Nhà', petHomeTitle: 'Nhà của bạn nhỏ', petHomeNote: 'Bạn nhỏ có chỗ ở đẹp thì ở lại lâu hơn và mang về nhiều may mắn hơn.',
-    petWearTitle: 'Phụ kiện', petWearNote: 'Một chiếc khăn hay một vòng hoa cũng làm bạn nhỏ rạng rỡ hơn hẳn.',
+    petWearTitle: 'Đồ mặc', petWearNote: 'Bạn nhỏ mặc áo hay đeo phụ kiện đều rạng rỡ hơn hẳn.',
     careDays: 'Chăm đều mỗi ngày', careMeals: 'Số bữa đã cho ăn', careTreats: 'Món ngon', careCoat: 'Màu lông đặc biệt', careWear: 'Phụ kiện', careHome: 'Nhà đẹp',
     careMeal: 'Bữa ăn cơ bản', petMealWorth: 'Mỗi bữa ăn được', petLevel: (n) => 'Cấp ' + n,
     petPreviewIntro: 'Bạn xem thử bạn nhỏ này trước đã. Chỉ khi bạn bấm nút bên dưới thì bạn ấy mới về ở với bạn.',
@@ -2078,7 +2107,7 @@ const STR = {
     coatNames: { cream: 'Cream', lilac: 'Lilac', rose: 'Rose', sky: 'Sky', mint: 'Mint', ember: 'Ember', midnight: 'Midnight', gold: 'Gold' },
     petFoodTitle: 'Meals', petFoodNote: 'Better food makes a happier companion, and its luck fills faster.',
     petHomeShort: 'Home', petHomeTitle: 'Its home', petHomeNote: 'A companion with a lovely home settles in and brings back more.',
-    petWearTitle: 'Charms', petWearNote: 'A scarf or a flower crown makes a companion shine.',
+    petWearTitle: 'Clothes', petWearNote: 'A jumper, a cloak or a flower crown: a dressed companion shines.',
     careDays: 'Coming back every day', careMeals: 'Meals given', careTreats: 'Good food', careCoat: 'A special coat', careWear: 'A charm', careHome: 'A proper home',
     careMeal: 'A plain meal', petMealWorth: 'Every meal earns', petLevel: (n) => 'Level ' + n,
     petPreviewIntro: 'Have a proper look first. Nothing is kept until you press the button below.',
@@ -12879,37 +12908,37 @@ const PET_LINES = {
 };
 const LUCKS = {
   love: {
-    id: 'love', sym: '💗', ink: '#D3557E', aura: '#FBD3E1',
+    id: 'love', sym: '💗', ink: '#D3557E', deep: '#8E2E4C', aura: '#FBD3E1',
     name: { vi: 'Tình duyên', en: 'Love' },
     line: { vi: 'Mèo Trăng ngồi canh chuyện tình cảm và giữ cho lòng bạn ấm.', en: 'The moon cat sits with matters of the heart and keeps you warm.' },
     proLine: { vi: 'Phượng Hoàng bay qua những gì đã cũ và mở ra một mùa mới cho trái tim bạn.', en: 'The phoenix flies over what is finished and opens a new season for your heart.' }
   },
   career: {
-    id: 'career', sym: '⭐', ink: '#B98420', aura: '#FBE7BE',
+    id: 'career', sym: '⭐', ink: '#B98420', deep: '#775010', aura: '#FBE7BE',
     name: { vi: 'Sự nghiệp', en: 'Work' },
     line: { vi: 'Cáo Sao đi trước một bước để mở đường cho công việc của bạn.', en: 'The star fox walks a step ahead and opens the way at work.' },
     proLine: { vi: 'Rồng Mây cưỡi gió đưa tên bạn đi xa hơn những gì bạn tự nói về mình.', en: 'The cloud dragon rides the wind and carries your name further than you could speak it.' }
   },
   study: {
-    id: 'study', sym: '📖', ink: '#4173B8', aura: '#CFE0F7',
+    id: 'study', sym: '📖', ink: '#4173B8', deep: '#23477F', aura: '#CFE0F7',
     name: { vi: 'Học hành', en: 'Study' },
     line: { vi: 'Thỏ Mây thức cùng bạn qua những trang sách khó nhất.', en: 'The cloud bunny stays up with you through the hardest pages.' },
     proLine: { vi: 'Kỳ Lân chỉ hiện ra với người chịu học, và nó đang đứng cạnh bàn của bạn.', en: 'The qilin shows itself only to those who keep studying, and it is standing by your desk.' }
   },
   money: {
-    id: 'money', sym: '🪙', ink: '#2E8A68', aura: '#C6E8D9',
+    id: 'money', sym: '🪙', ink: '#2E8A68', deep: '#145C43', aura: '#C6E8D9',
     name: { vi: 'Tiền tài', en: 'Money' },
     line: { vi: 'Rùa Ngọc đi chậm mà chắc, giữ lại những gì bạn đã có.', en: 'The jade turtle moves slowly and keeps what you already have.' },
     proLine: { vi: 'Tỳ Hưu chỉ nuốt vào mà không nhả ra, nên của cải ở lại trong nhà bạn.', en: 'The pixiu swallows and never gives back, so what comes in stays in your house.' }
   },
   health: {
-    id: 'health', sym: '🌿', ink: '#1F8A98', aura: '#C7EAEE',
+    id: 'health', sym: '🌿', ink: '#1F8A98', deep: '#14606B', aura: '#C7EAEE',
     name: { vi: 'Sức khỏe', en: 'Health' },
     line: { vi: 'Hươu Lành nhắc bạn đi chậm lại một chút để người còn theo kịp.', en: 'The gentle deer asks you to slow down so your body can keep up.' },
     proLine: { vi: 'Bạch Hạc sống rất thọ, và nó đứng canh giấc ngủ của bạn mỗi đêm.', en: 'The white crane lives a long life, and it keeps watch over your sleep.' }
   },
   travel: {
-    id: 'travel', sym: '🧭', ink: '#C4643C', aura: '#F8D9C6',
+    id: 'travel', sym: '🧭', ink: '#C4643C', deep: '#8A3E1E', aura: '#F8D9C6',
     name: { vi: 'Đi lại', en: 'Travel' },
     line: { vi: 'Én Gió bay rất xa rồi vẫn về đúng tổ, nên đường bạn đi cũng luôn có lối về bình an.', en: 'The wind swallow flies far and still finds its own nest, so your road always has a safe way back.' },
     proLine: { vi: 'Thiên Mã đi cùng người đi xa, dù là đi làm hay đi chơi, để bạn thượng lộ bình an và về đến nhà nguyên vẹn.', en: 'The sky horse rides with whoever goes far, for work or for pleasure, and sees them safely there and safely home.' }
@@ -13001,14 +13030,21 @@ const PET_HOMES = [
   { id: 'mat', pro: false, add: 0, name: { vi: 'Chiếu cỏ', en: 'Grass mat' } },
   { id: 'cloud', pro: true, add: 12, name: { vi: 'Nhà mây', en: 'Cloud cottage' } },
   { id: 'shrine', pro: true, add: 12, name: { vi: 'Đền nhỏ', en: 'Little shrine' } },
-  { id: 'moon', pro: true, add: 12, name: { vi: 'Vườn trăng', en: 'Moon garden' } }
+  { id: 'moon', pro: true, add: 12, name: { vi: 'Vườn trăng', en: 'Moon garden' } },
+  { id: 'heaven', pro: true, add: 12, name: { vi: 'Cổng trời', en: 'Gate of heaven' } },
+  { id: 'palace', pro: true, add: 12, name: { vi: 'Cung điện', en: 'The palace' } },
+  { id: 'castle', pro: true, add: 12, name: { vi: 'Lâu đài phép', en: 'Magic castle' } }
 ];
 const PET_WEARS = [
   { id: 'none', pro: false, add: 0, name: { vi: 'Để mộc', en: 'Nothing' } },
   { id: 'scarf', pro: true, add: 10, name: { vi: 'Khăn lụa', en: 'Silk scarf' } },
   { id: 'bell', pro: true, add: 10, name: { vi: 'Chuông vàng', en: 'Gold bell' } },
   { id: 'crown', pro: true, add: 10, name: { vi: 'Vòng hoa', en: 'Flower crown' } },
-  { id: 'hat', pro: true, add: 10, name: { vi: 'Nón trăng', en: 'Moon hat' } }
+  { id: 'hat', pro: true, add: 10, name: { vi: 'Nón trăng', en: 'Moon hat' } },
+  /* Clothes rather than accessories: these are worn on the body. */
+  { id: 'jumper', pro: true, add: 10, name: { vi: 'Áo len', en: 'Knitted jumper' } },
+  { id: 'cloak', pro: true, add: 10, name: { vi: 'Áo choàng sao', en: 'Star cloak' } },
+  { id: 'armour', pro: true, add: 10, name: { vi: 'Giáp vàng', en: 'Gold armour' } }
 ];
 /* What gets thrown when the two of you play. */
 const PET_PAT_XP = 4;
@@ -13286,6 +13322,65 @@ function petHomeSVG(id) {
       + '<ellipse cx="106" cy="228" rx="86" ry="13" fill="#5A4C98" opacity=".55"/>'
       + '<path d="M150 226 q22 -4 42 0" stroke="#FFE9A8" stroke-width="2" opacity=".5" fill="none"/>'
       + '<g fill="#8E7FD6"><ellipse cx="20" cy="192" rx="16" ry="8"/><ellipse cx="226" cy="200" rx="14" ry="7"/></g>' + flies + '</svg>';
+  }
+  if (id === 'heaven') {
+    let rays = '';
+    for (let k = 0; k < 12; k++) rays += '<path d="M120 46 L' + (120 + Math.cos(k * 0.52 - 2.1) * 200).toFixed(0) + ' ' + (46 + Math.sin(k * 0.52 - 2.1) * 200).toFixed(0) + ' L' + (120 + Math.cos(k * 0.52 - 2.02) * 200).toFixed(0) + ' ' + (46 + Math.sin(k * 0.52 - 2.02) * 200).toFixed(0) + ' Z" fill="#FFF3C4" opacity=".35"/>';
+    return open
+      + '<defs><linearGradient id="hgh" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#FDF3D8"/><stop offset="55%" stop-color="#FBE7BE"/><stop offset="100%" stop-color="#F7D9E4"/></linearGradient></defs>'
+      + '<rect width="240" height="240" fill="url(#hgh)"/>'
+      + '<g>' + rays + '</g>'
+      + '<circle cx="120" cy="46" r="30" fill="#FFF7DA"/><circle cx="120" cy="46" r="38" fill="#FFE9A8" opacity=".45"/>'
+      /* a gate of light, standing open on a floor of cloud */
+      + '<path d="M62 176 L62 96 Q120 62 178 96 L178 176 Z" fill="none" stroke="#E5BE5E" stroke-width="5"/>'
+      + '<path d="M74 176 L74 104 Q120 76 166 104 L166 176 Z" fill="#FFF7DA" opacity=".55"/>'
+      + '<g fill="#E5BE5E"><circle cx="62" cy="94" r="5"/><circle cx="178" cy="94" r="5"/><circle cx="120" cy="66" r="5"/></g>'
+      + '<g fill="#FFFFFF" opacity=".95"><ellipse cx="34" cy="196" rx="48" ry="22"/><ellipse cx="112" cy="204" rx="60" ry="26"/><ellipse cx="206" cy="196" rx="46" ry="22"/></g>'
+      + '<g fill="#FBE7BE" opacity=".85"><ellipse cx="70" cy="218" rx="44" ry="16"/><ellipse cx="172" cy="220" rx="46" ry="16"/></g>'
+      + '<g fill="#FFF3C4"><path class="twinkle" d="M40 74 l3 6 6 3 -6 3 -3 6 -3 -6 -6 -3 6 -3 Z"/>'
+      + '<path class="twinkle" style="animation-delay:900ms" d="M198 62 l2.6 5 5 2.6 -5 2.6 -2.6 5 -2.6 -5 -5 -2.6 5 -2.6 Z"/></g></svg>';
+  }
+  if (id === 'palace') {
+    const roof = (cx, w, y, h) => '<path d="M' + (cx - w) + ' ' + (y + h) + ' Q' + (cx - w * 0.55) + ' ' + (y - 4) + ' ' + cx + ' ' + y + ' Q' + (cx + w * 0.55) + ' ' + (y - 4) + ' ' + (cx + w) + ' ' + (y + h) + ' Q' + cx + ' ' + (y + h - 10) + ' ' + (cx - w) + ' ' + (y + h) + ' Z" fill="#B0483F"/>'
+      + '<path d="M' + (cx - w) + ' ' + (y + h) + ' Q' + cx + ' ' + (y + h - 10) + ' ' + (cx + w) + ' ' + (y + h) + '" fill="none" stroke="#E5BE5E" stroke-width="2.4"/>';
+    const lantern = (x, y) => '<path d="M' + x + ' ' + (y - 14) + ' v8" stroke="#8E3A33" stroke-width="2"/>'
+      + '<ellipse cx="' + x + '" cy="' + y + '" rx="9" ry="11" fill="#E9705F" stroke="#B0483F" stroke-width="1.6"/>'
+      + '<path d="M' + (x - 7) + ' ' + (y - 5) + ' h14 M' + (x - 7) + ' ' + (y + 5) + ' h14" stroke="#B0483F" stroke-width="1.2"/>'
+      + '<path d="M' + x + ' ' + (y + 11) + ' v6" stroke="#E5BE5E" stroke-width="2"/>';
+    return open
+      + '<defs><linearGradient id="hgp" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#F7D9C0"/><stop offset="100%" stop-color="#FBEEDC"/></linearGradient></defs>'
+      + '<rect width="240" height="240" fill="url(#hgp)"/>'
+      + '<circle cx="52" cy="52" r="26" fill="#F8C79A" opacity=".55"/>'
+      + roof(120, 74, 40, 26) + '<rect x="58" y="66" width="124" height="8" fill="#8E3A33"/>'
+      + '<rect x="70" y="74" width="100" height="34" fill="#F2E3CB" stroke="#CBAE8B" stroke-width="2"/>'
+      + roof(120, 92, 104, 26) + '<rect x="30" y="130" width="180" height="8" fill="#8E3A33"/>'
+      + '<rect x="46" y="138" width="148" height="62" fill="#F2E3CB" stroke="#CBAE8B" stroke-width="2"/>'
+      + '<g fill="#B0483F"><rect x="52" y="138" width="12" height="62"/><rect x="176" y="138" width="12" height="62"/><rect x="112" y="138" width="16" height="62"/></g>'
+      + '<rect x="94" y="158" width="52" height="42" rx="4" fill="#8E3A33"/>'
+      + '<circle cx="120" cy="176" r="10" fill="#E5BE5E"/><circle cx="120" cy="176" r="4" fill="#B0483F"/>'
+      + '<g fill="#E5BE5E"><circle cx="120" cy="30" r="6"/><circle cx="46" cy="96" r="4"/><circle cx="194" cy="96" r="4"/></g>'
+      + lantern(36, 116) + lantern(204, 116)
+      + '<rect x="0" y="200" width="240" height="40" fill="#E0D0B4"/>'
+      + '<g stroke="#CBAE8B" stroke-width="1.6"><path d="M0 212 h240 M0 226 h240 M60 200 v40 M180 200 v40"/></g></svg>';
+  }
+  if (id === 'castle') {
+    const tower = (x, w, top) => '<rect x="' + (x - w / 2) + '" y="' + top + '" width="' + w + '" height="' + (206 - top) + '" fill="#D9C9F2" stroke="#B79BEA" stroke-width="1.6"/>'
+      + '<path d="M' + (x - w / 2 - 5) + ' ' + top + ' L' + x + ' ' + (top - 34) + ' L' + (x + w / 2 + 5) + ' ' + top + ' Z" fill="#8E7FD6"/>'
+      + '<path d="M' + x + ' ' + (top - 34) + ' l14 6 -14 6 Z" fill="#F2789F"/>'
+      + '<circle cx="' + x + '" cy="' + (top + 22) + '" r="6" fill="#FFF3C4"/>';
+    let stars = '';
+    for (let k = 0; k < 20; k++) stars += '<circle class="twinkle" cx="' + (10 + (k * 41) % 224) + '" cy="' + (8 + (k * 57) % 96) + '" r="' + (1 + (k % 3) * 0.6) + '" fill="#FFF3C4" style="animation-delay:' + (k * 160) + 'ms"/>';
+    return open
+      + '<defs><linearGradient id="hgc2" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#2E2756"/><stop offset="100%" stop-color="#6E5AA8"/></linearGradient></defs>'
+      + '<rect width="240" height="240" fill="url(#hgc2)"/>' + stars
+      + '<path d="M206 34 A20 20 0 1 0 206 74 A16 16 0 1 1 206 34 Z" fill="#FFE9A8"/>'
+      + tower(46, 34, 96) + tower(194, 34, 96) + tower(120, 52, 62)
+      + '<rect x="62" y="140" width="116" height="66" fill="#E4DCFA" stroke="#B79BEA" stroke-width="1.6"/>'
+      + '<path d="M96 206 v-34 a24 24 0 0 1 48 0 v34 Z" fill="#5E4F9E"/>'
+      + '<circle cx="120" cy="176" r="5" fill="#FFE9A8"/>'
+      + '<g fill="#FFF3C4" opacity=".9"><circle cx="46" cy="132" r="4"/><circle cx="194" cy="132" r="4"/><circle cx="120" cy="98" r="4"/></g>'
+      + '<rect x="0" y="206" width="240" height="34" fill="#4A3E80"/>'
+      + '<g fill="#5E4F9E"><ellipse cx="40" cy="212" rx="30" ry="8"/><ellipse cx="190" cy="214" rx="34" ry="9"/></g></svg>';
   }
   return open
     + '<defs><linearGradient id="hgg" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#DCEBFB"/><stop offset="70%" stop-color="#F7F1E6"/><stop offset="100%" stop-color="#F2EEDF"/></linearGradient></defs>'
@@ -13751,6 +13846,30 @@ function petSVG(kind, coat, mood, wear) {
     worn = '<ellipse cx="60" cy="34" rx="30" ry="7" fill="#E8CFA0"/><path d="M38 34 L60 6 L82 34 Z" fill="#F0DFC8" stroke="#C6A98A" stroke-width="1.6"/>'
       + '<path d="M46 28 q14 -6 28 0" fill="none" stroke="#C6A98A" stroke-width="1.4"/>'
       + '<path d="M60 8 A9 9 0 1 0 60 26 A7 7 0 1 1 60 8 Z" fill="#E5BE5E"/>';
+  } else if (w === 'jumper') {
+    // A jumper covers the chest and the shoulders, with a rolled collar and cuffs.
+    worn = '<path d="M32 84 Q30 72 42 70 Q60 66 78 70 Q90 72 88 84 Q90 100 84 108 L36 108 Q30 100 32 84 Z" fill="#E1607F"/>'
+      + '<path d="M40 70 Q60 78 80 70 Q80 76 60 82 Q40 76 40 70 Z" fill="#C94C6C"/>'
+      + '<g stroke="#F5A6BF" stroke-width="1.6" fill="none" opacity=".85">'
+      + '<path d="M38 88 q22 -6 44 0 M36 96 q24 -6 48 0 M38 104 q22 -5 44 0"/></g>'
+      + '<g stroke="#C94C6C" stroke-width="1.4" fill="none" opacity=".7"><path d="M46 84 v22 M60 82 v26 M74 84 v22"/></g>'
+      + '<path d="M32 104 h12 v6 h-12 Z M76 104 h12 v6 h-12 Z" fill="#C94C6C"/>';
+  } else if (w === 'cloak') {
+    // A cloak hangs from the shoulders and spreads behind the feet.
+    worn = '<path d="M34 74 Q22 96 20 116 L100 116 Q98 96 86 74 Q60 84 34 74 Z" fill="#4A3E80"/>'
+      + '<path d="M34 74 Q26 92 24 112 L44 112 Q40 92 42 76 Z" fill="#5E4F9E" opacity=".8"/>'
+      + '<path d="M86 74 Q94 92 96 112 L76 112 Q80 92 78 76 Z" fill="#5E4F9E" opacity=".8"/>'
+      + '<path d="M34 74 Q60 84 86 74 Q88 68 82 66 Q60 74 38 66 Q32 68 34 74 Z" fill="#E5BE5E"/>'
+      + '<g fill="#FFF3C4"><circle cx="36" cy="96" r="1.8"/><circle cx="52" cy="106" r="1.4"/><circle cx="70" cy="98" r="1.6"/><circle cx="86" cy="108" r="1.5"/><circle cx="60" cy="90" r="1.3"/></g>'
+      + '<circle cx="60" cy="72" r="5" fill="#E5BE5E"/><circle cx="60" cy="72" r="2.2" fill="#4A3E80"/>';
+  } else if (w === 'armour') {
+    // Plate over the chest, pauldrons on the shoulders.
+    worn = '<path d="M38 76 Q60 70 82 76 Q86 92 80 108 L40 108 Q34 92 38 76 Z" fill="#EDD08A"/>'
+      + '<path d="M38 76 Q60 70 82 76 Q80 82 60 86 Q40 82 38 76 Z" fill="#D4B25F"/>'
+      + '<g stroke="#B9913B" stroke-width="1.5" fill="none"><path d="M42 92 q18 -6 36 0 M42 100 q18 -6 36 0 M60 86 v22"/></g>'
+      + '<path d="M30 74 q10 -8 18 -2 q-4 10 -18 10 Z" fill="#EDD08A" stroke="#B9913B" stroke-width="1.2"/>'
+      + '<path d="M90 74 q-10 -8 -18 -2 q4 10 18 10 Z" fill="#EDD08A" stroke="#B9913B" stroke-width="1.2"/>'
+      + '<path d="M60 88 l5 7 -5 7 -5 -7 Z" fill="#FFF3C4"/>';
   }
   const headShape = art.headPath
     ? '<path d="' + art.headPath + '" fill="' + c.body + '"/>'
@@ -13860,7 +13979,7 @@ function renderPet(want) {
       + '</div>'
       + (bless ? '<div class="bless"><span class="q">' + luck.sym + '</span><p>' + esc(L(bless)) + '</p><span class="who">' + esc(p.name || L(PET_NAMES[p.kind])) + '</span></div>'
         : '<p class="hint">' + esc(PETS.fedToday(p) ? S.petPrayHint : S.petNeedFeed) + '</p>')
-      + '<div class="lucktag" style="--ink:' + luck.ink + ';--aura:' + luck.aura + '">' + luck.sym + ' ' + esc(S.petBrings(L(luck.name))) + '</div>'
+      + '<div class="lucktag" style="--ink:' + (luck.deep || luck.ink) + ';--aura:' + luck.aura + '">' + luck.sym + ' ' + esc(S.petBrings(L(luck.name))) + '</div>'
       + '<p class="petline">' + esc(L(petLine(p.kind))) + '</p>'
       + (petIsPro(p.kind) ? '<p class="mythline">✨ ' + esc(S.petMythBonus(MYTH_XP)) + '</p>' : '')
       + '<div class="charm"><span class="lbl">' + esc(S.petLevel(st.lv)) + '</span><span class="bar"><i style="width:' + st.at + '%;background:' + luck.ink + '"></i></span>'
@@ -14129,7 +14248,7 @@ function renderPet(want) {
       + '<div class="petstage">' + petHomeSVG('mat') + petAuraHTML(kind) + petSVG(kind, PET_COATS[0], 'happy')
       + '<span class="stagebtns left">' + prevBtn('🍚', S.petFoodTitle) + prevBtn('👑', S.petWearTitle) + '</span>'
       + '<span class="stagebtns right">' + prevBtn('🏠', S.petHomeShort) + prevBtn('🎨', S.petCoat) + '</span></div>'
-      + '<div class="lucktag" style="--ink:' + luck.ink + ';--aura:' + luck.aura + '">' + luck.sym + ' ' + esc(S.petBrings(L(luck.name))) + '</div>'
+      + '<div class="lucktag" style="--ink:' + (luck.deep || luck.ink) + ';--aura:' + luck.aura + '">' + luck.sym + ' ' + esc(S.petBrings(L(luck.name))) + '</div>'
       + '<p class="petline">' + esc(L(petLine(kind))) + '</p>'
       + (petIsPro(kind) ? '<p class="mythline">✨ ' + esc(S.petMythBonus(MYTH_XP)) + '</p>' : '')
       + '<p class="hint" style="text-align:center;margin-bottom:6px">' + esc(S.petPreviewCan) + '</p>'
@@ -14166,7 +14285,7 @@ function renderPet(want) {
       return '<button type="button" class="pp luck-' + luck.id + (have ? ' have' : '') + (locked ? ' locked' : '') + (petIsPro(k) ? ' myth' : '') + '" data-kind="' + k + '">'
         + '<span class="ppart">' + petAuraHTML(k, 3) + petSVG(k, PET_COATS[0], 'happy') + '</span>'
         + '<b>' + esc(L(PET_NAMES[k])) + '</b>'
-        + '<span class="pl" style="--ink:' + luck.ink + ';--aura:' + luck.aura + '">' + luck.sym + ' ' + esc(L(luck.name)) + '</span>'
+        + '<span class="pl" style="--ink:' + (luck.deep || luck.ink) + ';--aura:' + luck.aura + '">' + luck.sym + ' ' + esc(L(luck.name)) + '</span>'
         + (petIsPro(k) ? '<span class="x2">×' + MYTH_XP + ' ' + esc(S.petXpWord) + '</span>' : '')
         + (have ? '<span class="pp-on">✓</span>' : (locked ? '<span class="pp-lock">🔒</span>' : ''))
         + '</button>';
@@ -14512,7 +14631,7 @@ function authHTML() {
   const prov = CONFIG.authProviders;
   return '<div class="card"><h3 style="margin-bottom:10px">' + esc(S.signIn) + '</h3><div class="providers">'
     + (prov.indexOf('google') > -1 ? '<button class="btn block" data-auth="google"><svg viewBox="0 0 24 24"><path fill="#4285F4" d="M21.6 12.2c0-.7-.1-1.4-.2-2H12v3.9h5.4a4.6 4.6 0 0 1-2 3v2.5h3.2c1.9-1.7 3-4.3 3-7.4z"/><path fill="#34A853" d="M12 22c2.7 0 5-.9 6.6-2.4l-3.2-2.5c-.9.6-2 1-3.4 1-2.6 0-4.8-1.8-5.6-4.1H3.1v2.6A10 10 0 0 0 12 22z"/><path fill="#FBBC05" d="M6.4 14a6 6 0 0 1 0-3.9V7.5H3.1a10 10 0 0 0 0 9z"/><path fill="#EA4335" d="M12 6c1.5 0 2.8.5 3.8 1.5l2.8-2.8A10 10 0 0 0 3.1 7.5l3.3 2.6C7.2 7.8 9.4 6 12 6z"/></svg>' + esc(S.signInWith.google) + '</button>' : '')
-    + (prov.indexOf('facebook') > -1 ? '<button class="btn block" data-auth="facebook" style="background:#1877F2;color:#fff;border-color:transparent">' + esc(S.signInWith.facebook) + '</button>' : '')
+    + (prov.indexOf('facebook') > -1 ? '<button class="btn block" data-auth="facebook" style="background:#1461C7;color:#fff;border-color:transparent">' + esc(S.signInWith.facebook) + '</button>' : '')
     + (prov.indexOf('email') > -1 ? '<button class="btn block" data-auth="email">' + esc(S.signInWith.email) + '</button>' : '')
     + '</div><div id="emailform" hidden style="margin-top:12px"><label class="f" for="aemail">' + esc(S.emailLabel) + '</label><input id="aemail" type="email" autocomplete="email"><label class="f" for="apw">' + esc(S.passwordLabel) + '</label><input id="apw" type="password" autocomplete="current-password">'
     + '<div class="row" style="margin-top:12px"><button class="btn primary" id="alogin">' + esc(S.signIn) + '</button><button class="btn" id="acreate">' + esc(S.createAccount) + '</button><button class="btn sm" id="aforgot">' + esc(S.forgot) + '</button></div></div>'
@@ -15931,7 +16050,7 @@ ROUTES.admin = { nav: '', render: renderAdmin };
 window.APP_VERSION = 'v109';
 window.NABU = { CONFIG: CONFIG, SALE: SALE, salePrice: salePrice, loadActs: loadActs, BACK: BACK, LESSONS: LESSONS, localAnswer: localAnswer, compatVerdict: compatVerdict, numerologyOf: numerologyOf, ZDEEP: ZDEEP, lunarToday: lunarToday, solarToLunar: solarToLunar, DECK: DECK, INSIGHT: INSIGHT, KW: KW, ASK: ASK, TOPICS: TOPICS, GUIDES: GUIDES, SERVICES: SERVICES, COURSES: COURSES, ACCESS: ACCESS, ZODIAC: ZODIAC, pick: pick, book: book,
   insightHTML: insightHTML, insightOf: insightOf, sunSignIndex: sunSignIndex, lifePath: lifePath, PROFILE: () => PROFILE, BE: BE, ACTS: ACTS,
-  ANGELS: ANGELS, angelRead: angelRead, CODEBOOK: CODEBOOK, verifyCode: verifyCode, codeDigest: codeDigest, randomCode: randomCode, BANK: BANK, PETS: PETS, petSVG: petSVG, PET_COATS: PET_COATS, PET_KINDS: PET_KINDS, luckCut: luckCut, petLevel: petLevel, petStep: petStep, VOUCHERS: VOUCHERS, levelCoins: levelCoins, LOOKS: LOOKS };
+  ANGELS: ANGELS, angelRead: angelRead, CODEBOOK: CODEBOOK, verifyCode: verifyCode, petHomeSVG: petHomeSVG, PET_HOMES: PET_HOMES, PET_WEARS: PET_WEARS, codeDigest: codeDigest, randomCode: randomCode, BANK: BANK, PETS: PETS, petSVG: petSVG, PET_COATS: PET_COATS, PET_KINDS: PET_KINDS, luckCut: luckCut, petLevel: petLevel, petStep: petStep, VOUCHERS: VOUCHERS, levelCoins: levelCoins, LOOKS: LOOKS };
 BE.initP = BE.init().catch(() => { /* backend unreachable: the app runs device-only */ });
 // The Gemini key is a dashboard setting kept in the app cloud (content/ai), never in the source.
 loadContent('codes', 'codes.json', 'nabu-codes').then((r) => { CODEBOOK.set(r && r.data); }).catch(() => {});

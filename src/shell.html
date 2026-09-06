@@ -61,6 +61,7 @@
   }
 }
 :root[data-theme="dark"]{
+
   --bg:#241A45; --surface:#312559; --surface-2:#3B2D6A; --surface-3:#463779;
   --fg:#F6F0FA; --fg-soft:#CBC0E4; --fg-faint:#9F92C2;
   --rule:#4D3F80; --rule-soft:#3F3271;
@@ -796,6 +797,17 @@ main{padding:22px 0 30px}
    Written as their own classes, not as `.diary.paper-x`, so the picker can
    show the same paper at preview size. Each is a different sheet rather than
    the same sheet in a different tint. */
+/* Each paper is a fixed sheet, so everything written on it takes a fixed
+   ink rather than the theme's. */
+.paper-plain,.paper-ruled,.paper-floral{color:#3B2A5E}
+.diary.paper-plain .date,.diary.paper-ruled .date,.diary.paper-floral .date,
+.diary.paper-plain .faint,.diary.paper-ruled .faint,.diary.paper-floral .faint,
+.diary.paper-plain .hint,.diary.paper-ruled .hint,.diary.paper-floral .hint{color:#6B5A86}
+.diary.paper-plain p,.diary.paper-ruled p,.diary.paper-floral p{color:#3B2A5E}
+.diary.paper-plain textarea,.diary.paper-ruled textarea,.diary.paper-floral textarea{background:rgba(255,255,255,.7);color:#2E2144;border-color:rgba(90,70,120,.25)}
+.diary.paper-plain textarea::placeholder,.diary.paper-ruled textarea::placeholder,.diary.paper-floral textarea::placeholder{color:#8B7BA6}
+.diary.paper-plain .mood,.diary.paper-ruled .mood,.diary.paper-floral .mood{background:rgba(255,255,255,.55);border-color:rgba(90,70,120,.16)}
+.diary.paper-plain .linkbtn,.diary.paper-ruled .linkbtn,.diary.paper-floral .linkbtn{color:#8A3A5E}
 .paper-plain{background:#FFFCF2}
 /* Ruled ivory, with the red margin a school exercise book has. */
 .paper-ruled{position:relative;background:repeating-linear-gradient(#FFFCEF 0px,#FFFCEF 25px,#DCCFB2 25px,#DCCFB2 26px)}
@@ -875,7 +887,9 @@ main{padding:22px 0 30px}
 .stagebtns{position:absolute;top:8%;z-index:5;display:flex;flex-direction:column;gap:8px}
 .stagebtns.left{left:6px;align-items:flex-start}
 .stagebtns.right{right:6px;align-items:flex-end}
-.stagebtn{display:flex;align-items:center;gap:5px;background:rgba(255,255,255,.86);border:1px solid var(--rule-soft);border-radius:999px;padding:5px 9px;font:inherit;color:var(--fg);cursor:pointer;box-shadow:0 2px 8px rgba(60,40,90,.14);backdrop-filter:blur(3px)}
+/* The pill is white whatever the theme, so its ink is dark whatever the
+   theme. Following --fg here made these vanish in the dark. */
+.stagebtn{display:flex;align-items:center;gap:5px;background:rgba(255,255,255,.9);border:1px solid rgba(90,70,120,.18);border-radius:999px;padding:5px 9px;font:inherit;color:#3B2A5E;cursor:pointer;box-shadow:0 2px 8px rgba(60,40,90,.18);backdrop-filter:blur(3px)}
 .stagebtn .ic{font-size:15px;line-height:1}
 .stagebtn .lb{font-size:11.5px;font-weight:600;white-space:nowrap}
 .stagebtn.locked{opacity:.9;border-style:dashed;cursor:default}
@@ -943,7 +957,7 @@ main{padding:22px 0 30px}
 .feedrow{display:flex;align-items:center;justify-content:center;gap:9px;margin-bottom:10px}
 /* The food sits in the scene, at the companion's feet, so the drag is short. */
 .petstage .foodchip{position:absolute;left:8px;bottom:8px;z-index:7}
-.foodchip{display:inline-flex;align-items:center;justify-content:center;width:46px;height:46px;border-radius:50%;background:rgba(255,255,255,.9);border:2px dashed var(--gold);font-size:24px;cursor:grab;touch-action:none;user-select:none;box-shadow:0 2px 8px rgba(60,40,90,.16)}
+.foodchip{display:inline-flex;align-items:center;justify-content:center;width:46px;height:46px;border-radius:50%;background:rgba(255,255,255,.92);border:2px dashed #B9913B;color:#3B2A5E;font-size:24px;cursor:grab;touch-action:none;user-select:none;box-shadow:0 2px 8px rgba(60,40,90,.2)}
 .foodchip:active{cursor:grabbing;transform:scale(1.08)}
 .dragtip{font-size:12.5px;color:var(--fg-soft)}
 .dragfood{position:fixed;z-index:80;font-size:36px;pointer-events:none;transform:translate(-50%,-50%);filter:drop-shadow(0 3px 6px rgba(60,40,90,.3))}
@@ -955,7 +969,10 @@ main{padding:22px 0 30px}
 .crumbs i{position:absolute;top:-6%;font-size:20px;font-style:normal;opacity:0;animation:dropfood 1s ease-in forwards}
 @keyframes dropfood{0%{opacity:0;transform:translateY(-10px)}20%{opacity:1}100%{opacity:0;transform:translateY(62px)}}
 /* What this one looks after, and the line that says it in words. */
-.lucktag{display:inline-flex;align-items:center;gap:5px;background:var(--aura);color:var(--ink);border-radius:999px;padding:4px 12px;font-size:13px;font-weight:600}
+/* The pastel is fixed, so the ink is too - and darker than the line colour,
+   which was chosen to sit on the page rather than on its own pastel. */
+.lucktag{display:inline-flex;align-items:center;gap:5px;background:var(--aura);color:var(--ink);border-radius:999px;padding:4px 12px;font-size:13px;font-weight:700;filter:saturate(1.1)}
+.lucktag,.petpick .pl{text-shadow:none}
 #main p.petline{margin:8px 0 12px;font-size:13.5px;color:var(--fg-soft);text-align:center;text-wrap:balance}
 /* The luck bar, and the list of what fills it. */
 .charm{display:flex;align-items:center;gap:8px;margin-bottom:10px}
@@ -1155,6 +1172,18 @@ button.unl{display:block;width:100%;text-align:left;font:inherit;color:inherit;c
 @keyframes slipdrop{0%{opacity:0;transform:translateX(-50%) translateY(-46px) rotate(0deg)}100%{opacity:1}}
 @keyframes wishfly{0%{opacity:0;transform:translate(-50%,10px) scale(.9)}15%{opacity:1}100%{opacity:0;transform:translate(-50%,-120px) scale(1.05)}}@keyframes twinkle{0%,100%{opacity:0;transform:scale(.6)}50%{opacity:1;transform:scale(1.2)}}
 .act .foot{justify-content:flex-start}
+/* ---- read in the dark ----
+   Last in the sheet on purpose: these lift colours that are legible on a
+   pale page and not on a dark one, and they have to win over the rules
+   that set them. */
+:root:not([data-theme="light"]) .warn,
+:root:not([data-theme="light"]) .ci small.warn,
+:root:not([data-theme="light"]) .tpick .warn,
+:root:not([data-theme="light"]) .sum .warn{color:#FF9E86}
+:root:not([data-theme="light"]) .ci small.ok,
+:root:not([data-theme="light"]) .tpick .ok,
+:root:not([data-theme="light"]) .sum .ok{color:#7BD9A0}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .warn,:root:not([data-theme="light"]) .sum .warn{color:#FF9E86}}
 </style>
 </head>
 <body>
