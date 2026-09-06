@@ -23,6 +23,18 @@
    this never becomes a directory of strangers to browse. */
 
 const HANDLE_RE = /^[a-z0-9][a-z0-9._]{1,18}[a-z0-9]$/;
+/* Firestore answers a write it will not allow with permission-denied, and that
+   is a different thing from a write that failed. It means the rules for these
+   collections are not published, so retrying is pointless - and the person in
+   front of the screen has done nothing wrong. Say which it is. */
+function loveWhy(e) {
+  const S = T();
+  const code = (e && (e.code || e.message)) || '';
+  if (/permission[-_ ]?denied|insufficient permissions/i.test(String(code))) {
+    return BE.isAdmin && BE.isAdmin() ? S.loveNoRulesAdmin : S.loveNoRules;
+  }
+  return S.publishFail;
+}
 /* The token in an invitation link is the whole secret, so it is long enough
    that guessing one is hopeless and drawn from the machine's own randomness. */
 const INVITE_ALPHABET = 'abcdefghijkmnpqrstuvwxyz23456789';
@@ -514,7 +526,7 @@ function renderLove(wantHandle) {
       if (!HANDLE_RE.test(h)) { drawHandle(S.loveHandleBad); return; }
       b.disabled = true; st.className = 'hint'; st.textContent = S.loveSaving;
       try { await LOVEDB.claimHandle(h, $('#lvname').value.trim()); forceHandle = false; draw(); }
-      catch (e) { drawHandle(e.message === 'taken' ? S.loveHandleTaken : e.message === 'handle' ? S.loveHandleBad : S.publishFail); }
+      catch (e) { drawHandle(e.message === 'taken' ? S.loveHandleTaken : e.message === 'handle' ? S.loveHandleBad : loveWhy(e)); }
     });
   };
 
@@ -570,7 +582,7 @@ function renderLove(wantHandle) {
       if (kept && !fresh) { showLink(kept); return; }
       box.innerHTML = '<p class="hint">' + esc(S.loveSaving) + '</p>';
       try { showLink(await LOVEDB.makeInvite()); }
-      catch (e) { box.innerHTML = '<p class="hint err">' + esc(S.publishFail) + '</p>'; }
+      catch (e) { box.innerHTML = '<p class="hint err">' + esc(loveWhy(e)) + '</p>'; }
     };
     if (LOVE.local().invite) showLink(LOVE.local().invite);
     else $('#lvlink').innerHTML = '<button type="button" class="btn primary block" id="lvmake">🔗 ' + esc(S.loveMakeLink) + '</button>';
@@ -581,7 +593,7 @@ function renderLove(wantHandle) {
       if (!r || !confirm(S.loveAcceptAsk(r.name || ('@' + r.handle)))) return;
       b.disabled = true;
       try { await LOVEDB.accept(r); toast(S.loveTied); }
-      catch (e) { toast(e.message === 'taken' ? S.loveTheyTied : S.publishFail); b.disabled = false; }
+      catch (e) { toast(e.message === 'taken' ? S.loveTheyTied : loveWhy(e)); b.disabled = false; }
     }));
     $$('[data-decline]', m).forEach((b) => b.addEventListener('click', async () => {
       b.disabled = true;
@@ -619,7 +631,7 @@ function renderLove(wantHandle) {
       if (off) off.addEventListener('click', async () => {
         off.disabled = true;
         try { await LOVEDB.offer(who.uid, $('#lvnote').value); st.className = 'hint ok'; st.textContent = S.loveOffered; }
-        catch (e) { st.className = 'hint err'; st.textContent = S.publishFail; off.disabled = false; }
+        catch (e) { st.className = 'hint err'; st.textContent = loveWhy(e); off.disabled = false; }
       });
     });
   };
@@ -714,7 +726,7 @@ function renderLove(wantHandle) {
         b.disabled = true;
         if (st) { st.className = 'hint'; st.textContent = S.loveSaving; }
         try { await job(); if (okMsg) toast(okMsg); }
-        catch (e) { b.disabled = false; if (st) { st.className = 'hint err'; st.textContent = S.publishFail; } else toast(S.publishFail); }
+        catch (e) { b.disabled = false; if (st) { st.className = 'hint err'; st.textContent = loveWhy(e); } else toast(loveWhy(e)); }
       });
     };
     run('#lvask', '#lvaskst', () => LOVEDB.propose(bond.id, $('#lvasknote').value), S.loveAskDone);
@@ -724,7 +736,7 @@ function renderLove(wantHandle) {
     run('#lvmarry', null, () => LOVEDB.marry(bond.id), S.loveMarriedDone);
 
     $$('[data-role]', m).forEach((b) => b.addEventListener('click', async () => {
-      try { await LOVEDB.setRole(bond.id, bond, b.getAttribute('data-role')); } catch (e) { toast(S.publishFail); }
+      try { await LOVEDB.setRole(bond.id, bond, b.getAttribute('data-role')); } catch (e) { toast(loveWhy(e)); }
     }));
     { const sp = $('#lvshowpar');
       if (sp) sp.addEventListener('change', () => { LOVE.save({ parents: sp.checked }); toast(sp.checked ? S.loveShowParentsOn : S.loveShowParentsOff); }); }
@@ -734,7 +746,7 @@ function renderLove(wantHandle) {
       if (!leftToday) { st.className = 'hint err'; st.textContent = S.loveGiftDone; return; }
       b.disabled = true; st.className = 'hint'; st.textContent = S.loveSaving;
       try { await LOVEDB.giveGift(bond.id, b.getAttribute('data-gift'), $('#lvgnote').value); toast(S.loveGiftSent); }
-      catch (e) { b.disabled = false; st.className = 'hint err'; st.textContent = S.publishFail; }
+      catch (e) { b.disabled = false; st.className = 'hint err'; st.textContent = loveWhy(e); }
     }));
 
     $('#lvsince').addEventListener('change', async () => {
@@ -742,11 +754,11 @@ function renderLove(wantHandle) {
       if (!v || v > isoDate(new Date())) { st.className = 'hint err'; st.textContent = S.loveDayBad; return; }
       st.className = 'hint'; st.textContent = S.loveSaving;
       try { await LOVEDB.setSince(bond.id, v); st.className = 'hint ok'; st.textContent = S.loveDaySaved; }
-      catch (e) { st.className = 'hint err'; st.textContent = S.publishFail; }
+      catch (e) { st.className = 'hint err'; st.textContent = loveWhy(e); }
     });
     $('#lvuntie').addEventListener('click', async () => {
       if (!confirm(S.loveUntieAsk)) return;
-      try { await LOVEDB.untie(bond.id); toast(S.loveUntied); } catch (e) { toast(S.publishFail); }
+      try { await LOVEDB.untie(bond.id); toast(S.loveUntied); } catch (e) { toast(loveWhy(e)); }
     });
   };
 
@@ -830,7 +842,7 @@ function renderLoveJoin(token) {
       try { await LOVEDB.acceptInvite(inv); toast(S.loveTied); location.hash = '#/love'; }
       catch (e) {
         st.className = 'hint err';
-        st.textContent = e.message === 'mine' ? S.loveAlreadyMine : e.message === 'taken' ? S.loveTheyTied : S.publishFail;
+        st.textContent = e.message === 'mine' ? S.loveAlreadyMine : e.message === 'taken' ? S.loveTheyTied : loveWhy(e);
         b.disabled = false;
       }
     });

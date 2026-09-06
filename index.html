@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
 <title>Nabu Tarot</title>
 <meta name="description" content="Nabu Tarot: dự đoán mới, rút một lá bài xem năng lượng hiện tại, học tarot, Lenormand, chiêm tinh, và đặt lịch xem bài.">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'none'; object-src 'none'; form-action 'self'; script-src 'self' 'sha256-U65DJoTCf3pWSEaIX/2CVLnzqdPzPUKUwETQlgb5yS0=' https://www.gstatic.com https://apis.google.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; font-src 'self' data:; media-src 'self' data: blob:; worker-src 'self'; connect-src 'self' https://*.googleapis.com https://*.google.com https://*.firebaseio.com https://*.cloudfunctions.net https://*.workers.dev https://generativelanguage.googleapis.com; frame-src https://*.firebaseapp.com https://accounts.google.com https://*.facebook.com">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'none'; object-src 'none'; form-action 'self'; script-src 'self' 'sha256-KKNJdh2ixrNC887HebT/RmIgQgz2ce+DoIXdwgN0Nus=' https://www.gstatic.com https://apis.google.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; font-src 'self' data:; media-src 'self' data: blob:; worker-src 'self'; connect-src 'self' https://*.googleapis.com https://*.google.com https://*.firebaseio.com https://*.cloudfunctions.net https://*.workers.dev https://generativelanguage.googleapis.com; frame-src https://*.firebaseapp.com https://accounts.google.com https://*.facebook.com">
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <meta name="theme-color" content="#EFE9FA">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -1917,6 +1917,8 @@ const STR = {
     actPickHint: 'Bạn chạm vào tụ bài mà mình thấy bị thu hút nhất. Nabu sẽ đăng thông điệp của từng tụ sau vài ngày.', actPicked: (n) => 'Bạn đã chọn tụ ' + n + '.', actComeBack: (d) => 'Quay lại vào ' + d + ' để lật bài xem thông điệp.', actChangePile: 'Đổi sang tụ khác?', actPickToSee: 'Thông điệp đã có. Chạm vào một tụ để lật lên.', actTapOthers: 'Tụ bạn chọn đã lật lên. Bạn có thể chạm vào tụ khác để xem thử.',
     actVoteHint: 'Bạn chạm vào một lựa chọn. Mỗi người chỉ được bình chọn một lần.', actVoteLogin: 'Bạn cần đăng nhập để bình chọn và xem kết quả.', actVoted: 'Cảm ơn bạn đã bình chọn!', actClosedNote: 'Bình chọn đã đóng. Đây là kết quả.', actVotes: (n) => n + ' phiếu',
     actWishPh: 'Điều mình ước lúc này là…', actWishSend: 'Gửi vào vũ trụ', actWishHint: 'Bạn viết ngắn gọn, ở thì hiện tại, rồi gửi đi. Điều ước chỉ được lưu trên máy của bạn và không ai đọc được.', actWishCount: (n) => 'Bạn đã gửi ' + n + ' điều ước ở đây.', actWishSent: 'Đã gửi. Giờ đến lượt bạn làm bước đầu tiên. ✨', actWishEmpty: 'Bạn viết điều ước trước nhé.', actWishClear: 'Xoá các điều ước đã lưu trên máy', actWishClearConfirm: 'Xoá các điều ước đã lưu trên máy này?',
+    loveNoRules: 'Phần này của Nabu chưa được mở. Bạn báo giúp Nabu qua mục Liên hệ nhé, không phải lỗi của bạn đâu.',
+    loveNoRulesAdmin: 'Firestore từ chối ghi: rules cho handles / people / bonds / requests / invites chưa được publish. Vào Firebase Console › Firestore Database › Rules, dán toàn bộ file firestore.rules trong repo rồi bấm Publish.',
     loveRoadTitle: 'Chặng đường',
     loveRoadOf: { tied: 'Buộc chỉ', proposed: 'Cầu hôn', engaged: 'Đính ước', married: 'Cưới' },
     loveRoadHint: 'Bắt đầu từ sợi chỉ. Sau đó một người trao nhẫn, người kia trả lời, rồi hai bạn làm lễ. Mỗi chặng có hình riêng, hiện trên hồ sơ của bạn.',
@@ -2345,6 +2347,8 @@ const STR = {
     actPickHint: 'Tap the pile that pulls you. Nabu posts each pile\'s message a few days later.', actPicked: (n) => 'You chose pile ' + n + '.', actComeBack: (d) => 'Come back on ' + d + ' to flip it over.', actChangePile: 'Switch to another pile?', actPickToSee: 'The messages are in. Tap a pile to flip it.', actTapOthers: 'Your pile is open. Tap another pile to peek.',
     actVoteHint: 'Tap an option. One vote per person.', actVoteLogin: 'Sign in to vote and see the results.', actVoted: 'Thank you for voting!', actClosedNote: 'Voting is closed. Here are the results.', actVotes: (n) => n + ' votes',
     actWishPh: 'Right now I wish…', actWishSend: 'Send it to the universe', actWishHint: 'Keep it short, in the present tense, then send. Wishes stay on your device; nobody reads them.', actWishCount: (n) => 'You have sent ' + n + ' wishes here.', actWishSent: 'Sent. Now the first step is yours. ✨', actWishEmpty: 'Write your wish first.', actWishClear: 'Clear the wishes saved on this device', actWishClearConfirm: 'Clear the wishes saved on this device?',
+    loveNoRules: 'This part of Nabu is not open yet. Let Nabu know through Contact — nothing here is your fault.',
+    loveNoRulesAdmin: 'Firestore refused the write: the rules for handles / people / bonds / requests / invites have not been published. Firebase Console › Firestore Database › Rules, paste the whole firestore.rules from the repo, then Publish.',
     loveRoadTitle: 'The road',
     loveRoadOf: { tied: 'Tied', proposed: 'Proposed', engaged: 'Engaged', married: 'Married' },
     loveRoadHint: 'It starts with the thread. Then one of you offers a ring, the other answers, and the two of you hold the wedding. Each stage has a mark of its own, and it shows on your profile.',
@@ -12776,6 +12780,18 @@ function renderAngelOne(id) {
    this never becomes a directory of strangers to browse. */
 
 const HANDLE_RE = /^[a-z0-9][a-z0-9._]{1,18}[a-z0-9]$/;
+/* Firestore answers a write it will not allow with permission-denied, and that
+   is a different thing from a write that failed. It means the rules for these
+   collections are not published, so retrying is pointless - and the person in
+   front of the screen has done nothing wrong. Say which it is. */
+function loveWhy(e) {
+  const S = T();
+  const code = (e && (e.code || e.message)) || '';
+  if (/permission[-_ ]?denied|insufficient permissions/i.test(String(code))) {
+    return BE.isAdmin && BE.isAdmin() ? S.loveNoRulesAdmin : S.loveNoRules;
+  }
+  return S.publishFail;
+}
 /* The token in an invitation link is the whole secret, so it is long enough
    that guessing one is hopeless and drawn from the machine's own randomness. */
 const INVITE_ALPHABET = 'abcdefghijkmnpqrstuvwxyz23456789';
@@ -13267,7 +13283,7 @@ function renderLove(wantHandle) {
       if (!HANDLE_RE.test(h)) { drawHandle(S.loveHandleBad); return; }
       b.disabled = true; st.className = 'hint'; st.textContent = S.loveSaving;
       try { await LOVEDB.claimHandle(h, $('#lvname').value.trim()); forceHandle = false; draw(); }
-      catch (e) { drawHandle(e.message === 'taken' ? S.loveHandleTaken : e.message === 'handle' ? S.loveHandleBad : S.publishFail); }
+      catch (e) { drawHandle(e.message === 'taken' ? S.loveHandleTaken : e.message === 'handle' ? S.loveHandleBad : loveWhy(e)); }
     });
   };
 
@@ -13323,7 +13339,7 @@ function renderLove(wantHandle) {
       if (kept && !fresh) { showLink(kept); return; }
       box.innerHTML = '<p class="hint">' + esc(S.loveSaving) + '</p>';
       try { showLink(await LOVEDB.makeInvite()); }
-      catch (e) { box.innerHTML = '<p class="hint err">' + esc(S.publishFail) + '</p>'; }
+      catch (e) { box.innerHTML = '<p class="hint err">' + esc(loveWhy(e)) + '</p>'; }
     };
     if (LOVE.local().invite) showLink(LOVE.local().invite);
     else $('#lvlink').innerHTML = '<button type="button" class="btn primary block" id="lvmake">🔗 ' + esc(S.loveMakeLink) + '</button>';
@@ -13334,7 +13350,7 @@ function renderLove(wantHandle) {
       if (!r || !confirm(S.loveAcceptAsk(r.name || ('@' + r.handle)))) return;
       b.disabled = true;
       try { await LOVEDB.accept(r); toast(S.loveTied); }
-      catch (e) { toast(e.message === 'taken' ? S.loveTheyTied : S.publishFail); b.disabled = false; }
+      catch (e) { toast(e.message === 'taken' ? S.loveTheyTied : loveWhy(e)); b.disabled = false; }
     }));
     $$('[data-decline]', m).forEach((b) => b.addEventListener('click', async () => {
       b.disabled = true;
@@ -13372,7 +13388,7 @@ function renderLove(wantHandle) {
       if (off) off.addEventListener('click', async () => {
         off.disabled = true;
         try { await LOVEDB.offer(who.uid, $('#lvnote').value); st.className = 'hint ok'; st.textContent = S.loveOffered; }
-        catch (e) { st.className = 'hint err'; st.textContent = S.publishFail; off.disabled = false; }
+        catch (e) { st.className = 'hint err'; st.textContent = loveWhy(e); off.disabled = false; }
       });
     });
   };
@@ -13467,7 +13483,7 @@ function renderLove(wantHandle) {
         b.disabled = true;
         if (st) { st.className = 'hint'; st.textContent = S.loveSaving; }
         try { await job(); if (okMsg) toast(okMsg); }
-        catch (e) { b.disabled = false; if (st) { st.className = 'hint err'; st.textContent = S.publishFail; } else toast(S.publishFail); }
+        catch (e) { b.disabled = false; if (st) { st.className = 'hint err'; st.textContent = loveWhy(e); } else toast(loveWhy(e)); }
       });
     };
     run('#lvask', '#lvaskst', () => LOVEDB.propose(bond.id, $('#lvasknote').value), S.loveAskDone);
@@ -13477,7 +13493,7 @@ function renderLove(wantHandle) {
     run('#lvmarry', null, () => LOVEDB.marry(bond.id), S.loveMarriedDone);
 
     $$('[data-role]', m).forEach((b) => b.addEventListener('click', async () => {
-      try { await LOVEDB.setRole(bond.id, bond, b.getAttribute('data-role')); } catch (e) { toast(S.publishFail); }
+      try { await LOVEDB.setRole(bond.id, bond, b.getAttribute('data-role')); } catch (e) { toast(loveWhy(e)); }
     }));
     { const sp = $('#lvshowpar');
       if (sp) sp.addEventListener('change', () => { LOVE.save({ parents: sp.checked }); toast(sp.checked ? S.loveShowParentsOn : S.loveShowParentsOff); }); }
@@ -13487,7 +13503,7 @@ function renderLove(wantHandle) {
       if (!leftToday) { st.className = 'hint err'; st.textContent = S.loveGiftDone; return; }
       b.disabled = true; st.className = 'hint'; st.textContent = S.loveSaving;
       try { await LOVEDB.giveGift(bond.id, b.getAttribute('data-gift'), $('#lvgnote').value); toast(S.loveGiftSent); }
-      catch (e) { b.disabled = false; st.className = 'hint err'; st.textContent = S.publishFail; }
+      catch (e) { b.disabled = false; st.className = 'hint err'; st.textContent = loveWhy(e); }
     }));
 
     $('#lvsince').addEventListener('change', async () => {
@@ -13495,11 +13511,11 @@ function renderLove(wantHandle) {
       if (!v || v > isoDate(new Date())) { st.className = 'hint err'; st.textContent = S.loveDayBad; return; }
       st.className = 'hint'; st.textContent = S.loveSaving;
       try { await LOVEDB.setSince(bond.id, v); st.className = 'hint ok'; st.textContent = S.loveDaySaved; }
-      catch (e) { st.className = 'hint err'; st.textContent = S.publishFail; }
+      catch (e) { st.className = 'hint err'; st.textContent = loveWhy(e); }
     });
     $('#lvuntie').addEventListener('click', async () => {
       if (!confirm(S.loveUntieAsk)) return;
-      try { await LOVEDB.untie(bond.id); toast(S.loveUntied); } catch (e) { toast(S.publishFail); }
+      try { await LOVEDB.untie(bond.id); toast(S.loveUntied); } catch (e) { toast(loveWhy(e)); }
     });
   };
 
@@ -13583,7 +13599,7 @@ function renderLoveJoin(token) {
       try { await LOVEDB.acceptInvite(inv); toast(S.loveTied); location.hash = '#/love'; }
       catch (e) {
         st.className = 'hint err';
-        st.textContent = e.message === 'mine' ? S.loveAlreadyMine : e.message === 'taken' ? S.loveTheyTied : S.publishFail;
+        st.textContent = e.message === 'mine' ? S.loveAlreadyMine : e.message === 'taken' ? S.loveTheyTied : loveWhy(e);
         b.disabled = false;
       }
     });
@@ -17462,7 +17478,7 @@ function adminSale(p) {
 ROUTES.admin = { nav: '', render: renderAdmin };
 
 /* ============================ boot ============================ */
-window.APP_VERSION = 'v116';
+window.APP_VERSION = 'v117';
 window.NABU = { CONFIG: CONFIG, SALE: SALE, salePrice: salePrice, loadActs: loadActs, BACK: BACK, LESSONS: LESSONS, localAnswer: localAnswer, compatVerdict: compatVerdict, numerologyOf: numerologyOf, ZDEEP: ZDEEP, lunarToday: lunarToday, solarToLunar: solarToLunar, DECK: DECK, INSIGHT: INSIGHT, KW: KW, ASK: ASK, TOPICS: TOPICS, GUIDES: GUIDES, SERVICES: SERVICES, COURSES: COURSES, ACCESS: ACCESS, ZODIAC: ZODIAC, pick: pick, book: book,
   insightHTML: insightHTML, insightOf: insightOf, sunSignIndex: sunSignIndex, lifePath: lifePath, PROFILE: () => PROFILE, BE: BE, ACTS: ACTS,
   ANGELS: ANGELS, angelRead: angelRead, CODEBOOK: CODEBOOK, verifyCode: verifyCode, petHomeSVG: petHomeSVG, PET_HOMES: PET_HOMES, PET_WEARS: PET_WEARS, codeDigest: codeDigest, randomCode: randomCode, BANK: BANK, PETS: PETS, petSVG: petSVG, PET_COATS: PET_COATS, PET_KINDS: PET_KINDS, luckCut: luckCut, petLevel: petLevel, petStep: petStep, VOUCHERS: VOUCHERS, levelCoins: levelCoins, LOOKS: LOOKS,

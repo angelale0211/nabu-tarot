@@ -769,6 +769,20 @@ async function go(hash, sel) { W().location.hash = hash; await sleep(30); return
       await go('#/love', '#lvhandle');
       ok(d.querySelector('#lvhandle') && d.querySelector('#lvname') && /\u0111\u1ed5i|later|sau/i.test(d.querySelector('#main').textContent),
         'the thread asks for a handle before anything else, and says it can be changed');
+      { /* A database that refuses the write is not a write that failed, and the
+           difference is the whole message: nobody can retry their way past a
+           rule that was never published. */
+        const kept = N.BE.db;
+        N.BE.db = { collection: () => ({ doc: () => ({
+          get: async () => ({ exists: false }),
+          set: async () => { const e = new Error('Missing or insufficient permissions.'); e.code = 'permission-denied'; throw e; },
+          delete: async () => {} }) }) };
+        d.querySelector('#lvname').value = 'Mai'; d.querySelector('#lvhandle').value = 'mai.09';
+        d.querySelector('#lvsave').click(); await sleep(220);
+        const msg = d.querySelector('#lvstatus').textContent;
+        ok(/mở|Firestore|rules/i.test(msg) && !/không thành công|failed/i.test(msg),
+          'a database that refuses the write says the rules are not published, rather than "it did not work"');
+        N.BE.db = kept; }
       d.querySelector('#lvname').value = 'Mai'; d.querySelector('#lvhandle').value = '@MAI.09';
       d.querySelector('#lvsave').click(); await sleep(120);
       ok(db.docs['handles/mai.09'] && db.docs['handles/mai.09'].uid === 'uidA'
