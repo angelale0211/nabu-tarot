@@ -309,6 +309,8 @@ function adminSale(p) {
   const S = T();
   if (!needAdmin(p)) return;
   const d = SALE.data || {};
+  const picks = (Array.isArray(d.items) ? d.items : []).slice();
+  const picked = (k) => picks.indexOf(k) > -1;
   const opt = (v, cur, label) => '<option value="' + esc(v) + '"' + (cur === v ? ' selected' : '') + '>' + esc(label) + '</option>';
   p.innerHTML = '<p class="hint">' + esc(S.saleHint) + '</p>'
     + '<div class="card"><label class="f" style="display:flex;gap:8px;align-items:center"><input type="checkbox" id="son" style="width:auto"' + (d.on ? ' checked' : '') + '>' + esc(S.saleOn) + '</label>'
@@ -319,6 +321,11 @@ function adminSale(p) {
     + '<div><label class="f" for="sval">' + esc(S.saleValue) + '</label><input id="sval" type="number" min="0" value="' + esc(d.value == null ? '' : d.value) + '"></div></div>'
     + '<div class="two"><div><label class="f" for="sfrom">' + esc(S.saleFrom) + '</label><input id="sfrom" type="date" value="' + esc(d.from || '') + '"></div>'
     + '<div><label class="f" for="sto">' + esc(S.saleTo) + '</label><input id="sto" type="date" value="' + esc(d.to || '') + '"></div></div>'
+    + '<label class="f">' + esc(S.salePicks) + '</label><p class="hint" style="margin:0 0 8px">' + esc(S.salePicksHint) + '</p>'
+    + '<div class="chips" id="spicks">'
+    + SERVICES.map((x) => '<button type="button" class="chip' + (picked('r:' + x.id) ? ' on' : '') + '" data-pick="r:' + x.id + '">' + (x.icon || '') + ' ' + esc(L(x.name)) + '</button>').join('')
+    + COURSES.map((x) => '<button type="button" class="chip' + (picked('u:' + x.id) ? ' on' : '') + '" data-pick="u:' + x.id + '">🔓 ' + esc(L(x.name)) + '</button>').join('')
+    + '</div>'
     + '<label class="f" for="slabel">' + esc(S.saleLabel) + '</label><input id="slabel" placeholder="' + esc(S.saleLabelPh) + '" value="' + esc((d.label && d.label.vi) || '') + '">'
     + '<label class="f" for="slabel_en">' + esc(S.saleLabel) + ' (EN)</label><input id="slabel_en" value="' + esc((d.label && d.label.en) || '') + '">'
     + '<button class="btn primary block" id="ssave" style="margin-top:12px">' + esc(S.publish) + '</button><p class="hint" id="sstatus"></p></div>'
@@ -326,18 +333,20 @@ function adminSale(p) {
   const read = () => ({
     on: $('#son').checked, scope: $('#sscope').value, kind: $('#skind').value,
     value: Number($('#sval').value) || 0, from: $('#sfrom').value, to: $('#sto').value,
-    label: { vi: $('#slabel').value.trim(), en: $('#slabel_en').value.trim() }
+    label: { vi: $('#slabel').value.trim(), en: $('#slabel_en').value.trim() },
+    items: $$('#spicks .chip.on', p).map((b) => b.getAttribute('data-pick'))
   });
   const preview = () => {
     const before = SALE.data;
     SALE.set(read());
     const live = SALE.live();
     $('#sprev').innerHTML = live
-      ? '<p class="hint">' + esc(SALE.off()) + ' · ' + esc(S.saleScopes[live.scope] || '') + '</p><div class="sum"><div class="r"><span>300.000đ</span><b>' + priceHTML(300000, 'unlock') + '</b></div><div class="r"><span>60.000đ</span><b>' + priceHTML(60000, 'reading') + '</b></div></div>'
+      ? '<p class="hint">' + esc(SALE.off()) + ' · ' + esc(S.saleScopes[live.scope] || '') + '</p><div class="sum"><div class="r"><span>300.000đ</span><b>' + priceHTML(300000, 'unlock', 'tarot') + '</b></div><div class="r"><span>60.000đ</span><b>' + priceHTML(60000, 'reading', 'tarot') + '</b></div></div>'
       : '<p class="hint">' + esc(S.saleNone) + '</p>';
     SALE.set(before);
   };
   $$('#son,#sscope,#skind,#sval,#sfrom,#sto', p).forEach((el) => el.addEventListener('input', preview));
+  $$('#spicks .chip', p).forEach((b) => b.addEventListener('click', () => { b.classList.toggle('on'); preview(); }));
   preview();
   $('#ssave').addEventListener('click', async () => {
     if (!cloud()) { (function(){ var st=$('#sstatus'); st.textContent=S.adminLogin; st.className='hint err'; })(); return; }

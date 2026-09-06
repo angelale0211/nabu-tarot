@@ -68,9 +68,20 @@ const SALE = {
     if (d.to && today > d.to) return null;
     return d;
   },
-  covers(kind) { const d = this.live(); return d && (d.scope === 'all' || d.scope === kind) ? d : null; },
-  price(n, kind) {
-    const d = this.covers(kind), base = Number(n) || 0;
+  /* kind is 'reading' or 'unlock'; id names the service or the unlockable.
+     A sale with no picks covers its whole category, which is what an empty
+     list has always meant. Picks are stored as 'r:tarot' or 'u:manifest' so a
+     reading and a course of the same name never collide. */
+  covers(kind, id) {
+    const d = this.live();
+    if (!d || (d.scope !== 'all' && d.scope !== kind)) return null;
+    const picks = Array.isArray(d.items) ? d.items.filter(Boolean) : [];
+    if (!picks.length) return d;
+    if (!id) return null;
+    return picks.indexOf((kind === 'unlock' ? 'u:' : 'r:') + id) > -1 ? d : null;
+  },
+  price(n, kind, id) {
+    const d = this.covers(kind, id), base = Number(n) || 0;
     if (!d || base <= 0) return base;
     const v = Math.max(0, Number(d.value) || 0);
     let out = d.kind === 'amount' ? base - v : base * (100 - Math.min(100, v)) / 100;
@@ -84,10 +95,10 @@ const SALE = {
   },
   title() { const d = this.live(); return d && d.label ? L(d.label) : (T().saleDefault || ''); }
 };
-const salePrice = (n, kind) => SALE.price(n, kind);
+const salePrice = (n, kind, id) => SALE.price(n, kind, id);
 /* A price with its old value struck through when a sale is on. */
-function priceHTML(n, kind) {
-  const now = SALE.price(n, kind);
+function priceHTML(n, kind, id) {
+  const now = SALE.price(n, kind, id);
   if (now === Number(n)) return fmtPrice(n);
   return '<span class="was">' + fmtPrice(n) + '</span> <span class="now">' + fmtPrice(now) + '</span>';
 }
