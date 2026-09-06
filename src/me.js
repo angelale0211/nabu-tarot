@@ -196,7 +196,10 @@ function renderMe(args, params) {
     h += aiPanelHTML({ type: 'general' });
     h += '<div class="card"><h3 style="margin-bottom:8px">' + esc(S.myCourses) + '</h3>' + COURSES.map((c) => { const a = ACCESS.isAdmin() ? '9999-12-31' : ACCESS.get()[c.id]; const on = ACCESS.has(c.id);
       const ic = a ? (on ? '✓' : '⌛') : '🔒';
-      const right = a ? esc(on ? S.activeUntil(fmtDate(a)) : S.expiredOn(fmtDate(a))) : (isTWA() ? '' : fmtPrice(c.price));
+      // The tick and the hourglass already say open or expired, so the column
+      // only carries the date. Spelling it out pushed long course names onto a
+      // second line and left the column ragged.
+      const right = a ? esc(a.slice(8, 10) + '/' + a.slice(5, 7) + '/' + a.slice(0, 4)) : (isTWA() ? '' : fmtPrice(c.price));
       return '<div class="course"><span class="nm">' + esc(L(c.name)) + '</span><span class="ic">' + ic + '</span><span class="pr faint">' + right + '</span></div>'; }).join('')
       + '<label class="f" for="mcode">' + esc(S.enterCode) + '</label><div class="row nw"><input id="mcode" placeholder="NABU-T-…" autocapitalize="characters"><button class="btn" id="munlock">' + esc(S.unlock) + '</button></div><p class="hint" id="mcstatus"></p></div>';
     h += '<div class="card"><h3 style="margin-bottom:8px">' + esc(S.themeTitle) + '</h3><div class="themes">' + ['auto', 'light', 'dark', 'pink'].map((t) => '<button class="chip' + (themeChoice() === t ? ' on' : '') + '" data-theme-pick="' + t + '" title="' + esc(S.themes[t]) + '">' + esc(S.themeShort[t]) + '</button>').join('') + '</div></div>';

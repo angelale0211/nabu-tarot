@@ -756,8 +756,11 @@ main{padding:22px 0 30px}
 .tile .lock{font-size:16px;vertical-align:middle}
 /* Three columns, so the padlocks line up down the card however long the
    names are, and the prices stay flush right. */
-.course{display:grid;grid-template-columns:1fr 20px auto;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--rule-soft);font-size:14.5px}
-.course .nm{min-width:0;overflow-wrap:anywhere}.course .ic{text-align:center;font-size:13px}.course .pr{text-align:right;white-space:nowrap}
+.course{display:grid;grid-template-columns:1fr 20px 78px;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--rule-soft);font-size:14.5px}
+.course .nm{min-width:0;overflow-wrap:anywhere}.course .ic{text-align:center;font-size:13px}
+/* A fixed right column so the icons form one straight line down the card,
+   whether the row shows a date or a price. */
+.course .pr{text-align:right;white-space:nowrap}
 .codebox{font-family:Georgia,serif;font-size:22px;letter-spacing:.06em;background:var(--surface-2);border-radius:12px;padding:12px;text-align:center;margin:10px 0;user-select:all}
 
 /* ---- booking ---- */
@@ -1144,7 +1147,7 @@ const COURSES = [
   { id: 'luck', price: 50000, months: 12, sum: { vi: 'Đồng xu và cây thông điệp, không giới hạn.', en: 'Coin and message tree, unlimited.' }, name: { vi: 'Đồng xu và cây thông điệp', en: 'Coin and message tree' },
     blurb: { vi: 'Mở không giới hạn cả hai hoạt động trong một năm: tung đồng xu và rung cây thông điệp bao nhiêu lần tuỳ bạn.', en: 'Unlimited turns at both for a year: flip the coin and shake the message tree as often as you like.' },
     includes: { vi: ['Tung đồng xu không giới hạn', 'Rung cây thông điệp không giới hạn', 'Dùng 12 tháng'], en: ['Unlimited coin flips', 'Unlimited tree shakes', '12 months of access'] } },
-  { id: 'coin', price: 30000, months: 12, sum: { vi: 'Tung đồng xu không giới hạn.', en: 'Unlimited coin flips.' }, name: { vi: 'Tung đồng xu không giới hạn', en: 'Unlimited coin flips' },
+  { id: 'coin', price: 30000, months: 12, sum: { vi: 'Tung đồng xu không giới hạn.', en: 'Unlimited coin flips.' }, name: { vi: 'Đồng xu không giới hạn', en: 'Unlimited coin flips' },
     blurb: { vi: 'Tung đồng xu bao nhiêu lần tuỳ bạn trong một năm.', en: 'Flip the coin as often as you like for a year.' },
     includes: { vi: ['Tung đồng xu không giới hạn', 'Dùng 12 tháng'], en: ['Unlimited coin flips', '12 months of access'] } },
   { id: 'tree', price: 30000, months: 12, sum: { vi: 'Rung cây thông điệp không giới hạn.', en: 'Unlimited tree shakes.' }, name: { vi: 'Rung cây không giới hạn', en: 'Unlimited tree shakes' },
@@ -9693,6 +9696,27 @@ const plainText = (s) => String(s || '').replace(/\[(?:img|video):[^\]\s]+\]/g, 
 function hydrateImages(root) {
   $$('img.pimg[data-img]', root).forEach((img) => { const id = img.getAttribute('data-img'); if (IMGS[id]) { img.src = IMGS[id]; return; } loadImg(id).then((d) => { if (d) img.src = d; }); });
 }
+/* How many lines a piece of text actually occupies. */
+function lineCount(el) {
+  const r = document.createRange();
+  r.selectNodeContents(el);
+  const rects = r.getClientRects(), tops = {};
+  for (let i = 0; i < rects.length; i++) tops[Math.round(rects[i].top)] = 1;
+  return Object.keys(tops).length;
+}
+/* Titles that only just overflow are stepped down until they sit on one line.
+   Nothing below 15px, and a title too long to ever fit keeps the normal size. */
+function fitTitles(root) {
+  $$('.post h2', root || document).forEach((h) => {
+    h.style.fontSize = '';
+    if (lineCount(h) <= 1) return;
+    for (let fs = 18; fs >= 15; fs--) {
+      h.style.fontSize = fs + 'px';
+      if (lineCount(h) <= 1) return;
+    }
+    h.style.fontSize = '';
+  });
+}
 function postHTML(p, full) {
   const raw = L(p.body), body = plainText(raw), long = !full && body.length > 320, score = postScore(p);
   return '<article class="post" data-id="' + esc(p.id) + '">'
@@ -9804,6 +9828,7 @@ async function renderHome(args, params) {
     + (POSTS_CACHED && all.length ? '<div class="banner">' + esc(S.feedOffline) + '</div>' : '')
     + (list.length ? '<div class="eyebrow" style="margin-top:4px">📰 ' + esc(S.nabuPosts) + '</div>' + list.slice(0, 3).map((p) => postHTML(p, false)).join('') + '<a class="btn block" href="#/news">' + esc(S.allPostsBtn(list.length)) + '</a>' : (welcome ? '' : '<p class="empty">' + esc(S.feedEmpty) + '</p>'));
   bindPost(feed);
+  fitTitles(feed);
   const wt = $('[data-wtoggle]', feed);
   if (wt) wt.addEventListener('click', () => { const sec = wt.closest('.welcome'), open = !sec.classList.contains('open'); sec.classList.toggle('open', open); $('.chev', wt).textContent = open ? '–' : '+'; store.set('nabu-welcome-open', open); });
   if (params.go === 'feed' && NAV.restore == null) feed.scrollIntoView({ behavior: 'smooth' });
@@ -9824,7 +9849,9 @@ async function renderNews() {
   const draw = () => {
     const q = fold($('#nsearch').value.trim());
     const list = sortedPosts().filter((p) => !p.welcome).filter((p) => !q || fold(L(p.title) + ' ' + plainText(L(p.body))).indexOf(q) > -1);
-    $('#news').innerHTML = list.length ? list.map((p) => postHTML(p, false)).join('') : '<p class="empty">' + esc(q ? S.noMatch : S.feedEmpty) + '</p>';
+    const newsBox = $('#news');
+    newsBox.innerHTML = list.length ? list.map((p) => postHTML(p, false)).join('') : '<p class="empty">' + esc(q ? S.noMatch : S.feedEmpty) + '</p>';
+    fitTitles(newsBox);
     bindPost($('#news'));
   };
   $('#nsearch').addEventListener('input', draw); draw();
@@ -11591,7 +11618,10 @@ function renderMe(args, params) {
     h += aiPanelHTML({ type: 'general' });
     h += '<div class="card"><h3 style="margin-bottom:8px">' + esc(S.myCourses) + '</h3>' + COURSES.map((c) => { const a = ACCESS.isAdmin() ? '9999-12-31' : ACCESS.get()[c.id]; const on = ACCESS.has(c.id);
       const ic = a ? (on ? '✓' : '⌛') : '🔒';
-      const right = a ? esc(on ? S.activeUntil(fmtDate(a)) : S.expiredOn(fmtDate(a))) : (isTWA() ? '' : fmtPrice(c.price));
+      // The tick and the hourglass already say open or expired, so the column
+      // only carries the date. Spelling it out pushed long course names onto a
+      // second line and left the column ragged.
+      const right = a ? esc(a.slice(8, 10) + '/' + a.slice(5, 7) + '/' + a.slice(0, 4)) : (isTWA() ? '' : fmtPrice(c.price));
       return '<div class="course"><span class="nm">' + esc(L(c.name)) + '</span><span class="ic">' + ic + '</span><span class="pr faint">' + right + '</span></div>'; }).join('')
       + '<label class="f" for="mcode">' + esc(S.enterCode) + '</label><div class="row nw"><input id="mcode" placeholder="NABU-T-…" autocapitalize="characters"><button class="btn" id="munlock">' + esc(S.unlock) + '</button></div><p class="hint" id="mcstatus"></p></div>';
     h += '<div class="card"><h3 style="margin-bottom:8px">' + esc(S.themeTitle) + '</h3><div class="themes">' + ['auto', 'light', 'dark', 'pink'].map((t) => '<button class="chip' + (themeChoice() === t ? ' on' : '') + '" data-theme-pick="' + t + '" title="' + esc(S.themes[t]) + '">' + esc(S.themeShort[t]) + '</button>').join('') + '</div></div>';
@@ -11902,6 +11932,7 @@ function bindActs(root, list) {
       const cl = $('[data-wishclear]', card); if (cl) cl.addEventListener('click', () => { if (!confirm(S.actWishClearConfirm)) return; store.set('nabu-wishes', (store.get('nabu-wishes', []) || []).filter((w) => w.aid !== a.id)); $('.wishcount', card).textContent = S.actWishHint; cl.remove(); });
     }
   });
+  fitTitles(root);
   hydrateImages(root);
 }
 function actStatus(a) { const S = T(); return actAnswered(a) ? '✓ ' + S.actHasResults : a.closed ? S.actClosed : S.actOpen; }
@@ -12586,7 +12617,7 @@ function adminCodes(p) {
 ROUTES.admin = { nav: '', render: renderAdmin };
 
 /* ============================ boot ============================ */
-window.APP_VERSION = 'v93';
+window.APP_VERSION = 'v94';
 window.NABU = { CONFIG: CONFIG, loadActs: loadActs, BACK: BACK, LESSONS: LESSONS, localAnswer: localAnswer, compatVerdict: compatVerdict, numerologyOf: numerologyOf, ZDEEP: ZDEEP, lunarToday: lunarToday, solarToLunar: solarToLunar, DECK: DECK, INSIGHT: INSIGHT, KW: KW, ASK: ASK, TOPICS: TOPICS, GUIDES: GUIDES, SERVICES: SERVICES, COURSES: COURSES, ACCESS: ACCESS, makeCode: makeCode, parseCode: parseCode, ZODIAC: ZODIAC, pick: pick, book: book,
   insightHTML: insightHTML, insightOf: insightOf, sunSignIndex: sunSignIndex, lifePath: lifePath, PROFILE: () => PROFILE, BE: BE, ACTS: ACTS };
 BE.initP = BE.init().catch(() => { /* backend unreachable: the app runs device-only */ });

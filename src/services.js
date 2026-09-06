@@ -77,7 +77,7 @@ const COURSES = [
   { id: 'luck', price: 50000, months: 12, sum: { vi: 'Đồng xu và cây thông điệp, không giới hạn.', en: 'Coin and message tree, unlimited.' }, name: { vi: 'Đồng xu và cây thông điệp', en: 'Coin and message tree' },
     blurb: { vi: 'Mở không giới hạn cả hai hoạt động trong một năm: tung đồng xu và rung cây thông điệp bao nhiêu lần tuỳ bạn.', en: 'Unlimited turns at both for a year: flip the coin and shake the message tree as often as you like.' },
     includes: { vi: ['Tung đồng xu không giới hạn', 'Rung cây thông điệp không giới hạn', 'Dùng 12 tháng'], en: ['Unlimited coin flips', 'Unlimited tree shakes', '12 months of access'] } },
-  { id: 'coin', price: 30000, months: 12, sum: { vi: 'Tung đồng xu không giới hạn.', en: 'Unlimited coin flips.' }, name: { vi: 'Tung đồng xu không giới hạn', en: 'Unlimited coin flips' },
+  { id: 'coin', price: 30000, months: 12, sum: { vi: 'Tung đồng xu không giới hạn.', en: 'Unlimited coin flips.' }, name: { vi: 'Đồng xu không giới hạn', en: 'Unlimited coin flips' },
     blurb: { vi: 'Tung đồng xu bao nhiêu lần tuỳ bạn trong một năm.', en: 'Flip the coin as often as you like for a year.' },
     includes: { vi: ['Tung đồng xu không giới hạn', 'Dùng 12 tháng'], en: ['Unlimited coin flips', '12 months of access'] } },
   { id: 'tree', price: 30000, months: 12, sum: { vi: 'Rung cây thông điệp không giới hạn.', en: 'Unlimited tree shakes.' }, name: { vi: 'Rung cây không giới hạn', en: 'Unlimited tree shakes' },

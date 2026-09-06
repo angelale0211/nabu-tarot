@@ -590,8 +590,11 @@ main{padding:22px 0 30px}
 .tile .lock{font-size:16px;vertical-align:middle}
 /* Three columns, so the padlocks line up down the card however long the
    names are, and the prices stay flush right. */
-.course{display:grid;grid-template-columns:1fr 20px auto;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--rule-soft);font-size:14.5px}
-.course .nm{min-width:0;overflow-wrap:anywhere}.course .ic{text-align:center;font-size:13px}.course .pr{text-align:right;white-space:nowrap}
+.course{display:grid;grid-template-columns:1fr 20px 78px;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--rule-soft);font-size:14.5px}
+.course .nm{min-width:0;overflow-wrap:anywhere}.course .ic{text-align:center;font-size:13px}
+/* A fixed right column so the icons form one straight line down the card,
+   whether the row shows a date or a price. */
+.course .pr{text-align:right;white-space:nowrap}
 .codebox{font-family:Georgia,serif;font-size:22px;letter-spacing:.06em;background:var(--surface-2);border-radius:12px;padding:12px;text-align:center;margin:10px 0;user-select:all}
 
 /* ---- booking ---- */
