@@ -1111,8 +1111,12 @@ function petSVG(kind, coat, mood, wear) {
        beat lives on a group with no transform of its own: put it on one that
        is already placed and the placement is thrown away. */
     const fan = (flip) => {
-      const feath = [[-70, 34], [-56, 39], [-42, 40], [-28, 36], [-15, 28]].map((f, i) =>
-        '<ellipse cx="0" cy="' + (-f[1]) + '" rx="7.6" ry="' + f[1] + '" fill="' + (i % 2 ? '#FFFDF8' : '#F1E9FF')
+      /* [angle out from upright, how far the feather reaches]. An ellipse
+         standing on the shoulder has its centre at half that and its radius at
+         half that; giving it the whole length for both made every feather
+         twice as long as the table says, and the outer ones left the frame. */
+      const feath = [[-70, 42], [-56, 48], [-42, 50], [-28, 44], [-15, 34]].map((f, i) =>
+        '<ellipse cx="0" cy="' + (-f[1] / 2) + '" rx="8" ry="' + (f[1] / 2) + '" fill="' + (i % 2 ? '#FFFDF8' : '#F1E9FF')
         + '" stroke="#D9C7F2" stroke-width="1" transform="rotate(' + f[0] + ')"/>').join('');
       return '<g transform="translate(' + (flip ? 68 : 52) + ',84)' + (flip ? ' scale(-1,1)' : '') + '">' + feath + '</g>';
     };
@@ -1600,8 +1604,8 @@ function petWearArt(id) {
   if (id === 'hat') return open + '<ellipse cx="30" cy="42" rx="24" ry="6" fill="#E8CFA0"/><path d="M12 42 L30 12 L48 42 Z" fill="#F0DFC8" stroke="#C6A98A" stroke-width="2"/><path d="M30 14 A9 9 0 1 0 30 32 A7 7 0 1 1 30 14 Z" fill="#E5BE5E"/></svg>';
   if (id === 'wings') {
     const fan = (flip) => '<g transform="translate(' + (flip ? 34 : 26) + ',44)' + (flip ? ' scale(-1,1)' : '') + '">'
-      + [[-70, 22], [-56, 25], [-42, 26], [-28, 23], [-15, 18]].map((f, i) =>
-        '<ellipse cx="0" cy="' + (-f[1]) + '" rx="5" ry="' + f[1] + '" fill="' + (i % 2 ? '#FFFDF8' : '#F1E9FF')
+      + [[-70, 30], [-56, 34], [-42, 36], [-28, 32], [-15, 25]].map((f, i) =>
+        '<ellipse cx="0" cy="' + (-f[1] / 2) + '" rx="5" ry="' + (f[1] / 2) + '" fill="' + (i % 2 ? '#FFFDF8' : '#F1E9FF')
         + '" stroke="#D9C7F2" stroke-width="1" transform="rotate(' + f[0] + ')"/>').join('') + '</g>';
     return open + fan(false) + fan(true) + '<circle cx="30" cy="42" r="4" fill="#E5BE5E"/></svg>';
   }

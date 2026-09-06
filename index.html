@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
 <title>Nabu Tarot</title>
 <meta name="description" content="Nabu Tarot: dự đoán mới, rút một lá bài xem năng lượng hiện tại, học tarot, Lenormand, chiêm tinh, và đặt lịch xem bài.">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'none'; object-src 'none'; form-action 'self'; script-src 'self' 'sha256-nSXD6bR9epp6wtCuR3nYEUgCZssEHhXHZdVQYt68lcM=' https://www.gstatic.com https://apis.google.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; font-src 'self' data:; media-src 'self' data: blob:; worker-src 'self'; connect-src 'self' https://*.googleapis.com https://*.google.com https://*.firebaseio.com https://*.cloudfunctions.net https://*.workers.dev https://generativelanguage.googleapis.com; frame-src https://*.firebaseapp.com https://accounts.google.com https://*.facebook.com">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'none'; object-src 'none'; form-action 'self'; script-src 'self' 'sha256-yEXklIJteTuy8bQTsgGm71/UnpcRxLXNzPdFaKJmcEU=' https://www.gstatic.com https://apis.google.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; font-src 'self' data:; media-src 'self' data: blob:; worker-src 'self'; connect-src 'self' https://*.googleapis.com https://*.google.com https://*.firebaseio.com https://*.cloudfunctions.net https://*.workers.dev https://generativelanguage.googleapis.com; frame-src https://*.firebaseapp.com https://accounts.google.com https://*.facebook.com">
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <meta name="theme-color" content="#EFE9FA">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -14504,8 +14504,12 @@ function petSVG(kind, coat, mood, wear) {
        beat lives on a group with no transform of its own: put it on one that
        is already placed and the placement is thrown away. */
     const fan = (flip) => {
-      const feath = [[-70, 34], [-56, 39], [-42, 40], [-28, 36], [-15, 28]].map((f, i) =>
-        '<ellipse cx="0" cy="' + (-f[1]) + '" rx="7.6" ry="' + f[1] + '" fill="' + (i % 2 ? '#FFFDF8' : '#F1E9FF')
+      /* [angle out from upright, how far the feather reaches]. An ellipse
+         standing on the shoulder has its centre at half that and its radius at
+         half that; giving it the whole length for both made every feather
+         twice as long as the table says, and the outer ones left the frame. */
+      const feath = [[-70, 42], [-56, 48], [-42, 50], [-28, 44], [-15, 34]].map((f, i) =>
+        '<ellipse cx="0" cy="' + (-f[1] / 2) + '" rx="8" ry="' + (f[1] / 2) + '" fill="' + (i % 2 ? '#FFFDF8' : '#F1E9FF')
         + '" stroke="#D9C7F2" stroke-width="1" transform="rotate(' + f[0] + ')"/>').join('');
       return '<g transform="translate(' + (flip ? 68 : 52) + ',84)' + (flip ? ' scale(-1,1)' : '') + '">' + feath + '</g>';
     };
@@ -14993,8 +14997,8 @@ function petWearArt(id) {
   if (id === 'hat') return open + '<ellipse cx="30" cy="42" rx="24" ry="6" fill="#E8CFA0"/><path d="M12 42 L30 12 L48 42 Z" fill="#F0DFC8" stroke="#C6A98A" stroke-width="2"/><path d="M30 14 A9 9 0 1 0 30 32 A7 7 0 1 1 30 14 Z" fill="#E5BE5E"/></svg>';
   if (id === 'wings') {
     const fan = (flip) => '<g transform="translate(' + (flip ? 34 : 26) + ',44)' + (flip ? ' scale(-1,1)' : '') + '">'
-      + [[-70, 22], [-56, 25], [-42, 26], [-28, 23], [-15, 18]].map((f, i) =>
-        '<ellipse cx="0" cy="' + (-f[1]) + '" rx="5" ry="' + f[1] + '" fill="' + (i % 2 ? '#FFFDF8' : '#F1E9FF')
+      + [[-70, 30], [-56, 34], [-42, 36], [-28, 32], [-15, 25]].map((f, i) =>
+        '<ellipse cx="0" cy="' + (-f[1] / 2) + '" rx="5" ry="' + (f[1] / 2) + '" fill="' + (i % 2 ? '#FFFDF8' : '#F1E9FF')
         + '" stroke="#D9C7F2" stroke-width="1" transform="rotate(' + f[0] + ')"/>').join('') + '</g>';
     return open + fan(false) + fan(true) + '<circle cx="30" cy="42" r="4" fill="#E5BE5E"/></svg>';
   }
@@ -16784,7 +16788,7 @@ function adminSale(p) {
 ROUTES.admin = { nav: '', render: renderAdmin };
 
 /* ============================ boot ============================ */
-window.APP_VERSION = 'v112';
+window.APP_VERSION = 'v113';
 window.NABU = { CONFIG: CONFIG, SALE: SALE, salePrice: salePrice, loadActs: loadActs, BACK: BACK, LESSONS: LESSONS, localAnswer: localAnswer, compatVerdict: compatVerdict, numerologyOf: numerologyOf, ZDEEP: ZDEEP, lunarToday: lunarToday, solarToLunar: solarToLunar, DECK: DECK, INSIGHT: INSIGHT, KW: KW, ASK: ASK, TOPICS: TOPICS, GUIDES: GUIDES, SERVICES: SERVICES, COURSES: COURSES, ACCESS: ACCESS, ZODIAC: ZODIAC, pick: pick, book: book,
   insightHTML: insightHTML, insightOf: insightOf, sunSignIndex: sunSignIndex, lifePath: lifePath, PROFILE: () => PROFILE, BE: BE, ACTS: ACTS,
   ANGELS: ANGELS, angelRead: angelRead, CODEBOOK: CODEBOOK, verifyCode: verifyCode, petHomeSVG: petHomeSVG, PET_HOMES: PET_HOMES, PET_WEARS: PET_WEARS, codeDigest: codeDigest, randomCode: randomCode, BANK: BANK, PETS: PETS, petSVG: petSVG, PET_COATS: PET_COATS, PET_KINDS: PET_KINDS, luckCut: luckCut, petLevel: petLevel, petStep: petStep, VOUCHERS: VOUCHERS, levelCoins: levelCoins, LOOKS: LOOKS,

@@ -845,6 +845,12 @@ async function go(hash, sel) { W().location.hash = hash; await sleep(30); return
       ok(art && w.getComputedStyle(art).filter === 'none'
         && holder.querySelectorAll('.glowoff').length === 3 && holder.querySelector('.mythring'),
         'a spirit beast carries its glow inside the drawing, so nothing has to be rasterised while it moves');
+      /* Measured, not eyeballed: anything drawn outside the frame is cut off on
+         the phone, which is what happened to the outer feathers. */
+      holder.innerHTML = N.petSVG('phoenix', N.PET_COATS[0], '', { id: 'wings' });
+      const wb = holder.querySelector('.wingpair').getBBox();
+      ok(wb.x >= 0 && wb.y >= 0 && wb.x + wb.width <= 120 && wb.y + wb.height <= 120 && wb.width > 50,
+        'a pair of wings is wide but stays inside the frame, so no feather is cut off at the edge');
       holder.remove();
     }
     await go('#/me', '[data-theme-pick]');
