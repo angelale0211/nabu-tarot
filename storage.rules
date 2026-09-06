@@ -1,15 +1,96 @@
 rules_version = '2';
-service firebase.storage {
-  match /b/{bucket}/o {
-    // Chat attachments: a visitor writes into their own thread folder; the
-    // reader (admin) can read and write every thread. Put the same admin
-    // emails here as in firestore.rules.
-    // email_verified matters: Firebase issues a token with whatever address
-    // was typed at sign-up, verified or not. See firestore.rules.
-    function isAdmin() { return request.auth != null && request.auth.token.email_verified == true && request.auth.token.email in ['nabutarot@outlook.com', 'angela_le_@outlook.com', 'angelale_le_@outlook.com']; }
-    match /threads/{uid}/{file} {
-      allow read: if request.auth != null && (request.auth.uid == uid || isAdmin());
-      allow write: if request.auth != null && (request.auth.uid == uid || isAdmin()) && request.resource.size < 8 * 1024 * 1024;
+service cloud.firestore {
+  match /databases/{database}/documents {
+    /* Who counts as Nabu.
+
+       email_verified matters here and is not decoration. Firebase hands out a
+       token with whatever address was typed into "create an account with email
+       and password", verified or not. Without this check, anyone could sign up
+       as nabutarot@outlook.com and read every booking, every private message,
+       and rewrite every price in the app. Outlook will not let them verify an
+       address they do not own, so the check closes it.
+
+       Sturdier still would be a list of uids, which cannot be claimed at all.
+       Add them here once they are known and drop the email list. */
+    function isAdmin() {
+      return request.auth != null
+        && request.auth.token.email_verified == true
+        && request.auth.token.email in ['nabutarot@outlook.com', 'angela_le_@outlook.com', 'angelale_le_@outlook.com'];
+    }
+    function isOwner(uid) { return request.auth != null && request.auth.uid == uid; }
+    function shorterThan(field, n) {
+      return !(field in request.resource.data) || !(request.resource.data[field] is string) || request.resource.data[field].size() < n;
+    }
+
+    match /users/{uid} {
+      allow read, write: if isOwner(uid) || isAdmin();
+    }
+    match /threads/{uid} {
+      allow read: if isOwner(uid) || isAdmin();
+      allow write: if isOwner(uid) || isAdmin();
+      match /messages/{mid} {
+        allow read: if isOwner(uid) || isAdmin();
+        // A message is a message, not a place to park a megabyte.
+        allow create: if ((isOwner(uid) && request.resource.data.from == 'user')
+                      || (isAdmin() && request.resource.data.from == 'nabu'))
+                      && shorterThan('text', 4000);
+        // Account deletion inside the app removes the person's own messages.
+        allow delete: if isOwner(uid) || isAdmin();
+      }
+    }
+    match /bookings/{id} {
+      allow create: if request.auth != null && request.resource.data.uid == request.auth.uid
+                    && shorterThan('note', 2000) && shorterThan('message', 8000)
+                    && shorterThan('service', 500) && shorterThan('name', 200);
+      allow read: if isAdmin() || (request.auth != null && resource.data.uid == request.auth.uid);
+      /* Nabu manages bookings. The person who made one may ask to move or
+         cancel it, which touches those three fields and nothing else - not the
+         price, not the slot itself, not whose booking it is. */
+      allow update: if isAdmin()
+                    || (request.auth != null && resource.data.uid == request.auth.uid
+                        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['status', 'newSlot', 'prevStatus'])
+                        && request.resource.data.status in ['change_requested', 'cancel_requested']);
+      allow delete: if isAdmin() || (request.auth != null && resource.data.uid == request.auth.uid);
+    }
+    /* Posts, availability, activities and the sale are edited in the dashboard:
+       everyone reads them, Nabu writes them.
+
+       content/ai is the exception. It holds an API key, and a rule that lets
+       the whole internet read it is the same as publishing the key. Only Nabu
+       reads that one; the app answers from its built-in text when it cannot. */
+    match /content/{doc} {
+      allow read: if doc != 'ai' || isAdmin();
+      allow write: if isAdmin();
+    }
+    // Activity votes and pile choices: readable by all (results are counted on the phone), written only by their owner.
+    match /votes/{id} {
+      allow read: if true;
+      allow create, update: if request.auth != null && request.resource.data.uid == request.auth.uid
+                            && id == request.resource.data.aid + '_' + request.auth.uid
+                            && shorterThan('aid', 120);
+      allow delete: if isAdmin() || (request.auth != null && resource.data.uid == request.auth.uid);
+    }
+    match /reports/{id} {
+      allow create: if request.auth != null && request.resource.data.uid == request.auth.uid
+                    && shorterThan('what', 4000) && shorterThan('info', 4000);
+      allow read, update, delete: if isAdmin();
+    }
+    /* Taken slots are public so the calendar can hide them. A slot may only be
+       claimed for a booking that already exists and belongs to the person
+       claiming it, so the calendar cannot be emptied by someone signing in and
+       claiming every hour of the month. */
+    match /taken/{slot} {
+      allow read: if true;
+      allow create: if request.auth != null
+                    && !exists(/databases/$(database)/documents/taken/$(slot))
+                    && request.resource.data.bookingId is string
+                    && (isAdmin()
+                        || get(/databases/$(database)/documents/bookings/$(request.resource.data.bookingId)).data.uid == request.auth.uid);
+      allow update: if isAdmin()
+                    || (request.auth != null
+                        && request.resource.data.bookingId is string
+                        && get(/databases/$(database)/documents/bookings/$(request.resource.data.bookingId)).data.uid == request.auth.uid);
+      allow delete: if isAdmin();
     }
   }
 }
