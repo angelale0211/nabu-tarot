@@ -24,6 +24,20 @@ async function loadActs() {
   return ACTS.items;
 }
 const actsDoc = (items) => { const doc = { items: items }; if (ACTS.hidden && ACTS.hidden.length) doc.hidden = ACTS.hidden; return doc; };
+/* The slips inside the jar: one per wish, stacked from the bottom up in a
+   fixed pattern so they stay put when the screen redraws. Twelve is as many as
+   fit; past that the jar simply reads as full. */
+const JAR_SLOTS = [[50, 3, -8], [28, 4, 7], [72, 5, 11], [38, 12, -13], [62, 13, 8], [50, 21, -4],
+                   [30, 22, 14], [70, 23, -11], [44, 30, 6], [58, 31, -9], [36, 38, -6], [64, 39, 10]];
+function jarPapersHTML(n) {
+  const k = Math.max(0, Math.min(n, JAR_SLOTS.length));
+  let out = '';
+  for (let i = 0; i < k; i++) {
+    const s = JAR_SLOTS[i];
+    out += '<i style="left:' + s[0] + '%;bottom:' + s[1] + 'px;transform:translateX(-50%) rotate(' + s[2] + 'deg)"' + (i === k - 1 ? ' class="fresh"' : '') + '></i>';
+  }
+  return out;
+}
 const myChoices = () => store.get('nabu-act-choices', {}) || {};
 function setChoice(aid, choice) { const c = myChoices(); c[aid] = choice; store.set('nabu-act-choices', c); }
 async function sendVote(a, choice) {
@@ -78,12 +92,12 @@ function actHTML(a, compact) {
       + '<p class="hint pollnote">' + esc(voted ? S.actVoted : a.closed ? S.actClosedNote : (BE.enabled && BE.user ? S.actVoteHint : S.actVoteLogin)) + '</p><p class="hint pollstat">' + esc(S.actResultsPublic) + ': …</p>';
   } else if (a.type === 'wish') {
     const wishes = (store.get('nabu-wishes', []) || []).filter((w) => w.aid === a.id);
-    body = '<div class="wishjar" data-wish="' + a.id + '"><div class="jar"><span class="star s1">✦</span><span class="star s2">✧</span><span class="star s3">✦</span><div class="note" hidden></div>🫙</div>'
+    body = '<div class="wishjar" data-wish="' + a.id + '"><div class="jar"><span class="star s1">✦</span><span class="star s2">✧</span><span class="star s3">✦</span><div class="note" hidden></div>🫙<span class="papers">' + jarPapersHTML(wishes.length) + '</span></div>'
       + '<textarea class="wishtext" placeholder="' + esc(S.actWishPh) + '"></textarea><button type="button" class="btn primary block" data-wishsend>🌠 ' + esc(S.actWishSend) + '</button>'
       + '<p class="hint wishcount">' + esc(wishes.length ? S.actWishCount(wishes.length) : S.actWishHint) + '</p>'
       + (wishes.length ? '<button type="button" class="linkbtn" data-wishlist>' + esc(S.wishHistory(wishes.length)) + '</button><ul class="wishlist" hidden>' + wishes.slice().reverse().map((w) => '<li><span class="d">' + esc(fmtDate(String(w.at).slice(0, 10))) + '</span>' + esc(w.text) + '</li>').join('') + '</ul> · <button type="button" class="linkbtn" data-wishclear>' + esc(S.actWishClear) + '</button>' : '') + '</div>';
   }
-  return '<article class="post act act-' + esc(a.type) + '" data-act="' + esc(a.id) + '">' + actDateLine(a) + '<h2>' + esc(L(a.title)) + '</h2>' + (a.intro ? '<div class="body">' + richHTML(L(a.intro)) + '</div>' : '') + body
+  return '<article class="post act act-' + esc(a.type) + '" data-act="' + esc(a.id) + '">' + actDateLine(a) + '<h2 class="tclamp">' + esc(L(a.title)) + '</h2>' + (a.intro ? '<div class="body clamp">' + richHTML(L(a.intro)) + '</div>' : '') + body
     + (compact ? '<div class="foot"><a class="btn sm primary" href="#/play/' + esc(a.id) + '">' + esc(S.actJoin) + ' →</a><a class="btn sm" href="#/play">' + esc(S.actAll) + '</a></div>' : '') + '</article>';
 }
 function bindActs(root, list) {
@@ -123,6 +137,8 @@ function bindActs(root, list) {
         const text = (ta.value || '').trim(); if (!text) { toast(S.actWishEmpty); ta.focus(); return; }
         note.textContent = text.slice(0, 60); note.hidden = false; jar.classList.remove('fly'); void jar.offsetWidth; jar.classList.add('fly');
         const list = store.get('nabu-wishes', []) || []; list.push({ aid: a.id, text: text, at: new Date().toISOString() }); store.set('nabu-wishes', list.slice(-100));
+        const papers = $('.papers', card);
+        if (papers) papers.innerHTML = jarPapersHTML(list.filter((w) => w.aid === a.id).length);
         ta.value = ''; sendVote(a, 'wish');
         const mine = list.filter((w) => w.aid === a.id).length; $('.wishcount', card).textContent = S.actWishCount(mine); toast(S.actWishSent);
         setTimeout(() => { note.hidden = true; }, 2600);
