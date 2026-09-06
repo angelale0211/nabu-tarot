@@ -120,10 +120,10 @@ h1{font-size:28px;letter-spacing:-.01em}
 h2{font-size:21px;line-height:1.25}
 h3{font-size:17px;line-height:1.3}
 p{margin:0 0 12px}
-/* A heading or a short note that wraps should split its lines evenly rather
-   than drop one word onto a line of its own. Vietnamese words are short, so
-   this shows up there first. */
-h1,h2,h3,.tip,.note span,.hint,.faint,.muted,#tour p,.eyebrow{text-wrap:balance}
+/* Only headings balance. A body paragraph must never be balanced or
+   prettified: both narrow the whole block and leave the right side of the card
+   empty, which is far worse than a short last line. */
+h1,h2,h3,.eyebrow{text-wrap:balance}
 .wrap{max-width:600px;margin:0 auto;padding:0 18px}
 
 /* ---- header ---- */
@@ -566,9 +566,10 @@ main{padding:22px 0 30px}
 .tile .ic .pickico{width:24px;height:41px}
 .svc .t .ic .pickico{width:20px;height:34px}
 .tile .lock{font-size:16px;vertical-align:middle}
-.course{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--rule-soft);font-size:14.5px}
-/* A long product name wraps instead of widening the card. */
-.course>span:first-child{min-width:0;overflow-wrap:anywhere}.course>span:last-child{flex:none;text-align:right}
+/* Three columns, so the padlocks line up down the card however long the
+   names are, and the prices stay flush right. */
+.course{display:grid;grid-template-columns:1fr 20px auto;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--rule-soft);font-size:14.5px}
+.course .nm{min-width:0;overflow-wrap:anywhere}.course .ic{text-align:center;font-size:13px}.course .pr{text-align:right;white-space:nowrap}
 .codebox{font-family:Georgia,serif;font-size:22px;letter-spacing:.06em;background:var(--surface-2);border-radius:12px;padding:12px;text-align:center;margin:10px 0;user-select:all}
 
 /* ---- booking ---- */

@@ -125,6 +125,18 @@ const BE = {
   watchThreads(cb) { return this.db.collection('threads').orderBy('lastAt', 'desc').limit(100).onSnapshot((s) => cb(s.docs.map((d) => Object.assign({ id: d.id }, d.data())))); },
 
   /* ---- bookings ---- */
+  /* An unlock order: same collection as bookings so one list, one set of
+     statuses and one notification path serve both, but with no slot to take. */
+  async createUnlockOrder(items, total) {
+    const doc = {
+      kind: 'unlock', uid: this.user.uid, email: this.user.email || '',
+      name: (typeof PROFILE !== 'undefined' && PROFILE.name) || '',
+      items: items, price: total, status: 'requested',
+      at: firebase.firestore.FieldValue.serverTimestamp()
+    };
+    const ref = await this.db.collection('bookings').add(doc);
+    return ref.id;
+  },
   async createBooking(b) {
     const doc = Object.assign({ uid: this.user.uid, email: this.user.email || '', status: 'requested', at: firebase.firestore.FieldValue.serverTimestamp() }, b);
     const ref = await this.db.collection('bookings').add(doc);
@@ -133,7 +145,7 @@ const BE = {
     return ref.id;
   },
   watchMyBookings(cb) { return this.db.collection('bookings').where('uid', '==', this.user.uid).onSnapshot((s) => cb(s.docs.map((d) => Object.assign({ id: d.id }, d.data())).sort((a, b) => String(b.slot).localeCompare(String(a.slot))))); },
-  watchAllBookings(cb) { return this.db.collection('bookings').orderBy('slot', 'desc').limit(200).onSnapshot((s) => cb(s.docs.map((d) => Object.assign({ id: d.id }, d.data())))); },
+  watchAllBookings(cb) { return this.db.collection('bookings').limit(300).onSnapshot((s) => cb(s.docs.map((d) => Object.assign({ id: d.id }, d.data())).sort((a, b) => String(b.slot || b.id).localeCompare(String(a.slot || a.id))))); },
   async setBookingStatus(b, status) {
     const ref = this.db.collection('bookings').doc(b.id), key = String(b.slot).replace(/[^0-9T]/g, ''), newKey = b.newSlot ? String(b.newSlot).replace(/[^0-9T]/g, '') : '';
     if (status === 'keep') {  // the client asked for a change or a cancellation; Nabu keeps the booking as it was

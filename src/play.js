@@ -336,18 +336,20 @@ function renderTree() {
 /* ---- a coin for questions that only need yes or no ----
    The coin decides nothing. It puts one of the two answers in front of you so
    your own reaction to it becomes visible. */
-/* The answer is struck on the coin itself, the way a coin carries its face. */
+/* Both faces are struck the same way: one ornament, one type size worked out
+   from the longer of the two words, and the pair centred as a block. Turning
+   the coin over changes the word and nothing else. */
 function coinFaceSVG(side) {
   const S = T();
+  const longest = Math.max(String(S.coinYes).length, String(S.coinNo).length);
+  const size = longest <= 2 ? 46 : longest === 3 ? 40 : longest === 4 ? 32 : 25;
+  const ornament = '<path d="M84 46 A13 13 0 1 0 84 72 A10 10 0 1 1 84 46 Z" fill="#5A3F18" opacity=".9"/>';
   const word = side ? (side === 'yes' ? S.coinYes : S.coinNo) : '';
-  const size = word.length <= 2 ? 44 : word.length === 3 ? 38 : word.length === 4 ? 31 : 24;
-  const mark = side === 'yes' ? '<path d="M72 44 A15 15 0 1 0 72 74 A11.5 11.5 0 1 1 72 44 Z" fill="#B9913B" opacity=".85"/>'
-    : side === 'no' ? '<path d="M80 46 l3.6 8.4 8.4 3.6 -8.4 3.6 -3.6 8.4 -3.6 -8.4 -8.4 -3.6 8.4 -3.6z" fill="#B9913B" opacity=".85"/>' : '';
   return '<svg viewBox="0 0 160 160" aria-hidden="true">'
     + '<circle cx="80" cy="80" r="74" fill="#E5BE5E" stroke="#B9913B" stroke-width="5"/>'
     + '<circle cx="80" cy="80" r="60" fill="none" stroke="#B9913B" stroke-width="2"/>'
     + (side
-      ? mark + '<text x="80" y="106" text-anchor="middle" font-family="Georgia,serif" font-weight="700" font-size="' + size + '" letter-spacing="1" fill="#5A3F18">' + esc(word) + '</text>'
+      ? ornament + '<text x="80" y="112" text-anchor="middle" font-family="Georgia,serif" font-weight="700" font-size="' + size + '" letter-spacing="1" fill="#5A3F18">' + esc(word) + '</text>'
       : '<text x="80" y="102" text-anchor="middle" font-family="Georgia,serif" font-size="62" fill="#B9913B">?</text>')
     + '</svg>';
 }

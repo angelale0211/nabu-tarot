@@ -133,8 +133,24 @@ async function chatAttachment(file, uid, kind) {
   if (data.length > 700000) throw new Error(T().imgTooBigChat);
   return { url: data, kind: 'image' };
 }
+/* An unlock order has no date and no calendar file: it is a list of what was
+   chosen, a total, and a code to send back. */
+function unlockRequestRow(b, admin) {
+  const S = T(), items = Array.isArray(b.items) ? b.items : [];
+  const list = items.map((it) => '<li>' + esc(it.name || it.id || '') + (it.price ? ' <b>' + fmtPrice(it.price) + '</b>' : '') + '</li>').join('');
+  const meta = admin && (b.name || b.email) ? '🙋 ' + esc([b.name, b.email].filter(Boolean).join(' · ')) : '';
+  let acts = '';
+  if (admin && b.status === 'requested') acts = '<button class="btn sm primary" data-bk="confirmed" data-id="' + b.id + '">' + esc(S.confirm) + '</button><button class="btn sm" data-bk="declined" data-id="' + b.id + '">' + esc(S.decline) + '</button>';
+  return '<div class="bk unlockreq"><div class="bkh"><b>🔓 ' + esc(S.reqKindUnlock) + '</b><span class="st ' + esc(b.status || '') + '">' + esc((S.status && S.status[b.status]) || b.status || '') + '</span></div>'
+    + (list ? '<ul>' + list + '</ul>' : '')
+    + (b.price ? '<div class="tot"><span>' + esc(S.unlockTotal) + '</span><b>' + fmtPrice(b.price) + '</b></div>' : '')
+    + (meta ? '<p class="hint">' + meta + '</p>' : '')
+    + (acts ? '<div class="acts">' + acts + '</div>' : '')
+    + '</div>';
+}
 function bookingRow(b, admin) {
   const S = T();
+  if (b.kind === 'unlock') return unlockRequestRow(b, admin);
   const items = Array.isArray(b.items) && b.items.length ? b.items : (b.service ? [{ service: b.service, pkg: b.pkg || '', price: b.price || 0, topic: b.topic || '' }] : []);
   const list = items.map((it) => '<li>' + esc(String(it.service || '') + (it.pkg ? ' – ' + it.pkg : '')) + (it.price ? ' <b>' + fmtPrice(it.price) + '</b>' : '') + (it.topic ? '<br><small>' + esc(S.msgTopic) + ': ' + esc(it.topic) + '</small>' : '') + '</li>').join('');
   const total = items.length > 1 ? '<div class="tot"><span>' + esc(S.msgTotal) + '</span><b>' + fmtPrice(b.price || items.reduce((n, x) => n + (x.price || 0), 0)) + '</b></div>' : '';
@@ -151,7 +167,7 @@ function bookingRow(b, admin) {
     acts = '<a class="btn sm" href="#/book?change=' + esc(b.id) + '">🔁 ' + esc(S.changeSlot) + '</a><button class="btn sm" data-cancel="' + b.id + '">✕ ' + esc(S.cancelBooking) + '</button>'
       + '<button type="button" class="btn sm" data-ics="' + b.id + '">📅 ' + esc(S.addToCalendar) + '</button><a class="btn sm" href="' + esc(gcalLink(b)) + '" target="_blank" rel="noopener">🗓 ' + esc(S.gcal) + '</a>';
   }
-  return '<div class="bk"><div class="bkh"><b>📅 ' + esc(slotLabel(b.slot)) + '</b><span class="st ' + esc(b.status) + '">' + esc(S.status[b.status] || b.status) + '</span></div>' + change
+  return '<div class="bk"><div class="bkh"><b>📅 ' + esc(S.reqKindBooking) + ' · ' + esc(slotLabel(b.slot)) + '</b><span class="st ' + esc(b.status) + '">' + esc(S.status[b.status] || b.status) + '</span></div>' + change
     + (list ? '<ul>' + list + '</ul>' : '') + total + (meta ? '<p class="meta">' + meta + '</p>' : '')
     + (acts ? '<div class="acts">' + acts + '</div>' : '') + '</div>';
 }
@@ -178,9 +194,12 @@ function renderMe(args, params) {
     }
     if (!(isStandalone() || isTWA())) h += '<a class="card" href="#/install" style="display:block;text-decoration:none;color:inherit"><h3 style="margin-bottom:4px">📲 ' + esc(S.installTitle) + '</h3><p class="hint">' + esc(S.instIntro) + '</p></a>';
     h += aiPanelHTML({ type: 'general' });
-    h += '<div class="card"><h3 style="margin-bottom:8px">' + esc(S.myCourses) + '</h3>' + COURSES.map((c) => { const a = ACCESS.isAdmin() ? '9999-12-31' : ACCESS.get()[c.id]; return '<div class="course"><span>' + esc(L(c.name)) + '</span><span class="faint">' + (a ? (ACCESS.has(c.id) ? '✓ ' + esc(S.activeUntil(fmtDate(a))) : esc(S.expiredOn(fmtDate(a)))) : (isTWA() ? '🔒' : '🔒 ' + fmtPrice(c.price))) + '</span></div>'; }).join('')
+    h += '<div class="card"><h3 style="margin-bottom:8px">' + esc(S.myCourses) + '</h3>' + COURSES.map((c) => { const a = ACCESS.isAdmin() ? '9999-12-31' : ACCESS.get()[c.id]; const on = ACCESS.has(c.id);
+      const ic = a ? (on ? '✓' : '⌛') : '🔒';
+      const right = a ? esc(on ? S.activeUntil(fmtDate(a)) : S.expiredOn(fmtDate(a))) : (isTWA() ? '' : fmtPrice(c.price));
+      return '<div class="course"><span class="nm">' + esc(L(c.name)) + '</span><span class="ic">' + ic + '</span><span class="pr faint">' + right + '</span></div>'; }).join('')
       + '<label class="f" for="mcode">' + esc(S.enterCode) + '</label><div class="row nw"><input id="mcode" placeholder="NABU-T-…" autocapitalize="characters"><button class="btn" id="munlock">' + esc(S.unlock) + '</button></div><p class="hint" id="mcstatus"></p></div>';
-    h += '<div class="card"><h3 style="margin-bottom:8px">' + esc(S.themeTitle) + '</h3><div class="themes">' + ['auto', 'light', 'dark', 'pink'].map((t) => '<button class="chip' + (themeChoice() === t ? ' on' : '') + '" data-theme-pick="' + t + '" title="' + esc(S.themes[t]) + '">' + esc(S.themeShort[t]) + '</button>').join('') + '</div><p class="hint">' + esc(S.themeHint) + '</p></div>';
+    h += '<div class="card"><h3 style="margin-bottom:8px">' + esc(S.themeTitle) + '</h3><div class="themes">' + ['auto', 'light', 'dark', 'pink'].map((t) => '<button class="chip' + (themeChoice() === t ? ' on' : '') + '" data-theme-pick="' + t + '" title="' + esc(S.themes[t]) + '">' + esc(S.themeShort[t]) + '</button>').join('') + '</div></div>';
     h += '<div class="meacts"><div class="row3"><a class="btn" href="#/contact">💬 ' + esc(S.contactLink) + '</a><a class="btn" href="#/report">🐞 ' + esc(S.reportLink) + '</a><button class="btn" id="retour">🎓 ' + esc(S.tourLink) + '</button></div>'
       + (BE.user || BE.isAdmin() ? '<div class="row">' + (BE.user ? '<button class="btn" id="signout" style="flex:1">🚪 ' + esc(S.signOut) + '</button>' : '') + (BE.isAdmin() ? '<a class="btn gold" href="#/admin" style="flex:1">🛠 ' + esc(S.adminTitle) + '</a>' : '') + '</div>' : '') + '</div>';
     if (BE.enabled && BE.user) h += '<div class="card danger"><h3 style="margin-bottom:4px">' + esc(S.delAccount) + '</h3><p class="hint" style="margin-bottom:10px">' + esc(S.delHint) + '</p><button class="btn block" id="delacct">🗑 ' + esc(S.delAccount) + '</button><p class="hint" id="delstatus"></p></div>';

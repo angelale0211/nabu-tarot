@@ -32,7 +32,7 @@ function renderPick(args, params) {
     const cls = pick.chosen == null ? '' : (pick.chosen === id ? ' chosen' : ' dim');
     return '<div class="slot' + cls + '"><button data-card="' + id + '" aria-label="' + (i + 1) + '">' + BACK + '</button></div>';
   }).join('');
-  m.innerHTML = '<div class="pick-head"><div class="eyebrow">' + esc(S.nav.pick) + '</div><h1>' + esc(S.pickTitle) + '</h1><p>' + esc(S.pickIntro) + '</p></div>'
+  m.innerHTML = '<div class="pick-head"><div class="eyebrow">' + esc(S.nav.pick) + '</div><h1>' + esc(S.pickTitle) + '</h1><p>' + esc(S.pickIntro) + '<br>' + esc(S.pickIntro2) + '</p></div>'
     + '<div class="faint" style="text-align:center">' + esc(S.focusLabel) + '</div><div class="chips focus">' + chips + '</div>'
     + '<div class="fan deck" id="fan">' + fan + '</div>'
     + '<div class="deckbar"><button type="button" class="btn sm" data-step="-1" aria-label="prev">‹</button><span id="deckpos" class="faint"></span><button type="button" class="btn sm" data-step="1" aria-label="next">›</button></div>'

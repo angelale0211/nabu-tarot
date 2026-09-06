@@ -286,10 +286,10 @@ h1{font-size:28px;letter-spacing:-.01em}
 h2{font-size:21px;line-height:1.25}
 h3{font-size:17px;line-height:1.3}
 p{margin:0 0 12px}
-/* A heading or a short note that wraps should split its lines evenly rather
-   than drop one word onto a line of its own. Vietnamese words are short, so
-   this shows up there first. */
-h1,h2,h3,.tip,.note span,.hint,.faint,.muted,#tour p,.eyebrow{text-wrap:balance}
+/* Only headings balance. A body paragraph must never be balanced or
+   prettified: both narrow the whole block and leave the right side of the card
+   empty, which is far worse than a short last line. */
+h1,h2,h3,.eyebrow{text-wrap:balance}
 .wrap{max-width:600px;margin:0 auto;padding:0 18px}
 
 /* ---- header ---- */
@@ -732,9 +732,10 @@ main{padding:22px 0 30px}
 .tile .ic .pickico{width:24px;height:41px}
 .svc .t .ic .pickico{width:20px;height:34px}
 .tile .lock{font-size:16px;vertical-align:middle}
-.course{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--rule-soft);font-size:14.5px}
-/* A long product name wraps instead of widening the card. */
-.course>span:first-child{min-width:0;overflow-wrap:anywhere}.course>span:last-child{flex:none;text-align:right}
+/* Three columns, so the padlocks line up down the card however long the
+   names are, and the prices stay flush right. */
+.course{display:grid;grid-template-columns:1fr 20px auto;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--rule-soft);font-size:14.5px}
+.course .nm{min-width:0;overflow-wrap:anywhere}.course .ic{text-align:center;font-size:13px}.course .pr{text-align:right;white-space:nowrap}
 .codebox{font-family:Georgia,serif;font-size:22px;letter-spacing:.06em;background:var(--surface-2);border-radius:12px;padding:12px;text-align:center;margin:10px 0;user-select:all}
 
 /* ---- booking ---- */
@@ -1102,25 +1103,25 @@ const SERVICES = [
 ];
 /* Paid courses in the Học tab. Access codes are made in the dashboard. */
 const COURSES = [
-  { id: 'tarot', price: 300000, months: 6, name: { vi: 'Khóa Tarot', en: 'Tarot course' },
+  { id: 'tarot', price: 300000, months: 6, sum: { vi: '78 lá, 8 trải bài và các bài đọc.', en: '78 cards, 8 spreads and the guides.' }, name: { vi: 'Khóa Tarot', en: 'Tarot course' },
     blurb: { vi: 'Toàn bộ 78 lá, mỗi lá có hình, từ khóa, nghĩa xuôi ngược, nghĩa theo tình cảm, công việc, học tập, tiền bạc, và các câu hỏi thường gặp. Kèm 8 cách trải bài và các bài đọc.', en: 'All 78 cards with art, keywords, upright and reversed meanings, love / work / study / money readings and frequently asked questions. Plus 8 spreads and the guides.' },
     includes: { vi: ['78 lá bài, mỗi lá một trang', '8 cách trải bài có sơ đồ', 'Bài đọc: bắt đầu, lá ngược, lá hoàng gia', 'Dùng 6 tháng, xem offline'], en: ['78 cards, one page each', '8 spreads with diagrams', 'Guides: starting out, reversals, court cards', '6 months of access, works offline'] } },
-  { id: 'lenormand', price: 300000, months: 6, name: { vi: 'Khóa Lenormand', en: 'Lenormand course' },
+  { id: 'lenormand', price: 300000, months: 6, sum: { vi: '36 lá, 7 trải bài và cách ghép cặp.', en: '36 cards, 7 spreads and how to pair them.' }, name: { vi: 'Khóa Lenormand', en: 'Lenormand course' },
     blurb: { vi: 'Toàn bộ 36 lá, mỗi lá có hình, sắc thái, nghĩa chính, tình cảm, công việc, chỉ người, thời gian và các cặp lá. Kèm 7 cách trải bài và các bài đọc.', en: 'All 36 cards with art, tone, core meaning, love, work, person, timing and pairs. Plus 7 spreads and the guides.' },
     includes: { vi: ['36 lá bài, mỗi lá một trang', 'Cặp lá thường gặp', '7 cách trải bài, có Grand Tableau', 'Dùng 6 tháng, xem offline'], en: ['36 cards, one page each', 'Common pairs', '7 spreads including the Grand Tableau', '6 months of access, works offline'] } },
-  { id: 'playing', price: 150000, months: 6, name: { vi: 'Khóa Bài Tây', en: 'Cartomancy course (playing cards)' },
+  { id: 'playing', price: 150000, months: 6, sum: { vi: '52 lá bài Tây, 9 bài học, 4 trải bài.', en: '52 playing cards, 9 lessons, 4 spreads.' }, name: { vi: 'Khóa Bài Tây', en: 'Cartomancy course (playing cards)' },
     blurb: { vi: 'Bói bài Tây 52 lá theo lối truyền thống: bốn chất, câu chuyện từ Át tới Mười, 12 lá hình, cặp lá, thời gian và bốn trải bài. Mỗi lá có hình vẽ, nghĩa truyền thống, lý do của nghĩa ấy và lá tarot tương ứng.', en: 'Traditional 52-card cartomancy: four suits, the Ace-to-Ten story, the 12 court cards, pairs, timing and four spreads. Every card has a drawn face, its traditional meaning, why it means that, and its tarot twin.' },
     includes: { vi: ['9 bài học có hình', '52 lá, mỗi lá một trang', 'Cặp lá, thời gian, trải bài điều ước', 'Dùng 6 tháng, xem offline'], en: ['9 illustrated sessions', '52 cards, one page each', 'Pairs, timing, the wish spread', '6 months of access, works offline'] } },
-  { id: 'manifest', price: 75000, months: 12, name: { vi: 'Bộ Manifestation', en: 'Manifestation set' },
+  { id: 'manifest', price: 75000, months: 12, sum: { vi: '7 phương pháp, mỗi bài một công cụ.', en: '7 methods, one tool with each.' }, name: { vi: 'Bộ Manifestation', en: 'Manifestation set' },
     blurb: { vi: 'Bảy phương pháp có công cụ làm ngay trong app: WOOP, bảng tầm nhìn có ảnh, nghi thức trăng, kế hoạch nếu-thì, buông bỏ, giới hạn, nến và đá. Mọi thứ bạn viết được lưu trên máy và có thể xoá làm lại bất cứ lúc nào.', en: 'Seven methods with tools you use right in the app: WOOP, a vision board with photos, Moon rituals, if-then plans, letting go, limits, candles and stones. Everything you write is saved on your device and can be cleared and redone any time.' },
     includes: { vi: ['7 bài hướng dẫn nâng cao', 'Bảng ảnh, kế hoạch, nghi thức, buông bỏ', 'Nến và đá theo mục đích', 'Dùng 12 tháng, xem offline'], en: ['7 advanced guides', 'Photo board, plans, ritual and letting-go tools', 'Candles and stones by purpose', '12 months of access, works offline'] } },
-  { id: 'luck', price: 50000, months: 12, name: { vi: 'Đồng xu và cây thông điệp', en: 'Coin and message tree' },
+  { id: 'luck', price: 50000, months: 12, sum: { vi: 'Đồng xu và cây thông điệp, không giới hạn.', en: 'Coin and message tree, unlimited.' }, name: { vi: 'Đồng xu và cây thông điệp', en: 'Coin and message tree' },
     blurb: { vi: 'Mở không giới hạn cả hai hoạt động trong một năm: tung đồng xu và rung cây thông điệp bao nhiêu lần tuỳ bạn.', en: 'Unlimited turns at both for a year: flip the coin and shake the message tree as often as you like.' },
     includes: { vi: ['Tung đồng xu không giới hạn', 'Rung cây thông điệp không giới hạn', 'Dùng 12 tháng'], en: ['Unlimited coin flips', 'Unlimited tree shakes', '12 months of access'] } },
-  { id: 'coin', price: 30000, months: 12, name: { vi: 'Tung đồng xu không giới hạn', en: 'Unlimited coin flips' },
+  { id: 'coin', price: 30000, months: 12, sum: { vi: 'Tung đồng xu không giới hạn.', en: 'Unlimited coin flips.' }, name: { vi: 'Tung đồng xu không giới hạn', en: 'Unlimited coin flips' },
     blurb: { vi: 'Tung đồng xu bao nhiêu lần tuỳ bạn trong một năm.', en: 'Flip the coin as often as you like for a year.' },
     includes: { vi: ['Tung đồng xu không giới hạn', 'Dùng 12 tháng'], en: ['Unlimited coin flips', '12 months of access'] } },
-  { id: 'tree', price: 30000, months: 12, name: { vi: 'Rung cây không giới hạn', en: 'Unlimited tree shakes' },
+  { id: 'tree', price: 30000, months: 12, sum: { vi: 'Rung cây thông điệp không giới hạn.', en: 'Unlimited tree shakes.' }, name: { vi: 'Rung cây không giới hạn', en: 'Unlimited tree shakes' },
     blurb: { vi: 'Rung cây thông điệp bao nhiêu lần tuỳ bạn trong một năm.', en: 'Shake the message tree as often as you like for a year.' },
     includes: { vi: ['Rung cây thông điệp không giới hạn', 'Dùng 12 tháng'], en: ['Unlimited tree shakes', '12 months of access'] } },
 ];
@@ -1164,7 +1165,7 @@ const STR = {
 
     pickToday: 'Rút một lá bài hôm nay',
     pickTitle: 'Năng lượng hiện tại của bạn',
-    pickIntro: 'Bạn hãy hít một hơi thật sâu, nghĩ về ngày hôm nay, rồi lật một lá bài.',
+    pickIntro: 'Bạn hãy hít một hơi thật sâu và nghĩ về ngày hôm nay.', pickIntro2: 'Rồi lật một lá bài.',
     focusLabel: 'Bạn đang nghĩ về',
     focus: { general: 'Chung', love: 'Tình cảm', work: 'Công việc', study: 'Học tập', money: 'Tiền bạc' },
     tapACard: 'Lướt trái phải để xem cả bộ, rồi chạm vào lá bạn thấy hợp nhất.', deckPos: (i, n) => i + ' / ' + n,
@@ -1270,6 +1271,8 @@ const STR = {
     unlockOpenUntil: (d) => 'Đang mở đến ' + d, unlockNot: 'Chưa mở', unlockHow: 'Cách mở khoá',
     unlockStep1: 'Bạn chuyển khoản đúng số tiền của mục mình chọn.', unlockStep2: 'Bạn nhắn cho Nabu tên mục đó kèm ảnh chuyển khoản.', unlockStep3: 'Nabu gửi lại mã. Bạn dán mã vào ô bên dưới là xong.',
     unlockPick: 'Bạn chạm vào mục muốn mở. Chọn được nhiều mục, chạm lần nữa để bỏ.', unlockCart: 'Mục bạn đã chọn', unlockEmpty: 'Bạn chưa chọn mục nào.', unlockTotal: 'Tổng cộng', unlockSend: 'Gửi yêu cầu cho Nabu', unlockMsgHead: 'Mình muốn mở khoá trong app Nabu Tarot:', unlockChosen: 'Đã chọn',
+    reqKindBooking: 'Đặt lịch', reqKindUnlock: 'Mở khoá', reqAll: 'Tất cả', reqNone: 'Chưa có yêu cầu nào ở mục này.',
+    unlockSent: 'Đã gửi yêu cầu. Nabu sẽ gửi mã cho bạn sau khi nhận được chuyển khoản.', unlockSendApp: 'Gửi yêu cầu trong app', unlockSendMsg: 'Gửi qua tin nhắn',
     adminShort: 'Tài khoản quản trị', unlockCodeLabel: 'Nhập mã Nabu gửi cho bạn', unlockReadings: 'Xem bảng giá xem bài riêng',
     luckFree: 'Bạn có 1 lượt miễn phí mỗi tuần.', luckLeft: 'Lượt tuần này của bạn vẫn còn.', luckSpent: (d) => 'Bạn đã dùng lượt tuần này. Lượt mới mở vào ' + d + '.', luckOpen: 'Bạn đang mở không giới hạn.', luckOffer: 'Muốn dùng không giới hạn cả năm: 30.000đ cho một mục, hoặc 50.000đ cho cả đồng xu và cây thông điệp.', luckGet: 'Nhắn Nabu để lấy mã', luckCodePh: 'NABU-B-…',
     treeTitle: 'Rung cây thông điệp', treeSub: 'một lời nhắn từ vũ trụ', treeIntro: 'Bạn đứng trước cây, nghĩ về điều đang ở trong lòng mình, rồi rung nhẹ một cái. Cây sẽ thả xuống cho bạn một lời nhắn.', treeShake: 'Rung cây', treeAgain: 'Rung thêm một lần nữa', treeFor: 'Lời nhắn dành cho bạn', treeNote: 'Mỗi lần rung, cây chọn ngẫu nhiên một lời nhắn trong sáu mươi lời. Bạn hãy đọc chậm và giữ lại câu nào chạm vào mình.',
@@ -1428,7 +1431,7 @@ const STR = {
 
     pickToday: 'Pick a card today',
     pickTitle: 'Your energy right now',
-    pickIntro: 'Take a deep breath. Think about today. Then tap a card.',
+    pickIntro: 'Take a deep breath. Think about today.', pickIntro2: 'Then turn a card over.',
     focusLabel: 'On your mind',
     focus: { general: 'General', love: 'Love', work: 'Work', study: 'Study', money: 'Money' },
     tapACard: 'Swipe left and right through the deck, then tap the card that calls you.', deckPos: (i, n) => i + ' / ' + n,
@@ -1468,7 +1471,7 @@ const STR = {
     pcIntro: 'Playing cards can be read two ways. Traditional cartomancy has its own set of meanings for the 52 cards, in use since before tarot decks were common. The second way borrows the tarot Minors, because both decks share one root: Hearts are Cups, Diamonds Pentacles, Clubs Wands, Spades Swords. Pick a card to see both.', pcPick: 'Pick a playing card', pcNote: 'A playing-card deck has no Majors and only three court cards per suit, so the Jack is usually read as the Knight (some readers use the Page), the Queen as the Queen and the King as the King.', pcTrad: 'Traditional meaning', pcTarotWay: 'Read through tarot',
     teaIntro: 'Tap each zone of the cup to see what the position means. The common shapes are below.', teaZones: { rim: 'Near the rim', mid: 'Middle', bottom: 'Bottom', handle: 'Near the handle' }, teaZoneText: { rim: 'Near the rim: soon, within days or weeks.', mid: 'Middle of the cup: weeks to months away.', bottom: 'Bottom: further away, or the root of the matter.', handle: 'Near the handle: about you directly. Opposite the handle: other people, outside events.' }, teaSymbols: 'Common shapes', teaPractice: 'Try one', teaPracticeHint: 'Tap for a random shape in a random zone, then practise reading it.', teaDraw: 'Draw a shape',
     animalIntro: 'Tap an animal on the wheel. Yours is marked.', animalYours: 'your animal', animalTrio: 'Trio (tam hợp)', animalClash: 'Clash (tứ hành xung)', animalYears: 'Years',
-    reportTitle: 'Report a problem', reportIntro: 'Something looks wrong, a button does nothing, or a text is confusing? Tell Nabu here.', reportWhat: 'What went wrong?', reportPlaceholder: 'Which screen you were on, what you tapped, and what happened.', reportContact: 'How to reach you (optional)', reportAuto: 'The app attaches this so Nabu can find the bug faster:', reportSend: 'Send report', reportViaIg: 'Send through Instagram', reportNeed: 'Describe the problem first.', reportSent: 'Sent to Nabu. Thank you!', reportNoChannel: 'Direct sending is not switched on yet. The message is copied; please send it through Instagram.', reportMsgHead: 'Nabu Tarot app bug report:', reportLink: 'Report a problem', rights: 'All rights reserved.', demoTag: 'Free preview', demoIntro: 'The first two lessons are open so you can see how the course works. Unlock to read everything.', lessonN: (n) => 'Lesson ' + n, lesson1: 'Overview and how to learn', lesson2: 'The first card', courseTabs: { cards: 'The cards', spreads: 'Spreads', guides: 'Guides' },
+    reportTitle: 'Report a problem', reportIntro: 'Something looks wrong, a button does nothing, or a text is confusing? Tell Nabu here.', reportWhat: 'What went wrong?', reportPlaceholder: 'Which screen you were on, what you tapped, and what happened.', reportContact: 'How to reach you (optional)', reportAuto: 'The app attaches this so Nabu can find the bug faster:', reportSend: 'Send report', reportViaIg: 'Send through Instagram', reportNeed: 'Describe the problem first.', reportSent: 'Sent to Nabu. Thank you!', reportNoChannel: 'Direct sending is not switched on yet. The message is copied; please send it through Instagram.', reportMsgHead: 'Nabu Tarot app bug report:', reportLink: 'Report', rights: 'All rights reserved.', demoTag: 'Free preview', demoIntro: 'The first two lessons are open so you can see how the course works. Unlock to read everything.', lessonN: (n) => 'Lesson ' + n, lesson1: 'Overview and how to learn', lesson2: 'The first card', courseTabs: { cards: 'The cards', spreads: 'Spreads', guides: 'Guides' },
     months6: 'months', adminAccess: 'Admin account: every course is open for Nabu.', accessUntil: (d) => 'Your access runs until ' + d + '.', courseExpired: (d) => 'Your code expired on ' + d + '. Buy again to continue.',
     buyCourse: 'Buy the course on Instagram', buyHint: 'The purchase message is copied. After the transfer, Nabu sends you an unlock code. Enter it below.',
     buyMsg: (n, p, m) => 'Hi Nabu, I would like to buy the ' + n + ' (' + p + ', ' + m + ' months).', unlock: 'Unlock', unlocked: 'Unlocked', badCode: 'That code is not right. Please check it.',
@@ -1534,6 +1537,8 @@ const STR = {
     unlockOpenUntil: (d) => 'Open until ' + d, unlockNot: 'Not unlocked yet', unlockHow: 'How to unlock',
     unlockStep1: 'Transfer the exact amount for the item you want.', unlockStep2: 'Message Nabu with the name of the item and a picture of the transfer.', unlockStep3: 'Nabu sends you a code. Paste it in the box below and you are done.',
     unlockPick: 'Tap what you want to unlock. You can pick several, and tap again to remove one.', unlockCart: 'What you have chosen', unlockEmpty: 'You have not chosen anything yet.', unlockTotal: 'Total', unlockSend: 'Send the request to Nabu', unlockMsgHead: 'I would like to unlock these in the Nabu Tarot app:', unlockChosen: 'Chosen',
+    reqKindBooking: 'Booking', reqKindUnlock: 'Unlock', reqAll: 'All', reqNone: 'No requests of this kind yet.',
+    unlockSent: 'Request sent. Nabu will send your code once the transfer arrives.', unlockSendApp: 'Send the request in the app', unlockSendMsg: 'Send as a message',
     adminShort: 'Admin account', unlockCodeLabel: 'Enter the code Nabu sent you', unlockReadings: 'See the prices for a reading',
     luckFree: 'You get one free turn a week.', luckLeft: 'Your turn for this week is still open.', luckSpent: (d) => 'You have had your turn this week. The next one opens on ' + d + '.', luckOpen: 'You have unlimited turns.', luckOffer: 'For unlimited turns all year: 30,000đ for one, or 50,000đ for both the coin and the message tree.', luckGet: 'Message Nabu for a code', luckCodePh: 'NABU-B-…',
     treeTitle: 'Shake the message tree', treeSub: 'a message from the universe', treeIntro: 'Stand in front of the tree, hold in mind whatever you are carrying, and give it a gentle shake. The tree will let a message fall for you.', treeShake: 'Shake the tree', treeAgain: 'Shake it once more', treeFor: 'A message for you', treeNote: 'Each shake picks one of sixty messages at random. Read it slowly and keep whichever line reaches you.',
@@ -9125,6 +9130,18 @@ const BE = {
   watchThreads(cb) { return this.db.collection('threads').orderBy('lastAt', 'desc').limit(100).onSnapshot((s) => cb(s.docs.map((d) => Object.assign({ id: d.id }, d.data())))); },
 
   /* ---- bookings ---- */
+  /* An unlock order: same collection as bookings so one list, one set of
+     statuses and one notification path serve both, but with no slot to take. */
+  async createUnlockOrder(items, total) {
+    const doc = {
+      kind: 'unlock', uid: this.user.uid, email: this.user.email || '',
+      name: (typeof PROFILE !== 'undefined' && PROFILE.name) || '',
+      items: items, price: total, status: 'requested',
+      at: firebase.firestore.FieldValue.serverTimestamp()
+    };
+    const ref = await this.db.collection('bookings').add(doc);
+    return ref.id;
+  },
   async createBooking(b) {
     const doc = Object.assign({ uid: this.user.uid, email: this.user.email || '', status: 'requested', at: firebase.firestore.FieldValue.serverTimestamp() }, b);
     const ref = await this.db.collection('bookings').add(doc);
@@ -9133,7 +9150,7 @@ const BE = {
     return ref.id;
   },
   watchMyBookings(cb) { return this.db.collection('bookings').where('uid', '==', this.user.uid).onSnapshot((s) => cb(s.docs.map((d) => Object.assign({ id: d.id }, d.data())).sort((a, b) => String(b.slot).localeCompare(String(a.slot))))); },
-  watchAllBookings(cb) { return this.db.collection('bookings').orderBy('slot', 'desc').limit(200).onSnapshot((s) => cb(s.docs.map((d) => Object.assign({ id: d.id }, d.data())))); },
+  watchAllBookings(cb) { return this.db.collection('bookings').limit(300).onSnapshot((s) => cb(s.docs.map((d) => Object.assign({ id: d.id }, d.data())).sort((a, b) => String(b.slot || b.id).localeCompare(String(a.slot || a.id))))); },
   async setBookingStatus(b, status) {
     const ref = this.db.collection('bookings').doc(b.id), key = String(b.slot).replace(/[^0-9T]/g, ''), newKey = b.newSlot ? String(b.newSlot).replace(/[^0-9T]/g, '') : '';
     if (status === 'keep') {  // the client asked for a change or a cancellation; Nabu keeps the booking as it was
@@ -9816,7 +9833,7 @@ function renderPick(args, params) {
     const cls = pick.chosen == null ? '' : (pick.chosen === id ? ' chosen' : ' dim');
     return '<div class="slot' + cls + '"><button data-card="' + id + '" aria-label="' + (i + 1) + '">' + BACK + '</button></div>';
   }).join('');
-  m.innerHTML = '<div class="pick-head"><div class="eyebrow">' + esc(S.nav.pick) + '</div><h1>' + esc(S.pickTitle) + '</h1><p>' + esc(S.pickIntro) + '</p></div>'
+  m.innerHTML = '<div class="pick-head"><div class="eyebrow">' + esc(S.nav.pick) + '</div><h1>' + esc(S.pickTitle) + '</h1><p>' + esc(S.pickIntro) + '<br>' + esc(S.pickIntro2) + '</p></div>'
     + '<div class="faint" style="text-align:center">' + esc(S.focusLabel) + '</div><div class="chips focus">' + chips + '</div>'
     + '<div class="fan deck" id="fan">' + fan + '</div>'
     + '<div class="deckbar"><button type="button" class="btn sm" data-step="-1" aria-label="prev">‹</button><span id="deckpos" class="faint"></span><button type="button" class="btn sm" data-step="1" aria-label="next">›</button></div>'
@@ -10297,7 +10314,7 @@ function unlockRowHTML(c) {
   const S = T(), until = ACCESS.get()[c.id], open = ACCESS.has(c.id) || (c.id !== 'luck' && ACCESS.has('luck'));
   const picked = !open && UNL_CART.has(c.id);
   const body = '<div class="unl-h"><b>' + esc(L(c.name)) + '</b>' + (isTWA() ? '' : '<span class="pr">' + fmtPrice(c.price) + '</span>') + '</div>'
-    + '<p class="hint">' + esc(L(c.blurb)) + '</p>'
+    + '<p class="hint">' + esc(L(c.sum || c.blurb)) + '</p>'
     + '<div class="unl-f">' + (c.id === 'luck' ? '<span class="chip pink">' + esc(S.unlockBest) + '</span>' : '')
     + '<span class="unl-st">' + (open ? '✓ ' + esc(ACCESS.isAdmin() && !until ? S.adminShort : S.unlockOpenUntil(fmtDate(until)))
       : picked ? '✓ ' + esc(S.unlockChosen) : esc(S.unlockNot) + (isTWA() ? '' : ' · ' + esc(c.months + ' ' + S.months6))) + '</span></div>';
@@ -11454,8 +11471,24 @@ async function chatAttachment(file, uid, kind) {
   if (data.length > 700000) throw new Error(T().imgTooBigChat);
   return { url: data, kind: 'image' };
 }
+/* An unlock order has no date and no calendar file: it is a list of what was
+   chosen, a total, and a code to send back. */
+function unlockRequestRow(b, admin) {
+  const S = T(), items = Array.isArray(b.items) ? b.items : [];
+  const list = items.map((it) => '<li>' + esc(it.name || it.id || '') + (it.price ? ' <b>' + fmtPrice(it.price) + '</b>' : '') + '</li>').join('');
+  const meta = admin && (b.name || b.email) ? '🙋 ' + esc([b.name, b.email].filter(Boolean).join(' · ')) : '';
+  let acts = '';
+  if (admin && b.status === 'requested') acts = '<button class="btn sm primary" data-bk="confirmed" data-id="' + b.id + '">' + esc(S.confirm) + '</button><button class="btn sm" data-bk="declined" data-id="' + b.id + '">' + esc(S.decline) + '</button>';
+  return '<div class="bk unlockreq"><div class="bkh"><b>🔓 ' + esc(S.reqKindUnlock) + '</b><span class="st ' + esc(b.status || '') + '">' + esc((S.status && S.status[b.status]) || b.status || '') + '</span></div>'
+    + (list ? '<ul>' + list + '</ul>' : '')
+    + (b.price ? '<div class="tot"><span>' + esc(S.unlockTotal) + '</span><b>' + fmtPrice(b.price) + '</b></div>' : '')
+    + (meta ? '<p class="hint">' + meta + '</p>' : '')
+    + (acts ? '<div class="acts">' + acts + '</div>' : '')
+    + '</div>';
+}
 function bookingRow(b, admin) {
   const S = T();
+  if (b.kind === 'unlock') return unlockRequestRow(b, admin);
   const items = Array.isArray(b.items) && b.items.length ? b.items : (b.service ? [{ service: b.service, pkg: b.pkg || '', price: b.price || 0, topic: b.topic || '' }] : []);
   const list = items.map((it) => '<li>' + esc(String(it.service || '') + (it.pkg ? ' – ' + it.pkg : '')) + (it.price ? ' <b>' + fmtPrice(it.price) + '</b>' : '') + (it.topic ? '<br><small>' + esc(S.msgTopic) + ': ' + esc(it.topic) + '</small>' : '') + '</li>').join('');
   const total = items.length > 1 ? '<div class="tot"><span>' + esc(S.msgTotal) + '</span><b>' + fmtPrice(b.price || items.reduce((n, x) => n + (x.price || 0), 0)) + '</b></div>' : '';
@@ -11472,7 +11505,7 @@ function bookingRow(b, admin) {
     acts = '<a class="btn sm" href="#/book?change=' + esc(b.id) + '">🔁 ' + esc(S.changeSlot) + '</a><button class="btn sm" data-cancel="' + b.id + '">✕ ' + esc(S.cancelBooking) + '</button>'
       + '<button type="button" class="btn sm" data-ics="' + b.id + '">📅 ' + esc(S.addToCalendar) + '</button><a class="btn sm" href="' + esc(gcalLink(b)) + '" target="_blank" rel="noopener">🗓 ' + esc(S.gcal) + '</a>';
   }
-  return '<div class="bk"><div class="bkh"><b>📅 ' + esc(slotLabel(b.slot)) + '</b><span class="st ' + esc(b.status) + '">' + esc(S.status[b.status] || b.status) + '</span></div>' + change
+  return '<div class="bk"><div class="bkh"><b>📅 ' + esc(S.reqKindBooking) + ' · ' + esc(slotLabel(b.slot)) + '</b><span class="st ' + esc(b.status) + '">' + esc(S.status[b.status] || b.status) + '</span></div>' + change
     + (list ? '<ul>' + list + '</ul>' : '') + total + (meta ? '<p class="meta">' + meta + '</p>' : '')
     + (acts ? '<div class="acts">' + acts + '</div>' : '') + '</div>';
 }
@@ -11499,9 +11532,12 @@ function renderMe(args, params) {
     }
     if (!(isStandalone() || isTWA())) h += '<a class="card" href="#/install" style="display:block;text-decoration:none;color:inherit"><h3 style="margin-bottom:4px">📲 ' + esc(S.installTitle) + '</h3><p class="hint">' + esc(S.instIntro) + '</p></a>';
     h += aiPanelHTML({ type: 'general' });
-    h += '<div class="card"><h3 style="margin-bottom:8px">' + esc(S.myCourses) + '</h3>' + COURSES.map((c) => { const a = ACCESS.isAdmin() ? '9999-12-31' : ACCESS.get()[c.id]; return '<div class="course"><span>' + esc(L(c.name)) + '</span><span class="faint">' + (a ? (ACCESS.has(c.id) ? '✓ ' + esc(S.activeUntil(fmtDate(a))) : esc(S.expiredOn(fmtDate(a)))) : (isTWA() ? '🔒' : '🔒 ' + fmtPrice(c.price))) + '</span></div>'; }).join('')
+    h += '<div class="card"><h3 style="margin-bottom:8px">' + esc(S.myCourses) + '</h3>' + COURSES.map((c) => { const a = ACCESS.isAdmin() ? '9999-12-31' : ACCESS.get()[c.id]; const on = ACCESS.has(c.id);
+      const ic = a ? (on ? '✓' : '⌛') : '🔒';
+      const right = a ? esc(on ? S.activeUntil(fmtDate(a)) : S.expiredOn(fmtDate(a))) : (isTWA() ? '' : fmtPrice(c.price));
+      return '<div class="course"><span class="nm">' + esc(L(c.name)) + '</span><span class="ic">' + ic + '</span><span class="pr faint">' + right + '</span></div>'; }).join('')
       + '<label class="f" for="mcode">' + esc(S.enterCode) + '</label><div class="row nw"><input id="mcode" placeholder="NABU-T-…" autocapitalize="characters"><button class="btn" id="munlock">' + esc(S.unlock) + '</button></div><p class="hint" id="mcstatus"></p></div>';
-    h += '<div class="card"><h3 style="margin-bottom:8px">' + esc(S.themeTitle) + '</h3><div class="themes">' + ['auto', 'light', 'dark', 'pink'].map((t) => '<button class="chip' + (themeChoice() === t ? ' on' : '') + '" data-theme-pick="' + t + '" title="' + esc(S.themes[t]) + '">' + esc(S.themeShort[t]) + '</button>').join('') + '</div><p class="hint">' + esc(S.themeHint) + '</p></div>';
+    h += '<div class="card"><h3 style="margin-bottom:8px">' + esc(S.themeTitle) + '</h3><div class="themes">' + ['auto', 'light', 'dark', 'pink'].map((t) => '<button class="chip' + (themeChoice() === t ? ' on' : '') + '" data-theme-pick="' + t + '" title="' + esc(S.themes[t]) + '">' + esc(S.themeShort[t]) + '</button>').join('') + '</div></div>';
     h += '<div class="meacts"><div class="row3"><a class="btn" href="#/contact">💬 ' + esc(S.contactLink) + '</a><a class="btn" href="#/report">🐞 ' + esc(S.reportLink) + '</a><button class="btn" id="retour">🎓 ' + esc(S.tourLink) + '</button></div>'
       + (BE.user || BE.isAdmin() ? '<div class="row">' + (BE.user ? '<button class="btn" id="signout" style="flex:1">🚪 ' + esc(S.signOut) + '</button>' : '') + (BE.isAdmin() ? '<a class="btn gold" href="#/admin" style="flex:1">🛠 ' + esc(S.adminTitle) + '</a>' : '') + '</div>' : '') + '</div>';
     if (BE.enabled && BE.user) h += '<div class="card danger"><h3 style="margin-bottom:4px">' + esc(S.delAccount) + '</h3><p class="hint" style="margin-bottom:10px">' + esc(S.delHint) + '</p><button class="btn block" id="delacct">🗑 ' + esc(S.delAccount) + '</button><p class="hint" id="delstatus"></p></div>';
@@ -11998,18 +12034,20 @@ function renderTree() {
 /* ---- a coin for questions that only need yes or no ----
    The coin decides nothing. It puts one of the two answers in front of you so
    your own reaction to it becomes visible. */
-/* The answer is struck on the coin itself, the way a coin carries its face. */
+/* Both faces are struck the same way: one ornament, one type size worked out
+   from the longer of the two words, and the pair centred as a block. Turning
+   the coin over changes the word and nothing else. */
 function coinFaceSVG(side) {
   const S = T();
+  const longest = Math.max(String(S.coinYes).length, String(S.coinNo).length);
+  const size = longest <= 2 ? 46 : longest === 3 ? 40 : longest === 4 ? 32 : 25;
+  const ornament = '<path d="M84 46 A13 13 0 1 0 84 72 A10 10 0 1 1 84 46 Z" fill="#5A3F18" opacity=".9"/>';
   const word = side ? (side === 'yes' ? S.coinYes : S.coinNo) : '';
-  const size = word.length <= 2 ? 44 : word.length === 3 ? 38 : word.length === 4 ? 31 : 24;
-  const mark = side === 'yes' ? '<path d="M72 44 A15 15 0 1 0 72 74 A11.5 11.5 0 1 1 72 44 Z" fill="#B9913B" opacity=".85"/>'
-    : side === 'no' ? '<path d="M80 46 l3.6 8.4 8.4 3.6 -8.4 3.6 -3.6 8.4 -3.6 -8.4 -8.4 -3.6 8.4 -3.6z" fill="#B9913B" opacity=".85"/>' : '';
   return '<svg viewBox="0 0 160 160" aria-hidden="true">'
     + '<circle cx="80" cy="80" r="74" fill="#E5BE5E" stroke="#B9913B" stroke-width="5"/>'
     + '<circle cx="80" cy="80" r="60" fill="none" stroke="#B9913B" stroke-width="2"/>'
     + (side
-      ? mark + '<text x="80" y="106" text-anchor="middle" font-family="Georgia,serif" font-weight="700" font-size="' + size + '" letter-spacing="1" fill="#5A3F18">' + esc(word) + '</text>'
+      ? ornament + '<text x="80" y="112" text-anchor="middle" font-family="Georgia,serif" font-weight="700" font-size="' + size + '" letter-spacing="1" fill="#5A3F18">' + esc(word) + '</text>'
       : '<text x="80" y="102" text-anchor="middle" font-family="Georgia,serif" font-size="62" fill="#B9913B">?</text>')
     + '</svg>';
 }
@@ -12446,7 +12484,7 @@ function adminCodes(p) {
 ROUTES.admin = { nav: '', render: renderAdmin };
 
 /* ============================ boot ============================ */
-window.APP_VERSION = 'v79';
+window.APP_VERSION = 'v80';
 window.NABU = { CONFIG: CONFIG, loadActs: loadActs, BACK: BACK, LESSONS: LESSONS, localAnswer: localAnswer, compatVerdict: compatVerdict, numerologyOf: numerologyOf, ZDEEP: ZDEEP, lunarToday: lunarToday, solarToLunar: solarToLunar, DECK: DECK, INSIGHT: INSIGHT, KW: KW, ASK: ASK, TOPICS: TOPICS, GUIDES: GUIDES, SERVICES: SERVICES, COURSES: COURSES, ACCESS: ACCESS, makeCode: makeCode, parseCode: parseCode, ZODIAC: ZODIAC, pick: pick, book: book,
   insightHTML: insightHTML, insightOf: insightOf, sunSignIndex: sunSignIndex, lifePath: lifePath, PROFILE: () => PROFILE, BE: BE, ACTS: ACTS };
 BE.initP = BE.init().catch(() => { /* backend unreachable: the app runs device-only */ });

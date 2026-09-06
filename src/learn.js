@@ -398,7 +398,7 @@ function unlockRowHTML(c) {
   const S = T(), until = ACCESS.get()[c.id], open = ACCESS.has(c.id) || (c.id !== 'luck' && ACCESS.has('luck'));
   const picked = !open && UNL_CART.has(c.id);
   const body = '<div class="unl-h"><b>' + esc(L(c.name)) + '</b>' + (isTWA() ? '' : '<span class="pr">' + fmtPrice(c.price) + '</span>') + '</div>'
-    + '<p class="hint">' + esc(L(c.blurb)) + '</p>'
+    + '<p class="hint">' + esc(L(c.sum || c.blurb)) + '</p>'
     + '<div class="unl-f">' + (c.id === 'luck' ? '<span class="chip pink">' + esc(S.unlockBest) + '</span>' : '')
     + '<span class="unl-st">' + (open ? '✓ ' + esc(ACCESS.isAdmin() && !until ? S.adminShort : S.unlockOpenUntil(fmtDate(until)))
       : picked ? '✓ ' + esc(S.unlockChosen) : esc(S.unlockNot) + (isTWA() ? '' : ' · ' + esc(c.months + ' ' + S.months6))) + '</span></div>';
