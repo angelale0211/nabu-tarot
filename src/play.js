@@ -291,7 +291,7 @@ function treeSVG() {
   const blooms = [[70, 66, 9], [112, 44, 10], [156, 40, 9], [198, 60, 9], [232, 86, 8], [46, 100, 8],
                   [92, 92, 10], [136, 78, 10], [180, 92, 9], [218, 112, 8], [66, 132, 8], [110, 130, 9],
                   [152, 122, 10], [196, 132, 8], [128, 106, 8], [172, 66, 8], [88, 118, 7], [244, 118, 7]];
-  return '<svg viewBox="0 0 280 250" role="img" aria-hidden="true">'
+  return '<svg viewBox="-6 -30 292 290" role="img" aria-hidden="true">'
     + '<defs><radialGradient id="tglow" cx="50%" cy="36%" r="62%"><stop offset="0%" stop-color="#FFF3C4" stop-opacity=".7"/><stop offset="100%" stop-color="#FFF3C4" stop-opacity="0"/></radialGradient></defs>'
     + '<circle cx="140" cy="94" r="118" fill="url(#tglow)"/>'
     + '<ellipse cx="140" cy="238" rx="76" ry="9" fill="#C9A5D8" opacity=".3"/>'
