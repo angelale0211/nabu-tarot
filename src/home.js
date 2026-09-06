@@ -42,6 +42,7 @@ function todayHTML() {
 const TOUR = [
   { ic: DRAW_ICON, vi: ['Rút bài', 'Chọn chủ đề trước, rồi lật một lá để xem năng lượng hôm nay của bạn.'], en: ['Pick a card', 'Tap one card to see your energy today. Choose a focus first: love, work, study, money.'] },
   { ic: '✨', vi: ['Dự đoán', 'Bài mới của Nabu nằm ở trang chủ. Bài ghi "dành cho bạn" hợp với cung của bạn.'], en: ['Readings', 'Nabu\'s new posts live on the home screen. Posts marked "for you" match your sign.'] },
+  { ic: '🎲', vi: ['Hoạt động', 'Chọn tụ bài, bình chọn, tung đồng xu hay rung cây thông điệp. Mỗi tuần đều có việc mới.'], en: ['Activities', 'Pick a pile, vote, flip the coin or shake the message tree. Something new every week.'] },
   { ic: '📚', vi: ['Học', 'Tarot, Lenormand, chiêm tinh và manifestation. Bạn bấm vào một lá bài hoặc một cung để đọc.'], en: ['Learn', 'Tarot, Lenormand, astrology, manifestation and fortune telling. Tap a card or a sign to read.'] },
   { ic: '📅', vi: ['Đặt lịch', 'Bạn chọn gói, chọn giờ trên lịch rồi gửi yêu cầu cho Nabu.'], en: ['Book', 'Choose a topic, pick a time on the calendar, send it to Nabu.'] },
   { ic: '👤', vi: ['Hồ sơ', 'Nhập tên và ngày sinh để app chọn nội dung hợp với bạn. Đăng nhập để lưu hồ sơ và xem lịch hẹn.'], en: ['Profile', 'Enter your name and birthday so the app picks content for you. Sign in to keep your profile, message Nabu and see bookings.'] }

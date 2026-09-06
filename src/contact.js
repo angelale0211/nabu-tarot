@@ -12,6 +12,7 @@ function renderContact() {
     + (fb ? '<button class="btn block" data-ch="fb">📘 ' + esc(S.contactFb) + '</button>' : '')
     + (CONFIG.email ? '<button class="btn block" data-ch="mail">✉️ Email</button>' : '')
     + '</div><p class="hint" style="margin-top:10px">📋 ' + esc(S.contactCopyHint) + '</p><p class="hint" id="cstatus"></p></div>';
+  { const draft = store.get('nabu-contact-draft', ''); if (draft) { $('#ctext').value = draft; store.set('nabu-contact-draft', ''); } }
   const text = () => $('#ctext').value.trim();
   const st = (t, cls) => { $('#cstatus').textContent = t; $('#cstatus').className = 'hint ' + (cls || ''); };
   const need = () => { if (!text()) { toast(S.contactNeed); $('#ctext').focus(); return false; } return true; };

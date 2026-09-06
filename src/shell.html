@@ -696,12 +696,21 @@ main{padding:22px 0 30px}
 .unlist{display:grid;gap:10px}
 .unl{background:var(--surface);border:1px solid var(--rule-soft);border-radius:16px;padding:14px}
 .unl.best{border-color:var(--pink);border-width:1.5px}.unl.on{border-color:var(--gold)}
+button.unl{display:block;width:100%;text-align:left;font:inherit;color:inherit;cursor:pointer}
+.unl.pick{border-color:var(--primary);border-width:1.5px;background:var(--surface-2)}
+.unl.pick .unl-st{background:var(--primary);color:var(--primary-ink)}
+#ucart .sum .r{justify-content:space-between;align-items:baseline}
+#ucart .sum .r.tot{font-weight:700;border-top:1px solid var(--rule);border-bottom:0}
 .unl-h{display:flex;align-items:baseline;gap:10px}
 .unl-h b{font-family:var(--display);font-weight:500;font-size:17px;flex:1;min-width:0}
 .unl-h .pr{font-weight:700;white-space:nowrap}
 .unl .hint{margin:6px 0 0}
 .unl-f{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-top:10px}
-.unl-f .st{font-size:12.5px;color:var(--fg-faint)}.unl.on .unl-f .st{color:var(--gold-ink,var(--fg-soft));font-weight:600}.btns{display:grid;grid-template-columns:1fr 1fr;gap:8px}.btns .btn{width:100%}
+/* Its own class: the shared .st chip never wraps, and a long line of status
+   text has to. Background and ink always come from one matched pair, so the
+   contrast holds on light, dark and pastel pink alike. */
+.unl-st{font-size:12.5px;line-height:1.35;font-weight:600;border-radius:9px;padding:4px 9px;background:var(--surface-3);color:var(--fg-soft)}
+.unl.on .unl-st{background:var(--tag-gold-bg);color:var(--tag-gold-ink)}.btns{display:grid;grid-template-columns:1fr 1fr;gap:8px}.btns .btn{width:100%}
 /* Booking summary card and the done screen. */
 .sum{background:var(--surface);border:1px solid var(--rule);border-radius:14px;padding:4px 14px;font-size:14.5px;margin:10px 0;text-align:left}.sum .r{display:flex;gap:10px;padding:9px 0;border-top:1px solid var(--rule-soft)}.sum .r:first-child{border-top:0}
 .sum .k{flex:none;width:86px;color:var(--fg-faint);font-size:12.5px;font-weight:600;padding-top:2px}.sum .v{flex:1;min-width:0;overflow-wrap:anywhere}.sum ul{margin:0;padding-left:16px}.sum li{margin:2px 0}.sum li small{font-size:12.5px}.sum .warn{color:#B04A2E;font-weight:600}.sum .ok{color:#2E7D46;font-weight:600}

@@ -365,27 +365,67 @@ function renderNumbers() {
    turns in the Activities tab. The bundle is marked, since it is the row that
    makes sense for anyone who wants both. In the Play build prices are hidden
    and only the code box remains. */
+/* A row you can actually choose. Already-open items stay as plain cards. */
+const UNL_CART = {
+  get() { const a = store.get('nabu-unlock-cart', []); return Array.isArray(a) ? a : []; },
+  set(a) { store.set('nabu-unlock-cart', a); },
+  has(id) { return this.get().indexOf(id) > -1; },
+  toggle(id) {
+    let a = this.get();
+    if (a.indexOf(id) > -1) a = a.filter((x) => x !== id);
+    // The bundle is the two single items together, so it cannot sit beside them.
+    else if (id === 'luck') a = a.filter((x) => x !== 'coin' && x !== 'tree').concat(id);
+    else a = a.filter((x) => !(id === 'coin' || id === 'tree') || x !== 'luck').concat(id);
+    this.set(a); return a;
+  }
+};
 function unlockRowHTML(c) {
   const S = T(), until = ACCESS.get()[c.id], open = ACCESS.has(c.id) || (c.id !== 'luck' && ACCESS.has('luck'));
-  return '<div class="unl' + (open ? ' on' : '') + (c.id === 'luck' ? ' best' : '') + '">'
-    + '<div class="unl-h"><b>' + esc(L(c.name)) + '</b>' + (isTWA() ? '' : '<span class="pr">' + fmtPrice(c.price) + '</span>') + '</div>'
+  const picked = !open && UNL_CART.has(c.id);
+  const body = '<div class="unl-h"><b>' + esc(L(c.name)) + '</b>' + (isTWA() ? '' : '<span class="pr">' + fmtPrice(c.price) + '</span>') + '</div>'
     + '<p class="hint">' + esc(L(c.blurb)) + '</p>'
     + '<div class="unl-f">' + (c.id === 'luck' ? '<span class="chip pink">' + esc(S.unlockBest) + '</span>' : '')
-    + '<span class="st">' + (open ? '✓ ' + esc(until ? S.unlockOpenUntil(fmtDate(until)) : S.adminAccess) : esc(S.unlockNot) + (isTWA() ? '' : ' · ' + esc(c.months + ' ' + S.months6))) + '</span></div>'
-    + '</div>';
+    + '<span class="unl-st">' + (open ? '✓ ' + esc(ACCESS.isAdmin() && !until ? S.adminShort : S.unlockOpenUntil(fmtDate(until)))
+      : picked ? '✓ ' + esc(S.unlockChosen) : esc(S.unlockNot) + (isTWA() ? '' : ' · ' + esc(c.months + ' ' + S.months6))) + '</span></div>';
+  if (open) return '<div class="unl on' + (c.id === 'luck' ? ' best' : '') + '">' + body + '</div>';
+  return '<button type="button" class="unl pickable' + (picked ? ' pick' : '') + (c.id === 'luck' ? ' best' : '') + '" data-unl="' + c.id + '">' + body + '</button>';
+}
+function unlockCartHTML() {
+  const S = T(), ids = UNL_CART.get().filter((id) => COURSES.some((c) => c.id === id) && !ACCESS.has(id));
+  if (!ids.length) return '<p class="hint">' + esc(S.unlockEmpty) + '</p>';
+  const rows = COURSES.filter((c) => ids.indexOf(c.id) > -1);
+  const total = rows.reduce((n, c) => n + c.price, 0);
+  return '<div class="sum">' + rows.map((c) => '<div class="r"><span>' + esc(L(c.name)) + '</span><b>' + fmtPrice(c.price) + '</b></div>').join('')
+    + '<div class="r tot"><span>' + esc(S.unlockTotal) + '</span><b>' + fmtPrice(total) + '</b></div></div>';
+}
+function unlockMessage() {
+  const S = T(), ids = UNL_CART.get(), rows = COURSES.filter((c) => ids.indexOf(c.id) > -1 && !ACCESS.has(c.id));
+  if (!rows.length) return '';
+  const total = rows.reduce((n, c) => n + c.price, 0);
+  return '🔓 ' + S.unlockMsgHead + '\n' + rows.map((c) => '• ' + L(c.name) + ': ' + fmtPrice(c.price)).join('\n')
+    + '\n💰 ' + S.unlockTotal + ': ' + fmtPrice(total);
 }
 function renderUnlock() {
   const S = T(), m = $('#main');
   const draw = () => {
     const group = (ids) => '<div class="unlist">' + COURSES.filter((c) => ids.indexOf(c.id) > -1).map(unlockRowHTML).join('') + '</div>';
     m.innerHTML = '<div class="eyebrow">' + esc(CONFIG.brand) + '</div><h1 style="margin-bottom:6px">' + esc(S.unlockTitle) + '</h1><p class="muted">' + esc(S.unlockIntro) + '</p>'
+      + (isTWA() ? '' : '<p class="hint" style="margin-bottom:14px">' + esc(S.unlockPick) + '</p>')
       + '<div class="sec"><h2 style="margin-bottom:8px">' + esc(S.unlockCourses) + '</h2>' + group(['tarot', 'lenormand', 'playing', 'manifest']) + '</div>'
       + '<div class="sec"><h2 style="margin-bottom:8px">' + esc(S.unlockActs) + '</h2>' + group(['luck', 'coin', 'tree']) + '</div>'
+      + (isTWA() ? '' : '<div class="sec"><h2 style="margin-bottom:8px">' + esc(S.unlockCart) + '</h2><div id="ucart">' + unlockCartHTML() + '</div>'
+        + '<button class="btn primary block" id="usend" style="margin-top:12px">' + esc(S.unlockSend) + '</button></div>')
       + (isTWA() ? '' : '<div class="sec card"><h3 style="margin-bottom:10px">' + esc(S.unlockHow) + '</h3><ol class="steps">'
-        + [S.unlockStep1, S.unlockStep2, S.unlockStep3].map((x) => '<li>' + esc(x) + '</li>').join('') + '</ol>'
-        + '<a class="btn block primary" href="#/contact">' + esc(S.luckGet) + '</a></div>')
+        + [S.unlockStep1, S.unlockStep2, S.unlockStep3].map((x) => '<li>' + esc(x) + '</li>').join('') + '</ol></div>')
       + '<div class="card"><label class="f" for="ucode">' + esc(S.unlockCodeLabel) + '</label><div class="row nw"><input id="ucode" placeholder="' + esc(S.luckCodePh) + '" autocapitalize="characters"><button class="btn" id="ugo">' + esc(S.unlock) + '</button></div><p class="hint" id="ustatus"></p></div>'
       + (isTWA() ? '' : '<p style="margin-top:14px"><a class="backlink" href="#/prices">' + esc(S.unlockReadings) + ' →</a></p>');
+    $$('[data-unl]', m).forEach((b) => b.addEventListener('click', () => { UNL_CART.toggle(b.getAttribute('data-unl')); draw(); }));
+    const send = $('#usend');
+    if (send) send.addEventListener('click', () => {
+      const msg = unlockMessage();
+      if (!msg) { toast(S.unlockEmpty); return; }
+      store.set('nabu-contact-draft', msg); location.hash = '#/contact';
+    });
     $('#ugo').addEventListener('click', () => {
       const r = parseCode($('#ucode').value), st = $('#ustatus');
       if (!r) { st.textContent = S.badCode; st.className = 'hint err'; return; }
