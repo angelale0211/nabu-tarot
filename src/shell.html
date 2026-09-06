@@ -1112,7 +1112,13 @@ h1 .pileico{width:34px;height:27px;vertical-align:-3px;margin-right:2px}
 .lovetag .d{color:#A85267;font-weight:500}
 .lovemark{width:26px;height:26px;flex:none;display:block}
 .lovemark.big{width:64px;height:64px;margin:0 auto 6px}
-.lovemark.inline{width:22px;height:22px;display:inline-block;vertical-align:-5px}
+.lovemark.inline{width:24px;height:24px;display:inline-block;vertical-align:-5px}
+/* In a row of activities the mark takes the place an emoji held, so it needs
+   the same footprint the emoji had. */
+.actbtn .ic .lovemark{width:32px;height:32px;margin:0 auto}
+.actquick .aq .ic .lovemark{width:24px;height:24px}
+.btn .lovemark{width:20px;height:20px;display:inline-block;vertical-align:-4px;margin-right:2px}
+#main h1 .lovemark{width:30px;height:30px;display:inline-block;vertical-align:-4px}
 .lovetag.st-engaged{background:#FFF3DC;border-color:#EBCB8E;color:#6B4D0F}
 .lovetag.st-engaged .d{color:#8A6A22}
 .lovetag.st-married{background:#F6ECFF;border-color:#D6BEF0;color:#4B2A6E}

@@ -207,7 +207,7 @@ async function renderPlay(args) {
   const diaryN = Object.keys(store.get('nabu-diary', {}) || {}).length;
   m.innerHTML = '<div class="eyebrow">' + esc(CONFIG.brand) + '</div><h1 style="margin-bottom:6px">' + esc(S.actTitle) + '</h1><p class="muted">' + esc(S.actIntro) + '</p><div id="acts" class="actlist">'
     + petRowHTML(S)
-    + '<a class="actbtn act-love live" href="#/love"><span class="ic">🧵</span><span class="body"><b>' + esc(S.loveTitle) + '</b><span class="meta">' + esc(S.loveSub) + '</span></span><span class="go">›</span></a>'
+    + '<a class="actbtn act-love live" href="#/love"><span class="ic">' + loveMarkSVG(LOVE.local().stage || 'tied') + '</span><span class="body"><b>' + esc(S.loveTitle) + '</b><span class="meta">' + esc(S.loveSub) + '</span></span><span class="go">›</span></a>'
     + '<a class="actbtn act-tree live" href="#/play/tree"><span class="ic">🌸</span><span class="body"><b>' + esc(S.treeTitle) + '</b><span class="meta">' + esc(S.treeSub) + '</span></span><span class="go">›</span></a>'
     + '<a class="actbtn act-coin live" href="#/play/coin"><span class="ic">🪙</span><span class="body"><b>' + esc(S.coinTitle) + '</b><span class="meta">' + esc(S.coinSub) + '</span></span><span class="go">›</span></a>'
     + '<a class="actbtn act-diary live" href="#/play/diary"><span class="ic">📔</span><span class="body"><b>' + esc(S.diaryTitle) + '</b><span class="meta">' + esc(S.diarySub) + (diaryN ? ' · ' + esc(S.diaryCount(diaryN)) : '') + '</span></span><span class="chev">›</span></a>'
@@ -610,7 +610,7 @@ async function homeActHTML(root) {
       const n = list.filter((a2) => a2.type === g[0]).length;
       return '<a class="aq" href="#/play/' + esc(g[2]) + '"><span class="ic">' + g[1] + '</span><b>' + esc(S.actTypes[g[0]]) + '</b>' + (n ? '<span class="cnt">' + n + '</span>' : '') + '</a>';
     }).join('')
-    + '<a class="aq" href="#/love"><span class="ic">🧵</span><b>' + esc(S.loveTitle) + '</b>'
+    + '<a class="aq" href="#/love"><span class="ic">' + loveMarkSVG(LOVE.local().stage || 'tied') + '</span><b>' + esc(S.loveTitle) + '</b>'
     + (LOVE.local().bond ? '<span class="cnt">' + LOVE.days({ since: LOVE.local().since }) + '</span>' : '') + '</a>'
     + '</div>'
     + '<p style="margin-top:10px"><a class="btn block" href="#/play">' + esc(S.actAll) + '</a></p></div>';

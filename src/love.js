@@ -238,53 +238,89 @@ function loveMarkSVG(state, cls) {
 }
 
 /* ---- the thread itself ----
-   Two hands, little fingers reaching towards each other, and the knot between
-   them. The knot beats slowly, because a thread that is alive is the point. */
+   A pan chang - the knot tied in red silk for weddings and for luck - inside a
+   fine gold ring, falling into two weighted tassels.
+
+   The weave is real. Every strand is laid down twice, first as a wide stroke in
+   the ground colour and then as the cord, so each one cuts a clean gap through
+   whatever is beneath it. Three strands run across, three run down, and then
+   the crossings where the horizontal belongs on top are painted back in - nine
+   of them, alternating. That alternation is the whole difference between cord
+   and a flat squiggle. */
 function threadSVG(state, still) {
-  const RED = '#D6314B', SOFT = '#F2789F', SKIN = '#F6DCC6', SKIN2 = '#E9C4A6';
-  /* A closed hand with one finger out of it: the wrist coming in from the
-     edge, the fist, the fingers curled along its lower edge, the thumb over
-     them, and the little finger reaching to the middle with the thread wound
-     twice round it. */
-  const hand = (flip) => '<g transform="' + (flip ? 'translate(240,0) scale(-1,1)' : '') + '">'
-    + '<path d="M0 98 L30 92 L34 144 L0 150 Z" fill="' + SKIN2 + '" opacity=".85"/>'
-    + '<path d="M24 92 Q54 78 78 92 Q94 101 94 117 Q94 136 74 144 Q48 152 30 141 Q18 132 18 115 Q18 99 24 92 Z" fill="' + SKIN + '"/>'
-    + '<g stroke="' + SKIN2 + '" stroke-width="2" fill="none" opacity=".55" stroke-linecap="round">'
-    + '<path d="M42 148 q7 -15 3 -31 M60 150 q7 -15 3 -32 M78 143 q6 -13 2 -27"/></g>'
-    + '<g stroke="' + SKIN2 + '" stroke-width="1.6" fill="none" opacity=".5" stroke-linecap="round">'
-    + '<path d="M32 100 q9 -6 18 -2 M56 94 q9 -5 18 1"/></g>'
-    + '<path d="M28 134 Q20 146 30 152 Q42 156 48 144 Q44 138 28 134 Z" fill="' + SKIN + '" stroke="' + SKIN2 + '" stroke-width="1.2"/>'
-    + '<path d="M88 104 Q106 98 120 102 Q126 104 124 111 Q122 118 112 118 Q100 118 88 114 Z" fill="' + SKIN + '" stroke="' + SKIN2 + '" stroke-width="1.3"/>'
-    + '<g stroke="' + RED + '" fill="none" stroke-linecap="round"><path d="M103 100 q5 9 0 18" stroke-width="2.6"/>'
-    + '<path d="M110 100 q5 9 0 18" stroke-width="2.2" opacity=".9"/></g>'
+  const RED = '#C4142F', RED_DEEP = '#8A0C20', RED_LIT = '#F0748C', GROUND = '#FFFAF6';
+  const W = 10;
+  /* One strand: the gap it cuts, the cord, and the light along its back. */
+  const cord = (d, w) => {
+    const k = w || W;
+    return '<path d="' + d + '" fill="none" stroke="' + GROUND + '" stroke-width="' + (k + 4.5) + '" stroke-linecap="round" stroke-linejoin="round"/>'
+      + '<path d="' + d + '" fill="none" stroke="' + RED_DEEP + '" stroke-width="' + k + '" stroke-linecap="round" stroke-linejoin="round"/>'
+      + '<path d="' + d + '" fill="none" stroke="' + RED + '" stroke-width="' + (k - 2.2) + '" stroke-linecap="round" stroke-linejoin="round"/>'
+      + '<path d="' + d + '" fill="none" stroke="' + RED_LIT + '" stroke-width="' + (k - 6.4) + '" stroke-linecap="round" stroke-linejoin="round" opacity=".45"/>';
+  };
+  /* The same strand without its gap, for painting a crossing back on top. */
+  const over = (d, w) => {
+    const k = w || W;
+    return '<path d="' + d + '" fill="none" stroke="' + RED_DEEP + '" stroke-width="' + k + '" stroke-linecap="butt"/>'
+      + '<path d="' + d + '" fill="none" stroke="' + RED + '" stroke-width="' + (k - 2.2) + '" stroke-linecap="butt"/>'
+      + '<path d="' + d + '" fill="none" stroke="' + RED_LIT + '" stroke-width="' + (k - 6.4) + '" stroke-linecap="butt" opacity=".45"/>';
+  };
+
+  /* The body of the knot: a square of cord woven over and under itself. */
+  const CX = 120, CY = 116, GAP = 14;
+  const rows = [CY - GAP, CY, CY + GAP], cols = [CX - GAP, CX, CX + GAP];
+  const x0 = CX - GAP - 12, x1 = CX + GAP + 12, y0 = CY - GAP - 12, y1 = CY + GAP + 12;
+  let weave = '';
+  /* The four loops first, so the body sits over where they enter it. */
+  weave += cord('M' + cols[0] + ' ' + y0 + ' C ' + (cols[0] - 6) + ' ' + (y0 - 40) + ' ' + (cols[2] + 6) + ' ' + (y0 - 40) + ' ' + cols[2] + ' ' + y0);
+  weave += cord('M' + x0 + ' ' + rows[0] + ' C ' + (x0 - 40) + ' ' + (rows[0] - 6) + ' ' + (x0 - 40) + ' ' + (rows[2] + 6) + ' ' + x0 + ' ' + rows[2]);
+  weave += cord('M' + x1 + ' ' + rows[0] + ' C ' + (x1 + 40) + ' ' + (rows[0] - 6) + ' ' + (x1 + 40) + ' ' + (rows[2] + 6) + ' ' + x1 + ' ' + rows[2]);
+  /* Three across, then three down: the downs pass over everywhere. */
+  rows.forEach((y) => { weave += cord('M' + x0 + ' ' + y + ' H' + x1); });
+  cols.forEach((x) => { weave += cord('M' + x + ' ' + y0 + ' V' + y1); });
+  /* Then the crossings where the across belongs on top, in a chequer. */
+  rows.forEach((y, r) => cols.forEach((x, c) => {
+    if ((r + c) % 2 === 0) weave += over('M' + (x - 8) + ' ' + y + ' H' + (x + 8));
+  }));
+
+  const frame = '<g fill="none" stroke="#E5BE5E">'
+    + '<circle cx="120" cy="116" r="72" stroke-width="1.4" opacity=".85"/>'
+    + '<circle cx="120" cy="116" r="66" stroke-width="0.9" opacity=".55"/></g>'
+    + '<g fill="#E5BE5E" opacity=".9">'
+    + [0, 90, 180, 270].map((a) => '<circle cx="120" cy="44" r="2.6" transform="rotate(' + a + ' 120 116)"/>').join('')
     + '</g>';
-  const knot = '<g class="knot' + (still ? '' : ' beat') + '">'
-    + '<circle cx="120" cy="109" r="8.5" fill="' + RED + '"/><circle cx="120" cy="109" r="3.6" fill="' + SOFT + '"/>'
-    + '<path d="M112 101 q8 -7 16 0 M112 117 q8 7 16 0" stroke="' + RED + '" stroke-width="3" fill="none" stroke-linecap="round"/>'
+
+  const bloom = (x, y, c, s2) => '<g transform="translate(' + x + ',' + y + ') scale(' + s2 + ')">'
+    + [0, 72, 144, 216, 288].map((a) => '<ellipse cx="0" cy="-4.6" rx="3" ry="4.6" fill="' + c + '" transform="rotate(' + a + ')"/>').join('')
+    + '<circle r="2" fill="#FFF3C4"/></g>';
+
+  const tassel = (x, tilt) => '<g transform="translate(' + x + ',' + (y1 + 34) + ') rotate(' + tilt + ')">'
+    + '<ellipse cx="0" cy="6" rx="5.4" ry="6" fill="#E5BE5E"/><ellipse cx="-1.6" cy="4.2" rx="1.7" ry="2" fill="#FFF3C4"/>'
+    + '<path d="M-5 10 L-6.2 27 M-2.5 11 L-2.9 29 M0 11 L0 30 M2.5 11 L2.9 29 M5 10 L6.2 27" stroke="' + RED + '" stroke-width="1.7" stroke-linecap="round"/>'
     + '</g>';
-  /* What floats above the knot says which stage this is. Nothing while it is
-     only a thread; one ring while the question is out; two hooked together
-     once it has been answered; and an arch of flowers over them at the end. */
+
   const st = state || 'tied';
-  const above = st === 'proposed' ? ringArt(120, 44, 24, -8, true)
-    : st === 'engaged' ? ringPairArt(120, 46, 22)
-      : st === 'married' ? ringPairArt(120, 52, 21) + wreathArt(120, 20, 62)
+  const above = st === 'proposed' ? ringArt(120, 26, 19, -8, true)
+    : st === 'engaged' ? ringPairArt(120, 27, 17)
+      : st === 'married' ? ringPairArt(120, 30, 16) + wreathArt(120, 12, 44)
         : '';
-  /* The thread reaches up to whatever is waiting there. */
-  const reach = above
-    ? '<path class="reach" d="M120 100 q-7 -22 0 -34" stroke="' + RED + '" stroke-width="2" fill="none" stroke-linecap="round" opacity=".5"/>'
-    : '';
-  const spark = st === 'proposed' && !still
-    ? '<g fill="#FFF3C4" class="sparks"><path class="twinkle" d="M86 30 l2.4 5 5 2.4 -5 2.4 -2.4 5 -2.4 -5 -5 -2.4 5 -2.4 Z"/>'
-      + '<path class="twinkle" style="animation-delay:900ms" d="M156 26 l2 4.2 4.2 2 -4.2 2 -2 4.2 -2 -4.2 -4.2 -2 4.2 -2 Z"/>'
-      + '<path class="twinkle" style="animation-delay:1700ms" d="M150 74 l1.8 3.8 3.8 1.8 -3.8 1.8 -1.8 3.8 -1.8 -3.8 -3.8 -1.8 3.8 -1.8 Z"/></g>'
-    : '';
-  return '<svg viewBox="0 0 240 178" class="threadart" role="img" aria-hidden="true">'
-    + '<ellipse cx="120" cy="168" rx="80" ry="7" fill="#C9A5D8" opacity=".2"/>'
-    + hand(false) + hand(true)
-    + '<path d="M120 114 q-26 22 -58 26" stroke="' + RED + '" stroke-width="2.2" fill="none" stroke-linecap="round" opacity=".55"/>'
-    + '<path d="M120 114 q26 22 58 26" stroke="' + RED + '" stroke-width="2.2" fill="none" stroke-linecap="round" opacity=".55"/>'
-    + reach + knot + above + spark
+  const spark = still ? '' : '<g fill="#FFF3C4" class="sparks">'
+    + '<path class="twinkle" d="M30 92 l2.4 5 5 2.4 -5 2.4 -2.4 5 -2.4 -5 -5 -2.4 5 -2.4 Z"/>'
+    + '<path class="twinkle" style="animation-delay:900ms" d="M208 84 l2 4.2 4.2 2 -4.2 2 -2 4.2 -2 -4.2 -4.2 -2 4.2 -2 Z"/>'
+    + '<path class="twinkle" style="animation-delay:1700ms" d="M204 164 l1.8 3.8 3.8 1.8 -3.8 1.8 -1.8 3.8 -1.8 -3.8 -3.8 -1.8 3.8 -1.8 Z"/></g>';
+
+  return '<svg viewBox="0 0 240 216" class="threadart" role="img" aria-hidden="true">'
+    + '<circle cx="120" cy="116" r="78" fill="#F7A9C6" opacity=".1"/>'
+    + frame
+    /* placed on the ring itself, so they read as part of the frame */
+    + bloom(120 - 72 * 0.71, 116 - 72 * 0.71, '#F7A9C6', 1)
+    + bloom(120 + 72 * 0.71, 116 - 72 * 0.71, '#FBD3E1', .8)
+    + bloom(120 + 72 * 0.62, 116 + 72 * 0.78, '#C9B0EA', .85)
+    + '<g class="knot' + (still ? '' : ' beat') + '">' + weave + '</g>'
+    + cord('M' + cols[0] + ' ' + y1 + ' C ' + (cols[0] - 2) + ' ' + (y1 + 18) + ' ' + (cols[0] - 2) + ' ' + (y1 + 24) + ' ' + (cols[0] - 3) + ' ' + (y1 + 30), 8)
+    + cord('M' + cols[2] + ' ' + y1 + ' C ' + (cols[2] + 2) + ' ' + (y1 + 18) + ' ' + (cols[2] + 2) + ' ' + (y1 + 24) + ' ' + (cols[2] + 3) + ' ' + (y1 + 30), 8)
+    + tassel(cols[0] - 3, -5) + tassel(cols[2] + 3, 5)
+    + above + spark
     + '</svg>';
 }
 
@@ -499,7 +535,7 @@ function renderLove(wantHandle) {
   const cleanup = () => { stop.forEach((f) => { try { f(); } catch (e) { /* already gone */ } }); stop = []; };
   NAV.cleanup = cleanup;
 
-  const head = () => '<div class="eyebrow">' + esc(CONFIG.brand) + '</div><h1 style="margin-bottom:6px">🧵 ' + esc(S.loveTitle) + '</h1>'
+  const head = () => '<div class="eyebrow">' + esc(CONFIG.brand) + '</div><h1 style="margin-bottom:6px">' + loveMarkSVG(LOVE.local().stage || 'tied', 'inline') + ' ' + esc(S.loveTitle) + '</h1>'
     + '<p class="muted">' + esc(S.loveIntro) + '</p>';
   const foot = () => '<p class="hint" style="margin-top:16px">' + esc(S.loveNote) + '</p>';
 
@@ -625,7 +661,7 @@ function renderLove(wantHandle) {
         + (who.tied ? '<p class="hint">' + esc(S.loveAlreadyTied) + '</p>'
           : '<label class="f" for="lvnote" style="margin-top:8px">' + esc(S.loveNoteLabel) + '</label>'
             + '<input id="lvnote" maxlength="200" placeholder="' + esc(S.loveNotePh) + '">'
-            + '<button type="button" class="btn primary block" id="lvoffer" style="margin-top:10px">🧵 ' + esc(S.loveOffer) + '</button>')
+            + '<button type="button" class="btn primary block" id="lvoffer" style="margin-top:10px">' + loveMarkSVG('tied', 'inline') + ' ' + esc(S.loveOffer) + '</button>')
         + '</div>';
       const off = $('#lvoffer');
       if (off) off.addEventListener('click', async () => {
@@ -816,7 +852,7 @@ function renderLoveJoin(token) {
     if (!inv) { gone(); return; }
     const who = inv.name || (inv.handle ? '@' + inv.handle : S.loveSomeone);
     const card = (body) => shell('<div class="card lovecard">' + threadSVG('tied', true)
-      + '<div class="pair"><span>' + esc(who) + '</span><i>🧵</i><span>' + esc(S.loveYou) + '</span></div>'
+      + '<div class="pair"><span>' + esc(who) + '</span><i>' + loveMarkSVG('tied', 'inline') + '</i><span>' + esc(S.loveYou) + '</span></div>'
       + '<p class="lead">' + esc(S.loveJoinFrom(who)) + '</p>' + body + '</div>');
     if (!BE.user) {
       card('<p class="hint">' + esc(S.loveJoinSignIn) + '</p><a class="btn primary block" href="#/me">' + esc(S.signIn) + '</a>');
@@ -835,7 +871,7 @@ function renderLoveJoin(token) {
       card('<p class="hint">' + esc(S.loveJoinNeedName) + '</p><a class="btn primary block" href="#/love">' + esc(S.loveClaim) + '</a>');
       return;
     }
-    card('<button type="button" class="btn primary block" id="lvtake">🧵 ' + esc(S.loveJoinTake) + '</button><p class="hint" id="lvtakest"></p>');
+    card('<button type="button" class="btn primary block" id="lvtake">' + loveMarkSVG('tied', 'inline') + ' ' + esc(S.loveJoinTake) + '</button><p class="hint" id="lvtakest"></p>');
     $('#lvtake').addEventListener('click', async () => {
       const b = $('#lvtake'), st = $('#lvtakest');
       b.disabled = true; st.className = 'hint'; st.textContent = S.loveSaving;
