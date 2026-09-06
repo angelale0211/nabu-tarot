@@ -468,6 +468,18 @@ function loveBadgeHTML() {
     + '<span class="d">' + esc(S.loveDaysN(LOVE.days({ since: l.since }))) + '</span></a>';
 }
 
+/* The four stages laid out in order, so the whole of it is visible from the
+   first screen instead of only after there is somebody to share it with. The
+   one reached so far is lit; the rest wait. */
+function loveRoadHTML(at) {
+  const S = T(), steps = ['tied', 'proposed', 'engaged', 'married'];
+  const here = steps.indexOf(at || '');
+  return '<div class="card roadcard"><div class="eyebrow">' + esc(S.loveRoadTitle) + '</div>'
+    + '<div class="road">' + steps.map((s, i) => '<span class="rs' + (i <= here ? ' on' : '') + '">'
+      + loveMarkSVG(s) + '<b>' + esc(S.loveRoadOf[s]) + '</b></span>').join('') + '</div>'
+    + '<p class="hint">' + esc(S.loveRoadHint) + '</p></div>';
+}
+
 /* ---- the screen ---- */
 function renderLove(wantHandle) {
   const S = T(), m = $('#main');
@@ -525,6 +537,7 @@ function renderLove(wantHandle) {
       + '<p class="hint" style="margin-bottom:10px">' + esc(S.loveFindHint) + '</p>'
       + '<div class="row nw athandle"><span class="at">@</span><input id="lvfind" maxlength="20" autocapitalize="none" spellcheck="false" placeholder="' + esc(S.loveHandlePh) + '"><button type="button" class="btn" id="lvgo">' + esc(S.loveFind) + '</button></div>'
       + '<div id="lvfound"></div><p class="hint" id="lvfstatus"></p></div>'
+      + loveRoadHTML('')
       + '<div class="card invitecard"><h3 style="margin-bottom:4px">💌 ' + esc(S.loveInviteTitle) + '</h3>'
       + '<p class="hint" style="margin-bottom:10px">' + esc(S.loveInviteHint) + '</p>'
       + '<div id="lvlink"></div></div>'
@@ -685,7 +698,7 @@ function renderLove(wantHandle) {
       + '<p class="since">' + esc(S.loveSince(fmtDate(bond.since))) + '</p>'
       + (next ? '<p class="hint" style="text-align:center">' + esc(S.loveNextMark(next.at, next.inDays)) + '</p>' : '')
       + '</div>'
-      + ask + shelf
+      + loveRoadHTML(stage) + ask + shelf
       + '<div class="card"><h3 style="margin-bottom:6px">' + esc(S.loveDayTitle) + '</h3>'
       + '<p class="hint" style="margin-bottom:8px">' + esc(S.loveDayHint) + '</p>'
       + '<input type="date" id="lvsince" max="' + esc(isoDate(new Date())) + '" value="' + esc(bond.since || '') + '">'

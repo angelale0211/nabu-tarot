@@ -1121,6 +1121,16 @@ h1 .pileico{width:34px;height:27px;vertical-align:-3px;margin-right:2px}
 #main .lovecard .stagename{margin:4px 0 0;font-size:12px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--pink-ink)}
 :root[lang="vi"] #main .lovecard .stagename{text-transform:none;letter-spacing:.02em}
 /* The question, and its answer. */
+/* The four stages in order, the one reached so far lit. */
+.roadcard .eyebrow{text-align:left;margin-bottom:10px}
+.road{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;align-items:start}
+.road .rs{display:flex;flex-direction:column;align-items:center;gap:4px;position:relative;opacity:.38;filter:grayscale(.7)}
+.road .rs.on{opacity:1;filter:none}
+.road .rs .lovemark{width:34px;height:34px}
+.road .rs b{font-size:11px;font-weight:600;text-align:center;line-height:1.2}
+/* A hairline between one stage and the next, tucked behind the marks. */
+.road .rs+.rs::before{content:'';position:absolute;left:-56%;top:16px;width:56%;height:1.5px;background:var(--rule);border-radius:2px}
+.road .rs.on+.rs.on::before{background:var(--gold)}
 .askcard{text-align:center}
 .askcard h3{margin-bottom:4px}
 .askcard>b{display:block;font-family:var(--display);font-size:16px;margin-bottom:2px}
