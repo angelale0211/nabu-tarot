@@ -130,12 +130,52 @@ function priceSheetHTML(interactive) {
       : '<div class="pkg"><span>' + esc(L(p.name)) + '</span><b>' + priceHTML(p.price, 'reading', s.id) + '</b></div>')).join('') + '</div></div>').join('')
     + '<p class="paynote">💜 ' + esc(L(PAYMENT_NOTE)) + '</p>';
 }
+/* One shape for every paid thing on the page: a tile of one size, a name, one
+   line about it, what it costs, and where it leads. Nothing on this page is
+   allowed to be a different shape from anything else. */
+function priceCardHTML(c) {
+  const S = T();
+  const label = c.kind === 'course' ? (S.cats[c.id] || L(c.name)) : S.priceOpen;
+  return '<div class="svc ' + (c.kind === 'course' ? 'lav' : 'gold') + '">'
+    + '<div class="t"><span class="ic">' + c.icon + '</span><div><b>' + esc(L(c.name)) + '</b>'
+    + '<div class="tag">' + esc(L(c.sum)) + '</div></div></div>'
+    + (isTWA() ? '' : '<div class="pk"><div class="pkg"><span>' + c.months + ' ' + esc(S.months6) + '</span><b>' + priceHTML(c.price, 'unlock', c.id) + '</b></div></div>')
+    + '<a class="btn sm block" href="' + esc(c.to) + '" style="margin-top:8px">' + esc(label) + ' \u2192</a></div>';
+}
+
+/* What the app gives away. Somebody reading a price list has no way of knowing
+   how much of this costs nothing unless the price list says so. */
+function freeGridHTML() {
+  const S = T(), vi = lang === 'vi';
+  const rows = [
+    ['#/pick', DRAW_ICON, S.nav.pick, vi ? 'm\u1ed7i ng\u00e0y m\u1ed9t l\u00e1' : 'a card a day'],
+    ['#/learn/astro', '\uD83D\uDD2E', S.cats.astro, S.catSub.astro],
+    ['#/learn/angel', '\uD83D\uDC7C', S.cats.angel, S.catSub.angel],
+    ['#/learn/fortune', '\uD83D\uDD22', S.cats.fortune, S.catSub.fortune],
+    ['#/play/pet', '\uD83D\uDC3E', S.petTitle, vi ? 'm\u1ed9t b\u1ea1n nh\u1ecf' : 'one companion'],
+    ['#/play/tree', '\uD83C\uDF38', S.treeTitle, vi ? '1 l\u01b0\u1ee3t m\u1ed7i tu\u1ea7n' : 'once a week'],
+    ['#/play/coin', '\uD83E\uDE99', S.coinTitle, vi ? '1 l\u01b0\u1ee3t m\u1ed7i tu\u1ea7n' : 'once a week'],
+    ['#/play/diary', '\uD83D\uDCD4', S.diaryTitle, S.diarySub],
+    ['#/love', loveMarkSVG('tied'), S.loveTitle, S.loveSub],
+    ['#/play/piles', PILE_ICON, S.actTypes.pile, vi ? 'khi Nabu \u0111\u0103ng' : 'when Nabu posts'],
+    ['#/play/polls', '\uD83D\uDCCA', S.actTypes.poll, vi ? 'khi Nabu \u0111\u0103ng' : 'when Nabu posts'],
+    ['#/play/wishes', '\uD83C\uDF20', S.actTypes.wish, vi ? 'khi Nabu \u0111\u0103ng' : 'when Nabu posts']
+  ];
+  return '<div class="freegrid">' + rows.map((r) => '<a class="fg" href="' + r[0] + '">'
+    + '<span class="ic">' + r[1] + '</span><b>' + esc(r[2]) + '</b><span class="s">' + esc(r[3]) + '</span></a>').join('') + '</div>';
+}
+
 function renderPrices() {
   const S = T(), m = $('#main');
-  m.innerHTML = '<div class="eyebrow">' + esc(CONFIG.brand) + '</div><h1 style="margin-bottom:6px">' + esc(S.priceTitle) + '</h1><p class="muted">' + esc(S.priceIntro) + '</p>'
-    + priceSheetHTML(false) + '<a class="btn primary block" href="#/book">' + esc(S.ctaBook) + '</a>'
-    + '<h2 style="margin:24px 0 10px">' + esc(S.courses) + '</h2>' + COURSES.map((c) => '<div class="svc lav"><div class="t"><span class="ic">' + (c.id === 'tarot' ? PICK_ICON : '🗝️') + '</span><div><b>' + esc(L(c.name)) + '</b><div class="tag">' + esc(L(c.blurb)) + '</div></div></div>'
-      + (isTWA() ? '' : '<div class="pk"><div class="pkg"><span>' + c.months + ' ' + esc(S.months6) + '</span><b>' + priceHTML(c.price, 'unlock', c.id) + '</b></div></div>') + '<a class="btn sm block" href="#/learn/' + c.id + '" style="margin-top:8px">' + esc(S.cats[c.id]) + ' →</a></div>').join('');
+  const sec = (n, title, hint, body) => '<div class="sec pricesec"><h2><i>' + n + '</i>' + esc(title) + '</h2>'
+    + (hint ? '<p class="hint">' + esc(hint) + '</p>' : '') + body + '</div>';
+  const of = (k) => COURSES.filter((c) => c.kind === k).map(priceCardHTML).join('');
+  m.innerHTML = '<div class="eyebrow">' + esc(CONFIG.brand) + '</div>'
+    + '<h1 style="margin-bottom:6px">' + esc(S.priceTitle) + '</h1><p class="muted">' + esc(S.priceIntro) + '</p>'
+    + sec(1, S.priceReadings, S.priceReadingsHint, priceSheetHTML(false) + '<a class="btn primary block" href="#/book">' + esc(S.ctaBook) + '</a>')
+    + sec(2, S.courses, S.priceCoursesHint, of('course'))
+    + sec(3, S.priceUnlocks, S.priceUnlocksHint, of('unlock'))
+    + sec(4, S.priceFree, S.priceFreeHint, freeGridHTML());
 }
 
 async function renderBook(args, params) {

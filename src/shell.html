@@ -380,6 +380,22 @@ main{padding:22px 0 30px}
 /* Ten of them, so the last row holds one. It goes in the middle rather than
    hanging off the left. */
 .plgrid > :last-child:nth-child(3n+1){grid-column:2}
+/* Every section of the price list has the same head: a numbered disc, a
+   title, one line of explanation. */
+.pricesec{margin-bottom:30px}
+#main .pricesec h2{display:flex;align-items:center;gap:9px;font-size:19px;margin:0 0 4px}
+.pricesec h2 i{flex:none;width:26px;height:26px;border-radius:50%;background:var(--primary);color:var(--primary-ink);font-style:normal;font-size:13px;font-weight:700;display:grid;place-content:center;font-family:var(--body)}
+#main .pricesec>.hint{margin:0 0 12px}
+.pricesec .paynote{margin-bottom:12px}
+/* The free half, all one shape. */
+.freegrid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.freegrid .fg{display:flex;flex-direction:column;align-items:center;gap:4px;background:var(--surface);border:1px solid var(--rule-soft);border-radius:14px;padding:11px 5px;text-decoration:none;color:inherit;min-width:0}
+.freegrid .fg .ic{height:26px;display:grid;place-content:center;font-size:21px;line-height:1}
+.freegrid .fg .ic .pickico{width:16px;height:27px}
+.freegrid .fg .ic .lovemark{width:24px;height:24px}
+.freegrid .fg .ic .pileico{width:26px;height:21px}
+.freegrid .fg b{font-size:11.5px;font-weight:600;line-height:1.25;text-align:center;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
+.freegrid .fg .s{font-size:10.5px;line-height:1.25;color:var(--fg-faint);text-align:center;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
 .signlist{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
 .signlist button{background:var(--surface);border:1px solid var(--rule-soft);border-radius:14px;padding:10px 6px;text-align:center}
 .signlist button .g{font-size:26px;color:var(--link);display:block}
@@ -400,9 +416,17 @@ main{padding:22px 0 30px}
 .svc.blue{border-color:var(--blue)}.svc.lav{border-color:var(--lav)}.svc.pink{border-color:var(--pink)}.svc.gold{border-color:var(--gold)}
 .svc.on{box-shadow:0 0 0 2px var(--primary) inset}
 .svc .t{display:flex;gap:10px;align-items:center;margin-bottom:8px}
-.svc .t .ic{font-size:26px}
-.svc .t b{font-family:var(--display);font-weight:500;font-size:18px;display:block}
-.svc .t .tag{font-size:12.5px;color:var(--fg-faint);font-style:italic}
+/* One tile, one size, whatever goes in it - a drawing, an emoji, a glyph.
+   Before this the icons were whatever size their own content happened to be,
+   so nothing lined up with the title beside it. */
+.svc .t .ic{flex:none;width:46px;height:46px;border-radius:14px;background:var(--surface-2);display:grid;place-content:center;font-size:23px;line-height:1}
+.svc .t .ic svg{display:block}
+.svc .t .ic .lovemark{width:28px;height:28px}
+.svc .t .ic .pileico{width:28px;height:23px}
+.svc .t b{font-family:var(--display);font-weight:600;font-size:16.5px;line-height:1.3;display:block}
+/* One short line under the name, never a paragraph: the long description
+   belongs on the page you buy, not in a list you are scanning. */
+.svc .t .tag{font-size:12.5px;line-height:1.4;color:var(--fg-soft);margin-top:2px}
 .svc .pk{display:flex;flex-direction:column;gap:6px}
 .svc .pkg{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:4px 10px;width:100%;max-width:100%;text-align:left;background:var(--surface-2);border:1px solid transparent;border-radius:12px;padding:9px 12px;font-size:14.5px;overflow:hidden}
 .svc .pkg b{font-family:var(--body);font-weight:700;white-space:nowrap;margin-left:auto}
@@ -623,7 +647,7 @@ main{padding:22px 0 30px}
 .actfilter .chip .pileico{width:22px;height:18px;vertical-align:-4px;margin-right:1px}
 h1 .pileico{width:34px;height:27px;vertical-align:-3px;margin-right:2px}
 .tile .ic .pickico{width:24px;height:41px}
-.svc .t .ic .pickico{width:20px;height:34px}
+.svc .t .ic .pickico{width:19px;height:32px}
 .tile .lock{font-size:16px;vertical-align:middle}
 /* Three columns, so the padlocks line up down the card however long the
    names are, and the prices stay flush right. */

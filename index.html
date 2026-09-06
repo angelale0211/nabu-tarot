@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
 <title>Nabu Tarot</title>
 <meta name="description" content="Nabu Tarot: dự đoán mới, rút một lá bài xem năng lượng hiện tại, học tarot, Lenormand, chiêm tinh, và đặt lịch xem bài.">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'none'; object-src 'none'; form-action 'self'; script-src 'self' 'sha256-NjokIBbXknPlMRr1d5HuteP7q5jM9trNeEnbWiAJSng=' https://www.gstatic.com https://apis.google.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; font-src 'self' data:; media-src 'self' data: blob:; worker-src 'self'; connect-src 'self' https://*.googleapis.com https://*.google.com https://*.firebaseio.com https://*.cloudfunctions.net https://*.workers.dev https://generativelanguage.googleapis.com; frame-src https://*.firebaseapp.com https://accounts.google.com https://*.facebook.com">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'none'; object-src 'none'; form-action 'self'; script-src 'self' 'sha256-fgK7w00fnPbPAeieZorEcIAvmsNCO76qbXc8y25fDY4=' https://www.gstatic.com https://apis.google.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; font-src 'self' data:; media-src 'self' data: blob:; worker-src 'self'; connect-src 'self' https://*.googleapis.com https://*.google.com https://*.firebaseio.com https://*.cloudfunctions.net https://*.workers.dev https://generativelanguage.googleapis.com; frame-src https://*.firebaseapp.com https://accounts.google.com https://*.facebook.com">
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <meta name="theme-color" content="#EFE9FA">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -546,6 +546,22 @@ main{padding:22px 0 30px}
 /* Ten of them, so the last row holds one. It goes in the middle rather than
    hanging off the left. */
 .plgrid > :last-child:nth-child(3n+1){grid-column:2}
+/* Every section of the price list has the same head: a numbered disc, a
+   title, one line of explanation. */
+.pricesec{margin-bottom:30px}
+#main .pricesec h2{display:flex;align-items:center;gap:9px;font-size:19px;margin:0 0 4px}
+.pricesec h2 i{flex:none;width:26px;height:26px;border-radius:50%;background:var(--primary);color:var(--primary-ink);font-style:normal;font-size:13px;font-weight:700;display:grid;place-content:center;font-family:var(--body)}
+#main .pricesec>.hint{margin:0 0 12px}
+.pricesec .paynote{margin-bottom:12px}
+/* The free half, all one shape. */
+.freegrid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.freegrid .fg{display:flex;flex-direction:column;align-items:center;gap:4px;background:var(--surface);border:1px solid var(--rule-soft);border-radius:14px;padding:11px 5px;text-decoration:none;color:inherit;min-width:0}
+.freegrid .fg .ic{height:26px;display:grid;place-content:center;font-size:21px;line-height:1}
+.freegrid .fg .ic .pickico{width:16px;height:27px}
+.freegrid .fg .ic .lovemark{width:24px;height:24px}
+.freegrid .fg .ic .pileico{width:26px;height:21px}
+.freegrid .fg b{font-size:11.5px;font-weight:600;line-height:1.25;text-align:center;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
+.freegrid .fg .s{font-size:10.5px;line-height:1.25;color:var(--fg-faint);text-align:center;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
 .signlist{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
 .signlist button{background:var(--surface);border:1px solid var(--rule-soft);border-radius:14px;padding:10px 6px;text-align:center}
 .signlist button .g{font-size:26px;color:var(--link);display:block}
@@ -566,9 +582,17 @@ main{padding:22px 0 30px}
 .svc.blue{border-color:var(--blue)}.svc.lav{border-color:var(--lav)}.svc.pink{border-color:var(--pink)}.svc.gold{border-color:var(--gold)}
 .svc.on{box-shadow:0 0 0 2px var(--primary) inset}
 .svc .t{display:flex;gap:10px;align-items:center;margin-bottom:8px}
-.svc .t .ic{font-size:26px}
-.svc .t b{font-family:var(--display);font-weight:500;font-size:18px;display:block}
-.svc .t .tag{font-size:12.5px;color:var(--fg-faint);font-style:italic}
+/* One tile, one size, whatever goes in it - a drawing, an emoji, a glyph.
+   Before this the icons were whatever size their own content happened to be,
+   so nothing lined up with the title beside it. */
+.svc .t .ic{flex:none;width:46px;height:46px;border-radius:14px;background:var(--surface-2);display:grid;place-content:center;font-size:23px;line-height:1}
+.svc .t .ic svg{display:block}
+.svc .t .ic .lovemark{width:28px;height:28px}
+.svc .t .ic .pileico{width:28px;height:23px}
+.svc .t b{font-family:var(--display);font-weight:600;font-size:16.5px;line-height:1.3;display:block}
+/* One short line under the name, never a paragraph: the long description
+   belongs on the page you buy, not in a list you are scanning. */
+.svc .t .tag{font-size:12.5px;line-height:1.4;color:var(--fg-soft);margin-top:2px}
 .svc .pk{display:flex;flex-direction:column;gap:6px}
 .svc .pkg{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:4px 10px;width:100%;max-width:100%;text-align:left;background:var(--surface-2);border:1px solid transparent;border-radius:12px;padding:9px 12px;font-size:14.5px;overflow:hidden}
 .svc .pkg b{font-family:var(--body);font-weight:700;white-space:nowrap;margin-left:auto}
@@ -789,7 +813,7 @@ main{padding:22px 0 30px}
 .actfilter .chip .pileico{width:22px;height:18px;vertical-align:-4px;margin-right:1px}
 h1 .pileico{width:34px;height:27px;vertical-align:-3px;margin-right:2px}
 .tile .ic .pickico{width:24px;height:41px}
-.svc .t .ic .pickico{width:20px;height:34px}
+.svc .t .ic .pickico{width:19px;height:32px}
 .tile .lock{font-size:16px;vertical-align:middle}
 /* Three columns, so the padlocks line up down the card however long the
    names are, and the prices stay flush right. */
@@ -1749,30 +1773,32 @@ const SERVICES = [
     ] }
 ];
 /* Paid courses in the Học tab. Access codes are made in the dashboard. */
+/* kind: a course is something to read, an unlock is something to use. They
+   are sold the same way and belong in different lists. */
 const COURSES = [
-  { id: 'tarot', price: 300000, months: 6, sum: { vi: '78 lá, 8 trải bài và các bài đọc.', en: '78 cards, 8 spreads and the guides.' }, name: { vi: 'Khóa Tarot', en: 'Tarot course' },
+  { id: 'tarot', kind: 'course', icon: PICK_ICON, to: '#/learn/tarot', price: 300000, months: 6, sum: { vi: '78 lá, 8 trải bài và các bài đọc.', en: '78 cards, 8 spreads and the guides.' }, name: { vi: 'Khóa Tarot', en: 'Tarot course' },
     blurb: { vi: 'Toàn bộ 78 lá, mỗi lá có hình, từ khóa, nghĩa xuôi ngược, nghĩa theo tình cảm, công việc, học tập, tiền bạc, và các câu hỏi thường gặp. Kèm 8 cách trải bài và các bài đọc.', en: 'All 78 cards with art, keywords, upright and reversed meanings, love / work / study / money readings and frequently asked questions. Plus 8 spreads and the guides.' },
     includes: { vi: ['78 lá bài, mỗi lá một trang', '8 cách trải bài có sơ đồ', 'Bài đọc: bắt đầu, lá ngược, lá hoàng gia', 'Dùng 6 tháng, xem offline'], en: ['78 cards, one page each', '8 spreads with diagrams', 'Guides: starting out, reversals, court cards', '6 months of access, works offline'] } },
-  { id: 'lenormand', price: 300000, months: 6, sum: { vi: '36 lá, 7 trải bài và cách ghép cặp.', en: '36 cards, 7 spreads and how to pair them.' }, name: { vi: 'Khóa Lenormand', en: 'Lenormand course' },
+  { id: 'lenormand', kind: 'course', icon: '🗝️', to: '#/learn/lenormand', price: 300000, months: 6, sum: { vi: '36 lá, 7 trải bài và cách ghép cặp.', en: '36 cards, 7 spreads and how to pair them.' }, name: { vi: 'Khóa Lenormand', en: 'Lenormand course' },
     blurb: { vi: 'Toàn bộ 36 lá, mỗi lá có hình, sắc thái, nghĩa chính, tình cảm, công việc, chỉ người, thời gian và các cặp lá. Kèm 7 cách trải bài và các bài đọc.', en: 'All 36 cards with art, tone, core meaning, love, work, person, timing and pairs. Plus 7 spreads and the guides.' },
     includes: { vi: ['36 lá bài, mỗi lá một trang', 'Cặp lá thường gặp', '7 cách trải bài, có Grand Tableau', 'Dùng 6 tháng, xem offline'], en: ['36 cards, one page each', 'Common pairs', '7 spreads including the Grand Tableau', '6 months of access, works offline'] } },
-  { id: 'playing', price: 300000, months: 6, sum: { vi: '52 lá bài Tây, 9 bài học, 4 trải bài.', en: '52 playing cards, 9 lessons, 4 spreads.' }, name: { vi: 'Khóa Bài Tây', en: 'Cartomancy course' },
+  { id: 'playing', kind: 'course', icon: '🂡', to: '#/learn/playing', price: 300000, months: 6, sum: { vi: '52 lá bài Tây, 9 bài học, 4 trải bài.', en: '52 playing cards, 9 lessons, 4 spreads.' }, name: { vi: 'Khóa Bài Tây', en: 'Cartomancy course' },
     blurb: { vi: 'Bói bài Tây 52 lá theo lối truyền thống: bốn chất, câu chuyện từ Át tới Mười, 12 lá hình, cặp lá, thời gian và bốn trải bài. Mỗi lá có hình vẽ, nghĩa truyền thống, lý do của nghĩa ấy và lá tarot tương ứng.', en: 'Traditional 52-card cartomancy: four suits, the Ace-to-Ten story, the 12 court cards, pairs, timing and four spreads. Every card has a drawn face, its traditional meaning, why it means that, and its tarot twin.' },
     includes: { vi: ['9 bài học có hình', '52 lá, mỗi lá một trang', 'Cặp lá, thời gian, trải bài điều ước', 'Dùng 6 tháng, xem offline'], en: ['9 illustrated sessions', '52 cards, one page each', 'Pairs, timing, the wish spread', '6 months of access, works offline'] } },
-  { id: 'manifest', price: 75000, months: 12, sum: { vi: '7 phương pháp, mỗi bài một công cụ.', en: '7 methods, one tool with each.' }, name: { vi: 'Bộ Manifestation', en: 'Manifestation set' },
+  { id: 'manifest', kind: 'course', icon: '🌙', to: '#/learn/manifest', price: 75000, months: 12, sum: { vi: '7 phương pháp, mỗi bài một công cụ.', en: '7 methods, one tool with each.' }, name: { vi: 'Bộ Manifestation', en: 'Manifestation set' },
     blurb: { vi: 'Bảy phương pháp có công cụ làm ngay trong app: WOOP, bảng tầm nhìn có ảnh, nghi thức trăng, kế hoạch nếu-thì, buông bỏ, giới hạn, nến và đá. Mọi thứ bạn viết được lưu trên máy và có thể xoá làm lại bất cứ lúc nào.', en: 'Seven methods with tools you use right in the app: WOOP, a vision board with photos, Moon rituals, if-then plans, letting go, limits, candles and stones. Everything you write is saved on your device and can be cleared and redone any time.' },
     includes: { vi: ['7 bài hướng dẫn nâng cao', 'Bảng ảnh, kế hoạch, nghi thức, buông bỏ', 'Nến và đá theo mục đích', 'Dùng 12 tháng, xem offline'], en: ['7 advanced guides', 'Photo board, plans, ritual and letting-go tools', 'Candles and stones by purpose', '12 months of access, works offline'] } },
-  { id: 'pro', price: 120000, months: 12, sum: { vi: 'Sáu linh thú, nuôi nhiều vị cùng lúc, và mọi giao diện đẹp.', en: 'Six spirit beasts, several at once, and every look.' },
+  { id: 'pro', kind: 'unlock', icon: '✨', to: '#/play/pet', price: 120000, months: 12, sum: { vi: 'Sáu linh thú, nuôi nhiều vị cùng lúc, và mọi giao diện đẹp.', en: 'Six spirit beasts, several at once, and every look.' },
     name: { vi: 'Nabu Tarot Plus', en: 'Nabu Tarot Plus' },
     blurb: { vi: 'Mở sáu linh thú trong truyền thuyết, cho bạn nuôi nhiều vị cùng lúc, kèm món ăn ngon, nhà đẹp và phụ kiện cho chúng, cùng toàn bộ giao diện của app trong một năm.', en: 'Opens the six spirit beasts, lets you keep several companions at once, adds their good food, their homes and their charms, and every look in the app for a year.' },
     includes: { vi: ['6 linh thú: Phượng Hoàng, Rồng Mây, Kỳ Lân, Tỳ Hưu, Bạch Hạc, Thiên Mã', 'Nuôi nhiều bạn nhỏ cùng lúc', 'Chơi 3 lượt mỗi ngày, chờ 2 giờ giữa hai bữa', '6 món ăn ngon, 6 ngôi nhà và 7 món đồ mặc', '3 mặt sau lá bài, 3 cây thông điệp, 3 đồng xu và 3 trang nhật ký', 'Dùng 12 tháng'], en: ['6 spirit beasts: phoenix, dragon, qilin, pixiu, crane and sky horse', 'Keep several companions at once', '3 turns of play a day, 2 hours between meals', '6 good foods, 6 homes and 7 things to wear', '3 card backs, 3 message trees, 3 coins and 3 diary pages', '12 months of access'] } },
-  { id: 'luck', price: 50000, months: 12, sum: { vi: 'Đồng xu và cây thông điệp, không giới hạn.', en: 'Coin and message tree, unlimited.' }, name: { vi: 'Đồng xu và cây thông điệp', en: 'Coin and message tree' },
+  { id: 'luck', kind: 'unlock', icon: '🍀', to: '#/play/coin', price: 50000, months: 12, sum: { vi: 'Đồng xu và cây thông điệp, không giới hạn.', en: 'Coin and message tree, unlimited.' }, name: { vi: 'Đồng xu và cây thông điệp', en: 'Coin and message tree' },
     blurb: { vi: 'Mở không giới hạn cả hai hoạt động trong một năm: tung đồng xu và rung cây thông điệp bao nhiêu lần tuỳ bạn.', en: 'Unlimited turns at both for a year: flip the coin and shake the message tree as often as you like.' },
     includes: { vi: ['Tung đồng xu không giới hạn', 'Rung cây thông điệp không giới hạn', 'Dùng 12 tháng'], en: ['Unlimited coin flips', 'Unlimited tree shakes', '12 months of access'] } },
-  { id: 'coin', price: 30000, months: 12, sum: { vi: 'Tung đồng xu không giới hạn.', en: 'Unlimited coin flips.' }, name: { vi: 'Đồng xu không giới hạn', en: 'Unlimited coin flips' },
+  { id: 'coin', kind: 'unlock', icon: '🪙', to: '#/play/coin', price: 30000, months: 12, sum: { vi: 'Tung đồng xu không giới hạn.', en: 'Unlimited coin flips.' }, name: { vi: 'Đồng xu không giới hạn', en: 'Unlimited coin flips' },
     blurb: { vi: 'Tung đồng xu bao nhiêu lần tuỳ bạn trong một năm.', en: 'Flip the coin as often as you like for a year.' },
     includes: { vi: ['Tung đồng xu không giới hạn', 'Dùng 12 tháng'], en: ['Unlimited coin flips', '12 months of access'] } },
-  { id: 'tree', price: 30000, months: 12, sum: { vi: 'Rung cây thông điệp không giới hạn.', en: 'Unlimited tree shakes.' }, name: { vi: 'Rung cây không giới hạn', en: 'Unlimited tree shakes' },
+  { id: 'tree', kind: 'unlock', icon: '🌸', to: '#/play/tree', price: 30000, months: 12, sum: { vi: 'Rung cây thông điệp không giới hạn.', en: 'Unlimited tree shakes.' }, name: { vi: 'Rung cây không giới hạn', en: 'Unlimited tree shakes' },
     blurb: { vi: 'Rung cây thông điệp bao nhiêu lần tuỳ bạn trong một năm.', en: 'Shake the message tree as often as you like for a year.' },
     includes: { vi: ['Rung cây thông điệp không giới hạn', 'Dùng 12 tháng'], en: ['Unlimited tree shakes', '12 months of access'] } },
 ];
@@ -1852,6 +1878,11 @@ const STR = {
     angelWhyLadder: 'Đây là số bậc thang: các chữ số tăng dần liền nhau.',
     angelWhyRoot: (r) => 'Cộng các chữ số lại và rút gọn, bạn được số gốc ' + r + '. Bạn đọc theo nhóm số ' + r + '.',
     angelNote: 'Con số thiên thần là một cách đọc dân gian, được ghi lại ở đây để bạn tham khảo. Con số là lời nhắc bạn nhìn lại một việc, không phải lời tiên đoán.',
+    priceReadings: 'Xem bài cùng Nabu', priceReadingsHint: 'Nabu xem trực tiếp cho bạn. Chọn gói, chọn giờ, rồi nhắn cho Nabu.',
+    priceCoursesHint: 'Học theo tốc độ của bạn, xem được cả khi không có mạng.',
+    priceUnlocks: 'Mở thêm trong app', priceUnlocksHint: 'Không phải bài học — là những thứ bạn dùng hàng ngày trong app.',
+    priceOpen: 'Xem thử',
+    priceFree: 'Miễn phí', priceFreeHint: 'Phần lớn app là miễn phí, không cần mã, không cần trả gì. Bạn chạm vào để xem thử.',
     courses: 'Khóa học', coursesPractice: 'Khóa học và thực hành', freeReads: 'Đọc miễn phí', practice: 'Thực hành', lessonsIntro: (n) => 'Khóa học có ' + n + ' bài. Bạn nên học lần lượt và dành khoảng một tuần cho mỗi bài.', markDone: 'Đánh dấu đã học xong', lessonDone: 'Đã học xong', journeyHint: 'Chạm vào một lá để mở trang của lá đó.', lenGridHint: 'Cả 36 lá. Chạm để xem từng lá.',
     aiIntro: 'Bạn có thể hỏi Nabu AI về nội dung đang mở. Câu hỏi càng cụ thể thì câu trả lời càng rõ.', aiIntroLesson: 'Nếu có chỗ nào trong bài bạn chưa hiểu, bạn hãy hỏi Nabu AI tại đây.', aiPlaceholder: 'Ví dụ: lá này nói gì về chuyện tình cảm của mình?', aiAsk: 'Hỏi', aiOnline: 'trả lời bằng AI', aiBuiltin: 'trả lời từ kho kiến thức', aiNote: 'Nabu AI trả lời cả câu hỏi thường lẫn tarot, chiêm tinh, thần số học, và tra cứu mạng khi cần. Chuyện riêng quan trọng, bạn đặt lịch với Nabu.', aiFallback: 'AI đang bận, đây là câu trả lời từ kho kiến thức.',
     aiSugCard: ['Lá này nói gì về tình cảm của mình?', 'Mình có nên tiếp tục không?', 'Khi nào chuyện này xảy ra?'], aiSugLesson: ['Ẩn Chính khác Ẩn Phụ thế nào?', 'Lá hoàng gia là ai?', 'Nếu mình không hiểu một lá thì làm sao?'], aiSugSign: ['Cung này hợp với cung nào?', 'Cung này trong tình yêu thế nào?', 'Mặt Trăng ở cung này là sao?'], aiSugNumbers: ['Số đường đời của mình nói gì?', 'Năm nay của mình là năm gì?', 'Số vận mệnh theo tên mình là gì?'], aiSugGeneral: ['Gã Khờ nghĩa là gì?', 'Sư Tử hợp với Bảo Bình không?', 'Số đường đời của mình?'],
@@ -2282,6 +2313,11 @@ const STR = {
     angelWhyLadder: 'This is a ladder: the digits rise one after another.',
     angelWhyRoot: (r) => 'Adding the digits and reducing gives a root of ' + r + ', so it is read as the ' + r + ' group.',
     angelNote: 'Angel numbers are folk reading, written down here for interest. A number is a prompt to look at something, not a prediction.',
+    priceReadings: 'A reading with Nabu', priceReadingsHint: 'Nabu reads for you directly. Pick a package, pick a time, then send it.',
+    priceCoursesHint: 'Learn at your own pace. Everything works without a connection.',
+    priceUnlocks: 'Open more in the app', priceUnlocksHint: 'Not lessons — these are things you use in the app every day.',
+    priceOpen: 'Take a look',
+    priceFree: 'Free', priceFreeHint: 'Most of this app is free: no code, nothing to pay. Tap anything to try it.',
     courses: 'Courses', coursesPractice: 'Courses and practice', freeReads: 'Free to read', practice: 'Practice', lessonsIntro: (n) => 'The course has ' + n + ' sessions. Take them in order, about one a week.', markDone: 'Mark as done', lessonDone: 'Done', journeyHint: 'Tap a card to open its page.', lenGridHint: 'All 36 cards. Tap one to open it.',
     aiIntro: 'Ask Nabu AI about what you are looking at. The more specific, the better.', aiIntroLesson: 'Anything in this lesson unclear? Ask Nabu AI here.', aiPlaceholder: 'For example: what does this card say about my love life?', aiAsk: 'Ask', aiOnline: 'answered by AI', aiBuiltin: 'answered from the knowledge base', aiNote: 'Nabu AI answers everyday questions as well as tarot, astrology and numerology, and looks things up online when needed. For anything personal and important, book a reading with Nabu.', aiFallback: 'AI is busy; this answer comes from the knowledge base.',
     aiSugCard: ['What does this card say about my love life?', 'Should I keep going?', 'When will this happen?'], aiSugLesson: ['How do Majors differ from Minors?', 'Who are the court cards?', 'What if I do not understand a card?'], aiSugSign: ['Which signs suit this sign?', 'How is this sign in love?', 'What does the Moon in this sign mean?'], aiSugNumbers: ['What does my life path say?', 'What kind of year is this for me?', 'What is my destiny number from my name?'], aiSugGeneral: ['What does The Fool mean?', 'Do Leo and Aquarius get along?', 'What is my life path?'],
@@ -15906,12 +15942,52 @@ function priceSheetHTML(interactive) {
       : '<div class="pkg"><span>' + esc(L(p.name)) + '</span><b>' + priceHTML(p.price, 'reading', s.id) + '</b></div>')).join('') + '</div></div>').join('')
     + '<p class="paynote">💜 ' + esc(L(PAYMENT_NOTE)) + '</p>';
 }
+/* One shape for every paid thing on the page: a tile of one size, a name, one
+   line about it, what it costs, and where it leads. Nothing on this page is
+   allowed to be a different shape from anything else. */
+function priceCardHTML(c) {
+  const S = T();
+  const label = c.kind === 'course' ? (S.cats[c.id] || L(c.name)) : S.priceOpen;
+  return '<div class="svc ' + (c.kind === 'course' ? 'lav' : 'gold') + '">'
+    + '<div class="t"><span class="ic">' + c.icon + '</span><div><b>' + esc(L(c.name)) + '</b>'
+    + '<div class="tag">' + esc(L(c.sum)) + '</div></div></div>'
+    + (isTWA() ? '' : '<div class="pk"><div class="pkg"><span>' + c.months + ' ' + esc(S.months6) + '</span><b>' + priceHTML(c.price, 'unlock', c.id) + '</b></div></div>')
+    + '<a class="btn sm block" href="' + esc(c.to) + '" style="margin-top:8px">' + esc(label) + ' \u2192</a></div>';
+}
+
+/* What the app gives away. Somebody reading a price list has no way of knowing
+   how much of this costs nothing unless the price list says so. */
+function freeGridHTML() {
+  const S = T(), vi = lang === 'vi';
+  const rows = [
+    ['#/pick', DRAW_ICON, S.nav.pick, vi ? 'm\u1ed7i ng\u00e0y m\u1ed9t l\u00e1' : 'a card a day'],
+    ['#/learn/astro', '\uD83D\uDD2E', S.cats.astro, S.catSub.astro],
+    ['#/learn/angel', '\uD83D\uDC7C', S.cats.angel, S.catSub.angel],
+    ['#/learn/fortune', '\uD83D\uDD22', S.cats.fortune, S.catSub.fortune],
+    ['#/play/pet', '\uD83D\uDC3E', S.petTitle, vi ? 'm\u1ed9t b\u1ea1n nh\u1ecf' : 'one companion'],
+    ['#/play/tree', '\uD83C\uDF38', S.treeTitle, vi ? '1 l\u01b0\u1ee3t m\u1ed7i tu\u1ea7n' : 'once a week'],
+    ['#/play/coin', '\uD83E\uDE99', S.coinTitle, vi ? '1 l\u01b0\u1ee3t m\u1ed7i tu\u1ea7n' : 'once a week'],
+    ['#/play/diary', '\uD83D\uDCD4', S.diaryTitle, S.diarySub],
+    ['#/love', loveMarkSVG('tied'), S.loveTitle, S.loveSub],
+    ['#/play/piles', PILE_ICON, S.actTypes.pile, vi ? 'khi Nabu \u0111\u0103ng' : 'when Nabu posts'],
+    ['#/play/polls', '\uD83D\uDCCA', S.actTypes.poll, vi ? 'khi Nabu \u0111\u0103ng' : 'when Nabu posts'],
+    ['#/play/wishes', '\uD83C\uDF20', S.actTypes.wish, vi ? 'khi Nabu \u0111\u0103ng' : 'when Nabu posts']
+  ];
+  return '<div class="freegrid">' + rows.map((r) => '<a class="fg" href="' + r[0] + '">'
+    + '<span class="ic">' + r[1] + '</span><b>' + esc(r[2]) + '</b><span class="s">' + esc(r[3]) + '</span></a>').join('') + '</div>';
+}
+
 function renderPrices() {
   const S = T(), m = $('#main');
-  m.innerHTML = '<div class="eyebrow">' + esc(CONFIG.brand) + '</div><h1 style="margin-bottom:6px">' + esc(S.priceTitle) + '</h1><p class="muted">' + esc(S.priceIntro) + '</p>'
-    + priceSheetHTML(false) + '<a class="btn primary block" href="#/book">' + esc(S.ctaBook) + '</a>'
-    + '<h2 style="margin:24px 0 10px">' + esc(S.courses) + '</h2>' + COURSES.map((c) => '<div class="svc lav"><div class="t"><span class="ic">' + (c.id === 'tarot' ? PICK_ICON : '🗝️') + '</span><div><b>' + esc(L(c.name)) + '</b><div class="tag">' + esc(L(c.blurb)) + '</div></div></div>'
-      + (isTWA() ? '' : '<div class="pk"><div class="pkg"><span>' + c.months + ' ' + esc(S.months6) + '</span><b>' + priceHTML(c.price, 'unlock', c.id) + '</b></div></div>') + '<a class="btn sm block" href="#/learn/' + c.id + '" style="margin-top:8px">' + esc(S.cats[c.id]) + ' →</a></div>').join('');
+  const sec = (n, title, hint, body) => '<div class="sec pricesec"><h2><i>' + n + '</i>' + esc(title) + '</h2>'
+    + (hint ? '<p class="hint">' + esc(hint) + '</p>' : '') + body + '</div>';
+  const of = (k) => COURSES.filter((c) => c.kind === k).map(priceCardHTML).join('');
+  m.innerHTML = '<div class="eyebrow">' + esc(CONFIG.brand) + '</div>'
+    + '<h1 style="margin-bottom:6px">' + esc(S.priceTitle) + '</h1><p class="muted">' + esc(S.priceIntro) + '</p>'
+    + sec(1, S.priceReadings, S.priceReadingsHint, priceSheetHTML(false) + '<a class="btn primary block" href="#/book">' + esc(S.ctaBook) + '</a>')
+    + sec(2, S.courses, S.priceCoursesHint, of('course'))
+    + sec(3, S.priceUnlocks, S.priceUnlocksHint, of('unlock'))
+    + sec(4, S.priceFree, S.priceFreeHint, freeGridHTML());
 }
 
 async function renderBook(args, params) {
@@ -17520,7 +17596,7 @@ function adminSale(p) {
 ROUTES.admin = { nav: '', render: renderAdmin };
 
 /* ============================ boot ============================ */
-window.APP_VERSION = 'v118';
+window.APP_VERSION = 'v119';
 window.NABU = { CONFIG: CONFIG, SALE: SALE, salePrice: salePrice, loadActs: loadActs, BACK: BACK, LESSONS: LESSONS, localAnswer: localAnswer, compatVerdict: compatVerdict, numerologyOf: numerologyOf, ZDEEP: ZDEEP, lunarToday: lunarToday, solarToLunar: solarToLunar, DECK: DECK, INSIGHT: INSIGHT, KW: KW, ASK: ASK, TOPICS: TOPICS, GUIDES: GUIDES, SERVICES: SERVICES, COURSES: COURSES, ACCESS: ACCESS, ZODIAC: ZODIAC, pick: pick, book: book,
   insightHTML: insightHTML, insightOf: insightOf, sunSignIndex: sunSignIndex, lifePath: lifePath, PROFILE: () => PROFILE, BE: BE, ACTS: ACTS,
   ANGELS: ANGELS, angelRead: angelRead, CODEBOOK: CODEBOOK, verifyCode: verifyCode, petHomeSVG: petHomeSVG, PET_HOMES: PET_HOMES, PET_WEARS: PET_WEARS, codeDigest: codeDigest, randomCode: randomCode, BANK: BANK, PETS: PETS, petSVG: petSVG, PET_COATS: PET_COATS, PET_KINDS: PET_KINDS, luckCut: luckCut, petLevel: petLevel, petStep: petStep, VOUCHERS: VOUCHERS, levelCoins: levelCoins, LOOKS: LOOKS,
