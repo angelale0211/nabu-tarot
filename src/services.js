@@ -74,6 +74,10 @@ const COURSES = [
   { id: 'manifest', price: 75000, months: 12, sum: { vi: '7 phương pháp, mỗi bài một công cụ.', en: '7 methods, one tool with each.' }, name: { vi: 'Bộ Manifestation', en: 'Manifestation set' },
     blurb: { vi: 'Bảy phương pháp có công cụ làm ngay trong app: WOOP, bảng tầm nhìn có ảnh, nghi thức trăng, kế hoạch nếu-thì, buông bỏ, giới hạn, nến và đá. Mọi thứ bạn viết được lưu trên máy và có thể xoá làm lại bất cứ lúc nào.', en: 'Seven methods with tools you use right in the app: WOOP, a vision board with photos, Moon rituals, if-then plans, letting go, limits, candles and stones. Everything you write is saved on your device and can be cleared and redone any time.' },
     includes: { vi: ['7 bài hướng dẫn nâng cao', 'Bảng ảnh, kế hoạch, nghi thức, buông bỏ', 'Nến và đá theo mục đích', 'Dùng 12 tháng, xem offline'], en: ['7 advanced guides', 'Photo board, plans, ritual and letting-go tools', 'Candles and stones by purpose', '12 months of access, works offline'] } },
+  { id: 'pro', price: 120000, months: 12, sum: { vi: 'Cả bốn bạn nhỏ may mắn và mọi giao diện đẹp.', en: 'All four luck companions and every look.' },
+    name: { vi: 'Nabu Tarot Plus', en: 'Nabu Tarot Plus' },
+    blurb: { vi: 'Mở cả bốn bạn nhỏ may mắn cùng món ăn ngon, nhà đẹp và phụ kiện cho chúng, thêm toàn bộ giao diện của app trong một năm: ba mặt sau lá bài, ba cây thông điệp, ba đồng xu và ba trang nhật ký.', en: 'Opens all four luck companions with their good food, their homes and their charms, plus every look in the app for a year: three more card backs, three more message trees, three more coins and three more diary pages.' },
+    includes: { vi: ['Nuôi cả 4 bạn nhỏ may mắn', '6 món ăn ngon, 3 ngôi nhà và 4 phụ kiện', '4 màu lông đặc biệt', '3 mặt sau lá bài và 3 cây thông điệp', '3 đồng xu và 3 trang nhật ký', 'Dùng 12 tháng'], en: ['Keep all 4 luck companions', '6 good foods, 3 homes and 4 charms', '4 special coats', '3 more card backs and 3 more message trees', '3 more coins and diary pages', '12 months of access'] } },
   { id: 'luck', price: 50000, months: 12, sum: { vi: 'Đồng xu và cây thông điệp, không giới hạn.', en: 'Coin and message tree, unlimited.' }, name: { vi: 'Đồng xu và cây thông điệp', en: 'Coin and message tree' },
     blurb: { vi: 'Mở không giới hạn cả hai hoạt động trong một năm: tung đồng xu và rung cây thông điệp bao nhiêu lần tuỳ bạn.', en: 'Unlimited turns at both for a year: flip the coin and shake the message tree as often as you like.' },
     includes: { vi: ['Tung đồng xu không giới hạn', 'Rung cây thông điệp không giới hạn', 'Dùng 12 tháng'], en: ['Unlimited coin flips', 'Unlimited tree shakes', '12 months of access'] } },
@@ -85,4 +89,5 @@ const COURSES = [
     includes: { vi: ['Rung cây thông điệp không giới hạn', 'Dùng 12 tháng'], en: ['Unlimited tree shakes', '12 months of access'] } },
 ];
 const PAYMENT_NOTE = { vi: 'Vui lòng chuyển khoản trước khi xem.', en: 'Please transfer the fee in advance.' };
-const fmtPrice = (n) => String(n).replace(/\B(?=(\d{3})+(?!\d))/g, '.') + 'đ';
+const fmtNum = (n) => String(Math.round(Number(n) || 0)).replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+const fmtPrice = (n) => fmtNum(n) + 'đ';

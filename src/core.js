@@ -133,14 +133,14 @@ function courseHash(str) {
   for (let i = 0; i < str.length; i++) { const c = str.charCodeAt(i); h1 = Math.imul(h1 ^ c, 16777619) >>> 0; h2 = (Math.imul(h2, 33) + c) >>> 0; }
   return (h1.toString(36) + h2.toString(36)).toUpperCase().replace(/[^A-Z0-9]/g, '').slice(-4).padStart(4, 'X');
 }
-const CODE_LETTER = { tarot: 'T', manifest: 'M', playing: 'P', coin: 'C', tree: 'Y', luck: 'B', lenormand: 'L' };
-const CODE_COURSE = { T: 'tarot', M: 'manifest', P: 'playing', C: 'coin', Y: 'tree', B: 'luck', L: 'lenormand' };
+const CODE_LETTER = { tarot: 'T', manifest: 'M', playing: 'P', coin: 'C', tree: 'Y', luck: 'B', pro: 'S', lenormand: 'L' };
+const CODE_COURSE = { T: 'tarot', M: 'manifest', P: 'playing', C: 'coin', Y: 'tree', B: 'luck', S: 'pro', L: 'lenormand' };
 function makeCode(course, untilISO) {
   const d = untilISO.replace(/-/g, '').slice(2), Lt = CODE_LETTER[course] || 'L';
   return 'NABU-' + Lt + '-' + d + '-' + courseHash(Lt + d + CONFIG.courseSecret);
 }
 function parseCode(code) {
-  const m = /^NABU-([TLMPCYB])-(\d{6})-([A-Z0-9]{4})$/.exec(String(code || '').trim().toUpperCase().replace(/\s+/g, ''));
+  const m = /^NABU-([TLMPCYBS])-(\d{6})-([A-Z0-9]{4})$/.exec(String(code || '').trim().toUpperCase().replace(/\s+/g, ''));
   if (!m || courseHash(m[1] + m[2] + CONFIG.courseSecret) !== m[3]) return null;
   const course = CODE_COURSE[m[1]];
   return { course: course, courses: course === 'luck' ? ['coin', 'tree', 'luck'] : [course], until: '20' + m[2].slice(0, 2) + '-' + m[2].slice(2, 4) + '-' + m[2].slice(4, 6) };
@@ -200,6 +200,8 @@ function backSVG() {
     + '</svg>';
 }
 const BACK = backSVG();
+/* Drawn fresh each time, because the visitor can change the look. */
+const backNow = () => (typeof LOOKS === 'undefined' ? BACK : backSVGFor());
 /* The logo's three cards, for the home block. */
 function logoCardSVG(kind) {
   const fill = kind === 'blue' ? '#AFC8F0' : kind === 'pink' ? '#F6BBCB' : '#3D2A6E';

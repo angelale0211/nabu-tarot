@@ -170,12 +170,23 @@ function actButtonHTML(a) {
   const S = T(), mine = myChoices()[a.id];
   return '<a class="actbtn act-' + esc(a.type) + (actOpen(a) ? ' live' : '') + '" href="#/play/' + esc(a.id) + '"><span class="ic">' + (S.actTypeIcon[a.type] || '🎲') + '</span><span class="body"><b>' + esc(L(a.title)) + '</b><span class="meta">' + esc(fmtDate(a.date)) + ' · ' + esc(S.actTypes[a.type] || a.type) + ' · ' + esc(actStatus(a)) + (a.type === 'pile' && mine != null ? ' · ' + esc(S.actPicked(Number(mine) + 1)) : '') + '</span></span><span class="chev">›</span></a>';
 }
+/* The row in the activities list carries whichever companions are kept, and
+   says which of them still needs feeding today. */
+function petRowHTML(S) {
+  const pets = PETS.all(), hungry = pets.filter((p) => !PETS.fedToday(p));
+  const title = pets.length === 1 ? (pets[0].name || L(PET_NAMES[pets[0].kind])) : (pets.length ? S.petLuckTotal(pets.length) : S.petTitle);
+  const meta = !pets.length ? S.petSub : (hungry.length ? S.petFeedWith(L(PETS.food(hungry[0]).name)) : S.petFedToday);
+  return '<a class="actbtn act-pet live" href="#/play/pet"><span class="ic">🐾</span><span class="body"><b>' + esc(title) + '</b><span class="meta">' + esc(meta) + '</span></span><span class="go">›</span></a>';
+}
 async function renderPlay(args) {
   const S = T(), m = $('#main');
-  const list = (await loadActs()).slice().sort((a, b) => String(b.date).localeCompare(String(a.date)));
+  /* The four built-in screens are answered before the cloud list is fetched, so
+     a slow or failed connection never leaves one of them blank. */
   if (args && args[0] === 'diary') { renderDiary(); return; }
   if (args && args[0] === 'coin') { renderCoin(); return; }
   if (args && args[0] === 'tree') { renderTree(); return; }
+  if (args && args[0] === 'pet') { renderPet(); return; }
+  const list = (await loadActs()).slice().sort((a, b) => String(b.date).localeCompare(String(a.date)));
   if (args && args[0]) {
     const a = list.filter((x) => x.id === args[0])[0];
     if (!a) { redirect('#/play'); return; }
@@ -185,6 +196,7 @@ async function renderPlay(args) {
   }
   const diaryN = Object.keys(store.get('nabu-diary', {}) || {}).length;
   m.innerHTML = '<div class="eyebrow">' + esc(CONFIG.brand) + '</div><h1 style="margin-bottom:6px">' + esc(S.actTitle) + '</h1><p class="muted">' + esc(S.actIntro) + '</p><div id="acts" class="actlist">'
+    + petRowHTML(S)
     + '<a class="actbtn act-tree live" href="#/play/tree"><span class="ic">🌸</span><span class="body"><b>' + esc(S.treeTitle) + '</b><span class="meta">' + esc(S.treeSub) + '</span></span><span class="go">›</span></a>'
     + '<a class="actbtn act-coin live" href="#/play/coin"><span class="ic">🪙</span><span class="body"><b>' + esc(S.coinTitle) + '</b><span class="meta">' + esc(S.coinSub) + '</span></span><span class="go">›</span></a>'
     + '<a class="actbtn act-diary live" href="#/play/diary"><span class="ic">📔</span><span class="body"><b>' + esc(S.diaryTitle) + '</b><span class="meta">' + esc(S.diarySub) + (diaryN ? ' · ' + esc(S.diaryCount(diaryN)) : '') + '</span></span><span class="chev">›</span></a>'
@@ -280,36 +292,84 @@ const TREE_MSGS = [
   { vi: 'Tối nay bạn hãy đi ngủ sớm. Ngày mai sẽ mang một màu khác, và bạn sẽ nhìn mọi chuyện rõ ràng hơn.', en: 'Go to bed early tonight. Tomorrow will carry a different colour, and you will see everything more clearly.' },
   { vi: 'Bạn đã đi qua những ngày khó hơn ngày hôm nay rất nhiều, và bạn vẫn ở đây. Điều đó nói lên rất nhiều về bạn.', en: 'You have walked through days far harder than this one, and you are still here. That says a great deal about you.' }
 ];
-function treeSVG() {
-  const petal5 = (x, y, r) => [0, 72, 144, 216, 288].map((a) => '<ellipse cx="' + x + '" cy="' + (y - r * 0.66) + '" rx="' + (r * 0.44).toFixed(1) + '" ry="' + (r * 0.66).toFixed(1) + '" fill="#F7A9C6" transform="rotate(' + a + ' ' + x + ' ' + y + ')"/>').join('') + '<circle cx="' + x + '" cy="' + y + '" r="' + (r * 0.3).toFixed(1) + '" fill="#FFE9A8"/>';
-  // canopy: many soft puffs in three pinks, so the edge reads as blossom, not as circles
-  const puffs = [[86, 92, 40, '#F3BFD4', .55], [136, 68, 46, '#F7CBDD', .6], [190, 88, 42, '#F3BFD4', .55],
-                 [60, 122, 32, '#EFB3CB', .5], [110, 116, 40, '#F7CBDD', .55], [168, 120, 38, '#EFB3CB', .5],
-                 [216, 118, 30, '#F3BFD4', .5], [140, 104, 48, '#FAD8E6', .55], [98, 60, 30, '#FAD8E6', .5],
-                 [178, 58, 28, '#FAD8E6', .5], [240, 96, 22, '#F3BFD4', .45], [40, 96, 22, '#F3BFD4', .45]];
-  const blooms = [[70, 66, 9], [112, 44, 10], [156, 40, 9], [198, 60, 9], [232, 86, 8], [46, 100, 8],
-                  [92, 92, 10], [136, 78, 10], [180, 92, 9], [218, 112, 8], [66, 132, 8], [110, 130, 9],
-                  [152, 122, 10], [196, 132, 8], [128, 106, 8], [172, 66, 8], [88, 118, 7], [244, 118, 7]];
+/* Four trees. The free one is the cherry in daylight; the others come with
+   Plus and are the reason to want it, so each has something the first has not:
+   fireflies that drift, stars that breathe, butterflies that circle. */
+function treeSVGFor(id, still) {
+  const look = id || LOOKS.get('tree');
+  if (look === 'night') return treeNightSVG(still);
+  if (look === 'galaxy') return treeGalaxySVG(still);
+  if (look === 'butterfly') return treeButterflySVG(still);
+  return treeSakuraSVG();
+}
+function treeCanopy(puffs, blooms, petalColour) {
+  const petal5 = (x, y, r) => [0, 72, 144, 216, 288].map((a) => '<ellipse cx="' + x + '" cy="' + (y - r * 0.66) + '" rx="' + (r * 0.44).toFixed(1) + '" ry="' + (r * 0.66).toFixed(1) + '" fill="' + petalColour + '" transform="rotate(' + a + ' ' + x + ' ' + y + ')"/>').join('') + '<circle cx="' + x + '" cy="' + y + '" r="' + (r * 0.3).toFixed(1) + '" fill="#FFE9A8"/>';
+  return puffs.map((p) => '<circle cx="' + p[0] + '" cy="' + p[1] + '" r="' + p[2] + '" fill="' + p[3] + '" opacity="' + p[4] + '"/>').join('')
+    + blooms.map((b) => '<g>' + petal5(b[0], b[1], b[2]) + '</g>').join('');
+}
+const TREE_TRUNK = '<path d="M126 238 C124 210 122 190 116 172 C110 154 100 140 88 128 L96 120 C110 132 122 146 130 162 C132 150 133 140 134 130 L146 130 C147 142 149 154 152 166 C160 148 174 132 190 120 L197 128 C182 141 170 156 162 174 C155 192 154 214 154 238 Z" fill="#7A5539"/>'
+  + '<path d="M134 130 C133 150 132 176 133 200 C134 216 135 228 136 238 L146 238 C145 226 144 212 144 196 C144 172 145 150 146 130 Z" fill="#6B4A32"/>'
+  + '<path d="M136 168 C142 156 152 146 164 138" stroke="#7A5539" stroke-width="4" fill="none" stroke-linecap="round"/>'
+  + '<path d="M133 152 C126 143 116 136 106 131" stroke="#7A5539" stroke-width="3.6" fill="none" stroke-linecap="round"/>';
+const TREE_PUFFS = [[86, 92, 40], [136, 68, 46], [190, 88, 42], [60, 122, 32], [110, 116, 40], [168, 120, 38], [216, 118, 30], [140, 104, 48], [98, 60, 30], [178, 58, 28], [240, 96, 22], [40, 96, 22]];
+const TREE_BLOOMS = [[70, 66, 9], [112, 44, 10], [156, 40, 9], [198, 60, 9], [232, 86, 8], [46, 100, 8], [92, 92, 10], [136, 78, 10], [180, 92, 9], [218, 112, 8], [66, 132, 8], [110, 130, 9], [152, 122, 10], [196, 132, 8], [128, 106, 8], [172, 66, 8], [88, 118, 7], [244, 118, 7]];
+function treeShell(inner, glowFrom) {
   return '<svg viewBox="-6 -30 292 290" role="img" aria-hidden="true">'
-    + '<defs><radialGradient id="tglow" cx="50%" cy="36%" r="62%"><stop offset="0%" stop-color="#FFF3C4" stop-opacity=".7"/><stop offset="100%" stop-color="#FFF3C4" stop-opacity="0"/></radialGradient></defs>'
+    + '<defs><radialGradient id="tglow" cx="50%" cy="36%" r="62%"><stop offset="0%" stop-color="' + glowFrom + '" stop-opacity=".7"/><stop offset="100%" stop-color="' + glowFrom + '" stop-opacity="0"/></radialGradient></defs>'
     + '<circle cx="140" cy="94" r="118" fill="url(#tglow)"/>'
     + '<ellipse cx="140" cy="238" rx="76" ry="9" fill="#C9A5D8" opacity=".3"/>'
-    // trunk: one filled shape, wide at the root and splitting into two limbs
-    + '<path d="M126 238 C124 210 122 190 116 172 C110 154 100 140 88 128 L96 120 C110 132 122 146 130 162 C132 150 133 140 134 130 L146 130 C147 142 149 154 152 166 C160 148 174 132 190 120 L197 128 C182 141 170 156 162 174 C155 192 154 214 154 238 Z" fill="#7A5539"/>'
-    + '<path d="M134 130 C133 150 132 176 133 200 C134 216 135 228 136 238 L146 238 C145 226 144 212 144 196 C144 172 145 150 146 130 Z" fill="#6B4A32"/>'
-    + '<path d="M136 168 C142 156 152 146 164 138" stroke="#7A5539" stroke-width="4" fill="none" stroke-linecap="round"/>'
-    + '<path d="M133 152 C126 143 116 136 106 131" stroke="#7A5539" stroke-width="3.6" fill="none" stroke-linecap="round"/>'
-    + puffs.map((p) => '<circle cx="' + p[0] + '" cy="' + p[1] + '" r="' + p[2] + '" fill="' + p[3] + '" opacity="' + p[4] + '"/>').join('')
-    + blooms.map((b) => '<g>' + petal5(b[0], b[1], b[2]) + '</g>').join('')
-    + '<g fill="#FFF3C4"><circle cx="34" cy="58" r="2.2"/><circle cx="252" cy="70" r="2.4"/><circle cx="246" cy="34" r="1.6"/><circle cx="26" cy="140" r="1.8"/><circle cx="258" cy="150" r="1.6"/></g>'
-    + '</svg>';
+    + TREE_TRUNK + inner + '</svg>';
+}
+function treeSakuraSVG() {
+  const tones = ['#F3BFD4', '#F7CBDD', '#F3BFD4', '#EFB3CB', '#F7CBDD', '#EFB3CB', '#F3BFD4', '#FAD8E6', '#FAD8E6', '#FAD8E6', '#F3BFD4', '#F3BFD4'];
+  const op = [.55, .6, .55, .5, .55, .5, .5, .55, .5, .5, .45, .45];
+  const puffs = TREE_PUFFS.map((p, i) => [p[0], p[1], p[2], tones[i], op[i]]);
+  return treeShell(treeCanopy(puffs, TREE_BLOOMS, '#F7A9C6')
+    + '<g fill="#FFF3C4"><circle cx="34" cy="58" r="2.2"/><circle cx="252" cy="70" r="2.4"/><circle cx="246" cy="34" r="1.6"/><circle cx="26" cy="140" r="1.8"/><circle cx="258" cy="150" r="1.6"/></g>', '#FFF3C4');
+}
+function treeNightSVG(still) {
+  const puffs = TREE_PUFFS.map((p, i) => [p[0], p[1], p[2], i % 2 ? '#3B3168' : '#4A3E80', .72]);
+  let flies = '';
+  [[62, 78], [104, 58], [158, 74], [206, 96], [86, 128], [178, 132], [126, 96], [232, 70]].forEach((f, i) => {
+    flies += '<circle class="fly' + (still ? '' : ' lit') + '" cx="' + f[0] + '" cy="' + f[1] + '" r="3.4" fill="#FFE9A8" style="animation-delay:' + (i * 320) + 'ms"/>';
+  });
+  return treeShell(treeCanopy(puffs, TREE_BLOOMS.slice(0, 10), '#8E7FD6')
+    + '<g fill="#FFF3C4" opacity=".9"><circle cx="30" cy="44" r="1.8"/><circle cx="250" cy="52" r="2"/><circle cx="210" cy="24" r="1.4"/><circle cx="60" cy="20" r="1.6"/></g>' + flies, '#2E2756');
+}
+function treeGalaxySVG(still) {
+  const puffs = TREE_PUFFS.map((p, i) => [p[0], p[1], p[2], i % 3 === 0 ? '#4B3A8F' : (i % 3 === 1 ? '#6C4FB8' : '#8A5FD0'), .6]);
+  let stars = '';
+  for (let i = 0; i < 26; i++) {
+    const x = 24 + (i * 37) % 232, y = 26 + (i * 53) % 120, r = 1 + (i % 3) * 0.7;
+    stars += '<circle class="twinkle' + (still ? ' still' : '') + '" cx="' + x + '" cy="' + y + '" r="' + r + '" fill="#FFF3C4" style="animation-delay:' + (i * 170) + 'ms"/>';
+  }
+  const shine = (x, y, r) => '<path d="M' + x + ' ' + (y - r) + ' Q' + x + ' ' + y + ' ' + (x + r) + ' ' + y + ' Q' + x + ' ' + y + ' ' + x + ' ' + (y + r) + ' Q' + x + ' ' + y + ' ' + (x - r) + ' ' + y + ' Q' + x + ' ' + y + ' ' + x + ' ' + (y - r) + ' Z" fill="#FFF3C4"/>';
+  return treeShell(treeCanopy(puffs, [], '#B79BF0') + stars + shine(140, 70, 15) + shine(96, 108, 9) + shine(196, 96, 8), '#3A2A72');
+}
+function treeButterflySVG(still) {
+  const puffs = TREE_PUFFS.map((p, i) => [p[0], p[1], p[2], i % 2 ? '#CFE7C4' : '#B9DCAC', .6]);
+  const wing = (x, y, c, i) => '<g class="flit' + (still ? ' still' : '') + '" style="animation-delay:' + (i * 430) + 'ms" transform="translate(' + x + ',' + y + ')">'
+    + '<ellipse cx="-5" cy="0" rx="6" ry="8" fill="' + c + '" opacity=".95"/><ellipse cx="5" cy="0" rx="6" ry="8" fill="' + c + '" opacity=".95"/>'
+    + '<ellipse cx="-4" cy="6" rx="4" ry="5" fill="' + c + '" opacity=".8"/><ellipse cx="4" cy="6" rx="4" ry="5" fill="' + c + '" opacity=".8"/>'
+    + '<rect x="-1" y="-7" width="2" height="15" rx="1" fill="#6B4A32"/></g>';
+  return treeShell(treeCanopy(puffs, TREE_BLOOMS.slice(0, 12), '#F4D06F')
+    + wing(76, 74, '#F5A6C9', 0) + wing(196, 66, '#F7D488', 1) + wing(132, 44, '#A8CFF5', 2) + wing(226, 118, '#F5A6C9', 3) + wing(58, 122, '#F7D488', 4), '#FFF6DA');
+}
+function treeSVG() { return treeSVGFor(); }
+/* The companions stand at the foot of the tree, so the two screens read as one
+   garden. Tapping one opens its own page. */
+function treePetHTML() {
+  const pets = PETS.all();
+  if (!pets.length) return '';
+  return '<span class="treepets">' + pets.map((p) => '<a class="treepet" href="#/play/pet" aria-label="' + esc(p.name || L(PET_NAMES[p.kind])) + '">'
+    + petSVG(p.kind, PETS.coat(p), PETS.fedToday(p) ? 'happy' : '', PETS.wear(p)) + '</a>').join('') + '</span>';
 }
 function renderTree() {
   const S = T(), m = $('#main');
   let msg = null, busy = false;
   const draw = () => {
     m.innerHTML = '<div class="eyebrow">' + esc(S.actTitle) + '</div><h1 style="margin-bottom:6px">🌸 ' + esc(S.treeTitle) + '</h1><p class="muted">' + esc(S.treeIntro) + '</p>'
-      + '<div class="card treewrap"><button type="button" class="tree" id="tree" aria-label="' + esc(S.treeShake) + '">' + treeSVG() + '<span class="petals" id="petals"></span></button>'
+      + '<div class="card treewrap">' + treePetHTML() + '<button type="button" class="tree" id="tree" aria-label="' + esc(S.treeShake) + '">' + treeSVG() + '<span class="petals" id="petals"></span></button>'
       + '<div class="treemsg" id="treemsg"' + (msg ? '' : ' hidden') + '><div class="eyebrow">' + esc(S.treeFor) + '</div><p id="treetext">' + (msg ? esc(L(msg)) : '') + '</p></div>'
       + (luckSpent('tree') ? '' : '<button class="btn primary block" id="shake">' + esc(msg ? S.treeAgain : S.treeShake) + '</button>') + '</div>'
       + luckPanelHTML('tree')
@@ -381,19 +441,23 @@ const COIN_SIZE = {
 /* Both faces are struck the same way: one ornament, one type size worked out
    from the longer of the two words, and the pair centred as a block. Turning
    the coin over changes the word and nothing else. */
-function coinFaceSVG(side) {
-  const S = T();
+function coinFaceSVG(side) { return coinFaceFor(coinMetal(), side); }
+function coinFaceFor(metal, side) {
+  const S = T(), mtl = metal || coinMetal();
   const size = COIN_SIZE.get();
-  // Drawn around the origin, then shifted so the crescent's own middle sits on
-  // the coin's centre line. The same mark is used in every language.
-  const ornament = '<g transform="translate(86.5,58)" fill="#5A3F18" opacity=".9"><path d="M0 -13 A13 13 0 1 0 0 13 A10 10 0 1 1 0 -13 Z"/></g>';
+  // The mark and the word are placed as one block whose middle lands on the
+  // middle of the coin, so the pair is centred whatever size the word needs.
+  const cap = size * 0.72;
+  const markY = 80 - (6 + cap) / 2;
+  const wordY = markY + 19 + cap;
+  const ornament = '<g transform="translate(86.5,' + markY.toFixed(1) + ')" fill="' + mtl.ink + '" opacity=".9"><path d="M0 -13 A13 13 0 1 0 0 13 A10 10 0 1 1 0 -13 Z"/></g>';
   const word = side ? (side === 'yes' ? S.coinYes : S.coinNo) : '';
   return '<svg viewBox="0 0 160 160" aria-hidden="true">'
-    + '<circle cx="80" cy="80" r="74" fill="#E5BE5E" stroke="#B9913B" stroke-width="5"/>'
-    + '<circle cx="80" cy="80" r="60" fill="none" stroke="#B9913B" stroke-width="2"/>'
+    + '<circle cx="80" cy="80" r="74" fill="' + mtl.face + '" stroke="' + mtl.rim + '" stroke-width="5"/>'
+    + '<circle cx="80" cy="80" r="60" fill="none" stroke="' + mtl.rim + '" stroke-width="2"/>'
     + (side
-      ? ornament + '<text x="80" y="113" text-anchor="middle" font-family="Georgia,serif" font-weight="700" font-size="' + size + '" letter-spacing="1" fill="#5A3F18">' + esc(word) + '</text>'
-      : '<text x="80" y="102" text-anchor="middle" font-family="Georgia,serif" font-size="62" fill="#B9913B">?</text>')
+      ? ornament + '<text x="80" y="' + wordY.toFixed(1) + '" text-anchor="middle" font-family="Georgia,serif" font-weight="700" font-size="' + size + '" letter-spacing="1" fill="' + mtl.ink + '">' + esc(word) + '</text>'
+      : '<text x="80" y="102" text-anchor="middle" font-family="Georgia,serif" font-size="62" fill="' + mtl.rim + '">?</text>')
     + '</svg>';
 }
 function renderCoin() {
@@ -441,7 +505,7 @@ function renderDiary() {
   const draw = () => {
     const d = all(), cur = d[today] || { m: '', t: '' }, days = Object.keys(d).filter((k) => k !== today).sort().reverse();
     m.innerHTML = '<div class="eyebrow">' + esc(S.actTitle) + '</div><h1 style="margin-bottom:6px">📔 ' + esc(S.diaryTitle) + '</h1><p class="muted">' + esc(S.diaryIntro) + '</p>'
-      + '<div class="card diary"><div class="date"><span>' + esc(S.diaryToday) + ' · ' + esc(fmtDate(today)) + '</span><span class="faint" id="dsaved">' + (cur.t || cur.m ? esc(S.diarySaved) : '') + '</span></div>'
+      + '<div class="card diary ' + diaryPaperClass() + '"><div class="date"><span>' + esc(S.diaryToday) + ' · ' + esc(fmtDate(today)) + '</span><span class="faint" id="dsaved">' + (cur.t || cur.m ? esc(S.diarySaved) : '') + '</span></div>'
       + '<p class="hint" style="margin:8px 0 6px">' + esc(S.diaryMood) + '</p><div class="moods">' + MOODS.map((x) => '<button type="button" class="mood' + (cur.m === x ? ' on' : '') + '" data-mood="' + x + '">' + x + '</button>').join('') + '</div>'
       + '<textarea id="dtext" placeholder="' + esc(S.diaryPh) + '">' + esc(cur.t || '') + '</textarea></div>'
       + '<h3 style="margin:16px 0 8px">' + esc(S.diaryPast) + (days.length ? ' <span class="faint">· ' + esc(S.diaryCount(days.length + (cur.t || cur.m ? 1 : 0))) + '</span>' : '') + '</h3>'

@@ -770,6 +770,7 @@ main{padding:22px 0 30px}
 .tip{background:var(--tag-lav-bg,var(--surface-2));color:var(--fg);border-radius:12px;padding:10px 12px;font-size:14.5px;line-height:1.5;margin:10px 0 4px}
 /* instruction rows: icon column + text, every row starts at the same edge */
 .notes{margin:2px 0 8px}.note{display:flex;gap:10px;align-items:flex-start;font-size:14.5px;line-height:1.5;color:var(--fg-soft);margin:0 0 8px}.note .ni{flex:none;width:22px;text-align:center;font-size:16px;line-height:1.35}
+.melinks{display:grid;grid-template-columns:1fr 1fr;gap:8px}.melinks .btn{padding:11px 4px;font-size:13.5px;white-space:nowrap;text-align:center;min-width:0}
 .row3{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.row3 .btn{padding:11px 4px;font-size:13.5px;white-space:nowrap;text-align:center;min-width:0}
 .themes{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}.themes .chip{padding:8px 2px;font-size:12.5px;white-space:nowrap;text-align:center;min-width:0}
 .cart{background:var(--surface);border:1.5px solid var(--primary);border-radius:16px;padding:12px 14px;margin:4px 0 6px;font-size:14.5px;max-width:100%;overflow:hidden}.cart.empty{border-style:dashed;border-color:var(--rule);color:var(--fg-faint)}.cart>b{display:block;margin-bottom:8px}
@@ -899,6 +900,137 @@ main{padding:22px 0 30px}
 .salebar .tag{font-weight:700;white-space:nowrap}.salebar .txt{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .salebar .go{white-space:nowrap;font-weight:600;opacity:.85}
 .nav a{position:relative}.nav .saletag{position:absolute;top:-1px;right:calc(50% - 20px);font-size:11px;line-height:1}
+/* ---- looks, the pet, and the paid trees ---- */
+.lookgrid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+.look{position:relative;display:flex;flex-direction:column;align-items:center;gap:8px;background:var(--surface);border:1px solid var(--rule-soft);border-radius:16px;padding:12px 10px;font:inherit;color:inherit;cursor:pointer}
+.look.on{border-color:var(--primary);border-width:1.5px}
+.look.locked .lk-card,.look.locked .lk-tree,.look.locked .lk-coin,.look.locked .lk-diary{opacity:.92}
+.look.locked{border-style:dashed}
+.look .lk-lock{background:var(--tag-gold-bg);border-radius:8px;padding:1px 4px}
+.look b{font-size:13px;font-weight:600}
+.look .lk-lock{position:absolute;top:8px;right:9px;font-size:15px}
+.look .lk-on{position:absolute;top:8px;left:9px;color:var(--primary);font-weight:700}
+.lk-card{display:block;width:64px}.lk-card svg{width:100%;height:auto;display:block;border-radius:6px}
+.lk-tree{display:block;width:96px}.lk-tree svg{width:100%;height:auto;display:block}
+.lk-coin{display:block;width:56px}.lk-coin svg{width:100%;height:auto;display:block}
+.lk-diary{display:block;width:64px;height:74px;border-radius:6px;border:1px solid var(--rule);padding:8px 7px;background:#FFFDF5}
+.lk-diary i{display:block;height:3px;border-radius:2px;background:#D8CDB4;margin-bottom:7px}
+/* Fireflies breathe, stars twinkle, butterflies drift: only on the paid trees. */
+@keyframes flyglow{0%,100%{opacity:.25}50%{opacity:1}}
+.fly.lit{animation:flyglow 2.4s ease-in-out infinite}
+@keyframes twinkling{0%,100%{opacity:.35}50%{opacity:1}}
+.twinkle{animation:twinkling 3s ease-in-out infinite}.twinkle.still{animation:none}
+@keyframes flitting{0%,100%{transform:translateY(0) rotate(-4deg)}50%{transform:translateY(-7px) rotate(5deg)}}
+.flit{animation:flitting 3.4s ease-in-out infinite;transform-box:fill-box;transform-origin:center}.flit.still{animation:none}
+/* The diary papers */
+.diary.paper-ruled{background:repeating-linear-gradient(var(--surface),var(--surface) 26px,var(--rule-soft) 27px)}
+.diary.paper-floral{border:2px solid var(--pink);box-shadow:inset 0 0 0 4px var(--surface),inset 0 0 0 5px var(--tag-pink-bg)}
+.diary.paper-starry{background:radial-gradient(circle at 12% 18%,var(--gold-soft) 1.4px,transparent 1.6px),radial-gradient(circle at 74% 32%,var(--gold-soft) 1.6px,transparent 1.8px),radial-gradient(circle at 42% 76%,var(--gold-soft) 1.2px,transparent 1.4px),var(--surface)}
+/* ---- the luck companions ----
+   The stage stacks three layers: the home behind, the halo of luck around it,
+   and the companion on top. Everything else on the card explains, in the open,
+   what each kind of care is worth. */
+.petwrap{text-align:center}
+.petstage{position:relative;width:min(250px,72vw);margin:0 auto 12px;padding-bottom:4px}
+.petstage .pethome{position:absolute;left:-8%;right:-8%;bottom:-2%;width:116%;height:auto;display:block;z-index:0}
+.pethome{display:block;width:100%;height:auto}
+.aura{position:absolute;left:8%;top:2%;width:84%;height:84%;border-radius:50%;z-index:1;background:radial-gradient(circle,var(--aura) 0%,transparent 68%);opacity:.85;animation:breathe 4.6s ease-in-out infinite}
+@keyframes breathe{0%,100%{transform:scale(.94);opacity:.6}50%{transform:scale(1.06);opacity:.95}}
+.petart{position:relative;z-index:2;width:100%;height:auto;display:block}
+.lucksyms{position:absolute;inset:0;z-index:3;pointer-events:none;overflow:hidden}
+.lucksyms i{position:absolute;bottom:16%;font-size:15px;font-style:normal;opacity:0;animation:luckrise 4.2s ease-in-out infinite}
+@keyframes luckrise{0%{opacity:0;transform:translateY(6px) scale(.7)}18%{opacity:.95}100%{opacity:0;transform:translateY(-64px) scale(1.05)}}
+.petstage.munch .petart{animation:munching .5s ease-in-out 2}
+@keyframes munching{0%,100%{transform:translateY(0) scale(1)}50%{transform:translateY(-4px) scale(1.03)}}
+.petstage.praying .petart{animation:praying 1.2s ease-in-out}
+.petstage.praying .aura{animation:blessing 1.2s ease-in-out}
+@keyframes praying{0%,100%{transform:translateY(0)}30%{transform:translateY(3px) scale(.97)}70%{transform:translateY(-6px) scale(1.04)}}
+@keyframes blessing{0%{transform:scale(.9);opacity:.5}60%{transform:scale(1.3);opacity:1}100%{transform:scale(1);opacity:.8}}
+.crumbs{position:absolute;inset:0;z-index:4;pointer-events:none;overflow:hidden}
+.crumbs i{position:absolute;top:-6%;font-size:20px;font-style:normal;opacity:0;animation:dropfood 1s ease-in forwards}
+@keyframes dropfood{0%{opacity:0;transform:translateY(-10px)}20%{opacity:1}100%{opacity:0;transform:translateY(62px)}}
+/* What this one looks after, and the line that says it in words. */
+.lucktag{display:inline-flex;align-items:center;gap:5px;background:var(--aura);color:var(--ink);border-radius:999px;padding:4px 12px;font-size:13px;font-weight:600}
+#main p.petline{margin:8px 0 12px;font-size:13.5px;color:var(--fg-soft);text-align:center;text-wrap:balance}
+/* The luck bar, and the list of what fills it. */
+.charm{display:flex;align-items:center;gap:8px;margin-bottom:10px}
+.charm .lbl{font-size:13px;color:var(--fg-soft)}
+.charm .bar{flex:1;height:9px;border-radius:9px;background:var(--surface-2);overflow:hidden}
+.charm .bar i{display:block;height:100%;border-radius:9px;transition:width .5s ease}
+.charm b{font-size:13px;min-width:36px;text-align:right}
+.carelist{list-style:none;margin:0 0 12px;padding:10px 12px;border-radius:12px;background:var(--surface-2);display:grid;gap:5px}
+.carelist li{display:flex;justify-content:space-between;align-items:baseline;gap:10px;font-size:12.5px;color:var(--fg-soft)}
+.carelist li b{font-weight:600;color:var(--fg);white-space:nowrap}
+.carelist li.locked{opacity:.7}.carelist li.locked b{color:var(--gold-deep)}
+.carelist li.head{border-bottom:1px solid var(--rule-soft);padding-bottom:5px;margin-bottom:1px;color:var(--fg)}
+.carelist li.head span,.carelist li.head b{font-weight:600;font-size:13px}
+.petstat a{color:var(--gold-deep);text-decoration:none;font-weight:600}
+/* ---- coins, vouchers and the panel offered when ordering ---- */
+.luckpanel .lk-row{display:flex;align-items:center;gap:9px;padding:7px 0;font-size:13.5px;border-bottom:1px solid var(--rule-soft)}
+.luckpanel .lk-row:last-of-type{border-bottom:0}
+.luckpanel .lk-row span{flex:1}
+.luckpanel .lk-row b{font-weight:700;white-space:nowrap}
+.luckpanel .lk-row input{width:18px;height:18px;flex:none;margin:0}
+.lkchips{margin-top:10px}
+.lkchips .chip{cursor:pointer;font-size:12.5px;padding:6px 11px}
+.lkchips .chip.on{background:var(--primary);color:var(--primary-ink);border-color:var(--primary)}
+.sum .r.cut span,.sum .r.cut b{color:var(--gold-deep)}
+.sum .r.cut b{font-weight:600}
+.coinbox{text-align:center}
+.coinbox .n{display:block;font-family:var(--display);font-size:38px;font-weight:600;line-height:1.15;color:var(--gold-deep)}
+.coinbox .u{display:block;font-size:13px;color:var(--fg-soft);margin-bottom:6px}
+.vlist{list-style:none;margin:0 0 8px;padding:0;display:grid;gap:6px}
+.vlist li{display:flex;justify-content:space-between;align-items:baseline;gap:10px;font-size:13.5px;padding:8px 12px;border-radius:12px;background:var(--surface-2);color:var(--fg-soft)}
+.vlist li.on{background:var(--tag-gold-bg);color:var(--tag-gold-ink)}
+.vlist li b{white-space:nowrap;font-weight:700}
+.holds{list-style:none;margin:0 0 8px;padding:0;display:grid;gap:8px}
+.holds li{display:flex;align-items:center;gap:9px;font-size:13px;color:var(--fg-soft)}
+.holds li span{flex:1}
+.holds li b{font-weight:700;color:var(--gold-deep);white-space:nowrap}
+.btn.tiny{padding:5px 11px;font-size:12.5px;width:auto;flex:none}
+.petstat{display:flex;justify-content:center;gap:14px;font-size:13.5px;color:var(--fg-soft);margin-bottom:10px}
+/* What the companion answers with, once a day. */
+.bless{position:relative;margin-top:12px;padding:16px 16px 12px;border-radius:14px;background:var(--surface-2);border:1px solid var(--rule-soft)}
+.bless .q{position:absolute;top:-11px;left:14px;background:var(--surface);border-radius:999px;padding:1px 7px;font-size:15px}
+.bless p{margin:0 0 6px;font-size:14.5px;line-height:1.6;text-wrap:balance}
+.bless .who{font-size:12px;color:var(--fg-soft)}
+.btn.off{opacity:.55}
+/* Switching between the companions you keep. */
+.pettabs{display:flex;gap:8px;margin-bottom:12px;overflow-x:auto;padding-bottom:2px}
+.pettabs .pt{flex:0 0 auto;display:flex;flex-direction:column;align-items:center;gap:2px;width:74px;background:var(--surface);border:1px solid var(--rule-soft);border-radius:14px;padding:6px 4px;font:inherit;color:inherit;cursor:pointer}
+.pettabs .pt svg{width:42px;height:42px}
+.pettabs .pt b{font-size:11px;font-weight:600;line-height:1.25;text-align:center}
+.pettabs .pt.on{border-color:var(--primary);border-width:1.5px;background:var(--surface-2)}
+/* The shelves: food, homes, charms. */
+.shelf{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.shelf .sh{position:relative;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;gap:5px;background:var(--surface-2);border:1px solid var(--rule-soft);border-radius:14px;padding:10px 6px;font:inherit;color:inherit;cursor:pointer}
+.shelf .sh b{font-size:11.5px;font-weight:600;line-height:1.3;text-align:center}
+.shelf .sh.on{border-color:var(--primary);border-width:1.5px;background:var(--surface)}
+.shelf .sh.locked{border-style:dashed;opacity:.94}
+.shelf .shart{display:flex;align-items:center;justify-content:center;height:40px;font-size:26px;line-height:1;width:100%}
+.shelf .shart svg{position:static;max-width:100%;max-height:40px;width:auto;height:auto}
+.shelf .plus{font-size:11px;font-weight:700;color:var(--gold-deep);background:var(--tag-gold-bg);border-radius:999px;padding:0 6px}
+.shelf .sh-lock{position:absolute;top:6px;right:7px;font-size:13px}
+.shelf .sh-on{position:absolute;top:6px;left:7px;color:var(--primary);font-weight:700;font-size:13px}
+.coats{justify-content:center}
+.coat{width:34px;height:34px;border-radius:50%;border:2px solid var(--rule);cursor:pointer;font-size:13px;line-height:1;padding:0}
+.coat.on{border-color:var(--primary);box-shadow:0 0 0 2px var(--primary) inset}
+/* Choosing a companion: all four are always shown, with the luck each keeps. */
+.petpick{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+.petpick .pp{position:relative;display:flex;flex-direction:column;align-items:center;gap:6px;background:var(--surface);border:1px solid var(--rule-soft);border-radius:16px;padding:12px 8px;font:inherit;color:inherit;cursor:pointer}
+.petpick .pp b{font-size:13.5px;font-weight:600}
+.petpick .ppart{position:relative;display:block;width:88px}
+.petpick .pl{display:inline-flex;align-items:center;gap:4px;background:var(--aura);color:var(--ink);border-radius:999px;padding:2px 10px;font-size:12px;font-weight:600}
+.petpick .pp.have{border-color:var(--primary);border-width:1.5px}
+.petpick .pp.locked{border-style:dashed}
+.petpick .pp-lock{position:absolute;top:8px;right:9px;font-size:14px}
+.petpick .pp-on{position:absolute;top:8px;left:9px;color:var(--primary);font-weight:700}
+/* The companions stand at the foot of the tree rather than in the branches. */
+.treewrap{position:relative}
+.treepets{position:absolute;left:6px;bottom:92px;z-index:2;display:flex;align-items:flex-end;gap:-6px}
+.treepet{width:70px;display:block}
+.treepet+.treepet{margin-left:-16px}
+@media (max-width:360px){.treepets{bottom:86px}.treepet{width:58px}}
 .unlist{display:grid;gap:10px}
 .unl{background:var(--surface);border:1px solid var(--rule-soft);border-radius:16px;padding:14px}
 .unl.best{border-color:var(--pink);border-width:1.5px}.unl.on{border-color:var(--gold)}
@@ -1160,6 +1292,10 @@ const COURSES = [
   { id: 'manifest', price: 75000, months: 12, sum: { vi: '7 phương pháp, mỗi bài một công cụ.', en: '7 methods, one tool with each.' }, name: { vi: 'Bộ Manifestation', en: 'Manifestation set' },
     blurb: { vi: 'Bảy phương pháp có công cụ làm ngay trong app: WOOP, bảng tầm nhìn có ảnh, nghi thức trăng, kế hoạch nếu-thì, buông bỏ, giới hạn, nến và đá. Mọi thứ bạn viết được lưu trên máy và có thể xoá làm lại bất cứ lúc nào.', en: 'Seven methods with tools you use right in the app: WOOP, a vision board with photos, Moon rituals, if-then plans, letting go, limits, candles and stones. Everything you write is saved on your device and can be cleared and redone any time.' },
     includes: { vi: ['7 bài hướng dẫn nâng cao', 'Bảng ảnh, kế hoạch, nghi thức, buông bỏ', 'Nến và đá theo mục đích', 'Dùng 12 tháng, xem offline'], en: ['7 advanced guides', 'Photo board, plans, ritual and letting-go tools', 'Candles and stones by purpose', '12 months of access, works offline'] } },
+  { id: 'pro', price: 120000, months: 12, sum: { vi: 'Cả bốn bạn nhỏ may mắn và mọi giao diện đẹp.', en: 'All four luck companions and every look.' },
+    name: { vi: 'Nabu Tarot Plus', en: 'Nabu Tarot Plus' },
+    blurb: { vi: 'Mở cả bốn bạn nhỏ may mắn cùng món ăn ngon, nhà đẹp và phụ kiện cho chúng, thêm toàn bộ giao diện của app trong một năm: ba mặt sau lá bài, ba cây thông điệp, ba đồng xu và ba trang nhật ký.', en: 'Opens all four luck companions with their good food, their homes and their charms, plus every look in the app for a year: three more card backs, three more message trees, three more coins and three more diary pages.' },
+    includes: { vi: ['Nuôi cả 4 bạn nhỏ may mắn', '6 món ăn ngon, 3 ngôi nhà và 4 phụ kiện', '4 màu lông đặc biệt', '3 mặt sau lá bài và 3 cây thông điệp', '3 đồng xu và 3 trang nhật ký', 'Dùng 12 tháng'], en: ['Keep all 4 luck companions', '6 good foods, 3 homes and 4 charms', '4 special coats', '3 more card backs and 3 more message trees', '3 more coins and diary pages', '12 months of access'] } },
   { id: 'luck', price: 50000, months: 12, sum: { vi: 'Đồng xu và cây thông điệp, không giới hạn.', en: 'Coin and message tree, unlimited.' }, name: { vi: 'Đồng xu và cây thông điệp', en: 'Coin and message tree' },
     blurb: { vi: 'Mở không giới hạn cả hai hoạt động trong một năm: tung đồng xu và rung cây thông điệp bao nhiêu lần tuỳ bạn.', en: 'Unlimited turns at both for a year: flip the coin and shake the message tree as often as you like.' },
     includes: { vi: ['Tung đồng xu không giới hạn', 'Rung cây thông điệp không giới hạn', 'Dùng 12 tháng'], en: ['Unlimited coin flips', 'Unlimited tree shakes', '12 months of access'] } },
@@ -1171,7 +1307,8 @@ const COURSES = [
     includes: { vi: ['Rung cây thông điệp không giới hạn', 'Dùng 12 tháng'], en: ['Unlimited tree shakes', '12 months of access'] } },
 ];
 const PAYMENT_NOTE = { vi: 'Vui lòng chuyển khoản trước khi xem.', en: 'Please transfer the fee in advance.' };
-const fmtPrice = (n) => String(n).replace(/\B(?=(\d{3})+(?!\d))/g, '.') + 'đ';
+const fmtNum = (n) => String(Math.round(Number(n) || 0)).replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+const fmtPrice = (n) => fmtNum(n) + 'đ';
 
 /* ============================ UI strings ============================
    Vietnamese is the first language of the app. Keep every line short and
@@ -1320,6 +1457,44 @@ const STR = {
     unlockSent: 'Đã gửi yêu cầu. Nabu sẽ gửi mã cho bạn sau khi nhận được chuyển khoản.', unlockSendApp: 'Gửi yêu cầu trong app', unlockSendMsg: 'Gửi qua tin nhắn',
     saleTab: 'Khuyến mãi', saleOn: 'Đang chạy khuyến mãi', saleScope: 'Áp dụng cho', saleScopes: { all: 'Tất cả', reading: 'Xem bài', unlock: 'Mở khoá trong app' },
     saleKind: 'Kiểu giảm', saleKinds: { percent: 'Theo phần trăm', amount: 'Theo số tiền' }, saleValue: 'Mức giảm', saleFrom: 'Bắt đầu', saleTo: 'Kết thúc',
+    plusName: 'Nabu Tarot Plus', looksTitle: 'Giao diện của bạn', looksLink: 'Đổi giao diện',
+    looksIntro: 'Chọn cách app trông ra sao: mặt sau bộ bài, cây thông điệp, đồng xu và trang nhật ký.',
+    looksLocked: 'Mở tất cả giao diện đẹp hơn', looksPlusOn: 'Bạn đang có Nabu Tarot Plus, tất cả giao diện đều mở.', looksNeedPlus: 'Giao diện này thuộc Nabu Tarot Plus.',
+    lookKinds: { cardback: 'Mặt sau lá bài', tree: 'Cây thông điệp', coin: 'Đồng xu', diary: 'Trang nhật ký' },
+    petTitle: 'Nuôi bạn nhỏ may mắn', petSub: 'mỗi ngày một bữa ăn và một lời khấn',
+    petPick: 'Mỗi bạn nhỏ trông giữ một phần khác nhau trong cuộc sống của bạn. Bạn hãy chọn người bạn mà bạn muốn có bên cạnh.',
+    petIntro: 'Bạn cho bạn nhỏ ăn mỗi ngày một lần, rồi khấn một lời. Bạn chăm sóc càng đều đặn thì vận may càng đầy.',
+    petBrings: (n) => 'Trông giữ chuyện ' + n.toLowerCase(), petCharm: 'Vận may',
+    petFeedWith: (n) => 'Cho ăn ' + n.toLowerCase(), petFedToday: '✓ Hôm nay bạn nhỏ đã được ăn rồi. Ngày mai bạn quay lại nhé.', petThanks: 'Bạn nhỏ vui lắm!',
+    petPray: 'Khấn một lời cùng bạn nhỏ', petPrayHint: 'Bạn nhắm mắt, nghĩ về điều mình đang mong, rồi chạm vào nút này. Mỗi ngày một lời.',
+    petNeedFeed: 'Bạn cho bạn nhỏ ăn trước, sau đó hãy khấn.',
+    petStreak: (n) => n + ' ngày liền', petMeals: (n) => n + ' bữa', petCoat: 'Màu lông', petName: 'Đặt tên',
+    petSwap: 'Đổi bạn nhỏ khác', petSwapAsk: 'Bạn muốn đổi sang một bạn nhỏ khác?', petLetGo: 'Tiễn bạn nhỏ này đi', petLetGoAsk: 'Bạn muốn tiễn bạn nhỏ này đi?',
+    petAdd: 'Nhận thêm một bạn nhỏ', petRoomLeft: (n) => 'còn ' + n + ' chỗ', petBack: 'Quay lại với bạn nhỏ',
+    petLuckTotal: (n) => 'Bạn đang có ' + n + ' loại may mắn đi cùng.',
+    petPlusPitch: 'Người dùng thường nuôi được một bạn nhỏ. Nabu Tarot Plus mở cả bốn, để nhiều góc trong đời bạn cùng được trông giữ.',
+    petPlusItem: 'Món này thuộc Nabu Tarot Plus.',
+    petLuckNote: 'Bạn nhỏ ở đây để mỗi ngày bạn có một việc nhỏ ấm áp. Lời chúc là lời chúc, không phải lời hứa.',
+    petFoodTitle: 'Bữa ăn', petFoodNote: 'Món ăn ngon hơn làm bạn nhỏ vui hơn, và vận may cũng đầy nhanh hơn.',
+    petHomeTitle: 'Nhà của bạn nhỏ', petHomeNote: 'Bạn nhỏ có chỗ ở đẹp thì ở lại lâu hơn và mang về nhiều may mắn hơn.',
+    petWearTitle: 'Phụ kiện', petWearNote: 'Một chiếc khăn hay một vòng hoa cũng làm bạn nhỏ rạng rỡ hơn hẳn.',
+    careDays: 'Chăm đều mỗi ngày', careMeals: 'Số bữa đã cho ăn', careTreats: 'Món ngon', careCoat: 'Màu lông đặc biệt', careWear: 'Phụ kiện', careHome: 'Nhà đẹp',
+    careMeal: 'Bữa ăn cơ bản', petMealWorth: 'Mỗi bữa ăn được', petLevel: (n) => 'Cấp ' + n,
+    petFull: (w) => 'Bạn nhỏ đang no. Bạn quay lại sau ' + w + ' nhé.', petFasterPlus: 'Với Nabu Tarot Plus, bạn chỉ phải chờ 2 giờ giữa hai bữa ăn.',
+    petLevelUp: (lv, c) => 'Bạn nhỏ lên cấp ' + lv + '. Bạn nhận được ' + c + ' xu Nabu.', petThanksCoins: (c) => 'Bạn nhỏ vui lắm. Bạn nhận được ' + c + ' xu Nabu.',
+    waitMin: (n) => n + ' phút', waitHour: (n) => n + ' giờ', waitHourMin: (h, m) => h + ' giờ ' + m + ' phút',
+    luckTitle: 'Xu Nabu và ưu đãi', luckLink: 'Xu và ưu đãi của bạn', luckCoins: 'xu Nabu',
+    luckIntro: 'Chăm sóc bạn nhỏ mỗi ngày sẽ tích được xu Nabu và mở ra phiếu giảm giá. Một xu tương đương một đồng khi bạn đặt lịch xem bài hoặc mở một khóa học.',
+    luckHint: 'Bạn có thể dùng ngay hoặc để dành cho lần sau. Xu Nabu không bao giờ hết hạn.',
+    luckWorth: (s) => 'Tương đương ' + s + ' khi bạn đặt dịch vụ.',
+    luckVoucher: 'Phiếu giảm giá theo cấp', luckVoucherHint: 'Cấp cao nhất mà bạn nhỏ của bạn từng đạt sẽ quyết định mức giảm.',
+    luckVoucherOf: (p) => 'Phiếu giảm ' + p + '%', luckAtLevel: (n) => 'Từ cấp ' + n,
+    luckNextTier: (lv, p) => 'Bạn nuôi bạn nhỏ lên cấp ' + lv + ' để nhận phiếu giảm ' + p + '%.', luckTopTier: 'Bạn đã đạt mức ưu đãi cao nhất.',
+    luckEarnTitle: 'Cách tích xu', luckEarnFeed: 'Mỗi bữa ăn thường', luckEarnGood: 'Mỗi bữa ăn ngon', luckEarnLevel: 'Mỗi lần lên cấp', luckLevelWord: 'cấp',
+    luckEarnNote: 'Mỗi ngày bạn tích được tối đa 30 xu từ việc cho ăn. Riêng xu thưởng khi lên cấp thì không giới hạn.',
+    luckHoldTitle: 'Xu đang chờ đơn', luckHoldHint: 'Nếu đơn không thành, bạn có thể lấy lại số xu này bất cứ lúc nào.', luckTakeBack: 'Lấy lại',
+    luckGaveBack: (n) => 'Đã hoàn ' + n + ' xu Nabu.', luckHave: (n) => 'Bạn đang có ' + n + ' xu', luckKeep: 'Để dành', luckAll: 'Dùng hết',
+    luckSaveUp: 'Bạn tích thêm xu rồi dùng cho lần sau nhé.', luckCoinsUsed: (n) => 'Dùng ' + n + ' xu Nabu', luckAfter: 'Bạn cần trả',
     salePicks: 'Chỉ áp dụng cho', salePicksHint: 'Không chọn gì nghĩa là áp dụng cho cả nhóm ở trên.', saleLabel: 'Tên đợt khuyến mãi', saleLabelPh: 'Ví dụ: Mừng Trung thu', saleDefault: 'Đang có khuyến mãi', saleNone: 'Hiện không có khuyến mãi nào.',
     saleSaved: 'Đã lưu khuyến mãi', saleHint: 'Bật, chọn phạm vi và mức giảm, rồi chọn ngày bắt đầu và ngày kết thúc. Giá cũ sẽ bị gạch ngang và giá mới hiện bên cạnh.',
     saleBanner: (off, what) => 'Khuyến mãi ' + off + ' cho ' + what, saleSee: 'Xem ngay',
@@ -1590,6 +1765,44 @@ const STR = {
     unlockSent: 'Request sent. Nabu will send your code once the transfer arrives.', unlockSendApp: 'Send the request in the app', unlockSendMsg: 'Send as a message',
     saleTab: 'Sale', saleOn: 'A sale is running', saleScope: 'Applies to', saleScopes: { all: 'Everything', reading: 'Readings', unlock: 'Unlocks in the app' },
     saleKind: 'Kind of discount', saleKinds: { percent: 'A percentage', amount: 'An amount' }, saleValue: 'Discount', saleFrom: 'Starts', saleTo: 'Ends',
+    plusName: 'Nabu Tarot Plus', looksTitle: 'How your app looks', looksLink: 'Change the look',
+    looksIntro: 'Choose how the app looks: the back of the deck, the message tree, the coin and the diary page.',
+    looksLocked: 'Open every look', looksPlusOn: 'You have Nabu Tarot Plus, so every look is open.', looksNeedPlus: 'That look comes with Nabu Tarot Plus.',
+    lookKinds: { cardback: 'Card backs', tree: 'The message tree', coin: 'The coin', diary: 'Diary paper' },
+    petTitle: 'Keep a luck companion', petSub: 'one meal and one wish a day',
+    petPick: 'Each companion looks after a different part of your life. Choose the one you would like beside you.',
+    petIntro: 'Feed your companion once a day, then say one wish over it. The more steadily you care for it, the fuller its luck grows.',
+    petBrings: (n) => 'Looks after your ' + n.toLowerCase(), petCharm: 'Luck',
+    petFeedWith: (n) => 'Feed ' + n.toLowerCase(), petFedToday: '✓ Fed today. Come back tomorrow.', petThanks: 'Very happy!',
+    petPray: 'Say a wish over it', petPrayHint: 'Close your eyes, think of what you are hoping for, then tap. One wish a day.',
+    petNeedFeed: 'Feed your companion first, then make your wish.',
+    petStreak: (n) => n + ' days running', petMeals: (n) => n + ' meals', petCoat: 'Coat', petName: 'Name',
+    petSwap: 'Choose a different companion', petSwapAsk: 'Change to a different companion?', petLetGo: 'Let this companion go', petLetGoAsk: 'Let this companion go?',
+    petAdd: 'Take in another companion', petRoomLeft: (n) => n + ' places left', petBack: 'Back to your companion',
+    petLuckTotal: (n) => n + ' kinds of luck are walking with you.',
+    petPlusPitch: 'One companion is free. Nabu Tarot Plus opens all four, so more corners of your life are looked after.',
+    petPlusItem: 'That one comes with Nabu Tarot Plus.',
+    petLuckNote: 'Your companion is here to give you one warm small thing each day. A blessing is a blessing, not a promise.',
+    petFoodTitle: 'Meals', petFoodNote: 'Better food makes a happier companion, and its luck fills faster.',
+    petHomeTitle: 'Its home', petHomeNote: 'A companion with a lovely home settles in and brings back more.',
+    petWearTitle: 'Charms', petWearNote: 'A scarf or a flower crown makes a companion shine.',
+    careDays: 'Coming back every day', careMeals: 'Meals given', careTreats: 'Good food', careCoat: 'A special coat', careWear: 'A charm', careHome: 'A proper home',
+    careMeal: 'A plain meal', petMealWorth: 'Every meal earns', petLevel: (n) => 'Level ' + n,
+    petFull: (w) => 'Full for now. Come back in ' + w + '.', petFasterPlus: 'With Nabu Tarot Plus the wait between meals is only 2 hours.',
+    petLevelUp: (lv, c) => 'Level ' + lv + ' reached. You earned ' + c + ' Nabu coins.', petThanksCoins: (c) => 'Very happy! You earned ' + c + ' Nabu coins.',
+    waitMin: (n) => n + ' minutes', waitHour: (n) => n + ' hours', waitHourMin: (h, m) => h + ' hours ' + m + ' minutes',
+    luckTitle: 'Nabu coins and rewards', luckLink: 'Your coins and rewards', luckCoins: 'Nabu coins',
+    luckIntro: 'Caring for your companion every day earns Nabu coins and opens a voucher. One coin is worth one đồng towards a reading or a course.',
+    luckHint: 'Use them now or keep them for next time. Nabu coins never expire.',
+    luckWorth: (s) => 'Worth ' + s + ' towards anything here.',
+    luckVoucher: 'Voucher by level', luckVoucherHint: 'The highest level any of your companions has reached sets how much comes off.',
+    luckVoucherOf: (p) => p + '% voucher', luckAtLevel: (n) => 'From level ' + n,
+    luckNextTier: (lv, p) => 'Reach level ' + lv + ' for a ' + p + '% voucher.', luckTopTier: 'You are at the highest reward level.',
+    luckEarnTitle: 'How coins are earned', luckEarnFeed: 'Each plain meal', luckEarnGood: 'Each good meal', luckEarnLevel: 'Each level reached', luckLevelWord: 'level',
+    luckEarnNote: 'Feeding earns up to 30 coins a day. Coins for reaching a new level are on top of that.',
+    luckHoldTitle: 'Coins waiting on an order', luckHoldHint: 'If an order does not go ahead, you can take these coins back at any time.', luckTakeBack: 'Take back',
+    luckGaveBack: (n) => n + ' coins returned.', luckHave: (n) => 'You have ' + n + ' coins', luckKeep: 'Keep them', luckAll: 'Use all',
+    luckSaveUp: 'Save up a few more and use them next time.', luckCoinsUsed: (n) => n + ' Nabu coins used', luckAfter: 'You pay',
     salePicks: 'Only these', salePicksHint: 'Tick nothing and the sale covers the whole group above.', saleLabel: 'Name of the sale', saleLabelPh: 'For example: Mid-Autumn', saleDefault: 'A sale is on', saleNone: 'No sale is running at the moment.',
     saleSaved: 'Sale saved', saleHint: 'Switch it on, choose what it covers and how much comes off, then pick the first and last day. Old prices are struck through with the new price beside them.',
     saleBanner: (off, what) => off + ' off ' + what, saleSee: 'See it',
@@ -8771,14 +8984,14 @@ function courseHash(str) {
   for (let i = 0; i < str.length; i++) { const c = str.charCodeAt(i); h1 = Math.imul(h1 ^ c, 16777619) >>> 0; h2 = (Math.imul(h2, 33) + c) >>> 0; }
   return (h1.toString(36) + h2.toString(36)).toUpperCase().replace(/[^A-Z0-9]/g, '').slice(-4).padStart(4, 'X');
 }
-const CODE_LETTER = { tarot: 'T', manifest: 'M', playing: 'P', coin: 'C', tree: 'Y', luck: 'B', lenormand: 'L' };
-const CODE_COURSE = { T: 'tarot', M: 'manifest', P: 'playing', C: 'coin', Y: 'tree', B: 'luck', L: 'lenormand' };
+const CODE_LETTER = { tarot: 'T', manifest: 'M', playing: 'P', coin: 'C', tree: 'Y', luck: 'B', pro: 'S', lenormand: 'L' };
+const CODE_COURSE = { T: 'tarot', M: 'manifest', P: 'playing', C: 'coin', Y: 'tree', B: 'luck', S: 'pro', L: 'lenormand' };
 function makeCode(course, untilISO) {
   const d = untilISO.replace(/-/g, '').slice(2), Lt = CODE_LETTER[course] || 'L';
   return 'NABU-' + Lt + '-' + d + '-' + courseHash(Lt + d + CONFIG.courseSecret);
 }
 function parseCode(code) {
-  const m = /^NABU-([TLMPCYB])-(\d{6})-([A-Z0-9]{4})$/.exec(String(code || '').trim().toUpperCase().replace(/\s+/g, ''));
+  const m = /^NABU-([TLMPCYBS])-(\d{6})-([A-Z0-9]{4})$/.exec(String(code || '').trim().toUpperCase().replace(/\s+/g, ''));
   if (!m || courseHash(m[1] + m[2] + CONFIG.courseSecret) !== m[3]) return null;
   const course = CODE_COURSE[m[1]];
   return { course: course, courses: course === 'luck' ? ['coin', 'tree', 'luck'] : [course], until: '20' + m[2].slice(0, 2) + '-' + m[2].slice(2, 4) + '-' + m[2].slice(4, 6) };
@@ -8838,6 +9051,8 @@ function backSVG() {
     + '</svg>';
 }
 const BACK = backSVG();
+/* Drawn fresh each time, because the visitor can change the look. */
+const backNow = () => (typeof LOOKS === 'undefined' ? BACK : backSVGFor());
 /* The logo's three cards, for the home block. */
 function logoCardSVG(kind) {
   const fill = kind === 'blue' ? '#AFC8F0' : kind === 'pink' ? '#F6BBCB' : '#3D2A6E';
@@ -10355,7 +10570,10 @@ function renderSign(key) {
   if (!z) { redirect('#/learn/astro'); return; }
   const zp = ZODIAC[key][lang], ruler = ZPLANET[ZRULER[key]];
   const cards = Object.keys(ASTRO).filter((id) => ASTRO[id].sign === key);
+  // Arrows above the reading as well as below it, so the wheel can be walked
+  // without scrolling to the end of every sign first.
   m.innerHTML = backLink('#/learn/astro', S.cats.astro) + '<div class="detail">'
+    + signNavHTML(key)
     + '<div class="hero" style="grid-template-columns:72px 1fr"><div class="glyph" style="width:72px;height:72px;border-radius:50%;background:' + EL_COLOR[z.el] + ';display:flex;align-items:center;justify-content:center;font-size:40px;color:#fff">' + z.g + '</div>'
     + '<div><div class="name">' + esc(z[lang]) + '</div><div class="en">' + esc(lang === 'vi' ? z.en : z.vi) + '</div><div class="meta"><i>' + esc(lang === 'vi' ? z.dvi : z.den) + '</i></div></div></div>'
     + '<div class="row" style="margin-bottom:12px"><span class="chip tag">' + esc(S.element) + ': ' + ZELEM[z.el].g + ' ' + esc(ZELEM[z.el][lang]) + '</span><span class="chip tag">' + esc(S.mode) + ': ' + esc(ZMODE[z.mod][lang]) + '</span><span class="chip tag">' + esc(S.ruler) + ': ' + ruler.g + ' ' + esc(ruler[lang]) + '</span></div>'
@@ -10364,7 +10582,7 @@ function renderSign(key) {
     + '<div class="ins"><h3>' + esc(S.strengths) + '</h3><div class="kwl">' + ZDEEP[key][lang].strengths.map((k) => '<span>' + esc(k) + '</span>').join('') + '</div><h3>' + esc(S.challenges) + '</h3><div class="kwl neg">' + ZDEEP[key][lang].challenges.map((k) => '<span>' + esc(k) + '</span>').join('') + '</div><h3>' + esc(S.compat) + '</h3><div class="awrapper">' + zodiacRingSVG(key, ZDEEP[key].compat) + '</div><div class="chips">' + ZDEEP[key].compat.map((k) => '<a class="chip lav" href="#/learn/sign/' + k + '">' + ZSIGN[k].g + ' ' + esc(ZSIGN[k][lang]) + '</a>').join('') + '</div></div>'
     + '<div class="ins"><h3>' + esc(S.moonSign) + '</h3><p>' + esc(ZDEEP[key][lang].moon) + '</p><h3>' + esc(S.risingSign) + '</h3><p>' + esc(ZDEEP[key][lang].rising) + '</p></div>'
     + '<div class="ins"><h3>' + esc(S.signCards) + '</h3><div class="mini">' + cards.map((id) => miniHTML(id, true)).join('') + '</div><p class="faint">' + cards.map((id) => cardById(id).name + ': ' + astroLine(id)).map(esc).join('<br>') + '</p></div>'
-    + aiPanelHTML({ type: 'sign', key: key }) + signNavHTML(key) + '</div>';
+    + signNavHTML(key) + aiPanelHTML({ type: 'sign', key: key }) + '</div>';
   bindCardLinks(m); bindAI(m);
   $$('[data-zsign]', m).forEach((b) => b.addEventListener('click', () => { location.hash = '#/learn/sign/' + b.getAttribute('data-zsign'); }));
 }
@@ -10486,20 +10704,38 @@ function unlockRowHTML(c) {
   if (open) return '<div class="unl on' + (c.id === 'luck' ? ' best' : '') + '">' + body + '</div>';
   return '<button type="button" class="unl pickable' + (picked ? ' pick' : '') + (c.id === 'luck' ? ' best' : '') + '" data-unl="' + c.id + '">' + body + '</button>';
 }
+/* What the chosen unlockables come to after the shop's own sale. */
+function unlockBase() {
+  const ids = UNL_CART.get().filter((id) => COURSES.some((c) => c.id === id) && !ACCESS.has(id));
+  return COURSES.filter((c) => ids.indexOf(c.id) > -1).reduce((n, c) => n + salePrice(c.price, 'unlock', c.id), 0);
+}
+/* The person's own rewards, as they currently stand on this screen. */
+const UNL_USE = { v: false, c: 0 };
+function unlockLuck() {
+  const base = unlockBase();
+  return luckCut(base, { v: UNL_USE.v, c: luckWanted(UNL_USE, base) });
+}
 function unlockCartHTML() {
   const S = T(), ids = UNL_CART.get().filter((id) => COURSES.some((c) => c.id === id) && !ACCESS.has(id));
   if (!ids.length) return '<p class="hint">' + esc(S.unlockEmpty) + '</p>';
   const rows = COURSES.filter((c) => ids.indexOf(c.id) > -1);
   const total = rows.reduce((n, c) => n + salePrice(c.price, 'unlock', c.id), 0);
+  const cut = unlockLuck();
   return '<div class="sum">' + rows.map((c) => '<div class="r"><span>' + esc(L(c.name)) + '</span><b>' + priceHTML(c.price, 'unlock', c.id) + '</b></div>').join('')
-    + '<div class="r tot"><span>' + esc(S.unlockTotal) + '</span><b>' + fmtPrice(total) + '</b></div></div>';
+    + '<div class="r tot"><span>' + esc(S.unlockTotal) + '</span><b>' + fmtPrice(total) + '</b></div>'
+    + (cut.pctOff ? '<div class="r cut"><span>🎟️ ' + esc(S.luckVoucherOf(cut.pct)) + '</span><b>-' + fmtPrice(cut.pctOff) + '</b></div>' : '')
+    + (cut.coins ? '<div class="r cut"><span>🪙 ' + esc(S.luckCoinsUsed(fmtNum(cut.coins))) + '</span><b>-' + fmtPrice(cut.coins) + '</b></div>' : '')
+    + ((cut.pctOff || cut.coins) ? '<div class="r tot"><span>' + esc(S.luckAfter) + '</span><b>' + fmtPrice(cut.final) + '</b></div>' : '')
+    + '</div>';
 }
 function unlockMessage() {
   const S = T(), ids = UNL_CART.get(), rows = COURSES.filter((c) => ids.indexOf(c.id) > -1 && !ACCESS.has(c.id));
   if (!rows.length) return '';
   const total = rows.reduce((n, c) => n + salePrice(c.price, 'unlock', c.id), 0);
+  const cut = unlockLuck();
   return '🔓 ' + S.unlockMsgHead + '\n' + rows.map((c) => '• ' + L(c.name) + ': ' + fmtPrice(salePrice(c.price, 'unlock', c.id))).join('\n')
-    + '\n💰 ' + S.unlockTotal + ': ' + fmtPrice(total);
+    + '\n💰 ' + S.unlockTotal + ': ' + fmtPrice(total) + luckLines(cut)
+    + ((cut.pctOff || cut.coins) ? '\n✅ ' + S.luckAfter + ': ' + fmtPrice(cut.final) : '');
 }
 function renderUnlock() {
   const S = T(), m = $('#main');
@@ -10509,7 +10745,9 @@ function renderUnlock() {
       + (isTWA() ? '' : '<p class="hint" style="margin-bottom:14px">' + esc(S.unlockPick) + '</p>')
       + '<div class="sec"><h2 style="margin-bottom:8px">' + esc(S.unlockCourses) + '</h2>' + group(['tarot', 'lenormand', 'playing', 'manifest']) + '</div>'
       + '<div class="sec"><h2 style="margin-bottom:8px">' + esc(S.unlockActs) + '</h2>' + group(['luck', 'coin', 'tree']) + '</div>'
+      + '<div class="sec"><h2 style="margin-bottom:8px">✨ ' + esc(S.plusName) + '</h2>' + group(['pro']) + '</div>'
       + (isTWA() ? '' : '<div class="sec"><h2 style="margin-bottom:8px">' + esc(S.unlockCart) + '</h2><div id="ucart">' + unlockCartHTML() + '</div>'
+        + rewardPanelHTML(unlockBase(), UNL_USE)
         + '<button class="btn primary block" id="usend" style="margin-top:12px">' + esc(S.unlockSend) + '</button>'
         + '<p class="hint" id="ustatus">' + esc(BE.enabled && BE.user ? '' : S.unlockSendMsg) + '</p></div>')
       + (isTWA() ? '' : '<div class="sec card"><h3 style="margin-bottom:10px">' + esc(S.unlockHow) + '</h3><ol class="steps">'
@@ -10517,6 +10755,7 @@ function renderUnlock() {
       + '<div class="card"><label class="f" for="ucode">' + esc(S.unlockCodeLabel) + '</label><div class="row nw"><input id="ucode" placeholder="' + esc(S.luckCodePh) + '" autocapitalize="characters"><button class="btn" id="ugo">' + esc(S.unlock) + '</button></div><p class="hint" id="ustatus"></p></div>'
       + (isTWA() ? '' : '<p style="margin-top:14px"><a class="backlink" href="#/prices">' + esc(S.unlockReadings) + ' →</a></p>');
     $$('[data-unl]', m).forEach((b) => b.addEventListener('click', () => { UNL_CART.toggle(b.getAttribute('data-unl')); draw(); }));
+    bindRewardPanel(m, UNL_USE, draw);
     const send = $('#usend');
     if (send) send.addEventListener('click', async () => {
       const ids = UNL_CART.get(), rows = COURSES.filter((c) => ids.indexOf(c.id) > -1 && !ACCESS.has(c.id));
@@ -10525,14 +10764,17 @@ function renderUnlock() {
       if (BE.enabled && BE.user) {
         send.disabled = true;
         try {
-          await BE.createUnlockOrder(rows.map((c) => ({ id: c.id, name: L(c.name), price: salePrice(c.price, 'unlock', c.id) })), rows.reduce((n, c) => n + salePrice(c.price, 'unlock', c.id), 0));
-          UNL_CART.set([]); toast(S.unlockSent); draw();
+          const cut = unlockLuck();
+          await BE.createUnlockOrder(rows.map((c) => ({ id: c.id, name: L(c.name), price: salePrice(c.price, 'unlock', c.id) })), cut.final);
+          luckCommit(cut, S.unlockCart);
+          UNL_CART.set([]); UNL_USE.v = false; UNL_USE.c = 0; toast(S.unlockSent); draw();
           const s2 = $('#ustatus'); if (s2) { s2.textContent = S.unlockSent; s2.className = 'hint ok'; }
           return;
         } catch (e) { st.textContent = S.publishFail + ': ' + e.message; st.className = 'hint err'; }
         send.disabled = false; return;
       }
       // No account yet: keep the message route so the order still reaches Nabu.
+      luckCommit(unlockLuck(), S.unlockCart);
       store.set('nabu-contact-draft', unlockMessage());
       location.hash = BE.enabled ? '#/me?next=unlock' : '#/contact';
     });
@@ -11287,11 +11529,841 @@ function bindGuideVisual(root) {
   $$('[data-len]', root).forEach((b) => b.addEventListener('click', () => { location.hash = '#/learn/len/' + b.getAttribute('data-len'); }));
 }
 
+/* ============================ looks ============================
+   Four things in the app can be dressed differently: the back of the cards you
+   draw, the message tree, the coin, and the paper the diary is written on.
+   Each one has a free look plus three that come with Nabu Tarot Plus.
+
+   A locked look is never hidden. It is drawn in full, at half brightness with
+   a padlock over it, so the reason to buy is the thing itself rather than a
+   description of it. Choosing one you do not own bounces to the unlock screen
+   and leaves your current look alone. */
+
+const LOOK_KINDS = ['cardback', 'tree', 'coin', 'diary'];
+const proOn = () => ACCESS.has('pro');
+
+/* What the visitor has chosen, and a fallback to the free look whenever the
+   chosen one is not theirs any more (an expired code, a shared device). */
+const LOOKS = {
+  all() { return store.get('nabu-looks', {}) || {}; },
+  get(kind) {
+    const id = this.all()[kind];
+    const set = LOOK_SETS[kind];
+    if (!set) return '';
+    const found = set.filter((x) => x.id === id)[0];
+    if (!found) return set[0].id;
+    return (found.pro && !proOn()) ? set[0].id : found.id;
+  },
+  set(kind, id) { const a = this.all(); a[kind] = id; store.set('nabu-looks', a); },
+  of(kind) { const set = LOOK_SETS[kind] || []; const id = this.get(kind); return set.filter((x) => x.id === id)[0] || set[0]; }
+};
+
+/* ---- the backs of the drawn cards ----
+   Each returns the inside of a 100x172 card; the frame is drawn around it. */
+const CARD_BACKS = {
+  moon(g) {
+    return '<path d="M56 60 A26 26 0 1 0 56 112 A21 21 0 1 1 56 60 Z" fill="' + g + '"/>'
+      + [[26, 32], [74, 32], [26, 140], [74, 140]].map((p) => '<circle cx="' + p[0] + '" cy="' + p[1] + '" r="3.4" fill="' + g + '"/>').join('');
+  },
+  stars(g) {
+    // A night sky: one bright star, a scatter of small ones, and a soft arc.
+    const star = (x, y, r) => '<path d="M' + x + ' ' + (y - r) + ' L' + (x + r * 0.28) + ' ' + (y - r * 0.28) + ' L' + (x + r) + ' ' + y + ' L' + (x + r * 0.28) + ' ' + (y + r * 0.28) + ' L' + x + ' ' + (y + r) + ' L' + (x - r * 0.28) + ' ' + (y + r * 0.28) + ' L' + (x - r) + ' ' + y + ' L' + (x - r * 0.28) + ' ' + (y - r * 0.28) + ' Z" fill="' + g + '"/>';
+    let s = star(50, 74, 20) + star(30, 118, 8) + star(72, 126, 6) + star(66, 44, 5);
+    [[22, 52], [78, 60], [38, 146], [62, 152], [50, 34], [84, 96], [18, 92]].forEach((p) => { s += '<circle cx="' + p[0] + '" cy="' + p[1] + '" r="1.7" fill="' + g + '" opacity=".85"/>'; });
+    s += '<path d="M14 130 C 34 112, 66 112, 86 130" fill="none" stroke="' + g + '" stroke-width="1.2" opacity=".55"/>';
+    return s;
+  },
+  bloom(g) {
+    // A damask flower, mirrored, the way an old card back is printed.
+    const petal = (a) => '<ellipse cx="50" cy="60" rx="7.5" ry="17" fill="' + g + '" opacity=".9" transform="rotate(' + a + ' 50 86)"/>';
+    let s = '';
+    for (let a = 0; a < 360; a += 45) s += petal(a);
+    s += '<circle cx="50" cy="86" r="7" fill="' + g + '"/>';
+    s += '<circle cx="50" cy="86" r="30" fill="none" stroke="' + g + '" stroke-width="1" opacity=".5"/>';
+    [[50, 24], [50, 148], [22, 86], [78, 86]].forEach((p) => { s += '<circle cx="' + p[0] + '" cy="' + p[1] + '" r="2.6" fill="' + g + '"/>'; });
+    return s;
+  },
+  eye(g) {
+    // An eye between two crescents: the old fortune-teller's card back.
+    return '<path d="M22 86 C 34 66, 66 66, 78 86 C 66 106, 34 106, 22 86 Z" fill="none" stroke="' + g + '" stroke-width="2"/>'
+      + '<circle cx="50" cy="86" r="9" fill="' + g + '"/><circle cx="50" cy="86" r="3.4" fill="#2A1D4E"/>'
+      + '<path d="M50 34 A12 12 0 1 0 50 58 A9 9 0 1 1 50 34 Z" fill="' + g + '"/>'
+      + '<path d="M50 138 A12 12 0 1 0 50 114 A9 9 0 1 1 50 138 Z" fill="' + g + '"/>'
+      + [[26, 74], [74, 74], [26, 98], [74, 98]].map((p) => '<circle cx="' + p[0] + '" cy="' + p[1] + '" r="2" fill="' + g + '" opacity=".8"/>').join('');
+  }
+};
+
+const LOOK_SETS = {
+  cardback: [
+    { id: 'moon', pro: false, name: { vi: 'Trăng vàng', en: 'Gold crescent' }, card: ['#3D2A6E', '#4A3480'], gold: '#E5BE5E' },
+    { id: 'stars', pro: true, name: { vi: 'Trời sao', en: 'Night sky' }, card: ['#1E2A57', '#2C3C74'], gold: '#FFE9A8' },
+    { id: 'bloom', pro: true, name: { vi: 'Hoa gấm', en: 'Damask bloom' }, card: ['#5B2340', '#7A3055'], gold: '#F6BBCB' },
+    { id: 'eye', pro: true, name: { vi: 'Mắt huyền', en: 'The seeing eye' }, card: ['#173F3A', '#215750'], gold: '#9FE3C9' }
+  ],
+  tree: [
+    { id: 'sakura', pro: false, name: { vi: 'Anh đào', en: 'Cherry blossom' } },
+    { id: 'night', pro: true, name: { vi: 'Đêm đom đóm', en: 'Firefly night' } },
+    { id: 'galaxy', pro: true, name: { vi: 'Cây ngân hà', en: 'Galaxy tree' } },
+    { id: 'butterfly', pro: true, name: { vi: 'Vườn bướm', en: 'Butterfly garden' } }
+  ],
+  coin: [
+    { id: 'gold', pro: false, name: { vi: 'Vàng', en: 'Gold' }, face: '#E5BE5E', rim: '#B9913B', ink: '#5A3F18' },
+    { id: 'moonsilver', pro: true, name: { vi: 'Bạc trăng', en: 'Moon silver' }, face: '#DCE3EF', rim: '#94A3BE', ink: '#2C3A52' },
+    { id: 'rose', pro: true, name: { vi: 'Vàng hồng', en: 'Rose gold' }, face: '#F0C4C2', rim: '#C98A85', ink: '#63302C' },
+    { id: 'jade', pro: true, name: { vi: 'Ngọc bích', en: 'Jade' }, face: '#A9DCC4', rim: '#5E9E82', ink: '#1E4636' }
+  ],
+  diary: [
+    { id: 'plain', pro: false, name: { vi: 'Giấy trơn', en: 'Plain paper' } },
+    { id: 'ruled', pro: true, name: { vi: 'Giấy kẻ cũ', en: 'Old ruled paper' } },
+    { id: 'floral', pro: true, name: { vi: 'Viền hoa', en: 'Floral border' } },
+    { id: 'starry', pro: true, name: { vi: 'Đêm sao', en: 'Starry night' } }
+  ]
+};
+
+/* ---- the card back, drawn in whichever look is chosen ---- */
+function backSVGFor(look) {
+  const b = look || LOOKS.of('cardback');
+  const draw = CARD_BACKS[b.id] || CARD_BACKS.moon;
+  return '<svg viewBox="0 0 100 172" aria-hidden="true">'
+    + '<rect x="1.3" y="1.3" width="97.4" height="169.4" rx="8" fill="' + b.card[0] + '" stroke="#2A1D4E" stroke-width="2.6"/>'
+    + '<rect x="9" y="9" width="82" height="154" rx="5" fill="' + b.card[1] + '" stroke="' + b.gold + '" stroke-width="1.4"/>'
+    + draw(b.gold) + '</svg>';
+}
+
+/* ---- the coin, in whichever metal is chosen ---- */
+function coinMetal() { return LOOKS.of('coin'); }
+
+/* ---- the paper the diary is written on ---- */
+function diaryPaperClass() { return 'paper-' + LOOKS.get('diary'); }
+
+/* ---- the picker ----
+   Every look is drawn at its real size. The ones that need Plus are dimmed and
+   carry a padlock, so what you would get is visible before you pay. */
+function lookPreview(kind, item) {
+  if (kind === 'cardback') return '<span class="lk-card">' + backSVGFor(item) + '</span>';
+  if (kind === 'tree') return '<span class="lk-tree">' + treeSVGFor(item.id, true) + '</span>';
+  if (kind === 'coin') return '<span class="lk-coin">' + coinFaceFor(item, '') + '</span>';
+  return '<span class="lk-diary ' + esc('paper-' + item.id) + '"><i></i><i></i><i></i></span>';
+}
+function renderLooks() {
+  const S = T(), m = $('#main');
+  const draw = () => {
+    const pro = proOn();
+    m.innerHTML = '<div class="eyebrow">' + esc(CONFIG.brand) + '</div><h1 style="margin-bottom:6px">' + esc(S.looksTitle) + '</h1><p class="muted">' + esc(S.looksIntro) + '</p>'
+      + (pro ? '<p class="hint">✨ ' + esc(S.looksPlusOn) + '</p>' : '<a class="salebar" href="#/unlock"><span class="tag">✨ ' + esc(S.plusName) + '</span><span class="txt">' + esc(S.looksLocked) + '</span><span class="go">' + esc(S.unlockLink) + ' ›</span></a>')
+      + LOOK_KINDS.map((kind) => '<div class="sec"><h2 style="margin-bottom:8px">' + esc(S.lookKinds[kind]) + '</h2><div class="lookgrid">'
+        + LOOK_SETS[kind].map((x) => {
+          const locked = x.pro && !pro, on = LOOKS.get(kind) === x.id;
+          return '<button type="button" class="look' + (on ? ' on' : '') + (locked ? ' locked' : '') + '" data-look="' + kind + ':' + x.id + '">'
+            + lookPreview(kind, x) + '<b>' + esc(L(x.name)) + '</b>'
+            + (locked ? '<span class="lk-lock">🔒</span>' : '') + (on ? '<span class="lk-on">✓</span>' : '') + '</button>';
+        }).join('') + '</div></div>').join('')
+      + '<p style="margin-top:14px"><a class="backlink" href="#/unlock">' + esc(S.unlockLink) + ' →</a></p>';
+    $$('[data-look]', m).forEach((b) => b.addEventListener('click', () => {
+      const p = b.getAttribute('data-look').split(':'), item = LOOK_SETS[p[0]].filter((x) => x.id === p[1])[0];
+      if (item.pro && !proOn()) { toast(S.looksNeedPlus); location.hash = '#/unlock'; return; }
+      LOOKS.set(p[0], p[1]); toast('✓'); draw();
+    }));
+  };
+  draw();
+}
+ROUTES.looks = { nav: '', render: renderLooks };
+
+/* ======================= levels, coins and vouchers =======================
+   Caring for a companion earns it experience, and experience earns the person
+   something real: Nabu coins, which come off the price of anything sold here,
+   and a voucher that grows with the highest level reached.
+
+   One coin is worth one đồng. Coins are earned slowly and never expire, so
+   they can be saved for a course or spent on a single reading; using them is
+   always a choice, offered at the moment of ordering and never automatic.
+
+   Everything is kept on the device. Nothing is deducted until an order is
+   actually sent, and coins put into an order can be taken back if the order
+   never happens. */
+
+/* Ten levels. The numbers are cumulative experience. */
+const PET_STEPS = [0, 60, 150, 300, 500, 750, 1050, 1400, 1800, 2250];
+const PET_MAXLV = PET_STEPS.length;
+function petLevel(xp) {
+  const x = Math.max(0, Number(xp) || 0);
+  let lv = 1;
+  for (let i = 0; i < PET_STEPS.length; i++) if (x >= PET_STEPS[i]) lv = i + 1;
+  return lv;
+}
+/* Where the bar stands between this level and the next. */
+function petStep(xp) {
+  const x = Math.max(0, Number(xp) || 0), lv = petLevel(x);
+  if (lv >= PET_MAXLV) return { lv: lv, into: 1, need: 0, at: 100 };
+  const from = PET_STEPS[lv - 1], to = PET_STEPS[lv];
+  return { lv: lv, into: x - from, need: to - from, at: Math.round((x - from) / (to - from) * 100) };
+}
+
+/* The vouchers the levels unlock, kept in order. */
+const VOUCHERS = [
+  { lv: 3, pct: 5 },
+  { lv: 5, pct: 10 },
+  { lv: 7, pct: 15 },
+  { lv: 10, pct: 20 }
+];
+/* What a level-up pays into the purse. */
+const levelCoins = (lv) => lv * 500;
+
+const BANK = {
+  coins() { return Math.max(0, Math.round(Number(store.get('nabu-coins', 0)) || 0)); },
+  put(n) { store.set('nabu-coins', Math.max(0, Math.round(n))); },
+  earn(n) { if (n > 0) this.put(this.coins() + n); },
+  /* Feeding pays a few coins, but only up to a point each day, so the purse
+     grows by coming back for a long time rather than by tapping all evening. */
+  dayCap: 30,
+  earnDay(n) {
+    const rec = store.get('nabu-coin-day', null) || {}, today = isoDate(new Date());
+    const used = rec.d === today ? (Number(rec.n) || 0) : 0;
+    const give = Math.max(0, Math.min(Math.round(n), this.dayCap - used));
+    if (give) { this.earn(give); store.set('nabu-coin-day', { d: today, n: used + give }); }
+    return give;
+  },
+  spend(n) { const take = Math.min(this.coins(), Math.max(0, Math.round(n))); this.put(this.coins() - take); return take; },
+  /* The highest level any companion has ever reached, which is what the
+     voucher is based on. It never goes down, even if a companion is let go. */
+  best() { return Math.max(1, Number(store.get('nabu-luck-best', 1)) || 1); },
+  mark(lv) { if (lv > this.best()) store.set('nabu-luck-best', lv); },
+  tier() { let out = null; VOUCHERS.forEach((v) => { if (BANK.best() >= v.lv) out = v; }); return out; },
+  next() { let out = null; VOUCHERS.slice().reverse().forEach((v) => { if (BANK.best() < v.lv) out = v; }); return out; },
+  /* Coins put into an order that has been sent but not yet answered. */
+  holds() { const a = store.get('nabu-luck-hold', []); return Array.isArray(a) ? a : []; },
+  hold(rec) { const a = this.holds(); a.unshift(rec); store.set('nabu-luck-hold', a.slice(0, 12)); },
+  release(at) {
+    const a = this.holds(), keep = a.filter((r) => r.at !== at), gone = a.filter((r) => r.at === at)[0];
+    if (!gone) return 0;
+    store.set('nabu-luck-hold', keep); this.earn(Number(gone.coins) || 0);
+    return Number(gone.coins) || 0;
+  }
+};
+
+/* ---- what an order costs after the person's own rewards ----
+   The shop's own sale has already been taken off the price before this runs,
+   so the voucher comes off the sale price and the coins come off last. */
+function luckCut(total, use) {
+  const base = Math.max(0, Math.round(Number(total) || 0));
+  const tier = BANK.tier();
+  const pct = (use && use.v && tier) ? tier.pct : 0;
+  const pctOff = pct ? Math.round(base * pct / 100 / 1000) * 1000 : 0;
+  const afterPct = Math.max(0, base - pctOff);
+  const coins = Math.min(Math.max(0, Math.round((use && use.c) || 0)), BANK.coins(), afterPct);
+  return { pct: pct, pctOff: pctOff, coins: coins, final: Math.max(0, afterPct - coins) };
+}
+/* The lines added to the message that is sent to Nabu. */
+function luckLines(cut) {
+  const S = T();
+  let s = '';
+  if (cut.pctOff) s += '\n🎟️ ' + S.luckVoucherOf(cut.pct) + ': -' + fmtPrice(cut.pctOff);
+  if (cut.coins) s += '\n🪙 ' + S.luckCoinsUsed(fmtNum(cut.coins)) + ': -' + fmtPrice(cut.coins);
+  return s;
+}
+
+/* ---- the panel offered at the moment of ordering ----
+   Nothing is ticked to begin with: spending a reward is always a decision,
+   and the panel says plainly that saved coins keep for later. */
+function rewardPanelHTML(total, use) {
+  const S = T(), tier = BANK.tier(), have = BANK.coins();
+  if (!tier && have < 1000) return '';
+  const cut = luckCut(total, use);
+  const afterPct = Math.max(0, Math.round(total) - cut.pctOff);
+  const steps = [1000, 5000, 10000, 20000].filter((n) => n <= Math.min(have, afterPct));
+  return '<div class="card luckpanel"><h3 style="margin-bottom:4px">🪙 ' + esc(S.luckTitle) + '</h3>'
+    + '<p class="hint" style="margin-bottom:10px">' + esc(S.luckHint) + '</p>'
+    + (tier ? '<label class="lk-row"><input type="checkbox" id="luckv"' + (use.v ? ' checked' : '') + '><span>' + esc(S.luckVoucherOf(tier.pct)) + '</span><b>-' + fmtPrice(cut.pctOff) + '</b></label>' : '')
+    + '<div class="lk-row"><span>' + esc(S.luckHave(fmtNum(have))) + '</span><b>' + (cut.coins ? '-' + fmtPrice(cut.coins) : fmtPrice(0)) + '</b></div>'
+    + (have >= 1000 && afterPct > 0
+      ? '<div class="chips lkchips"><button type="button" class="chip' + (!use.c ? ' on' : '') + '" data-coin="0">' + esc(S.luckKeep) + '</button>'
+        + steps.map((n) => '<button type="button" class="chip' + (use.c === n ? ' on' : '') + '" data-coin="' + n + '">' + fmtNum(n) + '</button>').join('')
+        + '<button type="button" class="chip' + (use.c === -1 ? ' on' : '') + '" data-coin="-1">' + esc(S.luckAll) + '</button></div>'
+      : '<p class="hint">' + esc(S.luckSaveUp) + '</p>')
+    + '</div>';
+}
+function bindRewardPanel(root, use, redraw) {
+  const v = $('#luckv', root);
+  if (v) v.addEventListener('change', () => { use.v = v.checked; redraw(); });
+  $$('[data-coin]', root).forEach((b) => b.addEventListener('click', () => {
+    const n = Number(b.getAttribute('data-coin'));
+    use.c = n === -1 ? -1 : n;
+    redraw();
+  }));
+}
+/* -1 means "all of them", worked out against whatever the total is now. */
+function luckWanted(use, total) {
+  if (!use || !use.c) return 0;
+  if (use.c === -1) return Math.min(BANK.coins(), Math.max(0, Math.round(total)));
+  return use.c;
+}
+/* Called once the order has actually been sent. */
+function luckCommit(cut, what) {
+  if (!cut.coins) return;
+  BANK.spend(cut.coins);
+  BANK.hold({ at: Date.now(), coins: cut.coins, what: what || '' });
+}
+
+/* ---- the rewards screen ---- */
+function renderRewards() {
+  const S = T(), m = $('#main');
+  const draw = () => {
+    const tier = BANK.tier(), next = BANK.next(), best = BANK.best(), holds = BANK.holds();
+    m.innerHTML = '<div class="eyebrow">' + esc(CONFIG.brand) + '</div><h1 style="margin-bottom:6px">🪙 ' + esc(S.luckTitle) + '</h1>'
+      + '<p class="muted">' + esc(S.luckIntro) + '</p>'
+      + '<div class="card coinbox"><span class="n">' + fmtNum(BANK.coins()) + '</span><span class="u">' + esc(S.luckCoins) + '</span>'
+      + '<p class="hint">' + esc(S.luckWorth(fmtPrice(BANK.coins()))) + '</p></div>'
+      + '<div class="card"><h3 style="margin-bottom:8px">🎟️ ' + esc(S.luckVoucher) + '</h3>'
+      + '<p class="hint" style="margin-bottom:10px">' + esc(S.luckVoucherHint) + '</p>'
+      + '<ul class="vlist">' + VOUCHERS.map((v) => '<li class="' + (best >= v.lv ? 'on' : '') + '"><span>' + esc(S.luckAtLevel(v.lv)) + '</span><b>' + (best >= v.lv ? '✓ ' : '🔒 ') + '-' + v.pct + '%</b></li>').join('') + '</ul>'
+      + (next ? '<p class="hint">' + esc(S.luckNextTier(next.lv, next.pct)) + '</p>' : '<p class="hint ok">' + esc(S.luckTopTier) + '</p>')
+      + '</div>'
+      + '<div class="card"><h3 style="margin-bottom:8px">' + esc(S.luckEarnTitle) + '</h3><ul class="carelist">'
+      + '<li><span>' + esc(S.luckEarnFeed) + '</span><b>+5</b></li>'
+      + '<li><span>' + esc(S.luckEarnGood) + '</span><b>+10</b></li>'
+      + '<li><span>' + esc(S.luckEarnLevel) + '</span><b>+500 × ' + esc(S.luckLevelWord) + '</b></li>'
+      + '</ul><p class="hint">' + esc(S.luckEarnNote) + '</p></div>'
+      + (holds.length
+        ? '<div class="card"><h3 style="margin-bottom:8px">' + esc(S.luckHoldTitle) + '</h3><ul class="holds">'
+          + holds.map((r) => '<li><span>' + esc(fmtDate(isoDate(new Date(r.at)))) + ' · ' + esc(r.what || '') + '</span><b>' + fmtNum(r.coins) + '</b><button type="button" class="btn tiny" data-back="' + r.at + '">' + esc(S.luckTakeBack) + '</button></li>').join('')
+          + '</ul><p class="hint">' + esc(S.luckHoldHint) + '</p></div>'
+        : '')
+      + '<p style="margin-top:14px"><a class="backlink" href="#/play/pet">← ' + esc(S.petBack) + '</a></p>';
+    $$('[data-back]', m).forEach((b) => b.addEventListener('click', () => {
+      const n = BANK.release(Number(b.getAttribute('data-back')));
+      if (n) toast(S.luckGaveBack(fmtNum(n)));
+      draw();
+    }));
+  };
+  draw();
+}
+ROUTES.rewards = { nav: '', render: renderRewards };
+
+/* ============================ the luck companions ============================
+   Four small animals, each one looking after a different corner of life: love,
+   work, study and money. You feed one every day and you may say a wish over it
+   once a day; it answers with a short blessing from its own corner.
+
+   Care is the whole idea. Coming back every day, feeding it something good,
+   dressing it, giving it a proper home: each of those fills the luck bar a
+   little further, and the app shows exactly how much each one is worth. One
+   companion, plain food and a grass mat are free. Nabu Tarot Plus opens all
+   four companions, the good food, the homes and the charms.
+
+   Everything is kept on the device, like the diary and the wish jar. The
+   blessings are written to comfort and to give the day a shape, the way a
+   drawn card does; nothing here promises an outcome. */
+
+const PET_KINDS = ['cat', 'fox', 'bunny', 'turtle'];
+const PET_NAMES = {
+  cat: { vi: 'Mèo Trăng', en: 'Moon cat' },
+  fox: { vi: 'Cáo Sao', en: 'Star fox' },
+  bunny: { vi: 'Thỏ Mây', en: 'Cloud bunny' },
+  turtle: { vi: 'Rùa Ngọc', en: 'Jade turtle' }
+};
+
+/* ---- what each one looks after ---- */
+const PET_LUCK = { cat: 'love', fox: 'career', bunny: 'study', turtle: 'money' };
+const LUCKS = {
+  love: {
+    id: 'love', sym: '💗', ink: '#D3557E', aura: '#FBD3E1',
+    name: { vi: 'Tình duyên', en: 'Love' },
+    line: { vi: 'Mèo Trăng ngồi canh chuyện tình cảm và giữ cho lòng bạn ấm.', en: 'The moon cat sits with matters of the heart and keeps you warm.' }
+  },
+  career: {
+    id: 'career', sym: '⭐', ink: '#B98420', aura: '#FBE7BE',
+    name: { vi: 'Sự nghiệp', en: 'Work' },
+    line: { vi: 'Cáo Sao đi trước một bước để mở đường cho công việc của bạn.', en: 'The star fox walks a step ahead and opens the way at work.' }
+  },
+  study: {
+    id: 'study', sym: '📖', ink: '#4173B8', aura: '#CFE0F7',
+    name: { vi: 'Học hành', en: 'Study' },
+    line: { vi: 'Thỏ Mây thức cùng bạn qua những trang sách khó nhất.', en: 'The cloud bunny stays up with you through the hardest pages.' }
+  },
+  money: {
+    id: 'money', sym: '🪙', ink: '#2E8A68', aura: '#C6E8D9',
+    name: { vi: 'Tiền tài', en: 'Money' },
+    line: { vi: 'Rùa Ngọc đi chậm mà chắc, giữ lại những gì bạn đã có.', en: 'The jade turtle moves slowly and keeps what you already have.' }
+  }
+};
+const petLuck = (kind) => LUCKS[PET_LUCK[kind] || 'love'];
+
+/* ---- what they say when you make a wish over them ----
+   Six lines each, so the answer feels like it belongs to that companion. */
+const PET_BLESS = {
+  love: [
+    { vi: 'Hôm nay có người nghĩ về bạn nhiều hơn bạn tưởng.', en: 'Someone is thinking of you more than you would guess today.' },
+    { vi: 'Bạn không cần chứng minh điều gì cả. Người hợp sẽ ở lại.', en: 'You do not need to prove anything. The right person stays.' },
+    { vi: 'Giữ lòng mình mềm, nhưng giữ ranh giới thật rõ.', en: 'Keep your heart soft and your limits clear.' },
+    { vi: 'Một cuộc gặp rất bình thường tuần này có thể ấm hơn bạn nghĩ.', en: 'An ordinary meeting this week may turn out warmer than you expect.' },
+    { vi: 'Điều bạn đang đợi chưa mất, nó chỉ đang đi đường vòng.', en: 'What you are waiting for is not lost. It is taking the long way.' },
+    { vi: 'Nói ra một câu thật lòng hôm nay sẽ nhẹ hơn giữ nó thêm một tuần.', en: 'One honest sentence today weighs less than another week of silence.' }
+  ],
+  career: [
+    { vi: 'Việc bạn làm lặng lẽ hôm nay sẽ có người nhìn thấy.', en: 'The work you do quietly today is seen by someone.' },
+    { vi: 'Đừng nhận thêm phần việc vốn không thuộc về bạn.', en: 'Do not take on work that was never yours.' },
+    { vi: 'Một cơ hội nhỏ đang mở ra. Hãy trả lời sớm.', en: 'A small opening is there. Answer it early.' },
+    { vi: 'Bạn đang làm tốt hơn chính bạn của năm ngoái.', en: 'You are doing better than you were a year ago.' },
+    { vi: 'Hôm nay hợp để hỏi, chưa hợp để hứa.', en: 'A good day to ask. Not yet a day to promise.' },
+    { vi: 'Ở một nơi bạn không có mặt, tên bạn được nhắc đến một cách tử tế.', en: 'Somewhere you are not, your name is being spoken kindly.' }
+  ],
+  study: [
+    { vi: 'Học ít mà đều còn hơn học thật nhiều trong một lần.', en: 'A little every day beats everything at once.' },
+    { vi: 'Phần bạn thấy khó nhất chính là phần sắp thông.', en: 'The part that feels hardest is the part about to open.' },
+    { vi: 'Ghi lại ba điều bạn vừa hiểu, chúng sẽ ở lại lâu hơn.', en: 'Write down three things you just understood. They will stay longer.' },
+    { vi: 'Đừng so tốc độ với người khác. Bạn đang đi đúng đường của mình.', en: 'Do not measure your speed against anyone. You are on your own road.' },
+    { vi: 'Một câu hỏi bạn ngại hỏi sẽ mở ra nhiều thứ hơn bạn tưởng.', en: 'The question you are shy to ask opens more than you think.' },
+    { vi: 'Nghỉ đúng lúc cũng là một phần của việc học.', en: 'Resting at the right moment is part of studying.' }
+  ],
+  money: [
+    { vi: 'Một khoản nhỏ quay về đúng lúc bạn cần đến nó.', en: 'A small amount comes back just when you need it.' },
+    { vi: 'Hôm nay hợp để giữ tiền hơn là để tiêu tiền.', en: 'Today suits keeping money more than spending it.' },
+    { vi: 'Đếm lại những gì bạn đang có trước khi đi tìm thêm.', en: 'Count what you already have before looking for more.' },
+    { vi: 'Một cơ hội kiếm thêm đến từ một người quen cũ.', en: 'A chance to earn more comes through someone you already know.' },
+    { vi: 'Đừng quyết định chuyện lớn khi trong người đang mệt.', en: 'Do not make a large decision while you are tired.' },
+    { vi: 'Tiền vào chậm nhưng chắc. Cứ giữ nhịp của bạn.', en: 'Money comes in slowly and steadily. Keep your rhythm.' }
+  ]
+};
+
+/* ---- coats, food, homes and charms ----
+   Four coats anyone can use, four more with Plus. Two plain foods for
+   everyone, six good ones with Plus. The mat is free, the three real homes
+   are not. Every paid item says what it adds, so nothing is hidden. */
+const PET_COATS = [
+  { id: 'cream', pro: false, body: '#F3DCC4', dark: '#D9BC9B', ink: '#5B4632' },
+  { id: 'lilac', pro: false, body: '#D9C9F2', dark: '#BCA6E4', ink: '#4A3670' },
+  { id: 'rose', pro: false, body: '#F6C6D4', dark: '#E3A2B6', ink: '#6A2F45' },
+  { id: 'sky', pro: false, body: '#BFD8F5', dark: '#9CBCE6', ink: '#28456E' },
+  { id: 'mint', pro: true, body: '#B8E6D0', dark: '#8FCDB2', ink: '#1E5340' },
+  { id: 'ember', pro: true, body: '#F7C89A', dark: '#E3A66C', ink: '#6B3A16' },
+  { id: 'midnight', pro: true, body: '#8E86C9', dark: '#6E64A8', ink: '#F3EEFF' },
+  { id: 'gold', pro: true, body: '#EDD08A', dark: '#D4B25F', ink: '#5A4415' }
+];
+const PET_FOODS = [
+  { id: 'rice', pro: false, add: 0, sym: '🍚', name: { vi: 'Cơm trắng', en: 'Plain rice' } },
+  { id: 'carrot', pro: false, add: 0, sym: '🥕', name: { vi: 'Cà rốt vườn', en: 'Garden carrot' } },
+  { id: 'moon', pro: true, add: 2, sym: '🍡', name: { vi: 'Bánh trôi ngũ sắc', en: 'Five-colour dumplings' } },
+  { id: 'fish', pro: true, add: 2, sym: '🐟', name: { vi: 'Cá nướng lá chuối', en: 'Fish in banana leaf' } },
+  { id: 'honey', pro: true, add: 2, sym: '🍯', name: { vi: 'Mật hoa rừng', en: 'Wild flower honey' } },
+  { id: 'berry', pro: true, add: 2, sym: '🍓', name: { vi: 'Dâu sương sớm', en: 'Morning-dew berries' } },
+  { id: 'cake', pro: true, add: 2, sym: '🍥', name: { vi: 'Bánh trăng rằm', en: 'Full-moon cake' } },
+  { id: 'star', pro: true, add: 2, sym: '🧁', name: { vi: 'Bánh kem sao', en: 'Star cream cake' } }
+];
+const PET_HOMES = [
+  { id: 'mat', pro: false, add: 0, name: { vi: 'Chiếu cỏ', en: 'Grass mat' } },
+  { id: 'cloud', pro: true, add: 12, name: { vi: 'Nhà mây', en: 'Cloud cottage' } },
+  { id: 'shrine', pro: true, add: 12, name: { vi: 'Đền nhỏ', en: 'Little shrine' } },
+  { id: 'moon', pro: true, add: 12, name: { vi: 'Vườn trăng', en: 'Moon garden' } }
+];
+const PET_WEARS = [
+  { id: 'none', pro: false, add: 0, name: { vi: 'Để mộc', en: 'Nothing' } },
+  { id: 'scarf', pro: true, add: 10, name: { vi: 'Khăn lụa', en: 'Silk scarf' } },
+  { id: 'bell', pro: true, add: 10, name: { vi: 'Chuông vàng', en: 'Gold bell' } },
+  { id: 'crown', pro: true, add: 10, name: { vi: 'Vòng hoa', en: 'Flower crown' } },
+  { id: 'hat', pro: true, add: 10, name: { vi: 'Nón trăng', en: 'Moon hat' } }
+];
+const PET_FREE_MAX = 1;
+const pickFrom = (set, id, free) => {
+  const found = set.filter((x) => x.id === id)[0] || set[0];
+  return (found.pro && !proOn()) ? (free ? set[0] : found) : found;
+};
+
+/* ---- the little household ----
+   Kept as a list. Before v98 there was only ever one companion, saved under
+   its own key, so that one is carried across the first time this runs. */
+const PETS = {
+  all() {
+    let list = store.get('nabu-pets', null);
+    if (!Array.isArray(list)) {
+      const old = store.get('nabu-pet', null);
+      list = old && PET_KINDS.indexOf(old.kind) > -1 ? [old] : [];
+      if (list.length) store.set('nabu-pets', list);
+    }
+    return list.filter((p) => p && PET_KINDS.indexOf(p.kind) > -1);
+  },
+  save(list) { store.set('nabu-pets', list); },
+  put(p) {
+    const list = this.all().filter((x) => x.kind !== p.kind);
+    list.push(p); this.save(list); return p;
+  },
+  drop(kind) { this.save(this.all().filter((p) => p.kind !== kind)); },
+  one(kind) { return this.all().filter((p) => p.kind === kind)[0] || null; },
+  /* How many may be kept: one, or all of them with Plus. */
+  cap() { return proOn() ? PET_KINDS.length : PET_FREE_MAX; },
+  room() { return this.all().length < this.cap(); },
+  fresh(kind) { return { kind: kind, coat: 'cream', wear: 'none', home: 'mat', food: 'rice', name: '', streak: 0, meals: 0, treats: 0, xp: 0, last: 0, fed: '', pray: '', bless: 0 }; },
+  /* Anything paid falls back to the free version the day Plus lapses, so a
+     lapsed subscription never leaves a companion looking broken. */
+  coat(p) { return pickFrom(PET_COATS, p && p.coat, true); },
+  wear(p) { return pickFrom(PET_WEARS, p && p.wear, true); },
+  home(p) { return pickFrom(PET_HOMES, p && p.home, true); },
+  food(p) { return pickFrom(PET_FOODS, p && p.food, true); },
+  fedToday(p) { return !!p && p.fed === isoDate(new Date()); },
+  prayedToday(p) { return !!p && p.pray === isoDate(new Date()); },
+  /* Everyone may feed a companion several times a day. The wait between two
+     meals is six hours, or two hours with Plus. */
+  gap() { return (proOn() ? 2 : 6) * 3600000; },
+  waitLeft(p) { return Math.max(0, (Number(p && p.last) || 0) + this.gap() - Date.now()); },
+  canFeed(p) { return this.waitLeft(p) <= 0; },
+  /* What one meal is worth, itemised, because the card shows the list and the
+     list is what makes the case for feeding it something good. */
+  gain(p) {
+    const days = Math.min(10, ((Number(p.streak) || 0) - 1) * 2);
+    const food = this.food(p).add ? 8 : 0;
+    const wear = this.wear(p).add ? 4 : 0;
+    const home = this.home(p).add ? 5 : 0;
+    const coat = this.coat(p).pro ? 3 : 0;
+    return { meal: 10, days: Math.max(0, days), food: food, wear: wear, home: home, coat: coat,
+      total: 10 + Math.max(0, days) + food + wear + home + coat };
+  },
+  /* A streak counts one day at a time, however many meals are given that day.
+     Feeding pays experience and a few coins; crossing a level pays more. */
+  feed(p) {
+    const today = isoDate(new Date());
+    const y = new Date(); y.setDate(y.getDate() - 1);
+    if (p.fed !== today) p.streak = p.fed === isoDate(y) ? (Number(p.streak) || 0) + 1 : 1;
+    const before = petLevel(p.xp);
+    const good = !!this.food(p).add;
+    p.xp = (Number(p.xp) || 0) + this.gain(p).total;
+    p.fed = today;
+    p.last = Date.now();
+    p.meals = (Number(p.meals) || 0) + 1;
+    if (good) p.treats = (Number(p.treats) || 0) + 1;
+    const coins = BANK.earnDay(good ? 5 : 2);
+    const after = petLevel(p.xp);
+    let up = 0;
+    for (let lv = before + 1; lv <= after; lv++) { BANK.earn(levelCoins(lv)); up += levelCoins(lv); }
+    BANK.mark(after);
+    this.put(p);
+    return { coins: coins, up: up, from: before, to: after };
+  },
+  /* One wish a day, and the answer stays on the card until tomorrow. */
+  pray(p) {
+    const pool = PET_BLESS[petLuck(p.kind).id];
+    p.pray = isoDate(new Date());
+    p.bless = Math.floor(Math.random() * pool.length);
+    p.xp = (Number(p.xp) || 0) + 6;
+    BANK.mark(petLevel(p.xp));
+    return this.put(p);
+  },
+  blessing(p) { return PET_BLESS[petLuck(p.kind).id][Number(p.bless) || 0]; },
+  level(p) { return petLevel(p && p.xp); },
+  step(p) { return petStep(p && p.xp); }
+};
+/* The older name, kept because the tree and the activities list use it. */
+const PET = PETS;
+
+/* ---- the four homes ----
+   Drawn behind the companion, filling the width of the stage. */
+function petHomeSVG(id) {
+  const open = '<svg viewBox="0 0 240 150" class="pethome" aria-hidden="true">';
+  if (id === 'cloud') {
+    return open
+      + '<circle cx="60" cy="46" r="26" fill="#EDE6FB"/><circle cx="96" cy="34" r="32" fill="#F5F0FF"/><circle cx="140" cy="40" r="28" fill="#EDE6FB"/><circle cx="178" cy="52" r="22" fill="#F5F0FF"/>'
+      + '<path d="M56 96 L120 52 L184 96 Z" fill="#D9C9F2"/><rect x="72" y="94" width="96" height="46" rx="8" fill="#F3EAFE" stroke="#C7B4EC" stroke-width="2"/>'
+      + '<rect x="104" y="110" width="32" height="30" rx="6" fill="#C9B0EA"/>'
+      + '<circle cx="88" cy="112" r="7" fill="#FFF7EE" stroke="#C7B4EC" stroke-width="1.6"/><circle cx="152" cy="112" r="7" fill="#FFF7EE" stroke="#C7B4EC" stroke-width="1.6"/>'
+      + '<ellipse cx="120" cy="146" rx="94" ry="6" fill="#C9A5D8" opacity=".25"/></svg>';
+  }
+  if (id === 'shrine') {
+    return open
+      + '<path d="M28 62 L120 26 L212 62 Z" fill="#B0483F"/><rect x="34" y="62" width="172" height="10" rx="4" fill="#8E3A33"/>'
+      + '<rect x="52" y="72" width="136" height="66" rx="6" fill="#F0DFC8" stroke="#C6A98A" stroke-width="2"/>'
+      + '<rect x="96" y="86" width="48" height="52" rx="4" fill="#8E3A33"/><circle cx="120" cy="104" r="10" fill="#E5BE5E"/>'
+      + '<rect x="60" y="72" width="10" height="66" fill="#B0483F"/><rect x="170" y="72" width="10" height="66" fill="#B0483F"/>'
+      + '<g fill="#E5BE5E"><circle cx="44" cy="52" r="4"/><circle cx="196" cy="52" r="4"/></g>'
+      + '<path d="M74 96 q10 -8 20 0" stroke="#C6A98A" stroke-width="2" fill="none"/><path d="M146 96 q10 -8 20 0" stroke="#C6A98A" stroke-width="2" fill="none"/>'
+      + '<ellipse cx="120" cy="146" rx="94" ry="6" fill="#C9A5D8" opacity=".25"/></svg>';
+  }
+  if (id === 'moon') {
+    let stars = '';
+    for (let i = 0; i < 16; i++) stars += '<circle class="twinkle" cx="' + (14 + (i * 31) % 214) + '" cy="' + (12 + (i * 43) % 76) + '" r="' + (1 + (i % 3) * 0.6) + '" fill="#FFF3C4" style="animation-delay:' + (i * 190) + 'ms"/>';
+    return open
+      + '<rect x="0" y="0" width="240" height="150" rx="16" fill="#2E2756"/>' + stars
+      + '<path d="M188 40 A24 24 0 1 0 188 88 A19 19 0 1 1 188 40 Z" fill="#FFE9A8"/>'
+      + '<path d="M0 118 q60 -22 120 -4 q60 18 120 -6 L240 150 L0 150 Z" fill="#4A3E80"/>'
+      + '<g fill="#8E7FD6"><ellipse cx="42" cy="122" rx="16" ry="9"/><ellipse cx="196" cy="126" rx="14" ry="8"/></g>'
+      + '<g fill="#F7A9C6"><circle cx="30" cy="112" r="4"/><circle cx="70" cy="118" r="3.4"/><circle cx="206" cy="116" r="3.6"/></g></svg>';
+  }
+  return open
+    + '<ellipse cx="120" cy="126" rx="92" ry="20" fill="#CFE3C4"/><ellipse cx="120" cy="126" rx="92" ry="20" fill="none" stroke="#AECFA0" stroke-width="2"/>'
+    + '<g stroke="#AECFA0" stroke-width="2" stroke-linecap="round"><path d="M44 120 v10 M64 116 v12 M176 116 v12 M196 120 v10"/></g>'
+    + '<g fill="#F7A9C6"><circle cx="52" cy="112" r="4"/><circle cx="188" cy="114" r="4"/></g></svg>';
+}
+
+/* ---- the four creatures ----
+   The same body plan, so they read as one family: a round body, a round head,
+   a face, a charm at the throat in the colour of the luck they carry, and one
+   feature that tells them apart. Drawn on a 120x120 square. */
+function petSVG(kind, coat, mood, wear) {
+  const c = coat || PET_COATS[0];
+  const luck = petLuck(kind);
+  const happy = mood === 'happy';
+  const eye = (x) => happy
+    ? '<path d="M' + (x - 5) + ' 54 q5 -6 10 0" fill="none" stroke="' + c.ink + '" stroke-width="2.6" stroke-linecap="round"/>'
+    : '<ellipse cx="' + x + '" cy="54" rx="3.4" ry="4.4" fill="' + c.ink + '"/><circle cx="' + (x + 1.2) + '" cy="52.2" r="1.2" fill="#fff"/>';
+  const face = eye(50) + eye(70)
+    + '<path d="M56 64 q4 4 8 0" fill="none" stroke="' + c.ink + '" stroke-width="2.4" stroke-linecap="round"/>'
+    + '<ellipse cx="40" cy="62" rx="5" ry="3.2" fill="#F2A9BE" opacity=".55"/>'
+    + '<ellipse cx="80" cy="62" rx="5" ry="3.2" fill="#F2A9BE" opacity=".55"/>';
+  let ears = '', extra = '', behind = '', overBody = '', feet = true;
+  if (kind === 'cat') {
+    ears = '<path d="M36 32 L38 10 L54 24 Z" fill="' + c.body + '"/><path d="M84 32 L82 10 L66 24 Z" fill="' + c.body + '"/>'
+      + '<path d="M40 30 L41 18 L50 26 Z" fill="' + c.dark + '"/><path d="M80 30 L79 18 L70 26 Z" fill="' + c.dark + '"/>';
+    behind = '<path d="M86 96 q24 -4 18 -26" fill="none" stroke="' + c.dark + '" stroke-width="8" stroke-linecap="round"/>';
+    extra = '<path d="M28 56 h-11 M28 61 h-12 M92 56 h11 M92 61 h12" stroke="' + c.dark + '" stroke-width="1.4" stroke-linecap="round"/>';
+  } else if (kind === 'fox') {
+    ears = '<path d="M34 34 L33 8 L56 24 Z" fill="' + c.body + '"/><path d="M86 34 L87 8 L64 24 Z" fill="' + c.body + '"/>'
+      + '<path d="M38 30 L38 16 L50 25 Z" fill="' + c.ink + '" opacity=".4"/><path d="M82 30 L82 16 L70 25 Z" fill="' + c.ink + '" opacity=".4"/>';
+    behind = '<path d="M84 98 q28 4 22 -22 q-5 15 -22 13 Z" fill="' + c.dark + '"/><path d="M102 80 q7 -5 5 -12" stroke="#FFF7EE" stroke-width="6" fill="none" stroke-linecap="round"/>';
+    extra = '<path d="M44 74 q16 7 32 0" fill="none" stroke="' + c.dark + '" stroke-width="2" opacity=".45"/>';
+  } else if (kind === 'bunny') {
+    ears = '<ellipse cx="47" cy="18" rx="7.5" ry="21" fill="' + c.body + '" transform="rotate(-8 47 18)"/>'
+      + '<ellipse cx="73" cy="18" rx="7.5" ry="21" fill="' + c.body + '" transform="rotate(8 73 18)"/>'
+      + '<ellipse cx="47" cy="20" rx="3.6" ry="14" fill="#F7C7D6" transform="rotate(-8 47 20)"/>'
+      + '<ellipse cx="73" cy="20" rx="3.6" ry="14" fill="#F7C7D6" transform="rotate(8 73 20)"/>';
+    behind = '<circle cx="92" cy="94" r="9" fill="#FFF7EE"/>';
+  } else {
+    // The turtle is a shell with a head coming out of it: the flippers and the
+    // tail are drawn first so the shell sits over them, and the charm is set
+    // into the shell rather than hung at the throat.
+    feet = false;
+    behind = '<ellipse cx="26" cy="100" rx="12" ry="6.5" fill="' + c.dark + '" transform="rotate(-16 26 100)"/>'
+      + '<ellipse cx="94" cy="100" rx="12" ry="6.5" fill="' + c.dark + '" transform="rotate(16 94 100)"/>'
+      + '<path d="M92 96 q14 -1 18 6 q-9 5 -18 -1 Z" fill="' + c.dark + '"/>';
+    overBody = '<path d="M24 106 A36 32 0 0 1 96 106 Z" fill="#7FC9A8"/>'
+      + '<ellipse cx="60" cy="106" rx="36" ry="5" fill="#4E9C7C"/>'
+      + '<path d="M24 106 A36 32 0 0 1 96 106" fill="none" stroke="#4E9C7C" stroke-width="2.4"/>'
+      + '<g fill="none" stroke="#4E9C7C" stroke-width="1.6" opacity=".9">'
+      + '<path d="M60 74 L60 106 M40 80 L48 106 M80 80 L72 106 M27 95 L34 106 M93 95 L86 106"/>'
+      + '<path d="M34 92 Q60 82 86 92"/></g>'
+      + '<path d="M40 100 q20 -7 40 0" fill="none" stroke="#B9E8D2" stroke-width="2" opacity=".7"/>';
+    extra = '<path d="M36 46 q6 -8 14 -9 M84 46 q-6 -8 -14 -9" fill="none" stroke="' + c.dark + '" stroke-width="1.8" stroke-linecap="round" opacity=".7"/>';
+  }
+  // The charm at the throat says which luck this one carries.
+  const charmY = kind === 'turtle' ? 92 : 80;
+  let neck = (kind === 'turtle' ? '' : '<path d="M42 74 q18 9 36 0" fill="none" stroke="' + luck.ink + '" stroke-width="2.4" stroke-linecap="round" opacity=".9"/>')
+    + '<circle cx="60" cy="' + charmY + '" r="6.4" fill="' + luck.ink + '"/><circle cx="60" cy="' + charmY + '" r="3" fill="' + luck.aura + '"/>';
+  let worn = '';
+  const w = (wear && wear.id) || 'none';
+  if (w === 'scarf') {
+    neck = '<path d="M38 72 q22 14 44 0 q2 8 -4 12 q-18 9 -36 0 q-6 -4 -4 -12 Z" fill="#E1607F"/>'
+      + '<path d="M74 82 q10 8 6 20 q-8 2 -12 -4 Z" fill="#C94C6C"/>';
+  } else if (w === 'bell') {
+    neck += '<circle cx="60" cy="80" r="6.4" fill="#E5BE5E" stroke="#B9913B" stroke-width="1.4"/>'
+      + '<path d="M55 80 h10" stroke="#B9913B" stroke-width="1.4"/><circle cx="60" cy="84" r="1.6" fill="#8A6B22"/>';
+  } else if (w === 'crown') {
+    const bud = (x, y, col) => [0, 72, 144, 216, 288].map((a) => '<ellipse cx="' + x + '" cy="' + (y - 3.4) + '" rx="2.2" ry="3.4" fill="' + col + '" transform="rotate(' + a + ' ' + x + ' ' + y + ')"/>').join('') + '<circle cx="' + x + '" cy="' + y + '" r="1.6" fill="#FFE9A8"/>';
+    worn = '<path d="M34 36 Q60 22 86 36" fill="none" stroke="#8FBF7F" stroke-width="2.4"/>'
+      + bud(38, 35, '#F7A9C6') + bud(52, 28, '#FFF3C4') + bud(68, 28, '#F7A9C6') + bud(82, 35, '#C9B0EA');
+  } else if (w === 'hat') {
+    worn = '<ellipse cx="60" cy="34" rx="30" ry="7" fill="#E8CFA0"/><path d="M38 34 L60 6 L82 34 Z" fill="#F0DFC8" stroke="#C6A98A" stroke-width="1.6"/>'
+      + '<path d="M46 28 q14 -6 28 0" fill="none" stroke="#C6A98A" stroke-width="1.4"/>'
+      + '<path d="M60 8 A9 9 0 1 0 60 26 A7 7 0 1 1 60 8 Z" fill="#E5BE5E"/>';
+  }
+  // A turtle's head is small and comes out over the shell, so its head and
+  // face are drawn smaller and higher than the rest of the family's.
+  const head = '<ellipse cx="60" cy="56" rx="29" ry="26" fill="' + c.body + '"/>' + face + extra;
+  const headed = kind === 'turtle'
+    ? '<g transform="translate(60,50) scale(.76) translate(-60,-56)">' + head + '</g>'
+    : head;
+  return '<svg viewBox="0 0 120 120" class="petart" role="img" aria-label="' + esc(L(PET_NAMES[kind])) + '">'
+    + '<ellipse cx="60" cy="112" rx="32" ry="6" fill="#C9A5D8" opacity=".28"/>'
+    + behind
+    + '<ellipse cx="60" cy="88" rx="30" ry="23" fill="' + c.body + '"/>'
+    + '<ellipse cx="60" cy="92" rx="18" ry="14" fill="#FFF7EE" opacity=".55"/>'
+    + (feet ? '<ellipse cx="38" cy="104" rx="8" ry="5" fill="' + c.dark + '"/><ellipse cx="82" cy="104" rx="8" ry="5" fill="' + c.dark + '"/>' : '')
+    + overBody + ears + headed + neck + worn
+    + '</svg>';
+}
+
+/* The wait until the next meal, rounded the way a person would say it. */
+function waitWord(ms) {
+  const S = T(), mins = Math.max(1, Math.ceil(ms / 60000));
+  if (mins < 60) return S.waitMin(mins);
+  const h = Math.floor(mins / 60), m = mins % 60;
+  return m ? S.waitHourMin(h, m) : S.waitHour(h);
+}
+
+/* The halo of luck behind a companion, and the symbols drifting up out of it.
+   They are HTML rather than SVG so they can be animated cheaply. */
+function petAuraHTML(kind, n) {
+  const luck = petLuck(kind);
+  let s = '<span class="aura" style="--aura:' + luck.aura + '"></span><span class="lucksyms" aria-hidden="true">';
+  for (let i = 0; i < (n || 5); i++) s += '<i style="left:' + (12 + i * 18) + '%;animation-delay:' + (i * 700) + 'ms">' + luck.sym + '</i>';
+  return s + '</span>';
+}
+
+/* ---- the screen ---- */
+function renderPet(want) {
+  const S = T(), m = $('#main');
+  let busy = false, open = '';
+
+  /* One line of the meal list: what it adds, and whether it is open. */
+  const gainRow = (label, got, worth, locked) => '<li' + (locked ? ' class="locked"' : '') + '><span>' + esc(label) + '</span><b>' + (locked ? '🔒 +' + worth : '+' + got) + '</b></li>';
+
+  const petCardHTML = (p) => {
+    const luck = petLuck(p.kind), coat = PETS.coat(p), prayed = PETS.prayedToday(p);
+    const st = PETS.step(p), gain = PETS.gain(p), pro = proOn(), ready = PETS.canFeed(p);
+    const bless = prayed ? PETS.blessing(p) : null;
+    return '<div class="card petwrap luck-' + luck.id + '">'
+      + '<div class="petstage" id="petstage">' + petHomeSVG(PETS.home(p).id) + petAuraHTML(p.kind) + petSVG(p.kind, coat, ready ? '' : 'happy', PETS.wear(p)) + '<span class="crumbs" id="crumbs"></span></div>'
+      + '<div class="lucktag" style="--ink:' + luck.ink + ';--aura:' + luck.aura + '">' + luck.sym + ' ' + esc(S.petBrings(L(luck.name))) + '</div>'
+      + '<p class="petline">' + esc(L(luck.line)) + '</p>'
+      + '<div class="charm"><span class="lbl">' + esc(S.petLevel(st.lv)) + '</span><span class="bar"><i style="width:' + st.at + '%;background:' + luck.ink + '"></i></span>'
+      + '<b>' + (st.need ? st.into + '/' + st.need : '★') + '</b></div>'
+      + '<ul class="carelist"><li class="head"><span>' + esc(S.petMealWorth) + '</span><b>+' + gain.total + '</b></li>'
+      + gainRow(S.careMeal, gain.meal, 10, false)
+      + gainRow(S.careDays, gain.days, 10, false)
+      + gainRow(S.careTreats, gain.food, 8, !pro)
+      + gainRow(S.careWear, gain.wear, 4, !pro)
+      + gainRow(S.careHome, gain.home, 5, !pro)
+      + gainRow(S.careCoat, gain.coat, 3, !pro)
+      + '</ul>'
+      + '<div class="petstat"><span>🔥 ' + esc(S.petStreak(Number(p.streak) || 0)) + '</span><span>🍽️ ' + esc(S.petMeals(Number(p.meals) || 0)) + '</span><a href="#/rewards">🪙 ' + fmtNum(BANK.coins()) + '</a></div>'
+      + (ready
+        ? '<button class="btn primary block" id="feed">' + PETS.food(p).sym + ' ' + esc(S.petFeedWith(L(PETS.food(p).name))) + '</button>'
+        : '<p class="hint ok">' + esc(S.petFull(waitWord(PETS.waitLeft(p)))) + '</p>'
+          + (pro ? '' : '<p class="hint">' + esc(S.petFasterPlus) + '</p>'))
+      + (bless ? '<div class="bless"><span class="q">' + luck.sym + '</span><p>' + esc(L(bless)) + '</p><span class="who">' + esc(p.name || L(PET_NAMES[p.kind])) + '</span></div>'
+        : '<button class="btn block' + (PETS.fedToday(p) ? '' : ' off') + '" id="pray" style="margin-top:10px">🙏 ' + esc(S.petPray) + '</button>'
+          + '<p class="hint">' + esc(PETS.fedToday(p) ? S.petPrayHint : S.petNeedFeed) + '</p>')
+      + '</div>';
+  };
+
+  /* One shelf of things to give the companion: food, a home, something to
+     wear. Locked items are shown in full with what they would add. */
+  const shelfHTML = (title, note, set, chosenId, key, label) => '<div class="card"><h3 style="margin-bottom:4px">' + esc(title) + '</h3><p class="hint" style="margin-bottom:10px">' + esc(note) + '</p>'
+    + '<div class="shelf">' + set.map((x) => {
+      const locked = x.pro && !proOn();
+      return '<button type="button" class="sh' + (chosenId === x.id ? ' on' : '') + (locked ? ' locked' : '') + '" data-shelf="' + key + ':' + x.id + '">'
+        + '<span class="shart">' + (label === 'food' ? x.sym : (label === 'home' ? petHomeSVG(x.id) : petWearArt(x.id))) + '</span>'
+        + '<b>' + esc(L(x.name)) + '</b>'
+        + (x.add ? '<span class="plus">+' + x.add + '</span>' : '')
+        + (locked ? '<span class="sh-lock">🔒</span>' : '') + (chosenId === x.id ? '<span class="sh-on">✓</span>' : '')
+        + '</button>';
+    }).join('') + '</div></div>';
+
+  const draw = () => {
+    const pets = PETS.all();
+    if (!pets.length) { drawPicker(); return; }
+    if (!open || !PETS.one(open)) open = pets[0].kind;
+    const p = PETS.one(open), coat = PETS.coat(p);
+    const tabs = pets.length > 1
+      ? '<div class="pettabs">' + pets.map((x) => '<button type="button" class="pt' + (x.kind === open ? ' on' : '') + '" data-open="' + x.kind + '">' + petSVG(x.kind, PETS.coat(x), 'happy', PETS.wear(x)) + '<b>' + esc(x.name || L(PET_NAMES[x.kind])) + '</b></button>').join('') + '</div>'
+      : '';
+    const room = PETS.room(), left = PETS.cap() - pets.length;
+    m.innerHTML = '<div class="eyebrow">' + esc(S.actTitle) + '</div><h1 style="margin-bottom:6px">🐾 ' + esc(p.name || L(PET_NAMES[p.kind])) + '</h1>'
+      + '<p class="muted">' + esc(S.petIntro) + '</p>'
+      + tabs + petCardHTML(p)
+      + (pets.length > 1 ? '<p class="hint ok" style="text-align:center">✨ ' + esc(S.petLuckTotal(pets.length)) + '</p>' : '')
+      + (room
+        ? '<button type="button" class="btn block" id="addpet" style="margin-top:12px">➕ ' + esc(S.petAdd) + (left > 1 ? ' · ' + esc(S.petRoomLeft(left)) : '') + '</button>'
+        : (proOn() ? '' : '<a class="salebar" href="#/unlock"><span class="tag">✨ ' + esc(S.plusName) + '</span><span class="txt">' + esc(S.petPlusPitch) + '</span><span class="go">' + esc(S.unlockLink) + ' ›</span></a>'))
+      + shelfHTML(S.petFoodTitle, S.petFoodNote, PET_FOODS, PETS.food(p).id, 'food', 'food')
+      + shelfHTML(S.petHomeTitle, S.petHomeNote, PET_HOMES, PETS.home(p).id, 'home', 'home')
+      + shelfHTML(S.petWearTitle, S.petWearNote, PET_WEARS, PETS.wear(p).id, 'wear', 'wear')
+      + '<div class="card"><h3 style="margin-bottom:8px">' + esc(S.petCoat) + '</h3><div class="chips coats">'
+      + PET_COATS.map((c) => { const locked = c.pro && !proOn(); return '<button type="button" class="coat' + (coat.id === c.id ? ' on' : '') + (locked ? ' locked' : '') + '" data-coat="' + c.id + '" style="background:' + c.body + '" aria-label="' + esc(c.id) + '">' + (locked ? '🔒' : '') + '</button>'; }).join('')
+      + '</div><label class="f" for="petname" style="margin-top:12px">' + esc(S.petName) + '</label><input id="petname" maxlength="24" value="' + esc(p.name || '') + '" placeholder="' + esc(L(PET_NAMES[p.kind])) + '">'
+      + '<button class="btn block" id="petswap" style="margin-top:10px">' + esc(pets.length > 1 ? S.petLetGo : S.petSwap) + '</button></div>'
+      + '<p style="margin-top:14px"><a href="#/play" class="backlink">← ' + esc(S.actTitle) + '</a></p>';
+
+    $$('[data-open]', m).forEach((b) => b.addEventListener('click', () => { open = b.getAttribute('data-open'); draw(); }));
+    const add = $('#addpet');
+    if (add) add.addEventListener('click', () => drawPicker());
+    const fb = $('#feed');
+    if (fb) fb.addEventListener('click', () => {
+      if (busy) return;
+      busy = true; fb.disabled = true;
+      const stage = $('#petstage'), crumbs = $('#crumbs'), sym = PETS.food(p).sym;
+      stage.classList.add('munch');
+      let html = '';
+      for (let i = 0; i < 7; i++) html += '<i style="left:' + (18 + Math.round(Math.random() * 64)) + '%;animation-delay:' + (i * 90) + 'ms">' + sym + '</i>';
+      crumbs.innerHTML = html;
+      setTimeout(() => {
+        const got = PETS.feed(p);
+        busy = false; draw();
+        toast(got.to > got.from ? S.petLevelUp(got.to, fmtNum(got.up)) : (got.coins ? S.petThanksCoins(fmtNum(got.coins)) : S.petThanks));
+      }, 1100);
+    });
+    const pb = $('#pray');
+    if (pb) pb.addEventListener('click', () => {
+      if (busy) return;
+      if (!PETS.fedToday(p)) { toast(S.petNeedFeed); return; }
+      busy = true; pb.disabled = true;
+      $('#petstage').classList.add('praying');
+      setTimeout(() => { PETS.pray(p); busy = false; draw(); }, 1200);
+    });
+    $$('[data-shelf]', m).forEach((b) => b.addEventListener('click', () => {
+      const parts = b.getAttribute('data-shelf').split(':'), key = parts[0], id = parts[1];
+      const set = key === 'food' ? PET_FOODS : (key === 'home' ? PET_HOMES : PET_WEARS);
+      const item = set.filter((x) => x.id === id)[0];
+      if (item.pro && !proOn()) { toast(S.petPlusItem); location.hash = '#/unlock'; return; }
+      p[key] = id; PETS.put(p); draw();
+    }));
+    $$('[data-coat]', m).forEach((b) => b.addEventListener('click', () => {
+      const id = b.getAttribute('data-coat'), c = PET_COATS.filter((x) => x.id === id)[0];
+      if (c.pro && !proOn()) { toast(S.petPlusItem); location.hash = '#/unlock'; return; }
+      p.coat = id; PETS.put(p); draw();
+    }));
+    $('#petname').addEventListener('input', () => { p.name = $('#petname').value.trim(); PETS.put(p); });
+    $('#petswap').addEventListener('click', () => {
+      if (!confirm(PETS.all().length > 1 ? S.petLetGoAsk : S.petSwapAsk)) return;
+      PETS.drop(p.kind); open = ''; draw();
+    });
+  };
+
+  /* The picker always shows all four, with what each one looks after, because
+     the ones that cannot be kept yet are the reason to look at Plus. */
+  const drawPicker = () => {
+    const pets = PETS.all(), room = PETS.room();
+    m.innerHTML = '<div class="eyebrow">' + esc(S.actTitle) + '</div><h1 style="margin-bottom:6px">🐾 ' + esc(pets.length ? S.petAdd : S.petTitle) + '</h1><p class="muted">' + esc(S.petPick) + '</p>'
+      + (room ? '' : '<a class="salebar" href="#/unlock"><span class="tag">✨ ' + esc(S.plusName) + '</span><span class="txt">' + esc(S.petPlusPitch) + '</span><span class="go">' + esc(S.unlockLink) + ' ›</span></a>')
+      + '<div class="petpick">' + PET_KINDS.map((k) => {
+        const luck = petLuck(k), have = !!PETS.one(k), locked = !have && !room;
+        return '<button type="button" class="pp luck-' + luck.id + (have ? ' have' : '') + (locked ? ' locked' : '') + '" data-kind="' + k + '">'
+          + '<span class="ppart">' + petAuraHTML(k, 3) + petSVG(k, PET_COATS[0], 'happy') + '</span>'
+          + '<b>' + esc(L(PET_NAMES[k])) + '</b>'
+          + '<span class="pl" style="--ink:' + luck.ink + ';--aura:' + luck.aura + '">' + luck.sym + ' ' + esc(L(luck.name)) + '</span>'
+          + (have ? '<span class="pp-on">✓</span>' : (locked ? '<span class="pp-lock">🔒</span>' : ''))
+          + '</button>';
+      }).join('') + '</div>'
+      + '<p class="hint">' + esc(S.petLuckNote) + '</p>'
+      + '<p style="margin-top:14px"><a href="#/play" class="backlink" id="petback">← ' + esc(pets.length ? S.petBack : S.actTitle) + '</a></p>';
+    $$('[data-kind]', m).forEach((b) => b.addEventListener('click', () => {
+      const k = b.getAttribute('data-kind');
+      if (PETS.one(k)) { open = k; draw(); return; }
+      if (!PETS.room()) { toast(S.petPlusPitch); location.hash = '#/unlock'; return; }
+      PETS.put(PETS.fresh(k)); open = k; draw();
+    }));
+    const back = $('#petback');
+    if (back && pets.length) back.addEventListener('click', (e) => { e.preventDefault(); draw(); });
+  };
+
+  /* What a charm looks like on its own, for the shelf. */
+  if (want === 'add') drawPicker(); else draw();
+}
+
+/* A small picture of each charm, shown on the shelf rather than on the pet. */
+function petWearArt(id) {
+  const open = '<svg viewBox="0 0 60 60" class="wearart" aria-hidden="true">';
+  if (id === 'scarf') return open + '<path d="M10 22 q20 14 40 0 q3 10 -4 15 q-16 9 -32 0 q-7 -5 -4 -15 Z" fill="#E1607F"/><path d="M40 36 q10 10 6 20 q-9 2 -13 -5 Z" fill="#C94C6C"/></svg>';
+  if (id === 'bell') return open + '<path d="M12 34 q18 10 36 0" fill="none" stroke="#B9913B" stroke-width="3" stroke-linecap="round"/><circle cx="30" cy="38" r="11" fill="#E5BE5E" stroke="#B9913B" stroke-width="2"/><path d="M21 38 h18" stroke="#B9913B" stroke-width="2"/><circle cx="30" cy="45" r="2.6" fill="#8A6B22"/></svg>';
+  if (id === 'crown') {
+    const bud = (x, y, col) => [0, 72, 144, 216, 288].map((a) => '<ellipse cx="' + x + '" cy="' + (y - 4.6) + '" rx="3" ry="4.6" fill="' + col + '" transform="rotate(' + a + ' ' + x + ' ' + y + ')"/>').join('') + '<circle cx="' + x + '" cy="' + y + '" r="2.2" fill="#FFE9A8"/>';
+    return open + '<path d="M8 40 Q30 20 52 40" fill="none" stroke="#8FBF7F" stroke-width="3"/>' + bud(13, 38, '#F7A9C6') + bud(30, 26, '#FFF3C4') + bud(47, 38, '#C9B0EA') + '</svg>';
+  }
+  if (id === 'hat') return open + '<ellipse cx="30" cy="42" rx="24" ry="6" fill="#E8CFA0"/><path d="M12 42 L30 12 L48 42 Z" fill="#F0DFC8" stroke="#C6A98A" stroke-width="2"/><path d="M30 14 A9 9 0 1 0 30 32 A7 7 0 1 1 30 14 Z" fill="#E5BE5E"/></svg>';
+  return open + '<circle cx="30" cy="30" r="16" fill="none" stroke="#C9BFE0" stroke-width="2" stroke-dasharray="4 4"/></svg>';
+}
+ROUTES.pet = { nav: 'play', render: renderPet };
+
 /* ============================ booking ============================
    Service and package, topic (required for "set topic" packages), a
    calendar of Nabu's free slots (schedule.json, minus slots taken in
    Firestore when accounts are on), details, then send. */
-const book = { items: [], name: '', note: '', birth: '', birthTime: '', card: null, slot: null, month: null, day: null, timeSaved: false, restored: false };
+const book = { items: [], name: '', note: '', birth: '', birthTime: '', card: null, slot: null, month: null, day: null, timeSaved: false, restored: false, use: { v: false, c: 0 } };
 /* The draft lives on the device: leave the screen, come back, everything is still chosen. */
 const BOOK_KEYS = ['items', 'name', 'note', 'birth', 'birthTime', 'slot', 'day', 'timeSaved'];
 function saveBook() { const o = {}; BOOK_KEYS.forEach((k) => { o[k] = book[k]; }); store.set('nabu-book', o); }
@@ -11345,6 +12417,8 @@ const pkgOfItem = (it) => { const s = serviceOf(it.svc); return s ? s.packages.f
 const itemIndex = (svc, pkg) => book.items.findIndex((x) => x.svc === svc && x.pkg === pkg);
 // Summed from the prices actually charged, so the total always matches the rows.
 const cartTotal = () => book.items.reduce((sum, it) => { const p = pkgOfItem(it); return sum + (p ? salePrice(p.price, 'reading', it.svc) : 0); }, 0);
+/* The person's own coins and voucher, against whatever is in the basket. */
+const bookLuck = () => luckCut(cartTotal(), { v: book.use.v, c: luckWanted(book.use, cartTotal()) });
 const needsBirth = () => book.items.some((it) => { const s = serviceOf(it.svc); return s && s.needsBirth; });
 const topicLabel = (n, l) => { const t = TOPICS[n - 1]; return t ? '#' + t.id + ' ' + (l ? L2(t.name, l) : L(t.name)) : ''; };
 function composeMessage() {
@@ -11357,6 +12431,12 @@ function composeMessage() {
       if (p.needsTopic && it.topic) out.push('   ↳ ' + S.msgTopic + ': ' + topicLabel(it.topic));
     });
     if (book.items.length > 1) out.push('💰 ' + S.msgTotal + ': ' + fmtPrice(cartTotal()));
+    const cut = bookLuck();
+    if (cut.pctOff || cut.coins) {
+      if (book.items.length === 1) out.push('💰 ' + S.msgTotal + ': ' + fmtPrice(cartTotal()));
+      luckLines(cut).split('\n').filter(Boolean).forEach((x) => out.push(x));
+      out.push('✅ ' + S.luckAfter + ': ' + fmtPrice(cut.final));
+    }
     out.push('');
   }
   if (book.slot) out.push('📅 ' + S.msgTime + ': ' + slotLabel(book.slot));
@@ -11368,17 +12448,21 @@ function composeMessage() {
   return out.join('\n');
 }
 /* The request as a labelled card: packages one per line, total, time, details. */
-function summaryHTML() {
-  const S = T(), rows = [];
+function summaryHTML(withPanel) {
+  const S = T(), rows = [], cut = bookLuck();
   const items = book.items.map((it) => { const s = serviceOf(it.svc), p = pkgOfItem(it); if (!s || !p) return ''; return '<li>' + esc(L(s.name) + ' – ' + L(p.name)) + ' <b>' + priceHTML(p.price, 'reading', s.id) + '</b>' + (p.needsTopic ? '<br><small class="' + (it.topic ? 'ok' : 'warn') + '">' + esc(it.topic ? S.msgTopic + ': ' + topicLabel(it.topic) : S.cartNeedsTopic) + '</small>' : '') + '</li>'; }).join('');
   rows.push([S.bkItems, items ? '<ul>' + items + '</ul>' : '<span class="warn">' + esc(S.cartEmpty) + '</span>']);
-  if (book.items.length > 1) rows.push([S.msgTotal, '<b>' + fmtPrice(cartTotal()) + '</b>']);
+  if (book.items.length > 1 || cut.pctOff || cut.coins) rows.push([S.msgTotal, '<b>' + fmtPrice(cartTotal()) + '</b>']);
+  if (cut.pctOff) rows.push(['🎟️ ' + S.luckVoucherOf(cut.pct), '<b>-' + fmtPrice(cut.pctOff) + '</b>']);
+  if (cut.coins) rows.push(['🪙 ' + S.luckCoinsUsed(fmtNum(cut.coins)), '<b>-' + fmtPrice(cut.coins) + '</b>']);
+  if (cut.pctOff || cut.coins) rows.push([S.luckAfter, '<b>' + fmtPrice(cut.final) + '</b>']);
   rows.push([S.msgTime, book.slot ? esc(slotLabel(book.slot)) : '<span class="warn">' + esc(S.pickDay) + '</span>']);
   if (book.name.trim()) rows.push([S.msgName, esc(book.name.trim())]);
   if (needsBirth()) rows.push([S.msgBirth, book.birth ? esc(book.birth + (book.birthTime ? ' ' + book.birthTime : '')) : '<span class="warn">' + esc(S.needBirth) + '</span>']);
   if (book.note.trim()) rows.push([S.msgNote, esc(book.note.trim())]);
   if (book.card) { const c = cardById(book.card); if (c) rows.push([S.msgCard, esc(c.name)]); }
-  return '<div class="sum">' + rows.map((r) => '<div class="r"><span class="k">' + esc(r[0]) + '</span><span class="v">' + r[1] + '</span></div>').join('') + '</div>';
+  return '<div class="sum">' + rows.map((r) => '<div class="r"><span class="k">' + esc(r[0]) + '</span><span class="v">' + r[1] + '</span></div>').join('') + '</div>'
+    + (withPanel && book.items.length ? rewardPanelHTML(cartTotal(), book.use) : '');
 }
 /* The basket under the price list: every chosen package, its topic, the total. */
 function cartHTML() {
@@ -11434,7 +12518,7 @@ async function renderBook(args, params) {
     + (BE.enabled ? '<button class="btn block primary" id="sendapp">' + esc(S.sendInApp) + '</button><p class="hint" id="sendstatus"></p>' : '<p class="hint">' + esc(S.needLogin) + '</p>')
     + '<a class="btn block" href="#/contact">💬 ' + esc(S.contactTitle) + '</a></div></div>'
     + '<div class="sec card"><h3 style="margin-bottom:10px">' + esc(S.howItWorks) + '</h3><ol class="steps">' + [S.chooseService.slice(3), S.chooseTopic.slice(3), S.chooseTime.slice(3), S.sendVia.slice(3), L(PAYMENT_NOTE)].map((x) => '<li>' + esc(x) + '</li>').join('') + '</ol></div>';
-  const prev = () => { const p = $('#msgprev'); if (!p) return; p.innerHTML = summaryHTML(); $('#msgtext').textContent = composeMessage(); saveBook(); };
+  const prev = () => { const p = $('#msgprev'); if (!p) return; p.innerHTML = summaryHTML(true); bindRewardPanel(p, book.use, prev); $('#msgtext').textContent = composeMessage(); saveBook(); };
   const done = () => {
     m.innerHTML = '<div class="done"><div class="big">✅</div><h1>' + esc(S.doneTitle) + '</h1><p class="muted">' + esc(S.doneBody) + '</p><p><span class="st requested">' + esc(S.status.requested) + '</span></p>' + summaryHTML()
       + '<div class="row" style="flex-direction:column;margin-top:16px"><a class="btn primary block" href="#/me">' + esc(S.doneMe) + '</a><a class="btn block" href="#/home">' + esc(S.doneHome) + '</a><button class="btn block" id="bookmore">' + esc(S.doneMore) + '</button></div></div>';
@@ -11487,8 +12571,9 @@ async function renderBook(args, params) {
     try {
       const items = book.items.map((it) => { const s = serviceOf(it.svc), p = pkgOfItem(it); return { service: L2(s.name, 'vi'), pkg: L2(p.name, 'vi'), price: p.price, topic: p.needsTopic && it.topic ? topicLabel(it.topic, 'vi') : '' }; });
       await BE.createBooking({ name: book.name.trim() || PROFILE.name || '', slot: book.slot,
-        service: items.map((x) => x.service + ' – ' + x.pkg + (x.topic ? ' (' + x.topic + ')' : '')).join(' + '), pkg: '', price: cartTotal(), topic: items.map((x) => x.topic).filter(Boolean).join('; '), items: items,
-        note: book.note.trim(), message: composeMessage(), birth: needsBirth() ? (book.birth + (book.birthTime ? ' ' + book.birthTime : '')) : '', card: book.card ? cardById(book.card).name : '' });
+        service: items.map((x) => x.service + ' – ' + x.pkg + (x.topic ? ' (' + x.topic + ')' : '')).join(' + '), pkg: '', price: bookLuck().final, topic: items.map((x) => x.topic).filter(Boolean).join('; '), items: items,
+        note: book.note.trim(), message: composeMessage(), luck: bookLuck(), birth: needsBirth() ? (book.birth + (book.birthTime ? ' ' + book.birthTime : '')) : '', card: book.card ? cardById(book.card).name : '' });
+      luckCommit(bookLuck(), S.bkItems); book.use.v = false; book.use.c = 0;
       toast('✓'); try { TAKEN = await BE.takenSlots(); } catch (e2) { /* refreshed on the next visit */ }
       done(); return;
     } catch (e) { $('#sendstatus').textContent = S.publishFail + ': ' + e.message; $('#sendstatus').className = 'hint err'; }
@@ -11754,6 +12839,7 @@ function renderMe(args, params) {
       return '<div class="course"><span class="nm">' + esc(L(c.name)) + '</span><span class="ic">' + ic + '</span><span class="pr faint">' + right + '</span></div>'; }).join('')
       + '<label class="f" for="mcode">' + esc(S.enterCode) + '</label><div class="row nw"><input id="mcode" placeholder="NABU-T-…" autocapitalize="characters"><button class="btn" id="munlock">' + esc(S.unlock) + '</button></div><p class="hint" id="mcstatus"></p></div>';
     h += '<div class="card"><h3 style="margin-bottom:8px">' + esc(S.themeTitle) + '</h3><div class="themes">' + ['auto', 'light', 'dark', 'pink'].map((t) => '<button class="chip' + (themeChoice() === t ? ' on' : '') + '" data-theme-pick="' + t + '" title="' + esc(S.themes[t]) + '">' + esc(S.themeShort[t]) + '</button>').join('') + '</div></div>';
+    h += '<div class="melinks" style="margin-bottom:14px"><a class="btn" href="#/looks">🎨 ' + esc(S.looksLink) + '</a><a class="btn" href="#/rewards">🪙 ' + esc(S.luckLink) + '</a></div>';
     h += '<div class="meacts"><div class="row3"><a class="btn" href="#/contact">💬 ' + esc(S.contactLink) + '</a><a class="btn" href="#/report">🐞 ' + esc(S.reportLink) + '</a><button class="btn" id="retour">🎓 ' + esc(S.tourLink) + '</button></div>'
       + (BE.user || BE.isAdmin() ? '<div class="row">' + (BE.user ? '<button class="btn" id="signout" style="flex:1">🚪 ' + esc(S.signOut) + '</button>' : '') + (BE.isAdmin() ? '<a class="btn gold" href="#/admin" style="flex:1">🛠 ' + esc(S.adminTitle) + '</a>' : '') + '</div>' : '') + '</div>';
     if (BE.enabled && BE.user) h += '<div class="card danger"><h3 style="margin-bottom:4px">' + esc(S.delAccount) + '</h3><p class="hint" style="margin-bottom:10px">' + esc(S.delHint) + '</p><button class="btn block" id="delacct">🗑 ' + esc(S.delAccount) + '</button><p class="hint" id="delstatus"></p></div>';
@@ -12092,12 +13178,23 @@ function actButtonHTML(a) {
   const S = T(), mine = myChoices()[a.id];
   return '<a class="actbtn act-' + esc(a.type) + (actOpen(a) ? ' live' : '') + '" href="#/play/' + esc(a.id) + '"><span class="ic">' + (S.actTypeIcon[a.type] || '🎲') + '</span><span class="body"><b>' + esc(L(a.title)) + '</b><span class="meta">' + esc(fmtDate(a.date)) + ' · ' + esc(S.actTypes[a.type] || a.type) + ' · ' + esc(actStatus(a)) + (a.type === 'pile' && mine != null ? ' · ' + esc(S.actPicked(Number(mine) + 1)) : '') + '</span></span><span class="chev">›</span></a>';
 }
+/* The row in the activities list carries whichever companions are kept, and
+   says which of them still needs feeding today. */
+function petRowHTML(S) {
+  const pets = PETS.all(), hungry = pets.filter((p) => !PETS.fedToday(p));
+  const title = pets.length === 1 ? (pets[0].name || L(PET_NAMES[pets[0].kind])) : (pets.length ? S.petLuckTotal(pets.length) : S.petTitle);
+  const meta = !pets.length ? S.petSub : (hungry.length ? S.petFeedWith(L(PETS.food(hungry[0]).name)) : S.petFedToday);
+  return '<a class="actbtn act-pet live" href="#/play/pet"><span class="ic">🐾</span><span class="body"><b>' + esc(title) + '</b><span class="meta">' + esc(meta) + '</span></span><span class="go">›</span></a>';
+}
 async function renderPlay(args) {
   const S = T(), m = $('#main');
-  const list = (await loadActs()).slice().sort((a, b) => String(b.date).localeCompare(String(a.date)));
+  /* The four built-in screens are answered before the cloud list is fetched, so
+     a slow or failed connection never leaves one of them blank. */
   if (args && args[0] === 'diary') { renderDiary(); return; }
   if (args && args[0] === 'coin') { renderCoin(); return; }
   if (args && args[0] === 'tree') { renderTree(); return; }
+  if (args && args[0] === 'pet') { renderPet(); return; }
+  const list = (await loadActs()).slice().sort((a, b) => String(b.date).localeCompare(String(a.date)));
   if (args && args[0]) {
     const a = list.filter((x) => x.id === args[0])[0];
     if (!a) { redirect('#/play'); return; }
@@ -12107,6 +13204,7 @@ async function renderPlay(args) {
   }
   const diaryN = Object.keys(store.get('nabu-diary', {}) || {}).length;
   m.innerHTML = '<div class="eyebrow">' + esc(CONFIG.brand) + '</div><h1 style="margin-bottom:6px">' + esc(S.actTitle) + '</h1><p class="muted">' + esc(S.actIntro) + '</p><div id="acts" class="actlist">'
+    + petRowHTML(S)
     + '<a class="actbtn act-tree live" href="#/play/tree"><span class="ic">🌸</span><span class="body"><b>' + esc(S.treeTitle) + '</b><span class="meta">' + esc(S.treeSub) + '</span></span><span class="go">›</span></a>'
     + '<a class="actbtn act-coin live" href="#/play/coin"><span class="ic">🪙</span><span class="body"><b>' + esc(S.coinTitle) + '</b><span class="meta">' + esc(S.coinSub) + '</span></span><span class="go">›</span></a>'
     + '<a class="actbtn act-diary live" href="#/play/diary"><span class="ic">📔</span><span class="body"><b>' + esc(S.diaryTitle) + '</b><span class="meta">' + esc(S.diarySub) + (diaryN ? ' · ' + esc(S.diaryCount(diaryN)) : '') + '</span></span><span class="chev">›</span></a>'
@@ -12202,36 +13300,84 @@ const TREE_MSGS = [
   { vi: 'Tối nay bạn hãy đi ngủ sớm. Ngày mai sẽ mang một màu khác, và bạn sẽ nhìn mọi chuyện rõ ràng hơn.', en: 'Go to bed early tonight. Tomorrow will carry a different colour, and you will see everything more clearly.' },
   { vi: 'Bạn đã đi qua những ngày khó hơn ngày hôm nay rất nhiều, và bạn vẫn ở đây. Điều đó nói lên rất nhiều về bạn.', en: 'You have walked through days far harder than this one, and you are still here. That says a great deal about you.' }
 ];
-function treeSVG() {
-  const petal5 = (x, y, r) => [0, 72, 144, 216, 288].map((a) => '<ellipse cx="' + x + '" cy="' + (y - r * 0.66) + '" rx="' + (r * 0.44).toFixed(1) + '" ry="' + (r * 0.66).toFixed(1) + '" fill="#F7A9C6" transform="rotate(' + a + ' ' + x + ' ' + y + ')"/>').join('') + '<circle cx="' + x + '" cy="' + y + '" r="' + (r * 0.3).toFixed(1) + '" fill="#FFE9A8"/>';
-  // canopy: many soft puffs in three pinks, so the edge reads as blossom, not as circles
-  const puffs = [[86, 92, 40, '#F3BFD4', .55], [136, 68, 46, '#F7CBDD', .6], [190, 88, 42, '#F3BFD4', .55],
-                 [60, 122, 32, '#EFB3CB', .5], [110, 116, 40, '#F7CBDD', .55], [168, 120, 38, '#EFB3CB', .5],
-                 [216, 118, 30, '#F3BFD4', .5], [140, 104, 48, '#FAD8E6', .55], [98, 60, 30, '#FAD8E6', .5],
-                 [178, 58, 28, '#FAD8E6', .5], [240, 96, 22, '#F3BFD4', .45], [40, 96, 22, '#F3BFD4', .45]];
-  const blooms = [[70, 66, 9], [112, 44, 10], [156, 40, 9], [198, 60, 9], [232, 86, 8], [46, 100, 8],
-                  [92, 92, 10], [136, 78, 10], [180, 92, 9], [218, 112, 8], [66, 132, 8], [110, 130, 9],
-                  [152, 122, 10], [196, 132, 8], [128, 106, 8], [172, 66, 8], [88, 118, 7], [244, 118, 7]];
+/* Four trees. The free one is the cherry in daylight; the others come with
+   Plus and are the reason to want it, so each has something the first has not:
+   fireflies that drift, stars that breathe, butterflies that circle. */
+function treeSVGFor(id, still) {
+  const look = id || LOOKS.get('tree');
+  if (look === 'night') return treeNightSVG(still);
+  if (look === 'galaxy') return treeGalaxySVG(still);
+  if (look === 'butterfly') return treeButterflySVG(still);
+  return treeSakuraSVG();
+}
+function treeCanopy(puffs, blooms, petalColour) {
+  const petal5 = (x, y, r) => [0, 72, 144, 216, 288].map((a) => '<ellipse cx="' + x + '" cy="' + (y - r * 0.66) + '" rx="' + (r * 0.44).toFixed(1) + '" ry="' + (r * 0.66).toFixed(1) + '" fill="' + petalColour + '" transform="rotate(' + a + ' ' + x + ' ' + y + ')"/>').join('') + '<circle cx="' + x + '" cy="' + y + '" r="' + (r * 0.3).toFixed(1) + '" fill="#FFE9A8"/>';
+  return puffs.map((p) => '<circle cx="' + p[0] + '" cy="' + p[1] + '" r="' + p[2] + '" fill="' + p[3] + '" opacity="' + p[4] + '"/>').join('')
+    + blooms.map((b) => '<g>' + petal5(b[0], b[1], b[2]) + '</g>').join('');
+}
+const TREE_TRUNK = '<path d="M126 238 C124 210 122 190 116 172 C110 154 100 140 88 128 L96 120 C110 132 122 146 130 162 C132 150 133 140 134 130 L146 130 C147 142 149 154 152 166 C160 148 174 132 190 120 L197 128 C182 141 170 156 162 174 C155 192 154 214 154 238 Z" fill="#7A5539"/>'
+  + '<path d="M134 130 C133 150 132 176 133 200 C134 216 135 228 136 238 L146 238 C145 226 144 212 144 196 C144 172 145 150 146 130 Z" fill="#6B4A32"/>'
+  + '<path d="M136 168 C142 156 152 146 164 138" stroke="#7A5539" stroke-width="4" fill="none" stroke-linecap="round"/>'
+  + '<path d="M133 152 C126 143 116 136 106 131" stroke="#7A5539" stroke-width="3.6" fill="none" stroke-linecap="round"/>';
+const TREE_PUFFS = [[86, 92, 40], [136, 68, 46], [190, 88, 42], [60, 122, 32], [110, 116, 40], [168, 120, 38], [216, 118, 30], [140, 104, 48], [98, 60, 30], [178, 58, 28], [240, 96, 22], [40, 96, 22]];
+const TREE_BLOOMS = [[70, 66, 9], [112, 44, 10], [156, 40, 9], [198, 60, 9], [232, 86, 8], [46, 100, 8], [92, 92, 10], [136, 78, 10], [180, 92, 9], [218, 112, 8], [66, 132, 8], [110, 130, 9], [152, 122, 10], [196, 132, 8], [128, 106, 8], [172, 66, 8], [88, 118, 7], [244, 118, 7]];
+function treeShell(inner, glowFrom) {
   return '<svg viewBox="-6 -30 292 290" role="img" aria-hidden="true">'
-    + '<defs><radialGradient id="tglow" cx="50%" cy="36%" r="62%"><stop offset="0%" stop-color="#FFF3C4" stop-opacity=".7"/><stop offset="100%" stop-color="#FFF3C4" stop-opacity="0"/></radialGradient></defs>'
+    + '<defs><radialGradient id="tglow" cx="50%" cy="36%" r="62%"><stop offset="0%" stop-color="' + glowFrom + '" stop-opacity=".7"/><stop offset="100%" stop-color="' + glowFrom + '" stop-opacity="0"/></radialGradient></defs>'
     + '<circle cx="140" cy="94" r="118" fill="url(#tglow)"/>'
     + '<ellipse cx="140" cy="238" rx="76" ry="9" fill="#C9A5D8" opacity=".3"/>'
-    // trunk: one filled shape, wide at the root and splitting into two limbs
-    + '<path d="M126 238 C124 210 122 190 116 172 C110 154 100 140 88 128 L96 120 C110 132 122 146 130 162 C132 150 133 140 134 130 L146 130 C147 142 149 154 152 166 C160 148 174 132 190 120 L197 128 C182 141 170 156 162 174 C155 192 154 214 154 238 Z" fill="#7A5539"/>'
-    + '<path d="M134 130 C133 150 132 176 133 200 C134 216 135 228 136 238 L146 238 C145 226 144 212 144 196 C144 172 145 150 146 130 Z" fill="#6B4A32"/>'
-    + '<path d="M136 168 C142 156 152 146 164 138" stroke="#7A5539" stroke-width="4" fill="none" stroke-linecap="round"/>'
-    + '<path d="M133 152 C126 143 116 136 106 131" stroke="#7A5539" stroke-width="3.6" fill="none" stroke-linecap="round"/>'
-    + puffs.map((p) => '<circle cx="' + p[0] + '" cy="' + p[1] + '" r="' + p[2] + '" fill="' + p[3] + '" opacity="' + p[4] + '"/>').join('')
-    + blooms.map((b) => '<g>' + petal5(b[0], b[1], b[2]) + '</g>').join('')
-    + '<g fill="#FFF3C4"><circle cx="34" cy="58" r="2.2"/><circle cx="252" cy="70" r="2.4"/><circle cx="246" cy="34" r="1.6"/><circle cx="26" cy="140" r="1.8"/><circle cx="258" cy="150" r="1.6"/></g>'
-    + '</svg>';
+    + TREE_TRUNK + inner + '</svg>';
+}
+function treeSakuraSVG() {
+  const tones = ['#F3BFD4', '#F7CBDD', '#F3BFD4', '#EFB3CB', '#F7CBDD', '#EFB3CB', '#F3BFD4', '#FAD8E6', '#FAD8E6', '#FAD8E6', '#F3BFD4', '#F3BFD4'];
+  const op = [.55, .6, .55, .5, .55, .5, .5, .55, .5, .5, .45, .45];
+  const puffs = TREE_PUFFS.map((p, i) => [p[0], p[1], p[2], tones[i], op[i]]);
+  return treeShell(treeCanopy(puffs, TREE_BLOOMS, '#F7A9C6')
+    + '<g fill="#FFF3C4"><circle cx="34" cy="58" r="2.2"/><circle cx="252" cy="70" r="2.4"/><circle cx="246" cy="34" r="1.6"/><circle cx="26" cy="140" r="1.8"/><circle cx="258" cy="150" r="1.6"/></g>', '#FFF3C4');
+}
+function treeNightSVG(still) {
+  const puffs = TREE_PUFFS.map((p, i) => [p[0], p[1], p[2], i % 2 ? '#3B3168' : '#4A3E80', .72]);
+  let flies = '';
+  [[62, 78], [104, 58], [158, 74], [206, 96], [86, 128], [178, 132], [126, 96], [232, 70]].forEach((f, i) => {
+    flies += '<circle class="fly' + (still ? '' : ' lit') + '" cx="' + f[0] + '" cy="' + f[1] + '" r="3.4" fill="#FFE9A8" style="animation-delay:' + (i * 320) + 'ms"/>';
+  });
+  return treeShell(treeCanopy(puffs, TREE_BLOOMS.slice(0, 10), '#8E7FD6')
+    + '<g fill="#FFF3C4" opacity=".9"><circle cx="30" cy="44" r="1.8"/><circle cx="250" cy="52" r="2"/><circle cx="210" cy="24" r="1.4"/><circle cx="60" cy="20" r="1.6"/></g>' + flies, '#2E2756');
+}
+function treeGalaxySVG(still) {
+  const puffs = TREE_PUFFS.map((p, i) => [p[0], p[1], p[2], i % 3 === 0 ? '#4B3A8F' : (i % 3 === 1 ? '#6C4FB8' : '#8A5FD0'), .6]);
+  let stars = '';
+  for (let i = 0; i < 26; i++) {
+    const x = 24 + (i * 37) % 232, y = 26 + (i * 53) % 120, r = 1 + (i % 3) * 0.7;
+    stars += '<circle class="twinkle' + (still ? ' still' : '') + '" cx="' + x + '" cy="' + y + '" r="' + r + '" fill="#FFF3C4" style="animation-delay:' + (i * 170) + 'ms"/>';
+  }
+  const shine = (x, y, r) => '<path d="M' + x + ' ' + (y - r) + ' Q' + x + ' ' + y + ' ' + (x + r) + ' ' + y + ' Q' + x + ' ' + y + ' ' + x + ' ' + (y + r) + ' Q' + x + ' ' + y + ' ' + (x - r) + ' ' + y + ' Q' + x + ' ' + y + ' ' + x + ' ' + (y - r) + ' Z" fill="#FFF3C4"/>';
+  return treeShell(treeCanopy(puffs, [], '#B79BF0') + stars + shine(140, 70, 15) + shine(96, 108, 9) + shine(196, 96, 8), '#3A2A72');
+}
+function treeButterflySVG(still) {
+  const puffs = TREE_PUFFS.map((p, i) => [p[0], p[1], p[2], i % 2 ? '#CFE7C4' : '#B9DCAC', .6]);
+  const wing = (x, y, c, i) => '<g class="flit' + (still ? ' still' : '') + '" style="animation-delay:' + (i * 430) + 'ms" transform="translate(' + x + ',' + y + ')">'
+    + '<ellipse cx="-5" cy="0" rx="6" ry="8" fill="' + c + '" opacity=".95"/><ellipse cx="5" cy="0" rx="6" ry="8" fill="' + c + '" opacity=".95"/>'
+    + '<ellipse cx="-4" cy="6" rx="4" ry="5" fill="' + c + '" opacity=".8"/><ellipse cx="4" cy="6" rx="4" ry="5" fill="' + c + '" opacity=".8"/>'
+    + '<rect x="-1" y="-7" width="2" height="15" rx="1" fill="#6B4A32"/></g>';
+  return treeShell(treeCanopy(puffs, TREE_BLOOMS.slice(0, 12), '#F4D06F')
+    + wing(76, 74, '#F5A6C9', 0) + wing(196, 66, '#F7D488', 1) + wing(132, 44, '#A8CFF5', 2) + wing(226, 118, '#F5A6C9', 3) + wing(58, 122, '#F7D488', 4), '#FFF6DA');
+}
+function treeSVG() { return treeSVGFor(); }
+/* The companions stand at the foot of the tree, so the two screens read as one
+   garden. Tapping one opens its own page. */
+function treePetHTML() {
+  const pets = PETS.all();
+  if (!pets.length) return '';
+  return '<span class="treepets">' + pets.map((p) => '<a class="treepet" href="#/play/pet" aria-label="' + esc(p.name || L(PET_NAMES[p.kind])) + '">'
+    + petSVG(p.kind, PETS.coat(p), PETS.fedToday(p) ? 'happy' : '', PETS.wear(p)) + '</a>').join('') + '</span>';
 }
 function renderTree() {
   const S = T(), m = $('#main');
   let msg = null, busy = false;
   const draw = () => {
     m.innerHTML = '<div class="eyebrow">' + esc(S.actTitle) + '</div><h1 style="margin-bottom:6px">🌸 ' + esc(S.treeTitle) + '</h1><p class="muted">' + esc(S.treeIntro) + '</p>'
-      + '<div class="card treewrap"><button type="button" class="tree" id="tree" aria-label="' + esc(S.treeShake) + '">' + treeSVG() + '<span class="petals" id="petals"></span></button>'
+      + '<div class="card treewrap">' + treePetHTML() + '<button type="button" class="tree" id="tree" aria-label="' + esc(S.treeShake) + '">' + treeSVG() + '<span class="petals" id="petals"></span></button>'
       + '<div class="treemsg" id="treemsg"' + (msg ? '' : ' hidden') + '><div class="eyebrow">' + esc(S.treeFor) + '</div><p id="treetext">' + (msg ? esc(L(msg)) : '') + '</p></div>'
       + (luckSpent('tree') ? '' : '<button class="btn primary block" id="shake">' + esc(msg ? S.treeAgain : S.treeShake) + '</button>') + '</div>'
       + luckPanelHTML('tree')
@@ -12303,19 +13449,23 @@ const COIN_SIZE = {
 /* Both faces are struck the same way: one ornament, one type size worked out
    from the longer of the two words, and the pair centred as a block. Turning
    the coin over changes the word and nothing else. */
-function coinFaceSVG(side) {
-  const S = T();
+function coinFaceSVG(side) { return coinFaceFor(coinMetal(), side); }
+function coinFaceFor(metal, side) {
+  const S = T(), mtl = metal || coinMetal();
   const size = COIN_SIZE.get();
-  // Drawn around the origin, then shifted so the crescent's own middle sits on
-  // the coin's centre line. The same mark is used in every language.
-  const ornament = '<g transform="translate(86.5,58)" fill="#5A3F18" opacity=".9"><path d="M0 -13 A13 13 0 1 0 0 13 A10 10 0 1 1 0 -13 Z"/></g>';
+  // The mark and the word are placed as one block whose middle lands on the
+  // middle of the coin, so the pair is centred whatever size the word needs.
+  const cap = size * 0.72;
+  const markY = 80 - (6 + cap) / 2;
+  const wordY = markY + 19 + cap;
+  const ornament = '<g transform="translate(86.5,' + markY.toFixed(1) + ')" fill="' + mtl.ink + '" opacity=".9"><path d="M0 -13 A13 13 0 1 0 0 13 A10 10 0 1 1 0 -13 Z"/></g>';
   const word = side ? (side === 'yes' ? S.coinYes : S.coinNo) : '';
   return '<svg viewBox="0 0 160 160" aria-hidden="true">'
-    + '<circle cx="80" cy="80" r="74" fill="#E5BE5E" stroke="#B9913B" stroke-width="5"/>'
-    + '<circle cx="80" cy="80" r="60" fill="none" stroke="#B9913B" stroke-width="2"/>'
+    + '<circle cx="80" cy="80" r="74" fill="' + mtl.face + '" stroke="' + mtl.rim + '" stroke-width="5"/>'
+    + '<circle cx="80" cy="80" r="60" fill="none" stroke="' + mtl.rim + '" stroke-width="2"/>'
     + (side
-      ? ornament + '<text x="80" y="113" text-anchor="middle" font-family="Georgia,serif" font-weight="700" font-size="' + size + '" letter-spacing="1" fill="#5A3F18">' + esc(word) + '</text>'
-      : '<text x="80" y="102" text-anchor="middle" font-family="Georgia,serif" font-size="62" fill="#B9913B">?</text>')
+      ? ornament + '<text x="80" y="' + wordY.toFixed(1) + '" text-anchor="middle" font-family="Georgia,serif" font-weight="700" font-size="' + size + '" letter-spacing="1" fill="' + mtl.ink + '">' + esc(word) + '</text>'
+      : '<text x="80" y="102" text-anchor="middle" font-family="Georgia,serif" font-size="62" fill="' + mtl.rim + '">?</text>')
     + '</svg>';
 }
 function renderCoin() {
@@ -12363,7 +13513,7 @@ function renderDiary() {
   const draw = () => {
     const d = all(), cur = d[today] || { m: '', t: '' }, days = Object.keys(d).filter((k) => k !== today).sort().reverse();
     m.innerHTML = '<div class="eyebrow">' + esc(S.actTitle) + '</div><h1 style="margin-bottom:6px">📔 ' + esc(S.diaryTitle) + '</h1><p class="muted">' + esc(S.diaryIntro) + '</p>'
-      + '<div class="card diary"><div class="date"><span>' + esc(S.diaryToday) + ' · ' + esc(fmtDate(today)) + '</span><span class="faint" id="dsaved">' + (cur.t || cur.m ? esc(S.diarySaved) : '') + '</span></div>'
+      + '<div class="card diary ' + diaryPaperClass() + '"><div class="date"><span>' + esc(S.diaryToday) + ' · ' + esc(fmtDate(today)) + '</span><span class="faint" id="dsaved">' + (cur.t || cur.m ? esc(S.diarySaved) : '') + '</span></div>'
       + '<p class="hint" style="margin:8px 0 6px">' + esc(S.diaryMood) + '</p><div class="moods">' + MOODS.map((x) => '<button type="button" class="mood' + (cur.m === x ? ' on' : '') + '" data-mood="' + x + '">' + x + '</button>').join('') + '</div>'
       + '<textarea id="dtext" placeholder="' + esc(S.diaryPh) + '">' + esc(cur.t || '') + '</textarea></div>'
       + '<h3 style="margin:16px 0 8px">' + esc(S.diaryPast) + (days.length ? ' <span class="faint">· ' + esc(S.diaryCount(days.length + (cur.t || cur.m ? 1 : 0))) + '</span>' : '') + '</h3>'
@@ -12805,9 +13955,10 @@ function adminSale(p) {
 ROUTES.admin = { nav: '', render: renderAdmin };
 
 /* ============================ boot ============================ */
-window.APP_VERSION = 'v97';
+window.APP_VERSION = 'v98';
 window.NABU = { CONFIG: CONFIG, SALE: SALE, salePrice: salePrice, loadActs: loadActs, BACK: BACK, LESSONS: LESSONS, localAnswer: localAnswer, compatVerdict: compatVerdict, numerologyOf: numerologyOf, ZDEEP: ZDEEP, lunarToday: lunarToday, solarToLunar: solarToLunar, DECK: DECK, INSIGHT: INSIGHT, KW: KW, ASK: ASK, TOPICS: TOPICS, GUIDES: GUIDES, SERVICES: SERVICES, COURSES: COURSES, ACCESS: ACCESS, makeCode: makeCode, parseCode: parseCode, ZODIAC: ZODIAC, pick: pick, book: book,
-  insightHTML: insightHTML, insightOf: insightOf, sunSignIndex: sunSignIndex, lifePath: lifePath, PROFILE: () => PROFILE, BE: BE, ACTS: ACTS };
+  insightHTML: insightHTML, insightOf: insightOf, sunSignIndex: sunSignIndex, lifePath: lifePath, PROFILE: () => PROFILE, BE: BE, ACTS: ACTS,
+  BANK: BANK, PETS: PETS, luckCut: luckCut, petLevel: petLevel, petStep: petStep, VOUCHERS: VOUCHERS, levelCoins: levelCoins, LOOKS: LOOKS };
 BE.initP = BE.init().catch(() => { /* backend unreachable: the app runs device-only */ });
 // The Gemini key is a dashboard setting kept in the app cloud (content/ai), never in the source.
 loadContent('sale', 'sale.json', 'nabu-sale').then((r) => { SALE.set(r && r.data); renderChrome((ROUTES[parseHash().route] || {}).nav); route(); });

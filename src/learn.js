@@ -292,7 +292,10 @@ function renderSign(key) {
   if (!z) { redirect('#/learn/astro'); return; }
   const zp = ZODIAC[key][lang], ruler = ZPLANET[ZRULER[key]];
   const cards = Object.keys(ASTRO).filter((id) => ASTRO[id].sign === key);
+  // Arrows above the reading as well as below it, so the wheel can be walked
+  // without scrolling to the end of every sign first.
   m.innerHTML = backLink('#/learn/astro', S.cats.astro) + '<div class="detail">'
+    + signNavHTML(key)
     + '<div class="hero" style="grid-template-columns:72px 1fr"><div class="glyph" style="width:72px;height:72px;border-radius:50%;background:' + EL_COLOR[z.el] + ';display:flex;align-items:center;justify-content:center;font-size:40px;color:#fff">' + z.g + '</div>'
     + '<div><div class="name">' + esc(z[lang]) + '</div><div class="en">' + esc(lang === 'vi' ? z.en : z.vi) + '</div><div class="meta"><i>' + esc(lang === 'vi' ? z.dvi : z.den) + '</i></div></div></div>'
     + '<div class="row" style="margin-bottom:12px"><span class="chip tag">' + esc(S.element) + ': ' + ZELEM[z.el].g + ' ' + esc(ZELEM[z.el][lang]) + '</span><span class="chip tag">' + esc(S.mode) + ': ' + esc(ZMODE[z.mod][lang]) + '</span><span class="chip tag">' + esc(S.ruler) + ': ' + ruler.g + ' ' + esc(ruler[lang]) + '</span></div>'
@@ -301,7 +304,7 @@ function renderSign(key) {
     + '<div class="ins"><h3>' + esc(S.strengths) + '</h3><div class="kwl">' + ZDEEP[key][lang].strengths.map((k) => '<span>' + esc(k) + '</span>').join('') + '</div><h3>' + esc(S.challenges) + '</h3><div class="kwl neg">' + ZDEEP[key][lang].challenges.map((k) => '<span>' + esc(k) + '</span>').join('') + '</div><h3>' + esc(S.compat) + '</h3><div class="awrapper">' + zodiacRingSVG(key, ZDEEP[key].compat) + '</div><div class="chips">' + ZDEEP[key].compat.map((k) => '<a class="chip lav" href="#/learn/sign/' + k + '">' + ZSIGN[k].g + ' ' + esc(ZSIGN[k][lang]) + '</a>').join('') + '</div></div>'
     + '<div class="ins"><h3>' + esc(S.moonSign) + '</h3><p>' + esc(ZDEEP[key][lang].moon) + '</p><h3>' + esc(S.risingSign) + '</h3><p>' + esc(ZDEEP[key][lang].rising) + '</p></div>'
     + '<div class="ins"><h3>' + esc(S.signCards) + '</h3><div class="mini">' + cards.map((id) => miniHTML(id, true)).join('') + '</div><p class="faint">' + cards.map((id) => cardById(id).name + ': ' + astroLine(id)).map(esc).join('<br>') + '</p></div>'
-    + aiPanelHTML({ type: 'sign', key: key }) + signNavHTML(key) + '</div>';
+    + signNavHTML(key) + aiPanelHTML({ type: 'sign', key: key }) + '</div>';
   bindCardLinks(m); bindAI(m);
   $$('[data-zsign]', m).forEach((b) => b.addEventListener('click', () => { location.hash = '#/learn/sign/' + b.getAttribute('data-zsign'); }));
 }
@@ -423,20 +426,38 @@ function unlockRowHTML(c) {
   if (open) return '<div class="unl on' + (c.id === 'luck' ? ' best' : '') + '">' + body + '</div>';
   return '<button type="button" class="unl pickable' + (picked ? ' pick' : '') + (c.id === 'luck' ? ' best' : '') + '" data-unl="' + c.id + '">' + body + '</button>';
 }
+/* What the chosen unlockables come to after the shop's own sale. */
+function unlockBase() {
+  const ids = UNL_CART.get().filter((id) => COURSES.some((c) => c.id === id) && !ACCESS.has(id));
+  return COURSES.filter((c) => ids.indexOf(c.id) > -1).reduce((n, c) => n + salePrice(c.price, 'unlock', c.id), 0);
+}
+/* The person's own rewards, as they currently stand on this screen. */
+const UNL_USE = { v: false, c: 0 };
+function unlockLuck() {
+  const base = unlockBase();
+  return luckCut(base, { v: UNL_USE.v, c: luckWanted(UNL_USE, base) });
+}
 function unlockCartHTML() {
   const S = T(), ids = UNL_CART.get().filter((id) => COURSES.some((c) => c.id === id) && !ACCESS.has(id));
   if (!ids.length) return '<p class="hint">' + esc(S.unlockEmpty) + '</p>';
   const rows = COURSES.filter((c) => ids.indexOf(c.id) > -1);
   const total = rows.reduce((n, c) => n + salePrice(c.price, 'unlock', c.id), 0);
+  const cut = unlockLuck();
   return '<div class="sum">' + rows.map((c) => '<div class="r"><span>' + esc(L(c.name)) + '</span><b>' + priceHTML(c.price, 'unlock', c.id) + '</b></div>').join('')
-    + '<div class="r tot"><span>' + esc(S.unlockTotal) + '</span><b>' + fmtPrice(total) + '</b></div></div>';
+    + '<div class="r tot"><span>' + esc(S.unlockTotal) + '</span><b>' + fmtPrice(total) + '</b></div>'
+    + (cut.pctOff ? '<div class="r cut"><span>🎟️ ' + esc(S.luckVoucherOf(cut.pct)) + '</span><b>-' + fmtPrice(cut.pctOff) + '</b></div>' : '')
+    + (cut.coins ? '<div class="r cut"><span>🪙 ' + esc(S.luckCoinsUsed(fmtNum(cut.coins))) + '</span><b>-' + fmtPrice(cut.coins) + '</b></div>' : '')
+    + ((cut.pctOff || cut.coins) ? '<div class="r tot"><span>' + esc(S.luckAfter) + '</span><b>' + fmtPrice(cut.final) + '</b></div>' : '')
+    + '</div>';
 }
 function unlockMessage() {
   const S = T(), ids = UNL_CART.get(), rows = COURSES.filter((c) => ids.indexOf(c.id) > -1 && !ACCESS.has(c.id));
   if (!rows.length) return '';
   const total = rows.reduce((n, c) => n + salePrice(c.price, 'unlock', c.id), 0);
+  const cut = unlockLuck();
   return '🔓 ' + S.unlockMsgHead + '\n' + rows.map((c) => '• ' + L(c.name) + ': ' + fmtPrice(salePrice(c.price, 'unlock', c.id))).join('\n')
-    + '\n💰 ' + S.unlockTotal + ': ' + fmtPrice(total);
+    + '\n💰 ' + S.unlockTotal + ': ' + fmtPrice(total) + luckLines(cut)
+    + ((cut.pctOff || cut.coins) ? '\n✅ ' + S.luckAfter + ': ' + fmtPrice(cut.final) : '');
 }
 function renderUnlock() {
   const S = T(), m = $('#main');
@@ -446,7 +467,9 @@ function renderUnlock() {
       + (isTWA() ? '' : '<p class="hint" style="margin-bottom:14px">' + esc(S.unlockPick) + '</p>')
       + '<div class="sec"><h2 style="margin-bottom:8px">' + esc(S.unlockCourses) + '</h2>' + group(['tarot', 'lenormand', 'playing', 'manifest']) + '</div>'
       + '<div class="sec"><h2 style="margin-bottom:8px">' + esc(S.unlockActs) + '</h2>' + group(['luck', 'coin', 'tree']) + '</div>'
+      + '<div class="sec"><h2 style="margin-bottom:8px">✨ ' + esc(S.plusName) + '</h2>' + group(['pro']) + '</div>'
       + (isTWA() ? '' : '<div class="sec"><h2 style="margin-bottom:8px">' + esc(S.unlockCart) + '</h2><div id="ucart">' + unlockCartHTML() + '</div>'
+        + rewardPanelHTML(unlockBase(), UNL_USE)
         + '<button class="btn primary block" id="usend" style="margin-top:12px">' + esc(S.unlockSend) + '</button>'
         + '<p class="hint" id="ustatus">' + esc(BE.enabled && BE.user ? '' : S.unlockSendMsg) + '</p></div>')
       + (isTWA() ? '' : '<div class="sec card"><h3 style="margin-bottom:10px">' + esc(S.unlockHow) + '</h3><ol class="steps">'
@@ -454,6 +477,7 @@ function renderUnlock() {
       + '<div class="card"><label class="f" for="ucode">' + esc(S.unlockCodeLabel) + '</label><div class="row nw"><input id="ucode" placeholder="' + esc(S.luckCodePh) + '" autocapitalize="characters"><button class="btn" id="ugo">' + esc(S.unlock) + '</button></div><p class="hint" id="ustatus"></p></div>'
       + (isTWA() ? '' : '<p style="margin-top:14px"><a class="backlink" href="#/prices">' + esc(S.unlockReadings) + ' →</a></p>');
     $$('[data-unl]', m).forEach((b) => b.addEventListener('click', () => { UNL_CART.toggle(b.getAttribute('data-unl')); draw(); }));
+    bindRewardPanel(m, UNL_USE, draw);
     const send = $('#usend');
     if (send) send.addEventListener('click', async () => {
       const ids = UNL_CART.get(), rows = COURSES.filter((c) => ids.indexOf(c.id) > -1 && !ACCESS.has(c.id));
@@ -462,14 +486,17 @@ function renderUnlock() {
       if (BE.enabled && BE.user) {
         send.disabled = true;
         try {
-          await BE.createUnlockOrder(rows.map((c) => ({ id: c.id, name: L(c.name), price: salePrice(c.price, 'unlock', c.id) })), rows.reduce((n, c) => n + salePrice(c.price, 'unlock', c.id), 0));
-          UNL_CART.set([]); toast(S.unlockSent); draw();
+          const cut = unlockLuck();
+          await BE.createUnlockOrder(rows.map((c) => ({ id: c.id, name: L(c.name), price: salePrice(c.price, 'unlock', c.id) })), cut.final);
+          luckCommit(cut, S.unlockCart);
+          UNL_CART.set([]); UNL_USE.v = false; UNL_USE.c = 0; toast(S.unlockSent); draw();
           const s2 = $('#ustatus'); if (s2) { s2.textContent = S.unlockSent; s2.className = 'hint ok'; }
           return;
         } catch (e) { st.textContent = S.publishFail + ': ' + e.message; st.className = 'hint err'; }
         send.disabled = false; return;
       }
       // No account yet: keep the message route so the order still reaches Nabu.
+      luckCommit(unlockLuck(), S.unlockCart);
       store.set('nabu-contact-draft', unlockMessage());
       location.hash = BE.enabled ? '#/me?next=unlock' : '#/contact';
     });

@@ -2,7 +2,7 @@
    Service and package, topic (required for "set topic" packages), a
    calendar of Nabu's free slots (schedule.json, minus slots taken in
    Firestore when accounts are on), details, then send. */
-const book = { items: [], name: '', note: '', birth: '', birthTime: '', card: null, slot: null, month: null, day: null, timeSaved: false, restored: false };
+const book = { items: [], name: '', note: '', birth: '', birthTime: '', card: null, slot: null, month: null, day: null, timeSaved: false, restored: false, use: { v: false, c: 0 } };
 /* The draft lives on the device: leave the screen, come back, everything is still chosen. */
 const BOOK_KEYS = ['items', 'name', 'note', 'birth', 'birthTime', 'slot', 'day', 'timeSaved'];
 function saveBook() { const o = {}; BOOK_KEYS.forEach((k) => { o[k] = book[k]; }); store.set('nabu-book', o); }
@@ -56,6 +56,8 @@ const pkgOfItem = (it) => { const s = serviceOf(it.svc); return s ? s.packages.f
 const itemIndex = (svc, pkg) => book.items.findIndex((x) => x.svc === svc && x.pkg === pkg);
 // Summed from the prices actually charged, so the total always matches the rows.
 const cartTotal = () => book.items.reduce((sum, it) => { const p = pkgOfItem(it); return sum + (p ? salePrice(p.price, 'reading', it.svc) : 0); }, 0);
+/* The person's own coins and voucher, against whatever is in the basket. */
+const bookLuck = () => luckCut(cartTotal(), { v: book.use.v, c: luckWanted(book.use, cartTotal()) });
 const needsBirth = () => book.items.some((it) => { const s = serviceOf(it.svc); return s && s.needsBirth; });
 const topicLabel = (n, l) => { const t = TOPICS[n - 1]; return t ? '#' + t.id + ' ' + (l ? L2(t.name, l) : L(t.name)) : ''; };
 function composeMessage() {
@@ -68,6 +70,12 @@ function composeMessage() {
       if (p.needsTopic && it.topic) out.push('   ↳ ' + S.msgTopic + ': ' + topicLabel(it.topic));
     });
     if (book.items.length > 1) out.push('💰 ' + S.msgTotal + ': ' + fmtPrice(cartTotal()));
+    const cut = bookLuck();
+    if (cut.pctOff || cut.coins) {
+      if (book.items.length === 1) out.push('💰 ' + S.msgTotal + ': ' + fmtPrice(cartTotal()));
+      luckLines(cut).split('\n').filter(Boolean).forEach((x) => out.push(x));
+      out.push('✅ ' + S.luckAfter + ': ' + fmtPrice(cut.final));
+    }
     out.push('');
   }
   if (book.slot) out.push('📅 ' + S.msgTime + ': ' + slotLabel(book.slot));
@@ -79,17 +87,21 @@ function composeMessage() {
   return out.join('\n');
 }
 /* The request as a labelled card: packages one per line, total, time, details. */
-function summaryHTML() {
-  const S = T(), rows = [];
+function summaryHTML(withPanel) {
+  const S = T(), rows = [], cut = bookLuck();
   const items = book.items.map((it) => { const s = serviceOf(it.svc), p = pkgOfItem(it); if (!s || !p) return ''; return '<li>' + esc(L(s.name) + ' – ' + L(p.name)) + ' <b>' + priceHTML(p.price, 'reading', s.id) + '</b>' + (p.needsTopic ? '<br><small class="' + (it.topic ? 'ok' : 'warn') + '">' + esc(it.topic ? S.msgTopic + ': ' + topicLabel(it.topic) : S.cartNeedsTopic) + '</small>' : '') + '</li>'; }).join('');
   rows.push([S.bkItems, items ? '<ul>' + items + '</ul>' : '<span class="warn">' + esc(S.cartEmpty) + '</span>']);
-  if (book.items.length > 1) rows.push([S.msgTotal, '<b>' + fmtPrice(cartTotal()) + '</b>']);
+  if (book.items.length > 1 || cut.pctOff || cut.coins) rows.push([S.msgTotal, '<b>' + fmtPrice(cartTotal()) + '</b>']);
+  if (cut.pctOff) rows.push(['🎟️ ' + S.luckVoucherOf(cut.pct), '<b>-' + fmtPrice(cut.pctOff) + '</b>']);
+  if (cut.coins) rows.push(['🪙 ' + S.luckCoinsUsed(fmtNum(cut.coins)), '<b>-' + fmtPrice(cut.coins) + '</b>']);
+  if (cut.pctOff || cut.coins) rows.push([S.luckAfter, '<b>' + fmtPrice(cut.final) + '</b>']);
   rows.push([S.msgTime, book.slot ? esc(slotLabel(book.slot)) : '<span class="warn">' + esc(S.pickDay) + '</span>']);
   if (book.name.trim()) rows.push([S.msgName, esc(book.name.trim())]);
   if (needsBirth()) rows.push([S.msgBirth, book.birth ? esc(book.birth + (book.birthTime ? ' ' + book.birthTime : '')) : '<span class="warn">' + esc(S.needBirth) + '</span>']);
   if (book.note.trim()) rows.push([S.msgNote, esc(book.note.trim())]);
   if (book.card) { const c = cardById(book.card); if (c) rows.push([S.msgCard, esc(c.name)]); }
-  return '<div class="sum">' + rows.map((r) => '<div class="r"><span class="k">' + esc(r[0]) + '</span><span class="v">' + r[1] + '</span></div>').join('') + '</div>';
+  return '<div class="sum">' + rows.map((r) => '<div class="r"><span class="k">' + esc(r[0]) + '</span><span class="v">' + r[1] + '</span></div>').join('') + '</div>'
+    + (withPanel && book.items.length ? rewardPanelHTML(cartTotal(), book.use) : '');
 }
 /* The basket under the price list: every chosen package, its topic, the total. */
 function cartHTML() {
@@ -145,7 +157,7 @@ async function renderBook(args, params) {
     + (BE.enabled ? '<button class="btn block primary" id="sendapp">' + esc(S.sendInApp) + '</button><p class="hint" id="sendstatus"></p>' : '<p class="hint">' + esc(S.needLogin) + '</p>')
     + '<a class="btn block" href="#/contact">💬 ' + esc(S.contactTitle) + '</a></div></div>'
     + '<div class="sec card"><h3 style="margin-bottom:10px">' + esc(S.howItWorks) + '</h3><ol class="steps">' + [S.chooseService.slice(3), S.chooseTopic.slice(3), S.chooseTime.slice(3), S.sendVia.slice(3), L(PAYMENT_NOTE)].map((x) => '<li>' + esc(x) + '</li>').join('') + '</ol></div>';
-  const prev = () => { const p = $('#msgprev'); if (!p) return; p.innerHTML = summaryHTML(); $('#msgtext').textContent = composeMessage(); saveBook(); };
+  const prev = () => { const p = $('#msgprev'); if (!p) return; p.innerHTML = summaryHTML(true); bindRewardPanel(p, book.use, prev); $('#msgtext').textContent = composeMessage(); saveBook(); };
   const done = () => {
     m.innerHTML = '<div class="done"><div class="big">✅</div><h1>' + esc(S.doneTitle) + '</h1><p class="muted">' + esc(S.doneBody) + '</p><p><span class="st requested">' + esc(S.status.requested) + '</span></p>' + summaryHTML()
       + '<div class="row" style="flex-direction:column;margin-top:16px"><a class="btn primary block" href="#/me">' + esc(S.doneMe) + '</a><a class="btn block" href="#/home">' + esc(S.doneHome) + '</a><button class="btn block" id="bookmore">' + esc(S.doneMore) + '</button></div></div>';
@@ -198,8 +210,9 @@ async function renderBook(args, params) {
     try {
       const items = book.items.map((it) => { const s = serviceOf(it.svc), p = pkgOfItem(it); return { service: L2(s.name, 'vi'), pkg: L2(p.name, 'vi'), price: p.price, topic: p.needsTopic && it.topic ? topicLabel(it.topic, 'vi') : '' }; });
       await BE.createBooking({ name: book.name.trim() || PROFILE.name || '', slot: book.slot,
-        service: items.map((x) => x.service + ' – ' + x.pkg + (x.topic ? ' (' + x.topic + ')' : '')).join(' + '), pkg: '', price: cartTotal(), topic: items.map((x) => x.topic).filter(Boolean).join('; '), items: items,
-        note: book.note.trim(), message: composeMessage(), birth: needsBirth() ? (book.birth + (book.birthTime ? ' ' + book.birthTime : '')) : '', card: book.card ? cardById(book.card).name : '' });
+        service: items.map((x) => x.service + ' – ' + x.pkg + (x.topic ? ' (' + x.topic + ')' : '')).join(' + '), pkg: '', price: bookLuck().final, topic: items.map((x) => x.topic).filter(Boolean).join('; '), items: items,
+        note: book.note.trim(), message: composeMessage(), luck: bookLuck(), birth: needsBirth() ? (book.birth + (book.birthTime ? ' ' + book.birthTime : '')) : '', card: book.card ? cardById(book.card).name : '' });
+      luckCommit(bookLuck(), S.bkItems); book.use.v = false; book.use.c = 0;
       toast('✓'); try { TAKEN = await BE.takenSlots(); } catch (e2) { /* refreshed on the next visit */ }
       done(); return;
     } catch (e) { $('#sendstatus').textContent = S.publishFail + ': ' + e.message; $('#sendstatus').className = 'hint err'; }
