@@ -199,6 +199,7 @@ const PET_WEARS = [
 ];
 /* What gets thrown when the two of you play. */
 const PET_PAT_XP = 4;
+const PET_GROOM_XP = 8;
 /* How far a finger has to travel before a stroke counts. */
 const PET_PAT_DIST = 260;
 const PET_TOYS = ['🧶', '🦋', '🎈', '🍃', '✨', '🪁'];
@@ -242,7 +243,7 @@ const PETS = {
   changeLeft() { return this.all().length ? Math.max(0, this.changedAt() + PET_CHANGE_GAP - Date.now()) : 0; },
   canChange() { return this.changeLeft() <= 0; },
   changeOn() { const d = new Date(this.changedAt() + PET_CHANGE_GAP); return isoDate(d); },
-  fresh(kind) { return { kind: kind, coat: 'cream', wear: 'none', home: 'mat', food: 'rice', name: '', streak: 0, meals: 0, treats: 0, xp: 0, last: 0, fed: '', pray: '', bless: 0, playDay: '', playN: 0 }; },
+  fresh(kind) { return { kind: kind, coat: 'cream', wear: 'none', home: 'mat', food: 'rice', name: '', streak: 0, meals: 0, treats: 0, xp: 0, last: 0, fed: '', pray: '', bless: 0, playDay: '', playN: 0, groomDay: '', groomN: 0 }; },
   /* Anything paid falls back to the free version the day Plus lapses, so a
      lapsed subscription never leaves a companion looking broken. */
   coat(p) { return pickFrom(PET_COATS, p && p.coat, true); },
@@ -325,6 +326,26 @@ const PETS = {
   playedToday(p) { return p && p.playDay === isoDate(new Date()) ? Math.max(0, Number(p.playN) || 0) : 0; },
   playLeft(p) { return Math.max(0, this.playCap() - this.playedToday(p)); },
   canPlay(p) { return this.playLeft(p) > 0; },
+  /* Brushing: once a day, twice with Plus. Worth more than a stroke and less
+     than a game, because it takes a moment rather than a while. */
+  groomCap() { return proOn() ? 2 : 1; },
+  groomedToday(p) { return p && p.groomDay === isoDate(new Date()) ? Math.max(0, Number(p.groomN) || 0) : 0; },
+  groomLeft(p) { return Math.max(0, this.groomCap() - this.groomedToday(p)); },
+  canGroom(p) { return this.groomLeft(p) > 0; },
+  groom(p) {
+    const today = isoDate(new Date());
+    if (p.groomDay !== today) { p.groomDay = today; p.groomN = 0; }
+    p.groomN = (Number(p.groomN) || 0) + 1;
+    const before = petLevel(p.xp);
+    const learnt = this.addXP(p, PET_GROOM_XP * (petIsPro(p.kind) ? MYTH_XP : 1));
+    const coins = BANK.earnDay(2);
+    const after = petLevel(p.xp);
+    let up = 0;
+    for (let lv = before + 1; lv <= after; lv++) { BANK.earn(levelCoins(lv)); up += levelCoins(lv); }
+    BANK.mark(after);
+    this.put(p);
+    return { coins: coins, up: up, from: before, to: after, xp: learnt };
+  },
   /* One wish a day, and the answer stays on the card until tomorrow. */
   pray(p) {
     const pool = PET_BLESS[petLuck(p.kind).id];
@@ -590,63 +611,57 @@ const PET_ART = {
   /* Nine tails, drawn full and fanned, and a fox's short sharp muzzle rather
      than the long jaw that made her a dog. */
   ninetails: () => ({
-    glow: true, feet: false, pal: { body: '#FFFDF8', dark: '#F0C6D6', ink: '#6E2B44' },
-    bodyRX: 25, bodyRY: 22,
-    /* Nine plumes fanned behind her. Each is as long as it can be at its own
-       angle without leaving the square, so the fan fills the frame instead of
-       being cropped into stubs. */
-    behind: (() => {
+    glow: true, charmY: 100,
+    only: (() => {
+      const WHITE = '#FFFDF8', MASK = '#F2789F', DEEP = '#DB5C84', PINK = '#F7C7D6', INK = '#5E2138';
+      /* Nine tails first, fanned behind everything, each as long as it can be
+         at its own angle without leaving the square. */
       const R = Math.PI / 180;
-      let out = '';
-      [-74, -56, -37, -18, 0, 18, 37, 56, 74].forEach((a) => {
+      let tails = '';
+      [-78, -58, -39, -19, 0, 19, 39, 58, 78].forEach((a) => {
         const s0 = Math.sin(a * R), c0 = Math.cos(a * R);
-        const bx = 60, by = 102;
-        const room = Math.min(Math.abs(s0) > 0.05 ? 54 / Math.abs(s0) : 999, Math.abs(c0) > 0.05 ? 92 / Math.abs(c0) : 999);
-        const len = Math.min(88, room);
-        const tipX = bx + s0 * len, tipY = by - c0 * len;
-        const midX = bx + s0 * len * 0.5, midY = by - c0 * len * 0.5;
-        const w = 13;
-        const p = (k) => [midX + c0 * w * k, midY + s0 * w * k];
+        const bx = 60, by = 106;
+        const room = Math.min(Math.abs(s0) > 0.05 ? 55 / Math.abs(s0) : 999, Math.abs(c0) > 0.05 ? 96 / Math.abs(c0) : 999);
+        const len = Math.min(90, room);
+        const tx = bx + s0 * len, ty = by - c0 * len;
+        const mx = bx + s0 * len * 0.5, my = by - c0 * len * 0.5;
+        const p = (k) => [mx + c0 * 13 * k, my + s0 * 13 * k];
         const l = p(1), r = p(-1);
-        out += '<path d="M' + bx + ' ' + by + ' Q' + l[0].toFixed(1) + ' ' + l[1].toFixed(1) + ' ' + tipX.toFixed(1) + ' ' + tipY.toFixed(1)
-          + ' Q' + r[0].toFixed(1) + ' ' + r[1].toFixed(1) + ' ' + bx + ' ' + by + ' Z" fill="#FFFDF8" stroke="#EFC3D4" stroke-width="1.3"/>';
+        tails += '<path d="M' + bx + ' ' + by + ' Q' + l[0].toFixed(1) + ' ' + l[1].toFixed(1) + ' ' + tx.toFixed(1) + ' ' + ty.toFixed(1)
+          + ' Q' + r[0].toFixed(1) + ' ' + r[1].toFixed(1) + ' ' + bx + ' ' + by + ' Z" fill="' + WHITE + '" stroke="' + PINK + '" stroke-width="1.3"/>';
         const nx = bx + s0 * len * 0.72, ny = by - c0 * len * 0.72;
-        const q = (k) => [nx + c0 * 7 * k, ny + s0 * 7 * k];
+        const q = (k) => [nx + c0 * 6.5 * k, ny + s0 * 6.5 * k];
         const ql = q(1), qr = q(-1);
-        out += '<path d="M' + nx.toFixed(1) + ' ' + ny.toFixed(1) + ' Q' + ql[0].toFixed(1) + ' ' + ql[1].toFixed(1) + ' ' + tipX.toFixed(1) + ' ' + tipY.toFixed(1)
-          + ' Q' + qr[0].toFixed(1) + ' ' + qr[1].toFixed(1) + ' ' + nx.toFixed(1) + ' ' + ny.toFixed(1) + ' Z" fill="#F2789F" opacity=".9"/>';
+        tails += '<path d="M' + nx.toFixed(1) + ' ' + ny.toFixed(1) + ' Q' + ql[0].toFixed(1) + ' ' + ql[1].toFixed(1) + ' ' + tx.toFixed(1) + ' ' + ty.toFixed(1)
+          + ' Q' + qr[0].toFixed(1) + ' ' + qr[1].toFixed(1) + ' ' + nx.toFixed(1) + ' ' + ny.toFixed(1) + ' Z" fill="' + MASK + '" opacity=".92"/>';
       });
-      return out;
-    })(),
-    /* One triangle from the ears to the nose. A fox has no separate muzzle
-       patch stuck on a round face, which is what kept making her a dog. */
-    headPath: 'M60 16 Q33 19 29 42 Q26 57 37 65 Q45 71 52 82 Q57 91 60 93 Q63 91 68 82 Q75 71 83 65 Q94 57 91 42 Q87 19 60 16 Z',
-    ears: '<path d="M33 32 L24 -2 L59 18 Z" fill="#FFFDF8" stroke="#EFC3D4" stroke-width="1.2"/>'
-      + '<path d="M87 32 L96 -2 L61 18 Z" fill="#FFFDF8" stroke="#EFC3D4" stroke-width="1.2"/>'
-      + '<path d="M37 28 L31 7 L52 19 Z" fill="#F2789F" opacity=".55"/><path d="M83 28 L89 7 L68 19 Z" fill="#F2789F" opacity=".55"/>',
-    overBody: '<path d="M60 74 q-10 14 -9 28 q9 5 18 0 q1 -14 -9 -28 Z" fill="#FDEFF4"/>',
-    front: (() => {
-      /* The bridge of the snout, shaded a shade warmer than the cheeks, so
-         the taper reads as depth rather than as a flat kite. */
-      const bridge = '<path d="M60 40 Q52 60 55 82 Q60 90 60 93 Q60 90 65 82 Q68 60 60 40 Z" fill="#FDF4F7"/>';
-      const ruff = '<path d="M31 52 q-13 6 -15 19 q11 -3 16 -11 q-3 9 -12 16 q15 -2 20 -16 Z" fill="#FFFDF8" stroke="#EFC3D4" stroke-width="1"/>'
-        + '<path d="M89 52 q13 6 15 19 q-11 -3 -16 -11 q3 9 12 16 q-15 -2 -20 -16 Z" fill="#FFFDF8" stroke="#EFC3D4" stroke-width="1"/>';
-      // Small, slanted, set wide: fox eyes sit high on the triangle.
+      // A small body, so the head can be the big triangle it has to be.
+      const body = '<path d="M60 70 Q41 72 39 92 Q38 106 45 110 L75 110 Q82 106 81 92 Q79 72 60 70 Z" fill="' + WHITE + '"/>'
+        + '<path d="M60 78 Q53 89 54 106 L66 106 Q67 89 60 78 Z" fill="' + PINK + '" opacity=".4"/>';
+      // Ears at the corners of the triangle: dark backs, pink insides.
+      const ears = '<path d="M30 40 L20 2 L54 24 Z" fill="' + MASK + '"/>'
+        + '<path d="M90 40 L100 2 L66 24 Z" fill="' + MASK + '"/>'
+        + '<path d="M20 2 L27 21 L37 13 Z" fill="' + INK + '"/><path d="M100 2 L93 21 L83 13 Z" fill="' + INK + '"/>'
+        + '<path d="M35 34 L29 13 L48 24 Z" fill="' + PINK + '"/><path d="M85 34 L91 13 L72 24 Z" fill="' + PINK + '"/>';
+      // The head is one triangle, from the ears down to the nose.
+      const head = '<path d="M60 18 Q28 22 25 46 Q23 62 36 70 Q46 76 53 88 Q58 97 60 98 Q62 97 67 88 Q74 76 84 70 Q97 62 95 46 Q92 22 60 18 Z" fill="' + WHITE + '"/>';
+      /* The mask, which is the whole trick: colour across the brow and around
+         the eyes, white below, split along a sharp V down the nose. */
+      const mask = '<path d="M60 18 Q28 22 25 46 Q24 57 32 64 Q43 61 48 51 Q55 45 60 57 Q65 45 72 51 Q77 61 88 64 Q96 57 95 46 Q92 22 60 18 Z" fill="' + MASK + '"/>'
+        + '<path d="M60 22 Q40 25 34 41 Q45 35 60 41 Q75 35 86 41 Q80 25 60 22 Z" fill="' + DEEP + '" opacity=".3"/>';
       const eyes = '<g class="eyes">'
-        + '<path d="M38 47 Q46 41 53 50 Q45 53 38 47 Z" fill="#6E2B44"/>'
-        + '<path d="M82 47 Q74 41 67 50 Q75 53 82 47 Z" fill="#6E2B44"/>'
-        + '<circle cx="45" cy="46" r="1.5" fill="#fff"/><circle cx="75" cy="46" r="1.5" fill="#fff"/>'
-        + '<path d="M38 47 q-6 -3 -8 -8 M82 47 q6 -3 8 -8" stroke="#6E2B44" stroke-width="1.8" fill="none" stroke-linecap="round"/>'
-        + '<path d="M43 55 q3 6 8 8 M77 55 q-3 6 -8 8" stroke="#F0AFC6" stroke-width="2" fill="none" stroke-linecap="round" opacity=".8"/>'
+        + '<path d="M36 50 Q45 43 53 53 Q44 57 36 50 Z" fill="' + INK + '"/>'
+        + '<path d="M84 50 Q75 43 67 53 Q76 57 84 50 Z" fill="' + INK + '"/>'
+        + '<circle cx="43" cy="49" r="1.6" fill="#fff"/><circle cx="77" cy="49" r="1.6" fill="#fff"/>'
         + '</g>';
-      const nose = '<path d="M56 84 Q60 82 64 84 Q62 91 60 92 Q58 91 56 84 Z" fill="#4E1E32"/>'
-        + '<path d="M60 92 q-4 4 -8 1 M60 92 q4 4 8 1" stroke="#4E1E32" stroke-width="1.2" fill="none" stroke-linecap="round"/>'
-        + '<path d="M45 70 h-12 M46 76 h-11 M75 70 h12 M74 76 h11" stroke="#D89BB4" stroke-width="1" stroke-linecap="round" opacity=".8"/>';
-      const mark = '<path d="M53 27 q7 -4 14 0" stroke="#E5BE5E" stroke-width="2.2" fill="none" stroke-linecap="round"/>'
-        + '<circle cx="60" cy="23" r="3" fill="#E5BE5E"/>';
-      return bridge + ruff + eyes + nose + mark;
-    })(),
-    noFace: true, noMouth: true, charmY: 104
+      const face = '<path d="M56 86 Q60 84 64 86 Q62 93 60 94 Q58 93 56 86 Z" fill="' + INK + '"/>'
+        + '<path d="M60 94 q-5 4 -9 1 M60 94 q5 4 9 1" stroke="' + INK + '" stroke-width="1.3" fill="none" stroke-linecap="round"/>'
+        + '<g stroke="' + PINK + '" stroke-width="1.2" stroke-linecap="round" opacity=".9"><path d="M42 74 h-13 M43 80 h-12 M78 74 h13 M77 80 h12"/></g>'
+        + '<ellipse cx="36" cy="66" rx="6" ry="4" fill="' + MASK + '" opacity=".4"/><ellipse cx="84" cy="66" rx="6" ry="4" fill="' + MASK + '" opacity=".4"/>';
+      const crown = '<path d="M52 20 q8 -5 16 0" stroke="#E5BE5E" stroke-width="2.4" fill="none" stroke-linecap="round"/>'
+        + '<circle cx="60" cy="15" r="3.2" fill="#E5BE5E"/>';
+      return tails + body + ears + head + mask + eyes + face + crown;
+    })()
   }),
   dragon: () => ({
     glow: true, pal: { body: '#C6EEDA', dark: '#7FC9A8', ink: '#12452F' },
@@ -914,6 +929,14 @@ function petSVG(kind, coat, mood, wear) {
       + '<path class="twinkle" style="animation-delay:900ms" d="M104 26 l2.2 4.6 4.6 2.2 -4.6 2.2 -2.2 4.6 -2.2 -4.6 -4.6 -2.2 4.6 -2.2 Z"/>'
       + '<path class="twinkle" style="animation-delay:1800ms" d="M100 108 l2 4 4 2 -4 2 -2 4 -2 -4 -4 -2 4 -2 Z"/></g>'
     : '';
+  /* A creature may take the drawing over completely. Everything shared - the
+     shadow, the halo, the charm and whatever it wears - is still drawn around
+     it, so it stays part of the set. */
+  if (art.only) {
+    return '<svg viewBox="0 0 120 120" class="petart' + (art.glow ? ' myth' : '') + '" role="img" aria-label="' + esc(L(PET_NAMES[kind])) + '">'
+      + halo + '<ellipse cx="60" cy="112" rx="32" ry="6" fill="#C9A5D8" opacity=".28"/>'
+      + art.only + neck + worn + '</svg>';
+  }
   return '<svg viewBox="0 0 120 120" class="petart' + (art.glow ? ' myth' : '') + '" role="img" aria-label="' + esc(L(PET_NAMES[kind])) + '">'
     + halo
     + '<ellipse cx="60" cy="112" rx="32" ry="6" fill="#C9A5D8" opacity=".28"/>'
@@ -947,44 +970,63 @@ function renderPet(want) {
   const S = T(), m = $('#main');
   let busy = false, open = '', sheet = '';
 
-  /* One line of the meal list: what it adds, and whether it is open. */
-  const gainRow = (label, got, worth, locked) => '<li' + (locked ? ' class="locked"' : '') + '><span>' + esc(label) + '</span><b>' + (locked ? '🔒 +' + worth : '+' + got) + '</b></li>';
+  /* Every way to earn, as one table of two columns. A locked line still shows
+     what it would be worth, because that is the case for Plus. */
+  const earnGrid = (p) => {
+    const gain = PETS.gain(p), pro = proOn(), myth = petIsPro(p.kind) ? MYTH_XP : 1;
+    const rows = [
+      ['🍚', S.earnMeal, 10 * myth, false],
+      ['🔥', S.earnStreak, gain.days ? gain.days : 2 * myth, false],
+      ['🧶', S.earnPlay, 12 * myth, false],
+      ['🧼', S.earnGroom, PET_GROOM_XP * myth, false],
+      ['✋', S.earnPat, PET_PAT_XP, false],
+      ['🙏', S.earnPray, 6, false],
+      ['🍡', S.earnGood, 8 * myth, !pro],
+      ['👑', S.earnWear, 4 * myth, !pro],
+      ['🏠', S.earnHome, 5 * myth, !pro],
+      ['🎨', S.earnCoat, 3 * myth, !pro]
+    ];
+    return '<div class="earngrid">' + rows.map((r) => '<span class="e' + (r[3] ? ' locked' : '') + '"><i>' + r[0] + '</i><b>' + esc(r[1]) + '</b><u>' + (r[3] ? '🔒 ' : '') + '+' + r[2] + '</u></span>').join('') + '</div>';
+  };
+
+
+  /* What the next level pays, which is the reason to feed anything at all. */
+  const nextReward = (lv) => {
+    if (lv >= PET_MAXLV) return S.petTopLevel;
+    const to = lv + 1, tier = VOUCHERS.filter((v) => v.lv === to)[0];
+    return S.petNextPays(to, fmtNum(levelCoins(to))) + (tier ? ' · ' + S.luckVoucherOf(tier.pct) + (tier.pro ? ' ✨' : '') : '');
+  };
 
   const petCardHTML = (p) => {
     const luck = petLuck(p.kind), coat = PETS.coat(p), prayed = PETS.prayedToday(p);
     const st = PETS.step(p), gain = PETS.gain(p), pro = proOn(), ready = PETS.canFeed(p);
     const bless = prayed ? PETS.blessing(p) : null;
     return '<div class="card petwrap luck-' + luck.id + '">'
-      + '<div class="petstage" id="petstage">' + petHomeSVG(PETS.home(p).id) + petAuraHTML(p.kind) + petSVG(p.kind, coat, ready ? '' : 'happy', PETS.wear(p)) + '<span class="crumbs" id="crumbs"></span><span class="toys" id="toys"></span><span class="pats" id="pats"></span>'
+      + '<div class="petstage" id="petstage">' + petHomeSVG(PETS.home(p).id) + petAuraHTML(p.kind) + petSVG(p.kind, coat, ready ? '' : 'happy', PETS.wear(p))
+      + '<span class="crumbs" id="crumbs"></span><span class="toys" id="toys"></span><span class="pats" id="pats"></span>'
       + '<span class="stagebtns left">' + stageBtn('food', '🍚', S.petFoodTitle) + stageBtn('wear', '👑', S.petWearTitle) + '</span>'
-      + '<span class="stagebtns right">' + stageBtn('home', '🏠', S.petHomeShort) + stageBtn('coat', '🎨', S.petCoat) + '</span></div>'
+      + '<span class="stagebtns right">' + stageBtn('home', '🏠', S.petHomeShort) + stageBtn('coat', '🎨', S.petCoat) + '</span>'
+      + (ready ? '<span class="foodchip" id="foodchip" title="' + esc(S.petDragFood) + '">' + PETS.food(p).sym + '</span>' : '')
+      + '</div>'
+      + '<p class="handhint">✋ ' + esc(S.petPatHint) + '</p>'
       + '<div class="lucktag" style="--ink:' + luck.ink + ';--aura:' + luck.aura + '">' + luck.sym + ' ' + esc(S.petBrings(L(luck.name))) + '</div>'
       + '<p class="petline">' + esc(L(petLine(p.kind))) + '</p>'
+      + (petIsPro(p.kind) ? '<p class="mythline">✨ ' + esc(S.petMythBonus(MYTH_XP)) + '</p>' : '')
       + '<div class="charm"><span class="lbl">' + esc(S.petLevel(st.lv)) + '</span><span class="bar"><i style="width:' + st.at + '%;background:' + luck.ink + '"></i></span>'
       + '<b>' + (st.need ? st.into + '/' + st.need : '★') + '</b></div>'
-      + (petIsPro(p.kind) ? '<p class="mythline">✨ ' + esc(S.petMythBonus(MYTH_XP)) + '</p>' : '')
-      + '<ul class="carelist"><li class="head"><span>' + esc(S.petMealWorth) + '</span><b>+' + gain.total + '</b></li>'
-      + gainRow(S.careMeal, gain.meal, 10, false)
-      + gainRow(S.careDays, gain.days, 10, false)
-      + gainRow(S.careTreats, gain.food, 8, !pro)
-      + gainRow(S.careWear, gain.wear, 4, !pro)
-      + gainRow(S.careHome, gain.home, 5, !pro)
-      + gainRow(S.careCoat, gain.coat, 3, !pro)
-      + '</ul>'
+      + '<a class="nextpay" href="#/rewards">🎁 ' + esc(nextReward(st.lv)) + '<span class="go">›</span></a>'
+      + '<div class="earnhead"><span>' + esc(S.petEarnTitle) + '</span><b>' + esc(S.petMealWorth) + ' +' + gain.total + '</b></div>'
+      + earnGrid(p)
       + '<div class="petstat"><span>🔥 ' + esc(S.petStreak(Number(p.streak) || 0)) + '</span><span>🍽️ ' + esc(S.petMeals(Number(p.meals) || 0)) + '</span><a href="#/rewards">🪙 ' + fmtNum(BANK.coins()) + '</a></div>'
       + '<p class="hint" style="text-align:center">' + esc(PETS.xpLeft() ? S.petDayLeft(PETS.xpToday(), PET_DAY_XP) : S.petDayFull) + '</p>'
-      + '<p class="hint" style="text-align:center">' + esc(PETS.xpLeft() ? S.petDayLeft(PETS.xpToday(), PET_DAY_XP) : S.petDayFull) + '</p>'
-      + '<p class="hint" style="text-align:center">' + esc(PETS.xpLeft() ? S.petDayLeft(PETS.xpToday(), PET_DAY_XP) : S.petDayFull) + '</p>'
-      + '<p class="hint pathint">✋ ' + esc(S.petPatHint) + '</p>'
       + (ready
-        ? '<div class="feedrow"><span class="foodchip" id="foodchip" title="' + esc(S.petDragFood) + '">' + PETS.food(p).sym + '</span>'
-          + '<span class="dragtip">' + esc(S.petDragFood) + '</span></div>'
-          + '<button class="btn primary block" id="feed">' + PETS.food(p).sym + ' ' + esc(S.petFeedWith(L(PETS.food(p).name))) + '</button>'
+        ? '<button class="btn primary block" id="petfeed">' + PETS.food(p).sym + ' ' + esc(S.petFeedWith(L(PETS.food(p).name))) + '</button>'
         : '<p class="hint ok">' + esc(S.petFull(waitWord(PETS.waitLeft(p)))) + '</p>'
           + (pro ? '' : '<p class="hint">' + esc(S.petFasterPlus) + '</p>'))
-      + (PETS.canPlay(p)
-        ? '<button class="btn block" id="playbtn" style="margin-top:10px">🧶 ' + esc(S.petPlay) + ' · ' + esc(S.petPlayLeft(PETS.playLeft(p))) + '</button>'
-        : '<p class="hint ok">' + esc(S.petPlayDone) + '</p>' + (pro ? '' : '<p class="hint">' + esc(S.petPlayMore) + '</p>'))
+      + '<div class="row2">'
+      + (PETS.canPlay(p) ? '<button class="btn" id="playbtn">🧶 ' + esc(S.petPlayShort) + ' ×' + PETS.playLeft(p) + '</button>' : '<span class="done">✓ ' + esc(S.petPlayDone) + '</span>')
+      + (PETS.canGroom(p) ? '<button class="btn" id="groombtn">🧼 ' + esc(S.petGroom) + ' ×' + PETS.groomLeft(p) + '</button>' : '<span class="done">✓ ' + esc(S.petGroomDone) + '</span>')
+      + '</div>'
       + (bless ? '<div class="bless"><span class="q">' + luck.sym + '</span><p>' + esc(L(bless)) + '</p><span class="who">' + esc(p.name || L(PET_NAMES[p.kind])) + '</span></div>'
         : '<button class="btn block' + (PETS.fedToday(p) ? '' : ' off') + '" id="pray" style="margin-top:10px">🙏 ' + esc(S.petPray) + '</button>'
           + '<p class="hint">' + esc(PETS.fedToday(p) ? S.petPrayHint : S.petNeedFeed) + '</p>')
@@ -1052,7 +1094,7 @@ function renderPet(want) {
     $$('[data-open]', m).forEach((b) => b.addEventListener('click', () => { open = b.getAttribute('data-open'); draw(); }));
     const add = $('#addpet');
     if (add) add.addEventListener('click', () => drawPicker());
-    const fb = $('#feed');
+    const fb = $('#petfeed');
     if (fb) fb.addEventListener('click', () => {
       if (busy) return;
       busy = true; fb.disabled = true;
@@ -1152,7 +1194,7 @@ function renderPet(want) {
         const hit = over(e);
         ghost.remove(); ghost = null;
         stage.classList.remove('hoverfeed');
-        if (hit) { const fb2 = $('#feed'); if (fb2) fb2.click(); }
+        if (hit) { const fb2 = $('#petfeed'); if (fb2) fb2.click(); }
       };
       chip.addEventListener('pointerup', drop);
       chip.addEventListener('pointercancel', drop);

@@ -876,9 +876,29 @@ main{padding:22px 0 30px}
 .petstage.patting{cursor:grabbing}
 .petstage.patting .petart{animation:none;transform:translateY(-3px) rotate(-1.5deg) scale(1.02)}
 .petstage.hoverfeed{box-shadow:inset 0 0 0 3px var(--gold)}
-#main p.pathint{text-align:center;margin:0 0 10px}
+/* Said under the picture, where the hands actually go. */
+#main p.handhint{text-align:center;margin:0 0 12px;font-size:13px;color:var(--fg-soft);text-wrap:balance}
+/* What the next level pays, said where the level is shown. */
+.nextpay{display:flex;align-items:center;gap:8px;margin:0 0 12px;padding:8px 12px;border-radius:12px;background:var(--tag-gold-bg);color:var(--tag-gold-ink);font-size:12.5px;font-weight:600;text-decoration:none}
+.nextpay .go{margin-left:auto;font-weight:700}
+/* Every way to earn, two to a row. */
+.earnhead{display:flex;justify-content:space-between;align-items:baseline;gap:10px;margin-bottom:6px;font-size:13px}
+.earnhead span{color:var(--fg-soft)}.earnhead b{font-weight:700;white-space:nowrap}
+.earngrid{display:grid;grid-template-columns:1fr 1fr;gap:4px 8px;margin-bottom:12px}
+.earngrid .e{display:flex;align-items:center;gap:6px;font-size:12.5px;padding:4px 8px;border-radius:9px;background:var(--surface-2)}
+.earngrid .e i{font-style:normal;font-size:13px}
+.earngrid .e b{flex:1;font-weight:500;color:var(--fg-soft);min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.earngrid .e u{text-decoration:none;font-weight:700;white-space:nowrap}
+.earngrid .e.locked u{color:var(--gold-deep)}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px}
+.row2 .btn{padding:11px 6px;font-size:13px;white-space:normal;line-height:1.25;min-width:0}
+.row2 .done{display:flex;align-items:center;justify-content:center;font-size:12.5px;color:var(--fg-soft);background:var(--surface-2);border-radius:12px;padding:8px 6px;text-align:center}
+@keyframes grooming{0%,100%{transform:translateY(0) rotate(0)}25%{transform:translateY(-2px) rotate(-2deg)}75%{transform:translateY(-2px) rotate(2deg)}}
+.petstage.grooming .petart{animation:grooming .5s ease-in-out 3}
 .feedrow{display:flex;align-items:center;justify-content:center;gap:9px;margin-bottom:10px}
-.foodchip{display:inline-flex;align-items:center;justify-content:center;width:46px;height:46px;border-radius:50%;background:var(--surface-2);border:1px dashed var(--gold);font-size:24px;cursor:grab;touch-action:none;user-select:none}
+/* The food sits in the scene, at the companion's feet, so the drag is short. */
+.petstage .foodchip{position:absolute;left:8px;bottom:8px;z-index:7}
+.foodchip{display:inline-flex;align-items:center;justify-content:center;width:46px;height:46px;border-radius:50%;background:rgba(255,255,255,.9);border:2px dashed var(--gold);font-size:24px;cursor:grab;touch-action:none;user-select:none;box-shadow:0 2px 8px rgba(60,40,90,.16)}
 .foodchip:active{cursor:grabbing;transform:scale(1.08)}
 .dragtip{font-size:12.5px;color:var(--fg-soft)}
 .dragfood{position:fixed;z-index:80;font-size:36px;pointer-events:none;transform:translate(-50%,-50%);filter:drop-shadow(0 3px 6px rgba(60,40,90,.3))}

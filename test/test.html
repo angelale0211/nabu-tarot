@@ -480,9 +480,9 @@ async function go(hash, sel) { W().location.hash = hash; await sleep(30); return
         }
         ok(bad.length === 0, 'a pile, poll or wish page shows its whole introduction and title, with nothing faded out (' + bad.join(', ') + ')'); }
       await go('#/home', '#actwrap .act');
-      ok(!d.querySelector('#actwrap .post.act') && !d.querySelector('#actwrap .clamp') && !d.querySelector('#actwrap .tclamp')
-        && d.querySelector('#actwrap .actbtn[href^="#/play/"]') && d.querySelector('#actwrap a[href="#/play"]'),
-        'the home page names the newest activity on one line instead of spelling it out, so nothing there is ever faded off');
+      ok(!d.querySelector('#actwrap .post.act') && !d.querySelector('#actwrap .clamp') && !d.querySelector('#actwrap .tclamp') && !d.querySelector('#actwrap .actbtn')
+        && d.querySelector('#actwrap a[href="#/play"]'),
+        'the home page offers the activities as buttons and spells none of them out, so nothing there is ever faded off');
       await go('#/play/tree', '#shake'); ok(d.querySelector('#tree svg') && d.querySelector('#treemsg').hidden, 'the message tree starts with no message shown');
       ok(d.querySelectorAll('.lookstrip .look').length === 4 && d.querySelectorAll('.lookstrip .look.locked').length === 3 && d.querySelector('.lookstrip .look.on'), 'the message tree carries the four trees themselves, three of them locked');
       d.querySelector('#shake').click(); await waitFor(() => !d.querySelector('#treemsg').hidden, 6000);
@@ -555,7 +555,8 @@ async function go(hash, sel) { W().location.hash = hash; await sleep(30); return
       d.querySelector('#petkeep').click(); await sleep(60);
       ok(JSON.parse(w.localStorage.getItem('nabu-pets')).length === 1 && d.querySelector('.petstage .pethome') && d.querySelector('.petstage .aura')
         && d.querySelectorAll('.petstage .stagebtn').length === 4 && !d.querySelector('.sheet')
-        && d.querySelectorAll('.carelist li.locked').length === 4 && d.querySelector('#feed'),
+        && d.querySelectorAll('.earngrid .e').length === 10 && d.querySelectorAll('.earngrid .e.locked').length === 4
+        && d.querySelector('#petfeed') && d.querySelector('#groombtn') && d.querySelector('.nextpay') && d.querySelector('.petstage #foodchip'),
         'the chosen companion arrives with a home, a halo, four ways to dress it on the scene itself, and four locked ways to earn more');
       d.querySelector('[data-open-sheet="food"]').click(); await sleep(40);
       ok(d.querySelector('.sheet') && d.querySelectorAll('[data-sheet-tab]').length === 4
@@ -588,8 +589,8 @@ async function go(hash, sel) { W().location.hash = hash; await sleep(30); return
           'the food can be picked up and dropped on the companion, which feeds it'); }
       { const q = N.PETS.one('cat'); q.last = 0; q.fed = ''; q.streak = 0; q.meals = 0; q.xp = 0; N.PETS.put(q);
         w.localStorage.removeItem('nabu-xp-day'); w.localStorage.removeItem('nabu-coin-day'); N.BANK.put(0); }
-      await go('#/play', '#acts'); await go('#/play/pet', '#feed');
-      d.querySelector('#feed').click(); await waitFor(() => !d.querySelector('#feed'), 3000);
+      await go('#/play', '#acts'); await go('#/play/pet', '#petfeed');
+      d.querySelector('#petfeed').click(); await waitFor(() => !d.querySelector('#petfeed'), 3000);
       { const p1 = JSON.parse(w.localStorage.getItem('nabu-pets'))[0];
         ok(p1.xp === 10 && p1.meals === 1 && p1.streak === 1 && p1.last > 0 && Number(w.localStorage.getItem('nabu-coins')) === 2
           && /Bạn nhỏ đang no/.test(d.querySelector('#main').textContent) && /2 giờ/.test(d.querySelector('#main').textContent),
@@ -653,7 +654,7 @@ async function go(hash, sel) { W().location.hash = hash; await sleep(30); return
       w.localStorage.removeItem('nabu-coin-day'); N.UNL_CART && N.UNL_CART.set([]);
       await go('#/play/q1', '#acts .act-poll'); await sleep(40);
       ok(d.querySelectorAll('.act-poll [data-opt]').length === 3 && /đăng nhập để bình chọn/.test(d.querySelector('.act-poll .pollnote').textContent) && d.querySelector('.act-poll .pollstat') && d.querySelectorAll('.act-poll .bar').length === 3, 'a guest is told to sign in to vote but still sees the overall results');
-      await go('#/home', '#actwrap .act'); ok(d.querySelector('#actwrap .act-poll') && d.querySelector('#actwrap a[href="#/play/q1"]') && d.querySelector('#actwrap a[href="#/play"]') && !d.querySelector('#actwrap [data-opt]'), 'home shows the newest open activity as a teaser with a join button');
+      await go('#/home', '#actwrap .aq'); ok(d.querySelector('#actwrap .aq[href="#/play/polls"]') && d.querySelector('#actwrap a[href="#/play"]') && !d.querySelector('#actwrap [data-opt]') && !d.querySelector('#actwrap .post'), 'home offers the activities as buttons rather than one expanded teaser');
       ok(d.querySelectorAll('#actwrap .actquick .aq').length === 7 && d.querySelector('#actwrap .aq[href="#/play/pet"]') && d.querySelector('#actwrap .aq[href="#/play/tree"]') && d.querySelector('#actwrap .aq[href="#/play/coin"]') && d.querySelector('#actwrap .aq[href="#/play/diary"]')
         && d.querySelector('#actwrap .aq[href="#/play/piles"]') && d.querySelector('#actwrap .aq[href="#/play/polls"]') && d.querySelector('#actwrap .aq[href="#/play/wishes"]'),
         'home offers all seven activities as their own buttons: the four everyday ones and the three published kinds');
