@@ -23,7 +23,6 @@ const SERVICES = [
     ] },
   { id: 'tea', icon: '🍵', tone: 'gold', name: { vi: 'Bài trà', en: 'Tealeaf fortune telling' },
     tagline: { vi: 'Một tách trà, một câu chuyện.', en: 'One cup of tea, one story.' },
-    note: { vi: 'Bạn pha một tách trà lá, uống gần cạn, chụp ảnh lòng tách gửi Nabu.', en: 'Brew loose-leaf tea, drink it nearly to the bottom, send Nabu a photo of the cup.' },
     packages: [
       { id: 'q1', name: { vi: '1 câu', en: '1 question' }, price: 25000 },
       { id: 'q3', name: { vi: '3 câu', en: '3 questions' }, price: 50000 },
@@ -46,7 +45,7 @@ const SERVICES = [
       { id: 't60', name: { vi: '60 phút', en: '60 minutes' }, price: 145000 }
     ] },
   { id: 'tuvi', icon: '🌸', tone: 'pink', name: { vi: 'Tử vi', en: 'Tử vi (Vietnamese astrology)' },
-    tagline: { vi: 'Không phải chuyện hôm nay, mà là cả đường dài.', en: 'Not about today, but the long road.' },
+    tagline: { vi: 'Không phải chuyện hôm nay, mà là cả đường dài.', en: 'Not just today, but the long road.' },
     note: { vi: 'Cần ngày, tháng, năm sinh và giờ sinh chính xác.', en: 'Needs your exact date and hour of birth.' },
     needsBirth: true,
     packages: [
