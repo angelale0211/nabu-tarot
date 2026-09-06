@@ -937,6 +937,13 @@ main{padding:22px 0 30px}
 .aura{position:absolute;left:8%;top:2%;width:84%;height:84%;border-radius:50%;z-index:1;background:radial-gradient(circle,var(--aura) 0%,transparent 68%);opacity:.85;animation:breathe 4.6s ease-in-out infinite}
 @keyframes breathe{0%,100%{transform:scale(.94);opacity:.6}50%{transform:scale(1.06);opacity:.95}}
 .petart{position:relative;z-index:2;width:100%;height:auto;display:block}
+/* A companion is never quite still: it breathes, and it lifts a paw now and
+   then. */
+.petstage .petart,.treepet .petart,.petpick .petart{animation:breathing 3.4s ease-in-out infinite}
+@keyframes breathing{0%,100%{transform:translateY(0) scale(1)}50%{transform:translateY(-3px) scale(1.015)}}
+.petstage .petart .ft.wav,.treepet .petart .ft.wav{transform-box:fill-box;transform-origin:20% 60%;animation:pawwave 4.6s ease-in-out infinite}
+@keyframes pawwave{0%,62%,100%{transform:rotate(0) translateY(0)}70%{transform:rotate(-24deg) translateY(-5px)}78%{transform:rotate(6deg) translateY(-5px)}86%{transform:rotate(-20deg) translateY(-5px)}94%{transform:rotate(0) translateY(0)}}
+@media (prefers-reduced-motion:reduce){.petstage .petart,.treepet .petart,.petpick .petart,.petstage .petart .ft.wav,.treepet .petart .ft.wav,.treepet{animation:none}}
 /* The companion stands to the left of centre, in front of its own place. */
 .petstage .petart{position:absolute;left:5%;bottom:1%;width:68%;height:auto}
 /* A spirit beast is lit from within, so it reads as the rarer thing. */
@@ -988,6 +995,9 @@ main{padding:22px 0 30px}
 .lkchips .chip.on{background:var(--primary);color:var(--primary-ink);border-color:var(--primary)}
 .sum .r.cut span,.sum .r.cut b{color:var(--gold-deep)}
 .sum .r.cut b{font-weight:600}
+/* The way to the looks picker, offered under whatever it changes. */
+.lookslink{text-align:center;margin:10px 0 0}
+.lookslink a{color:var(--gold-deep);font-weight:600;font-size:13.5px;text-decoration:none;border-bottom:1px solid var(--gold-soft);padding-bottom:1px}
 .coinbox{text-align:center}
 .coinbox .n{display:block;font-family:var(--display);font-size:38px;font-weight:600;line-height:1.15;color:var(--gold-deep)}
 .coinbox .u{display:block;font-size:13px;color:var(--fg-soft);margin-bottom:6px}
@@ -1040,10 +1050,16 @@ main{padding:22px 0 30px}
 .petpick .pp-on{position:absolute;top:8px;left:9px;color:var(--primary);font-weight:700}
 /* The companions stand at the foot of the tree rather than in the branches. */
 .treewrap{position:relative}
-.treepets{position:absolute;left:6px;bottom:92px;z-index:2;display:flex;align-items:flex-end;gap:-6px}
-.treepet{width:70px;display:block}
-.treepet+.treepet{margin-left:-16px}
-@media (max-width:360px){.treepets{bottom:86px}.treepet{width:58px}}
+/* The stage is exactly the tree picture, so the companions can be placed
+   against the ground the tree stands on rather than against the card. */
+.treestage{position:relative;width:100%;max-width:300px;margin:0 auto 6px}
+.treestage .tree{margin:0}
+/* Set a little to the side of the trunk, so the tree is never hidden. */
+.treepets{position:absolute;left:0;right:0;bottom:7%;z-index:2;display:flex;justify-content:center;align-items:flex-end;pointer-events:none;transform:translateX(15%)}
+.treepet{width:31%;max-width:96px;display:block;pointer-events:auto;animation:strolling 11s ease-in-out infinite}
+.treepet+.treepet{margin-left:-7%}
+@keyframes strolling{0%,100%{transform:translateX(-13%)}50%{transform:translateX(13%)}}
+@media (max-width:360px){.treepet{width:34%}}
 .unlist{display:grid;gap:10px}
 .unl{background:var(--surface);border:1px solid var(--rule-soft);border-radius:16px;padding:14px}
 .unl.best{border-color:var(--pink);border-width:1.5px}.unl.on{border-color:var(--gold)}
@@ -1472,7 +1488,7 @@ const STR = {
     saleKind: 'Kiểu giảm', saleKinds: { percent: 'Theo phần trăm', amount: 'Theo số tiền' }, saleValue: 'Mức giảm', saleFrom: 'Bắt đầu', saleTo: 'Kết thúc',
     plusName: 'Nabu Tarot Plus', looksTitle: 'Giao diện của bạn', looksLink: 'Đổi giao diện',
     looksIntro: 'Chọn cách app trông ra sao: mặt sau bộ bài, cây thông điệp, đồng xu và trang nhật ký.',
-    looksLocked: 'Mở tất cả giao diện đẹp hơn', looksPlusOn: 'Bạn đang có Nabu Tarot Plus, tất cả giao diện đều mở.', looksNeedPlus: 'Giao diện này thuộc Nabu Tarot Plus.',
+    looksHere: '🎨 Đổi giao diện của mục này', looksLocked: 'Mở tất cả giao diện đẹp hơn', looksPlusOn: 'Bạn đang có Nabu Tarot Plus, tất cả giao diện đều mở.', looksNeedPlus: 'Giao diện này thuộc Nabu Tarot Plus.',
     lookKinds: { cardback: 'Mặt sau lá bài', tree: 'Cây thông điệp', coin: 'Đồng xu', diary: 'Trang nhật ký' },
     petTitle: 'Nuôi bạn nhỏ may mắn', petSub: 'mỗi ngày một bữa ăn và một lời khấn',
     petPick: 'Mỗi bạn nhỏ trông giữ một phần khác nhau trong cuộc sống của bạn: tình duyên, sự nghiệp, học hành, tiền tài, sức khỏe và chuyện đi lại.',
@@ -1785,7 +1801,7 @@ const STR = {
     saleKind: 'Kind of discount', saleKinds: { percent: 'A percentage', amount: 'An amount' }, saleValue: 'Discount', saleFrom: 'Starts', saleTo: 'Ends',
     plusName: 'Nabu Tarot Plus', looksTitle: 'How your app looks', looksLink: 'Change the look',
     looksIntro: 'Choose how the app looks: the back of the deck, the message tree, the coin and the diary page.',
-    looksLocked: 'Open every look', looksPlusOn: 'You have Nabu Tarot Plus, so every look is open.', looksNeedPlus: 'That look comes with Nabu Tarot Plus.',
+    looksHere: '🎨 Change how this looks', looksLocked: 'Open every look', looksPlusOn: 'You have Nabu Tarot Plus, so every look is open.', looksNeedPlus: 'That look comes with Nabu Tarot Plus.',
     lookKinds: { cardback: 'Card backs', tree: 'The message tree', coin: 'The coin', diary: 'Diary paper' },
     petTitle: 'Keep a luck companion', petSub: 'one meal and one wish a day',
     petPick: 'Each companion looks after a different part of your life: love, work, study, money, health and travel.',
@@ -12494,7 +12510,7 @@ function petSVG(kind, coat, mood, wear) {
     + (art.behind || '')
     + '<ellipse cx="60" cy="88" rx="30" ry="23" fill="' + c.body + '"/>'
     + '<ellipse cx="60" cy="92" rx="18" ry="14" fill="#FFF7EE" opacity=".55"/>'
-    + (art.feet === false ? '' : '<ellipse cx="38" cy="104" rx="8" ry="5" fill="' + c.dark + '"/><ellipse cx="82" cy="104" rx="8" ry="5" fill="' + c.dark + '"/>')
+    + (art.feet === false ? '' : '<ellipse class="ft" cx="38" cy="104" rx="8" ry="5" fill="' + c.dark + '"/><ellipse class="ft wav" cx="82" cy="104" rx="8" ry="5" fill="' + c.dark + '"/>')
     + (art.overBody || '') + (art.ears || '') + headed + neck + worn
     + '</svg>';
 }
@@ -13719,10 +13735,21 @@ function treeButterflySVG(still) {
 function treeSVG() { return treeSVGFor(); }
 /* The companions stand at the foot of the tree, so the two screens read as one
    garden. Tapping one opens its own page. */
+/* The looks picker is offered on every screen a look belongs to, because
+   nobody goes looking for it on the profile. */
+function looksLinkHTML() {
+  return '<p class="lookslink"><a href="#/looks">' + esc(T().looksHere) + '</a></p>';
+}
+/* The looks picker is offered on every screen a look belongs to, because
+   nobody goes looking for it on the profile. */
+function looksLinkHTML() {
+  return '<p class="lookslink"><a href="#/looks">' + esc(T().looksHere) + '</a></p>';
+}
 function treePetHTML() {
   const pets = PETS.all();
   if (!pets.length) return '';
-  return '<span class="treepets">' + pets.map((p) => '<a class="treepet" href="#/play/pet" aria-label="' + esc(p.name || L(PET_NAMES[p.kind])) + '">'
+  /* Each one strolls at its own pace, so a row of them never marches in step. */
+  return '<span class="treepets">' + pets.map((p, i) => '<a class="treepet" href="#/play/pet" style="animation-delay:' + (i * 1300) + 'ms" aria-label="' + esc(p.name || L(PET_NAMES[p.kind])) + '">'
     + petSVG(p.kind, PETS.coat(p), PETS.fedToday(p) ? 'happy' : '', PETS.wear(p)) + '</a>').join('') + '</span>';
 }
 function renderTree() {
@@ -13730,10 +13757,12 @@ function renderTree() {
   let msg = null, busy = false;
   const draw = () => {
     m.innerHTML = '<div class="eyebrow">' + esc(S.actTitle) + '</div><h1 style="margin-bottom:6px">🌸 ' + esc(S.treeTitle) + '</h1><p class="muted">' + esc(S.treeIntro) + '</p>'
-      + '<div class="card treewrap">' + treePetHTML() + '<button type="button" class="tree" id="tree" aria-label="' + esc(S.treeShake) + '">' + treeSVG() + '<span class="petals" id="petals"></span></button>'
+      + '<div class="card treewrap"><div class="treestage"><button type="button" class="tree" id="tree" aria-label="' + esc(S.treeShake) + '">' + treeSVG() + '<span class="petals" id="petals"></span></button>' + treePetHTML() + '</div>'
       + '<div class="treemsg" id="treemsg"' + (msg ? '' : ' hidden') + '><div class="eyebrow">' + esc(S.treeFor) + '</div><p id="treetext">' + (msg ? esc(L(msg)) : '') + '</p></div>'
       + (luckSpent('tree') ? '' : '<button class="btn primary block" id="shake">' + esc(msg ? S.treeAgain : S.treeShake) + '</button>') + '</div>'
       + luckPanelHTML('tree')
+      + looksLinkHTML()
+      + looksLinkHTML()
       + '<p style="margin-top:14px"><a class="btn block" href="#/unlock">💳 ' + esc(S.unlockLink) + '</a></p>'
       + '<p style="margin-top:14px"><a href="#/play" class="backlink">← ' + esc(S.actTitle) + '</a></p>';
     const shake = () => {
@@ -13806,12 +13835,15 @@ function coinFaceSVG(side) { return coinFaceFor(coinMetal(), side); }
 function coinFaceFor(metal, side) {
   const S = T(), mtl = metal || coinMetal();
   const size = COIN_SIZE.get();
-  // The mark and the word are placed as one block whose middle lands on the
-  // middle of the coin, so the pair is centred whatever size the word needs.
+  // The word itself sits on the middle of the coin. The crescent above it is
+  // balanced by three dots the same distance below, so the face stays even
+  // without pushing the word off centre.
   const cap = size * 0.72;
-  const markY = 80 - (6 + cap) / 2;
-  const wordY = markY + 19 + cap;
-  const ornament = '<g transform="translate(86.5,' + markY.toFixed(1) + ')" fill="' + mtl.ink + '" opacity=".9"><path d="M0 -13 A13 13 0 1 0 0 13 A10 10 0 1 1 0 -13 Z"/></g>';
+  const wordY = 80 + cap / 2;
+  const band = (y) => '<path d="M80 ' + (y - 5) + ' l4.5 5 -4.5 5 -4.5 -5 Z"/>'
+    + '<rect x="56" y="' + (y - 0.9) + '" width="16" height="1.8" rx=".9"/>'
+    + '<rect x="88" y="' + (y - 0.9) + '" width="16" height="1.8" rx=".9"/>';
+  const ornament = '<g fill="' + mtl.ink + '" opacity=".6">' + band(44) + band(116) + '</g>';
   const word = side ? (side === 'yes' ? S.coinYes : S.coinNo) : '';
   return '<svg viewBox="0 0 160 160" aria-hidden="true">'
     + '<circle cx="80" cy="80" r="74" fill="' + mtl.face + '" stroke="' + mtl.rim + '" stroke-width="5"/>'
@@ -13831,6 +13863,8 @@ function renderCoin() {
       + '<div class="coinres" id="coinres" aria-live="polite">' + (side ? esc(side === 'yes' ? S.coinYes : S.coinNo) : '') + '</div>'
       + (luckSpent('coin') ? '' : '<button class="btn primary block" id="coinflip">' + esc(side ? S.coinAgain : S.coinFlip) + '</button>') + '</div>'
       + luckPanelHTML('coin')
+      + looksLinkHTML()
+      + looksLinkHTML()
       + '<p class="hint">' + esc(S.coinNote) + '</p>'
       + '<p style="margin-top:14px"><a class="btn block" href="#/unlock">💳 ' + esc(S.unlockLink) + '</a></p>'
       + '<p style="margin-top:14px"><a href="#/play" class="backlink">← ' + esc(S.actTitle) + '</a></p>';
@@ -13871,6 +13905,7 @@ function renderDiary() {
       + '<textarea id="dtext" placeholder="' + esc(S.diaryPh) + '">' + esc(cur.t || '') + '</textarea></div>'
       + '<h3 style="margin:16px 0 8px">' + esc(S.diaryPast) + (days.length ? ' <span class="faint">· ' + esc(S.diaryCount(days.length + (cur.t || cur.m ? 1 : 0))) + '</span>' : '') + '</h3>'
       + (days.length ? days.map((k) => '<div class="card diary past" data-day="' + k + '"><div class="date"><span>' + (d[k].m ? d[k].m + ' ' : '') + esc(fmtDate(k)) + '</span><button type="button" class="linkbtn" data-ddel="' + k + '">' + esc(S.diaryDel) + '</button></div><p>' + esc(d[k].t || '').replace(/\n/g, '<br>') + '</p></div>').join('') : '<p class="hint">' + esc(S.diaryEmpty) + '</p>')
+      + looksLinkHTML()
       + '<p style="margin-top:12px"><a href="#/play" class="backlink">← ' + esc(S.actBack) + '</a></p>';
     const save = () => { const d2 = all(); const t = $('#dtext').value, mo = ($('.mood.on', m) || {}).getAttribute ? $('.mood.on', m).getAttribute('data-mood') : ''; if (t.trim() || mo) d2[today] = { m: mo || '', t: t }; else delete d2[today]; store.set('nabu-diary', d2); $('#dsaved').textContent = t.trim() || mo ? S.diarySaved : ''; };
     $('#dtext').addEventListener('input', save);
@@ -14308,7 +14343,7 @@ function adminSale(p) {
 ROUTES.admin = { nav: '', render: renderAdmin };
 
 /* ============================ boot ============================ */
-window.APP_VERSION = 'v99';
+window.APP_VERSION = 'v100';
 window.NABU = { CONFIG: CONFIG, SALE: SALE, salePrice: salePrice, loadActs: loadActs, BACK: BACK, LESSONS: LESSONS, localAnswer: localAnswer, compatVerdict: compatVerdict, numerologyOf: numerologyOf, ZDEEP: ZDEEP, lunarToday: lunarToday, solarToLunar: solarToLunar, DECK: DECK, INSIGHT: INSIGHT, KW: KW, ASK: ASK, TOPICS: TOPICS, GUIDES: GUIDES, SERVICES: SERVICES, COURSES: COURSES, ACCESS: ACCESS, makeCode: makeCode, parseCode: parseCode, ZODIAC: ZODIAC, pick: pick, book: book,
   insightHTML: insightHTML, insightOf: insightOf, sunSignIndex: sunSignIndex, lifePath: lifePath, PROFILE: () => PROFILE, BE: BE, ACTS: ACTS,
   BANK: BANK, PETS: PETS, luckCut: luckCut, petLevel: petLevel, petStep: petStep, VOUCHERS: VOUCHERS, levelCoins: levelCoins, LOOKS: LOOKS };

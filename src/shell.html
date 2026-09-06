@@ -771,6 +771,13 @@ main{padding:22px 0 30px}
 .aura{position:absolute;left:8%;top:2%;width:84%;height:84%;border-radius:50%;z-index:1;background:radial-gradient(circle,var(--aura) 0%,transparent 68%);opacity:.85;animation:breathe 4.6s ease-in-out infinite}
 @keyframes breathe{0%,100%{transform:scale(.94);opacity:.6}50%{transform:scale(1.06);opacity:.95}}
 .petart{position:relative;z-index:2;width:100%;height:auto;display:block}
+/* A companion is never quite still: it breathes, and it lifts a paw now and
+   then. */
+.petstage .petart,.treepet .petart,.petpick .petart{animation:breathing 3.4s ease-in-out infinite}
+@keyframes breathing{0%,100%{transform:translateY(0) scale(1)}50%{transform:translateY(-3px) scale(1.015)}}
+.petstage .petart .ft.wav,.treepet .petart .ft.wav{transform-box:fill-box;transform-origin:20% 60%;animation:pawwave 4.6s ease-in-out infinite}
+@keyframes pawwave{0%,62%,100%{transform:rotate(0) translateY(0)}70%{transform:rotate(-24deg) translateY(-5px)}78%{transform:rotate(6deg) translateY(-5px)}86%{transform:rotate(-20deg) translateY(-5px)}94%{transform:rotate(0) translateY(0)}}
+@media (prefers-reduced-motion:reduce){.petstage .petart,.treepet .petart,.petpick .petart,.petstage .petart .ft.wav,.treepet .petart .ft.wav,.treepet{animation:none}}
 /* The companion stands to the left of centre, in front of its own place. */
 .petstage .petart{position:absolute;left:5%;bottom:1%;width:68%;height:auto}
 /* A spirit beast is lit from within, so it reads as the rarer thing. */
@@ -822,6 +829,9 @@ main{padding:22px 0 30px}
 .lkchips .chip.on{background:var(--primary);color:var(--primary-ink);border-color:var(--primary)}
 .sum .r.cut span,.sum .r.cut b{color:var(--gold-deep)}
 .sum .r.cut b{font-weight:600}
+/* The way to the looks picker, offered under whatever it changes. */
+.lookslink{text-align:center;margin:10px 0 0}
+.lookslink a{color:var(--gold-deep);font-weight:600;font-size:13.5px;text-decoration:none;border-bottom:1px solid var(--gold-soft);padding-bottom:1px}
 .coinbox{text-align:center}
 .coinbox .n{display:block;font-family:var(--display);font-size:38px;font-weight:600;line-height:1.15;color:var(--gold-deep)}
 .coinbox .u{display:block;font-size:13px;color:var(--fg-soft);margin-bottom:6px}
@@ -874,10 +884,16 @@ main{padding:22px 0 30px}
 .petpick .pp-on{position:absolute;top:8px;left:9px;color:var(--primary);font-weight:700}
 /* The companions stand at the foot of the tree rather than in the branches. */
 .treewrap{position:relative}
-.treepets{position:absolute;left:6px;bottom:92px;z-index:2;display:flex;align-items:flex-end;gap:-6px}
-.treepet{width:70px;display:block}
-.treepet+.treepet{margin-left:-16px}
-@media (max-width:360px){.treepets{bottom:86px}.treepet{width:58px}}
+/* The stage is exactly the tree picture, so the companions can be placed
+   against the ground the tree stands on rather than against the card. */
+.treestage{position:relative;width:100%;max-width:300px;margin:0 auto 6px}
+.treestage .tree{margin:0}
+/* Set a little to the side of the trunk, so the tree is never hidden. */
+.treepets{position:absolute;left:0;right:0;bottom:7%;z-index:2;display:flex;justify-content:center;align-items:flex-end;pointer-events:none;transform:translateX(15%)}
+.treepet{width:31%;max-width:96px;display:block;pointer-events:auto;animation:strolling 11s ease-in-out infinite}
+.treepet+.treepet{margin-left:-7%}
+@keyframes strolling{0%,100%{transform:translateX(-13%)}50%{transform:translateX(13%)}}
+@media (max-width:360px){.treepet{width:34%}}
 .unlist{display:grid;gap:10px}
 .unl{background:var(--surface);border:1px solid var(--rule-soft);border-radius:16px;padding:14px}
 .unl.best{border-color:var(--pink);border-width:1.5px}.unl.on{border-color:var(--gold)}

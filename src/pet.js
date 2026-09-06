@@ -629,7 +629,7 @@ function petSVG(kind, coat, mood, wear) {
     + (art.behind || '')
     + '<ellipse cx="60" cy="88" rx="30" ry="23" fill="' + c.body + '"/>'
     + '<ellipse cx="60" cy="92" rx="18" ry="14" fill="#FFF7EE" opacity=".55"/>'
-    + (art.feet === false ? '' : '<ellipse cx="38" cy="104" rx="8" ry="5" fill="' + c.dark + '"/><ellipse cx="82" cy="104" rx="8" ry="5" fill="' + c.dark + '"/>')
+    + (art.feet === false ? '' : '<ellipse class="ft" cx="38" cy="104" rx="8" ry="5" fill="' + c.dark + '"/><ellipse class="ft wav" cx="82" cy="104" rx="8" ry="5" fill="' + c.dark + '"/>')
     + (art.overBody || '') + (art.ears || '') + headed + neck + worn
     + '</svg>';
 }

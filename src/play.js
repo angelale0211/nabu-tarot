@@ -358,10 +358,21 @@ function treeButterflySVG(still) {
 function treeSVG() { return treeSVGFor(); }
 /* The companions stand at the foot of the tree, so the two screens read as one
    garden. Tapping one opens its own page. */
+/* The looks picker is offered on every screen a look belongs to, because
+   nobody goes looking for it on the profile. */
+function looksLinkHTML() {
+  return '<p class="lookslink"><a href="#/looks">' + esc(T().looksHere) + '</a></p>';
+}
+/* The looks picker is offered on every screen a look belongs to, because
+   nobody goes looking for it on the profile. */
+function looksLinkHTML() {
+  return '<p class="lookslink"><a href="#/looks">' + esc(T().looksHere) + '</a></p>';
+}
 function treePetHTML() {
   const pets = PETS.all();
   if (!pets.length) return '';
-  return '<span class="treepets">' + pets.map((p) => '<a class="treepet" href="#/play/pet" aria-label="' + esc(p.name || L(PET_NAMES[p.kind])) + '">'
+  /* Each one strolls at its own pace, so a row of them never marches in step. */
+  return '<span class="treepets">' + pets.map((p, i) => '<a class="treepet" href="#/play/pet" style="animation-delay:' + (i * 1300) + 'ms" aria-label="' + esc(p.name || L(PET_NAMES[p.kind])) + '">'
     + petSVG(p.kind, PETS.coat(p), PETS.fedToday(p) ? 'happy' : '', PETS.wear(p)) + '</a>').join('') + '</span>';
 }
 function renderTree() {
@@ -369,10 +380,12 @@ function renderTree() {
   let msg = null, busy = false;
   const draw = () => {
     m.innerHTML = '<div class="eyebrow">' + esc(S.actTitle) + '</div><h1 style="margin-bottom:6px">🌸 ' + esc(S.treeTitle) + '</h1><p class="muted">' + esc(S.treeIntro) + '</p>'
-      + '<div class="card treewrap">' + treePetHTML() + '<button type="button" class="tree" id="tree" aria-label="' + esc(S.treeShake) + '">' + treeSVG() + '<span class="petals" id="petals"></span></button>'
+      + '<div class="card treewrap"><div class="treestage"><button type="button" class="tree" id="tree" aria-label="' + esc(S.treeShake) + '">' + treeSVG() + '<span class="petals" id="petals"></span></button>' + treePetHTML() + '</div>'
       + '<div class="treemsg" id="treemsg"' + (msg ? '' : ' hidden') + '><div class="eyebrow">' + esc(S.treeFor) + '</div><p id="treetext">' + (msg ? esc(L(msg)) : '') + '</p></div>'
       + (luckSpent('tree') ? '' : '<button class="btn primary block" id="shake">' + esc(msg ? S.treeAgain : S.treeShake) + '</button>') + '</div>'
       + luckPanelHTML('tree')
+      + looksLinkHTML()
+      + looksLinkHTML()
       + '<p style="margin-top:14px"><a class="btn block" href="#/unlock">💳 ' + esc(S.unlockLink) + '</a></p>'
       + '<p style="margin-top:14px"><a href="#/play" class="backlink">← ' + esc(S.actTitle) + '</a></p>';
     const shake = () => {
@@ -445,12 +458,15 @@ function coinFaceSVG(side) { return coinFaceFor(coinMetal(), side); }
 function coinFaceFor(metal, side) {
   const S = T(), mtl = metal || coinMetal();
   const size = COIN_SIZE.get();
-  // The mark and the word are placed as one block whose middle lands on the
-  // middle of the coin, so the pair is centred whatever size the word needs.
+  // The word itself sits on the middle of the coin. The crescent above it is
+  // balanced by three dots the same distance below, so the face stays even
+  // without pushing the word off centre.
   const cap = size * 0.72;
-  const markY = 80 - (6 + cap) / 2;
-  const wordY = markY + 19 + cap;
-  const ornament = '<g transform="translate(86.5,' + markY.toFixed(1) + ')" fill="' + mtl.ink + '" opacity=".9"><path d="M0 -13 A13 13 0 1 0 0 13 A10 10 0 1 1 0 -13 Z"/></g>';
+  const wordY = 80 + cap / 2;
+  const band = (y) => '<path d="M80 ' + (y - 5) + ' l4.5 5 -4.5 5 -4.5 -5 Z"/>'
+    + '<rect x="56" y="' + (y - 0.9) + '" width="16" height="1.8" rx=".9"/>'
+    + '<rect x="88" y="' + (y - 0.9) + '" width="16" height="1.8" rx=".9"/>';
+  const ornament = '<g fill="' + mtl.ink + '" opacity=".6">' + band(44) + band(116) + '</g>';
   const word = side ? (side === 'yes' ? S.coinYes : S.coinNo) : '';
   return '<svg viewBox="0 0 160 160" aria-hidden="true">'
     + '<circle cx="80" cy="80" r="74" fill="' + mtl.face + '" stroke="' + mtl.rim + '" stroke-width="5"/>'
@@ -470,6 +486,8 @@ function renderCoin() {
       + '<div class="coinres" id="coinres" aria-live="polite">' + (side ? esc(side === 'yes' ? S.coinYes : S.coinNo) : '') + '</div>'
       + (luckSpent('coin') ? '' : '<button class="btn primary block" id="coinflip">' + esc(side ? S.coinAgain : S.coinFlip) + '</button>') + '</div>'
       + luckPanelHTML('coin')
+      + looksLinkHTML()
+      + looksLinkHTML()
       + '<p class="hint">' + esc(S.coinNote) + '</p>'
       + '<p style="margin-top:14px"><a class="btn block" href="#/unlock">💳 ' + esc(S.unlockLink) + '</a></p>'
       + '<p style="margin-top:14px"><a href="#/play" class="backlink">← ' + esc(S.actTitle) + '</a></p>';
@@ -510,6 +528,7 @@ function renderDiary() {
       + '<textarea id="dtext" placeholder="' + esc(S.diaryPh) + '">' + esc(cur.t || '') + '</textarea></div>'
       + '<h3 style="margin:16px 0 8px">' + esc(S.diaryPast) + (days.length ? ' <span class="faint">· ' + esc(S.diaryCount(days.length + (cur.t || cur.m ? 1 : 0))) + '</span>' : '') + '</h3>'
       + (days.length ? days.map((k) => '<div class="card diary past" data-day="' + k + '"><div class="date"><span>' + (d[k].m ? d[k].m + ' ' : '') + esc(fmtDate(k)) + '</span><button type="button" class="linkbtn" data-ddel="' + k + '">' + esc(S.diaryDel) + '</button></div><p>' + esc(d[k].t || '').replace(/\n/g, '<br>') + '</p></div>').join('') : '<p class="hint">' + esc(S.diaryEmpty) + '</p>')
+      + looksLinkHTML()
       + '<p style="margin-top:12px"><a href="#/play" class="backlink">← ' + esc(S.actBack) + '</a></p>';
     const save = () => { const d2 = all(); const t = $('#dtext').value, mo = ($('.mood.on', m) || {}).getAttribute ? $('.mood.on', m).getAttribute('data-mood') : ''; if (t.trim() || mo) d2[today] = { m: mo || '', t: t }; else delete d2[today]; store.set('nabu-diary', d2); $('#dsaved').textContent = t.trim() || mo ? S.diarySaved : ''; };
     $('#dtext').addEventListener('input', save);

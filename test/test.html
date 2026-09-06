@@ -475,11 +475,16 @@ async function go(hash, sel) { W().location.hash = hash; await sleep(30); return
       await go('#/home', '#actwrap .act');
       ok(d.querySelector('#actwrap h2.tclamp') && d.querySelector('#actwrap .body.clamp'), 'the home teaser is the one that shortens the title and the text');
       await go('#/play/tree', '#shake'); ok(d.querySelector('#tree svg') && d.querySelector('#treemsg').hidden, 'the message tree starts with no message shown');
+      ok(!!d.querySelector('#main .lookslink a[href="#/looks"]'), 'the message tree offers the looks picker where the tree is');
       d.querySelector('#shake').click(); await waitFor(() => !d.querySelector('#treemsg').hidden, 6000);
       ok(d.querySelector('#treetext').textContent.length > 20 && d.querySelectorAll('#tree .petals i').length === 0, 'shaking the tree drops one written message and clears the petals');
       await go('#/play/coin', '#coinflip'); ok(d.querySelector('#coin svg') && d.querySelector('#coinres').textContent === '', 'the coin starts unflipped');
       d.querySelector('#coinflip').click(); await waitFor(() => d.querySelector('#coinres').textContent, 6000);
       ok(/^(CÓ|KHÔNG)$/.test(d.querySelector('#coin svg text').textContent) && d.querySelector('#coin svg text').getBBox().width < 120, 'the coin carries its answer on its own face, inside the ring');
+      { const tb = d.querySelector('#coin svg text').getBBox();
+        ok(Math.abs((tb.y + tb.height / 2) - 80) < 3 && Math.abs((tb.x + tb.width / 2) - 80) < 2,
+          'the answer sits on the middle of the coin, not below it'); }
+      ok(!!d.querySelector('#main .lookslink a[href="#/looks"]'), 'the coin screen offers the looks picker where the coin is');
       ok(!d.querySelector('#coinflip') && d.querySelector('.luckbox') && /30\.000đ/.test(d.querySelector('.luckbox').textContent) && /50\.000đ/.test(d.querySelector('.luckbox').textContent) && d.querySelector('#main > p > a[href="#/unlock"]'), 'the free weekly turn is used up, and the price for unlimited plus a code box appear');
       d.querySelector('#luckcode').value = N.makeCode('luck', '2099-01-01'); d.querySelector('#luckgo').click(); await waitFor(() => d.querySelector('#coinflip'), 4000);
       ok(d.querySelector('#coinflip') && !d.querySelector('.luckbox'), 'the bundle code lifts the limit on the coin');
@@ -542,6 +547,13 @@ async function go(hash, sel) { W().location.hash = hash; await sleep(30); return
           'a meal earns experience and a couple of coins, then the companion is full for six hours'); }
       ok(d.querySelector('#pray') && !d.querySelector('#pray').className.match(/off/), 'a wish can be said once the companion has eaten');
       d.querySelector('#pray').click(); await waitFor(() => d.querySelector('.bless'), 3000);
+      { await go('#/play/tree', '.treepet');
+        const st = d.querySelector('.treestage').getBoundingClientRect(), pet = d.querySelector('.treepet').getBoundingClientRect();
+        const ground = d.querySelector('#tree svg ellipse[cy="238"]').getBoundingClientRect();
+        ok(pet.width > st.width * 0.26 && Math.abs(pet.bottom - (ground.top + ground.height / 2)) < st.height * 0.06
+          && pet.left > st.left && pet.right < st.right,
+          'the companion stands on the ground under the tree, big enough to see, inside the picture');
+        await go('#/play/pet', '.petstage'); }
       ok(d.querySelector('.bless p').textContent.length > 20 && JSON.parse(w.localStorage.getItem('nabu-pets'))[0].xp === 16 && !d.querySelector('#pray'),
         'the companion answers with a blessing of its own kind, once a day');
       { const one = d.querySelectorAll('.pettabs').length;
