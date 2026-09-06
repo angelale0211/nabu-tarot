@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
 <title>Nabu Tarot</title>
 <meta name="description" content="Nabu Tarot: dự đoán mới, rút một lá bài xem năng lượng hiện tại, học tarot, Lenormand, chiêm tinh, và đặt lịch xem bài.">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'none'; object-src 'none'; form-action 'self'; script-src 'self' 'sha256-A4X2Zbnk1YyLjp/yYG08hwAymzw/u8Oj/LJD7LDr+HQ=' https://www.gstatic.com https://apis.google.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; font-src 'self' data:; media-src 'self' data: blob:; worker-src 'self'; connect-src 'self' https://*.googleapis.com https://*.google.com https://*.firebaseio.com https://*.cloudfunctions.net https://*.workers.dev https://generativelanguage.googleapis.com; frame-src https://*.firebaseapp.com https://accounts.google.com https://*.facebook.com">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'none'; object-src 'none'; form-action 'self'; script-src 'self' 'sha256-vv0rZekWiu3p4C7m2yplq2IS2Boc2J7a04VOCoJ4zSg=' https://www.gstatic.com https://apis.google.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; font-src 'self' data:; media-src 'self' data: blob:; worker-src 'self'; connect-src 'self' https://*.googleapis.com https://*.google.com https://*.firebaseio.com https://*.cloudfunctions.net https://*.workers.dev https://generativelanguage.googleapis.com; frame-src https://*.firebaseapp.com https://accounts.google.com https://*.facebook.com">
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <meta name="theme-color" content="#EFE9FA">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -1193,7 +1193,10 @@ h1 .pileico{width:34px;height:27px;vertical-align:-3px;margin-right:2px}
 .pats{position:absolute;inset:0;z-index:6;pointer-events:none;overflow:hidden}
 .pats i{position:absolute;font-size:19px;font-style:normal;opacity:0;transform:translate(-50%,-50%);animation:pathearts 1.15s ease-out forwards}
 @keyframes pathearts{0%{opacity:0;transform:translate(-50%,-50%) scale(.5)}20%{opacity:1}100%{opacity:0;transform:translate(-50%,-190%) scale(1.15)}}
-.petstage{touch-action:pan-y;cursor:grab}
+/* The scene takes the whole gesture. With pan-y the phone read a stroke down
+   the companion's back as a page scroll and cancelled the pointer after a
+   move or two, so only sideways strokes ever did anything. */
+.petstage{touch-action:none;cursor:grab}
 .petstage.patting{cursor:grabbing}
 .petstage.patting .petart{animation:none;transform:translateY(-3px) rotate(-1.5deg) scale(1.02)}
 .petstage.hoverfeed{box-shadow:inset 0 0 0 3px var(--gold)}
@@ -14353,7 +14356,9 @@ const PET_WEARS = [
 const PET_PAT_XP = 4;
 const PET_GROOM_XP = 8;
 /* How far a finger has to travel before a stroke counts. */
-const PET_PAT_DIST = 260;
+/* How far a finger travels before a stroke counts. Short enough that a few
+   passes over the fur are worth something. */
+const PET_PAT_DIST = 150;
 const PET_TOYS = ['🧶', '🦋', '🎈', '🍃', '✨', '🪁'];
 const PET_FREE_MAX = 1;
 /* However many spirit beasts are open, six is a household. */
@@ -15477,7 +15482,10 @@ function renderPet(want) {
        redrawn while the finger is down, so the animation is never cut off. */
     const stage = $('#petstage');
     if (stage) {
-      let down = false, lastX = 0, lastY = 0, went = 0, since = 0, earned = 0;
+      /* went carries between strokes: stroking an animal is a short movement
+         repeated, not one long sweep, and resetting it each time meant the
+         short ones never added up to anything. */
+      let down = false, lastX = 0, lastY = 0, went = 0, since = 0, earned = 0, said = false;
       const heart = (x, y) => {
         const box = $('#pats'); if (!box) return;
         const r = stage.getBoundingClientRect();
@@ -15497,7 +15505,8 @@ function renderPet(want) {
       };
       const start = (e) => {
         if (busy || e.target.closest('.stagebtn')) return;
-        down = true; went = 0; earned = 0; lastX = e.clientX; lastY = e.clientY;
+        down = true; earned = 0; lastX = e.clientX; lastY = e.clientY;
+        heart(e.clientX, e.clientY);   // something happens on the very first touch
         stage.classList.add('patting');
         if (stage.setPointerCapture && e.pointerId != null) { try { stage.setPointerCapture(e.pointerId); } catch (err) { /* not captured: the move handler still works */ } }
       };
@@ -15509,9 +15518,10 @@ function renderPet(want) {
         went += d; since += d;
         if (since > 34) { since = 0; heart(e.clientX, e.clientY); }
         if (went >= PET_PAT_DIST) {
-          went = 0;
+          went -= PET_PAT_DIST;
           const got = PETS.addXP(p, PET_PAT_XP);
           if (got) { earned += got; PETS.put(p); BANK.mark(petLevel(p.xp)); refresh(); }
+          else if (!said) { said = true; toast(S.petDayFull); }   // say why nothing is coming
         }
         e.preventDefault();
       };
@@ -15607,6 +15617,27 @@ function renderPet(want) {
         busy = false; draw();
         toast(got.to > got.from ? S.petLevelUp(got.to, fmtNum(got.up)) : S.petPlayThanks);
       }, 1500);
+    });
+    /* Brushing. The button, its words, its animation and PETS.groom() all
+       existed; this line, which joins them, did not. */
+    const groom = $('#groombtn');
+    if (groom) groom.addEventListener('click', () => {
+      if (busy) return;
+      busy = true; groom.disabled = true;
+      const stage = $('#petstage'), toys = $('#toys');
+      if (stage) stage.classList.add('grooming');
+      let html = '';
+      for (let i = 0; i < 6; i++) {
+        html += '<i style="left:' + (12 + i * 14) + '%;bottom:' + (24 + (i % 3) * 13) + '%;--tx:'
+          + (i % 2 ? 22 : -22) + 'px;animation-delay:' + (i * 140) + 'ms">' + ['\u2728', '\uD83D\uDCAB'][i % 2] + '</i>';
+      }
+      if (toys) toys.innerHTML = html;
+      setTimeout(() => {
+        const got = PETS.groom(p);
+        if (stage) stage.classList.remove('grooming');
+        busy = false; draw();
+        toast(got.to > got.from ? S.petLevelUp(got.to, fmtNum(got.up)) : S.petGroomThanks);
+      }, 1400);
     });
     const pb = $('#pray');
     if (pb) pb.addEventListener('click', () => {
@@ -17732,7 +17763,7 @@ function adminSale(p) {
 ROUTES.admin = { nav: '', render: renderAdmin };
 
 /* ============================ boot ============================ */
-window.APP_VERSION = 'v120';
+window.APP_VERSION = 'v121';
 window.NABU = { CONFIG: CONFIG, SALE: SALE, salePrice: salePrice, loadActs: loadActs, BACK: BACK, LESSONS: LESSONS, localAnswer: localAnswer, compatVerdict: compatVerdict, numerologyOf: numerologyOf, ZDEEP: ZDEEP, lunarToday: lunarToday, solarToLunar: solarToLunar, DECK: DECK, INSIGHT: INSIGHT, KW: KW, ASK: ASK, TOPICS: TOPICS, GUIDES: GUIDES, SERVICES: SERVICES, COURSES: COURSES, ACCESS: ACCESS, ZODIAC: ZODIAC, pick: pick, book: book,
   insightHTML: insightHTML, insightOf: insightOf, sunSignIndex: sunSignIndex, lifePath: lifePath, PROFILE: () => PROFILE, BE: BE, ACTS: ACTS,
   ANGELS: ANGELS, angelRead: angelRead, CODEBOOK: CODEBOOK, verifyCode: verifyCode, petHomeSVG: petHomeSVG, PET_HOMES: PET_HOMES, PET_WEARS: PET_WEARS, codeDigest: codeDigest, randomCode: randomCode, BANK: BANK, PETS: PETS, petSVG: petSVG, PET_COATS: PET_COATS, PET_KINDS: PET_KINDS, luckCut: luckCut, petLevel: petLevel, petStep: petStep, VOUCHERS: VOUCHERS, levelCoins: levelCoins, LOOKS: LOOKS,

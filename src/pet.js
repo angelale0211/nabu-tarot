@@ -213,7 +213,9 @@ const PET_WEARS = [
 const PET_PAT_XP = 4;
 const PET_GROOM_XP = 8;
 /* How far a finger has to travel before a stroke counts. */
-const PET_PAT_DIST = 260;
+/* How far a finger travels before a stroke counts. Short enough that a few
+   passes over the fur are worth something. */
+const PET_PAT_DIST = 150;
 const PET_TOYS = ['🧶', '🦋', '🎈', '🍃', '✨', '🪁'];
 const PET_FREE_MAX = 1;
 /* However many spirit beasts are open, six is a household. */
@@ -1337,7 +1339,10 @@ function renderPet(want) {
        redrawn while the finger is down, so the animation is never cut off. */
     const stage = $('#petstage');
     if (stage) {
-      let down = false, lastX = 0, lastY = 0, went = 0, since = 0, earned = 0;
+      /* went carries between strokes: stroking an animal is a short movement
+         repeated, not one long sweep, and resetting it each time meant the
+         short ones never added up to anything. */
+      let down = false, lastX = 0, lastY = 0, went = 0, since = 0, earned = 0, said = false;
       const heart = (x, y) => {
         const box = $('#pats'); if (!box) return;
         const r = stage.getBoundingClientRect();
@@ -1357,7 +1362,8 @@ function renderPet(want) {
       };
       const start = (e) => {
         if (busy || e.target.closest('.stagebtn')) return;
-        down = true; went = 0; earned = 0; lastX = e.clientX; lastY = e.clientY;
+        down = true; earned = 0; lastX = e.clientX; lastY = e.clientY;
+        heart(e.clientX, e.clientY);   // something happens on the very first touch
         stage.classList.add('patting');
         if (stage.setPointerCapture && e.pointerId != null) { try { stage.setPointerCapture(e.pointerId); } catch (err) { /* not captured: the move handler still works */ } }
       };
@@ -1369,9 +1375,10 @@ function renderPet(want) {
         went += d; since += d;
         if (since > 34) { since = 0; heart(e.clientX, e.clientY); }
         if (went >= PET_PAT_DIST) {
-          went = 0;
+          went -= PET_PAT_DIST;
           const got = PETS.addXP(p, PET_PAT_XP);
           if (got) { earned += got; PETS.put(p); BANK.mark(petLevel(p.xp)); refresh(); }
+          else if (!said) { said = true; toast(S.petDayFull); }   // say why nothing is coming
         }
         e.preventDefault();
       };
@@ -1467,6 +1474,27 @@ function renderPet(want) {
         busy = false; draw();
         toast(got.to > got.from ? S.petLevelUp(got.to, fmtNum(got.up)) : S.petPlayThanks);
       }, 1500);
+    });
+    /* Brushing. The button, its words, its animation and PETS.groom() all
+       existed; this line, which joins them, did not. */
+    const groom = $('#groombtn');
+    if (groom) groom.addEventListener('click', () => {
+      if (busy) return;
+      busy = true; groom.disabled = true;
+      const stage = $('#petstage'), toys = $('#toys');
+      if (stage) stage.classList.add('grooming');
+      let html = '';
+      for (let i = 0; i < 6; i++) {
+        html += '<i style="left:' + (12 + i * 14) + '%;bottom:' + (24 + (i % 3) * 13) + '%;--tx:'
+          + (i % 2 ? 22 : -22) + 'px;animation-delay:' + (i * 140) + 'ms">' + ['\u2728', '\uD83D\uDCAB'][i % 2] + '</i>';
+      }
+      if (toys) toys.innerHTML = html;
+      setTimeout(() => {
+        const got = PETS.groom(p);
+        if (stage) stage.classList.remove('grooming');
+        busy = false; draw();
+        toast(got.to > got.from ? S.petLevelUp(got.to, fmtNum(got.up)) : S.petGroomThanks);
+      }, 1400);
     });
     const pb = $('#pray');
     if (pb) pb.addEventListener('click', () => {

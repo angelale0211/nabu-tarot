@@ -1027,7 +1027,10 @@ h1 .pileico{width:34px;height:27px;vertical-align:-3px;margin-right:2px}
 .pats{position:absolute;inset:0;z-index:6;pointer-events:none;overflow:hidden}
 .pats i{position:absolute;font-size:19px;font-style:normal;opacity:0;transform:translate(-50%,-50%);animation:pathearts 1.15s ease-out forwards}
 @keyframes pathearts{0%{opacity:0;transform:translate(-50%,-50%) scale(.5)}20%{opacity:1}100%{opacity:0;transform:translate(-50%,-190%) scale(1.15)}}
-.petstage{touch-action:pan-y;cursor:grab}
+/* The scene takes the whole gesture. With pan-y the phone read a stroke down
+   the companion's back as a page scroll and cancelled the pointer after a
+   move or two, so only sideways strokes ever did anything. */
+.petstage{touch-action:none;cursor:grab}
 .petstage.patting{cursor:grabbing}
 .petstage.patting .petart{animation:none;transform:translateY(-3px) rotate(-1.5deg) scale(1.02)}
 .petstage.hoverfeed{box-shadow:inset 0 0 0 3px var(--gold)}
