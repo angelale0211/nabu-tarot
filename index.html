@@ -13241,12 +13241,12 @@ const PET_ART = {
       const R = Math.PI / 180;
       let tails = '';
       const base = [86, 90];
-      [[-64, 74], [-48, 82], [-32, 88], [-16, 90], [0, 88], [14, 84], [28, 78], [42, 70], [56, 60]].forEach((t, i) => {
+      [[-62, 66], [-46, 73], [-31, 78], [-16, 80], [0, 78], [14, 75], [28, 70], [42, 63], [56, 55]].forEach((t, i) => {
         const a = t[0] * R, len = t[1];
         const s0 = Math.sin(a), c0 = Math.cos(a);
         // the tip, curled back on itself the way a flame leans
         const tx = base[0] + s0 * len * 0.62, ty = base[1] - c0 * len;
-        const w = 11 - i * 0.4;
+        const w = 13.5 - i * 0.4;
         const m1x = base[0] + s0 * len * 0.1 + c0 * w, m1y = base[1] - c0 * len * 0.55 + s0 * w;
         const m2x = base[0] + s0 * len * 0.55 - c0 * w * 1.6, m2y = base[1] - c0 * len * 0.42 - s0 * w * 1.6;
         tails += '<path d="M' + base[0] + ' ' + base[1] + ' Q' + m1x.toFixed(1) + ' ' + m1y.toFixed(1) + ' ' + tx.toFixed(1) + ' ' + ty.toFixed(1)
@@ -13271,21 +13271,22 @@ const PET_ART = {
       /* The neck rises to a head in profile: the muzzle points left, which is
          the angle at which a fox cannot be mistaken for anything else. */
       const neckline = '<path d="M58 62 Q50 54 46 44 Q44 36 50 32 L64 40 Q64 52 62 60 Z" fill="' + WHITE + '"/>';
-      const head = '<path d="M50 30 Q36 30 26 38 Q16 45 12 50 Q10 53 13 55 L30 57 Q38 58 44 55 Q52 51 54 42 Q55 33 50 30 Z" fill="' + WHITE + '"/>'
-        + '<path d="M26 44 Q18 47 13 51 Q11 53 14 54 L30 56 Q26 50 26 44 Z" fill="' + SHADE + '" opacity=".8"/>';
+      const head = '<path d="M50 28 Q34 27 25 36 Q17 43 15 50 Q14 55 19 57 Q27 59 34 58 Q45 57 51 50 Q56 42 55 35 Q54 29 50 28 Z" fill="' + WHITE + '"/>'
+        + '<path d="M25 40 Q17 44 15 50 Q14 55 19 57 Q26 58 31 57 Q25 50 25 40 Z" fill="' + SHADE + '" opacity=".75"/>';
       /* Both ears sit on the skull and lean back, the far one behind and
          smaller, which is what makes the head read as turned away. */
-      const ear = '<path d="M52 30 Q56 16 66 10 Q66 22 60 32 Z" fill="' + SHADE + '" stroke="#EBC9D6" stroke-width="1"/>'
-        + '<path d="M43 32 Q45 12 57 4 Q59 20 53 33 Z" fill="' + WHITE + '" stroke="#EBC9D6" stroke-width="1.2"/>'
-        + '<path d="M46 29 Q48 16 55 10 Q56 21 52 30 Z" fill="' + RED + '" opacity=".6"/>';
-      const face = '<g class="eyes"><path d="M26 45 Q32 41 38 46 Q31 49 26 45 Z" fill="' + INK + '"/>'
-        + '<circle cx="32" cy="45" r="1.3" fill="#fff"/></g>'
-        + '<path d="M12 50 Q9 51 10 54 Q13 55 15 53 Z" fill="' + INK + '"/>'
-        + '<path d="M16 55 q4 3 8 1" stroke="' + INK + '" stroke-width="1.1" fill="none" stroke-linecap="round"/>'
-        /* the mask marks: a stroke over the eye and two on the cheek */
-        + '<path d="M22 39 Q30 35 40 39" stroke="' + RED + '" stroke-width="2.6" fill="none" stroke-linecap="round"/>'
-        + '<path d="M28 51 q6 2 10 0 M30 55 q5 1 8 0" stroke="' + RED + '" stroke-width="1.8" fill="none" stroke-linecap="round" opacity=".75"/>'
-        + '<g stroke="#E8C4D2" stroke-width="1" stroke-linecap="round" opacity=".9"><path d="M18 46 h-8 M18 50 h-9"/></g>';
+      const ear = '<path d="M53 30 Q58 19 67 16 Q66 26 60 33 Z" fill="' + SHADE + '" stroke="#EBC9D6" stroke-width="1"/>'
+        + '<path d="M42 31 Q44 15 56 11 Q58 23 52 33 Z" fill="' + WHITE + '" stroke="#EBC9D6" stroke-width="1.2"/>'
+        + '<path d="M45 29 Q47 19 54 16 Q55 25 51 31 Z" fill="' + RED + '" opacity=".55"/>';
+      const face = '<g class="eyes"><ellipse cx="31" cy="45" rx="5" ry="5.6" fill="' + INK + '"/>'
+        + '<circle cx="32.8" cy="43" r="2" fill="#fff"/><circle cx="29" cy="47.4" r="1" fill="#fff" opacity=".85"/></g>'
+        + '<ellipse cx="17.5" cy="49.5" rx="2.6" ry="2" fill="' + INK + '"/>'
+        + '<path d="M17.5 52 q3 3.5 6.5 1.5" stroke="' + INK + '" stroke-width="1.2" fill="none" stroke-linecap="round"/>'
+        + '<ellipse cx="27" cy="52" rx="5" ry="3.2" fill="#F7A9C6" opacity=".55"/>'
+        /* the mask marks, lighter now so they do not harden the face */
+        + '<path d="M24 37 Q31 33 40 37" stroke="' + RED + '" stroke-width="2.4" fill="none" stroke-linecap="round"/>'
+        + '<path d="M34 52 q5 2 8 0" stroke="' + RED + '" stroke-width="1.7" fill="none" stroke-linecap="round" opacity=".7"/>'
+        + '<g stroke="#E8C4D2" stroke-width="1" stroke-linecap="round" opacity=".85"><path d="M20 44 h-8 M20 48 h-9"/></g>';
       /* A gold bell at the throat and a moon behind her, so the frame reads as
          a scene rather than a sticker. */
       const charm = '<path d="M50 62 Q58 68 66 62" stroke="' + GOLD + '" stroke-width="2.2" fill="none" stroke-linecap="round"/>'
@@ -13293,7 +13294,9 @@ const PET_ART = {
         + '<circle cx="58" cy="70" r="1.4" fill="#8A6B22"/>';
       const moon = '<circle cx="30" cy="26" r="15" fill="#FFF3C4" opacity=".55"/>'
         + '<circle cx="30" cy="26" r="15" fill="none" stroke="' + GOLD + '" stroke-width="1" opacity=".5"/>';
-      return moon + tails + body + neckline + ear + head + face + charm;
+      /* A bigger head on a smaller body is most of what reads as cute. */
+      const above = '<g transform="translate(52,58) scale(1.24) translate(-52,-58)">' + ear + head + face + '</g>';
+      return moon + tails + body + neckline + above + charm;
     })()
   }),
   dragon: () => ({
