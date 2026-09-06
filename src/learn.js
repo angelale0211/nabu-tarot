@@ -160,6 +160,7 @@ function cardBodyHTML(id) {
   const catName = { love: 'Tình cảm', career: 'Công việc', money: 'Tiền bạc', health: 'Sức khỏe', timing: 'Thời gian', verdict: 'Có / không', other: 'Khác' };
   return '<div class="detail">'
     + '<div class="hero"><span class="face">' + faceSVG(c) + '</span><div><div class="name">' + esc(c.name) + '</div><div class="en">' + esc(other.name) + '</div><div class="meta m-' + c.suit + '"><i>' + esc(c.meta) + '</i></div></div></div>'
+    + tarotNavHTML(id)
     + '<div class="ins"><h3>' + esc(S.onTheCard) + '</h3><p class="scene">' + esc(c.scene) + '</p></div>'
     + '<div class="ins"><h3>' + esc(S.kwPos) + '</h3><div class="kwl">' + pos.map((k) => '<span>' + esc(k) + '</span>').join('') + '</div>'
     + (neg.length ? '<h3>' + esc(S.kwNeg) + '</h3><div class="kwl neg">' + neg.map((k) => '<span>' + esc(k) + '</span>').join('') + '</div>' : '') + '</div>'
@@ -168,7 +169,8 @@ function cardBodyHTML(id) {
     + (asks.length ? '<div class="ins"><h3>' + esc(S.questions) + '</h3>' + Object.keys(groups).map((g) => '<div class="acc"><button><span>' + esc(catName[g] || g) + ' (' + groups[g].length + ')</span></button><div class="in">'
       + groups[g].map((a) => '<div class="qa"><div class="q">' + esc(a[1]) + '</div><p class="a">' + esc(a[2]) + '</p></div>').join('') + '</div></div>').join('') + '</div>' : '')
     + aiPanelHTML({ type: 'card', id: id, focus: 'general' })
-    + '<div class="row"><a class="btn primary" href="#/pick">' + esc(S.nav.pick) + '</a><a class="btn" href="#/book?card=' + id + '">' + esc(S.ctaBook) + '</a></div></div>';
+    + '<div class="row"><a class="btn primary" href="#/pick">' + esc(S.nav.pick) + '</a><a class="btn" href="#/book?card=' + id + '">' + esc(S.ctaBook) + '</a></div>'
+    + tarotNavHTML(id) + '</div>';
 }
 
 /* ---- lenormand ---- */
@@ -193,6 +195,7 @@ function lenBodyHTML(n) {
   return '<div class="detail">'
     + '<div class="hero"><span class="face">' + lenFace(n) + '</span><div><div class="name">' + n + '. ' + esc(d.name) + '</div><div class="en">' + esc(other.name) + '</div>'
     + '<div class="meta"><span class="chip tag">' + esc(S.lenTone[d.tone]) + '</span> <span class="chip tag">' + esc(S.lenCard) + ': ' + esc(d.card) + '</span></div></div></div>'
+    + lenNavHTML(n)
     + '<div class="ins"><h3>' + esc(S.onTheCard) + '</h3><p class="scene">' + esc(d.scene) + '</p></div>'
     + '<div class="ins"><h3>' + esc(S.kwPos) + '</h3><div class="kwl">' + (d.kw.pos || []).map((k) => '<span>' + esc(k) + '</span>').join('') + '</div>'
     + ((d.kw.neg || []).length ? '<h3>' + esc(S.kwNeg) + '</h3><div class="kwl neg">' + d.kw.neg.map((k) => '<span>' + esc(k) + '</span>').join('') + '</div>' : '') + '</div>'
@@ -204,13 +207,25 @@ function lenBodyHTML(n) {
 
 /* Straight to the card before and the card after, so the 36 can be read in
    order without going back to the grid every time. */
-function lenNavHTML(n) {
-  const link = (to, dir) => {
-    const d = lenCard(to);
-    if (!d) return '<span class="cn-sp"></span>';
-    return '<a class="' + (dir < 0 ? 'prev' : 'next') + '" href="#/learn/len/' + to + '">' + (dir < 0 ? '<span class="ar">←</span>' : '') + '<b>' + esc(to + '. ' + d.name) + '</b>' + (dir > 0 ? '<span class="ar">→</span>' : '') + '</a>';
+function cardNavHTML(course, prev, next) {
+  // Browsing the deck is part of what the course sells, so it stays closed
+  // until the course is open. The free demo card shows no arrows.
+  if (!ACCESS.has(course)) return '';
+  const link = (it, dir) => {
+    if (!it) return '<span class="cn-sp"></span>';
+    return '<a class="' + (dir < 0 ? 'prev' : 'next') + '" href="' + it.href + '">' + (dir < 0 ? '<span class="ar">←</span>' : '') + '<b>' + esc(it.label) + '</b>' + (dir > 0 ? '<span class="ar">→</span>' : '') + '</a>';
   };
-  return '<div class="cardnav">' + link(n - 1, -1) + link(n + 1, 1) + '</div>';
+  return '<div class="cardnav">' + link(prev, -1) + link(next, 1) + '</div>';
+}
+function lenNavHTML(n) {
+  const at = (i) => { const d = lenCard(i); return d ? { href: '#/learn/len/' + i, label: i + '. ' + d.name } : null; };
+  return cardNavHTML('lenormand', at(n - 1), at(n + 1));
+}
+function tarotNavHTML(id) {
+  const D = DECK[lang], i = D.map((c) => c.id).indexOf(id);
+  if (i < 0) return '';
+  const at = (k) => (D[k] ? { href: '#/learn/card/' + D[k].id, label: D[k].name } : null);
+  return cardNavHTML('tarot', at(i - 1), at(i + 1));
 }
 
 /* ---- astrology (free) ---- */

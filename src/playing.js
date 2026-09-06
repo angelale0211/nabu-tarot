@@ -123,14 +123,24 @@ function pcGridHTML() {
 function bindPC(root) { $$('[data-pc]', root).forEach((b) => b.addEventListener('click', () => { location.hash = '#/learn/pc/' + b.getAttribute('data-pc'); })); }
 
 /* ---- one page per card ---- */
+function pcNavHTML(id) {
+  const order = [];
+  PC_SUITS.forEach((s) => PC_RANKS.forEach((r) => order.push(pcId(s[0], r))));
+  const i = order.indexOf(id);
+  if (i < 0) return '';
+  const at = (k) => (order[k] ? { href: '#/learn/pc/' + order[k], label: pcName(order[k][0], order[k].slice(1)) } : null);
+  return cardNavHTML('playing', at(i - 1), at(i + 1));
+}
 function pcCardBodyHTML(id) {
   const S = T(), suit = id[0], rank = id.slice(1), st = PC_SUIT_TEXT[suit][lang], rk = PC_RANK_TEXT[rank][lang], tr = PC_TRAD[id] || ['', ''], tw = pcToTarot(suit, rank), c = cardById(tw), I = insightOf(tw), sp = PC_SPECIAL[id];
   const pairs = PC_COMBOS.filter((x) => x[0] === id || x[1] === id);
   return '<div class="hero"><div class="pcbig">' + pcFaceSVG(suit, rank) + '</div><div><div class="name">' + esc(pcName(suit, rank)) + '</div>' + (sp ? '<div class="en">★ ' + esc(sp[lang]) + '</div>' : '') + '<div class="meta"><i>' + esc(st[2]) + '</i></div></div></div>'
+    + pcNavHTML(id)
     + '<div class="ins"><h3>' + esc(S.pcTrad) + '</h3><p class="pctrad">' + esc(lang === 'vi' ? tr[0] : tr[1]) + '</p></div>'
     + '<div class="ins"><h3>' + esc(lang === 'vi' ? 'Vì sao lá này mang nghĩa này' : 'Why the card means this') + '</h3><p><b>' + esc(st[0]) + ':</b> ' + esc(st[1]) + '</p><p><b>' + esc(rk[0]) + ':</b> ' + esc(rk[1]) + '</p>' + (PC_COURT_TEXT[id] ? '<p><b>' + esc(lang === 'vi' ? 'Người' : 'The person') + ':</b> ' + esc(PC_COURT_TEXT[id][lang]) + '</p>' : '') + '</div>'
     + (pairs.length ? '<div class="ins"><h3>' + esc(lang === 'vi' ? 'Cặp lá thường gặp' : 'Common pairs') + '</h3>' + pairs.map((p) => { const o = p[0] === id ? p[1] : p[0]; return '<p>+ <b>' + esc(pcName(o[0], o.slice(1))) + '</b>: ' + esc(p[2][lang]) + '</p>'; }).join('') + '</div>' : '')
-    + '<div class="pcrow"><button class="face" data-open-card="' + tw + '">' + faceSVG(c) + '</button><div><div class="eyebrow">' + esc(S.pcTarotWay) + '</div><b>' + esc(c.name) + '</b><p>' + esc(I.pos.slice(0, 3).join(' · ')) + '</p></div></div>';
+    + '<div class="pcrow"><button class="face" data-open-card="' + tw + '">' + faceSVG(c) + '</button><div><div class="eyebrow">' + esc(S.pcTarotWay) + '</div><b>' + esc(c.name) + '</b><p>' + esc(I.pos.slice(0, 3).join(' · ')) + '</p></div></div>'
+    + pcNavHTML(id);
 }
 function renderPCCard(id) {
   const S = T(), m = $('#main');

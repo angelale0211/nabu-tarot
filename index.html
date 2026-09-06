@@ -831,7 +831,8 @@ main{padding:22px 0 30px}
    inputs on the same line. */
 .two{display:grid;grid-template-columns:1fr 1fr;gap:10px;align-items:stretch}.two label.f{margin-top:8px}
 .two>div{display:flex;flex-direction:column;min-width:0}.two>div>input,.two>div>select,.two>div>textarea{margin-top:auto}
-.cardnav{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:18px}
+.cardnav{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:14px 0 18px}
+.detail .hero + .cardnav{margin-top:12px}
 .cardnav a{display:flex;align-items:center;gap:7px;min-width:0;padding:11px 12px;border:1px solid var(--rule);border-radius:14px;background:var(--surface);color:var(--fg);text-decoration:none;font-size:13.5px;font-weight:600}
 .cardnav a.next{justify-content:flex-end;text-align:right}.cardnav a b{font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.cardnav .ar{flex:none;color:var(--fg-faint)}.cardnav .cn-sp{display:block}
 .meacts{margin-bottom:14px}.meacts .row{margin-top:8px}
@@ -10058,6 +10059,7 @@ function cardBodyHTML(id) {
   const catName = { love: 'Tình cảm', career: 'Công việc', money: 'Tiền bạc', health: 'Sức khỏe', timing: 'Thời gian', verdict: 'Có / không', other: 'Khác' };
   return '<div class="detail">'
     + '<div class="hero"><span class="face">' + faceSVG(c) + '</span><div><div class="name">' + esc(c.name) + '</div><div class="en">' + esc(other.name) + '</div><div class="meta m-' + c.suit + '"><i>' + esc(c.meta) + '</i></div></div></div>'
+    + tarotNavHTML(id)
     + '<div class="ins"><h3>' + esc(S.onTheCard) + '</h3><p class="scene">' + esc(c.scene) + '</p></div>'
     + '<div class="ins"><h3>' + esc(S.kwPos) + '</h3><div class="kwl">' + pos.map((k) => '<span>' + esc(k) + '</span>').join('') + '</div>'
     + (neg.length ? '<h3>' + esc(S.kwNeg) + '</h3><div class="kwl neg">' + neg.map((k) => '<span>' + esc(k) + '</span>').join('') + '</div>' : '') + '</div>'
@@ -10066,7 +10068,8 @@ function cardBodyHTML(id) {
     + (asks.length ? '<div class="ins"><h3>' + esc(S.questions) + '</h3>' + Object.keys(groups).map((g) => '<div class="acc"><button><span>' + esc(catName[g] || g) + ' (' + groups[g].length + ')</span></button><div class="in">'
       + groups[g].map((a) => '<div class="qa"><div class="q">' + esc(a[1]) + '</div><p class="a">' + esc(a[2]) + '</p></div>').join('') + '</div></div>').join('') + '</div>' : '')
     + aiPanelHTML({ type: 'card', id: id, focus: 'general' })
-    + '<div class="row"><a class="btn primary" href="#/pick">' + esc(S.nav.pick) + '</a><a class="btn" href="#/book?card=' + id + '">' + esc(S.ctaBook) + '</a></div></div>';
+    + '<div class="row"><a class="btn primary" href="#/pick">' + esc(S.nav.pick) + '</a><a class="btn" href="#/book?card=' + id + '">' + esc(S.ctaBook) + '</a></div>'
+    + tarotNavHTML(id) + '</div>';
 }
 
 /* ---- lenormand ---- */
@@ -10091,6 +10094,7 @@ function lenBodyHTML(n) {
   return '<div class="detail">'
     + '<div class="hero"><span class="face">' + lenFace(n) + '</span><div><div class="name">' + n + '. ' + esc(d.name) + '</div><div class="en">' + esc(other.name) + '</div>'
     + '<div class="meta"><span class="chip tag">' + esc(S.lenTone[d.tone]) + '</span> <span class="chip tag">' + esc(S.lenCard) + ': ' + esc(d.card) + '</span></div></div></div>'
+    + lenNavHTML(n)
     + '<div class="ins"><h3>' + esc(S.onTheCard) + '</h3><p class="scene">' + esc(d.scene) + '</p></div>'
     + '<div class="ins"><h3>' + esc(S.kwPos) + '</h3><div class="kwl">' + (d.kw.pos || []).map((k) => '<span>' + esc(k) + '</span>').join('') + '</div>'
     + ((d.kw.neg || []).length ? '<h3>' + esc(S.kwNeg) + '</h3><div class="kwl neg">' + d.kw.neg.map((k) => '<span>' + esc(k) + '</span>').join('') + '</div>' : '') + '</div>'
@@ -10102,13 +10106,25 @@ function lenBodyHTML(n) {
 
 /* Straight to the card before and the card after, so the 36 can be read in
    order without going back to the grid every time. */
-function lenNavHTML(n) {
-  const link = (to, dir) => {
-    const d = lenCard(to);
-    if (!d) return '<span class="cn-sp"></span>';
-    return '<a class="' + (dir < 0 ? 'prev' : 'next') + '" href="#/learn/len/' + to + '">' + (dir < 0 ? '<span class="ar">←</span>' : '') + '<b>' + esc(to + '. ' + d.name) + '</b>' + (dir > 0 ? '<span class="ar">→</span>' : '') + '</a>';
+function cardNavHTML(course, prev, next) {
+  // Browsing the deck is part of what the course sells, so it stays closed
+  // until the course is open. The free demo card shows no arrows.
+  if (!ACCESS.has(course)) return '';
+  const link = (it, dir) => {
+    if (!it) return '<span class="cn-sp"></span>';
+    return '<a class="' + (dir < 0 ? 'prev' : 'next') + '" href="' + it.href + '">' + (dir < 0 ? '<span class="ar">←</span>' : '') + '<b>' + esc(it.label) + '</b>' + (dir > 0 ? '<span class="ar">→</span>' : '') + '</a>';
   };
-  return '<div class="cardnav">' + link(n - 1, -1) + link(n + 1, 1) + '</div>';
+  return '<div class="cardnav">' + link(prev, -1) + link(next, 1) + '</div>';
+}
+function lenNavHTML(n) {
+  const at = (i) => { const d = lenCard(i); return d ? { href: '#/learn/len/' + i, label: i + '. ' + d.name } : null; };
+  return cardNavHTML('lenormand', at(n - 1), at(n + 1));
+}
+function tarotNavHTML(id) {
+  const D = DECK[lang], i = D.map((c) => c.id).indexOf(id);
+  if (i < 0) return '';
+  const at = (k) => (D[k] ? { href: '#/learn/card/' + D[k].id, label: D[k].name } : null);
+  return cardNavHTML('tarot', at(i - 1), at(i + 1));
 }
 
 /* ---- astrology (free) ---- */
@@ -10875,14 +10891,24 @@ function pcGridHTML() {
 function bindPC(root) { $$('[data-pc]', root).forEach((b) => b.addEventListener('click', () => { location.hash = '#/learn/pc/' + b.getAttribute('data-pc'); })); }
 
 /* ---- one page per card ---- */
+function pcNavHTML(id) {
+  const order = [];
+  PC_SUITS.forEach((s) => PC_RANKS.forEach((r) => order.push(pcId(s[0], r))));
+  const i = order.indexOf(id);
+  if (i < 0) return '';
+  const at = (k) => (order[k] ? { href: '#/learn/pc/' + order[k], label: pcName(order[k][0], order[k].slice(1)) } : null);
+  return cardNavHTML('playing', at(i - 1), at(i + 1));
+}
 function pcCardBodyHTML(id) {
   const S = T(), suit = id[0], rank = id.slice(1), st = PC_SUIT_TEXT[suit][lang], rk = PC_RANK_TEXT[rank][lang], tr = PC_TRAD[id] || ['', ''], tw = pcToTarot(suit, rank), c = cardById(tw), I = insightOf(tw), sp = PC_SPECIAL[id];
   const pairs = PC_COMBOS.filter((x) => x[0] === id || x[1] === id);
   return '<div class="hero"><div class="pcbig">' + pcFaceSVG(suit, rank) + '</div><div><div class="name">' + esc(pcName(suit, rank)) + '</div>' + (sp ? '<div class="en">★ ' + esc(sp[lang]) + '</div>' : '') + '<div class="meta"><i>' + esc(st[2]) + '</i></div></div></div>'
+    + pcNavHTML(id)
     + '<div class="ins"><h3>' + esc(S.pcTrad) + '</h3><p class="pctrad">' + esc(lang === 'vi' ? tr[0] : tr[1]) + '</p></div>'
     + '<div class="ins"><h3>' + esc(lang === 'vi' ? 'Vì sao lá này mang nghĩa này' : 'Why the card means this') + '</h3><p><b>' + esc(st[0]) + ':</b> ' + esc(st[1]) + '</p><p><b>' + esc(rk[0]) + ':</b> ' + esc(rk[1]) + '</p>' + (PC_COURT_TEXT[id] ? '<p><b>' + esc(lang === 'vi' ? 'Người' : 'The person') + ':</b> ' + esc(PC_COURT_TEXT[id][lang]) + '</p>' : '') + '</div>'
     + (pairs.length ? '<div class="ins"><h3>' + esc(lang === 'vi' ? 'Cặp lá thường gặp' : 'Common pairs') + '</h3>' + pairs.map((p) => { const o = p[0] === id ? p[1] : p[0]; return '<p>+ <b>' + esc(pcName(o[0], o.slice(1))) + '</b>: ' + esc(p[2][lang]) + '</p>'; }).join('') + '</div>' : '')
-    + '<div class="pcrow"><button class="face" data-open-card="' + tw + '">' + faceSVG(c) + '</button><div><div class="eyebrow">' + esc(S.pcTarotWay) + '</div><b>' + esc(c.name) + '</b><p>' + esc(I.pos.slice(0, 3).join(' · ')) + '</p></div></div>';
+    + '<div class="pcrow"><button class="face" data-open-card="' + tw + '">' + faceSVG(c) + '</button><div><div class="eyebrow">' + esc(S.pcTarotWay) + '</div><b>' + esc(c.name) + '</b><p>' + esc(I.pos.slice(0, 3).join(' · ')) + '</p></div></div>'
+    + pcNavHTML(id);
 }
 function renderPCCard(id) {
   const S = T(), m = $('#main');
@@ -12420,7 +12446,7 @@ function adminCodes(p) {
 ROUTES.admin = { nav: '', render: renderAdmin };
 
 /* ============================ boot ============================ */
-window.APP_VERSION = 'v77';
+window.APP_VERSION = 'v78';
 window.NABU = { CONFIG: CONFIG, loadActs: loadActs, BACK: BACK, LESSONS: LESSONS, localAnswer: localAnswer, compatVerdict: compatVerdict, numerologyOf: numerologyOf, ZDEEP: ZDEEP, lunarToday: lunarToday, solarToLunar: solarToLunar, DECK: DECK, INSIGHT: INSIGHT, KW: KW, ASK: ASK, TOPICS: TOPICS, GUIDES: GUIDES, SERVICES: SERVICES, COURSES: COURSES, ACCESS: ACCESS, makeCode: makeCode, parseCode: parseCode, ZODIAC: ZODIAC, pick: pick, book: book,
   insightHTML: insightHTML, insightOf: insightOf, sunSignIndex: sunSignIndex, lifePath: lifePath, PROFILE: () => PROFILE, BE: BE, ACTS: ACTS };
 BE.initP = BE.init().catch(() => { /* backend unreachable: the app runs device-only */ });
