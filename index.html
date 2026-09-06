@@ -902,6 +902,17 @@ main{padding:22px 0 30px}
 .nav a{position:relative}.nav .saletag{position:absolute;top:-1px;right:calc(50% - 20px);font-size:11px;line-height:1}
 /* ---- looks, the pet, and the paid trees ---- */
 .lookgrid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+.lookgrid.four{grid-template-columns:repeat(4,1fr);gap:7px}
+.lookgrid.four .look{padding:9px 5px;gap:6px}
+.lookgrid.four .look b{font-size:11px;line-height:1.25;text-align:center}
+.lookgrid.four .lk-card{width:100%}.lookgrid.four .lk-tree{width:100%}.lookgrid.four .lk-coin{width:86%}
+.lookgrid.four .lk-diary{width:100%;height:56px;padding:6px 5px}
+.lookgrid.four .lk-lock{top:4px;right:5px;font-size:12px}.lookgrid.four .lk-on{top:4px;left:5px;font-size:12px}
+/* The row that sits on the screen the look belongs to. */
+.lookstrip .ls-h{display:flex;align-items:baseline;justify-content:space-between;gap:10px;margin-bottom:2px}
+.lookstrip .ls-h h3{margin:0}
+.lookstrip .ls-h a{color:var(--gold-deep);font-weight:600;font-size:12.5px;text-decoration:none;white-space:nowrap}
+.lookstrip .hint{margin-bottom:10px}
 .look{position:relative;display:flex;flex-direction:column;align-items:center;gap:8px;background:var(--surface);border:1px solid var(--rule-soft);border-radius:16px;padding:12px 10px;font:inherit;color:inherit;cursor:pointer}
 .look.on{border-color:var(--primary);border-width:1.5px}
 .look.locked .lk-card,.look.locked .lk-tree,.look.locked .lk-coin,.look.locked .lk-diary{opacity:.92}
@@ -939,17 +950,59 @@ main{padding:22px 0 30px}
 .petart{position:relative;z-index:2;width:100%;height:auto;display:block}
 /* A companion is never quite still: it breathes, and it lifts a paw now and
    then. */
-.petstage .petart,.treepet .petart,.petpick .petart{animation:breathing 3.4s ease-in-out infinite}
-@keyframes breathing{0%,100%{transform:translateY(0) scale(1)}50%{transform:translateY(-3px) scale(1.015)}}
-.petstage .petart .ft.wav,.treepet .petart .ft.wav{transform-box:fill-box;transform-origin:20% 60%;animation:pawwave 4.6s ease-in-out infinite}
+/* One timeline, so nothing fights: four slow breaths, a crouch, a hop, and a
+   settle. The squash works from the feet, the way weight does. */
+.petstage .petart,.petpick .petart{transform-origin:50% 100%;animation:petalive 7.2s cubic-bezier(.37,0,.63,1) infinite}
+@keyframes petalive{
+  0%{transform:translateY(0) scaleY(1)}
+  9%{transform:translateY(-3px) scaleY(1.025)}
+  18%{transform:translateY(0) scaleY(1)}
+  27%{transform:translateY(-3px) scaleY(1.025)}
+  36%{transform:translateY(0) scaleY(1)}
+  45%{transform:translateY(-2px) scaleY(1.02)}
+  54%{transform:translateY(0) scaleY(1)}
+  62%{transform:translateY(1px) scaleY(.93)}
+  69%{transform:translateY(-15px) scaleY(1.07)}
+  75%{transform:translateY(0) scaleY(.95)}
+  80%{transform:translateY(0) scaleY(1.01)}
+  84%{transform:translateY(0) scaleY(1)}
+  93%{transform:translateY(-3px) scaleY(1.025)}
+  100%{transform:translateY(0) scaleY(1)}
+}
+/* An eye closes for a moment now and then, which is most of what makes a
+   drawn animal look awake. */
+.petstage .petart .eyes{transform-box:fill-box;transform-origin:center;animation:blinking 6.4s ease-in-out infinite}
+@keyframes blinking{0%,90%,100%{transform:scaleY(1)}93%{transform:scaleY(.08)}96%{transform:scaleY(1)}}
+.petstage .petart .ft.wav{transform-box:fill-box;transform-origin:20% 60%;animation:pawwave 5.8s ease-in-out infinite}
 @keyframes pawwave{0%,62%,100%{transform:rotate(0) translateY(0)}70%{transform:rotate(-24deg) translateY(-5px)}78%{transform:rotate(6deg) translateY(-5px)}86%{transform:rotate(-20deg) translateY(-5px)}94%{transform:rotate(0) translateY(0)}}
-@media (prefers-reduced-motion:reduce){.petstage .petart,.treepet .petart,.petpick .petart,.petstage .petart .ft.wav,.treepet .petart .ft.wav,.treepet{animation:none}}
+@media (prefers-reduced-motion:reduce){.petstage .petart,.petpick .petart,.petstage .petart .ft.wav,.petstage .petart .eyes{animation:none}}
 /* The companion stands to the left of centre, in front of its own place. */
 .petstage .petart{position:absolute;left:5%;bottom:1%;width:68%;height:auto}
 /* A spirit beast is lit from within, so it reads as the rarer thing. */
 .petart.myth{filter:drop-shadow(0 0 6px rgba(229,190,94,.55));animation:mythglow 3.6s ease-in-out infinite}
 @keyframes mythglow{0%,100%{filter:drop-shadow(0 0 4px rgba(229,190,94,.4))}50%{filter:drop-shadow(0 0 10px rgba(229,190,94,.75))}}
 .petstage .aura{left:12%;top:26%;width:64%;height:58%}
+/* What can be given to a companion, on the edge of its own scene. */
+.stagebtns{position:absolute;top:8%;z-index:5;display:flex;flex-direction:column;gap:8px}
+.stagebtns.left{left:6px;align-items:flex-start}
+.stagebtns.right{right:6px;align-items:flex-end}
+.stagebtn{display:flex;align-items:center;gap:5px;background:rgba(255,255,255,.86);border:1px solid var(--rule-soft);border-radius:999px;padding:5px 9px;font:inherit;color:var(--fg);cursor:pointer;box-shadow:0 2px 8px rgba(60,40,90,.14);backdrop-filter:blur(3px)}
+.stagebtn .ic{font-size:15px;line-height:1}
+.stagebtn .lb{font-size:11.5px;font-weight:600;white-space:nowrap}
+@media (max-width:360px){.stagebtn .lb{display:none}.stagebtn{padding:6px 7px}}
+/* The sheet that those buttons lift. */
+.sheet{position:fixed;inset:0;z-index:60;display:flex;align-items:flex-end;justify-content:center}
+.sheet .sh-back{position:absolute;inset:0;background:rgba(30,18,50,.42);animation:fadein .18s ease}
+.sheet .sh-body{position:relative;width:100%;max-width:520px;max-height:82vh;overflow-y:auto;background:var(--surface);border-radius:20px 20px 0 0;padding:10px 16px calc(18px + env(safe-area-inset-bottom));box-shadow:0 -8px 30px rgba(40,25,70,.25);animation:sheetup .22s cubic-bezier(.2,.7,.3,1)}
+.sheet .sh-grip{width:40px;height:4px;border-radius:4px;background:var(--rule);margin:0 auto 10px}
+.sheet .sh-tabs{margin-bottom:8px;flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none}
+.sheet .sh-tabs::-webkit-scrollbar{display:none}
+.sheet .sh-tabs .chip{flex:0 0 auto;cursor:pointer;font-size:12.5px;padding:6px 11px}
+.sheet .sh-tabs .chip.on{background:var(--primary);color:var(--primary-ink);border-color:var(--primary)}
+.sheet .shelf{grid-template-columns:repeat(3,1fr)}
+.sheet .sh .dot{display:block;width:30px;height:30px;border-radius:50%;border:1px solid var(--rule)}
+@keyframes sheetup{from{transform:translateY(30px);opacity:.4}to{transform:translateY(0);opacity:1}}
+@keyframes fadein{from{opacity:0}to{opacity:1}}
 .lucksyms{position:absolute;inset:0;z-index:3;pointer-events:none;overflow:hidden}
 .lucksyms i{position:absolute;bottom:16%;font-size:15px;font-style:normal;opacity:0;animation:luckrise 4.2s ease-in-out infinite}
 @keyframes luckrise{0%{opacity:0;transform:translateY(6px) scale(.7)}18%{opacity:.95}100%{opacity:0;transform:translateY(-64px) scale(1.05)}}
@@ -1056,9 +1109,10 @@ main{padding:22px 0 30px}
 .treestage .tree{margin:0}
 /* Set a little to the side of the trunk, so the tree is never hidden. */
 .treepets{position:absolute;left:0;right:0;bottom:7%;z-index:2;display:flex;justify-content:center;align-items:flex-end;pointer-events:none;transform:translateX(15%)}
-.treepet{width:31%;max-width:96px;display:block;pointer-events:auto;animation:strolling 11s ease-in-out infinite}
+/* The companion by the tree stands still. Sliding it about looked like a
+   shape being moved across a slide rather than an animal. */
+.treepet{width:31%;max-width:96px;display:block;pointer-events:auto}
 .treepet+.treepet{margin-left:-7%}
-@keyframes strolling{0%,100%{transform:translateX(-13%)}50%{transform:translateX(13%)}}
 @media (max-width:360px){.treepet{width:34%}}
 .unlist{display:grid;gap:10px}
 .unl{background:var(--surface);border:1px solid var(--rule-soft);border-radius:16px;padding:14px}
@@ -1488,6 +1542,10 @@ const STR = {
     saleKind: 'Kiểu giảm', saleKinds: { percent: 'Theo phần trăm', amount: 'Theo số tiền' }, saleValue: 'Mức giảm', saleFrom: 'Bắt đầu', saleTo: 'Kết thúc',
     plusName: 'Nabu Tarot Plus', looksTitle: 'Giao diện của bạn', looksLink: 'Đổi giao diện',
     looksIntro: 'Chọn cách app trông ra sao: mặt sau bộ bài, cây thông điệp, đồng xu và trang nhật ký.',
+    looksAll: 'Tất cả giao diện', looksYours: 'Bạn đang có Nabu Tarot Plus, bạn chọn mẫu nào cũng được.',
+    looksStripNote: 'Bạn chạm để đổi. Ba mẫu có ổ khoá thuộc Nabu Tarot Plus.',
+    looksAll: 'Tất cả giao diện', looksYours: 'Bạn đang có Nabu Tarot Plus, bạn chọn mẫu nào cũng được.',
+    looksStripNote: 'Bạn chạm để đổi. Ba mẫu có ổ khoá thuộc Nabu Tarot Plus.',
     looksHere: '🎨 Đổi giao diện của mục này', looksLocked: 'Mở tất cả giao diện đẹp hơn', looksPlusOn: 'Bạn đang có Nabu Tarot Plus, tất cả giao diện đều mở.', looksNeedPlus: 'Giao diện này thuộc Nabu Tarot Plus.',
     lookKinds: { cardback: 'Mặt sau lá bài', tree: 'Cây thông điệp', coin: 'Đồng xu', diary: 'Trang nhật ký' },
     petTitle: 'Nuôi bạn nhỏ may mắn', petSub: 'mỗi ngày một bữa ăn và một lời khấn',
@@ -1504,8 +1562,10 @@ const STR = {
     petPlusPitch: 'Người dùng thường nuôi một bạn nhỏ. Nabu Tarot Plus mở sáu linh thú và cho bạn nuôi nhiều vị cùng lúc, để nhiều góc trong đời bạn cùng được trông giữ.',
     petPlusItem: 'Món này thuộc Nabu Tarot Plus.',
     petLuckNote: 'Bạn nhỏ ở đây để mỗi ngày bạn có một việc nhỏ ấm áp. Lời chúc là lời chúc, không phải lời hứa.',
+    sheetClose: 'Xong', petCoatNote: 'Bốn màu đầu miễn phí. Bốn màu đặc biệt thuộc Nabu Tarot Plus.',
+    coatNames: { cream: 'Kem', lilac: 'Tím nhạt', rose: 'Hồng phấn', sky: 'Xanh trời', mint: 'Bạc hà', ember: 'Cam đất', midnight: 'Tím đêm', gold: 'Vàng ánh' },
     petFoodTitle: 'Bữa ăn', petFoodNote: 'Món ăn ngon hơn làm bạn nhỏ vui hơn, và vận may cũng đầy nhanh hơn.',
-    petHomeTitle: 'Nhà của bạn nhỏ', petHomeNote: 'Bạn nhỏ có chỗ ở đẹp thì ở lại lâu hơn và mang về nhiều may mắn hơn.',
+    petHomeShort: 'Nhà', petHomeTitle: 'Nhà của bạn nhỏ', petHomeNote: 'Bạn nhỏ có chỗ ở đẹp thì ở lại lâu hơn và mang về nhiều may mắn hơn.',
     petWearTitle: 'Phụ kiện', petWearNote: 'Một chiếc khăn hay một vòng hoa cũng làm bạn nhỏ rạng rỡ hơn hẳn.',
     careDays: 'Chăm đều mỗi ngày', careMeals: 'Số bữa đã cho ăn', careTreats: 'Món ngon', careCoat: 'Màu lông đặc biệt', careWear: 'Phụ kiện', careHome: 'Nhà đẹp',
     careMeal: 'Bữa ăn cơ bản', petMealWorth: 'Mỗi bữa ăn được', petLevel: (n) => 'Cấp ' + n,
@@ -1801,6 +1861,10 @@ const STR = {
     saleKind: 'Kind of discount', saleKinds: { percent: 'A percentage', amount: 'An amount' }, saleValue: 'Discount', saleFrom: 'Starts', saleTo: 'Ends',
     plusName: 'Nabu Tarot Plus', looksTitle: 'How your app looks', looksLink: 'Change the look',
     looksIntro: 'Choose how the app looks: the back of the deck, the message tree, the coin and the diary page.',
+    looksAll: 'All looks', looksYours: 'You have Nabu Tarot Plus, so any of these is yours.',
+    looksStripNote: 'Tap to change. The three with a padlock come with Nabu Tarot Plus.',
+    looksAll: 'All looks', looksYours: 'You have Nabu Tarot Plus, so any of these is yours.',
+    looksStripNote: 'Tap to change. The three with a padlock come with Nabu Tarot Plus.',
     looksHere: '🎨 Change how this looks', looksLocked: 'Open every look', looksPlusOn: 'You have Nabu Tarot Plus, so every look is open.', looksNeedPlus: 'That look comes with Nabu Tarot Plus.',
     lookKinds: { cardback: 'Card backs', tree: 'The message tree', coin: 'The coin', diary: 'Diary paper' },
     petTitle: 'Keep a luck companion', petSub: 'one meal and one wish a day',
@@ -1817,8 +1881,10 @@ const STR = {
     petPlusPitch: 'One companion is free. Nabu Tarot Plus opens the six spirit beasts and lets you keep several at once, so more corners of your life are looked after.',
     petPlusItem: 'That one comes with Nabu Tarot Plus.',
     petLuckNote: 'Your companion is here to give you one warm small thing each day. A blessing is a blessing, not a promise.',
+    sheetClose: 'Done', petCoatNote: 'The first four are free. The four special coats come with Nabu Tarot Plus.',
+    coatNames: { cream: 'Cream', lilac: 'Lilac', rose: 'Rose', sky: 'Sky', mint: 'Mint', ember: 'Ember', midnight: 'Midnight', gold: 'Gold' },
     petFoodTitle: 'Meals', petFoodNote: 'Better food makes a happier companion, and its luck fills faster.',
-    petHomeTitle: 'Its home', petHomeNote: 'A companion with a lovely home settles in and brings back more.',
+    petHomeShort: 'Home', petHomeTitle: 'Its home', petHomeNote: 'A companion with a lovely home settles in and brings back more.',
     petWearTitle: 'Charms', petWearNote: 'A scarf or a flower crown makes a companion shine.',
     careDays: 'Coming back every day', careMeals: 'Meals given', careTreats: 'Good food', careCoat: 'A special coat', careWear: 'A charm', careHome: 'A proper home',
     careMeal: 'A plain meal', petMealWorth: 'Every meal earns', petLevel: (n) => 'Level ' + n,
@@ -10232,14 +10298,17 @@ function renderPick(args, params) {
   const chips = Object.keys(S.focus).map((f) => '<button class="chip' + (pick.focus === f ? ' on' : '') + '" data-focus="' + f + '"' + (pick.chosen != null && pick.focus !== f ? ' disabled' : '') + '>' + esc(S.focus[f]) + '</button>').join('');
   const fan = pick.hand.map((id, i) => {
     const cls = pick.chosen == null ? '' : (pick.chosen === id ? ' chosen' : ' dim');
-    return '<div class="slot' + cls + '"><button data-card="' + id + '" aria-label="' + (i + 1) + '">' + BACK + '</button></div>';
+    return '<div class="slot' + cls + '"><button data-card="' + id + '" aria-label="' + (i + 1) + '">' + backNow() + '</button></div>';
   }).join('');
   m.innerHTML = '<div class="pick-head"><div class="eyebrow">' + esc(S.nav.pick) + '</div><h1>' + esc(S.pickTitle) + '</h1><p>' + esc(S.pickIntro) + '<br>' + esc(S.pickIntro2) + '</p></div>'
     + '<div class="faint" style="text-align:center">' + esc(S.focusLabel) + '</div><div class="chips focus">' + chips + '</div>'
     + '<div class="fan deck" id="fan">' + fan + '</div>'
     + '<div class="deckbar"><button type="button" class="btn sm" data-step="-1" aria-label="prev">‹</button><span id="deckpos" class="faint"></span><button type="button" class="btn sm" data-step="1" aria-label="next">›</button></div>'
-    + '<div class="tap-hint">' + (pick.chosen == null ? esc(S.tapACard) : '') + '</div><div class="reveal" id="reveal"></div>';
+    + '<div class="tap-hint">' + (pick.chosen == null ? esc(S.tapACard) : '') + '</div><div class="reveal" id="reveal"></div>'
+    + lookStripHTML('cardback');
   bindDeck(m);
+  // Changing the back redraws the fan, so the new one is seen straight away.
+  bindLookStrip(m, () => renderPick(args, params));
   $$('[data-focus]', m).forEach((b) => b.addEventListener('click', () => {
     if (pick.chosen != null) return;
     pick.focus = b.getAttribute('data-focus'); store.set('nabu-focus', pick.focus);
@@ -10299,7 +10368,7 @@ function renderReveal(animate) {
   const kws = I ? I.pos.slice(0, 3).join(', ') : '';
   const r = $('#reveal');
   r.innerHTML = '<div class="reveal-top"><div class="eyebrow">' + esc(S.yourCard) + '</div><button class="btn sm" id="redrawTop">🔄 ' + esc(S.redraw) + '</button></div>'
-    + '<div class="hero"><div class="flip"><div class="inner"' + (animate ? '' : ' style="animation:none"') + '><span class="face fr">' + faceSVG(c) + '</span><span class="face bk">' + BACK + '</span></div></div>'
+    + '<div class="hero"><div class="flip"><div class="inner"' + (animate ? '' : ' style="animation:none"') + '><span class="face fr">' + faceSVG(c) + '</span><span class="face bk">' + backNow() + '</span></div></div>'
     + '<div><div class="name">' + esc(c.name) + '</div><div class="en">' + esc(other.name) + '</div><div class="meta m-' + c.suit + '"><i>' + esc(c.meta) + '</i></div></div></div>'
     + insightHTML(id, pick.focus)
     + '<div class="ins" style="border-color:var(--gold)"><p class="muted" style="margin-bottom:12px">' + esc(S.quickNote) + '</p>'
@@ -11684,6 +11753,58 @@ function lookPreview(kind, item) {
   if (kind === 'coin') return '<span class="lk-coin">' + coinFaceFor(item, '') + '</span>';
   return '<span class="lk-diary ' + esc('paper-' + item.id) + '"><i></i><i></i><i></i></span>';
 }
+/* The same tiles as the picker, in one row, for the screen the look belongs
+   to. A locked one is drawn in full and dimmed rather than hidden, so the
+   choice is made in front of the thing it changes. */
+function lookStripHTML(kind) {
+  const S = T(), set = LOOK_SETS[kind] || [], now = LOOKS.get(kind), pro = proOn();
+  if (!set.length) return '';
+  return '<div class="card lookstrip"><div class="ls-h"><h3>' + esc(S.lookKinds[kind]) + '</h3>'
+    + '<a href="#/looks">' + esc(S.looksAll) + ' ›</a></div>'
+    + '<p class="hint">' + esc(pro ? S.looksYours : S.looksStripNote) + '</p>'
+    + '<div class="lookgrid four">' + set.map((x) => {
+      const locked = x.pro && !pro, on = now === x.id;
+      return '<button type="button" class="look' + (on ? ' on' : '') + (locked ? ' locked' : '') + '" data-strip="' + kind + ':' + x.id + '">'
+        + lookPreview(kind, x) + '<b>' + esc(L(x.name)) + '</b>'
+        + (locked ? '<span class="lk-lock">🔒</span>' : '') + (on ? '<span class="lk-on">✓</span>' : '') + '</button>';
+    }).join('') + '</div></div>';
+}
+/* redraw is called after a change, so the screen shows the new look at once. */
+function bindLookStrip(root, redraw) {
+  $$('[data-strip]', root).forEach((b) => b.addEventListener('click', () => {
+    const p = b.getAttribute('data-strip').split(':'), item = (LOOK_SETS[p[0]] || []).filter((x) => x.id === p[1])[0];
+    if (!item) return;
+    if (item.pro && !proOn()) { toast(T().looksNeedPlus); location.hash = '#/unlock'; return; }
+    LOOKS.set(p[0], p[1]); toast('✓');
+    if (redraw) redraw();
+  }));
+}
+/* The same tiles as the picker, in one row, for the screen the look belongs
+   to. A locked one is drawn in full and dimmed rather than hidden, so the
+   choice is made in front of the thing it changes. */
+function lookStripHTML(kind) {
+  const S = T(), set = LOOK_SETS[kind] || [], now = LOOKS.get(kind), pro = proOn();
+  if (!set.length) return '';
+  return '<div class="card lookstrip"><div class="ls-h"><h3>' + esc(S.lookKinds[kind]) + '</h3>'
+    + '<a href="#/looks">' + esc(S.looksAll) + ' ›</a></div>'
+    + '<p class="hint">' + esc(pro ? S.looksYours : S.looksStripNote) + '</p>'
+    + '<div class="lookgrid four">' + set.map((x) => {
+      const locked = x.pro && !pro, on = now === x.id;
+      return '<button type="button" class="look' + (on ? ' on' : '') + (locked ? ' locked' : '') + '" data-strip="' + kind + ':' + x.id + '">'
+        + lookPreview(kind, x) + '<b>' + esc(L(x.name)) + '</b>'
+        + (locked ? '<span class="lk-lock">🔒</span>' : '') + (on ? '<span class="lk-on">✓</span>' : '') + '</button>';
+    }).join('') + '</div></div>';
+}
+/* redraw is called after a change, so the screen shows the new look at once. */
+function bindLookStrip(root, redraw) {
+  $$('[data-strip]', root).forEach((b) => b.addEventListener('click', () => {
+    const p = b.getAttribute('data-strip').split(':'), item = (LOOK_SETS[p[0]] || []).filter((x) => x.id === p[1])[0];
+    if (!item) return;
+    if (item.pro && !proOn()) { toast(T().looksNeedPlus); location.hash = '#/unlock'; return; }
+    LOOKS.set(p[0], p[1]); toast('✓');
+    if (redraw) redraw();
+  }));
+}
 function renderLooks() {
   const S = T(), m = $('#main');
   const draw = () => {
@@ -11953,8 +12074,8 @@ const LUCKS = {
   travel: {
     id: 'travel', sym: '🧭', ink: '#C4643C', aura: '#F8D9C6',
     name: { vi: 'Đi lại', en: 'Travel' },
-    line: { vi: 'Én Gió biết đường về, nên chuyến đi nào của bạn cũng có lối quay lại.', en: 'The wind swallow knows the way home, so every journey of yours has a way back.' },
-    proLine: { vi: 'Thiên Mã không cần đường, nơi nào bạn muốn đến thì nó đã đứng sẵn ở đó.', en: 'The sky horse needs no road; wherever you mean to go, it is already standing there.' }
+    line: { vi: 'Én Gió bay rất xa rồi vẫn về đúng tổ, nên đường bạn đi cũng luôn có lối về bình an.', en: 'The wind swallow flies far and still finds its own nest, so your road always has a safe way back.' },
+    proLine: { vi: 'Thiên Mã đi cùng người đi xa, dù là đi làm hay đi chơi, để bạn thượng lộ bình an và về đến nhà nguyên vẹn.', en: 'The sky horse rides with whoever goes far, for work or for pleasure, and sees them safely there and safely home.' }
   }
 };
 const petLuck = (kind) => LUCKS[PET_LUCK[kind] || 'love'];
@@ -12006,12 +12127,12 @@ const PET_BLESS = {
     { vi: 'Điều bạn lo về sức khỏe nên được hỏi bác sĩ, đừng hỏi mỗi mình bạn.', en: 'The worry you are carrying belongs to a doctor, not only to you.' }
   ],
   travel: [
-    { vi: 'Chuyến đi bạn hoãn mãi có thể bắt đầu bằng một việc rất nhỏ hôm nay.', en: 'The trip you keep postponing can start with one small thing today.' },
-    { vi: 'Bạn kiểm tra lại giấy tờ và giờ giấc một lần nữa trước khi đi.', en: 'Check your papers and your times once more before you set out.' },
-    { vi: 'Đường xa nhưng thuận. Bạn cứ đi sớm hơn dự định một chút.', en: 'The way is long but clear. Set out a little earlier than you planned.' },
-    { vi: 'Một nơi bạn từng đến sẽ gọi bạn quay lại trong năm nay.', en: 'A place you have been before will call you back this year.' },
-    { vi: 'Bạn đi nhẹ thôi. Thứ bạn cần ở đó nhiều hơn bạn tưởng.', en: 'Travel light. More of what you need is already there.' },
-    { vi: 'Người bạn gặp trên đường quan trọng hơn nơi bạn đến.', en: 'Who you meet on the way matters more than where you arrive.' }
+    { vi: 'Chuyến đi sắp tới của bạn thuận buồm xuôi gió. Bạn cứ yên tâm lên đường.', en: 'The journey ahead of you runs smooth. Set out with an easy mind.' },
+    { vi: 'Bạn kiểm tra lại giấy tờ và giờ khởi hành một lần nữa, rồi đi cho nhẹ lòng.', en: 'Check your papers and your departure time once more, then travel light in your mind.' },
+    { vi: 'Đi xa thì nhớ giữ sức. Đến nơi bình an quan trọng hơn đến nơi thật sớm.', en: 'Look after yourself out there. Arriving safe matters more than arriving early.' },
+    { vi: 'Dù chuyến này là đi làm hay đi chơi, vẫn có người trông chừng bạn từ xa.', en: 'Whether this trip is for work or for pleasure, someone is watching over you from home.' },
+    { vi: 'Đường có thể đổi, nhưng bạn vẫn sẽ đến nơi. Bạn đừng lo lắng quá.', en: 'The road may change, and you will still arrive. Do not worry so much.' },
+    { vi: 'Thượng lộ bình an. Về đến nơi rồi bạn nhắn một câu cho người đang đợi.', en: 'Safe travels. Send word to whoever is waiting once you are there.' }
   ]
 };
 
@@ -12450,19 +12571,31 @@ const PET_ART = {
   }),
   pegasus: (c) => ({
     glow: true,
-    ears: '<path d="M42 34 Q38 16 44 8 Q52 18 50 32 Z" fill="' + c.body + '"/><path d="M78 34 Q82 16 76 8 Q68 18 70 32 Z" fill="' + c.body + '"/>'
-      + '<path d="M60 26 Q44 18 34 26 Q46 24 52 30 Z" fill="#C9B0EA"/>'
-      + '<path d="M60 20 Q46 10 34 16 Q48 16 56 24 Z" fill="#E0D2F7"/>',
-    behind: '<path d="M28 74 q-26 -14 -24 -38 q18 18 30 30 Z" fill="#FFFFFF"/>'
-      + '<path d="M92 74 q26 -14 24 -38 q-18 18 -30 30 Z" fill="#FFFFFF"/>'
-      + '<path d="M30 80 q-22 -6 -24 -24 q16 12 28 18 Z" fill="#E0D2F7"/>'
-      + '<path d="M90 80 q22 -6 24 -24 q-16 12 -28 18 Z" fill="#E0D2F7"/>'
-      + '<path d="M86 98 q22 4 24 22 q-18 -2 -26 -12 Z" fill="#C9B0EA"/>',
-    front: '<ellipse cx="60" cy="68" rx="11" ry="8" fill="' + c.dark + '"/>'
-      + '<ellipse cx="56" cy="66" rx="1.8" ry="2.4" fill="#4A3728"/><ellipse cx="64" cy="66" rx="1.8" ry="2.4" fill="#4A3728"/>'
-      + '<path d="M40 46 Q28 40 22 46 Q34 46 40 54 Z" fill="#E0D2F7"/>',
-    overBody: '<g fill="#FFF3C4" opacity=".9"><circle cx="44" cy="82" r="2"/><circle cx="76" cy="88" r="1.8"/><circle cx="58" cy="76" r="1.6"/></g>',
-    noMouth: true
+    /* Wings spread from the shoulders and stay inside the square; the mane
+       falls down the neck rather than sitting on top of the head. */
+    behind: '<path d="M34 84 Q10 68 7 36 Q27 54 41 76 Z" fill="#FFFFFF"/>'
+      + '<path d="M35 88 Q15 78 10 52 Q27 68 42 84 Z" fill="#EFE8FF"/>'
+      + '<path d="M37 92 Q21 88 17 68 Q31 80 43 88 Z" fill="#DCCEF7"/>'
+      + '<path d="M86 84 Q110 68 113 36 Q93 54 79 76 Z" fill="#FFFFFF"/>'
+      + '<path d="M85 88 Q105 78 110 52 Q93 68 78 84 Z" fill="#EFE8FF"/>'
+      + '<path d="M83 92 Q99 88 103 68 Q89 80 77 88 Z" fill="#DCCEF7"/>'
+      + '<g stroke="#C9B0EA" stroke-width="1.1" fill="none" opacity=".7">'
+      + '<path d="M14 46 Q26 60 34 78 M12 62 Q24 72 36 86 M106 46 Q94 60 86 78 M108 62 Q96 72 84 86"/></g>'
+      + '<path d="M50 28 Q33 32 29 50 Q26 66 34 78 Q31 60 41 47 Q47 37 50 28 Z" fill="#B79BEA"/>'
+      + '<path d="M54 30 Q40 36 37 52 Q35 64 40 74 Q39 58 47 47 Q52 39 54 30 Z" fill="#D3C2F5"/>'
+      + '<path d="M84 100 Q108 104 112 122 Q93 118 82 107 Z" fill="#C9B0EA"/>'
+      + '<path d="M86 96 Q106 96 112 110" stroke="#E0D2F7" stroke-width="4" fill="none" stroke-linecap="round"/>',
+    ears: '<path d="M42 32 Q39 14 47 8 Q54 18 52 31 Z" fill="' + c.body + '"/><path d="M78 32 Q81 14 73 8 Q66 18 68 31 Z" fill="' + c.body + '"/>'
+      + '<path d="M46 26 Q46 18 49 14 Q51 20 50 27 Z" fill="#C9B0EA"/><path d="M74 26 Q74 18 71 14 Q69 20 70 27 Z" fill="#C9B0EA"/>',
+    front: '<ellipse cx="60" cy="72" rx="14" ry="11" fill="#FFF7EE"/>'
+      + '<ellipse cx="60" cy="72" rx="14" ry="11" fill="none" stroke="' + c.dark + '" stroke-width="1.1" opacity=".55"/>'
+      + '<ellipse cx="54" cy="69" rx="2.2" ry="2.8" fill="#7A6250"/><ellipse cx="66" cy="69" rx="2.2" ry="2.8" fill="#7A6250"/>'
+      + '<path d="M54 78 q6 4 12 0" stroke="#7A6250" stroke-width="1.6" fill="none" stroke-linecap="round"/>'
+      + '<path d="M60 32 Q53 40 55 48 Q60 42 64 46 Q65 38 60 32 Z" fill="#D3C2F5"/>',
+    overBody: '<path d="M60 68 q-9 14 -6 26 q9 4 18 0 q3 -12 -6 -26 Z" fill="#FFF7EE" opacity=".9"/>'
+      + '<g fill="#FFF3C4"><circle cx="24" cy="72" r="2.2"/><circle cx="100" cy="68" r="2"/><circle cx="48" cy="42" r="1.6"/><circle cx="94" cy="98" r="1.8"/></g>'
+      + '<ellipse cx="38" cy="106" rx="8" ry="4.6" fill="#E5BE5E"/><ellipse cx="82" cy="106" rx="8" ry="4.6" fill="#E5BE5E"/>',
+    feet: false, eyeY: 50, noMouth: true, blushY: 58, charmY: 92
   })
 };
 
@@ -12475,7 +12608,7 @@ function petSVG(kind, coat, mood, wear) {
   const eye = (x) => happy
     ? '<path d="M' + (x - 5) + ' ' + eyeY + ' q5 -6 10 0" fill="none" stroke="' + c.ink + '" stroke-width="2.6" stroke-linecap="round"/>'
     : '<ellipse cx="' + x + '" cy="' + eyeY + '" rx="3.4" ry="4.4" fill="' + c.ink + '"/><circle cx="' + (x + 1.2) + '" cy="' + (eyeY - 1.8) + '" r="1.2" fill="#fff"/>';
-  const face = eye(50) + eye(70)
+  const face = '<g class="eyes">' + eye(50) + eye(70) + '</g>'
     + (art.noMouth ? '' : '<path d="M56 64 q4 4 8 0" fill="none" stroke="' + c.ink + '" stroke-width="2.4" stroke-linecap="round"/>')
     + '<ellipse cx="40" cy="' + blushY + '" rx="5" ry="3.2" fill="#F2A9BE" opacity=".55"/>'
     + '<ellipse cx="80" cy="' + blushY + '" rx="5" ry="3.2" fill="#F2A9BE" opacity=".55"/>';
@@ -12535,7 +12668,7 @@ function petAuraHTML(kind, n) {
 /* ---- the screen ---- */
 function renderPet(want) {
   const S = T(), m = $('#main');
-  let busy = false, open = '';
+  let busy = false, open = '', sheet = '';
 
   /* One line of the meal list: what it adds, and whether it is open. */
   const gainRow = (label, got, worth, locked) => '<li' + (locked ? ' class="locked"' : '') + '><span>' + esc(label) + '</span><b>' + (locked ? '🔒 +' + worth : '+' + got) + '</b></li>';
@@ -12545,7 +12678,9 @@ function renderPet(want) {
     const st = PETS.step(p), gain = PETS.gain(p), pro = proOn(), ready = PETS.canFeed(p);
     const bless = prayed ? PETS.blessing(p) : null;
     return '<div class="card petwrap luck-' + luck.id + '">'
-      + '<div class="petstage" id="petstage">' + petHomeSVG(PETS.home(p).id) + petAuraHTML(p.kind) + petSVG(p.kind, coat, ready ? '' : 'happy', PETS.wear(p)) + '<span class="crumbs" id="crumbs"></span><span class="toys" id="toys"></span></div>'
+      + '<div class="petstage" id="petstage">' + petHomeSVG(PETS.home(p).id) + petAuraHTML(p.kind) + petSVG(p.kind, coat, ready ? '' : 'happy', PETS.wear(p)) + '<span class="crumbs" id="crumbs"></span><span class="toys" id="toys"></span>'
+      + '<span class="stagebtns left">' + stageBtn('food', '🍚', S.petFoodTitle) + stageBtn('wear', '👑', S.petWearTitle) + '</span>'
+      + '<span class="stagebtns right">' + stageBtn('home', '🏠', S.petHomeShort) + stageBtn('coat', '🎨', S.petCoat) + '</span></div>'
       + '<div class="lucktag" style="--ink:' + luck.ink + ';--aura:' + luck.aura + '">' + luck.sym + ' ' + esc(S.petBrings(L(luck.name))) + '</div>'
       + '<p class="petline">' + esc(L(petLine(p.kind))) + '</p>'
       + '<div class="charm"><span class="lbl">' + esc(S.petLevel(st.lv)) + '</span><span class="bar"><i style="width:' + st.at + '%;background:' + luck.ink + '"></i></span>'
@@ -12572,18 +12707,41 @@ function renderPet(want) {
       + '</div>';
   };
 
-  /* One shelf of things to give the companion: food, a home, something to
-     wear. Locked items are shown in full with what they would add. */
-  const shelfHTML = (title, note, set, chosenId, key, label) => '<div class="card"><h3 style="margin-bottom:4px">' + esc(title) + '</h3><p class="hint" style="margin-bottom:10px">' + esc(note) + '</p>'
-    + '<div class="shelf">' + set.map((x) => {
-      const locked = x.pro && !proOn();
-      return '<button type="button" class="sh' + (chosenId === x.id ? ' on' : '') + (locked ? ' locked' : '') + '" data-shelf="' + key + ':' + x.id + '">'
-        + '<span class="shart">' + (label === 'food' ? x.sym : (label === 'home' ? petHomeSVG(x.id) : petWearArt(x.id))) + '</span>'
-        + '<b>' + esc(L(x.name)) + '</b>'
-        + (x.add ? '<span class="plus">+' + x.add + '</span>' : '')
-        + (locked ? '<span class="sh-lock">🔒</span>' : '') + (chosenId === x.id ? '<span class="sh-on">✓</span>' : '')
-        + '</button>';
-    }).join('') + '</div></div>';
+  /* A button on the edge of the scene, so what can be changed is visible the
+     moment the screen opens rather than three scrolls down. */
+  const stageBtn = (key, icon, label) => '<button type="button" class="stagebtn" data-open-sheet="' + key + '" aria-label="' + esc(label) + '"><span class="ic">' + icon + '</span><span class="lb">' + esc(label) + '</span></button>';
+
+  /* One shelf of things to give the companion. Locked items are shown in full
+     with what they would add, never hidden. */
+  const shelfRows = (set, chosenId, key, label) => '<div class="shelf">' + set.map((x) => {
+    const locked = x.pro && !proOn();
+    return '<button type="button" class="sh' + (chosenId === x.id ? ' on' : '') + (locked ? ' locked' : '') + '" data-shelf="' + key + ':' + x.id + '">'
+      + '<span class="shart">' + (label === 'food' ? x.sym : (label === 'home' ? petHomeSVG(x.id) : (label === 'coat' ? '<span class="dot" style="background:' + x.body + '"></span>' : petWearArt(x.id)))) + '</span>'
+      + '<b>' + esc(L(x.name) || x.id) + '</b>'
+      + (x.add ? '<span class="plus">+' + x.add + '</span>' : '')
+      + (locked ? '<span class="sh-lock">🔒</span>' : '') + (chosenId === x.id ? '<span class="sh-on">✓</span>' : '')
+      + '</button>';
+  }).join('') + '</div>';
+
+  /* The four groups live in one sheet, so a visitor who opens the food can go
+     straight on to the home without closing anything. */
+  const SHEETS = [
+    { key: 'food', icon: '🍚', title: () => S.petFoodTitle, note: () => S.petFoodNote, set: () => PET_FOODS, now: (p) => PETS.food(p).id, art: 'food' },
+    { key: 'home', icon: '🏠', title: () => S.petHomeTitle, note: () => S.petHomeNote, set: () => PET_HOMES, now: (p) => PETS.home(p).id, art: 'home' },
+    { key: 'wear', icon: '👑', title: () => S.petWearTitle, note: () => S.petWearNote, set: () => PET_WEARS, now: (p) => PETS.wear(p).id, art: 'wear' },
+    { key: 'coat', icon: '🎨', title: () => S.petCoat, note: () => S.petCoatNote, set: () => PET_COATS.map((c) => ({ id: c.id, pro: c.pro, add: 3, body: c.body, name: S.coatNames[c.id] || c.id })), now: (p) => PETS.coat(p).id, art: 'coat' }
+  ];
+  const sheetHTML = (p, open) => {
+    const cur = SHEETS.filter((x) => x.key === open)[0] || SHEETS[0];
+    return '<div class="sheet" id="petsheet"><div class="sh-back" data-close-sheet="1"></div>'
+      + '<div class="sh-body" role="dialog" aria-modal="true" aria-label="' + esc(cur.title()) + '">'
+      + '<div class="sh-grip"></div>'
+      + '<div class="chips sh-tabs">' + SHEETS.map((x) => '<button type="button" class="chip' + (x.key === cur.key ? ' on' : '') + '" data-sheet-tab="' + x.key + '">' + x.icon + ' ' + esc(x.title()) + '</button>').join('') + '</div>'
+      + '<p class="hint">' + esc(cur.note()) + '</p>'
+      + shelfRows(cur.set(), cur.now(p), cur.key, cur.art)
+      + '<button type="button" class="btn block" data-close-sheet="1" style="margin-top:12px">' + esc(S.sheetClose) + '</button>'
+      + '</div></div>';
+  };
 
   const draw = () => {
     const pets = PETS.all();
@@ -12601,14 +12759,10 @@ function renderPet(want) {
       + (room
         ? '<button type="button" class="btn block" id="addpet" style="margin-top:12px">➕ ' + esc(S.petAdd) + (left > 1 ? ' · ' + esc(S.petRoomLeft(left)) : '') + '</button>'
         : (proOn() ? '' : '<a class="salebar" href="#/unlock"><span class="tag">✨ ' + esc(S.plusName) + '</span><span class="txt">' + esc(S.petPlusPitch) + '</span><span class="go">' + esc(S.unlockLink) + ' ›</span></a>'))
-      + shelfHTML(S.petFoodTitle, S.petFoodNote, PET_FOODS, PETS.food(p).id, 'food', 'food')
-      + shelfHTML(S.petHomeTitle, S.petHomeNote, PET_HOMES, PETS.home(p).id, 'home', 'home')
-      + shelfHTML(S.petWearTitle, S.petWearNote, PET_WEARS, PETS.wear(p).id, 'wear', 'wear')
-      + '<div class="card"><h3 style="margin-bottom:8px">' + esc(S.petCoat) + '</h3><div class="chips coats">'
-      + PET_COATS.map((c) => { const locked = c.pro && !proOn(); return '<button type="button" class="coat' + (coat.id === c.id ? ' on' : '') + (locked ? ' locked' : '') + '" data-coat="' + c.id + '" style="background:' + c.body + '" aria-label="' + esc(c.id) + '">' + (locked ? '🔒' : '') + '</button>'; }).join('')
-      + '</div><label class="f" for="petname" style="margin-top:12px">' + esc(S.petName) + '</label><input id="petname" maxlength="24" value="' + esc(p.name || '') + '" placeholder="' + esc(L(PET_NAMES[p.kind])) + '">'
+      + '<div class="card"><label class="f" for="petname">' + esc(S.petName) + '</label><input id="petname" maxlength="24" value="' + esc(p.name || '') + '" placeholder="' + esc(L(PET_NAMES[p.kind])) + '">'
       + '<button class="btn block" id="petswap" style="margin-top:10px">' + esc(pets.length > 1 ? S.petLetGo : S.petSwap) + '</button></div>'
-      + '<p style="margin-top:14px"><a href="#/play" class="backlink">← ' + esc(S.actTitle) + '</a></p>';
+      + '<p style="margin-top:14px"><a href="#/play" class="backlink">← ' + esc(S.actTitle) + '</a></p>'
+      + (sheet ? sheetHTML(p, sheet) : '');
 
     $$('[data-open]', m).forEach((b) => b.addEventListener('click', () => { open = b.getAttribute('data-open'); draw(); }));
     const add = $('#addpet');
@@ -12654,17 +12808,16 @@ function renderPet(want) {
       $('#petstage').classList.add('praying');
       setTimeout(() => { PETS.pray(p); busy = false; draw(); }, 1200);
     });
+    $$('[data-open-sheet]', m).forEach((b) => b.addEventListener('click', () => { sheet = b.getAttribute('data-open-sheet'); draw(); }));
+    $$('[data-sheet-tab]', m).forEach((b) => b.addEventListener('click', () => { sheet = b.getAttribute('data-sheet-tab'); draw(); }));
+    $$('[data-close-sheet]', m).forEach((b) => b.addEventListener('click', () => { sheet = ''; draw(); }));
     $$('[data-shelf]', m).forEach((b) => b.addEventListener('click', () => {
       const parts = b.getAttribute('data-shelf').split(':'), key = parts[0], id = parts[1];
-      const set = key === 'food' ? PET_FOODS : (key === 'home' ? PET_HOMES : PET_WEARS);
+      const set = key === 'food' ? PET_FOODS : (key === 'home' ? PET_HOMES : (key === 'wear' ? PET_WEARS : PET_COATS));
       const item = set.filter((x) => x.id === id)[0];
+      if (!item) return;
       if (item.pro && !proOn()) { toast(S.petPlusItem); location.hash = '#/unlock'; return; }
       p[key] = id; PETS.put(p); draw();
-    }));
-    $$('[data-coat]', m).forEach((b) => b.addEventListener('click', () => {
-      const id = b.getAttribute('data-coat'), c = PET_COATS.filter((x) => x.id === id)[0];
-      if (c.pro && !proOn()) { toast(S.petPlusItem); location.hash = '#/unlock'; return; }
-      p.coat = id; PETS.put(p); draw();
     }));
     $('#petname').addEventListener('input', () => { p.name = $('#petname').value.trim(); PETS.put(p); });
     $('#petswap').addEventListener('click', () => {
@@ -13735,16 +13888,6 @@ function treeButterflySVG(still) {
 function treeSVG() { return treeSVGFor(); }
 /* The companions stand at the foot of the tree, so the two screens read as one
    garden. Tapping one opens its own page. */
-/* The looks picker is offered on every screen a look belongs to, because
-   nobody goes looking for it on the profile. */
-function looksLinkHTML() {
-  return '<p class="lookslink"><a href="#/looks">' + esc(T().looksHere) + '</a></p>';
-}
-/* The looks picker is offered on every screen a look belongs to, because
-   nobody goes looking for it on the profile. */
-function looksLinkHTML() {
-  return '<p class="lookslink"><a href="#/looks">' + esc(T().looksHere) + '</a></p>';
-}
 function treePetHTML() {
   const pets = PETS.all();
   if (!pets.length) return '';
@@ -13761,10 +13904,10 @@ function renderTree() {
       + '<div class="treemsg" id="treemsg"' + (msg ? '' : ' hidden') + '><div class="eyebrow">' + esc(S.treeFor) + '</div><p id="treetext">' + (msg ? esc(L(msg)) : '') + '</p></div>'
       + (luckSpent('tree') ? '' : '<button class="btn primary block" id="shake">' + esc(msg ? S.treeAgain : S.treeShake) + '</button>') + '</div>'
       + luckPanelHTML('tree')
-      + looksLinkHTML()
-      + looksLinkHTML()
+      + lookStripHTML('tree')
       + '<p style="margin-top:14px"><a class="btn block" href="#/unlock">💳 ' + esc(S.unlockLink) + '</a></p>'
       + '<p style="margin-top:14px"><a href="#/play" class="backlink">← ' + esc(S.actTitle) + '</a></p>';
+    bindLookStrip(m, draw);
     const shake = () => {
       if (busy) return;
       busy = true;
@@ -13863,11 +14006,11 @@ function renderCoin() {
       + '<div class="coinres" id="coinres" aria-live="polite">' + (side ? esc(side === 'yes' ? S.coinYes : S.coinNo) : '') + '</div>'
       + (luckSpent('coin') ? '' : '<button class="btn primary block" id="coinflip">' + esc(side ? S.coinAgain : S.coinFlip) + '</button>') + '</div>'
       + luckPanelHTML('coin')
-      + looksLinkHTML()
-      + looksLinkHTML()
+      + lookStripHTML('coin')
       + '<p class="hint">' + esc(S.coinNote) + '</p>'
       + '<p style="margin-top:14px"><a class="btn block" href="#/unlock">💳 ' + esc(S.unlockLink) + '</a></p>'
       + '<p style="margin-top:14px"><a href="#/play" class="backlink">← ' + esc(S.actTitle) + '</a></p>';
+    bindLookStrip(m, draw);
     const q = $('#coinq'); q.addEventListener('input', () => store.set('nabu-coinq', q.value));
     bindLuck(m, draw);
     const fb = $('#coinflip'); if (!fb) return;
@@ -13905,8 +14048,9 @@ function renderDiary() {
       + '<textarea id="dtext" placeholder="' + esc(S.diaryPh) + '">' + esc(cur.t || '') + '</textarea></div>'
       + '<h3 style="margin:16px 0 8px">' + esc(S.diaryPast) + (days.length ? ' <span class="faint">· ' + esc(S.diaryCount(days.length + (cur.t || cur.m ? 1 : 0))) + '</span>' : '') + '</h3>'
       + (days.length ? days.map((k) => '<div class="card diary past" data-day="' + k + '"><div class="date"><span>' + (d[k].m ? d[k].m + ' ' : '') + esc(fmtDate(k)) + '</span><button type="button" class="linkbtn" data-ddel="' + k + '">' + esc(S.diaryDel) + '</button></div><p>' + esc(d[k].t || '').replace(/\n/g, '<br>') + '</p></div>').join('') : '<p class="hint">' + esc(S.diaryEmpty) + '</p>')
-      + looksLinkHTML()
+      + lookStripHTML('diary')
       + '<p style="margin-top:12px"><a href="#/play" class="backlink">← ' + esc(S.actBack) + '</a></p>';
+    bindLookStrip(m, draw);
     const save = () => { const d2 = all(); const t = $('#dtext').value, mo = ($('.mood.on', m) || {}).getAttribute ? $('.mood.on', m).getAttribute('data-mood') : ''; if (t.trim() || mo) d2[today] = { m: mo || '', t: t }; else delete d2[today]; store.set('nabu-diary', d2); $('#dsaved').textContent = t.trim() || mo ? S.diarySaved : ''; };
     $('#dtext').addEventListener('input', save);
     $$('[data-mood]', m).forEach((b) => b.addEventListener('click', () => { const on = b.classList.contains('on'); $$('[data-mood]', m).forEach((x) => x.classList.remove('on')); if (!on) b.classList.add('on'); save(); }));
@@ -14343,7 +14487,7 @@ function adminSale(p) {
 ROUTES.admin = { nav: '', render: renderAdmin };
 
 /* ============================ boot ============================ */
-window.APP_VERSION = 'v100';
+window.APP_VERSION = 'v101';
 window.NABU = { CONFIG: CONFIG, SALE: SALE, salePrice: salePrice, loadActs: loadActs, BACK: BACK, LESSONS: LESSONS, localAnswer: localAnswer, compatVerdict: compatVerdict, numerologyOf: numerologyOf, ZDEEP: ZDEEP, lunarToday: lunarToday, solarToLunar: solarToLunar, DECK: DECK, INSIGHT: INSIGHT, KW: KW, ASK: ASK, TOPICS: TOPICS, GUIDES: GUIDES, SERVICES: SERVICES, COURSES: COURSES, ACCESS: ACCESS, makeCode: makeCode, parseCode: parseCode, ZODIAC: ZODIAC, pick: pick, book: book,
   insightHTML: insightHTML, insightOf: insightOf, sunSignIndex: sunSignIndex, lifePath: lifePath, PROFILE: () => PROFILE, BE: BE, ACTS: ACTS,
   BANK: BANK, PETS: PETS, luckCut: luckCut, petLevel: petLevel, petStep: petStep, VOUCHERS: VOUCHERS, levelCoins: levelCoins, LOOKS: LOOKS };

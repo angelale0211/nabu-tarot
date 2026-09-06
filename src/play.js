@@ -358,16 +358,6 @@ function treeButterflySVG(still) {
 function treeSVG() { return treeSVGFor(); }
 /* The companions stand at the foot of the tree, so the two screens read as one
    garden. Tapping one opens its own page. */
-/* The looks picker is offered on every screen a look belongs to, because
-   nobody goes looking for it on the profile. */
-function looksLinkHTML() {
-  return '<p class="lookslink"><a href="#/looks">' + esc(T().looksHere) + '</a></p>';
-}
-/* The looks picker is offered on every screen a look belongs to, because
-   nobody goes looking for it on the profile. */
-function looksLinkHTML() {
-  return '<p class="lookslink"><a href="#/looks">' + esc(T().looksHere) + '</a></p>';
-}
 function treePetHTML() {
   const pets = PETS.all();
   if (!pets.length) return '';
@@ -384,10 +374,10 @@ function renderTree() {
       + '<div class="treemsg" id="treemsg"' + (msg ? '' : ' hidden') + '><div class="eyebrow">' + esc(S.treeFor) + '</div><p id="treetext">' + (msg ? esc(L(msg)) : '') + '</p></div>'
       + (luckSpent('tree') ? '' : '<button class="btn primary block" id="shake">' + esc(msg ? S.treeAgain : S.treeShake) + '</button>') + '</div>'
       + luckPanelHTML('tree')
-      + looksLinkHTML()
-      + looksLinkHTML()
+      + lookStripHTML('tree')
       + '<p style="margin-top:14px"><a class="btn block" href="#/unlock">💳 ' + esc(S.unlockLink) + '</a></p>'
       + '<p style="margin-top:14px"><a href="#/play" class="backlink">← ' + esc(S.actTitle) + '</a></p>';
+    bindLookStrip(m, draw);
     const shake = () => {
       if (busy) return;
       busy = true;
@@ -486,11 +476,11 @@ function renderCoin() {
       + '<div class="coinres" id="coinres" aria-live="polite">' + (side ? esc(side === 'yes' ? S.coinYes : S.coinNo) : '') + '</div>'
       + (luckSpent('coin') ? '' : '<button class="btn primary block" id="coinflip">' + esc(side ? S.coinAgain : S.coinFlip) + '</button>') + '</div>'
       + luckPanelHTML('coin')
-      + looksLinkHTML()
-      + looksLinkHTML()
+      + lookStripHTML('coin')
       + '<p class="hint">' + esc(S.coinNote) + '</p>'
       + '<p style="margin-top:14px"><a class="btn block" href="#/unlock">💳 ' + esc(S.unlockLink) + '</a></p>'
       + '<p style="margin-top:14px"><a href="#/play" class="backlink">← ' + esc(S.actTitle) + '</a></p>';
+    bindLookStrip(m, draw);
     const q = $('#coinq'); q.addEventListener('input', () => store.set('nabu-coinq', q.value));
     bindLuck(m, draw);
     const fb = $('#coinflip'); if (!fb) return;
@@ -528,8 +518,9 @@ function renderDiary() {
       + '<textarea id="dtext" placeholder="' + esc(S.diaryPh) + '">' + esc(cur.t || '') + '</textarea></div>'
       + '<h3 style="margin:16px 0 8px">' + esc(S.diaryPast) + (days.length ? ' <span class="faint">· ' + esc(S.diaryCount(days.length + (cur.t || cur.m ? 1 : 0))) + '</span>' : '') + '</h3>'
       + (days.length ? days.map((k) => '<div class="card diary past" data-day="' + k + '"><div class="date"><span>' + (d[k].m ? d[k].m + ' ' : '') + esc(fmtDate(k)) + '</span><button type="button" class="linkbtn" data-ddel="' + k + '">' + esc(S.diaryDel) + '</button></div><p>' + esc(d[k].t || '').replace(/\n/g, '<br>') + '</p></div>').join('') : '<p class="hint">' + esc(S.diaryEmpty) + '</p>')
-      + looksLinkHTML()
+      + lookStripHTML('diary')
       + '<p style="margin-top:12px"><a href="#/play" class="backlink">← ' + esc(S.actBack) + '</a></p>';
+    bindLookStrip(m, draw);
     const save = () => { const d2 = all(); const t = $('#dtext').value, mo = ($('.mood.on', m) || {}).getAttribute ? $('.mood.on', m).getAttribute('data-mood') : ''; if (t.trim() || mo) d2[today] = { m: mo || '', t: t }; else delete d2[today]; store.set('nabu-diary', d2); $('#dsaved').textContent = t.trim() || mo ? S.diarySaved : ''; };
     $('#dtext').addEventListener('input', save);
     $$('[data-mood]', m).forEach((b) => b.addEventListener('click', () => { const on = b.classList.contains('on'); $$('[data-mood]', m).forEach((x) => x.classList.remove('on')); if (!on) b.classList.add('on'); save(); }));

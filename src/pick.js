@@ -30,14 +30,17 @@ function renderPick(args, params) {
   const chips = Object.keys(S.focus).map((f) => '<button class="chip' + (pick.focus === f ? ' on' : '') + '" data-focus="' + f + '"' + (pick.chosen != null && pick.focus !== f ? ' disabled' : '') + '>' + esc(S.focus[f]) + '</button>').join('');
   const fan = pick.hand.map((id, i) => {
     const cls = pick.chosen == null ? '' : (pick.chosen === id ? ' chosen' : ' dim');
-    return '<div class="slot' + cls + '"><button data-card="' + id + '" aria-label="' + (i + 1) + '">' + BACK + '</button></div>';
+    return '<div class="slot' + cls + '"><button data-card="' + id + '" aria-label="' + (i + 1) + '">' + backNow() + '</button></div>';
   }).join('');
   m.innerHTML = '<div class="pick-head"><div class="eyebrow">' + esc(S.nav.pick) + '</div><h1>' + esc(S.pickTitle) + '</h1><p>' + esc(S.pickIntro) + '<br>' + esc(S.pickIntro2) + '</p></div>'
     + '<div class="faint" style="text-align:center">' + esc(S.focusLabel) + '</div><div class="chips focus">' + chips + '</div>'
     + '<div class="fan deck" id="fan">' + fan + '</div>'
     + '<div class="deckbar"><button type="button" class="btn sm" data-step="-1" aria-label="prev">‹</button><span id="deckpos" class="faint"></span><button type="button" class="btn sm" data-step="1" aria-label="next">›</button></div>'
-    + '<div class="tap-hint">' + (pick.chosen == null ? esc(S.tapACard) : '') + '</div><div class="reveal" id="reveal"></div>';
+    + '<div class="tap-hint">' + (pick.chosen == null ? esc(S.tapACard) : '') + '</div><div class="reveal" id="reveal"></div>'
+    + lookStripHTML('cardback');
   bindDeck(m);
+  // Changing the back redraws the fan, so the new one is seen straight away.
+  bindLookStrip(m, () => renderPick(args, params));
   $$('[data-focus]', m).forEach((b) => b.addEventListener('click', () => {
     if (pick.chosen != null) return;
     pick.focus = b.getAttribute('data-focus'); store.set('nabu-focus', pick.focus);
@@ -97,7 +100,7 @@ function renderReveal(animate) {
   const kws = I ? I.pos.slice(0, 3).join(', ') : '';
   const r = $('#reveal');
   r.innerHTML = '<div class="reveal-top"><div class="eyebrow">' + esc(S.yourCard) + '</div><button class="btn sm" id="redrawTop">🔄 ' + esc(S.redraw) + '</button></div>'
-    + '<div class="hero"><div class="flip"><div class="inner"' + (animate ? '' : ' style="animation:none"') + '><span class="face fr">' + faceSVG(c) + '</span><span class="face bk">' + BACK + '</span></div></div>'
+    + '<div class="hero"><div class="flip"><div class="inner"' + (animate ? '' : ' style="animation:none"') + '><span class="face fr">' + faceSVG(c) + '</span><span class="face bk">' + backNow() + '</span></div></div>'
     + '<div><div class="name">' + esc(c.name) + '</div><div class="en">' + esc(other.name) + '</div><div class="meta m-' + c.suit + '"><i>' + esc(c.meta) + '</i></div></div></div>'
     + insightHTML(id, pick.focus)
     + '<div class="ins" style="border-color:var(--gold)"><p class="muted" style="margin-bottom:12px">' + esc(S.quickNote) + '</p>'

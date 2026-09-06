@@ -114,6 +114,58 @@ function lookPreview(kind, item) {
   if (kind === 'coin') return '<span class="lk-coin">' + coinFaceFor(item, '') + '</span>';
   return '<span class="lk-diary ' + esc('paper-' + item.id) + '"><i></i><i></i><i></i></span>';
 }
+/* The same tiles as the picker, in one row, for the screen the look belongs
+   to. A locked one is drawn in full and dimmed rather than hidden, so the
+   choice is made in front of the thing it changes. */
+function lookStripHTML(kind) {
+  const S = T(), set = LOOK_SETS[kind] || [], now = LOOKS.get(kind), pro = proOn();
+  if (!set.length) return '';
+  return '<div class="card lookstrip"><div class="ls-h"><h3>' + esc(S.lookKinds[kind]) + '</h3>'
+    + '<a href="#/looks">' + esc(S.looksAll) + ' ›</a></div>'
+    + '<p class="hint">' + esc(pro ? S.looksYours : S.looksStripNote) + '</p>'
+    + '<div class="lookgrid four">' + set.map((x) => {
+      const locked = x.pro && !pro, on = now === x.id;
+      return '<button type="button" class="look' + (on ? ' on' : '') + (locked ? ' locked' : '') + '" data-strip="' + kind + ':' + x.id + '">'
+        + lookPreview(kind, x) + '<b>' + esc(L(x.name)) + '</b>'
+        + (locked ? '<span class="lk-lock">🔒</span>' : '') + (on ? '<span class="lk-on">✓</span>' : '') + '</button>';
+    }).join('') + '</div></div>';
+}
+/* redraw is called after a change, so the screen shows the new look at once. */
+function bindLookStrip(root, redraw) {
+  $$('[data-strip]', root).forEach((b) => b.addEventListener('click', () => {
+    const p = b.getAttribute('data-strip').split(':'), item = (LOOK_SETS[p[0]] || []).filter((x) => x.id === p[1])[0];
+    if (!item) return;
+    if (item.pro && !proOn()) { toast(T().looksNeedPlus); location.hash = '#/unlock'; return; }
+    LOOKS.set(p[0], p[1]); toast('✓');
+    if (redraw) redraw();
+  }));
+}
+/* The same tiles as the picker, in one row, for the screen the look belongs
+   to. A locked one is drawn in full and dimmed rather than hidden, so the
+   choice is made in front of the thing it changes. */
+function lookStripHTML(kind) {
+  const S = T(), set = LOOK_SETS[kind] || [], now = LOOKS.get(kind), pro = proOn();
+  if (!set.length) return '';
+  return '<div class="card lookstrip"><div class="ls-h"><h3>' + esc(S.lookKinds[kind]) + '</h3>'
+    + '<a href="#/looks">' + esc(S.looksAll) + ' ›</a></div>'
+    + '<p class="hint">' + esc(pro ? S.looksYours : S.looksStripNote) + '</p>'
+    + '<div class="lookgrid four">' + set.map((x) => {
+      const locked = x.pro && !pro, on = now === x.id;
+      return '<button type="button" class="look' + (on ? ' on' : '') + (locked ? ' locked' : '') + '" data-strip="' + kind + ':' + x.id + '">'
+        + lookPreview(kind, x) + '<b>' + esc(L(x.name)) + '</b>'
+        + (locked ? '<span class="lk-lock">🔒</span>' : '') + (on ? '<span class="lk-on">✓</span>' : '') + '</button>';
+    }).join('') + '</div></div>';
+}
+/* redraw is called after a change, so the screen shows the new look at once. */
+function bindLookStrip(root, redraw) {
+  $$('[data-strip]', root).forEach((b) => b.addEventListener('click', () => {
+    const p = b.getAttribute('data-strip').split(':'), item = (LOOK_SETS[p[0]] || []).filter((x) => x.id === p[1])[0];
+    if (!item) return;
+    if (item.pro && !proOn()) { toast(T().looksNeedPlus); location.hash = '#/unlock'; return; }
+    LOOKS.set(p[0], p[1]); toast('✓');
+    if (redraw) redraw();
+  }));
+}
 function renderLooks() {
   const S = T(), m = $('#main');
   const draw = () => {

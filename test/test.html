@@ -475,7 +475,7 @@ async function go(hash, sel) { W().location.hash = hash; await sleep(30); return
       await go('#/home', '#actwrap .act');
       ok(d.querySelector('#actwrap h2.tclamp') && d.querySelector('#actwrap .body.clamp'), 'the home teaser is the one that shortens the title and the text');
       await go('#/play/tree', '#shake'); ok(d.querySelector('#tree svg') && d.querySelector('#treemsg').hidden, 'the message tree starts with no message shown');
-      ok(!!d.querySelector('#main .lookslink a[href="#/looks"]'), 'the message tree offers the looks picker where the tree is');
+      ok(d.querySelectorAll('.lookstrip .look').length === 4 && d.querySelectorAll('.lookstrip .look.locked').length === 3 && d.querySelector('.lookstrip .look.on'), 'the message tree carries the four trees themselves, three of them locked');
       d.querySelector('#shake').click(); await waitFor(() => !d.querySelector('#treemsg').hidden, 6000);
       ok(d.querySelector('#treetext').textContent.length > 20 && d.querySelectorAll('#tree .petals i').length === 0, 'shaking the tree drops one written message and clears the petals');
       await go('#/play/coin', '#coinflip'); ok(d.querySelector('#coin svg') && d.querySelector('#coinres').textContent === '', 'the coin starts unflipped');
@@ -484,7 +484,7 @@ async function go(hash, sel) { W().location.hash = hash; await sleep(30); return
       { const tb = d.querySelector('#coin svg text').getBBox();
         ok(Math.abs((tb.y + tb.height / 2) - 80) < 3 && Math.abs((tb.x + tb.width / 2) - 80) < 2,
           'the answer sits on the middle of the coin, not below it'); }
-      ok(!!d.querySelector('#main .lookslink a[href="#/looks"]'), 'the coin screen offers the looks picker where the coin is');
+      ok(d.querySelectorAll('.lookstrip .look').length === 4 && d.querySelectorAll('.lookstrip .look.locked').length === 3 && d.querySelector('.lookstrip .lk-coin svg'), 'the coin screen carries the four coins themselves, three of them locked');
       ok(!d.querySelector('#coinflip') && d.querySelector('.luckbox') && /30\.000đ/.test(d.querySelector('.luckbox').textContent) && /50\.000đ/.test(d.querySelector('.luckbox').textContent) && d.querySelector('#main > p > a[href="#/unlock"]'), 'the free weekly turn is used up, and the price for unlimited plus a code box appear');
       d.querySelector('#luckcode').value = N.makeCode('luck', '2099-01-01'); d.querySelector('#luckgo').click(); await waitFor(() => d.querySelector('#coinflip'), 4000);
       ok(d.querySelector('#coinflip') && !d.querySelector('.luckbox'), 'the bundle code lifts the limit on the coin');
@@ -535,11 +535,19 @@ async function go(hash, sel) { W().location.hash = hash; await sleep(30); return
       await go('#/play/pet', '.petpick');
       d.querySelector('[data-kind="cat"]').click(); await sleep(60);
       ok(JSON.parse(w.localStorage.getItem('nabu-pets')).length === 1 && d.querySelector('.petstage .pethome') && d.querySelector('.petstage .aura')
-        && d.querySelectorAll('.shelf').length === 3 && d.querySelectorAll('.carelist li.locked').length === 4 && d.querySelector('#feed'),
-        'the chosen companion arrives with a home, a halo, three shelves and four locked ways to earn more');
-      ok(d.querySelectorAll('[data-shelf^="food"]').length === 8 && d.querySelectorAll('[data-shelf^="food"].locked').length === 6
-        && d.querySelectorAll('[data-shelf^="home"].locked').length === 3 && d.querySelectorAll('[data-shelf^="wear"].locked').length === 4,
-        'two plain foods and a grass mat are free; the good food, the homes and the charms need Plus');
+        && d.querySelectorAll('.petstage .stagebtn').length === 4 && !d.querySelector('.sheet')
+        && d.querySelectorAll('.carelist li.locked').length === 4 && d.querySelector('#feed'),
+        'the chosen companion arrives with a home, a halo, four ways to dress it on the scene itself, and four locked ways to earn more');
+      d.querySelector('[data-open-sheet="food"]').click(); await sleep(40);
+      ok(d.querySelector('.sheet') && d.querySelectorAll('[data-sheet-tab]').length === 4
+        && d.querySelectorAll('[data-shelf^="food"]').length === 8 && d.querySelectorAll('[data-shelf^="food"].locked').length === 6,
+        'a button on the scene lifts one sheet holding all four groups; two plain foods are free and six need Plus');
+      d.querySelector('[data-sheet-tab="home"]').click(); await sleep(40);
+      ok(d.querySelectorAll('[data-shelf^="home"]').length === 4 && d.querySelectorAll('[data-shelf^="home"].locked').length === 3, 'the grass mat is free and the three homes need Plus');
+      d.querySelector('[data-sheet-tab="wear"]').click(); await sleep(40);
+      ok(d.querySelectorAll('[data-shelf^="wear"].locked').length === 4, 'every charm needs Plus');
+      d.querySelector('[data-close-sheet]').click(); await sleep(40);
+      ok(!d.querySelector('.sheet'), 'the sheet closes again');
       d.querySelector('#feed').click(); await waitFor(() => !d.querySelector('#feed'), 3000);
       { const p1 = JSON.parse(w.localStorage.getItem('nabu-pets'))[0];
         ok(p1.xp === 10 && p1.meals === 1 && p1.streak === 1 && p1.last > 0 && Number(w.localStorage.getItem('nabu-coins')) === 2

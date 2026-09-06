@@ -72,8 +72,8 @@ const LUCKS = {
   travel: {
     id: 'travel', sym: '🧭', ink: '#C4643C', aura: '#F8D9C6',
     name: { vi: 'Đi lại', en: 'Travel' },
-    line: { vi: 'Én Gió biết đường về, nên chuyến đi nào của bạn cũng có lối quay lại.', en: 'The wind swallow knows the way home, so every journey of yours has a way back.' },
-    proLine: { vi: 'Thiên Mã không cần đường, nơi nào bạn muốn đến thì nó đã đứng sẵn ở đó.', en: 'The sky horse needs no road; wherever you mean to go, it is already standing there.' }
+    line: { vi: 'Én Gió bay rất xa rồi vẫn về đúng tổ, nên đường bạn đi cũng luôn có lối về bình an.', en: 'The wind swallow flies far and still finds its own nest, so your road always has a safe way back.' },
+    proLine: { vi: 'Thiên Mã đi cùng người đi xa, dù là đi làm hay đi chơi, để bạn thượng lộ bình an và về đến nhà nguyên vẹn.', en: 'The sky horse rides with whoever goes far, for work or for pleasure, and sees them safely there and safely home.' }
   }
 };
 const petLuck = (kind) => LUCKS[PET_LUCK[kind] || 'love'];
@@ -125,12 +125,12 @@ const PET_BLESS = {
     { vi: 'Điều bạn lo về sức khỏe nên được hỏi bác sĩ, đừng hỏi mỗi mình bạn.', en: 'The worry you are carrying belongs to a doctor, not only to you.' }
   ],
   travel: [
-    { vi: 'Chuyến đi bạn hoãn mãi có thể bắt đầu bằng một việc rất nhỏ hôm nay.', en: 'The trip you keep postponing can start with one small thing today.' },
-    { vi: 'Bạn kiểm tra lại giấy tờ và giờ giấc một lần nữa trước khi đi.', en: 'Check your papers and your times once more before you set out.' },
-    { vi: 'Đường xa nhưng thuận. Bạn cứ đi sớm hơn dự định một chút.', en: 'The way is long but clear. Set out a little earlier than you planned.' },
-    { vi: 'Một nơi bạn từng đến sẽ gọi bạn quay lại trong năm nay.', en: 'A place you have been before will call you back this year.' },
-    { vi: 'Bạn đi nhẹ thôi. Thứ bạn cần ở đó nhiều hơn bạn tưởng.', en: 'Travel light. More of what you need is already there.' },
-    { vi: 'Người bạn gặp trên đường quan trọng hơn nơi bạn đến.', en: 'Who you meet on the way matters more than where you arrive.' }
+    { vi: 'Chuyến đi sắp tới của bạn thuận buồm xuôi gió. Bạn cứ yên tâm lên đường.', en: 'The journey ahead of you runs smooth. Set out with an easy mind.' },
+    { vi: 'Bạn kiểm tra lại giấy tờ và giờ khởi hành một lần nữa, rồi đi cho nhẹ lòng.', en: 'Check your papers and your departure time once more, then travel light in your mind.' },
+    { vi: 'Đi xa thì nhớ giữ sức. Đến nơi bình an quan trọng hơn đến nơi thật sớm.', en: 'Look after yourself out there. Arriving safe matters more than arriving early.' },
+    { vi: 'Dù chuyến này là đi làm hay đi chơi, vẫn có người trông chừng bạn từ xa.', en: 'Whether this trip is for work or for pleasure, someone is watching over you from home.' },
+    { vi: 'Đường có thể đổi, nhưng bạn vẫn sẽ đến nơi. Bạn đừng lo lắng quá.', en: 'The road may change, and you will still arrive. Do not worry so much.' },
+    { vi: 'Thượng lộ bình an. Về đến nơi rồi bạn nhắn một câu cho người đang đợi.', en: 'Safe travels. Send word to whoever is waiting once you are there.' }
   ]
 };
 
@@ -569,19 +569,31 @@ const PET_ART = {
   }),
   pegasus: (c) => ({
     glow: true,
-    ears: '<path d="M42 34 Q38 16 44 8 Q52 18 50 32 Z" fill="' + c.body + '"/><path d="M78 34 Q82 16 76 8 Q68 18 70 32 Z" fill="' + c.body + '"/>'
-      + '<path d="M60 26 Q44 18 34 26 Q46 24 52 30 Z" fill="#C9B0EA"/>'
-      + '<path d="M60 20 Q46 10 34 16 Q48 16 56 24 Z" fill="#E0D2F7"/>',
-    behind: '<path d="M28 74 q-26 -14 -24 -38 q18 18 30 30 Z" fill="#FFFFFF"/>'
-      + '<path d="M92 74 q26 -14 24 -38 q-18 18 -30 30 Z" fill="#FFFFFF"/>'
-      + '<path d="M30 80 q-22 -6 -24 -24 q16 12 28 18 Z" fill="#E0D2F7"/>'
-      + '<path d="M90 80 q22 -6 24 -24 q-16 12 -28 18 Z" fill="#E0D2F7"/>'
-      + '<path d="M86 98 q22 4 24 22 q-18 -2 -26 -12 Z" fill="#C9B0EA"/>',
-    front: '<ellipse cx="60" cy="68" rx="11" ry="8" fill="' + c.dark + '"/>'
-      + '<ellipse cx="56" cy="66" rx="1.8" ry="2.4" fill="#4A3728"/><ellipse cx="64" cy="66" rx="1.8" ry="2.4" fill="#4A3728"/>'
-      + '<path d="M40 46 Q28 40 22 46 Q34 46 40 54 Z" fill="#E0D2F7"/>',
-    overBody: '<g fill="#FFF3C4" opacity=".9"><circle cx="44" cy="82" r="2"/><circle cx="76" cy="88" r="1.8"/><circle cx="58" cy="76" r="1.6"/></g>',
-    noMouth: true
+    /* Wings spread from the shoulders and stay inside the square; the mane
+       falls down the neck rather than sitting on top of the head. */
+    behind: '<path d="M34 84 Q10 68 7 36 Q27 54 41 76 Z" fill="#FFFFFF"/>'
+      + '<path d="M35 88 Q15 78 10 52 Q27 68 42 84 Z" fill="#EFE8FF"/>'
+      + '<path d="M37 92 Q21 88 17 68 Q31 80 43 88 Z" fill="#DCCEF7"/>'
+      + '<path d="M86 84 Q110 68 113 36 Q93 54 79 76 Z" fill="#FFFFFF"/>'
+      + '<path d="M85 88 Q105 78 110 52 Q93 68 78 84 Z" fill="#EFE8FF"/>'
+      + '<path d="M83 92 Q99 88 103 68 Q89 80 77 88 Z" fill="#DCCEF7"/>'
+      + '<g stroke="#C9B0EA" stroke-width="1.1" fill="none" opacity=".7">'
+      + '<path d="M14 46 Q26 60 34 78 M12 62 Q24 72 36 86 M106 46 Q94 60 86 78 M108 62 Q96 72 84 86"/></g>'
+      + '<path d="M50 28 Q33 32 29 50 Q26 66 34 78 Q31 60 41 47 Q47 37 50 28 Z" fill="#B79BEA"/>'
+      + '<path d="M54 30 Q40 36 37 52 Q35 64 40 74 Q39 58 47 47 Q52 39 54 30 Z" fill="#D3C2F5"/>'
+      + '<path d="M84 100 Q108 104 112 122 Q93 118 82 107 Z" fill="#C9B0EA"/>'
+      + '<path d="M86 96 Q106 96 112 110" stroke="#E0D2F7" stroke-width="4" fill="none" stroke-linecap="round"/>',
+    ears: '<path d="M42 32 Q39 14 47 8 Q54 18 52 31 Z" fill="' + c.body + '"/><path d="M78 32 Q81 14 73 8 Q66 18 68 31 Z" fill="' + c.body + '"/>'
+      + '<path d="M46 26 Q46 18 49 14 Q51 20 50 27 Z" fill="#C9B0EA"/><path d="M74 26 Q74 18 71 14 Q69 20 70 27 Z" fill="#C9B0EA"/>',
+    front: '<ellipse cx="60" cy="72" rx="14" ry="11" fill="#FFF7EE"/>'
+      + '<ellipse cx="60" cy="72" rx="14" ry="11" fill="none" stroke="' + c.dark + '" stroke-width="1.1" opacity=".55"/>'
+      + '<ellipse cx="54" cy="69" rx="2.2" ry="2.8" fill="#7A6250"/><ellipse cx="66" cy="69" rx="2.2" ry="2.8" fill="#7A6250"/>'
+      + '<path d="M54 78 q6 4 12 0" stroke="#7A6250" stroke-width="1.6" fill="none" stroke-linecap="round"/>'
+      + '<path d="M60 32 Q53 40 55 48 Q60 42 64 46 Q65 38 60 32 Z" fill="#D3C2F5"/>',
+    overBody: '<path d="M60 68 q-9 14 -6 26 q9 4 18 0 q3 -12 -6 -26 Z" fill="#FFF7EE" opacity=".9"/>'
+      + '<g fill="#FFF3C4"><circle cx="24" cy="72" r="2.2"/><circle cx="100" cy="68" r="2"/><circle cx="48" cy="42" r="1.6"/><circle cx="94" cy="98" r="1.8"/></g>'
+      + '<ellipse cx="38" cy="106" rx="8" ry="4.6" fill="#E5BE5E"/><ellipse cx="82" cy="106" rx="8" ry="4.6" fill="#E5BE5E"/>',
+    feet: false, eyeY: 50, noMouth: true, blushY: 58, charmY: 92
   })
 };
 
@@ -594,7 +606,7 @@ function petSVG(kind, coat, mood, wear) {
   const eye = (x) => happy
     ? '<path d="M' + (x - 5) + ' ' + eyeY + ' q5 -6 10 0" fill="none" stroke="' + c.ink + '" stroke-width="2.6" stroke-linecap="round"/>'
     : '<ellipse cx="' + x + '" cy="' + eyeY + '" rx="3.4" ry="4.4" fill="' + c.ink + '"/><circle cx="' + (x + 1.2) + '" cy="' + (eyeY - 1.8) + '" r="1.2" fill="#fff"/>';
-  const face = eye(50) + eye(70)
+  const face = '<g class="eyes">' + eye(50) + eye(70) + '</g>'
     + (art.noMouth ? '' : '<path d="M56 64 q4 4 8 0" fill="none" stroke="' + c.ink + '" stroke-width="2.4" stroke-linecap="round"/>')
     + '<ellipse cx="40" cy="' + blushY + '" rx="5" ry="3.2" fill="#F2A9BE" opacity=".55"/>'
     + '<ellipse cx="80" cy="' + blushY + '" rx="5" ry="3.2" fill="#F2A9BE" opacity=".55"/>';
@@ -654,7 +666,7 @@ function petAuraHTML(kind, n) {
 /* ---- the screen ---- */
 function renderPet(want) {
   const S = T(), m = $('#main');
-  let busy = false, open = '';
+  let busy = false, open = '', sheet = '';
 
   /* One line of the meal list: what it adds, and whether it is open. */
   const gainRow = (label, got, worth, locked) => '<li' + (locked ? ' class="locked"' : '') + '><span>' + esc(label) + '</span><b>' + (locked ? '🔒 +' + worth : '+' + got) + '</b></li>';
@@ -664,7 +676,9 @@ function renderPet(want) {
     const st = PETS.step(p), gain = PETS.gain(p), pro = proOn(), ready = PETS.canFeed(p);
     const bless = prayed ? PETS.blessing(p) : null;
     return '<div class="card petwrap luck-' + luck.id + '">'
-      + '<div class="petstage" id="petstage">' + petHomeSVG(PETS.home(p).id) + petAuraHTML(p.kind) + petSVG(p.kind, coat, ready ? '' : 'happy', PETS.wear(p)) + '<span class="crumbs" id="crumbs"></span><span class="toys" id="toys"></span></div>'
+      + '<div class="petstage" id="petstage">' + petHomeSVG(PETS.home(p).id) + petAuraHTML(p.kind) + petSVG(p.kind, coat, ready ? '' : 'happy', PETS.wear(p)) + '<span class="crumbs" id="crumbs"></span><span class="toys" id="toys"></span>'
+      + '<span class="stagebtns left">' + stageBtn('food', '🍚', S.petFoodTitle) + stageBtn('wear', '👑', S.petWearTitle) + '</span>'
+      + '<span class="stagebtns right">' + stageBtn('home', '🏠', S.petHomeShort) + stageBtn('coat', '🎨', S.petCoat) + '</span></div>'
       + '<div class="lucktag" style="--ink:' + luck.ink + ';--aura:' + luck.aura + '">' + luck.sym + ' ' + esc(S.petBrings(L(luck.name))) + '</div>'
       + '<p class="petline">' + esc(L(petLine(p.kind))) + '</p>'
       + '<div class="charm"><span class="lbl">' + esc(S.petLevel(st.lv)) + '</span><span class="bar"><i style="width:' + st.at + '%;background:' + luck.ink + '"></i></span>'
@@ -691,18 +705,41 @@ function renderPet(want) {
       + '</div>';
   };
 
-  /* One shelf of things to give the companion: food, a home, something to
-     wear. Locked items are shown in full with what they would add. */
-  const shelfHTML = (title, note, set, chosenId, key, label) => '<div class="card"><h3 style="margin-bottom:4px">' + esc(title) + '</h3><p class="hint" style="margin-bottom:10px">' + esc(note) + '</p>'
-    + '<div class="shelf">' + set.map((x) => {
-      const locked = x.pro && !proOn();
-      return '<button type="button" class="sh' + (chosenId === x.id ? ' on' : '') + (locked ? ' locked' : '') + '" data-shelf="' + key + ':' + x.id + '">'
-        + '<span class="shart">' + (label === 'food' ? x.sym : (label === 'home' ? petHomeSVG(x.id) : petWearArt(x.id))) + '</span>'
-        + '<b>' + esc(L(x.name)) + '</b>'
-        + (x.add ? '<span class="plus">+' + x.add + '</span>' : '')
-        + (locked ? '<span class="sh-lock">🔒</span>' : '') + (chosenId === x.id ? '<span class="sh-on">✓</span>' : '')
-        + '</button>';
-    }).join('') + '</div></div>';
+  /* A button on the edge of the scene, so what can be changed is visible the
+     moment the screen opens rather than three scrolls down. */
+  const stageBtn = (key, icon, label) => '<button type="button" class="stagebtn" data-open-sheet="' + key + '" aria-label="' + esc(label) + '"><span class="ic">' + icon + '</span><span class="lb">' + esc(label) + '</span></button>';
+
+  /* One shelf of things to give the companion. Locked items are shown in full
+     with what they would add, never hidden. */
+  const shelfRows = (set, chosenId, key, label) => '<div class="shelf">' + set.map((x) => {
+    const locked = x.pro && !proOn();
+    return '<button type="button" class="sh' + (chosenId === x.id ? ' on' : '') + (locked ? ' locked' : '') + '" data-shelf="' + key + ':' + x.id + '">'
+      + '<span class="shart">' + (label === 'food' ? x.sym : (label === 'home' ? petHomeSVG(x.id) : (label === 'coat' ? '<span class="dot" style="background:' + x.body + '"></span>' : petWearArt(x.id)))) + '</span>'
+      + '<b>' + esc(L(x.name) || x.id) + '</b>'
+      + (x.add ? '<span class="plus">+' + x.add + '</span>' : '')
+      + (locked ? '<span class="sh-lock">🔒</span>' : '') + (chosenId === x.id ? '<span class="sh-on">✓</span>' : '')
+      + '</button>';
+  }).join('') + '</div>';
+
+  /* The four groups live in one sheet, so a visitor who opens the food can go
+     straight on to the home without closing anything. */
+  const SHEETS = [
+    { key: 'food', icon: '🍚', title: () => S.petFoodTitle, note: () => S.petFoodNote, set: () => PET_FOODS, now: (p) => PETS.food(p).id, art: 'food' },
+    { key: 'home', icon: '🏠', title: () => S.petHomeTitle, note: () => S.petHomeNote, set: () => PET_HOMES, now: (p) => PETS.home(p).id, art: 'home' },
+    { key: 'wear', icon: '👑', title: () => S.petWearTitle, note: () => S.petWearNote, set: () => PET_WEARS, now: (p) => PETS.wear(p).id, art: 'wear' },
+    { key: 'coat', icon: '🎨', title: () => S.petCoat, note: () => S.petCoatNote, set: () => PET_COATS.map((c) => ({ id: c.id, pro: c.pro, add: 3, body: c.body, name: S.coatNames[c.id] || c.id })), now: (p) => PETS.coat(p).id, art: 'coat' }
+  ];
+  const sheetHTML = (p, open) => {
+    const cur = SHEETS.filter((x) => x.key === open)[0] || SHEETS[0];
+    return '<div class="sheet" id="petsheet"><div class="sh-back" data-close-sheet="1"></div>'
+      + '<div class="sh-body" role="dialog" aria-modal="true" aria-label="' + esc(cur.title()) + '">'
+      + '<div class="sh-grip"></div>'
+      + '<div class="chips sh-tabs">' + SHEETS.map((x) => '<button type="button" class="chip' + (x.key === cur.key ? ' on' : '') + '" data-sheet-tab="' + x.key + '">' + x.icon + ' ' + esc(x.title()) + '</button>').join('') + '</div>'
+      + '<p class="hint">' + esc(cur.note()) + '</p>'
+      + shelfRows(cur.set(), cur.now(p), cur.key, cur.art)
+      + '<button type="button" class="btn block" data-close-sheet="1" style="margin-top:12px">' + esc(S.sheetClose) + '</button>'
+      + '</div></div>';
+  };
 
   const draw = () => {
     const pets = PETS.all();
@@ -720,14 +757,10 @@ function renderPet(want) {
       + (room
         ? '<button type="button" class="btn block" id="addpet" style="margin-top:12px">➕ ' + esc(S.petAdd) + (left > 1 ? ' · ' + esc(S.petRoomLeft(left)) : '') + '</button>'
         : (proOn() ? '' : '<a class="salebar" href="#/unlock"><span class="tag">✨ ' + esc(S.plusName) + '</span><span class="txt">' + esc(S.petPlusPitch) + '</span><span class="go">' + esc(S.unlockLink) + ' ›</span></a>'))
-      + shelfHTML(S.petFoodTitle, S.petFoodNote, PET_FOODS, PETS.food(p).id, 'food', 'food')
-      + shelfHTML(S.petHomeTitle, S.petHomeNote, PET_HOMES, PETS.home(p).id, 'home', 'home')
-      + shelfHTML(S.petWearTitle, S.petWearNote, PET_WEARS, PETS.wear(p).id, 'wear', 'wear')
-      + '<div class="card"><h3 style="margin-bottom:8px">' + esc(S.petCoat) + '</h3><div class="chips coats">'
-      + PET_COATS.map((c) => { const locked = c.pro && !proOn(); return '<button type="button" class="coat' + (coat.id === c.id ? ' on' : '') + (locked ? ' locked' : '') + '" data-coat="' + c.id + '" style="background:' + c.body + '" aria-label="' + esc(c.id) + '">' + (locked ? '🔒' : '') + '</button>'; }).join('')
-      + '</div><label class="f" for="petname" style="margin-top:12px">' + esc(S.petName) + '</label><input id="petname" maxlength="24" value="' + esc(p.name || '') + '" placeholder="' + esc(L(PET_NAMES[p.kind])) + '">'
+      + '<div class="card"><label class="f" for="petname">' + esc(S.petName) + '</label><input id="petname" maxlength="24" value="' + esc(p.name || '') + '" placeholder="' + esc(L(PET_NAMES[p.kind])) + '">'
       + '<button class="btn block" id="petswap" style="margin-top:10px">' + esc(pets.length > 1 ? S.petLetGo : S.petSwap) + '</button></div>'
-      + '<p style="margin-top:14px"><a href="#/play" class="backlink">← ' + esc(S.actTitle) + '</a></p>';
+      + '<p style="margin-top:14px"><a href="#/play" class="backlink">← ' + esc(S.actTitle) + '</a></p>'
+      + (sheet ? sheetHTML(p, sheet) : '');
 
     $$('[data-open]', m).forEach((b) => b.addEventListener('click', () => { open = b.getAttribute('data-open'); draw(); }));
     const add = $('#addpet');
@@ -773,17 +806,16 @@ function renderPet(want) {
       $('#petstage').classList.add('praying');
       setTimeout(() => { PETS.pray(p); busy = false; draw(); }, 1200);
     });
+    $$('[data-open-sheet]', m).forEach((b) => b.addEventListener('click', () => { sheet = b.getAttribute('data-open-sheet'); draw(); }));
+    $$('[data-sheet-tab]', m).forEach((b) => b.addEventListener('click', () => { sheet = b.getAttribute('data-sheet-tab'); draw(); }));
+    $$('[data-close-sheet]', m).forEach((b) => b.addEventListener('click', () => { sheet = ''; draw(); }));
     $$('[data-shelf]', m).forEach((b) => b.addEventListener('click', () => {
       const parts = b.getAttribute('data-shelf').split(':'), key = parts[0], id = parts[1];
-      const set = key === 'food' ? PET_FOODS : (key === 'home' ? PET_HOMES : PET_WEARS);
+      const set = key === 'food' ? PET_FOODS : (key === 'home' ? PET_HOMES : (key === 'wear' ? PET_WEARS : PET_COATS));
       const item = set.filter((x) => x.id === id)[0];
+      if (!item) return;
       if (item.pro && !proOn()) { toast(S.petPlusItem); location.hash = '#/unlock'; return; }
       p[key] = id; PETS.put(p); draw();
-    }));
-    $$('[data-coat]', m).forEach((b) => b.addEventListener('click', () => {
-      const id = b.getAttribute('data-coat'), c = PET_COATS.filter((x) => x.id === id)[0];
-      if (c.pro && !proOn()) { toast(S.petPlusItem); location.hash = '#/unlock'; return; }
-      p.coat = id; PETS.put(p); draw();
     }));
     $('#petname').addEventListener('input', () => { p.name = $('#petname').value.trim(); PETS.put(p); });
     $('#petswap').addEventListener('click', () => {

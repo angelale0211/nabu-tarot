@@ -736,6 +736,17 @@ main{padding:22px 0 30px}
 .nav a{position:relative}.nav .saletag{position:absolute;top:-1px;right:calc(50% - 20px);font-size:11px;line-height:1}
 /* ---- looks, the pet, and the paid trees ---- */
 .lookgrid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+.lookgrid.four{grid-template-columns:repeat(4,1fr);gap:7px}
+.lookgrid.four .look{padding:9px 5px;gap:6px}
+.lookgrid.four .look b{font-size:11px;line-height:1.25;text-align:center}
+.lookgrid.four .lk-card{width:100%}.lookgrid.four .lk-tree{width:100%}.lookgrid.four .lk-coin{width:86%}
+.lookgrid.four .lk-diary{width:100%;height:56px;padding:6px 5px}
+.lookgrid.four .lk-lock{top:4px;right:5px;font-size:12px}.lookgrid.four .lk-on{top:4px;left:5px;font-size:12px}
+/* The row that sits on the screen the look belongs to. */
+.lookstrip .ls-h{display:flex;align-items:baseline;justify-content:space-between;gap:10px;margin-bottom:2px}
+.lookstrip .ls-h h3{margin:0}
+.lookstrip .ls-h a{color:var(--gold-deep);font-weight:600;font-size:12.5px;text-decoration:none;white-space:nowrap}
+.lookstrip .hint{margin-bottom:10px}
 .look{position:relative;display:flex;flex-direction:column;align-items:center;gap:8px;background:var(--surface);border:1px solid var(--rule-soft);border-radius:16px;padding:12px 10px;font:inherit;color:inherit;cursor:pointer}
 .look.on{border-color:var(--primary);border-width:1.5px}
 .look.locked .lk-card,.look.locked .lk-tree,.look.locked .lk-coin,.look.locked .lk-diary{opacity:.92}
@@ -773,17 +784,59 @@ main{padding:22px 0 30px}
 .petart{position:relative;z-index:2;width:100%;height:auto;display:block}
 /* A companion is never quite still: it breathes, and it lifts a paw now and
    then. */
-.petstage .petart,.treepet .petart,.petpick .petart{animation:breathing 3.4s ease-in-out infinite}
-@keyframes breathing{0%,100%{transform:translateY(0) scale(1)}50%{transform:translateY(-3px) scale(1.015)}}
-.petstage .petart .ft.wav,.treepet .petart .ft.wav{transform-box:fill-box;transform-origin:20% 60%;animation:pawwave 4.6s ease-in-out infinite}
+/* One timeline, so nothing fights: four slow breaths, a crouch, a hop, and a
+   settle. The squash works from the feet, the way weight does. */
+.petstage .petart,.petpick .petart{transform-origin:50% 100%;animation:petalive 7.2s cubic-bezier(.37,0,.63,1) infinite}
+@keyframes petalive{
+  0%{transform:translateY(0) scaleY(1)}
+  9%{transform:translateY(-3px) scaleY(1.025)}
+  18%{transform:translateY(0) scaleY(1)}
+  27%{transform:translateY(-3px) scaleY(1.025)}
+  36%{transform:translateY(0) scaleY(1)}
+  45%{transform:translateY(-2px) scaleY(1.02)}
+  54%{transform:translateY(0) scaleY(1)}
+  62%{transform:translateY(1px) scaleY(.93)}
+  69%{transform:translateY(-15px) scaleY(1.07)}
+  75%{transform:translateY(0) scaleY(.95)}
+  80%{transform:translateY(0) scaleY(1.01)}
+  84%{transform:translateY(0) scaleY(1)}
+  93%{transform:translateY(-3px) scaleY(1.025)}
+  100%{transform:translateY(0) scaleY(1)}
+}
+/* An eye closes for a moment now and then, which is most of what makes a
+   drawn animal look awake. */
+.petstage .petart .eyes{transform-box:fill-box;transform-origin:center;animation:blinking 6.4s ease-in-out infinite}
+@keyframes blinking{0%,90%,100%{transform:scaleY(1)}93%{transform:scaleY(.08)}96%{transform:scaleY(1)}}
+.petstage .petart .ft.wav{transform-box:fill-box;transform-origin:20% 60%;animation:pawwave 5.8s ease-in-out infinite}
 @keyframes pawwave{0%,62%,100%{transform:rotate(0) translateY(0)}70%{transform:rotate(-24deg) translateY(-5px)}78%{transform:rotate(6deg) translateY(-5px)}86%{transform:rotate(-20deg) translateY(-5px)}94%{transform:rotate(0) translateY(0)}}
-@media (prefers-reduced-motion:reduce){.petstage .petart,.treepet .petart,.petpick .petart,.petstage .petart .ft.wav,.treepet .petart .ft.wav,.treepet{animation:none}}
+@media (prefers-reduced-motion:reduce){.petstage .petart,.petpick .petart,.petstage .petart .ft.wav,.petstage .petart .eyes{animation:none}}
 /* The companion stands to the left of centre, in front of its own place. */
 .petstage .petart{position:absolute;left:5%;bottom:1%;width:68%;height:auto}
 /* A spirit beast is lit from within, so it reads as the rarer thing. */
 .petart.myth{filter:drop-shadow(0 0 6px rgba(229,190,94,.55));animation:mythglow 3.6s ease-in-out infinite}
 @keyframes mythglow{0%,100%{filter:drop-shadow(0 0 4px rgba(229,190,94,.4))}50%{filter:drop-shadow(0 0 10px rgba(229,190,94,.75))}}
 .petstage .aura{left:12%;top:26%;width:64%;height:58%}
+/* What can be given to a companion, on the edge of its own scene. */
+.stagebtns{position:absolute;top:8%;z-index:5;display:flex;flex-direction:column;gap:8px}
+.stagebtns.left{left:6px;align-items:flex-start}
+.stagebtns.right{right:6px;align-items:flex-end}
+.stagebtn{display:flex;align-items:center;gap:5px;background:rgba(255,255,255,.86);border:1px solid var(--rule-soft);border-radius:999px;padding:5px 9px;font:inherit;color:var(--fg);cursor:pointer;box-shadow:0 2px 8px rgba(60,40,90,.14);backdrop-filter:blur(3px)}
+.stagebtn .ic{font-size:15px;line-height:1}
+.stagebtn .lb{font-size:11.5px;font-weight:600;white-space:nowrap}
+@media (max-width:360px){.stagebtn .lb{display:none}.stagebtn{padding:6px 7px}}
+/* The sheet that those buttons lift. */
+.sheet{position:fixed;inset:0;z-index:60;display:flex;align-items:flex-end;justify-content:center}
+.sheet .sh-back{position:absolute;inset:0;background:rgba(30,18,50,.42);animation:fadein .18s ease}
+.sheet .sh-body{position:relative;width:100%;max-width:520px;max-height:82vh;overflow-y:auto;background:var(--surface);border-radius:20px 20px 0 0;padding:10px 16px calc(18px + env(safe-area-inset-bottom));box-shadow:0 -8px 30px rgba(40,25,70,.25);animation:sheetup .22s cubic-bezier(.2,.7,.3,1)}
+.sheet .sh-grip{width:40px;height:4px;border-radius:4px;background:var(--rule);margin:0 auto 10px}
+.sheet .sh-tabs{margin-bottom:8px;flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none}
+.sheet .sh-tabs::-webkit-scrollbar{display:none}
+.sheet .sh-tabs .chip{flex:0 0 auto;cursor:pointer;font-size:12.5px;padding:6px 11px}
+.sheet .sh-tabs .chip.on{background:var(--primary);color:var(--primary-ink);border-color:var(--primary)}
+.sheet .shelf{grid-template-columns:repeat(3,1fr)}
+.sheet .sh .dot{display:block;width:30px;height:30px;border-radius:50%;border:1px solid var(--rule)}
+@keyframes sheetup{from{transform:translateY(30px);opacity:.4}to{transform:translateY(0);opacity:1}}
+@keyframes fadein{from{opacity:0}to{opacity:1}}
 .lucksyms{position:absolute;inset:0;z-index:3;pointer-events:none;overflow:hidden}
 .lucksyms i{position:absolute;bottom:16%;font-size:15px;font-style:normal;opacity:0;animation:luckrise 4.2s ease-in-out infinite}
 @keyframes luckrise{0%{opacity:0;transform:translateY(6px) scale(.7)}18%{opacity:.95}100%{opacity:0;transform:translateY(-64px) scale(1.05)}}
@@ -890,9 +943,10 @@ main{padding:22px 0 30px}
 .treestage .tree{margin:0}
 /* Set a little to the side of the trunk, so the tree is never hidden. */
 .treepets{position:absolute;left:0;right:0;bottom:7%;z-index:2;display:flex;justify-content:center;align-items:flex-end;pointer-events:none;transform:translateX(15%)}
-.treepet{width:31%;max-width:96px;display:block;pointer-events:auto;animation:strolling 11s ease-in-out infinite}
+/* The companion by the tree stands still. Sliding it about looked like a
+   shape being moved across a slide rather than an animal. */
+.treepet{width:31%;max-width:96px;display:block;pointer-events:auto}
 .treepet+.treepet{margin-left:-7%}
-@keyframes strolling{0%,100%{transform:translateX(-13%)}50%{transform:translateX(13%)}}
 @media (max-width:360px){.treepet{width:34%}}
 .unlist{display:grid;gap:10px}
 .unl{background:var(--surface);border:1px solid var(--rule-soft);border-radius:16px;padding:14px}
