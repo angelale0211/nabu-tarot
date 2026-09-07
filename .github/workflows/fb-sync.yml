@@ -31,4 +31,19 @@ jobs:
           git config user.name "nabu-sync"
           git config user.email "nabu-sync@users.noreply.github.com"
           git add fb.json
-          git diff --cached --quiet || git commit -m "Sync social posts" && git push
+          if git diff --cached --quiet; then
+            echo "nothing changed, so nothing to save"
+            exit 0
+          fi
+          git commit -m "Sync social posts"
+          # Somebody may have pushed while this job was working. Take what
+          # landed, put this commit on top of it, and try again.
+          for attempt in 1 2 3; do
+            if git push; then
+              exit 0
+            fi
+            echo "push refused; rebasing onto what landed meanwhile (attempt $attempt)"
+            git pull --rebase origin "${GITHUB_REF_NAME:-main}" || exit 1
+          done
+          echo "could not save after three attempts"
+          exit 1
