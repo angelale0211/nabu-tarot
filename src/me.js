@@ -260,13 +260,20 @@ function meSect(id, icon, title, body, openByDefault, force) {
        machine. Open, because it is the half people come back for. */
     h += meSect('talk', '\uD83D\uDCAC', S.meGroupTalk, talk, true);
 
-    let own = '<div class="card"><h3 style="margin-bottom:8px">' + esc(S.myCourses) + '</h3>' + COURSES.map((c) => { const a = ACCESS.isAdmin() ? '9999-12-31' : ACCESS.get()[c.id]; const on = ACCESS.has(c.id);
+    /* Not in the installed app. On the web this list is useful - it is where
+       somebody checks what they hold and when it runs out. Inside the Android
+       app it is also the first thing a Play reviewer sees, and a list of paid
+       courses with dates against them, next to prices, reads as selling digital
+       goods outside Play whatever the truth of it. The prices were already kept
+       out of the app for that reason; the rest of the row belongs with them.
+       The box for entering a code stays, so an unlock still works here. */
+    let own = '<div class="card"><h3 style="margin-bottom:8px">' + esc(S.myCourses) + '</h3>' + (isTWA() ? '' : COURSES.map((c) => { const a = ACCESS.isAdmin() ? '9999-12-31' : ACCESS.get()[c.id]; const on = ACCESS.has(c.id);
       const ic = a ? (on ? '✓' : '⌛') : '🔒';
       // The tick and the hourglass already say open or expired, so the column
       // only carries the date. Spelling it out pushed long course names onto a
       // second line and left the column ragged.
       const right = a ? esc(a.slice(8, 10) + '/' + a.slice(5, 7) + '/' + a.slice(0, 4)) : (isTWA() ? '' : priceHTML(c.price, 'unlock', c.id));
-      return '<div class="course"><span class="nm">' + esc(L(c.name)) + '</span><span class="ic">' + ic + '</span><span class="pr faint">' + right + '</span></div>'; }).join('')
+      return '<div class="course"><span class="nm">' + esc(L(c.name)) + '</span><span class="ic">' + ic + '</span><span class="pr faint">' + right + '</span></div>'; }).join(''))
       + '<label class="f" for="mcode">' + esc(S.enterCode) + '</label><div class="row nw"><input id="mcode" placeholder="NABU-T-…" autocapitalize="characters"><button class="btn" id="munlock">' + esc(S.unlock) + '</button></div><p class="hint" id="mcstatus"></p></div>';
     own += '<div class="melinks"><a class="btn" href="#/looks">\uD83C\uDFA8 ' + esc(S.looksLink) + '</a><a class="btn" href="#/rewards">\uD83E\uDE99 ' + esc(S.luckLink) + '</a></div>';
     /* Group three: what this account holds. Folded by default - it is a place
