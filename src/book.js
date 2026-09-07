@@ -263,8 +263,22 @@ async function renderBook(args, params) {
     + '<div class="sec card"><h3 style="margin-bottom:10px">' + esc(S.howItWorks) + '</h3><ol class="steps">' + [S.chooseService.slice(3), S.chooseTopic.slice(3), S.chooseTime.slice(3), S.chooseWhere.slice(3), S.sendVia.slice(3), L(PAYMENT_NOTE)].map((x) => '<li>' + esc(x) + '</li>').join('') + '</ol></div>';
   const prev = () => { const p = $('#msgprev'); if (!p) return; p.innerHTML = summaryHTML(true); bindRewardPanel(p, book.use, prev); $('#msgtext').textContent = composeMessage(); saveBook(); };
   const done = () => {
+    /* Kept before the basket is emptied, so the panel underneath can say what
+       was booked and for how much. */
+    const bk = { items: book.items.slice(), slot: book.slot, total: bookLuck().final };
     m.innerHTML = '<div class="done"><div class="big">✅</div><h1>' + esc(S.doneTitle) + '</h1><p class="muted">' + esc(S.doneBody) + '</p><p><span class="st requested">' + esc(S.status.requested) + '</span></p>' + summaryHTML()
       + '<div class="row" style="flex-direction:column;margin-top:16px"><a class="btn primary block" href="#/me">' + esc(S.doneMe) + '</a><a class="btn block" href="#/home">' + esc(S.doneHome) + '</a><button class="btn block" id="bookmore">' + esc(S.doneMore) + '</button></div></div>';
+    /* The reading is asked for; this is how it gets paid for, in the same
+       chat where Nabu answers. Written before the basket is cleared. */
+    try {
+      const svc = serviceOf(bk.items && bk.items[0] ? bk.items[0].svc : '');
+      if (svc) {
+        const what = L(svc.name) + ' \u00b7 ' + slotLabel(bk.slot);
+        const ref = payRef('booking|' + bk.slot);
+        $('.done', m).insertAdjacentHTML('beforeend', payPanelHTML(what, bk.total, ref, 'bookpay'));
+        bindPayPanel(m, () => ({ what: what, total: bk.total, ref: ref }));
+      }
+    } catch (e) { /* the booking stands either way */ }
     clearBook(); window.scrollTo(0, 0);
     $('#bookmore').addEventListener('click', () => { renderBook([], {}); });
   };

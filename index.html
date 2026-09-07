@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
 <title>Nabu Tarot</title>
 <meta name="description" content="Nabu Tarot: dự đoán mới, rút một lá bài xem năng lượng hiện tại, học tarot, Lenormand, chiêm tinh, và đặt lịch xem bài.">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'none'; object-src 'none'; form-action 'self'; script-src 'self' 'sha256-iB7CbMeeZ9BCWXoXGsdy8kOwnUd1MyzYag7OxtKpquo=' https://www.gstatic.com https://apis.google.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; font-src 'self' data:; media-src 'self' data: blob:; worker-src 'self'; connect-src 'self' https://*.googleapis.com https://*.google.com https://*.firebaseio.com https://*.cloudfunctions.net https://*.workers.dev https://generativelanguage.googleapis.com; frame-src https://*.firebaseapp.com https://accounts.google.com https://*.facebook.com">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'none'; object-src 'none'; form-action 'self'; script-src 'self' 'sha256-gEQlqBYG6ZwIv4+hx/fDoxFbbbbBYYL3naV4oIXBSQc=' https://www.gstatic.com https://apis.google.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; font-src 'self' data:; media-src 'self' data: blob:; worker-src 'self'; connect-src 'self' https://*.googleapis.com https://*.google.com https://*.firebaseio.com https://*.cloudfunctions.net https://*.workers.dev https://generativelanguage.googleapis.com; frame-src https://*.firebaseapp.com https://accounts.google.com https://*.facebook.com">
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <meta name="theme-color" content="#EFE9FA">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -1498,6 +1498,10 @@ h1 .pileico{width:34px;height:27px;vertical-align:-3px;margin-right:2px}
 .cupidname{margin:0 0 8px;font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--gold-ink);opacity:.75}
 .wedpair{margin:2px 0 4px;font-family:var(--display);font-size:21px;line-height:1.3;overflow-wrap:anywhere}
 .wedwhen{margin:0 0 4px;font-size:14px;color:var(--fg-soft)}
+.paypanel{border:1px solid var(--gold)}
+.paypanel .payref{margin:0 0 8px;font-size:14px}
+.paypanel .payref b{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;letter-spacing:.06em;font-size:15px}
+.paypanel .paymsg{width:100%;resize:none;font-size:13.5px;line-height:1.5}
 .wedready{margin:2px 0 2px;font-size:13px;letter-spacing:.04em;text-transform:uppercase;color:var(--ok);font-weight:700}
 .movewhen{margin-top:12px;text-align:left;background:var(--bg)}
 .movewhen > summary{padding:10px 12px;font-size:14px}
@@ -2548,6 +2552,15 @@ const STR = {
     wedShutFor: 'Cửa phòng sẽ mở trước giờ làm lễ 15 phút. Bạn quay lại lúc đó nhé.',
     wedUnpaid: 'Phòng cưới đang giữ khung giờ này cho hai bạn. Bạn chuyển khoản sớm giúp Nabu nhé.',
     wedPayNow: 'Xem cách thanh toán',
+    payTitle: 'Thanh toán', payHow: 'Bạn gửi tin nhắn dưới đây cho Nabu. Nabu sẽ nhắn lại số tài khoản kèm mã QR để bạn chuyển khoản.',
+    payRefIs: 'Mã yêu cầu của bạn:',
+    payMsg: (what, price, ref) => 'Chào Nabu, mình muốn thanh toán cho ' + what + ' (' + price + '). Mã yêu cầu: ' + ref + '. Bạn gửi giúp mình số tài khoản nhé.',
+    paySend: 'Gửi tin nhắn này cho Nabu', payCopy: 'Chép tin nhắn',
+    paySent: 'Đã gửi cho Nabu 💌 Bạn mở tab Hồ sơ để xem Nabu trả lời nhé.',
+    payThen: 'Chuyển khoản xong, bạn chụp màn hình biên lai và gửi lại trong khung chat này là được.',
+    wedPayWhat2: (when) => 'lễ cưới trên Nabu (' + when + ')',
+    wedEnterUnpaid: 'Đang chờ Nabu xác nhận thanh toán',
+    wedWaitPay: 'Phòng cưới đang giữ khung giờ này cho hai bạn. Sau khi Nabu nhận được chuyển khoản, cửa phòng sẽ mở đúng giờ đã hẹn.',
     wedReady: 'Phòng cưới của hai bạn đã sẵn sàng',
     wedEnter: 'Vào phòng cưới', wedEnterLater: 'Phòng cưới chưa mở cửa',
     wedEnterNow: 'Cửa đã mở. Hai bạn vào phòng để bắt đầu buổi lễ.',
@@ -3182,6 +3195,15 @@ const STR = {
     wedShutFor: 'The doors open 15 minutes before the ceremony. Come back then.',
     wedUnpaid: 'The room is holding this hour for you. Transferring soon is what keeps it.',
     wedPayNow: 'How to pay',
+    payTitle: 'Paying', payHow: 'Send Nabu the message below. Nabu replies with the account details and a QR code to transfer to.',
+    payRefIs: 'Your reference:',
+    payMsg: (what, price, ref) => 'Hi Nabu, I would like to pay for ' + what + ' (' + price + '). Reference: ' + ref + '. Could you send me the account details?',
+    paySend: 'Send this to Nabu', payCopy: 'Copy the message',
+    paySent: 'Sent to Nabu \uD83D\uDC8C Open the Profile tab to see the reply.',
+    payThen: 'Once you have transferred, photograph the receipt and send it back in the same chat.',
+    wedPayWhat2: (when) => 'a wedding on Nabu (' + when + ')',
+    wedEnterUnpaid: 'Waiting for Nabu to confirm the payment',
+    wedWaitPay: 'The room is holding this hour for you. Once Nabu has the transfer, the doors open at the time you chose.',
     wedReady: 'Your wedding room is ready',
     wedEnter: 'Go into the room', wedEnterLater: 'The room is not open yet',
     wedEnterNow: 'The doors are open. Go in to begin the ceremony.',
@@ -11141,6 +11163,72 @@ const BE = {
   }
 };
 
+/* ======================== asking to pay for something ======================
+
+   Every paid thing in Nabu is settled the same way: a transfer to Nabu's bank,
+   and a code or a confirmation back. What was missing is the sentence in
+   between - somebody had to work out for themselves what to say and where to
+   say it.
+
+   This writes it. What was asked for, the amount, and a short reference drawn
+   from the order so Nabu can match the message to the thing. One press puts it
+   in the chat, where Nabu can answer with the account details or a photograph
+   of the QR code, and where the receipt comes back the same way.
+
+   Deliberately no card processor: Google and Apple both want a cut of this. */
+
+/* Short, spoken aloud without ambiguity, and stable for a given order. */
+function payRef(seed) {
+  const s = String(seed || '') + '|' + (BE.user ? BE.user.uid : '');
+  let h = 0;
+  for (let i = 0; i < s.length; i++) { h = ((h << 5) - h + s.charCodeAt(i)) | 0; }
+  const abc = '23456789ABCDEFGHJKLMNPQRSTUVWXYZ';
+  let out = '';
+  let n = Math.abs(h) || 7;
+  for (let i = 0; i < 5; i++) { out += abc[n % abc.length]; n = Math.floor(n / abc.length) + 11; }
+  return 'NB-' + out;
+}
+
+function payMessage(what, total, ref) {
+  const S = T();
+  return S.payMsg(what, fmtPrice(total), ref);
+}
+
+/* The panel. `what` is one line naming the thing, `total` the amount. */
+function payPanelHTML(what, total, ref, id) {
+  const S = T();
+  const msg = payMessage(what, total, ref);
+  return '<div class="card paypanel" id="' + esc(id || 'paypanel') + '">'
+    + '<div class="ghead"><span class="gk">\uD83D\uDCB3</span><h3>' + esc(S.payTitle) + '</h3></div>'
+    + '<p class="hint" style="margin-bottom:10px">' + esc(S.payHow) + '</p>'
+    + '<p class="payref">' + esc(S.payRefIs) + ' <b>' + esc(ref) + '</b></p>'
+    + '<textarea class="paymsg" readonly rows="4">' + esc(msg) + '</textarea>'
+    + '<button type="button" class="btn primary block" data-paysend="1" style="margin-top:10px">' + esc(S.paySend) + '</button>'
+    + '<button type="button" class="btn block" data-paycopy="1" style="margin-top:8px">' + esc(S.payCopy) + '</button>'
+    + '<p class="hint" data-paystatus></p>'
+    + '<p class="hint">' + esc(S.payThen) + '</p></div>';
+}
+
+function bindPayPanel(root, get) {
+  const S = T();
+  const say = (t, cls) => { const el = $('[data-paystatus]', root); if (el) { el.className = 'hint ' + (cls || ''); el.textContent = t || ''; } };
+  $$('[data-paysend]', root).forEach((b) => b.addEventListener('click', async () => {
+    const w = get();
+    if (!(BE.enabled && BE.user)) { toast(S.unlockNeedIn); location.hash = '#/me'; return; }
+    b.disabled = true; say(S.loveSaving);
+    try {
+      await BE.sendMessage(payMessage(w.what, w.total, w.ref), null, null);
+      say(S.paySent, 'ok');
+      toast(S.paySent);
+    } catch (e) { b.disabled = false; say(S.publishFail + ': ' + (e && e.message ? e.message : ''), 'err'); }
+  }));
+  $$('[data-paycopy]', root).forEach((b) => b.addEventListener('click', async () => {
+    const w = get();
+    await copyText(payMessage(w.what, w.total, w.ref));
+    toast(S.copied);
+  }));
+}
+
 /* ============================ telling people ============================
 
    Somebody who has just been tied, or asked, or married inside Nabu wants to
@@ -12087,6 +12175,13 @@ function bindPaywall(root, after) {
       await BE.createUnlockOrder([{ id: c.id, name: L(c.name), price: price }], price);
       if (st) { st.className = 'hint ok'; st.textContent = S.unlockSent; }
       toast(S.unlockSent);
+      /* And straight away, the message that starts the conversation where the
+         account details and the receipt are exchanged. */
+      if (!$('.paypanel', root)) {
+        const ref = payRef('course|' + c.id);
+        b.insertAdjacentHTML('afterend', payPanelHTML(L(c.name), price, ref, 'coursepay'));
+        bindPayPanel(root, () => ({ what: L(c.name), total: price, ref: ref }));
+      }
     } catch (e) {
       b.disabled = false;
       if (st) { st.className = 'hint err'; st.textContent = S.publishFail + ': ' + (e && e.message ? e.message : ''); }
@@ -12522,6 +12617,12 @@ function unlockLuck() {
   const base = unlockBase();
   return luckCut(base, { v: UNL_USE.v, c: luckWanted(UNL_USE, base) });
 }
+/* What is actually in the basket, so the page can talk about it as well as
+   draw it. */
+function unlockCartRows() {
+  const ids = UNL_CART.get().filter((id) => COURSES.some((c) => c.id === id) && !ACCESS.has(id));
+  return COURSES.filter((c) => ids.indexOf(c.id) > -1);
+}
 function unlockCartHTML() {
   const S = T(), ids = UNL_CART.get().filter((id) => COURSES.some((c) => c.id === id) && !ACCESS.has(id));
   if (!ids.length) return '<p class="hint">' + esc(S.unlockEmpty) + '</p>';
@@ -12570,11 +12671,16 @@ function renderUnlock(args, params) {
         + rewardPanelHTML(unlockBase(), UNL_USE)
         + '<button class="btn primary block" id="usend" style="margin-top:12px">' + esc(S.unlockSend) + '</button>'
         + '<p class="hint" id="ustatus">' + esc(BE.enabled && BE.user ? '' : S.unlockSendMsg) + '</p></div>')
-      + (isTWA() ? '' : '<div class="sec card"><h3 style="margin-bottom:10px">' + esc(S.unlockHow) + '</h3><ol class="steps">'
-        + [S.unlockStep1, S.unlockStep2, S.unlockStep3].map((x) => '<li>' + esc(x) + '</li>').join('') + '</ol></div>')
+      + (isTWA() || !unlockCartRows().length ? ''
+        : payPanelHTML(unlockCartRows().map((c) => L(c.name)).join(', '), unlockLuck().final,
+            payRef('unlock|' + unlockCartRows().map((c) => c.id).join('+')), 'unlockpay'))
       + '<div class="card"><label class="f" for="ucode">' + esc(S.unlockCodeLabel) + '</label><div class="row nw"><input id="ucode" placeholder="' + esc(S.luckCodePh) + '" autocapitalize="characters"><button class="btn" id="ugo">' + esc(S.unlock) + '</button></div><p class="hint" id="ustatus"></p></div>'
       + (isTWA() ? '' : '<p style="margin-top:14px"><a class="backlink" href="#/prices">' + esc(S.unlockReadings) + ' →</a></p>');
     $$('[data-unl]', m).forEach((b) => b.addEventListener('click', () => { UNL_CART.toggle(b.getAttribute('data-unl')); draw(); }));
+    if (unlockCartRows().length) {
+      bindPayPanel(m, () => ({ what: unlockCartRows().map((c) => L(c.name)).join(', '),
+        total: unlockLuck().final, ref: payRef('unlock|' + unlockCartRows().map((c) => c.id).join('+')) }));
+    }
     bindRewardPanel(m, UNL_USE, draw);
     const send = $('#usend');
     if (send) send.addEventListener('click', async () => {
@@ -17969,8 +18075,22 @@ async function renderBook(args, params) {
     + '<div class="sec card"><h3 style="margin-bottom:10px">' + esc(S.howItWorks) + '</h3><ol class="steps">' + [S.chooseService.slice(3), S.chooseTopic.slice(3), S.chooseTime.slice(3), S.chooseWhere.slice(3), S.sendVia.slice(3), L(PAYMENT_NOTE)].map((x) => '<li>' + esc(x) + '</li>').join('') + '</ol></div>';
   const prev = () => { const p = $('#msgprev'); if (!p) return; p.innerHTML = summaryHTML(true); bindRewardPanel(p, book.use, prev); $('#msgtext').textContent = composeMessage(); saveBook(); };
   const done = () => {
+    /* Kept before the basket is emptied, so the panel underneath can say what
+       was booked and for how much. */
+    const bk = { items: book.items.slice(), slot: book.slot, total: bookLuck().final };
     m.innerHTML = '<div class="done"><div class="big">✅</div><h1>' + esc(S.doneTitle) + '</h1><p class="muted">' + esc(S.doneBody) + '</p><p><span class="st requested">' + esc(S.status.requested) + '</span></p>' + summaryHTML()
       + '<div class="row" style="flex-direction:column;margin-top:16px"><a class="btn primary block" href="#/me">' + esc(S.doneMe) + '</a><a class="btn block" href="#/home">' + esc(S.doneHome) + '</a><button class="btn block" id="bookmore">' + esc(S.doneMore) + '</button></div></div>';
+    /* The reading is asked for; this is how it gets paid for, in the same
+       chat where Nabu answers. Written before the basket is cleared. */
+    try {
+      const svc = serviceOf(bk.items && bk.items[0] ? bk.items[0].svc : '');
+      if (svc) {
+        const what = L(svc.name) + ' \u00b7 ' + slotLabel(bk.slot);
+        const ref = payRef('booking|' + bk.slot);
+        $('.done', m).insertAdjacentHTML('beforeend', payPanelHTML(what, bk.total, ref, 'bookpay'));
+        bindPayPanel(m, () => ({ what: what, total: bk.total, ref: ref }));
+      }
+    } catch (e) { /* the booking stands either way */ }
     clearBook(); window.scrollTo(0, 0);
     $('#bookmore').addEventListener('click', () => { renderBook([], {}); });
   };
@@ -20023,7 +20143,10 @@ function renderWedding(args) {
   const drawPay = (bond) => {
     const me = WED.me(), you = LOVE.other(bond, me);
     const nm = (you && (you.name || (you.handle ? '@' + you.handle : ''))) || S.loveSomeone;
-    const ms = Number(store.get('nabu-wed-want', 0)) || 0;
+    /* The hour they are paying for: the one waiting to be booked, or - once
+       the room exists - the room's own. It used to look only at the first, so
+       "how to pay" from an existing room bounced straight back out. */
+    const ms = Number(store.get('nabu-wed-want', 0)) || WED.startMs(wedding) || 0;
     if (!ms) { location.hash = '#/wedding'; return; }
     const price = salePrice(WED_PRICE, 'unlock', 'wedding');
     m.innerHTML = head(S.wedPayIntro)
@@ -20034,13 +20157,18 @@ function renderWedding(args) {
       + '<p class="hint" style="text-align:center">' + esc(S.wedPayOnce) + '</p></div>'
       + '<div class="card"><h3 style="margin-bottom:6px">' + esc(S.wedPayWhat) + '</h3>'
       + '<ul class="carelist">' + S.wedPayList.map((x) => '<li><span>' + esc(x) + '</span><b>\u2713</b></li>').join('') + '</ul></div>'
-      + '<div class="card"><h3 style="margin-bottom:6px">' + esc(S.wedPayHow) + '</h3>'
-      + '<ol class="steps">' + [S.unlockStep1, S.unlockStep2, S.unlockStep3].map((x) => '<li>' + esc(x) + '</li>').join('') + '</ol>'
       + '<p class="hint hold">' + esc(S.wedPayHold(wedWhen(ms))) + '</p>'
-      + '<button type="button" class="btn primary block" id="wedpay">' + esc(S.wedPaySend) + '</button>'
-      + '<p class="hint" id="wedpayst"></p>'
-      + '<p style="margin-top:10px"><a class="backlink" href="#/wedding">\u2190 ' + esc(S.wedChangeTime) + '</a></p></div>';
+      + (wedding
+        ? payPanelHTML(S.wedPayWhat2(wedWhen(ms)), price, payRef('wedding|' + wedding.id), 'wedpanel')
+        : '<div class="card"><h3 style="margin-bottom:6px">' + esc(S.wedPayHow) + '</h3>'
+          + '<button type="button" class="btn primary block" id="wedpay">' + esc(S.wedPaySend) + '</button>'
+          + '<p class="hint" id="wedpayst"></p></div>')
+      + '<p style="margin-top:10px"><a class="backlink" href="#/wedding">\u2190 ' + esc(S.wedChangeTime) + '</a></p>';
 
+    if (wedding) {
+      bindPayPanel(m, () => ({ what: S.wedPayWhat2(wedWhen(ms)), total: price, ref: payRef('wedding|' + wedding.id) }));
+      return;
+    }
     $('#wedpay').addEventListener('click', async () => {
       const b = $('#wedpay'), st = $('#wedpayst');
       if (!BE.enabled || !BE.user) { st.className = 'hint err'; st.textContent = S.unlockSendMsg; return; }
@@ -20102,6 +20230,7 @@ function renderWedding(args) {
     const door = WED.doorState(w);
     if (door === 'over') { drawDoor(w); return; }
     const openNow = door === 'open';
+    const paidFor = ACCESS.has('wedding');
 
     const link = appURL() + '#/wedding/' + encodeURIComponent(w.id);
     m.innerHTML = head()
@@ -20112,10 +20241,13 @@ function renderWedding(args) {
       + '<p class="wedcount" id="wedcd">' + esc(openNow ? S.wedDoorsOpen : wedCountdown(wedDoorAt(w))) + '</p>'
       /* The way in, first, because it is what the screen is for. Locked until
          a quarter of an hour before, and saying how long that is. */
-      + (openNow
+      /* Asking holds the hour; paying opens the door. The button says which
+         of those has happened rather than letting somebody through and finding
+         out later. */
+      + (openNow && paidFor
         ? '<a class="btn primary block" href="#/wedding/room">' + esc(S.wedEnter) + '</a>'
-        : '<button type="button" class="btn primary block" disabled>' + esc(S.wedEnterLater) + '</button>')
-      + '<p class="hint">' + esc(openNow ? S.wedEnterNow : S.wedShutFor) + '</p>'
+        : '<button type="button" class="btn primary block" disabled>' + esc(paidFor ? S.wedEnterLater : S.wedEnterUnpaid) + '</button>')
+      + '<p class="hint">' + esc(!paidFor ? S.wedWaitPay : openNow ? S.wedEnterNow : S.wedShutFor) + '</p>'
       /* Unpaid, said once, softly, with the way to settle it. */
       + (ACCESS.has('wedding') ? ''
         : '<p class="hint hold">' + esc(S.wedUnpaid) + ' <a href="#/wedding/pay">' + esc(S.wedPayNow) + ' \u2192</a></p>')
@@ -21073,7 +21205,7 @@ function adminSale(p) {
 ROUTES.admin = { nav: '', render: renderAdmin };
 
 /* ============================ boot ============================ */
-window.APP_VERSION = 'v146';
+window.APP_VERSION = 'v147';
 window.NABU = { CONFIG: CONFIG, SALE: SALE, salePrice: salePrice, loadActs: loadActs, BACK: BACK, LESSONS: LESSONS, localAnswer: localAnswer, compatVerdict: compatVerdict, numerologyOf: numerologyOf, ZDEEP: ZDEEP, lunarToday: lunarToday, solarToLunar: solarToLunar, DECK: DECK, INSIGHT: INSIGHT, KW: KW, ASK: ASK, TOPICS: TOPICS, GUIDES: GUIDES, SERVICES: SERVICES, COURSES: COURSES, ACCESS: ACCESS, plusOn: () => plusOn(), proOn: () => proOn(), luckUnlimited: () => luckUnlimited(), ZODIAC: ZODIAC, pick: pick, book: book,
   insightHTML: insightHTML, insightOf: insightOf, sunSignIndex: sunSignIndex, lifePath: lifePath, PROFILE: () => PROFILE, BE: BE, ACTS: ACTS,
   ANGELS: ANGELS, angelRead: angelRead, CODEBOOK: CODEBOOK, verifyCode: verifyCode, petHomeSVG: petHomeSVG, PET_HOMES: PET_HOMES, PET_WEARS: PET_WEARS, codeDigest: codeDigest, randomCode: randomCode, BANK: BANK, PETS: PETS, petSVG: petSVG, PET_COATS: PET_COATS, PET_KINDS: PET_KINDS, luckCut: luckCut, petLevel: petLevel, petStep: petStep, VOUCHERS: VOUCHERS, levelCoins: levelCoins, LOOKS: LOOKS,

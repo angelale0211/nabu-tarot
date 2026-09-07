@@ -523,7 +523,10 @@ function renderWedding(args) {
   const drawPay = (bond) => {
     const me = WED.me(), you = LOVE.other(bond, me);
     const nm = (you && (you.name || (you.handle ? '@' + you.handle : ''))) || S.loveSomeone;
-    const ms = Number(store.get('nabu-wed-want', 0)) || 0;
+    /* The hour they are paying for: the one waiting to be booked, or - once
+       the room exists - the room's own. It used to look only at the first, so
+       "how to pay" from an existing room bounced straight back out. */
+    const ms = Number(store.get('nabu-wed-want', 0)) || WED.startMs(wedding) || 0;
     if (!ms) { location.hash = '#/wedding'; return; }
     const price = salePrice(WED_PRICE, 'unlock', 'wedding');
     m.innerHTML = head(S.wedPayIntro)
@@ -534,13 +537,18 @@ function renderWedding(args) {
       + '<p class="hint" style="text-align:center">' + esc(S.wedPayOnce) + '</p></div>'
       + '<div class="card"><h3 style="margin-bottom:6px">' + esc(S.wedPayWhat) + '</h3>'
       + '<ul class="carelist">' + S.wedPayList.map((x) => '<li><span>' + esc(x) + '</span><b>\u2713</b></li>').join('') + '</ul></div>'
-      + '<div class="card"><h3 style="margin-bottom:6px">' + esc(S.wedPayHow) + '</h3>'
-      + '<ol class="steps">' + [S.unlockStep1, S.unlockStep2, S.unlockStep3].map((x) => '<li>' + esc(x) + '</li>').join('') + '</ol>'
       + '<p class="hint hold">' + esc(S.wedPayHold(wedWhen(ms))) + '</p>'
-      + '<button type="button" class="btn primary block" id="wedpay">' + esc(S.wedPaySend) + '</button>'
-      + '<p class="hint" id="wedpayst"></p>'
-      + '<p style="margin-top:10px"><a class="backlink" href="#/wedding">\u2190 ' + esc(S.wedChangeTime) + '</a></p></div>';
+      + (wedding
+        ? payPanelHTML(S.wedPayWhat2(wedWhen(ms)), price, payRef('wedding|' + wedding.id), 'wedpanel')
+        : '<div class="card"><h3 style="margin-bottom:6px">' + esc(S.wedPayHow) + '</h3>'
+          + '<button type="button" class="btn primary block" id="wedpay">' + esc(S.wedPaySend) + '</button>'
+          + '<p class="hint" id="wedpayst"></p></div>')
+      + '<p style="margin-top:10px"><a class="backlink" href="#/wedding">\u2190 ' + esc(S.wedChangeTime) + '</a></p>';
 
+    if (wedding) {
+      bindPayPanel(m, () => ({ what: S.wedPayWhat2(wedWhen(ms)), total: price, ref: payRef('wedding|' + wedding.id) }));
+      return;
+    }
     $('#wedpay').addEventListener('click', async () => {
       const b = $('#wedpay'), st = $('#wedpayst');
       if (!BE.enabled || !BE.user) { st.className = 'hint err'; st.textContent = S.unlockSendMsg; return; }
@@ -602,6 +610,7 @@ function renderWedding(args) {
     const door = WED.doorState(w);
     if (door === 'over') { drawDoor(w); return; }
     const openNow = door === 'open';
+    const paidFor = ACCESS.has('wedding');
 
     const link = appURL() + '#/wedding/' + encodeURIComponent(w.id);
     m.innerHTML = head()
@@ -612,10 +621,13 @@ function renderWedding(args) {
       + '<p class="wedcount" id="wedcd">' + esc(openNow ? S.wedDoorsOpen : wedCountdown(wedDoorAt(w))) + '</p>'
       /* The way in, first, because it is what the screen is for. Locked until
          a quarter of an hour before, and saying how long that is. */
-      + (openNow
+      /* Asking holds the hour; paying opens the door. The button says which
+         of those has happened rather than letting somebody through and finding
+         out later. */
+      + (openNow && paidFor
         ? '<a class="btn primary block" href="#/wedding/room">' + esc(S.wedEnter) + '</a>'
-        : '<button type="button" class="btn primary block" disabled>' + esc(S.wedEnterLater) + '</button>')
-      + '<p class="hint">' + esc(openNow ? S.wedEnterNow : S.wedShutFor) + '</p>'
+        : '<button type="button" class="btn primary block" disabled>' + esc(paidFor ? S.wedEnterLater : S.wedEnterUnpaid) + '</button>')
+      + '<p class="hint">' + esc(!paidFor ? S.wedWaitPay : openNow ? S.wedEnterNow : S.wedShutFor) + '</p>'
       /* Unpaid, said once, softly, with the way to settle it. */
       + (ACCESS.has('wedding') ? ''
         : '<p class="hint hold">' + esc(S.wedUnpaid) + ' <a href="#/wedding/pay">' + esc(S.wedPayNow) + ' \u2192</a></p>')

@@ -1,3 +1,69 @@
+/* ======================== asking to pay for something ======================
+
+   Every paid thing in Nabu is settled the same way: a transfer to Nabu's bank,
+   and a code or a confirmation back. What was missing is the sentence in
+   between - somebody had to work out for themselves what to say and where to
+   say it.
+
+   This writes it. What was asked for, the amount, and a short reference drawn
+   from the order so Nabu can match the message to the thing. One press puts it
+   in the chat, where Nabu can answer with the account details or a photograph
+   of the QR code, and where the receipt comes back the same way.
+
+   Deliberately no card processor: Google and Apple both want a cut of this. */
+
+/* Short, spoken aloud without ambiguity, and stable for a given order. */
+function payRef(seed) {
+  const s = String(seed || '') + '|' + (BE.user ? BE.user.uid : '');
+  let h = 0;
+  for (let i = 0; i < s.length; i++) { h = ((h << 5) - h + s.charCodeAt(i)) | 0; }
+  const abc = '23456789ABCDEFGHJKLMNPQRSTUVWXYZ';
+  let out = '';
+  let n = Math.abs(h) || 7;
+  for (let i = 0; i < 5; i++) { out += abc[n % abc.length]; n = Math.floor(n / abc.length) + 11; }
+  return 'NB-' + out;
+}
+
+function payMessage(what, total, ref) {
+  const S = T();
+  return S.payMsg(what, fmtPrice(total), ref);
+}
+
+/* The panel. `what` is one line naming the thing, `total` the amount. */
+function payPanelHTML(what, total, ref, id) {
+  const S = T();
+  const msg = payMessage(what, total, ref);
+  return '<div class="card paypanel" id="' + esc(id || 'paypanel') + '">'
+    + '<div class="ghead"><span class="gk">\uD83D\uDCB3</span><h3>' + esc(S.payTitle) + '</h3></div>'
+    + '<p class="hint" style="margin-bottom:10px">' + esc(S.payHow) + '</p>'
+    + '<p class="payref">' + esc(S.payRefIs) + ' <b>' + esc(ref) + '</b></p>'
+    + '<textarea class="paymsg" readonly rows="4">' + esc(msg) + '</textarea>'
+    + '<button type="button" class="btn primary block" data-paysend="1" style="margin-top:10px">' + esc(S.paySend) + '</button>'
+    + '<button type="button" class="btn block" data-paycopy="1" style="margin-top:8px">' + esc(S.payCopy) + '</button>'
+    + '<p class="hint" data-paystatus></p>'
+    + '<p class="hint">' + esc(S.payThen) + '</p></div>';
+}
+
+function bindPayPanel(root, get) {
+  const S = T();
+  const say = (t, cls) => { const el = $('[data-paystatus]', root); if (el) { el.className = 'hint ' + (cls || ''); el.textContent = t || ''; } };
+  $$('[data-paysend]', root).forEach((b) => b.addEventListener('click', async () => {
+    const w = get();
+    if (!(BE.enabled && BE.user)) { toast(S.unlockNeedIn); location.hash = '#/me'; return; }
+    b.disabled = true; say(S.loveSaving);
+    try {
+      await BE.sendMessage(payMessage(w.what, w.total, w.ref), null, null);
+      say(S.paySent, 'ok');
+      toast(S.paySent);
+    } catch (e) { b.disabled = false; say(S.publishFail + ': ' + (e && e.message ? e.message : ''), 'err'); }
+  }));
+  $$('[data-paycopy]', root).forEach((b) => b.addEventListener('click', async () => {
+    const w = get();
+    await copyText(payMessage(w.what, w.total, w.ref));
+    toast(S.copied);
+  }));
+}
+
 /* ============================ telling people ============================
 
    Somebody who has just been tied, or asked, or married inside Nabu wants to

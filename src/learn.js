@@ -46,6 +46,13 @@ function bindPaywall(root, after) {
       await BE.createUnlockOrder([{ id: c.id, name: L(c.name), price: price }], price);
       if (st) { st.className = 'hint ok'; st.textContent = S.unlockSent; }
       toast(S.unlockSent);
+      /* And straight away, the message that starts the conversation where the
+         account details and the receipt are exchanged. */
+      if (!$('.paypanel', root)) {
+        const ref = payRef('course|' + c.id);
+        b.insertAdjacentHTML('afterend', payPanelHTML(L(c.name), price, ref, 'coursepay'));
+        bindPayPanel(root, () => ({ what: L(c.name), total: price, ref: ref }));
+      }
     } catch (e) {
       b.disabled = false;
       if (st) { st.className = 'hint err'; st.textContent = S.publishFail + ': ' + (e && e.message ? e.message : ''); }
@@ -481,6 +488,12 @@ function unlockLuck() {
   const base = unlockBase();
   return luckCut(base, { v: UNL_USE.v, c: luckWanted(UNL_USE, base) });
 }
+/* What is actually in the basket, so the page can talk about it as well as
+   draw it. */
+function unlockCartRows() {
+  const ids = UNL_CART.get().filter((id) => COURSES.some((c) => c.id === id) && !ACCESS.has(id));
+  return COURSES.filter((c) => ids.indexOf(c.id) > -1);
+}
 function unlockCartHTML() {
   const S = T(), ids = UNL_CART.get().filter((id) => COURSES.some((c) => c.id === id) && !ACCESS.has(id));
   if (!ids.length) return '<p class="hint">' + esc(S.unlockEmpty) + '</p>';
@@ -529,11 +542,16 @@ function renderUnlock(args, params) {
         + rewardPanelHTML(unlockBase(), UNL_USE)
         + '<button class="btn primary block" id="usend" style="margin-top:12px">' + esc(S.unlockSend) + '</button>'
         + '<p class="hint" id="ustatus">' + esc(BE.enabled && BE.user ? '' : S.unlockSendMsg) + '</p></div>')
-      + (isTWA() ? '' : '<div class="sec card"><h3 style="margin-bottom:10px">' + esc(S.unlockHow) + '</h3><ol class="steps">'
-        + [S.unlockStep1, S.unlockStep2, S.unlockStep3].map((x) => '<li>' + esc(x) + '</li>').join('') + '</ol></div>')
+      + (isTWA() || !unlockCartRows().length ? ''
+        : payPanelHTML(unlockCartRows().map((c) => L(c.name)).join(', '), unlockLuck().final,
+            payRef('unlock|' + unlockCartRows().map((c) => c.id).join('+')), 'unlockpay'))
       + '<div class="card"><label class="f" for="ucode">' + esc(S.unlockCodeLabel) + '</label><div class="row nw"><input id="ucode" placeholder="' + esc(S.luckCodePh) + '" autocapitalize="characters"><button class="btn" id="ugo">' + esc(S.unlock) + '</button></div><p class="hint" id="ustatus"></p></div>'
       + (isTWA() ? '' : '<p style="margin-top:14px"><a class="backlink" href="#/prices">' + esc(S.unlockReadings) + ' →</a></p>');
     $$('[data-unl]', m).forEach((b) => b.addEventListener('click', () => { UNL_CART.toggle(b.getAttribute('data-unl')); draw(); }));
+    if (unlockCartRows().length) {
+      bindPayPanel(m, () => ({ what: unlockCartRows().map((c) => L(c.name)).join(', '),
+        total: unlockLuck().final, ref: payRef('unlock|' + unlockCartRows().map((c) => c.id).join('+')) }));
+    }
     bindRewardPanel(m, UNL_USE, draw);
     const send = $('#usend');
     if (send) send.addEventListener('click', async () => {
