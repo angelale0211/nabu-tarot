@@ -1087,6 +1087,8 @@ h1 .pileico{width:34px;height:27px;vertical-align:-3px;margin-right:2px}
 .sheet{position:fixed;inset:0;z-index:60;display:flex;align-items:flex-end;justify-content:center}
 .sheet .sh-back{position:absolute;inset:0;background:rgba(30,18,50,.42);animation:fadein .18s ease}
 .sheet .sh-body{position:relative;width:100%;max-width:520px;max-height:82vh;overflow-y:auto;background:var(--surface);border-radius:20px 20px 0 0;padding:10px 16px calc(18px + env(safe-area-inset-bottom));box-shadow:0 -8px 30px rgba(40,25,70,.25);animation:sheetup .22s cubic-bezier(.2,.7,.3,1)}
+.shelfsay{margin-top:10px;padding:9px 12px;border-radius:12px;background:var(--surface-2);color:var(--fg)}
+.shelfsay a{white-space:nowrap}
 .sheet .sh-grip{width:40px;height:4px;border-radius:4px;background:var(--rule);margin:0 auto 10px}
 .sheet .sh-tabs{margin-bottom:8px;flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none}
 .sheet .sh-tabs::-webkit-scrollbar{display:none}
@@ -1406,6 +1408,9 @@ html,body{overscroll-behavior-y:contain}
 #bell{position:relative}
 #bell .ndot{position:absolute;top:-3px;right:-3px;min-width:16px;height:16px;padding:0 4px;border-radius:999px;
   background:var(--err);color:#fff;font-size:10.5px;font-weight:700;line-height:16px;text-align:center;box-shadow:0 0 0 2px var(--bg)}
+.pulltip{margin:0 0 10px;padding:8px 12px;border-radius:12px;background:var(--surface-2);color:var(--fg-soft)}
+.alertacts{gap:8px;margin:0 0 4px}
+.alertacts .btn{flex:1;min-width:0}
 .alerthead{margin:16px 0 6px;font-size:13px;letter-spacing:.02em;color:var(--fg-faint);text-transform:uppercase}
 .alerts{display:flex;flex-direction:column;gap:8px}
 .alert{display:flex;gap:10px;align-items:flex-start;padding:11px 12px;border:1px solid var(--rule);border-radius:14px;

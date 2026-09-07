@@ -1288,6 +1288,9 @@ function renderPet(want) {
       + '<div class="chips sh-tabs">' + SHEETS.map((x) => '<button type="button" class="chip' + (x.key === cur.key ? ' on' : '') + '" data-sheet-tab="' + x.key + '">' + x.icon + ' ' + esc(x.title()) + '</button>').join('') + '</div>'
       + '<p class="hint">' + esc(cur.note(p)) + '</p>'
       + (cur.key === 'coat' && petIsPro(p.kind) ? '' : shelfRows(cur.set(), cur.now(p), cur.key, cur.art))
+      /* Where a locked item explains itself, instead of the app jumping to the
+         price list and leaving somebody to wonder what they did wrong. */
+      + '<p class="hint shelfsay" id="shelfsay" hidden></p>'
       + '<button type="button" class="btn block" data-close-sheet="1" style="margin-top:12px">' + esc(S.sheetClose) + '</button>'
       + '</div></div>';
   };
@@ -1517,7 +1520,17 @@ function renderPet(want) {
       const set = key === 'food' ? PET_FOODS : (key === 'home' ? PET_HOMES : (key === 'wear' ? PET_WEARS : PET_COATS));
       const item = set.filter((x) => x.id === id)[0];
       if (!item) return;
-      if (item.pro && !proOn()) { toast(S.petPlusItem); location.hash = '#/unlock'; return; }
+      if (item.pro && !proOn()) {
+        /* Not a trapdoor. Most of these shelves are locked, so jumping to the
+           price list on a tap meant losing the screen you were looking at,
+           seven times out of nine. */
+        const say = $('#shelfsay');
+        if (say) {
+          say.hidden = false;
+          say.innerHTML = esc(S.petLockedItem(L(item.name))) + ' <a href="#/unlock?from=app">' + esc(S.unlockLink) + ' \u2192</a>';
+        } else { toast(S.petPlusItem); }
+        return;
+      }
       p[key] = id; PETS.put(p); draw();
     }));
     /* The pencil turns the title into a field and back again, so a name can be

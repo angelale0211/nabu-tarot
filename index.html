@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
 <title>Nabu Tarot</title>
 <meta name="description" content="Nabu Tarot: dự đoán mới, rút một lá bài xem năng lượng hiện tại, học tarot, Lenormand, chiêm tinh, và đặt lịch xem bài.">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'none'; object-src 'none'; form-action 'self'; script-src 'self' 'sha256-UI/ZtuTuO3/AsTwZWt4/gG3vSLOE5jlWU9jprIOaqdw=' https://www.gstatic.com https://apis.google.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; font-src 'self' data:; media-src 'self' data: blob:; worker-src 'self'; connect-src 'self' https://*.googleapis.com https://*.google.com https://*.firebaseio.com https://*.cloudfunctions.net https://*.workers.dev https://generativelanguage.googleapis.com; frame-src https://*.firebaseapp.com https://accounts.google.com https://*.facebook.com">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'none'; object-src 'none'; form-action 'self'; script-src 'self' 'sha256-VhvaG+ESOYAIJjkfH1GLa1CInUP+GOTSzUAnvTtjxZY=' https://www.gstatic.com https://apis.google.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; font-src 'self' data:; media-src 'self' data: blob:; worker-src 'self'; connect-src 'self' https://*.googleapis.com https://*.google.com https://*.firebaseio.com https://*.cloudfunctions.net https://*.workers.dev https://generativelanguage.googleapis.com; frame-src https://*.firebaseapp.com https://accounts.google.com https://*.facebook.com">
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <meta name="theme-color" content="#EFE9FA">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -1253,6 +1253,8 @@ h1 .pileico{width:34px;height:27px;vertical-align:-3px;margin-right:2px}
 .sheet{position:fixed;inset:0;z-index:60;display:flex;align-items:flex-end;justify-content:center}
 .sheet .sh-back{position:absolute;inset:0;background:rgba(30,18,50,.42);animation:fadein .18s ease}
 .sheet .sh-body{position:relative;width:100%;max-width:520px;max-height:82vh;overflow-y:auto;background:var(--surface);border-radius:20px 20px 0 0;padding:10px 16px calc(18px + env(safe-area-inset-bottom));box-shadow:0 -8px 30px rgba(40,25,70,.25);animation:sheetup .22s cubic-bezier(.2,.7,.3,1)}
+.shelfsay{margin-top:10px;padding:9px 12px;border-radius:12px;background:var(--surface-2);color:var(--fg)}
+.shelfsay a{white-space:nowrap}
 .sheet .sh-grip{width:40px;height:4px;border-radius:4px;background:var(--rule);margin:0 auto 10px}
 .sheet .sh-tabs{margin-bottom:8px;flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none}
 .sheet .sh-tabs::-webkit-scrollbar{display:none}
@@ -1572,6 +1574,9 @@ html,body{overscroll-behavior-y:contain}
 #bell{position:relative}
 #bell .ndot{position:absolute;top:-3px;right:-3px;min-width:16px;height:16px;padding:0 4px;border-radius:999px;
   background:var(--err);color:#fff;font-size:10.5px;font-weight:700;line-height:16px;text-align:center;box-shadow:0 0 0 2px var(--bg)}
+.pulltip{margin:0 0 10px;padding:8px 12px;border-radius:12px;background:var(--surface-2);color:var(--fg-soft)}
+.alertacts{gap:8px;margin:0 0 4px}
+.alertacts .btn{flex:1;min-width:0}
 .alerthead{margin:16px 0 6px;font-size:13px;letter-spacing:.02em;color:var(--fg-faint);text-transform:uppercase}
 .alerts{display:flex;flex-direction:column;gap:8px}
 .alert{display:flex;gap:10px;align-items:flex-start;padding:11px 12px;border:1px solid var(--rule);border-radius:14px;
@@ -2431,6 +2436,7 @@ const STR = {
     petPreviewCan: 'Khi bạn nhận bạn nhỏ này, bạn sẽ mở được:',
     petPickFree: 'Sáu bạn nhỏ miễn phí', petPickFreeNote: 'Bạn chọn một bạn nhỏ để nuôi miễn phí, và đổi được bất cứ lúc nào.',
     petPickPro: 'Linh thú Nabu Pro', petPickProNote: 'Mười hai linh thú trong truyền thuyết, hai vị cho mỗi phần đời. Linh thú nhận gấp đôi điểm mỗi lần bạn cho ăn hoặc chơi cùng, nên lên cấp nhanh gấp đôi và đổi ra xu Nabu cũng nhanh gấp đôi. Nabu Pro mở cả mười hai và cho bạn nuôi nhiều vị cùng lúc.',
+    petLockedItem: (n) => '“' + n + '” có trong gói Nabu Pro.',
     petXpWord: 'điểm', petMythBonus: (n) => 'Linh thú nhận gấp ' + n + ' lần điểm mỗi khi ăn và chơi.',
     petMythPlus: 'Linh thú này thuộc Nabu Pro.',
     petRename: 'Đổi tên bạn nhỏ', petRenameOk: 'Lưu tên',
@@ -2589,6 +2595,7 @@ const STR = {
     wedShareGuest: (a, b) => 'Mình vừa dự lễ cưới của ' + a + ' và ' + b + ' trên Nabu Tarot 💒',
     alertTitle: 'Thông báo', alertIntro: 'Những gì đã xảy ra khi bạn không mở app.',
     alertNone: 'Chưa có thông báo nào. Khi có người muốn buộc sợi tơ hồng, khi bạn nhận quà, khi lịch hẹn được xác nhận hay khi bạn nhỏ đói bụng, bạn sẽ thấy ở đây.',
+    alertPullTip: 'Bạn kéo màn hình xuống từ trên cùng để làm mới và cập nhật bản mới nhất.',
     alertReadAll: 'Đánh dấu đã đọc', alertClear: 'Xoá hết',
     alertToday: 'Hôm nay', alertYesterday: 'Hôm qua', alertEarlier: 'Trước đó',
     alertOffer: (n) => '💌 ' + n + ' muốn buộc sợi tơ hồng với bạn',
@@ -3053,6 +3060,7 @@ const STR = {
     petPreviewCan: 'When you keep this companion you can:',
     petPickFree: 'Six everyday companions', petPickFreeNote: 'Keep one of them for free, and change your mind whenever you like.',
     petPickPro: 'Nabu Pro spirit beasts', petPickProNote: 'Twelve creatures out of legend, two for each corner of life. A spirit beast earns double from every meal and every game, so it levels twice as fast and turns into Nabu coins twice as fast. Plus opens all twelve and lets you keep several at once.',
+    petLockedItem: (n) => '\u201C' + n + '\u201D comes with Nabu Pro.',
     petXpWord: 'XP', petMythBonus: (n) => 'A spirit beast earns ' + n + '× the points from every meal and every game.',
     petMythPlus: 'That spirit beast comes with Nabu Pro.',
     petRename: 'Rename', petRenameOk: 'Save the name',
@@ -3211,6 +3219,7 @@ const STR = {
     wedShareGuest: (a, b) => 'I was just at the wedding of ' + a + ' and ' + b + ' on Nabu Tarot \uD83D\uDC92',
     alertTitle: 'Notifications', alertIntro: 'What happened while you were away.',
     alertNone: 'Nothing yet. When someone wants to tie a thread with you, when a gift arrives, when a booking is answered or when your companion is hungry, it will be here.',
+    alertPullTip: 'Pull down from the top to refresh and take the newest version.',
     alertReadAll: 'Mark all as read', alertClear: 'Clear',
     alertToday: 'Today', alertYesterday: 'Yesterday', alertEarlier: 'Earlier',
     alertOffer: (n) => '💌 ' + n + ' would like to tie a thread with you',
@@ -11652,7 +11661,9 @@ const TOUR = [
   { ic: '✨', vi: ['Dự đoán', 'Bài mới của Nabu nằm ở trang chủ. Bài ghi "dành cho bạn" hợp với cung của bạn.'], en: ['Readings', 'Nabu\'s new posts live on the home screen. Posts marked "for you" match your sign.'] },
   { ic: '🎲', vi: ['Hoạt động', 'Nuôi bạn nhỏ may mắn, buộc sợi chỉ đỏ, rung cây thông điệp, tung đồng xu, viết nhật ký. Khi Nabu đăng thì có thêm tụ bài, bình chọn và điều ước.'], en: ['Activities', 'Keep a lucky companion, tie the red thread, shake the message tree, flip the coin, write the diary. When Nabu posts there are piles to pick, polls to vote in and wishes to send.'] },
   { ic: '📚', vi: ['Học', 'Tarot, Lenormand, bài Tây, chiêm tinh, con số thiên thần, manifestation và bói toán. Bạn bấm vào một lá bài hoặc một cung để đọc.'], en: ['Learn', 'Tarot, Lenormand, cartomancy, astrology, angel numbers, manifestation and fortune telling. Tap a card or a sign to read.'] },
+  { ic: '\uD83E\uDDE7', vi: ['Sợi tơ hồng', 'Buộc sợi tơ hồng với một người: bạn đặt tên riêng, đưa cho người ấy, và người ấy đồng ý là app bắt đầu đếm ngày cho hai bạn. Sau đó có thể ngỏ lời, đính ước, tặng quà và tổ chức lễ cưới.'], en: ['The red thread', 'Tie a thread with somebody: choose a name, give it to them, and once they agree the app starts counting your days. After that you can ask, get engaged, send gifts and hold a wedding.'] },
   { ic: '📅', vi: ['Đặt lịch', 'Bạn chọn gói, chọn giờ trên lịch rồi gửi yêu cầu cho Nabu.'], en: ['Book', 'Choose a topic, pick a time on the calendar, send it to Nabu.'] },
+  { ic: '\uD83D\uDD14', vi: ['Làm mới & thông báo', 'Ở bất kỳ trang nào, bạn kéo màn hình xuống từ trên cùng là app tự làm mới và cập nhật bản mới nhất. Chuông ở góc trên bên phải giữ lại những gì đã xảy ra khi bạn không mở app.'], en: ['Refresh & notifications', 'On any screen, pull down from the top and the app refreshes itself to the newest version. The bell in the top corner keeps whatever happened while you were away.'] },
   { ic: '👤', vi: ['Hồ sơ', 'Nhập tên và ngày sinh để app chọn nội dung hợp với bạn. Đăng nhập để lưu hồ sơ và xem lịch hẹn.'], en: ['Profile', 'Enter your name and birthday so the app picks content for you. Sign in to keep your profile, message Nabu and see bookings.'] }
 ];
 function tourHTML(step) {
@@ -17191,6 +17202,9 @@ function renderPet(want) {
       + '<div class="chips sh-tabs">' + SHEETS.map((x) => '<button type="button" class="chip' + (x.key === cur.key ? ' on' : '') + '" data-sheet-tab="' + x.key + '">' + x.icon + ' ' + esc(x.title()) + '</button>').join('') + '</div>'
       + '<p class="hint">' + esc(cur.note(p)) + '</p>'
       + (cur.key === 'coat' && petIsPro(p.kind) ? '' : shelfRows(cur.set(), cur.now(p), cur.key, cur.art))
+      /* Where a locked item explains itself, instead of the app jumping to the
+         price list and leaving somebody to wonder what they did wrong. */
+      + '<p class="hint shelfsay" id="shelfsay" hidden></p>'
       + '<button type="button" class="btn block" data-close-sheet="1" style="margin-top:12px">' + esc(S.sheetClose) + '</button>'
       + '</div></div>';
   };
@@ -17420,7 +17434,17 @@ function renderPet(want) {
       const set = key === 'food' ? PET_FOODS : (key === 'home' ? PET_HOMES : (key === 'wear' ? PET_WEARS : PET_COATS));
       const item = set.filter((x) => x.id === id)[0];
       if (!item) return;
-      if (item.pro && !proOn()) { toast(S.petPlusItem); location.hash = '#/unlock'; return; }
+      if (item.pro && !proOn()) {
+        /* Not a trapdoor. Most of these shelves are locked, so jumping to the
+           price list on a tap meant losing the screen you were looking at,
+           seven times out of nine. */
+        const say = $('#shelfsay');
+        if (say) {
+          say.hidden = false;
+          say.innerHTML = esc(S.petLockedItem(L(item.name))) + ' <a href="#/unlock?from=app">' + esc(S.unlockLink) + ' \u2192</a>';
+        } else { toast(S.petPlusItem); }
+        return;
+      }
       p[key] = id; PETS.put(p); draw();
     }));
     /* The pencil turns the title into a field and back again, so a name can be
@@ -20502,11 +20526,14 @@ function renderAlerts() {
     m.innerHTML = '<div class="eyebrow">' + esc(CONFIG.brand) + '</div>'
       + '<h1 style="margin-bottom:6px">🔔 ' + esc(S.alertTitle) + '</h1>'
       + '<p class="muted">' + esc(S.alertIntro) + '</p>'
+      + '<p class="hint pulltip">\u2193 ' + esc(S.alertPullTip) + '</p>'
+      /* The two buttons sit above the list, not under it. With a hundred
+         notifications, a button at the bottom is a button nobody reaches. */
       + (list.length
-        ? groups.filter((g) => g[1].length).map((g) =>
-          '<h3 class="alerthead">' + esc(g[0]) + '</h3><div class="alerts">' + g[1].map(row).join('') + '</div>').join('')
-          + '<div class="row" style="margin-top:16px"><button type="button" class="btn" id="alread">' + esc(S.alertReadAll) + '</button>'
+        ? '<div class="row alertacts"><button type="button" class="btn" id="alread">' + esc(S.alertReadAll) + '</button>'
           + '<button type="button" class="btn" id="alclear">' + esc(S.alertClear) + '</button></div>'
+          + groups.filter((g) => g[1].length).map((g) =>
+            '<h3 class="alerthead">' + esc(g[0]) + '</h3><div class="alerts">' + g[1].map(row).join('') + '</div>').join('')
         : '<div class="card"><p class="lead" style="text-align:center">🔔</p>'
           + '<p class="hint" style="text-align:center">' + esc(S.alertNone) + '</p></div>');
 
@@ -20948,7 +20975,7 @@ function adminSale(p) {
 ROUTES.admin = { nav: '', render: renderAdmin };
 
 /* ============================ boot ============================ */
-window.APP_VERSION = 'v141';
+window.APP_VERSION = 'v142';
 window.NABU = { CONFIG: CONFIG, SALE: SALE, salePrice: salePrice, loadActs: loadActs, BACK: BACK, LESSONS: LESSONS, localAnswer: localAnswer, compatVerdict: compatVerdict, numerologyOf: numerologyOf, ZDEEP: ZDEEP, lunarToday: lunarToday, solarToLunar: solarToLunar, DECK: DECK, INSIGHT: INSIGHT, KW: KW, ASK: ASK, TOPICS: TOPICS, GUIDES: GUIDES, SERVICES: SERVICES, COURSES: COURSES, ACCESS: ACCESS, plusOn: () => plusOn(), proOn: () => proOn(), luckUnlimited: () => luckUnlimited(), ZODIAC: ZODIAC, pick: pick, book: book,
   insightHTML: insightHTML, insightOf: insightOf, sunSignIndex: sunSignIndex, lifePath: lifePath, PROFILE: () => PROFILE, BE: BE, ACTS: ACTS,
   ANGELS: ANGELS, angelRead: angelRead, CODEBOOK: CODEBOOK, verifyCode: verifyCode, petHomeSVG: petHomeSVG, PET_HOMES: PET_HOMES, PET_WEARS: PET_WEARS, codeDigest: codeDigest, randomCode: randomCode, BANK: BANK, PETS: PETS, petSVG: petSVG, PET_COATS: PET_COATS, PET_KINDS: PET_KINDS, luckCut: luckCut, petLevel: petLevel, petStep: petStep, VOUCHERS: VOUCHERS, levelCoins: levelCoins, LOOKS: LOOKS,

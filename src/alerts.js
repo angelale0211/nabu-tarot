@@ -331,11 +331,14 @@ function renderAlerts() {
     m.innerHTML = '<div class="eyebrow">' + esc(CONFIG.brand) + '</div>'
       + '<h1 style="margin-bottom:6px">🔔 ' + esc(S.alertTitle) + '</h1>'
       + '<p class="muted">' + esc(S.alertIntro) + '</p>'
+      + '<p class="hint pulltip">\u2193 ' + esc(S.alertPullTip) + '</p>'
+      /* The two buttons sit above the list, not under it. With a hundred
+         notifications, a button at the bottom is a button nobody reaches. */
       + (list.length
-        ? groups.filter((g) => g[1].length).map((g) =>
-          '<h3 class="alerthead">' + esc(g[0]) + '</h3><div class="alerts">' + g[1].map(row).join('') + '</div>').join('')
-          + '<div class="row" style="margin-top:16px"><button type="button" class="btn" id="alread">' + esc(S.alertReadAll) + '</button>'
+        ? '<div class="row alertacts"><button type="button" class="btn" id="alread">' + esc(S.alertReadAll) + '</button>'
           + '<button type="button" class="btn" id="alclear">' + esc(S.alertClear) + '</button></div>'
+          + groups.filter((g) => g[1].length).map((g) =>
+            '<h3 class="alerthead">' + esc(g[0]) + '</h3><div class="alerts">' + g[1].map(row).join('') + '</div>').join('')
         : '<div class="card"><p class="lead" style="text-align:center">🔔</p>'
           + '<p class="hint" style="text-align:center">' + esc(S.alertNone) + '</p></div>');
 

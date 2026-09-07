@@ -44,13 +44,13 @@ async function go(hash, sel) { W().location.hash = hash; await sleep(30); return
     ok(/rotate\(-10/.test(d.querySelector('#nav a[href="#/pick"] svg').innerHTML), 'pick tab uses the two-card line icon');
     ok(d.querySelector('[data-tour="prev"]') && d.querySelector('[data-tour="prev"]').disabled && d.querySelector('[data-tour="next"]') && d.querySelectorAll('.tournav > *').length === 3, 'the tour shows both arrows from step one in fixed slots; back is greyed out at the start');
     d.querySelector('[data-tour="next"]').click(); await sleep(30); d.querySelector('[data-tour="next"]').click(); await sleep(30);
-    ok(/3 \/ 6/.test(d.querySelector('#tour').textContent) && !d.querySelector('[data-tour="prev"]').disabled, 'later steps enable the back arrow in the same place');
+    ok(/3 \/ 8/.test(d.querySelector('#tour').textContent) && !d.querySelector('[data-tour="prev"]').disabled, 'later steps enable the back arrow in the same place');
     d.querySelector('[data-tour="prev"]').click(); await sleep(30);
-    ok(/2 \/ 6/.test(d.querySelector('#tour').textContent), 'the back arrow steps back');
-    for (let i = 0; i < 6 && d.querySelector('[data-tour="next"]'); i++) { d.querySelector('[data-tour="next"]').click(); await sleep(30); }
+    ok(/2 \/ 8/.test(d.querySelector('#tour').textContent), 'the back arrow steps back');
+    for (let i = 0; i < 10 && d.querySelector('[data-tour="next"]'); i++) { d.querySelector('[data-tour="next"]').click(); await sleep(30); }
     ok(d.querySelector('#tour.tourmini') && N.PROFILE().tourDone === true, 'tour completes, is remembered, and shrinks to a one-line bar');
     d.querySelector('[data-tour="open"]').click(); await sleep(30);
-    ok(d.querySelector('#tour.card') && /1 \/ 6/.test(d.querySelector('#tour').textContent), 'the bar reopens the tour from step one');
+    ok(d.querySelector('#tour.card') && /1 \/ 8/.test(d.querySelector('#tour').textContent), 'the bar reopens the tour from step one');
     d.querySelector('[data-tour="skip"]').click(); await sleep(30);
     ok(d.querySelector('#tour.tourmini'), 'closing shrinks it again');
     await waitFor(() => d.querySelector('.welcome'), 6000);
@@ -1615,31 +1615,72 @@ async function go(hash, sel) { W().location.hash = hash; await sleep(30); return
     ok(!d.documentElement.getAttribute('data-theme') && JSON.parse(w.localStorage.getItem('nabu-theme')) === '' && bgOf() === (w.matchMedia('(prefers-color-scheme: dark)').matches ? DARK : LIGHT), 'auto follows the phone setting');
     d.querySelector('[data-theme-pick="light"]').click();
     ok(d.documentElement.scrollWidth <= 431, 'no horizontal overflow (' + d.documentElement.scrollWidth + ')');
+    { /* The four shelves - food, home, what they wear, their coat. Reported as
+         broken; it was not, but seven of the nine foods are locked and tapping
+         one used to jump the whole app to the price list, which is what that
+         looks like from outside. Both halves are checked. */
+      const keptPets = w.localStorage.getItem('nabu-pets');
+      const keptAcc = w.localStorage.getItem('nabu-access');
+      w.localStorage.removeItem('nabu-pets');
+      N.ACCESS.grant('pro', '2099-01-01');
+      await go('#/home', '#main'); await go('#/play/pet', '[data-kind]'); await sleep(220);
+      d.querySelector('[data-kind]:not(.locked)').click(); await sleep(240);
+      if (d.querySelector('#petkeep')) { d.querySelector('#petkeep').click(); await sleep(320); }
+
+      const bad = [];
+      for (const pair of [['food', 'honey'], ['home', 'cloud'], ['wear', 'crown'], ['coat', 'gold']]) {
+        const op = d.querySelector('[data-open-sheet="' + pair[0] + '"]');
+        if (!op) { bad.push(pair[0] + ' has no way to open it'); continue; }
+        op.click(); await sleep(200);
+        const item = d.querySelector('[data-shelf="' + pair[0] + ':' + pair[1] + '"]');
+        if (!item) { bad.push(pair[0] + ' has no ' + pair[1]); continue; }
+        item.click(); await sleep(240);
+        const p = N.PETS.all()[0] || {};
+        if (p[pair[0]] !== pair[1]) bad.push(pair[0] + ' stayed ' + p[pair[0]] + ' instead of ' + pair[1]);
+      }
+      ok(bad.length === 0, 'every shelf stores what is chosen from it' + (bad.length ? ' [' + bad.join('; ') + ']' : ''));
+
+      /* And without Plus, a locked one explains itself where it was tapped. */
+      w.localStorage.removeItem('nabu-access');
+      await go('#/home', '#main'); await go('#/play/pet', '#main'); await sleep(260);
+      const op2 = d.querySelector('[data-open-sheet="food"]');
+      if (op2) {
+        op2.click(); await sleep(200);
+        const locked = d.querySelector('[data-shelf="food:tea"]');
+        const before = (N.PETS.all()[0] || {}).food;
+        locked.click(); await sleep(240);
+        const say = d.querySelector('#shelfsay');
+        ok(say && !say.hidden && /Pro/.test(say.textContent) && d.querySelector('#petsheet')
+          && w.location.hash.indexOf('unlock') < 0,
+          'a locked one says so where it was tapped, without throwing anybody off the page');
+        ok((N.PETS.all()[0] || {}).food === before, 'and changes nothing');
+      } else { ok(false, 'the food shelf opens'); ok(false, 'and changes nothing'); }
+
+      if (keptPets != null) w.localStorage.setItem('nabu-pets', keptPets); else w.localStorage.removeItem('nabu-pets');
+      if (keptAcc != null) w.localStorage.setItem('nabu-access', keptAcc); }
     { /* The picker, a preview and a companion's own page are three screens on
          one route, so nothing scrolls between them. Tapping a companion near
          the bottom of the grid landed on the buttons under a picture nobody
-         had seen. Only visible from the bottom of a screen, which is why it
-         survived every other check. */
-      await go('#/home', '#main'); await go('#/play/pet', '#main'); await sleep(200);
-      const tile = d.querySelector('.petpick [data-kind]:not(.locked)')
-        || d.querySelector('[data-kind]');
-      if (tile) {
-        w.scrollTo(0, Math.max(400, d.documentElement.scrollHeight - 500));
-        await sleep(80);
-        const wasDown = (w.scrollY || d.documentElement.scrollTop || 0) > 100;
-        tile.click(); await sleep(220);
-        ok(wasDown && (w.scrollY || d.documentElement.scrollTop || 0) < 30,
-          'opening a companion from the bottom of the grid starts at the top of it');
-        /* And a redraw of the screen you are on must not move you. */
-        w.scrollTo(0, 200); await sleep(60);
-        const brush = d.querySelector('[data-brush], #petbrush, .petstage');
-        if (brush) { brush.click(); await sleep(200); }
-        ok((w.scrollY || d.documentElement.scrollTop || 0) > 100,
-          'while redrawing the screen you are on leaves you where you were');
-      } else {
-        ok(false, 'the companion picker offers something to open');
-        ok(false, 'while redrawing the screen you are on leaves you where you were');
-      } }
+         had seen. Only visible from the bottom of a screen, which is why every
+         other check missed it - and the state has to be set here rather than
+         inherited, or which screen opens depends on what ran before. */
+      const keptPets = w.localStorage.getItem('nabu-pets');
+      w.localStorage.removeItem('nabu-pets');
+      await go('#/home', '#main'); await go('#/play/pet', '.petpick'); await sleep(220);
+      const tall = d.documentElement.scrollHeight > w.innerHeight + 200;
+      ok(tall, 'the companion picker is long enough that where you are standing matters');
+      w.scrollTo(0, Math.max(300, d.documentElement.scrollHeight - w.innerHeight - 40));
+      await sleep(90);
+      ok((w.scrollY || d.documentElement.scrollTop || 0) > 100, 'and it can be scrolled down');
+      d.querySelector('.petpick [data-kind]:not(.locked)').click(); await sleep(260);
+      ok(d.querySelector('#petkeep') && (w.scrollY || d.documentElement.scrollTop || 0) < 30,
+        'opening a companion from the bottom of the grid starts at the top of it');
+      /* And back the other way, which is the same fault in reverse. */
+      w.scrollTo(0, 400); await sleep(80);
+      d.querySelector('#petback2').click(); await sleep(240);
+      ok(d.querySelector('.petpick') && (w.scrollY || d.documentElement.scrollTop || 0) < 30,
+        'and going back to the grid starts at the top of that');
+      if (keptPets != null) w.localStorage.setItem('nabu-pets', keptPets); }
     { /* A pill with a symbol in it and no words is the shape of a button, so
          people waited for it and pressed at it. Nothing may answer a press
          with a bare mark. */
