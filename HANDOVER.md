@@ -34,39 +34,44 @@ Bumping a version means **two** edits, then a rebuild:
 
 Without the `sw.js` bump, nobody's phone sees the new version.
 
-## 3. THE TEST SUITE IS CURRENTLY BROKEN ON THIS MACHINE — read this first
+## 3. The test suite — fixed, with one known stall
 
-At the end of the session the suite **stalls before its first check** ("the
-browser did not settle"), and it does so **even with the session's code changes
-reverted**. It is not a regression in the app. Two things were found and fixed,
-and a third is still open:
+It used to stall before its first check and report nothing at all. Three things
+were wrong; two are fixed.
 
-- **Fixed**: `test/run.py` created a fresh Chromium profile per run and never
-  deleted it. **629** of them had accumulated in `%TEMP%`, and the resulting
-  disk thrash is what made runs slow, then stall. The runner now deletes old
-  `nabu-edge-*` profiles before each run and its own on the way out.
-- **Fixed**: the mock database read every `where()` as `array-contains`, which
-  happens to work for a uid inside a string and throws for a boolean.
-- **STILL OPEN**: even on a clean machine the run reaches `#results` = "running"
-  with zero checks. Next thing to try: put per-check progress reporting back
-  into `test/test.html` (`R.textContent = out.join('\n')` inside `ok()`) and
-  find which check it dies on — but note that *adding that line coincided with a
-  stall*, so verify it in isolation first. Also worth trying: a much smaller
-  `--virtual-time-budget` and bisecting the test file by commenting out blocks.
+- **Fixed: the runner guessed how long the suite would take.** It gave the
+  browser a budget of pretend time (`--virtual-time-budget`) and read the page
+  once that ran out. Pretend time stands still while the browser is waiting on
+  the real network, so one slow request held the whole run open until it was
+  killed — reporting nothing, after several minutes.
+  **The page now posts its results back** to the runner as it goes, and the run
+  ends when the suite says it has ended. A run that dies half way prints the
+  checks it managed and names the one it stopped after. The pretend clock is
+  still used (the checks wait 30ms for a redraw and mean it), it is simply no
+  longer what ends the run.
+- **Fixed: a stale check.** The wedding test still expected the old one-press
+  start, from before v162 made it two keys. It threw on a null, and because the
+  whole suite is one `try`/`catch`, that one line killed the remaining 40% of
+  the run. It now walks the two-key flow.
+- **Fixed earlier:** 629 leftover browser profiles in `%TEMP%`; the mock db
+  reading every `where()` as `array-contains`.
 
-**Do not let this block shipping.** When the suite will not run, verify by hand:
+**Still open — one stall, precisely located.** The suite reaches **431 of ~440**
+checks and stops inside `answerAs()` in `test/test.html`, on the first
+`#wedyes` click of the four-vow walk-through. Ruled out already: `WEDMUSIC`
+(the same call fires on an earlier check that passes) and the 20-second
+heartbeat (guarded by `!beat`, cleared in two places). The next thing to try is
+whether mock-db listeners accumulate across repeated room entries — `answerAs`
+enters the room four times — which would grind the page to a halt in real time
+while the pretend clock is paused. Everything else passes.
 
 ```bash
-python -m http.server 8801 &
-"/c/Program Files (x86)/Microsoft/Edge/Application/msedge.exe" --headless=new \
-  --disable-gpu --no-first-run --virtual-time-budget=20000 \
-  --user-data-dir=/tmp/nb1 --dump-dom "http://127.0.0.1:8801/index.html#/home" \
-  | grep -o 'id="main"[^>]*>.\{0,200\}'
+python build.py
+PYTHONIOENCODING=utf-8 python test/run.py     # 432 checks, ~7 min
 ```
 
-If `#main` has real content, the bundle parses and boots. Repeat for `#/unlock`,
-`#/alerts`, `#/wedding`, `#/me`. A JavaScript syntax error anywhere in `src/`
-produces a **blank** app, not a broken screen — this check catches that.
+The run takes about seven minutes because it waits out that stall (90 seconds
+of silence) before reporting. Fix the stall and it will be quick again.
 
 ## 4. Traps that cost hours this session — do not repeat them
 

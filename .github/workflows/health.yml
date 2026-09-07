@@ -1,0 +1,81 @@
+# Is the live site actually up, and is it serving what we think it is?
+#
+# The bell inside the app is for readers, and it cannot tell Nabu anything: it
+# only runs while somebody has the app open. Nothing watched the site itself.
+# This does, four times a day, and it fails loudly - a failed Action emails the
+# owner, which is the whole point.
+#
+# It checks three things that have each been wrong before:
+#   1. the page loads at all
+#   2. the version it serves matches the version in main (a deploy that half
+#      happened leaves those different, and phones then sit on an old bundle)
+#   3. the app boots - a JavaScript syntax error anywhere in src/ produces a
+#      blank page, not a broken screen, so only rendering catches it
+name: health
+
+on:
+  schedule:
+    - cron: '20 */6 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  live:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: The site answers
+        run: curl -fsS --max-time 30 -o /tmp/live.html https://nabutarot.com/
+
+      - name: It is serving the version in main
+        run: |
+          here=$(grep -o "APP_VERSION = '[^']*'" src/main.js | head -1 | sed "s/.*'\(.*\)'/\1/")
+          live=$(grep -o "APP_VERSION = '[^']*'" /tmp/live.html | head -1 | sed "s/.*'\(.*\)'/\1/")
+          echo "main says $here, the site says $live"
+          if [ "$here" != "$live" ]; then
+            echo "The site is not serving what main says it should."
+            echo "Either a deploy did not finish, or index.html was not rebuilt and committed."
+            exit 1
+          fi
+
+      - name: The service worker cache name matches too
+        run: |
+          v=$(grep -o "APP_VERSION = '[^']*'" src/main.js | head -1 | sed "s/.*'\(.*\)'/\1/")
+          sw=$(grep -o "nabu-tarot-[a-z0-9.]*" sw.js | head -1 | sed 's/nabu-tarot-//')
+          echo "app $v, service worker $sw"
+          if [ "$v" != "$sw" ]; then
+            echo "sw.js was not bumped with main.js, so nobody's phone will see the new version."
+            exit 1
+          fi
+
+      - name: The app boots, rather than rendering a blank page
+        run: |
+          python3 -m http.server 8801 >/dev/null 2>&1 &
+          sleep 2
+          for route in home unlock alerts wedding me; do
+            google-chrome --headless=new --disable-gpu --no-sandbox --no-first-run \
+              --virtual-time-budget=20000 --user-data-dir=/tmp/hc-$route --dump-dom \
+              "http://127.0.0.1:8801/index.html#/$route" > /tmp/$route.html 2>/dev/null || true
+            n=$(grep -o 'id="main"' /tmp/$route.html | wc -l)
+            size=$(wc -c < /tmp/$route.html)
+            echo "#/$route -> $size bytes"
+            if [ "$n" -lt 1 ] || [ "$size" -lt 50000 ]; then
+              echo "#/$route rendered nothing. That is a syntax error in src/, not a broken screen."
+              exit 1
+            fi
+          done
+
+      - name: The worker answers
+        run: |
+          url=$(grep -o "aiEndpoint: '[^']*'" src/config.js | head -1 | sed "s/.*'\(.*\)'/\1/")
+          if [ -z "$url" ]; then echo "No aiEndpoint set, nothing to check."; exit 0; fi
+          code=$(curl -s -o /dev/null -w '%{http_code}' --max-time 30 -X POST "$url" \
+            -H 'Content-Type: application/json' \
+            -d '{"lang":"vi","kind":"general","question":"ping","context":"health check"}')
+          echo "worker answered $code"
+          # 200 is fine, 401 is fine (it wants a token, which means it is up and
+          # guarding itself), 429 is fine (limits are working). 5xx is not.
+          case "$code" in 200|401|429) exit 0 ;; *) echo "The worker is not answering properly."; exit 1 ;; esac

@@ -22,7 +22,9 @@ Installs to the home screen on iPhone (Safari → Share → Add to Home Screen) 
 
 **GitHub token** – GitHub → Settings → Developer settings → Personal access tokens → Fine-grained tokens → Generate. Repository access: only `nabu-tarot`. Permissions: Contents → Read and write. The token stays in that phone's browser.
 
-**Course codes** – after a client pays, open `#/admin` → *Mã học*, pick the course and start date, press *Tạo mã*, send the code. The client enters it on the course page or under Tôi → Khóa học của tôi. Codes are checked on the device against `CONFIG.courseSecret` (change it once to something private; older codes then stop working).
+**Selling a course** – when the order was placed in the app, there is no code to make. Open `#/admin` → *Thanh toán*, find the order and press the button that says the money arrived. That marks it paid and opens the course on the buyer's own account.
+
+**Course codes** – only for somebody who paid without an account. `#/admin` → *Mã học*, pick the course and the date it runs to, press *Tạo mã*, send the code. The app keeps no secret: it publishes a slow salted hash of each code, and redeeming hashes what was typed and looks it up (`src/codes.js`). A code Nabu never issued opens nothing, and editing the course or the date inside a real code gets nowhere. Cancelling a code stops it being redeemed again — it does not take anything back from somebody who already used it; for that, open their thread in *Tin nhắn* and withdraw their access.
 
 **Services and prices** – `src/services.js` (six services with their packages and VND prices, the payment note). The booking screen and the `#/prices` page read from it.
 
