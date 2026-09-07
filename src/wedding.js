@@ -514,17 +514,56 @@ function renderWedding(args) {
     void bouquetShown;
   };
 
+
+  /* One page about this wedding: when it is, what it costs, what happens, and
+     one button that tells Nabu. Not a price list - they have already chosen. */
+  const drawPay = (bond) => {
+    const me = WED.me(), you = LOVE.other(bond, me);
+    const nm = (you && (you.name || (you.handle ? '@' + you.handle : ''))) || S.loveSomeone;
+    const ms = Number(store.get('nabu-wed-want', 0)) || 0;
+    if (!ms) { location.hash = '#/wedding'; return; }
+    const price = salePrice(WED_PRICE, 'unlock', 'wedding');
+    m.innerHTML = head(S.wedPayIntro)
+      + '<div class="card wedcard">' + cupidSVG()
+      + '<p class="wedpair">' + esc((PROFILE && PROFILE.name) || S.loveYou) + ' \u2764 ' + esc(nm) + '</p>'
+      + '<p class="wedwhen">' + esc(wedWhen(ms)) + '</p>'
+      + '<p class="wedprice">' + esc(fmtPrice(price)) + '</p>'
+      + '<p class="hint" style="text-align:center">' + esc(S.wedPayOnce) + '</p></div>'
+      + '<div class="card"><h3 style="margin-bottom:6px">' + esc(S.wedPayWhat) + '</h3>'
+      + '<ul class="carelist">' + S.wedPayList.map((x) => '<li><span>' + esc(x) + '</span><b>\u2713</b></li>').join('') + '</ul></div>'
+      + '<div class="card"><h3 style="margin-bottom:6px">' + esc(S.wedPayHow) + '</h3>'
+      + '<ol class="steps">' + [S.unlockStep1, S.unlockStep2, S.unlockStep3].map((x) => '<li>' + esc(x) + '</li>').join('') + '</ol>'
+      + '<p class="hint hold">' + esc(S.wedPayHold(wedWhen(ms))) + '</p>'
+      + '<button type="button" class="btn primary block" id="wedpay">' + esc(S.wedPaySend) + '</button>'
+      + '<p class="hint" id="wedpayst"></p>'
+      + '<p style="margin-top:10px"><a class="backlink" href="#/wedding">\u2190 ' + esc(S.wedChangeTime) + '</a></p></div>';
+
+    $('#wedpay').addEventListener('click', async () => {
+      const b = $('#wedpay'), st = $('#wedpayst');
+      if (!BE.enabled || !BE.user) { st.className = 'hint err'; st.textContent = S.unlockSendMsg; return; }
+      b.disabled = true; st.className = 'hint'; st.textContent = S.loveSaving;
+      try {
+        await BE.createUnlockOrder([{ id: 'wedding', name: L(COURSES.filter((c) => c.id === 'wedding')[0].name)
+          + ' \u00b7 ' + wedWhen(ms), price: price }], price);
+        st.className = 'hint ok'; st.textContent = S.wedPaySent;
+        toast(S.wedPaySent);
+      } catch (e) { b.disabled = false; st.className = 'hint err'; st.textContent = loveWhy(e); }
+    });
+  };
+
   /* ------------------------------------------------- the couple's own screen */
   const drawPlan = (bond, w) => {
     const me = WED.me(), you = LOVE.other(bond, me);
     const nm = (you && (you.name || (you.handle ? '@' + you.handle : ''))) || S.loveSomeone;
     if (!w) {
-      const soon = new Date(Date.now() + 3 * 86400000);
-      soon.setHours(19, 0, 0, 0);
+      /* The hour they chose before paying, if they chose one. */
+      const wanted2 = Number(store.get('nabu-wed-want', 0)) || 0;
+      const soon = new Date(wanted2 > Date.now() ? wanted2 : Date.now() + 3 * 86400000);
+      if (!wanted2) soon.setHours(19, 0, 0, 0);
       m.innerHTML = head()
         + '<div class="card wedcard">' + cupidSVG()
         + '<p class="lead" style="text-align:center">' + esc(S.wedPlanLead(nm)) + '</p>'
-        + '<p class="hint" style="text-align:center">' + esc(S.wedPlanHint) + '</p></div>'
+        + '<p class="hint" style="text-align:center">' + esc(ACCESS.has('wedding') ? S.wedPlanHint : S.wedPlanPay(fmtPrice(salePrice(WED_PRICE, 'unlock', 'wedding')))) + '</p></div>'
         + '<div class="card"><h3 style="margin-bottom:6px">\uD83D\uDD52 ' + esc(S.wedWhen) + '</h3>'
         + '<p class="hint" style="margin-bottom:10px">' + esc(S.wedWhenHint) + '</p>'
         + '<input type="datetime-local" id="wedat" value="' + esc(wedLocalValue(soon.getTime())) + '">'
@@ -534,6 +573,10 @@ function renderWedding(args) {
         const b = $('#wedmake'), st = $('#wedst'), v = $('#wedat').value;
         const ms = new Date(v).getTime();
         if (!v || isNaN(ms) || ms < Date.now() + 10 * 60000) { st.className = 'hint err'; st.textContent = S.wedWhenBad; return; }
+        /* The hour is kept whatever happens next, so that coming back with a
+           code does not mean choosing it all over again. */
+        store.set('nabu-wed-want', ms);
+        if (!ACCESS.has('wedding')) { location.hash = '#/wedding/pay'; return; }
         b.disabled = true; st.className = 'hint'; st.textContent = S.loveSaving;
         try { await WED.create(bond, ms); toast(S.wedMade); }
         catch (e) { b.disabled = false; st.className = 'hint err'; st.textContent = loveWhy(e); }
@@ -590,6 +633,11 @@ function renderWedding(args) {
   const paint = () => {
     if (!ready) return;
     if (tick) { clearInterval(tick); tick = null; }
+    if (wanted === 'pay') {
+      if (!bond) { shut(S.wedNeedThread); return; }
+      drawPay(bond);
+      return;
+    }
     if (wanted && (!bond || WED.idFor(bond) !== wanted)) {
       /* Somebody else's wedding: a guest, arriving by link. */
       if (!wedding) { shut(S.wedNoRoom); return; }
@@ -601,7 +649,8 @@ function renderWedding(args) {
     /* One of them pays and both are married. Buying is what lets a room be
        made; once it exists it belongs to the couple, so the partner who did
        not pay walks in exactly as the one who did. */
-    if (!wedding && !ACCESS.has('wedding')) { drawOffer(); return; }
+    /* The hour comes first. What it costs is the next screen, not a gate in
+       front of the only screen that lets somebody choose anything. */
     drawPlan(bond, wedding);
   };
 
@@ -631,7 +680,10 @@ function renderWedding(args) {
   }
 
   /* The room, whichever one this is. */
-  const id = wanted || LOVE.local().bond || '';
+  /* The paying step is the couple's own screen under another name, so it needs
+     the thread; only a guest's link stands on its own. */
+  const guestLink = wanted && wanted !== 'pay';
+  const id = guestLink ? wanted : (LOVE.local().bond || '');
   if (id) {
     stop.push(WED.watch(id, (w) => {
       wedding = w; ready = true;
@@ -645,7 +697,7 @@ function renderWedding(args) {
           store.set('nabu-wed-seen', seen);
         }
       }
-      if (w && wanted && !WED.mine(w)) {
+      if (w && guestLink && !WED.mine(w)) {
         /* A guest takes a seat once, and then keeps it warm while they watch,
            because the bouquet may only land on somebody actually here. */
         if (!seated) { seated = true; WED.sit(w.id, (PROFILE && PROFILE.name) || '').catch(() => {}); }
@@ -656,7 +708,7 @@ function renderWedding(args) {
     stop.push(WED.watchGuests(id, (g) => { guests = g; paint(); }));
     stop.push(WED.watchGifts(id, (g) => { gifts = g; paint(); }));
   }
-  if (!wanted) {
+  if (!guestLink) {
     stop.push(LOVEDB.watchMine((b) => { bond = b; ready = true; paint(); }));
   } else { ready = true; paint(); }
 }

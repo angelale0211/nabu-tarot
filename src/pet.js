@@ -1186,6 +1186,10 @@ function petAuraHTML(kind, n) {
 function renderPet(want) {
   const S = T(), m = $('#main');
   let busy = false, open = '', sheet = '';
+  /* Three screens share one route, so nothing scrolls them for us. Moving
+     between them starts at the top; redrawing the one you are on does not. */
+  let petView = '';
+  const petShow = (key) => { if (key !== petView) { petView = key; window.scrollTo(0, 0); } };
 
   /* Every way to earn, as one table of two columns. A locked line still shows
      what it would be worth, because that is the case for Plus. */
@@ -1289,6 +1293,7 @@ function renderPet(want) {
   };
 
   const draw = () => {
+    petShow('pet:' + (open || ''));
     // a drag interrupted by a route change can leave its food behind
     $$('.dragfood').forEach((x) => x.remove());
     const pets = PETS.all();
@@ -1547,6 +1552,7 @@ function renderPet(want) {
      visitor can see what comes with keeping one before they keep it. */
   const prevBtn = (icon, label) => '<span class="stagebtn locked"><span class="ic">' + icon + '</span><span class="lb">' + esc(label) + '</span><span class="lk">🔒</span></span>';
   const drawPreview = (kind) => {
+    petShow('prev:' + kind);
     const luck = petLuck(kind), have = !!PETS.one(kind), pets = PETS.all();
     const swap = !have && !PETS.room();
     const blocked = swap && !PETS.canChange();
@@ -1587,6 +1593,7 @@ function renderPet(want) {
   /* The picker shows every companion, with what each one looks after, because
      the ones that cannot be kept yet are the reason to look at Plus. */
   const drawPicker = () => {
+    petShow('pick');
     const pets = PETS.all();
     const tile = (k) => {
       const luck = petLuck(k), have = !!PETS.one(k), locked = !have && !PETS.mayKeep(k);
@@ -1610,7 +1617,10 @@ function renderPet(want) {
     $$('[data-kind]', m).forEach((b) => b.addEventListener('click', () => {
       const k = b.getAttribute('data-kind');
       // A spirit beast cannot be previewed without Plus; everything else can.
-      if (petIsPro(k) && !proOn()) { toast(S.petMythPlus); location.hash = '#/unlock'; return; }
+      if (petIsPro(k) && !proOn()) { toast(S.petMythPlus); location.hash = '#/unlock?from=app'; return; }
+      /* Opening a preview replaces the screen but not where the visitor is
+         standing on it, so tapping a companion near the bottom of the grid
+         left them looking at the buttons under a picture they never saw. */
       drawPreview(k);
     }));
     const back = $('#petback');
@@ -1663,11 +1673,19 @@ function petWearArt(id) {
 function petParentsHTML() {
   const S = T(), l = LOVE.local();
   if (!l.parents || l.stage !== 'married' || !l.bond) return '';
+  /* Both of them, always. It used to drop whoever had not chosen a sign,
+     and a partner who has not opened that screen has no sign - so a married
+     couple who asked to be shown here saw one name, their own, as though
+     the other had been left out of their own family. The sign follows each
+     person's own choice; somebody who has made none is marked neutrally and
+     still named, because they are still a parent. */
   const sym = { mother: '\u2640', father: '\u2642' };
+  const mark = (r) => sym[r] || '\u2022';
   const who = [[l.role, LOVE.local().name || PROFILE.name || ''], [l.otherRole, l.withName || '']]
-    .filter((x) => sym[x[0]] && x[1])
-    .map((x) => '<span class="pp"><i>' + sym[x[0]] + '</i>' + esc(x[1]) + '</span>');
-  if (!who.length) return '';
+    .filter((x) => x[1])
+    .map((x) => '<span class="pp"><i>' + mark(x[0]) + '</i>' + esc(x[1]) + '</span>');
+  /* Half a family is worse than none. */
+  if (who.length < 2) return '';
   return '<p class="petfam"><b>' + esc(S.petParents) + '</b>' + who.join('') + '</p>';
 }
 
