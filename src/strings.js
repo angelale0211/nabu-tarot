@@ -727,6 +727,7 @@ const STR = {
 
     adminTitle: 'Điều khiển',
     adminIntro: 'Trang này chỉ dành cho Nabu.',
+    adminGotPaidSure: 'Chắc chắn đã nhận tiền?',
     adminMessageThem: 'Nhắn cho họ',
     errIntro: 'Những lỗi mà app gặp trên máy của người dùng. Cùng một lỗi được gộp thành một dòng.',
     errTitle: 'Lỗi', errNone: 'Chưa có lỗi nào. Đó là tin tốt.',
@@ -1518,6 +1519,7 @@ const STR = {
 
     adminTitle: 'Dashboard',
     adminIntro: 'This page is for Nabu only.',
+    adminGotPaidSure: 'Sure the money arrived?',
     adminMessageThem: 'Message them',
     errIntro: 'What went wrong on other people’s phones. The same fault is gathered into one line.',
     errTitle: 'Errors', errNone: 'No errors yet. That is good news.',

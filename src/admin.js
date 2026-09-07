@@ -359,19 +359,26 @@ function adminPay(p) {
           + '<button type="button" class="btn sm" data-wmvno="' + esc(w.id) + '">' + esc(S.adminKeep) + '</button>' : '')
         + '</div></div>').join('')
       + '</div>' : '';
-    const orders = all.filter((b) => b.kind === 'unlock');
+    /* An order has no hour in it, so the list arrives sorted by document id -
+       which is random. Anything that stopped being "requested" was then shown
+       only if it happened to fall in the first six, and an order Nabu had just
+       confirmed usually did not: it vanished off the screen at the exact moment
+       it mattered most. Sorted by when it was placed, newest first. */
+    const whenMs = (b) => (b.at && b.at.toMillis ? b.at.toMillis() : Number(b.paidAt || b.at) || 0);
+    const byNewest = (x, y) => whenMs(y) - whenMs(x);
+    const orders = all.filter((b) => b.kind === 'unlock').sort(byNewest);
     const waiting = orders.filter((b) => b.status === 'requested');
     $('#pyorders').innerHTML = '<div class="card"><h3 style="margin-bottom:4px">\uD83D\uDCB3 ' + esc(S.adminOrders) + (waiting.length ? ' <span class="n">' + waiting.length + '</span>' : '') + '</h3>'
       + '<p class="hint" style="margin-bottom:10px">' + esc(S.adminOrdersHint) + '</p>'
-      + (orders.length ? waiting.concat(orders.filter((b) => b.status !== 'requested').slice(0, 6)).map((b) => bookingRow(b, true)).join('')
+      + (orders.length ? waiting.concat(orders.filter((b) => b.status !== 'requested').slice(0, 25)).map((b) => bookingRow(b, true)).join('')
         : '<p class="empty">' + esc(S.adminOrdersNone) + '</p>') + '</div>';
     /* Readings: nothing to unlock, but Nabu still has to know which of them
        have been settled. */
-    const books = all.filter((b) => b.kind !== 'unlock' && ['declined', 'cancelled'].indexOf(b.status) < 0);
+    const books = all.filter((b) => b.kind !== 'unlock' && ['declined', 'cancelled'].indexOf(b.status) < 0).sort(byNewest);
     const owing = books.filter((b) => !b.paid);
     $('#pybooks').innerHTML = '<div class="card"><h3 style="margin-bottom:4px">\uD83D\uDCC5 ' + esc(S.payBookings) + (owing.length ? ' <span class="n">' + owing.length + '</span>' : '') + '</h3>'
       + '<p class="hint" style="margin-bottom:10px">' + esc(S.payBookingsHint) + '</p>'
-      + (books.length ? owing.concat(books.filter((b) => b.paid).slice(0, 6)).map((b) => bookingRow(b, true)).join('')
+      + (books.length ? owing.concat(books.filter((b) => b.paid).slice(0, 25)).map((b) => bookingRow(b, true)).join('')
         : '<p class="empty">' + esc(S.payNone) + '</p>') + '</div>';
 
     $$('[data-bk]', p).forEach((b) => b.addEventListener('click', async () => {
@@ -391,6 +398,23 @@ function adminPay(p) {
     $$('[data-paid]', p).forEach((b) => b.addEventListener('click', async () => {
       const bk = all.filter((x) => x.id === b.getAttribute('data-paid'))[0];
       if (!bk) return;
+      /* Confirming an order takes its two buttons away, and this one then slides
+         left into the space where "confirm" stood a moment ago - so the second
+         half of a double tap landed on "the money arrived", which opens a course
+         and cannot be undone from this screen. It asks first now, so a stray tap
+         hits the question rather than the money. confirm() is no use here: some
+         phone webviews skip it outright. */
+      if (b.getAttribute('data-sure') !== '1') {
+        b.setAttribute('data-sure', '1');
+        b.textContent = T().adminGotPaidSure;
+        setTimeout(() => {
+          if (b.getAttribute('data-sure') === '1') {
+            b.removeAttribute('data-sure');
+            b.textContent = '💰 ' + T().adminGotPaid;
+          }
+        }, 5000);
+        return;
+      }
       b.disabled = true;
       try {
         const opened = await BE.markPaid(bk);

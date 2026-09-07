@@ -38,7 +38,10 @@ class Runner(SimpleHTTPRequestHandler):
         n = int(self.headers.get('Content-Length') or 0)
         body = self.rfile.read(n).decode('utf-8', 'replace')
         with LOCK:
-            RESULTS['text'] = body
+            # The mark saying the suite has finished arrives on its own and
+            # carries nothing, so an empty body means "keep what you have".
+            if body:
+                RESULTS['text'] = body
             RESULTS['at'] = time.time()
             if 'done=1' in self.path:
                 RESULTS['done'] = True
@@ -54,7 +57,7 @@ def serve():
     return httpd
 
 
-TIMEOUT = 420      # the whole suite, wall clock
+TIMEOUT = 900      # the whole suite, wall clock
 QUIET = 90         # ... or this long with the page saying nothing new
 
 
@@ -69,9 +72,16 @@ def run(url, extra=()):
     # screen to redraw, which is true when the clock is pretend and often false
     # when it is real. So the budget stays - it is what makes the checks mean
     # what they say - but it is no longer what ends the run.
+    #
+    # It is set far higher than the suite needs. Pretend time is spent at
+    # whatever rate the page can run, not at the rate a person would, and a
+    # screen holding a one-second timer burns through it fast: the wedding
+    # ceremony alone ate a fifteen-minute budget and the page then froze
+    # mid-check, which read as a stall. Nothing is waited for in real time by
+    # making this bigger; it only stops the clock running out first.
     proc = subprocess.Popen([EDGE, '--headless=new', '--disable-gpu', '--no-first-run',
                              '--no-default-browser-check', '--disable-extensions',
-                             '--virtual-time-budget=900000',
+                             '--virtual-time-budget=20000000',
                              '--user-data-dir=' + prof, '--window-size=430,900']
                             + list(extra) + [url],
                             stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)

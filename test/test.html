@@ -16,9 +16,19 @@ const report = (done) => {
   /* Opened by hand rather than by the runner, there is nothing listening for
      these and every one of them fails. That must stay silent: the results are
      on the page either way, and a rejected promise per check would drown the
-     console the suite is read in. */
-  try { fetch('/__results' + (done ? '?done=1' : ''), { method: 'POST', body: out.join('\n'), keepalive: true }).catch(() => {}); }
-  catch (e) { /* the results are still on the page */ }
+     console the suite is read in.
+
+     Not keepalive: those share one 64KB allowance between every request still
+     in flight, and by the end of a run each of these carries tens of kilobytes.
+
+     The "finished" mark is sent on its own, carrying nothing, and only once the
+     results it refers to have been taken. Riding along on the last big upload
+     it kept going missing, and a suite that had run every check then reported
+     that it had stopped one short of the end. */
+  try {
+    const sending = fetch('/__results', { method: 'POST', body: out.join('\n') }).catch(() => {});
+    if (done) sending.then(() => fetch('/__results?done=1', { method: 'POST', body: '' }).catch(() => {}));
+  } catch (e) { /* the results are still on the page */ }
 };
 const ok = (cond, msg) => {
   out.push((cond ? 'PASS ' : 'FAIL ') + msg);
@@ -901,6 +911,10 @@ async function go(hash, sel) { W().location.hash = hash; await sleep(30); return
           return q;
         };
         return { collection: (c) => colRef(c), docs: docs,
+          /* How many live listeners the app currently holds. A screen that
+             subscribes on every repaint without dropping what it had leaves
+             this climbing, and every write then costs more than the last. */
+          watchers: () => ls.length,
           put: (k, v) => { docs[k] = v; notify(); } };
       };
       const keep = { db: N.BE.db, user: N.BE.user, on: N.BE.enabled, confirm: w.confirm };
@@ -1515,6 +1529,7 @@ async function go(hash, sel) { W().location.hash = hash; await sleep(30); return
         const answerAs = async (uid) => {
           N.BE.user = { uid: uid, email: uid + '@test' };
           await go('#/home', '#main'); await go('#/wedding/room', '#main'); await sleep(280);
+          ok(db.watchers() < 60, 'entering the room again does not leave the last visit listening (' + db.watchers() + ')');
           const y = d.querySelector('#wedyes');
           if (y) { y.click(); await sleep(280); }
           return !!y;
@@ -1708,6 +1723,11 @@ async function go(hash, sel) { W().location.hash = hash; await sleep(30); return
         card.querySelector('[data-bk="confirmed"]').click(); await sleep(300);
         ok(db.docs['bookings/ord1'].status === 'confirmed' && !db.docs['bookings/ord1'].paid,
           'confirming an order agrees to sell it and opens nothing, because the money has not come');
+        /* Twice, because it asks first: confirming an order takes two buttons
+           away and this one slides into the space where "confirm" was, so a
+           single stray tap used to hand somebody a course. */
+        d.querySelector('#pyorders [data-paid="ord1"]').click(); await sleep(60);
+        ok(!db.docs['bookings/ord1'].paid, 'one press on "the money arrived" asks rather than opening anything');
         d.querySelector('#pyorders [data-paid="ord1"]').click(); await sleep(400);
         ok(db.docs['bookings/ord1'].paid === true && db.docs['weddings/uidC__uidD'].paid === true,
           'and the money arriving is the press that opens it');
@@ -1728,12 +1748,12 @@ async function go(hash, sel) { W().location.hash = hash; await sleep(30); return
         await sleep(320);
         const noOrder = Object.keys(db.docs).filter((k) => k.indexOf('bookings/') === 0
           && (db.docs[k].items || []).some((it) => it.wid === 'uidE__uidF'));
-        const paybtn = d.querySelector('#bkasks [data-wpaid="uidE__uidF"]');
-        ok(!noOrder.length && paybtn && /Mai/.test(d.querySelector('#bkasks').textContent),
+        const paybtn = d.querySelector('#pyweds [data-wpaid="uidE__uidF"]');
+        ok(!noOrder.length && paybtn && /Mai/.test(d.querySelector('#pyweds').textContent),
           'a wedding with no order behind it still asks Nabu whether the money arrived');
         paybtn.click(); await sleep(320);
         ok(db.docs['weddings/uidE__uidF'].paid === true
-          && !d.querySelector('#bkasks [data-wpaid="uidE__uidF"]'),
+          && !d.querySelector('#pyweds [data-wpaid="uidE__uidF"]'),
           'and saying it arrived opens that room, without an order and without a code');
 
         /* Moving the hour used to be done on the spot, and Nabu - who has to be
@@ -1743,8 +1763,8 @@ async function go(hash, sel) { W().location.hash = hash; await sleep(30); return
         ok(!N.WED.canMove(db.docs[W2]),
           'a couple waiting on an answer cannot ask for a second hour meanwhile');
         await sleep(320);
-        const mv = d.querySelector('#bkasks [data-wmv]');
-        ok(mv && /uidC|&/.test(d.querySelector('#bkasks').textContent),
+        const mv = d.querySelector('#pyweds [data-wmv]');
+        ok(mv && /uidC|&/.test(d.querySelector('#pyweds').textContent),
           'and the hour they want waits for Nabu beside the orders, rather than nowhere');
         ok(db.docs[W2].startMs === was,
           'the old hour stands until it is answered, so nothing moves under the guests');
@@ -1757,7 +1777,7 @@ async function go(hash, sel) { W().location.hash = hash; await sleep(30); return
         /* Saying no has to leave the hour exactly where it was. */
         db.put(W2, Object.assign({}, db.docs[W2], { moved: 0, wantMs: was + 7200000, moveAsk: true }));
         await sleep(320);
-        d.querySelector('#bkasks [data-wmvno]').click(); await sleep(320);
+        d.querySelector('#pyweds [data-wmvno]').click(); await sleep(320);
         ok(db.docs[W2].startMs === was + 3600000 && db.docs[W2].moved === 0 && !db.docs[W2].moveAsk,
           'and saying no leaves the hour where it was without spending their one move');
         N.BE.user = userWas2; }
