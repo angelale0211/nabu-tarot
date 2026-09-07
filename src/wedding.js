@@ -121,6 +121,14 @@ const WED = {
     void mine; void you;
     return id;
   },
+  /* Paid for. It lives on the room rather than on a phone because one payment
+     covers both partners, and only one of them ever pays. */
+  setPaid(id, yes) {
+    return BE.db.collection('weddings').doc(id).set(
+      { paid: yes !== false, paidAt: Date.now() }, { merge: true });
+  },
+  isPaid(w) { return !!(w && w.paid) || (typeof ACCESS !== 'undefined' && ACCESS.has('wedding')); },
+
   watch(id, cb) {
     if (!this.ok() || !id) return () => {};
     return BE.db.collection('weddings').doc(id)
@@ -134,14 +142,36 @@ const WED = {
      way by then, and a room that moves under them is worse than one that
      starts late. */
   moved(w) { return Number((w && w.moved) || 0); },
-  canMove(w) { return this.moved(w) < 1 && Date.now() < this.startMs(w) - WED_MOVE_MS; },
+  /* An hour asked for and not yet answered. */
+  asking(w) { return !!(w && w.moveAsk && Number(w.wantMs) > 0); },
+  wantMs(w) { return Number((w && w.wantMs) || 0); },
+  /* Once, never inside the last hour, and not while an answer is awaited. */
+  canMove(w) { return this.moved(w) < 1 && !this.asking(w) && Date.now() < this.startMs(w) - WED_MOVE_MS; },
   /* Inside the last hour, or once it has begun, calling off is final: the hour
      was held and then not used, which is the same to Nabu as nobody coming. */
   lateNow(w) { return Date.now() > this.startMs(w) - WED_MOVE_MS; },
-  setTime(id, startMs, w) {
+  /* Nabu hosts the ceremony, so the hour is asked for rather than taken. The
+     old hour stands until the answer comes, which is what makes it safe to
+     ask: nothing moves under the guests who are already invited. */
+  askMove(id, wantMs) {
     return BE.db.collection('weddings').doc(id).update({
-      startMs: Number(startMs) || 0, moved: this.moved(w) + 1
+      wantMs: Number(wantMs) || 0, moveAsk: true
     });
+  },
+  /* Answered. Yes counts the move, which is what shuts the button for good;
+     no leaves the hour exactly where it was. Two writes, never one, so a
+     refused write cannot leave a room that has moved without counting it. */
+  answerMove(id, w, yes) {
+    const at = this.wantMs(w);
+    return BE.db.collection('weddings').doc(id).update(yes && at
+      ? { startMs: at, moved: this.moved(w) + 1, wantMs: 0, moveAsk: false }
+      : { wantMs: 0, moveAsk: false });
+  },
+  /* Every hour waiting on Nabu, which is a handful at the very most. */
+  watchMoveAsks(cb) {
+    if (!this.ok()) return () => {};
+    return BE.db.collection('weddings').where('moveAsk', '==', true).limit(50)
+      .onSnapshot((s) => cb(s.docs.map((d) => Object.assign({ id: d.id }, d.data()))), () => cb([]));
   },
   callOff(id) { return BE.db.collection('weddings').doc(id).update({ state: 'called-off' }); },
   drop(id) { return BE.db.collection('weddings').doc(id).delete(); },
@@ -695,6 +725,8 @@ function renderWedding(args) {
 
   /* ------------------------------------------------------------- the room --- */
   let gifts = [], guests = [], says = [], bouquetShown = 0;
+  /* Where the reader was in the comments, so a repaint does not move them. */
+  const SAYAT = { top: 0, h: 0 };
   const drawRoom = (w) => {
     const side = WED.side(w), mine = !!side, step = wedStep(w.step | 0);
     const names = esc(w.aName || S.loveSomeone) + ' \u2764 ' + esc(w.bName || S.loveSomeone);
@@ -884,8 +916,20 @@ function renderWedding(args) {
       };
       if (go) go.addEventListener('click', send);
       if (box) box.addEventListener('keydown', (e) => { if (e.key === 'Enter') { e.preventDefault(); send(); } });
+      /* A hundred people talking at a wedding is the point, and following the
+         newest line is only right for somebody already on it. Anyone who has
+         scrolled up to read is reading, and being dragged back down within the
+         second is how a busy room becomes unreadable. */
       const list = $('#saylist');
-      if (list) list.scrollTop = list.scrollHeight; }
+      if (list) {
+        const near = SAYAT.h > 0 ? (SAYAT.h - SAYAT.top < 60) : true;
+        if (near) list.scrollTop = list.scrollHeight;
+        else list.scrollTop = SAYAT.top;
+        list.addEventListener('scroll', () => {
+          SAYAT.top = list.scrollTop;
+          SAYAT.h = list.scrollHeight - list.clientHeight;
+        });
+      } }
     { const mu = $('#wedmute');
       if (mu) mu.addEventListener('click', () => { WEDMUSIC.mute(WEDMUSIC.on); paint(); }); }
 
@@ -953,7 +997,7 @@ function renderWedding(args) {
       if (!BE.enabled || !BE.user) { st.className = 'hint err'; st.textContent = S.unlockSendMsg; return; }
       b.disabled = true; st.className = 'hint'; st.textContent = S.loveSaving;
       try {
-        await BE.createUnlockOrder([{ id: 'wedding', name: L(COURSES.filter((c) => c.id === 'wedding')[0].name)
+        await BE.createUnlockOrder([{ id: 'wedding', wid: WED.idFor(bond), name: L(COURSES.filter((c) => c.id === 'wedding')[0].name)
           + ' \u00b7 ' + wedWhen(ms), price: price }], price);
         /* And the room itself, because the hour is what is being held and an
            hour cannot be held by a room that does not exist. */
@@ -1025,7 +1069,9 @@ function renderWedding(args) {
     const door = WED.doorState(w);
     if (door === 'over') { drawDoor(w); return; }
     const openNow = door === 'open';
-    const paidFor = ACCESS.has('wedding');
+    /* The room's own flag, not a code on this phone: the partner who did not
+       pay is just as married as the one who did. */
+    const paidFor = WED.isPaid(w);
 
     const link = appURL() + '#/wedding/' + encodeURIComponent(w.id);
     const asked = (store.get('nabu-wed-asked', {}) || {})[w.id] || [];
@@ -1057,7 +1103,8 @@ function renderWedding(args) {
           + '<input type="datetime-local" id="wedat" value="' + esc(wedLocalValue(w.startMs)) + '">'
           + '<button type="button" class="btn block" id="wedmove" style="margin-top:8px">' + esc(S.wedMove) + '</button>'
           + '<p class="hint" id="wedst"></p></div></details>'
-        : '<p class="hint movewhy">' + esc(WED.moved(w) ? S.wedMovedAlready : S.wedMoveTooLate) + '</p>')
+        : '<p class="hint movewhy">' + esc(WED.asking(w) ? S.wedMoveWait(wedWhen(WED.wantMs(w)))
+          : WED.moved(w) ? S.wedMovedAlready : S.wedMoveTooLate) + '</p>')
       + '</div>'
       + inviteHTML(w)
       + guestListHTML(w, guests)
@@ -1081,7 +1128,7 @@ function renderWedding(args) {
         if (!v || isNaN(ms) || ms < Date.now() + 10 * 60000) { st.className = 'hint err'; st.textContent = S.wedWhenBad; return; }
         if (!confirm(S.wedMoveOnce)) return;
         st.className = 'hint'; st.textContent = S.loveSaving;
-        try { await WED.setTime(w.id, ms, w); st.className = 'hint ok'; st.textContent = S.wedMoved; }
+        try { await WED.askMove(w.id, ms); st.className = 'hint ok'; st.textContent = S.wedMoveAsked; }
         catch (e) { st.className = 'hint err'; st.textContent = loveWhy(e); }
       }); }
     $('#weddrop').addEventListener('click', async () => {

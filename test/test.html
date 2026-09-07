@@ -855,7 +855,14 @@ async function go(hash, sel) { W().location.hash = hash; await sleep(30); return
         const colRef = (base, f) => {
           const pick = () => Object.keys(docs)
             .filter((k) => k.indexOf(base + '/') === 0 && k.slice(base.length + 1).indexOf('/') < 0)
-            .filter((k) => !f || ((docs[k][f[0]] || []).indexOf(f[2]) > -1))
+            /* The mock read every where() as array-contains, which happens to
+               be right for a uid inside a string and wrong for everything
+               else - a boolean has no indexOf and throws. */
+            .filter((k) => !f || (f[1] === 'array-contains'
+              ? (docs[k][f[0]] || []).indexOf(f[2]) > -1
+              : f[1] === 'in' ? (f[2] || []).indexOf(docs[k][f[0]]) > -1
+              : f[1] === '>' ? Number(docs[k][f[0]] || 0) > Number(f[2])
+              : docs[k][f[0]] === f[2]))
             .map(snap);
           const q = { doc: (id) => {
               /* Firestore refuses an empty document id, and a mock that accepts
@@ -1503,6 +1510,24 @@ async function go(hash, sel) { W().location.hash = hash; await sleep(30); return
         ok(db.docs[W].bouquet.uid === 'uidG',
           'ten seconds later it lands on a guest who was really there, never on the couple');
 
+        { /* A hundred guests talking is the point of a wedding, and a hundred
+             comments down the page is not a comment section. It is a box that
+             scrolls, the way a live chat scrolls. */
+          for (let i = 0; i < 40; i++) db.put(W + '/says/g' + i + '__' + i, { from: 'uidG', name: 'Khách ' + i, text: 'Chúc mừng hai bạn ' + i, at: 1000 + i });
+          await sleep(400);
+          const sl = d.querySelector('#saylist');
+          ok(sl && sl.scrollHeight > sl.clientHeight && sl.clientHeight < 320,
+            'a room full of well-wishers scrolls inside its own box rather than down the page');
+          ok(Math.abs(sl.scrollTop + sl.clientHeight - sl.scrollHeight) < 8,
+            'and opens on the newest line, which is the one being said now');
+          /* Somebody who scrolls up is reading. */
+          sl.scrollTop = 0; sl.dispatchEvent(new w.Event('scroll'));
+          db.put(W + '/says/gZ__99', { from: 'uidG', name: 'Khách', text: 'lời cuối', at: 9999 });
+          await sleep(400);
+          const sl2 = d.querySelector('#saylist');
+          ok(sl2 && sl2.scrollTop < 40,
+            'and a new comment does not drag a reader off the older ones they were reading'); }
+
         w.localStorage.removeItem('nabu-weddings');
         db.put(B, Object.assign({}, db.docs[B], { state: 'tied', marriedOn: null }));
         w.localStorage.setItem('nabu-love', JSON.stringify({ bond: 'uidA__uidB', stage: 'tied' })); }
@@ -1591,6 +1616,59 @@ async function go(hash, sel) { W().location.hash = hash; await sleep(30); return
           && Object.keys(u.access).length === 0,
           'and the withdrawal is written with a time on it, which is what the other phone obeys');
         N.BE.user = userWas; }
+
+      { /* A wedding order has no hour in it, so it sat on a bookings calendar
+             with no day to sit under and drifted into a list of three hundred
+             appointments. The one thing on that screen that was money waiting
+             to be taken was the one thing with nowhere to be. */
+        const userWas2 = N.BE.user;
+        N.BE.user = { uid: 'admin1', email: 'angela_le_@outlook.com' };
+        db.put('weddings/uidC__uidD', { uids: ['uidC', 'uidD'], a: 'uidC', b: 'uidD', startMs: Date.now() + 86400000, state: 'planned', step: 0 });
+        db.put('bookings/ord1', { kind: 'unlock', uid: 'uidC', name: 'Nam', email: 'nam@test', status: 'requested', price: 30000,
+          items: [{ id: 'wedding', wid: 'uidC__uidD', name: 'Lễ cưới trên Nabu', price: 30000 }] });
+        await go('#/admin?tab=bookings', '#bkorders'); await sleep(300);
+        const card = d.querySelector('#bkorders');
+        ok(card && /Lễ cưới|Nam/.test(card.textContent) && card.querySelector('[data-bk="confirmed"]'),
+          'an order with no hour in it waits above the calendar, where it can be confirmed');
+        ok(!d.querySelector('#bklist [data-id="ord1"]'),
+          'and not in the day list, which is for things that have an hour');
+
+        card.querySelector('[data-bk="confirmed"]').click(); await sleep(300);
+        ok(db.docs['bookings/ord1'].status === 'confirmed' && db.docs['weddings/uidC__uidD'].paid === true,
+          'confirming the payment opens the room itself, rather than only changing a word');
+
+        /* The room is what both of them read, which is the whole point: only
+           one of them ever pays. */
+        N.BE.user = { uid: 'uidD', email: 'd@test' };
+        ok(N.WED.isPaid(db.docs['weddings/uidC__uidD']) && !N.ACCESS.has('wedding'),
+          'so the partner who paid nothing is let in too, without a code of their own');
+        N.BE.user = { uid: 'admin1', email: 'angela_le_@outlook.com' };
+
+        /* Moving the hour used to be done on the spot, and Nabu - who has to be
+           there to host it - was never told. */
+        const W2 = 'weddings/uidC__uidD', was = db.docs[W2].startMs;
+        db.put(W2, Object.assign({}, db.docs[W2], { wantMs: was + 3600000, moveAsk: true }));
+        ok(!N.WED.canMove(db.docs[W2]),
+          'a couple waiting on an answer cannot ask for a second hour meanwhile');
+        await sleep(320);
+        const mv = d.querySelector('#bkasks [data-wmv]');
+        ok(mv && /uidC|&/.test(d.querySelector('#bkasks').textContent),
+          'and the hour they want waits for Nabu beside the orders, rather than nowhere');
+        ok(db.docs[W2].startMs === was,
+          'the old hour stands until it is answered, so nothing moves under the guests');
+        mv.click(); await sleep(320);
+        ok(db.docs[W2].startMs === was + 3600000 && db.docs[W2].moved === 1 && !db.docs[W2].moveAsk,
+          'saying yes moves the hour and counts the move in the same breath');
+        ok(!N.WED.canMove(db.docs[W2]),
+          'and the button is shut for good afterwards, because a wedding moves once');
+
+        /* Saying no has to leave the hour exactly where it was. */
+        db.put(W2, Object.assign({}, db.docs[W2], { moved: 0, wantMs: was + 7200000, moveAsk: true }));
+        await sleep(320);
+        d.querySelector('#bkasks [data-wmvno]').click(); await sleep(320);
+        ok(db.docs[W2].startMs === was + 3600000 && db.docs[W2].moved === 0 && !db.docs[W2].moveAsk,
+          'and saying no leaves the hour where it was without spending their one move');
+        N.BE.user = userWas2; }
 
       /* ---- the diary, read by two ---- */
       { const B = 'bonds/uidA__uidB';

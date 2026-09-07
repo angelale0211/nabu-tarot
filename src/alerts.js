@@ -306,6 +306,23 @@ function alertsWatchWeddings() {
         ALERTS.add({ id: 'wed-today-' + id + '-' + day, k: 'love',
           t: S.alertWedToday(pair), b: S.alertWedTodayBody, href: '#/wedding/' + id });
       }
+      /* An hour asked for and answered. Which answer it was is the hour
+         itself: if it moved, Nabu said yes. */
+      if (WED.mine(w) && !w.doneAt) {
+        const before = alertWas('wedmove.' + id, (w.moveAsk ? 'ask' : 'no') + ':' + (Number(w.startMs) || 0));
+        if (before && before.indexOf('ask:') === 0 && !w.moveAsk) {
+          const yes = before.slice(4) !== String(Number(w.startMs) || 0);
+          alertSay({ id: 'wedmove-' + id + '-' + w.startMs + '-' + (yes ? 'y' : 'n'), k: 'love',
+            t: yes ? S.alertWedMoveYes : S.alertWedMoveNo,
+            b: yes ? S.alertWedMoveYesBody(wedWhen(Number(w.startMs) || 0)) : S.alertWedMoveNoBody(wedWhen(Number(w.startMs) || 0)),
+            href: '#/wedding/' + id }, true);
+        }
+      }
+      /* Paid for. Both of them hear it, including the one who paid nothing. */
+      if (w.paid && WED.mine(w) && !w.doneAt) {
+        alertSay({ id: 'wed-paid-' + id, k: 'love',
+          t: S.alertWedPaid, b: S.alertWedPaidBody(pair), href: '#/wedding/' + id }, true);
+      }
       /* And the moment the doors open, which is the only moment the link
          works and lasts a quarter of an hour. */
       if (WED.doorState(w) === 'open' && !w.doneAt) {

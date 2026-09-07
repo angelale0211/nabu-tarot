@@ -241,29 +241,74 @@ function needAdmin(p) {
 function adminBookings(p) {
   const S = T();
   if (!needAdmin(p)) return;
-  p.innerHTML = '<p class="hint">' + esc(S.bookingsIntro) + '</p><div id="bkcal" class="bkcal"></div><div id="bklist"></div>';
-  let all = [], month = new Date(new Date().getFullYear(), new Date().getMonth(), 1), day = '';
+  /* An order has no hour in it, so it never belonged on a calendar. It goes
+     above one, where the only question it raises is answered. */
+  p.innerHTML = '<p class="hint">' + esc(S.bookingsIntro) + '</p><div id="bkasks"></div><div id="bkorders"></div><div id="bkcal" class="bkcal"></div><div id="bklist"></div>';
+  let all = [], asks = [], month = new Date(new Date().getFullYear(), new Date().getMonth(), 1), day = '';
   const draw = () => {
-    const byDay = {}; all.forEach((b) => { if (['declined', 'cancelled'].indexOf(b.status) > -1) return; const k = String(b.slot).slice(0, 10); (byDay[k] = byDay[k] || []).push(b); });
+    /* Bookings keep arriving after Nabu has walked off this tab, and a
+       snapshot with nowhere to go is not an error worth throwing. */
+    if (!$('#bkorders') || !$('#bkcal')) return;
+    /* An hour waiting on Nabu. Nabu is the one who has to be there, so the
+       couple ask and the old hour stands until this is answered. */
+    $('#bkasks').innerHTML = asks.length ? '<div class="card"><h3 style="margin-bottom:4px">\uD83D\uDD01 ' + esc(S.adminWedMoves) + ' <span class="n">' + asks.length + '</span></h3>'
+      + '<p class="hint" style="margin-bottom:10px">' + esc(S.adminWedMovesHint) + '</p>'
+      + asks.map((w) => '<div class="bk"><div class="bkh"><b>\uD83D\uDC8D ' + esc((w.aName || '') + ' & ' + (w.bName || '')) + '</b></div>'
+        + '<p class="hint">' + esc(S.adminWedWas) + ': <b>' + esc(wedWhen(Number(w.startMs) || 0)) + '</b></p>'
+        + '<p class="hint">' + esc(S.adminWedWants) + ': <b>' + esc(wedWhen(Number(w.wantMs) || 0)) + '</b></p>'
+        + '<div class="acts"><button type="button" class="btn sm primary" data-wmv="' + esc(w.id) + '">' + esc(S.confirm) + '</button>'
+        + '<button type="button" class="btn sm" data-wmvno="' + esc(w.id) + '">' + esc(S.adminKeep) + '</button></div></div>').join('')
+      + '</div>' : '';
+    const orders = all.filter((b) => b.kind === 'unlock');
+    const waiting = orders.filter((b) => b.status === 'requested');
+    $('#bkorders').innerHTML = '<div class="card"><h3 style="margin-bottom:4px">\uD83D\uDCB3 ' + esc(S.adminOrders) + (waiting.length ? ' <span class="n">' + waiting.length + '</span>' : '') + '</h3>'
+      + '<p class="hint" style="margin-bottom:10px">' + esc(S.adminOrdersHint) + '</p>'
+      + (orders.length ? waiting.concat(orders.filter((b) => b.status !== 'requested').slice(0, 6)).map((b) => bookingRow(b, true)).join('')
+        : '<p class="empty">' + esc(S.adminOrdersNone) + '</p>') + '</div>';
+    /* The calendar is for things with an hour in them. Kept separate rather
+       than filtered out of `all`, which would empty the orders card the first
+       time somebody pressed a month arrow. */
+    const books = all.filter((b) => b.kind !== 'unlock');
+    const byDay = {}; books.forEach((b) => { if (['declined', 'cancelled'].indexOf(b.status) > -1) return; const k = String(b.slot).slice(0, 10); (byDay[k] = byDay[k] || []).push(b); });
     const start = new Date(month.getFullYear(), month.getMonth(), 1).getDay(), days = new Date(month.getFullYear(), month.getMonth() + 1, 0).getDate(), todayStr = isoDate(new Date());
     let cells = ''; for (let i = 0; i < start; i++) cells += '<div class="d off"></div>';
     for (let d = 1; d <= days; d++) { const ds = isoDate(new Date(month.getFullYear(), month.getMonth(), d)), n = (byDay[ds] || []).length; cells += '<button class="d' + (n ? ' has' : '') + (ds === todayStr ? ' today' : '') + (ds === day ? ' sel' : '') + '" data-bday="' + ds + '">' + d + (n ? '<span class="n">' + n + '</span>' : '') + '</button>'; }
     $('#bkcal').innerHTML = '<div class="cal"><div class="head"><button data-bcal="-1" aria-label="prev">‹</button><b>' + esc(S.months[month.getMonth()]) + ' ' + month.getFullYear() + '</b><button data-bcal="1" aria-label="next">›</button></div><div class="dow">' + S.dow.map((x) => '<span>' + x + '</span>').join('') + '</div><div class="days">' + cells + '</div>'
       + (day ? '<div class="picked" style="justify-content:space-between"><span>' + esc(S.bkOn(fmtDate(day))) + '</span><button class="btn sm" data-bday="">' + esc(S.allDays) + '</button></div>' : '') + '</div>';
-    const list = day ? all.filter((b) => String(b.slot).slice(0, 10) === day) : all;
+    const list = day ? books.filter((b) => String(b.slot).slice(0, 10) === day) : books;
     $('#bklist').innerHTML = list.length ? list.map((b) => bookingRow(b, true)).join('') : '<p class="empty">' + esc(S.noBookings) + '</p>';
     $$('[data-bcal]', p).forEach((b) => b.addEventListener('click', () => { month = new Date(month.getFullYear(), month.getMonth() + Number(b.getAttribute('data-bcal')), 1); draw(); }));
     $$('[data-bday]', p).forEach((b) => b.addEventListener('click', () => { day = b.getAttribute('data-bday') === day ? '' : b.getAttribute('data-bday'); draw(); }));
-    $$('[data-ics]', p).forEach((b) => b.addEventListener('click', () => { const bk = all.filter((x) => x.id === b.getAttribute('data-ics'))[0]; if (bk) addToCalendar(bk); }));
-    $$('[data-bk]', p).forEach((b) => b.addEventListener('click', async () => { const bk = all.filter((x) => x.id === b.getAttribute('data-id'))[0]; try { await BE.setBookingStatus(bk, b.getAttribute('data-bk')); toast(T().saved); } catch (e) { toast(e.message); } }));
+    $$('[data-ics]', p).forEach((b) => b.addEventListener('click', () => { const bk = books.filter((x) => x.id === b.getAttribute('data-ics'))[0]; if (bk) addToCalendar(bk); }));
+    $$('[data-bk]', p).forEach((b) => b.addEventListener('click', async () => {
+      const bk = all.filter((x) => x.id === b.getAttribute('data-id'))[0];
+      const to = b.getAttribute('data-bk');
+      try {
+        await BE.setBookingStatus(bk, to);
+        /* Taking the money is what opens the door. Confirming the order and
+           leaving the room shut would be the same as not confirming it. */
+        const wed = (bk.items || []).filter((it) => it.id === 'wedding' && it.wid)[0];
+        if (wed && (to === 'confirmed' || to === 'declined')) await WED.setPaid(wed.wid, to === 'confirmed');
+        toast(T().saved);
+      } catch (e) { toast(e.message); }
+    }));
     /* Calling one off is behind a question, because the hour goes back on the
        calendar and the person who booked it is told. */
     $$('[data-bkoff]', p).forEach((b) => b.addEventListener('click', async () => {
-      const bk = all.filter((x) => x.id === b.getAttribute('data-bkoff'))[0];
+      const bk = books.filter((x) => x.id === b.getAttribute('data-bkoff'))[0];
       if (!bk || !confirm(T().adminCancelAsk)) return;
       try { await BE.setBookingStatus(bk, 'cancelled'); toast(T().adminCancelDone); } catch (e) { toast(e.message); }
     }));
+    $$('[data-wmv]', p).forEach((b) => b.addEventListener('click', async () => {
+      const w = asks.filter((x) => x.id === b.getAttribute('data-wmv'))[0];
+      try { await WED.answerMove(w.id, w, true); toast(T().saved); } catch (e) { toast(e.message); }
+    }));
+    $$('[data-wmvno]', p).forEach((b) => b.addEventListener('click', async () => {
+      const w = asks.filter((x) => x.id === b.getAttribute('data-wmvno'))[0];
+      try { await WED.answerMove(w.id, w, false); toast(T().saved); } catch (e) { toast(e.message); }
+    }));
   };
+  admin.unsubs.push(WED.watchMoveAsks((l) => { asks = l; draw(); }));
   admin.unsubs.push(BE.watchAllBookings((list) => { all = list; draw(); }));
 }
 function adminInbox(p) {

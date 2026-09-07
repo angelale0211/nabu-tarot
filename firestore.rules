@@ -255,10 +255,17 @@ service cloud.firestore {
                     && request.resource.data.step == 0
                     && request.resource.data.state == 'planned'
                     && shorterThan('aName', 40) && shorterThan('bName', 40);
-      allow update: if request.auth != null && request.auth.uid in resource.data.uids
+      allow update: if (request.auth != null && request.auth.uid in resource.data.uids
                     && request.resource.data.uids == resource.data.uids
                     && request.resource.data.diff(resource.data).affectedKeys()
-                         .hasOnly(['startMs', 'state', 'step', 'vows', 'doneAt', 'bouquet', 'guestCount', 'moved']);
+                         .hasOnly(['state', 'step', 'vows', 'doneAt', 'bouquet', 'guestCount', 'wantMs', 'moveAsk']))
+                    // Whether it has been paid for is Nabu's to say, and saying
+                    // it opens the door for both partners at once.
+                    // The hour itself, and whether it has been paid for, are
+                    // Nabu's to write: Nabu hosts the ceremony and has to be
+                    // there. The couple ask; this answers.
+                    || (isAdmin() && request.resource.data.diff(resource.data).affectedKeys()
+                         .hasOnly(['paid', 'paidAt', 'startMs', 'moved', 'wantMs', 'moveAsk']));
       allow delete: if request.auth != null && request.auth.uid in resource.data.uids;
 
       /* A seat. Yours alone, and it says only who you are and when you were

@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
 <title>Nabu Tarot</title>
 <meta name="description" content="Nabu Tarot: dự đoán mới, rút một lá bài xem năng lượng hiện tại, học tarot, Lenormand, chiêm tinh, và đặt lịch xem bài.">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'none'; object-src 'none'; form-action 'self'; script-src 'self' 'sha256-/fS7IS53Ig5KSv7zt6TQJ1vxf8T9PmRetXtYzDy+JiE=' https://www.gstatic.com https://apis.google.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; font-src 'self' data:; media-src 'self' data: blob:; worker-src 'self'; connect-src 'self' https://*.googleapis.com https://*.google.com https://*.firebaseio.com https://*.cloudfunctions.net https://*.workers.dev https://generativelanguage.googleapis.com; frame-src https://*.firebaseapp.com https://accounts.google.com https://*.facebook.com">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'none'; object-src 'none'; form-action 'self'; script-src 'self' 'sha256-MHhxT1i05vv5ubCp4DiyGgnxZ1dKBU9tAlgyo33BelA=' https://www.gstatic.com https://apis.google.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; font-src 'self' data:; media-src 'self' data: blob:; worker-src 'self'; connect-src 'self' https://*.googleapis.com https://*.google.com https://*.firebaseio.com https://*.cloudfunctions.net https://*.workers.dev https://generativelanguage.googleapis.com; frame-src https://*.firebaseapp.com https://accounts.google.com https://*.facebook.com">
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <meta name="theme-color" content="#EFE9FA">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -2599,6 +2599,20 @@ const STR = {
     adminRevokeWhy: 'Lý do (người ấy sẽ đọc được)',
     adminRevokeHint: 'Người ấy nhận được thông báo, và quyền sẽ mất khi máy của họ vào lại Nabu.',
     adminRevoked: 'Đã thu hồi quyền sử dụng.',
+    adminOrders: 'Chờ xác nhận thanh toán',
+    adminOrdersHint: 'Đơn mở khoá và lễ cưới không có giờ hẹn nên không nằm trên lịch. Khi bạn đã nhận được tiền, bạn bấm Xác nhận ở đây — với lễ cưới, phòng chờ mở ra cho cả hai người ngay lúc đó.',
+    adminOrdersNone: 'Chưa có đơn nào.',
+    alertWedPaid: 'Lễ cưới của bạn đã được xác nhận 💍',
+    alertWedPaidBody: (pair) => 'Nabu đã nhận được thanh toán. Phòng cưới của ' + pair + ' sẽ mở trước giờ làm lễ 15 phút nhé.',
+    wedMoveAsked: 'Nabu đã nhận được yêu cầu đổi giờ của bạn rồi nhé.',
+    wedMoveWait: (when) => 'Bạn đã xin đổi sang ' + when + '. Nabu đang xem lại, giờ cũ vẫn giữ nguyên cho tới khi Nabu trả lời.',
+    adminWedMoves: 'Xin đổi giờ lễ cưới',
+    adminWedMovesHint: 'Bạn là người chủ trì nên giờ mới cần bạn đồng ý. Giờ cũ vẫn giữ nguyên cho tới khi bạn trả lời, và mỗi cặp chỉ được đổi một lần.',
+    adminWedWas: 'Giờ đang giữ', adminWedWants: 'Xin đổi sang',
+    alertWedMoveYes: 'Nabu đã đồng ý giờ mới 💍',
+    alertWedMoveYesBody: (when) => 'Lễ cưới của bạn chuyển sang ' + when + '. Bạn nhớ báo lại cho khách nhé.',
+    alertWedMoveNo: 'Nabu giữ giờ cũ',
+    alertWedMoveNoBody: (when) => 'Lần này Nabu chưa đổi được giờ, lễ cưới vẫn diễn ra vào ' + when + '. Bạn nhắn cho Nabu nếu cần sắp xếp thêm nhé.',
     meInboxHint: 'Mọi cuộc trò chuyện với khách nằm ở Hộp thư trong trang điều khiển.',
     meGroupYou: 'Bạn là ai', meGroupTalk: 'Trò chuyện & lịch hẹn', meGroupOwn: 'Bạn đang có gì', meGroupApp: 'Ứng dụng',
     imgSaved: 'Đã lưu ảnh về máy 📷',
@@ -3320,6 +3334,20 @@ const STR = {
     adminRevokeWhy: 'Reason (they will read this)',
     adminRevokeHint: 'They are told, and it takes hold the next time their phone reaches Nabu.',
     adminRevoked: 'Access withdrawn.',
+    adminOrders: 'Waiting for payment',
+    adminOrdersHint: 'Unlock orders and weddings have no appointment hour, so they are not on the calendar. Once the money has arrived, confirm it here \u2014 for a wedding that opens the room for both partners at once.',
+    adminOrdersNone: 'Nothing waiting.',
+    alertWedPaid: 'Your wedding is confirmed \uD83D\uDC8D',
+    alertWedPaidBody: (pair) => 'Nabu has received the payment. The room for ' + pair + ' opens fifteen minutes before the ceremony.',
+    wedMoveAsked: 'Nabu has your request for a new hour.',
+    wedMoveWait: (when) => 'You have asked for ' + when + '. Nabu is looking at it, and the old hour stands until there is an answer.',
+    adminWedMoves: 'Wedding time changes',
+    adminWedMovesHint: 'You host the ceremony, so a new hour needs your yes. The old hour stands until you answer, and each couple may move once.',
+    adminWedWas: 'Held for', adminWedWants: 'Asking for',
+    alertWedMoveYes: 'Nabu agreed to the new time \uD83D\uDC8D',
+    alertWedMoveYesBody: (when) => 'Your wedding moves to ' + when + '. Do let your guests know.',
+    alertWedMoveNo: 'Nabu is keeping the old time',
+    alertWedMoveNoBody: (when) => 'The hour could not be moved this time, so the wedding stays at ' + when + '. Write to Nabu if you need to arrange something.',
     meInboxHint: 'Every conversation with a visitor lives in the Inbox on the dashboard.',
     meGroupYou: 'Who you are', meGroupTalk: 'Messages & bookings', meGroupOwn: 'What you have', meGroupApp: 'The app',
     imgSaved: 'Saved to your phone \uD83D\uDCF7',
@@ -20232,6 +20260,14 @@ const WED = {
     void mine; void you;
     return id;
   },
+  /* Paid for. It lives on the room rather than on a phone because one payment
+     covers both partners, and only one of them ever pays. */
+  setPaid(id, yes) {
+    return BE.db.collection('weddings').doc(id).set(
+      { paid: yes !== false, paidAt: Date.now() }, { merge: true });
+  },
+  isPaid(w) { return !!(w && w.paid) || (typeof ACCESS !== 'undefined' && ACCESS.has('wedding')); },
+
   watch(id, cb) {
     if (!this.ok() || !id) return () => {};
     return BE.db.collection('weddings').doc(id)
@@ -20245,14 +20281,36 @@ const WED = {
      way by then, and a room that moves under them is worse than one that
      starts late. */
   moved(w) { return Number((w && w.moved) || 0); },
-  canMove(w) { return this.moved(w) < 1 && Date.now() < this.startMs(w) - WED_MOVE_MS; },
+  /* An hour asked for and not yet answered. */
+  asking(w) { return !!(w && w.moveAsk && Number(w.wantMs) > 0); },
+  wantMs(w) { return Number((w && w.wantMs) || 0); },
+  /* Once, never inside the last hour, and not while an answer is awaited. */
+  canMove(w) { return this.moved(w) < 1 && !this.asking(w) && Date.now() < this.startMs(w) - WED_MOVE_MS; },
   /* Inside the last hour, or once it has begun, calling off is final: the hour
      was held and then not used, which is the same to Nabu as nobody coming. */
   lateNow(w) { return Date.now() > this.startMs(w) - WED_MOVE_MS; },
-  setTime(id, startMs, w) {
+  /* Nabu hosts the ceremony, so the hour is asked for rather than taken. The
+     old hour stands until the answer comes, which is what makes it safe to
+     ask: nothing moves under the guests who are already invited. */
+  askMove(id, wantMs) {
     return BE.db.collection('weddings').doc(id).update({
-      startMs: Number(startMs) || 0, moved: this.moved(w) + 1
+      wantMs: Number(wantMs) || 0, moveAsk: true
     });
+  },
+  /* Answered. Yes counts the move, which is what shuts the button for good;
+     no leaves the hour exactly where it was. Two writes, never one, so a
+     refused write cannot leave a room that has moved without counting it. */
+  answerMove(id, w, yes) {
+    const at = this.wantMs(w);
+    return BE.db.collection('weddings').doc(id).update(yes && at
+      ? { startMs: at, moved: this.moved(w) + 1, wantMs: 0, moveAsk: false }
+      : { wantMs: 0, moveAsk: false });
+  },
+  /* Every hour waiting on Nabu, which is a handful at the very most. */
+  watchMoveAsks(cb) {
+    if (!this.ok()) return () => {};
+    return BE.db.collection('weddings').where('moveAsk', '==', true).limit(50)
+      .onSnapshot((s) => cb(s.docs.map((d) => Object.assign({ id: d.id }, d.data()))), () => cb([]));
   },
   callOff(id) { return BE.db.collection('weddings').doc(id).update({ state: 'called-off' }); },
   drop(id) { return BE.db.collection('weddings').doc(id).delete(); },
@@ -20806,6 +20864,8 @@ function renderWedding(args) {
 
   /* ------------------------------------------------------------- the room --- */
   let gifts = [], guests = [], says = [], bouquetShown = 0;
+  /* Where the reader was in the comments, so a repaint does not move them. */
+  const SAYAT = { top: 0, h: 0 };
   const drawRoom = (w) => {
     const side = WED.side(w), mine = !!side, step = wedStep(w.step | 0);
     const names = esc(w.aName || S.loveSomeone) + ' \u2764 ' + esc(w.bName || S.loveSomeone);
@@ -20995,8 +21055,20 @@ function renderWedding(args) {
       };
       if (go) go.addEventListener('click', send);
       if (box) box.addEventListener('keydown', (e) => { if (e.key === 'Enter') { e.preventDefault(); send(); } });
+      /* A hundred people talking at a wedding is the point, and following the
+         newest line is only right for somebody already on it. Anyone who has
+         scrolled up to read is reading, and being dragged back down within the
+         second is how a busy room becomes unreadable. */
       const list = $('#saylist');
-      if (list) list.scrollTop = list.scrollHeight; }
+      if (list) {
+        const near = SAYAT.h > 0 ? (SAYAT.h - SAYAT.top < 60) : true;
+        if (near) list.scrollTop = list.scrollHeight;
+        else list.scrollTop = SAYAT.top;
+        list.addEventListener('scroll', () => {
+          SAYAT.top = list.scrollTop;
+          SAYAT.h = list.scrollHeight - list.clientHeight;
+        });
+      } }
     { const mu = $('#wedmute');
       if (mu) mu.addEventListener('click', () => { WEDMUSIC.mute(WEDMUSIC.on); paint(); }); }
 
@@ -21064,7 +21136,7 @@ function renderWedding(args) {
       if (!BE.enabled || !BE.user) { st.className = 'hint err'; st.textContent = S.unlockSendMsg; return; }
       b.disabled = true; st.className = 'hint'; st.textContent = S.loveSaving;
       try {
-        await BE.createUnlockOrder([{ id: 'wedding', name: L(COURSES.filter((c) => c.id === 'wedding')[0].name)
+        await BE.createUnlockOrder([{ id: 'wedding', wid: WED.idFor(bond), name: L(COURSES.filter((c) => c.id === 'wedding')[0].name)
           + ' \u00b7 ' + wedWhen(ms), price: price }], price);
         /* And the room itself, because the hour is what is being held and an
            hour cannot be held by a room that does not exist. */
@@ -21136,7 +21208,9 @@ function renderWedding(args) {
     const door = WED.doorState(w);
     if (door === 'over') { drawDoor(w); return; }
     const openNow = door === 'open';
-    const paidFor = ACCESS.has('wedding');
+    /* The room's own flag, not a code on this phone: the partner who did not
+       pay is just as married as the one who did. */
+    const paidFor = WED.isPaid(w);
 
     const link = appURL() + '#/wedding/' + encodeURIComponent(w.id);
     const asked = (store.get('nabu-wed-asked', {}) || {})[w.id] || [];
@@ -21168,7 +21242,8 @@ function renderWedding(args) {
           + '<input type="datetime-local" id="wedat" value="' + esc(wedLocalValue(w.startMs)) + '">'
           + '<button type="button" class="btn block" id="wedmove" style="margin-top:8px">' + esc(S.wedMove) + '</button>'
           + '<p class="hint" id="wedst"></p></div></details>'
-        : '<p class="hint movewhy">' + esc(WED.moved(w) ? S.wedMovedAlready : S.wedMoveTooLate) + '</p>')
+        : '<p class="hint movewhy">' + esc(WED.asking(w) ? S.wedMoveWait(wedWhen(WED.wantMs(w)))
+          : WED.moved(w) ? S.wedMovedAlready : S.wedMoveTooLate) + '</p>')
       + '</div>'
       + inviteHTML(w)
       + guestListHTML(w, guests)
@@ -21192,7 +21267,7 @@ function renderWedding(args) {
         if (!v || isNaN(ms) || ms < Date.now() + 10 * 60000) { st.className = 'hint err'; st.textContent = S.wedWhenBad; return; }
         if (!confirm(S.wedMoveOnce)) return;
         st.className = 'hint'; st.textContent = S.loveSaving;
-        try { await WED.setTime(w.id, ms, w); st.className = 'hint ok'; st.textContent = S.wedMoved; }
+        try { await WED.askMove(w.id, ms); st.className = 'hint ok'; st.textContent = S.wedMoveAsked; }
         catch (e) { st.className = 'hint err'; st.textContent = loveWhy(e); }
       }); }
     $('#weddrop').addEventListener('click', async () => {
@@ -21652,6 +21727,23 @@ function alertsWatchWeddings() {
         ALERTS.add({ id: 'wed-today-' + id + '-' + day, k: 'love',
           t: S.alertWedToday(pair), b: S.alertWedTodayBody, href: '#/wedding/' + id });
       }
+      /* An hour asked for and answered. Which answer it was is the hour
+         itself: if it moved, Nabu said yes. */
+      if (WED.mine(w) && !w.doneAt) {
+        const before = alertWas('wedmove.' + id, (w.moveAsk ? 'ask' : 'no') + ':' + (Number(w.startMs) || 0));
+        if (before && before.indexOf('ask:') === 0 && !w.moveAsk) {
+          const yes = before.slice(4) !== String(Number(w.startMs) || 0);
+          alertSay({ id: 'wedmove-' + id + '-' + w.startMs + '-' + (yes ? 'y' : 'n'), k: 'love',
+            t: yes ? S.alertWedMoveYes : S.alertWedMoveNo,
+            b: yes ? S.alertWedMoveYesBody(wedWhen(Number(w.startMs) || 0)) : S.alertWedMoveNoBody(wedWhen(Number(w.startMs) || 0)),
+            href: '#/wedding/' + id }, true);
+        }
+      }
+      /* Paid for. Both of them hear it, including the one who paid nothing. */
+      if (w.paid && WED.mine(w) && !w.doneAt) {
+        alertSay({ id: 'wed-paid-' + id, k: 'love',
+          t: S.alertWedPaid, b: S.alertWedPaidBody(pair), href: '#/wedding/' + id }, true);
+      }
       /* And the moment the doors open, which is the only moment the link
          works and lasts a quarter of an hour. */
       if (WED.doorState(w) === 'open' && !w.doneAt) {
@@ -21986,29 +22078,74 @@ function needAdmin(p) {
 function adminBookings(p) {
   const S = T();
   if (!needAdmin(p)) return;
-  p.innerHTML = '<p class="hint">' + esc(S.bookingsIntro) + '</p><div id="bkcal" class="bkcal"></div><div id="bklist"></div>';
-  let all = [], month = new Date(new Date().getFullYear(), new Date().getMonth(), 1), day = '';
+  /* An order has no hour in it, so it never belonged on a calendar. It goes
+     above one, where the only question it raises is answered. */
+  p.innerHTML = '<p class="hint">' + esc(S.bookingsIntro) + '</p><div id="bkasks"></div><div id="bkorders"></div><div id="bkcal" class="bkcal"></div><div id="bklist"></div>';
+  let all = [], asks = [], month = new Date(new Date().getFullYear(), new Date().getMonth(), 1), day = '';
   const draw = () => {
-    const byDay = {}; all.forEach((b) => { if (['declined', 'cancelled'].indexOf(b.status) > -1) return; const k = String(b.slot).slice(0, 10); (byDay[k] = byDay[k] || []).push(b); });
+    /* Bookings keep arriving after Nabu has walked off this tab, and a
+       snapshot with nowhere to go is not an error worth throwing. */
+    if (!$('#bkorders') || !$('#bkcal')) return;
+    /* An hour waiting on Nabu. Nabu is the one who has to be there, so the
+       couple ask and the old hour stands until this is answered. */
+    $('#bkasks').innerHTML = asks.length ? '<div class="card"><h3 style="margin-bottom:4px">\uD83D\uDD01 ' + esc(S.adminWedMoves) + ' <span class="n">' + asks.length + '</span></h3>'
+      + '<p class="hint" style="margin-bottom:10px">' + esc(S.adminWedMovesHint) + '</p>'
+      + asks.map((w) => '<div class="bk"><div class="bkh"><b>\uD83D\uDC8D ' + esc((w.aName || '') + ' & ' + (w.bName || '')) + '</b></div>'
+        + '<p class="hint">' + esc(S.adminWedWas) + ': <b>' + esc(wedWhen(Number(w.startMs) || 0)) + '</b></p>'
+        + '<p class="hint">' + esc(S.adminWedWants) + ': <b>' + esc(wedWhen(Number(w.wantMs) || 0)) + '</b></p>'
+        + '<div class="acts"><button type="button" class="btn sm primary" data-wmv="' + esc(w.id) + '">' + esc(S.confirm) + '</button>'
+        + '<button type="button" class="btn sm" data-wmvno="' + esc(w.id) + '">' + esc(S.adminKeep) + '</button></div></div>').join('')
+      + '</div>' : '';
+    const orders = all.filter((b) => b.kind === 'unlock');
+    const waiting = orders.filter((b) => b.status === 'requested');
+    $('#bkorders').innerHTML = '<div class="card"><h3 style="margin-bottom:4px">\uD83D\uDCB3 ' + esc(S.adminOrders) + (waiting.length ? ' <span class="n">' + waiting.length + '</span>' : '') + '</h3>'
+      + '<p class="hint" style="margin-bottom:10px">' + esc(S.adminOrdersHint) + '</p>'
+      + (orders.length ? waiting.concat(orders.filter((b) => b.status !== 'requested').slice(0, 6)).map((b) => bookingRow(b, true)).join('')
+        : '<p class="empty">' + esc(S.adminOrdersNone) + '</p>') + '</div>';
+    /* The calendar is for things with an hour in them. Kept separate rather
+       than filtered out of `all`, which would empty the orders card the first
+       time somebody pressed a month arrow. */
+    const books = all.filter((b) => b.kind !== 'unlock');
+    const byDay = {}; books.forEach((b) => { if (['declined', 'cancelled'].indexOf(b.status) > -1) return; const k = String(b.slot).slice(0, 10); (byDay[k] = byDay[k] || []).push(b); });
     const start = new Date(month.getFullYear(), month.getMonth(), 1).getDay(), days = new Date(month.getFullYear(), month.getMonth() + 1, 0).getDate(), todayStr = isoDate(new Date());
     let cells = ''; for (let i = 0; i < start; i++) cells += '<div class="d off"></div>';
     for (let d = 1; d <= days; d++) { const ds = isoDate(new Date(month.getFullYear(), month.getMonth(), d)), n = (byDay[ds] || []).length; cells += '<button class="d' + (n ? ' has' : '') + (ds === todayStr ? ' today' : '') + (ds === day ? ' sel' : '') + '" data-bday="' + ds + '">' + d + (n ? '<span class="n">' + n + '</span>' : '') + '</button>'; }
     $('#bkcal').innerHTML = '<div class="cal"><div class="head"><button data-bcal="-1" aria-label="prev">‹</button><b>' + esc(S.months[month.getMonth()]) + ' ' + month.getFullYear() + '</b><button data-bcal="1" aria-label="next">›</button></div><div class="dow">' + S.dow.map((x) => '<span>' + x + '</span>').join('') + '</div><div class="days">' + cells + '</div>'
       + (day ? '<div class="picked" style="justify-content:space-between"><span>' + esc(S.bkOn(fmtDate(day))) + '</span><button class="btn sm" data-bday="">' + esc(S.allDays) + '</button></div>' : '') + '</div>';
-    const list = day ? all.filter((b) => String(b.slot).slice(0, 10) === day) : all;
+    const list = day ? books.filter((b) => String(b.slot).slice(0, 10) === day) : books;
     $('#bklist').innerHTML = list.length ? list.map((b) => bookingRow(b, true)).join('') : '<p class="empty">' + esc(S.noBookings) + '</p>';
     $$('[data-bcal]', p).forEach((b) => b.addEventListener('click', () => { month = new Date(month.getFullYear(), month.getMonth() + Number(b.getAttribute('data-bcal')), 1); draw(); }));
     $$('[data-bday]', p).forEach((b) => b.addEventListener('click', () => { day = b.getAttribute('data-bday') === day ? '' : b.getAttribute('data-bday'); draw(); }));
-    $$('[data-ics]', p).forEach((b) => b.addEventListener('click', () => { const bk = all.filter((x) => x.id === b.getAttribute('data-ics'))[0]; if (bk) addToCalendar(bk); }));
-    $$('[data-bk]', p).forEach((b) => b.addEventListener('click', async () => { const bk = all.filter((x) => x.id === b.getAttribute('data-id'))[0]; try { await BE.setBookingStatus(bk, b.getAttribute('data-bk')); toast(T().saved); } catch (e) { toast(e.message); } }));
+    $$('[data-ics]', p).forEach((b) => b.addEventListener('click', () => { const bk = books.filter((x) => x.id === b.getAttribute('data-ics'))[0]; if (bk) addToCalendar(bk); }));
+    $$('[data-bk]', p).forEach((b) => b.addEventListener('click', async () => {
+      const bk = all.filter((x) => x.id === b.getAttribute('data-id'))[0];
+      const to = b.getAttribute('data-bk');
+      try {
+        await BE.setBookingStatus(bk, to);
+        /* Taking the money is what opens the door. Confirming the order and
+           leaving the room shut would be the same as not confirming it. */
+        const wed = (bk.items || []).filter((it) => it.id === 'wedding' && it.wid)[0];
+        if (wed && (to === 'confirmed' || to === 'declined')) await WED.setPaid(wed.wid, to === 'confirmed');
+        toast(T().saved);
+      } catch (e) { toast(e.message); }
+    }));
     /* Calling one off is behind a question, because the hour goes back on the
        calendar and the person who booked it is told. */
     $$('[data-bkoff]', p).forEach((b) => b.addEventListener('click', async () => {
-      const bk = all.filter((x) => x.id === b.getAttribute('data-bkoff'))[0];
+      const bk = books.filter((x) => x.id === b.getAttribute('data-bkoff'))[0];
       if (!bk || !confirm(T().adminCancelAsk)) return;
       try { await BE.setBookingStatus(bk, 'cancelled'); toast(T().adminCancelDone); } catch (e) { toast(e.message); }
     }));
+    $$('[data-wmv]', p).forEach((b) => b.addEventListener('click', async () => {
+      const w = asks.filter((x) => x.id === b.getAttribute('data-wmv'))[0];
+      try { await WED.answerMove(w.id, w, true); toast(T().saved); } catch (e) { toast(e.message); }
+    }));
+    $$('[data-wmvno]', p).forEach((b) => b.addEventListener('click', async () => {
+      const w = asks.filter((x) => x.id === b.getAttribute('data-wmvno'))[0];
+      try { await WED.answerMove(w.id, w, false); toast(T().saved); } catch (e) { toast(e.message); }
+    }));
   };
+  admin.unsubs.push(WED.watchMoveAsks((l) => { asks = l; draw(); }));
   admin.unsubs.push(BE.watchAllBookings((list) => { all = list; draw(); }));
 }
 function adminInbox(p) {
@@ -22199,7 +22336,7 @@ function adminSale(p) {
 ROUTES.admin = { nav: '', render: renderAdmin };
 
 /* ============================ boot ============================ */
-window.APP_VERSION = 'v156';
+window.APP_VERSION = 'v157';
 window.NABU = { CONFIG: CONFIG, SALE: SALE, salePrice: salePrice, loadActs: loadActs, BACK: BACK, LESSONS: LESSONS, localAnswer: localAnswer, compatVerdict: compatVerdict, numerologyOf: numerologyOf, ZDEEP: ZDEEP, lunarToday: lunarToday, solarToLunar: solarToLunar, DECK: DECK, INSIGHT: INSIGHT, KW: KW, ASK: ASK, TOPICS: TOPICS, GUIDES: GUIDES, SERVICES: SERVICES, COURSES: COURSES, ACCESS: ACCESS, plusOn: () => plusOn(), proOn: () => proOn(), luckUnlimited: () => luckUnlimited(), ZODIAC: ZODIAC, pick: pick, book: book,
   insightHTML: insightHTML, insightOf: insightOf, sunSignIndex: sunSignIndex, lifePath: lifePath, PROFILE: () => PROFILE, BE: BE, ACTS: ACTS,
   ANGELS: ANGELS, angelRead: angelRead, CODEBOOK: CODEBOOK, verifyCode: verifyCode, petHomeSVG: petHomeSVG, PET_HOMES: PET_HOMES, PET_WEARS: PET_WEARS, codeDigest: codeDigest, randomCode: randomCode, BANK: BANK, PETS: PETS, petSVG: petSVG, PET_COATS: PET_COATS, PET_KINDS: PET_KINDS, luckCut: luckCut, petLevel: petLevel, petStep: petStep, VOUCHERS: VOUCHERS, levelCoins: levelCoins, LOOKS: LOOKS,
