@@ -410,6 +410,8 @@ function renderNumbers() {
    makes sense for anyone who wants both. In the Play build prices are hidden
    and only the code box remains. */
 /* A row you can actually choose. Already-open items stay as plain cards. */
+/* The three that cannot be held together: Plus, and Pro's two terms. */
+const UNL_TIERS = ['plus', 'pro6', 'pro'];
 const UNL_CART = {
   get() { const a = store.get('nabu-unlock-cart', []); return Array.isArray(a) ? a : []; },
   set(a) { store.set('nabu-unlock-cart', a); },
@@ -417,17 +419,20 @@ const UNL_CART = {
   toggle(id) {
     let a = this.get();
     if (a.indexOf(id) > -1) a = a.filter((x) => x !== id);
-    /* Pro contains Plus, so the two packages cannot sit in the basket together:
-       choosing one clears the other rather than charging for both. */
-    else if (id === 'pro') a = a.filter((x) => x !== 'plus').concat(id);
-    else if (id === 'plus') a = a.filter((x) => x !== 'pro').concat(id);
+    /* Pro contains Plus, and the two Pro terms are the same thing for a
+       different length of time. Only one of the three can be in the basket at
+       once, so nobody is charged twice for what they would already hold. */
+    else if (UNL_TIERS.indexOf(id) > -1) a = a.filter((x) => UNL_TIERS.indexOf(x) < 0).concat(id);
     else a = a.concat(id);
     this.set(a); return a;
   }
 };
 function unlockRowHTML(c) {
   /* Holding Pro opens Plus as well, so Plus shows as already yours. */
-  const S = T(), until = ACCESS.get()[c.id], open = ACCESS.has(c.id) || (c.id === 'plus' && ACCESS.has('pro'));
+  /* Holding Pro opens Plus, and either Pro term opens the other's contents, so
+     all three show as already yours once any Pro is held. */
+  const S = T(), until = ACCESS.get()[c.id];
+  const open = ACCESS.has(c.id) || (UNL_TIERS.indexOf(c.id) > -1 && ACCESS.has('pro'));
   const picked = !open && UNL_CART.has(c.id);
   const body = '<div class="unl-h"><b>' + esc(L(c.name)) + '</b>' + (isTWA() ? '' : '<span class="pr">' + priceHTML(c.price, 'unlock', c.id) + '</span>') + '</div>'
     + '<p class="hint">' + esc(L(c.sum || c.blurb)) + '</p>'
@@ -456,7 +461,7 @@ function unlockCartHTML() {
   const cut = unlockLuck();
   return '<div class="sum">' + rows.map((c) => '<div class="r"><span>' + esc(L(c.name)) + '</span><b>' + priceHTML(c.price, 'unlock', c.id) + '</b></div>').join('')
     + '<div class="r tot"><span>' + esc(S.unlockTotal) + '</span><b>' + fmtPrice(total) + '</b></div>'
-    + (cut.pctOff ? '<div class="r cut"><span>🎟️ ' + esc(S.luckVoucherOf(cut.pct)) + '</span><b>-' + fmtPrice(cut.pctOff) + '</b></div>' : '')
+    + (cut.pctOff ? '<div class="r cut"><span>' + (cut.from === 'pro' ? '👑 ' + esc(S.luckProOff(cut.pct)) : '🎟️ ' + esc(S.luckVoucherOf(cut.pct))) + '</span><b>-' + fmtPrice(cut.pctOff) + '</b></div>' : '')
     + (cut.coins ? '<div class="r cut"><span>🪙 ' + esc(S.luckCoinsUsed(fmtNum(cut.coins))) + '</span><b>-' + fmtPrice(cut.coins) + '</b></div>' : '')
     + ((cut.pctOff || cut.coins) ? '<div class="r tot"><span>' + esc(S.luckAfter) + '</span><b>' + fmtPrice(cut.final) + '</b></div>' : '')
     + '</div>';
@@ -478,7 +483,7 @@ function renderUnlock() {
       + (isTWA() ? '' : '<p class="hint" style="margin-bottom:14px">' + esc(S.unlockPick) + '</p>')
       + '<div class="sec"><h2 style="margin-bottom:8px">' + esc(S.unlockCourses) + '</h2>' + group(['tarot', 'lenormand', 'playing', 'manifest']) + '</div>'
       + '<div class="sec"><h2 style="margin-bottom:8px">' + esc(S.unlockActs) + '</h2>'
-        + '<p class="hint" style="margin-bottom:10px">' + esc(S.unlockTiers) + '</p>' + group(['plus', 'pro']) + '</div>'
+        + '<p class="hint" style="margin-bottom:10px">' + esc(S.unlockTiers) + '</p>' + group(UNL_TIERS) + '</div>'
       + (isTWA() ? '' : '<div class="sec"><h2 style="margin-bottom:8px">' + esc(S.unlockCart) + '</h2><div id="ucart">' + unlockCartHTML() + '</div>'
         + rewardPanelHTML(unlockBase(), UNL_USE)
         + '<button class="btn primary block" id="usend" style="margin-top:12px">' + esc(S.unlockSend) + '</button>'

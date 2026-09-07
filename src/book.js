@@ -102,7 +102,7 @@ function summaryHTML(withPanel) {
   const items = book.items.map((it) => { const s = serviceOf(it.svc), p = pkgOfItem(it); if (!s || !p) return ''; return '<li>' + esc(L(s.name) + ' – ' + L(p.name)) + ' <b>' + priceHTML(p.price, 'reading', s.id) + '</b>' + (p.needsTopic ? '<br><small class="' + (it.topic ? 'ok' : 'warn') + '">' + esc(it.topic ? S.msgTopic + ': ' + topicLabel(it.topic) : S.cartNeedsTopic) + '</small>' : '') + '</li>'; }).join('');
   rows.push([S.bkItems, items ? '<ul>' + items + '</ul>' : '<span class="warn">' + esc(S.cartEmpty) + '</span>']);
   if (book.items.length > 1 || cut.pctOff || cut.coins) rows.push([S.msgTotal, '<b>' + fmtPrice(cartTotal()) + '</b>']);
-  if (cut.pctOff) rows.push(['🎟️ ' + S.luckVoucherOf(cut.pct), '<b>-' + fmtPrice(cut.pctOff) + '</b>']);
+  if (cut.pctOff) rows.push([(cut.from === 'pro' ? '👑 ' + S.luckProOff(cut.pct) : '🎟️ ' + S.luckVoucherOf(cut.pct)), '<b>-' + fmtPrice(cut.pctOff) + '</b>']);
   if (cut.coins) rows.push(['🪙 ' + S.luckCoinsUsed(fmtNum(cut.coins)), '<b>-' + fmtPrice(cut.coins) + '</b>']);
   if (cut.pctOff || cut.coins) rows.push([S.luckAfter, '<b>' + fmtPrice(cut.final) + '</b>']);
   rows.push([S.msgTime, book.slot ? esc(slotLabel(book.slot)) : '<span class="warn">' + esc(S.pickDay) + '</span>']);

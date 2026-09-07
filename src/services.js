@@ -83,13 +83,24 @@ const COURSES = [
       en: 'Everything that is not a companion: flip the coin and shake the message tree as often as you like, and take every design in the app — card backs, message trees, coins and diary pages.' },
     includes: { vi: ['Tung đồng xu không giới hạn', 'Rung cây thông điệp không giới hạn', '3 mặt sau lá bài, 3 cây, 3 đồng xu, 3 trang nhật ký', 'Dùng 12 tháng'],
       en: ['Unlimited coin flips', 'Unlimited tree shakes', '3 card backs, 3 trees, 3 coins, 3 diary pages', '12 months of access'] } },
-  { id: 'pro', kind: 'unlock', icon: '👑', to: '#/play/pet', price: 149000, months: 12,
+  /* Pro is sold by the half year and by the year. The year is cheaper by the
+     month - 249.000 against 298.000 for two half years - so paying once is the
+     better deal and reads as one. Both open exactly the same thing; only the
+     date they run to differs. */
+  { id: 'pro6', kind: 'unlock', icon: '👑', to: '#/play/pet', price: 149000, months: 6,
     sum: { vi: 'Toàn bộ Plus, cộng linh thú và mọi thứ cho bạn nhỏ.', en: 'All of Plus, and the companions with everything for them.' },
-    name: { vi: 'Nabu Pro', en: 'Nabu Pro' },
+    name: { vi: 'Nabu Pro · 6 tháng', en: 'Nabu Pro · 6 months' },
     blurb: { vi: 'Có tất cả những gì của Nabu Plus, và thêm phần bạn nhỏ: mười hai linh thú trong truyền thuyết, nuôi sáu vị cùng lúc, món ngon, nhà đẹp và đồ mặc cho chúng, chờ hai giờ thay vì sáu giờ giữa hai bữa, và điểm nhân đôi.',
       en: 'Everything in Nabu Plus, and the companions besides: twelve spirit beasts, six of them at once, their good food, their homes and their clothes, a two-hour wait between meals instead of six, and double points.' },
-    includes: { vi: ['Mọi thứ của Nabu Plus', '12 linh thú, nuôi 6 vị cùng lúc', '9 món ăn, 8 ngôi nhà, 9 món đồ mặc', 'Chờ 2 giờ giữa hai bữa, chơi 3 lượt mỗi ngày, điểm nhân đôi', 'Voucher 15% và 20%', 'Dùng 12 tháng'],
-      en: ['Everything in Nabu Plus', '12 spirit beasts, six kept at once', '9 foods, 8 homes, 9 things to wear', '2 hours between meals, 3 plays a day, double points', 'The 15% and 20% vouchers', '12 months of access'] } }
+    includes: { vi: ['Giảm 15% mọi buổi xem bài với Nabu', 'Mọi thứ của Nabu Plus', '12 linh thú, nuôi 6 vị cùng lúc', '9 món ăn, 8 ngôi nhà, 9 món đồ mặc', 'Chờ 2 giờ giữa hai bữa, chơi 3 lượt mỗi ngày, điểm nhân đôi', 'Voucher 15% và 20%', 'Dùng 6 tháng'],
+      en: ['15% off every reading with Nabu', 'Everything in Nabu Plus', '12 spirit beasts, six kept at once', '9 foods, 8 homes, 9 things to wear', '2 hours between meals, 3 plays a day, double points', 'The 15% and 20% vouchers', '6 months of access'] } },
+  { id: 'pro', kind: 'unlock', icon: '👑', to: '#/play/pet', price: 249000, months: 12,
+    sum: { vi: 'Như trên, trọn một năm — rẻ hơn 49.000đ so với mua hai lần 6 tháng.', en: 'The same, for a whole year — 49.000đ less than two half years.' },
+    name: { vi: 'Nabu Pro · 12 tháng', en: 'Nabu Pro · 12 months' },
+    blurb: { vi: 'Có tất cả những gì của Nabu Plus, và thêm phần bạn nhỏ: mười hai linh thú trong truyền thuyết, nuôi sáu vị cùng lúc, món ngon, nhà đẹp và đồ mặc cho chúng, chờ hai giờ thay vì sáu giờ giữa hai bữa, và điểm nhân đôi. Trả một lần cho cả năm thì rẻ hơn.',
+      en: 'Everything in Nabu Plus, and the companions besides: twelve spirit beasts, six of them at once, their good food, their homes and their clothes, a two-hour wait between meals instead of six, and double points. Paying once for the year costs less.' },
+    includes: { vi: ['Giảm 15% mọi buổi xem bài với Nabu', 'Rẻ hơn 49.000đ so với mua hai lần 6 tháng', 'Mọi thứ của Nabu Plus', '12 linh thú, nuôi 6 vị cùng lúc', '9 món ăn, 8 ngôi nhà, 9 món đồ mặc', 'Chờ 2 giờ giữa hai bữa, chơi 3 lượt mỗi ngày, điểm nhân đôi', 'Voucher 15% và 20%', 'Dùng 12 tháng'],
+      en: ['15% off every reading with Nabu', '49.000đ less than two half years', 'Everything in Nabu Plus', '12 spirit beasts, six kept at once', '9 foods, 8 homes, 9 things to wear', '2 hours between meals, 3 plays a day, double points', 'The 15% and 20% vouchers', '12 months of access'] } }
 ];
 /* Where the reading itself happens. Three, because these are the three
    places Nabu actually reads. */

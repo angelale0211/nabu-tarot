@@ -73,7 +73,8 @@ async function verifyCode(typed) {
   const rec = h && CODEBOOK.all()[h];
   if (!rec || !rec.c) return null;
   /* Pro contains Plus, so a code for Pro opens both. */
-  return { hash: h, course: rec.c, courses: rec.c === 'pro' ? ['pro', 'plus'] : [rec.c], until: rec.u };
+  /* Either Pro term opens Pro itself and Plus with it. */
+  return { hash: h, course: rec.c, courses: (rec.c === 'pro' || rec.c === 'pro6') ? ['pro', 'plus'] : [rec.c], until: rec.u };
 }
 
 /* Publishing merges into the book rather than replacing it, so two dashboards
