@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
 <title>Nabu Tarot</title>
 <meta name="description" content="Nabu Tarot: dự đoán mới, rút một lá bài xem năng lượng hiện tại, học tarot, Lenormand, chiêm tinh, và đặt lịch xem bài.">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'none'; object-src 'none'; form-action 'self'; script-src 'self' 'sha256-KENuqK/ca6hFPq5eqAUbaPuAwO/9s25OmUBgYRMDx9M=' https://www.gstatic.com https://apis.google.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; font-src 'self' data:; media-src 'self' data: blob:; worker-src 'self'; connect-src 'self' https://*.googleapis.com https://*.google.com https://*.firebaseio.com https://*.cloudfunctions.net https://*.workers.dev https://generativelanguage.googleapis.com; frame-src https://*.firebaseapp.com https://accounts.google.com https://*.facebook.com">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'none'; object-src 'none'; form-action 'self'; script-src 'self' 'sha256-sEeCNFzgZDIYhZLo/Ew++hUbzT0waQsZzNb1TaGircw=' https://www.gstatic.com https://apis.google.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; font-src 'self' data:; media-src 'self' data: blob:; worker-src 'self'; connect-src 'self' https://*.googleapis.com https://*.google.com https://*.firebaseio.com https://*.cloudfunctions.net https://*.workers.dev https://generativelanguage.googleapis.com; frame-src https://*.firebaseapp.com https://accounts.google.com https://*.facebook.com">
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <meta name="theme-color" content="#EFE9FA">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -1384,8 +1384,18 @@ h1 .pileico{width:34px;height:27px;vertical-align:-3px;margin-right:2px}
 .reqcard.found{margin:12px 0 0;border-color:var(--lav)}
 .athandle .at{flex:none;color:var(--fg-faint);font-weight:600;font-size:17px}
 /* The tag on the profile: a fixed blush ground, so a fixed ink to go on it. */
-.lovetag{display:inline-flex;align-items:center;gap:7px;background:#FCE4E9;color:#8A1F33;border:1px solid #F3B7C3;border-radius:999px;padding:5px 13px;font-size:13px;font-weight:600;text-decoration:none;margin:0 0 14px}
-.lovetag .d{color:#A85267;font-weight:500}
+/* The tag carries its own ground in every theme, so the three inks on it are
+   chosen against that ground rather than against the page - which is what keeps
+   them legible on light, on dark and on pink alike. */
+.lovetag{display:inline-flex;align-items:center;gap:7px;flex-wrap:wrap;background:#FCE4E9;border:1px solid #F3B7C3;
+  border-radius:999px;padding:5px 13px;font-size:13px;font-weight:600;text-decoration:none;margin:0 0 14px;
+  --tag-days:#8A0C20; --tag-who:#7A2E8C; --tag-what:#8A1F33}
+.lovetag .loveknot{width:22px;height:19px;flex:none}
+.lovetag .d{color:var(--tag-days);font-weight:800;letter-spacing:.01em}
+.lovetag .w{color:var(--tag-who);font-weight:700}
+.lovetag b{color:var(--tag-what);font-weight:500}
+.lovetag .w::before{content:'\00B7';margin-right:7px;color:#C79AA6;font-weight:400}
+.lovetag b::before{content:'\00B7';margin-right:7px;color:#C79AA6;font-weight:400}
 .lovemark{width:26px;height:26px;flex:none;display:block}
 .lovemark.big{width:64px;height:64px;margin:0 auto 6px}
 .lovemark.inline{width:24px;height:24px;display:inline-block;vertical-align:-5px}
@@ -1395,10 +1405,8 @@ h1 .pileico{width:34px;height:27px;vertical-align:-3px;margin-right:2px}
 .actquick .aq .ic .lovemark{width:24px;height:24px}
 .btn .lovemark{width:20px;height:20px;display:inline-block;vertical-align:-4px;margin-right:2px}
 #main h1 .lovemark{width:30px;height:30px;display:inline-block;vertical-align:-4px}
-.lovetag.st-engaged{background:#FFF3DC;border-color:#EBCB8E;color:#6B4D0F}
-.lovetag.st-engaged .d{color:#8A6A22}
-.lovetag.st-married{background:#F6ECFF;border-color:#D6BEF0;color:#4B2A6E}
-.lovetag.st-married .d{color:#6C4C94}
+.lovetag.st-engaged{background:#FFF3DC;border-color:#EBCB8E;--tag-days:#6B4D0F;--tag-who:#7A4E14;--tag-what:#8A6A22}
+.lovetag.st-married{background:#F6ECFF;border-color:#D6BEF0;--tag-days:#4B2A6E;--tag-who:#7A2E8C;--tag-what:#6C4C94}
 /* #main p is justified with an id in its selector, which outweighs the
    text-align the card sets - and a one-line justified paragraph renders flush
    left, so these only looked centred when a line happened to fill the width.
@@ -1433,6 +1441,22 @@ h1 .pileico{width:34px;height:27px;vertical-align:-3px;margin-right:2px}
 .giftstep{margin:12px 0 6px;font-size:12.5px;font-weight:600;color:var(--fg-soft)}
 .gp.on{border-color:var(--accent);box-shadow:0 0 0 2px var(--accent) inset}
 .btn.danger{color:var(--err);border-color:var(--err)}
+/* A folding group on the profile. The tab was eleven unrelated cards in the
+   order they were written; these are four named groups, and the two nobody
+   opens daily start closed. */
+.sect{border:1px solid var(--rule);border-radius:16px;background:var(--surface);margin:0 0 12px;overflow:hidden}
+.sect > summary{display:flex;align-items:center;gap:10px;padding:13px 14px;cursor:pointer;list-style:none;
+  font-size:15px;color:var(--fg);-webkit-tap-highlight-color:transparent}
+.sect > summary::-webkit-details-marker{display:none}
+.sect > summary .si{font-size:18px;line-height:1;flex:none}
+.sect > summary b{flex:1;min-width:0;font-weight:600;overflow-wrap:anywhere}
+.sect > summary .sx{flex:none;color:var(--fg-faint);font-size:19px;line-height:1;transition:transform .18s ease}
+.sect[open] > summary .sx{transform:rotate(90deg)}
+.sect[open] > summary{border-bottom:1px solid var(--rule-soft)}
+.sect .sbody{padding:12px 12px 4px}
+.sect .sbody > .card{background:var(--bg);border-color:var(--rule-soft)}
+.sect .sbody > :last-child{margin-bottom:12px}
+
 /* Pull down to refresh. The browser's own is switched off: it reloads the
    whole page and loses the screen you were standing on. */
 html,body{overscroll-behavior-y:contain}
@@ -1499,8 +1523,7 @@ html,body{overscroll-behavior-y:contain}
 #main p.petfam .pp i{font-style:normal;font-size:14px;opacity:.85}
 /* An invitation someone opened before they had an account, waiting on the
    profile screen for them to come back to it. */
-.lovetag.waiting{background:#FFF1DC;border-color:#EFCE9B;color:#7A4E14;display:flex}
-.lovetag.waiting .d{color:#9A6B24}
+.lovetag.waiting{background:#FFF1DC;border-color:#EFCE9B;color:#7A4E14;display:flex;--tag-days:#7A4E14;--tag-who:#7A4E14;--tag-what:#9A6B24}
 /* The link itself: shown in full, because being able to read it before you
    send it is half of trusting it. */
 .invitecard #lvurl{font-size:12.5px;font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;margin-top:2px;background:var(--surface-2)}
@@ -2329,6 +2352,7 @@ const STR = {
     treeTitle: 'Rung cây thông điệp', treeSub: 'một lời nhắn từ vũ trụ', treePets: 'Hiện bạn nhỏ dưới gốc cây', treePetsHint: 'Tắt đi thì chỉ còn cây. Chỉ ảnh hưởng máy của bạn.',
     treeIntro: 'Bạn đứng trước cây, nghĩ về điều đang ở trong lòng mình, rồi rung nhẹ một cái. Cây sẽ thả xuống cho bạn một lời nhắn.', treeShake: 'Rung cây', treeAgain: 'Rung thêm một lần nữa', treeFor: 'Lời nhắn dành cho bạn', coinTitle: 'Tung đồng xu', coinSub: 'cho câu hỏi có hoặc không', coinIntro: 'Khi bạn có một câu hỏi chỉ cần trả lời có hoặc không, bạn hãy nghĩ thật rõ về câu hỏi đó rồi tung đồng xu.', coinQ: 'Câu hỏi của bạn', coinQPh: 'Ví dụ: mình có nên nhắn trước không?', coinFlip: 'Tung đồng xu', coinAgain: 'Tung lại', coinYes: 'CÓ', coinNo: 'KHÔNG', coinNote: 'Đồng xu chỉ cho bạn một trong hai câu trả lời. Điều đáng chú ý là cảm giác của bạn ngay khi nhìn thấy kết quả: nếu bạn thấy hụt hẫng, bạn đã biết mình muốn gì.',
     actNew: 'Hoạt động mới', actType: 'Loại', actTypes: { pile: 'Chọn tụ bài', poll: 'Bình chọn', wish: 'Điều ước' }, actResultsDate: 'Ngày đăng kết quả', actIntroLabel: 'Lời dẫn (thanh công cụ phía trên ô cho phép in đậm, in nghiêng, tô sáng, chèn ảnh, video và emoji)', actPilesHint: 'Từ 2 đến 5 tụ. Bạn có thể đăng trước với nhãn trống; vài ngày sau quay lại điền thông điệp và bật "Đã có kết quả".', actPileN: (n) => 'Tụ ' + n, actPileLabel: 'Nhãn ngắn (không bắt buộc), ví dụ: Trái · Giữa · Phải', actPileMsg: 'Thông điệp cho tụ này (đăng sau cũng được)', actPileMsgEn: 'English message (optional)', actPileAdd: 'Thêm tụ', actPileDel: 'Bớt tụ', actResultsOn: 'Đã có kết quả: cho phép lật bài', actOptions: 'Các lựa chọn, mỗi dòng một lựa chọn', actCloseOn: 'Đóng bình chọn', actExisting: 'Hoạt động đã đăng', actNeedPiles: 'Bạn điền ít nhất một tụ nhé.', actNeedOptions: 'Cần ít nhất hai lựa chọn.',
+    meGroupYou: 'Bạn là ai', meGroupTalk: 'Trò chuyện & lịch hẹn', meGroupOwn: 'Bạn đang có gì', meGroupApp: 'Ứng dụng',
     refreshed: 'Đã làm mới ✨', pullHint: 'Kéo xuống để làm mới',
     alertTitle: 'Thông báo', alertIntro: 'Những gì đã xảy ra khi bạn không mở app.',
     alertNone: 'Chưa có thông báo nào. Khi có người muốn buộc sợi tơ hồng, khi bạn nhận quà, khi lịch hẹn được xác nhận hay khi bạn nhỏ đói bụng, bạn sẽ thấy ở đây.',
@@ -2836,6 +2860,7 @@ const STR = {
     treeTitle: 'Shake the message tree', treeSub: 'a message from the universe', treePets: 'Show your companions under the tree', treePetsHint: 'Turn it off and the tree stands on its own. This phone only.',
     treeIntro: 'Stand in front of the tree, hold in mind whatever you are carrying, and give it a gentle shake. The tree will let a message fall for you.', treeShake: 'Shake the tree', treeAgain: 'Shake it once more', treeFor: 'A message for you', coinTitle: 'Flip a coin', coinSub: 'for a yes or no question', coinIntro: 'When a question needs nothing more than a yes or a no, hold the question clearly in mind and flip the coin.', coinQ: 'Your question', coinQPh: 'For example: should I message first?', coinFlip: 'Flip the coin', coinAgain: 'Flip again', coinYes: 'YES', coinNo: 'NO', coinNote: 'The coin gives you one of two answers. What matters is how you feel the moment you see it: if the result disappoints you, you already know what you want.',
     actNew: 'New activity', actType: 'Type', actTypes: { pile: 'Pick a pile', poll: 'Poll', wish: 'Wish' }, actResultsDate: 'Results date', actIntroLabel: 'Intro (the bar above the box: bold, italic, highlight, images, video, emoji)', actPilesHint: 'Two to five piles. You can publish with empty labels; come back days later, fill in the messages and switch on "Answered".', actPileN: (n) => 'Pile ' + n, actPileLabel: 'Short label (optional), e.g. Left · Middle · Right', actPileMsg: 'Message for this pile (can be added later)', actPileMsgEn: 'English message (optional)', actPileAdd: 'Add a pile', actPileDel: 'Remove a pile', actResultsOn: 'Answered: let people flip the piles', actOptions: 'Options, one per line', actCloseOn: 'Close the poll', actExisting: 'Published activities', actNeedPiles: 'Fill in at least one pile.', actNeedOptions: 'At least two options are needed.',
+    meGroupYou: 'Who you are', meGroupTalk: 'Messages & bookings', meGroupOwn: 'What you have', meGroupApp: 'The app',
     refreshed: 'Refreshed \u2728', pullHint: 'Pull down to refresh',
     alertTitle: 'Notifications', alertIntro: 'What happened while you were away.',
     alertNone: 'Nothing yet. When someone wants to tie a thread with you, when a gift arrives, when a booking is answered or when your companion is hungry, it will be here.',
@@ -13460,6 +13485,24 @@ function wreathArt(cx, cy, span) {
 /* The same four marks, small, for the tag on a profile and the tile on the home
    screen. Whatever says where somebody stands should say it the same way
    everywhere it appears. */
+/* The knot at tag size: the same heart of cord the thread page draws, with the
+   frame, the blossom and the falling ends left off because at 22 pixels they
+   are mud. Three passes of stroke keep it reading as cord rather than a line -
+   dark, red, and a thin lit edge. */
+function loveKnotSVG(cls) {
+  const RED = '#C4142F', DEEP = '#8A0C20', LIT = '#F0748C';
+  const HEART = 'M120 150 C 82 130, 60 102, 68 80 C 75 60, 102 58, 113 76'
+    + ' C 116 81, 118 86, 120 91 C 122 86, 124 81, 127 76'
+    + ' C 138 58, 165 60, 172 80 C 180 102, 158 130, 120 150 Z';
+  const wrapA = 'M106 147 C 113 151, 127 151, 134 147';
+  const wrapB = 'M106 156 C 113 160, 127 160, 134 156';
+  const cord = (d, k) => '<path d="' + d + '" fill="none" stroke="' + DEEP + '" stroke-width="' + k + '" stroke-linecap="round" stroke-linejoin="round"/>'
+    + '<path d="' + d + '" fill="none" stroke="' + RED + '" stroke-width="' + (k - 3) + '" stroke-linecap="round" stroke-linejoin="round"/>'
+    + '<path d="' + d + '" fill="none" stroke="' + LIT + '" stroke-width="' + (k - 8) + '" stroke-linecap="round" stroke-linejoin="round" opacity=".5"/>';
+  return '<svg viewBox="52 52 136 116" class="loveknot ' + (cls || '') + '" aria-hidden="true">'
+    + cord(HEART, 15) + cord(wrapA, 11) + cord(wrapB, 11) + '</svg>';
+}
+
 function loveMarkSVG(state, cls) {
   const st = state || 'tied';
   const open = '<svg viewBox="0 0 48 48" class="lovemark ' + (cls || '') + '" aria-hidden="true">';
@@ -13732,10 +13775,12 @@ function loveBadgeHTML() {
   }
   if (!l.bond) return '';
   const st = l.stage || 'tied';
-  return '<a class="lovetag st-' + esc(st) + '" href="#/love">' + loveMarkSVG(st, 'tag')
-    + '<b>' + esc(S.loveTagOf[st] || S.loveTagTied) + '</b>'
+  /* Three things, three inks: how long, with whom, and what they are to each
+     other. They used to be one colour and ran together into one grey line. */
+  return '<a class="lovetag st-' + esc(st) + '" href="#/love">' + loveKnotSVG('tag')
+    + '<span class="d">' + esc(S.loveDaysN(LOVE.days({ since: l.since }))) + '</span>'
     + (l.withName ? '<span class="w">' + esc(l.withName) + '</span>' : '')
-    + '<span class="d">' + esc(S.loveDaysN(LOVE.days({ since: l.since }))) + '</span></a>';
+    + '<b>' + esc(S.loveTagOf[st] || S.loveTagTied) + '</b></a>';
 }
 
 /* The four stages laid out in order, so the whole of it is visible from the
@@ -17552,22 +17597,40 @@ function renderMe(args, params) {
   const head = '<div class="me-head"><div class="avatar">' + esc((name || '?').charAt(0).toUpperCase()) + '</div><div><b>' + esc(name || S.helloGuest) + '</b><span class="faint">' + esc(BE.user ? (BE.user.email || '') : S.localOnly) + '</span></div></div>';
   m.innerHTML = head + loveBadgeHTML() + '<div id="mebody"></div>';
   const body = $('#mebody');
+/* A folding group. Whether it was open is kept per device, so the page comes
+   back the way somebody left it rather than the way it was designed. */
+function meOpen(id, fallback) {
+  const m = store.get('nabu-me-open', {}) || {};
+  return Object.prototype.hasOwnProperty.call(m, id) ? !!m[id] : !!fallback;
+}
+function meSect(id, icon, title, body, openByDefault) {
+  if (!body) return '';
+  return '<details class="sect" data-sect="' + esc(id) + '"' + (meOpen(id, openByDefault) ? ' open' : '') + '>'
+    + '<summary><span class="si">' + icon + '</span><b>' + esc(title) + '</b><span class="sx" aria-hidden="true">\u203A</span></summary>'
+    + '<div class="sbody">' + body + '</div></details>';
+}
+
   const draw = () => {
     meCleanup();
     let h = '';
     if (params.next === 'book' && !BE.user) h += '<div class="banner">' + esc(S.needLogin) + '</div>';
     if (BE.isAdmin()) h += adminSummaryHTML();
-    h += authHTML() + profileFormHTML();
+    /* Group one: who you are. Always open - it is the reason the tab exists. */
+    h += meSect('who', '\uD83D\uDC64', S.meGroupYou, authHTML() + profileFormHTML(), true);
+    let talk = '';
     if (BE.enabled) {
-      h += '<div class="card"><h3 style="margin-bottom:4px">' + esc(S.messages) + '</h3><p class="hint" style="margin-bottom:8px">' + esc(BE.isAdmin() ? S.ownThreadHint : S.messagesIntro) + '</p>'
+      talk += '<div class="card"><h3 style="margin-bottom:4px">' + esc(S.messages) + '</h3><p class="hint" style="margin-bottom:8px">' + esc(BE.isAdmin() ? S.ownThreadHint : S.messagesIntro) + '</p>'
         + (BE.user ? '<div class="chat" id="chat"></div>' + chatBarHTML('mtext', 'msend', S.send) : '<p class="muted">' + esc(S.needLogin) + '</p>') + '</div>';
-      if (BE.user) h += '<div class="card"><h3 style="margin-bottom:8px">' + esc(S.myBookings) + '</h3><div id="mybk"><p class="hint">…</p></div>' + (notifyState() === 'default' ? '<button class="btn block" id="notifon" style="margin-top:8px">🔔 ' + esc(S.reminderOn) + '</button>' : '') + '<p class="hint">' + esc(S.reminderHint) + ' ' + esc(S.calendarHint) + '</p></div>';
+      if (BE.user) talk += '<div class="card"><h3 style="margin-bottom:8px">' + esc(S.myBookings) + '</h3><div id="mybk"><p class="hint">…</p></div>' + (notifyState() === 'default' ? '<button class="btn block" id="notifon" style="margin-top:8px">🔔 ' + esc(S.reminderOn) + '</button>' : '') + '<p class="hint">' + esc(S.reminderHint) + ' ' + esc(S.calendarHint) + '</p></div>';
     } else if (CONFIG.instagram) {
-      h += '<div class="card"><h3 style="margin-bottom:4px">' + esc(S.messages) + '</h3><p class="muted" style="font-size:14px">' + esc(S.messagesSoon) + '</p><a class="btn block" href="https://ig.me/m/' + esc(CONFIG.instagram) + '" target="_blank" rel="noopener">' + esc(S.viaInstagram) + '</a></div>';
+      talk += '<div class="card"><h3 style="margin-bottom:4px">' + esc(S.messages) + '</h3><p class="muted" style="font-size:14px">' + esc(S.messagesSoon) + '</p><a class="btn block" href="https://ig.me/m/' + esc(CONFIG.instagram) + '" target="_blank" rel="noopener">' + esc(S.viaInstagram) + '</a></div>';
     }
-    if (!(isStandalone() || isTWA())) h += '<a class="card" href="#/install" style="display:block;text-decoration:none;color:inherit"><h3 style="margin-bottom:4px">📲 ' + esc(S.installTitle) + '</h3><p class="hint">' + esc(S.instIntro) + '</p></a>';
-    h += aiPanelHTML({ type: 'general' });
-    h += '<div class="card"><h3 style="margin-bottom:8px">' + esc(S.myCourses) + '</h3>' + COURSES.map((c) => { const a = ACCESS.isAdmin() ? '9999-12-31' : ACCESS.get()[c.id]; const on = ACCESS.has(c.id);
+    talk += aiPanelHTML({ type: 'general' });
+    /* Group two: everything that is a conversation - with Nabu, and with the
+       machine. Open, because it is the half people come back for. */
+    h += meSect('talk', '\uD83D\uDCAC', S.meGroupTalk, talk, true);
+
+    let own = '<div class="card"><h3 style="margin-bottom:8px">' + esc(S.myCourses) + '</h3>' + COURSES.map((c) => { const a = ACCESS.isAdmin() ? '9999-12-31' : ACCESS.get()[c.id]; const on = ACCESS.has(c.id);
       const ic = a ? (on ? '✓' : '⌛') : '🔒';
       // The tick and the hourglass already say open or expired, so the column
       // only carries the date. Spelling it out pushed long course names onto a
@@ -17575,13 +17638,27 @@ function renderMe(args, params) {
       const right = a ? esc(a.slice(8, 10) + '/' + a.slice(5, 7) + '/' + a.slice(0, 4)) : (isTWA() ? '' : priceHTML(c.price, 'unlock', c.id));
       return '<div class="course"><span class="nm">' + esc(L(c.name)) + '</span><span class="ic">' + ic + '</span><span class="pr faint">' + right + '</span></div>'; }).join('')
       + '<label class="f" for="mcode">' + esc(S.enterCode) + '</label><div class="row nw"><input id="mcode" placeholder="NABU-T-…" autocapitalize="characters"><button class="btn" id="munlock">' + esc(S.unlock) + '</button></div><p class="hint" id="mcstatus"></p></div>';
-    h += '<div class="card"><h3 style="margin-bottom:8px">' + esc(S.themeTitle) + '</h3><div class="themes">' + ['auto', 'light', 'dark', 'pink'].map((t) => '<button class="chip' + (themeChoice() === t ? ' on' : '') + '" data-theme-pick="' + t + '" title="' + esc(S.themes[t]) + '">' + esc(S.themeShort[t]) + '</button>').join('') + '</div></div>';
-    h += '<div class="melinks" style="margin-bottom:14px"><a class="btn" href="#/looks">🎨 ' + esc(S.looksLink) + '</a><a class="btn" href="#/rewards">🪙 ' + esc(S.luckLink) + '</a></div>';
-    h += '<div class="meacts"><div class="row3"><a class="btn" href="#/contact">💬 ' + esc(S.contactLink) + '</a><a class="btn" href="#/report">🐞 ' + esc(S.reportLink) + '</a><button class="btn" id="retour">🎓 ' + esc(S.tourLink) + '</button></div>'
+    own += '<div class="melinks"><a class="btn" href="#/looks">\uD83C\uDFA8 ' + esc(S.looksLink) + '</a><a class="btn" href="#/rewards">\uD83E\uDE99 ' + esc(S.luckLink) + '</a></div>';
+    /* Group three: what this account holds. Folded by default - it is a place
+       you go to check something, not a place you read. */
+    h += meSect('own', '\uD83D\uDD11', S.meGroupOwn, own, false);
+
+    let app = '<div class="card"><h3 style="margin-bottom:8px">' + esc(S.themeTitle) + '</h3><div class="themes">' + ['auto', 'light', 'dark', 'pink'].map((t) => '<button class="chip' + (themeChoice() === t ? ' on' : '') + '" data-theme-pick="' + t + '" title="' + esc(S.themes[t]) + '">' + esc(S.themeShort[t]) + '</button>').join('') + '</div></div>';
+    if (!(isStandalone() || isTWA())) app += '<a class="card" href="#/install" style="display:block;text-decoration:none;color:inherit"><h3 style="margin-bottom:4px">\uD83D\uDCF2 ' + esc(S.installTitle) + '</h3><p class="hint">' + esc(S.instIntro) + '</p></a>';
+    app += '<div class="meacts"><div class="row3"><a class="btn" href="#/contact">💬 ' + esc(S.contactLink) + '</a><a class="btn" href="#/report">🐞 ' + esc(S.reportLink) + '</a><button class="btn" id="retour">🎓 ' + esc(S.tourLink) + '</button></div>'
       + (BE.user || BE.isAdmin() ? '<div class="row">' + (BE.user ? '<button class="btn" id="signout" style="flex:1">🚪 ' + esc(S.signOut) + '</button>' : '') + (BE.isAdmin() ? '<a class="btn gold" href="#/admin" style="flex:1">🛠 ' + esc(S.adminTitle) + '</a>' : '') + '</div>' : '') + '</div>';
-    if (BE.enabled && BE.user) h += '<div class="card danger"><h3 style="margin-bottom:4px">' + esc(S.delAccount) + '</h3><p class="hint" style="margin-bottom:10px">' + esc(S.delHint) + '</p><button class="btn block" id="delacct">🗑 ' + esc(S.delAccount) + '</button><p class="hint" id="delstatus"></p></div>';
-    h += '<p class="hint" style="text-align:center;margin-top:16px">' + esc(S.versionLine(window.APP_VERSION || '')) + ' · <button type="button" class="linkbtn" id="chkupd">' + esc(S.checkUpdate) + '</button> · <a href="#/privacy">' + esc(S.privacyLink) + '</a></p>';
+    if (BE.enabled && BE.user) app += '<div class="card danger"><h3 style="margin-bottom:4px">' + esc(S.delAccount) + '</h3><p class="hint" style="margin-bottom:10px">' + esc(S.delHint) + '</p><button class="btn block" id="delacct">🗑 ' + esc(S.delAccount) + '</button><p class="hint" id="delstatus"></p></div>';
+    app += '<p class="hint" style="text-align:center;margin-top:16px">' + esc(S.versionLine(window.APP_VERSION || '')) + ' · <button type="button" class="linkbtn" id="chkupd">' + esc(S.checkUpdate) + '</button> · <a href="#/privacy">' + esc(S.privacyLink) + '</a></p>';
+    /* Group four: the app itself. Folded - nobody changes their theme twice a
+       day, and deleting the account should take a deliberate reach. */
+    h += meSect('app', '\u2699\uFE0F', S.meGroupApp, app, false);
     body.innerHTML = h;
+    /* Remember how they left it. */
+    $$('details[data-sect]', body).forEach((el) => el.addEventListener('toggle', () => {
+      const m = store.get('nabu-me-open', {}) || {};
+      m[el.getAttribute('data-sect')] = el.open;
+      store.set('nabu-me-open', m);
+    }));
     bindAuth(body); bindAI(body); bindNotify(body);
     $('#chkupd').addEventListener('click', async () => {
       toast(S.updating);
@@ -19309,7 +19386,7 @@ function adminSale(p) {
 ROUTES.admin = { nav: '', render: renderAdmin };
 
 /* ============================ boot ============================ */
-window.APP_VERSION = 'v131';
+window.APP_VERSION = 'v132';
 window.NABU = { CONFIG: CONFIG, SALE: SALE, salePrice: salePrice, loadActs: loadActs, BACK: BACK, LESSONS: LESSONS, localAnswer: localAnswer, compatVerdict: compatVerdict, numerologyOf: numerologyOf, ZDEEP: ZDEEP, lunarToday: lunarToday, solarToLunar: solarToLunar, DECK: DECK, INSIGHT: INSIGHT, KW: KW, ASK: ASK, TOPICS: TOPICS, GUIDES: GUIDES, SERVICES: SERVICES, COURSES: COURSES, ACCESS: ACCESS, plusOn: () => plusOn(), proOn: () => proOn(), luckUnlimited: () => luckUnlimited(), ZODIAC: ZODIAC, pick: pick, book: book,
   insightHTML: insightHTML, insightOf: insightOf, sunSignIndex: sunSignIndex, lifePath: lifePath, PROFILE: () => PROFILE, BE: BE, ACTS: ACTS,
   ANGELS: ANGELS, angelRead: angelRead, CODEBOOK: CODEBOOK, verifyCode: verifyCode, petHomeSVG: petHomeSVG, PET_HOMES: PET_HOMES, PET_WEARS: PET_WEARS, codeDigest: codeDigest, randomCode: randomCode, BANK: BANK, PETS: PETS, petSVG: petSVG, PET_COATS: PET_COATS, PET_KINDS: PET_KINDS, luckCut: luckCut, petLevel: petLevel, petStep: petStep, VOUCHERS: VOUCHERS, levelCoins: levelCoins, LOOKS: LOOKS,

@@ -187,22 +187,40 @@ function renderMe(args, params) {
   const head = '<div class="me-head"><div class="avatar">' + esc((name || '?').charAt(0).toUpperCase()) + '</div><div><b>' + esc(name || S.helloGuest) + '</b><span class="faint">' + esc(BE.user ? (BE.user.email || '') : S.localOnly) + '</span></div></div>';
   m.innerHTML = head + loveBadgeHTML() + '<div id="mebody"></div>';
   const body = $('#mebody');
+/* A folding group. Whether it was open is kept per device, so the page comes
+   back the way somebody left it rather than the way it was designed. */
+function meOpen(id, fallback) {
+  const m = store.get('nabu-me-open', {}) || {};
+  return Object.prototype.hasOwnProperty.call(m, id) ? !!m[id] : !!fallback;
+}
+function meSect(id, icon, title, body, openByDefault) {
+  if (!body) return '';
+  return '<details class="sect" data-sect="' + esc(id) + '"' + (meOpen(id, openByDefault) ? ' open' : '') + '>'
+    + '<summary><span class="si">' + icon + '</span><b>' + esc(title) + '</b><span class="sx" aria-hidden="true">\u203A</span></summary>'
+    + '<div class="sbody">' + body + '</div></details>';
+}
+
   const draw = () => {
     meCleanup();
     let h = '';
     if (params.next === 'book' && !BE.user) h += '<div class="banner">' + esc(S.needLogin) + '</div>';
     if (BE.isAdmin()) h += adminSummaryHTML();
-    h += authHTML() + profileFormHTML();
+    /* Group one: who you are. Always open - it is the reason the tab exists. */
+    h += meSect('who', '\uD83D\uDC64', S.meGroupYou, authHTML() + profileFormHTML(), true);
+    let talk = '';
     if (BE.enabled) {
-      h += '<div class="card"><h3 style="margin-bottom:4px">' + esc(S.messages) + '</h3><p class="hint" style="margin-bottom:8px">' + esc(BE.isAdmin() ? S.ownThreadHint : S.messagesIntro) + '</p>'
+      talk += '<div class="card"><h3 style="margin-bottom:4px">' + esc(S.messages) + '</h3><p class="hint" style="margin-bottom:8px">' + esc(BE.isAdmin() ? S.ownThreadHint : S.messagesIntro) + '</p>'
         + (BE.user ? '<div class="chat" id="chat"></div>' + chatBarHTML('mtext', 'msend', S.send) : '<p class="muted">' + esc(S.needLogin) + '</p>') + '</div>';
-      if (BE.user) h += '<div class="card"><h3 style="margin-bottom:8px">' + esc(S.myBookings) + '</h3><div id="mybk"><p class="hint">…</p></div>' + (notifyState() === 'default' ? '<button class="btn block" id="notifon" style="margin-top:8px">🔔 ' + esc(S.reminderOn) + '</button>' : '') + '<p class="hint">' + esc(S.reminderHint) + ' ' + esc(S.calendarHint) + '</p></div>';
+      if (BE.user) talk += '<div class="card"><h3 style="margin-bottom:8px">' + esc(S.myBookings) + '</h3><div id="mybk"><p class="hint">…</p></div>' + (notifyState() === 'default' ? '<button class="btn block" id="notifon" style="margin-top:8px">🔔 ' + esc(S.reminderOn) + '</button>' : '') + '<p class="hint">' + esc(S.reminderHint) + ' ' + esc(S.calendarHint) + '</p></div>';
     } else if (CONFIG.instagram) {
-      h += '<div class="card"><h3 style="margin-bottom:4px">' + esc(S.messages) + '</h3><p class="muted" style="font-size:14px">' + esc(S.messagesSoon) + '</p><a class="btn block" href="https://ig.me/m/' + esc(CONFIG.instagram) + '" target="_blank" rel="noopener">' + esc(S.viaInstagram) + '</a></div>';
+      talk += '<div class="card"><h3 style="margin-bottom:4px">' + esc(S.messages) + '</h3><p class="muted" style="font-size:14px">' + esc(S.messagesSoon) + '</p><a class="btn block" href="https://ig.me/m/' + esc(CONFIG.instagram) + '" target="_blank" rel="noopener">' + esc(S.viaInstagram) + '</a></div>';
     }
-    if (!(isStandalone() || isTWA())) h += '<a class="card" href="#/install" style="display:block;text-decoration:none;color:inherit"><h3 style="margin-bottom:4px">📲 ' + esc(S.installTitle) + '</h3><p class="hint">' + esc(S.instIntro) + '</p></a>';
-    h += aiPanelHTML({ type: 'general' });
-    h += '<div class="card"><h3 style="margin-bottom:8px">' + esc(S.myCourses) + '</h3>' + COURSES.map((c) => { const a = ACCESS.isAdmin() ? '9999-12-31' : ACCESS.get()[c.id]; const on = ACCESS.has(c.id);
+    talk += aiPanelHTML({ type: 'general' });
+    /* Group two: everything that is a conversation - with Nabu, and with the
+       machine. Open, because it is the half people come back for. */
+    h += meSect('talk', '\uD83D\uDCAC', S.meGroupTalk, talk, true);
+
+    let own = '<div class="card"><h3 style="margin-bottom:8px">' + esc(S.myCourses) + '</h3>' + COURSES.map((c) => { const a = ACCESS.isAdmin() ? '9999-12-31' : ACCESS.get()[c.id]; const on = ACCESS.has(c.id);
       const ic = a ? (on ? '✓' : '⌛') : '🔒';
       // The tick and the hourglass already say open or expired, so the column
       // only carries the date. Spelling it out pushed long course names onto a
@@ -210,13 +228,27 @@ function renderMe(args, params) {
       const right = a ? esc(a.slice(8, 10) + '/' + a.slice(5, 7) + '/' + a.slice(0, 4)) : (isTWA() ? '' : priceHTML(c.price, 'unlock', c.id));
       return '<div class="course"><span class="nm">' + esc(L(c.name)) + '</span><span class="ic">' + ic + '</span><span class="pr faint">' + right + '</span></div>'; }).join('')
       + '<label class="f" for="mcode">' + esc(S.enterCode) + '</label><div class="row nw"><input id="mcode" placeholder="NABU-T-…" autocapitalize="characters"><button class="btn" id="munlock">' + esc(S.unlock) + '</button></div><p class="hint" id="mcstatus"></p></div>';
-    h += '<div class="card"><h3 style="margin-bottom:8px">' + esc(S.themeTitle) + '</h3><div class="themes">' + ['auto', 'light', 'dark', 'pink'].map((t) => '<button class="chip' + (themeChoice() === t ? ' on' : '') + '" data-theme-pick="' + t + '" title="' + esc(S.themes[t]) + '">' + esc(S.themeShort[t]) + '</button>').join('') + '</div></div>';
-    h += '<div class="melinks" style="margin-bottom:14px"><a class="btn" href="#/looks">🎨 ' + esc(S.looksLink) + '</a><a class="btn" href="#/rewards">🪙 ' + esc(S.luckLink) + '</a></div>';
-    h += '<div class="meacts"><div class="row3"><a class="btn" href="#/contact">💬 ' + esc(S.contactLink) + '</a><a class="btn" href="#/report">🐞 ' + esc(S.reportLink) + '</a><button class="btn" id="retour">🎓 ' + esc(S.tourLink) + '</button></div>'
+    own += '<div class="melinks"><a class="btn" href="#/looks">\uD83C\uDFA8 ' + esc(S.looksLink) + '</a><a class="btn" href="#/rewards">\uD83E\uDE99 ' + esc(S.luckLink) + '</a></div>';
+    /* Group three: what this account holds. Folded by default - it is a place
+       you go to check something, not a place you read. */
+    h += meSect('own', '\uD83D\uDD11', S.meGroupOwn, own, false);
+
+    let app = '<div class="card"><h3 style="margin-bottom:8px">' + esc(S.themeTitle) + '</h3><div class="themes">' + ['auto', 'light', 'dark', 'pink'].map((t) => '<button class="chip' + (themeChoice() === t ? ' on' : '') + '" data-theme-pick="' + t + '" title="' + esc(S.themes[t]) + '">' + esc(S.themeShort[t]) + '</button>').join('') + '</div></div>';
+    if (!(isStandalone() || isTWA())) app += '<a class="card" href="#/install" style="display:block;text-decoration:none;color:inherit"><h3 style="margin-bottom:4px">\uD83D\uDCF2 ' + esc(S.installTitle) + '</h3><p class="hint">' + esc(S.instIntro) + '</p></a>';
+    app += '<div class="meacts"><div class="row3"><a class="btn" href="#/contact">💬 ' + esc(S.contactLink) + '</a><a class="btn" href="#/report">🐞 ' + esc(S.reportLink) + '</a><button class="btn" id="retour">🎓 ' + esc(S.tourLink) + '</button></div>'
       + (BE.user || BE.isAdmin() ? '<div class="row">' + (BE.user ? '<button class="btn" id="signout" style="flex:1">🚪 ' + esc(S.signOut) + '</button>' : '') + (BE.isAdmin() ? '<a class="btn gold" href="#/admin" style="flex:1">🛠 ' + esc(S.adminTitle) + '</a>' : '') + '</div>' : '') + '</div>';
-    if (BE.enabled && BE.user) h += '<div class="card danger"><h3 style="margin-bottom:4px">' + esc(S.delAccount) + '</h3><p class="hint" style="margin-bottom:10px">' + esc(S.delHint) + '</p><button class="btn block" id="delacct">🗑 ' + esc(S.delAccount) + '</button><p class="hint" id="delstatus"></p></div>';
-    h += '<p class="hint" style="text-align:center;margin-top:16px">' + esc(S.versionLine(window.APP_VERSION || '')) + ' · <button type="button" class="linkbtn" id="chkupd">' + esc(S.checkUpdate) + '</button> · <a href="#/privacy">' + esc(S.privacyLink) + '</a></p>';
+    if (BE.enabled && BE.user) app += '<div class="card danger"><h3 style="margin-bottom:4px">' + esc(S.delAccount) + '</h3><p class="hint" style="margin-bottom:10px">' + esc(S.delHint) + '</p><button class="btn block" id="delacct">🗑 ' + esc(S.delAccount) + '</button><p class="hint" id="delstatus"></p></div>';
+    app += '<p class="hint" style="text-align:center;margin-top:16px">' + esc(S.versionLine(window.APP_VERSION || '')) + ' · <button type="button" class="linkbtn" id="chkupd">' + esc(S.checkUpdate) + '</button> · <a href="#/privacy">' + esc(S.privacyLink) + '</a></p>';
+    /* Group four: the app itself. Folded - nobody changes their theme twice a
+       day, and deleting the account should take a deliberate reach. */
+    h += meSect('app', '\u2699\uFE0F', S.meGroupApp, app, false);
     body.innerHTML = h;
+    /* Remember how they left it. */
+    $$('details[data-sect]', body).forEach((el) => el.addEventListener('toggle', () => {
+      const m = store.get('nabu-me-open', {}) || {};
+      m[el.getAttribute('data-sect')] = el.open;
+      store.set('nabu-me-open', m);
+    }));
     bindAuth(body); bindAI(body); bindNotify(body);
     $('#chkupd').addEventListener('click', async () => {
       toast(S.updating);

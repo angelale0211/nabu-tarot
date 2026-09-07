@@ -224,6 +224,24 @@ function wreathArt(cx, cy, span) {
 /* The same four marks, small, for the tag on a profile and the tile on the home
    screen. Whatever says where somebody stands should say it the same way
    everywhere it appears. */
+/* The knot at tag size: the same heart of cord the thread page draws, with the
+   frame, the blossom and the falling ends left off because at 22 pixels they
+   are mud. Three passes of stroke keep it reading as cord rather than a line -
+   dark, red, and a thin lit edge. */
+function loveKnotSVG(cls) {
+  const RED = '#C4142F', DEEP = '#8A0C20', LIT = '#F0748C';
+  const HEART = 'M120 150 C 82 130, 60 102, 68 80 C 75 60, 102 58, 113 76'
+    + ' C 116 81, 118 86, 120 91 C 122 86, 124 81, 127 76'
+    + ' C 138 58, 165 60, 172 80 C 180 102, 158 130, 120 150 Z';
+  const wrapA = 'M106 147 C 113 151, 127 151, 134 147';
+  const wrapB = 'M106 156 C 113 160, 127 160, 134 156';
+  const cord = (d, k) => '<path d="' + d + '" fill="none" stroke="' + DEEP + '" stroke-width="' + k + '" stroke-linecap="round" stroke-linejoin="round"/>'
+    + '<path d="' + d + '" fill="none" stroke="' + RED + '" stroke-width="' + (k - 3) + '" stroke-linecap="round" stroke-linejoin="round"/>'
+    + '<path d="' + d + '" fill="none" stroke="' + LIT + '" stroke-width="' + (k - 8) + '" stroke-linecap="round" stroke-linejoin="round" opacity=".5"/>';
+  return '<svg viewBox="52 52 136 116" class="loveknot ' + (cls || '') + '" aria-hidden="true">'
+    + cord(HEART, 15) + cord(wrapA, 11) + cord(wrapB, 11) + '</svg>';
+}
+
 function loveMarkSVG(state, cls) {
   const st = state || 'tied';
   const open = '<svg viewBox="0 0 48 48" class="lovemark ' + (cls || '') + '" aria-hidden="true">';
@@ -496,10 +514,12 @@ function loveBadgeHTML() {
   }
   if (!l.bond) return '';
   const st = l.stage || 'tied';
-  return '<a class="lovetag st-' + esc(st) + '" href="#/love">' + loveMarkSVG(st, 'tag')
-    + '<b>' + esc(S.loveTagOf[st] || S.loveTagTied) + '</b>'
+  /* Three things, three inks: how long, with whom, and what they are to each
+     other. They used to be one colour and ran together into one grey line. */
+  return '<a class="lovetag st-' + esc(st) + '" href="#/love">' + loveKnotSVG('tag')
+    + '<span class="d">' + esc(S.loveDaysN(LOVE.days({ since: l.since }))) + '</span>'
     + (l.withName ? '<span class="w">' + esc(l.withName) + '</span>' : '')
-    + '<span class="d">' + esc(S.loveDaysN(LOVE.days({ since: l.since }))) + '</span></a>';
+    + '<b>' + esc(S.loveTagOf[st] || S.loveTagTied) + '</b></a>';
 }
 
 /* The four stages laid out in order, so the whole of it is visible from the

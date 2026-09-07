@@ -1218,8 +1218,18 @@ h1 .pileico{width:34px;height:27px;vertical-align:-3px;margin-right:2px}
 .reqcard.found{margin:12px 0 0;border-color:var(--lav)}
 .athandle .at{flex:none;color:var(--fg-faint);font-weight:600;font-size:17px}
 /* The tag on the profile: a fixed blush ground, so a fixed ink to go on it. */
-.lovetag{display:inline-flex;align-items:center;gap:7px;background:#FCE4E9;color:#8A1F33;border:1px solid #F3B7C3;border-radius:999px;padding:5px 13px;font-size:13px;font-weight:600;text-decoration:none;margin:0 0 14px}
-.lovetag .d{color:#A85267;font-weight:500}
+/* The tag carries its own ground in every theme, so the three inks on it are
+   chosen against that ground rather than against the page - which is what keeps
+   them legible on light, on dark and on pink alike. */
+.lovetag{display:inline-flex;align-items:center;gap:7px;flex-wrap:wrap;background:#FCE4E9;border:1px solid #F3B7C3;
+  border-radius:999px;padding:5px 13px;font-size:13px;font-weight:600;text-decoration:none;margin:0 0 14px;
+  --tag-days:#8A0C20; --tag-who:#7A2E8C; --tag-what:#8A1F33}
+.lovetag .loveknot{width:22px;height:19px;flex:none}
+.lovetag .d{color:var(--tag-days);font-weight:800;letter-spacing:.01em}
+.lovetag .w{color:var(--tag-who);font-weight:700}
+.lovetag b{color:var(--tag-what);font-weight:500}
+.lovetag .w::before{content:'\00B7';margin-right:7px;color:#C79AA6;font-weight:400}
+.lovetag b::before{content:'\00B7';margin-right:7px;color:#C79AA6;font-weight:400}
 .lovemark{width:26px;height:26px;flex:none;display:block}
 .lovemark.big{width:64px;height:64px;margin:0 auto 6px}
 .lovemark.inline{width:24px;height:24px;display:inline-block;vertical-align:-5px}
@@ -1229,10 +1239,8 @@ h1 .pileico{width:34px;height:27px;vertical-align:-3px;margin-right:2px}
 .actquick .aq .ic .lovemark{width:24px;height:24px}
 .btn .lovemark{width:20px;height:20px;display:inline-block;vertical-align:-4px;margin-right:2px}
 #main h1 .lovemark{width:30px;height:30px;display:inline-block;vertical-align:-4px}
-.lovetag.st-engaged{background:#FFF3DC;border-color:#EBCB8E;color:#6B4D0F}
-.lovetag.st-engaged .d{color:#8A6A22}
-.lovetag.st-married{background:#F6ECFF;border-color:#D6BEF0;color:#4B2A6E}
-.lovetag.st-married .d{color:#6C4C94}
+.lovetag.st-engaged{background:#FFF3DC;border-color:#EBCB8E;--tag-days:#6B4D0F;--tag-who:#7A4E14;--tag-what:#8A6A22}
+.lovetag.st-married{background:#F6ECFF;border-color:#D6BEF0;--tag-days:#4B2A6E;--tag-who:#7A2E8C;--tag-what:#6C4C94}
 /* #main p is justified with an id in its selector, which outweighs the
    text-align the card sets - and a one-line justified paragraph renders flush
    left, so these only looked centred when a line happened to fill the width.
@@ -1267,6 +1275,22 @@ h1 .pileico{width:34px;height:27px;vertical-align:-3px;margin-right:2px}
 .giftstep{margin:12px 0 6px;font-size:12.5px;font-weight:600;color:var(--fg-soft)}
 .gp.on{border-color:var(--accent);box-shadow:0 0 0 2px var(--accent) inset}
 .btn.danger{color:var(--err);border-color:var(--err)}
+/* A folding group on the profile. The tab was eleven unrelated cards in the
+   order they were written; these are four named groups, and the two nobody
+   opens daily start closed. */
+.sect{border:1px solid var(--rule);border-radius:16px;background:var(--surface);margin:0 0 12px;overflow:hidden}
+.sect > summary{display:flex;align-items:center;gap:10px;padding:13px 14px;cursor:pointer;list-style:none;
+  font-size:15px;color:var(--fg);-webkit-tap-highlight-color:transparent}
+.sect > summary::-webkit-details-marker{display:none}
+.sect > summary .si{font-size:18px;line-height:1;flex:none}
+.sect > summary b{flex:1;min-width:0;font-weight:600;overflow-wrap:anywhere}
+.sect > summary .sx{flex:none;color:var(--fg-faint);font-size:19px;line-height:1;transition:transform .18s ease}
+.sect[open] > summary .sx{transform:rotate(90deg)}
+.sect[open] > summary{border-bottom:1px solid var(--rule-soft)}
+.sect .sbody{padding:12px 12px 4px}
+.sect .sbody > .card{background:var(--bg);border-color:var(--rule-soft)}
+.sect .sbody > :last-child{margin-bottom:12px}
+
 /* Pull down to refresh. The browser's own is switched off: it reloads the
    whole page and loses the screen you were standing on. */
 html,body{overscroll-behavior-y:contain}
@@ -1333,8 +1357,7 @@ html,body{overscroll-behavior-y:contain}
 #main p.petfam .pp i{font-style:normal;font-size:14px;opacity:.85}
 /* An invitation someone opened before they had an account, waiting on the
    profile screen for them to come back to it. */
-.lovetag.waiting{background:#FFF1DC;border-color:#EFCE9B;color:#7A4E14;display:flex}
-.lovetag.waiting .d{color:#9A6B24}
+.lovetag.waiting{background:#FFF1DC;border-color:#EFCE9B;color:#7A4E14;display:flex;--tag-days:#7A4E14;--tag-who:#7A4E14;--tag-what:#9A6B24}
 /* The link itself: shown in full, because being able to read it before you
    send it is half of trusting it. */
 .invitecard #lvurl{font-size:12.5px;font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;margin-top:2px;background:var(--surface-2)}
