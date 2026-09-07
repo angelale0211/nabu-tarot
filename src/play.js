@@ -719,6 +719,39 @@ const MOODS = ['😄', '🙂', '😌', '🥰', '🤩', '😐', '😔', '😢', '
 function renderDiary() {
   const S = T(), m = $('#main'), today = isoDate(new Date());
   const all = () => store.get('nabu-diary', {}) || {};
+  /* Two people who are tied may read each other's pages, if both say so. The
+     bond and their pages arrive on their own time, so the screen redraws when
+     they do rather than waiting for them. */
+  let bond = null, theirs = [], stopBond = null, stopDiary = null;
+  const stopAll = () => {
+    if (stopBond) { stopBond(); stopBond = null; }
+    if (stopDiary) { stopDiary(); stopDiary = null; }
+  };
+  NAV.cleanup = stopAll;
+
+  const shareHTML = () => {
+    if (!bond) return '';
+    const you = LOVE.other(bond, LOVEDB.me()), nm = (you && (you.name || (you.handle ? '@' + you.handle : ''))) || S.loveSomeone;
+    const mine = LOVEDB.diaryMine(bond), both = LOVEDB.diaryBoth(bond);
+    const state = both ? S.diaryShareBoth(nm) : mine ? S.diaryShareWait(nm) : S.diaryShareOff;
+    return '<div class="card sharecard' + (both ? ' on' : '') + '">'
+      + '<div class="ghead"><span class="gk">\uD83E\uDDE7</span><h3>' + esc(S.diaryShareTitle) + '</h3></div>'
+      + '<p class="hint" style="margin-bottom:10px">' + esc(S.diaryShareHint) + '</p>'
+      + '<label class="remind"><input type="checkbox" id="dshare"' + (mine ? ' checked' : '') + '><span>' + esc(S.diaryShareAsk(nm)) + '</span></label>'
+      + '<p class="hint' + (both ? ' ok' : '') + '" id="dsharest">' + esc(state) + '</p></div>';
+  };
+
+  const theirHTML = () => {
+    if (!bond || !LOVEDB.diaryBoth(bond)) return '';
+    const you = LOVE.other(bond, LOVEDB.me()), nm = (you && (you.name || '')) || S.loveSomeone;
+    return '<h3 style="margin:16px 0 8px">\uD83D\uDCD6 ' + esc(S.diaryTheirs(nm)) + '</h3>'
+      + (theirs.length
+        ? theirs.slice(0, 60).map((x) => '<div class="card diary past theirs ' + diaryPaperClass() + '">'
+          + '<div class="date"><span>' + (x.m ? x.m + ' ' : '') + esc(fmtDate(x.day)) + '</span><span class="faint">' + esc(nm) + '</span></div>'
+          + '<p>' + esc(x.t || '').replace(/\n/g, '<br>') + '</p></div>').join('')
+        : '<p class="hint">' + esc(S.diaryTheirsNone(nm)) + '</p>');
+  };
+
   const draw = () => {
     const d = all(), cur = d[today] || { m: '', t: '' }, days = Object.keys(d).filter((k) => k !== today).sort().reverse();
     m.innerHTML = '<div class="eyebrow">' + esc(S.actTitle) + '</div><h1 style="margin-bottom:6px">📔 ' + esc(S.diaryTitle) + '</h1><p class="muted">' + esc(S.diaryIntro) + '</p>'
@@ -727,15 +760,45 @@ function renderDiary() {
       + '<textarea id="dtext" placeholder="' + esc(S.diaryPh) + '">' + esc(cur.t || '') + '</textarea></div>'
       + '<h3 style="margin:16px 0 8px">' + esc(S.diaryPast) + (days.length ? ' <span class="faint">· ' + esc(S.diaryCount(days.length + (cur.t || cur.m ? 1 : 0))) + '</span>' : '') + '</h3>'
       + (days.length ? days.map((k) => '<div class="card diary past ' + diaryPaperClass() + '" data-day="' + k + '"><div class="date"><span>' + (d[k].m ? d[k].m + ' ' : '') + esc(fmtDate(k)) + '</span><button type="button" class="linkbtn" data-ddel="' + k + '">' + esc(S.diaryDel) + '</button></div><p>' + esc(d[k].t || '').replace(/\n/g, '<br>') + '</p></div>').join('') : '<p class="hint">' + esc(S.diaryEmpty) + '</p>')
+      + theirHTML()
+      + shareHTML()
       + lookStripHTML('diary')
       + '<p style="margin-top:12px"><a href="#/play" class="backlink">← ' + esc(S.actBack) + '</a></p>';
     bindLookStrip(m, draw);
-    const save = () => { const d2 = all(); const t = $('#dtext').value, mo = ($('.mood.on', m) || {}).getAttribute ? $('.mood.on', m).getAttribute('data-mood') : ''; if (t.trim() || mo) d2[today] = { m: mo || '', t: t }; else delete d2[today]; store.set('nabu-diary', d2); $('#dsaved').textContent = t.trim() || mo ? S.diarySaved : ''; };
+    { const sh = $('#dshare');
+      if (sh) sh.addEventListener('change', async () => {
+        const st = $('#dsharest');
+        sh.disabled = true; st.className = 'hint'; st.textContent = S.loveSaving;
+        try {
+          await LOVEDB.setDiaryShare(bond.id, bond, sh.checked);
+          /* Switching it on sends today's page, so there is something to see
+             at once; switching it off has already taken everything back. */
+          if (sh.checked) { const d3 = all()[today]; if (d3) await LOVEDB.putDiaryDay(bond.id, today, d3); }
+        } catch (e) { sh.checked = !sh.checked; st.className = 'hint err'; st.textContent = loveWhy(e); }
+        sh.disabled = false;
+      }); }
+    const save = () => {
+      const d2 = all(); const t = $('#dtext').value, mo = ($('.mood.on', m) || {}).getAttribute ? $('.mood.on', m).getAttribute('data-mood') : '';
+      if (t.trim() || mo) d2[today] = { m: mo || '', t: t }; else delete d2[today];
+      store.set('nabu-diary', d2); $('#dsaved').textContent = t.trim() || mo ? S.diarySaved : '';
+      /* Only while the switch is on, and only the day being written. */
+      if (bond && LOVEDB.diaryMine(bond)) LOVEDB.putDiaryDay(bond.id, today, d2[today]).catch(() => {});
+    };
     $('#dtext').addEventListener('input', save);
     $$('[data-mood]', m).forEach((b) => b.addEventListener('click', () => { const on = b.classList.contains('on'); $$('[data-mood]', m).forEach((x) => x.classList.remove('on')); if (!on) b.classList.add('on'); save(); }));
     $$('[data-ddel]', m).forEach((b) => b.addEventListener('click', () => { if (!confirm(S.confirmDel)) return; const d2 = all(); delete d2[b.getAttribute('data-ddel')]; store.set('nabu-diary', d2); draw(); }));
   };
   draw();
+
+  if (LOVEDB.ok() && LOVE.local().bond) {
+    stopBond = LOVEDB.watchMine((b) => {
+      bond = b;
+      if (b && LOVEDB.diaryBoth(b)) {
+        if (!stopDiary) stopDiary = LOVEDB.watchTheirDiary(b.id, (list) => { theirs = list; draw(); });
+      } else if (stopDiary) { stopDiary(); stopDiary = null; theirs = []; }
+      draw();
+    });
+  }
 }
 /* The newest open activity, shown on the home screen. */
 async function homeActHTML(root) {

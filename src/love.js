@@ -485,6 +485,38 @@ const LOVEDB = {
     const patch = {}; patch[k] = role;
     await BE.db.collection('bonds').doc(id).update(patch);
   },
+  /* Each opens their own diary and nobody else's. Both must be open before
+     either can read a word, and the rule says so as well as the screen. */
+  async setDiaryShare(id, bond, on) {
+    const k = bond.a === this.me() ? 'aDiary' : 'bDiary';
+    const patch = {}; patch[k] = !!on;
+    await BE.db.collection('bonds').doc(id).update(patch);
+    if (!on) await this.clearMyDiary(id);
+  },
+  diaryMine(bond) { return !!(bond && (bond.a === this.me() ? bond.aDiary : bond.bDiary)); },
+  diaryBoth(bond) { return !!(bond && bond.aDiary && bond.bDiary); },
+  /* One page, the day it belongs to. Only what is written while the switch is
+     on ever goes; there is no sweep of the archive behind anybody's back. */
+  async putDiaryDay(id, day, entry) {
+    const ref = BE.db.collection('bonds').doc(id).collection('diary').doc(this.me() + '__' + day);
+    if (!entry || (!String(entry.t || '').trim() && !entry.m)) { await ref.delete().catch(() => {}); return; }
+    await ref.set({ from: this.me(), day: day, m: entry.m || '', t: String(entry.t || '').slice(0, 4000), at: Date.now() });
+  },
+  /* Turning it off takes back what was sent, rather than leaving it lying
+     there unreadable-for-now. */
+  async clearMyDiary(id) {
+    const snap = await BE.db.collection('bonds').doc(id).collection('diary').get().catch(() => null);
+    if (!snap) return;
+    await Promise.all(snap.docs.filter((d) => (d.data() || {}).from === this.me())
+      .map((d) => d.ref.delete().catch(() => {})));
+  },
+  watchTheirDiary(id, cb) {
+    if (!this.ok() || !id) return () => {};
+    const me = this.me();
+    return BE.db.collection('bonds').doc(id).collection('diary')
+      .onSnapshot((s) => cb(s.docs.map((d) => d.data()).filter((x) => x && x.from !== me)
+        .sort((a, b) => String(b.day).localeCompare(String(a.day)))), () => cb([]));
+  },
   async giveGift(id, kind, note) {
     await BE.db.collection('bonds').doc(id).collection('gifts').doc(loveToken()).set({
       from: this.me(), kind: kind, note: String(note || '').slice(0, 200), at: Date.now()

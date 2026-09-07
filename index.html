@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
 <title>Nabu Tarot</title>
 <meta name="description" content="Nabu Tarot: dự đoán mới, rút một lá bài xem năng lượng hiện tại, học tarot, Lenormand, chiêm tinh, và đặt lịch xem bài.">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'none'; object-src 'none'; form-action 'self'; script-src 'self' 'sha256-sEeCNFzgZDIYhZLo/Ew++hUbzT0waQsZzNb1TaGircw=' https://www.gstatic.com https://apis.google.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; font-src 'self' data:; media-src 'self' data: blob:; worker-src 'self'; connect-src 'self' https://*.googleapis.com https://*.google.com https://*.firebaseio.com https://*.cloudfunctions.net https://*.workers.dev https://generativelanguage.googleapis.com; frame-src https://*.firebaseapp.com https://accounts.google.com https://*.facebook.com">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'none'; object-src 'none'; form-action 'self'; script-src 'self' 'sha256-lsjt6HbKxHv4iyVvpv1md/yYfCBLOh5Vg9A98Y2702A=' https://www.gstatic.com https://apis.google.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; font-src 'self' data:; media-src 'self' data: blob:; worker-src 'self'; connect-src 'self' https://*.googleapis.com https://*.google.com https://*.firebaseio.com https://*.cloudfunctions.net https://*.workers.dev https://generativelanguage.googleapis.com; frame-src https://*.firebaseapp.com https://accounts.google.com https://*.facebook.com">
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <meta name="theme-color" content="#EFE9FA">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -1441,6 +1441,12 @@ h1 .pileico{width:34px;height:27px;vertical-align:-3px;margin-right:2px}
 .giftstep{margin:12px 0 6px;font-size:12.5px;font-weight:600;color:var(--fg-soft)}
 .gp.on{border-color:var(--accent);box-shadow:0 0 0 2px var(--accent) inset}
 .btn.danger{color:var(--err);border-color:var(--err)}
+/* Somebody else's pages, marked as theirs so they are never mistaken for
+   your own, and the switch that lets them be seen at all. */
+.diary.theirs{border-style:dashed}
+.sharecard{border:1px solid var(--rule)}
+.sharecard.on{border-color:var(--lav)}
+
 /* A folding group on the profile. The tab was eleven unrelated cards in the
    order they were written; these are four named groups, and the two nobody
    opens daily start closed. */
@@ -2352,6 +2358,12 @@ const STR = {
     treeTitle: 'Rung cây thông điệp', treeSub: 'một lời nhắn từ vũ trụ', treePets: 'Hiện bạn nhỏ dưới gốc cây', treePetsHint: 'Tắt đi thì chỉ còn cây. Chỉ ảnh hưởng máy của bạn.',
     treeIntro: 'Bạn đứng trước cây, nghĩ về điều đang ở trong lòng mình, rồi rung nhẹ một cái. Cây sẽ thả xuống cho bạn một lời nhắn.', treeShake: 'Rung cây', treeAgain: 'Rung thêm một lần nữa', treeFor: 'Lời nhắn dành cho bạn', coinTitle: 'Tung đồng xu', coinSub: 'cho câu hỏi có hoặc không', coinIntro: 'Khi bạn có một câu hỏi chỉ cần trả lời có hoặc không, bạn hãy nghĩ thật rõ về câu hỏi đó rồi tung đồng xu.', coinQ: 'Câu hỏi của bạn', coinQPh: 'Ví dụ: mình có nên nhắn trước không?', coinFlip: 'Tung đồng xu', coinAgain: 'Tung lại', coinYes: 'CÓ', coinNo: 'KHÔNG', coinNote: 'Đồng xu chỉ cho bạn một trong hai câu trả lời. Điều đáng chú ý là cảm giác của bạn ngay khi nhìn thấy kết quả: nếu bạn thấy hụt hẫng, bạn đã biết mình muốn gì.',
     actNew: 'Hoạt động mới', actType: 'Loại', actTypes: { pile: 'Chọn tụ bài', poll: 'Bình chọn', wish: 'Điều ước' }, actResultsDate: 'Ngày đăng kết quả', actIntroLabel: 'Lời dẫn (thanh công cụ phía trên ô cho phép in đậm, in nghiêng, tô sáng, chèn ảnh, video và emoji)', actPilesHint: 'Từ 2 đến 5 tụ. Bạn có thể đăng trước với nhãn trống; vài ngày sau quay lại điền thông điệp và bật "Đã có kết quả".', actPileN: (n) => 'Tụ ' + n, actPileLabel: 'Nhãn ngắn (không bắt buộc), ví dụ: Trái · Giữa · Phải', actPileMsg: 'Thông điệp cho tụ này (đăng sau cũng được)', actPileMsgEn: 'English message (optional)', actPileAdd: 'Thêm tụ', actPileDel: 'Bớt tụ', actResultsOn: 'Đã có kết quả: cho phép lật bài', actOptions: 'Các lựa chọn, mỗi dòng một lựa chọn', actCloseOn: 'Đóng bình chọn', actExisting: 'Hoạt động đã đăng', actNeedPiles: 'Bạn điền ít nhất một tụ nhé.', actNeedOptions: 'Cần ít nhất hai lựa chọn.',
+    diaryShareTitle: 'Đọc nhật ký của nhau', diaryShareHint: 'Cả hai cùng bật thì mới đọc được của nhau. Bạn tắt lúc nào cũng được, và những trang đã gửi sẽ được xoá đi.',
+    diaryShareAsk: (n) => 'Cho ' + n + ' đọc nhật ký của tôi',
+    diaryShareOff: 'Đang tắt. Nhật ký của bạn chỉ nằm trên máy này.',
+    diaryShareWait: (n) => 'Bạn đã bật. Đợi ' + n + ' bật nữa là hai bạn đọc được của nhau.',
+    diaryShareBoth: (n) => 'Cả hai đã bật. Bạn và ' + n + ' đọc được nhật ký của nhau ✨',
+    diaryTheirs: (n) => 'Nhật ký của ' + n, diaryTheirsNone: (n) => n + ' chưa viết trang nào kể từ khi bật.',
     meGroupYou: 'Bạn là ai', meGroupTalk: 'Trò chuyện & lịch hẹn', meGroupOwn: 'Bạn đang có gì', meGroupApp: 'Ứng dụng',
     refreshed: 'Đã làm mới ✨', pullHint: 'Kéo xuống để làm mới',
     alertTitle: 'Thông báo', alertIntro: 'Những gì đã xảy ra khi bạn không mở app.',
@@ -2860,6 +2872,12 @@ const STR = {
     treeTitle: 'Shake the message tree', treeSub: 'a message from the universe', treePets: 'Show your companions under the tree', treePetsHint: 'Turn it off and the tree stands on its own. This phone only.',
     treeIntro: 'Stand in front of the tree, hold in mind whatever you are carrying, and give it a gentle shake. The tree will let a message fall for you.', treeShake: 'Shake the tree', treeAgain: 'Shake it once more', treeFor: 'A message for you', coinTitle: 'Flip a coin', coinSub: 'for a yes or no question', coinIntro: 'When a question needs nothing more than a yes or a no, hold the question clearly in mind and flip the coin.', coinQ: 'Your question', coinQPh: 'For example: should I message first?', coinFlip: 'Flip the coin', coinAgain: 'Flip again', coinYes: 'YES', coinNo: 'NO', coinNote: 'The coin gives you one of two answers. What matters is how you feel the moment you see it: if the result disappoints you, you already know what you want.',
     actNew: 'New activity', actType: 'Type', actTypes: { pile: 'Pick a pile', poll: 'Poll', wish: 'Wish' }, actResultsDate: 'Results date', actIntroLabel: 'Intro (the bar above the box: bold, italic, highlight, images, video, emoji)', actPilesHint: 'Two to five piles. You can publish with empty labels; come back days later, fill in the messages and switch on "Answered".', actPileN: (n) => 'Pile ' + n, actPileLabel: 'Short label (optional), e.g. Left · Middle · Right', actPileMsg: 'Message for this pile (can be added later)', actPileMsgEn: 'English message (optional)', actPileAdd: 'Add a pile', actPileDel: 'Remove a pile', actResultsOn: 'Answered: let people flip the piles', actOptions: 'Options, one per line', actCloseOn: 'Close the poll', actExisting: 'Published activities', actNeedPiles: 'Fill in at least one pile.', actNeedOptions: 'At least two options are needed.',
+    diaryShareTitle: 'Read each other\u2019s diary', diaryShareHint: 'Both of you have to switch this on. You can switch it off whenever you like, and the pages you sent are deleted.',
+    diaryShareAsk: (n) => 'Let ' + n + ' read my diary',
+    diaryShareOff: 'Off. Your diary stays on this phone only.',
+    diaryShareWait: (n) => 'You have switched it on. When ' + n + ' does too, you can read each other.',
+    diaryShareBoth: (n) => 'Both switched on. You and ' + n + ' can read each other \u2728',
+    diaryTheirs: (n) => n + '\u2019s diary', diaryTheirsNone: (n) => n + ' has not written a page since switching it on.',
     meGroupYou: 'Who you are', meGroupTalk: 'Messages & bookings', meGroupOwn: 'What you have', meGroupApp: 'The app',
     refreshed: 'Refreshed \u2728', pullHint: 'Pull down to refresh',
     alertTitle: 'Notifications', alertIntro: 'What happened while you were away.',
@@ -13746,6 +13764,38 @@ const LOVEDB = {
     const patch = {}; patch[k] = role;
     await BE.db.collection('bonds').doc(id).update(patch);
   },
+  /* Each opens their own diary and nobody else's. Both must be open before
+     either can read a word, and the rule says so as well as the screen. */
+  async setDiaryShare(id, bond, on) {
+    const k = bond.a === this.me() ? 'aDiary' : 'bDiary';
+    const patch = {}; patch[k] = !!on;
+    await BE.db.collection('bonds').doc(id).update(patch);
+    if (!on) await this.clearMyDiary(id);
+  },
+  diaryMine(bond) { return !!(bond && (bond.a === this.me() ? bond.aDiary : bond.bDiary)); },
+  diaryBoth(bond) { return !!(bond && bond.aDiary && bond.bDiary); },
+  /* One page, the day it belongs to. Only what is written while the switch is
+     on ever goes; there is no sweep of the archive behind anybody's back. */
+  async putDiaryDay(id, day, entry) {
+    const ref = BE.db.collection('bonds').doc(id).collection('diary').doc(this.me() + '__' + day);
+    if (!entry || (!String(entry.t || '').trim() && !entry.m)) { await ref.delete().catch(() => {}); return; }
+    await ref.set({ from: this.me(), day: day, m: entry.m || '', t: String(entry.t || '').slice(0, 4000), at: Date.now() });
+  },
+  /* Turning it off takes back what was sent, rather than leaving it lying
+     there unreadable-for-now. */
+  async clearMyDiary(id) {
+    const snap = await BE.db.collection('bonds').doc(id).collection('diary').get().catch(() => null);
+    if (!snap) return;
+    await Promise.all(snap.docs.filter((d) => (d.data() || {}).from === this.me())
+      .map((d) => d.ref.delete().catch(() => {})));
+  },
+  watchTheirDiary(id, cb) {
+    if (!this.ok() || !id) return () => {};
+    const me = this.me();
+    return BE.db.collection('bonds').doc(id).collection('diary')
+      .onSnapshot((s) => cb(s.docs.map((d) => d.data()).filter((x) => x && x.from !== me)
+        .sort((a, b) => String(b.day).localeCompare(String(a.day)))), () => cb([]));
+  },
   async giveGift(id, kind, note) {
     await BE.db.collection('bonds').doc(id).collection('gifts').doc(loveToken()).set({
       from: this.me(), kind: kind, note: String(note || '').slice(0, 200), at: Date.now()
@@ -18554,6 +18604,39 @@ const MOODS = ['😄', '🙂', '😌', '🥰', '🤩', '😐', '😔', '😢', '
 function renderDiary() {
   const S = T(), m = $('#main'), today = isoDate(new Date());
   const all = () => store.get('nabu-diary', {}) || {};
+  /* Two people who are tied may read each other's pages, if both say so. The
+     bond and their pages arrive on their own time, so the screen redraws when
+     they do rather than waiting for them. */
+  let bond = null, theirs = [], stopBond = null, stopDiary = null;
+  const stopAll = () => {
+    if (stopBond) { stopBond(); stopBond = null; }
+    if (stopDiary) { stopDiary(); stopDiary = null; }
+  };
+  NAV.cleanup = stopAll;
+
+  const shareHTML = () => {
+    if (!bond) return '';
+    const you = LOVE.other(bond, LOVEDB.me()), nm = (you && (you.name || (you.handle ? '@' + you.handle : ''))) || S.loveSomeone;
+    const mine = LOVEDB.diaryMine(bond), both = LOVEDB.diaryBoth(bond);
+    const state = both ? S.diaryShareBoth(nm) : mine ? S.diaryShareWait(nm) : S.diaryShareOff;
+    return '<div class="card sharecard' + (both ? ' on' : '') + '">'
+      + '<div class="ghead"><span class="gk">\uD83E\uDDE7</span><h3>' + esc(S.diaryShareTitle) + '</h3></div>'
+      + '<p class="hint" style="margin-bottom:10px">' + esc(S.diaryShareHint) + '</p>'
+      + '<label class="remind"><input type="checkbox" id="dshare"' + (mine ? ' checked' : '') + '><span>' + esc(S.diaryShareAsk(nm)) + '</span></label>'
+      + '<p class="hint' + (both ? ' ok' : '') + '" id="dsharest">' + esc(state) + '</p></div>';
+  };
+
+  const theirHTML = () => {
+    if (!bond || !LOVEDB.diaryBoth(bond)) return '';
+    const you = LOVE.other(bond, LOVEDB.me()), nm = (you && (you.name || '')) || S.loveSomeone;
+    return '<h3 style="margin:16px 0 8px">\uD83D\uDCD6 ' + esc(S.diaryTheirs(nm)) + '</h3>'
+      + (theirs.length
+        ? theirs.slice(0, 60).map((x) => '<div class="card diary past theirs ' + diaryPaperClass() + '">'
+          + '<div class="date"><span>' + (x.m ? x.m + ' ' : '') + esc(fmtDate(x.day)) + '</span><span class="faint">' + esc(nm) + '</span></div>'
+          + '<p>' + esc(x.t || '').replace(/\n/g, '<br>') + '</p></div>').join('')
+        : '<p class="hint">' + esc(S.diaryTheirsNone(nm)) + '</p>');
+  };
+
   const draw = () => {
     const d = all(), cur = d[today] || { m: '', t: '' }, days = Object.keys(d).filter((k) => k !== today).sort().reverse();
     m.innerHTML = '<div class="eyebrow">' + esc(S.actTitle) + '</div><h1 style="margin-bottom:6px">📔 ' + esc(S.diaryTitle) + '</h1><p class="muted">' + esc(S.diaryIntro) + '</p>'
@@ -18562,15 +18645,45 @@ function renderDiary() {
       + '<textarea id="dtext" placeholder="' + esc(S.diaryPh) + '">' + esc(cur.t || '') + '</textarea></div>'
       + '<h3 style="margin:16px 0 8px">' + esc(S.diaryPast) + (days.length ? ' <span class="faint">· ' + esc(S.diaryCount(days.length + (cur.t || cur.m ? 1 : 0))) + '</span>' : '') + '</h3>'
       + (days.length ? days.map((k) => '<div class="card diary past ' + diaryPaperClass() + '" data-day="' + k + '"><div class="date"><span>' + (d[k].m ? d[k].m + ' ' : '') + esc(fmtDate(k)) + '</span><button type="button" class="linkbtn" data-ddel="' + k + '">' + esc(S.diaryDel) + '</button></div><p>' + esc(d[k].t || '').replace(/\n/g, '<br>') + '</p></div>').join('') : '<p class="hint">' + esc(S.diaryEmpty) + '</p>')
+      + theirHTML()
+      + shareHTML()
       + lookStripHTML('diary')
       + '<p style="margin-top:12px"><a href="#/play" class="backlink">← ' + esc(S.actBack) + '</a></p>';
     bindLookStrip(m, draw);
-    const save = () => { const d2 = all(); const t = $('#dtext').value, mo = ($('.mood.on', m) || {}).getAttribute ? $('.mood.on', m).getAttribute('data-mood') : ''; if (t.trim() || mo) d2[today] = { m: mo || '', t: t }; else delete d2[today]; store.set('nabu-diary', d2); $('#dsaved').textContent = t.trim() || mo ? S.diarySaved : ''; };
+    { const sh = $('#dshare');
+      if (sh) sh.addEventListener('change', async () => {
+        const st = $('#dsharest');
+        sh.disabled = true; st.className = 'hint'; st.textContent = S.loveSaving;
+        try {
+          await LOVEDB.setDiaryShare(bond.id, bond, sh.checked);
+          /* Switching it on sends today's page, so there is something to see
+             at once; switching it off has already taken everything back. */
+          if (sh.checked) { const d3 = all()[today]; if (d3) await LOVEDB.putDiaryDay(bond.id, today, d3); }
+        } catch (e) { sh.checked = !sh.checked; st.className = 'hint err'; st.textContent = loveWhy(e); }
+        sh.disabled = false;
+      }); }
+    const save = () => {
+      const d2 = all(); const t = $('#dtext').value, mo = ($('.mood.on', m) || {}).getAttribute ? $('.mood.on', m).getAttribute('data-mood') : '';
+      if (t.trim() || mo) d2[today] = { m: mo || '', t: t }; else delete d2[today];
+      store.set('nabu-diary', d2); $('#dsaved').textContent = t.trim() || mo ? S.diarySaved : '';
+      /* Only while the switch is on, and only the day being written. */
+      if (bond && LOVEDB.diaryMine(bond)) LOVEDB.putDiaryDay(bond.id, today, d2[today]).catch(() => {});
+    };
     $('#dtext').addEventListener('input', save);
     $$('[data-mood]', m).forEach((b) => b.addEventListener('click', () => { const on = b.classList.contains('on'); $$('[data-mood]', m).forEach((x) => x.classList.remove('on')); if (!on) b.classList.add('on'); save(); }));
     $$('[data-ddel]', m).forEach((b) => b.addEventListener('click', () => { if (!confirm(S.confirmDel)) return; const d2 = all(); delete d2[b.getAttribute('data-ddel')]; store.set('nabu-diary', d2); draw(); }));
   };
   draw();
+
+  if (LOVEDB.ok() && LOVE.local().bond) {
+    stopBond = LOVEDB.watchMine((b) => {
+      bond = b;
+      if (b && LOVEDB.diaryBoth(b)) {
+        if (!stopDiary) stopDiary = LOVEDB.watchTheirDiary(b.id, (list) => { theirs = list; draw(); });
+      } else if (stopDiary) { stopDiary(); stopDiary = null; theirs = []; }
+      draw();
+    });
+  }
 }
 /* The newest open activity, shown on the home screen. */
 async function homeActHTML(root) {
@@ -19386,7 +19499,7 @@ function adminSale(p) {
 ROUTES.admin = { nav: '', render: renderAdmin };
 
 /* ============================ boot ============================ */
-window.APP_VERSION = 'v132';
+window.APP_VERSION = 'v133';
 window.NABU = { CONFIG: CONFIG, SALE: SALE, salePrice: salePrice, loadActs: loadActs, BACK: BACK, LESSONS: LESSONS, localAnswer: localAnswer, compatVerdict: compatVerdict, numerologyOf: numerologyOf, ZDEEP: ZDEEP, lunarToday: lunarToday, solarToLunar: solarToLunar, DECK: DECK, INSIGHT: INSIGHT, KW: KW, ASK: ASK, TOPICS: TOPICS, GUIDES: GUIDES, SERVICES: SERVICES, COURSES: COURSES, ACCESS: ACCESS, plusOn: () => plusOn(), proOn: () => proOn(), luckUnlimited: () => luckUnlimited(), ZODIAC: ZODIAC, pick: pick, book: book,
   insightHTML: insightHTML, insightOf: insightOf, sunSignIndex: sunSignIndex, lifePath: lifePath, PROFILE: () => PROFILE, BE: BE, ACTS: ACTS,
   ANGELS: ANGELS, angelRead: angelRead, CODEBOOK: CODEBOOK, verifyCode: verifyCode, petHomeSVG: petHomeSVG, PET_HOMES: PET_HOMES, PET_WEARS: PET_WEARS, codeDigest: codeDigest, randomCode: randomCode, BANK: BANK, PETS: PETS, petSVG: petSVG, PET_COATS: PET_COATS, PET_KINDS: PET_KINDS, luckCut: luckCut, petLevel: petLevel, petStep: petStep, VOUCHERS: VOUCHERS, levelCoins: levelCoins, LOOKS: LOOKS,

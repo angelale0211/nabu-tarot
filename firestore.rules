@@ -158,7 +158,7 @@ service cloud.firestore {
       allow update: if request.auth != null && request.auth.uid in resource.data.uids
                     && request.resource.data.uids == resource.data.uids
                     && request.resource.data.diff(resource.data).affectedKeys()
-                         .hasOnly(['since', 'state', 'ask', 'engagedOn', 'marriedOn', 'day', 'aRole', 'bRole'])
+                         .hasOnly(['since', 'state', 'ask', 'engagedOn', 'marriedOn', 'day', 'aRole', 'bRole', 'aDiary', 'bDiary'])
                     && (!('ask' in request.resource.data)
                         || request.resource.data.ask == null
                         || request.resource.data.ask.by == request.auth.uid)
@@ -171,8 +171,33 @@ service cloud.firestore {
                     && (!request.resource.data.diff(resource.data).affectedKeys().hasAny(['aRole'])
                         || request.auth.uid == resource.data.a)
                     && (!request.resource.data.diff(resource.data).affectedKeys().hasAny(['bRole'])
+                        || request.auth.uid == resource.data.b)
+                    // and each opens their own diary, never the other's
+                    && (!request.resource.data.diff(resource.data).affectedKeys().hasAny(['aDiary'])
+                        || request.auth.uid == resource.data.a)
+                    && (!request.resource.data.diff(resource.data).affectedKeys().hasAny(['bDiary'])
                         || request.auth.uid == resource.data.b);
       allow delete: if request.auth != null && request.auth.uid in resource.data.uids;
+
+      /* Diary pages, and the only place in Nabu where one person reads what
+         another wrote in private. So the condition is written here rather than
+         left to the screen: a page is readable only while BOTH of them have
+         opened their own diary. Turning yours off shuts the door in both
+         directions at once - you cannot read theirs while hiding your own.
+
+         You may only write pages signed with your own id, and only delete your
+         own, so neither can put words in the other's diary or take them out. */
+      match /diary/{did} {
+        allow read: if request.auth != null
+                    && request.auth.uid in get(/databases/$(database)/documents/bonds/$(id)).data.uids
+                    && get(/databases/$(database)/documents/bonds/$(id)).data.aDiary == true
+                    && get(/databases/$(database)/documents/bonds/$(id)).data.bDiary == true;
+        allow create, update: if request.auth != null
+                    && request.resource.data.from == request.auth.uid
+                    && request.auth.uid in get(/databases/$(database)/documents/bonds/$(id)).data.uids
+                    && shorterThan('t', 4000) && shorterThan('m', 8) && shorterThan('day', 12);
+        allow delete: if request.auth != null && resource.data.from == request.auth.uid;
+      }
 
       /* What one gives the other. Only the two of them can see them or add to
          them, and a gift is signed with the id of whoever gave it. Either may
