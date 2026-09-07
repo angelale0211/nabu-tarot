@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
 <title>Nabu Tarot</title>
 <meta name="description" content="Nabu Tarot: dự đoán mới, rút một lá bài xem năng lượng hiện tại, học tarot, Lenormand, chiêm tinh, và đặt lịch xem bài.">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'none'; object-src 'none'; form-action 'self'; script-src 'self' 'sha256-+7DD+xW0dRcCBkOa8zACWSRrKd2/vRs8C4pLzGGJprY=' https://www.gstatic.com https://apis.google.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; font-src 'self' data:; media-src 'self' data: blob:; worker-src 'self'; connect-src 'self' https://*.googleapis.com https://*.google.com https://*.firebaseio.com https://*.cloudfunctions.net https://*.workers.dev https://generativelanguage.googleapis.com; frame-src https://*.firebaseapp.com https://accounts.google.com https://*.facebook.com">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'none'; object-src 'none'; form-action 'self'; script-src 'self' 'sha256-DF2C2+QsK6+T8oxibBA2AxfE8Y5O74oeYaI8V18LAzw=' https://www.gstatic.com https://apis.google.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; font-src 'self' data:; media-src 'self' data: blob:; worker-src 'self'; connect-src 'self' https://*.googleapis.com https://*.google.com https://*.firebaseio.com https://*.cloudfunctions.net https://*.workers.dev https://generativelanguage.googleapis.com; frame-src https://*.firebaseapp.com https://accounts.google.com https://*.facebook.com">
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <meta name="theme-color" content="#EFE9FA">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -1851,19 +1851,20 @@ const COURSES = [
   { id: 'manifest', kind: 'course', icon: '🌙', to: '#/learn/manifest', price: 75000, months: 12, sum: { vi: '7 phương pháp, mỗi bài một công cụ.', en: '7 methods, one tool with each.' }, name: { vi: 'Bộ Manifestation', en: 'Manifestation set' },
     blurb: { vi: 'Bảy phương pháp có công cụ làm ngay trong app: WOOP, bảng tầm nhìn có ảnh, nghi thức trăng, kế hoạch nếu-thì, buông bỏ, giới hạn, nến và đá. Mọi thứ bạn viết được lưu trên máy và có thể xoá làm lại bất cứ lúc nào.', en: 'Seven methods with tools you use right in the app: WOOP, a vision board with photos, Moon rituals, if-then plans, letting go, limits, candles and stones. Everything you write is saved on your device and can be cleared and redone any time.' },
     includes: { vi: ['7 bài hướng dẫn nâng cao', 'Bảng ảnh, kế hoạch, nghi thức, buông bỏ', 'Nến và đá theo mục đích', 'Dùng 12 tháng, xem offline'], en: ['7 advanced guides', 'Photo board, plans, ritual and letting-go tools', 'Candles and stones by purpose', '12 months of access, works offline'] } },
-  { id: 'pro', kind: 'unlock', icon: '✨', to: '#/play/pet', price: 120000, months: 12, sum: { vi: 'Sáu linh thú, nuôi nhiều vị cùng lúc, và mọi giao diện đẹp.', en: 'Six spirit beasts, several at once, and every look.' },
-    name: { vi: 'Nabu Tarot Plus', en: 'Nabu Tarot Plus' },
-    blurb: { vi: 'Mở sáu linh thú trong truyền thuyết, cho bạn nuôi nhiều vị cùng lúc, kèm món ăn ngon, nhà đẹp và phụ kiện cho chúng, cùng toàn bộ giao diện của app trong một năm.', en: 'Opens the six spirit beasts, lets you keep several companions at once, adds their good food, their homes and their charms, and every look in the app for a year.' },
-    includes: { vi: ['6 linh thú: Phượng Hoàng, Rồng Mây, Kỳ Lân, Tỳ Hưu, Bạch Hạc, Thiên Mã', 'Nuôi nhiều bạn nhỏ cùng lúc', 'Chơi 3 lượt mỗi ngày, chờ 2 giờ giữa hai bữa', '6 món ăn ngon, 6 ngôi nhà và 7 món đồ mặc', '3 mặt sau lá bài, 3 cây thông điệp, 3 đồng xu và 3 trang nhật ký', 'Dùng 12 tháng'], en: ['6 spirit beasts: phoenix, dragon, qilin, pixiu, crane and sky horse', 'Keep several companions at once', '3 turns of play a day, 2 hours between meals', '6 good foods, 6 homes and 7 things to wear', '3 card backs, 3 message trees, 3 coins and 3 diary pages', '12 months of access'] } },
-  { id: 'luck', kind: 'unlock', icon: '🍀', to: '#/play/coin', price: 50000, months: 12, sum: { vi: 'Đồng xu và cây thông điệp, không giới hạn.', en: 'Coin and message tree, unlimited.' }, name: { vi: 'Đồng xu và cây thông điệp', en: 'Coin and message tree' },
-    blurb: { vi: 'Mở không giới hạn cả hai hoạt động trong một năm: tung đồng xu và rung cây thông điệp bao nhiêu lần tuỳ bạn.', en: 'Unlimited turns at both for a year: flip the coin and shake the message tree as often as you like.' },
-    includes: { vi: ['Tung đồng xu không giới hạn', 'Rung cây thông điệp không giới hạn', 'Dùng 12 tháng'], en: ['Unlimited coin flips', 'Unlimited tree shakes', '12 months of access'] } },
-  { id: 'coin', kind: 'unlock', icon: '🪙', to: '#/play/coin', price: 30000, months: 12, sum: { vi: 'Tung đồng xu không giới hạn.', en: 'Unlimited coin flips.' }, name: { vi: 'Đồng xu không giới hạn', en: 'Unlimited coin flips' },
-    blurb: { vi: 'Tung đồng xu bao nhiêu lần tuỳ bạn trong một năm.', en: 'Flip the coin as often as you like for a year.' },
-    includes: { vi: ['Tung đồng xu không giới hạn', 'Dùng 12 tháng'], en: ['Unlimited coin flips', '12 months of access'] } },
-  { id: 'tree', kind: 'unlock', icon: '🌸', to: '#/play/tree', price: 30000, months: 12, sum: { vi: 'Rung cây thông điệp không giới hạn.', en: 'Unlimited tree shakes.' }, name: { vi: 'Rung cây không giới hạn', en: 'Unlimited tree shakes' },
-    blurb: { vi: 'Rung cây thông điệp bao nhiêu lần tuỳ bạn trong một năm.', en: 'Shake the message tree as often as you like for a year.' },
-    includes: { vi: ['Rung cây thông điệp không giới hạn', 'Dùng 12 tháng'], en: ['Unlimited tree shakes', '12 months of access'] } },
+  { id: 'plus', kind: 'unlock', icon: '✨', to: '#/play/coin', price: 79000, months: 12,
+    sum: { vi: 'Tung xu và rung cây không giới hạn, cùng toàn bộ giao diện.', en: 'The coin and the tree without limit, and every design.' },
+    name: { vi: 'Nabu Plus', en: 'Nabu Plus' },
+    blurb: { vi: 'Mở tất cả những gì không thuộc về bạn nhỏ: tung đồng xu và rung cây thông điệp bao nhiêu lần tùy bạn, và toàn bộ giao diện của app: mặt sau lá bài, cây thông điệp, đồng xu và trang nhật ký.',
+      en: 'Everything that is not a companion: flip the coin and shake the message tree as often as you like, and take every design in the app — card backs, message trees, coins and diary pages.' },
+    includes: { vi: ['Tung đồng xu không giới hạn', 'Rung cây thông điệp không giới hạn', '3 mặt sau lá bài, 3 cây, 3 đồng xu, 3 trang nhật ký', 'Dùng 12 tháng'],
+      en: ['Unlimited coin flips', 'Unlimited tree shakes', '3 card backs, 3 trees, 3 coins, 3 diary pages', '12 months of access'] } },
+  { id: 'pro', kind: 'unlock', icon: '👑', to: '#/play/pet', price: 149000, months: 12,
+    sum: { vi: 'Toàn bộ Plus, cộng linh thú và mọi thứ cho bạn nhỏ.', en: 'All of Plus, and the companions with everything for them.' },
+    name: { vi: 'Nabu Pro', en: 'Nabu Pro' },
+    blurb: { vi: 'Có tất cả những gì của Nabu Plus, và thêm phần bạn nhỏ: mười hai linh thú trong truyền thuyết, nuôi sáu vị cùng lúc, món ngon, nhà đẹp và đồ mặc cho chúng, chờ hai giờ thay vì sáu giờ giữa hai bữa, và điểm nhân đôi.',
+      en: 'Everything in Nabu Plus, and the companions besides: twelve spirit beasts, six of them at once, their good food, their homes and their clothes, a two-hour wait between meals instead of six, and double points.' },
+    includes: { vi: ['Mọi thứ của Nabu Plus', '12 linh thú, nuôi 6 vị cùng lúc', '9 món ăn, 8 ngôi nhà, 9 món đồ mặc', 'Chờ 2 giờ giữa hai bữa, chơi 3 lượt mỗi ngày, điểm nhân đôi', 'Voucher 15% và 20%', 'Dùng 12 tháng'],
+      en: ['Everything in Nabu Plus', '12 spirit beasts, six kept at once', '9 foods, 8 homes, 9 things to wear', '2 hours between meals, 3 plays a day, double points', 'The 15% and 20% vouchers', '12 months of access'] } }
 ];
 /* Where the reading itself happens. Three, because these are the three
    places Nabu actually reads. */
@@ -1984,6 +1985,7 @@ const STR = {
     quizFailed: (p) => 'Bạn cần từ ' + p + '% trở lên. Bạn đọc lại phần giải thích bên dưới rồi làm lại nhé.',
     quizProgress: (d, t) => 'Đã đạt ' + d + '/' + t + ' bài kiểm tra.',
     quizKept: 'Kết quả chỉ được lưu trên máy của bạn. Nabu không nhận được điểm này.',
+    unlockTiers: 'Hai gói, bạn chọn một. Nabu Pro đã có sẵn toàn bộ Nabu Plus, nên không cần mua cả hai.',
     reportTitle: 'Báo lỗi app', reportIntro: 'Nếu có chỗ nào hiển thị sai, bấm không được hoặc khó hiểu, bạn hãy kể lại cho Nabu ở đây.', reportWhat: 'Bạn gặp lỗi gì?', reportPlaceholder: 'Bạn đang ở màn hình nào, bấm vào đâu, và điều gì xảy ra?', reportContact: 'Cách liên lạc lại (không bắt buộc)', reportAuto: 'App tự đính kèm thông tin này để Nabu tìm lỗi nhanh hơn:', reportSend: 'Gửi báo lỗi', reportViaIg: 'Gửi qua Instagram', reportNeed: 'Bạn mô tả lỗi trước nhé.', reportSent: 'Đã gửi tới Nabu. Cảm ơn bạn!', reportNoChannel: 'Bạn cần đăng nhập để gửi trực tiếp, hoặc dùng mục Liên hệ bên dưới.', reportMsgHead: 'Báo lỗi app Nabu Tarot:', reportLink: 'Báo lỗi', rights: 'All rights reserved.', demoTag: 'Học thử miễn phí', demoIntro: 'Hai bài đầu mở sẵn để bạn xem cách học. Mở khóa để xem trọn bộ.', lessonN: (n) => 'Bài ' + n, lesson1: 'Tổng quan và cách học', lesson2: 'Lá bài đầu tiên', courseTabs: { cards: 'Các lá bài', spreads: 'Trải bài', guides: 'Bài đọc' },
     months6: 'tháng', adminAccess: 'Tài khoản quản trị của Nabu: toàn bộ khóa học đang mở.', accessUntil: (d) => 'Bạn có quyền xem đến ' + d + '.', courseExpired: (d) => 'Mã của bạn đã hết hạn ngày ' + d + '. Mua lại để xem tiếp.',
     buyCourse: 'Mua khóa học qua Instagram', buyHint: 'Tin nhắn mua khóa đã được sao chép. Sau khi chuyển khoản, Nabu gửi bạn mã mở khóa. Nhập mã ở dưới.',
@@ -2118,7 +2120,7 @@ const STR = {
     actFilterAll: 'Tất cả', actMore: (n) => 'Xem thêm ' + n, actLess: 'Thu gọn', actResultsPublic: 'Kết quả chung', actNoVotes: 'Chưa có phiếu nào. Bạn mở hàng nhé!', wishHistory: (n) => 'Xem ' + n + ' điều ước đã gửi', wishHide: 'Ẩn danh sách', diaryTitle: 'Nhật ký mỗi ngày', diarySub: 'hôm nay của bạn thế nào?', diaryIntro: 'Mỗi tối bạn viết vài dòng về ngày hôm nay: cảm giác của bạn, một điều đáng nhớ và một điều bạn thấy biết ơn. Nhật ký chỉ được lưu trên máy của bạn và không ai đọc được.', diaryMood: 'Hôm nay bạn thấy', diaryPh: 'Hôm nay…', diaryToday: 'Hôm nay', diarySaved: 'Đã lưu', diaryPast: 'Những ngày trước', diaryEmpty: 'Chưa có ngày nào. Bắt đầu từ hôm nay nhé.', diaryDel: 'Xoá ngày này', diaryCount: (n) => n + ' ngày đã ghi',
     unlockTitle: 'Mở khoá thêm trong app', unlockLink: 'Bảng giá mở khoá',
     unlockIntro: 'Đây là những phần bạn trả một lần để mở trong app. Xem bài riêng với Nabu là dịch vụ khác và có bảng giá riêng.',
-    unlockCourses: 'Khóa học và thực hành', unlockActs: 'Hoạt động không giới hạn', unlockBest: 'Đáng chọn nhất',
+    unlockCourses: 'Khóa học và thực hành', unlockActs: 'Gói nâng cấp', unlockBest: 'Đáng chọn nhất',
     unlockOpenUntil: (d) => 'Đang mở đến ' + d, unlockNot: 'Chưa mở khoá', unlockHow: 'Cách mở khoá',
     unlockStep1: 'Bạn chuyển khoản đúng số tiền của mục mình chọn.', unlockStep2: 'Bạn nhắn cho Nabu tên mục đó kèm ảnh chuyển khoản.', unlockStep3: 'Nabu gửi lại mã. Bạn dán mã vào ô bên dưới là xong.',
     unlockPick: 'Bạn chạm vào mục muốn mở. Chọn được nhiều mục, chạm lần nữa để bỏ.', unlockCart: 'Mục bạn đã chọn', unlockEmpty: 'Bạn chưa chọn mục nào.', unlockTotal: 'Tổng cộng', unlockSend: 'Gửi yêu cầu cho Nabu', unlockMsgHead: 'Mình muốn mở khoá trong app Nabu Tarot:', unlockChosen: 'Đã chọn',
@@ -2126,13 +2128,13 @@ const STR = {
     unlockSent: 'Đã gửi yêu cầu. Nabu sẽ gửi mã cho bạn sau khi nhận được chuyển khoản.', unlockSendApp: 'Gửi yêu cầu trong app', unlockSendMsg: 'Gửi qua tin nhắn',
     saleTab: 'Khuyến mãi', saleOn: 'Đang chạy khuyến mãi', saleScope: 'Áp dụng cho', saleScopes: { all: 'Tất cả', reading: 'Xem bài', unlock: 'Mở khoá trong app' },
     saleKind: 'Kiểu giảm', saleKinds: { percent: 'Theo phần trăm', amount: 'Theo số tiền' }, saleValue: 'Mức giảm', saleFrom: 'Bắt đầu', saleTo: 'Kết thúc',
-    plusName: 'Nabu Tarot Plus', looksTitle: 'Trang trí trong app', looksLink: 'Đổi kiểu trang trí',
+    plusName: 'Nabu Plus', proName: 'Nabu Pro', looksTitle: 'Trang trí trong app', looksLink: 'Đổi kiểu trang trí',
     looksIntro: 'Bạn chọn kiểu trang trí cho từng thứ trong app: mặt sau bộ bài, cây thông điệp, đồng xu và trang nhật ký. Phần này không liên quan đến chế độ sáng tối của app.',
-    looksAll: 'Tất cả kiểu trang trí', looksYours: 'Bạn đang có Nabu Tarot Plus, bạn chọn mẫu nào cũng được.',
-    looksStripNote: 'Bạn chạm để đổi kiểu. Ba mẫu có ổ khoá thuộc Nabu Tarot Plus.',
-    looksAll: 'Tất cả giao diện', looksYours: 'Bạn đang có Nabu Tarot Plus, bạn chọn mẫu nào cũng được.',
-    looksStripNote: 'Bạn chạm để đổi. Ba mẫu có ổ khoá thuộc Nabu Tarot Plus.',
-    looksHere: '🎨 Đổi kiểu trang trí của mục này', looksLocked: 'Mở tất cả kiểu trang trí', looksPlusOn: 'Bạn đang có Nabu Tarot Plus, tất cả kiểu trang trí đều mở.', looksNeedPlus: 'Kiểu trang trí này thuộc Nabu Tarot Plus.',
+    looksAll: 'Tất cả kiểu trang trí', looksYours: 'Bạn đang có Nabu Plus, bạn chọn mẫu nào cũng được.',
+    looksStripNote: 'Bạn chạm để đổi kiểu. Ba mẫu có ổ khoá thuộc Nabu Plus.',
+    looksAll: 'Tất cả giao diện', looksYours: 'Bạn đang có Nabu Plus, bạn chọn mẫu nào cũng được.',
+    looksStripNote: 'Bạn chạm để đổi. Ba mẫu có ổ khoá thuộc Nabu Plus.',
+    looksHere: '🎨 Đổi kiểu trang trí của mục này', looksLocked: 'Mở tất cả kiểu trang trí', looksPlusOn: 'Bạn đang có Nabu Plus, tất cả kiểu trang trí đều mở.', looksNeedPlus: 'Kiểu trang trí này thuộc Nabu Plus.',
     lookKinds: { cardback: 'Mặt sau lá bài', tree: 'Cây thông điệp', coin: 'Đồng xu', diary: 'Trang nhật ký' },
     petTitle: 'Thú cưng may mắn', petSub: 'mỗi ngày một bữa ăn và một lời khấn',
     petPick: 'Mỗi bạn nhỏ trông giữ một phần khác nhau trong cuộc sống của bạn: tình duyên, sự nghiệp, học hành, tiền tài, sức khỏe và chuyện đi lại.',
@@ -2145,10 +2147,10 @@ const STR = {
     petSwap: 'Đổi bạn nhỏ khác', petSwapAsk: 'Bạn muốn đổi sang một bạn nhỏ khác?', petLetGo: 'Tiễn bạn nhỏ này đi', petLetGoAsk: 'Bạn muốn tiễn bạn nhỏ này đi?',
     petAdd: 'Nhận thêm một bạn nhỏ', petRoomLeft: (n) => 'còn ' + n + ' chỗ', petBack: 'Quay lại với bạn nhỏ',
     petLuckTotal: (n) => 'Bạn đang có ' + n + ' loại may mắn đi cùng.',
-    petPlusPitch: 'Người dùng thường nuôi một bạn nhỏ. Nabu Tarot Plus mở cả mười hai linh thú và cho bạn nuôi cùng lúc tối đa sáu bạn, để nhiều góc trong đời bạn cùng được trông giữ.',
-    petPlusItem: 'Món này thuộc Nabu Tarot Plus.',
+    petPlusPitch: 'Người dùng thường nuôi một bạn nhỏ. Nabu Pro mở cả mười hai linh thú và cho bạn nuôi cùng lúc tối đa sáu bạn, để nhiều góc trong đời bạn cùng được trông giữ.',
+    petPlusItem: 'Món này thuộc Nabu Pro.',
     petLuckNote: 'Bạn nhỏ ở đây để mỗi ngày bạn có một việc nhỏ ấm áp. Lời chúc là lời chúc, không phải lời hứa.',
-    sheetClose: 'Xong', petCoatMyth: 'Linh thú giữ nguyên màu riêng của mình, nên phần màu lông chỉ dành cho các bạn nhỏ thường.', petCoatNote: 'Bốn màu đầu miễn phí. Bốn màu đặc biệt thuộc Nabu Tarot Plus.',
+    sheetClose: 'Xong', petCoatMyth: 'Linh thú giữ nguyên màu riêng của mình, nên phần màu lông chỉ dành cho các bạn nhỏ thường.', petCoatNote: 'Bốn màu đầu miễn phí. Bốn màu đặc biệt thuộc Nabu Pro.',
     coatNames: { cream: 'Kem', lilac: 'Tím nhạt', rose: 'Hồng phấn', sky: 'Xanh trời', mint: 'Bạc hà', ember: 'Cam đất', midnight: 'Tím đêm', gold: 'Vàng ánh' },
     petFoodTitle: 'Bữa ăn', petFoodNote: 'Món ăn ngon hơn làm bạn nhỏ vui hơn, và vận may cũng đầy nhanh hơn.',
     petHomeShort: 'Nhà', petHomeTitle: 'Nhà của bạn nhỏ', petHomeNote: 'Bạn nhỏ có chỗ ở đẹp thì ở lại lâu hơn và mang về nhiều may mắn hơn.',
@@ -2168,9 +2170,9 @@ const STR = {
     actNewest: 'Mới nhất', actGroupIntro: { pile: 'Bạn chọn một tụ bài, rồi quay lại khi Nabu lật tụ để xem thông điệp dành cho bạn.', poll: 'Bạn bình chọn cùng mọi người và xem kết quả chung ngay sau đó.', wish: 'Bạn gửi một điều ước vào lọ. Điều ước của bạn được giữ riêng trên máy.' },
     petPreviewCan: 'Khi bạn nhận bạn nhỏ này, bạn sẽ mở được:',
     petPickFree: 'Sáu bạn nhỏ miễn phí', petPickFreeNote: 'Bạn chọn một bạn nhỏ để nuôi miễn phí, và đổi được bất cứ lúc nào.',
-    petPickPro: 'Linh thú Nabu Tarot Plus', petPickProNote: 'Mười hai linh thú trong truyền thuyết, hai vị cho mỗi phần đời. Linh thú nhận gấp đôi điểm mỗi lần bạn cho ăn hoặc chơi cùng, nên lên cấp nhanh gấp đôi và đổi ra xu Nabu cũng nhanh gấp đôi. Nabu Tarot Plus mở cả mười hai và cho bạn nuôi nhiều vị cùng lúc.',
+    petPickPro: 'Linh thú Nabu Pro', petPickProNote: 'Mười hai linh thú trong truyền thuyết, hai vị cho mỗi phần đời. Linh thú nhận gấp đôi điểm mỗi lần bạn cho ăn hoặc chơi cùng, nên lên cấp nhanh gấp đôi và đổi ra xu Nabu cũng nhanh gấp đôi. Nabu Pro mở cả mười hai và cho bạn nuôi nhiều vị cùng lúc.',
     petXpWord: 'điểm', petMythBonus: (n) => 'Linh thú nhận gấp ' + n + ' lần điểm mỗi khi ăn và mỗi khi chơi.',
-    petMythPlus: 'Linh thú này thuộc Nabu Tarot Plus.',
+    petMythPlus: 'Linh thú này thuộc Nabu Pro.',
     petRename: 'Đổi tên bạn nhỏ', petRenameOk: 'Lưu tên',
     petRemind: 'Nhắc tôi cho bạn nhỏ ăn', petRemindHint: 'Khi bạn mở app mà bạn nhỏ đã nhịn hơn một ngày, app sẽ nhắc bạn một lần trong ngày. App không gửi được thông báo khi bạn chưa mở app.',
     petRemindOk: 'App sẽ nhắc bạn khi bạn nhỏ đói.', petRemindNoPerm: 'Điện thoại chưa cho phép thông báo, app sẽ nhắc bạn ngay trong app.',
@@ -2183,8 +2185,8 @@ const STR = {
     petPlayShort: 'Chơi cùng', petGroom: 'Chải lông', petGroomDone: 'Đã chải hôm nay', petGroomThanks: 'Bộ lông sạch bóng. Bạn nhỏ thích lắm.',
     petPatThanks: (n) => 'Bạn nhỏ dụi vào tay bạn. Bạn ấy nhận thêm ' + n + ' điểm.', petDragFood: 'Kéo thả vào bạn nhỏ',
     petPlay: 'Chơi cùng bạn nhỏ', petPlayLeft: (n) => 'còn ' + n + ' lượt hôm nay', petPlayDone: '✓ Hôm nay bạn đã chơi cùng bạn nhỏ rồi.',
-    petPlayMore: 'Với Nabu Tarot Plus, bạn được chơi 3 lượt mỗi ngày.', petPlayThanks: 'Bạn nhỏ chạy nhảy vui vẻ. Bạn được thêm 12 điểm.', luckEarnPlay: 'Mỗi lượt chơi',
-    petFull: (w) => 'Bạn nhỏ đang no. Bạn quay lại sau ' + w + ' nhé.', petFasterPlus: 'Với Nabu Tarot Plus, bạn chỉ phải chờ 2 giờ giữa hai bữa ăn.',
+    petPlayMore: 'Với Nabu Pro, bạn được chơi 3 lượt mỗi ngày.', petPlayThanks: 'Bạn nhỏ chạy nhảy vui vẻ. Bạn được thêm 12 điểm.', luckEarnPlay: 'Mỗi lượt chơi',
+    petFull: (w) => 'Bạn nhỏ đang no. Bạn quay lại sau ' + w + ' nhé.', petFasterPlus: 'Với Nabu Pro, bạn chỉ phải chờ 2 giờ giữa hai bữa ăn.',
     petLevelUp: (lv, c) => 'Bạn nhỏ lên cấp ' + lv + '. Bạn nhận được ' + c + ' xu Nabu.', petThanksCoins: (c) => 'Bạn nhỏ vui lắm. Bạn nhận được ' + c + ' xu Nabu.',
     waitMin: (n) => n + ' phút', waitHour: (n) => n + ' giờ', waitHourMin: (h, m) => h + ' giờ ' + m + ' phút',
     luckTitle: 'Xu Nabu và ưu đãi', luckLink: 'Xu và ưu đãi của bạn', luckCoins: 'xu Nabu',
@@ -2196,7 +2198,7 @@ const STR = {
     luckNextTier: (lv, p) => 'Bạn nuôi bạn nhỏ lên cấp ' + lv + ' để nhận phiếu giảm ' + p + '%.', luckTopTier: 'Bạn đã đạt mức ưu đãi cao nhất.',
     luckEarnTitle: 'Cách tích xu', luckEarnFeed: 'Mỗi bữa ăn thường', luckEarnGood: 'Mỗi bữa ăn ngon', luckEarnLevel: 'Mỗi lần lên cấp', luckLevelWord: 'cấp',
     luckEarnNote: (n) => 'Mỗi ngày bạn tích được tối đa ' + n + ' xu từ việc chăm bạn nhỏ. Riêng xu thưởng khi lên cấp thì không giới hạn.',
-    luckPaceNote: 'Bạn nhỏ học tối đa 400 điểm mỗi ngày. Linh thú của Nabu Tarot Plus nhận gấp đôi điểm nên lên cấp nhanh hơn nhiều.',
+    luckPaceNote: 'Bạn nhỏ học tối đa 400 điểm mỗi ngày. Linh thú của Nabu Pro nhận gấp đôi điểm nên lên cấp nhanh hơn nhiều.',
     petDayLeft: (n, max) => 'Hôm nay bạn nhỏ đã học ' + n + '/' + max + ' điểm.', petDayFull: 'Bạn nhỏ đã học đủ điểm cho hôm nay. Bạn quay lại vào ngày mai nhé.',
     luckHoldTitle: 'Xu đang chờ đơn', luckHoldHint: 'Nếu đơn không thành, bạn có thể lấy lại số xu này bất cứ lúc nào.', luckTakeBack: 'Lấy lại',
     luckGaveBack: (n) => 'Đã hoàn ' + n + ' xu Nabu.', luckHave: (n) => 'Bạn đang có ' + n + ' xu', luckKeep: 'Để dành', luckAll: 'Dùng hết',
@@ -2205,7 +2207,7 @@ const STR = {
     saleSaved: 'Đã lưu khuyến mãi', saleHint: 'Bật, chọn phạm vi và mức giảm, rồi chọn ngày bắt đầu và ngày kết thúc. Giá cũ sẽ bị gạch ngang và giá mới hiện bên cạnh.',
     saleBanner: (off, what) => 'Khuyến mãi ' + off + ' cho ' + what, saleSee: 'Xem ngay',
     adminShort: 'Tài khoản quản trị', unlockCodeLabel: 'Nhập mã Nabu gửi cho bạn', unlockReadings: 'Xem bảng giá xem bài riêng',
-    luckFree: 'Bạn có 1 lượt miễn phí mỗi tuần.', luckLeft: 'Lượt tuần này của bạn vẫn còn.', luckSpent: (d) => 'Bạn đã dùng lượt tuần này. Lượt mới mở vào ' + d + '.', luckOpen: 'Bạn đang mở không giới hạn.', luckOffer: 'Muốn dùng không giới hạn cả năm: 30.000đ cho một mục, hoặc 50.000đ cho cả đồng xu và cây thông điệp.', luckGet: 'Nhắn Nabu để lấy mã', luckCodePh: 'NABU-B-…',
+    luckFree: 'Bạn có 1 lượt miễn phí mỗi tuần.', luckLeft: 'Lượt tuần này của bạn vẫn còn.', luckSpent: (d) => 'Bạn đã dùng lượt tuần này. Lượt mới mở vào ' + d + '.', luckOpen: 'Bạn đang mở không giới hạn.', luckOffer: 'Nabu Plus mở tung xu và rung cây không giới hạn cả năm, kèm toàn bộ giao diện: 79.000đ.', luckGet: 'Nhắn Nabu để lấy mã', luckCodePh: 'NABU-B-…',
     treeTitle: 'Rung cây thông điệp', treeSub: 'một lời nhắn từ vũ trụ', treePets: 'Hiện bạn nhỏ dưới gốc cây', treePetsHint: 'Tắt đi thì chỉ còn cây. Chỉ ảnh hưởng máy của bạn.',
     treeIntro: 'Bạn đứng trước cây, nghĩ về điều đang ở trong lòng mình, rồi rung nhẹ một cái. Cây sẽ thả xuống cho bạn một lời nhắn.', treeShake: 'Rung cây', treeAgain: 'Rung thêm một lần nữa', treeFor: 'Lời nhắn dành cho bạn', coinTitle: 'Tung đồng xu', coinSub: 'cho câu hỏi có hoặc không', coinIntro: 'Khi bạn có một câu hỏi chỉ cần trả lời có hoặc không, bạn hãy nghĩ thật rõ về câu hỏi đó rồi tung đồng xu.', coinQ: 'Câu hỏi của bạn', coinQPh: 'Ví dụ: mình có nên nhắn trước không?', coinFlip: 'Tung đồng xu', coinAgain: 'Tung lại', coinYes: 'CÓ', coinNo: 'KHÔNG', coinNote: 'Đồng xu chỉ cho bạn một trong hai câu trả lời. Điều đáng chú ý là cảm giác của bạn ngay khi nhìn thấy kết quả: nếu bạn thấy hụt hẫng, bạn đã biết mình muốn gì.',
     actNew: 'Hoạt động mới', actType: 'Loại', actTypes: { pile: 'Chọn tụ bài', poll: 'Bình chọn', wish: 'Điều ước' }, actResultsDate: 'Ngày đăng kết quả', actIntroLabel: 'Lời dẫn (thanh công cụ phía trên ô cho phép in đậm, in nghiêng, tô sáng, chèn ảnh, video và emoji)', actPilesHint: 'Từ 2 đến 5 tụ. Bạn có thể đăng trước với nhãn trống; vài ngày sau quay lại điền thông điệp và bật "Đã có kết quả".', actPileN: (n) => 'Tụ ' + n, actPileLabel: 'Nhãn ngắn (không bắt buộc), ví dụ: Trái · Giữa · Phải', actPileMsg: 'Thông điệp cho tụ này (đăng sau cũng được)', actPileMsgEn: 'English message (optional)', actPileAdd: 'Thêm tụ', actPileDel: 'Bớt tụ', actResultsOn: 'Đã có kết quả: cho phép lật bài', actOptions: 'Các lựa chọn, mỗi dòng một lựa chọn', actCloseOn: 'Đóng bình chọn', actExisting: 'Hoạt động đã đăng', actNeedPiles: 'Bạn điền ít nhất một tụ nhé.', actNeedOptions: 'Cần ít nhất hai lựa chọn.',
@@ -2435,6 +2437,7 @@ const STR = {
     quizFailed: (p) => 'You need ' + p + '% or more. Read the notes below and take it again.',
     quizProgress: (d, t) => d + ' of ' + t + ' tests passed.',
     quizKept: 'Your score is kept on this device only. Nabu never receives it.',
+    unlockTiers: 'Two packages, one choice. Nabu Pro already contains all of Nabu Plus, so there is no need to buy both.',
     reportTitle: 'Report a problem', reportIntro: 'Something looks wrong, a button does nothing, or a text is confusing? Tell Nabu here.', reportWhat: 'What went wrong?', reportPlaceholder: 'Which screen you were on, what you tapped, and what happened.', reportContact: 'How to reach you (optional)', reportAuto: 'The app attaches this so Nabu can find the bug faster:', reportSend: 'Send report', reportViaIg: 'Send through Instagram', reportNeed: 'Describe the problem first.', reportSent: 'Sent to Nabu. Thank you!', reportNoChannel: 'Direct sending is not switched on yet. The message is copied; please send it through Instagram.', reportMsgHead: 'Nabu Tarot app bug report:', reportLink: 'Report', rights: 'All rights reserved.', demoTag: 'Free preview', demoIntro: 'The first two lessons are open so you can see how the course works. Unlock to read everything.', lessonN: (n) => 'Lesson ' + n, lesson1: 'Overview and how to learn', lesson2: 'The first card', courseTabs: { cards: 'The cards', spreads: 'Spreads', guides: 'Guides' },
     months6: 'months', adminAccess: 'Admin account: every course is open for Nabu.', accessUntil: (d) => 'Your access runs until ' + d + '.', courseExpired: (d) => 'Your code expired on ' + d + '. Buy again to continue.',
     buyCourse: 'Buy the course on Instagram', buyHint: 'The purchase message is copied. After the transfer, Nabu sends you an unlock code. Enter it below.',
@@ -2569,7 +2572,7 @@ const STR = {
     actFilterAll: 'All', actMore: (n) => 'See ' + n + ' more', actLess: 'Show less', actResultsPublic: 'Overall results', actNoVotes: 'No votes yet. Be the first!', wishHistory: (n) => 'See the ' + n + ' wishes you sent', wishHide: 'Hide the list', diaryTitle: 'Daily diary', diarySub: 'how was your day?', diaryIntro: 'A few lines each evening about today: how it felt, one thing worth remembering, one thing to be grateful for. Saved only on your device; nobody can read it.', diaryMood: 'Today you feel', diaryPh: 'Today…', diaryToday: 'Today', diarySaved: 'Saved', diaryPast: 'Earlier days', diaryEmpty: 'No days yet. Start with today.', diaryDel: 'Delete this day', diaryCount: (n) => n + ' days written',
     unlockTitle: 'Unlock more in the app', unlockLink: 'Unlock prices',
     unlockIntro: 'These are the things you pay for once to open inside the app. A private reading with Nabu is a separate service with its own price sheet.',
-    unlockCourses: 'Courses and practice', unlockActs: 'Unlimited activities', unlockBest: 'Best value',
+    unlockCourses: 'Courses and practice', unlockActs: 'Upgrade packages', unlockBest: 'Best value',
     unlockOpenUntil: (d) => 'Open until ' + d, unlockNot: 'Not unlocked yet', unlockHow: 'How to unlock',
     unlockStep1: 'Transfer the exact amount for the item you want.', unlockStep2: 'Message Nabu with the name of the item and a picture of the transfer.', unlockStep3: 'Nabu sends you a code. Paste it in the box below and you are done.',
     unlockPick: 'Tap what you want to unlock. You can pick several, and tap again to remove one.', unlockCart: 'What you have chosen', unlockEmpty: 'You have not chosen anything yet.', unlockTotal: 'Total', unlockSend: 'Send the request to Nabu', unlockMsgHead: 'I would like to unlock these in the Nabu Tarot app:', unlockChosen: 'Chosen',
@@ -2577,13 +2580,13 @@ const STR = {
     unlockSent: 'Request sent. Nabu will send your code once the transfer arrives.', unlockSendApp: 'Send the request in the app', unlockSendMsg: 'Send as a message',
     saleTab: 'Sale', saleOn: 'A sale is running', saleScope: 'Applies to', saleScopes: { all: 'Everything', reading: 'Readings', unlock: 'Unlocks in the app' },
     saleKind: 'Kind of discount', saleKinds: { percent: 'A percentage', amount: 'An amount' }, saleValue: 'Discount', saleFrom: 'Starts', saleTo: 'Ends',
-    plusName: 'Nabu Tarot Plus', looksTitle: 'Decorations in your app', looksLink: 'Change the decorations',
+    plusName: 'Nabu Plus', proName: 'Nabu Pro', looksTitle: 'Decorations in your app', looksLink: 'Change the decorations',
     looksIntro: 'Choose the decoration for each thing in the app: the back of the deck, the message tree, the coin and the diary page. This is separate from the light or dark setting.',
-    looksAll: 'All decorations', looksYours: 'You have Nabu Tarot Plus, so any of these is yours.',
-    looksStripNote: 'Tap to change. The three with a padlock come with Nabu Tarot Plus.',
-    looksAll: 'All looks', looksYours: 'You have Nabu Tarot Plus, so any of these is yours.',
-    looksStripNote: 'Tap to change. The three with a padlock come with Nabu Tarot Plus.',
-    looksHere: '🎨 Change this decoration', looksLocked: 'Open every decoration', looksPlusOn: 'You have Nabu Tarot Plus, so every decoration is open.', looksNeedPlus: 'That decoration comes with Nabu Tarot Plus.',
+    looksAll: 'All decorations', looksYours: 'You have Nabu Plus, so any of these is yours.',
+    looksStripNote: 'Tap to change. The three with a padlock come with Nabu Plus.',
+    looksAll: 'All looks', looksYours: 'You have Nabu Plus, so any of these is yours.',
+    looksStripNote: 'Tap to change. The three with a padlock come with Nabu Plus.',
+    looksHere: '🎨 Change this decoration', looksLocked: 'Open every decoration', looksPlusOn: 'You have Nabu Plus, so every decoration is open.', looksNeedPlus: 'That decoration comes with Nabu Plus.',
     lookKinds: { cardback: 'Card backs', tree: 'The message tree', coin: 'The coin', diary: 'Diary paper' },
     petTitle: 'Lucky pets', petSub: 'one meal and one wish a day',
     petPick: 'Each companion looks after a different part of your life: love, work, study, money, health and travel.',
@@ -2596,10 +2599,10 @@ const STR = {
     petSwap: 'Choose a different companion', petSwapAsk: 'Change to a different companion?', petLetGo: 'Let this companion go', petLetGoAsk: 'Let this companion go?',
     petAdd: 'Take in another companion', petRoomLeft: (n) => n + ' places left', petBack: 'Back to your companion',
     petLuckTotal: (n) => n + ' kinds of luck are walking with you.',
-    petPlusPitch: 'One companion is free. Nabu Tarot Plus opens all twelve spirit beasts and lets you keep up to six at once, so more corners of your life are looked after.',
-    petPlusItem: 'That one comes with Nabu Tarot Plus.',
+    petPlusPitch: 'One companion is free. Nabu Pro opens all twelve spirit beasts and lets you keep up to six at once, so more corners of your life are looked after.',
+    petPlusItem: 'That one comes with Nabu Pro.',
     petLuckNote: 'Your companion is here to give you one warm small thing each day. A blessing is a blessing, not a promise.',
-    sheetClose: 'Done', petCoatMyth: 'A spirit beast keeps its own colours, so coats are for the everyday companions.', petCoatNote: 'The first four are free. The four special coats come with Nabu Tarot Plus.',
+    sheetClose: 'Done', petCoatMyth: 'A spirit beast keeps its own colours, so coats are for the everyday companions.', petCoatNote: 'The first four are free. The four special coats come with Nabu Pro.',
     coatNames: { cream: 'Cream', lilac: 'Lilac', rose: 'Rose', sky: 'Sky', mint: 'Mint', ember: 'Ember', midnight: 'Midnight', gold: 'Gold' },
     petFoodTitle: 'Meals', petFoodNote: 'Better food makes a happier companion, and its luck fills faster.',
     petHomeShort: 'Home', petHomeTitle: 'Its home', petHomeNote: 'A companion with a lovely home settles in and brings back more.',
@@ -2619,9 +2622,9 @@ const STR = {
     actNewest: 'Newest', actGroupIntro: { pile: 'Choose a pile, then come back when Nabu turns it over to read what it holds for you.', poll: 'Vote with everyone else and see how the answers fall.', wish: 'Send a wish into the jar. Your wishes stay on your own device.' },
     petPreviewCan: 'When you keep this companion you can:',
     petPickFree: 'Six everyday companions', petPickFreeNote: 'Keep one of them for free, and change your mind whenever you like.',
-    petPickPro: 'Nabu Tarot Plus spirit beasts', petPickProNote: 'Twelve creatures out of legend, two for each corner of life. A spirit beast earns double from every meal and every game, so it levels twice as fast and turns into Nabu coins twice as fast. Plus opens all twelve and lets you keep several at once.',
+    petPickPro: 'Nabu Pro spirit beasts', petPickProNote: 'Twelve creatures out of legend, two for each corner of life. A spirit beast earns double from every meal and every game, so it levels twice as fast and turns into Nabu coins twice as fast. Plus opens all twelve and lets you keep several at once.',
     petXpWord: 'XP', petMythBonus: (n) => 'A spirit beast earns ' + n + '× the points from every meal and every game.',
-    petMythPlus: 'That spirit beast comes with Nabu Tarot Plus.',
+    petMythPlus: 'That spirit beast comes with Nabu Pro.',
     petRename: 'Rename', petRenameOk: 'Save the name',
     petRemind: 'Remind me to feed it', petRemindHint: 'When you open the app and a companion has gone more than a day without a meal, it says so, once a day. The app cannot reach you while it is closed.',
     petRemindOk: 'You will be reminded when it is hungry.', petRemindNoPerm: 'Your phone has not allowed notifications, so the reminder appears inside the app.',
@@ -2634,8 +2637,8 @@ const STR = {
     petPlayShort: 'Play', petGroom: 'Brush', petGroomDone: 'Brushed today', petGroomThanks: 'Coat gleaming. It loved that.',
     petPatThanks: (n) => 'It leans into your hand. That is ' + n + ' more points.', petDragFood: 'Drag onto your companion',
     petPlay: 'Play together', petPlayLeft: (n) => n + ' turns left today', petPlayDone: '✓ You have played together today.',
-    petPlayMore: 'With Nabu Tarot Plus you get 3 turns a day.', petPlayThanks: 'Happy and bouncing. That is 12 more points.', luckEarnPlay: 'Each turn of play',
-    petFull: (w) => 'Full for now. Come back in ' + w + '.', petFasterPlus: 'With Nabu Tarot Plus the wait between meals is only 2 hours.',
+    petPlayMore: 'With Nabu Pro you get 3 turns a day.', petPlayThanks: 'Happy and bouncing. That is 12 more points.', luckEarnPlay: 'Each turn of play',
+    petFull: (w) => 'Full for now. Come back in ' + w + '.', petFasterPlus: 'With Nabu Pro the wait between meals is only 2 hours.',
     petLevelUp: (lv, c) => 'Level ' + lv + ' reached. You earned ' + c + ' Nabu coins.', petThanksCoins: (c) => 'Very happy! You earned ' + c + ' Nabu coins.',
     waitMin: (n) => n + ' minutes', waitHour: (n) => n + ' hours', waitHourMin: (h, m) => h + ' hours ' + m + ' minutes',
     luckTitle: 'Nabu coins and rewards', luckLink: 'Your coins and rewards', luckCoins: 'Nabu coins',
@@ -2647,7 +2650,7 @@ const STR = {
     luckNextTier: (lv, p) => 'Reach level ' + lv + ' for a ' + p + '% voucher.', luckTopTier: 'You are at the highest reward level.',
     luckEarnTitle: 'How coins are earned', luckEarnFeed: 'Each plain meal', luckEarnGood: 'Each good meal', luckEarnLevel: 'Each level reached', luckLevelWord: 'level',
     luckEarnNote: (n) => 'Caring for a companion earns up to ' + n + ' coins a day. Coins for reaching a new level are on top of that.',
-    luckPaceNote: 'A companion learns at most 400 points a day. A Nabu Tarot Plus spirit beast earns double, so it climbs much faster.',
+    luckPaceNote: 'A companion learns at most 400 points a day. A Nabu Pro spirit beast earns double, so it climbs much faster.',
     petDayLeft: (n, max) => 'Learned ' + n + '/' + max + ' points today.', petDayFull: 'That is everything it can learn today. Come back tomorrow.',
     luckHoldTitle: 'Coins waiting on an order', luckHoldHint: 'If an order does not go ahead, you can take these coins back at any time.', luckTakeBack: 'Take back',
     luckGaveBack: (n) => n + ' coins returned.', luckHave: (n) => 'You have ' + n + ' coins', luckKeep: 'Keep them', luckAll: 'Use all',
@@ -2656,7 +2659,7 @@ const STR = {
     saleSaved: 'Sale saved', saleHint: 'Switch it on, choose what it covers and how much comes off, then pick the first and last day. Old prices are struck through with the new price beside them.',
     saleBanner: (off, what) => off + ' off ' + what, saleSee: 'See it',
     adminShort: 'Admin account', unlockCodeLabel: 'Enter the code Nabu sent you', unlockReadings: 'See the prices for a reading',
-    luckFree: 'You get one free turn a week.', luckLeft: 'Your turn for this week is still open.', luckSpent: (d) => 'You have had your turn this week. The next one opens on ' + d + '.', luckOpen: 'You have unlimited turns.', luckOffer: 'For unlimited turns all year: 30,000đ for one, or 50,000đ for both the coin and the message tree.', luckGet: 'Message Nabu for a code', luckCodePh: 'NABU-B-…',
+    luckFree: 'You get one free turn a week.', luckLeft: 'Your turn for this week is still open.', luckSpent: (d) => 'You have had your turn this week. The next one opens on ' + d + '.', luckOpen: 'You have unlimited turns.', luckOffer: 'Nabu Plus opens the coin and the message tree without limit for a year, and every design with them: 79,000đ.', luckGet: 'Message Nabu for a code', luckCodePh: 'NABU-B-…',
     treeTitle: 'Shake the message tree', treeSub: 'a message from the universe', treePets: 'Show your companions under the tree', treePetsHint: 'Turn it off and the tree stands on its own. This phone only.',
     treeIntro: 'Stand in front of the tree, hold in mind whatever you are carrying, and give it a gentle shake. The tree will let a message fall for you.', treeShake: 'Shake the tree', treeAgain: 'Shake it once more', treeFor: 'A message for you', coinTitle: 'Flip a coin', coinSub: 'for a yes or no question', coinIntro: 'When a question needs nothing more than a yes or a no, hold the question clearly in mind and flip the coin.', coinQ: 'Your question', coinQPh: 'For example: should I message first?', coinFlip: 'Flip the coin', coinAgain: 'Flip again', coinYes: 'YES', coinNo: 'NO', coinNote: 'The coin gives you one of two answers. What matters is how you feel the moment you see it: if the result disappoints you, you already know what you want.',
     actNew: 'New activity', actType: 'Type', actTypes: { pile: 'Pick a pile', poll: 'Poll', wish: 'Wish' }, actResultsDate: 'Results date', actIntroLabel: 'Intro (the bar above the box: bold, italic, highlight, images, video, emoji)', actPilesHint: 'Two to five piles. You can publish with empty labels; come back days later, fill in the messages and switch on "Answered".', actPileN: (n) => 'Pile ' + n, actPileLabel: 'Short label (optional), e.g. Left · Middle · Right', actPileMsg: 'Message for this pile (can be added later)', actPileMsgEn: 'English message (optional)', actPileAdd: 'Add a pile', actPileDel: 'Remove a pile', actResultsOn: 'Answered: let people flip the piles', actOptions: 'Options, one per line', actCloseOn: 'Close the poll', actExisting: 'Published activities', actNeedPiles: 'Fill in at least one pile.', actNeedOptions: 'At least two options are needed.',
@@ -9833,7 +9836,10 @@ const ACCESS = {
    or an admin account) lifts the limit entirely. */
 function weekStart(when) { const x = new Date(when || Date.now()); x.setHours(0, 0, 0, 0); x.setDate(x.getDate() - ((x.getDay() + 6) % 7)); return isoDate(x); }
 function weekNext() { const x = new Date(); x.setHours(0, 0, 0, 0); x.setDate(x.getDate() + (7 - ((x.getDay() + 6) % 7))); return isoDate(x); }
-const luckUnlimited = (kind) => ACCESS.has(kind) || ACCESS.has('luck');
+/* The coin and the message tree run without limit for anyone on Nabu Plus, and
+   Pro contains Plus. plusOn() is defined in looks.js, which loads after this
+   file, so it is asked for when called rather than captured now. */
+const luckUnlimited = () => plusOn();
 const luckSpent = (kind) => !luckUnlimited(kind) && (store.get('nabu-luck', {}) || {})[kind] === weekStart();
 function luckSpend(kind) { if (luckUnlimited(kind)) return; const a = store.get('nabu-luck', {}) || {}; a[kind] = weekStart(); store.set('nabu-luck', a); }
 const CODE_LETTER = { tarot: 'T', manifest: 'M', playing: 'P', coin: 'C', tree: 'Y', luck: 'B', pro: 'S', lenormand: 'L' };
@@ -11609,22 +11615,25 @@ const UNL_CART = {
   toggle(id) {
     let a = this.get();
     if (a.indexOf(id) > -1) a = a.filter((x) => x !== id);
-    // The bundle is the two single items together, so it cannot sit beside them.
-    else if (id === 'luck') a = a.filter((x) => x !== 'coin' && x !== 'tree').concat(id);
-    else a = a.filter((x) => !(id === 'coin' || id === 'tree') || x !== 'luck').concat(id);
+    /* Pro contains Plus, so the two packages cannot sit in the basket together:
+       choosing one clears the other rather than charging for both. */
+    else if (id === 'pro') a = a.filter((x) => x !== 'plus').concat(id);
+    else if (id === 'plus') a = a.filter((x) => x !== 'pro').concat(id);
+    else a = a.concat(id);
     this.set(a); return a;
   }
 };
 function unlockRowHTML(c) {
-  const S = T(), until = ACCESS.get()[c.id], open = ACCESS.has(c.id) || (c.id !== 'luck' && ACCESS.has('luck'));
+  /* Holding Pro opens Plus as well, so Plus shows as already yours. */
+  const S = T(), until = ACCESS.get()[c.id], open = ACCESS.has(c.id) || (c.id === 'plus' && ACCESS.has('pro'));
   const picked = !open && UNL_CART.has(c.id);
   const body = '<div class="unl-h"><b>' + esc(L(c.name)) + '</b>' + (isTWA() ? '' : '<span class="pr">' + priceHTML(c.price, 'unlock', c.id) + '</span>') + '</div>'
     + '<p class="hint">' + esc(L(c.sum || c.blurb)) + '</p>'
-    + '<div class="unl-f">' + (c.id === 'luck' ? '<span class="chip pink">' + esc(S.unlockBest) + '</span>' : '')
+    + '<div class="unl-f">' + (c.id === 'pro' ? '<span class="chip pink">' + esc(S.unlockBest) + '</span>' : '')
     + '<span class="unl-st">' + (open ? '✓ ' + esc(ACCESS.isAdmin() && !until ? S.adminShort : S.unlockOpenUntil(fmtDate(until)))
       : picked ? '✓ ' + esc(S.unlockChosen) : esc(S.unlockNot) + (isTWA() ? '' : ' · ' + esc(c.months + ' ' + S.months6))) + '</span></div>';
-  if (open) return '<div class="unl on' + (c.id === 'luck' ? ' best' : '') + '">' + body + '</div>';
-  return '<button type="button" class="unl pickable' + (picked ? ' pick' : '') + (c.id === 'luck' ? ' best' : '') + '" data-unl="' + c.id + '">' + body + '</button>';
+  if (open) return '<div class="unl on' + (c.id === 'pro' ? ' best' : '') + '">' + body + '</div>';
+  return '<button type="button" class="unl pickable' + (picked ? ' pick' : '') + (c.id === 'pro' ? ' best' : '') + '" data-unl="' + c.id + '">' + body + '</button>';
 }
 /* What the chosen unlockables come to after the shop's own sale. */
 function unlockBase() {
@@ -11666,8 +11675,8 @@ function renderUnlock() {
     m.innerHTML = '<div class="eyebrow">' + esc(CONFIG.brand) + '</div><h1 style="margin-bottom:6px">' + esc(S.unlockTitle) + '</h1><p class="muted">' + esc(S.unlockIntro) + '</p>'
       + (isTWA() ? '' : '<p class="hint" style="margin-bottom:14px">' + esc(S.unlockPick) + '</p>')
       + '<div class="sec"><h2 style="margin-bottom:8px">' + esc(S.unlockCourses) + '</h2>' + group(['tarot', 'lenormand', 'playing', 'manifest']) + '</div>'
-      + '<div class="sec"><h2 style="margin-bottom:8px">' + esc(S.unlockActs) + '</h2>' + group(['luck', 'coin', 'tree']) + '</div>'
-      + '<div class="sec"><h2 style="margin-bottom:8px">✨ ' + esc(S.plusName) + '</h2>' + group(['pro']) + '</div>'
+      + '<div class="sec"><h2 style="margin-bottom:8px">' + esc(S.unlockActs) + '</h2>'
+        + '<p class="hint" style="margin-bottom:10px">' + esc(S.unlockTiers) + '</p>' + group(['plus', 'pro']) + '</div>'
       + (isTWA() ? '' : '<div class="sec"><h2 style="margin-bottom:8px">' + esc(S.unlockCart) + '</h2><div id="ucart">' + unlockCartHTML() + '</div>'
         + rewardPanelHTML(unlockBase(), UNL_USE)
         + '<button class="btn primary block" id="usend" style="margin-top:12px">' + esc(S.unlockSend) + '</button>'
@@ -12529,7 +12538,8 @@ async function verifyCode(typed) {
   const h = await codeDigest(clean, CODEBOOK.salt());
   const rec = h && CODEBOOK.all()[h];
   if (!rec || !rec.c) return null;
-  return { hash: h, course: rec.c, courses: rec.c === 'luck' ? ['coin', 'tree', 'luck'] : [rec.c], until: rec.u };
+  /* Pro contains Plus, so a code for Pro opens both. */
+  return { hash: h, course: rec.c, courses: rec.c === 'pro' ? ['pro', 'plus'] : [rec.c], until: rec.u };
 }
 
 /* Publishing merges into the book rather than replacing it, so two dashboards
@@ -14413,7 +14423,11 @@ QUIZ.playing = {
    and leaves your current look alone. */
 
 const LOOK_KINDS = ['cardback', 'tree', 'coin', 'diary'];
+/* Pro contains Plus, so nobody has to buy twice and nobody can hold the top
+   package without the one under it. Everything that is not a companion asks
+   plusOn(); the companions ask proOn(). */
 const proOn = () => ACCESS.has('pro');
+const plusOn = () => ACCESS.has('plus') || ACCESS.has('pro');
 
 /* What the visitor has chosen, and a fallback to the free look whenever the
    chosen one is not theirs any more (an expired code, a shared device). */
@@ -14425,7 +14439,7 @@ const LOOKS = {
     if (!set) return '';
     const found = set.filter((x) => x.id === id)[0];
     if (!found) return set[0].id;
-    return (found.pro && !proOn()) ? set[0].id : found.id;
+    return (found.pro && !plusOn()) ? set[0].id : found.id;
   },
   set(kind, id) { const a = this.all(); a[kind] = id; store.set('nabu-looks', a); },
   of(kind) { const set = LOOK_SETS[kind] || []; const id = this.get(kind); return set.filter((x) => x.id === id)[0] || set[0]; }
@@ -14592,7 +14606,7 @@ function lookPreview(kind, item) {
    to. A locked one is drawn in full and dimmed rather than hidden, so the
    choice is made in front of the thing it changes. */
 function lookStripHTML(kind) {
-  const S = T(), set = LOOK_SETS[kind] || [], now = LOOKS.get(kind), pro = proOn();
+  const S = T(), set = LOOK_SETS[kind] || [], now = LOOKS.get(kind), pro = plusOn();
   if (!set.length) return '';
   return '<div class="card lookstrip"><div class="ls-h"><h3>' + esc(S.lookKinds[kind]) + '</h3>'
     + '<a href="#/looks">' + esc(S.looksAll) + ' ›</a></div>'
@@ -14609,7 +14623,7 @@ function bindLookStrip(root, redraw) {
   $$('[data-strip]', root).forEach((b) => b.addEventListener('click', () => {
     const p = b.getAttribute('data-strip').split(':'), item = (LOOK_SETS[p[0]] || []).filter((x) => x.id === p[1])[0];
     if (!item) return;
-    if (item.pro && !proOn()) { toast(T().looksNeedPlus); location.hash = '#/unlock'; return; }
+    if (item.pro && !plusOn()) { toast(T().looksNeedPlus); location.hash = '#/unlock'; return; }
     LOOKS.set(p[0], p[1]); toast('✓');
     if (redraw) redraw();
   }));
@@ -14618,7 +14632,7 @@ function bindLookStrip(root, redraw) {
    to. A locked one is drawn in full and dimmed rather than hidden, so the
    choice is made in front of the thing it changes. */
 function lookStripHTML(kind) {
-  const S = T(), set = LOOK_SETS[kind] || [], now = LOOKS.get(kind), pro = proOn();
+  const S = T(), set = LOOK_SETS[kind] || [], now = LOOKS.get(kind), pro = plusOn();
   if (!set.length) return '';
   return '<div class="card lookstrip"><div class="ls-h"><h3>' + esc(S.lookKinds[kind]) + '</h3>'
     + '<a href="#/looks">' + esc(S.looksAll) + ' ›</a></div>'
@@ -14635,7 +14649,7 @@ function bindLookStrip(root, redraw) {
   $$('[data-strip]', root).forEach((b) => b.addEventListener('click', () => {
     const p = b.getAttribute('data-strip').split(':'), item = (LOOK_SETS[p[0]] || []).filter((x) => x.id === p[1])[0];
     if (!item) return;
-    if (item.pro && !proOn()) { toast(T().looksNeedPlus); location.hash = '#/unlock'; return; }
+    if (item.pro && !plusOn()) { toast(T().looksNeedPlus); location.hash = '#/unlock'; return; }
     LOOKS.set(p[0], p[1]); toast('✓');
     if (redraw) redraw();
   }));
@@ -14643,7 +14657,7 @@ function bindLookStrip(root, redraw) {
 function renderLooks() {
   const S = T(), m = $('#main');
   const draw = () => {
-    const pro = proOn();
+    const pro = plusOn();
     m.innerHTML = '<div class="eyebrow">' + esc(CONFIG.brand) + '</div><h1 style="margin-bottom:6px">' + esc(S.looksTitle) + '</h1><p class="muted">' + esc(S.looksIntro) + '</p>'
       + (pro ? '<p class="hint">✨ ' + esc(S.looksPlusOn) + '</p>' : '<a class="salebar" href="#/unlock"><span class="tag">✨ ' + esc(S.plusName) + '</span><span class="txt">' + esc(S.looksLocked) + '</span><span class="go">' + esc(S.unlockLink) + ' ›</span></a>')
       + LOOK_KINDS.map((kind) => '<div class="sec"><h2 style="margin-bottom:8px">' + esc(S.lookKinds[kind]) + '</h2><div class="lookgrid">'
@@ -14656,7 +14670,7 @@ function renderLooks() {
       + '<p style="margin-top:14px"><a class="backlink" href="#/unlock">' + esc(S.unlockLink) + ' →</a></p>';
     $$('[data-look]', m).forEach((b) => b.addEventListener('click', () => {
       const p = b.getAttribute('data-look').split(':'), item = LOOK_SETS[p[0]].filter((x) => x.id === p[1])[0];
-      if (item.pro && !proOn()) { toast(S.looksNeedPlus); location.hash = '#/unlock'; return; }
+      if (item.pro && !plusOn()) { toast(S.looksNeedPlus); location.hash = '#/unlock'; return; }
       LOOKS.set(p[0], p[1]); toast('✓'); draw();
     }));
   };
@@ -14821,7 +14835,7 @@ function renderRewards() {
       + '<p class="hint">' + esc(S.luckWorth(fmtPrice(BANK.coins()))) + '</p></div>'
       + '<div class="card"><h3 style="margin-bottom:8px">🎟️ ' + esc(S.luckVoucher) + '</h3>'
       + '<p class="hint" style="margin-bottom:10px">' + esc(S.luckVoucherHint) + '</p>'
-      + '<ul class="vlist">' + VOUCHERS.map((v) => { const open = best >= v.lv && (!v.pro || proOn()); return '<li class="' + (open ? 'on' : '') + '"><span>' + esc(S.luckAtLevel(v.lv)) + (v.pro ? ' · ✨ ' + esc(S.plusName) : '') + '</span><b>' + (open ? '✓ ' : '🔒 ') + '-' + v.pct + '%</b></li>'; }).join('') + '</ul>'
+      + '<ul class="vlist">' + VOUCHERS.map((v) => { const open = best >= v.lv && (!v.pro || proOn()); return '<li class="' + (open ? 'on' : '') + '"><span>' + esc(S.luckAtLevel(v.lv)) + (v.pro ? ' · ✨ ' + esc(S.proName) : '') + '</span><b>' + (open ? '✓ ' : '🔒 ') + '-' + v.pct + '%</b></li>'; }).join('') + '</ul>'
       + (next ? '<p class="hint">' + esc(S.luckNextTier(next.lv, next.pct)) + '</p>' : '<p class="hint ok">' + esc(S.luckTopTier) + '</p>')
       + '</div>'
       + '<div class="card"><h3 style="margin-bottom:8px">' + esc(S.luckEarnTitle) + '</h3><ul class="carelist">'
@@ -16156,7 +16170,7 @@ function renderPet(want) {
       + (pets.length > 1 ? '<p class="hint ok" style="text-align:center">✨ ' + esc(S.petLuckTotal(pets.length)) + '</p>' : '')
       + (room
         ? '<button type="button" class="btn block" id="addpet" style="margin-top:12px">➕ ' + esc(S.petAdd) + (left > 1 ? ' · ' + esc(S.petRoomLeft(left)) : '') + '</button>'
-        : (proOn() ? '' : '<a class="salebar" href="#/unlock"><span class="tag">✨ ' + esc(S.plusName) + '</span><span class="txt">' + esc(S.petPlusPitch) + '</span><span class="go">' + esc(S.unlockLink) + ' ›</span></a>'))
+        : (proOn() ? '' : '<a class="salebar" href="#/unlock"><span class="tag">✨ ' + esc(S.proName) + '</span><span class="txt">' + esc(S.petPlusPitch) + '</span><span class="go">' + esc(S.unlockLink) + ' ›</span></a>'))
       + '<div class="card petsetcard">'
       + '<label class="remind"><input type="checkbox" id="petremind"' + (petRemindOn() ? ' checked' : '') + '><span>' + esc(S.petRemind) + '</span></label>'
       + '<p class="hint">' + esc(S.petRemindHint) + '</p>'
@@ -16449,7 +16463,7 @@ function renderPet(want) {
     };
     const free = PET_KINDS.filter((k) => !petIsPro(k)), myth = PET_KINDS.filter(petIsPro);
     m.innerHTML = '<div class="eyebrow">' + esc(S.actTitle) + '</div><h1 style="margin-bottom:6px">🐾 ' + esc(pets.length ? S.petAdd : S.petTitle) + '</h1><p class="muted">' + esc(S.petPick) + '</p>'
-      + (PETS.room() ? '' : '<a class="salebar" href="#/unlock"><span class="tag">✨ ' + esc(S.plusName) + '</span><span class="txt">' + esc(S.petPlusPitch) + '</span><span class="go">' + esc(S.unlockLink) + ' ›</span></a>')
+      + (PETS.room() ? '' : '<a class="salebar" href="#/unlock"><span class="tag">✨ ' + esc(S.proName) + '</span><span class="txt">' + esc(S.petPlusPitch) + '</span><span class="go">' + esc(S.unlockLink) + ' ›</span></a>')
       + '<div class="sec"><h2 style="margin-bottom:4px">' + esc(S.petPickFree) + '</h2><p class="hint" style="margin-bottom:10px">' + esc(S.petPickFreeNote) + '</p>'
       + '<div class="petpick">' + free.map(tile).join('') + '</div></div>'
       + '<div class="sec"><h2 style="margin-bottom:4px">✨ ' + esc(S.petPickPro) + '</h2><p class="hint" style="margin-bottom:10px">' + esc(S.petPickProNote) + '</p>'
@@ -18524,8 +18538,8 @@ function adminSale(p) {
 ROUTES.admin = { nav: '', render: renderAdmin };
 
 /* ============================ boot ============================ */
-window.APP_VERSION = 'v126';
-window.NABU = { CONFIG: CONFIG, SALE: SALE, salePrice: salePrice, loadActs: loadActs, BACK: BACK, LESSONS: LESSONS, localAnswer: localAnswer, compatVerdict: compatVerdict, numerologyOf: numerologyOf, ZDEEP: ZDEEP, lunarToday: lunarToday, solarToLunar: solarToLunar, DECK: DECK, INSIGHT: INSIGHT, KW: KW, ASK: ASK, TOPICS: TOPICS, GUIDES: GUIDES, SERVICES: SERVICES, COURSES: COURSES, ACCESS: ACCESS, ZODIAC: ZODIAC, pick: pick, book: book,
+window.APP_VERSION = 'v127';
+window.NABU = { CONFIG: CONFIG, SALE: SALE, salePrice: salePrice, loadActs: loadActs, BACK: BACK, LESSONS: LESSONS, localAnswer: localAnswer, compatVerdict: compatVerdict, numerologyOf: numerologyOf, ZDEEP: ZDEEP, lunarToday: lunarToday, solarToLunar: solarToLunar, DECK: DECK, INSIGHT: INSIGHT, KW: KW, ASK: ASK, TOPICS: TOPICS, GUIDES: GUIDES, SERVICES: SERVICES, COURSES: COURSES, ACCESS: ACCESS, plusOn: () => plusOn(), proOn: () => proOn(), luckUnlimited: () => luckUnlimited(), ZODIAC: ZODIAC, pick: pick, book: book,
   insightHTML: insightHTML, insightOf: insightOf, sunSignIndex: sunSignIndex, lifePath: lifePath, PROFILE: () => PROFILE, BE: BE, ACTS: ACTS,
   ANGELS: ANGELS, angelRead: angelRead, CODEBOOK: CODEBOOK, verifyCode: verifyCode, petHomeSVG: petHomeSVG, PET_HOMES: PET_HOMES, PET_WEARS: PET_WEARS, codeDigest: codeDigest, randomCode: randomCode, BANK: BANK, PETS: PETS, petSVG: petSVG, PET_COATS: PET_COATS, PET_KINDS: PET_KINDS, luckCut: luckCut, petLevel: petLevel, petStep: petStep, VOUCHERS: VOUCHERS, levelCoins: levelCoins, LOOKS: LOOKS,
   LOVE: LOVE, LOVEDB: LOVEDB, HANDLE_RE: HANDLE_RE, loveBadgeHTML: loveBadgeHTML,

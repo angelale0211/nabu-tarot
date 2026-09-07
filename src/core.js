@@ -126,7 +126,10 @@ const ACCESS = {
    or an admin account) lifts the limit entirely. */
 function weekStart(when) { const x = new Date(when || Date.now()); x.setHours(0, 0, 0, 0); x.setDate(x.getDate() - ((x.getDay() + 6) % 7)); return isoDate(x); }
 function weekNext() { const x = new Date(); x.setHours(0, 0, 0, 0); x.setDate(x.getDate() + (7 - ((x.getDay() + 6) % 7))); return isoDate(x); }
-const luckUnlimited = (kind) => ACCESS.has(kind) || ACCESS.has('luck');
+/* The coin and the message tree run without limit for anyone on Nabu Plus, and
+   Pro contains Plus. plusOn() is defined in looks.js, which loads after this
+   file, so it is asked for when called rather than captured now. */
+const luckUnlimited = () => plusOn();
 const luckSpent = (kind) => !luckUnlimited(kind) && (store.get('nabu-luck', {}) || {})[kind] === weekStart();
 function luckSpend(kind) { if (luckUnlimited(kind)) return; const a = store.get('nabu-luck', {}) || {}; a[kind] = weekStart(); store.set('nabu-luck', a); }
 const CODE_LETTER = { tarot: 'T', manifest: 'M', playing: 'P', coin: 'C', tree: 'Y', luck: 'B', pro: 'S', lenormand: 'L' };

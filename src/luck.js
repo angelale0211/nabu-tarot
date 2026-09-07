@@ -155,7 +155,7 @@ function renderRewards() {
       + '<p class="hint">' + esc(S.luckWorth(fmtPrice(BANK.coins()))) + '</p></div>'
       + '<div class="card"><h3 style="margin-bottom:8px">🎟️ ' + esc(S.luckVoucher) + '</h3>'
       + '<p class="hint" style="margin-bottom:10px">' + esc(S.luckVoucherHint) + '</p>'
-      + '<ul class="vlist">' + VOUCHERS.map((v) => { const open = best >= v.lv && (!v.pro || proOn()); return '<li class="' + (open ? 'on' : '') + '"><span>' + esc(S.luckAtLevel(v.lv)) + (v.pro ? ' · ✨ ' + esc(S.plusName) : '') + '</span><b>' + (open ? '✓ ' : '🔒 ') + '-' + v.pct + '%</b></li>'; }).join('') + '</ul>'
+      + '<ul class="vlist">' + VOUCHERS.map((v) => { const open = best >= v.lv && (!v.pro || proOn()); return '<li class="' + (open ? 'on' : '') + '"><span>' + esc(S.luckAtLevel(v.lv)) + (v.pro ? ' · ✨ ' + esc(S.proName) : '') + '</span><b>' + (open ? '✓ ' : '🔒 ') + '-' + v.pct + '%</b></li>'; }).join('') + '</ul>'
       + (next ? '<p class="hint">' + esc(S.luckNextTier(next.lv, next.pct)) + '</p>' : '<p class="hint ok">' + esc(S.luckTopTier) + '</p>')
       + '</div>'
       + '<div class="card"><h3 style="margin-bottom:8px">' + esc(S.luckEarnTitle) + '</h3><ul class="carelist">'

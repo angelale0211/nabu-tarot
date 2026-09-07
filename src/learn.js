@@ -417,22 +417,25 @@ const UNL_CART = {
   toggle(id) {
     let a = this.get();
     if (a.indexOf(id) > -1) a = a.filter((x) => x !== id);
-    // The bundle is the two single items together, so it cannot sit beside them.
-    else if (id === 'luck') a = a.filter((x) => x !== 'coin' && x !== 'tree').concat(id);
-    else a = a.filter((x) => !(id === 'coin' || id === 'tree') || x !== 'luck').concat(id);
+    /* Pro contains Plus, so the two packages cannot sit in the basket together:
+       choosing one clears the other rather than charging for both. */
+    else if (id === 'pro') a = a.filter((x) => x !== 'plus').concat(id);
+    else if (id === 'plus') a = a.filter((x) => x !== 'pro').concat(id);
+    else a = a.concat(id);
     this.set(a); return a;
   }
 };
 function unlockRowHTML(c) {
-  const S = T(), until = ACCESS.get()[c.id], open = ACCESS.has(c.id) || (c.id !== 'luck' && ACCESS.has('luck'));
+  /* Holding Pro opens Plus as well, so Plus shows as already yours. */
+  const S = T(), until = ACCESS.get()[c.id], open = ACCESS.has(c.id) || (c.id === 'plus' && ACCESS.has('pro'));
   const picked = !open && UNL_CART.has(c.id);
   const body = '<div class="unl-h"><b>' + esc(L(c.name)) + '</b>' + (isTWA() ? '' : '<span class="pr">' + priceHTML(c.price, 'unlock', c.id) + '</span>') + '</div>'
     + '<p class="hint">' + esc(L(c.sum || c.blurb)) + '</p>'
-    + '<div class="unl-f">' + (c.id === 'luck' ? '<span class="chip pink">' + esc(S.unlockBest) + '</span>' : '')
+    + '<div class="unl-f">' + (c.id === 'pro' ? '<span class="chip pink">' + esc(S.unlockBest) + '</span>' : '')
     + '<span class="unl-st">' + (open ? '✓ ' + esc(ACCESS.isAdmin() && !until ? S.adminShort : S.unlockOpenUntil(fmtDate(until)))
       : picked ? '✓ ' + esc(S.unlockChosen) : esc(S.unlockNot) + (isTWA() ? '' : ' · ' + esc(c.months + ' ' + S.months6))) + '</span></div>';
-  if (open) return '<div class="unl on' + (c.id === 'luck' ? ' best' : '') + '">' + body + '</div>';
-  return '<button type="button" class="unl pickable' + (picked ? ' pick' : '') + (c.id === 'luck' ? ' best' : '') + '" data-unl="' + c.id + '">' + body + '</button>';
+  if (open) return '<div class="unl on' + (c.id === 'pro' ? ' best' : '') + '">' + body + '</div>';
+  return '<button type="button" class="unl pickable' + (picked ? ' pick' : '') + (c.id === 'pro' ? ' best' : '') + '" data-unl="' + c.id + '">' + body + '</button>';
 }
 /* What the chosen unlockables come to after the shop's own sale. */
 function unlockBase() {
@@ -474,8 +477,8 @@ function renderUnlock() {
     m.innerHTML = '<div class="eyebrow">' + esc(CONFIG.brand) + '</div><h1 style="margin-bottom:6px">' + esc(S.unlockTitle) + '</h1><p class="muted">' + esc(S.unlockIntro) + '</p>'
       + (isTWA() ? '' : '<p class="hint" style="margin-bottom:14px">' + esc(S.unlockPick) + '</p>')
       + '<div class="sec"><h2 style="margin-bottom:8px">' + esc(S.unlockCourses) + '</h2>' + group(['tarot', 'lenormand', 'playing', 'manifest']) + '</div>'
-      + '<div class="sec"><h2 style="margin-bottom:8px">' + esc(S.unlockActs) + '</h2>' + group(['luck', 'coin', 'tree']) + '</div>'
-      + '<div class="sec"><h2 style="margin-bottom:8px">✨ ' + esc(S.plusName) + '</h2>' + group(['pro']) + '</div>'
+      + '<div class="sec"><h2 style="margin-bottom:8px">' + esc(S.unlockActs) + '</h2>'
+        + '<p class="hint" style="margin-bottom:10px">' + esc(S.unlockTiers) + '</p>' + group(['plus', 'pro']) + '</div>'
       + (isTWA() ? '' : '<div class="sec"><h2 style="margin-bottom:8px">' + esc(S.unlockCart) + '</h2><div id="ucart">' + unlockCartHTML() + '</div>'
         + rewardPanelHTML(unlockBase(), UNL_USE)
         + '<button class="btn primary block" id="usend" style="margin-top:12px">' + esc(S.unlockSend) + '</button>'

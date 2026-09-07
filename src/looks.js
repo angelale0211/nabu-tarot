@@ -9,7 +9,11 @@
    and leaves your current look alone. */
 
 const LOOK_KINDS = ['cardback', 'tree', 'coin', 'diary'];
+/* Pro contains Plus, so nobody has to buy twice and nobody can hold the top
+   package without the one under it. Everything that is not a companion asks
+   plusOn(); the companions ask proOn(). */
 const proOn = () => ACCESS.has('pro');
+const plusOn = () => ACCESS.has('plus') || ACCESS.has('pro');
 
 /* What the visitor has chosen, and a fallback to the free look whenever the
    chosen one is not theirs any more (an expired code, a shared device). */
@@ -21,7 +25,7 @@ const LOOKS = {
     if (!set) return '';
     const found = set.filter((x) => x.id === id)[0];
     if (!found) return set[0].id;
-    return (found.pro && !proOn()) ? set[0].id : found.id;
+    return (found.pro && !plusOn()) ? set[0].id : found.id;
   },
   set(kind, id) { const a = this.all(); a[kind] = id; store.set('nabu-looks', a); },
   of(kind) { const set = LOOK_SETS[kind] || []; const id = this.get(kind); return set.filter((x) => x.id === id)[0] || set[0]; }
@@ -188,7 +192,7 @@ function lookPreview(kind, item) {
    to. A locked one is drawn in full and dimmed rather than hidden, so the
    choice is made in front of the thing it changes. */
 function lookStripHTML(kind) {
-  const S = T(), set = LOOK_SETS[kind] || [], now = LOOKS.get(kind), pro = proOn();
+  const S = T(), set = LOOK_SETS[kind] || [], now = LOOKS.get(kind), pro = plusOn();
   if (!set.length) return '';
   return '<div class="card lookstrip"><div class="ls-h"><h3>' + esc(S.lookKinds[kind]) + '</h3>'
     + '<a href="#/looks">' + esc(S.looksAll) + ' ›</a></div>'
@@ -205,7 +209,7 @@ function bindLookStrip(root, redraw) {
   $$('[data-strip]', root).forEach((b) => b.addEventListener('click', () => {
     const p = b.getAttribute('data-strip').split(':'), item = (LOOK_SETS[p[0]] || []).filter((x) => x.id === p[1])[0];
     if (!item) return;
-    if (item.pro && !proOn()) { toast(T().looksNeedPlus); location.hash = '#/unlock'; return; }
+    if (item.pro && !plusOn()) { toast(T().looksNeedPlus); location.hash = '#/unlock'; return; }
     LOOKS.set(p[0], p[1]); toast('✓');
     if (redraw) redraw();
   }));
@@ -214,7 +218,7 @@ function bindLookStrip(root, redraw) {
    to. A locked one is drawn in full and dimmed rather than hidden, so the
    choice is made in front of the thing it changes. */
 function lookStripHTML(kind) {
-  const S = T(), set = LOOK_SETS[kind] || [], now = LOOKS.get(kind), pro = proOn();
+  const S = T(), set = LOOK_SETS[kind] || [], now = LOOKS.get(kind), pro = plusOn();
   if (!set.length) return '';
   return '<div class="card lookstrip"><div class="ls-h"><h3>' + esc(S.lookKinds[kind]) + '</h3>'
     + '<a href="#/looks">' + esc(S.looksAll) + ' ›</a></div>'
@@ -231,7 +235,7 @@ function bindLookStrip(root, redraw) {
   $$('[data-strip]', root).forEach((b) => b.addEventListener('click', () => {
     const p = b.getAttribute('data-strip').split(':'), item = (LOOK_SETS[p[0]] || []).filter((x) => x.id === p[1])[0];
     if (!item) return;
-    if (item.pro && !proOn()) { toast(T().looksNeedPlus); location.hash = '#/unlock'; return; }
+    if (item.pro && !plusOn()) { toast(T().looksNeedPlus); location.hash = '#/unlock'; return; }
     LOOKS.set(p[0], p[1]); toast('✓');
     if (redraw) redraw();
   }));
@@ -239,7 +243,7 @@ function bindLookStrip(root, redraw) {
 function renderLooks() {
   const S = T(), m = $('#main');
   const draw = () => {
-    const pro = proOn();
+    const pro = plusOn();
     m.innerHTML = '<div class="eyebrow">' + esc(CONFIG.brand) + '</div><h1 style="margin-bottom:6px">' + esc(S.looksTitle) + '</h1><p class="muted">' + esc(S.looksIntro) + '</p>'
       + (pro ? '<p class="hint">✨ ' + esc(S.looksPlusOn) + '</p>' : '<a class="salebar" href="#/unlock"><span class="tag">✨ ' + esc(S.plusName) + '</span><span class="txt">' + esc(S.looksLocked) + '</span><span class="go">' + esc(S.unlockLink) + ' ›</span></a>')
       + LOOK_KINDS.map((kind) => '<div class="sec"><h2 style="margin-bottom:8px">' + esc(S.lookKinds[kind]) + '</h2><div class="lookgrid">'
@@ -252,7 +256,7 @@ function renderLooks() {
       + '<p style="margin-top:14px"><a class="backlink" href="#/unlock">' + esc(S.unlockLink) + ' →</a></p>';
     $$('[data-look]', m).forEach((b) => b.addEventListener('click', () => {
       const p = b.getAttribute('data-look').split(':'), item = LOOK_SETS[p[0]].filter((x) => x.id === p[1])[0];
-      if (item.pro && !proOn()) { toast(S.looksNeedPlus); location.hash = '#/unlock'; return; }
+      if (item.pro && !plusOn()) { toast(S.looksNeedPlus); location.hash = '#/unlock'; return; }
       LOOKS.set(p[0], p[1]); toast('✓'); draw();
     }));
   };
