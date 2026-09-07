@@ -142,33 +142,33 @@ HOUSE = {
 
 # The element gives the manner - how this sign is likely to go at it.
 ELEM_WAY = {
-    'fire':  {'vi': 'Bạn thuộc nhóm lửa, nên bạn sẽ muốn làm ngay. Cứ làm, nhưng chọn một việc thôi thay vì năm việc.',
+    'fire':  {'vi': 'Bạn thuộc nhóm lửa, nên hễ đã muốn là bạn muốn làm ngay. Cứ đi theo cái nhiệt ấy, nhưng bạn hãy chọn một việc thôi thay vì ôm cùng lúc năm việc — ngọn lửa nào cũng cháy đẹp nhất khi có một chỗ để cháy.',
               'en': 'You are of fire, so you will want to move at once. Move — but pick one thing rather than five.'},
-    'earth': {'vi': 'Bạn thuộc nhóm đất, nên bạn sẽ muốn chắc chắn trước. Được, nhưng đừng đợi tới lúc chắc chắn tuyệt đối, vì lúc đó không tới.',
+    'earth': {'vi': 'Bạn thuộc nhóm đất, nên bạn cần thấy chắc chắn rồi mới bước, và điều đó chẳng có gì sai cả. Chỉ là bạn đừng đợi đến lúc mọi thứ chắc chắn tuyệt đối, bởi cái lúc ấy sẽ không bao giờ tới; đủ chắc là đã có thể đi rồi.',
               'en': 'You are of earth, so you will want to be sure first. Fair enough — but do not wait for certainty, because it does not arrive.'},
-    'air':   {'vi': 'Bạn thuộc nhóm khí, nên bạn sẽ nghĩ và nói về nó rất nhiều. Đến một lúc thì phải chuyển từ nói sang làm.',
+    'air':   {'vi': 'Bạn thuộc nhóm khí, nên bạn sẽ nghĩ tới nghĩ lui và nói ra rất nhiều. Nghĩ kỹ vốn là điểm mạnh của bạn, nhưng đến một lúc nào đó, lời nói cần được biến thành việc làm, nếu không nó sẽ mãi ở lại trong đầu.',
               'en': 'You are of air, so you will think it through and talk it out. At some point the talking has to become doing.'},
-    'water': {'vi': 'Bạn thuộc nhóm nước, nên bạn sẽ cảm nhận trước khi hiểu. Cảm giác của bạn thường đúng, chỉ là nó tới trước lời giải thích.',
+    'water': {'vi': 'Bạn thuộc nhóm nước, nên bạn cảm nhận được mọi thứ trước khi kịp hiểu vì sao. Trực giác của bạn thường đúng; nó chỉ đến sớm hơn lời giải thích một nhịp, nên bạn đừng vội gạt nó sang một bên.',
               'en': 'You are of water, so you will feel it before you understand it. Your sense is usually right; it simply arrives before the reason.'}
 }
 
 # The Moon's phase gives the timing.
 PHASE = [
-    {'vi': 'Trăng non đầu kỳ: đây là lúc bắt đầu, không phải lúc kết thúc. Bạn gieo, đừng đòi gặt.',
+    {'vi': 'Kỳ này mở ra bằng một vầng trăng non, mà trăng non bao giờ cũng là lúc để bắt đầu chứ chưa phải lúc để kết thúc. Bạn cứ gieo xuống điều mình mong muốn rồi cho nó thời gian, đừng vội đòi thu hoạch ngay.',
      'en': 'A new Moon opens this stretch: a time to begin, not to finish. Sow; do not ask to harvest yet.'},
-    {'vi': 'Trăng đang lớn dần: việc bạn vừa bắt đầu cần được nuôi mỗi ngày một chút.',
+    {'vi': 'Trăng đang lớn dần lên từng đêm, và việc bạn vừa bắt đầu cũng vậy: nó cần được nuôi mỗi ngày một chút, đều đặn và không ồn ào, thì mới lớn kịp theo.',
      'en': 'The Moon is filling: whatever you have just begun needs feeding a little each day.'},
-    {'vi': 'Trăng bán nguyệt đầu: đây là chỗ gặp trở ngại đầu tiên. Gặp là đúng lịch, không phải là điềm xấu.',
+    {'vi': 'Trăng đã đi hết nửa đường đầu, và đây thường là chỗ trở ngại đầu tiên xuất hiện. Bạn gặp nó là đúng lịch trình chứ không phải điềm xấu; ai bắt đầu điều gì rồi cũng đều đi qua khúc này.',
      'en': 'The first quarter: this is where the first obstacle shows up. On schedule, not a bad omen.'},
-    {'vi': 'Trăng gần tròn: mọi thứ đang dồn lại. Bạn giữ nhịp thêm vài ngày nữa.',
+    {'vi': 'Trăng đã gần tròn và mọi thứ đang dồn lại gần nhau. Bạn chỉ cần giữ nhịp thêm vài ngày nữa thôi, bởi phần khó nhất đã ở lại phía sau rồi.',
      'en': 'The Moon is nearly full: things are gathering. Hold the pace a few days more.'},
-    {'vi': 'Trăng tròn giữa kỳ: điều gì đang thật sẽ lộ ra rõ nhất lúc này, kể cả điều bạn không muốn nhìn.',
+    {'vi': 'Giữa kỳ có một vầng trăng tròn, và trăng tròn thì soi rõ mọi thứ — kể cả những điều bạn vẫn tránh nhìn. Nhưng nhìn thấy rồi bạn mới biết mình đang thật sự đứng ở đâu.',
      'en': 'A full Moon falls in the middle: what is real shows itself now, including what you would rather not see.'},
-    {'vi': 'Trăng bắt đầu khuyết: đây là lúc bỏ bớt, không phải lúc thêm vào.',
+    {'vi': 'Trăng bắt đầu khuyết dần, nên đây là quãng để bớt đi chứ không phải để thêm vào. Bạn buông bớt một việc, một cuộc hẹn hay một suy nghĩ cũ, rồi sẽ thấy mình nhẹ hơn hẳn.',
      'en': 'The Moon is waning: a time to take away, not to add.'},
-    {'vi': 'Trăng bán nguyệt cuối: bạn dọn dẹp và kết lại những gì còn dở.',
+    {'vi': 'Trăng đã khuyết một nửa. Bạn dọn dẹp lại những gì còn dang dở và khép chúng cho gọn, để khi vòng mới bắt đầu thì tay bạn không còn vướng bận.',
      'en': 'The last quarter: tidy up and close what is still half-done.'},
-    {'vi': 'Trăng tàn cuối kỳ: nghỉ, nhìn lại, rồi đợi vòng sau. Không cần cố lúc này.',
+    {'vi': 'Kỳ này khép lại bằng một vầng trăng tàn. Đây là lúc để nghỉ ngơi, để nhìn lại chặng vừa qua và chờ vòng sau; không có gì cần phải gắng gượng trong lúc này cả.',
      'en': 'The old Moon closes this stretch: rest, look back, and wait for the next round. Nothing needs forcing now.'}
 ]
 
@@ -177,33 +177,37 @@ RULER = {'aries': 'mars', 'taurus': 'venus', 'gemini': 'mercury', 'cancer': 'moo
          'leo': 'sun', 'virgo': 'mercury', 'libra': 'venus', 'scorpio': 'mars',
          'sagittarius': 'jupiter', 'capricorn': 'saturn', 'aquarius': 'saturn', 'pisces': 'jupiter'}
 RULER_LINE = {
-    'mars':    {'vi': 'Sao Hỏa cai quản bạn, nên bạn tiến bằng cách đẩy. Tháng này cái cần đẩy là một việc, không phải một người.',
+    'mars':    {'vi': 'Sao Hỏa cai quản bạn, nên bạn vượt qua mọi thứ bằng cách đẩy tới. Tháng này, bạn hãy nhớ rằng thứ đáng đẩy là công việc chứ không phải con người; vẫn sức ấy thôi, đặt đúng chỗ là đi được rất xa.',
                 'en': 'Mars rules you, so you get through things by pushing. This month, push the task and not the person.'},
-    'venus':   {'vi': 'Sao Kim cai quản bạn, nên bạn đi xa nhất bằng sự dễ chịu chứ không phải bằng sức. Cái gì càng gồng càng chậm.',
+    'venus':   {'vi': 'Sao Kim cai quản bạn, nên bạn đi xa nhất khi thấy dễ chịu chứ không phải khi gồng mình lên. Điều gì bạn càng cố sức thì lại càng chậm, nên tháng này hãy để mọi việc mềm ra một chút.',
                 'en': 'Venus rules you, so you get furthest by ease rather than force. Whatever you strain at will move slowest.'},
-    'mercury': {'vi': 'Sao Thủy cai quản bạn, nên chữ nghĩa là công cụ của bạn. Viết ra thì rõ, giữ trong đầu thì rối.',
+    'mercury': {'vi': 'Sao Thủy cai quản bạn, nên chữ nghĩa là công cụ mạnh nhất mà bạn có. Điều gì viết ra được thì sẽ sáng tỏ, còn điều gì cứ giữ mãi trong đầu thì chỉ rối thêm mà thôi.',
                 'en': 'Mercury rules you, so words are your tool. Written down it is clear; kept in your head it tangles.'},
-    'moon':    {'vi': 'Mặt Trăng cai quản bạn, nên bạn lên xuống theo chu kỳ và điều đó bình thường. Bạn đừng quyết chuyện lớn vào ngày mình xuống.',
+    'moon':    {'vi': 'Mặt Trăng cai quản bạn, nên tâm trạng của bạn lên xuống theo chu kỳ, và điều đó hoàn toàn bình thường. Bạn chỉ cần nhớ một điều: đừng quyết định chuyện lớn vào những ngày mình đang xuống.',
                 'en': 'The Moon rules you, so you rise and fall in cycles, and that is normal. Do not decide anything large on a low day.'},
-    'sun':     {'vi': 'Mặt Trời cai quản bạn, nên bạn sống được khi được nhìn thấy. Bạn cứ nhận lấy chỗ đứng của mình, đừng đợi ai mời.',
+    'sun':     {'vi': 'Mặt Trời cai quản bạn, nên bạn cần được nhìn thấy thì mới thấy mình đang thật sự sống. Bạn cứ nhận lấy chỗ đứng của mình một cách tự nhiên, chẳng việc gì phải đợi người khác mời.',
                 'en': 'The Sun rules you, so you need to be seen to feel alive. Take your place; do not wait to be invited to it.'},
-    'jupiter': {'vi': 'Sao Mộc cai quản bạn, nên bạn hay nghĩ lớn. Tháng này bạn thu nhỏ lại một chút thì lại đi được xa hơn.',
+    'jupiter': {'vi': 'Sao Mộc cai quản bạn, nên bạn quen nghĩ lớn và nghĩ xa. Tháng này, nếu bạn chịu thu mục tiêu nhỏ lại một chút, có lẽ bạn sẽ ngạc nhiên vì mình lại đi được xa hơn.',
                 'en': 'Jupiter rules you, so you think big. Scaling down a little this month will take you further.'},
-    'saturn':  {'vi': 'Sao Thổ cai quản bạn, nên bạn đi chậm mà chắc, và bạn hay khắt khe với chính mình. Chậm là được, khắt khe thì bớt.',
+    'saturn':  {'vi': 'Sao Thổ cai quản bạn, nên bạn đi chậm mà chắc, và cũng hay khắt khe với chính mình. Chậm thì chẳng sao cả, đó là cách của bạn; chỉ có phần khắt khe là bạn nên bớt đi một chút.',
                 'en': 'Saturn rules you, so you go slowly and surely, and you are hard on yourself. Slow is fine; hard is optional.'}
 }
 
 # How a week leans, from where the Moon stands in its round.
 WEEK_SHAPE = [
-    {'vi': 'Đầu tuần nhẹ, cuối tuần mới rõ. Bạn để việc quan trọng vào thứ Năm, thứ Sáu.',
+    {'vi': 'Đầu tuần sẽ trôi đi khá nhẹ nhàng, và mọi thứ chỉ thật sự rõ ràng về cuối. Vì vậy bạn hãy để dành việc quan trọng cho thứ Năm hoặc thứ Sáu, lúc đầu óc bạn sáng nhất.',
      'en': 'The start is light and the end is clearer. Put the important thing on Thursday or Friday.'},
-    {'vi': 'Tuần này dồn về giữa. Thứ Ba tới thứ Năm là chỗ đáng dùng nhất.',
+    {'vi': 'Tuần này dồn sức về khoảng giữa. Từ thứ Ba đến thứ Năm là quãng đáng dùng nhất, nên bạn hãy xếp những việc cần tập trung vào đúng mấy ngày ấy.',
      'en': 'This week gathers in the middle. Tuesday to Thursday is the part worth using.'},
-    {'vi': 'Đầu tuần mạnh nhất. Bạn làm việc khó vào thứ Hai, thứ Ba, rồi thả lỏng dần.',
+    {'vi': 'Đầu tuần là lúc bạn mạnh nhất. Bạn hãy làm việc khó ngay thứ Hai hoặc thứ Ba, rồi những ngày sau cứ thong thả dần — như vậy nhẹ hơn nhiều so với để mọi thứ dồn lại.',
      'en': 'The start is strongest. Do the hard thing on Monday or Tuesday, then let it ease off.'},
-    {'vi': 'Tuần này đều, không có ngày nào nổi bật. Bạn giữ nhịp nhỏ mỗi ngày thì hơn dồn một hôm.',
+    {'vi': 'Tuần này trôi khá đều, không có ngày nào nổi bật hẳn lên. Chính vì thế, thay vì dồn hết vào một hôm, bạn hãy giữ một nhịp nhỏ đều đặn mỗi ngày; chính sự bền bỉ ấy mới là thứ đưa bạn đi xa.',
      'en': 'An even week with no standout day. A small amount daily beats one long push.'}
 ]
+
+# Nobody says "thứ 1"; they say "thứ nhất".
+ORD_VI = {1: 'nhất', 2: 'hai', 3: 'ba', 4: 'tư', 5: 'năm', 6: 'sáu',
+          7: 'bảy', 8: 'tám', 9: 'chín', 10: 'mười', 11: 'mười một', 12: 'mười hai'}
 
 OPENERS = ['✨', '🌙', '💗', '🌿', '🕯️', '🔮', '⭐', '🌸']
 
@@ -231,17 +235,37 @@ def week_days(sign, monday):
     return good, hard
 
 
+
+def join_vi(names, idx):
+    """Vietnamese puts "và" before the last of a list, where English is happy
+    with a comma. A forecast that says "thứ Hai, thứ Sáu" reads as a fragment of
+    a table; "thứ Hai và thứ Sáu" reads as a sentence."""
+    words = [names[i] for i in idx]
+    if len(words) == 1:
+        return words[0]
+    return ', '.join(words[:-1]) + ' và ' + words[-1]
+
 def days_line(sign, monday, lang):
     good, hard = week_days(sign, monday)
     names = DAY_VI if lang == 'vi' else DAY_EN
     bits = []
-    if good:
-        bits.append(('Ngày thuận lợi: ' if lang == 'vi' else 'Easier days: ') + ', '.join(names[i] for i in good) + '.')
-    if hard:
-        bits.append(('Ngày cần cẩn thận: ' if lang == 'vi' else 'Days that ask more: ') + ', '.join(names[i] for i in hard) + '.')
-    if not bits:
-        bits.append('Tuần này không có ngày nào nổi bật hẳn lên.' if lang == 'vi'
-                    else 'No day this week stands out sharply from the others.')
+    if lang == 'vi':
+        if good:
+            bits.append('Những ngày trôi thuận nhất với bạn là ' + join_vi(names, good)
+                        + ' — hãy để dành việc quan trọng cho mấy ngày ấy.')
+        if hard:
+            bits.append(('Riêng ' if good else 'Trong tuần, ') + join_vi(names, hard)
+                        + ' sẽ đòi ở bạn nhiều sức hơn một chút, nên bạn nhớ giữ sức và đừng ôm quá nhiều việc.')
+        if not bits:
+            bits.append('Các ngày trong tuần này khá đều nhau, không có ngày nào nổi bật hẳn lên, '
+                        'nên bạn cứ thong thả sắp xếp theo ý mình.')
+    else:
+        if good:
+            bits.append('Easier days: ' + ', '.join(names[i] for i in good) + '.')
+        if hard:
+            bits.append('Days that ask more: ' + ', '.join(names[i] for i in hard) + '.')
+        if not bits:
+            bits.append('No day this week stands out sharply from the others.')
     return ' '.join(bits)
 
 
@@ -263,7 +287,9 @@ def compose(sign, when, period, monday=None):
         bodyname = (SIGN_VI if lang == 'vi' else SIGN_EN)[body]
         if lang == 'vi':
             who = 'mặt trăng' if period == 'weekly' else 'mặt trời'
-            lead = '%s thân mến, %s đang đi qua cung %s, tức nhà số %d của bạn. %s' % (name, who, bodyname, h, subject)
+            span = 'tuần này' if period == 'weekly' else 'tháng này'
+            lead = '%s thân mến, %s %s đi qua cung %s — khu vực thứ %s trên bản đồ sao của bạn. %s' % (
+                name, span, who, bodyname, ORD_VI[h], subject)
         else:
             who = 'The Moon' if period == 'weekly' else 'The Sun'
             lead = '%s is crossing %s, which is your %s house, %s. %s' % (
