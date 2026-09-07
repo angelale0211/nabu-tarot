@@ -37,7 +37,17 @@ const ALERTS = {
     return true;
   },
   unseen() { return this.all().filter((n) => !n.seen).length; },
-  markSeen() { const l = this.all(); l.forEach((n) => { n.seen = true; }); store.set('nabu-alerts', l); alertsBadge(); },
+  /* Marking them read has to be written down to mean anything. If the phone
+     will not take the write, say so here rather than redrawing from an older
+     list and appearing to lose the newest one. */
+  markSeen() {
+    const l = this.all();
+    if (!l.length) return true;
+    l.forEach((n) => { n.seen = true; });
+    const ok2 = store.set('nabu-alerts', l);
+    alertsBadge();
+    return ok2;
+  },
   clear() { store.set('nabu-alerts', []); alertsBadge(); }
 };
 
@@ -412,21 +422,31 @@ function renderAlerts() {
       + (list.length
         ? '<div class="row alertacts"><button type="button" class="btn" id="alread">' + esc(S.alertReadAll) + '</button>'
           + '<button type="button" class="btn" id="alclear">' + esc(S.alertClear) + '</button></div>'
+          /* Clearing throws away every notification there is, and it sits one
+             finger-width from marking them read. It asks on the page, because
+             a browser confirm() is skipped outright by some phone webviews. */
+          + '<div class="card" id="alsure" hidden><p class="hint err">' + esc(S.alertClearAsk) + '</p>'
+          + '<div class="row"><button type="button" class="btn danger" id="alyes">' + esc(S.alertClearYes) + '</button>'
+          + '<button type="button" class="btn" id="alno">' + esc(S.loveCancel) + '</button></div></div>'
           + groups.filter((g) => g[1].length).map((g) =>
             '<h3 class="alerthead">' + esc(g[0]) + '</h3><div class="alerts">' + g[1].map(row).join('') + '</div>').join('')
         : '<div class="card"><p class="lead" style="text-align:center">🔔</p>'
           + '<p class="hint" style="text-align:center">' + esc(S.alertNone) + '</p></div>');
 
     if (list.length) {
-      $('#alread').addEventListener('click', () => { ALERTS.markSeen(); draw(); });
-      $('#alclear').addEventListener('click', () => { ALERTS.clear(); draw(); });
+      $('#alread').addEventListener('click', () => { const ok2 = ALERTS.markSeen(); toast(ok2 ? T().alertReadDone : T().storeFull); draw(); });
+      $('#alclear').addEventListener('click', () => { $('#alsure').hidden = false; $('#alno').focus(); });
+      $('#alno').addEventListener('click', () => { $('#alsure').hidden = true; });
+      $('#alyes').addEventListener('click', () => { ALERTS.clear(); draw(); });
     }
   };
   draw();
-  /* Opening the bell is reading them; the count clears on the way out so the
-     visitor can still see which ones were new while they are looking. */
-  const list = ALERTS.all();
-  if (list.some((n) => !n.seen)) setTimeout(() => { ALERTS.markSeen(); }, 1200);
+  /* Reading them is what marks them read, and reading them is not over a
+     second after the page opens. Marking on the way out keeps the "new"
+     highlight for as long as somebody is looking at it - which is the only
+     thing on the screen saying which ones they have not seen - and leaves the
+     button with something to do while they are here. */
+  NAV.cleanup = () => { ALERTS.markSeen(); };
 }
 
 ROUTES.alerts = { nav: '', render: renderAlerts };

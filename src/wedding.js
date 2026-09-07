@@ -201,7 +201,32 @@ const WED = {
         .sort((a, b) => Number(a.startMs) - Number(b.startMs)));
     }, () => cb([]));
   },
+  /* Beginning takes two. It was one press by whichever of them reached the
+     button first, so a ceremony could start in front of the guests with the
+     other one still reading the guest list. */
+  bothReady(w) { const r = (w && w.ready) || {}; return !!(r.a && r.b); },
+  iamReady(w) { const r = (w && w.ready) || {}; return !!r[this.side(w)]; },
+  sayReady(id, w) {
+    const k = 'ready.' + this.side(w);
+    const patch = {}; patch[k] = true;
+    return BE.db.collection('weddings').doc(id).update(patch);
+  },
   callOff(id) { return BE.db.collection('weddings').doc(id).update({ state: 'called-off' }); },
+  /* A quiet line between the two of them. Everything else in that room is said
+     in front of a hundred people. */
+  sayTo(id, text, name) {
+    return BE.db.collection('weddings').doc(id).collection('talk')
+      .doc(this.me() + '__' + Date.now()).set({
+        from: this.me(), name: String(name || '').slice(0, 40),
+        text: String(text || '').slice(0, 300), at: Date.now()
+      });
+  },
+  watchTalk(id, cb) {
+    if (!this.ok() || !id) return () => {};
+    return BE.db.collection('weddings').doc(id).collection('talk').limit(80)
+      .onSnapshot((s) => cb(s.docs.map((d) => Object.assign({ id: d.id }, d.data()))
+        .sort((a, b) => Number(a.at || 0) - Number(b.at || 0))), () => cb([]));
+  },
   drop(id) { return BE.db.collection('weddings').doc(id).delete(); },
 
   /* An answer and the step it moves. Written together so the room can never
@@ -754,7 +779,7 @@ function renderWedding(args) {
   };
 
   /* ------------------------------------------------------------- the room --- */
-  let gifts = [], guests = [], says = [], bouquetShown = 0;
+  let gifts = [], guests = [], says = [], talk = [], bouquetShown = 0;
   /* Where the reader was in the comments, so a repaint does not move them. */
   const SAYAT = { top: 0, h: 0 };
   /* Who was standing here a moment ago, so an arrival is an arrival and not
@@ -815,8 +840,14 @@ function renderWedding(args) {
             + '<p class="hint">' + esc(S.wedStartsAt(wedWhen(startMs))) + '</p>'
           : '<p class="hint">' + esc(S.wedGuestWait(wedWhen(startMs))) + '</p>');
     } else if (mine && !w.doneAt && (w.step | 0) === 0) {
-      act = '<button type="button" class="btn primary block" id="wedon">' + esc(S.wedStart) + '</button>'
-        + '<p class="hint">' + esc(S.wedStartNow) + '</p>';
+      /* One says begin, the other says ready. Neither alone starts a wedding
+         in front of a room full of people. */
+      const iam = WED.iamReady(w);
+      act = iam
+        ? '<button type="button" class="btn primary block" disabled>' + esc(S.wedWaitReady(youName)) + '</button>'
+          + '<p class="hint">' + esc(S.wedWaitReadyHint(youName)) + '</p>'
+        : '<button type="button" class="btn primary block" id="wedready">' + esc(WED.iamReady(w) ? S.wedStart : (w.ready && Object.keys(w.ready).length ? S.wedImReady : S.wedStart)) + '</button>'
+          + '<p class="hint">' + esc(S.wedStartBoth) + '</p>';
     } else if (askingMe) {
       act = '<div class="vowrow"><button type="button" class="btn primary" id="wedyes">' + esc(S.wedIDo) + '</button>'
         + '<button type="button" class="btn" id="wedno">' + esc(S.wedNotYet) + '</button></div>'
@@ -826,7 +857,9 @@ function renderWedding(args) {
     } else if (mine && !step.who && !w.doneAt) {
       act = '<button type="button" class="btn primary block" id="wedon">' + esc(S.wedGoOn) + '</button>';
     } else if (!mine && !w.doneAt) {
-      act = '<p class="hint" style="text-align:center">' + esc(S.wedWatching) + '</p>';
+      /* Guests are told what is holding it up, rather than watching a screen
+         that says nothing while two people sort themselves out. */
+      act = '<p class="hint" style="text-align:center">' + esc((w.step | 0) === 0 && w.ready && Object.keys(w.ready).length ? S.wedAlmost : S.wedWatching) + '</p>';
     }
 
     /* the bouquet, after the vows */
@@ -901,6 +934,14 @@ function renderWedding(args) {
       + whoHere
       + act + '</div>'
       + bq
+      + (mine ? '<div class="card talkcard"><div class="ghead"><span class="gk">\uD83E\uDD1D</span><h3>' + esc(S.wedTalkTitle) + '</h3></div>'
+        + '<p class="hint" style="margin-bottom:8px">' + esc(S.wedTalkHint) + '</p>'
+        + (talk.length ? '<ul class="saylist" id="talklist">' + talk.slice(-40).map((x) =>
+          '<li' + (x.from === (BE.user ? BE.user.uid : '') ? ' class="me"' : '') + '><b>' + esc(x.name || S.loveSomeone) + '</b>'
+          + '<span>' + esc(x.text) + '</span></li>').join('') + '</ul>'
+          : '<p class="hint">' + esc(S.wedTalkNone) + '</p>')
+        + '<div class="row nw saybar"><input id="wedtalkin" maxlength="300" placeholder="' + esc(S.wedTalkPh) + '">'
+        + '<button type="button" class="btn primary" id="wedtalkgo">' + esc(S.wedSayGo) + '</button></div></div>' : '')
       + guestListHTML(w, guests)
       + giftBox
       /* A wedding you can speak at. Everyone in the room, the couple included. */
@@ -923,15 +964,19 @@ function renderWedding(args) {
        no-show, so a ceremony that finished kept its room open with nothing
        counting anything down, and anybody standing in a room whose hour had
        long passed simply stayed there. */
-    if (shutAt > 0) {
+    if (shutAt > 0 && !byeSoon) {
+      /* Nothing to show yet. One wake-up when the announcement is due beats a
+         tick a second for the minutes until then - a timer running for no
+         reason on somebody's phone, and, under a test clock, minutes of budget
+         spent counting to itself. */
+      if (tick) { clearInterval(tick); tick = null; }
+      tick = setTimeout(paint, Math.max(500, shutAt - WED_BYE_MS - Date.now()));
+    } else if (shutAt > 0) {
       if (tick) { clearInterval(tick); tick = null; }
       tick = setInterval(() => {
         const left = Math.max(0, shutAt - Date.now());
         const el = $('#wedbye') || $('#wedshut');
         if (el) el.textContent = wedCountdown(Date.now() + left);
-        /* The announcement appears on its own, without waiting for anything
-           else to happen in the room. */
-        if (!byeSoon && left <= WED_BYE_MS) { paint(); return; }
         if (left <= 0) {
           /* Whoever is the couple writes it shut for good. Everybody else is
              simply shown out - a screen for a room that no longer exists is
@@ -968,6 +1013,18 @@ function renderWedding(args) {
     };
     { const y = $('#wedyes'); if (y) y.addEventListener('click', () => { y.disabled = true; ans(true); }); }
     { const n = $('#wedno'); if (n) n.addEventListener('click', () => { if (!confirm(S.wedNoSure)) return; ans(false); }); }
+    /* Saying begin, or saying ready - the same button, and the second press
+       is the one that starts it. */
+    { const r = $('#wedready');
+      if (r) r.addEventListener('click', async () => {
+        r.disabled = true;
+        try {
+          await WED.sayReady(w.id, w);
+          const both = WED.bothReady(Object.assign({}, w, { ready: Object.assign({}, w.ready || {}, (() => { const o2 = {}; o2[WED.side(w)] = true; return o2; })()) }));
+          if (both) { await WED.onward(w.id, w); WEDMUSIC.chime(); }
+          else toast(S.wedReadySent);
+        } catch (e) { r.disabled = false; toast(loveWhy(e)); }
+      }); }
     { const o = $('#wedon');
       if (o) o.addEventListener('click', async () => {
         o.disabled = true;
@@ -982,6 +1039,18 @@ function renderWedding(args) {
         } catch (e) { o.disabled = false; toast(loveWhy(e)); }
       }); }
     bindInvite(w);
+    { const tb = $('#wedtalkin'), tg = $('#wedtalkgo');
+      const sendTalk = async () => {
+        const t2 = (tb.value || '').trim();
+        if (!t2) return;
+        tb.value = '';
+        try { await WED.sayTo(w.id, t2, WED.side(w) === 'a' ? (w.aName || '') : (w.bName || '')); }
+        catch (e) { toast(loveWhy(e)); }
+      };
+      if (tg) tg.addEventListener('click', sendTalk);
+      if (tb) tb.addEventListener('keydown', (e) => { if (e.key === 'Enter') { e.preventDefault(); sendTalk(); } });
+      const tl = $('#talklist');
+      if (tl) tl.scrollTop = tl.scrollHeight; }
     { /* Said once, and shown to everybody. */
       const box = $('#wedsayin'), go = $('#wedsaygo');
       const send = async () => {
@@ -1095,6 +1164,19 @@ function renderWedding(args) {
   const drawPlan = (bond, w) => {
     const me = WED.me(), you = LOVE.other(bond, me);
     const nm = (you && (you.name || (you.handle ? '@' + you.handle : ''))) || S.loveSomeone;
+    /* Married already. The day is on the thread, and that day is what a
+       wedding is - so this pair are done. An hour nobody came to records
+       nothing, which is why a room that was never used leaves them free to ask
+       again; and untying the thread clears the record with it. */
+    if (!w && bond && bond.marriedOn) {
+      m.innerHTML = head()
+        + '<div class="card wedcard">' + cupidSVG('joy')
+        + '<p class="wedpair">' + esc((LOVE.mine(bond, WED.me()) || {}).name || '') + ' \u2764 ' + esc(nm) + '</p>'
+        + '<p class="lead" style="text-align:center">' + esc(S.wedAlreadyLead) + '</p>'
+        + '<p class="hint" style="text-align:center">' + esc(S.wedAlreadyHint(fmtDate(bond.marriedOn))) + '</p></div>'
+        + '<p><a class="backlink" href="#/love">\u2190 ' + esc(S.loveTitle) + '</a></p>';
+      return;
+    }
     if (!w) {
       /* The hour they chose before paying, if they chose one. */
       const wanted2 = Number(store.get('nabu-wed-want', 0)) || 0;
@@ -1170,6 +1252,12 @@ function renderWedding(args) {
       /* Three lines, one fact each. The full terms live on the screen where
          they were agreed to; repeating all four here is noise. */
       + '<ul class="wedrules">' + S.wedRules.map((r) => '<li>' + esc(r) + '</li>').join('') + '</ul>'
+      /* And how the room itself works, folded, because it is six lines and
+         only wanted once. They used to walk into a room with a guest list, a
+         gift table, a comment feed and a button, in front of everybody they
+         had invited, and work it out live. */
+      + '<details class="sect howroom"><summary><span class="si">\uD83D\uDCD6</span><b>' + esc(S.wedHowTitle) + '</b><span class="sx">\u203A</span></summary>'
+      + '<div class="sbody"><ol class="terms">' + S.wedHow.map((x) => '<li>' + esc(x) + '</li>').join('') + '</ol></div></details>'
       /* Unpaid, said once, softly, with the way to settle it. */
       + (ACCESS.has('wedding') ? ''
         : '<p class="hint hold">' + esc(S.wedUnpaid) + ' <a href="#/wedding/pay">' + esc(S.wedPayNow) + ' \u2192</a></p>')
@@ -1287,8 +1375,13 @@ function renderWedding(args) {
      the thread; only a guest's link stands on its own. */
   const guestLink = wanted && wanted !== 'pay' && wanted !== 'room';
   const id = guestLink ? wanted : (LOVE.local().bond || '');
+  /* One stream failing must not take the screen down with it. These are set
+     up in a row, and an exception in any of them used to skip every
+     subscription after it - including the thread itself, which is why the room
+     could come out as "you need a thread first" while the thread sat there. */
+  const sub = (make) => { try { stop.push(make()); } catch (e) { window.__wedErr = String((e && e.message) || e); } };
   if (id) {
-    stop.push(WED.watch(id, (w) => {
+    sub(() => WED.watch(id, (w) => {
       wedding = w; ready = true;
       /* Enough to draw the line on the profile before the cloud answers. */
       if (w) {
@@ -1319,14 +1412,18 @@ function renderWedding(args) {
          tell the other has arrived. Only once the door is open: a seat kept
          warm from the planning screen would say somebody was in a room that
          has not opened yet. */
-      if (w && WED.mine(w) && WED.doorState(w) === 'open' && !beat) {
+      const open2 = w && WED.doorState(w) === 'open';
+      if (w && WED.mine(w) && open2 && !beat) {
         const nm = WED.side(w) === 'a' ? (w.aName || '') : (w.bName || '');
         WED.sit(w.id, nm).catch(() => {});
         beat = setInterval(() => WED.stillHere(w.id), 20000);
       }
+      /* And it stops when the room does. A seat kept warm in a room that has
+         closed is a timer writing to nothing for as long as the app is open. */
+      if (beat && !open2) { clearInterval(beat); beat = null; }
       paint();
     }));
-    stop.push(WED.watchGuests(id, (g) => {
+    sub(() => WED.watchGuests(id, (g) => {
       guests = g;
       /* Somebody arriving is worth saying once, and only to the people it
          means something to: the couple hear their partner arrive, because that
@@ -1349,11 +1446,12 @@ function renderWedding(args) {
       }
       paint();
     }));
-    stop.push(WED.watchGifts(id, (g) => { gifts = g; paint(); }));
-    stop.push(WED.watchSays(id, (l) => { says = l; paint(); }));
+    sub(() => WED.watchGifts(id, (g) => { gifts = g; paint(); }));
+    sub(() => WED.watchSays(id, (l) => { says = l; paint(); }));
+    sub(() => WED.watchTalk(id, (l) => { talk = l; paint(); }));
   }
   if (!guestLink) {
-    stop.push(LOVEDB.watchMine((b) => { bond = b; ready = true; paint(); }));
+    sub(() => LOVEDB.watchMine((b) => { bond = b; ready = true; paint(); }));
   } else { ready = true; paint(); }
 }
 

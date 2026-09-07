@@ -3,7 +3,7 @@
 fetch() and the service worker behave as on GitHub Pages, opens test.html
 (which loads index.html in an iframe and drives it), and prints the results.
 Run:  python test/run.py"""
-import io, os, re, subprocess, sys, tempfile, threading, time
+import glob, io, os, re, shutil, subprocess, sys, tempfile, threading, time
 from http.server import ThreadingHTTPServer, SimpleHTTPRequestHandler
 
 HERE = os.path.dirname(os.path.abspath(__file__))
@@ -28,15 +28,21 @@ def serve():
     return httpd
 
 
-TIMEOUT = 420
+TIMEOUT = 600
 
 
 def run_once(url, extra=()):
+    # Every run used to leave its browser profile behind. Six hundred of them
+    # later the temp folder is slow enough to stall the run that made them, and
+    # a suite that fails because of its own litter is worse than no suite.
+    for old in glob.glob(os.path.join(tempfile.gettempdir(), 'nabu-edge-*')):
+        shutil.rmtree(old, ignore_errors=True)
     prof = tempfile.mkdtemp(prefix='nabu-edge-')
     out = subprocess.run([EDGE, '--headless=new', '--disable-gpu', '--no-first-run',
                           '--virtual-time-budget=600000', '--user-data-dir=' + prof,
                           '--window-size=430,900', '--dump-dom'] + list(extra) + [url],
                          capture_output=True, timeout=TIMEOUT)
+    shutil.rmtree(prof, ignore_errors=True)
     dom = out.stdout.decode('utf-8', 'replace')
     m = re.findall(r'<pre id="results">(.*?)</pre>', dom, re.S)
     return m[-1] if m else ('NO RESULTS\n' + dom[-3000:])

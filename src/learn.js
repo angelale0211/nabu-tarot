@@ -533,10 +533,13 @@ function renderUnlock(args, params) {
           + '<p class="hint" style="margin-bottom:10px">' + esc(S.unlockTiers) + '</p>' + group(UNL_TIERS) + '</div>';
         const wed = '<div class="sec" data-sec="wedding"><h2 style="margin-bottom:8px">\uD83D\uDC92 ' + esc(S.unlockWedding) + '</h2>'
           + '<p class="hint" style="margin-bottom:10px">' + esc(S.unlockWeddingHint) + '</p>' + group(['wedding']) + '</div>';
-        /* Which of these is the answer depends on the door they came through. */
-        if (from === 'app') return tiers + courses + wed;
+        /* A wedding is not a thing to browse beside a tarot course: it needs a
+           thread, two people and a date already agreed. It is offered inside
+           the love system and shown here only to somebody who arrived from
+           there, to pay for the one they have already asked for. */
         if (from === 'wedding') return wed + tiers + courses;
-        return courses + tiers + wed;
+        if (from === 'app') return tiers + courses;
+        return courses + tiers;
       })()
       + (isTWA() ? '' : '<div class="sec"><h2 style="margin-bottom:8px">' + esc(S.unlockCart) + '</h2><div id="ucart">' + unlockCartHTML() + '</div>'
         + rewardPanelHTML(unlockBase(), UNL_USE)

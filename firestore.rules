@@ -258,7 +258,7 @@ service cloud.firestore {
       allow update: if (request.auth != null && request.auth.uid in resource.data.uids
                     && request.resource.data.uids == resource.data.uids
                     && request.resource.data.diff(resource.data).affectedKeys()
-                         .hasOnly(['state', 'step', 'vows', 'doneAt', 'bouquet', 'guestCount', 'wantMs', 'moveAsk']))
+                         .hasOnly(['state', 'step', 'vows', 'doneAt', 'bouquet', 'guestCount', 'wantMs', 'moveAsk', 'ready']))
                     // The hour itself, and whether it has been paid for, are
                     // Nabu's to write: Nabu hosts the ceremony and has to be
                     // there, and one payment covers both partners. The couple
@@ -266,6 +266,15 @@ service cloud.firestore {
                     || (isAdmin() && request.resource.data.diff(resource.data).affectedKeys()
                          .hasOnly(['paid', 'paidAt', 'startMs', 'moved', 'wantMs', 'moveAsk']));
       allow delete: if request.auth != null && request.auth.uid in resource.data.uids;
+
+      /* The couple's own line. Everything else in that room is said in front
+         of the guests; this is the sentence that decides whether to begin, and
+         nobody outside the pair can read it. */
+      match /talk/{tid} {
+        allow read, create: if request.auth != null
+                    && request.auth.uid in get(/databases/$(database)/documents/weddings/$(wid)).data.uids
+                    && shorterThan('text', 400);
+      }
 
       /* A seat. Yours alone, and it says only who you are and when you were
          last looking, which is what the bouquet needs to know. */

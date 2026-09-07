@@ -63,14 +63,14 @@ function adminCleanup() { admin.unsubs.forEach((u) => { try { u(); } catch (e) {
 function renderAdmin(args, params) {
   adminCleanup();
   const S = T(), m = $('#main');
-  if (params && params.tab && ['posts', 'acts', 'schedule', 'bookings', 'inbox', 'codes', 'sale'].indexOf(params.tab) > -1) admin.tab = params.tab;
+  if (params && params.tab && ['posts', 'acts', 'schedule', 'bookings', 'pay', 'inbox', 'codes', 'sale'].indexOf(params.tab) > -1) admin.tab = params.tab;
   m.innerHTML = '<div class="eyebrow">' + esc(CONFIG.brand) + '</div><h1 style="margin-bottom:6px">' + esc(S.adminTitle) + '</h1><p class="muted">' + esc(S.adminIntro) + '</p>'
-    + '<div class="tabs" id="atabs">' + ['posts', 'acts', 'schedule', 'bookings', 'inbox', 'codes', 'sale'].map((k) => '<button data-t="' + k + '" class="' + (admin.tab === k ? 'on' : '') + '">' + esc(S.adminTabs[k]) + '<span class="tb" data-tb="' + k + '" hidden></span></button>').join('') + '</div>'
+    + '<div class="tabs" id="atabs">' + ['posts', 'acts', 'schedule', 'bookings', 'pay', 'inbox', 'codes', 'sale'].map((k) => '<button data-t="' + k + '" class="' + (admin.tab === k ? 'on' : '') + '">' + esc(S.adminTabs[k]) + '<span class="tb" data-tb="' + k + '" hidden></span></button>').join('') + '</div>'
     + (BE.enabled ? '<p class="hint" style="margin-bottom:12px">☁️ ' + esc(S.cloudContent) + '</p>' : '<div class="card"><label class="f" for="gtoken">' + esc(S.token) + '</label><div class="row nw"><input id="gtoken" type="password" value="' + esc(ghToken()) + '" style="flex:1" autocomplete="off"><button class="btn sm" id="savetoken">' + esc(S.saveToken) + '</button></div><p class="hint">' + esc(S.tokenHint) + ' (' + esc(CONFIG.repo) + ')</p></div>')
     + '<div id="apanel"></div>';
   const stb = $('#savetoken'); if (stb) stb.addEventListener('click', () => { store.set('nabu-gh-token', $('#gtoken').value.trim()); toast(T().saved); show(admin.tab); });
   $$('#atabs button').forEach((b) => b.addEventListener('click', () => { admin.tab = b.getAttribute('data-t'); $$('#atabs button').forEach((x) => x.classList.toggle('on', x === b)); show(admin.tab); }));
-  const show = (t) => { adminCleanup(); const p = $('#apanel'); if (t === 'sale') adminSale(p); else if (t === 'posts') adminPosts(p); else if (t === 'acts') adminActivities(p); else if (t === 'schedule') adminSchedule(p); else if (t === 'bookings') adminBookings(p); else if (t === 'codes') adminCodes(p); else adminInbox(p); };
+  const show = (t) => { adminCleanup(); const p = $('#apanel'); if (t === 'sale') adminSale(p); else if (t === 'posts') adminPosts(p); else if (t === 'acts') adminActivities(p); else if (t === 'schedule') adminSchedule(p); else if (t === 'bookings') adminBookings(p); else if (t === 'pay') adminPay(p); else if (t === 'codes') adminCodes(p); else adminInbox(p); };
   show(admin.tab);
 }
 
@@ -241,38 +241,14 @@ function needAdmin(p) {
 function adminBookings(p) {
   const S = T();
   if (!needAdmin(p)) return;
-  /* An order has no hour in it, so it never belonged on a calendar. It goes
-     above one, where the only question it raises is answered. */
-  p.innerHTML = '<p class="hint">' + esc(S.bookingsIntro) + '</p><div id="bkasks"></div><div id="bkorders"></div><div id="bkcal" class="bkcal"></div><div id="bklist"></div>';
-  let all = [], asks = [], month = new Date(new Date().getFullYear(), new Date().getMonth(), 1), day = '';
+  /* Hours here, money in its own tab. An order has no hour in it and never
+     belonged on a calendar; neither does a transfer that has not arrived. */
+  p.innerHTML = '<p class="hint">' + esc(S.bookingsIntro) + '</p><div id="bkcal" class="bkcal"></div><div id="bklist"></div>';
+  let all = [], month = new Date(new Date().getFullYear(), new Date().getMonth(), 1), day = '';
   const draw = () => {
     /* Bookings keep arriving after Nabu has walked off this tab, and a
        snapshot with nowhere to go is not an error worth throwing. */
-    if (!$('#bkorders') || !$('#bkcal')) return;
-    /* An hour waiting on Nabu. Nabu is the one who has to be there, so the
-       couple ask and the old hour stands until this is answered. */
-    /* Every wedding Nabu is holding, with what it is waiting for written on
-       it. The room always exists - the request is what creates it - so this
-       is the one place that never depends on an order row being written. */
-    const owed = asks.filter((w) => !w.paid).length;
-    $('#bkasks').innerHTML = asks.length ? '<div class="card"><h3 style="margin-bottom:4px">\uD83D\uDC8D ' + esc(S.adminWeds) + (owed ? ' <span class="n">' + owed + '</span>' : '') + '</h3>'
-      + '<p class="hint" style="margin-bottom:10px">' + esc(S.adminWedsHint) + '</p>'
-      + asks.map((w) => '<div class="bk"><div class="bkh"><b>\uD83D\uDC8D ' + esc(((w.aName || '') + ' & ' + (w.bName || '')).replace(/^ & $/, S.loveSomeone)) + '</b>'
-        + '<span class="st ' + (w.paid ? 'confirmed' : 'requested') + '">' + esc(w.paid ? S.adminWedPaid : S.adminWedOwed) + '</span></div>'
-        + '<p class="hint">' + esc(S.adminWedWas) + ': <b>' + esc(wedWhen(Number(w.startMs) || 0)) + '</b></p>'
-        + (WED.asking(w) ? '<p class="hint">' + esc(S.adminWedWants) + ': <b>' + esc(wedWhen(Number(w.wantMs) || 0)) + '</b></p>' : '')
-        + '<div class="acts">'
-        + (w.paid ? '' : '<button type="button" class="btn sm primary" data-wpaid="' + esc(w.id) + '">\uD83D\uDCB0 ' + esc(S.adminWedGotPaid) + '</button>')
-        + (WED.asking(w) ? '<button type="button" class="btn sm primary" data-wmv="' + esc(w.id) + '">\uD83D\uDD01 ' + esc(S.adminWedMoveOk) + '</button>'
-          + '<button type="button" class="btn sm" data-wmvno="' + esc(w.id) + '">' + esc(S.adminKeep) + '</button>' : '')
-        + '</div></div>').join('')
-      + '</div>' : '';
-    const orders = all.filter((b) => b.kind === 'unlock');
-    const waiting = orders.filter((b) => b.status === 'requested');
-    $('#bkorders').innerHTML = '<div class="card"><h3 style="margin-bottom:4px">\uD83D\uDCB3 ' + esc(S.adminOrders) + (waiting.length ? ' <span class="n">' + waiting.length + '</span>' : '') + '</h3>'
-      + '<p class="hint" style="margin-bottom:10px">' + esc(S.adminOrdersHint) + '</p>'
-      + (orders.length ? waiting.concat(orders.filter((b) => b.status !== 'requested').slice(0, 6)).map((b) => bookingRow(b, true)).join('')
-        : '<p class="empty">' + esc(S.adminOrdersNone) + '</p>') + '</div>';
+    if (!$('#bkcal')) return;
     /* The calendar is for things with an hour in them. Kept separate rather
        than filtered out of `all`, which would empty the orders card the first
        time somebody pressed a month arrow. */
@@ -290,15 +266,7 @@ function adminBookings(p) {
     $$('[data-ics]', p).forEach((b) => b.addEventListener('click', () => { const bk = books.filter((x) => x.id === b.getAttribute('data-ics'))[0]; if (bk) addToCalendar(bk); }));
     $$('[data-bk]', p).forEach((b) => b.addEventListener('click', async () => {
       const bk = all.filter((x) => x.id === b.getAttribute('data-id'))[0];
-      const to = b.getAttribute('data-bk');
-      try {
-        await BE.setBookingStatus(bk, to);
-        /* Taking the money is what opens the door. Confirming the order and
-           leaving the room shut would be the same as not confirming it. */
-        const wed = (bk.items || []).filter((it) => it.id === 'wedding' && it.wid)[0];
-        if (wed && (to === 'confirmed' || to === 'declined')) await WED.setPaid(wed.wid, to === 'confirmed');
-        toast(T().saved);
-      } catch (e) { toast(e.message); }
+      try { await BE.setBookingStatus(bk, b.getAttribute('data-bk')); toast(T().saved); } catch (e) { toast(loveWhy(e)); }
     }));
     /* Calling one off is behind a question, because the hour goes back on the
        calendar and the person who booked it is told. */
@@ -306,6 +274,72 @@ function adminBookings(p) {
       const bk = books.filter((x) => x.id === b.getAttribute('data-bkoff'))[0];
       if (!bk || !confirm(T().adminCancelAsk)) return;
       try { await BE.setBookingStatus(bk, 'cancelled'); toast(T().adminCancelDone); } catch (e) { toast(e.message); }
+    }));
+  };
+  admin.unsubs.push(BE.watchAllBookings((list) => { all = list; draw(); }));
+}
+/* ---- the money, which is not the calendar ----
+
+   Everything waiting on a transfer used to be piled on top of the appointments
+   calendar, a screen for answering who is coming and when. Nabu was reading
+   past the hours to find the money, and the one press that mattered - the
+   transfer arrived - did not exist at all for most of what is sold.
+
+   Confirming and being paid are two presses now, because agreeing to sell
+   something and being paid for it are different days. The second is the one
+   that opens anything, and what it opens is written onto the buyer's own
+   account rather than handed out as a code that travels. */
+function adminPay(p) {
+  const S = T();
+  if (!needAdmin(p)) return;
+  p.innerHTML = '<p class="hint">' + esc(S.payIntro) + '</p><div id="pyweds"></div><div id="pyorders"></div><div id="pybooks"></div>';
+  let all = [], asks = [];
+  const draw = () => {
+    if (!$('#pyweds')) return;
+    const owed = asks.filter((w) => !w.paid).length;
+    $('#pyweds').innerHTML = asks.length ? '<div class="card"><h3 style="margin-bottom:4px">\uD83D\uDC8D ' + esc(S.adminWeds) + (owed ? ' <span class="n">' + owed + '</span>' : '') + '</h3>'
+      + '<p class="hint" style="margin-bottom:10px">' + esc(S.adminWedsHint) + '</p>'
+      + asks.map((w) => '<div class="bk"><div class="bkh"><b>\uD83D\uDC8D ' + esc(((w.aName || '') + ' & ' + (w.bName || '')).replace(/^ & $/, S.loveSomeone)) + '</b>'
+        + '<span class="st ' + (w.paid ? 'confirmed' : 'requested') + '">' + esc(w.paid ? S.adminWedPaid : S.adminWedOwed) + '</span></div>'
+        + '<p class="hint">' + esc(S.adminWedWas) + ': <b>' + esc(wedWhen(Number(w.startMs) || 0)) + '</b></p>'
+        + (WED.asking(w) ? '<p class="hint">' + esc(S.adminWedWants) + ': <b>' + esc(wedWhen(Number(w.wantMs) || 0)) + '</b></p>' : '')
+        + '<div class="acts">'
+        + (w.paid ? '' : '<button type="button" class="btn sm primary" data-wpaid="' + esc(w.id) + '">\uD83D\uDCB0 ' + esc(S.adminWedGotPaid) + '</button>')
+        + (WED.asking(w) ? '<button type="button" class="btn sm primary" data-wmv="' + esc(w.id) + '">\uD83D\uDD01 ' + esc(S.adminWedMoveOk) + '</button>'
+          + '<button type="button" class="btn sm" data-wmvno="' + esc(w.id) + '">' + esc(S.adminKeep) + '</button>' : '')
+        + '</div></div>').join('')
+      + '</div>' : '';
+    const orders = all.filter((b) => b.kind === 'unlock');
+    const waiting = orders.filter((b) => b.status === 'requested');
+    $('#pyorders').innerHTML = '<div class="card"><h3 style="margin-bottom:4px">\uD83D\uDCB3 ' + esc(S.adminOrders) + (waiting.length ? ' <span class="n">' + waiting.length + '</span>' : '') + '</h3>'
+      + '<p class="hint" style="margin-bottom:10px">' + esc(S.adminOrdersHint) + '</p>'
+      + (orders.length ? waiting.concat(orders.filter((b) => b.status !== 'requested').slice(0, 6)).map((b) => bookingRow(b, true)).join('')
+        : '<p class="empty">' + esc(S.adminOrdersNone) + '</p>') + '</div>';
+    /* Readings: nothing to unlock, but Nabu still has to know which of them
+       have been settled. */
+    const books = all.filter((b) => b.kind !== 'unlock' && ['declined', 'cancelled'].indexOf(b.status) < 0);
+    const owing = books.filter((b) => !b.paid);
+    $('#pybooks').innerHTML = '<div class="card"><h3 style="margin-bottom:4px">\uD83D\uDCC5 ' + esc(S.payBookings) + (owing.length ? ' <span class="n">' + owing.length + '</span>' : '') + '</h3>'
+      + '<p class="hint" style="margin-bottom:10px">' + esc(S.payBookingsHint) + '</p>'
+      + (books.length ? owing.concat(books.filter((b) => b.paid).slice(0, 6)).map((b) => bookingRow(b, true)).join('')
+        : '<p class="empty">' + esc(S.payNone) + '</p>') + '</div>';
+
+    $$('[data-bk]', p).forEach((b) => b.addEventListener('click', async () => {
+      const bk = all.filter((x) => x.id === b.getAttribute('data-id'))[0];
+      try { await BE.setBookingStatus(bk, b.getAttribute('data-bk')); toast(T().saved); } catch (e) { toast(loveWhy(e)); }
+    }));
+    /* The press that matters. It writes what was bought onto the buyer's own
+       account, so there is no code for anybody to pass around. */
+    $$('[data-paid]', p).forEach((b) => b.addEventListener('click', async () => {
+      const bk = all.filter((x) => x.id === b.getAttribute('data-paid'))[0];
+      if (!bk) return;
+      b.disabled = true;
+      try {
+        const opened = await BE.markPaid(bk);
+        const wed = (bk.items || []).filter((it) => it.id === 'wedding' && it.wid)[0];
+        if (wed) await WED.setPaid(wed.wid, true);
+        toast(opened.length ? T().payOpened(opened.map(accessName).join(', ')) : T().payMarked);
+      } catch (e) { b.disabled = false; toast(loveWhy(e)); }
     }));
     /* The one thing Nabu could not do anywhere: say the money arrived. */
     $$('[data-wpaid]', p).forEach((b) => b.addEventListener('click', async () => {

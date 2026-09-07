@@ -13,9 +13,36 @@ function titleHTML(text) {
   return esc(text).replace(/(\d[\d.\/-]*)\s*([–—-])\s*(\d[\d.\/-]*)/g, '<span class="nb">$1 $2 $3</span>');
 }
 const esc = (s) => String(s == null ? '' : s).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+/* Copies of files the app can simply fetch again. They are the first thing to
+   go when the phone says it has no room, because losing them costs a moment of
+   waiting and losing anything else costs the thing itself. */
+const STORE_SPARE = ['nabu-fb', 'nabu-horo', 'nabu-acts', 'nabu-acts-stock', 'nabu-privacy', 'nabu-posts'];
+let STORE_SAID = 0;
+
 const store = {
   get(k, d) { try { const v = localStorage.getItem(k); return v == null ? d : JSON.parse(v); } catch (e) { return d; } },
-  set(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) { /* private mode */ } },
+  /* A write that fails is not a write, and this used to pretend otherwise.
+     When the phone is full every set() throws; swallowing that made the app
+     forget things without ever saying so - a notification marked read that
+     came back unread, because the screen then redrew itself from the last list
+     that had stored successfully, which was an older one. Same three lines
+     behind every setting, every diary page, and everything unlocked. */
+  set(k, v) {
+    try { localStorage.setItem(k, JSON.stringify(v)); return true; } catch (e) { /* full, probably */ }
+    let freed = false;
+    STORE_SPARE.forEach((s) => {
+      if (s === k) return;
+      try { if (localStorage.getItem(s) != null) { localStorage.removeItem(s); freed = true; } } catch (e2) { /* nothing there */ }
+    });
+    if (freed) { try { localStorage.setItem(k, JSON.stringify(v)); return true; } catch (e3) { /* still full */ } }
+    /* Said once in a while, not once per write: a full phone fails every write
+       there is, and sixty toasts is not a clearer message than one. */
+    if (Date.now() - STORE_SAID > 60000) {
+      STORE_SAID = Date.now();
+      try { toast(T().storeFull); } catch (e4) { /* too early to have a screen */ }
+    }
+    return false;
+  },
   del(k) { try { localStorage.removeItem(k); } catch (e) { /* private mode */ } }
 };
 const pad2 = (n) => String(n).padStart(2, '0');

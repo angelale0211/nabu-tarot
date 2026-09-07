@@ -12,7 +12,7 @@
      carries this notice with it. See LICENSE. -->
 <meta name="author" content="Nabu Tarot">
 <meta name="copyright" content="Copyright (c) 2025-2026 Nabu Tarot. All rights reserved.">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'none'; object-src 'none'; form-action 'self'; script-src 'self' 'sha256-LXjdo1rJgB+Z/SnYdHd5SYViLvF91XMyE6jvU37S1Eo=' https://www.gstatic.com https://apis.google.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; font-src 'self' data:; media-src 'self' data: blob:; worker-src 'self'; connect-src 'self' https://*.googleapis.com https://*.google.com https://*.firebaseio.com https://*.cloudfunctions.net https://*.workers.dev https://generativelanguage.googleapis.com; frame-src https://*.firebaseapp.com https://accounts.google.com https://*.facebook.com">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'none'; object-src 'none'; form-action 'self'; script-src 'self' 'sha256-AWMQha86F+BXe5r3YHpVbWfU5lhkLFCsA9rppZcok+Q=' https://www.gstatic.com https://apis.google.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; font-src 'self' data:; media-src 'self' data: blob:; worker-src 'self'; connect-src 'self' https://*.googleapis.com https://*.google.com https://*.firebaseio.com https://*.cloudfunctions.net https://*.workers.dev https://generativelanguage.googleapis.com; frame-src https://*.firebaseapp.com https://accounts.google.com https://*.facebook.com">
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <meta name="theme-color" content="#EFE9FA">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -2654,6 +2654,28 @@ const STR = {
     wedByeNoShow: 'Lễ cưới không diễn ra được hôm nay.',
     wedByeShut: 'Phòng cưới sẽ tự đóng sau thời gian trên.',
     wedByeGone: 'Phòng cưới đã đóng. Cảm ơn bạn nhé 💕',
+    alertClearAsk: 'Xoá hết thông báo? Xoá rồi thì không lấy lại được đâu nhé.',
+    alertClearYes: 'Có, xoá hết', alertReadDone: 'Đã đánh dấu đã đọc.',
+    payIntro: 'Chỗ theo dõi tiền. Xác nhận đơn là bạn đồng ý bán; bấm Đã nhận tiền khi khách đã chuyển — lúc đó phần họ mua mới mở ra, và mở thẳng trên tài khoản của họ nên không chia cho ai được.',
+    payBookings: 'Lịch xem bài', payBookingsHint: 'Buổi xem bài thì không có gì để mở khoá, chỉ đánh dấu là đã nhận tiền thôi.',
+    payNone: 'Chưa có gì chờ thanh toán.',
+    adminGotPaid: 'Đã nhận tiền', adminPaidTag: 'Đã thanh toán',
+    payMarked: 'Đã đánh dấu là đã nhận tiền.',
+    payOpened: (n) => 'Đã mở ' + n + ' cho khách rồi nhé.',
+    storeFull: 'Máy của bạn đầy bộ nhớ rồi nên Nabu chưa lưu lại được. Bạn thử xoá bớt dữ liệu trình duyệt hoặc ứng dụng khác giúp Nabu nhé.',
+    wedStartBoth: 'Một người bấm bắt đầu, người còn lại xác nhận là đã sẵn sàng thì lễ cưới mới diễn ra nhé.',
+    wedImReady: 'Mình sẵn sàng rồi',
+    wedWaitReady: (n) => 'Đang đợi ' + n + ' xác nhận…',
+    wedWaitReadyHint: (n) => 'Bạn đã sẵn sàng rồi. Lễ cưới sẽ bắt đầu ngay khi ' + n + ' xác nhận.',
+    wedReadySent: 'Đã báo với người ấy là bạn sẵn sàng rồi.',
+    wedAlmost: 'Cô dâu chú rể sắp bắt đầu rồi, bạn đợi một chút nhé.',
+    wedTalkTitle: 'Chỉ hai bạn đọc được',
+    wedTalkHint: 'Khách không thấy được phần này. Hai bạn bàn nhau xem bắt đầu luôn hay đợi thêm ai nữa.',
+    wedTalkNone: 'Chưa có tin nhắn nào.', wedTalkPh: 'Nhắn riêng cho người ấy…',
+    wedAlreadyLead: 'Hai bạn cưới nhau rồi mà! 💕',
+    wedAlreadyHint: (d) => 'Lễ cưới của hai bạn đã diễn ra ngày ' + d + ' rồi nên không tổ chức thêm một lễ nữa được đâu nhé.',
+    loveTakenLead: 'Người này đã có sợi chỉ với người khác rồi.',
+    loveTakenHint: 'Bạn thử tìm tên của một người chưa có đôi trong Nabu nhé.',
     meInboxHint: 'Mọi cuộc trò chuyện với khách nằm ở Hộp thư trong trang điều khiển.',
     meGroupYou: 'Bạn là ai', meGroupTalk: 'Trò chuyện & lịch hẹn', meGroupOwn: 'Bạn đang có gì', meGroupApp: 'Ứng dụng',
     imgSaved: 'Đã lưu ảnh về máy 📷',
@@ -2757,6 +2779,15 @@ const STR = {
     ],
     wedAgree: 'Tôi đã đọc và đồng ý với các điều khoản trên.',
     wedAgreeFirst: 'Bạn đọc và tích vào ô đồng ý ở trên để tiếp tục nhé.',
+    wedHowTitle: 'Trong phòng cưới có gì',
+    wedHow: [
+      'Hai bạn cùng xác nhận thì lễ mới bắt đầu: một người bấm “Bắt đầu buổi lễ”, người kia bấm “Mình sẵn sàng rồi”.',
+      'Ngay trên màn hình có dòng cho biết người ấy đã vào phòng chưa, và đang có bao nhiêu khách.',
+      'Hai bạn có một ô nhắn riêng cho nhau, khách không đọc được.',
+      'Muốn mời thêm ai, bạn kéo xuống cuối trang — mời được cả khi đang trong phòng.',
+      'Nabu Cupid hỏi, hai bạn lần lượt trả lời trước mặt khách. Xong xuôi thì tới màn tung hoa cưới.',
+      'Sau giờ lễ 15 phút mà chưa ai bắt đầu thì phòng tự đóng, và lễ coi như đã dùng.'
+    ],
     wedRules: [
       'Buổi lễ bắt đầu đúng giờ đã chọn — một trong hai bạn cần bấm “Bắt đầu” trong 15 phút đầu.',
       'Đổi ngày giờ: được một lần, chậm nhất trước giờ lễ 1 tiếng.',
@@ -2928,7 +2959,7 @@ const STR = {
 
     adminTitle: 'Điều khiển',
     adminIntro: 'Trang này chỉ dành cho Nabu.',
-    adminTabs: { posts: '📝 Bài đăng', acts: '🎲 Hoạt động', schedule: '🕒 Lịch rảnh', bookings: '📅 Đặt lịch', inbox: '💬 Tin nhắn', codes: '🔑 Mã học', sale: '🏷️ Khuyến mãi' },
+    adminTabs: { posts: '📝 Bài đăng', acts: '🎲 Hoạt động', schedule: '🕒 Lịch rảnh', bookings: '📅 Đặt lịch', pay: '💰 Thanh toán', inbox: '💬 Tin nhắn', codes: '🔑 Mã học', sale: '🏷️ Khuyến mãi' },
     codeChecking: 'Đang kiểm tra mã…', codeOffline: 'Chưa kiểm tra được mã lúc này. Bạn thử lại khi có mạng nhé.',
     copyCode: 'Sao chép mã', codeOnceOnly: 'Bạn hãy lưu mã này lại. App chỉ giữ dấu vân của mã nên sau này không xem lại được mã gốc.',
     codePublishing: 'Đang lưu mã…', codeOldLabel: 'Thêm mã bạn đã phát trước đây', codeOldAdd: 'Thêm các mã này',
@@ -3409,6 +3440,28 @@ const STR = {
     wedByeNoShow: 'The ceremony could not take place today.',
     wedByeShut: 'The room closes by itself when this runs out.',
     wedByeGone: 'The room has closed. Thank you for coming \uD83D\uDC95',
+    alertClearAsk: 'Throw away every notification? There is no getting them back.',
+    alertClearYes: 'Yes, clear them', alertReadDone: 'Marked as read.',
+    payIntro: 'Where the money is tracked. Confirming an order is agreeing to sell; press Payment received once it has arrived \u2014 that is what opens what they bought, written onto their own account so it cannot be passed round.',
+    payBookings: 'Readings', payBookingsHint: 'A reading has nothing to unlock; this only records that it has been settled.',
+    payNone: 'Nothing waiting to be paid.',
+    adminGotPaid: 'Payment received', adminPaidTag: 'Paid',
+    payMarked: 'Marked as paid.',
+    payOpened: (n) => 'Opened ' + n + ' for them.',
+    storeFull: 'This phone has no storage left, so Nabu could not save that. Freeing some space in the browser or another app will fix it.',
+    wedStartBoth: 'One of you presses begin and the other confirms they are ready \u2014 the ceremony starts only then.',
+    wedImReady: 'I am ready',
+    wedWaitReady: (n) => 'Waiting for ' + n + '\u2026',
+    wedWaitReadyHint: (n) => 'You are ready. It begins the moment ' + n + ' confirms.',
+    wedReadySent: 'They have been told you are ready.',
+    wedAlmost: 'The couple are about to begin. One moment.',
+    wedTalkTitle: 'Only the two of you', 
+    wedTalkHint: 'Guests cannot see this. Sort out between you whether to begin now or wait for somebody.',
+    wedTalkNone: 'Nothing said yet.', wedTalkPh: 'A word to them alone\u2026',
+    wedAlreadyLead: 'You two are already married \uD83D\uDC95',
+    wedAlreadyHint: (d) => 'Your wedding took place on ' + d + ', so there is no second one to hold.',
+    loveTakenLead: 'This person already has a thread with somebody else.',
+    loveTakenHint: 'Try the name of somebody who has no partner in Nabu yet.',
     meInboxHint: 'Every conversation with a visitor lives in the Inbox on the dashboard.',
     meGroupYou: 'Who you are', meGroupTalk: 'Messages & bookings', meGroupOwn: 'What you have', meGroupApp: 'The app',
     imgSaved: 'Saved to your phone \uD83D\uDCF7',
@@ -3512,6 +3565,15 @@ const STR = {
     ],
     wedAgree: 'I have read and agree to these terms.',
     wedAgreeFirst: 'Please read the terms and tick the box to continue.',
+    wedHowTitle: 'How the room works',
+    wedHow: [
+      'It takes both of you to begin: one presses “Begin the ceremony” and the other confirms “I am ready”.',
+      'A line on the screen says whether the other one has arrived, and how many guests are here.',
+      'The two of you have a private box no guest can read.',
+      'To invite anybody else, scroll to the bottom — it works from inside the room too.',
+      'Nabu Cupid asks; you answer in turn in front of everyone. Then comes the bouquet.',
+      'If nobody has begun fifteen minutes after the hour, the room closes itself and the wedding counts as used.'
+    ],
     wedRules: [
       'It begins at the hour you chose \u2014 one of you presses Begin within the first 15 minutes.',
       'Moving the day: once, and no later than an hour before.',
@@ -3683,7 +3745,7 @@ const STR = {
 
     adminTitle: 'Dashboard',
     adminIntro: 'This page is for Nabu only.',
-    adminTabs: { posts: '📝 Posts', acts: '🎲 Activities', schedule: '🕒 Hours', bookings: '📅 Bookings', inbox: '💬 Inbox', codes: '🔑 Codes', sale: '🏷️ Sale' },
+    adminTabs: { posts: '📝 Posts', acts: '🎲 Activities', schedule: '🕒 Hours', bookings: '📅 Bookings', pay: '💰 Payments', inbox: '💬 Inbox', codes: '🔑 Codes', sale: '🏷️ Sale' },
     codeChecking: 'Checking the code…', codeOffline: 'The code cannot be checked right now. Please try again when you are online.',
     copyCode: 'Copy the code', codeOnceOnly: 'Keep this code somewhere. The app stores only a fingerprint of it, so it cannot be shown again.',
     codePublishing: 'Saving the code…', codeOldLabel: 'Add codes you handed out before', codeOldAdd: 'Add these codes',
@@ -10678,9 +10740,36 @@ function titleHTML(text) {
   return esc(text).replace(/(\d[\d.\/-]*)\s*([–—-])\s*(\d[\d.\/-]*)/g, '<span class="nb">$1 $2 $3</span>');
 }
 const esc = (s) => String(s == null ? '' : s).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+/* Copies of files the app can simply fetch again. They are the first thing to
+   go when the phone says it has no room, because losing them costs a moment of
+   waiting and losing anything else costs the thing itself. */
+const STORE_SPARE = ['nabu-fb', 'nabu-horo', 'nabu-acts', 'nabu-acts-stock', 'nabu-privacy', 'nabu-posts'];
+let STORE_SAID = 0;
+
 const store = {
   get(k, d) { try { const v = localStorage.getItem(k); return v == null ? d : JSON.parse(v); } catch (e) { return d; } },
-  set(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) { /* private mode */ } },
+  /* A write that fails is not a write, and this used to pretend otherwise.
+     When the phone is full every set() throws; swallowing that made the app
+     forget things without ever saying so - a notification marked read that
+     came back unread, because the screen then redrew itself from the last list
+     that had stored successfully, which was an older one. Same three lines
+     behind every setting, every diary page, and everything unlocked. */
+  set(k, v) {
+    try { localStorage.setItem(k, JSON.stringify(v)); return true; } catch (e) { /* full, probably */ }
+    let freed = false;
+    STORE_SPARE.forEach((s) => {
+      if (s === k) return;
+      try { if (localStorage.getItem(s) != null) { localStorage.removeItem(s); freed = true; } } catch (e2) { /* nothing there */ }
+    });
+    if (freed) { try { localStorage.setItem(k, JSON.stringify(v)); return true; } catch (e3) { /* still full */ } }
+    /* Said once in a while, not once per write: a full phone fails every write
+       there is, and sixty toasts is not a clearer message than one. */
+    if (Date.now() - STORE_SAID > 60000) {
+      STORE_SAID = Date.now();
+      try { toast(T().storeFull); } catch (e4) { /* too early to have a screen */ }
+    }
+    return false;
+  },
   del(k) { try { localStorage.removeItem(k); } catch (e) { /* private mode */ } }
 };
 const pad2 = (n) => String(n).padStart(2, '0');
@@ -11465,7 +11554,21 @@ const BE = {
           b: d.revoked.why || T().accessGoneBody, href: '#/me' }, true);
       }
     }
-    if (d.access) { const a = ACCESS.get(); Object.keys(d.access).forEach((k) => { if (!a[k] || d.access[k] > a[k]) a[k] = d.access[k]; }); store.set('nabu-access', a); }
+    if (d.access) {
+      const a = ACCESS.get(), fresh = [];
+      Object.keys(d.access).forEach((k) => {
+        if (!a[k] || d.access[k] > a[k]) { if (!a[k]) fresh.push(k); a[k] = d.access[k]; }
+      });
+      store.set('nabu-access', a);
+      /* Opened by Nabu rather than by a code on this phone, so nothing has
+         said so yet. Somebody who has just paid should not have to go looking
+         for what they bought. */
+      if (fresh.length && typeof ALERTS !== 'undefined') {
+        ALERTS.add({ id: 'unlocked-' + fresh.join('+') + '-' + d.access[fresh[0]], k: 'app',
+          t: T().accessOnTitle(fresh.map(accessName).join(', ')),
+          b: T().accessOnBody(fmtDate(d.access[fresh[0]])), href: '#/me' });
+      }
+    }
     delete d.access; delete d.revoked; saveProfileLocal(d);
   },
   async pushProfile() {
@@ -11473,6 +11576,33 @@ const BE = {
     const p = { name: PROFILE.name || this.user.displayName || '', birthday: PROFILE.birthday || '', interests: PROFILE.interests || [],
       tourDone: !!PROFILE.tourDone, email: this.user.email || '', access: ACCESS.get(), updatedAt: firebase.firestore.FieldValue.serverTimestamp() };
     await this.db.collection('users').doc(this.user.uid).set(p, { merge: true });
+  },
+
+  /* Paid for. Two presses rather than one, because agreeing to sell
+     something and being paid for it are different days, and only the second
+     one should open anything.
+
+     What it opens is written onto the buyer's own account. A code is a string
+     and travels: whatever one customer can paste, five friends can paste, and
+     what was sold once gets used by a household. An account cannot be handed
+     round the same way. */
+  async markPaid(b) {
+    await this.db.collection('bookings').doc(b.id).set(
+      { paid: true, paidAt: Date.now(), status: b.status === 'requested' ? 'confirmed' : (b.status || 'confirmed') }, { merge: true });
+    const ids = (b.items || []).map((it) => it.id)
+      .filter((id) => COURSES.some((c) => c.id === id));
+    if (ids.length && b.uid) await this.grantAccess(b.uid, ids);
+    return ids;
+  },
+  /* Opened on the account, for as long as the thing is sold for. */
+  async grantAccess(uid, ids) {
+    const a = {}, today = isoDate(new Date());
+    ids.forEach((id) => {
+      const c = COURSES.filter((x) => x.id === id)[0];
+      a[id] = addMonths(today, (c && c.months) || 12);
+    });
+    await this.db.collection('users').doc(uid).set({ access: a }, { merge: true });
+    return a;
   },
 
   /* What somebody holds, so it can be looked at before anything is taken. */
@@ -13113,10 +13243,13 @@ function renderUnlock(args, params) {
           + '<p class="hint" style="margin-bottom:10px">' + esc(S.unlockTiers) + '</p>' + group(UNL_TIERS) + '</div>';
         const wed = '<div class="sec" data-sec="wedding"><h2 style="margin-bottom:8px">\uD83D\uDC92 ' + esc(S.unlockWedding) + '</h2>'
           + '<p class="hint" style="margin-bottom:10px">' + esc(S.unlockWeddingHint) + '</p>' + group(['wedding']) + '</div>';
-        /* Which of these is the answer depends on the door they came through. */
-        if (from === 'app') return tiers + courses + wed;
+        /* A wedding is not a thing to browse beside a tarot course: it needs a
+           thread, two people and a date already agreed. It is offered inside
+           the love system and shown here only to somebody who arrived from
+           there, to pay for the one they have already asked for. */
         if (from === 'wedding') return wed + tiers + courses;
-        return courses + tiers + wed;
+        if (from === 'app') return tiers + courses;
+        return courses + tiers;
       })()
       + (isTWA() ? '' : '<div class="sec"><h2 style="margin-bottom:8px">' + esc(S.unlockCart) + '</h2><div id="ucart">' + unlockCartHTML() + '</div>'
         + rewardPanelHTML(unlockBase(), UNL_USE)
@@ -18939,7 +19072,12 @@ function unlockRequestRow(b, admin) {
   const meta = admin && (b.name || b.email) ? '🙋 ' + esc([b.name, b.email].filter(Boolean).join(' · ')) : '';
   let acts = '';
   if (admin && b.status === 'requested') acts = '<button class="btn sm primary" data-bk="confirmed" data-id="' + b.id + '">' + esc(S.confirm) + '</button><button class="btn sm" data-bk="declined" data-id="' + b.id + '">' + esc(S.decline) + '</button>';
-  return '<div class="bk unlockreq"><div class="bkh"><b>🔓 ' + esc(S.reqKindUnlock) + '</b><span class="st ' + esc(b.status || '') + '">' + esc((S.status && S.status[b.status]) || b.status || '') + '</span></div>'
+  /* The second press. Confirming was only ever an agreement to sell; this is
+     the money arriving, and this is what opens anything. */
+  if (admin && !b.paid && ['declined', 'cancelled'].indexOf(b.status) < 0) {
+    acts += '<button type="button" class="btn sm primary" data-paid="' + b.id + '">💰 ' + esc(S.adminGotPaid) + '</button>';
+  }
+  return '<div class="bk unlockreq' + (b.paid ? ' ispaid' : '') + '"><div class="bkh"><b>🔓 ' + esc(S.reqKindUnlock) + '</b><span class="st ' + esc(b.paid ? 'confirmed' : (b.status || '')) + '">' + esc(b.paid ? S.adminPaidTag : ((S.status && S.status[b.status]) || b.status || '')) + '</span></div>'
     + (list ? '<ul>' + list + '</ul>' : '')
     + (b.price ? '<div class="tot"><span>' + esc(S.unlockTotal) + '</span><b>' + fmtPrice(b.price) + '</b></div>' : '')
     + (meta ? '<p class="hint">' + meta + '</p>' : '')
@@ -18968,6 +19106,9 @@ function bookingRow(b, admin) {
     /* Nabu could confirm, decline, and agree to a cancellation somebody else
        asked for - but not call one off. Anyone who takes bookings falls ill. */
     if (live && b.status !== 'cancel_requested') acts += '<button type="button" class="btn sm" data-bkoff="' + b.id + '">✕ ' + esc(S.adminCancel) + '</button>';
+    /* A reading has nothing to unlock, but Nabu still needs to know which
+       ones have been settled. */
+    if (!b.paid && live) acts += '<button type="button" class="btn sm" data-paid="' + b.id + '">💰 ' + esc(S.adminGotPaid) + '</button>';
     if (live && future) acts += '<button type="button" class="btn sm" data-ics="' + b.id + '">📅 ' + esc(S.addToCalendar) + '</button><a class="btn sm" href="' + esc(gcalLink(b)) + '" target="_blank" rel="noopener">🗓 ' + esc(S.gcal) + '</a>';
   } else if (live && future) {
     acts = '<a class="btn sm" href="#/book?change=' + esc(b.id) + '">🔁 ' + esc(S.changeSlot) + '</a><button class="btn sm" data-cancel="' + b.id + '">✕ ' + esc(S.cancelBooking) + '</button>'
@@ -20401,7 +20542,32 @@ const WED = {
         .sort((a, b) => Number(a.startMs) - Number(b.startMs)));
     }, () => cb([]));
   },
+  /* Beginning takes two. It was one press by whichever of them reached the
+     button first, so a ceremony could start in front of the guests with the
+     other one still reading the guest list. */
+  bothReady(w) { const r = (w && w.ready) || {}; return !!(r.a && r.b); },
+  iamReady(w) { const r = (w && w.ready) || {}; return !!r[this.side(w)]; },
+  sayReady(id, w) {
+    const k = 'ready.' + this.side(w);
+    const patch = {}; patch[k] = true;
+    return BE.db.collection('weddings').doc(id).update(patch);
+  },
   callOff(id) { return BE.db.collection('weddings').doc(id).update({ state: 'called-off' }); },
+  /* A quiet line between the two of them. Everything else in that room is said
+     in front of a hundred people. */
+  sayTo(id, text, name) {
+    return BE.db.collection('weddings').doc(id).collection('talk')
+      .doc(this.me() + '__' + Date.now()).set({
+        from: this.me(), name: String(name || '').slice(0, 40),
+        text: String(text || '').slice(0, 300), at: Date.now()
+      });
+  },
+  watchTalk(id, cb) {
+    if (!this.ok() || !id) return () => {};
+    return BE.db.collection('weddings').doc(id).collection('talk').limit(80)
+      .onSnapshot((s) => cb(s.docs.map((d) => Object.assign({ id: d.id }, d.data()))
+        .sort((a, b) => Number(a.at || 0) - Number(b.at || 0))), () => cb([]));
+  },
   drop(id) { return BE.db.collection('weddings').doc(id).delete(); },
 
   /* An answer and the step it moves. Written together so the room can never
@@ -20954,7 +21120,7 @@ function renderWedding(args) {
   };
 
   /* ------------------------------------------------------------- the room --- */
-  let gifts = [], guests = [], says = [], bouquetShown = 0;
+  let gifts = [], guests = [], says = [], talk = [], bouquetShown = 0;
   /* Where the reader was in the comments, so a repaint does not move them. */
   const SAYAT = { top: 0, h: 0 };
   /* Who was standing here a moment ago, so an arrival is an arrival and not
@@ -21015,8 +21181,14 @@ function renderWedding(args) {
             + '<p class="hint">' + esc(S.wedStartsAt(wedWhen(startMs))) + '</p>'
           : '<p class="hint">' + esc(S.wedGuestWait(wedWhen(startMs))) + '</p>');
     } else if (mine && !w.doneAt && (w.step | 0) === 0) {
-      act = '<button type="button" class="btn primary block" id="wedon">' + esc(S.wedStart) + '</button>'
-        + '<p class="hint">' + esc(S.wedStartNow) + '</p>';
+      /* One says begin, the other says ready. Neither alone starts a wedding
+         in front of a room full of people. */
+      const iam = WED.iamReady(w);
+      act = iam
+        ? '<button type="button" class="btn primary block" disabled>' + esc(S.wedWaitReady(youName)) + '</button>'
+          + '<p class="hint">' + esc(S.wedWaitReadyHint(youName)) + '</p>'
+        : '<button type="button" class="btn primary block" id="wedready">' + esc(WED.iamReady(w) ? S.wedStart : (w.ready && Object.keys(w.ready).length ? S.wedImReady : S.wedStart)) + '</button>'
+          + '<p class="hint">' + esc(S.wedStartBoth) + '</p>';
     } else if (askingMe) {
       act = '<div class="vowrow"><button type="button" class="btn primary" id="wedyes">' + esc(S.wedIDo) + '</button>'
         + '<button type="button" class="btn" id="wedno">' + esc(S.wedNotYet) + '</button></div>'
@@ -21026,7 +21198,9 @@ function renderWedding(args) {
     } else if (mine && !step.who && !w.doneAt) {
       act = '<button type="button" class="btn primary block" id="wedon">' + esc(S.wedGoOn) + '</button>';
     } else if (!mine && !w.doneAt) {
-      act = '<p class="hint" style="text-align:center">' + esc(S.wedWatching) + '</p>';
+      /* Guests are told what is holding it up, rather than watching a screen
+         that says nothing while two people sort themselves out. */
+      act = '<p class="hint" style="text-align:center">' + esc((w.step | 0) === 0 && w.ready && Object.keys(w.ready).length ? S.wedAlmost : S.wedWatching) + '</p>';
     }
 
     /* the bouquet, after the vows */
@@ -21101,6 +21275,14 @@ function renderWedding(args) {
       + whoHere
       + act + '</div>'
       + bq
+      + (mine ? '<div class="card talkcard"><div class="ghead"><span class="gk">\uD83E\uDD1D</span><h3>' + esc(S.wedTalkTitle) + '</h3></div>'
+        + '<p class="hint" style="margin-bottom:8px">' + esc(S.wedTalkHint) + '</p>'
+        + (talk.length ? '<ul class="saylist" id="talklist">' + talk.slice(-40).map((x) =>
+          '<li' + (x.from === (BE.user ? BE.user.uid : '') ? ' class="me"' : '') + '><b>' + esc(x.name || S.loveSomeone) + '</b>'
+          + '<span>' + esc(x.text) + '</span></li>').join('') + '</ul>'
+          : '<p class="hint">' + esc(S.wedTalkNone) + '</p>')
+        + '<div class="row nw saybar"><input id="wedtalkin" maxlength="300" placeholder="' + esc(S.wedTalkPh) + '">'
+        + '<button type="button" class="btn primary" id="wedtalkgo">' + esc(S.wedSayGo) + '</button></div></div>' : '')
       + guestListHTML(w, guests)
       + giftBox
       /* A wedding you can speak at. Everyone in the room, the couple included. */
@@ -21123,15 +21305,19 @@ function renderWedding(args) {
        no-show, so a ceremony that finished kept its room open with nothing
        counting anything down, and anybody standing in a room whose hour had
        long passed simply stayed there. */
-    if (shutAt > 0) {
+    if (shutAt > 0 && !byeSoon) {
+      /* Nothing to show yet. One wake-up when the announcement is due beats a
+         tick a second for the minutes until then - a timer running for no
+         reason on somebody's phone, and, under a test clock, minutes of budget
+         spent counting to itself. */
+      if (tick) { clearInterval(tick); tick = null; }
+      tick = setTimeout(paint, Math.max(500, shutAt - WED_BYE_MS - Date.now()));
+    } else if (shutAt > 0) {
       if (tick) { clearInterval(tick); tick = null; }
       tick = setInterval(() => {
         const left = Math.max(0, shutAt - Date.now());
         const el = $('#wedbye') || $('#wedshut');
         if (el) el.textContent = wedCountdown(Date.now() + left);
-        /* The announcement appears on its own, without waiting for anything
-           else to happen in the room. */
-        if (!byeSoon && left <= WED_BYE_MS) { paint(); return; }
         if (left <= 0) {
           /* Whoever is the couple writes it shut for good. Everybody else is
              simply shown out - a screen for a room that no longer exists is
@@ -21168,6 +21354,18 @@ function renderWedding(args) {
     };
     { const y = $('#wedyes'); if (y) y.addEventListener('click', () => { y.disabled = true; ans(true); }); }
     { const n = $('#wedno'); if (n) n.addEventListener('click', () => { if (!confirm(S.wedNoSure)) return; ans(false); }); }
+    /* Saying begin, or saying ready - the same button, and the second press
+       is the one that starts it. */
+    { const r = $('#wedready');
+      if (r) r.addEventListener('click', async () => {
+        r.disabled = true;
+        try {
+          await WED.sayReady(w.id, w);
+          const both = WED.bothReady(Object.assign({}, w, { ready: Object.assign({}, w.ready || {}, (() => { const o2 = {}; o2[WED.side(w)] = true; return o2; })()) }));
+          if (both) { await WED.onward(w.id, w); WEDMUSIC.chime(); }
+          else toast(S.wedReadySent);
+        } catch (e) { r.disabled = false; toast(loveWhy(e)); }
+      }); }
     { const o = $('#wedon');
       if (o) o.addEventListener('click', async () => {
         o.disabled = true;
@@ -21182,6 +21380,18 @@ function renderWedding(args) {
         } catch (e) { o.disabled = false; toast(loveWhy(e)); }
       }); }
     bindInvite(w);
+    { const tb = $('#wedtalkin'), tg = $('#wedtalkgo');
+      const sendTalk = async () => {
+        const t2 = (tb.value || '').trim();
+        if (!t2) return;
+        tb.value = '';
+        try { await WED.sayTo(w.id, t2, WED.side(w) === 'a' ? (w.aName || '') : (w.bName || '')); }
+        catch (e) { toast(loveWhy(e)); }
+      };
+      if (tg) tg.addEventListener('click', sendTalk);
+      if (tb) tb.addEventListener('keydown', (e) => { if (e.key === 'Enter') { e.preventDefault(); sendTalk(); } });
+      const tl = $('#talklist');
+      if (tl) tl.scrollTop = tl.scrollHeight; }
     { /* Said once, and shown to everybody. */
       const box = $('#wedsayin'), go = $('#wedsaygo');
       const send = async () => {
@@ -21295,6 +21505,19 @@ function renderWedding(args) {
   const drawPlan = (bond, w) => {
     const me = WED.me(), you = LOVE.other(bond, me);
     const nm = (you && (you.name || (you.handle ? '@' + you.handle : ''))) || S.loveSomeone;
+    /* Married already. The day is on the thread, and that day is what a
+       wedding is - so this pair are done. An hour nobody came to records
+       nothing, which is why a room that was never used leaves them free to ask
+       again; and untying the thread clears the record with it. */
+    if (!w && bond && bond.marriedOn) {
+      m.innerHTML = head()
+        + '<div class="card wedcard">' + cupidSVG('joy')
+        + '<p class="wedpair">' + esc((LOVE.mine(bond, WED.me()) || {}).name || '') + ' \u2764 ' + esc(nm) + '</p>'
+        + '<p class="lead" style="text-align:center">' + esc(S.wedAlreadyLead) + '</p>'
+        + '<p class="hint" style="text-align:center">' + esc(S.wedAlreadyHint(fmtDate(bond.marriedOn))) + '</p></div>'
+        + '<p><a class="backlink" href="#/love">\u2190 ' + esc(S.loveTitle) + '</a></p>';
+      return;
+    }
     if (!w) {
       /* The hour they chose before paying, if they chose one. */
       const wanted2 = Number(store.get('nabu-wed-want', 0)) || 0;
@@ -21370,6 +21593,12 @@ function renderWedding(args) {
       /* Three lines, one fact each. The full terms live on the screen where
          they were agreed to; repeating all four here is noise. */
       + '<ul class="wedrules">' + S.wedRules.map((r) => '<li>' + esc(r) + '</li>').join('') + '</ul>'
+      /* And how the room itself works, folded, because it is six lines and
+         only wanted once. They used to walk into a room with a guest list, a
+         gift table, a comment feed and a button, in front of everybody they
+         had invited, and work it out live. */
+      + '<details class="sect howroom"><summary><span class="si">\uD83D\uDCD6</span><b>' + esc(S.wedHowTitle) + '</b><span class="sx">\u203A</span></summary>'
+      + '<div class="sbody"><ol class="terms">' + S.wedHow.map((x) => '<li>' + esc(x) + '</li>').join('') + '</ol></div></details>'
       /* Unpaid, said once, softly, with the way to settle it. */
       + (ACCESS.has('wedding') ? ''
         : '<p class="hint hold">' + esc(S.wedUnpaid) + ' <a href="#/wedding/pay">' + esc(S.wedPayNow) + ' \u2192</a></p>')
@@ -21487,8 +21716,13 @@ function renderWedding(args) {
      the thread; only a guest's link stands on its own. */
   const guestLink = wanted && wanted !== 'pay' && wanted !== 'room';
   const id = guestLink ? wanted : (LOVE.local().bond || '');
+  /* One stream failing must not take the screen down with it. These are set
+     up in a row, and an exception in any of them used to skip every
+     subscription after it - including the thread itself, which is why the room
+     could come out as "you need a thread first" while the thread sat there. */
+  const sub = (make) => { try { stop.push(make()); } catch (e) { window.__wedErr = String((e && e.message) || e); } };
   if (id) {
-    stop.push(WED.watch(id, (w) => {
+    sub(() => WED.watch(id, (w) => {
       wedding = w; ready = true;
       /* Enough to draw the line on the profile before the cloud answers. */
       if (w) {
@@ -21519,14 +21753,18 @@ function renderWedding(args) {
          tell the other has arrived. Only once the door is open: a seat kept
          warm from the planning screen would say somebody was in a room that
          has not opened yet. */
-      if (w && WED.mine(w) && WED.doorState(w) === 'open' && !beat) {
+      const open2 = w && WED.doorState(w) === 'open';
+      if (w && WED.mine(w) && open2 && !beat) {
         const nm = WED.side(w) === 'a' ? (w.aName || '') : (w.bName || '');
         WED.sit(w.id, nm).catch(() => {});
         beat = setInterval(() => WED.stillHere(w.id), 20000);
       }
+      /* And it stops when the room does. A seat kept warm in a room that has
+         closed is a timer writing to nothing for as long as the app is open. */
+      if (beat && !open2) { clearInterval(beat); beat = null; }
       paint();
     }));
-    stop.push(WED.watchGuests(id, (g) => {
+    sub(() => WED.watchGuests(id, (g) => {
       guests = g;
       /* Somebody arriving is worth saying once, and only to the people it
          means something to: the couple hear their partner arrive, because that
@@ -21549,11 +21787,12 @@ function renderWedding(args) {
       }
       paint();
     }));
-    stop.push(WED.watchGifts(id, (g) => { gifts = g; paint(); }));
-    stop.push(WED.watchSays(id, (l) => { says = l; paint(); }));
+    sub(() => WED.watchGifts(id, (g) => { gifts = g; paint(); }));
+    sub(() => WED.watchSays(id, (l) => { says = l; paint(); }));
+    sub(() => WED.watchTalk(id, (l) => { talk = l; paint(); }));
   }
   if (!guestLink) {
-    stop.push(LOVEDB.watchMine((b) => { bond = b; ready = true; paint(); }));
+    sub(() => LOVEDB.watchMine((b) => { bond = b; ready = true; paint(); }));
   } else { ready = true; paint(); }
 }
 
@@ -21639,7 +21878,17 @@ const ALERTS = {
     return true;
   },
   unseen() { return this.all().filter((n) => !n.seen).length; },
-  markSeen() { const l = this.all(); l.forEach((n) => { n.seen = true; }); store.set('nabu-alerts', l); alertsBadge(); },
+  /* Marking them read has to be written down to mean anything. If the phone
+     will not take the write, say so here rather than redrawing from an older
+     list and appearing to lose the newest one. */
+  markSeen() {
+    const l = this.all();
+    if (!l.length) return true;
+    l.forEach((n) => { n.seen = true; });
+    const ok2 = store.set('nabu-alerts', l);
+    alertsBadge();
+    return ok2;
+  },
   clear() { store.set('nabu-alerts', []); alertsBadge(); }
 };
 
@@ -22014,21 +22263,31 @@ function renderAlerts() {
       + (list.length
         ? '<div class="row alertacts"><button type="button" class="btn" id="alread">' + esc(S.alertReadAll) + '</button>'
           + '<button type="button" class="btn" id="alclear">' + esc(S.alertClear) + '</button></div>'
+          /* Clearing throws away every notification there is, and it sits one
+             finger-width from marking them read. It asks on the page, because
+             a browser confirm() is skipped outright by some phone webviews. */
+          + '<div class="card" id="alsure" hidden><p class="hint err">' + esc(S.alertClearAsk) + '</p>'
+          + '<div class="row"><button type="button" class="btn danger" id="alyes">' + esc(S.alertClearYes) + '</button>'
+          + '<button type="button" class="btn" id="alno">' + esc(S.loveCancel) + '</button></div></div>'
           + groups.filter((g) => g[1].length).map((g) =>
             '<h3 class="alerthead">' + esc(g[0]) + '</h3><div class="alerts">' + g[1].map(row).join('') + '</div>').join('')
         : '<div class="card"><p class="lead" style="text-align:center">🔔</p>'
           + '<p class="hint" style="text-align:center">' + esc(S.alertNone) + '</p></div>');
 
     if (list.length) {
-      $('#alread').addEventListener('click', () => { ALERTS.markSeen(); draw(); });
-      $('#alclear').addEventListener('click', () => { ALERTS.clear(); draw(); });
+      $('#alread').addEventListener('click', () => { const ok2 = ALERTS.markSeen(); toast(ok2 ? T().alertReadDone : T().storeFull); draw(); });
+      $('#alclear').addEventListener('click', () => { $('#alsure').hidden = false; $('#alno').focus(); });
+      $('#alno').addEventListener('click', () => { $('#alsure').hidden = true; });
+      $('#alyes').addEventListener('click', () => { ALERTS.clear(); draw(); });
     }
   };
   draw();
-  /* Opening the bell is reading them; the count clears on the way out so the
-     visitor can still see which ones were new while they are looking. */
-  const list = ALERTS.all();
-  if (list.some((n) => !n.seen)) setTimeout(() => { ALERTS.markSeen(); }, 1200);
+  /* Reading them is what marks them read, and reading them is not over a
+     second after the page opens. Marking on the way out keeps the "new"
+     highlight for as long as somebody is looking at it - which is the only
+     thing on the screen saying which ones they have not seen - and leaves the
+     button with something to do while they are here. */
+  NAV.cleanup = () => { ALERTS.markSeen(); };
 }
 
 ROUTES.alerts = { nav: '', render: renderAlerts };
@@ -22098,14 +22357,14 @@ function adminCleanup() { admin.unsubs.forEach((u) => { try { u(); } catch (e) {
 function renderAdmin(args, params) {
   adminCleanup();
   const S = T(), m = $('#main');
-  if (params && params.tab && ['posts', 'acts', 'schedule', 'bookings', 'inbox', 'codes', 'sale'].indexOf(params.tab) > -1) admin.tab = params.tab;
+  if (params && params.tab && ['posts', 'acts', 'schedule', 'bookings', 'pay', 'inbox', 'codes', 'sale'].indexOf(params.tab) > -1) admin.tab = params.tab;
   m.innerHTML = '<div class="eyebrow">' + esc(CONFIG.brand) + '</div><h1 style="margin-bottom:6px">' + esc(S.adminTitle) + '</h1><p class="muted">' + esc(S.adminIntro) + '</p>'
-    + '<div class="tabs" id="atabs">' + ['posts', 'acts', 'schedule', 'bookings', 'inbox', 'codes', 'sale'].map((k) => '<button data-t="' + k + '" class="' + (admin.tab === k ? 'on' : '') + '">' + esc(S.adminTabs[k]) + '<span class="tb" data-tb="' + k + '" hidden></span></button>').join('') + '</div>'
+    + '<div class="tabs" id="atabs">' + ['posts', 'acts', 'schedule', 'bookings', 'pay', 'inbox', 'codes', 'sale'].map((k) => '<button data-t="' + k + '" class="' + (admin.tab === k ? 'on' : '') + '">' + esc(S.adminTabs[k]) + '<span class="tb" data-tb="' + k + '" hidden></span></button>').join('') + '</div>'
     + (BE.enabled ? '<p class="hint" style="margin-bottom:12px">☁️ ' + esc(S.cloudContent) + '</p>' : '<div class="card"><label class="f" for="gtoken">' + esc(S.token) + '</label><div class="row nw"><input id="gtoken" type="password" value="' + esc(ghToken()) + '" style="flex:1" autocomplete="off"><button class="btn sm" id="savetoken">' + esc(S.saveToken) + '</button></div><p class="hint">' + esc(S.tokenHint) + ' (' + esc(CONFIG.repo) + ')</p></div>')
     + '<div id="apanel"></div>';
   const stb = $('#savetoken'); if (stb) stb.addEventListener('click', () => { store.set('nabu-gh-token', $('#gtoken').value.trim()); toast(T().saved); show(admin.tab); });
   $$('#atabs button').forEach((b) => b.addEventListener('click', () => { admin.tab = b.getAttribute('data-t'); $$('#atabs button').forEach((x) => x.classList.toggle('on', x === b)); show(admin.tab); }));
-  const show = (t) => { adminCleanup(); const p = $('#apanel'); if (t === 'sale') adminSale(p); else if (t === 'posts') adminPosts(p); else if (t === 'acts') adminActivities(p); else if (t === 'schedule') adminSchedule(p); else if (t === 'bookings') adminBookings(p); else if (t === 'codes') adminCodes(p); else adminInbox(p); };
+  const show = (t) => { adminCleanup(); const p = $('#apanel'); if (t === 'sale') adminSale(p); else if (t === 'posts') adminPosts(p); else if (t === 'acts') adminActivities(p); else if (t === 'schedule') adminSchedule(p); else if (t === 'bookings') adminBookings(p); else if (t === 'pay') adminPay(p); else if (t === 'codes') adminCodes(p); else adminInbox(p); };
   show(admin.tab);
 }
 
@@ -22276,38 +22535,14 @@ function needAdmin(p) {
 function adminBookings(p) {
   const S = T();
   if (!needAdmin(p)) return;
-  /* An order has no hour in it, so it never belonged on a calendar. It goes
-     above one, where the only question it raises is answered. */
-  p.innerHTML = '<p class="hint">' + esc(S.bookingsIntro) + '</p><div id="bkasks"></div><div id="bkorders"></div><div id="bkcal" class="bkcal"></div><div id="bklist"></div>';
-  let all = [], asks = [], month = new Date(new Date().getFullYear(), new Date().getMonth(), 1), day = '';
+  /* Hours here, money in its own tab. An order has no hour in it and never
+     belonged on a calendar; neither does a transfer that has not arrived. */
+  p.innerHTML = '<p class="hint">' + esc(S.bookingsIntro) + '</p><div id="bkcal" class="bkcal"></div><div id="bklist"></div>';
+  let all = [], month = new Date(new Date().getFullYear(), new Date().getMonth(), 1), day = '';
   const draw = () => {
     /* Bookings keep arriving after Nabu has walked off this tab, and a
        snapshot with nowhere to go is not an error worth throwing. */
-    if (!$('#bkorders') || !$('#bkcal')) return;
-    /* An hour waiting on Nabu. Nabu is the one who has to be there, so the
-       couple ask and the old hour stands until this is answered. */
-    /* Every wedding Nabu is holding, with what it is waiting for written on
-       it. The room always exists - the request is what creates it - so this
-       is the one place that never depends on an order row being written. */
-    const owed = asks.filter((w) => !w.paid).length;
-    $('#bkasks').innerHTML = asks.length ? '<div class="card"><h3 style="margin-bottom:4px">\uD83D\uDC8D ' + esc(S.adminWeds) + (owed ? ' <span class="n">' + owed + '</span>' : '') + '</h3>'
-      + '<p class="hint" style="margin-bottom:10px">' + esc(S.adminWedsHint) + '</p>'
-      + asks.map((w) => '<div class="bk"><div class="bkh"><b>\uD83D\uDC8D ' + esc(((w.aName || '') + ' & ' + (w.bName || '')).replace(/^ & $/, S.loveSomeone)) + '</b>'
-        + '<span class="st ' + (w.paid ? 'confirmed' : 'requested') + '">' + esc(w.paid ? S.adminWedPaid : S.adminWedOwed) + '</span></div>'
-        + '<p class="hint">' + esc(S.adminWedWas) + ': <b>' + esc(wedWhen(Number(w.startMs) || 0)) + '</b></p>'
-        + (WED.asking(w) ? '<p class="hint">' + esc(S.adminWedWants) + ': <b>' + esc(wedWhen(Number(w.wantMs) || 0)) + '</b></p>' : '')
-        + '<div class="acts">'
-        + (w.paid ? '' : '<button type="button" class="btn sm primary" data-wpaid="' + esc(w.id) + '">\uD83D\uDCB0 ' + esc(S.adminWedGotPaid) + '</button>')
-        + (WED.asking(w) ? '<button type="button" class="btn sm primary" data-wmv="' + esc(w.id) + '">\uD83D\uDD01 ' + esc(S.adminWedMoveOk) + '</button>'
-          + '<button type="button" class="btn sm" data-wmvno="' + esc(w.id) + '">' + esc(S.adminKeep) + '</button>' : '')
-        + '</div></div>').join('')
-      + '</div>' : '';
-    const orders = all.filter((b) => b.kind === 'unlock');
-    const waiting = orders.filter((b) => b.status === 'requested');
-    $('#bkorders').innerHTML = '<div class="card"><h3 style="margin-bottom:4px">\uD83D\uDCB3 ' + esc(S.adminOrders) + (waiting.length ? ' <span class="n">' + waiting.length + '</span>' : '') + '</h3>'
-      + '<p class="hint" style="margin-bottom:10px">' + esc(S.adminOrdersHint) + '</p>'
-      + (orders.length ? waiting.concat(orders.filter((b) => b.status !== 'requested').slice(0, 6)).map((b) => bookingRow(b, true)).join('')
-        : '<p class="empty">' + esc(S.adminOrdersNone) + '</p>') + '</div>';
+    if (!$('#bkcal')) return;
     /* The calendar is for things with an hour in them. Kept separate rather
        than filtered out of `all`, which would empty the orders card the first
        time somebody pressed a month arrow. */
@@ -22325,15 +22560,7 @@ function adminBookings(p) {
     $$('[data-ics]', p).forEach((b) => b.addEventListener('click', () => { const bk = books.filter((x) => x.id === b.getAttribute('data-ics'))[0]; if (bk) addToCalendar(bk); }));
     $$('[data-bk]', p).forEach((b) => b.addEventListener('click', async () => {
       const bk = all.filter((x) => x.id === b.getAttribute('data-id'))[0];
-      const to = b.getAttribute('data-bk');
-      try {
-        await BE.setBookingStatus(bk, to);
-        /* Taking the money is what opens the door. Confirming the order and
-           leaving the room shut would be the same as not confirming it. */
-        const wed = (bk.items || []).filter((it) => it.id === 'wedding' && it.wid)[0];
-        if (wed && (to === 'confirmed' || to === 'declined')) await WED.setPaid(wed.wid, to === 'confirmed');
-        toast(T().saved);
-      } catch (e) { toast(e.message); }
+      try { await BE.setBookingStatus(bk, b.getAttribute('data-bk')); toast(T().saved); } catch (e) { toast(loveWhy(e)); }
     }));
     /* Calling one off is behind a question, because the hour goes back on the
        calendar and the person who booked it is told. */
@@ -22341,6 +22568,72 @@ function adminBookings(p) {
       const bk = books.filter((x) => x.id === b.getAttribute('data-bkoff'))[0];
       if (!bk || !confirm(T().adminCancelAsk)) return;
       try { await BE.setBookingStatus(bk, 'cancelled'); toast(T().adminCancelDone); } catch (e) { toast(e.message); }
+    }));
+  };
+  admin.unsubs.push(BE.watchAllBookings((list) => { all = list; draw(); }));
+}
+/* ---- the money, which is not the calendar ----
+
+   Everything waiting on a transfer used to be piled on top of the appointments
+   calendar, a screen for answering who is coming and when. Nabu was reading
+   past the hours to find the money, and the one press that mattered - the
+   transfer arrived - did not exist at all for most of what is sold.
+
+   Confirming and being paid are two presses now, because agreeing to sell
+   something and being paid for it are different days. The second is the one
+   that opens anything, and what it opens is written onto the buyer's own
+   account rather than handed out as a code that travels. */
+function adminPay(p) {
+  const S = T();
+  if (!needAdmin(p)) return;
+  p.innerHTML = '<p class="hint">' + esc(S.payIntro) + '</p><div id="pyweds"></div><div id="pyorders"></div><div id="pybooks"></div>';
+  let all = [], asks = [];
+  const draw = () => {
+    if (!$('#pyweds')) return;
+    const owed = asks.filter((w) => !w.paid).length;
+    $('#pyweds').innerHTML = asks.length ? '<div class="card"><h3 style="margin-bottom:4px">\uD83D\uDC8D ' + esc(S.adminWeds) + (owed ? ' <span class="n">' + owed + '</span>' : '') + '</h3>'
+      + '<p class="hint" style="margin-bottom:10px">' + esc(S.adminWedsHint) + '</p>'
+      + asks.map((w) => '<div class="bk"><div class="bkh"><b>\uD83D\uDC8D ' + esc(((w.aName || '') + ' & ' + (w.bName || '')).replace(/^ & $/, S.loveSomeone)) + '</b>'
+        + '<span class="st ' + (w.paid ? 'confirmed' : 'requested') + '">' + esc(w.paid ? S.adminWedPaid : S.adminWedOwed) + '</span></div>'
+        + '<p class="hint">' + esc(S.adminWedWas) + ': <b>' + esc(wedWhen(Number(w.startMs) || 0)) + '</b></p>'
+        + (WED.asking(w) ? '<p class="hint">' + esc(S.adminWedWants) + ': <b>' + esc(wedWhen(Number(w.wantMs) || 0)) + '</b></p>' : '')
+        + '<div class="acts">'
+        + (w.paid ? '' : '<button type="button" class="btn sm primary" data-wpaid="' + esc(w.id) + '">\uD83D\uDCB0 ' + esc(S.adminWedGotPaid) + '</button>')
+        + (WED.asking(w) ? '<button type="button" class="btn sm primary" data-wmv="' + esc(w.id) + '">\uD83D\uDD01 ' + esc(S.adminWedMoveOk) + '</button>'
+          + '<button type="button" class="btn sm" data-wmvno="' + esc(w.id) + '">' + esc(S.adminKeep) + '</button>' : '')
+        + '</div></div>').join('')
+      + '</div>' : '';
+    const orders = all.filter((b) => b.kind === 'unlock');
+    const waiting = orders.filter((b) => b.status === 'requested');
+    $('#pyorders').innerHTML = '<div class="card"><h3 style="margin-bottom:4px">\uD83D\uDCB3 ' + esc(S.adminOrders) + (waiting.length ? ' <span class="n">' + waiting.length + '</span>' : '') + '</h3>'
+      + '<p class="hint" style="margin-bottom:10px">' + esc(S.adminOrdersHint) + '</p>'
+      + (orders.length ? waiting.concat(orders.filter((b) => b.status !== 'requested').slice(0, 6)).map((b) => bookingRow(b, true)).join('')
+        : '<p class="empty">' + esc(S.adminOrdersNone) + '</p>') + '</div>';
+    /* Readings: nothing to unlock, but Nabu still has to know which of them
+       have been settled. */
+    const books = all.filter((b) => b.kind !== 'unlock' && ['declined', 'cancelled'].indexOf(b.status) < 0);
+    const owing = books.filter((b) => !b.paid);
+    $('#pybooks').innerHTML = '<div class="card"><h3 style="margin-bottom:4px">\uD83D\uDCC5 ' + esc(S.payBookings) + (owing.length ? ' <span class="n">' + owing.length + '</span>' : '') + '</h3>'
+      + '<p class="hint" style="margin-bottom:10px">' + esc(S.payBookingsHint) + '</p>'
+      + (books.length ? owing.concat(books.filter((b) => b.paid).slice(0, 6)).map((b) => bookingRow(b, true)).join('')
+        : '<p class="empty">' + esc(S.payNone) + '</p>') + '</div>';
+
+    $$('[data-bk]', p).forEach((b) => b.addEventListener('click', async () => {
+      const bk = all.filter((x) => x.id === b.getAttribute('data-id'))[0];
+      try { await BE.setBookingStatus(bk, b.getAttribute('data-bk')); toast(T().saved); } catch (e) { toast(loveWhy(e)); }
+    }));
+    /* The press that matters. It writes what was bought onto the buyer's own
+       account, so there is no code for anybody to pass around. */
+    $$('[data-paid]', p).forEach((b) => b.addEventListener('click', async () => {
+      const bk = all.filter((x) => x.id === b.getAttribute('data-paid'))[0];
+      if (!bk) return;
+      b.disabled = true;
+      try {
+        const opened = await BE.markPaid(bk);
+        const wed = (bk.items || []).filter((it) => it.id === 'wedding' && it.wid)[0];
+        if (wed) await WED.setPaid(wed.wid, true);
+        toast(opened.length ? T().payOpened(opened.map(accessName).join(', ')) : T().payMarked);
+      } catch (e) { b.disabled = false; toast(loveWhy(e)); }
     }));
     /* The one thing Nabu could not do anywhere: say the money arrived. */
     $$('[data-wpaid]', p).forEach((b) => b.addEventListener('click', async () => {
@@ -22548,7 +22841,7 @@ function adminSale(p) {
 ROUTES.admin = { nav: '', render: renderAdmin };
 
 /* ============================ boot ============================ */
-window.APP_VERSION = 'v161';
+window.APP_VERSION = 'v162';
 window.NABU = { CONFIG: CONFIG, SALE: SALE, salePrice: salePrice, loadActs: loadActs, BACK: BACK, LESSONS: LESSONS, localAnswer: localAnswer, compatVerdict: compatVerdict, numerologyOf: numerologyOf, ZDEEP: ZDEEP, lunarToday: lunarToday, solarToLunar: solarToLunar, DECK: DECK, INSIGHT: INSIGHT, KW: KW, ASK: ASK, TOPICS: TOPICS, GUIDES: GUIDES, SERVICES: SERVICES, COURSES: COURSES, ACCESS: ACCESS, plusOn: () => plusOn(), proOn: () => proOn(), luckUnlimited: () => luckUnlimited(), ZODIAC: ZODIAC, pick: pick, book: book,
   insightHTML: insightHTML, insightOf: insightOf, sunSignIndex: sunSignIndex, lifePath: lifePath, PROFILE: () => PROFILE, BE: BE, ACTS: ACTS,
   ANGELS: ANGELS, angelRead: angelRead, CODEBOOK: CODEBOOK, verifyCode: verifyCode, petHomeSVG: petHomeSVG, PET_HOMES: PET_HOMES, PET_WEARS: PET_WEARS, codeDigest: codeDigest, randomCode: randomCode, BANK: BANK, PETS: PETS, petSVG: petSVG, PET_COATS: PET_COATS, PET_KINDS: PET_KINDS, luckCut: luckCut, petLevel: petLevel, petStep: petStep, VOUCHERS: VOUCHERS, levelCoins: levelCoins, LOOKS: LOOKS,

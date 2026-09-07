@@ -443,7 +443,7 @@ async function go(hash, sel) { W().location.hash = hash; await sleep(30); return
     ok(/Hồ sơ đang lưu trên máy này/.test(d.body.textContent) && /Instagram/.test(d.body.textContent) && d.querySelectorAll('[data-auth]').length === 3 && /Nabu chưa bật đăng nhập/.test(d.body.textContent) && /Cài app lên điện thoại/.test(d.querySelector('#main').textContent) && d.querySelector('#main a[href="#/install"]') && d.querySelectorAll('.course').length === 8 && /✓/.test(d.querySelector('.course').textContent), 'me tab: device-only profile, Instagram, my courses with status');
     // admin
     await go('#/admin', '#atabs');
-    ok(d.querySelectorAll('#atabs button').length === 7 && d.querySelectorAll('#cgrid button').length === 78 && Array.from(d.querySelectorAll('#atabs button')).every((b) => b.scrollWidth <= b.clientWidth + 1), 'admin has seven tabs whose labels fit inside their buttons, and the 78-card picker');
+    ok(d.querySelectorAll('#atabs button').length === 8 && d.querySelectorAll('#cgrid button').length === 78 && Array.from(d.querySelectorAll('#atabs button')).every((b) => b.scrollWidth <= b.clientWidth + 1), 'admin has eight tabs whose labels fit inside their buttons, and the 78-card picker');
     d.querySelector('[data-t="acts"]').click(); await waitFor(() => d.querySelector('#apub'), 6000);
     ok(d.querySelector('#apub') && d.querySelectorAll('[data-atype]').length === 3 && d.querySelectorAll('[data-pl]').length === 3 && d.querySelector('#aresults') && d.querySelectorAll('#apanel .tb').length === 7 && d.querySelectorAll('#apanel .tb [data-w="i"]').length === 7 && d.querySelectorAll('[data-part]').length === 3, 'the activities tab has a form with three types, three piles with picture choosers, and a formatting bar on every text box');
     d.querySelector('[data-t="codes"]').click(); await waitFor(() => d.querySelector('#cmake'), 4000);
@@ -552,7 +552,7 @@ async function go(hash, sel) { W().location.hash = hash; await sleep(30); return
         w.localStorage.removeItem('nabu-access');
         ok(!N.plusOn() && !N.proOn() && !N.luckUnlimited(), 'and holding neither opens neither');
         if (keep != null) w.localStorage.setItem('nabu-access', keep); }
-      await go('#/play', '#acts'); await go('#/unlock', '.unlist'); ok(d.querySelectorAll('.unl').length === 8 && d.querySelector('.unl.best') && /249\.000đ/.test(d.querySelector('.unl.best').textContent) && /12 tháng/.test(d.querySelector('.unl.best').textContent) && d.querySelector('#ucode') && d.querySelector('a[href="#/prices"]'), 'one screen lists the four courses, Plus, both Pro terms and the wedding, marks the year as the best of them, and carries a code box');
+      await go('#/play', '#acts'); await go('#/unlock', '.unlist'); ok(d.querySelectorAll('.unl').length === 7 && !/wedding/.test(d.querySelector('#main').innerHTML) && d.querySelector('.unl.best') && /249\.000đ/.test(d.querySelector('.unl.best').textContent) && /12 tháng/.test(d.querySelector('.unl.best').textContent) && d.querySelector('#ucode') && d.querySelector('a[href="#/prices"]'), 'one screen lists the four courses, Plus and both Pro terms - and not the wedding, which needs a thread and two people - marks the year as the best of them, and carries a code box');
       { /* Which section leads depends on the door: a locked design wants the
            packages, a locked lesson wants the courses. */
         await go('#/play', '#acts'); await go('#/unlock?from=app', '.unlist'); await sleep(120);
@@ -564,8 +564,12 @@ async function go(hash, sel) { W().location.hash = hash; await sleep(30); return
         ok(f2 && f2.getAttribute('data-sec') === 'courses',
           'and arriving from a locked lesson, the courses do');
         await go('#/play', '#acts'); await go('#/unlock', '.unlist'); await sleep(120);
-        ok(d.querySelectorAll('#main .sec[data-sec]').length === 3,
-          'while everything is on the page whichever door was used'); }
+        ok(d.querySelectorAll('#main .sec[data-sec]').length === 2
+          && !d.querySelector('#main .sec[data-sec="wedding"]'),
+          'while a wedding is not something to browse beside a tarot course');
+        await go('#/play', '#acts'); await go('#/unlock?from=wedding', '.unlist'); await sleep(120);
+        ok(d.querySelector('#main .sec[data-sec="wedding"]'),
+          'and is on the page only for somebody who came from the thread that needs it'); }
       w.localStorage.removeItem('nabu-access'); w.localStorage.removeItem('nabu-luck');
       { const bt = d.querySelector('#totop'); ok(bt && bt.hidden, 'a back-to-top button exists and stays hidden until the screen is scrolled'); }
       { const dots = d.createElement('div'); dots.innerHTML = N.BACK; ok(dots.querySelectorAll('circle').length === 4, 'the card back carries four dots, one per corner'); dots.remove(); }
@@ -1132,8 +1136,8 @@ async function go(hash, sel) { W().location.hash = hash; await sleep(30); return
           && /🧧|🎁/.test(d.querySelector('#main .alert').textContent),
           'and opening it lists them, newest first, each with a mark of its kind');
         await sleep(1400);
-        ok(N.ALERTS.unseen() === 0 && !d.querySelector('#bell .ndot'),
-          'looking at them is reading them, and the count goes');
+        ok(N.ALERTS.unseen() === before && d.querySelector('#alread'),
+          'they stay marked new while somebody is looking at them, with the button that marks them read');
         N.ALERTS.clear();
         db.put(B, Object.assign({}, db.docs[B], { ask: null, state: 'tied' })); }
 
@@ -1268,6 +1272,9 @@ async function go(hash, sel) { W().location.hash = hash; await sleep(30); return
            shown a price list before choosing anything answers nothing. */
         delete acc.wedding; w.localStorage.setItem('nabu-access', JSON.stringify(acc));
         w.localStorage.removeItem('nabu-wed-want');
+        /* Not already married: a pair who have had their day cannot have a
+           second one, and this check is about the day being arranged. */
+        if (db.docs[B]) db.put(B, Object.assign({}, db.docs[B], { marriedOn: null, state: 'engaged' }));
         await go('#/wedding', '#wedat'); await sleep(240);
         ok(d.querySelector('#wedat') && d.querySelector('#wedmake')
           && /30\.000/.test(d.querySelector('#main').textContent),
@@ -1311,7 +1318,14 @@ async function go(hash, sel) { W().location.hash = hash; await sleep(30); return
           { /* Three short lines, not a centred paragraph, and standing clear of
              the control underneath - which kept coming out flush because a
              later rule of equal weight flattened its margin. */
-          await go('#/home', '#main'); await go('#/wedding', '#main'); await sleep(300);
+          /* A pair who have already had their day are shown that, not a room
+             card - so this block, which is about the room card, needs a pair
+             who have not. */
+          if (db.docs[B]) db.put(B, Object.assign({}, db.docs[B], { marriedOn: null, state: 'engaged' }));
+          await go('#/home', '#main'); await go('#/wedding', '#main');
+          /* The room card arrives when the thread does, which is a round trip
+             away; waiting a fixed moment for it was racing the redraw. */
+          await waitFor(() => d.querySelector('.wedrules'), 5000);
           const rules = d.querySelector('.wedrules');
           ok(rules && rules.querySelectorAll('li').length === 3
             && w.getComputedStyle(rules.querySelector('li')).textAlign === 'left',
@@ -1652,16 +1666,19 @@ async function go(hash, sel) { W().location.hash = hash; await sleep(30); return
         db.put('weddings/uidC__uidD', { uids: ['uidC', 'uidD'], a: 'uidC', b: 'uidD', startMs: Date.now() + 86400000, state: 'planned', step: 0 });
         db.put('bookings/ord1', { kind: 'unlock', uid: 'uidC', name: 'Nam', email: 'nam@test', status: 'requested', price: 30000,
           items: [{ id: 'wedding', wid: 'uidC__uidD', name: 'Lễ cưới trên Nabu', price: 30000 }] });
-        await go('#/admin?tab=bookings', '#bkorders'); await sleep(300);
-        const card = d.querySelector('#bkorders');
+        await go('#/admin?tab=pay', '#pyorders'); await sleep(300);
+        const card = d.querySelector('#pyorders');
         ok(card && /Lễ cưới|Nam/.test(card.textContent) && card.querySelector('[data-bk="confirmed"]'),
-          'an order with no hour in it waits above the calendar, where it can be confirmed');
-        ok(!d.querySelector('#bklist [data-id="ord1"]'),
-          'and not in the day list, which is for things that have an hour');
+          'an order with no hour in it waits under the money, not on a calendar of hours');
+        ok(!d.querySelector('#bklist'),
+          'and the calendar of hours is a different screen entirely');
 
         card.querySelector('[data-bk="confirmed"]').click(); await sleep(300);
-        ok(db.docs['bookings/ord1'].status === 'confirmed' && db.docs['weddings/uidC__uidD'].paid === true,
-          'confirming the payment opens the room itself, rather than only changing a word');
+        ok(db.docs['bookings/ord1'].status === 'confirmed' && !db.docs['bookings/ord1'].paid,
+          'confirming an order agrees to sell it and opens nothing, because the money has not come');
+        d.querySelector('#pyorders [data-paid="ord1"]').click(); await sleep(400);
+        ok(db.docs['bookings/ord1'].paid === true && db.docs['weddings/uidC__uidD'].paid === true,
+          'and the money arriving is the press that opens it');
 
         /* The room is what both of them read, which is the whole point: only
            one of them ever pays. */

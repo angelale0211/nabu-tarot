@@ -151,7 +151,12 @@ function unlockRequestRow(b, admin) {
   const meta = admin && (b.name || b.email) ? '🙋 ' + esc([b.name, b.email].filter(Boolean).join(' · ')) : '';
   let acts = '';
   if (admin && b.status === 'requested') acts = '<button class="btn sm primary" data-bk="confirmed" data-id="' + b.id + '">' + esc(S.confirm) + '</button><button class="btn sm" data-bk="declined" data-id="' + b.id + '">' + esc(S.decline) + '</button>';
-  return '<div class="bk unlockreq"><div class="bkh"><b>🔓 ' + esc(S.reqKindUnlock) + '</b><span class="st ' + esc(b.status || '') + '">' + esc((S.status && S.status[b.status]) || b.status || '') + '</span></div>'
+  /* The second press. Confirming was only ever an agreement to sell; this is
+     the money arriving, and this is what opens anything. */
+  if (admin && !b.paid && ['declined', 'cancelled'].indexOf(b.status) < 0) {
+    acts += '<button type="button" class="btn sm primary" data-paid="' + b.id + '">💰 ' + esc(S.adminGotPaid) + '</button>';
+  }
+  return '<div class="bk unlockreq' + (b.paid ? ' ispaid' : '') + '"><div class="bkh"><b>🔓 ' + esc(S.reqKindUnlock) + '</b><span class="st ' + esc(b.paid ? 'confirmed' : (b.status || '')) + '">' + esc(b.paid ? S.adminPaidTag : ((S.status && S.status[b.status]) || b.status || '')) + '</span></div>'
     + (list ? '<ul>' + list + '</ul>' : '')
     + (b.price ? '<div class="tot"><span>' + esc(S.unlockTotal) + '</span><b>' + fmtPrice(b.price) + '</b></div>' : '')
     + (meta ? '<p class="hint">' + meta + '</p>' : '')
@@ -180,6 +185,9 @@ function bookingRow(b, admin) {
     /* Nabu could confirm, decline, and agree to a cancellation somebody else
        asked for - but not call one off. Anyone who takes bookings falls ill. */
     if (live && b.status !== 'cancel_requested') acts += '<button type="button" class="btn sm" data-bkoff="' + b.id + '">✕ ' + esc(S.adminCancel) + '</button>';
+    /* A reading has nothing to unlock, but Nabu still needs to know which
+       ones have been settled. */
+    if (!b.paid && live) acts += '<button type="button" class="btn sm" data-paid="' + b.id + '">💰 ' + esc(S.adminGotPaid) + '</button>';
     if (live && future) acts += '<button type="button" class="btn sm" data-ics="' + b.id + '">📅 ' + esc(S.addToCalendar) + '</button><a class="btn sm" href="' + esc(gcalLink(b)) + '" target="_blank" rel="noopener">🗓 ' + esc(S.gcal) + '</a>';
   } else if (live && future) {
     acts = '<a class="btn sm" href="#/book?change=' + esc(b.id) + '">🔁 ' + esc(S.changeSlot) + '</a><button class="btn sm" data-cancel="' + b.id + '">✕ ' + esc(S.cancelBooking) + '</button>'

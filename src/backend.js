@@ -88,7 +88,21 @@ const BE = {
           b: d.revoked.why || T().accessGoneBody, href: '#/me' }, true);
       }
     }
-    if (d.access) { const a = ACCESS.get(); Object.keys(d.access).forEach((k) => { if (!a[k] || d.access[k] > a[k]) a[k] = d.access[k]; }); store.set('nabu-access', a); }
+    if (d.access) {
+      const a = ACCESS.get(), fresh = [];
+      Object.keys(d.access).forEach((k) => {
+        if (!a[k] || d.access[k] > a[k]) { if (!a[k]) fresh.push(k); a[k] = d.access[k]; }
+      });
+      store.set('nabu-access', a);
+      /* Opened by Nabu rather than by a code on this phone, so nothing has
+         said so yet. Somebody who has just paid should not have to go looking
+         for what they bought. */
+      if (fresh.length && typeof ALERTS !== 'undefined') {
+        ALERTS.add({ id: 'unlocked-' + fresh.join('+') + '-' + d.access[fresh[0]], k: 'app',
+          t: T().accessOnTitle(fresh.map(accessName).join(', ')),
+          b: T().accessOnBody(fmtDate(d.access[fresh[0]])), href: '#/me' });
+      }
+    }
     delete d.access; delete d.revoked; saveProfileLocal(d);
   },
   async pushProfile() {
@@ -96,6 +110,33 @@ const BE = {
     const p = { name: PROFILE.name || this.user.displayName || '', birthday: PROFILE.birthday || '', interests: PROFILE.interests || [],
       tourDone: !!PROFILE.tourDone, email: this.user.email || '', access: ACCESS.get(), updatedAt: firebase.firestore.FieldValue.serverTimestamp() };
     await this.db.collection('users').doc(this.user.uid).set(p, { merge: true });
+  },
+
+  /* Paid for. Two presses rather than one, because agreeing to sell
+     something and being paid for it are different days, and only the second
+     one should open anything.
+
+     What it opens is written onto the buyer's own account. A code is a string
+     and travels: whatever one customer can paste, five friends can paste, and
+     what was sold once gets used by a household. An account cannot be handed
+     round the same way. */
+  async markPaid(b) {
+    await this.db.collection('bookings').doc(b.id).set(
+      { paid: true, paidAt: Date.now(), status: b.status === 'requested' ? 'confirmed' : (b.status || 'confirmed') }, { merge: true });
+    const ids = (b.items || []).map((it) => it.id)
+      .filter((id) => COURSES.some((c) => c.id === id));
+    if (ids.length && b.uid) await this.grantAccess(b.uid, ids);
+    return ids;
+  },
+  /* Opened on the account, for as long as the thing is sold for. */
+  async grantAccess(uid, ids) {
+    const a = {}, today = isoDate(new Date());
+    ids.forEach((id) => {
+      const c = COURSES.filter((x) => x.id === id)[0];
+      a[id] = addMonths(today, (c && c.months) || 12);
+    });
+    await this.db.collection('users').doc(uid).set({ access: a }, { merge: true });
+    return a;
   },
 
   /* What somebody holds, so it can be looked at before anything is taken. */
