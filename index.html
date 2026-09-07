@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
 <title>Nabu Tarot</title>
 <meta name="description" content="Nabu Tarot: dự đoán mới, rút một lá bài xem năng lượng hiện tại, học tarot, Lenormand, chiêm tinh, và đặt lịch xem bài.">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'none'; object-src 'none'; form-action 'self'; script-src 'self' 'sha256-dIvpvOTIHoxIFPSkN2eUwMNdAc/VmTiaZvUgXxo2dCQ=' https://www.gstatic.com https://apis.google.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; font-src 'self' data:; media-src 'self' data: blob:; worker-src 'self'; connect-src 'self' https://*.googleapis.com https://*.google.com https://*.firebaseio.com https://*.cloudfunctions.net https://*.workers.dev https://generativelanguage.googleapis.com; frame-src https://*.firebaseapp.com https://accounts.google.com https://*.facebook.com">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'none'; object-src 'none'; form-action 'self'; script-src 'self' 'sha256-o2zEeen010y4LD9ECQUqwRc+WJrWE8KQB+dyyu/EWes=' https://www.gstatic.com https://apis.google.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; font-src 'self' data:; media-src 'self' data: blob:; worker-src 'self'; connect-src 'self' https://*.googleapis.com https://*.google.com https://*.firebaseio.com https://*.cloudfunctions.net https://*.workers.dev https://generativelanguage.googleapis.com; frame-src https://*.firebaseapp.com https://accounts.google.com https://*.facebook.com">
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <meta name="theme-color" content="#EFE9FA">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -575,6 +575,9 @@ main{padding:22px 0 30px}
 .wherepick{display:grid;gap:8px}
 .wherepick .wp{position:relative;display:grid;grid-template-columns:34px 1fr;grid-template-rows:auto auto;column-gap:11px;align-items:center;text-align:left;background:var(--surface);border:1.5px solid var(--rule);border-radius:16px;padding:12px 42px 12px 13px}
 .wherepick .wp .ic{grid-row:1 / span 2;font-size:23px;line-height:1;text-align:center}
+/* All three marks are the same drawn square, so the row reads as three of
+   a kind and nothing looks like an afterthought. */
+.wp .ic .wpart{width:30px;height:30px;display:block;margin:0 auto}
 .wherepick .wp b{font-size:15px;font-weight:600}
 .wherepick .wp .s{font-size:12.5px;color:var(--fg-soft);line-height:1.35}
 .wherepick .wp .tick{position:absolute;right:13px;top:50%;transform:translateY(-50%);width:22px;height:22px;border-radius:50%;border:1.5px solid var(--rule);color:transparent;font-size:12px;display:grid;place-content:center}
@@ -1978,29 +1981,29 @@ const COURSES = [
     blurb: { vi: 'Bảy phương pháp có công cụ làm ngay trong app: WOOP, bảng tầm nhìn có ảnh, nghi thức trăng, kế hoạch nếu-thì, buông bỏ, giới hạn, nến và đá. Mọi thứ bạn viết được lưu trên máy và có thể xoá làm lại bất cứ lúc nào.', en: 'Seven methods with tools you use right in the app: WOOP, a vision board with photos, Moon rituals, if-then plans, letting go, limits, candles and stones. Everything you write is saved on your device and can be cleared and redone any time.' },
     includes: { vi: ['7 bài hướng dẫn nâng cao', 'Bảng ảnh, kế hoạch, nghi thức, buông bỏ', 'Nến và đá theo mục đích', 'Dùng 12 tháng, xem offline'], en: ['7 advanced guides', 'Photo board, plans, ritual and letting-go tools', 'Candles and stones by purpose', '12 months of access, works offline'] } },
   { id: 'plus', kind: 'unlock', icon: '✨', to: '#/play/coin', price: 79000, months: 12,
-    sum: { vi: 'Tung xu và rung cây không giới hạn, cùng toàn bộ giao diện.', en: 'The coin and the tree without limit, and every design.' },
+    sum: { vi: 'Không giới hạn lượt tung đồng xu và rung cây, mở toàn bộ giao diện.', en: 'The coin and the tree without limit, and every design.' },
     name: { vi: 'Nabu Plus', en: 'Nabu Plus' },
-    blurb: { vi: 'Mở tất cả những gì không thuộc về bạn nhỏ: tung đồng xu và rung cây thông điệp bao nhiêu lần tùy bạn, và toàn bộ giao diện của app: mặt sau lá bài, cây thông điệp, đồng xu và trang nhật ký.',
+    blurb: { vi: 'Nabu Plus mở toàn bộ các phần ngoài khu vực bạn nhỏ. Bạn được tung đồng xu và rung cây thông điệp không giới hạn số lượt, đồng thời sử dụng tất cả giao diện của ứng dụng: mặt sau lá bài, cây thông điệp, đồng xu và trang nhật ký.',
       en: 'Everything that is not a companion: flip the coin and shake the message tree as often as you like, and take every design in the app — card backs, message trees, coins and diary pages.' },
-    includes: { vi: ['Tung đồng xu không giới hạn', 'Rung cây thông điệp không giới hạn', '3 mặt sau lá bài, 3 cây, 3 đồng xu, 3 trang nhật ký', 'Dùng 12 tháng'],
+    includes: { vi: ['Tung đồng xu không giới hạn', 'Rung cây thông điệp không giới hạn', '3 mặt sau lá bài, 3 cây thông điệp, 3 đồng xu, 3 trang nhật ký', 'Thời hạn sử dụng 12 tháng'],
       en: ['Unlimited coin flips', 'Unlimited tree shakes', '3 card backs, 3 trees, 3 coins, 3 diary pages', '12 months of access'] } },
   /* Pro is sold by the half year and by the year. The year is cheaper by the
      month - 249.000 against 298.000 for two half years - so paying once is the
      better deal and reads as one. Both open exactly the same thing; only the
      date they run to differs. */
   { id: 'pro6', kind: 'unlock', icon: '👑', to: '#/play/pet', price: 149000, months: 6,
-    sum: { vi: 'Toàn bộ Plus, cộng linh thú và mọi thứ cho bạn nhỏ.', en: 'All of Plus, and the companions with everything for them.' },
+    sum: { vi: 'Trọn quyền lợi Nabu Plus, thêm linh thú và vật phẩm cho bạn nhỏ.', en: 'All of Plus, and the companions with everything for them.' },
     name: { vi: 'Nabu Pro · 6 tháng', en: 'Nabu Pro · 6 months' },
-    blurb: { vi: 'Có tất cả những gì của Nabu Plus, và thêm phần bạn nhỏ: mười hai linh thú trong truyền thuyết, nuôi sáu vị cùng lúc, món ngon, nhà đẹp và đồ mặc cho chúng, chờ hai giờ thay vì sáu giờ giữa hai bữa, và điểm nhân đôi.',
+    blurb: { vi: 'Nabu Pro bao gồm toàn bộ quyền lợi của Nabu Plus, cùng với khu vực bạn nhỏ: mười hai linh thú trong truyền thuyết, nuôi tối đa sáu bạn cùng lúc, đầy đủ thức ăn, nhà ở và trang phục dành cho các bạn ấy, thời gian chờ giữa hai bữa rút ngắn từ sáu giờ xuống còn hai giờ, và điểm kinh nghiệm nhân đôi.',
       en: 'Everything in Nabu Plus, and the companions besides: twelve spirit beasts, six of them at once, their good food, their homes and their clothes, a two-hour wait between meals instead of six, and double points.' },
-    includes: { vi: ['Giảm 15% mọi buổi xem bài với Nabu', 'Mọi thứ của Nabu Plus', '12 linh thú, nuôi 6 vị cùng lúc', '9 món ăn, 8 ngôi nhà, 9 món đồ mặc', 'Chờ 2 giờ giữa hai bữa, chơi 3 lượt mỗi ngày, điểm nhân đôi', 'Voucher 15% và 20%', 'Dùng 6 tháng'],
+    includes: { vi: ['Giảm 15% cho mọi buổi xem bài cùng Nabu', 'Toàn bộ quyền lợi của Nabu Plus', '12 linh thú, nuôi tối đa 6 bạn cùng lúc', '9 món ăn, 8 ngôi nhà, 9 bộ trang phục', 'Chờ 2 giờ giữa hai bữa, 3 lượt chơi mỗi ngày, điểm kinh nghiệm nhân đôi', 'Voucher giảm 15% và 20%', 'Thời hạn sử dụng 6 tháng'],
       en: ['15% off every reading with Nabu', 'Everything in Nabu Plus', '12 spirit beasts, six kept at once', '9 foods, 8 homes, 9 things to wear', '2 hours between meals, 3 plays a day, double points', 'The 15% and 20% vouchers', '6 months of access'] } },
   { id: 'pro', kind: 'unlock', icon: '👑', to: '#/play/pet', price: 249000, months: 12,
-    sum: { vi: 'Như trên, trọn một năm — rẻ hơn 49.000đ so với mua hai lần 6 tháng.', en: 'The same, for a whole year — 49.000đ less than two half years.' },
+    sum: { vi: 'Quyền lợi như gói 6 tháng, dùng trọn một năm và tiết kiệm 49.000đ.', en: 'The same, for a whole year — 49.000đ less than two half years.' },
     name: { vi: 'Nabu Pro · 12 tháng', en: 'Nabu Pro · 12 months' },
-    blurb: { vi: 'Có tất cả những gì của Nabu Plus, và thêm phần bạn nhỏ: mười hai linh thú trong truyền thuyết, nuôi sáu vị cùng lúc, món ngon, nhà đẹp và đồ mặc cho chúng, chờ hai giờ thay vì sáu giờ giữa hai bữa, và điểm nhân đôi. Trả một lần cho cả năm thì rẻ hơn.',
+    blurb: { vi: 'Nabu Pro bao gồm toàn bộ quyền lợi của Nabu Plus, cùng với khu vực bạn nhỏ: mười hai linh thú trong truyền thuyết, nuôi tối đa sáu bạn cùng lúc, đầy đủ thức ăn, nhà ở và trang phục dành cho các bạn ấy, thời gian chờ giữa hai bữa rút ngắn từ sáu giờ xuống còn hai giờ, và điểm kinh nghiệm nhân đôi. Thanh toán một lần cho cả năm sẽ tiết kiệm hơn so với mua hai lần gói 6 tháng.',
       en: 'Everything in Nabu Plus, and the companions besides: twelve spirit beasts, six of them at once, their good food, their homes and their clothes, a two-hour wait between meals instead of six, and double points. Paying once for the year costs less.' },
-    includes: { vi: ['Giảm 15% mọi buổi xem bài với Nabu', 'Rẻ hơn 49.000đ so với mua hai lần 6 tháng', 'Mọi thứ của Nabu Plus', '12 linh thú, nuôi 6 vị cùng lúc', '9 món ăn, 8 ngôi nhà, 9 món đồ mặc', 'Chờ 2 giờ giữa hai bữa, chơi 3 lượt mỗi ngày, điểm nhân đôi', 'Voucher 15% và 20%', 'Dùng 12 tháng'],
+    includes: { vi: ['Giảm 15% cho mọi buổi xem bài cùng Nabu', 'Tiết kiệm 49.000đ so với mua hai lần gói 6 tháng', 'Toàn bộ quyền lợi của Nabu Plus', '12 linh thú, nuôi tối đa 6 bạn cùng lúc', '9 món ăn, 8 ngôi nhà, 9 bộ trang phục', 'Chờ 2 giờ giữa hai bữa, 3 lượt chơi mỗi ngày, điểm kinh nghiệm nhân đôi', 'Voucher giảm 15% và 20%', 'Thời hạn sử dụng 12 tháng'],
       en: ['15% off every reading with Nabu', '49.000đ less than two half years', 'Everything in Nabu Plus', '12 spirit beasts, six kept at once', '9 foods, 8 homes, 9 things to wear', '2 hours between meals, 3 plays a day, double points', 'The 15% and 20% vouchers', '12 months of access'] } }
 ];
 /* Where the reading itself happens. Three, because these are the three
@@ -2010,9 +2013,9 @@ const COURSES = [
 const BOOK_WHERE = [
   { id: 'app', icon: '💬', best: true, name: { vi: 'Trong app Nabu Tarot', en: 'Here in the Nabu Tarot app' },
     sub: { vi: 'Nabu nhắn thẳng vào mục Hồ sơ của bạn, không lạc đi đâu được', en: 'Nabu replies straight into your Profile tab, where nothing can go astray' } },
-  { id: 'ig', icon: '📷', needsId: true, name: { vi: 'Instagram', en: 'Instagram' },
+  { id: 'ig', icon: '📸', needsId: true, name: { vi: 'Instagram', en: 'Instagram' },
     sub: { vi: 'Nabu nhắn qua tin nhắn Instagram', en: 'Nabu writes to you on Instagram' } },
-  { id: 'fb', icon: '🌐', needsId: true, name: { vi: 'Facebook', en: 'Facebook' },
+  { id: 'fb', icon: '💬', needsId: true, name: { vi: 'Facebook', en: 'Facebook' },
     sub: { vi: 'Nabu nhắn qua Messenger', en: 'Nabu writes to you on Messenger' } }
 ];
 const whereOf = (id) => BOOK_WHERE.filter((w) => w.id === id)[0] || null;
@@ -2092,9 +2095,9 @@ const STR = {
     angelWhyLadder: 'Đây là số bậc thang: các chữ số tăng dần liền nhau.',
     angelWhyRoot: (r) => 'Cộng các chữ số lại và rút gọn, bạn được số gốc ' + r + '. Bạn đọc theo nhóm số ' + r + '.',
     angelNote: 'Con số thiên thần là một cách đọc dân gian, được ghi lại ở đây để bạn tham khảo. Con số là lời nhắc bạn nhìn lại một việc, không phải lời tiên đoán.',
-    priceReadings: 'Xem bài cùng Nabu', priceReadingsHint: 'Nabu xem trực tiếp cho bạn. Chọn gói, chọn giờ, rồi nhắn cho Nabu.',
-    priceCoursesHint: 'Học theo tốc độ của bạn, xem được cả khi không có mạng.',
-    priceUnlocks: 'Mở thêm trong app', priceUnlocksHint: 'Không phải bài học — là những thứ bạn dùng hàng ngày trong app.',
+    priceReadings: 'Xem bài cùng Nabu', priceReadingsHint: 'Nabu xem bài trực tiếp cho bạn. Bạn chọn gói, chọn giờ, sau đó nhắn tin cho Nabu.',
+    priceCoursesHint: 'Bạn học theo tốc độ của mình và xem lại được cả khi không có mạng.',
+    priceUnlocks: 'Mở thêm trong ứng dụng', priceUnlocksHint: 'Đây không phải khoá học, mà là những tính năng bạn dùng hằng ngày trong ứng dụng.',
     priceOpen: 'Xem thử',
     priceFree: 'Miễn phí', priceFreeHint: 'Phần lớn app là miễn phí, không cần mã, không cần trả gì. Bạn chạm vào để xem thử.',
     courses: 'Khóa học', coursesPractice: 'Khóa học và thực hành', freeReads: 'Đọc miễn phí', practice: 'Thực hành', lessonsIntro: (n) => 'Khóa học có ' + n + ' bài. Bạn nên học lần lượt và dành khoảng một tuần cho mỗi bài.', markDone: 'Đánh dấu đã học xong', lessonDone: 'Đã học xong', journeyHint: 'Chạm vào một lá để mở trang của lá đó.', lenGridHint: 'Cả 36 lá. Chạm để xem từng lá.',
@@ -2158,7 +2161,7 @@ const STR = {
     animalNote: 'Con giáp ở đây được tính theo năm dương lịch. Nếu bạn sinh trước Tết, bạn thuộc con giáp của năm trước đó.',
 
     bookTitle: 'Đặt lịch xem bài',
-    priceTitle: 'Bảng giá', priceIntro: 'Buổi xem bài, khoá học và những phần mở thêm — đủ cả ở đây. Phần lớn app là miễn phí, mục cuối trang liệt kê hết.',
+    priceTitle: 'Bảng giá', priceIntro: 'Toàn bộ buổi xem bài, khoá học và các gói mở thêm đều được liệt kê tại đây. Phần lớn ứng dụng là miễn phí, và mục cuối trang liệt kê đầy đủ những phần miễn phí đó.',
     chooseService: '1. Chọn dịch vụ', serviceHint: 'Bạn chạm vào gói muốn xem để chọn, và chạm thêm một lần nữa nếu muốn bỏ chọn.', needService: 'Bạn chọn ít nhất một gói dịch vụ trước nhé.', bookTip: 'Bạn có thể chọn nhiều gói cho cùng một buổi.', cartTitle: 'Các gói bạn đã chọn', cartEmpty: 'Bạn chưa chọn gói nào.', cartNeedsTopic: 'chưa chọn chủ đề', msgTotal: 'Tổng', topicFor: 'Chủ đề cho', topicNone: 'Phần này chỉ hiện khi bạn chọn một gói 1 chủ đề sẵn ở bước 1. Mỗi gói như vậy sẽ có một ô chọn chủ đề riêng.',
     optional: 'không bắt buộc', birthTime: 'Giờ sinh', birthHint: 'Giờ sinh càng chính xác thì lá số tử vi càng đúng.', needBirth: 'Tử vi cần ngày sinh của bạn.',
     msgService: 'Dịch vụ', msgBirth: 'Ngày giờ sinh',
@@ -17256,12 +17259,42 @@ function composeMessage() {
   while (out[out.length - 1] === '') out.pop();
   return out.join('\n');
 }
+/* The three marks. One silhouette - a rounded square of the same size and
+   corner - so the row reads as three of a kind and the eye compares the glyphs
+   rather than the shapes. Instagram and Facebook in their own colours, because
+   that is what a logo is for; Nabu's in the app's purple, on the same grid, so
+   choosing to stay in the app looks like a choice and not a fallback. */
+const WHERE_ART = {
+  ig: '<svg viewBox="0 0 24 24" class="wpart" aria-hidden="true">'
+    + '<defs><linearGradient id="wpig" x1="0" y1="1" x2="1" y2="0">'
+    + '<stop offset="0" stop-color="#FEDA75"/><stop offset=".25" stop-color="#FA7E1E"/>'
+    + '<stop offset=".5" stop-color="#D62976"/><stop offset=".75" stop-color="#962FBF"/>'
+    + '<stop offset="1" stop-color="#4F5BD5"/></linearGradient></defs>'
+    + '<rect x="1" y="1" width="22" height="22" rx="6.6" fill="url(#wpig)"/>'
+    + '<rect x="5.7" y="5.7" width="12.6" height="12.6" rx="4.1" fill="none" stroke="#fff" stroke-width="1.7"/>'
+    + '<circle cx="12" cy="12" r="3.3" fill="none" stroke="#fff" stroke-width="1.7"/>'
+    + '<circle cx="16.8" cy="7.2" r="1.15" fill="#fff"/></svg>',
+  fb: '<svg viewBox="0 0 24 24" class="wpart" aria-hidden="true">'
+    + '<rect x="1" y="1" width="22" height="22" rx="6.6" fill="#1877F2"/>'
+    + '<path fill="#fff" d="M13.9 20.2v-7.4h2.5l.38-2.9H13.9V8.05c0-.84.23-1.41 1.43-1.41h1.53V4.05'
+    + 'c-.27-.04-1.18-.12-2.24-.12-2.22 0-3.74 1.35-3.74 3.84v2.13H8.37v2.9h2.51v7.4Z"/></svg>',
+  app: '<svg viewBox="0 0 24 24" class="wpart" aria-hidden="true">'
+    + '<defs><linearGradient id="wpnb" x1="0" y1="1" x2="1" y2="0">'
+    + '<stop offset="0" stop-color="#6C4CC4"/><stop offset="1" stop-color="#B8A4E3"/></linearGradient></defs>'
+    + '<rect x="1" y="1" width="22" height="22" rx="6.6" fill="url(#wpnb)"/>'
+    + '<path fill="#fff" d="M6.6 7.4h10.8a1.7 1.7 0 0 1 1.7 1.7v4.8a1.7 1.7 0 0 1-1.7 1.7h-4.8'
+    + 'L9.3 18.4v-2.8H6.6a1.7 1.7 0 0 1-1.7-1.7V9.1a1.7 1.7 0 0 1 1.7-1.7Z"/>'
+    + '<circle cx="9.1" cy="11.5" r="1.1" fill="#6C4CC4"/><circle cx="12" cy="11.5" r="1.1" fill="#6C4CC4"/>'
+    + '<circle cx="14.9" cy="11.5" r="1.1" fill="#6C4CC4"/></svg>'
+};
+const whereArt = (id) => WHERE_ART[id] || '';
+
 /* Where the reading happens. Three cards, one of which has to be chosen before
    the request can be sent, because guessing this has been Nabu's job until now. */
 function whereHTML() {
   const S = T(), picked = whereOf(book.where);
   const cards = BOOK_WHERE.map((w) => '<button type="button" class="wp' + (book.where === w.id ? ' on' : '') + (w.best ? ' best' : '') + '" data-where="' + w.id + '">'
-    + '<span class="ic">' + w.icon + '</span><b>' + esc(L(w.name)) + (w.best ? '<span class="wbest">\uD83D\uDC9C ' + esc(S.whereBest) + '</span>' : '') + '</b>'
+    + '<span class="ic">' + (whereArt(w.id) || w.icon) + '</span><b>' + esc(L(w.name)) + (w.best ? '<span class="wbest">\uD83D\uDC9C ' + esc(S.whereBest) + '</span>' : '') + '</b>'
     + '<span class="s">' + esc(L(w.sub)) + '</span><span class="tick">\u2713</span></button>').join('');
   /* Nabu cannot write to somebody on Instagram or Facebook without being told
      who they are, so the account is asked for at the moment that is chosen -
@@ -19647,7 +19680,7 @@ function adminSale(p) {
 ROUTES.admin = { nav: '', render: renderAdmin };
 
 /* ============================ boot ============================ */
-window.APP_VERSION = 'v135';
+window.APP_VERSION = 'v136';
 window.NABU = { CONFIG: CONFIG, SALE: SALE, salePrice: salePrice, loadActs: loadActs, BACK: BACK, LESSONS: LESSONS, localAnswer: localAnswer, compatVerdict: compatVerdict, numerologyOf: numerologyOf, ZDEEP: ZDEEP, lunarToday: lunarToday, solarToLunar: solarToLunar, DECK: DECK, INSIGHT: INSIGHT, KW: KW, ASK: ASK, TOPICS: TOPICS, GUIDES: GUIDES, SERVICES: SERVICES, COURSES: COURSES, ACCESS: ACCESS, plusOn: () => plusOn(), proOn: () => proOn(), luckUnlimited: () => luckUnlimited(), ZODIAC: ZODIAC, pick: pick, book: book,
   insightHTML: insightHTML, insightOf: insightOf, sunSignIndex: sunSignIndex, lifePath: lifePath, PROFILE: () => PROFILE, BE: BE, ACTS: ACTS,
   ANGELS: ANGELS, angelRead: angelRead, CODEBOOK: CODEBOOK, verifyCode: verifyCode, petHomeSVG: petHomeSVG, PET_HOMES: PET_HOMES, PET_WEARS: PET_WEARS, codeDigest: codeDigest, randomCode: randomCode, BANK: BANK, PETS: PETS, petSVG: petSVG, PET_COATS: PET_COATS, PET_KINDS: PET_KINDS, luckCut: luckCut, petLevel: petLevel, petStep: petStep, VOUCHERS: VOUCHERS, levelCoins: levelCoins, LOOKS: LOOKS,

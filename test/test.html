@@ -1325,6 +1325,20 @@ async function go(hash, sel) { W().location.hash = hash; await sleep(30); return
       ok(d.querySelector('[data-where="app"]').classList.contains('best') && /khuyên dùng/.test(d.querySelector('[data-where="app"]').textContent)
         && !d.querySelector('.whereid'),
         'the in-app option is marked as the one Nabu prefers, and nothing extra is asked for until it is needed');
+      { /* Three drawn marks on one silhouette, not a camera, a globe and a
+             speech balloon at three different weights. */
+        const arts = d.querySelectorAll('.wherepick .wp .ic .wpart');
+        ok(arts.length === 3, 'each of the three places wears a drawn mark, not an emoji');
+        const sizes = Array.prototype.map.call(arts, (a2) => {
+          const r = a2.getBoundingClientRect();
+          return Math.round(r.width) + 'x' + Math.round(r.height);
+        });
+        ok(sizes[0] === sizes[1] && sizes[1] === sizes[2] && /^[1-9]/.test(sizes[0]),
+          'and all three are drawn at the same size, so the row reads as three of a kind [' + sizes.join(' ') + ']');
+        /* The message that reaches Nabu is plain text, where a drawing cannot
+           go - so the emoji has to survive alongside the picture. */
+        ok(!/<svg/.test(d.querySelector('#msgtext').textContent),
+          'while the message sent to Nabu stays plain text'); }
       d.querySelector('[data-where="ig"]').click(); await sleep(80);
       ok(d.querySelector('[data-where="ig"]').classList.contains('on') && /Instagram/.test(d.querySelector('#msgtext').textContent),
         'the choice is carried in the message that goes to Nabu');

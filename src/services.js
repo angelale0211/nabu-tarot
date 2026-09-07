@@ -77,29 +77,29 @@ const COURSES = [
     blurb: { vi: 'Bảy phương pháp có công cụ làm ngay trong app: WOOP, bảng tầm nhìn có ảnh, nghi thức trăng, kế hoạch nếu-thì, buông bỏ, giới hạn, nến và đá. Mọi thứ bạn viết được lưu trên máy và có thể xoá làm lại bất cứ lúc nào.', en: 'Seven methods with tools you use right in the app: WOOP, a vision board with photos, Moon rituals, if-then plans, letting go, limits, candles and stones. Everything you write is saved on your device and can be cleared and redone any time.' },
     includes: { vi: ['7 bài hướng dẫn nâng cao', 'Bảng ảnh, kế hoạch, nghi thức, buông bỏ', 'Nến và đá theo mục đích', 'Dùng 12 tháng, xem offline'], en: ['7 advanced guides', 'Photo board, plans, ritual and letting-go tools', 'Candles and stones by purpose', '12 months of access, works offline'] } },
   { id: 'plus', kind: 'unlock', icon: '✨', to: '#/play/coin', price: 79000, months: 12,
-    sum: { vi: 'Tung xu và rung cây không giới hạn, cùng toàn bộ giao diện.', en: 'The coin and the tree without limit, and every design.' },
+    sum: { vi: 'Không giới hạn lượt tung đồng xu và rung cây, mở toàn bộ giao diện.', en: 'The coin and the tree without limit, and every design.' },
     name: { vi: 'Nabu Plus', en: 'Nabu Plus' },
-    blurb: { vi: 'Mở tất cả những gì không thuộc về bạn nhỏ: tung đồng xu và rung cây thông điệp bao nhiêu lần tùy bạn, và toàn bộ giao diện của app: mặt sau lá bài, cây thông điệp, đồng xu và trang nhật ký.',
+    blurb: { vi: 'Nabu Plus mở toàn bộ các phần ngoài khu vực bạn nhỏ. Bạn được tung đồng xu và rung cây thông điệp không giới hạn số lượt, đồng thời sử dụng tất cả giao diện của ứng dụng: mặt sau lá bài, cây thông điệp, đồng xu và trang nhật ký.',
       en: 'Everything that is not a companion: flip the coin and shake the message tree as often as you like, and take every design in the app — card backs, message trees, coins and diary pages.' },
-    includes: { vi: ['Tung đồng xu không giới hạn', 'Rung cây thông điệp không giới hạn', '3 mặt sau lá bài, 3 cây, 3 đồng xu, 3 trang nhật ký', 'Dùng 12 tháng'],
+    includes: { vi: ['Tung đồng xu không giới hạn', 'Rung cây thông điệp không giới hạn', '3 mặt sau lá bài, 3 cây thông điệp, 3 đồng xu, 3 trang nhật ký', 'Thời hạn sử dụng 12 tháng'],
       en: ['Unlimited coin flips', 'Unlimited tree shakes', '3 card backs, 3 trees, 3 coins, 3 diary pages', '12 months of access'] } },
   /* Pro is sold by the half year and by the year. The year is cheaper by the
      month - 249.000 against 298.000 for two half years - so paying once is the
      better deal and reads as one. Both open exactly the same thing; only the
      date they run to differs. */
   { id: 'pro6', kind: 'unlock', icon: '👑', to: '#/play/pet', price: 149000, months: 6,
-    sum: { vi: 'Toàn bộ Plus, cộng linh thú và mọi thứ cho bạn nhỏ.', en: 'All of Plus, and the companions with everything for them.' },
+    sum: { vi: 'Trọn quyền lợi Nabu Plus, thêm linh thú và vật phẩm cho bạn nhỏ.', en: 'All of Plus, and the companions with everything for them.' },
     name: { vi: 'Nabu Pro · 6 tháng', en: 'Nabu Pro · 6 months' },
-    blurb: { vi: 'Có tất cả những gì của Nabu Plus, và thêm phần bạn nhỏ: mười hai linh thú trong truyền thuyết, nuôi sáu vị cùng lúc, món ngon, nhà đẹp và đồ mặc cho chúng, chờ hai giờ thay vì sáu giờ giữa hai bữa, và điểm nhân đôi.',
+    blurb: { vi: 'Nabu Pro bao gồm toàn bộ quyền lợi của Nabu Plus, cùng với khu vực bạn nhỏ: mười hai linh thú trong truyền thuyết, nuôi tối đa sáu bạn cùng lúc, đầy đủ thức ăn, nhà ở và trang phục dành cho các bạn ấy, thời gian chờ giữa hai bữa rút ngắn từ sáu giờ xuống còn hai giờ, và điểm kinh nghiệm nhân đôi.',
       en: 'Everything in Nabu Plus, and the companions besides: twelve spirit beasts, six of them at once, their good food, their homes and their clothes, a two-hour wait between meals instead of six, and double points.' },
-    includes: { vi: ['Giảm 15% mọi buổi xem bài với Nabu', 'Mọi thứ của Nabu Plus', '12 linh thú, nuôi 6 vị cùng lúc', '9 món ăn, 8 ngôi nhà, 9 món đồ mặc', 'Chờ 2 giờ giữa hai bữa, chơi 3 lượt mỗi ngày, điểm nhân đôi', 'Voucher 15% và 20%', 'Dùng 6 tháng'],
+    includes: { vi: ['Giảm 15% cho mọi buổi xem bài cùng Nabu', 'Toàn bộ quyền lợi của Nabu Plus', '12 linh thú, nuôi tối đa 6 bạn cùng lúc', '9 món ăn, 8 ngôi nhà, 9 bộ trang phục', 'Chờ 2 giờ giữa hai bữa, 3 lượt chơi mỗi ngày, điểm kinh nghiệm nhân đôi', 'Voucher giảm 15% và 20%', 'Thời hạn sử dụng 6 tháng'],
       en: ['15% off every reading with Nabu', 'Everything in Nabu Plus', '12 spirit beasts, six kept at once', '9 foods, 8 homes, 9 things to wear', '2 hours between meals, 3 plays a day, double points', 'The 15% and 20% vouchers', '6 months of access'] } },
   { id: 'pro', kind: 'unlock', icon: '👑', to: '#/play/pet', price: 249000, months: 12,
-    sum: { vi: 'Như trên, trọn một năm — rẻ hơn 49.000đ so với mua hai lần 6 tháng.', en: 'The same, for a whole year — 49.000đ less than two half years.' },
+    sum: { vi: 'Quyền lợi như gói 6 tháng, dùng trọn một năm và tiết kiệm 49.000đ.', en: 'The same, for a whole year — 49.000đ less than two half years.' },
     name: { vi: 'Nabu Pro · 12 tháng', en: 'Nabu Pro · 12 months' },
-    blurb: { vi: 'Có tất cả những gì của Nabu Plus, và thêm phần bạn nhỏ: mười hai linh thú trong truyền thuyết, nuôi sáu vị cùng lúc, món ngon, nhà đẹp và đồ mặc cho chúng, chờ hai giờ thay vì sáu giờ giữa hai bữa, và điểm nhân đôi. Trả một lần cho cả năm thì rẻ hơn.',
+    blurb: { vi: 'Nabu Pro bao gồm toàn bộ quyền lợi của Nabu Plus, cùng với khu vực bạn nhỏ: mười hai linh thú trong truyền thuyết, nuôi tối đa sáu bạn cùng lúc, đầy đủ thức ăn, nhà ở và trang phục dành cho các bạn ấy, thời gian chờ giữa hai bữa rút ngắn từ sáu giờ xuống còn hai giờ, và điểm kinh nghiệm nhân đôi. Thanh toán một lần cho cả năm sẽ tiết kiệm hơn so với mua hai lần gói 6 tháng.',
       en: 'Everything in Nabu Plus, and the companions besides: twelve spirit beasts, six of them at once, their good food, their homes and their clothes, a two-hour wait between meals instead of six, and double points. Paying once for the year costs less.' },
-    includes: { vi: ['Giảm 15% mọi buổi xem bài với Nabu', 'Rẻ hơn 49.000đ so với mua hai lần 6 tháng', 'Mọi thứ của Nabu Plus', '12 linh thú, nuôi 6 vị cùng lúc', '9 món ăn, 8 ngôi nhà, 9 món đồ mặc', 'Chờ 2 giờ giữa hai bữa, chơi 3 lượt mỗi ngày, điểm nhân đôi', 'Voucher 15% và 20%', 'Dùng 12 tháng'],
+    includes: { vi: ['Giảm 15% cho mọi buổi xem bài cùng Nabu', 'Tiết kiệm 49.000đ so với mua hai lần gói 6 tháng', 'Toàn bộ quyền lợi của Nabu Plus', '12 linh thú, nuôi tối đa 6 bạn cùng lúc', '9 món ăn, 8 ngôi nhà, 9 bộ trang phục', 'Chờ 2 giờ giữa hai bữa, 3 lượt chơi mỗi ngày, điểm kinh nghiệm nhân đôi', 'Voucher giảm 15% và 20%', 'Thời hạn sử dụng 12 tháng'],
       en: ['15% off every reading with Nabu', '49.000đ less than two half years', 'Everything in Nabu Plus', '12 spirit beasts, six kept at once', '9 foods, 8 homes, 9 things to wear', '2 hours between meals, 3 plays a day, double points', 'The 15% and 20% vouchers', '12 months of access'] } }
 ];
 /* Where the reading itself happens. Three, because these are the three
@@ -109,9 +109,9 @@ const COURSES = [
 const BOOK_WHERE = [
   { id: 'app', icon: '💬', best: true, name: { vi: 'Trong app Nabu Tarot', en: 'Here in the Nabu Tarot app' },
     sub: { vi: 'Nabu nhắn thẳng vào mục Hồ sơ của bạn, không lạc đi đâu được', en: 'Nabu replies straight into your Profile tab, where nothing can go astray' } },
-  { id: 'ig', icon: '📷', needsId: true, name: { vi: 'Instagram', en: 'Instagram' },
+  { id: 'ig', icon: '📸', needsId: true, name: { vi: 'Instagram', en: 'Instagram' },
     sub: { vi: 'Nabu nhắn qua tin nhắn Instagram', en: 'Nabu writes to you on Instagram' } },
-  { id: 'fb', icon: '🌐', needsId: true, name: { vi: 'Facebook', en: 'Facebook' },
+  { id: 'fb', icon: '💬', needsId: true, name: { vi: 'Facebook', en: 'Facebook' },
     sub: { vi: 'Nabu nhắn qua Messenger', en: 'Nabu writes to you on Messenger' } }
 ];
 const whereOf = (id) => BOOK_WHERE.filter((w) => w.id === id)[0] || null;

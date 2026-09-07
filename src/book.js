@@ -88,12 +88,42 @@ function composeMessage() {
   while (out[out.length - 1] === '') out.pop();
   return out.join('\n');
 }
+/* The three marks. One silhouette - a rounded square of the same size and
+   corner - so the row reads as three of a kind and the eye compares the glyphs
+   rather than the shapes. Instagram and Facebook in their own colours, because
+   that is what a logo is for; Nabu's in the app's purple, on the same grid, so
+   choosing to stay in the app looks like a choice and not a fallback. */
+const WHERE_ART = {
+  ig: '<svg viewBox="0 0 24 24" class="wpart" aria-hidden="true">'
+    + '<defs><linearGradient id="wpig" x1="0" y1="1" x2="1" y2="0">'
+    + '<stop offset="0" stop-color="#FEDA75"/><stop offset=".25" stop-color="#FA7E1E"/>'
+    + '<stop offset=".5" stop-color="#D62976"/><stop offset=".75" stop-color="#962FBF"/>'
+    + '<stop offset="1" stop-color="#4F5BD5"/></linearGradient></defs>'
+    + '<rect x="1" y="1" width="22" height="22" rx="6.6" fill="url(#wpig)"/>'
+    + '<rect x="5.7" y="5.7" width="12.6" height="12.6" rx="4.1" fill="none" stroke="#fff" stroke-width="1.7"/>'
+    + '<circle cx="12" cy="12" r="3.3" fill="none" stroke="#fff" stroke-width="1.7"/>'
+    + '<circle cx="16.8" cy="7.2" r="1.15" fill="#fff"/></svg>',
+  fb: '<svg viewBox="0 0 24 24" class="wpart" aria-hidden="true">'
+    + '<rect x="1" y="1" width="22" height="22" rx="6.6" fill="#1877F2"/>'
+    + '<path fill="#fff" d="M13.9 20.2v-7.4h2.5l.38-2.9H13.9V8.05c0-.84.23-1.41 1.43-1.41h1.53V4.05'
+    + 'c-.27-.04-1.18-.12-2.24-.12-2.22 0-3.74 1.35-3.74 3.84v2.13H8.37v2.9h2.51v7.4Z"/></svg>',
+  app: '<svg viewBox="0 0 24 24" class="wpart" aria-hidden="true">'
+    + '<defs><linearGradient id="wpnb" x1="0" y1="1" x2="1" y2="0">'
+    + '<stop offset="0" stop-color="#6C4CC4"/><stop offset="1" stop-color="#B8A4E3"/></linearGradient></defs>'
+    + '<rect x="1" y="1" width="22" height="22" rx="6.6" fill="url(#wpnb)"/>'
+    + '<path fill="#fff" d="M6.6 7.4h10.8a1.7 1.7 0 0 1 1.7 1.7v4.8a1.7 1.7 0 0 1-1.7 1.7h-4.8'
+    + 'L9.3 18.4v-2.8H6.6a1.7 1.7 0 0 1-1.7-1.7V9.1a1.7 1.7 0 0 1 1.7-1.7Z"/>'
+    + '<circle cx="9.1" cy="11.5" r="1.1" fill="#6C4CC4"/><circle cx="12" cy="11.5" r="1.1" fill="#6C4CC4"/>'
+    + '<circle cx="14.9" cy="11.5" r="1.1" fill="#6C4CC4"/></svg>'
+};
+const whereArt = (id) => WHERE_ART[id] || '';
+
 /* Where the reading happens. Three cards, one of which has to be chosen before
    the request can be sent, because guessing this has been Nabu's job until now. */
 function whereHTML() {
   const S = T(), picked = whereOf(book.where);
   const cards = BOOK_WHERE.map((w) => '<button type="button" class="wp' + (book.where === w.id ? ' on' : '') + (w.best ? ' best' : '') + '" data-where="' + w.id + '">'
-    + '<span class="ic">' + w.icon + '</span><b>' + esc(L(w.name)) + (w.best ? '<span class="wbest">\uD83D\uDC9C ' + esc(S.whereBest) + '</span>' : '') + '</b>'
+    + '<span class="ic">' + (whereArt(w.id) || w.icon) + '</span><b>' + esc(L(w.name)) + (w.best ? '<span class="wbest">\uD83D\uDC9C ' + esc(S.whereBest) + '</span>' : '') + '</b>'
     + '<span class="s">' + esc(L(w.sub)) + '</span><span class="tick">\u2713</span></button>').join('');
   /* Nabu cannot write to somebody on Instagram or Facebook without being told
      who they are, so the account is asked for at the moment that is chosen -
