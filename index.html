@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
 <title>Nabu Tarot</title>
 <meta name="description" content="Nabu Tarot: dự đoán mới, rút một lá bài xem năng lượng hiện tại, học tarot, Lenormand, chiêm tinh, và đặt lịch xem bài.">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'none'; object-src 'none'; form-action 'self'; script-src 'self' 'sha256-u+vOFPXbLR0PTYyWFI5BYlaoM7f1mSr2CPrzUdlAnPw=' https://www.gstatic.com https://apis.google.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; font-src 'self' data:; media-src 'self' data: blob:; worker-src 'self'; connect-src 'self' https://*.googleapis.com https://*.google.com https://*.firebaseio.com https://*.cloudfunctions.net https://*.workers.dev https://generativelanguage.googleapis.com; frame-src https://*.firebaseapp.com https://accounts.google.com https://*.facebook.com">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'none'; object-src 'none'; form-action 'self'; script-src 'self' 'sha256-tx8/ccPQ0L2g7k3TlVEU6EqNILj2MiPj0jbDGewB08c=' https://www.gstatic.com https://apis.google.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; font-src 'self' data:; media-src 'self' data: blob:; worker-src 'self'; connect-src 'self' https://*.googleapis.com https://*.google.com https://*.firebaseio.com https://*.cloudfunctions.net https://*.workers.dev https://generativelanguage.googleapis.com; frame-src https://*.firebaseapp.com https://accounts.google.com https://*.facebook.com">
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <meta name="theme-color" content="#EFE9FA">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -959,10 +959,15 @@ h1 .pileico{width:34px;height:27px;vertical-align:-3px;margin-right:2px}
 .thr-head{display:flex;align-items:center;gap:12px;margin-bottom:10px}.thr-head b{display:block}.thr-head i{font-style:normal;color:var(--fg-faint);font-size:12.5px;font-weight:500}
 .tabs button{position:relative}.tabs .tb{display:inline-block;margin-left:6px;background:var(--pink-ink);color:#fff;font-size:10.5px;border-radius:999px;min-width:17px;height:17px;line-height:17px;text-align:center;padding:0 5px;vertical-align:1px}
 .admin-sum .cnt{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:8px 0 10px}.admin-sum .cnt a{background:var(--surface-2);border-radius:14px;padding:12px;text-align:center;text-decoration:none;color:inherit}.admin-sum .cnt b{display:block;font-size:26px;font-family:var(--display);color:var(--link)}.admin-sum .cnt span{font-size:12.5px;color:var(--fg-soft)}
-.chatbar{display:flex;gap:8px;margin-top:10px;align-items:flex-end}.chatbar .emojis{width:100%}
-.chatbar textarea{min-height:44px;max-height:120px;border-radius:14px;padding:10px 14px}
+/* Three columns that stretch to the same height: the small buttons, the box
+   to type in, and Send. Pinned to the bottom they were level only when the box
+   held one line. */
+.chatbar{display:flex;gap:8px;margin-top:10px;align-items:stretch}
+.chattools{display:flex;flex-direction:column;gap:6px;flex:none}
+.chattools .att-btn{flex:1;width:46px;min-height:0;padding:0;display:grid;place-content:center}.chatbar .emojis{width:100%}
+.chatbar textarea{min-height:94px;max-height:180px;border-radius:14px;padding:10px 14px}
 .chatbar button{flex:none}
-.chatbar .att-btn{padding:8px 10px;min-height:44px;font-size:18px;cursor:pointer}
+.chatbar .att-btn{font-size:18px;cursor:pointer}
 .chatbar .att-btn.rec{background:var(--tag-pink-bg);color:var(--tag-pink-ink);animation:pulse 1s infinite}
 @keyframes pulse{50%{opacity:.6}}
 .msg .att{display:block;max-width:220px;border-radius:10px;margin-bottom:6px}
@@ -1731,7 +1736,8 @@ button.unl{display:block;width:100%;text-align:left;font:inherit;color:inherit;c
 .ai .sugs{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0}
 .ai .sugs .chip{flex:0 1 auto;min-width:0;text-align:left;line-height:1.3;overflow-wrap:anywhere}
 .ai-chat{display:flex;flex-direction:column;gap:8px;max-height:55vh;overflow:auto;padding:10px;border:1px solid var(--rule-soft)}.ai-chat .msg{max-width:94%}.ai-chat .msg p{margin:0 0 6px}.ai-chat .msg p:last-child{margin:0}
-.ai .chatbar{align-items:flex-end}.ai .chatbar textarea{flex:1;min-height:46px;resize:none}.ai .chatbar .btn{min-height:46px;padding:0 16px}.ai .chatbar .btn[disabled]{opacity:.5}
+.ai .chatbar{align-items:flex-end}.ai .chatbar textarea{flex:1;resize:none}.ai .chatbar .btn{min-height:0;padding:0 16px}
+.chatbar > .btn.primary{align-self:stretch}.ai .chatbar .btn[disabled]{opacity:.5}
 .ok{color:var(--ok)}.err{color:var(--err)}
 
 @media (max-width:380px){.hero{grid-template-columns:96px 1fr}.fan{height:230px}.fan .slot{width:92px;height:150px;margin-left:-46px}.nav a{font-size:9.5px}}
@@ -2015,7 +2021,16 @@ const COURSES = [
     blurb: { vi: 'Nabu Pro bao gồm toàn bộ quyền lợi của Nabu Plus, cùng với khu vực bạn nhỏ: mười hai linh thú trong truyền thuyết, nuôi tối đa sáu bạn cùng lúc, đầy đủ thức ăn, nhà ở và trang phục dành cho các bạn ấy, thời gian chờ giữa hai bữa rút ngắn từ sáu giờ xuống còn hai giờ, và điểm kinh nghiệm nhân đôi. Thanh toán một lần cho cả năm sẽ tiết kiệm hơn so với mua hai lần gói 6 tháng.',
       en: 'Everything in Nabu Plus, and the companions besides: twelve spirit beasts, six of them at once, their good food, their homes and their clothes, a two-hour wait between meals instead of six, and double points. Paying once for the year costs less.' },
     includes: { vi: ['Giảm 15% cho mọi buổi xem bài cùng Nabu', 'Tiết kiệm 49.000đ so với mua hai lần gói 6 tháng', 'Toàn bộ quyền lợi của Nabu Plus', '12 linh thú, nuôi tối đa 6 bạn cùng lúc', '9 món ăn, 8 ngôi nhà, 9 bộ trang phục', 'Chờ 2 giờ giữa hai bữa, 3 lượt chơi mỗi ngày, điểm kinh nghiệm nhân đôi', 'Voucher giảm 15% và 20%', 'Thời hạn sử dụng 12 tháng'],
-      en: ['15% off every reading with Nabu', '49.000đ less than two half years', 'Everything in Nabu Plus', '12 spirit beasts, six kept at once', '9 foods, 8 homes, 9 things to wear', '2 hours between meals, 3 plays a day, double points', 'The 15% and 20% vouchers', '12 months of access'] } }
+      en: ['15% off every reading with Nabu', '49.000đ less than two half years', 'Everything in Nabu Plus', '12 spirit beasts, six kept at once', '9 foods, 8 homes, 9 things to wear', '2 hours between meals, 3 plays a day, double points', 'The 15% and 20% vouchers', '12 months of access'] } },
+  /* A wedding is bought once and held once, but the year is there so nobody
+     loses what they paid for by having to move the date. */
+  { id: 'wedding', kind: 'unlock', icon: '\uD83D\uDC92', to: '#/wedding', price: 30000, months: 12,
+    sum: { vi: 'Tổ chức lễ cưới trong ứng dụng, có khách mời và Nabu Cupid chủ hôn.', en: 'Hold a ceremony inside the app, with guests and Nabu Cupid to marry you.' },
+    name: { vi: 'Lễ cưới trên Nabu', en: 'A wedding on Nabu' },
+    blurb: { vi: 'Hai bạn đã đính ước trên sợi tơ hồng có thể tổ chức một lễ cưới ngay trong ứng dụng. Bạn chọn ngày giờ, gửi thiệp mời cho bạn bè, và đến giờ, Nabu Cupid sẽ chủ hôn: hỏi lời thề của từng người, chờ hai bạn trả lời, rồi tuyên bố hai bạn nên duyên. Khách mời vào xem, gửi quà chúc mừng miễn phí, và tham gia màn tung hoa cưới ở cuối buổi lễ.',
+      en: 'A couple engaged on the red thread can hold a ceremony inside the app. You choose the day and the hour, send invitations to your friends, and when the time comes Nabu Cupid marries you: the vows are asked one at a time, you answer them in front of everybody, and then you are declared married. Guests watch, send free congratulations, and join the bouquet toss at the end.' },
+    includes: { vi: ['Phòng cưới riêng, có ngày giờ do hai bạn chọn', 'Thiệp mời gửi bằng đường dẫn, không giới hạn khách', 'Nabu Cupid chủ hôn, hỏi lời thề từng người', 'Nhạc lễ và hiệu ứng trong suốt buổi', 'Khách gửi lời chúc và quà miễn phí', 'Màn tung hoa cưới chọn người may mắn', 'Thời hạn sử dụng 12 tháng'],
+      en: ['A room of your own, at an hour you choose', 'Invitations by link, as many guests as you like', 'Nabu Cupid asks each of you your vows', 'Music and effects throughout', 'Guests send congratulations and gifts, free', 'A bouquet toss to pick one lucky guest', '12 months to hold it'] } }
 ];
 /* Where the reading itself happens. Three, because these are the three
    places Nabu actually reads. */
@@ -10169,8 +10184,8 @@ function weekNext() { const x = new Date(); x.setHours(0, 0, 0, 0); x.setDate(x.
 const luckUnlimited = () => plusOn();
 const luckSpent = (kind) => !luckUnlimited(kind) && (store.get('nabu-luck', {}) || {})[kind] === weekStart();
 function luckSpend(kind) { if (luckUnlimited(kind)) return; const a = store.get('nabu-luck', {}) || {}; a[kind] = weekStart(); store.set('nabu-luck', a); }
-const CODE_LETTER = { tarot: 'T', manifest: 'M', playing: 'P', coin: 'C', tree: 'Y', luck: 'B', pro: 'S', lenormand: 'L' };
-const CODE_COURSE = { T: 'tarot', M: 'manifest', P: 'playing', C: 'coin', Y: 'tree', B: 'luck', S: 'pro', L: 'lenormand' };
+const CODE_LETTER = { tarot: 'T', manifest: 'M', playing: 'P', coin: 'C', tree: 'Y', luck: 'B', pro: 'S', lenormand: 'L', wedding: 'W' };
+const CODE_COURSE = { T: 'tarot', M: 'manifest', P: 'playing', C: 'coin', Y: 'tree', B: 'luck', S: 'pro', L: 'lenormand', W: 'wedding' };
 function addMonths(iso, n) { const d = new Date(iso + 'T00:00:00'); d.setMonth(d.getMonth() + n); return isoDate(d); }
 
 /* ---- the deck ---- */
@@ -13706,7 +13721,7 @@ function loveKnotSVG(cls) {
   const cord = (d, k) => '<path d="' + d + '" fill="none" stroke="' + DEEP + '" stroke-width="' + k + '" stroke-linecap="round" stroke-linejoin="round"/>'
     + '<path d="' + d + '" fill="none" stroke="' + RED + '" stroke-width="' + (k - 3) + '" stroke-linecap="round" stroke-linejoin="round"/>'
     + '<path d="' + d + '" fill="none" stroke="' + LIT + '" stroke-width="' + (k - 8) + '" stroke-linecap="round" stroke-linejoin="round" opacity=".5"/>';
-  return '<svg viewBox="52 52 136 116" class="loveknot ' + (cls || '') + '" aria-hidden="true">'
+  return '<svg viewBox="52 46 136 128" class="loveknot ' + (cls || '') + '" aria-hidden="true">'
     + cord(HEART, 15) + cord(wrapA, 11) + cord(wrapB, 11) + '</svg>';
 }
 
@@ -13716,11 +13731,10 @@ function loveMarkSVG(state, cls) {
   if (st === 'proposed') return open + ringArt(24, 28, 12, -8, true) + '</svg>';
   if (st === 'engaged') return open + ringPairArt(24, 27, 11) + '</svg>';
   if (st === 'married') return open + ringPairArt(24, 33, 10) + wreathArt(24, 11, 18) + '</svg>';
-  return open
-    + '<path d="M8 34 q10 -6 14 -12 M40 34 q-10 -6 -14 -12" stroke="#D6314B" stroke-width="3" fill="none" stroke-linecap="round"/>'
-    + '<circle cx="24" cy="20" r="8" fill="#D6314B"/><circle cx="24" cy="20" r="3.4" fill="#F2789F"/>'
-    + '<path d="M16 12 q8 -7 16 0 M16 28 q8 7 16 0" stroke="#D6314B" stroke-width="3" fill="none" stroke-linecap="round"/>'
-    + '</svg>';
+  /* The first stage is the thread itself, so it wears the thread: the same
+     knot as everywhere else, not the abstract mark nobody recognised. Its own
+     viewBox, because the knot is wider than it is tall. */
+  return loveKnotSVG('lovemark ' + (cls || ''));
 }
 
 /* ---- the thread itself ----
@@ -17794,7 +17808,14 @@ function authMessage(e, provider) {
 function chatBarHTML(idText, idSend, label) {
   const S = T();
   const att = (CONFIG.attachments || CONFIG.chatImages ? '<label class="btn sm att-btn" title="' + esc(S.sendPhoto) + '">📷<input type="file" accept="image/*" data-chat-img hidden></label>' : '') + (CONFIG.attachments ? '<button class="btn sm att-btn" data-chat-voice title="' + esc(S.holdToRecord) + '">🎤</button>' : '');
-  return '<div class="emojis" data-chat-emojis hidden>' + EMOJIS.map((e) => '<button type="button">' + e + '</button>').join('') + '</div><div class="chatbar"><button class="btn sm att-btn" data-chat-emoji title="' + esc(S.emojiBtn) + '">😊</button>' + att + '<textarea id="' + idText + '" placeholder="' + esc(S.typeMsg) + '"></textarea><button class="btn primary" id="' + idSend + '">' + esc(label) + '</button></div><p class="hint" data-chat-status></p>';
+  /* The two small buttons stack down the left rather than sitting in the row,
+     so they stay level with a compose box of any height instead of being
+     dwarfed by it. */
+  return '<div class="emojis" data-chat-emojis hidden>' + EMOJIS.map((e) => '<button type="button">' + e + '</button>').join('') + '</div>'
+    + '<div class="chatbar">'
+    + '<div class="chattools"><button class="btn sm att-btn" data-chat-emoji title="' + esc(S.emojiBtn) + '">😊</button>' + att + '</div>'
+    + '<textarea id="' + idText + '" placeholder="' + esc(S.typeMsg) + '"></textarea>'
+    + '<button class="btn primary" id="' + idSend + '">' + esc(label) + '</button></div><p class="hint" data-chat-status></p>';
 }
 function bindChatBar(root, sendFn) {
   const S = T(), status = $('[data-chat-status]', root);
@@ -19085,6 +19106,246 @@ function adminActivities(p) {
   p.innerHTML = '<p class="hint">…</p>';
   loadActs().then((list) => { items = list.slice(); draw(); });
 }
+
+/* =========================== a wedding on Nabu ===========================
+
+   Two people who are engaged on the red thread can hold a ceremony inside the
+   app, at an hour they choose, with guests watching. Nabu Cupid asks them the
+   questions, each of them answers in front of everybody, and at the end they
+   are married - on the thread, in the data, not only in the story.
+
+   How it holds together, and why:
+
+   THE ROOM IS THE DOCUMENT. There is no server here and there never will be,
+   so a shared moment has to be a shared document that everybody watches. The
+   ceremony is a numbered script held in this file; the cloud stores only which
+   step the room is on and what was answered. Everyone on that step sees the
+   same thing, latecomers included, and nothing has to be replayed to them.
+
+   ONLY THE COUPLE MOVE IT. A step advances when the person being asked
+   answers, and the rules let nobody but those two write to it. Guests write to
+   exactly two places - their own seat and their own gifts - and to nothing
+   else, so a guest cannot marry anybody or answer for the bride.
+
+   YES IS NOT AUTOMATIC. Cupid asks; the answer is a real choice, and No ends
+   the ceremony gently and does not marry them. That is the whole reason for
+   doing this in front of people, and pretending otherwise would make it a
+   cutscene rather than a ceremony.
+
+   THE DOOR OPENS FIFTEEN MINUTES BEFORE AND SHUTS AT THE END. A guest with the
+   link sees a closed door before that and a thank-you after it. During the
+   hour they may leave and come back as often as they like, because people do.
+
+   THE MUSIC IS SYNTHESISED. Every note is generated here with oscillators, so
+   nothing is fetched, nothing is licensed from anybody, and it works offline.
+   It starts only on a press, because that is the rule browsers enforce and
+   also the polite thing to do to somebody on a bus. */
+
+const WED_PRICE = 30000;
+const WED_OPEN_MS = 15 * 60 * 1000;   /* the door opens this long before */
+const WED_END_MS = 5 * 60 * 1000;     /* and shuts this long after the vows */
+const WED_SEEN_MS = 45 * 1000;        /* a seat still warm counts as present */
+
+/* ---------------------------------------------------------------- the script
+
+   One numbered line at a time. `who` is whose turn it is to answer - 'a', 'b',
+   or nobody - and every client renders the same line for the same number, so
+   the room stays together without anything being broadcast. */
+const WED_STEPS = [
+  { id: 'gather', who: '' },
+  { id: 'thread', who: '' },
+  { id: 'askA', who: 'a', vow: 'takeA' },
+  { id: 'askB', who: 'b', vow: 'takeB' },
+  { id: 'promiseA', who: 'a', vow: 'keepA' },
+  { id: 'promiseB', who: 'b', vow: 'keepB' },
+  { id: 'bind', who: '' },
+  { id: 'declare', who: '' }
+];
+const wedStep = (n) => WED_STEPS[Math.max(0, Math.min(WED_STEPS.length - 1, n | 0))];
+
+/* ------------------------------------------------------------------ the room */
+
+const WED = {
+  ok() { return typeof BE !== 'undefined' && BE.enabled && !!BE.user && !!BE.db; },
+  me() { return BE.user.uid; },
+  /* One wedding per thread, named after it, so a couple cannot end up with two
+     and a guest's link never goes stale. */
+  idFor(bond) { return bond ? bond.id : ''; },
+  mine(w) { return !!(w && w.uids && w.uids.indexOf(this.me()) > -1); },
+  /* Which of the pair I am, in the script's terms. */
+  side(w) { return w && w.a === this.me() ? 'a' : w && w.b === this.me() ? 'b' : ''; },
+  startMs(w) { return Number(w && w.startMs) || 0; },
+  /* The door. Before it opens there is nothing to enter; once the vows are
+     done the room stays warm for five minutes and then closes for good. */
+  doorState(w, now) {
+    const t = now || Date.now(), start = this.startMs(w);
+    if (!w || !start) return 'none';
+    if (w.state === 'ended' || w.state === 'called-off') return 'over';
+    if (w.doneAt && t > w.doneAt + WED_END_MS) return 'over';
+    if (w.doneAt) return 'open';
+    if (t < start - WED_OPEN_MS) return 'early';
+    return 'open';
+  },
+  /* Everyone whose seat was warm in the last minute or so. Used for the
+     bouquet, which should only be able to land on somebody actually there. */
+  present(guests) {
+    const t = Date.now();
+    return (guests || []).filter((g) => t - Number(g.seen || 0) < WED_SEEN_MS);
+  },
+
+  async create(bond, startMs) {
+    const id = this.idFor(bond), me = this.me();
+    const mine = LOVE.mine(bond, me), you = LOVE.other(bond, me);
+    await BE.db.collection('weddings').doc(id).set({
+      uids: bond.uids, a: bond.a, b: bond.b,
+      aName: bond.aName || '', bName: bond.bName || '',
+      startMs: Number(startMs) || 0,
+      state: 'planned', step: 0, vows: {}, guestCount: 0,
+      by: me, at: Date.now()
+    });
+    void mine; void you;
+    return id;
+  },
+  watch(id, cb) {
+    if (!this.ok() || !id) return () => {};
+    return BE.db.collection('weddings').doc(id)
+      .onSnapshot((d) => cb(d.exists ? Object.assign({ id: d.id }, d.data()) : null), () => cb(null));
+  },
+  async get(id) {
+    const d = await BE.db.collection('weddings').doc(id).get();
+    return d.exists ? Object.assign({ id: d.id }, d.data()) : null;
+  },
+  setTime(id, startMs) { return BE.db.collection('weddings').doc(id).update({ startMs: Number(startMs) || 0 }); },
+  callOff(id) { return BE.db.collection('weddings').doc(id).update({ state: 'called-off' }); },
+  drop(id) { return BE.db.collection('weddings').doc(id).delete(); },
+
+  /* An answer and the step it moves. Written together so the room can never
+     sit on a question that has already been answered. */
+  async answer(id, w, vowKey, yes) {
+    const patch = { step: (w.step | 0) + 1 };
+    patch['vows.' + vowKey] = !!yes;
+    if (!yes) { patch.state = 'called-off'; patch.doneAt = Date.now(); }
+    await BE.db.collection('weddings').doc(id).update(patch);
+  },
+  /* Moving on where nothing was asked - Cupid's own lines. */
+  async onward(id, w) {
+    const next = (w.step | 0) + 1;
+    const patch = { step: next };
+    if (wedStep(next).id === 'declare') { patch.state = 'married'; patch.doneAt = Date.now(); }
+    await BE.db.collection('weddings').doc(id).update(patch);
+  },
+
+  /* ---- seats ---- */
+  seat(id) { return BE.db.collection('weddings').doc(id).collection('guests').doc(this.me()); },
+  async sit(id, name) {
+    await this.seat(id).set({ uid: this.me(), name: String(name || '').slice(0, 40), seen: Date.now() }, { merge: true });
+    /* Kept under the guest's own account as well, so the invitation survives a
+       new phone: this is the only place the app can look it up from. */
+    const list = store.get('nabu-weddings', []) || [];
+    if (list.indexOf(id) < 0) { list.push(id); store.set('nabu-weddings', list.slice(-12)); }
+    try { await BE.db.collection('users').doc(this.me()).set({ weddings: list }, { merge: true }); } catch (e) { /* offline */ }
+  },
+  stillHere(id) { return this.seat(id).set({ seen: Date.now() }, { merge: true }).catch(() => {}); },
+  watchGuests(id, cb) {
+    if (!this.ok() || !id) return () => {};
+    return BE.db.collection('weddings').doc(id).collection('guests')
+      .onSnapshot((s) => cb(s.docs.map((d) => d.data())), () => cb([]));
+  },
+
+  /* ---- what the room throws ---- */
+  giveGift(id, kind) {
+    return BE.db.collection('weddings').doc(id).collection('gifts').doc(this.me() + '__' + Date.now()).set({
+      from: this.me(), name: (PROFILE && PROFILE.name) || '', kind: kind, at: Date.now()
+    });
+  },
+  watchGifts(id, cb) {
+    if (!this.ok() || !id) return () => {};
+    return BE.db.collection('weddings').doc(id).collection('gifts')
+      .onSnapshot((s) => cb(s.docs.map((d) => d.data()).sort((x, y) => (y.at || 0) - (x.at || 0))), () => cb([]));
+  },
+
+  /* ---- the bouquet ----
+     Thrown first, landed ten seconds later, in two writes. Everybody watching
+     sees the throw at the same moment and waits the same wait; if the winner
+     were chosen in one write the answer would already be in the room while the
+     flowers were still in the air. */
+  async throwBouquet(id, guests) {
+    const here = this.present(guests).filter((g) => this.mine ? true : true);
+    await BE.db.collection('weddings').doc(id).update({ bouquet: { at: Date.now(), by: this.me(), n: here.length } });
+    return here;
+  },
+  async landBouquet(id, here) {
+    const pool = here || [];
+    if (!pool.length) { await BE.db.collection('weddings').doc(id).update({ 'bouquet.none': true }); return null; }
+    const r = new Uint32Array(1);
+    (window.crypto || window.msCrypto).getRandomValues(r);
+    const won = pool[r[0] % pool.length];
+    await BE.db.collection('weddings').doc(id).update({ 'bouquet.uid': won.uid, 'bouquet.name': won.name || '' });
+    return won;
+  }
+};
+
+/* -------------------------------------------------------------- the music
+
+   Written here rather than fetched: a handful of oscillators and an envelope.
+   Nothing is downloaded, nothing belongs to anybody else, and it works with
+   the phone in flight mode. It only ever starts inside a press. */
+const WEDMUSIC = {
+  ctx: null, gain: null, timers: [], on: true,
+  wake() {
+    if (!this.on) return null;
+    if (!this.ctx) {
+      const AC = window.AudioContext || window.webkitAudioContext;
+      if (!AC) return null;
+      this.ctx = new AC();
+      this.gain = this.ctx.createGain();
+      this.gain.gain.value = 0.16;
+      this.gain.connect(this.ctx.destination);
+    }
+    if (this.ctx.state === 'suspended') this.ctx.resume().catch(() => {});
+    return this.ctx;
+  },
+  /* One note: a soft triangle with a slow attack, which is as close to a
+     chapel organ as two lines of code get. */
+  note(freq, at, dur, vol) {
+    const c = this.ctx;
+    if (!c) return;
+    const o = c.createOscillator(), g = c.createGain();
+    o.type = 'triangle'; o.frequency.value = freq;
+    const t0 = c.currentTime + at;
+    g.gain.setValueAtTime(0.0001, t0);
+    g.gain.exponentialRampToValueAtTime(vol || 0.5, t0 + 0.06);
+    g.gain.exponentialRampToValueAtTime(0.0001, t0 + dur);
+    o.connect(g); g.connect(this.gain);
+    o.start(t0); o.stop(t0 + dur + 0.05);
+  },
+  /* The walk in: a slow rising figure, unhurried, in a major key. */
+  processional() {
+    if (!this.wake()) return;
+    const n = [392, 523.25, 587.33, 659.25, 587.33, 523.25, 493.88, 523.25];
+    n.forEach((f, i) => { this.note(f, i * 0.62, 1.5, 0.34); this.note(f / 2, i * 0.62, 1.6, 0.2); });
+  },
+  /* The moment itself: a fanfare, then a chord that hangs. */
+  fanfare() {
+    if (!this.wake()) return;
+    [523.25, 659.25, 783.99, 1046.5].forEach((f, i) => this.note(f, i * 0.13, 0.9, 0.5));
+    [523.25, 659.25, 783.99, 1046.5].forEach((f) => this.note(f, 0.62, 2.6, 0.34));
+    [261.63, 392].forEach((f) => this.note(f, 0.62, 2.8, 0.24));
+  },
+  /* A small bright ring for a gift, an answer, a bouquet caught. */
+  chime(kind) {
+    if (!this.wake()) return;
+    const set = kind === 'no' ? [349.23, 293.66] : kind === 'win' ? [659.25, 880, 1174.7] : [880, 1174.7];
+    set.forEach((f, i) => this.note(f, i * 0.1, 0.5, 0.34));
+  },
+  mute(off) {
+    this.on = !off;
+    store.set('nabu-wed-mute', !!off);
+    if (off && this.gain) this.gain.gain.value = 0;
+    else if (this.gain) this.gain.gain.value = 0.16;
+  },
+  muted() { return store.get('nabu-wed-mute', false) === true; }
+};
 
 /* ==================== what happened while you were away ====================
 

@@ -238,7 +238,7 @@ function loveKnotSVG(cls) {
   const cord = (d, k) => '<path d="' + d + '" fill="none" stroke="' + DEEP + '" stroke-width="' + k + '" stroke-linecap="round" stroke-linejoin="round"/>'
     + '<path d="' + d + '" fill="none" stroke="' + RED + '" stroke-width="' + (k - 3) + '" stroke-linecap="round" stroke-linejoin="round"/>'
     + '<path d="' + d + '" fill="none" stroke="' + LIT + '" stroke-width="' + (k - 8) + '" stroke-linecap="round" stroke-linejoin="round" opacity=".5"/>';
-  return '<svg viewBox="52 52 136 116" class="loveknot ' + (cls || '') + '" aria-hidden="true">'
+  return '<svg viewBox="52 46 136 128" class="loveknot ' + (cls || '') + '" aria-hidden="true">'
     + cord(HEART, 15) + cord(wrapA, 11) + cord(wrapB, 11) + '</svg>';
 }
 
@@ -248,11 +248,10 @@ function loveMarkSVG(state, cls) {
   if (st === 'proposed') return open + ringArt(24, 28, 12, -8, true) + '</svg>';
   if (st === 'engaged') return open + ringPairArt(24, 27, 11) + '</svg>';
   if (st === 'married') return open + ringPairArt(24, 33, 10) + wreathArt(24, 11, 18) + '</svg>';
-  return open
-    + '<path d="M8 34 q10 -6 14 -12 M40 34 q-10 -6 -14 -12" stroke="#D6314B" stroke-width="3" fill="none" stroke-linecap="round"/>'
-    + '<circle cx="24" cy="20" r="8" fill="#D6314B"/><circle cx="24" cy="20" r="3.4" fill="#F2789F"/>'
-    + '<path d="M16 12 q8 -7 16 0 M16 28 q8 7 16 0" stroke="#D6314B" stroke-width="3" fill="none" stroke-linecap="round"/>'
-    + '</svg>';
+  /* The first stage is the thread itself, so it wears the thread: the same
+     knot as everywhere else, not the abstract mark nobody recognised. Its own
+     viewBox, because the knot is wider than it is tall. */
+  return loveKnotSVG('lovemark ' + (cls || ''));
 }
 
 /* ---- the thread itself ----
