@@ -259,11 +259,10 @@ service cloud.firestore {
                     && request.resource.data.uids == resource.data.uids
                     && request.resource.data.diff(resource.data).affectedKeys()
                          .hasOnly(['state', 'step', 'vows', 'doneAt', 'bouquet', 'guestCount', 'wantMs', 'moveAsk']))
-                    // Whether it has been paid for is Nabu's to say, and saying
-                    // it opens the door for both partners at once.
                     // The hour itself, and whether it has been paid for, are
                     // Nabu's to write: Nabu hosts the ceremony and has to be
-                    // there. The couple ask; this answers.
+                    // there, and one payment covers both partners. The couple
+                    // ask; this answers.
                     || (isAdmin() && request.resource.data.diff(resource.data).affectedKeys()
                          .hasOnly(['paid', 'paidAt', 'startMs', 'moved', 'wantMs', 'moveAsk']));
       allow delete: if request.auth != null && request.auth.uid in resource.data.uids;

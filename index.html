@@ -12,7 +12,7 @@
      carries this notice with it. See LICENSE. -->
 <meta name="author" content="Nabu Tarot">
 <meta name="copyright" content="Copyright (c) 2025-2026 Nabu Tarot. All rights reserved.">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'none'; object-src 'none'; form-action 'self'; script-src 'self' 'sha256-b6APf+8ytMvV8QwIJGKkG3iA/OL0AacnzzXn5qlPEDw=' https://www.gstatic.com https://apis.google.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; font-src 'self' data:; media-src 'self' data: blob:; worker-src 'self'; connect-src 'self' https://*.googleapis.com https://*.google.com https://*.firebaseio.com https://*.cloudfunctions.net https://*.workers.dev https://generativelanguage.googleapis.com; frame-src https://*.firebaseapp.com https://accounts.google.com https://*.facebook.com">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'none'; object-src 'none'; form-action 'self'; script-src 'self' 'sha256-zPYcNzE9CkgBF1vW2n666KBGTfCkz1Ybok1Zteb1RzM=' https://www.gstatic.com https://apis.google.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; font-src 'self' data:; media-src 'self' data: blob:; worker-src 'self'; connect-src 'self' https://*.googleapis.com https://*.google.com https://*.firebaseio.com https://*.cloudfunctions.net https://*.workers.dev https://generativelanguage.googleapis.com; frame-src https://*.firebaseapp.com https://accounts.google.com https://*.facebook.com">
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <meta name="theme-color" content="#EFE9FA">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -22196,15 +22196,15 @@ function adminBookings(p) {
     $$('[data-wpaid]', p).forEach((b) => b.addEventListener('click', async () => {
       const id = b.getAttribute('data-wpaid');
       b.disabled = true;
-      try { await WED.setPaid(id, true); toast(T().adminWedPaidDone); } catch (e) { b.disabled = false; toast(e.message); }
+      try { await WED.setPaid(id, true); toast(T().adminWedPaidDone); } catch (e) { b.disabled = false; toast(loveWhy(e)); }
     }));
     $$('[data-wmv]', p).forEach((b) => b.addEventListener('click', async () => {
       const w = asks.filter((x) => x.id === b.getAttribute('data-wmv'))[0];
-      try { await WED.answerMove(w.id, w, true); toast(T().saved); } catch (e) { toast(e.message); }
+      try { await WED.answerMove(w.id, w, true); toast(T().saved); } catch (e) { toast(loveWhy(e)); }
     }));
     $$('[data-wmvno]', p).forEach((b) => b.addEventListener('click', async () => {
       const w = asks.filter((x) => x.id === b.getAttribute('data-wmvno'))[0];
-      try { await WED.answerMove(w.id, w, false); toast(T().saved); } catch (e) { toast(e.message); }
+      try { await WED.answerMove(w.id, w, false); toast(T().saved); } catch (e) { toast(loveWhy(e)); }
     }));
   };
   admin.unsubs.push(WED.watchRooms((l) => { asks = l; draw(); }));
@@ -22398,7 +22398,7 @@ function adminSale(p) {
 ROUTES.admin = { nav: '', render: renderAdmin };
 
 /* ============================ boot ============================ */
-window.APP_VERSION = 'v158';
+window.APP_VERSION = 'v159';
 window.NABU = { CONFIG: CONFIG, SALE: SALE, salePrice: salePrice, loadActs: loadActs, BACK: BACK, LESSONS: LESSONS, localAnswer: localAnswer, compatVerdict: compatVerdict, numerologyOf: numerologyOf, ZDEEP: ZDEEP, lunarToday: lunarToday, solarToLunar: solarToLunar, DECK: DECK, INSIGHT: INSIGHT, KW: KW, ASK: ASK, TOPICS: TOPICS, GUIDES: GUIDES, SERVICES: SERVICES, COURSES: COURSES, ACCESS: ACCESS, plusOn: () => plusOn(), proOn: () => proOn(), luckUnlimited: () => luckUnlimited(), ZODIAC: ZODIAC, pick: pick, book: book,
   insightHTML: insightHTML, insightOf: insightOf, sunSignIndex: sunSignIndex, lifePath: lifePath, PROFILE: () => PROFILE, BE: BE, ACTS: ACTS,
   ANGELS: ANGELS, angelRead: angelRead, CODEBOOK: CODEBOOK, verifyCode: verifyCode, petHomeSVG: petHomeSVG, PET_HOMES: PET_HOMES, PET_WEARS: PET_WEARS, codeDigest: codeDigest, randomCode: randomCode, BANK: BANK, PETS: PETS, petSVG: petSVG, PET_COATS: PET_COATS, PET_KINDS: PET_KINDS, luckCut: luckCut, petLevel: petLevel, petStep: petStep, VOUCHERS: VOUCHERS, levelCoins: levelCoins, LOOKS: LOOKS,

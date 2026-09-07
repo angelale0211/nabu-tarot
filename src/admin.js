@@ -311,15 +311,15 @@ function adminBookings(p) {
     $$('[data-wpaid]', p).forEach((b) => b.addEventListener('click', async () => {
       const id = b.getAttribute('data-wpaid');
       b.disabled = true;
-      try { await WED.setPaid(id, true); toast(T().adminWedPaidDone); } catch (e) { b.disabled = false; toast(e.message); }
+      try { await WED.setPaid(id, true); toast(T().adminWedPaidDone); } catch (e) { b.disabled = false; toast(loveWhy(e)); }
     }));
     $$('[data-wmv]', p).forEach((b) => b.addEventListener('click', async () => {
       const w = asks.filter((x) => x.id === b.getAttribute('data-wmv'))[0];
-      try { await WED.answerMove(w.id, w, true); toast(T().saved); } catch (e) { toast(e.message); }
+      try { await WED.answerMove(w.id, w, true); toast(T().saved); } catch (e) { toast(loveWhy(e)); }
     }));
     $$('[data-wmvno]', p).forEach((b) => b.addEventListener('click', async () => {
       const w = asks.filter((x) => x.id === b.getAttribute('data-wmvno'))[0];
-      try { await WED.answerMove(w.id, w, false); toast(T().saved); } catch (e) { toast(e.message); }
+      try { await WED.answerMove(w.id, w, false); toast(T().saved); } catch (e) { toast(loveWhy(e)); }
     }));
   };
   admin.unsubs.push(WED.watchRooms((l) => { asks = l; draw(); }));
