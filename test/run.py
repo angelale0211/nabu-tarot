@@ -28,15 +28,39 @@ def serve():
     return httpd
 
 
-def run(url, extra=()):
+TIMEOUT = 420
+
+
+def run_once(url, extra=()):
     prof = tempfile.mkdtemp(prefix='nabu-edge-')
     out = subprocess.run([EDGE, '--headless=new', '--disable-gpu', '--no-first-run',
                           '--virtual-time-budget=600000', '--user-data-dir=' + prof,
                           '--window-size=430,900', '--dump-dom'] + list(extra) + [url],
-                         capture_output=True, timeout=420)
+                         capture_output=True, timeout=TIMEOUT)
     dom = out.stdout.decode('utf-8', 'replace')
     m = re.findall(r'<pre id="results">(.*?)</pre>', dom, re.S)
     return m[-1] if m else ('NO RESULTS\n' + dom[-3000:])
+
+
+def run(url, extra=()):
+    """A browser that hangs is not a failed check, and should not be reported as
+    one. The page fetches a few files as it starts and reaches out to the app
+    cloud; once in a while, on a shared machine, one of those never settles and
+    the browser waits until it is killed. That arrives as a red build for a
+    reason that has nothing to do with the code, which is the fastest way to
+    teach somebody to ignore red builds.
+
+    One retry tells the two apart: a real failure fails twice, a stall almost
+    never does. The timeout used to escape from here as a traceback; it now says
+    plainly what happened."""
+    for attempt in (1, 2):
+        try:
+            return run_once(url, extra)
+        except subprocess.TimeoutExpired:
+            print('the browser did not settle within %d seconds (attempt %d of 2)' % (TIMEOUT, attempt), file=sys.stderr)
+    return ('FAIL the browser never settled, twice over, so nothing was checked. '
+            'That is a stalled browser rather than a broken check: run it again, '
+            'and look at the network if it keeps happening.')
 
 
 if __name__ == '__main__':
