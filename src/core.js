@@ -528,12 +528,18 @@ async function refreshNow() {
     loadContent('schedule', CONFIG.schedulePath, 'nabu-schedule').catch(() => null)
   ]).catch(() => {}));
   try { if (typeof alertsStart === 'function') alertsStart(); } catch (e) { /* nothing to listen to */ }
-  route();
-  toast(S.refreshed);
-  /* When it last happened, so a test can see the gesture arrive rather than
-     guessing from what it redrew. */
-  if (window.NABU) window.NABU.REFRESHED_AT = Date.now();
-  REFRESHING = false;
+  /* Whatever happens in the redraw, the latch has to come off. It did not,
+     and a single throw in a render would have left pull-to-refresh dead for
+     the rest of the session with nothing to show for it. */
+  try {
+    route();
+    toast(S.refreshed);
+    /* When it last happened, so a test can see the gesture arrive rather than
+       guessing from what it redrew. */
+    if (window.NABU) window.NABU.REFRESHED_AT = Date.now();
+  } finally {
+    REFRESHING = false;
+  }
 }
 
 function pullToRefresh() {

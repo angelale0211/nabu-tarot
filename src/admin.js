@@ -68,7 +68,7 @@ function renderAdmin(args, params) {
     + '<div class="tabs" id="atabs">' + ['posts', 'acts', 'schedule', 'bookings', 'inbox', 'codes', 'sale'].map((k) => '<button data-t="' + k + '" class="' + (admin.tab === k ? 'on' : '') + '">' + esc(S.adminTabs[k]) + '<span class="tb" data-tb="' + k + '" hidden></span></button>').join('') + '</div>'
     + (BE.enabled ? '<p class="hint" style="margin-bottom:12px">☁️ ' + esc(S.cloudContent) + '</p>' : '<div class="card"><label class="f" for="gtoken">' + esc(S.token) + '</label><div class="row nw"><input id="gtoken" type="password" value="' + esc(ghToken()) + '" style="flex:1" autocomplete="off"><button class="btn sm" id="savetoken">' + esc(S.saveToken) + '</button></div><p class="hint">' + esc(S.tokenHint) + ' (' + esc(CONFIG.repo) + ')</p></div>')
     + '<div id="apanel"></div>';
-  const stb = $('#savetoken'); if (stb) stb.addEventListener('click', () => { store.set('nabu-gh-token', $('#gtoken').value.trim()); toast('✓'); show(admin.tab); });
+  const stb = $('#savetoken'); if (stb) stb.addEventListener('click', () => { store.set('nabu-gh-token', $('#gtoken').value.trim()); toast(T().saved); show(admin.tab); });
   $$('#atabs button').forEach((b) => b.addEventListener('click', () => { admin.tab = b.getAttribute('data-t'); $$('#atabs button').forEach((x) => x.classList.toggle('on', x === b)); show(admin.tab); }));
   const show = (t) => { adminCleanup(); const p = $('#apanel'); if (t === 'sale') adminSale(p); else if (t === 'posts') adminPosts(p); else if (t === 'acts') adminActivities(p); else if (t === 'schedule') adminSchedule(p); else if (t === 'bookings') adminBookings(p); else if (t === 'codes') adminCodes(p); else adminInbox(p); };
   show(admin.tab);
@@ -167,7 +167,7 @@ function adminPosts(p) {
       try {
         if (cloud()) { const list = await cloudPosts(); await BE.setContent('posts', { posts: list.filter((x) => x.id !== b.getAttribute('data-del')) }); }
         else { const cur = await ghRead(CONFIG.postsPath); await ghWrite(CONFIG.postsPath, { posts: (cur.json.posts || []).filter((x) => x.id !== b.getAttribute('data-del')) }, cur.sha, 'Remove post'); }
-        POSTS = null; toast('✓'); refreshList();
+        POSTS = null; toast(T().saved); refreshList();
       }
       catch (e) { status(S.publishFail + ': ' + e.message, 'err'); }
     }));
@@ -255,7 +255,7 @@ function adminBookings(p) {
     $$('[data-bcal]', p).forEach((b) => b.addEventListener('click', () => { month = new Date(month.getFullYear(), month.getMonth() + Number(b.getAttribute('data-bcal')), 1); draw(); }));
     $$('[data-bday]', p).forEach((b) => b.addEventListener('click', () => { day = b.getAttribute('data-bday') === day ? '' : b.getAttribute('data-bday'); draw(); }));
     $$('[data-ics]', p).forEach((b) => b.addEventListener('click', () => { const bk = all.filter((x) => x.id === b.getAttribute('data-ics'))[0]; if (bk) addToCalendar(bk); }));
-    $$('[data-bk]', p).forEach((b) => b.addEventListener('click', async () => { const bk = all.filter((x) => x.id === b.getAttribute('data-id'))[0]; try { await BE.setBookingStatus(bk, b.getAttribute('data-bk')); toast('✓'); } catch (e) { toast(e.message); } }));
+    $$('[data-bk]', p).forEach((b) => b.addEventListener('click', async () => { const bk = all.filter((x) => x.id === b.getAttribute('data-id'))[0]; try { await BE.setBookingStatus(bk, b.getAttribute('data-bk')); toast(T().saved); } catch (e) { toast(e.message); } }));
     /* Calling one off is behind a question, because the hour goes back on the
        calendar and the person who booked it is told. */
     $$('[data-bkoff]', p).forEach((b) => b.addEventListener('click', async () => {
@@ -360,7 +360,7 @@ function adminCodes(p) {
       }).join('') + '</ul>';
     $$('[data-revoke]', wrap).forEach((b) => b.addEventListener('click', async () => {
       if (!confirm(S.codeRevokeAsk)) return;
-      try { await revokeCode(b.getAttribute('data-revoke')); drawBook(); toast('✓'); }
+      try { await revokeCode(b.getAttribute('data-revoke')); drawBook(); toast(T().saved); }
       catch (e) { toast(S.publishFail); }
     }));
   }

@@ -256,7 +256,7 @@ function bindActs(root, list) {
         setChoice(a.id, i); await sendVote(a, i);
         $$('[data-pile]', card).forEach((x) => x.classList.toggle('chosen', x === el));
         const h = $('.hint', card); if (h) { h.className = 'hint ok'; h.textContent = S.actPicked(i + 1) + ' ' + S.actComeBack(fmtDate(a.resultsDate || a.date)); }
-        toast('✓');
+        toast(T().saved);
       }));
     } else if (a.type === 'poll') {
       const draw = (counts) => { const total = counts && counts.total || 0; $$('[data-opt]', card).forEach((b) => { const n = counts ? (counts[b.getAttribute('data-opt')] || 0) : 0, pct = total ? Math.round(n * 100 / total) : 0; $('.bar', b).style.width = pct + '%'; $('.pct', b).textContent = total ? pct + '%' : ''; }); const st = $('.pollstat', card); if (st) st.textContent = S.actResultsPublic + ': ' + (total ? S.actVotes(total) : S.actNoVotes); };
@@ -933,7 +933,7 @@ function adminActivities(p) {
     $('#apdel').addEventListener('click', () => { cur = read(); if ((cur.piles || []).length > 2) cur.piles.pop(); draw(); });
     $('#anew').addEventListener('click', () => { cur = null; editing = null; draw(); });
     $$('[data-aedit]', p).forEach((b) => b.addEventListener('click', () => { cur = JSON.parse(JSON.stringify(items.filter((x) => x.id === b.getAttribute('data-aedit'))[0])); editing = cur.id; draw(); $('#ahead').scrollIntoView({ behavior: 'smooth' }); }));
-    $$('[data-adel]', p).forEach((b) => b.addEventListener('click', async () => { if (!confirm(S.confirmDel)) return; const id = b.getAttribute('data-adel'); items = items.filter((x) => x.id !== id); if (ACTS.stock && ACTS.stock[id]) ACTS.hidden = (ACTS.hidden || []).concat(id); try { await BE.setContent('activities', actsDoc(items)); ACTS.items = items; toast('✓'); draw(); } catch (e) { status(S.publishFail + ': ' + e.message, 'err'); } }));
+    $$('[data-adel]', p).forEach((b) => b.addEventListener('click', async () => { if (!confirm(S.confirmDel)) return; const id = b.getAttribute('data-adel'); items = items.filter((x) => x.id !== id); if (ACTS.stock && ACTS.stock[id]) ACTS.hidden = (ACTS.hidden || []).concat(id); try { await BE.setContent('activities', actsDoc(items)); ACTS.items = items; toast(T().saved); draw(); } catch (e) { status(S.publishFail + ': ' + e.message, 'err'); } }));
     $('#apub').addEventListener('click', async () => {
       const a = read();
       if (!a.title.vi) { status(S.needBody, 'err'); return; }

@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
 <title>Nabu Tarot</title>
 <meta name="description" content="Nabu Tarot: dự đoán mới, rút một lá bài xem năng lượng hiện tại, học tarot, Lenormand, chiêm tinh, và đặt lịch xem bài.">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'none'; object-src 'none'; form-action 'self'; script-src 'self' 'sha256-8ee4DMT66HWkPOH48QTxuXPsPjW4oH62Qwl6CV8aD3E=' https://www.gstatic.com https://apis.google.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; font-src 'self' data:; media-src 'self' data: blob:; worker-src 'self'; connect-src 'self' https://*.googleapis.com https://*.google.com https://*.firebaseio.com https://*.cloudfunctions.net https://*.workers.dev https://generativelanguage.googleapis.com; frame-src https://*.firebaseapp.com https://accounts.google.com https://*.facebook.com">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'none'; object-src 'none'; form-action 'self'; script-src 'self' 'sha256-+u1fatnJ1RbMBbeJkXWSMnZZ5Y0AOZJzBTTe2LpIkBA=' https://www.gstatic.com https://apis.google.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; font-src 'self' data:; media-src 'self' data: blob:; worker-src 'self'; connect-src 'self' https://*.googleapis.com https://*.google.com https://*.firebaseio.com https://*.cloudfunctions.net https://*.workers.dev https://generativelanguage.googleapis.com; frame-src https://*.firebaseapp.com https://accounts.google.com https://*.facebook.com">
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <meta name="theme-color" content="#EFE9FA">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -377,7 +377,8 @@ main{padding:22px 0 30px}
 .muted{color:var(--fg-soft)}
 .faint{color:var(--fg-faint);font-size:13.5px;line-height:1.45}
 .toast{position:fixed;left:50%;bottom:calc(var(--nav-h) + env(safe-area-inset-bottom) + 14px);transform:translateX(-50%);z-index:30;
-  background:var(--fg);color:var(--bg);padding:10px 16px;border-radius:999px;font-size:14px;font-weight:600;box-shadow:0 8px 24px var(--shade);opacity:0;pointer-events:none;transition:opacity .2s;max-width:88vw;text-align:center}
+  background:var(--fg);color:var(--bg);padding:10px 16px;border-radius:14px;font-size:14px;font-weight:500;
+  box-shadow:0 8px 24px var(--shade);opacity:0;pointer-events:none;transition:opacity .2s;max-width:88vw;text-align:center}
 .toast.show{opacity:1}
 .banner{background:var(--surface-2);border:1px solid var(--rule);border-radius:14px;padding:12px 14px;font-size:14px;display:flex;gap:10px;align-items:flex-start;margin-bottom:16px}
 .banner button{color:var(--primary);font-weight:700;white-space:nowrap}
@@ -10752,12 +10753,18 @@ async function refreshNow() {
     loadContent('schedule', CONFIG.schedulePath, 'nabu-schedule').catch(() => null)
   ]).catch(() => {}));
   try { if (typeof alertsStart === 'function') alertsStart(); } catch (e) { /* nothing to listen to */ }
-  route();
-  toast(S.refreshed);
-  /* When it last happened, so a test can see the gesture arrive rather than
-     guessing from what it redrew. */
-  if (window.NABU) window.NABU.REFRESHED_AT = Date.now();
-  REFRESHING = false;
+  /* Whatever happens in the redraw, the latch has to come off. It did not,
+     and a single throw in a render would have left pull-to-refresh dead for
+     the rest of the session with nothing to show for it. */
+  try {
+    route();
+    toast(S.refreshed);
+    /* When it last happened, so a test can see the gesture arrive rather than
+       guessing from what it redrew. */
+    if (window.NABU) window.NABU.REFRESHED_AT = Date.now();
+  } finally {
+    REFRESHING = false;
+  }
 }
 
 function pullToRefresh() {
@@ -13624,7 +13631,7 @@ function renderAngel() {
       else if (k === '✓') {
         if (!typed) return;
         const r = angelRead(typed);
-        if (r && r.a) { ANGEL_LOG.add(typed, r.a.id); store.set('nabu-angel-last', typed); toast('✓'); }
+        if (r && r.a) { ANGEL_LOG.add(typed, r.a.id); store.set('nabu-angel-last', typed); toast(T().saved); }
         draw();
         const ans = $('.angelanswer', m); if (ans) ans.scrollIntoView({ behavior: 'smooth', block: 'center' });
         return;
@@ -15576,7 +15583,7 @@ function bindLookStrip(root, redraw) {
     const p = b.getAttribute('data-strip').split(':'), item = (LOOK_SETS[p[0]] || []).filter((x) => x.id === p[1])[0];
     if (!item) return;
     if (item.pro && !plusOn()) { toast(T().looksNeedPlus); location.hash = '#/unlock'; return; }
-    LOOKS.set(p[0], p[1]); toast('✓');
+    LOOKS.set(p[0], p[1]);
     if (redraw) redraw();
   }));
 }
@@ -15602,7 +15609,7 @@ function bindLookStrip(root, redraw) {
     const p = b.getAttribute('data-strip').split(':'), item = (LOOK_SETS[p[0]] || []).filter((x) => x.id === p[1])[0];
     if (!item) return;
     if (item.pro && !plusOn()) { toast(T().looksNeedPlus); location.hash = '#/unlock'; return; }
-    LOOKS.set(p[0], p[1]); toast('✓');
+    LOOKS.set(p[0], p[1]);
     if (redraw) redraw();
   }));
 }
@@ -15623,7 +15630,7 @@ function renderLooks() {
     $$('[data-look]', m).forEach((b) => b.addEventListener('click', () => {
       const p = b.getAttribute('data-look').split(':'), item = LOOK_SETS[p[0]].filter((x) => x.id === p[1])[0];
       if (item.pro && !plusOn()) { toast(S.looksNeedPlus); location.hash = '#/unlock'; return; }
-      LOOKS.set(p[0], p[1]); toast('✓'); draw();
+      LOOKS.set(p[0], p[1]); draw();
     }));
   };
   draw();
@@ -17850,7 +17857,7 @@ async function renderBook(args, params) {
         whereId: String(book.whereId || '').trim(),
         note: book.note.trim(), message: composeMessage(), luck: bookLuck(), birth: needsBirth() ? (book.birth + (book.birthTime ? ' ' + book.birthTime : '')) : '', card: book.card ? cardById(book.card).name : '' });
       luckCommit(bookLuck(), S.bkItems); book.use.v = false; book.use.c = 0;
-      toast('✓'); try { TAKEN = await BE.takenSlots(); } catch (e2) { /* refreshed on the next visit */ }
+      toast(T().saved); try { TAKEN = await BE.takenSlots(); } catch (e2) { /* refreshed on the next visit */ }
       done(); return;
     } catch (e) { $('#sendstatus').textContent = S.publishFail + ': ' + e.message; $('#sendstatus').className = 'hint err'; }
     sendBtn.disabled = false; sendBtn.textContent = S.sendInApp;
@@ -17912,7 +17919,7 @@ async function renderChange(id) {
     if (!book.slot) { toast(S.needSlot); return; }
     if (book.slot === bk.slot) { toast(S.needSlot); return; }
     $('#sendchange').disabled = true;
-    try { await BE.requestChange(bk, book.slot); restore(); st.textContent = S.changeSent; st.className = 'hint ok'; toast('✓'); setTimeout(() => { location.hash = '#/me'; }, 900); }
+    try { await BE.requestChange(bk, book.slot); restore(); st.textContent = S.changeSent; st.className = 'hint ok'; toast(T().saved); setTimeout(() => { location.hash = '#/me'; }, 900); }
     catch (e) { st.textContent = S.publishFail + ': ' + e.message; st.className = 'hint err'; $('#sendchange').disabled = false; }
   });
 }
@@ -18616,7 +18623,7 @@ function bindActs(root, list) {
         setChoice(a.id, i); await sendVote(a, i);
         $$('[data-pile]', card).forEach((x) => x.classList.toggle('chosen', x === el));
         const h = $('.hint', card); if (h) { h.className = 'hint ok'; h.textContent = S.actPicked(i + 1) + ' ' + S.actComeBack(fmtDate(a.resultsDate || a.date)); }
-        toast('✓');
+        toast(T().saved);
       }));
     } else if (a.type === 'poll') {
       const draw = (counts) => { const total = counts && counts.total || 0; $$('[data-opt]', card).forEach((b) => { const n = counts ? (counts[b.getAttribute('data-opt')] || 0) : 0, pct = total ? Math.round(n * 100 / total) : 0; $('.bar', b).style.width = pct + '%'; $('.pct', b).textContent = total ? pct + '%' : ''; }); const st = $('.pollstat', card); if (st) st.textContent = S.actResultsPublic + ': ' + (total ? S.actVotes(total) : S.actNoVotes); };
@@ -19293,7 +19300,7 @@ function adminActivities(p) {
     $('#apdel').addEventListener('click', () => { cur = read(); if ((cur.piles || []).length > 2) cur.piles.pop(); draw(); });
     $('#anew').addEventListener('click', () => { cur = null; editing = null; draw(); });
     $$('[data-aedit]', p).forEach((b) => b.addEventListener('click', () => { cur = JSON.parse(JSON.stringify(items.filter((x) => x.id === b.getAttribute('data-aedit'))[0])); editing = cur.id; draw(); $('#ahead').scrollIntoView({ behavior: 'smooth' }); }));
-    $$('[data-adel]', p).forEach((b) => b.addEventListener('click', async () => { if (!confirm(S.confirmDel)) return; const id = b.getAttribute('data-adel'); items = items.filter((x) => x.id !== id); if (ACTS.stock && ACTS.stock[id]) ACTS.hidden = (ACTS.hidden || []).concat(id); try { await BE.setContent('activities', actsDoc(items)); ACTS.items = items; toast('✓'); draw(); } catch (e) { status(S.publishFail + ': ' + e.message, 'err'); } }));
+    $$('[data-adel]', p).forEach((b) => b.addEventListener('click', async () => { if (!confirm(S.confirmDel)) return; const id = b.getAttribute('data-adel'); items = items.filter((x) => x.id !== id); if (ACTS.stock && ACTS.stock[id]) ACTS.hidden = (ACTS.hidden || []).concat(id); try { await BE.setContent('activities', actsDoc(items)); ACTS.items = items; toast(T().saved); draw(); } catch (e) { status(S.publishFail + ': ' + e.message, 'err'); } }));
     $('#apub').addEventListener('click', async () => {
       const a = read();
       if (!a.title.vi) { status(S.needBody, 'err'); return; }
@@ -20438,7 +20445,7 @@ function renderAdmin(args, params) {
     + '<div class="tabs" id="atabs">' + ['posts', 'acts', 'schedule', 'bookings', 'inbox', 'codes', 'sale'].map((k) => '<button data-t="' + k + '" class="' + (admin.tab === k ? 'on' : '') + '">' + esc(S.adminTabs[k]) + '<span class="tb" data-tb="' + k + '" hidden></span></button>').join('') + '</div>'
     + (BE.enabled ? '<p class="hint" style="margin-bottom:12px">☁️ ' + esc(S.cloudContent) + '</p>' : '<div class="card"><label class="f" for="gtoken">' + esc(S.token) + '</label><div class="row nw"><input id="gtoken" type="password" value="' + esc(ghToken()) + '" style="flex:1" autocomplete="off"><button class="btn sm" id="savetoken">' + esc(S.saveToken) + '</button></div><p class="hint">' + esc(S.tokenHint) + ' (' + esc(CONFIG.repo) + ')</p></div>')
     + '<div id="apanel"></div>';
-  const stb = $('#savetoken'); if (stb) stb.addEventListener('click', () => { store.set('nabu-gh-token', $('#gtoken').value.trim()); toast('✓'); show(admin.tab); });
+  const stb = $('#savetoken'); if (stb) stb.addEventListener('click', () => { store.set('nabu-gh-token', $('#gtoken').value.trim()); toast(T().saved); show(admin.tab); });
   $$('#atabs button').forEach((b) => b.addEventListener('click', () => { admin.tab = b.getAttribute('data-t'); $$('#atabs button').forEach((x) => x.classList.toggle('on', x === b)); show(admin.tab); }));
   const show = (t) => { adminCleanup(); const p = $('#apanel'); if (t === 'sale') adminSale(p); else if (t === 'posts') adminPosts(p); else if (t === 'acts') adminActivities(p); else if (t === 'schedule') adminSchedule(p); else if (t === 'bookings') adminBookings(p); else if (t === 'codes') adminCodes(p); else adminInbox(p); };
   show(admin.tab);
@@ -20537,7 +20544,7 @@ function adminPosts(p) {
       try {
         if (cloud()) { const list = await cloudPosts(); await BE.setContent('posts', { posts: list.filter((x) => x.id !== b.getAttribute('data-del')) }); }
         else { const cur = await ghRead(CONFIG.postsPath); await ghWrite(CONFIG.postsPath, { posts: (cur.json.posts || []).filter((x) => x.id !== b.getAttribute('data-del')) }, cur.sha, 'Remove post'); }
-        POSTS = null; toast('✓'); refreshList();
+        POSTS = null; toast(T().saved); refreshList();
       }
       catch (e) { status(S.publishFail + ': ' + e.message, 'err'); }
     }));
@@ -20625,7 +20632,7 @@ function adminBookings(p) {
     $$('[data-bcal]', p).forEach((b) => b.addEventListener('click', () => { month = new Date(month.getFullYear(), month.getMonth() + Number(b.getAttribute('data-bcal')), 1); draw(); }));
     $$('[data-bday]', p).forEach((b) => b.addEventListener('click', () => { day = b.getAttribute('data-bday') === day ? '' : b.getAttribute('data-bday'); draw(); }));
     $$('[data-ics]', p).forEach((b) => b.addEventListener('click', () => { const bk = all.filter((x) => x.id === b.getAttribute('data-ics'))[0]; if (bk) addToCalendar(bk); }));
-    $$('[data-bk]', p).forEach((b) => b.addEventListener('click', async () => { const bk = all.filter((x) => x.id === b.getAttribute('data-id'))[0]; try { await BE.setBookingStatus(bk, b.getAttribute('data-bk')); toast('✓'); } catch (e) { toast(e.message); } }));
+    $$('[data-bk]', p).forEach((b) => b.addEventListener('click', async () => { const bk = all.filter((x) => x.id === b.getAttribute('data-id'))[0]; try { await BE.setBookingStatus(bk, b.getAttribute('data-bk')); toast(T().saved); } catch (e) { toast(e.message); } }));
     /* Calling one off is behind a question, because the hour goes back on the
        calendar and the person who booked it is told. */
     $$('[data-bkoff]', p).forEach((b) => b.addEventListener('click', async () => {
@@ -20730,7 +20737,7 @@ function adminCodes(p) {
       }).join('') + '</ul>';
     $$('[data-revoke]', wrap).forEach((b) => b.addEventListener('click', async () => {
       if (!confirm(S.codeRevokeAsk)) return;
-      try { await revokeCode(b.getAttribute('data-revoke')); drawBook(); toast('✓'); }
+      try { await revokeCode(b.getAttribute('data-revoke')); drawBook(); toast(T().saved); }
       catch (e) { toast(S.publishFail); }
     }));
   }
@@ -20792,7 +20799,7 @@ function adminSale(p) {
 ROUTES.admin = { nav: '', render: renderAdmin };
 
 /* ============================ boot ============================ */
-window.APP_VERSION = 'v138';
+window.APP_VERSION = 'v139';
 window.NABU = { CONFIG: CONFIG, SALE: SALE, salePrice: salePrice, loadActs: loadActs, BACK: BACK, LESSONS: LESSONS, localAnswer: localAnswer, compatVerdict: compatVerdict, numerologyOf: numerologyOf, ZDEEP: ZDEEP, lunarToday: lunarToday, solarToLunar: solarToLunar, DECK: DECK, INSIGHT: INSIGHT, KW: KW, ASK: ASK, TOPICS: TOPICS, GUIDES: GUIDES, SERVICES: SERVICES, COURSES: COURSES, ACCESS: ACCESS, plusOn: () => plusOn(), proOn: () => proOn(), luckUnlimited: () => luckUnlimited(), ZODIAC: ZODIAC, pick: pick, book: book,
   insightHTML: insightHTML, insightOf: insightOf, sunSignIndex: sunSignIndex, lifePath: lifePath, PROFILE: () => PROFILE, BE: BE, ACTS: ACTS,
   ANGELS: ANGELS, angelRead: angelRead, CODEBOOK: CODEBOOK, verifyCode: verifyCode, petHomeSVG: petHomeSVG, PET_HOMES: PET_HOMES, PET_WEARS: PET_WEARS, codeDigest: codeDigest, randomCode: randomCode, BANK: BANK, PETS: PETS, petSVG: petSVG, PET_COATS: PET_COATS, PET_KINDS: PET_KINDS, luckCut: luckCut, petLevel: petLevel, petStep: petStep, VOUCHERS: VOUCHERS, levelCoins: levelCoins, LOOKS: LOOKS,

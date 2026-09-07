@@ -210,7 +210,7 @@ function bindLookStrip(root, redraw) {
     const p = b.getAttribute('data-strip').split(':'), item = (LOOK_SETS[p[0]] || []).filter((x) => x.id === p[1])[0];
     if (!item) return;
     if (item.pro && !plusOn()) { toast(T().looksNeedPlus); location.hash = '#/unlock'; return; }
-    LOOKS.set(p[0], p[1]); toast('✓');
+    LOOKS.set(p[0], p[1]);
     if (redraw) redraw();
   }));
 }
@@ -236,7 +236,7 @@ function bindLookStrip(root, redraw) {
     const p = b.getAttribute('data-strip').split(':'), item = (LOOK_SETS[p[0]] || []).filter((x) => x.id === p[1])[0];
     if (!item) return;
     if (item.pro && !plusOn()) { toast(T().looksNeedPlus); location.hash = '#/unlock'; return; }
-    LOOKS.set(p[0], p[1]); toast('✓');
+    LOOKS.set(p[0], p[1]);
     if (redraw) redraw();
   }));
 }
@@ -257,7 +257,7 @@ function renderLooks() {
     $$('[data-look]', m).forEach((b) => b.addEventListener('click', () => {
       const p = b.getAttribute('data-look').split(':'), item = LOOK_SETS[p[0]].filter((x) => x.id === p[1])[0];
       if (item.pro && !plusOn()) { toast(S.looksNeedPlus); location.hash = '#/unlock'; return; }
-      LOOKS.set(p[0], p[1]); toast('✓'); draw();
+      LOOKS.set(p[0], p[1]); draw();
     }));
   };
   draw();

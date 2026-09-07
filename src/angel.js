@@ -308,7 +308,7 @@ function renderAngel() {
       else if (k === '✓') {
         if (!typed) return;
         const r = angelRead(typed);
-        if (r && r.a) { ANGEL_LOG.add(typed, r.a.id); store.set('nabu-angel-last', typed); toast('✓'); }
+        if (r && r.a) { ANGEL_LOG.add(typed, r.a.id); store.set('nabu-angel-last', typed); toast(T().saved); }
         draw();
         const ans = $('.angelanswer', m); if (ans) ans.scrollIntoView({ behavior: 'smooth', block: 'center' });
         return;

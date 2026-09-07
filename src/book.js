@@ -326,7 +326,7 @@ async function renderBook(args, params) {
         whereId: String(book.whereId || '').trim(),
         note: book.note.trim(), message: composeMessage(), luck: bookLuck(), birth: needsBirth() ? (book.birth + (book.birthTime ? ' ' + book.birthTime : '')) : '', card: book.card ? cardById(book.card).name : '' });
       luckCommit(bookLuck(), S.bkItems); book.use.v = false; book.use.c = 0;
-      toast('✓'); try { TAKEN = await BE.takenSlots(); } catch (e2) { /* refreshed on the next visit */ }
+      toast(T().saved); try { TAKEN = await BE.takenSlots(); } catch (e2) { /* refreshed on the next visit */ }
       done(); return;
     } catch (e) { $('#sendstatus').textContent = S.publishFail + ': ' + e.message; $('#sendstatus').className = 'hint err'; }
     sendBtn.disabled = false; sendBtn.textContent = S.sendInApp;
@@ -388,7 +388,7 @@ async function renderChange(id) {
     if (!book.slot) { toast(S.needSlot); return; }
     if (book.slot === bk.slot) { toast(S.needSlot); return; }
     $('#sendchange').disabled = true;
-    try { await BE.requestChange(bk, book.slot); restore(); st.textContent = S.changeSent; st.className = 'hint ok'; toast('✓'); setTimeout(() => { location.hash = '#/me'; }, 900); }
+    try { await BE.requestChange(bk, book.slot); restore(); st.textContent = S.changeSent; st.className = 'hint ok'; toast(T().saved); setTimeout(() => { location.hash = '#/me'; }, 900); }
     catch (e) { st.textContent = S.publishFail + ': ' + e.message; st.className = 'hint err'; $('#sendchange').disabled = false; }
   });
 }
