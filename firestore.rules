@@ -71,6 +71,35 @@ service cloud.firestore {
       allow read: if doc != 'ai' || isAdmin();
       allow write: if isAdmin();
     }
+    /* ---- what broke, on somebody else's phone ----
+
+       An app that only finds out about its own errors when a client happens to
+       mention one is an app with no idea how well it works. The phone writes
+       what went wrong here, and Nabu reads it in the dashboard.
+
+       Write-only, by design: a person may add to this and can never read it
+       back, list it, change it or delete it. That way one collection cannot
+       become a way to learn anything about anybody. An account is required, so
+       this is not somewhere a stranger can pour rubbish into, and the fields
+       are capped so a runaway loop cannot write a novel.
+
+       Nothing here is private to the person: a message, a screen, a version and
+       a device. No question, no reading, no name. */
+    match /errors/{id} {
+      allow read: if isAdmin();
+      allow create: if request.auth != null
+                    && request.resource.data.uid == request.auth.uid
+                    && request.resource.data.keys().hasOnly(['uid', 'version', 'screen', 'message', 'where', 'ua', 'size', 'lang', 'at'])
+                    && request.resource.data.message is string
+                    && request.resource.data.message.size() > 0
+                    && shorterThan('message', 400)
+                    && shorterThan('screen', 100)
+                    && shorterThan('where', 160)
+                    && shorterThan('ua', 260)
+                    && shorterThan('version', 40);
+      allow update: if false;
+      allow delete: if isAdmin();
+    }
     // Activity votes and pile choices: readable by all (results are counted on the phone), written only by their owner.
     match /votes/{id} {
       allow read: if true;

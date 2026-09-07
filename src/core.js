@@ -440,16 +440,48 @@ async function loadContent(name, path, key) {
 }
 
 /* ---- what went wrong ----
-   The last few errors are kept in memory so the bug report can carry them.
-   Nothing is sent anywhere on its own and nothing is written to the device. */
+   The last few errors are kept in memory so the bug report can carry them. */
 const OOPS = [];
-window.addEventListener('error', (e) => {
-  OOPS.unshift(String((e && e.message) || 'error') + (e && e.filename ? ' @' + String(e.filename).split('/').pop() + ':' + e.lineno : ''));
+
+/* Until now that was the end of it: unless somebody opened the bug-report form
+   and sent it, an error that broke the app for them was known only to their own
+   phone. Nabu found out when a client mentioned it in a message, or never.
+   So errors are also written down where Nabu can read them.
+
+   Kept deliberately small. Five per session, never the same message twice, and
+   only when somebody is signed in - the rules require an account, which is what
+   stops the collection being a place strangers can write to. Everything here
+   fails quietly: an app that cannot report a problem must not make a second
+   one, and it must never show the reader a wall about it. */
+const OOPS_SENT = [];
+function noteOops(what, where) {
+  const msg = String(what || '').slice(0, 300);
+  if (!msg) return;
+  OOPS.unshift(msg + (where ? ' @' + where : ''));
   OOPS.length = Math.min(OOPS.length, 3);
+  try {
+    if (OOPS_SENT.length >= 5 || OOPS_SENT.indexOf(msg) > -1) return;
+    OOPS_SENT.push(msg);
+    if (typeof BE === 'undefined' || !BE.enabled || !BE.user || !BE.db) return;
+    BE.db.collection('errors').add({
+      uid: BE.user.uid,
+      version: String(window.APP_VERSION || ''),
+      screen: String(location.hash || '#/').slice(0, 80),
+      message: msg,
+      where: String(where || '').slice(0, 120),
+      ua: String(navigator.userAgent || '').replace(/\).*$/, ')').slice(0, 200),
+      size: window.innerWidth + 'x' + window.innerHeight,
+      lang: typeof lang === 'string' ? lang : '',
+      at: Date.now()
+    }).catch(() => {});
+  } catch (e) { /* never make a second problem out of the first */ }
+}
+window.addEventListener('error', (e) => {
+  noteOops((e && e.message) || 'error',
+    e && e.filename ? String(e.filename).split('/').pop() + ':' + e.lineno : '');
 });
 window.addEventListener('unhandledrejection', (e) => {
-  OOPS.unshift('promise: ' + String((e && e.reason && e.reason.message) || e.reason || '').slice(0, 200));
-  OOPS.length = Math.min(OOPS.length, 3);
+  noteOops('promise: ' + String((e && e.reason && e.reason.message) || e.reason || ''), '');
 });
 
 /* ---- router ---- */

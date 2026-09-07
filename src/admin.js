@@ -2,7 +2,7 @@
    Posts and availability are files in the repo, committed through the
    GitHub API with a fine-grained token. Bookings and the inbox live in
    Firestore and need an admin sign-in. */
-const admin = { tab: 'posts', editing: null, cards: [], busy: false, unsubs: [] };
+const admin = { tab: 'posts', editing: null, cards: [], busy: false, unsubs: [], openThread: null };
 const ghHeaders = (token) => ({ Authorization: 'Bearer ' + token, Accept: 'application/vnd.github+json', 'X-GitHub-Api-Version': '2022-11-28' });
 const b64enc = (s) => btoa(unescape(encodeURIComponent(s)));
 const b64dec = (s) => decodeURIComponent(escape(atob(s.replace(/\n/g, ''))));
@@ -63,14 +63,14 @@ function adminCleanup() { admin.unsubs.forEach((u) => { try { u(); } catch (e) {
 function renderAdmin(args, params) {
   adminCleanup();
   const S = T(), m = $('#main');
-  if (params && params.tab && ['posts', 'acts', 'schedule', 'bookings', 'pay', 'inbox', 'codes', 'sale'].indexOf(params.tab) > -1) admin.tab = params.tab;
+  if (params && params.tab && ['posts', 'acts', 'schedule', 'bookings', 'pay', 'inbox', 'codes', 'sale', 'errors'].indexOf(params.tab) > -1) admin.tab = params.tab;
   m.innerHTML = '<div class="eyebrow">' + esc(CONFIG.brand) + '</div><h1 style="margin-bottom:6px">' + esc(S.adminTitle) + '</h1><p class="muted">' + esc(S.adminIntro) + '</p>'
-    + '<div class="tabs" id="atabs">' + ['posts', 'acts', 'schedule', 'bookings', 'pay', 'inbox', 'codes', 'sale'].map((k) => '<button data-t="' + k + '" class="' + (admin.tab === k ? 'on' : '') + '">' + esc(S.adminTabs[k]) + '<span class="tb" data-tb="' + k + '" hidden></span></button>').join('') + '</div>'
+    + '<div class="tabs" id="atabs">' + ['posts', 'acts', 'schedule', 'bookings', 'pay', 'inbox', 'codes', 'sale', 'errors'].map((k) => '<button data-t="' + k + '" class="' + (admin.tab === k ? 'on' : '') + '">' + esc(S.adminTabs[k]) + '<span class="tb" data-tb="' + k + '" hidden></span></button>').join('') + '</div>'
     + (BE.enabled ? '<p class="hint" style="margin-bottom:12px">☁️ ' + esc(S.cloudContent) + '</p>' : '<div class="card"><label class="f" for="gtoken">' + esc(S.token) + '</label><div class="row nw"><input id="gtoken" type="password" value="' + esc(ghToken()) + '" style="flex:1" autocomplete="off"><button class="btn sm" id="savetoken">' + esc(S.saveToken) + '</button></div><p class="hint">' + esc(S.tokenHint) + ' (' + esc(CONFIG.repo) + ')</p></div>')
     + '<div id="apanel"></div>';
   const stb = $('#savetoken'); if (stb) stb.addEventListener('click', () => { store.set('nabu-gh-token', $('#gtoken').value.trim()); toast(T().saved); show(admin.tab); });
   $$('#atabs button').forEach((b) => b.addEventListener('click', () => { admin.tab = b.getAttribute('data-t'); $$('#atabs button').forEach((x) => x.classList.toggle('on', x === b)); show(admin.tab); }));
-  const show = (t) => { adminCleanup(); const p = $('#apanel'); if (t === 'sale') adminSale(p); else if (t === 'posts') adminPosts(p); else if (t === 'acts') adminActivities(p); else if (t === 'schedule') adminSchedule(p); else if (t === 'bookings') adminBookings(p); else if (t === 'pay') adminPay(p); else if (t === 'codes') adminCodes(p); else adminInbox(p); };
+  const show = (t) => { adminCleanup(); const p = $('#apanel'); if (t === 'sale') adminSale(p); else if (t === 'posts') adminPosts(p); else if (t === 'acts') adminActivities(p); else if (t === 'schedule') adminSchedule(p); else if (t === 'bookings') adminBookings(p); else if (t === 'pay') adminPay(p); else if (t === 'codes') adminCodes(p); else if (t === 'errors') adminErrors(p); else adminInbox(p); };
   show(admin.tab);
 }
 
@@ -289,6 +289,56 @@ function adminBookings(p) {
    something and being paid for it are different days. The second is the one
    that opens anything, and what it opens is written onto the buyer's own
    account rather than handed out as a code that travels. */
+/* What broke, on somebody else's phone.
+
+   The same fault hits twenty people and writes twenty rows, so rows are not
+   what is shown: identical messages are gathered into one line with a count and
+   the time it last happened. A list sorted by how often something goes wrong is
+   a list of what to fix, in order. */
+function adminErrors(p) {
+  const S = T();
+  if (!needAdmin(p)) return;
+  p.innerHTML = '<p class="hint">' + esc(S.errIntro) + '</p><div id="errlist" class="card"><p class="hint">' + esc(S.loading) + '</p></div>';
+  const stamp = (ms) => { const t = new Date(Number(ms) || 0); return isNaN(t) || !ms ? '—' : t.toLocaleString(lang === 'en' ? 'en-GB' : 'vi-VN', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' }); };
+  let rows = [];
+  const draw = () => {
+    const box = $('#errlist'); if (!box) return;
+    if (!rows.length) { box.innerHTML = '<p class="hint">' + esc(S.errNone) + '</p>'; return; }
+    /* One line per distinct message, most frequent first. */
+    const byMsg = {};
+    rows.forEach((r) => {
+      const k = String(r.message || '').slice(0, 200);
+      const g = byMsg[k] || (byMsg[k] = { msg: k, n: 0, last: 0, versions: {}, screens: {}, ids: [] });
+      g.n++;
+      g.last = Math.max(g.last, Number(r.at) || 0);
+      if (r.version) g.versions[r.version] = 1;
+      if (r.screen) g.screens[r.screen] = 1;
+      g.ids.push(r.id);
+    });
+    const groups = Object.keys(byMsg).map((k) => byMsg[k]).sort((a, b) => b.n - a.n || b.last - a.last);
+    box.innerHTML = '<h3 style="margin-bottom:4px">🐞 ' + esc(S.errTitle) + ' <span class="n">' + groups.length + '</span></h3>'
+      + '<p class="hint" style="margin-bottom:10px">' + esc(S.errHint(rows.length)) + '</p>'
+      + groups.map((g) => '<div class="bk"><div class="bkh"><b>' + esc(g.msg) + '</b>'
+        + '<span class="st ' + (g.n > 4 ? 'requested' : 'confirmed') + '">' + g.n + '</span></div>'
+        + '<p class="hint">' + esc(S.errWhere) + ': ' + esc(Object.keys(g.screens).join(', ') || '—')
+        + ' · ' + esc(Object.keys(g.versions).join(', ') || '—')
+        + ' · ' + esc(S.errLast) + ' ' + esc(stamp(g.last)) + '</p>'
+        + '<div class="acts"><button type="button" class="btn sm" data-errgone="' + esc(g.ids.join(',')) + '">' + esc(S.errDone) + '</button></div>'
+        + '</div>').join('');
+    $$('[data-errgone]', box).forEach((b) => b.addEventListener('click', async () => {
+      b.disabled = true;
+      const ids = b.getAttribute('data-errgone').split(',').filter(Boolean);
+      try { for (const id of ids) await BE.db.collection('errors').doc(id).delete(); toast(S.saved); }
+      catch (e) { b.disabled = false; toast(loveWhy ? loveWhy(e) : String(e && e.message || e)); }
+    }));
+  };
+  /* The newest few hundred is plenty: this is for finding what is wrong now,
+     not for keeping history. */
+  admin.unsubs.push(BE.db.collection('errors').orderBy('at', 'desc').limit(300)
+    .onSnapshot((s) => { rows = s.docs.map((doc) => Object.assign({ id: doc.id }, doc.data())); draw(); },
+      () => { const box = $('#errlist'); if (box) box.innerHTML = '<p class="hint">' + esc(S.errNone) + '</p>'; }));
+}
+
 function adminPay(p) {
   const S = T();
   if (!needAdmin(p)) return;
@@ -328,6 +378,14 @@ function adminPay(p) {
       const bk = all.filter((x) => x.id === b.getAttribute('data-id'))[0];
       try { await BE.setBookingStatus(bk, b.getAttribute('data-bk')); toast(T().saved); } catch (e) { toast(loveWhy(e)); }
     }));
+    /* Straight from an order to that person's thread - the only way to reach
+       somebody who ordered and then never wrote a word. What they hold, and the
+       way to withdraw it, are on that screen too. */
+    $$('[data-person]', p).forEach((b) => b.addEventListener('click', () => {
+      admin.openThread = b.getAttribute('data-person');
+      admin.tab = 'inbox';
+      location.hash = '#/admin?tab=inbox';
+    }));
     /* The press that matters. It writes what was bought onto the buyer's own
        account, so there is no code for anybody to pass around. */
     $$('[data-paid]', p).forEach((b) => b.addEventListener('click', async () => {
@@ -363,6 +421,10 @@ function adminInbox(p) {
   const S = T();
   if (!needAdmin(p)) return;
   p.innerHTML = '<div id="threads"></div>';
+  /* Somebody can be sent here from an order, which is the only way to reach a
+     buyer who ordered and then never wrote. A thread that does not exist yet
+     still opens: Nabu writes the first message. */
+  const wanted = admin.openThread; admin.openThread = null;
   const list = () => {
     adminCleanup();
     admin.unsubs.push(BE.watchThreads((ts) => {
@@ -371,6 +433,7 @@ function adminInbox(p) {
         return '<button class="thr' + (t.adminUnread ? ' unread' : '') + '" data-th="' + t.id + '"><span class="av">' + esc(who.charAt(0).toUpperCase()) + '</span><span class="body"><b>' + esc(who) + (own ? ' <i>(' + esc(S.ownThread) + ')</i>' : '') + '</b><span class="mail">' + esc(t.email && t.email !== who ? t.email : '') + '</span><span class="prev">' + (t.lastFrom === 'nabu' ? esc(S.youLabel) + ': ' : '') + esc(t.lastText || '') + '</span></span><span class="meta">' + (at ? '<span class="when">' + esc(T().dateShort(at)) + '</span>' : '') + (t.adminUnread ? '<span class="n">' + t.adminUnread + '</span>' : '') + '</span></button>';
       }).join('') : '<p class="empty">' + esc(S.inboxEmpty) + '</p>');
       $$('[data-th]', p).forEach((b) => b.addEventListener('click', () => open(b.getAttribute('data-th'), ts.filter((x) => x.id === b.getAttribute('data-th'))[0])));
+      if (wanted) { const w = wanted; open(w, ts.filter((x) => x.id === w)[0] || { id: w }); }
     }));
   };
   const open = (uid, t) => {

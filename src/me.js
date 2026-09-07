@@ -156,6 +156,13 @@ function unlockRequestRow(b, admin) {
   if (admin && !b.paid && ['declined', 'cancelled'].indexOf(b.status) < 0) {
     acts += '<button type="button" class="btn sm primary" data-paid="' + b.id + '">💰 ' + esc(S.adminGotPaid) + '</button>';
   }
+  /* Plenty of people order and never write a word, and until now there was no
+     way to reach them from the order at all: the only door to somebody's thread
+     was the inbox, which lists the people who already wrote. This opens theirs,
+     where what they hold and the way to take it back also live. */
+  if (admin && b.uid) {
+    acts += '<button type="button" class="btn sm" data-person="' + esc(b.uid) + '">💬 ' + esc(S.adminMessageThem) + '</button>';
+  }
   return '<div class="bk unlockreq' + (b.paid ? ' ispaid' : '') + '"><div class="bkh"><b>🔓 ' + esc(S.reqKindUnlock) + '</b><span class="st ' + esc(b.paid ? 'confirmed' : (b.status || '')) + '">' + esc(b.paid ? S.adminPaidTag : ((S.status && S.status[b.status]) || b.status || '')) + '</span></div>'
     + (list ? '<ul>' + list + '</ul>' : '')
     + (b.price ? '<div class="tot"><span>' + esc(S.unlockTotal) + '</span><b>' + fmtPrice(b.price) + '</b></div>' : '')

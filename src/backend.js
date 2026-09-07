@@ -33,6 +33,14 @@ const BE = {
   },
 
   /* ---- auth ---- */
+  /* The proof of who this is, for the one place outside Firebase that needs it:
+     the worker that answers questions. Firebase refreshes the token itself, so
+     asking for it each time is cheap and always gives a fresh one. Empty string
+     when nobody is signed in - the caller decides what that means. */
+  async token() {
+    try { return this.auth && this.auth.currentUser ? await this.auth.currentUser.getIdToken() : ''; }
+    catch (e) { return ''; }
+  },
   async signIn(provider) {
     const P = provider === 'google' ? new firebase.auth.GoogleAuthProvider() : new firebase.auth.FacebookAuthProvider();
     try { await this.auth.signInWithPopup(P); } catch (e) { if (/popup/i.test(e.code || '')) await this.auth.signInWithRedirect(P); else throw e; }

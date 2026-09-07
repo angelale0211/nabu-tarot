@@ -337,7 +337,20 @@ async function fillEN(obj) {
 }
 /* ---- online engine ---- */
 async function remoteAnswer(q, ctx, history) {
-  const r = await withTimeout(fetch(CONFIG.aiEndpoint, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ lang: lang, question: q, context: contextText(ctx), kind: ctx.type, history: history.slice(-6), profile: { name: PROFILE.name || '', sign: mySign() > -1 ? ZSIGN[ZKEYS[mySign()]].en : '' } }) }), 25000);
+  /* Who is asking, so the worker can count it against this person rather than
+     answering the whole internet for free. Signed out, the header is simply
+     left off and the worker decides. */
+  const headers = { 'Content-Type': 'application/json' };
+  const tok = (typeof BE !== 'undefined' && BE.token) ? await BE.token() : '';
+  if (tok) headers.Authorization = 'Bearer ' + tok;
+  const r = await withTimeout(fetch(CONFIG.aiEndpoint, { method: 'POST', headers: headers, body: JSON.stringify({ lang: lang, question: q, context: contextText(ctx), kind: ctx.type, history: history.slice(-6), profile: { name: PROFILE.name || '', sign: mySign() > -1 ? ZSIGN[ZKEYS[mySign()]].en : '' } }) }), 25000);
+  /* Two refusals worth saying plainly, because both have something the reader
+     can actually do about them. */
+  if (r.status === 401) throw new Error('AI-SIGNIN');
+  if (r.status === 429) {
+    let wait = 0; try { wait = Number((await r.json()).retryAfter) || 0; } catch (e) { /* no body */ }
+    const e = new Error('AI-LIMIT'); e.retryAfter = wait; throw e;
+  }
   if (!r.ok) throw new Error('AI ' + r.status);
   const j = await r.json();
   if (!j.answer) throw new Error(j.error || 'AI');
@@ -380,7 +393,15 @@ function bindAI(root) {
       const thinking = document.createElement('div'); thinking.className = 'msg them ai-wait'; thinking.textContent = '…'; chat.appendChild(thinking); chat.scrollTop = chat.scrollHeight;
       let a;
       try { a = CONFIG.geminiKey ? await geminiAnswer(q, ctx, AI.history[key]) : CONFIG.aiEndpoint ? await remoteAnswer(q, ctx, AI.history[key]) : localAnswer(q, ctx); }
-      catch (e) { try { a = localAnswer(q, ctx) + '\n\n(' + T().aiFallback + ')'; } catch (e2) { a = T().aiGeneralHelp; } }
+      catch (e) {
+        /* Busy, signed out and asked-too-much all still get an answer from the
+           knowledge base. Only the line underneath it changes, because only one
+           of the three is something the reader can do anything about. */
+        const why = String((e && e.message) || '') === 'AI-SIGNIN' ? T().aiNeedSignin
+          : String((e && e.message) || '') === 'AI-LIMIT' ? T().aiLimit
+          : T().aiFallback;
+        try { a = localAnswer(q, ctx) + '\n\n(' + why + ')'; } catch (e2) { a = T().aiGeneralHelp; }
+      }
       finally { thinking.remove(); busy = false; send.disabled = false; }
       push('assistant', a); ta.focus();
     };
