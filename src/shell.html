@@ -1261,7 +1261,8 @@ h1 .pileico{width:34px;height:27px;vertical-align:-3px;margin-right:2px}
    text-align the card sets - and a one-line justified paragraph renders flush
    left, so these only looked centred when a line happened to fill the width.
    This selector is strong enough to win. */
-#main .lovecard p,#main .askcard p,#main .quizresult p,#main .roadcard .road b{text-align:center}
+#main .lovecard p,#main .askcard p,#main .quizresult p,#main .roadcard .road b,
+#main .wedcard p,#main .bqcard p,#main .wedroom .wedcard p{text-align:center}
 /* The stage, named under the pair. */
 #main .lovecard .stagename{margin:4px 0 0;font-size:12px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--pink-ink)}
 :root[lang="vi"] #main .lovecard .stagename{text-transform:none;letter-spacing:.02em}
@@ -1329,7 +1330,9 @@ h1 .pileico{width:34px;height:27px;vertical-align:-3px;margin-right:2px}
 .cupid{width:132px;height:143px;display:block;margin:0 auto 4px}
 .cupid.joy{animation:cupidjoy 2.4s ease-in-out infinite}
 @keyframes cupidjoy{0%,100%{transform:translateY(0)}50%{transform:translateY(-7px)}}
-.cupidname{margin:0 0 8px;font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--gold-ink);opacity:.75}
+/* --gold-ink is for writing ON gold; on the page in the dark theme it is
+   nearly the background itself. */
+.cupidname{margin:0 0 8px;font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--fg-soft);font-weight:600}
 .wedpair{margin:2px 0 4px;font-family:var(--display);font-size:21px;line-height:1.3;overflow-wrap:anywhere}
 .wedwhen{margin:0 0 4px;font-size:14px;color:var(--fg-soft)}
 .paypanel{border:1px solid var(--gold)}
@@ -1343,6 +1346,17 @@ h1 .pileico{width:34px;height:27px;vertical-align:-3px;margin-right:2px}
 .wedsay{margin:6px 0 14px;font-size:16.5px;line-height:1.6;font-family:var(--display)}
 :root[lang="vi"] .wedsay,:root[lang="vi"] .wedpair{line-height:1.75}
 .wedprice{margin:10px 0;font-size:22px;font-weight:700;text-align:center}
+/* What has been answered, for the whole room to see. */
+.vowsaid{display:flex;flex-direction:column;gap:5px;margin:10px 0 12px;text-align:left}
+.vowsaid .vs{display:flex;align-items:baseline;gap:8px;font-size:13.5px;color:var(--fg-soft)}
+.vowsaid .vs i{font-style:normal;font-weight:700;width:16px;flex:none;text-align:center}
+.vowsaid .vs.yes i{color:var(--ok)}
+.vowsaid .vs.no i{color:var(--err)}
+.vowsaid .vs b{margin-left:auto;font-weight:600;color:var(--fg)}
+.attention{margin:10px 0;padding:10px 12px;border-radius:14px;background:var(--tag-gold-bg);color:var(--tag-gold-ink);
+  font-weight:600;animation:attn 1.4s ease-in-out infinite}
+@keyframes attn{0%,100%{transform:scale(1)}50%{transform:scale(1.03)}}
+@media (prefers-reduced-motion:reduce){.attention{animation:none}}
 .vowrow{display:flex;gap:10px}
 .vowrow .btn{flex:1;min-width:0;min-height:46px}
 .mutebtn{position:absolute;top:10px;right:10px;width:34px;height:34px;border-radius:999px;border:1px solid var(--rule);
@@ -1363,9 +1377,37 @@ h1 .pileico{width:34px;height:27px;vertical-align:-3px;margin-right:2px}
 .wedrow b{flex:1;min-width:0;font-weight:600;overflow-wrap:anywhere}
 .wedrow .faint{font-size:12.5px;white-space:nowrap}
 .bqcard{position:relative;text-align:center;overflow:hidden}
+/* .ghead h3 takes flex:1, so it filled the row and sat at its left edge
+   whatever the alignment said. The row is centred instead, so the mark and
+   the words travel together. */
+.bqcard .ghead{justify-content:center}
+.bqcard .ghead h3{flex:0 1 auto;text-align:center}
 .bqair{margin:6px 0;font-size:44px;line-height:1;animation:bqfly 1.6s ease-in-out infinite}
 .bqair.still{animation:none}
 @keyframes bqfly{0%,100%{transform:translateY(0) rotate(-12deg)}50%{transform:translateY(-16px) rotate(12deg)}}
+.saylist{list-style:none;margin:0 0 10px;padding:0;display:flex;flex-direction:column;gap:6px;
+  max-height:240px;overflow:auto}
+.saylist li{padding:8px 11px;border-radius:14px;background:var(--surface-2);font-size:14px;line-height:1.45}
+.saylist li.me{background:var(--tag-neu-bg);color:var(--tag-neu-ink)}
+.saylist li b{display:block;font-size:12px;font-weight:700;color:var(--fg-soft);margin-bottom:1px}
+.saylist li.me b{color:inherit;opacity:.75}
+.saybar input{flex:1;min-width:0}
+.wishcard{position:relative;overflow:hidden}
+.wgtally{display:flex;flex-wrap:wrap;align-items:center;gap:10px;margin-bottom:12px;padding:9px 12px;
+  border-radius:12px;background:var(--surface-2);font-size:14px;font-weight:600}
+.wgtally i{font-style:normal;margin-right:4px}
+.wgtally .all{margin-left:auto;font-weight:500;color:var(--fg-soft);font-size:13px}
+.wgpick{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:12px}
+.wgpick .wgp{display:flex;flex-direction:column;align-items:center;gap:4px;padding:10px 4px;border-radius:14px;
+  border:1px solid var(--rule);background:var(--surface);font:inherit;font-size:12px;font-weight:600;
+  min-width:0;overflow-wrap:anywhere;text-align:center;cursor:pointer}
+.wgpick .wgp i{font-style:normal;font-size:24px;line-height:1}
+.wgpick .wgp:active{transform:scale(.96)}
+.wgfeed{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:6px;max-height:220px;overflow:auto}
+.wgfeed li{display:flex;align-items:baseline;gap:8px;font-size:13.5px}
+.wgfeed .wgs{font-size:17px;line-height:1}
+.wgfeed b{font-weight:600}
+.wgfeed .wgw{color:var(--fg-soft)}
 .wgrow{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px}
 .wgrow .wg{display:block;padding:4px;border-radius:10px;background:var(--surface-2)}
 @media (prefers-reduced-motion:reduce){

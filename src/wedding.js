@@ -36,6 +36,17 @@ const WED_PRICE = 30000;
 const WED_OPEN_MS = 15 * 60 * 1000;   /* the door opens this long before */
 const WED_END_MS = 5 * 60 * 1000;     /* and shuts this long after the vows */
 const WED_SEEN_MS = 45 * 1000;        /* a seat still warm counts as present */
+const WED_CALL_MS = 2 * 60 * 1000;    /* and this long before, the room is called to order */
+
+/* Three, not eight. A wedding gift is chosen in a second, in front of a room -
+   the long shelf belongs to the thread, where one person gives another
+   something quietly. */
+const WED_GIFTS = [
+  { id: 'flowers', sym: '\uD83D\uDC90', name: { vi: 'Bó hoa', en: 'Flowers' } },
+  { id: 'cake', sym: '\uD83C\uDF70', name: { vi: 'Bánh cưới', en: 'A cake' } },
+  { id: 'choc', sym: '\uD83C\uDF6B', name: { vi: 'Sô-cô-la', en: 'Chocolates' } }
+];
+const wedGiftOf = (id) => WED_GIFTS.filter((g) => g.id === id)[0] || WED_GIFTS[0];
 
 /* ---------------------------------------------------------------- the script
 
@@ -149,6 +160,19 @@ const WED = {
       from: this.me(), name: (PROFILE && PROFILE.name) || '', kind: kind, at: Date.now()
     });
   },
+  /* What the room says. Short, signed, and in the order it was said. */
+  say(id, text) {
+    const t = String(text || '').trim().slice(0, 300);
+    if (!t) return Promise.resolve();
+    return BE.db.collection('weddings').doc(id).collection('says').doc(this.me() + '__' + Date.now()).set({
+      from: this.me(), name: (PROFILE && PROFILE.name) || '', text: t, at: Date.now()
+    });
+  },
+  watchSays(id, cb) {
+    if (!this.ok() || !id) return () => {};
+    return BE.db.collection('weddings').doc(id).collection('says')
+      .onSnapshot((s) => cb(s.docs.map((d) => d.data()).sort((x, y) => (x.at || 0) - (y.at || 0))), () => cb([]));
+  },
   watchGifts(id, cb) {
     if (!this.ok() || !id) return () => {};
     return BE.db.collection('weddings').doc(id).collection('gifts')
@@ -247,46 +271,87 @@ const WEDMUSIC = {
    cupid would belong to some other story. Drawn, so it costs nothing and works
    with the phone in flight mode. */
 function cupidSVG(mood) {
-  const glow = mood === 'joy' ? '.9' : '.5';
-  const CREAM = '#FFFDF6', EDGE = '#D6BEF0';
-  /* The thread hangs between the two hands and dips, the way a held cord does,
-     with the knot at the bottom of the dip. Drawn dark first and red over it,
-     so it reads as cord rather than as a line. */
-  const CORD = 'M27 70 C 38 100, 82 100, 93 70';
-  return '<svg viewBox="0 0 120 130" class="cupid ' + (mood || '') + '" role="img" aria-hidden="true">'
-    + '<defs><radialGradient id="cupglow"><stop offset="0" stop-color="#FFF3C4" stop-opacity="' + glow + '"/>'
+  const joy = mood === 'joy';
+  const glow = joy ? '.95' : '.55';
+  const CREAM = '#FFFDF6', EDGE = '#D6BEF0', SKIN = '#FFF6EC', SKIN_E = '#E7CDBA';
+  const HAIR = '#F2D9A6', HAIR_D = '#E0BE7E', EYE = '#4B2E86', BLUSH = '#F7B7C4';
+  /* Held between the two hands and dipping, with the knot at the bottom of the
+     dip - the one part of the first drawing that already said the right thing. */
+  const CORD = 'M25 78 C 38 106, 82 106, 95 78';
+  const heart = (x, y, sc, fill, op) => '<g transform="translate(' + x + ',' + y + ') scale(' + sc + ')" opacity="' + op + '">'
+    + '<path d="M0 6 C -7 1, -10 -4, -7 -8 C -4.5 -11, -1 -9.5, 0 -6.5'
+    + ' C 1 -9.5, 4.5 -11, 7 -8 C 10 -4, 7 1, 0 6 Z" fill="' + fill + '"/></g>';
+
+  return '<svg viewBox="0 0 120 132" class="cupid ' + (mood || '') + '" role="img" aria-hidden="true">'
+    + '<defs>'
+    + '<radialGradient id="cupglow"><stop offset="0" stop-color="#FFF3C4" stop-opacity="' + glow + '"/>'
     + '<stop offset="1" stop-color="#FFF3C4" stop-opacity="0"/></radialGradient>'
-    + '<linearGradient id="cupbody" x1="0" y1="0" x2="0" y2="1">'
-    + '<stop offset="0" stop-color="' + CREAM + '"/><stop offset="1" stop-color="#EBDCF7"/></linearGradient></defs>'
-    + '<circle cx="60" cy="56" r="54" fill="url(#cupglow)"/>'
-    /* wings, behind everything and sweeping up */
-    + '<path d="M46 52 C 26 30, 6 34, 8 52 C 10 70, 32 70, 46 62 Z" fill="#F3E8FF" stroke="' + EDGE + '" stroke-width="1.6" stroke-linejoin="round"/>'
-    + '<path d="M74 52 C 94 30, 114 34, 112 52 C 110 70, 88 70, 74 62 Z" fill="#F3E8FF" stroke="' + EDGE + '" stroke-width="1.6" stroke-linejoin="round"/>'
-    /* a robe rather than a blob */
-    + '<path d="M60 42 C 68 42, 73 48, 75 58 L 80 92 C 74 96, 66 98, 60 98 C 54 98, 46 96, 40 92 L 45 58 C 47 48, 52 42, 60 42 Z" fill="url(#cupbody)" stroke="' + EDGE + '" stroke-width="1.6" stroke-linejoin="round"/>'
-    /* arms out to the sides, ending where the cord begins */
-    + '<path d="M47 58 C 39 60, 32 64, 28 69" stroke="' + EDGE + '" stroke-width="7.4" fill="none" stroke-linecap="round"/>'
-    + '<path d="M47 58 C 39 60, 32 64, 28 69" stroke="' + CREAM + '" stroke-width="5" fill="none" stroke-linecap="round"/>'
-    + '<path d="M73 58 C 81 60, 88 64, 92 69" stroke="' + EDGE + '" stroke-width="7.4" fill="none" stroke-linecap="round"/>'
-    + '<path d="M73 58 C 81 60, 88 64, 92 69" stroke="' + CREAM + '" stroke-width="5" fill="none" stroke-linecap="round"/>'
-    /* head, face, and the thread s own gold in the halo */
-    + '<circle cx="60" cy="28" r="13" fill="' + CREAM + '" stroke="' + EDGE + '" stroke-width="1.6"/>'
-    + '<circle cx="55.6" cy="27" r="1.5" fill="#5B3F9E"/><circle cx="64.4" cy="27" r="1.5" fill="#5B3F9E"/>'
-    + '<path d="M56.4 31.6 q3.6 3.2, 7.2 0" stroke="#5B3F9E" stroke-width="1.5" fill="none" stroke-linecap="round"/>'
-    + '<ellipse cx="60" cy="11.5" rx="10.5" ry="3.2" fill="none" stroke="#E5BE5E" stroke-width="1.8"/>'
-    /* the thread itself, held */
-    + '<path d="' + CORD + '" stroke="#8A0C20" stroke-width="6" fill="none" stroke-linecap="round"/>'
-    + '<path d="' + CORD + '" stroke="#C4142F" stroke-width="3.6" fill="none" stroke-linecap="round"/>'
-    + '<path d="' + CORD + '" stroke="#F0748C" stroke-width="1.2" fill="none" stroke-linecap="round" opacity=".5"/>'
+    + '<linearGradient id="cuprobe" x1="0" y1="0" x2="0" y2="1">'
+    + '<stop offset="0" stop-color="' + CREAM + '"/><stop offset="1" stop-color="#E9DAF8"/></linearGradient>'
+    + '<linearGradient id="cupwing" x1="0" y1="0" x2="0" y2="1">'
+    + '<stop offset="0" stop-color="#FBF6FF"/><stop offset="1" stop-color="#E6D8F7"/></linearGradient>'
+    + '</defs>'
+    + '<circle cx="60" cy="52" r="54" fill="url(#cupglow)"/>'
+
+    /* wings: a soft curve up, and a scalloped edge underneath so they read as
+       feathers rather than as two leaves */
+    + '<g stroke="' + EDGE + '" stroke-width="1.5" stroke-linejoin="round">'
+    + '<path d="M44 58 C 26 40, 8 40, 6 54 C 4 66, 14 72, 24 70'
+    + ' q 3 4, 7 -1 q 3 4, 7 -1 q 3 4, 6 -2 Z" fill="url(#cupwing)"/>'
+    + '<path d="M76 58 C 94 40, 112 40, 114 54 C 116 66, 106 72, 96 70'
+    + ' q -3 4, -7 -1 q -3 4, -7 -1 q -3 4, -6 -2 Z" fill="url(#cupwing)"/>'
+    + '</g>'
+
+    /* a robe that falls in a bell, with a hem */
+    + '<path d="M60 52 C 69 52, 74 58, 76 68 L 82 96 C 75 101, 66 103, 60 103'
+    + ' C 54 103, 45 101, 38 96 L 44 68 C 46 58, 51 52, 60 52 Z"'
+    + ' fill="url(#cuprobe)" stroke="' + EDGE + '" stroke-width="1.6" stroke-linejoin="round"/>'
+    + '<path d="M39 95 C 47 100, 73 100, 81 95" fill="none" stroke="' + EDGE + '" stroke-width="1.4" opacity=".8"/>'
+
+    /* sleeves widening to the wrists, and small hands at the ends */
+    + '<path d="M46 62 C 38 65, 31 70, 26 76 l 6 5 C 38 74, 44 70, 49 68 Z"'
+    + ' fill="url(#cuprobe)" stroke="' + EDGE + '" stroke-width="1.4" stroke-linejoin="round"/>'
+    + '<path d="M74 62 C 82 65, 89 70, 94 76 l -6 5 C 82 74, 76 70, 71 68 Z"'
+    + ' fill="url(#cuprobe)" stroke="' + EDGE + '" stroke-width="1.4" stroke-linejoin="round"/>'
+    + '<circle cx="27.5" cy="79" r="4.6" fill="' + SKIN + '" stroke="' + SKIN_E + '" stroke-width="1.2"/>'
+    + '<circle cx="92.5" cy="79" r="4.6" fill="' + SKIN + '" stroke="' + SKIN_E + '" stroke-width="1.2"/>'
+
+    /* a big head on a small body, which is what makes anything look sweet */
+    + '<circle cx="60" cy="33" r="19.5" fill="' + SKIN + '" stroke="' + SKIN_E + '" stroke-width="1.4"/>'
+    /* hair, with a soft fringe following the curve of the head */
+    + '<path d="M41 30 C 41 16, 50 11, 60 11 C 70 11, 79 16, 79 30'
+    + ' C 76 25, 72 22, 66 23 C 62 19, 56 19, 52 23 C 46 22, 43 25, 41 30 Z"'
+    + ' fill="' + HAIR + '" stroke="' + HAIR_D + '" stroke-width="1.2" stroke-linejoin="round"/>'
+    /* eyes with light in them, a small smile, and cheeks */
+    + '<ellipse cx="53" cy="34.5" rx="2.9" ry="3.4" fill="' + EYE + '"/>'
+    + '<ellipse cx="67" cy="34.5" rx="2.9" ry="3.4" fill="' + EYE + '"/>'
+    + '<circle cx="54.1" cy="33.2" r="1.05" fill="#fff"/>'
+    + '<circle cx="68.1" cy="33.2" r="1.05" fill="#fff"/>'
+    + '<ellipse cx="46.5" cy="39.5" rx="3.6" ry="2.4" fill="' + BLUSH + '" opacity=".62"/>'
+    + '<ellipse cx="73.5" cy="39.5" rx="3.6" ry="2.4" fill="' + BLUSH + '" opacity=".62"/>'
+    + '<path d="M55.6 41.4 q4.4 3.6, 8.8 0" stroke="' + EYE + '" stroke-width="1.7" fill="none" stroke-linecap="round"/>'
+    /* the halo, in the thread's own gold */
+    + '<ellipse cx="60" cy="9.5" rx="11" ry="3.4" fill="none" stroke="#E5BE5E" stroke-width="2"/>'
+
+    /* the thread, held */
+    + '<path d="' + CORD + '" stroke="#8A0C20" stroke-width="6.4" fill="none" stroke-linecap="round"/>'
+    + '<path d="' + CORD + '" stroke="#C4142F" stroke-width="4" fill="none" stroke-linecap="round"/>'
+    + '<path d="' + CORD + '" stroke="#F0748C" stroke-width="1.3" fill="none" stroke-linecap="round" opacity=".5"/>'
     /* and its knot, a small heart at the bottom of the dip */
-    + '<g transform="translate(60,90) scale(.135)">'
+    + '<g transform="translate(60,99) scale(.14)">'
     + '<path d="M120 150 C 82 130, 60 102, 68 80 C 75 60, 102 58, 113 76 C 116 81, 118 86, 120 91'
     + ' C 122 86, 124 81, 127 76 C 138 58, 165 60, 172 80 C 180 102, 158 130, 120 150 Z"'
-    + ' transform="translate(-120,-104)" fill="none" stroke="#8A0C20" stroke-width="26"/>'
+    + ' transform="translate(-120,-104)" fill="none" stroke="#8A0C20" stroke-width="27"/>'
     + '<path d="M120 150 C 82 130, 60 102, 68 80 C 75 60, 102 58, 113 76 C 116 81, 118 86, 120 91'
     + ' C 122 86, 124 81, 127 76 C 138 58, 165 60, 172 80 C 180 102, 158 130, 120 150 Z"'
     + ' transform="translate(-120,-104)" fill="none" stroke="#C4142F" stroke-width="15"/>'
     + '</g>'
+
+    /* small hearts near the hands, more of them when there is something to be
+       happy about */
+    + heart(23, 26, 0.62, '#F2789F', joy ? '.95' : '.55')
+    + heart(97, 30, 0.5, '#F2789F', joy ? '.9' : '.45')
+    + (joy ? heart(12, 44, 0.44, '#E5BE5E', '.9') + heart(108, 48, 0.4, '#E5BE5E', '.85') : '')
     + '</svg>';
 }
 
@@ -328,6 +393,23 @@ const wedCountdown = (ms) => {
 };
 
 /* ================================ the screen ============================== */
+
+/* What has been answered so far, for the whole room. Each line is one promise
+   and the word that answered it - which is the part a guest came to see. */
+function vowsHTML(w) {
+  const S = T(), v = (w && w.vows) || {};
+  const rows = [
+    ['takeA', w.aName || ''], ['takeB', w.bName || ''],
+    ['keepA', w.aName || ''], ['keepB', w.bName || '']
+  ].filter((r) => v[r[0]] !== undefined);
+  if (!rows.length) return '';
+  return '<div class="vowsaid">' + rows.map((r) =>
+    '<span class="vs' + (v[r[0]] ? ' yes' : ' no') + '"><i>' + (v[r[0]] ? '\u2713' : '\u2014') + '</i>'
+    + esc(r[1]) + '<b>' + esc(v[r[0]] ? S.wedIDo : S.wedNotYet) + '</b></span>').join('') + '</div>';
+}
+
+/* Sounds that must happen once per visit, not once per repaint. */
+const PLAYED = { call: false };
 
 function renderWedding(args) {
   const S = T(), m = $('#main');
@@ -391,10 +473,15 @@ function renderWedding(args) {
   };
 
   /* ------------------------------------------------------------- the room --- */
-  let gifts = [], guests = [], bouquetShown = 0;
+  let gifts = [], guests = [], says = [], bouquetShown = 0;
   const drawRoom = (w) => {
     const side = WED.side(w), mine = !!side, step = wedStep(w.step | 0);
     const names = esc(w.aName || S.loveSomeone) + ' \u2764 ' + esc(w.bName || S.loveSomeone);
+    /* The doors open early so people can gather; the ceremony still begins at
+       the hour it was booked for. */
+    const startMs = WED.startMs(w);
+    const waiting = !w.doneAt && (w.step | 0) === 0 && Date.now() < startMs;
+    const nearly = waiting && startMs - Date.now() <= WED_CALL_MS;
     const askingMe = mine && step.who === side && !w.doneAt;
     const theirTurn = mine && step.who && step.who !== side && !w.doneAt;
     const line = S.wedSay[step.id](w.aName || S.loveSomeone, w.bName || S.loveSomeone);
@@ -404,6 +491,18 @@ function renderWedding(args) {
     let act = '';
     if (called) {
       act = '<p class="hint err" style="text-align:center">' + esc(S.wedCalledOff) + '</p>';
+    } else if (waiting) {
+      /* Everybody in the room is reading the same clock, so nobody has to be
+         told when it is about to happen. */
+      act = '<p class="wedcount" id="wedgo">' + esc(wedCountdown(startMs)) + '</p>'
+        + (nearly ? '<p class="lead attention">\uD83D\uDD14 ' + esc(S.wedAttention) + '</p>' : '')
+        + (mine
+          ? '<button type="button" class="btn primary block" disabled>' + esc(S.wedStart) + '</button>'
+            + '<p class="hint">' + esc(S.wedStartsAt(wedWhen(startMs))) + '</p>'
+          : '<p class="hint">' + esc(S.wedGuestWait(wedWhen(startMs))) + '</p>');
+    } else if (mine && !w.doneAt && (w.step | 0) === 0) {
+      act = '<button type="button" class="btn primary block" id="wedon">' + esc(S.wedStart) + '</button>'
+        + '<p class="hint">' + esc(S.wedStartNow) + '</p>';
     } else if (askingMe) {
       act = '<div class="vowrow"><button type="button" class="btn primary" id="wedyes">' + esc(S.wedIDo) + '</button>'
         + '<button type="button" class="btn" id="wedno">' + esc(S.wedNotYet) + '</button></div>'
@@ -439,14 +538,27 @@ function renderWedding(args) {
     }
 
     /* what the room is throwing */
-    const wishes = gifts.slice(0, 14).map((g) => '<span class="wg" title="' + esc(g.name || '') + '">' + giftArt(g.kind) + '</span>').join('');
-    const giftBox = w.doneAt || !mine
-      ? '<div class="card"><h3 style="margin-bottom:4px">\uD83C\uDF89 ' + esc(S.wedWishTitle) + '</h3>'
-        + '<p class="hint" style="margin-bottom:10px">' + esc(S.wedWishHint) + '</p>'
-        + (wishes ? '<div class="wgrow">' + wishes + '</div>' : '')
-        + (mine ? '' : '<div class="giftpick">' + GIFTS.slice(0, 8).map((g) => '<button type="button" class="gp" data-wgift="' + g.id + '" aria-label="' + esc(L(g.name)) + '">' + giftArt(g.id) + '<b>' + esc(L(g.name)) + '</b></button>').join('') + '</div>')
-        + '</div>'
-      : '';
+    /* What the room has brought: a tally the couple can read at a glance, and
+       the arrivals themselves, newest first, each naming who sent it. */
+    const tally = WED_GIFTS.map((g) => ({ g: g, n: gifts.filter((x) => x.kind === g.id).length }))
+      .filter((t) => t.n > 0);
+    const feed = gifts.slice(0, 20).map((x) => '<li><span class="wgs">' + wedGiftOf(x.kind).sym + '</span>'
+      + '<b>' + esc(x.name || S.loveSomeone) + '</b>'
+      + '<span class="wgw">' + esc(S.wedGave(L(wedGiftOf(x.kind).name))) + '</span></li>').join('');
+    const giftBox = '<div class="card wishcard">'
+      + (gifts.length ? wedFallHTML(6) : '')
+      + '<div class="ghead"><span class="gk">\uD83C\uDF89</span><h3>' + esc(S.wedWishTitle) + '</h3></div>'
+      + '<p class="hint" style="margin-bottom:10px">' + esc(S.wedWishHint) + '</p>'
+      + (tally.length
+        ? '<div class="wgtally">' + tally.map((t) => '<span><i>' + t.g.sym + '</i>' + t.n + '</span>').join('')
+          + '<span class="all">' + esc(S.wedGiftsTotal(gifts.length)) + '</span></div>'
+        : '')
+      /* Guests bring things; the couple are the ones being brought them. */
+      + (mine ? '' : '<div class="wgpick">' + WED_GIFTS.map((g) =>
+        '<button type="button" class="wgp" data-wgift="' + g.id + '"><i>' + g.sym + '</i><b>' + esc(L(g.name)) + '</b></button>').join('') + '</div>')
+      + (feed ? '<ul class="wgfeed">' + feed + '</ul>'
+        : '<p class="hint">' + esc(S.wedNoWishes) + '</p>')
+      + '</div>';
 
     m.innerHTML = '<div class="wedroom">'
       + (w.doneAt && w.state === 'married' ? wedFallHTML(18) : '')
@@ -456,14 +568,43 @@ function renderWedding(args) {
       + '<p class="wedpair">' + names + '</p>'
       + '<p class="cupidname">' + esc(S.wedCupid) + '</p>'
       + '<p class="wedsay">' + esc(line) + '</p>'
+      /* Cupid asks in front of everybody; the point of that is that everybody
+         hears the reply. */
+      + vowsHTML(w)
       + act + '</div>'
       + bq
       + '<div class="card"><h3 style="margin-bottom:4px">\uD83D\uDC65 ' + esc(S.wedGuests(guests.length)) + '</h3>'
       + (guests.length ? '<p class="hint">' + esc(guests.slice(0, 24).map((g) => g.name || S.loveSomeone).join(' \u00b7 ')) + '</p>'
         : '<p class="hint">' + esc(S.wedNoGuests) + '</p>') + '</div>'
       + giftBox
+      /* A wedding you can speak at. Everyone in the room, the couple included. */
+      + '<div class="card saycard"><div class="ghead"><span class="gk">\uD83D\uDCAC</span><h3>' + esc(S.wedSayTitle) + '</h3></div>'
+      + (says.length
+        ? '<ul class="saylist" id="saylist">' + says.slice(-60).map((x) =>
+          '<li' + (x.from === (BE.user ? BE.user.uid : '') ? ' class="me"' : '') + '>'
+          + '<b>' + esc(x.name || S.loveSomeone) + '</b><span>' + esc(x.text) + '</span></li>').join('') + '</ul>'
+        : '<p class="hint">' + esc(S.wedSayNone) + '</p>')
+      + '<div class="row nw saybar"><input id="wedsayin" maxlength="300" placeholder="' + esc(S.wedSayPh) + '">'
+      + '<button type="button" class="btn primary" id="wedsaygo">' + esc(S.wedSayGo) + '</button></div>'
+      + '</div>'
       + (mine ? '<p class="hint" style="text-align:center">' + esc(S.wedLeaveOk) + '</p>' : '')
       + '</div>';
+
+    /* While the room waits, it counts - and two minutes out it calls itself to
+       order and the processional plays, once, for anybody with the sound on. */
+    if (waiting) {
+      if (tick) { clearInterval(tick); tick = null; }
+      tick = setInterval(() => {
+        const el = $('#wedgo');
+        if (el) el.textContent = wedCountdown(startMs);
+        const left = startMs - Date.now();
+        if (left <= WED_CALL_MS && !PLAYED.call) { PLAYED.call = true; WEDMUSIC.processional(); paint(); }
+        if (left <= 0) paint();
+      }, 1000);
+    }
+    /* Browsers only allow sound that a person started, so the first touch
+       anywhere in the room is what wakes it. */
+    m.addEventListener('click', () => { WEDMUSIC.wake(); }, { once: true });
 
     /* answering */
     const ans = async (yes) => {
@@ -487,6 +628,19 @@ function renderWedding(args) {
           } else { WEDMUSIC.chime(); }
         } catch (e) { o.disabled = false; toast(loveWhy(e)); }
       }); }
+    { /* Said once, and shown to everybody. */
+      const box = $('#wedsayin'), go = $('#wedsaygo');
+      const send = async () => {
+        const t = box.value.trim();
+        if (!t) return;
+        box.value = ''; go.disabled = true;
+        try { await WED.say(w.id, t); } catch (e) { toast(loveWhy(e)); }
+        go.disabled = false; box.focus();
+      };
+      if (go) go.addEventListener('click', send);
+      if (box) box.addEventListener('keydown', (e) => { if (e.key === 'Enter') { e.preventDefault(); send(); } });
+      const list = $('#saylist');
+      if (list) list.scrollTop = list.scrollHeight; }
     { const mu = $('#wedmute');
       if (mu) mu.addEventListener('click', () => { WEDMUSIC.mute(WEDMUSIC.on); paint(); }); }
 
@@ -754,6 +908,7 @@ function renderWedding(args) {
     }));
     stop.push(WED.watchGuests(id, (g) => { guests = g; paint(); }));
     stop.push(WED.watchGifts(id, (g) => { gifts = g; paint(); }));
+    stop.push(WED.watchSays(id, (l) => { says = l; paint(); }));
   }
   if (!guestLink) {
     stop.push(LOVEDB.watchMine((b) => { bond = b; ready = true; paint(); }));

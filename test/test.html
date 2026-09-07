@@ -1303,6 +1303,28 @@ async function go(hash, sel) { W().location.hash = hash; await sleep(30); return
           'once the door is open a guest is seated, and their seat says when they were last looking');
         ok(!d.querySelector('#wedyes') && !d.querySelector('#wedon') && d.querySelector('[data-wgift]'),
           'a guest can send congratulations but is given nothing to answer with');
+        { /* Three easy things, given in front of everybody, with the room
+             keeping a tally and naming who sent what. */
+          const picks = d.querySelectorAll('.wgpick [data-wgift]');
+          ok(picks.length === 3, 'a guest is offered three things to bring, not a long shelf');
+          picks[1].click(); await sleep(320);
+          const line = d.querySelector('.wgfeed li');
+          ok(line && /Linh|khách|guest|[A-Za-z]/.test(line.textContent),
+            'and it appears in the room, naming who sent it');
+          ok(d.querySelector('.wgtally') && /1/.test(d.querySelector('.wgtally').textContent),
+            'with a tally the couple can read at a glance'); }
+        { /* Watching in silence is not attending: anybody in the room can say
+             something, and everybody sees it. */
+          const box = d.querySelector('#wedsayin');
+          ok(box && d.querySelector('#wedsaygo'), 'anybody in the room can say something');
+          box.value = 'Chúc mừng hai bạn!';
+          d.querySelector('#wedsaygo').click(); await sleep(340);
+          const said = Object.keys(db.docs).filter((k) => k.indexOf(W + '/says/') === 0);
+          ok(said.length === 1 && db.docs[said[0]].from === 'uidG'
+            && db.docs[said[0]].text === 'Chúc mừng hai bạn!',
+            'and it is signed with who said it');
+          ok(d.querySelector('.saylist li') && /Chúc mừng/.test(d.querySelector('.saylist').textContent),
+            'and appears in the room for everybody'); }
 
         /* The couple walk the ceremony. Cupid speaks, then asks each of them. */
         N.BE.user = { uid: 'uidA', email: 'a@test' };
@@ -1310,8 +1332,18 @@ async function go(hash, sel) { W().location.hash = hash; await sleep(30); return
         ok(d.querySelector('a[href="#/wedding/room"]') && d.querySelector('#wedurl'),
           'once the doors open the couple are offered the way in, and keep the invitation link beside it');
         await go('#/wedding/room', '#main'); await sleep(320);
-        ok(d.querySelector('#wedon') && /Nabu Cupid/.test(d.querySelector('#main').textContent),
-          'and inside, the ceremony is walked one line at a time');
+        /* Inside before the hour: the room waits. A wedding booked for seven
+           does not happen at a quarter to, however early the doors open. */
+        ok(!d.querySelector('#wedon') && d.querySelector('.wedcard .btn.primary')
+          && d.querySelector('.wedcard .btn.primary').disabled
+          && /Nabu Cupid/.test(d.querySelector('#main').textContent),
+          'inside before the hour, the way to begin is there but cannot be pressed');
+
+        /* The hour arrives. */
+        db.put(W, Object.assign({}, db.docs[W], { startMs: Date.now() - 1000 }));
+        await sleep(400);
+        ok(d.querySelector('#wedon'),
+          'and at the hour it becomes pressable, and the ceremony is walked one line at a time');
         d.querySelector('#wedon').click(); await sleep(200);
         d.querySelector('#wedon').click(); await sleep(220);
         ok(db.docs[W].step === 2 && d.querySelector('#wedyes') && d.querySelector('#wedno'),
@@ -1326,7 +1358,7 @@ async function go(hash, sel) { W().location.hash = hash; await sleep(30); return
 
         /* Start again, and say yes to all four. */
         db.put(W, { uids: ['uidA', 'uidB'], a: 'uidA', b: 'uidB', aName: 'Mai', bName: 'Nam',
-          startMs: Date.now() + 60000, state: 'planned', step: 2, vows: {}, by: 'uidA', at: 1 });
+          startMs: Date.now() - 1000, state: 'planned', step: 2, vows: {}, by: 'uidA', at: 1 });
         await sleep(300);
         /* Two people answer, in turn - which is the point of asking. Only the
            one being asked is given anything to press. */
@@ -1347,6 +1379,14 @@ async function go(hash, sel) { W().location.hash = hash; await sleep(30); return
         await answerAs('uidA'); await answerAs('uidB');
         ok(db.docs[W].step === 6 && db.docs[W].vows.takeA === true && db.docs[W].vows.keepB === true,
           'four questions, four answers, and the room moves on with each one');
+        { /* Cupid asks in front of everybody, so everybody sees the reply. */
+          N.BE.user = { uid: 'uidG', email: 'g@test' };
+          await go('#/home', '#main'); await go('#/wedding/uidA__uidB', '#main'); await sleep(320);
+          const said = d.querySelectorAll('.vowsaid .vs');
+          ok(said.length === 4 && d.querySelectorAll('.vowsaid .vs.yes').length === 4
+            && /Mai/.test(d.querySelector('.vowsaid').textContent),
+            'and a guest can see what each of them answered, which is why it was asked out loud');
+          N.BE.user = { uid: 'uidA', email: 'a@test' }; }
         N.BE.user = { uid: 'uidA', email: 'a@test' };
         await go('#/home', '#main'); await go('#/wedding/room', '#wedon'); await sleep(260);
         d.querySelector('#wedon').click(); await sleep(300);
