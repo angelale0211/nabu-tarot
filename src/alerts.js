@@ -191,6 +191,23 @@ function alertsWatchLove() {
   ALERT_STOP.push(LOVEDB.watchRequests((list) => {
     const S = T();
     const first = alertSeen('love.offers') === null;
+    /* Who was offering last time, so that one being taken back can be told
+       apart from one being answered. Somebody invited by mistake deserves the
+       correction as plainly as the invitation. */
+    const now = (list || []).map((r) => r.uid).sort().join(',');
+    const before = alertSeen('love.offerlist');
+    alertWas('love.offerlist', now);
+    if (before !== null && before) {
+      before.split(',').filter((u) => u && now.split(',').indexOf(u) < 0).forEach((u) => {
+        const name = (store.get('nabu-offer-names', {}) || {})[u] || S.loveSomeone;
+        alertSay({ id: 'offer-gone-' + u + '-' + Date.now(), k: 'love',
+          t: S.alertOfferGone(name), b: S.alertOfferGoneBody, href: '#/love' }, true);
+      });
+    }
+    { /* Remembered by name, so a withdrawal can say who it was from. */
+      const names = store.get('nabu-offer-names', {}) || {};
+      (list || []).forEach((r) => { names[r.uid] = r.name || ('@' + (r.handle || '')); });
+      store.set('nabu-offer-names', names); }
     alertWas('love.offers', '1');
     (list || []).forEach((r) => {
       /* One that was already waiting belongs on the bell, but it did not just

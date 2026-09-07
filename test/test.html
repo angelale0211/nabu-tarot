@@ -919,10 +919,28 @@ async function go(hash, sel) { W().location.hash = hash; await sleep(30); return
       d.querySelector('#lvfind').value = '@nam'; d.querySelector('#lvgo').click(); await sleep(120);
       ok(/Nam/.test(d.querySelector('#lvfound').textContent) && d.querySelector('#lvoffer'),
         'someone is found by their handle alone, and can be offered the thread');
-      d.querySelector('#lvnote').value = 'g\u1eedi b\u1ea1n'; d.querySelector('#lvoffer').click(); await sleep(120);
+      d.querySelector('#lvnote').value = 'g\u1eedi b\u1ea1n'; d.querySelector('#lvoffer').click(); await sleep(240);
       ok(db.docs['requests/uidB/from/uidA'] && db.docs['requests/uidB/from/uidA'].note === 'g\u1eedi b\u1ea1n'
         && !db.docs['bonds/uidA__uidB'],
         'an offer is only an invitation under the other person: nothing is shown as tied until they answer');
+
+      { /* One invitation stands at a time. The app could not read its own, so
+           it offered the button again and the second press was refused - which
+           is what "this part of Nabu is not open yet" was. */
+        await sleep(320);
+        /* Sending repaints the screen, so the record of having sent lives on
+           the screen itself rather than on a card that vanishes. */
+        ok(d.querySelector('.sentcard [data-unsend]'),
+          'an invitation already sent stays on the screen, with the way to take it back');
+        w.confirm = () => true;
+        d.querySelector('.sentcard [data-unsend]').click(); await sleep(320);
+        ok(!db.docs['requests/uidB/from/uidA'],
+          'and it can be withdrawn, for whoever was invited by mistake');
+        ok(!d.querySelector('.sentcard'),
+          'after which nothing is left outstanding'); }
+
+      d.querySelector('#lvfind').value = '@nam'; d.querySelector('#lvgo').click(); await sleep(200);
+      d.querySelector('#lvnote').value = 'g\u1eedi b\u1ea1n'; d.querySelector('#lvoffer').click(); await sleep(240);
 
       db.put('requests/uidA/from/uidB', { uid: 'uidB', name: 'Nam', handle: 'nam', note: 'ch\u00e0o', at: 1 });
       await sleep(60);
@@ -1236,7 +1254,15 @@ async function go(hash, sel) { W().location.hash = hash; await sleep(30); return
 
         const want = Date.now() + 4 * 86400000;
         d.querySelector('#wedat').value = new Date(want - new Date().getTimezoneOffset() * 60000).toISOString().slice(0, 16);
-        d.querySelector('#wedmake').click(); await sleep(320);
+        /* A paid thing that cannot be refunded is agreed to before it is
+           bought, so the button is shut until the box is ticked. */
+        ok(d.querySelector('#wedmake').disabled && d.querySelectorAll('.terms li').length === 4,
+          'the terms are shown as separate facts, and nothing can be booked until they are agreed');
+        d.querySelector('#wedagree').checked = true;
+        d.querySelector('#wedagree').dispatchEvent(new w.Event('change'));
+        await sleep(60);
+        ok(!d.querySelector('#wedmake').disabled, 'and ticking the box opens the button');
+        d.querySelector('#wedmake').click(); await sleep(340);
         ok(/#\/wedding\/pay/.test(w.location.hash) && !db.docs[W],
           'and pressing the button takes them to pay rather than making a room nobody has paid for');
         ok(d.querySelector('#wedpay') && /30\.000/.test(d.querySelector('#main').textContent)
@@ -1259,6 +1285,13 @@ async function go(hash, sel) { W().location.hash = hash; await sleep(30); return
         ok(db.docs[W] && db.docs[W].step === 0 && db.docs[W].state === 'planned'
           && db.docs[W].uids.length === 2 && Math.abs(db.docs[W].startMs - want) < 120000,
           'sending the request makes the room, at the hour they chose, holding it');
+        { /* Moved once, and not inside the last hour: guests are already on
+             their way by then. */
+          ok(N.WED.canMove(db.docs[W]), 'a wedding days away can still be moved');
+          ok(!N.WED.canMove(Object.assign({}, db.docs[W], { moved: 1 })),
+            'but only once, because one moved three times is one nobody attends');
+          ok(!N.WED.canMove(Object.assign({}, db.docs[W], { startMs: Date.now() + 30 * 60000 })),
+            'and never inside the last hour'); }
 
         await go('#/home', '#main'); await go('#/wedding', '#main'); await sleep(300);
         ok(!d.querySelector('#wedmake'),
@@ -1374,8 +1407,13 @@ async function go(hash, sel) { W().location.hash = hash; await sleep(30); return
           'and at the hour it becomes pressable, and the ceremony is walked one line at a time');
         /* Somebody always turns up late, or asks for the link again, so both
            ways of inviting stay to hand inside the room. */
-        ok(d.querySelector('#wedwho') && d.querySelector('#wedurl') && d.querySelector('.sharerow'),
-          'and inside the room the couple can still invite, by name or by link');
+        { /* Still there, but at the foot: during a wedding the ceremony is the
+             thing and inviting is the errand. */
+          const inv = d.querySelector('.invitecard'), say2 = d.querySelector('.saycard');
+          ok(inv && d.querySelector('#wedwho') && d.querySelector('#wedurl'),
+            'and inside the room the couple can still invite, by name or by link');
+          ok(inv && say2 && inv.getBoundingClientRect().top > say2.getBoundingClientRect().top,
+            'with it moved below the ceremony, where an errand belongs'); }
         d.querySelector('#wedon').click(); await sleep(200);
         d.querySelector('#wedon').click(); await sleep(220);
         ok(db.docs[W].step === 2 && d.querySelector('#wedyes') && d.querySelector('#wedno'),
@@ -1790,6 +1828,37 @@ async function go(hash, sel) { W().location.hash = hash; await sleep(30); return
     ok(!d.documentElement.getAttribute('data-theme') && JSON.parse(w.localStorage.getItem('nabu-theme')) === '' && bgOf() === (w.matchMedia('(prefers-color-scheme: dark)').matches ? DARK : LIGHT), 'auto follows the phone setting');
     d.querySelector('[data-theme-pick="light"]').click();
     ok(d.documentElement.scrollWidth <= 431, 'no horizontal overflow (' + d.documentElement.scrollWidth + ')');
+    { /* A database that never answers, which is what a bad connection looks
+         like from inside the app. The thread used to draw nothing at all until
+         a read came back and a listener fired, so pressing it looked exactly
+         like a button that did nothing - and every check passed, because a
+         mock replies in a millisecond. */
+      const keepBE = { db: N.BE.db, on: N.BE.enabled, user: N.BE.user };
+      const never = () => new Promise(() => {});
+      const dead = { collection: () => ({
+        doc: () => ({ get: never, set: never, update: never, delete: never,
+          collection: () => dead.collection(), onSnapshot: () => () => {} }),
+        where: () => ({ limit: () => ({ onSnapshot: () => () => {} }), onSnapshot: () => () => {} }),
+        limit: () => ({ onSnapshot: () => () => {} }),
+        orderBy: () => ({ limitToLast: () => ({ onSnapshot: () => () => {} }) }),
+        get: never, add: never, onSnapshot: () => () => {} }) };
+      const keptLove = w.localStorage.getItem('nabu-love');
+      w.localStorage.setItem('nabu-love', JSON.stringify({ bond: 'x', stage: 'tied', handle: 'mai', name: 'Mai' }));
+      N.BE.db = dead; N.BE.enabled = true; N.BE.user = { uid: 'uidA', email: 'a@test' };
+
+      await go('#/home', '#main'); await sleep(120);
+      const homeLen = d.querySelector('#main').innerHTML.length;
+      w.location.hash = '#/love';
+      await sleep(200);
+      const now = d.querySelector('#main');
+      ok(now.innerHTML.length !== homeLen && /S\u1ee3i t\u01a1 h\u1ed3ng|thread/i.test(now.textContent),
+        'the thread draws something within a moment of the press, before the network is asked');
+      ok(/\u0110ang m\u1edf|Opening/.test(now.textContent),
+        'and says it is opening, rather than showing an empty page');
+
+      N.BE.db = keepBE.db; N.BE.enabled = keepBE.on; N.BE.user = keepBE.user;
+      if (keptLove != null) w.localStorage.setItem('nabu-love', keptLove); else w.localStorage.removeItem('nabu-love');
+      await go('#/home', '#main'); }
     { /* Which section the unlock page leads with depends on the door somebody
          came through, so every way in has to say which door it is. Three did
          not - the design pickers inside the coin, the tree and the card backs -
@@ -1813,21 +1882,29 @@ async function go(hash, sel) { W().location.hash = hash; await sleep(30); return
       w.localStorage.removeItem('nabu-pets');
       N.ACCESS.grant('pro', '2099-01-01');
       await go('#/home', '#main'); await go('#/play/pet', '[data-kind]'); await sleep(220);
-      d.querySelector('[data-kind]:not(.locked)').click(); await sleep(240);
+      /* A named ordinary companion, not whichever tile happens to be first: a
+         spirit beast has its own coat rules, so the shelf would differ. */
+      (d.querySelector('[data-kind="cat"]') || d.querySelector('[data-kind]:not(.locked)')).click();
+      await sleep(240);
       if (d.querySelector('#petkeep')) { d.querySelector('#petkeep').click(); await sleep(320); }
 
       const bad = [];
       for (const pair of [['food', 'honey'], ['home', 'cloud'], ['wear', 'crown'], ['coat', 'gold']]) {
+        /* Each shelf starts from the companion's own page, so one choice
+           cannot leave the next in a state it did not expect. */
+        await go('#/home', '#main'); await go('#/play/pet', '#main'); await sleep(240);
         const op = d.querySelector('[data-open-sheet="' + pair[0] + '"]');
         if (!op) { bad.push(pair[0] + ' has no way to open it'); continue; }
-        op.click(); await sleep(200);
+        op.click(); await sleep(220);
         const item = d.querySelector('[data-shelf="' + pair[0] + ':' + pair[1] + '"]');
         if (!item) { bad.push(pair[0] + ' has no ' + pair[1]); continue; }
         item.click(); await sleep(240);
         const p = N.PETS.all()[0] || {};
         if (p[pair[0]] !== pair[1]) bad.push(pair[0] + ' stayed ' + p[pair[0]] + ' instead of ' + pair[1]);
       }
-      ok(bad.length === 0, 'every shelf stores what is chosen from it' + (bad.length ? ' [' + bad.join('; ') + ']' : ''));
+      ok(bad.length === 0, 'every shelf stores what is chosen from it' + (bad.length ? ' [' + bad.join('; ')
+        + ' | pet=' + JSON.stringify((N.PETS.all()[0] || {}).kind) + ' pro=' + N.proOn()
+        + ' shelfitems=' + d.querySelectorAll('[data-shelf]').length + ']' : ''));
 
       /* And without Plus, a locked one explains itself where it was tapped. */
       w.localStorage.removeItem('nabu-access');

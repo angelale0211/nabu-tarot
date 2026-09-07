@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
 <title>Nabu Tarot</title>
 <meta name="description" content="Nabu Tarot: dự đoán mới, rút một lá bài xem năng lượng hiện tại, học tarot, Lenormand, chiêm tinh, và đặt lịch xem bài.">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'none'; object-src 'none'; form-action 'self'; script-src 'self' 'sha256-YLupPNLMLUFGHcWz6hzy1hzCjq3kXORxgKVN6hEHCBc=' https://www.gstatic.com https://apis.google.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; font-src 'self' data:; media-src 'self' data: blob:; worker-src 'self'; connect-src 'self' https://*.googleapis.com https://*.google.com https://*.firebaseio.com https://*.cloudfunctions.net https://*.workers.dev https://generativelanguage.googleapis.com; frame-src https://*.firebaseapp.com https://accounts.google.com https://*.facebook.com">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'none'; object-src 'none'; form-action 'self'; script-src 'self' 'sha256-1yd02xDPYlZDIFcGLc/cr8Q/M7aeLZZxYeKFXl0z8f8=' https://www.gstatic.com https://apis.google.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; font-src 'self' data:; media-src 'self' data: blob:; worker-src 'self'; connect-src 'self' https://*.googleapis.com https://*.google.com https://*.firebaseio.com https://*.cloudfunctions.net https://*.workers.dev https://generativelanguage.googleapis.com; frame-src https://*.firebaseapp.com https://accounts.google.com https://*.facebook.com">
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <meta name="theme-color" content="#EFE9FA">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -1506,7 +1506,10 @@ h1 .pileico{width:34px;height:27px;vertical-align:-3px;margin-right:2px}
 .paypanel .payref b{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;letter-spacing:.06em;font-size:15px}
 .paypanel .paymsg{width:100%;resize:none;font-size:13.5px;line-height:1.5}
 .wedready{margin:2px 0 2px;font-size:13px;letter-spacing:.04em;text-transform:uppercase;color:var(--ok);font-weight:700}
-.movewhen{margin-top:12px;text-align:left;background:var(--bg)}
+/* Two rules about the same thing, flush against one another, read as one
+   paragraph of small print. */
+.movewhen{margin:18px 0 6px;text-align:left;background:var(--bg)}
+.movewhy{margin-top:16px}
 .movewhen > summary{padding:10px 12px;font-size:14px}
 .wedcount{margin:2px 0 8px;font-size:26px;font-weight:700;font-variant-numeric:tabular-nums;color:var(--fg)}
 .wedsay{margin:6px 0 14px;font-size:16.5px;line-height:1.6;font-family:var(--display)}
@@ -1552,6 +1555,16 @@ h1 .pileico{width:34px;height:27px;vertical-align:-3px;margin-right:2px}
 .bqair.still{animation:none}
 @keyframes bqfly{0%,100%{transform:translateY(0) rotate(-12deg)}50%{transform:translateY(-16px) rotate(12deg)}}
 .invitecard{border:1px solid var(--rule-soft)}
+.sentcard{border:1px solid var(--gold)}
+/* Terms are read one fact at a time; a paragraph of them is scrolled past. */
+.termscard{border:1px solid var(--rule)}
+.terms{margin:0 0 4px;padding-left:22px}
+#main .terms li{margin:0 0 8px;font-size:13.5px;line-height:1.5;color:var(--fg-soft);text-align:left}
+.termscard .remind{margin-top:12px;align-items:flex-start}
+.termscard .remind span{line-height:1.4}
+.sentrow{display:flex;align-items:center;gap:10px;padding:8px 0;border-top:1px solid var(--rule-soft)}
+.sentrow:first-of-type{border-top:0}
+.sentrow b{flex:1;min-width:0;overflow-wrap:anywhere}
 /* An invitation waiting to be answered is the one card that should catch
    the eye the moment it opens. */
 .wedcard.invited{border-color:var(--pink);box-shadow:0 0 0 3px var(--pink-soft,rgba(246,187,203,.35))}
@@ -2398,6 +2411,14 @@ const STR = {
     loveJoinTake: 'Nhận sợi tơ hồng', loveJoinYours: 'Đây là link của chính bạn. Bạn gửi nó cho người ấy nhé.',
     loveJoinWaiting: 'Có một lời mời đang đợi bạn', loveJoinOpen: 'Mở',
     loveAlreadyMine: 'Bạn đang buộc chỉ với người khác rồi.',
+    loveAlreadySent: 'Bạn đã gửi lời mời cho người này rồi. Nabu đang chờ người ấy trả lời.',
+    loveUnsend: 'Huỷ lời mời', loveUnsendHint: 'Nếu bạn gửi nhầm người, bạn huỷ ở đây. Người ấy sẽ được báo là lời mời đã được rút lại.',
+    loveUnsendAsk: (n) => 'Huỷ lời mời đã gửi cho ' + n + '?',
+    loveUnsent: 'Đã huỷ lời mời.',
+    loveSentTitle: 'Lời mời bạn đã gửi', loveSentHint: 'Nabu đang chờ người ấy trả lời. Nếu bạn gửi nhầm, bạn huỷ ở đây và người ấy sẽ được báo lại.',
+    loveOpening: 'Đang mở sợi tơ hồng…',
+    loveSlow: 'Mạng đang chậm nên Nabu chưa mở được sợi tơ hồng của bạn. Bạn thử lại giúp Nabu nhé.',
+    loveTryAgain: 'Thử lại',
     loveTitle: 'Sợi tơ hồng', loveSub: 'Buộc sợi tơ hồng với người ấy',
     loveIntro: 'Chuyện xưa kể rằng Ông Tơ Bà Nguyệt buộc một sợi tơ hồng vào ngón út của hai người có duyên gặp nhau. Sợi tơ hồng có thể rối, có thể căng, nhưng không đứt.',
     loveNote: 'Đây là một kỉ niệm trong app, không phải giấy tờ. Nó không có giá trị pháp lý ở bất kỳ đâu. Ai cũng tháo được sợi tơ hồng của mình bất cứ lúc nào mà không cần hỏi người kia.',
@@ -2619,7 +2640,7 @@ const STR = {
     wedAsked: (n) => 'Đã mời trực tiếp ' + n + ' người:',
     alertWedAsked: (p) => '💌 Bạn được mời dự lễ cưới của ' + p,
     alertWedAskedBody: (by) => (by ? by + ' mời bạn. ' : '') + 'Bạn bấm vào để xem ngày giờ nhé.',
-    wedBeThere: 'Lưu ý: hai bạn cần có mặt và bấm “Bắt đầu buổi lễ” trong vòng 15 phút sau giờ đã hẹn. Quá giờ đó mà chưa bắt đầu, phòng cưới sẽ tự đóng và khách mời được báo là buổi lễ không diễn ra. Nếu bận, hai bạn đổi ngày giờ trước nhé.',
+    wedBeThere: 'Vài điều hai bạn cần biết trước khi chọn giờ. Hai bạn cần có mặt và bấm “Bắt đầu buổi lễ” trong vòng 15 phút sau giờ đã hẹn; quá giờ đó mà chưa bắt đầu thì phòng cưới sẽ tự đóng và khách mời được báo là buổi lễ không diễn ra. Ngày giờ chỉ đổi được một lần, và chậm nhất là trước giờ làm lễ 1 tiếng. Nếu buổi lễ bị huỷ trong vòng 1 tiếng trước giờ hẹn, đang diễn ra, hoặc tự đóng vì không ai có mặt, thì lễ cưới coi như đã dùng và Nabu không hoàn lại phí; hai bạn muốn tổ chức lại thì đăng ký và thanh toán một lần nữa nhé.',
     wedNoShow: 'Buổi lễ hôm nay không diễn ra được.',
     wedNoShowSorry: 'Cô dâu chú rể chưa có mặt đúng giờ. Nabu xin lỗi vì đã để mọi người chờ, và cảm ơn mọi người đã đến.',
     wedNoShowShut: 'Phòng cưới sẽ đóng sau ít phút nữa.',
@@ -2632,6 +2653,23 @@ const STR = {
     wedChangeMind: 'Mình đến được rồi', wedChangeMindHint: 'Nếu bạn thu xếp được, bấm vào đây là cô dâu chú rể biết ngay.',
     wedNotAnswered: (n) => n + ' người chưa trả lời:',
     wedCannotCome: (n) => n + ' người báo bận:',
+    wedMoveRule: 'Hai bạn chỉ đổi được một lần, và chậm nhất là trước giờ làm lễ 1 tiếng.',
+    wedMoveOnce: 'Hai bạn chỉ được đổi ngày giờ một lần thôi. Bạn chắc chắn với ngày giờ mới chứ?',
+    wedMovedAlready: 'Hai bạn đã đổi ngày giờ một lần rồi, nên lần này Nabu giữ nguyên lịch cũ nhé.',
+    wedMoveTooLate: 'Đã quá gần giờ làm lễ nên không đổi được nữa. Khách mời có thể đang trên đường tới rồi.',
+    wedDropLate: 'Huỷ buổi lễ',
+    wedDropLateHint: 'Đã quá gần giờ làm lễ. Nếu huỷ bây giờ, lễ cưới coi như đã dùng và Nabu không hoàn lại phí; muốn tổ chức lại thì hai bạn đăng ký và thanh toán một lần nữa.',
+    wedDropLateAsk: 'Huỷ buổi lễ ngay lúc này? Khách mời sẽ được báo là lễ cưới không diễn ra, và phí đã đóng sẽ không được hoàn lại. Muốn tổ chức lại, hai bạn cần đăng ký và thanh toán mới.',
+    wedDroppedLate: 'Đã huỷ buổi lễ.',
+    wedTermsTitle: 'Điều khoản của lễ cưới',
+    wedTerms: [
+      'Buổi lễ bắt đầu đúng giờ hai bạn đã chọn. Một trong hai người cần có mặt và bấm “Bắt đầu buổi lễ” trong vòng 15 phút sau giờ đó.',
+      'Nếu quá 15 phút mà chưa ai bắt đầu, phòng cưới sẽ tự đóng và khách mời được báo là buổi lễ không diễn ra.',
+      'Ngày giờ chỉ được đổi một lần, và chậm nhất là trước giờ làm lễ 1 tiếng.',
+      'Nếu buổi lễ bị huỷ trong vòng 1 tiếng trước giờ hẹn, bị huỷ khi đang diễn ra, hoặc tự đóng vì không ai có mặt, thì lễ cưới coi như đã dùng và phí 30.000đ không được hoàn lại. Muốn tổ chức lại, hai bạn đăng ký và thanh toán một lần nữa.'
+    ],
+    wedAgree: 'Tôi đã đọc và đồng ý với các điều khoản trên.',
+    wedAgreeFirst: 'Bạn đọc và tích vào ô đồng ý ở trên để tiếp tục nhé.',
     wedStart: 'Bắt đầu buổi lễ', wedStartsAt: (when) => 'Buổi lễ bắt đầu đúng ' + when + '. Nút này sẽ bấm được vào đúng giờ đó.',
     wedStartNow: 'Đã đến giờ. Một trong hai bạn bấm để bắt đầu nhé.',
     wedGuestWait: (when) => 'Buổi lễ bắt đầu lúc ' + when + '. Bạn cứ ở đây, sắp bắt đầu rồi.',
@@ -2699,6 +2737,8 @@ const STR = {
     alertPullTip: 'Bạn kéo màn hình xuống từ trên cùng để làm mới và cập nhật bản mới nhất.',
     alertReadAll: 'Đánh dấu đã đọc', alertClear: 'Xoá hết',
     alertToday: 'Hôm nay', alertYesterday: 'Hôm qua', alertEarlier: 'Trước đó',
+    alertOfferGone: (n) => '🍃 ' + n + ' đã rút lại lời mời buộc sợi tơ hồng',
+    alertOfferGoneBody: 'Có thể người ấy gửi nhầm, hoặc đổi ý. Không sao cả bạn nhé.',
     alertOffer: (n) => '💌 ' + n + ' muốn buộc sợi tơ hồng với bạn',
     alertOfferBody: 'Bạn mở sợi tơ hồng để trả lời nhé.',
     alertTied: (n) => '🧧 Bạn và ' + n + ' đã buộc sợi tơ hồng!',
@@ -3069,6 +3109,14 @@ const STR = {
     loveJoinTake: 'Take the thread', loveJoinYours: 'This is your own link. Send it to them.',
     loveJoinWaiting: 'An invitation is waiting for you', loveJoinOpen: 'Open',
     loveAlreadyMine: 'You are already tied to someone.',
+    loveAlreadySent: 'You have already invited this person. Nabu is waiting for their answer.',
+    loveUnsend: 'Withdraw the invitation', loveUnsendHint: 'If you invited the wrong person, withdraw it here. They will be told it was taken back.',
+    loveUnsendAsk: (n) => 'Withdraw the invitation you sent to ' + n + '?',
+    loveUnsent: 'Withdrawn.',
+    loveSentTitle: 'Invitations you have sent', loveSentHint: 'Nabu is waiting for their answer. If you invited the wrong person, withdraw it here and they will be told.',
+    loveOpening: 'Opening your thread\u2026',
+    loveSlow: 'The connection is slow, so Nabu could not open your thread. Please try again.',
+    loveTryAgain: 'Try again',
     loveTitle: 'The red thread', loveSub: 'Tie the red thread with someone',
     loveIntro: 'An old story says two people meant to meet are tied at the little finger by a red thread. It can tangle and it can stretch, but it does not break.',
     loveNote: 'This is a keepsake inside the app, not a document. It carries no legal weight anywhere. Either of you can untie your own thread at any time without asking the other.',
@@ -3290,7 +3338,7 @@ const STR = {
     wedAsked: (n) => 'Invited from here: ' + n + ' \u2014',
     alertWedAsked: (p) => '\uD83D\uDC8C You are invited to the wedding of ' + p,
     alertWedAskedBody: (by) => (by ? by + ' invited you. ' : '') + 'Tap to see the day and the hour.',
-    wedBeThere: 'One thing to know: one of you must be here and press Begin within 15 minutes of the hour you chose. If nobody begins by then, the room closes itself and your guests are told the ceremony is not happening. If you are busy, move the day beforehand.',
+    wedBeThere: 'A few things to know before you choose the hour. One of you must be here and press Begin within 15 minutes of the hour; if nobody does, the room closes itself and your guests are told it is not happening. The day can be moved once, and no later than an hour before. And if the wedding is called off within that last hour, or during the ceremony, or closes itself because nobody came, it counts as held and the fee is not returned \u2014 holding another means booking and paying again.',
     wedNoShow: 'The ceremony is not going ahead today.',
     wedNoShowSorry: 'The couple were not here in time. Nabu is sorry for the wait, and thanks everybody who came.',
     wedNoShowShut: 'This room closes in a few minutes.',
@@ -3303,6 +3351,23 @@ const STR = {
     wedChangeMind: 'Actually, I can come', wedChangeMindHint: 'If you can make it after all, press this and the couple will know.',
     wedNotAnswered: (n) => n + ' have not answered:',
     wedCannotCome: (n) => n + ' cannot come:',
+    wedMoveRule: 'You may move it once, and no later than an hour before the ceremony.',
+    wedMoveOnce: 'You can only move the day once. Are you sure about the new time?',
+    wedMovedAlready: 'You have already moved this wedding once, so the day now stands.',
+    wedMoveTooLate: 'It is too close to the hour to move it \u2014 your guests may already be on their way.',
+    wedDropLate: 'Call the ceremony off',
+    wedDropLateHint: 'It is too close to the hour. Calling off now counts as held, and the fee is not returned; holding another means booking and paying again.',
+    wedDropLateAsk: 'Call the ceremony off now? Your guests will be told it is not happening, and the fee is not returned. Holding another means booking and paying again.',
+    wedDroppedLate: 'Called off.',
+    wedTermsTitle: 'Terms for the ceremony',
+    wedTerms: [
+      'The ceremony begins at the hour you choose. One of you must be here and press Begin within 15 minutes of it.',
+      'If nobody has begun by then, the room closes itself and your guests are told the ceremony is not happening.',
+      'The day and hour can be moved once, and no later than an hour before the ceremony.',
+      'If the wedding is called off within that last hour, called off during the ceremony, or closes itself because nobody came, it counts as held and the 30.000\u0111 is not returned. Holding another means booking and paying again.'
+    ],
+    wedAgree: 'I have read and agree to these terms.',
+    wedAgreeFirst: 'Please read the terms and tick the box to continue.',
     wedStart: 'Begin the ceremony', wedStartsAt: (when) => 'The ceremony begins at ' + when + '. This button works at that hour, and not before.',
     wedStartNow: 'It is time. Either of you may begin.',
     wedGuestWait: (when) => 'The ceremony begins at ' + when + '. Stay where you are \u2014 it is nearly time.',
@@ -3370,6 +3435,8 @@ const STR = {
     alertPullTip: 'Pull down from the top to refresh and take the newest version.',
     alertReadAll: 'Mark all as read', alertClear: 'Clear',
     alertToday: 'Today', alertYesterday: 'Yesterday', alertEarlier: 'Earlier',
+    alertOfferGone: (n) => '🍃 ' + n + ' has withdrawn their invitation',
+    alertOfferGoneBody: 'They may have sent it by mistake, or changed their mind. Nothing to worry about.',
     alertOffer: (n) => '💌 ' + n + ' would like to tie a thread with you',
     alertOfferBody: 'Open the red thread to answer.',
     alertTied: (n) => '🧧 You and ' + n + ' are tied!',
@@ -14114,6 +14181,17 @@ const LOVE = {
     return bond.ask && bond.ask.by ? 'proposed' : 'tied';
   },
   role(bond, uid) { return bond && (bond.a === uid ? bond.aRole : bond.bRole) || ''; },
+  /* Invitations this device has sent and not yet seen answered. They live
+     under the person invited, so there is no way to ask the database for
+     "everything I have sent" without an index for a list that is nearly always
+     one line long. */
+  sent() { const a = this.local().sent; return Array.isArray(a) ? a : []; },
+  rememberSent(who) {
+    const a = this.sent().filter((x) => x.uid !== who.uid);
+    a.push({ uid: who.uid, name: who.name || '', handle: who.handle || '', at: Date.now() });
+    this.save({ sent: a.slice(-6) });
+  },
+  forgetSent(uid) { this.save({ sent: this.sent().filter((x) => x.uid !== uid) }); },
   giftsToday(gifts, uid) {
     const day = isoDate(new Date());
     return (gifts || []).filter((g) => g.from === uid && isoDate(new Date(g.at || 0)) === day).length;
@@ -14403,6 +14481,21 @@ const LOVEDB = {
       uid: me, name: mine.name || '', handle: mine.handle || LOVE.handle(),
       note: String(note || '').slice(0, 200), at: Date.now()
     });
+  },
+  /* Whether an invitation to this person is already standing. Readable by the
+     sender now, which is what lets the screen say so. */
+  async sentTo(uid) {
+    if (!this.ok() || !uid) return null;
+    try {
+      const d = await BE.db.collection('requests').doc(uid).collection('from').doc(this.me()).get();
+      return d.exists ? d.data() : null;
+    } catch (e) { return null; }
+  },
+  /* Taken back. The other person is told, because somebody invited by mistake
+     deserves the correction as plainly as the invitation. */
+  async unsend(uid) {
+    await BE.db.collection('requests').doc(uid).collection('from').doc(this.me()).delete();
+    LOVE.forgetSent(uid);
   },
   watchRequests(cb) {
     if (!this.ok()) return () => {};
@@ -14707,6 +14800,14 @@ function renderLove(wantHandle) {
         : '')
       + '<div class="card"><h3 style="margin-bottom:4px">' + esc(S.loveFindTitle) + '</h3>'
       + '<p class="hint" style="margin-bottom:10px">' + esc(S.loveFindHint) + '</p>'
+      /* What you have already sent, above the box for sending more - so that
+         pressing the button leaves something behind. */
+      + (LOVE.sent().length
+        ? '<div class="card sentcard"><div class="ghead"><span class="gk">\uD83D\uDCE4</span><h3>' + esc(S.loveSentTitle) + '</h3></div>'
+          + LOVE.sent().map((x) => '<div class="sentrow"><b>' + esc(x.name || ('@' + x.handle)) + '</b>'
+            + '<button type="button" class="btn sm" data-unsend="' + esc(x.uid) + '">' + esc(S.loveUnsend) + '</button></div>').join('')
+          + '<p class="hint">' + esc(S.loveSentHint) + '</p></div>'
+        : '')
       + '<h3 class="stepno" style="margin-bottom:4px">' + esc(S.loveStepTwo) + '</h3>'
       + '<div class="row nw athandle"><span class="at">@</span><input id="lvfind" maxlength="20" autocapitalize="none" spellcheck="false" placeholder="' + esc(S.loveHandlePh) + '"><button type="button" class="btn" id="lvgo">' + esc(S.loveFind) + '</button></div>'
       + '<div id="lvfound"></div><p class="hint" id="lvfstatus"></p></div>'
@@ -14759,7 +14860,17 @@ function renderLove(wantHandle) {
       b.disabled = true;
       await LOVEDB.decline(b.getAttribute('data-decline'));
     }));
-    $('#lvgo').addEventListener('click', async () => {
+    $$('[data-unsend]', m).forEach((b) => b.addEventListener('click', async () => {
+      const uid = b.getAttribute('data-unsend');
+      const one = LOVE.sent().filter((x) => x.uid === uid)[0] || {};
+      if (!confirm(S.loveUnsendAsk(one.name || ('@' + (one.handle || ''))))) return;
+      b.disabled = true;
+      try { await LOVEDB.unsend(uid); toast(S.loveUnsent); draw(); }
+      catch (e) { b.disabled = false; toast(loveWhy(e)); }
+    }));
+    /* Named, because the card has to be able to draw itself again after an
+       invitation is sent or taken back. */
+    const find = async () => {
       const st = $('#lvfstatus'), out = $('#lvfound');
       out.innerHTML = ''; st.className = 'hint'; st.textContent = S.loveLooking;
       let who = null;
@@ -14781,19 +14892,51 @@ function renderLove(wantHandle) {
       }
       if (who.self) { st.className = 'hint err'; st.textContent = S.loveThatsYou; return; }
       st.textContent = '';
-      out.innerHTML = '<div class="card reqcard found"><b>' + esc(who.name || ('@' + who.handle)) + '</b><span class="faint">@' + esc(who.handle || '') + '</span>'
-        + (who.tied ? '<p class="hint">' + esc(S.loveAlreadyTied) + '</p>'
-          : '<label class="f" for="lvnote" style="margin-top:8px">' + esc(S.loveNoteLabel) + '</label>'
-            + '<input id="lvnote" maxlength="200" placeholder="' + esc(S.loveNotePh) + '">'
-            + '<button type="button" class="btn primary block" id="lvoffer" style="margin-top:10px">' + loveMarkSVG('tied', 'inline') + ' ' + esc(S.loveOffer) + '</button>')
-        + '</div>';
-      const off = $('#lvoffer');
-      if (off) off.addEventListener('click', async () => {
-        off.disabled = true;
-        try { await LOVEDB.offer(who.uid, $('#lvnote').value); st.className = 'hint ok'; st.textContent = S.loveOffered; }
-        catch (e) { st.className = 'hint err'; st.textContent = loveWhy(e); off.disabled = false; }
-      });
-    });
+      /* One invitation stands at a time. The card says which state it is in
+         rather than offering a button that will be refused - and it redraws
+         itself between the two, because sending makes the listeners fire and
+         that repaints the screen underneath, search box and all. */
+      const showFound = (already) => {
+        const card = (inner) => '<div class="card reqcard found"><b>' + esc(who.name || ('@' + who.handle)) + '</b>'
+          + '<span class="faint">@' + esc(who.handle || '') + '</span>' + inner + '</div>';
+        out.innerHTML = who.tied
+          ? card('<p class="hint">' + esc(S.loveAlreadyTied) + '</p>')
+          : already
+            ? card('<p class="hint ok" style="margin-top:8px">' + esc(S.loveAlreadySent) + '</p>'
+                + (already.note ? '<p class="note">' + esc(already.note) + '</p>' : '')
+                + '<button type="button" class="btn block" id="lvunsend" style="margin-top:10px">' + esc(S.loveUnsend) + '</button>'
+                + '<p class="hint">' + esc(S.loveUnsendHint) + '</p>')
+            : card('<label class="f" for="lvnote" style="margin-top:8px">' + esc(S.loveNoteLabel) + '</label>'
+                + '<input id="lvnote" maxlength="200" placeholder="' + esc(S.loveNotePh) + '">'
+                + '<button type="button" class="btn primary block" id="lvoffer" style="margin-top:10px">' + loveMarkSVG('tied', 'inline') + ' ' + esc(S.loveOffer) + '</button>');
+        const off = $('#lvoffer');
+        if (off) off.addEventListener('click', async () => {
+          off.disabled = true;
+          const note = $('#lvnote').value;
+          try {
+            await LOVEDB.offer(who.uid, note);
+            LOVE.rememberSent(who);
+            toast(S.loveOffered);
+            /* Nothing the sender watches has changed - the invitation lives
+               under the other person - so the screen has to be told. */
+            draw();
+          } catch (e) { st.className = 'hint err'; st.textContent = loveWhy(e); off.disabled = false; }
+        });
+        const un = $('#lvunsend');
+        if (un) un.addEventListener('click', async () => {
+          if (!confirm(S.loveUnsendAsk(who.name || ('@' + who.handle)))) return;
+          un.disabled = true;
+          try {
+            await LOVEDB.unsend(who.uid);
+            st.className = 'hint'; st.textContent = S.loveUnsent;
+            toast(S.loveUnsent);
+            showFound(null);
+          } catch (e) { st.className = 'hint err'; st.textContent = loveWhy(e); un.disabled = false; }
+        });
+      };
+      showFound(await LOVEDB.sentTo(who.uid));
+    };
+    $('#lvgo').addEventListener('click', find);
   };
 
   const drawBond = (bond, gifts) => {
@@ -15015,19 +15158,51 @@ function renderLove(wantHandle) {
     });
   };
 
+  /* Something on the screen in the same tick as the press. Everything below
+     asks the network first, and a screen that has written nothing looks exactly
+     like a button that did nothing. */
+  const drawOpening = () => {
+    m.innerHTML = head()
+      + '<div class="card lovecard">' + threadSVG(LOVE.local().stage || 'tied', true)
+      + '<p class="hint" style="text-align:center">' + esc(S.loveOpening) + '</p></div>' + foot();
+  };
+
   const draw = async () => {
     cleanup();
     if (!LOVEDB.ok()) { drawGuest(); return; }
+    drawOpening();
+    /* Who this account is, which only fills in a name - so it must never be
+       allowed to hold the screen. */
     let person = null;
-    try { person = await LOVEDB.myPerson(); } catch (e) { person = null; }
+    try {
+      person = await Promise.race([
+        LOVEDB.myPerson(),
+        new Promise((r) => setTimeout(() => r(null), 2500))
+      ]);
+    } catch (e) { person = null; }
     if (person) LOVE.save({ handle: person.handle || '', name: person.name || '' });
     if (forceHandle || !LOVE.handle()) { drawHandle(); return; }
     /* Two listeners, one screen: the bond decides which half is drawn, and
        either of them arriving repaints it. */
     let reqs = [], bond = null, ready = false, gifts = [], giftStop = null;
     const paint = () => { if (!ready) return; if (bond) drawBond(bond, gifts); else drawSingle(reqs); };
+    /* And if nothing has been heard at all, say so rather than waiting in
+       silence. A listener that never fires is indistinguishable, from the
+       outside, from an app that is broken. */
+    const stall = setTimeout(() => {
+      if (ready) return;
+      m.innerHTML = head()
+        + '<div class="card lovecard">' + threadSVG('tied', true)
+        + '<p class="lead" style="text-align:center">' + esc(S.loveSlow) + '</p>'
+        + '<button type="button" class="btn primary block" id="lvagain">' + esc(S.loveTryAgain) + '</button></div>' + foot();
+      const again = $('#lvagain');
+      if (again) again.addEventListener('click', () => draw());
+    }, 7000);
+    stop.push(() => clearTimeout(stall));
     stop.push(LOVEDB.watchMine((b) => {
+      clearTimeout(stall);
       bond = b; ready = true;
+      if (b) LOVE.save({ sent: [] });   /* answered: nothing is outstanding now */
       LOVE.save(b
         ? { bond: b.id, since: b.since, stage: LOVE.stage(b), withName: (LOVE.other(b, LOVEDB.me()) || {}).name || '',
             role: LOVE.role(b, LOVEDB.me()), otherRole: LOVE.role(b, (LOVE.other(b, LOVEDB.me()) || {}).uid) }
@@ -19762,6 +19937,7 @@ const WED_SEEN_MS = 45 * 1000;        /* a seat still warm counts as present */
 const WED_CALL_MS = 2 * 60 * 1000;    /* and this long before, the room is called to order */
 const WED_GRACE_MS = 15 * 60 * 1000;  /* how late a couple may be before the room gives up */
 const WED_SHUT_MS = 3 * 60 * 1000;    /* and how long it stays open to say so */
+const WED_MOVE_MS = 60 * 60 * 1000;   /* how close to the hour it may still be moved */
 
 /* Three, not eight. A wedding gift is chosen in a second, in front of a room -
    the long shelf belongs to the thread, where one person gives another
@@ -19852,7 +20028,19 @@ const WED = {
     const d = await BE.db.collection('weddings').doc(id).get();
     return d.exists ? Object.assign({ id: d.id }, d.data()) : null;
   },
-  setTime(id, startMs) { return BE.db.collection('weddings').doc(id).update({ startMs: Number(startMs) || 0 }); },
+  /* Moved once, and never inside the last hour: guests are already on their
+     way by then, and a room that moves under them is worse than one that
+     starts late. */
+  moved(w) { return Number((w && w.moved) || 0); },
+  canMove(w) { return this.moved(w) < 1 && Date.now() < this.startMs(w) - WED_MOVE_MS; },
+  /* Inside the last hour, or once it has begun, calling off is final: the hour
+     was held and then not used, which is the same to Nabu as nobody coming. */
+  lateNow(w) { return Date.now() > this.startMs(w) - WED_MOVE_MS; },
+  setTime(id, startMs, w) {
+    return BE.db.collection('weddings').doc(id).update({
+      startMs: Number(startMs) || 0, moved: this.moved(w) + 1
+    });
+  },
   callOff(id) { return BE.db.collection('weddings').doc(id).update({ state: 'called-off' }); },
   drop(id) { return BE.db.collection('weddings').doc(id).delete(); },
 
@@ -20481,9 +20669,6 @@ function renderWedding(args) {
       + act + '</div>'
       + bq
       + guestListHTML(w, guests)
-      /* The couple can go on inviting people from inside the room, which is
-         when somebody is usually asking for the link. */
-      + (mine ? inviteHTML(w) : '')
       + giftBox
       /* A wedding you can speak at. Everyone in the room, the couple included. */
       + '<div class="card saycard"><div class="ghead"><span class="gk">\uD83D\uDCAC</span><h3>' + esc(S.wedSayTitle) + '</h3></div>'
@@ -20495,6 +20680,9 @@ function renderWedding(args) {
       + '<div class="row nw saybar"><input id="wedsayin" maxlength="300" placeholder="' + esc(S.wedSayPh) + '">'
       + '<button type="button" class="btn primary" id="wedsaygo">' + esc(S.wedSayGo) + '</button></div>'
       + '</div>'
+      /* At the foot: during a wedding the ceremony is the thing and inviting
+         is the errand, so the errand goes where errands go. */
+      + (mine ? inviteHTML(w) : '')
       + (mine ? '<p class="hint" style="text-align:center">' + esc(S.wedLeaveOk) + '</p>' : '')
       + '</div>';
 
@@ -20663,10 +20851,22 @@ function renderWedding(args) {
         + '<p class="hint" style="text-align:center">' + esc(ACCESS.has('wedding') ? S.wedPlanHint : S.wedPlanPay(fmtPrice(salePrice(WED_PRICE, 'unlock', 'wedding')))) + '</p></div>'
         + '<div class="card"><h3 style="margin-bottom:6px">\uD83D\uDD52 ' + esc(S.wedWhen) + '</h3>'
         + '<p class="hint" style="margin-bottom:10px">' + esc(S.wedWhenHint) + '</p>'
-        + '<p class="hint hold">' + esc(S.wedBeThere) + '</p>'
-        + '<input type="datetime-local" id="wedat" value="' + esc(wedLocalValue(soon.getTime())) + '">'
-        + '<button type="button" class="btn primary block" id="wedmake" style="margin-top:10px">' + esc(S.wedMake) + '</button>'
-        + '<p class="hint" id="wedst"></p></div>';
+        + '<input type="datetime-local" id="wedat" value="' + esc(wedLocalValue(soon.getTime())) + '"></div>'
+        /* A paid thing that cannot be refunded is agreed to, not mentioned in
+           passing above a button. Four facts, one sentence each, because that
+           is the difference between terms read and terms scrolled past. */
+        + '<div class="card termscard"><div class="ghead"><span class="gk">\uD83D\uDCDC</span><h3>' + esc(S.wedTermsTitle) + '</h3></div>'
+        + '<ol class="terms">' + S.wedTerms.map((t) => '<li>' + esc(t) + '</li>').join('') + '</ol>'
+        + '<label class="remind"><input type="checkbox" id="wedagree"><span>' + esc(S.wedAgree) + '</span></label>'
+        + '<button type="button" class="btn primary block" id="wedmake" style="margin-top:12px" disabled>' + esc(S.wedMake) + '</button>'
+        + '<p class="hint" id="wedst">' + esc(S.wedAgreeFirst) + '</p></div>';
+      { /* The button stays shut until the box is ticked. */
+        const agree = $('#wedagree'), make = $('#wedmake'), st0 = $('#wedst');
+        agree.addEventListener('change', () => {
+          make.disabled = !agree.checked;
+          st0.className = 'hint';
+          st0.textContent = agree.checked ? '' : S.wedAgreeFirst;
+        }); }
       $('#wedmake').addEventListener('click', async () => {
         const b = $('#wedmake'), st = $('#wedst'), v = $('#wedat').value;
         const ms = new Date(v).getTime();
@@ -20674,6 +20874,9 @@ function renderWedding(args) {
         /* The hour is kept whatever happens next, so that coming back with a
            code does not mean choosing it all over again. */
         store.set('nabu-wed-want', ms);
+        /* Recorded, because a record of what was agreed and when is the point
+           of asking. */
+        store.set('nabu-wed-terms', { at: Date.now(), v: 1 });
         if (!ACCESS.has('wedding')) { location.hash = '#/wedding/pay'; return; }
         b.disabled = true; st.className = 'hint'; st.textContent = S.loveSaving;
         try { await WED.create(bond, ms); store.set('nabu-wed-want', 0); toast(S.wedMade); }
@@ -20712,15 +20915,19 @@ function renderWedding(args) {
       + (ACCESS.has('wedding') ? ''
         : '<p class="hint hold">' + esc(S.wedUnpaid) + ' <a href="#/wedding/pay">' + esc(S.wedPayNow) + ' \u2192</a></p>')
       /* And moving it, immediately beneath, folded until it is wanted. */
-      + '<details class="sect movewhen"><summary><span class="si">\uD83D\uDD52</span><b>' + esc(S.wedMoveTitle) + '</b><span class="sx">\u203A</span></summary>'
-      + '<div class="sbody"><input type="datetime-local" id="wedat" value="' + esc(wedLocalValue(w.startMs)) + '">'
-      + '<button type="button" class="btn block" id="wedmove" style="margin-top:8px">' + esc(S.wedMove) + '</button>'
-      + '<p class="hint" id="wedst"></p></div></details>'
+      + (WED.canMove(w)
+        ? '<details class="sect movewhen"><summary><span class="si">\uD83D\uDD52</span><b>' + esc(S.wedMoveTitle) + '</b><span class="sx">\u203A</span></summary>'
+          + '<div class="sbody"><p class="hint">' + esc(S.wedMoveRule) + '</p>'
+          + '<input type="datetime-local" id="wedat" value="' + esc(wedLocalValue(w.startMs)) + '">'
+          + '<button type="button" class="btn block" id="wedmove" style="margin-top:8px">' + esc(S.wedMove) + '</button>'
+          + '<p class="hint" id="wedst"></p></div></details>'
+        : '<p class="hint movewhy">' + esc(WED.moved(w) ? S.wedMovedAlready : S.wedMoveTooLate) + '</p>')
       + '</div>'
       + inviteHTML(w)
       + guestListHTML(w, guests)
-      + '<button type="button" class="btn block danger" id="weddrop">\uD83D\uDC94 ' + esc(S.wedDrop) + '</button>'
-      + '<p class="hint">' + esc(S.wedDropHint) + '</p>';
+      + '<button type="button" class="btn block danger" id="weddrop">\uD83D\uDC94 '
+        + esc(WED.lateNow(w) ? S.wedDropLate : S.wedDrop) + '</button>'
+      + '<p class="hint">' + esc(WED.lateNow(w) ? S.wedDropLateHint : S.wedDropHint) + '</p>';
 
     /* When the doors open the screen changes itself, so nobody is left
        wondering whether to keep waiting or keep pressing. */
@@ -20732,16 +20939,26 @@ function renderWedding(args) {
       }, 1000);
     }
     bindInvite(w);
-    $('#wedmove').addEventListener('click', async () => {
-      const st = $('#wedst'), v = $('#wedat').value, ms = new Date(v).getTime();
-      if (!v || isNaN(ms) || ms < Date.now() + 10 * 60000) { st.className = 'hint err'; st.textContent = S.wedWhenBad; return; }
-      st.className = 'hint'; st.textContent = S.loveSaving;
-      try { await WED.setTime(w.id, ms); st.className = 'hint ok'; st.textContent = S.wedMoved; }
-      catch (e) { st.className = 'hint err'; st.textContent = loveWhy(e); }
-    });
+    { const mv = $('#wedmove');
+      if (mv) mv.addEventListener('click', async () => {
+        const st = $('#wedst'), v = $('#wedat').value, ms = new Date(v).getTime();
+        if (!v || isNaN(ms) || ms < Date.now() + 10 * 60000) { st.className = 'hint err'; st.textContent = S.wedWhenBad; return; }
+        if (!confirm(S.wedMoveOnce)) return;
+        st.className = 'hint'; st.textContent = S.loveSaving;
+        try { await WED.setTime(w.id, ms, w); st.className = 'hint ok'; st.textContent = S.wedMoved; }
+        catch (e) { st.className = 'hint err'; st.textContent = loveWhy(e); }
+      }); }
     $('#weddrop').addEventListener('click', async () => {
-      if (!confirm(S.wedDropAsk)) return;
-      try { await WED.drop(w.id); toast(S.wedDropped); } catch (e) { toast(loveWhy(e)); }
+      /* Two different acts wearing one button: giving up a room nobody has
+         used yet, and abandoning an hour that has already been held. */
+      const late = WED.lateNow(w);
+      if (!confirm(late ? S.wedDropLateAsk : S.wedDropAsk)) return;
+      try {
+        if (late) {
+          await BE.db.collection('weddings').doc(w.id).update({ state: 'called-off', doneAt: Date.now() });
+          toast(S.wedDroppedLate);
+        } else { await WED.drop(w.id); toast(S.wedDropped); }
+      } catch (e) { toast(loveWhy(e)); }
     });
   };
 
@@ -21073,6 +21290,23 @@ function alertsWatchLove() {
   ALERT_STOP.push(LOVEDB.watchRequests((list) => {
     const S = T();
     const first = alertSeen('love.offers') === null;
+    /* Who was offering last time, so that one being taken back can be told
+       apart from one being answered. Somebody invited by mistake deserves the
+       correction as plainly as the invitation. */
+    const now = (list || []).map((r) => r.uid).sort().join(',');
+    const before = alertSeen('love.offerlist');
+    alertWas('love.offerlist', now);
+    if (before !== null && before) {
+      before.split(',').filter((u) => u && now.split(',').indexOf(u) < 0).forEach((u) => {
+        const name = (store.get('nabu-offer-names', {}) || {})[u] || S.loveSomeone;
+        alertSay({ id: 'offer-gone-' + u + '-' + Date.now(), k: 'love',
+          t: S.alertOfferGone(name), b: S.alertOfferGoneBody, href: '#/love' }, true);
+      });
+    }
+    { /* Remembered by name, so a withdrawal can say who it was from. */
+      const names = store.get('nabu-offer-names', {}) || {};
+      (list || []).forEach((r) => { names[r.uid] = r.name || ('@' + (r.handle || '')); });
+      store.set('nabu-offer-names', names); }
     alertWas('love.offers', '1');
     (list || []).forEach((r) => {
       /* One that was already waiting belongs on the bell, but it did not just
@@ -21682,7 +21916,7 @@ function adminSale(p) {
 ROUTES.admin = { nav: '', render: renderAdmin };
 
 /* ============================ boot ============================ */
-window.APP_VERSION = 'v151';
+window.APP_VERSION = 'v152';
 window.NABU = { CONFIG: CONFIG, SALE: SALE, salePrice: salePrice, loadActs: loadActs, BACK: BACK, LESSONS: LESSONS, localAnswer: localAnswer, compatVerdict: compatVerdict, numerologyOf: numerologyOf, ZDEEP: ZDEEP, lunarToday: lunarToday, solarToLunar: solarToLunar, DECK: DECK, INSIGHT: INSIGHT, KW: KW, ASK: ASK, TOPICS: TOPICS, GUIDES: GUIDES, SERVICES: SERVICES, COURSES: COURSES, ACCESS: ACCESS, plusOn: () => plusOn(), proOn: () => proOn(), luckUnlimited: () => luckUnlimited(), ZODIAC: ZODIAC, pick: pick, book: book,
   insightHTML: insightHTML, insightOf: insightOf, sunSignIndex: sunSignIndex, lifePath: lifePath, PROFILE: () => PROFILE, BE: BE, ACTS: ACTS,
   ANGELS: ANGELS, angelRead: angelRead, CODEBOOK: CODEBOOK, verifyCode: verifyCode, petHomeSVG: petHomeSVG, PET_HOMES: PET_HOMES, PET_WEARS: PET_WEARS, codeDigest: codeDigest, randomCode: randomCode, BANK: BANK, PETS: PETS, petSVG: petSVG, PET_COATS: PET_COATS, PET_KINDS: PET_KINDS, luckCut: luckCut, petLevel: petLevel, petStep: petStep, VOUCHERS: VOUCHERS, levelCoins: levelCoins, LOOKS: LOOKS,

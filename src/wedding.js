@@ -39,6 +39,7 @@ const WED_SEEN_MS = 45 * 1000;        /* a seat still warm counts as present */
 const WED_CALL_MS = 2 * 60 * 1000;    /* and this long before, the room is called to order */
 const WED_GRACE_MS = 15 * 60 * 1000;  /* how late a couple may be before the room gives up */
 const WED_SHUT_MS = 3 * 60 * 1000;    /* and how long it stays open to say so */
+const WED_MOVE_MS = 60 * 60 * 1000;   /* how close to the hour it may still be moved */
 
 /* Three, not eight. A wedding gift is chosen in a second, in front of a room -
    the long shelf belongs to the thread, where one person gives another
@@ -129,7 +130,19 @@ const WED = {
     const d = await BE.db.collection('weddings').doc(id).get();
     return d.exists ? Object.assign({ id: d.id }, d.data()) : null;
   },
-  setTime(id, startMs) { return BE.db.collection('weddings').doc(id).update({ startMs: Number(startMs) || 0 }); },
+  /* Moved once, and never inside the last hour: guests are already on their
+     way by then, and a room that moves under them is worse than one that
+     starts late. */
+  moved(w) { return Number((w && w.moved) || 0); },
+  canMove(w) { return this.moved(w) < 1 && Date.now() < this.startMs(w) - WED_MOVE_MS; },
+  /* Inside the last hour, or once it has begun, calling off is final: the hour
+     was held and then not used, which is the same to Nabu as nobody coming. */
+  lateNow(w) { return Date.now() > this.startMs(w) - WED_MOVE_MS; },
+  setTime(id, startMs, w) {
+    return BE.db.collection('weddings').doc(id).update({
+      startMs: Number(startMs) || 0, moved: this.moved(w) + 1
+    });
+  },
   callOff(id) { return BE.db.collection('weddings').doc(id).update({ state: 'called-off' }); },
   drop(id) { return BE.db.collection('weddings').doc(id).delete(); },
 
@@ -758,9 +771,6 @@ function renderWedding(args) {
       + act + '</div>'
       + bq
       + guestListHTML(w, guests)
-      /* The couple can go on inviting people from inside the room, which is
-         when somebody is usually asking for the link. */
-      + (mine ? inviteHTML(w) : '')
       + giftBox
       /* A wedding you can speak at. Everyone in the room, the couple included. */
       + '<div class="card saycard"><div class="ghead"><span class="gk">\uD83D\uDCAC</span><h3>' + esc(S.wedSayTitle) + '</h3></div>'
@@ -772,6 +782,9 @@ function renderWedding(args) {
       + '<div class="row nw saybar"><input id="wedsayin" maxlength="300" placeholder="' + esc(S.wedSayPh) + '">'
       + '<button type="button" class="btn primary" id="wedsaygo">' + esc(S.wedSayGo) + '</button></div>'
       + '</div>'
+      /* At the foot: during a wedding the ceremony is the thing and inviting
+         is the errand, so the errand goes where errands go. */
+      + (mine ? inviteHTML(w) : '')
       + (mine ? '<p class="hint" style="text-align:center">' + esc(S.wedLeaveOk) + '</p>' : '')
       + '</div>';
 
@@ -940,10 +953,22 @@ function renderWedding(args) {
         + '<p class="hint" style="text-align:center">' + esc(ACCESS.has('wedding') ? S.wedPlanHint : S.wedPlanPay(fmtPrice(salePrice(WED_PRICE, 'unlock', 'wedding')))) + '</p></div>'
         + '<div class="card"><h3 style="margin-bottom:6px">\uD83D\uDD52 ' + esc(S.wedWhen) + '</h3>'
         + '<p class="hint" style="margin-bottom:10px">' + esc(S.wedWhenHint) + '</p>'
-        + '<p class="hint hold">' + esc(S.wedBeThere) + '</p>'
-        + '<input type="datetime-local" id="wedat" value="' + esc(wedLocalValue(soon.getTime())) + '">'
-        + '<button type="button" class="btn primary block" id="wedmake" style="margin-top:10px">' + esc(S.wedMake) + '</button>'
-        + '<p class="hint" id="wedst"></p></div>';
+        + '<input type="datetime-local" id="wedat" value="' + esc(wedLocalValue(soon.getTime())) + '"></div>'
+        /* A paid thing that cannot be refunded is agreed to, not mentioned in
+           passing above a button. Four facts, one sentence each, because that
+           is the difference between terms read and terms scrolled past. */
+        + '<div class="card termscard"><div class="ghead"><span class="gk">\uD83D\uDCDC</span><h3>' + esc(S.wedTermsTitle) + '</h3></div>'
+        + '<ol class="terms">' + S.wedTerms.map((t) => '<li>' + esc(t) + '</li>').join('') + '</ol>'
+        + '<label class="remind"><input type="checkbox" id="wedagree"><span>' + esc(S.wedAgree) + '</span></label>'
+        + '<button type="button" class="btn primary block" id="wedmake" style="margin-top:12px" disabled>' + esc(S.wedMake) + '</button>'
+        + '<p class="hint" id="wedst">' + esc(S.wedAgreeFirst) + '</p></div>';
+      { /* The button stays shut until the box is ticked. */
+        const agree = $('#wedagree'), make = $('#wedmake'), st0 = $('#wedst');
+        agree.addEventListener('change', () => {
+          make.disabled = !agree.checked;
+          st0.className = 'hint';
+          st0.textContent = agree.checked ? '' : S.wedAgreeFirst;
+        }); }
       $('#wedmake').addEventListener('click', async () => {
         const b = $('#wedmake'), st = $('#wedst'), v = $('#wedat').value;
         const ms = new Date(v).getTime();
@@ -951,6 +976,9 @@ function renderWedding(args) {
         /* The hour is kept whatever happens next, so that coming back with a
            code does not mean choosing it all over again. */
         store.set('nabu-wed-want', ms);
+        /* Recorded, because a record of what was agreed and when is the point
+           of asking. */
+        store.set('nabu-wed-terms', { at: Date.now(), v: 1 });
         if (!ACCESS.has('wedding')) { location.hash = '#/wedding/pay'; return; }
         b.disabled = true; st.className = 'hint'; st.textContent = S.loveSaving;
         try { await WED.create(bond, ms); store.set('nabu-wed-want', 0); toast(S.wedMade); }
@@ -989,15 +1017,19 @@ function renderWedding(args) {
       + (ACCESS.has('wedding') ? ''
         : '<p class="hint hold">' + esc(S.wedUnpaid) + ' <a href="#/wedding/pay">' + esc(S.wedPayNow) + ' \u2192</a></p>')
       /* And moving it, immediately beneath, folded until it is wanted. */
-      + '<details class="sect movewhen"><summary><span class="si">\uD83D\uDD52</span><b>' + esc(S.wedMoveTitle) + '</b><span class="sx">\u203A</span></summary>'
-      + '<div class="sbody"><input type="datetime-local" id="wedat" value="' + esc(wedLocalValue(w.startMs)) + '">'
-      + '<button type="button" class="btn block" id="wedmove" style="margin-top:8px">' + esc(S.wedMove) + '</button>'
-      + '<p class="hint" id="wedst"></p></div></details>'
+      + (WED.canMove(w)
+        ? '<details class="sect movewhen"><summary><span class="si">\uD83D\uDD52</span><b>' + esc(S.wedMoveTitle) + '</b><span class="sx">\u203A</span></summary>'
+          + '<div class="sbody"><p class="hint">' + esc(S.wedMoveRule) + '</p>'
+          + '<input type="datetime-local" id="wedat" value="' + esc(wedLocalValue(w.startMs)) + '">'
+          + '<button type="button" class="btn block" id="wedmove" style="margin-top:8px">' + esc(S.wedMove) + '</button>'
+          + '<p class="hint" id="wedst"></p></div></details>'
+        : '<p class="hint movewhy">' + esc(WED.moved(w) ? S.wedMovedAlready : S.wedMoveTooLate) + '</p>')
       + '</div>'
       + inviteHTML(w)
       + guestListHTML(w, guests)
-      + '<button type="button" class="btn block danger" id="weddrop">\uD83D\uDC94 ' + esc(S.wedDrop) + '</button>'
-      + '<p class="hint">' + esc(S.wedDropHint) + '</p>';
+      + '<button type="button" class="btn block danger" id="weddrop">\uD83D\uDC94 '
+        + esc(WED.lateNow(w) ? S.wedDropLate : S.wedDrop) + '</button>'
+      + '<p class="hint">' + esc(WED.lateNow(w) ? S.wedDropLateHint : S.wedDropHint) + '</p>';
 
     /* When the doors open the screen changes itself, so nobody is left
        wondering whether to keep waiting or keep pressing. */
@@ -1009,16 +1041,26 @@ function renderWedding(args) {
       }, 1000);
     }
     bindInvite(w);
-    $('#wedmove').addEventListener('click', async () => {
-      const st = $('#wedst'), v = $('#wedat').value, ms = new Date(v).getTime();
-      if (!v || isNaN(ms) || ms < Date.now() + 10 * 60000) { st.className = 'hint err'; st.textContent = S.wedWhenBad; return; }
-      st.className = 'hint'; st.textContent = S.loveSaving;
-      try { await WED.setTime(w.id, ms); st.className = 'hint ok'; st.textContent = S.wedMoved; }
-      catch (e) { st.className = 'hint err'; st.textContent = loveWhy(e); }
-    });
+    { const mv = $('#wedmove');
+      if (mv) mv.addEventListener('click', async () => {
+        const st = $('#wedst'), v = $('#wedat').value, ms = new Date(v).getTime();
+        if (!v || isNaN(ms) || ms < Date.now() + 10 * 60000) { st.className = 'hint err'; st.textContent = S.wedWhenBad; return; }
+        if (!confirm(S.wedMoveOnce)) return;
+        st.className = 'hint'; st.textContent = S.loveSaving;
+        try { await WED.setTime(w.id, ms, w); st.className = 'hint ok'; st.textContent = S.wedMoved; }
+        catch (e) { st.className = 'hint err'; st.textContent = loveWhy(e); }
+      }); }
     $('#weddrop').addEventListener('click', async () => {
-      if (!confirm(S.wedDropAsk)) return;
-      try { await WED.drop(w.id); toast(S.wedDropped); } catch (e) { toast(loveWhy(e)); }
+      /* Two different acts wearing one button: giving up a room nobody has
+         used yet, and abandoning an hour that has already been held. */
+      const late = WED.lateNow(w);
+      if (!confirm(late ? S.wedDropLateAsk : S.wedDropAsk)) return;
+      try {
+        if (late) {
+          await BE.db.collection('weddings').doc(w.id).update({ state: 'called-off', doneAt: Date.now() });
+          toast(S.wedDroppedLate);
+        } else { await WED.drop(w.id); toast(S.wedDropped); }
+      } catch (e) { toast(loveWhy(e)); }
     });
   };
 

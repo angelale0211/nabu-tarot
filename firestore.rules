@@ -95,8 +95,14 @@ service cloud.firestore {
        has been sent to them. The sender may withdraw it, the receiver may
        refuse it, and either way it is the same delete. */
     match /requests/{to}/from/{from} {
-      allow read: if isOwner(to);
-      allow create: if isOwner(from) && request.resource.data.uid == request.auth.uid
+      /* Both of them: the person invited, obviously, and the person who sent it
+         - without which the app cannot tell whether it has already been sent,
+         and offers to send it again. */
+      allow read: if isOwner(to) || isOwner(from);
+      /* create AND update. Sending the same invitation twice is what anybody
+         does when the first appears to have gone nowhere, and refusing it
+         reads as the app being broken rather than as the invitation standing. */
+      allow create, update: if isOwner(from) && request.resource.data.uid == request.auth.uid
                     && shorterThan('note', 300) && shorterThan('name', 40) && shorterThan('handle', 30);
       allow delete: if isOwner(to) || isOwner(from);
     }
@@ -246,7 +252,7 @@ service cloud.firestore {
       allow update: if request.auth != null && request.auth.uid in resource.data.uids
                     && request.resource.data.uids == resource.data.uids
                     && request.resource.data.diff(resource.data).affectedKeys()
-                         .hasOnly(['startMs', 'state', 'step', 'vows', 'doneAt', 'bouquet', 'guestCount']);
+                         .hasOnly(['startMs', 'state', 'step', 'vows', 'doneAt', 'bouquet', 'guestCount', 'moved']);
       allow delete: if request.auth != null && request.auth.uid in resource.data.uids;
 
       /* A seat. Yours alone, and it says only who you are and when you were
@@ -289,8 +295,8 @@ service cloud.firestore {
        somebody is the act; the person invited may clear it, and so may
        whoever sent it. */
     match /wedasks/{to}/from/{from} {
-      allow read: if isOwner(to);
-      allow create: if isOwner(from) && request.resource.data.from == request.auth.uid
+      allow read: if isOwner(to) || isOwner(from);
+      allow create, update: if isOwner(from) && request.resource.data.from == request.auth.uid
                     && shorterThan('wid', 80) && shorterThan('names', 80) && shorterThan('by', 40);
       allow delete: if isOwner(to) || isOwner(from);
     }

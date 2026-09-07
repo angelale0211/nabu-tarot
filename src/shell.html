@@ -1340,7 +1340,10 @@ h1 .pileico{width:34px;height:27px;vertical-align:-3px;margin-right:2px}
 .paypanel .payref b{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;letter-spacing:.06em;font-size:15px}
 .paypanel .paymsg{width:100%;resize:none;font-size:13.5px;line-height:1.5}
 .wedready{margin:2px 0 2px;font-size:13px;letter-spacing:.04em;text-transform:uppercase;color:var(--ok);font-weight:700}
-.movewhen{margin-top:12px;text-align:left;background:var(--bg)}
+/* Two rules about the same thing, flush against one another, read as one
+   paragraph of small print. */
+.movewhen{margin:18px 0 6px;text-align:left;background:var(--bg)}
+.movewhy{margin-top:16px}
 .movewhen > summary{padding:10px 12px;font-size:14px}
 .wedcount{margin:2px 0 8px;font-size:26px;font-weight:700;font-variant-numeric:tabular-nums;color:var(--fg)}
 .wedsay{margin:6px 0 14px;font-size:16.5px;line-height:1.6;font-family:var(--display)}
@@ -1386,6 +1389,16 @@ h1 .pileico{width:34px;height:27px;vertical-align:-3px;margin-right:2px}
 .bqair.still{animation:none}
 @keyframes bqfly{0%,100%{transform:translateY(0) rotate(-12deg)}50%{transform:translateY(-16px) rotate(12deg)}}
 .invitecard{border:1px solid var(--rule-soft)}
+.sentcard{border:1px solid var(--gold)}
+/* Terms are read one fact at a time; a paragraph of them is scrolled past. */
+.termscard{border:1px solid var(--rule)}
+.terms{margin:0 0 4px;padding-left:22px}
+#main .terms li{margin:0 0 8px;font-size:13.5px;line-height:1.5;color:var(--fg-soft);text-align:left}
+.termscard .remind{margin-top:12px;align-items:flex-start}
+.termscard .remind span{line-height:1.4}
+.sentrow{display:flex;align-items:center;gap:10px;padding:8px 0;border-top:1px solid var(--rule-soft)}
+.sentrow:first-of-type{border-top:0}
+.sentrow b{flex:1;min-width:0;overflow-wrap:anywhere}
 /* An invitation waiting to be answered is the one card that should catch
    the eye the moment it opens. */
 .wedcard.invited{border-color:var(--pink);box-shadow:0 0 0 3px var(--pink-soft,rgba(246,187,203,.35))}

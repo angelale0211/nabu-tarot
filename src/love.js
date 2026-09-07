@@ -96,6 +96,17 @@ const LOVE = {
     return bond.ask && bond.ask.by ? 'proposed' : 'tied';
   },
   role(bond, uid) { return bond && (bond.a === uid ? bond.aRole : bond.bRole) || ''; },
+  /* Invitations this device has sent and not yet seen answered. They live
+     under the person invited, so there is no way to ask the database for
+     "everything I have sent" without an index for a list that is nearly always
+     one line long. */
+  sent() { const a = this.local().sent; return Array.isArray(a) ? a : []; },
+  rememberSent(who) {
+    const a = this.sent().filter((x) => x.uid !== who.uid);
+    a.push({ uid: who.uid, name: who.name || '', handle: who.handle || '', at: Date.now() });
+    this.save({ sent: a.slice(-6) });
+  },
+  forgetSent(uid) { this.save({ sent: this.sent().filter((x) => x.uid !== uid) }); },
   giftsToday(gifts, uid) {
     const day = isoDate(new Date());
     return (gifts || []).filter((g) => g.from === uid && isoDate(new Date(g.at || 0)) === day).length;
@@ -385,6 +396,21 @@ const LOVEDB = {
       uid: me, name: mine.name || '', handle: mine.handle || LOVE.handle(),
       note: String(note || '').slice(0, 200), at: Date.now()
     });
+  },
+  /* Whether an invitation to this person is already standing. Readable by the
+     sender now, which is what lets the screen say so. */
+  async sentTo(uid) {
+    if (!this.ok() || !uid) return null;
+    try {
+      const d = await BE.db.collection('requests').doc(uid).collection('from').doc(this.me()).get();
+      return d.exists ? d.data() : null;
+    } catch (e) { return null; }
+  },
+  /* Taken back. The other person is told, because somebody invited by mistake
+     deserves the correction as plainly as the invitation. */
+  async unsend(uid) {
+    await BE.db.collection('requests').doc(uid).collection('from').doc(this.me()).delete();
+    LOVE.forgetSent(uid);
   },
   watchRequests(cb) {
     if (!this.ok()) return () => {};
@@ -689,6 +715,14 @@ function renderLove(wantHandle) {
         : '')
       + '<div class="card"><h3 style="margin-bottom:4px">' + esc(S.loveFindTitle) + '</h3>'
       + '<p class="hint" style="margin-bottom:10px">' + esc(S.loveFindHint) + '</p>'
+      /* What you have already sent, above the box for sending more - so that
+         pressing the button leaves something behind. */
+      + (LOVE.sent().length
+        ? '<div class="card sentcard"><div class="ghead"><span class="gk">\uD83D\uDCE4</span><h3>' + esc(S.loveSentTitle) + '</h3></div>'
+          + LOVE.sent().map((x) => '<div class="sentrow"><b>' + esc(x.name || ('@' + x.handle)) + '</b>'
+            + '<button type="button" class="btn sm" data-unsend="' + esc(x.uid) + '">' + esc(S.loveUnsend) + '</button></div>').join('')
+          + '<p class="hint">' + esc(S.loveSentHint) + '</p></div>'
+        : '')
       + '<h3 class="stepno" style="margin-bottom:4px">' + esc(S.loveStepTwo) + '</h3>'
       + '<div class="row nw athandle"><span class="at">@</span><input id="lvfind" maxlength="20" autocapitalize="none" spellcheck="false" placeholder="' + esc(S.loveHandlePh) + '"><button type="button" class="btn" id="lvgo">' + esc(S.loveFind) + '</button></div>'
       + '<div id="lvfound"></div><p class="hint" id="lvfstatus"></p></div>'
@@ -741,7 +775,17 @@ function renderLove(wantHandle) {
       b.disabled = true;
       await LOVEDB.decline(b.getAttribute('data-decline'));
     }));
-    $('#lvgo').addEventListener('click', async () => {
+    $$('[data-unsend]', m).forEach((b) => b.addEventListener('click', async () => {
+      const uid = b.getAttribute('data-unsend');
+      const one = LOVE.sent().filter((x) => x.uid === uid)[0] || {};
+      if (!confirm(S.loveUnsendAsk(one.name || ('@' + (one.handle || ''))))) return;
+      b.disabled = true;
+      try { await LOVEDB.unsend(uid); toast(S.loveUnsent); draw(); }
+      catch (e) { b.disabled = false; toast(loveWhy(e)); }
+    }));
+    /* Named, because the card has to be able to draw itself again after an
+       invitation is sent or taken back. */
+    const find = async () => {
       const st = $('#lvfstatus'), out = $('#lvfound');
       out.innerHTML = ''; st.className = 'hint'; st.textContent = S.loveLooking;
       let who = null;
@@ -763,19 +807,51 @@ function renderLove(wantHandle) {
       }
       if (who.self) { st.className = 'hint err'; st.textContent = S.loveThatsYou; return; }
       st.textContent = '';
-      out.innerHTML = '<div class="card reqcard found"><b>' + esc(who.name || ('@' + who.handle)) + '</b><span class="faint">@' + esc(who.handle || '') + '</span>'
-        + (who.tied ? '<p class="hint">' + esc(S.loveAlreadyTied) + '</p>'
-          : '<label class="f" for="lvnote" style="margin-top:8px">' + esc(S.loveNoteLabel) + '</label>'
-            + '<input id="lvnote" maxlength="200" placeholder="' + esc(S.loveNotePh) + '">'
-            + '<button type="button" class="btn primary block" id="lvoffer" style="margin-top:10px">' + loveMarkSVG('tied', 'inline') + ' ' + esc(S.loveOffer) + '</button>')
-        + '</div>';
-      const off = $('#lvoffer');
-      if (off) off.addEventListener('click', async () => {
-        off.disabled = true;
-        try { await LOVEDB.offer(who.uid, $('#lvnote').value); st.className = 'hint ok'; st.textContent = S.loveOffered; }
-        catch (e) { st.className = 'hint err'; st.textContent = loveWhy(e); off.disabled = false; }
-      });
-    });
+      /* One invitation stands at a time. The card says which state it is in
+         rather than offering a button that will be refused - and it redraws
+         itself between the two, because sending makes the listeners fire and
+         that repaints the screen underneath, search box and all. */
+      const showFound = (already) => {
+        const card = (inner) => '<div class="card reqcard found"><b>' + esc(who.name || ('@' + who.handle)) + '</b>'
+          + '<span class="faint">@' + esc(who.handle || '') + '</span>' + inner + '</div>';
+        out.innerHTML = who.tied
+          ? card('<p class="hint">' + esc(S.loveAlreadyTied) + '</p>')
+          : already
+            ? card('<p class="hint ok" style="margin-top:8px">' + esc(S.loveAlreadySent) + '</p>'
+                + (already.note ? '<p class="note">' + esc(already.note) + '</p>' : '')
+                + '<button type="button" class="btn block" id="lvunsend" style="margin-top:10px">' + esc(S.loveUnsend) + '</button>'
+                + '<p class="hint">' + esc(S.loveUnsendHint) + '</p>')
+            : card('<label class="f" for="lvnote" style="margin-top:8px">' + esc(S.loveNoteLabel) + '</label>'
+                + '<input id="lvnote" maxlength="200" placeholder="' + esc(S.loveNotePh) + '">'
+                + '<button type="button" class="btn primary block" id="lvoffer" style="margin-top:10px">' + loveMarkSVG('tied', 'inline') + ' ' + esc(S.loveOffer) + '</button>');
+        const off = $('#lvoffer');
+        if (off) off.addEventListener('click', async () => {
+          off.disabled = true;
+          const note = $('#lvnote').value;
+          try {
+            await LOVEDB.offer(who.uid, note);
+            LOVE.rememberSent(who);
+            toast(S.loveOffered);
+            /* Nothing the sender watches has changed - the invitation lives
+               under the other person - so the screen has to be told. */
+            draw();
+          } catch (e) { st.className = 'hint err'; st.textContent = loveWhy(e); off.disabled = false; }
+        });
+        const un = $('#lvunsend');
+        if (un) un.addEventListener('click', async () => {
+          if (!confirm(S.loveUnsendAsk(who.name || ('@' + who.handle)))) return;
+          un.disabled = true;
+          try {
+            await LOVEDB.unsend(who.uid);
+            st.className = 'hint'; st.textContent = S.loveUnsent;
+            toast(S.loveUnsent);
+            showFound(null);
+          } catch (e) { st.className = 'hint err'; st.textContent = loveWhy(e); un.disabled = false; }
+        });
+      };
+      showFound(await LOVEDB.sentTo(who.uid));
+    };
+    $('#lvgo').addEventListener('click', find);
   };
 
   const drawBond = (bond, gifts) => {
@@ -997,19 +1073,51 @@ function renderLove(wantHandle) {
     });
   };
 
+  /* Something on the screen in the same tick as the press. Everything below
+     asks the network first, and a screen that has written nothing looks exactly
+     like a button that did nothing. */
+  const drawOpening = () => {
+    m.innerHTML = head()
+      + '<div class="card lovecard">' + threadSVG(LOVE.local().stage || 'tied', true)
+      + '<p class="hint" style="text-align:center">' + esc(S.loveOpening) + '</p></div>' + foot();
+  };
+
   const draw = async () => {
     cleanup();
     if (!LOVEDB.ok()) { drawGuest(); return; }
+    drawOpening();
+    /* Who this account is, which only fills in a name - so it must never be
+       allowed to hold the screen. */
     let person = null;
-    try { person = await LOVEDB.myPerson(); } catch (e) { person = null; }
+    try {
+      person = await Promise.race([
+        LOVEDB.myPerson(),
+        new Promise((r) => setTimeout(() => r(null), 2500))
+      ]);
+    } catch (e) { person = null; }
     if (person) LOVE.save({ handle: person.handle || '', name: person.name || '' });
     if (forceHandle || !LOVE.handle()) { drawHandle(); return; }
     /* Two listeners, one screen: the bond decides which half is drawn, and
        either of them arriving repaints it. */
     let reqs = [], bond = null, ready = false, gifts = [], giftStop = null;
     const paint = () => { if (!ready) return; if (bond) drawBond(bond, gifts); else drawSingle(reqs); };
+    /* And if nothing has been heard at all, say so rather than waiting in
+       silence. A listener that never fires is indistinguishable, from the
+       outside, from an app that is broken. */
+    const stall = setTimeout(() => {
+      if (ready) return;
+      m.innerHTML = head()
+        + '<div class="card lovecard">' + threadSVG('tied', true)
+        + '<p class="lead" style="text-align:center">' + esc(S.loveSlow) + '</p>'
+        + '<button type="button" class="btn primary block" id="lvagain">' + esc(S.loveTryAgain) + '</button></div>' + foot();
+      const again = $('#lvagain');
+      if (again) again.addEventListener('click', () => draw());
+    }, 7000);
+    stop.push(() => clearTimeout(stall));
     stop.push(LOVEDB.watchMine((b) => {
+      clearTimeout(stall);
       bond = b; ready = true;
+      if (b) LOVE.save({ sent: [] });   /* answered: nothing is outstanding now */
       LOVE.save(b
         ? { bond: b.id, since: b.since, stage: LOVE.stage(b), withName: (LOVE.other(b, LOVEDB.me()) || {}).name || '',
             role: LOVE.role(b, LOVEDB.me()), otherRole: LOVE.role(b, (LOVE.other(b, LOVEDB.me()) || {}).uid) }
