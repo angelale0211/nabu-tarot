@@ -314,6 +314,9 @@ const wedLocalValue = (ms) => {
   return d.getFullYear() + '-' + pad2(d.getMonth() + 1) + '-' + pad2(d.getDate())
     + 'T' + pad2(d.getHours()) + ':' + pad2(d.getMinutes());
 };
+/* The doors, not the ceremony. Under a locked door the useful number is when
+   it unlocks, and the two are a quarter of an hour apart. */
+const wedDoorAt = (w) => WED.startMs(w) - WED_OPEN_MS;
 const wedCountdown = (ms) => {
   const left = Math.max(0, Number(ms) - Date.now());
   const h = Math.floor(left / 3600000), m = Math.floor((left % 3600000) / 60000), s2 = Math.floor((left % 60000) / 1000);
@@ -545,8 +548,17 @@ function renderWedding(args) {
       try {
         await BE.createUnlockOrder([{ id: 'wedding', name: L(COURSES.filter((c) => c.id === 'wedding')[0].name)
           + ' \u00b7 ' + wedWhen(ms), price: price }], price);
+        /* And the room itself, because the hour is what is being held and an
+           hour cannot be held by a room that does not exist. */
+        if (!wedding) await WED.create(bond, ms);
+        ALERTS.add({ id: 'wed-made-' + WED.idFor(bond) + '-' + ms, k: 'love',
+          t: S.wedMadeTitle, b: S.wedMadeBody(wedWhen(ms)), href: '#/wedding' });
         st.className = 'hint ok'; st.textContent = S.wedPaySent;
         toast(S.wedPaySent);
+        /* Only if they are still standing here. A delayed jump that fires
+           after somebody has walked away drags them back from wherever they
+           went, which is worse than not moving them at all. */
+        setTimeout(() => { if (location.hash.indexOf('/wedding/pay') > -1) location.hash = '#/wedding'; }, 1200);
       } catch (e) { b.disabled = false; st.className = 'hint err'; st.textContent = loveWhy(e); }
     });
   };
@@ -597,12 +609,16 @@ function renderWedding(args) {
       + '<p class="wedready">' + esc(S.wedReady) + '</p>'
       + '<p class="wedpair">' + esc(w.aName || '') + ' \u2764 ' + esc(w.bName || '') + '</p>'
       + '<p class="wedwhen">' + esc(wedWhen(w.startMs)) + '</p>'
-      + '<p class="wedcount" id="wedcd">' + esc(openNow ? S.wedDoorsOpen : wedCountdown(w.startMs)) + '</p>'
-      /* The way in, first, because it is what the screen is for. */
+      + '<p class="wedcount" id="wedcd">' + esc(openNow ? S.wedDoorsOpen : wedCountdown(wedDoorAt(w))) + '</p>'
+      /* The way in, first, because it is what the screen is for. Locked until
+         a quarter of an hour before, and saying how long that is. */
       + (openNow
         ? '<a class="btn primary block" href="#/wedding/room">' + esc(S.wedEnter) + '</a>'
         : '<button type="button" class="btn primary block" disabled>' + esc(S.wedEnterLater) + '</button>')
-      + '<p class="hint">' + esc(openNow ? S.wedEnterNow : S.wedOpensSoon) + '</p>'
+      + '<p class="hint">' + esc(openNow ? S.wedEnterNow : S.wedShutFor) + '</p>'
+      /* Unpaid, said once, softly, with the way to settle it. */
+      + (ACCESS.has('wedding') ? ''
+        : '<p class="hint hold">' + esc(S.wedUnpaid) + ' <a href="#/wedding/pay">' + esc(S.wedPayNow) + ' \u2192</a></p>')
       /* And moving it, immediately beneath, folded until it is wanted. */
       + '<details class="sect movewhen"><summary><span class="si">\uD83D\uDD52</span><b>' + esc(S.wedMoveTitle) + '</b><span class="sx">\u203A</span></summary>'
       + '<div class="sbody"><input type="datetime-local" id="wedat" value="' + esc(wedLocalValue(w.startMs)) + '">'
@@ -624,8 +640,8 @@ function renderWedding(args) {
     if (!openNow) {
       tick = setInterval(() => {
         const el = $('#wedcd');
-        if (el) el.textContent = wedCountdown(w.startMs);
-        if (Date.now() > w.startMs - WED_OPEN_MS) paint();
+        if (el) el.textContent = wedCountdown(wedDoorAt(w));
+        if (Date.now() > wedDoorAt(w)) paint();
       }, 1000);
     }
     bindShareRow(m, () => ({ text: S.wedInviteText(w.aName || '', w.bName || '', wedWhen(w.startMs)), url: link }));

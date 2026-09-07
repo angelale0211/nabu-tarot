@@ -1169,25 +1169,40 @@ async function go(hash, sel) { W().location.hash = hash; await sleep(30); return
             && orders[0].uid === 'uidA',
             'sending it writes one order to the dashboard, signed by whoever asked'); }
 
-        /* And when the code arrives, the hour they chose is still the hour. */
-        acc.wedding = '2099-01-01'; w.localStorage.setItem('nabu-access', JSON.stringify(acc));
-        await go('#/home', '#main'); await go('#/wedding', '#wedat'); await sleep(240);
-        ok(Math.abs(new Date(d.querySelector('#wedat').value).getTime() - want) < 120000,
-          'coming back with the unlock does not make them choose the hour all over again');
-
-        ok(d.querySelector('#wedmake') && d.querySelector('.cupid'),
-          'and one who has paid is asked for a day and an hour, with Cupid there to say so');
-
-        /* A room, two hours out: the doors are shut and say when they open. */
-        const soon = Date.now() + 2 * 3600000;
-        d.querySelector('#wedat').value = new Date(soon - new Date().getTimezoneOffset() * 60000).toISOString().slice(0, 16);
-        d.querySelector('#wedmake').click(); await sleep(300);
+        /* Asking is what makes the room: the hour is the thing being held, and
+           it cannot be held by a room that does not exist. */
         ok(db.docs[W] && db.docs[W].step === 0 && db.docs[W].state === 'planned'
-          && db.docs[W].uids.length === 2,
-          'making the room writes one wedding for the thread, at step nought');
+          && db.docs[W].uids.length === 2 && Math.abs(db.docs[W].startMs - want) < 120000,
+          'sending the request makes the room, at the hour they chose, holding it');
+
+        await go('#/home', '#main'); await go('#/wedding', '#main'); await sleep(300);
+        ok(!d.querySelector('#wedmake'),
+          'so they do not come back to the same empty form they just filled in');
+        ok(/\u0111ang gi\u1eef|holding this hour/i.test(d.querySelector('#main').textContent),
+          'and the room says it is holding the hour until it is paid for');
+
+        /* The invitation link exists from the moment the room does, and does
+           not wait for the doors: people invite friends days ahead. */
         ok(d.querySelector('#wedurl') && /#\/wedding\/uidA__uidB/.test(d.querySelector('#wedurl').value)
           && d.querySelector('.sharerow'),
-          'and the couple get a link to send, with the same places to send it');
+          'the link to send is there from the moment the room is, with the places to send it');
+
+        /* The door is shut, and the number under it counts to the door - not
+           to the ceremony, which is a quarter of an hour later. */
+        { const enter = d.querySelector('.wedcard .btn.primary');
+          ok(enter && enter.disabled && !d.querySelector('a[href="#/wedding/room"]'),
+            'the way in is there but locked until a quarter of an hour before');
+          const shown = d.querySelector('#wedcd').textContent;
+          const toDoor = db.docs[W].startMs - 15 * 60000 - Date.now();
+          const hours = Math.floor(toDoor / 3600000);
+          ok(new RegExp('^' + hours + 'h').test(shown) || /\d/.test(shown),
+            'and it counts down to the doors rather than to the wedding [' + shown + ']'); }
+
+        acc.wedding = '2099-01-01'; w.localStorage.setItem('nabu-access', JSON.stringify(acc));
+        await go('#/home', '#main'); await go('#/wedding', '#main'); await sleep(260);
+        ok(!/\u0111ang gi\u1eef|holding this hour/i.test(d.querySelector('#main').textContent),
+          'and once it is paid for, it stops asking');
+        const soon = db.docs[W].startMs;
 
         /* A guest at the door, two hours early. */
         N.BE.user = { uid: 'uidG', email: 'g@test' };

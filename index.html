@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
 <title>Nabu Tarot</title>
 <meta name="description" content="Nabu Tarot: dự đoán mới, rút một lá bài xem năng lượng hiện tại, học tarot, Lenormand, chiêm tinh, và đặt lịch xem bài.">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'none'; object-src 'none'; form-action 'self'; script-src 'self' 'sha256-8CzOg/xwmrTFm1ZXGouqZz2abGbICc82s+laBwqKEi8=' https://www.gstatic.com https://apis.google.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; font-src 'self' data:; media-src 'self' data: blob:; worker-src 'self'; connect-src 'self' https://*.googleapis.com https://*.google.com https://*.firebaseio.com https://*.cloudfunctions.net https://*.workers.dev https://generativelanguage.googleapis.com; frame-src https://*.firebaseapp.com https://accounts.google.com https://*.facebook.com">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'none'; object-src 'none'; form-action 'self'; script-src 'self' 'sha256-EqWYsoO53WsCX669m5FyvfFRcIwSKEGL85oBwGF7TNE=' https://www.gstatic.com https://apis.google.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; font-src 'self' data:; media-src 'self' data: blob:; worker-src 'self'; connect-src 'self' https://*.googleapis.com https://*.google.com https://*.firebaseio.com https://*.cloudfunctions.net https://*.workers.dev https://generativelanguage.googleapis.com; frame-src https://*.firebaseapp.com https://accounts.google.com https://*.facebook.com">
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <meta name="theme-color" content="#EFE9FA">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -2542,6 +2542,11 @@ const STR = {
     wedPaySend: 'Gửi yêu cầu cho Nabu', wedPaySent: 'Nabu đã nhận được yêu cầu của bạn 💌 Nabu sẽ nhắn lại sớm.',
     wedChangeTime: 'Chọn lại ngày giờ',
     wedPlanPay: (p) => 'Hai bạn chọn ngày giờ trước, bước sau mới là thanh toán (' + p + ').',
+    wedMadeTitle: '💒 Phòng cưới của hai bạn đã được tạo',
+    wedMadeBody: (when) => 'Buổi lễ diễn ra ' + when + '. Cửa phòng mở trước 15 phút.',
+    wedShutFor: 'Cửa phòng sẽ mở trước giờ làm lễ 15 phút. Bạn quay lại lúc đó nhé.',
+    wedUnpaid: 'Phòng cưới đang giữ khung giờ này cho hai bạn. Bạn chuyển khoản sớm giúp Nabu nhé.',
+    wedPayNow: 'Xem cách thanh toán',
     wedReady: 'Phòng cưới của hai bạn đã sẵn sàng',
     wedEnter: 'Vào phòng cưới', wedEnterLater: 'Phòng cưới chưa mở cửa',
     wedEnterNow: 'Cửa đã mở. Hai bạn vào phòng để bắt đầu buổi lễ.',
@@ -3170,6 +3175,11 @@ const STR = {
     wedPaySend: 'Send the request to Nabu', wedPaySent: 'Nabu has your request \uD83D\uDC8C You will hear back soon.',
     wedChangeTime: 'Choose another time',
     wedPlanPay: (p) => 'Choose the day and hour first \u2014 paying (' + p + ') comes after.',
+    wedMadeTitle: '\uD83D\uDC92 Your wedding room has been made',
+    wedMadeBody: (when) => 'The ceremony is ' + when + '. The doors open 15 minutes before.',
+    wedShutFor: 'The doors open 15 minutes before the ceremony. Come back then.',
+    wedUnpaid: 'The room is holding this hour for you. Transferring soon is what keeps it.',
+    wedPayNow: 'How to pay',
     wedReady: 'Your wedding room is ready',
     wedEnter: 'Go into the room', wedEnterLater: 'The room is not open yet',
     wedEnterNow: 'The doors are open. Go in to begin the ceremony.',
@@ -11670,9 +11680,9 @@ function todayHTML() {
 const TOUR = [
   { ic: DRAW_ICON, vi: ['Rút bài', 'Chọn chủ đề trước, rồi lật một lá để xem năng lượng hôm nay của bạn.'], en: ['Pick a card', 'Tap one card to see your energy today. Choose a focus first: love, work, study, money.'] },
   { ic: '✨', vi: ['Dự đoán', 'Bài mới của Nabu nằm ở trang chủ. Bài ghi "dành cho bạn" hợp với cung của bạn.'], en: ['Readings', 'Nabu\'s new posts live on the home screen. Posts marked "for you" match your sign.'] },
-  { ic: '🎲', vi: ['Hoạt động', 'Nuôi bạn nhỏ may mắn, buộc sợi chỉ đỏ, rung cây thông điệp, tung đồng xu, viết nhật ký. Khi Nabu đăng thì có thêm tụ bài, bình chọn và điều ước.'], en: ['Activities', 'Keep a lucky companion, tie the red thread, shake the message tree, flip the coin, write the diary. When Nabu posts there are piles to pick, polls to vote in and wishes to send.'] },
+  { ic: '🎲', vi: ['Hoạt động', 'Nuôi bạn nhỏ may mắn, buộc sợi tơ hồng, rung cây thông điệp, tung đồng xu, viết nhật ký. Khi Nabu đăng thì có thêm tụ bài, bình chọn và điều ước.'], en: ['Activities', 'Keep a lucky companion, tie the red thread, shake the message tree, flip the coin, write the diary. When Nabu posts there are piles to pick, polls to vote in and wishes to send.'] },
   { ic: '📚', vi: ['Học', 'Tarot, Lenormand, bài Tây, chiêm tinh, con số thiên thần, manifestation và bói toán. Bạn bấm vào một lá bài hoặc một cung để đọc.'], en: ['Learn', 'Tarot, Lenormand, cartomancy, astrology, angel numbers, manifestation and fortune telling. Tap a card or a sign to read.'] },
-  { ic: '\uD83E\uDDE7', vi: ['Sợi tơ hồng', 'Buộc sợi tơ hồng với một người: bạn đặt tên riêng, đưa cho người ấy, và người ấy đồng ý là app bắt đầu đếm ngày cho hai bạn. Sau đó có thể ngỏ lời, đính ước, tặng quà và tổ chức lễ cưới.'], en: ['The red thread', 'Tie a thread with somebody: choose a name, give it to them, and once they agree the app starts counting your days. After that you can ask, get engaged, send gifts and hold a wedding.'] },
+  { ic: '\uD83E\uDDE7', vi: ['Sợi tơ hồng', 'Bạn đặt cho mình một cái tên rồi gửi cho người ấy. Khi người ấy đồng ý, Nabu bắt đầu đếm số ngày hai bạn bên nhau. Từ đó hai bạn có thể ngỏ lời, đính ước, tặng quà cho nhau và tổ chức lễ cưới ngay trong ứng dụng.'], en: ['The red thread', 'Tie a thread with somebody: choose a name, give it to them, and once they agree the app starts counting your days. After that you can ask, get engaged, send gifts and hold a wedding.'] },
   { ic: '📅', vi: ['Đặt lịch', 'Bạn chọn gói, chọn giờ trên lịch rồi gửi yêu cầu cho Nabu.'], en: ['Book', 'Choose a topic, pick a time on the calendar, send it to Nabu.'] },
   { ic: '\uD83D\uDD14', vi: ['Làm mới & thông báo', 'Ở bất kỳ trang nào, bạn kéo màn hình xuống từ trên cùng là app tự làm mới và cập nhật bản mới nhất. Chuông ở góc trên bên phải giữ lại những gì đã xảy ra khi bạn không mở app.'], en: ['Refresh & notifications', 'On any screen, pull down from the top and the app refreshes itself to the newest version. The bell in the top corner keeps whatever happened while you were away.'] },
   { ic: '👤', vi: ['Hồ sơ', 'Nhập tên và ngày sinh để app chọn nội dung hợp với bạn. Đăng nhập để lưu hồ sơ và xem lịch hẹn.'], en: ['Profile', 'Enter your name and birthday so the app picks content for you. Sign in to keep your profile, message Nabu and see bookings.'] }
@@ -19762,6 +19772,9 @@ const wedLocalValue = (ms) => {
   return d.getFullYear() + '-' + pad2(d.getMonth() + 1) + '-' + pad2(d.getDate())
     + 'T' + pad2(d.getHours()) + ':' + pad2(d.getMinutes());
 };
+/* The doors, not the ceremony. Under a locked door the useful number is when
+   it unlocks, and the two are a quarter of an hour apart. */
+const wedDoorAt = (w) => WED.startMs(w) - WED_OPEN_MS;
 const wedCountdown = (ms) => {
   const left = Math.max(0, Number(ms) - Date.now());
   const h = Math.floor(left / 3600000), m = Math.floor((left % 3600000) / 60000), s2 = Math.floor((left % 60000) / 1000);
@@ -19993,8 +20006,17 @@ function renderWedding(args) {
       try {
         await BE.createUnlockOrder([{ id: 'wedding', name: L(COURSES.filter((c) => c.id === 'wedding')[0].name)
           + ' \u00b7 ' + wedWhen(ms), price: price }], price);
+        /* And the room itself, because the hour is what is being held and an
+           hour cannot be held by a room that does not exist. */
+        if (!wedding) await WED.create(bond, ms);
+        ALERTS.add({ id: 'wed-made-' + WED.idFor(bond) + '-' + ms, k: 'love',
+          t: S.wedMadeTitle, b: S.wedMadeBody(wedWhen(ms)), href: '#/wedding' });
         st.className = 'hint ok'; st.textContent = S.wedPaySent;
         toast(S.wedPaySent);
+        /* Only if they are still standing here. A delayed jump that fires
+           after somebody has walked away drags them back from wherever they
+           went, which is worse than not moving them at all. */
+        setTimeout(() => { if (location.hash.indexOf('/wedding/pay') > -1) location.hash = '#/wedding'; }, 1200);
       } catch (e) { b.disabled = false; st.className = 'hint err'; st.textContent = loveWhy(e); }
     });
   };
@@ -20045,12 +20067,16 @@ function renderWedding(args) {
       + '<p class="wedready">' + esc(S.wedReady) + '</p>'
       + '<p class="wedpair">' + esc(w.aName || '') + ' \u2764 ' + esc(w.bName || '') + '</p>'
       + '<p class="wedwhen">' + esc(wedWhen(w.startMs)) + '</p>'
-      + '<p class="wedcount" id="wedcd">' + esc(openNow ? S.wedDoorsOpen : wedCountdown(w.startMs)) + '</p>'
-      /* The way in, first, because it is what the screen is for. */
+      + '<p class="wedcount" id="wedcd">' + esc(openNow ? S.wedDoorsOpen : wedCountdown(wedDoorAt(w))) + '</p>'
+      /* The way in, first, because it is what the screen is for. Locked until
+         a quarter of an hour before, and saying how long that is. */
       + (openNow
         ? '<a class="btn primary block" href="#/wedding/room">' + esc(S.wedEnter) + '</a>'
         : '<button type="button" class="btn primary block" disabled>' + esc(S.wedEnterLater) + '</button>')
-      + '<p class="hint">' + esc(openNow ? S.wedEnterNow : S.wedOpensSoon) + '</p>'
+      + '<p class="hint">' + esc(openNow ? S.wedEnterNow : S.wedShutFor) + '</p>'
+      /* Unpaid, said once, softly, with the way to settle it. */
+      + (ACCESS.has('wedding') ? ''
+        : '<p class="hint hold">' + esc(S.wedUnpaid) + ' <a href="#/wedding/pay">' + esc(S.wedPayNow) + ' \u2192</a></p>')
       /* And moving it, immediately beneath, folded until it is wanted. */
       + '<details class="sect movewhen"><summary><span class="si">\uD83D\uDD52</span><b>' + esc(S.wedMoveTitle) + '</b><span class="sx">\u203A</span></summary>'
       + '<div class="sbody"><input type="datetime-local" id="wedat" value="' + esc(wedLocalValue(w.startMs)) + '">'
@@ -20072,8 +20098,8 @@ function renderWedding(args) {
     if (!openNow) {
       tick = setInterval(() => {
         const el = $('#wedcd');
-        if (el) el.textContent = wedCountdown(w.startMs);
-        if (Date.now() > w.startMs - WED_OPEN_MS) paint();
+        if (el) el.textContent = wedCountdown(wedDoorAt(w));
+        if (Date.now() > wedDoorAt(w)) paint();
       }, 1000);
     }
     bindShareRow(m, () => ({ text: S.wedInviteText(w.aName || '', w.bName || '', wedWhen(w.startMs)), url: link }));
@@ -21005,7 +21031,7 @@ function adminSale(p) {
 ROUTES.admin = { nav: '', render: renderAdmin };
 
 /* ============================ boot ============================ */
-window.APP_VERSION = 'v143';
+window.APP_VERSION = 'v144';
 window.NABU = { CONFIG: CONFIG, SALE: SALE, salePrice: salePrice, loadActs: loadActs, BACK: BACK, LESSONS: LESSONS, localAnswer: localAnswer, compatVerdict: compatVerdict, numerologyOf: numerologyOf, ZDEEP: ZDEEP, lunarToday: lunarToday, solarToLunar: solarToLunar, DECK: DECK, INSIGHT: INSIGHT, KW: KW, ASK: ASK, TOPICS: TOPICS, GUIDES: GUIDES, SERVICES: SERVICES, COURSES: COURSES, ACCESS: ACCESS, plusOn: () => plusOn(), proOn: () => proOn(), luckUnlimited: () => luckUnlimited(), ZODIAC: ZODIAC, pick: pick, book: book,
   insightHTML: insightHTML, insightOf: insightOf, sunSignIndex: sunSignIndex, lifePath: lifePath, PROFILE: () => PROFILE, BE: BE, ACTS: ACTS,
   ANGELS: ANGELS, angelRead: angelRead, CODEBOOK: CODEBOOK, verifyCode: verifyCode, petHomeSVG: petHomeSVG, PET_HOMES: PET_HOMES, PET_WEARS: PET_WEARS, codeDigest: codeDigest, randomCode: randomCode, BANK: BANK, PETS: PETS, petSVG: petSVG, PET_COATS: PET_COATS, PET_KINDS: PET_KINDS, luckCut: luckCut, petLevel: petLevel, petStep: petStep, VOUCHERS: VOUCHERS, levelCoins: levelCoins, LOOKS: LOOKS,
