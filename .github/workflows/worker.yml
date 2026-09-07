@@ -1,0 +1,55 @@
+# The worker holds the API keys and is the only part of Nabu Tarot with a bill
+# attached, and until now it was deployed by hand from a laptop. That means the
+# thing running in front of the money is whatever somebody last remembered to
+# push. This checks it on every change and deploys it when main moves.
+#
+# Deploying needs one repository secret: CLOUDFLARE_API_TOKEN, made at
+# Cloudflare dashboard > My Profile > API Tokens > Edit Cloudflare Workers.
+# Without it the check still runs and the deploy step is skipped, so a fork or
+# a pull request cannot deploy and does not fail for not being able to.
+name: worker
+
+on:
+  push:
+    branches: [main]
+    paths: ['worker/**', '.github/workflows/worker.yml']
+  pull_request:
+    paths: ['worker/**', '.github/workflows/worker.yml']
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  worker:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: worker
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install
+        run: npm install
+
+      # TypeScript is not run by wrangler when it deploys, so a mistake in the
+      # types reaches production as a runtime error. This is the only place it
+      # gets caught.
+      - name: Types
+        run: npm run typecheck
+
+      - name: Deploy
+        if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+        run: |
+          if [ -z "$CLOUDFLARE_API_TOKEN" ]; then
+            echo "No CLOUDFLARE_API_TOKEN secret, so nothing was deployed."
+            echo "The worker still runs whatever was last pushed by hand."
+            exit 0
+          fi
+          npx wrangler deploy

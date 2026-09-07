@@ -9,6 +9,18 @@ compatibility_flags = ["nodejs_compat"]
 
 [vars]
 ALLOWED_ORIGIN = "https://nabutarot.com"
+# Whose sign-ins this worker accepts. While it is empty the worker answers
+# anybody, exactly as it did before, so this can be deployed before the app is
+# sending a token. Set it once the app is, and asking needs an account.
+FIREBASE_PROJECT_ID = ""
+
+# Where the per-person counts live. Without it the worker still answers, but
+# nothing is limited, so make it:
+#   npx wrangler kv namespace create NABU_LIMITS
+# then paste the id it prints below and uncomment both lines.
+# [[kv_namespaces]]
+# binding = "KV"
+# id = "paste-the-id-here"
 
 # Secrets (never in this file):
 #   npx wrangler secret put GEMINI_API_KEY      (Gemini answers, key never in the browser)

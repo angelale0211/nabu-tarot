@@ -5,6 +5,8 @@
    Deploy: npm install && npx wrangler secret put ANTHROPIC_API_KEY && npx wrangler deploy
    Then put the worker URL into CONFIG.aiEndpoint in src/config.js. */
 import Anthropic from "@anthropic-ai/sdk";
+import { whoIsAsking } from "./auth";
+import { allow, cachedAnswer, keepAnswer } from "./limit";
 
 export interface Env {
   ANTHROPIC_API_KEY?: string;
@@ -12,7 +14,14 @@ export interface Env {
   AI?: { run: (model: string, input: unknown) => Promise<{ response?: string }> }; // Workers AI binding (free tier, open models)
   ALLOWED_ORIGIN?: string; // e.g. https://nabutarot.com
   RESEND_API_KEY?: string; // for /booking: mails the reader a calendar invitation
+  FIREBASE_PROJECT_ID?: string; // whose sign-ins this worker accepts; unset = anybody may ask
+  KV?: KVNamespace;            // where the per-person counts live; unset = no limits
 }
+
+/* What one person may ask for in a day. Generous for somebody using the app,
+   nowhere near enough to be worth abusing. */
+const ASK_A_DAY = 40, ASK_A_MINUTE = 6;
+const MAIL_A_DAY = 20, MAIL_A_MINUTE = 3;
 
 interface AskBody {
   lang: "vi" | "en";
@@ -33,8 +42,18 @@ No medical diagnosis, no specific legal or investment advice, no promises that s
 const cors = (origin: string | undefined, env: Env) => ({
   "Access-Control-Allow-Origin": env.ALLOWED_ORIGIN && origin === env.ALLOWED_ORIGIN ? origin : env.ALLOWED_ORIGIN || "*",
   "Access-Control-Allow-Methods": "POST, OPTIONS",
-  "Access-Control-Allow-Headers": "Content-Type",
+  "Access-Control-Allow-Headers": "Content-Type, Authorization",
 });
+
+/* Cloudflare puts the caller's address here. Behind it there is no spoofing it,
+   which is what makes it usable for counting. */
+const caller = (request: Request): string =>
+  "ip:" + (request.headers.get("CF-Connecting-IP") || "unknown");
+
+const tooMany = (v: { retryAfter: number }, headers: Record<string, string>): Response =>
+  new Response(JSON.stringify({ error: "limit", retryAfter: v.retryAfter }), {
+    status: 429, headers: { ...headers, "Retry-After": String(v.retryAfter) },
+  });
 
 const recipients = (to: unknown): string[] => (Array.isArray(to) ? to : [to]).map((x) => String(x || "").trim()).filter((x) => /^[^@\s]+@[^@\s]+$/.test(x)).slice(0, 5);
 
@@ -78,16 +97,49 @@ async function bookingMail(request: Request, env: Env, headers: Record<string, s
 }
 
 export default {
-  async fetch(request: Request, env: Env): Promise<Response> {
+  async fetch(request: Request, env: Env, ctx: ExecutionContext): Promise<Response> {
     const headers = { ...cors(request.headers.get("Origin") || undefined, env), "Content-Type": "application/json" };
     if (request.method === "OPTIONS") return new Response(null, { headers });
     if (request.method !== "POST") return new Response(JSON.stringify({ error: "POST only" }), { status: 405, headers });
-    if (new URL(request.url).pathname.endsWith("/booking")) return bookingMail(request, env, headers);
-    if (new URL(request.url).pathname.endsWith("/report")) return reportMail(request, env, headers);
+
+    /* The two mail endpoints do not need an account - a bug report from
+       somebody who cannot sign in is exactly the report worth having - so they
+       are counted by address instead. */
+    const path = new URL(request.url).pathname;
+    if (path.endsWith("/booking") || path.endsWith("/report")) {
+      const v = await allow(env, caller(request), MAIL_A_DAY, MAIL_A_MINUTE);
+      if (!v.ok) return tooMany(v, headers);
+      return path.endsWith("/booking") ? bookingMail(request, env, headers) : reportMail(request, env, headers);
+    }
+
+    /* Asking costs money, so asking requires an account. Until the project id
+       is set the worker keeps its old behaviour, so deploying this cannot lock
+       the app out before the app is sending a token. */
+    let who = "";
+    if (env.FIREBASE_PROJECT_ID) {
+      const person = await whoIsAsking(request, env.FIREBASE_PROJECT_ID);
+      if (!person) return new Response(JSON.stringify({ error: "signin" }), { status: 401, headers });
+      who = person.uid;
+    } else {
+      who = caller(request);
+    }
+    const verdict = await allow(env, who, ASK_A_DAY, ASK_A_MINUTE);
+    if (!verdict.ok) return tooMany(verdict, headers);
+
     let body: AskBody;
     try { body = (await request.json()) as AskBody; } catch { return new Response(JSON.stringify({ error: "bad json" }), { status: 400, headers }); }
     const question = (body.question || "").trim().slice(0, 1000);
     if (!question) return new Response(JSON.stringify({ error: "empty question" }), { status: 400, headers });
+
+    /* The same question with nothing said before it has the same answer for
+       everybody, and the card meanings are asked all day long. */
+    const fresh = !(body.history || []).length;
+    const cacheKey = { lang: body.lang, kind: body.kind, question, context: (body.context || "").slice(0, 12000) };
+    if (fresh) {
+      const hit = await cachedAnswer(cacheKey);
+      if (hit) return new Response(JSON.stringify({ answer: hit }), { headers });
+    }
+    const keep = (answer: string): void => { if (fresh && answer) keepAnswer(cacheKey, answer, ctx); };
 
     const knowledge = `KIND: ${body.kind}\nVISITOR: ${body.profile?.name || "-"} ${body.profile?.sign ? "(" + body.profile.sign + ")" : ""}\nKNOWLEDGE:\n${(body.context || "").slice(0, 12000)}`;
     /* Gemini, with the key held here rather than in the browser. Set it with
@@ -113,7 +165,7 @@ export default {
           if (!r.ok) continue;
           const j = (await r.json()) as any;
           const text = (j?.candidates?.[0]?.content?.parts || []).map((p: any) => p.text || "").join("").trim();
-          if (text) return new Response(JSON.stringify({ answer: text }), { headers });
+          if (text) { keep(text); return new Response(JSON.stringify({ answer: text }), { headers }); }
         } catch { /* try the next model */ }
       }
       return new Response(JSON.stringify({ error: "gemini" }), { status: 502, headers });
@@ -126,7 +178,9 @@ export default {
       msgs.push({ role: "user", content: question });
       try {
         const out = await env.AI.run("@cf/meta/llama-3.3-70b-instruct-fp8-fast", { messages: msgs, max_tokens: 700 });
-        return new Response(JSON.stringify({ answer: (out.response || "").trim() }), { headers });
+        const said = (out.response || "").trim();
+        keep(said);
+        return new Response(JSON.stringify({ answer: said }), { headers });
       } catch { return new Response(JSON.stringify({ error: "workers-ai" }), { status: 502, headers }); }
     }
     if (!env.ANTHROPIC_API_KEY) return new Response(JSON.stringify({ error: "no provider" }), { status: 500, headers });
@@ -154,6 +208,7 @@ export default {
         return new Response(JSON.stringify({ answer: body.lang === "en" ? "I can't help with that one. Try asking about the card, the lesson or your sign." : "Câu này mình không trả lời được. Bạn thử hỏi về lá bài, bài học hay cung của bạn nhé." }), { headers });
       }
       const answer = response.content.filter((b) => b.type === "text").map((b) => (b as Anthropic.TextBlock).text).join("\n").trim();
+      keep(answer);
       return new Response(JSON.stringify({ answer }), { headers });
     } catch (error) {
       if (error instanceof Anthropic.RateLimitError) return new Response(JSON.stringify({ error: "busy" }), { status: 429, headers });
