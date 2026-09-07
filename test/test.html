@@ -857,7 +857,12 @@ async function go(hash, sel) { W().location.hash = hash; await sleep(30); return
             .filter((k) => k.indexOf(base + '/') === 0 && k.slice(base.length + 1).indexOf('/') < 0)
             .filter((k) => !f || ((docs[k][f[0]] || []).indexOf(f[2]) > -1))
             .map(snap);
-          const q = { doc: (id) => docRef(base + '/' + id), where: (fl, op, v) => colRef(base, [fl, op, v]),
+          const q = { doc: (id) => {
+              /* Firestore refuses an empty document id, and a mock that accepts
+                 one will call broken code working. */
+              if (!id) throw new Error('Document path cannot be empty.');
+              return docRef(base + '/' + id);
+            }, where: (fl, op, v) => colRef(base, [fl, op, v]),
             limit: () => q, get: async () => ({ docs: pick() }), onSnapshot: watch(() => ({ docs: pick() })),
             /* Firestore makes the id itself when nobody supplies one, which is
                how every booking and order in this app is written. */
@@ -1112,11 +1117,36 @@ async function go(hash, sel) { W().location.hash = hash; await sleep(30); return
       ok(Math.abs(Math.round(bar.querySelector('.chattools').getBoundingClientRect().height) - 150) <= 3,
         'and it stays level when the box grows'); }
 
+      { /* Approving an order that has no hour in it. An unlock - a course, or
+             a wedding - is a booking with no slot, and the status handler built
+             the calendar key from String(b.slot): "undefined", stripped to the
+             empty string, which the database refuses. Confirm therefore threw
+             on every course purchase and every wedding request. */
+        db.put('bookings/ord1', { kind: 'unlock', uid: 'uidA', email: 'a@test',
+          items: [{ id: 'wedding', name: 'Lễ cưới', price: 30000 }], price: 30000, status: 'requested' });
+        let threw = null;
+        try { await N.BE.setBookingStatus(Object.assign({ id: 'ord1' }, db.docs['bookings/ord1']), 'confirmed'); }
+        catch (e) { threw = e && e.message; }
+        ok(!threw && db.docs['bookings/ord1'].status === 'confirmed',
+          'an order with no hour in it can be approved' + (threw ? ' [' + threw + ']' : ''));
+        ok(!Object.keys(db.docs).some((k) => k === 'taken/' || k.indexOf('taken/undefined') === 0),
+          'and nothing is written into the calendar for an order that has no hour');
+        /* A real booking still holds its hour. */
+        db.put('bookings/ord2', { uid: 'uidA', slot: '2026-10-01T19:00', status: 'requested', service: 'x' });
+        await N.BE.setBookingStatus(Object.assign({ id: 'ord2' }, db.docs['bookings/ord2']), 'confirmed');
+        ok(db.docs['taken/20261001T1900'] && db.docs['taken/20261001T1900'].bookingId === 'ord2',
+          'while a booking with an hour still holds it');
+        /* Tidied away, so the counts in the checks after this one still mean
+           what they say. */
+        delete db.docs['bookings/ord1']; delete db.docs['bookings/ord2'];
+        delete db.docs['taken/20261001T1900']; }
+
       /* ---- a locked lesson asks Nabu, in the app ---- */
       { const keptAcc = w.localStorage.getItem('nabu-access');
         w.localStorage.removeItem('nabu-access');
         N.BE.user = { uid: 'uidA', email: 'a@test' };
-        const before = Object.keys(db.docs).filter((k) => k.indexOf('bookings/') === 0).length;
+        const before = Object.keys(db.docs).filter((k) => k.indexOf('bookings/') === 0)
+          .map((k) => db.docs[k]).filter((x) => x && x.kind === 'unlock').length;
         await go('#/home', '#main');
         await go('#/learn/lenormand', '.paywall, .acc'); await sleep(240);
         const ask = d.querySelector('[data-buyreq]');

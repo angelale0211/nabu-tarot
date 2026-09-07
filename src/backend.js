@@ -147,21 +147,31 @@ const BE = {
   watchMyBookings(cb) { return this.db.collection('bookings').where('uid', '==', this.user.uid).onSnapshot((s) => cb(s.docs.map((d) => Object.assign({ id: d.id }, d.data())).sort((a, b) => String(b.slot).localeCompare(String(a.slot))))); },
   watchAllBookings(cb) { return this.db.collection('bookings').limit(300).onSnapshot((s) => cb(s.docs.map((d) => Object.assign({ id: d.id }, d.data())).sort((a, b) => String(b.slot || b.id).localeCompare(String(a.slot || a.id))))); },
   async setBookingStatus(b, status) {
-    const ref = this.db.collection('bookings').doc(b.id), key = String(b.slot).replace(/[^0-9T]/g, ''), newKey = b.newSlot ? String(b.newSlot).replace(/[^0-9T]/g, '') : '';
+    const ref = this.db.collection('bookings').doc(b.id);
+    /* An unlock order - a course, or a wedding - is a booking with no hour in
+       it. String(undefined) is "undefined", which keeps none of its characters
+       once everything but digits and T is stripped, so the key came out empty
+       and Firestore refuses a document path of ''. There is nothing to hold in
+       the calendar for an order without an hour, so nothing is held. */
+    const key = b.slot ? String(b.slot).replace(/[^0-9T]/g, '') : '';
+    const newKey = b.newSlot ? String(b.newSlot).replace(/[^0-9T]/g, '') : '';
+    const taken = (k) => this.db.collection('taken').doc(k);
     if (status === 'keep') {  // the client asked for a change or a cancellation; Nabu keeps the booking as it was
       await ref.set({ status: b.prevStatus || 'confirmed', newSlot: firebase.firestore.FieldValue.delete(), prevStatus: firebase.firestore.FieldValue.delete() }, { merge: true });
-      if (newKey) await this.db.collection('taken').doc(newKey).delete().catch(() => {});
+      if (newKey) await taken(newKey).delete().catch(() => {});
       return;
     }
     if (status === 'confirmed' && b.status === 'change_requested' && b.newSlot) {  // the new time takes over
       await ref.set({ status: 'confirmed', slot: b.newSlot, newSlot: firebase.firestore.FieldValue.delete(), prevStatus: firebase.firestore.FieldValue.delete() }, { merge: true });
-      await this.db.collection('taken').doc(key).delete().catch(() => {});
-      await this.db.collection('taken').doc(newKey).set({ bookingId: b.id }, { merge: true });
+      if (key) await taken(key).delete().catch(() => {});
+      await taken(newKey).set({ bookingId: b.id }, { merge: true });
       return;
     }
     await ref.set({ status: status }, { merge: true });
-    if (status === 'declined' || status === 'cancelled') { await this.db.collection('taken').doc(key).delete().catch(() => {}); if (newKey) await this.db.collection('taken').doc(newKey).delete().catch(() => {}); }
-    else await this.db.collection('taken').doc(key).set({ bookingId: b.id }, { merge: true });
+    if (status === 'declined' || status === 'cancelled') {
+      if (key) await taken(key).delete().catch(() => {});
+      if (newKey) await taken(newKey).delete().catch(() => {});
+    } else if (key) await taken(key).set({ bookingId: b.id }, { merge: true });
   },
   /* The client asks to move the booking: the new slot is reserved at once, Nabu approves or keeps the old time. */
   async requestChange(b, newSlot) {
