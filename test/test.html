@@ -573,8 +573,29 @@ async function go(hash, sel) { W().location.hash = hash; await sleep(30); return
       ok(JSON.parse(w.localStorage.getItem('nabu-wishes')).length === 1 && d.querySelector('.act-wish .jar.fly') && /1 điều ước/.test(d.querySelector('.act-wish .wishcount').textContent), 'a wish flies out of the jar and is kept on the device');
       await go('#/play', '#acts .actbtn'); await go('#/play/w1', '#acts .act-wish'); await sleep(40); d.querySelector('[data-wishlist]').click(); await sleep(20);
       ok(!d.querySelector('.wishlist').hidden && d.querySelectorAll('.wishlist li').length === 1 && /bình yên/.test(d.querySelector('.wishlist').textContent), 'the person can look back at the wishes they sent, with dates');
-      w.localStorage.removeItem('nabu-diary'); await go('#/play/diary', '#dtext'); d.querySelector('[data-mood="🙂"]').click(); d.querySelector('#dtext').value = 'Một ngày yên.'; d.querySelector('#dtext').dispatchEvent(new w.Event('input')); await sleep(20);
-      { const dd = JSON.parse(w.localStorage.getItem('nabu-diary')); const k = Object.keys(dd)[0]; ok(Object.keys(dd).length === 1 && dd[k].m === '🙂' && dd[k].t === 'Một ngày yên.' && /Đã lưu/.test(d.querySelector('#dsaved').textContent), 'the daily diary saves today\'s mood and text on the device'); }
+      w.localStorage.removeItem('nabu-diary'); w.localStorage.removeItem('nabu-diary-draft');
+      await go('#/play/diary', '#dtext');
+      d.querySelector('[data-mood="🙂"]').click();
+      d.querySelector('#dtext').value = 'Một ngày yên.';
+      d.querySelector('#dtext').dispatchEvent(new w.Event('input')); await sleep(40);
+      /* Typing is not saving. It used to be, and there was nothing to press
+         and nothing to see when a page was finished. */
+      ok(!w.localStorage.getItem('nabu-diary')
+        && /Chưa lưu/.test(d.querySelector('#dsaved').textContent)
+        && d.querySelector('#dsave'),
+        'typing keeps a draft and writes no page, and the corner says it is not saved yet');
+      { /* And nothing typed is lost by leaving the screen, which is what makes
+           it safe for the button to be the only thing that saves. */
+        await go('#/play', '.actbtn'); await go('#/play/diary', '#dtext'); await sleep(60);
+        ok(d.querySelector('#dtext').value === 'Một ngày yên.' && d.querySelector('.mood.on'),
+          'and walking away and back brings the unsaved draft with it'); }
+      d.querySelector('#dsave').click(); await sleep(120);
+      { const dd = JSON.parse(w.localStorage.getItem('nabu-diary') || 'null'); const k = dd && Object.keys(dd)[0];
+        ok(dd && Object.keys(dd).length === 1 && dd[k].m === '🙂' && dd[k].t === 'Một ngày yên.'
+          && /Đã lưu/.test(d.querySelector('#dsaved').textContent) && !w.localStorage.getItem('nabu-diary-draft'),
+          'the daily diary saves today\'s mood and text on the device when Save is pressed'); }
+      ok(d.querySelector('.diary.past.istoday') && /Một ngày yên/.test(d.querySelector('.diary.past.istoday').textContent),
+        'and the saved page goes up onto the shelf with the other days, marked as today');
       /* ---- the luck companions ---- */
       w.localStorage.removeItem('nabu-pets'); w.localStorage.removeItem('nabu-pet'); w.localStorage.removeItem('nabu-coins');
       w.localStorage.removeItem('nabu-luck-best'); w.localStorage.removeItem('nabu-coin-day'); w.localStorage.removeItem('nabu-luck-hold');
@@ -1020,41 +1041,72 @@ async function go(hash, sel) { W().location.hash = hash; await sleep(30); return
         db.put(B, Object.assign({}, db.docs[B], { aDiary: false, bDiary: false }));
         await go('#/home', '#actwrap');
         await go('#/play/diary', '#dtext'); await sleep(200);
-        ok(d.querySelector('#dshare') && !d.querySelector('.diary.theirs'),
-          'a diary offers to be shared once there is somebody to share it with');
+        ok(d.querySelector('#dask') && !d.querySelector('.diary.theirs'),
+          'a diary offers to be shared once there is somebody to share it with, as something to ask for');
 
-        /* One switch is not enough - that is the whole promise. */
-        d.querySelector('#dshare').checked = true;
-        d.querySelector('#dshare').dispatchEvent(new w.Event('change'));
-        await sleep(260);
+        /* Asking alone shares nothing - that is the whole promise. */
+        d.querySelector('#dask').click();
+        await sleep(300);
         ok(db.docs[B].aDiary === true && !d.querySelector('.diary.theirs')
-          && /Đợi|When /.test(d.querySelector('#dsharest').textContent),
-          'switching mine on alone shares nothing, and says it is waiting for them');
+          && d.querySelector('#dstop') && !d.querySelector('#dask'),
+          'asking alone shares nothing, and turns into a request that can be taken back');
 
-        /* Today's page goes as soon as it is written, and only then. */
+        /* A page saved while my own yes stands is sent, ready for the moment
+           they agree - there is no sweep of the archive later. */
         d.querySelector('#dtext').value = 'một ngày yên';
         d.querySelector('#dtext').dispatchEvent(new w.Event('input'));
-        await sleep(200);
+        d.querySelector('#dsave').click();
+        await sleep(260);
         const mine = Object.keys(db.docs).filter((k) => k.indexOf(B + '/diary/uidA__') === 0);
         ok(mine.length === 1 && db.docs[mine[0]].from === 'uidA' && db.docs[mine[0]].t === 'một ngày yên',
-          'and what is written while it is on is sent, one page for the day it belongs to');
+          'a page saved after agreeing is sent, one page for the day it belongs to');
 
-        /* They switch theirs on, and now both can read. */
-        db.put(B, Object.assign({}, db.docs[B], { bDiary: true }));
+        /* Seen from the other side: a request is a request, with a button on
+           it, not a switch nobody mentioned. */
+        db.put(B, Object.assign({}, db.docs[B], { aDiary: false, bDiary: true }));
+        await sleep(300);
+        ok(d.querySelector('#dyes') && d.querySelector('#dno')
+          && d.querySelector('.sharecard.fresh') && !d.querySelector('.diary.theirs'),
+          'the person asked sees the request itself, with agree and not-yet on it');
+
+        /* Agreeing opens it both ways. */
+        d.querySelector('#dyes').click();
+        await sleep(300);
         db.put(B + '/diary/uidB__2026-09-06', { from: 'uidB', day: '2026-09-06', m: '🌙', t: 'nhớ em' });
         await sleep(300);
-        ok(d.querySelector('.diary.theirs') && /nhớ em/.test(d.querySelector('.diary.theirs').textContent),
-          'once both have switched it on, each can read the other');
+        ok(db.docs[B].aDiary === true && d.querySelector('.diary.theirs')
+          && /nhớ em/.test(d.querySelector('.diary.theirs').textContent),
+          'agreeing opens it both ways at once');
 
-        /* And switching mine off takes back what I sent, both ways at once. */
-        d.querySelector('#dshare').checked = false;
-        d.querySelector('#dshare').dispatchEvent(new w.Event('change'));
-        await sleep(320);
+        /* And either of them stops it alone. No permission, both directions,
+           and the pages go. */
+        ok(d.querySelector('#dstop'), 'once it is on, there is a way to stop it');
+        d.querySelector('#dstop').click();
+        await sleep(340);
         ok(db.docs[B].aDiary === false
           && Object.keys(db.docs).filter((k) => k.indexOf(B + '/diary/uidA__') === 0).length === 0
           && !d.querySelector('.diary.theirs'),
-          'switching mine off takes back my pages and closes the door in both directions');
-        w.localStorage.removeItem('nabu-diary'); }
+          'stopping needs nobody\u2019s permission: it deletes my pages and closes both directions');
+
+        /* Untying takes the pages with it, rather than leaving them lying
+           unreadable in the database. */
+        db.put(B, Object.assign({}, db.docs[B], { aDiary: true, bDiary: true }));
+        await sleep(200);
+        d.querySelector('#dtext').value = 'trang cuối';
+        d.querySelector('#dtext').dispatchEvent(new w.Event('input'));
+        d.querySelector('#dsave').click(); await sleep(280);
+        ok(Object.keys(db.docs).filter((k) => k.indexOf(B + '/diary/uidA__') === 0).length === 1,
+          'a page written while it is on is sent');
+        const keptBond = Object.assign({}, db.docs[B]);
+        await N.LOVEDB.untie('uidA__uidB');
+        await sleep(200);
+        ok(!db.docs[B] && Object.keys(db.docs).filter((k) => k.indexOf(B + '/diary/uidA__') === 0).length === 0,
+          'and untying the thread takes my diary pages with it, not just out of reach');
+        /* The checks after this one are still about a couple, so put the thread
+           back the way it was before this digression. */
+        db.put(B, Object.assign(keptBond, { aDiary: false, bDiary: false }));
+        await sleep(120);
+        w.localStorage.removeItem('nabu-diary'); w.localStorage.removeItem('nabu-diary-draft'); }
 
       N.BE.user = { uid: 'uidA', email: 'a@test' };
       w.localStorage.removeItem('nabu-love');

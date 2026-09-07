@@ -102,7 +102,13 @@ function alertsWatchLove() {
       const had = alertSeen('love.bond');
       if (had === null) return;
       alertWas('love.bond', '');
-      if (had) alertSay({ id: 'love-untied-' + had, k: 'love', t: S.alertUntied, b: S.alertUntiedBody, href: '#/love' }, true);
+      if (had) {
+        alertSay({ id: 'love-untied-' + had, k: 'love', t: S.alertUntied, b: S.alertUntiedBody, href: '#/love' }, true);
+        /* Whoever untied cleared their own pages. This is the other side
+           clearing theirs, the moment it hears. */
+        LOVEDB.clearMyDiary(had).catch(() => {});
+      }
+      alertWas('love.diary', '');
       alertWas('love.state', ''); alertWas('love.ask', '');
       if (giftStop) { giftStop(); giftStop = null; }
       return;
@@ -137,6 +143,20 @@ function alertsWatchLove() {
     }
     if (state === 'married' && wasState !== null && wasState !== 'married') {
       alertSay({ id: 'love-wed-' + bond.id + '-' + (bond.marriedOn || ''), k: 'love', t: S.alertWed(name), b: S.alertWedBody, href: '#/love' }, true);
+    }
+
+    /* Asking to share diaries, and the answer to it. Neither used to be said
+       anywhere, so a request could sit unanswered for weeks. */
+    const step = LOVEDB.diaryStep(bond);
+    const wasStep = alertWas('love.diary', step);
+    if (wasStep !== null && step !== wasStep) {
+      if (step === 'invited') {
+        alertSay({ id: 'diary-ask-' + bond.id + '-' + Date.now(), k: 'love', t: S.alertDiaryAsk(name), b: S.alertDiaryAskBody, href: '#/play/diary' }, true);
+      } else if (step === 'on') {
+        alertSay({ id: 'diary-on-' + bond.id, k: 'love', t: S.alertDiaryOn(name), b: S.alertDiaryOnBody, href: '#/play/diary' }, true);
+      } else if (wasStep === 'on') {
+        alertSay({ id: 'diary-off-' + bond.id + '-' + Date.now(), k: 'love', t: S.alertDiaryOff(name), b: S.alertDiaryOffBody, href: '#/play/diary' }, true);
+      }
     }
 
     alertsAnniversary(bond, name);

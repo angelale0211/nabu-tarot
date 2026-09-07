@@ -719,6 +719,13 @@ const MOODS = ['😄', '🙂', '😌', '🥰', '🤩', '😐', '😔', '😢', '
 function renderDiary() {
   const S = T(), m = $('#main'), today = isoDate(new Date());
   const all = () => store.get('nabu-diary', {}) || {};
+  /* What is being typed, kept apart from what has been saved. Closing the tab
+     mid-sentence loses nothing, and nothing counts as written until Save. */
+  const draft = () => store.get('nabu-diary-draft', null);
+  /* Cleared means gone, not the string "null" sitting in its place. */
+  const setDraft = (o) => { if (o) store.set('nabu-diary-draft', o); else store.del('nabu-diary-draft'); };
+  const same = (a, b) => (a || { m: '', t: '' }).m === (b || { m: '', t: '' }).m
+    && String((a || {}).t || '') === String((b || {}).t || '');
   /* Two people who are tied may read each other's pages, if both say so. The
      bond and their pages arrive on their own time, so the screen redraws when
      they do rather than waiting for them. */
@@ -729,16 +736,28 @@ function renderDiary() {
   };
   NAV.cleanup = stopAll;
 
+  /* One question at a time. Whose move it is decides what the card says and
+     what button is on it - never two switches with nobody told to press one. */
   const shareHTML = () => {
     if (!bond) return '';
     const you = LOVE.other(bond, LOVEDB.me()), nm = (you && (you.name || (you.handle ? '@' + you.handle : ''))) || S.loveSomeone;
-    const mine = LOVEDB.diaryMine(bond), both = LOVEDB.diaryBoth(bond);
-    const state = both ? S.diaryShareBoth(nm) : mine ? S.diaryShareWait(nm) : S.diaryShareOff;
-    return '<div class="card sharecard' + (both ? ' on' : '') + '">'
-      + '<div class="ghead"><span class="gk">\uD83E\uDDE7</span><h3>' + esc(S.diaryShareTitle) + '</h3></div>'
-      + '<p class="hint" style="margin-bottom:10px">' + esc(S.diaryShareHint) + '</p>'
-      + '<label class="remind"><input type="checkbox" id="dshare"' + (mine ? ' checked' : '') + '><span>' + esc(S.diaryShareAsk(nm)) + '</span></label>'
-      + '<p class="hint' + (both ? ' ok' : '') + '" id="dsharest">' + esc(state) + '</p></div>';
+    const step = LOVEDB.diaryStep(bond);
+    const head = '<div class="ghead"><span class="gk">\uD83E\uDDE7</span><h3>' + esc(S.diaryShareTitle) + '</h3></div>';
+    const body = {
+      off: '<p class="hint">' + esc(S.diaryShareHint) + '</p>'
+        + '<button type="button" class="btn primary block" id="dask">' + esc(S.diaryAsk(nm)) + '</button>',
+      asked: '<p class="hint">' + esc(S.diaryWait(nm)) + '</p>'
+        + '<button type="button" class="btn block" id="dstop">' + esc(S.diaryTakeBack) + '</button>',
+      invited: '<p class="lead">' + esc(S.diaryInvited(nm)) + '</p>'
+        + '<p class="hint">' + esc(S.diaryInvitedHint) + '</p>'
+        + '<div class="row"><button type="button" class="btn primary" id="dyes">' + esc(S.diaryApprove) + '</button>'
+        + '<button type="button" class="btn" id="dno">' + esc(S.diaryDecline) + '</button></div>',
+      on: '<p class="hint ok">' + esc(S.diaryShareBoth(nm)) + '</p>'
+        + '<p class="hint">' + esc(S.diaryStopHint) + '</p>'
+        + '<button type="button" class="btn block danger" id="dstop">' + esc(S.diaryStop) + '</button>'
+    }[step];
+    return '<div class="card sharecard step-' + step + (step === 'on' ? ' on' : '') + (step === 'invited' ? ' fresh' : '') + '">'
+      + head + body + '<p class="hint" id="dsharest"></p></div>';
   };
 
   const theirHTML = () => {
@@ -753,40 +772,87 @@ function renderDiary() {
   };
 
   const draw = () => {
-    const d = all(), cur = d[today] || { m: '', t: '' }, days = Object.keys(d).filter((k) => k !== today).sort().reverse();
+    const d = all(), saved = d[today] || null;
+    const dr = draft();
+    /* The draft wins while there is one, so a redraw does not throw away
+       half a sentence. */
+    const cur = dr || saved || { m: '', t: '' };
+    /* Today is on the shelf too, once it has been saved: seeing it arrive
+       there is the whole point of pressing the button. */
+    const days = Object.keys(d).sort().reverse();
     m.innerHTML = '<div class="eyebrow">' + esc(S.actTitle) + '</div><h1 style="margin-bottom:6px">📔 ' + esc(S.diaryTitle) + '</h1><p class="muted">' + esc(S.diaryIntro) + '</p>'
-      + '<div class="card diary ' + diaryPaperClass() + '"><div class="date"><span>' + esc(S.diaryToday) + ' · ' + esc(fmtDate(today)) + '</span><span class="faint" id="dsaved">' + (cur.t || cur.m ? esc(S.diarySaved) : '') + '</span></div>'
+      + '<div class="card diary ' + diaryPaperClass() + '"><div class="date"><span>' + esc(S.diaryToday) + ' · ' + esc(fmtDate(today)) + '</span><span class="faint" id="dsaved"></span></div>'
       + '<p class="hint" style="margin:8px 0 6px">' + esc(S.diaryMood) + '</p><div class="moods">' + MOODS.map((x) => '<button type="button" class="mood' + (cur.m === x ? ' on' : '') + '" data-mood="' + x + '">' + x + '</button>').join('') + '</div>'
-      + '<textarea id="dtext" placeholder="' + esc(S.diaryPh) + '">' + esc(cur.t || '') + '</textarea></div>'
-      + '<h3 style="margin:16px 0 8px">' + esc(S.diaryPast) + (days.length ? ' <span class="faint">· ' + esc(S.diaryCount(days.length + (cur.t || cur.m ? 1 : 0))) + '</span>' : '') + '</h3>'
-      + (days.length ? days.map((k) => '<div class="card diary past ' + diaryPaperClass() + '" data-day="' + k + '"><div class="date"><span>' + (d[k].m ? d[k].m + ' ' : '') + esc(fmtDate(k)) + '</span><button type="button" class="linkbtn" data-ddel="' + k + '">' + esc(S.diaryDel) + '</button></div><p>' + esc(d[k].t || '').replace(/\n/g, '<br>') + '</p></div>').join('') : '<p class="hint">' + esc(S.diaryEmpty) + '</p>')
+      + '<textarea id="dtext" placeholder="' + esc(S.diaryPh) + '">' + esc(cur.t || '') + '</textarea>'
+      + '<button type="button" class="btn primary block" id="dsave" style="margin-top:10px">' + esc(S.diarySave) + '</button></div>'
+      + '<h3 style="margin:16px 0 8px">' + esc(S.diaryPast) + (days.length ? ' <span class="faint">· ' + esc(S.diaryCount(days.length)) + '</span>' : '') + '</h3>'
+      + (days.length ? days.map((k) => '<div class="card diary past' + (k === today ? ' istoday' : '') + ' ' + diaryPaperClass() + '" data-day="' + k + '"><div class="date"><span>' + (d[k].m ? d[k].m + ' ' : '') + (k === today ? esc(S.diaryToday) + ' · ' : '') + esc(fmtDate(k)) + '</span><button type="button" class="linkbtn" data-ddel="' + k + '">' + esc(S.diaryDel) + '</button></div><p>' + esc(d[k].t || '').replace(/\n/g, '<br>') + '</p></div>').join('') : '<p class="hint">' + esc(S.diaryEmpty) + '</p>')
       + theirHTML()
       + shareHTML()
       + lookStripHTML('diary')
       + '<p style="margin-top:12px"><a href="#/play" class="backlink">← ' + esc(S.actBack) + '</a></p>';
     bindLookStrip(m, draw);
-    { const sh = $('#dshare');
-      if (sh) sh.addEventListener('change', async () => {
+    /* Saying yes - whether asking or approving - is the same write: my own
+       consent. Two of them make it live, which is what the rule reads. */
+    const answer = async (btn, on) => {
+      const b = $(btn); if (!b) return;
+      b.addEventListener('click', async () => {
         const st = $('#dsharest');
-        sh.disabled = true; st.className = 'hint'; st.textContent = S.loveSaving;
+        b.disabled = true; st.className = 'hint'; st.textContent = S.loveSaving;
         try {
-          await LOVEDB.setDiaryShare(bond.id, bond, sh.checked);
-          /* Switching it on sends today's page, so there is something to see
-             at once; switching it off has already taken everything back. */
-          if (sh.checked) { const d3 = all()[today]; if (d3) await LOVEDB.putDiaryDay(bond.id, today, d3); }
-        } catch (e) { sh.checked = !sh.checked; st.className = 'hint err'; st.textContent = loveWhy(e); }
-        sh.disabled = false;
-      }); }
-    const save = () => {
-      const d2 = all(); const t = $('#dtext').value, mo = ($('.mood.on', m) || {}).getAttribute ? $('.mood.on', m).getAttribute('data-mood') : '';
-      if (t.trim() || mo) d2[today] = { m: mo || '', t: t }; else delete d2[today];
-      store.set('nabu-diary', d2); $('#dsaved').textContent = t.trim() || mo ? S.diarySaved : '';
-      /* Only while the switch is on, and only the day being written. */
-      if (bond && LOVEDB.diaryMine(bond)) LOVEDB.putDiaryDay(bond.id, today, d2[today]).catch(() => {});
+          await LOVEDB.setDiaryShare(bond.id, bond, on);
+          /* Agreeing sends what is already written for today, so there is
+             something to read at once. Stopping has already taken it back. */
+          if (on) { const d3 = all()[today]; if (d3) await LOVEDB.putDiaryDay(bond.id, today, d3); }
+          toast(on ? S.diaryAskSent : S.diaryStopped);
+        } catch (e) { b.disabled = false; st.className = 'hint err'; st.textContent = loveWhy(e); }
+      });
     };
-    $('#dtext').addEventListener('input', save);
-    $$('[data-mood]', m).forEach((b) => b.addEventListener('click', () => { const on = b.classList.contains('on'); $$('[data-mood]', m).forEach((x) => x.classList.remove('on')); if (!on) b.classList.add('on'); save(); }));
-    $$('[data-ddel]', m).forEach((b) => b.addEventListener('click', () => { if (!confirm(S.confirmDel)) return; const d2 = all(); delete d2[b.getAttribute('data-ddel')]; store.set('nabu-diary', d2); draw(); }));
+    answer('#dask', true);
+    answer('#dyes', true);
+    answer('#dno', false);
+    answer('#dstop', false);
+    const onScreen = () => {
+      const t = $('#dtext').value, on2 = $('.mood.on', m);
+      return { m: on2 ? on2.getAttribute('data-mood') : '', t: t };
+    };
+    /* What the corner says: nothing when the page is empty and untouched,
+       otherwise whether what is on screen is what was saved. */
+    const mark = () => {
+      const now = onScreen(), empty = !now.t.trim() && !now.m;
+      const st = $('#dsaved');
+      if (empty && !saved) { st.textContent = ''; st.className = 'faint'; return; }
+      const clean = same(now, saved);
+      st.textContent = clean ? S.diarySaved : S.diaryUnsaved;
+      st.className = clean ? 'faint ok' : 'faint warn';
+    };
+    /* Typing keeps a draft so nothing is lost, and writes no page. */
+    const keep = () => { setDraft(onScreen()); mark(); };
+    $('#dtext').addEventListener('input', keep);
+    $$('[data-mood]', m).forEach((b) => b.addEventListener('click', () => { const on = b.classList.contains('on'); $$('[data-mood]', m).forEach((x) => x.classList.remove('on')); if (!on) b.classList.add('on'); keep(); }));
+    mark();
+
+    $('#dsave').addEventListener('click', async () => {
+      const now = onScreen(), d2 = all();
+      if (!now.t.trim() && !now.m) { toast(S.diaryNothing); return; }
+      d2[today] = { m: now.m || '', t: now.t };
+      store.set('nabu-diary', d2);
+      setDraft(null);
+      /* Sent to a partner on save, not on every keystroke - which is both what
+         anybody would expect and a great many fewer writes. */
+      if (bond && LOVEDB.diaryMine(bond)) LOVEDB.putDiaryDay(bond.id, today, d2[today]).catch(() => {});
+      toast(S.diarySavedToast);
+      draw();
+    });
+    $$('[data-ddel]', m).forEach((b) => b.addEventListener('click', () => {
+      if (!confirm(S.confirmDel)) return;
+      const k = b.getAttribute('data-ddel'), d2 = all();
+      delete d2[k]; store.set('nabu-diary', d2);
+      /* Otherwise the draft would put today's page straight back. */
+      if (k === today) setDraft(null);
+      if (k === today && bond && LOVEDB.diaryMine(bond)) LOVEDB.putDiaryDay(bond.id, today, null).catch(() => {});
+      draw();
+    }));
   };
   draw();
 

@@ -494,6 +494,14 @@ const LOVEDB = {
     if (!on) await this.clearMyDiary(id);
   },
   diaryMine(bond) { return !!(bond && (bond.a === this.me() ? bond.aDiary : bond.bDiary)); },
+  diaryTheirs(bond) { return !!(bond && (bond.a === this.me() ? bond.bDiary : bond.aDiary)); },
+  /* Whose turn it is, in one word. 'off' nobody has asked; 'asked' I have and
+     am waiting; 'invited' they have and it is on me; 'on' both have. */
+  diaryStep(bond) {
+    if (!bond) return 'off';
+    const mine = this.diaryMine(bond), theirs = this.diaryTheirs(bond);
+    return mine && theirs ? 'on' : mine ? 'asked' : theirs ? 'invited' : 'off';
+  },
   diaryBoth(bond) { return !!(bond && bond.aDiary && bond.bDiary); },
   /* One page, the day it belongs to. Only what is written while the switch is
      on ever goes; there is no sweep of the archive behind anybody's back. */
@@ -529,6 +537,11 @@ const LOVEDB = {
   },
   /* Untying is one person's decision and needs nobody's permission. */
   async untie(id) {
+    /* Diary pages go with it. Once the bond is gone the rule refuses every
+       read of them, but unreadable is not the same as deleted. Each side
+       clears its own - the deletion rule asks only who wrote a page, so this
+       still works after the bond itself has gone. */
+    await this.clearMyDiary(id).catch(() => {});
     await BE.db.collection('bonds').doc(id).delete();
     LOVE.save({ bond: '', since: '', withName: '' });
   }

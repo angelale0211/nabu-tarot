@@ -1280,11 +1280,21 @@ h1 .pileico{width:34px;height:27px;vertical-align:-3px;margin-right:2px}
 .giftstep{margin:12px 0 6px;font-size:12.5px;font-weight:600;color:var(--fg-soft)}
 .gp.on{border-color:var(--accent);box-shadow:0 0 0 2px var(--accent) inset}
 .btn.danger{color:var(--err);border-color:var(--err)}
+/* Saved and not-saved say so in the corner of the page being written, and
+   today's saved page is marked where it joins the shelf. */
+.diary .date .ok{color:var(--ok)}
+.diary .date .warn{color:var(--err)}
+.diary.past.istoday{border-color:var(--lav)}
+
 /* Somebody else's pages, marked as theirs so they are never mistaken for
    your own, and the switch that lets them be seen at all. */
 .diary.theirs{border-style:dashed}
 .sharecard{border:1px solid var(--rule)}
 .sharecard.on{border-color:var(--lav)}
+/* A request waiting on you is the one state that should catch the eye. */
+.sharecard.fresh{border-color:var(--pink);box-shadow:0 0 0 3px var(--pink-soft,rgba(246,187,203,.35))}
+.sharecard .row{gap:8px}
+.sharecard .row .btn{flex:1;min-width:0}
 
 /* A folding group on the profile. The tab was eleven unrelated cards in the
    order they were written; these are four named groups, and the two nobody
