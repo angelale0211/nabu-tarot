@@ -594,6 +594,69 @@ function pullToRefresh() {
   document.addEventListener('touchcancel', () => { pulling = false; show(0); dist = 0; }, { passive: true });
 }
 
+/* ---- a photograph from the chat ----
+
+   The chat carries pictures both ways: Nabu sends the bank QR code, and the
+   receipt comes back. Tapping one used to follow a link to a data: URL, which
+   every browser blocks at the top level - so nothing happened at all, and
+   nothing said why.
+
+   One tap now puts it on the phone and says so. Saving goes through a blob,
+   because that is the form browsers will write to disk; a data: URL on a
+   download link is ignored as often as not.
+
+   iOS is the exception and cannot be argued with: Safari ignores the download
+   attribute entirely. There the tap opens the picture large and gives the
+   instruction that does work - press and hold, then Save Image. A button that
+   quietly fails would be worse than saying so plainly. */
+function imageViewer() {
+  const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent)
+    || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+  let box = null;
+  const shut = () => { if (box) { box.remove(); box = null; } };
+
+  /* Big, with the one instruction that works on this phone. */
+  const show = (src) => {
+    const S = T();
+    shut();
+    box = document.createElement('div');
+    box.className = 'imgview';
+    box.innerHTML = '<button type="button" class="ivx" aria-label="' + esc(S.sheetClose) + '">\u2715</button>'
+      + '<img src="' + esc(src) + '" alt="">'
+      + '<p class="hint">' + esc(S.imgHold) + '</p>';
+    document.body.appendChild(box);
+    box.addEventListener('click', (e) => { if (e.target === box) shut(); });
+    box.querySelector('.ivx').addEventListener('click', shut);
+  };
+
+  const keep = async (src) => {
+    try {
+      const blob = await (await fetch(src)).blob();
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'nabu-' + Date.now() + '.jpg';
+      document.body.appendChild(a);
+      a.click();
+      setTimeout(() => { URL.revokeObjectURL(url); a.remove(); }, 1000);
+      toast(T().imgSaved);
+    } catch (e) {
+      /* If the phone would not take it, show it and say how to keep it by
+         hand rather than failing in silence. */
+      show(src);
+    }
+  };
+
+  /* One listener for every chat there is or ever will be. */
+  document.addEventListener('click', (e) => {
+    const img = e.target.closest && e.target.closest('img.att[data-img]');
+    if (!img) return;
+    const src = img.getAttribute('src');
+    if (isIOS) show(src); else keep(src);
+  });
+  document.addEventListener('keydown', (e) => { if (e.key === 'Escape') shut(); });
+}
+
 function boot() {
   window.addEventListener('hashchange', route);
   document.addEventListener('click', (e) => {
@@ -610,6 +673,7 @@ function boot() {
   $('#theme').addEventListener('click', () => { const cur = effectiveTheme(); setTheme(THEMES[(THEMES.indexOf(cur) + 1) % THEMES.length]); });
   applyTheme();
   pullToRefresh();
+  imageViewer();
   route();
   if ('serviceWorker' in navigator && location.protocol !== 'file:') {
     window.addEventListener('load', () => {

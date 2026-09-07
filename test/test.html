@@ -1086,6 +1086,20 @@ async function go(hash, sel) { W().location.hash = hash; await sleep(30); return
         const yes = N.ALERTS.all().filter((n) => n.id.indexOf('love-yes-') === 0)[0];
         ok(yes && /🎉/.test(yes.t) && /Nam/.test(yes.t) && /💍/.test(yes.b),
           'and being said yes to is a congratulation, not a silent change of state');
+        { /* The couple say they have married; a guest says they were there.
+             One line said the guest's version to everybody, including the two
+             people whose wedding it was. */
+          const w2 = { uids: ['uidA', 'uidB'], a: 'uidA', b: 'uidB', aName: 'Mai', bName: 'Nam' };
+          N.BE.user = { uid: 'uidA', email: 'a@test' };
+          const asBride = N.shareLine(w2);
+          N.BE.user = { uid: 'uidG', email: 'g@test' };
+          const asGuest = N.shareLine(w2);
+          N.BE.user = { uid: 'uidA', email: 'a@test' };
+          ok(asBride !== asGuest && /Nam/.test(asBride) && !/Mai/.test(asBride),
+            'the couple say they have married, naming the person they married');
+          ok(/Mai/.test(asGuest) && /Nam/.test(asGuest),
+            'while a guest says they were at the wedding of both of them');
+        }
 
         /* A gift from the other side arrives as its own line; my own does not. */
         const later = Date.now() + 60000;
@@ -1493,6 +1507,28 @@ async function go(hash, sel) { W().location.hash = hash; await sleep(30); return
         db.put(B, Object.assign({}, db.docs[B], { state: 'tied', marriedOn: null }));
         w.localStorage.setItem('nabu-love', JSON.stringify({ bond: 'uidA__uidB', stage: 'tied' })); }
 
+      { /* A reply from Nabu has to reach the bell. The thread writes the
+             sender as 'nabu' and the watcher looked for 'admin', so nobody was
+             ever told they had an answer. */
+        N.BE.user = { uid: 'uidA', email: 'a@test' };
+        w.localStorage.removeItem('nabu-alerts');
+        { const seen = JSON.parse(w.localStorage.getItem('nabu-alert-state') || '{}');
+          seen['msg.last'] = 'old'; w.localStorage.setItem('nabu-alert-state', JSON.stringify(seen)); }
+        db.put('threads/uidA', { lastFrom: 'nabu', lastText: 'Nabu đã nhận được yêu cầu của bạn', lastAt: 4242, userUnread: 1 });
+        N.alertsStart(); await sleep(320);
+        const said = N.ALERTS.all().filter((x) => x.id.indexOf('msg-') === 0);
+        ok(said.length === 1 && /Nabu/.test(said[0].t),
+          'a reply from Nabu reaches the bell, rather than waiting to be noticed');
+        /* And the profile tab carries the count, so it is visible without
+           opening anything. In the app this listener starts at sign-in. */
+        N.BE.watchUnread();
+        await sleep(200);
+        await go('#/home', '#main'); await sleep(180);
+        const badge = d.querySelector('.nav a[href="#/me"] .badge');
+        ok(badge && Number(badge.textContent) >= 1,
+          'and the profile tab shows how many are waiting');
+        N.ALERTS.clear(); }
+
       /* ---- the diary, read by two ---- */
       { const B = 'bonds/uidA__uidB';
         N.BE.user = { uid: 'uidA', email: 'a@test' };
@@ -1557,10 +1593,17 @@ async function go(hash, sel) { W().location.hash = hash; await sleep(30); return
         ok(Object.keys(db.docs).filter((k) => k.indexOf(B + '/diary/uidA__') === 0).length === 1,
           'a page written while it is on is sent');
         const keptBond = Object.assign({}, db.docs[B]);
+        /* A room from the marriage they are leaving must not be waiting for
+           them if they ever come back: it is named after the pair, so the same
+           two people always land on the same one. */
+        db.put('weddings/uidA__uidB', { uids: ['uidA', 'uidB'], a: 'uidA', b: 'uidB',
+          aName: 'Mai', bName: 'Nam', startMs: Date.now() - 86400000, state: 'ended', step: 7, doneAt: Date.now() - 86000000 });
         await N.LOVEDB.untie('uidA__uidB');
-        await sleep(200);
+        await sleep(240);
         ok(!db.docs[B] && Object.keys(db.docs).filter((k) => k.indexOf(B + '/diary/uidA__') === 0).length === 0,
           'and untying the thread takes my diary pages with it, not just out of reach');
+        ok(!db.docs['weddings/uidA__uidB'],
+          'and the wedding room too, so coming back together is not met with the ceremony they left');
         /* The checks after this one are still about a couple, so put the thread
            back the way it was before this digression. */
         db.put(B, Object.assign(keptBond, { aDiary: false, bDiary: false }));

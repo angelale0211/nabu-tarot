@@ -567,6 +567,12 @@ const LOVEDB = {
        clears its own - the deletion rule asks only who wrote a page, so this
        still works after the bond itself has gone. */
     await this.clearMyDiary(id).catch(() => {});
+    /* And the wedding room. A room is named after the pair, so the same two
+       people always come back to the same one - which is how a couple who
+       untied and returned were shown the ceremony they had already left. The
+       room's own rule asks who is in its uids, not whether the thread is still
+       there, so this works after the bond has gone. */
+    await BE.db.collection('weddings').doc(id).delete().catch(() => {});
     await BE.db.collection('bonds').doc(id).delete();
     LOVE.save({ bond: '', since: '', withName: '' });
   }

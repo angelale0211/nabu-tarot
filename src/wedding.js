@@ -348,12 +348,12 @@ const WEDMUSIC = {
    with the phone in flight mode. */
 function cupidSVG(mood) {
   const joy = mood === 'joy';
-  const glow = joy ? '.95' : '.55';
-  const CREAM = '#FFFDF6', EDGE = '#D6BEF0', SKIN = '#FFF6EC', SKIN_E = '#E7CDBA';
-  const HAIR = '#F2D9A6', HAIR_D = '#E0BE7E', EYE = '#4B2E86', BLUSH = '#F7B7C4';
+  const glow = joy ? '.95' : '.5';
+  const CREAM = '#FFFDF6', EDGE = '#D9C4EF', SKIN = '#FFF3E4', SKIN_E = '#E9CDB6';
+  const HAIR = '#F6DFAE', HAIR_D = '#E2BF80', EYE = '#43268A', BLUSH = '#F9AFC0';
   /* Held between the two hands and dipping, with the knot at the bottom of the
-     dip - the one part of the first drawing that already said the right thing. */
-  const CORD = 'M25 78 C 38 106, 82 106, 95 78';
+     dip. Unchanged: this part was already saying the right thing. */
+  const CORD = 'M25 84 C 38 110, 82 110, 95 84';
   const heart = (x, y, sc, fill, op) => '<g transform="translate(' + x + ',' + y + ') scale(' + sc + ')" opacity="' + op + '">'
     + '<path d="M0 6 C -7 1, -10 -4, -7 -8 C -4.5 -11, -1 -9.5, 0 -6.5'
     + ' C 1 -9.5, 4.5 -11, 7 -8 C 10 -4, 7 1, 0 6 Z" fill="' + fill + '"/></g>';
@@ -363,58 +363,67 @@ function cupidSVG(mood) {
     + '<radialGradient id="cupglow"><stop offset="0" stop-color="#FFF3C4" stop-opacity="' + glow + '"/>'
     + '<stop offset="1" stop-color="#FFF3C4" stop-opacity="0"/></radialGradient>'
     + '<linearGradient id="cuprobe" x1="0" y1="0" x2="0" y2="1">'
-    + '<stop offset="0" stop-color="' + CREAM + '"/><stop offset="1" stop-color="#E9DAF8"/></linearGradient>'
+    + '<stop offset="0" stop-color="' + CREAM + '"/><stop offset="1" stop-color="#EADCF8"/></linearGradient>'
     + '<linearGradient id="cupwing" x1="0" y1="0" x2="0" y2="1">'
-    + '<stop offset="0" stop-color="#FBF6FF"/><stop offset="1" stop-color="#E6D8F7"/></linearGradient>'
+    + '<stop offset="0" stop-color="#FFFBFF"/><stop offset=".7" stop-color="#EFE3FB"/>'
+    + '<stop offset="1" stop-color="#F7DCE8"/></linearGradient>'
     + '</defs>'
-    + '<circle cx="60" cy="52" r="54" fill="url(#cupglow)"/>'
+    + '<circle cx="60" cy="50" r="55" fill="url(#cupglow)"/>'
 
-    /* wings: a soft curve up, and a scalloped edge underneath so they read as
-       feathers rather than as two leaves */
+    /* wings: rounder, scalloped along the bottom, a blush of pink at the base */
     + '<g stroke="' + EDGE + '" stroke-width="1.5" stroke-linejoin="round">'
-    + '<path d="M44 58 C 26 40, 8 40, 6 54 C 4 66, 14 72, 24 70'
-    + ' q 3 4, 7 -1 q 3 4, 7 -1 q 3 4, 6 -2 Z" fill="url(#cupwing)"/>'
-    + '<path d="M76 58 C 94 40, 112 40, 114 54 C 116 66, 106 72, 96 70'
-    + ' q -3 4, -7 -1 q -3 4, -7 -1 q -3 4, -6 -2 Z" fill="url(#cupwing)"/>'
+    + '<path d="M45 66 C 30 48, 10 46, 7 60 C 4 74, 16 80, 27 77'
+    + ' q 3.5 4.5, 8 -1 q 3.5 4.5, 8 -1 q 2.5 3.5, 5 -2 Z" fill="url(#cupwing)"/>'
+    + '<path d="M75 66 C 90 48, 110 46, 113 60 C 116 74, 104 80, 93 77'
+    + ' q -3.5 4.5, -8 -1 q -3.5 4.5, -8 -1 q -2.5 3.5, -5 -2 Z" fill="url(#cupwing)"/>'
     + '</g>'
 
-    /* a robe that falls in a bell, with a hem */
-    + '<path d="M60 52 C 69 52, 74 58, 76 68 L 82 96 C 75 101, 66 103, 60 103'
-    + ' C 54 103, 45 101, 38 96 L 44 68 C 46 58, 51 52, 60 52 Z"'
+    /* a small body under a big head - the whole trick, and half measures on it
+       look like a small adult */
+    + '<path d="M60 60 C 68 60, 72 66, 73 74 L 77 99 C 71 103, 65 105, 60 105'
+    + ' C 55 105, 49 103, 43 99 L 47 74 C 48 66, 52 60, 60 60 Z"'
     + ' fill="url(#cuprobe)" stroke="' + EDGE + '" stroke-width="1.6" stroke-linejoin="round"/>'
-    + '<path d="M39 95 C 47 100, 73 100, 81 95" fill="none" stroke="' + EDGE + '" stroke-width="1.4" opacity=".8"/>'
+    + '<path d="M44 98 C 51 102, 69 102, 76 98" fill="none" stroke="' + EDGE + '" stroke-width="1.3" opacity=".75"/>'
+    /* little bare feet - a small being rather than a floating bell */
+    + '<ellipse cx="53" cy="106" rx="4.6" ry="3.2" fill="' + SKIN + '" stroke="' + SKIN_E + '" stroke-width="1.1"/>'
+    + '<ellipse cx="67" cy="106" rx="4.6" ry="3.2" fill="' + SKIN + '" stroke="' + SKIN_E + '" stroke-width="1.1"/>'
 
-    /* sleeves widening to the wrists, and small hands at the ends */
-    + '<path d="M46 62 C 38 65, 31 70, 26 76 l 6 5 C 38 74, 44 70, 49 68 Z"'
-    + ' fill="url(#cuprobe)" stroke="' + EDGE + '" stroke-width="1.4" stroke-linejoin="round"/>'
-    + '<path d="M74 62 C 82 65, 89 70, 94 76 l -6 5 C 82 74, 76 70, 71 68 Z"'
-    + ' fill="url(#cuprobe)" stroke="' + EDGE + '" stroke-width="1.4" stroke-linejoin="round"/>'
-    + '<circle cx="27.5" cy="79" r="4.6" fill="' + SKIN + '" stroke="' + SKIN_E + '" stroke-width="1.2"/>'
-    + '<circle cx="92.5" cy="79" r="4.6" fill="' + SKIN + '" stroke="' + SKIN_E + '" stroke-width="1.2"/>'
+    /* arms out to the cord, with small round hands */
+    + '<path d="M47 70 C 39 73, 32 77, 27 82" stroke="' + EDGE + '" stroke-width="7.6" fill="none" stroke-linecap="round"/>'
+    + '<path d="M47 70 C 39 73, 32 77, 27 82" stroke="' + CREAM + '" stroke-width="5.2" fill="none" stroke-linecap="round"/>'
+    + '<path d="M73 70 C 81 73, 88 77, 93 82" stroke="' + EDGE + '" stroke-width="7.6" fill="none" stroke-linecap="round"/>'
+    + '<path d="M73 70 C 81 73, 88 77, 93 82" stroke="' + CREAM + '" stroke-width="5.2" fill="none" stroke-linecap="round"/>'
+    + '<circle cx="26" cy="84" r="4.8" fill="' + SKIN + '" stroke="' + SKIN_E + '" stroke-width="1.1"/>'
+    + '<circle cx="94" cy="84" r="4.8" fill="' + SKIN + '" stroke="' + SKIN_E + '" stroke-width="1.1"/>'
 
-    /* a big head on a small body, which is what makes anything look sweet */
-    + '<circle cx="60" cy="33" r="19.5" fill="' + SKIN + '" stroke="' + SKIN_E + '" stroke-width="1.4"/>'
-    /* hair, with a soft fringe following the curve of the head */
-    + '<path d="M41 30 C 41 16, 50 11, 60 11 C 70 11, 79 16, 79 30'
-    + ' C 76 25, 72 22, 66 23 C 62 19, 56 19, 52 23 C 46 22, 43 25, 41 30 Z"'
+    /* the head: wider than it is tall, which is what reads as a small child */
+    + '<ellipse cx="60" cy="36" rx="23" ry="21" fill="' + SKIN + '" stroke="' + SKIN_E + '" stroke-width="1.4"/>'
+    /* hair: three soft curls onto the forehead, and one at each cheek */
+    + '<path d="M37 34 C 37 17, 47 10, 60 10 C 73 10, 83 17, 83 34'
+    + ' C 79 27, 74 25, 70 27 C 67 20, 60 19, 57 26 C 53 20, 46 22, 44 28'
+    + ' C 41 26, 38 29, 37 34 Z"'
     + ' fill="' + HAIR + '" stroke="' + HAIR_D + '" stroke-width="1.2" stroke-linejoin="round"/>'
-    /* eyes with light in them, a small smile, and cheeks */
-    + '<ellipse cx="53" cy="34.5" rx="2.9" ry="3.4" fill="' + EYE + '"/>'
-    + '<ellipse cx="67" cy="34.5" rx="2.9" ry="3.4" fill="' + EYE + '"/>'
-    + '<circle cx="54.1" cy="33.2" r="1.05" fill="#fff"/>'
-    + '<circle cx="68.1" cy="33.2" r="1.05" fill="#fff"/>'
-    + '<ellipse cx="46.5" cy="39.5" rx="3.6" ry="2.4" fill="' + BLUSH + '" opacity=".62"/>'
-    + '<ellipse cx="73.5" cy="39.5" rx="3.6" ry="2.4" fill="' + BLUSH + '" opacity=".62"/>'
-    + '<path d="M55.6 41.4 q4.4 3.6, 8.8 0" stroke="' + EYE + '" stroke-width="1.7" fill="none" stroke-linecap="round"/>'
+    + '<path d="M37 33 C 33 38, 34 45, 38 47 C 36 42, 36 37, 38 34 Z" fill="' + HAIR + '" stroke="' + HAIR_D + '" stroke-width="1.1"/>'
+    + '<path d="M83 33 C 87 38, 86 45, 82 47 C 84 42, 84 37, 82 34 Z" fill="' + HAIR + '" stroke="' + HAIR_D + '" stroke-width="1.1"/>'
+    /* big eyes, set low and wide, with a large highlight and a small one */
+    + '<ellipse cx="51" cy="40" rx="4.4" ry="5.2" fill="' + EYE + '"/>'
+    + '<ellipse cx="69" cy="40" rx="4.4" ry="5.2" fill="' + EYE + '"/>'
+    + '<circle cx="52.6" cy="38" r="1.7" fill="#fff"/>'
+    + '<circle cx="70.6" cy="38" r="1.7" fill="#fff"/>'
+    + '<circle cx="49.6" cy="42.2" r="0.85" fill="#fff" opacity=".85"/>'
+    + '<circle cx="67.6" cy="42.2" r="0.85" fill="#fff" opacity=".85"/>'
+    /* cheeks, and a small mouth - small under big eyes reads sweet */
+    + '<ellipse cx="42.5" cy="45" rx="4.2" ry="2.7" fill="' + BLUSH + '" opacity=".6"/>'
+    + '<ellipse cx="77.5" cy="45" rx="4.2" ry="2.7" fill="' + BLUSH + '" opacity=".6"/>'
+    + '<path d="M57.4 47.6 q2.6 2.6, 5.2 0" stroke="' + EYE + '" stroke-width="1.6" fill="none" stroke-linecap="round"/>'
     /* the halo, in the thread's own gold */
-    + '<ellipse cx="60" cy="9.5" rx="11" ry="3.4" fill="none" stroke="#E5BE5E" stroke-width="2"/>'
+    + '<ellipse cx="60" cy="8" rx="11.5" ry="3.4" fill="none" stroke="#E5BE5E" stroke-width="2"/>'
 
     /* the thread, held */
     + '<path d="' + CORD + '" stroke="#8A0C20" stroke-width="6.4" fill="none" stroke-linecap="round"/>'
     + '<path d="' + CORD + '" stroke="#C4142F" stroke-width="4" fill="none" stroke-linecap="round"/>'
     + '<path d="' + CORD + '" stroke="#F0748C" stroke-width="1.3" fill="none" stroke-linecap="round" opacity=".5"/>'
-    /* and its knot, a small heart at the bottom of the dip */
-    + '<g transform="translate(60,99) scale(.14)">'
+    + '<g transform="translate(60,104) scale(.135)">'
     + '<path d="M120 150 C 82 130, 60 102, 68 80 C 75 60, 102 58, 113 76 C 116 81, 118 86, 120 91'
     + ' C 122 86, 124 81, 127 76 C 138 58, 165 60, 172 80 C 180 102, 158 130, 120 150 Z"'
     + ' transform="translate(-120,-104)" fill="none" stroke="#8A0C20" stroke-width="27"/>'
@@ -423,11 +432,11 @@ function cupidSVG(mood) {
     + ' transform="translate(-120,-104)" fill="none" stroke="#C4142F" stroke-width="15"/>'
     + '</g>'
 
-    /* small hearts near the hands, more of them when there is something to be
-       happy about */
-    + heart(23, 26, 0.62, '#F2789F', joy ? '.95' : '.55')
-    + heart(97, 30, 0.5, '#F2789F', joy ? '.9' : '.45')
-    + (joy ? heart(12, 44, 0.44, '#E5BE5E', '.9') + heart(108, 48, 0.4, '#E5BE5E', '.85') : '')
+    /* small hearts drifting, more of them when there is something to celebrate */
+    + heart(20, 30, 0.6, '#F2789F', joy ? '.95' : '.5')
+    + heart(100, 34, 0.48, '#F2789F', joy ? '.9' : '.42')
+    + (joy ? heart(11, 52, 0.42, '#E5BE5E', '.9') + heart(109, 56, 0.38, '#E5BE5E', '.85')
+        + heart(31, 16, 0.3, '#F2789F', '.8') : '')
     + '</svg>';
 }
 
@@ -488,6 +497,16 @@ function vowsHTML(w) {
 const PLAYED = { call: false };
 
 /* Coming, cannot, and has not said - the three groups a guest list is for. */
+/* Whose news it is. The couple say they have married; a guest says they were
+   there. One line said the guest's version to everybody, including the two
+   people whose wedding it was. */
+function shareLine(w) {
+  const S = T();
+  if (!WED.mine(w)) return S.wedShareGuest(w.aName || '', w.bName || '');
+  const other = WED.side(w) === 'a' ? (w.bName || '') : (w.aName || '');
+  return S.wedShareMine(other);
+}
+
 function guestListHTML(w, guests) {
   const S = T(), r = WED.rsvps(guests, (w && w.uids) || []);
   const line = (list) => list.map((g) => esc(g.name || S.loveSomeone)).join(' \u00b7 ');
@@ -554,12 +573,25 @@ function renderWedding(args) {
         + '<p class="lead" style="text-align:center">' + esc(w.state === 'married' ? S.wedOverMarried : S.wedOverCalled) + '</p>'
         + (w.state === 'married' && w.doneAt ? '<p class="wedwhen">' + esc(wedWhen(w.doneAt)) + '</p>' : '')
         + (won ? '<p class="hint" style="text-align:center">\uD83D\uDC90 ' + esc(S.wedCaught(won)) + '</p>' : '')
+        /* A ceremony that is over is over; another one is a new booking, which
+           is exactly what somebody who wants a second wedding expects. */
+        + (WED.mine(w)
+          ? '<button type="button" class="btn block" id="wedanother" style="margin-top:12px">' + esc(S.wedAnother) + '</button>'
+            + '<p class="hint">' + esc(S.wedAnotherHint) + '</p>'
+          : '')
         + '</div>'
         + (w.state === 'married' ? '<div class="card tellcard">'
           + '<div class="ghead"><span class="gk">\uD83D\uDCE3</span><h3>' + esc(S.wedTellTitle) + '</h3></div>'
-          + '<p class="tellline">\u201C' + esc(S.wedShareGuest(w.aName || '', w.bName || '')) + '\u201D</p>'
+          + '<p class="tellline">\u201C' + esc(shareLine(w)) + '\u201D</p>'
           + shareRowHTML('wedshare') + '</div>' : '');
-      bindShareRow(m, () => ({ text: S.wedShareGuest(w.aName || '', w.bName || ''), url: appURL() + '#/home' }));
+      bindShareRow(m, () => ({ text: shareLine(w), url: appURL() + '#/home' }));
+      { const again = $('#wedanother');
+        if (again) again.addEventListener('click', async () => {
+          if (!confirm(S.wedAnotherAsk)) return;
+          again.disabled = true;
+          try { await WED.drop(w.id); store.set('nabu-wed-want', 0); toast(S.wedAnotherDone); }
+          catch (e) { again.disabled = false; toast(loveWhy(e)); }
+        }); }
       return;
     }
     drawRoom(w, guests);

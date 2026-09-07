@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
 <title>Nabu Tarot</title>
 <meta name="description" content="Nabu Tarot: dự đoán mới, rút một lá bài xem năng lượng hiện tại, học tarot, Lenormand, chiêm tinh, và đặt lịch xem bài.">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'none'; object-src 'none'; form-action 'self'; script-src 'self' 'sha256-doiwO48ud9pYqSQh2IpAjHZlldweXNrTlbPgAOa/gA8=' https://www.gstatic.com https://apis.google.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; font-src 'self' data:; media-src 'self' data: blob:; worker-src 'self'; connect-src 'self' https://*.googleapis.com https://*.google.com https://*.firebaseio.com https://*.cloudfunctions.net https://*.workers.dev https://generativelanguage.googleapis.com; frame-src https://*.firebaseapp.com https://accounts.google.com https://*.facebook.com">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'none'; object-src 'none'; form-action 'self'; script-src 'self' 'sha256-CE1PnC/YLGONckQRfJgb0zOn+hDywENpoiGfACrlREk=' https://www.gstatic.com https://apis.google.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; font-src 'self' data:; media-src 'self' data: blob:; worker-src 'self'; connect-src 'self' https://*.googleapis.com https://*.google.com https://*.firebaseio.com https://*.cloudfunctions.net https://*.workers.dev https://generativelanguage.googleapis.com; frame-src https://*.firebaseapp.com https://accounts.google.com https://*.facebook.com">
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <meta name="theme-color" content="#EFE9FA">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -1633,6 +1633,16 @@ h1 .pileico{width:34px;height:27px;vertical-align:-3px;margin-right:2px}
 .sect .sbody > .card{background:var(--bg);border-color:var(--rule-soft)}
 .sect .sbody > :last-child{margin-bottom:12px}
 
+/* A photograph from the chat, over the page. The picture itself never fills
+   more than the screen, and everything else gets out of its way. */
+.imgview{position:fixed;inset:0;z-index:90;background:rgba(16,10,32,.92);display:flex;
+  flex-direction:column;align-items:center;justify-content:center;gap:14px;padding:20px}
+.imgview img{max-width:100%;max-height:72vh;border-radius:14px;box-shadow:0 8px 40px rgba(0,0,0,.5)}
+.imgview .ivx{position:absolute;top:calc(env(safe-area-inset-top,0px) + 12px);right:14px;width:38px;height:38px;
+  border-radius:999px;border:0;background:rgba(255,255,255,.16);color:#fff;font-size:17px;line-height:1;cursor:pointer}
+.imgview .hint{color:#EDE6F7;max-width:340px;text-align:center}
+.att{cursor:zoom-in}
+
 /* Pull down to refresh. The browser's own is switched off: it reloads the
    whole page and loses the screen you were standing on. */
 html,body{overscroll-behavior-y:contain}
@@ -2579,7 +2589,10 @@ const STR = {
     diaryShareWait: (n) => 'Bạn đã bật. Đợi ' + n + ' bật nữa là hai bạn đọc được của nhau.',
     diaryShareBoth: (n) => 'Cả hai đã bật. Bạn và ' + n + ' đọc được nhật ký của nhau ✨',
     diaryTheirs: (n) => 'Nhật ký của ' + n, diaryTheirsNone: (n) => n + ' chưa viết trang nào kể từ khi bật.',
+    meInboxHint: 'Mọi cuộc trò chuyện với khách nằm ở Hộp thư trong trang điều khiển.',
     meGroupYou: 'Bạn là ai', meGroupTalk: 'Trò chuyện & lịch hẹn', meGroupOwn: 'Bạn đang có gì', meGroupApp: 'Ứng dụng',
+    imgSaved: 'Đã lưu ảnh về máy 📷',
+    imgHold: 'Bạn nhấn giữ vào ảnh rồi chọn “Lưu ảnh” để lưu về máy nhé.',
     refreshed: 'Đã làm mới ✨', pullHint: 'Kéo xuống để làm mới',
     alertDiaryAsk: (n) => '💌 ' + n + ' muốn hai bạn đọc nhật ký của nhau',
     alertDiaryAskBody: 'Bạn mở nhật ký để trả lời nhé.',
@@ -2684,6 +2697,11 @@ const STR = {
       'Đổi ngày giờ: được một lần, chậm nhất trước giờ lễ 1 tiếng.',
       'Huỷ muộn hoặc không ai có mặt: lễ coi như đã dùng, không hoàn phí.'
     ],
+    wedShareMine: (n) => 'Mình và ' + n + ' đã chính thức nên duyên vợ chồng trên Nabu Tarot 💒',
+    wedAnother: 'Tổ chức một lễ cưới khác',
+    wedAnotherHint: 'Buổi lễ này đã khép lại. Hai bạn muốn tổ chức lần nữa thì đăng ký ngày giờ mới và thanh toán như lần đầu.',
+    wedAnotherAsk: 'Xoá phòng cưới cũ để đăng ký một buổi lễ mới? Buổi lễ mới cần thanh toán lại.',
+    wedAnotherDone: 'Hai bạn chọn ngày giờ mới nhé 💒',
     wedStart: 'Bắt đầu buổi lễ', wedStartsAt: (when) => 'Buổi lễ bắt đầu đúng ' + when + '. Nút này sẽ bấm được vào đúng giờ đó.',
     wedStartNow: 'Đã đến giờ. Một trong hai bạn bấm để bắt đầu nhé.',
     wedGuestWait: (when) => 'Buổi lễ bắt đầu lúc ' + when + '. Bạn cứ ở đây, sắp bắt đầu rồi.',
@@ -3282,7 +3300,10 @@ const STR = {
     diaryShareWait: (n) => 'You have switched it on. When ' + n + ' does too, you can read each other.',
     diaryShareBoth: (n) => 'Both switched on. You and ' + n + ' can read each other \u2728',
     diaryTheirs: (n) => n + '\u2019s diary', diaryTheirsNone: (n) => n + ' has not written a page since switching it on.',
+    meInboxHint: 'Every conversation with a visitor lives in the Inbox on the dashboard.',
     meGroupYou: 'Who you are', meGroupTalk: 'Messages & bookings', meGroupOwn: 'What you have', meGroupApp: 'The app',
+    imgSaved: 'Saved to your phone \uD83D\uDCF7',
+    imgHold: 'Press and hold the picture, then choose Save Image.',
     refreshed: 'Refreshed \u2728', pullHint: 'Pull down to refresh',
     alertDiaryAsk: (n) => '\uD83D\uDC8C ' + n + ' would like you to read each other\u2019s diaries',
     alertDiaryAskBody: 'Open the diary to answer.',
@@ -3387,6 +3408,11 @@ const STR = {
       'Moving the day: once, and no later than an hour before.',
       'Called off late, or nobody there: it counts as held, and the fee is not returned.'
     ],
+    wedShareMine: (n) => n + ' and I are married on Nabu Tarot \uD83D\uDC92',
+    wedAnother: 'Hold another wedding',
+    wedAnotherHint: 'This ceremony is finished. To hold another, choose a new day and pay as you did the first time.',
+    wedAnotherAsk: 'Clear the old room and book a new ceremony? The new one is paid for again.',
+    wedAnotherDone: 'Choose your new day and hour \uD83D\uDC92',
     wedStart: 'Begin the ceremony', wedStartsAt: (when) => 'The ceremony begins at ' + when + '. This button works at that hour, and not before.',
     wedStartNow: 'It is time. Either of you may begin.',
     wedGuestWait: (when) => 'The ceremony begins at ' + when + '. Stay where you are \u2014 it is nearly time.',
@@ -11124,6 +11150,69 @@ function pullToRefresh() {
   document.addEventListener('touchcancel', () => { pulling = false; show(0); dist = 0; }, { passive: true });
 }
 
+/* ---- a photograph from the chat ----
+
+   The chat carries pictures both ways: Nabu sends the bank QR code, and the
+   receipt comes back. Tapping one used to follow a link to a data: URL, which
+   every browser blocks at the top level - so nothing happened at all, and
+   nothing said why.
+
+   One tap now puts it on the phone and says so. Saving goes through a blob,
+   because that is the form browsers will write to disk; a data: URL on a
+   download link is ignored as often as not.
+
+   iOS is the exception and cannot be argued with: Safari ignores the download
+   attribute entirely. There the tap opens the picture large and gives the
+   instruction that does work - press and hold, then Save Image. A button that
+   quietly fails would be worse than saying so plainly. */
+function imageViewer() {
+  const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent)
+    || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+  let box = null;
+  const shut = () => { if (box) { box.remove(); box = null; } };
+
+  /* Big, with the one instruction that works on this phone. */
+  const show = (src) => {
+    const S = T();
+    shut();
+    box = document.createElement('div');
+    box.className = 'imgview';
+    box.innerHTML = '<button type="button" class="ivx" aria-label="' + esc(S.sheetClose) + '">\u2715</button>'
+      + '<img src="' + esc(src) + '" alt="">'
+      + '<p class="hint">' + esc(S.imgHold) + '</p>';
+    document.body.appendChild(box);
+    box.addEventListener('click', (e) => { if (e.target === box) shut(); });
+    box.querySelector('.ivx').addEventListener('click', shut);
+  };
+
+  const keep = async (src) => {
+    try {
+      const blob = await (await fetch(src)).blob();
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'nabu-' + Date.now() + '.jpg';
+      document.body.appendChild(a);
+      a.click();
+      setTimeout(() => { URL.revokeObjectURL(url); a.remove(); }, 1000);
+      toast(T().imgSaved);
+    } catch (e) {
+      /* If the phone would not take it, show it and say how to keep it by
+         hand rather than failing in silence. */
+      show(src);
+    }
+  };
+
+  /* One listener for every chat there is or ever will be. */
+  document.addEventListener('click', (e) => {
+    const img = e.target.closest && e.target.closest('img.att[data-img]');
+    if (!img) return;
+    const src = img.getAttribute('src');
+    if (isIOS) show(src); else keep(src);
+  });
+  document.addEventListener('keydown', (e) => { if (e.key === 'Escape') shut(); });
+}
+
 function boot() {
   window.addEventListener('hashchange', route);
   document.addEventListener('click', (e) => {
@@ -11140,6 +11229,7 @@ function boot() {
   $('#theme').addEventListener('click', () => { const cur = effectiveTheme(); setTheme(THEMES[(THEMES.indexOf(cur) + 1) % THEMES.length]); });
   applyTheme();
   pullToRefresh();
+  imageViewer();
   route();
   if ('serviceWorker' in navigator && location.protocol !== 'file:') {
     window.addEventListener('load', () => {
@@ -14682,6 +14772,12 @@ const LOVEDB = {
        clears its own - the deletion rule asks only who wrote a page, so this
        still works after the bond itself has gone. */
     await this.clearMyDiary(id).catch(() => {});
+    /* And the wedding room. A room is named after the pair, so the same two
+       people always come back to the same one - which is how a couple who
+       untied and returned were shown the ceremony they had already left. The
+       room's own rule asks who is in its uids, not whether the thread is still
+       there, so this works after the bond has gone. */
+    await BE.db.collection('weddings').doc(id).delete().catch(() => {});
     await BE.db.collection('bonds').doc(id).delete();
     LOVE.save({ bond: '', since: '', withName: '' });
   }
@@ -18599,7 +18695,10 @@ function chatHTML(msgs, mine) {
   if (!msgs.length) return '<p class="empty">' + esc(S.noMsgs) + '</p>';
   return msgs.map((m) => {
     const at = m.at && m.at.toDate ? m.at.toDate() : null;
-    const att = m.kind === 'image' && m.url ? '<a href="' + esc(m.url) + '" target="_blank" rel="noopener"><img src="' + esc(m.url) + '" alt="" class="att"></a>' : m.kind === 'audio' && m.url ? '<audio controls src="' + esc(m.url) + '" class="att"></audio>' : '';
+    /* Not a link: a data: URL cannot be navigated to, so the old anchor did
+       nothing at all when tapped. The viewer opens it instead. */
+    const att = m.kind === 'image' && m.url ? '<img src="' + esc(m.url) + '" alt="" class="att" data-img="1">'
+      : m.kind === 'audio' && m.url ? '<audio controls src="' + esc(m.url) + '" class="att"></audio>' : '';
     const who = m.from === mine ? S.youLabel : (m.from === 'nabu' ? 'Nabu' : (m.name || S.guestLabel));
     return '<div class="msg ' + (m.from === mine ? 'me' : 'them') + '"><span class="who">' + esc(who) + '</span>' + att + esc(m.text || '').replace(/\n/g, '<br>') + (at ? '<span class="t">' + esc(T().dateShort(at)) + ' ' + pad2(at.getHours()) + ':' + pad2(at.getMinutes()) + '</span>' : '') + '</div>';
   }).join('');
@@ -18747,8 +18846,18 @@ function meSect(id, icon, title, body, openByDefault) {
     h += meSect('who', '\uD83D\uDC64', S.meGroupYou, authHTML() + profileFormHTML(), true);
     let talk = '';
     if (BE.enabled) {
-      talk += '<div class="card"><h3 style="margin-bottom:4px">' + esc(S.messages) + '</h3><p class="hint" style="margin-bottom:8px">' + esc(BE.isAdmin() ? S.ownThreadHint : S.messagesIntro) + '</p>'
-        + (BE.user ? '<div class="chat" id="chat"></div>' + chatBarHTML('mtext', 'msend', S.send) : '<p class="muted">' + esc(S.needLogin) + '</p>') + '</div>';
+      /* Nabu already has an inbox on the dashboard holding every conversation.
+         A second chat box here is Nabu's thread with Nabu, which exists only
+         because the code never told the two apart. For a visitor this box is
+         the one way to reach Nabu, and stays exactly where it is. */
+      if (BE.isAdmin()) {
+        talk += '<a class="card" href="#/admin?tab=inbox" style="display:block;text-decoration:none;color:inherit">'
+          + '<h3 style="margin-bottom:4px">\uD83D\uDCE8 ' + esc(S.adminTabs.inbox) + '</h3>'
+          + '<p class="hint">' + esc(S.meInboxHint) + '</p></a>';
+      } else {
+        talk += '<div class="card"><h3 style="margin-bottom:4px">' + esc(S.messages) + '</h3><p class="hint" style="margin-bottom:8px">' + esc(S.messagesIntro) + '</p>'
+          + (BE.user ? '<div class="chat" id="chat"></div>' + chatBarHTML('mtext', 'msend', S.send) : '<p class="muted">' + esc(S.needLogin) + '</p>') + '</div>';
+      }
       if (BE.user) talk += wedComingHTML();
       if (BE.user) talk += '<div class="card"><h3 style="margin-bottom:8px">' + esc(S.myBookings) + '</h3><div id="mybk"><p class="hint">…</p></div>' + (notifyState() === 'default' ? '<button class="btn block" id="notifon" style="margin-top:8px">🔔 ' + esc(S.reminderOn) + '</button>' : '') + '<p class="hint">' + esc(S.reminderHint) + ' ' + esc(S.calendarHint) + '</p></div>';
     } else if (CONFIG.instagram) {
@@ -18829,11 +18938,13 @@ function meSect(id, icon, title, body, openByDefault) {
       catch (e) { da.disabled = false; if (e && e.code === 'auth/requires-recent-login') { st.textContent = S.delRelogin; st.className = 'hint err'; try { await BE.signOut(); } catch (e2) { /* already out */ } } else { st.textContent = S.publishFail + ': ' + (e && e.message || e); st.className = 'hint err'; } }
     });
     if (BE.enabled && BE.user) {
+      /* Nabu's own profile has no chat box, so there is nothing to bind. */
       const chat = $('#chat');
+      if (chat) {
       meUnsubs.push(BE.watchMessages(BE.user.uid, (msgs) => { chat.innerHTML = chatHTML(msgs, 'user'); chat.scrollTop = chat.scrollHeight; BE.markRead(BE.user.uid, 'user'); }));
       const sendUser = async (text, file, kind) => { let att = null; if (file) att = await chatAttachment(file, BE.user.uid, kind); await BE.sendMessage(text, null, att); };
       $('#msend').addEventListener('click', async () => { const t = $('#mtext').value.trim(); if (!t) return; $('#mtext').value = ''; try { await sendUser(t); } catch (e) { toast(e.message); } });
-      bindChatBar(body, sendUser);
+      bindChatBar(body, sendUser); }
       meUnsubs.push(BE.watchMyBookings((list) => {
         $('#mybk').innerHTML = list.length ? list.map((b) => bookingRow(b, false)).join('') : '<p class="hint">' + esc(S.noBookings) + '</p>';
         $$('[data-ics]', body).forEach((x) => x.addEventListener('click', () => { const bk = list.filter((y) => y.id === x.getAttribute('data-ics'))[0]; if (bk) addToCalendar(bk); }));
@@ -20276,12 +20387,12 @@ const WEDMUSIC = {
    with the phone in flight mode. */
 function cupidSVG(mood) {
   const joy = mood === 'joy';
-  const glow = joy ? '.95' : '.55';
-  const CREAM = '#FFFDF6', EDGE = '#D6BEF0', SKIN = '#FFF6EC', SKIN_E = '#E7CDBA';
-  const HAIR = '#F2D9A6', HAIR_D = '#E0BE7E', EYE = '#4B2E86', BLUSH = '#F7B7C4';
+  const glow = joy ? '.95' : '.5';
+  const CREAM = '#FFFDF6', EDGE = '#D9C4EF', SKIN = '#FFF3E4', SKIN_E = '#E9CDB6';
+  const HAIR = '#F6DFAE', HAIR_D = '#E2BF80', EYE = '#43268A', BLUSH = '#F9AFC0';
   /* Held between the two hands and dipping, with the knot at the bottom of the
-     dip - the one part of the first drawing that already said the right thing. */
-  const CORD = 'M25 78 C 38 106, 82 106, 95 78';
+     dip. Unchanged: this part was already saying the right thing. */
+  const CORD = 'M25 84 C 38 110, 82 110, 95 84';
   const heart = (x, y, sc, fill, op) => '<g transform="translate(' + x + ',' + y + ') scale(' + sc + ')" opacity="' + op + '">'
     + '<path d="M0 6 C -7 1, -10 -4, -7 -8 C -4.5 -11, -1 -9.5, 0 -6.5'
     + ' C 1 -9.5, 4.5 -11, 7 -8 C 10 -4, 7 1, 0 6 Z" fill="' + fill + '"/></g>';
@@ -20291,58 +20402,67 @@ function cupidSVG(mood) {
     + '<radialGradient id="cupglow"><stop offset="0" stop-color="#FFF3C4" stop-opacity="' + glow + '"/>'
     + '<stop offset="1" stop-color="#FFF3C4" stop-opacity="0"/></radialGradient>'
     + '<linearGradient id="cuprobe" x1="0" y1="0" x2="0" y2="1">'
-    + '<stop offset="0" stop-color="' + CREAM + '"/><stop offset="1" stop-color="#E9DAF8"/></linearGradient>'
+    + '<stop offset="0" stop-color="' + CREAM + '"/><stop offset="1" stop-color="#EADCF8"/></linearGradient>'
     + '<linearGradient id="cupwing" x1="0" y1="0" x2="0" y2="1">'
-    + '<stop offset="0" stop-color="#FBF6FF"/><stop offset="1" stop-color="#E6D8F7"/></linearGradient>'
+    + '<stop offset="0" stop-color="#FFFBFF"/><stop offset=".7" stop-color="#EFE3FB"/>'
+    + '<stop offset="1" stop-color="#F7DCE8"/></linearGradient>'
     + '</defs>'
-    + '<circle cx="60" cy="52" r="54" fill="url(#cupglow)"/>'
+    + '<circle cx="60" cy="50" r="55" fill="url(#cupglow)"/>'
 
-    /* wings: a soft curve up, and a scalloped edge underneath so they read as
-       feathers rather than as two leaves */
+    /* wings: rounder, scalloped along the bottom, a blush of pink at the base */
     + '<g stroke="' + EDGE + '" stroke-width="1.5" stroke-linejoin="round">'
-    + '<path d="M44 58 C 26 40, 8 40, 6 54 C 4 66, 14 72, 24 70'
-    + ' q 3 4, 7 -1 q 3 4, 7 -1 q 3 4, 6 -2 Z" fill="url(#cupwing)"/>'
-    + '<path d="M76 58 C 94 40, 112 40, 114 54 C 116 66, 106 72, 96 70'
-    + ' q -3 4, -7 -1 q -3 4, -7 -1 q -3 4, -6 -2 Z" fill="url(#cupwing)"/>'
+    + '<path d="M45 66 C 30 48, 10 46, 7 60 C 4 74, 16 80, 27 77'
+    + ' q 3.5 4.5, 8 -1 q 3.5 4.5, 8 -1 q 2.5 3.5, 5 -2 Z" fill="url(#cupwing)"/>'
+    + '<path d="M75 66 C 90 48, 110 46, 113 60 C 116 74, 104 80, 93 77'
+    + ' q -3.5 4.5, -8 -1 q -3.5 4.5, -8 -1 q -2.5 3.5, -5 -2 Z" fill="url(#cupwing)"/>'
     + '</g>'
 
-    /* a robe that falls in a bell, with a hem */
-    + '<path d="M60 52 C 69 52, 74 58, 76 68 L 82 96 C 75 101, 66 103, 60 103'
-    + ' C 54 103, 45 101, 38 96 L 44 68 C 46 58, 51 52, 60 52 Z"'
+    /* a small body under a big head - the whole trick, and half measures on it
+       look like a small adult */
+    + '<path d="M60 60 C 68 60, 72 66, 73 74 L 77 99 C 71 103, 65 105, 60 105'
+    + ' C 55 105, 49 103, 43 99 L 47 74 C 48 66, 52 60, 60 60 Z"'
     + ' fill="url(#cuprobe)" stroke="' + EDGE + '" stroke-width="1.6" stroke-linejoin="round"/>'
-    + '<path d="M39 95 C 47 100, 73 100, 81 95" fill="none" stroke="' + EDGE + '" stroke-width="1.4" opacity=".8"/>'
+    + '<path d="M44 98 C 51 102, 69 102, 76 98" fill="none" stroke="' + EDGE + '" stroke-width="1.3" opacity=".75"/>'
+    /* little bare feet - a small being rather than a floating bell */
+    + '<ellipse cx="53" cy="106" rx="4.6" ry="3.2" fill="' + SKIN + '" stroke="' + SKIN_E + '" stroke-width="1.1"/>'
+    + '<ellipse cx="67" cy="106" rx="4.6" ry="3.2" fill="' + SKIN + '" stroke="' + SKIN_E + '" stroke-width="1.1"/>'
 
-    /* sleeves widening to the wrists, and small hands at the ends */
-    + '<path d="M46 62 C 38 65, 31 70, 26 76 l 6 5 C 38 74, 44 70, 49 68 Z"'
-    + ' fill="url(#cuprobe)" stroke="' + EDGE + '" stroke-width="1.4" stroke-linejoin="round"/>'
-    + '<path d="M74 62 C 82 65, 89 70, 94 76 l -6 5 C 82 74, 76 70, 71 68 Z"'
-    + ' fill="url(#cuprobe)" stroke="' + EDGE + '" stroke-width="1.4" stroke-linejoin="round"/>'
-    + '<circle cx="27.5" cy="79" r="4.6" fill="' + SKIN + '" stroke="' + SKIN_E + '" stroke-width="1.2"/>'
-    + '<circle cx="92.5" cy="79" r="4.6" fill="' + SKIN + '" stroke="' + SKIN_E + '" stroke-width="1.2"/>'
+    /* arms out to the cord, with small round hands */
+    + '<path d="M47 70 C 39 73, 32 77, 27 82" stroke="' + EDGE + '" stroke-width="7.6" fill="none" stroke-linecap="round"/>'
+    + '<path d="M47 70 C 39 73, 32 77, 27 82" stroke="' + CREAM + '" stroke-width="5.2" fill="none" stroke-linecap="round"/>'
+    + '<path d="M73 70 C 81 73, 88 77, 93 82" stroke="' + EDGE + '" stroke-width="7.6" fill="none" stroke-linecap="round"/>'
+    + '<path d="M73 70 C 81 73, 88 77, 93 82" stroke="' + CREAM + '" stroke-width="5.2" fill="none" stroke-linecap="round"/>'
+    + '<circle cx="26" cy="84" r="4.8" fill="' + SKIN + '" stroke="' + SKIN_E + '" stroke-width="1.1"/>'
+    + '<circle cx="94" cy="84" r="4.8" fill="' + SKIN + '" stroke="' + SKIN_E + '" stroke-width="1.1"/>'
 
-    /* a big head on a small body, which is what makes anything look sweet */
-    + '<circle cx="60" cy="33" r="19.5" fill="' + SKIN + '" stroke="' + SKIN_E + '" stroke-width="1.4"/>'
-    /* hair, with a soft fringe following the curve of the head */
-    + '<path d="M41 30 C 41 16, 50 11, 60 11 C 70 11, 79 16, 79 30'
-    + ' C 76 25, 72 22, 66 23 C 62 19, 56 19, 52 23 C 46 22, 43 25, 41 30 Z"'
+    /* the head: wider than it is tall, which is what reads as a small child */
+    + '<ellipse cx="60" cy="36" rx="23" ry="21" fill="' + SKIN + '" stroke="' + SKIN_E + '" stroke-width="1.4"/>'
+    /* hair: three soft curls onto the forehead, and one at each cheek */
+    + '<path d="M37 34 C 37 17, 47 10, 60 10 C 73 10, 83 17, 83 34'
+    + ' C 79 27, 74 25, 70 27 C 67 20, 60 19, 57 26 C 53 20, 46 22, 44 28'
+    + ' C 41 26, 38 29, 37 34 Z"'
     + ' fill="' + HAIR + '" stroke="' + HAIR_D + '" stroke-width="1.2" stroke-linejoin="round"/>'
-    /* eyes with light in them, a small smile, and cheeks */
-    + '<ellipse cx="53" cy="34.5" rx="2.9" ry="3.4" fill="' + EYE + '"/>'
-    + '<ellipse cx="67" cy="34.5" rx="2.9" ry="3.4" fill="' + EYE + '"/>'
-    + '<circle cx="54.1" cy="33.2" r="1.05" fill="#fff"/>'
-    + '<circle cx="68.1" cy="33.2" r="1.05" fill="#fff"/>'
-    + '<ellipse cx="46.5" cy="39.5" rx="3.6" ry="2.4" fill="' + BLUSH + '" opacity=".62"/>'
-    + '<ellipse cx="73.5" cy="39.5" rx="3.6" ry="2.4" fill="' + BLUSH + '" opacity=".62"/>'
-    + '<path d="M55.6 41.4 q4.4 3.6, 8.8 0" stroke="' + EYE + '" stroke-width="1.7" fill="none" stroke-linecap="round"/>'
+    + '<path d="M37 33 C 33 38, 34 45, 38 47 C 36 42, 36 37, 38 34 Z" fill="' + HAIR + '" stroke="' + HAIR_D + '" stroke-width="1.1"/>'
+    + '<path d="M83 33 C 87 38, 86 45, 82 47 C 84 42, 84 37, 82 34 Z" fill="' + HAIR + '" stroke="' + HAIR_D + '" stroke-width="1.1"/>'
+    /* big eyes, set low and wide, with a large highlight and a small one */
+    + '<ellipse cx="51" cy="40" rx="4.4" ry="5.2" fill="' + EYE + '"/>'
+    + '<ellipse cx="69" cy="40" rx="4.4" ry="5.2" fill="' + EYE + '"/>'
+    + '<circle cx="52.6" cy="38" r="1.7" fill="#fff"/>'
+    + '<circle cx="70.6" cy="38" r="1.7" fill="#fff"/>'
+    + '<circle cx="49.6" cy="42.2" r="0.85" fill="#fff" opacity=".85"/>'
+    + '<circle cx="67.6" cy="42.2" r="0.85" fill="#fff" opacity=".85"/>'
+    /* cheeks, and a small mouth - small under big eyes reads sweet */
+    + '<ellipse cx="42.5" cy="45" rx="4.2" ry="2.7" fill="' + BLUSH + '" opacity=".6"/>'
+    + '<ellipse cx="77.5" cy="45" rx="4.2" ry="2.7" fill="' + BLUSH + '" opacity=".6"/>'
+    + '<path d="M57.4 47.6 q2.6 2.6, 5.2 0" stroke="' + EYE + '" stroke-width="1.6" fill="none" stroke-linecap="round"/>'
     /* the halo, in the thread's own gold */
-    + '<ellipse cx="60" cy="9.5" rx="11" ry="3.4" fill="none" stroke="#E5BE5E" stroke-width="2"/>'
+    + '<ellipse cx="60" cy="8" rx="11.5" ry="3.4" fill="none" stroke="#E5BE5E" stroke-width="2"/>'
 
     /* the thread, held */
     + '<path d="' + CORD + '" stroke="#8A0C20" stroke-width="6.4" fill="none" stroke-linecap="round"/>'
     + '<path d="' + CORD + '" stroke="#C4142F" stroke-width="4" fill="none" stroke-linecap="round"/>'
     + '<path d="' + CORD + '" stroke="#F0748C" stroke-width="1.3" fill="none" stroke-linecap="round" opacity=".5"/>'
-    /* and its knot, a small heart at the bottom of the dip */
-    + '<g transform="translate(60,99) scale(.14)">'
+    + '<g transform="translate(60,104) scale(.135)">'
     + '<path d="M120 150 C 82 130, 60 102, 68 80 C 75 60, 102 58, 113 76 C 116 81, 118 86, 120 91'
     + ' C 122 86, 124 81, 127 76 C 138 58, 165 60, 172 80 C 180 102, 158 130, 120 150 Z"'
     + ' transform="translate(-120,-104)" fill="none" stroke="#8A0C20" stroke-width="27"/>'
@@ -20351,11 +20471,11 @@ function cupidSVG(mood) {
     + ' transform="translate(-120,-104)" fill="none" stroke="#C4142F" stroke-width="15"/>'
     + '</g>'
 
-    /* small hearts near the hands, more of them when there is something to be
-       happy about */
-    + heart(23, 26, 0.62, '#F2789F', joy ? '.95' : '.55')
-    + heart(97, 30, 0.5, '#F2789F', joy ? '.9' : '.45')
-    + (joy ? heart(12, 44, 0.44, '#E5BE5E', '.9') + heart(108, 48, 0.4, '#E5BE5E', '.85') : '')
+    /* small hearts drifting, more of them when there is something to celebrate */
+    + heart(20, 30, 0.6, '#F2789F', joy ? '.95' : '.5')
+    + heart(100, 34, 0.48, '#F2789F', joy ? '.9' : '.42')
+    + (joy ? heart(11, 52, 0.42, '#E5BE5E', '.9') + heart(109, 56, 0.38, '#E5BE5E', '.85')
+        + heart(31, 16, 0.3, '#F2789F', '.8') : '')
     + '</svg>';
 }
 
@@ -20416,6 +20536,16 @@ function vowsHTML(w) {
 const PLAYED = { call: false };
 
 /* Coming, cannot, and has not said - the three groups a guest list is for. */
+/* Whose news it is. The couple say they have married; a guest says they were
+   there. One line said the guest's version to everybody, including the two
+   people whose wedding it was. */
+function shareLine(w) {
+  const S = T();
+  if (!WED.mine(w)) return S.wedShareGuest(w.aName || '', w.bName || '');
+  const other = WED.side(w) === 'a' ? (w.bName || '') : (w.aName || '');
+  return S.wedShareMine(other);
+}
+
 function guestListHTML(w, guests) {
   const S = T(), r = WED.rsvps(guests, (w && w.uids) || []);
   const line = (list) => list.map((g) => esc(g.name || S.loveSomeone)).join(' \u00b7 ');
@@ -20482,12 +20612,25 @@ function renderWedding(args) {
         + '<p class="lead" style="text-align:center">' + esc(w.state === 'married' ? S.wedOverMarried : S.wedOverCalled) + '</p>'
         + (w.state === 'married' && w.doneAt ? '<p class="wedwhen">' + esc(wedWhen(w.doneAt)) + '</p>' : '')
         + (won ? '<p class="hint" style="text-align:center">\uD83D\uDC90 ' + esc(S.wedCaught(won)) + '</p>' : '')
+        /* A ceremony that is over is over; another one is a new booking, which
+           is exactly what somebody who wants a second wedding expects. */
+        + (WED.mine(w)
+          ? '<button type="button" class="btn block" id="wedanother" style="margin-top:12px">' + esc(S.wedAnother) + '</button>'
+            + '<p class="hint">' + esc(S.wedAnotherHint) + '</p>'
+          : '')
         + '</div>'
         + (w.state === 'married' ? '<div class="card tellcard">'
           + '<div class="ghead"><span class="gk">\uD83D\uDCE3</span><h3>' + esc(S.wedTellTitle) + '</h3></div>'
-          + '<p class="tellline">\u201C' + esc(S.wedShareGuest(w.aName || '', w.bName || '')) + '\u201D</p>'
+          + '<p class="tellline">\u201C' + esc(shareLine(w)) + '\u201D</p>'
           + shareRowHTML('wedshare') + '</div>' : '');
-      bindShareRow(m, () => ({ text: S.wedShareGuest(w.aName || '', w.bName || ''), url: appURL() + '#/home' }));
+      bindShareRow(m, () => ({ text: shareLine(w), url: appURL() + '#/home' }));
+      { const again = $('#wedanother');
+        if (again) again.addEventListener('click', async () => {
+          if (!confirm(S.wedAnotherAsk)) return;
+          again.disabled = true;
+          try { await WED.drop(w.id); store.set('nabu-wed-want', 0); toast(S.wedAnotherDone); }
+          catch (e) { again.disabled = false; toast(loveWhy(e)); }
+        }); }
       return;
     }
     drawRoom(w, guests);
@@ -21236,8 +21379,10 @@ function alertsWatchLove() {
       if (had) {
         alertSay({ id: 'love-untied-' + had, k: 'love', t: S.alertUntied, b: S.alertUntiedBody, href: '#/love' }, true);
         /* Whoever untied cleared their own pages. This is the other side
-           clearing theirs, the moment it hears. */
+           clearing theirs, the moment it hears - and the room, which otherwise
+           waits to greet them if they ever come back. */
         LOVEDB.clearMyDiary(had).catch(() => {});
+        BE.db.collection('weddings').doc(had).delete().catch(() => {});
       }
       alertWas('love.diary', '');
       alertWas('love.state', ''); alertWas('love.ask', '');
@@ -21396,7 +21541,9 @@ function alertsWatchMessages() {
     if (!t) return;
     const stamp = String(t.lastAt && t.lastAt.seconds ? t.lastAt.seconds : (t.lastAt || ''));
     const before = alertWas('msg.last', stamp);
-    if (!before || before === stamp || t.lastFrom !== 'admin') return;
+    /* The thread records a message from Nabu as 'nabu'; this looked for
+       'admin' and so never fired once. */
+    if (!before || before === stamp || t.lastFrom !== 'nabu') return;
     alertSay({ id: 'msg-' + stamp, k: 'msg', t: S.alertMsg, b: t.lastText || '', href: '#/me' }, true);
   }, () => {}));
 }
@@ -21948,13 +22095,13 @@ function adminSale(p) {
 ROUTES.admin = { nav: '', render: renderAdmin };
 
 /* ============================ boot ============================ */
-window.APP_VERSION = 'v154';
+window.APP_VERSION = 'v155';
 window.NABU = { CONFIG: CONFIG, SALE: SALE, salePrice: salePrice, loadActs: loadActs, BACK: BACK, LESSONS: LESSONS, localAnswer: localAnswer, compatVerdict: compatVerdict, numerologyOf: numerologyOf, ZDEEP: ZDEEP, lunarToday: lunarToday, solarToLunar: solarToLunar, DECK: DECK, INSIGHT: INSIGHT, KW: KW, ASK: ASK, TOPICS: TOPICS, GUIDES: GUIDES, SERVICES: SERVICES, COURSES: COURSES, ACCESS: ACCESS, plusOn: () => plusOn(), proOn: () => proOn(), luckUnlimited: () => luckUnlimited(), ZODIAC: ZODIAC, pick: pick, book: book,
   insightHTML: insightHTML, insightOf: insightOf, sunSignIndex: sunSignIndex, lifePath: lifePath, PROFILE: () => PROFILE, BE: BE, ACTS: ACTS,
   ANGELS: ANGELS, angelRead: angelRead, CODEBOOK: CODEBOOK, verifyCode: verifyCode, petHomeSVG: petHomeSVG, PET_HOMES: PET_HOMES, PET_WEARS: PET_WEARS, codeDigest: codeDigest, randomCode: randomCode, BANK: BANK, PETS: PETS, petSVG: petSVG, PET_COATS: PET_COATS, PET_KINDS: PET_KINDS, luckCut: luckCut, petLevel: petLevel, petStep: petStep, VOUCHERS: VOUCHERS, levelCoins: levelCoins, LOOKS: LOOKS,
   LOVE: LOVE, LOVEDB: LOVEDB, HANDLE_RE: HANDLE_RE, loveBadgeHTML: loveBadgeHTML,
   loveMarkSVG: loveMarkSVG, QUIZ: QUIZ, QSCORE: QSCORE, QUIZ_PASS: QUIZ_PASS, QUIZ_LEN: QUIZ_LEN, pileArtSVG: pileArtSVG, PILE_ARTS: PILE_ARTS, threadSVG: threadSVG, petParentsHTML: petParentsHTML, GIFTS: GIFTS, ALERTS: ALERTS, alertsStart: alertsStart, alertWas: alertWas,
-  WED: WED, WED_STEPS: WED_STEPS, wedStep: wedStep, cupidSVG: cupidSVG };
+  WED: WED, WED_STEPS: WED_STEPS, wedStep: wedStep, cupidSVG: cupidSVG, shareLine: shareLine };
 try { petRemindCheck(); } catch (e) { /* nothing kept yet */ }
 /* The bell catches up on what happened while the app was shut, and keeps
    listening while it is open. Signing in or out changes what there is to

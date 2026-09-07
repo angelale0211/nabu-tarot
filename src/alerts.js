@@ -105,8 +105,10 @@ function alertsWatchLove() {
       if (had) {
         alertSay({ id: 'love-untied-' + had, k: 'love', t: S.alertUntied, b: S.alertUntiedBody, href: '#/love' }, true);
         /* Whoever untied cleared their own pages. This is the other side
-           clearing theirs, the moment it hears. */
+           clearing theirs, the moment it hears - and the room, which otherwise
+           waits to greet them if they ever come back. */
         LOVEDB.clearMyDiary(had).catch(() => {});
+        BE.db.collection('weddings').doc(had).delete().catch(() => {});
       }
       alertWas('love.diary', '');
       alertWas('love.state', ''); alertWas('love.ask', '');
@@ -265,7 +267,9 @@ function alertsWatchMessages() {
     if (!t) return;
     const stamp = String(t.lastAt && t.lastAt.seconds ? t.lastAt.seconds : (t.lastAt || ''));
     const before = alertWas('msg.last', stamp);
-    if (!before || before === stamp || t.lastFrom !== 'admin') return;
+    /* The thread records a message from Nabu as 'nabu'; this looked for
+       'admin' and so never fired once. */
+    if (!before || before === stamp || t.lastFrom !== 'nabu') return;
     alertSay({ id: 'msg-' + stamp, k: 'msg', t: S.alertMsg, b: t.lastText || '', href: '#/me' }, true);
   }, () => {}));
 }

@@ -68,7 +68,10 @@ function chatHTML(msgs, mine) {
   if (!msgs.length) return '<p class="empty">' + esc(S.noMsgs) + '</p>';
   return msgs.map((m) => {
     const at = m.at && m.at.toDate ? m.at.toDate() : null;
-    const att = m.kind === 'image' && m.url ? '<a href="' + esc(m.url) + '" target="_blank" rel="noopener"><img src="' + esc(m.url) + '" alt="" class="att"></a>' : m.kind === 'audio' && m.url ? '<audio controls src="' + esc(m.url) + '" class="att"></audio>' : '';
+    /* Not a link: a data: URL cannot be navigated to, so the old anchor did
+       nothing at all when tapped. The viewer opens it instead. */
+    const att = m.kind === 'image' && m.url ? '<img src="' + esc(m.url) + '" alt="" class="att" data-img="1">'
+      : m.kind === 'audio' && m.url ? '<audio controls src="' + esc(m.url) + '" class="att"></audio>' : '';
     const who = m.from === mine ? S.youLabel : (m.from === 'nabu' ? 'Nabu' : (m.name || S.guestLabel));
     return '<div class="msg ' + (m.from === mine ? 'me' : 'them') + '"><span class="who">' + esc(who) + '</span>' + att + esc(m.text || '').replace(/\n/g, '<br>') + (at ? '<span class="t">' + esc(T().dateShort(at)) + ' ' + pad2(at.getHours()) + ':' + pad2(at.getMinutes()) + '</span>' : '') + '</div>';
   }).join('');
@@ -216,8 +219,18 @@ function meSect(id, icon, title, body, openByDefault) {
     h += meSect('who', '\uD83D\uDC64', S.meGroupYou, authHTML() + profileFormHTML(), true);
     let talk = '';
     if (BE.enabled) {
-      talk += '<div class="card"><h3 style="margin-bottom:4px">' + esc(S.messages) + '</h3><p class="hint" style="margin-bottom:8px">' + esc(BE.isAdmin() ? S.ownThreadHint : S.messagesIntro) + '</p>'
-        + (BE.user ? '<div class="chat" id="chat"></div>' + chatBarHTML('mtext', 'msend', S.send) : '<p class="muted">' + esc(S.needLogin) + '</p>') + '</div>';
+      /* Nabu already has an inbox on the dashboard holding every conversation.
+         A second chat box here is Nabu's thread with Nabu, which exists only
+         because the code never told the two apart. For a visitor this box is
+         the one way to reach Nabu, and stays exactly where it is. */
+      if (BE.isAdmin()) {
+        talk += '<a class="card" href="#/admin?tab=inbox" style="display:block;text-decoration:none;color:inherit">'
+          + '<h3 style="margin-bottom:4px">\uD83D\uDCE8 ' + esc(S.adminTabs.inbox) + '</h3>'
+          + '<p class="hint">' + esc(S.meInboxHint) + '</p></a>';
+      } else {
+        talk += '<div class="card"><h3 style="margin-bottom:4px">' + esc(S.messages) + '</h3><p class="hint" style="margin-bottom:8px">' + esc(S.messagesIntro) + '</p>'
+          + (BE.user ? '<div class="chat" id="chat"></div>' + chatBarHTML('mtext', 'msend', S.send) : '<p class="muted">' + esc(S.needLogin) + '</p>') + '</div>';
+      }
       if (BE.user) talk += wedComingHTML();
       if (BE.user) talk += '<div class="card"><h3 style="margin-bottom:8px">' + esc(S.myBookings) + '</h3><div id="mybk"><p class="hint">…</p></div>' + (notifyState() === 'default' ? '<button class="btn block" id="notifon" style="margin-top:8px">🔔 ' + esc(S.reminderOn) + '</button>' : '') + '<p class="hint">' + esc(S.reminderHint) + ' ' + esc(S.calendarHint) + '</p></div>';
     } else if (CONFIG.instagram) {
@@ -298,11 +311,13 @@ function meSect(id, icon, title, body, openByDefault) {
       catch (e) { da.disabled = false; if (e && e.code === 'auth/requires-recent-login') { st.textContent = S.delRelogin; st.className = 'hint err'; try { await BE.signOut(); } catch (e2) { /* already out */ } } else { st.textContent = S.publishFail + ': ' + (e && e.message || e); st.className = 'hint err'; } }
     });
     if (BE.enabled && BE.user) {
+      /* Nabu's own profile has no chat box, so there is nothing to bind. */
       const chat = $('#chat');
+      if (chat) {
       meUnsubs.push(BE.watchMessages(BE.user.uid, (msgs) => { chat.innerHTML = chatHTML(msgs, 'user'); chat.scrollTop = chat.scrollHeight; BE.markRead(BE.user.uid, 'user'); }));
       const sendUser = async (text, file, kind) => { let att = null; if (file) att = await chatAttachment(file, BE.user.uid, kind); await BE.sendMessage(text, null, att); };
       $('#msend').addEventListener('click', async () => { const t = $('#mtext').value.trim(); if (!t) return; $('#mtext').value = ''; try { await sendUser(t); } catch (e) { toast(e.message); } });
-      bindChatBar(body, sendUser);
+      bindChatBar(body, sendUser); }
       meUnsubs.push(BE.watchMyBookings((list) => {
         $('#mybk').innerHTML = list.length ? list.map((b) => bookingRow(b, false)).join('') : '<p class="hint">' + esc(S.noBookings) + '</p>';
         $$('[data-ics]', body).forEach((x) => x.addEventListener('click', () => { const bk = list.filter((y) => y.id === x.getAttribute('data-ics'))[0]; if (bk) addToCalendar(bk); }));
