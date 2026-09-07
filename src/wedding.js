@@ -151,6 +151,31 @@ const WED = {
 
   /* ---- seats ---- */
   seat(id) { return BE.db.collection('weddings').doc(id).collection('guests').doc(this.me()); },
+  /* My own answer, from the list the room already watches. */
+  mySeat(list) { const me = this.me(); return (list || []).filter((g) => g.uid === me)[0] || null; },
+  /* Yes or no, and either can be changed: people change their minds about a
+     Saturday, and a wedding would rather know. */
+  async rsvp(id, yes, name) {
+    await this.seat(id).set({
+      uid: this.me(), name: String(name || '').slice(0, 40),
+      rsvp: yes ? 'yes' : 'no', at: Date.now(), seen: yes ? Date.now() : 0
+    }, { merge: true });
+    const list = store.get('nabu-weddings', []) || [];
+    if (yes) { if (list.indexOf(id) < 0) { list.push(id); store.set('nabu-weddings', list.slice(-12)); } }
+    else store.set('nabu-weddings', list.filter((x) => x !== id));
+    try { await BE.db.collection('users').doc(this.me()).set({ weddings: store.get('nabu-weddings', []) }, { merge: true }); } catch (e) { /* offline */ }
+  },
+  /* Who is coming, who cannot, and who has not said - which is what anybody
+     actually wants to know from a guest list. */
+  rsvps(list, uids) {
+    const pair = uids || [];
+    const g = (list || []).filter((x) => pair.indexOf(x.uid) < 0);
+    return {
+      yes: g.filter((x) => x.rsvp === 'yes'),
+      no: g.filter((x) => x.rsvp === 'no'),
+      quiet: g.filter((x) => !x.rsvp)
+    };
+  },
   async sit(id, name) {
     await this.seat(id).set({ uid: this.me(), name: String(name || '').slice(0, 40), seen: Date.now() }, { merge: true });
     /* Kept under the guest's own account as well, so the invitation survives a
@@ -449,6 +474,18 @@ function vowsHTML(w) {
 /* Sounds that must happen once per visit, not once per repaint. */
 const PLAYED = { call: false };
 
+/* Coming, cannot, and has not said - the three groups a guest list is for. */
+function guestListHTML(w, guests) {
+  const S = T(), r = WED.rsvps(guests, (w && w.uids) || []);
+  const line = (list) => list.map((g) => esc(g.name || S.loveSomeone)).join(' \u00b7 ');
+  return '<div class="card"><h3 style="margin-bottom:6px">\uD83D\uDC65 ' + esc(S.wedGuests(r.yes.length)) + '</h3>'
+    + (r.yes.length ? '<p class="hint">' + line(r.yes) + '</p>'
+      : '<p class="hint">' + esc(S.wedNoGuestsYet) + '</p>')
+    + (r.quiet.length ? '<p class="hint faint">' + esc(S.wedNotAnswered(r.quiet.length)) + ' ' + line(r.quiet) + '</p>' : '')
+    + (r.no.length ? '<p class="hint faint">' + esc(S.wedCannotCome(r.no.length)) + ' ' + line(r.no) + '</p>' : '')
+    + '</div>';
+}
+
 function renderWedding(args) {
   const S = T(), m = $('#main');
   const wanted = (args && args[0]) || '';
@@ -476,6 +513,11 @@ function renderWedding(args) {
   const drawDoor = (w, guests) => {
     const door = WED.doorState(w);
     const names = esc(w.aName || S.loveSomeone) + ' \u2764 ' + esc(w.bName || S.loveSomeone);
+    /* An invitation is answered before it is anything else. Somebody who has
+       not answered is not a guest, however many times they open the link. */
+    const seat = WED.mySeat(guests);
+    if (!WED.mine(w) && door !== 'over' && (!seat || !seat.rsvp)) { drawAsk(w); return; }
+    if (!WED.mine(w) && seat && seat.rsvp === 'no' && door !== 'over') { drawDeclined(w); return; }
     if (door === 'early') {
       m.innerHTML = head(S.wedGuestIntro)
         + '<div class="card wedcard">' + cupidSVG()
@@ -562,6 +604,48 @@ function renderWedding(args) {
     };
     go.addEventListener('click', send);
     box.addEventListener('keydown', (e) => { if (e.key === 'Enter') { e.preventDefault(); send(); } });
+  };
+
+
+  /* The invitation itself: who, when, and two answers. */
+  const drawAsk = (w) => {
+    m.innerHTML = head(S.wedGuestIntro)
+      + '<div class="card wedcard invited">' + cupidSVG()
+      + '<p class="wedpair">' + esc(w.aName || '') + ' \u2764 ' + esc(w.bName || '') + '</p>'
+      + '<p class="lead">' + esc(S.wedYouAreAsked) + '</p>'
+      + '<p class="wedwhen">' + esc(wedWhen(w.startMs)) + '</p>'
+      + '<div class="vowrow" style="margin-top:14px">'
+      + '<button type="button" class="btn primary" id="wedyesrsvp">' + esc(S.wedComing) + '</button>'
+      + '<button type="button" class="btn" id="wednorsvp">' + esc(S.wedCannot) + '</button></div>'
+      + '<p class="hint" id="wedrsvpst">' + esc(S.wedRsvpHint) + '</p></div>';
+    const answer = async (yes) => {
+      const st = $('#wedrsvpst');
+      $('#wedyesrsvp').disabled = true; $('#wednorsvp').disabled = true;
+      st.className = 'hint'; st.textContent = S.loveSaving;
+      try { await WED.rsvp(w.id, yes, (PROFILE && PROFILE.name) || ''); toast(yes ? S.wedComingYes : S.wedComingNo); }
+      catch (e) {
+        $('#wedyesrsvp').disabled = false; $('#wednorsvp').disabled = false;
+        st.className = 'hint err'; st.textContent = loveWhy(e);
+      }
+    };
+    $('#wedyesrsvp').addEventListener('click', () => answer(true));
+    $('#wednorsvp').addEventListener('click', () => answer(false));
+  };
+
+  /* Said no, and may say otherwise. */
+  const drawDeclined = (w) => {
+    m.innerHTML = head(S.wedGuestIntro)
+      + '<div class="card wedcard">' + cupidSVG()
+      + '<p class="wedpair">' + esc(w.aName || '') + ' \u2764 ' + esc(w.bName || '') + '</p>'
+      + '<p class="lead">' + esc(S.wedSaidNo) + '</p>'
+      + '<p class="wedwhen">' + esc(wedWhen(w.startMs)) + '</p>'
+      + '<button type="button" class="btn primary block" id="wedchange">' + esc(S.wedChangeMind) + '</button>'
+      + '<p class="hint">' + esc(S.wedChangeMindHint) + '</p></div>';
+    $('#wedchange').addEventListener('click', async () => {
+      $('#wedchange').disabled = true;
+      try { await WED.rsvp(w.id, true, (PROFILE && PROFILE.name) || ''); toast(S.wedComingYes); }
+      catch (e) { $('#wedchange').disabled = false; toast(loveWhy(e)); }
+    });
   };
 
   /* ------------------------------------------------------------- the room --- */
@@ -673,9 +757,7 @@ function renderWedding(args) {
       + vowsHTML(w)
       + act + '</div>'
       + bq
-      + '<div class="card"><h3 style="margin-bottom:4px">\uD83D\uDC65 ' + esc(S.wedGuests(guests.length)) + '</h3>'
-      + (guests.length ? '<p class="hint">' + esc(guests.slice(0, 24).map((g) => g.name || S.loveSomeone).join(' \u00b7 ')) + '</p>'
-        : '<p class="hint">' + esc(S.wedNoGuests) + '</p>') + '</div>'
+      + guestListHTML(w, guests)
       /* The couple can go on inviting people from inside the room, which is
          when somebody is usually asking for the link. */
       + (mine ? inviteHTML(w) : '')
@@ -913,9 +995,7 @@ function renderWedding(args) {
       + '<p class="hint" id="wedst"></p></div></details>'
       + '</div>'
       + inviteHTML(w)
-      + '<div class="card"><h3 style="margin-bottom:4px">\uD83D\uDC65 ' + esc(S.wedGuests(guests.length)) + '</h3>'
-      + (guests.length ? '<p class="hint">' + esc(guests.map((g) => g.name || S.loveSomeone).join(' \u00b7 ')) + '</p>'
-        : '<p class="hint">' + esc(S.wedNoGuestsYet) + '</p>') + '</div>'
+      + guestListHTML(w, guests)
       + '<button type="button" class="btn block danger" id="weddrop">\uD83D\uDC94 ' + esc(S.wedDrop) + '</button>'
       + '<p class="hint">' + esc(S.wedDropHint) + '</p>';
 
@@ -1017,10 +1097,11 @@ function renderWedding(args) {
         }
       }
       if (w && guestLink && !WED.mine(w)) {
-        /* A guest takes a seat once, and then keeps it warm while they watch,
-           because the bouquet may only land on somebody actually here. */
-        if (!seated) { seated = true; WED.sit(w.id, (PROFILE && PROFILE.name) || '').catch(() => {}); }
-        if (!beat) beat = setInterval(() => WED.stillHere(w.id), 20000);
+        /* Only somebody who said yes keeps a seat warm. Opening a link is not
+           an answer, and the bouquet may only land on somebody actually here. */
+        const seat = WED.mySeat(guests);
+        if (seat && seat.rsvp === 'yes' && !beat) beat = setInterval(() => WED.stillHere(w.id), 20000);
+        void seated;
       }
       paint();
     }));

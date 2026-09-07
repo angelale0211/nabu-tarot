@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
 <title>Nabu Tarot</title>
 <meta name="description" content="Nabu Tarot: dự đoán mới, rút một lá bài xem năng lượng hiện tại, học tarot, Lenormand, chiêm tinh, và đặt lịch xem bài.">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'none'; object-src 'none'; form-action 'self'; script-src 'self' 'sha256-793f0E3ee4GtOh9wYetPB1agGA2fddoBZ4L5fow8Zo8=' https://www.gstatic.com https://apis.google.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; font-src 'self' data:; media-src 'self' data: blob:; worker-src 'self'; connect-src 'self' https://*.googleapis.com https://*.google.com https://*.firebaseio.com https://*.cloudfunctions.net https://*.workers.dev https://generativelanguage.googleapis.com; frame-src https://*.firebaseapp.com https://accounts.google.com https://*.facebook.com">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'none'; object-src 'none'; form-action 'self'; script-src 'self' 'sha256-YLupPNLMLUFGHcWz6hzy1hzCjq3kXORxgKVN6hEHCBc=' https://www.gstatic.com https://apis.google.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; font-src 'self' data:; media-src 'self' data: blob:; worker-src 'self'; connect-src 'self' https://*.googleapis.com https://*.google.com https://*.firebaseio.com https://*.cloudfunctions.net https://*.workers.dev https://generativelanguage.googleapis.com; frame-src https://*.firebaseapp.com https://accounts.google.com https://*.facebook.com">
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <meta name="theme-color" content="#EFE9FA">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -1552,6 +1552,10 @@ h1 .pileico{width:34px;height:27px;vertical-align:-3px;margin-right:2px}
 .bqair.still{animation:none}
 @keyframes bqfly{0%,100%{transform:translateY(0) rotate(-12deg)}50%{transform:translateY(-16px) rotate(12deg)}}
 .invitecard{border:1px solid var(--rule-soft)}
+/* An invitation waiting to be answered is the one card that should catch
+   the eye the moment it opens. */
+.wedcard.invited{border-color:var(--pink);box-shadow:0 0 0 3px var(--pink-soft,rgba(246,187,203,.35))}
+#main .card .hint.faint{color:var(--fg-faint)}
 .saylist{list-style:none;margin:0 0 10px;padding:0;display:flex;flex-direction:column;gap:6px;
   max-height:240px;overflow:auto}
 .saylist li{padding:8px 11px;border-radius:14px;background:var(--surface-2);font-size:14px;line-height:1.45}
@@ -2619,6 +2623,15 @@ const STR = {
     wedNoShow: 'Buổi lễ hôm nay không diễn ra được.',
     wedNoShowSorry: 'Cô dâu chú rể chưa có mặt đúng giờ. Nabu xin lỗi vì đã để mọi người chờ, và cảm ơn mọi người đã đến.',
     wedNoShowShut: 'Phòng cưới sẽ đóng sau ít phút nữa.',
+    wedYouAreAsked: 'Bạn được mời đến chung vui cùng hai bạn ấy.',
+    wedComing: 'Mình sẽ đến', wedCannot: 'Xin lỗi, mình bận',
+    wedRsvpHint: 'Bạn trả lời để cô dâu chú rể biết nhé. Đổi ý lúc nào cũng được.',
+    wedComingYes: 'Đã nhận lời 💌 Hẹn gặp bạn ở lễ cưới nhé!',
+    wedComingNo: 'Đã báo giúp bạn rồi. Chúc bạn một ngày vui.',
+    wedSaidNo: 'Bạn đã báo là không đến được buổi lễ này.',
+    wedChangeMind: 'Mình đến được rồi', wedChangeMindHint: 'Nếu bạn thu xếp được, bấm vào đây là cô dâu chú rể biết ngay.',
+    wedNotAnswered: (n) => n + ' người chưa trả lời:',
+    wedCannotCome: (n) => n + ' người báo bận:',
     wedStart: 'Bắt đầu buổi lễ', wedStartsAt: (when) => 'Buổi lễ bắt đầu đúng ' + when + '. Nút này sẽ bấm được vào đúng giờ đó.',
     wedStartNow: 'Đã đến giờ. Một trong hai bạn bấm để bắt đầu nhé.',
     wedGuestWait: (when) => 'Buổi lễ bắt đầu lúc ' + when + '. Bạn cứ ở đây, sắp bắt đầu rồi.',
@@ -3281,6 +3294,15 @@ const STR = {
     wedNoShow: 'The ceremony is not going ahead today.',
     wedNoShowSorry: 'The couple were not here in time. Nabu is sorry for the wait, and thanks everybody who came.',
     wedNoShowShut: 'This room closes in a few minutes.',
+    wedYouAreAsked: 'You are invited to join them.',
+    wedComing: 'I will be there', wedCannot: 'Sorry, I cannot',
+    wedRsvpHint: 'Answer so the couple know. You can change your mind later.',
+    wedComingYes: 'Accepted \uD83D\uDC8C See you there!',
+    wedComingNo: 'They have been told. Have a lovely day.',
+    wedSaidNo: 'You said you could not make this one.',
+    wedChangeMind: 'Actually, I can come', wedChangeMindHint: 'If you can make it after all, press this and the couple will know.',
+    wedNotAnswered: (n) => n + ' have not answered:',
+    wedCannotCome: (n) => n + ' cannot come:',
     wedStart: 'Begin the ceremony', wedStartsAt: (when) => 'The ceremony begins at ' + when + '. This button works at that hour, and not before.',
     wedStartNow: 'It is time. Either of you may begin.',
     wedGuestWait: (when) => 'The ceremony begins at ' + when + '. Stay where you are \u2014 it is nearly time.',
@@ -19852,6 +19874,31 @@ const WED = {
 
   /* ---- seats ---- */
   seat(id) { return BE.db.collection('weddings').doc(id).collection('guests').doc(this.me()); },
+  /* My own answer, from the list the room already watches. */
+  mySeat(list) { const me = this.me(); return (list || []).filter((g) => g.uid === me)[0] || null; },
+  /* Yes or no, and either can be changed: people change their minds about a
+     Saturday, and a wedding would rather know. */
+  async rsvp(id, yes, name) {
+    await this.seat(id).set({
+      uid: this.me(), name: String(name || '').slice(0, 40),
+      rsvp: yes ? 'yes' : 'no', at: Date.now(), seen: yes ? Date.now() : 0
+    }, { merge: true });
+    const list = store.get('nabu-weddings', []) || [];
+    if (yes) { if (list.indexOf(id) < 0) { list.push(id); store.set('nabu-weddings', list.slice(-12)); } }
+    else store.set('nabu-weddings', list.filter((x) => x !== id));
+    try { await BE.db.collection('users').doc(this.me()).set({ weddings: store.get('nabu-weddings', []) }, { merge: true }); } catch (e) { /* offline */ }
+  },
+  /* Who is coming, who cannot, and who has not said - which is what anybody
+     actually wants to know from a guest list. */
+  rsvps(list, uids) {
+    const pair = uids || [];
+    const g = (list || []).filter((x) => pair.indexOf(x.uid) < 0);
+    return {
+      yes: g.filter((x) => x.rsvp === 'yes'),
+      no: g.filter((x) => x.rsvp === 'no'),
+      quiet: g.filter((x) => !x.rsvp)
+    };
+  },
   async sit(id, name) {
     await this.seat(id).set({ uid: this.me(), name: String(name || '').slice(0, 40), seen: Date.now() }, { merge: true });
     /* Kept under the guest's own account as well, so the invitation survives a
@@ -20150,6 +20197,18 @@ function vowsHTML(w) {
 /* Sounds that must happen once per visit, not once per repaint. */
 const PLAYED = { call: false };
 
+/* Coming, cannot, and has not said - the three groups a guest list is for. */
+function guestListHTML(w, guests) {
+  const S = T(), r = WED.rsvps(guests, (w && w.uids) || []);
+  const line = (list) => list.map((g) => esc(g.name || S.loveSomeone)).join(' \u00b7 ');
+  return '<div class="card"><h3 style="margin-bottom:6px">\uD83D\uDC65 ' + esc(S.wedGuests(r.yes.length)) + '</h3>'
+    + (r.yes.length ? '<p class="hint">' + line(r.yes) + '</p>'
+      : '<p class="hint">' + esc(S.wedNoGuestsYet) + '</p>')
+    + (r.quiet.length ? '<p class="hint faint">' + esc(S.wedNotAnswered(r.quiet.length)) + ' ' + line(r.quiet) + '</p>' : '')
+    + (r.no.length ? '<p class="hint faint">' + esc(S.wedCannotCome(r.no.length)) + ' ' + line(r.no) + '</p>' : '')
+    + '</div>';
+}
+
 function renderWedding(args) {
   const S = T(), m = $('#main');
   const wanted = (args && args[0]) || '';
@@ -20177,6 +20236,11 @@ function renderWedding(args) {
   const drawDoor = (w, guests) => {
     const door = WED.doorState(w);
     const names = esc(w.aName || S.loveSomeone) + ' \u2764 ' + esc(w.bName || S.loveSomeone);
+    /* An invitation is answered before it is anything else. Somebody who has
+       not answered is not a guest, however many times they open the link. */
+    const seat = WED.mySeat(guests);
+    if (!WED.mine(w) && door !== 'over' && (!seat || !seat.rsvp)) { drawAsk(w); return; }
+    if (!WED.mine(w) && seat && seat.rsvp === 'no' && door !== 'over') { drawDeclined(w); return; }
     if (door === 'early') {
       m.innerHTML = head(S.wedGuestIntro)
         + '<div class="card wedcard">' + cupidSVG()
@@ -20263,6 +20327,48 @@ function renderWedding(args) {
     };
     go.addEventListener('click', send);
     box.addEventListener('keydown', (e) => { if (e.key === 'Enter') { e.preventDefault(); send(); } });
+  };
+
+
+  /* The invitation itself: who, when, and two answers. */
+  const drawAsk = (w) => {
+    m.innerHTML = head(S.wedGuestIntro)
+      + '<div class="card wedcard invited">' + cupidSVG()
+      + '<p class="wedpair">' + esc(w.aName || '') + ' \u2764 ' + esc(w.bName || '') + '</p>'
+      + '<p class="lead">' + esc(S.wedYouAreAsked) + '</p>'
+      + '<p class="wedwhen">' + esc(wedWhen(w.startMs)) + '</p>'
+      + '<div class="vowrow" style="margin-top:14px">'
+      + '<button type="button" class="btn primary" id="wedyesrsvp">' + esc(S.wedComing) + '</button>'
+      + '<button type="button" class="btn" id="wednorsvp">' + esc(S.wedCannot) + '</button></div>'
+      + '<p class="hint" id="wedrsvpst">' + esc(S.wedRsvpHint) + '</p></div>';
+    const answer = async (yes) => {
+      const st = $('#wedrsvpst');
+      $('#wedyesrsvp').disabled = true; $('#wednorsvp').disabled = true;
+      st.className = 'hint'; st.textContent = S.loveSaving;
+      try { await WED.rsvp(w.id, yes, (PROFILE && PROFILE.name) || ''); toast(yes ? S.wedComingYes : S.wedComingNo); }
+      catch (e) {
+        $('#wedyesrsvp').disabled = false; $('#wednorsvp').disabled = false;
+        st.className = 'hint err'; st.textContent = loveWhy(e);
+      }
+    };
+    $('#wedyesrsvp').addEventListener('click', () => answer(true));
+    $('#wednorsvp').addEventListener('click', () => answer(false));
+  };
+
+  /* Said no, and may say otherwise. */
+  const drawDeclined = (w) => {
+    m.innerHTML = head(S.wedGuestIntro)
+      + '<div class="card wedcard">' + cupidSVG()
+      + '<p class="wedpair">' + esc(w.aName || '') + ' \u2764 ' + esc(w.bName || '') + '</p>'
+      + '<p class="lead">' + esc(S.wedSaidNo) + '</p>'
+      + '<p class="wedwhen">' + esc(wedWhen(w.startMs)) + '</p>'
+      + '<button type="button" class="btn primary block" id="wedchange">' + esc(S.wedChangeMind) + '</button>'
+      + '<p class="hint">' + esc(S.wedChangeMindHint) + '</p></div>';
+    $('#wedchange').addEventListener('click', async () => {
+      $('#wedchange').disabled = true;
+      try { await WED.rsvp(w.id, true, (PROFILE && PROFILE.name) || ''); toast(S.wedComingYes); }
+      catch (e) { $('#wedchange').disabled = false; toast(loveWhy(e)); }
+    });
   };
 
   /* ------------------------------------------------------------- the room --- */
@@ -20374,9 +20480,7 @@ function renderWedding(args) {
       + vowsHTML(w)
       + act + '</div>'
       + bq
-      + '<div class="card"><h3 style="margin-bottom:4px">\uD83D\uDC65 ' + esc(S.wedGuests(guests.length)) + '</h3>'
-      + (guests.length ? '<p class="hint">' + esc(guests.slice(0, 24).map((g) => g.name || S.loveSomeone).join(' \u00b7 ')) + '</p>'
-        : '<p class="hint">' + esc(S.wedNoGuests) + '</p>') + '</div>'
+      + guestListHTML(w, guests)
       /* The couple can go on inviting people from inside the room, which is
          when somebody is usually asking for the link. */
       + (mine ? inviteHTML(w) : '')
@@ -20614,9 +20718,7 @@ function renderWedding(args) {
       + '<p class="hint" id="wedst"></p></div></details>'
       + '</div>'
       + inviteHTML(w)
-      + '<div class="card"><h3 style="margin-bottom:4px">\uD83D\uDC65 ' + esc(S.wedGuests(guests.length)) + '</h3>'
-      + (guests.length ? '<p class="hint">' + esc(guests.map((g) => g.name || S.loveSomeone).join(' \u00b7 ')) + '</p>'
-        : '<p class="hint">' + esc(S.wedNoGuestsYet) + '</p>') + '</div>'
+      + guestListHTML(w, guests)
       + '<button type="button" class="btn block danger" id="weddrop">\uD83D\uDC94 ' + esc(S.wedDrop) + '</button>'
       + '<p class="hint">' + esc(S.wedDropHint) + '</p>';
 
@@ -20718,10 +20820,11 @@ function renderWedding(args) {
         }
       }
       if (w && guestLink && !WED.mine(w)) {
-        /* A guest takes a seat once, and then keeps it warm while they watch,
-           because the bouquet may only land on somebody actually here. */
-        if (!seated) { seated = true; WED.sit(w.id, (PROFILE && PROFILE.name) || '').catch(() => {}); }
-        if (!beat) beat = setInterval(() => WED.stillHere(w.id), 20000);
+        /* Only somebody who said yes keeps a seat warm. Opening a link is not
+           an answer, and the bouquet may only land on somebody actually here. */
+        const seat = WED.mySeat(guests);
+        if (seat && seat.rsvp === 'yes' && !beat) beat = setInterval(() => WED.stillHere(w.id), 20000);
+        void seated;
       }
       paint();
     }));
@@ -21579,7 +21682,7 @@ function adminSale(p) {
 ROUTES.admin = { nav: '', render: renderAdmin };
 
 /* ============================ boot ============================ */
-window.APP_VERSION = 'v150';
+window.APP_VERSION = 'v151';
 window.NABU = { CONFIG: CONFIG, SALE: SALE, salePrice: salePrice, loadActs: loadActs, BACK: BACK, LESSONS: LESSONS, localAnswer: localAnswer, compatVerdict: compatVerdict, numerologyOf: numerologyOf, ZDEEP: ZDEEP, lunarToday: lunarToday, solarToLunar: solarToLunar, DECK: DECK, INSIGHT: INSIGHT, KW: KW, ASK: ASK, TOPICS: TOPICS, GUIDES: GUIDES, SERVICES: SERVICES, COURSES: COURSES, ACCESS: ACCESS, plusOn: () => plusOn(), proOn: () => proOn(), luckUnlimited: () => luckUnlimited(), ZODIAC: ZODIAC, pick: pick, book: book,
   insightHTML: insightHTML, insightOf: insightOf, sunSignIndex: sunSignIndex, lifePath: lifePath, PROFILE: () => PROFILE, BE: BE, ACTS: ACTS,
   ANGELS: ANGELS, angelRead: angelRead, CODEBOOK: CODEBOOK, verifyCode: verifyCode, petHomeSVG: petHomeSVG, PET_HOMES: PET_HOMES, PET_WEARS: PET_WEARS, codeDigest: codeDigest, randomCode: randomCode, BANK: BANK, PETS: PETS, petSVG: petSVG, PET_COATS: PET_COATS, PET_KINDS: PET_KINDS, luckCut: luckCut, petLevel: petLevel, petStep: petStep, VOUCHERS: VOUCHERS, levelCoins: levelCoins, LOOKS: LOOKS,
