@@ -238,25 +238,31 @@ const WED = {
    Nothing is downloaded, nothing belongs to anybody else, and it works with
    the phone in flight mode. It only ever starts inside a press. */
 const WEDMUSIC = {
-  ctx: null, gain: null, timers: [], on: true,
+  ctx: null, gain: null, timers: [], on: true, dead: false,
   wake() {
-    if (!this.on) return null;
-    if (!this.ctx) {
-      const AC = window.AudioContext || window.webkitAudioContext;
-      if (!AC) return null;
-      this.ctx = new AC();
-      this.gain = this.ctx.createGain();
-      this.gain.gain.value = 0.16;
-      this.gain.connect(this.ctx.destination);
-    }
-    if (this.ctx.state === 'suspended') this.ctx.resume().catch(() => {});
-    return this.ctx;
+    if (!this.on || this.dead) return null;
+    /* A machine with no sound device throws here, and this is called from
+       inside a timer - where a throw takes the timer, and the ceremony, with
+       it. Nothing about a wedding should depend on the speakers working. */
+    try {
+      if (!this.ctx) {
+        const AC = window.AudioContext || window.webkitAudioContext;
+        if (!AC) { this.dead = true; return null; }
+        this.ctx = new AC();
+        this.gain = this.ctx.createGain();
+        this.gain.gain.value = 0.16;
+        this.gain.connect(this.ctx.destination);
+      }
+      if (this.ctx.state === 'suspended') this.ctx.resume().catch(() => {});
+      return this.ctx;
+    } catch (e) { this.dead = true; return null; }
   },
   /* One note: a soft triangle with a slow attack, which is as close to a
      chapel organ as two lines of code get. */
   note(freq, at, dur, vol) {
     const c = this.ctx;
     if (!c) return;
+    try {
     const o = c.createOscillator(), g = c.createGain();
     o.type = 'triangle'; o.frequency.value = freq;
     const t0 = c.currentTime + at;
@@ -265,6 +271,7 @@ const WEDMUSIC = {
     g.gain.exponentialRampToValueAtTime(0.0001, t0 + dur);
     o.connect(g); g.connect(this.gain);
     o.start(t0); o.stop(t0 + dur + 0.05);
+    } catch (e) { this.dead = true; }
   },
   /* The walk in: a slow rising figure, unhurried, in a major key. */
   processional() {
@@ -503,6 +510,60 @@ function renderWedding(args) {
     drawRoom(w, guests);
   };
 
+
+  /* Both ways of asking somebody: a link for whoever is elsewhere, a name for
+     whoever is already here. Available the whole time, including from inside
+     the room - which is when a wedding actually needs it. */
+  const inviteHTML = (w) => {
+    const link = appURL() + '#/wedding/' + encodeURIComponent(w.id);
+    const asked = (store.get('nabu-wed-asked', {}) || {})[w.id] || [];
+    return '<div class="card invitecard">'
+      + '<div class="ghead"><span class="gk">\uD83D\uDC8C</span><h3>' + esc(S.wedInviteTitle) + '</h3></div>'
+      + '<p class="hint" style="margin-bottom:10px">' + esc(S.wedAskInApp) + '</p>'
+      + '<div class="row nw athandle"><span class="at">@</span>'
+      + '<input id="wedwho" maxlength="20" autocapitalize="none" spellcheck="false" placeholder="' + esc(S.loveHandlePh) + '">'
+      + '<button type="button" class="btn" id="wedaskgo">' + esc(S.wedAskSend) + '</button></div>'
+      + '<p class="hint" id="wedaskst"></p>'
+      + (asked.length ? '<p class="hint">' + esc(S.wedAsked(asked.length)) + ' ' + esc(asked.join(', ')) + '</p>' : '')
+      + '<p class="hint" style="margin-top:14px">' + esc(S.wedInviteHint) + '</p>'
+      + '<input id="wedurl" readonly value="' + esc(link) + '">'
+      + shareRowHTML('wedinv') + '</div>';
+  };
+
+  /* Both halves of it are bound together, wherever the card was drawn. */
+  const bindInvite = (w) => {
+    const link = appURL() + '#/wedding/' + encodeURIComponent(w.id);
+    if (!$('#wedwho')) return;
+    bindShareRow(m, () => ({ text: S.wedInviteText(w.aName || '', w.bName || '', wedWhen(w.startMs)), url: link }));
+    const box = $('#wedwho'), go = $('#wedaskgo'), st = $('#wedaskst');
+    const send = async () => {
+      const h = String(box.value || '').trim().replace(/^@/, '');
+      if (!h) return;
+      go.disabled = true; st.className = 'hint'; st.textContent = S.loveLooking;
+      try {
+        const who = await WED.invite(w, h);
+        const all = store.get('nabu-wed-asked', {}) || {};
+        const list = all[w.id] || [];
+        const nm = who.name || ('@' + (who.handle || h));
+        if (list.indexOf(nm) < 0) list.push(nm);
+        all[w.id] = list; store.set('nabu-wed-asked', all);
+        /* Emptied at once, so the next name goes straight in. */
+        box.value = '';
+        st.className = 'hint ok'; st.textContent = S.wedAskDone(nm);
+        toast(S.wedAskDone(nm));
+        paint();
+      } catch (e) {
+        st.className = 'hint err';
+        st.textContent = e.message === 'nobody' ? S.loveNoOne
+          : e.message === 'yourself' ? S.wedAskSelf : loveWhy(e);
+      }
+      go.disabled = false;
+      if ($('#wedwho')) $('#wedwho').focus();
+    };
+    go.addEventListener('click', send);
+    box.addEventListener('keydown', (e) => { if (e.key === 'Enter') { e.preventDefault(); send(); } });
+  };
+
   /* ------------------------------------------------------------- the room --- */
   let gifts = [], guests = [], says = [], bouquetShown = 0;
   const drawRoom = (w) => {
@@ -615,6 +676,9 @@ function renderWedding(args) {
       + '<div class="card"><h3 style="margin-bottom:4px">\uD83D\uDC65 ' + esc(S.wedGuests(guests.length)) + '</h3>'
       + (guests.length ? '<p class="hint">' + esc(guests.slice(0, 24).map((g) => g.name || S.loveSomeone).join(' \u00b7 ')) + '</p>'
         : '<p class="hint">' + esc(S.wedNoGuests) + '</p>') + '</div>'
+      /* The couple can go on inviting people from inside the room, which is
+         when somebody is usually asking for the link. */
+      + (mine ? inviteHTML(w) : '')
       + giftBox
       /* A wedding you can speak at. Everyone in the room, the couple included. */
       + '<div class="card saycard"><div class="ghead"><span class="gk">\uD83D\uDCAC</span><h3>' + esc(S.wedSayTitle) + '</h3></div>'
@@ -681,6 +745,7 @@ function renderWedding(args) {
           } else { WEDMUSIC.chime(); }
         } catch (e) { o.disabled = false; toast(loveWhy(e)); }
       }); }
+    bindInvite(w);
     { /* Said once, and shown to everybody. */
       const box = $('#wedsayin'), go = $('#wedsaygo');
       const send = async () => {
@@ -847,19 +912,7 @@ function renderWedding(args) {
       + '<button type="button" class="btn block" id="wedmove" style="margin-top:8px">' + esc(S.wedMove) + '</button>'
       + '<p class="hint" id="wedst"></p></div></details>'
       + '</div>'
-      + '<div class="card"><div class="ghead"><span class="gk">\uD83D\uDC8C</span><h3>' + esc(S.wedInviteTitle) + '</h3></div>'
-      + '<p class="hint" style="margin-bottom:10px">' + esc(S.wedInviteHint) + '</p>'
-      + '<input id="wedurl" readonly value="' + esc(link) + '">'
-      + shareRowHTML('wedinv')
-      /* A link is right for the friend on Facebook and wrong for the one
-         already sitting in this app: they can simply be asked here. */
-      + '<p class="hint" style="margin-top:14px">' + esc(S.wedAskInApp) + '</p>'
-      + '<div class="row nw athandle"><span class="at">@</span>'
-      + '<input id="wedwho" maxlength="20" autocapitalize="none" spellcheck="false" placeholder="' + esc(S.loveHandlePh) + '">'
-      + '<button type="button" class="btn" id="wedaskgo">' + esc(S.wedAskSend) + '</button></div>'
-      + '<p class="hint" id="wedaskst"></p>'
-      + (asked.length ? '<p class="hint">' + esc(S.wedAsked(asked.length)) + ' ' + esc(asked.join(', ')) + '</p>' : '')
-      + '</div>'
+      + inviteHTML(w)
       + '<div class="card"><h3 style="margin-bottom:4px">\uD83D\uDC65 ' + esc(S.wedGuests(guests.length)) + '</h3>'
       + (guests.length ? '<p class="hint">' + esc(guests.map((g) => g.name || S.loveSomeone).join(' \u00b7 ')) + '</p>'
         : '<p class="hint">' + esc(S.wedNoGuestsYet) + '</p>') + '</div>'
@@ -875,35 +928,7 @@ function renderWedding(args) {
         if (Date.now() > wedDoorAt(w)) paint();
       }, 1000);
     }
-    bindShareRow(m, () => ({ text: S.wedInviteText(w.aName || '', w.bName || '', wedWhen(w.startMs)), url: link }));
-    { /* Asked, and the box empties itself so the next name can go straight in -
-         which is what people do: they invite in a sitting. */
-      const box = $('#wedwho'), go = $('#wedaskgo'), st = $('#wedaskst');
-      const send = async () => {
-        const h = String(box.value || '').trim().replace(/^@/, '');
-        if (!h) return;
-        go.disabled = true; st.className = 'hint'; st.textContent = S.loveLooking;
-        try {
-          const who = await WED.invite(w, h);
-          const all = store.get('nabu-wed-asked', {}) || {};
-          const list = all[w.id] || [];
-          const nm = who.name || ('@' + (who.handle || h));
-          if (list.indexOf(nm) < 0) list.push(nm);
-          all[w.id] = list; store.set('nabu-wed-asked', all);
-          box.value = '';
-          st.className = 'hint ok'; st.textContent = S.wedAskDone(nm);
-          toast(S.wedAskDone(nm));
-          paint();
-        } catch (e) {
-          st.className = 'hint err';
-          st.textContent = e.message === 'nobody' ? S.loveNoOne
-            : e.message === 'yourself' ? S.wedAskSelf : loveWhy(e);
-        }
-        go.disabled = false;
-        if (box) box.focus();
-      };
-      if (go) go.addEventListener('click', send);
-      if (box) box.addEventListener('keydown', (e) => { if (e.key === 'Enter') { e.preventDefault(); send(); } }); }
+    bindInvite(w);
     $('#wedmove').addEventListener('click', async () => {
       const st = $('#wedst'), v = $('#wedat').value, ms = new Date(v).getTime();
       if (!v || isNaN(ms) || ms < Date.now() + 10 * 60000) { st.className = 'hint err'; st.textContent = S.wedWhenBad; return; }
