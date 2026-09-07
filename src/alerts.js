@@ -295,12 +295,32 @@ function alertsWatchWeddings() {
   });
 }
 
+/* An invitation to somebody else's wedding, which arrives without a link. */
+function alertsWatchWedAsks() {
+  if (typeof WED === 'undefined' || !WED.ok()) return;
+  ALERT_STOP.push(WED.watchAsks((list) => {
+    const S = T();
+    (list || []).forEach((a) => {
+      alertSay({ id: 'wedask-' + a.wid + '-' + a.from, k: 'love', at: a.at || Date.now(),
+        t: S.alertWedAsked(a.names || ''), b: S.alertWedAskedBody(a.by || ''),
+        href: '#/wedding/' + a.wid }, true);
+      /* Kept where the profile can find it, so it shows up as something coming. */
+      const seen = store.get('nabu-wed-seen', {}) || {};
+      seen[a.wid] = { startMs: a.startMs || 0, pair: a.names || '' };
+      store.set('nabu-wed-seen', seen);
+      const ids = store.get('nabu-weddings', []) || [];
+      if (ids.indexOf(a.wid) < 0) { ids.push(a.wid); store.set('nabu-weddings', ids.slice(-12)); }
+    });
+  }));
+}
+
 function alertsStart() {
   alertsStop();
   alertsLocalCheck();
   if (!BE.enabled || !BE.user) { alertsBadge(); return; }
   try { alertsWatchLove(); } catch (e) { /* the thread is not reachable */ }
   try { alertsWatchWeddings(); } catch (e) { /* no room is reachable */ }
+  try { alertsWatchWedAsks(); } catch (e) { /* invitations are not reachable */ }
   try { alertsWatchBookings(); } catch (e) { /* bookings are not reachable */ }
   try { alertsWatchMessages(); } catch (e) { /* the thread doc is not reachable */ }
   alertsBadge();

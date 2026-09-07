@@ -283,6 +283,17 @@ service cloud.firestore {
                     && request.auth.uid in get(/databases/$(database)/documents/weddings/$(wid)).data.uids;
       }
     }
+    /* An invitation to a wedding, kept under the person invited so only they
+       can read what has been sent to them - the same shape as the thread's
+       invitations. Anyone signed in may put one there, because inviting
+       somebody is the act; the person invited may clear it, and so may
+       whoever sent it. */
+    match /wedasks/{to}/from/{from} {
+      allow read: if isOwner(to);
+      allow create: if isOwner(from) && request.resource.data.from == request.auth.uid
+                    && shorterThan('wid', 80) && shorterThan('names', 80) && shorterThan('by', 40);
+      allow delete: if isOwner(to) || isOwner(from);
+    }
     match /reports/{id} {
       allow create: if request.auth != null && request.resource.data.uid == request.auth.uid
                     && shorterThan('what', 4000) && shorterThan('info', 4000);

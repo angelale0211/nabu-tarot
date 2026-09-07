@@ -37,6 +37,8 @@ const WED_OPEN_MS = 15 * 60 * 1000;   /* the door opens this long before */
 const WED_END_MS = 5 * 60 * 1000;     /* and shuts this long after the vows */
 const WED_SEEN_MS = 45 * 1000;        /* a seat still warm counts as present */
 const WED_CALL_MS = 2 * 60 * 1000;    /* and this long before, the room is called to order */
+const WED_GRACE_MS = 15 * 60 * 1000;  /* how late a couple may be before the room gives up */
+const WED_SHUT_MS = 3 * 60 * 1000;    /* and how long it stays open to say so */
 
 /* Three, not eight. A wedding gift is chosen in a second, in front of a room -
    the long shelf belongs to the thread, where one person gives another
@@ -86,8 +88,18 @@ const WED = {
     if (w.doneAt && t > w.doneAt + WED_END_MS) return 'over';
     if (w.doneAt) return 'open';
     if (t < start - WED_OPEN_MS) return 'early';
+    /* Nobody came. The room stays open a few minutes to say so, and to let the
+       people who did come read it, then closes. */
+    if (this.noShow(w, t)) return t > start + WED_GRACE_MS + WED_SHUT_MS ? 'over' : 'open';
     return 'open';
   },
+  /* A ceremony that never began, a quarter of an hour after its hour. */
+  noShow(w, now) {
+    if (!w || w.doneAt || (w.step | 0) > 0) return false;
+    return (now || Date.now()) > this.startMs(w) + WED_GRACE_MS;
+  },
+  /* How long the room has left before it closes itself. */
+  shutsIn(w) { return this.startMs(w) + WED_GRACE_MS + WED_SHUT_MS - Date.now(); },
   /* Everyone whose seat was warm in the last minute or so. Used for the
      bouquet, which should only be able to land on somebody actually there. */
   present(guests) {
@@ -160,6 +172,25 @@ const WED = {
       from: this.me(), name: (PROFILE && PROFILE.name) || '', kind: kind, at: Date.now()
     });
   },
+  /* Asking somebody who is already here. It lands under them, so only they
+     can read it, and it says enough to be answered without opening anything. */
+  async invite(w, handle) {
+    const who = await LOVEDB.findByHandle(handle);
+    if (!who) throw new Error('nobody');
+    if (w.uids.indexOf(who.uid) > -1) throw new Error('yourself');
+    await BE.db.collection('wedasks').doc(who.uid).collection('from').doc(this.me()).set({
+      from: this.me(), wid: w.id, names: (w.aName || '') + ' & ' + (w.bName || ''),
+      by: (PROFILE && PROFILE.name) || '', startMs: Number(w.startMs) || 0, at: Date.now()
+    });
+    return who;
+  },
+  watchAsks(cb) {
+    if (!this.ok()) return () => {};
+    return BE.db.collection('wedasks').doc(this.me()).collection('from')
+      .onSnapshot((s) => cb(s.docs.map((d) => d.data())), () => cb([]));
+  },
+  clearAsk(from) { return BE.db.collection('wedasks').doc(this.me()).collection('from').doc(from).delete().catch(() => {}); },
+
   /* What the room says. Short, signed, and in the order it was said. */
   say(id, text) {
     const t = String(text || '').trim().slice(0, 300);
@@ -488,9 +519,17 @@ function renderWedding(args) {
     const here = WED.present(guests);
     const called = w.state === 'called-off';
 
+    const gone = WED.noShow(w);
     let act = '';
     if (called) {
       act = '<p class="hint err" style="text-align:center">' + esc(S.wedCalledOff) + '</p>';
+    } else if (gone) {
+      /* Said to whoever came, which is the point of saying it at all. */
+      act = '<p class="lead">' + esc(S.wedNoShow) + '</p>'
+        + '<p class="hint">' + esc(S.wedNoShowSorry) + '</p>'
+        + '<p class="wedcount" id="wedshut">' + esc(wedCountdown(Date.now() + Math.max(0, WED.shutsIn(w)))) + '</p>'
+        + '<p class="hint">' + esc(S.wedNoShowShut) + '</p>'
+        + (mine ? '<a class="btn block" href="#/wedding" style="margin-top:10px">' + esc(S.wedMoveTitle) + '</a>' : '');
     } else if (waiting) {
       /* Everybody in the room is reading the same clock, so nobody has to be
          told when it is about to happen. */
@@ -590,6 +629,20 @@ function renderWedding(args) {
       + (mine ? '<p class="hint" style="text-align:center">' + esc(S.wedLeaveOk) + '</p>' : '')
       + '</div>';
 
+    if (gone) {
+      if (tick) { clearInterval(tick); tick = null; }
+      tick = setInterval(() => {
+        const el = $('#wedshut');
+        const left = Math.max(0, WED.shutsIn(w));
+        if (el) el.textContent = wedCountdown(Date.now() + left);
+        if (left <= 0) {
+          /* Whoever is the couple closes it for good; a guest simply sees the
+             door shut on the next repaint. */
+          if (mine && w.state !== 'ended') BE.db.collection('weddings').doc(w.id).update({ state: 'ended' }).catch(() => {});
+          paint();
+        }
+      }, 1000);
+    }
     /* While the room waits, it counts - and two minutes out it calls itself to
        order and the processional plays, once, for anybody with the sound on. */
     if (waiting) {
@@ -740,6 +793,7 @@ function renderWedding(args) {
         + '<p class="hint" style="text-align:center">' + esc(ACCESS.has('wedding') ? S.wedPlanHint : S.wedPlanPay(fmtPrice(salePrice(WED_PRICE, 'unlock', 'wedding')))) + '</p></div>'
         + '<div class="card"><h3 style="margin-bottom:6px">\uD83D\uDD52 ' + esc(S.wedWhen) + '</h3>'
         + '<p class="hint" style="margin-bottom:10px">' + esc(S.wedWhenHint) + '</p>'
+        + '<p class="hint hold">' + esc(S.wedBeThere) + '</p>'
         + '<input type="datetime-local" id="wedat" value="' + esc(wedLocalValue(soon.getTime())) + '">'
         + '<button type="button" class="btn primary block" id="wedmake" style="margin-top:10px">' + esc(S.wedMake) + '</button>'
         + '<p class="hint" id="wedst"></p></div>';
@@ -767,6 +821,7 @@ function renderWedding(args) {
     const paidFor = ACCESS.has('wedding');
 
     const link = appURL() + '#/wedding/' + encodeURIComponent(w.id);
+    const asked = (store.get('nabu-wed-asked', {}) || {})[w.id] || [];
     m.innerHTML = head()
       + '<div class="card wedcard">' + cupidSVG()
       + '<p class="wedready">' + esc(S.wedReady) + '</p>'
@@ -782,6 +837,7 @@ function renderWedding(args) {
         ? '<a class="btn primary block" href="#/wedding/room">' + esc(S.wedEnter) + '</a>'
         : '<button type="button" class="btn primary block" disabled>' + esc(paidFor ? S.wedEnterLater : S.wedEnterUnpaid) + '</button>')
       + '<p class="hint">' + esc(!paidFor ? S.wedWaitPay : openNow ? S.wedEnterNow : S.wedShutFor) + '</p>'
+      + '<p class="hint">' + esc(S.wedBeThere) + '</p>'
       /* Unpaid, said once, softly, with the way to settle it. */
       + (ACCESS.has('wedding') ? ''
         : '<p class="hint hold">' + esc(S.wedUnpaid) + ' <a href="#/wedding/pay">' + esc(S.wedPayNow) + ' \u2192</a></p>')
@@ -794,7 +850,16 @@ function renderWedding(args) {
       + '<div class="card"><div class="ghead"><span class="gk">\uD83D\uDC8C</span><h3>' + esc(S.wedInviteTitle) + '</h3></div>'
       + '<p class="hint" style="margin-bottom:10px">' + esc(S.wedInviteHint) + '</p>'
       + '<input id="wedurl" readonly value="' + esc(link) + '">'
-      + shareRowHTML('wedinv') + '</div>'
+      + shareRowHTML('wedinv')
+      /* A link is right for the friend on Facebook and wrong for the one
+         already sitting in this app: they can simply be asked here. */
+      + '<p class="hint" style="margin-top:14px">' + esc(S.wedAskInApp) + '</p>'
+      + '<div class="row nw athandle"><span class="at">@</span>'
+      + '<input id="wedwho" maxlength="20" autocapitalize="none" spellcheck="false" placeholder="' + esc(S.loveHandlePh) + '">'
+      + '<button type="button" class="btn" id="wedaskgo">' + esc(S.wedAskSend) + '</button></div>'
+      + '<p class="hint" id="wedaskst"></p>'
+      + (asked.length ? '<p class="hint">' + esc(S.wedAsked(asked.length)) + ' ' + esc(asked.join(', ')) + '</p>' : '')
+      + '</div>'
       + '<div class="card"><h3 style="margin-bottom:4px">\uD83D\uDC65 ' + esc(S.wedGuests(guests.length)) + '</h3>'
       + (guests.length ? '<p class="hint">' + esc(guests.map((g) => g.name || S.loveSomeone).join(' \u00b7 ')) + '</p>'
         : '<p class="hint">' + esc(S.wedNoGuestsYet) + '</p>') + '</div>'
@@ -811,6 +876,34 @@ function renderWedding(args) {
       }, 1000);
     }
     bindShareRow(m, () => ({ text: S.wedInviteText(w.aName || '', w.bName || '', wedWhen(w.startMs)), url: link }));
+    { /* Asked, and the box empties itself so the next name can go straight in -
+         which is what people do: they invite in a sitting. */
+      const box = $('#wedwho'), go = $('#wedaskgo'), st = $('#wedaskst');
+      const send = async () => {
+        const h = String(box.value || '').trim().replace(/^@/, '');
+        if (!h) return;
+        go.disabled = true; st.className = 'hint'; st.textContent = S.loveLooking;
+        try {
+          const who = await WED.invite(w, h);
+          const all = store.get('nabu-wed-asked', {}) || {};
+          const list = all[w.id] || [];
+          const nm = who.name || ('@' + (who.handle || h));
+          if (list.indexOf(nm) < 0) list.push(nm);
+          all[w.id] = list; store.set('nabu-wed-asked', all);
+          box.value = '';
+          st.className = 'hint ok'; st.textContent = S.wedAskDone(nm);
+          toast(S.wedAskDone(nm));
+          paint();
+        } catch (e) {
+          st.className = 'hint err';
+          st.textContent = e.message === 'nobody' ? S.loveNoOne
+            : e.message === 'yourself' ? S.wedAskSelf : loveWhy(e);
+        }
+        go.disabled = false;
+        if (box) box.focus();
+      };
+      if (go) go.addEventListener('click', send);
+      if (box) box.addEventListener('keydown', (e) => { if (e.key === 'Enter') { e.preventDefault(); send(); } }); }
     $('#wedmove').addEventListener('click', async () => {
       const st = $('#wedst'), v = $('#wedat').value, ms = new Date(v).getTime();
       if (!v || isNaN(ms) || ms < Date.now() + 10 * 60000) { st.className = 'hint err'; st.textContent = S.wedWhenBad; return; }
