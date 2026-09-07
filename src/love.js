@@ -764,17 +764,31 @@ function renderLove(wantHandle) {
         + '<p class="hint">' + esc(S.loveShowParentsHint) + '</p></div>';
     }
 
-    /* Gifts: the newest large, the rest as a shelf underneath. */
-    const shelf = '<div class="card giftcard"><h3 style="margin-bottom:4px">\uD83C\uDF3F ' + esc(S.loveGiftTitle) + '</h3>'
+    /* Two cards, deliberately unalike. Something somebody chose for you should
+       not look like a row of buttons; it used to, and people scrolled past it. */
+    const got = given.filter((g) => g.from !== me), mine2 = given.filter((g) => g.from === me);
+    const newest = got.reduce((n, g) => Math.max(n, g.at || 0), 0);
+    const fresh = newest > (LOVE.local().giftSeen || 0);
+    const top = got[0];
+    const inbox = '<div class="card giftin' + (fresh ? ' fresh' : '') + '">'
+      + '<div class="ghead"><span class="gk">\uD83D\uDCE9</span><h3>' + esc(S.loveGotTitle) + '</h3>'
+      + (fresh ? '<span class="newtag">' + esc(S.loveGiftNew) + '</span>' : '') + '</div>'
+      + (top
+        ? '<div class="lastgift">' + giftArt(top.kind, 'big')
+          + '<div><b>' + esc(S.loveGiftTheyGave(nameOf(you), giftName(top.kind))) + '</b>'
+          + (top.note ? '<p class="note">\u201C' + esc(top.note) + '\u201D</p>' : '')
+          + '<span class="faint">' + esc(fmtDate(isoDate(new Date(top.at || Date.now())))) + '</span></div></div>'
+          + (got.length > 1
+            ? '<div class="giftrow">' + got.slice(1, 13).map((g) => '<span class="gi" title="' + esc(giftName(g.kind)) + '">' + giftArt(g.kind) + '</span>').join('') + '</div>'
+            : '')
+        : '<p class="hint">' + esc(S.loveGotNone) + '</p>')
+      + '</div>';
+
+    const shelf = inbox + '<div class="card giftout">'
+      + '<div class="ghead"><span class="gk">\uD83D\uDC90</span><h3>' + esc(S.loveGiftTitle) + '</h3></div>'
       + '<p class="hint" style="margin-bottom:10px">' + esc(S.loveGiftHint) + '</p>'
-      + (last
-        ? '<div class="lastgift">' + giftArt(last.kind, 'big')
-          + '<div><b>' + esc(last.from === me ? S.loveGiftYouGave(giftName(last.kind)) : S.loveGiftTheyGave(nameOf(you), giftName(last.kind))) + '</b>'
-          + (last.note ? '<p class="note">' + esc(last.note) + '</p>' : '')
-          + '<span class="faint">' + esc(fmtDate(isoDate(new Date(last.at || Date.now())))) + '</span></div></div>'
-        : '<p class="hint">' + esc(S.loveGiftNone) + '</p>')
-      + (given.length > 1
-        ? '<div class="giftrow">' + given.slice(1, 13).map((g) => '<span class="gi' + (g.from === me ? ' mine' : '') + '" title="' + esc(giftName(g.kind)) + '">' + giftArt(g.kind) + '</span>').join('') + '</div>'
+      + (mine2.length
+        ? '<div class="giftrow mine">' + mine2.slice(0, 13).map((g) => '<span class="gi mine" title="' + esc(giftName(g.kind)) + '">' + giftArt(g.kind) + '</span>').join('') + '</div>'
         : '')
       /* Picking used to send. Now it picks, and can be re-picked as often as
          they like; nothing reaches the other person until Send. */
@@ -830,6 +844,9 @@ function renderLove(wantHandle) {
     }));
     { const sp = $('#lvshowpar');
       if (sp) sp.addEventListener('change', () => { LOVE.save({ parents: sp.checked }); toast(sp.checked ? S.loveShowParentsOn : S.loveShowParentsOff); }); }
+
+    /* Looked at is no longer new; the mark shows once. */
+    if (newest > (LOVE.local().giftSeen || 0)) setTimeout(() => LOVE.save({ giftSeen: newest }), 1500);
 
     /* Chosen, not sent. */
     let picked = '';

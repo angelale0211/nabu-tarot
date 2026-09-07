@@ -925,8 +925,14 @@ async function go(hash, sel) { W().location.hash = hash; await sleep(30); return
       d.querySelector('#lvgsend').click(); await sleep(260);
       const gk = Object.keys(db.docs).filter((k) => k.indexOf('bonds/uidA__uidB/gifts/') === 0);
       ok(gk.length === 1 && db.docs[gk[0]].from === 'uidB' && db.docs[gk[0]].kind === 'rose'
-        && db.docs[gk[0]].note === 'tặng em' && d.querySelector('.lastgift'),
+        && db.docs[gk[0]].note === 'tặng em' && d.querySelector('.giftrow.mine'),
         'only Send gives it: one document, signed by whoever gave it, with the line they wrote');
+      /* What arrived and what you can send are two cards, not one - a gift used
+         to sit in the same box as the buttons and got scrolled past. */
+      ok(d.querySelector('.giftin') && d.querySelector('.giftout')
+        && !d.querySelector('.giftin .lastgift')
+        && d.querySelector('.giftout .giftpick'),
+        'what somebody sent you is its own card, apart from the one for sending');
       ok(N.GIFTS.length === 8 && d.querySelectorAll('.giftpick .gp').length === 8,
         'eight things to give, each with a picture of its own');
 
@@ -1229,6 +1235,43 @@ async function go(hash, sel) { W().location.hash = hash; await sleep(30); return
     ok(!d.documentElement.getAttribute('data-theme') && JSON.parse(w.localStorage.getItem('nabu-theme')) === '' && bgOf() === (w.matchMedia('(prefers-color-scheme: dark)').matches ? DARK : LIGHT), 'auto follows the phone setting');
     d.querySelector('[data-theme-pick="light"]').click();
     ok(d.documentElement.scrollWidth <= 431, 'no horizontal overflow (' + d.documentElement.scrollWidth + ')');
+    { /* Pull down at the top of a screen to refresh it, the way every feed on
+         a phone works. Driven with real touch events, because a function that
+         no finger can reach is not the feature. */
+      const touch = (type, x, y) => {
+        const spec = { identifier: 1, target: d.body, clientX: x, clientY: y };
+        const t = typeof w.Touch === 'function' ? new w.Touch(spec) : spec;
+        d.dispatchEvent(new w.TouchEvent(type, { touches: type === 'touchend' ? [] : [t], bubbles: true, cancelable: true }));
+      };
+      await go('#/home', '#main'); w.scrollTo(0, 0); await sleep(60);
+      const pull = d.getElementById('pull');
+      ok(pull, 'every screen carries the pull-to-refresh indicator, so it works on all of them');
+
+      touch('touchstart', 100, 40); touch('touchmove', 100, 70); await sleep(30);
+      const part = w.getComputedStyle(pull).opacity;
+      ok(Number(part) > 0 && !pull.classList.contains('ready'),
+        'a short drag shows the indicator without arming it');
+      touch('touchmove', 100, 140); await sleep(30);
+      ok(pull.classList.contains('ready'),
+        'and dragging past the trip point arms it, so the gesture says what it will do');
+      /* A refresh goes and asks the cloud, which is allowed to take a moment. */
+      touch('touchend', 100, 140);
+      for (let i = 0; i < 40 && !w.NABU.REFRESHED_AT; i++) await sleep(100);
+      ok(w.NABU.REFRESHED_AT > 0, 'letting go past the trip point refreshes');
+
+      /* A sideways drag belongs to whatever is scrolling sideways. */
+      w.NABU.REFRESHED_AT = 0;
+      touch('touchstart', 100, 40); touch('touchmove', 240, 46); touch('touchend', 240, 46);
+      await sleep(160);
+      ok(w.NABU.REFRESHED_AT === 0 && !pull.classList.contains('ready'),
+        'a sideways drag is left to whatever scrolls sideways');
+
+      /* And a drag that stops short does nothing, which is what makes the
+         gesture safe to start by accident. */
+      touch('touchstart', 100, 40); touch('touchmove', 100, 66); touch('touchend', 100, 66);
+      await sleep(160);
+      ok(w.NABU.REFRESHED_AT === 0, 'a drag that stops short of the trip point refreshes nothing');
+    }
     { /* No screen offers the same way back twice. The companion page used to
          show three links in a row, two of them identical. */
       const twice = [];

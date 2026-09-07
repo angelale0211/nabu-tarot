@@ -498,6 +498,96 @@ function route() {
     setTimeout(() => { if (window.scrollY < 4) window.scrollTo(0, y); }, 120);
   });
 }
+/* ---- pull down to refresh ----
+   The gesture every feed on a phone has. It lives here rather than on any one
+   screen, so it works on all of them, including ones written later.
+
+   The browser's own version is switched off in CSS: it reloads the whole page
+   and throws away where you were. This asks the service worker whether there
+   is a newer Nabu - if there is, the reload that already exists takes over -
+   then refetches what the app reads from the cloud and redraws the screen. */
+let REFRESHING = false;
+async function refreshNow() {
+  if (REFRESHING) return;
+  REFRESHING = true;
+  const S = T();
+  /* A refresh on a bad connection must still end. Whatever has not answered in
+     five seconds is left behind and the screen redraws with what did. */
+  const capped = (p, ms) => Promise.race([p, new Promise((r) => setTimeout(r, ms || 5000))]);
+  await capped(Promise.all([
+    (async () => {
+      try {
+        if ('serviceWorker' in navigator && navigator.serviceWorker.getRegistration) {
+          const reg = await navigator.serviceWorker.getRegistration();
+          if (reg) await reg.update();
+        }
+      } catch (e) { /* no worker, or offline: the rest is still worth doing */ }
+    })(),
+    loadContent('posts', CONFIG.postsPath, 'nabu-posts').catch(() => null),
+    loadContent('sale', 'sale.json', 'nabu-sale').then((r) => { SALE.set(r && r.data); }).catch(() => {}),
+    loadContent('schedule', CONFIG.schedulePath, 'nabu-schedule').catch(() => null)
+  ]).catch(() => {}));
+  try { if (typeof alertsStart === 'function') alertsStart(); } catch (e) { /* nothing to listen to */ }
+  route();
+  toast(S.refreshed);
+  /* When it last happened, so a test can see the gesture arrive rather than
+     guessing from what it redrew. */
+  if (window.NABU) window.NABU.REFRESHED_AT = Date.now();
+  REFRESHING = false;
+}
+
+function pullToRefresh() {
+  const el = document.createElement('div');
+  el.id = 'pull';
+  el.innerHTML = '<span class="parrow">\u2193</span>';
+  document.body.appendChild(el);
+
+  const TRIP = 74, MAX = 104;
+  let startY = 0, startX = 0, pulling = false, dist = 0, busy = false;
+  const show = (d) => {
+    el.style.transform = 'translate(-50%,' + Math.round(Math.min(d, MAX) * 0.6) + 'px)';
+    el.style.opacity = String(Math.min(1, d / TRIP));
+    el.classList.toggle('ready', d >= TRIP);
+  };
+  const atTop = () => (window.scrollY || document.documentElement.scrollTop || 0) <= 0;
+
+  document.addEventListener('touchstart', (e) => {
+    if (busy || e.touches.length !== 1 || !atTop()) { pulling = false; return; }
+    /* Not from inside a box that scrolls sideways of its own accord, and not
+       from a field somebody is typing in. */
+    const t = e.target;
+    if (t.closest && t.closest('input,textarea,select,[contenteditable]')) { pulling = false; return; }
+    startY = e.touches[0].clientY; startX = e.touches[0].clientX;
+    pulling = true; dist = 0;
+  }, { passive: true });
+
+  document.addEventListener('touchmove', (e) => {
+    if (!pulling) return;
+    const dy = e.touches[0].clientY - startY, dx = e.touches[0].clientX - startX;
+    if (dy <= 0 || Math.abs(dx) > Math.abs(dy)) { pulling = false; show(0); return; }
+    if (!atTop()) { pulling = false; show(0); return; }
+    dist = dy;
+    /* Held back, so a small drag feels like resistance rather than a launch. */
+    if (e.cancelable) e.preventDefault();
+    show(dist);
+  }, { passive: false });
+
+  const let_go = async () => {
+    if (!pulling) return;
+    pulling = false;
+    if (dist < TRIP) { show(0); dist = 0; return; }
+    busy = true;
+    el.classList.add('spin');
+    show(TRIP);
+    try { await refreshNow(); } catch (e) { /* said its piece already */ }
+    el.classList.remove('spin');
+    show(0);
+    dist = 0; busy = false;
+  };
+  document.addEventListener('touchend', let_go, { passive: true });
+  document.addEventListener('touchcancel', () => { pulling = false; show(0); dist = 0; }, { passive: true });
+}
+
 function boot() {
   window.addEventListener('hashchange', route);
   document.addEventListener('click', (e) => {
@@ -513,6 +603,7 @@ function boot() {
     bt.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' })); }
   $('#theme').addEventListener('click', () => { const cur = effectiveTheme(); setTheme(THEMES[(THEMES.indexOf(cur) + 1) % THEMES.length]); });
   applyTheme();
+  pullToRefresh();
   route();
   if ('serviceWorker' in navigator && location.protocol !== 'file:') {
     window.addEventListener('load', () => {

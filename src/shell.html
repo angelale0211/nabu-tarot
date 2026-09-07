@@ -1267,6 +1267,19 @@ h1 .pileico{width:34px;height:27px;vertical-align:-3px;margin-right:2px}
 .giftstep{margin:12px 0 6px;font-size:12.5px;font-weight:600;color:var(--fg-soft)}
 .gp.on{border-color:var(--accent);box-shadow:0 0 0 2px var(--accent) inset}
 .btn.danger{color:var(--err);border-color:var(--err)}
+/* Pull down to refresh. The browser's own is switched off: it reloads the
+   whole page and loses the screen you were standing on. */
+html,body{overscroll-behavior-y:contain}
+#pull{position:fixed;top:calc(env(safe-area-inset-top,0px) + 4px);left:50%;z-index:60;width:34px;height:34px;
+  display:flex;align-items:center;justify-content:center;border-radius:999px;pointer-events:none;
+  background:var(--surface);border:1px solid var(--rule);color:var(--fg-soft);
+  opacity:0;transform:translate(-50%,0);box-shadow:0 2px 10px var(--shade)}
+#pull .parrow{font-size:17px;line-height:1;transition:transform .18s ease}
+#pull.ready .parrow{transform:rotate(180deg)}
+#pull.ready{border-color:var(--lav);color:var(--fg)}
+#pull.spin .parrow{animation:pullspin .8s linear infinite}
+@keyframes pullspin{to{transform:rotate(360deg)}}
+
 /* The bell, and the count of what has not been read on it. */
 #bell{position:relative}
 #bell .ndot{position:absolute;top:-3px;right:-3px;min-width:16px;height:16px;padding:0 4px;border-radius:999px;
@@ -1290,10 +1303,21 @@ h1 .pileico{width:34px;height:27px;vertical-align:-3px;margin-right:2px}
 /* What has been given. */
 .giftart{width:34px;height:34px;display:block}
 .giftart.big{width:58px;height:58px}
-.giftcard .lastgift{display:flex;align-items:flex-start;gap:12px;background:var(--surface-2);border-radius:14px;padding:12px}
-.giftcard .lastgift b{display:block;font-size:14.5px}
-.giftcard .lastgift .note{margin:4px 0 2px;font-size:14px}
-.giftcard .lastgift .faint{font-size:12px}
+/* An envelope, not a panel: what somebody chose for you is edged, warm and
+   drawn large, so it cannot be mistaken for the row of buttons underneath. */
+.giftin{border:1px solid var(--gold);background:linear-gradient(180deg,var(--surface-2),var(--surface))}
+.giftin.fresh{border-color:var(--pink);box-shadow:0 0 0 3px var(--pink-soft,rgba(246,187,203,.35))}
+.ghead{display:flex;align-items:center;gap:8px;margin-bottom:8px}
+.ghead h3{margin:0;font-size:16px;flex:1;min-width:0;overflow-wrap:anywhere}
+.ghead .gk{font-size:20px;line-height:1}
+.newtag{flex:none;padding:2px 8px;border-radius:999px;background:var(--pink);color:var(--pink-ink);font-size:11.5px;font-weight:700}
+.giftin .lastgift .note{font-style:italic}
+.giftout{border:1px solid var(--rule-soft)}
+.giftrow.mine{opacity:.75}
+.giftcard .lastgift,.giftin .lastgift{display:flex;align-items:flex-start;gap:12px;background:var(--surface-2);border-radius:14px;padding:12px}
+.giftcard .lastgift b,.giftin .lastgift b{display:block;font-size:14.5px}
+.giftcard .lastgift .note,.giftin .lastgift .note{margin:4px 0 2px;font-size:14px}
+.giftcard .lastgift .faint,.giftin .lastgift .faint{font-size:12px}
 .giftrow{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
 .giftrow .gi{display:block;padding:4px;border-radius:10px;background:var(--surface-2)}
 .giftrow .gi.mine{background:var(--surface-3)}
