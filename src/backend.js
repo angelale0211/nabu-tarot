@@ -60,7 +60,25 @@ const BE = {
     this.speakTheirLanguage();
     return this.auth.sendPasswordResetEmail(email);
   },
-  signOut() { return this.auth.signOut(); },
+  /* Signing out has to take the account off the device with it.
+     It used to sign out of Firebase and leave everything else where it was, so
+     the next person - or the same person wanting a second account - opened a
+     phone that still had the last one's name at the top of the profile, their
+     birthday, and their courses still unlocked. Somebody who says "sign out"
+     means all of it.
+
+     What is not touched: the language, the theme, and whether the tour has been
+     seen. Those belong to the phone, not to whoever was signed in on it. */
+  async signOut() {
+    try {
+      saveProfileLocal({ name: '', birthday: '', interests: [] });
+      store.set('nabu-profile', PROFILE);
+      store.set('nabu-access', {});
+      store.set('nabu-admin', '');
+      store.set('nabu-revoked-at', 0);
+    } catch (e) { /* a full phone must not be able to trap somebody signed in */ }
+    return this.auth.signOut();
+  },
   /* Account deletion (a store requirement): profile, thread and messages, bookings, then the login itself.
      Firebase asks for a recent sign-in before deleting a login; the caller handles that error. */
   async deleteAccount() {

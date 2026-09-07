@@ -218,9 +218,9 @@ function meOpen(id, fallback) {
   const m = store.get('nabu-me-open', {}) || {};
   return Object.prototype.hasOwnProperty.call(m, id) ? !!m[id] : !!fallback;
 }
-function meSect(id, icon, title, body, openByDefault) {
+function meSect(id, icon, title, body, openByDefault, force) {
   if (!body) return '';
-  return '<details class="sect" data-sect="' + esc(id) + '"' + (meOpen(id, openByDefault) ? ' open' : '') + '>'
+  return '<details class="sect" data-sect="' + esc(id) + '"' + (force || meOpen(id, openByDefault) ? ' open' : '') + '>'
     + '<summary><span class="si">' + icon + '</span><b>' + esc(title) + '</b><span class="sx" aria-hidden="true">\u203A</span></summary>'
     + '<div class="sbody">' + body + '</div></details>';
 }
@@ -231,7 +231,11 @@ function meSect(id, icon, title, body, openByDefault) {
     if (params.next === 'book' && !BE.user) h += '<div class="banner">' + esc(S.needLogin) + '</div>';
     if (BE.isAdmin()) h += adminSummaryHTML();
     /* Group one: who you are. Always open - it is the reason the tab exists. */
-    h += meSect('who', '\uD83D\uDC64', S.meGroupYou, authHTML() + profileFormHTML(), true);
+    /* Folded shut, this section hides the only way back in. Somebody who has
+       just signed out, or has never signed in, must be able to see the buttons
+       without knowing to open anything - so with nobody signed in it is opened
+       whatever this device last chose. */
+    h += meSect('who', '\uD83D\uDC64', S.meGroupYou, authHTML() + profileFormHTML(), true, !BE.user);
     let talk = '';
     if (BE.enabled) {
       /* Nabu already has an inbox on the dashboard holding every conversation.
