@@ -238,19 +238,16 @@ function loveMarkSVG(state, cls) {
 }
 
 /* ---- the thread itself ----
-   A pan chang - the knot tied in red silk for weddings and for luck - inside a
-   fine gold ring, falling into two weighted tassels.
+   One length of red cord, looped into a heart and tied at the base, inside a
+   fine gold ring, with the two ends falling away below.
 
-   The weave is real. Every strand is laid down twice, first as a wide stroke in
-   the ground colour and then as the cord, so each one cuts a clean gap through
-   whatever is beneath it. Three strands run across, three run down, and then
-   the crossings where the horizontal belongs on top are painted back in - nine
-   of them, alternating. That alternation is the whole difference between cord
-   and a flat squiggle. */
+   Every strand is drawn twice, first as a wide stroke in the ground colour and
+   then as the cord, so each one cuts a clean gap through whatever lies under it
+   and passes over. In the knot the crossings that belong on top are painted
+   back over afterwards, which is the whole difference between cord and a line. */
 function threadSVG(state, still) {
   const RED = '#C4142F', RED_DEEP = '#8A0C20', RED_LIT = '#F0748C', GROUND = '#FFFAF6';
   const W = 10;
-  /* One strand: the gap it cuts, the cord, and the light along its back. */
   const cord = (d, w) => {
     const k = w || W;
     return '<path d="' + d + '" fill="none" stroke="' + GROUND + '" stroke-width="' + (k + 4.5) + '" stroke-linecap="round" stroke-linejoin="round"/>'
@@ -258,46 +255,34 @@ function threadSVG(state, still) {
       + '<path d="' + d + '" fill="none" stroke="' + RED + '" stroke-width="' + (k - 2.2) + '" stroke-linecap="round" stroke-linejoin="round"/>'
       + '<path d="' + d + '" fill="none" stroke="' + RED_LIT + '" stroke-width="' + (k - 6.4) + '" stroke-linecap="round" stroke-linejoin="round" opacity=".45"/>';
   };
-  /* The same strand without its gap, for painting a crossing back on top. */
   const over = (d, w) => {
     const k = w || W;
-    return '<path d="' + d + '" fill="none" stroke="' + RED_DEEP + '" stroke-width="' + k + '" stroke-linecap="butt"/>'
-      + '<path d="' + d + '" fill="none" stroke="' + RED + '" stroke-width="' + (k - 2.2) + '" stroke-linecap="butt"/>'
-      + '<path d="' + d + '" fill="none" stroke="' + RED_LIT + '" stroke-width="' + (k - 6.4) + '" stroke-linecap="butt" opacity=".45"/>';
+    return '<path d="' + d + '" fill="none" stroke="' + RED_DEEP + '" stroke-width="' + k + '" stroke-linecap="round"/>'
+      + '<path d="' + d + '" fill="none" stroke="' + RED + '" stroke-width="' + (k - 2.2) + '" stroke-linecap="round"/>'
+      + '<path d="' + d + '" fill="none" stroke="' + RED_LIT + '" stroke-width="' + (k - 6.4) + '" stroke-linecap="round" opacity=".45"/>';
   };
 
-  /* The body of the knot: a square of cord woven over and under itself. */
-  const CX = 120, CY = 116, GAP = 14;
-  const rows = [CY - GAP, CY, CY + GAP], cols = [CX - GAP, CX, CX + GAP];
-  const x0 = CX - GAP - 12, x1 = CX + GAP + 12, y0 = CY - GAP - 12, y1 = CY + GAP + 12;
-  let weave = '';
-  /* The four loops first, so the body sits over where they enter it. */
-  weave += cord('M' + cols[0] + ' ' + y0 + ' C ' + (cols[0] - 6) + ' ' + (y0 - 40) + ' ' + (cols[2] + 6) + ' ' + (y0 - 40) + ' ' + cols[2] + ' ' + y0);
-  weave += cord('M' + x0 + ' ' + rows[0] + ' C ' + (x0 - 40) + ' ' + (rows[0] - 6) + ' ' + (x0 - 40) + ' ' + (rows[2] + 6) + ' ' + x0 + ' ' + rows[2]);
-  weave += cord('M' + x1 + ' ' + rows[0] + ' C ' + (x1 + 40) + ' ' + (rows[0] - 6) + ' ' + (x1 + 40) + ' ' + (rows[2] + 6) + ' ' + x1 + ' ' + rows[2]);
-  /* Three across, then three down: the downs pass over everywhere. */
-  rows.forEach((y) => { weave += cord('M' + x0 + ' ' + y + ' H' + x1); });
-  cols.forEach((x) => { weave += cord('M' + x + ' ' + y0 + ' V' + y1); });
-  /* Then the crossings where the across belongs on top, in a chequer. */
-  rows.forEach((y, r) => cols.forEach((x, c) => {
-    if ((r + c) % 2 === 0) weave += over('M' + (x - 8) + ' ' + y + ' H' + (x + 8));
-  }));
+  /* The heart is one unbroken length of cord, so there is no join to see: from
+     the tie at the bottom, up and round the left lobe, down into the cleft, up
+     and round the right, and back down to where it started. */
+  const HEART = 'M120 150 C 82 130, 60 102, 68 80 C 75 60, 102 58, 113 76'
+    + ' C 116 81, 118 86, 120 91 C 122 86, 124 81, 127 76'
+    + ' C 138 58, 165 60, 172 80 C 180 102, 158 130, 120 150 Z';
+  /* Below it the two ends cross and fall away, and two turns of cord bind them
+     where they meet. A binding is what makes cord look tied; a bow does not. */
+  const fallL = 'M113 148 C 106 168, 96 182, 80 196';
+  const fallR = 'M127 148 C 134 168, 144 182, 160 196';
+  /* Both turns bow the same way, so they read as two bands round a bundle. Bowed
+     apart they made a lens, which the eye takes for an eye. */
+  const wrapA = 'M106 147 C 113 151, 127 151, 134 147';
+  const wrapB = 'M106 156 C 113 160, 127 160, 134 156';
 
   const frame = '<g fill="none" stroke="#E5BE5E">'
-    + '<circle cx="120" cy="116" r="72" stroke-width="1.4" opacity=".85"/>'
-    + '<circle cx="120" cy="116" r="66" stroke-width="0.9" opacity=".55"/></g>'
-    + '<g fill="#E5BE5E" opacity=".9">'
-    + [0, 90, 180, 270].map((a) => '<circle cx="120" cy="44" r="2.6" transform="rotate(' + a + ' 120 116)"/>').join('')
-    + '</g>';
-
+    + '<circle cx="120" cy="108" r="76" stroke-width="1.4" opacity=".85"/>'
+    + '<circle cx="120" cy="108" r="70" stroke-width="0.9" opacity=".5"/></g>';
   const bloom = (x, y, c, s2) => '<g transform="translate(' + x + ',' + y + ') scale(' + s2 + ')">'
     + [0, 72, 144, 216, 288].map((a) => '<ellipse cx="0" cy="-4.6" rx="3" ry="4.6" fill="' + c + '" transform="rotate(' + a + ')"/>').join('')
     + '<circle r="2" fill="#FFF3C4"/></g>';
-
-  const tassel = (x, tilt) => '<g transform="translate(' + x + ',' + (y1 + 34) + ') rotate(' + tilt + ')">'
-    + '<ellipse cx="0" cy="6" rx="5.4" ry="6" fill="#E5BE5E"/><ellipse cx="-1.6" cy="4.2" rx="1.7" ry="2" fill="#FFF3C4"/>'
-    + '<path d="M-5 10 L-6.2 27 M-2.5 11 L-2.9 29 M0 11 L0 30 M2.5 11 L2.9 29 M5 10 L6.2 27" stroke="' + RED + '" stroke-width="1.7" stroke-linecap="round"/>'
-    + '</g>';
 
   const st = state || 'tied';
   const above = st === 'proposed' ? ringArt(120, 26, 19, -8, true)
@@ -305,21 +290,22 @@ function threadSVG(state, still) {
       : st === 'married' ? ringPairArt(120, 30, 16) + wreathArt(120, 12, 44)
         : '';
   const spark = still ? '' : '<g fill="#FFF3C4" class="sparks">'
-    + '<path class="twinkle" d="M30 92 l2.4 5 5 2.4 -5 2.4 -2.4 5 -2.4 -5 -5 -2.4 5 -2.4 Z"/>'
-    + '<path class="twinkle" style="animation-delay:900ms" d="M208 84 l2 4.2 4.2 2 -4.2 2 -2 4.2 -2 -4.2 -4.2 -2 4.2 -2 Z"/>'
-    + '<path class="twinkle" style="animation-delay:1700ms" d="M204 164 l1.8 3.8 3.8 1.8 -3.8 1.8 -1.8 3.8 -1.8 -3.8 -3.8 -1.8 3.8 -1.8 Z"/></g>';
+    + '<path class="twinkle" d="M32 84 l2.4 5 5 2.4 -5 2.4 -2.4 5 -2.4 -5 -5 -2.4 5 -2.4 Z"/>'
+    + '<path class="twinkle" style="animation-delay:900ms" d="M206 76 l2 4.2 4.2 2 -4.2 2 -2 4.2 -2 -4.2 -4.2 -2 4.2 -2 Z"/>'
+    + '<path class="twinkle" style="animation-delay:1700ms" d="M202 156 l1.8 3.8 3.8 1.8 -3.8 1.8 -1.8 3.8 -1.8 -3.8 -3.8 -1.8 3.8 -1.8 Z"/></g>';
 
-  return '<svg viewBox="0 0 240 216" class="threadart" role="img" aria-hidden="true">'
-    + '<circle cx="120" cy="116" r="78" fill="#F7A9C6" opacity=".1"/>'
+  return '<svg viewBox="0 0 240 206" class="threadart" role="img" aria-hidden="true">'
+    + '<circle cx="120" cy="108" r="80" fill="#F7A9C6" opacity=".1"/>'
     + frame
-    /* placed on the ring itself, so they read as part of the frame */
-    + bloom(120 - 72 * 0.71, 116 - 72 * 0.71, '#F7A9C6', 1)
-    + bloom(120 + 72 * 0.71, 116 - 72 * 0.71, '#FBD3E1', .8)
-    + bloom(120 + 72 * 0.62, 116 + 72 * 0.78, '#C9B0EA', .85)
-    + '<g class="knot' + (still ? '' : ' beat') + '">' + weave + '</g>'
-    + cord('M' + cols[0] + ' ' + y1 + ' C ' + (cols[0] - 2) + ' ' + (y1 + 18) + ' ' + (cols[0] - 2) + ' ' + (y1 + 24) + ' ' + (cols[0] - 3) + ' ' + (y1 + 30), 8)
-    + cord('M' + cols[2] + ' ' + y1 + ' C ' + (cols[2] + 2) + ' ' + (y1 + 18) + ' ' + (cols[2] + 2) + ' ' + (y1 + 24) + ' ' + (cols[2] + 3) + ' ' + (y1 + 30), 8)
-    + tassel(cols[0] - 3, -5) + tassel(cols[2] + 3, 5)
+    + bloom(120 - 76 * 0.71, 108 - 76 * 0.71, '#F7A9C6', 1)
+    + bloom(120 + 76 * 0.71, 108 - 76 * 0.71, '#FBD3E1', .8)
+    + bloom(120 - 76 * 0.72, 108 + 76 * 0.68, '#C9B0EA', .8)
+    + '<g class="knot' + (still ? '' : ' beat') + '">'
+    + cord(fallL, 8) + cord(fallR, 8)
+    + cord(HEART)
+    /* the binding goes on last, so it sits over the bundle it is holding */
+    + cord(wrapA, 8) + cord(wrapB, 8)
+    + '</g>'
     + above + spark
     + '</svg>';
 }

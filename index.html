@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
 <title>Nabu Tarot</title>
 <meta name="description" content="Nabu Tarot: dự đoán mới, rút một lá bài xem năng lượng hiện tại, học tarot, Lenormand, chiêm tinh, và đặt lịch xem bài.">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'none'; object-src 'none'; form-action 'self'; script-src 'self' 'sha256-0b6dZMhQD4dpUuBkb+nKlyjzGR7a0wuCCeFVXupEe2s=' https://www.gstatic.com https://apis.google.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; font-src 'self' data:; media-src 'self' data: blob:; worker-src 'self'; connect-src 'self' https://*.googleapis.com https://*.google.com https://*.firebaseio.com https://*.cloudfunctions.net https://*.workers.dev https://generativelanguage.googleapis.com; frame-src https://*.firebaseapp.com https://accounts.google.com https://*.facebook.com">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'none'; object-src 'none'; form-action 'self'; script-src 'self' 'sha256-c5Hm870KcfZQx5cEjIVfH++dGeHcajPTMPKZ8/LXgWk=' https://www.gstatic.com https://apis.google.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; font-src 'self' data:; media-src 'self' data: blob:; worker-src 'self'; connect-src 'self' https://*.googleapis.com https://*.google.com https://*.firebaseio.com https://*.cloudfunctions.net https://*.workers.dev https://generativelanguage.googleapis.com; frame-src https://*.firebaseapp.com https://accounts.google.com https://*.facebook.com">
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <meta name="theme-color" content="#EFE9FA">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -990,6 +990,12 @@ h1 .pileico{width:34px;height:27px;vertical-align:-3px;margin-right:2px}
 .treemsg{background:var(--tag-gold-bg);color:var(--tag-gold-ink);border:1.5px solid var(--gold);border-radius:16px;padding:14px 16px;margin:8px 0 14px}
 .treemsg .eyebrow{color:inherit;opacity:.75;margin-bottom:6px}
 .treemsg p{margin:0;font-family:var(--display);font-size:19px;line-height:1.45}
+/* The line about turns needs room: pressed against the card below it, it read
+   as a caption belonging to that card. */
+.luckline{margin:16px 0 18px}
+#main .luckline p{margin:0}
+.setcard{margin-top:18px}
+.setcard .remind{margin-top:0}
 .luckbox{margin-top:12px}.luckbox .lead{font-weight:600;margin:0 0 4px}.luckbox .btn.block{margin-top:8px}
 .sico{width:17px;height:17px;display:block}
 .links .sl{display:inline-flex;align-items:center;text-decoration:none;vertical-align:-3px}
@@ -1365,6 +1371,11 @@ h1 .pileico{width:34px;height:27px;vertical-align:-3px;margin-right:2px}
 .lovetag.st-engaged .d{color:#8A6A22}
 .lovetag.st-married{background:#F6ECFF;border-color:#D6BEF0;color:#4B2A6E}
 .lovetag.st-married .d{color:#6C4C94}
+/* #main p is justified with an id in its selector, which outweighs the
+   text-align the card sets - and a one-line justified paragraph renders flush
+   left, so these only looked centred when a line happened to fill the width.
+   This selector is strong enough to win. */
+#main .lovecard p,#main .askcard p,#main .quizresult p,#main .roadcard .road b{text-align:center}
 /* The stage, named under the pair. */
 #main .lovecard .stagename{margin:4px 0 0;font-size:12px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--pink-ink)}
 :root[lang="vi"] #main .lovecard .stagename{text-transform:none;letter-spacing:.02em}
@@ -2028,17 +2039,17 @@ const STR = {
     sentOk: 'Đã gửi. Nabu sẽ xác nhận sớm. Bạn xem lại trong mục Hồ sơ.',
     welcomeHead: 'Nabu Tarot xin chào! 🌙', nabuPosts: 'Bài viết của Nabu', versionLine: (v) => 'Phiên bản ' + v, checkUpdate: 'Kiểm tra cập nhật', updating: 'Đang tải bản mới…',
     privacyTitle: 'Chính sách quyền riêng tư', privacyLink: 'Riêng tư', delAccount: 'Xoá tài khoản', delHint: 'Thao tác này xoá tài khoản đăng nhập, hồ sơ, tin nhắn và lịch hẹn của bạn, và không thể hoàn lại.', delConfirm: 'Xoá tài khoản và toàn bộ dữ liệu của bạn? Việc này không hoàn lại được.', delDone: 'Đã xoá tài khoản. Cảm ơn bạn đã ghé Nabu Tarot.', delRelogin: 'Để chắc là bạn, hãy đăng nhập lại rồi bấm Xoá tài khoản một lần nữa.', aiFlag: 'Báo cáo câu trả lời này', aiFlagged: 'Đã ghi nhận. Cảm ơn bạn, Nabu sẽ xem lại.', storeCodeHint: 'Nhập mã mở khoá mà Nabu đã gửi cho bạn.',
-    actTitle: 'Hoạt động', actIntro: 'Những việc nhỏ để bạn ghé qua mỗi ngày: nuôi bạn nhỏ may mắn, buộc sợi chỉ đỏ với người ấy, rung cây thông điệp, tung đồng xu và viết nhật ký. Khi Nabu đăng thì có thêm tụ bài để chọn, bình chọn để tham gia và điều ước để gửi.', actEmpty: 'Chưa có hoạt động nào. Quay lại sau nhé.', actAll: 'Tất cả hoạt động', actOpen: 'Đang mở', actClosed: 'Đã đóng', actHasResults: 'Đã có kết quả',
+    actTitle: 'Hoạt động', actIntro: 'Những việc nhỏ để bạn ghé qua mỗi ngày: nuôi bạn nhỏ may mắn, buộc sợi tơ hồng với người ấy, rung cây thông điệp, tung đồng xu và viết nhật ký. Khi Nabu đăng thì có thêm tụ bài để chọn, bình chọn để tham gia và điều ước để gửi.', actEmpty: 'Chưa có hoạt động nào. Quay lại sau nhé.', actAll: 'Tất cả hoạt động', actOpen: 'Đang mở', actClosed: 'Đã đóng', actHasResults: 'Đã có kết quả',
     actPickHint: 'Bạn chạm vào tụ bài mà mình thấy bị thu hút nhất. Nabu sẽ đăng thông điệp của từng tụ sau vài ngày.', actPicked: (n) => 'Bạn đã chọn tụ ' + n + '.', actComeBack: (d) => 'Quay lại vào ' + d + ' để lật bài xem thông điệp.', actChangePile: 'Đổi sang tụ khác?', actPickToSee: 'Thông điệp đã có. Chạm vào một tụ để lật lên.', actTapOthers: 'Tụ bạn chọn đã lật lên. Bạn có thể chạm vào tụ khác để xem thử.',
     actVoteHint: 'Bạn chạm vào một lựa chọn. Mỗi người chỉ được bình chọn một lần.', actVoteLogin: 'Bạn cần đăng nhập để bình chọn và xem kết quả.', actVoted: 'Cảm ơn bạn đã bình chọn!', actClosedNote: 'Bình chọn đã đóng. Đây là kết quả.', actVotes: (n) => n + ' phiếu',
     actWishPh: 'Điều mình ước lúc này là…', actWishSend: 'Gửi vào vũ trụ', actWishHint: 'Bạn viết ngắn gọn, ở thì hiện tại, rồi gửi đi. Điều ước chỉ được lưu trên máy của bạn và không ai đọc được.', actWishCount: (n) => 'Bạn đã gửi ' + n + ' điều ước ở đây.', actWishSent: 'Đã gửi. Giờ đến lượt bạn làm bước đầu tiên. ✨', actWishEmpty: 'Bạn viết điều ước trước nhé.', actWishClear: 'Xoá các điều ước đã lưu trên máy', actWishClearConfirm: 'Xoá các điều ước đã lưu trên máy này?',
     loveNoRules: 'Phần này của Nabu chưa được mở. Bạn báo giúp Nabu qua mục Liên hệ nhé, không phải lỗi của bạn đâu.',
     loveNoRulesAdmin: 'Firestore từ chối ghi: rules cho handles / people / bonds / requests / invites chưa được publish. Vào Firebase Console › Firestore Database › Rules, dán toàn bộ file firestore.rules trong repo rồi bấm Publish.',
     loveRoadTitle: 'Chặng đường',
-    loveRoadOf: { tied: 'Buộc chỉ', proposed: 'Cầu hôn', engaged: 'Đính ước', married: 'Cưới' },
-    loveRoadHint: 'Bắt đầu từ sợi chỉ. Sau đó một người trao nhẫn, người kia trả lời, rồi hai bạn làm lễ. Mỗi chặng có hình riêng, hiện trên hồ sơ của bạn.',
-    loveStage: { tied: 'Đang buộc chỉ', proposed: 'Đang đợi câu trả lời', engaged: 'Đã đính ước', married: 'Đã cưới' },
-    loveTagOf: { tied: 'Đang buộc chỉ', proposed: 'Đang đợi trả lời', engaged: 'Đã đính ước', married: 'Đã cưới' },
+    loveRoadOf: { tied: 'Buộc tơ', proposed: 'Cầu hôn', engaged: 'Đính ước', married: 'Cưới' },
+    loveRoadHint: 'Bắt đầu từ sợi tơ hồng. Sau đó một người trao nhẫn, người kia trả lời, rồi hai bạn làm lễ. Mỗi chặng có hình riêng, hiện trên hồ sơ của bạn.',
+    loveStage: { tied: 'Đang buộc tơ hồng', proposed: 'Đang đợi câu trả lời', engaged: 'Đã đính ước', married: 'Đã cưới' },
+    loveTagOf: { tied: 'Đang buộc tơ hồng', proposed: 'Đang đợi trả lời', engaged: 'Đã đính ước', married: 'Đã cưới' },
     loveAskTitle: 'Cầu hôn', loveAskHint: 'Bạn gửi một chiếc nhẫn sang bên kia. Người ấy trả lời được hoặc chưa trả lời cũng không sao — bạn rút lại lúc nào cũng được.',
     loveAskNotePh: 'Một câu cho người ấy…', loveAskDo: '💍 Gửi lời cầu hôn', loveAskDone: 'Đã gửi 💍',
     loveAskSent: 'Bạn đã cầu hôn.', loveAskSentHint: (n) => 'Đang đợi ' + n + ' trả lời.', loveAskTakeBack: 'Rút lại',
@@ -2061,30 +2072,30 @@ const STR = {
     loveGiftLeft: (n) => 'Hôm nay bạn còn tặng được ' + n + ' món.', loveGiftDone: 'Hôm nay bạn tặng đủ rồi. Mai tặng tiếp nhé.',
     loveYou: 'Bạn',
     loveNotHere: 'Không tìm thấy ai mang tên này.',
-    loveNotHereWhy: 'Thường là vì người ấy chưa dùng Nabu bao giờ. Bạn tạo một link mời rồi gửi cho người ấy nhé — mở link lên, tạo tài khoản, là nhận được sợi chỉ của bạn.',
+    loveNotHereWhy: 'Thường là vì người ấy chưa dùng Nabu bao giờ. Bạn tạo một link mời rồi gửi cho người ấy nhé — mở link lên, tạo tài khoản, là nhận được sợi tơ của bạn.',
     loveInviteTitle: 'Mời người chưa dùng Nabu',
-    loveInviteHint: 'Link này gửi được qua Messenger, Zalo hay bất cứ đâu. Ai mở link sẽ thấy tên bạn và nhận sợi chỉ sau khi tạo tài khoản. Bạn chỉ gửi cho một người thôi nhé.',
+    loveInviteHint: 'Link này gửi được qua Messenger, Zalo hay bất cứ đâu. Ai mở link sẽ thấy tên bạn và nhận sợi tơ sau khi tạo tài khoản. Bạn chỉ gửi cho một người thôi nhé.',
     loveMakeLink: 'Tạo link mời', loveNewLink: 'Tạo link mới',
     loveLinkReady: 'Link đã sẵn sàng. Gửi cho người ấy nhé.',
     loveCopy: 'Sao chép', loveCopied: 'Đã sao chép link.', loveCopyFail: 'Bạn chạm giữ vào ô trên rồi chọn Sao chép nhé.',
-    loveShare: 'Gửi đi', loveShareText: 'Mình muốn buộc sợi chỉ đỏ với bạn trên Nabu.',
+    loveShare: 'Gửi đi', loveShareText: 'Mình muốn buộc sợi tơ hồng với bạn trên Nabu.',
     loveJoinTitle: 'Lời mời buộc chỉ',
-    loveJoinFrom: (n) => n + ' muốn buộc sợi chỉ đỏ với bạn.',
+    loveJoinFrom: (n) => n + ' muốn buộc sợi tơ hồng với bạn.',
     loveJoinSignIn: 'Bạn tạo tài khoản hoặc đăng nhập đã. Lời mời này vẫn đợi bạn ở đây.',
     loveJoinNeedName: 'Bạn chọn tên hiển thị trước đã nhé.',
     loveJoinGone: 'Lời mời này không còn dùng được nữa.',
-    loveJoinTake: 'Nhận sợi chỉ', loveJoinYours: 'Đây là link của chính bạn. Bạn gửi nó cho người ấy nhé.',
+    loveJoinTake: 'Nhận sợi tơ', loveJoinYours: 'Đây là link của chính bạn. Bạn gửi nó cho người ấy nhé.',
     loveJoinWaiting: 'Có một lời mời đang đợi bạn', loveJoinOpen: 'Mở',
     loveAlreadyMine: 'Bạn đang buộc chỉ với người khác rồi.',
-    loveTitle: 'Sợi chỉ đỏ', loveSub: 'Buộc sợi chỉ đỏ với người ấy',
-    loveIntro: 'Chuyện xưa kể rằng hai người có duyên gặp nhau đã được buộc vào nhau bằng một sợi chỉ đỏ ở ngón út. Sợi chỉ có thể rối, có thể căng, nhưng không đứt.',
-    loveNote: 'Đây là một kỉ niệm trong app, không phải giấy tờ. Nó không có giá trị pháp lý ở bất kỳ đâu. Ai cũng tháo được sợi chỉ của mình bất cứ lúc nào mà không cần hỏi người kia.',
+    loveTitle: 'Sợi tơ hồng', loveSub: 'Buộc sợi tơ hồng với người ấy',
+    loveIntro: 'Chuyện xưa kể rằng Ông Tơ Bà Nguyệt buộc một sợi tơ hồng vào ngón út của hai người có duyên gặp nhau. Sợi tơ có thể rối, có thể căng, nhưng không đứt.',
+    loveNote: 'Đây là một kỉ niệm trong app, không phải giấy tờ. Nó không có giá trị pháp lý ở bất kỳ đâu. Ai cũng tháo được sợi tơ của mình bất cứ lúc nào mà không cần hỏi người kia.',
     loveNeedAccount: 'Bạn đăng nhập trước đã, để Nabu biết hai người là ai.',
     loveHandleTitle: 'Đặt tên riêng của bạn', loveHandleHint: 'Đây là tên để người ấy tìm ra bạn: bạn đưa tên cho người ấy, người ấy gõ vào ô tìm. Chỉ chữ thường, số, dấu chấm và gạch dưới, từ 3 đến 20 ký tự. Bạn đổi lúc nào cũng được.',
     loveYourName: 'Tên hiển thị', loveHandle: 'Tên riêng của bạn', loveClaim: 'Lưu tên', loveSaving: 'Đang lưu…',
     loveHandleBad: 'Tên này chưa hợp lệ. Dùng chữ thường, số, dấu chấm hoặc gạch dưới, từ 3 đến 20 ký tự.',
     loveHandleTaken: 'Tên này có người dùng rồi. Bạn thử tên khác nhé.',
-    loveSingle: 'Sợi chỉ của bạn chưa buộc với ai.', loveYouAre: 'Người ấy tìm bạn bằng',
+    loveSingle: 'Sợi tơ của bạn chưa buộc với ai.', loveYouAre: 'Người ấy tìm bạn bằng',
     loveRequests: 'Lời mời đang chờ', loveAccept: 'Nhận chỉ', loveDecline: 'Từ chối',
     loveAcceptAsk: (n) => 'Buộc chỉ với ' + n + '? Cả hai sẽ cùng hiện trên trang này.',
     loveTied: 'Đã buộc chỉ 🧵', loveTheyTied: 'Người này vừa buộc chỉ với người khác.',
@@ -2092,15 +2103,15 @@ const STR = {
     loveHandlePh: 'tennguoiay', loveFind: 'Tìm', loveChangeHandle: 'Đổi tên riêng', loveLooking: 'Đang tìm…',
     loveNoOne: 'Không có ai mang tên này.', loveThatsYou: 'Đó là bạn.', loveAlreadyTied: 'Người này đã buộc chỉ với người khác rồi.',
     loveNoteLabel: 'Lời nhắn (không bắt buộc)', loveNotePh: 'Viết một câu cho người ấy…',
-    loveOffer: 'Gửi sợi chỉ', loveOffered: 'Đã gửi. Đợi người ấy nhận nhé.', loveSomeone: 'Người ấy',
+    loveOffer: 'Gửi sợi tơ', loveOffered: 'Đã gửi. Đợi người ấy nhận nhé.', loveSomeone: 'Người ấy',
     loveDaysWord: 'ngày bên nhau', loveDaysN: (n) => n + ' ngày', loveSince: (d) => 'Từ ngày ' + d,
     loveNextMark: (n, d) => 'Còn ' + d + ' ngày nữa là tròn ' + n + ' ngày.',
     loveDayTitle: 'Ngày bắt đầu', loveDayHint: 'Nếu hai bạn bắt đầu trước hôm nay, chọn đúng ngày đó. Cả hai đều sửa được, và không chọn được ngày trong tương lai.',
     loveDayBad: 'Chọn một ngày không muộn hơn hôm nay.', loveDaySaved: 'Đã lưu ngày bắt đầu.',
     loveNextTitle: 'Sắp có', loveNextSoon: 'Lễ trao lời hẹn, thiệp mời bạn bè tới dự và lời chúc của mọi người sẽ tới ở bản sau.',
     loveUntie: 'Tháo chỉ', loveUntieHint: 'Bạn tháo được bất cứ lúc nào, không cần người kia đồng ý. Trang này sẽ trở lại như cũ với cả hai.',
-    loveUntieAsk: 'Tháo sợi chỉ này? Cả hai sẽ không còn hiện là một đôi nữa.', loveUntied: 'Đã tháo chỉ.',
-    loveTagTied: 'Đang buộc chỉ',
+    loveUntieAsk: 'Tháo sợi tơ này? Cả hai sẽ không còn hiện là một đôi nữa.', loveUntied: 'Đã tháo chỉ.',
+    loveTagTied: 'Đang buộc tơ hồng',
     actJoin: 'Tham gia', actBack: 'Tất cả hoạt động', actPileMsgOf: (n) => 'Thông điệp tụ ' + n, actTypeIcon: { pile: PILE_ICON, poll: '📊', wish: '🌠' },
     actPileArt: 'Hình của tụ', actArtAuto: 'Tự chọn', actArts: ['Nến', 'Hoa đào', 'Trăng non', 'Thạch anh tím', 'Mặt trời', 'Chìa khoá', 'Lông vũ', 'Sóng biển', 'Hoa sen', 'Kim cương'],
     translating: 'Đang dịch sang tiếng Anh…', translated: 'Đã có bản tiếng Anh (dịch tự động).', translateFail: 'Chưa dịch được sang tiếng Anh; bản tiếng Việt vẫn hiện cho mọi người.',
@@ -13136,19 +13147,16 @@ function loveMarkSVG(state, cls) {
 }
 
 /* ---- the thread itself ----
-   A pan chang - the knot tied in red silk for weddings and for luck - inside a
-   fine gold ring, falling into two weighted tassels.
+   One length of red cord, looped into a heart and tied at the base, inside a
+   fine gold ring, with the two ends falling away below.
 
-   The weave is real. Every strand is laid down twice, first as a wide stroke in
-   the ground colour and then as the cord, so each one cuts a clean gap through
-   whatever is beneath it. Three strands run across, three run down, and then
-   the crossings where the horizontal belongs on top are painted back in - nine
-   of them, alternating. That alternation is the whole difference between cord
-   and a flat squiggle. */
+   Every strand is drawn twice, first as a wide stroke in the ground colour and
+   then as the cord, so each one cuts a clean gap through whatever lies under it
+   and passes over. In the knot the crossings that belong on top are painted
+   back over afterwards, which is the whole difference between cord and a line. */
 function threadSVG(state, still) {
   const RED = '#C4142F', RED_DEEP = '#8A0C20', RED_LIT = '#F0748C', GROUND = '#FFFAF6';
   const W = 10;
-  /* One strand: the gap it cuts, the cord, and the light along its back. */
   const cord = (d, w) => {
     const k = w || W;
     return '<path d="' + d + '" fill="none" stroke="' + GROUND + '" stroke-width="' + (k + 4.5) + '" stroke-linecap="round" stroke-linejoin="round"/>'
@@ -13156,46 +13164,34 @@ function threadSVG(state, still) {
       + '<path d="' + d + '" fill="none" stroke="' + RED + '" stroke-width="' + (k - 2.2) + '" stroke-linecap="round" stroke-linejoin="round"/>'
       + '<path d="' + d + '" fill="none" stroke="' + RED_LIT + '" stroke-width="' + (k - 6.4) + '" stroke-linecap="round" stroke-linejoin="round" opacity=".45"/>';
   };
-  /* The same strand without its gap, for painting a crossing back on top. */
   const over = (d, w) => {
     const k = w || W;
-    return '<path d="' + d + '" fill="none" stroke="' + RED_DEEP + '" stroke-width="' + k + '" stroke-linecap="butt"/>'
-      + '<path d="' + d + '" fill="none" stroke="' + RED + '" stroke-width="' + (k - 2.2) + '" stroke-linecap="butt"/>'
-      + '<path d="' + d + '" fill="none" stroke="' + RED_LIT + '" stroke-width="' + (k - 6.4) + '" stroke-linecap="butt" opacity=".45"/>';
+    return '<path d="' + d + '" fill="none" stroke="' + RED_DEEP + '" stroke-width="' + k + '" stroke-linecap="round"/>'
+      + '<path d="' + d + '" fill="none" stroke="' + RED + '" stroke-width="' + (k - 2.2) + '" stroke-linecap="round"/>'
+      + '<path d="' + d + '" fill="none" stroke="' + RED_LIT + '" stroke-width="' + (k - 6.4) + '" stroke-linecap="round" opacity=".45"/>';
   };
 
-  /* The body of the knot: a square of cord woven over and under itself. */
-  const CX = 120, CY = 116, GAP = 14;
-  const rows = [CY - GAP, CY, CY + GAP], cols = [CX - GAP, CX, CX + GAP];
-  const x0 = CX - GAP - 12, x1 = CX + GAP + 12, y0 = CY - GAP - 12, y1 = CY + GAP + 12;
-  let weave = '';
-  /* The four loops first, so the body sits over where they enter it. */
-  weave += cord('M' + cols[0] + ' ' + y0 + ' C ' + (cols[0] - 6) + ' ' + (y0 - 40) + ' ' + (cols[2] + 6) + ' ' + (y0 - 40) + ' ' + cols[2] + ' ' + y0);
-  weave += cord('M' + x0 + ' ' + rows[0] + ' C ' + (x0 - 40) + ' ' + (rows[0] - 6) + ' ' + (x0 - 40) + ' ' + (rows[2] + 6) + ' ' + x0 + ' ' + rows[2]);
-  weave += cord('M' + x1 + ' ' + rows[0] + ' C ' + (x1 + 40) + ' ' + (rows[0] - 6) + ' ' + (x1 + 40) + ' ' + (rows[2] + 6) + ' ' + x1 + ' ' + rows[2]);
-  /* Three across, then three down: the downs pass over everywhere. */
-  rows.forEach((y) => { weave += cord('M' + x0 + ' ' + y + ' H' + x1); });
-  cols.forEach((x) => { weave += cord('M' + x + ' ' + y0 + ' V' + y1); });
-  /* Then the crossings where the across belongs on top, in a chequer. */
-  rows.forEach((y, r) => cols.forEach((x, c) => {
-    if ((r + c) % 2 === 0) weave += over('M' + (x - 8) + ' ' + y + ' H' + (x + 8));
-  }));
+  /* The heart is one unbroken length of cord, so there is no join to see: from
+     the tie at the bottom, up and round the left lobe, down into the cleft, up
+     and round the right, and back down to where it started. */
+  const HEART = 'M120 150 C 82 130, 60 102, 68 80 C 75 60, 102 58, 113 76'
+    + ' C 116 81, 118 86, 120 91 C 122 86, 124 81, 127 76'
+    + ' C 138 58, 165 60, 172 80 C 180 102, 158 130, 120 150 Z';
+  /* Below it the two ends cross and fall away, and two turns of cord bind them
+     where they meet. A binding is what makes cord look tied; a bow does not. */
+  const fallL = 'M113 148 C 106 168, 96 182, 80 196';
+  const fallR = 'M127 148 C 134 168, 144 182, 160 196';
+  /* Both turns bow the same way, so they read as two bands round a bundle. Bowed
+     apart they made a lens, which the eye takes for an eye. */
+  const wrapA = 'M106 147 C 113 151, 127 151, 134 147';
+  const wrapB = 'M106 156 C 113 160, 127 160, 134 156';
 
   const frame = '<g fill="none" stroke="#E5BE5E">'
-    + '<circle cx="120" cy="116" r="72" stroke-width="1.4" opacity=".85"/>'
-    + '<circle cx="120" cy="116" r="66" stroke-width="0.9" opacity=".55"/></g>'
-    + '<g fill="#E5BE5E" opacity=".9">'
-    + [0, 90, 180, 270].map((a) => '<circle cx="120" cy="44" r="2.6" transform="rotate(' + a + ' 120 116)"/>').join('')
-    + '</g>';
-
+    + '<circle cx="120" cy="108" r="76" stroke-width="1.4" opacity=".85"/>'
+    + '<circle cx="120" cy="108" r="70" stroke-width="0.9" opacity=".5"/></g>';
   const bloom = (x, y, c, s2) => '<g transform="translate(' + x + ',' + y + ') scale(' + s2 + ')">'
     + [0, 72, 144, 216, 288].map((a) => '<ellipse cx="0" cy="-4.6" rx="3" ry="4.6" fill="' + c + '" transform="rotate(' + a + ')"/>').join('')
     + '<circle r="2" fill="#FFF3C4"/></g>';
-
-  const tassel = (x, tilt) => '<g transform="translate(' + x + ',' + (y1 + 34) + ') rotate(' + tilt + ')">'
-    + '<ellipse cx="0" cy="6" rx="5.4" ry="6" fill="#E5BE5E"/><ellipse cx="-1.6" cy="4.2" rx="1.7" ry="2" fill="#FFF3C4"/>'
-    + '<path d="M-5 10 L-6.2 27 M-2.5 11 L-2.9 29 M0 11 L0 30 M2.5 11 L2.9 29 M5 10 L6.2 27" stroke="' + RED + '" stroke-width="1.7" stroke-linecap="round"/>'
-    + '</g>';
 
   const st = state || 'tied';
   const above = st === 'proposed' ? ringArt(120, 26, 19, -8, true)
@@ -13203,21 +13199,22 @@ function threadSVG(state, still) {
       : st === 'married' ? ringPairArt(120, 30, 16) + wreathArt(120, 12, 44)
         : '';
   const spark = still ? '' : '<g fill="#FFF3C4" class="sparks">'
-    + '<path class="twinkle" d="M30 92 l2.4 5 5 2.4 -5 2.4 -2.4 5 -2.4 -5 -5 -2.4 5 -2.4 Z"/>'
-    + '<path class="twinkle" style="animation-delay:900ms" d="M208 84 l2 4.2 4.2 2 -4.2 2 -2 4.2 -2 -4.2 -4.2 -2 4.2 -2 Z"/>'
-    + '<path class="twinkle" style="animation-delay:1700ms" d="M204 164 l1.8 3.8 3.8 1.8 -3.8 1.8 -1.8 3.8 -1.8 -3.8 -3.8 -1.8 3.8 -1.8 Z"/></g>';
+    + '<path class="twinkle" d="M32 84 l2.4 5 5 2.4 -5 2.4 -2.4 5 -2.4 -5 -5 -2.4 5 -2.4 Z"/>'
+    + '<path class="twinkle" style="animation-delay:900ms" d="M206 76 l2 4.2 4.2 2 -4.2 2 -2 4.2 -2 -4.2 -4.2 -2 4.2 -2 Z"/>'
+    + '<path class="twinkle" style="animation-delay:1700ms" d="M202 156 l1.8 3.8 3.8 1.8 -3.8 1.8 -1.8 3.8 -1.8 -3.8 -3.8 -1.8 3.8 -1.8 Z"/></g>';
 
-  return '<svg viewBox="0 0 240 216" class="threadart" role="img" aria-hidden="true">'
-    + '<circle cx="120" cy="116" r="78" fill="#F7A9C6" opacity=".1"/>'
+  return '<svg viewBox="0 0 240 206" class="threadart" role="img" aria-hidden="true">'
+    + '<circle cx="120" cy="108" r="80" fill="#F7A9C6" opacity=".1"/>'
     + frame
-    /* placed on the ring itself, so they read as part of the frame */
-    + bloom(120 - 72 * 0.71, 116 - 72 * 0.71, '#F7A9C6', 1)
-    + bloom(120 + 72 * 0.71, 116 - 72 * 0.71, '#FBD3E1', .8)
-    + bloom(120 + 72 * 0.62, 116 + 72 * 0.78, '#C9B0EA', .85)
-    + '<g class="knot' + (still ? '' : ' beat') + '">' + weave + '</g>'
-    + cord('M' + cols[0] + ' ' + y1 + ' C ' + (cols[0] - 2) + ' ' + (y1 + 18) + ' ' + (cols[0] - 2) + ' ' + (y1 + 24) + ' ' + (cols[0] - 3) + ' ' + (y1 + 30), 8)
-    + cord('M' + cols[2] + ' ' + y1 + ' C ' + (cols[2] + 2) + ' ' + (y1 + 18) + ' ' + (cols[2] + 2) + ' ' + (y1 + 24) + ' ' + (cols[2] + 3) + ' ' + (y1 + 30), 8)
-    + tassel(cols[0] - 3, -5) + tassel(cols[2] + 3, 5)
+    + bloom(120 - 76 * 0.71, 108 - 76 * 0.71, '#F7A9C6', 1)
+    + bloom(120 + 76 * 0.71, 108 - 76 * 0.71, '#FBD3E1', .8)
+    + bloom(120 - 76 * 0.72, 108 + 76 * 0.68, '#C9B0EA', .8)
+    + '<g class="knot' + (still ? '' : ' beat') + '">'
+    + cord(fallL, 8) + cord(fallR, 8)
+    + cord(HEART)
+    /* the binding goes on last, so it sits over the bundle it is holding */
+    + cord(wrapA, 8) + cord(wrapB, 8)
+    + '</g>'
     + above + spark
     + '</svg>';
 }
@@ -17857,12 +17854,15 @@ function renderTree() {
       + '<div class="card treewrap"><div class="treestage"><button type="button" class="tree" id="tree" aria-label="' + esc(S.treeShake) + '">' + treeSVG() + '<span class="petals" id="petals"></span></button>' + treePetHTML() + '</div>'
       + '<div class="treemsg" id="treemsg"' + (msg ? '' : ' hidden') + '><div class="eyebrow">' + esc(S.treeFor) + '</div><p id="treetext">' + (msg ? esc(L(msg)) : '') + '</p></div>'
       + (luckSpent('tree') ? '' : '<button class="btn primary block" id="shake">' + esc(msg ? S.treeAgain : S.treeShake) + '</button>') + '</div>'
-      + (PETS.all().length
-        ? '<label class="remind"><input type="checkbox" id="treepets"' + (treePetsOn() ? ' checked' : '') + '><span>' + esc(S.treePets) + '</span></label>'
-          + '<p class="hint">' + esc(S.treePetsHint) + '</p>'
-        : '')
-      + luckPanelHTML('tree')
+      /* The designs come first, straight under the tree: somebody who never
+         scrolls should still learn the tree can be changed. The switch for the
+         companions goes to the foot of the screen, in a card of its own. */
       + lookStripHTML('tree')
+      + '<div class="luckline">' + luckPanelHTML('tree') + '</div>'
+      + (PETS.all().length
+        ? '<div class="card setcard"><label class="remind"><input type="checkbox" id="treepets"' + (treePetsOn() ? ' checked' : '') + '><span>' + esc(S.treePets) + '</span></label>'
+          + '<p class="hint">' + esc(S.treePetsHint) + '</p></div>'
+        : '')
       + '<p style="margin-top:14px"><a class="btn block" href="#/unlock">💳 ' + esc(S.unlockLink) + '</a></p>'
       + '<p style="margin-top:14px"><a href="#/play" class="backlink">← ' + esc(S.actTitle) + '</a></p>';
     bindLookStrip(m, draw);
@@ -17959,8 +17959,8 @@ function renderCoin() {
       + '<div class="coin" id="coin">' + coinFaceSVG(side) + '</div>'
       + '<div class="coinres" id="coinres" aria-live="polite">' + (side ? esc(side === 'yes' ? S.coinYes : S.coinNo) : '') + '</div>'
       + (luckSpent('coin') ? '' : '<button class="btn primary block" id="coinflip">' + esc(side ? S.coinAgain : S.coinFlip) + '</button>') + '</div>'
-      + luckPanelHTML('coin')
       + lookStripHTML('coin')
+      + '<div class="luckline">' + luckPanelHTML('coin') + '</div>'
       + '<p class="hint">' + esc(S.coinNote) + '</p>'
       + '<p style="margin-top:14px"><a class="btn block" href="#/unlock">💳 ' + esc(S.unlockLink) + '</a></p>'
       + '<p style="margin-top:14px"><a href="#/play" class="backlink">← ' + esc(S.actTitle) + '</a></p>';
@@ -18524,7 +18524,7 @@ function adminSale(p) {
 ROUTES.admin = { nav: '', render: renderAdmin };
 
 /* ============================ boot ============================ */
-window.APP_VERSION = 'v124';
+window.APP_VERSION = 'v125';
 window.NABU = { CONFIG: CONFIG, SALE: SALE, salePrice: salePrice, loadActs: loadActs, BACK: BACK, LESSONS: LESSONS, localAnswer: localAnswer, compatVerdict: compatVerdict, numerologyOf: numerologyOf, ZDEEP: ZDEEP, lunarToday: lunarToday, solarToLunar: solarToLunar, DECK: DECK, INSIGHT: INSIGHT, KW: KW, ASK: ASK, TOPICS: TOPICS, GUIDES: GUIDES, SERVICES: SERVICES, COURSES: COURSES, ACCESS: ACCESS, ZODIAC: ZODIAC, pick: pick, book: book,
   insightHTML: insightHTML, insightOf: insightOf, sunSignIndex: sunSignIndex, lifePath: lifePath, PROFILE: () => PROFILE, BE: BE, ACTS: ACTS,
   ANGELS: ANGELS, angelRead: angelRead, CODEBOOK: CODEBOOK, verifyCode: verifyCode, petHomeSVG: petHomeSVG, PET_HOMES: PET_HOMES, PET_WEARS: PET_WEARS, codeDigest: codeDigest, randomCode: randomCode, BANK: BANK, PETS: PETS, petSVG: petSVG, PET_COATS: PET_COATS, PET_KINDS: PET_KINDS, luckCut: luckCut, petLevel: petLevel, petStep: petStep, VOUCHERS: VOUCHERS, levelCoins: levelCoins, LOOKS: LOOKS,

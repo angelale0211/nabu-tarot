@@ -824,6 +824,12 @@ h1 .pileico{width:34px;height:27px;vertical-align:-3px;margin-right:2px}
 .treemsg{background:var(--tag-gold-bg);color:var(--tag-gold-ink);border:1.5px solid var(--gold);border-radius:16px;padding:14px 16px;margin:8px 0 14px}
 .treemsg .eyebrow{color:inherit;opacity:.75;margin-bottom:6px}
 .treemsg p{margin:0;font-family:var(--display);font-size:19px;line-height:1.45}
+/* The line about turns needs room: pressed against the card below it, it read
+   as a caption belonging to that card. */
+.luckline{margin:16px 0 18px}
+#main .luckline p{margin:0}
+.setcard{margin-top:18px}
+.setcard .remind{margin-top:0}
 .luckbox{margin-top:12px}.luckbox .lead{font-weight:600;margin:0 0 4px}.luckbox .btn.block{margin-top:8px}
 .sico{width:17px;height:17px;display:block}
 .links .sl{display:inline-flex;align-items:center;text-decoration:none;vertical-align:-3px}
@@ -1199,6 +1205,11 @@ h1 .pileico{width:34px;height:27px;vertical-align:-3px;margin-right:2px}
 .lovetag.st-engaged .d{color:#8A6A22}
 .lovetag.st-married{background:#F6ECFF;border-color:#D6BEF0;color:#4B2A6E}
 .lovetag.st-married .d{color:#6C4C94}
+/* #main p is justified with an id in its selector, which outweighs the
+   text-align the card sets - and a one-line justified paragraph renders flush
+   left, so these only looked centred when a line happened to fill the width.
+   This selector is strong enough to win. */
+#main .lovecard p,#main .askcard p,#main .quizresult p,#main .roadcard .road b{text-align:center}
 /* The stage, named under the pair. */
 #main .lovecard .stagename{margin:4px 0 0;font-size:12px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--pink-ink)}
 :root[lang="vi"] #main .lovecard .stagename{text-transform:none;letter-spacing:.02em}

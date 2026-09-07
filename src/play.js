@@ -579,12 +579,15 @@ function renderTree() {
       + '<div class="card treewrap"><div class="treestage"><button type="button" class="tree" id="tree" aria-label="' + esc(S.treeShake) + '">' + treeSVG() + '<span class="petals" id="petals"></span></button>' + treePetHTML() + '</div>'
       + '<div class="treemsg" id="treemsg"' + (msg ? '' : ' hidden') + '><div class="eyebrow">' + esc(S.treeFor) + '</div><p id="treetext">' + (msg ? esc(L(msg)) : '') + '</p></div>'
       + (luckSpent('tree') ? '' : '<button class="btn primary block" id="shake">' + esc(msg ? S.treeAgain : S.treeShake) + '</button>') + '</div>'
-      + (PETS.all().length
-        ? '<label class="remind"><input type="checkbox" id="treepets"' + (treePetsOn() ? ' checked' : '') + '><span>' + esc(S.treePets) + '</span></label>'
-          + '<p class="hint">' + esc(S.treePetsHint) + '</p>'
-        : '')
-      + luckPanelHTML('tree')
+      /* The designs come first, straight under the tree: somebody who never
+         scrolls should still learn the tree can be changed. The switch for the
+         companions goes to the foot of the screen, in a card of its own. */
       + lookStripHTML('tree')
+      + '<div class="luckline">' + luckPanelHTML('tree') + '</div>'
+      + (PETS.all().length
+        ? '<div class="card setcard"><label class="remind"><input type="checkbox" id="treepets"' + (treePetsOn() ? ' checked' : '') + '><span>' + esc(S.treePets) + '</span></label>'
+          + '<p class="hint">' + esc(S.treePetsHint) + '</p></div>'
+        : '')
       + '<p style="margin-top:14px"><a class="btn block" href="#/unlock">💳 ' + esc(S.unlockLink) + '</a></p>'
       + '<p style="margin-top:14px"><a href="#/play" class="backlink">← ' + esc(S.actTitle) + '</a></p>';
     bindLookStrip(m, draw);
@@ -681,8 +684,8 @@ function renderCoin() {
       + '<div class="coin" id="coin">' + coinFaceSVG(side) + '</div>'
       + '<div class="coinres" id="coinres" aria-live="polite">' + (side ? esc(side === 'yes' ? S.coinYes : S.coinNo) : '') + '</div>'
       + (luckSpent('coin') ? '' : '<button class="btn primary block" id="coinflip">' + esc(side ? S.coinAgain : S.coinFlip) + '</button>') + '</div>'
-      + luckPanelHTML('coin')
       + lookStripHTML('coin')
+      + '<div class="luckline">' + luckPanelHTML('coin') + '</div>'
       + '<p class="hint">' + esc(S.coinNote) + '</p>'
       + '<p style="margin-top:14px"><a class="btn block" href="#/unlock">💳 ' + esc(S.unlockLink) + '</a></p>'
       + '<p style="margin-top:14px"><a href="#/play" class="backlink">← ' + esc(S.actTitle) + '</a></p>';

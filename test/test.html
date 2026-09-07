@@ -649,7 +649,7 @@ async function go(hash, sel) { W().location.hash = hash; await sleep(30); return
       { /* The writing that introduces a tab has to name what is on it. */
         await go('#/play', '#acts .actbtn');
         const intro = d.querySelector('#main p.muted').textContent;
-        ok(/bạn nhỏ/.test(intro) && /sợi chỉ/.test(intro) && /nhật ký/.test(intro) && /đồng xu/.test(intro),
+        ok(/bạn nhỏ/.test(intro) && /tơ hồng/.test(intro) && /nhật ký/.test(intro) && /đồng xu/.test(intro),
           'the activities tab describes the everyday things on it, not only the three Nabu publishes');
         await go('#/play/pet', '.petstage'); }
       { const bp = d.querySelector('.bless p'), bl = d.querySelector('.bless'), prev = bl.previousElementSibling;
