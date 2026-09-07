@@ -16,13 +16,41 @@ function paywallHTML(courseId) {
     + '<ul class="inc">' + L(c.includes).map((x) => '<li>' + esc(x) + '</li>').join('') + '</ul>'
     + (isTWA() ? '' : '<div class="price">' + priceHTML(c.price, 'unlock', c.id) + ' <span>/ ' + c.months + ' ' + esc(S.months6) + '</span></div>')
     + (expired ? '<p class="hint err">' + esc(S.courseExpired(a)) + '</p>' : '')
-    + (isTWA() ? '<p class="hint" style="margin:8px 0">' + esc(S.storeCodeHint) + '</p>' : '<a class="btn primary block" data-buy="' + courseId + '" href="' + (CONFIG.instagram ? 'https://ig.me/m/' + esc(CONFIG.instagram) : '#/me') + '" target="_blank" rel="noopener">' + esc(S.buyCourse) + '</a>'
-    + '<p class="hint" style="margin:8px 0">' + esc(S.buyHint) + '</p>')
+    /* Asked here, in the app, the way a booking is - not copied to the
+       clipboard and carried off to Instagram, where nothing knows what was
+       asked for and Nabu has a message to answer instead of an order. */
+    + (isTWA() ? '<p class="hint" style="margin:8px 0">' + esc(S.storeCodeHint) + '</p>'
+      : '<button type="button" class="btn primary block" data-buyreq="' + courseId + '">' + esc(S.buyCourse) + '</button>'
+        + '<p class="hint" id="bstatus" style="margin:8px 0"></p>'
+        + '<p class="hint" style="margin:8px 0">' + esc(S.buyHint) + '</p>'
+        + '<p style="margin:8px 0"><a class="backlink" href="#/unlock?from=learn">' + esc(S.unlockLink) + ' \u2192</a></p>')
     + '<div class="row"><input id="ccode" placeholder="NABU-T-…" autocapitalize="characters" style="flex:1"><button class="btn" id="cunlock">' + esc(S.unlock) + '</button></div><p class="hint" id="cstatus"></p></div>';
 }
 function bindPaywall(root, after) {
   const S = T();
-  $$('[data-buy]', root).forEach((a) => a.addEventListener('click', () => { const c = courseOf(a.getAttribute('data-buy')); copyText(S.buyMsg(L(c.name), fmtPrice(c.price), c.months)); toast(S.copied); }));
+  /* One button, one order in the dashboard, signed by whoever asked. */
+  $$('[data-buyreq]', root).forEach((b) => b.addEventListener('click', async () => {
+    const c = courseOf(b.getAttribute('data-buyreq')), st = $('#bstatus', root);
+    if (!(BE.enabled && BE.user)) {
+      /* An order has to be signed by somebody, so signing in comes first - and
+         they come back here rather than to the home screen. */
+      toast(S.unlockNeedIn);
+      store.set('nabu-unlock-from', 'learn');
+      location.hash = '#/me?next=unlock';
+      return;
+    }
+    b.disabled = true;
+    if (st) { st.className = 'hint'; st.textContent = S.loveSaving; }
+    try {
+      const price = salePrice(c.price, 'unlock', c.id);
+      await BE.createUnlockOrder([{ id: c.id, name: L(c.name), price: price }], price);
+      if (st) { st.className = 'hint ok'; st.textContent = S.unlockSent; }
+      toast(S.unlockSent);
+    } catch (e) {
+      b.disabled = false;
+      if (st) { st.className = 'hint err'; st.textContent = S.publishFail + ': ' + (e && e.message ? e.message : ''); }
+    }
+  }));
   const btn = $('#cunlock', root);
   if (btn) btn.addEventListener('click', async () => {
     const st = $('#cstatus', root);

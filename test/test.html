@@ -1112,6 +1112,29 @@ async function go(hash, sel) { W().location.hash = hash; await sleep(30); return
       ok(Math.abs(Math.round(bar.querySelector('.chattools').getBoundingClientRect().height) - 150) <= 3,
         'and it stays level when the box grows'); }
 
+      /* ---- a locked lesson asks Nabu, in the app ---- */
+      { const keptAcc = w.localStorage.getItem('nabu-access');
+        w.localStorage.removeItem('nabu-access');
+        N.BE.user = { uid: 'uidA', email: 'a@test' };
+        const before = Object.keys(db.docs).filter((k) => k.indexOf('bookings/') === 0).length;
+        await go('#/home', '#main');
+        await go('#/learn/lenormand', '.paywall, .acc'); await sleep(240);
+        const ask = d.querySelector('[data-buyreq]');
+        ok(ask && !d.querySelector('.paywall a[href*="ig.me"]'),
+          'a locked lesson offers to ask Nabu, rather than opening an Instagram chat');
+        if (ask) {
+          ask.click(); await sleep(320);
+          const orders = Object.keys(db.docs).filter((k) => k.indexOf('bookings/') === 0)
+            .map((k) => db.docs[k]).filter((x) => x && x.kind === 'unlock');
+          ok(orders.length === before + 1 && orders[orders.length - 1].uid === 'uidA'
+            && orders[orders.length - 1].items[0].id === 'lenormand'
+            && orders[orders.length - 1].status === 'requested',
+            'and pressing it writes one order to the dashboard, named and signed');
+          ok(/#\/learn/.test(w.location.hash),
+            'without leaving the lesson they were looking at');
+        } else { ok(false, 'and pressing it writes one order'); ok(false, 'without leaving the lesson'); }
+        if (keptAcc != null) w.localStorage.setItem('nabu-access', keptAcc); }
+
       /* ---- a wedding ---- */
       { const B = 'bonds/uidA__uidB', W = 'weddings/uidA__uidB';
         N.BE.user = { uid: 'uidA', email: 'a@test' };
@@ -1163,10 +1186,10 @@ async function go(hash, sel) { W().location.hash = hash; await sleep(30); return
         /* The request has to reach Nabu, or none of this is true. */
         d.querySelector('#wedpay').click(); await sleep(320);
         { const orders = Object.keys(db.docs).filter((k) => k.indexOf('bookings/') === 0)
-            .map((k) => db.docs[k]).filter((x) => x && x.kind === 'unlock');
-          ok(orders.length === 1 && orders[0].items[0].id === 'wedding'
-            && orders[0].price === 30000 && orders[0].status === 'requested'
-            && orders[0].uid === 'uidA',
+            .map((k) => db.docs[k])
+            .filter((x) => x && x.kind === 'unlock' && x.items && x.items[0].id === 'wedding');
+          ok(orders.length === 1 && orders[0].price === 30000
+            && orders[0].status === 'requested' && orders[0].uid === 'uidA',
             'sending it writes one order to the dashboard, signed by whoever asked'); }
 
         /* Asking is what makes the room: the hour is the thing being held, and
@@ -1633,6 +1656,20 @@ async function go(hash, sel) { W().location.hash = hash; await sleep(30); return
     ok(!d.documentElement.getAttribute('data-theme') && JSON.parse(w.localStorage.getItem('nabu-theme')) === '' && bgOf() === (w.matchMedia('(prefers-color-scheme: dark)').matches ? DARK : LIGHT), 'auto follows the phone setting');
     d.querySelector('[data-theme-pick="light"]').click();
     ok(d.documentElement.scrollWidth <= 431, 'no horizontal overflow (' + d.documentElement.scrollWidth + ')');
+    { /* Which section the unlock page leads with depends on the door somebody
+         came through, so every way in has to say which door it is. Three did
+         not - the design pickers inside the coin, the tree and the card backs -
+         and a locked design therefore landed on a page led by tarot courses. */
+      /* The app is one inline script among several tags, and the first one
+         is a library with no text in it - so take them all, or the check
+         quietly passes on an empty string. */
+      const src = Array.prototype.map.call(d.querySelectorAll('script'), (x) => x.textContent || '').join(String.fromCharCode(10));
+      const bare = (src.match(/['"]#\/unlock['"]/g) || []).length;
+      const tagged = (src.match(/#\/unlock\?from=/g) || []).length;
+      ok(bare === 0 && tagged >= 8,
+        'every way into the unlock page carries the door it came through ('
+        + tagged + ' tagged, ' + bare + ' bare)');
+    }
     { /* The four shelves - food, home, what they wear, their coat. Reported as
          broken; it was not, but seven of the nine foods are locked and tapping
          one used to jump the whole app to the price list, which is what that
@@ -1702,7 +1739,10 @@ async function go(hash, sel) { W().location.hash = hash; await sleep(30); return
     { /* A pill with a symbol in it and no words is the shape of a button, so
          people waited for it and pressed at it. Nothing may answer a press
          with a bare mark. */
-      const src = d.querySelector('script') ? d.querySelector('script').textContent : '';
+      /* The app is one inline script among several tags, and the first one
+         is a library with no text in it - so take them all, or the check
+         quietly passes on an empty string. */
+      const src = Array.prototype.map.call(d.querySelectorAll('script'), (x) => x.textContent || '').join(String.fromCharCode(10));
       const bare = (src.match(/toast\(\s*'[^']{0,3}'\s*\)/g) || []);
       ok(bare.length === 0, 'no press is answered with a wordless mark' + (bare.length ? ' [' + bare.join(' ') + ']' : ''));
 

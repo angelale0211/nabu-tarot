@@ -265,7 +265,9 @@ function meSect(id, icon, title, body, openByDefault) {
     });
     bindProfileForm(body, () => {
       if (params.next === 'book') location.hash = '#/book';
-      else if (params.next === 'unlock') location.hash = '#/unlock';
+      /* Back through the door they came in by, so the page still leads with
+         whatever they were trying to unlock. */
+      else if (params.next === 'unlock') location.hash = '#/unlock?from=' + (store.get('nabu-unlock-from', '') || '');
       /* Back to the door they were standing at when they were asked to
          make an account. */
       else if (params.next === 'wedding') { const w = store.get('nabu-wed-next', ''); location.hash = w ? '#/wedding/' + w : '#/wedding'; }

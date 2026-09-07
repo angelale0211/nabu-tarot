@@ -216,7 +216,7 @@ async function renderHome(args, params) {
   const name = (PROFILE.name || '').trim();
   const sale = SALE.live();
   const saleBanner = sale
-    ? '<a class="salebar" href="' + (sale.scope === 'unlock' ? '#/unlock' : '#/prices') + '"><span class="tag">🏷️ ' + esc(SALE.off()) + '</span><span class="txt">' + esc(SALE.title() || T().saleDefault) + '</span><span class="go">' + esc(T().saleSee) + ' ›</span></a>'
+    ? '<a class="salebar" href="' + (sale.scope === 'unlock' ? '#/unlock?from=app' : '#/prices') + '"><span class="tag">🏷️ ' + esc(SALE.off()) + '</span><span class="txt">' + esc(SALE.title() || T().saleDefault) + '</span><span class="go">' + esc(T().saleSee) + ' ›</span></a>'
     : '';
   m.innerHTML = saleBanner + '<div class="eyebrow">' + esc(CONFIG.brand) + '</div>'
     + todayHTML()
