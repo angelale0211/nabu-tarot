@@ -38,9 +38,20 @@ const BE = {
     try { await this.auth.signInWithPopup(P); } catch (e) { if (/popup/i.test(e.code || '')) await this.auth.signInWithRedirect(P); else throw e; }
   },
   async signInEmail(email, pw, create) {
+    this.speakTheirLanguage();
     if (create) await this.auth.createUserWithEmailAndPassword(email, pw); else await this.auth.signInWithEmailAndPassword(email, pw);
   },
-  resetPassword(email) { return this.auth.sendPasswordResetEmail(email); },
+  /* Firebase sends its own emails, and it will send them in the reader's own
+     language if it is told which one that is - otherwise every message goes
+     out in the project's default whatever the person is reading. It is one
+     line, and it has never been set. */
+  speakTheirLanguage() {
+    try { this.auth.languageCode = (typeof lang !== 'undefined' && lang) ? lang : 'vi'; } catch (e) { /* older SDK */ }
+  },
+  resetPassword(email) {
+    this.speakTheirLanguage();
+    return this.auth.sendPasswordResetEmail(email);
+  },
   signOut() { return this.auth.signOut(); },
   /* Account deletion (a store requirement): profile, thread and messages, bookings, then the login itself.
      Firebase asks for a recent sign-in before deleting a login; the caller handles that error. */
