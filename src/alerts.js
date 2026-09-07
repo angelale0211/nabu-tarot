@@ -263,11 +263,37 @@ function alertsLocalCheck() {
   if (was && was !== v) ALERTS.add({ id: 'ver-' + v, k: 'app', t: S.alertUp(v), b: S.alertUpBody, href: '#/home' });
 }
 
+/* Every room this account has a seat in. The list lives on the account, so a
+   new phone still knows what you said you would come to. */
+function alertsWatchWeddings() {
+  const ids = store.get('nabu-weddings', []) || [];
+  if (!ids.length || typeof WED === 'undefined') return;
+  ids.slice(-6).forEach((id) => {
+    ALERT_STOP.push(WED.watch(id, (w) => {
+      if (!w) return;
+      const S = T(), pair = (w.aName || '') + ' & ' + (w.bName || '');
+      const day = isoDate(new Date(Number(w.startMs) || 0));
+      /* Today, once. */
+      if (day === isoDate(new Date()) && !w.doneAt) {
+        ALERTS.add({ id: 'wed-today-' + id + '-' + day, k: 'love',
+          t: S.alertWedToday(pair), b: S.alertWedTodayBody, href: '#/wedding/' + id });
+      }
+      /* And the moment the doors open, which is the only moment the link
+         works and lasts a quarter of an hour. */
+      if (WED.doorState(w) === 'open' && !w.doneAt) {
+        alertSay({ id: 'wed-open-' + id + '-' + day, k: 'love',
+          t: S.alertWedOpen(pair), b: S.alertWedOpenBody, href: '#/wedding/' + id }, true);
+      }
+    }));
+  });
+}
+
 function alertsStart() {
   alertsStop();
   alertsLocalCheck();
   if (!BE.enabled || !BE.user) { alertsBadge(); return; }
   try { alertsWatchLove(); } catch (e) { /* the thread is not reachable */ }
+  try { alertsWatchWeddings(); } catch (e) { /* no room is reachable */ }
   try { alertsWatchBookings(); } catch (e) { /* bookings are not reachable */ }
   try { alertsWatchMessages(); } catch (e) { /* the thread doc is not reachable */ }
   alertsBadge();

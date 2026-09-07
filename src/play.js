@@ -588,7 +588,7 @@ function renderTree() {
         ? '<div class="card setcard"><label class="remind"><input type="checkbox" id="treepets"' + (treePetsOn() ? ' checked' : '') + '><span>' + esc(S.treePets) + '</span></label>'
           + '<p class="hint">' + esc(S.treePetsHint) + '</p></div>'
         : '')
-      + '<p style="margin-top:14px"><a class="btn block" href="#/unlock">💳 ' + esc(S.unlockLink) + '</a></p>'
+      + '<p style="margin-top:14px"><a class="btn block" href="#/unlock?from=app">💳 ' + esc(S.unlockLink) + '</a></p>'
       + '<p style="margin-top:14px"><a href="#/play" class="backlink">← ' + esc(S.actTitle) + '</a></p>';
     bindLookStrip(m, draw);
     { const tp = $('#treepets');
@@ -687,7 +687,7 @@ function renderCoin() {
       + lookStripHTML('coin')
       + '<div class="luckline">' + luckPanelHTML('coin') + '</div>'
       + '<p class="hint">' + esc(S.coinNote) + '</p>'
-      + '<p style="margin-top:14px"><a class="btn block" href="#/unlock">💳 ' + esc(S.unlockLink) + '</a></p>'
+      + '<p style="margin-top:14px"><a class="btn block" href="#/unlock?from=app">💳 ' + esc(S.unlockLink) + '</a></p>'
       + '<p style="margin-top:14px"><a href="#/play" class="backlink">← ' + esc(S.actTitle) + '</a></p>';
     bindLookStrip(m, draw);
     const q = $('#coinq'); q.addEventListener('input', () => store.set('nabu-coinq', q.value));

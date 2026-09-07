@@ -245,7 +245,7 @@ function renderLooks() {
   const draw = () => {
     const pro = plusOn();
     m.innerHTML = '<div class="eyebrow">' + esc(CONFIG.brand) + '</div><h1 style="margin-bottom:6px">' + esc(S.looksTitle) + '</h1><p class="muted">' + esc(S.looksIntro) + '</p>'
-      + (pro ? '<p class="hint">✨ ' + esc(S.looksPlusOn) + '</p>' : '<a class="salebar" href="#/unlock"><span class="tag">✨ ' + esc(S.plusName) + '</span><span class="txt">' + esc(S.looksLocked) + '</span><span class="go">' + esc(S.unlockLink) + ' ›</span></a>')
+      + (pro ? '<p class="hint">✨ ' + esc(S.looksPlusOn) + '</p>' : '<a class="salebar" href="#/unlock?from=app"><span class="tag">✨ ' + esc(S.plusName) + '</span><span class="txt">' + esc(S.looksLocked) + '</span><span class="go">' + esc(S.unlockLink) + ' ›</span></a>')
       + LOOK_KINDS.map((kind) => '<div class="sec"><h2 style="margin-bottom:8px">' + esc(S.lookKinds[kind]) + '</h2><div class="lookgrid">'
         + LOOK_SETS[kind].map((x) => {
           const locked = x.pro && !pro, on = LOOKS.get(kind) === x.id;
@@ -253,7 +253,7 @@ function renderLooks() {
             + lookPreview(kind, x) + '<b>' + esc(L(x.name)) + '</b>'
             + (locked ? '<span class="lk-lock">🔒</span>' : '') + (on ? '<span class="lk-on">✓</span>' : '') + '</button>';
         }).join('') + '</div></div>').join('')
-      + '<p style="margin-top:14px"><a class="backlink" href="#/unlock">' + esc(S.unlockLink) + ' →</a></p>';
+      + '<p style="margin-top:14px"><a class="backlink" href="#/unlock?from=app">' + esc(S.unlockLink) + ' →</a></p>';
     $$('[data-look]', m).forEach((b) => b.addEventListener('click', () => {
       const p = b.getAttribute('data-look').split(':'), item = LOOK_SETS[p[0]].filter((x) => x.id === p[1])[0];
       if (item.pro && !plusOn()) { toast(S.looksNeedPlus); location.hash = '#/unlock'; return; }

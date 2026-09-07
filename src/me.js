@@ -218,6 +218,7 @@ function meSect(id, icon, title, body, openByDefault) {
     if (BE.enabled) {
       talk += '<div class="card"><h3 style="margin-bottom:4px">' + esc(S.messages) + '</h3><p class="hint" style="margin-bottom:8px">' + esc(BE.isAdmin() ? S.ownThreadHint : S.messagesIntro) + '</p>'
         + (BE.user ? '<div class="chat" id="chat"></div>' + chatBarHTML('mtext', 'msend', S.send) : '<p class="muted">' + esc(S.needLogin) + '</p>') + '</div>';
+      if (BE.user) talk += wedComingHTML();
       if (BE.user) talk += '<div class="card"><h3 style="margin-bottom:8px">' + esc(S.myBookings) + '</h3><div id="mybk"><p class="hint">…</p></div>' + (notifyState() === 'default' ? '<button class="btn block" id="notifon" style="margin-top:8px">🔔 ' + esc(S.reminderOn) + '</button>' : '') + '<p class="hint">' + esc(S.reminderHint) + ' ' + esc(S.calendarHint) + '</p></div>';
     } else if (CONFIG.instagram) {
       talk += '<div class="card"><h3 style="margin-bottom:4px">' + esc(S.messages) + '</h3><p class="muted" style="font-size:14px">' + esc(S.messagesSoon) + '</p><a class="btn block" href="https://ig.me/m/' + esc(CONFIG.instagram) + '" target="_blank" rel="noopener">' + esc(S.viaInstagram) + '</a></div>';
@@ -262,7 +263,13 @@ function meSect(id, icon, title, body, openByDefault) {
       try { if ('serviceWorker' in navigator) { const reg = await navigator.serviceWorker.getRegistration(); if (reg) await reg.update(); } } catch (e) { /* offline */ }
       setTimeout(() => location.reload(), 800);
     });
-    bindProfileForm(body, () => { if (params.next === 'book') location.hash = '#/book'; else if (params.next === 'unlock') location.hash = '#/unlock'; });
+    bindProfileForm(body, () => {
+      if (params.next === 'book') location.hash = '#/book';
+      else if (params.next === 'unlock') location.hash = '#/unlock';
+      /* Back to the door they were standing at when they were asked to
+         make an account. */
+      else if (params.next === 'wedding') { const w = store.get('nabu-wed-next', ''); location.hash = w ? '#/wedding/' + w : '#/wedding'; }
+    });
     $('#munlock').addEventListener('click', async () => {
       const st = $('#mcstatus'), btn = $('#munlock');
       st.textContent = S.codeChecking; st.className = 'hint'; btn.disabled = true;

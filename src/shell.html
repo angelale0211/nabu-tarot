@@ -1294,6 +1294,52 @@ h1 .pileico{width:34px;height:27px;vertical-align:-3px;margin-right:2px}
 .diary .date .warn{color:var(--err)}
 .diary.past.istoday{border-color:var(--lav)}
 
+/* ---- the wedding room ----
+   Its own ground, because a ceremony that looks like the rest of the app is
+   not a ceremony. Warm, gold-ruled, dim at the edges. */
+.wedcard{position:relative;text-align:center;border:1px solid var(--gold);
+  background:radial-gradient(120% 90% at 50% 0%,var(--surface-2),var(--surface))}
+.wedcard.live{padding-top:18px}
+.wedcard.done{border-color:var(--lav)}
+.cupid{width:132px;height:143px;display:block;margin:0 auto 4px}
+.cupid.joy{animation:cupidjoy 2.4s ease-in-out infinite}
+@keyframes cupidjoy{0%,100%{transform:translateY(0)}50%{transform:translateY(-7px)}}
+.cupidname{margin:0 0 8px;font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--gold-ink);opacity:.75}
+.wedpair{margin:2px 0 4px;font-family:var(--display);font-size:21px;line-height:1.3;overflow-wrap:anywhere}
+.wedwhen{margin:0 0 4px;font-size:14px;color:var(--fg-soft)}
+.wedcount{margin:2px 0 8px;font-size:26px;font-weight:700;font-variant-numeric:tabular-nums;color:var(--fg)}
+.wedsay{margin:6px 0 14px;font-size:16.5px;line-height:1.6;font-family:var(--display)}
+:root[lang="vi"] .wedsay,:root[lang="vi"] .wedpair{line-height:1.75}
+.wedprice{margin:10px 0;font-size:22px;font-weight:700;text-align:center}
+.vowrow{display:flex;gap:10px}
+.vowrow .btn{flex:1;min-width:0;min-height:46px}
+.mutebtn{position:absolute;top:10px;right:10px;width:34px;height:34px;border-radius:999px;border:1px solid var(--rule);
+  background:var(--surface);font-size:15px;line-height:1;display:grid;place-content:center;cursor:pointer}
+
+/* petals over the room, catching nothing */
+.wedroom{position:relative}
+.wedfall{position:absolute;inset:0;overflow:hidden;pointer-events:none;z-index:4;border-radius:18px}
+.wedfall i{position:absolute;top:-8%;font-size:17px;font-style:normal;opacity:0;animation:wedfall linear infinite}
+@keyframes wedfall{
+  0%{transform:translateY(-10%) rotate(0deg);opacity:0}
+  10%{opacity:.95}
+  100%{transform:translateY(560px) rotate(300deg);opacity:0}}
+
+.wedrow{display:flex;align-items:baseline;gap:10px;padding:9px 0;border-top:1px solid var(--rule-soft);
+  color:inherit;text-decoration:none}
+.wedrow:first-of-type{border-top:0}
+.wedrow b{flex:1;min-width:0;font-weight:600;overflow-wrap:anywhere}
+.wedrow .faint{font-size:12.5px;white-space:nowrap}
+.bqcard{position:relative;text-align:center;overflow:hidden}
+.bqair{margin:6px 0;font-size:44px;line-height:1;animation:bqfly 1.6s ease-in-out infinite}
+.bqair.still{animation:none}
+@keyframes bqfly{0%,100%{transform:translateY(0) rotate(-12deg)}50%{transform:translateY(-16px) rotate(12deg)}}
+.wgrow{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px}
+.wgrow .wg{display:block;padding:4px;border-radius:10px;background:var(--surface-2)}
+@media (prefers-reduced-motion:reduce){
+  .wedfall i,.bqair,.cupid.joy{animation:none}
+  .wedfall{display:none}}
+
 /* Somebody else's pages, marked as theirs so they are never mistaken for
    your own, and the switch that lets them be seen at all. */
 .diary.theirs{border-style:dashed}

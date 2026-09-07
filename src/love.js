@@ -813,7 +813,9 @@ function renderLove(wantHandle) {
         + '<b>' + esc(S.loveEngaged) + '</b>'
         + (bond.engagedOn ? '<p class="hint">' + esc(S.loveEngagedOn(fmtDate(bond.engagedOn))) + '</p>' : '')
         + '<button type="button" class="btn primary block" id="lvmarry" style="margin-top:10px">' + esc(S.loveMarryDo) + '</button>'
-        + '<p class="hint">' + esc(S.loveMarryHint) + '</p></div>';
+        + '<p class="hint">' + esc(S.loveMarryHint) + '</p>'
+        + '<a class="btn block" href="#/wedding" style="margin-top:10px">\uD83D\uDC92 ' + esc(S.wedTitle) + '</a>'
+        + '<p class="hint">' + esc(S.wedFromThread) + '</p></div>';
     } else if (stage === 'married') {
       const myRole = LOVE.role(bond, me);
       ask = '<div class="card askcard done">' + loveMarkSVG('married', 'big')

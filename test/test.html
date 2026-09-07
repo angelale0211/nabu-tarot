@@ -515,7 +515,7 @@ async function go(hash, sel) { W().location.hash = hash; await sleep(30); return
       ok(d.querySelectorAll('.lookstrip .look').length === 4 && d.querySelectorAll('.lookstrip .look.locked').length === 3 && d.querySelector('.lookstrip .lk-coin svg'), 'the coin screen carries the four coins themselves, three of them locked');
       { const faces = Array.from(d.querySelectorAll('.lookstrip .lk-coin svg')).map((e) => e.innerHTML.replace(/#[0-9A-Fa-f]{6}/g, ''));
         ok(faces.length === 4 && new Set(faces).size === 4, 'the four coins are four different faces, not one face in four colours'); }
-      ok(!d.querySelector('#coinflip') && d.querySelector('.luckbox') && /79\.000đ/.test(d.querySelector('.luckbox').textContent) && /Nabu Plus/.test(d.querySelector('.luckbox').textContent) && d.querySelector('#main > p > a[href="#/unlock"]'), 'the free weekly turn is used up, and Nabu Plus is offered with a code box');
+      ok(!d.querySelector('#coinflip') && d.querySelector('.luckbox') && /79\.000đ/.test(d.querySelector('.luckbox').textContent) && /Nabu Plus/.test(d.querySelector('.luckbox').textContent) && d.querySelector('#main > p > a[href^="#/unlock"]'), 'the free weekly turn is used up, and Nabu Plus is offered with a code box');
       d.querySelector('#luckcode').value = await issue('plus', '2099-01-01'); d.querySelector('#luckgo').click(); await waitFor(() => d.querySelector('#coinflip'), 6000);
       ok(d.querySelector('#coinflip') && !d.querySelector('.luckbox'), 'a Nabu Plus code lifts the limit on the coin');
       await go('#/play/tree', '#shake'); ok(d.querySelector('#shake') && !d.querySelector('.luckbox'), 'and on the message tree as well');
@@ -552,7 +552,20 @@ async function go(hash, sel) { W().location.hash = hash; await sleep(30); return
         w.localStorage.removeItem('nabu-access');
         ok(!N.plusOn() && !N.proOn() && !N.luckUnlimited(), 'and holding neither opens neither');
         if (keep != null) w.localStorage.setItem('nabu-access', keep); }
-      await go('#/play', '#acts'); await go('#/unlock', '.unlist'); ok(d.querySelectorAll('.unl').length === 7 && d.querySelector('.unl.best') && /249\.000đ/.test(d.querySelector('.unl.best').textContent) && /12 tháng/.test(d.querySelector('.unl.best').textContent) && d.querySelectorAll('.steps li').length === 3 && d.querySelector('#ucode') && d.querySelector('a[href="#/prices"]'), 'one screen lists the four courses, Plus and both Pro terms, marks the year as the best of them, and carries the steps plus a code box');
+      await go('#/play', '#acts'); await go('#/unlock', '.unlist'); ok(d.querySelectorAll('.unl').length === 8 && d.querySelector('.unl.best') && /249\.000đ/.test(d.querySelector('.unl.best').textContent) && /12 tháng/.test(d.querySelector('.unl.best').textContent) && d.querySelectorAll('.steps li').length === 3 && d.querySelector('#ucode') && d.querySelector('a[href="#/prices"]'), 'one screen lists the four courses, Plus, both Pro terms and the wedding, marks the year as the best of them, and carries the steps plus a code box');
+      { /* Which section leads depends on the door: a locked design wants the
+           packages, a locked lesson wants the courses. */
+        await go('#/play', '#acts'); await go('#/unlock?from=app', '.unlist'); await sleep(120);
+        const first = d.querySelector('#main .sec[data-sec]');
+        ok(first && first.getAttribute('data-sec') === 'tiers',
+          'arriving from a locked design, the packages that open it come first');
+        await go('#/play', '#acts'); await go('#/unlock?from=learn', '.unlist'); await sleep(120);
+        const f2 = d.querySelector('#main .sec[data-sec]');
+        ok(f2 && f2.getAttribute('data-sec') === 'courses',
+          'and arriving from a locked lesson, the courses do');
+        await go('#/play', '#acts'); await go('#/unlock', '.unlist'); await sleep(120);
+        ok(d.querySelectorAll('#main .sec[data-sec]').length === 3,
+          'while everything is on the page whichever door was used'); }
       w.localStorage.removeItem('nabu-access'); w.localStorage.removeItem('nabu-luck');
       { const bt = d.querySelector('#totop'); ok(bt && bt.hidden, 'a back-to-top button exists and stays hidden until the screen is scrolled'); }
       { const dots = d.createElement('div'); dots.innerHTML = N.BACK; ok(dots.querySelectorAll('circle').length === 4, 'the card back carries four dots, one per corner'); dots.remove(); }
@@ -817,7 +830,23 @@ async function go(hash, sel) { W().location.hash = hash; await sleep(30); return
         const docRef = (k) => ({
           get: async () => snap(k),
           set: async (v, o) => { docs[k] = (o && o.merge) ? Object.assign({}, docs[k] || {}, v) : v; notify(); },
-          update: async (v) => { docs[k] = Object.assign({}, docs[k] || {}, v); notify(); },
+          /* Firestore reads a dotted key as a path into the document, so
+             {'vows.takeA': true} sets one field inside vows rather than making
+             a key with a full stop in it. */
+          update: async (v) => {
+            const next = Object.assign({}, docs[k] || {});
+            Object.keys(v).forEach((key) => {
+              if (key.indexOf('.') < 0) { next[key] = v[key]; return; }
+              const path = key.split('.');
+              let at = next;
+              for (let i = 0; i < path.length - 1; i++) {
+                at[path[i]] = Object.assign({}, at[path[i]] || {});
+                at = at[path[i]];
+              }
+              at[path[path.length - 1]] = v[key];
+            });
+            docs[k] = next; notify();
+          },
           delete: async () => { delete docs[k]; notify(); },
           collection: (c) => colRef(k + '/' + c),
           onSnapshot: watch(() => snap(k))
@@ -1068,6 +1097,114 @@ async function go(hash, sel) { W().location.hash = hash; await sleep(30); return
       ta.style.height = '150px'; await sleep(60);
       ok(Math.abs(Math.round(bar.querySelector('.chattools').getBoundingClientRect().height) - 150) <= 3,
         'and it stays level when the box grows'); }
+
+      /* ---- a wedding ---- */
+      { const B = 'bonds/uidA__uidB', W = 'weddings/uidA__uidB';
+        N.BE.user = { uid: 'uidA', email: 'a@test' };
+        db.put(B, Object.assign({}, db.docs[B], { state: 'engaged', ask: null, engagedOn: '2026-09-01' }));
+        w.localStorage.setItem('nabu-love', JSON.stringify({ bond: 'uidA__uidB', stage: 'engaged' }));
+        const acc = JSON.parse(w.localStorage.getItem('nabu-access') || '{}');
+        await go('#/home', '#main');
+
+        /* Bought or not bought is the first fork. */
+        delete acc.wedding; w.localStorage.setItem('nabu-access', JSON.stringify(acc));
+        await go('#/wedding', '#main'); await sleep(260);
+        ok(/30\.000/.test(d.querySelector('#main').textContent) && d.querySelector('a[href^="#/unlock"]'),
+          'a couple who have not bought a wedding are shown what it is and what it costs');
+
+        acc.wedding = '2099-01-01'; w.localStorage.setItem('nabu-access', JSON.stringify(acc));
+        await go('#/home', '#main'); await go('#/wedding', '#wedmake'); await sleep(200);
+        ok(d.querySelector('#wedat') && d.querySelector('.cupid'),
+          'and one who has is asked for a day and an hour, with Cupid there to say so');
+
+        /* A room, two hours out: the doors are shut and say when they open. */
+        const soon = Date.now() + 2 * 3600000;
+        d.querySelector('#wedat').value = new Date(soon - new Date().getTimezoneOffset() * 60000).toISOString().slice(0, 16);
+        d.querySelector('#wedmake').click(); await sleep(300);
+        ok(db.docs[W] && db.docs[W].step === 0 && db.docs[W].state === 'planned'
+          && db.docs[W].uids.length === 2,
+          'making the room writes one wedding for the thread, at step nought');
+        ok(d.querySelector('#wedurl') && /#\/wedding\/uidA__uidB/.test(d.querySelector('#wedurl').value)
+          && d.querySelector('.sharerow'),
+          'and the couple get a link to send, with the same places to send it');
+
+        /* A guest at the door, two hours early. */
+        N.BE.user = { uid: 'uidG', email: 'g@test' };
+        await go('#/home', '#main'); await go('#/wedding/uidA__uidB', '#main'); await sleep(300);
+        ok(!d.querySelector('#wedyes') && !d.querySelector('#wedon')
+          && /15/.test(d.querySelector('#main').textContent),
+          'a guest arriving early finds the door shut, and is told when it opens');
+
+        /* Move it to now: the door opens, and the guest takes a seat. */
+        db.put(W, Object.assign({}, db.docs[W], { startMs: Date.now() + 60000 }));
+        await sleep(320);
+        ok(db.docs[W + '/guests/uidG'] && db.docs[W + '/guests/uidG'].seen > 0,
+          'once the door is open a guest is seated, and their seat says when they were last looking');
+        ok(!d.querySelector('#wedyes') && !d.querySelector('#wedon') && d.querySelector('[data-wgift]'),
+          'a guest can send congratulations but is given nothing to answer with');
+
+        /* The couple walk the ceremony. Cupid speaks, then asks each of them. */
+        N.BE.user = { uid: 'uidA', email: 'a@test' };
+        await go('#/home', '#main'); await go('#/wedding', '#main'); await sleep(300);
+        ok(d.querySelector('#wedon') && /Nabu Cupid/.test(d.querySelector('#main').textContent),
+          'the couple are given the ceremony to walk, one line at a time');
+        d.querySelector('#wedon').click(); await sleep(200);
+        d.querySelector('#wedon').click(); await sleep(220);
+        ok(db.docs[W].step === 2 && d.querySelector('#wedyes') && d.querySelector('#wedno'),
+          'and when it is somebody\u2019s turn they are asked, with a real yes and a real no');
+
+        /* No is a real answer. */
+        w.confirm = () => true;
+        d.querySelector('#wedno').click(); await sleep(260);
+        ok(db.docs[W].state === 'called-off' && db.docs[W].vows.takeA === false
+          && db.docs[B].state === 'engaged',
+          'answering no stops the ceremony and marries nobody');
+
+        /* Start again, and say yes to all four. */
+        db.put(W, { uids: ['uidA', 'uidB'], a: 'uidA', b: 'uidB', aName: 'Mai', bName: 'Nam',
+          startMs: Date.now() + 60000, state: 'planned', step: 2, vows: {}, by: 'uidA', at: 1 });
+        await sleep(300);
+        /* Two people answer, in turn - which is the point of asking. Only the
+           one being asked is given anything to press. */
+        const answerAs = async (uid) => {
+          N.BE.user = { uid: uid, email: uid + '@test' };
+          await go('#/home', '#main'); await go('#/wedding', '#main'); await sleep(280);
+          const y = d.querySelector('#wedyes');
+          if (y) { y.click(); await sleep(280); }
+          return !!y;
+        };
+        const wrongTurn = await (async () => {
+          N.BE.user = { uid: 'uidB', email: 'b@test' };
+          await go('#/home', '#main'); await go('#/wedding', '#main'); await sleep(280);
+          return !d.querySelector('#wedyes');
+        })();
+        ok(wrongTurn, 'the one who is not being asked is given nothing to answer with');
+        await answerAs('uidA'); await answerAs('uidB');
+        await answerAs('uidA'); await answerAs('uidB');
+        ok(db.docs[W].step === 6 && db.docs[W].vows.takeA === true && db.docs[W].vows.keepB === true,
+          'four questions, four answers, and the room moves on with each one');
+        N.BE.user = { uid: 'uidA', email: 'a@test' };
+        await go('#/home', '#main'); await go('#/wedding', '#wedon'); await sleep(260);
+        d.querySelector('#wedon').click(); await sleep(300);
+        ok(db.docs[W].state === 'married' && db.docs[W].doneAt > 0 && db.docs[B].state === 'married',
+          'the declaration marries them on the thread itself, not only in the story');
+
+        /* The bouquet: ten seconds in the air, and it never lands on the couple. */
+        db.put(W + '/guests/uidG', { uid: 'uidG', name: 'Linh', seen: Date.now() });
+        db.put(W + '/guests/uidA', { uid: 'uidA', name: 'Mai', seen: Date.now() });
+        await sleep(260);
+        ok(d.querySelector('#wedbq'), 'and then the bouquet is offered to be thrown');
+        d.querySelector('#wedbq').click(); await sleep(400);
+        ok(db.docs[W].bouquet && db.docs[W].bouquet.at > 0 && !db.docs[W].bouquet.uid,
+          'throwing it puts it in the air with nobody named yet, so the wait is the same for everybody');
+        ok(d.querySelector('.bqcard.flying'), 'and the room shows it flying');
+        await sleep(10400);
+        ok(db.docs[W].bouquet.uid === 'uidG',
+          'ten seconds later it lands on a guest who was really there, never on the couple');
+
+        w.localStorage.removeItem('nabu-weddings');
+        db.put(B, Object.assign({}, db.docs[B], { state: 'tied', marriedOn: null }));
+        w.localStorage.setItem('nabu-love', JSON.stringify({ bond: 'uidA__uidB', stage: 'tied' })); }
 
       /* ---- the diary, read by two ---- */
       { const B = 'bonds/uidA__uidB';

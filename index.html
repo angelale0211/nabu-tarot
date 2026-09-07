@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
 <title>Nabu Tarot</title>
 <meta name="description" content="Nabu Tarot: dự đoán mới, rút một lá bài xem năng lượng hiện tại, học tarot, Lenormand, chiêm tinh, và đặt lịch xem bài.">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'none'; object-src 'none'; form-action 'self'; script-src 'self' 'sha256-tx8/ccPQ0L2g7k3TlVEU6EqNILj2MiPj0jbDGewB08c=' https://www.gstatic.com https://apis.google.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; font-src 'self' data:; media-src 'self' data: blob:; worker-src 'self'; connect-src 'self' https://*.googleapis.com https://*.google.com https://*.firebaseio.com https://*.cloudfunctions.net https://*.workers.dev https://generativelanguage.googleapis.com; frame-src https://*.firebaseapp.com https://accounts.google.com https://*.facebook.com">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'none'; object-src 'none'; form-action 'self'; script-src 'self' 'sha256-8ee4DMT66HWkPOH48QTxuXPsPjW4oH62Qwl6CV8aD3E=' https://www.gstatic.com https://apis.google.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; font-src 'self' data:; media-src 'self' data: blob:; worker-src 'self'; connect-src 'self' https://*.googleapis.com https://*.google.com https://*.firebaseio.com https://*.cloudfunctions.net https://*.workers.dev https://generativelanguage.googleapis.com; frame-src https://*.firebaseapp.com https://accounts.google.com https://*.facebook.com">
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <meta name="theme-color" content="#EFE9FA">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -1460,6 +1460,52 @@ h1 .pileico{width:34px;height:27px;vertical-align:-3px;margin-right:2px}
 .diary .date .warn{color:var(--err)}
 .diary.past.istoday{border-color:var(--lav)}
 
+/* ---- the wedding room ----
+   Its own ground, because a ceremony that looks like the rest of the app is
+   not a ceremony. Warm, gold-ruled, dim at the edges. */
+.wedcard{position:relative;text-align:center;border:1px solid var(--gold);
+  background:radial-gradient(120% 90% at 50% 0%,var(--surface-2),var(--surface))}
+.wedcard.live{padding-top:18px}
+.wedcard.done{border-color:var(--lav)}
+.cupid{width:132px;height:143px;display:block;margin:0 auto 4px}
+.cupid.joy{animation:cupidjoy 2.4s ease-in-out infinite}
+@keyframes cupidjoy{0%,100%{transform:translateY(0)}50%{transform:translateY(-7px)}}
+.cupidname{margin:0 0 8px;font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--gold-ink);opacity:.75}
+.wedpair{margin:2px 0 4px;font-family:var(--display);font-size:21px;line-height:1.3;overflow-wrap:anywhere}
+.wedwhen{margin:0 0 4px;font-size:14px;color:var(--fg-soft)}
+.wedcount{margin:2px 0 8px;font-size:26px;font-weight:700;font-variant-numeric:tabular-nums;color:var(--fg)}
+.wedsay{margin:6px 0 14px;font-size:16.5px;line-height:1.6;font-family:var(--display)}
+:root[lang="vi"] .wedsay,:root[lang="vi"] .wedpair{line-height:1.75}
+.wedprice{margin:10px 0;font-size:22px;font-weight:700;text-align:center}
+.vowrow{display:flex;gap:10px}
+.vowrow .btn{flex:1;min-width:0;min-height:46px}
+.mutebtn{position:absolute;top:10px;right:10px;width:34px;height:34px;border-radius:999px;border:1px solid var(--rule);
+  background:var(--surface);font-size:15px;line-height:1;display:grid;place-content:center;cursor:pointer}
+
+/* petals over the room, catching nothing */
+.wedroom{position:relative}
+.wedfall{position:absolute;inset:0;overflow:hidden;pointer-events:none;z-index:4;border-radius:18px}
+.wedfall i{position:absolute;top:-8%;font-size:17px;font-style:normal;opacity:0;animation:wedfall linear infinite}
+@keyframes wedfall{
+  0%{transform:translateY(-10%) rotate(0deg);opacity:0}
+  10%{opacity:.95}
+  100%{transform:translateY(560px) rotate(300deg);opacity:0}}
+
+.wedrow{display:flex;align-items:baseline;gap:10px;padding:9px 0;border-top:1px solid var(--rule-soft);
+  color:inherit;text-decoration:none}
+.wedrow:first-of-type{border-top:0}
+.wedrow b{flex:1;min-width:0;font-weight:600;overflow-wrap:anywhere}
+.wedrow .faint{font-size:12.5px;white-space:nowrap}
+.bqcard{position:relative;text-align:center;overflow:hidden}
+.bqair{margin:6px 0;font-size:44px;line-height:1;animation:bqfly 1.6s ease-in-out infinite}
+.bqair.still{animation:none}
+@keyframes bqfly{0%,100%{transform:translateY(0) rotate(-12deg)}50%{transform:translateY(-16px) rotate(12deg)}}
+.wgrow{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px}
+.wgrow .wg{display:block;padding:4px;border-radius:10px;background:var(--surface-2)}
+@media (prefers-reduced-motion:reduce){
+  .wedfall i,.bqair,.cupid.joy{animation:none}
+  .wedfall{display:none}}
+
 /* Somebody else's pages, marked as theirs so they are never mistaken for
    your own, and the switch that lets them be seen at all. */
 .diary.theirs{border-style:dashed}
@@ -2435,6 +2481,69 @@ const STR = {
       engaged: (n, d) => 'Mình và ' + n + ' đã đính ước trên Nabu Tarot, sau ' + d + ' ngày bên nhau 💍✨',
       married: (n, d) => 'Mình và ' + n + ' đã thành đôi trên Nabu Tarot, ' + d + ' ngày và còn dài 💒'
     },
+    unlockWedding: 'Lễ cưới', unlockWeddingHint: 'Chỉ cần một trong hai người thanh toán, cả hai đều vào được phòng cưới.',
+    wedFromThread: 'Hoặc tổ chức một buổi lễ có khách mời, do Nabu Cupid chủ hôn.',
+    wedJoinHint: 'Bạn tạo tài khoản Nabu trong một phút, rồi quay lại đây là vào được phòng cưới.',
+    alertWedToday: (p) => '💒 Hôm nay là lễ cưới của ' + p,
+    alertWedTodayBody: 'Bạn nhớ vào đúng giờ nhé, cửa phòng mở trước 15 phút.',
+    alertWedOpen: (p) => '🔔 Phòng cưới của ' + p + ' đã mở cửa',
+    alertWedOpenBody: 'Bạn vào ngay để không lỡ phần nghi lễ.',
+    wedComing: 'Lễ cưới sắp tới', wedMineComing: (n) => 'Lễ cưới của bạn và ' + n,
+    wedGuestComing: (p) => 'Lễ cưới của ' + p,
+    wedTitle: 'Lễ cưới trên Nabu', wedIntro: 'Hai bạn đã đính ước có thể tổ chức một buổi lễ ngay trong ứng dụng, có khách mời và có Nabu Cupid chủ hôn.',
+    wedCupid: 'Nabu Cupid',
+    wedNeedAccount: 'Bạn cần đăng nhập để mở hoặc tham dự một lễ cưới.',
+    wedNeedThread: 'Bạn cần buộc sợi tơ hồng với một người trước đã.',
+    wedNeedEngaged: 'Hai bạn cần đính ước trên sợi tơ hồng trước khi tổ chức lễ cưới.',
+    wedNoRoom: 'Không tìm thấy lễ cưới này. Có thể buổi lễ đã kết thúc hoặc đường dẫn không còn đúng.',
+    wedOfferLead: 'Một buổi lễ nhỏ, chỉ của hai bạn và những người hai bạn mời.',
+    wedBuy: 'Mở lễ cưới', wedBuyHint: 'Bạn thanh toán một lần và có 12 tháng để chọn ngày tổ chức.',
+    wedPlanLead: (n) => 'Hai bạn và ' + n + ' đã sẵn sàng. Bây giờ chỉ còn chọn ngày giờ.',
+    wedPlanHint: 'Khách mời chỉ vào được phòng cưới từ 15 phút trước giờ bắt đầu.',
+    wedWhen: 'Ngày và giờ tổ chức', wedWhenHint: 'Bạn chọn giờ theo múi giờ trên máy của bạn. Hai bạn đổi lại được bất cứ lúc nào trước buổi lễ.',
+    wedWhenBad: 'Bạn chọn một thời điểm cách hiện tại ít nhất 10 phút.',
+    wedMake: 'Tạo phòng cưới', wedMade: 'Đã tạo phòng cưới 💒',
+    wedMoveTitle: 'Đổi ngày giờ', wedMove: 'Lưu ngày giờ mới', wedMoved: 'Đã đổi ngày giờ.',
+    wedDrop: 'Huỷ lễ cưới', wedDropHint: 'Huỷ thì phòng cưới và danh sách khách mời sẽ bị xoá. Bạn vẫn tạo lại được sau.',
+    wedDropAsk: 'Huỷ lễ cưới này? Phòng cưới và danh sách khách mời sẽ bị xoá.',
+    wedDropped: 'Đã huỷ lễ cưới.',
+    wedOpensSoon: 'Phòng cưới mở cửa 15 phút trước giờ bắt đầu.',
+    wedInviteTitle: 'Mời khách', wedInviteHint: 'Bạn gửi đường dẫn này cho ai cũng được. Người chưa có tài khoản Nabu sẽ được mời tạo một tài khoản trước khi vào.',
+    wedInviteText: (a, b, when) => 'Mời bạn đến dự lễ cưới của ' + a + ' và ' + b + ' trên Nabu Tarot, ' + when + ' 💒',
+    wedGuests: (n) => 'Khách mời (' + n + ')', wedNoGuests: 'Chưa có ai trong phòng.', wedNoGuestsYet: 'Chưa có ai nhận lời. Bạn gửi đường dẫn ở trên nhé.',
+    wedGuestIntro: 'Bạn được mời đến dự một lễ cưới trên Nabu.',
+    wedDoorEarly: 'Cửa phòng cưới sẽ mở 15 phút trước giờ bắt đầu. Bạn quay lại lúc đó nhé.',
+    wedRemember: 'Đừng quên nhé', wedRememberHint: 'Bạn lưu buổi lễ vào lịch của máy để được nhắc đúng giờ.',
+    wedAddCal: 'Lưu vào lịch', wedCalTitle: (a, b) => 'Lễ cưới của ' + a + ' và ' + b + ' trên Nabu',
+    wedInDays: (d, h) => d + ' ngày ' + h + ' giờ',
+    wedWatching: 'Bạn đang dự lễ. Bạn xem và gửi lời chúc, phần nghi lễ để cô dâu chú rể trả lời.',
+    wedLeaveOk: 'Bạn ra ngoài rồi quay lại trong lúc buổi lễ đang diễn ra đều được.',
+    wedGoOn: 'Tiếp tục', wedIDo: 'Con đồng ý', wedNotYet: 'Chưa',
+    wedAnswerHint: 'Bạn cứ suy nghĩ thật kỹ. Câu trả lời này hiện ra trước tất cả khách mời.',
+    wedNoSure: 'Bạn chắc chắn muốn trả lời “Chưa”? Buổi lễ sẽ dừng lại tại đây.',
+    wedWaitingFor: (n) => 'Đang chờ ' + n + ' trả lời…',
+    wedCalledOff: 'Buổi lễ đã dừng lại. Sợi tơ hồng của hai bạn vẫn còn đó, và hai bạn có thể tổ chức lại khi nào thấy sẵn sàng.',
+    wedMute: 'Bật/tắt nhạc',
+    wedSay: {
+      gather: () => 'Xin chào tất cả mọi người. Ta là Nabu Cupid, người giữ sợi tơ hồng. Hôm nay ta được mời đến đây để chứng kiến một điều rất đẹp.',
+      thread: (a, b) => 'Sợi tơ hồng giữa ' + a + ' và ' + b + ' đã được buộc từ lâu. Hôm nay, trước mặt mọi người, hai con sẽ thắt nó lại một lần nữa.',
+      askA: (a, b) => a + ', con có bằng lòng nhận ' + b + ' làm người bạn đời của mình không?',
+      askB: (a, b) => b + ', con có bằng lòng nhận ' + a + ' làm người bạn đời của mình không?',
+      promiseA: (a) => a + ', con có hứa sẽ ở bên người ấy những ngày vui, và ở lại cả những ngày không vui không?',
+      promiseB: (a, b) => b + ', con có hứa sẽ ở bên người ấy những ngày vui, và ở lại cả những ngày không vui không?',
+      bind: () => 'Ta xin thắt sợi tơ hồng này lại. Từ đây, hai đầu chỉ đã là một.',
+      declare: (a, b) => 'Trước tất cả những người có mặt hôm nay, ta tuyên bố ' + a + ' và ' + b + ' đã nên duyên vợ chồng. Chúc hai con trăm năm hạnh phúc! 🎊'
+    },
+    wedWishTitle: 'Lời chúc từ khách mời', wedWishHint: 'Khách mời gửi quà chúc mừng miễn phí, gửi bao nhiêu cũng được.',
+    wedBqTitle: 'Tung hoa cưới', wedBqHint: 'Cô dâu tung bó hoa cho khách mời đang có mặt. Người bắt được sẽ nhận lời chúc may mắn trong tình duyên.',
+    wedBqThrow: 'Tung bó hoa', wedBqReady: (n) => 'Đang có ' + n + ' khách trong phòng.',
+    wedBqNobody: 'Chưa có khách nào đang ở trong phòng để bắt hoa.',
+    wedBqAir: 'Bó hoa đang bay… ai sẽ là người bắt được?',
+    wedCaught: (n) => n + ' đã bắt được bó hoa cưới! 💐',
+    wedOverMarried: 'Buổi lễ đã kết thúc. Chúc mừng hai bạn!',
+    wedOverCalled: 'Buổi lễ đã dừng lại.',
+    wedTellTitle: 'Chia sẻ tin vui',
+    wedShareGuest: (a, b) => 'Mình vừa dự lễ cưới của ' + a + ' và ' + b + ' trên Nabu Tarot 💒',
     alertTitle: 'Thông báo', alertIntro: 'Những gì đã xảy ra khi bạn không mở app.',
     alertNone: 'Chưa có thông báo nào. Khi có người muốn buộc sợi tơ hồng, khi bạn nhận quà, khi lịch hẹn được xác nhận hay khi bạn nhỏ đói bụng, bạn sẽ thấy ở đây.',
     alertReadAll: 'Đánh dấu đã đọc', alertClear: 'Xoá hết',
@@ -2974,6 +3083,69 @@ const STR = {
       engaged: (n, d) => n + ' and I are engaged on Nabu Tarot, after ' + d + ' days together \uD83D\uDC8D\u2728',
       married: (n, d) => n + ' and I are married on Nabu Tarot \u2014 ' + d + ' days, and a long way to go \uD83D\uDC92'
     },
+    unlockWedding: 'A wedding', unlockWeddingHint: 'Only one of you needs to pay \u2014 the room then opens for you both.',
+    wedFromThread: 'Or hold a ceremony with guests, with Nabu Cupid to marry you.',
+    wedJoinHint: 'Making a Nabu account takes a minute, and then this door opens for you.',
+    alertWedToday: (p) => '\uD83D\uDC92 Today is the wedding of ' + p,
+    alertWedTodayBody: 'Be there on time \u2014 the doors open 15 minutes before.',
+    alertWedOpen: (p) => '\uD83D\uDD14 The doors are open for ' + p,
+    alertWedOpenBody: 'Come in now so you do not miss the ceremony.',
+    wedComing: 'Coming up', wedMineComing: (n) => 'Your wedding with ' + n,
+    wedGuestComing: (p) => 'The wedding of ' + p,
+    wedTitle: 'A wedding on Nabu', wedIntro: 'A couple engaged on the red thread can hold a ceremony inside the app, with guests, and Nabu Cupid to marry them.',
+    wedCupid: 'Nabu Cupid',
+    wedNeedAccount: 'You need to be signed in to hold or attend a wedding.',
+    wedNeedThread: 'You need a red thread with somebody first.',
+    wedNeedEngaged: 'You need to be engaged on the red thread before you can hold a wedding.',
+    wedNoRoom: 'This wedding could not be found. It may have finished, or the link may be out of date.',
+    wedOfferLead: 'A small ceremony, for the two of you and whoever you invite.',
+    wedBuy: 'Open a wedding', wedBuyHint: 'Paid once, and you have 12 months to choose the day.',
+    wedPlanLead: (n) => 'You and ' + n + ' are ready. All that is left is the day and the hour.',
+    wedPlanHint: 'Guests can only come in from 15 minutes before it starts.',
+    wedWhen: 'The day and the hour', wedWhenHint: 'In the time on your own phone. Either of you can change it any time before the ceremony.',
+    wedWhenBad: 'Choose a time at least 10 minutes from now.',
+    wedMake: 'Make the room', wedMade: 'Your wedding room is ready \uD83D\uDC92',
+    wedMoveTitle: 'Move it', wedMove: 'Save the new time', wedMoved: 'Moved.',
+    wedDrop: 'Call the wedding off', wedDropHint: 'The room and the guest list are deleted. You can make another one later.',
+    wedDropAsk: 'Call this wedding off? The room and the guest list will be deleted.',
+    wedDropped: 'Called off.',
+    wedOpensSoon: 'The room opens 15 minutes before it starts.',
+    wedInviteTitle: 'Invite people', wedInviteHint: 'Send this link to anyone. Somebody without a Nabu account is asked to make one before they can come in.',
+    wedInviteText: (a, b, when) => 'You are invited to the wedding of ' + a + ' and ' + b + ' on Nabu Tarot, ' + when + ' \uD83D\uDC92',
+    wedGuests: (n) => 'Guests (' + n + ')', wedNoGuests: 'Nobody in the room yet.', wedNoGuestsYet: 'Nobody has accepted yet. Send them the link above.',
+    wedGuestIntro: 'You are invited to a wedding on Nabu.',
+    wedDoorEarly: 'The doors open 15 minutes before it starts. Come back then.',
+    wedRemember: 'Do not forget', wedRememberHint: 'Save it to your phone\u2019s calendar and be reminded on the day.',
+    wedAddCal: 'Save to my calendar', wedCalTitle: (a, b) => 'The wedding of ' + a + ' and ' + b + ' on Nabu',
+    wedInDays: (d, h) => d + 'd ' + h + 'h',
+    wedWatching: 'You are a guest. Watch, and send your congratulations \u2014 the vows are for the couple to answer.',
+    wedLeaveOk: 'You can step out and come back while the ceremony is going on.',
+    wedGoOn: 'Go on', wedIDo: 'I do', wedNotYet: 'Not yet',
+    wedAnswerHint: 'Take your time. Your answer appears in front of every guest.',
+    wedNoSure: 'Are you sure you want to answer \u201CNot yet\u201D? The ceremony will stop here.',
+    wedWaitingFor: (n) => 'Waiting for ' + n + ' to answer\u2026',
+    wedCalledOff: 'The ceremony has stopped. Your thread is still here, and you can hold another when you are both ready.',
+    wedMute: 'Music on or off',
+    wedSay: {
+      gather: () => 'Welcome, everyone. I am Nabu Cupid, who keeps the red thread. I have been asked here today to witness something rather lovely.',
+      thread: (a, b) => 'The thread between ' + a + ' and ' + b + ' was tied a long time ago. Today, in front of all these people, they will tie it once more.',
+      askA: (a, b) => a + ', will you take ' + b + ' to be your own, for the rest of your days?',
+      askB: (a, b) => b + ', will you take ' + a + ' to be your own, for the rest of your days?',
+      promiseA: (a) => a + ', do you promise to stand beside them on the good days, and to stay on the days that are not?',
+      promiseB: (a, b) => b + ', do you promise to stand beside them on the good days, and to stay on the days that are not?',
+      bind: () => 'Then let me tie this thread. From here, the two ends are one.',
+      declare: (a, b) => 'Before everybody here today, I declare ' + a + ' and ' + b + ' married. Every happiness to you both! \uD83C\uDF8A'
+    },
+    wedWishTitle: 'From the guests', wedWishHint: 'Guests can send their congratulations, free, as many as they like.',
+    wedBqTitle: 'Throw the bouquet', wedBqHint: 'Throw it to the guests who are here. Whoever catches it takes the luck in love with them.',
+    wedBqThrow: 'Throw it', wedBqReady: (n) => n + ' guests are in the room.',
+    wedBqNobody: 'Nobody is in the room to catch it.',
+    wedBqAir: 'The bouquet is in the air\u2026 who will catch it?',
+    wedCaught: (n) => n + ' caught the bouquet! \uD83D\uDC90',
+    wedOverMarried: 'The ceremony is over. Congratulations to you both!',
+    wedOverCalled: 'The ceremony stopped.',
+    wedTellTitle: 'Share the news',
+    wedShareGuest: (a, b) => 'I was just at the wedding of ' + a + ' and ' + b + ' on Nabu Tarot \uD83D\uDC92',
     alertTitle: 'Notifications', alertIntro: 'What happened while you were away.',
     alertNone: 'Nothing yet. When someone wants to tie a thread with you, when a gift arrives, when a booking is answered or when your companion is hungry, it will be here.',
     alertReadAll: 'Mark all as read', alertClear: 'Clear',
@@ -11818,7 +11990,7 @@ function renderLearn(args, params) {
     m.innerHTML = '<div class="eyebrow">' + esc(S.nav.learn) + '</div><h1 style="margin-bottom:6px">' + esc(S.learnTitle) + '</h1><p class="muted">' + esc(S.learnIntro) + '</p>'
       + '<div class="eyebrow">' + esc(S.coursesPractice) + '</div><div class="tiles">' + tile('tarot', !ACCESS.has('tarot')) + tile('lenormand', !ACCESS.has('lenormand')) + tile('playing', !ACCESS.has('playing')) + tile('manifest', !ACCESS.has('manifest')) + '</div>'
       + '<div class="eyebrow">' + esc(S.freeReads) + '</div><div class="tiles">' + tile('astro') + tile('angel') + tile('fortune') + '</div>'
-      + '<p style="margin-top:14px"><a class="btn block" href="#/unlock">💳 ' + esc(S.unlockLink) + '</a></p>'
+      + '<p style="margin-top:14px"><a class="btn block" href="#/unlock?from=learn">💳 ' + esc(S.unlockLink) + '</a></p>'
       + (function () { const ints = PROFILE.interests || []; const list = GUIDES.filter((g) => g.tags.some((t) => ints.indexOf(t) > -1) && !((g.cat === 'tarot' || g.cat === 'lenormand') && !ACCESS.has(g.cat)) && !(g.id === 'fort-playing' && !ACCESS.has('playing'))).slice(0, 4); return list.length ? '<div class="sec"><div class="eyebrow">' + esc(S.forInterests) + '</div>' + list.map(guideRow).join('') + '</div>' : ''; }());
     return;
   }
@@ -12231,15 +12403,28 @@ function unlockMessage() {
     + '\n💰 ' + S.unlockTotal + ': ' + fmtPrice(total) + luckLines(cut)
     + ((cut.pctOff || cut.coins) ? '\n✅ ' + S.luckAfter + ': ' + fmtPrice(cut.final) : '');
 }
-function renderUnlock() {
+function renderUnlock(args, params) {
   const S = T(), m = $('#main');
+  /* Arriving from something's own offer, that thing is already chosen: being
+     sent to a list and having to find it again is a small insult. */
+  { const want = (params && params.item) || '';
+    if (want && COURSES.some((c) => c.id === want) && !UNL_CART.has(want)) UNL_CART.toggle(want); }
+  const from = (params && params.from) || '';
   const draw = () => {
     const group = (ids) => '<div class="unlist">' + COURSES.filter((c) => ids.indexOf(c.id) > -1).map(unlockRowHTML).join('') + '</div>';
     m.innerHTML = '<div class="eyebrow">' + esc(CONFIG.brand) + '</div><h1 style="margin-bottom:6px">' + esc(S.unlockTitle) + '</h1><p class="muted">' + esc(S.unlockIntro) + '</p>'
       + (isTWA() ? '' : '<p class="hint" style="margin-bottom:14px">' + esc(S.unlockPick) + '</p>')
-      + '<div class="sec"><h2 style="margin-bottom:8px">' + esc(S.unlockCourses) + '</h2>' + group(['tarot', 'lenormand', 'playing', 'manifest']) + '</div>'
-      + '<div class="sec"><h2 style="margin-bottom:8px">' + esc(S.unlockActs) + '</h2>'
-        + '<p class="hint" style="margin-bottom:10px">' + esc(S.unlockTiers) + '</p>' + group(UNL_TIERS) + '</div>'
+      + (() => {
+        const courses = '<div class="sec" data-sec="courses"><h2 style="margin-bottom:8px">' + esc(S.unlockCourses) + '</h2>' + group(['tarot', 'lenormand', 'playing', 'manifest']) + '</div>';
+        const tiers = '<div class="sec" data-sec="tiers"><h2 style="margin-bottom:8px">' + esc(S.unlockActs) + '</h2>'
+          + '<p class="hint" style="margin-bottom:10px">' + esc(S.unlockTiers) + '</p>' + group(UNL_TIERS) + '</div>';
+        const wed = '<div class="sec" data-sec="wedding"><h2 style="margin-bottom:8px">\uD83D\uDC92 ' + esc(S.unlockWedding) + '</h2>'
+          + '<p class="hint" style="margin-bottom:10px">' + esc(S.unlockWeddingHint) + '</p>' + group(['wedding']) + '</div>';
+        /* Which of these is the answer depends on the door they came through. */
+        if (from === 'app') return tiers + courses + wed;
+        if (from === 'wedding') return wed + tiers + courses;
+        return courses + tiers + wed;
+      })()
       + (isTWA() ? '' : '<div class="sec"><h2 style="margin-bottom:8px">' + esc(S.unlockCart) + '</h2><div id="ucart">' + unlockCartHTML() + '</div>'
         + rewardPanelHTML(unlockBase(), UNL_USE)
         + '<button class="btn primary block" id="usend" style="margin-top:12px">' + esc(S.unlockSend) + '</button>'
@@ -14296,7 +14481,9 @@ function renderLove(wantHandle) {
         + '<b>' + esc(S.loveEngaged) + '</b>'
         + (bond.engagedOn ? '<p class="hint">' + esc(S.loveEngagedOn(fmtDate(bond.engagedOn))) + '</p>' : '')
         + '<button type="button" class="btn primary block" id="lvmarry" style="margin-top:10px">' + esc(S.loveMarryDo) + '</button>'
-        + '<p class="hint">' + esc(S.loveMarryHint) + '</p></div>';
+        + '<p class="hint">' + esc(S.loveMarryHint) + '</p>'
+        + '<a class="btn block" href="#/wedding" style="margin-top:10px">\uD83D\uDC92 ' + esc(S.wedTitle) + '</a>'
+        + '<p class="hint">' + esc(S.wedFromThread) + '</p></div>';
     } else if (stage === 'married') {
       const myRole = LOVE.role(bond, me);
       ask = '<div class="card askcard done">' + loveMarkSVG('married', 'big')
@@ -15424,7 +15611,7 @@ function renderLooks() {
   const draw = () => {
     const pro = plusOn();
     m.innerHTML = '<div class="eyebrow">' + esc(CONFIG.brand) + '</div><h1 style="margin-bottom:6px">' + esc(S.looksTitle) + '</h1><p class="muted">' + esc(S.looksIntro) + '</p>'
-      + (pro ? '<p class="hint">✨ ' + esc(S.looksPlusOn) + '</p>' : '<a class="salebar" href="#/unlock"><span class="tag">✨ ' + esc(S.plusName) + '</span><span class="txt">' + esc(S.looksLocked) + '</span><span class="go">' + esc(S.unlockLink) + ' ›</span></a>')
+      + (pro ? '<p class="hint">✨ ' + esc(S.looksPlusOn) + '</p>' : '<a class="salebar" href="#/unlock?from=app"><span class="tag">✨ ' + esc(S.plusName) + '</span><span class="txt">' + esc(S.looksLocked) + '</span><span class="go">' + esc(S.unlockLink) + ' ›</span></a>')
       + LOOK_KINDS.map((kind) => '<div class="sec"><h2 style="margin-bottom:8px">' + esc(S.lookKinds[kind]) + '</h2><div class="lookgrid">'
         + LOOK_SETS[kind].map((x) => {
           const locked = x.pro && !pro, on = LOOKS.get(kind) === x.id;
@@ -15432,7 +15619,7 @@ function renderLooks() {
             + lookPreview(kind, x) + '<b>' + esc(L(x.name)) + '</b>'
             + (locked ? '<span class="lk-lock">🔒</span>' : '') + (on ? '<span class="lk-on">✓</span>' : '') + '</button>';
         }).join('') + '</div></div>').join('')
-      + '<p style="margin-top:14px"><a class="backlink" href="#/unlock">' + esc(S.unlockLink) + ' →</a></p>';
+      + '<p style="margin-top:14px"><a class="backlink" href="#/unlock?from=app">' + esc(S.unlockLink) + ' →</a></p>';
     $$('[data-look]', m).forEach((b) => b.addEventListener('click', () => {
       const p = b.getAttribute('data-look').split(':'), item = LOOK_SETS[p[0]].filter((x) => x.id === p[1])[0];
       if (item.pro && !plusOn()) { toast(S.looksNeedPlus); location.hash = '#/unlock'; return; }
@@ -16944,7 +17131,7 @@ function renderPet(want) {
       + (pets.length > 1 ? '<p class="hint ok" style="text-align:center">✨ ' + esc(S.petLuckTotal(pets.length)) + '</p>' : '')
       + (room
         ? '<button type="button" class="btn block" id="addpet" style="margin-top:12px">➕ ' + esc(S.petAdd) + (left > 1 ? ' · ' + esc(S.petRoomLeft(left)) : '') + '</button>'
-        : (proOn() ? '' : '<a class="salebar" href="#/unlock"><span class="tag">✨ ' + esc(S.proName) + '</span><span class="txt">' + esc(S.petPlusPitch) + '</span><span class="go">' + esc(S.unlockLink) + ' ›</span></a>'))
+        : (proOn() ? '' : '<a class="salebar" href="#/unlock?from=app"><span class="tag">✨ ' + esc(S.proName) + '</span><span class="txt">' + esc(S.petPlusPitch) + '</span><span class="go">' + esc(S.unlockLink) + ' ›</span></a>'))
       + '<div class="card petsetcard">'
       + '<label class="remind"><input type="checkbox" id="petremind"' + (petRemindOn() ? ' checked' : '') + '><span>' + esc(S.petRemind) + '</span></label>'
       + '<p class="hint">' + esc(S.petRemindHint) + '</p>'
@@ -17237,7 +17424,7 @@ function renderPet(want) {
     };
     const free = PET_KINDS.filter((k) => !petIsPro(k)), myth = PET_KINDS.filter(petIsPro);
     m.innerHTML = '<div class="eyebrow">' + esc(S.actTitle) + '</div><h1 style="margin-bottom:6px">🐾 ' + esc(pets.length ? S.petAdd : S.petTitle) + '</h1><p class="muted">' + esc(S.petPick) + '</p>'
-      + (PETS.room() ? '' : '<a class="salebar" href="#/unlock"><span class="tag">✨ ' + esc(S.proName) + '</span><span class="txt">' + esc(S.petPlusPitch) + '</span><span class="go">' + esc(S.unlockLink) + ' ›</span></a>')
+      + (PETS.room() ? '' : '<a class="salebar" href="#/unlock?from=app"><span class="tag">✨ ' + esc(S.proName) + '</span><span class="txt">' + esc(S.petPlusPitch) + '</span><span class="go">' + esc(S.unlockLink) + ' ›</span></a>')
       + '<div class="sec"><h2 style="margin-bottom:4px">' + esc(S.petPickFree) + '</h2><p class="hint" style="margin-bottom:10px">' + esc(S.petPickFreeNote) + '</p>'
       + '<div class="petpick">' + free.map(tile).join('') + '</div></div>'
       + '<div class="sec"><h2 style="margin-bottom:4px">✨ ' + esc(S.petPickPro) + '</h2><p class="hint" style="margin-bottom:10px">' + esc(S.petPickProNote) + '</p>'
@@ -17552,17 +17739,30 @@ function freeGridHTML() {
     + '<span class="ic">' + r[1] + '</span><b>' + esc(r[2]) + '</b><span class="s">' + esc(r[3]) + '</span></a>').join('') + '</div>';
 }
 
-function renderPrices() {
+/* `from` says which door they came through: 'app' for a locked design, a coin
+   or a companion, 'learn' for a lesson. The section they came for goes first
+   and keeps its number, so the page is the same page - just answering the
+   question that was actually asked. */
+function renderPrices(args, params) {
   const S = T(), m = $('#main');
+  const from = (params && params.from) || '';
   const sec = (n, title, hint, body) => '<div class="sec pricesec"><h2><i>' + n + '</i>' + esc(title) + '</h2>'
     + (hint ? '<p class="hint">' + esc(hint) + '</p>' : '') + body + '</div>';
   const of = (k) => COURSES.filter((c) => c.kind === k).map(priceCardHTML).join('');
   m.innerHTML = '<div class="eyebrow">' + esc(CONFIG.brand) + '</div>'
     + '<h1 style="margin-bottom:6px">' + esc(S.priceTitle) + '</h1><p class="muted">' + esc(S.priceIntro) + '</p>'
-    + sec(1, S.priceReadings, S.priceReadingsHint, priceSheetHTML(false) + '<a class="btn primary block" href="#/book">' + esc(S.ctaBook) + '</a>')
-    + sec(2, S.courses, S.priceCoursesHint, of('course'))
-    + sec(3, S.priceUnlocks, S.priceUnlocksHint, of('unlock'))
-    + sec(4, S.priceFree, S.priceFreeHint, freeGridHTML());
+    + (() => {
+      const readings = sec(1, S.priceReadings, S.priceReadingsHint, priceSheetHTML(false) + '<a class="btn primary block" href="#/book">' + esc(S.ctaBook) + '</a>');
+      const courses = sec(2, S.courses, S.priceCoursesHint, of('course'));
+      const unlocks = sec(3, S.priceUnlocks, S.priceUnlocksHint, of('unlock'));
+      const free = sec(4, S.priceFree, S.priceFreeHint, freeGridHTML());
+      /* Somebody who pressed "unlock this design" came for the packages;
+         somebody who pressed a locked lesson came for the courses. Everything
+         is still here either way. */
+      if (from === 'app') return unlocks + courses + readings + free;
+      if (from === 'learn') return courses + unlocks + readings + free;
+      return readings + courses + unlocks + free;
+    })();
 }
 
 async function renderBook(args, params) {
@@ -17939,6 +18139,7 @@ function meSect(id, icon, title, body, openByDefault) {
     if (BE.enabled) {
       talk += '<div class="card"><h3 style="margin-bottom:4px">' + esc(S.messages) + '</h3><p class="hint" style="margin-bottom:8px">' + esc(BE.isAdmin() ? S.ownThreadHint : S.messagesIntro) + '</p>'
         + (BE.user ? '<div class="chat" id="chat"></div>' + chatBarHTML('mtext', 'msend', S.send) : '<p class="muted">' + esc(S.needLogin) + '</p>') + '</div>';
+      if (BE.user) talk += wedComingHTML();
       if (BE.user) talk += '<div class="card"><h3 style="margin-bottom:8px">' + esc(S.myBookings) + '</h3><div id="mybk"><p class="hint">…</p></div>' + (notifyState() === 'default' ? '<button class="btn block" id="notifon" style="margin-top:8px">🔔 ' + esc(S.reminderOn) + '</button>' : '') + '<p class="hint">' + esc(S.reminderHint) + ' ' + esc(S.calendarHint) + '</p></div>';
     } else if (CONFIG.instagram) {
       talk += '<div class="card"><h3 style="margin-bottom:4px">' + esc(S.messages) + '</h3><p class="muted" style="font-size:14px">' + esc(S.messagesSoon) + '</p><a class="btn block" href="https://ig.me/m/' + esc(CONFIG.instagram) + '" target="_blank" rel="noopener">' + esc(S.viaInstagram) + '</a></div>';
@@ -17983,7 +18184,13 @@ function meSect(id, icon, title, body, openByDefault) {
       try { if ('serviceWorker' in navigator) { const reg = await navigator.serviceWorker.getRegistration(); if (reg) await reg.update(); } } catch (e) { /* offline */ }
       setTimeout(() => location.reload(), 800);
     });
-    bindProfileForm(body, () => { if (params.next === 'book') location.hash = '#/book'; else if (params.next === 'unlock') location.hash = '#/unlock'; });
+    bindProfileForm(body, () => {
+      if (params.next === 'book') location.hash = '#/book';
+      else if (params.next === 'unlock') location.hash = '#/unlock';
+      /* Back to the door they were standing at when they were asked to
+         make an account. */
+      else if (params.next === 'wedding') { const w = store.get('nabu-wed-next', ''); location.hash = w ? '#/wedding/' + w : '#/wedding'; }
+    });
     $('#munlock').addEventListener('click', async () => {
       const st = $('#mcstatus'), btn = $('#munlock');
       st.textContent = S.codeChecking; st.className = 'hint'; btn.disabled = true;
@@ -18741,7 +18948,7 @@ function renderTree() {
         ? '<div class="card setcard"><label class="remind"><input type="checkbox" id="treepets"' + (treePetsOn() ? ' checked' : '') + '><span>' + esc(S.treePets) + '</span></label>'
           + '<p class="hint">' + esc(S.treePetsHint) + '</p></div>'
         : '')
-      + '<p style="margin-top:14px"><a class="btn block" href="#/unlock">💳 ' + esc(S.unlockLink) + '</a></p>'
+      + '<p style="margin-top:14px"><a class="btn block" href="#/unlock?from=app">💳 ' + esc(S.unlockLink) + '</a></p>'
       + '<p style="margin-top:14px"><a href="#/play" class="backlink">← ' + esc(S.actTitle) + '</a></p>';
     bindLookStrip(m, draw);
     { const tp = $('#treepets');
@@ -18840,7 +19047,7 @@ function renderCoin() {
       + lookStripHTML('coin')
       + '<div class="luckline">' + luckPanelHTML('coin') + '</div>'
       + '<p class="hint">' + esc(S.coinNote) + '</p>'
-      + '<p style="margin-top:14px"><a class="btn block" href="#/unlock">💳 ' + esc(S.unlockLink) + '</a></p>'
+      + '<p style="margin-top:14px"><a class="btn block" href="#/unlock?from=app">💳 ' + esc(S.unlockLink) + '</a></p>'
       + '<p style="margin-top:14px"><a href="#/play" class="backlink">← ' + esc(S.actTitle) + '</a></p>';
     bindLookStrip(m, draw);
     const q = $('#coinq'); q.addEventListener('input', () => store.set('nabu-coinq', q.value));
@@ -19269,8 +19476,9 @@ const WED = {
      sees the throw at the same moment and waits the same wait; if the winner
      were chosen in one write the answer would already be in the room while the
      flowers were still in the air. */
-  async throwBouquet(id, guests) {
-    const here = this.present(guests).filter((g) => this.mine ? true : true);
+  async throwBouquet(id, w, guests) {
+    const pair = (w && w.uids) || [];
+    const here = this.present(guests).filter((g) => pair.indexOf(g.uid) < 0);
     await BE.db.collection('weddings').doc(id).update({ bouquet: { at: Date.now(), by: this.me(), n: here.length } });
     return here;
   },
@@ -19346,6 +19554,471 @@ const WEDMUSIC = {
   },
   muted() { return store.get('nabu-wed-mute', false) === true; }
 };
+
+
+/* ------------------------------------------------------------- Nabu Cupid
+
+   Not a cherub with a bow. A small figure of light holding the two ends of the
+   red thread, because that is what this app's marriage is made of and a stock
+   cupid would belong to some other story. Drawn, so it costs nothing and works
+   with the phone in flight mode. */
+function cupidSVG(mood) {
+  const glow = mood === 'joy' ? '.9' : '.5';
+  const CREAM = '#FFFDF6', EDGE = '#D6BEF0';
+  /* The thread hangs between the two hands and dips, the way a held cord does,
+     with the knot at the bottom of the dip. Drawn dark first and red over it,
+     so it reads as cord rather than as a line. */
+  const CORD = 'M27 70 C 38 100, 82 100, 93 70';
+  return '<svg viewBox="0 0 120 130" class="cupid ' + (mood || '') + '" role="img" aria-hidden="true">'
+    + '<defs><radialGradient id="cupglow"><stop offset="0" stop-color="#FFF3C4" stop-opacity="' + glow + '"/>'
+    + '<stop offset="1" stop-color="#FFF3C4" stop-opacity="0"/></radialGradient>'
+    + '<linearGradient id="cupbody" x1="0" y1="0" x2="0" y2="1">'
+    + '<stop offset="0" stop-color="' + CREAM + '"/><stop offset="1" stop-color="#EBDCF7"/></linearGradient></defs>'
+    + '<circle cx="60" cy="56" r="54" fill="url(#cupglow)"/>'
+    /* wings, behind everything and sweeping up */
+    + '<path d="M46 52 C 26 30, 6 34, 8 52 C 10 70, 32 70, 46 62 Z" fill="#F3E8FF" stroke="' + EDGE + '" stroke-width="1.6" stroke-linejoin="round"/>'
+    + '<path d="M74 52 C 94 30, 114 34, 112 52 C 110 70, 88 70, 74 62 Z" fill="#F3E8FF" stroke="' + EDGE + '" stroke-width="1.6" stroke-linejoin="round"/>'
+    /* a robe rather than a blob */
+    + '<path d="M60 42 C 68 42, 73 48, 75 58 L 80 92 C 74 96, 66 98, 60 98 C 54 98, 46 96, 40 92 L 45 58 C 47 48, 52 42, 60 42 Z" fill="url(#cupbody)" stroke="' + EDGE + '" stroke-width="1.6" stroke-linejoin="round"/>'
+    /* arms out to the sides, ending where the cord begins */
+    + '<path d="M47 58 C 39 60, 32 64, 28 69" stroke="' + EDGE + '" stroke-width="7.4" fill="none" stroke-linecap="round"/>'
+    + '<path d="M47 58 C 39 60, 32 64, 28 69" stroke="' + CREAM + '" stroke-width="5" fill="none" stroke-linecap="round"/>'
+    + '<path d="M73 58 C 81 60, 88 64, 92 69" stroke="' + EDGE + '" stroke-width="7.4" fill="none" stroke-linecap="round"/>'
+    + '<path d="M73 58 C 81 60, 88 64, 92 69" stroke="' + CREAM + '" stroke-width="5" fill="none" stroke-linecap="round"/>'
+    /* head, face, and the thread s own gold in the halo */
+    + '<circle cx="60" cy="28" r="13" fill="' + CREAM + '" stroke="' + EDGE + '" stroke-width="1.6"/>'
+    + '<circle cx="55.6" cy="27" r="1.5" fill="#5B3F9E"/><circle cx="64.4" cy="27" r="1.5" fill="#5B3F9E"/>'
+    + '<path d="M56.4 31.6 q3.6 3.2, 7.2 0" stroke="#5B3F9E" stroke-width="1.5" fill="none" stroke-linecap="round"/>'
+    + '<ellipse cx="60" cy="11.5" rx="10.5" ry="3.2" fill="none" stroke="#E5BE5E" stroke-width="1.8"/>'
+    /* the thread itself, held */
+    + '<path d="' + CORD + '" stroke="#8A0C20" stroke-width="6" fill="none" stroke-linecap="round"/>'
+    + '<path d="' + CORD + '" stroke="#C4142F" stroke-width="3.6" fill="none" stroke-linecap="round"/>'
+    + '<path d="' + CORD + '" stroke="#F0748C" stroke-width="1.2" fill="none" stroke-linecap="round" opacity=".5"/>'
+    /* and its knot, a small heart at the bottom of the dip */
+    + '<g transform="translate(60,90) scale(.135)">'
+    + '<path d="M120 150 C 82 130, 60 102, 68 80 C 75 60, 102 58, 113 76 C 116 81, 118 86, 120 91'
+    + ' C 122 86, 124 81, 127 76 C 138 58, 165 60, 172 80 C 180 102, 158 130, 120 150 Z"'
+    + ' transform="translate(-120,-104)" fill="none" stroke="#8A0C20" stroke-width="26"/>'
+    + '<path d="M120 150 C 82 130, 60 102, 68 80 C 75 60, 102 58, 113 76 C 116 81, 118 86, 120 91'
+    + ' C 122 86, 124 81, 127 76 C 138 58, 165 60, 172 80 C 180 102, 158 130, 120 150 Z"'
+    + ' transform="translate(-120,-104)" fill="none" stroke="#C4142F" stroke-width="15"/>'
+    + '</g>'
+    + '</svg>';
+}
+
+/* Petals and confetti for the moment itself. Twenty spans, each given its own
+   drift, which is cheaper than any library and stops when the class goes. */
+function wedFallHTML(n) {
+  const bits = ['\uD83C\uDF38', '\uD83E\uDD0D', '\u2728', '\uD83C\uDF3A', '\uD83D\uDC96'];
+  let out = '<div class="wedfall" aria-hidden="true">';
+  for (let i = 0; i < (n || 18); i++) {
+    out += '<i style="left:' + Math.round((i * 5.6 + (i % 3) * 4) % 100) + '%;'
+      + 'animation-delay:' + (i * 240) + 'ms;animation-duration:' + (4200 + (i % 5) * 900) + 'ms">'
+      + bits[i % bits.length] + '</i>';
+  }
+  return out + '</div>';
+}
+
+const wedWhen = (ms) => {
+  const d = new Date(Number(ms) || 0);
+  if (isNaN(d)) return '';
+  return T().dateFmt(d) + ' \u00b7 ' + pad2(d.getHours()) + ':' + pad2(d.getMinutes());
+};
+/* Local time as the value an <input type=datetime-local> wants. */
+const wedLocalValue = (ms) => {
+  const d = new Date(Number(ms) || Date.now());
+  return d.getFullYear() + '-' + pad2(d.getMonth() + 1) + '-' + pad2(d.getDate())
+    + 'T' + pad2(d.getHours()) + ':' + pad2(d.getMinutes());
+};
+const wedCountdown = (ms) => {
+  const left = Math.max(0, Number(ms) - Date.now());
+  const h = Math.floor(left / 3600000), m = Math.floor((left % 3600000) / 60000), s2 = Math.floor((left % 60000) / 1000);
+  const d = Math.floor(h / 24);
+  const S = T();
+  if (d > 0) return S.wedInDays(d, h % 24);
+  if (h > 0) return h + 'h ' + pad2(m) + 'm';
+  return pad2(m) + ':' + pad2(s2);
+};
+
+/* ================================ the screen ============================== */
+
+function renderWedding(args) {
+  const S = T(), m = $('#main');
+  const wanted = (args && args[0]) || '';
+  let stop = [], tick = null, beat = null;
+  const cleanup = () => {
+    stop.forEach((f) => { try { f(); } catch (e) { /* already gone */ } });
+    stop = [];
+    if (tick) { clearInterval(tick); tick = null; }
+    if (beat) { clearInterval(beat); beat = null; }
+  };
+  NAV.cleanup = cleanup;
+
+  const head = (sub) => '<div class="eyebrow">' + esc(CONFIG.brand) + '</div>'
+    + '<h1 style="margin-bottom:6px">\uD83D\uDC92 ' + esc(S.wedTitle) + '</h1>'
+    + '<p class="muted">' + esc(sub || S.wedIntro) + '</p>';
+
+  const shut = (why) => {
+    m.innerHTML = head(why)
+      + '<div class="card wedcard"><p style="text-align:center;margin:0">' + cupidSVG() + '</p>'
+      + '<p class="lead" style="text-align:center">' + esc(why) + '</p>'
+      + '<a class="btn block" href="#/love">' + esc(S.loveTitle) + '</a></div>';
+  };
+
+  /* ---------------------------------------------------------- the guest door */
+  const drawDoor = (w, guests) => {
+    const door = WED.doorState(w);
+    const names = esc(w.aName || S.loveSomeone) + ' \u2764 ' + esc(w.bName || S.loveSomeone);
+    if (door === 'early') {
+      m.innerHTML = head(S.wedGuestIntro)
+        + '<div class="card wedcard">' + cupidSVG()
+        + '<p class="wedpair">' + names + '</p>'
+        + '<p class="wedwhen">' + esc(wedWhen(w.startMs)) + '</p>'
+        + '<p class="wedcount" id="wedcd">' + esc(wedCountdown(w.startMs)) + '</p>'
+        + '<p class="hint" style="text-align:center">' + esc(S.wedDoorEarly) + '</p></div>'
+        + '<div class="card"><h3 style="margin-bottom:6px">\uD83D\uDCC5 ' + esc(S.wedRemember) + '</h3>'
+        + '<p class="hint" style="margin-bottom:10px">' + esc(S.wedRememberHint) + '</p>'
+        + '<button type="button" class="btn block" id="wedics">' + esc(S.wedAddCal) + '</button></div>';
+      tick = setInterval(() => { const el = $('#wedcd'); if (el) el.textContent = wedCountdown(w.startMs); if (Date.now() > w.startMs - WED_OPEN_MS) paint(); }, 1000);
+      const ics = $('#wedics');
+      if (ics) ics.addEventListener('click', () => wedSaveIcs(w));
+      return;
+    }
+    if (door === 'over') {
+      const won = w.bouquet && w.bouquet.name;
+      m.innerHTML = head(S.wedGuestIntro)
+        + '<div class="card wedcard done">' + cupidSVG('joy')
+        + '<p class="wedpair">' + names + '</p>'
+        + '<p class="lead" style="text-align:center">' + esc(w.state === 'married' ? S.wedOverMarried : S.wedOverCalled) + '</p>'
+        + (w.state === 'married' && w.doneAt ? '<p class="wedwhen">' + esc(wedWhen(w.doneAt)) + '</p>' : '')
+        + (won ? '<p class="hint" style="text-align:center">\uD83D\uDC90 ' + esc(S.wedCaught(won)) + '</p>' : '')
+        + '</div>'
+        + (w.state === 'married' ? '<div class="card tellcard">'
+          + '<div class="ghead"><span class="gk">\uD83D\uDCE3</span><h3>' + esc(S.wedTellTitle) + '</h3></div>'
+          + '<p class="tellline">\u201C' + esc(S.wedShareGuest(w.aName || '', w.bName || '')) + '\u201D</p>'
+          + shareRowHTML('wedshare') + '</div>' : '');
+      bindShareRow(m, () => ({ text: S.wedShareGuest(w.aName || '', w.bName || ''), url: appURL() + '#/home' }));
+      return;
+    }
+    drawRoom(w, guests);
+  };
+
+  /* ------------------------------------------------------------- the room --- */
+  let gifts = [], guests = [], bouquetShown = 0;
+  const drawRoom = (w) => {
+    const side = WED.side(w), mine = !!side, step = wedStep(w.step | 0);
+    const names = esc(w.aName || S.loveSomeone) + ' \u2764 ' + esc(w.bName || S.loveSomeone);
+    const askingMe = mine && step.who === side && !w.doneAt;
+    const theirTurn = mine && step.who && step.who !== side && !w.doneAt;
+    const line = S.wedSay[step.id](w.aName || S.loveSomeone, w.bName || S.loveSomeone);
+    const here = WED.present(guests);
+    const called = w.state === 'called-off';
+
+    let act = '';
+    if (called) {
+      act = '<p class="hint err" style="text-align:center">' + esc(S.wedCalledOff) + '</p>';
+    } else if (askingMe) {
+      act = '<div class="vowrow"><button type="button" class="btn primary" id="wedyes">' + esc(S.wedIDo) + '</button>'
+        + '<button type="button" class="btn" id="wedno">' + esc(S.wedNotYet) + '</button></div>'
+        + '<p class="hint" style="text-align:center">' + esc(S.wedAnswerHint) + '</p>';
+    } else if (theirTurn) {
+      act = '<p class="hint" style="text-align:center">' + esc(S.wedWaitingFor(step.who === 'a' ? (w.aName || '') : (w.bName || ''))) + '</p>';
+    } else if (mine && !step.who && !w.doneAt) {
+      act = '<button type="button" class="btn primary block" id="wedon">' + esc(S.wedGoOn) + '</button>';
+    } else if (!mine && !w.doneAt) {
+      act = '<p class="hint" style="text-align:center">' + esc(S.wedWatching) + '</p>';
+    }
+
+    /* the bouquet, after the vows */
+    let bq = '';
+    if (w.doneAt && w.state === 'married') {
+      const b2 = w.bouquet || null;
+      if (!b2 && mine) {
+        bq = '<div class="card bqcard"><div class="ghead"><span class="gk">\uD83D\uDC90</span><h3>' + esc(S.wedBqTitle) + '</h3></div>'
+          + '<p class="hint">' + esc(S.wedBqHint) + '</p>'
+          + '<button type="button" class="btn primary block" id="wedbq"' + (here.length ? '' : ' disabled') + '>' + esc(S.wedBqThrow) + '</button>'
+          + '<p class="hint">' + esc(here.length ? S.wedBqReady(here.length) : S.wedBqNobody) + '</p></div>';
+      } else if (b2 && !b2.uid && !b2.none) {
+        bq = '<div class="card bqcard flying">' + wedFallHTML(10)
+          + '<p class="bqair">\uD83D\uDC90</p>'
+          + '<p class="lead" style="text-align:center">' + esc(S.wedBqAir) + '</p></div>';
+      } else if (b2 && b2.uid) {
+        bq = '<div class="card bqcard won">' + wedFallHTML(12)
+          + '<p class="bqair still">\uD83D\uDC90</p>'
+          + '<p class="lead" style="text-align:center">' + esc(S.wedCaught(b2.name || S.loveSomeone)) + '</p></div>';
+      } else if (b2 && b2.none) {
+        bq = '<div class="card bqcard"><p class="hint" style="text-align:center">' + esc(S.wedBqNobody) + '</p></div>';
+      }
+    }
+
+    /* what the room is throwing */
+    const wishes = gifts.slice(0, 14).map((g) => '<span class="wg" title="' + esc(g.name || '') + '">' + giftArt(g.kind) + '</span>').join('');
+    const giftBox = w.doneAt || !mine
+      ? '<div class="card"><h3 style="margin-bottom:4px">\uD83C\uDF89 ' + esc(S.wedWishTitle) + '</h3>'
+        + '<p class="hint" style="margin-bottom:10px">' + esc(S.wedWishHint) + '</p>'
+        + (wishes ? '<div class="wgrow">' + wishes + '</div>' : '')
+        + (mine ? '' : '<div class="giftpick">' + GIFTS.slice(0, 8).map((g) => '<button type="button" class="gp" data-wgift="' + g.id + '" aria-label="' + esc(L(g.name)) + '">' + giftArt(g.id) + '<b>' + esc(L(g.name)) + '</b></button>').join('') + '</div>')
+        + '</div>'
+      : '';
+
+    m.innerHTML = '<div class="wedroom">'
+      + (w.doneAt && w.state === 'married' ? wedFallHTML(18) : '')
+      + '<div class="card wedcard live">'
+      + '<button type="button" class="mutebtn" id="wedmute" aria-label="' + esc(S.wedMute) + '">' + (WEDMUSIC.on ? '\uD83D\uDD0A' : '\uD83D\uDD07') + '</button>'
+      + cupidSVG(w.doneAt && w.state === 'married' ? 'joy' : '')
+      + '<p class="wedpair">' + names + '</p>'
+      + '<p class="cupidname">' + esc(S.wedCupid) + '</p>'
+      + '<p class="wedsay">' + esc(line) + '</p>'
+      + act + '</div>'
+      + bq
+      + '<div class="card"><h3 style="margin-bottom:4px">\uD83D\uDC65 ' + esc(S.wedGuests(guests.length)) + '</h3>'
+      + (guests.length ? '<p class="hint">' + esc(guests.slice(0, 24).map((g) => g.name || S.loveSomeone).join(' \u00b7 ')) + '</p>'
+        : '<p class="hint">' + esc(S.wedNoGuests) + '</p>') + '</div>'
+      + giftBox
+      + (mine ? '<p class="hint" style="text-align:center">' + esc(S.wedLeaveOk) + '</p>' : '')
+      + '</div>';
+
+    /* answering */
+    const ans = async (yes) => {
+      try {
+        WEDMUSIC.chime(yes ? '' : 'no');
+        await WED.answer(w.id, w, step.vow, yes);
+      } catch (e) { toast(loveWhy(e)); }
+    };
+    { const y = $('#wedyes'); if (y) y.addEventListener('click', () => { y.disabled = true; ans(true); }); }
+    { const n = $('#wedno'); if (n) n.addEventListener('click', () => { if (!confirm(S.wedNoSure)) return; ans(false); }); }
+    { const o = $('#wedon');
+      if (o) o.addEventListener('click', async () => {
+        o.disabled = true;
+        try {
+          await WED.onward(w.id, w);
+          /* Reaching the declaration is the moment the thread itself changes:
+             the marriage is recorded on the bond, not only in the story. */
+          if (wedStep((w.step | 0) + 1).id === 'declare') {
+            WEDMUSIC.fanfare();
+            try { await LOVEDB.marry(w.id); } catch (e) { /* already married */ }
+          } else { WEDMUSIC.chime(); }
+        } catch (e) { o.disabled = false; toast(loveWhy(e)); }
+      }); }
+    { const mu = $('#wedmute');
+      if (mu) mu.addEventListener('click', () => { WEDMUSIC.mute(WEDMUSIC.on); paint(); }); }
+
+    $$('[data-wgift]', m).forEach((b) => b.addEventListener('click', async () => {
+      b.disabled = true;
+      try { WEDMUSIC.chime(); await WED.giveGift(w.id, b.getAttribute('data-wgift')); toast(S.loveGiftSent); }
+      catch (e) { b.disabled = false; toast(loveWhy(e)); }
+    }));
+
+    { const t = $('#wedbq');
+      if (t) t.addEventListener('click', async () => {
+        t.disabled = true;
+        try {
+          const pool = await WED.throwBouquet(w.id, w, guests);
+          /* Ten seconds in the air, the same ten seconds for everyone, because
+             the winner is not written until they land. */
+          setTimeout(async () => {
+            try { const won = await WED.landBouquet(w.id, pool); if (won) WEDMUSIC.chime('win'); }
+            catch (e) { /* somebody else landed it */ }
+          }, 10000);
+        } catch (e) { t.disabled = false; toast(loveWhy(e)); }
+      }); }
+
+    /* The room closes itself five minutes after the vows. */
+    if (w.doneAt && mine && Date.now() > w.doneAt + WED_END_MS && w.state !== 'ended' && w.state === 'married') {
+      BE.db.collection('weddings').doc(w.id).update({ state: 'ended' }).catch(() => {});
+    }
+    void bouquetShown;
+  };
+
+  /* ------------------------------------------------- the couple's own screen */
+  const drawPlan = (bond, w) => {
+    const me = WED.me(), you = LOVE.other(bond, me);
+    const nm = (you && (you.name || (you.handle ? '@' + you.handle : ''))) || S.loveSomeone;
+    if (!w) {
+      const soon = new Date(Date.now() + 3 * 86400000);
+      soon.setHours(19, 0, 0, 0);
+      m.innerHTML = head()
+        + '<div class="card wedcard">' + cupidSVG()
+        + '<p class="lead" style="text-align:center">' + esc(S.wedPlanLead(nm)) + '</p>'
+        + '<p class="hint" style="text-align:center">' + esc(S.wedPlanHint) + '</p></div>'
+        + '<div class="card"><h3 style="margin-bottom:6px">\uD83D\uDD52 ' + esc(S.wedWhen) + '</h3>'
+        + '<p class="hint" style="margin-bottom:10px">' + esc(S.wedWhenHint) + '</p>'
+        + '<input type="datetime-local" id="wedat" value="' + esc(wedLocalValue(soon.getTime())) + '">'
+        + '<button type="button" class="btn primary block" id="wedmake" style="margin-top:10px">' + esc(S.wedMake) + '</button>'
+        + '<p class="hint" id="wedst"></p></div>';
+      $('#wedmake').addEventListener('click', async () => {
+        const b = $('#wedmake'), st = $('#wedst'), v = $('#wedat').value;
+        const ms = new Date(v).getTime();
+        if (!v || isNaN(ms) || ms < Date.now() + 10 * 60000) { st.className = 'hint err'; st.textContent = S.wedWhenBad; return; }
+        b.disabled = true; st.className = 'hint'; st.textContent = S.loveSaving;
+        try { await WED.create(bond, ms); toast(S.wedMade); }
+        catch (e) { b.disabled = false; st.className = 'hint err'; st.textContent = loveWhy(e); }
+      });
+      return;
+    }
+
+    const door = WED.doorState(w);
+    if (door === 'open') { drawRoom(w); return; }
+    if (door === 'over') { drawDoor(w); return; }
+
+    const link = appURL() + '#/wedding/' + encodeURIComponent(w.id);
+    m.innerHTML = head()
+      + '<div class="card wedcard">' + cupidSVG()
+      + '<p class="wedpair">' + esc(w.aName || '') + ' \u2764 ' + esc(w.bName || '') + '</p>'
+      + '<p class="wedwhen">' + esc(wedWhen(w.startMs)) + '</p>'
+      + '<p class="wedcount" id="wedcd">' + esc(wedCountdown(w.startMs)) + '</p>'
+      + '<p class="hint" style="text-align:center">' + esc(S.wedOpensSoon) + '</p></div>'
+      + '<div class="card"><div class="ghead"><span class="gk">\uD83D\uDC8C</span><h3>' + esc(S.wedInviteTitle) + '</h3></div>'
+      + '<p class="hint" style="margin-bottom:10px">' + esc(S.wedInviteHint) + '</p>'
+      + '<input id="wedurl" readonly value="' + esc(link) + '">'
+      + shareRowHTML('wedinv') + '</div>'
+      + '<div class="card"><h3 style="margin-bottom:4px">\uD83D\uDC65 ' + esc(S.wedGuests(guests.length)) + '</h3>'
+      + (guests.length ? '<p class="hint">' + esc(guests.map((g) => g.name || S.loveSomeone).join(' \u00b7 ')) + '</p>'
+        : '<p class="hint">' + esc(S.wedNoGuestsYet) + '</p>') + '</div>'
+      + '<div class="card"><h3 style="margin-bottom:6px">\uD83D\uDD52 ' + esc(S.wedMoveTitle) + '</h3>'
+      + '<input type="datetime-local" id="wedat" value="' + esc(wedLocalValue(w.startMs)) + '">'
+      + '<button type="button" class="btn block" id="wedmove" style="margin-top:8px">' + esc(S.wedMove) + '</button>'
+      + '<p class="hint" id="wedst"></p></div>'
+      + '<button type="button" class="btn block danger" id="weddrop">\uD83D\uDC94 ' + esc(S.wedDrop) + '</button>'
+      + '<p class="hint">' + esc(S.wedDropHint) + '</p>';
+
+    tick = setInterval(() => {
+      const el = $('#wedcd');
+      if (el) el.textContent = wedCountdown(w.startMs);
+      if (Date.now() > w.startMs - WED_OPEN_MS) paint();
+    }, 1000);
+    bindShareRow(m, () => ({ text: S.wedInviteText(w.aName || '', w.bName || '', wedWhen(w.startMs)), url: link }));
+    $('#wedmove').addEventListener('click', async () => {
+      const st = $('#wedst'), v = $('#wedat').value, ms = new Date(v).getTime();
+      if (!v || isNaN(ms) || ms < Date.now() + 10 * 60000) { st.className = 'hint err'; st.textContent = S.wedWhenBad; return; }
+      st.className = 'hint'; st.textContent = S.loveSaving;
+      try { await WED.setTime(w.id, ms); st.className = 'hint ok'; st.textContent = S.wedMoved; }
+      catch (e) { st.className = 'hint err'; st.textContent = loveWhy(e); }
+    });
+    $('#weddrop').addEventListener('click', async () => {
+      if (!confirm(S.wedDropAsk)) return;
+      try { await WED.drop(w.id); toast(S.wedDropped); } catch (e) { toast(loveWhy(e)); }
+    });
+  };
+
+  /* ------------------------------------------------------------ what to draw */
+  let bond = null, wedding = null, ready = false, seated = false;
+  const paint = () => {
+    if (!ready) return;
+    if (tick) { clearInterval(tick); tick = null; }
+    if (wanted && (!bond || WED.idFor(bond) !== wanted)) {
+      /* Somebody else's wedding: a guest, arriving by link. */
+      if (!wedding) { shut(S.wedNoRoom); return; }
+      drawDoor(wedding, guests);
+      return;
+    }
+    if (!bond) { shut(S.wedNeedThread); return; }
+    if (LOVE.stage(bond) !== 'engaged' && LOVE.stage(bond) !== 'married') { shut(S.wedNeedEngaged); return; }
+    /* One of them pays and both are married. Buying is what lets a room be
+       made; once it exists it belongs to the couple, so the partner who did
+       not pay walks in exactly as the one who did. */
+    if (!wedding && !ACCESS.has('wedding')) { drawOffer(); return; }
+    drawPlan(bond, wedding);
+  };
+
+  const drawOffer = () => {
+    const item = COURSES.filter((c) => c.id === 'wedding')[0];
+    m.innerHTML = head()
+      + '<div class="card wedcard">' + cupidSVG()
+      + '<p class="lead" style="text-align:center">' + esc(S.wedOfferLead) + '</p>'
+      + '<p class="hint">' + esc(L(item.blurb)) + '</p>'
+      + '<ul class="carelist">' + L(item.includes).map((x) => '<li><span>' + esc(x) + '</span><b>\u2713</b></li>').join('') + '</ul>'
+      + (isTWA() ? '' : '<p class="wedprice">' + esc(fmtPrice(salePrice(item.price, 'unlock', 'wedding'))) + '</p>')
+      + '<a class="btn primary block" href="#/unlock?item=wedding&from=wedding">' + esc(S.wedBuy) + '</a>'
+      + '<p class="hint">' + esc(S.wedBuyHint) + '</p></div>';
+  };
+
+  if (!WED.ok()) {
+    /* Somebody following an invitation who has no account yet. Where they were
+       going is remembered, so making an account puts them back at the door
+       rather than on the home screen. */
+    if (wanted) store.set('nabu-wed-next', wanted);
+    m.innerHTML = head(S.wedGuestIntro)
+      + '<div class="card wedcard">' + cupidSVG()
+      + '<p class="lead">' + esc(S.wedNeedAccount) + '</p>'
+      + '<a class="btn primary block" href="#/me?next=wedding">' + esc(S.signIn) + '</a>'
+      + '<p class="hint">' + esc(S.wedJoinHint) + '</p></div>';
+    return;
+  }
+
+  /* The room, whichever one this is. */
+  const id = wanted || LOVE.local().bond || '';
+  if (id) {
+    stop.push(WED.watch(id, (w) => {
+      wedding = w; ready = true;
+      /* Enough to draw the line on the profile before the cloud answers. */
+      if (w) {
+        if (WED.mine(w)) {
+          store.set('nabu-wed-mine', { startMs: w.startMs, other: WED.side(w) === 'a' ? (w.bName || '') : (w.aName || '') });
+        } else {
+          const seen = store.get('nabu-wed-seen', {}) || {};
+          seen[w.id] = { startMs: w.startMs, pair: (w.aName || '') + ' & ' + (w.bName || '') };
+          store.set('nabu-wed-seen', seen);
+        }
+      }
+      if (w && wanted && !WED.mine(w)) {
+        /* A guest takes a seat once, and then keeps it warm while they watch,
+           because the bouquet may only land on somebody actually here. */
+        if (!seated) { seated = true; WED.sit(w.id, (PROFILE && PROFILE.name) || '').catch(() => {}); }
+        if (!beat) beat = setInterval(() => WED.stillHere(w.id), 20000);
+      }
+      paint();
+    }));
+    stop.push(WED.watchGuests(id, (g) => { guests = g; paint(); }));
+    stop.push(WED.watchGifts(id, (g) => { gifts = g; paint(); }));
+  }
+  if (!wanted) {
+    stop.push(LOVEDB.watchMine((b) => { bond = b; ready = true; paint(); }));
+  } else { ready = true; paint(); }
+}
+
+/* A wedding in the phone's own calendar, so it is not forgotten. The same
+   trick the bookings use: a file the phone knows how to open. */
+function wedSaveIcs(w) {
+  const d = new Date(Number(w.startMs) || 0), end = new Date(d.getTime() + 3600000);
+  const z = (x) => x.getUTCFullYear() + pad2(x.getUTCMonth() + 1) + pad2(x.getUTCDate())
+    + 'T' + pad2(x.getUTCHours()) + pad2(x.getUTCMinutes()) + '00Z';
+  const title = T().wedCalTitle(w.aName || '', w.bName || '');
+  const body = ['BEGIN:VCALENDAR', 'VERSION:2.0', 'PRODID:-//Nabu Tarot//wedding//EN', 'BEGIN:VEVENT',
+    'UID:' + w.id + '@nabutarot', 'DTSTAMP:' + z(new Date()), 'DTSTART:' + z(d), 'DTEND:' + z(end),
+    'SUMMARY:' + title, 'DESCRIPTION:' + appURL() + '#/wedding/' + w.id,
+    'URL:' + appURL() + '#/wedding/' + w.id, 'END:VEVENT', 'END:VCALENDAR'].join('\r\n');
+  const blob = new Blob([body], { type: 'text/calendar' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'nabu-wedding.ics';
+  document.body.appendChild(a); a.click();
+  setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 1000);
+}
+
+/* What is coming, on the profile, beside the bookings - because a wedding you
+   said you would go to is an appointment like any other. Drawn from what this
+   device already knows, so it costs nothing and shows before the cloud
+   answers. */
+function wedComingHTML() {
+  const S = T(), ids = store.get('nabu-weddings', []) || [];
+  const mine = store.get('nabu-wed-mine', null);
+  const rows = [];
+  if (mine && mine.startMs > Date.now() - 3600000) {
+    rows.push(['#/wedding', S.wedMineComing(mine.other || ''), wedWhen(mine.startMs)]);
+  }
+  ids.slice(-4).forEach((id) => {
+    const seen = (store.get('nabu-wed-seen', {}) || {})[id];
+    if (!seen || !seen.startMs || seen.startMs < Date.now() - 3600000) return;
+    rows.push(['#/wedding/' + id, S.wedGuestComing(seen.pair || ''), wedWhen(seen.startMs)]);
+  });
+  if (!rows.length) return '';
+  return '<div class="card"><h3 style="margin-bottom:8px">\uD83D\uDC92 ' + esc(S.wedComing) + '</h3>'
+    + rows.map((r) => '<a class="wedrow" href="' + esc(r[0]) + '"><b>' + esc(r[1]) + '</b>'
+      + '<span class="faint">' + esc(r[2]) + '</span></a>').join('') + '</div>';
+}
+
+ROUTES.wedding = { nav: '', render: renderWedding };
 
 /* ==================== what happened while you were away ====================
 
@@ -19612,11 +20285,37 @@ function alertsLocalCheck() {
   if (was && was !== v) ALERTS.add({ id: 'ver-' + v, k: 'app', t: S.alertUp(v), b: S.alertUpBody, href: '#/home' });
 }
 
+/* Every room this account has a seat in. The list lives on the account, so a
+   new phone still knows what you said you would come to. */
+function alertsWatchWeddings() {
+  const ids = store.get('nabu-weddings', []) || [];
+  if (!ids.length || typeof WED === 'undefined') return;
+  ids.slice(-6).forEach((id) => {
+    ALERT_STOP.push(WED.watch(id, (w) => {
+      if (!w) return;
+      const S = T(), pair = (w.aName || '') + ' & ' + (w.bName || '');
+      const day = isoDate(new Date(Number(w.startMs) || 0));
+      /* Today, once. */
+      if (day === isoDate(new Date()) && !w.doneAt) {
+        ALERTS.add({ id: 'wed-today-' + id + '-' + day, k: 'love',
+          t: S.alertWedToday(pair), b: S.alertWedTodayBody, href: '#/wedding/' + id });
+      }
+      /* And the moment the doors open, which is the only moment the link
+         works and lasts a quarter of an hour. */
+      if (WED.doorState(w) === 'open' && !w.doneAt) {
+        alertSay({ id: 'wed-open-' + id + '-' + day, k: 'love',
+          t: S.alertWedOpen(pair), b: S.alertWedOpenBody, href: '#/wedding/' + id }, true);
+      }
+    }));
+  });
+}
+
 function alertsStart() {
   alertsStop();
   alertsLocalCheck();
   if (!BE.enabled || !BE.user) { alertsBadge(); return; }
   try { alertsWatchLove(); } catch (e) { /* the thread is not reachable */ }
+  try { alertsWatchWeddings(); } catch (e) { /* no room is reachable */ }
   try { alertsWatchBookings(); } catch (e) { /* bookings are not reachable */ }
   try { alertsWatchMessages(); } catch (e) { /* the thread doc is not reachable */ }
   alertsBadge();
@@ -20093,7 +20792,7 @@ function adminSale(p) {
 ROUTES.admin = { nav: '', render: renderAdmin };
 
 /* ============================ boot ============================ */
-window.APP_VERSION = 'v137';
+window.APP_VERSION = 'v138';
 window.NABU = { CONFIG: CONFIG, SALE: SALE, salePrice: salePrice, loadActs: loadActs, BACK: BACK, LESSONS: LESSONS, localAnswer: localAnswer, compatVerdict: compatVerdict, numerologyOf: numerologyOf, ZDEEP: ZDEEP, lunarToday: lunarToday, solarToLunar: solarToLunar, DECK: DECK, INSIGHT: INSIGHT, KW: KW, ASK: ASK, TOPICS: TOPICS, GUIDES: GUIDES, SERVICES: SERVICES, COURSES: COURSES, ACCESS: ACCESS, plusOn: () => plusOn(), proOn: () => proOn(), luckUnlimited: () => luckUnlimited(), ZODIAC: ZODIAC, pick: pick, book: book,
   insightHTML: insightHTML, insightOf: insightOf, sunSignIndex: sunSignIndex, lifePath: lifePath, PROFILE: () => PROFILE, BE: BE, ACTS: ACTS,
   ANGELS: ANGELS, angelRead: angelRead, CODEBOOK: CODEBOOK, verifyCode: verifyCode, petHomeSVG: petHomeSVG, PET_HOMES: PET_HOMES, PET_WEARS: PET_WEARS, codeDigest: codeDigest, randomCode: randomCode, BANK: BANK, PETS: PETS, petSVG: petSVG, PET_COATS: PET_COATS, PET_KINDS: PET_KINDS, luckCut: luckCut, petLevel: petLevel, petStep: petStep, VOUCHERS: VOUCHERS, levelCoins: levelCoins, LOOKS: LOOKS,

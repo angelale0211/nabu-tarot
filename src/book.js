@@ -215,17 +215,30 @@ function freeGridHTML() {
     + '<span class="ic">' + r[1] + '</span><b>' + esc(r[2]) + '</b><span class="s">' + esc(r[3]) + '</span></a>').join('') + '</div>';
 }
 
-function renderPrices() {
+/* `from` says which door they came through: 'app' for a locked design, a coin
+   or a companion, 'learn' for a lesson. The section they came for goes first
+   and keeps its number, so the page is the same page - just answering the
+   question that was actually asked. */
+function renderPrices(args, params) {
   const S = T(), m = $('#main');
+  const from = (params && params.from) || '';
   const sec = (n, title, hint, body) => '<div class="sec pricesec"><h2><i>' + n + '</i>' + esc(title) + '</h2>'
     + (hint ? '<p class="hint">' + esc(hint) + '</p>' : '') + body + '</div>';
   const of = (k) => COURSES.filter((c) => c.kind === k).map(priceCardHTML).join('');
   m.innerHTML = '<div class="eyebrow">' + esc(CONFIG.brand) + '</div>'
     + '<h1 style="margin-bottom:6px">' + esc(S.priceTitle) + '</h1><p class="muted">' + esc(S.priceIntro) + '</p>'
-    + sec(1, S.priceReadings, S.priceReadingsHint, priceSheetHTML(false) + '<a class="btn primary block" href="#/book">' + esc(S.ctaBook) + '</a>')
-    + sec(2, S.courses, S.priceCoursesHint, of('course'))
-    + sec(3, S.priceUnlocks, S.priceUnlocksHint, of('unlock'))
-    + sec(4, S.priceFree, S.priceFreeHint, freeGridHTML());
+    + (() => {
+      const readings = sec(1, S.priceReadings, S.priceReadingsHint, priceSheetHTML(false) + '<a class="btn primary block" href="#/book">' + esc(S.ctaBook) + '</a>');
+      const courses = sec(2, S.courses, S.priceCoursesHint, of('course'));
+      const unlocks = sec(3, S.priceUnlocks, S.priceUnlocksHint, of('unlock'));
+      const free = sec(4, S.priceFree, S.priceFreeHint, freeGridHTML());
+      /* Somebody who pressed "unlock this design" came for the packages;
+         somebody who pressed a locked lesson came for the courses. Everything
+         is still here either way. */
+      if (from === 'app') return unlocks + courses + readings + free;
+      if (from === 'learn') return courses + unlocks + readings + free;
+      return readings + courses + unlocks + free;
+    })();
 }
 
 async function renderBook(args, params) {

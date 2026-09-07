@@ -62,7 +62,7 @@ function renderLearn(args, params) {
     m.innerHTML = '<div class="eyebrow">' + esc(S.nav.learn) + '</div><h1 style="margin-bottom:6px">' + esc(S.learnTitle) + '</h1><p class="muted">' + esc(S.learnIntro) + '</p>'
       + '<div class="eyebrow">' + esc(S.coursesPractice) + '</div><div class="tiles">' + tile('tarot', !ACCESS.has('tarot')) + tile('lenormand', !ACCESS.has('lenormand')) + tile('playing', !ACCESS.has('playing')) + tile('manifest', !ACCESS.has('manifest')) + '</div>'
       + '<div class="eyebrow">' + esc(S.freeReads) + '</div><div class="tiles">' + tile('astro') + tile('angel') + tile('fortune') + '</div>'
-      + '<p style="margin-top:14px"><a class="btn block" href="#/unlock">💳 ' + esc(S.unlockLink) + '</a></p>'
+      + '<p style="margin-top:14px"><a class="btn block" href="#/unlock?from=learn">💳 ' + esc(S.unlockLink) + '</a></p>'
       + (function () { const ints = PROFILE.interests || []; const list = GUIDES.filter((g) => g.tags.some((t) => ints.indexOf(t) > -1) && !((g.cat === 'tarot' || g.cat === 'lenormand') && !ACCESS.has(g.cat)) && !(g.id === 'fort-playing' && !ACCESS.has('playing'))).slice(0, 4); return list.length ? '<div class="sec"><div class="eyebrow">' + esc(S.forInterests) + '</div>' + list.map(guideRow).join('') + '</div>' : ''; }());
     return;
   }
@@ -475,15 +475,28 @@ function unlockMessage() {
     + '\n💰 ' + S.unlockTotal + ': ' + fmtPrice(total) + luckLines(cut)
     + ((cut.pctOff || cut.coins) ? '\n✅ ' + S.luckAfter + ': ' + fmtPrice(cut.final) : '');
 }
-function renderUnlock() {
+function renderUnlock(args, params) {
   const S = T(), m = $('#main');
+  /* Arriving from something's own offer, that thing is already chosen: being
+     sent to a list and having to find it again is a small insult. */
+  { const want = (params && params.item) || '';
+    if (want && COURSES.some((c) => c.id === want) && !UNL_CART.has(want)) UNL_CART.toggle(want); }
+  const from = (params && params.from) || '';
   const draw = () => {
     const group = (ids) => '<div class="unlist">' + COURSES.filter((c) => ids.indexOf(c.id) > -1).map(unlockRowHTML).join('') + '</div>';
     m.innerHTML = '<div class="eyebrow">' + esc(CONFIG.brand) + '</div><h1 style="margin-bottom:6px">' + esc(S.unlockTitle) + '</h1><p class="muted">' + esc(S.unlockIntro) + '</p>'
       + (isTWA() ? '' : '<p class="hint" style="margin-bottom:14px">' + esc(S.unlockPick) + '</p>')
-      + '<div class="sec"><h2 style="margin-bottom:8px">' + esc(S.unlockCourses) + '</h2>' + group(['tarot', 'lenormand', 'playing', 'manifest']) + '</div>'
-      + '<div class="sec"><h2 style="margin-bottom:8px">' + esc(S.unlockActs) + '</h2>'
-        + '<p class="hint" style="margin-bottom:10px">' + esc(S.unlockTiers) + '</p>' + group(UNL_TIERS) + '</div>'
+      + (() => {
+        const courses = '<div class="sec" data-sec="courses"><h2 style="margin-bottom:8px">' + esc(S.unlockCourses) + '</h2>' + group(['tarot', 'lenormand', 'playing', 'manifest']) + '</div>';
+        const tiers = '<div class="sec" data-sec="tiers"><h2 style="margin-bottom:8px">' + esc(S.unlockActs) + '</h2>'
+          + '<p class="hint" style="margin-bottom:10px">' + esc(S.unlockTiers) + '</p>' + group(UNL_TIERS) + '</div>';
+        const wed = '<div class="sec" data-sec="wedding"><h2 style="margin-bottom:8px">\uD83D\uDC92 ' + esc(S.unlockWedding) + '</h2>'
+          + '<p class="hint" style="margin-bottom:10px">' + esc(S.unlockWeddingHint) + '</p>' + group(['wedding']) + '</div>';
+        /* Which of these is the answer depends on the door they came through. */
+        if (from === 'app') return tiers + courses + wed;
+        if (from === 'wedding') return wed + tiers + courses;
+        return courses + tiers + wed;
+      })()
       + (isTWA() ? '' : '<div class="sec"><h2 style="margin-bottom:8px">' + esc(S.unlockCart) + '</h2><div id="ucart">' + unlockCartHTML() + '</div>'
         + rewardPanelHTML(unlockBase(), UNL_USE)
         + '<button class="btn primary block" id="usend" style="margin-top:12px">' + esc(S.unlockSend) + '</button>'
