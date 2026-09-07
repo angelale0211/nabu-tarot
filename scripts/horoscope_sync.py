@@ -14,7 +14,7 @@ import io, json, os, re, sys, time, urllib.parse, urllib.request, html as htmlmo
 
 OUT = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'horoscope.json')
 SIGNS = ['aries', 'taurus', 'gemini', 'cancer', 'leo', 'virgo', 'libra', 'scorpio', 'sagittarius', 'capricorn', 'aquarius', 'pisces']
-UA = {'User-Agent': 'Mozilla/5.0 (compatible; NabuTarot/1.0; +https://angelale0211.github.io/nabu-tarot/)'}
+UA = {'User-Agent': 'Mozilla/5.0 (compatible; NabuTarot/1.0; +https://nabutarot.com/)'}
 GEMINI_KEY = os.environ.get('GEMINI_API_KEY', '').strip()
 
 

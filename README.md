@@ -1,6 +1,6 @@
 # Nabu Tarot app
 
-Mobile web app for Nabu Tarot, live at https://angelale0211.github.io/nabu-tarot/
+Mobile web app for Nabu Tarot, live at https://nabutarot.com/
 
 Five tabs:
 
@@ -39,7 +39,7 @@ Bump `CACHE` in `sw.js` whenever `index.html` changes, so installed copies refre
 
 Every card, lesson, sign and numbers page has a "Nabu AI" box. Out of the box it answers from the app's own knowledge base (no key, no cost, works offline, but it only knows what the app knows). Three ways to make it a real AI, in order of effort:
 
-**A. Gemini, free, with web search (about 5 minutes).** Go to https://aistudio.google.com → *Get API key* → create a key. Then in https://console.cloud.google.com → APIs & Services → Credentials → open that key → *Application restrictions: Websites* → add `https://angelale0211.github.io/*`. Paste the key into `CONFIG.geminiKey` in `src/config.js`, rebuild, push. The app calls Gemini straight from the browser, and Gemini can search the web to answer questions the app's knowledge does not cover. The free tier is enough for a small audience; the referrer restriction stops other sites from using your key.
+**A. Gemini, free, with web search (about 5 minutes).** Go to https://aistudio.google.com → *Get API key* → create a key. Then in https://console.cloud.google.com → APIs & Services → Credentials → open that key → *Application restrictions: Websites* → add `https://nabutarot.com/*`. Paste the key into `CONFIG.geminiKey` in `src/config.js`, rebuild, push. The app calls Gemini straight from the browser, and Gemini can search the web to answer questions the app's knowledge does not cover. The free tier is enough for a small audience; the referrer restriction stops other sites from using your key.
 
 **B. Open model on Cloudflare Workers AI, free.** In `worker/wrangler.toml` uncomment the `[ai]` binding, then `cd worker && npm install && npx wrangler login && npx wrangler deploy`. Put the printed URL into `CONFIG.aiEndpoint`. Answers come from Llama 3.3 (open weights) without any key; no web search.
 
@@ -56,7 +56,7 @@ The worker keeps the key server-side, sends the model the same knowledge the pag
 
 1. https://console.firebase.google.com → Add project (e.g. `nabu-tarot`).
 2. Build → Authentication → Sign-in method: enable **Google**, **Email/Password**, and **Facebook** (Facebook needs a Meta developer app: paste its App ID and secret, and add the OAuth redirect URL Firebase shows into the Meta app). Instagram cannot be used as a login provider (Meta retired that API), so Instagram users sign in with Facebook or email.
-3. Authentication → Settings → Authorized domains: add `angelale0211.github.io`.
+3. Authentication → Settings → Authorized domains: add `nabutarot.com`.
 4. Build → Firestore Database → Create (production mode). Rules tab: paste `firestore.rules` from this repo, replacing `nabu@example.com` with Nabu's login email(s). Publish.
 5. Project settings → Your apps → Web app → copy the config object into `CONFIG.firebase` in `src/config.js`, and put the same email(s) into `CONFIG.adminEmails`. Rebuild, push. (Done for project `nabutarot`; admins are nabutarot@outlook.com and angela_le_@outlook.com.)
 
@@ -112,4 +112,4 @@ test/run.py        headless Edge checks (55)     make_icons.py  icons from logo.
 
 ## Google Play (Trusted Web Activity)
 
-The Play app is the live site wrapped as a Trusted Web Activity: it opens the same URL full screen, with no browser bar, and updates the moment the site updates. Build it without any local tooling at https://www.pwabuilder.com (enter the site URL, Package for stores, Android): it returns an `.aab`, a signing key and the SHA-256 fingerprint. The signed package is in the repo as `nabu-tarot.apk` (installable from `#/install`); the `.aab` for Play, the keystore and its passwords live outside the repo in `C:\Users\angel\nabu-tarot-keys\pkg` (back that folder up: Play needs the same key for every future upload). The fingerprint is published at `https://angelale0211.github.io/.well-known/assetlinks.json` (repository `angelale0211.github.io`, copy in `well-known/assetlinks.json`), which is what lets the app open without a browser bar. Inside the Play build `isTWA()` is true (android-app referrer), so course prices and the buy buttons are hidden and only unlock codes are taken, as Play's payment policy requires for digital content sold outside Play Billing. Privacy policy: `privacy.html` (built from `privacy.json`, also shown at `#/privacy`). Account deletion: Me → Xoá tài khoản (`BE.deleteAccount`), plus the email route in the policy.
+The Play app is the live site wrapped as a Trusted Web Activity: it opens the same URL full screen, with no browser bar, and updates the moment the site updates. Build it without any local tooling at https://www.pwabuilder.com (enter the site URL, Package for stores, Android): it returns an `.aab`, a signing key and the SHA-256 fingerprint. The signed package is in the repo as `nabu-tarot.apk` (installable from `#/install`); the `.aab` for Play, the keystore and its passwords live outside the repo in `C:\Users\angel\nabu-tarot-keys\pkg` (back that folder up: Play needs the same key for every future upload). The fingerprint is published at `https://nabutarot.com/.well-known/assetlinks.json` (repository `nabutarot.com`, copy in `well-known/assetlinks.json`), which is what lets the app open without a browser bar. Inside the Play build `isTWA()` is true (android-app referrer), so course prices and the buy buttons are hidden and only unlock codes are taken, as Play's payment policy requires for digital content sold outside Play Billing. Privacy policy: `privacy.html` (built from `privacy.json`, also shown at `#/privacy`). Account deletion: Me → Xoá tài khoản (`BE.deleteAccount`), plus the email route in the policy.
