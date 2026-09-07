@@ -1,7 +1,10 @@
 name: Update weekly and monthly horoscopes
 
-# Refreshes horoscope.json every day from Horoscope.com's general forecasts,
-# translated to Vietnamese, so the home screen can show the visitor's sign.
+# Writes horoscope.json every day from Nabu's own text, composed from where the
+# Sun and Moon actually are: the Sun's sign gives each sign its house for the
+# month, the Moon's gives it for the week, and the Moon's phase gives the timing.
+# Nothing is fetched and nothing is translated, so nothing here belongs to
+# anybody else.
 on:
   schedule:
     - cron: '15 3 * * *'
@@ -18,10 +21,8 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
-      - name: Fetch forecasts
-        env:
-          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
-        run: python scripts/horoscope_sync.py
+      - name: Write the forecasts
+        run: python scripts/horoscope_write.py
       - name: Commit if changed
         run: |
           git config user.name "nabu-sync"
