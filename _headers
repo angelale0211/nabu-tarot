@@ -1,0 +1,43 @@
+# Headers for Cloudflare Pages. GitHub Pages ignores this file, so it is safe
+# to have here before the move as well as after it.
+#
+# The one that matters is sw.js. Cloudflare caches harder than GitHub does, and
+# a service worker held in a cache is a phone pinned to an old version of the
+# app: updates stop arriving, silently, with nothing to see. The page itself
+# and the data files it reads are revalidated for the same reason - the app
+# keeps its own copies for working offline, so nothing here costs a visitor a
+# slower start.
+
+/*
+  X-Content-Type-Options: nosniff
+  Referrer-Policy: strict-origin-when-cross-origin
+  X-Frame-Options: SAMEORIGIN
+  Permissions-Policy: geolocation=(), camera=(), payment=()
+
+/sw.js
+  Cache-Control: no-cache, no-store, must-revalidate
+
+/
+  Cache-Control: no-cache
+
+/index.html
+  Cache-Control: no-cache
+
+/manifest.webmanifest
+  Cache-Control: no-cache
+
+# Posts, availability, horoscopes and prices are written by the scheduled jobs
+# and read straight from here.
+/*.json
+  Cache-Control: no-cache
+
+# Android reads this to prove the installed app and this domain are the same
+# thing. It must be served as JSON, and it must be readable from anywhere.
+/.well-known/assetlinks.json
+  Content-Type: application/json
+  Access-Control-Allow-Origin: *
+  Cache-Control: no-cache
+
+# Pictures and icons never change without changing their name.
+/*.png
+  Cache-Control: public, max-age=604800

@@ -251,13 +251,21 @@ function adminBookings(p) {
     if (!$('#bkorders') || !$('#bkcal')) return;
     /* An hour waiting on Nabu. Nabu is the one who has to be there, so the
        couple ask and the old hour stands until this is answered. */
-    $('#bkasks').innerHTML = asks.length ? '<div class="card"><h3 style="margin-bottom:4px">\uD83D\uDD01 ' + esc(S.adminWedMoves) + ' <span class="n">' + asks.length + '</span></h3>'
-      + '<p class="hint" style="margin-bottom:10px">' + esc(S.adminWedMovesHint) + '</p>'
-      + asks.map((w) => '<div class="bk"><div class="bkh"><b>\uD83D\uDC8D ' + esc((w.aName || '') + ' & ' + (w.bName || '')) + '</b></div>'
+    /* Every wedding Nabu is holding, with what it is waiting for written on
+       it. The room always exists - the request is what creates it - so this
+       is the one place that never depends on an order row being written. */
+    const owed = asks.filter((w) => !w.paid).length;
+    $('#bkasks').innerHTML = asks.length ? '<div class="card"><h3 style="margin-bottom:4px">\uD83D\uDC8D ' + esc(S.adminWeds) + (owed ? ' <span class="n">' + owed + '</span>' : '') + '</h3>'
+      + '<p class="hint" style="margin-bottom:10px">' + esc(S.adminWedsHint) + '</p>'
+      + asks.map((w) => '<div class="bk"><div class="bkh"><b>\uD83D\uDC8D ' + esc(((w.aName || '') + ' & ' + (w.bName || '')).replace(/^ & $/, S.loveSomeone)) + '</b>'
+        + '<span class="st ' + (w.paid ? 'confirmed' : 'requested') + '">' + esc(w.paid ? S.adminWedPaid : S.adminWedOwed) + '</span></div>'
         + '<p class="hint">' + esc(S.adminWedWas) + ': <b>' + esc(wedWhen(Number(w.startMs) || 0)) + '</b></p>'
-        + '<p class="hint">' + esc(S.adminWedWants) + ': <b>' + esc(wedWhen(Number(w.wantMs) || 0)) + '</b></p>'
-        + '<div class="acts"><button type="button" class="btn sm primary" data-wmv="' + esc(w.id) + '">' + esc(S.confirm) + '</button>'
-        + '<button type="button" class="btn sm" data-wmvno="' + esc(w.id) + '">' + esc(S.adminKeep) + '</button></div></div>').join('')
+        + (WED.asking(w) ? '<p class="hint">' + esc(S.adminWedWants) + ': <b>' + esc(wedWhen(Number(w.wantMs) || 0)) + '</b></p>' : '')
+        + '<div class="acts">'
+        + (w.paid ? '' : '<button type="button" class="btn sm primary" data-wpaid="' + esc(w.id) + '">\uD83D\uDCB0 ' + esc(S.adminWedGotPaid) + '</button>')
+        + (WED.asking(w) ? '<button type="button" class="btn sm primary" data-wmv="' + esc(w.id) + '">\uD83D\uDD01 ' + esc(S.adminWedMoveOk) + '</button>'
+          + '<button type="button" class="btn sm" data-wmvno="' + esc(w.id) + '">' + esc(S.adminKeep) + '</button>' : '')
+        + '</div></div>').join('')
       + '</div>' : '';
     const orders = all.filter((b) => b.kind === 'unlock');
     const waiting = orders.filter((b) => b.status === 'requested');
@@ -299,6 +307,12 @@ function adminBookings(p) {
       if (!bk || !confirm(T().adminCancelAsk)) return;
       try { await BE.setBookingStatus(bk, 'cancelled'); toast(T().adminCancelDone); } catch (e) { toast(e.message); }
     }));
+    /* The one thing Nabu could not do anywhere: say the money arrived. */
+    $$('[data-wpaid]', p).forEach((b) => b.addEventListener('click', async () => {
+      const id = b.getAttribute('data-wpaid');
+      b.disabled = true;
+      try { await WED.setPaid(id, true); toast(T().adminWedPaidDone); } catch (e) { b.disabled = false; toast(e.message); }
+    }));
     $$('[data-wmv]', p).forEach((b) => b.addEventListener('click', async () => {
       const w = asks.filter((x) => x.id === b.getAttribute('data-wmv'))[0];
       try { await WED.answerMove(w.id, w, true); toast(T().saved); } catch (e) { toast(e.message); }
@@ -308,7 +322,7 @@ function adminBookings(p) {
       try { await WED.answerMove(w.id, w, false); toast(T().saved); } catch (e) { toast(e.message); }
     }));
   };
-  admin.unsubs.push(WED.watchMoveAsks((l) => { asks = l; draw(); }));
+  admin.unsubs.push(WED.watchRooms((l) => { asks = l; draw(); }));
   admin.unsubs.push(BE.watchAllBookings((list) => { all = list; draw(); }));
 }
 function adminInbox(p) {

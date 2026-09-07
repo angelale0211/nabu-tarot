@@ -167,11 +167,17 @@ const WED = {
       ? { startMs: at, moved: this.moved(w) + 1, wantMs: 0, moveAsk: false }
       : { wantMs: 0, moveAsk: false });
   },
-  /* Every hour waiting on Nabu, which is a handful at the very most. */
-  watchMoveAsks(cb) {
+  /* Every room Nabu is holding. Filtered here rather than in the query: a
+     room with no `paid` field at all is exactly the room that has not been
+     paid for, and a where() on a field that is not there matches nothing. */
+  watchRooms(cb) {
     if (!this.ok()) return () => {};
-    return BE.db.collection('weddings').where('moveAsk', '==', true).limit(50)
-      .onSnapshot((s) => cb(s.docs.map((d) => Object.assign({ id: d.id }, d.data()))), () => cb([]));
+    return BE.db.collection('weddings').limit(100).onSnapshot((s) => {
+      const from = Date.now() - 86400000;
+      cb(s.docs.map((d) => Object.assign({ id: d.id }, d.data()))
+        .filter((w) => Number(w.startMs) > from && w.state !== 'called-off')
+        .sort((a, b) => Number(a.startMs) - Number(b.startMs)));
+    }, () => cb([]));
   },
   callOff(id) { return BE.db.collection('weddings').doc(id).update({ state: 'called-off' }); },
   drop(id) { return BE.db.collection('weddings').doc(id).delete(); },
@@ -1192,7 +1198,11 @@ function renderWedding(args) {
     /* Somebody following an invitation who has no account yet. Where they were
        going is remembered, so making an account puts them back at the door
        rather than on the home screen. */
-    if (wanted) store.set('nabu-wed-next', wanted);
+    /* Two keys, not one. The first is consumed by the sign-in screen to send
+       them back here; the second outlives that and becomes the invitation in
+       the bell, so closing the app halfway through the sign-up no longer loses
+       the fact that they were asked. */
+    if (wanted) { store.set('nabu-wed-next', wanted); store.set('nabu-wed-ask', wanted); }
     m.innerHTML = head(S.wedGuestIntro)
       + '<div class="card wedcard">' + cupidSVG()
       + '<p class="lead">' + esc(S.wedNeedAccount) + '</p>'

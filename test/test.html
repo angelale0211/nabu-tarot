@@ -1644,6 +1644,23 @@ async function go(hash, sel) { W().location.hash = hash; await sleep(30); return
           'so the partner who paid nothing is let in too, without a code of their own');
         N.BE.user = { uid: 'admin1', email: 'angela_le_@outlook.com' };
 
+        /* The room is created by the request, because that is what holds the
+           hour - so by the time anybody reaches the paying screen the branch
+           that writes an order is skipped, and no order is ever written. Nabu
+           was hunting for a row the ordinary path never creates. */
+        db.put('weddings/uidE__uidF', { uids: ['uidE', 'uidF'], a: 'uidE', b: 'uidF',
+          aName: 'Mai', bName: 'Nam', startMs: Date.now() + 5 * 86400000, state: 'planned', step: 0 });
+        await sleep(320);
+        const noOrder = Object.keys(db.docs).filter((k) => k.indexOf('bookings/') === 0
+          && (db.docs[k].items || []).some((it) => it.wid === 'uidE__uidF'));
+        const paybtn = d.querySelector('#bkasks [data-wpaid="uidE__uidF"]');
+        ok(!noOrder.length && paybtn && /Mai/.test(d.querySelector('#bkasks').textContent),
+          'a wedding with no order behind it still asks Nabu whether the money arrived');
+        paybtn.click(); await sleep(320);
+        ok(db.docs['weddings/uidE__uidF'].paid === true
+          && !d.querySelector('#bkasks [data-wpaid="uidE__uidF"]'),
+          'and saying it arrived opens that room, without an order and without a code');
+
         /* Moving the hour used to be done on the spot, and Nabu - who has to be
            there to host it - was never told. */
         const W2 = 'weddings/uidC__uidD', was = db.docs[W2].startMs;
@@ -1669,6 +1686,28 @@ async function go(hash, sel) { W().location.hash = hash; await sleep(30); return
         ok(db.docs[W2].startMs === was + 3600000 && db.docs[W2].moved === 0 && !db.docs[W2].moveAsk,
           'and saying no leaves the hour where it was without spending their one move');
         N.BE.user = userWas2; }
+
+      { /* An invitation link travels outside Nabu - a message, a group chat -
+             and lands on somebody with no account. Making one used to put them
+             at the door by accident of a redirect, and the invitation itself
+             was gone: close the app halfway through and the couple would have
+             had to invite them all over again, inside the app. */
+        const userWas3 = N.BE.user;
+        N.BE.user = null;
+        w.localStorage.removeItem('nabu-wed-ask');
+        await go('#/wedding/uidC__uidD', '.wedcard'); await sleep(200);
+        ok(w.localStorage.getItem('nabu-wed-ask') && d.querySelector('#main a[href*="/me"]'),
+          'a link opened without an account asks for one, and remembers which wedding it was');
+
+        N.BE.user = { uid: 'uidG2', email: 'g2@test' };
+        N.ALERTS.clear();
+        N.alertsStart(); await sleep(400);
+        const inv = N.ALERTS.all().filter((x) => x.id.indexOf('wed-link-') === 0)[0];
+        ok(inv && inv.href.indexOf('uidC__uidD') > -1,
+          'and once there is an account the invitation is waiting in the bell, to be answered there');
+        ok(!JSON.parse(w.localStorage.getItem('nabu-wed-ask') || '""'),
+          'and it is spent, so it does not arrive again at every start');
+        N.BE.user = userWas3; N.ALERTS.clear(); }
 
       /* ---- the diary, read by two ---- */
       { const B = 'bonds/uidA__uidB';

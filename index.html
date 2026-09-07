@@ -5,7 +5,14 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
 <title>Nabu Tarot</title>
 <meta name="description" content="Nabu Tarot: dự đoán mới, rút một lá bài xem năng lượng hiện tại, học tarot, Lenormand, chiêm tinh, và đặt lịch xem bài.">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'none'; object-src 'none'; form-action 'self'; script-src 'self' 'sha256-MHhxT1i05vv5ubCp4DiyGgnxZ1dKBU9tAlgyo33BelA=' https://www.gstatic.com https://apis.google.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; font-src 'self' data:; media-src 'self' data: blob:; worker-src 'self'; connect-src 'self' https://*.googleapis.com https://*.google.com https://*.firebaseio.com https://*.cloudfunctions.net https://*.workers.dev https://generativelanguage.googleapis.com; frame-src https://*.firebaseapp.com https://accounts.google.com https://*.facebook.com">
+<!-- Nabu Tarot. Copyright (c) 2025-2026 Nabu Tarot. All rights reserved.
+     This application, its text in both languages, its artwork and its lessons
+     may not be copied, republished, adapted, or used to train a model.
+     Whoever opens this page, saves it, or serves it from somewhere else,
+     carries this notice with it. See LICENSE. -->
+<meta name="author" content="Nabu Tarot">
+<meta name="copyright" content="Copyright (c) 2025-2026 Nabu Tarot. All rights reserved.">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'none'; object-src 'none'; form-action 'self'; script-src 'self' 'sha256-b6APf+8ytMvV8QwIJGKkG3iA/OL0AacnzzXn5qlPEDw=' https://www.gstatic.com https://apis.google.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; font-src 'self' data:; media-src 'self' data: blob:; worker-src 'self'; connect-src 'self' https://*.googleapis.com https://*.google.com https://*.firebaseio.com https://*.cloudfunctions.net https://*.workers.dev https://generativelanguage.googleapis.com; frame-src https://*.firebaseapp.com https://accounts.google.com https://*.facebook.com">
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <meta name="theme-color" content="#EFE9FA">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -2613,6 +2620,13 @@ const STR = {
     alertWedMoveYesBody: (when) => 'Lễ cưới của bạn chuyển sang ' + when + '. Bạn nhớ báo lại cho khách nhé.',
     alertWedMoveNo: 'Nabu giữ giờ cũ',
     alertWedMoveNoBody: (when) => 'Lần này Nabu chưa đổi được giờ, lễ cưới vẫn diễn ra vào ' + when + '. Bạn nhắn cho Nabu nếu cần sắp xếp thêm nhé.',
+    alertWedInvite: (pair) => 'Bạn được mời dự lễ cưới của ' + pair + ' 💌',
+    alertWedInviteBody: (when) => 'Lễ cưới diễn ra vào ' + when + '. Bạn mở ra để nhận lời hoặc từ chối nhé.',
+    adminWeds: 'Lễ cưới đang giữ',
+    adminWedsHint: 'Mỗi lễ cưới đang đặt chỗ đều ở đây. Khi bạn đã nhận được 30.000đ, bạn bấm Đã nhận tiền — phòng cưới mở ra cho cả hai người, không ai cần nhập mã nữa.',
+    adminWedPaid: 'Đã thanh toán', adminWedOwed: 'Chưa thanh toán',
+    adminWedGotPaid: 'Đã nhận tiền', adminWedPaidDone: 'Đã mở phòng cưới cho hai bạn ấy.',
+    adminWedMoveOk: 'Đồng ý giờ mới',
     meInboxHint: 'Mọi cuộc trò chuyện với khách nằm ở Hộp thư trong trang điều khiển.',
     meGroupYou: 'Bạn là ai', meGroupTalk: 'Trò chuyện & lịch hẹn', meGroupOwn: 'Bạn đang có gì', meGroupApp: 'Ứng dụng',
     imgSaved: 'Đã lưu ảnh về máy 📷',
@@ -3348,6 +3362,13 @@ const STR = {
     alertWedMoveYesBody: (when) => 'Your wedding moves to ' + when + '. Do let your guests know.',
     alertWedMoveNo: 'Nabu is keeping the old time',
     alertWedMoveNoBody: (when) => 'The hour could not be moved this time, so the wedding stays at ' + when + '. Write to Nabu if you need to arrange something.',
+    alertWedInvite: (pair) => 'You are invited to the wedding of ' + pair + ' \uD83D\uDC8C',
+    alertWedInviteBody: (when) => 'The ceremony is on ' + when + '. Open it to accept or decline.',
+    adminWeds: 'Weddings being held',
+    adminWedsHint: 'Every wedding with an hour reserved is here. Once the 30,000\u0111 has arrived, press Payment received \u2014 the room opens for both partners and neither needs a code.',
+    adminWedPaid: 'Paid', adminWedOwed: 'Not paid yet',
+    adminWedGotPaid: 'Payment received', adminWedPaidDone: 'Their room is open.',
+    adminWedMoveOk: 'Agree to the new hour',
     meInboxHint: 'Every conversation with a visitor lives in the Inbox on the dashboard.',
     meGroupYou: 'Who you are', meGroupTalk: 'Messages & bookings', meGroupOwn: 'What you have', meGroupApp: 'The app',
     imgSaved: 'Saved to your phone \uD83D\uDCF7',
@@ -20306,11 +20327,17 @@ const WED = {
       ? { startMs: at, moved: this.moved(w) + 1, wantMs: 0, moveAsk: false }
       : { wantMs: 0, moveAsk: false });
   },
-  /* Every hour waiting on Nabu, which is a handful at the very most. */
-  watchMoveAsks(cb) {
+  /* Every room Nabu is holding. Filtered here rather than in the query: a
+     room with no `paid` field at all is exactly the room that has not been
+     paid for, and a where() on a field that is not there matches nothing. */
+  watchRooms(cb) {
     if (!this.ok()) return () => {};
-    return BE.db.collection('weddings').where('moveAsk', '==', true).limit(50)
-      .onSnapshot((s) => cb(s.docs.map((d) => Object.assign({ id: d.id }, d.data()))), () => cb([]));
+    return BE.db.collection('weddings').limit(100).onSnapshot((s) => {
+      const from = Date.now() - 86400000;
+      cb(s.docs.map((d) => Object.assign({ id: d.id }, d.data()))
+        .filter((w) => Number(w.startMs) > from && w.state !== 'called-off')
+        .sort((a, b) => Number(a.startMs) - Number(b.startMs)));
+    }, () => cb([]));
   },
   callOff(id) { return BE.db.collection('weddings').doc(id).update({ state: 'called-off' }); },
   drop(id) { return BE.db.collection('weddings').doc(id).delete(); },
@@ -21331,7 +21358,11 @@ function renderWedding(args) {
     /* Somebody following an invitation who has no account yet. Where they were
        going is remembered, so making an account puts them back at the door
        rather than on the home screen. */
-    if (wanted) store.set('nabu-wed-next', wanted);
+    /* Two keys, not one. The first is consumed by the sign-in screen to send
+       them back here; the second outlives that and becomes the invitation in
+       the bell, so closing the app halfway through the sign-up no longer loses
+       the fact that they were asked. */
+    if (wanted) { store.set('nabu-wed-next', wanted); store.set('nabu-wed-ask', wanted); }
     m.innerHTML = head(S.wedGuestIntro)
       + '<div class="card wedcard">' + cupidSVG()
       + '<p class="lead">' + esc(S.wedNeedAccount) + '</p>'
@@ -21773,10 +21804,27 @@ function alertsWatchWedAsks() {
   }));
 }
 
+/* Somebody who followed an invitation link before they had an account. The
+   room they were heading for was kept across the sign-up; this turns it back
+   into an invitation they can answer, so the couple do not have to invite them
+   a second time inside the app having already sent them the link. */
+function alertsWedInvite() {
+  const id = store.get('nabu-wed-ask', '');
+  if (!id || typeof WED === 'undefined' || !WED.ok()) return;
+  WED.get(id).then((w) => {
+    store.set('nabu-wed-ask', '');
+    if (!w || WED.mine(w)) return;
+    const S = T(), pair = (w.aName || '') + ' & ' + (w.bName || '');
+    alertSay({ id: 'wed-link-' + id, k: 'love', t: S.alertWedInvite(pair),
+      b: S.alertWedInviteBody(wedWhen(Number(w.startMs) || 0)), href: '#/wedding/' + id }, true);
+  }).catch(() => { /* offline; the link is still in the bell next time */ });
+}
+
 function alertsStart() {
   alertsStop();
   alertsLocalCheck();
   if (!BE.enabled || !BE.user) { alertsBadge(); return; }
+  alertsWedInvite();
   try { alertsWatchLove(); } catch (e) { /* the thread is not reachable */ }
   try { alertsWatchWeddings(); } catch (e) { /* no room is reachable */ }
   try { alertsWatchWedAsks(); } catch (e) { /* invitations are not reachable */ }
@@ -22088,13 +22136,21 @@ function adminBookings(p) {
     if (!$('#bkorders') || !$('#bkcal')) return;
     /* An hour waiting on Nabu. Nabu is the one who has to be there, so the
        couple ask and the old hour stands until this is answered. */
-    $('#bkasks').innerHTML = asks.length ? '<div class="card"><h3 style="margin-bottom:4px">\uD83D\uDD01 ' + esc(S.adminWedMoves) + ' <span class="n">' + asks.length + '</span></h3>'
-      + '<p class="hint" style="margin-bottom:10px">' + esc(S.adminWedMovesHint) + '</p>'
-      + asks.map((w) => '<div class="bk"><div class="bkh"><b>\uD83D\uDC8D ' + esc((w.aName || '') + ' & ' + (w.bName || '')) + '</b></div>'
+    /* Every wedding Nabu is holding, with what it is waiting for written on
+       it. The room always exists - the request is what creates it - so this
+       is the one place that never depends on an order row being written. */
+    const owed = asks.filter((w) => !w.paid).length;
+    $('#bkasks').innerHTML = asks.length ? '<div class="card"><h3 style="margin-bottom:4px">\uD83D\uDC8D ' + esc(S.adminWeds) + (owed ? ' <span class="n">' + owed + '</span>' : '') + '</h3>'
+      + '<p class="hint" style="margin-bottom:10px">' + esc(S.adminWedsHint) + '</p>'
+      + asks.map((w) => '<div class="bk"><div class="bkh"><b>\uD83D\uDC8D ' + esc(((w.aName || '') + ' & ' + (w.bName || '')).replace(/^ & $/, S.loveSomeone)) + '</b>'
+        + '<span class="st ' + (w.paid ? 'confirmed' : 'requested') + '">' + esc(w.paid ? S.adminWedPaid : S.adminWedOwed) + '</span></div>'
         + '<p class="hint">' + esc(S.adminWedWas) + ': <b>' + esc(wedWhen(Number(w.startMs) || 0)) + '</b></p>'
-        + '<p class="hint">' + esc(S.adminWedWants) + ': <b>' + esc(wedWhen(Number(w.wantMs) || 0)) + '</b></p>'
-        + '<div class="acts"><button type="button" class="btn sm primary" data-wmv="' + esc(w.id) + '">' + esc(S.confirm) + '</button>'
-        + '<button type="button" class="btn sm" data-wmvno="' + esc(w.id) + '">' + esc(S.adminKeep) + '</button></div></div>').join('')
+        + (WED.asking(w) ? '<p class="hint">' + esc(S.adminWedWants) + ': <b>' + esc(wedWhen(Number(w.wantMs) || 0)) + '</b></p>' : '')
+        + '<div class="acts">'
+        + (w.paid ? '' : '<button type="button" class="btn sm primary" data-wpaid="' + esc(w.id) + '">\uD83D\uDCB0 ' + esc(S.adminWedGotPaid) + '</button>')
+        + (WED.asking(w) ? '<button type="button" class="btn sm primary" data-wmv="' + esc(w.id) + '">\uD83D\uDD01 ' + esc(S.adminWedMoveOk) + '</button>'
+          + '<button type="button" class="btn sm" data-wmvno="' + esc(w.id) + '">' + esc(S.adminKeep) + '</button>' : '')
+        + '</div></div>').join('')
       + '</div>' : '';
     const orders = all.filter((b) => b.kind === 'unlock');
     const waiting = orders.filter((b) => b.status === 'requested');
@@ -22136,6 +22192,12 @@ function adminBookings(p) {
       if (!bk || !confirm(T().adminCancelAsk)) return;
       try { await BE.setBookingStatus(bk, 'cancelled'); toast(T().adminCancelDone); } catch (e) { toast(e.message); }
     }));
+    /* The one thing Nabu could not do anywhere: say the money arrived. */
+    $$('[data-wpaid]', p).forEach((b) => b.addEventListener('click', async () => {
+      const id = b.getAttribute('data-wpaid');
+      b.disabled = true;
+      try { await WED.setPaid(id, true); toast(T().adminWedPaidDone); } catch (e) { b.disabled = false; toast(e.message); }
+    }));
     $$('[data-wmv]', p).forEach((b) => b.addEventListener('click', async () => {
       const w = asks.filter((x) => x.id === b.getAttribute('data-wmv'))[0];
       try { await WED.answerMove(w.id, w, true); toast(T().saved); } catch (e) { toast(e.message); }
@@ -22145,7 +22207,7 @@ function adminBookings(p) {
       try { await WED.answerMove(w.id, w, false); toast(T().saved); } catch (e) { toast(e.message); }
     }));
   };
-  admin.unsubs.push(WED.watchMoveAsks((l) => { asks = l; draw(); }));
+  admin.unsubs.push(WED.watchRooms((l) => { asks = l; draw(); }));
   admin.unsubs.push(BE.watchAllBookings((list) => { all = list; draw(); }));
 }
 function adminInbox(p) {
@@ -22336,7 +22398,7 @@ function adminSale(p) {
 ROUTES.admin = { nav: '', render: renderAdmin };
 
 /* ============================ boot ============================ */
-window.APP_VERSION = 'v157';
+window.APP_VERSION = 'v158';
 window.NABU = { CONFIG: CONFIG, SALE: SALE, salePrice: salePrice, loadActs: loadActs, BACK: BACK, LESSONS: LESSONS, localAnswer: localAnswer, compatVerdict: compatVerdict, numerologyOf: numerologyOf, ZDEEP: ZDEEP, lunarToday: lunarToday, solarToLunar: solarToLunar, DECK: DECK, INSIGHT: INSIGHT, KW: KW, ASK: ASK, TOPICS: TOPICS, GUIDES: GUIDES, SERVICES: SERVICES, COURSES: COURSES, ACCESS: ACCESS, plusOn: () => plusOn(), proOn: () => proOn(), luckUnlimited: () => luckUnlimited(), ZODIAC: ZODIAC, pick: pick, book: book,
   insightHTML: insightHTML, insightOf: insightOf, sunSignIndex: sunSignIndex, lifePath: lifePath, PROFILE: () => PROFILE, BE: BE, ACTS: ACTS,
   ANGELS: ANGELS, angelRead: angelRead, CODEBOOK: CODEBOOK, verifyCode: verifyCode, petHomeSVG: petHomeSVG, PET_HOMES: PET_HOMES, PET_WEARS: PET_WEARS, codeDigest: codeDigest, randomCode: randomCode, BANK: BANK, PETS: PETS, petSVG: petSVG, PET_COATS: PET_COATS, PET_KINDS: PET_KINDS, luckCut: luckCut, petLevel: petLevel, petStep: petStep, VOUCHERS: VOUCHERS, levelCoins: levelCoins, LOOKS: LOOKS,

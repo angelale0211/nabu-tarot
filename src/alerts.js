@@ -352,10 +352,27 @@ function alertsWatchWedAsks() {
   }));
 }
 
+/* Somebody who followed an invitation link before they had an account. The
+   room they were heading for was kept across the sign-up; this turns it back
+   into an invitation they can answer, so the couple do not have to invite them
+   a second time inside the app having already sent them the link. */
+function alertsWedInvite() {
+  const id = store.get('nabu-wed-ask', '');
+  if (!id || typeof WED === 'undefined' || !WED.ok()) return;
+  WED.get(id).then((w) => {
+    store.set('nabu-wed-ask', '');
+    if (!w || WED.mine(w)) return;
+    const S = T(), pair = (w.aName || '') + ' & ' + (w.bName || '');
+    alertSay({ id: 'wed-link-' + id, k: 'love', t: S.alertWedInvite(pair),
+      b: S.alertWedInviteBody(wedWhen(Number(w.startMs) || 0)), href: '#/wedding/' + id }, true);
+  }).catch(() => { /* offline; the link is still in the bell next time */ });
+}
+
 function alertsStart() {
   alertsStop();
   alertsLocalCheck();
   if (!BE.enabled || !BE.user) { alertsBadge(); return; }
+  alertsWedInvite();
   try { alertsWatchLove(); } catch (e) { /* the thread is not reachable */ }
   try { alertsWatchWeddings(); } catch (e) { /* no room is reachable */ }
   try { alertsWatchWedAsks(); } catch (e) { /* invitations are not reachable */ }

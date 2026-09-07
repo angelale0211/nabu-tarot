@@ -10,7 +10,7 @@ export interface Env {
   ANTHROPIC_API_KEY?: string;
   GEMINI_API_KEY?: string;
   AI?: { run: (model: string, input: unknown) => Promise<{ response?: string }> }; // Workers AI binding (free tier, open models)
-  ALLOWED_ORIGIN?: string; // e.g. https://angelale0211.github.io
+  ALLOWED_ORIGIN?: string; // e.g. https://nabutarot.com
   RESEND_API_KEY?: string; // for /booking: mails the reader a calendar invitation
 }
 
