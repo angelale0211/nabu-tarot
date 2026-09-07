@@ -816,9 +816,21 @@ async function go(hash, sel) { W().location.hash = hash; await sleep(30); return
       w.confirm = () => true;
       w.localStorage.removeItem('nabu-love');
 
-      await go('#/love', '#lvhandle');
-      ok(d.querySelector('#lvhandle') && d.querySelector('#lvname') && /\u0111\u1ed5i|later|sau/i.test(d.querySelector('#main').textContent),
-        'the thread asks for a handle before anything else, and says it can be changed');
+      await go('#/love', '#lvname');
+      { /* One box, not two: testers read the second one as "your partner's
+           name" and filled it in with somebody else's. And the search box is on
+           the screen from the start, greyed, so what the name is FOR is visible
+           before it is typed. */
+        const boxes = d.querySelectorAll('#main input:not([type=date])');
+        const find = d.querySelector('#main .step.waiting input');
+        ok(d.querySelector('#lvname') && !d.querySelector('#lvhandle') && boxes.length === 2
+          && find && find.disabled,
+          'the thread asks for one name only, and shows the search step greyed beside it');
+        d.querySelector('#lvname').value = 'Thu Anh';
+        d.querySelector('#lvname').dispatchEvent(new w.Event('input'));
+        await sleep(40);
+        ok(/@thuanh/.test(d.querySelector('#lvprev').textContent),
+          'and shows what the partner will have to type, accents folded away, before anything is saved'); }
       { /* A database that refuses the write is not a write that failed, and the
            difference is the whole message: nobody can retry their way past a
            rule that was never published. */
@@ -827,18 +839,19 @@ async function go(hash, sel) { W().location.hash = hash; await sleep(30); return
           get: async () => ({ exists: false }),
           set: async () => { const e = new Error('Missing or insufficient permissions.'); e.code = 'permission-denied'; throw e; },
           delete: async () => {} }) }) };
-        d.querySelector('#lvname').value = 'Mai'; d.querySelector('#lvhandle').value = 'mai.09';
-        d.querySelector('#lvsave').click(); await sleep(220);
+        d.querySelector('#lvname').value = 'Mai Anh';
+        d.querySelector('#lvsave').click(); await sleep(300);
         const msg = d.querySelector('#lvstatus').textContent;
         ok(/mở|Firestore|rules/i.test(msg) && !/không thành công|failed/i.test(msg),
           'a database that refuses the write says the rules are not published, rather than "it did not work"');
         N.BE.db = kept; }
-      d.querySelector('#lvname').value = 'Mai'; d.querySelector('#lvhandle').value = '@MAI.09';
-      d.querySelector('#lvsave').click(); await sleep(120);
-      ok(db.docs['handles/mai.09'] && db.docs['handles/mai.09'].uid === 'uidA'
-        && db.docs['people/uidA'].handle === 'mai.09' && db.docs['people/uidA'].name === 'Mai'
+      db.put('handles/mai', { uid: 'uidZ' });   /* the obvious handle is already gone */
+      d.querySelector('#lvname').value = 'Mai';
+      d.querySelector('#lvsave').click(); await sleep(240);
+      ok(db.docs['handles/mai2'] && db.docs['handles/mai2'].uid === 'uidA'
+        && db.docs['people/uidA'].handle === 'mai2' && db.docs['people/uidA'].name === 'Mai'
         && d.querySelector('#lvfind'),
-        'a handle is claimed in lower case for one account, and the screen moves on to finding someone');
+        'a name somebody already has gets a number rather than a refusal, and the search opens');
 
       db.put('handles/nam', { uid: 'uidB' }); db.put('people/uidB', { name: 'Nam', handle: 'nam' });
       d.querySelector('#lvfind').value = '@nam'; d.querySelector('#lvgo').click(); await sleep(120);
@@ -898,12 +911,22 @@ async function go(hash, sel) { W().location.hash = hash; await sleep(30); return
         'each of them writes only their own name for it');
 
       /* ---- what they give each other ---- */
+      /* Picking is not sending. It used to be, and there was no way to write
+         the line first - or to change your mind. */
+      d.querySelector('[data-gift="lotus"]').click(); await sleep(80);
+      ok(Object.keys(db.docs).filter((k) => k.indexOf('bonds/uidA__uidB/gifts/') === 0).length === 0
+        && d.querySelector('[data-gift="lotus"]').classList.contains('on'),
+        'choosing a gift marks it as chosen and sends nothing');
+      d.querySelector('[data-gift="rose"]').click(); await sleep(60);
+      ok(d.querySelector('[data-gift="rose"]').classList.contains('on')
+        && !d.querySelector('[data-gift="lotus"]').classList.contains('on'),
+        'and they may change their mind as often as they like, still without sending');
       d.querySelector('#lvgnote').value = 'tặng em';
-      d.querySelector('[data-gift="rose"]').click(); await sleep(240);
+      d.querySelector('#lvgsend').click(); await sleep(260);
       const gk = Object.keys(db.docs).filter((k) => k.indexOf('bonds/uidA__uidB/gifts/') === 0);
       ok(gk.length === 1 && db.docs[gk[0]].from === 'uidB' && db.docs[gk[0]].kind === 'rose'
         && db.docs[gk[0]].note === 'tặng em' && d.querySelector('.lastgift'),
-        'a gift is its own document, signed by whoever gave it, and the newest one is shown large');
+        'only Send gives it: one document, signed by whoever gave it, with the line they wrote');
       ok(N.GIFTS.length === 8 && d.querySelectorAll('.giftpick .gp').length === 8,
         'eight things to give, each with a picture of its own');
 
@@ -922,7 +945,18 @@ async function go(hash, sel) { W().location.hash = hash; await sleep(30); return
       w.localStorage.removeItem('nabu-love');
       await go('#/home', '#actwrap');
       await go('#/love', '#lvuntie');
-      d.querySelector('#lvuntie').click(); await sleep(160);
+      /* The one irreversible thing on the page asks in the page itself. It used
+         to lean on confirm(), which some phone webviews skip outright - and on
+         those phones a single tap untied the thread. */
+      d.querySelector('#lvuntie').click(); await sleep(120);
+      ok(db.docs['bonds/uidA__uidB'] && !d.querySelector('#lvsure').hidden
+        && d.querySelector('#lvuntieYes') && d.querySelector('#lvuntieNo'),
+        'the first tap on untie asks again in the page and unties nothing');
+      d.querySelector('#lvuntieNo').click(); await sleep(80);
+      ok(db.docs['bonds/uidA__uidB'] && d.querySelector('#lvsure').hidden,
+        'and saying no leaves the thread exactly where it was');
+      d.querySelector('#lvuntie').click(); await sleep(80);
+      d.querySelector('#lvuntieYes').click(); await sleep(200);
       ok(!db.docs['bonds/uidA__uidB'] && d.querySelector('#lvfind') && N.loveBadgeHTML() === '',
         'either of them unties alone, and the page and the tag go back to how they were');
 
@@ -937,7 +971,7 @@ async function go(hash, sel) { W().location.hash = hash; await sleep(30); return
       d.querySelector('#lvmake2').click(); await sleep(200);
       const url = d.querySelector('#lvurl').value, tok = url.split('#/love/join/')[1];
       ok(tok && tok.length === 16 && db.docs['invites/' + tok] && db.docs['invites/' + tok].from === 'uidA'
-        && db.docs['invites/' + tok].name === 'Mai' && db.docs['invites/' + tok].handle === 'mai.09',
+        && db.docs['invites/' + tok].name === 'Mai' && db.docs['invites/' + tok].handle === 'mai2',
         'the link carries a random token, and the invitation under it says who is asking');
       ok(N.LOVE.local().invite === tok, 'the link is kept, so it can be copied again rather than made afresh every time');
 
@@ -1132,6 +1166,54 @@ async function go(hash, sel) { W().location.hash = hash; await sleep(30); return
     ok(!d.documentElement.getAttribute('data-theme') && JSON.parse(w.localStorage.getItem('nabu-theme')) === '' && bgOf() === (w.matchMedia('(prefers-color-scheme: dark)').matches ? DARK : LIGHT), 'auto follows the phone setting');
     d.querySelector('[data-theme-pick="light"]').click();
     ok(d.documentElement.scrollWidth <= 431, 'no horizontal overflow (' + d.documentElement.scrollWidth + ')');
+    { /* Every check above ran at 430, an iPhone Pro Max. Most phones are
+         narrower, which is how three rows came to push their own contents off
+         the edge on an iPhone 13 without anything noticing. */
+      const frame = document.getElementById('f'), wasWide = frame.style.width;
+      const bad = [];
+      for (const px of [320, 360, 390]) {
+        frame.style.width = px + 'px';
+        for (const route of ['#/me', '#/play/pet', '#/love', '#/prices', '#/book']) {
+          await go('#/home', '#main');
+          await go(route, '#main');
+          await sleep(140);
+          const vw = d.documentElement.clientWidth;
+          d.querySelectorAll('#main *').forEach((el) => {
+            const r = el.getBoundingClientRect();
+            if (!r.width || !r.height) return;
+            const name = String(el.className || el.tagName).split(/\s+/)[0];
+            /* off the screen entirely */
+            if (r.right > vw + 1 || r.left < -1) { bad.push(px + ' ' + route + ' ' + name + ' off-screen'); return; }
+            /* or still on the screen but wider than the box holding it, which is
+               what a label does when it is forbidden to wrap: it leaves its own
+               button rather than getting narrower. Anything built to scroll
+               sideways on purpose is left alone. */
+            const cs = w.getComputedStyle(el), ov2 = cs.overflowX;
+            /* A strip built to scroll, and a label politely cutting itself
+               short with an ellipsis, are both doing as they were told. */
+            const clipped = ov2 === 'auto' || ov2 === 'scroll'
+              || (ov2 === 'hidden' && cs.textOverflow === 'ellipsis');
+            /* Decoration placed by hand - a glow, a drifting sparkle - is meant
+               to sit outside the box. Only content that flows is judged. */
+            let decor = false;
+            for (const kid of el.children) {
+              const kp = w.getComputedStyle(kid).position;
+              if (kp === 'absolute' || kp === 'fixed') { decor = true; break; }
+            }
+            if (!clipped && !decor && el.scrollWidth > el.clientWidth + 1 && el.clientWidth > 0) {
+              bad.push(px + ' ' + route + ' ' + name + ' overflows its box');
+            }
+          });
+          if (d.documentElement.scrollWidth > px + 1) bad.push(px + ' ' + route + ' page scrolls sideways');
+        }
+      }
+      frame.style.width = wasWide || '430px';
+      await sleep(120);
+      const uniq = bad.filter((x, i) => bad.indexOf(x) === i);
+      ok(uniq.length === 0,
+        'nothing leaves the screen at 320, 360 or 390 across the five busiest screens'
+        + (uniq.length ? ' [' + uniq.slice(0, 4).join('; ') + ']' : ''));
+    }
   } catch (e) { out.push('FAIL exception: ' + (e && e.stack || e)); }
   document.getElementById('results').textContent = out.join('\n');
 })();

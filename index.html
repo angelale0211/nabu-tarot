@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
 <title>Nabu Tarot</title>
 <meta name="description" content="Nabu Tarot: dự đoán mới, rút một lá bài xem năng lượng hiện tại, học tarot, Lenormand, chiêm tinh, và đặt lịch xem bài.">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'none'; object-src 'none'; form-action 'self'; script-src 'self' 'sha256-As89apUmhdP7XQSm7m7KLoEIchvPfh5Ba9q63Vf/nEw=' https://www.gstatic.com https://apis.google.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; font-src 'self' data:; media-src 'self' data: blob:; worker-src 'self'; connect-src 'self' https://*.googleapis.com https://*.google.com https://*.firebaseio.com https://*.cloudfunctions.net https://*.workers.dev https://generativelanguage.googleapis.com; frame-src https://*.firebaseapp.com https://accounts.google.com https://*.facebook.com">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'none'; object-src 'none'; form-action 'self'; script-src 'self' 'sha256-3NkGoh35hZfgNm/sRTNC9x4G6hqs4ImAGdlrTJIiVTI=' https://www.gstatic.com https://apis.google.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; font-src 'self' data:; media-src 'self' data: blob:; worker-src 'self'; connect-src 'self' https://*.googleapis.com https://*.google.com https://*.firebaseio.com https://*.cloudfunctions.net https://*.workers.dev https://generativelanguage.googleapis.com; frame-src https://*.firebaseapp.com https://accounts.google.com https://*.facebook.com">
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <meta name="theme-color" content="#EFE9FA">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -881,9 +881,24 @@ h1 .pileico{width:34px;height:27px;vertical-align:-3px;margin-right:2px}
 .tip{background:var(--tag-lav-bg,var(--surface-2));color:var(--fg);border-radius:12px;padding:10px 12px;font-size:14.5px;line-height:1.5;margin:10px 0 4px}
 /* instruction rows: icon column + text, every row starts at the same edge */
 .notes{margin:2px 0 8px}.note{display:flex;gap:10px;align-items:flex-start;font-size:14.5px;line-height:1.5;color:var(--fg-soft);margin:0 0 8px}.note .ni{flex:none;width:22px;text-align:center;font-size:16px;line-height:1.35}
-.melinks{display:grid;grid-template-columns:1fr 1fr;gap:8px}.melinks .btn{padding:11px 4px;font-size:13.5px;white-space:nowrap;text-align:center;min-width:0}
-.row3{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.row3 .btn{padding:11px 4px;font-size:13.5px;white-space:nowrap;text-align:center;min-width:0}
-.themes{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}.themes .chip{padding:8px 2px;font-size:12.5px;white-space:nowrap;text-align:center;min-width:0}
+/* The fourth row with the same fault, and the one the tester actually saw: at
+   320 the two labels are longer than half the screen, nowrap forbids them to
+   wrap, so the paint icon ends up sitting outside its own button. */
+.melinks{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.melinks .btn{padding:11px 6px;font-size:13.5px;text-align:center;min-width:0;line-height:1.25;overflow-wrap:anywhere}
+/* A grid column with min-width:0 may shrink below its contents; nowrap then
+   forbids the text to wrap, so it leaves the button instead of getting
+   narrower. Wrapping is allowed here, and below 360 the three sit two and one
+   rather than being squeezed into a strip. */
+.row3{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.row3 .btn{padding:11px 6px;font-size:13.5px;text-align:center;min-width:0;line-height:1.25;overflow-wrap:anywhere}
+@media (max-width:359px){.row3{grid-template-columns:repeat(2,1fr)}}
+/* Same fault, same fix. Four across down to 375; two by two below it, because a
+   wrapped label in a squeezed chip reads worse than a second row. */
+.themes{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}
+.themes .chip{padding:8px 4px;font-size:12.5px;text-align:center;min-width:0;line-height:1.25;overflow-wrap:anywhere}
+@media (max-width:374px){.themes{grid-template-columns:repeat(2,1fr)}}
+
 .cart{background:var(--surface);border:1.5px solid var(--primary);border-radius:16px;padding:12px 14px;margin:4px 0 6px;font-size:14.5px;max-width:100%;overflow:hidden}.cart.empty{border-style:dashed;border-color:var(--rule);color:var(--fg-faint)}.cart>b{display:block;margin-bottom:8px}
 .ci{display:flex;align-items:center;flex-wrap:wrap;gap:4px 10px;padding:7px 0;border-top:1px solid var(--rule-soft)}.ci>span{flex:1 1 140px}.ci b{margin-left:auto}.ci>span{flex:1;min-width:0}.ci b{white-space:nowrap}.ci .x{background:none;border:1px solid var(--rule);border-radius:50%;width:28px;height:28px;font-size:12px;color:var(--fg-soft)}.ci.total{border-top:2px solid var(--rule);font-weight:700}.ci small.warn,.tpick .warn{color:#B04A2E;font-size:12.5px;font-weight:600}.ci small.ok,.tpick .ok{color:#2E7D46;font-size:12.5px;font-weight:600}
 .tpick{margin:14px 0 18px}.tpick h3{margin:0 0 8px;font-size:15.5px}
@@ -1405,6 +1420,14 @@ h1 .pileico{width:34px;height:27px;vertical-align:-3px;margin-right:2px}
 .askcard.theirs{border-color:var(--gold);box-shadow:0 0 0 1px var(--gold) inset}
 .askcard.done{background:linear-gradient(180deg,var(--tag-gold-bg),var(--surface))}
 .askcard .row2{margin-top:12px}
+/* A step that is on the screen but not ready yet: visible, so the shape of
+   what is coming is clear, and plainly not usable yet. */
+.step .stepno{font-size:15px;letter-spacing:.01em}
+.step.waiting{opacity:.55}
+.step.waiting input,.step.waiting .btn{pointer-events:none}
+.giftstep{margin:12px 0 6px;font-size:12.5px;font-weight:600;color:var(--fg-soft)}
+.gp.on{border-color:var(--accent);box-shadow:0 0 0 2px var(--accent) inset}
+.btn.danger{color:var(--err);border-color:var(--err)}
 .rolepick{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:8px 0 4px}
 .rolepick .rp{display:flex;flex-direction:column;align-items:center;gap:3px;background:var(--surface);border:1px solid var(--rule);border-radius:12px;padding:8px 4px;font-size:12.5px;font-weight:600}
 .rolepick .rp i{font-style:normal;font-size:19px;line-height:1;color:var(--link)}
@@ -1598,7 +1621,12 @@ button.unl{display:block;width:100%;text-align:left;font:inherit;color:inherit;c
 /* Guide opened in place on the home screen. */
 .fyg .in h2{font-size:17px;margin:12px 0 4px;font-family:var(--display);font-weight:500;color:var(--fg)}.fyg .in .lead{color:var(--fg);font-weight:500}
 /* Nabu AI: one scrolling row of suggestions, a real chat column, a bar that stays usable. */
-.ai{padding:14px}.ai .sugs{display:flex;gap:6px;overflow-x:auto;flex-wrap:nowrap;margin:8px -14px 8px;padding:0 14px 4px;-webkit-overflow-scrolling:touch;scrollbar-width:none}.ai .sugs::-webkit-scrollbar{display:none}.ai .sugs .chip{white-space:nowrap;flex:none}
+.ai{padding:14px}/* These were a sideways-scrolling strip, so on a phone the second and third
+   questions sat off the screen and most people never learnt they existed -
+   which is the one thing the panel is for. They wrap onto as many lines as they
+   need. */
+.ai .sugs{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0}
+.ai .sugs .chip{flex:0 1 auto;min-width:0;text-align:left;line-height:1.3;overflow-wrap:anywhere}
 .ai-chat{display:flex;flex-direction:column;gap:8px;max-height:55vh;overflow:auto;padding:10px;border:1px solid var(--rule-soft)}.ai-chat .msg{max-width:94%}.ai-chat .msg p{margin:0 0 6px}.ai-chat .msg p:last-child{margin:0}
 .ai .chatbar{align-items:flex-end}.ai .chatbar textarea{flex:1;min-height:46px;resize:none}.ai .chatbar .btn{min-height:46px;padding:0 16px}.ai .chatbar .btn[disabled]{opacity:.5}
 .ok{color:var(--ok)}.err{color:var(--err)}
@@ -2098,6 +2126,10 @@ const STR = {
     loveGiftYouGave: (g) => 'Bạn đã tặng ' + g,
     loveGiftTheyGave: (n, g) => n + ' đã tặng bạn ' + g,
     loveGiftNotePh: 'Viết kèm một câu…', loveGiftSent: 'Đã tặng 🌿',
+    loveGiftStep1: '1. Chọn một món', loveGiftStep2: '2. Viết một câu (không bắt buộc)', loveGiftStep3: '3. Gửi đi',
+    loveGiftChosen: (n) => 'Bạn đang chọn: ' + n + '. Muốn đổi thì bấm món khác.',
+    loveGiftSend: 'Gửi quà', loveGiftNeedPick: 'Bạn chọn một món trước đã.',
+    loveGiftNotSent: 'Chưa gửi đâu. Bấm “Gửi quà” thì người ấy mới nhận được.',
     loveGiftLeft: (n) => 'Hôm nay bạn còn tặng được ' + n + ' món.', loveGiftDone: 'Hôm nay bạn tặng đủ rồi. Mai tặng tiếp nhé.',
     loveYou: 'Bạn',
     loveNotHere: 'Không tìm thấy ai mang tên này.',
@@ -2120,6 +2152,15 @@ const STR = {
     loveIntro: 'Chuyện xưa kể rằng Ông Tơ Bà Nguyệt buộc một sợi tơ hồng vào ngón út của hai người có duyên gặp nhau. Sợi tơ hồng có thể rối, có thể căng, nhưng không đứt.',
     loveNote: 'Đây là một kỉ niệm trong app, không phải giấy tờ. Nó không có giá trị pháp lý ở bất kỳ đâu. Ai cũng tháo được sợi tơ hồng của mình bất cứ lúc nào mà không cần hỏi người kia.',
     loveNeedAccount: 'Bạn đăng nhập trước đã, để Nabu biết hai người là ai.',
+    loveStepOne: 'Bước 1 — Đặt tên cho chính bạn',
+    loveStepOneHint: 'Đây là tên bạn tự nghĩ ra cho mình, không phải tên người ấy. Bạn đưa tên này cho người ấy, rồi người ấy gõ vào ô Bước 2 để tìm ra bạn.',
+    loveStepTwo: 'Bước 2 — Tìm người ấy',
+    loveStepTwoLocked: 'Lưu tên ở Bước 1 trước đã. Xong bước đó, ô này mở ra.',
+    loveNameLabel: 'Bạn muốn được gọi là gì?', loveNamePh: 'Ví dụ: Thu Anh',
+    loveNameShort: 'Tên cần ít nhất 3 chữ hoặc số.',
+    loveWillBe: (h) => 'Người ấy sẽ tìm bạn bằng @' + h,
+    loveTookOther: (h) => 'Tên đó có người dùng rồi, nên bạn là @' + h + '.',
+    loveNameSaved: (h) => 'Đã lưu. Bạn là @' + h + '. Đưa tên này cho người ấy.',
     loveHandleTitle: 'Đặt tên riêng của bạn', loveHandleHint: 'Đây là tên để người ấy tìm ra bạn: bạn đưa tên cho người ấy, người ấy gõ vào ô tìm. Chỉ chữ thường, số, dấu chấm và gạch dưới, từ 3 đến 20 ký tự. Bạn đổi lúc nào cũng được.',
     loveYourName: 'Tên hiển thị', loveHandle: 'Tên riêng của bạn', loveClaim: 'Lưu tên', loveSaving: 'Đang lưu…',
     loveHandleBad: 'Tên này chưa hợp lệ. Dùng chữ thường, số, dấu chấm hoặc gạch dưới, từ 3 đến 20 ký tự.',
@@ -2137,9 +2178,11 @@ const STR = {
     loveNextMark: (n, d) => 'Còn ' + d + ' ngày nữa là tròn ' + n + ' ngày.',
     loveDayTitle: 'Ngày bắt đầu', loveDayHint: 'Nếu hai bạn bắt đầu trước hôm nay, chọn đúng ngày đó. Cả hai đều sửa được, và không chọn được ngày trong tương lai.',
     loveDayBad: 'Chọn một ngày không muộn hơn hôm nay.', loveDaySaved: 'Đã lưu ngày bắt đầu.',
+    loveDaySave: 'Lưu ngày này', loveDayUnsaved: 'Bạn đổi ngày rồi nhưng chưa lưu.',
     loveNextTitle: 'Sắp có', loveNextSoon: 'Lễ trao lời hẹn, thiệp mời bạn bè tới dự và lời chúc của mọi người sẽ tới ở bản sau.',
     loveUntie: 'Tháo chỉ', loveUntieHint: 'Bạn tháo được bất cứ lúc nào, không cần người kia đồng ý. Trang này sẽ trở lại như cũ với cả hai.',
-    loveUntieAsk: 'Tháo sợi tơ hồng này? Cả hai sẽ không còn hiện là một đôi nữa.', loveUntied: 'Đã tháo chỉ.',
+    loveUntieAsk: 'Tháo sợi tơ hồng này? Cả hai sẽ không còn hiện là một đôi nữa. Việc này không lấy lại được.',
+    loveUntieYes: 'Có, tháo chỉ', loveCancel: 'Thôi, giữ lại', loveUntied: 'Đã tháo chỉ.',
     loveTagTied: 'Đang buộc tơ hồng',
     actJoin: 'Tham gia', actBack: 'Tất cả hoạt động', actPileMsgOf: (n) => 'Thông điệp tụ ' + n, actTypeIcon: { pile: PILE_ICON, poll: '📊', wish: '🌠' },
     actPileArt: 'Hình của tụ', actArtAuto: 'Tự chọn', actArts: ['Nến', 'Hoa đào', 'Trăng non', 'Thạch anh tím', 'Mặt trời', 'Chìa khoá', 'Lông vũ', 'Sóng biển', 'Hoa sen', 'Kim cương'],
@@ -2556,6 +2599,10 @@ const STR = {
     loveGiftYouGave: (g) => 'You gave ' + g,
     loveGiftTheyGave: (n, g) => n + ' gave you ' + g,
     loveGiftNotePh: 'A line to go with it…', loveGiftSent: 'Given 🌿',
+    loveGiftStep1: '1. Pick something', loveGiftStep2: '2. Write a line (optional)', loveGiftStep3: '3. Send it',
+    loveGiftChosen: (n) => 'You have picked: ' + n + '. Tap another to change your mind.',
+    loveGiftSend: 'Send it', loveGiftNeedPick: 'Pick something first.',
+    loveGiftNotSent: 'Nothing has been sent yet. It only goes when you press Send it.',
     loveGiftLeft: (n) => n + ' left to give today.', loveGiftDone: 'That is all for today. More tomorrow.',
     loveYou: 'You',
     loveNotHere: 'Nobody here has that handle.',
@@ -2578,6 +2625,15 @@ const STR = {
     loveIntro: 'An old story says two people meant to meet are tied at the little finger by a red thread. It can tangle and it can stretch, but it does not break.',
     loveNote: 'This is a keepsake inside the app, not a document. It carries no legal weight anywhere. Either of you can untie your own thread at any time without asking the other.',
     loveNeedAccount: 'Sign in first, so Nabu knows which two people this is.',
+    loveStepOne: 'Step 1 — Choose a name for yourself',
+    loveStepOneHint: 'This is a name you make up for yourself, not the other person\u2019s name. You give it to them, and they type it into the step 2 box to find you.',
+    loveStepTwo: 'Step 2 — Find them',
+    loveStepTwoLocked: 'Save your name in step 1 first. This box opens once you have.',
+    loveNameLabel: 'What would you like to be called?', loveNamePh: 'For example: Thu Anh',
+    loveNameShort: 'A name needs at least 3 letters or numbers.',
+    loveWillBe: (h) => 'They will find you at @' + h,
+    loveTookOther: (h) => 'That one was taken, so you are @' + h + '.',
+    loveNameSaved: (h) => 'Saved. You are @' + h + '. Give that to them.',
     loveHandleTitle: 'Choose your handle', loveHandleHint: 'This is the name someone uses to find you: you give it to them, they type it into the search box. Lower case letters, numbers, dots and underscores, 3 to 20 characters. You can change it whenever you like.',
     loveYourName: 'Name to show', loveHandle: 'Handle', loveClaim: 'Save', loveSaving: 'Saving…',
     loveHandleBad: 'That handle will not work. Use lower case letters, numbers, dots or underscores, 3 to 20 characters.',
@@ -2595,9 +2651,11 @@ const STR = {
     loveNextMark: (n, d) => d + ' days until you reach ' + n + '.',
     loveDayTitle: 'The day it began', loveDayHint: 'If it began before today, set the real day. Either of you can change it, and it cannot be a day in the future.',
     loveDayBad: 'Pick a day no later than today.', loveDaySaved: 'Saved.',
+    loveDaySave: 'Save this day', loveDayUnsaved: 'You changed the day but have not saved it.',
     loveNextTitle: 'Coming next', loveNextSoon: 'The ceremony, invitations for the friends you want there, and their blessings are coming in a later release.',
     loveUntie: 'Untie the thread', loveUntieHint: 'You can untie at any time without the other person agreeing. The page goes back to how it was for both of you.',
-    loveUntieAsk: 'Untie this thread? Neither of you will be shown as a couple any more.', loveUntied: 'Untied.',
+    loveUntieAsk: 'Untie this thread? Neither of you will be shown as a couple any more, and this cannot be undone.',
+    loveUntieYes: 'Yes, untie it', loveCancel: 'No, keep it', loveUntied: 'Untied.',
     loveTagTied: 'Tied',
     actJoin: 'Join in', actBack: 'All activities', actPileMsgOf: (n) => 'Message of pile ' + n, actTypeIcon: { pile: PILE_ICON, poll: '📊', wish: '🌠' },
     actPileArt: 'Pile picture', actArtAuto: 'Automatic', actArts: ['Candle', 'Blossom', 'Crescent', 'Amethyst', 'Sun', 'Key', 'Feather', 'Waves', 'Lotus', 'Diamond'],
@@ -13473,6 +13531,37 @@ function loveRoadHTML(at) {
 }
 
 /* ---- the screen ---- */
+/* One name, not two.
+
+   People were asked for a display name and then for a handle, and read the
+   second box as "your partner's name" - so they typed somebody else's. There is
+   one box now. The handle is made from what they type: accents folded off, so
+   Thu Anh becomes thuanh, which is what their partner will have to type. */
+function handleFrom(name) {
+  const h = String(name || '')
+    .replace(/[\u0111]/g, 'd').replace(/[\u0110]/g, 'D')
+    .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+    .toLowerCase().replace(/[^a-z0-9._]+/g, '')
+    .replace(/^[._]+/, '').replace(/[._]+$/, '');
+  return h.slice(0, 20);
+}
+
+/* If the handle they would get is already somebody else's, add a number rather
+   than sending them back to think of another name. */
+async function claimFrom(name) {
+  const base = handleFrom(name);
+  if (base.length < 3) throw new Error('short');
+  const tries = [base];
+  for (let i = 2; i <= 9; i++) tries.push((base + i).slice(0, 20));
+  tries.push((base.slice(0, 17) + String(10 + Math.floor(Math.random() * 89))).slice(0, 20));
+  let last = null;
+  for (const h of tries) {
+    try { await LOVEDB.claimHandle(h, String(name || '').trim()); return h; }
+    catch (e) { if (e.message !== 'taken') throw e; last = e; }
+  }
+  throw last || new Error('taken');
+}
+
 function renderLove(wantHandle) {
   const S = T(), m = $('#main');
   let stop = [], forceHandle = !!wantHandle;
@@ -13490,23 +13579,47 @@ function renderLove(wantHandle) {
       + '<a class="btn primary block" href="#/me">' + esc(S.signIn) + '</a></div>' + foot();
   };
 
+  /* Both steps on one screen, always. Step two is greyed until step one is
+     saved - present but plainly not ready - so that the point of the name is
+     visible before it is typed, instead of a search box appearing out of
+     nowhere afterwards. */
   const drawHandle = (err) => {
     m.innerHTML = head()
-      + '<div class="card"><h3 style="margin-bottom:4px">' + esc(S.loveHandleTitle) + '</h3>'
-      + '<p class="hint" style="margin-bottom:10px">' + esc(S.loveHandleHint) + '</p>'
-      + '<label class="f" for="lvname">' + esc(S.loveYourName) + '</label>'
-      + '<input id="lvname" maxlength="24" value="' + esc(LOVE.local().name || PROFILE.name || '') + '">'
-      + '<label class="f" for="lvhandle" style="margin-top:10px">' + esc(S.loveHandle) + '</label>'
-      + '<div class="row nw athandle"><span class="at">@</span><input id="lvhandle" maxlength="20" autocapitalize="none" spellcheck="false" value="' + esc(LOVE.handle()) + '"></div>'
-      + '<button type="button" class="btn primary block" id="lvsave" style="margin-top:12px">' + esc(S.loveClaim) + '</button>'
-      + '<p class="hint' + (err ? ' err' : '') + '" id="lvstatus">' + esc(err || '') + '</p></div>' + foot();
+      + '<div class="card step"><h3 class="stepno" style="margin-bottom:4px">' + esc(S.loveStepOne) + '</h3>'
+      + '<p class="hint" style="margin-bottom:10px">' + esc(S.loveStepOneHint) + '</p>'
+      + '<label class="f" for="lvname">' + esc(S.loveNameLabel) + '</label>'
+      + '<input id="lvname" maxlength="24" placeholder="' + esc(S.loveNamePh) + '" value="' + esc(LOVE.local().name || PROFILE.name || '') + '">'
+      + '<p class="hint" id="lvprev"></p>'
+      + '<button type="button" class="btn primary block" id="lvsave" style="margin-top:10px">' + esc(S.loveClaim) + '</button>'
+      + '<p class="hint' + (err ? ' err' : '') + '" id="lvstatus">' + esc(err || '') + '</p></div>'
+      + '<div class="card step waiting"><h3 class="stepno" style="margin-bottom:4px">' + esc(S.loveStepTwo) + '</h3>'
+      + '<p class="hint" style="margin-bottom:10px">' + esc(S.loveStepTwoLocked) + '</p>'
+      + '<div class="row nw athandle"><span class="at">@</span>'
+      + '<input maxlength="20" placeholder="' + esc(S.loveHandlePh) + '" disabled>'
+      + '<button type="button" class="btn" disabled>' + esc(S.loveFind) + '</button></div></div>'
+      + foot();
+
+    /* What their partner will have to type, shown while they type it. */
+    const nameEl = $('#lvname'), prev = $('#lvprev');
+    const preview = () => {
+      const h = handleFrom(nameEl.value);
+      prev.className = 'hint' + (h.length < 3 ? ' err' : '');
+      prev.textContent = nameEl.value.trim() === '' ? '' : h.length < 3 ? S.loveNameShort : S.loveWillBe(h);
+    };
+    nameEl.addEventListener('input', preview);
+    preview();
+
     $('#lvsave').addEventListener('click', async () => {
-      const b = $('#lvsave'), st = $('#lvstatus');
-      const h = $('#lvhandle').value.toLowerCase().replace(/^@/, '').trim();
-      if (!HANDLE_RE.test(h)) { drawHandle(S.loveHandleBad); return; }
+      const b = $('#lvsave'), st = $('#lvstatus'), typed = nameEl.value.trim();
+      if (handleFrom(typed).length < 3) { drawHandle(S.loveNameShort); return; }
       b.disabled = true; st.className = 'hint'; st.textContent = S.loveSaving;
-      try { await LOVEDB.claimHandle(h, $('#lvname').value.trim()); forceHandle = false; draw(); }
-      catch (e) { drawHandle(e.message === 'taken' ? S.loveHandleTaken : e.message === 'handle' ? S.loveHandleBad : loveWhy(e)); }
+      try {
+        const got = await claimFrom(typed);
+        toast(got === handleFrom(typed) ? S.loveNameSaved(got) : S.loveTookOther(got));
+        forceHandle = false; draw();
+      } catch (e) {
+        drawHandle(e.message === 'short' ? S.loveNameShort : e.message === 'taken' ? S.loveHandleTaken : loveWhy(e));
+      }
     });
   };
 
@@ -13528,6 +13641,7 @@ function renderLove(wantHandle) {
         : '')
       + '<div class="card"><h3 style="margin-bottom:4px">' + esc(S.loveFindTitle) + '</h3>'
       + '<p class="hint" style="margin-bottom:10px">' + esc(S.loveFindHint) + '</p>'
+      + '<h3 class="stepno" style="margin-bottom:4px">' + esc(S.loveStepTwo) + '</h3>'
       + '<div class="row nw athandle"><span class="at">@</span><input id="lvfind" maxlength="20" autocapitalize="none" spellcheck="false" placeholder="' + esc(S.loveHandlePh) + '"><button type="button" class="btn" id="lvgo">' + esc(S.loveFind) + '</button></div>'
       + '<div id="lvfound"></div><p class="hint" id="lvfstatus"></p></div>'
       + loveRoadHTML('')
@@ -13678,9 +13792,15 @@ function renderLove(wantHandle) {
       + (given.length > 1
         ? '<div class="giftrow">' + given.slice(1, 13).map((g) => '<span class="gi' + (g.from === me ? ' mine' : '') + '" title="' + esc(giftName(g.kind)) + '">' + giftArt(g.kind) + '</span>').join('') + '</div>'
         : '')
+      /* Picking used to send. Now it picks, and can be re-picked as often as
+         they like; nothing reaches the other person until Send. */
+      + '<p class="giftstep">' + esc(S.loveGiftStep1) + '</p>'
       + '<div class="giftpick">' + GIFTS.map((g) => '<button type="button" class="gp" data-gift="' + g.id + '" aria-label="' + esc(L(g.name)) + '">' + giftArt(g.id) + '<b>' + esc(L(g.name)) + '</b></button>').join('') + '</div>'
-      + '<input id="lvgnote" maxlength="200" placeholder="' + esc(S.loveGiftNotePh) + '" style="margin-top:10px">'
-      + '<p class="hint" id="lvgst">' + esc(leftToday ? S.loveGiftLeft(leftToday) : S.loveGiftDone) + '</p></div>';
+      + '<p class="giftstep">' + esc(S.loveGiftStep2) + '</p>'
+      + '<input id="lvgnote" maxlength="200" placeholder="' + esc(S.loveGiftNotePh) + '">'
+      + '<p class="giftstep">' + esc(S.loveGiftStep3) + '</p>'
+      + '<button type="button" class="btn primary block" id="lvgsend" disabled>' + esc(S.loveGiftSend) + '</button>'
+      + '<p class="hint" id="lvgst">' + esc(leftToday ? S.loveGiftNotSent : S.loveGiftDone) + '</p></div>';
 
     m.innerHTML = head()
       + '<div class="card lovecard tied st-' + esc(stage) + '">' + threadSVG(stage)
@@ -13694,8 +13814,12 @@ function renderLove(wantHandle) {
       + '<div class="card"><h3 style="margin-bottom:6px">' + esc(S.loveDayTitle) + '</h3>'
       + '<p class="hint" style="margin-bottom:8px">' + esc(S.loveDayHint) + '</p>'
       + '<input type="date" id="lvsince" max="' + esc(isoDate(new Date())) + '" value="' + esc(bond.since || '') + '">'
+      + '<button type="button" class="btn block" id="lvsinceSave" style="margin-top:8px">' + esc(S.loveDaySave) + '</button>'
       + '<p class="hint" id="lvsincest"></p></div>'
-      + '<button type="button" class="btn block" id="lvuntie">' + esc(S.loveUntie) + '</button>'
+      + '<button type="button" class="btn block danger" id="lvuntie">\uD83D\uDC94 ' + esc(S.loveUntie) + '</button>'
+      + '<div id="lvsure" hidden><p class="hint err" style="margin-top:8px">' + esc(S.loveUntieAsk) + '</p>'
+      + '<div class="row"><button type="button" class="btn danger" id="lvuntieYes">' + esc(S.loveUntieYes) + '</button>'
+      + '<button type="button" class="btn" id="lvuntieNo">' + esc(S.loveCancel) + '</button></div></div>'
       + '<p class="hint">' + esc(S.loveUntieHint) + '</p>'
       + foot();
 
@@ -13721,24 +13845,55 @@ function renderLove(wantHandle) {
     { const sp = $('#lvshowpar');
       if (sp) sp.addEventListener('change', () => { LOVE.save({ parents: sp.checked }); toast(sp.checked ? S.loveShowParentsOn : S.loveShowParentsOff); }); }
 
-    $$('[data-gift]', m).forEach((b) => b.addEventListener('click', async () => {
+    /* Chosen, not sent. */
+    let picked = '';
+    $$('[data-gift]', m).forEach((b) => b.addEventListener('click', () => {
       const st = $('#lvgst');
       if (!leftToday) { st.className = 'hint err'; st.textContent = S.loveGiftDone; return; }
-      b.disabled = true; st.className = 'hint'; st.textContent = S.loveSaving;
-      try { await LOVEDB.giveGift(bond.id, b.getAttribute('data-gift'), $('#lvgnote').value); toast(S.loveGiftSent); }
-      catch (e) { b.disabled = false; st.className = 'hint err'; st.textContent = loveWhy(e); }
+      picked = b.getAttribute('data-gift');
+      $$('[data-gift]', m).forEach((o) => o.classList.toggle('on', o === b));
+      $('#lvgsend').disabled = false;
+      st.className = 'hint';
+      st.textContent = S.loveGiftChosen(giftName(picked)) + ' ' + S.loveGiftNotSent;
     }));
+    $('#lvgsend').addEventListener('click', async () => {
+      const st = $('#lvgst'), b = $('#lvgsend');
+      if (!picked) { st.className = 'hint err'; st.textContent = S.loveGiftNeedPick; return; }
+      b.disabled = true; st.className = 'hint'; st.textContent = S.loveSaving;
+      try { await LOVEDB.giveGift(bond.id, picked, $('#lvgnote').value); toast(S.loveGiftSent); }
+      catch (e) { b.disabled = false; st.className = 'hint err'; st.textContent = loveWhy(e); }
+    });
 
-    $('#lvsince').addEventListener('change', async () => {
-      const st = $('#lvsincest'), v = $('#lvsince').value;
+    /* Changing the date no longer saves it behind their back; it says so, and
+       waits for the button, like every other field on the page. */
+    $('#lvsince').addEventListener('change', () => {
+      const st = $('#lvsincest');
+      st.className = 'hint'; st.textContent = S.loveDayUnsaved;
+    });
+    $('#lvsinceSave').addEventListener('click', async () => {
+      const st = $('#lvsincest'), b = $('#lvsinceSave'), v = $('#lvsince').value;
       if (!v || v > isoDate(new Date())) { st.className = 'hint err'; st.textContent = S.loveDayBad; return; }
-      st.className = 'hint'; st.textContent = S.loveSaving;
+      b.disabled = true; st.className = 'hint'; st.textContent = S.loveSaving;
       try { await LOVEDB.setSince(bond.id, v); st.className = 'hint ok'; st.textContent = S.loveDaySaved; }
       catch (e) { st.className = 'hint err'; st.textContent = loveWhy(e); }
+      b.disabled = false;
     });
-    $('#lvuntie').addEventListener('click', async () => {
-      if (!confirm(S.loveUntieAsk)) return;
-      try { await LOVEDB.untie(bond.id); toast(S.loveUntied); } catch (e) { toast(loveWhy(e)); }
+    /* The one thing on this page that cannot be undone asks in the page itself.
+       A browser confirm() is skipped outright by some phone webviews, which
+       would have untied the thread with a single tap. */
+    $('#lvuntie').addEventListener('click', () => {
+      $('#lvsure').hidden = false;
+      $('#lvuntie').hidden = true;
+      $('#lvuntieNo').focus();
+    });
+    $('#lvuntieNo').addEventListener('click', () => {
+      $('#lvsure').hidden = true;
+      $('#lvuntie').hidden = false;
+    });
+    $('#lvuntieYes').addEventListener('click', async () => {
+      $('#lvuntieYes').disabled = true;
+      try { await LOVEDB.untie(bond.id); toast(S.loveUntied); }
+      catch (e) { $('#lvuntieYes').disabled = false; toast(loveWhy(e)); }
     });
   };
 
@@ -18607,7 +18762,7 @@ function adminSale(p) {
 ROUTES.admin = { nav: '', render: renderAdmin };
 
 /* ============================ boot ============================ */
-window.APP_VERSION = 'v129';
+window.APP_VERSION = 'v130';
 window.NABU = { CONFIG: CONFIG, SALE: SALE, salePrice: salePrice, loadActs: loadActs, BACK: BACK, LESSONS: LESSONS, localAnswer: localAnswer, compatVerdict: compatVerdict, numerologyOf: numerologyOf, ZDEEP: ZDEEP, lunarToday: lunarToday, solarToLunar: solarToLunar, DECK: DECK, INSIGHT: INSIGHT, KW: KW, ASK: ASK, TOPICS: TOPICS, GUIDES: GUIDES, SERVICES: SERVICES, COURSES: COURSES, ACCESS: ACCESS, plusOn: () => plusOn(), proOn: () => proOn(), luckUnlimited: () => luckUnlimited(), ZODIAC: ZODIAC, pick: pick, book: book,
   insightHTML: insightHTML, insightOf: insightOf, sunSignIndex: sunSignIndex, lifePath: lifePath, PROFILE: () => PROFILE, BE: BE, ACTS: ACTS,
   ANGELS: ANGELS, angelRead: angelRead, CODEBOOK: CODEBOOK, verifyCode: verifyCode, petHomeSVG: petHomeSVG, PET_HOMES: PET_HOMES, PET_WEARS: PET_WEARS, codeDigest: codeDigest, randomCode: randomCode, BANK: BANK, PETS: PETS, petSVG: petSVG, PET_COATS: PET_COATS, PET_KINDS: PET_KINDS, luckCut: luckCut, petLevel: petLevel, petStep: petStep, VOUCHERS: VOUCHERS, levelCoins: levelCoins, LOOKS: LOOKS,

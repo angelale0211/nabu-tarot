@@ -515,6 +515,37 @@ function loveRoadHTML(at) {
 }
 
 /* ---- the screen ---- */
+/* One name, not two.
+
+   People were asked for a display name and then for a handle, and read the
+   second box as "your partner's name" - so they typed somebody else's. There is
+   one box now. The handle is made from what they type: accents folded off, so
+   Thu Anh becomes thuanh, which is what their partner will have to type. */
+function handleFrom(name) {
+  const h = String(name || '')
+    .replace(/[\u0111]/g, 'd').replace(/[\u0110]/g, 'D')
+    .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+    .toLowerCase().replace(/[^a-z0-9._]+/g, '')
+    .replace(/^[._]+/, '').replace(/[._]+$/, '');
+  return h.slice(0, 20);
+}
+
+/* If the handle they would get is already somebody else's, add a number rather
+   than sending them back to think of another name. */
+async function claimFrom(name) {
+  const base = handleFrom(name);
+  if (base.length < 3) throw new Error('short');
+  const tries = [base];
+  for (let i = 2; i <= 9; i++) tries.push((base + i).slice(0, 20));
+  tries.push((base.slice(0, 17) + String(10 + Math.floor(Math.random() * 89))).slice(0, 20));
+  let last = null;
+  for (const h of tries) {
+    try { await LOVEDB.claimHandle(h, String(name || '').trim()); return h; }
+    catch (e) { if (e.message !== 'taken') throw e; last = e; }
+  }
+  throw last || new Error('taken');
+}
+
 function renderLove(wantHandle) {
   const S = T(), m = $('#main');
   let stop = [], forceHandle = !!wantHandle;
@@ -532,23 +563,47 @@ function renderLove(wantHandle) {
       + '<a class="btn primary block" href="#/me">' + esc(S.signIn) + '</a></div>' + foot();
   };
 
+  /* Both steps on one screen, always. Step two is greyed until step one is
+     saved - present but plainly not ready - so that the point of the name is
+     visible before it is typed, instead of a search box appearing out of
+     nowhere afterwards. */
   const drawHandle = (err) => {
     m.innerHTML = head()
-      + '<div class="card"><h3 style="margin-bottom:4px">' + esc(S.loveHandleTitle) + '</h3>'
-      + '<p class="hint" style="margin-bottom:10px">' + esc(S.loveHandleHint) + '</p>'
-      + '<label class="f" for="lvname">' + esc(S.loveYourName) + '</label>'
-      + '<input id="lvname" maxlength="24" value="' + esc(LOVE.local().name || PROFILE.name || '') + '">'
-      + '<label class="f" for="lvhandle" style="margin-top:10px">' + esc(S.loveHandle) + '</label>'
-      + '<div class="row nw athandle"><span class="at">@</span><input id="lvhandle" maxlength="20" autocapitalize="none" spellcheck="false" value="' + esc(LOVE.handle()) + '"></div>'
-      + '<button type="button" class="btn primary block" id="lvsave" style="margin-top:12px">' + esc(S.loveClaim) + '</button>'
-      + '<p class="hint' + (err ? ' err' : '') + '" id="lvstatus">' + esc(err || '') + '</p></div>' + foot();
+      + '<div class="card step"><h3 class="stepno" style="margin-bottom:4px">' + esc(S.loveStepOne) + '</h3>'
+      + '<p class="hint" style="margin-bottom:10px">' + esc(S.loveStepOneHint) + '</p>'
+      + '<label class="f" for="lvname">' + esc(S.loveNameLabel) + '</label>'
+      + '<input id="lvname" maxlength="24" placeholder="' + esc(S.loveNamePh) + '" value="' + esc(LOVE.local().name || PROFILE.name || '') + '">'
+      + '<p class="hint" id="lvprev"></p>'
+      + '<button type="button" class="btn primary block" id="lvsave" style="margin-top:10px">' + esc(S.loveClaim) + '</button>'
+      + '<p class="hint' + (err ? ' err' : '') + '" id="lvstatus">' + esc(err || '') + '</p></div>'
+      + '<div class="card step waiting"><h3 class="stepno" style="margin-bottom:4px">' + esc(S.loveStepTwo) + '</h3>'
+      + '<p class="hint" style="margin-bottom:10px">' + esc(S.loveStepTwoLocked) + '</p>'
+      + '<div class="row nw athandle"><span class="at">@</span>'
+      + '<input maxlength="20" placeholder="' + esc(S.loveHandlePh) + '" disabled>'
+      + '<button type="button" class="btn" disabled>' + esc(S.loveFind) + '</button></div></div>'
+      + foot();
+
+    /* What their partner will have to type, shown while they type it. */
+    const nameEl = $('#lvname'), prev = $('#lvprev');
+    const preview = () => {
+      const h = handleFrom(nameEl.value);
+      prev.className = 'hint' + (h.length < 3 ? ' err' : '');
+      prev.textContent = nameEl.value.trim() === '' ? '' : h.length < 3 ? S.loveNameShort : S.loveWillBe(h);
+    };
+    nameEl.addEventListener('input', preview);
+    preview();
+
     $('#lvsave').addEventListener('click', async () => {
-      const b = $('#lvsave'), st = $('#lvstatus');
-      const h = $('#lvhandle').value.toLowerCase().replace(/^@/, '').trim();
-      if (!HANDLE_RE.test(h)) { drawHandle(S.loveHandleBad); return; }
+      const b = $('#lvsave'), st = $('#lvstatus'), typed = nameEl.value.trim();
+      if (handleFrom(typed).length < 3) { drawHandle(S.loveNameShort); return; }
       b.disabled = true; st.className = 'hint'; st.textContent = S.loveSaving;
-      try { await LOVEDB.claimHandle(h, $('#lvname').value.trim()); forceHandle = false; draw(); }
-      catch (e) { drawHandle(e.message === 'taken' ? S.loveHandleTaken : e.message === 'handle' ? S.loveHandleBad : loveWhy(e)); }
+      try {
+        const got = await claimFrom(typed);
+        toast(got === handleFrom(typed) ? S.loveNameSaved(got) : S.loveTookOther(got));
+        forceHandle = false; draw();
+      } catch (e) {
+        drawHandle(e.message === 'short' ? S.loveNameShort : e.message === 'taken' ? S.loveHandleTaken : loveWhy(e));
+      }
     });
   };
 
@@ -570,6 +625,7 @@ function renderLove(wantHandle) {
         : '')
       + '<div class="card"><h3 style="margin-bottom:4px">' + esc(S.loveFindTitle) + '</h3>'
       + '<p class="hint" style="margin-bottom:10px">' + esc(S.loveFindHint) + '</p>'
+      + '<h3 class="stepno" style="margin-bottom:4px">' + esc(S.loveStepTwo) + '</h3>'
       + '<div class="row nw athandle"><span class="at">@</span><input id="lvfind" maxlength="20" autocapitalize="none" spellcheck="false" placeholder="' + esc(S.loveHandlePh) + '"><button type="button" class="btn" id="lvgo">' + esc(S.loveFind) + '</button></div>'
       + '<div id="lvfound"></div><p class="hint" id="lvfstatus"></p></div>'
       + loveRoadHTML('')
@@ -720,9 +776,15 @@ function renderLove(wantHandle) {
       + (given.length > 1
         ? '<div class="giftrow">' + given.slice(1, 13).map((g) => '<span class="gi' + (g.from === me ? ' mine' : '') + '" title="' + esc(giftName(g.kind)) + '">' + giftArt(g.kind) + '</span>').join('') + '</div>'
         : '')
+      /* Picking used to send. Now it picks, and can be re-picked as often as
+         they like; nothing reaches the other person until Send. */
+      + '<p class="giftstep">' + esc(S.loveGiftStep1) + '</p>'
       + '<div class="giftpick">' + GIFTS.map((g) => '<button type="button" class="gp" data-gift="' + g.id + '" aria-label="' + esc(L(g.name)) + '">' + giftArt(g.id) + '<b>' + esc(L(g.name)) + '</b></button>').join('') + '</div>'
-      + '<input id="lvgnote" maxlength="200" placeholder="' + esc(S.loveGiftNotePh) + '" style="margin-top:10px">'
-      + '<p class="hint" id="lvgst">' + esc(leftToday ? S.loveGiftLeft(leftToday) : S.loveGiftDone) + '</p></div>';
+      + '<p class="giftstep">' + esc(S.loveGiftStep2) + '</p>'
+      + '<input id="lvgnote" maxlength="200" placeholder="' + esc(S.loveGiftNotePh) + '">'
+      + '<p class="giftstep">' + esc(S.loveGiftStep3) + '</p>'
+      + '<button type="button" class="btn primary block" id="lvgsend" disabled>' + esc(S.loveGiftSend) + '</button>'
+      + '<p class="hint" id="lvgst">' + esc(leftToday ? S.loveGiftNotSent : S.loveGiftDone) + '</p></div>';
 
     m.innerHTML = head()
       + '<div class="card lovecard tied st-' + esc(stage) + '">' + threadSVG(stage)
@@ -736,8 +798,12 @@ function renderLove(wantHandle) {
       + '<div class="card"><h3 style="margin-bottom:6px">' + esc(S.loveDayTitle) + '</h3>'
       + '<p class="hint" style="margin-bottom:8px">' + esc(S.loveDayHint) + '</p>'
       + '<input type="date" id="lvsince" max="' + esc(isoDate(new Date())) + '" value="' + esc(bond.since || '') + '">'
+      + '<button type="button" class="btn block" id="lvsinceSave" style="margin-top:8px">' + esc(S.loveDaySave) + '</button>'
       + '<p class="hint" id="lvsincest"></p></div>'
-      + '<button type="button" class="btn block" id="lvuntie">' + esc(S.loveUntie) + '</button>'
+      + '<button type="button" class="btn block danger" id="lvuntie">\uD83D\uDC94 ' + esc(S.loveUntie) + '</button>'
+      + '<div id="lvsure" hidden><p class="hint err" style="margin-top:8px">' + esc(S.loveUntieAsk) + '</p>'
+      + '<div class="row"><button type="button" class="btn danger" id="lvuntieYes">' + esc(S.loveUntieYes) + '</button>'
+      + '<button type="button" class="btn" id="lvuntieNo">' + esc(S.loveCancel) + '</button></div></div>'
       + '<p class="hint">' + esc(S.loveUntieHint) + '</p>'
       + foot();
 
@@ -763,24 +829,55 @@ function renderLove(wantHandle) {
     { const sp = $('#lvshowpar');
       if (sp) sp.addEventListener('change', () => { LOVE.save({ parents: sp.checked }); toast(sp.checked ? S.loveShowParentsOn : S.loveShowParentsOff); }); }
 
-    $$('[data-gift]', m).forEach((b) => b.addEventListener('click', async () => {
+    /* Chosen, not sent. */
+    let picked = '';
+    $$('[data-gift]', m).forEach((b) => b.addEventListener('click', () => {
       const st = $('#lvgst');
       if (!leftToday) { st.className = 'hint err'; st.textContent = S.loveGiftDone; return; }
-      b.disabled = true; st.className = 'hint'; st.textContent = S.loveSaving;
-      try { await LOVEDB.giveGift(bond.id, b.getAttribute('data-gift'), $('#lvgnote').value); toast(S.loveGiftSent); }
-      catch (e) { b.disabled = false; st.className = 'hint err'; st.textContent = loveWhy(e); }
+      picked = b.getAttribute('data-gift');
+      $$('[data-gift]', m).forEach((o) => o.classList.toggle('on', o === b));
+      $('#lvgsend').disabled = false;
+      st.className = 'hint';
+      st.textContent = S.loveGiftChosen(giftName(picked)) + ' ' + S.loveGiftNotSent;
     }));
+    $('#lvgsend').addEventListener('click', async () => {
+      const st = $('#lvgst'), b = $('#lvgsend');
+      if (!picked) { st.className = 'hint err'; st.textContent = S.loveGiftNeedPick; return; }
+      b.disabled = true; st.className = 'hint'; st.textContent = S.loveSaving;
+      try { await LOVEDB.giveGift(bond.id, picked, $('#lvgnote').value); toast(S.loveGiftSent); }
+      catch (e) { b.disabled = false; st.className = 'hint err'; st.textContent = loveWhy(e); }
+    });
 
-    $('#lvsince').addEventListener('change', async () => {
-      const st = $('#lvsincest'), v = $('#lvsince').value;
+    /* Changing the date no longer saves it behind their back; it says so, and
+       waits for the button, like every other field on the page. */
+    $('#lvsince').addEventListener('change', () => {
+      const st = $('#lvsincest');
+      st.className = 'hint'; st.textContent = S.loveDayUnsaved;
+    });
+    $('#lvsinceSave').addEventListener('click', async () => {
+      const st = $('#lvsincest'), b = $('#lvsinceSave'), v = $('#lvsince').value;
       if (!v || v > isoDate(new Date())) { st.className = 'hint err'; st.textContent = S.loveDayBad; return; }
-      st.className = 'hint'; st.textContent = S.loveSaving;
+      b.disabled = true; st.className = 'hint'; st.textContent = S.loveSaving;
       try { await LOVEDB.setSince(bond.id, v); st.className = 'hint ok'; st.textContent = S.loveDaySaved; }
       catch (e) { st.className = 'hint err'; st.textContent = loveWhy(e); }
+      b.disabled = false;
     });
-    $('#lvuntie').addEventListener('click', async () => {
-      if (!confirm(S.loveUntieAsk)) return;
-      try { await LOVEDB.untie(bond.id); toast(S.loveUntied); } catch (e) { toast(loveWhy(e)); }
+    /* The one thing on this page that cannot be undone asks in the page itself.
+       A browser confirm() is skipped outright by some phone webviews, which
+       would have untied the thread with a single tap. */
+    $('#lvuntie').addEventListener('click', () => {
+      $('#lvsure').hidden = false;
+      $('#lvuntie').hidden = true;
+      $('#lvuntieNo').focus();
+    });
+    $('#lvuntieNo').addEventListener('click', () => {
+      $('#lvsure').hidden = true;
+      $('#lvuntie').hidden = false;
+    });
+    $('#lvuntieYes').addEventListener('click', async () => {
+      $('#lvuntieYes').disabled = true;
+      try { await LOVEDB.untie(bond.id); toast(S.loveUntied); }
+      catch (e) { $('#lvuntieYes').disabled = false; toast(loveWhy(e)); }
     });
   };
 

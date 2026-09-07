@@ -715,9 +715,24 @@ h1 .pileico{width:34px;height:27px;vertical-align:-3px;margin-right:2px}
 .tip{background:var(--tag-lav-bg,var(--surface-2));color:var(--fg);border-radius:12px;padding:10px 12px;font-size:14.5px;line-height:1.5;margin:10px 0 4px}
 /* instruction rows: icon column + text, every row starts at the same edge */
 .notes{margin:2px 0 8px}.note{display:flex;gap:10px;align-items:flex-start;font-size:14.5px;line-height:1.5;color:var(--fg-soft);margin:0 0 8px}.note .ni{flex:none;width:22px;text-align:center;font-size:16px;line-height:1.35}
-.melinks{display:grid;grid-template-columns:1fr 1fr;gap:8px}.melinks .btn{padding:11px 4px;font-size:13.5px;white-space:nowrap;text-align:center;min-width:0}
-.row3{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.row3 .btn{padding:11px 4px;font-size:13.5px;white-space:nowrap;text-align:center;min-width:0}
-.themes{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}.themes .chip{padding:8px 2px;font-size:12.5px;white-space:nowrap;text-align:center;min-width:0}
+/* The fourth row with the same fault, and the one the tester actually saw: at
+   320 the two labels are longer than half the screen, nowrap forbids them to
+   wrap, so the paint icon ends up sitting outside its own button. */
+.melinks{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.melinks .btn{padding:11px 6px;font-size:13.5px;text-align:center;min-width:0;line-height:1.25;overflow-wrap:anywhere}
+/* A grid column with min-width:0 may shrink below its contents; nowrap then
+   forbids the text to wrap, so it leaves the button instead of getting
+   narrower. Wrapping is allowed here, and below 360 the three sit two and one
+   rather than being squeezed into a strip. */
+.row3{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.row3 .btn{padding:11px 6px;font-size:13.5px;text-align:center;min-width:0;line-height:1.25;overflow-wrap:anywhere}
+@media (max-width:359px){.row3{grid-template-columns:repeat(2,1fr)}}
+/* Same fault, same fix. Four across down to 375; two by two below it, because a
+   wrapped label in a squeezed chip reads worse than a second row. */
+.themes{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}
+.themes .chip{padding:8px 4px;font-size:12.5px;text-align:center;min-width:0;line-height:1.25;overflow-wrap:anywhere}
+@media (max-width:374px){.themes{grid-template-columns:repeat(2,1fr)}}
+
 .cart{background:var(--surface);border:1.5px solid var(--primary);border-radius:16px;padding:12px 14px;margin:4px 0 6px;font-size:14.5px;max-width:100%;overflow:hidden}.cart.empty{border-style:dashed;border-color:var(--rule);color:var(--fg-faint)}.cart>b{display:block;margin-bottom:8px}
 .ci{display:flex;align-items:center;flex-wrap:wrap;gap:4px 10px;padding:7px 0;border-top:1px solid var(--rule-soft)}.ci>span{flex:1 1 140px}.ci b{margin-left:auto}.ci>span{flex:1;min-width:0}.ci b{white-space:nowrap}.ci .x{background:none;border:1px solid var(--rule);border-radius:50%;width:28px;height:28px;font-size:12px;color:var(--fg-soft)}.ci.total{border-top:2px solid var(--rule);font-weight:700}.ci small.warn,.tpick .warn{color:#B04A2E;font-size:12.5px;font-weight:600}.ci small.ok,.tpick .ok{color:#2E7D46;font-size:12.5px;font-weight:600}
 .tpick{margin:14px 0 18px}.tpick h3{margin:0 0 8px;font-size:15.5px}
@@ -1239,6 +1254,14 @@ h1 .pileico{width:34px;height:27px;vertical-align:-3px;margin-right:2px}
 .askcard.theirs{border-color:var(--gold);box-shadow:0 0 0 1px var(--gold) inset}
 .askcard.done{background:linear-gradient(180deg,var(--tag-gold-bg),var(--surface))}
 .askcard .row2{margin-top:12px}
+/* A step that is on the screen but not ready yet: visible, so the shape of
+   what is coming is clear, and plainly not usable yet. */
+.step .stepno{font-size:15px;letter-spacing:.01em}
+.step.waiting{opacity:.55}
+.step.waiting input,.step.waiting .btn{pointer-events:none}
+.giftstep{margin:12px 0 6px;font-size:12.5px;font-weight:600;color:var(--fg-soft)}
+.gp.on{border-color:var(--accent);box-shadow:0 0 0 2px var(--accent) inset}
+.btn.danger{color:var(--err);border-color:var(--err)}
 .rolepick{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:8px 0 4px}
 .rolepick .rp{display:flex;flex-direction:column;align-items:center;gap:3px;background:var(--surface);border:1px solid var(--rule);border-radius:12px;padding:8px 4px;font-size:12.5px;font-weight:600}
 .rolepick .rp i{font-style:normal;font-size:19px;line-height:1;color:var(--link)}
@@ -1432,7 +1455,12 @@ button.unl{display:block;width:100%;text-align:left;font:inherit;color:inherit;c
 /* Guide opened in place on the home screen. */
 .fyg .in h2{font-size:17px;margin:12px 0 4px;font-family:var(--display);font-weight:500;color:var(--fg)}.fyg .in .lead{color:var(--fg);font-weight:500}
 /* Nabu AI: one scrolling row of suggestions, a real chat column, a bar that stays usable. */
-.ai{padding:14px}.ai .sugs{display:flex;gap:6px;overflow-x:auto;flex-wrap:nowrap;margin:8px -14px 8px;padding:0 14px 4px;-webkit-overflow-scrolling:touch;scrollbar-width:none}.ai .sugs::-webkit-scrollbar{display:none}.ai .sugs .chip{white-space:nowrap;flex:none}
+.ai{padding:14px}/* These were a sideways-scrolling strip, so on a phone the second and third
+   questions sat off the screen and most people never learnt they existed -
+   which is the one thing the panel is for. They wrap onto as many lines as they
+   need. */
+.ai .sugs{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0}
+.ai .sugs .chip{flex:0 1 auto;min-width:0;text-align:left;line-height:1.3;overflow-wrap:anywhere}
 .ai-chat{display:flex;flex-direction:column;gap:8px;max-height:55vh;overflow:auto;padding:10px;border:1px solid var(--rule-soft)}.ai-chat .msg{max-width:94%}.ai-chat .msg p{margin:0 0 6px}.ai-chat .msg p:last-child{margin:0}
 .ai .chatbar{align-items:flex-end}.ai .chatbar textarea{flex:1;min-height:46px;resize:none}.ai .chatbar .btn{min-height:46px;padding:0 16px}.ai .chatbar .btn[disabled]{opacity:.5}
 .ok{color:var(--ok)}.err{color:var(--err)}
