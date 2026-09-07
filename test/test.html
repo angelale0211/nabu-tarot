@@ -5,7 +5,27 @@
 <pre id="results">running</pre>
 <script>
 const out = [];
-const ok = (cond, msg) => out.push((cond ? 'PASS ' : 'FAIL ') + msg);
+/* The runner used to guess how long the suite would take, by giving the browser
+   a budget of pretend time and reading the page once it ran out. A page that
+   talks to the network can hold that clock still, and then the run never ends
+   and reports nothing - not one check, after several minutes of waiting.
+   So the page says how it is getting on instead: every few checks, and once
+   more when it is finished. A run that dies half way now says where it got to. */
+let sent = 0;
+const report = (done) => {
+  /* Opened by hand rather than by the runner, there is nothing listening for
+     these and every one of them fails. That must stay silent: the results are
+     on the page either way, and a rejected promise per check would drown the
+     console the suite is read in. */
+  try { fetch('/__results' + (done ? '?done=1' : ''), { method: 'POST', body: out.join('\n'), keepalive: true }).catch(() => {}); }
+  catch (e) { /* the results are still on the page */ }
+};
+const ok = (cond, msg) => {
+  out.push((cond ? 'PASS ' : 'FAIL ') + msg);
+  if (out.length - sent >= 1) { sent = out.length; report(false); }
+};
+/* Something thrown outside the run itself would otherwise be silent. */
+window.addEventListener('error', (e) => { out.push('FAIL page error: ' + (e.message || '')); report(true); });
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 const f = document.getElementById('f');
 const W = () => f.contentWindow, D = () => f.contentDocument;
@@ -443,7 +463,7 @@ async function go(hash, sel) { W().location.hash = hash; await sleep(30); return
     ok(/Hồ sơ đang lưu trên máy này/.test(d.body.textContent) && /Instagram/.test(d.body.textContent) && d.querySelectorAll('[data-auth]').length === 3 && /Nabu chưa bật đăng nhập/.test(d.body.textContent) && /Cài app lên điện thoại/.test(d.querySelector('#main').textContent) && d.querySelector('#main a[href="#/install"]') && d.querySelectorAll('.course').length === 8 && /✓/.test(d.querySelector('.course').textContent), 'me tab: device-only profile, Instagram, my courses with status');
     // admin
     await go('#/admin', '#atabs');
-    ok(d.querySelectorAll('#atabs button').length === 8 && d.querySelectorAll('#cgrid button').length === 78 && Array.from(d.querySelectorAll('#atabs button')).every((b) => b.scrollWidth <= b.clientWidth + 1), 'admin has eight tabs whose labels fit inside their buttons, and the 78-card picker');
+    ok(d.querySelectorAll('#atabs button').length === 9 && d.querySelectorAll('#cgrid button').length === 78 && Array.from(d.querySelectorAll('#atabs button')).every((b) => b.scrollWidth <= b.clientWidth + 1), 'admin has nine tabs whose labels fit inside their buttons, and the 78-card picker');
     d.querySelector('[data-t="acts"]').click(); await waitFor(() => d.querySelector('#apub'), 6000);
     ok(d.querySelector('#apub') && d.querySelectorAll('[data-atype]').length === 3 && d.querySelectorAll('[data-pl]').length === 3 && d.querySelector('#aresults') && d.querySelectorAll('#apanel .tb').length === 7 && d.querySelectorAll('#apanel .tb [data-w="i"]').length === 7 && d.querySelectorAll('[data-part]').length === 3, 'the activities tab has a form with three types, three piles with picture choosers, and a formatting bar on every text box');
     d.querySelector('[data-t="codes"]').click(); await waitFor(() => d.querySelector('#cmake'), 4000);
@@ -1448,11 +1468,13 @@ async function go(hash, sel) { W().location.hash = hash; await sleep(30); return
           && /Nabu Cupid/.test(d.querySelector('#main').textContent),
           'inside before the hour, the way to begin is there but cannot be pressed');
 
-        /* The hour arrives. */
+        /* The hour arrives. Since v162 the hour alone does not start it:
+           one of them may still be reading the guest list, so a wedding
+           begins on two keys rather than whichever of them is quickest. */
         db.put(W, Object.assign({}, db.docs[W], { startMs: Date.now() - 1000 }));
         await sleep(400);
-        ok(d.querySelector('#wedon'),
-          'and at the hour it becomes pressable, and the ceremony is walked one line at a time');
+        ok(d.querySelector('#wedready') && !d.querySelector('#wedon'),
+          'at the hour the couple are asked to say they are ready, not handed the ceremony');
         /* Somebody always turns up late, or asks for the link again, so both
            ways of inviting stay to hand inside the room. */
         { /* Still there, but at the foot: during a wedding the ceremony is the
@@ -1462,7 +1484,17 @@ async function go(hash, sel) { W().location.hash = hash; await sleep(30); return
             'and inside the room the couple can still invite, by name or by link');
           ok(inv && say2 && inv.getBoundingClientRect().top > say2.getBoundingClientRect().top,
             'with it moved below the ceremony, where an errand belongs'); }
-        d.querySelector('#wedon').click(); await sleep(200);
+        /* One of them says so, and nothing starts: it is recorded and the
+           other is waited for. */
+        d.querySelector('#wedready').click(); await sleep(240);
+        ok(db.docs[W].ready && db.docs[W].ready.a === true && (db.docs[W].step | 0) === 0,
+          'and one of them saying so is written down without starting anything');
+        /* The other one says so too. The second key is the one that begins it. */
+        db.put(W, Object.assign({}, db.docs[W], { ready: { b: true } }));
+        await sleep(280);
+        d.querySelector('#wedready').click(); await sleep(260);
+        ok((db.docs[W].step | 0) === 1 && d.querySelector('#wedon'),
+          'and once both have, the ceremony begins and is walked one line at a time');
         d.querySelector('#wedon').click(); await sleep(220);
         ok(db.docs[W].step === 2 && d.querySelector('#wedyes') && d.querySelector('#wedno'),
           'and when it is somebody\u2019s turn they are asked, with a real yes and a real no');
@@ -2416,6 +2448,7 @@ async function go(hash, sel) { W().location.hash = hash; await sleep(30); return
     }
   } catch (e) { out.push('FAIL exception: ' + (e && e.stack || e)); }
   document.getElementById('results').textContent = out.join('\n');
+  report(true);
 })();
 </script>
 </body></html>

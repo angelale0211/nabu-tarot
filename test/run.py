@@ -2,8 +2,15 @@
 """Headless checks of the built app in Edge. Serves the project over HTTP so
 fetch() and the service worker behave as on GitHub Pages, opens test.html
 (which loads index.html in an iframe and drives it), and prints the results.
-Run:  python test/run.py"""
-import glob, io, os, re, shutil, subprocess, sys, tempfile, threading, time
+Run:  python test/run.py
+
+The page posts its results back here as it goes. It used to be given a budget
+of pretend time instead, and read once that ran out - but pretend time stands
+still while the browser is waiting on the real network, so a single slow
+request could hold the whole run open until it was killed, reporting nothing
+at all. Now the run ends when the suite says it has ended, and a run that dies
+half way still prints the checks it managed."""
+import glob, os, re, shutil, subprocess, sys, tempfile, threading, time
 from http.server import ThreadingHTTPServer, SimpleHTTPRequestHandler
 
 HERE = os.path.dirname(os.path.abspath(__file__))
@@ -15,58 +22,96 @@ BROWSERS = [os.environ.get('NABU_BROWSER'),
 EDGE = next((b for b in BROWSERS if b and os.path.exists(b)), BROWSERS[1])
 PORT = 8765
 
+# What the page has told us so far, and whether it says it is finished.
+RESULTS = {'text': '', 'done': False, 'at': 0.0}
+LOCK = threading.Lock()
 
-class Quiet(SimpleHTTPRequestHandler):
+
+class Runner(SimpleHTTPRequestHandler):
     def log_message(self, *a):
         pass
+
+    def do_POST(self):
+        if self.path.split('?')[0] != '/__results':
+            self.send_error(404)
+            return
+        n = int(self.headers.get('Content-Length') or 0)
+        body = self.rfile.read(n).decode('utf-8', 'replace')
+        with LOCK:
+            RESULTS['text'] = body
+            RESULTS['at'] = time.time()
+            if 'done=1' in self.path:
+                RESULTS['done'] = True
+        self.send_response(204)
+        self.send_header('Content-Length', '0')
+        self.end_headers()
 
 
 def serve():
     os.chdir(ROOT)
-    httpd = ThreadingHTTPServer(('127.0.0.1', PORT), Quiet)
+    httpd = ThreadingHTTPServer(('127.0.0.1', PORT), Runner)
     threading.Thread(target=httpd.serve_forever, daemon=True).start()
     return httpd
 
 
-TIMEOUT = 600
+TIMEOUT = 420      # the whole suite, wall clock
+QUIET = 90         # ... or this long with the page saying nothing new
 
 
-def run_once(url, extra=()):
+def run(url, extra=()):
     # Every run used to leave its browser profile behind. Six hundred of them
     # later the temp folder is slow enough to stall the run that made them, and
     # a suite that fails because of its own litter is worse than no suite.
     for old in glob.glob(os.path.join(tempfile.gettempdir(), 'nabu-edge-*')):
         shutil.rmtree(old, ignore_errors=True)
     prof = tempfile.mkdtemp(prefix='nabu-edge-')
-    out = subprocess.run([EDGE, '--headless=new', '--disable-gpu', '--no-first-run',
-                          '--virtual-time-budget=600000', '--user-data-dir=' + prof,
-                          '--window-size=430,900', '--dump-dom'] + list(extra) + [url],
-                         capture_output=True, timeout=TIMEOUT)
-    shutil.rmtree(prof, ignore_errors=True)
-    dom = out.stdout.decode('utf-8', 'replace')
-    m = re.findall(r'<pre id="results">(.*?)</pre>', dom, re.S)
-    return m[-1] if m else ('NO RESULTS\n' + dom[-3000:])
-
-
-def run(url, extra=()):
-    """A browser that hangs is not a failed check, and should not be reported as
-    one. The page fetches a few files as it starts and reaches out to the app
-    cloud; once in a while, on a shared machine, one of those never settles and
-    the browser waits until it is killed. That arrives as a red build for a
-    reason that has nothing to do with the code, which is the fastest way to
-    teach somebody to ignore red builds.
-
-    One retry tells the two apart: a real failure fails twice, a stall almost
-    never does. The timeout used to escape from here as a traceback; it now says
-    plainly what happened."""
-    for attempt in (1, 2):
+    # The suite is written against a fast-forwarded clock: it waits 30ms for a
+    # screen to redraw, which is true when the clock is pretend and often false
+    # when it is real. So the budget stays - it is what makes the checks mean
+    # what they say - but it is no longer what ends the run.
+    proc = subprocess.Popen([EDGE, '--headless=new', '--disable-gpu', '--no-first-run',
+                             '--no-default-browser-check', '--disable-extensions',
+                             '--virtual-time-budget=900000',
+                             '--user-data-dir=' + prof, '--window-size=430,900']
+                            + list(extra) + [url],
+                            stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+    started = time.time()
+    try:
+        while True:
+            with LOCK:
+                done, last = RESULTS['done'], RESULTS['at']
+            if done:
+                break
+            if proc.poll() is not None and time.time() - started > 5:
+                break                       # the browser gave up before the suite did
+            now = time.time()
+            if now - started > TIMEOUT:
+                print('the suite ran past %d seconds and was stopped' % TIMEOUT, file=sys.stderr)
+                break
+            if last and now - last > QUIET:
+                print('the suite said nothing for %d seconds and was stopped' % QUIET, file=sys.stderr)
+                break
+            if not last and now - started > QUIET:
+                print('the suite never started; the page said nothing for %d seconds' % QUIET, file=sys.stderr)
+                break
+            time.sleep(0.25)
+    finally:
+        proc.terminate()
         try:
-            return run_once(url, extra)
+            proc.wait(timeout=10)
         except subprocess.TimeoutExpired:
-            print('the browser did not settle within %d seconds (attempt %d of 2)' % (TIMEOUT, attempt), file=sys.stderr)
-    return ('FAIL the browser never settled, twice over, so nothing was checked. '
-            'That is a stalled browser rather than a broken check: run it again, '
-            'and look at the network if it keeps happening.')
+            proc.kill()
+        shutil.rmtree(prof, ignore_errors=True)
+
+    with LOCK:
+        text, done = RESULTS['text'], RESULTS['done']
+    if not text:
+        return ('FAIL nothing was checked: the page never reported a single result. '
+                'Open test/test.html in a browser and look at the console.')
+    if not done:
+        text += ('\nFAIL the suite stopped part way, after %d checks. '
+                 'The check after the last one above is where to look.' % len(text.split('\n')))
+    return text
 
 
 if __name__ == '__main__':
@@ -74,6 +119,8 @@ if __name__ == '__main__':
     time.sleep(0.3)
     res = run('http://127.0.0.1:%d/test/test.html' % PORT)
     print(res)
-    ok = 'FAIL' not in res and 'NO RESULTS' not in res
+    lines = [l for l in res.split('\n') if l.strip()]
+    bad = [l for l in lines if l.startswith('FAIL')]
+    print('\n%d checks, %d passed, %d failed' % (len(lines), len(lines) - len(bad), len(bad)))
     httpd.shutdown()
-    sys.exit(0 if ok else 1)
+    sys.exit(1 if bad else 0)
