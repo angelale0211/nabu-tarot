@@ -376,6 +376,14 @@ const STR = {
     alertDiaryOnBody: 'Từ giờ trang nào bạn lưu, người ấy cũng đọc được.',
     alertDiaryOff: (n) => '📕 Đã dừng chia sẻ nhật ký',
     alertDiaryOffBody: 'Nhật ký của bạn lại chỉ nằm trên máy này thôi.',
+    shareCopy: 'Chép', shareMore: 'Khác', shareIgCopied: 'Đã chép. Bạn mở Instagram rồi dán vào story hoặc bài viết nhé.',
+    loveTellTitle: 'Khoe với mọi người', loveTellHint: 'Bạn bấm một nơi bất kỳ, Nabu đã viết sẵn câu chữ kèm đường dẫn.',
+    loveShareOf: {
+      tied: (n, d) => 'Mình và ' + n + ' đã buộc sợi tơ hồng trên Nabu Tarot, hôm nay là ngày thứ ' + d + ' 🧧',
+      proposed: (n) => 'Có một lời ngỏ đang chờ trên sợi tơ hồng của mình và ' + n + ' 💍',
+      engaged: (n, d) => 'Mình và ' + n + ' đã đính ước trên Nabu Tarot, sau ' + d + ' ngày bên nhau 💍✨',
+      married: (n, d) => 'Mình và ' + n + ' đã thành đôi trên Nabu Tarot, ' + d + ' ngày và còn dài 💒'
+    },
     alertTitle: 'Thông báo', alertIntro: 'Những gì đã xảy ra khi bạn không mở app.',
     alertNone: 'Chưa có thông báo nào. Khi có người muốn buộc sợi tơ hồng, khi bạn nhận quà, khi lịch hẹn được xác nhận hay khi bạn nhỏ đói bụng, bạn sẽ thấy ở đây.',
     alertReadAll: 'Đánh dấu đã đọc', alertClear: 'Xoá hết',
@@ -907,6 +915,14 @@ const STR = {
     alertDiaryOnBody: 'From now on, every page you save, they can read.',
     alertDiaryOff: (n) => '\uD83D\uDCD5 Diary sharing has stopped',
     alertDiaryOffBody: 'Your diary is back to living on this phone only.',
+    shareCopy: 'Copy', shareMore: 'More', shareIgCopied: 'Copied. Open Instagram and paste it into a story or a post.',
+    loveTellTitle: 'Tell people', loveTellHint: 'Press anywhere below \u2014 the words and the link are written for you.',
+    loveShareOf: {
+      tied: (n, d) => n + ' and I tied the red thread on Nabu Tarot. Today is day ' + d + ' \uD83E\uDDE7',
+      proposed: (n) => 'There is a question waiting on the thread between ' + n + ' and me \uD83D\uDC8D',
+      engaged: (n, d) => n + ' and I are engaged on Nabu Tarot, after ' + d + ' days together \uD83D\uDC8D\u2728',
+      married: (n, d) => n + ' and I are married on Nabu Tarot \u2014 ' + d + ' days, and a long way to go \uD83D\uDC92'
+    },
     alertTitle: 'Notifications', alertIntro: 'What happened while you were away.',
     alertNone: 'Nothing yet. When someone wants to tie a thread with you, when a gift arrives, when a booking is answered or when your companion is hungry, it will be here.',
     alertReadAll: 'Mark all as read', alertClear: 'Clear',

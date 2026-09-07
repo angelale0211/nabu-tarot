@@ -829,6 +829,19 @@ function renderLove(wantHandle) {
         + '<p class="hint">' + esc(S.loveShowParentsHint) + '</p></div>';
     }
 
+    /* What they might want to tell people, written for them. The day count
+       and the name are already on this screen; nobody should have to retype
+       them into a post. */
+    const shareText = () => {
+      const St = T(), nm = nameOf(you), n = LOVE.days(bond);
+      return (St.loveShareOf[stage] || St.loveShareOf.tied)(nm, n);
+    };
+    const teller = '<div class="card tellcard">'
+      + '<div class="ghead"><span class="gk">\uD83D\uDCE3</span><h3>' + esc(S.loveTellTitle) + '</h3></div>'
+      + '<p class="tellline">\u201C' + esc(shareText()) + '\u201D</p>'
+      + '<p class="hint">' + esc(S.loveTellHint) + '</p>'
+      + shareRowHTML('lvshare') + '</div>';
+
     /* Two cards, deliberately unalike. Something somebody chose for you should
        not look like a row of buttons; it used to, and people scrolled past it. */
     const got = given.filter((g) => g.from !== me), mine2 = given.filter((g) => g.from === me);
@@ -873,7 +886,7 @@ function renderLove(wantHandle) {
       + '<p class="since">' + esc(S.loveSince(fmtDate(bond.since))) + '</p>'
       + (next ? '<p class="hint" style="text-align:center">' + esc(S.loveNextMark(next.at, next.inDays)) + '</p>' : '')
       + '</div>'
-      + loveRoadHTML(stage) + ask + shelf
+      + loveRoadHTML(stage) + ask + teller + shelf
       + '<div class="card"><h3 style="margin-bottom:6px">' + esc(S.loveDayTitle) + '</h3>'
       + '<p class="hint" style="margin-bottom:8px">' + esc(S.loveDayHint) + '</p>'
       + '<input type="date" id="lvsince" max="' + esc(isoDate(new Date())) + '" value="' + esc(bond.since || '') + '">'
@@ -909,6 +922,8 @@ function renderLove(wantHandle) {
     }));
     { const sp = $('#lvshowpar');
       if (sp) sp.addEventListener('change', () => { LOVE.save({ parents: sp.checked }); toast(sp.checked ? S.loveShowParentsOn : S.loveShowParentsOff); }); }
+
+    bindShareRow(m, () => ({ text: shareText(), url: appURL() + '#/love' }));
 
     /* Looked at is no longer new; the mark shows once. */
     if (newest > (LOVE.local().giftSeen || 0)) setTimeout(() => LOVE.save({ giftSeen: newest }), 1500);
