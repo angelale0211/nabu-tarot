@@ -12,7 +12,7 @@
      carries this notice with it. See LICENSE. -->
 <meta name="author" content="Nabu Tarot">
 <meta name="copyright" content="Copyright (c) 2025-2026 Nabu Tarot. All rights reserved.">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'none'; object-src 'none'; form-action 'self'; script-src 'self' 'sha256-zPYcNzE9CkgBF1vW2n666KBGTfCkz1Ybok1Zteb1RzM=' https://www.gstatic.com https://apis.google.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; font-src 'self' data:; media-src 'self' data: blob:; worker-src 'self'; connect-src 'self' https://*.googleapis.com https://*.google.com https://*.firebaseio.com https://*.cloudfunctions.net https://*.workers.dev https://generativelanguage.googleapis.com; frame-src https://*.firebaseapp.com https://accounts.google.com https://*.facebook.com">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'none'; object-src 'none'; form-action 'self'; script-src 'self' 'sha256-qur5iyGayLDohyMQ3zaP6115vG19+6BQclbVo/6MbSA=' https://www.gstatic.com https://apis.google.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; font-src 'self' data:; media-src 'self' data: blob:; worker-src 'self'; connect-src 'self' https://*.googleapis.com https://*.google.com https://*.firebaseio.com https://*.cloudfunctions.net https://*.workers.dev https://generativelanguage.googleapis.com; frame-src https://*.firebaseapp.com https://accounts.google.com https://*.facebook.com">
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <meta name="theme-color" content="#EFE9FA">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -1585,6 +1585,14 @@ h1 .pileico{width:34px;height:27px;vertical-align:-3px;margin-right:2px}
    the eye the moment it opens. */
 .wedcard.invited{border-color:var(--pink);box-shadow:0 0 0 3px var(--pink-soft,rgba(246,187,203,.35))}
 #main .card .hint.faint{color:var(--fg-faint)}
+/* Who is standing in the room. One line, because that is all it is: your
+   partner by name, and the guests as a number. */
+.wedhere{display:flex;align-items:center;justify-content:center;gap:10px;flex-wrap:wrap;
+  margin:2px 0 12px;font-size:13.5px;line-height:1.5}
+.wedhere .in{color:var(--ok,#2E8B57)}
+.wedhere .out{color:var(--fg-faint)}
+.wedhere .cnt{color:var(--fg-soft)}
+
 .saylist{list-style:none;margin:0 0 10px;padding:0;display:flex;flex-direction:column;gap:6px;
   max-height:240px;overflow:auto}
 .saylist li{padding:8px 11px;border-radius:14px;background:var(--surface-2);font-size:14px;line-height:1.45}
@@ -2627,6 +2635,14 @@ const STR = {
     adminWedPaid: 'Đã thanh toán', adminWedOwed: 'Chưa thanh toán',
     adminWedGotPaid: 'Đã nhận tiền', adminWedPaidDone: 'Đã mở phòng cưới cho hai bạn ấy.',
     adminWedMoveOk: 'Đồng ý giờ mới',
+    wedHereYes: (n) => n + ' đã ở trong phòng',
+    wedHereNo: (n) => n + ' chưa vào phòng',
+    wedHereBoth: 'Cô dâu và chú rể đã có mặt',
+    wedHereOne: (n) => n + ' đã có mặt',
+    wedHereNone: 'Cô dâu chú rể chưa vào phòng',
+    wedHereGuests: (n) => n === 0 ? 'chưa có khách nào' : n + ' khách đang ở đây',
+    wedCameIn: (n) => n + ' vừa vào phòng rồi đó! 💕',
+    wedCoupleIn: 'Cô dâu chú rể vừa vào phòng 💍',
     meInboxHint: 'Mọi cuộc trò chuyện với khách nằm ở Hộp thư trong trang điều khiển.',
     meGroupYou: 'Bạn là ai', meGroupTalk: 'Trò chuyện & lịch hẹn', meGroupOwn: 'Bạn đang có gì', meGroupApp: 'Ứng dụng',
     imgSaved: 'Đã lưu ảnh về máy 📷',
@@ -3369,6 +3385,14 @@ const STR = {
     adminWedPaid: 'Paid', adminWedOwed: 'Not paid yet',
     adminWedGotPaid: 'Payment received', adminWedPaidDone: 'Their room is open.',
     adminWedMoveOk: 'Agree to the new hour',
+    wedHereYes: (n) => n + ' is in the room',
+    wedHereNo: (n) => n + ' is not here yet',
+    wedHereBoth: 'The couple are here',
+    wedHereOne: (n) => n + ' is here',
+    wedHereNone: 'The couple are not in the room yet',
+    wedHereGuests: (n) => n === 0 ? 'no guests yet' : n + (n === 1 ? ' guest here' : ' guests here'),
+    wedCameIn: (n) => n + ' has just come in \uD83D\uDC95',
+    wedCoupleIn: 'The couple have just come in \uD83D\uDC8D',
     meInboxHint: 'Every conversation with a visitor lives in the Inbox on the dashboard.',
     meGroupYou: 'Who you are', meGroupTalk: 'Messages & bookings', meGroupOwn: 'What you have', meGroupApp: 'The app',
     imgSaved: 'Saved to your phone \uD83D\uDCF7',
@@ -20267,6 +20291,16 @@ const WED = {
     const t = Date.now();
     return (guests || []).filter((g) => t - Number(g.seen || 0) < WED_SEEN_MS);
   },
+  /* The couple keep a seat too, so that each of them can tell whether the
+     other has arrived. They are not guests at their own wedding, though, so
+     anywhere a number of guests is wanted they come out again. */
+  hereGuests(w, guests) {
+    const pair = (w && w.uids) || [];
+    return this.present(guests).filter((g) => pair.indexOf(g.uid) < 0);
+  },
+  hereIs(guests, uid) {
+    return !!uid && this.present(guests).some((g) => g.uid === uid);
+  },
 
   async create(bond, startMs) {
     const id = this.idFor(bond), me = this.me();
@@ -20893,6 +20927,9 @@ function renderWedding(args) {
   let gifts = [], guests = [], says = [], bouquetShown = 0;
   /* Where the reader was in the comments, so a repaint does not move them. */
   const SAYAT = { top: 0, h: 0 };
+  /* Who was standing here a moment ago, so an arrival is an arrival and not
+     the same fact said again every twenty seconds. */
+  const wasHere = { you: null, pair: null };
   const drawRoom = (w) => {
     const side = WED.side(w), mine = !!side, step = wedStep(w.step | 0);
     const names = esc(w.aName || S.loveSomeone) + ' \u2764 ' + esc(w.bName || S.loveSomeone);
@@ -20904,7 +20941,23 @@ function renderWedding(args) {
     const askingMe = mine && step.who === side && !w.doneAt;
     const theirTurn = mine && step.who && step.who !== side && !w.doneAt;
     const line = S.wedSay[step.id](w.aName || S.loveSomeone, w.bName || S.loveSomeone);
-    const here = WED.present(guests);
+    /* Guests, without the couple in the count: they are not guests at their
+       own wedding, and the bouquet has never been able to land on them. */
+    const here = WED.hereGuests(w, guests);
+    /* Who is standing here. Two people once waited for each other in this room
+       with no way to tell the other had arrived, so neither pressed begin. */
+    const youId = mine ? (side === 'a' ? w.b : w.a) : '';
+    const youName = (side === 'a' ? w.bName : w.aName) || S.loveSomeone;
+    const aIn = WED.hereIs(guests, w.a), bIn = WED.hereIs(guests, w.b);
+    const whoHere = '<p class="wedhere">'
+      + (mine
+        ? (WED.hereIs(guests, youId)
+          ? '<b class="in">\u25CF ' + esc(S.wedHereYes(youName)) + '</b>'
+          : '<span class="out">\u25CB ' + esc(S.wedHereNo(youName)) + '</span>')
+        : '<b class="' + (aIn && bIn ? 'in' : 'out') + '">' + (aIn && bIn ? '\u25CF ' : '\u25CB ')
+          + esc(aIn && bIn ? S.wedHereBoth : aIn ? S.wedHereOne(w.aName || S.loveSomeone)
+            : bIn ? S.wedHereOne(w.bName || S.loveSomeone) : S.wedHereNone) + '</b>')
+      + '<span class="cnt">\uD83D\uDC65 ' + esc(S.wedHereGuests(here.length)) + '</span></p>';
     const called = w.state === 'called-off';
 
     const gone = WED.noShow(w);
@@ -20998,6 +21051,7 @@ function renderWedding(args) {
       /* Cupid asks in front of everybody; the point of that is that everybody
          hears the reply. */
       + vowsHTML(w)
+      + whoHere
       + act + '</div>'
       + bq
       + guestListHTML(w, guests)
@@ -21396,9 +21450,40 @@ function renderWedding(args) {
         if (seat && seat.rsvp === 'yes' && !beat) beat = setInterval(() => WED.stillHere(w.id), 20000);
         void seated;
       }
+      /* The couple keep one too, which is the whole of how each of them can
+         tell the other has arrived. Only once the door is open: a seat kept
+         warm from the planning screen would say somebody was in a room that
+         has not opened yet. */
+      if (w && WED.mine(w) && WED.doorState(w) === 'open' && !beat) {
+        const nm = WED.side(w) === 'a' ? (w.aName || '') : (w.bName || '');
+        WED.sit(w.id, nm).catch(() => {});
+        beat = setInterval(() => WED.stillHere(w.id), 20000);
+      }
       paint();
     }));
-    stop.push(WED.watchGuests(id, (g) => { guests = g; paint(); }));
+    stop.push(WED.watchGuests(id, (g) => {
+      guests = g;
+      /* Somebody arriving is worth saying once, and only to the people it
+         means something to: the couple hear their partner arrive, because that
+         is the moment one of them can begin, and guests hear the couple
+         arrive. Nobody is told about the other ninety-eight guests, who are a
+         count and not an event. */
+      if (wedding) {
+        const S2 = T(), w2 = wedding;
+        if (WED.mine(w2)) {
+          const you = WED.side(w2) === 'a' ? w2.b : w2.a;
+          const nm = (WED.side(w2) === 'a' ? w2.bName : w2.aName) || S2.loveSomeone;
+          const now = WED.hereIs(guests, you);
+          if (now && wasHere.you === false) toast(S2.wedCameIn(nm));
+          wasHere.you = now;
+        } else {
+          const now = WED.hereIs(guests, w2.a) || WED.hereIs(guests, w2.b);
+          if (now && wasHere.pair === false) toast(S2.wedCoupleIn);
+          wasHere.pair = now;
+        }
+      }
+      paint();
+    }));
     stop.push(WED.watchGifts(id, (g) => { gifts = g; paint(); }));
     stop.push(WED.watchSays(id, (l) => { says = l; paint(); }));
   }
@@ -22398,7 +22483,7 @@ function adminSale(p) {
 ROUTES.admin = { nav: '', render: renderAdmin };
 
 /* ============================ boot ============================ */
-window.APP_VERSION = 'v159';
+window.APP_VERSION = 'v160';
 window.NABU = { CONFIG: CONFIG, SALE: SALE, salePrice: salePrice, loadActs: loadActs, BACK: BACK, LESSONS: LESSONS, localAnswer: localAnswer, compatVerdict: compatVerdict, numerologyOf: numerologyOf, ZDEEP: ZDEEP, lunarToday: lunarToday, solarToLunar: solarToLunar, DECK: DECK, INSIGHT: INSIGHT, KW: KW, ASK: ASK, TOPICS: TOPICS, GUIDES: GUIDES, SERVICES: SERVICES, COURSES: COURSES, ACCESS: ACCESS, plusOn: () => plusOn(), proOn: () => proOn(), luckUnlimited: () => luckUnlimited(), ZODIAC: ZODIAC, pick: pick, book: book,
   insightHTML: insightHTML, insightOf: insightOf, sunSignIndex: sunSignIndex, lifePath: lifePath, PROFILE: () => PROFILE, BE: BE, ACTS: ACTS,
   ANGELS: ANGELS, angelRead: angelRead, CODEBOOK: CODEBOOK, verifyCode: verifyCode, petHomeSVG: petHomeSVG, PET_HOMES: PET_HOMES, PET_WEARS: PET_WEARS, codeDigest: codeDigest, randomCode: randomCode, BANK: BANK, PETS: PETS, petSVG: petSVG, PET_COATS: PET_COATS, PET_KINDS: PET_KINDS, luckCut: luckCut, petLevel: petLevel, petStep: petStep, VOUCHERS: VOUCHERS, levelCoins: levelCoins, LOOKS: LOOKS,

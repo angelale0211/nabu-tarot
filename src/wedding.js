@@ -107,6 +107,16 @@ const WED = {
     const t = Date.now();
     return (guests || []).filter((g) => t - Number(g.seen || 0) < WED_SEEN_MS);
   },
+  /* The couple keep a seat too, so that each of them can tell whether the
+     other has arrived. They are not guests at their own wedding, though, so
+     anywhere a number of guests is wanted they come out again. */
+  hereGuests(w, guests) {
+    const pair = (w && w.uids) || [];
+    return this.present(guests).filter((g) => pair.indexOf(g.uid) < 0);
+  },
+  hereIs(guests, uid) {
+    return !!uid && this.present(guests).some((g) => g.uid === uid);
+  },
 
   async create(bond, startMs) {
     const id = this.idFor(bond), me = this.me();
@@ -733,6 +743,9 @@ function renderWedding(args) {
   let gifts = [], guests = [], says = [], bouquetShown = 0;
   /* Where the reader was in the comments, so a repaint does not move them. */
   const SAYAT = { top: 0, h: 0 };
+  /* Who was standing here a moment ago, so an arrival is an arrival and not
+     the same fact said again every twenty seconds. */
+  const wasHere = { you: null, pair: null };
   const drawRoom = (w) => {
     const side = WED.side(w), mine = !!side, step = wedStep(w.step | 0);
     const names = esc(w.aName || S.loveSomeone) + ' \u2764 ' + esc(w.bName || S.loveSomeone);
@@ -744,7 +757,23 @@ function renderWedding(args) {
     const askingMe = mine && step.who === side && !w.doneAt;
     const theirTurn = mine && step.who && step.who !== side && !w.doneAt;
     const line = S.wedSay[step.id](w.aName || S.loveSomeone, w.bName || S.loveSomeone);
-    const here = WED.present(guests);
+    /* Guests, without the couple in the count: they are not guests at their
+       own wedding, and the bouquet has never been able to land on them. */
+    const here = WED.hereGuests(w, guests);
+    /* Who is standing here. Two people once waited for each other in this room
+       with no way to tell the other had arrived, so neither pressed begin. */
+    const youId = mine ? (side === 'a' ? w.b : w.a) : '';
+    const youName = (side === 'a' ? w.bName : w.aName) || S.loveSomeone;
+    const aIn = WED.hereIs(guests, w.a), bIn = WED.hereIs(guests, w.b);
+    const whoHere = '<p class="wedhere">'
+      + (mine
+        ? (WED.hereIs(guests, youId)
+          ? '<b class="in">\u25CF ' + esc(S.wedHereYes(youName)) + '</b>'
+          : '<span class="out">\u25CB ' + esc(S.wedHereNo(youName)) + '</span>')
+        : '<b class="' + (aIn && bIn ? 'in' : 'out') + '">' + (aIn && bIn ? '\u25CF ' : '\u25CB ')
+          + esc(aIn && bIn ? S.wedHereBoth : aIn ? S.wedHereOne(w.aName || S.loveSomeone)
+            : bIn ? S.wedHereOne(w.bName || S.loveSomeone) : S.wedHereNone) + '</b>')
+      + '<span class="cnt">\uD83D\uDC65 ' + esc(S.wedHereGuests(here.length)) + '</span></p>';
     const called = w.state === 'called-off';
 
     const gone = WED.noShow(w);
@@ -838,6 +867,7 @@ function renderWedding(args) {
       /* Cupid asks in front of everybody; the point of that is that everybody
          hears the reply. */
       + vowsHTML(w)
+      + whoHere
       + act + '</div>'
       + bq
       + guestListHTML(w, guests)
@@ -1236,9 +1266,40 @@ function renderWedding(args) {
         if (seat && seat.rsvp === 'yes' && !beat) beat = setInterval(() => WED.stillHere(w.id), 20000);
         void seated;
       }
+      /* The couple keep one too, which is the whole of how each of them can
+         tell the other has arrived. Only once the door is open: a seat kept
+         warm from the planning screen would say somebody was in a room that
+         has not opened yet. */
+      if (w && WED.mine(w) && WED.doorState(w) === 'open' && !beat) {
+        const nm = WED.side(w) === 'a' ? (w.aName || '') : (w.bName || '');
+        WED.sit(w.id, nm).catch(() => {});
+        beat = setInterval(() => WED.stillHere(w.id), 20000);
+      }
       paint();
     }));
-    stop.push(WED.watchGuests(id, (g) => { guests = g; paint(); }));
+    stop.push(WED.watchGuests(id, (g) => {
+      guests = g;
+      /* Somebody arriving is worth saying once, and only to the people it
+         means something to: the couple hear their partner arrive, because that
+         is the moment one of them can begin, and guests hear the couple
+         arrive. Nobody is told about the other ninety-eight guests, who are a
+         count and not an event. */
+      if (wedding) {
+        const S2 = T(), w2 = wedding;
+        if (WED.mine(w2)) {
+          const you = WED.side(w2) === 'a' ? w2.b : w2.a;
+          const nm = (WED.side(w2) === 'a' ? w2.bName : w2.aName) || S2.loveSomeone;
+          const now = WED.hereIs(guests, you);
+          if (now && wasHere.you === false) toast(S2.wedCameIn(nm));
+          wasHere.you = now;
+        } else {
+          const now = WED.hereIs(guests, w2.a) || WED.hereIs(guests, w2.b);
+          if (now && wasHere.pair === false) toast(S2.wedCoupleIn);
+          wasHere.pair = now;
+        }
+      }
+      paint();
+    }));
     stop.push(WED.watchGifts(id, (g) => { gifts = g; paint(); }));
     stop.push(WED.watchSays(id, (l) => { says = l; paint(); }));
   }
