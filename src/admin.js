@@ -284,12 +284,44 @@ function adminInbox(p) {
     adminCleanup();
     const own = BE.user && uid === BE.user.uid;
     p.innerHTML = '<p><a href="#/admin" id="backin" class="backlink">← ' + esc(S.adminTabs.inbox) + '</a></p><div class="thr-head"><span class="av">' + esc((t.name || t.email || uid).charAt(0).toUpperCase()) + '</span><div><b>' + esc(t.name || t.email || uid) + (own ? ' <i>(' + esc(S.ownThread) + ')</i>' : '') + '</b><span class="faint">' + esc(t.email || '') + '</span></div></div><div class="chat" id="achat"></div>' + chatBarHTML('atext', 'asend', S.reply);
+    /* The withdrawal lives here because this is where Nabu works out who is
+       abusing a code, and the same screen is where they get told why. It sits
+       under the conversation rather than over it: the thread is the point of
+       the page. */
+    if (!own) p.insertAdjacentHTML('beforeend', '<div class="card" id="accbox" style="margin-top:14px"><h3 style="margin-bottom:6px">\uD83D\uDD11 ' + esc(S.adminHolds) + '</h3><div id="acclist"><p class="hint">…</p></div></div>');
     $('#backin').addEventListener('click', (e) => { e.preventDefault(); p.innerHTML = '<div id="threads"></div>'; list(); });
+    if (!own) drawAccess(uid);
     const chat = $('#achat');
     admin.unsubs.push(BE.watchMessages(uid, (msgs) => { chat.innerHTML = chatHTML(msgs, 'nabu'); chat.scrollTop = chat.scrollHeight; BE.markRead(uid, 'admin'); }));
     const sendAdmin = async (text, file, kind) => { let att = null; if (file) att = await chatAttachment(file, uid, kind); await BE.sendMessage(text, uid, att); };
     $('#asend').addEventListener('click', async () => { const tx = $('#atext').value.trim(); if (!tx) return; $('#atext').value = ''; try { await sendAdmin(tx); } catch (e) { toast(e.message); } });
     bindChatBar(p, sendAdmin);
+  };
+  /* What this person holds, and the one way to take it away. Asking happens on
+     the page itself: a browser confirm() is skipped outright by some phone
+     webviews, which would withdraw somebody's courses on a single tap. */
+  const drawAccess = async (uid) => {
+    const box = $('#acclist');
+    if (!box) return;
+    let a = {};
+    try { a = await BE.accessOf(uid); } catch (e) { box.innerHTML = '<p class="hint err">' + esc(e.message) + '</p>'; return; }
+    if (!$('#acclist')) return;
+    const keys = Object.keys(a || {});
+    if (!keys.length) { box.innerHTML = '<p class="hint">' + esc(S.adminAccessNone) + '</p>'; return; }
+    box.innerHTML = keys.map((k) => '<p class="hint" style="margin:0 0 4px"><b>' + esc(accessName(k)) + '</b> \u00b7 ' + esc(S.codeUntil) + ' ' + esc(fmtDate(a[k])) + '</p>').join('')
+      + '<label class="f" for="acwhy" style="margin-top:12px">' + esc(S.adminRevokeWhy) + '</label><textarea id="acwhy" rows="2"></textarea>'
+      + '<button type="button" class="btn block danger" id="acgo" style="margin-top:8px">' + esc(S.adminRevoke) + '</button>'
+      + '<div id="acsure" hidden><p class="hint err" style="margin-top:8px">' + esc(S.adminRevokeAsk) + '</p>'
+      + '<div class="row"><button type="button" class="btn danger" id="acyes">' + esc(S.adminRevokeYes) + '</button>'
+      + '<button type="button" class="btn" id="acno">' + esc(S.loveCancel) + '</button></div></div>'
+      + '<p class="hint" style="margin-top:8px">' + esc(S.adminRevokeHint) + '</p>';
+    $('#acgo').addEventListener('click', () => { $('#acsure').hidden = false; $('#acgo').hidden = true; $('#acno').focus(); });
+    $('#acno').addEventListener('click', () => { $('#acsure').hidden = true; $('#acgo').hidden = false; });
+    $('#acyes').addEventListener('click', async () => {
+      $('#acyes').disabled = true;
+      try { await BE.revokeAccess(uid, $('#acwhy').value.trim()); toast(S.adminRevoked); await drawAccess(uid); }
+      catch (e) { $('#acyes').disabled = false; toast(e.message); }
+    });
   };
   list();
 }

@@ -25,7 +25,13 @@ service cloud.firestore {
     }
 
     match /users/{uid} {
-      allow read, write: if isOwner(uid) || isAdmin();
+      allow read: if isOwner(uid) || isAdmin();
+      // A withdrawal of access is Nabu's to write. The owner keeps every other
+      // field, but cannot clear the one that says their access was taken away -
+      // otherwise withdrawing it would last exactly until they looked.
+      allow write: if isAdmin() || (isOwner(uid)
+                   && (!request.resource.data.keys().hasAny(['revoked'])
+                       || (resource != null && request.resource.data.revoked == resource.data.revoked)));
     }
     match /threads/{uid} {
       allow read: if isOwner(uid) || isAdmin();

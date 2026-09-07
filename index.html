@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
 <title>Nabu Tarot</title>
 <meta name="description" content="Nabu Tarot: dự đoán mới, rút một lá bài xem năng lượng hiện tại, học tarot, Lenormand, chiêm tinh, và đặt lịch xem bài.">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'none'; object-src 'none'; form-action 'self'; script-src 'self' 'sha256-CE1PnC/YLGONckQRfJgb0zOn+hDywENpoiGfACrlREk=' https://www.gstatic.com https://apis.google.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; font-src 'self' data:; media-src 'self' data: blob:; worker-src 'self'; connect-src 'self' https://*.googleapis.com https://*.google.com https://*.firebaseio.com https://*.cloudfunctions.net https://*.workers.dev https://generativelanguage.googleapis.com; frame-src https://*.firebaseapp.com https://accounts.google.com https://*.facebook.com">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'none'; object-src 'none'; form-action 'self'; script-src 'self' 'sha256-/fS7IS53Ig5KSv7zt6TQJ1vxf8T9PmRetXtYzDy+JiE=' https://www.gstatic.com https://apis.google.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; font-src 'self' data:; media-src 'self' data: blob:; worker-src 'self'; connect-src 'self' https://*.googleapis.com https://*.google.com https://*.firebaseio.com https://*.cloudfunctions.net https://*.workers.dev https://generativelanguage.googleapis.com; frame-src https://*.firebaseapp.com https://accounts.google.com https://*.facebook.com">
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <meta name="theme-color" content="#EFE9FA">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -2589,6 +2589,16 @@ const STR = {
     diaryShareWait: (n) => 'Bạn đã bật. Đợi ' + n + ' bật nữa là hai bạn đọc được của nhau.',
     diaryShareBoth: (n) => 'Cả hai đã bật. Bạn và ' + n + ' đọc được nhật ký của nhau ✨',
     diaryTheirs: (n) => 'Nhật ký của ' + n, diaryTheirsNone: (n) => n + ' chưa viết trang nào kể từ khi bật.',
+    accessOnTitle: (n) => 'Đã mở khoá: ' + n,
+    accessOnBody: (until) => 'Bạn dùng được đến hết ngày ' + until + '. Cảm ơn bạn đã ủng hộ Nabu nhé!',
+    accessGoneTitle: 'Quyền sử dụng đã được thu hồi',
+    accessGoneBody: 'Nabu đã thu hồi những phần bạn đang mở. Nếu bạn nghĩ là có nhầm lẫn, bạn nhắn cho Nabu ở mục Hồ sơ nhé.',
+    adminHolds: 'Quyền sử dụng', adminAccessNone: 'Người này chưa mở khoá phần nào.',
+    adminRevoke: 'Thu hồi quyền sử dụng', adminRevokeYes: 'Có, thu hồi',
+    adminRevokeAsk: 'Thu hồi toàn bộ những phần người này đang mở? Việc này không hoàn lại được.',
+    adminRevokeWhy: 'Lý do (người ấy sẽ đọc được)',
+    adminRevokeHint: 'Người ấy nhận được thông báo, và quyền sẽ mất khi máy của họ vào lại Nabu.',
+    adminRevoked: 'Đã thu hồi quyền sử dụng.',
     meInboxHint: 'Mọi cuộc trò chuyện với khách nằm ở Hộp thư trong trang điều khiển.',
     meGroupYou: 'Bạn là ai', meGroupTalk: 'Trò chuyện & lịch hẹn', meGroupOwn: 'Bạn đang có gì', meGroupApp: 'Ứng dụng',
     imgSaved: 'Đã lưu ảnh về máy 📷',
@@ -3300,6 +3310,16 @@ const STR = {
     diaryShareWait: (n) => 'You have switched it on. When ' + n + ' does too, you can read each other.',
     diaryShareBoth: (n) => 'Both switched on. You and ' + n + ' can read each other \u2728',
     diaryTheirs: (n) => n + '\u2019s diary', diaryTheirsNone: (n) => n + ' has not written a page since switching it on.',
+    accessOnTitle: (n) => 'Unlocked: ' + n,
+    accessOnBody: (until) => 'Yours until the end of ' + until + '. Thank you for supporting Nabu.',
+    accessGoneTitle: 'Your access has been withdrawn',
+    accessGoneBody: 'Nabu has withdrawn what you had open. If you think this is a mistake, write to Nabu from the Profile tab.',
+    adminHolds: 'Access', adminAccessNone: 'This person has nothing unlocked.',
+    adminRevoke: 'Withdraw access', adminRevokeYes: 'Yes, withdraw it',
+    adminRevokeAsk: 'Withdraw everything this person has open? This cannot be undone.',
+    adminRevokeWhy: 'Reason (they will read this)',
+    adminRevokeHint: 'They are told, and it takes hold the next time their phone reaches Nabu.',
+    adminRevoked: 'Access withdrawn.',
     meInboxHint: 'Every conversation with a visitor lives in the Inbox on the dashboard.',
     meGroupYou: 'Who you are', meGroupTalk: 'Messages & bookings', meGroupOwn: 'What you have', meGroupApp: 'The app',
     imgSaved: 'Saved to your phone \uD83D\uDCF7',
@@ -10666,6 +10686,14 @@ function priceHTML(n, kind, id) {
    it is checked against the list of hashes Nabu publishes (see codes.js), so
    a code that was never issued cannot be made up, and one that was issued can
    be taken back. */
+/* The name of a thing somebody has unlocked. Codes are issued against the
+   list of courses and packages, so the name is almost always there; a key from
+   somewhere else is shown as it stands rather than hidden. */
+function accessName(id) {
+  const list = typeof COURSES !== 'undefined' ? COURSES.filter((c) => c.id === id) : [];
+  return list.length ? L(list[0].name) : String(id);
+}
+
 const ACCESS = {
   get() { return store.get('nabu-access', {}); },
   // Nabu (any admin email) always has every course open.
@@ -10674,7 +10702,19 @@ const ACCESS = {
   // BE is a top-level const (not on window), so test for it with typeof.
   isAdmin() { const be = typeof BE !== 'undefined' ? BE : null; return !!((be && be.user && be.isAdmin()) || (!(be && be.ready) && store.get('nabu-admin', ''))); },
   has(course) { if (this.isAdmin()) return true; const a = this.get()[course]; return !!a && a >= isoDate(new Date()); },
-  grant(course, until) { const a = this.get(); (Array.isArray(course) ? course : [course]).forEach((c) => { a[c] = until; }); store.set('nabu-access', a); if (typeof BE !== 'undefined' && BE.user) BE.pushProfile(); }
+  grant(course, until) {
+    const a = this.get(), list = Array.isArray(course) ? course : [course];
+    list.forEach((c) => { a[c] = until; });
+    store.set('nabu-access', a);
+    if (typeof BE !== 'undefined' && BE.user) BE.pushProfile();
+    /* Say what was opened and how long it lasts. A code used simply to work,
+       and nobody was ever told what they now had or until when. */
+    if (typeof ALERTS !== 'undefined' && until) {
+      ALERTS.add({ id: 'unlocked-' + list.join('+') + '-' + until, k: 'app',
+        t: T().accessOnTitle(list.map(accessName).join(', ')),
+        b: T().accessOnBody(fmtDate(until)), href: '#/me' });
+    }
+  }
 };
 
 /* ---- one free turn a week for the coin and the message tree ----
@@ -11317,14 +11357,46 @@ const BE = {
   /* ---- profile ---- */
   async pullProfile() {
     const snap = await this.db.collection('users').doc(this.user.uid).get();
-    if (snap.exists) { const d = snap.data(); if (d.access) { const a = ACCESS.get(); Object.keys(d.access).forEach((k) => { if (!a[k] || d.access[k] > a[k]) a[k] = d.access[k]; }); store.set('nabu-access', a); } delete d.access; saveProfileLocal(d); }
-    else await this.pushProfile();
+    if (!snap.exists) { await this.pushProfile(); return; }
+    const d = snap.data();
+    /* The withdrawal is read before the merge, and applied once. The merge
+       keeps whichever date is later, so emptying the cloud copy on its own
+       achieves nothing: the phone's copy simply wins and is pushed back up. A
+       withdrawal is not a date but an instruction, stamped with the moment it
+       was given, and a device applies it once and remembers that it has. */
+    if (d.revoked && d.revoked.at && Number(d.revoked.at) > Number(store.get('nabu-revoked-at', 0))) {
+      const had = Object.keys(ACCESS.get()).length;
+      store.set('nabu-access', {});
+      store.set('nabu-revoked-at', Number(d.revoked.at));
+      d.access = {};
+      /* Said out loud, because access that disappears without a word reads as
+         a broken app rather than a decision somebody made. */
+      if (had && typeof alertSay === 'function') {
+        alertSay({ id: 'revoked-' + d.revoked.at, k: 'app', t: T().accessGoneTitle,
+          b: d.revoked.why || T().accessGoneBody, href: '#/me' }, true);
+      }
+    }
+    if (d.access) { const a = ACCESS.get(); Object.keys(d.access).forEach((k) => { if (!a[k] || d.access[k] > a[k]) a[k] = d.access[k]; }); store.set('nabu-access', a); }
+    delete d.access; delete d.revoked; saveProfileLocal(d);
   },
   async pushProfile() {
     if (!this.user) return;
     const p = { name: PROFILE.name || this.user.displayName || '', birthday: PROFILE.birthday || '', interests: PROFILE.interests || [],
       tourDone: !!PROFILE.tourDone, email: this.user.email || '', access: ACCESS.get(), updatedAt: firebase.firestore.FieldValue.serverTimestamp() };
     await this.db.collection('users').doc(this.user.uid).set(p, { merge: true });
+  },
+
+  /* What somebody holds, so it can be looked at before anything is taken. */
+  async accessOf(uid) {
+    const d = await this.db.collection('users').doc(uid).get();
+    return d.exists ? (d.data().access || {}) : {};
+  },
+  /* Taking it back. The time on it is what lets it beat the merge on the
+     person's own phone; the reason is what they will read. */
+  revokeAccess(uid, why) {
+    return this.db.collection('users').doc(uid).set({
+      access: {}, revoked: { at: Date.now(), why: String(why || '').slice(0, 300) }
+    }, { merge: true });
   },
 
   /* ---- messages: one thread per user ---- */
@@ -21957,12 +22029,44 @@ function adminInbox(p) {
     adminCleanup();
     const own = BE.user && uid === BE.user.uid;
     p.innerHTML = '<p><a href="#/admin" id="backin" class="backlink">← ' + esc(S.adminTabs.inbox) + '</a></p><div class="thr-head"><span class="av">' + esc((t.name || t.email || uid).charAt(0).toUpperCase()) + '</span><div><b>' + esc(t.name || t.email || uid) + (own ? ' <i>(' + esc(S.ownThread) + ')</i>' : '') + '</b><span class="faint">' + esc(t.email || '') + '</span></div></div><div class="chat" id="achat"></div>' + chatBarHTML('atext', 'asend', S.reply);
+    /* The withdrawal lives here because this is where Nabu works out who is
+       abusing a code, and the same screen is where they get told why. It sits
+       under the conversation rather than over it: the thread is the point of
+       the page. */
+    if (!own) p.insertAdjacentHTML('beforeend', '<div class="card" id="accbox" style="margin-top:14px"><h3 style="margin-bottom:6px">\uD83D\uDD11 ' + esc(S.adminHolds) + '</h3><div id="acclist"><p class="hint">…</p></div></div>');
     $('#backin').addEventListener('click', (e) => { e.preventDefault(); p.innerHTML = '<div id="threads"></div>'; list(); });
+    if (!own) drawAccess(uid);
     const chat = $('#achat');
     admin.unsubs.push(BE.watchMessages(uid, (msgs) => { chat.innerHTML = chatHTML(msgs, 'nabu'); chat.scrollTop = chat.scrollHeight; BE.markRead(uid, 'admin'); }));
     const sendAdmin = async (text, file, kind) => { let att = null; if (file) att = await chatAttachment(file, uid, kind); await BE.sendMessage(text, uid, att); };
     $('#asend').addEventListener('click', async () => { const tx = $('#atext').value.trim(); if (!tx) return; $('#atext').value = ''; try { await sendAdmin(tx); } catch (e) { toast(e.message); } });
     bindChatBar(p, sendAdmin);
+  };
+  /* What this person holds, and the one way to take it away. Asking happens on
+     the page itself: a browser confirm() is skipped outright by some phone
+     webviews, which would withdraw somebody's courses on a single tap. */
+  const drawAccess = async (uid) => {
+    const box = $('#acclist');
+    if (!box) return;
+    let a = {};
+    try { a = await BE.accessOf(uid); } catch (e) { box.innerHTML = '<p class="hint err">' + esc(e.message) + '</p>'; return; }
+    if (!$('#acclist')) return;
+    const keys = Object.keys(a || {});
+    if (!keys.length) { box.innerHTML = '<p class="hint">' + esc(S.adminAccessNone) + '</p>'; return; }
+    box.innerHTML = keys.map((k) => '<p class="hint" style="margin:0 0 4px"><b>' + esc(accessName(k)) + '</b> \u00b7 ' + esc(S.codeUntil) + ' ' + esc(fmtDate(a[k])) + '</p>').join('')
+      + '<label class="f" for="acwhy" style="margin-top:12px">' + esc(S.adminRevokeWhy) + '</label><textarea id="acwhy" rows="2"></textarea>'
+      + '<button type="button" class="btn block danger" id="acgo" style="margin-top:8px">' + esc(S.adminRevoke) + '</button>'
+      + '<div id="acsure" hidden><p class="hint err" style="margin-top:8px">' + esc(S.adminRevokeAsk) + '</p>'
+      + '<div class="row"><button type="button" class="btn danger" id="acyes">' + esc(S.adminRevokeYes) + '</button>'
+      + '<button type="button" class="btn" id="acno">' + esc(S.loveCancel) + '</button></div></div>'
+      + '<p class="hint" style="margin-top:8px">' + esc(S.adminRevokeHint) + '</p>';
+    $('#acgo').addEventListener('click', () => { $('#acsure').hidden = false; $('#acgo').hidden = true; $('#acno').focus(); });
+    $('#acno').addEventListener('click', () => { $('#acsure').hidden = true; $('#acgo').hidden = false; });
+    $('#acyes').addEventListener('click', async () => {
+      $('#acyes').disabled = true;
+      try { await BE.revokeAccess(uid, $('#acwhy').value.trim()); toast(S.adminRevoked); await drawAccess(uid); }
+      catch (e) { $('#acyes').disabled = false; toast(e.message); }
+    });
   };
   list();
 }
@@ -22095,7 +22199,7 @@ function adminSale(p) {
 ROUTES.admin = { nav: '', render: renderAdmin };
 
 /* ============================ boot ============================ */
-window.APP_VERSION = 'v155';
+window.APP_VERSION = 'v156';
 window.NABU = { CONFIG: CONFIG, SALE: SALE, salePrice: salePrice, loadActs: loadActs, BACK: BACK, LESSONS: LESSONS, localAnswer: localAnswer, compatVerdict: compatVerdict, numerologyOf: numerologyOf, ZDEEP: ZDEEP, lunarToday: lunarToday, solarToLunar: solarToLunar, DECK: DECK, INSIGHT: INSIGHT, KW: KW, ASK: ASK, TOPICS: TOPICS, GUIDES: GUIDES, SERVICES: SERVICES, COURSES: COURSES, ACCESS: ACCESS, plusOn: () => plusOn(), proOn: () => proOn(), luckUnlimited: () => luckUnlimited(), ZODIAC: ZODIAC, pick: pick, book: book,
   insightHTML: insightHTML, insightOf: insightOf, sunSignIndex: sunSignIndex, lifePath: lifePath, PROFILE: () => PROFILE, BE: BE, ACTS: ACTS,
   ANGELS: ANGELS, angelRead: angelRead, CODEBOOK: CODEBOOK, verifyCode: verifyCode, petHomeSVG: petHomeSVG, PET_HOMES: PET_HOMES, PET_WEARS: PET_WEARS, codeDigest: codeDigest, randomCode: randomCode, BANK: BANK, PETS: PETS, petSVG: petSVG, PET_COATS: PET_COATS, PET_KINDS: PET_KINDS, luckCut: luckCut, petLevel: petLevel, petStep: petStep, VOUCHERS: VOUCHERS, levelCoins: levelCoins, LOOKS: LOOKS,

@@ -69,14 +69,46 @@ const BE = {
   /* ---- profile ---- */
   async pullProfile() {
     const snap = await this.db.collection('users').doc(this.user.uid).get();
-    if (snap.exists) { const d = snap.data(); if (d.access) { const a = ACCESS.get(); Object.keys(d.access).forEach((k) => { if (!a[k] || d.access[k] > a[k]) a[k] = d.access[k]; }); store.set('nabu-access', a); } delete d.access; saveProfileLocal(d); }
-    else await this.pushProfile();
+    if (!snap.exists) { await this.pushProfile(); return; }
+    const d = snap.data();
+    /* The withdrawal is read before the merge, and applied once. The merge
+       keeps whichever date is later, so emptying the cloud copy on its own
+       achieves nothing: the phone's copy simply wins and is pushed back up. A
+       withdrawal is not a date but an instruction, stamped with the moment it
+       was given, and a device applies it once and remembers that it has. */
+    if (d.revoked && d.revoked.at && Number(d.revoked.at) > Number(store.get('nabu-revoked-at', 0))) {
+      const had = Object.keys(ACCESS.get()).length;
+      store.set('nabu-access', {});
+      store.set('nabu-revoked-at', Number(d.revoked.at));
+      d.access = {};
+      /* Said out loud, because access that disappears without a word reads as
+         a broken app rather than a decision somebody made. */
+      if (had && typeof alertSay === 'function') {
+        alertSay({ id: 'revoked-' + d.revoked.at, k: 'app', t: T().accessGoneTitle,
+          b: d.revoked.why || T().accessGoneBody, href: '#/me' }, true);
+      }
+    }
+    if (d.access) { const a = ACCESS.get(); Object.keys(d.access).forEach((k) => { if (!a[k] || d.access[k] > a[k]) a[k] = d.access[k]; }); store.set('nabu-access', a); }
+    delete d.access; delete d.revoked; saveProfileLocal(d);
   },
   async pushProfile() {
     if (!this.user) return;
     const p = { name: PROFILE.name || this.user.displayName || '', birthday: PROFILE.birthday || '', interests: PROFILE.interests || [],
       tourDone: !!PROFILE.tourDone, email: this.user.email || '', access: ACCESS.get(), updatedAt: firebase.firestore.FieldValue.serverTimestamp() };
     await this.db.collection('users').doc(this.user.uid).set(p, { merge: true });
+  },
+
+  /* What somebody holds, so it can be looked at before anything is taken. */
+  async accessOf(uid) {
+    const d = await this.db.collection('users').doc(uid).get();
+    return d.exists ? (d.data().access || {}) : {};
+  },
+  /* Taking it back. The time on it is what lets it beat the merge on the
+     person's own phone; the reason is what they will read. */
+  revokeAccess(uid, why) {
+    return this.db.collection('users').doc(uid).set({
+      access: {}, revoked: { at: Date.now(), why: String(why || '').slice(0, 300) }
+    }, { merge: true });
   },
 
   /* ---- messages: one thread per user ---- */

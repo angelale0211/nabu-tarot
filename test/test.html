@@ -862,7 +862,7 @@ async function go(hash, sel) { W().location.hash = hash; await sleep(30); return
                  one will call broken code working. */
               if (!id) throw new Error('Document path cannot be empty.');
               return docRef(base + '/' + id);
-            }, where: (fl, op, v) => colRef(base, [fl, op, v]),
+            }, where: (fl, op, v) => colRef(base, [fl, op, v]), orderBy: () => q,
             limit: () => q, get: async () => ({ docs: pick() }), onSnapshot: watch(() => ({ docs: pick() })),
             /* Firestore makes the id itself when nobody supplies one, which is
                how every booking and order in this app is written. */
@@ -1528,6 +1528,69 @@ async function go(hash, sel) { W().location.hash = hash; await sleep(30); return
         ok(badge && Number(badge.textContent) >= 1,
           'and the profile tab shows how many are waiting');
         N.ALERTS.clear(); }
+
+      { /* Unlocking used to happen in silence: the code worked, something
+             somewhere changed, and nobody was told what they now had or for
+             how long. */
+        N.ALERTS.clear();
+        w.localStorage.removeItem('nabu-admin');
+        N.ACCESS.grant('tarot', '2027-03-04');
+        const said = N.ALERTS.all().filter((x) => x.id.indexOf('unlocked-') === 0)[0];
+        ok(said && /Tarot/i.test(said.t) && /2027|03/.test(said.b),
+          'unlocking says what was opened and how long it lasts');
+
+        /* Access lives on the device and is merged with the cloud copy at every
+           sign-in, keeping whichever date is later - so emptying the cloud copy
+           on its own is refilled from the phone within the second. A withdrawal
+           has to outrank that. */
+        const profileWas = w.localStorage.getItem('nabu-profile');
+        w.localStorage.removeItem('nabu-revoked-at');
+        w.localStorage.setItem('nabu-access', JSON.stringify({ tarot: '2099-01-01' }));
+        const at = Date.now();
+        db.put('users/uidA', { name: 'A', access: {}, revoked: { at: at, why: 'Mã dùng chung với người khác.' } });
+        N.ALERTS.clear();
+        await N.BE.pullProfile();
+        ok(!N.ACCESS.has('tarot') && Object.keys(N.ACCESS.get()).length === 0,
+          'a withdrawal beats the merge, rather than being refilled from the phone');
+        const gone = N.ALERTS.all().filter((x) => x.id.indexOf('revoked-') === 0)[0];
+        ok(gone && /chung/.test(gone.b),
+          'and the person is told, with the reason Nabu gave rather than silence');
+
+        /* Withdrawing is not a life sentence: the next code has to work, and
+           the same withdrawal must not empty the account a second time. */
+        N.ACCESS.grant('tarot', '2099-01-01');
+        db.put('users/uidA', { name: 'A', access: { tarot: '2099-01-01' }, revoked: { at: at, why: 'x' } });
+        await N.BE.pullProfile();
+        ok(N.ACCESS.has('tarot'),
+          'and a code issued afterwards opens the course again, because the withdrawal is applied once');
+
+        w.localStorage.removeItem('nabu-access');
+        w.localStorage.removeItem('nabu-revoked-at');
+        if (profileWas == null) w.localStorage.removeItem('nabu-profile'); else w.localStorage.setItem('nabu-profile', profileWas);
+        N.ALERTS.clear(); }
+
+      { /* Nabu finds the person in the inbox - that is where it becomes clear
+             who is passing a code around - so that is where the withdrawal is. */
+        const userWas = N.BE.user;
+        N.BE.user = { uid: 'admin1', email: 'angela_le_@outlook.com' };
+        db.put('threads/uidB', { lastFrom: 'user', lastText: 'cho mình xin mã', lastAt: 9, adminUnread: 1 });
+        db.put('users/uidB', { name: 'Nam', access: { tarot: '2099-01-01' } });
+        await go('#/admin?tab=inbox', '[data-th]'); await sleep(200);
+        d.querySelector('[data-th="uidB"]').click(); await sleep(300);
+        ok(d.querySelector('#accbox') && /Tarot/i.test(d.querySelector('#acclist').textContent),
+          'the inbox shows what this person has unlocked, beside the conversation about it');
+        ok(d.querySelector('#acsure') && d.querySelector('#acsure').hidden,
+          'and does not withdraw anything on a single tap');
+        d.querySelector('#acwhy').value = 'Chia m\u00e3 cho ng\u01b0\u1eddi kh\u00e1c.';
+        d.querySelector('#acgo').click();
+        ok(!d.querySelector('#acsure').hidden,
+          'it asks on the page itself, which a phone webview cannot skip the way it skips confirm()');
+        d.querySelector('#acyes').click(); await sleep(300);
+        const u = db.docs['users/uidB'];
+        ok(u.revoked && u.revoked.at > 0 && /chung|kh\u00e1c/.test(u.revoked.why)
+          && Object.keys(u.access).length === 0,
+          'and the withdrawal is written with a time on it, which is what the other phone obeys');
+        N.BE.user = userWas; }
 
       /* ---- the diary, read by two ---- */
       { const B = 'bonds/uidA__uidB';

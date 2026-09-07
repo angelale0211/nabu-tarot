@@ -110,6 +110,14 @@ function priceHTML(n, kind, id) {
    it is checked against the list of hashes Nabu publishes (see codes.js), so
    a code that was never issued cannot be made up, and one that was issued can
    be taken back. */
+/* The name of a thing somebody has unlocked. Codes are issued against the
+   list of courses and packages, so the name is almost always there; a key from
+   somewhere else is shown as it stands rather than hidden. */
+function accessName(id) {
+  const list = typeof COURSES !== 'undefined' ? COURSES.filter((c) => c.id === id) : [];
+  return list.length ? L(list[0].name) : String(id);
+}
+
 const ACCESS = {
   get() { return store.get('nabu-access', {}); },
   // Nabu (any admin email) always has every course open.
@@ -118,7 +126,19 @@ const ACCESS = {
   // BE is a top-level const (not on window), so test for it with typeof.
   isAdmin() { const be = typeof BE !== 'undefined' ? BE : null; return !!((be && be.user && be.isAdmin()) || (!(be && be.ready) && store.get('nabu-admin', ''))); },
   has(course) { if (this.isAdmin()) return true; const a = this.get()[course]; return !!a && a >= isoDate(new Date()); },
-  grant(course, until) { const a = this.get(); (Array.isArray(course) ? course : [course]).forEach((c) => { a[c] = until; }); store.set('nabu-access', a); if (typeof BE !== 'undefined' && BE.user) BE.pushProfile(); }
+  grant(course, until) {
+    const a = this.get(), list = Array.isArray(course) ? course : [course];
+    list.forEach((c) => { a[c] = until; });
+    store.set('nabu-access', a);
+    if (typeof BE !== 'undefined' && BE.user) BE.pushProfile();
+    /* Say what was opened and how long it lasts. A code used simply to work,
+       and nobody was ever told what they now had or until when. */
+    if (typeof ALERTS !== 'undefined' && until) {
+      ALERTS.add({ id: 'unlocked-' + list.join('+') + '-' + until, k: 'app',
+        t: T().accessOnTitle(list.map(accessName).join(', ')),
+        b: T().accessOnBody(fmtDate(until)), href: '#/me' });
+    }
+  }
 };
 
 /* ---- one free turn a week for the coin and the message tree ----
