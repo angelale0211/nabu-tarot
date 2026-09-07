@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
 <title>Nabu Tarot</title>
 <meta name="description" content="Nabu Tarot: dự đoán mới, rút một lá bài xem năng lượng hiện tại, học tarot, Lenormand, chiêm tinh, và đặt lịch xem bài.">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'none'; object-src 'none'; form-action 'self'; script-src 'self' 'sha256-lsjt6HbKxHv4iyVvpv1md/yYfCBLOh5Vg9A98Y2702A=' https://www.gstatic.com https://apis.google.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; font-src 'self' data:; media-src 'self' data: blob:; worker-src 'self'; connect-src 'self' https://*.googleapis.com https://*.google.com https://*.firebaseio.com https://*.cloudfunctions.net https://*.workers.dev https://generativelanguage.googleapis.com; frame-src https://*.firebaseapp.com https://accounts.google.com https://*.facebook.com">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'none'; object-src 'none'; form-action 'self'; script-src 'self' 'sha256-3d41APe4hjeECg5yNE3HKESgpnRUSJyDFol0FfFNMOI=' https://www.gstatic.com https://apis.google.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; font-src 'self' data:; media-src 'self' data: blob:; worker-src 'self'; connect-src 'self' https://*.googleapis.com https://*.google.com https://*.firebaseio.com https://*.cloudfunctions.net https://*.workers.dev https://generativelanguage.googleapis.com; frame-src https://*.firebaseapp.com https://accounts.google.com https://*.facebook.com">
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <meta name="theme-color" content="#EFE9FA">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -1390,7 +1390,12 @@ h1 .pileico{width:34px;height:27px;vertical-align:-3px;margin-right:2px}
 .lovetag{display:inline-flex;align-items:center;gap:7px;flex-wrap:wrap;background:#FCE4E9;border:1px solid #F3B7C3;
   border-radius:999px;padding:5px 13px;font-size:13px;font-weight:600;text-decoration:none;margin:0 0 14px;
   --tag-days:#8A0C20; --tag-who:#7A2E8C; --tag-what:#8A1F33}
+.loveknot{width:26px;height:22px;flex:none;display:block}
+.loveknot.inline{width:26px;height:22px;display:inline-block;vertical-align:-4px}
 .lovetag .loveknot{width:22px;height:19px;flex:none}
+.actbtn .ic .loveknot{width:34px;height:29px;margin:0 auto}
+.aq .ic .loveknot{width:26px;height:22px;margin:0 auto}
+.fg .ic .loveknot{width:26px;height:22px;margin:0 auto}
 .lovetag .d{color:var(--tag-days);font-weight:800;letter-spacing:.01em}
 .lovetag .w{color:var(--tag-who);font-weight:700}
 .lovetag b{color:var(--tag-what);font-weight:500}
@@ -13883,7 +13888,7 @@ function renderLove(wantHandle) {
   const cleanup = () => { stop.forEach((f) => { try { f(); } catch (e) { /* already gone */ } }); stop = []; };
   NAV.cleanup = cleanup;
 
-  const head = () => '<div class="eyebrow">' + esc(CONFIG.brand) + '</div><h1 style="margin-bottom:6px">' + loveMarkSVG(LOVE.local().stage || 'tied', 'inline') + ' ' + esc(S.loveTitle) + '</h1>'
+  const head = () => '<div class="eyebrow">' + esc(CONFIG.brand) + '</div><h1 style="margin-bottom:6px">' + loveKnotSVG('inline') + ' ' + esc(S.loveTitle) + '</h1>'
     + '<p class="muted">' + esc(S.loveIntro) + '</p>';
   const foot = () => '<p class="hint" style="margin-top:16px">' + esc(S.loveNote) + '</p>';
 
@@ -17282,7 +17287,7 @@ function freeGridHTML() {
     ['#/play/tree', '\uD83C\uDF38', S.treeTitle, vi ? '1 l\u01b0\u1ee3t m\u1ed7i tu\u1ea7n' : 'once a week'],
     ['#/play/coin', '\uD83E\uDE99', S.coinTitle, vi ? '1 l\u01b0\u1ee3t m\u1ed7i tu\u1ea7n' : 'once a week'],
     ['#/play/diary', '\uD83D\uDCD4', S.diaryTitle, S.diarySub],
-    ['#/love', loveMarkSVG('tied'), S.loveTitle, S.loveSub],
+    ['#/love', loveKnotSVG(), S.loveTitle, S.loveSub],
     ['#/play/piles', PILE_ICON, S.actTypes.pile, vi ? 'khi Nabu \u0111\u0103ng' : 'when Nabu posts'],
     ['#/play/polls', '\uD83D\uDCCA', S.actTypes.poll, vi ? 'khi Nabu \u0111\u0103ng' : 'when Nabu posts'],
     ['#/play/wishes', '\uD83C\uDF20', S.actTypes.wish, vi ? 'khi Nabu \u0111\u0103ng' : 'when Nabu posts']
@@ -18228,7 +18233,7 @@ async function renderPlay(args) {
   const diaryN = Object.keys(store.get('nabu-diary', {}) || {}).length;
   m.innerHTML = '<div class="eyebrow">' + esc(CONFIG.brand) + '</div><h1 style="margin-bottom:6px">' + esc(S.actTitle) + '</h1><p class="muted">' + esc(S.actIntro) + '</p><div id="acts" class="actlist">'
     + petRowHTML(S)
-    + '<a class="actbtn act-love live" href="#/love"><span class="ic">' + loveMarkSVG(LOVE.local().stage || 'tied') + '</span><span class="body"><b>' + esc(S.loveTitle) + '</b><span class="meta">' + esc(S.loveSub) + '</span></span><span class="go">›</span></a>'
+    + '<a class="actbtn act-love live" href="#/love"><span class="ic">' + loveKnotSVG() + '</span><span class="body"><b>' + esc(S.loveTitle) + '</b><span class="meta">' + esc(S.loveSub) + '</span></span><span class="go">›</span></a>'
     + '<a class="actbtn act-tree live" href="#/play/tree"><span class="ic">🌸</span><span class="body"><b>' + esc(S.treeTitle) + '</b><span class="meta">' + esc(S.treeSub) + '</span></span><span class="go">›</span></a>'
     + '<a class="actbtn act-coin live" href="#/play/coin"><span class="ic">🪙</span><span class="body"><b>' + esc(S.coinTitle) + '</b><span class="meta">' + esc(S.coinSub) + '</span></span><span class="go">›</span></a>'
     + '<a class="actbtn act-diary live" href="#/play/diary"><span class="ic">📔</span><span class="body"><b>' + esc(S.diaryTitle) + '</b><span class="meta">' + esc(S.diarySub) + (diaryN ? ' · ' + esc(S.diaryCount(diaryN)) : '') + '</span></span><span class="chev">›</span></a>'
@@ -18707,7 +18712,7 @@ async function homeActHTML(root) {
       const n = list.filter((a2) => a2.type === g[0]).length;
       return '<a class="aq" href="#/play/' + esc(g[2]) + '"><span class="ic">' + g[1] + '</span><b>' + esc(S.actTypes[g[0]]) + '</b>' + (n ? '<span class="cnt">' + n + '</span>' : '') + '</a>';
     }).join('')
-    + '<a class="aq" href="#/love"><span class="ic">' + loveMarkSVG(LOVE.local().stage || 'tied') + '</span><b>' + esc(S.loveTitle) + '</b>'
+    + '<a class="aq" href="#/love"><span class="ic">' + loveKnotSVG() + '</span><b>' + esc(S.loveTitle) + '</b>'
     + (LOVE.local().bond ? '<span class="cnt">' + LOVE.days({ since: LOVE.local().since }) + '</span>' : '') + '</a>'
     + '</div>'
     + '<p style="margin-top:10px"><a class="btn block" href="#/play">' + esc(S.actAll) + '</a></p></div>';
@@ -19499,7 +19504,7 @@ function adminSale(p) {
 ROUTES.admin = { nav: '', render: renderAdmin };
 
 /* ============================ boot ============================ */
-window.APP_VERSION = 'v133';
+window.APP_VERSION = 'v134';
 window.NABU = { CONFIG: CONFIG, SALE: SALE, salePrice: salePrice, loadActs: loadActs, BACK: BACK, LESSONS: LESSONS, localAnswer: localAnswer, compatVerdict: compatVerdict, numerologyOf: numerologyOf, ZDEEP: ZDEEP, lunarToday: lunarToday, solarToLunar: solarToLunar, DECK: DECK, INSIGHT: INSIGHT, KW: KW, ASK: ASK, TOPICS: TOPICS, GUIDES: GUIDES, SERVICES: SERVICES, COURSES: COURSES, ACCESS: ACCESS, plusOn: () => plusOn(), proOn: () => proOn(), luckUnlimited: () => luckUnlimited(), ZODIAC: ZODIAC, pick: pick, book: book,
   insightHTML: insightHTML, insightOf: insightOf, sunSignIndex: sunSignIndex, lifePath: lifePath, PROFILE: () => PROFILE, BE: BE, ACTS: ACTS,
   ANGELS: ANGELS, angelRead: angelRead, CODEBOOK: CODEBOOK, verifyCode: verifyCode, petHomeSVG: petHomeSVG, PET_HOMES: PET_HOMES, PET_WEARS: PET_WEARS, codeDigest: codeDigest, randomCode: randomCode, BANK: BANK, PETS: PETS, petSVG: petSVG, PET_COATS: PET_COATS, PET_KINDS: PET_KINDS, luckCut: luckCut, petLevel: petLevel, petStep: petStep, VOUCHERS: VOUCHERS, levelCoins: levelCoins, LOOKS: LOOKS,

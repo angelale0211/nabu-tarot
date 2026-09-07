@@ -176,7 +176,7 @@ function freeGridHTML() {
     ['#/play/tree', '\uD83C\uDF38', S.treeTitle, vi ? '1 l\u01b0\u1ee3t m\u1ed7i tu\u1ea7n' : 'once a week'],
     ['#/play/coin', '\uD83E\uDE99', S.coinTitle, vi ? '1 l\u01b0\u1ee3t m\u1ed7i tu\u1ea7n' : 'once a week'],
     ['#/play/diary', '\uD83D\uDCD4', S.diaryTitle, S.diarySub],
-    ['#/love', loveMarkSVG('tied'), S.loveTitle, S.loveSub],
+    ['#/love', loveKnotSVG(), S.loveTitle, S.loveSub],
     ['#/play/piles', PILE_ICON, S.actTypes.pile, vi ? 'khi Nabu \u0111\u0103ng' : 'when Nabu posts'],
     ['#/play/polls', '\uD83D\uDCCA', S.actTypes.poll, vi ? 'khi Nabu \u0111\u0103ng' : 'when Nabu posts'],
     ['#/play/wishes', '\uD83C\uDF20', S.actTypes.wish, vi ? 'khi Nabu \u0111\u0103ng' : 'when Nabu posts']

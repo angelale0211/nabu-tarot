@@ -604,7 +604,7 @@ function renderLove(wantHandle) {
   const cleanup = () => { stop.forEach((f) => { try { f(); } catch (e) { /* already gone */ } }); stop = []; };
   NAV.cleanup = cleanup;
 
-  const head = () => '<div class="eyebrow">' + esc(CONFIG.brand) + '</div><h1 style="margin-bottom:6px">' + loveMarkSVG(LOVE.local().stage || 'tied', 'inline') + ' ' + esc(S.loveTitle) + '</h1>'
+  const head = () => '<div class="eyebrow">' + esc(CONFIG.brand) + '</div><h1 style="margin-bottom:6px">' + loveKnotSVG('inline') + ' ' + esc(S.loveTitle) + '</h1>'
     + '<p class="muted">' + esc(S.loveIntro) + '</p>';
   const foot = () => '<p class="hint" style="margin-top:16px">' + esc(S.loveNote) + '</p>';
 
