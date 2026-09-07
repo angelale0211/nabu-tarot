@@ -40,6 +40,7 @@ const WED_CALL_MS = 2 * 60 * 1000;    /* and this long before, the room is calle
 const WED_GRACE_MS = 15 * 60 * 1000;  /* how late a couple may be before the room gives up */
 const WED_SHUT_MS = 3 * 60 * 1000;    /* and how long it stays open to say so */
 const WED_MOVE_MS = 60 * 60 * 1000;   /* how close to the hour it may still be moved */
+const WED_BYE_MS = 2 * 60 * 1000;     /* and this long before it closes, it says so */
 
 /* Three, not eight. A wedding gift is chosen in a second, in front of a room -
    the long shelf belongs to the thread, where one person gives another
@@ -101,6 +102,17 @@ const WED = {
   },
   /* How long the room has left before it closes itself. */
   shutsIn(w) { return this.startMs(w) + WED_GRACE_MS + WED_SHUT_MS - Date.now(); },
+  /* When this room shuts, whichever way it is ending: a ceremony that is over
+     keeps the room warm for five minutes, an hour nobody came to closes three
+     minutes after the grace runs out, and a room with a ceremony still ahead
+     of it is not closing at all. Nought means not closing. */
+  closingAt(w) {
+    if (!w || w.state === 'called-off') return 0;
+    if (w.doneAt) return Number(w.doneAt) + WED_END_MS;
+    if (this.noShow(w)) return this.startMs(w) + WED_GRACE_MS + WED_SHUT_MS;
+    return 0;
+  },
+  closingIn(w) { const at = this.closingAt(w); return at ? at - Date.now() : 0; },
   /* Everyone whose seat was warm in the last minute or so. Used for the
      bouquet, which should only be able to land on somebody actually there. */
   present(guests) {
@@ -612,6 +624,8 @@ function renderWedding(args) {
       return;
     }
     if (door === 'over') {
+      /* Walked out, not left holding a screen for a room that has gone. */
+      if (wasInRoom) { wasInRoom = false; toast(S.wedByeGone); location.hash = '#/home'; return; }
       const won = w.bouquet && w.bouquet.name;
       m.innerHTML = head(S.wedGuestIntro)
         + '<div class="card wedcard done">' + cupidSVG('joy')
@@ -746,6 +760,10 @@ function renderWedding(args) {
   /* Who was standing here a moment ago, so an arrival is an arrival and not
      the same fact said again every twenty seconds. */
   const wasHere = { you: null, pair: null };
+  /* Whether this person was actually standing in the room when it closed.
+     Somebody opening a months-old link should read that the wedding is over;
+     somebody who was in it a second ago should be walked out of it. */
+  let wasInRoom = false;
   const drawRoom = (w) => {
     const side = WED.side(w), mine = !!side, step = wedStep(w.step | 0);
     const names = esc(w.aName || S.loveSomeone) + ' \u2764 ' + esc(w.bName || S.loveSomeone);
@@ -856,7 +874,20 @@ function renderWedding(args) {
         : '<p class="hint">' + esc(S.wedNoWishes) + '</p>')
       + '</div>';
 
+    /* A room that empties with no warning reads as a crash, so it says so
+       first: who is being thanked, that it is over, and how long is left. */
+    wasInRoom = true;
+    const shutAt = WED.closingAt(w);
+    const byeSoon = shutAt > 0 && shutAt - Date.now() <= WED_BYE_MS;
+    const bye = byeSoon
+      ? '<div class="card byecard"><p class="lead">' + esc(S.wedByeThanks(w.aName || S.loveSomeone, w.bName || S.loveSomeone)) + '</p>'
+        + '<p class="hint">' + esc(w.doneAt ? S.wedByeDone : S.wedByeNoShow) + '</p>'
+        + '<p class="wedcount" id="wedbye">' + esc(wedCountdown(shutAt)) + '</p>'
+        + '<p class="hint">' + esc(S.wedByeShut) + '</p></div>'
+      : '';
+
     m.innerHTML = '<div class="wedroom">'
+      + bye
       + (w.doneAt && w.state === 'married' ? wedFallHTML(18) : '')
       + '<div class="card wedcard live">'
       + '<button type="button" class="mutebtn" id="wedmute" aria-label="' + esc(S.wedMute) + '">' + (WEDMUSIC.on ? '\uD83D\uDD0A' : '\uD83D\uDD07') + '</button>'
@@ -888,17 +919,27 @@ function renderWedding(args) {
       + (mine ? '<p class="hint" style="text-align:center">' + esc(S.wedLeaveOk) + '</p>' : '')
       + '</div>';
 
-    if (gone) {
+    /* One clock for every way a room ends. It used to run only after a
+       no-show, so a ceremony that finished kept its room open with nothing
+       counting anything down, and anybody standing in a room whose hour had
+       long passed simply stayed there. */
+    if (shutAt > 0) {
       if (tick) { clearInterval(tick); tick = null; }
       tick = setInterval(() => {
-        const el = $('#wedshut');
-        const left = Math.max(0, WED.shutsIn(w));
+        const left = Math.max(0, shutAt - Date.now());
+        const el = $('#wedbye') || $('#wedshut');
         if (el) el.textContent = wedCountdown(Date.now() + left);
+        /* The announcement appears on its own, without waiting for anything
+           else to happen in the room. */
+        if (!byeSoon && left <= WED_BYE_MS) { paint(); return; }
         if (left <= 0) {
-          /* Whoever is the couple closes it for good; a guest simply sees the
-             door shut on the next repaint. */
+          /* Whoever is the couple writes it shut for good. Everybody else is
+             simply shown out - a screen for a room that no longer exists is
+             worse than the home page. */
           if (mine && w.state !== 'ended') BE.db.collection('weddings').doc(w.id).update({ state: 'ended' }).catch(() => {});
-          paint();
+          if (tick) { clearInterval(tick); tick = null; }
+          toast(S.wedByeGone);
+          location.hash = '#/home';
         }
       }, 1000);
     }
@@ -1265,6 +1306,14 @@ function renderWedding(args) {
         const seat = WED.mySeat(guests);
         if (seat && seat.rsvp === 'yes' && !beat) beat = setInterval(() => WED.stillHere(w.id), 20000);
         void seated;
+      }
+      /* An hour nobody came to is written off, once, by the couple. Only ever
+         an hour nobody came to: a room with a ceremony in it closes on the
+         clock and keeps saying 'married', which is the record of the day and
+         must not be overwritten with 'ended'. */
+      if (w && WED.mine(w) && !w.doneAt && WED.noShow(w) && w.state !== 'ended'
+          && w.state !== 'called-off' && Date.now() > WED.closingAt(w)) {
+        BE.db.collection('weddings').doc(w.id).update({ state: 'ended' }).catch(() => {});
       }
       /* The couple keep one too, which is the whole of how each of them can
          tell the other has arrived. Only once the door is open: a seat kept
