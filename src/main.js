@@ -4,8 +4,12 @@ window.NABU = { CONFIG: CONFIG, SALE: SALE, salePrice: salePrice, loadActs: load
   insightHTML: insightHTML, insightOf: insightOf, sunSignIndex: sunSignIndex, lifePath: lifePath, PROFILE: () => PROFILE, BE: BE, ACTS: ACTS,
   ANGELS: ANGELS, angelRead: angelRead, CODEBOOK: CODEBOOK, verifyCode: verifyCode, petHomeSVG: petHomeSVG, PET_HOMES: PET_HOMES, PET_WEARS: PET_WEARS, codeDigest: codeDigest, randomCode: randomCode, BANK: BANK, PETS: PETS, petSVG: petSVG, PET_COATS: PET_COATS, PET_KINDS: PET_KINDS, luckCut: luckCut, petLevel: petLevel, petStep: petStep, VOUCHERS: VOUCHERS, levelCoins: levelCoins, LOOKS: LOOKS,
   LOVE: LOVE, LOVEDB: LOVEDB, HANDLE_RE: HANDLE_RE, loveBadgeHTML: loveBadgeHTML,
-  loveMarkSVG: loveMarkSVG, QUIZ: QUIZ, QSCORE: QSCORE, QUIZ_PASS: QUIZ_PASS, QUIZ_LEN: QUIZ_LEN, pileArtSVG: pileArtSVG, PILE_ARTS: PILE_ARTS, threadSVG: threadSVG, petParentsHTML: petParentsHTML, GIFTS: GIFTS };
+  loveMarkSVG: loveMarkSVG, QUIZ: QUIZ, QSCORE: QSCORE, QUIZ_PASS: QUIZ_PASS, QUIZ_LEN: QUIZ_LEN, pileArtSVG: pileArtSVG, PILE_ARTS: PILE_ARTS, threadSVG: threadSVG, petParentsHTML: petParentsHTML, GIFTS: GIFTS, ALERTS: ALERTS, alertsStart: alertsStart, alertWas: alertWas };
 try { petRemindCheck(); } catch (e) { /* nothing kept yet */ }
+/* The bell catches up on what happened while the app was shut, and keeps
+   listening while it is open. Signing in or out changes what there is to
+   listen to, so it is started again then. */
+try { alertsStart(); } catch (e) { /* nothing to catch up on */ }
 BE.initP = BE.init().catch(() => { /* backend unreachable: the app runs device-only */ });
 // The Gemini key is a dashboard setting kept in the app cloud (content/ai), never in the source.
 loadContent('codes', 'codes.json', 'nabu-codes').then((r) => { CODEBOOK.set(r && r.data); }).catch(() => {});
@@ -17,5 +21,8 @@ loadContent('ai', 'ai.json', '').then((r) => { if (r && r.data && typeof r.data.
 document.addEventListener('gesturestart', (e) => e.preventDefault(), { passive: false });
 let lastTouch = 0; document.addEventListener('touchend', (e) => { const now = Date.now(); if (now - lastTouch < 300 && !(e.target.closest && e.target.closest('input,textarea'))) e.preventDefault(); lastTouch = now; }, { passive: false });
 // Signing in can unlock things (admin sees every course), so redraw the open screen.
-BE.onAuth(() => { if (['learn', 'me', 'home'].indexOf(parseHash().route) > -1) route(); });
+BE.onAuth(() => {
+  try { alertsStart(); } catch (e) { /* not reachable */ }
+  if (['learn', 'me', 'home'].indexOf(parseHash().route) > -1) route();
+});
 boot();

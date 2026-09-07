@@ -259,6 +259,7 @@ function renderChrome(route) {
     // A sale on readings shows up on the tab where readings are booked.
     + (k === 'book' && SALE.covers('reading') ? '<span class="saletag" aria-hidden="true">🏷️</span>' : '')
     + (k === 'learn' && SALE.covers('unlock') ? '<span class="saletag" aria-hidden="true">🏷️</span>' : '') + '</a>').join('');
+  if (typeof alertsBadge === 'function') alertsBadge();
   if (typeof adminTabBadges === 'function') adminTabBadges();
 }
 let toastTimer = null;
@@ -433,6 +434,7 @@ function screenLabel(h) {
   if (r === 'book') return S.nav.book;
   if (r === 'prices') return S.priceTitle;
   if (r === 'news') return S.newsTitle;
+  if (r === 'alerts') return S.alertTitle;
   if (r === 'contact') return S.contactTitle;
   if (r === 'privacy') return S.privacyTitle;
   if (r === 'install') return S.installTitle;
@@ -461,6 +463,17 @@ function renderBackBar(r) {
   const foot = $('#homefoot');
   if (foot) { foot.hidden = !prev; foot.innerHTML = link + (prev && prev !== '#/home' ? '<a href="#/home" class="backlink">🏠 ' + esc(T().nav.home) + '</a>' : ''); }
 }
+/* A screen that writes its own way back keeps it; the router simply stops
+   offering the same destination underneath it. Three links in a row - back to
+   Activities, back to Activities, home - is what this removes. */
+function dedupeBackLinks() {
+  const foot = $('#homefoot');
+  if (!foot || foot.hidden) return;
+  const here = {};
+  $$('#main a.backlink').forEach((a) => { here[a.getAttribute('href') || ''] = true; });
+  $$('#homefoot a.backlink').forEach((a) => { if (here[a.getAttribute('href') || '']) a.remove(); });
+  if (!$('#homefoot a')) foot.hidden = true;
+}
 function parseHash() {
   const h = location.hash.replace(/^#\/?/, '');
   const q = h.split('?'), path = q[0].split('/'), params = {};
@@ -478,6 +491,7 @@ function route() {
   const y = NAV.restore;
   if (y == null) window.scrollTo(0, 0);
   Promise.resolve(def.render(r.args, r.params)).then(() => {
+    dedupeBackLinks();
     if (!y) return;  // nothing to restore, and never fight a visitor who has started scrolling
     window.scrollTo(0, y);
     requestAnimationFrame(() => window.scrollTo(0, y));
@@ -492,6 +506,7 @@ function boot() {
     e.preventDefault(); NAV.popping = true; location.hash = a.getAttribute('href');
   });
   $('#lang').addEventListener('click', () => { lang = lang === 'vi' ? 'en' : 'vi'; store.set('nabu-lang', lang); route(); });
+  { const bell = $('#bell'); if (bell) bell.addEventListener('click', () => { location.hash = '#/alerts'; }); }
   { const bt = $('#totop');
     const seen = () => { bt.hidden = (window.scrollY || document.documentElement.scrollTop || 0) < 700; };
     window.addEventListener('scroll', seen, { passive: true }); seen();

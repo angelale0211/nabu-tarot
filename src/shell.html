@@ -130,6 +130,11 @@ input:focus,textarea:focus,select:focus{outline:2px solid var(--lav);outline-off
 textarea{min-height:110px;resize:vertical}
 label.f{display:block;font-size:13px;color:var(--fg-soft);margin:14px 0 6px;font-weight:600}
 .hint{font-size:13.5px;line-height:1.45;color:var(--fg-faint);margin:6px 0 0}
+/* A hint has room above it and none below, so wherever one explained the
+   button underneath it the two touched and read as one lump. Whatever
+   substantial thing follows a note now stands clear of it. */
+.hint + *{margin-top:12px}
+.hint + .hint,.hint + .err{margin-top:6px}   /* stacked notes stay a group */
 h1,h2,h3{font-family:var(--display);font-weight:500;margin:0;line-height:1.2}
 :root[lang="vi"]{--display:"Lora",Georgia,"Times New Roman",serif}
 :root[lang="vi"] h1{line-height:1.3}
@@ -1262,6 +1267,22 @@ h1 .pileico{width:34px;height:27px;vertical-align:-3px;margin-right:2px}
 .giftstep{margin:12px 0 6px;font-size:12.5px;font-weight:600;color:var(--fg-soft)}
 .gp.on{border-color:var(--accent);box-shadow:0 0 0 2px var(--accent) inset}
 .btn.danger{color:var(--err);border-color:var(--err)}
+/* The bell, and the count of what has not been read on it. */
+#bell{position:relative}
+#bell .ndot{position:absolute;top:-3px;right:-3px;min-width:16px;height:16px;padding:0 4px;border-radius:999px;
+  background:var(--err);color:#fff;font-size:10.5px;font-weight:700;line-height:16px;text-align:center;box-shadow:0 0 0 2px var(--bg)}
+.alerthead{margin:16px 0 6px;font-size:13px;letter-spacing:.02em;color:var(--fg-faint);text-transform:uppercase}
+.alerts{display:flex;flex-direction:column;gap:8px}
+.alert{display:flex;gap:10px;align-items:flex-start;padding:11px 12px;border:1px solid var(--rule);border-radius:14px;
+  background:var(--surface);color:var(--fg);text-decoration:none}
+/* Unread ones are marked by a band down the side rather than a different
+   background, so they read the same in every theme. */
+.alert.fresh{border-color:var(--lav);box-shadow:inset 3px 0 0 var(--lav);background:var(--surface-2)}
+.alert .ai{flex:none;font-size:19px;line-height:1.2}
+.alert .at{display:flex;flex-direction:column;gap:2px;min-width:0;flex:1}
+.alert .at b{font-weight:600;line-height:1.35;overflow-wrap:anywhere}
+.alert .ab{font-size:13px;color:var(--fg-soft);line-height:1.4;overflow-wrap:anywhere}
+.alert .aw{font-size:11.5px;color:var(--fg-faint)}
 .rolepick{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:8px 0 4px}
 .rolepick .rp{display:flex;flex-direction:column;align-items:center;gap:3px;background:var(--surface);border:1px solid var(--rule);border-radius:12px;padding:8px 4px;font-size:12.5px;font-weight:600}
 .rolepick .rp i{font-style:normal;font-size:19px;line-height:1;color:var(--link)}
@@ -1512,6 +1533,7 @@ button.unl{display:block;width:100%;text-align:left;font:inherit;color:inherit;c
 <header class="top"><div class="wrap">
   <a class="brand" href="#/home" id="brand"></a>
   <div class="tools">
+    <button class="pill" id="bell" aria-label="notifications">🔔</button>
     <button class="pill" id="theme" aria-label="theme">🌙</button>
     <button class="pill" id="lang"></button>
   </div>

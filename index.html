@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
 <title>Nabu Tarot</title>
 <meta name="description" content="Nabu Tarot: dự đoán mới, rút một lá bài xem năng lượng hiện tại, học tarot, Lenormand, chiêm tinh, và đặt lịch xem bài.">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'none'; object-src 'none'; form-action 'self'; script-src 'self' 'sha256-3NkGoh35hZfgNm/sRTNC9x4G6hqs4ImAGdlrTJIiVTI=' https://www.gstatic.com https://apis.google.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; font-src 'self' data:; media-src 'self' data: blob:; worker-src 'self'; connect-src 'self' https://*.googleapis.com https://*.google.com https://*.firebaseio.com https://*.cloudfunctions.net https://*.workers.dev https://generativelanguage.googleapis.com; frame-src https://*.firebaseapp.com https://accounts.google.com https://*.facebook.com">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'none'; object-src 'none'; form-action 'self'; script-src 'self' 'sha256-HGWY+V6KpRIb9iBN2ziW2C+C/O9SPBimb1RIasHT0y4=' https://www.gstatic.com https://apis.google.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; font-src 'self' data:; media-src 'self' data: blob:; worker-src 'self'; connect-src 'self' https://*.googleapis.com https://*.google.com https://*.firebaseio.com https://*.cloudfunctions.net https://*.workers.dev https://generativelanguage.googleapis.com; frame-src https://*.firebaseapp.com https://accounts.google.com https://*.facebook.com">
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <meta name="theme-color" content="#EFE9FA">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -296,6 +296,11 @@ input:focus,textarea:focus,select:focus{outline:2px solid var(--lav);outline-off
 textarea{min-height:110px;resize:vertical}
 label.f{display:block;font-size:13px;color:var(--fg-soft);margin:14px 0 6px;font-weight:600}
 .hint{font-size:13.5px;line-height:1.45;color:var(--fg-faint);margin:6px 0 0}
+/* A hint has room above it and none below, so wherever one explained the
+   button underneath it the two touched and read as one lump. Whatever
+   substantial thing follows a note now stands clear of it. */
+.hint + *{margin-top:12px}
+.hint + .hint,.hint + .err{margin-top:6px}   /* stacked notes stay a group */
 h1,h2,h3{font-family:var(--display);font-weight:500;margin:0;line-height:1.2}
 :root[lang="vi"]{--display:"Lora",Georgia,"Times New Roman",serif}
 :root[lang="vi"] h1{line-height:1.3}
@@ -1428,6 +1433,22 @@ h1 .pileico{width:34px;height:27px;vertical-align:-3px;margin-right:2px}
 .giftstep{margin:12px 0 6px;font-size:12.5px;font-weight:600;color:var(--fg-soft)}
 .gp.on{border-color:var(--accent);box-shadow:0 0 0 2px var(--accent) inset}
 .btn.danger{color:var(--err);border-color:var(--err)}
+/* The bell, and the count of what has not been read on it. */
+#bell{position:relative}
+#bell .ndot{position:absolute;top:-3px;right:-3px;min-width:16px;height:16px;padding:0 4px;border-radius:999px;
+  background:var(--err);color:#fff;font-size:10.5px;font-weight:700;line-height:16px;text-align:center;box-shadow:0 0 0 2px var(--bg)}
+.alerthead{margin:16px 0 6px;font-size:13px;letter-spacing:.02em;color:var(--fg-faint);text-transform:uppercase}
+.alerts{display:flex;flex-direction:column;gap:8px}
+.alert{display:flex;gap:10px;align-items:flex-start;padding:11px 12px;border:1px solid var(--rule);border-radius:14px;
+  background:var(--surface);color:var(--fg);text-decoration:none}
+/* Unread ones are marked by a band down the side rather than a different
+   background, so they read the same in every theme. */
+.alert.fresh{border-color:var(--lav);box-shadow:inset 3px 0 0 var(--lav);background:var(--surface-2)}
+.alert .ai{flex:none;font-size:19px;line-height:1.2}
+.alert .at{display:flex;flex-direction:column;gap:2px;min-width:0;flex:1}
+.alert .at b{font-weight:600;line-height:1.35;overflow-wrap:anywhere}
+.alert .ab{font-size:13px;color:var(--fg-soft);line-height:1.4;overflow-wrap:anywhere}
+.alert .aw{font-size:11.5px;color:var(--fg-faint)}
 .rolepick{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:8px 0 4px}
 .rolepick .rp{display:flex;flex-direction:column;align-items:center;gap:3px;background:var(--surface);border:1px solid var(--rule);border-radius:12px;padding:8px 4px;font-size:12.5px;font-weight:600}
 .rolepick .rp i{font-style:normal;font-size:19px;line-height:1;color:var(--link)}
@@ -1678,6 +1699,7 @@ button.unl{display:block;width:100%;text-align:left;font:inherit;color:inherit;c
 <header class="top"><div class="wrap">
   <a class="brand" href="#/home" id="brand"></a>
   <div class="tools">
+    <button class="pill" id="bell" aria-label="notifications">🔔</button>
     <button class="pill" id="theme" aria-label="theme">🌙</button>
     <button class="pill" id="lang"></button>
   </div>
@@ -2281,6 +2303,37 @@ const STR = {
     treeTitle: 'Rung cây thông điệp', treeSub: 'một lời nhắn từ vũ trụ', treePets: 'Hiện bạn nhỏ dưới gốc cây', treePetsHint: 'Tắt đi thì chỉ còn cây. Chỉ ảnh hưởng máy của bạn.',
     treeIntro: 'Bạn đứng trước cây, nghĩ về điều đang ở trong lòng mình, rồi rung nhẹ một cái. Cây sẽ thả xuống cho bạn một lời nhắn.', treeShake: 'Rung cây', treeAgain: 'Rung thêm một lần nữa', treeFor: 'Lời nhắn dành cho bạn', coinTitle: 'Tung đồng xu', coinSub: 'cho câu hỏi có hoặc không', coinIntro: 'Khi bạn có một câu hỏi chỉ cần trả lời có hoặc không, bạn hãy nghĩ thật rõ về câu hỏi đó rồi tung đồng xu.', coinQ: 'Câu hỏi của bạn', coinQPh: 'Ví dụ: mình có nên nhắn trước không?', coinFlip: 'Tung đồng xu', coinAgain: 'Tung lại', coinYes: 'CÓ', coinNo: 'KHÔNG', coinNote: 'Đồng xu chỉ cho bạn một trong hai câu trả lời. Điều đáng chú ý là cảm giác của bạn ngay khi nhìn thấy kết quả: nếu bạn thấy hụt hẫng, bạn đã biết mình muốn gì.',
     actNew: 'Hoạt động mới', actType: 'Loại', actTypes: { pile: 'Chọn tụ bài', poll: 'Bình chọn', wish: 'Điều ước' }, actResultsDate: 'Ngày đăng kết quả', actIntroLabel: 'Lời dẫn (thanh công cụ phía trên ô cho phép in đậm, in nghiêng, tô sáng, chèn ảnh, video và emoji)', actPilesHint: 'Từ 2 đến 5 tụ. Bạn có thể đăng trước với nhãn trống; vài ngày sau quay lại điền thông điệp và bật "Đã có kết quả".', actPileN: (n) => 'Tụ ' + n, actPileLabel: 'Nhãn ngắn (không bắt buộc), ví dụ: Trái · Giữa · Phải', actPileMsg: 'Thông điệp cho tụ này (đăng sau cũng được)', actPileMsgEn: 'English message (optional)', actPileAdd: 'Thêm tụ', actPileDel: 'Bớt tụ', actResultsOn: 'Đã có kết quả: cho phép lật bài', actOptions: 'Các lựa chọn, mỗi dòng một lựa chọn', actCloseOn: 'Đóng bình chọn', actExisting: 'Hoạt động đã đăng', actNeedPiles: 'Bạn điền ít nhất một tụ nhé.', actNeedOptions: 'Cần ít nhất hai lựa chọn.',
+    alertTitle: 'Thông báo', alertIntro: 'Những gì đã xảy ra khi bạn không mở app.',
+    alertNone: 'Chưa có thông báo nào. Khi có người muốn buộc sợi tơ hồng, khi bạn nhận quà, khi lịch hẹn được xác nhận hay khi bạn nhỏ đói bụng, bạn sẽ thấy ở đây.',
+    alertReadAll: 'Đánh dấu đã đọc', alertClear: 'Xoá hết',
+    alertToday: 'Hôm nay', alertYesterday: 'Hôm qua', alertEarlier: 'Trước đó',
+    alertOffer: (n) => '💌 ' + n + ' muốn buộc sợi tơ hồng với bạn',
+    alertOfferBody: 'Bạn mở sợi tơ hồng để trả lời nhé.',
+    alertTied: (n) => '🧧 Bạn và ' + n + ' đã buộc sợi tơ hồng!',
+    alertTiedBody: 'Từ hôm nay Nabu bắt đầu đếm ngày cho hai bạn 💗',
+    alertAsked: (n) => '💍 ' + n + ' vừa ngỏ lời với bạn!',
+    alertAskedBody: 'Bạn mở sợi tơ hồng để trả lời nhé. Không cần vội đâu.',
+    alertYes: (n) => '🎉 ' + n + ' đã đồng ý!',
+    alertYesBody: 'Chúc mừng hai bạn! Từ hôm nay hai bạn đã đính ước 💍✨',
+    alertNo: (n) => '🌿 Lần này ' + n + ' chưa sẵn sàng',
+    alertNoBody: 'Không sao đâu bạn nhé. Có những điều chỉ cần thêm một chút thời gian. Sợi tơ hồng của hai bạn vẫn còn đây, và bạn vẫn có thể hỏi lại sau 💗',
+    alertWed: (n) => '💒 Bạn và ' + n + ' đã thành đôi!',
+    alertWedBody: 'Chúc hai bạn trăm năm hạnh phúc 🎊🥂',
+    alertUntied: '💔 Sợi tơ hồng đã được tháo',
+    alertUntiedBody: 'Bạn có thể buộc lại bất cứ lúc nào.',
+    alertGift: (n, g) => '🎁 ' + n + ' tặng bạn ' + g,
+    alertGiftBody: 'Món quà này ở lại trong sợi tơ hồng của hai bạn.',
+    alertAnniv: (n, y) => '🎊 Hôm nay là kỷ niệm ' + y + ' năm của bạn và ' + n + '!',
+    alertAnnivBody: 'Chúc mừng hai bạn 🥳💐 Hôm nay nhớ nói với nhau một câu thật dễ thương nhé!',
+    alertMark: (n, d) => '✨ Hôm nay là ngày thứ ' + d + ' của bạn và ' + n + '!',
+    alertMarkBody: 'Một cột mốc nhỏ đáng nhớ 💗',
+    alertBookOk: '✅ Lịch hẹn của bạn đã được xác nhận', alertBookNo: '📅 Lịch hẹn của bạn đã được huỷ',
+    alertMsg: '💬 Nabu vừa nhắn cho bạn',
+    alertPet: (n) => '🍚 ' + n + ' đang đói', alertPetMany: (k) => '🍚 ' + k + ' bạn nhỏ đang đói',
+    alertPetBody: 'Bạn cho bạn nhỏ ăn một bữa nhé.',
+    alertUp: (v) => '✨ Nabu vừa được cập nhật (' + v + ')', alertUpBody: 'Có vài thứ mới, bạn xem thử nhé.',
+    alertAnnivAsk: 'Nhắc tôi vào ngày kỷ niệm',
+    alertAnnivHint: 'Đúng ngày này mỗi năm, Nabu sẽ nhắc bạn. Lời nhắc chỉ hiện trên máy bạn.',
     newsTitle: 'Bài viết', newsIntro: 'Tất cả bài Nabu đã đăng, gồm dự đoán, chia sẻ và thông báo. Bạn gõ từ khóa để tìm nhanh.', searchPosts: 'Tìm trong bài viết…', noMatch: 'Không có bài nào khớp.', allPostsBtn: (n) => 'Xem tất cả bài viết (' + n + ')', watchOn: (s) => 'Xem video trên ' + s,
     addImage: 'Ảnh', addVideo: 'Video', videoPrompt: 'Dán link video (YouTube, Facebook, TikTok, Instagram):', imgNeedCloud: 'Bạn cần đăng nhập tài khoản admin để tải ảnh lên.', imgTooBig: 'Ảnh quá lớn, thử ảnh nhỏ hơn.', imgAdded: 'Đã thêm ảnh vào bài.', wrapPlaceholder: 'chữ', boxLabel: 'Hộp', formatHint: 'Chọn chữ rồi bấm B / I / U / H để in đậm, in nghiêng, gạch dưới, tô sáng. H2 là tiêu đề nhỏ, Hộp là ô tiêu đề riêng. Ảnh tải thẳng vào bài; video dán link.',
     contactTitle: 'Liên hệ', contactLink: 'Liên hệ', contactIntro: 'Bạn viết vài dòng cho Nabu, rồi chọn kênh mình muốn gửi.', contactWhat: 'Bạn muốn nhắn gì?', contactPlaceholder: 'Ví dụ: mình muốn hỏi về gói xem bài, hoặc góp ý cho app…', contactChoose: 'Gửi qua:', contactApp: 'Nhắn trong app Nabu Tarot', contactIg: 'Sao chép tin nhắn và mở Instagram', contactFb: 'Sao chép tin nhắn và mở Facebook', contactCopyHint: 'Với Instagram và Facebook: tin nhắn của bạn được sao chép sẵn khi bấm nút, sang bên đó bạn chỉ cần dán vào ô chat và gửi.', contactNeed: 'Bạn viết vài dòng trước nhé.', contactSent: 'Đã gửi tới Nabu. Bạn xem trả lời trong mục Hồ sơ.', contactCopied: 'Tin nhắn đã được sao chép. Dán vào ô chat khi ứng dụng mở lên.',
@@ -2754,6 +2807,37 @@ const STR = {
     treeTitle: 'Shake the message tree', treeSub: 'a message from the universe', treePets: 'Show your companions under the tree', treePetsHint: 'Turn it off and the tree stands on its own. This phone only.',
     treeIntro: 'Stand in front of the tree, hold in mind whatever you are carrying, and give it a gentle shake. The tree will let a message fall for you.', treeShake: 'Shake the tree', treeAgain: 'Shake it once more', treeFor: 'A message for you', coinTitle: 'Flip a coin', coinSub: 'for a yes or no question', coinIntro: 'When a question needs nothing more than a yes or a no, hold the question clearly in mind and flip the coin.', coinQ: 'Your question', coinQPh: 'For example: should I message first?', coinFlip: 'Flip the coin', coinAgain: 'Flip again', coinYes: 'YES', coinNo: 'NO', coinNote: 'The coin gives you one of two answers. What matters is how you feel the moment you see it: if the result disappoints you, you already know what you want.',
     actNew: 'New activity', actType: 'Type', actTypes: { pile: 'Pick a pile', poll: 'Poll', wish: 'Wish' }, actResultsDate: 'Results date', actIntroLabel: 'Intro (the bar above the box: bold, italic, highlight, images, video, emoji)', actPilesHint: 'Two to five piles. You can publish with empty labels; come back days later, fill in the messages and switch on "Answered".', actPileN: (n) => 'Pile ' + n, actPileLabel: 'Short label (optional), e.g. Left · Middle · Right', actPileMsg: 'Message for this pile (can be added later)', actPileMsgEn: 'English message (optional)', actPileAdd: 'Add a pile', actPileDel: 'Remove a pile', actResultsOn: 'Answered: let people flip the piles', actOptions: 'Options, one per line', actCloseOn: 'Close the poll', actExisting: 'Published activities', actNeedPiles: 'Fill in at least one pile.', actNeedOptions: 'At least two options are needed.',
+    alertTitle: 'Notifications', alertIntro: 'What happened while you were away.',
+    alertNone: 'Nothing yet. When someone wants to tie a thread with you, when a gift arrives, when a booking is answered or when your companion is hungry, it will be here.',
+    alertReadAll: 'Mark all as read', alertClear: 'Clear',
+    alertToday: 'Today', alertYesterday: 'Yesterday', alertEarlier: 'Earlier',
+    alertOffer: (n) => '💌 ' + n + ' would like to tie a thread with you',
+    alertOfferBody: 'Open the red thread to answer.',
+    alertTied: (n) => '🧧 You and ' + n + ' are tied!',
+    alertTiedBody: 'Nabu starts counting your days from today 💗',
+    alertAsked: (n) => '💍 ' + n + ' has asked you!',
+    alertAskedBody: 'Open the red thread to answer. There is no hurry.',
+    alertYes: (n) => '🎉 ' + n + ' said yes!',
+    alertYesBody: 'Congratulations to you both. You are engaged 💍✨',
+    alertNo: (n) => '🌿 ' + n + ' is not ready this time',
+    alertNoBody: 'That is all right. Some things simply need more time. Your thread is still here, and you can ask again later 💗',
+    alertWed: (n) => '💒 You and ' + n + ' are married!',
+    alertWedBody: 'Every happiness to you both 🎊🥂',
+    alertUntied: '💔 The thread has been untied',
+    alertUntiedBody: 'You can tie one again whenever you like.',
+    alertGift: (n, g) => '🎁 ' + n + ' gave you ' + g,
+    alertGiftBody: 'It stays in your thread.',
+    alertAnniv: (n, y) => '🎊 Today is ' + y + ' year' + (y > 1 ? 's' : '') + ' for you and ' + n + '!',
+    alertAnnivBody: 'Congratulations 🥳💐 Say something lovely to each other today.',
+    alertMark: (n, d) => '✨ Today is day ' + d + ' for you and ' + n + '!',
+    alertMarkBody: 'A small milestone worth marking 💗',
+    alertBookOk: '✅ Your booking is confirmed', alertBookNo: '📅 Your booking was cancelled',
+    alertMsg: '💬 Nabu has written to you',
+    alertPet: (n) => '🍚 ' + n + ' is hungry', alertPetMany: (k) => '🍚 ' + k + ' companions are hungry',
+    alertPetBody: 'Give them a meal.',
+    alertUp: (v) => '✨ Nabu has been updated (' + v + ')', alertUpBody: 'There is something new to look at.',
+    alertAnnivAsk: 'Remind me on our anniversary',
+    alertAnnivHint: 'On this day each year, Nabu will remind you. The reminder stays on your phone.',
     newsTitle: 'Posts', newsIntro: 'Everything Nabu has posted: readings, thoughts, announcements. Type to search.', searchPosts: 'Search the posts…', noMatch: 'No post matches.', allPostsBtn: (n) => 'See all posts (' + n + ')', watchOn: (s) => 'Watch on ' + s,
     addImage: 'Image', addVideo: 'Video', videoPrompt: 'Paste a video link (YouTube, Facebook, TikTok, Instagram):', imgNeedCloud: 'Sign in with the admin account to upload images.', imgTooBig: 'Image too large, try a smaller one.', imgAdded: 'Image added to the post.', wrapPlaceholder: 'text', boxLabel: 'Box', formatHint: 'Select text, then tap B / I / U / H for bold, italic, underline, highlight. H2 is a small heading, Box a separate title box. Images upload straight into the post; videos are pasted as links.',
     contactTitle: 'Contact us', contactLink: 'Contact', contactIntro: 'Write a few lines to Nabu, then choose where to send them.', contactWhat: 'Your message', contactPlaceholder: 'For example: a question about a package, or feedback on the app…', contactChoose: 'Send via:', contactApp: 'Message inside the Nabu Tarot app', contactIg: 'Copy the message and open Instagram', contactFb: 'Copy the message and open Facebook', contactCopyHint: 'For Instagram and Facebook: your message is copied when you tap the button, so over there you only paste it into the chat and send.', contactNeed: 'Write a few lines first.', contactSent: 'Sent to Nabu. Replies show under Profile.', contactCopied: 'Your message is copied. Paste it into the chat when the app opens.',
@@ -10060,6 +10144,7 @@ function renderChrome(route) {
     // A sale on readings shows up on the tab where readings are booked.
     + (k === 'book' && SALE.covers('reading') ? '<span class="saletag" aria-hidden="true">🏷️</span>' : '')
     + (k === 'learn' && SALE.covers('unlock') ? '<span class="saletag" aria-hidden="true">🏷️</span>' : '') + '</a>').join('');
+  if (typeof alertsBadge === 'function') alertsBadge();
   if (typeof adminTabBadges === 'function') adminTabBadges();
 }
 let toastTimer = null;
@@ -10234,6 +10319,7 @@ function screenLabel(h) {
   if (r === 'book') return S.nav.book;
   if (r === 'prices') return S.priceTitle;
   if (r === 'news') return S.newsTitle;
+  if (r === 'alerts') return S.alertTitle;
   if (r === 'contact') return S.contactTitle;
   if (r === 'privacy') return S.privacyTitle;
   if (r === 'install') return S.installTitle;
@@ -10262,6 +10348,17 @@ function renderBackBar(r) {
   const foot = $('#homefoot');
   if (foot) { foot.hidden = !prev; foot.innerHTML = link + (prev && prev !== '#/home' ? '<a href="#/home" class="backlink">🏠 ' + esc(T().nav.home) + '</a>' : ''); }
 }
+/* A screen that writes its own way back keeps it; the router simply stops
+   offering the same destination underneath it. Three links in a row - back to
+   Activities, back to Activities, home - is what this removes. */
+function dedupeBackLinks() {
+  const foot = $('#homefoot');
+  if (!foot || foot.hidden) return;
+  const here = {};
+  $$('#main a.backlink').forEach((a) => { here[a.getAttribute('href') || ''] = true; });
+  $$('#homefoot a.backlink').forEach((a) => { if (here[a.getAttribute('href') || '']) a.remove(); });
+  if (!$('#homefoot a')) foot.hidden = true;
+}
 function parseHash() {
   const h = location.hash.replace(/^#\/?/, '');
   const q = h.split('?'), path = q[0].split('/'), params = {};
@@ -10279,6 +10376,7 @@ function route() {
   const y = NAV.restore;
   if (y == null) window.scrollTo(0, 0);
   Promise.resolve(def.render(r.args, r.params)).then(() => {
+    dedupeBackLinks();
     if (!y) return;  // nothing to restore, and never fight a visitor who has started scrolling
     window.scrollTo(0, y);
     requestAnimationFrame(() => window.scrollTo(0, y));
@@ -10293,6 +10391,7 @@ function boot() {
     e.preventDefault(); NAV.popping = true; location.hash = a.getAttribute('href');
   });
   $('#lang').addEventListener('click', () => { lang = lang === 'vi' ? 'en' : 'vi'; store.set('nabu-lang', lang); route(); });
+  { const bell = $('#bell'); if (bell) bell.addEventListener('click', () => { location.hash = '#/alerts'; }); }
   { const bt = $('#totop');
     const seen = () => { bt.hidden = (window.scrollY || document.documentElement.scrollTop || 0) < 700; };
     window.addEventListener('scroll', seen, { passive: true }); seen();
@@ -13815,7 +13914,9 @@ function renderLove(wantHandle) {
       + '<p class="hint" style="margin-bottom:8px">' + esc(S.loveDayHint) + '</p>'
       + '<input type="date" id="lvsince" max="' + esc(isoDate(new Date())) + '" value="' + esc(bond.since || '') + '">'
       + '<button type="button" class="btn block" id="lvsinceSave" style="margin-top:8px">' + esc(S.loveDaySave) + '</button>'
-      + '<p class="hint" id="lvsincest"></p></div>'
+      + '<p class="hint" id="lvsincest"></p>'
+      + '<label class="remind"><input type="checkbox" id="lvanniv"' + (LOVE.local().anniv ? ' checked' : '') + '><span>' + esc(S.alertAnnivAsk) + '</span></label>'
+      + '<p class="hint">' + esc(S.alertAnnivHint) + '</p></div>'
       + '<button type="button" class="btn block danger" id="lvuntie">\uD83D\uDC94 ' + esc(S.loveUntie) + '</button>'
       + '<div id="lvsure" hidden><p class="hint err" style="margin-top:8px">' + esc(S.loveUntieAsk) + '</p>'
       + '<div class="row"><button type="button" class="btn danger" id="lvuntieYes">' + esc(S.loveUntieYes) + '</button>'
@@ -13866,6 +13967,12 @@ function renderLove(wantHandle) {
 
     /* Changing the date no longer saves it behind their back; it says so, and
        waits for the button, like every other field on the page. */
+    { const an = $('#lvanniv');
+      if (an) an.addEventListener('change', () => {
+        LOVE.save({ anniv: an.checked });
+        toast(an.checked ? S.alertAnnivAsk : S.loveDaySaved);
+        if (an.checked) { try { alertsAnniversary(bond, nameOf(you)); } catch (e) { /* nothing to mark today */ } }
+      }); }
     $('#lvsince').addEventListener('change', () => {
       const st = $('#lvsincest');
       st.className = 'hint'; st.textContent = S.loveDayUnsaved;
@@ -18338,6 +18445,308 @@ function adminActivities(p) {
   loadActs().then((list) => { items = list.slice(); draw(); });
 }
 
+/* ==================== what happened while you were away ====================
+
+   Nobody was ever told anything. Someone accepted a thread, someone was not
+   ready to say yes, a gift arrived, a booking was confirmed - and the only way
+   to learn any of it was to open the right screen at the right moment and
+   notice that something looked different. People proposed and then waited, and
+   heard nothing back, because there was nothing to hear it with.
+
+   This is the bell. It keeps the last sixty things that happened to this
+   person, on this device, and says how many have not been read.
+
+   Nothing is pushed and nothing new is stored in the cloud. Every line is
+   worked out from a stream the app already watches, so there is no new
+   collection for anyone to read, no rules to publish, and no third party in
+   between. What makes a snapshot into news is memory: this device writes down
+   the state it last saw, and an entry appears only when the state has moved.
+   That memory survives being closed, so a proposal answered on Tuesday is
+   still news when the app is next opened on Friday.
+
+   The one thing it cannot do is wake a phone that is not looking at Nabu. It
+   catches up the moment the app opens, which is what a bell is for.
+*/
+
+const ALERT_KEEP = 60;
+
+const ALERTS = {
+  all() { const a = store.get('nabu-alerts', []); return Array.isArray(a) ? a : []; },
+  /* Every entry carries an id built from the thing that happened, so the same
+     gift seen in three snapshots is still one line. */
+  add(item) {
+    if (!item || !item.id) return false;
+    const list = this.all();
+    if (list.some((n) => n.id === item.id)) return false;
+    list.unshift({ id: item.id, k: item.k || 'app', at: item.at || Date.now(), t: item.t || '', b: item.b || '', href: item.href || '', seen: false });
+    store.set('nabu-alerts', list.slice(0, ALERT_KEEP));
+    alertsBadge();
+    return true;
+  },
+  unseen() { return this.all().filter((n) => !n.seen).length; },
+  markSeen() { const l = this.all(); l.forEach((n) => { n.seen = true; }); store.set('nabu-alerts', l); alertsBadge(); },
+  clear() { store.set('nabu-alerts', []); alertsBadge(); }
+};
+
+/* The state this device last saw for one thing, and the answer is the state
+   before this one. A booking that read "requested" yesterday and reads
+   "confirmed" now is an event; the same snapshot twice is not. Kept on the
+   device, so a change made while the app was shut is still found on opening. */
+/* What this device last saw, without writing anything down. */
+function alertSeen(key) {
+  const m = store.get('nabu-alert-state', {}) || {};
+  return Object.prototype.hasOwnProperty.call(m, key) ? m[key] : null;
+}
+
+function alertWas(key, value) {
+  const m = store.get('nabu-alert-state', {}) || {};
+  const had = Object.prototype.hasOwnProperty.call(m, key);
+  const before = had ? m[key] : null;
+  if (!had || before !== value) { m[key] = value; store.set('nabu-alert-state', m); }
+  return had ? before : null;
+}
+
+function alertsBadge() {
+  const b = document.getElementById('bell');
+  if (!b) return;
+  const n = ALERTS.unseen();
+  b.innerHTML = '🔔' + (n ? '<span class="ndot">' + (n > 9 ? '9+' : n) + '</span>' : '');
+  b.setAttribute('aria-label', T().alertTitle + (n ? ' (' + n + ')' : ''));
+}
+
+/* Something that happens while the app is open is said out loud as well as
+   written down - once, and only if the phone was asked first. */
+function alertSay(item, loud) {
+  if (!ALERTS.add(item)) return;
+  if (!loud) return;
+  toast(item.t);
+  if ('Notification' in window && Notification.permission === 'granted') {
+    try {
+      const n = new Notification(item.t, { body: item.b || '', icon: 'icon-180.png', badge: 'icon-180.png', tag: item.id });
+      n.onclick = () => { window.focus(); if (item.href) location.hash = item.href; n.close(); };
+    } catch (e) { /* the phone said no, and the bell is enough */ }
+  }
+}
+
+/* ---------------------------------------------------------------- the streams */
+
+let ALERT_STOP = [];
+function alertsStop() { ALERT_STOP.forEach((f) => { try { f(); } catch (e) { /* already gone */ } }); ALERT_STOP = []; }
+
+/* The thread. Four things worth hearing about happen here and three of them
+   used to happen in silence: being asked, being answered, and being answered
+   no. The last one is the reason this exists - people proposed and then sat
+   looking at a screen that had quietly gone back to how it was before. */
+function alertsWatchLove() {
+  if (!LOVEDB.ok()) return;
+  const me = BE.user.uid;
+  let giftStop = null;
+  ALERT_STOP.push(LOVEDB.watchMine((bond) => {
+    const S = T();
+    if (!bond) {
+      /* A live query answers "nothing" for an instant before the data lands.
+         Writing that instant down would turn the data's arrival into news. */
+      const had = alertSeen('love.bond');
+      if (had === null) return;
+      alertWas('love.bond', '');
+      if (had) alertSay({ id: 'love-untied-' + had, k: 'love', t: S.alertUntied, b: S.alertUntiedBody, href: '#/love' }, true);
+      alertWas('love.state', ''); alertWas('love.ask', '');
+      if (giftStop) { giftStop(); giftStop = null; }
+      return;
+    }
+    const wasBond = alertWas('love.bond', bond.id);
+    const you = LOVE.other(bond, me), name = (you && (you.name || (you.handle ? '@' + you.handle : ''))) || S.loveSomeone;
+
+    /* A device seeing a thread for the first time - a new phone, cleared data -
+       is not being told that it just happened. Only a change is news. */
+    if (wasBond !== null && wasBond !== bond.id) {
+      alertSay({ id: 'love-tied-' + bond.id, k: 'love', t: S.alertTied(name), b: S.alertTiedBody, href: '#/love' }, true);
+    }
+
+    /* A question, and what became of it. The ask is remembered by who wrote it
+       and when, so its disappearance can be read: gone with the stage moved on
+       is a yes, gone with the stage where it was is a not yet. */
+    const askNow = bond.ask && bond.ask.by ? bond.ask.by + '@' + (bond.ask.at || 0) : '';
+    const wasAsk = alertWas('love.ask', askNow);
+    const state = bond.state || 'tied';
+    const wasState = alertWas('love.state', state);
+
+    if (askNow && askNow !== wasAsk && bond.ask.by !== me) {
+      alertSay({ id: 'love-ask-' + bond.id + '-' + (bond.ask.at || 0), k: 'love', t: S.alertAsked(name), b: S.alertAskedBody, href: '#/love' }, true);
+    }
+    if (wasAsk && !askNow && wasAsk.split('@')[0] === me && state === wasState) {
+      /* Softly. Someone has just been told no, and the app is the only thing
+         in the room with them. */
+      alertSay({ id: 'love-no-' + bond.id + '-' + wasAsk.split('@')[1], k: 'love', t: S.alertNo(name), b: S.alertNoBody, href: '#/love' }, true);
+    }
+    if (state === 'engaged' && wasState !== null && wasState !== 'engaged') {
+      alertSay({ id: 'love-yes-' + bond.id + '-' + (bond.engagedOn || ''), k: 'love', t: S.alertYes(name), b: S.alertYesBody, href: '#/love' }, true);
+    }
+    if (state === 'married' && wasState !== null && wasState !== 'married') {
+      alertSay({ id: 'love-wed-' + bond.id + '-' + (bond.marriedOn || ''), k: 'love', t: S.alertWed(name), b: S.alertWedBody, href: '#/love' }, true);
+    }
+
+    alertsAnniversary(bond, name);
+
+    if (!giftStop) {
+      /* Only what has arrived since this device last looked. A phone opening
+         the thread for the first time is not owed every gift ever given. */
+      giftStop = LOVEDB.watchGifts(bond.id, (gifts) => {
+        const St = T(), key = 'love.gift.' + bond.id;
+        const list = (gifts || []).filter((g) => g.from !== me);
+        const newest = list.reduce((n, g) => Math.max(n, g.at || 0), 0);
+        const since = alertSeen(key);
+        alertWas(key, String(newest));
+        if (since === null) return;
+        list.filter((g) => (g.at || 0) > Number(since)).forEach((g) => {
+          alertSay({ id: 'gift-' + g.id, k: 'gift', at: g.at || Date.now(),
+            t: St.alertGift(name, giftName(g.kind)), b: g.note || St.alertGiftBody, href: '#/love' }, true);
+        });
+      });
+      ALERT_STOP.push(giftStop);
+    }
+  }));
+
+  /* Somebody asking to tie a thread with you. */
+  ALERT_STOP.push(LOVEDB.watchRequests((list) => {
+    const S = T();
+    const first = alertSeen('love.offers') === null;
+    alertWas('love.offers', '1');
+    (list || []).forEach((r) => {
+      /* One that was already waiting belongs on the bell, but it did not just
+         happen, so it does not interrupt. */
+      alertSay({ id: 'offer-' + r.uid, k: 'love', at: r.at || Date.now(),
+        t: S.alertOffer(r.name || ('@' + (r.handle || ''))), b: r.note || S.alertOfferBody, href: '#/love' }, !first);
+    });
+  }));
+}
+
+/* The day it began, come round again. Only for couples who asked to be
+   reminded - it is their day, not the app's. */
+function alertsAnniversary(bond, name) {
+  if (!bond || !bond.since || !LOVE.local().anniv) return;
+  const S = T(), today = new Date(), since = new Date(bond.since + 'T00:00:00');
+  if (isNaN(since)) return;
+  const iso = isoDate(today);
+  if (today.getMonth() === since.getMonth() && today.getDate() === since.getDate()) {
+    const years = today.getFullYear() - since.getFullYear();
+    if (years > 0) {
+      ALERTS.add({ id: 'anniv-' + bond.id + '-' + iso, k: 'love', t: S.alertAnniv(name, years), b: S.alertAnnivBody, href: '#/love' });
+    }
+  }
+  /* And the round numbers the thread page already counts towards. */
+  const days = LOVE.days(bond);
+  if (LOVE.marks.indexOf(days) > -1) {
+    ALERTS.add({ id: 'mark-' + bond.id + '-' + days, k: 'love', t: S.alertMark(name, days), b: S.alertMarkBody, href: '#/love' });
+  }
+}
+
+/* A booking answered. Nabu confirms, moves or cancels it from the dashboard,
+   and until now the only way to find out was to go and look. */
+function alertsWatchBookings() {
+  if (!BE.enabled || !BE.user || BE.isAdmin()) return;
+  ALERT_STOP.push(BE.watchMyBookings((list) => {
+    const S = T();
+    (list || []).forEach((b) => {
+      const key = 'bk.' + b.id, now = String(b.status || '') + '|' + String(b.slot || '');
+      const before = alertWas(key, now);
+      if (!before || before === now) return;
+      const when = String(b.slot || '').replace('T', ' ');
+      if (b.status === 'confirmed') alertSay({ id: key + '-ok-' + now, k: 'book', t: S.alertBookOk, b: when, href: '#/me' }, true);
+      else if (b.status === 'cancelled') alertSay({ id: key + '-no-' + now, k: 'book', t: S.alertBookNo, b: when, href: '#/me' }, true);
+      else if (b.status === 'declined') alertSay({ id: key + '-dec-' + now, k: 'book', t: S.alertBookNo, b: when, href: '#/me' }, true);
+    });
+  }));
+}
+
+/* A message from Nabu. The count on the profile tab already knew; nothing said
+   so out loud. */
+function alertsWatchMessages() {
+  if (!BE.enabled || !BE.user || BE.isAdmin()) return;
+  ALERT_STOP.push(BE.thread().onSnapshot((d) => {
+    const S = T(), t = d.exists ? d.data() : null;
+    if (!t) return;
+    const stamp = String(t.lastAt && t.lastAt.seconds ? t.lastAt.seconds : (t.lastAt || ''));
+    const before = alertWas('msg.last', stamp);
+    if (!before || before === stamp || t.lastFrom !== 'admin') return;
+    alertSay({ id: 'msg-' + stamp, k: 'msg', t: S.alertMsg, b: t.lastText || '', href: '#/me' }, true);
+  }, () => {}));
+}
+
+/* Things this device can see for itself: a hungry companion, and a Nabu that
+   has been updated underneath them. */
+function alertsLocalCheck() {
+  const S = T();
+  try {
+    const hungry = PETS.anyHungry();
+    if (hungry.length) {
+      const p = hungry[0], nm = p.name || L(PET_NAMES[p.kind]);
+      ALERTS.add({ id: 'pet-' + isoDate(new Date()), k: 'pet',
+        t: hungry.length > 1 ? S.alertPetMany(hungry.length) : S.alertPet(nm), b: S.alertPetBody, href: '#/play/pet' });
+    }
+  } catch (e) { /* no companion kept yet */ }
+  const v = window.APP_VERSION || '';
+  const was = alertWas('app.version', v);
+  if (was && was !== v) ALERTS.add({ id: 'ver-' + v, k: 'app', t: S.alertUp(v), b: S.alertUpBody, href: '#/home' });
+}
+
+function alertsStart() {
+  alertsStop();
+  alertsLocalCheck();
+  if (!BE.enabled || !BE.user) { alertsBadge(); return; }
+  try { alertsWatchLove(); } catch (e) { /* the thread is not reachable */ }
+  try { alertsWatchBookings(); } catch (e) { /* bookings are not reachable */ }
+  try { alertsWatchMessages(); } catch (e) { /* the thread doc is not reachable */ }
+  alertsBadge();
+}
+
+/* ---------------------------------------------------------------- the screen */
+
+const ALERT_ICON = { love: '🧧', gift: '🎁', book: '📅', msg: '💬', pet: '🍚', app: '✨' };
+
+function renderAlerts() {
+  const S = T(), m = $('#main');
+  const draw = () => {
+    const list = ALERTS.all();
+    const today = isoDate(new Date());
+    const yest = isoDate(new Date(Date.now() - 86400000));
+    const groups = [[S.alertToday, []], [S.alertYesterday, []], [S.alertEarlier, []]];
+    list.forEach((n) => {
+      const d = isoDate(new Date(n.at || 0));
+      groups[d === today ? 0 : d === yest ? 1 : 2][1].push(n);
+    });
+    const time = (at) => { const d = new Date(at || 0); return pad2(d.getHours()) + ':' + pad2(d.getMinutes()); };
+    const row = (n) => '<a class="alert' + (n.seen ? '' : ' fresh') + '" href="' + esc(n.href || '#/home') + '">'
+      + '<span class="ai">' + (ALERT_ICON[n.k] || ALERT_ICON.app) + '</span>'
+      + '<span class="at"><b>' + esc(n.t) + '</b>'
+      + (n.b ? '<span class="ab">' + esc(n.b) + '</span>' : '')
+      + '<span class="aw">' + esc(time(n.at)) + '</span></span></a>';
+
+    m.innerHTML = '<div class="eyebrow">' + esc(CONFIG.brand) + '</div>'
+      + '<h1 style="margin-bottom:6px">🔔 ' + esc(S.alertTitle) + '</h1>'
+      + '<p class="muted">' + esc(S.alertIntro) + '</p>'
+      + (list.length
+        ? groups.filter((g) => g[1].length).map((g) =>
+          '<h3 class="alerthead">' + esc(g[0]) + '</h3><div class="alerts">' + g[1].map(row).join('') + '</div>').join('')
+          + '<div class="row" style="margin-top:16px"><button type="button" class="btn" id="alread">' + esc(S.alertReadAll) + '</button>'
+          + '<button type="button" class="btn" id="alclear">' + esc(S.alertClear) + '</button></div>'
+        : '<div class="card"><p class="lead" style="text-align:center">🔔</p>'
+          + '<p class="hint" style="text-align:center">' + esc(S.alertNone) + '</p></div>');
+
+    if (list.length) {
+      $('#alread').addEventListener('click', () => { ALERTS.markSeen(); draw(); });
+      $('#alclear').addEventListener('click', () => { ALERTS.clear(); draw(); });
+    }
+  };
+  draw();
+  /* Opening the bell is reading them; the count clears on the way out so the
+     visitor can still see which ones were new while they are looking. */
+  const list = ALERTS.all();
+  if (list.some((n) => !n.seen)) setTimeout(() => { ALERTS.markSeen(); }, 1200);
+}
+
+ROUTES.alerts = { nav: '', render: renderAlerts };
+
 /* ============================ admin (#/admin) ============================
    Posts and availability are files in the repo, committed through the
    GitHub API with a fine-grained token. Bookings and the inbox live in
@@ -18767,8 +19176,12 @@ window.NABU = { CONFIG: CONFIG, SALE: SALE, salePrice: salePrice, loadActs: load
   insightHTML: insightHTML, insightOf: insightOf, sunSignIndex: sunSignIndex, lifePath: lifePath, PROFILE: () => PROFILE, BE: BE, ACTS: ACTS,
   ANGELS: ANGELS, angelRead: angelRead, CODEBOOK: CODEBOOK, verifyCode: verifyCode, petHomeSVG: petHomeSVG, PET_HOMES: PET_HOMES, PET_WEARS: PET_WEARS, codeDigest: codeDigest, randomCode: randomCode, BANK: BANK, PETS: PETS, petSVG: petSVG, PET_COATS: PET_COATS, PET_KINDS: PET_KINDS, luckCut: luckCut, petLevel: petLevel, petStep: petStep, VOUCHERS: VOUCHERS, levelCoins: levelCoins, LOOKS: LOOKS,
   LOVE: LOVE, LOVEDB: LOVEDB, HANDLE_RE: HANDLE_RE, loveBadgeHTML: loveBadgeHTML,
-  loveMarkSVG: loveMarkSVG, QUIZ: QUIZ, QSCORE: QSCORE, QUIZ_PASS: QUIZ_PASS, QUIZ_LEN: QUIZ_LEN, pileArtSVG: pileArtSVG, PILE_ARTS: PILE_ARTS, threadSVG: threadSVG, petParentsHTML: petParentsHTML, GIFTS: GIFTS };
+  loveMarkSVG: loveMarkSVG, QUIZ: QUIZ, QSCORE: QSCORE, QUIZ_PASS: QUIZ_PASS, QUIZ_LEN: QUIZ_LEN, pileArtSVG: pileArtSVG, PILE_ARTS: PILE_ARTS, threadSVG: threadSVG, petParentsHTML: petParentsHTML, GIFTS: GIFTS, ALERTS: ALERTS, alertsStart: alertsStart, alertWas: alertWas };
 try { petRemindCheck(); } catch (e) { /* nothing kept yet */ }
+/* The bell catches up on what happened while the app was shut, and keeps
+   listening while it is open. Signing in or out changes what there is to
+   listen to, so it is started again then. */
+try { alertsStart(); } catch (e) { /* nothing to catch up on */ }
 BE.initP = BE.init().catch(() => { /* backend unreachable: the app runs device-only */ });
 // The Gemini key is a dashboard setting kept in the app cloud (content/ai), never in the source.
 loadContent('codes', 'codes.json', 'nabu-codes').then((r) => { CODEBOOK.set(r && r.data); }).catch(() => {});
@@ -18780,7 +19193,10 @@ loadContent('ai', 'ai.json', '').then((r) => { if (r && r.data && typeof r.data.
 document.addEventListener('gesturestart', (e) => e.preventDefault(), { passive: false });
 let lastTouch = 0; document.addEventListener('touchend', (e) => { const now = Date.now(); if (now - lastTouch < 300 && !(e.target.closest && e.target.closest('input,textarea'))) e.preventDefault(); lastTouch = now; }, { passive: false });
 // Signing in can unlock things (admin sees every course), so redraw the open screen.
-BE.onAuth(() => { if (['learn', 'me', 'home'].indexOf(parseHash().route) > -1) route(); });
+BE.onAuth(() => {
+  try { alertsStart(); } catch (e) { /* not reachable */ }
+  if (['learn', 'me', 'home'].indexOf(parseHash().route) > -1) route();
+});
 boot();
 </script>
 </body>

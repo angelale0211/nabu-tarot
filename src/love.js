@@ -799,7 +799,9 @@ function renderLove(wantHandle) {
       + '<p class="hint" style="margin-bottom:8px">' + esc(S.loveDayHint) + '</p>'
       + '<input type="date" id="lvsince" max="' + esc(isoDate(new Date())) + '" value="' + esc(bond.since || '') + '">'
       + '<button type="button" class="btn block" id="lvsinceSave" style="margin-top:8px">' + esc(S.loveDaySave) + '</button>'
-      + '<p class="hint" id="lvsincest"></p></div>'
+      + '<p class="hint" id="lvsincest"></p>'
+      + '<label class="remind"><input type="checkbox" id="lvanniv"' + (LOVE.local().anniv ? ' checked' : '') + '><span>' + esc(S.alertAnnivAsk) + '</span></label>'
+      + '<p class="hint">' + esc(S.alertAnnivHint) + '</p></div>'
       + '<button type="button" class="btn block danger" id="lvuntie">\uD83D\uDC94 ' + esc(S.loveUntie) + '</button>'
       + '<div id="lvsure" hidden><p class="hint err" style="margin-top:8px">' + esc(S.loveUntieAsk) + '</p>'
       + '<div class="row"><button type="button" class="btn danger" id="lvuntieYes">' + esc(S.loveUntieYes) + '</button>'
@@ -850,6 +852,12 @@ function renderLove(wantHandle) {
 
     /* Changing the date no longer saves it behind their back; it says so, and
        waits for the button, like every other field on the page. */
+    { const an = $('#lvanniv');
+      if (an) an.addEventListener('change', () => {
+        LOVE.save({ anniv: an.checked });
+        toast(an.checked ? S.alertAnnivAsk : S.loveDaySaved);
+        if (an.checked) { try { alertsAnniversary(bond, nameOf(you)); } catch (e) { /* nothing to mark today */ } }
+      }); }
     $('#lvsince').addEventListener('change', () => {
       const st = $('#lvsincest');
       st.className = 'hint'; st.textContent = S.loveDayUnsaved;
