@@ -1266,15 +1266,34 @@ h1 .pileico{width:34px;height:27px;vertical-align:-3px;margin-right:2px}
 /* The question, and its answer. */
 /* The four stages in order, the one reached so far lit. */
 .roadcard .eyebrow{text-align:left;margin-bottom:10px}
-.road{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;align-items:start}
+/* The line between the stages is geometry, not a guess. Each stage is a column
+   of width W with a gap G between columns, and the mark is a square of side M
+   centred in its column. So the run from the right edge of one mark to the left
+   edge of the next starts at (M - W)/2 - G and is W - M + G long, and it sits on
+   the marks' own centre line at M/2. The three numbers are named once here so
+   the line cannot drift away from them again. */
+.road{--rsm:34px;--rsg:6px;display:grid;grid-template-columns:repeat(4,1fr);gap:var(--rsg);align-items:start}
 .road .rs{display:flex;flex-direction:column;align-items:center;gap:4px;position:relative;opacity:.38;filter:grayscale(.7)}
 .road .rs.on{opacity:1;filter:none}
-.road .rs .lovemark{width:34px;height:34px}
+.road .rs .lovemark,.road .rs .loveknot{width:var(--rsm);height:var(--rsm)}
 .road .rs b{font-size:11px;font-weight:600;text-align:center;line-height:1.2}
 /* A hairline between one stage and the next, tucked behind the marks. */
-.road .rs+.rs::before{content:'';position:absolute;left:-56%;top:16px;width:56%;height:1.5px;background:var(--rule);border-radius:2px}
+.road .rs+.rs::before{content:'';position:absolute;
+  left:calc((var(--rsm) - 100%) / 2 - var(--rsg));
+  width:calc(100% - var(--rsm) + var(--rsg));
+  top:calc(var(--rsm) / 2);transform:translateY(-50%);
+  height:2px;background:var(--rule);border-radius:2px}
 .road .rs.on+.rs.on::before{background:var(--gold)}
+/* The offer of a ceremony, which is neither a stage nor a setting, so it
+   carries the thread's own gold rather than looking like either. */
+.wedoffer{border:1px solid var(--gold)}
 .askcard{text-align:center}
+/* A checkbox row is a flex row, so on a card where everything else is centred
+   it alone sat hard against the left padding. And a row of rounded buttons
+   whose corners touch the card's own corners looks wedged in, so it is inset. */
+.askcard .rolepick{margin:12px 6px 6px}
+.askcard .remind{justify-content:center;margin:14px 0 0;text-align:left}
+.askcard .remind + .hint{margin-top:8px}
 .askcard h3{margin-bottom:4px}
 .askcard>b{display:block;font-family:var(--display);font-size:16px;margin-bottom:2px}
 .askcard .note{margin:8px 0;font-size:14px;background:var(--surface-2);border-radius:12px;padding:9px 12px}

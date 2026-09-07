@@ -814,8 +814,7 @@ function renderLove(wantHandle) {
         + (bond.engagedOn ? '<p class="hint">' + esc(S.loveEngagedOn(fmtDate(bond.engagedOn))) + '</p>' : '')
         + '<button type="button" class="btn primary block" id="lvmarry" style="margin-top:10px">' + esc(S.loveMarryDo) + '</button>'
         + '<p class="hint">' + esc(S.loveMarryHint) + '</p>'
-        + '<a class="btn block" href="#/wedding" style="margin-top:10px">\uD83D\uDC92 ' + esc(S.wedTitle) + '</a>'
-        + '<p class="hint">' + esc(S.wedFromThread) + '</p></div>';
+        + '</div>';
     } else if (stage === 'married') {
       const myRole = LOVE.role(bond, me);
       ask = '<div class="card askcard done">' + loveMarkSVG('married', 'big')
@@ -829,6 +828,17 @@ function renderLove(wantHandle) {
         + '<label class="remind"><input type="checkbox" id="lvshowpar"' + (LOVE.local().parents ? ' checked' : '') + '><span>' + esc(S.loveShowParents) + '</span></label>'
         + '<p class="hint">' + esc(S.loveShowParentsHint) + '</p></div>';
     }
+
+    /* A ceremony is a thing you hold, not a status you have, so it is offered
+       to a couple who have just said yes AND to one already married here. It
+       was a link under the "we are married" button, which meant pressing that
+       button took the only mention of it off the screen. */
+    const wedOffer = (stage === 'engaged' || stage === 'married')
+      ? '<div class="card wedoffer">'
+        + '<div class="ghead"><span class="gk">\uD83D\uDC92</span><h3>' + esc(S.wedAskTitle) + '</h3></div>'
+        + '<p class="hint">' + esc(stage === 'married' ? S.wedAskMarried : S.wedAskEngaged) + '</p>'
+        + '<a class="btn primary block" href="#/wedding">' + esc(S.wedAskGo) + '</a></div>'
+      : '';
 
     /* What they might want to tell people, written for them. The day count
        and the name are already on this screen; nobody should have to retype
@@ -887,7 +897,7 @@ function renderLove(wantHandle) {
       + '<p class="since">' + esc(S.loveSince(fmtDate(bond.since))) + '</p>'
       + (next ? '<p class="hint" style="text-align:center">' + esc(S.loveNextMark(next.at, next.inDays)) + '</p>' : '')
       + '</div>'
-      + loveRoadHTML(stage) + ask + teller + shelf
+      + loveRoadHTML(stage) + ask + wedOffer + teller + shelf
       + '<div class="card"><h3 style="margin-bottom:6px">' + esc(S.loveDayTitle) + '</h3>'
       + '<p class="hint" style="margin-bottom:8px">' + esc(S.loveDayHint) + '</p>'
       + '<input type="date" id="lvsince" max="' + esc(isoDate(new Date())) + '" value="' + esc(bond.since || '') + '">'

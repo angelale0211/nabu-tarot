@@ -239,7 +239,7 @@ service cloud.firestore {
                     && wid == request.resource.data.uids[0] + '__' + request.resource.data.uids[1]
                     // there has to be a thread, and it has to have reached engaged
                     && exists(/databases/$(database)/documents/bonds/$(wid))
-                    && get(/databases/$(database)/documents/bonds/$(wid)).data.state == 'engaged'
+                    && get(/databases/$(database)/documents/bonds/$(wid)).data.state in ['engaged', 'married']
                     && request.resource.data.step == 0
                     && request.resource.data.state == 'planned'
                     && shorterThan('aName', 40) && shorterThan('bName', 40);

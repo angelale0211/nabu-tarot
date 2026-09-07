@@ -1106,6 +1106,26 @@ async function go(hash, sel) { W().location.hash = hash; await sleep(30); return
         const acc = JSON.parse(w.localStorage.getItem('nabu-access') || '{}');
         await go('#/home', '#main');
 
+        /* Being engaged should offer the ceremony where somebody would look
+           for it: a card of its own, not a link under the button that ends the
+           stage the card belongs to. */
+        await go('#/love', '.lovecard'); await sleep(220);
+        ok(d.querySelector('.wedoffer a[href="#/wedding"]'),
+          'an engaged couple are offered the ceremony on the thread, as a card of its own');
+        { /* And the bell asks the same question at the moment it becomes
+             relevant - once, not every time the app is opened. */
+          w.localStorage.removeItem('nabu-alerts');
+          const seen = JSON.parse(w.localStorage.getItem('nabu-alert-state') || '{}');
+          seen['love.state'] = 'tied'; seen['love.bond'] = 'uidA__uidB'; seen['love.ask'] = '';
+          w.localStorage.setItem('nabu-alert-state', JSON.stringify(seen));
+          N.alertsStart(); await sleep(280);
+          ok(N.ALERTS.all().filter((x) => x.id.indexOf('wed-ask-') === 0).length === 1,
+            'and the bell asks the same question the moment they become engaged');
+          N.alertsStart(); await sleep(200);
+          ok(N.ALERTS.all().filter((x) => x.id.indexOf('wed-ask-') === 0).length === 1,
+            'asked once, not again every time the app is opened');
+          N.ALERTS.clear(); }
+
         /* Bought or not bought is the first fork. */
         delete acc.wedding; w.localStorage.setItem('nabu-access', JSON.stringify(acc));
         await go('#/wedding', '#main'); await sleep(260);
@@ -1311,6 +1331,24 @@ async function go(hash, sel) { W().location.hash = hash; await sleep(30); return
         await go('#/love', '#main'); await sleep(120);
         ok(d.querySelector('#main h1 .loveknot'),
           'and so does the thread page’s own title');
+        { /* The line between the stages is measured, not eyeballed: it has to
+               start where one mark ends, finish where the next begins, and sit
+               on their own centre line. */
+          const rs = d.querySelectorAll('.road .rs');
+          const box = (el) => el.getBoundingClientRect();
+          const markOf = (el) => box(el.querySelector('svg'));
+          const bad = [];
+          for (let i = 1; i < rs.length; i++) {
+            const cs = w.getComputedStyle(rs[i], '::before');
+            const line = { left: box(rs[i]).left + parseFloat(cs.left), width: parseFloat(cs.width),
+              top: box(rs[i]).top + parseFloat(cs.top) };
+            const prev = markOf(rs[i - 1]), here = markOf(rs[i]);
+            const midPrev = prev.top + prev.height / 2;
+            if (Math.abs(line.left - prev.right) > 1.5) bad.push(i + ' starts ' + Math.round(line.left - prev.right) + 'px off the mark before it');
+            if (Math.abs((line.left + line.width) - here.left) > 1.5) bad.push(i + ' ends ' + Math.round((line.left + line.width) - here.left) + 'px off the mark after it');
+            if (Math.abs(line.top - midPrev) > 1.5) bad.push(i + ' sits ' + Math.round(line.top - midPrev) + 'px off their centre line');
+          }
+          ok(bad.length === 0, 'the timeline runs mark to mark, on their centre line' + (bad.length ? ' [' + bad.join('; ') + ']' : '')); }
         ok(d.querySelectorAll('.road .rs .lovemark').length === 4
           && d.querySelectorAll('.road .rs .loveknot').length === 1
           && d.querySelectorAll('.road .rs .lovering, .road .rs .ringpair').length >= 0,

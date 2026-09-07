@@ -144,6 +144,13 @@ function alertsWatchLove() {
     if (state === 'married' && wasState !== null && wasState !== 'married') {
       alertSay({ id: 'love-wed-' + bond.id + '-' + (bond.marriedOn || ''), k: 'love', t: S.alertWed(name), b: S.alertWedBody, href: '#/love' }, true);
     }
+    /* Asked once, at the moment somebody would want to be asked - and not at
+       all if they have already paid for one. */
+    if ((state === 'engaged' || state === 'married') && wasState !== null && wasState !== state
+        && !ACCESS.has('wedding')) {
+      ALERTS.add({ id: 'wed-ask-' + bond.id + '-' + state, k: 'love',
+        t: S.alertWedAsk(name), b: S.alertWedAskBody, href: '#/wedding' });
+    }
 
     /* Asking to share diaries, and the answer to it. Neither used to be said
        anywhere, so a request could sit unanswered for weeks. */

@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
 <title>Nabu Tarot</title>
 <meta name="description" content="Nabu Tarot: dự đoán mới, rút một lá bài xem năng lượng hiện tại, học tarot, Lenormand, chiêm tinh, và đặt lịch xem bài.">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'none'; object-src 'none'; form-action 'self'; script-src 'self' 'sha256-+u1fatnJ1RbMBbeJkXWSMnZZ5Y0AOZJzBTTe2LpIkBA=' https://www.gstatic.com https://apis.google.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; font-src 'self' data:; media-src 'self' data: blob:; worker-src 'self'; connect-src 'self' https://*.googleapis.com https://*.google.com https://*.firebaseio.com https://*.cloudfunctions.net https://*.workers.dev https://generativelanguage.googleapis.com; frame-src https://*.firebaseapp.com https://accounts.google.com https://*.facebook.com">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'none'; object-src 'none'; form-action 'self'; script-src 'self' 'sha256-12mwdaopveJVsDM1oVFbiPMrNbjBnP8FkxoflzXTl3M=' https://www.gstatic.com https://apis.google.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; font-src 'self' data:; media-src 'self' data: blob:; worker-src 'self'; connect-src 'self' https://*.googleapis.com https://*.google.com https://*.firebaseio.com https://*.cloudfunctions.net https://*.workers.dev https://generativelanguage.googleapis.com; frame-src https://*.firebaseapp.com https://accounts.google.com https://*.facebook.com">
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <meta name="theme-color" content="#EFE9FA">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -1432,15 +1432,34 @@ h1 .pileico{width:34px;height:27px;vertical-align:-3px;margin-right:2px}
 /* The question, and its answer. */
 /* The four stages in order, the one reached so far lit. */
 .roadcard .eyebrow{text-align:left;margin-bottom:10px}
-.road{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;align-items:start}
+/* The line between the stages is geometry, not a guess. Each stage is a column
+   of width W with a gap G between columns, and the mark is a square of side M
+   centred in its column. So the run from the right edge of one mark to the left
+   edge of the next starts at (M - W)/2 - G and is W - M + G long, and it sits on
+   the marks' own centre line at M/2. The three numbers are named once here so
+   the line cannot drift away from them again. */
+.road{--rsm:34px;--rsg:6px;display:grid;grid-template-columns:repeat(4,1fr);gap:var(--rsg);align-items:start}
 .road .rs{display:flex;flex-direction:column;align-items:center;gap:4px;position:relative;opacity:.38;filter:grayscale(.7)}
 .road .rs.on{opacity:1;filter:none}
-.road .rs .lovemark{width:34px;height:34px}
+.road .rs .lovemark,.road .rs .loveknot{width:var(--rsm);height:var(--rsm)}
 .road .rs b{font-size:11px;font-weight:600;text-align:center;line-height:1.2}
 /* A hairline between one stage and the next, tucked behind the marks. */
-.road .rs+.rs::before{content:'';position:absolute;left:-56%;top:16px;width:56%;height:1.5px;background:var(--rule);border-radius:2px}
+.road .rs+.rs::before{content:'';position:absolute;
+  left:calc((var(--rsm) - 100%) / 2 - var(--rsg));
+  width:calc(100% - var(--rsm) + var(--rsg));
+  top:calc(var(--rsm) / 2);transform:translateY(-50%);
+  height:2px;background:var(--rule);border-radius:2px}
 .road .rs.on+.rs.on::before{background:var(--gold)}
+/* The offer of a ceremony, which is neither a stage nor a setting, so it
+   carries the thread's own gold rather than looking like either. */
+.wedoffer{border:1px solid var(--gold)}
 .askcard{text-align:center}
+/* A checkbox row is a flex row, so on a card where everything else is centred
+   it alone sat hard against the left padding. And a row of rounded buttons
+   whose corners touch the card's own corners looks wedged in, so it is inset. */
+.askcard .rolepick{margin:12px 6px 6px}
+.askcard .remind{justify-content:center;margin:14px 0 0;text-align:left}
+.askcard .remind + .hint{margin-top:8px}
 .askcard h3{margin-bottom:4px}
 .askcard>b{display:block;font-family:var(--display);font-size:16px;margin-bottom:2px}
 .askcard .note{margin:8px 0;font-size:14px;background:var(--surface-2);border-radius:12px;padding:9px 12px}
@@ -2281,9 +2300,9 @@ const STR = {
     loveAskYesDone: 'Đã đính ước 💍', loveEngaged: 'Hai bạn đã đính ước.', loveEngagedOn: (d) => 'Từ ngày ' + d,
     loveMarryDo: 'Làm lễ cưới', loveMarryHint: 'Cả hai cùng chọn ngày, thiệp mời và khách dự sẽ tới ở bản sau.',
     loveMarried: 'Hai bạn đã cưới.', loveMarriedOn: (d) => 'Từ ngày ' + d, loveMarriedDone: 'Chúc mừng hai bạn 🌿',
-    loveRoleAsk: 'Trên trang bạn nhỏ, bạn muốn được gọi là gì?',
+    loveRoleAsk: 'Trên trang thú cưng may mắn, bạn muốn được gọi là gì?',
     loveRoleMother: 'Mẹ', loveRoleFather: 'Bố', loveRoleNone: 'Không hiện',
-    loveShowParents: 'Hiện tên bố mẹ trên trang bạn nhỏ',
+    loveShowParents: 'Hiện tên bố mẹ trên trang thú cưng may mắn',
     loveShowParentsHint: 'Chỉ hiện trên máy của bạn thôi. Bạn tắt lúc nào cũng được.',
     loveShowParentsOn: 'Đã bật.', loveShowParentsOff: 'Đã tắt.',
     petParents: 'Bố mẹ',
@@ -2491,6 +2510,12 @@ const STR = {
     alertWedOpenBody: 'Bạn vào ngay để không lỡ phần nghi lễ.',
     wedComing: 'Lễ cưới sắp tới', wedMineComing: (n) => 'Lễ cưới của bạn và ' + n,
     wedGuestComing: (p) => 'Lễ cưới của ' + p,
+    wedAskTitle: 'Tổ chức lễ cưới trên Nabu?',
+    wedAskEngaged: 'Hai bạn đã đính ước. Nếu muốn, hai bạn có thể tổ chức một buổi lễ ngay trong ứng dụng: chọn ngày giờ, mời bạn bè, và Nabu Cupid sẽ chủ hôn.',
+    wedAskMarried: 'Hai bạn đã là vợ chồng trên Nabu. Nếu muốn, hai bạn vẫn có thể tổ chức một buổi lễ có khách mời, do Nabu Cupid chủ hôn.',
+    wedAskGo: 'Xem lễ cưới trên Nabu',
+    alertWedAsk: (n) => '💒 Hai bạn có muốn tổ chức lễ cưới trên Nabu không?',
+    alertWedAskBody: 'Chọn ngày giờ, mời bạn bè, và Nabu Cupid sẽ chủ hôn. Chỉ một trong hai người thanh toán là đủ.',
     wedTitle: 'Lễ cưới trên Nabu', wedIntro: 'Hai bạn đã đính ước có thể tổ chức một buổi lễ ngay trong ứng dụng, có khách mời và có Nabu Cupid chủ hôn.',
     wedCupid: 'Nabu Cupid',
     wedNeedAccount: 'Bạn cần đăng nhập để mở hoặc tham dự một lễ cưới.',
@@ -3093,6 +3118,12 @@ const STR = {
     alertWedOpenBody: 'Come in now so you do not miss the ceremony.',
     wedComing: 'Coming up', wedMineComing: (n) => 'Your wedding with ' + n,
     wedGuestComing: (p) => 'The wedding of ' + p,
+    wedAskTitle: 'Hold your wedding on Nabu?',
+    wedAskEngaged: 'You are engaged. If you would like, you can hold a ceremony inside the app: choose the day and hour, invite your friends, and Nabu Cupid will marry you.',
+    wedAskMarried: 'You are married on Nabu. If you would like, you can still hold a ceremony with guests, with Nabu Cupid to marry you.',
+    wedAskGo: 'See a wedding on Nabu',
+    alertWedAsk: (n) => '\uD83D\uDC92 Would you like to hold your wedding on Nabu?',
+    alertWedAskBody: 'Choose the day and hour, invite your friends, and Nabu Cupid will marry you. Only one of you needs to pay.',
     wedTitle: 'A wedding on Nabu', wedIntro: 'A couple engaged on the red thread can hold a ceremony inside the app, with guests, and Nabu Cupid to marry them.',
     wedCupid: 'Nabu Cupid',
     wedNeedAccount: 'You need to be signed in to hold or attend a wedding.',
@@ -14489,8 +14520,7 @@ function renderLove(wantHandle) {
         + (bond.engagedOn ? '<p class="hint">' + esc(S.loveEngagedOn(fmtDate(bond.engagedOn))) + '</p>' : '')
         + '<button type="button" class="btn primary block" id="lvmarry" style="margin-top:10px">' + esc(S.loveMarryDo) + '</button>'
         + '<p class="hint">' + esc(S.loveMarryHint) + '</p>'
-        + '<a class="btn block" href="#/wedding" style="margin-top:10px">\uD83D\uDC92 ' + esc(S.wedTitle) + '</a>'
-        + '<p class="hint">' + esc(S.wedFromThread) + '</p></div>';
+        + '</div>';
     } else if (stage === 'married') {
       const myRole = LOVE.role(bond, me);
       ask = '<div class="card askcard done">' + loveMarkSVG('married', 'big')
@@ -14504,6 +14534,17 @@ function renderLove(wantHandle) {
         + '<label class="remind"><input type="checkbox" id="lvshowpar"' + (LOVE.local().parents ? ' checked' : '') + '><span>' + esc(S.loveShowParents) + '</span></label>'
         + '<p class="hint">' + esc(S.loveShowParentsHint) + '</p></div>';
     }
+
+    /* A ceremony is a thing you hold, not a status you have, so it is offered
+       to a couple who have just said yes AND to one already married here. It
+       was a link under the "we are married" button, which meant pressing that
+       button took the only mention of it off the screen. */
+    const wedOffer = (stage === 'engaged' || stage === 'married')
+      ? '<div class="card wedoffer">'
+        + '<div class="ghead"><span class="gk">\uD83D\uDC92</span><h3>' + esc(S.wedAskTitle) + '</h3></div>'
+        + '<p class="hint">' + esc(stage === 'married' ? S.wedAskMarried : S.wedAskEngaged) + '</p>'
+        + '<a class="btn primary block" href="#/wedding">' + esc(S.wedAskGo) + '</a></div>'
+      : '';
 
     /* What they might want to tell people, written for them. The day count
        and the name are already on this screen; nobody should have to retype
@@ -14562,7 +14603,7 @@ function renderLove(wantHandle) {
       + '<p class="since">' + esc(S.loveSince(fmtDate(bond.since))) + '</p>'
       + (next ? '<p class="hint" style="text-align:center">' + esc(S.loveNextMark(next.at, next.inDays)) + '</p>' : '')
       + '</div>'
-      + loveRoadHTML(stage) + ask + teller + shelf
+      + loveRoadHTML(stage) + ask + wedOffer + teller + shelf
       + '<div class="card"><h3 style="margin-bottom:6px">' + esc(S.loveDayTitle) + '</h3>'
       + '<p class="hint" style="margin-bottom:8px">' + esc(S.loveDayHint) + '</p>'
       + '<input type="date" id="lvsince" max="' + esc(isoDate(new Date())) + '" value="' + esc(bond.since || '') + '">'
@@ -20173,6 +20214,13 @@ function alertsWatchLove() {
     if (state === 'married' && wasState !== null && wasState !== 'married') {
       alertSay({ id: 'love-wed-' + bond.id + '-' + (bond.marriedOn || ''), k: 'love', t: S.alertWed(name), b: S.alertWedBody, href: '#/love' }, true);
     }
+    /* Asked once, at the moment somebody would want to be asked - and not at
+       all if they have already paid for one. */
+    if ((state === 'engaged' || state === 'married') && wasState !== null && wasState !== state
+        && !ACCESS.has('wedding')) {
+      ALERTS.add({ id: 'wed-ask-' + bond.id + '-' + state, k: 'love',
+        t: S.alertWedAsk(name), b: S.alertWedAskBody, href: '#/wedding' });
+    }
 
     /* Asking to share diaries, and the answer to it. Neither used to be said
        anywhere, so a request could sit unanswered for weeks. */
@@ -20799,7 +20847,7 @@ function adminSale(p) {
 ROUTES.admin = { nav: '', render: renderAdmin };
 
 /* ============================ boot ============================ */
-window.APP_VERSION = 'v139';
+window.APP_VERSION = 'v140';
 window.NABU = { CONFIG: CONFIG, SALE: SALE, salePrice: salePrice, loadActs: loadActs, BACK: BACK, LESSONS: LESSONS, localAnswer: localAnswer, compatVerdict: compatVerdict, numerologyOf: numerologyOf, ZDEEP: ZDEEP, lunarToday: lunarToday, solarToLunar: solarToLunar, DECK: DECK, INSIGHT: INSIGHT, KW: KW, ASK: ASK, TOPICS: TOPICS, GUIDES: GUIDES, SERVICES: SERVICES, COURSES: COURSES, ACCESS: ACCESS, plusOn: () => plusOn(), proOn: () => proOn(), luckUnlimited: () => luckUnlimited(), ZODIAC: ZODIAC, pick: pick, book: book,
   insightHTML: insightHTML, insightOf: insightOf, sunSignIndex: sunSignIndex, lifePath: lifePath, PROFILE: () => PROFILE, BE: BE, ACTS: ACTS,
   ANGELS: ANGELS, angelRead: angelRead, CODEBOOK: CODEBOOK, verifyCode: verifyCode, petHomeSVG: petHomeSVG, PET_HOMES: PET_HOMES, PET_WEARS: PET_WEARS, codeDigest: codeDigest, randomCode: randomCode, BANK: BANK, PETS: PETS, petSVG: petSVG, PET_COATS: PET_COATS, PET_KINDS: PET_KINDS, luckCut: luckCut, petLevel: petLevel, petStep: petStep, VOUCHERS: VOUCHERS, levelCoins: levelCoins, LOOKS: LOOKS,
