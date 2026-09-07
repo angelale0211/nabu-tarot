@@ -104,12 +104,14 @@ const COURSES = [
 ];
 /* Where the reading itself happens. Three, because these are the three
    places Nabu actually reads. */
+/* best: the one Nabu would rather use, and says so on the card.
+   needsId: somewhere Nabu cannot reach without being given an account. */
 const BOOK_WHERE = [
-  { id: 'app', icon: '💬', name: { vi: 'Trong app Nabu Tarot', en: 'Here in the Nabu Tarot app' },
-    sub: { vi: 'Nabu nhắn trực tiếp trong mục Hồ sơ', en: 'Nabu replies in your Profile tab' } },
-  { id: 'ig', icon: '📷', name: { vi: 'Instagram', en: 'Instagram' },
+  { id: 'app', icon: '💬', best: true, name: { vi: 'Trong app Nabu Tarot', en: 'Here in the Nabu Tarot app' },
+    sub: { vi: 'Nabu nhắn thẳng vào mục Hồ sơ của bạn, không lạc đi đâu được', en: 'Nabu replies straight into your Profile tab, where nothing can go astray' } },
+  { id: 'ig', icon: '📷', needsId: true, name: { vi: 'Instagram', en: 'Instagram' },
     sub: { vi: 'Nabu nhắn qua tin nhắn Instagram', en: 'Nabu writes to you on Instagram' } },
-  { id: 'fb', icon: '🌐', name: { vi: 'Facebook', en: 'Facebook' },
+  { id: 'fb', icon: '🌐', needsId: true, name: { vi: 'Facebook', en: 'Facebook' },
     sub: { vi: 'Nabu nhắn qua Messenger', en: 'Nabu writes to you on Messenger' } }
 ];
 const whereOf = (id) => BOOK_WHERE.filter((w) => w.id === id)[0] || null;

@@ -156,7 +156,9 @@ function bookingRow(b, admin) {
   const total = items.length > 1 ? '<div class="tot"><span>' + esc(S.msgTotal) + '</span><b>' + fmtPrice(b.price || items.reduce((n, x) => n + (x.price || 0), 0)) + '</b></div>' : '';
   const wh = b.where ? whereOf(b.where) : null;
   const meta = [admin && (b.name || b.email) ? '🙋 ' + esc([b.name, b.email].filter(Boolean).join(' · ')) : '',
-    wh ? wh.icon + ' ' + esc(S.msgWhere) + ': <b>' + esc(L(wh.name)) + '</b>' : (b.whereName ? '💬 ' + esc(S.msgWhere) + ': <b>' + esc(b.whereName) + '</b>' : ''),
+    wh ? wh.icon + ' ' + esc(S.msgWhere) + ': <b>' + esc(L(wh.name)) + '</b>'
+        + (b.whereId ? ' · <b>' + esc(b.whereId) + '</b>' : '')
+      : (b.whereName ? '💬 ' + esc(S.msgWhere) + ': <b>' + esc(b.whereName) + '</b>' : ''),
     b.birth ? '🎂 ' + esc(b.birth) : '', b.note ? '📝 ' + esc(b.note) : '', b.card ? '🃏 ' + esc(b.card) : ''].filter(Boolean).join('<br>');
   const d = slotDate(b.slot), future = d && d.getTime() > Date.now(), live = ['requested', 'confirmed', 'change_requested', 'cancel_requested'].indexOf(b.status) > -1;
   const change = b.status === 'change_requested' && b.newSlot ? '<div class="chg">🔁 ' + esc(S.newSlotLabel) + ': ' + esc(slotLabel(b.newSlot)) + '</div>' : '';

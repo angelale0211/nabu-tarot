@@ -2,12 +2,12 @@
    Service and package, topic (required for "set topic" packages), a
    calendar of Nabu's free slots (schedule.json, minus slots taken in
    Firestore when accounts are on), details, then send. */
-const book = { items: [], name: '', note: '', birth: '', birthTime: '', card: null, slot: null, month: null, day: null, where: '', timeSaved: false, restored: false, use: { v: false, c: 0 } };
+const book = { items: [], name: '', note: '', birth: '', birthTime: '', card: null, slot: null, month: null, day: null, where: '', whereId: '', timeSaved: false, restored: false, use: { v: false, c: 0 } };
 /* The draft lives on the device: leave the screen, come back, everything is still chosen. */
-const BOOK_KEYS = ['items', 'name', 'note', 'birth', 'birthTime', 'slot', 'day', 'where', 'timeSaved'];
+const BOOK_KEYS = ['items', 'name', 'note', 'birth', 'birthTime', 'slot', 'day', 'where', 'whereId', 'timeSaved'];
 function saveBook() { const o = {}; BOOK_KEYS.forEach((k) => { o[k] = book[k]; }); store.set('nabu-book', o); }
 function restoreBook() { if (book.restored) return; book.restored = true; const o = store.get('nabu-book', null); if (!o) return; BOOK_KEYS.forEach((k) => { if (o[k] != null) book[k] = o[k]; }); if (!Array.isArray(book.items)) book.items = []; }
-function clearBook() { book.items = []; book.slot = null; book.day = null; book.timeSaved = false; book.note = ''; book.card = null; book.where = ''; store.set('nabu-book', null); }
+function clearBook() { book.items = []; book.slot = null; book.day = null; book.timeSaved = false; book.note = ''; book.card = null; book.where = ''; book.whereId = ''; store.set('nabu-book', null); }
 let SCHEDULE = null, TAKEN = {};
 
 async function loadSchedule() {
@@ -79,7 +79,8 @@ function composeMessage() {
     out.push('');
   }
   if (book.slot) out.push('📅 ' + S.msgTime + ': ' + slotLabel(book.slot));
-  { const w = whereOf(book.where); if (w) out.push(w.icon + ' ' + S.msgWhere + ': ' + L(w.name)); }
+  { const w = whereOf(book.where);
+    if (w) out.push(w.icon + ' ' + S.msgWhere + ': ' + L(w.name) + (w.needsId && book.whereId.trim() ? ' — ' + book.whereId.trim() : '')); }
   if (book.name.trim()) out.push('🙋 ' + S.msgName + ': ' + book.name.trim());
   if (needsBirth() && (book.birth || book.birthTime)) out.push('🎂 ' + S.msgBirth + ': ' + (book.birth || '?') + (book.birthTime ? ' ' + book.birthTime : ''));
   if (book.note.trim()) out.push('📝 ' + S.msgNote + ': ' + book.note.trim());
@@ -90,10 +91,19 @@ function composeMessage() {
 /* Where the reading happens. Three cards, one of which has to be chosen before
    the request can be sent, because guessing this has been Nabu's job until now. */
 function whereHTML() {
-  const S = T();
-  return '<div class="wherepick">' + BOOK_WHERE.map((w) => '<button type="button" class="wp' + (book.where === w.id ? ' on' : '') + '" data-where="' + w.id + '">'
-    + '<span class="ic">' + w.icon + '</span><b>' + esc(L(w.name)) + '</b><span class="s">' + esc(L(w.sub)) + '</span>'
-    + '<span class="tick">\u2713</span></button>').join('') + '</div>';
+  const S = T(), picked = whereOf(book.where);
+  const cards = BOOK_WHERE.map((w) => '<button type="button" class="wp' + (book.where === w.id ? ' on' : '') + (w.best ? ' best' : '') + '" data-where="' + w.id + '">'
+    + '<span class="ic">' + w.icon + '</span><b>' + esc(L(w.name)) + (w.best ? '<span class="wbest">\uD83D\uDC9C ' + esc(S.whereBest) + '</span>' : '') + '</b>'
+    + '<span class="s">' + esc(L(w.sub)) + '</span><span class="tick">\u2713</span></button>').join('');
+  /* Nabu cannot write to somebody on Instagram or Facebook without being told
+     who they are, so the account is asked for at the moment that is chosen -
+     along with the reason a message so often never arrives. */
+  const ask = picked && picked.needsId
+    ? '<div class="whereid"><label class="f" for="bwho">' + esc(S.whereIdLabel(L(picked.name))) + '</label>'
+      + '<input id="bwho" maxlength="200" autocapitalize="none" spellcheck="false" placeholder="' + esc(S.whereIdPh) + '" value="' + esc(book.whereId || '') + '">'
+      + '<p class="hint warn">\u26A0\uFE0F ' + esc(S.whereOpenDm) + '</p></div>'
+    : '';
+  return '<div class="wherepick">' + cards + '</div>' + ask;
 }
 
 /* The request as a labelled card: packages one per line, total, time, details. */
@@ -252,6 +262,12 @@ async function renderBook(args, params) {
     if (!book.slot) { toast(S.needSlot); $('#calwrap').scrollIntoView({ behavior: 'smooth', block: 'center' }); return false; }
     if (needsBirth() && !book.birth) { toast(S.needBirth); $('#birthwrap').scrollIntoView({ behavior: 'smooth', block: 'center' }); return false; }
     if (!book.where) { toast(S.needWhere); $('#wherewrap').scrollIntoView({ behavior: 'smooth', block: 'center' }); return false; }
+    { const w = whereOf(book.where);
+      if (w && w.needsId && !String(book.whereId || '').trim()) {
+        toast(S.needWhereId(L(w.name)));
+        const f = $('#bwho'); if (f) { f.scrollIntoView({ behavior: 'smooth', block: 'center' }); f.focus(); }
+        return false;
+      } }
     return true;
   };
   const sendBtn = $('#sendapp');
@@ -264,6 +280,7 @@ async function renderBook(args, params) {
       await BE.createBooking({ name: book.name.trim() || PROFILE.name || '', slot: book.slot,
         service: items.map((x) => x.service + ' – ' + x.pkg + (x.topic ? ' (' + x.topic + ')' : '')).join(' + '), pkg: '', price: bookLuck().final, topic: items.map((x) => x.topic).filter(Boolean).join('; '), items: items,
         where: book.where, whereName: L2((whereOf(book.where) || { name: {} }).name, 'vi'),
+        whereId: String(book.whereId || '').trim(),
         note: book.note.trim(), message: composeMessage(), luck: bookLuck(), birth: needsBirth() ? (book.birth + (book.birthTime ? ' ' + book.birthTime : '')) : '', card: book.card ? cardById(book.card).name : '' });
       luckCommit(bookLuck(), S.bkItems); book.use.v = false; book.use.c = 0;
       toast('✓'); try { TAKEN = await BE.takenSlots(); } catch (e2) { /* refreshed on the next visit */ }
@@ -276,6 +293,8 @@ async function renderBook(args, params) {
       book.where = b.getAttribute('data-where');
       $('#wherewrap').innerHTML = whereHTML(); bindWhere(); prev();
     }));
+    const who = $('#bwho');
+    if (who) who.addEventListener('input', () => { book.whereId = who.value; prev(); });
   };
   bindWhere();
   const bindSlots = () => {

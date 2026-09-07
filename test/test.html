@@ -1106,9 +1106,19 @@ async function go(hash, sel) { W().location.hash = hash; await sleep(30); return
       ok(d.querySelectorAll('.wherepick .wp').length === 3 && d.querySelector('[data-where="app"]')
         && d.querySelector('[data-where="ig"]') && d.querySelector('[data-where="fb"]') && !d.querySelector('.wherepick .wp.on'),
         'a booking asks where the reading happens: in the app, on Instagram or on Facebook, and none is chosen to begin with');
+      ok(d.querySelector('[data-where="app"]').classList.contains('best') && /khuyên dùng/.test(d.querySelector('[data-where="app"]').textContent)
+        && !d.querySelector('.whereid'),
+        'the in-app option is marked as the one Nabu prefers, and nothing extra is asked for until it is needed');
       d.querySelector('[data-where="ig"]').click(); await sleep(80);
       ok(d.querySelector('[data-where="ig"]').classList.contains('on') && /Instagram/.test(d.querySelector('#msgtext').textContent),
         'the choice is carried in the message that goes to Nabu');
+      ok(d.querySelector('.whereid') && d.querySelector('#bwho') && /người lạ|riêng tư/.test(d.querySelector('.whereid').textContent),
+        'choosing Instagram asks for the account and warns that a private profile silently refuses the message');
+      d.querySelector('#bwho').value = '@mai.09'; d.querySelector('#bwho').dispatchEvent(new w.Event('input', { bubbles: true })); await sleep(80);
+      ok(/@mai\.09/.test(d.querySelector('#msgtext').textContent),
+        'and the account travels in the message with it');
+      d.querySelector('[data-where="app"]').click(); await sleep(80);
+      ok(!d.querySelector('.whereid'), 'choosing the app again puts the question away');
       { const svc = d.querySelector('[data-pkg]'); if (svc) svc.click(); await sleep(60); }
       d.querySelector('[data-where="ig"]').click(); await sleep(60);
       await go('#/me', '[data-theme-pick]'); }
