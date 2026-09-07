@@ -578,23 +578,37 @@ function renderWedding(args) {
         store.set('nabu-wed-want', ms);
         if (!ACCESS.has('wedding')) { location.hash = '#/wedding/pay'; return; }
         b.disabled = true; st.className = 'hint'; st.textContent = S.loveSaving;
-        try { await WED.create(bond, ms); toast(S.wedMade); }
+        try { await WED.create(bond, ms); store.set('nabu-wed-want', 0); toast(S.wedMade); }
         catch (e) { b.disabled = false; st.className = 'hint err'; st.textContent = loveWhy(e); }
       });
       return;
     }
 
+    /* The couple are no longer thrown into the room the moment it opens: that
+       took the invitation link off the screen at exactly the quarter of an hour
+       when the late ones are asking for it. */
     const door = WED.doorState(w);
-    if (door === 'open') { drawRoom(w); return; }
     if (door === 'over') { drawDoor(w); return; }
+    const openNow = door === 'open';
 
     const link = appURL() + '#/wedding/' + encodeURIComponent(w.id);
     m.innerHTML = head()
       + '<div class="card wedcard">' + cupidSVG()
+      + '<p class="wedready">' + esc(S.wedReady) + '</p>'
       + '<p class="wedpair">' + esc(w.aName || '') + ' \u2764 ' + esc(w.bName || '') + '</p>'
       + '<p class="wedwhen">' + esc(wedWhen(w.startMs)) + '</p>'
-      + '<p class="wedcount" id="wedcd">' + esc(wedCountdown(w.startMs)) + '</p>'
-      + '<p class="hint" style="text-align:center">' + esc(S.wedOpensSoon) + '</p></div>'
+      + '<p class="wedcount" id="wedcd">' + esc(openNow ? S.wedDoorsOpen : wedCountdown(w.startMs)) + '</p>'
+      /* The way in, first, because it is what the screen is for. */
+      + (openNow
+        ? '<a class="btn primary block" href="#/wedding/room">' + esc(S.wedEnter) + '</a>'
+        : '<button type="button" class="btn primary block" disabled>' + esc(S.wedEnterLater) + '</button>')
+      + '<p class="hint">' + esc(openNow ? S.wedEnterNow : S.wedOpensSoon) + '</p>'
+      /* And moving it, immediately beneath, folded until it is wanted. */
+      + '<details class="sect movewhen"><summary><span class="si">\uD83D\uDD52</span><b>' + esc(S.wedMoveTitle) + '</b><span class="sx">\u203A</span></summary>'
+      + '<div class="sbody"><input type="datetime-local" id="wedat" value="' + esc(wedLocalValue(w.startMs)) + '">'
+      + '<button type="button" class="btn block" id="wedmove" style="margin-top:8px">' + esc(S.wedMove) + '</button>'
+      + '<p class="hint" id="wedst"></p></div></details>'
+      + '</div>'
       + '<div class="card"><div class="ghead"><span class="gk">\uD83D\uDC8C</span><h3>' + esc(S.wedInviteTitle) + '</h3></div>'
       + '<p class="hint" style="margin-bottom:10px">' + esc(S.wedInviteHint) + '</p>'
       + '<input id="wedurl" readonly value="' + esc(link) + '">'
@@ -602,18 +616,18 @@ function renderWedding(args) {
       + '<div class="card"><h3 style="margin-bottom:4px">\uD83D\uDC65 ' + esc(S.wedGuests(guests.length)) + '</h3>'
       + (guests.length ? '<p class="hint">' + esc(guests.map((g) => g.name || S.loveSomeone).join(' \u00b7 ')) + '</p>'
         : '<p class="hint">' + esc(S.wedNoGuestsYet) + '</p>') + '</div>'
-      + '<div class="card"><h3 style="margin-bottom:6px">\uD83D\uDD52 ' + esc(S.wedMoveTitle) + '</h3>'
-      + '<input type="datetime-local" id="wedat" value="' + esc(wedLocalValue(w.startMs)) + '">'
-      + '<button type="button" class="btn block" id="wedmove" style="margin-top:8px">' + esc(S.wedMove) + '</button>'
-      + '<p class="hint" id="wedst"></p></div>'
       + '<button type="button" class="btn block danger" id="weddrop">\uD83D\uDC94 ' + esc(S.wedDrop) + '</button>'
       + '<p class="hint">' + esc(S.wedDropHint) + '</p>';
 
-    tick = setInterval(() => {
-      const el = $('#wedcd');
-      if (el) el.textContent = wedCountdown(w.startMs);
-      if (Date.now() > w.startMs - WED_OPEN_MS) paint();
-    }, 1000);
+    /* When the doors open the screen changes itself, so nobody is left
+       wondering whether to keep waiting or keep pressing. */
+    if (!openNow) {
+      tick = setInterval(() => {
+        const el = $('#wedcd');
+        if (el) el.textContent = wedCountdown(w.startMs);
+        if (Date.now() > w.startMs - WED_OPEN_MS) paint();
+      }, 1000);
+    }
     bindShareRow(m, () => ({ text: S.wedInviteText(w.aName || '', w.bName || '', wedWhen(w.startMs)), url: link }));
     $('#wedmove').addEventListener('click', async () => {
       const st = $('#wedst'), v = $('#wedat').value, ms = new Date(v).getTime();
@@ -633,6 +647,11 @@ function renderWedding(args) {
   const paint = () => {
     if (!ready) return;
     if (tick) { clearInterval(tick); tick = null; }
+    if (wanted === 'room') {
+      if (!wedding) { shut(S.wedNoRoom); return; }
+      drawDoor(wedding, guests);
+      return;
+    }
     if (wanted === 'pay') {
       if (!bond) { shut(S.wedNeedThread); return; }
       drawPay(bond);
@@ -682,7 +701,7 @@ function renderWedding(args) {
   /* The room, whichever one this is. */
   /* The paying step is the couple's own screen under another name, so it needs
      the thread; only a guest's link stands on its own. */
-  const guestLink = wanted && wanted !== 'pay';
+  const guestLink = wanted && wanted !== 'pay' && wanted !== 'room';
   const id = guestLink ? wanted : (LOVE.local().bond || '');
   if (id) {
     stop.push(WED.watch(id, (w) => {
