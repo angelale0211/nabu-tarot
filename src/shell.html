@@ -1340,9 +1340,18 @@ h1 .pileico{width:34px;height:27px;vertical-align:-3px;margin-right:2px}
 .paypanel .payref b{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;letter-spacing:.06em;font-size:15px}
 .paypanel .paymsg{width:100%;resize:none;font-size:13.5px;line-height:1.5}
 .wedready{margin:2px 0 2px;font-size:13px;letter-spacing:.04em;text-transform:uppercase;color:var(--ok);font-weight:700}
-/* Two rules about the same thing, flush against one another, read as one
-   paragraph of small print. */
-.movewhen{margin:18px 0 6px;text-align:left;background:var(--bg)}
+/* Three short facts, left-aligned - centred prose is hard to read at any
+   length, and at paragraph length it is a wall. With a clear gap after them,
+   because the control below is a different thing entirely. */
+.wedrules{list-style:none;margin:16px 0 0;padding:0;text-align:left}
+#main .wedrules li{position:relative;margin:0 0 9px;padding-left:18px;font-size:13px;line-height:1.5;
+  color:var(--fg-soft);text-align:left}
+#main .wedrules li:last-child{margin-bottom:0}
+#main .wedrules li::before{content:'\2022';position:absolute;left:4px;top:-1px;color:var(--gold);font-weight:700}
+/* .sect is declared later with the same weight and sets margin:0 0 12px,
+   so this needs one more class to keep its space. Two single-class rules
+   and the later one wins, which is how the gap kept coming out as zero. */
+.sect.movewhen{margin:22px 0 6px;text-align:left;background:var(--bg)}
 .movewhy{margin-top:16px}
 .movewhen > summary{padding:10px 12px;font-size:14px}
 .wedcount{margin:2px 0 8px;font-size:26px;font-weight:700;font-variant-numeric:tabular-nums;color:var(--fg)}

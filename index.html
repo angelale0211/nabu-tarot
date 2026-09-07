@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
 <title>Nabu Tarot</title>
 <meta name="description" content="Nabu Tarot: dự đoán mới, rút một lá bài xem năng lượng hiện tại, học tarot, Lenormand, chiêm tinh, và đặt lịch xem bài.">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'none'; object-src 'none'; form-action 'self'; script-src 'self' 'sha256-1yd02xDPYlZDIFcGLc/cr8Q/M7aeLZZxYeKFXl0z8f8=' https://www.gstatic.com https://apis.google.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; font-src 'self' data:; media-src 'self' data: blob:; worker-src 'self'; connect-src 'self' https://*.googleapis.com https://*.google.com https://*.firebaseio.com https://*.cloudfunctions.net https://*.workers.dev https://generativelanguage.googleapis.com; frame-src https://*.firebaseapp.com https://accounts.google.com https://*.facebook.com">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'none'; object-src 'none'; form-action 'self'; script-src 'self' 'sha256-LBI1W++o6kc29+HQbk2iaWAsTM2KK1KnLzbJ7qkfZXU=' https://www.gstatic.com https://apis.google.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; font-src 'self' data:; media-src 'self' data: blob:; worker-src 'self'; connect-src 'self' https://*.googleapis.com https://*.google.com https://*.firebaseio.com https://*.cloudfunctions.net https://*.workers.dev https://generativelanguage.googleapis.com; frame-src https://*.firebaseapp.com https://accounts.google.com https://*.facebook.com">
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <meta name="theme-color" content="#EFE9FA">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -1506,9 +1506,18 @@ h1 .pileico{width:34px;height:27px;vertical-align:-3px;margin-right:2px}
 .paypanel .payref b{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;letter-spacing:.06em;font-size:15px}
 .paypanel .paymsg{width:100%;resize:none;font-size:13.5px;line-height:1.5}
 .wedready{margin:2px 0 2px;font-size:13px;letter-spacing:.04em;text-transform:uppercase;color:var(--ok);font-weight:700}
-/* Two rules about the same thing, flush against one another, read as one
-   paragraph of small print. */
-.movewhen{margin:18px 0 6px;text-align:left;background:var(--bg)}
+/* Three short facts, left-aligned - centred prose is hard to read at any
+   length, and at paragraph length it is a wall. With a clear gap after them,
+   because the control below is a different thing entirely. */
+.wedrules{list-style:none;margin:16px 0 0;padding:0;text-align:left}
+#main .wedrules li{position:relative;margin:0 0 9px;padding-left:18px;font-size:13px;line-height:1.5;
+  color:var(--fg-soft);text-align:left}
+#main .wedrules li:last-child{margin-bottom:0}
+#main .wedrules li::before{content:'\2022';position:absolute;left:4px;top:-1px;color:var(--gold);font-weight:700}
+/* .sect is declared later with the same weight and sets margin:0 0 12px,
+   so this needs one more class to keep its space. Two single-class rules
+   and the later one wins, which is how the gap kept coming out as zero. */
+.sect.movewhen{margin:22px 0 6px;text-align:left;background:var(--bg)}
 .movewhy{margin-top:16px}
 .movewhen > summary{padding:10px 12px;font-size:14px}
 .wedcount{margin:2px 0 8px;font-size:26px;font-weight:700;font-variant-numeric:tabular-nums;color:var(--fg)}
@@ -2670,6 +2679,11 @@ const STR = {
     ],
     wedAgree: 'Tôi đã đọc và đồng ý với các điều khoản trên.',
     wedAgreeFirst: 'Bạn đọc và tích vào ô đồng ý ở trên để tiếp tục nhé.',
+    wedRules: [
+      'Buổi lễ bắt đầu đúng giờ đã chọn — một trong hai bạn cần bấm “Bắt đầu” trong 15 phút đầu.',
+      'Đổi ngày giờ: được một lần, chậm nhất trước giờ lễ 1 tiếng.',
+      'Huỷ muộn hoặc không ai có mặt: lễ coi như đã dùng, không hoàn phí.'
+    ],
     wedStart: 'Bắt đầu buổi lễ', wedStartsAt: (when) => 'Buổi lễ bắt đầu đúng ' + when + '. Nút này sẽ bấm được vào đúng giờ đó.',
     wedStartNow: 'Đã đến giờ. Một trong hai bạn bấm để bắt đầu nhé.',
     wedGuestWait: (when) => 'Buổi lễ bắt đầu lúc ' + when + '. Bạn cứ ở đây, sắp bắt đầu rồi.',
@@ -3368,6 +3382,11 @@ const STR = {
     ],
     wedAgree: 'I have read and agree to these terms.',
     wedAgreeFirst: 'Please read the terms and tick the box to continue.',
+    wedRules: [
+      'It begins at the hour you chose \u2014 one of you presses Begin within the first 15 minutes.',
+      'Moving the day: once, and no later than an hour before.',
+      'Called off late, or nobody there: it counts as held, and the fee is not returned.'
+    ],
     wedStart: 'Begin the ceremony', wedStartsAt: (when) => 'The ceremony begins at ' + when + '. This button works at that hour, and not before.',
     wedStartNow: 'It is time. Either of you may begin.',
     wedGuestWait: (when) => 'The ceremony begins at ' + when + '. Stay where you are \u2014 it is nearly time.',
@@ -20910,7 +20929,9 @@ function renderWedding(args) {
         ? '<a class="btn primary block" href="#/wedding/room">' + esc(S.wedEnter) + '</a>'
         : '<button type="button" class="btn primary block" disabled>' + esc(paidFor ? S.wedEnterLater : S.wedEnterUnpaid) + '</button>')
       + '<p class="hint">' + esc(!paidFor ? S.wedWaitPay : openNow ? S.wedEnterNow : S.wedShutFor) + '</p>'
-      + '<p class="hint">' + esc(S.wedBeThere) + '</p>'
+      /* Three lines, one fact each. The full terms live on the screen where
+         they were agreed to; repeating all four here is noise. */
+      + '<ul class="wedrules">' + S.wedRules.map((r) => '<li>' + esc(r) + '</li>').join('') + '</ul>'
       /* Unpaid, said once, softly, with the way to settle it. */
       + (ACCESS.has('wedding') ? ''
         : '<p class="hint hold">' + esc(S.wedUnpaid) + ' <a href="#/wedding/pay">' + esc(S.wedPayNow) + ' \u2192</a></p>')
@@ -21916,7 +21937,7 @@ function adminSale(p) {
 ROUTES.admin = { nav: '', render: renderAdmin };
 
 /* ============================ boot ============================ */
-window.APP_VERSION = 'v152';
+window.APP_VERSION = 'v153';
 window.NABU = { CONFIG: CONFIG, SALE: SALE, salePrice: salePrice, loadActs: loadActs, BACK: BACK, LESSONS: LESSONS, localAnswer: localAnswer, compatVerdict: compatVerdict, numerologyOf: numerologyOf, ZDEEP: ZDEEP, lunarToday: lunarToday, solarToLunar: solarToLunar, DECK: DECK, INSIGHT: INSIGHT, KW: KW, ASK: ASK, TOPICS: TOPICS, GUIDES: GUIDES, SERVICES: SERVICES, COURSES: COURSES, ACCESS: ACCESS, plusOn: () => plusOn(), proOn: () => proOn(), luckUnlimited: () => luckUnlimited(), ZODIAC: ZODIAC, pick: pick, book: book,
   insightHTML: insightHTML, insightOf: insightOf, sunSignIndex: sunSignIndex, lifePath: lifePath, PROFILE: () => PROFILE, BE: BE, ACTS: ACTS,
   ANGELS: ANGELS, angelRead: angelRead, CODEBOOK: CODEBOOK, verifyCode: verifyCode, petHomeSVG: petHomeSVG, PET_HOMES: PET_HOMES, PET_WEARS: PET_WEARS, codeDigest: codeDigest, randomCode: randomCode, BANK: BANK, PETS: PETS, petSVG: petSVG, PET_COATS: PET_COATS, PET_KINDS: PET_KINDS, luckCut: luckCut, petLevel: petLevel, petStep: petStep, VOUCHERS: VOUCHERS, levelCoins: levelCoins, LOOKS: LOOKS,

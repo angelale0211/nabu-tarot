@@ -1012,7 +1012,9 @@ function renderWedding(args) {
         ? '<a class="btn primary block" href="#/wedding/room">' + esc(S.wedEnter) + '</a>'
         : '<button type="button" class="btn primary block" disabled>' + esc(paidFor ? S.wedEnterLater : S.wedEnterUnpaid) + '</button>')
       + '<p class="hint">' + esc(!paidFor ? S.wedWaitPay : openNow ? S.wedEnterNow : S.wedShutFor) + '</p>'
-      + '<p class="hint">' + esc(S.wedBeThere) + '</p>'
+      /* Three lines, one fact each. The full terms live on the screen where
+         they were agreed to; repeating all four here is noise. */
+      + '<ul class="wedrules">' + S.wedRules.map((r) => '<li>' + esc(r) + '</li>').join('') + '</ul>'
       /* Unpaid, said once, softly, with the way to settle it. */
       + (ACCESS.has('wedding') ? ''
         : '<p class="hint hold">' + esc(S.wedUnpaid) + ' <a href="#/wedding/pay">' + esc(S.wedPayNow) + ' \u2192</a></p>')

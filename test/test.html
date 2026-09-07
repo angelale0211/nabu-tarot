@@ -1287,7 +1287,20 @@ async function go(hash, sel) { W().location.hash = hash; await sleep(30); return
           'sending the request makes the room, at the hour they chose, holding it');
         { /* Moved once, and not inside the last hour: guests are already on
              their way by then. */
-          ok(N.WED.canMove(db.docs[W]), 'a wedding days away can still be moved');
+          { /* Three short lines, not a centred paragraph, and standing clear of
+             the control underneath - which kept coming out flush because a
+             later rule of equal weight flattened its margin. */
+          await go('#/home', '#main'); await go('#/wedding', '#main'); await sleep(300);
+          const rules = d.querySelector('.wedrules');
+          ok(rules && rules.querySelectorAll('li').length === 3
+            && w.getComputedStyle(rules.querySelector('li')).textAlign === 'left',
+            'the rules on the room card are three short lines, left-aligned');
+          const long = Array.prototype.filter.call(d.querySelectorAll('.wedcard p'), (p2) => p2.textContent.length > 220);
+          ok(long.length === 0, 'with no paragraph of small print left on the card');
+          const below = d.querySelector('.movewhen') || d.querySelector('.movewhy');
+          ok(below && below.getBoundingClientRect().top - rules.getBoundingClientRect().bottom >= 12,
+            'and clear space between them and whatever comes next'); }
+        ok(N.WED.canMove(db.docs[W]), 'a wedding days away can still be moved');
           ok(!N.WED.canMove(Object.assign({}, db.docs[W], { moved: 1 })),
             'but only once, because one moved three times is one nobody attends');
           ok(!N.WED.canMove(Object.assign({}, db.docs[W], { startMs: Date.now() + 30 * 60000 })),

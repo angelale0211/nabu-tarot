@@ -478,6 +478,11 @@ const STR = {
     ],
     wedAgree: 'Tôi đã đọc và đồng ý với các điều khoản trên.',
     wedAgreeFirst: 'Bạn đọc và tích vào ô đồng ý ở trên để tiếp tục nhé.',
+    wedRules: [
+      'Buổi lễ bắt đầu đúng giờ đã chọn — một trong hai bạn cần bấm “Bắt đầu” trong 15 phút đầu.',
+      'Đổi ngày giờ: được một lần, chậm nhất trước giờ lễ 1 tiếng.',
+      'Huỷ muộn hoặc không ai có mặt: lễ coi như đã dùng, không hoàn phí.'
+    ],
     wedStart: 'Bắt đầu buổi lễ', wedStartsAt: (when) => 'Buổi lễ bắt đầu đúng ' + when + '. Nút này sẽ bấm được vào đúng giờ đó.',
     wedStartNow: 'Đã đến giờ. Một trong hai bạn bấm để bắt đầu nhé.',
     wedGuestWait: (when) => 'Buổi lễ bắt đầu lúc ' + when + '. Bạn cứ ở đây, sắp bắt đầu rồi.',
@@ -1176,6 +1181,11 @@ const STR = {
     ],
     wedAgree: 'I have read and agree to these terms.',
     wedAgreeFirst: 'Please read the terms and tick the box to continue.',
+    wedRules: [
+      'It begins at the hour you chose \u2014 one of you presses Begin within the first 15 minutes.',
+      'Moving the day: once, and no later than an hour before.',
+      'Called off late, or nobody there: it counts as held, and the fee is not returned.'
+    ],
     wedStart: 'Begin the ceremony', wedStartsAt: (when) => 'The ceremony begins at ' + when + '. This button works at that hour, and not before.',
     wedStartNow: 'It is time. Either of you may begin.',
     wedGuestWait: (when) => 'The ceremony begins at ' + when + '. Stay where you are \u2014 it is nearly time.',
