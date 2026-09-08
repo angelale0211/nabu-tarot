@@ -180,3 +180,52 @@ export async function grantUntil(env: PlayEnv, uid: string, want: Record<string,
   if (!w.ok) throw new Error("firestore " + w.status);
   return out;
 }
+
+/* ---- subscriptions ----
+   subscriptionsv2 is the current shape: one token, a state for the whole
+   subscription, and a line item per product with its expiry and base plan.
+   The state is Google's word, and it is the only word this worker takes. */
+export interface SubInfo {
+  state: string;          // SUBSCRIPTION_STATE_ACTIVE | _CANCELED | _IN_GRACE_PERIOD | _ON_HOLD | _PAUSED | _EXPIRED | _PENDING | _PENDING_PURCHASE_CANCELED | _UNSPECIFIED
+  expiryMs: number;
+  productId: string;
+  basePlanId: string;
+  autoRenew: boolean;
+  acknowledged: boolean;
+  linkedToken: string;    // the token this one replaced, on a plan change
+}
+export interface SubCheck { ok: boolean; why?: string; sub?: SubInfo }
+
+export async function checkSubscription(env: PlayEnv, token: string): Promise<SubCheck> {
+  const pkg = env.ANDROID_PACKAGE || "app.nabutarot.twa";
+  const at = await accessToken(env, PLAY_SCOPE);
+  const url = "https://androidpublisher.googleapis.com/androidpublisher/v3/applications/"
+    + encodeURIComponent(pkg) + "/purchases/subscriptionsv2/tokens/" + encodeURIComponent(token);
+  const r = await fetch(url, { headers: { Authorization: "Bearer " + at } });
+  if (r.status === 404) return { ok: false, why: "unknown purchase" };
+  if (!r.ok) return { ok: false, why: "play " + r.status };
+  const j = (await r.json()) as {
+    subscriptionState?: string; acknowledgementState?: string; linkedPurchaseToken?: string;
+    lineItems?: { productId?: string; expiryTime?: string; autoRenewingPlan?: { autoRenewEnabled?: boolean }; offerDetails?: { basePlanId?: string } }[];
+  };
+  const li = (j.lineItems || [])[0] || {};
+  return { ok: true, sub: {
+    state: j.subscriptionState || "SUBSCRIPTION_STATE_UNSPECIFIED",
+    expiryMs: li.expiryTime ? Date.parse(li.expiryTime) : 0,
+    productId: li.productId || "",
+    basePlanId: (li.offerDetails && li.offerDetails.basePlanId) || "",
+    autoRenew: !!(li.autoRenewingPlan && li.autoRenewingPlan.autoRenewEnabled),
+    acknowledged: j.acknowledgementState === "ACKNOWLEDGEMENT_STATE_ACKNOWLEDGED",
+    linkedToken: j.linkedPurchaseToken || "",
+  } };
+}
+
+/* Acknowledged, never consumed: a subscription that is consumed is gone. Not
+   acknowledging within three days refunds the buyer, so this is money. */
+export async function acknowledgeSub(env: PlayEnv, productId: string, token: string): Promise<void> {
+  const pkg = env.ANDROID_PACKAGE || "app.nabutarot.twa";
+  const at = await accessToken(env, PLAY_SCOPE);
+  await fetch("https://androidpublisher.googleapis.com/androidpublisher/v3/applications/" + encodeURIComponent(pkg)
+    + "/purchases/subscriptions/" + encodeURIComponent(productId) + "/tokens/" + encodeURIComponent(token) + ":acknowledge",
+    { method: "POST", headers: { Authorization: "Bearer " + at, "Content-Type": "application/json" }, body: "{}" });
+}
