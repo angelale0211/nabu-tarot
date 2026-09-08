@@ -7,6 +7,11 @@ compatibility_flags = ["nodejs_compat"]
 # [ai]
 # binding = "AI"
 
+# Once a day, take back what Google refunded. 20:10 UTC is 03:10 in Việt Nam,
+# which is when nobody is buying and nothing else is running.
+[triggers]
+crons = ["10 20 * * *"]
+
 [vars]
 ALLOWED_ORIGIN = "https://nabutarot.com"
 # Whose sign-ins this worker accepts. While it is empty the worker answers

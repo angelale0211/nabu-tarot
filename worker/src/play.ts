@@ -83,7 +83,7 @@ export async function serviceToken(env: ServiceEnv, scope: string): Promise<stri
 }
 const accessToken = serviceToken;
 
-const PLAY_SCOPE = "https://www.googleapis.com/auth/androidpublisher";
+export const PLAY_SCOPE = "https://www.googleapis.com/auth/androidpublisher";
 export const FS_SCOPE = "https://www.googleapis.com/auth/datastore";
 
 export interface Bought { ok: boolean; why?: string; sku?: string }

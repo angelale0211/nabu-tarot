@@ -9,6 +9,7 @@ import { whoIsAsking } from "./auth";
 import { allow, cachedAnswer, keepAnswer } from "./limit";
 import { checkPurchase, acknowledge, grant, grantUntil } from "./play";
 import { claimCode } from "./codes";
+import { recordPurchase, sweepRefunds } from "./refunds";
 
 /* How long each thing is sold for. Kept here rather than read from the app,
    because the app is the side that cannot be trusted about what it bought. */
@@ -153,6 +154,15 @@ export default {
         }
         const ids = [sku].concat(ALSO[sku] || []);
         const access = await grant(env, person.uid, ids, MONTHS);
+        /* Who bought what, filed under the token Google will name if it is
+           ever refunded. Without this the nightly sweep has nothing to match
+           a voided purchase against. It must not sink the sale, though: the
+           buyer already holds the course by this line. */
+        try {
+          await recordPurchase(env, person.uid, sku, ids, token);
+        } catch (e) {
+          console.error(JSON.stringify({ at: "billing", uid: person.uid, sku, ledger: String((e as Error).message || e) }));
+        }
         /* Only once it is written down. A purchase acknowledged before the
            access exists is a purchase Google will not refund and the buyer
            never received. */
@@ -303,5 +313,25 @@ export default {
       if (error instanceof Anthropic.APIError) return new Response(JSON.stringify({ error: `api ${error.status}` }), { status: 502, headers });
       return new Response(JSON.stringify({ error: "unknown" }), { status: 500, headers });
     }
+  },
+
+  /* ---- once a day: anything Google refunded, taken back ----
+
+     A buyer can refund within 48 hours and Nabu can refund from the Console at
+     any time, and neither of those tells this worker anything. So once a day it
+     asks Google what was voided and closes what those purchases opened.
+
+     It never throws. A scheduled handler that throws is a red mark in a
+     dashboard nobody opens; one that logs says what happened in a place the
+     logs already go. */
+  async scheduled(_controller: ScheduledController, env: Env, ctx: ExecutionContext): Promise<void> {
+    ctx.waitUntil((async () => {
+      try {
+        const swept = await sweepRefunds(env);
+        console.log(JSON.stringify({ at: "refund-sweep", ...swept }));
+      } catch (e) {
+        console.error(JSON.stringify({ at: "refund-sweep", error: String((e as Error).message || e) }));
+      }
+    })());
   },
 };
