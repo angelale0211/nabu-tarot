@@ -126,14 +126,14 @@ const LOVE = {
    sit together as one set rather than as whatever the phone's emoji font
    happens to do that year. */
 const GIFTS = [
-  { id: 'rose', name: { vi: 'H\u1ed3ng nhung', en: 'A red rose' } },
-  { id: 'lotus', name: { vi: 'Sen h\u1ed3ng', en: 'A lotus' } },
-  { id: 'daisy', name: { vi: 'C\u00fac tr\u1eafng', en: 'A daisy' } },
-  { id: 'tulip', name: { vi: 'Tulip v\u00e0ng', en: 'A tulip' } },
-  { id: 'letter', name: { vi: 'Th\u01b0 tay', en: 'A letter' } },
-  { id: 'cake', name: { vi: 'B\u00e1nh ng\u1ecdt', en: 'Something sweet' } },
-  { id: 'star', name: { vi: 'M\u1ed9t v\u00ec sao', en: 'A star' } },
-  { id: 'moon', name: { vi: 'M\u1ea3nh tr\u0103ng', en: 'A piece of the moon' } }
+  { id: 'rose', name: { vi: 'H\u1ed3ng nhung', en: 'A red rose', de: 'Eine rote Rose' } },
+  { id: 'lotus', name: { vi: 'Sen h\u1ed3ng', en: 'A lotus', de: 'Eine Lotusblüte' } },
+  { id: 'daisy', name: { vi: 'C\u00fac tr\u1eafng', en: 'A daisy', de: 'Ein Gänseblümchen' } },
+  { id: 'tulip', name: { vi: 'Tulip v\u00e0ng', en: 'A tulip', de: 'Eine Tulpe' } },
+  { id: 'letter', name: { vi: 'Th\u01b0 tay', en: 'A letter', de: 'Ein handgeschriebener Brief' } },
+  { id: 'cake', name: { vi: 'B\u00e1nh ng\u1ecdt', en: 'Something sweet', de: 'Etwas Süßes' } },
+  { id: 'star', name: { vi: 'M\u1ed9t v\u00ec sao', en: 'A star', de: 'Ein Stern' } },
+  { id: 'moon', name: { vi: 'M\u1ea3nh tr\u0103ng', en: 'A piece of the moon', de: 'Ein Stück Mond' } }
 ];
 const GIFT_PER_DAY = 3;
 function giftName(id) { const g = GIFTS.filter((x) => x.id === id)[0]; return g ? L(g.name) : ''; }

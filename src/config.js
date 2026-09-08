@@ -82,7 +82,7 @@ const CONFIG = {
   // (any long phrase); codes made before the change stop working.
 
   timezone: 'Asia/Ho_Chi_Minh',
-  tzLabel: { vi: 'giờ Việt Nam', en: 'Vietnam time' },
+  tzLabel: { vi: 'giờ Việt Nam', en: 'Vietnam time', de: 'vietnamesische Zeit' },
 
   // Booking page copy. Short sentences; this is what clients read.
   // The owner's own words, one line per step; book.js draws the first line
@@ -92,7 +92,7 @@ const CONFIG = {
     en: "💌 How to book\nChoose the service that fits.\nChoose a topic if it is a one-topic package.\nChoose a free date & time.\nChoose how you want the reading.\nSend your request to Nabu.\nTransfer the payment before the session to complete the booking. ✨",
     de: "💌 So buchst du\nWähl die passende Leistung.\nWähl ein Thema, wenn es ein Paket mit einem Thema ist.\nWähl einen freien Tag & eine Uhrzeit.\nWähl die Art der Legung.\nSchick deine Anfrage an Nabu.\nÜberweise vor dem Termin, um die Buchung abzuschließen. ✨"
   },
-  tagline: { vi: 'Lắng nghe và thấu hiểu', en: 'Listening and understanding' },
+  tagline: { vi: 'Lắng nghe và thấu hiểu', en: 'Listening and understanding', de: 'Zuhören und verstehen' },
   about: {
     vi: 'Nabu Tarot xem bài về tình cảm, người cũ, crush, công việc và học tập. Mỗi chủ đề là một trải bài 5 lá với 5 câu hỏi rõ ràng.',
     en: 'Nabu Tarot reads on relationships, exes, crushes, career and study. Each topic is a five-card spread with five clear questions.'
@@ -102,15 +102,15 @@ const CONFIG = {
 /* Interests a visitor can pick in their profile. Ids are stable; posts and
    guides carry the same ids so the home screen can match them. */
 const INTERESTS = [
-  { id: 'love', vi: 'Tình cảm', en: 'Love' },
-  { id: 'ex', vi: 'Người cũ', en: 'An ex' },
-  { id: 'crush', vi: 'Crush / mập mờ', en: 'Crush' },
-  { id: 'work', vi: 'Công việc', en: 'Career' },
-  { id: 'study', vi: 'Học tập', en: 'Study' },
-  { id: 'money', vi: 'Tiền bạc', en: 'Money' },
-  { id: 'astro', vi: 'Chiêm tinh', en: 'Astrology' },
-  { id: 'tarot', vi: 'Học tarot', en: 'Learn tarot' },
-  { id: 'lenormand', vi: 'Lenormand', en: 'Lenormand' },
-  { id: 'manifest', vi: 'Manifestation', en: 'Manifestation' },
-  { id: 'fortune', vi: 'Bói toán', en: 'Fortune telling' }
+  { id: 'love', vi: 'Tình cảm', en: 'Love', de: 'Liebe' },
+  { id: 'ex', vi: 'Người cũ', en: 'An ex', de: 'Ex-Partner' },
+  { id: 'crush', vi: 'Crush / mập mờ', en: 'Crush', de: 'Crush / Kennenlernphase' },
+  { id: 'work', vi: 'Công việc', en: 'Career', de: 'Arbeit' },
+  { id: 'study', vi: 'Học tập', en: 'Study', de: 'Lernen' },
+  { id: 'money', vi: 'Tiền bạc', en: 'Money', de: 'Geld' },
+  { id: 'astro', vi: 'Chiêm tinh', en: 'Astrology', de: 'Astrologie' },
+  { id: 'tarot', vi: 'Học tarot', en: 'Learn tarot', de: 'Tarot lernen' },
+  { id: 'lenormand', vi: 'Lenormand', en: 'Lenormand', de: 'Lenormand' },
+  { id: 'manifest', vi: 'Manifestation', en: 'Manifestation', de: 'Manifestation' },
+  { id: 'fortune', vi: 'Bói toán', en: 'Fortune telling', de: 'Divination' }
 ];

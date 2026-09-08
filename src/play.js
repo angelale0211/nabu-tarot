@@ -898,22 +898,68 @@ async function homeActHTML(root) {
 }
 ROUTES.play = { nav: 'play', render: renderPlay };
 
+/* ---- German for activities that were published before German existed ----
+   The list a visitor sees comes from the cloud when anything has been saved
+   from the dashboard, so the German added to activities.json and
+   activities-stock.json does not reach them on its own. This walks the loaded
+   activities and fills in any missing `de` from those two files, matching on
+   the English text, which is unique across both. Only missing values are
+   written; nothing already there is touched. */
+async function germanFromFiles() {
+  const map = {};
+  /* Cached under their own keys: 'nabu-acts' belongs to the cloud copy and
+     must not be overwritten with the file. */
+  for (const [path, key] of [['activities.json', 'nabu-acts-src'], ['activities-stock.json', 'nabu-acts-stock']]) {
+    const r = await loadJSON(path, key);
+    const walk = (o) => {
+      if (!o || typeof o !== 'object') return;
+      if (Array.isArray(o)) { o.forEach(walk); return; }
+      if (typeof o.en === 'string' && typeof o.de === 'string' && o.de) { map[o.en] = o.de; return; }
+      Object.keys(o).forEach((k) => walk(o[k]));
+    };
+    walk((r.data && r.data.items) || []);
+  }
+  return map;
+}
+
+function fillActsDe(items, map) {
+  let filled = 0;
+  const missing = [];
+  const walk = (o) => {
+    if (!o || typeof o !== 'object') return;
+    if (Array.isArray(o)) { o.forEach(walk); return; }
+    if (typeof o.vi === 'string' && typeof o.en === 'string') {
+      if (!o.de) {
+        if (map[o.en]) { o.de = map[o.en]; filled++; }
+        else if (missing.indexOf(o.en) < 0) missing.push(o.en);
+      }
+      return;
+    }
+    Object.keys(o).forEach((k) => walk(o[k]));
+  };
+  walk(items);
+  return { filled: filled, missing: missing };
+}
+
 /* ---- dashboard: create and answer activities ---- */
 function adminActivities(p) {
   const S = T();
   let items = [], editing = null;
   const form = (a) => {
     a = a || { type: 'pile', date: isoDate(new Date()), title: { vi: '', en: '' }, intro: { vi: '', en: '' }, piles: [{ label: '', msg: { vi: '', en: '' } }, { label: '', msg: { vi: '', en: '' } }, { label: '', msg: { vi: '', en: '' } }], options: [], results: false, closed: false, resultsDate: '' };
-    const pileRows = (a.piles || []).map((pl, i) => '<div class="card" style="padding:12px"><b>' + esc(S.actPileN(i + 1)) + '</b><input data-pl="' + i + '" placeholder="' + esc(S.actPileLabel) + '" value="' + esc(pl.label || '') + '" style="margin:6px 0"><label class="f" style="margin-top:6px">' + esc(S.actPileArt) + '</label><select data-part="' + i + '"><option value="">' + esc(S.actArtAuto) + '</option>' + S.actArts.map((n, k) => '<option value="' + k + '"' + (pl.art === k ? ' selected' : '') + '>' + esc(n) + '</option>').join('') + '</select><textarea data-pmsg="' + i + '" placeholder="' + esc(S.actPileMsg) + '">' + esc(L2(pl.msg, 'vi')) + '</textarea><textarea data-pmsgen="' + i + '" placeholder="' + esc(S.actPileMsgEn) + '" style="min-height:60px;margin-top:6px">' + esc(L2(pl.msg, 'en')) + '</textarea></div>').join('');
+    const pileRows = (a.piles || []).map((pl, i) => '<div class="card" style="padding:12px"><b>' + esc(S.actPileN(i + 1)) + '</b><input data-pl="' + i + '" placeholder="' + esc(S.actPileLabel) + '" value="' + esc(pl.label || '') + '" style="margin:6px 0"><label class="f" style="margin-top:6px">' + esc(S.actPileArt) + '</label><select data-part="' + i + '"><option value="">' + esc(S.actArtAuto) + '</option>' + S.actArts.map((n, k) => '<option value="' + k + '"' + (pl.art === k ? ' selected' : '') + '>' + esc(n) + '</option>').join('') + '</select><textarea data-pmsg="' + i + '" placeholder="' + esc(S.actPileMsg) + '">' + esc(L2(pl.msg, 'vi')) + '</textarea><textarea data-pmsgen="' + i + '" placeholder="' + esc(S.actPileMsgEn) + '" style="min-height:60px;margin-top:6px">' + esc(L2(pl.msg, 'en')) + '</textarea><textarea data-pmsgde="' + i + '" placeholder="' + esc(S.actPileMsgDe) + '" style="min-height:60px;margin-top:6px">' + esc(L2(pl.msg, 'de')) + '</textarea></div>').join('');
     return '<div class="card"><h3 id="ahead" style="margin-bottom:6px">' + esc(editing ? S.edit : S.actNew) + '</h3>'
       + '<label class="f">' + esc(S.actType) + '</label><div class="chips">' + ['pile', 'poll', 'wish'].map((t) => '<button type="button" class="chip' + (a.type === t ? ' on' : '') + '" data-atype="' + t + '">' + esc(S.actTypes[t]) + '</button>').join('') + '</div>'
       + '<div class="two"><div><label class="f" for="adate">' + esc(S.postDate) + '</label><input id="adate" type="date" value="' + esc(a.date) + '"></div><div><label class="f" for="ardate">' + esc(S.actResultsDate) + '</label><input id="ardate" type="date" value="' + esc(a.resultsDate || '') + '"></div></div>'
-      + '<label class="f" for="atitle">' + esc(S.postTitle) + '</label><input id="atitle" value="' + esc(L2(a.title, 'vi')) + '"><label class="f" for="atitle_en">' + esc(S.postTitleEn) + '</label><input id="atitle_en" value="' + esc(L2(a.title, 'en')) + '">'
+      + '<label class="f" for="atitle">' + esc(S.postTitle) + '</label><input id="atitle" value="' + esc(L2(a.title, 'vi')) + '"><label class="f" for="atitle_en">' + esc(S.postTitleEn) + '</label><input id="atitle_en" value="' + esc(L2(a.title, 'en')) + '"><label class="f" for="atitle_de">' + esc(S.postTitleDe) + '</label><input id="atitle_de" value="' + esc(L2(a.title, 'de')) + '">'
       + '<label class="f" for="aintro">' + esc(S.actIntroLabel) + '</label><textarea id="aintro">' + esc(L2(a.intro, 'vi')) + '</textarea>'
+      + '<label class="f" for="aintro_de">' + esc(S.actIntroDe) + '</label><textarea id="aintro_de">' + esc(L2(a.intro, 'de')) + '</textarea>'
       + '<div id="apiles"' + (a.type === 'pile' ? '' : ' hidden') + '><p class="hint" style="margin:12px 0 8px">' + esc(S.actPilesHint) + '</p>' + pileRows + '<div class="row nw"><button type="button" class="btn sm" id="apadd">+ ' + esc(S.actPileAdd) + '</button><button type="button" class="btn sm" id="apdel">− ' + esc(S.actPileDel) + '</button></div>'
       + '<label class="f" style="display:flex;gap:8px;align-items:center;margin-top:14px"><input type="checkbox" id="aresults" style="width:auto"' + (actAnswered(a) ? ' checked' : '') + '>' + esc(S.actResultsOn) + '</label></div>'
-      + '<div id="apoll"' + (a.type === 'poll' ? '' : ' hidden') + '><label class="f" for="aopts">' + esc(S.actOptions) + '</label><textarea id="aopts">' + esc((a.options || []).map((o) => L2(o, 'vi')).join('\n')) + '</textarea><label class="f" style="display:flex;gap:8px;align-items:center;margin-top:10px"><input type="checkbox" id="aclosed" style="width:auto"' + (a.closed ? ' checked' : '') + '>' + esc(S.actCloseOn) + '</label></div>'
-      + '<div class="btns" style="margin-top:16px"><button class="btn primary" id="apub">' + esc(S.publish) + '</button><button class="btn" id="anew">' + esc(S.actNew) + '</button></div><p id="astatus" class="hint"></p></div>'
+      + '<div id="apoll"' + (a.type === 'poll' ? '' : ' hidden') + '><label class="f" for="aopts">' + esc(S.actOptions) + '</label><textarea id="aopts">' + esc((a.options || []).map((o) => L2(o, 'vi')).join('\n')) + '</textarea><label class="f" for="aopts_de">' + esc(S.actOptionsDe) + '</label><textarea id="aopts_de">' + esc((a.options || []).map((o) => L2(o, 'de')).join('\n')) + '</textarea><label class="f" style="display:flex;gap:8px;align-items:center;margin-top:10px"><input type="checkbox" id="aclosed" style="width:auto"' + (a.closed ? ' checked' : '') + '>' + esc(S.actCloseOn) + '</label></div>'
+      + '<div class="btns" style="margin-top:16px"><button class="btn primary" id="apub">' + esc(S.publish) + '</button><button class="btn" id="anew">' + esc(S.actNew) + '</button></div>'
+      + '<div class="btns" style="margin-top:8px"><button class="btn" id="adefill">' + esc(S.actFillDe) + '</button></div>'
+      + '<p class="hint">' + esc(S.actFillDeHint) + '</p><p id="astatus" class="hint"></p></div>'
       + '<div class="card"><h3 style="margin-bottom:6px">' + esc(S.actExisting) + '</h3><div class="plist" id="alist">' + (items.length ? items.map((x) => '<div class="it"><div class="tt"><div>' + esc(S.actTypes[x.type] || x.type) + ' · ' + esc(L2(x.title, 'vi') || L2(x.title, 'en')) + '</div><div class="d">' + esc(x.date) + (x.results ? ' · ✓' : '') + '</div></div><button class="btn sm" data-aedit="' + esc(x.id) + '">' + esc(S.edit) + '</button><button class="btn sm" data-adel="' + esc(x.id) + '">' + esc(S.del) + '</button></div>').join('') : '<p class="hint">' + esc(S.actEmpty) + '</p>') + '</div></div>';
   };
   let cur = null;
@@ -924,9 +970,19 @@ function adminActivities(p) {
     const read = () => {
       const type = $('.chip.on[data-atype]') ? $('.chip.on[data-atype]').getAttribute('data-atype') : 'pile';
       const a = { id: (cur && cur.id) || ($('#adate').value || isoDate(new Date())) + '-' + Math.random().toString(36).slice(2, 6), type: type, date: $('#adate').value || isoDate(new Date()), resultsDate: $('#ardate').value || '',
-        title: { vi: $('#atitle').value.trim(), en: $('#atitle_en').value.trim() }, intro: { vi: $('#aintro').value.trim(), en: (cur && cur.intro && cur.intro.en) || '' }, results: !!$('#aresults').checked, closed: !!$('#aclosed').checked };
-      if (type === 'pile') a.piles = $$('[data-pl]', p).map((inp, i) => { const art = $('[data-part="' + i + '"]', p).value; const o = { label: inp.value.trim(), msg: { vi: $('[data-pmsg="' + i + '"]', p).value.trim(), en: $('[data-pmsgen="' + i + '"]', p).value.trim() } }; if (art !== '') o.art = Number(art); return o; });
-      if (type === 'poll') a.options = $('#aopts').value.split('\n').map((x) => x.trim()).filter(Boolean).map((x) => { const old = ((cur && cur.options) || []).filter((o) => L2(o, 'vi') === x)[0]; return old && old.en ? { vi: x, en: old.en } : { vi: x }; });
+        title: { vi: $('#atitle').value.trim(), en: $('#atitle_en').value.trim(), de: $('#atitle_de').value.trim() }, intro: { vi: $('#aintro').value.trim(), en: (cur && cur.intro && cur.intro.en) || '', de: $('#aintro_de').value.trim() }, results: !!$('#aresults').checked, closed: !!$('#aclosed').checked };
+      if (type === 'pile') a.piles = $$('[data-pl]', p).map((inp, i) => { const art = $('[data-part="' + i + '"]', p).value; const o = { label: inp.value.trim(), msg: { vi: $('[data-pmsg="' + i + '"]', p).value.trim(), en: $('[data-pmsgen="' + i + '"]', p).value.trim(), de: $('[data-pmsgde="' + i + '"]', p).value.trim() } }; if (art !== '') o.art = Number(art); return o; });
+      if (type === 'poll') {
+        const de = $('#aopts_de').value.split('\n').map((x) => x.trim());
+        a.options = $('#aopts').value.split('\n').map((x) => x.trim()).filter(Boolean).map((x, i) => {
+          const old = ((cur && cur.options) || []).filter((o) => L2(o, 'vi') === x)[0], o = { vi: x };
+          if (old && old.en) o.en = old.en;
+          /* The German list is read line for line against the Vietnamese one; a
+             line left blank keeps whatever that option already had. */
+          if (de[i]) o.de = de[i]; else if (old && old.de) o.de = old.de;
+          return o;
+        });
+      }
       if (!a.title.en) delete a.title.en;
       return a;
     };
@@ -935,6 +991,18 @@ function adminActivities(p) {
     $('#apdel').addEventListener('click', () => { cur = read(); if ((cur.piles || []).length > 2) cur.piles.pop(); draw(); });
     $('#anew').addEventListener('click', () => { cur = null; editing = null; draw(); });
     $$('[data-aedit]', p).forEach((b) => b.addEventListener('click', () => { cur = JSON.parse(JSON.stringify(items.filter((x) => x.id === b.getAttribute('data-aedit'))[0])); editing = cur.id; draw(); $('#ahead').scrollIntoView({ behavior: 'smooth' }); }));
+    $('#adefill').addEventListener('click', async () => {
+      status(S.translating);
+      try {
+        const map = await germanFromFiles();
+        const r = fillActsDe(items, map);
+        if (!r.filled) { status(S.actFillDeNone, 'ok'); return; }
+        await BE.setContent('activities', actsDoc(items));
+        ACTS.items = items; ACTS.loaded = true;
+        status(S.actFillDeDone(r.filled, r.missing.length), 'ok');
+        draw();
+      } catch (e) { status(S.publishFail + ': ' + e.message, 'err'); }
+    });
     $$('[data-adel]', p).forEach((b) => b.addEventListener('click', async () => { if (!confirm(S.confirmDel)) return; const id = b.getAttribute('data-adel'); items = items.filter((x) => x.id !== id); if (ACTS.stock && ACTS.stock[id]) ACTS.hidden = (ACTS.hidden || []).concat(id); try { await BE.setContent('activities', actsDoc(items)); ACTS.items = items; toast(T().saved); draw(); } catch (e) { status(S.publishFail + ': ' + e.message, 'err'); } }));
     $('#apub').addEventListener('click', async () => {
       const a = read();

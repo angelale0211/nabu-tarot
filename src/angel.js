@@ -18,183 +18,219 @@ const ANGEL_ROOT = { 1: 'n1', 2: 'n2', 3: 'n3', 4: 'n4', 5: 'n5', 6: 'n6', 7: 'n
 const ANGELS = [
   {
     id: 'n0', digit: 0, ink: '#6E5AA8', aura: '#E4DCFA', seen: ['000', '0000', '00:00'],
-    name: { vi: 'Số 0 lặp lại', en: 'Repeating zeros' },
-    short: { vi: 'Một vòng mới bắt đầu', en: 'A circle opening' },
-    keys: { vi: ['khởi đầu', 'trở về gốc', 'buông bớt'], en: ['beginning', 'return', 'letting go'] },
+    name: { vi: 'Số 0 lặp lại', en: 'Repeating zeros', de: 'Wiederkehrende Nullen' },
+    short: { vi: 'Một vòng mới bắt đầu', en: 'A circle opening', de: 'Ein Kreis öffnet sich' },
+    keys: { vi: ['khởi đầu', 'trở về gốc', 'buông bớt'], en: ['beginning', 'return', 'letting go'], de: ['Anfang', 'Rückkehr', 'Loslassen'] },
     body: {
       vi: ['Số 0 không có điểm đầu và cũng không có điểm cuối. Khi bạn liên tục nhìn thấy 000 hoặc 0000, người ta cho rằng bạn đang đứng ở đoạn giữa hai chương: chương cũ đã đóng lại nhưng chương mới thì chưa kịp mở ra. Cảm giác trống trải trong giai đoạn này là bình thường, và nó không có nghĩa là bạn đang đi sai đường.',
         'Đây thường là lúc những thói quen cũ không còn phù hợp nữa. Bạn có thể thấy mình mất hứng thú với những việc trước đây từng theo đuổi, hoặc thấy cần một khoảng lặng trước khi quyết định điều gì. Số 0 nhắc bạn rằng khoảng lặng ấy là một phần của quá trình, không phải là sự trì trệ.',
         'Trong nhiều truyền thống, số 0 còn được xem là biểu tượng của sự trọn vẹn: mọi thứ vốn đã đủ, chỉ là bạn đang nhìn nó theo một cách khác. Khi gặp số này, bạn hãy quay về với những điều cơ bản nhất của mình.'],
       en: ['Zero has no beginning and no end. Seeing 000 or 0000 again and again is read as standing between two chapters: the old one has closed and the new one has not opened yet. The empty feeling that comes with it is normal, and it does not mean you have gone the wrong way.',
         'This is usually a stretch where old habits stop fitting. You may lose interest in something you used to chase, or find you need a pause before deciding anything. Zero says the pause is part of the process rather than a stall.',
-        'In many traditions zero also stands for wholeness: nothing is missing, you are only looking at it differently. When it appears, go back to your own basics.']
+        'In many traditions zero also stands for wholeness: nothing is missing, you are only looking at it differently. When it appears, go back to your own basics.'],
+      de: ['Die Null hat weder Anfang noch Ende. Wenn dir 000 oder 0000 immer wieder begegnet, wird das oft als Zwischenraum zwischen zwei Kapiteln gedeutet: Das alte ist abgeschlossen, das neue noch nicht ganz geöffnet. Das Gefühl von Leere dazwischen ist normal und bedeutet nicht, dass du falsch abgebogen bist.',
+        'Oft passt diese Zahl zu einer Phase, in der alte Gewohnheiten nicht mehr richtig sitzen. Vielleicht verlierst du das Interesse an etwas, dem du lange hinterhergelaufen bist, oder brauchst eine Pause, bevor du dich entscheidest. Die Null erinnert daran, dass auch eine Pause Teil des Weges sein kann.',
+        'In vielen Zahlensymboliken steht die Null außerdem für Ganzheit: Es fehlt nicht unbedingt etwas — vielleicht schaust du nur aus einer anderen Perspektive darauf. Wenn sie auftaucht, geh zurück zu deinen eigenen Grundlagen.']
     },
-    todo: { vi: 'Bạn dọn bớt một thứ đã cũ trong tuần này, dù là một món đồ, một thói quen hay một cuộc trò chuyện chưa dứt.', en: 'Clear one old thing this week: an object, a habit, or a conversation you never finished.' }
+    todo: { vi: 'Bạn dọn bớt một thứ đã cũ trong tuần này, dù là một món đồ, một thói quen hay một cuộc trò chuyện chưa dứt.', en: 'Clear one old thing this week: an object, a habit, or a conversation you never finished.', de: 'Räum diese Woche eine alte Sache auf: einen Gegenstand, eine Gewohnheit oder ein Gespräch, das nie richtig beendet wurde.' }
   },
   {
     id: 'n1', digit: 1, ink: '#C0872A', aura: '#FBE7BE', seen: ['111', '1111', '11:11'],
-    name: { vi: 'Số 1 lặp lại', en: 'Repeating ones' },
-    short: { vi: 'Cánh cửa vừa mở', en: 'A door standing open' },
-    keys: { vi: ['khởi sự', 'ý nghĩ thành hình', 'đi trước'], en: ['starting', 'thoughts taking shape', 'going first'] },
+    name: { vi: 'Số 1 lặp lại', en: 'Repeating ones', de: 'Wiederkehrende Einsen' },
+    short: { vi: 'Cánh cửa vừa mở', en: 'A door standing open', de: 'Eine Tür steht offen' },
+    keys: { vi: ['khởi sự', 'ý nghĩ thành hình', 'đi trước'], en: ['starting', 'thoughts taking shape', 'going first'], de: ['Anfang', 'Gedanken werden konkret', 'den ersten Schritt machen'] },
     body: {
       vi: ['111 và 1111 là dãy số được nhắc đến nhiều nhất. Người ta xem đây là dấu hiệu của một cánh cửa vừa mở ra, và điều bạn đang nghĩ trong khoảnh khắc ấy có sức nặng hơn bình thường. Vì vậy mới có thói quen ước một điều gì đó khi đồng hồ chỉ 11:11.',
         'Ở mức thực tế hơn, số 1 gắn với việc bắt đầu và với việc tự mình đi bước đầu tiên. Nếu bạn đang cân nhắc một việc mới, dãy số này thường xuất hiện đúng vào lúc bạn đã có đủ thông tin nhưng còn thiếu quyết tâm.',
         'Số 1 cũng nhắc bạn để ý đến giọng nói bên trong của mình. Những câu bạn tự nói với bản thân trong giai đoạn này sẽ định hình cách bạn hành động trong vài tháng tới, nên bạn hãy chọn lời cho tử tế.'],
       en: ['111 and 1111 are the most talked-about of all. They are read as a door standing open, with whatever you are thinking at that moment carrying more weight than usual - which is where the habit of making a wish at 11:11 comes from.',
         'More practically, one is the number of beginnings and of taking the first step yourself. If you are weighing something new, this sequence tends to turn up exactly when you have enough information and not quite enough nerve.',
-        'It also asks you to listen to your own voice. What you say to yourself now shapes how you act for months, so choose the words kindly.']
+        'It also asks you to listen to your own voice. What you say to yourself now shapes how you act for months, so choose the words kindly.'],
+      de: ['111 und 1111 gehören zu den bekanntesten Engelszahlen. Sie werden oft wie eine offene Tür gelesen: Was dir in diesem Moment durch den Kopf geht, bekommt besondere Aufmerksamkeit — daher kommt auch die Gewohnheit, sich um 11:11 etwas zu wünschen.',
+        'Praktischer betrachtet steht die Eins für Anfang und Eigeninitiative. Wenn du etwas Neues abwägst, kann diese Zahlenfolge eine schöne Erinnerung sein, dass irgendwann nicht noch mehr Denken, sondern ein erster Schritt nötig ist.',
+        'Sie lenkt den Blick auch auf deine innere Stimme. Die Art, wie du jetzt mit dir selbst sprichst, beeinflusst, wie du in den nächsten Wochen und Monaten handelst. Wähl deine Worte deshalb freundlich.']
     },
-    todo: { vi: 'Bạn viết ra một câu về điều bạn muốn, ở thì hiện tại, rồi làm một việc nhỏ nhất có thể để bắt đầu.', en: 'Write one sentence about what you want, in the present tense, then do the smallest thing that starts it.' }
+    todo: { vi: 'Bạn viết ra một câu về điều bạn muốn, ở thì hiện tại, rồi làm một việc nhỏ nhất có thể để bắt đầu.', en: 'Write one sentence about what you want, in the present tense, then do the smallest thing that starts it.', de: 'Schreib in einem Satz im Präsens auf, was du möchtest, und tu danach die kleinste Sache, mit der es beginnen kann.' }
   },
   {
     id: 'n2', digit: 2, ink: '#B0537A', aura: '#FBD3E1', seen: ['222', '2222', '22:22'],
-    name: { vi: 'Số 2 lặp lại', en: 'Repeating twos' },
-    short: { vi: 'Hãy cho mọi việc thêm thời gian', en: 'Give it time' },
-    keys: { vi: ['cân bằng', 'bạn đồng hành', 'đúng thời điểm'], en: ['balance', 'partnership', 'timing'] },
+    name: { vi: 'Số 2 lặp lại', en: 'Repeating twos', de: 'Wiederkehrende Zweien' },
+    short: { vi: 'Hãy cho mọi việc thêm thời gian', en: 'Give it time', de: 'Gib ihm Zeit' },
+    keys: { vi: ['cân bằng', 'bạn đồng hành', 'đúng thời điểm'], en: ['balance', 'partnership', 'timing'], de: ['Balance', 'Partnerschaft', 'Timing'] },
     body: {
       vi: ['Số 2 nói về hai phía: bạn và một người khác, công việc và đời sống riêng, điều bạn muốn và điều bạn đang có. Khi 222 xuất hiện nhiều lần, người ta hiểu rằng có một việc trong đời bạn đang cần được cân lại cho đều.',
         'Đây cũng là dãy số của sự kiên nhẫn. Những gì bạn gieo trước đó chưa kịp nảy mầm, và số 2 khuyên bạn đừng đào lên xem. Nhiều chuyện chỉ cần thêm thời gian chứ không cần thêm nỗ lực.',
         'Trong chuyện tình cảm và trong hợp tác làm ăn, dãy số này thường được xem là dấu hiệu tốt: một mối quan hệ đang đi đúng hướng, hoặc một người phù hợp sắp bước vào phần việc bạn đang làm.'],
       en: ['Two is about two sides: you and someone else, work and life, what you want and what you have. When 222 keeps appearing, something in your life is asking to be evened out.',
         'It is also the number of patience. What you planted has not come up yet, and two says do not dig it back up to look. Some things need more time rather than more effort.',
-        'In love and in partnerships it is usually read as a good sign: a relationship is going the right way, or the right person is about to join what you are building.']
+        'In love and in partnerships it is usually read as a good sign: a relationship is going the right way, or the right person is about to join what you are building.'],
+      de: ['Die Zwei handelt von zwei Seiten: dir und einem anderen Menschen, Arbeit und Privatleben, Wunsch und Wirklichkeit. Wenn 222 immer wieder auftaucht, wird sie oft als Hinweis gelesen, irgendwo wieder mehr Gleichgewicht herzustellen.',
+        'Sie ist außerdem eine Zahl der Geduld. Was du gesät hast, ist vielleicht noch nicht sichtbar. Die Zwei erinnert daran, nicht ständig nachzugraben, ob schon etwas wächst. Manches braucht eher mehr Zeit als mehr Druck.',
+        'In Liebe und Zusammenarbeit wird 222 traditionell häufig positiv gelesen: als Bild für eine Verbindung, die sich entwickeln darf, oder für Unterstützung, die zu dem hinzukommt, was du gerade aufbaust.']
     },
-    todo: { vi: 'Bạn nhắn cho một người mà bạn đang chờ, hoặc cho họ thêm một tuần nữa mà không hỏi lại.', en: 'Message the person you are waiting on, or give them one more week without asking again.' }
+    todo: { vi: 'Bạn nhắn cho một người mà bạn đang chờ, hoặc cho họ thêm một tuần nữa mà không hỏi lại.', en: 'Message the person you are waiting on, or give them one more week without asking again.', de: 'Schreib der Person, auf deren Antwort du wartest — oder gib der Sache bewusst noch eine Woche Zeit, ohne erneut nachzufragen.' }
   },
   {
     id: 'n3', digit: 3, ink: '#C46A2C', aura: '#F8D9C6', seen: ['333', '3333', '3:33'],
-    name: { vi: 'Số 3 lặp lại', en: 'Repeating threes' },
-    short: { vi: 'Nói ra điều bạn đang giữ', en: 'Say the thing' },
-    keys: { vi: ['sáng tạo', 'lên tiếng', 'có người bên cạnh'], en: ['creativity', 'speaking up', 'support'] },
+    name: { vi: 'Số 3 lặp lại', en: 'Repeating threes', de: 'Wiederkehrende Dreien' },
+    short: { vi: 'Nói ra điều bạn đang giữ', en: 'Say the thing', de: 'Sag, was gesagt werden will' },
+    keys: { vi: ['sáng tạo', 'lên tiếng', 'có người bên cạnh'], en: ['creativity', 'speaking up', 'support'], de: ['Kreativität', 'sich ausdrücken', 'Unterstützung'] },
     body: {
       vi: ['Số 3 gắn với việc thể hiện: viết, vẽ, hát, hoặc đơn giản là nói ra một điều bạn đã giữ trong lòng quá lâu. Khi 333 xuất hiện, thường là lúc bạn đang có điều muốn nói nhưng lại tự thuyết phục mình rằng chưa phải lúc.',
         'Dãy số này còn được xem là dấu hiệu bạn không đơn độc. Có thể là một người thầy, một người bạn cũ, hoặc một người bạn chưa từng nghĩ tới sẽ giúp bạn trong việc bạn đang làm dở.',
         'Nếu bạn đang làm công việc sáng tạo, 333 là lời nhắc quay lại với phần việc bạn thích nhất chứ không phải phần việc dễ đo đếm nhất.'],
       en: ['Three is expression: writing, drawing, singing, or simply saying something you have held too long. When 333 turns up, there is usually something you want to say and keep telling yourself is not timely yet.',
         'It is also read as a sign that you are not on your own. A teacher, an old friend, or someone you never expected is about to help with the thing you left half-finished.',
-        'If you make things for a living, 333 asks you back to the part of the work you actually like rather than the part that is easiest to measure.']
+        'If you make things for a living, 333 asks you back to the part of the work you actually like rather than the part that is easiest to measure.'],
+      de: ['Die Drei steht für Ausdruck: schreiben, zeichnen, singen oder einfach etwas aussprechen, das du schon zu lange zurückhältst. Wenn 333 auftaucht, kann sie dich daran erinnern, einer Idee oder einem Gefühl endlich eine Form zu geben.',
+        'Sie wird auch mit Unterstützung verbunden. Vielleicht hilft dir eine Lehrperson, ein alter Freund oder jemand Unerwartetes dabei, etwas wieder aufzunehmen, das liegen geblieben ist.',
+        'Wenn du kreativ arbeitest, kann 333 eine Einladung sein, kurz zu dem Teil zurückzukehren, den du wirklich liebst — nicht nur zu dem, der sich am leichtesten messen oder verkaufen lässt.']
     },
-    todo: { vi: 'Bạn gửi đi một tin nhắn hoặc một tác phẩm mà bạn vẫn để trong bản nháp.', en: 'Send one message, or share one piece of work, that has been sitting in drafts.' }
+    todo: { vi: 'Bạn gửi đi một tin nhắn hoặc một tác phẩm mà bạn vẫn để trong bản nháp.', en: 'Send one message, or share one piece of work, that has been sitting in drafts.', de: 'Schick eine Nachricht oder teile eine Arbeit, die schon länger als Entwurf auf dich wartet.' }
   },
   {
     id: 'n4', digit: 4, ink: '#3E7D5A', aura: '#C6E8D9', seen: ['444', '4444', '4:44'],
-    name: { vi: 'Số 4 lặp lại', en: 'Repeating fours' },
-    short: { vi: 'Bạn đang được che chắn', en: 'You are held' },
-    keys: { vi: ['nền móng', 'được bảo vệ', 'làm cho chắc'], en: ['foundations', 'protection', 'steadiness'] },
+    name: { vi: 'Số 4 lặp lại', en: 'Repeating fours', de: 'Wiederkehrende Vieren' },
+    short: { vi: 'Bạn đang được che chắn', en: 'You are held', de: 'Du hast Halt' },
+    keys: { vi: ['nền móng', 'được bảo vệ', 'làm cho chắc'], en: ['foundations', 'protection', 'steadiness'], de: ['Fundament', 'Schutz', 'Beständigkeit'] },
     body: {
       vi: ['444 là dãy số của sự vững chãi. Người ta tin rằng khi số này xuất hiện, bạn đang được che chắn trong một giai đoạn khó, và những gì bạn đã xây dựng chắc chắn hơn bạn tưởng.',
         'Số 4 cũng nói về nền móng: sức khỏe, tiền tiết kiệm, chỗ ở, những mối quan hệ lâu năm. Đây là lúc thích hợp để kiểm tra lại phần gốc thay vì chạy theo cơ hội mới.',
         'Nếu bạn đang lo lắng về một việc cụ thể, dãy số này thường được đọc là lời trấn an: bạn không sai khi kiên trì, chỉ là kết quả đến chậm hơn bạn muốn.'],
       en: ['444 is the steady one. It is read as being held through a hard stretch, with what you have built standing firmer than you think.',
         'Four is also foundations: health, savings, where you live, the relationships that have lasted. A good time to check the base rather than chase something new.',
-        'If you are worried about one particular thing, this sequence is usually read as reassurance: you are not wrong to keep going, the result is simply slower than you wanted.']
+        'If you are worried about one particular thing, this sequence is usually read as reassurance: you are not wrong to keep going, the result is simply slower than you wanted.'],
+      de: ['444 ist die ruhige, stabile Zahlenfolge. Sie wird oft als Bild dafür gelesen, dass du auch durch eine schwierige Phase getragen wirst und dein Fundament fester ist, als es sich gerade anfühlt.',
+        'Die Vier steht für Grundlagen: Gesundheit, Rücklagen, Zuhause und Beziehungen, die sich über Zeit bewährt haben. Sie eignet sich deshalb gut als Erinnerung, erst die Basis zu prüfen, bevor du dem nächsten neuen Ziel hinterherläufst.',
+        'Wenn dich eine bestimmte Sache beschäftigt, kann 444 wie ein beruhigender Hinweis wirken: Nicht alles muss sofort sichtbar werden. Beständigkeit ist manchmal wichtiger als Geschwindigkeit.']
     },
-    todo: { vi: 'Bạn kiểm tra lại một việc thuộc phần nền: giấy tờ, sức khỏe, hoặc một khoản chi đều đặn.', en: 'Check one thing at the base: papers, health, or a payment that goes out every month.' }
+    todo: { vi: 'Bạn kiểm tra lại một việc thuộc phần nền: giấy tờ, sức khỏe, hoặc một khoản chi đều đặn.', en: 'Check one thing at the base: papers, health, or a payment that goes out every month.', de: 'Prüf heute eine Sache an deiner Basis: wichtige Unterlagen, einen Gesundheitstermin oder eine regelmäßige Zahlung.' }
   },
   {
     id: 'n5', digit: 5, ink: '#2F7E96', aura: '#C7EAEE', seen: ['555', '5555', '5:55'],
-    name: { vi: 'Số 5 lặp lại', en: 'Repeating fives' },
-    short: { vi: 'Có thay đổi đang tới', en: 'Change is coming' },
-    keys: { vi: ['thay đổi', 'tự do', 'nới tay ra'], en: ['change', 'freedom', 'loosening'] },
+    name: { vi: 'Số 5 lặp lại', en: 'Repeating fives', de: 'Wiederkehrende Fünfen' },
+    short: { vi: 'Có thay đổi đang tới', en: 'Change is coming', de: 'Veränderung kommt in Bewegung' },
+    keys: { vi: ['thay đổi', 'tự do', 'nới tay ra'], en: ['change', 'freedom', 'loosening'], de: ['Veränderung', 'Freiheit', 'lockerlassen'] },
     body: {
       vi: ['555 báo hiệu sự thay đổi. Có thể là công việc, chỗ ở, hoặc cách bạn nhìn một mối quan hệ. Điều đáng nói là thay đổi ấy thường đã bắt đầu từ trước khi bạn kịp nhận ra.',
         'Người ta khuyên rằng khi gặp dãy số này, bạn nên nới tay với những kế hoạch quá chi tiết. Giai đoạn 5 hiếm khi đi theo đúng lịch, và phần lớn những gì tốt đẹp trong giai đoạn này đến từ chỗ bạn không tính trước.',
         'Nếu bạn đang sợ thay đổi, số 5 không hứa rằng mọi việc sẽ dễ. Nó chỉ nói rằng đứng yên cũng không còn là lựa chọn thoải mái nữa.'],
       en: ['555 announces change: work, where you live, or how you see a relationship. What is worth noticing is that it usually began before you noticed it.',
         'When it appears, loosen your grip on plans that are too detailed. A five stretch rarely keeps to a schedule, and most of the good in it arrives from somewhere you did not account for.',
-        'If change frightens you, five does not promise it will be easy. It only says that standing still has stopped being comfortable.']
+        'If change frightens you, five does not promise it will be easy. It only says that standing still has stopped being comfortable.'],
+      de: ['555 wird traditionell mit Veränderung verbunden — bei Arbeit, Wohnort, Gewohnheiten oder der Sicht auf eine Beziehung. Oft hat diese Veränderung schon begonnen, bevor du sie bewusst benennst.',
+        'Wenn die Folge auftaucht, kann sie dich daran erinnern, sehr starre Pläne etwas lockerer zu halten. Übergangsphasen verlaufen selten exakt nach Zeitplan, und manche guten Möglichkeiten kommen aus einer Richtung, die du nicht eingeplant hattest.',
+        'Wenn Veränderung dir Angst macht, verspricht die Fünf nicht, dass alles leicht wird. Sie kann vielmehr zeigen, dass Stillstand inzwischen ebenfalls unbequem geworden ist.']
     },
-    todo: { vi: 'Bạn thử đổi một thói quen nhỏ trong tuần này, như đi một đường khác hoặc dậy sớm hơn nửa tiếng.', en: 'Change one small habit this week: a different route, or half an hour earlier.' }
+    todo: { vi: 'Bạn thử đổi một thói quen nhỏ trong tuần này, như đi một đường khác hoặc dậy sớm hơn nửa tiếng.', en: 'Change one small habit this week: a different route, or half an hour earlier.', de: 'Verändere diese Woche eine kleine Gewohnheit: nimm einen anderen Weg oder beginne etwas eine halbe Stunde früher.' }
   },
   {
     id: 'n6', digit: 6, ink: '#8B5E3C', aura: '#EFDCC4', seen: ['666', '6666', '6:66'],
-    name: { vi: 'Số 6 lặp lại', en: 'Repeating sixes' },
-    short: { vi: 'Nhìn lại chuyện nhà và chuyện tiền', en: 'Home and money, rebalanced' },
-    keys: { vi: ['gia đình', 'chăm sóc', 'cân lại vật chất'], en: ['family', 'caring', 'material balance'] },
+    name: { vi: 'Số 6 lặp lại', en: 'Repeating sixes', de: 'Wiederkehrende Sechsen' },
+    short: { vi: 'Nhìn lại chuyện nhà và chuyện tiền', en: 'Home and money, rebalanced', de: 'Zuhause und Materielles neu ausbalancieren' },
+    keys: { vi: ['gia đình', 'chăm sóc', 'cân lại vật chất'], en: ['family', 'caring', 'material balance'], de: ['Familie', 'Fürsorge', 'materielle Balance'] },
     body: {
       vi: ['Trái với những gì nhiều người nghĩ, 666 trong cách đọc này không mang nghĩa xấu. Đây là dãy số nhắc bạn về sự cân bằng giữa phần vật chất và phần còn lại của cuộc sống.',
         'Số 6 gắn với nhà cửa, gia đình và việc chăm sóc người khác. Khi số này xuất hiện nhiều, thường là lúc bạn đang dồn quá nhiều sức cho một phía: hoặc lo kiếm tiền mà quên người nhà, hoặc lo cho người khác mà quên chính mình.',
         'Đây cũng là lời nhắc kiểm tra lại các con số thật: chi tiêu, nợ, những khoản đang chảy đi mà bạn không để ý. Số 6 không bảo bạn từ bỏ vật chất, nó chỉ bảo bạn đặt vật chất đúng chỗ.'],
       en: ['Contrary to what many expect, 666 is not read as an ill omen here. It is the number of balance between the material side of life and everything else.',
         'Six is home, family and looking after people. When it keeps appearing, you are usually pouring too much into one side: earning and forgetting the people at home, or caring for everyone and forgetting yourself.',
-        'It is also a nudge to check the real numbers: spending, debts, the small amounts leaving without your noticing. Six does not ask you to give up material things, only to put them in their place.']
+        'It is also a nudge to check the real numbers: spending, debts, the small amounts leaving without your noticing. Six does not ask you to give up material things, only to put them in their place.'],
+      de: ['Anders als viele erwarten, wird 666 hier nicht als böses Omen gelesen. In der Zahlensymbolik kann die Sechs für das Gleichgewicht zwischen materiellen Themen und den anderen Bereichen des Lebens stehen.',
+        'Die Sechs wird mit Zuhause, Familie und Fürsorge verbunden. Wenn sie häufig auftaucht, kann das eine Einladung sein zu prüfen, ob du gerade zu viel in eine Richtung gibst: nur arbeiten und Menschen zuhause vergessen — oder dich um alle kümmern und dich selbst dabei übergehen.',
+        'Sie kann auch ganz praktisch an Zahlen erinnern: Ausgaben, Schulden oder kleine regelmäßige Beträge, die unbemerkt abfließen. Es geht nicht darum, Materielles abzulehnen, sondern ihm einen passenden Platz zu geben.']
     },
-    todo: { vi: 'Bạn dành một buổi tối cho người nhà, và một buổi khác để xem lại các khoản chi trong tháng.', en: 'Give one evening to the people at home, and another to last month’s spending.' }
+    todo: { vi: 'Bạn dành một buổi tối cho người nhà, và một buổi khác để xem lại các khoản chi trong tháng.', en: 'Give one evening to the people at home, and another to last month’s spending.', de: 'Schenk einen Abend den Menschen zuhause — und einen zweiten einem ruhigen Blick auf deine Ausgaben des letzten Monats.' }
   },
   {
     id: 'n7', digit: 7, ink: '#5A4BA8', aura: '#DCD4F7', seen: ['777', '7777', '7:77'],
-    name: { vi: 'Số 7 lặp lại', en: 'Repeating sevens' },
-    short: { vi: 'Bạn đang đi đúng hướng', en: 'You are on the right road' },
-    keys: { vi: ['may mắn', 'trực giác', 'học hỏi'], en: ['luck', 'intuition', 'study'] },
+    name: { vi: 'Số 7 lặp lại', en: 'Repeating sevens', de: 'Wiederkehrende Siebenen' },
+    short: { vi: 'Bạn đang đi đúng hướng', en: 'You are on the right road', de: 'Vertrau deinem Weg' },
+    keys: { vi: ['may mắn', 'trực giác', 'học hỏi'], en: ['luck', 'intuition', 'study'], de: ['Glück', 'Intuition', 'Lernen'] },
     body: {
       vi: ['777 được xem là dãy số của sự thuận lợi. Không phải kiểu may mắn trúng thưởng, mà là cảm giác mọi thứ bắt đầu khớp lại sau một thời gian dài rời rạc.',
         'Số 7 gắn với chiều sâu: đọc, học, suy nghĩ, hoặc theo đuổi một câu hỏi mà bạn không giải thích được vì sao lại quan tâm. Khi số này xuất hiện, những gì bạn học trong giai đoạn này sẽ có ích hơn bạn tưởng.',
         'Người ta cũng cho rằng 777 là lúc trực giác của bạn đáng tin. Nếu bạn có một linh cảm rõ ràng về ai đó hoặc về một cơ hội, bạn nên ghi lại nó thay vì gạt đi.'],
       en: ['777 is read as the easy stretch. Not lottery luck, but the feeling of things fitting together after a long time of not fitting.',
         'Seven is depth: reading, studying, thinking, or following a question you cannot explain your interest in. What you learn now turns out to be more useful than it looks.',
-        'It is also taken as a sign that your instinct is worth trusting. If you have a clear feeling about a person or an opening, write it down rather than dismissing it.']
+        'It is also taken as a sign that your instinct is worth trusting. If you have a clear feeling about a person or an opening, write it down rather than dismissing it.'],
+      de: ['777 wird oft mit einer leichteren Phase verbunden — weniger mit Lotterieglück als mit dem Gefühl, dass Dinge nach längerer Unordnung wieder besser zusammenpassen.',
+        'Die Sieben steht für Tiefe: lesen, lernen, nachdenken oder einer Frage folgen, deren Faszination du selbst noch nicht ganz erklären kannst. Was du jetzt lernst, kann später nützlicher werden, als es zunächst aussieht.',
+        'Sie wird außerdem gern als Erinnerung an die eigene Intuition gelesen. Wenn du bei einer Person oder Gelegenheit ein klares Gefühl hast, schreib es auf, statt es sofort wegzuerklären.']
     },
-    todo: { vi: 'Bạn ghi lại một linh cảm hôm nay, kèm ngày tháng, rồi đọc lại sau một tháng.', en: 'Write down one hunch today with the date on it, and read it again in a month.' }
+    todo: { vi: 'Bạn ghi lại một linh cảm hôm nay, kèm ngày tháng, rồi đọc lại sau một tháng.', en: 'Write down one hunch today with the date on it, and read it again in a month.', de: 'Notiere heute eine Ahnung mit Datum und lies sie in einem Monat noch einmal.' }
   },
   {
     id: 'n8', digit: 8, ink: '#1F7A5E', aura: '#C6E8D9', seen: ['888', '8888', '8:88'],
-    name: { vi: 'Số 8 lặp lại', en: 'Repeating eights' },
-    short: { vi: 'Của cải và sự đền đáp', en: 'Abundance and return' },
-    keys: { vi: ['tiền bạc', 'vòng tuần hoàn', 'cho và nhận'], en: ['money', 'cycles', 'give and take'] },
+    name: { vi: 'Số 8 lặp lại', en: 'Repeating eights', de: 'Wiederkehrende Achten' },
+    short: { vi: 'Của cải và sự đền đáp', en: 'Abundance and return', de: 'Fülle und Rückfluss' },
+    keys: { vi: ['tiền bạc', 'vòng tuần hoàn', 'cho và nhận'], en: ['money', 'cycles', 'give and take'], de: ['Geld', 'Zyklen', 'Geben und Nehmen'] },
     body: {
       vi: ['Số 8 nằm ngang chính là dấu vô cực, nên 888 thường được đọc là dòng chảy: cái gì đi ra rồi cũng quay về. Trong tiếng Hoa và trong quan niệm dân gian ở Việt Nam, số 8 còn gắn liền với tài lộc.',
         'Khi dãy số này xuất hiện, người ta xem đó là dấu hiệu của một giai đoạn được đền đáp. Công sức bạn bỏ ra trước đây bắt đầu quay lại, đôi khi từ một hướng hoàn toàn khác với chỗ bạn đã bỏ công.',
         'Số 8 cũng nhắc về sự công bằng trong trao đổi. Nếu bạn đang cho đi quá nhiều mà không nhận lại, hoặc ngược lại, đây là lúc để chỉnh cho cân.'],
       en: ['Eight on its side is the infinity sign, so 888 is read as flow: what goes out comes back. In Chinese and Vietnamese folk belief eight is also the number of prosperity.',
         'When it appears it is taken as a season of return. Effort you put in earlier starts coming back, sometimes from a completely different direction than where you spent it.',
-        'Eight also asks about fairness in the exchange. If you are giving far more than you receive, or the reverse, this is the moment to even it out.']
+        'Eight also asks about fairness in the exchange. If you are giving far more than you receive, or the reverse, this is the moment to even it out.'],
+      de: ['Eine liegende Acht erinnert an das Unendlichkeitszeichen, weshalb 888 oft als Bild für Kreisläufe und Fluss gelesen wird: Was hinausgeht, kann auf andere Weise zurückkommen. In chinesischen und vietnamesischen Zahlentraditionen wird die Acht außerdem häufig mit Wohlstand verbunden.',
+        'Wenn sie auftaucht, kann sie symbolisch zu einer Phase passen, in der frühere Mühe erste Ergebnisse zeigt — manchmal aus einer ganz anderen Richtung als der, in die du ursprünglich investiert hast.',
+        'Die Acht stellt auch die Frage nach Fairness im Austausch. Wenn du deutlich mehr gibst als zurückbekommst — oder umgekehrt —, kann jetzt ein guter Zeitpunkt sein, das Verhältnis neu auszubalancieren.']
     },
-    todo: { vi: 'Bạn gửi hóa đơn còn treo, đòi một khoản người ta nợ bạn, hoặc trả một khoản bạn đang nợ.', en: 'Send the invoice you have not sent, ask for what you are owed, or pay what you owe.' }
+    todo: { vi: 'Bạn gửi hóa đơn còn treo, đòi một khoản người ta nợ bạn, hoặc trả một khoản bạn đang nợ.', en: 'Send the invoice you have not sent, ask for what you are owed, or pay what you owe.', de: 'Schick die offene Rechnung, frag nach einem Betrag, der dir zusteht, oder begleiche etwas, das du selbst noch schuldest.' }
   },
   {
     id: 'n9', digit: 9, ink: '#8A4B6E', aura: '#F0D4E4', seen: ['999', '9999', '9:99'],
-    name: { vi: 'Số 9 lặp lại', en: 'Repeating nines' },
-    short: { vi: 'Một chương đang khép lại', en: 'A chapter closing' },
-    keys: { vi: ['kết thúc', 'buông', 'dọn chỗ'], en: ['endings', 'release', 'making room'] },
+    name: { vi: 'Số 9 lặp lại', en: 'Repeating nines', de: 'Wiederkehrende Neunen' },
+    short: { vi: 'Một chương đang khép lại', en: 'A chapter closing', de: 'Ein Kapitel schließt sich' },
+    keys: { vi: ['kết thúc', 'buông', 'dọn chỗ'], en: ['endings', 'release', 'making room'], de: ['Abschluss', 'Loslassen', 'Raum schaffen'] },
     body: {
       vi: ['999 là dãy số của sự hoàn tất. Một việc trong đời bạn đã đi hết vòng của nó: một công việc, một mối quan hệ, hoặc một cách sống mà bạn đã quen suốt nhiều năm.',
         'Kết thúc trong cách đọc này không mang nghĩa mất mát. Nó có nghĩa là phần việc ấy đã dạy xong những gì cần dạy, và giữ lại lâu hơn nữa chỉ khiến bạn mệt.',
         'Người ta cũng gắn số 9 với việc quay lại giúp người khác. Sau khi đi qua một chặng dài, bạn thường có thứ mà người đi sau đang cần: không phải lời khuyên, mà là kinh nghiệm cụ thể.'],
       en: ['999 is completion. Something in your life has gone all the way round: a job, a relationship, or a way of living you have been used to for years.',
         'Ending, read this way, is not loss. It means that part has finished teaching what it had to teach, and holding on longer only tires you.',
-        'Nine is also associated with turning back to help. After a long stretch you usually have what the person behind you needs: not advice, but the specifics.']
+        'Nine is also associated with turning back to help. After a long stretch you usually have what the person behind you needs: not advice, but the specifics.'],
+      de: ['999 wird mit Vollendung verbunden. Etwas in deinem Leben kann einen ganzen Zyklus durchlaufen haben: ein Job, eine Beziehung oder eine Lebensweise, die lange zu dir gehört hat.',
+        'Ein Ende muss in dieser Lesart nicht nur Verlust bedeuten. Es kann auch heißen, dass ein Abschnitt seine Aufgabe erfüllt hat und weiteres Festhalten mehr Kraft kostet, als es dir gibt.',
+        'Die Neun wird außerdem mit Weitergeben verbunden. Nach einem langen Weg besitzt du oft genau die Erfahrung, die jemand hinter dir gebrauchen kann — nicht unbedingt als große Lebensweisheit, sondern als konkrete Hilfe.']
     },
-    todo: { vi: 'Bạn kết thúc dứt điểm một việc còn dở, và kể lại kinh nghiệm đó cho một người đang bắt đầu.', en: 'Finish one thing you left hanging, and tell someone starting out what it taught you.' }
+    todo: { vi: 'Bạn kết thúc dứt điểm một việc còn dở, và kể lại kinh nghiệm đó cho một người đang bắt đầu.', en: 'Finish one thing you left hanging, and tell someone starting out what it taught you.', de: 'Schließ eine Sache ab, die lange offen war, und erzähl jemandem am Anfang des Weges, was du daraus gelernt hast.' }
   },
   {
     id: 'mirror', digit: -1, ink: '#4173B8', aura: '#CFE0F7', seen: ['1010', '1212', '1313', '2121', '1221'],
-    name: { vi: 'Số gương và số lặp cặp', en: 'Mirror and paired numbers' },
-    short: { vi: 'Hai nửa đang khớp lại', en: 'Two halves lining up' },
-    keys: { vi: ['đối chiếu', 'đồng điệu', 'bước tiếp'], en: ['reflection', 'alignment', 'stepping on'] },
+    name: { vi: 'Số gương và số lặp cặp', en: 'Mirror and paired numbers', de: 'Spiegel- und Paarzahlen' },
+    short: { vi: 'Hai nửa đang khớp lại', en: 'Two halves lining up', de: 'Zwei Hälften finden zusammen' },
+    keys: { vi: ['đối chiếu', 'đồng điệu', 'bước tiếp'], en: ['reflection', 'alignment', 'stepping on'], de: ['Spiegelung', 'Ausrichtung', 'weitergehen'] },
     body: {
       vi: ['Số gương là những dãy lặp lại theo cặp như 1010, 1212, 1313, hoặc đọc xuôi đọc ngược đều như nhau như 1221. Người ta xem đây là dấu hiệu của sự đồng điệu: điều bạn nghĩ và điều đang xảy ra bên ngoài đang khớp với nhau.',
         'Trong nhóm này, 1010 thường được đọc là một vòng mới bắt đầu cùng với một sự tỉnh thức nào đó, còn 1212 là lời nhắc bước tiếp trên con đường bạn đã chọn, kể cả khi bạn chưa nhìn thấy hết đường.',
         'Số gương cũng hay xuất hiện khi bạn vừa gặp ai đó và có cảm giác quen thuộc khó giải thích. Dân gian gọi đó là những người đi cùng đường với bạn trong một chặng.'],
       en: ['Mirror numbers repeat in pairs - 1010, 1212, 1313 - or read the same both ways, like 1221. They are taken as a sign of alignment: what you are thinking and what is happening outside are matching.',
         'Within this group, 1010 is usually read as a new cycle arriving with some kind of waking up, and 1212 as a nudge to keep walking the road you chose even when you cannot see all of it.',
-        'Mirror numbers also turn up when you have just met someone and feel an ease you cannot explain. Folk reading calls those people fellow travellers for a stretch of the road.']
+        'Mirror numbers also turn up when you have just met someone and feel an ease you cannot explain. Folk reading calls those people fellow travellers for a stretch of the road.'],
+      de: ['Spiegelzahlen wiederholen sich in Paaren — etwa 1010, 1212 oder 1313 — oder lesen sich vorwärts und rückwärts ähnlich, wie 1221. Sie werden oft als Symbol für Ausrichtung gelesen: das, was du denkst, und das, was außen geschieht, scheinen sich stärker zu spiegeln.',
+        'Innerhalb dieser Gruppe wird 1010 häufig mit einem neuen Zyklus und einem Moment des Erwachens verbunden. 1212 wird oft als Ermutigung gelesen, auf dem gewählten Weg weiterzugehen, auch wenn du noch nicht jede Etappe sehen kannst.',
+        'Spiegelzahlen werden in manchen modernen Deutungen auch mit Begegnungen verbunden, die sich sofort vertraut oder leicht anfühlen. Du kannst das als schönes Bild für Menschen sehen, die eine Strecke deines Weges mit dir teilen.']
     },
-    todo: { vi: 'Bạn viết ra hai cột: điều bạn đang nghĩ và điều đang thực sự xảy ra. Xem hai cột ấy có khớp không.', en: 'Write two columns: what you are thinking, and what is actually happening. See whether they match.' }
+    todo: { vi: 'Bạn viết ra hai cột: điều bạn đang nghĩ và điều đang thực sự xảy ra. Xem hai cột ấy có khớp không.', en: 'Write two columns: what you are thinking, and what is actually happening. See whether they match.', de: 'Mach zwei Spalten: Was denke ich gerade — und was passiert tatsächlich? Schau, wo beides zusammenpasst und wo nicht.' }
   },
   {
     id: 'ladder', digit: -2, ink: '#B07C3E', aura: '#F7E6C8', seen: ['123', '1234', '234', '2345'],
-    name: { vi: 'Số bậc thang', en: 'Ladder numbers' },
-    short: { vi: 'Đi từng bước một', en: 'One step at a time' },
-    keys: { vi: ['tuần tự', 'tiến độ', 'kiên trì'], en: ['order', 'progress', 'persistence'] },
+    name: { vi: 'Số bậc thang', en: 'Ladder numbers', de: 'Treppenzahlen' },
+    short: { vi: 'Đi từng bước một', en: 'One step at a time', de: 'Schritt für Schritt' },
+    keys: { vi: ['tuần tự', 'tiến độ', 'kiên trì'], en: ['order', 'progress', 'persistence'], de: ['Reihenfolge', 'Fortschritt', 'Dranbleiben'] },
     body: {
       vi: ['Những dãy số tăng dần như 123, 1234 hay 2345 được xem là dấu hiệu của sự tiến lên theo thứ tự. Bạn không cần nhảy cóc, và cũng không nên.',
         'Dãy số này thường xuất hiện với người đang làm một việc dài hơi và bắt đầu sốt ruột. Nó nhắc rằng phần bạn đã đi qua là có thật, và bước tiếp theo luôn là bước ngay sau chỗ bạn đang đứng.',
         'Trong một số cách đọc, 1234 còn được hiểu là lời khuyên đơn giản hóa: bỏ bớt những việc không thuộc về con đường chính, giữ lại bốn năm việc thật sự quan trọng.'],
       en: ['Rising runs like 123, 1234 or 2345 are read as progress in order. You do not need to skip steps, and you should not.',
         'They tend to appear to people doing something long and starting to fret. The stretch you have covered is real, and the next step is always the one immediately after where you stand.',
-        'In some readings 1234 is simply advice to simplify: drop what is not on the main road and keep the four or five things that matter.']
+        'In some readings 1234 is simply advice to simplify: drop what is not on the main road and keep the four or five things that matter.'],
+      de: ['Aufsteigende Folgen wie 123, 1234 oder 2345 werden als Fortschritt in einer klaren Reihenfolge gelesen. Du musst keinen Schritt überspringen — und meistens hilft es auch nicht.',
+        'Solche Folgen fallen oft besonders auf, wenn du an etwas Langfristigem arbeitest und langsam ungeduldig wirst. Sie können dich daran erinnern, dass der bereits zurückgelegte Weg zählt und der nächste sinnvolle Schritt direkt vor dir liegt.',
+        '1234 wird manchmal ganz schlicht als Aufforderung zum Vereinfachen gelesen: Lass Nebensachen weg und behalte die wenigen Schritte, die wirklich zum Ziel gehören.']
     },
-    todo: { vi: 'Bạn viết ra bốn bước tiếp theo của việc bạn đang làm, rồi chỉ làm bước đầu tiên hôm nay.', en: 'Write the next four steps of what you are doing, then do only the first today.' }
+    todo: { vi: 'Bạn viết ra bốn bước tiếp theo của việc bạn đang làm, rồi chỉ làm bước đầu tiên hôm nay.', en: 'Write the next four steps of what you are doing, then do only the first today.', de: 'Schreib die nächsten vier Schritte deines Vorhabens auf — und erledige heute nur den ersten.' }
   }
 ];
 

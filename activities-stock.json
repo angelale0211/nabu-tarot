@@ -6,28 +6,34 @@
    "date": "2026-09-04",
    "title": {
     "vi": "Bình chọn: Cung nào có giọng nói hay nhất?",
-    "en": "Poll: Which sign has the most beautiful voice?"
+    "en": "Poll: Which sign has the most beautiful voice?",
+    "de": "Umfrage: Welches Sternzeichen hat die schönste Stimme?"
    },
    "intro": {
     "vi": "Chỉ để vui, không có đáp án đúng. Bạn chọn theo trải nghiệm của mình với bạn bè, người yêu, đồng nghiệp. Mọi người đều thấy tỉ lệ chung, không ai thấy tên bạn. 👀",
-    "en": "Just for fun, there is no right answer. Choose from your own experience with friends, partners and colleagues. Everyone sees the overall percentages, nobody sees your name. 👀"
+    "en": "Just for fun, there is no right answer. Choose from your own experience with friends, partners and colleagues. Everyone sees the overall percentages, nobody sees your name. 👀",
+    "de": "Nur zum Spaß, es gibt keine richtige Antwort. Wähl nach deiner eigenen Erfahrung mit Freundinnen und Freunden, Partnern und Kolleginnen und Kollegen. Alle sehen die Gesamtprozente, deinen Namen sieht niemand. 👀"
    },
    "options": [
     {
      "vi": "♎ Thiên Bình",
-     "en": "♎ Libra"
+     "en": "♎ Libra",
+     "de": "♎ Waage"
     },
     {
      "vi": "♓ Song Ngư",
-     "en": "♓ Pisces"
+     "en": "♓ Pisces",
+     "de": "♓ Fische"
     },
     {
      "vi": "♉ Kim Ngưu",
-     "en": "♉ Taurus"
+     "en": "♉ Taurus",
+     "de": "♉ Stier"
     },
     {
      "vi": "♌ Sư Tử",
-     "en": "♌ Leo"
+     "en": "♌ Leo",
+     "de": "♌ Löwe"
     }
    ],
    "closed": false
@@ -38,28 +44,34 @@
    "date": "2026-09-03",
    "title": {
     "vi": "Bình chọn: Cung nào hay quên nhất?",
-    "en": "Poll: Which sign is the most forgetful?"
+    "en": "Poll: Which sign is the most forgetful?",
+    "de": "Umfrage: Welches Sternzeichen ist am vergesslichsten?"
    },
    "intro": {
     "vi": "Chỉ để vui, không có đáp án đúng. Bạn chọn theo trải nghiệm của mình với bạn bè, người yêu, đồng nghiệp. Mọi người đều thấy tỉ lệ chung, không ai thấy tên bạn. 👀",
-    "en": "Just for fun, there is no right answer. Choose from your own experience with friends, partners and colleagues. Everyone sees the overall percentages, nobody sees your name. 👀"
+    "en": "Just for fun, there is no right answer. Choose from your own experience with friends, partners and colleagues. Everyone sees the overall percentages, nobody sees your name. 👀",
+    "de": "Nur zum Spaß, es gibt keine richtige Antwort. Wähl nach deiner eigenen Erfahrung mit Freundinnen und Freunden, Partnern und Kolleginnen und Kollegen. Alle sehen die Gesamtprozente, deinen Namen sieht niemand. 👀"
    },
    "options": [
     {
      "vi": "♊ Song Tử",
-     "en": "♊ Gemini"
+     "en": "♊ Gemini",
+     "de": "♊ Zwillinge"
     },
     {
      "vi": "♐ Nhân Mã",
-     "en": "♐ Sagittarius"
+     "en": "♐ Sagittarius",
+     "de": "♐ Schütze"
     },
     {
      "vi": "♒ Bảo Bình",
-     "en": "♒ Aquarius"
+     "en": "♒ Aquarius",
+     "de": "♒ Wassermann"
     },
     {
      "vi": "♓ Song Ngư",
-     "en": "♓ Pisces"
+     "en": "♓ Pisces",
+     "de": "♓ Fische"
     }
    ],
    "closed": false
@@ -70,28 +82,34 @@
    "date": "2026-09-02",
    "title": {
     "vi": "Bình chọn: Cung nào nấu ăn ngon nhất?",
-    "en": "Poll: Which sign cooks best?"
+    "en": "Poll: Which sign cooks best?",
+    "de": "Umfrage: Welches Sternzeichen kocht am besten?"
    },
    "intro": {
     "vi": "Chỉ để vui, không có đáp án đúng. Bạn chọn theo trải nghiệm của mình với bạn bè, người yêu, đồng nghiệp. Mọi người đều thấy tỉ lệ chung, không ai thấy tên bạn. 👀",
-    "en": "Just for fun, there is no right answer. Choose from your own experience with friends, partners and colleagues. Everyone sees the overall percentages, nobody sees your name. 👀"
+    "en": "Just for fun, there is no right answer. Choose from your own experience with friends, partners and colleagues. Everyone sees the overall percentages, nobody sees your name. 👀",
+    "de": "Nur zum Spaß, es gibt keine richtige Antwort. Wähl nach deiner eigenen Erfahrung mit Freundinnen und Freunden, Partnern und Kolleginnen und Kollegen. Alle sehen die Gesamtprozente, deinen Namen sieht niemand. 👀"
    },
    "options": [
     {
      "vi": "♉ Kim Ngưu",
-     "en": "♉ Taurus"
+     "en": "♉ Taurus",
+     "de": "♉ Stier"
     },
     {
      "vi": "♋ Cự Giải",
-     "en": "♋ Cancer"
+     "en": "♋ Cancer",
+     "de": "♋ Krebs"
     },
     {
      "vi": "♍ Xử Nữ",
-     "en": "♍ Virgo"
+     "en": "♍ Virgo",
+     "de": "♍ Jungfrau"
     },
     {
      "vi": "♎ Thiên Bình",
-     "en": "♎ Libra"
+     "en": "♎ Libra",
+     "de": "♎ Waage"
     }
    ],
    "closed": false
@@ -102,11 +120,13 @@
    "date": "2026-09-02",
    "title": {
     "vi": "Điều ước cho chuyện tình cảm 💌",
-    "en": "A wish for love 💌"
+    "en": "A wish for love 💌",
+    "de": "Ein Wunsch für die Liebe 💌"
    },
    "intro": {
     "vi": "Một điều ước về trái tim: về chính bạn, không phải về việc bắt người khác thay đổi. Viết ở thì hiện tại, ngắn gọn, rồi gửi vào lọ.",
-    "en": "One wish for the heart: about yourself, not about making someone else change. Present tense, short, then into the jar."
+    "en": "One wish for the heart: about yourself, not about making someone else change. Present tense, short, then into the jar.",
+    "de": "Ein Wunsch für dein Herz: über dich selbst, nicht darüber, jemand anderen zu verändern. In der Gegenwart, kurz, dann abschicken."
    }
   },
   {
@@ -115,28 +135,34 @@
    "date": "2026-09-01",
    "title": {
     "vi": "Bình chọn: Cung nào là bạn thân đáng tin nhất?",
-    "en": "Poll: Which sign makes the most loyal best friend?"
+    "en": "Poll: Which sign makes the most loyal best friend?",
+    "de": "Umfrage: Auf welches Sternzeichen ist als beste Freundin oder bester Freund am meisten Verlass?"
    },
    "intro": {
     "vi": "Chỉ để vui, không có đáp án đúng. Bạn chọn theo trải nghiệm của mình với bạn bè, người yêu, đồng nghiệp. Mọi người đều thấy tỉ lệ chung, không ai thấy tên bạn. 👀",
-    "en": "Just for fun, there is no right answer. Choose from your own experience with friends, partners and colleagues. Everyone sees the overall percentages, nobody sees your name. 👀"
+    "en": "Just for fun, there is no right answer. Choose from your own experience with friends, partners and colleagues. Everyone sees the overall percentages, nobody sees your name. 👀",
+    "de": "Nur zum Spaß, es gibt keine richtige Antwort. Wähl nach deiner eigenen Erfahrung mit Freundinnen und Freunden, Partnern und Kolleginnen und Kollegen. Alle sehen die Gesamtprozente, deinen Namen sieht niemand. 👀"
    },
    "options": [
     {
      "vi": "♉ Kim Ngưu",
-     "en": "♉ Taurus"
+     "en": "♉ Taurus",
+     "de": "♉ Stier"
     },
     {
      "vi": "♋ Cự Giải",
-     "en": "♋ Cancer"
+     "en": "♋ Cancer",
+     "de": "♋ Krebs"
     },
     {
      "vi": "♑ Ma Kết",
-     "en": "♑ Capricorn"
+     "en": "♑ Capricorn",
+     "de": "♑ Steinbock"
     },
     {
      "vi": "♏ Bọ Cạp",
-     "en": "♏ Scorpio"
+     "en": "♏ Scorpio",
+     "de": "♏ Skorpion"
     }
    ],
    "closed": false
@@ -147,28 +173,34 @@
    "date": "2026-08-31",
    "title": {
     "vi": "Bình chọn: Cung nào trả lời tin nhắn chậm nhất?",
-    "en": "Poll: Which sign replies to messages the slowest?"
+    "en": "Poll: Which sign replies to messages the slowest?",
+    "de": "Umfrage: Welches Sternzeichen antwortet am langsamsten auf Nachrichten?"
    },
    "intro": {
     "vi": "Chỉ để vui, không có đáp án đúng. Bạn chọn theo trải nghiệm của mình với bạn bè, người yêu, đồng nghiệp. Mọi người đều thấy tỉ lệ chung, không ai thấy tên bạn. 👀",
-    "en": "Just for fun, there is no right answer. Choose from your own experience with friends, partners and colleagues. Everyone sees the overall percentages, nobody sees your name. 👀"
+    "en": "Just for fun, there is no right answer. Choose from your own experience with friends, partners and colleagues. Everyone sees the overall percentages, nobody sees your name. 👀",
+    "de": "Nur zum Spaß, es gibt keine richtige Antwort. Wähl nach deiner eigenen Erfahrung mit Freundinnen und Freunden, Partnern und Kolleginnen und Kollegen. Alle sehen die Gesamtprozente, deinen Namen sieht niemand. 👀"
    },
    "options": [
     {
      "vi": "♒ Bảo Bình",
-     "en": "♒ Aquarius"
+     "en": "♒ Aquarius",
+     "de": "♒ Wassermann"
     },
     {
      "vi": "♐ Nhân Mã",
-     "en": "♐ Sagittarius"
+     "en": "♐ Sagittarius",
+     "de": "♐ Schütze"
     },
     {
      "vi": "♑ Ma Kết",
-     "en": "♑ Capricorn"
+     "en": "♑ Capricorn",
+     "de": "♑ Steinbock"
     },
     {
      "vi": "♊ Song Tử",
-     "en": "♊ Gemini"
+     "en": "♊ Gemini",
+     "de": "♊ Zwillinge"
     }
    ],
    "closed": false
@@ -179,28 +211,34 @@
    "date": "2026-08-30",
    "title": {
     "vi": "Bình chọn: Cung nào dễ khóc khi xem phim nhất?",
-    "en": "Poll: Which sign cries at films the most?"
+    "en": "Poll: Which sign cries at films the most?",
+    "de": "Umfrage: Welches Sternzeichen weint am ehesten bei Filmen?"
    },
    "intro": {
     "vi": "Chỉ để vui, không có đáp án đúng. Bạn chọn theo trải nghiệm của mình với bạn bè, người yêu, đồng nghiệp. Mọi người đều thấy tỉ lệ chung, không ai thấy tên bạn. 👀",
-    "en": "Just for fun, there is no right answer. Choose from your own experience with friends, partners and colleagues. Everyone sees the overall percentages, nobody sees your name. 👀"
+    "en": "Just for fun, there is no right answer. Choose from your own experience with friends, partners and colleagues. Everyone sees the overall percentages, nobody sees your name. 👀",
+    "de": "Nur zum Spaß, es gibt keine richtige Antwort. Wähl nach deiner eigenen Erfahrung mit Freundinnen und Freunden, Partnern und Kolleginnen und Kollegen. Alle sehen die Gesamtprozente, deinen Namen sieht niemand. 👀"
    },
    "options": [
     {
      "vi": "♋ Cự Giải",
-     "en": "♋ Cancer"
+     "en": "♋ Cancer",
+     "de": "♋ Krebs"
     },
     {
      "vi": "♓ Song Ngư",
-     "en": "♓ Pisces"
+     "en": "♓ Pisces",
+     "de": "♓ Fische"
     },
     {
      "vi": "♎ Thiên Bình",
-     "en": "♎ Libra"
+     "en": "♎ Libra",
+     "de": "♎ Waage"
     },
     {
      "vi": "♌ Sư Tử",
-     "en": "♌ Leo"
+     "en": "♌ Leo",
+     "de": "♌ Löwe"
     }
    ],
    "closed": false
@@ -211,28 +249,34 @@
    "date": "2026-08-29",
    "title": {
     "vi": "Bình chọn: Emoji nào hợp với Nhân Mã nhất?",
-    "en": "Poll: Which emoji suits Sagittarius best?"
+    "en": "Poll: Which emoji suits Sagittarius best?",
+    "de": "Umfrage: Welches Emoji passt am besten zu Schütze?"
    },
    "intro": {
     "vi": "Chỉ để vui, không có đáp án đúng. Bạn chọn theo trải nghiệm của mình với bạn bè, người yêu, đồng nghiệp. Mọi người đều thấy tỉ lệ chung, không ai thấy tên bạn. 👀",
-    "en": "Just for fun, there is no right answer. Choose from your own experience with friends, partners and colleagues. Everyone sees the overall percentages, nobody sees your name. 👀"
+    "en": "Just for fun, there is no right answer. Choose from your own experience with friends, partners and colleagues. Everyone sees the overall percentages, nobody sees your name. 👀",
+    "de": "Nur zum Spaß, es gibt keine richtige Antwort. Wähl nach deiner eigenen Erfahrung mit Freundinnen und Freunden, Partnern und Kolleginnen und Kollegen. Alle sehen die Gesamtprozente, deinen Namen sieht niemand. 👀"
    },
    "options": [
     {
      "vi": "🏹",
-     "en": "🏹"
+     "en": "🏹",
+     "de": "🏹"
     },
     {
      "vi": "✈️",
-     "en": "✈️"
+     "en": "✈️",
+     "de": "✈️"
     },
     {
      "vi": "🔥",
-     "en": "🔥"
+     "en": "🔥",
+     "de": "🔥"
     },
     {
      "vi": "😂",
-     "en": "😂"
+     "en": "😂",
+     "de": "😂"
     }
    ],
    "closed": false
@@ -243,28 +287,34 @@
    "date": "2026-08-28",
    "title": {
     "vi": "Bình chọn: Emoji nào hợp với Bọ Cạp nhất?",
-    "en": "Poll: Which emoji suits Scorpio best?"
+    "en": "Poll: Which emoji suits Scorpio best?",
+    "de": "Umfrage: Welches Emoji passt am besten zu Skorpion?"
    },
    "intro": {
     "vi": "Chỉ để vui, không có đáp án đúng. Bạn chọn theo trải nghiệm của mình với bạn bè, người yêu, đồng nghiệp. Mọi người đều thấy tỉ lệ chung, không ai thấy tên bạn. 👀",
-    "en": "Just for fun, there is no right answer. Choose from your own experience with friends, partners and colleagues. Everyone sees the overall percentages, nobody sees your name. 👀"
+    "en": "Just for fun, there is no right answer. Choose from your own experience with friends, partners and colleagues. Everyone sees the overall percentages, nobody sees your name. 👀",
+    "de": "Nur zum Spaß, es gibt keine richtige Antwort. Wähl nach deiner eigenen Erfahrung mit Freundinnen und Freunden, Partnern und Kolleginnen und Kollegen. Alle sehen die Gesamtprozente, deinen Namen sieht niemand. 👀"
    },
    "options": [
     {
      "vi": "🦂",
-     "en": "🦂"
+     "en": "🦂",
+     "de": "🦂"
     },
     {
      "vi": "🖤",
-     "en": "🖤"
+     "en": "🖤",
+     "de": "🖤"
     },
     {
      "vi": "🔮",
-     "en": "🔮"
+     "en": "🔮",
+     "de": "🔮"
     },
     {
      "vi": "👀",
-     "en": "👀"
+     "en": "👀",
+     "de": "👀"
     }
    ],
    "closed": false
@@ -275,28 +325,34 @@
    "date": "2026-08-27",
    "title": {
     "vi": "Bình chọn: Emoji nào hợp với Song Ngư nhất?",
-    "en": "Poll: Which emoji suits Pisces best?"
+    "en": "Poll: Which emoji suits Pisces best?",
+    "de": "Umfrage: Welches Emoji passt am besten zu Fische?"
    },
    "intro": {
     "vi": "Chỉ để vui, không có đáp án đúng. Bạn chọn theo trải nghiệm của mình với bạn bè, người yêu, đồng nghiệp. Mọi người đều thấy tỉ lệ chung, không ai thấy tên bạn. 👀",
-    "en": "Just for fun, there is no right answer. Choose from your own experience with friends, partners and colleagues. Everyone sees the overall percentages, nobody sees your name. 👀"
+    "en": "Just for fun, there is no right answer. Choose from your own experience with friends, partners and colleagues. Everyone sees the overall percentages, nobody sees your name. 👀",
+    "de": "Nur zum Spaß, es gibt keine richtige Antwort. Wähl nach deiner eigenen Erfahrung mit Freundinnen und Freunden, Partnern und Kolleginnen und Kollegen. Alle sehen die Gesamtprozente, deinen Namen sieht niemand. 👀"
    },
    "options": [
     {
      "vi": "🐟",
-     "en": "🐟"
+     "en": "🐟",
+     "de": "🐟"
     },
     {
      "vi": "🌊",
-     "en": "🌊"
+     "en": "🌊",
+     "de": "🌊"
     },
     {
      "vi": "💭",
-     "en": "💭"
+     "en": "💭",
+     "de": "💭"
     },
     {
      "vi": "🎨",
-     "en": "🎨"
+     "en": "🎨",
+     "de": "🎨"
     }
    ],
    "closed": false
@@ -307,28 +363,34 @@
    "date": "2026-08-26",
    "title": {
     "vi": "Bình chọn: Cung nào hay trễ hẹn nhất?",
-    "en": "Poll: Which sign is late most often?"
+    "en": "Poll: Which sign is late most often?",
+    "de": "Umfrage: Welches Sternzeichen kommt am häufigsten zu spät?"
    },
    "intro": {
     "vi": "Chỉ để vui, không có đáp án đúng. Bạn chọn theo trải nghiệm của mình với bạn bè, người yêu, đồng nghiệp. Mọi người đều thấy tỉ lệ chung, không ai thấy tên bạn. 👀",
-    "en": "Just for fun, there is no right answer. Choose from your own experience with friends, partners and colleagues. Everyone sees the overall percentages, nobody sees your name. 👀"
+    "en": "Just for fun, there is no right answer. Choose from your own experience with friends, partners and colleagues. Everyone sees the overall percentages, nobody sees your name. 👀",
+    "de": "Nur zum Spaß, es gibt keine richtige Antwort. Wähl nach deiner eigenen Erfahrung mit Freundinnen und Freunden, Partnern und Kolleginnen und Kollegen. Alle sehen die Gesamtprozente, deinen Namen sieht niemand. 👀"
    },
    "options": [
     {
      "vi": "♓ Song Ngư",
-     "en": "♓ Pisces"
+     "en": "♓ Pisces",
+     "de": "♓ Fische"
     },
     {
      "vi": "♐ Nhân Mã",
-     "en": "♐ Sagittarius"
+     "en": "♐ Sagittarius",
+     "de": "♐ Schütze"
     },
     {
      "vi": "♊ Song Tử",
-     "en": "♊ Gemini"
+     "en": "♊ Gemini",
+     "de": "♊ Zwillinge"
     },
     {
      "vi": "♒ Bảo Bình",
-     "en": "♒ Aquarius"
+     "en": "♒ Aquarius",
+     "de": "♒ Wassermann"
     }
    ],
    "closed": false
@@ -339,28 +401,34 @@
    "date": "2026-08-25",
    "title": {
     "vi": "Bình chọn: Cung nào tiêu tiền \"bạo tay\" nhất?",
-    "en": "Poll: Which sign spends the most freely?"
+    "en": "Poll: Which sign spends the most freely?",
+    "de": "Umfrage: Welches Sternzeichen gibt am lockersten Geld aus?"
    },
    "intro": {
     "vi": "Chỉ để vui, không có đáp án đúng. Bạn chọn theo trải nghiệm của mình với bạn bè, người yêu, đồng nghiệp. Mọi người đều thấy tỉ lệ chung, không ai thấy tên bạn. 👀",
-    "en": "Just for fun, there is no right answer. Choose from your own experience with friends, partners and colleagues. Everyone sees the overall percentages, nobody sees your name. 👀"
+    "en": "Just for fun, there is no right answer. Choose from your own experience with friends, partners and colleagues. Everyone sees the overall percentages, nobody sees your name. 👀",
+    "de": "Nur zum Spaß, es gibt keine richtige Antwort. Wähl nach deiner eigenen Erfahrung mit Freundinnen und Freunden, Partnern und Kolleginnen und Kollegen. Alle sehen die Gesamtprozente, deinen Namen sieht niemand. 👀"
    },
    "options": [
     {
      "vi": "♌ Sư Tử",
-     "en": "♌ Leo"
+     "en": "♌ Leo",
+     "de": "♌ Löwe"
     },
     {
      "vi": "♐ Nhân Mã",
-     "en": "♐ Sagittarius"
+     "en": "♐ Sagittarius",
+     "de": "♐ Schütze"
     },
     {
      "vi": "♎ Thiên Bình",
-     "en": "♎ Libra"
+     "en": "♎ Libra",
+     "de": "♎ Waage"
     },
     {
      "vi": "♈ Bạch Dương",
-     "en": "♈ Aries"
+     "en": "♈ Aries",
+     "de": "♈ Widder"
     }
    ],
    "closed": false
@@ -371,28 +439,34 @@
    "date": "2026-08-24",
    "title": {
     "vi": "Bình chọn: Cung nào giữ bí mật giỏi nhất?",
-    "en": "Poll: Which sign keeps a secret best?"
+    "en": "Poll: Which sign keeps a secret best?",
+    "de": "Umfrage: Welches Sternzeichen kann ein Geheimnis am besten für sich behalten?"
    },
    "intro": {
     "vi": "Chỉ để vui, không có đáp án đúng. Bạn chọn theo trải nghiệm của mình với bạn bè, người yêu, đồng nghiệp. Mọi người đều thấy tỉ lệ chung, không ai thấy tên bạn. 👀",
-    "en": "Just for fun, there is no right answer. Choose from your own experience with friends, partners and colleagues. Everyone sees the overall percentages, nobody sees your name. 👀"
+    "en": "Just for fun, there is no right answer. Choose from your own experience with friends, partners and colleagues. Everyone sees the overall percentages, nobody sees your name. 👀",
+    "de": "Nur zum Spaß, es gibt keine richtige Antwort. Wähl nach deiner eigenen Erfahrung mit Freundinnen und Freunden, Partnern und Kolleginnen und Kollegen. Alle sehen die Gesamtprozente, deinen Namen sieht niemand. 👀"
    },
    "options": [
     {
      "vi": "♏ Bọ Cạp",
-     "en": "♏ Scorpio"
+     "en": "♏ Scorpio",
+     "de": "♏ Skorpion"
     },
     {
      "vi": "♑ Ma Kết",
-     "en": "♑ Capricorn"
+     "en": "♑ Capricorn",
+     "de": "♑ Steinbock"
     },
     {
      "vi": "♍ Xử Nữ",
-     "en": "♍ Virgo"
+     "en": "♍ Virgo",
+     "de": "♍ Jungfrau"
     },
     {
      "vi": "♉ Kim Ngưu",
-     "en": "♉ Taurus"
+     "en": "♉ Taurus",
+     "de": "♉ Stier"
     }
    ],
    "closed": false
@@ -403,28 +477,34 @@
    "date": "2026-08-23",
    "title": {
     "vi": "Bình chọn: Cung nào lãng mạn nhất?",
-    "en": "Poll: Which sign is the most romantic?"
+    "en": "Poll: Which sign is the most romantic?",
+    "de": "Umfrage: Welches Sternzeichen ist am romantischsten?"
    },
    "intro": {
     "vi": "Chỉ để vui, không có đáp án đúng. Bạn chọn theo trải nghiệm của mình với bạn bè, người yêu, đồng nghiệp. Mọi người đều thấy tỉ lệ chung, không ai thấy tên bạn. 👀",
-    "en": "Just for fun, there is no right answer. Choose from your own experience with friends, partners and colleagues. Everyone sees the overall percentages, nobody sees your name. 👀"
+    "en": "Just for fun, there is no right answer. Choose from your own experience with friends, partners and colleagues. Everyone sees the overall percentages, nobody sees your name. 👀",
+    "de": "Nur zum Spaß, es gibt keine richtige Antwort. Wähl nach deiner eigenen Erfahrung mit Freundinnen und Freunden, Partnern und Kolleginnen und Kollegen. Alle sehen die Gesamtprozente, deinen Namen sieht niemand. 👀"
    },
    "options": [
     {
      "vi": "♓ Song Ngư",
-     "en": "♓ Pisces"
+     "en": "♓ Pisces",
+     "de": "♓ Fische"
     },
     {
      "vi": "♎ Thiên Bình",
-     "en": "♎ Libra"
+     "en": "♎ Libra",
+     "de": "♎ Waage"
     },
     {
      "vi": "♋ Cự Giải",
-     "en": "♋ Cancer"
+     "en": "♋ Cancer",
+     "de": "♋ Krebs"
     },
     {
      "vi": "♌ Sư Tử",
-     "en": "♌ Leo"
+     "en": "♌ Leo",
+     "de": "♌ Löwe"
     }
    ],
    "closed": false
@@ -435,28 +515,34 @@
    "date": "2026-08-22",
    "title": {
     "vi": "Bình chọn: Cung nào cãi là thắng?",
-    "en": "Poll: Which sign wins every argument?"
+    "en": "Poll: Which sign wins every argument?",
+    "de": "Umfrage: Welches Sternzeichen gewinnt jede Diskussion?"
    },
    "intro": {
     "vi": "Chỉ để vui, không có đáp án đúng. Bạn chọn theo trải nghiệm của mình với bạn bè, người yêu, đồng nghiệp. Mọi người đều thấy tỉ lệ chung, không ai thấy tên bạn. 👀",
-    "en": "Just for fun, there is no right answer. Choose from your own experience with friends, partners and colleagues. Everyone sees the overall percentages, nobody sees your name. 👀"
+    "en": "Just for fun, there is no right answer. Choose from your own experience with friends, partners and colleagues. Everyone sees the overall percentages, nobody sees your name. 👀",
+    "de": "Nur zum Spaß, es gibt keine richtige Antwort. Wähl nach deiner eigenen Erfahrung mit Freundinnen und Freunden, Partnern und Kolleginnen und Kollegen. Alle sehen die Gesamtprozente, deinen Namen sieht niemand. 👀"
    },
    "options": [
     {
      "vi": "♈ Bạch Dương",
-     "en": "♈ Aries"
+     "en": "♈ Aries",
+     "de": "♈ Widder"
     },
     {
      "vi": "♊ Song Tử",
-     "en": "♊ Gemini"
+     "en": "♊ Gemini",
+     "de": "♊ Zwillinge"
     },
     {
      "vi": "♏ Bọ Cạp",
-     "en": "♏ Scorpio"
+     "en": "♏ Scorpio",
+     "de": "♏ Skorpion"
     },
     {
      "vi": "♑ Ma Kết",
-     "en": "♑ Capricorn"
+     "en": "♑ Capricorn",
+     "de": "♑ Steinbock"
     }
    ],
    "closed": false
@@ -467,28 +553,34 @@
    "date": "2026-08-21",
    "title": {
     "vi": "Bình chọn: Cung nào hợp làm sếp nhất?",
-    "en": "Poll: Which sign makes the best boss?"
+    "en": "Poll: Which sign makes the best boss?",
+    "de": "Umfrage: Welches Sternzeichen ist die beste Chefin oder der beste Chef?"
    },
    "intro": {
     "vi": "Chỉ để vui, không có đáp án đúng. Bạn chọn theo trải nghiệm của mình với bạn bè, người yêu, đồng nghiệp. Mọi người đều thấy tỉ lệ chung, không ai thấy tên bạn. 👀",
-    "en": "Just for fun, there is no right answer. Choose from your own experience with friends, partners and colleagues. Everyone sees the overall percentages, nobody sees your name. 👀"
+    "en": "Just for fun, there is no right answer. Choose from your own experience with friends, partners and colleagues. Everyone sees the overall percentages, nobody sees your name. 👀",
+    "de": "Nur zum Spaß, es gibt keine richtige Antwort. Wähl nach deiner eigenen Erfahrung mit Freundinnen und Freunden, Partnern und Kolleginnen und Kollegen. Alle sehen die Gesamtprozente, deinen Namen sieht niemand. 👀"
    },
    "options": [
     {
      "vi": "♑ Ma Kết",
-     "en": "♑ Capricorn"
+     "en": "♑ Capricorn",
+     "de": "♑ Steinbock"
     },
     {
      "vi": "♌ Sư Tử",
-     "en": "♌ Leo"
+     "en": "♌ Leo",
+     "de": "♌ Löwe"
     },
     {
      "vi": "♈ Bạch Dương",
-     "en": "♈ Aries"
+     "en": "♈ Aries",
+     "de": "♈ Widder"
     },
     {
      "vi": "♏ Bọ Cạp",
-     "en": "♏ Scorpio"
+     "en": "♏ Scorpio",
+     "de": "♏ Skorpion"
     }
    ],
    "closed": false
@@ -499,28 +591,34 @@
    "date": "2026-08-20",
    "title": {
     "vi": "Bình chọn: Cung nào \"cà khịa\" duyên nhất?",
-    "en": "Poll: Which sign teases with the most charm?"
+    "en": "Poll: Which sign teases with the most charm?",
+    "de": "Umfrage: Welches Sternzeichen zieht einen am charmantesten auf?"
    },
    "intro": {
     "vi": "Chỉ để vui, không có đáp án đúng. Bạn chọn theo trải nghiệm của mình với bạn bè, người yêu, đồng nghiệp. Mọi người đều thấy tỉ lệ chung, không ai thấy tên bạn. 👀",
-    "en": "Just for fun, there is no right answer. Choose from your own experience with friends, partners and colleagues. Everyone sees the overall percentages, nobody sees your name. 👀"
+    "en": "Just for fun, there is no right answer. Choose from your own experience with friends, partners and colleagues. Everyone sees the overall percentages, nobody sees your name. 👀",
+    "de": "Nur zum Spaß, es gibt keine richtige Antwort. Wähl nach deiner eigenen Erfahrung mit Freundinnen und Freunden, Partnern und Kolleginnen und Kollegen. Alle sehen die Gesamtprozente, deinen Namen sieht niemand. 👀"
    },
    "options": [
     {
      "vi": "♊ Song Tử",
-     "en": "♊ Gemini"
+     "en": "♊ Gemini",
+     "de": "♊ Zwillinge"
     },
     {
      "vi": "♐ Nhân Mã",
-     "en": "♐ Sagittarius"
+     "en": "♐ Sagittarius",
+     "de": "♐ Schütze"
     },
     {
      "vi": "♒ Bảo Bình",
-     "en": "♒ Aquarius"
+     "en": "♒ Aquarius",
+     "de": "♒ Wassermann"
     },
     {
      "vi": "♌ Sư Tử",
-     "en": "♌ Leo"
+     "en": "♌ Leo",
+     "de": "♌ Löwe"
     }
    ],
    "closed": false
@@ -531,11 +629,13 @@
    "date": "2026-08-20",
    "title": {
     "vi": "Điều ước cho công việc 💼",
-    "en": "A wish for work 💼"
+    "en": "A wish for work 💼",
+    "de": "Ein Wunsch für die Arbeit 💼"
    },
    "intro": {
     "vi": "Điều bạn muốn có trong công việc trong ba tháng tới. Viết như thể nó đã bắt đầu: \"Mình đang…\". Gửi vào lọ, rồi làm một việc nhỏ hôm nay.",
-    "en": "What you want at work in the next three months. Write it as if it has begun: \"I am…\". Into the jar, then do one small thing today."
+    "en": "What you want at work in the next three months. Write it as if it has begun: \"I am…\". Into the jar, then do one small thing today.",
+    "de": "Was du dir in den nächsten drei Monaten bei der Arbeit wünschst. Schreib es, als hätte es schon begonnen: „Ich …“. Abschicken und heute eine kleine Sache dafür tun."
    }
   },
   {
@@ -544,28 +644,34 @@
    "date": "2026-08-19",
    "title": {
     "vi": "Bình chọn: Lá tarot nào bạn thích nhất?",
-    "en": "Poll: Which tarot card do you love most?"
+    "en": "Poll: Which tarot card do you love most?",
+    "de": "Umfrage: Welche Tarotkarte magst du am liebsten?"
    },
    "intro": {
     "vi": "Chỉ để vui, không có đáp án đúng. Bạn chọn theo trải nghiệm của mình với bạn bè, người yêu, đồng nghiệp. Mọi người đều thấy tỉ lệ chung, không ai thấy tên bạn. 👀",
-    "en": "Just for fun, there is no right answer. Choose from your own experience with friends, partners and colleagues. Everyone sees the overall percentages, nobody sees your name. 👀"
+    "en": "Just for fun, there is no right answer. Choose from your own experience with friends, partners and colleagues. Everyone sees the overall percentages, nobody sees your name. 👀",
+    "de": "Nur zum Spaß, es gibt keine richtige Antwort. Wähl nach deiner eigenen Erfahrung mit Freundinnen und Freunden, Partnern und Kolleginnen und Kollegen. Alle sehen die Gesamtprozente, deinen Namen sieht niemand. 👀"
    },
    "options": [
     {
      "vi": "⭐ Ngôi Sao",
-     "en": "⭐ The Star"
+     "en": "⭐ The Star",
+     "de": "⭐ Der Stern"
     },
     {
      "vi": "☀️ Mặt Trời",
-     "en": "☀️ The Sun"
+     "en": "☀️ The Sun",
+     "de": "☀️ Die Sonne"
     },
     {
      "vi": "🏮 Ẩn Sĩ",
-     "en": "🏮 The Hermit"
+     "en": "🏮 The Hermit",
+     "de": "🏮 Der Eremit"
     },
     {
      "vi": "🌿 Gã Khờ",
-     "en": "🌿 The Fool"
+     "en": "🌿 The Fool",
+     "de": "🌿 Der Narr"
     }
    ],
    "closed": false
@@ -576,28 +682,34 @@
    "date": "2026-08-18",
    "title": {
     "vi": "Bình chọn: Lá nào khiến bạn hồi hộp nhất khi lật lên?",
-    "en": "Poll: Which card makes your heart skip when it turns up?"
+    "en": "Poll: Which card makes your heart skip when it turns up?",
+    "de": "Umfrage: Bei welcher Karte wird dir am mulmigsten, wenn sie aufgedeckt wird?"
    },
    "intro": {
     "vi": "Chỉ để vui, không có đáp án đúng. Bạn chọn theo trải nghiệm của mình với bạn bè, người yêu, đồng nghiệp. Mọi người đều thấy tỉ lệ chung, không ai thấy tên bạn. 👀",
-    "en": "Just for fun, there is no right answer. Choose from your own experience with friends, partners and colleagues. Everyone sees the overall percentages, nobody sees your name. 👀"
+    "en": "Just for fun, there is no right answer. Choose from your own experience with friends, partners and colleagues. Everyone sees the overall percentages, nobody sees your name. 👀",
+    "de": "Nur zum Spaß, es gibt keine richtige Antwort. Wähl nach deiner eigenen Erfahrung mit Freundinnen und Freunden, Partnern und Kolleginnen und Kollegen. Alle sehen die Gesamtprozente, deinen Namen sieht niemand. 👀"
    },
    "options": [
     {
      "vi": "🗼 Tháp",
-     "en": "🗼 The Tower"
+     "en": "🗼 The Tower",
+     "de": "🗼 Der Turm"
     },
     {
      "vi": "💀 Thần Chết",
-     "en": "💀 Death"
+     "en": "💀 Death",
+     "de": "💀 Der Tod"
     },
     {
      "vi": "😈 Ác Quỷ",
-     "en": "😈 The Devil"
+     "en": "😈 The Devil",
+     "de": "😈 Der Teufel"
     },
     {
      "vi": "⚔️ Mười Kiếm",
-     "en": "⚔️ Ten of Swords"
+     "en": "⚔️ Ten of Swords",
+     "de": "⚔️ Zehn der Schwerter"
     }
    ],
    "closed": false
@@ -608,28 +720,34 @@
    "date": "2026-08-17",
    "title": {
     "vi": "Bình chọn: Bạn hay rút bài lúc nào?",
-    "en": "Poll: When do you usually draw a card?"
+    "en": "Poll: When do you usually draw a card?",
+    "de": "Umfrage: Wann ziehst du normalerweise eine Karte?"
    },
    "intro": {
     "vi": "Chỉ để vui, không có đáp án đúng. Bạn chọn theo trải nghiệm của mình với bạn bè, người yêu, đồng nghiệp. Mọi người đều thấy tỉ lệ chung, không ai thấy tên bạn. 👀",
-    "en": "Just for fun, there is no right answer. Choose from your own experience with friends, partners and colleagues. Everyone sees the overall percentages, nobody sees your name. 👀"
+    "en": "Just for fun, there is no right answer. Choose from your own experience with friends, partners and colleagues. Everyone sees the overall percentages, nobody sees your name. 👀",
+    "de": "Nur zum Spaß, es gibt keine richtige Antwort. Wähl nach deiner eigenen Erfahrung mit Freundinnen und Freunden, Partnern und Kolleginnen und Kollegen. Alle sehen die Gesamtprozente, deinen Namen sieht niemand. 👀"
    },
    "options": [
     {
      "vi": "🌅 Sáng sớm",
-     "en": "🌅 Early morning"
+     "en": "🌅 Early morning",
+     "de": "🌅 Früh am Morgen"
     },
     {
      "vi": "🌞 Giữa ngày",
-     "en": "🌞 Midday"
+     "en": "🌞 Midday",
+     "de": "🌞 Mittags"
     },
     {
      "vi": "🌙 Tối trước khi ngủ",
-     "en": "🌙 At night before sleep"
+     "en": "🌙 At night before sleep",
+     "de": "🌙 Abends vor dem Schlafen"
     },
     {
      "vi": "🌀 Chỉ khi rối",
-     "en": "🌀 Only when confused"
+     "en": "🌀 Only when confused",
+     "de": "🌀 Nur wenn ich nicht weiterweiß"
     }
    ],
    "closed": false
@@ -640,28 +758,34 @@
    "date": "2026-08-16",
    "title": {
     "vi": "Bình chọn: Trăng nào bạn thích nhất?",
-    "en": "Poll: Which Moon do you love most?"
+    "en": "Poll: Which Moon do you love most?",
+    "de": "Umfrage: Welchen Mond magst du am liebsten?"
    },
    "intro": {
     "vi": "Chỉ để vui, không có đáp án đúng. Bạn chọn theo trải nghiệm của mình với bạn bè, người yêu, đồng nghiệp. Mọi người đều thấy tỉ lệ chung, không ai thấy tên bạn. 👀",
-    "en": "Just for fun, there is no right answer. Choose from your own experience with friends, partners and colleagues. Everyone sees the overall percentages, nobody sees your name. 👀"
+    "en": "Just for fun, there is no right answer. Choose from your own experience with friends, partners and colleagues. Everyone sees the overall percentages, nobody sees your name. 👀",
+    "de": "Nur zum Spaß, es gibt keine richtige Antwort. Wähl nach deiner eigenen Erfahrung mit Freundinnen und Freunden, Partnern und Kolleginnen und Kollegen. Alle sehen die Gesamtprozente, deinen Namen sieht niemand. 👀"
    },
    "options": [
     {
      "vi": "🌑 Trăng non",
-     "en": "🌑 New Moon"
+     "en": "🌑 New Moon",
+     "de": "🌑 Neumond"
     },
     {
      "vi": "🌕 Trăng tròn",
-     "en": "🌕 Full Moon"
+     "en": "🌕 Full Moon",
+     "de": "🌕 Vollmond"
     },
     {
      "vi": "🌙 Trăng khuyết",
-     "en": "🌙 Crescent"
+     "en": "🌙 Crescent",
+     "de": "🌙 Mondsichel"
     },
     {
      "vi": "🌘 Trăng máu",
-     "en": "🌘 Blood Moon"
+     "en": "🌘 Blood Moon",
+     "de": "🌘 Blutmond"
     }
    ],
    "closed": false
@@ -672,28 +796,34 @@
    "date": "2026-08-15",
    "title": {
     "vi": "Bình chọn: Bạn thấy mình giống cung nào nhất?",
-    "en": "Poll: Which of your signs feels most like you?"
+    "en": "Poll: Which of your signs feels most like you?",
+    "de": "Umfrage: Welches deiner Zeichen fühlt sich am meisten nach dir an?"
    },
    "intro": {
     "vi": "Chỉ để vui, không có đáp án đúng. Bạn chọn theo trải nghiệm của mình với bạn bè, người yêu, đồng nghiệp. Mọi người đều thấy tỉ lệ chung, không ai thấy tên bạn. 👀",
-    "en": "Just for fun, there is no right answer. Choose from your own experience with friends, partners and colleagues. Everyone sees the overall percentages, nobody sees your name. 👀"
+    "en": "Just for fun, there is no right answer. Choose from your own experience with friends, partners and colleagues. Everyone sees the overall percentages, nobody sees your name. 👀",
+    "de": "Nur zum Spaß, es gibt keine richtige Antwort. Wähl nach deiner eigenen Erfahrung mit Freundinnen und Freunden, Partnern und Kolleginnen und Kollegen. Alle sehen die Gesamtprozente, deinen Namen sieht niemand. 👀"
    },
    "options": [
     {
      "vi": "☀️ Cung Mặt Trời",
-     "en": "☀️ Sun sign"
+     "en": "☀️ Sun sign",
+     "de": "☀️ Sonnenzeichen"
     },
     {
      "vi": "🌙 Cung Mặt Trăng",
-     "en": "🌙 Moon sign"
+     "en": "🌙 Moon sign",
+     "de": "🌙 Mondzeichen"
     },
     {
      "vi": "⬆️ Cung Mọc",
-     "en": "⬆️ Rising sign"
+     "en": "⬆️ Rising sign",
+     "de": "⬆️ Aszendent"
     },
     {
      "vi": "✨ Cả ba",
-     "en": "✨ All three"
+     "en": "✨ All three",
+     "de": "✨ Alle drei"
     }
    ],
    "closed": false
@@ -704,28 +834,34 @@
    "date": "2026-08-14",
    "title": {
     "vi": "Bình chọn: Cung nào hát karaoke \"cháy\" nhất?",
-    "en": "Poll: Which sign sets karaoke on fire?"
+    "en": "Poll: Which sign sets karaoke on fire?",
+    "de": "Umfrage: Welches Sternzeichen rockt das Karaoke am meisten?"
    },
    "intro": {
     "vi": "Chỉ để vui, không có đáp án đúng. Bạn chọn theo trải nghiệm của mình với bạn bè, người yêu, đồng nghiệp. Mọi người đều thấy tỉ lệ chung, không ai thấy tên bạn. 👀",
-    "en": "Just for fun, there is no right answer. Choose from your own experience with friends, partners and colleagues. Everyone sees the overall percentages, nobody sees your name. 👀"
+    "en": "Just for fun, there is no right answer. Choose from your own experience with friends, partners and colleagues. Everyone sees the overall percentages, nobody sees your name. 👀",
+    "de": "Nur zum Spaß, es gibt keine richtige Antwort. Wähl nach deiner eigenen Erfahrung mit Freundinnen und Freunden, Partnern und Kolleginnen und Kollegen. Alle sehen die Gesamtprozente, deinen Namen sieht niemand. 👀"
    },
    "options": [
     {
      "vi": "♌ Sư Tử",
-     "en": "♌ Leo"
+     "en": "♌ Leo",
+     "de": "♌ Löwe"
     },
     {
      "vi": "♐ Nhân Mã",
-     "en": "♐ Sagittarius"
+     "en": "♐ Sagittarius",
+     "de": "♐ Schütze"
     },
     {
      "vi": "♊ Song Tử",
-     "en": "♊ Gemini"
+     "en": "♊ Gemini",
+     "de": "♊ Zwillinge"
     },
     {
      "vi": "♈ Bạch Dương",
-     "en": "♈ Aries"
+     "en": "♈ Aries",
+     "de": "♈ Widder"
     }
    ],
    "closed": false
@@ -736,28 +872,34 @@
    "date": "2026-08-13",
    "title": {
     "vi": "Bình chọn: Emoji nào hợp với Sư Tử nhất?",
-    "en": "Poll: Which emoji suits Leo best?"
+    "en": "Poll: Which emoji suits Leo best?",
+    "de": "Umfrage: Welches Emoji passt am besten zu Löwe?"
    },
    "intro": {
     "vi": "Chỉ để vui, không có đáp án đúng. Bạn chọn theo trải nghiệm của mình với bạn bè, người yêu, đồng nghiệp. Mọi người đều thấy tỉ lệ chung, không ai thấy tên bạn. 👀",
-    "en": "Just for fun, there is no right answer. Choose from your own experience with friends, partners and colleagues. Everyone sees the overall percentages, nobody sees your name. 👀"
+    "en": "Just for fun, there is no right answer. Choose from your own experience with friends, partners and colleagues. Everyone sees the overall percentages, nobody sees your name. 👀",
+    "de": "Nur zum Spaß, es gibt keine richtige Antwort. Wähl nach deiner eigenen Erfahrung mit Freundinnen und Freunden, Partnern und Kolleginnen und Kollegen. Alle sehen die Gesamtprozente, deinen Namen sieht niemand. 👀"
    },
    "options": [
     {
      "vi": "🦁",
-     "en": "🦁"
+     "en": "🦁",
+     "de": "🦁"
     },
     {
      "vi": "👑",
-     "en": "👑"
+     "en": "👑",
+     "de": "👑"
     },
     {
      "vi": "✨",
-     "en": "✨"
+     "en": "✨",
+     "de": "✨"
     },
     {
      "vi": "🎤",
-     "en": "🎤"
+     "en": "🎤",
+     "de": "🎤"
     }
    ],
    "closed": false

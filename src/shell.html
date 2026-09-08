@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
 <title>Nabu Tarot</title>
-<meta name="description" content="Nabu Tarot: dự đoán mới, rút một lá bài xem năng lượng hiện tại, học tarot, Lenormand, chiêm tinh, và đặt lịch xem bài.">
+<meta name="description" content="Rút Tarot, xem dự đoán, khám phá chiêm tinh, nuôi linh thú, viết nhật ký, manifestation và đặt lịch với Nabu.">
 <!-- Nabu Tarot. Copyright (c) 2025-2026 Nabu Tarot. All rights reserved.
      This application, its text in both languages, its artwork and its lessons
      may not be copied, republished, adapted, or used to train a model.
@@ -528,7 +528,10 @@ button.chip,a.chip,label.chip{display:inline-flex;align-items:center;justify-con
 .foot .wrap{display:flex;flex-direction:column;gap:6px;align-items:flex-start}
 .foot svg{width:150px;height:40px;flex:none}
 .foot b{color:var(--fg)}
-.foot .links{margin-top:4px;display:flex;flex-wrap:nowrap;gap:6px;white-space:nowrap;font-size:12.5px;overflow:hidden}.foot .links a{flex:none}
+/* The reviewed Vietnamese label is Quyền riêng tư, which is long enough to
+   push this row past a 320px screen, so the row wraps instead of running off
+   the edge. */
+.foot .links{margin-top:4px;display:flex;flex-wrap:wrap;gap:6px 10px;row-gap:6px;font-size:12.5px}.foot .links a{flex:none;white-space:nowrap}
 .foot .links a{font-weight:600}
 .foot .links .sico{width:17px;height:17px}
 .foot .copy{margin-top:4px;color:var(--fg-faint);font-size:12px}

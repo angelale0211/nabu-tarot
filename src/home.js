@@ -20,20 +20,27 @@ function calLine(calendar, locale, opts) {
 }
 function todayHTML() {
   const S = T(), now = new Date();
-  const greg = now.toLocaleDateString(lang === 'vi' ? 'vi-VN' : 'en-GB', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
+  const dateLocale = lang === 'vi' ? 'vi-VN' : (lang === 'de' ? 'de-DE' : 'en-GB');
+  const intlLocale = lang === 'vi' ? 'vi' : (lang === 'de' ? 'de' : 'en');
+  const greg = now.toLocaleDateString(dateLocale, { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
   const rows = [];
   // Vietnamese lunar calendar (Hồ Ngọc Đức's algorithm, UTC+7), as on the lịch vạn niên.
   const lu = lunarToday(now);
-  const leap = lu.leap ? (lang === 'vi' ? ' (nhuận)' : ' (leap)') : '';
-  rows.push([lang === 'vi' ? 'Âm lịch' : 'Lunar (VN)', lang === 'vi'
+  const leap = lu.leap ? (lang === 'vi' ? ' (nhuận)' : (lang === 'de' ? ' · Schaltmonat' : ' (leap)')) : '';
+  rows.push([lang === 'vi' ? 'Âm lịch' : (lang === 'de' ? 'Mondkalender (VN)' : 'Lunar (VN)'), lang === 'vi'
     ? 'Ngày ' + lu.day + ' tháng ' + lu.month + leap + ' năm ' + lu.yearCC + ' (' + lu.year + ')'
-    : 'Day ' + lu.day + ' of lunar month ' + lu.month + leap + ', year of the ' + lu.yearAn + ' (' + lu.year + ')']);
+    : (lang === 'de'
+      ? 'Tag ' + lu.day + ' · Mondmonat ' + lu.month + leap + ' · Jahr ' + lu.year
+      : 'Day ' + lu.day + ' of lunar month ' + lu.month + leap + ', year of the ' + lu.yearAn + ' (' + lu.year + ')')]);
   rows.push(lang === 'vi' ? ['Can chi', 'Ngày ' + lu.dayCC + ' · tháng ' + lu.monthCC + ' · năm ' + lu.yearCC]
-    : ['Animal signs', 'Day of the ' + lu.dayAn + ' · month of the ' + lu.monthAn + ' · year of the ' + lu.yearAn]);
-  const others = [['islamic-umalqura', lang === 'vi' ? 'Hồi giáo (Hijri)' : 'Islamic (Hijri)'], ['hebrew', lang === 'vi' ? 'Do Thái' : 'Hebrew'], ['persian', lang === 'vi' ? 'Ba Tư' : 'Persian'], ['buddhist', lang === 'vi' ? 'Phật lịch (Thái)' : 'Buddhist (Thai)']];
-  others.forEach((o) => { const v = calLine(o[0], lang === 'vi' ? 'vi' : 'en', { day: 'numeric', month: 'long', year: 'numeric' }); if (v) rows.push([o[1], v]); });
+    : (lang === 'de'
+      ? ['Tierzeichen', lu.dayAn + ' · ' + lu.monthAn + ' · ' + lu.yearAn]
+      : ['Animal signs', 'Day of the ' + lu.dayAn + ' · month of the ' + lu.monthAn + ' · year of the ' + lu.yearAn]));
+  const calName = (vi, en, de) => lang === 'vi' ? vi : (lang === 'de' ? de : en);
+  const others = [['islamic-umalqura', calName('Hồi giáo (Hijri)', 'Islamic (Hijri)', 'Islamischer Kalender (Hijri)')], ['hebrew', calName('Do Thái', 'Hebrew', 'Hebräischer Kalender')], ['persian', calName('Ba Tư', 'Persian', 'Persischer Kalender')], ['buddhist', calName('Phật lịch (Thái)', 'Buddhist (Thai)', 'Buddhistischer Kalender (Thailand)')]];
+  others.forEach((o) => { const v = calLine(o[0], intlLocale, { day: 'numeric', month: 'long', year: 'numeric' }); if (v) rows.push([o[1], v]); });
   const mp = moonPhase(now);
-  rows.push([lang === 'vi' ? 'Trăng' : 'Moon', MOON_ICONS[mp.idx] + ' ' + MOON_NAMES[lang][mp.idx] + ' · ' + (lang === 'vi' ? 'ngày ' : 'day ') + Math.round(mp.age)]);
+  rows.push([lang === 'vi' ? 'Trăng' : (lang === 'de' ? 'Mond' : 'Moon'), MOON_ICONS[mp.idx] + ' ' + MOON_NAMES[lang][mp.idx] + ' · ' + (lang === 'vi' ? 'ngày ' : (lang === 'de' ? 'Tag ' : 'day ')) + Math.round(mp.age)]);
   return '<div class="acc open" id="today"><button><span>📅 ' + esc(greg) + '</span></button><div class="in"><table class="tbl">'
     + rows.map((r) => '<tr><td>' + esc(r[0]) + '</td><td>' + esc(r[1]) + '</td></tr>').join('') + '</table></div></div>';
 }
@@ -174,7 +181,7 @@ function personalHTML() {
   const c = majorId ? cardById(majorId) : null;
   const lp = lifePath(b.y, b.m, b.d);
   return '<div class="hello">'
-    + '<div class="sign"><div class="glyph">' + z.g + '</div><div><div class="faint">' + esc(S.yourSign) + '</div><b>' + esc(S.zodiac[si]) + '</b> · ' + esc(lang === 'vi' ? z.dvi : z.den)
+    + '<div class="sign"><div class="glyph">' + z.g + '</div><div><div class="faint">' + esc(S.yourSign) + '</div><b>' + esc(S.zodiac[si]) + '</b> · ' + esc(lang === 'vi' ? z.dvi : (lang === 'de' ? (z.dde || z.den) : z.den))
     + '<div class="faint">' + esc(zp.kw.join(' · ')) + '</div></div></div>'
     + '<p style="font-size:14.5px;margin:6px 0 0">' + esc(zp.tip) + '</p>'
     + (c ? '<button class="cardline" data-open-card="' + c.id + '" style="width:100%;text-align:left"><span class="face">' + faceSVG(c) + '</span><span><span class="faint">' + esc(S.signCard) + '</span><br><b>' + esc(c.name) + '</b></span></button>' : '')
@@ -190,12 +197,12 @@ function pickCtaHTML() {
 }
 function quickLinksHTML() {
   const S = T();
-  const tiles = [['#/pick', DRAW_ICON, S.nav.pick, lang === 'vi' ? 'năng lượng hôm nay' : 'your energy today'],
-    ['#/news', '✨', S.newsTitle, lang === 'vi' ? 'bài mới của Nabu' : 'new posts from Nabu'],
-    ['#/learn/astro', '🔮', S.cats.astro, lang === 'vi' ? '12 cung, hành tinh, nhà' : '12 signs, planets, houses'],
-    ['#/learn/tarot', PICK_ICON, S.cats.tarot, lang === 'vi' ? '78 lá, ý nghĩa' : '78 cards, meanings'],
-    ['#/book', '📅', S.nav.book, lang === 'vi' ? 'hẹn giờ với Nabu' : 'book a time with Nabu'],
-    ['#/prices', '💜', S.priceTitle, lang === 'vi' ? 'các gói xem bài' : 'reading packages']];
+  const tiles = [['#/pick', DRAW_ICON, S.nav.pick, lang === 'vi' ? 'năng lượng hôm nay' : (lang === 'de' ? 'deine Energie heute' : 'your energy today')],
+    ['#/news', '✨', S.newsTitle, lang === 'vi' ? 'bài mới của Nabu' : (lang === 'de' ? 'neue Beiträge von Nabu' : 'new posts from Nabu')],
+    ['#/learn/astro', '🔮', S.cats.astro, lang === 'vi' ? '12 cung, hành tinh, nhà' : (lang === 'de' ? '12 Zeichen, Planeten, Häuser' : '12 signs, planets, houses')],
+    ['#/learn/tarot', PICK_ICON, S.cats.tarot, lang === 'vi' ? '78 lá, ý nghĩa' : (lang === 'de' ? '78 Karten, Bedeutungen' : '78 cards, meanings')],
+    ['#/book', '📅', S.nav.book, lang === 'vi' ? 'hẹn giờ với Nabu' : (lang === 'de' ? 'Termin bei Nabu' : 'book a time with Nabu')],
+    ['#/prices', '💜', S.priceTitle, lang === 'vi' ? 'các gói xem bài' : (lang === 'de' ? 'Legungspakete' : 'reading packages')]];
   return '<div class="tiles">' + tiles.map((t) => '<a class="tile" href="' + t[0] + '"><div class="ic">' + t[1] + '</div><b>' + esc(t[2]) + '</b><span>' + esc(t[3]) + '</span></a>').join('') + '</div>'
     + (isStandalone() || isTWA() ? '' : '<a class="upnext" href="#/install" style="margin-top:-8px"><span class="ic">📲</span><span><b>' + esc(S.installTitle) + '</b><br>' + esc(S.instAndroidIntro) + '</span></a>');
 }
@@ -245,7 +252,7 @@ async function renderHome(args, params) {
        - the same two cards, drawn once for whichever column is showing. */
     + '<div id="sidehoro" hidden></div>'
     + '</aside>'
-    + '<h1 style="margin:18px 0 4px">' + esc(name ? S.hello(name) : S.helloGuest) + '</h1><p class="muted">' + esc(lang === 'vi' ? 'Hôm nay bạn muốn làm gì?' : 'What would you like to do today?') + '</p>'
+    + '<h1 style="margin:18px 0 4px">' + esc(name ? S.hello(name) : S.helloGuest) + '</h1><p class="muted">' + esc(lang === 'vi' ? 'Hôm nay bạn muốn làm gì?' : (lang === 'de' ? 'Was möchtest du heute machen?' : 'What would you like to do today?')) + '</p>'
     + upcomingHTML()
     + pickCtaHTML()
     + quickLinksHTML()

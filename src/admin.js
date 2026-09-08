@@ -95,6 +95,8 @@ function adminPosts(p) {
     + '<textarea id="pbody" style="min-height:160px"></textarea><p class="hint">' + esc(S.formatHint) + ' ' + esc(S.bodyHint) + '</p>'
     + '<label class="f" for="ptitle_en">' + esc(S.postTitleEn) + '</label><input id="ptitle_en">'
     + '<label class="f" for="pbody_en">' + esc(S.postBodyEn) + '</label><textarea id="pbody_en"></textarea>'
+    + '<label class="f" for="ptitle_de">' + esc(S.postTitleDe) + '</label><input id="ptitle_de">'
+    + '<label class="f" for="pbody_de">' + esc(S.postBodyDe) + '</label><textarea id="pbody_de"></textarea>'
     + '<div class="acc" id="cardpick" style="margin-top:14px"><button type="button"><span>🃏 ' + esc(S.postCards) + '</span></button><div class="in"><input id="csearch" placeholder="' + esc(S.searchCard) + '" style="margin-bottom:8px">'
     + '<div class="grid" id="cgrid">' + DECK[lang].map((c) => '<button data-cid="' + c.id + '" data-name="' + esc((c.name + ' ' + cardById(c.id, otherLang()).name).toLowerCase()) + '">' + faceSVG(c) + '</button>').join('') + '</div></div></div><div class="mini" id="csel"></div>'
     + '<label class="f">' + esc(S.postTopics) + '</label><div class="chips">' + INTERESTS.map((i) => '<button class="chip" data-topic-id="' + i.id + '">' + esc(i[lang]) + '</button>').join('') + '</div>'
@@ -136,7 +138,7 @@ function adminPosts(p) {
   const formPost = () => {
     const v = (id) => $(id).value.trim(), iso = isoDate(new Date());
     const post = { id: admin.editing || (v('#pdate') || iso) + '-' + Math.random().toString(36).slice(2, 6), date: v('#pdate') || iso,
-      title: { vi: v('#ptitle'), en: v('#ptitle_en') }, body: { vi: v('#pbody'), en: v('#pbody_en') }, cards: admin.cards.slice(),
+      title: { vi: v('#ptitle'), en: v('#ptitle_en'), de: v('#ptitle_de') }, body: { vi: v('#pbody'), en: v('#pbody_en'), de: v('#pbody_de') }, cards: admin.cards.slice(),
       topics: $$('[data-topic-id].on').map((b) => b.getAttribute('data-topic-id')),
       markers: { initials: v('#pinit').split(/[,\s]+/).map((x) => x.trim().toUpperCase()).filter(Boolean), signs: $$('[data-sign].on').map((b) => Number(b.getAttribute('data-sign'))) }, pinned: $('#ppin').checked };
     if (!post.title.en) delete post.title.en; if (!post.body.en) delete post.body.en;
@@ -146,6 +148,7 @@ function adminPosts(p) {
     admin.editing = post ? post.id : null; admin.cards = post ? (post.cards || []).slice() : [];
     $('#pdate').value = post ? post.date : ''; $('#ptitle').value = post ? L2(post.title, 'vi') : ''; $('#ptitle_en').value = post ? L2(post.title, 'en') : '';
     $('#pbody').value = post ? L2(post.body, 'vi') : ''; $('#pbody_en').value = post ? L2(post.body, 'en') : '';
+    $('#ptitle_de').value = post ? L2(post.title, 'de') : ''; $('#pbody_de').value = post ? L2(post.body, 'de') : '';
     $('#pinit').value = post && post.markers && post.markers.initials ? post.markers.initials.join(', ') : '';
     const signs = post && post.markers && post.markers.signs ? post.markers.signs : [], topics = post && post.topics ? post.topics : [];
     $$('[data-sign]').forEach((b) => b.classList.toggle('on', signs.indexOf(Number(b.getAttribute('data-sign'))) > -1));
@@ -207,7 +210,9 @@ async function adminSchedule(p) {
   else if (ghToken()) { try { const r = await ghRead(CONFIG.schedulePath); sha = r.sha; sch = r.json; } catch (e) { p.innerHTML = '<p class="hint err">' + esc(e.message) + '</p>'; return; } }
   sch = sch || (await loadSchedule());
   sch.weekly = sch.weekly || {}; sch.blocked = sch.blocked || []; sch.booked = sch.booked || []; sch.extra = sch.extra || {};
-  const dn = lang === 'vi' ? ['Chủ nhật', 'Thứ hai', 'Thứ ba', 'Thứ tư', 'Thứ năm', 'Thứ sáu', 'Thứ bảy'] : ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+  const dn = lang === 'vi' ? ['Chủ nhật', 'Thứ hai', 'Thứ ba', 'Thứ tư', 'Thứ năm', 'Thứ sáu', 'Thứ bảy']
+    : (lang === 'de' ? ['Sonntag', 'Montag', 'Dienstag', 'Mittwoch', 'Donnerstag', 'Freitag', 'Samstag']
+    : ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']);
   const draw = () => {
     p.innerHTML = '<div class="card"><h3 style="margin-bottom:4px">' + esc(S.weekly) + '</h3><p class="hint" style="margin-bottom:10px">' + esc(S.weeklyHint) + '</p><div class="week">'
       + [1, 2, 3, 4, 5, 6, 0].map((d) => '<div class="wd"><b>' + esc(dn[d]) + '</b><div class="chips hourgrid">' + HOURS.map((h) => '<button class="chip' + ((sch.weekly[String(d)] || []).indexOf(h) > -1 ? ' on' : '') + '" data-wd="' + d + '" data-h="' + h + '">' + h + '</button>').join('') + '</div></div>').join('') + '</div></div>'

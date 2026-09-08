@@ -4,7 +4,7 @@
    how the card leans, what it describes, and when one card is not enough
    and more cards should be drawn. Vietnamese only (shown in the course).
    [category, question, answer] -- unbounded per card. */
-const ASK = { vi: {}, en: {} };
+const ASK = { vi: {}, en: {}, de: {} };
 
 const KW = { vi: {}, en: {} };
 
@@ -444,7 +444,7 @@ Object.assign(ASK.vi, {
 Object.assign(ASK.vi, {
   'wands-2': [
     ['love', 'Người ấy dành cho tôi tình cảm như thế nào?',
-     'Trong mối quan hệ này, người ấy nhìn khá xa và có tầm nhìn rõ ràng. Có thể ngay từ sớm họ đã hình dung ra một viễn cảnh lâu dài và một sự cam kết với bạn. Trước mắt, mong muốn cam kết đó là thật. Tuy nhiên, lá bài chưa cho biết họ cam kết vì yêu bạn hay vì một lý do khác. Nếu trải bài có thêm những lá Cốc đẹp như Át Cốc, Hai Cốc, Sáu Cốc hay Mười Cốc thì bạn đọc theo hướng tình yêu thuần túy. Nếu lá này đi kèm Công Lý hoặc Đức Vua Kiếm, tức là những lá thiên về lý trí, thì họ muốn cam kết nhưng còn có thêm một lý do nào đó nữa.'],
+     'Trong mối quan hệ này, người ấy nhìn khá xa và có tầm nhìn rõ ràng. Có thể ngay từ sớm họ đã hình dung ra một viễn cảnh lâu dài và một sự cam kết với bạn. Trước mắt, mong muốn cam kết đó là thật. Tuy nhiên, lá bài chưa cho biết họ cam kết vì yêu bạn hay vì một lý do khác. Nếu trải bài có thêm những lá Cốc đẹp như Át Cốc, Hai Cốc, Sáu Cốc hay Mười Cốc thì bạn đọc theo hướng tình yêu thuần túy. Nếu lá này đi kèm Công Lý hoặc Vua Kiếm, tức là những lá thiên về lý trí, thì họ muốn cam kết nhưng còn có thêm một lý do nào đó nữa.'],
     ['love', 'Nếu người ấy cam kết vì một lý do khác, điều đó có phải là xấu không?',
      'Điều đó không hẳn là xấu. Trong nhiều trường hợp, người ấy không nhắm đến tài chính hay vật chất của bạn. Họ có thể nhìn thấy ở bạn một tính cách hoặc một đặc điểm khiến họ tin rằng hai người đi đường dài được. Có người yêu bằng trọn vẹn trái tim, cũng có người yêu bằng một phần trái tim và một phần lý trí, và cách yêu thứ hai không phải là dấu hiệu xấu. Trên thực tế, những người giữ được lý trí trong tình cảm đôi khi lại chung thủy hơn những người yêu hoàn toàn bằng cảm xúc. Chẳng hạn, một người xác định dành phần lớn thời gian cho sự nghiệp sẽ tìm một bạn đời chăm lo cho gia đình; họ thấy bạn có những đặc điểm đó và bản thân bạn cũng mong muốn như vậy, nên họ chọn gắn bó lâu dài với bạn. Cảm xúc họ dành cho bạn có thể không quá mãnh liệt, nhưng họ vẫn chung thủy và đối xử tốt với bạn.'],
     ['love', 'Chúng tôi đang cãi nhau, tôi có nên chia tay không?',
@@ -750,9 +750,9 @@ Object.assign(ASK.vi, {
 Object.assign(ASK.vi, {
   'wands-7': [
     ['love', 'Lá này miêu tả tính cách của một người như thế nào?',
-     'Bảy Gậy mô tả một người luôn ở trong tư thế phòng thủ và dễ gây xung đột. Họ hay nghi ngờ rằng người khác đang có ý công kích hoặc nói xấu mình, dù thật ra không ai để ý đến họ. Vì mang tâm thế đó, họ thường ra tay trước: khi cảm thấy ai đó sắp gây bất lợi cho mình, họ tìm cách hạ thấp người đó trước, dù người kia không hề có ý định như vậy. Trong tập thể, đây là người hay hóng chuyện, dành nhiều thời gian cho những việc vô bổ và va chạm với hết người này đến người khác.'],
+     'Bảy Gậy có thể mô tả một người luôn trong thế phòng thủ. Họ dễ cảm thấy mình bị soi xét hoặc phải tự bảo vệ, nên đôi khi phản ứng mạnh trước khi hiểu rõ ý của người khác. Ở mặt bóng, trạng thái này khiến họ dễ tranh cãi, căng thẳng và tiêu tốn năng lượng vào những cuộc đối đầu không cần thiết.'],
     ['love', 'Người ấy dành cho tôi tình cảm như thế nào?',
-     'Với câu hỏi này, lá bài không trả lời rõ rằng họ có yêu bạn hay không. Điều lá bài cho thấy rõ hơn là trạng thái của chính người đó: họ đang mất cân bằng và bất ổn trong nội tâm. Bạn nên lưu ý một điều, kể cả khi bản thân bạn rất vững vàng. Một người mang những tổn thương chưa được chữa lành sẽ vô tình gây cho người mình yêu đúng những vết thương mà họ đang mang. Nếu họ không đủ mạnh mẽ để nhìn nhận vấn đề của mình và thay đổi sớm, bạn sẽ là người bị tổn thương.'],
+     'Lá này không cho biết rõ họ yêu bạn nhiều hay ít. Nó nói nhiều hơn về trạng thái của họ: đang căng thẳng, phòng thủ hoặc mang theo những tổn thương chưa được xử lý. Điều đáng nhìn không phải là “họ có vết thương hay không”, mà là họ có nhận ra và chịu trách nhiệm cho cách mình cư xử hay không. Bạn không có trách nhiệm chữa lành thay cho họ.'],
     ['love', 'Chúng tôi đang cãi nhau, tôi có nên chia tay không?',
      'Những cuộc cãi vã mà lá bài nói đến thường xoay quanh những chuyện rất nhỏ. Một bên trách móc đối phương về việc đi chơi về muộn, quên nhắn tin hay không gọi điện đúng lúc, và đòi hỏi người kia phải thay đổi hết điều này đến điều khác. Trong khi đó, bên trách móc lại quên nhìn lại chính mình, dù bản thân cũng nhiều lần bỏ lỡ tin nhắn hoặc đi chơi với người khác mà không báo trước. Lá bài không khuyên chia tay ngay. Thay vào đó, bạn hãy thử là người thay đổi trước. Nếu đối phương nhận ra sự thay đổi đó, trân trọng nó và thay đổi theo, mối quan hệ này xứng đáng để đi tiếp. Nếu họ nhìn thấy nhưng vẫn giữ nguyên cách cư xử, khi đó bạn có đủ cơ sở để tự quyết định dừng lại.'],
     ['career', 'Trong thời gian tới, tôi có tìm được việc không?',
@@ -764,17 +764,17 @@ Object.assign(ASK.vi, {
   ],
   'swords-7': [
     ['love', 'Lá này miêu tả tính cách của một người như thế nào?',
-     'Người mang năng lượng Bảy Kiếm hành động theo cách lén lút và thích làm mọi việc sau lưng người khác. Bên cạnh đó, họ còn có phần tham lam. Những biểu hiện thường gặp là nói xấu sau lưng, gây chuyện thị phi hoặc ngoại tình. Riêng chuyện ngoại tình thể hiện cả hai đặc điểm cùng lúc: đó vừa là hành động giấu giếm, vừa là lòng tham khi một người tình chưa đủ với họ.'],
+     'Bảy Kiếm thường gợi đến sự kín đáo, né tránh hoặc hành động không hoàn toàn minh bạch. Ở mặt bóng, người mang năng lượng này có thể giấu thông tin, nói một đằng làm một nẻo hoặc chọn đường vòng thay vì đối thoại thẳng. Lá bài không tự động có nghĩa là ngoại tình hay lừa dối; cần nhìn thêm hoàn cảnh và các lá đi cùng.'],
     ['love', 'Người ấy dành cho tôi tình cảm như thế nào?',
-     'Đây là một câu trả lời không dễ chịu. Khi Bảy Kiếm xuất hiện cho câu hỏi về tình cảm của một người đang tìm hiểu bạn, khả năng đáng lo nhất là người đó đang có một mối quan hệ khác mà bạn chưa biết. Một tình huống thường gặp là họ nói rằng mình vừa chia tay, nhưng thật ra mối quan hệ cũ vẫn chưa dứt hẳn. Trong trường hợp đó, chính bạn lại là người thứ ba mà không hay biết. Vì vậy, bạn cần hiểu rằng sự lén lút của lá bài không nhất thiết có nghĩa là họ đang có người thứ ba ngoài bạn. Vị trí người thứ ba đó rất có thể thuộc về bạn. Bạn nên hỏi thẳng trước khi nhận lời, vì nhiều khi một câu hỏi trực tiếp sẽ khiến sự thật được nói ra.'],
+     'Bảy Kiếm khiến câu hỏi này cần được kiểm chứng bằng thực tế hơn là suy đoán. Có thể người ấy đang giữ lại một phần thông tin, chưa nói hết về hoàn cảnh của mình hoặc chưa sẵn sàng minh bạch. Điều đó không đồng nghĩa chắc chắn có người thứ ba. Nếu mối quan hệ còn mơ hồ, hỏi thẳng về tình trạng hiện tại và quan sát sự nhất quán giữa lời nói với hành động sẽ hữu ích hơn việc tự kết luận.'],
     ['love', 'Chúng tôi cãi nhau nhiều, tôi có nên chia tay không?',
      'Bảy Kiếm gợi ra hai khả năng cho câu hỏi này. Khả năng thứ nhất là phía đối phương có người thứ ba. Khả năng thứ hai là không có người thứ ba trong tình cảm, nhưng có một bên thứ ba đang tác động từ phía sau. Đó có thể là bạn bè hoặc gia đình, những người liên tục khuyên bạn chia tay với lý do bạn xứng đáng với một người tốt hơn. Cả hai khả năng đều bắt nguồn từ bản chất của lá bài: mọi việc diễn ra ở phía sau hậu trường chứ không diễn ra trước mặt. Người mang năng lượng này khi không hài lòng với ai sẽ nói sau lưng chứ không nói thẳng.'],
     ['career', 'Tôi đã thất nghiệp lâu, sắp tới tôi có tìm được việc mới không?',
-     'Khả năng là bạn vẫn chưa tìm được việc trong thời gian tới, vì có một tác động âm thầm nào đó đang cản trở bạn. Bạn hãy nhìn lại những người xung quanh mình, dù đó là gia đình, bạn bè hay người yêu, để xem tác động này đến từ đâu. Một ví dụ dễ hình dung là người thân muốn bạn ở lại làm việc gần nhà theo ý họ, nên thường xuyên nói rằng bạn không đủ năng lực và ra ngoài cũng không làm được gì. Những lời đó dần thấm vào bạn. Đến khi đi phỏng vấn, bạn mất tự tin, trả lời lúng túng và trượt, trong khi bạn không nhận ra rằng nguồn gốc của sự thiếu tự tin đó lại nằm ở chính người thân của mình.'],
+     'Lá này gợi ý có một yếu tố “ẩn” đang làm quá trình tìm việc kém hiệu quả. Đó có thể là lời khuyên từ người khác khiến bạn mất tự tin, một chiến lược tìm việc chưa phù hợp hoặc chính bạn đang né một bước cần làm. Hãy kiểm tra lại hồ sơ, cách ứng tuyển và những niềm tin đang ảnh hưởng đến bạn trước khi cho rằng có ai đó cố tình cản trở.'],
     ['career', 'Trong thời gian tới, công việc của tôi có biến cố gì không?',
      'Lá bài báo hiệu là có. Biến cố này mang tính chất bị chơi xấu từ phía sau: bạn có thể bị nói xấu sau lưng hoặc bị lôi vào chuyện thị phi. Một tình huống khác là bạn đang phấn đấu cho một vị trí quản lý hoặc trưởng nhóm, và có người cạnh tranh với bạn bằng những thủ đoạn thiếu lành mạnh thay vì cạnh tranh công khai và sòng phẳng. Đó chính là năng lượng của Bảy Kiếm. Một lá bài chỉ cho thấy một phần của bức tranh, nên nếu bạn muốn biết người đó là ai và mình nên làm gì, bạn cần rút thêm bài.'],
     ['other', 'Thao túng cảm xúc được hiểu như thế nào?',
-     'Thao túng cảm xúc là một từ khóa thường đi kèm với Bảy Kiếm. Đó là việc một người điều khiển suy nghĩ và cảm xúc của người khác để đạt được điều mình muốn. Chuyện này xảy ra rất thường xuyên trong đời sống hằng ngày, đặc biệt là trong tình yêu và trong quan hệ với cấp trên. Nếu không quan sát kỹ, bạn có thể bị thao túng, hoặc chính bạn thao túng người khác một cách vô thức. Người có khả năng thao túng thường thông minh và có trí tuệ cảm xúc cao. Họ duyên dáng, được lòng nhiều người và biết cách dẫn dắt câu chuyện. Họ biết nên nói gì, tỏ thái độ ra sao và dùng từ ngữ nào vào đúng thời điểm để tác động vào tâm lý người nghe. Khi để ý, bạn sẽ nhận ra có những người như vậy, bên cạnh những người thẳng thắn nghĩ gì nói nấy.']
+     'Thao túng cảm xúc là khi một người cố tác động vào suy nghĩ, cảm giác hoặc quyết định của người khác để đạt mục đích cho mình, thường bằng cách che giấu ý định, gây tội lỗi, bóp méo sự việc hoặc tạo áp lực. Người thao túng không nhất thiết có “EQ cao”; họ chỉ có thể rất giỏi quan sát phản ứng của người khác. Dấu hiệu quan trọng là bạn liên tục cảm thấy bị ép, bị làm cho nghi ngờ chính mình hoặc khó nói “không” mà không bị trừng phạt về cảm xúc.']
   ],
   'cups-7': [
     ['other', 'Từ khóa của lá này là gì?',
@@ -806,7 +806,7 @@ Object.assign(ASK.vi, {
     ['career', 'Trong thời gian tới, công việc của tôi sẽ thế nào?',
      'Bảy Tiền hứa hẹn thành quả, nhưng thành quả đó đến chậm và chắc chắn. Bạn cũng nên hiểu rằng đây không phải là lá bài của may mắn bất ngờ. Bạn bỏ ra bao nhiêu công sức thì sẽ nhận về đúng bấy nhiêu, chứ không nhận về gấp đôi. Chẳng hạn, nếu bạn đang mong được thăng chức ở công ty hiện tại, cơ hội đó sẽ đến nhưng không nhanh như bạn mong muốn. Bài học của lá bài là bạn hãy tiếp tục chăm chỉ và nhẫn nại ngay cả khi chưa nhìn thấy kết quả.'],
     ['other', 'Vì sao tôi phải kiên trì đến như vậy?',
-     'Năng lượng của Bảy Tiền không phải là sự bùng nổ trong một khoảnh khắc, mà là sự đều đặn trải dài ngày này qua ngày khác và không bao giờ dừng lại. Hình ảnh trồng cây trên lá bài giải thích điều đó. Khi hạt giống chưa nảy mầm, người trồng không thể bỏ chậu đi để gieo một hạt khác. Họ vẫn tưới nước và bón phân mỗi ngày với cùng một lượng thời gian, không bỏ sót ngày nào. Cây không lớn ngay, nhưng qua thời gian nó sẽ lớn và xanh tốt đúng như mong đợi. Việc thay đổi bản thân cũng như vậy. Muốn thay đổi mình, bạn phải thay đổi thói quen, và một thói quen không thể hình thành trong một hai ngày mà cần ít nhất 28 ngày thực hiện liên tục.']
+     'Bảy Tiền nói về sự đều đặn hơn là bùng nổ. Hình ảnh trồng cây trên lá bài rất dễ nhớ: có những kết quả cần được chăm trong nhiều tuần hoặc nhiều tháng trước khi nhìn thấy rõ. Thay đổi thói quen cũng vậy; không có một con số ngày cố định đúng cho tất cả mọi người. Điều quan trọng là lặp lại đủ lâu và điều chỉnh cách làm khi cần.']
   ]
 });
 
@@ -819,7 +819,7 @@ Object.assign(ASK.vi, {
     ['love', 'Lá này miêu tả tính cách của một người như thế nào?',
      'Đặc điểm nổi bật nhất của người này là tốc độ. Họ suy nghĩ nhanh, nói nhanh, đi lại nhanh và làm việc gì cũng nhanh. Đây cũng có thể là người thích làm nhiều việc cùng lúc vì muốn mọi thứ xong sớm, chẳng hạn vừa trả lời tin nhắn công việc vừa họp vừa xử lý một việc khác. Điểm yếu của họ nằm ở chính tốc độ đó, vì làm việc quá nhanh thì rất dễ sai sót. Các nghiên cứu cho thấy khi tập trung vào một việc, chúng ta làm nhanh hơn và ít lỗi hơn. Nếu làm nhiều việc cùng lúc và mắc nhiều lỗi, chúng ta phải quay lại làm từ đầu và cuối cùng tốn thời gian hơn. Vì vậy, người này cần học cách chậm lại.'],
     ['love', 'Người ấy dành cho tôi tình cảm như thế nào?',
-     'Đây là một câu trả lời đáng để bạn thận trọng. Tình cảm họ dành cho bạn đến rất nhanh, và điều gì đến nhanh thì cũng dễ đi nhanh. Có thể hai người đã lao vào nhau quá vội. Chuyện này khá phổ biến: mới quen vài ngày, một người đã tin rằng mình vừa gặp được tình yêu của đời mình. Sau một thời gian tiếp xúc, những điểm chưa tốt của đối phương dần lộ ra, và người đó nhận ra đây chỉ là một người bình thường. Những cặp đôi vừa gặp đã cuồng nhiệt, tin rằng mình là định mệnh của nhau vì có chung sở thích, thường đang yêu hình ảnh mà chính họ dựng lên về đối phương chứ không yêu con người thật của đối phương. Khi hình ảnh đó vỡ ra, họ chán nản và có thể là người rời đi trước.'],
+     'Tình cảm ở đây có thể đến rất nhanh và rất mạnh, nhưng tốc độ không cho biết nó sẽ bền hay chóng tàn. Hai người có thể đang bị cuốn bởi sự mới mẻ và hình ảnh mình tưởng tượng về nhau. Hãy cho mối quan hệ thêm thời gian để xem cảm xúc đó có đi cùng sự hiểu biết, nhất quán và cam kết hay không.'],
     ['love', 'Chúng tôi đang cãi nhau, tôi có nên chia tay không?',
      'Lời khuyên của lá bài không phải là chia tay, mà là cả hai cần bình tĩnh lại. Gậy mang năng lượng của lửa, và Tám Gậy còn cộng thêm tốc độ. Lửa cháy nhanh có nghĩa là cả hai đều có thể nóng nảy, bốc đồng và không ai chịu lắng nghe ai. Người mang năng lượng này thường kết luận rất vội. Chỉ từ một hai dấu hiệu nhỏ, họ đã cho rằng đối phương hết yêu mình hoặc đang muốn phản bội mình, rồi thay đổi cách cư xử cho khớp với kết luận đó, dù sự thật có thể hoàn toàn khác. Một người điềm tĩnh hơn sẽ quan sát, thu thập đủ thông tin và thậm chí hỏi thẳng đối phương trước khi kết luận. Vì vậy, hai bạn nên nhìn lại bản thân và mối quan hệ, rồi ngồi xuống nói chuyện một cách bình tĩnh thay vì to tiếng với nhau.'],
     ['career', 'Tôi đang thất nghiệp, thời gian tới tôi có tìm được việc không?',
@@ -831,17 +831,17 @@ Object.assign(ASK.vi, {
     ['other', 'Từ khóa của lá này là gì?',
      'Ba từ khóa của Tám Kiếm là bế tắc, trói buộc và mất tự do. Nhân vật trên lá bài bị bịt mắt, bị trói và bị tám thanh kiếm vây quanh. Người đó muốn đi làm, đi học hay yêu đương đều cảm thấy không thể. Tuy nhiên, khi nhìn kỹ, bạn sẽ thấy dây trói rất lỏng và có thể tuột ra bất cứ lúc nào. Vòng kiếm cũng chỉ vây một nửa, còn phía trước vẫn có lối đi. Điều đó có nghĩa là người này hoàn toàn có thể tự cởi trói, tháo băng bịt mắt và bước ra ngoài. Việc họ có làm vậy hay không lại là một chuyện khác.'],
     ['other', 'Vậy ai là người đã trói người đó?',
-     'Người trói họ chính là bản thân họ. Sự bế tắc của Tám Kiếm không đến từ ai bên ngoài, mà đến từ những suy nghĩ tiêu cực của chính người hỏi. Bạn có thể hình dung rằng người này đã tự cắm kiếm xuống đất, tự bước vào giữa vòng kiếm, tự bịt mắt và tự trói mình. Điều đáng nói là họ vẫn than rằng mình khổ, mình bị trói và cần ai đó đến cứu, mà không nhận ra chính họ đã tạo ra tình cảnh đó. Vì bạn tự trói mình, nên chỉ có bạn mới tự cởi trói được.'],
+     'Tám Kiếm thường nói về cảm giác bị mắc kẹt và những niềm tin khiến ta khó nhìn thấy lối ra. Đôi khi rào cản nằm trong suy nghĩ của chính mình, nhưng cũng có lúc hoàn cảnh bên ngoài là có thật. Lá bài không bảo bạn tự trách mình; nó hỏi phần nào bạn có thể tác động, phần nào cần hỗ trợ, và bước nhỏ nào giúp bạn lấy lại quyền lựa chọn.'],
     ['love', 'Lá này miêu tả tính cách của một người như thế nào?',
-     'Người này có thói quen suy nghĩ tiêu cực và chỉ nhìn vào mặt tối của mọi vấn đề. Ở đâu họ cũng thấy điều không hay: người này ghét mình, người kia muốn hại mình, việc này mình không làm nổi, mình kém cỏi và sẽ không bao giờ vươn lên được. Người có xu hướng như vậy thường không hạnh phúc, vì họ tự bao quanh mình bằng những điều đen tối. Dù vậy, Tám Kiếm mới chỉ là mức độ nhẹ so với Chín Kiếm và Mười Kiếm. Ở mức này, người đó vẫn còn kịp quay đầu và sửa sai.'],
+     'Lá này có thể mô tả một người hay lo và dễ mắc kẹt trong những suy nghĩ giới hạn bản thân. Khi căng thẳng, họ có xu hướng nhìn thấy rủi ro trước cơ hội và khó tin rằng mình có lựa chọn. Đây là một trạng thái có thể thay đổi, không phải bản chất cố định của một con người.'],
     ['love', 'Người ấy dành cho tôi tình cảm như thế nào?',
      'Câu trả lời nghiêng về hướng họ có tình cảm với bạn. Vấn đề là họ đang tự ngăn mình đến với bạn, vì một tổn thương trong quá khứ hoặc vì những suy nghĩ tiêu cực của chính họ. Bạn có thể hình dung một người tin rằng hoàn cảnh của mình là một nhược điểm lớn và mình sẽ không bao giờ xứng đáng được yêu. Khi gặp một người thật lòng quan tâm và không hề để ý đến hoàn cảnh đó, họ vẫn tự nhủ rằng người kia sẽ không yêu mình được lâu. Với suy nghĩ đó, chính họ là người đẩy đối phương ra xa.'],
     ['love', 'Chúng tôi đang cãi nhau, tôi có nên chia tay không?',
-     'Lá bài không cho thấy hai bạn cần chia tay ở thời điểm này. Điều đáng chú ý hơn là cách nhìn của bạn: có thể bạn đang nhìn cuộc sống bằng con mắt tiêu cực và cảm thấy mọi thứ đều bế tắc. Khi gặp vấn đề, phản ứng thường gặp của chúng ta là muốn sửa ngay, nhưng thứ chúng ta muốn sửa lại là môi trường và những người xung quanh. Tình cảm không ổn thì chúng ta muốn thay đổi người yêu, công việc không ổn thì chúng ta trách cấp trên và đồng nghiệp. Chúng ta hiếm khi nhìn lại xem bản thân cần sửa điều gì trước. Đôi khi bạn không cần sửa một đặc điểm nào cả, mà chỉ cần thay đổi cách nhìn nhận vấn đề thì vấn đề sẽ tự được giải quyết.'],
+     'Lá bài chưa nói hai bạn phải chia tay. Nó nhấn mạnh cảm giác bế tắc và cách suy nghĩ có thể làm vấn đề trông tuyệt vọng hơn thực tế. Hãy tách điều bạn biết chắc khỏi điều bạn đang suy đoán, nhìn cả phần trách nhiệm của mình lẫn những giới hạn thật từ phía đối phương. Nếu có kiểm soát, đe dọa hoặc bạo lực, vấn đề không chỉ nằm ở “cách nhìn”; an toàn và hỗ trợ bên ngoài cần được ưu tiên.'],
     ['love', 'Bạn có thể cho một ví dụ về việc thay đổi cách nhìn không?',
      'Bạn hãy hình dung một tình huống ở nơi làm việc: một đồng nghiệp nói xấu bạn dù bạn chưa từng làm gì họ. Có người sẽ tự dằn vặt rằng mình đã sai ở đâu, rồi kết luận rằng mình phải trả đũa bằng cách nói xấu lại. Có người lại chìm trong buồn bực, luôn tự hỏi tại sao mọi người đối xử với mình như vậy và tại sao ai cũng muốn hại mình. Cả hai cách phản ứng đều khiến bạn bị trói bởi chính suy nghĩ tiêu cực của mình. Ngược lại, một người khác có thể tự thoát ra khỏi sợi dây đó bằng một cách nhìn nhẹ nhàng hơn. Họ xem đó là chuyện nhân quả, tin rằng điều gì đến thì sẽ đến, và nếu mình không làm gì sai mà vẫn bị hại thì người kia sẽ tự nhận lấy hậu quả của họ. Với cách nhìn này, họ không thấy cần phải trả thù.'],
     ['career', 'Trong thời gian tới, tôi có tìm được việc mới không?',
-     'Câu trả lời nghiêng về hướng chưa, và nguyên nhân nằm ở chính bạn. Bạn có đi tìm việc, nhưng bạn mang theo niềm tin rằng mình sẽ không tìm được công việc nào tốt. Sự tiêu cực đó ảnh hưởng đến hai việc. Thứ nhất, nó làm giảm kết quả phỏng vấn của bạn. Thứ hai, nó ảnh hưởng đến cách bạn chọn nơi để nộp hồ sơ: bạn thường nộp vào những vị trí thấp hơn năng lực thật của mình hoặc không đúng với sở thích. Chẳng hạn, một người yêu thích thiết kế nhưng chỉ nộp hồ sơ vào các vị trí hành chính vì gia đình muốn như vậy.'],
+     'Lá bài nghiêng về một giai đoạn tìm việc còn vướng, nhưng không có nghĩa nguyên nhân hoàn toàn nằm ở bạn. Có thể bạn đang tự giới hạn lựa chọn vì thiếu tự tin, đồng thời thị trường hoặc hoàn cảnh thực tế cũng chưa thuận. Hãy kiểm tra lại những vị trí bạn đang tự loại mình khỏi, xin phản hồi về hồ sơ và mở rộng hướng tìm kiếm nếu phù hợp.'],
     ['career', 'Trong thời gian tới, công việc của tôi có điều gì cần lưu ý?',
      'Bạn nói rằng công việc vẫn bình thường, nhưng lá bài cho thấy có điều gì đó đang khiến bạn cảm thấy bế tắc ở nơi làm việc. Một ví dụ thường gặp là mối quan hệ với cấp trên. Bạn đã thử nhiều cách, từ mềm mỏng đến cứng rắn, nhưng vẫn không được người đó quý mến, và suy nghĩ về chuyện này đeo bám bạn suốt một thời gian dài. Với Tám Kiếm, thời gian tới nhiều khả năng sẽ không có sự kiện nào đáng kể. Thay vào đó, lá bài muốn bạn nhìn lại bản thân để xem có vấn đề nào cần giải quyết hoặc suy nghĩ nào cần buông bỏ. Khi tự cởi trói cho mình, bạn sẽ có một môi trường làm việc tích cực hơn.']
   ],
@@ -853,7 +853,7 @@ Object.assign(ASK.vi, {
     ['love', 'Tình cảm của người đó dành cho tôi có thật lòng hay không?',
      'Tình cảm của họ có thể là thật, nhưng ở thời điểm này họ đang hướng về một con đường khác. Hình ảnh của lá bài giống như bạn đang đứng nhìn người đó quay lưng bước đi và để bạn ở lại. Vì vậy, dù có tình cảm, họ sẽ không tiến tới với bạn lúc này. Họ biết mình có một ước mơ hoặc một hành trình riêng, và hành trình đó không thể gắn với bạn. Chẳng hạn, một người muốn bắt đầu mối quan hệ nhưng sắp phải đi làm việc ở nơi xa trong nhiều năm, nên chọn không bắt đầu để không làm khổ cả hai.'],
     ['love', 'Chúng tôi đang cãi nhau, tôi có nên chia tay không?',
-     'Khi Tám Cốc xuất hiện cho câu hỏi về chia tay, khả năng chia ly là khá cao, và sự chia ly này sẽ đến từ bạn hoặc từ đối phương. Vì thế, lá bài không cần khuyên nên hay không nên, bởi sớm muộn một trong hai người cũng sẽ bước ra khỏi mối quan hệ. Nguyên nhân của những cuộc cãi vã có thể là một người đã tìm thấy một hướng đi mới, còn người kia vẫn cố níu giữ. Hai người bắt đầu khác nhau về quan điểm sống hoặc về hành trình, nên kể cả khi được khuyên ở lại, sự rời đi vẫn sẽ xảy ra. Tuy nhiên, sự chia ly của Tám Cốc mang một chút tiếc nuối. Nếu cả hai cố gắng thêm, có lẽ họ vẫn tìm được một cách nào đó, nhưng không phải ai cũng đủ kiên nhẫn để làm điều đó.'],
+     'Tám Cốc cho thấy ít nhất một người đang nghĩ nghiêm túc về việc rời đi hoặc cần một hướng sống khác. Điều đó làm khả năng chia xa cao hơn, nhưng không biến chia tay thành kết cục chắc chắn. Hai người cần nói thẳng về điều mỗi người đang muốn, phần nào còn có thể cùng xây và phần nào đã khác nhau quá xa.'],
     ['career', 'Tôi đã thất nghiệp ba tháng, tôi có tìm được công việc như ý không?',
      'Điều kiện để bạn tìm được công việc như ý là bạn phải buông bỏ cảm giác tiếc nuối mà lá bài đang chỉ ra. Có thể bạn chỉ tìm việc trong một vài ngành nhất định, vì bạn đã học ngành đó và đã bỏ nhiều thời gian cho nó, nên bạn không muốn chuyển hướng. Cảm giác đó rất dễ hiểu, bởi những chiếc cốc trong Tám Cốc vẫn còn đầy và việc bỏ lại chúng đương nhiên gây tiếc nuối. Tuy nhiên, nếu bạn tiếp tục giữ nguyên cách tìm việc như hiện nay, bạn sẽ khó tìm được việc.']
   ],
@@ -863,7 +863,7 @@ Object.assign(ASK.vi, {
     ['love', 'Lá này miêu tả tính cách của một người như thế nào?',
      'Đây là một người tỉ mỉ, chăm chỉ và cầu toàn, có thể đến mức theo chủ nghĩa hoàn hảo. Họ làm việc một mình hiệu quả hơn là làm việc với nhiều người, và năng lượng này thường được liên hệ với cung Xử Nữ. Nhược điểm của họ là đôi khi không nhìn được bức tranh toàn cảnh. Họ có xu hướng soi lỗi, chỉ thấy phần còn thiếu và phần sai sót, nên không thể tận hưởng toàn bộ những gì mình đang có.'],
     ['love', 'Người ấy dành cho tôi tình cảm như thế nào?',
-     'Câu trả lời nghiêng về hướng có, nhưng thói quen soi lỗi của họ sẽ là trở ngại. Thay vì đơn giản nghĩ rằng hai người hợp nhau và có thể tiến tới, họ suy nghĩ quá nhiều. Họ cân nhắc xem gia cảnh hai bên có tương xứng không, thu nhập của mỗi người ra sao, và tính cách của đối phương liệu có thay đổi được không. Thay vì đến với nhau rồi cùng cố gắng, họ tìm ra lỗi của cả hai phía. Đôi khi họ biết rằng suy nghĩ như vậy chỉ khiến mình buồn và không mang lại hạnh phúc, nhưng họ vẫn không dừng lại được, giống như một thói quen ám ảnh.'],
+     'Câu trả lời nghiêng về hướng có, nhưng người này có xu hướng phân tích rất kỹ trước khi tiến tới. Họ để ý đến sự phù hợp trong đời sống thực tế, thói quen và tương lai lâu dài. Sự cẩn thận có thể hữu ích, nhưng nếu biến thành việc soi từng khuyết điểm thì mối quan hệ sẽ khó có cơ hội phát triển tự nhiên.'],
     ['love', 'Chúng tôi đang cãi nhau, tôi có nên chia tay không?',
      'Nguyên nhân của những cuộc cãi vã là một trong hai người, hoặc cả hai, có xu hướng soi lỗi của nhau thay vì nhìn vào những điều đối phương đã làm cho mình. Họ giận hờn vì những chuyện rất nhỏ, chẳng hạn cách ăn mặc của đối phương hay một nụ cười xã giao với người khác. Đó là những chuyện không đáng để tranh cãi. Bên cạnh đó, một hoặc cả hai người còn để ý quá mức đến đời tư của nhau, từ việc ai đã thích một bức ảnh trên mạng xã hội cho đến việc đối phương xem bài đăng mà không nhắn tin.'],
     ['career', 'Trong thời gian tới, tôi có tìm được việc không?',
@@ -878,7 +878,7 @@ Object.assign(ASK.vi, {
 Object.assign(ASK.vi, {
   'wands-9': [
     ['love', 'Lá này miêu tả tính cách của một người như thế nào?',
-     'Chín Gậy mô tả một người bền bỉ và khó bị khuất phục. Họ không đầu hàng trước nghịch cảnh hay thử thách và không dễ bỏ cuộc giữa chừng. Có một điều đáng chú ý khi lá này xuất hiện để mô tả một người: người đó thường chăm chỉ và nỗ lực hơn mức bình thường, nhưng đồng thời họ cũng gặp nhiều khó khăn hơn mức bình thường. Con đường của họ gập ghềnh hơn con đường của người khác. Với sự chăm chỉ đó, họ sẽ thành công, và khi nhìn lại, họ sẽ thấy mình đã đi qua nhiều thử thách hơn những người xung quanh.'],
+     'Chín Gậy mô tả một người bền bỉ, đã đi qua nhiều thử thách nên thường cảnh giác hơn người khác. Họ không dễ bỏ cuộc, nhưng đôi khi sự kiên cường biến thành việc lúc nào cũng chuẩn bị cho điều xấu xảy ra. Điểm mạnh là sức chịu đựng; điều cần học là biết khi nào nên cố thêm và khi nào nên nghỉ hoặc đổi cách.'],
     ['love', 'Người ấy dành cho tôi tình cảm như thế nào?',
      'Một lá Chín Gậy rất khó khẳng định có hay không, nên bạn nên rút thêm bài. Nếu chỉ dựa vào lá này, bạn có thể đọc rằng họ có tình cảm với bạn, nhưng có một trở ngại đi kèm. Trở ngại đó có thể là những thử thách khác mà họ đang phải đối mặt trong cuộc sống và công việc hiện tại. Nó cũng có thể là những tổn thương trong quá khứ, chẳng hạn họ từng bị phản bội hoặc bị bỏ rơi nhiều lần. Dù là trường hợp nào, quá khứ và hoàn cảnh của họ đều là chướng ngại cho mối quan hệ giữa hai bạn.'],
     ['love', 'Vì sao họ bảo tôi hãy chờ đợi?',
@@ -894,19 +894,19 @@ Object.assign(ASK.vi, {
   ],
   'swords-9': [
     ['love', 'Lá này miêu tả tính cách của một người như thế nào?',
-     'Người mang năng lượng Chín Kiếm sống với một tâm thế rất nặng nề. Họ tin rằng không ai yêu quý mình, mọi người đều chống lại mình và mình đơn độc giữa cả thế giới. Họ thường xuyên cảm thấy khổ sở và bất lực. Chính cách nhìn đó là đặc điểm nổi bật nhất của người này.'],
+     'Chín Kiếm nói nhiều về trạng thái tinh thần hơn là “tính cách” cố định. Người này có thể đang lo âu, mất ngủ, tự trách hoặc nhìn mọi chuyện qua lăng kính rất nặng nề. Khi tâm trí quá tải, họ dễ cảm thấy mình cô độc hoặc không còn lối thoát, dù thực tế vẫn có thể có người và nguồn hỗ trợ ở quanh mình.'],
     ['love', 'Tôi có nên yêu một người mang năng lượng của lá này không?',
-     'Bạn cần cân nhắc rất kỹ. Vấn đề của người này không thể giải quyết từ một phía, và cũng không ai có thể đến để chữa lành thay cho họ. Nếu bạn tin rằng mình có thể chữa lành cho họ, bạn đang nhầm, vì vấn đề của họ chỉ có chính họ mới giải quyết được. Theo nguyên tắc chung khi đọc bài, lời khuyên dành cho người hỏi là hãy suy nghĩ thật kỹ trước khi bước vào mối quan hệ này. Nếu nói một cách thẳng thắn với người thân thiết, câu trả lời sẽ là không nên yêu người này.'],
+     'Đừng quyết định có nên yêu ai chỉ dựa vào một lá bài. Nếu người ấy đang ở giai đoạn lo âu hoặc tổn thương, điều quan trọng là họ có nhận ra tình trạng của mình, biết tìm hỗ trợ và vẫn tôn trọng ranh giới của bạn hay không. Bạn có thể đồng hành, nhưng không cần trở thành người chữa lành thay cho họ.'],
     ['love', 'Chúng tôi cãi nhau nhiều, tôi có nên chia tay không?',
      'Hai bạn có thể có tính cách rất trái ngược nhau, và thay vì tìm tiếng nói chung, mỗi người lại đòi hỏi người kia phải thay đổi. Chẳng hạn, một người hay ghen còn người kia lại thích dành thời gian cho bạn bè hơn là cho người yêu. Một bên cấm đối phương đi chơi, bên kia yêu cầu đối phương bỏ tính ghen tuông, và cả hai rơi vào một vòng luẩn quẩn ngày càng độc hại. Vấn đề của hai bạn lúc đầu chỉ ở mức Tám Kiếm, nhưng dần dần đã bị đẩy lên thành chuyện lớn. Dù vậy, Chín Kiếm vẫn thuộc bộ Ẩn Phụ, và điều đó có nghĩa là người hỏi hoàn toàn có khả năng tự giải quyết. Ở mức chín hay mười, việc giải quyết đương nhiên khó hơn ở mức ba hay bốn, nhưng không phải là không thể.'],
     ['love', 'Vậy tôi nên làm gì trong tình huống này?',
      'Bạn nên tỉnh táo hơn và cố gắng thỏa hiệp để tìm tiếng nói chung với đối phương. Tuy nhiên, sự thỏa hiệp chỉ từ một phía sẽ không đi đến đâu. Bạn có thể thử theo cách này: bạn là người nhượng bộ trước, và nếu họ đáp lại thì hai bạn tiếp tục mối quan hệ. Nếu bạn đã xuống nước mà họ không trân trọng nỗ lực đó, bạn hoàn toàn có quyền rời đi. Bạn cũng cần nhìn nhận thực tế rằng một mối quan hệ đã ở mức Chín Kiếm thì khá độc hại và mệt mỏi.'],
     ['career', 'Tôi đã thất nghiệp lâu, sắp tới tôi có tìm được việc không?',
-     'Lời khuyên của Chín Kiếm là bạn hãy thay đổi tâm trạng của mình trước khi tiếp tục tìm việc. Hiện tại bạn đang khá bi quan, có thể vì đã bị từ chối vài lần. Cách bạn nhìn nhận việc tìm việc rất tiêu cực: bạn chưa bước vào phòng phỏng vấn đã tin rằng mình sẽ trượt. Năng lượng bi quan đó theo bạn vào buổi phỏng vấn, và người tuyển dụng nhận ra ngay. Họ không muốn nhận một người thiếu niềm tin như vậy. Tần số của bạn đang thấp, và tần số thấp sẽ thu hút những điều tương ứng như thất bại, chia ly và đau khổ. Bạn hãy lạc quan hơn và hướng sự chú ý vào những điều tươi sáng trong cuộc sống.'],
+     'Chín Kiếm cho thấy việc tìm việc đang khiến bạn lo lắng và dễ mất tự tin. Sau nhiều lần bị từ chối, bạn có thể bước vào phỏng vấn với tâm thế đã nghĩ mình sẽ thất bại, và điều đó ảnh hưởng đến cách bạn thể hiện. Đây không phải chuyện “tần số thấp thu hút thất bại”. Hãy tập trung vào những thứ có thể kiểm soát: chuẩn bị, luyện phỏng vấn, xin phản hồi và chăm sóc giấc ngủ, tinh thần trong giai đoạn tìm việc.'],
     ['career', 'Trong thời gian tới, công việc của tôi có điều gì cần lưu ý?',
      'Trong thời gian tới, vẫn sẽ có những sự kiện khiến bạn khổ sở vì công việc. Có thể bạn đã quá chán công việc này, và vì cách nhìn của bạn vốn bi quan nên bạn thường xuyên gặp rắc rối: thỉnh thoảng bị cấp trên khiển trách, thỉnh thoảng bị đồng nghiệp góp ý. Khi đó, bạn tự hỏi tại sao mọi người luôn nhắm vào mình và liệu cả thế giới có ghét mình không. Trong khi đó, lý do có thể đơn giản là bạn đã làm sai, làm chưa tốt hoặc làm cẩu thả. Bạn cần phân biệt hai trường hợp. Nếu bản chất công việc vốn nhiều áp lực và bạn không chịu được, bạn có thể nghỉ. Nếu vấn đề đến từ lỗi của bạn, bạn hãy tìm cách khắc phục.'],
     ['other', 'Việc đọc bài cho một người mang năng lượng của lá này sẽ diễn ra như thế nào?',
-     'Đó thường là một buổi trải bài khá mệt mỏi cho cả hai phía, và điều này cũng đúng với Mười Kiếm. Khi trải bài, bạn giống như một miếng bọt biển hút lấy năng lượng của người đối diện, cả năng lượng tốt lẫn xấu. Vì vậy, sau buổi đọc bài cho một người mang năng lượng Chín Kiếm, bạn sẽ cảm thấy mệt và tâm trạng của mình cũng bị kéo xuống theo.']
+     'Một buổi xem bài với người đang rất lo âu hoặc buồn bã có thể khiến reader mệt về mặt cảm xúc, nhất là khi phải tập trung và đồng cảm trong thời gian dài. Hãy đặt giới hạn thời gian, nghỉ giữa các buổi và nhớ rằng bạn không cần gánh cảm xúc của người khác sau khi buổi xem kết thúc.']
   ],
   'cups-9': [
     ['other', 'Từ khóa của lá này là gì?',
@@ -920,7 +920,7 @@ Object.assign(ASK.vi, {
     ['love', 'Chúng tôi cãi nhau, tôi cần giải quyết chuyện này như thế nào?',
      'Lá bài chưa cho thấy chuyện chia tay. Điều nó cho thấy là cả hai bạn đang chủ quan trong mối quan hệ, hoặc cả hai đều quá kiêu hãnh và tự đắc. Mỗi người đều tin rằng mình đúng, đối phương sai, và mình không có lý do gì để xin lỗi trước. Khi cả hai cùng mang năng lượng đó, cuộc cãi vã sẽ không có hồi kết. Bạn cần nhận ra rằng mọi mối quan hệ, dù là tình yêu, tình bạn hay quan hệ làm ăn, đều được xây dựng trên sự thỏa hiệp và lợi ích của cả hai bên. Khi Chín Cốc xuất hiện trong câu hỏi tình cảm, bạn nên rút thêm bài, vì ý nghĩa của lá này không nghiêng hẳn về tích cực hay tiêu cực và một lá đơn lẻ khó nói được nhiều.'],
     ['career', 'Sắp tới tôi có tìm được công việc ưng ý không?',
-     'Câu trả lời nghiêng về hướng khó. Một trong những lý do bạn chưa tìm được việc là bạn đang đánh giá bản thân cao hơn thực tế. Bạn có thể quá tự tin vào khả năng của mình và tin rằng với học vấn và bằng cấp của mình, bạn xứng đáng với một vị trí cao hơn và mức lương tốt hơn. Trong khi đó, bạn chưa nhận ra rằng mình vẫn là người mới đi làm và chưa có kinh nghiệm thực tế. Khi hạ kỳ vọng xuống mức phù hợp với năng lực hiện tại, bạn sẽ dễ tìm được việc hơn.'],
+     'Chín Cốc có thể nhắc bạn kiểm tra xem kỳ vọng hiện tại có phù hợp với kinh nghiệm, thị trường và ưu tiên thật sự của mình hay không. Điều này không có nghĩa bạn đang “đánh giá mình quá cao”. Hãy giữ tiêu chuẩn quan trọng với bạn, đồng thời xem đâu là điểm có thể linh hoạt để mở rộng cơ hội.'],
     ['career', 'Trong thời gian tới, tôi cần lưu ý điều gì trong công việc?',
      'Bạn đang làm tốt và trong thời gian tới vẫn sẽ làm tốt. Điều cần lưu ý là thái độ của bạn. Bạn có xu hướng cho rằng mình giỏi hơn người khác nên không cần học hỏi thêm, và kiến thức mới là không cần thiết. Người mang năng lượng Chín Cốc có thể giỏi thật, vì đạt đến mức này không phải là điều dễ. Tuy nhiên, sự cần cù, chăm chỉ và khiêm tốn không bao giờ là thừa. Hôm nay bạn có thành tích, nhưng điều đó không có nghĩa là ngày mai sẽ không xuất hiện người giỏi hơn. Nếu học được cách khiêm tốn, người này sẽ trở nên hoàn thiện, vì điểm thiếu duy nhất của họ là sự khiêm tốn.']
   ],
@@ -930,13 +930,13 @@ Object.assign(ASK.vi, {
     ['love', 'Lá này miêu tả tính cách của một người như thế nào?',
      'Người này yêu thích cảm giác được tận hưởng vật chất và sự thoải mái trong cuộc sống. Điều đó không có nghĩa là họ phải giàu có, dùng hàng hiệu hay ăn uống đắt tiền. Họ có thể mua những món đồ rất rẻ, nhưng họ thích được vây quanh bởi những thứ mình sở hữu. Bạn cũng không nên nghĩ rằng người Chín Tiền chỉ muốn dựa dẫm vào người khác, vì họ sẵn sàng làm việc chăm chỉ để tự mua những gì mình muốn. Mỗi người tìm thấy sự thỏa mãn ở một nơi khác nhau: có người ở kiến thức, có người ở đời sống tinh thần, và có người ở vật chất như trường hợp này. Đó là lựa chọn cách sống của mỗi người, và bạn không cần phán xét.'],
     ['love', 'Người ấy dành cho tôi tình cảm như thế nào?',
-     'Đây là một câu trả lời không thuận lợi. Năng lượng của Chín Tiền hướng về bản thân nhiều hơn là hướng ra bên ngoài, nên người bạn đang hỏi yêu chính mình và thế giới của mình nhiều hơn yêu người khác. Hình ảnh trên lá bài cũng thể hiện điều đó: nhân vật đang tận hưởng vật chất, nhưng tận hưởng một mình. Trong tình cảm, điều này có thể biểu hiện thành sự ích kỷ, hoặc thành việc họ không muốn chia sẻ suy nghĩ và tâm tư với người yêu. Cũng có thể họ khá tính toán trong tình yêu, chỉ muốn nhận quà và sự quan tâm mà không muốn trao đi tình cảm thật của mình.'],
+     'Chín Tiền cho thấy người này coi trọng sự độc lập và thế giới riêng của mình. Họ có thể có tình cảm với bạn nhưng vẫn cần nhiều không gian, hoặc chưa muốn hòa mọi phần của cuộc sống vào một mối quan hệ. Điều cần quan sát là sự độc lập đó có đi cùng sự quan tâm và trao đổi hai chiều hay biến thành xa cách, chỉ nhận mà không cho.'],
     ['love', 'Chúng tôi cãi nhau, liệu chúng tôi có phải chia tay không?',
      'Chín Tiền là một lá tốt trong trải bài về tài chính và công việc, nhưng trong tình cảm thì chưa chắc. Tình yêu cần sự thỏa hiệp từ cả hai phía, trong khi người mang năng lượng này chỉ muốn sống cuộc sống vui vẻ của riêng mình. Vì vậy, nguyên nhân của những cuộc cãi vã có thể là sự ích kỷ của một trong hai người hoặc của cả hai, khi ai cũng hướng về bản thân quá nhiều. Lá bài cũng gợi ý rằng người mang lá này có thể chưa sẵn sàng cho chuyện tình cảm và không phù hợp với những mối quan hệ cần sự cam kết.'],
     ['career', 'Sắp tới, tôi có tìm được công việc mới không?',
      'Câu trả lời là có. Công việc mới sẽ mang lại cho bạn điều kiện tài chính đủ để sống thoải mái, ăn ngon và mặc đẹp.'],
     ['career', 'Cụ thể thì mức lương đó là bao nhiêu tiền?',
-     'Tarot không đưa ra một con số cụ thể, vì con số đó phụ thuộc vào chính người hỏi. Nếu mức thu nhập đủ để bạn sống sung túc là một con số vừa phải, thì mức lương sắp tới sẽ nằm ở khoảng đó. Nếu bạn cần một con số cao hơn nhiều mới thấy đủ, thì mức lương bạn nhận được sẽ tương ứng với tiêu chuẩn đó. Theo nguyên tắc chung khi đọc bài, cao hay thấp trong câu hỏi về lương luôn được hiểu theo tiêu chuẩn của chính người hỏi.'],
+     'Tarot không cho một con số lương đáng tin cậy. Chín Tiền chỉ gợi đến cảm giác đủ đầy, độc lập và thoải mái về vật chất. Muốn biết mức lương có phù hợp hay không, hãy đối chiếu với thị trường, chi phí sống, kinh nghiệm và mục tiêu tài chính thực tế của bạn.'],
     ['career', 'Trong thời gian tới, công việc của tôi sẽ thế nào?',
      'Trong thời gian tới, công việc của bạn vẫn rất tốt. Chỉ khi công việc và thu nhập ổn định và dư dả, bạn mới có thể tận hưởng cuộc sống theo cách mà lá bài mô tả. Tuy nhiên, bạn cần lưu ý một điều: nếu bạn có nhiều tiền nhưng không thích công việc của mình, bạn cũng sẽ không tận hưởng được số tiền đó. Những người làm việc mười sáu tiếng mỗi ngày có thể kiếm rất nhiều tiền, nhưng họ không còn thời gian để tiêu, và vì thế họ cũng không có được năng lượng của Chín Tiền.']
   ]
@@ -947,15 +947,15 @@ Object.assign(ASK.vi, {
 Object.assign(ASK.vi, {
   'wands-10': [
     ['love', 'Lá này miêu tả tính cách của một người như thế nào?',
-     'Người mang năng lượng Mười Gậy thường gánh quá nhiều việc cùng một lúc. Nguyên nhân có thể nằm ở tính cả nể: họ khó lòng từ chối khi ai đó nhờ vả, nên việc của người khác dần trở thành việc của mình. Nguyên nhân cũng có thể là sự thiếu quyết đoán. Một người quyết đoán biết việc nào cần làm trước và việc nào có thể để sau, còn người này lại thiếu chính khả năng sắp xếp đó. Kết quả là cuộc sống của họ trở nên rối ren, và sự rối ren này do chính họ tạo ra chứ không phải do hoàn cảnh hay do người khác. Nếu họ tiếp tục giữ thói quen này, trong thời gian tới họ sẽ rơi vào căng thẳng, và những kế hoạch họ đang theo đuổi khó có thể hoàn thành.'],
+     'Mười Gậy thường mô tả một người có xu hướng ôm quá nhiều trách nhiệm. Họ có thể khó từ chối, quen tự làm mọi thứ hoặc chưa sắp xếp được thứ tự ưu tiên. Đôi khi khối lượng việc thật sự đến từ hoàn cảnh, chứ không phải do họ “tự tạo ra”. Điểm cần nhìn là gánh nặng nào bắt buộc, gánh nặng nào có thể chia sẻ và việc nào nên được đặt xuống.'],
     ['love', 'Người ấy dành cho tôi tình cảm như thế nào?',
      'Người ấy có thể thật lòng có cảm tình với bạn. Vấn đề không nằm ở tình cảm mà nằm ở hoàn cảnh: hiện tại họ đang bị cuốn vào quá nhiều mối bận tâm cùng lúc, từ công việc, tiền bạc, gia đình cho đến bạn bè, học hành và những sở thích riêng. Trong bức tranh đó, bạn chỉ là một trong rất nhiều thứ họ đang cố gắng giữ trên tay. Bạn cần tự hỏi mình có chấp nhận được vị trí như vậy hay không. Nếu bạn thấy ổn khi chỉ chiếm một phần nhỏ trong sự quan tâm của họ, mối quan hệ vẫn có thể tiếp tục. Nếu bạn cần được đặt ở vị trí quan trọng hơn, hãy nói rõ mong muốn đó ngay từ đầu. Khi ấy, người kia sẽ tự quyết định họ có thể đáp ứng hay không, và hai bạn tiến tới hoặc dừng lại dựa trên câu trả lời đó.'],
     ['love', 'Chúng tôi đang cãi nhau, tôi có nên chia tay không?',
      'Rất có thể cả hai bạn đều đang ở trong trạng thái Mười Gậy, nghĩa là mỗi người đều bận đến mức không còn thời gian và tâm trí dành cho nhau. Khi một người bị quá tải, sự kiên nhẫn của họ với người thân cũng cạn dần, và đôi khi chỉ một lời hỏi han của người yêu cũng đủ khiến họ bực bội. Đây là hiện tượng khá phổ biến: với người ngoài ta vẫn giữ được vẻ hòa nhã, nhưng với người gần gũi nhất ta lại dễ nổi nóng. Lá này chưa nói rằng hai bạn nên chia tay. Nó cho thấy mâu thuẫn xuất phát từ sự bận rộn, và có những giai đoạn bận rộn không thể tránh, chẳng hạn khi một người đang dồn sức cho một kỳ thi hay một đợt chuyển việc.'],
     ['love', 'Tôi đang ở trong giai đoạn bận rộn như vậy thì nên làm gì?',
-     'Điều bạn cần làm là trao đổi thẳng thắn với người yêu về giới hạn của mình. Hãy hình dung một ngày bạn về nhà rất muộn, kiệt sức sau hàng loạt việc dồn dập, trong khi người kia mong bạn dành cả buổi tối để trò chuyện. Thay vì im lặng chịu đựng hoặc cáu gắt, bạn hãy nói rõ rằng mình đang quá tải và đề nghị một cách gặp gỡ ngắn hơn nhưng vẫn đủ ấm áp, ví dụ một cuộc gọi ngắn để nhìn thấy nhau trước khi đi ngủ. Có những giai đoạn bạn buộc phải chấp nhận gánh nặng, và trong giai đoạn đó sự thông cảm của cả hai là điều quan trọng nhất. Tuy nhiên, khi giai đoạn bận rộn kết thúc, bạn có trách nhiệm sắp xếp lại cuộc sống và trả lại sự cân bằng cho mối quan hệ. Nếu trạng thái quá tải kéo dài mãi không dứt, lỗi thuộc về chính bạn chứ không phải hoàn cảnh.'],
+     'Hãy nói rõ với người yêu về giới hạn thời gian và năng lượng của mình thay vì im lặng chịu đựng rồi cáu gắt. Hai người có thể thống nhất những cách kết nối nhỏ nhưng đều đặn trong giai đoạn bận rộn. Khi áp lực giảm, hãy chủ động trả lại sự cân bằng cho mối quan hệ. Nếu quá tải kéo dài, đó là dấu hiệu cần xem lại cách phân việc, kỳ vọng hoặc nguồn hỗ trợ — không phải lý do để tự trách mình.'],
     ['career', 'Sắp tới tôi có tìm được công việc như ý không?',
-     'Lá này nghiêng về câu trả lời không, ít nhất là trong thời điểm hiện tại. Lý do là bạn đang theo đuổi quá nhiều mục tiêu cùng lúc: vừa tìm việc, vừa muốn học thêm, vừa muốn lấy thêm một tấm bằng hay chứng chỉ nào đó. Khi năng lượng bị chia nhỏ như vậy, việc tìm việc không nhận được sự tập trung cần thiết. Hậu quả có thể xuất hiện ở những chi tiết nhỏ nhưng quyết định: bạn quên mất lịch phỏng vấn, đến muộn, hoặc bước vào buổi phỏng vấn mà chưa hề tìm hiểu về công ty và không trả lời được những câu hỏi cơ bản nhất. Khi bạn dàn trải bản thân ra nhiều hướng, không việc nào được làm trọn vẹn, và cơ hội tốt vì thế dễ trôi qua.'],
+     'Mười Gậy cho thấy việc tìm việc đang cạnh tranh với quá nhiều đầu việc khác, nên tiến độ có thể chậm hơn bạn muốn. Thay vì coi đây là một câu “không”, hãy xem nó như lời nhắc thu gọn ưu tiên: dành thời gian riêng cho hồ sơ, phỏng vấn và nghiên cứu công ty, đồng thời tạm hoãn những việc chưa cần thiết nếu có thể.'],
     ['career', 'Trong thời gian tới, công việc của tôi có chuyện gì không?',
      'Thời gian tới của bạn có thể tóm gọn trong một chữ: bận. Ngoài phần việc của riêng mình, bạn còn được giao thêm nhiều dự án chồng chéo, cấp trên nhờ giải quyết việc ngoài phạm vi, đồng nghiệp cũng nhờ bạn gánh hộ những phần việc của họ với đủ lý do. Đặc trưng của Mười Gậy là nhiều đầu việc không liên quan đến nhau đổ về cùng một lúc. Bạn sẽ có cảm giác ôm quá nhiều thứ mà không giữ nổi thứ nào, và đến một lúc mọi việc có thể cùng đổ vỡ. Lá này không báo hiệu tai họa, nhưng nó cảnh báo rằng bạn sắp bị quá tải.'],
     ['other', 'Vậy tôi phải làm gì?',
@@ -963,23 +963,23 @@ Object.assign(ASK.vi, {
   ],
   'swords-10': [
     ['other', 'Từ khóa của lá này là gì?',
-     'Mười Kiếm nói về nỗi đau và sự khổ sở ở mức tận cùng, khi một người cảm thấy mình không còn gì để mất. Điểm cần lưu ý là nguồn gốc của nỗi đau này. Nó không đến từ hoàn cảnh bên ngoài mà từ chính những suy nghĩ tiêu cực được nuôi dưỡng lâu ngày trong tâm trí. Cùng một hoàn cảnh, người này thấy bình thường còn người kia thấy khổ sở, và sự khác biệt nằm ở cách nhìn. Về cường độ, các lá số 10 mạnh gần ngang với Ẩn Chính, nhưng Mười Kiếm vẫn là một lá Ẩn Phụ. Điều đó có nghĩa là vấn đề vẫn nằm trong tầm kiểm soát của con người; nó chỉ trở nên nặng nề vì đã được tích tụ qua một thời gian dài.'],
+     'Mười Kiếm nói về cảm giác một chu kỳ đau đớn đã đi đến giới hạn: kiệt sức, thất vọng hoặc tin rằng mình không thể chịu thêm. Một phần nỗi đau có thể bị khuếch đại bởi suy nghĩ, nhưng hoàn cảnh bên ngoài cũng có thể rất thật. Điểm tích cực của lá nằm ở chỗ một kết thúc đã lộ rõ; từ đây, câu hỏi chuyển từ “chịu thêm bao lâu” sang “mình cần làm gì để hồi phục và bắt đầu lại”.'],
     ['other', 'Có người nói rằng lá này vẫn có mặt tích cực, điều đó có đúng không?',
-     'Một số tài liệu nhìn Mười Kiếm theo hướng hy vọng. Họ lập luận rằng khi đã chạm đáy thì không còn gì để mất, và ở phía chân trời trong hình ảnh vẫn có ánh sáng hé lên, báo hiệu bóng tối đang qua đi. Cách đọc này không sai, nhưng khóa học khuyên bạn thận trọng khi dùng nó. Nếu người hỏi chỉ nghe rằng khó khăn rồi sẽ tự qua, họ sẽ ngồi chờ thời gian giải quyết mọi thứ và không bao giờ nhận ra nguyên nhân nằm ở chính mình. Vì vậy, thông điệp trọng tâm của Mười Kiếm là quay vào bên trong. Người hỏi cần tự đặt câu hỏi vì sao mình lại tự làm tổn thương mình bằng những suy nghĩ này, vì sao mình để tình hình đi xa đến vậy, và lần sau nếu gặp chuyện tương tự thì có thể làm gì khác đi.'],
+     'Có. Mười Kiếm thường được đọc như khoảnh khắc chạm đáy của một chu kỳ, nên nó cũng chứa ý nghĩa kết thúc và hồi phục. Tuy nhiên, “mọi chuyện rồi tự qua” không phải toàn bộ thông điệp. Hãy nhìn xem điều gì cần kết thúc, điều gì cần được hỗ trợ và bài học nào giúp bạn không lặp lại cùng một mô thức.'],
     ['love', 'Lá này miêu tả tính cách của một người như thế nào?',
-     'Đây là chân dung của một người mang cái nhìn cực kỳ bi quan, và sự bi quan đó không dừng lại ở họ mà lan sang những người xung quanh. Đúng là có những người gặp nhiều điều không may hơn người khác. Tuy nhiên, thay vì cố gắng giữ thái độ tích cực, họ lại để mình chìm sâu hơn vào tiêu cực, và điều này tạo ra một vòng xoáy: thái độ tiêu cực kéo theo phản ứng tiêu cực từ người khác, rồi những phản ứng đó lại củng cố niềm tin rằng cả thế giới đang chống lại họ. Hãy hình dung một người đến chỗ làm với tâm trạng bực bội sau một buổi sáng không vui ở nhà. Họ nói năng gắt gỏng với đồng nghiệp, đồng nghiệp dần xa lánh họ, cấp trên đánh giá họ thấp hơn. Sau đó họ lại than rằng ai cũng đối xử tệ với mình, trong khi không hề thấy rằng chính thái độ của họ đã khởi đầu chuỗi phản ứng ấy.'],
+     'Mười Kiếm không nên dùng để đóng khung tính cách một người. Nó thường mô tả một giai đoạn họ đang kiệt sức, bi quan hoặc cảm thấy bị dồn đến giới hạn. Khi ở trạng thái này, họ có thể khó nhìn thấy điều tích cực và dễ phản ứng nặng nề hơn bình thường. Trạng thái đó có thể thay đổi khi hoàn cảnh và sức khỏe tinh thần được cải thiện.'],
     ['other', 'Khi nói chuyện với người mang năng lượng của lá này, tôi sẽ cảm thấy thế nào?',
-     'Trò chuyện với người mang năng lượng này khiến bạn kiệt sức, ngay cả khi bạn không phải người nhạy cảm. Có thể gọi họ là những người rút cạn năng lượng của người khác. Đặc điểm của họ là than phiền liên tục, từ chuyện này sang chuyện khác, nhưng không bao giờ nhìn lại bản thân hay tự bắt tay vào giải quyết. Lần sau gặp lại, bạn sẽ nghe đúng những lời than ấy về đúng những vấn đề ấy. Điều đáng chú ý là cuộc trò chuyện chỉ diễn ra một chiều. Họ không thật sự lắng nghe bạn, mà chỉ cần một người để trút lên mọi điều nặng nề trong cuộc sống của mình.'],
+     'Trò chuyện lâu với một người đang liên tục tuyệt vọng hoặc khủng hoảng có thể khiến bạn mệt về mặt cảm xúc. Điều đó không biến họ thành “người hút năng lượng”. Bạn có thể lắng nghe mà vẫn đặt giới hạn: không phải lúc nào bạn cũng có đủ sức để tiếp nhận, và trong những vấn đề vượt quá khả năng của mình, khuyến khích họ tìm người thân hoặc hỗ trợ chuyên môn là phù hợp.'],
     ['love', 'Người ấy dành cho tôi tình cảm như thế nào?',
      'Người này nhìn tình yêu qua một lăng kính rất u ám. Họ có thể thích bạn, nhưng ngay từ khi mới bắt đầu tìm hiểu, trong đầu họ đã dựng sẵn những kịch bản xấu: rằng bạn rồi sẽ phản bội, rằng bạn tiếp cận họ chỉ vì muốn lợi dụng, rằng bạn không thật lòng. Những nghi ngờ này không dựa trên bất cứ điều gì bạn đã làm. Hai người mới chỉ đang làm quen một cách bình thường, và bạn không hề có ý định như họ tưởng. Lá này vì thế cho thấy tình cảm của họ, nếu có, đã bị chính sự bi quan của họ bóp méo ngay từ đầu.'],
     ['love', 'Tôi có nên giúp người mang năng lượng này không?',
-     'Lời khuyên của lá này là giữ khoảng cách. Bạn có thể phản đối rằng đây là bạn thân của mình và mình không thể bỏ mặc họ. Tuy nhiên, hãy nhớ rằng người đang ở Mười Kiếm đã đi qua Tám Kiếm và Chín Kiếm, tức là đã có nhiều cơ hội để dừng lại nhưng không dừng. Ở giai đoạn này, họ thường khước từ mọi sự giúp đỡ, không muốn thay đổi và chỉ muốn ở lại trong nỗi khổ quen thuộc của mình. Trong thâm tâm, họ tin rằng mình không có lỗi, rằng mọi bất hạnh đều do bên ngoài hoặc do số phận. Sự giúp đỡ chỉ có tác dụng với người sẵn sàng đón nhận nó. Vì vậy, nếu bạn muốn giúp ai, hãy dành sức cho những người đang chìa tay ra, chứ không phải người đang khép chặt lòng mình.'],
+     'Bạn có thể giúp trong giới hạn của mình, nhưng không thể ép một người thay đổi hoặc nhận sự giúp đỡ khi họ chưa sẵn sàng. Hãy nói rõ bạn có thể làm gì, không thể làm gì và khuyến khích nguồn hỗ trợ phù hợp. Nếu mối quan hệ khiến bạn liên tục kiệt sức hoặc bị tổn thương, giữ khoảng cách cũng là một lựa chọn hợp lý.'],
     ['other', 'Vì sao việc xem bài cho những người mang năng lượng này thường không có tác dụng?',
-     'Khi một người mang năng lượng Mười Kiếm đi xem bài, họ thường không hài lòng với những lời khuyên mang tính xây dựng, chẳng hạn rằng họ cần thay đổi cách suy nghĩ từ bên trong. Ngược lại, nếu ai đó nói với họ rằng số phận của họ đã an bài, rằng có cố gắng bao nhiêu cũng vô ích, họ lại cảm thấy nhẹ nhõm và được thấu hiểu. Nguyên nhân là họ đang tìm một lời biện hộ để không phải cố gắng nữa. Một câu trả lời khẳng định rằng mọi thứ nằm ngoài tầm tay họ chính là điều họ muốn nghe. Đó là lý do khóa học lưu ý rằng với những trường hợp như vậy, việc xem bài thường không mang lại lợi ích thật sự cho người hỏi.'],
+     'Khi người hỏi đang ở trạng thái tuyệt vọng, một trải bài có thể khó giúp họ nếu họ chỉ muốn một câu trả lời khẳng định rằng mọi thứ đã được định sẵn. Reader nên tránh củng cố cảm giác bất lực. Hãy dùng bài như công cụ gợi mở, tập trung vào lựa chọn thực tế và giới hạn của Tarot; với khủng hoảng tâm lý nghiêm trọng, trải bài không thay thế hỗ trợ chuyên môn.'],
     ['love', 'Chúng tôi cãi nhau nhiều, tôi có nên chia tay không?',
-     'Khi Mười Kiếm xuất hiện cho câu hỏi này, ít nhất một trong hai người, và có thể là cả hai, đang chìm trong năng lượng tiêu cực nặng nề. Một mối quan hệ như vậy trở nên độc hại, vì hai người không nâng đỡ nhau mà liên tục làm tổn thương nhau. Lá này vì thế nghiêng về hướng khuyên chia tay.'],
+     'Mười Kiếm cho thấy mối quan hệ đang ở mức kiệt sức hoặc tổn thương nặng. Lá bài nghiêng về việc một chu kỳ hiện tại cần kết thúc, nhưng “kết thúc” có thể là chấm dứt cách hai người đang đối xử với nhau, một khoảng cách để hồi phục, hoặc kết thúc hẳn mối quan hệ. Nếu có bạo lực, đe dọa hoặc sợ hãi, ưu tiên an toàn và hỗ trợ bên ngoài thay vì dùng Tarot để quyết định.'],
     ['career', 'Tôi có tìm được công việc ưng ý không?',
-     'Trước khi nghĩ đến chuyện tìm việc mới, bạn cần thay đổi trạng thái tinh thần của mình. Khi bước vào phòng phỏng vấn với vẻ mặt u ám và năng lượng nặng nề, bạn sẽ bị nhận ra ngay, bởi nhà tuyển dụng có kinh nghiệm cảm nhận được điều đó chỉ qua vài phút tiếp xúc. Rất ít nơi muốn nhận một người mang tâm trạng như vậy vào đội ngũ của họ. Vì thế, lá này khuyên bạn dành một hai tháng để chăm sóc tinh thần và tâm lý, tìm lại sự bình tĩnh, rồi mới bắt đầu nộp hồ sơ. Câu trả lời cho câu hỏi này vì vậy là chưa, ít nhất là cho đến khi bạn ổn định lại.'],
+     'Mười Kiếm cho thấy bạn có thể đang quá kiệt sức hoặc mất tinh thần vì quá trình tìm việc. Không cần mặc định rằng nhà tuyển dụng sẽ “cảm nhận năng lượng xấu”. Nếu có thể, hãy cho mình thời gian hồi phục, đồng thời tiếp tục những bước nhỏ như chỉnh hồ sơ, luyện phỏng vấn và tìm hỗ trợ. Thời điểm quay lại mạnh hơn tùy hoàn cảnh của bạn, không cần chờ đúng một hay hai tháng.'],
     ['career', 'Trong thời gian tới, công việc của tôi có biến cố gì không?',
      'Thời gian tới, môi trường làm việc của bạn sẽ rất căng thẳng và mang nhiều yếu tố độc hại. Tuy nhiên, chỉ với một lá thì chưa thể xác định sự độc hại đến từ đâu: đó có thể là đồng nghiệp, cấp trên hoặc khách hàng. Bạn nên rút thêm lá để làm rõ nguồn gốc, đồng thời rút một lá lời khuyên để biết cách né tránh hoặc giảm nhẹ tác động. Cần nói thêm rằng đây là một trong những lá nặng nề nhất của bộ bài. Việc diễn giải nó đòi hỏi người đọc phải giữ được sự bình tĩnh, vì khi nói về những điều tiêu cực, chính người diễn giải cũng dễ bị cuốn theo tâm trạng đó.']
   ],
@@ -991,7 +991,7 @@ Object.assign(ASK.vi, {
     ['love', 'Lá này miêu tả tính cách của một người như thế nào?',
      'Người mang năng lượng Mười Cốc tỏa ra sự tích cực rõ rệt, và điều đặc biệt là họ có khả năng truyền sự tích cực đó sang người khác. Trong một buổi gặp gỡ, họ thường tự nhiên trở thành trung tâm của sự chú ý. Điều này không xuất phát từ việc họ cố tình gây ấn tượng hay ăn mặc nổi bật, mà từ nụ cười, sự vui vẻ và thứ năng lượng ấm áp khiến mọi người muốn ở gần. Họ có trí tuệ cảm xúc cao, biết cách trò chuyện sao cho người đối diện cảm thấy được lắng nghe và thoải mái. Ở bên cạnh một người như vậy, bạn thường thấy tâm trạng của mình cũng nhẹ nhàng hơn.'],
     ['love', 'Người ấy dành cho tôi tình cảm như thế nào?',
-     'Câu trả lời ở đây rất tích cực. Người ấy có tình cảm với bạn, và đó là thứ tình cảm giàu chất lãng mạn, có thể vì bản thân họ cũng là người sống thiên về cảm xúc. Mười Cốc cho thấy cả người này lẫn mối quan hệ này đều thuộc về một tần số năng lượng cao và lành mạnh. Nếu bạn đang được yêu bởi một người như thế, hãy trân trọng và giữ gìn mối quan hệ, đừng để nó tuột khỏi tay. Họ không chỉ thương bạn mà còn mong muốn một tương lai lâu dài cùng bạn. Tuy nhiên, mong muốn này không mang tính ép buộc theo kiểu phải tiến tới hôn nhân bằng mọi giá. Họ muốn gắn bó lâu dài nhưng vẫn để mọi việc diễn ra một cách tự nhiên.'],
+     'Đây là một lá rất tích cực cho tình cảm. Nó gợi đến sự gắn bó, cảm giác thuộc về nhau và mong muốn xây một tương lai hài hòa. Tuy vậy, không nên coi một lá bài là bằng chứng chắc chắn về ý định kết hôn hay mức độ cam kết của người khác. Hãy để hành động, lời nói và kế hoạch thực tế xác nhận điều đó.'],
     ['love', 'Chúng tôi đang cãi nhau, lá này cho lời khuyên gì?',
      'Khi Mười Cốc xuất hiện cho câu hỏi về mâu thuẫn, điều đầu tiên cần thấy là nền tảng tình cảm giữa hai bạn vẫn rất tốt. Chuyện cãi vã bạn đang lo lắng nhiều khả năng chỉ là một va chạm nhỏ trong một bức tranh chung rất đẹp. Lời khuyên vì thế rất đơn giản: bạn đừng để một bất đồng nhỏ làm lung lay mối quan hệ. Nói thẳng thắn hơn, một cặp đôi có năng lượng Mười Cốc thường không cần đến trải bài chỉ vì một lần giận dỗi. Có thể bạn đi xem bài vì một vấn đề khác và tiện thể hỏi thêm về tình cảm, và trong trường hợp đó, câu trả lời là chuyện tình cảm của bạn không có gì đáng lo.'],
     ['career', 'Trong thời gian tới, tôi có tìm được công việc mới không?',
@@ -1007,11 +1007,11 @@ Object.assign(ASK.vi, {
     ['love', 'Lá này miêu tả tính cách của một người như thế nào?',
      'Đây là một người ổn định và thực tế, đúng với bản chất của bộ Tiền. Họ không keo kiệt. Vì có của cải, hay chính xác hơn là vì không cảm thấy thiếu thốn, họ sẵn lòng làm từ thiện hoặc tặng quà cho người xung quanh. Tuy nhiên, sự hào phóng của họ luôn đi kèm với lý trí. Khi một người thật sự gặp khó khăn, họ sẵn sàng giúp đỡ. Khi ai đó chỉ muốn vay tiền để tiêu xài hoang phí, họ sẽ từ chối một cách dứt khoát. Nói cách khác, người Mười Tiền vừa rộng rãi vừa tỉnh táo. Năng lượng của họ không sôi nổi và cởi mở như người Mười Cốc, nhưng vẫn là một dạng năng lượng cao và lành mạnh.'],
     ['love', 'Người ấy dành cho tôi tình cảm như thế nào?',
-     'Tình cảm của người này dành cho bạn ổn định nhưng có phần lạnh lùng. Họ có thể đang nghĩ đến chuyện kết hôn với bạn, song lý do có thể nằm ở sự tương xứng giữa hai gia đình hơn là ở cảm xúc. Điều này không có nghĩa họ là người ham vật chất, bởi bản thân họ không hề thiếu thốn. Thứ họ tìm kiếm là một người có xuất phát điểm, hoàn cảnh sống và nền tảng gia đình giống mình. Họ nhìn thấy những điểm đó ở bạn và bị thu hút bởi chúng trước khi muốn tìm hiểu con người thật của bạn. Đây không hẳn là điều xấu. Với người sống thiên về lãng mạn, cách tiếp cận này khó chấp nhận, còn với người thực tế, nó hoàn toàn hợp lý. Việc đánh giá tốt hay xấu tùy thuộc vào giá trị riêng của mỗi người.'],
+     'Mười Tiền cho thấy người này có thể nhìn tình yêu theo hướng lâu dài và thực tế: gia đình, nơi ở, tài chính, lối sống và khả năng xây dựng một cuộc sống chung. Họ có thể coi trọng sự tương đồng về nền tảng hoặc giá trị, nhưng lá bài không có nghĩa họ chọn bạn vì địa vị hay điều kiện gia đình. Hãy nhìn xem sự thực tế đó có đi cùng tình cảm, tôn trọng và sự hiểu nhau hay không.'],
     ['love', 'Vì sao chúng tôi cãi nhau?',
      'Với câu hỏi về tình cảm, một lá Mười Tiền đơn lẻ khó đưa ra câu trả lời đầy đủ, vì bộ Tiền nghiêng về công việc và vật chất hơn là cảm xúc. Bạn nên rút thêm lá để làm rõ. Dù vậy, khi lá này xuất hiện cho câu hỏi về nguyên nhân cãi vã, nó thường chỉ về phía gia đình. Có thể gia đình hai bên không ủng hộ, có sự chênh lệch về hoàn cảnh, hoặc những khác biệt về truyền thống và tôn giáo đang tạo ra căng thẳng. Một hướng khác rất thực tế là tiền bạc: hai người đã về chung một nhà nhưng thu nhập không đủ trang trải, hoặc đang yêu nhau nhưng bất đồng trong cách chi tiêu.'],
     ['career', 'Tôi có tìm được công việc mới không?',
-     'Bạn không chỉ tìm được việc mà còn tìm được một công việc có thu nhập tốt và mang lại sự ổn định. Cần nhớ rằng khi hỏi về mức lương cao hay thấp, thước đo là kỳ vọng của người hỏi chứ không phải một con số tuyệt đối. Với Mười Tiền, thu nhập không đến mức vượt trội nhưng thuộc nhóm cao, đủ để bạn sống thoải mái và vẫn dành ra được một khoản tiết kiệm. Công việc này cũng mở ra cơ hội thăng tiến về mặt vật chất. Tuy nhiên, lá này không cho biết bạn có yêu thích công việc đó hay có muốn gắn bó lâu dài hay không. Một công việc nhiều tiền nhưng không mang lại niềm vui vẫn là điều hoàn toàn có thể xảy ra.'],
+     'Mười Tiền là tín hiệu tích cực cho sự ổn định và nền tảng tài chính, nhưng không thể đảm bảo một mức lương cụ thể hay chắc chắn bạn sẽ tìm được việc. Nếu có cơ hội mới, hãy đánh giá mức lương, phúc lợi, độ ổn định và khả năng phát triển bằng thông tin thực tế.'],
     ['career', 'Thời gian tới, công việc của tôi có thay đổi gì không?',
      'Công việc hiện tại của bạn đang mang lại thu nhập tốt, và có thể bạn đang giữ một vị trí khá cao với mức lương tương xứng. Trong thời gian tới, tình hình này gần như sẽ được giữ nguyên. Mười Tiền là lá của sự ổn định, nên nếu có thay đổi thì thay đổi đó cũng diễn ra rất chậm. Bạn không nên chờ đợi một bước ngoặt đột ngột. Sự sung túc của Mười Tiền không đến trong một sớm một chiều mà được tích lũy qua cả một quá trình dài, và giai đoạn sắp tới là lúc bạn thu hoạch thành quả của quá trình đó.']
   ]
@@ -1021,66 +1021,147 @@ Object.assign(ASK.vi, {
 
 Object.assign(ASK.vi, {
   'wands-c0': [
-    ['other', 'Từ khóa của lá này là gì?',
-     'Điểm chung của bốn lá Tiểu Đồng là sự mới mẻ và non trẻ. Với Tiểu Đồng Gậy, sự mới mẻ đó thể hiện qua hành động, đam mê và nhiệt huyết: một niềm say mê vừa chớm, một việc làm vừa bắt đầu, một ngọn lửa vừa được thắp lên. Ở mặt tiêu cực, lá này gợi đến sự khờ dại, ngây ngô và đôi khi hấp tấp, bởi nguyên tố Gậy gắn với hành động và người trẻ thường hành động trước khi suy nghĩ kỹ. Bạn cũng cần ghi nhớ một nguyên tắc chung: cả Tiểu Đồng lẫn Kỵ Sĩ đều đại diện cho những người còn thiếu kinh nghiệm và cần có người dẫn dắt.'],
-    ['love', 'Lá này miêu tả tính cách của một người như thế nào?',
-     'Người mang năng lượng Tiểu Đồng Gậy tràn đầy nhiệt huyết và đam mê, và họ là người của hành động chứ không phải của lời nói. Hình ảnh trên lá là một chàng trai cầm cây gậy, ánh mắt hướng về phía chân trời như thể luôn sẵn sàng cho một chuyến đi mới. Theo hướng dẫn chung của khóa học, lá này thường được đọc theo nghĩa tích cực. Người này có thể còn khờ dại và thiếu kinh nghiệm, ở một mức độ nào đó giống với lá Gã Khờ, nhưng họ không hề nông cạn hay tự mãn. Khi được người khác chỉ bảo, họ biết lắng nghe thay vì gạt đi và cho rằng mình đã biết đủ.'],
-    ['love', 'So với Kỵ Sĩ Gậy, lá nào hấp tấp hơn?',
-     'Kỵ Sĩ chắc chắn hấp tấp hơn. Kỵ Sĩ mang năng lượng của một thanh niên đang ở độ sung sức nhất, còn Tiểu Đồng giống một đứa trẻ hiếu động: nhiều năng lượng, nhiều nhiệt tình, nhưng vẫn giữ nét ngây thơ. Nếu ví Tiểu Đồng với một cậu bé thích khám phá, thì Kỵ Sĩ là một thiếu niên mười bảy, mười tám tuổi bốc đồng và nóng vội. Đặc điểm bốc đồng này là nét chung của cả bốn lá Kỵ Sĩ.'],
-    ['love', 'Người ấy dành cho tôi tình cảm như thế nào?',
-     'Lá này báo hiệu một tình cảm mới. Người ấy có cảm tình với bạn, và tình cảm đó rất nhiệt thành, sôi nổi và đầy lửa. Chất lửa ở đây thường gắn với sự thu hút về mặt thể xác. Bạn có thể tin rằng tình cảm này là thật, nhưng cũng cần biết rằng nó chỉ mới hình thành gần đây và còn rất non. Đây không phải trường hợp của một người đã âm thầm thích bạn từ lâu.'],
-    ['love', 'Chúng tôi đang cãi nhau, trong thời gian tới nên giải quyết thế nào?',
-     'Nguồn gốc của mâu thuẫn có thể nằm ở sự non trẻ của cả hai. Giữa hai bạn vẫn có nhiệt huyết và đam mê, nhưng cả hai đều chưa có nhiều kinh nghiệm trong chuyện tình cảm. Điều này không phụ thuộc vào tuổi tác, vì một người lớn tuổi vẫn có thể còn vụng về khi yêu. Chính sự non nớt đó khiến hai bạn vô tình làm tổn thương nhau. Có thể thấy mối quan hệ này chưa chín chắn về mặt suy nghĩ và tâm lý, nên dễ xảy ra cãi vã, trong khi ở khía cạnh thể xác hai người lại khá hòa hợp và bù đắp được cho nhau.'],
-    ['career', 'Sắp tới, tôi có tìm được công việc mới không?',
-     'Câu trả lời là có. Công việc mới này có thể mở ra một chương hoàn toàn khác, trong một lĩnh vực mà bạn chưa từng thử sức. Tuy nhiên, lá này cũng nhấn mạnh rằng bạn phải chủ động. Có thể bạn đang mong người thân hay bạn bè giới thiệu việc cho mình và chờ cơ hội tự tìm đến. Với Tiểu Đồng Gậy, điều đó khó xảy ra. Bạn cần tự tìm kiếm, tự nộp hồ sơ và tự bước ra ngoài, và khi bạn hành động thì công việc sẽ đến.'],
-    ['career', 'Trong thời gian tới, công việc của tôi có điều gì cần lưu ý?',
-     'Trong thời gian tới, bạn có thể được giao những dự án hoàn toàn mới mà bạn chưa từng làm, thậm chí thuộc một lĩnh vực khác với chuyên môn bạn được đào tạo. Những dự án này sẽ đòi hỏi bạn phải hành động nhiều hơn bình thường: học thêm kiến thức mới, tự mày mò tìm hiểu, hoặc di chuyển và đi lại thường xuyên. Đây là giai đoạn của sự khởi đầu, nên bạn nên chuẩn bị tinh thần cho việc bước ra khỏi vùng quen thuộc.'],
-    ['other', 'Có mẹo nào để nhớ các lá Tiểu Đồng không?',
-     'Một cách ghi nhớ hữu ích là xem mỗi lá Tiểu Đồng như lá Gã Khờ được đặt vào một nguyên tố cụ thể. Tiểu Đồng Gậy là Gã Khờ trong thế giới của hành động và đam mê, và bạn có thể suy ra ba lá Tiểu Đồng còn lại theo cùng cách đó. Bạn cũng cần nhớ rằng các lá này không chỉ dùng để mô tả con người. Khi cần đọc năng lượng của một tình huống, bạn chỉ cần kết hợp hai tầng nghĩa: nguyên tố của lá nói về điều gì, và Tiểu Đồng nói về điều gì.']
+    [
+      "other",
+      "Từ khóa của lá này là gì?",
+      "Tiểu Đồng Gậy nói về một ngọn lửa vừa được nhóm lên: tò mò, nhiệt huyết, ham khám phá và sẵn sàng thử điều mới. Mặt trái là hấp tấp, thiếu kinh nghiệm hoặc bắt đầu rất hăng nhưng chưa biết đi đường dài. Hãy nhớ: Tiểu Đồng là năng lượng đang học cách dùng nguyên tố của mình."
+    ],
+    [
+      "love",
+      "Lá này miêu tả tính cách của một người như thế nào?",
+      "Người mang năng lượng Tiểu Đồng Gậy thường cởi mở, nhiều năng lượng và thích hành động. Họ dễ hào hứng với điều mới, đôi khi hơi bốc đồng vì chưa có nhiều kinh nghiệm. Điểm đẹp là họ thường thật lòng với sự tò mò của mình và sẵn sàng học khi được góp ý."
+    ],
+    [
+      "love",
+      "So với Kỵ Sĩ Gậy, lá nào hấp tấp hơn?",
+      "Kỵ Sĩ Gậy thường bốc đồng và lao nhanh hơn. Tiểu Đồng Gậy vẫn nhiều lửa, nhưng giống người mới bắt đầu: háo hức, tò mò và còn biết dừng lại để học. Kỵ Sĩ lại có xu hướng muốn hành động ngay và nghĩ sau."
+    ],
+    [
+      "love",
+      "Người ấy dành cho tôi tình cảm như thế nào?",
+      "Lá này thường gợi một cảm xúc mới chớm: người ấy có thể thấy bạn thú vị, hấp dẫn và muốn tiến gần hơn. Năng lượng khá nhiệt thành nhưng còn mới, nên chưa nói được tình cảm sẽ sâu đến đâu. Hãy nhìn thêm vào cách họ chủ động và duy trì sự quan tâm."
+    ],
+    [
+      "love",
+      "Chúng tôi đang cãi nhau, trong thời gian tới nên giải quyết thế nào?",
+      "Mâu thuẫn có thể đến từ việc cả hai phản ứng quá nhanh hoặc chưa biết cách xử lý cảm xúc khi nóng lên. Hãy giảm nhịp, nói từng chuyện một và tránh biến tranh luận thành cuộc thi ai thắng. Sự nhiệt tình giữa hai bạn vẫn có thể là điểm mạnh nếu được dùng để cùng giải quyết vấn đề."
+    ],
+    [
+      "career",
+      "Sắp tới, tôi có tìm được công việc mới không?",
+      "Tiểu Đồng Gậy ủng hộ việc mở một hướng mới, nhưng không phải lời đảm bảo rằng công việc sẽ tự đến. Hợp nhất lúc này là chủ động tìm, nộp hồ sơ, thử lĩnh vực mới và chấp nhận giai đoạn vừa làm vừa học. Cơ hội thường xuất hiện khi bạn bắt đầu di chuyển."
+    ],
+    [
+      "career",
+      "Trong thời gian tới, công việc của tôi có điều gì cần lưu ý?",
+      "Bạn có thể gặp một nhiệm vụ, dự án hoặc kỹ năng hoàn toàn mới. Đừng ngại mình chưa biết đủ; lá này hợp với việc học trong lúc làm. Điều cần tránh là nhận quá nhiều chỉ vì đang hào hứng rồi bỏ dở khi hết hứng."
+    ],
+    [
+      "other",
+      "Có mẹo nào để nhớ các lá Tiểu Đồng không?",
+      "Hãy xem Tiểu Đồng như “người mới” của từng nguyên tố. Tiểu Đồng Gậy học cách hành động và theo đuổi đam mê; Tiểu Đồng Cốc học về cảm xúc; Tiểu Đồng Kiếm học về tư duy và giao tiếp; Tiểu Đồng Xu học về kỹ năng và vật chất. Cách này giúp bạn nhớ vai trò trước rồi mới ghép với nguyên tố."
+    ]
   ],
   'swords-c0': [
-    ['love', 'Lá này miêu tả tính cách của một người như thế nào?',
-     'Điểm cần chú ý nhất ở người này là cách giao tiếp. Họ không cay nghiệt như Kỵ Sĩ Kiếm, nhưng lại có thói quen nghĩ gì nói nấy mà không cân nhắc, nên lời nói của họ thường bị xem là vô duyên. Có lẽ bạn từng gặp một người như vậy: họ không có ý xấu, nhưng gần như mỗi câu họ nói ra đều khiến người nghe khó chịu. Trong chuyện tán tỉnh, kiểu giao tiếp này rất khó đem lại kết quả. Cần nhớ rằng bản chất của các lá Tiểu Đồng không xấu. Chúng chỉ thể hiện sự non nớt trong khía cạnh của nguyên tố tương ứng, và với bộ Kiếm, sự non nớt đó nằm ở tư duy và cách suy nghĩ.'],
-    ['love', 'Người ấy dành cho tôi tình cảm như thế nào?',
-     'Đây là một câu trả lời khó, vì lá này cho thấy người ấy tiếp cận chuyện tình cảm bằng lý trí và tính toán thay vì cảm xúc. Nhìn chung, tình cảm họ dành cho bạn không nhiều và có phần thực dụng. Họ suy xét mối quan hệ này như một bài toán. Điều đáng nói là do còn thiếu kinh nghiệm, họ không giấu được sự tính toán ấy. Mục đích của họ khi đến với bạn khá dễ nhận ra, không chỉ với bạn mà với cả những người xung quanh.'],
-    ['other', 'Lá này có gì khác ba lá Tiểu Đồng kia?',
-     'Trong bốn lá Tiểu Đồng, Tiểu Đồng Kiếm mang nhiều sắc thái tiêu cực nhất. Không phải vì lá này xấu, mà vì nó thể hiện sự trẻ con theo đúng nghĩa đen của từ này. Mặt tích cực của lá, nếu có, là những ý tưởng mới. Tuy nhiên, những ý tưởng ấy còn non nớt, thiếu lập luận và không có bằng chứng hay kế hoạch cụ thể đi kèm. Bạn có thể hình dung một người hào hứng tuyên bố sẽ mở một cửa hàng của riêng mình, nhưng khi được hỏi về vốn, địa điểm hay khách hàng thì không trả lời được câu nào. Đó chính là kiểu ý tưởng đặc trưng của Tiểu Đồng Kiếm.'],
-    ['love', 'Chúng tôi đang cãi nhau, làm sao để giải quyết?',
-     'Năng lượng bao trùm ở đây là sự non trẻ và thiếu kinh nghiệm trong tình yêu, và điều này đúng với cả hai người. Cả hai đều dễ buột miệng nói ra những câu thiếu tế nhị làm tổn thương đối phương. Vì vậy, gốc rễ của mâu thuẫn nằm ở giao tiếp: cách hai bạn nói chuyện với nhau chưa đủ chín chắn. Cũng có thể cuộc trò chuyện chỉ diễn ra một chiều, khi một người nói liên tục và từ chối lắng nghe người kia. Đây là đặc điểm của một tâm hồn còn trẻ con, vốn thích được nói hơn là chịu nghe.'],
-    ['career', 'Tôi có tìm được công việc mới không?',
-     'Có khả năng bạn sẽ tìm được việc, nhưng lá này kèm theo một cảnh báo. Hình ảnh Tiểu Đồng Kiếm cho thấy đôi chân bước tới trong khi cái đầu lại ngoảnh về sau, và đó chính là vấn đề của bạn: khả năng ra quyết định còn yếu. Bạn có thể tìm thấy một công việc mình thích, thậm chí rõ ràng là một công việc tốt, nhưng đến lúc phải quyết định thì bạn lại chùn bước và rút lui. Sự thiếu dứt khoát này, hoặc việc chọn sai giữa hai lựa chọn, có thể là lý do khiến con đường sự nghiệp của bạn lận đận.'],
-    ['career', 'Thời gian tới, công việc của tôi có điều gì đáng chú ý?',
-     'Giai đoạn tới có thể mang đến cho bạn rất nhiều ý tưởng mới trong công việc. Tuy nhiên, để những ý tưởng đó được cấp trên chấp thuận, bạn cần nghiên cứu kỹ hơn và chuẩn bị đầy đủ số liệu cũng như thông tin cụ thể, thay vì chỉ trình bày một ý tưởng còn sơ khai. Ngoài ra, lá này cũng cảnh báo về những va chạm nhỏ nơi công sở: bạn có thể xích mích với đồng nghiệp hoặc gặp một người ăn nói thiếu tế nhị. Bạn cũng nên tự xem lại mình, vì có khả năng chính bạn mới là người vô tình nói ra những lời khiến người khác phật lòng.']
+    [
+      "love",
+      "Lá này miêu tả tính cách của một người như thế nào?",
+      "Tiểu Đồng Kiếm thường nhanh trí, tò mò và thích quan sát, nhưng cách nói chuyện có thể còn vụng. Họ dễ nói quá thẳng, hỏi quá nhiều hoặc phản ứng trước khi nghĩ kỹ người khác sẽ cảm thấy thế nào. Đây là sự non kinh nghiệm trong tư duy và giao tiếp, không phải bản chất xấu."
+    ],
+    [
+      "love",
+      "Người ấy dành cho tôi tình cảm như thế nào?",
+      "Lá này cho thấy người ấy đang quan sát và suy nghĩ về bạn nhiều, nhưng cảm xúc chưa chắc đã rõ hoặc sâu. Họ có thể tò mò, muốn tìm hiểu thêm và phân tích mối quan hệ bằng lý trí. Đừng vội kết luận rằng họ thực dụng hay không thật lòng chỉ từ một lá bài; hãy nhìn cách họ cư xử thực tế."
+    ],
+    [
+      "other",
+      "Lá này có gì khác ba lá Tiểu Đồng kia?",
+      "Tiểu Đồng Kiếm đặt sự mới mẻ vào thế giới của ý tưởng, câu hỏi và giao tiếp. Vì vậy, nó thường nói về một ý tưởng mới nhưng chưa được kiểm chứng, hoặc một người đang học cách dùng lời nói và lý trí. Điểm mạnh là ham học; điểm yếu là dễ kết luận quá nhanh."
+    ],
+    [
+      "love",
+      "Chúng tôi đang cãi nhau, làm sao để giải quyết?",
+      "Trọng tâm của lá này là giao tiếp. Hai bạn có thể đang nghe để phản bác chứ chưa thật sự nghe để hiểu, hoặc nói quá nhanh khi đang khó chịu. Hãy hỏi lại điều mình chưa chắc, tránh suy diễn và cho nhau thời gian hoàn thành câu nói trước khi đáp."
+    ],
+    [
+      "career",
+      "Tôi có tìm được công việc mới không?",
+      "Lá này cho thấy giai đoạn tìm việc cần nhiều thông tin, học hỏi và quyết định tỉnh táo. Bạn có thể gặp cơ hội mới, nhưng hãy đọc kỹ mô tả công việc, hỏi rõ điều kiện và tránh đổi ý chỉ vì lo lắng nhất thời. Kết quả phụ thuộc nhiều vào cách bạn thu thập thông tin và hành động."
+    ],
+    [
+      "career",
+      "Thời gian tới, công việc của tôi có điều gì đáng chú ý?",
+      "Nhiều ý tưởng, tin nhắn hoặc cuộc trao đổi mới có thể xuất hiện. Hãy kiểm chứng dữ kiện trước khi trình bày và chú ý cách nói để tránh hiểu lầm nơi công sở. Một câu hỏi đúng lúc có thể hữu ích hơn một kết luận vội."
+    ]
   ],
   'cups-c0': [
-    ['other', 'Từ khóa của lá này là gì?',
-     'Tiểu Đồng Cốc báo hiệu một khởi đầu mới trong đời sống tình cảm và cảm xúc. Đó có thể là một tình yêu vừa chớm nở, hoặc rộng hơn là bất kỳ tình huống nào khiến cảm xúc của bạn bắt đầu rung động. Cảm xúc ở đây chưa mãnh liệt mà mới ở giai đoạn đầu, giống như một sự hào hứng và thích thú vừa nhen lên. Nó có thể đến từ tình yêu, một tình bạn mới, một công việc mới, hoặc từ việc bạn bất ngờ khám phá ra một sở thích mà trước đây bạn chưa từng nghĩ mình sẽ quan tâm. Lá này gần như không mang ý nghĩa tiêu cực.'],
-    ['love', 'Lá này miêu tả tính cách của một người như thế nào?',
-     'Người này tỏa ra một năng lượng tích cực, có nét trẻ con nhưng không hề bốc đồng. Họ luôn tò mò, dễ hào hứng và dễ bị cuốn hút bởi những điều mới. Khi gặp một người đến từ nền văn hóa hay tôn giáo khác, phần lớn chúng ta có xu hướng giữ khoảng cách vì e ngại điều mình chưa hiểu. Người Tiểu Đồng Cốc thì ngược lại: họ cởi mở, chủ động làm quen và hỏi han về phong tục, cách sống của người kia với sự thích thú thật lòng. Họ tò mò về con người và về cuộc sống nói chung, yêu đời và thường nhìn mọi việc qua lăng kính tích cực.'],
-    ['love', 'Người này hợp làm bạn hay làm người yêu?',
-     'Người mang năng lượng này thường hợp làm bạn hơn làm người yêu. Lý do là khi yêu, ta thường mong đối phương chỉ dành sự chú ý cho mình, còn người này lại giống một đứa trẻ hiếu động, thấy điều gì mới cũng bị thu hút. Gọi đó là không chung thủy thì không đúng. Họ không nhất thiết yêu bạn rồi lại yêu người khác. Họ yêu bạn, nhưng đồng thời cũng say mê những trò chơi, những sở thích và những mối quan tâm riêng của họ, và sự chú ý của họ vì thế bị chia sẻ. Điều này khác hẳn với Kỵ Sĩ Cốc, lá thật sự gắn với sự lăng nhăng và thiếu chung thủy.'],
-    ['love', 'Người ấy dành cho tôi tình cảm như thế nào?',
-     'Người ấy có thể thật lòng có cảm tình với bạn, nhưng đó là một tình cảm mới chớm. Có thể họ đang ở giai đoạn thấy bạn thú vị và bị cuốn hút, chứ chưa đi đến chiều sâu. Vì vậy, lời khuyên là bạn nên dành thêm thời gian tìm hiểu nhau trước khi nhận lời. Lá này không khuyên bạn từ chối hay rời xa người đó, mà chỉ khuyên bạn đừng vội. Nhìn chung, khả năng hai người đến được với nhau vẫn khá cao.'],
-    ['love', 'Khi cãi nhau, tôi nên làm gì?',
-     'Có hai khả năng cần xem xét. Thứ nhất, một trong hai hoặc cả hai bạn mang năng lượng Tiểu Đồng Cốc, tức là dễ bị thu hút bởi nhiều thứ, và điều đó khiến người kia liên tục cảm thấy bất an. Thứ hai, cả hai còn trẻ và chưa có nhiều kinh nghiệm. Tình cảm giữa hai bạn là thật, nhưng sự non nớt khiến những chuyện vốn rất dễ giải quyết lại bị xử lý vụng về và trở nên rối rắm. Đây là điều rất phổ biến: khi còn trẻ, ta thường lúng túng trong các mối quan hệ, kể cả với bạn bè lẫn người yêu. Chỉ khi trưởng thành hơn và nhìn lại, hoặc nghe người khác kể những chuyện tương tự, ta mới thấy những vấn đề đó thật ra đơn giản đến mức nào.'],
-    ['love', 'Vậy tôi phải làm gì bây giờ?',
-     'Sự trưởng thành không thể đến trong một sớm một chiều. Đó chính là lý do những mối quan hệ ở tuổi trẻ thường dễ tan vỡ. Bạn không cần đổ lỗi cho mình hay cho người kia, vì sự vụng về này là một phần tự nhiên của tuổi trẻ. Nếu ai cũng biết cách xử lý mọi việc ngay từ đầu, thì đã không tồn tại khái niệm về sự non nớt của tuổi trẻ, và kinh nghiệm cũng không còn là thứ đáng quý theo năm tháng.'],
-    ['career', 'Tôi có tìm được công việc mới không?',
-     'Bạn chắc chắn sẽ tìm được việc, và đó là công việc bạn yêu thích. Riêng lá này chưa cho biết mức thu nhập hay cơ hội thăng tiến, nhưng điều đó không quá quan trọng, bởi khi có đam mê thì những thứ còn lại thường sẽ đến sau. Khi bạn làm công việc mình say mê, bạn tự nhiên đầu tư nhiều thời gian và công sức hơn hẳn so với một công việc bình thường, và sự chăm chỉ bền bỉ sớm muộn cũng được đền đáp bằng kết quả. Ngược lại, rất khó để ai đó kiên trì với một việc mà họ không hề thích.'],
-    ['career', 'Thời gian tới, công việc của tôi có điều gì đáng chú ý?',
-     'Trong thời gian tới, một điều gì đó sẽ khơi dậy sự hào hứng và niềm say mê của bạn trong công việc. Có thể bạn gặp một người khiến bạn rung động trong môi trường làm việc. Cũng có thể bản thân công việc có sự thay đổi tươi mới, chẳng hạn một dự án mới hay việc chuyển sang một bộ phận khác, và sự thay đổi đó giúp bạn vui vẻ và yêu đời hơn.']
+    [
+      "other",
+      "Từ khóa của lá này là gì?",
+      "Tiểu Đồng Cốc nói về một cảm xúc mới chớm: rung động, tò mò, sáng tạo, sự dịu dàng và khả năng mở lòng. Nó có thể là tình cảm, một tình bạn, một sở thích hay nguồn cảm hứng mới. Mặt trái là lý tưởng hóa, dễ bị cảm xúc cuốn đi hoặc chưa biết mình thật sự muốn gì."
+    ],
+    [
+      "love",
+      "Lá này miêu tả tính cách của một người như thế nào?",
+      "Người này thường nhạy cảm, cởi mở, giàu tưởng tượng và dễ rung động trước điều mới. Họ có nét trẻ trung, tò mò về con người và thường tiếp cận cuộc sống bằng cảm xúc. Khi chưa trưởng thành, họ có thể mơ mộng hoặc đổi hứng nhanh."
+    ],
+    [
+      "love",
+      "Người này hợp làm bạn hay làm người yêu?",
+      "Lá bài không quyết định ai “hợp làm bạn hơn làm người yêu”. Nó chỉ cho thấy một người nhiều cảm xúc mới mẻ, tò mò và còn đang khám phá bản thân. Một mối quan hệ có bền hay không phụ thuộc vào sự nhất quán, ranh giới và cách hai người giao tiếp, không phải chỉ vào lá bài này."
+    ],
+    [
+      "love",
+      "Người ấy dành cho tôi tình cảm như thế nào?",
+      "Có thể đang có một rung động chân thành nhưng còn mới và nhẹ. Người ấy thấy bạn thú vị, dễ thương hoặc khiến họ muốn mở lòng hơn. Hãy cho cảm xúc thời gian phát triển thay vì vội đặt tên cho nó."
+    ],
+    [
+      "love",
+      "Khi cãi nhau, tôi nên làm gì?",
+      "Đừng cố thắng bằng cảm xúc. Hãy nói rõ điều khiến bạn buồn hoặc thiếu an toàn, rồi hỏi đối phương đang cảm thấy gì thay vì đoán. Tiểu Đồng Cốc khuyên hai bạn quay lại sự mềm mại và tò mò với nhau."
+    ],
+    [
+      "love",
+      "Vậy tôi phải làm gì bây giờ?",
+      "Cho mình một chút thời gian để nhận ra cảm xúc thật trước khi phản ứng. Nếu cần nói chuyện, hãy dùng những câu bắt đầu bằng “mình cảm thấy…” thay vì quy lỗi. Một cuộc trò chuyện nhẹ nhàng nhưng thật lòng thường phù hợp hơn một quyết định vội."
+    ],
+    [
+      "career",
+      "Tôi có tìm được công việc mới không?",
+      "Lá này có thể gợi một công việc khiến bạn thấy hứng thú hoặc có cảm xúc tích cực, đặc biệt ở lĩnh vực sáng tạo, chăm sóc hay giao tiếp với con người. Tuy vậy, nó không đảm bảo kết quả tuyển dụng. Hãy dùng sự tò mò để khám phá cơ hội và kiểm tra các điều kiện thực tế trước khi nhận."
+    ],
+    [
+      "career",
+      "Thời gian tới, công việc của tôi có điều gì đáng chú ý?",
+      "Một ý tưởng, lời mời hoặc hứng thú mới có thể xuất hiện và khiến công việc bớt khô khan. Hãy cho nó cơ hội thử nghiệm nhưng đừng để cảm hứng thay thế kế hoạch. Nếu công việc liên quan con người, sự tinh tế trong giao tiếp sẽ là điểm mạnh."
+    ]
   ],
   'pentacles-c0': [
-    ['love', 'Lá này miêu tả tính cách của một người như thế nào?',
-     'Người này có thể xuất thân từ một gia đình khá giả, và phần lớn những gì họ có đều đã sẵn từ khi họ sinh ra. Ngoài ra, lá này cũng có thể báo hiệu rằng trong thời gian tới họ sẽ nhận được tin vui về tiền bạc, chẳng hạn một cơ hội du học, một suất học bổng hay một lời mời làm việc. Dù ở trường hợp nào, họ cũng là người gắn với sự thuận lợi về vật chất.'],
-    ['love', 'Người ấy dành cho tôi tình cảm như thế nào?',
-     'Đây là một câu hỏi khó với lá này, và câu trả lời không mấy dễ chịu. Người ấy có thể có tình cảm, nhưng họ đang nhìn bạn qua lăng kính vật chất. Với họ, bạn giống một món tài sản có thể sở hữu, và mối quan hệ này giống một thứ trang sức để tôn lên hình ảnh của họ. Có thể vì bạn có ngoại hình đẹp hoặc gia đình bạn có địa vị, nên khi ở bên bạn họ cảm thấy giá trị bản thân được nâng lên. Khi người khác hỏi về người yêu của họ, họ kể về bạn với niềm tự hào, và cái tôi của họ được thỏa mãn. Nói cách khác, họ có thể không yêu con người thật của bạn mà yêu những thứ bề ngoài mà bạn mang lại. Dĩ nhiên, nếu bản thân bạn cũng coi trọng những giá trị đó, hai người có thể lại rất hợp nhau.'],
-    ['love', 'Vì sao chúng tôi hay cãi nhau?',
-     'Có thể gần đây một trong hai hoặc cả hai bạn đang đón nhận những cơ hội mới trong công việc. Trước kia, sự chú ý của hai người dành trọn cho nhau, nhưng giờ đây mỗi người bắt đầu hướng về con đường riêng và những khía cạnh khác của bản thân. Đây là tình huống rất thường gặp ở những cặp đôi yêu nhau từ thời đi học rồi bước vào giai đoạn đi làm. Khi một người đầy tham vọng, muốn làm ở những nơi lớn và gặp gỡ những người giỏi, còn người kia lại bằng lòng với cuộc sống thong thả, không mấy hứng thú với sự nghiệp, thì khoảng cách giữa hai người dần hình thành một cách tự nhiên. Chính sự chênh lệch về hướng đi này là nguồn gốc của những cuộc cãi vã.'],
-    ['career', 'Sắp tới tôi có tìm được công việc mình thích không?',
-     'Nói rằng bạn sẽ thích công việc này thì chưa hẳn, nhưng đây là một công việc có tiền. Thu nhập không đến mức choáng ngợp, song khá ổn và thường nhỉnh hơn một chút so với mức bạn đang kỳ vọng. Để dễ hình dung, bạn có thể so sánh với các lá Hoàng gia khác: Kỵ Sĩ Gậy thường báo hiệu mức thu nhập vượt xa kỳ vọng, còn Nữ Hoàng Gậy không chỉ mang lại nhiều tiền mà còn cả vị trí cao. Trong khi đó, Tiểu Đồng Tiền và Kỵ Sĩ Tiền chỉ đơn giản cho thấy một công việc có thu nhập tốt, không hơn.'],
-    ['career', 'Trong thời gian tới, công việc của tôi có chuyện gì không?',
-     'Thời gian tới sẽ mở ra cho bạn một cơ hội, có thể là một công việc mới hoặc một dự án mới, và cơ hội đó gắn liền với tiền bạc. Ngoài ra, bạn cũng có thể được công ty cử đi đào tạo hoặc nhận được một suất học bổng từ chính nơi mình làm việc.']
+    [
+      "love",
+      "Lá này miêu tả tính cách của một người như thế nào?",
+      "Tiểu Đồng Xu thường thực tế, chăm chỉ và thích học bằng cách làm. Họ quan tâm đến kỹ năng, tiền bạc, học tập hoặc một mục tiêu có thể đo đếm được. Điểm yếu là đôi khi quá thận trọng, chậm bắt đầu hoặc chỉ tin vào điều mình nhìn thấy ngay trước mắt."
+    ],
+    [
+      "love",
+      "Người ấy dành cho tôi tình cảm như thế nào?",
+      "Người ấy có thể đang nghiêm túc tìm hiểu bạn theo cách chậm và thực tế. Họ thường thể hiện sự quan tâm bằng hành động nhỏ, thời gian hoặc sự ổn định hơn là lời lẽ lãng mạn. Cảm xúc còn ở giai đoạn đầu, nhưng có tiềm năng nếu cả hai tiếp tục vun đắp."
+    ],
+    [
+      "love",
+      "Vì sao chúng tôi hay cãi nhau?",
+      "Hai bạn có thể khác nhau về nhịp sống, tiền bạc, kế hoạch hoặc mức độ thực tế. Một người muốn chắc chắn từng bước, người kia lại muốn tiến nhanh hơn. Hãy nói rõ điều mỗi người cần để cảm thấy an toàn thay vì xem sự chậm rãi là thiếu tình cảm."
+    ],
+    [
+      "career",
+      "Sắp tới tôi có tìm được công việc mình thích không?",
+      "Tiểu Đồng Xu là tín hiệu tốt cho việc học nghề, thực tập, vị trí mới hoặc công việc giúp bạn xây kỹ năng. Nó không hứa một công việc hoàn hảo ngay lập tức, nhưng ủng hộ cơ hội có nền tảng để phát triển. Hãy ưu tiên nơi cho bạn học được điều thật sự có giá trị."
+    ],
+    [
+      "career",
+      "Trong thời gian tới, công việc của tôi có chuyện gì không?",
+      "Bạn có thể bước vào giai đoạn học thêm, nhận nhiệm vụ mới hoặc bắt đầu một mục tiêu thực tế hơn. Công việc tiến chậm nhưng chắc sẽ hợp với lá này. Đừng xem tiến độ nhỏ là vô nghĩa; đây là kiểu năng lượng xây nền từng viên một."
+    ]
   ]
 });
 
@@ -1088,86 +1169,197 @@ Object.assign(ASK.vi, {
 
 Object.assign(ASK.vi, {
   'wands-c1': [
-    ['other', 'Từ khóa của lá này là gì?',
-     'Ngọn lửa của tuổi trẻ là từ khóa của lá này. Bản thân nguồn năng lượng đó không tốt cũng không xấu, mà ý nghĩa của nó phụ thuộc vào hoàn cảnh của người hỏi. Với một người đang uể oải, trì trệ và thiếu động lực, sự bốc lửa này chính là liều thuốc cần thiết. Ngược lại, nếu bạn đã dùng nhiệt huyết tuổi trẻ một cách quá đà, ngọn lửa do chính bạn thắp lên sẽ quay lại thiêu đốt bạn, bởi bạn không còn kiểm soát được nó nữa.'],
-    ['other', 'Kỵ Sĩ khác Tiểu Đồng, Hoàng Hậu và Vua ở điểm nào?',
-     'Điểm quan trọng cần ghi nhớ là mức độ làm chủ nguyên tố của từng cấp bậc. Hoàng Hậu và Vua đã làm chủ được nguyên tố của mình, còn Kỵ Sĩ ở cả bốn bộ đều chưa thật sự làm được điều đó. Tiểu Đồng thì chỉ mới bắt đầu làm quen với nguyên tố, giống như một đứa trẻ mười một, mười hai tuổi chưa hiểu biết gì, nên chưa kịp gây ra chuyện dại dột nào. Kỵ Sĩ mới là người đang ở độ tuổi bồng bột, sẵn sàng làm những việc liều lĩnh và thiếu suy nghĩ, tức là kiểu người thường được gọi là "trẻ trâu".'],
-    ['love', 'Anh ấy hoặc cô ấy dành cho tôi tình cảm như thế nào?',
-     'Lá này cho thấy tình cảm của họ dành cho bạn giống một cơn say nắng: đó là một ham muốn, một đam mê bùng lên trong chốc lát. Ngọn lửa nào cháy bùng lên nhanh thì cũng dễ tắt nhanh. Vì vậy, bạn không nên đặt kỳ vọng quá lớn vào mối quan hệ này. Tuy nhiên, bạn cũng không cần vội gạt người ta ra. Bạn hãy dành thêm một hai tháng để tìm hiểu nhau. Nếu sau khoảng thời gian đó họ vẫn giữ nguyên sự nhiệt tình ban đầu, bạn có thể mở lòng nhiều hơn.'],
-    ['love', 'Có ví dụ nào cho kiểu tình cảm này không?',
-     'Bạn có thể hình dung một người đã sống một mình nhiều năm, rồi một ngày bỗng có ai đó xuất hiện và cuốn họ đi. Người mới này nhắn tin mỗi sáng, hẹn đi ăn mỗi tối, hứa hẹn đủ điều về tương lai và tỏ ra vô cùng lãng mạn. Với một người đã cô đơn quá lâu, sự săn đón dồn dập như vậy rất dễ khiến họ xiêu lòng. Nhưng chỉ sau một tháng, người kia bỗng nguội lạnh và tuyên bố đã hết hứng thú. Kiểu tình cảm bùng nhanh và tắt nhanh đó chính là điều lá này muốn nói.'],
-    ['love', 'Vì sao chúng tôi hay cãi nhau?',
-     'Lá này chỉ ra nguyên nhân là sự nóng nảy. Có thể một người, hoặc cả hai người, đều nóng tính và không ai chịu nhường ai. Mỗi bên đều muốn giải quyết thật nhanh vấn đề của mối quan hệ theo cách riêng của mình. Nhưng khi bạn làm theo cách của bạn và họ làm theo cách của họ, mọi việc sẽ không đi đến đâu, và mối quan hệ cũng vậy. Điều hai bạn cần là lắng nghe phía bên kia, tìm tiếng nói chung và chọn một hướng đi hài hòa cho cả hai người.'],
-    ['other', 'Tôi có nên đi xem bài về người yêu của mình không?',
-     'Nếu bạn đã có người yêu và cảm thấy mối quan hệ đang gặp trục trặc, bạn không cần tốn tiền tìm đến một người xem bài để hỏi xem mình nên làm gì với người ấy. Cách hiệu quả nhất là trò chuyện thẳng thắn với chính người yêu của bạn về mối quan hệ của hai người. Bạn có băn khoăn gì thì hãy hỏi trực tiếp người đó.'],
-    ['career', 'Trong thời gian tới, tôi có tìm được công việc ưng ý không?',
-     'Lá này chưa đưa ra được câu trả lời chắc chắn. Bạn có thể tìm được việc, nhưng khả năng cao là bạn đang bắt đầu nó một cách hơi vội. Nếu chịu khó xem xét kỹ hơn, bạn sẽ thấy còn nhiều cơ hội khác đang chờ mình. Cũng có thể bạn đã ký hợp đồng khi chưa hỏi rõ mức lương và chưa đọc kỹ các điều khoản. Một cách hiểu khác là công việc mới có tính chất năng động, môi trường trẻ trung, và đòi hỏi bạn phải di chuyển, đi lại nhiều, khác hẳn với công việc ngồi yên một chỗ trước đây.'],
-    ['career', 'Cách tôi đi tìm việc có vấn đề gì không?',
-     'Có thể bạn đang tìm việc theo kiểu chạy đua với thời gian. Chẳng hạn, bạn xếp ba buổi phỏng vấn trong cùng một ngày, và ở mỗi nơi bạn chỉ mong kết thúc sớm để kịp chạy sang nơi tiếp theo. Khi nhà tuyển dụng hỏi bạn còn thắc mắc gì không, bạn trả lời rằng không và xin phép đi ngay. Bạn rơi vào tình huống nào còn phụ thuộc vào các lá đi kèm và trực giác của bạn lúc đọc bài. Dù vậy, bạn hãy nhớ năng lượng cốt lõi của lá: đây là một người vội vàng, mặc dù bên trong họ có rất nhiều nhiệt tình và sức sống.'],
-    ['career', 'Tôi đang làm công việc văn phòng bình thường, thời gian tới công việc của tôi có gì mới không?',
-     'Trước hết, bạn cần đề phòng thói quen làm việc vội vàng, vì nó dễ dẫn đến sai sót. Ngoài ra, lá này còn có thể báo hiệu rằng bạn sắp tìm thấy một niềm đam mê mới liên quan đến công việc. Bạn nên khám phá niềm đam mê đó một cách từ tốn và có chừng mực, để nó không làm ảnh hưởng đến công việc chính của bạn.']
+    [
+      "other",
+      "Từ khóa của lá này là gì?",
+      "Kỵ Sĩ Gậy là chuyển động nhanh, đam mê, liều lĩnh và khát khao trải nghiệm. Đây là người muốn đi ngay khi thấy điều mình thích. Mặt trái là nóng vội, thiếu ổn định và dễ bỏ cuộc khi cảm giác hứng thú ban đầu qua đi."
+    ],
+    [
+      "other",
+      "Kỵ Sĩ khác Tiểu Đồng, Hoàng Hậu và Vua ở điểm nào?",
+      "Tiểu Đồng đang học; Kỵ Sĩ đã có đủ năng lượng để lao vào hành động nhưng chưa thật sự làm chủ nó; Nữ Hoàng và Vua trưởng thành và biết điều tiết nguyên tố của mình hơn. Vì vậy, Kỵ Sĩ thường là cấp bậc nhiều chuyển động nhất và cũng dễ đi quá đà nhất."
+    ],
+    [
+      "love",
+      "Anh ấy hoặc cô ấy dành cho tôi tình cảm như thế nào?",
+      "Người ấy có thể bị bạn thu hút rất mạnh và muốn tiến tới nhanh. Đây là năng lượng của đam mê, chủ động và sự háo hức, nhưng chưa chắc đồng nghĩa với cam kết lâu dài. Hãy xem họ có giữ được sự quan tâm khi giai đoạn mới mẻ qua đi hay không."
+    ],
+    [
+      "love",
+      "Có ví dụ nào cho kiểu tình cảm này không?",
+      "Ví dụ điển hình là một người chủ động nhắn nhiều, muốn gặp sớm, rủ bạn đi đây đó và khiến mọi thứ tiến rất nhanh. Điều đó có thể rất cuốn hút, nhưng hãy phân biệt giữa nhiệt tình nhất thời và sự nhất quán. Kỵ Sĩ Gậy mạnh ở khởi động, còn bền bỉ cần được chứng minh bằng thời gian."
+    ],
+    [
+      "love",
+      "Vì sao chúng tôi hay cãi nhau?",
+      "Hai bạn có thể phản ứng quá nhanh, tranh quyền chủ động hoặc dễ bùng lên rồi mới nghĩ lại. Mâu thuẫn thường lớn hơn vì cả hai đang nói khi còn nóng. Hãy tạm dừng trước khi trả lời và dành chỗ cho một người nói hết trước khi người kia phản ứng."
+    ],
+    [
+      "other",
+      "Tôi có nên đi xem bài về người yêu của mình không?",
+      "Bạn có thể xem bài để phản chiếu cảm xúc và lựa chọn của mình, nhưng đừng dùng Tarot để theo dõi hay kết luận chắc chắn về suy nghĩ của người khác. Nếu điều bạn cần thật sự là sự rõ ràng, một cuộc trò chuyện trực tiếp thường đáng tin hơn một lần rút bài."
+    ],
+    [
+      "career",
+      "Trong thời gian tới, tôi có tìm được công việc ưng ý không?",
+      "Kỵ Sĩ Gậy ủng hộ một giai đoạn tìm việc chủ động, nhiều cuộc hẹn, di chuyển hoặc cơ hội đến nhanh. Bạn có thể gặp một công việc hấp dẫn, nhưng hãy đọc kỹ điều kiện trước khi nhận chỉ vì đang hứng. Tốc độ là lợi thế nếu đi cùng sự tỉnh táo."
+    ],
+    [
+      "career",
+      "Cách tôi đi tìm việc có vấn đề gì không?",
+      "Bạn có thể đang làm rất nhiều nhưng thiếu chiến lược: gửi hồ sơ hàng loạt, đổi hướng liên tục hoặc nhận lời quá nhanh. Hãy chọn vài mục tiêu rõ ràng, theo dõi từng hồ sơ và chuẩn bị kỹ cho từng cuộc phỏng vấn. Ít hơn nhưng có chủ đích thường hiệu quả hơn."
+    ],
+    [
+      "career",
+      "Tôi đang làm công việc văn phòng bình thường, thời gian tới công việc của tôi có gì mới không?",
+      "Công việc có thể trở nên bận hơn, có dự án gấp, chuyến đi hoặc nhiệm vụ cần phản ứng nhanh. Đây là lúc tốt để chủ động nhận thử thách, nhưng đừng để nhịp nhanh biến thành kiệt sức. Hãy biết việc nào thật sự đáng để lao vào."
+    ]
   ],
   'swords-c1': [
-    ['other', 'Lá này miêu tả tính cách của một người như thế nào?',
-     'Đây là một người rất thông minh, phản ứng nhanh và thiên hẳn về lý trí. Điểm yếu của họ nằm ở những tình huống đòi hỏi sự đồng cảm, lòng trắc ẩn hay khả năng thấu hiểu cảm xúc. Chính vì thiếu mảng đó mà dù giỏi đến đâu, họ vẫn rất khó vươn lên vị trí lãnh đạo. Đó cũng là lý do người đứng đầu trong bộ Kiếm là Hoàng Hậu và Vua chứ không phải Kỵ Sĩ. Cả ba đều mang cùng một năng lượng Kiếm, nhưng cách họ hành xử và mức độ làm chủ năng lượng đó bên trong mình là hoàn toàn khác nhau.'],
-    ['other', 'Kỵ Sĩ và Tiểu Đồng có điểm gì chung?',
-     'Điểm chung của hai cấp bậc này là cả hai vẫn cần có người dẫn dắt. Kỵ Sĩ không phải là người ra lệnh. Anh ta nhận lệnh từ nhà vua hoặc từ vị tướng của mình, rồi lên đường chiến đấu.'],
-    ['love', 'Anh ấy hoặc cô ấy nghĩ gì về tôi?',
-     'Bề ngoài, người này có thể buông ra những câu khiến bạn thấy họ vô duyên và không khéo ăn nói. Nhưng theo cách hiểu chung về Kỵ Sĩ Kiếm, đây lại là một người khá thẳng thắn và thật lòng với bạn. Những người vụng về trong lời nói thường là những người chân thành, trong khi người quá khéo léo, quá ngọt ngào mới là đối tượng bạn nên dè chừng. Nếu bạn chấp nhận được tính cách đó, hoặc góp ý để họ hiểu và bớt gai góc hơn, hai bạn có thể xây dựng một mối quan hệ lâu bền.'],
-    ['love', 'Đây có phải là người dành cho tôi không?',
-     'Câu trả lời tùy thuộc vào điều bạn tìm kiếm ở tình yêu. Nếu bạn muốn được yêu bằng lời nói, muốn nghe những lời ngọt ngào, hoặc cần một người luôn để ý đến cảm xúc của bạn, thì người này không dành cho bạn. Trong chuyện tình cảm, họ khá vụng về và thiếu tinh tế. Khi thích ai, họ nói thẳng ngay, chẳng hạn vừa quen chưa được bao lâu đã đề nghị làm người yêu và hứa sẽ lo cho bạn mọi thứ. Cách tiếp cận đó khiến nhiều người choáng váng. Bù lại, sự quyết đoán và quyết tâm của họ là một điểm cộng rõ ràng.'],
-    ['love', 'Vì sao chúng tôi hay cãi nhau?',
-     'Lá này chỉ ra một điều khá rõ ràng: khi cãi vã, một trong hai người, hoặc cả hai, dùng lời nói làm vũ khí. Đó là những câu chì chiết, xúc phạm, những lời rất khó nghe khiến đối phương cảm thấy bị hạ nhục. Mỗi lần nóng giận, hai bạn không chỉ dừng ở việc mắng nhau mà còn lôi cả gia đình của nhau ra để mỉa mai, châm chọc. Đó chính là mặt tiêu cực của Kỵ Sĩ Kiếm. Một mối quan hệ như vậy đã trở nên độc hại. Nếu hai bạn sửa được thì rất tốt, còn nếu không thì cả hai sẽ chỉ thêm mệt mỏi.'],
-    ['career', 'Trong thời gian tới, tôi có tìm được công việc ưng ý không?',
-     'Lá này cho thấy vấn đề có thể nằm ở khâu phỏng vấn. Cách bạn trả lời, hoặc một vài câu bạn nói ra trong buổi phỏng vấn, có thể đã khiến nhà tuyển dụng không hài lòng. Bạn nên nhìn lại và tự đánh giá cách mình thể hiện trong các buổi phỏng vấn vừa qua, từ thái độ cho đến cách trả lời từng câu hỏi.'],
-    ['career', 'Tôi tìm mãi mà không ra việc, tôi phải làm sao?',
-     'Kỵ Sĩ Kiếm là kiểu người đã có mục tiêu thì lao thẳng về phía mục tiêu đó. Vì vậy, có thể bạn đang chỉ nhắm vào một lĩnh vực duy nhất và chỉ tìm việc trong lĩnh vực ấy. Tầm nhìn của Kỵ Sĩ Kiếm giống một đường thẳng kéo dài: nhìn rất xa, nhưng chỉ thấy một điểm đến duy nhất mà không thấy những gì ở hai bên. Trong giai đoạn khó tìm việc như hiện nay, bạn nên mở rộng phạm vi tìm kiếm thay vì bám vào một mục tiêu duy nhất.'],
-    ['career', 'Tôi đang làm công việc văn phòng bình thường, thời gian tới công việc của tôi có thay đổi gì không?',
-     'Có hai cách hiểu. Thứ nhất, bạn đang ở trong trạng thái của Kỵ Sĩ Kiếm và cần đi chậm lại. Việc bạn có ý tưởng và có mục tiêu là điều tốt, nhưng bạn nên bớt vội để quan sát những gì đang diễn ra xung quanh mình. Thứ hai, trong thời gian tới có thể xảy ra một cuộc tranh cãi gay gắt bằng lời ở nơi làm việc. Bạn có thể là người bị nói nặng lời, là người nói nặng lời với người khác, hoặc cả hai bên cùng lớn tiếng với nhau. Cụ thể là tình huống nào thì phụ thuộc vào trực giác của bạn lúc đọc bài và các lá đi kèm.'],
-    ['other', 'Tôi nên học lá bài như thế nào cho đúng?',
-     'Khóa học này chỉ trình bày phần năng lượng cốt lõi nhất của từng lá. Phần còn lại phụ thuộc vào bạn: bạn hãy kết hợp trí tưởng tượng, kiến thức và trải nghiệm sống của mình để tự xây dựng cách đọc bài riêng. Riêng với bộ Hoàng Gia, bạn nên bắt đầu bằng cách nắm vững bốn cấp bậc, học thuộc ý nghĩa của bốn nguyên tố, rồi kết hợp thêm hình ảnh trên từng lá. Bấy nhiêu là đủ để bạn đọc được bộ bài này.']
+    [
+      "other",
+      "Lá này miêu tả tính cách của một người như thế nào?",
+      "Kỵ Sĩ Kiếm nhanh trí, quyết liệt, thích tranh luận và thường đi thẳng vào vấn đề. Họ có thể rất hiệu quả khi cần phản ứng nhanh, nhưng dễ trở nên sắc lời, nóng nảy hoặc quá chắc rằng mình đúng. Bài học của lá này là dùng tốc độ của trí óc mà không biến nó thành vũ khí."
+    ],
+    [
+      "other",
+      "Kỵ Sĩ và Tiểu Đồng có điểm gì chung?",
+      "Cả hai đều chưa hoàn toàn làm chủ nguyên tố của mình. Tiểu Đồng còn đang học và đặt câu hỏi; Kỵ Sĩ đã có niềm tin và lao về phía trước, nên dễ đi quá đà hơn. Với bộ Kiếm, điều này thể hiện rõ qua suy nghĩ nhanh, lời nói mạnh và quyết định vội."
+    ],
+    [
+      "love",
+      "Anh ấy hoặc cô ấy nghĩ gì về tôi?",
+      "Người ấy có thể đang suy nghĩ rất nhiều về bạn và muốn có câu trả lời rõ ràng. Họ dễ tiếp cận mối quan hệ bằng lý trí, hỏi trực tiếp và muốn biết hai người đang ở đâu. Điều đó chưa cho biết họ yêu sâu đến mức nào; nó chỉ cho thấy tâm trí họ đang hoạt động rất mạnh quanh câu chuyện này."
+    ],
+    [
+      "love",
+      "Đây có phải là người dành cho tôi không?",
+      "Một lá bài không thể quyết định ai là “người dành cho bạn”. Kỵ Sĩ Kiếm hợp với người thích sự thẳng thắn, tốc độ và tranh luận trí tuệ, nhưng có thể mệt với người cần nhiều sự mềm mại. Hãy nhìn cách hai bạn xử lý bất đồng ngoài đời."
+    ],
+    [
+      "love",
+      "Vì sao chúng tôi hay cãi nhau?",
+      "Hai bạn có thể tranh luận để thắng hơn là để hiểu. Một người cắt lời, phản bác quá nhanh hoặc dùng sự thật như cách gây tổn thương. Hãy giảm tốc, tách sự kiện khỏi diễn giải và tránh nhắn tin dài khi đang tức giận."
+    ],
+    [
+      "career",
+      "Trong thời gian tới, tôi có tìm được công việc ưng ý không?",
+      "Lá này ủng hộ tiến triển nhanh, đặc biệt với công việc cần tư duy, giao tiếp, phân tích hoặc xử lý tình huống. Tuy nhiên, đừng nhận việc chỉ vì muốn thoát khỏi tình trạng hiện tại. Hãy hỏi kỹ về vai trò, khối lượng công việc và kỳ vọng trước khi quyết định."
+    ],
+    [
+      "career",
+      "Tôi tìm mãi mà không ra việc, tôi phải làm sao?",
+      "Đừng biến sự sốt ruột thành việc gửi hồ sơ thiếu chọn lọc. Hãy rà lại CV, luyện cách trả lời phỏng vấn và nhờ một người đáng tin xem giúp chiến lược tìm việc. Kỵ Sĩ Kiếm cần một mục tiêu rõ để tốc độ không bị tản ra."
+    ],
+    [
+      "career",
+      "Tôi đang làm công việc văn phòng bình thường, thời gian tới công việc của tôi có thay đổi gì không?",
+      "Bạn có thể bước vào giai đoạn nhiều quyết định, trao đổi gấp hoặc dự án cần phân tích nhanh. Có thể xuất hiện một người rất thẳng và quyết liệt trong công việc. Hãy giữ dữ kiện rõ ràng và đừng để nhịp căng biến thành xung đột không cần thiết."
+    ],
+    [
+      "other",
+      "Tôi nên học lá bài như thế nào cho đúng?",
+      "Đừng học Kỵ Sĩ Kiếm thành một nhãn “độc miệng”. Hãy nhớ cấu trúc: Kỵ Sĩ là hành động và chuyển động; Kiếm là tư duy, lời nói và quyết định. Ghép lại, bạn có tốc độ trí óc rất cao — tích cực khi cần dứt khoát, tiêu cực khi thiếu kiểm soát."
+    ]
   ],
   'cups-c1': [
-    ['other', 'Hình ảnh trên lá bài cho thấy điều gì?',
-     'Hình ảnh trên lá là một hiệp sĩ trẻ tay nâng chiếc ly, ngồi trên lưng một con ngựa trắng, khiến người xem liên tưởng đến hình tượng bạch mã hoàng tử. Nếu so với Kỵ Sĩ Kiếm và Kỵ Sĩ Gậy, hai chàng trai đang thúc ngựa phi nước đại, thì con ngựa của Kỵ Sĩ Ly lại bước đi rất thong thả. Chi tiết này gợi cảm giác anh ta vừa đi vừa thưởng thức cuộc sống, tận hưởng vẻ đẹp của đời và của tình yêu. So với hai Kỵ Sĩ kia, anh ta điềm tĩnh hơn, nhẹ nhàng hơn, yêu đời hơn, và mang đậm nét nghệ sĩ cùng chất thơ.'],
-    ['other', 'Từ khóa lớn nhất của lá này là gì?',
-     'Từ khóa lớn nhất của lá này là sự đa tình. Ly tượng trưng cho cảm xúc, tình cảm và đam mê. Kỵ Sĩ tượng trưng cho lứa tuổi mười bảy, mười tám đến đôi mươi: dồi dào sức khỏe và nhiệt huyết, nhưng còn thiếu kinh nghiệm sống. Người ta thường nói rằng nhiệt tình đi cùng thiếu hiểu biết dễ dẫn đến phá hoại, và câu đó rất đúng với lứa tuổi này. Kỵ Sĩ Ly chưa làm chủ được nguyên tố Ly, tức là chưa làm chủ được chuyện tình cảm, trong khi bên trong lại tràn đầy nhiệt huyết. Hệ quả là họ thường bị cảm xúc cuốn đi và điều khiển, thay vì chính họ làm chủ cảm xúc của mình.'],
-    ['other', 'Lá này miêu tả tính cách của một người như thế nào?',
-     'Tâm trạng của người này lên xuống rất thất thường. Khi họ vui, cả căn phòng vui theo. Khi họ bực bội, thái độ và hành động của họ kéo cả căn phòng chùng xuống. Trong tình yêu, họ vô cùng lãng mạn và ngọt ngào, nhưng chính sự lãng mạn thái quá đó lại đẩy họ vào tình trạng đa tình mà bản thân không hề nhận ra mình đang sai. Họ sống theo bản năng và cảm xúc. Họ hành động dựa trên việc mình cảm thấy dễ chịu hay không, chứ không dựa trên lẽ đúng sai. Nếu yêu hai người cùng lúc khiến họ thấy vui, họ sẽ làm như vậy mà không hề dừng lại để đánh giá hành động của mình bằng lý trí.'],
-    ['other', 'Vì sao đây là cấp độ tiêu cực nhất trong bốn cấp Hoàng Gia?',
-     'Nguyên nhân nằm ở sự mất cân đối giữa năng lượng và khả năng kiểm soát. Người này thừa năng lượng nhưng lại không biết cách điều khiển nguyên tố mà mình đại diện. Tiểu Đồng cũng chưa biết kiểm soát nguyên tố, nhưng Tiểu Đồng ngây thơ hơn và năng lượng cũng ít hơn một thanh niên. Một đứa trẻ khờ dại còn biết nghe lời khi được dạy bảo. Một thanh niên bồng bột thì được bảo cũng không nghe, bởi cái tôi của họ quá lớn, lớn một cách không cần thiết.'],
-    ['love', 'Anh ấy hoặc cô ấy nghĩ gì về tôi, và có thái độ như thế nào với mối quan hệ này?',
-     'Ở thời điểm hiện tại, rất có thể họ yêu bạn thật lòng. Vấn đề là họ mang tâm hồn của một nghệ sĩ. Lúc này họ có thể dành cho bạn mọi cử chỉ lãng mạn, từ những dòng tin nhắn nồng nàn đến những món quà tự tay làm. Nhưng vài tháng nữa, khi ngọn lửa dành cho bạn đã lụi, họ sẽ lặng lẽ rút lui và đem những cử chỉ ấy đi tặng cho một người khác. Kỵ Sĩ Ly là như vậy: họ yêu rất nhiều, nhưng yêu một cách không cần thiết.'],
-    ['love', 'Hồi còn trẻ, tôi thấy kiểu người này rất lãng mạn, điều đó có đúng không?',
-     'Cảm nhận đó hoàn toàn dễ hiểu. Khi còn trẻ, bạn dễ bị chinh phục bởi một người biết viết những lời có cánh và biết tạo ra những bất ngờ ngọt ngào. Nhưng càng trưởng thành, bạn sẽ càng nhận ra rằng thứ mình cần nhất trong một mối quan hệ là sự ổn định và cân bằng, chứ không phải một người sống quá thiên về cảm xúc. Điều này cũng đúng với tình bạn và tình thân trong gia đình. Đó là lý do vì sao dù các cung Đất thường bị xem là tẻ nhạt, mỗi người vẫn nên có một người bạn hoặc một người yêu mang năng lượng Đất. Họ có thể không thú vị, nhưng bên cạnh họ bạn luôn cảm thấy an toàn và yên tâm.'],
-    ['love', 'Hai chúng tôi hay cãi nhau, chúng tôi cần làm gì?',
-     'Lá này cho thấy một trong hai bạn, hoặc cả hai, đang để cảm xúc dẫn dắt mình. Ai cũng có cảm xúc, nhưng ở đây, mỗi khi cảm xúc trỗi dậy thì lý trí và logic đều bị gạt sang một bên. Cách khắc phục là hai bạn tạm gác cảm xúc lại, bỏ đi cái tôi và lòng tự ái không cần thiết, rồi ngồi xuống nói chuyện với nhau một cách chân thành. Nhiều khi một cuộc trò chuyện thẳng thắn như vậy có thể giải quyết vấn đề rất nhanh, thay vì để cơn giận bùng lên rồi dẫn đến mắng chửi, thậm chí là xô xát.'],
-    ['love', 'Nếu cả hai chúng tôi đều mang năng lượng này thì sao?',
-     'Khi cả hai cùng mang năng lượng Kỵ Sĩ Ly, mối quan hệ sẽ có hai thái cực. Lúc vui, hai bạn vui hết mình, thậm chí chuyện chăn gối cũng rất hòa hợp, vì cả hai đều có chút điên rồ giống nhau. Nhưng lúc không vui, mối quan hệ này lại trở nên khá độc hại.'],
-    ['other', 'Tôi có nên để cảm xúc bộc lộ hết ra ngoài không?',
-     'Đôi khi bạn cần thuận theo cảm xúc: buồn thì khóc, vui thì cười. Tuy nhiên, nếu bạn thiếu sự cân bằng, không biết kiểm soát cảm xúc và để nó bộc lộ một cách thái quá, cuộc sống của bạn sẽ trở nên vô cùng mệt mỏi, nhất là trong những môi trường đòi hỏi sự chuyên nghiệp như trường học hay công sở. Cấp trên của bạn sẽ không quan tâm việc bạn đang buồn. Bạn vẫn phải làm việc và vẫn phải nộp đúng hạn. Bạn cũng không thể xin giảng viên cho nộp bài muộn một tuần chỉ vì vừa chia tay người yêu. Bạn hãy tự hỏi liệu có ai chấp nhận lý do đó hay không.'],
-    ['career', 'Thời gian tới tôi có tìm được công việc mới ưng ý không?',
-     'Khả năng này hơi thấp, và có hai hướng diễn giải. Hướng thứ nhất là bạn tìm được một công việc mà mình khá yêu thích, nhưng riêng lá này chưa nói được gì về thu nhập hay cơ hội thăng tiến. Hướng thứ hai là bạn vẫn chưa tìm được việc, và nguyên nhân nằm ở thái độ và cách tìm việc của bạn. Bạn đặt cảm xúc lên trên hết, nên ngay cả trong buổi phỏng vấn, nơi đòi hỏi sự chuyên nghiệp, bạn vẫn nói chuyện theo cảm tính. Chỉ cần thấy không thích hoặc không hợp với một công ty, bạn bỏ luôn buổi phỏng vấn, mặc dù đã ra trường được nửa năm và tiền tiết kiệm sắp cạn.']
+    [
+      "other",
+      "Hình ảnh trên lá bài cho thấy điều gì?",
+      "Kỵ Sĩ Cốc cưỡi ngựa và đưa chiếc cốc ra phía trước, như mang theo một lời mời, cảm xúc hoặc đề nghị. So với những Kỵ Sĩ khác, chuyển động của lá này mềm và chậm hơn. Nó nhấn vào cách một cảm xúc được mang đến cho người khác."
+    ],
+    [
+      "other",
+      "Từ khóa lớn nhất của lá này là gì?",
+      "Từ khóa nổi bật nhất là lãng mạn. Ngoài ra còn có lời mời, quyến rũ, tưởng tượng, theo đuổi cảm xúc và lý tưởng hóa. Mặt trái là yêu cảm giác yêu hơn là thực sự hiểu người trước mặt."
+    ],
+    [
+      "other",
+      "Lá này miêu tả tính cách của một người như thế nào?",
+      "Người này thường duyên dáng, biết bày tỏ cảm xúc và có xu hướng sống theo cảm hứng. Họ có thể rất lãng mạn và tinh tế, nhưng nếu chưa trưởng thành thì dễ hứa theo cảm xúc rồi đổi ý khi cảm xúc thay đổi."
+    ],
+    [
+      "other",
+      "Vì sao đây là cấp độ tiêu cực nhất trong bốn cấp Hoàng Gia?",
+      "Không nên coi Kỵ Sĩ Cốc là “cấp tiêu cực nhất”. Mỗi Hofkarte có mặt sáng và mặt bóng. Với Kỵ Sĩ Cốc, rủi ro nằm ở việc bị cảm xúc và lý tưởng dẫn đi quá xa; điểm mạnh là khả năng chủ động mang tình cảm, nghệ thuật và sự dịu dàng đến cho người khác."
+    ],
+    [
+      "love",
+      "Anh ấy hoặc cô ấy nghĩ gì về tôi, và có thái độ như thế nào với mối quan hệ này?",
+      "Người ấy có thể đang nhìn bạn qua một lăng kính khá lãng mạn và muốn tiến gần hơn. Họ dễ thể hiện bằng lời ngọt ngào, lời mời hoặc cử chỉ tình cảm. Hãy tận hưởng sự đẹp đẽ đó, nhưng để thời gian cho biết cảm xúc có đi kèm sự ổn định hay không."
+    ],
+    [
+      "love",
+      "Hồi còn trẻ, tôi thấy kiểu người này rất lãng mạn, điều đó có đúng không?",
+      "Đúng, đây là một trong những hình ảnh lãng mạn nhất của bộ Hoàng Gia. Nhưng sự lãng mạn không tự động đồng nghĩa với một mối quan hệ lành mạnh hay bền vững. Hãy nhìn thêm vào sự nhất quán, tôn trọng ranh giới và khả năng giữ lời."
+    ],
+    [
+      "love",
+      "Hai chúng tôi hay cãi nhau, chúng tôi cần làm gì?",
+      "Một hoặc cả hai có thể đang phản ứng theo cảm xúc rồi mong người kia tự hiểu. Hãy nói rõ nhu cầu thay vì thử lòng, im lặng để được dỗ hay dùng những cử chỉ lớn để che một vấn đề chưa giải quyết. Sự chân thành đơn giản sẽ hiệu quả hơn kịch tính."
+    ],
+    [
+      "love",
+      "Nếu cả hai chúng tôi đều mang năng lượng này thì sao?",
+      "Hai bạn có thể tạo ra rất nhiều cảm xúc đẹp, nhưng cũng dễ cùng nhau lý tưởng hóa và né phần thực tế. Hãy giữ sự lãng mạn, đồng thời bàn rõ về thời gian, tiền bạc, ranh giới và cam kết. Cảm xúc càng đẹp càng cần một chiếc khung đủ chắc."
+    ],
+    [
+      "other",
+      "Tôi có nên để cảm xúc bộc lộ hết ra ngoài không?",
+      "Bộc lộ cảm xúc không có nghĩa là phải nói hoặc làm mọi thứ ngay lúc cảm xúc vừa xuất hiện. Hãy cho mình quyền cảm nhận, rồi chọn cách thể hiện không làm tổn thương mình hay người khác. Trưởng thành cảm xúc là thành thật mà vẫn có tự điều chỉnh."
+    ],
+    [
+      "career",
+      "Thời gian tới tôi có tìm được công việc mới ưng ý không?",
+      "Kỵ Sĩ Cốc có thể gợi một lời mời hoặc công việc khiến bạn thấy hứng thú, đặc biệt trong lĩnh vực sáng tạo, nghệ thuật, chăm sóc hay giao tiếp. Hãy kiểm tra thêm lương, điều kiện và đường phát triển, vì lá này nói nhiều về cảm giác phù hợp hơn là sự ổn định vật chất."
+    ]
   ],
   'pentacles-c1': [
-    ['other', 'Lá này miêu tả tính cách của một người như thế nào?',
-     'Người này làm việc gì cũng làm đến cùng, dù đó là nhiệm vụ cấp trên giao, là việc người khác nhờ, hay là mục tiêu do chính họ đặt ra. Trong tình cảm, họ có ưu điểm lớn là chung thủy và đáng tin cậy, dù có phần tẻ nhạt. Họ hoàn toàn trái ngược với Kỵ Sĩ Ly, người rất vui vẻ và lãng mạn nhưng lại không chung thủy.'],
-    ['other', 'Mặt tiêu cực của lá này là gì?',
-     'Mặt tiêu cực của người mang năng lượng này là họ không bao giờ chất vấn niềm tin của mình. Một khi đã tin điều gì, họ không tự hỏi xem việc mình đang làm là đúng hay sai. Họ được dạy thế nào thì hiểu thế ấy. Nói một cách gay gắt hơn, Kỵ Sĩ Xu là một người thiển cận và nông cạn.'],
-    ['love', 'Anh ấy hoặc cô ấy muốn gì ở tôi và ở mối quan hệ này?',
-     'Kỵ Sĩ Xu hướng tới hôn nhân, và trong tình cảm họ là người khá chung thủy. Đổi lại, họ cứng đầu, nông cạn và tẻ nhạt. Bạn có thích một người như vậy hay không là lựa chọn của riêng bạn. Theo nguyên tắc chung khi đọc bài, người xem bài chỉ nên phân tích tính cách của đối phương, chứ không nên khuyên bạn có nên yêu người đó hay không. Một lời khuyên như vậy luôn bị chi phối bởi góc nhìn chủ quan của người xem bài: người thích mẫu người này sẽ khuyến khích bạn, còn người không thích sẽ chê bai và can ngăn.'],
-    ['love', 'Vì sao chúng tôi hay cãi nhau?',
-     'Vấn đề nằm ở chỗ một trong hai bạn, hoặc cả hai, không chịu lắng nghe, không chịu mở lòng và luôn cho rằng mình đúng. Có những người nhất quyết không chịu nhìn cuộc sống hay tình huống từ góc độ của người khác. Họ quên rằng mỗi người sinh ra trong một hoàn cảnh khác nhau, được giáo dục theo cách khác nhau, và có bản tính khác nhau ngay từ đầu. Chính những yếu tố đó tạo nên những quan điểm sống khác nhau.'],
-    ['other', 'Có ví dụ nào về sự thiển cận của lá này không?',
-     'Bạn có thể hình dung một người lần đầu chuyển đến sống ở một vùng khác, gặp phong tục và cách sinh hoạt khác hẳn quê mình, và lập tức kết luận rằng người ở đó thật kỳ quặc. Người này không hiểu rằng mỗi nơi có một nền văn hóa riêng nên cách cư xử cũng khác nhau. Trong đầu họ chỉ có một công thức: khác mình nghĩa là xấu. Trong tình yêu, hai bạn cũng có thể đang mắc lỗi tương tự, khi cho rằng đối phương cư xử khác mình tức là sai và bắt họ phải thay đổi. Đó là sự thiếu cởi mở, thiếu tư duy rộng để chấp nhận và nhìn nhận tình huống từ góc độ của người kia, mặc dù hai bạn vẫn rất trung thành với nhau.'],
-    ['career', 'Tôi đã thất nghiệp mấy tháng, tôi có tìm được công việc như ý không?',
-     'Lá này nghiêng về khả năng bạn sẽ tìm được việc. Còn công việc đó có thật sự "như ý" và khiến bạn hài lòng hay không thì chưa thể khẳng định. Điều duy nhất có thể nói chắc là mặt tiền bạc của công việc này ở mức tạm ổn. Bất cứ khi nào lá Xu xuất hiện, bạn có thể hiểu ngay rằng khía cạnh tài chính không đến nỗi nào.'],
-    ['money', 'Kỵ Sĩ Xu có kém về tiền bạc không?',
-     'Kỵ Sĩ Xu hoàn toàn không kém về tiền bạc. Khi đã đặt ra một mục tiêu tài chính hay vật chất, họ sẽ theo đuổi đến cùng cho tới khi đạt được. Vì vậy, trong công việc mới này, các khía cạnh lương thưởng, vật chất và cơ hội thăng tiến đều ở mức khá. Tuy nhiên, môi trường làm việc ra sao, bạn có gắn bó lâu dài được không và bạn có thích công việc đó không lại là chuyện khác, và bạn cần rút thêm lá để biết. Có những công việc lương rất cao và cơ hội thăng tiến rộng mở, nhưng người làm vẫn không thích, chỉ vì họ cảm thấy không được là chính mình khi làm việc đó.'],
-    ['career', 'Tôi đang làm công việc văn phòng bình thường, thời gian tới công việc của tôi có thay đổi gì không?',
-     'Trong thời gian tới, có thể bạn sẽ tìm ra hoặc xác định được một mục tiêu cụ thể trong công việc, và bạn sẽ chăm chỉ theo đuổi mục tiêu đó. Nếu bạn đã có mục tiêu và đang nỗ lực rồi, thì lá này chỉ nói rằng bạn sẽ tiếp tục nỗ lực như vậy. Kỵ Sĩ Xu là một người rất chăm chỉ và không bao giờ lười biếng. Điểm hạn chế của họ chỉ nằm ở khả năng tư duy, vốn không được sắc bén cho lắm.'],
-    ['other', 'Kỵ Sĩ Xu khác Kỵ Sĩ Gậy ở chỗ nào trong công việc?',
-     'Sự khác biệt nằm ở cách hai người phản ứng khi nhận lệnh. Khi cấp trên giao việc, Kỵ Sĩ Xu gần như không hỏi tại sao mà bắt tay vào làm ngay, bởi họ coi đó là trách nhiệm của mình. Kỵ Sĩ Gậy thì suy nghĩ nhiều hơn và có thể sẽ chất vấn lại. Đặc điểm này của Kỵ Sĩ Xu vừa có mặt tích cực vừa có mặt tiêu cực. Bạn cần dựa vào các lá đi kèm, vào tình huống và câu hỏi cụ thể, cũng như vào trực giác của mình lúc đọc bài để quyết định nên hiểu theo hướng nào.']
+    [
+      "other",
+      "Lá này miêu tả tính cách của một người như thế nào?",
+      "Kỵ Sĩ Xu là người bền bỉ, thực tế và có tinh thần trách nhiệm. Họ không cần đi nhanh; họ thích biết rõ mục tiêu rồi làm đều từng bước. Mặt trái là quá cứng nhắc, chỉ làm theo thói quen hoặc tiếp tục một con đường dù đã cần điều chỉnh."
+    ],
+    [
+      "other",
+      "Mặt tiêu cực của lá này là gì?",
+      "Sự kiên trì có thể biến thành cố chấp, còn tính thực tế có thể biến thành tầm nhìn quá hẹp. Kỵ Sĩ Xu dễ tập trung vào việc trước mắt đến mức quên hỏi liệu mục tiêu ban đầu còn phù hợp hay không. Đôi khi cần dừng lại để kiểm tra hướng đi, không chỉ kiểm tra tiến độ."
+    ],
+    [
+      "love",
+      "Anh ấy hoặc cô ấy muốn gì ở tôi và ở mối quan hệ này?",
+      "Người ấy có thể muốn một mối quan hệ ổn định, rõ ràng và có thể xây dần theo thời gian. Họ thường chứng minh sự quan tâm bằng việc có mặt, giữ lời và làm những điều thiết thực. Nhịp có thể chậm, nhưng chậm không đồng nghĩa với thiếu tình cảm."
+    ],
+    [
+      "love",
+      "Vì sao chúng tôi hay cãi nhau?",
+      "Một người có thể cần sự ổn định và kế hoạch, trong khi người kia muốn linh hoạt hoặc nhiều cảm xúc hơn. Kỵ Sĩ Xu cũng có thể bám vào “cách vẫn làm” và khó đổi khi đối phương góp ý. Hãy phân biệt điều nào là giá trị cốt lõi và điều nào chỉ là thói quen có thể thương lượng."
+    ],
+    [
+      "other",
+      "Có ví dụ nào về sự thiển cận của lá này không?",
+      "Ví dụ, bạn rất chăm chỉ tiết kiệm cho một mục tiêu nhưng không nhận ra mục tiêu ấy đã không còn phù hợp với cuộc sống hiện tại. Hoặc bạn hoàn thành mọi nhiệm vụ đúng quy trình nhưng không hỏi liệu có cách tốt hơn. Vấn đề không phải thiếu nỗ lực, mà là thiếu bước lùi để nhìn toàn cảnh."
+    ],
+    [
+      "career",
+      "Tôi đã thất nghiệp mấy tháng, tôi có tìm được công việc như ý không?",
+      "Kỵ Sĩ Xu ủng hộ một con đường ổn định hơn là một bước ngoặt tức thời. Hãy kiên trì nộp hồ sơ, nâng kỹ năng và theo dõi từng cơ hội. Công việc phù hợp có thể đến qua quá trình đều đặn; lá bài không hứa thời điểm hay mức lương cụ thể."
+    ],
+    [
+      "money",
+      "Kỵ Sĩ Xu có kém về tiền bạc không?",
+      "Không. Đây là một trong những năng lượng thực tế và có kỷ luật nhất khi nói về tiền. Điểm mạnh là tích lũy đều, lập kế hoạch và theo đuổi mục tiêu; điểm yếu là có thể quá thận trọng hoặc chỉ nhìn vào an toàn mà bỏ qua cơ hội hợp lý."
+    ],
+    [
+      "career",
+      "Tôi đang làm công việc văn phòng bình thường, thời gian tới công việc của tôi có thay đổi gì không?",
+      "Bạn có thể bước vào giai đoạn cần làm đều, theo quy trình và hoàn thành một mục tiêu dài hơi. Sự thay đổi có thể không ồn ào mà đến từ trách nhiệm tăng dần, kỹ năng chắc hơn hoặc một mục tiêu rõ hơn. Đừng đánh giá thấp tiến bộ nhỏ nhưng bền."
+    ],
+    [
+      "other",
+      "Kỵ Sĩ Xu khác Kỵ Sĩ Gậy ở chỗ nào trong công việc?",
+      "Kỵ Sĩ Gậy ưu tiên tốc độ, thử nghiệm và hứng thú; Kỵ Sĩ Xu ưu tiên độ chắc, quy trình và hoàn thành. Một người khởi động nhanh, người kia giữ nhịp tốt. Trong thực tế, công việc khỏe nhất thường cần cả hai: đủ lửa để bắt đầu và đủ bền để đi đến cuối."
+    ]
   ]
 });
 
@@ -1175,90 +1367,207 @@ Object.assign(ASK.vi, {
 
 Object.assign(ASK.vi, {
   'wands-c2': [
-    ['other', 'Hình ảnh trên lá bài cho thấy điều gì?',
-     'Trên lá bài là một Nữ Hoàng ngồi trên ngai, một tay cầm cây gậy và tay kia cầm một bông hoa hướng dương. Cách đơn giản nhất để nắm được bộ Hoàng Gia là học theo hai bước. Trước tiên, bạn cần thuộc ý nghĩa năng lượng của bốn nguyên tố Gậy, Kiếm, Xu và Ly. Sau đó, bạn học ý nghĩa của bốn cấp bậc Tiểu Đồng, Kỵ Sĩ, Nữ Hoàng và Vua. Khi ghép hai phần này lại, bạn sẽ hiểu được từng lá.'],
-    ['other', 'Nữ Hoàng khác Vua ở chỗ nào?',
-     'Nữ Hoàng và Vua đều là những cấp bậc đã làm chủ được nguyên tố mà mình đại diện. Giữa hai lá này không có chuyện ai cao hơn ai. Hai lá đứng ngang hàng, và sự khác biệt chỉ nằm ở tính chất: Nữ Hoàng nữ tính và hướng nội hơn, còn Vua nam tính, mạnh mẽ và chủ động hơn. Bạn có thể hình dung Nữ Hoàng như lá Nữ Tư Tế hoặc lá Hoàng Hậu được cộng thêm năng lượng của một nguyên tố, và Vua như lá Hoàng Đế được cộng thêm nguyên tố đó.'],
-    ['other', 'Vì sao Nữ Hoàng Gậy cân bằng hơn Vua Gậy?',
-     'Gậy là nguyên tố mang tính nam, trong khi Nữ Hoàng mang tính nữ. Nhờ sự kết hợp này, Nữ Hoàng Gậy cân bằng được hai luồng năng lượng nam và nữ trong mình tốt hơn Vua Gậy. Vua Gậy là tính nam cộng với tính nam, nên đôi khi trở nên quá nóng nảy và có phần áp đảo người khác. Cả hai lá đều có tài lãnh đạo, nhưng cách lãnh đạo khác nhau. Vua Gậy dẫn đầu và kéo mọi người đi theo. Nữ Hoàng Gậy cũng dẫn dắt như vậy, nhưng nàng biết khi nào cần mềm mỏng và khi nào nên để người khác đi trước. Nàng luôn biết cách dịu dàng, biết lúc nào cần cứng rắn và lúc nào cần nhu.'],
-    ['other', 'Lá này miêu tả tính cách của một người như thế nào?',
-     'Dù là nam hay nữ, người này toát ra một phong thái tự tin. Họ biết rõ mình là ai, mình giỏi ở đâu và yếu ở đâu. Tài năng của họ có thể chỉ ở mức bình thường, nhưng chính sự tự tin đó khiến mọi người ngưỡng mộ, tôn trọng, đi theo và tôn họ lên làm người dẫn đầu, bởi họ luôn biết mình đang làm gì. Người lãnh đạo không nhất thiết phải là người giỏi nhất, nhưng phải là người biết mình đang đi về đâu, nên mới có người theo sau. Ngược lại, nhiều người rất tài giỏi nhưng không biết mình nên đi hướng nào, nên phải làm cấp dưới. Người mang năng lượng này biết cần đi đâu, khi nào nên tiến, khi nào nên dừng, khi nào rẽ trái hay rẽ phải, khi nào lùi lại.'],
-    ['other', 'Phong thái của Nữ Hoàng Gậy là như thế nào?',
-     'Chỉ cần nhìn tư thế ngồi, bạn đã thấy sự tự tin. Nàng không đứng dậy đi tới đi lui trong lo lắng, mà ngồi yên một chỗ, lưng thẳng, quan sát mọi thứ xung quanh. Nàng biết mình là Nữ Hoàng và mọi người sẽ nghe theo mình, nhưng nàng không cần ép buộc ai. Trước hết, đây là một người có nhiệt huyết và đam mê. Họ biết lúc nào cần hành động và lúc nào không, đồng thời vẫn giữ được sự hướng nội và nữ tính của mình.'],
-    ['love', 'Anh ấy hoặc cô ấy có tình cảm với tôi không?',
-     'Câu trả lời là có. Hơn nữa, đây là một tình cảm chân thành và không vụ lợi. Người này cũng rất thẳng thắn với cảm xúc của mình: khi yêu bạn, họ nói là yêu, và họ nói sao thì nghĩ vậy, không vòng vo. Theo cách hiểu chung, nếu lá này xuất hiện cho câu hỏi về tình cảm đối phương dành cho bạn, thì bạn là người may mắn khi gặp được họ.'],
-    ['love', 'Hai chúng tôi hay cãi nhau, chúng tôi cần làm gì để cải thiện?',
-     'Ở vị trí này, lá bài đóng vai trò một lời khuyên, và có hai cách hiểu. Cách thứ nhất: hai bạn đang thiếu năng lượng của Nữ Hoàng. Cả hai đều nóng tính và quá gay gắt với nhau, nên cần đến phần nữ tính của Nữ Hoàng để làm dịu bớt sức nóng của Gậy. Nếu không, mỗi lần nóng lên là hai bạn lại lao vào mắng chửi, ném đồ hay xô xát. Cách thứ hai: Nữ Hoàng Gậy là lá của sự tự tin, nên có thể hai bạn đang có những điều không hài lòng về nhau nhưng không dám nói ra. Điều hai bạn cần là sự thẳng thắn. Thẳng thắn ở đây không có nghĩa là chỉ trích, mà là giao tiếp trực tiếp và nói chuyện rõ ràng với nhau.'],
-    ['career', 'Trong thời gian tới, tôi có tìm được công việc như ý không?',
-     'Trong thời gian vừa qua, bạn đã chủ động gửi hồ sơ đi nhiều nơi. Bây giờ là lúc bạn nên ngồi lại và chờ đợi, giống như tư thế ngồi của Nữ Hoàng, chờ các nơi gọi bạn đến phỏng vấn. Có thể sẽ có nơi báo rằng sang năm họ mới bắt đầu tuyển. Bạn hãy bình tĩnh chờ và quan sát. Điều này không có nghĩa là bạn dừng hành động, bạn vẫn có thể tiếp tục gửi hồ sơ. Nhưng phần hành động trong thời gian qua đã đủ rồi.'],
-    ['career', 'Tôi thất nghiệp đã lâu mà chưa có ai gọi, tôi phải làm sao?',
-     'Dù đang cảm thấy khó khăn, bạn cũng không nên hoảng hốt hay sốt ruột khi chưa nhận được thông báo hay cuộc gọi phỏng vấn nào. Hãy bình tĩnh. Quan trọng hơn, bạn phải tự tin, vì đây là lá Nữ Hoàng. Bạn biết rằng mình có năng lực, hồ sơ của mình tốt và khả năng phỏng vấn của mình ổn. Bạn hãy tin vào những điều đó. Việc bạn thất nghiệp chỉ là một giai đoạn kém may mắn, chứ không ai muốn rơi vào hoàn cảnh này cả.'],
-    ['career', 'Tôi đang làm công việc văn phòng bình thường, thời gian tới công việc có gì thay đổi không?',
-     'Trong thời gian tới, bạn có khả năng được giao vai trò lãnh đạo hoặc được đề bạt vào một vị trí có chút quyền hạn. Vị trí đó không nhất thiết là cấp quản lý hay trưởng phòng. Nó có thể chỉ là trưởng nhóm của một dự án, và khi dự án kết thúc, bạn lại trở về làm nhân viên bình thường. Một khả năng khác là cấp trên giao cho bạn việc hướng dẫn người mới. Chẳng hạn, công ty nhận thêm vài nhân viên trẻ hơn bạn vài tuổi, và bạn được chỉ định làm người kèm cặp, chỉ bảo cho họ.']
+    [
+      "other",
+      "Hình ảnh trên lá bài cho thấy điều gì?",
+      "Nữ Hoàng Gậy ngồi thẳng trên ngai, tay cầm gậy và hoa hướng dương. Hình ảnh kết hợp lửa của Gậy với sự điềm tĩnh của một Nữ Hoàng: tự tin, ấm áp, sáng tạo và có khả năng dẫn dắt mà không cần lúc nào cũng áp đảo."
+    ],
+    [
+      "other",
+      "Nữ Hoàng khác Vua ở chỗ nào?",
+      "Cả Nữ Hoàng và Vua đều tượng trưng cho mức độ trưởng thành với nguyên tố của mình. Nữ Hoàng thường thể hiện năng lượng theo hướng tiếp nhận, nuôi dưỡng và ảnh hưởng từ bên trong; Vua thiên về hành động, quyết định và tạo cấu trúc bên ngoài. Đây là hai kiểu biểu hiện, không phải thứ bậc hơn kém."
+    ],
+    [
+      "other",
+      "Vì sao Nữ Hoàng Gậy cân bằng hơn Vua Gậy?",
+      "Trong nhiều cách đọc truyền thống, Nữ Hoàng Gậy pha sự nhiệt thành của Lửa với khả năng giữ nhịp và quan sát. Vì vậy nàng có thể vừa chủ động vừa biết lùi lại đúng lúc. Tuy nhiên, “cân bằng hơn” chỉ là một cách học biểu tượng, không phải quy luật cứng cho mọi trải bài."
+    ],
+    [
+      "other",
+      "Lá này miêu tả tính cách của một người như thế nào?",
+      "Người này thường tự tin, nhiệt tình, có sức hút và biết tạo động lực cho người khác. Họ không nhất thiết giỏi nhất phòng, nhưng thường dám đứng lên, thử trước và khiến mọi người tin rằng việc đó có thể làm được. Mặt trái là dễ tự ái hoặc muốn kiểm soát hình ảnh của mình."
+    ],
+    [
+      "other",
+      "Phong thái của Nữ Hoàng Gậy là như thế nào?",
+      "Phong thái của lá này là ấm áp nhưng vững vàng. Người mang năng lượng này thường không cần nói quá nhiều để chứng minh mình có mặt; họ tạo cảm giác tự tin qua cách đứng, nói và quyết định. Sự cuốn hút đến từ việc họ thoải mái với chính mình."
+    ],
+    [
+      "love",
+      "Anh ấy hoặc cô ấy có tình cảm với tôi không?",
+      "Nữ Hoàng Gậy là tín hiệu tích cực cho sự thu hút, thiện cảm và hứng thú. Người ấy có thể thấy bạn nổi bật hoặc rất muốn ở gần bạn. Tuy nhiên, một lá bài không thể xác nhận chắc chắn tình cảm của người khác; hãy để hành động và sự rõ ràng ngoài đời bổ sung cho trải bài."
+    ],
+    [
+      "love",
+      "Hai chúng tôi hay cãi nhau, chúng tôi cần làm gì để cải thiện?",
+      "Lá này khuyên hai bạn vừa thẳng thắn vừa giữ sự tôn trọng. Đừng biến tự tin thành hơn thua, nhưng cũng đừng im lặng chỉ để tránh xung đột. Nói rõ nhu cầu, giữ ranh giới và nhớ rằng một mối quan hệ tốt không cần ai phải thu nhỏ mình."
+    ],
+    [
+      "career",
+      "Trong thời gian tới, tôi có tìm được công việc như ý không?",
+      "Nữ Hoàng Gậy ủng hộ việc thể hiện bản thân tốt trong hồ sơ, phỏng vấn và networking. Bạn có thể thu hút một cơ hội phù hợp nếu chủ động và cho người khác thấy mình làm được gì. Hãy tiếp tục ứng tuyển thay vì chỉ chờ, nhưng tránh gửi hồ sơ tràn lan thiếu chọn lọc."
+    ],
+    [
+      "career",
+      "Tôi thất nghiệp đã lâu mà chưa có ai gọi, tôi phải làm sao?",
+      "Đừng để thời gian thất nghiệp biến thành câu chuyện rằng bạn “không đủ tốt”. Hãy kiểm tra lại CV, hồ sơ, cách tìm việc và nhờ người khác góp ý. Nữ Hoàng Gậy nhắc bạn giữ sự tự tin dựa trên năng lực thật, rồi thể hiện nó rõ hơn."
+    ],
+    [
+      "career",
+      "Tôi đang làm công việc văn phòng bình thường, thời gian tới công việc có gì thay đổi không?",
+      "Bạn có thể được giao vai trò cần chủ động hơn: dẫn một nhóm nhỏ, hướng dẫn người mới, trình bày ý tưởng hoặc đại diện cho nhóm. Không nhất thiết là thăng chức chính thức. Điểm chính là người khác bắt đầu trông vào khả năng dẫn dắt và tạo động lực của bạn."
+    ]
   ],
   'swords-c2': [
-    ['other', 'Hình ảnh trên lá bài cho thấy điều gì?',
-     'Lá bài vẽ một Nữ Hoàng tay cầm kiếm, ngồi trên chiếc ghế đá đặt trên đỉnh núi, với dáng vẻ rất cứng rắn. Kiếm là năng lượng của tư duy, trí tuệ, khả năng phân tích, logic và giao tiếp. Trong bộ Hoàng Gia, Nữ Hoàng và Vua là hai cấp bậc đã kiểm soát được và giỏi trong những lĩnh vực thuộc nguyên tố của mình. Điểm khác là Nữ Hoàng nữ tính và hướng nội hơn, mang năng lượng chăm sóc và duy trì nhiều hơn là năng lượng hành động.'],
-    ['other', 'Lá này miêu tả tính cách của một người như thế nào?',
-     'Bất kể giới tính, người này có đầu óc, có tài ăn nói và có tư duy tốt. Thậm chí có thể nói rằng họ thông minh, có trí tuệ, chỉ số IQ cao, lời nói sắc sảo và suy nghĩ nhạy bén. Ở khía cạnh này, họ gần như không có gì để chê.'],
-    ['other', 'Người này có độc mồm không?',
-     'Người này không độc miệng. Người hay làm mất lòng người khác là Kỵ Sĩ Kiếm hoặc Vua Kiếm. Lý do là Kiếm vốn là nguyên tố mang tính nam, và Vua cũng mang tính nam, nên khi hai phần nam tính cộng lại, lời nói và suy nghĩ đôi khi thiếu đi sự tinh tế. Nữ Hoàng lại mang tính nữ, nên cân bằng được phần nam tính của Kiếm. Vì vậy, Nữ Hoàng Kiếm ăn nói sắc bén nhưng biết khi nào nên nói và khi nào nên im lặng lắng nghe. Chỉ khi đi kèm những lá xấu thì cách hiểu mới thay đổi. Đây là một người thông minh, giỏi ăn nói nhưng vẫn khiêm tốn. Họ biết rõ mình giỏi, nhưng không thích thể hiện hay ra vẻ hiểu biết. Họ cũng ý thức được rằng lời nói của mình có thể làm tổn thương người khác, nên không nghĩ gì nói nấy.'],
-    ['love', 'Tình cảm người này dành cho tôi thế nào?',
-     'Người này có tình cảm với bạn, nhưng tình cảm đó không mang màu sắc lãng mạn, và cũng không phải là lợi dụng bạn. Có thể họ quá thực tế trong chuyện tình cảm. Họ thích bạn, và bên cạnh việc thích bạn, họ còn liệt kê thêm một loạt lý do khác. Chẳng hạn, hai gia đình có hoàn cảnh tương đồng, môn đăng hộ đối, nên kết hôn sẽ êm ấm và hạnh phúc hơn. Hoặc hai người có trình độ học vấn ngang nhau, nên sẽ hợp nhau hơn trong suy nghĩ và trong chuyện trò.'],
-    ['love', 'Người này có thật lòng không?',
-     'Người mang năng lượng Nữ Hoàng Kiếm có thể đang tìm một người bạn đời có trí tuệ, nhưng họ hoàn toàn không có ý định lợi dụng bạn. Họ chỉ đang cân nhắc những yếu tố thực tế của mối quan hệ. Trong khi đó, người mang năng lượng Ly chỉ cần thấy tim mình đập rộn ràng khi đứng trước ai đó là đã muốn tiến tới hôn nhân. Nữ Hoàng Kiếm đơn giản là thiên về lý trí, chứ không phải là người xấu hay có ý lợi dụng. Người này thật lòng, nhưng cách thật lòng của họ có thể khác với cách bạn hình dung.'],
-    ['love', 'Đây có phải là người dành cho tôi không?',
-     'Nếu bạn là kiểu người tìm kiếm một kết nối sâu sắc, chỉ cần nhìn thấy nhau là yêu mà không cần biết hoàn cảnh gia đình, hai trái tim cùng chung một nhịp đập, thì người này không dành cho bạn.'],
-    ['love', 'Vì sao chúng tôi hay cãi nhau?',
-     'Hai bạn có cãi nhau, nhưng vấn đề thật sự dường như chưa được nói ra. Có thể hai bạn đang cãi nhau vì những chuyện rất vụn vặt, theo kiểu giận cá chém thớt. Bạn không thích một điểm nào đó ở đối phương, nhưng vì lý do nào đó bạn không dám nói thẳng. Trong lòng vẫn còn bực bội, nên bạn bắt lỗi hết chuyện này đến chuyện khác, còn người kia thì không hiểu vì sao mình liên tục bị bắt lỗi. Trong khi đó, vấn đề cốt lõi vẫn chưa được giải quyết. Ở vị trí này, Nữ Hoàng Kiếm khuyên hai bạn hãy thành thật với nhau hơn và nói ra điều thật sự nằm trong lòng mình.'],
-    ['love', 'Có ví dụ nào cho kiểu cãi nhau đó không?',
-     'Bạn có thể hình dung tình huống người yêu bạn thường xuyên đi cà phê với một nhóm bạn cũ. Bạn cảm thấy khó chịu nhưng lại nghĩ rằng mình không có quyền ghen, vì họ đã chơi với nhau từ trước khi bạn xuất hiện. Thế là bạn giận dỗi, nhưng bạn không nói ra rằng mình đang giận. Thay vào đó, bạn bắt lỗi những chuyện khác và nhìn việc gì đối phương làm cũng thấy không vừa mắt. Xu hướng này rất thường gặp ở những người trẻ. Những người đã có nhiều kinh nghiệm trong tình cảm hoặc đã lớn tuổi thường không mất thời gian cho những chuyện như vậy. Không thích điều gì, họ nói thẳng để đỡ tốn thời gian của cả hai.'],
-    ['career', 'Trong thời gian tới, tôi có tìm được công việc như ý không?',
-     'Bạn có thể tìm được việc, và lá này còn mô tả luôn tính chất công việc đó. Đây là công việc thiên về trí óc, mang tính học tập, học thuật hoặc nghiên cứu, hơn là công việc hành chính. Công việc cũng đòi hỏi bạn giao tiếp nhiều. Tuy nhiên, đây không phải kiểu giao tiếp trong truyền thông hay tiếp thị, mà là giao tiếp dựa trên lập luận và cơ sở khoa học.'],
-    ['career', 'Tôi đang làm công việc văn phòng bình thường, thời gian tới công việc của tôi có thay đổi gì không?',
-     'Trong thời gian tới, bạn có thể được cất nhắc lên một vị trí lãnh đạo hoặc một vị trí có quyền hạn, bởi đây vẫn là một lá Nữ Hoàng. Ở vị trí mới, bạn sẽ phải suy nghĩ nhiều hơn và nói nhiều hơn, tức là phải dùng đến trí óc, khả năng ăn nói, hoặc cả hai. Một cách hiểu khác là bạn sẽ đảm nhận nhiều việc hướng dẫn và chỉ bảo người khác hơn trước.']
+    [
+      "other",
+      "Hình ảnh trên lá bài cho thấy điều gì?",
+      "Nữ Hoàng Kiếm ngồi trên ngai, một tay cầm kiếm thẳng và tay kia mở ra phía trước. Hình ảnh gợi sự sáng suốt, ranh giới rõ và khả năng nhìn thẳng vào sự thật mà vẫn sẵn sàng lắng nghe."
+    ],
+    [
+      "other",
+      "Lá này miêu tả tính cách của một người như thế nào?",
+      "Người này thường thông minh, độc lập, quan sát tốt và giao tiếp rõ ràng. Họ đánh giá vấn đề bằng lý trí nhưng không nhất thiết lạnh lùng. Trải nghiệm đã giúp họ biết điều gì đáng nói, điều gì nên bỏ qua và ranh giới nào cần giữ."
+    ],
+    [
+      "other",
+      "Người này có độc mồm không?",
+      "Không nhất thiết. Nữ Hoàng Kiếm nói về sự thẳng và sắc hơn là cố ý làm đau người khác. Ở mặt sáng, họ nói điều cần nói với sự chính xác và biết lắng nghe; ở mặt bóng, sự phòng thủ hoặc thất vọng có thể khiến lời nói lạnh và cắt."
+    ],
+    [
+      "love",
+      "Tình cảm người này dành cho tôi thế nào?",
+      "Người ấy có thể có tình cảm nhưng muốn hiểu mối quan hệ bằng cả trái tim lẫn lý trí. Họ quan tâm đến sự tương thích, cách giao tiếp, giá trị và khả năng tôn trọng nhau. Tình cảm có thể kín đáo hơn kiểu lãng mạn, nhưng không vì thế mà thiếu chân thành."
+    ],
+    [
+      "love",
+      "Người này có thật lòng không?",
+      "Lá này không cho phép kết luận chắc chắn về sự thật lòng. Nó cho thấy một người có xu hướng cân nhắc kỹ và cần sự rõ ràng trước khi mở lòng hoàn toàn. Hãy nhìn xem lời nói có đi cùng hành động và họ có tôn trọng ranh giới của bạn hay không."
+    ],
+    [
+      "love",
+      "Đây có phải là người dành cho tôi không?",
+      "Điều đó phụ thuộc vào điều bạn cần trong một mối quan hệ. Nếu bạn coi trọng sự rõ ràng, độc lập và giao tiếp thẳng, năng lượng này có thể rất hợp. Nếu bạn cần nhiều biểu hiện tình cảm, hai người có thể phải học cách dịch “ngôn ngữ yêu” của nhau."
+    ],
+    [
+      "love",
+      "Vì sao chúng tôi hay cãi nhau?",
+      "Có thể hai bạn đều đưa lý lẽ ra trước cảm xúc, hoặc một người thấy mình đang “nói sự thật” trong khi người kia cảm thấy bị phán xét. Hãy nói cả sự kiện lẫn cảm xúc, và phân biệt giữa ranh giới rõ ràng với cách nói lạnh lùng."
+    ],
+    [
+      "love",
+      "Có ví dụ nào cho kiểu cãi nhau đó không?",
+      "Ví dụ, một người nói “việc này không hợp lý” trong khi điều họ thật sự muốn nói là “mình thấy không được coi trọng”. Người kia đáp lại bằng thêm lý lẽ và cuộc nói chuyện càng xa cảm xúc gốc. Nữ Hoàng Kiếm khuyên gọi đúng vấn đề mà không bỏ phần con người ra ngoài."
+    ],
+    [
+      "career",
+      "Trong thời gian tới, tôi có tìm được công việc như ý không?",
+      "Lá này phù hợp với công việc cần phân tích, giao tiếp, viết, nghiên cứu, luật, chiến lược hoặc ra quyết định độc lập. Cơ hội có thể đến khi bạn trình bày năng lực rõ ràng và chọn lọc. Hãy đánh giá bằng tiêu chí thực tế thay vì chỉ vì một buổi phỏng vấn có cảm giác tốt."
+    ],
+    [
+      "career",
+      "Tôi đang làm công việc văn phòng bình thường, thời gian tới công việc của tôi có thay đổi gì không?",
+      "Bạn có thể phải đưa ra quyết định rõ hơn, đặt ranh giới trong công việc hoặc trở thành người được hỏi ý kiến vì khả năng phân tích. Một cuộc trao đổi thẳng có thể cần thiết. Hãy chuẩn bị dữ kiện và giữ cách nói bình tĩnh, chính xác."
+    ]
   ],
   'cups-c2': [
-    ['other', 'Hình ảnh trên lá bài cho thấy điều gì?',
-     'Lá bài vẽ một Nữ Hoàng ngồi trên ngai, tay cầm chiếc ly và nhìn nó với ánh mắt trìu mến. Nếu bạn còn nhớ hai lá Nữ Hoàng Gậy và Nữ Hoàng Kiếm, hai nàng đó có vẻ sắc sảo và khó tính hơn, còn Nữ Hoàng này mềm mại hơn hẳn. Ngay cả chiếc ghế nàng ngồi cũng được trang trí bằng hình những thiên thần nhỏ. Nàng ngồi giữa một vùng đồng cỏ, dưới chân có cây cối mọc và có dòng nước chảy. Tất cả những chi tiết nhỏ đó đều gợi lên cảm giác nữ tính và dịu dàng.'],
-    ['other', 'Lá này miêu tả tính cách của một người như thế nào?',
-     'Đây là người đã làm chủ được cảm xúc của mình. Họ biết điều gì làm mình vui và điều gì làm mình buồn, đồng thời sẵn sàng trao đi tình cảm và trái tim của mình cho người khác. Về mặt cảm xúc, người này có chỉ số EQ cao. Cả Nữ Hoàng Ly và Vua Ly đều có EQ cao, khác với Tiểu Đồng Ly và đặc biệt là Kỵ Sĩ Ly, người có phần lăng nhăng trong tình cảm.'],
-    ['other', 'Vì sao nói người này đã chữa lành cho bản thân?',
-     'Nữ Hoàng Ly luôn cho ta cảm giác về một người đã hoàn tất quá trình chữa lành cho chính mình. Trước hết, họ biết rõ những điểm yếu của mình và không ngần ngại để thế giới nhìn thấy chúng. Bạn đừng nghĩ rằng người mạnh mẽ là người luôn tỏ ra cứng rắn. Người mạnh mẽ nhất là người dám bộc lộ mặt yếu đuối và cả mặt chưa đẹp của mình, bởi họ hiểu rằng dù có lộ ra thì người khác cũng không thể làm tổn thương họ, vì họ biết mình là ai. Họ đã làm chủ cảm xúc, nên không sợ bị chê và không sợ bị chỉ trích. Bên cạnh đó, họ cũng rất biết cách yêu thương và chăm sóc người khác. Biết chăm sóc bản thân là một chuyện, còn biết chăm sóc người khác lại là một chuyện khác. Ai có được người yêu mang năng lượng Nữ Hoàng Ly thì không còn gì để chê.'],
-    ['love', 'Anh ấy hoặc cô ấy dành cho tôi tình cảm như thế nào?',
-     'Tình cảm này không có gì để chê. Họ có thật lòng không? Câu trả lời là có. Trong chuyện tình cảm, biết được đối phương có thật lòng hay không chính là điều quan trọng nhất. Người này thật lòng, và hơn thế nữa, họ biết cách thể hiện cảm xúc của mình và biết cách chăm sóc bạn.'],
-    ['love', 'Vì sao chúng tôi hay cãi nhau?',
-     'Lá này gợi ý rằng một người trong hai bạn mang năng lượng Nữ Hoàng Ly, còn người kia thì ngược lại. Nói cách khác, một người thật sự nghiêm túc và muốn đầu tư cho mối quan hệ. Bạn hãy nhớ rằng Nữ Hoàng Ly rất nghiêm túc trong tình cảm: họ không muốn trò chơi, không muốn đùa giỡn và không muốn lãng phí thời gian. Vì vậy, nếu hai bạn hay cãi nhau, có thể một người muốn gắn bó lâu dài, trong khi người kia chỉ muốn vui chơi và chỉ yêu ở thời điểm hiện tại. Đó là lý do hai bạn không tìm được tiếng nói chung. Một người cố gắng và sẵn sàng thay đổi vì người kia, còn người kia lại coi sự thay đổi đó là điều đương nhiên, bản thân không có ý định thay đổi và cũng không có ý định nghiêm túc.'],
-    ['love', 'Người này từ chối người khác như thế nào?',
-     'Người này không từ chối theo kiểu lạnh lùng và cắt đứt liên lạc đột ngột như Nữ Hoàng Kiếm. Ngay cả khi biết bạn chỉ đang đùa giỡn với họ và họ không muốn đáp lại, họ vẫn từ chối một cách khéo léo và nhẹ nhàng. Vua Ly có thể thẳng thắn hơn một chút, còn Nữ Hoàng Ly thì rất nhẹ nhàng, khéo léo và tinh tế.'],
-    ['career', 'Trong thời gian tới, tôi có tìm được công việc ưng ý không?',
-     'Bạn có thể tìm được việc, và khi lá này xuất hiện thì có hai hướng diễn giải. Hướng thứ nhất là bạn sẽ thích công việc của mình, vì đây là năng lượng của cảm xúc. Tuy nhiên, công việc đó có mang lại nhiều tiền hay cơ hội thăng tiến tốt hay không thì chưa thể nói, bởi điều đó phụ thuộc vào tiêu chuẩn của bạn. Nếu tiêu chuẩn của bạn là công việc vừa phải yêu thích vừa phải có thu nhập cao, thì câu chuyện sẽ khác. Còn nếu bạn chỉ cần một công việc hợp với sở thích, thì bạn sẽ tìm được đúng công việc như vậy, nhưng mức lương chưa chắc đã cao.'],
-    ['career', 'Hướng đi thứ hai trong công việc của tôi là gì?',
-     'Hướng thứ hai là công việc của bạn mang tính chất của Nữ Hoàng Ly. Đó có thể là công việc giàu cảm xúc, hoặc công việc mang năng lượng chăm sóc người khác, chẳng hạn trong lĩnh vực dịch vụ, chăm sóc hay chữa lành. Bạn có thể làm những nghề như y tá hoặc điều dưỡng viên. Cũng có thể đơn giản là bạn đặt rất nhiều cảm xúc của mình vào công việc.'],
-    ['career', 'Tôi đang làm công việc văn phòng bình thường, thời gian tới có điều gì thay đổi không?',
-     'Nếu hiện tại bạn đã yêu thích và tận hưởng công việc của mình, thì trong thời gian tới bạn vẫn tiếp tục yêu thích nó, thậm chí còn yêu công việc hơn nữa. Điều này không có gì phải bàn cãi. Một cách hiểu khác từng gặp trong thực tế đọc bài là người hỏi sắp có cấp dưới hoặc có nhân viên mới, và người đó sẽ đóng vai trò người hướng dẫn, tận tình chỉ bảo cho nhân viên mới ấy.'],
-    ['other', 'Lá này có mặt tiêu cực nào không?',
-     'Lá này khá đơn giản và gần như không có ý nghĩa tiêu cực. Chỉ có ba trường hợp ngoại lệ: bạn đọc bài ngược, bạn rút lá này cùng với những lá tiêu cực khác, hoặc tình huống đòi hỏi sự mạnh mẽ và cần năng lượng của Kiếm và Gậy để giải quyết. Trong trường hợp cuối, năng lượng của Ly có thể trở nên quá mềm và quá yếu. Cách hiểu cụ thể tùy vào từng trường hợp và từng câu hỏi.']
+    [
+      "other",
+      "Hình ảnh trên lá bài cho thấy điều gì?",
+      "Nữ Hoàng Cốc ngồi bên nước và nhìn chăm chú vào chiếc cốc được trang trí kín. Hình ảnh gợi một đời sống cảm xúc sâu, trực giác mạnh và khả năng giữ không gian cho cảm xúc mà không cần phô bày tất cả ra ngoài."
+    ],
+    [
+      "other",
+      "Lá này miêu tả tính cách của một người như thế nào?",
+      "Người này thường đồng cảm, tinh tế, giàu trực giác và dễ nhận ra cảm xúc của người khác. Họ có thể lắng nghe rất tốt và tạo cảm giác an toàn. Mặt trái là hấp thụ quá nhiều cảm xúc xung quanh hoặc quên ranh giới của mình."
+    ],
+    [
+      "other",
+      "Vì sao nói người này đã chữa lành cho bản thân?",
+      "Không nên mặc định rằng cứ rút Nữ Hoàng Cốc là người đó đã “chữa lành xong”. Lá bài mô tả khả năng nhận biết và chăm sóc cảm xúc khá trưởng thành. Họ có thể đã học được nhiều từ trải nghiệm, nhưng vẫn là con người và vẫn có những phần cần được chăm sóc."
+    ],
+    [
+      "love",
+      "Anh ấy hoặc cô ấy dành cho tôi tình cảm như thế nào?",
+      "Đây là một lá ấm áp cho sự quan tâm, đồng cảm và tình cảm sâu. Người ấy có thể thật sự để ý đến cảm xúc của bạn và muốn bạn cảm thấy an toàn. Tuy nhiên, hãy nhìn cả cách họ thể hiện và giữ ranh giới, vì tình cảm tốt vẫn cần hành động rõ ràng."
+    ],
+    [
+      "love",
+      "Vì sao chúng tôi hay cãi nhau?",
+      "Một người có thể đang cảm quá nhiều nhưng nói quá ít, còn người kia lại không biết mình cần đáp ứng điều gì. Cũng có thể hai bạn dễ hấp thụ tâm trạng của nhau. Hãy nói rõ nhu cầu và đừng biến sự đồng cảm thành việc phải đoán suy nghĩ."
+    ],
+    [
+      "love",
+      "Người này từ chối người khác như thế nào?",
+      "Ở mặt trưởng thành, họ thường cố từ chối với sự tử tế và để ý cảm xúc của người kia. Họ có thể nói mềm nhưng vẫn giữ ranh giới. Mặt trái là vì sợ làm ai buồn mà trì hoãn câu trả lời hoặc gửi tín hiệu mơ hồ."
+    ],
+    [
+      "career",
+      "Trong thời gian tới, tôi có tìm được công việc ưng ý không?",
+      "Nữ Hoàng Cốc có thể phù hợp với công việc chăm sóc, tư vấn, sáng tạo, nghệ thuật, dịch vụ hoặc bất cứ nơi nào cần sự tinh tế với con người. Nó gợi cảm giác phù hợp hơn là mức lương cụ thể. Hãy kiểm tra cả điều kiện thực tế để cảm xúc và nhu cầu vật chất cùng được đáp ứng."
+    ],
+    [
+      "career",
+      "Hướng đi thứ hai trong công việc của tôi là gì?",
+      "Một hướng khác là dùng khả năng lắng nghe, sáng tạo hoặc hiểu con người nhiều hơn trong công việc hiện tại. Bạn không nhất thiết phải đổi nghề hoàn toàn; đôi khi chỉ cần chuyển sang vai trò có nhiều tư vấn, chăm sóc khách hàng, thiết kế trải nghiệm hoặc làm việc với cộng đồng."
+    ],
+    [
+      "career",
+      "Tôi đang làm công việc văn phòng bình thường, thời gian tới có điều gì thay đổi không?",
+      "Bạn có thể được giao phần việc cần nhiều sự khéo léo với con người hoặc trở thành người mà đồng nghiệp tìm đến để chia sẻ. Hãy dùng sự đồng cảm nhưng đừng nhận hết cảm xúc của tập thể vào mình. Ranh giới tốt giúp bạn hỗ trợ người khác mà không kiệt sức."
+    ],
+    [
+      "other",
+      "Lá này có mặt tiêu cực nào không?",
+      "Có. Đồng cảm quá mức có thể thành dễ bị cuốn vào cảm xúc của người khác, lý tưởng hóa, khó nói không hoặc tự bỏ quên nhu cầu của mình. Mặt sáng của Nữ Hoàng Cốc là cảm sâu nhưng vẫn biết đâu là cảm xúc của mình và đâu là của người khác."
+    ]
   ],
   'pentacles-c2': [
-    ['other', 'Hình ảnh trên lá bài cho thấy điều gì?',
-     'Lá bài vẽ một Nữ Hoàng đang cầm đồng Xu, ngồi giữa một vùng cỏ cây xanh tốt um tùm. Hình ảnh này gợi nhớ đến lá Hoàng Hậu, tức lá Empress số 3 trong bộ Ẩn Chính, với cảm giác sung túc, đầy đủ và no ấm. Xu bao gồm tất cả những gì thuộc về thế giới vật chất, những thứ có thể sờ, nắm và nhìn thấy được: cơ hội vật chất, tiền bạc, học tập và công việc. Xu thuộc nguyên tố Đất.'],
-    ['other', 'Lá này miêu tả tính cách của một người như thế nào?',
-     'Dù bạn là nam hay nữ, nếu mang năng lượng Nữ Hoàng Xu thì bạn là người có tiền, biết kiếm tiền, hoặc sinh ra đã có điều kiện vật chất. Số tiền đó có thể không nhiều, nhưng theo cách tự nhìn nhận của bạn, bạn là người sung túc, sung sướng và đầy đủ. Có những người thu nhập rất cao mà vẫn thấy thiếu. Người mang năng lượng Nữ Hoàng Xu ở thái cực ngược lại: thu nhập khiêm tốn nhưng họ cảm thấy đủ, và như vậy nghĩa là đủ. Bạn giàu khi bạn nghĩ mình giàu, bạn đẹp khi bạn nghĩ mình đẹp, và bạn hạnh phúc khi bạn nghĩ mình hạnh phúc, chứ không phải dựa trên tiêu chuẩn của người khác hay của xã hội. Cuộc sống đơn giản như vậy.'],
-    ['other', 'Nữ Hoàng Xu khác Vua Xu ở chỗ nào?',
-     'Nữ Hoàng và Vua đều là những cấp bậc đã làm chủ nguyên tố của mình, và Nữ Hoàng Xu làm chủ được năng lượng vật chất. Khác biệt nằm ở chỗ Nữ Hoàng nữ tính hơn. Khi có của cải, nàng muốn dùng nguồn lực đó để chăm sóc người khác. Vua Xu lại mang tính nam, nên với ông, khi đã có rồi thì việc tiếp theo là tìm thêm cơ hội, thêm tiền, thêm nguồn lực, và dành thời gian, công sức để kiếm thêm mãi. Vua Xu cũng khắt khe và nghiêm ngặt hơn trong việc trao nguồn lực của mình cho người khác. Nữ Hoàng Xu thì rộng lượng hơn, sẵn sàng trao đi những gì mình có để giúp đỡ mọi người.'],
-    ['love', 'Người này nghĩ gì về tôi, và có yêu tôi thật lòng không?',
-     'Đây không phải là người ham vật chất hay thực dụng theo nghĩa xấu. Cách họ tiếp cận tình cảm có thể mang tính thực tế. Họ thấy rằng hai bên môn đăng hộ đối, họ có nền tảng tài chính và bạn cũng có, nên hai người nên đến với nhau. Đồng thời, họ sẵn sàng chăm sóc bạn và chia sẻ với bạn những nguồn lực mà họ có. Như vậy thì không có gì là xấu. Tóm lại, người này không yêu bằng thứ tình cảm xuất phát thuần túy từ trái tim như Nữ Hoàng Ly, nhưng họ là người thật thà.'],
-    ['other', 'Lá Xu có ý nghĩa tiêu cực không?',
-     'Xu không phải là lá xấu và không mang ý nghĩa tiêu cực, trừ khi bạn đọc bài ngược hoặc lá này đi cùng những lá tiêu cực khác. Khi đứng một mình, lá này hiếm khi được đọc theo hướng xấu. Trong thực tế đọc bài, gần như chưa bao giờ Nữ Hoàng Xu đứng một mình mà lại mang nghĩa tiêu cực.'],
-    ['love', 'Vì sao chúng tôi hay cãi nhau?',
-     'Nguyên nhân có thể là một người luôn sẵn sàng trao nguồn lực của mình cho đối phương, còn người kia chỉ biết nhận. Mối quan hệ này có phần một chiều: một bên cho đi liên tục, còn bên kia chỉ nhận về. Bạn cần phân biệt với Nữ Hoàng Ly ở cùng câu hỏi: ở đó, người cho đi quan tâm đến việc trao tình cảm, còn ở lá này, người cho đi quan tâm đến việc trao nguồn lực. Họ luôn nghĩ mình có thể giúp gì cho người yêu, mua gì tặng người yêu. Người kia lại không trân trọng điều đó, coi mọi thứ là đương nhiên, và đến khi người cho không còn giúp được nữa thì quay sang trách móc.'],
-    ['career', 'Trong thời gian tới, tôi có tìm được công việc ưng ý không?',
-     'Câu trả lời là có. Công việc này tốt và có thu nhập ổn định. Bạn có thích công việc đó không? Nhiều khả năng là có, vì năng lượng của Nữ Hoàng Xu vẫn là năng lượng tích cực. Lá này gợi ý một công việc vừa hợp với bạn vừa mang lại tiền bạc.'],
-    ['money', 'Tôi đang làm công việc văn phòng bình thường, thời gian tới công việc của tôi sẽ thế nào?',
-     'Trong thời gian tới, công việc của bạn vẫn mang lại tiền. Thu nhập hiện tại ở mức nào thì sắp tới vẫn giữ được mức đó. Công việc tốt, và các cơ hội thăng tiến, cơ hội tài chính, cơ hội vật chất cũng như cơ hội đi học đều có. Lý do là Xu không chỉ là tiền, mà còn là mọi cơ hội của thế giới vật chất: được cử đi học, được cử đi hội thảo, được thăng chức hay được giao dự án mới. Tất cả đều là tín hiệu tốt.'],
-    ['other', 'Trong bốn lá Nữ Hoàng thì lá nào tích cực nhất?',
-     'Nhìn chung, các lá Nữ Hoàng đều mang năng lượng tích cực, và Nữ Hoàng Xu cùng Nữ Hoàng Ly có phần tích cực hơn Nữ Hoàng Kiếm và Nữ Hoàng Gậy một chút. Nguyên nhân là Xu và Ly đều là nguyên tố mang tính nữ, và Nữ Hoàng cũng mang tính nữ, nên các năng lượng này hòa hợp và bổ trợ cho nhau. Với Nữ Hoàng Kiếm và Nữ Hoàng Gậy, Kiếm và Gậy là những nguyên tố mang tính nam nằm trong một lá Nữ Hoàng mang tính nữ, nên hai lá này có một chút xung đột bên trong.']
+    [
+      "other",
+      "Hình ảnh trên lá bài cho thấy điều gì?",
+      "Nữ Hoàng Xu ngồi giữa một khung cảnh xanh tốt, nâng đồng Xu trong tay như đang chăm một thứ có giá trị. Hình ảnh gắn vật chất với sự nuôi dưỡng: xây sự ổn định, chăm cơ thể, nhà cửa, tiền bạc và những gì cần thời gian để lớn."
+    ],
+    [
+      "other",
+      "Lá này miêu tả tính cách của một người như thế nào?",
+      "Người này thường thực tế, đáng tin, biết chăm lo và có khả năng biến sự quan tâm thành việc cụ thể. Họ nghĩ đến tiền, sức khỏe, nhà cửa và những nhu cầu đời thường mà không xem chúng là chuyện nhỏ. Mặt trái là ôm quá nhiều trách nhiệm hoặc đo giá trị bản thân bằng việc mình hữu ích đến đâu."
+    ],
+    [
+      "other",
+      "Nữ Hoàng Xu khác Vua Xu ở chỗ nào?",
+      "Cả hai đều thực tế và quan tâm đến sự ổn định. Nữ Hoàng Xu thường thể hiện qua chăm sóc, nuôi dưỡng và quản lý nguồn lực gần gũi; Vua Xu thiên về xây hệ thống, sở hữu, quản trị và thành quả dài hạn. Đây là hai sắc thái bổ sung cho nhau."
+    ],
+    [
+      "love",
+      "Người này nghĩ gì về tôi, và có yêu tôi thật lòng không?",
+      "Người ấy có thể nhìn mối quan hệ theo hướng nghiêm túc và thực tế: liệu hai bạn có chăm được cho nhau và xây được đời sống ổn định hay không. Điều đó không có nghĩa tình cảm chỉ dựa trên điều kiện. Hãy nhìn xem sự thực tế có đi cùng sự ấm áp, tôn trọng và đầu tư đều đặn hay không."
+    ],
+    [
+      "other",
+      "Lá Xu có ý nghĩa tiêu cực không?",
+      "Có. Mọi chất đều có mặt bóng. Với Xu, sự ổn định có thể thành bám víu, thực tế thành thực dụng, tiết kiệm thành sợ thiếu, chăm sóc thành kiểm soát. Hãy đọc mức độ và bối cảnh thay vì mặc định Xu luôn tốt về tiền."
+    ],
+    [
+      "love",
+      "Vì sao chúng tôi hay cãi nhau?",
+      "Mâu thuẫn có thể xoay quanh tiền bạc, việc nhà, thời gian, trách nhiệm hoặc cảm giác một người đang gánh quá nhiều. Có khi cả hai đều yêu theo kiểu “làm cho nhau” nhưng quên nói lời cần nói. Hãy chia việc rõ và hỏi nhau điều gì thật sự khiến mỗi người cảm thấy được quan tâm."
+    ],
+    [
+      "career",
+      "Trong thời gian tới, tôi có tìm được công việc ưng ý không?",
+      "Nữ Hoàng Xu là tín hiệu tốt cho một môi trường ổn định, thực tế và có thể nuôi dưỡng cuộc sống của bạn. Tuy nhiên, đừng dùng lá bài để hứa mức lương hay kết quả tuyển dụng. Hãy ưu tiên nơi có điều kiện rõ, văn hóa bền và khối lượng công việc bạn thực sự duy trì được."
+    ],
+    [
+      "money",
+      "Tôi đang làm công việc văn phòng bình thường, thời gian tới công việc của tôi sẽ thế nào?",
+      "Bạn có thể được tin tưởng giao quản lý nguồn lực, khách hàng, ngân sách hoặc một phần việc cần sự ổn định. Tài chính có thể trở nên có tổ chức hơn nếu bạn làm đều và quản lý tốt. Đừng nhận thêm mọi việc chỉ vì người khác biết bạn đáng tin."
+    ],
+    [
+      "other",
+      "Trong bốn lá Nữ Hoàng thì lá nào tích cực nhất?",
+      "Không có Nữ Hoàng nào “tích cực nhất” trong mọi câu hỏi. Mỗi lá mạnh ở một lĩnh vực: Gậy ở tự tin và hành động, Kiếm ở sáng suốt, Cốc ở cảm xúc, Xu ở sự ổn định và chăm lo. Lá phù hợp nhất phụ thuộc vào câu hỏi và vị trí trong trải bài."
+    ]
   ]
 });
 
@@ -1266,90 +1575,207 @@ Object.assign(ASK.vi, {
 
 Object.assign(ASK.vi, {
   'wands-c3': [
-    ['other', 'Hình ảnh trên lá bài cho thấy điều gì?',
-     'Lá bài vẽ một vị vua đầy quyền lực, tay cầm quyền trượng, toát lên vẻ tự tin của một người biết rõ mình đang làm gì và phải làm như thế nào. Ông mặc áo choàng đỏ và tóc cũng màu đỏ, nên chỉ nhìn qua đã thấy hừng hực lửa. Gậy là hành động, nhiệt huyết, đam mê và lửa. Trong bộ Hoàng Gia, Vua và Nữ Hoàng là hai cấp bậc có khả năng điều khiển và kiểm soát nguyên tố của mình, mang tính lãnh đạo và có phần lấn át người khác, trong khi Kỵ Sĩ và Tiểu Đồng là những người nhận lệnh và chịu sự chỉ đạo. Vua mang năng lượng nam tính, và Gậy cũng là nguyên tố nam tính. Khi hai phần nam tính đặt cạnh nhau, năng lượng càng bùng nổ và mãnh liệt hơn.'],
-    ['other', 'Lá này miêu tả tính cách của một người như thế nào?',
-     'Trước hết, đây là một người có tài lãnh đạo. Thật ra mọi lá Vua và Nữ Hoàng đều có khả năng lãnh đạo, kể cả Nữ Hoàng Gậy. Nhưng nếu nói đến hình mẫu lãnh đạo điển hình trong một công ty hay một doanh nghiệp lớn, người đi trước để mọi người theo sau, thì đó chính là Vua Gậy. Ông tự tin, biết mình đang làm gì, thiên về hành động, và gần như không có gì khiến ông chùn bước.'],
-    ['other', 'Người này có phải là người không biết sợ không?',
-     'Không phải là họ không biết sợ. Họ vẫn sợ, nhưng thay vì gặm nhấm nỗi sợ hay để nó cản đường, họ tự nhủ rằng mình sợ nhưng vẫn phải hành động và vẫn phải làm những gì cần làm. Một người luôn biết mình phải làm gì và luôn tự tin tiến về phía trước như vậy thì tự nhiên sẽ có người đi theo. Mọi người luôn muốn đi sau những người biết rõ mình đang đi đâu, biết khi nào rẽ trái hay rẽ phải, giống như con chim đầu đàn luôn dẫn cả đàn bay theo một hướng nhất định.'],
-    ['other', 'Vua Gậy khác Nữ Hoàng Gậy như thế nào?',
-     'Nữ Hoàng Gậy mang năng lượng nữ tính, nên cách lãnh đạo của nàng có phần mềm mỏng và dịu dàng hơn. Vua Gậy thì đúng nghĩa là người cầm đầu và kéo người khác đi theo. Ông giống như người đã nhắm được đích đến ở phía xa, chạy hết tốc lực về phía đó, và ai theo kịp thì theo, không theo kịp thì thôi. Cách này có phần hơi ích kỷ. Bù lại, ông rất giỏi, mạnh mẽ và tràn đầy nhiệt huyết. Tóm lại, đây là một người mạnh mẽ, giỏi giang, có tài lãnh đạo, hơi lấn át người khác và khá nóng tính.'],
-    ['career', 'Khi rút được lá Vua, có phải người đó đang làm lãnh đạo không?',
-     'Không hẳn. Trong bộ Hoàng Gia, một người mang năng lượng Vua Gậy không đương nhiên là lãnh đạo. Tính cách của họ thích làm người dẫn đầu, còn trong thực tế họ có đang giữ vai trò đó hay không lại là chuyện khác. Nếu họ đang làm lãnh đạo thì rất tốt, vì vị trí đó hợp với tính cách của họ. Nếu họ đang làm nhân viên, họ cần phấn đấu để vươn lên vị trí lãnh đạo. Nếu không, họ sẽ thường xuyên xung đột với cấp trên, bởi một người có tính cách như vậy rất khó hòa hợp khi phải ở dưới người khác. Họ phải là người đi đầu và dẫn đầu.'],
-    ['love', 'Anh ấy hoặc cô ấy nghĩ gì về tôi?',
-     'Người này có thích bạn. Nhưng với một số người, cách tiếp cận và tình cảm của họ quá nóng, quá dồn dập và muốn thắng nhanh. Họ thích bạn thì theo đuổi ngay và mong bạn đáp lại ngay. Nếu bạn thích mọi thứ đầy nhiệt huyết, lửa và đam mê như vậy, người này hợp với bạn. Nếu bạn thích sự chậm rãi và lãng mạn, kiểu hai người cùng viết thư tình hay làm thơ gửi cho nhau, thì người này không dành cho bạn. Dù là nam hay nữ, người mang năng lượng này đều có mong muốn chinh phục đối phương rất cao.'],
-    ['love', 'Vì sao chúng tôi hay cãi nhau?',
-     'Lý do rất đơn giản. Một trong hai bạn, hoặc cả hai, đều quá nóng tính, có xu hướng lấn át và muốn kiểm soát người kia, hoặc đi quá nhanh khiến người kia không theo kịp. Nhìn chung, năng lượng Vua Gậy phát huy tốt trong môi trường công việc, học tập hoặc những nơi có tính cạnh tranh và chạy đua. Nhưng trong tình yêu, bạn không chiến đấu với ai và cũng không chạy đua với ai, nên chính năng lượng này lại mang đến những điều tiêu cực.'],
-    ['career', 'Trong thời gian tới, tôi có tìm được công việc ưng ý không?',
-     'Bạn sẽ tìm được việc, và có thể ngay từ đầu bạn đã ở trong một vị trí có chức vụ và quyền hạn. Nói cách khác, bạn nộp hồ sơ vào các vị trí như quản lý, phó giám đốc hay trưởng nhóm dự án. Đó là những vị trí có quyền hành, có cấp dưới và đòi hỏi khả năng lãnh đạo.'],
-    ['career', 'Tôi đang làm công việc văn phòng bình thường, thời gian tới tôi cần lưu ý điều gì?',
-     'Có hai khả năng. Một là bạn được cất nhắc lên một vị trí có chức vụ và quyền hạn. Hai là sắp có chuyện gì đó xảy ra liên quan đến một người mang năng lượng Vua Gậy trong công việc của bạn. Nếu chính bạn là Vua Gậy thì không cần bàn thêm. Nhưng nếu khi nghe mô tả lá bài, bạn nhận ra đó là hình ảnh cấp trên của mình, thì có thể hiểu rằng sắp tới sẽ có chuyện liên quan đến người sếp đó. Để biết cụ thể chuyện gì sẽ xảy ra và tốt hay xấu, bạn cần rút thêm một hai lá nữa.'],
-    ['other', 'Lá này tích cực hay tiêu cực?',
-     'Điều này tùy vào hoàn cảnh và tình huống. Trong công việc và học tập, lá này mang ý nghĩa tốt. Trong mối quan hệ tình cảm, lá này lại không tốt.']
+    [
+      "other",
+      "Hình ảnh trên lá bài cho thấy điều gì?",
+      "Vua Gậy ngồi trên ngai với cây gậy trong tay, xung quanh là biểu tượng của Lửa. Hình ảnh nói về một người đã biết dùng nhiệt huyết để dẫn đường: nhìn xa, quyết đoán và sẵn sàng chịu trách nhiệm cho hướng đi mình chọn."
+    ],
+    [
+      "other",
+      "Lá này miêu tả tính cách của một người như thế nào?",
+      "Người này thường tự tin, nhiều tham vọng, có tầm nhìn và thích chủ động. Họ dễ trở thành người khởi xướng hoặc lãnh đạo vì có khả năng truyền năng lượng cho người khác. Mặt trái là nóng tính, áp đặt hoặc quá tin vào ý mình."
+    ],
+    [
+      "other",
+      "Người này có phải là người không biết sợ không?",
+      "Không. Dũng cảm không có nghĩa là không biết sợ. Vua Gậy thường nhận ra rủi ro nhưng vẫn quyết định hành động khi thấy mục tiêu xứng đáng. Mặt trưởng thành của lá này là biết dùng nỗi sợ như thông tin, không để nó cầm lái."
+    ],
+    [
+      "other",
+      "Vua Gậy khác Nữ Hoàng Gậy như thế nào?",
+      "Cả hai đều tự tin và có sức hút. Nữ Hoàng Gậy thường dẫn dắt bằng ảnh hưởng, sự ấm áp và khả năng khích lệ; Vua Gậy thiên về đặt hướng, ra quyết định và kéo mọi người tiến về phía mục tiêu. Đây là hai phong cách, không phải ai cao hơn ai."
+    ],
+    [
+      "career",
+      "Khi rút được lá Vua, có phải người đó đang làm lãnh đạo không?",
+      "Không nhất thiết. Lá Vua có thể mô tả một người có quyền quyết định, một vai trò cần tinh thần làm chủ, hoặc đơn giản là cách bạn nên tiếp cận tình huống. Đừng biến cấp bậc biểu tượng thành chức danh nghề nghiệp cố định."
+    ],
+    [
+      "love",
+      "Anh ấy hoặc cô ấy nghĩ gì về tôi?",
+      "Người ấy có thể thấy bạn hấp dẫn và muốn chủ động đưa mối quan hệ tiến lên. Họ thường biết mình muốn gì và có thể khá rõ ràng về ý định. Tuy nhiên, hãy để ý xem sự chủ động đó có tôn trọng nhịp và lựa chọn của bạn hay không."
+    ],
+    [
+      "love",
+      "Vì sao chúng tôi hay cãi nhau?",
+      "Mâu thuẫn dễ xảy ra khi một hoặc cả hai đều muốn cầm lái. Sự tự tin có thể biến thành cố chấp, và quyết đoán có thể nghe như mệnh lệnh. Hãy thống nhất chuyện nào cần người dẫn, chuyện nào cần hai người cùng quyết."
+    ],
+    [
+      "career",
+      "Trong thời gian tới, tôi có tìm được công việc ưng ý không?",
+      "Vua Gậy ủng hộ vai trò có nhiều chủ động, sáng tạo, lãnh đạo hoặc cơ hội xây thứ gì đó của riêng bạn. Hãy nhắm tới nơi cho phép bạn dùng tầm nhìn và chịu trách nhiệm. Lá bài không đảm bảo kết quả tuyển dụng, nhưng khuyên bạn thể hiện rõ giá trị và định hướng của mình."
+    ],
+    [
+      "career",
+      "Tôi đang làm công việc văn phòng bình thường, thời gian tới tôi cần lưu ý điều gì?",
+      "Bạn có thể được yêu cầu dẫn một dự án, đưa ra quyết định lớn hơn hoặc làm việc với một người có phong cách rất mạnh. Hãy chủ động nhưng đừng ôm hết quyền kiểm soát. Lãnh đạo tốt là tạo hướng rõ và để người khác có chỗ đóng góp."
+    ],
+    [
+      "other",
+      "Lá này tích cực hay tiêu cực?",
+      "Vua Gậy không tự động tốt hay xấu. Mặt sáng là tầm nhìn, bản lĩnh và khả năng dẫn dắt; mặt bóng là cái tôi lớn, nóng nảy và áp đặt. Câu hỏi, vị trí và các lá đi kèm cho biết năng lượng đang được dùng theo hướng nào."
+    ]
   ],
   'swords-c3': [
-    ['other', 'Hình ảnh trên lá bài cho thấy điều gì?',
-     'Lá bài vẽ một vị vua đang cầm kiếm. Kiếm là tri thức, trí óc, giao tiếp, ý tưởng mới và tất cả những gì liên quan đến tư duy. Giao tiếp ở đây không chỉ là nói, mà còn là viết lách và trao đổi thư từ. Kiếm cũng là vũ khí để chiến đấu, và con người thường chiến đấu với nhau nhiều nhất bằng lời nói, bằng ngôn từ, nhất là trong thời đại không thể dùng nắm đấm thì người ta xúc phạm nhau bằng lời. Ngoài ra, Kiếm còn thể hiện trí thông minh.'],
-    ['other', 'Vua Kiếm khác Nữ Hoàng Kiếm ở chỗ nào?',
-     'Vua Kiếm mang năng lượng nam tính, và Kiếm cũng là nguyên tố nam tính, nên Vua Kiếm là nam cộng nam. Nữ Hoàng Kiếm thì là một phần nam và một phần nữ. Vì vậy, Nữ Hoàng Kiếm rất thông minh và sắc sảo nhưng vẫn giữ được sự dịu dàng, hiền hòa của năng lượng nữ. Vua Kiếm cũng thông minh và sắc sảo, nhưng đôi khi lại quá nghiêm khắc, khắc nghiệt, kỷ luật và khó tính, thậm chí có phần tàn nhẫn.'],
-    ['other', 'Sự tàn nhẫn ở đây có nghĩa là gì?',
-     'Người này rất dứt khoát và quyết đoán, nhưng đồng thời sẵn sàng đóng vai kẻ xấu và đưa ra những quyết định lạnh lùng để phục vụ một mục tiêu lớn hơn. Họ chấp nhận hy sinh lợi ích của một số ít người để bảo vệ lợi ích của số đông. Nữ Hoàng Kiếm thì khác: nàng sẽ cố gắng cân bằng để không ai bị bỏ lại phía sau.'],
-    ['other', 'Vua Kiếm có độc mồm như Kỵ Sĩ Kiếm không?',
-     'Kỵ Sĩ Kiếm là người nói ra những câu làm tổn thương người khác mà không tự nhận ra. Vua Kiếm thì biết rõ điều đó. Ông không cố ý nói lời gây tổn thương, nhưng ông sẽ nói thẳng và nói thật, đi thẳng vào vấn đề để bạn biết mình đang sai ở đâu và cần sửa điều gì. Thoạt nhìn, cả Vua Kiếm và Kỵ Sĩ Kiếm đều có vẻ độc miệng, nhưng chỉ Kỵ Sĩ mới thật sự độc miệng, còn Vua là người nghiêm khắc và thẳng thắn. Về tính cách, đây là một người lạnh lùng, logic, lý trí và thực tế.'],
-    ['love', 'Người này nghĩ gì về tôi và về mối quan hệ này?',
-     'Người này tiếp cận mối quan hệ một cách rất lý trí và tỉnh táo. Vua Kiếm có thật lòng không? Năng lượng Kiếm không phải là năng lượng của sự lươn lẹo. Kỵ Sĩ Kiếm chỉ hơi độc miệng chứ cũng không gian dối, và Vua Kiếm cũng vậy. Họ không đến với bạn để lợi dụng, và cũng không vì bạn có gia thế hay của cải. Họ có thích bạn, nhưng cách thể hiện của họ hơi kém, vì họ không giỏi những chuyện lãng mạn.'],
-    ['love', 'Người này tỏ tình theo cách nào?',
-     'Người này không muốn tốn nhiều thời gian cho việc đuổi bắt hay những trò chơi tình ái. Khi thích bạn, họ nói thẳng và hỏi bạn có muốn tính chuyện lâu dài với họ hay không. Họ cần một câu trả lời rõ ràng là có hoặc không. Nếu bạn ấp úng và làm mất thời gian của họ, chính họ có thể là người rút lui trước với lý do rằng họ bận và không có thời gian để đùa giỡn, dù thật sự họ có thích bạn. Cách này rất lạnh lùng và quyết đoán. Nhưng trong tình yêu, con người cần năng lượng Nước của sự lãng mạn hoặc năng lượng Lửa của đam mê, chứ không cần nhiều lý trí đến vậy. Nếu ai cũng lý trí, thế giới đã không còn thơ tình.'],
-    ['love', 'Vì sao chúng tôi hay cãi nhau?',
-     'Một người quá lý trí, còn người kia có thể lại đòi hỏi sự lãng mạn. Người mang năng lượng Vua Kiếm không hẳn là vô tâm, chỉ là họ quá thiên về logic. Nếu đối phương của Vua Kiếm là một người trưởng thành và hiểu chuyện, hai người vẫn có thể hòa hợp. Nhưng nếu đối phương là kiểu trẻ con, hay hờn dỗi, thích lãng mạn và thích những điều ủy mị, thì họ sẽ không hợp với Vua Kiếm. Rất có thể đó chính là lý do hai bạn hay cãi nhau.'],
-    ['career', 'Tôi đã thất nghiệp mấy tháng, tôi có tìm được việc không?',
-     'Bạn sẽ tìm được việc, và công việc này mang tính chất của Kiếm. Đó là công việc đòi hỏi giao tiếp nhiều, hoặc công việc dùng trí óc. Trí óc ở đây không phải kiểu làm việc với con số như kế toán hay kiểm toán, mà là nghiên cứu, phân tích, công nghệ thông tin, hoặc kỹ thuật, tức là những công việc thiên hoàn toàn về tư duy.'],
-    ['career', 'Vị trí của tôi trong công việc mới sẽ như thế nào?',
-     'Vì đây là cấp bậc Vua, vị trí bạn nhận được có thể khá cao, không còn là nhân viên bình thường nữa. Vị trí đó không nhất thiết là giám đốc, mà có thể là trưởng nhóm dự án hay trưởng bộ phận. Nếu công việc thiên về giao tiếp, thì đó cũng là kiểu giao tiếp nghiêm túc, chứ không phải giao tiếp bán hàng hay đi tiếp thị. Có thể bạn phải thường xuyên thuyết trình về các vấn đề khoa học hoặc những chủ đề đòi hỏi tư duy sâu.'],
-    ['career', 'Tôi đang làm công việc văn phòng bình thường, thời gian tới công việc của tôi có thay đổi gì không?',
-     'Có ba cách hiểu. Thứ nhất, bạn có một dự án mới, và công việc của dự án đó buộc bạn phải dùng trí óc nhiều hơn. Thứ hai, bạn được cất nhắc lên một vị trí có chức vụ và quyền hạn, và vị trí mới đòi hỏi bạn phải tư duy nhiều hoặc giao tiếp nhiều, theo kiểu giao tiếp nghiêm túc với khách hàng và đối tác. Thứ ba, sắp có chuyện gì đó xảy ra trong công việc liên quan đến một người mang năng lượng Vua Kiếm. Nếu khi nghe mô tả về năng lượng này, bạn nhận ra đó là một đồng nghiệp của mình, bạn hãy rút thêm một hai lá nữa để làm rõ chuyện gì sẽ xảy ra với người đó, tốt hay xấu.']
+    [
+      "other",
+      "Hình ảnh trên lá bài cho thấy điều gì?",
+      "Vua Kiếm ngồi thẳng trên ngai, cầm kiếm dựng đứng. Hình ảnh nhấn mạnh lý trí, quyền quyết định, nguyên tắc và khả năng nhìn vấn đề một cách có hệ thống. Đây là trí tuệ được dùng để đưa ra phán đoán, không chỉ để quan sát."
+    ],
+    [
+      "other",
+      "Vua Kiếm khác Nữ Hoàng Kiếm ở chỗ nào?",
+      "Cả hai đều sắc sảo và coi trọng sự thật. Nữ Hoàng Kiếm thường nhấn vào nhận biết, ranh giới và sự độc lập; Vua Kiếm thiên về ra quyết định, xây quy tắc và chịu trách nhiệm cho phán đoán. Sự khác nhau nằm ở cách dùng trí tuệ, không phải ai thông minh hơn."
+    ],
+    [
+      "other",
+      "Sự tàn nhẫn ở đây có nghĩa là gì?",
+      "Từ “tàn nhẫn” dễ làm lá bài bị hiểu quá nặng. Mặt bóng của Vua Kiếm đúng hơn là quá lạnh, quá nguyên tắc hoặc đặt hiệu quả lên trên cảm xúc con người. Mặt sáng là có thể đưa ra quyết định khó mà vẫn dựa trên bằng chứng và đạo đức."
+    ],
+    [
+      "other",
+      "Vua Kiếm có độc mồm như Kỵ Sĩ Kiếm không?",
+      "Vua Kiếm có thể rất thẳng, nhưng ở mức trưởng thành họ biết chọn từ và hiểu hậu quả của lời nói. Kỵ Sĩ dễ phản ứng nhanh; Vua thiên về nói có chủ đích. Mặt bóng xuất hiện khi sự thẳng thắn biến thành coi thường hoặc dùng lý lẽ để áp đảo."
+    ],
+    [
+      "love",
+      "Người này nghĩ gì về tôi và về mối quan hệ này?",
+      "Người ấy có thể đang đánh giá mối quan hệ rất nghiêm túc bằng lý trí: hai bạn có cùng giá trị, giao tiếp được và xây được tương lai hay không. Họ có thể ít phô bày cảm xúc, nhưng điều đó không tự động nghĩa là không thật lòng. Hãy nhìn sự nhất quán và mức độ tôn trọng."
+    ],
+    [
+      "love",
+      "Người này tỏ tình theo cách nào?",
+      "Họ thường thích sự rõ ràng hơn trò đoán ý. Nếu muốn tiến tới, họ có thể nói thẳng mình muốn gì và hỏi bạn nghĩ sao. Cách này có thể ít hoa mỹ nhưng vẫn ấm áp nếu họ biết lắng nghe câu trả lời thay vì chỉ yêu cầu một quyết định."
+    ],
+    [
+      "love",
+      "Vì sao chúng tôi hay cãi nhau?",
+      "Một người có thể đang biến mọi vấn đề thành bài toán cần giải trong khi người kia cần được lắng nghe trước. Hoặc cả hai tranh luận dựa trên “đúng–sai” quá mạnh. Hãy phân biệt lúc nào cần giải pháp và lúc nào chỉ cần xác nhận cảm xúc của nhau."
+    ],
+    [
+      "career",
+      "Tôi đã thất nghiệp mấy tháng, tôi có tìm được việc không?",
+      "Vua Kiếm hợp với việc rà chiến lược tìm việc bằng lý trí: chọn ngành, chỉnh CV, luyện phỏng vấn và dùng dữ liệu để biết phần nào đang không hiệu quả. Những công việc thiên về phân tích, công nghệ, nghiên cứu, luật hoặc giao tiếp chuyên môn có thể hợp, nhưng lá bài không đảm bảo bạn sẽ được tuyển."
+    ],
+    [
+      "career",
+      "Vị trí của tôi trong công việc mới sẽ như thế nào?",
+      "Lá này có thể gợi một vai trò cần quyền phán đoán, trách nhiệm, tư duy chiến lược hoặc giao tiếp chuyên môn. Điều đó không nhất thiết là chức danh quản lý. Hãy xem mô tả công việc thực tế để biết mức quyền hạn thay vì suy ra từ cấp “Vua”."
+    ],
+    [
+      "career",
+      "Tôi đang làm công việc văn phòng bình thường, thời gian tới công việc của tôi có thay đổi gì không?",
+      "Bạn có thể phải xử lý một quyết định quan trọng, quy trình mới hoặc vấn đề cần phân tích kỹ. Một người có quyền quyết định và phong cách rất lý trí cũng có thể trở nên quan trọng. Chuẩn bị dữ kiện, ghi lại thỏa thuận và giữ trao đổi chuyên nghiệp."
+    ]
   ],
   'cups-c3': [
-    ['other', 'Hình ảnh trên lá bài cho thấy điều gì?',
-     'Lá bài vẽ một người đàn ông tay cầm chiếc ly, ngồi trên một chiếc ngai dường như đang nổi trên mặt nước. Vì bản chất là Ly, người này mềm mỏng và dễ chịu hơn hai vị Vua Kiếm và Vua Gậy đã học trước đó. Ly thuộc phạm trù cảm xúc, tinh thần và đam mê, còn Vua là năng lượng nam tính, là người lãnh đạo, người ra lệnh và nắm quyền lực. Vì vậy, Vua Ly là sự pha trộn của hai luồng năng lượng: phần nam tính của Vua và phần nữ tính của Ly.'],
-    ['other', 'Lá này miêu tả tính cách của một người như thế nào?',
-     'Dù là nam hay nữ, người này có đời sống cảm xúc phong phú, chỉ số EQ cao, đời sống tinh thần mạnh mẽ, và họ đã làm chủ được cảm xúc của mình. Vua Ly và Nữ Hoàng Ly là hai người có EQ khá cao. Khi thích ai, họ sẽ thể hiện ra, nhưng không phải theo kiểu vô duyên, sỗ sàng hay gây áp lực cho đối phương. Họ bày tỏ tình cảm một cách chân thành: họ thích, họ thương, họ quý bạn, và họ sẽ cho bạn thấy điều đó.'],
-    ['love', 'Người này có tỏ tình với tôi không?',
-     'Nhiều khả năng người này sẽ tỏ tình với bạn. Tuy nhiên, cách tỏ tình của họ sẽ không khiến bạn bối rối hay khó xử, vì dù sao đây vẫn là một người có EQ cao. Nhìn chung, Vua Ly và Nữ Hoàng Ly là những người rất biết cách cư xử trong các tình huống xã hội.'],
-    ['love', 'Anh ấy hoặc cô ấy dành cho tôi tình cảm như thế nào?',
-     'Người này chắc chắn có tình cảm với bạn. Không chỉ vậy, họ còn sẽ thể hiện và cho bạn thấy họ yêu thương bạn nhiều đến mức nào. Cách thể hiện đó không xấu và không tiêu cực, mà rất chín chắn và trưởng thành. Họ rất rõ ràng với tình cảm của mình. Vì đây vẫn là năng lượng nam tính, chủ động, mạnh mẽ và quyết liệt, nên khi thích bạn, họ sẽ chủ động tiến tới trước, nhưng theo cách không làm bạn khó chịu hay ngượng ngùng.'],
-    ['love', 'Hai chúng tôi yêu nhau nhiều năm nhưng hay cãi nhau, vì sao lại như vậy?',
-     'Người ta thường nói rằng càng thương nhau thì càng dễ làm nhau đau. Khi lá này xuất hiện, có nhiều hướng diễn giải. Hướng thứ nhất là trong mối quan hệ, một người thật lòng thương người kia và trao đi tình cảm, trao chiếc ly của mình, còn người kia chỉ biết nhận. Tình cảm hai bên bị mất cân bằng: một bên yêu nhiều hơn, một bên đã chán và một bên vẫn muốn vun đắp cho mối quan hệ. Hướng thứ hai là hai bạn thật ra chỉ cãi nhau những chuyện nhỏ và không có vấn đề gì nghiêm trọng, chẳng hạn người hỏi sau khi xem về công việc thì hỏi thêm về tình cảm cho trọn. Vua Ly cho thấy hai bạn vẫn còn thương nhau nhiều. Rơi vào hướng nào thì tùy thuộc vào trực giác của bạn và những lá đi kèm.'],
-    ['career', 'Trong thời gian tới, tôi có tìm được công việc như ý không?',
-     'Câu trả lời là có. Bạn sẽ tìm được công việc như ý và bạn sẽ thích công việc đó. Tuy nhiên, các khía cạnh tiền bạc, lương thưởng và thăng tiến của công việc này thì lá bài chưa cho thấy, vì Ly chỉ thuộc về phạm trù cảm xúc. Có thể chính người hỏi là người không đặt nặng chuyện tiền bạc, đã có sẵn nền tảng tài chính vững vàng và chỉ đi làm vì đam mê. Khi đó, bạn sẽ tìm được công việc mình thích nhưng chưa thấy được yếu tố tiền bạc. Điều này có nghĩa là lá bài không nói được, chứ không phải là công việc không có tiền.'],
-    ['other', 'Làm sao để tôi biết công việc đó có mang lại tiền hay không?',
-     'Bạn có thể rút thêm một lá và quy định trước rằng lá này sẽ nói về tiền bạc. Nếu bạn rút được những lá Xu đẹp, công việc này vừa hợp ý bạn vừa có tiền. Nếu bạn rút được lá Xu xấu, bạn sẽ thích công việc này nhưng thu nhập không tốt.'],
-    ['career', 'Hướng đi thứ hai trong công việc của tôi là gì?',
-     'Hướng thứ hai là công việc của bạn liên quan nhiều đến cảm xúc và con người. Có thể bạn làm công việc chữa lành tinh thần cho người khác, chẳng hạn như đọc bài tarot hay làm chuyên gia tâm lý. Cũng có thể đó là một công việc mang nhiều yếu tố cảm xúc và tinh thần. Các ngành dịch vụ, đặc biệt là dịch vụ chăm sóc con người, kể cả massage, đều mang năng lượng của Ly.'],
-    ['career', 'Tôi đang làm công việc văn phòng bình thường, thời gian tới có điều gì thay đổi không?',
-     'Có thể bạn đang yêu thích công việc của mình và trong thời gian tới vẫn tiếp tục yêu thích nó, chỉ đơn giản như vậy. Nếu câu hỏi của bạn là thời gian tới công việc có mang lại tiền hay không mà rút được Vua Ly, thì chưa chắc. Lá này chỉ nói rằng bạn thích công việc và nó mang lại cho bạn cảm giác thoải mái.'],
-    ['other', 'Lá này có thể miêu tả một người cụ thể không?',
-     'Lá này có thể mô tả một người cụ thể. Một cách hiểu khác là trong thời gian tới bạn sẽ gặp chuyện gì đó liên quan đến một người mang năng lượng Vua Ly. Người đó có EQ cao, biết thể hiện tình cảm cũng như suy nghĩ và cảm nhận của mình cho người khác biết, nhưng theo cách rất trưởng thành. Khi giận, họ không mắng chửi mà nói thẳng rằng hành động của bạn khiến họ khó chịu. Nếu nghe mô tả và bạn nhận ra đây là một người mình biết, thì để rõ chuyện gì sẽ xảy ra với người này, tốt hay xấu, bạn cần rút thêm lá. Bộ Hoàng Gia đôi khi vừa mô tả năng lượng của tình huống, vừa mô tả một người cụ thể trong cuộc sống của bạn. Nếu bạn thấy mô tả đó chính là mình thì cũng không sao, bạn chỉ cần xem tiếp chuyện gì sẽ xảy ra với mình trong công việc thời gian tới.']
+    [
+      "other",
+      "Hình ảnh trên lá bài cho thấy điều gì?",
+      "Vua Cốc ngồi trên ngai giữa mặt nước đang chuyển động. Hình ảnh cho thấy cảm xúc vẫn tồn tại quanh ông, nhưng ông không bị chúng cuốn đi. Đây là biểu tượng của sự trưởng thành cảm xúc, bình tĩnh và khả năng giữ vững mình khi hoàn cảnh dao động."
+    ],
+    [
+      "other",
+      "Lá này miêu tả tính cách của một người như thế nào?",
+      "Người này thường điềm tĩnh, biết lắng nghe, giàu cảm xúc nhưng không để cảm xúc điều khiển mọi quyết định. Họ có thể rất ấm áp và biết nâng đỡ người khác. Mặt trái là giấu cảm xúc quá kỹ hoặc dùng sự bình tĩnh để né một cuộc nói chuyện cần thiết."
+    ],
+    [
+      "love",
+      "Người này có tỏ tình với tôi không?",
+      "Vua Cốc có thể gợi một người biết mình cảm thấy gì và đủ trưởng thành để bày tỏ, nhưng Tarot không thể chắc chắn rằng họ sẽ tỏ tình. Hãy nhìn những dấu hiệu thật: sự chủ động, nhất quán và cách họ nói về mối quan hệ."
+    ],
+    [
+      "love",
+      "Anh ấy hoặc cô ấy dành cho tôi tình cảm như thế nào?",
+      "Đây là một lá đẹp cho tình cảm sâu, sự quan tâm và khả năng yêu theo cách chín chắn. Người ấy có thể thật sự muốn hiểu và chăm sóc cảm xúc của bạn. Tuy nhiên, độ sâu của tình cảm vẫn cần được xác nhận bằng hành động và giao tiếp ngoài đời."
+    ],
+    [
+      "love",
+      "Hai chúng tôi yêu nhau nhiều năm nhưng hay cãi nhau, vì sao lại như vậy?",
+      "Cãi nhau không có nghĩa là không còn thương. Với Vua Cốc, vấn đề có thể là một người đang giữ quá nhiều cảm xúc trong lòng để “giữ bình tĩnh”, hoặc một người luôn đóng vai người điều hòa đến mức nhu cầu riêng bị bỏ quên. Hai bạn cần nói cả những điều khó nói, không chỉ cố giữ hòa khí."
+    ],
+    [
+      "career",
+      "Trong thời gian tới, tôi có tìm được công việc như ý không?",
+      "Vua Cốc phù hợp với công việc cần sự điềm tĩnh, giao tiếp với con người, cố vấn, sáng tạo, chăm sóc hoặc quản lý cảm xúc trong tình huống áp lực. Nó có thể cho thấy sự phù hợp về môi trường nhưng không nói chắc về lương hay kết quả tuyển dụng."
+    ],
+    [
+      "other",
+      "Làm sao để tôi biết công việc đó có mang lại tiền hay không?",
+      "Tarot có thể giúp bạn đặt thêm câu hỏi về tài chính, nhưng để biết công việc có “mang lại tiền” hay không, hãy kiểm tra mức lương, phụ cấp, chi phí đi lại và cơ hội tăng thu nhập thực tế. Một lá Cốc nói về trải nghiệm cảm xúc nhiều hơn con số."
+    ],
+    [
+      "career",
+      "Hướng đi thứ hai trong công việc của tôi là gì?",
+      "Một hướng khác là những vai trò cần trí tuệ cảm xúc: tư vấn, chăm sóc khách hàng, quản lý con người, giáo dục, nghệ thuật, dịch vụ hoặc công việc hỗ trợ. Bạn cũng có thể mang kỹ năng này vào nghề hiện tại thay vì phải đổi ngành hoàn toàn."
+    ],
+    [
+      "career",
+      "Tôi đang làm công việc văn phòng bình thường, thời gian tới có điều gì thay đổi không?",
+      "Bạn có thể được giao tình huống cần sự bình tĩnh, xử lý con người hoặc làm trung gian giữa các bên. Đây là lúc tốt để dùng sự điềm tĩnh, nhưng đừng biến mình thành người phải gánh cảm xúc của cả đội. Giúp đỡ và giữ ranh giới có thể cùng tồn tại."
+    ],
+    [
+      "other",
+      "Lá này có thể miêu tả một người cụ thể không?",
+      "Có. Hofkarte thường có thể mô tả một người, một vai trò hoặc một cách hành xử. Vua Cốc có thể là người điềm tĩnh, biết lắng nghe và xử lý cảm xúc tốt. Chỉ nên gắn lá với một người cụ thể khi bối cảnh trải bài và thực tế thật sự khớp."
+    ]
   ],
   'pentacles-c3': [
-    ['other', 'Hình ảnh trên lá bài cho thấy điều gì?',
-     'Lá bài vẽ một người đàn ông tay cầm đồng Xu, ngồi trên ngai giữa cây cối xanh tốt, và trang phục của ông toát lên vẻ giàu có, sung túc. Đúng như vậy, người mang năng lượng Vua Xu là người rất giàu có và đầy đủ, bởi họ giỏi về mặt vật chất và tiền bạc, bất kể là nam hay nữ. Xu là vật chất, của cải và tất cả những giá trị có thể cầm, sờ, nắm và nhìn thấy được. Cơ hội công việc hay cơ hội du học cũng thuộc về Xu.'],
-    ['other', 'Lá này miêu tả tính cách của một người như thế nào?',
-     'Trước hết, đây là người vô cùng thực tế, có thể nói là thực tế nhất trong 78 lá Tarot. Họ kết hợp sự thực tế của Xu với tính nam và lý trí của Vua. Nữ Hoàng Xu vẫn còn chút cảm tính và nữ tính, còn Vua Xu thì thuần lý trí và thực tế. Đôi khi người này bị xem là khô khan, thậm chí thực dụng. Nhưng chính nhờ lý trí và thực tế, họ đưa ra những quyết định rất đúng đắn trong cuộc sống và hiếm khi để cảm xúc dẫn lối. Vì vậy, việc họ giàu có, sung túc và có một cuộc sống ổn định là điều hoàn toàn dễ hiểu.'],
-    ['love', 'Anh ấy hoặc cô ấy dành cho tôi tình cảm như thế nào?',
-     'Tình cảm này không phải là thứ tình yêu thuần túy xuất phát từ trái tim. Người này đến với bạn vì bạn có những điều kiện phù hợp với tiêu chuẩn của họ. Tuy nhiên, điều đó chưa chắc đã là xấu. Họ rất thực tế, và cả Vua Xu lẫn Nữ Hoàng Xu thường đều là người chung thủy. Họ chỉ có tiêu chuẩn rõ ràng, và cách họ tiếp cận hôn nhân hay mối quan hệ dựa trên những yếu tố khác chứ không phải dựa trên cảm xúc. Tính cách của họ vốn là như vậy. Có người sẽ thấy người này quá thực dụng và không thích. Nhưng có người lại tìm thấy ở họ cảm giác yên ổn, bình yên và ổn định, bởi một khi đã để mắt đến bạn và thích bạn, họ sẽ đầu tư cho bạn và cho mối quan hệ này. Vua Xu và Nữ Hoàng Xu thường không phải là người đa tình.'],
-    ['love', 'Yêu người này có gì khác so với yêu người khác?',
-     'Mối quan hệ với họ không có sự đam mê và bùng cháy như với những lá Ly, nhất là Kỵ Sĩ Ly. Họ sẽ không mang lại cho bạn cảm giác của tuổi trẻ hay kiểu yêu đến phát điên. Tình yêu của họ có thể nhạt, nhưng rất ổn định và an toàn. Cách họ cư xử, cách họ hành động và tình cảm họ dành cho bạn không hề thất thường. Người này phù hợp để kết hôn hơn là để yêu theo kiểu tuổi trẻ. Nếu bạn còn trẻ và muốn một tình yêu sống chết vì nhau, người này không dành cho bạn. Nếu bạn đã có tuổi và muốn một người ổn định, một tình yêu an toàn và một cuộc hôn nhân an toàn, thì đây chính là người dành cho bạn.'],
-    ['love', 'Hai chúng tôi yêu nhau nhiều năm nhưng hay cãi nhau, liệu có đến mức phải chia tay không?',
-     'Lá này nghiêng về khả năng hai bạn không phải chia tay. Có thể một trong hai bạn mang xu hướng của Vua Xu, tức là muốn ổn định, an toàn, lâu dài và hướng đến hôn nhân, còn người kia lại muốn bay nhảy và vui chơi. Một bên muốn ổn định, một bên muốn tự do, nên xảy ra xung đột về mong muốn và cách nhìn nhận cuộc sống, dẫn đến hay cãi nhau. Chuyện này hai bạn cần tự giải quyết với nhau.'],
-    ['love', 'Khi nào thì hai người buộc phải chia tay?',
-     'Đôi khi, nếu không giải quyết được những khác biệt về giá trị cốt lõi, hai người buộc phải chia tay trong hòa bình. Chẳng hạn, một người muốn có con còn người kia nhất quyết không muốn, không ai chịu nhường ai và không tìm được giải pháp chung, thì hai người đành phải chia tay, dù họ rất hợp nhau và rất thương nhau. Khác biệt về giá trị cốt lõi như vậy là điều phải chấp nhận. Một ví dụ khác là một người rất muốn kết hôn, có đông con cháu và sống chung với gia đình, bố mẹ, còn người kia nhất quyết không kết hôn, chỉ muốn ở bên nhau và không sống chung với cha mẹ của bất kỳ ai. Dù tính cách rất hòa hợp, hai người như vậy cũng không thể đến được với nhau.'],
-    ['money', 'Thời gian tới tôi có tìm được công việc không?',
-     'Khi lá này xuất hiện cho câu hỏi về công việc, bạn có thể yên tâm. Theo cách hiểu chung, bất cứ khi nào các lá Xu như Vua Xu, Nữ Hoàng Xu, Mười Xu hay Chín Xu xuất hiện cho câu hỏi về công việc, tài chính hay học tập, kết quả đều đáng hài lòng. Riêng với học tập, các lá Kiếm có phần phù hợp hơn một chút. Bạn sẽ tìm được việc, và đó là một công việc có thu nhập tốt. Thậm chí trong công việc này, bạn có thể ở vị trí lãnh đạo, có chức vụ và quyền hạn. Về mặt tài chính, mọi thứ đều ổn.'],
-    ['money', 'Tôi đang làm công việc văn phòng bình thường, thời gian tới công việc có gì thay đổi không?',
-     'Trong thời gian tới, có thể bạn sẽ có thêm tiền hoặc được thăng chức. Một cách hiểu khác là sắp có một sự kiện xảy ra liên quan đến một người mang năng lượng Vua Xu. Người đó thực tế, nam tính, hơi thực dụng và hơi khô khan. Nếu nghe mô tả và bạn nhận ra đó là cấp trên của mình, thì để biết sự kiện gì sẽ xảy ra với người này và ảnh hưởng thế nào đến bạn, bạn cần rút thêm lá.'],
-    ['other', 'Có ví dụ nào về việc rút thêm lá để đào sâu không?',
-     'Bạn có thể hình dung trường hợp rút được Vua Xu và bạn nhận ra đó là trưởng phòng của mình. Bạn rút thêm một lá, chẳng hạn được Ba Xu, lá của sự hợp tác và xây dựng, thì có thể hiểu rằng trưởng phòng sắp khởi động một dự án mới hoặc mở rộng nhóm, và bạn sẽ được kéo vào dự án đó. Sự thay đổi này chắc chắn ảnh hưởng đến công việc của bạn. Ảnh hưởng tốt hay xấu thì bạn lại rút tiếp một lá nữa. Bạn cứ đào sâu từng bước như vậy cho đến khi câu trả lời đủ rõ.']
+    [
+      "other",
+      "Hình ảnh trên lá bài cho thấy điều gì?",
+      "Vua Xu ngồi trên ngai giữa những biểu tượng của sự sung túc và thiên nhiên. Hình ảnh nói về thành quả được xây lâu dài: quản lý tiền bạc, nguồn lực, công việc và những giá trị có thể duy trì qua thời gian."
+    ],
+    [
+      "other",
+      "Lá này miêu tả tính cách của một người như thế nào?",
+      "Người này thường thực tế, ổn định, kiên nhẫn và giỏi quản lý nguồn lực. Họ thích kết quả bền hơn cảm giác nhất thời và thường nghĩ theo đường dài. Mặt trái là quá coi trọng địa vị, tiền bạc, kiểm soát hoặc sự an toàn."
+    ],
+    [
+      "love",
+      "Anh ấy hoặc cô ấy dành cho tôi tình cảm như thế nào?",
+      "Người ấy có thể nhìn mối quan hệ theo hướng lâu dài và thực tế: cùng xây cuộc sống, tài chính, nhà cửa hoặc kế hoạch chung. Sự thực tế không có nghĩa tình yêu kém chân thành. Hãy nhìn xem họ có ấm áp, tôn trọng và đầu tư cảm xúc chứ không chỉ cung cấp vật chất hay không."
+    ],
+    [
+      "love",
+      "Yêu người này có gì khác so với yêu người khác?",
+      "Năng lượng này thường ít phô trương và ổn định hơn kiểu tình yêu bùng cháy. Họ có thể thể hiện bằng việc giữ lời, có mặt, lập kế hoạch và xây sự an toàn. Điều quan trọng là đừng nhầm sự ổn định với quyền kiểm soát hoặc xem vật chất là thay thế cho sự gần gũi."
+    ],
+    [
+      "love",
+      "Hai chúng tôi yêu nhau nhiều năm nhưng hay cãi nhau, liệu có đến mức phải chia tay không?",
+      "Một lá bài không thể quyết định hai bạn có chia tay hay không. Vua Xu thường đưa câu chuyện về giá trị lâu dài: tiền bạc, gia đình, nơi sống, mức độ cam kết và cách xây tương lai. Nếu xung đột nằm ở đây, hai bạn cần nói rõ điều nào có thể thỏa hiệp và điều nào là giá trị cốt lõi."
+    ],
+    [
+      "love",
+      "Khi nào thì hai người buộc phải chia tay?",
+      "Không có lá bài nào quy định rằng hai người “buộc phải” chia tay. Tuy nhiên, nếu các giá trị cốt lõi như con cái, hôn nhân, an toàn, tôn trọng hoặc cách sống hoàn toàn không thể dung hòa, kết thúc mối quan hệ có thể là một lựa chọn lành mạnh. Quyết định đó thuộc về hai người, không thuộc về Tarot."
+    ],
+    [
+      "money",
+      "Thời gian tới tôi có tìm được công việc không?",
+      "Vua Xu là biểu tượng tốt cho sự ổn định và năng lực vật chất, nhưng không đảm bảo một công việc hay mức lương cụ thể. Hãy ưu tiên cơ hội có thu nhập, điều kiện và đường phát triển rõ ràng. Nếu bạn nhắm vai trò có trách nhiệm quản lý hoặc kinh doanh, lá này đặc biệt phù hợp về mặt biểu tượng."
+    ],
+    [
+      "money",
+      "Tôi đang làm công việc văn phòng bình thường, thời gian tới công việc có gì thay đổi không?",
+      "Bạn có thể được giao thêm trách nhiệm, quản lý nguồn lực hoặc nhìn thấy cơ hội tăng thu nhập theo hướng bền vững. Một người có ảnh hưởng về tài chính hoặc quản lý cũng có thể xuất hiện. Hãy kiểm tra mọi thay đổi bằng thông tin thật thay vì coi lá bài là lời hứa thăng chức."
+    ],
+    [
+      "other",
+      "Có ví dụ nào về việc rút thêm lá để đào sâu không?",
+      "Có. Nếu Vua Xu khiến bạn nghĩ đến một cấp trên, lá tiếp theo có thể được quy định trước để hỏi “người này ảnh hưởng thế nào đến công việc của mình?”. Ví dụ Ba Xu có thể gợi hợp tác hoặc xây dựng nhóm. Cách tốt nhất là đặt câu hỏi cụ thể cho từng lá thêm, thay vì rút liên tục cho đến khi gặp câu trả lời mình thích."
+    ]
   ]
 });
 
@@ -1373,3 +1799,2919 @@ Object.assign(ASK.vi, {
 
 /* keywords batch 07 - the four Aces and the four Twos */
 
+/* ---- the same 540 questions in English (review sections 20 and 22) ---- */
+
+Object.assign(ASK.en, {
+'major-0': [
+  ['love', 'What will my next partner be like?',
+   'Your next partner is likely to be someone who loves exploring. They are drawn to new experiences and dislike the feeling that every day looks the same. Life with them can feel exciting, but they may not be thinking about long-term commitment or marriage yet. One card is not enough to confirm that, so draw more if you want a clearer answer. If you are similar, the relationship could be lively and adventurous, but also a little reckless. For something lasting, it helps to share core values while having enough differences to balance each other. When two people are too alike, their weak spots can be doubled as well.'],
+  ['love', 'We are arguing. Should I break up with them?',
+   'Whether to end a relationship is a sensitive question. As a general reading principle, understand the situation and draw more cards before giving firm advice. If the conflict is mostly about small things, The Fool does not automatically point to a breakup. It can suggest that the relationship has become too repetitive and needs something fresh. Trying a new activity together, a short trip or a new shared interest may help. If the relationship is genuinely harmful, however, The Fool can support stepping outside what is familiar and choosing a different path, even if that means spending some time on your own.'],
+  ['career', 'I am unemployed. Will I find a job soon?',
+   'The answer leans yes. The next opportunity may be outside your current field or experience, because The Fool often brings a completely new beginning. Someone with a sales background, for example, might be offered work in design despite having no formal experience there. Stay open to a direction you had not originally planned.'],
+  ['career', 'I am currently working. What may change in my job soon?',
+   'You may be given a project in a completely new area. Because it is unfamiliar, you may need to learn from the beginning.'],
+  ['career', 'I have just started a new job. What should I do?',
+   'Mistakes are normal when you begin something unfamiliar. Give yourself time to learn, ask colleagues and managers when you are unsure, and take things step by step instead of expecting yourself to be excellent immediately. In this course, remember that a card meaning is only the beginning of a reading. The more important part is the advice you build from the card together with the person’s real situation.'],
+  ['other', 'What does this card say about my current energy?',
+   'The Fool says it is time to take the first step yourself. Its energy is curiosity, openness and active exploration. If you have been waiting for life to come to you, this card encourages you to get up and go looking.']
+],
+'major-1': [
+  ['love', 'What will my next partner be like?',
+   'This person is genuinely capable and confident in what they can do. They tend to be very competent in their field, quick to notice opportunities and good at handling situations as they arise. In work and practical matters, they are likely to be impressive.'],
+  ['love', 'Do they love me a lot?',
+   'The Magician alone cannot measure how deep someone’s feelings are. This card describes the person and the way they act more than the intensity of their emotions. Draw more cards if you want to explore how strong their feelings are.'],
+  ['love', 'What kind of feelings do they have for me?',
+   'The Magician speaks more about action than emotion, so it does not tell you how deep the feeling is by itself. What it does show is initiative: this person is actively moving toward you. Whether that initiative comes from genuine love needs more cards. If the Magician appears with the Ace of Cups, the combination gives much stronger support for real feelings and a willingness to show them. People with Magician energy are often direct and do not leave what they feel unspoken for long.'],
+  ['love', 'We are arguing. What does this card advise for the relationship?',
+   'Be the one who opens the conversation. Meet them directly if you can, talk honestly and work on a solution together. The answer needs to come from the two people in the relationship rather than from outsiders.'],
+  ['love', 'Should I break up with them?',
+   'The Magician asks for action, but action does not automatically mean ending the relationship. It may mean taking the initiative to sit down and talk clearly. Many couples understand each other better after an honest conversation. Because ending a relationship or leaving a job are both sensitive decisions, draw more cards before treating one card as a final answer.'],
+  ['career', 'I have been unemployed for six months. Will I find a job soon?',
+   'You can find work, but this card emphasises taking action rather than waiting. It may also describe a period of passivity, where the person is hoping an opportunity will simply arrive. The Magician reminds you that chances become more likely when you actively search, contact people and put yourself forward.'],
+  ['money', 'What is new for me this month?',
+   'This month, you may create a work or money opportunity for yourself. It is less about someone handing you a chance and more about you opening one. You may discover a new way to earn or use a skill you already have.'],
+  ['verdict', 'Should I leave my job?',
+   'The Magician alone is not enough for a simple yes or no; the real circumstances matter. If the workplace is genuinely harmful, the card can support taking the initiative to leave. If you are mainly bored or frustrated with a temporary phase, begin with changes you can control: reorganise your work, speak to the people involved and adjust your own approach. If those efforts do not help, then consider whether ending the job is the next step.']
+],
+'major-2': [
+  ['love', 'What will my next partner be like?',
+   'Your next partner may be highly intuitive and observant. Regardless of gender, they are likely to carry a quieter, receptive kind of energy even if they appear strong on the outside. Rather than acting immediately, they often step back, watch and then trust their inner sense of a person or situation.'],
+  ['love', 'What kind of feelings do they have for me?',
+   'The High Priestess does not tell you how strong the feelings are. It shows someone holding still, watching from a distance and keeping something private. They may feel drawn to you, but they are not acting on it yet. The reason for the silence needs more cards: fear of rejection, a private personality, poor timing or another relationship could all be possibilities. The key point is that, for now, there has been little or no action.'],
+  ['love', 'We are arguing. Should I break up with them?',
+   'This card suggests not rushing the decision. Give yourself time, calm down and listen to what you feel once the heat has passed. If, after some distance and reflection, your inner sense still tells you the relationship should end, you can decide from a clearer place. Decisions made in the middle of an argument are more likely to be impulsive and regretted later.'],
+  ['love', 'We are arguing. What does this card advise for the relationship?',
+   'The High Priestess suggests taking a small step back. Give each other some room to think. Some couples clash more when they keep talking while emotions are high, and a little distance can help the situation settle. Try not to dissect every sentence just to decide who was right. The most useful answer here comes from what each person honestly feels and needs, not from outside opinions.'],
+  ['career', 'I have been unemployed for six months. Will I find a job soon?',
+   'This card leans toward a delay rather than an immediate job. The High Priestess represents things that are still hidden or not fully formed. Your current search may not be focused in the right direction, or you may not yet know what kind of work suits you, so applications are going everywhere without a clear aim. Pause and ask what kind of work you actually want. Once that inner answer becomes clearer, the external search can become more focused too.'],
+  ['career', 'I am working normally. What may change at work soon?',
+   'For someone who is already working steadily, it would not make sense to turn this card into advice about quitting. A better layer of the High Priestess here is information that has not yet been revealed. Something may be developing behind the scenes, and it is not necessarily negative. A manager, for example, may be considering you for a new role without having said so yet. What is being kept quiet, who is involved and whether it helps you will need the surrounding cards.'],
+  ['other', 'How should I read this card when it appears on its own?',
+   'The High Priestess is one of the harder cards to read alone because its meaning is often hidden or unfinished. As a general reading practice, draw at least one more card before making a detailed interpretation.']
+],
+'major-3': [
+  ['love', 'What kind of person does this card describe?',
+   'The Empress describes someone with nurturing, maternal energy. They tend to care for people naturally and often do practical things well, from food to making a home feel comfortable. Their appearance or manner may feel polished, soft or feminine regardless of gender. This is different from the High Priestess: the High Priestess expresses femininity inwardly through intuition and the unconscious, while the Empress shows it outwardly through care, beauty, the senses and tangible life.'],
+  ['love', 'What kind of feelings do they have for me?',
+   'The Empress is usually a warm, positive card, so it often suggests genuine affection. The feeling comes with a protective, caring quality: this person wants to look after you and make life easier for you. Whether that care is healthy or becoming too much depends on the surrounding cards and the real relationship.'],
+  ['love', 'We argue a lot. Should I break up with them?',
+   'In many cases, this card does not point straight to a breakup. The two of you may care so much that small things turn into arguments. The relationship may need less parent-and-child style caretaking and more room for both people to meet as equal partners.'],
+  ['love', 'We argue a lot. What is the advice for this relationship?',
+   'Loosen the grip a little and give each other some personal space. The Empress can suggest that one person is giving or caring so intensely that the other feels crowded. More breathing room can make the relationship feel lighter.'],
+  ['money', 'How do my finances look this month?',
+   'Finances look relatively abundant this month. The Empress is traditionally linked with growth and plenty, so the picture is more about having enough and perhaps a little extra than about scarcity.'],
+  ['career', 'Will I find a job in the near future?',
+   'The answer leans yes. The next job may also feel comfortable or place you in an environment with strong nurturing or feminine themes. That could include service work, beauty, health care, nursing, a small business or any role centred on caring for people. It may also simply be a pleasant workplace with good material support or many women among colleagues and managers.'],
+  ['career', 'I work a normal office job. What may change soon?',
+   'Work may become more fruitful. You could receive more projects, more responsibility or more income as a result.'],
+  ['other', 'What does this card say about children or pregnancy?',
+   'The Empress is one of Tarot’s strongest traditional symbols of fertility, pregnancy, motherhood and creation. In an actual pregnancy question, however, a Tarot card is symbolic and cannot confirm a medical fact; use an appropriate test or medical advice for that. Marriage is usually read through other cards rather than the Empress alone.']
+]
+});
+
+Object.assign(ASK.en, {
+'major-4': [
+  ['love', 'What kind of feelings do they have for me?',
+   'If you have only been seeing each other for about a month and want to know whether they are serious, The Emperor suggests genuine long-term intent. Their way of loving can be controlling, though. They may want things to happen on their terms and can have a dominant presence without being a bad person. In a relationship with them, compromise will matter. If you also need to be in charge, clashes are more likely. In short, they may be serious about you, but they can also be rigid and imposing.'],
+  ['love', 'We are having a serious argument. What is the advice for this relationship?',
+   'The Emperor asks you to loosen the need for control. Stop trying to manage the other person or the relationship itself. You may want them to behave exactly as you think they should, but a lasting relationship needs compromise, mutual respect and acceptance of each other as adults. The person you love is a partner, not someone you need to raise or discipline.'],
+  ['career', 'What should I pay attention to at work over the next three months?',
+   'Pay attention to people with authority. This card opens two main possibilities. First, a manager or senior person may become important in your work; The Emperor alone does not say whether they favour or dislike you, only that their authority matters. Second, you may be given more decision-making power yourself. It may not be a formal management title, but you could lead a small group or become responsible for assigning work.'],
+  ['career', 'I have been unemployed for six months. Will I find a job soon?',
+   'This card is not strongly positive or negative, so the answer is not fully clear. You may find a job, but the new workplace could involve someone with Emperor energy: strict, demanding and not very flexible, yet potentially fair. If you do your work well, they may recognise it. The key is that they expect rules and standards to be followed.'],
+  ['career', 'What kind of work suits someone with this card’s energy?',
+   'One possible reading is that this person may eventually suit building something of their own rather than always working under someone else. They tend to want responsibility, authority and room to make decisions. That does not mean a young person should immediately become a manager, but over time entrepreneurship, leadership or a role with real ownership may fit them better than a position with little autonomy.'],
+  ['other', 'What other kinds of issues can this card point to?',
+   'The Emperor is linked with authority, hierarchy and formal systems. Depending on the question, it may point to a father figure, family authority, a spouse, a manager, an institution or public authority. Fines or administrative trouble can also fit this theme. Distinguish it from Justice: Justice leans more toward documents, procedures, fairness and legal matters, including disputes between individuals.']
+],
+'major-5': [
+  ['love', 'What kind of feelings do they have for me?',
+   'If you have been dating for only a short time and wonder whether the person is sincere, The Hierophant suggests seriousness and may even point to thoughts of formal commitment or marriage. Still, it helps to look for Cups or other emotional cards around it. The Hierophant can show a wish to make the relationship official, but by itself it does not explain whether the motivation is love, family expectations, social values or practical considerations.'],
+  ['love', 'We are arguing. Should I break up with them?',
+   'You may be holding so tightly to your own rules or beliefs that you cannot see the whole situation. It is easy to think, “I am right and they are wrong,” simply because that is how you were taught. Hierophant energy is good at respecting structure and principles, but its shadow is difficulty imagining another way. Before deciding to leave, ask whether the conflict is really about harm or incompatibility, or about two people treating their own rules as the only correct ones.'],
+  ['love', 'What is the advice for a relationship that keeps arguing?',
+   'The Hierophant can redirect some of your attention toward learning and personal growth. Choose a course, subject or skill that belongs to you rather than letting the relationship take up all your mental space. Having something meaningful of your own can reduce overthinking and give the relationship more breathing room.'],
+  ['career', 'What may be new at work soon?',
+   'You may meet a mentor, be sent to a workshop or training programme, or decide to study for a certificate or language qualification that supports your work. More broadly, The Hierophant is linked with learning, institutions and structured teamwork. You may join a new project group as a member; this card alone does not say that you will lead it.'],
+  ['other', 'How is this card different from The Emperor?',
+   'Both cards deal with rules, systems and authority. The difference is where the rules come from. The Emperor tends to create structure and expects others to follow it. The Hierophant works inside an existing tradition or institution and follows what the system, teachers or predecessors have established.'],
+  ['other', 'What else does this card represent?',
+   'The Hierophant is associated with religion, schools, education, knowledge, institutions, tradition and culture. It can also relate to marriage because marriage is a social and cultural institution. Another layer is the set of assumptions we absorb from the culture we grew up in and do not notice until we meet people who were taught differently. In teamwork questions, it is one of the cards that can emphasise learning and working within a group.']
+],
+'major-6': [
+  ['love', 'Does anyone like me?',
+   'There may be two people interested in you at the same time, and you may feel drawn to both, which makes the choice difficult. This differs from the Seven of Cups. With the Seven of Cups there can be many options but none feels quite right; with The Lovers, the tension is often that two choices both matter to you.'],
+  ['love', 'Do they like me?',
+   'The answer leans yes. However, The Lovers can also describe a choice, so the person may be considering more than one romantic option. Draw more cards before assuming what that choice is. If the surrounding cards are supportive, the reading can simply describe genuine attraction and connection between the two of you.'],
+  ['love', 'A couple argues a lot. Should they break up?',
+   'Do not rush to recommend a breakup from this card alone. There are two common directions. Positively, the two people still care deeply about each other and can use that bond as a reason to talk and repair things rather than end them too quickly. In another context, one person may be torn between the relationship and someone or something else. The surrounding cards and the real situation should decide which reading fits.'],
+  ['career', 'I am unemployed. Will I find work soon?',
+   'The answer leans yes, and you may even receive two opportunities close together and need to choose between them.'],
+  ['career', 'I am working normally. Will anything change in the next three months?',
+   'Another job offer or professional option may appear while you are still employed. You may then need to weigh staying where you are against moving somewhere new.'],
+  ['love', 'I am single. Will I meet someone soon?',
+   'You may meet more than one promising person in the same period. The important part of this card is not simply “two people,” but the need to make a choice that matches your real values.']
+],
+'major-7': [
+  ['love', 'What kind of personality does this card describe?',
+   'This person has strong willpower and tends to put goals first. They work hard, rarely back down and often come across as decisive and driven. The shadow of that strength is becoming so focused on achievement that family, friends or a partner are pushed into the background.'],
+  ['love', 'What kind of feelings do they have for me?',
+   'The answer leans toward attraction, but the approach may be fast and intense. This person can pursue romance like a goal they are determined to achieve. For some people, the thrill of pursuit is stronger than what comes after, so it is worth watching whether their interest remains steady once the chase is over.'],
+  ['love', 'A couple argues a lot. Should they break up?',
+   'This card may describe your current state more than the final outcome. You may be exhausted by the arguments and want to end everything quickly just to feel relief, but that can be a rushed decision. Breakup advice should depend on the actual health of the relationship: harm, persistent toxicity, or a clear loss of feeling matter more than one card. If the relationship is not at that point, calm down first and talk when both of you can think clearly. There may still be room to repair it.'],
+  ['love', 'They will not change the way I want. What should I do?',
+   'When a relationship feels difficult, many people instinctively try to fix the other person. You may have tried to make them text more or show more attention, then felt frustrated when nothing changed. The Chariot suggests changing your own perspective before trying to control the outside situation. For example, fewer messages may not mean less love; the person may be concentrating on work or a shared future. State what you need clearly, but also leave room to understand their reasons.'],
+  ['career', 'I am unemployed. Will I find a job soon?',
+   'This is a conditional yes. You can find work, but the card asks for more determination and initiative. After months without results, your energy may have dropped. Perhaps you are applying half-heartedly, feeling too comfortable to push, or carrying many plans but avoiding the first step because failure feels frightening. The Chariot says progress comes when you choose a direction and move.'],
+  ['career', 'I am working normally. What is new over the next three months?',
+   'The next three months may be busy. Your field could enter a peak period, or you may receive an additional project that needs a lot of time and focus. You may pour most of your energy into work. The reminder is to protect your basic rhythm: eat properly, sleep enough and leave room for family, friends or a partner so that progress does not turn into burnout.'],
+  ['other', 'How is this card different from The Sun?',
+   'The Chariot and The Sun can both speak about success, but they sit at different stages of the Major Arcana journey. The Chariot is an earlier victory driven by will and momentum; it can show reaching a target while neglecting things along the way. The Sun is a fuller kind of success, where achievement is accompanied by openness, support and joy. The lesson is that moving very fast can make the road lonely, while going far usually requires people and parts of life to travel with you.']
+],
+'major-8': [
+  ['love', 'What kind of personality does this card describe?',
+   'This person’s strength comes less from appearance and more from self-command. They understand their abilities and limits, and they can manage anger and strong impulses instead of being ruled by them. Because their confidence is secure, they can admit mistakes without becoming defensive. This is different from someone who performs strength to hide insecurity. Strength energy is quieter: steady, self-aware and difficult to shake.'],
+  ['love', 'Do they like me?',
+   'The answer leans yes, but do not expect a noisy chase. This person is secure enough to express interest calmly and directly. They may tell you they like you without pressuring you for an immediate answer. If you do not feel the same, they are more likely to step back respectfully than to keep pushing. Their style of affection is mature and considerate.'],
+  ['love', 'We are arguing. Should I break up with them?',
+   'The key word here is gentleness. Conflict is not solved by shouting or overpowering each other, but by patience, care and self-control. This card does not by itself point to a breakup. Decisions about leaving should be based on the real relationship, especially whether there is harm, persistent toxicity or no remaining willingness to repair things. If that is not the case, try listening and working through the issue from a calmer place.'],
+  ['career', 'I am unemployed. Will I find a new job soon?',
+   'The biggest barrier may be confidence rather than ability. After a long job search and repeated rejection, you may have started to believe you are not good enough, and that belief can show up in interviews. Someone who once answered fluently may begin hesitating because they are afraid of being wrong. Strength reminds you that your skills have not disappeared. The delay may be timing or a mismatch between the roles you are applying for and your actual strengths. Rebuilding confidence can change how you meet the next opportunity.'],
+  ['career', 'What should I pay attention to at work in the near future?',
+   'Work looks steady. You seem to understand your role, your strengths and your limits, and you are handling what is given to you competently. That stable period may continue without a major crisis or a dramatic leap. If you are hoping for a sudden breakthrough, this card does not promise one; its strength is consistency.'],
+  ['career', 'I have a new project coming up. Should I take it?',
+   'The card supports saying yes. You appear to have the resilience, skill and professional ability to handle it.'],
+  ['other', 'How should I read this card in an advice position?',
+   'In this course, Strength is read as a constructive upright energy rather than through reversals. In an advice position, it often points to a quality you need to bring forward: steadiness, patience, self-trust or emotional self-control. Strong instinctive feelings may be overpowering clear thought. The advice is to hold your centre rather than react from anger or fear.']
+],
+'major-9': [
+  ['love', 'What will my next partner be like?',
+   'Your next partner may be experienced, thoughtful and deeply reflective. They could be older than you, or simply more mature than people of the same age. Do not expect an especially theatrical kind of romance, though. Surprise parties, elaborate gifts or a highly staged proposal may not be their style. They can also be particular about things and need a lot of time alone.'],
+  ['love', 'What kind of feelings do they have for me?',
+   'There may be genuine feeling, but the person is in an inward-looking phase. They are busy searching for answers to their own questions, so the time and attention available for the relationship may be limited. You may want a weekend together while they would rather stay home, read or finish something personal. That can leave you feeling neglected. The Hermit is not a negative card, but its energy is not naturally easy for a relationship that currently needs more closeness.'],
+  ['love', 'We are arguing. Should I break up with them?',
+   'This card suggests not rushing into a breakup. If every meeting turns into another argument, give each other some time and space to settle. In that quiet period, look inward and ask where the conflict began, what part you may be contributing and what you can realistically change.'],
+  ['love', 'Is the problem them or me?',
+   'During conflict, most of us instinctively focus on what the other person is doing wrong. The Hermit turns the question inward first. In any relationship — family, friendship or romance — ask whether there is something in your own behaviour that could be adjusted. Improving yourself does not mean making yourself smaller or losing your identity. It can simply mean listening to feedback, apologising when appropriate and changing what you genuinely agree needs changing.'],
+  ['career', 'I have been unemployed for months. Will I find a job I like?',
+   'The card encourages you to keep searching while asking a deeper question about what you actually want. You may be focusing only on roles that meet a salary or qualification target while overlooking work that feels meaningful. Someone trained in engineering, for example, might discover that helping people is what gives them the strongest sense of purpose. Take time to listen to yourself. You can still keep a stable profession and meet that need through volunteering, or you may eventually choose social, educational or nonprofit work more directly.'],
+  ['career', 'What should I pay attention to at work soon?',
+   'You may meet a mentor, teacher or experienced professional who helps you deepen your knowledge.'],
+  ['timing', 'When will I finally find the answer?',
+   'This is not a fast card. The search may take time and asks for patience. Rather than treating a specific number of months as fixed, read The Hermit as a slower process in which clarity develops through sustained reflection and experience.']
+]
+});
+
+Object.assign(ASK.en, {
+'major-10': [
+  ['love', 'What kind of personality does this card describe?',
+   'The Wheel of Fortune is not a strong personality card on its own, so draw more cards if you want to describe a person. If you read only this card, it can suggest that meeting them feels meaningful rather than random: the two of you may have something important to learn through the connection. “Important” does not have to mean painful. The relationship can bring growth and good things in gentle ways as well as through challenge.'],
+  ['love', 'What kind of feelings do they have for me?',
+   'The Wheel of Fortune is also indirect when it comes to feelings. What it can show is that the person may see your meeting and the fact that you are still in each other’s lives as significant or “meant to happen.” That does not tell you exactly what they think or how deeply they feel, so draw more cards for the emotional part.'],
+  ['love', 'We are arguing. Should I break up with them?',
+   'Do not decide from this card alone. The Wheel of Fortune is neutral and depends heavily on the surrounding cards. Supportive cards such as the Ten of Cups or Four of Wands can show that the relationship still has strong potential and is worth talking through before ending it. Harder cards such as The Devil or The Tower can show a pattern that is becoming difficult to sustain. Even then, Tarot should not dictate a breakup; the real level of harm, trust, safety and willingness to change matters more than the card. One person cannot single-handedly control or repair an entire relationship.'],
+  ['career', 'Will I find a new job soon?',
+   'The answer leans yes, and the new job may feel like a turning point rather than an ordinary change. It could bring a move, work abroad, a new environment or experiences that broaden your perspective and change the way you think about your career.'],
+  ['career', 'I work a normal office job. What should I watch over the next three months?',
+   'A major change or turning point may appear at work. The Wheel itself is neutral: it shows movement but not whether the outcome is good or bad. The change could be a transfer, promotion, pay rise, work trip, office move or a change of manager. Use the surrounding cards to see the tone and the part you can influence.'],
+  ['other', 'What does it mean when a spread contains many Major Arcana cards?',
+   'The balance between Major and Minor Arcana can show the scale of the issue. When the Majors clearly dominate, the reading often feels connected to larger life themes, transitions or lessons that are not easily changed overnight. When the Minors dominate, everyday choices, habits, moods and practical actions usually play a bigger role. This is a reading convention rather than a fixed law of fate.'],
+  ['other', 'Can fate be changed?',
+   'One useful way to think about fate in Tarot is as a range rather than a single fixed outcome. Some circumstances are outside our control, while our choices, effort and responses still shape where we land within them. Not every person who works hard becomes a genius or gets every result they want, but effort can help us make fuller use of the abilities and opportunities we actually have.']
+],
+'major-11': [
+  ['love', 'What kind of feelings do they have for me?',
+   'In an emotional reading, Justice is more measured and rational than romantic. This person may be weighing the relationship carefully: what feels fair, what each person gives, and what the practical consequences of being together would be. That does not mean the feelings are false, only that emotion is not the whole picture. If the relationship is new, this card alone cannot tell you how deep or lasting the love will become.'],
+  ['love', 'We are arguing. Should I break up with them?',
+   'Justice leans toward slowing down before making a breakup decision. The card asks for balance and a clear look at the facts. Strong feelings are natural in relationships, but they can make the situation harder to judge in the middle of a conflict. Look for repeated patterns, what is fair to both people, and where your own behaviour may need adjustment before making a major decision.'],
+  ['career', 'I have been unemployed for months. Will I find a job I like?',
+   'Justice alone is not enough for a firm yes or no, so draw more cards. It does suggest several practical directions. The next role may involve administration, documents, procedures, accuracy, numbers or law — for example banking, accounting, data work or legal support. A new manager may also be very principled and demanding. Another possibility is that your application materials are part of the problem. Review your CV and documents, add what is missing, remove what is not useful and ask someone experienced to give you feedback.'],
+  ['career', 'What should I pay attention to at work in the near future?',
+   'Pay close attention to paperwork and administrative procedures. A decision that benefits you may already have been made but could be delayed because a certificate, form or approval is missing. If a raise or promotion is being processed, for example, HR may be unable to complete it until the documentation is correct. Check important work documents early rather than waiting until they become a bottleneck.'],
+  ['other', 'When something goes wrong, where should I look first?',
+   'Start with an honest look at your own part: what you handled well, what you could have done differently, and whether you completed your responsibilities. After that, look at the other people and circumstances involved. Self-reflection is useful because it gives you something you can actually change. It should not become self-blame, and it does not mean other people are never responsible. The aim is a fair assessment rather than automatically assigning all fault to one side.'],
+  ['other', 'What should I do if the cards seem to answer a different question?',
+   'This happens fairly often. You may ask about career prospects and find that the cards seem to describe a manager or another issue instead. First check whether you framed the question clearly and whether the cards actually connect to a hidden part of the situation. If the message still seems unrelated, say so rather than forcing a fit. Intuition matters in Tarot, but it works best alongside a clear question and honest interpretation.']
+],
+'major-12': [
+  ['love', 'What kind of person does this card describe?',
+   'The Hanged Man can describe someone who does not fit neatly into the usual mould. Their difference may show in the way they dress, think or choose to live. The point is not that being different is bad, but that they are willing to see life from another angle. They may have a background, identity or path that is less common, including being part of the LGBTQ+ community. Imagine someone leaving a secure office job for a vocation their family never expected: others may find the choice unusual, but the person is living more honestly as themselves.'],
+  ['love', 'What kind of feelings do they have for me?',
+   'The Hanged Man does not give a very direct emotional answer. The person may be attracted to you for something unusual or deeply personal rather than the qualities everyone else notices first. It can also describe you as someone whose difference is part of what draws them in. Draw more cards if you want to know how strong the feelings are or whether they will act on them.'],
+  ['love', 'We are arguing. What advice does this card give for the relationship?',
+   'Stop chasing a solution for a moment and change the angle from which you are looking at the problem. Some quiet time alone can help you think without the pressure of the argument. If you are stuck, speak with someone who sees life very differently from you and listen without immediately defending your own position. A new perspective may show that the conflict is smaller than it felt, or that it is revealing something the two of you needed to understand. Sometimes the first useful change is not the relationship itself, but the way you are seeing it.'],
+  ['career', 'Will I find a new job soon?',
+   'There are two useful ways to read this card. You may find work that is different from what you first expected or outside the field you studied. Or the card may be asking you to widen your search. If you are looking only at large companies in one city, for example, consider smaller organisations, another location or a role that uses your skills in a different way.'],
+  ['career', 'What should I pay attention to at work over the next three to six months?',
+   'The Hanged Man is not very specific here, so draw more cards for a fuller picture. Two possibilities stand out. You may be given a project unlike your usual work, which helps you understand your field from a new angle. Or you may meet a mentor with an unconventional style whose advice sounds strange at first but becomes useful once you think it through.'],
+  ['other', 'What is the core meaning of this card?',
+   'The Hanged Man marks a shift in perspective. In the Fool’s Journey, the traveller reaches a point where forcing himself into the expected shape no longer works. The card is about pausing, accepting what is true and looking from another angle. When you are stuck, the answer may not be another external action; it may begin with changing the way you understand the situation.'],
+  ['other', 'What kind of friends should I choose?',
+   'It is healthy to have people around you who see life differently from you. That does not mean people who enjoy fighting or provoking you, but people with different backgrounds, experiences and viewpoints. They remind you that one situation can be seen in more than one way. Learning to hold several perspectives can make you less quick to judge and better able to accept differences without trying to force everyone into your own mould.']
+],
+'major-13': [
+  ['love', 'What kind of personality does this card describe?',
+   'Death can describe someone whose life has contained major changes and reinventions. They may have experienced both highs and lows, with each turning point forcing them to rethink, adapt and become a different version of themselves. Rather than keeping one worldview for decades, they tend to grow through endings and new beginnings, like a tree shedding leaves before new growth. In Tarot astrology, this theme is traditionally associated with Scorpio and its symbolism of transformation.'],
+  ['love', 'What kind of feelings do they have for me?',
+   'Death alone is not enough for a firm emotional conclusion, so draw more cards. One possible reading, especially when it appears early in a spread, is that the person has feelings for you but still has something from the past to close properly. That may be a previous relationship or another chapter they do not want to carry into something new. If that fits the real situation, patience may be useful while they complete the ending — without putting your own life on indefinite hold.'],
+  ['love', 'We are arguing. Should I break up with them?',
+   'Death does not automatically mean “break up.” It can point to ending the way the relationship has been functioning rather than ending the relationship itself. A quiet, honest conversation about what has been left unsaid can help close an old pattern. If both people are willing to change, the relationship may move into a different chapter. If the harmful pattern cannot or will not change, then the ending may eventually need to be more literal.'],
+  ['career', 'I have been unemployed for three or four months. Will I find a new job soon?',
+   'The card says the current approach may need to end because it is not producing results. Two possibilities are worth checking. You may have lost confidence, and that is showing in interviews. Or you may be applying for roles that do not really match your training, strengths or preferred way of working. Someone who is strong with people, for example, may struggle if they only apply for isolated data-entry roles. Stop repeating a direction that is not working and redefine the kind of role that actually fits you.'],
+  ['career', 'Will I have problems at work over the next six months?',
+   'Do not assume this card predicts job loss. Death is more usefully read as the end of a phase or role. A project may finish and make room for another, or you may choose to close a position that no longer fits. One card cannot tell you whether the ending will feel welcome or difficult, so draw more if that distinction matters.'],
+  ['other', 'Why do I have to let go when I still feel attached?',
+   'Regret and attachment are normal. Letting go does not mean pretending something never mattered. It means recognising when a person, relationship or situation no longer works well enough to carry forward in the same form. Life has limited time and energy, so some things eventually have to be put down to make room for what comes next. Fear that nothing better will appear is common, but it is not proof that you should keep holding on.']
+],
+'major-14': [
+  ['love', 'What kind of feelings do they have for me?',
+   'There is likely affection here, but it is expressed in a measured way. The person is neither rushing toward you nor acting cold. Their feelings unfold steadily and at their own pace. If you want a highly dramatic, intense romance, Temperance may feel too quiet; its emotional temperature is balanced rather than extreme.'],
+  ['love', 'We are arguing. Should I break up with them?',
+   'Temperance advises against making a rushed breakup decision while everything feels out of balance. First look at your own rhythm. Overwork can lead to poor sleep, poor sleep can affect eating and mood, and exhaustion can make every conflict feel larger. Give yourself enough time to return to a steadier routine before deciding what the argument means. Once you are calmer, you may see the problem — and the available solutions — more clearly.'],
+  ['career', 'I have been unemployed for six months. Will I find the job I want?',
+   'Here, Temperance may say more about your pace than about the job market. You may be searching, but without much urgency or initiative. If only a handful of applications have gone out in six months, the slow result is understandable. The answer depends partly on whether you change the rhythm: contact more places, apply more consistently and take more active steps while still choosing roles thoughtfully.'],
+  ['career', 'Will I have problems at work over the next three to six months?',
+   'Work looks relatively stable, and the next few months may continue at a similar pace. Temperance does not promise a sudden offer or dramatic breakthrough. Its less exciting side can feel like standing still, but not every quiet period is bad. Some phases are for recovery and consolidation. The key is balance: constant rushing burns you out, while endless waiting can become stagnation.']
+],
+'major-15': [
+  ['love', 'What kind of personality does this card describe?',
+   'The Devil can describe someone who is being driven by impulses or a pattern they find hard to control. The dependence does not have to involve alcohol or drugs; it can be smoking, overeating or restrictive eating, sleep habits, gaming, social media, shopping or any behaviour that keeps taking more time and control than intended. The familiar pattern is “just one episode” turning into the whole night, or checking one message and then losing hours to the phone while important tasks stay untouched.'],
+  ['love', 'What kind of feelings do they have for me?',
+   'The Devil asks you to examine what is driving the attraction rather than assume it is pure love. Physical desire, secrecy, the thrill of crossing a boundary, jealousy, power or another unmet need may be mixed in. That does not prove the person has no real feelings, but it is a warning not to romanticise a connection that is being held together by compulsion or temptation. Use the surrounding cards and, more importantly, the person’s actual behaviour.'],
+  ['love', 'We are arguing. Should I break up with them?',
+   'The Devil can point to an unhealthy cycle, but a card alone cannot diagnose a relationship as toxic. Look at the real pattern. If being together repeatedly brings insults, control, jealousy, fear or loss of yourself, while distance produces panic and a strong pull back into the same cycle, that deserves serious attention. Ask whether you can still be yourself in the relationship and whether both people are willing and able to change the harmful behaviour. If there is abuse or you feel unsafe, seek support outside the relationship.'],
+  ['love', 'What if I feel like I cannot leave them?',
+   'Try changing the sentence from “I cannot leave” to “leaving feels extremely hard right now.” That wording makes room for both the pain and your agency. Ending a relationship can be difficult, frightening and complicated, especially when love, dependence, housing, money or family are involved. You do not have to do it alone. If you decide to leave, support from trusted people or appropriate services can make the process safer and more manageable.'],
+  ['career', 'Will I find a job I like soon?',
+   'The answer can lean yes, but with a clear warning: be cautious about offers that look almost too attractive. A role may promise excellent benefits while hiding unclear practices, grey legal areas or expectations that conflict with your values. The job itself is not automatically bad, but you should read every term carefully, ask direct questions and make sure the compensation is not being used to distract you from conditions you would otherwise reject.'],
+  ['career', 'What should I pay attention to at work over the next three to six months?',
+   'Watch for temptation and blurred boundaries. One form may be an office relationship that creates secrecy or conflicts of interest. Another may involve money, gifts, commissions, documents or shortcuts that put your integrity or legal position at risk. The card does not decide for you; it reminds you that a tempting short-term gain can carry a much larger cost. Keep professional boundaries clear and do not agree to anything you would be uncomfortable explaining openly.']
+]
+});
+
+Object.assign(ASK.en, {
+'major-16': [
+  ['love', 'What kind of person does this card describe?',
+   'When The Tower appears for a personality question, it often describes someone whose inner world is unsettled. They may be quick-tempered, impulsive or blunt, or they may simply be coming out of a major shock or sudden loss and still feel emotionally scattered. One card cannot tell you whether they have already rebuilt themselves after that experience, so draw more if you need a clearer picture.'],
+  ['love', 'What kind of feelings do they have for me?',
+   'The Tower does not answer this question directly. It often points less to the present connection and more to an old wound the person still carries. Imagine that the two of you have only just started getting to know each other and everything seems calm, yet The Tower appears. A reasonable reading is that they may have experienced a sudden betrayal, breakup or other emotional shock in the past, and some of that disruption still affects how they approach closeness. Whether they have healed enough to build something new depends on the surrounding cards and, more importantly, on their actual behaviour.'],
+  ['love', 'Should I date if I have not fully healed yet?',
+   'You do not have to become perfectly healed before you are allowed to love. Some wounds do repeat themselves in relationships when they are ignored, so self-awareness and responsibility matter. At the same time, certain patterns only become visible when intimacy brings them to the surface. The healthier question is not “Am I completely healed?” but “Can I recognise my wounds, take responsibility for them and avoid making another person responsible for fixing me?” A mature relationship can support growth, but it should not replace the work each person needs to do for themselves.'],
+  ['love', 'We are having a serious conflict. Should I break up with them?',
+   'The Tower says the current pattern cannot simply continue unchanged. It can point to a relationship in crisis, especially when conflict has become frightening, humiliating or destructive. Do not use one card to decide whether a relationship is abusive or whether you must leave; look at what is actually happening. If there is physical violence, threats, coercion or fear for your safety, prioritise safety and seek support outside the relationship. If the conflict is not abusive, the card still asks for an honest reset: either the underlying problem is addressed at its root, or the structure of the relationship may eventually break down.'],
+  ['love', 'They hit me, but apart from that they say they love me. Is that still a problem?',
+   'Yes. Being hit by a partner is physical violence, and love does not make violence acceptable. Abuse can coexist with apologies, affection and periods of calm, which is one reason it can be difficult to recognise or leave. You do not need to prove that the situation is “bad enough” before seeking help. If you feel unsafe, contact someone you trust or a local domestic-violence service and make safety the priority.'],
+  ['career', 'I have been unemployed for three months. Will I find work soon?',
+   'The Tower is not a promise of an immediate job. Instead, it asks you to rebuild the search from the ground up. Review whether you are targeting the right roles, whether your CV and applications are strong enough, whether you are preparing seriously for interviews and whether you are putting consistent effort into the search. Unemployment can make unexpected expenses feel especially stressful, so protecting whatever financial buffer you have is also sensible while you look.'],
+  ['career', 'What may change in my work over the next three to six months?',
+   'A sudden change may disrupt the structure you are used to. That could be a reorganisation, a manager leaving, a project ending, a policy change or another event that forces people to adjust quickly. The Tower does not mean disaster is guaranteed; it means something unstable may be exposed or something outdated may need to be rebuilt. Pay attention to real warning signs rather than inventing a crisis before it happens.'],
+  ['other', 'Why do some people have a difficult early life but a better later life?',
+   'There are many ways to understand this. In spiritual traditions that believe in karma and rebirth, hardship in one period of life may be interpreted as part of a longer cycle of causes, consequences and growth. That is a belief, not something Tarot can prove. From a practical point of view, people can also become more stable later because experience, relationships, skills and earlier choices accumulate over time. The useful message of The Tower is that a difficult beginning does not have to define the rest of a life.']
+],
+'major-17': [
+  ['love', 'What kind of person does this card describe?',
+   'The Star describes someone with steady faith in life and in their own ability to keep going. Faced with something difficult, they are inclined to believe that a way forward exists. That hope becomes valuable when it is paired with action. Optimism without effort can drift into wishful thinking: believing a good job will appear without applying anywhere, or believing love will arrive while never allowing yourself to meet anyone. The Star is strongest when hope gives you the courage to participate in your own future.'],
+  ['love', 'What kind of feelings do they have for me?',
+   'There is likely genuine affection here, but this person may also be idealising you. In their eyes, you can seem more beautiful, capable or perfect than any real person can consistently be. That can feel romantic at first, but lasting love usually becomes healthier when two people can see each other clearly, share ordinary burdens and meet as equals. Admiration is lovely; putting someone on a pedestal is harder to sustain.'],
+  ['love', 'We are arguing. Should I break up with them?',
+   'The Star is a hopeful card, so it suggests there may still be room to repair the relationship. The current conflict may be temporary rather than a final ending. Instead of deciding in the heat of the moment, look for what can realistically be repaired and whether both people are willing to do that work. Hope is useful when it is supported by real change.'],
+  ['career', 'I have been unemployed for three months. Will I find a suitable job?',
+   'The answer leans yes, but The Star pairs hope with participation. Keep applying, develop the skills that strengthen your position, widen your network and make yourself available to opportunities. Hope is not a substitute for action; it is what helps you continue acting when results have been slow.'],
+  ['career', 'What may change in my work over the next three to six months?',
+   'A new opportunity may come into view. The card does not guarantee that you will take it, only that there may be something worth noticing. Your part is to recognise the opening, check whether it fits your direction and act while the opportunity is real.'],
+  ['other', 'Does this card always mean there is hope?',
+   'Usually The Star carries hope, renewal and the sense that a difficult period can become lighter. Its shadow side is idealisation: expecting a future so perfect that you stop dealing with the present. Draw another card if you need to know whether the hope is being supported by action. A possibility can exist, but someone still has to meet it halfway.']
+],
+'major-18': [
+  ['love', 'What kind of person does this card describe?',
+   'The Moon can describe someone living with uncertainty, anxiety or a lack of clarity. Fear may make it difficult for them to act, and conversations can circle around the same worries without reaching a decision. That does not mean they are a negative person by nature; it may simply describe a period when they cannot yet see the road clearly. No one else can make their choices for them, but support, reflection and concrete information can help separate real problems from imagined ones.'],
+  ['love', 'What kind of feelings do they have for me?',
+   'They may have feelings for you, but uncertainty or fear is holding them back. The concern may be based on something real, or it may be a scenario they have built in their own mind; one card cannot tell you which. Give them room to work through that uncertainty instead of trying to force a decision. What matters is whether their eventual actions become clear and consistent.'],
+  ['love', 'We are arguing. Should I break up with them?',
+   'The Moon asks you to check whether the conflict is based on facts or on assumptions. Jealousy is a common example: a late dinner with colleagues can become an entire story in the mind before any evidence exists. Repeated suspicion can damage trust even when the feared event never happened. At the same time, do not dismiss genuine warning signs as “just anxiety.” Slow down, verify what you actually know, speak directly and make decisions from reality rather than from imagined scenarios.'],
+  ['love', 'So what is a healthier way to think about it?',
+   'You do not need to control every possible outcome. Trust can mean giving the relationship room while staying willing to respond if real information changes. If your partner is faithful, constant suspicion only exhausts both of you. If clear evidence of betrayal appears one day, you can deal with that reality then. The goal is not blind trust; it is to stop treating every fear as if it were already a fact.'],
+  ['career', 'I have been unemployed for two or three months. Will I find work soon?',
+   'Fear may be affecting the way you present yourself. If you walk into every interview already convinced you will fail, that anxiety can make it harder to show what you actually know. Feeling nervous is normal; the important part is not letting the fear decide your behaviour. Prepare carefully, practise your answers and judge each interview by what actually happens rather than by the worst outcome you imagined beforehand.'],
+  ['career', 'What should I watch for at work over the next three to six months?',
+   'A change may create uncertainty — for example, a reorganisation, a new manager or shifting responsibilities. The Moon reminds you not to let worry run ahead of the facts. You may fear that a new manager will dislike you before you have even met them. Separate what has actually changed from what your mind predicts might happen, and respond to the real situation as it develops.'],
+  ['other', 'If I fear something a lot, does that make it more likely to happen?',
+   'Fear does not magically cause events, but it can influence behaviour. Someone terrified of being late may sleep badly, rush in the morning, forget something and end up late partly because anxiety disrupted their preparation. The useful lesson is not to force yourself to “think positive” all the time. Do what you can, prepare well and leave room for outcomes you cannot control. If things go well, enjoy it; if they do not, you can feel disappointed and still move forward.']
+],
+'major-19': [
+  ['love', 'What kind of person does this card describe?',
+   'The Sun describes someone with natural presence. They tend to be optimistic, expressive and easy to notice, with the confidence to lead or bring energy into a room. The shadow side can be a strong need for attention or difficulty stepping out of the spotlight. Warmth becomes more sustainable when confidence is paired with the ability to listen, share space and let other people shine too.'],
+  ['love', 'What kind of feelings do they have for me?',
+   'The Sun is usually very positive in a love reading. If you are still getting to know each other, it suggests you bring genuine happiness and warmth into this person’s life. Their strongest quality here is clarity: they are more likely to know what they feel, know what they want and show it openly instead of leaving you to guess.'],
+  ['love', 'We are arguing. Should I break up with them?',
+   'Rather than giving a simple yes or no, The Sun asks for more light in the relationship: more honesty, clarity and direct communication. Conflict often grows when each person keeps their needs hidden and expects the other to guess. Say what you actually want, listen to what they need and see whether the two of you can meet each other in the open. Once things are clear, the decision may become much easier.'],
+  ['career', 'I have been unemployed for three months. Will I find the job I want?',
+   'The answer leans strongly yes. The Sun suggests a brighter period in your career and a role that may feel like a real win after a difficult wait. Keep doing the practical work of searching, because the card describes favourable energy, not a contract that arrives without action.'],
+  ['career', 'What will work be like over the next six months to a year?',
+   'Work looks relatively positive and stable. If things are already going well, The Sun suggests that momentum can continue. A single card cannot account for every event in an entire year, so treat it as the overall tone rather than a guarantee that nothing difficult will happen.'],
+  ['other', 'Is this card always positive?',
+   'Most of the time, The Sun is read positively: clarity, vitality, confidence and success. Its shadow can be overconfidence, ego or too much exposure. When reading for someone else, keep the interpretation balanced. A reader’s job is not to frighten the person or promise perfection, but to describe the card honestly and leave room for the person’s real circumstances.']
+],
+'major-20': [
+  ['love', 'What kind of person does this card describe?',
+   'Judgement can describe someone who has gained perspective through lived experience. This is not the same as being academically clever or knowing many facts. Their understanding comes from having gone through turning points, reflecting on them and learning what truly matters. If the person is young, the card may suggest a level of maturity beyond their years.'],
+  ['love', 'What kind of feelings do they have for me?',
+   'The energy is positive and can point to a connection that feels deeper than surface attraction. This person may value your character, inner world and the sense of recognition they feel with you. At its healthiest, the affection is respectful rather than possessive: they can express what they feel while still accepting your answer and your boundaries.'],
+  ['love', 'We are arguing. Should I break up with them?',
+   'Judgement asks you to look at the whole relationship, not only at the argument happening today. What brought you together? What has been good, and what patterns keep returning? A single conflict does not necessarily erase everything that came before, but serious harm, betrayal or abuse should never be minimised just because there were good memories too. Make the decision by looking at the full pattern and what both people are willing to change.'],
+  ['career', 'I have been unemployed for three months. Will I find a new job?',
+   'Judgement turns the question inward before it turns outward. You may be applying everywhere because you feel you have no other choice, even when many of those roles do not suit you. Take some time to review what you actually want, what you are good at and what kind of work you can realistically build toward. Once the direction becomes clearer, your applications can become much more focused and effective.'],
+  ['career', 'What may change in my work by the end of the year? Is there a new opportunity?',
+   'If you already feel engaged and aligned with your work, the overall direction remains positive. A new opportunity may appear along the way. Keep doing what is working, stay open to feedback and make sure enthusiasm is supported by consistent effort rather than assuming good momentum will maintain itself automatically.'],
+  ['other', 'What does “high frequency” mean here?',
+   'In Nabu’s spiritual language, “high frequency” is best understood as a metaphor for a relatively steady, grounded state of mind — not a scientifically measurable vibration. You still feel happiness, disappointment, excitement and sadness, but you are less likely to be thrown completely off balance by every event. Emotional maturity is not feeling less; it is being able to feel fully and still return to yourself.'],
+  ['other', 'Is it wrong to do a job I do not like?',
+   'Not at all. Many people do work they do not love because it provides income, stability or a bridge to something else. The useful question is whether the arrangement still serves you. You are allowed to keep a practical job while building another direction, or to decide that stability matters more to you than passion. The point is to make the choice consciously rather than assuming there is only one acceptable way to live.']
+],
+'major-21': [
+  ['career', 'Will I find a new job in the near future?',
+   'The World leans toward yes and may also describe the nature of the opportunity. The next role could involve international work, another country, a multinational company or regular contact with people abroad. If not, the card can still point to geographical movement, such as relocating to another city for work.'],
+  ['career', 'I have a normal office job. Will anything change soon?',
+   'Here The World does not necessarily mean an ending. It can show completion and competence within a field you already know well. Your work may remain stable, and this could be an industry you stay connected to for a long time even if you change companies later. Finding a field that fits you can matter more than staying with one employer forever.'],
+  ['love', 'What does it actually mean for two people to be compatible?',
+   'Compatibility is less about having identical personalities or hobbies and more about whether your core values and long-term direction can live together. Two people can think very differently and still complement each other if they want a similar kind of life. By contrast, shared interests may not be enough if one person wants a settled family life and the other wants complete independence with no long-term commitment. Differences can enrich a relationship; the important question is whether the two of you are ultimately trying to build toward the same horizon.']
+]
+});
+
+Object.assign(ASK.en, {
+'wands-1': [
+  ['love', 'What kind of person does this card describe?', 'This is an outgoing, energetic person who prefers doing to sitting still and overthinking. They are ambitious, enthusiastic and full of fire. Movement, sport or a busy schedule often gives that energy a healthy outlet. When it has nowhere to go, it can spill into impatience, arguments or reckless behaviour.'],
+  ['love', 'What kind of feelings do they have for me?', 'The overall energy is positive and there is likely strong physical attraction. Attraction itself is not a problem; what matters is how the person handles it. Respect, patience and clear boundaries are good signs. Pressure, entitlement or disappearing as soon as they get what they want are not.'],
+  ['love', 'We are arguing. Should I break up with them?', 'This card does not point straight to a breakup. It suggests bringing more initiative into the relationship: start the conversation, name what is happening and see whether both of you are willing to work on it. One person may be tired of always having to make the first move while the other waits behind their guard. As with any breakup question, judge the real pattern of the relationship rather than letting one card make the decision for you.'],
+  ['career', 'Will I find a new job soon?', 'The answer leans yes, especially through your own initiative rather than someone simply handing you an opportunity. The next role may also be active and people-facing, involving movement, communication or fast-paced work rather than sitting alone in one place all day.'],
+  ['career', 'What should I watch for at work between now and the end of the year?', 'The overall picture is favourable. New work opportunities may appear, and you will have a real choice about whether to pursue them. You may also create an additional source of income yourself.'],
+  ['other', 'What do the four Aces generally represent?', 'All four Aces represent beginnings: fresh energy, a new opening and the first step of a journey. They are generally positive cards, but an Ace is potential rather than a finished result.']
+],
+'swords-1': [
+  ['love', 'What kind of person does this card describe?', 'This person is sharp-minded, articulate and analytical. They think quickly, value logic and tend to notice contradictions fast. In astrological symbolism, this can resemble Mercury-ruled energy such as Gemini or Virgo: curious, observant and mentally active.'],
+  ['love', 'What kind of feelings do they have for me?', 'There may be interest, but the Ace of Swords describes clarity and thought more strongly than emotion. This person may approach the connection with a rational mind and strong self-protection. That is not automatically cold or bad; it simply means they may make decisions quickly when something no longer feels right. Draw more cards if you want to know how deep the emotional bond is.'],
+  ['love', 'We are arguing. Should I break up with them?', 'The Ace of Swords points to a need for clear communication before a final decision. Couples often store up small frustrations, say nothing, then explode over something minor because the real issue was never addressed. Name the actual problem while it is still manageable, listen to the other person and deal with one issue at a time instead of turning the conversation into a list of every old mistake.'],
+  ['love', 'Is there someone who will understand me without me having to say anything?', 'Do not build a relationship around the expectation that another person should read your mind. Even very compatible people need words. Trust, compromise and clear communication are what allow two people to understand each other more deeply over time.'],
+  ['career', 'I have been unemployed for two or three months. Will I find a job I like?', 'There are two useful readings. You may find a role involving communication, relationships, analysis or other mental work. Or the card may be asking you to clarify your direction first. Applying everywhere without knowing what you want can make it difficult to build the knowledge and enthusiasm employers are looking for. Decide what field you want to move toward, then make your applications more focused.'],
+  ['career', 'What should I watch for at work over the next three to six months?', 'A new project may appear that asks you to learn quickly, think more deeply and absorb unfamiliar information. Overall, this is a constructive sign.']
+],
+'cups-1': [
+  ['love', 'What kind of person does this card describe?', 'This is a warm, emotionally open person whose feelings generally flow in a healthy direction. They care about themselves and the people around them, are willing to help, and tend to approach life with kindness rather than letting every emotion control them.'],
+  ['love', 'What kind of feelings do they have for me?', 'The Ace of Cups is one of the clearest cards for genuine affection. Feelings are abundant and heartfelt. On its own, the card suggests emotional openness rather than obsession or possession: the person is willing to offer love without treating your response as something they are entitled to control.'],
+  ['love', 'We are arguing. Should I break up with them?', 'This card suggests that affection is still present, so the conflict may be repairable. Sit down, speak honestly and see whether the two of you can return to what you care about in each other. Strong feelings do not solve every incompatibility, however, so if the real issue involves harm, broken trust or incompatible values, those still need to be addressed directly.'],
+  ['career', 'I am unemployed. Will I find a new job soon?', 'The answer leans yes, and the next role may be something you genuinely enjoy or feel emotionally connected to. The Ace of Cups says little about salary or advancement by itself, so draw another card if those details are the focus.'],
+  ['career', 'Will my work progress over the next six months?', 'One possibility is a meaningful new connection through work. Another is a new project that gives you something fresh to care about and brings back enthusiasm you may have been missing.'],
+  ['other', 'Why did I ask about salary and get this card?', 'Sometimes a reading highlights what matters most to the person rather than answering only the surface wording of the question. The Ace of Cups may be saying that enjoyment and emotional fulfilment will stand out more than money in this role. That does not guarantee that passion will automatically produce income, so practical questions about pay and conditions still deserve their own cards and real-world checking.']
+],
+'pentacles-1': [
+  ['love', 'What kind of person does this card describe?', 'This is a grounded, practical person in a positive sense. They notice details, think realistically and prefer building something solid to romanticising instability. They may not show the fire of the Ace of Wands or the overflowing emotion of the Ace of Cups, but they are often dependable, willing to work for a shared future and comfortable saying what is or is not realistic.'],
+  ['love', 'What are they thinking about me and this relationship?', 'They likely have feelings for you and also see practical compatibility between you. They may be considering whether your lifestyles, values, finances and long-term expectations can fit together. In a serious relationship, affection matters deeply, but practical compatibility matters too.'],
+  ['love', 'Does a difference in family background really matter in a relationship?', 'It can matter, but it does not decide the relationship by itself. People raised in very different financial or cultural environments may develop different assumptions about money, family roles, security and daily life. Those differences become a problem only when they cannot be discussed or negotiated. Maturity, curiosity and shared values can bridge a great deal, so do not treat family background as a fixed measure of whether two people belong together.'],
+  ['love', 'We are arguing. Should I break up with them?', 'Do not rush. The Ace of Pentacles asks both of you to become more grounded and practical. The conflict may be smaller than it feels in the moment. Step away from romantic expectations or dramatic interpretations and ask what concrete problem actually needs solving.'],
+  ['career', 'Will I find a job soon?', 'The answer leans yes. The Ace of Pentacles is especially favourable in work and money questions and can point to a solid opportunity with reasonable income, stability or room to grow.'],
+  ['career', 'What may change in my work soon?', 'You may receive additional income, a raise, a new project, a transfer, a promotion or another concrete opportunity. You may also create a new source of income yourself, such as a side business or investment.']
+],
+'wands-2': [
+  ['love', 'What kind of feelings do they have for me?', 'This person appears to be thinking beyond the present and may already imagine a longer-term future with you. The intention to commit can be real, but this card alone does not tell you whether it comes purely from emotion or also from practical reasoning. Warm Cups cards would strengthen the emotional reading; more rational cards may suggest that long-term compatibility is part of the decision too.'],
+  ['love', 'If they want commitment for practical reasons too, is that bad?', 'Not necessarily. A person may love with both heart and judgment. They can see qualities in you that make a long-term partnership feel workable, such as shared values, complementary strengths or similar plans for family and career. Practical thinking is only a problem when the relationship becomes transactional or one person is being used. A calm, deliberate kind of love can be just as sincere as a dramatic one.'],
+  ['love', 'We are arguing. Should I break up with them?', 'Instead of focusing only on the current argument, look at the larger picture. If the conflict is about small things such as slow replies or social-media interactions, ask whether those details are truly worth losing sight of the relationship as a whole. If the issue is serious, however, “looking at the big picture” should include the harm as well, not erase it.'],
+  ['career', 'Will I find a job I like soon?', 'One card leaves two main possibilities. You may still need more time to prepare, learn or strengthen your applications because the Two of Wands looks toward a future that is not here yet. Or the next role may involve international work, travel, relocation, planning or strategic thinking.'],
+  ['career', 'What should I watch for at work between now and the end of the year?', 'You may feel more ambitious than before: wanting greater responsibility, a promotion or better pay. Ambition can be useful when it gives you direction; it becomes a problem only when nothing ever feels enough. The card can also point to travel or geographical movement connected with work.']
+],
+'swords-2': [
+  ['love', 'What kind of person does this card describe?', 'This person tends to delay decisions, especially when both options feel uncomfortable. They may become passive in relationships or work because choosing one path means giving up another. The lesson of the Two of Swords is not that control is always good, but that avoiding a decision is still a decision with consequences.'],
+  ['love', 'What kind of feelings do they have for me?', 'They are likely undecided about the connection. Feelings may exist, but something is preventing a clear step forward. Draw more cards if you want to understand whether the hesitation comes from fear, circumstances, another priority or uncertainty about the relationship itself.'],
+  ['love', 'We are arguing. Should I break up with them?', 'The Two of Swords suggests that an important issue is being avoided. One or both of you may be irritated about something but expressing it through smaller complaints instead of naming the real problem. If you can identify the underlying issue and speak about it directly, a breakup may not be necessary. If the truth you uncover is serious, then let the real situation — not avoidance — guide the decision.'],
+  ['career', 'Will I find a suitable job soon?', 'The answer may be delayed because your direction is still unclear or because you know what needs changing but have not acted on it yet. If your training is in one field but your real interest lies elsewhere, continuing to apply only to the old field may keep you stuck. Make a decision about the direction you want to test, then take concrete steps toward it.'],
+  ['career', 'Is there anything I should address at work soon?', 'There may already be an uncomfortable issue at work that you would rather ignore. Deal with it while it is still small. A quiet feeling that a manager favours someone else, for example, may not be a crisis, but resentment can grow if you never clarify expectations or ask for feedback.'],
+  ['other', 'What happens if I keep avoiding the issue?', 'Avoidance tends to make unresolved problems harder, not easier. In Tarot, the progression from the Two of Swords toward heavier cards can be read as a symbolic warning: what you refuse to face may eventually force a decision through consequences. You do not need to wait for a crisis. A small honest decision now is often easier than a dramatic one later.']
+],
+'cups-2': [
+  ['love', 'What kind of person does this card describe?', 'This card describes someone who values reciprocity and is good at meeting people halfway. They tend to negotiate well, communicate diplomatically and notice whether giving and receiving feel balanced. In relationships, they usually care about fairness, cooperation and maintaining good connections with the people around them.'],
+  ['love', 'What kind of feelings do they have for me?', 'This is a very positive sign. There is mutuality in the energy: the person wants to offer affection and also hopes to receive affection in return. The Two of Cups is one of the clearest cards for connection and emotional reciprocity.'],
+  ['love', 'We argue a lot. How can I improve the relationship?', 'The feelings between you may still be strong, while the arguments come from differences in personality or communication. Use the bond itself as a reason to work together. Name the problem, listen to each other and look for a solution as a pair rather than each person trying to fix the relationship alone.'],
+  ['love', 'Who should I ask when I want to improve my relationship?', 'Advice from trusted people can sometimes help, but the most important conversation is usually with the person you are actually in the relationship with. Ask what they need from you, explain what you need from them and see whether both of you are willing to adjust. A third party cannot replace a conversation the couple themselves need to have.']
+],
+'pentacles-2': [
+  ['love', 'What kind of person does this card describe?', 'This is not necessarily someone who is already balanced; it is someone constantly trying to keep many things in balance. They are adaptable, busy and often happiest when handling several tasks at once. Their challenge is learning when flexibility is useful and when juggling too much starts to cost them stability.'],
+  ['love', 'What kind of feelings do they have for me?', 'Feelings may be present, but this person is dividing attention between the relationship and work, study, money or other responsibilities. The card does not automatically mean a third person. It is more often about practical juggling. The real question is whether the amount of time and attention they can offer is enough for the kind of relationship you want.'],
+  ['love', 'We are arguing. Should I break up with them?', 'The conflict may be connected to overload. Stress from work or other responsibilities can spill into the relationship, especially when someone suppresses frustration all day and releases it at home. Before deciding on a breakup, see whether the pattern improves when workload, rest and boundaries are managed better. Stress explains irritability, but it does not excuse mistreatment.'],
+  ['health', 'How do I know if I am out of balance?', 'Look at both body and mind. Physical exhaustion is often easier to recognise, while emotional strain can show up as persistent irritability, low mood, anxiety, poor sleep, loss of interest or feeling unable to recover. You do not need to wait until things become severe before taking your mental health seriously. If symptoms persist or interfere with daily life, professional support is appropriate.'],
+  ['career', 'I have been unemployed for a few months. Will I find work soon?', 'The answer is not fixed. The Two of Pentacles suggests first creating enough structure to make good decisions. If your days, applications and priorities are scattered, organising them can make the search more effective. A tidy environment may help some people think more clearly, but the important part is the practical system: know what roles you are targeting, keep track of applications and prepare consistently.'],
+  ['other', 'What does tidying up have to do with finding work?', 'Tidying is useful here as a symbol of creating order, not as a magical cause of employment. A calmer environment, regular routine and basic self-care can make it easier to focus, prepare and make decisions. The same idea applies to relationships and commitments: notice what drains you, set boundaries where needed and reduce unnecessary clutter in your life.'],
+  ['other', 'Why does the card sometimes seem to answer a different question?', 'A reading can point to a factor underneath the surface question. If that happens, explain the connection clearly rather than forcing an unrelated meaning. Show how the underlying issue could affect the question the person actually asked, and leave room for them to decide whether the interpretation fits their real situation.']
+]
+});
+
+Object.assign(ASK.en, {
+'wands-3': [
+  ['love', 'What kind of person does this card describe?', 'This person has many plans, passions and ambitions, but may hesitate at the first real step because they are afraid of failing. They can talk enthusiastically about what they want to do, then months later explain why they have not begun and move on to a new idea. The challenge is turning vision into action.'],
+  ['love', 'What kind of feelings do they have for me?', 'If the relationship is still new, their feelings and thoughts about a long-term future may be sincere. What is missing is concrete action. They may talk about going far together without yet making practical choices around work, family, living arrangements or commitment. For now, the future exists more strongly in their imagination than in their plans.'],
+  ['love', 'We are arguing. Should I break up with them?', 'This card alone is not enough to decide. One possible source of conflict is that one or both of you like the idea of a long-term relationship but are not yet ready for what it requires. Commitment involves compromise, financial and practical planning, responsibility and room for both individual freedom and shared life. Talk about what “long term” actually means to each of you before making a final decision.'],
+  ['love', 'How can I change them?', 'You cannot change another person who does not want to change. You can explain what affects you, set boundaries and ask for specific changes, but the decision to grow has to belong to them. Love does not give you control over someone else’s choices.'],
+  ['career', 'I have been unemployed for a few months. Will I find work soon?', 'You may have strong plans but too little action behind them. If you want a competitive role, you may need to build skills, experience and stronger applications first. If fear has made you avoid even searching or sending applications, begin with one concrete step. The card can also point to an idea for a business or independent path that you have not yet dared to test.'],
+  ['career', 'What should I watch for in my work soon?', 'You may have several ideas you want to pursue but still be hesitating because of fear. The Three of Wands encourages you to move beyond planning and take a realistic first step outside your comfort zone.'],
+  ['other', 'What if I fail and people laugh at me?', 'Most people are far less focused on your mistakes than your fear suggests. They have their own lives, and even when someone notices a failure, their attention usually moves on quickly. Failure can feel embarrassing, but avoiding every meaningful attempt because of imagined judgment costs much more over time. Let other people have their opinions while you keep learning.']
+],
+'swords-3': [
+  ['love', 'What kind of person does this card describe?', 'The Three of Swords can describe someone carrying sadness, disappointment or emotional pain. They may currently be seeing life through a more negative lens because something still hurts. Treat it as a picture of their present emotional state, not a permanent personality label.'],
+  ['love', 'What kind of feelings do they have for me?', 'This is a difficult emotional signal. The person may still be carrying unresolved hurt from the past and may not be fully ready for a new relationship. That does not mean they are incapable of loving or that a breakup is inevitable. What matters is whether they recognise the wound and are willing to deal with it rather than making the new relationship carry all of it.'],
+  ['love', 'We are arguing. Should I break up with them?', 'The conflict is painful, but the Three of Swords does not automatically mean the relationship is beyond repair. Look at what is actually causing the hurt. If the arguments are about repeated small wounds, honest communication may still change the pattern. If the real issue is betrayal, abuse or serious harm, do not minimise it just because this is a Minor Arcana card. Real-life severity matters more than the card category.'],
+  ['love', 'Should I monitor or control my partner?', 'No. Healthy closeness does not require passwords, constant location checks or monitoring every like and message. If you need information because something specific has damaged trust, discuss that openly rather than turning the relationship into surveillance. Ask what fear is driving the need for control and whether trust can actually be rebuilt.'],
+  ['career', 'Will I find a job I like soon?', 'You may still face disappointment or delay. The card does not explain the whole reason by itself, so draw more if needed. One possibility is that you are applying in a direction that does not fit you because family, social pressure or fear is pulling you away from the work you actually want. Rather than treating rejection as proof that “the universe” is blocking you, use it as information and review your direction, skills and strategy.'],
+  ['career', 'What may change at work soon?', 'You may experience a disappointment: a project may underperform, feedback may sting or a relationship with a colleague may become uncomfortable. The card suggests hurt rather than total collapse, so address the issue early instead of letting resentment grow.']
+],
+'cups-3': [
+  ['love', 'What kind of person does this card describe?', 'This is a sociable person who enjoys friends, gatherings, celebrations and being around other people.'],
+  ['love', 'What kind of feelings do they have for me?', 'This card alone may point more clearly to friendship, enjoyment and companionship than to exclusive romantic commitment. If you are already together, it can simply mean the relationship still contains fun and a strong friendship base. Draw more cards before turning it into a negative conclusion.'],
+  ['love', 'We argue a lot. Should I break up with them?', 'Draw more before deciding. The Three of Cups can sometimes raise a question about a third person, but it does not prove cheating. The “third” influence could be a friend, family member, social circle or someone on either side of the relationship. Ask what outside influence is actually affecting the two of you instead of accusing anyone from one card.']
+],
+'pentacles-3': [
+  ['love', 'What kind of person does this card describe?', 'This is a fairly serious, cooperative person. Like the Three of Cups, they enjoy being with others, but usually around a shared task or useful goal rather than only for fun. They tend to appreciate teamwork, collaboration and environments where people build something together.'],
+  ['love', 'What kind of feelings do they have for me?', 'The energy may be more practical or professional than romantic. The person could see you as a friend, colleague, classmate or someone they work well with. If you are already in a relationship, the card can also point to the practical value you bring into each other’s lives. Do not assume they are using you materially from one card alone; look at whether affection, reciprocity and respect are actually present.'],
+  ['love', 'Should I leave them immediately if the relationship feels practical?', 'Not necessarily. Some relationships contain practical considerations as well as emotion, and that is not automatically dishonest. The important questions are whether both people understand the arrangement, whether anyone is being manipulated and whether the relationship meets both people’s real needs. If one person is secretly using the other for status, money or access, that is very different from two adults openly valuing practical compatibility.'],
+  ['love', 'We are arguing. Should I break up with them?', 'The Three of Pentacles says to try working on the problem together first. Money, living arrangements, marriage plans, children or other practical commitments may be the real source of tension. Sit down and make the unspoken expectations explicit. If one person refuses every attempt at a real conversation, that itself becomes useful information.'],
+  ['career', 'I have been unemployed for three months. Will I find work soon?', 'The answer leans yes, especially through collaboration or your network. The next job may involve teamwork, or the opportunity may come through someone who knows you. Tell trusted friends and former colleagues what you are looking for, ask for introductions and be willing to work with others rather than keeping the search completely private.'],
+  ['career', 'What should I watch for at work soon?', 'Teamwork is likely to become more important. If you currently work alone, you may soon need to coordinate with others; if you already work in a team, collaboration remains central. Whether that feels energising or challenging depends on your working style, but the skill to practise is clear: communicate, divide responsibilities and build something together.'],
+  ['other', 'How is this card different from the Three of Cups and The Hierophant?', 'All three can involve groups, but the purpose is different. The Three of Cups is the group that celebrates and socialises. The Three of Pentacles is the group that collaborates on a concrete task. The Hierophant is more connected with shared systems, teaching, institutions and established traditions.']
+]
+});
+
+Object.assign(ASK.en, {
+'wands-4': [
+  ['love', 'What kind of person does this card describe?', 'One card only sketches a few traits, and the Four of Wands is generally favourable. The clearest quality is steadiness: this person tends to have a stable emotional base and approaches life with optimism.'],
+  ['love', 'What kind of feelings do they have for me?', 'The Four of Wands is one of the stronger cards for serious intentions. This person is likely to see you as someone they could build a real partnership with rather than a temporary distraction. Even if marriage is not immediate, they may want stability, growth and mutual support. The other side of that steadiness is that they may not be highly spontaneous or dramatic. Draw more cards if you want to know how romantic or adventurous they are.'],
+  ['love', 'We are arguing. Should I break up with them?', 'The Four of Wands reminds you that this relationship may have been built with serious intentions. Before making a final decision, remember why you chose each other and then compare that foundation with the pattern you live in now. Long-term relationships require compromise from both sides. If one person always has to win and the other always has to give way, stability becomes difficult no matter how strong the beginning was.'],
+  ['career', 'I have been unemployed for a long time. Will I find work soon?', 'The answer leans yes. The Four of Wands can point to a role worth celebrating: something that fits your direction and could offer more stability than a temporary stopgap. Keep the reading realistic, though — a card can describe the quality of an opportunity, while the actual job still depends on applications, timing and circumstances.'],
+  ['career', 'What should I watch for at work soon?', 'If you already feel settled in your current work, that stability is likely to continue. The Four of Wands is less about an overnight transformation and more about a foundation that has been built over time and can keep supporting you.'],
+  ['other', 'Is staying in my comfort zone always bad?', 'No. Safety and stability are things people work hard to create. Leaving a comfort zone is useful when it helps you grow, not because you must constantly be uncomfortable. A healthy rhythm is often expansion, then rest; build a larger safe base, enjoy what you have created, and step outward again when you are ready.']
+],
+'swords-4': [
+  ['love', 'What kind of person does this card describe?', 'The Four of Swords describes someone cautious rather than lazy. They prefer to think before acting, look at an issue from several angles and move once they have enough clarity. The downside is that they may be slow when a situation genuinely requires a quick decision.'],
+  ['love', 'What kind of feelings do they have for me?', 'This person may not want to move the relationship forward quickly. They prefer keeping things calm and unchanged while they observe and think. If you are waiting for a confession, proposal or another major step, the card suggests they may not be ready yet.'],
+  ['love', 'We are arguing. Should I break up with them?', 'Do not decide in the middle of the argument. A short pause can help both of you cool down, reflect and return with clearer words. The point is to create breathing room, not to use silence as punishment or leave the relationship suspended indefinitely. Agree on when you will talk again so the pause has a purpose.'],
+  ['career', 'I have been unemployed for six months. Will I find the right job soon?', 'The card may be pointing to a genuine need for rest or reflection before pushing harder. You might be applying mainly because of outside expectations while part of you wants time to recover, learn, volunteer or work on a personal project. If that is true and your circumstances allow it, name the need honestly. If you do need work now, build enough rest into the process that exhaustion does not make every application half-hearted.'],
+  ['career', 'Can interviewers tell when I am not really interested?', 'Often, yes. Interviews test more than technical knowledge. Employers also notice preparation, curiosity and whether you can explain why the role interests you. You do not need to perform exaggerated enthusiasm, but vague answers, no questions and no understanding of the role can make disengagement obvious.'],
+  ['career', 'What may change at work soon?', 'Work may enter a quiet phase with little visible movement. That can feel comfortable if you value routine and stability, or frustrating if you want rapid growth and challenge. The card is not inherently good or bad; its meaning depends on what you need from work right now.']
+],
+'cups-4': [
+  ['love', 'What kind of person does this card describe?', 'The Four of Cups can describe someone who has become narrow in perspective or emotionally disengaged. They may focus so strongly on what is already familiar that they struggle to notice a different possibility. This is better read as a current habit of perception than as a permanent inability to use intuition or imagination.'],
+  ['love', 'What kind of feelings do they have for me?', 'One Four of Cups is not enough to define their feelings, but it can show someone overlooking what is being offered because their attention is elsewhere. They may be comparing the present with an old relationship, other possibilities or an ideal they cannot reach. The important question is whether they can recognise and value the connection that is actually in front of them.'],
+  ['love', 'Can this situation change?', 'Yes. The Four of Cups describes a pattern of attention, and patterns can change. An honest conversation may help the person notice what they have been taking for granted. But change still requires willingness; you cannot make someone value a relationship if they repeatedly choose not to engage with it.'],
+  ['love', 'We are arguing. Should I break up with them?', 'The card asks you to widen the frame. You may be focusing intensely on one flaw or one recent disappointment while overlooking the rest of the relationship. Step back and consider the full pattern: the effort, care and changes that have happened as well as the problem that hurts. Looking at the whole picture does not mean excusing serious harm; it means making the decision with complete information.'],
+  ['career', 'Will I find work soon?', 'An opportunity may be closer than you think — perhaps in a listing you keep overlooking or through someone already in your network. The Four of Cups suggests checking what is in front of you before assuming the answer must come from somewhere far away.'],
+  ['career', 'What may change at work soon?', 'Be careful not to miss an opportunity because you are fixated on a different path. There may be a project, skill or role in your current environment that fits you better than you realise. The card encourages you to notice what is genuinely available rather than chasing only what looks impressive from a distance.'],
+  ['other', 'What should I do if I cannot find my own direction?', 'Find guidance. A teacher, mentor, counsellor or experienced person can help you see options you are currently missing. Their role is not to choose your life for you, but to help you see the path more clearly so you can make your own decision.']
+],
+'pentacles-4': [
+  ['love', 'What kind of person does this card describe?', 'The Four of Pentacles can describe someone who holds tightly to control, possessions or security. The issue is not necessarily actual lack; it may be fear of losing what they have. That fear can make a person overly restrictive with money, affection or even basic needs. Prudence is healthy, but security becomes costly when it prevents reasonable spending, sharing or self-care.'],
+  ['love', 'What kind of feelings do they have for me?', 'Feelings may be present, but they come with guardedness. The person might try to control the relationship, or they may hold back because they are afraid of being hurt. Draw more cards and, more importantly, look at their real behaviour to tell the difference.'],
+  ['love', 'We argue a lot. How can we improve the relationship?', 'Control may be at the heart of the conflict. One or both of you may be trying to shape how the other dresses, speaks, behaves or spends time. Improvement begins by loosening unnecessary control and distinguishing between a healthy boundary and an attempt to manage another adult. Love needs room for the other person to remain themselves.'],
+  ['love', 'What else can this card mean in relationships?', 'The Four of Pentacles can also describe holding on to the past. You may no longer contact an ex, yet still preserve an idealised version of them in your mind. Years later, that image may have little to do with the real person they have become. Letting go can mean releasing the imagined version, not denying that the relationship once mattered.'],
+  ['career', 'Will I find the job I want soon?', 'The answer may be delayed, partly because you are trying to control every condition at once: the exact timing, salary, title and feeling of the role. It is good to have standards, but rigid expectations can make the search harder. Review what you can improve from previous interviews and accept that some useful steps — such as finishing a qualification — simply take time.'],
+  ['career', 'What should I watch for at work over the next three months?', 'Watch for holding too tightly to your role, information or expertise. You may be reluctant to teach a new colleague or share what you know because you fear becoming less valuable. Healthy professional security comes from continuing to grow, not from making other people dependent on information you keep to yourself.'],
+  ['other', 'Why should I let go?', 'The lesson of the Four of Pentacles is not to throw away everything you value. It is to notice what you are holding only because you are afraid. Sometimes a plan, role, possession or old story has stopped serving you, and keeping it leaves no room for anything new. Letting go is useful when it creates flexibility, not when it becomes another rule you force on yourself.']
+]
+});
+
+Object.assign(ASK.en, {
+'wands-5': [
+  ['love', 'What kind of person does this card describe?', 'The Five of Wands can describe two patterns. One is playful or provocative debate: someone who teases, argues and challenges ideas without necessarily wanting to hurt anyone. The other is inner conflict: they want one thing and then pull themselves in the opposite direction. In both cases, friction is the defining theme.'],
+  ['love', 'Is someone who likes to argue a bad person?', 'Not necessarily. There is a difference between arguing to humiliate someone and challenging an idea because you care about whether it makes sense. Constructive debate can sharpen your thinking when both people stay respectful. Once the goal becomes winning, belittling or provoking rather than understanding, the same habit stops being useful.'],
+  ['love', 'What kind of feelings do they have for me?', 'Feelings may be present, but the person seems internally conflicted. Part of them is drawn toward you while another part holds back. One card does not reveal the reason, so draw more if you need to understand what they are wrestling with.'],
+  ['love', 'We are arguing. Should I break up with them?', 'Do not rush to a breakup before naming the real issue. The arguments may be about small things while a larger insecurity sits underneath — uncertainty about the relationship, fear of losing the person or suspicion that has never been spoken aloud. The Five of Wands asks for honesty. Say what you are actually afraid of instead of fighting only about the surface details.'],
+  ['career', 'Will I find the job I want soon?', 'The search may be slowed by an inner conflict about direction. You may genuinely want one field while applying in another because of family expectations, your degree or fear of starting again. First work out which direction you are willing to test in real life. Once your effort and your actual goal point the same way, the search becomes much clearer.'],
+  ['career', 'Is there anything I should watch for at work soon?', 'A minor clash with a colleague may arise. The Five of Wands is usually manageable, but a small disagreement can grow when handled carelessly. Stay direct without becoming personal, clear up misunderstandings early and do not turn competition into a grudge.'],
+  ['other', 'Why do people say the future in Tarot can change?', 'Tarot is better used as a picture of current patterns and possibilities than as a fixed script. If behaviour, circumstances or choices change, the likely outcome can change too. Some things are outside your control, so the point is not that you can force any future you want; it is that a reading should leave room for agency rather than presenting fate as completely sealed.']
+],
+'swords-5': [
+  ['love', 'What kind of person does this card describe?', 'The Five of Swords can describe someone who turns conversations into contests. They want to win the exchange even when the victory accomplishes nothing beyond feeding the ego for a moment. Being right is not the same as communicating well.'],
+  ['love', 'What kind of feelings do they have for me?', 'One Five of Swords cannot fully answer the emotional question. Feelings may be real, while the way this person communicates still hurts or frustrates you. Some people care deeply and yet speak in a commanding, dismissive or combative way. Do not confuse affection with healthy communication; both matter.'],
+  ['love', 'We are arguing. Should I break up with them?', 'The main issue is how the two of you use words when you are upset. If ordinary differences become opportunities to insult, score points or reopen old wounds, work on the communication pattern first. A breakup is not automatically the first answer, but repeated contempt, humiliation or verbal abuse should be taken seriously rather than dismissed as “just arguing.”'],
+  ['career', 'I have been unemployed for a few months. Will I find work soon?', 'This card does not give a clean yes or no. It may instead be pointing to a discouraging voice around you — someone who repeatedly tells you that you are not capable or keeps bringing up past failures. Notice whose opinions are shaping your confidence. Useful feedback is specific and helps you improve; constant belittling is not the same thing.'],
+  ['career', 'What should I watch for at work soon?', 'Watch the way words are being used at work. You may be on the receiving end of disrespectful communication, or you may be the one speaking too sharply under pressure. If someone crosses a professional boundary, respond calmly, document serious incidents and use appropriate workplace channels rather than assuming you must simply tolerate it.'],
+  ['other', 'What does this card say about arguing online?', 'The Five of Swords fits many online arguments: long replies to strangers, a need to have the last word and the feeling that silence means defeat. Most of those “wins” change nothing meaningful. Someone may stop replying because they are busy, bored or simply done with the conversation. Different opinions can coexist, and not every disagreement deserves your time.'],
+  ['other', 'What does “karma of speech” mean?', 'In some Buddhist and folk traditions, “karma of speech” refers to the consequences created by the way we use words. The spiritual idea is that speech that humiliates, deceives or harms others has moral consequences. Even without taking karma literally, the practical lesson is useful: words shape trust, relationships and the kind of environment you create around yourself. Pause before saying something meant only to wound.']
+],
+'cups-5': [
+  ['other', 'Is this card positive or negative?', 'The Five of Cups works best as guidance rather than a simple good-or-bad event. Its themes include disappointment, loss and grief, but the image also contains what remains. The important question is whether the person becomes defined by the loss or eventually turns toward what can still be carried forward.'],
+  ['other', 'Why are Minor Arcana setbacks usually read as lighter?', 'As a reading convention, Minor Arcana often describe more everyday, changeable circumstances, while Major Arcana point to broader themes or turning points. That does not mean a Minor card can never accompany a serious real-life event. The actual situation always matters more than a hierarchy imposed by the deck.'],
+  ['love', 'I have just gone through a failure or breakup. How should I look at it?', 'The picture gives you the lesson: the figure looks at the spilled cups while two still stand behind them. Grief deserves to be felt, and you do not need to rush yourself into positivity. When you are ready, also ask what remains — your relationships, abilities, lessons, values and future choices. Moving forward does not erase the loss; it means allowing the loss to become one part of the story rather than the whole story.'],
+  ['love', 'How do I apply this after a breakup?', 'After a breakup, thoughts such as “I am unlovable” or “I will never love again” can feel convincing even though they are not facts. The Five of Cups asks you to separate the pain of this ending from your entire future. Over time, you can learn what kind of relationship does not suit you, what you want to do differently and what you now understand about your own needs.']
+],
+'pentacles-5': [
+  ['love', 'What kind of person does this card describe?', 'The Five of Pentacles can describe someone carrying a deep sense of scarcity or not being enough. That feeling may be connected with childhood hardship, exclusion or instability, but one card cannot determine its origin. Even after circumstances improve, old insecurity can continue to shape behaviour until the person notices and works with it.'],
+  ['love', 'What kind of feelings do they have for me?', 'This card can point to emotional scarcity: a person who wants closeness but is afraid there will never be enough love or that opening up will end in abandonment. They may have feelings for you while still struggling to give or receive affection safely. That history can explain a pattern, but it does not excuse harmful behaviour; healing remains their responsibility.'],
+  ['love', 'Should I start a relationship with someone carrying this energy?', 'Do not decide from the card alone. Ask whether the person recognises their difficulties, takes responsibility for them and can still offer respect, consistency and emotional safety. Everyone has wounds. The concern is not that someone is imperfect, but whether unresolved patterns repeatedly harm the relationship and the person refuses to address them.'],
+  ['love', 'Can I heal them?', 'You can support someone, but you cannot do their healing for them. You are not required to become a rescuer, therapist or proof that they are lovable. Encourage appropriate support, communicate your limits and remember that the person has to choose their own work. The same principle applies to you: other people can accompany you, but they cannot take over your inner work.'],
+  ['love', 'We keep arguing. Should I continue this relationship?', 'Continuing without changing the pattern will probably produce the same arguments. Ask yourself what feels missing and why you keep feeling unmet, then invite the other person into the same conversation. Clear words are kinder than expecting someone to guess and then punishing them with silence when they fail. Whether the relationship continues should depend on what happens after both people understand the problem.'],
+  ['career', 'Will I find the job I want soon?', 'The card suggests a financially tight period or an opportunity that may pay less than you hoped. Treat that as a prompt to review expenses, strengthen your search and keep realistic backup options rather than as a guaranteed prediction of hardship.'],
+  ['career', 'What should I watch for at work soon?', 'Pay attention to cash flow and payment timing. Salary, invoices, project payments or budgets may be tighter or slower than expected. Check the facts early and plan around confirmed numbers rather than relying on assumptions.'],
+  ['other', 'How can I control my reaction?', 'You cannot control everything another person does, and your first emotion may arise automatically. What you can influence is what happens next: the words you choose, the action you take and whether you give yourself a few seconds before reacting. When anger rises, pause and ask what outcome you actually want before you speak.']
+]
+});
+
+Object.assign(ASK.en, {
+'wands-6': [
+  ['love', 'What kind of person does this card describe?', 'The Six of Wands can describe someone proud of what they have achieved and, at times, a little self-satisfied. Surrounding cards matter. With a strong card such as The Sun, the confidence may be well earned: this is someone capable who sets goals and actually reaches them. Healthy pride celebrates achievement; the shadow appears when recognition becomes something they constantly need from other people.'],
+  ['love', 'What kind of feelings do they have for me?', 'This card is not the clearest sign of emotional sincerity. The person may enjoy the feeling of winning your attention or being admired. That does not prove the feelings are fake, but it is worth asking whether they are interested in you as a person or mainly in the validation of being chosen. Draw more cards and watch what happens after the “chase” is over.'],
+  ['love', 'We are arguing. Should I break up with them?', 'The Six of Wands suggests that ego has entered the conflict. Arguments may have become contests where each person keeps score, needs the last word or refuses to give way. Before thinking about a breakup, ask whether you are protecting the relationship or protecting your pride. If both people can stop trying to win and return to the actual problem, the dynamic may change.'],
+  ['career', 'I am unemployed. Will I find a job soon?', 'The answer leans yes, with one reminder: getting the job is the beginning, not the finish line. Early success can turn into complacency if you stop learning or assume the role is permanently secure. Keep developing after you are hired so the opportunity becomes something stable rather than a short victory.'],
+  ['career', 'What should I watch for at work soon?', 'You may receive recognition for a successful project or be trusted with a small leadership role. Enjoy the achievement, but treat it as a step rather than proof that you have nothing left to learn. New visibility usually brings more responsibility too.'],
+  ['other', 'How is this victory different from The Chariot and The Sun?', 'As a reading convention, the Six of Wands is a smaller milestone. The Chariot can describe winning through discipline, drive and sacrifice, while The Sun points to a broader sense of success and clarity. Think of the Six of Wands as a strong result in a practice test: worth celebrating, but not the same as completing the whole journey.'],
+  ['other', 'When two cards share a keyword, which one is stronger?', 'A common Tarot convention is to give Major Arcana broader weight than Minor Arcana, while higher-numbered Minor cards can feel more developed than lower ones. Treat this as a reading framework rather than a law. Context, card position and the real-life situation should still guide the interpretation.']
+],
+'swords-6': [
+  ['love', 'What kind of person does this card describe?', 'The Six of Swords says more about what someone is moving through than about their whole personality. They may have recently chosen to leave a relationship, job or difficult situation and still feel emotionally heavy. Draw more cards to see whether they are beginning to recover or still carrying much of that darkness with them.'],
+  ['love', 'What kind of feelings do they have for me?', 'This person may currently be moving away from the connection. They may feel that the relationship has become too painful or exhausting and want distance. One card cannot tell you whether that distance is temporary, permanent or the right decision for both of you, so look at the surrounding cards and the actual conversation between you.'],
+  ['love', 'What should I do when we keep arguing?', 'The Six of Swords can suggest creating distance from a relationship that has become repeatedly painful. That does not always have to mean an immediate permanent breakup; it can mean stepping out of the conflict long enough to decide clearly. If the relationship involves abuse, threats or fear, prioritise safety and outside support rather than treating separation as a Tarot experiment.'],
+  ['love', 'What if I leave and then go back?', 'Returning to something familiar after leaving is common, especially when loneliness or uncertainty feels harder than the old pattern. Before going back, remember why you left and ask what has actually changed. Familiarity is not the same as safety or compatibility. If you do return, let it be because there is evidence of meaningful change, not only because the unknown feels frightening.'],
+  ['career', 'I have been unemployed for a few months. Will I find the job I want?', 'The Six of Swords suggests reconsidering the direction you keep returning to. Perhaps you are applying only inside a familiar field that no longer suits you, or chasing a glamorous alternative that does not fit your real strengths. The card asks for a thoughtful transition: identify what you are leaving, what you are moving toward and what evidence tells you the new direction fits better.'],
+  ['career', 'What may change at work soon?', 'You may be preparing to leave a role, team or location, even if nothing dramatic has happened yet. Sometimes a low, persistent sense of mismatch is enough to deserve attention. You do not need to wait for a crisis to justify a change. Explore options, protect your finances and make the move deliberately rather than forcing yourself to endure indefinitely.']
+],
+'cups-6': [
+  ['other', 'Does this card mean “an ex is coming back”?', 'Traditional Tarot does not define one single card as “the ex returns.” Some readers use the Six of Cups that way as a personal convention, and personal associations can be valid when they are tested consistently. Start from the broader themes — memory, familiarity, innocence and the past — then let context decide whether an actual return is relevant.'],
+  ['other', 'So what is the core meaning of this card?', 'The Six of Cups centres on tenderness, familiarity and a simple, sincere kind of affection. It can connect with the past, but not necessarily with repeating the past unchanged. If an old relationship does return, a healthy Six of Cups reading would ask whether both people can meet again as changed people rather than recreate the same old wounds.'],
+  ['other', 'Is a reading accurate when I read for myself?', 'Self-reading can be useful, but bias becomes stronger when you are emotionally invested. If you desperately want an ex to return, almost any card can start looking like confirmation. Keep card meanings broad, write down the question before you draw, and consider waiting until you are calmer or asking another reader when the subject is especially charged.'],
+  ['love', 'What kind of person does this card describe?', 'The Six of Cups describes someone gentle, sincere and a little innocent in the best sense. Their affection can feel uncomplicated and free from obvious calculation. They may remind you of first love or bring out a softer, younger part of you.'],
+  ['love', 'We are arguing. Should I break up with them?', 'Rather than ending things immediately, the Six of Cups asks whether the relationship needs renewal. Long-term couples can lose the small gestures, playfulness and thoughtfulness that once made them feel close. Revisit something you used to enjoy together, bring back a little intentional romance and see whether warmth returns. If the relationship is harmful, nostalgia should not be used to excuse it.'],
+  ['career', 'Will I find a job I like soon?', 'The answer leans yes, especially toward work you genuinely enjoy. Cups describe emotional satisfaction more clearly than money, status or advancement, so draw more cards if those practical details matter. Enjoying a role and being well paid can coexist, but one does not automatically guarantee the other.'],
+  ['career', 'What may change at work soon?', 'You seem to retain genuine affection for your current work, and that enjoyment may continue. The Six of Cups can describe the simple pleasure of doing something because the activity itself still feels meaningful or fun to you.']
+],
+'pentacles-6': [
+  ['love', 'What kind of person does this card describe?', 'The Six of Pentacles describes someone practical about giving and receiving. They are usually willing to help, but they also notice balance, resources and whether support is sustainable. That can look calculating to some people, yet generosity without limits can harm the giver and the people who depend on them. The healthier expression is measured generosity rather than either hoarding or giving everything away.'],
+  ['love', 'What kind of feelings do they have for me?', 'This person may care for you and still think consciously about reciprocity. They want attention, respect and effort to move in both directions. That is not automatically selfish or transactional. The concern arises only if affection is being used to buy influence, status or control. Look at whether the exchange feels mutual and freely chosen.'],
+  ['love', 'We are arguing. Should I break up with them?', 'Before deciding, the Six of Pentacles asks for a fair assessment of the whole relationship. Do not let one small irritation erase a long pattern of care, but do not let gifts or good moments erase serious harm either. Weigh what is happening honestly and pay attention to proportionality.'],
+  ['love', 'What if the relationship is genuinely toxic or abusive?', 'Then the balance is not ambiguous. Gifts, apologies or affectionate periods do not cancel violence, coercion, threats or serious emotional harm. If you are being abused or feel unsafe, prioritise safety and seek support. You do not owe someone continued access to you because they have also done kind things.'],
+  ['career', 'I have been unemployed for a few months. Will I find work soon?', 'The answer leans yes, possibly through help, a referral or an introduction from someone else. Accepting support is fine. If the person later expects a reasonable favour in return, you can decide then what feels appropriate; help should not create an unlimited debt or pressure you into something unethical.'],
+  ['career', 'What should I watch for at work soon?', 'You may receive help, access or an opportunity through another person. Be clear about expectations. Professional reciprocity is normal, but assistance should not require secrecy, unethical favours or obligations you never agreed to.']
+]
+});
+
+Object.assign(ASK.en, {
+'wands-7': [
+  ['love', 'What kind of person does this card describe?', 'The Seven of Wands can describe someone who is often on the defensive. They may feel watched, judged or forced to protect themselves, and sometimes react strongly before they understand what another person meant. In its shadow form, this can turn into unnecessary arguments and a lot of energy spent fighting battles that did not need to happen.'],
+  ['love', 'What kind of feelings do they have for me?', 'This card does not show clearly how much they love you. It says more about their current state: tense, defensive or carrying hurt that has not been fully dealt with. The important question is not whether they have wounds, but whether they recognise them and take responsibility for how they behave. You are not responsible for healing them for them.'],
+  ['love', 'We are arguing. Should I break up with them?', 'The conflict shown by this card often grows from small things that become repeated battles: late replies, missed calls, different expectations or one person demanding changes without looking at their own behaviour. The card does not automatically advise a breakup. Try changing the part you genuinely own, then watch whether the other person notices, values the effort and meets you halfway. If the pattern stays one-sided, you will have clearer information for deciding what you want next.'],
+  ['career', 'Will I find a job soon?', 'The Seven of Wands suggests looking at how you are using your time and energy. You may be putting effort into things that do not move the search forward, or applying in directions that do not fit you well. Your resources are limited, so use them deliberately: focus your applications, strengthen the weak points and protect time for the steps that actually improve your chances.'],
+  ['career', 'What may be new at work soon?', 'There may be tension, gossip or office politics around you, and someone may try to pull you into it. You still get to choose whether you participate. Protect your energy, keep your communication professional and focus on the work that matters instead of turning every comment into a battle.'],
+  ['other', 'So who am I supposed to fight?', 'This card does not require you to fight everyone around you. Often the more useful challenge is to notice your own defensive habits, assumptions and repeated patterns. If the same kind of conflict follows you from one workplace or relationship to another, changing the setting alone may not solve it. Ask what is yours to adjust while still keeping clear boundaries with genuinely harmful behaviour.']
+],
+'swords-7': [
+  ['love', 'What kind of person does this card describe?', 'The Seven of Swords often points to secrecy, avoidance or behaviour that is not fully transparent. In its shadow form, someone may hide information, say one thing and do another, or take a side route instead of speaking directly. The card does not automatically mean cheating or deception; context and surrounding cards matter.'],
+  ['love', 'What kind of feelings do they have for me?', 'The Seven of Swords makes this a question to verify in real life rather than answer through suspicion. The person may be withholding part of the story, unclear about their circumstances or not ready to be fully transparent. That does not automatically mean there is a third person. If the situation is vague, ask directly about their relationship status and watch whether their words and actions stay consistent.'],
+  ['love', 'We argue a lot. Should I break up with them?', 'The Seven of Swords suggests that something important may not be getting said openly. That could be another person, outside influence from friends or family, or simply one partner avoiding an honest conversation. Before deciding, find out what is actually happening rather than building the answer from hints. If secrecy, lying or manipulation is confirmed and does not change, that is a real relationship issue — not merely a Tarot symbol.'],
+  ['career', 'I have been unemployed for a long time. Will I find a job soon?', 'This card suggests that a hidden factor may be making your job search less effective. It could be discouraging advice from other people, a strategy that is not working or a step you keep avoiding. Review your CV, applications, interview approach and the beliefs affecting your confidence before assuming that someone is deliberately standing in your way.'],
+  ['career', 'Will anything difficult happen at work soon?', 'The Seven of Swords can warn about poor transparency: gossip, withheld information or unfair competition. Treat that as a prompt to stay observant rather than a prediction that someone will betray you. Keep records of important work, communicate clearly and rely on evidence before accusing anyone of acting against you.'],
+  ['other', 'What does emotional manipulation mean?', 'Emotional manipulation is an attempt to influence another person’s thoughts, feelings or decisions for one’s own ends, often through hidden motives, guilt, distortion or pressure. A manipulative person does not necessarily have high emotional intelligence; they may simply be skilled at reading reactions. A useful warning sign is repeatedly feeling pressured, made to doubt your own memory or punished emotionally for saying no.']
+],
+'cups-7': [
+  ['other', 'What is the key meaning of this card?', 'The Seven of Cups is about having many possibilities without feeling genuinely satisfied by any of them. The image itself supports this: several cups appear in a cloud, but not every option is solid, useful or even real. The card asks you to separate fantasy from the choices you would actually be willing to live with.'],
+  ['other', 'How is this different from The Lovers and the Two of Swords?', 'All three can involve uncertainty, but for different reasons. The Lovers can show a meaningful choice between values or paths. The Two of Swords is hesitation because a decision feels blocked or difficult. The Seven of Cups is overload: too many options, fantasies or possibilities, with no clear preference yet.'],
+  ['other', 'Can you give me another example that is easy to remember?', 'Imagine a student choosing a university subject. Several paths are available, but none feels truly theirs: one pleases the family, another looks practical, and another matches an old hobby they do not want as a career. Many doors are open, yet none feels convincing. That is the Seven of Cups: options are not the same thing as clarity.'],
+  ['love', 'What kind of person does this card describe?', 'This card can describe someone who struggles to choose and keeps several possibilities alive for too long. They may let other people decide because committing to one path feels risky. Listening to advice is not the problem; the problem is living by someone else’s choice and then resenting it. The lesson is to choose consciously and take responsibility for what follows.'],
+  ['love', 'What kind of feelings do they have for me?', 'The Seven of Cups suggests uncertainty rather than a clear commitment. They may be exploring what they want, idealising possibilities or keeping more than one option in mind. That does not prove you are “one of many”, but it does mean clarity is missing. Look for whether they are willing to choose, communicate and show up consistently.'],
+  ['love', 'We are arguing. Should I break up with them?', 'This card does not give a simple yes or no. It shows confusion, dissatisfaction or attention drifting toward imagined alternatives. One or both of you may be wondering whether something else would feel better. Before ending the relationship, name what is actually missing and ask whether either of you still wants to work on it.']
+],
+'pentacles-7': [
+  ['other', 'What is the key meaning of this card?', 'The Seven of Pentacles is patience, steady effort and assessing what your work is producing. It can say either “keep going; the result needs more time” or “pause and check whether this is still worth your effort”. The difference comes from the question and the surrounding cards.'],
+  ['love', 'What kind of person does this card describe?', 'This is someone patient, persistent and able to stay with a process for a long time. The shadow is moving so cautiously that decisions become slow or overly passive, especially when a situation needs a timely response.'],
+  ['love', 'What kind of feelings do they have for me?', 'The answer leans positive. The Seven of Pentacles suggests feelings that have been built gradually rather than appearing overnight. This person may have invested time, attention and patience in the connection and wants to see whether what has been nurtured can grow into something lasting.'],
+  ['love', 'We are arguing. Should I break up with them?', 'This card points first to patience and long-term effort. A relationship that has lasted for some time can lose the easy excitement of the beginning, and both people may become less tolerant of each other’s habits. Before deciding to leave, ask whether the issue is a true incompatibility or whether both of you have simply stopped tending the relationship with the same care.'],
+  ['love', 'What should I do if the other person cannot change?', 'Some traits change slowly, and some may never change in the way you hope. Give reasonable time when change is genuinely possible, but do not turn patience into endless waiting. Ask what you actually need, whether the other person wants the same change for themselves, and whether the relationship still works if this trait remains.'],
+  ['career', 'Will I find a job I like soon?', 'The answer leans yes, but probably not immediately. The effort you have put into searching, learning and improving yourself can pay off. Keep going, while also checking which actions are producing results and which ones need to change.'],
+  ['career', 'How will my work develop in the near future?', 'The Seven of Pentacles promises gradual rather than sudden progress. It is not the card of effortless luck; it is the card of return on sustained work. If you are waiting for promotion or growth, expect it to take time and keep building evidence that you are ready.'],
+  ['other', 'Why do I have to be so persistent?', 'The Seven of Pentacles is about consistency rather than one burst of effort. The image of tending a plant is useful: some results need weeks or months of care before they become visible. Habits are similar; there is no single number of days that works for everyone. What matters is repeating the behaviour long enough, and adjusting the method when needed.']
+]
+});
+
+Object.assign(ASK.en, {
+'wands-8': [
+  ['other', 'What is the key meaning of this card?', 'The Eight of Wands has two main themes, both suggested by the wands flying through the air: speed and movement. Something may develop quickly, or distance and travel may become relevant. Unlike The World, which often points to a larger completion or wider horizon, the Eight of Wands can describe movement on any scale. The card itself is neutral: sometimes speed helps, and sometimes it is the reason to slow down.'],
+  ['love', 'What kind of person does this card describe?', 'This card can describe someone who thinks, speaks and acts quickly. They may enjoy handling several things at once because they like momentum. The shadow is rushing: speed can create avoidable mistakes, missed details and decisions made before enough information is available. Their lesson is not to become slow, but to know when speed is useful and when focus matters more.'],
+  ['love', 'What kind of feelings do they have for me?', 'The feelings may have arrived quickly and intensely, but speed does not tell you whether they will last. The two of you may be caught up in novelty or in an image you have built of each other. Give the relationship enough time to see whether the attraction is joined by real understanding, consistency and commitment.'],
+  ['love', 'We are arguing. Should I break up with them?', 'The Eight of Wands points more to speed and reactivity than to a breakup. Both people may be making fast conclusions from small signs, speaking before listening or escalating before checking what actually happened. Slow the exchange down, ask direct questions and separate facts from assumptions before making a permanent decision in the heat of the moment.'],
+  ['career', 'I am unemployed. Will I find a job soon?', 'The answer leans yes, and the card adds two possible themes. News may arrive quickly, and the opportunity may involve movement: another area, a longer commute, frequent travel or a role that keeps you on the move. Treat the timing as symbolic rather than a guaranteed number of days.'],
+  ['career', 'What should I watch for at work soon?', 'Something may develop quickly, so be ready to respond without rushing your judgment. The card can also point to movement at work: a business trip, a transfer, a new team or simply a change in where and how you work. Draw more cards if you need detail about whether the change is helpful or difficult.']
+],
+'swords-8': [
+  ['other', 'What is the key meaning of this card?', 'The Eight of Swords is the feeling of being trapped, restricted or unable to choose. In the image, the bindings are loose and the swords do not fully close the way out, which is why the card often asks whether fear or assumptions are making the situation feel more fixed than it is. It does not mean every obstacle is imaginary; it asks where you still have room to move.'],
+  ['other', 'So who tied this person up?', 'The Eight of Swords often points to beliefs that make an already difficult situation feel even narrower. Sometimes the barrier is internal, but external limits can be real too. The card is not asking you to blame yourself. Ask which part you can influence, which part needs support or resources, and what small step would return some choice to you.'],
+  ['love', 'What kind of person does this card describe?', 'This card can describe someone who worries easily and gets caught in limiting thoughts. Under stress, they may see risks before possibilities and struggle to believe that they have choices. Treat this as a state that can change, not as a fixed definition of the person.'],
+  ['love', 'What kind of feelings do they have for me?', 'The answer can lean toward feelings being present while the person holds themselves back. Fear, past hurt, insecurity or a belief that the relationship cannot work may be stronger than their willingness to act. What matters is whether they can recognise those fears and communicate rather than repeatedly pushing you away.'],
+  ['love', 'We are arguing. Should I break up with them?', 'The card does not say you must break up. It highlights a sense of being stuck and the way fearful thinking can make a problem look more hopeless than it is. Separate what you know from what you are assuming, and look at both your own part and the other person’s real limitations. If there is control, threat or abuse, the issue is not merely a mindset; safety and outside support come first.'],
+  ['love', 'Can you give an example of changing perspective?', 'Imagine a colleague says something unkind about you. One response is to obsess over what you did wrong; another is to retaliate and create a larger conflict. A different response is to check the facts, decide whether the comment needs a direct boundary or no attention at all, and then return your focus to what matters. Changing perspective does not mean pretending harm is fine. It means choosing a response that does not keep you trapped in the same conflict.'],
+  ['career', 'Will I find a new job soon?', 'The card suggests the search may still feel blocked, but that does not mean the cause is entirely you. You may be ruling yourself out of good roles because confidence is low, while the market or your circumstances may also be difficult. Review the jobs you automatically dismiss, ask for feedback on your applications and widen the search where it makes sense.'],
+  ['career', 'What should I watch for at work soon?', 'Something at work may be making you feel boxed in even if no dramatic event occurs. Ask whether the issue is a real structural limit, a difficult relationship, or a belief that you have no alternatives. Naming the kind of constraint matters, because each one needs a different response: a conversation, a boundary, a practical plan or a change of direction.']
+],
+'cups-8': [
+  ['other', 'What is the key meaning of this card?', 'The Eight of Cups is choosing to leave something that may still contain value because your path is moving elsewhere. You do not have to hate a place, person or chapter in order to outgrow it. The card carries both sadness and intention: you can appreciate what was good and still know that it is time to continue.'],
+  ['love', 'What kind of person does this card describe?', 'The Eight of Cups is easier to read as a life phase than as a fixed personality. This person may recently have left something meaningful behind in order to begin a different journey. That choice can bring sadness, relief and uncertainty at the same time, and the transition may still be shaping how they relate to people now.'],
+  ['love', 'Are their feelings for me genuine?', 'The feelings may be genuine, but the person may currently be moving toward a path that does not leave much room for the relationship. They could care about you and still decide not to begin or continue because of distance, timing or a different life direction. Feelings and availability are not the same thing.'],
+  ['love', 'We are arguing. Should I break up with them?', 'The Eight of Cups shows that at least one person is seriously thinking about leaving or needs a different direction in life. That raises the possibility of separation, but it does not make a breakup inevitable. Talk honestly about what each of you wants, what can still be built together and what may have become too different to reconcile.'],
+  ['career', 'I have been unemployed for three months. Will I find a job I like?', 'This card asks what you may need to release before the search can move. You might be limiting yourself to a field because you have already invested years in it, even though it no longer fits. Past effort is not wasted simply because you change direction. Consider which skills can travel with you into a different kind of work.']
+],
+'pentacles-8': [
+  ['other', 'What is the key meaning of this card?', 'The Eight of Pentacles is craftsmanship: careful work, repetition, patience and attention to detail. The person in the image improves one piece at a time. The card favours practice and consistency over shortcuts.'],
+  ['love', 'What kind of person does this card describe?', 'This is someone diligent, detail-oriented and often perfectionistic. They may work very well independently and take pride in doing things properly. The shadow is focusing so closely on flaws that they miss the whole picture or struggle to enjoy what is already good.'],
+  ['love', 'What kind of feelings do they have for me?', 'The answer leans positive, but this person tends to analyse carefully before moving forward. They may think about practical compatibility, habits and the long-term future rather than simply following attraction. Care can be useful; if it turns into inspecting every flaw, however, the relationship may never get room to develop naturally.'],
+  ['love', 'We are arguing. Should I break up with them?', 'The conflict may come from one or both of you focusing on small faults while overlooking what the other person contributes. Tiny habits, social-media behaviour or harmless details can become symbols of a much larger worry. Talk about the real need underneath the criticism instead of repeatedly policing each other’s minor behaviour.'],
+  ['career', 'Will I find a job soon?', 'The answer leans yes, especially for work that rewards skill, concentration and careful repetition. The role may involve independent work, numbers, craft, analysis or any process where quality grows through consistent practice. Accounting and auditing are examples, but the card is broader than those fields.'],
+  ['career', 'Will anything change in my work soon?', 'The Eight of Pentacles usually shows continuation rather than sudden change. Your progress comes from improving the work piece by piece. If you are tired, rest and adjust your pace, but do not mistake the absence of a dramatic breakthrough for the absence of progress.']
+]
+});
+
+Object.assign(ASK.en, {
+'wands-9': [
+  ['love', 'What kind of person does this card describe?', 'The Nine of Wands describes someone resilient who has already been through enough difficulty to become cautious. They do not give up easily, but resilience can turn into always expecting another problem. Their strength is endurance; their lesson is knowing when to keep going and when to rest or change approach.'],
+  ['love', 'What kind of feelings do they have for me?', 'One Nine of Wands is not enough for a clear yes or no. Feelings may be present, but something is making the person guarded: current pressures, old disappointment or fear of being hurt again. Draw more cards if you want to distinguish between genuine interest, caution and simple emotional unavailability.'],
+  ['love', 'Why are they asking me to wait?', 'The Nine of Wands can suggest that they like you but are moving slowly because they are dealing with other pressures or because past hurt has made them more cautious. If you choose to wait, make sure the pace also works for you. Patience should not mean putting your own needs on hold indefinitely.'],
+  ['love', 'We are arguing. Should I break up with them?', 'This card can describe a relationship that has required more effort than usual from the beginning, perhaps because of distance, family pressure, cultural differences or repeated stress. It does not decide the breakup for you. Ask whether both of you are still working on the same side and whether the effort is building something healthier, rather than treating “never give up” as a rule that applies to every relationship.'],
+  ['career', 'I am looking for work. How will the search go?', 'You may have faced several rejections already, but the Nine of Wands asks you not to treat them as proof that nothing will work. Keep going, while learning from each attempt. Persistence is most useful when it includes adjustment: refine the CV, practise interviews and change the search strategy when the evidence says you should.'],
+  ['career', 'What should I watch for at work soon?', 'You may run into a manageable but tiring obstacle: a difficult task, delay or recurring problem that needs attention before you can move on. The card favours endurance, not martyrdom. If the same issue keeps returning, solve the cause or ask for help instead of simply proving that you can tolerate it again.'],
+  ['other', 'What is the lesson of this card?', 'The Nine of Wands teaches persistence after difficulty. It is the moment when you are tired but not necessarily finished. The deeper lesson is to distinguish persistence from stubbornness: keep going when the goal still matters and the path is workable, but do not stay on a harmful path merely because you have already come far.']
+],
+'swords-9': [
+  ['love', 'What kind of person does this card describe?', 'The Nine of Swords speaks more about a mental state than a fixed personality. Someone may be anxious, losing sleep, blaming themselves or seeing everything through a very heavy lens. When the mind is overloaded, it can feel as though nobody understands and there is no way out, even when support and options still exist.'],
+  ['love', 'Should I date someone who carries this energy?', 'Do not decide whether to love someone from one card. If they are going through anxiety or emotional pain, look at whether they recognise it, seek appropriate support and still respect your boundaries. You can care about someone without becoming responsible for fixing their mental health.'],
+  ['love', 'We argue a lot. Should I break up with them?', 'The Nine of Swords suggests that the conflict has become emotionally exhausting. One or both of you may be stuck in fear, jealousy, resentment or repeated demands that the other person change. The card does not guarantee that the relationship can or cannot be repaired. What matters is whether both people can take responsibility, communicate safely and change the pattern rather than only promising to.'],
+  ['love', 'What should I do in this situation?', 'Look for a solution that is mutual rather than one-sided. You can make the first calm move, but a relationship cannot be repaired by one person repeatedly surrendering while the other changes nothing. If the dynamic is causing ongoing fear, humiliation or emotional harm, you are allowed to step away and seek support.'],
+  ['career', 'I have been unemployed for a long time. Will I find a job soon?', 'The Nine of Swords shows how stressful the search has become. After repeated rejection, you may enter interviews already expecting failure, and that can affect how confidently you present yourself. This is not about a “low frequency attracting failure”. Focus on what you can influence: preparation, practice, feedback, sleep and mental wellbeing while you continue the search.'],
+  ['career', 'What should I watch for at work soon?', 'Work may be feeding worry, but separate the source carefully. Is the job itself unreasonably stressful, are expectations unclear, or are you reacting strongly to normal feedback because you are already exhausted? The answer may be a boundary, a conversation, better systems, time off or a different job. Do not assume every criticism is persecution, but do not dismiss a genuinely unhealthy workplace either.'],
+  ['other', 'What is it like to read for someone with this energy?', 'A reading with someone who is very anxious or distressed can be emotionally tiring, especially when you are concentrating and empathising for a long time. Set time limits, take breaks between readings and remember that you do not have to carry another person’s emotions after the session ends.']
+],
+'cups-9': [
+  ['other', 'What is the key meaning of this card?', 'The Nine of Cups is satisfaction: enjoying what you have and feeling that something has gone well. Its shadow is complacency — treating a good result as if there is nothing left to learn or improve. The card asks you to enjoy the win without turning comfort into stagnation.'],
+  ['other', 'Can you give me an example?', 'Imagine a student gets an excellent result in a mock exam. The Nine of Cups fits the pleasure and confidence that follow. The caution is assuming that one good practice result guarantees the final exam. Celebrate, then keep the habits that produced the result.'],
+  ['love', 'What kind of person does this card describe?', 'This card can describe someone optimistic, pleasure-loving and comfortable with themselves. In the shadow, confidence can become self-satisfaction or a need to be admired. Look at whether they can enjoy their own success without making other people feel smaller.'],
+  ['love', 'What kind of feelings do they have for me?', 'The answer can lean positive, but the Nine of Cups asks whether the person values the relationship itself or mainly enjoys the attention and satisfaction it gives them. Attraction and pleasure can be genuine while still being self-focused. Watch what happens once they no longer need to “win” you: do care, respect and effort remain?'],
+  ['love', 'We are arguing. How should we handle it?', 'Pride may be keeping the argument alive. Each person may feel too certain that they are right to apologise or listen first. The Nine of Cups asks you to value the relationship more than the satisfaction of winning the disagreement. If the issue is important, draw more cards or, better still, talk about the actual need underneath it.'],
+  ['career', 'Will I find a job I like soon?', 'The Nine of Cups suggests checking whether your expectations match your experience, the market and what you actually value. This does not mean you are “overrating yourself”. Keep the standards that matter, but identify where you can be flexible enough to widen the opportunities available to you.'],
+  ['career', 'What should I watch for at work soon?', 'Things may be going well, and that is exactly why complacency is the caution. Enjoy recognition without assuming you have nothing left to learn. Keep asking questions, improving your craft and noticing what the next level requires.']
+],
+'pentacles-9': [
+  ['other', 'What is the key meaning of this card?', 'The Nine of Pentacles is material independence, comfort and enjoying the life you have built. It does not judge whether someone prefers simple pleasures or expensive ones. The important theme is being able to appreciate what you have without needing another person to provide your sense of security.'],
+  ['love', 'What kind of person does this card describe?', 'This person values comfort, independence and having a life that feels like their own. They may enjoy possessions, good food, a peaceful home or simply the freedom to choose how they live. The healthy form is self-sufficiency; the shadow is becoming so self-contained that partnership feels like an intrusion.'],
+  ['love', 'What kind of feelings do they have for me?', 'The Nine of Pentacles shows someone who values independence and their own world. They may care for you while still needing plenty of personal space, or they may not want to merge every part of life into a relationship. Watch whether independence still comes with mutual care and giving, or whether it becomes distance and one-sided receiving.'],
+  ['love', 'We are arguing. Does this mean we have to break up?', 'The tension may come from different needs for independence and togetherness. One person may want more shared time and commitment while the other protects a strong private life. Neither need is automatically wrong. The question is whether you can agree on a balance that leaves both people cared for rather than controlled or neglected.'],
+  ['career', 'Will I find a new job soon?', 'The answer leans positive, especially toward work that improves your financial independence or gives you more control over your life. Do not treat the card as a guarantee of luxury; use the actual offer, salary and conditions to judge whether the role gives you the stability you need.'],
+  ['career', 'Exactly how much will the salary be?', 'Tarot cannot give a reliable salary figure. The Nine of Pentacles points to comfort, independence and material sufficiency. To judge whether an offer is truly good, compare it with the market, your cost of living, your experience and your real financial goals.'],
+  ['career', 'How will my work go in the near future?', 'Work can remain stable enough to support a comfortable life, but the card also asks whether you have time to enjoy what you earn. More income is not the same as a better life if the job consumes every hour. Look at money, autonomy, time and wellbeing together.']
+]
+});
+
+Object.assign(ASK.en, {
+'wands-10': [
+  ['love', 'What kind of person does this card describe?', 'The Ten of Wands often describes someone who carries too many responsibilities. They may find it hard to say no, be used to doing everything themselves or struggle to prioritise. Sometimes the workload genuinely comes from circumstances rather than being self-created. The useful question is which burdens are necessary, which can be shared and which can be put down.'],
+  ['love', 'What kind of feelings do they have for me?', 'They may genuinely care about you, but their attention is divided across many responsibilities. The issue is not necessarily lack of feeling; it may be lack of capacity. Ask yourself whether the amount of time and attention they can realistically offer works for you, and say clearly what you need instead of hoping they will guess.'],
+  ['love', 'We are arguing. Should I break up with them?', 'The conflict may be coming from overload rather than lack of love. When both people are exhausted, patience disappears quickly and small requests can feel like extra weight. The card does not automatically advise a breakup. First ask whether this is a temporary busy period and whether both of you can protect some connection while the pressure lasts.'],
+  ['love', 'What should I do while I am this busy?', 'Tell your partner clearly what your limits are instead of staying silent until you snap. Agree on small, realistic ways to stay connected during the busy period. When pressure eases, actively restore balance to the relationship. If overload never ends, review workload, expectations and support rather than turning it into a reason to blame yourself.'],
+  ['career', 'Will I find a job I like soon?', 'The Ten of Wands shows that the job search is competing with too many other demands, so progress may be slower than you want. Rather than treating this as a flat no, narrow your priorities: protect time for applications, interviews and company research, and postpone what is not urgent where you can.'],
+  ['career', 'What may happen at work soon?', 'The near future may simply be busy. Projects can overlap, people may ask for extra help and tasks outside your usual role may accumulate. The warning is overload, not disaster. Clarify priorities early, negotiate deadlines and ask what can be delegated before everything becomes urgent at once.'],
+  ['other', 'So what should I do?', 'Start by admitting that the load is too large. Write down everything you are carrying, separate urgent from important and decide what can be delayed, delegated or declined. Tarot can point to the pattern; the practical solution is prioritisation, boundaries and asking for help where appropriate.']
+],
+'swords-10': [
+  ['other', 'What is the key meaning of this card?', 'The Ten of Swords is the feeling that a painful cycle has reached its limit: exhaustion, disappointment or the sense that you cannot take any more. Thoughts can intensify pain, but outside circumstances can be very real too. The constructive side is that an ending has become visible. The question shifts from “how much longer can I endure this?” to “what needs to end, and how do I recover?”'],
+  ['other', 'Some people say this card has a positive side. Is that true?', 'Yes. The Ten of Swords is often read as the bottom of a cycle, so it also contains ending and recovery. But “time will fix everything” is not the whole message. Look at what needs to stop, what support is needed and what lesson could prevent the same pattern from repeating.'],
+  ['love', 'What kind of person does this card describe?', 'The Ten of Swords should not be used to label someone’s whole personality. It often describes a period of exhaustion, pessimism or feeling pushed to the limit. In that state, someone may struggle to see positive possibilities and react more heavily than usual. The state can change as circumstances and mental wellbeing improve.'],
+  ['other', 'What might it feel like to talk with someone in this energy?', 'Long conversations with someone who is in constant despair or crisis can be emotionally tiring. That does not make them an “energy vampire”. You can listen while keeping limits: you will not always have the capacity to take everything in, and when the issue is beyond what you can hold, encouraging trusted people or professional support is appropriate.'],
+  ['love', 'What kind of feelings do they have for me?', 'The person may care about you while viewing the relationship through fear, distrust or expectations of being hurt. Those fears can distort how they interpret ordinary behaviour. Instead of trying to prove yourself endlessly, look for whether they can talk about their fears, check assumptions and build trust with you in a mutual way.'],
+  ['love', 'Should I help someone in this state?', 'You can help within your limits, but you cannot force another person to change or accept support before they are ready. Be clear about what you can and cannot offer and encourage appropriate support. If the relationship is repeatedly exhausting or harmful to you, creating distance is also a reasonable choice.'],
+  ['other', 'Why can a reading be unhelpful for someone in this state?', 'When someone feels hopeless, a reading may not help if they only want confirmation that everything is fixed by fate. A reader should avoid reinforcing helplessness. Use Tarot to open questions and practical choices, and be clear about its limits. In a serious mental-health crisis, a reading is not a substitute for professional support.'],
+  ['love', 'We argue constantly. Should I break up with them?', 'The Ten of Swords suggests that the current form of the relationship has become deeply exhausting or painful. Something in the cycle needs to end, but that may mean ending the harmful pattern, taking space to recover or ending the relationship itself. If there is violence, threats or fear, prioritise safety and outside support rather than using Tarot to decide.'],
+  ['career', 'Will I find a job I like?', 'You may be too exhausted or discouraged by the search to show your best self right now. That does not mean employers can magically “sense bad energy”. If possible, give yourself some recovery while continuing small practical steps: improve the CV, practise interviews and ask for support. There is no required one- or two-month waiting period.'],
+  ['career', 'Will anything difficult happen at work soon?', 'The Ten of Swords can reflect a workplace situation that already feels close to breaking point: burnout, a project ending, conflict or the need to leave a bad setup. One card cannot tell you who is at fault. Look at concrete facts, protect your wellbeing and draw more cards only as a reflective tool, not as evidence against colleagues or managers.']
+],
+'cups-10': [
+  ['other', 'What is the key meaning of this card?', 'The Ten of Cups is shared happiness, emotional belonging and a cycle reaching a harmonious completion. The family scene in the image is symbolic rather than a rule about what happiness must look like. At its best, the card describes connection, gratitude and the feeling of being at home with other people.'],
+  ['other', 'How strong are the Tens in the Minor Arcana?', 'Within many Tarot teaching systems, Tens represent the fullest development of their numbered suit before the court cards are considered separately. That makes them useful for reading completion or culmination. Treat this as a structural convention of the deck, not a measurable force stronger or weaker in an objective sense.'],
+  ['love', 'What kind of person does this card describe?', 'This card can describe someone warm, emotionally generous and comfortable creating a sense of belonging around them. They may be good at making others feel included and heard. The card does not guarantee high emotional intelligence, but it does favour openness, connection and shared joy.'],
+  ['love', 'What kind of feelings do they have for me?', 'This is a very positive card for love. It suggests affection, belonging and the wish to build a harmonious future together. Still, one card is not proof of marriage plans or another person’s exact level of commitment. Let their words, actions and real plans confirm what the card symbolises.'],
+  ['love', 'We are arguing. What does this card advise?', 'The Ten of Cups suggests that the relationship may have a strong emotional foundation even if you are currently upset. Do not let one small conflict erase the whole picture, but do not use a “good card” to dismiss a serious issue either. Return to what you value together and talk about the specific disagreement.'],
+  ['career', 'Will I find a new job soon?', 'The answer can lean positive for finding work that feels emotionally satisfying or socially supportive. The Ten of Cups says more about enjoyment, belonging and a good environment than about salary or promotion. Use another card or, better, the actual offer details to evaluate money and career growth.'],
+  ['career', 'What should I watch for at work soon?', 'The card points toward harmony and support rather than a particular warning. Enjoy a cooperative period, strengthen good relationships and do not assume that “nothing to worry about” means there is nothing to maintain. Healthy teams stay healthy because people keep contributing to them.']
+],
+'pentacles-10': [
+  ['other', 'What is the key meaning of this card?', 'The Ten of Pentacles is long-term material stability, family resources, inheritance of values and the structures that support a life over time. Its abundance is broader than cash: home, security, networks and what one generation passes to the next can all belong here.'],
+  ['other', 'How is this different from the Ten of Cups?', 'Both cards can show fulfilment, but the emphasis differs. The Ten of Cups centres emotional belonging and shared happiness. The Ten of Pentacles centres the structures around that life: family systems, money, home, tradition and long-term security. Those structures can support you, but they can also carry expectations that feel restrictive.'],
+  ['love', 'What kind of person does this card describe?', 'This is someone stable and practical who often thinks in long timeframes. They may value family, security, savings and helping people in ways that are sustainable. Their generosity tends to be considered rather than impulsive. The shadow is allowing tradition or material security to become more important than flexibility and individual choice.'],
+  ['love', 'What kind of feelings do they have for me?', 'The Ten of Pentacles can show someone thinking about love in long-term, practical terms: family, home, finances, lifestyle and whether a shared life could work. They may value similar backgrounds or values, but the card does not mean they chose you for status or family conditions. Look for whether practicality is joined by affection, respect and genuine understanding.'],
+  ['love', 'Why are we arguing?', 'A single Ten of Pentacles does not explain every relationship conflict, but it often points toward family systems or practical life. Pressure from relatives, differences in tradition or religion, housing, money and spending can all become sources of tension. Draw more cards if you need to see which part is actually active.'],
+  ['career', 'Will I find a new job?', 'The Ten of Pentacles is a positive symbol for stability and a solid financial foundation, but it cannot guarantee a job or a particular salary. If a new opportunity appears, judge pay, benefits, security and development with real information. The card is best read as a preference for something sustainable rather than a promise of wealth.'],
+  ['career', 'Will my work change soon?', 'The Ten of Pentacles usually favours continuity and slow development rather than sudden change. If your current work is stable, that stability may continue. If growth comes, it is more likely to be built through accumulated experience, responsibility and resources than through an overnight leap.']
+]
+});
+
+Object.assign(ASK.en, {
+  "wands-c0": [
+    [
+      "other",
+      "What are the keywords for this card?",
+      "Page of Wands is a newly lit spark: curiosity, enthusiasm, exploration and the urge to try something new. Its shadow is impulsiveness, inexperience, or starting with great energy without yet knowing how to sustain it. Think of every Page as someone learning how to use the element of their suit."
+    ],
+    [
+      "love",
+      "What kind of personality does this card describe?",
+      "A Page of Wands person is usually open, energetic and action-oriented. They get excited by new experiences and can be impulsive because they are still learning. Their strength is genuine curiosity and a willingness to learn from feedback."
+    ],
+    [
+      "love",
+      "Which is more impulsive, the Page or the Knight of Wands?",
+      "The Knight of Wands is usually more impulsive and moves faster. The Page still has plenty of fire, but feels like a beginner: excited, curious and more able to pause and learn. The Knight is more likely to act first and think later."
+    ],
+    [
+      "love",
+      "How does this person feel about me?",
+      "This card often suggests a new spark. They may find you exciting, attractive and worth getting closer to. The interest can be sincere and lively, but it is still young, so the card cannot tell you how deep it will become. Watch whether their actions stay consistent."
+    ],
+    [
+      "love",
+      "We are arguing. How should we handle it?",
+      "The conflict may come from reacting too quickly or not yet knowing how to handle strong feelings when things get heated. Slow the conversation down, deal with one issue at a time and do not turn it into a contest. The same passion that fuels the argument can also help you solve it together."
+    ],
+    [
+      "career",
+      "Will I find a new job soon?",
+      "Page of Wands supports opening a new direction, but it does not promise that a job will simply appear. Be proactive: apply, explore unfamiliar fields and accept a period of learning as you go. Opportunities are more likely to show up once you start moving."
+    ],
+    [
+      "career",
+      "What should I watch for at work in the near future?",
+      "A new task, project or skill may land in front of you. Do not worry about not knowing everything yet; this card is good for learning on the job. The main caution is taking on too much while excited and then losing momentum."
+    ],
+    [
+      "other",
+      "Is there an easy way to remember the Pages?",
+      "Think of each Page as the beginner of its element. Page of Wands learns action and passion; Page of Cups learns emotion; Page of Swords learns thought and communication; Page of Pentacles learns skills and the material world. Remember the role first, then combine it with the suit."
+    ]
+  ],
+  "swords-c0": [
+    [
+      "love",
+      "What kind of personality does this card describe?",
+      "Page of Swords is often quick-minded, curious and observant, but still learning how to communicate well. They may speak too bluntly, ask too many questions or react before considering how their words land. This is inexperience in thought and communication, not bad character."
+    ],
+    [
+      "love",
+      "How does this person feel about me?",
+      "This card shows a lot of watching and thinking, but the feelings may not be clear or deep yet. They can be curious about you, want to learn more and analyse the connection logically. Do not label them calculating or insincere from one card; look at how they actually behave."
+    ],
+    [
+      "other",
+      "How is this Page different from the other three?",
+      "Page of Swords brings newness into the world of ideas, questions and communication. It often points to a new idea that has not been tested yet, or someone learning how to use words and reason. The strength is curiosity; the weakness is jumping to conclusions."
+    ],
+    [
+      "love",
+      "We are arguing. How can we resolve it?",
+      "Communication is the main issue here. You may be listening in order to argue back rather than to understand, or speaking too quickly while upset. Ask when you are unsure, avoid assumptions and let each other finish before responding."
+    ],
+    [
+      "career",
+      "Will I find a new job?",
+      "This card makes the job search a matter of information, learning and clear decisions. New opportunities may appear, but read the details, ask about conditions and do not change direction only because of a moment of anxiety. The outcome depends heavily on how well you gather information and act on it."
+    ],
+    [
+      "career",
+      "What should I pay attention to at work soon?",
+      "New ideas, messages or discussions may arrive quickly. Check your facts before presenting them and mind your tone so small misunderstandings do not grow. One good question can be more useful than a rushed conclusion."
+    ]
+  ],
+  "cups-c0": [
+    [
+      "other",
+      "What are the keywords for this card?",
+      "Page of Cups is a new feeling beginning: tenderness, curiosity, imagination, creativity and emotional openness. It can be a crush, a friendship, a new interest or a fresh source of inspiration. Its shadow is idealising, being swept away by emotion or not yet knowing what you truly want."
+    ],
+    [
+      "love",
+      "What kind of personality does this card describe?",
+      "This person is often sensitive, open, imaginative and easily moved by new experiences. They have a youthful quality, are curious about people and tend to meet life through feeling. When immature, they may daydream or change interests quickly."
+    ],
+    [
+      "love",
+      "Is this person better as a friend or a partner?",
+      "The card cannot decide that someone is “better as a friend than a partner”. It shows a person with fresh emotions and curiosity who is still learning about themselves. Whether a relationship lasts depends on consistency, boundaries and communication, not this card alone."
+    ],
+    [
+      "love",
+      "How does this person feel about me?",
+      "There may be a sincere but still gentle and new attraction. They can find you interesting, sweet or emotionally inviting. Give the feeling time to develop instead of rushing to define it."
+    ],
+    [
+      "love",
+      "What should I do when we argue?",
+      "Do not try to win through emotion. Say what made you sad or insecure, then ask what the other person is feeling instead of guessing. Page of Cups asks both of you to return to softness and curiosity."
+    ],
+    [
+      "love",
+      "So what should I do now?",
+      "Give yourself a little time to identify the real feeling before reacting. If you need to talk, use “I feel…” language rather than blame. A gentle but honest conversation suits this card better than a rushed decision."
+    ],
+    [
+      "career",
+      "Will I find a new job?",
+      "This card can point toward work that genuinely interests you, especially creative, caring or people-focused roles, but it does not guarantee a hiring result. Use your curiosity to explore opportunities and check the practical conditions before accepting."
+    ],
+    [
+      "career",
+      "What should I pay attention to at work soon?",
+      "A new idea, invitation or interest may make work feel fresher. Give it room to be tested, but do not let inspiration replace a plan. If your work involves people, emotional sensitivity can be a real strength."
+    ]
+  ],
+  "pentacles-c0": [
+    [
+      "love",
+      "What kind of personality does this card describe?",
+      "Page of Pentacles is usually practical, diligent and comfortable learning by doing. They care about skills, money, study or a goal they can measure. Their weakness can be excessive caution, a slow start or trusting only what is immediately tangible."
+    ],
+    [
+      "love",
+      "How does this person feel about me?",
+      "They may be taking you seriously in a slow, practical way. Interest is more likely to show through small actions, time and reliability than dramatic romance. The feeling is still at an early stage, but it can grow if both of you keep investing in it."
+    ],
+    [
+      "love",
+      "Why do we argue so often?",
+      "You may differ in pace, money habits, plans or how practical you want the relationship to be. One person needs certainty at every step while the other wants to move faster. Talk about what each of you needs to feel secure instead of treating slowness as lack of love."
+    ],
+    [
+      "career",
+      "Will I find a job I like soon?",
+      "Page of Pentacles is encouraging for training, internships, a new position or work that builds useful skills. It does not promise a perfect job immediately, but it supports an opportunity with room to grow. Prioritise a place where you can learn something valuable."
+    ],
+    [
+      "career",
+      "What may happen at work in the near future?",
+      "You may enter a period of learning, take on a new task or begin a more concrete goal. Slow, steady progress suits this card. Do not dismiss small gains; this is the kind of energy that builds a foundation one piece at a time."
+    ]
+  ]
+});
+
+Object.assign(ASK.en, {
+  "wands-c1": [
+    [
+      "other",
+      "What are the keywords for this card?",
+      "Knight of Wands is fast movement, passion, risk-taking and the urge to experience life. This is the person who wants to go as soon as something excites them. The shadow is impatience, inconsistency and losing interest once the first rush fades."
+    ],
+    [
+      "other",
+      "How is a Knight different from a Page, Queen or King?",
+      "The Page is learning. The Knight has enough energy to charge into action but has not fully mastered it yet. Queens and Kings regulate their element more maturely. Knights are therefore the most mobile court cards and often the most likely to overdo their suit."
+    ],
+    [
+      "love",
+      "How does this person feel about me?",
+      "They may feel a strong attraction and want things to move quickly. This is passionate, proactive and excited energy, but it does not automatically mean long-term commitment. Watch whether the interest remains once the novelty wears off."
+    ],
+    [
+      "love",
+      "What is an example of this kind of attraction?",
+      "A typical example is someone who messages often, wants to meet quickly, invites you out and speeds the connection along. That can feel exciting, but distinguish a rush from consistency. Knight of Wands is excellent at starting; staying power has to be shown over time."
+    ],
+    [
+      "love",
+      "Why do we argue so often?",
+      "You may both react too quickly, compete for control or flare up before thinking things through. Arguments grow because you are talking while still heated. Pause before responding and let one person finish before the other jumps in."
+    ],
+    [
+      "other",
+      "Should I get a reading about my partner?",
+      "You can use Tarot to reflect on your own feelings and choices, but do not use it to monitor someone or claim certainty about what is in their mind. If what you truly need is clarity, a direct conversation is usually more reliable than a card pull."
+    ],
+    [
+      "career",
+      "Will I find a job I like soon?",
+      "Knight of Wands supports an active job-search period with interviews, travel or opportunities that arrive quickly. An exciting role may appear, but read the conditions before accepting purely on adrenaline. Speed helps when it is paired with judgement."
+    ],
+    [
+      "career",
+      "Is there a problem with the way I am looking for work?",
+      "You may be doing a lot without enough strategy: sending applications everywhere, changing direction constantly or saying yes too fast. Choose a few clear targets, track each application and prepare properly for each interview. Less activity with more intention can work better."
+    ],
+    [
+      "career",
+      "I have a normal office job. What may change soon?",
+      "Work may become busier through an urgent project, travel or a task that needs a quick response. It is a good time to take initiative, but do not let a fast pace become burnout. Choose carefully what is actually worth charging into."
+    ]
+  ],
+  "swords-c1": [
+    [
+      "other",
+      "What kind of personality does this card describe?",
+      "Knight of Swords is quick-minded, decisive, argumentative and direct. They can be excellent when fast action is needed, but may become sharp-tongued, impatient or overly certain they are right. The lesson is to use mental speed without turning it into a weapon."
+    ],
+    [
+      "other",
+      "What do the Knight and Page have in common?",
+      "Neither has fully mastered the suit yet. The Page is learning and asking questions; the Knight has formed an opinion and charges forward, so excess is more likely. In Swords, this shows up as fast thinking, strong words and rushed decisions."
+    ],
+    [
+      "love",
+      "What does this person think of me?",
+      "They may be thinking about you intensely and want a clear answer about where things stand. They approach the connection through logic, direct questions and a need for definition. That does not tell you how deep the love is; it shows that their mind is very active around the relationship."
+    ],
+    [
+      "love",
+      "Is this person right for me?",
+      "One card cannot decide who is “meant for you”. Knight of Swords may suit someone who likes directness, speed and intellectual debate, but can feel exhausting to someone who needs a softer pace. Look at how the two of you actually handle disagreement."
+    ],
+    [
+      "love",
+      "Why do we argue so often?",
+      "You may be debating to win rather than to understand. Someone may interrupt, counter too quickly or use facts in a cutting way. Slow down, separate facts from interpretations and avoid long angry messages."
+    ],
+    [
+      "career",
+      "Will I find a job I like soon?",
+      "This card supports fast movement, especially in roles involving thinking, communication, analysis or rapid problem-solving. Still, do not accept a job only because you want to escape your current situation. Ask about the role, workload and expectations before deciding."
+    ],
+    [
+      "career",
+      "I have been searching for ages with no result. What should I do?",
+      "Do not let impatience turn into unfocused applications. Review your CV, practise interview answers and ask someone you trust to look at your search strategy. Knight of Swords needs a clear target so its speed does not scatter."
+    ],
+    [
+      "career",
+      "I have a normal office job. What may change soon?",
+      "You may enter a period of quick decisions, urgent conversations or projects that need fast analysis. A very direct, driven person may also become important at work. Keep facts clear and do not let a tense pace turn into unnecessary conflict."
+    ],
+    [
+      "other",
+      "How should I learn this card properly?",
+      "Do not memorise Knight of Swords as simply “sharp-tongued”. Use the structure: Knight is action and movement; Swords are thought, speech and decisions. Together they create very high mental speed — useful when decisiveness is needed, difficult when it is uncontrolled."
+    ]
+  ],
+  "cups-c1": [
+    [
+      "other",
+      "What does the image on this card show?",
+      "Knight of Cups rides forward while offering a cup, as if carrying an invitation, feeling or proposal. Compared with the other Knights, his movement is gentler and slower. The image emphasises the act of bringing an emotion toward someone."
+    ],
+    [
+      "other",
+      "What is the main keyword for this card?",
+      "The strongest keyword is romance. Other themes are invitations, charm, imagination, emotional pursuit and idealisation. Its shadow is falling in love with the feeling of being in love instead of really knowing the person in front of you."
+    ],
+    [
+      "other",
+      "What kind of personality does this card describe?",
+      "This person is often charming, emotionally expressive and guided by inspiration. They can be romantic and sensitive, but when immature may make promises in a feeling and change direction when the feeling changes."
+    ],
+    [
+      "other",
+      "Why is this the most negative level of the court cards?",
+      "It is better not to call Knight of Cups the “most negative” court level. Every court card has light and shadow. Here the risk is being carried too far by emotion and ideals; the strength is actively bringing affection, art and gentleness into the world."
+    ],
+    [
+      "love",
+      "What does this person think of me, and how do they approach the relationship?",
+      "They may see you through a romantic lens and want to move closer. Sweet words, invitations and affectionate gestures can come easily. Enjoy that beauty, but let time show whether the feeling is supported by consistency."
+    ],
+    [
+      "love",
+      "I used to find this kind of person very romantic. Is that accurate?",
+      "Yes. This is one of the most romantic images among the court cards. Romance, however, does not automatically make a relationship healthy or lasting. Look for consistency, respect for boundaries and the ability to keep promises as well."
+    ],
+    [
+      "love",
+      "We argue a lot. What should we do?",
+      "One or both of you may react emotionally and expect the other person to understand without being told. State your needs instead of testing each other, going silent for reassurance or using grand gestures to cover an unresolved issue. Simple honesty works better than drama."
+    ],
+    [
+      "love",
+      "What if both of us carry this energy?",
+      "You can create a lot of beautiful emotion together, but may also idealise the relationship and avoid practical matters. Keep the romance while talking clearly about time, money, boundaries and commitment. Beautiful feelings still need a solid frame."
+    ],
+    [
+      "other",
+      "Should I let all my emotions show?",
+      "Expressing emotion does not mean saying or doing everything the moment a feeling appears. Let yourself feel it, then choose an expression that does not harm you or someone else. Emotional maturity means honesty with self-regulation."
+    ],
+    [
+      "career",
+      "Will I find a new job I like soon?",
+      "Knight of Cups can suggest an invitation or role that genuinely appeals to you, especially in creative, artistic, caring or people-focused work. Check salary, conditions and growth as well, because this card says more about emotional fit than material stability."
+    ]
+  ],
+  "pentacles-c1": [
+    [
+      "other",
+      "What kind of personality does this card describe?",
+      "Knight of Pentacles is persistent, practical and responsible. They do not need to move quickly; they prefer a clear goal and steady steps. The shadow is rigidity, doing things only from habit or staying on a path after it already needs adjusting."
+    ],
+    [
+      "other",
+      "What is the negative side of this card?",
+      "Persistence can become stubbornness, and practicality can become tunnel vision. Knight of Pentacles may focus so hard on the task in front of them that they forget to ask whether the original goal still fits. Sometimes you need to review the direction, not only the progress."
+    ],
+    [
+      "love",
+      "What does this person want from me and from the relationship?",
+      "They may want something stable, clear and buildable over time. Interest is often shown by being present, keeping promises and doing practical things. The pace can be slow, but slow does not mean uncaring."
+    ],
+    [
+      "love",
+      "Why do we argue so often?",
+      "One person may need stability and plans while the other wants more flexibility or emotional expression. Knight of Pentacles can also cling to “the way we always do it” and resist feedback. Separate true core values from habits that can be negotiated."
+    ],
+    [
+      "other",
+      "Can you give an example of this card becoming narrow-minded?",
+      "You may save diligently for a goal without noticing that the goal no longer fits your life, or complete every task exactly by procedure without asking whether there is a better way. The problem is not lack of effort; it is lack of distance to see the whole picture."
+    ],
+    [
+      "career",
+      "I have been unemployed for months. Will I find a job I like?",
+      "Knight of Pentacles supports a stable path rather than an overnight turnaround. Keep applying, building skills and following up on opportunities. A suitable role may come through consistent effort; the card does not promise a date or salary."
+    ],
+    [
+      "money",
+      "Is Knight of Pentacles bad with money?",
+      "No. This is one of the most practical and disciplined energies for money. Its strengths are steady saving, planning and following a goal; its weakness is becoming so cautious that sensible opportunities are missed."
+    ],
+    [
+      "career",
+      "I have a normal office job. What may change soon?",
+      "You may enter a phase of steady work, clear procedures and a longer-term target. Change may be quiet: gradually more responsibility, stronger skills or a clearer goal. Do not underestimate progress simply because it is not dramatic."
+    ],
+    [
+      "other",
+      "How does Knight of Pentacles differ from Knight of Wands at work?",
+      "Knight of Wands prioritises speed, experimentation and excitement; Knight of Pentacles prioritises reliability, process and completion. One starts quickly, the other keeps the pace. Healthy work often needs both: enough fire to begin and enough endurance to finish."
+    ]
+  ]
+});
+
+Object.assign(ASK.en, {
+  "wands-c2": [
+    [
+      "other",
+      "What does the image on this card show?",
+      "Queen of Wands sits upright on her throne holding a wand and a sunflower. The image combines the fire of Wands with the composure of a Queen: confidence, warmth, creativity and leadership without needing to dominate every moment."
+    ],
+    [
+      "other",
+      "How is a Queen different from a King?",
+      "Both Queens and Kings represent a mature relationship with their element. Queens often express it through receptivity, nurture and influence from within; Kings lean toward action, decision and outer structure. These are different modes, not a hierarchy of better and worse."
+    ],
+    [
+      "other",
+      "Why is Queen of Wands considered more balanced than King of Wands?",
+      "In many teaching traditions, Queen of Wands blends Fire’s enthusiasm with the ability to hold steady and observe. She can act boldly and still know when to step back. “More balanced” is a useful symbolic teaching device, not a fixed law for every reading."
+    ],
+    [
+      "other",
+      "What kind of personality does this card describe?",
+      "This person is often confident, enthusiastic, magnetic and good at motivating others. They do not have to be the most skilled person in the room; they are often the one willing to step up, try first and make others believe something is possible. The shadow can be pride or over-managing their image."
+    ],
+    [
+      "other",
+      "What is the Queen of Wands’ presence like?",
+      "Her presence is warm but grounded. A person with this energy rarely needs to prove they are in the room; confidence shows in how they stand, speak and decide. Their magnetism comes from being comfortable in themselves."
+    ],
+    [
+      "love",
+      "Does this person have feelings for me?",
+      "Queen of Wands is positive for attraction, warmth and interest. They may find you striking or enjoy being close to you. One card cannot confirm another person’s feelings with certainty, so let real-life actions and clarity support the reading."
+    ],
+    [
+      "love",
+      "We argue a lot. What should we do to improve things?",
+      "This card asks for both honesty and respect. Do not turn confidence into a power struggle, but do not stay silent simply to avoid conflict either. State your needs, hold your boundaries and remember that a healthy relationship does not require either person to shrink."
+    ],
+    [
+      "career",
+      "Will I find a job I like soon?",
+      "Queen of Wands favours showing yourself well in applications, interviews and networking. A suitable opportunity may respond to confidence and visible initiative. Keep applying instead of only waiting, but avoid scattering your effort across roles you do not really want."
+    ],
+    [
+      "career",
+      "I have been unemployed for a long time and no one calls. What should I do?",
+      "Do not let unemployment become a story that you are “not good enough”. Review your CV, portfolio and search strategy, and ask someone for honest feedback. Queen of Wands asks for confidence rooted in real ability, then clearer self-presentation."
+    ],
+    [
+      "career",
+      "I have a normal office job. What may change soon?",
+      "You may be given a more proactive role: leading a small group, mentoring someone new, presenting an idea or representing the team. It does not have to be a formal promotion. The main theme is that others begin to rely on your ability to lead and energise people."
+    ]
+  ],
+  "swords-c2": [
+    [
+      "other",
+      "What does the image on this card show?",
+      "Queen of Swords sits on her throne with one hand holding the sword upright and the other open in front of her. The image suggests clarity, firm boundaries and the ability to face truth while remaining willing to listen."
+    ],
+    [
+      "other",
+      "What kind of personality does this card describe?",
+      "This person is often intelligent, independent, observant and clear in communication. They use reason without necessarily being cold. Experience has taught them what is worth saying, what can be released and which boundaries matter."
+    ],
+    [
+      "other",
+      "Is this person sharp-tongued?",
+      "Not necessarily. Queen of Swords is about directness and precision more than deliberately hurting people. At her best she says what needs to be said and still listens; in shadow, defensiveness or disappointment can make her words cold and cutting."
+    ],
+    [
+      "love",
+      "How does this person feel about me?",
+      "They may have feelings but want to understand the relationship with both heart and reason. Compatibility, communication, values and mutual respect matter to them. The affection can be quieter than overt romance without being less sincere."
+    ],
+    [
+      "love",
+      "Is this person sincere?",
+      "This card cannot prove sincerity. It suggests someone who weighs things carefully and needs clarity before opening fully. Look for whether words match actions and whether your boundaries are respected."
+    ],
+    [
+      "love",
+      "Is this person right for me?",
+      "That depends on what you need in a relationship. If you value clarity, independence and direct communication, this energy may suit you very well. If you need frequent emotional reassurance, both of you may need to learn each other’s language of care."
+    ],
+    [
+      "love",
+      "Why do we argue so often?",
+      "You may both lead with arguments instead of feelings, or one person may believe they are “just telling the truth” while the other feels judged. Name both the facts and the feelings, and distinguish a clear boundary from a cold delivery."
+    ],
+    [
+      "love",
+      "Can you give an example of that kind of conflict?",
+      "One person says, “That makes no sense,” when what they actually mean is, “I feel unimportant.” The other responds with more logic and the conversation moves even further away from the real feeling. Queen of Swords asks you to name the issue accurately without removing the human part."
+    ],
+    [
+      "career",
+      "Will I find a job I like soon?",
+      "This card suits work involving analysis, communication, writing, research, law, strategy or independent judgement. Opportunities can respond to clear self-presentation and selective applications. Evaluate a role by real criteria, not only by whether an interview felt good."
+    ],
+    [
+      "career",
+      "I have a normal office job. What may change soon?",
+      "You may need to make a clearer decision, set a boundary at work or become the person others consult for analysis. A direct conversation may be necessary. Prepare your facts and keep the delivery calm and precise."
+    ]
+  ],
+  "cups-c2": [
+    [
+      "other",
+      "What does the image on this card show?",
+      "Queen of Cups sits by the water and studies an ornate, closed cup. The image suggests a deep emotional life, strong intuition and the ability to hold space for feelings without displaying everything outwardly."
+    ],
+    [
+      "other",
+      "What kind of personality does this card describe?",
+      "This person is often empathetic, perceptive, intuitive and quick to notice other people’s feelings. They can listen very well and make others feel safe. The shadow is absorbing too much emotion around them or forgetting their own boundaries."
+    ],
+    [
+      "other",
+      "Why do people say this person has healed themselves?",
+      "Do not assume that Queen of Cups means someone is completely “healed”. The card describes a relatively mature ability to recognise and care for emotion. They may have learned a great deal from experience, but they are still human and can still have tender places."
+    ],
+    [
+      "love",
+      "How does this person feel about me?",
+      "This is a warm card for care, empathy and deep affection. They may genuinely pay attention to your feelings and want you to feel safe. Still, look at how they express that care and hold boundaries, because good feelings need clear action too."
+    ],
+    [
+      "love",
+      "Why do we argue so often?",
+      "One person may feel a great deal but say too little, leaving the other unsure what is needed. You may also absorb each other’s moods too easily. State your needs and do not turn empathy into mind-reading."
+    ],
+    [
+      "love",
+      "How does this person reject someone?",
+      "At their mature best, they try to say no kindly and consider the other person’s feelings while keeping the boundary. The shadow is delaying the answer or giving mixed signals because they are afraid of hurting someone."
+    ],
+    [
+      "career",
+      "Will I find a job I like soon?",
+      "Queen of Cups can suit caring, counselling, creative, artistic, service or people-sensitive work. It speaks more about emotional fit than a specific salary. Check practical conditions too so both emotional and material needs are met."
+    ],
+    [
+      "career",
+      "What is a second possible career direction for me?",
+      "Another direction is to use more listening, creativity or understanding of people within the work you already do. You do not always need a complete career change; a role in advising, customer care, experience design or community work may bring more of this energy in."
+    ],
+    [
+      "career",
+      "I have a normal office job. What may change soon?",
+      "You may receive work that needs more people skills or become someone colleagues come to for support. Use empathy without taking the whole team’s emotions into yourself. Good boundaries let you help without burning out."
+    ],
+    [
+      "other",
+      "Does this card have a negative side?",
+      "Yes. Too much empathy can become emotional absorption, idealisation, difficulty saying no or neglect of your own needs. Queen of Cups at her best feels deeply while still knowing which feelings belong to her and which belong to someone else."
+    ]
+  ],
+  "pentacles-c2": [
+    [
+      "other",
+      "What does the image on this card show?",
+      "Queen of Pentacles sits in a lush setting holding a pentacle as if caring for something valuable. The image joins the material world with nurture: building stability and tending the body, home, money and things that need time to grow."
+    ],
+    [
+      "other",
+      "What kind of personality does this card describe?",
+      "This person is often practical, reliable, caring and good at turning concern into concrete action. Money, health, home and ordinary needs matter to them. The shadow is carrying too much responsibility or measuring self-worth by how useful they are."
+    ],
+    [
+      "other",
+      "How is Queen of Pentacles different from King of Pentacles?",
+      "Both are practical and value stability. Queen of Pentacles often expresses this through care, nurture and hands-on management of nearby resources; King of Pentacles leans toward systems, ownership, management and long-term results. They are complementary shades of the same suit."
+    ],
+    [
+      "love",
+      "What does this person think of me, and do they truly love me?",
+      "They may view the relationship seriously and practically: can the two of you care for each other and build a stable life? That does not mean the affection is based only on conditions. Look for whether practicality is accompanied by warmth, respect and steady investment."
+    ],
+    [
+      "other",
+      "Can Pentacles have negative meanings?",
+      "Yes. Every suit has a shadow. Stability can become clinging, practicality can become materialism, saving can become fear of scarcity and care can become control. Read the degree and context instead of assuming Pentacles are always “good for money”."
+    ],
+    [
+      "love",
+      "Why do we argue so often?",
+      "The conflict may involve money, housework, time, responsibility or the feeling that one person carries too much. You may both show love by doing things but forget to say what needs saying. Divide responsibilities clearly and ask what actually makes each person feel cared for."
+    ],
+    [
+      "career",
+      "Will I find a job I like soon?",
+      "Queen of Pentacles is encouraging for a stable, practical environment that can support your life. It should not be used to promise a salary or hiring result. Prioritise clear conditions, a sustainable culture and a workload you can genuinely maintain."
+    ],
+    [
+      "money",
+      "I have a normal office job. What may happen with work soon?",
+      "You may be trusted with resources, clients, a budget or work that needs consistency. Finances can become more organised if you work steadily and manage well. Do not accept every extra task simply because people know you are reliable."
+    ],
+    [
+      "other",
+      "Which of the four Queens is the most positive?",
+      "No Queen is “the most positive” for every question. Each has a strength: Wands in confidence and action, Swords in clarity, Cups in emotion, Pentacles in stability and care. The most useful card depends on the question and position in the spread."
+    ]
+  ]
+});
+
+Object.assign(ASK.en, {
+  "wands-c3": [
+    [
+      "other",
+      "What does the image on this card show?",
+      "King of Wands sits on his throne holding a wand, surrounded by symbols of Fire. The image suggests someone who has learned to use passion as direction: visionary, decisive and willing to take responsibility for the path they choose."
+    ],
+    [
+      "other",
+      "What kind of personality does this card describe?",
+      "This person is often confident, ambitious, visionary and proactive. They naturally initiate or lead because they can energise other people. The shadow is impatience, domination or becoming too convinced that their own way is the right one."
+    ],
+    [
+      "other",
+      "Is this a person who is never afraid?",
+      "No. Courage is not the absence of fear. King of Wands tends to recognise risk and still act when the goal feels worthwhile. At his best, he uses fear as information instead of letting it drive the decision."
+    ],
+    [
+      "other",
+      "How is King of Wands different from Queen of Wands?",
+      "Both are confident and magnetic. Queen of Wands often leads through influence, warmth and encouragement; King of Wands leans toward setting direction, making decisions and moving people toward a goal. These are two leadership styles, not a hierarchy."
+    ],
+    [
+      "career",
+      "If I draw a King, does it mean that person is a manager?",
+      "Not necessarily. A King can describe someone with decision-making authority, a role that requires ownership, or simply the approach you need to take. Do not turn a symbolic rank into a fixed job title."
+    ],
+    [
+      "love",
+      "What does this person think of me?",
+      "They may find you attractive and want to take the relationship forward actively. They often know what they want and can be clear about their intentions. Watch whether that initiative also respects your pace and choices."
+    ],
+    [
+      "love",
+      "Why do we argue so often?",
+      "Conflict can arise when one or both of you wants to steer. Confidence turns into stubbornness, and decisiveness can sound like an order. Agree on which matters need one person to lead and which need a shared decision."
+    ],
+    [
+      "career",
+      "Will I find a job I like soon?",
+      "King of Wands favours roles with initiative, creativity, leadership or the chance to build something of your own. Aim for places where you can use vision and take responsibility. The card does not guarantee hiring, but it encourages you to present your value and direction clearly."
+    ],
+    [
+      "career",
+      "I have a normal office job. What should I watch for soon?",
+      "You may be asked to lead a project, make bigger decisions or work closely with a strong-willed person. Be proactive without taking control of everything. Good leadership gives clear direction and leaves room for others to contribute."
+    ],
+    [
+      "other",
+      "Is this card positive or negative?",
+      "King of Wands is not automatically good or bad. Its light is vision, courage and leadership; its shadow is ego, impatience and domination. The question, position and surrounding cards show how the energy is being used."
+    ]
+  ],
+  "swords-c3": [
+    [
+      "other",
+      "What does the image on this card show?",
+      "King of Swords sits upright on his throne holding the sword vertically. The image emphasises reason, decision-making authority, principles and systematic thinking. This is intelligence used to judge and decide, not only to observe."
+    ],
+    [
+      "other",
+      "How is King of Swords different from Queen of Swords?",
+      "Both value truth and clear thinking. Queen of Swords often emphasises perception, boundaries and independence; King of Swords leans toward decisions, rules and responsibility for judgement. The difference is how intelligence is used, not who is smarter."
+    ],
+    [
+      "other",
+      "What does “ruthless” mean here?",
+      "“Ruthless” can make this card sound harsher than it needs to. The shadow is better described as being too cold, too rule-bound or valuing efficiency over human feeling. At its best, King of Swords can make difficult decisions while still using evidence and ethics."
+    ],
+    [
+      "other",
+      "Is King of Swords as sharp-tongued as Knight of Swords?",
+      "King of Swords can be very direct, but in mature form chooses words deliberately and understands their impact. The Knight reacts quickly; the King speaks with intention. The shadow appears when directness becomes contempt or logic is used to dominate."
+    ],
+    [
+      "love",
+      "What does this person think of me and of the relationship?",
+      "They may be evaluating the relationship seriously and logically: do your values align, can you communicate, and can a future be built? They may show less emotion outwardly, but that does not automatically mean they are insincere. Look for consistency and respect."
+    ],
+    [
+      "love",
+      "How would this person confess their feelings?",
+      "They usually prefer clarity to guessing games. If they want to move forward, they may say what they want directly and ask what you think. It may be less poetic, but it can still be warm if they truly listen to your answer instead of demanding a decision."
+    ],
+    [
+      "love",
+      "Why do we argue so often?",
+      "One person may turn every issue into a problem to solve while the other needs to be heard first. Or both of you may become too focused on who is right. Learn to tell the difference between a moment that needs a solution and one that first needs emotional acknowledgement."
+    ],
+    [
+      "career",
+      "I have been unemployed for months. Will I find work?",
+      "King of Swords suits a strategic review of your job search: target roles, revise the CV, practise interviews and use evidence to see what is not working. Analytical, technical, research, legal or specialist communication roles may fit this energy, but the card cannot guarantee a hire."
+    ],
+    [
+      "career",
+      "What kind of position will I have in a new job?",
+      "This card can suggest work requiring judgement, responsibility, strategy or specialist communication. It does not necessarily mean a management title. Use the actual job description to understand authority rather than inferring it from the rank “King”."
+    ],
+    [
+      "career",
+      "I have a normal office job. What may change soon?",
+      "You may face an important decision, a new procedure or a problem requiring careful analysis. A highly rational decision-maker may also become important. Prepare your facts, document agreements and keep communication professional."
+    ]
+  ],
+  "cups-c3": [
+    [
+      "other",
+      "What does the image on this card show?",
+      "King of Cups sits on a throne surrounded by moving water. Emotion is still present around him, but he is not swept away by it. The image symbolises emotional maturity, calm and the ability to stay centred while circumstances move."
+    ],
+    [
+      "other",
+      "What kind of personality does this card describe?",
+      "This person is often calm, a good listener and emotionally rich without letting every feeling make the decision. They can be warm and supportive. The shadow is hiding emotion too thoroughly or using calmness to avoid a conversation that needs to happen."
+    ],
+    [
+      "love",
+      "Will this person confess their feelings to me?",
+      "King of Cups can suggest someone who understands their feelings and is mature enough to express them, but Tarot cannot guarantee a confession. Look at real signs: initiative, consistency and how they speak about the relationship."
+    ],
+    [
+      "love",
+      "How does this person feel about me?",
+      "This is a strong card for deep affection, care and emotionally mature love. They may genuinely want to understand and support your feelings. The depth still needs to be confirmed by actions and real communication."
+    ],
+    [
+      "love",
+      "We have loved each other for years but argue often. Why?",
+      "Arguing does not mean the love is gone. With King of Cups, one person may be holding too much inside in order to “stay calm”, or always playing the peacemaker until their own needs disappear. You may need to say the difficult things, not only preserve harmony."
+    ],
+    [
+      "career",
+      "Will I find a job I like soon?",
+      "King of Cups suits work requiring calmness, people skills, counselling, creativity, care or emotional steadiness under pressure. It can suggest good environmental fit but does not promise a salary or hiring outcome."
+    ],
+    [
+      "other",
+      "How can I tell whether that job will pay well?",
+      "Tarot can prompt more questions about money, but to know whether a job pays well, check salary, benefits, travel costs and realistic growth. A Cups card says more about the emotional experience than the number on the payslip."
+    ],
+    [
+      "career",
+      "What is a second possible career direction for me?",
+      "Another direction is work that relies on emotional intelligence: counselling, customer care, people management, education, art, service or support. You can also bring these skills into your current profession rather than changing industries completely."
+    ],
+    [
+      "career",
+      "I have a normal office job. What may change soon?",
+      "You may face a situation that needs calm people-management or mediation. Use your steadiness, but do not become responsible for the whole team’s emotions. Support and boundaries can exist together."
+    ],
+    [
+      "other",
+      "Can this card describe a specific person?",
+      "Yes. Court cards can describe a person, a role or a way of behaving. King of Cups may represent someone calm, attentive and emotionally skilled. Link the card to a specific person only when both the spread and real context genuinely fit."
+    ]
+  ],
+  "pentacles-c3": [
+    [
+      "other",
+      "What does the image on this card show?",
+      "King of Pentacles sits on a throne surrounded by symbols of abundance and nature. The image speaks of results built over time: managing money, resources, work and values that can be sustained."
+    ],
+    [
+      "other",
+      "What kind of personality does this card describe?",
+      "This person is often practical, stable, patient and skilled at managing resources. They prefer durable results to temporary excitement and tend to think long term. The shadow is overvaluing status, money, control or safety."
+    ],
+    [
+      "love",
+      "How does this person feel about me?",
+      "They may view the relationship in long-term, practical terms: building a life, finances, a home or shared plans. Practicality does not make the love less sincere. Look for warmth, respect and emotional investment as well as material support."
+    ],
+    [
+      "love",
+      "What is different about loving this kind of person?",
+      "This energy is often less showy and more stable than a highly dramatic romance. Care may appear through keeping promises, being present, planning and building security. The important distinction is between stability and control, and between material provision and emotional closeness."
+    ],
+    [
+      "love",
+      "We have been together for years but argue often. Does it mean we will break up?",
+      "One card cannot decide whether you will break up. King of Pentacles brings attention to long-term values: money, family, where to live, commitment and how you build a future. If those are the conflict, identify what can be negotiated and what is truly non-negotiable."
+    ],
+    [
+      "love",
+      "When are two people forced to break up?",
+      "No card can decree that two people are “forced” to separate. If core values such as children, marriage, safety, respect or way of life cannot be reconciled, ending the relationship may be a healthy choice. That decision belongs to the people involved, not to Tarot."
+    ],
+    [
+      "money",
+      "Will I find a job soon?",
+      "King of Pentacles is a positive symbol for stability and material competence, but it cannot guarantee a job or salary. Prioritise opportunities with clear pay, conditions and development. Symbolically, the card fits especially well with management, business or roles carrying material responsibility."
+    ],
+    [
+      "money",
+      "I have a normal office job. What may change soon?",
+      "You may take on more responsibility, manage resources or see a sustainable opportunity to improve income. A financially influential or managerial person may also become relevant. Verify any change through real information rather than treating the card as a promise of promotion."
+    ],
+    [
+      "other",
+      "Can you give an example of drawing another card to go deeper?",
+      "Yes. If King of Pentacles makes you think of a manager, define the next card as “How will this person affect my work?”. Three of Pentacles might then suggest cooperation or team-building. Ask one clear question for each extra card instead of drawing until you get an answer you prefer."
+    ]
+  ]
+});
+
+
+/* ---- and in German ---- */
+
+Object.assign(ASK.de, {
+'major-0': [
+  ['love', 'Wie könnte mein nächster Partner sein?',
+   'Dein nächster Partner ist wahrscheinlich jemand, der gern Neues entdeckt. Diese Person probiert gern Dinge aus, die sie noch nie gemacht hat, und mag es nicht, wenn jeder Tag gleich aussieht. Mit ihr kann das Leben sehr lebendig sein, aber sie denkt vielleicht noch nicht an eine frühe Ehe oder eine feste langfristige Bindung. Eine Karte allein reicht dafür nicht aus; zieh weitere Karten, wenn du es genauer wissen möchtest. Wenn du ähnlich tickst, kann die Beziehung aufregend und abenteuerlich, aber auch etwas ungestüm sein. Für etwas Dauerhaftes helfen gemeinsame Grundwerte und zugleich genug Unterschiede, damit ihr euch ergänzt. Wenn zwei Menschen sich zu sehr ähneln, verdoppeln sich manchmal auch ihre Schwächen.'],
+  ['love', 'Wir streiten gerade. Soll ich mich trennen?',
+   'Ob eine Beziehung beendet werden sollte, ist eine sensible Frage. Als allgemeine Regel beim Kartenlegen solltest du die tatsächliche Situation kennen und weitere Karten ziehen, bevor du eine feste Empfehlung gibst. Wenn es vor allem um Kleinigkeiten geht, deutet Der Narr nicht automatisch auf eine Trennung. Die Karte kann zeigen, dass der Beziehung etwas Neues fehlt und der Alltag zu gleichförmig geworden ist. Eine gemeinsame neue Aktivität, ein kurzer Ausflug oder ein neues Hobby kann frischen Wind bringen. Wenn die Beziehung jedoch wirklich schädlich ist, kann Der Narr auch dafür stehen, das Vertraute zu verlassen und einen anderen Weg zu wählen — selbst wenn das zunächst bedeutet, eine Weile allein zu sein.'],
+  ['career', 'Ich bin arbeitslos. Finde ich bald eine Stelle?',
+   'Die Tendenz geht eher zu Ja. Die nächste Möglichkeit kann außerhalb deines bisherigen Fachgebiets oder deiner Erfahrung liegen, denn Der Narr steht oft für einen völlig neuen Anfang. Jemand aus dem Verkauf könnte zum Beispiel eine Chance im Design bekommen, obwohl bisher keine formale Erfahrung vorhanden ist. Bleib offen für eine Richtung, die du ursprünglich nicht geplant hattest.'],
+  ['career', 'Ich arbeite bereits. Was könnte sich bald im Job verändern?',
+   'Du könntest ein Projekt aus einem völlig neuen Bereich bekommen. Weil dir dort noch Erfahrung fehlt, wirst du vieles von Grund auf lernen müssen.'],
+  ['career', 'Ich habe gerade einen neuen Job angefangen. Was sollte ich tun?',
+   'Fehler gehören dazu, wenn etwas noch ungewohnt ist. Nimm dir Zeit zum Lernen, frag Kolleginnen, Kollegen oder Vorgesetzte, wenn dir etwas unklar ist, und geh Schritt für Schritt vor, statt sofort perfekt sein zu wollen. In diesem Kurs ist wichtig: Die Kartenbedeutung ist nur der Anfang einer Legung. Entscheidend ist, welchen Rat du aus der Karte zusammen mit der tatsächlichen Situation der fragenden Person ableitest.'],
+  ['other', 'Was sagt diese Karte über meine aktuelle Energie?',
+   'Der Narr sagt: Mach den ersten Schritt selbst. Seine Energie ist neugierig, offen und bereit, etwas zu entdecken. Wenn du darauf wartest, dass alles von allein zu dir kommt, ermutigt dich diese Karte, aufzustehen und selbst loszugehen.']
+],
+'major-1': [
+  ['love', 'Wie könnte mein nächster Partner sein?',
+   'Diese Person ist wirklich kompetent und vertraut den eigenen Fähigkeiten. In ihrem Bereich ist sie meist sehr gut, erkennt Chancen schnell und weiß im Alltag, wie sie mit Situationen umgehen kann. Beruflich und praktisch dürfte sie einiges mitbringen.'],
+  ['love', 'Liebt mich diese Person sehr?',
+   'Der Magier allein kann nicht messen, wie tief die Gefühle eines Menschen sind. Die Karte beschreibt eher die Person und ihre Art zu handeln als die Stärke ihrer Emotionen. Zieh weitere Karten, wenn du die Gefühle genauer betrachten möchtest.'],
+  ['love', 'Welche Gefühle hat diese Person für mich?',
+   'Der Magier spricht stärker über Handeln als über Gefühl. Allein zeigt er deshalb nicht, wie tief die Zuneigung ist. Was er deutlich macht, ist Initiative: Diese Person bewegt sich aktiv auf dich zu. Ob dahinter echte Liebe steht, braucht weitere Karten. Erscheint Der Magier zusammen mit dem Ass der Kelche, unterstützt die Kombination deutlich stärker echte Gefühle und den Wunsch, sie zu zeigen. Menschen mit Magier-Energie sprechen oft direkt aus, was sie empfinden, und lassen Gefühle nicht lange in der Schwebe.'],
+  ['love', 'Wir streiten. Was rät diese Karte für unsere Beziehung?',
+   'Sei die Person, die das Gespräch eröffnet. Wenn möglich, trefft euch direkt, sprecht ehrlich miteinander und sucht gemeinsam nach einer Lösung. Die Antwort sollte von euch beiden kommen und nicht von außen.'],
+  ['love', 'Soll ich mich trennen?',
+   'Der Magier fordert zum Handeln auf, aber Handeln bedeutet nicht automatisch Trennung. Es kann heißen, selbst das Gespräch zu suchen und Dinge klar auszusprechen. Viele Paare verstehen einander nach einem offenen Gespräch besser. Weil eine Trennung oder auch eine Kündigung sensible Entscheidungen sind, sollte eine einzelne Karte nicht als endgültige Antwort behandelt werden. Zieh weitere Karten und bezieh die reale Situation mit ein.'],
+  ['career', 'Ich bin seit sechs Monaten arbeitslos. Finde ich bald eine Stelle?',
+   'Du kannst Arbeit finden, aber diese Karte betont eigenes Handeln statt Warten. Sie kann auch eine Phase beschreiben, in der jemand sehr passiv geworden ist und hofft, dass ein Angebot einfach auftaucht. Der Magier erinnert daran, dass Chancen wahrscheinlicher werden, wenn du aktiv suchst, Kontakte ansprichst und dich selbst ins Spiel bringst.'],
+  ['money', 'Was gibt es diesen Monat Neues für mich?',
+   'Diesen Monat könntest du dir selbst eine berufliche oder finanzielle Chance schaffen. Es geht weniger darum, dass jemand dir etwas anbietet, sondern darum, dass du selbst eine Tür öffnest. Vielleicht findest du eine neue Einnahmequelle oder nutzt eine Fähigkeit auf eine neue Weise.'],
+  ['verdict', 'Soll ich meinen Job kündigen?',
+   'Der Magier allein reicht nicht für ein schlichtes Ja oder Nein; die tatsächlichen Umstände sind entscheidend. Wenn der Arbeitsplatz dir ernsthaft schadet, kann die Karte dafür sprechen, selbst die Initiative zum Gehen zu ergreifen. Wenn du vor allem von einer vorübergehenden Phase gelangweilt oder frustriert bist, beginn mit Veränderungen, die du beeinflussen kannst: Ordne deine Arbeitsweise neu, sprich mit den Beteiligten und verändere zunächst deinen eigenen Umgang damit. Wenn das nichts verbessert, kannst du danach überlegen, ob ein Ende der richtige nächste Schritt ist.']
+],
+'major-2': [
+  ['love', 'Wie könnte mein nächster Partner sein?',
+   'Dein nächster Partner könnte sehr intuitiv und aufmerksam sein. Unabhängig vom Geschlecht trägt diese Person wahrscheinlich eine eher stille, aufnehmende Energie in sich, selbst wenn sie nach außen stark wirkt. Statt sofort zu handeln, tritt sie häufig erst zurück, beobachtet und verlässt sich dann auf ihr inneres Gefühl für Menschen und Situationen.'],
+  ['love', 'Welche Gefühle hat diese Person für mich?',
+   'Die Hohepriesterin zeigt nicht, wie stark die Gefühle sind. Sie beschreibt eher jemanden, der stillhält, aus der Distanz beobachtet und etwas für sich behält. Es kann Zuneigung da sein, ohne dass bisher gehandelt wird. Warum die Person schweigt, muss durch weitere Karten geklärt werden: Angst vor Zurückweisung, ein sehr privater Charakter, ungünstiges Timing oder eine andere Beziehung wären mögliche Erklärungen. Entscheidend ist: Bis jetzt gibt es wenig oder keine konkrete Handlung.'],
+  ['love', 'Wir streiten gerade. Soll ich mich trennen?',
+   'Diese Karte rät dazu, die Entscheidung nicht zu überstürzen. Gib dir Zeit, beruhige dich und hör auf dein Gefühl, sobald die erste Hitze vorbei ist. Wenn dein inneres Empfinden auch nach etwas Abstand klar sagt, dass die Beziehung enden sollte, kannst du aus einer ruhigeren Position entscheiden. Entscheidungen mitten im Streit sind eher impulsiv und werden später leichter bereut.'],
+  ['love', 'Wir streiten. Was rät diese Karte für unsere Beziehung?',
+   'Die Hohepriesterin empfiehlt etwas Abstand. Gebt euch beide Raum zum Nachdenken. Manche Paare geraten umso stärker aneinander, je länger sie im aufgeheizten Zustand weiterreden; ein wenig Distanz kann die Lage beruhigen. Zerlegt nicht jeden Satz nur, um festzustellen, wer recht hatte. Die hilfreichste Antwort liegt darin, was ihr beide wirklich fühlt und braucht — nicht in den Meinungen anderer.'],
+  ['career', 'Ich bin seit sechs Monaten arbeitslos. Finde ich bald eine Stelle?',
+   'Diese Karte deutet eher auf Verzögerung als auf eine sofortige Stelle. Die Hohepriesterin steht für Dinge, die noch verborgen oder nicht vollständig geformt sind. Vielleicht ist deine aktuelle Suche nicht klar genug ausgerichtet, oder du weißt noch nicht genau, welche Arbeit zu dir passt, sodass Bewerbungen in viele Richtungen gehen. Halt kurz inne und frag dich, welche Art von Arbeit du wirklich möchtest. Wenn die innere Richtung klarer wird, kann auch die äußere Suche gezielter werden.'],
+  ['career', 'Ich arbeite ganz normal. Was könnte sich bald im Job verändern?',
+   'Bei jemandem, der stabil arbeitet, wäre es unpassend, diese Karte plötzlich als Rat zur Kündigung zu lesen. Eine sinnvollere Ebene der Hohepriesterin ist hier Information, die noch nicht offengelegt wurde. Hinter den Kulissen kann sich etwas entwickeln, ohne dass es negativ sein muss. Eine Führungskraft könnte zum Beispiel über eine neue Rolle für dich nachdenken, ohne es schon ausgesprochen zu haben. Was verborgen ist, wer beteiligt ist und ob es dir hilft, zeigen erst die umliegenden Karten.'],
+  ['other', 'Wie lese ich diese Karte, wenn sie allein fällt?',
+   'Die Hohepriesterin gehört zu den schwierigeren Karten, wenn sie allein liegt, weil ihre Bedeutung oft verborgen oder noch nicht fertig ist. Als allgemeine Praxis solltest du mindestens eine weitere Karte ziehen, bevor du eine ausführliche Deutung daraus machst.']
+],
+'major-3': [
+  ['love', 'Was für eine Person beschreibt diese Karte?',
+   'Die Herrscherin beschreibt jemanden mit fürsorglicher, mütterlicher Energie. Diese Person kümmert sich oft ganz selbstverständlich um andere und ist praktisch darin, eine angenehme Umgebung zu schaffen — vom Essen bis zum Zuhause. Auftreten oder Stil können gepflegt, weich oder feminin wirken, unabhängig vom Geschlecht. Das unterscheidet sie von der Hohepriesterin: Bei der Hohepriesterin zeigt sich Weiblichkeit stärker nach innen, über Intuition und Unterbewusstsein; bei der Herrscherin wird sie nach außen sichtbar, durch Fürsorge, Schönheit, Sinnlichkeit und greifbares Leben.'],
+  ['love', 'Welche Gefühle hat diese Person für mich?',
+   'Die Herrscherin ist meist eine warme, positive Karte und spricht daher oft für echte Zuneigung. Die Gefühle haben eine beschützende, fürsorgliche Seite: Diese Person möchte sich kümmern und dir Dinge erleichtern. Ob diese Fürsorge gesund ist oder schon zu viel wird, hängt von den umliegenden Karten und der wirklichen Beziehung ab.'],
+  ['love', 'Wir streiten viel. Soll ich mich trennen?',
+   'In vielen Fällen zeigt diese Karte nicht direkt auf eine Trennung. Vielleicht kümmert ihr euch so stark umeinander, dass selbst Kleinigkeiten zu Streit werden. Die Beziehung braucht womöglich weniger Fürsorge im Stil von Eltern und Kind und mehr Raum dafür, dass ihr euch als gleichwertige Partner begegnet.'],
+  ['love', 'Wir streiten viel. Was ist der Rat für unsere Beziehung?',
+   'Locker etwas und gebt euch mehr persönlichen Raum. Die Herrscherin kann zeigen, dass eine Person so viel gibt oder umsorgt, dass die andere sich eingeengt fühlt. Mehr Luft für beide kann die Beziehung leichter machen.'],
+  ['money', 'Wie sehen meine Finanzen diesen Monat aus?',
+   'Finanziell wirkt dieser Monat eher reichhaltig. Die Herrscherin wird traditionell mit Wachstum und Fülle verbunden, daher geht es hier eher um genügend Mittel und vielleicht etwas mehr als um Knappheit.'],
+  ['career', 'Finde ich in nächster Zeit eine Stelle?',
+   'Die Tendenz geht zu Ja. Der nächste Job kann sich angenehm anfühlen oder dich in ein Umfeld mit fürsorglichen oder stark weiblich geprägten Themen führen. Das kann Dienstleistung, Beauty, Gesundheitswesen, Pflege, ein kleines Unternehmen oder eine andere Tätigkeit mit Menschen sein. Möglich ist auch einfach ein angenehmer Arbeitsplatz mit guter materieller Unterstützung oder vielen Frauen im Team und in Führungsrollen.'],
+  ['career', 'Ich habe einen normalen Bürojob. Was könnte sich bald verändern?',
+   'Die Arbeit könnte ertragreicher werden. Du könntest mehr Projekte, mehr Verantwortung oder dadurch auch mehr Einkommen bekommen.'],
+  ['other', 'Was sagt diese Karte über Kinder oder Schwangerschaft?',
+   'Die Herrscherin gehört im Tarot zu den stärksten traditionellen Symbolen für Fruchtbarkeit, Schwangerschaft, Mutterschaft und schöpferisches Entstehen. Bei einer konkreten Schwangerschaftsfrage bleibt Tarot jedoch symbolisch und kann keine medizinische Tatsache bestätigen; dafür sind ein geeigneter Test oder medizinischer Rat zuständig. Eine Eheschließung wird meist über andere Karten gelesen und nicht über die Herrscherin allein.']
+]
+});
+
+Object.assign(ASK.de, {
+'major-4': [
+  ['love', 'Welche Gefühle hat diese Person für mich?',
+   'Wenn ihr euch erst seit ungefähr einem Monat kennt und du wissen möchtest, ob die Person es ernst meint, spricht Der Herrscher für echte langfristige Absichten. Die Art zu lieben kann allerdings kontrollierend sein. Diese Person möchte Dinge gern nach den eigenen Vorstellungen gestalten und kann sehr dominant wirken, ohne deshalb ein schlechter Mensch zu sein. In einer Beziehung mit ihr wird Kompromiss wichtig. Wenn auch du gern das Kommando hast, sind Reibungen wahrscheinlicher. Kurz gesagt: Die Person kann es ernst mit dir meinen, zugleich aber starr und bestimmend sein.'],
+  ['love', 'Wir haben einen heftigen Streit. Was rät diese Karte für unsere Beziehung?',
+   'Der Herrscher fordert dazu auf, Kontrolle etwas loszulassen. Versuch nicht, die andere Person oder die ganze Beziehung zu steuern. Vielleicht möchtest du, dass sie sich genau so verhält, wie du es für richtig hältst. Eine dauerhafte Beziehung braucht jedoch Kompromisse, gegenseitigen Respekt und die Bereitschaft, einander als erwachsene Menschen anzunehmen. Dein Partner ist kein Kind, das du erziehen musst.'],
+  ['career', 'Worauf sollte ich in den nächsten drei Monaten bei der Arbeit achten?',
+   'Achte auf Menschen mit Autorität. Die Karte eröffnet zwei Hauptmöglichkeiten. Erstens kann eine Führungskraft oder ranghöhere Person wichtig werden; Der Herrscher allein sagt nicht, ob sie dir wohlgesinnt ist, sondern nur, dass ihre Macht eine Rolle spielt. Zweitens kannst du selbst mehr Entscheidungsbefugnis bekommen. Das muss kein offizieller Führungstitel sein; vielleicht leitest du ein kleines Team oder verteilst Aufgaben.'],
+  ['career', 'Ich bin seit sechs Monaten arbeitslos. Finde ich bald eine Stelle?',
+   'Die Karte ist weder klar positiv noch klar negativ, deshalb bleibt die Antwort offen. Du kannst eine Stelle finden, aber am neuen Arbeitsplatz könnte jemand mit Herrscher-Energie wichtig sein: streng, anspruchsvoll und wenig flexibel, dafür möglicherweise fair. Gute Arbeit wird anerkannt, doch Regeln und Standards sollen eingehalten werden.'],
+  ['career', 'Welche Arbeit passt zu jemandem mit der Energie dieser Karte?',
+   'Eine mögliche Deutung ist, dass diese Person langfristig gut darin sein kann, etwas Eigenes aufzubauen, statt immer nur unter anderen zu arbeiten. Sie möchte Verantwortung, Entscheidungsraum und Einfluss. Das bedeutet nicht, dass ein junger Mensch sofort Führungskraft sein sollte; mit der Zeit können Selbstständigkeit, Leitung oder Rollen mit echter Eigenverantwortung jedoch besser passen als eine Stelle ohne Spielraum.'],
+  ['other', 'Auf welche anderen Probleme kann diese Karte hinweisen?',
+   'Der Herrscher ist mit Autorität, Hierarchie und formalen Systemen verbunden. Je nach Frage kann er einen Vater, eine Autorität in der Familie, einen Ehepartner, eine Führungskraft, eine Institution oder eine Behörde anzeigen. Auch Bußgelder oder Verwaltungsprobleme können zu diesem Thema gehören. Unterscheide ihn von Der Gerechtigkeit: Diese Karte betont stärker Dokumente, Verfahren, Fairness und rechtliche Fragen, auch zwischen Privatpersonen.']
+],
+'major-5': [
+  ['love', 'Welche Gefühle hat diese Person für mich?',
+   'Wenn ihr erst seit kurzer Zeit zusammen seid und du dich fragst, ob die Person es ernst meint, spricht Der Hierophant für Ernsthaftigkeit und kann sogar an formelle Bindung oder Ehe denken lassen. Trotzdem lohnt es sich, auf Kelche oder andere Gefühlskarten in der Umgebung zu achten. Der Hierophant kann den Wunsch zeigen, eine Beziehung offiziell zu machen; allein erklärt er aber nicht, ob Liebe, familiäre Erwartungen, gesellschaftliche Werte oder praktische Gründe dahinterstehen.'],
+  ['love', 'Wir streiten. Soll ich mich trennen?',
+   'Vielleicht hältst du so stark an deinen eigenen Regeln oder Überzeugungen fest, dass du das Ganze nicht mehr siehst. Man denkt leicht: „Ich habe recht und du liegst falsch“, nur weil man es so gelernt hat. Hierophant-Energie ist gut darin, Strukturen und Prinzipien zu respektieren; ihre Schattenseite ist, sich schwer einen anderen Weg vorstellen zu können. Bevor du gehst, frag dich, ob es wirklich um Schaden oder Unvereinbarkeit geht — oder darum, dass zwei Menschen ihre eigenen Regeln für die einzig richtigen halten.'],
+  ['love', 'Was rät diese Karte einer Beziehung, in der viel gestritten wird?',
+   'Der Hierophant kann einen Teil deiner Aufmerksamkeit auf Lernen und persönliche Entwicklung lenken. Such dir einen Kurs, ein Thema oder eine Fähigkeit, die nur dir gehört, statt die Beziehung deinen ganzen Kopf einnehmen zu lassen. Etwas Sinnvolles für dich selbst kann Grübeln reduzieren und der Beziehung mehr Luft geben.'],
+  ['career', 'Was könnte sich beruflich bald verändern?',
+   'Du könntest einen Mentor treffen, zu einem Seminar oder einer Fortbildung geschickt werden oder selbst eine zusätzliche Qualifikation beginnen, etwa ein Zertifikat oder einen Sprachkurs. Allgemein steht Der Hierophant für Lernen, Institutionen und strukturierte Zusammenarbeit. Vielleicht kommst du als Mitglied in ein neues Projektteam; die Karte allein sagt nicht, dass du es leitest.'],
+  ['other', 'Wie unterscheidet sich diese Karte von Der Herrscher?',
+   'Beide Karten handeln von Regeln, Systemen und Autorität. Der Unterschied liegt darin, woher die Regeln kommen. Der Herrscher schafft Struktur und erwartet, dass andere ihr folgen. Der Hierophant bewegt sich innerhalb einer bestehenden Tradition oder Institution und orientiert sich an dem, was das System, Lehrende oder Vorgänger festgelegt haben.'],
+  ['other', 'Wofür steht diese Karte außerdem?',
+   'Der Hierophant ist mit Religion, Schule, Bildung, Wissen, Institutionen, Tradition und Kultur verbunden. Auch Ehe kann dazugehören, weil sie eine gesellschaftliche und kulturelle Institution ist. Eine weitere Ebene sind die Annahmen, die wir unbewusst aus unserer Herkunftskultur übernehmen und oft erst bemerken, wenn wir Menschen treffen, die anders geprägt wurden. Bei Teamfragen kann die Karte außerdem Lernen und Arbeiten innerhalb einer Gruppe betonen.']
+],
+'major-6': [
+  ['love', 'Mag mich jemand?',
+   'Es können sich zwei Menschen gleichzeitig für dich interessieren, und vielleicht fühlst du dich ebenfalls zu beiden hingezogen. Das macht die Wahl schwierig. Das unterscheidet sich von Sieben der Kelche: Dort gibt es oft viele Möglichkeiten, von denen keine richtig passt; bei Die Liebenden liegt die Spannung häufiger darin, dass zwei Optionen dir beide etwas bedeuten.'],
+  ['love', 'Mag mich diese Person?',
+   'Die Tendenz geht zu Ja. Die Liebenden können jedoch auch eine Wahl darstellen, daher könnte die Person mehr als eine romantische Möglichkeit abwägen. Zieh weitere Karten, bevor du annimmst, worum diese Wahl genau geht. Wenn die umliegenden Karten unterstützend sind, kann die Karte auch einfach echte Anziehung und Verbindung zwischen euch zeigen.'],
+  ['love', 'Ein Paar streitet viel. Sollte es sich trennen?',
+   'Aus dieser Karte allein solltest du keine vorschnelle Trennung ableiten. Es gibt zwei häufige Richtungen. Positiv gesehen sind noch starke Gefühle vorhanden, und genau diese Bindung kann ein Grund sein, miteinander zu reden und die Beziehung zu reparieren. In einem anderen Kontext kann eine Person zwischen der Beziehung und jemandem oder etwas anderem schwanken. Welche Deutung passt, zeigen die umliegenden Karten und die reale Situation.'],
+  ['career', 'Ich bin arbeitslos. Finde ich bald Arbeit?',
+   'Die Tendenz geht zu Ja. Es können sogar zwei Möglichkeiten fast gleichzeitig auftauchen, zwischen denen du wählen musst.'],
+  ['career', 'Ich arbeite ganz normal. Verändert sich in den nächsten drei Monaten etwas?',
+   'Während du noch angestellt bist, kann ein anderes Stellenangebot oder eine berufliche Möglichkeit auftauchen. Dann musst du vielleicht abwägen, ob du bleibst oder wechselst.'],
+  ['love', 'Ich bin Single. Lerne ich bald jemanden kennen?',
+   'Du könntest in derselben Zeit mehr als eine interessante Person kennenlernen. Der Kern der Karte ist nicht nur „zwei Menschen“, sondern die Notwendigkeit, eine Wahl zu treffen, die wirklich zu deinen Werten passt.']
+],
+'major-7': [
+  ['love', 'Welche Persönlichkeit beschreibt diese Karte?',
+   'Diese Person hat einen starken Willen und stellt Ziele oft an erste Stelle. Sie arbeitet viel, gibt selten schnell auf und wirkt entschlossen und leistungsorientiert. Die Schattenseite dieser Stärke ist, sich so stark auf Erfolg zu konzentrieren, dass Familie, Freundschaften oder Partnerschaft in den Hintergrund geraten.'],
+  ['love', 'Welche Gefühle hat diese Person für mich?',
+   'Die Tendenz geht zu Anziehung, aber die Annäherung kann schnell und intensiv sein. Diese Person verfolgt Romantik manchmal wie ein Ziel, das unbedingt erreicht werden soll. Bei manchen Menschen ist der Reiz der Eroberung stärker als das, was danach kommt. Beobachte deshalb, ob das Interesse stabil bleibt, wenn der erste Jagdtrieb vorbei ist.'],
+  ['love', 'Ein Paar streitet viel. Sollte es sich trennen?',
+   'Diese Karte kann eher deinen aktuellen Zustand als das endgültige Ergebnis beschreiben. Vielleicht bist du von den Streits erschöpft und möchtest alles schnell beenden, nur um Ruhe zu haben. Das kann eine überhastete Entscheidung sein. Ob eine Trennung sinnvoll ist, hängt von der wirklichen Qualität der Beziehung ab: Schaden, anhaltende Toxizität oder klar verlorene Gefühle wiegen mehr als eine einzelne Karte. Wenn es nicht so weit ist, beruhigt euch zuerst und redet, wenn ihr beide wieder klar denken könnt. Es kann noch Raum für Reparatur geben.'],
+  ['love', 'Die andere Person verändert sich nicht so, wie ich es möchte. Was soll ich tun?',
+   'Wenn eine Beziehung schwierig wird, versuchen viele zuerst, den anderen Menschen zu „reparieren“. Vielleicht hast du versucht, mehr Nachrichten oder mehr Aufmerksamkeit zu bekommen, und warst frustriert, weil sich nichts änderte. Der Wagen schlägt vor, zunächst deine eigene Sicht zu verändern, statt die äußere Situation kontrollieren zu wollen. Weniger Nachrichten müssen zum Beispiel nicht weniger Liebe bedeuten; vielleicht konzentriert sich die Person stark auf Arbeit oder eine gemeinsame Zukunft. Sag klar, was du brauchst, und lass zugleich Raum für ihre Gründe.'],
+  ['career', 'Ich bin arbeitslos. Finde ich bald einen Job?',
+   'Das ist ein bedingtes Ja. Du kannst Arbeit finden, aber die Karte fordert mehr Entschlossenheit und Eigeninitiative. Nach Monaten ohne Ergebnis kann deine Energie abgesunken sein. Vielleicht bewirbst du dich nur noch halbherzig, fühlst wenig Druck oder hast viele Pläne, setzt aber aus Angst vor dem Scheitern keinen davon um. Der Wagen sagt: Fortschritt beginnt, wenn du eine Richtung wählst und dich bewegst.'],
+  ['career', 'Ich arbeite ganz normal. Was ist in den nächsten drei Monaten neu?',
+   'Die nächsten drei Monate können arbeitsreich werden. Vielleicht beginnt eine Hochphase, oder du bekommst ein zusätzliches Projekt, das viel Zeit und Konzentration verlangt. Ein großer Teil deiner Energie kann in die Arbeit fließen. Die Erinnerung dieser Karte: Schütze deinen Grundrhythmus. Iss vernünftig, schlaf genug und lass Platz für Familie, Freundschaften oder Partnerschaft, damit Fortschritt nicht in Erschöpfung kippt.'],
+  ['other', 'Wie unterscheidet sich diese Karte von Die Sonne?',
+   'Der Wagen und Die Sonne können beide Erfolg zeigen, stehen aber an unterschiedlichen Stellen der Reise durch die Großen Arkana. Der Wagen ist ein früherer Sieg, getragen von Willenskraft und Tempo; man kann ein Ziel erreichen und unterwegs anderes vernachlässigen. Die Sonne zeigt eine umfassendere Form von Erfolg, bei der Leistung mit Offenheit, Unterstützung und Freude zusammenkommt. Die Lehre: Sehr schnelles Vorankommen kann einsam machen, während ein langer Weg meist Menschen und andere Lebensbereiche mitnehmen muss.']
+],
+'major-8': [
+  ['love', 'Welche Persönlichkeit beschreibt diese Karte?',
+   'Die Stärke dieser Person liegt weniger im Auftreten als in Selbstbeherrschung. Sie kennt die eigenen Fähigkeiten und Grenzen und kann Ärger und starke Impulse steuern, statt von ihnen beherrscht zu werden. Weil ihr Selbstvertrauen stabil ist, kann sie Fehler eingestehen, ohne sofort defensiv zu reagieren. Das unterscheidet sie von Menschen, die Stärke spielen, um Unsicherheit zu verdecken. Die Kraft ist leiser: ruhig, selbstbewusst und schwer aus dem Gleichgewicht zu bringen.'],
+  ['love', 'Mag mich diese Person?',
+   'Die Tendenz geht zu Ja, aber erwarte keine laute Verfolgungsjagd. Diese Person ist sicher genug, Interesse ruhig und direkt zu zeigen. Sie kann sagen, dass sie dich mag, ohne sofort eine Antwort zu verlangen. Wenn du nicht dasselbe empfindest, zieht sie sich eher respektvoll zurück, als weiter Druck zu machen. Ihre Art zu lieben ist erwachsen und rücksichtsvoll.'],
+  ['love', 'Wir streiten. Soll ich mich trennen?',
+   'Das Schlüsselwort ist Sanftheit. Konflikte werden hier nicht durch Lautstärke oder Dominanz gelöst, sondern durch Geduld, Fürsorge und Selbstbeherrschung. Die Karte allein weist nicht auf eine Trennung. Ob Gehen sinnvoll ist, sollte an der realen Beziehung entschieden werden — besonders daran, ob Schaden, anhaltende Toxizität oder keinerlei Bereitschaft zur Reparatur vorhanden sind. Wenn das nicht der Fall ist, versucht zuzuhören und das Problem ruhiger zu lösen.'],
+  ['career', 'Ich bin arbeitslos. Finde ich bald einen neuen Job?',
+   'Das größte Hindernis kann gerade Selbstvertrauen statt Fähigkeit sein. Nach einer langen Suche und vielen Absagen beginnt man leicht zu glauben, nicht gut genug zu sein, und dieser Gedanke zeigt sich dann im Vorstellungsgespräch. Jemand, der früher flüssig geantwortet hat, zögert plötzlich aus Angst, etwas Falsches zu sagen. Die Kraft erinnert dich daran, dass deine Fähigkeiten nicht verschwunden sind. Die Verzögerung kann am Timing oder daran liegen, dass die Stellen nicht gut zu deinen echten Stärken passen. Mehr Selbstvertrauen kann verändern, wie du der nächsten Chance begegnest.'],
+  ['career', 'Worauf sollte ich bei der Arbeit in nächster Zeit achten?',
+   'Die Arbeit wirkt stabil. Du scheinst deine Rolle, deine Stärken und Grenzen zu kennen und erledigst deine Aufgaben kompetent. Diese ruhige Phase kann weitergehen, ohne große Krise, aber auch ohne dramatischen Sprung. Wenn du auf einen plötzlichen Durchbruch hoffst, verspricht die Karte ihn nicht; ihre Stärke liegt in Beständigkeit.'],
+  ['career', 'Ich bekomme bald ein neues Projekt. Soll ich es annehmen?',
+   'Die Karte unterstützt ein Ja. Du scheinst die Belastbarkeit, Fähigkeiten und fachliche Kompetenz dafür zu haben.'],
+  ['other', 'Wie lese ich diese Karte in einer Ratgeber-Position?',
+   'In diesem Kurs wird Die Kraft als konstruktive aufrechte Energie gelesen und nicht über Umkehrungen. Als Ratgeber weist sie oft auf eine Qualität hin, die du stärker einsetzen solltest: Ruhe, Geduld, Selbstvertrauen oder emotionale Selbststeuerung. Starke spontane Gefühle können klares Denken überlagern. Der Rat ist, bei dir zu bleiben, statt aus Ärger oder Angst zu reagieren.']
+],
+'major-9': [
+  ['love', 'Wie könnte mein nächster Partner sein?',
+   'Dein nächster Partner kann erfahren, nachdenklich und sehr reflektiert sein. Vielleicht ist diese Person älter als du oder einfach reifer als Gleichaltrige. Eine besonders theatralische Romantik solltest du jedoch nicht erwarten. Überraschungspartys, aufwendig inszenierte Geschenke oder ein spektakulärer Antrag sind vermutlich nicht ihr Stil. Sie kann außerdem recht genau sein und viel Zeit allein brauchen.'],
+  ['love', 'Welche Gefühle hat diese Person für mich?',
+   'Echte Gefühle können vorhanden sein, doch die Person befindet sich in einer nach innen gerichteten Phase. Sie sucht Antworten auf eigene Fragen, deshalb bleiben weniger Zeit und Aufmerksamkeit für die Beziehung. Du möchtest vielleicht am Wochenende etwas unternehmen, während sie lieber zu Hause liest oder etwas Persönliches erledigt. Das kann sich für dich wie Vernachlässigung anfühlen. Der Eremit ist keine negative Karte, aber seine Energie ist für eine Beziehung, die gerade mehr Nähe braucht, nicht besonders leicht.'],
+  ['love', 'Wir streiten. Soll ich mich trennen?',
+   'Diese Karte rät dazu, eine Trennung nicht zu überstürzen. Wenn jedes Treffen wieder in Streit endet, gebt euch etwas Zeit und Raum, um zur Ruhe zu kommen. Nutzt diese Stille, um nach innen zu schauen: Wo begann der Konflikt, welchen Anteil hast du selbst daran und was kannst du realistisch verändern?'],
+  ['love', 'Liegt das Problem bei der anderen Person oder bei mir?',
+   'Im Streit schauen die meisten zuerst darauf, was der andere falsch macht. Der Eremit dreht die Frage zunächst nach innen. In jeder Beziehung — Familie, Freundschaft oder Liebe — kannst du dich fragen, ob es im eigenen Verhalten etwas zu verändern gibt. An sich zu arbeiten bedeutet nicht, sich kleinzumachen oder die eigene Persönlichkeit zu verlieren. Es kann einfach heißen, Feedback anzuhören, sich bei Bedarf zu entschuldigen und das zu verändern, was du selbst für sinnvoll hältst.'],
+  ['career', 'Ich bin seit Monaten arbeitslos. Finde ich einen Job, der zu mir passt?',
+   'Die Karte ermutigt dich, weiterzusuchen und zugleich eine tiefere Frage zu stellen: Was willst du eigentlich? Vielleicht konzentrierst du dich nur auf Stellen, die ein bestimmtes Gehalt oder deine bisherige Ausbildung erfüllen, und übersiehst Arbeit, die dir Sinn gibt. Jemand mit technischem Hintergrund kann zum Beispiel entdecken, dass die größte Zufriedenheit darin liegt, anderen zu helfen. Hör dir selbst eine Weile zu. Du kannst einen stabilen Beruf behalten und dieses Bedürfnis durch Ehrenamt leben, oder später direkter in soziale, pädagogische oder gemeinnützige Arbeit wechseln.'],
+  ['career', 'Worauf sollte ich bei der Arbeit bald achten?',
+   'Du könntest einem Mentor, Lehrer oder erfahrenen Menschen begegnen, der dein Fachwissen vertieft.'],
+  ['timing', 'Wann finde ich endlich die Antwort?',
+   'Das ist keine schnelle Karte. Die Suche kann Zeit brauchen und verlangt Geduld. Statt eine feste Zahl von Monaten daraus abzuleiten, lies den Eremiten als langsameren Prozess, in dem Klarheit durch anhaltende Reflexion und Erfahrung entsteht.']
+]
+});
+
+Object.assign(ASK.de, {
+'major-10': [
+  ['love', 'Welche Persönlichkeit beschreibt diese Karte?',
+   'Das Rad des Schicksals ist allein keine besonders starke Persönlichkeitskarte. Zieh weitere Karten, wenn du einen Menschen genauer beschreiben möchtest. Liest du nur diese Karte, kann sie zeigen, dass sich eure Begegnung bedeutsam statt zufällig anfühlt: Vielleicht gibt es etwas Wichtiges, das ihr durch diese Verbindung lernt. „Wichtig“ muss dabei nicht schmerzhaft bedeuten. Wachstum und gute Veränderungen können auch auf sanfte Weise entstehen.'],
+  ['love', 'Welche Gefühle hat diese Person für mich?',
+   'Auch bei Gefühlen antwortet Das Rad des Schicksals eher indirekt. Es kann zeigen, dass die Person eure Begegnung und die Tatsache, dass ihr noch im Leben des anderen seid, als bedeutsam oder „schicksalhaft“ empfindet. Was sie konkret über dich denkt und wie tief ihre Gefühle sind, zeigt die Karte allein nicht. Dafür solltest du weitere Karten ziehen.'],
+  ['love', 'Wir streiten. Soll ich mich trennen?',
+   'Entscheide das nicht aus dieser Karte allein. Das Rad des Schicksals ist neutral und hängt stark von den umliegenden Karten ab. Unterstützende Karten wie Zehn der Kelche oder Vier der Stäbe können zeigen, dass die Beziehung noch viel Potenzial hat und ein Gespräch sinnvoll ist, bevor du sie beendest. Schwierige Karten wie Der Teufel oder Der Turm können auf ein Muster hinweisen, das immer schwerer zu tragen ist. Auch dann sollte Tarot keine Trennung vorschreiben; tatsächlicher Schaden, Vertrauen, Sicherheit und die Bereitschaft zur Veränderung sind wichtiger als eine Karte. Eine Person kann eine ganze Beziehung nicht allein kontrollieren oder reparieren.'],
+  ['career', 'Finde ich bald einen neuen Job?',
+   'Die Tendenz geht zu Ja, und die neue Stelle kann sich eher wie ein Wendepunkt als wie ein gewöhnlicher Wechsel anfühlen. Sie könnte einen Umzug, Arbeit im Ausland, ein neues Umfeld oder Erfahrungen mit sich bringen, die deinen Blick auf Beruf und Leben erweitern.'],
+  ['career', 'Ich habe einen normalen Bürojob. Worauf sollte ich in den nächsten drei Monaten achten?',
+   'Bei der Arbeit kann eine größere Veränderung oder ein Wendepunkt auftauchen. Das Rad selbst ist neutral: Es zeigt Bewegung, aber nicht automatisch, ob das Ergebnis gut oder schlecht ist. Möglich sind Versetzung, Beförderung, Gehaltserhöhung, Dienstreise, Standortwechsel oder ein neuer Vorgesetzter. Die umliegenden Karten zeigen den Ton und den Teil, den du beeinflussen kannst.'],
+  ['other', 'Was bedeutet es, wenn in einer Legung viele Große Arkana liegen?',
+   'Das Verhältnis von Großen und Kleinen Arkana kann die Größenordnung des Themas anzeigen. Wenn die Großen Arkana deutlich überwiegen, fühlt sich die Legung oft mit größeren Lebensphasen, Übergängen oder Lektionen verbunden an, die sich nicht über Nacht verändern. Wenn die Kleinen Arkana dominieren, spielen alltägliche Entscheidungen, Gewohnheiten, Stimmungen und praktische Handlungen meist eine größere Rolle. Das ist eine Deutungskonvention und kein festes Gesetz des Schicksals.'],
+  ['other', 'Kann man das Schicksal verändern?',
+   'Eine hilfreiche Tarot-Sicht ist, Schicksal eher als Spielraum denn als einzig festgelegtes Ergebnis zu verstehen. Manche Umstände liegen außerhalb unserer Kontrolle, während Entscheidungen, Einsatz und Reaktionen weiterhin beeinflussen, wo wir innerhalb dieses Spielraums landen. Nicht jeder Mensch, der sich anstrengt, wird ein Genie oder erreicht jedes gewünschte Ziel. Einsatz kann uns aber helfen, die Fähigkeiten und Chancen, die tatsächlich vorhanden sind, besser zu nutzen.']
+],
+'major-11': [
+  ['love', 'Welche Gefühle hat diese Person für mich?',
+   'In einer Gefühlslegung ist Die Gerechtigkeit eher abwägend und vernünftig als romantisch. Die Person kann die Beziehung sehr genau prüfen: Was ist fair, was gibt jeder, und welche praktischen Folgen hätte ein gemeinsamer Weg? Das bedeutet nicht, dass die Gefühle falsch sind; nur ist Emotion hier nicht das ganze Bild. Bei einer neuen Beziehung kann diese Karte allein nicht sagen, wie tief oder dauerhaft die Liebe werden wird.'],
+  ['love', 'Wir streiten. Soll ich mich trennen?',
+   'Die Gerechtigkeit spricht eher dafür, vor einer Trennungsentscheidung langsamer zu werden. Sie fordert Balance und einen klaren Blick auf die Fakten. Starke Gefühle sind in Beziehungen normal, können aber mitten im Konflikt die Einschätzung erschweren. Achte auf wiederkehrende Muster, darauf, was für beide fair ist, und darauf, wo du selbst etwas verändern kannst, bevor du eine große Entscheidung triffst.'],
+  ['career', 'Ich bin seit Monaten arbeitslos. Finde ich einen Job, der mir gefällt?',
+   'Die Gerechtigkeit allein reicht nicht für ein festes Ja oder Nein; zieh weitere Karten. Sie eröffnet aber einige praktische Richtungen. Die nächste Stelle könnte mit Verwaltung, Dokumenten, Verfahren, Genauigkeit, Zahlen oder Recht zu tun haben — etwa Bankwesen, Buchhaltung, Datenarbeit oder juristische Unterstützung. Auch eine sehr prinzipientreue und anspruchsvolle Führungskraft ist möglich. Eine weitere Möglichkeit: Deine Bewerbungsunterlagen bremsen dich. Prüf Lebenslauf und Dokumente, ergänze Fehlendes, streich Unnötiges und lass jemanden mit Erfahrung darübersehen.'],
+  ['career', 'Worauf sollte ich bei der Arbeit in nächster Zeit achten?',
+   'Achte besonders auf Unterlagen und Verwaltungsabläufe. Eine für dich günstige Entscheidung kann bereits gefallen sein und trotzdem an einem fehlenden Zertifikat, Formular oder einer Genehmigung hängen. Bei einer Gehaltserhöhung oder Beförderung kann die Personalabteilung zum Beispiel erst weiterarbeiten, wenn alles vollständig ist. Prüfe wichtige Unterlagen lieber früh, bevor sie zum Engpass werden.'],
+  ['other', 'Wenn etwas schiefläuft, worauf sollte ich zuerst schauen?',
+   'Schau zuerst ehrlich auf deinen eigenen Anteil: Was hast du gut gemacht, was hättest du anders tun können, und hast du deine Verantwortung erfüllt? Danach betrachtest du die anderen Menschen und Umstände. Selbstreflexion ist hilfreich, weil sie dir etwas gibt, das du tatsächlich verändern kannst. Sie soll aber nicht zu Selbstbeschuldigung werden und bedeutet nicht, dass andere nie verantwortlich sind. Ziel ist eine faire Einschätzung statt reflexhaft alle Schuld einer Seite zu geben.'],
+  ['other', 'Was mache ich, wenn die Karten scheinbar eine andere Frage beantworten?',
+   'Das passiert relativ häufig. Du fragst vielleicht nach Berufsaussichten, während die Karten scheinbar eine Führungskraft oder ein anderes Thema beschreiben. Prüf zuerst, ob die Frage klar gestellt war und ob die Karten vielleicht einen verborgenen Teil der Situation berühren. Wenn die Botschaft weiterhin nicht passt, sag das offen, statt zwanghaft eine Verbindung herzustellen. Intuition ist im Tarot wichtig, funktioniert aber am besten zusammen mit einer klaren Frage und ehrlicher Deutung.']
+],
+'major-12': [
+  ['love', 'Was für eine Person beschreibt diese Karte?',
+   'Der Gehängte kann einen Menschen beschreiben, der nicht sauber in die üblichen Schubladen passt. Die Besonderheit kann sich in Kleidung, Denken oder Lebensentscheidungen zeigen. Der Punkt ist nicht, dass Anderssein schlecht wäre, sondern dass diese Person bereit ist, das Leben aus einem anderen Winkel zu sehen. Sie kann einen weniger verbreiteten Hintergrund, eine besondere Identität oder einen ungewöhnlichen Weg haben, einschließlich einer Zugehörigkeit zur LGBTQ+-Community. Stell dir jemanden vor, der einen sicheren Bürojob verlässt, um einem Beruf zu folgen, den die Familie nie erwartet hätte: Für andere wirkt das ungewöhnlich, für die Person selbst ist es ehrlicher.'],
+  ['love', 'Welche Gefühle hat diese Person für mich?',
+   'Der Gehängte gibt keine besonders direkte Gefühlsantwort. Die Person kann sich aus einem ungewöhnlichen oder sehr persönlichen Grund zu dir hingezogen fühlen und nicht wegen der Eigenschaften, die andere zuerst bemerken. Die Karte kann auch dich als jemanden zeigen, dessen Besonderheit Teil der Anziehung ist. Zieh weitere Karten, wenn du wissen möchtest, wie stark die Gefühle sind oder ob die Person handeln wird.'],
+  ['love', 'Wir streiten. Welchen Rat gibt diese Karte für unsere Beziehung?',
+   'Hör für einen Moment auf, krampfhaft nach einer Lösung zu suchen, und ändere den Blickwinkel. Etwas stille Zeit allein kann helfen, ohne den Druck des Streits nachzudenken. Wenn du festhängst, sprich mit jemandem, der das Leben ganz anders sieht als du, und hör zu, ohne sofort deine eigene Position zu verteidigen. Eine neue Sicht kann zeigen, dass der Konflikt kleiner war, als er sich anfühlte, oder dass er etwas sichtbar macht, das ihr verstehen musstet. Manchmal ist die erste hilfreiche Veränderung nicht die Beziehung selbst, sondern die Art, wie du sie gerade siehst.'],
+  ['career', 'Finde ich bald einen neuen Job?',
+   'Es gibt zwei sinnvolle Lesarten. Du kannst Arbeit finden, die anders ist als ursprünglich erwartet oder außerhalb deines Studienfachs liegt. Oder die Karte fordert dich auf, die Suche zu erweitern. Wenn du nur große Firmen in einer einzigen Stadt anschaust, könntest du zum Beispiel kleinere Unternehmen, einen anderen Ort oder Rollen prüfen, die deine Fähigkeiten auf andere Weise nutzen.'],
+  ['career', 'Worauf sollte ich in den nächsten drei bis sechs Monaten bei der Arbeit achten?',
+   'Der Gehängte ist hier nicht besonders konkret, deshalb sind weitere Karten sinnvoll. Zwei Möglichkeiten stechen hervor. Du könntest ein Projekt bekommen, das ganz anders ist als deine übliche Arbeit und dir dein Fachgebiet aus einem neuen Winkel zeigt. Oder du triffst einen Mentor mit unkonventionellem Stil, dessen Rat zunächst seltsam klingt, aber nach längerem Nachdenken sehr nützlich wird.'],
+  ['other', 'Was ist die Kernbedeutung dieser Karte?',
+   'Der Gehängte markiert einen Perspektivwechsel. In der Reise des Narren kommt ein Punkt, an dem es nicht mehr funktioniert, sich in die erwartete Form zu pressen. Die Karte handelt vom Innehalten, vom Annehmen dessen, was wahr ist, und vom Blick aus einem anderen Winkel. Wenn du feststeckst, muss die Antwort nicht in einer weiteren äußeren Handlung liegen; sie kann damit beginnen, die Situation anders zu verstehen.'],
+  ['other', 'Wie sollte ich meine Freunde auswählen?',
+   'Es ist gesund, Menschen um dich zu haben, die das Leben anders sehen als du. Damit sind keine Leute gemeint, die gern streiten oder provozieren, sondern Menschen mit anderen Hintergründen, Erfahrungen und Perspektiven. Sie erinnern dich daran, dass eine Situation mehrere Blickwinkel hat. Wer verschiedene Sichtweisen aushält, urteilt oft weniger schnell und kann Unterschiede eher akzeptieren, ohne alle in die eigene Form pressen zu wollen.']
+],
+'major-13': [
+  ['love', 'Welche Persönlichkeit beschreibt diese Karte?',
+   'Der Tod kann einen Menschen beschreiben, dessen Leben von großen Veränderungen und Neuerfindungen geprägt war. Vielleicht gab es deutliche Hochs und Tiefs, und jeder Wendepunkt zwang die Person, umzudenken, sich anzupassen und eine neue Version ihrer selbst zu entwickeln. Statt jahrzehntelang dieselbe Weltsicht zu behalten, wächst sie durch Enden und Neuanfänge — wie ein Baum, der Blätter verliert und später neu austreibt. In der Tarot-Astrologie wird dieses Thema traditionell mit Skorpion und seiner Symbolik der Transformation verbunden.'],
+  ['love', 'Welche Gefühle hat diese Person für mich?',
+   'Der Tod allein reicht nicht für eine feste emotionale Schlussfolgerung. Zieh weitere Karten. Eine mögliche Deutung, besonders am Anfang einer Legung, ist, dass Gefühle da sind, die Person aber noch etwas Altes sauber abschließen muss. Das kann eine frühere Beziehung oder ein anderes Kapitel sein, das sie nicht in etwas Neues hineintragen möchte. Wenn das zur tatsächlichen Situation passt, kann Geduld sinnvoll sein — ohne dass du dein eigenes Leben auf unbestimmte Zeit anhältst.'],
+  ['love', 'Wir streiten. Soll ich mich trennen?',
+   'Der Tod bedeutet nicht automatisch „Trennung“. Die Karte kann zeigen, dass die bisherige Art, wie eure Beziehung funktioniert, enden muss, nicht zwingend die Beziehung selbst. Ein ruhiges, ehrliches Gespräch über Dinge, die bisher unausgesprochen blieben, kann ein altes Muster abschließen. Wenn beide bereit sind, etwas zu verändern, kann ein neues Kapitel entstehen. Wenn ein schädliches Muster weder verändert werden kann noch verändert werden will, kann das Ende irgendwann auch wörtlicher werden.'],
+  ['career', 'Ich bin seit drei oder vier Monaten arbeitslos. Finde ich bald einen neuen Job?',
+   'Die Karte sagt, dass die bisherige Suchstrategie möglicherweise beendet werden muss, weil sie keine Ergebnisse bringt. Zwei Möglichkeiten solltest du prüfen. Vielleicht hat dein Selbstvertrauen gelitten und das zeigt sich in Gesprächen. Oder du bewirbst dich auf Stellen, die nicht gut zu Ausbildung, Stärken oder Arbeitsweise passen. Jemand, der stark im Umgang mit Menschen ist, kann zum Beispiel Schwierigkeiten haben, wenn er sich ausschließlich auf isolierte Dateneingabe bewirbt. Wiederhole nicht einfach einen Weg, der nicht funktioniert, sondern definiere neu, welche Rolle wirklich zu dir passt.'],
+  ['career', 'Bekomme ich in den nächsten sechs Monaten Probleme bei der Arbeit?',
+   'Nimm diese Karte nicht automatisch als Vorhersage eines Jobverlusts. Der Tod lässt sich sinnvoller als Ende einer Phase oder Rolle lesen. Ein Projekt kann abgeschlossen werden und Platz für ein neues machen, oder du entscheidest selbst, eine Position zu beenden, die nicht mehr passt. Eine einzelne Karte sagt nicht, ob sich dieses Ende erleichternd oder schwer anfühlen wird; dafür brauchst du weitere Karten.'],
+  ['other', 'Warum soll ich loslassen, wenn ich noch daran hänge?',
+   'Bedauern und Bindung sind normal. Loslassen bedeutet nicht, so zu tun, als hätte etwas nie Bedeutung gehabt. Es bedeutet zu erkennen, wenn ein Mensch, eine Beziehung oder eine Situation in der bisherigen Form nicht mehr gut genug weitergetragen werden kann. Zeit und Energie sind begrenzt; manches muss irgendwann abgelegt werden, damit etwas Neues Platz bekommt. Die Angst, dass nichts Besseres kommt, ist verständlich, aber kein Beweis dafür, dass du festhalten solltest.']
+],
+'major-14': [
+  ['love', 'Welche Gefühle hat diese Person für mich?',
+   'Wahrscheinlich ist Zuneigung da, aber sie wird sehr maßvoll gezeigt. Die Person stürmt weder auf dich zu noch verhält sie sich kalt. Die Gefühle entwickeln sich gleichmäßig und in ihrem eigenen Tempo. Wenn du eine sehr dramatische, intensive Liebesgeschichte erwartest, kann Die Mäßigkeit dir zu ruhig vorkommen; ihre emotionale Temperatur bleibt eher ausgeglichen als extrem.'],
+  ['love', 'Wir streiten. Soll ich mich trennen?',
+   'Die Mäßigkeit rät davon ab, mitten in einem unausgeglichenen Zustand vorschnell eine Trennung zu beschließen. Schau zuerst auf deinen eigenen Rhythmus. Überarbeitung kann Schlaf verschlechtern, Schlafmangel kann Essen und Stimmung verändern, und Erschöpfung lässt jeden Konflikt größer wirken. Gib dir genug Zeit, wieder in einen ruhigeren Alltag zu finden, bevor du entscheidest, was der Streit wirklich bedeutet. Wenn du stabiler bist, siehst du das Problem und mögliche Lösungen oft klarer.'],
+  ['career', 'Ich bin seit sechs Monaten arbeitslos. Finde ich den Job, den ich möchte?',
+   'Hier kann Die Mäßigkeit mehr über dein Tempo als über den Arbeitsmarkt sagen. Vielleicht suchst du zwar, aber ohne viel Dringlichkeit oder Eigeninitiative. Wenn in sechs Monaten nur wenige Bewerbungen rausgegangen sind, ist ein langsames Ergebnis verständlich. Die Antwort hängt teilweise davon ab, ob du den Rhythmus änderst: mehr Kontakte, regelmäßigere Bewerbungen und mehr konkrete Schritte — ohne wahllos jede Stelle anzunehmen.'],
+  ['career', 'Bekomme ich in den nächsten drei bis sechs Monaten Probleme bei der Arbeit?',
+   'Die Arbeit wirkt relativ stabil, und die nächsten Monate können ähnlich weiterlaufen. Die Mäßigkeit verspricht weder ein plötzliches Angebot noch einen dramatischen Durchbruch. Ihre weniger aufregende Seite kann sich wie Stillstand anfühlen, aber nicht jede ruhige Phase ist schlecht. Manche Zeiten dienen der Erholung und Festigung. Entscheidend ist die Balance: ständiges Rennen macht müde, endloses Warten wird irgendwann zu Stagnation.']
+],
+'major-15': [
+  ['love', 'Welche Persönlichkeit beschreibt diese Karte?',
+   'Der Teufel kann einen Menschen beschreiben, der stark von Impulsen oder einem Muster getrieben wird, das schwer zu kontrollieren ist. Diese Abhängigkeit muss nichts mit Alkohol oder Drogen zu tun haben; sie kann Rauchen, übermäßiges oder stark eingeschränktes Essen, Schlafgewohnheiten, Gaming, soziale Medien, Shopping oder jedes Verhalten betreffen, das mehr Zeit und Kontrolle übernimmt als geplant. Typisch ist „nur eine Folge“ und plötzlich ist die ganze Nacht vorbei — oder eine Nachricht prüfen und danach Stunden am Handy verlieren, während wichtige Aufgaben liegen bleiben.'],
+  ['love', 'Welche Gefühle hat diese Person für mich?',
+   'Der Teufel fordert dazu auf, die treibende Kraft hinter der Anziehung zu prüfen, statt sie automatisch für reine Liebe zu halten. Körperliches Verlangen, Geheimhaltung, der Reiz einer Grenzüberschreitung, Eifersucht, Macht oder ein anderes ungestilltes Bedürfnis können mitmischen. Das beweist nicht, dass keine echten Gefühle vorhanden sind, ist aber eine Warnung, eine Verbindung nicht zu romantisieren, wenn sie vor allem von Zwang oder Versuchung zusammengehalten wird. Schau auf die umliegenden Karten und vor allem auf das tatsächliche Verhalten.'],
+  ['love', 'Wir streiten. Soll ich mich trennen?',
+   'Der Teufel kann auf einen ungesunden Kreislauf hinweisen, aber eine Karte allein kann eine Beziehung nicht als toxisch diagnostizieren. Schau auf das echte Muster. Wenn Zusammensein wiederholt Beleidigungen, Kontrolle, Eifersucht, Angst oder den Verlust des eigenen Selbst mit sich bringt und Distanz gleichzeitig Panik und einen starken Zug zurück in denselben Kreislauf auslöst, verdient das ernsthafte Aufmerksamkeit. Frag dich, ob du in der Beziehung noch du selbst sein kannst und ob beide Menschen bereit und fähig sind, schädliches Verhalten zu verändern. Bei Missbrauch oder wenn du dich unsicher fühlst, such Unterstützung außerhalb der Beziehung.'],
+  ['love', 'Was ist, wenn ich das Gefühl habe, die Person nicht verlassen zu können?',
+   'Versuch den Satz von „Ich kann nicht gehen“ zu „Gehen fühlt sich gerade extrem schwer an“ zu verändern. So bleibt Platz für den Schmerz und gleichzeitig für deine Handlungsmöglichkeit. Eine Beziehung zu beenden kann schwierig, beängstigend und kompliziert sein — besonders wenn Liebe, Abhängigkeit, Wohnung, Geld oder Familie daran hängen. Du musst das nicht allein schaffen. Wenn du gehen möchtest, können vertraute Menschen oder passende Beratungsstellen den Weg sicherer und überschaubarer machen.'],
+  ['career', 'Finde ich bald einen Job, der mir gefällt?',
+   'Die Tendenz kann zu Ja gehen, aber mit einer klaren Warnung: Sei vorsichtig bei Angeboten, die fast zu gut klingen. Eine Stelle kann sehr gute Leistungen versprechen und gleichzeitig unklare Praktiken, rechtliche Grauzonen oder Erwartungen verstecken, die deinen Werten widersprechen. Der Job ist nicht automatisch schlecht. Lies jedoch jede Bedingung sorgfältig, stell direkte Fragen und prüf, ob gute Bezahlung dich von Dingen ablenken soll, die du sonst ablehnen würdest.'],
+  ['career', 'Worauf sollte ich in den nächsten drei bis sechs Monaten bei der Arbeit achten?',
+   'Achte auf Versuchung und unscharfe Grenzen. Eine Form kann eine Beziehung am Arbeitsplatz sein, die Geheimnisse oder Interessenkonflikte erzeugt. Eine andere betrifft Geld, Geschenke, Provisionen, Dokumente oder Abkürzungen, die Integrität oder rechtliche Sicherheit gefährden. Die Karte entscheidet nicht für dich; sie erinnert daran, dass ein reizvoller kurzfristiger Vorteil einen viel größeren Preis haben kann. Halte berufliche Grenzen klar und stimme nichts zu, was du nicht offen erklären möchtest.']
+]
+});
+
+Object.assign(ASK.de, {
+'major-16': [
+  ['love', 'Welche Persönlichkeit beschreibt diese Karte?',
+   'Wenn Der Turm bei einer Persönlichkeitsfrage erscheint, beschreibt er oft jemanden, dessen innere Welt gerade erschüttert ist. Die Person kann schnell aufbrausen, impulsiv oder sehr direkt sein — oder sie kommt erst aus einem großen Schock, einem plötzlichen Verlust oder einem anderen Umbruch und fühlt sich noch ungeordnet. Eine Karte allein zeigt nicht, ob sie sich davon bereits wieder aufgebaut hat. Zieh weitere Karten, wenn du ein klareres Bild brauchst.'],
+  ['love', 'Welche Gefühle hat diese Person für mich?',
+   'Der Turm beantwortet diese Frage nicht direkt. Oft spricht er weniger über eure aktuelle Verbindung als über eine alte Wunde, die die Person noch mit sich trägt. Stell dir vor, ihr lernt euch gerade erst kennen und alles wirkt ruhig, trotzdem erscheint Der Turm. Eine plausible Deutung ist, dass sie früher einen plötzlichen Verrat, eine Trennung oder einen anderen emotionalen Schock erlebt hat und diese Erfahrung Nähe bis heute beeinflusst. Ob genug Heilung für etwas Neues da ist, zeigen die umliegenden Karten und vor allem das tatsächliche Verhalten.'],
+  ['love', 'Soll ich eine Beziehung eingehen, obwohl ich noch nicht vollständig geheilt bin?',
+   'Du musst nicht vollkommen „geheilt“ sein, bevor du lieben darfst. Unbeachtete Wunden können sich in Beziehungen wiederholen, deshalb sind Selbstreflexion und Verantwortung wichtig. Gleichzeitig werden manche Muster erst sichtbar, wenn echte Nähe sie berührt. Die hilfreichere Frage lautet nicht „Bin ich völlig geheilt?“, sondern „Kann ich meine Wunden erkennen, Verantwortung dafür übernehmen und vermeiden, dass die andere Person sie für mich reparieren muss?“ Eine reife Beziehung kann Entwicklung unterstützen, aber sie ersetzt nicht die eigene Arbeit.'],
+  ['love', 'Wir haben einen schweren Konflikt. Soll ich mich trennen?',
+   'Der Turm sagt, dass das bisherige Muster nicht einfach unverändert weiterlaufen kann. Er kann auf eine Beziehung in einer Krise hinweisen, besonders wenn Konflikte beängstigend, erniedrigend oder zerstörerisch geworden sind. Eine Karte allein kann weder Missbrauch diagnostizieren noch dir die Entscheidung abnehmen. Schau auf das, was wirklich geschieht. Bei körperlicher Gewalt, Drohungen, Zwang oder Angst um deine Sicherheit hat Schutz Vorrang; such Unterstützung außerhalb der Beziehung. Wenn kein Missbrauch vorliegt, fordert die Karte trotzdem einen ehrlichen Neustart: Das Grundproblem muss angegangen werden, sonst kann die bisherige Struktur irgendwann zusammenbrechen.'],
+  ['love', 'Die Person schlägt mich, sagt aber, dass sie mich liebt. Ist das trotzdem ein Problem?',
+   'Ja. Wenn ein Partner dich schlägt, ist das körperliche Gewalt, und Liebe macht Gewalt nicht akzeptabel. Missbrauch kann neben Entschuldigungen, Zärtlichkeit und ruhigen Phasen bestehen — gerade deshalb ist er manchmal schwer zu erkennen oder zu verlassen. Du musst nicht erst beweisen, dass es „schlimm genug“ ist, bevor du Hilfe suchst. Wenn du dich unsicher fühlst, wende dich an eine vertraute Person oder eine Beratungsstelle für häusliche Gewalt und stell deine Sicherheit an erste Stelle.'],
+  ['career', 'Ich bin seit drei Monaten arbeitslos. Finde ich bald Arbeit?',
+   'Der Turm verspricht keinen sofortigen Job. Stattdessen fordert er dich auf, die Suche von Grund auf zu überprüfen. Bewirbst du dich auf passende Rollen? Sind Lebenslauf und Unterlagen stark genug? Bereitest du dich ernsthaft auf Gespräche vor und suchst du regelmäßig? Arbeitslosigkeit macht unerwartete Ausgaben besonders belastend, deshalb ist es außerdem sinnvoll, vorhandene finanzielle Reserven während der Suche möglichst zu schützen.'],
+  ['career', 'Was kann sich in den nächsten drei bis sechs Monaten bei der Arbeit verändern?',
+   'Eine plötzliche Veränderung kann die gewohnte Struktur durcheinanderbringen. Das kann eine Umorganisation, ein Wechsel der Führungskraft, das Ende eines Projekts, eine neue Regel oder etwas anderes sein, das schnelle Anpassung verlangt. Der Turm bedeutet nicht, dass eine Katastrophe sicher kommt. Er zeigt eher, dass etwas Instabiles sichtbar werden oder etwas Überholtes neu aufgebaut werden muss. Achte auf echte Warnzeichen, statt eine Krise vorwegzunehmen.'],
+  ['other', 'Warum haben manche Menschen eine schwere erste Lebenshälfte und später ein besseres Leben?',
+   'Dafür gibt es unterschiedliche Deutungen. In spirituellen Traditionen, die an Karma und Wiedergeburt glauben, können schwere Lebensphasen als Teil eines längeren Kreislaufs von Ursache, Wirkung und Entwicklung verstanden werden. Das ist eine Glaubensvorstellung und nichts, was Tarot beweisen kann. Praktisch gesehen kann das Leben später auch stabiler werden, weil Erfahrung, Beziehungen, Fähigkeiten und frühere Entscheidungen sich mit der Zeit ansammeln. Die hilfreiche Botschaft des Turms ist: Ein schwieriger Anfang muss nicht den Rest deines Lebens bestimmen.']
+],
+'major-17': [
+  ['love', 'Welche Persönlichkeit beschreibt diese Karte?',
+   'Der Stern beschreibt jemanden mit beständigem Vertrauen ins Leben und in die eigene Fähigkeit weiterzugehen. Vor einer schwierigen Aufgabe glaubt diese Person eher daran, dass es einen Weg gibt. Wertvoll wird diese Hoffnung, wenn sie mit Handeln verbunden ist. Optimismus ohne Einsatz kann in Wunschdenken kippen: an einen guten Job glauben, ohne Bewerbungen zu schicken, oder auf Liebe hoffen, ohne je jemanden kennenzulernen. Der Stern ist am stärksten, wenn Hoffnung dir Mut gibt, an deiner eigenen Zukunft mitzuwirken.'],
+  ['love', 'Welche Gefühle hat diese Person für mich?',
+   'Wahrscheinlich ist echte Zuneigung da, aber die Person könnte dich zugleich idealisieren. In ihren Augen wirkst du vielleicht schöner, fähiger oder perfekter, als ein realer Mensch dauerhaft sein kann. Das fühlt sich anfangs romantisch an, doch langfristige Liebe wird meist gesünder, wenn zwei Menschen einander klar sehen, den Alltag teilen und sich auf Augenhöhe begegnen. Bewunderung ist schön; jemanden auf ein Podest zu stellen, ist schwer auf Dauer zu tragen.'],
+  ['love', 'Wir streiten. Soll ich mich trennen?',
+   'Der Stern ist eine hoffnungsvolle Karte und zeigt, dass noch Raum für Heilung in der Beziehung vorhanden sein kann. Der aktuelle Streit muss kein endgültiges Ende bedeuten. Statt mitten in der Hitze zu entscheiden, schau darauf, was sich realistisch reparieren lässt und ob beide bereit sind, daran zu arbeiten. Hoffnung hilft besonders dann, wenn sie von tatsächlicher Veränderung getragen wird.'],
+  ['career', 'Ich bin seit drei Monaten arbeitslos. Finde ich einen passenden Job?',
+   'Die Antwort tendiert zu Ja, aber Der Stern verbindet Hoffnung mit Eigeninitiative. Bewirb dich weiter, entwickle Fähigkeiten, die deine Chancen stärken, erweitere dein Netzwerk und mach dich für Möglichkeiten sichtbar. Hoffnung ersetzt kein Handeln; sie hilft dir, weiterzumachen, wenn Ergebnisse länger auf sich warten lassen.'],
+  ['career', 'Was kann sich in den nächsten drei bis sechs Monaten bei der Arbeit verändern?',
+   'Eine neue Möglichkeit kann in Sicht kommen. Die Karte garantiert nicht, dass du sie annimmst, sondern nur, dass etwas Beachtenswertes auftauchen kann. Deine Aufgabe ist, die Chance zu erkennen, zu prüfen, ob sie zu deiner Richtung passt, und zu handeln, solange sie wirklich offensteht.'],
+  ['other', 'Bedeutet diese Karte immer, dass es Hoffnung gibt?',
+   'Meist steht Der Stern für Hoffnung, Erneuerung und das Gefühl, dass eine schwierige Zeit leichter werden kann. Seine Schattenseite ist Idealisierung: eine Zukunft so perfekt zu erwarten, dass du die Gegenwart nicht mehr gestaltest. Zieh eine weitere Karte, wenn du wissen möchtest, ob die Hoffnung durch Handeln getragen wird. Eine Möglichkeit kann vorhanden sein — aber jemand muss ihr auch entgegengehen.']
+],
+'major-18': [
+  ['love', 'Welche Persönlichkeit beschreibt diese Karte?',
+   'Der Mond kann jemanden beschreiben, der gerade mit Unsicherheit, Ängsten oder fehlender Klarheit lebt. Furcht kann Handlungen blockieren, und Gespräche drehen sich womöglich immer wieder um dieselben Sorgen, ohne zu einer Entscheidung zu führen. Das bedeutet nicht, dass die Person grundsätzlich negativ ist; vielleicht sieht sie den Weg im Moment einfach nicht klar. Niemand kann ihre Entscheidungen für sie treffen, doch Unterstützung, Reflexion und konkrete Informationen können helfen, echte Probleme von vorgestellten zu unterscheiden.'],
+  ['love', 'Welche Gefühle hat diese Person für mich?',
+   'Gefühle können vorhanden sein, aber Unsicherheit oder Angst hält die Person zurück. Die Sorge kann auf etwas Realem beruhen oder nur auf einem Szenario im eigenen Kopf — eine Karte allein sagt nicht, was davon zutrifft. Gib ihr Raum, diese Unsicherheit selbst zu klären, statt eine Entscheidung zu erzwingen. Entscheidend ist, ob ihr späteres Verhalten klar und beständig wird.'],
+  ['love', 'Wir streiten. Soll ich mich trennen?',
+   'Der Mond fordert dich auf zu prüfen, ob der Konflikt auf Tatsachen oder auf Annahmen beruht. Eifersucht ist ein typisches Beispiel: Ein spätes Abendessen mit Kollegen kann im Kopf zu einer ganzen Geschichte werden, bevor überhaupt Beweise existieren. Wiederholtes Misstrauen kann Vertrauen beschädigen, selbst wenn das Befürchtete nie passiert ist. Gleichzeitig solltest du echte Warnzeichen nicht als „nur Angst“ abtun. Werde langsamer, prüfe, was du wirklich weißt, sprich direkt darüber und entscheide nach der Realität statt nach vorgestellten Szenarien.'],
+  ['love', 'Was wäre eine gesündere Art, darüber zu denken?',
+   'Du musst nicht jedes mögliche Ergebnis kontrollieren. Vertrauen kann bedeuten, der Beziehung Raum zu geben und gleichzeitig bereit zu sein, auf neue echte Informationen zu reagieren. Ist dein Partner treu, erschöpft ständiger Verdacht euch beide. Tauchen eines Tages klare Beweise für einen Verrat auf, kannst du dich dann mit dieser Realität auseinandersetzen. Das Ziel ist kein blindes Vertrauen, sondern nicht jede Angst so zu behandeln, als wäre sie bereits eine Tatsache.'],
+  ['career', 'Ich bin seit zwei oder drei Monaten arbeitslos. Finde ich bald Arbeit?',
+   'Angst kann beeinflussen, wie du dich präsentierst. Wenn du schon vor jedem Gespräch überzeugt bist, dass du scheitern wirst, kann diese Anspannung verhindern, dass du wirklich zeigst, was du kannst. Nervosität ist normal. Wichtig ist, dass sie nicht dein Verhalten bestimmt. Bereite dich gut vor, übe deine Antworten und bewerte jedes Gespräch nach dem, was tatsächlich passiert, statt nach dem schlimmsten Ergebnis, das du dir vorher vorgestellt hast.'],
+  ['career', 'Worauf sollte ich in den nächsten drei bis sechs Monaten bei der Arbeit achten?',
+   'Eine Veränderung kann Unsicherheit auslösen — zum Beispiel eine Umorganisation, eine neue Führungskraft oder veränderte Aufgaben. Der Mond erinnert dich daran, Sorgen nicht schneller laufen zu lassen als die Fakten. Vielleicht fürchtest du schon, dass eine neue Leitung dich nicht mag, bevor ihr euch überhaupt begegnet seid. Trenne das, was sich wirklich verändert hat, von dem, was dein Kopf nur vorhersagt, und reagiere auf die reale Situation, sobald sie sich entwickelt.'],
+  ['other', 'Wenn ich vor etwas große Angst habe, passiert es dann eher?',
+   'Angst lässt Ereignisse nicht magisch entstehen, aber sie kann dein Verhalten beeinflussen. Wer panische Angst hat, zu spät zu kommen, schläft vielleicht schlecht, hetzt am Morgen, vergisst etwas und kommt am Ende teilweise wegen der eigenen Anspannung wirklich zu spät. Die hilfreiche Lehre ist nicht, dich ständig zu „positivem Denken“ zu zwingen. Tu, was du kannst, bereite dich gut vor und lass Raum für Ergebnisse, die du nicht kontrollierst. Läuft es gut, freu dich. Läuft es anders, darfst du enttäuscht sein und trotzdem weitergehen.']
+],
+'major-19': [
+  ['love', 'Welche Persönlichkeit beschreibt diese Karte?',
+   'Die Sonne beschreibt jemanden mit natürlicher Ausstrahlung. Die Person ist oft optimistisch, offen und leicht wahrzunehmen und bringt genug Selbstvertrauen mit, um zu führen oder einem Raum Energie zu geben. Die Schattenseite kann ein starkes Bedürfnis nach Aufmerksamkeit oder Schwierigkeiten damit sein, aus dem Mittelpunkt zu treten. Wärme wird nachhaltiger, wenn Selbstvertrauen auch mit Zuhören, Teilen und dem Wunsch verbunden ist, andere ebenfalls glänzen zu lassen.'],
+  ['love', 'Welche Gefühle hat diese Person für mich?',
+   'Die Sonne ist in Liebesfragen meistens sehr positiv. Wenn ihr euch noch kennenlernt, deutet sie darauf hin, dass du echte Freude und Wärme in das Leben dieser Person bringst. Besonders auffällig ist die Klarheit: Sie weiß eher, was sie fühlt und was sie möchte, und zeigt es offen, statt dich ständig rätseln zu lassen.'],
+  ['love', 'Wir streiten. Soll ich mich trennen?',
+   'Statt eines einfachen Ja oder Nein fordert Die Sonne mehr Licht in der Beziehung: mehr Ehrlichkeit, Klarheit und direkte Kommunikation. Konflikte wachsen oft, wenn beide ihre Bedürfnisse für sich behalten und erwarten, dass der andere sie errät. Sag, was du wirklich möchtest, hör dir an, was die andere Person braucht, und prüft, ob ihr euch offen begegnen könnt. Wenn alles klarer ist, wird auch die Entscheidung meist leichter.'],
+  ['career', 'Ich bin seit drei Monaten arbeitslos. Finde ich den Job, den ich möchte?',
+   'Die Antwort tendiert deutlich zu Ja. Die Sonne deutet auf eine hellere berufliche Phase und auf eine Stelle hin, die sich nach einer schwierigen Wartezeit wie ein echter Erfolg anfühlen kann. Mach mit der praktischen Suche weiter, denn die Karte beschreibt günstige Energie und keinen Arbeitsvertrag, der ganz ohne Handeln von selbst auftaucht.'],
+  ['career', 'Wie entwickelt sich meine Arbeit in den nächsten sechs bis zwölf Monaten?',
+   'Die Arbeit wirkt insgesamt positiv und relativ stabil. Wenn es bereits gut läuft, kann Die Sonne darauf hinweisen, dass dieser Schwung anhält. Eine einzelne Karte kann jedoch nicht jedes Ereignis eines ganzen Jahres abbilden. Lies sie deshalb als Grundton und nicht als Garantie dafür, dass überhaupt nichts Schwieriges passieren wird.'],
+  ['other', 'Ist diese Karte immer positiv?',
+   'Meist wird Die Sonne positiv gelesen: Klarheit, Vitalität, Selbstvertrauen und Erfolg. Ihre Schattenseite kann Übermut, Ego oder zu viel Sichtbarkeit sein. Wenn du für jemand anderen liest, halte die Deutung ausgewogen. Die Aufgabe eines Readers ist weder, Angst zu machen, noch Perfektion zu versprechen, sondern die Karte ehrlich zu beschreiben und Raum für die tatsächliche Situation zu lassen.']
+],
+'major-20': [
+  ['love', 'Welche Persönlichkeit beschreibt diese Karte?',
+   'Das Gericht kann jemanden beschreiben, der durch eigene Erfahrungen viel Perspektive gewonnen hat. Das ist nicht dasselbe wie schulische Intelligenz oder großes Faktenwissen. Das Verständnis kommt aus Wendepunkten, Reflexion und der Erkenntnis, was im Leben wirklich wichtig ist. Bei einem jungen Menschen kann die Karte auf eine Reife hinweisen, die über das Alter hinausgeht.'],
+  ['love', 'Welche Gefühle hat diese Person für mich?',
+   'Die Energie ist positiv und kann auf eine Verbindung hinweisen, die tiefer als reine äußerliche Anziehung wirkt. Die Person schätzt womöglich deinen Charakter, deine innere Welt und das besondere Gefühl von Wiedererkennen zwischen euch. In ihrer gesündesten Form ist diese Zuneigung respektvoll statt besitzergreifend: Sie kann ihre Gefühle aussprechen und gleichzeitig deine Antwort und deine Grenzen akzeptieren.'],
+  ['love', 'Wir streiten. Soll ich mich trennen?',
+   'Das Gericht fordert dich auf, die ganze Beziehung zu betrachten und nicht nur den heutigen Streit. Was hat euch zusammengebracht? Was war gut, und welche Muster wiederholen sich? Ein einzelner Konflikt löscht nicht automatisch alles davor aus. Schwere Verletzungen, Verrat oder Missbrauch sollten aber auch nicht heruntergespielt werden, nur weil es schöne Erinnerungen gibt. Entscheide anhand des Gesamtmusters und danach, was beide wirklich bereit sind zu verändern.'],
+  ['career', 'Ich bin seit drei Monaten arbeitslos. Finde ich eine neue Stelle?',
+   'Das Gericht richtet die Frage zuerst nach innen. Vielleicht bewirbst du dich überall, weil du glaubst, keine andere Wahl zu haben, obwohl viele Stellen gar nicht zu dir passen. Nimm dir Zeit zu prüfen, was du wirklich möchtest, was du gut kannst und welche Art von Arbeit du realistisch aufbauen kannst. Sobald die Richtung klarer ist, können auch deine Bewerbungen gezielter und wirksamer werden.'],
+  ['career', 'Was verändert sich bis Jahresende beruflich? Gibt es eine neue Chance?',
+   'Wenn du dich mit deiner Arbeit bereits verbunden und auf dem richtigen Weg fühlst, bleibt die Grundrichtung positiv. Unterwegs kann eine neue Chance auftauchen. Mach weiter mit dem, was funktioniert, bleib offen für Feedback und stütze den guten Schwung durch beständige Arbeit, statt anzunehmen, dass er sich von allein erhält.'],
+  ['other', 'Was bedeutet hier „hohe Frequenz“?',
+   'In Nabūs spiritueller Sprache ist „hohe Frequenz“ am besten als Bild für einen relativ stabilen, geerdeten inneren Zustand zu verstehen — nicht als wissenschaftlich messbare Schwingung. Du fühlst weiterhin Freude, Enttäuschung, Aufregung und Traurigkeit, wirst aber nicht von jedem Ereignis völlig aus der Mitte gerissen. Emotionale Reife bedeutet nicht, weniger zu fühlen, sondern vollständig fühlen zu können und trotzdem wieder zu dir zurückzufinden.'],
+  ['other', 'Ist es schlimm, einen Job zu machen, den ich nicht mag?',
+   'Nein. Viele Menschen machen Arbeit, die sie nicht lieben, weil sie Einkommen, Stabilität oder eine Brücke zu etwas anderem bietet. Die hilfreiche Frage lautet, ob diese Lösung dir noch dient. Du darfst einen praktischen Job behalten und parallel eine andere Richtung aufbauen, oder entscheiden, dass Sicherheit dir wichtiger ist als Leidenschaft. Wichtig ist, bewusst zu wählen, statt zu glauben, es gäbe nur eine richtige Art zu leben.']
+],
+'major-21': [
+  ['career', 'Finde ich in nächster Zeit eine neue Stelle?',
+   'Die Welt tendiert zu Ja und kann zugleich etwas über die Art der Gelegenheit sagen. Die nächste Stelle könnte internationale Arbeit, ein anderes Land, ein multinationales Unternehmen oder regelmäßigen Kontakt mit Menschen im Ausland beinhalten. Wenn nicht, kann die Karte trotzdem auf räumliche Bewegung hinweisen, etwa einen Umzug in eine andere Stadt wegen der Arbeit.'],
+  ['career', 'Ich habe einen normalen Bürojob. Verändert sich demnächst etwas?',
+   'Hier muss Die Welt kein Ende bedeuten. Sie kann Abschluss und Kompetenz in einem Gebiet zeigen, das du bereits gut kennst. Deine Arbeit kann stabil bleiben, und vielleicht ist das eine Branche, mit der du lange verbunden bleibst, selbst wenn du später das Unternehmen wechselst. Ein Feld zu finden, das wirklich zu dir passt, kann wichtiger sein, als für immer bei demselben Arbeitgeber zu bleiben.'],
+  ['love', 'Was bedeutet es eigentlich, wenn zwei Menschen gut zusammenpassen?',
+   'Echte Kompatibilität hat weniger mit identischer Persönlichkeit oder gleichen Hobbys zu tun als damit, ob eure Grundwerte und langfristigen Richtungen miteinander leben können. Zwei Menschen können sehr unterschiedlich denken und sich trotzdem wunderbar ergänzen, wenn sie eine ähnliche Art von Zukunft aufbauen möchten. Umgekehrt reichen gemeinsame Interessen oft nicht, wenn eine Person ein stabiles Familienleben möchte und die andere völlige Unabhängigkeit ohne langfristige Bindung. Unterschiede können eine Beziehung bereichern; entscheidend ist, ob ihr letztlich auf denselben Horizont zugeht.']
+]
+});
+
+Object.assign(ASK.de, {
+'wands-1': [
+  ['love', 'Welche Persönlichkeit beschreibt diese Karte?', 'Das ist ein kontaktfreudiger, energiegeladener Mensch, der lieber handelt, als stillzusitzen und alles zu zerdenken. Die Person ist ehrgeizig, begeistert und voller Feuer. Bewegung, Sport oder ein aktiver Alltag geben dieser Energie oft einen gesunden Ausweg. Fehlt ein Ventil, kann sie sich als Ungeduld, Streit oder unüberlegtes Verhalten zeigen.'],
+  ['love', 'Welche Gefühle hat diese Person für mich?', 'Die Grundenergie ist positiv, und wahrscheinlich besteht eine starke körperliche Anziehung. Anziehung selbst ist kein Problem; entscheidend ist, wie die Person damit umgeht. Respekt, Geduld und klare Grenzen sind gute Zeichen. Druck, Anspruchsdenken oder sofortiges Verschwinden, sobald sie bekommen hat, was sie wollte, sind es nicht.'],
+  ['love', 'Wir streiten. Soll ich mich trennen?', 'Diese Karte deutet nicht direkt auf eine Trennung. Sie fordert mehr Eigeninitiative in der Beziehung: Eröffne das Gespräch, benenne das Problem und schau, ob ihr beide daran arbeiten wollt. Vielleicht ist eine Person müde davon, immer den ersten Schritt machen zu müssen, während die andere hinter ihrer Schutzmauer wartet. Bei Trennungsfragen sollte immer das echte Beziehungsmuster entscheiden und nicht eine einzelne Karte.'],
+  ['career', 'Finde ich bald eine neue Stelle?', 'Die Antwort tendiert zu Ja, besonders durch deine eigene Initiative und weniger dadurch, dass dir jemand einfach eine Chance bringt. Die nächste Rolle kann außerdem aktiv und menschenbezogen sein, mit Bewegung, Kommunikation oder einem schnellen Arbeitsrhythmus statt einem ganzen Tag allein am selben Platz.'],
+  ['career', 'Worauf sollte ich bis zum Jahresende beruflich achten?', 'Das Gesamtbild ist günstig. Neue berufliche Möglichkeiten können auftauchen, und du kannst selbst entscheiden, ob du sie verfolgst. Vielleicht erschließt du dir auch eine zusätzliche Einnahmequelle.'],
+  ['other', 'Welche Grundenergie haben die vier Asse?', 'Alle vier Asse stehen für Anfänge: frische Energie, eine neue Öffnung und den ersten Schritt eines Weges. Sie gelten grundsätzlich als positive Karten, aber ein Ass ist zunächst Potenzial und noch kein fertiges Ergebnis.']
+],
+'swords-1': [
+  ['love', 'Welche Persönlichkeit beschreibt diese Karte?', 'Diese Person ist geistig schnell, sprachlich präzise und analytisch. Sie denkt logisch und bemerkt Widersprüche rasch. In astrologischer Symbolik kann das an merkurbetonte Energie wie Zwillinge oder Jungfrau erinnern: neugierig, aufmerksam und mental sehr aktiv.'],
+  ['love', 'Welche Gefühle hat diese Person für mich?', 'Interesse kann vorhanden sein, aber das Ass der Schwerter beschreibt Klarheit und Denken stärker als Gefühle. Die Person nähert sich der Verbindung womöglich sehr rational und schützt sich selbst deutlich. Das ist nicht automatisch kalt oder schlecht; es bedeutet nur, dass sie bei fehlender Passung schnell klare Entscheidungen treffen kann. Zieh weitere Karten, wenn du die emotionale Tiefe genauer sehen möchtest.'],
+  ['love', 'Wir streiten. Soll ich mich trennen?', 'Das Ass der Schwerter weist zuerst auf die Notwendigkeit klarer Kommunikation hin. Paare sammeln oft kleine Frustrationen, sagen lange nichts und explodieren später wegen einer Kleinigkeit, weil das eigentliche Thema nie angesprochen wurde. Benenne das wirkliche Problem, solange es noch überschaubar ist, hör zu und bearbeitet ein Thema nach dem anderen, statt im Streit jede alte Verletzung wieder hervorzuholen.'],
+  ['love', 'Gibt es jemanden, der mich versteht, ohne dass ich etwas sagen muss?', 'Erwarte nicht, dass ein anderer Mensch deine Gedanken lesen muss. Selbst sehr gut passende Menschen brauchen Worte. Vertrauen, Kompromisse und klare Kommunikation lassen zwei Menschen mit der Zeit immer tiefer verstehen, was im anderen vorgeht.'],
+  ['career', 'Ich bin seit zwei oder drei Monaten arbeitslos. Finde ich einen Job, der mir gefällt?', 'Es gibt zwei hilfreiche Lesarten. Du könntest eine Stelle finden, die Kommunikation, Beziehungen, Analyse oder andere geistige Arbeit beinhaltet. Oder die Karte fordert dich zuerst auf, deine Richtung zu klären. Wer sich überall bewirbt, ohne zu wissen, wohin er eigentlich möchte, baut oft weder das nötige Fachwissen noch glaubwürdige Begeisterung auf. Entscheide, welches Feld du testen willst, und richte deine Bewerbungen gezielter darauf aus.'],
+  ['career', 'Worauf sollte ich in den nächsten drei bis sechs Monaten beruflich achten?', 'Ein neues Projekt kann auftauchen, das schnelles Lernen, viel Denken und den Umgang mit unbekannten Informationen verlangt. Insgesamt ist das ein konstruktives Zeichen.']
+],
+'cups-1': [
+  ['love', 'Welche Persönlichkeit beschreibt diese Karte?', 'Das ist ein warmer, emotional offener Mensch, dessen Gefühle meist in eine gesunde Richtung fließen. Die Person kümmert sich um sich selbst und um andere, hilft gern und begegnet dem Leben eher mit Freundlichkeit, ohne sich von jeder Emotion vollständig steuern zu lassen.'],
+  ['love', 'Welche Gefühle hat diese Person für mich?', 'Das Ass der Kelche ist eine der klarsten Karten für echte Zuneigung. Die Gefühle sind reich und aufrichtig. Allein gelesen zeigt die Karte eher emotionale Offenheit als Besessenheit oder Besitzdenken: Die Person ist bereit, Liebe anzubieten, ohne deine Reaktion kontrollieren zu wollen.'],
+  ['love', 'Wir streiten. Soll ich mich trennen?', 'Diese Karte zeigt, dass Zuneigung noch vorhanden ist und der Konflikt daher reparierbar sein kann. Setzt euch zusammen, sprecht ehrlich und erinnert euch daran, was ihr aneinander schätzt. Starke Gefühle lösen jedoch nicht jede Unvereinbarkeit. Wenn es um Verletzungen, zerstörtes Vertrauen oder gegensätzliche Grundwerte geht, müssen diese Themen trotzdem direkt bearbeitet werden.'],
+  ['career', 'Ich bin arbeitslos. Finde ich bald eine neue Stelle?', 'Die Antwort tendiert zu Ja, und die nächste Rolle kann etwas sein, das dir wirklich Freude macht oder zu dem du eine emotionale Verbindung spürst. Über Gehalt oder Aufstieg sagt das Ass der Kelche allein wenig. Zieh dafür eine weitere Karte, wenn diese Details im Mittelpunkt stehen.'],
+  ['career', 'Entwickelt sich meine Arbeit in den nächsten sechs Monaten weiter?', 'Eine Möglichkeit ist eine bedeutungsvolle neue Verbindung über die Arbeit. Eine andere ist ein neues Projekt, das dir wieder etwas gibt, wofür du dich begeistern kannst.'],
+  ['other', 'Warum bekomme ich diese Karte, wenn ich nach dem Gehalt frage?', 'Manchmal hebt eine Legung hervor, was für die Person am wichtigsten sein wird, statt nur die Oberfläche der Frage zu beantworten. Das Ass der Kelche kann sagen, dass Freude und Erfüllung in dieser Rolle stärker ins Gewicht fallen als Geld. Das garantiert nicht, dass Leidenschaft automatisch Einkommen bringt. Gehalt und Bedingungen sollten deshalb weiterhin praktisch geprüft und bei Bedarf mit weiteren Karten betrachtet werden.']
+],
+'pentacles-1': [
+  ['love', 'Welche Persönlichkeit beschreibt diese Karte?', 'Das ist ein geerdeter, praktischer Mensch im positiven Sinn. Die Person achtet auf Details, denkt realistisch und baut lieber etwas Solides auf, als Unsicherheit romantisch zu verklären. Vielleicht zeigt sie weniger Feuer als das Ass der Stäbe oder weniger überschäumende Gefühle als das Ass der Kelche, dafür ist sie oft verlässlich, bereit für eine gemeinsame Zukunft zu arbeiten und spricht offen darüber, was realistisch ist.'],
+  ['love', 'Was denkt diese Person über mich und über unsere Beziehung?', 'Wahrscheinlich sind Gefühle da, und gleichzeitig sieht die Person praktische Kompatibilität zwischen euch. Sie kann überlegen, ob Lebensstil, Werte, Finanzen und langfristige Vorstellungen zusammenpassen. In einer ernsthaften Beziehung sind Gefühle zentral, doch praktische Vereinbarkeit spielt ebenfalls eine Rolle.'],
+  ['love', 'Ist ein unterschiedlicher familiärer Hintergrund in einer Beziehung wirklich wichtig?', 'Er kann eine Rolle spielen, entscheidet die Beziehung aber nicht allein. Menschen aus sehr unterschiedlichen finanziellen oder kulturellen Umfeldern entwickeln möglicherweise andere Vorstellungen über Geld, Familienrollen, Sicherheit und Alltag. Zum Problem werden diese Unterschiede vor allem dann, wenn man nicht darüber sprechen oder verhandeln kann. Reife, Neugier und gemeinsame Werte können viel überbrücken. Herkunft sollte deshalb nicht als starres Maß dafür behandelt werden, ob zwei Menschen zusammengehören.'],
+  ['love', 'Wir streiten. Soll ich mich trennen?', 'Überstürze nichts. Das Ass der Münzen fordert euch auf, geerdeter und praktischer zu werden. Der Konflikt kann kleiner sein, als er sich im Moment anfühlt. Leg romantische Erwartungen oder dramatische Deutungen kurz beiseite und fragt euch, welches konkrete Problem tatsächlich gelöst werden muss.'],
+  ['career', 'Finde ich bald eine Stelle?', 'Die Antwort tendiert zu Ja. Das Ass der Münzen ist besonders bei Arbeit und Geld günstig und kann auf eine solide Chance mit vernünftigem Einkommen, Stabilität oder Entwicklungsmöglichkeiten hinweisen.'],
+  ['career', 'Was kann sich beruflich bald verändern?', 'Du könntest mehr Einkommen, eine Gehaltserhöhung, ein neues Projekt, eine Versetzung, eine Beförderung oder eine andere konkrete Chance bekommen. Vielleicht eröffnest du dir auch selbst eine neue Einnahmequelle, etwa ein Nebengeschäft oder eine Investition.']
+],
+'wands-2': [
+  ['love', 'Welche Gefühle hat diese Person für mich?', 'Die Person scheint über die Gegenwart hinauszudenken und kann sich bereits eine längerfristige Zukunft mit dir vorstellen. Der Wunsch nach Bindung kann echt sein, doch die Karte allein sagt nicht, ob er nur aus Gefühlen oder auch aus praktischen Überlegungen entsteht. Schöne Kelchkarten würden die emotionale Seite verstärken; rationalere Karten können zeigen, dass langfristige Passung ebenfalls Teil der Entscheidung ist.'],
+  ['love', 'Ist es schlecht, wenn die Person sich auch aus praktischen Gründen binden möchte?', 'Nicht unbedingt. Jemand kann mit Herz und Verstand zugleich lieben. Die Person kann Eigenschaften in dir sehen, die eine langfristige Partnerschaft tragfähig machen, etwa gemeinsame Werte, ergänzende Stärken oder ähnliche Vorstellungen von Familie und Beruf. Praktisches Denken wird erst problematisch, wenn die Beziehung rein transaktional wird oder jemand ausgenutzt wird. Ruhige, bewusste Liebe kann genauso ehrlich sein wie dramatische Leidenschaft.'],
+  ['love', 'Wir streiten. Soll ich mich trennen?', 'Statt nur auf den aktuellen Streit zu schauen, betrachte das größere Bild. Geht es um Kleinigkeiten wie späte Antworten oder Social-Media-Interaktionen, frag dich, ob diese Details wirklich den Blick auf die ganze Beziehung bestimmen sollten. Ist das Problem ernst, gehört allerdings auch der tatsächliche Schaden zum großen Bild und darf nicht kleingeredet werden.'],
+  ['career', 'Finde ich bald einen Job, der mir gefällt?', 'Mit nur einer Karte bleiben zwei Hauptmöglichkeiten. Vielleicht brauchst du noch Zeit, um dich vorzubereiten, zu lernen oder deine Bewerbungen zu stärken, weil die Zwei der Stäbe in eine Zukunft blickt, die noch nicht ganz da ist. Oder die nächste Rolle beinhaltet internationale Arbeit, Reisen, einen Umzug, Planung oder strategisches Denken.'],
+  ['career', 'Worauf sollte ich bis zum Jahresende beruflich achten?', 'Du könntest ehrgeiziger werden als zuvor und mehr Verantwortung, eine Beförderung oder besseres Gehalt wollen. Ehrgeiz ist hilfreich, wenn er dir Richtung gibt; problematisch wird er erst, wenn nichts jemals genug ist. Die Karte kann außerdem auf Reisen oder räumliche Veränderungen durch die Arbeit hinweisen.']
+],
+'swords-2': [
+  ['love', 'Welche Persönlichkeit beschreibt diese Karte?', 'Diese Person neigt dazu, Entscheidungen aufzuschieben, besonders wenn beide Möglichkeiten unangenehm wirken. In Beziehungen oder im Beruf kann sie dadurch passiv werden, weil jede Wahl bedeutet, auf etwas anderes zu verzichten. Die Lehre der Zwei der Schwerter ist nicht, dass Kontrolle immer gut ist, sondern dass auch das Vermeiden einer Entscheidung Folgen hat.'],
+  ['love', 'Welche Gefühle hat diese Person für mich?', 'Wahrscheinlich ist die Person unentschlossen. Gefühle können vorhanden sein, doch etwas verhindert einen klaren Schritt nach vorn. Zieh weitere Karten, wenn du verstehen möchtest, ob die Zurückhaltung aus Angst, äußeren Umständen, anderen Prioritäten oder Unsicherheit über die Beziehung selbst kommt.'],
+  ['love', 'Wir streiten. Soll ich mich trennen?', 'Die Zwei der Schwerter deutet darauf hin, dass ein wichtiges Thema vermieden wird. Einer oder beide ärgern sich vielleicht über etwas, sprechen aber nur über kleinere Nebensachen statt über das eigentliche Problem. Wenn ihr den Kern erkennt und direkt darüber redet, muss eine Trennung nicht nötig sein. Ist die Wahrheit dahinter ernst, dann lass diese reale Situation entscheiden und nicht das Vermeiden.'],
+  ['career', 'Finde ich bald eine passende Stelle?', 'Die Antwort kann sich verzögern, weil deine Richtung noch unklar ist oder weil du zwar weißt, was du ändern solltest, aber noch nicht gehandelt hast. Wenn deine Ausbildung in einem Feld liegt, dein echtes Interesse aber in einem anderen, hält dich die ausschließliche Bewerbung im alten Bereich womöglich fest. Entscheide, welche Richtung du ausprobieren möchtest, und mach konkrete Schritte dorthin.'],
+  ['career', 'Gibt es beruflich etwas, das ich bald angehen sollte?', 'Vielleicht gibt es am Arbeitsplatz bereits ein unangenehmes Thema, das du lieber ignorieren würdest. Kümmere dich darum, solange es noch klein ist. Das Gefühl, dass eine Führungskraft jemanden bevorzugt, muss zum Beispiel keine Krise sein, aber stiller Groll wächst leicht, wenn du nie nach Erwartungen oder Feedback fragst.'],
+  ['other', 'Was passiert, wenn ich das Problem weiter vermeide?', 'Vermeidung macht ungelöste Probleme meistens schwerer statt leichter. Im Tarot kann die Entwicklung von der Zwei der Schwerter zu schwereren Karten als symbolische Warnung gelesen werden: Was du nicht ansehen willst, kann dich später durch Konsequenzen zu einer Entscheidung zwingen. Du musst nicht auf eine Krise warten. Eine kleine ehrliche Entscheidung heute ist oft leichter als eine dramatische später.']
+],
+'cups-2': [
+  ['love', 'Welche Persönlichkeit beschreibt diese Karte?', 'Diese Karte beschreibt jemanden, der Gegenseitigkeit schätzt und anderen gut auf halbem Weg entgegenkommen kann. Die Person verhandelt meist geschickt, kommuniziert diplomatisch und merkt, ob Geben und Nehmen ausgewogen wirken. In Beziehungen sind Fairness, Zusammenarbeit und gute Verbindungen zu anderen oft wichtig.'],
+  ['love', 'Welche Gefühle hat diese Person für mich?', 'Das ist ein sehr positives Zeichen. In der Energie liegt Gegenseitigkeit: Die Person möchte Zuneigung geben und hofft zugleich, Zuneigung zurückzubekommen. Die Zwei der Kelche ist eine der klarsten Karten für Verbindung und emotionales Entgegenkommen.'],
+  ['love', 'Wir streiten oft. Wie kann ich die Beziehung verbessern?', 'Die Gefühle können weiterhin stark sein, während die Konflikte eher aus Unterschieden in Persönlichkeit oder Kommunikation entstehen. Nutzt eure Verbindung als Grund, gemeinsam daran zu arbeiten. Benennt das Problem, hört einander zu und sucht als Paar nach einer Lösung, statt dass jeder die Beziehung allein reparieren will.'],
+  ['love', 'Wen sollte ich fragen, wenn ich meine Beziehung verbessern möchte?', 'Rat von vertrauten Menschen kann manchmal helfen, doch das wichtigste Gespräch ist meistens das mit der Person, mit der du tatsächlich zusammen bist. Frag, was sie von dir braucht, sag, was du von ihr brauchst, und prüft, ob ihr beide bereit seid, etwas anzupassen. Eine dritte Person kann ein Gespräch nicht ersetzen, das das Paar selbst führen muss.']
+],
+'pentacles-2': [
+  ['love', 'Welche Persönlichkeit beschreibt diese Karte?', 'Das ist nicht unbedingt jemand, der bereits völlig ausgeglichen ist, sondern jemand, der ständig versucht, viele Dinge in Balance zu halten. Die Person ist anpassungsfähig, beschäftigt und oft am zufriedensten, wenn mehrere Aufgaben gleichzeitig laufen. Die Herausforderung ist zu erkennen, wann Flexibilität hilft und wann zu viel Jonglieren die Stabilität kostet.'],
+  ['love', 'Welche Gefühle hat diese Person für mich?', 'Gefühle können vorhanden sein, aber die Aufmerksamkeit wird zwischen Beziehung, Arbeit, Studium, Geld oder anderen Verpflichtungen aufgeteilt. Die Karte bedeutet nicht automatisch eine dritte Person. Meist geht es um praktisches Jonglieren. Die eigentliche Frage ist, ob die Zeit und Aufmerksamkeit, die die Person geben kann, für die Art von Beziehung ausreichen, die du möchtest.'],
+  ['love', 'Wir streiten. Soll ich mich trennen?', 'Der Konflikt kann mit Überlastung zusammenhängen. Stress aus Arbeit oder anderen Pflichten kann in die Beziehung überschwappen, besonders wenn jemand tagsüber Frust schluckt und ihn zu Hause herauslässt. Bevor du über eine Trennung entscheidest, prüf, ob sich das Muster verbessert, wenn Arbeitsmenge, Erholung und Grenzen besser geregelt werden. Stress erklärt Gereiztheit, entschuldigt aber keine schlechte Behandlung.'],
+  ['health', 'Woran merke ich, dass ich aus dem Gleichgewicht bin?', 'Achte auf Körper und Psyche. Körperliche Erschöpfung ist oft leichter zu erkennen, während seelische Belastung sich etwa durch anhaltende Gereiztheit, Niedergeschlagenheit, Angst, schlechten Schlaf, Interessenverlust oder das Gefühl zeigen kann, sich nicht mehr zu erholen. Du musst nicht warten, bis es sehr schlimm wird, bevor du deine psychische Gesundheit ernst nimmst. Bleiben Beschwerden bestehen oder beeinträchtigen sie deinen Alltag, ist professionelle Unterstützung sinnvoll.'],
+  ['career', 'Ich bin seit ein paar Monaten arbeitslos. Finde ich bald Arbeit?', 'Die Antwort ist nicht festgelegt. Die Zwei der Münzen empfiehlt zuerst genug Struktur zu schaffen, um gute Entscheidungen treffen zu können. Sind deine Tage, Bewerbungen und Prioritäten ungeordnet, kann ein klares System die Suche wirksamer machen. Eine aufgeräumte Umgebung hilft manchen Menschen beim Denken, doch entscheidend ist die praktische Ordnung: Zielrollen kennen, Bewerbungen verfolgen und sich regelmäßig vorbereiten.'],
+  ['other', 'Was hat Aufräumen mit der Jobsuche zu tun?', 'Aufräumen funktioniert hier als Bild für Ordnung und nicht als magische Ursache für einen Job. Eine ruhigere Umgebung, ein regelmäßiger Tagesablauf und grundlegende Selbstfürsorge können Konzentration, Vorbereitung und Entscheidungen erleichtern. Dasselbe gilt für Beziehungen und Verpflichtungen: Erkenne, was dich auslaugt, setz nötige Grenzen und reduziere unnötigen Ballast.'],
+  ['other', 'Warum scheint die Karte manchmal eine andere Frage zu beantworten?', 'Eine Legung kann auf einen Faktor unterhalb der Oberflächenfrage hinweisen. Wenn das passiert, erkläre die Verbindung klar, statt eine unpassende Bedeutung zu erzwingen. Zeig, wie das zugrunde liegende Thema die eigentliche Frage beeinflussen könnte, und lass der Person Raum zu entscheiden, ob die Deutung zu ihrer realen Situation passt.']
+]
+});
+
+Object.assign(ASK.de, {
+'wands-3': [
+  ['love', 'Welche Persönlichkeit beschreibt diese Karte?', 'Diese Person hat viele Pläne, Leidenschaften und Ziele, zögert aber beim ersten echten Schritt, weil sie Angst vor dem Scheitern hat. Sie erzählt begeistert, was sie alles machen möchte, erklärt Monate später, warum sie noch nicht angefangen hat, und wechselt vielleicht schon zur nächsten Idee. Die Herausforderung lautet, Vision in Handlung zu verwandeln.'],
+  ['love', 'Welche Gefühle hat diese Person für mich?', 'Wenn die Beziehung noch neu ist, können die Gefühle und Gedanken über eine gemeinsame Zukunft durchaus ehrlich sein. Was fehlt, sind konkrete Schritte. Die Person spricht vielleicht davon, langfristig mit dir zusammenzubleiben, ohne schon praktische Entscheidungen zu Arbeit, Familie, Wohnsituation oder Bindung zu treffen. Im Moment lebt die Zukunft stärker in ihrer Vorstellung als in einem wirklichen Plan.'],
+  ['love', 'Wir streiten. Soll ich mich trennen?', 'Diese Karte allein reicht für die Entscheidung nicht aus. Eine mögliche Konfliktquelle ist, dass einer oder beide die Idee einer langfristigen Beziehung mögen, aber noch nicht bereit für das sind, was sie verlangt. Bindung bedeutet Kompromisse, praktische und finanzielle Planung, Verantwortung und Platz für individuelles wie gemeinsames Leben. Sprecht darüber, was „langfristig“ für euch konkret bedeutet, bevor ihr endgültig entscheidet.'],
+  ['love', 'Wie kann ich die andere Person verändern?', 'Du kannst keinen Menschen verändern, der sich selbst nicht verändern möchte. Du kannst erklären, was dich verletzt, Grenzen setzen und um konkrete Veränderungen bitten. Die Entscheidung zu wachsen muss aber von der Person selbst kommen. Liebe gibt dir keine Kontrolle über die Entscheidungen eines anderen.'],
+  ['career', 'Ich bin seit ein paar Monaten arbeitslos. Finde ich bald Arbeit?', 'Du hast vielleicht große Pläne, aber noch zu wenig Handlung dahinter. Für eine begehrte Stelle musst du womöglich erst Fähigkeiten, Erfahrung und stärkere Bewerbungen aufbauen. Wenn Angst dich sogar vom Suchen oder Absenden abhält, beginne mit einem konkreten Schritt. Die Karte kann auch auf eine Geschäftsidee oder einen selbstständigen Weg hinweisen, den du bisher nicht zu testen wagst.'],
+  ['career', 'Worauf sollte ich beruflich in nächster Zeit achten?', 'Du hast womöglich mehrere Ideen, zögerst aber aus Angst, sie umzusetzen. Die Drei der Stäbe fordert dich auf, über das Planen hinauszugehen und einen realistischen ersten Schritt aus deiner Komfortzone zu machen.'],
+  ['other', 'Was ist, wenn ich scheitere und andere über mich lachen?', 'Die meisten Menschen achten viel weniger auf deine Fehler, als deine Angst dir erzählt. Sie haben ihr eigenes Leben, und selbst wenn jemand ein Scheitern bemerkt, wandert die Aufmerksamkeit meist schnell weiter. Scheitern kann peinlich sein, aber jede wichtige Chance aus Angst vor fremden Urteilen zu vermeiden, kostet langfristig mehr. Lass andere ihre Meinung haben und lern weiter.']
+],
+'swords-3': [
+  ['love', 'Welche Persönlichkeit beschreibt diese Karte?', 'Die Drei der Schwerter kann jemanden beschreiben, der Traurigkeit, Enttäuschung oder emotionalen Schmerz mit sich trägt. Vielleicht sieht die Person das Leben im Moment negativer, weil etwas noch weh tut. Lies das als Bild ihres aktuellen Zustands und nicht als unveränderliches Persönlichkeitsmerkmal.'],
+  ['love', 'Welche Gefühle hat diese Person für mich?', 'Das ist ein schwieriges emotionales Signal. Die Person kann noch unverarbeiteten Schmerz aus der Vergangenheit tragen und deshalb nicht vollständig bereit für eine neue Beziehung sein. Das bedeutet weder, dass sie nicht lieben kann, noch dass eine Trennung unvermeidlich ist. Wichtig ist, ob sie die Wunde erkennt und bereit ist, sich darum zu kümmern, statt die neue Beziehung alles tragen zu lassen.'],
+  ['love', 'Wir streiten. Soll ich mich trennen?', 'Der Konflikt tut weh, aber die Drei der Schwerter bedeutet nicht automatisch, dass nichts mehr zu retten ist. Schau darauf, was den Schmerz tatsächlich verursacht. Geht es um wiederkehrende kleine Verletzungen, kann ehrliche Kommunikation das Muster noch verändern. Geht es um Verrat, Missbrauch oder schweren Schaden, darfst du das nicht herunterspielen, nur weil es eine Karte der Kleinen Arkana ist. Die reale Schwere der Situation ist wichtiger als die Kartenkategorie.'],
+  ['love', 'Soll ich meinen Partner kontrollieren?', 'Nein. Gesunde Nähe braucht keine Passwörter, ständige Standortkontrolle oder Überwachung jedes Likes und jeder Nachricht. Wenn etwas Konkretes Vertrauen beschädigt hat und du Informationen brauchst, sprecht offen darüber, statt die Beziehung in Überwachung zu verwandeln. Frag dich, welche Angst hinter dem Kontrollbedürfnis steht und ob Vertrauen tatsächlich wieder aufgebaut werden kann.'],
+  ['career', 'Finde ich bald einen Job, der mir gefällt?', 'Es kann noch Enttäuschung oder Verzögerung geben. Die Karte erklärt den ganzen Grund nicht allein, deshalb zieh bei Bedarf weiter. Vielleicht bewirbst du dich in eine Richtung, die nicht zu dir passt, weil Familie, gesellschaftlicher Druck oder Angst dich von der Arbeit wegziehen, die du eigentlich willst. Betrachte Absagen nicht als Beweis, dass „das Universum“ dich blockiert, sondern als Information und überprüfe Richtung, Fähigkeiten und Strategie.'],
+  ['career', 'Was kann sich beruflich bald verändern?', 'Eine Enttäuschung kann auftreten: Ein Projekt bleibt hinter den Erwartungen zurück, Feedback trifft dich oder das Verhältnis zu einem Kollegen wird unangenehm. Die Karte zeigt eher Verletzung als völligen Zusammenbruch. Kümmere dich früh darum, bevor stiller Groll wächst.']
+],
+'cups-3': [
+  ['love', 'Welche Persönlichkeit beschreibt diese Karte?', 'Das ist ein geselliger Mensch, der Freunde, Treffen, Feiern und das Zusammensein mit anderen genießt.'],
+  ['love', 'Welche Gefühle hat diese Person für mich?', 'Allein gelesen spricht diese Karte deutlicher von Freundschaft, Freude und Gesellschaft als von exklusiver romantischer Bindung. Wenn ihr bereits zusammen seid, kann sie einfach bedeuten, dass eure Beziehung weiterhin Spaß und eine starke Freundschaftsbasis enthält. Zieh weitere Karten, bevor du daraus ein negatives Urteil machst.'],
+  ['love', 'Wir streiten oft. Soll ich mich trennen?', 'Zieh weitere Karten, bevor du entscheidest. Die Drei der Kelche kann manchmal die Frage nach einem dritten Einfluss aufwerfen, beweist aber keinen Betrug. Dieser Einfluss kann ein Freund, ein Familienmitglied, ein sozialer Kreis oder jemand auf beiden Seiten der Beziehung sein. Frag, welcher äußere Faktor euch wirklich beeinflusst, statt aufgrund einer Karte jemanden zu beschuldigen.']
+],
+'pentacles-3': [
+  ['love', 'Welche Persönlichkeit beschreibt diese Karte?', 'Das ist ein eher ernsthafter, kooperativer Mensch. Wie bei der Drei der Kelche ist die Person gern mit anderen zusammen, aber häufiger rund um eine gemeinsame Aufgabe oder ein nützliches Ziel statt nur zum Vergnügen. Sie schätzt Teamarbeit, Zusammenarbeit und Umgebungen, in denen Menschen gemeinsam etwas aufbauen.'],
+  ['love', 'Welche Gefühle hat diese Person für mich?', 'Die Energie kann praktischer oder professioneller als romantisch sein. Die Person sieht dich vielleicht als Freund, Kollegen, Mitschüler oder jemanden, mit dem sie gut zusammenarbeitet. In einer bestehenden Beziehung kann die Karte auch auf den praktischen Wert hinweisen, den ihr einander gebt. Nimm nicht aufgrund einer einzigen Karte an, dass die Person dich materiell ausnutzt. Schau darauf, ob echte Zuneigung, Gegenseitigkeit und Respekt vorhanden sind.'],
+  ['love', 'Soll ich sofort gehen, wenn sich die Beziehung sehr praktisch anfühlt?', 'Nicht unbedingt. Manche Beziehungen enthalten praktische Überlegungen neben Gefühlen, und das ist nicht automatisch unehrlich. Entscheidend ist, ob beide verstehen, worauf sie sich einlassen, ob jemand manipuliert wird und ob die Beziehung die echten Bedürfnisse beider erfüllt. Heimliche Nutzung für Status, Geld oder Zugang ist etwas völlig anderes als zwei Erwachsene, die praktische Kompatibilität offen mitbewerten.'],
+  ['love', 'Wir streiten. Soll ich mich trennen?', 'Die Drei der Münzen sagt, dass ihr zuerst versuchen solltet, gemeinsam am Problem zu arbeiten. Geld, Wohnen, Heiratspläne, Kinder oder andere praktische Verpflichtungen können die eigentliche Spannung auslösen. Setzt euch zusammen und sprecht unausgesprochene Erwartungen aus. Wenn eine Person jedes ernsthafte Gespräch verweigert, ist auch das eine wichtige Information.'],
+  ['career', 'Ich bin seit drei Monaten arbeitslos. Finde ich bald Arbeit?', 'Die Antwort tendiert zu Ja, besonders über Zusammenarbeit oder dein Netzwerk. Die nächste Stelle kann Teamarbeit verlangen, oder die Gelegenheit kommt durch jemanden, der dich kennt. Sag vertrauten Freunden und früheren Kollegen, wonach du suchst, bitte um Kontakte und sei bereit, mit anderen zusammenzuarbeiten, statt die Suche völlig für dich zu behalten.'],
+  ['career', 'Worauf sollte ich beruflich bald achten?', 'Teamarbeit wird wahrscheinlich wichtiger. Arbeitest du bisher allein, musst du vielleicht bald stärker koordinieren; bist du schon im Team, bleibt Zusammenarbeit zentral. Ob das angenehm oder herausfordernd ist, hängt von deinem Stil ab, aber die Übung ist klar: kommunizieren, Aufgaben verteilen und gemeinsam etwas aufbauen.'],
+  ['other', 'Wie unterscheidet sich diese Karte von der Drei der Kelche und dem Hierophanten?', 'Alle drei können Gruppen zeigen, doch der Zweck ist unterschiedlich. Die Drei der Kelche ist die Gruppe, die feiert und sich trifft. Die Drei der Münzen ist die Gruppe, die an einer konkreten Aufgabe zusammenarbeitet. Der Hierophant hängt stärker mit gemeinsamen Systemen, Lehre, Institutionen und etablierten Traditionen zusammen.']
+]
+});
+
+Object.assign(ASK.de, {
+'wands-4': [
+  ['love', 'Welche Persönlichkeit beschreibt diese Karte?', 'Eine einzelne Karte zeigt nur einige Züge, und die Vier der Stäbe ist grundsätzlich günstig. Am deutlichsten ist Beständigkeit: Diese Person hat meist eine stabile emotionale Basis und blickt eher optimistisch auf das Leben.'],
+  ['love', 'Welche Gefühle hat diese Person für mich?', 'Die Vier der Stäbe ist eine der stärkeren Karten für ernsthafte Absichten. Die Person sieht dich wahrscheinlich als jemanden, mit dem sie eine echte Partnerschaft aufbauen könnte, und nicht als vorübergehende Ablenkung. Auch wenn Heirat noch nicht unmittelbar ansteht, kann sie Stabilität, gemeinsames Wachstum und gegenseitige Unterstützung wollen. Die andere Seite dieser Beständigkeit: Sie ist vielleicht nicht besonders spontan oder dramatisch. Zieh weitere Karten, wenn du wissen willst, wie romantisch oder abenteuerlustig sie ist.'],
+  ['love', 'Wir streiten. Soll ich mich trennen?', 'Die Vier der Stäbe erinnert daran, dass diese Beziehung womöglich mit ernsthaften Absichten aufgebaut wurde. Bevor du endgültig entscheidest, erinnere dich daran, warum ihr euch gewählt habt, und vergleiche diese Grundlage mit dem Muster, das ihr heute lebt. Langfristige Beziehungen brauchen Kompromisse von beiden Seiten. Muss immer einer gewinnen und der andere nachgeben, wird Stabilität schwierig — egal wie stark der Anfang war.'],
+  ['career', 'Ich bin schon lange arbeitslos. Finde ich bald Arbeit?', 'Die Antwort tendiert zu Ja. Die Vier der Stäbe kann auf eine Stelle hinweisen, die wirklich Grund zur Freude gibt: etwas, das zu deiner Richtung passt und mehr Stabilität bietet als eine reine Übergangslösung. Bleib dennoch realistisch. Eine Karte kann die Qualität einer Chance beschreiben; ob der Job tatsächlich entsteht, hängt weiterhin von Bewerbungen, Timing und Umständen ab.'],
+  ['career', 'Worauf sollte ich beruflich bald achten?', 'Wenn du dich in deiner aktuellen Arbeit bereits gefestigt fühlst, kann diese Stabilität weitergehen. Bei der Vier der Stäbe geht es weniger um eine Veränderung über Nacht als um ein Fundament, das über Zeit entstanden ist und dich weiterhin tragen kann.'],
+  ['other', 'Ist es immer schlecht, in der Komfortzone zu bleiben?', 'Nein. Sicherheit und Stabilität sind Dinge, für die Menschen oft lange arbeiten. Die Komfortzone zu verlassen ist sinnvoll, wenn es Wachstum ermöglicht, nicht weil du dich ständig unwohl fühlen musst. Ein gesunder Rhythmus kann so aussehen: erweitern, ausruhen, eine größere sichere Basis genießen und erst wieder nach außen gehen, wenn du bereit bist.']
+],
+'swords-4': [
+  ['love', 'Welche Persönlichkeit beschreibt diese Karte?', 'Die Vier der Schwerter beschreibt einen vorsichtigen und nicht unbedingt faulen Menschen. Die Person denkt lieber nach, betrachtet ein Thema aus mehreren Blickwinkeln und handelt, wenn genug Klarheit da ist. Der Nachteil: Wenn eine Situation wirklich eine schnelle Entscheidung braucht, kann sie zu lange zögern.'],
+  ['love', 'Welche Gefühle hat diese Person für mich?', 'Die Person möchte die Beziehung womöglich nicht schnell vorantreiben. Sie hält die Dinge lieber ruhig und unverändert, während sie beobachtet und nachdenkt. Wenn du auf ein Geständnis, einen Antrag oder einen anderen großen Schritt wartest, deutet die Karte darauf hin, dass sie noch nicht bereit ist.'],
+  ['love', 'Wir streiten. Soll ich mich trennen?', 'Entscheide nicht mitten im Streit. Eine kurze Pause kann euch helfen, herunterzukommen, nachzudenken und mit klareren Worten zurückzukehren. Der Sinn ist Raum zum Atmen, nicht Schweigen als Strafe oder eine Beziehung, die auf unbestimmte Zeit in der Schwebe bleibt. Vereinbart am besten, wann ihr wieder miteinander sprecht.'],
+  ['career', 'Ich bin seit sechs Monaten arbeitslos. Finde ich bald den passenden Job?', 'Die Karte kann auf ein echtes Bedürfnis nach Erholung oder Neuorientierung hinweisen, bevor du noch mehr Druck machst. Vielleicht bewirbst du dich vor allem wegen äußerer Erwartungen, während ein Teil von dir erst Kraft sammeln, etwas lernen, sich engagieren oder ein eigenes Projekt verfolgen möchte. Wenn das stimmt und deine Situation es erlaubt, benenne dieses Bedürfnis ehrlich. Wenn du jetzt Arbeit brauchst, plane trotzdem genug Erholung ein, damit Erschöpfung nicht jede Bewerbung halbherzig macht.'],
+  ['career', 'Merken Interviewer, wenn ich eigentlich gar nicht interessiert bin?', 'Oft ja. In Gesprächen geht es nicht nur um Fachwissen. Arbeitgeber bemerken Vorbereitung, Neugier und ob du erklären kannst, warum dich die Stelle interessiert. Du musst keine übertriebene Begeisterung spielen, aber vage Antworten, keine Rückfragen und fehlendes Verständnis für die Rolle lassen Desinteresse schnell sichtbar werden.'],
+  ['career', 'Was kann sich beruflich bald verändern?', 'Die Arbeit kann in eine ruhige Phase mit wenig sichtbarer Bewegung eintreten. Das kann angenehm sein, wenn du Routine und Stabilität schätzt, oder frustrierend, wenn du schnelle Entwicklung und neue Herausforderungen möchtest. Die Karte ist nicht an sich gut oder schlecht; entscheidend ist, was du gerade von deiner Arbeit brauchst.']
+],
+'cups-4': [
+  ['love', 'Welche Persönlichkeit beschreibt diese Karte?', 'Die Vier der Kelche kann jemanden beschreiben, dessen Blick gerade eng geworden ist oder der emotional auf Abstand steht. Die Person konzentriert sich womöglich so stark auf das Vertraute, dass sie andere Möglichkeiten kaum bemerkt. Lies das besser als momentane Wahrnehmungsgewohnheit und nicht als dauerhaft fehlende Intuition oder Fantasie.'],
+  ['love', 'Welche Gefühle hat diese Person für mich?', 'Eine Vier der Kelche allein reicht nicht, um die Gefühle festzulegen. Sie kann aber jemanden zeigen, der das Angebot vor sich übersieht, weil die Aufmerksamkeit woanders liegt. Vielleicht vergleicht die Person die Gegenwart mit einer früheren Beziehung, anderen Möglichkeiten oder einem unerreichbaren Ideal. Entscheidend ist, ob sie die Verbindung, die tatsächlich da ist, erkennen und wertschätzen kann.'],
+  ['love', 'Kann sich diese Situation verändern?', 'Ja. Die Vier der Kelche beschreibt ein Aufmerksamkeitsmuster, und Muster können sich ändern. Ein ehrliches Gespräch kann helfen, etwas wahrzunehmen, das bisher als selbstverständlich galt. Veränderung braucht jedoch Bereitschaft. Du kannst niemanden dazu zwingen, eine Beziehung zu schätzen, wenn die Person sich immer wieder entscheidet, sich nicht darauf einzulassen.'],
+  ['love', 'Wir streiten. Soll ich mich trennen?', 'Die Karte fordert einen weiteren Blick. Vielleicht konzentrierst du dich sehr auf einen Fehler oder eine aktuelle Enttäuschung und übersiehst den Rest der Beziehung. Geh einen Schritt zurück und betrachte das ganze Muster: Mühe, Fürsorge und Veränderungen ebenso wie das Problem, das weh tut. Das Gesamtbild zu sehen bedeutet nicht, schweren Schaden zu entschuldigen; es bedeutet, mit vollständigen Informationen zu entscheiden.'],
+  ['career', 'Finde ich bald Arbeit?', 'Eine Chance kann näher sein, als du denkst — vielleicht in einer Anzeige, die du immer wieder übergehst, oder durch jemanden, den du bereits kennst. Die Vier der Kelche empfiehlt, zuerst genauer auf das zu schauen, was vor dir liegt, bevor du annimmst, die Antwort müsse weit weg sein.'],
+  ['career', 'Was kann sich beruflich bald verändern?', 'Pass auf, dass du keine Chance direkt vor dir verpasst, weil du auf einen anderen Weg fixiert bist. In deinem aktuellen Umfeld kann ein Projekt, eine Fähigkeit oder eine Rolle liegen, die besser zu dir passt, als du bisher bemerkt hast. Die Karte fordert dich auf, reale Möglichkeiten zu sehen, statt nur dem hinterherzulaufen, was aus der Ferne beeindruckend aussieht.'],
+  ['other', 'Was soll ich tun, wenn ich meine Richtung nicht selbst finde?', 'Such dir Orientierung. Eine Lehrperson, ein Mentor, eine Beraterin oder ein erfahrener Mensch kann dir Optionen zeigen, die du gerade nicht siehst. Diese Person soll dein Leben nicht für dich wählen, sondern deinen Blick klären, damit du selbst entscheiden kannst.']
+],
+'pentacles-4': [
+  ['love', 'Welche Persönlichkeit beschreibt diese Karte?', 'Die Vier der Münzen kann jemanden beschreiben, der Kontrolle, Besitz oder Sicherheit sehr festhält. Das Problem ist nicht unbedingt echter Mangel, sondern vielleicht die Angst, etwas zu verlieren. Diese Angst kann eine Person bei Geld, Zuneigung oder sogar grundlegenden Bedürfnissen übermäßig einschränken. Vorsicht ist gesund; Sicherheit wird teuer, wenn sie vernünftiges Ausgeben, Teilen oder Selbstfürsorge verhindert.'],
+  ['love', 'Welche Gefühle hat diese Person für mich?', 'Gefühle können vorhanden sein, kommen aber mit Vorsicht. Vielleicht versucht die Person, die Beziehung zu kontrollieren, oder sie hält sich zurück, weil sie Angst vor Verletzung hat. Zieh weitere Karten und achte vor allem auf ihr echtes Verhalten, um den Unterschied zu erkennen.'],
+  ['love', 'Wir streiten oft. Wie können wir die Beziehung verbessern?', 'Kontrolle kann im Zentrum des Konflikts stehen. Einer oder beide versuchen vielleicht zu bestimmen, wie der andere sich kleidet, spricht, verhält oder seine Zeit verbringt. Verbesserung beginnt damit, unnötige Kontrolle zu lockern und eine gesunde Grenze von dem Versuch zu unterscheiden, einen erwachsenen Menschen zu steuern. Liebe braucht Raum, damit der andere er selbst bleiben kann.'],
+  ['love', 'Was kann diese Karte in Beziehungen noch bedeuten?', 'Die Vier der Münzen kann auch das Festhalten an der Vergangenheit zeigen. Vielleicht hast du keinen Kontakt mehr zu einer früheren Liebe und bewahrst trotzdem eine idealisierte Version dieser Person im Kopf. Jahre später hat dieses Bild womöglich kaum noch etwas mit dem Menschen zu tun, der sie heute ist. Loslassen kann heißen, die Vorstellung freizugeben, ohne zu leugnen, dass die Beziehung einmal Bedeutung hatte.'],
+  ['career', 'Finde ich bald den Job, den ich möchte?', 'Die Antwort kann sich verzögern, teilweise weil du jedes Detail gleichzeitig kontrollieren möchtest: Zeitpunkt, Gehalt, Titel und Gefühl der Stelle. Standards sind gut, aber starre Erwartungen können die Suche erschweren. Schau, was du aus vergangenen Gesprächen verbessern kannst, und akzeptiere, dass manche sinnvollen Schritte — etwa ein Abschluss oder Zertifikat — einfach Zeit brauchen.'],
+  ['career', 'Worauf sollte ich in den nächsten drei Monaten beruflich achten?', 'Achte darauf, Rolle, Wissen oder Erfahrung nicht zu fest zu verteidigen. Vielleicht willst du einen neuen Kollegen ungern einarbeiten oder Wissen teilen, weil du Angst hast, dadurch weniger wertvoll zu werden. Berufliche Sicherheit entsteht gesünder dadurch, dass du selbst weiterlernst, statt andere von Informationen abhängig zu machen, die du zurückhältst.'],
+  ['other', 'Warum sollte ich loslassen?', 'Die Lehre der Vier der Münzen lautet nicht, alles Wertvolle wegzuwerfen. Sie fordert dich auf zu erkennen, was du nur aus Angst festhältst. Manchmal dient dir ein Plan, eine Rolle, ein Besitz oder eine alte Geschichte nicht mehr, und das Festhalten lässt keinen Platz für Neues. Loslassen ist hilfreich, wenn es Flexibilität schafft — nicht wenn es zu einer weiteren Regel wird, die du dir aufzwingst.']
+]
+});
+
+Object.assign(ASK.de, {
+'wands-5': [
+  ['love', 'Welche Persönlichkeit beschreibt diese Karte?', 'Die Fünf der Stäbe kann zwei Muster beschreiben. Das eine ist spielerische oder provozierende Diskussion: jemand neckt, widerspricht und fordert Ideen heraus, ohne unbedingt verletzen zu wollen. Das andere ist innerer Konflikt: Die Person möchte etwas und zieht sich im nächsten Moment selbst in die Gegenrichtung. In beiden Fällen ist Reibung das Hauptthema.'],
+  ['love', 'Ist jemand, der gern diskutiert, ein schlechter Mensch?', 'Nicht unbedingt. Es ist ein Unterschied, ob jemand diskutiert, um andere kleinzumachen, oder eine Idee hinterfragt, weil sie logisch geprüft werden soll. Konstruktive Debatte kann dein Denken schärfen, solange beide respektvoll bleiben. Sobald es nur noch ums Gewinnen, Herabsetzen oder Provozieren geht, verliert dieselbe Gewohnheit ihren Wert.'],
+  ['love', 'Welche Gefühle hat diese Person für mich?', 'Gefühle können da sein, doch die Person wirkt innerlich zerrissen. Ein Teil zieht zu dir hin, ein anderer hält sich zurück. Eine Karte zeigt den Grund nicht vollständig. Zieh weitere, wenn du verstehen möchtest, womit sie ringt.'],
+  ['love', 'Wir streiten. Soll ich mich trennen?', 'Überstürze keine Trennung, bevor das eigentliche Thema benannt ist. Ihr streitet vielleicht über Kleinigkeiten, während darunter eine größere Unsicherheit liegt — Angst um die Beziehung, Verlustangst oder ein Verdacht, der nie offen ausgesprochen wurde. Die Fünf der Stäbe fordert Ehrlichkeit. Sag, wovor du wirklich Angst hast, statt nur über die Oberfläche zu kämpfen.'],
+  ['career', 'Finde ich bald den Job, den ich möchte?', 'Die Suche kann durch einen inneren Richtungskonflikt gebremst werden. Vielleicht möchtest du eigentlich in ein bestimmtes Feld, bewirbst dich aber wegen Familie, Abschluss oder Angst weiterhin in einem anderen. Kläre zuerst, welche Richtung du wirklich im Alltag testen willst. Wenn Einsatz und Ziel in dieselbe Richtung zeigen, wird auch die Suche klarer.'],
+  ['career', 'Worauf sollte ich beruflich bald achten?', 'Ein kleiner Konflikt mit einem Kollegen kann auftauchen. Die Fünf der Stäbe ist meist gut handhabbar, doch ein kleines Missverständnis kann wachsen, wenn man ungeschickt damit umgeht. Bleib direkt, ohne persönlich zu werden, kläre Dinge früh und lass Konkurrenz nicht zu einem Groll werden.'],
+  ['other', 'Warum sagt man, dass sich die Zukunft im Tarot verändern kann?', 'Tarot eignet sich besser als Bild aktueller Muster und Möglichkeiten als als festgeschriebenes Drehbuch. Wenn Verhalten, Umstände oder Entscheidungen sich ändern, kann sich auch ein wahrscheinlicher Ausgang verändern. Manche Dinge liegen außerhalb deiner Kontrolle. Es geht also nicht darum, jede gewünschte Zukunft erzwingen zu können, sondern darum, in einer Legung Raum für Handlungsmöglichkeiten zu lassen.']
+],
+'swords-5': [
+  ['love', 'Welche Persönlichkeit beschreibt diese Karte?', 'Die Fünf der Schwerter kann jemanden beschreiben, der Gespräche in Wettkämpfe verwandelt. Die Person will jeden Wortwechsel gewinnen, obwohl dieser Sieg oft nichts bringt außer einem kurzen Ego-Schub. Recht zu haben ist nicht dasselbe wie gut zu kommunizieren.'],
+  ['love', 'Welche Gefühle hat diese Person für mich?', 'Eine Fünf der Schwerter allein beantwortet die Gefühlsfrage nicht vollständig. Gefühle können echt sein, während die Art zu kommunizieren dich trotzdem verletzt oder frustriert. Manche Menschen kümmern sich sehr und sprechen dennoch befehlend, abwertend oder kämpferisch. Verwechsle Zuneigung nicht mit gesunder Kommunikation; beides zählt.'],
+  ['love', 'Wir streiten. Soll ich mich trennen?', 'Das Hauptproblem ist, wie ihr Worte benutzt, wenn ihr wütend seid. Werden normale Unterschiede zu Gelegenheiten für Beleidigungen, Punktegewinne oder alte Verletzungen, solltet ihr zuerst dieses Kommunikationsmuster bearbeiten. Eine Trennung ist nicht automatisch die erste Antwort, aber wiederholte Verachtung, Erniedrigung oder verbale Gewalt sollte ernst genommen und nicht als „nur Streit“ abgetan werden.'],
+  ['career', 'Ich bin seit ein paar Monaten arbeitslos. Finde ich bald Arbeit?', 'Die Karte gibt kein klares Ja oder Nein. Vielleicht weist sie eher auf eine entmutigende Stimme in deinem Umfeld hin — jemanden, der dir ständig sagt, du seist unfähig oder alte Misserfolge wiederholt. Achte darauf, wessen Meinung dein Selbstvertrauen prägt. Hilfreiches Feedback ist konkret und hilft dir besser zu werden; ständiges Herabsetzen ist etwas anderes.'],
+  ['career', 'Worauf sollte ich beruflich bald achten?', 'Achte darauf, wie Worte am Arbeitsplatz verwendet werden. Vielleicht wirst du respektlos behandelt, oder du selbst sprichst unter Druck zu scharf mit anderen. Überschreitet jemand eine berufliche Grenze, antworte ruhig, dokumentiere ernsthafte Vorfälle und nutze passende betriebliche Wege, statt anzunehmen, du müsstest alles einfach hinnehmen.'],
+  ['other', 'Was sagt diese Karte über Streit im Internet?', 'Die Fünf der Schwerter passt zu vielen Online-Streits: lange Antworten an Fremde, das Bedürfnis nach dem letzten Wort und die Vorstellung, Schweigen bedeute Niederlage. Die meisten dieser „Siege“ verändern nichts Wichtiges. Jemand hört vielleicht auf zu antworten, weil er beschäftigt, gelangweilt oder einfach fertig mit der Diskussion ist. Unterschiedliche Meinungen dürfen existieren, und nicht jeder Streit verdient deine Zeit.'],
+  ['other', 'Was bedeutet „Karma der Sprache“?', 'In manchen buddhistischen und volkstümlichen Traditionen bezeichnet „Karma der Sprache“ die Folgen, die durch unseren Umgang mit Worten entstehen. Die spirituelle Vorstellung lautet, dass Sprache, die erniedrigt, täuscht oder verletzt, moralische Konsequenzen hat. Auch ohne Karma wörtlich zu verstehen, bleibt die praktische Lehre sinnvoll: Worte prägen Vertrauen, Beziehungen und das Umfeld, das du um dich herum schaffst. Halt kurz inne, bevor du etwas sagst, das nur verletzen soll.']
+],
+'cups-5': [
+  ['other', 'Ist diese Karte positiv oder negativ?', 'Die Fünf der Kelche funktioniert besser als Rat denn als einfach gutes oder schlechtes Ereignis. Ihre Themen sind Enttäuschung, Verlust und Trauer, doch im Bild bleibt auch etwas erhalten. Die wichtige Frage ist, ob die Person vom Verlust dauerhaft bestimmt wird oder sich irgendwann wieder dem zuwendet, was noch da ist.'],
+  ['other', 'Warum werden Rückschläge der Kleinen Arkana meist leichter gelesen?', 'Als Deutungskonvention beschreiben die Kleinen Arkana häufig alltäglichere und veränderbarere Umstände, während die Großen Arkana eher größere Themen oder Wendepunkte markieren. Das bedeutet nicht, dass eine Karte der Kleinen Arkana niemals neben einem ernsten realen Ereignis auftauchen kann. Die tatsächliche Situation ist immer wichtiger als eine Rangordnung des Decks.'],
+  ['love', 'Ich habe gerade eine Niederlage oder Trennung erlebt. Wie soll ich damit umgehen?', 'Das Bild trägt die Lehre bereits in sich: Die Figur schaut auf die verschütteten Kelche, während zwei hinter ihr noch stehen. Trauer darf gefühlt werden, und du musst dich nicht sofort zu Optimismus zwingen. Wenn du bereit bist, frag auch, was geblieben ist — Beziehungen, Fähigkeiten, Erfahrungen, Werte und zukünftige Entscheidungen. Weiterzugehen löscht den Verlust nicht aus; es macht ihn zu einem Teil der Geschichte statt zur ganzen Geschichte.'],
+  ['love', 'Wie wende ich diese Lehre nach einer Trennung an?', 'Nach einer Trennung können Gedanken wie „Ich bin nicht liebenswert“ oder „Ich werde nie wieder lieben“ sehr überzeugend wirken, obwohl sie keine Tatsachen sind. Die Fünf der Kelche fordert dich auf, den Schmerz dieses Endes von deiner gesamten Zukunft zu trennen. Mit der Zeit kannst du erkennen, welche Beziehung nicht zu dir passt, was du anders machen möchtest und was du über deine eigenen Bedürfnisse gelernt hast.']
+],
+'pentacles-5': [
+  ['love', 'Welche Persönlichkeit beschreibt diese Karte?', 'Die Fünf der Münzen kann jemanden beschreiben, der ein tiefes Gefühl von Mangel oder Nicht-genug-Sein trägt. Dieses Gefühl kann mit schwieriger Kindheit, Ausgrenzung oder Instabilität zusammenhängen, doch eine Karte allein bestimmt seinen Ursprung nicht. Selbst wenn sich die äußeren Umstände verbessern, kann alte Unsicherheit das Verhalten weiter prägen, bis die Person sie erkennt und bearbeitet.'],
+  ['love', 'Welche Gefühle hat diese Person für mich?', 'Die Karte kann auf emotionales Mangelgefühl hinweisen: Jemand möchte Nähe, hat aber Angst, dass Liebe nie ausreicht oder Öffnung wieder zu Verlassenwerden führt. Gefühle können vorhanden sein, während Geben und Annehmen von Zuneigung schwerfallen. Diese Geschichte kann ein Muster erklären, entschuldigt aber kein verletzendes Verhalten; Heilung bleibt die Verantwortung der Person.'],
+  ['love', 'Sollte ich mit jemandem eine Beziehung beginnen, der diese Energie trägt?', 'Entscheide das nicht anhand der Karte allein. Frag, ob die Person ihre Schwierigkeiten erkennt, Verantwortung übernimmt und trotzdem Respekt, Verlässlichkeit und emotionale Sicherheit bieten kann. Jeder Mensch hat Wunden. Entscheidend ist nicht Unvollkommenheit, sondern ob ungelöste Muster die Beziehung wiederholt verletzen und die Person sich weigert, daran zu arbeiten.'],
+  ['love', 'Kann ich diese Person heilen?', 'Du kannst jemanden unterstützen, aber du kannst seine Heilung nicht für ihn erledigen. Du musst weder Retter noch Therapeutin oder Beweis für seine Liebenswürdigkeit werden. Ermutige passende Unterstützung, kommuniziere deine Grenzen und denk daran, dass die Person ihre Arbeit selbst wählen muss. Dasselbe gilt für dich: Andere können dich begleiten, aber deine innere Arbeit nicht übernehmen.'],
+  ['love', 'Wir streiten ständig. Soll ich diese Beziehung fortsetzen?', 'Wenn sich nichts verändert, wird dasselbe Muster wahrscheinlich dieselben Streitigkeiten hervorbringen. Frag dich, was dir fehlt und warum du dich immer wieder nicht erfüllt fühlst, und lade die andere Person in dasselbe Gespräch ein. Klare Worte sind freundlicher, als jemanden raten zu lassen und ihn später mit Schweigen zu bestrafen. Ob die Beziehung weitergeht, sollte davon abhängen, was passiert, nachdem beide das Problem verstanden haben.'],
+  ['career', 'Finde ich bald den Job, den ich möchte?', 'Die Karte deutet auf eine finanziell engere Phase oder auf eine Gelegenheit hin, die weniger zahlt als erhofft. Nimm das als Anlass, Ausgaben zu prüfen, deine Suche zu stärken und realistische Alternativen bereitzuhalten — nicht als garantierte Vorhersage einer finanziellen Krise.'],
+  ['career', 'Worauf sollte ich beruflich bald achten?', 'Achte auf Cashflow und Zahlungsfristen. Gehalt, Rechnungen, Projektzahlungen oder Budgets könnten knapper oder langsamer sein als erwartet. Prüf die Fakten früh und plane mit bestätigten Zahlen statt mit Annahmen.'],
+  ['other', 'Wie kann ich meine Reaktion kontrollieren?', 'Du kannst nicht alles kontrollieren, was andere tun, und das erste Gefühl entsteht oft automatisch. Beeinflussen kannst du, was danach passiert: welche Worte du wählst, was du tust und ob du dir vor der Reaktion ein paar Sekunden gibst. Wenn Ärger hochkommt, halt kurz inne und frag dich, welches Ergebnis du eigentlich willst, bevor du sprichst.']
+]
+});
+
+Object.assign(ASK.de, {
+'wands-6': [
+  ['love', 'Welche Persönlichkeit beschreibt diese Karte?', 'Die Sechs der Stäbe kann jemanden beschreiben, der stolz auf Erreichtes ist und manchmal etwas selbstzufrieden wirkt. Die umliegenden Karten sind wichtig. Zusammen mit einer starken Karte wie Der Sonne kann das Selbstvertrauen gut begründet sein: Die Person ist fähig, setzt sich Ziele und erreicht sie tatsächlich. Gesunder Stolz feiert Leistung; die Schattenseite beginnt, wenn Anerkennung ständig von anderen kommen muss.'],
+  ['love', 'Welche Gefühle hat diese Person für mich?', 'Diese Karte ist kein besonders klares Zeichen für emotionale Aufrichtigkeit. Die Person kann das Gefühl genießen, deine Aufmerksamkeit zu gewinnen oder bewundert zu werden. Das beweist nicht, dass die Gefühle unecht sind, aber frag dich, ob sie an dir als Mensch interessiert ist oder vor allem an der Bestätigung, gewählt zu werden. Zieh weitere Karten und beobachte, was passiert, wenn die „Eroberung“ vorbei ist.'],
+  ['love', 'Wir streiten. Soll ich mich trennen?', 'Die Sechs der Stäbe deutet darauf hin, dass Ego in den Konflikt geraten ist. Streit kann zu einem Wettkampf werden, bei dem jeder Punkte zählt, das letzte Wort braucht oder niemals nachgeben will. Bevor du an Trennung denkst, frag dich, ob du gerade die Beziehung oder deinen Stolz verteidigst. Wenn beide aufhören können zu gewinnen und zum eigentlichen Problem zurückkehren, kann sich die Dynamik verändern.'],
+  ['career', 'Ich bin arbeitslos. Finde ich bald eine Stelle?', 'Die Antwort tendiert zu Ja, mit einer Erinnerung: Den Job zu bekommen ist der Anfang und nicht die Ziellinie. Früher Erfolg kann in Nachlässigkeit kippen, wenn du nicht weiterlernst oder die Stelle für dauerhaft sicher hältst. Entwickle dich auch nach der Einstellung weiter, damit aus der Chance Stabilität wird und nicht nur ein kurzer Sieg.'],
+  ['career', 'Worauf sollte ich beruflich bald achten?', 'Du kannst Anerkennung für ein gelungenes Projekt bekommen oder eine kleine Führungsaufgabe übernehmen. Freu dich über den Erfolg, aber sieh ihn als Schritt und nicht als Beweis, dass du nichts mehr lernen musst. Mehr Sichtbarkeit bringt meist auch mehr Verantwortung.'],
+  ['other', 'Wie unterscheidet sich dieser Sieg vom Wagen und von der Sonne?', 'Als Deutungskonvention ist die Sechs der Stäbe eher ein kleinerer Meilenstein. Der Wagen kann Erfolg durch Disziplin, Antrieb und Opfer beschreiben, während Die Sonne für ein umfassenderes Gefühl von Erfolg und Klarheit steht. Denk bei der Sechs der Stäbe an ein starkes Ergebnis in einer Probeprüfung: Es darf gefeiert werden, ist aber noch nicht das Ende der ganzen Reise.'],
+  ['other', 'Wenn zwei Karten dasselbe Stichwort haben, welche ist stärker?', 'Eine verbreitete Tarot-Konvention gibt den Großen Arkana mehr übergeordnetes Gewicht als den Kleinen Arkana, während höhere Zahlen innerhalb der Kleinen Arkana weiter entwickelte Themen zeigen können. Behandle das als Leserahmen und nicht als Gesetz. Kontext, Kartenposition und reale Situation bleiben entscheidend.']
+],
+'swords-6': [
+  ['love', 'Welche Persönlichkeit beschreibt diese Karte?', 'Die Sechs der Schwerter sagt mehr darüber, was jemand gerade durchmacht, als über die gesamte Persönlichkeit. Die Person hat vielleicht selbst eine Beziehung, einen Job oder eine schwierige Situation verlassen und trägt emotional noch viel davon mit. Zieh weitere Karten, um zu sehen, ob sie sich bereits erholt oder noch stark in dieser Schwere steckt.'],
+  ['love', 'Welche Gefühle hat diese Person für mich?', 'Die Person kann sich gerade von der Verbindung entfernen. Vielleicht erlebt sie die Beziehung als zu schmerzhaft oder erschöpfend und möchte Abstand. Eine Karte allein sagt nicht, ob dieser Abstand vorübergehend, endgültig oder für euch beide richtig ist. Schau auf die umliegenden Karten und vor allem auf das tatsächliche Gespräch zwischen euch.'],
+  ['love', 'Was soll ich tun, wenn wir ständig streiten?', 'Die Sechs der Schwerter kann Abstand von einer Beziehung empfehlen, die immer wieder schmerzhaft geworden ist. Das muss nicht automatisch eine sofortige endgültige Trennung sein; es kann bedeuten, aus dem Konflikt herauszugehen, bis du klar entscheiden kannst. Bei Missbrauch, Drohungen oder Angst sollte Sicherheit und Unterstützung von außen Vorrang haben, statt eine Trennung wie ein Tarot-Experiment zu behandeln.'],
+  ['love', 'Was ist, wenn ich gehe und später wieder zurückkomme?', 'Nach dem Gehen zu etwas Vertrautem zurückzukehren ist häufig, besonders wenn Einsamkeit oder Unsicherheit schwerer wirken als das alte Muster. Bevor du zurückgehst, erinnere dich daran, warum du gegangen bist, und frag, was sich tatsächlich verändert hat. Vertrautheit ist nicht dasselbe wie Sicherheit oder Passung. Wenn du zurückkehrst, dann möglichst wegen echter Veränderung und nicht nur, weil das Unbekannte Angst macht.'],
+  ['career', 'Ich bin seit ein paar Monaten arbeitslos. Finde ich den Job, den ich möchte?', 'Die Sechs der Schwerter fordert dich auf, die Richtung zu prüfen, zu der du immer wieder zurückkehrst. Vielleicht bewirbst du dich nur in einem vertrauten Feld, das nicht mehr passt, oder jagst einer glänzenden Alternative nach, die nicht zu deinen echten Stärken passt. Die Karte empfiehlt einen überlegten Übergang: Was lässt du zurück, wohin gehst du, und welche Hinweise zeigen, dass die neue Richtung besser zu dir passt?'],
+  ['career', 'Was kann sich beruflich bald verändern?', 'Du bereitest dich vielleicht darauf vor, eine Stelle, ein Team oder einen Ort zu verlassen, auch wenn noch nichts Dramatisches passiert ist. Ein leises, anhaltendes Gefühl von Nicht-Passen kann bereits Aufmerksamkeit verdienen. Du musst nicht auf eine Krise warten, um Veränderung zu rechtfertigen. Erkunde Optionen, schütze deine Finanzen und geh bewusst, statt dich endlos zum Aushalten zu zwingen.']
+],
+'cups-6': [
+  ['other', 'Bedeutet diese Karte „der Ex kommt zurück“?', 'Im traditionellen Tarot ist keine einzelne Karte fest als „der Ex kommt zurück“ definiert. Manche Reader verwenden die Sechs der Kelche als persönliche Konvention dafür, und eigene Zuordnungen können sinnvoll sein, wenn sie konsequent geprüft werden. Beginne mit den breiteren Themen — Erinnerung, Vertrautheit, Unschuld und Vergangenheit — und lass den Kontext entscheiden, ob eine tatsächliche Rückkehr relevant ist.'],
+  ['other', 'Was ist dann die eigentliche Kernbedeutung dieser Karte?', 'Die Sechs der Kelche steht im Kern für Zärtlichkeit, Vertrautheit und eine einfache, aufrichtige Art von Zuneigung. Sie kann mit der Vergangenheit verbunden sein, muss aber nicht bedeuten, die Vergangenheit unverändert zu wiederholen. Kehrt eine alte Beziehung zurück, würde eine gesunde Deutung fragen, ob beide sich als veränderte Menschen neu begegnen können, statt dieselben alten Wunden wieder aufzubauen.'],
+  ['other', 'Ist eine Legung zuverlässig, wenn ich für mich selbst lese?', 'Selbstlegungen können hilfreich sein, doch Voreingenommenheit wird stärker, wenn du emotional sehr beteiligt bist. Wenn du dir verzweifelt wünschst, dass ein Ex zurückkommt, kann fast jede Karte wie eine Bestätigung aussehen. Halte Bedeutungen breit, schreib die Frage vor dem Ziehen auf und warte bei sehr aufgeladenen Themen eventuell, bis du ruhiger bist, oder bitte jemand anderen um eine zweite Sicht.'],
+  ['love', 'Welche Persönlichkeit beschreibt diese Karte?', 'Die Sechs der Kelche beschreibt jemanden, der sanft, aufrichtig und im besten Sinn ein wenig unschuldig ist. Die Zuneigung kann unkompliziert und frei von offensichtlicher Berechnung wirken. Vielleicht erinnert die Person an erste Liebe oder bringt eine weichere, jüngere Seite in dir hervor.'],
+  ['love', 'Wir streiten. Soll ich mich trennen?', 'Statt sofort zu beenden, fragt die Sechs der Kelche, ob die Beziehung Erneuerung braucht. Langjährige Paare verlieren manchmal kleine Gesten, Verspieltheit und Aufmerksamkeit, die sie früher verbunden haben. Greift etwas auf, das ihr früher gern zusammen gemacht habt, bringt bewusst etwas Romantik zurück und schaut, ob Wärme wiederkommt. Ist die Beziehung schädlich, sollte Nostalgie jedoch nichts entschuldigen.'],
+  ['career', 'Finde ich bald einen Job, der mir gefällt?', 'Die Antwort tendiert zu Ja, besonders zu Arbeit, die dir wirklich Freude macht. Kelche beschreiben emotionale Erfüllung klarer als Geld, Status oder Aufstieg. Zieh weitere Karten, wenn diese praktischen Details wichtig sind. Eine Arbeit zu lieben und gut bezahlt zu werden kann zusammengehen, aber das eine garantiert nicht automatisch das andere.'],
+  ['career', 'Was kann sich beruflich bald verändern?', 'Du scheinst weiterhin echte Freude an deiner aktuellen Arbeit zu haben, und dieses Gefühl kann anhalten. Die Sechs der Kelche kann die einfache Freude beschreiben, etwas zu tun, weil die Tätigkeit selbst dir noch immer Sinn oder Spaß gibt.']
+],
+'pentacles-6': [
+  ['love', 'Welche Persönlichkeit beschreibt diese Karte?', 'Die Sechs der Münzen beschreibt jemanden, der beim Geben und Nehmen praktisch denkt. Die Person hilft meist gern, achtet aber auch auf Balance, Ressourcen und darauf, ob Unterstützung nachhaltig ist. Manche empfinden das als berechnend, doch grenzenlose Großzügigkeit kann den Gebenden und Menschen, die von ihm abhängen, ebenfalls schaden. Die gesunde Form ist maßvolle Großzügigkeit statt Horten oder Alles-verschenken.'],
+  ['love', 'Welche Gefühle hat diese Person für mich?', 'Die Person kann sich um dich kümmern und gleichzeitig bewusst auf Gegenseitigkeit achten. Sie möchte Aufmerksamkeit, Respekt und Einsatz in beide Richtungen fließen sehen. Das ist nicht automatisch egoistisch oder geschäftsmäßig. Problematisch wird es erst, wenn Zuneigung benutzt wird, um Einfluss, Status oder Kontrolle zu kaufen. Schau, ob der Austausch freiwillig und gegenseitig ist.'],
+  ['love', 'Wir streiten. Soll ich mich trennen?', 'Bevor du entscheidest, fordert die Sechs der Münzen eine faire Betrachtung der ganzen Beziehung. Lass nicht eine kleine Irritation ein langes Muster von Fürsorge auslöschen, aber lass auch Geschenke oder gute Momente schweren Schaden nicht verdecken. Wiege ehrlich ab und achte auf Verhältnismäßigkeit.'],
+  ['love', 'Und wenn die Beziehung wirklich toxisch oder gewalttätig ist?', 'Dann ist die Bilanz nicht unklar. Geschenke, Entschuldigungen oder liebevolle Phasen heben Gewalt, Zwang, Drohungen oder schwere seelische Verletzungen nicht auf. Wenn du misshandelt wirst oder dich unsicher fühlst, hat Sicherheit Vorrang und du solltest Unterstützung suchen. Du schuldest niemandem dauerhaften Zugang zu dir, nur weil die Person auch nette Dinge getan hat.'],
+  ['career', 'Ich bin seit ein paar Monaten arbeitslos. Finde ich bald Arbeit?', 'Die Antwort tendiert zu Ja, möglicherweise durch Hilfe, eine Empfehlung oder eine Vorstellung über jemand anderen. Unterstützung anzunehmen ist in Ordnung. Erwartet die Person später eine vernünftige Gegenleistung, kannst du dann entscheiden, was angemessen ist. Hilfe sollte keine unbegrenzte Schuld erzeugen und dich nicht zu etwas Unethischem drängen.'],
+  ['career', 'Worauf sollte ich beruflich bald achten?', 'Du kannst Hilfe, Zugang oder eine Chance über jemand anderen bekommen. Kläre Erwartungen. Berufliche Gegenseitigkeit ist normal, aber Unterstützung sollte keine Geheimhaltung, unethischen Gefallen oder Verpflichtungen verlangen, denen du nie zugestimmt hast.']
+]
+});
+
+Object.assign(ASK.de, {
+'wands-7': [
+  ['love', 'Welche Persönlichkeit beschreibt diese Karte?', 'Die Sieben der Stäbe kann jemanden beschreiben, der oft in Abwehrhaltung ist. Die Person fühlt sich vielleicht schnell beobachtet, beurteilt oder gezwungen, sich zu schützen, und reagiert manchmal stark, bevor sie die Absicht des anderen wirklich verstanden hat. In der Schattenseite entstehen daraus unnötige Streitigkeiten und viel Energie für Kämpfe, die gar nicht nötig wären.'],
+  ['love', 'Welche Gefühle hat diese Person für mich?', 'Diese Karte zeigt nicht klar, wie stark die Gefühle für dich sind. Sie sagt mehr über den aktuellen Zustand der Person: angespannt, defensiv oder mit Verletzungen beschäftigt, die noch nicht verarbeitet sind. Entscheidend ist nicht, ob jemand Wunden hat, sondern ob er sie erkennt und Verantwortung für sein Verhalten übernimmt. Du bist nicht dafür verantwortlich, jemanden für ihn selbst zu heilen.'],
+  ['love', 'Wir streiten. Soll ich mich trennen?', 'Die Konflikte dieser Karte entstehen oft aus kleinen Dingen, die zu wiederkehrenden Kämpfen werden: späte Antworten, verpasste Anrufe, unterschiedliche Erwartungen oder Forderungen nach Veränderung, ohne das eigene Verhalten anzuschauen. Die Karte rät nicht automatisch zur Trennung. Verändere zuerst den Teil, für den du wirklich verantwortlich bist, und beobachte dann, ob die andere Person das sieht, wertschätzt und dir entgegenkommt. Bleibt alles einseitig, hast du eine klarere Grundlage für deine Entscheidung.'],
+  ['career', 'Finde ich bald einen Job?', 'Die Sieben der Stäbe lenkt den Blick darauf, wie du Zeit und Energie einsetzt. Vielleicht steckst du Kraft in Dinge, die die Suche kaum voranbringen, oder bewirbst dich in Richtungen, die nicht gut zu dir passen. Deine Ressourcen sind begrenzt: Bündele Bewerbungen, verbessere Schwachstellen und reserviere Zeit für Schritte, die deine Chancen tatsächlich erhöhen.'],
+  ['career', 'Was kann beruflich bald neu sein?', 'Es kann Spannungen, Gerede oder Büropolitik geben, und jemand versucht vielleicht, dich hineinzuziehen. Du entscheidest trotzdem selbst, ob du mitmachst. Schütze deine Energie, kommuniziere professionell und konzentriere dich auf die Arbeit, statt aus jedem Kommentar einen Kampf zu machen.'],
+  ['other', 'Gegen wen soll ich also kämpfen?', 'Diese Karte verlangt nicht, dass du gegen alle um dich herum kämpfst. Oft ist es hilfreicher, die eigenen Abwehrmuster, Annahmen und wiederkehrenden Konflikte zu erkennen. Wenn dieselbe Art von Problem dich von Arbeitsplatz zu Arbeitsplatz oder Beziehung zu Beziehung begleitet, löst ein Ortswechsel allein es vielleicht nicht. Frag, was du selbst verändern kannst, und behalte zugleich klare Grenzen gegenüber wirklich schädlichem Verhalten.']
+],
+'swords-7': [
+  ['love', 'Welche Persönlichkeit beschreibt diese Karte?', 'Die Sieben der Schwerter weist oft auf Heimlichkeit, Vermeidung oder Verhalten hin, das nicht völlig transparent ist. In der Schattenseite kann jemand Informationen zurückhalten, etwas anderes sagen als tun oder Umwege wählen, statt direkt zu sprechen. Die Karte bedeutet nicht automatisch Betrug oder Untreue; Kontext und umliegende Karten sind wichtig.'],
+  ['love', 'Welche Gefühle hat diese Person für mich?', 'Bei der Sieben der Schwerter sollte diese Frage eher in der Realität überprüft als aus Verdacht beantwortet werden. Die Person hält vielleicht einen Teil der Geschichte zurück, ist über ihre Situation unklar oder noch nicht bereit, völlig offen zu sein. Das bedeutet nicht automatisch, dass es eine dritte Person gibt. Wenn die Lage vage ist, frag direkt nach dem Beziehungsstatus und achte darauf, ob Worte und Handlungen zusammenpassen.'],
+  ['love', 'Wir streiten oft. Soll ich mich trennen?', 'Die Sieben der Schwerter deutet darauf hin, dass etwas Wichtiges nicht offen ausgesprochen wird. Das kann eine andere Person sein, Einfluss von Freunden oder Familie oder schlicht das Vermeiden eines ehrlichen Gesprächs. Bevor du entscheidest, finde heraus, was tatsächlich passiert, statt aus Andeutungen eine Antwort zu bauen. Werden Heimlichkeit, Lügen oder Manipulation bestätigt und ändern sich nicht, ist das ein reales Beziehungsproblem und nicht nur ein Tarot-Symbol.'],
+  ['career', 'Ich bin schon lange arbeitslos. Finde ich bald einen neuen Job?', 'Die Karte deutet auf einen verborgenen Faktor hin, der deine Jobsuche weniger wirksam macht. Das können entmutigende Stimmen anderer, eine ungeeignete Strategie oder ein Schritt sein, den du selbst vermeidest. Prüfe Lebenslauf, Bewerbungen, Vorstellungsgespräche und die Überzeugungen, die dein Selbstvertrauen beeinflussen, bevor du annimmst, jemand halte dich absichtlich zurück.'],
+  ['career', 'Passiert beruflich bald etwas Schwieriges?', 'Die Sieben der Schwerter kann vor mangelnder Transparenz warnen: Gerede, zurückgehaltene Informationen oder unfairer Wettbewerb. Nimm das als Anlass, aufmerksam zu bleiben, nicht als Vorhersage eines Verrats. Dokumentiere wichtige Arbeit, kommuniziere klar und stütze dich auf Fakten, bevor du jemandem schlechte Absichten unterstellst.'],
+  ['other', 'Was bedeutet emotionale Manipulation?', 'Emotionale Manipulation bedeutet, Gedanken, Gefühle oder Entscheidungen eines anderen Menschen zum eigenen Vorteil beeinflussen zu wollen, oft durch versteckte Absichten, Schuldgefühle, Verdrehungen oder Druck. Manipulative Menschen haben nicht automatisch eine hohe emotionale Intelligenz; manche sind lediglich gut darin, Reaktionen zu lesen. Ein Warnzeichen ist, wenn du dich wiederholt gedrängt fühlst, an deiner eigenen Wahrnehmung zweifelst oder für ein Nein emotional bestraft wirst.']
+],
+'cups-7': [
+  ['other', 'Was ist die Kernbedeutung dieser Karte?', 'Die Sieben der Kelche steht für viele Möglichkeiten, ohne dass eine davon wirklich zufriedenstellt. Das Bild unterstützt diese Bedeutung: Mehrere Kelche erscheinen in einer Wolke, aber nicht jede Option ist greifbar, sinnvoll oder überhaupt realistisch. Die Karte fordert dich auf, Fantasie von Entscheidungen zu trennen, mit denen du tatsächlich leben würdest.'],
+  ['other', 'Wie unterscheidet sich diese Karte von den Liebenden und der Zwei der Schwerter?', 'Alle drei können Unsicherheit zeigen, aber aus unterschiedlichen Gründen. Die Liebenden können eine bedeutende Wahl zwischen Werten oder Wegen darstellen. Die Zwei der Schwerter zeigt Zögern, weil eine Entscheidung blockiert oder schwierig wirkt. Die Sieben der Kelche ist Überforderung durch zu viele Optionen, Vorstellungen oder Möglichkeiten, ohne klare Präferenz.'],
+  ['other', 'Kannst du ein leicht merkbares Beispiel geben?', 'Stell dir jemanden vor, der ein Studienfach wählen muss. Mehrere Wege stehen offen, aber keiner fühlt sich wirklich wie der eigene an: Einer gefällt der Familie, einer wirkt praktisch und einer passt zu einem alten Hobby, das nicht zum Beruf werden soll. Viele Türen sind offen, doch keine überzeugt. Das ist die Sieben der Kelche: Möglichkeiten sind nicht dasselbe wie Klarheit.'],
+  ['love', 'Welche Persönlichkeit beschreibt diese Karte?', 'Diese Karte kann jemanden beschreiben, der sich schwer entscheidet und zu viele Möglichkeiten zu lange offenhält. Vielleicht lässt die Person andere entscheiden, weil eine eigene Festlegung riskant wirkt. Rat anzunehmen ist nicht das Problem; problematisch wird es, nach der Entscheidung eines anderen zu leben und sie später übelzunehmen. Die Lektion lautet, bewusst zu wählen und Verantwortung für die Wahl zu übernehmen.'],
+  ['love', 'Welche Gefühle hat diese Person für mich?', 'Die Sieben der Kelche zeigt eher Unklarheit als feste Bindung. Die Person erkundet vielleicht noch, was sie will, idealisiert Möglichkeiten oder hält mehrere Optionen gedanklich offen. Das beweist nicht, dass du „nur eine von vielen“ bist, aber Klarheit fehlt. Achte darauf, ob sie bereit ist, sich zu entscheiden, offen zu kommunizieren und verlässlich da zu sein.'],
+  ['love', 'Wir streiten. Soll ich mich trennen?', 'Diese Karte gibt kein einfaches Ja oder Nein. Sie zeigt Verwirrung, Unzufriedenheit oder den Blick auf vorgestellte Alternativen. Einer von euch oder beide fragen sich vielleicht, ob etwas anderes besser wäre. Bevor ihr beendet, benennt, was tatsächlich fehlt, und fragt euch, ob ihr noch gemeinsam daran arbeiten wollt.']
+],
+'pentacles-7': [
+  ['other', 'Was ist die Kernbedeutung dieser Karte?', 'Die Sieben der Münzen steht für Geduld, stetige Arbeit und die Prüfung dessen, was die eigene Mühe hervorbringt. Sie kann entweder sagen: „Bleib dran, das Ergebnis braucht Zeit“ oder: „Halt kurz inne und prüfe, ob sich dieser Einsatz noch lohnt.“ Frage und umliegende Karten entscheiden über die Nuance.'],
+  ['love', 'Welche Persönlichkeit beschreibt diese Karte?', 'Das ist ein geduldiger, ausdauernder Mensch, der lange bei einem Prozess bleiben kann. Die Schattenseite ist so viel Vorsicht, dass Entscheidungen langsam oder zu passiv werden, besonders wenn eine Situation rechtzeitiges Handeln verlangt.'],
+  ['love', 'Welche Gefühle hat diese Person für mich?', 'Die Antwort tendiert positiv. Die Sieben der Münzen zeigt Gefühle, die sich eher langsam aufgebaut haben als plötzlich entstanden sind. Diese Person hat vielleicht Zeit, Aufmerksamkeit und Geduld investiert und möchte sehen, ob aus dem Gepflegten etwas Dauerhaftes wachsen kann.'],
+  ['love', 'Wir streiten. Soll ich mich trennen?', 'Diese Karte lenkt zuerst auf Geduld und langfristige Pflege. In einer langen Beziehung kann die Leichtigkeit des Anfangs nachlassen, und beide werden weniger tolerant gegenüber den Gewohnheiten des anderen. Bevor du gehst, frag, ob es echte Unvereinbarkeit ist oder ob ihr beide aufgehört habt, die Beziehung mit derselben Sorgfalt zu pflegen.'],
+  ['love', 'Was soll ich tun, wenn die andere Person sich nicht ändern kann?', 'Manche Eigenschaften verändern sich langsam, andere vielleicht nie so, wie du es hoffst. Gib vernünftig Zeit, wenn Veränderung wirklich möglich ist, aber verwandle Geduld nicht in endloses Warten. Frag, was du tatsächlich brauchst, ob die andere Person diese Veränderung auch für sich selbst will und ob die Beziehung noch funktioniert, wenn dieser Punkt bleibt.'],
+  ['career', 'Finde ich bald einen Job, der zu mir passt?', 'Die Antwort tendiert zu Ja, aber wahrscheinlich nicht sofort. Die Mühe, die du in Suche, Lernen und Weiterentwicklung gesteckt hast, kann sich auszahlen. Bleib dran und prüfe zugleich, welche Schritte Ergebnisse bringen und welche angepasst werden sollten.'],
+  ['career', 'Wie entwickelt sich meine Arbeit in nächster Zeit?', 'Die Sieben der Münzen verspricht eher schrittweisen als plötzlichen Fortschritt. Sie ist keine Karte mühelosen Glücks, sondern der Ertrag beständiger Arbeit. Wartest du auf Beförderung oder Wachstum, rechne mit Zeit und sammle weiter Belege dafür, dass du bereit bist.'],
+  ['other', 'Warum muss ich so geduldig sein?', 'Die Sieben der Münzen handelt von Beständigkeit statt von einem kurzen Kraftschub. Das Bild einer gepflegten Pflanze ist hilfreich: Manche Ergebnisse brauchen Wochen oder Monate, bevor man sie klar sieht. Bei Gewohnheiten ist es ähnlich; es gibt keine feste Zahl von Tagen, die für alle gilt. Wichtig ist, das Verhalten lange genug zu wiederholen und die Methode bei Bedarf anzupassen.']
+]
+});
+
+Object.assign(ASK.de, {
+'wands-8': [
+  ['other', 'Was ist die Kernbedeutung dieser Karte?', 'Die Acht der Stäbe hat zwei Hauptthemen, die beide aus den fliegenden Stäben im Bild kommen: Geschwindigkeit und Bewegung. Etwas kann sich schnell entwickeln, oder Entfernung und Reisen werden wichtig. Anders als Die Welt, die oft einen größeren Abschluss oder weiteren Horizont zeigt, kann die Acht der Stäbe Bewegung in jeder Größenordnung beschreiben. Die Karte ist neutral: Manchmal hilft Tempo, manchmal ist es der Grund, langsamer zu werden.'],
+  ['love', 'Welche Persönlichkeit beschreibt diese Karte?', 'Diese Karte kann jemanden beschreiben, der schnell denkt, spricht und handelt. Die Person erledigt vielleicht gern mehrere Dinge gleichzeitig, weil sie Schwung mag. Die Schattenseite ist Hast: Tempo kann vermeidbare Fehler, übersehene Details und Entscheidungen erzeugen, bevor genug Informationen da sind. Die Lektion ist nicht, langsam zu werden, sondern zu wissen, wann Tempo nützt und wann Fokus wichtiger ist.'],
+  ['love', 'Welche Gefühle hat diese Person für mich?', 'Die Gefühle können schnell und intensiv entstanden sein, doch Geschwindigkeit sagt nichts darüber aus, ob sie bleiben. Ihr seid vielleicht von Neuheit oder von einem Bild fasziniert, das ihr euch voneinander gemacht habt. Gebt der Verbindung genug Zeit, damit sich zeigt, ob zur Anziehung auch echtes Verstehen, Beständigkeit und Verbindlichkeit kommen.'],
+  ['love', 'Wir streiten. Soll ich mich trennen?', 'Die Acht der Stäbe spricht eher von Tempo und schnellen Reaktionen als von einer Trennung. Vielleicht zieht ihr aus kleinen Zeichen vorschnelle Schlüsse, sprecht, bevor ihr zuhört, oder steigert euch hinein, bevor klar ist, was wirklich passiert ist. Verlangsamt das Gespräch, fragt direkt nach und trennt Tatsachen von Annahmen, bevor ihr im Affekt eine dauerhafte Entscheidung trefft.'],
+  ['career', 'Ich bin arbeitslos. Finde ich bald einen Job?', 'Die Antwort tendiert zu Ja, und die Karte bringt zwei mögliche Themen mit. Nachrichten können schnell kommen, und die Chance kann Bewegung verlangen: ein anderer Ort, ein längerer Arbeitsweg, häufiges Reisen oder eine Tätigkeit, bei der du viel unterwegs bist. Behandle die Zeitangabe symbolisch und nicht als Garantie für eine bestimmte Zahl von Tagen.'],
+  ['career', 'Worauf sollte ich beruflich bald achten?', 'Etwas kann sich schnell entwickeln, also sei bereit zu reagieren, ohne vorschnell zu urteilen. Die Karte kann auch Bewegung im Beruf anzeigen: Dienstreise, Versetzung, neues Team oder schlicht eine Veränderung darin, wo und wie du arbeitest. Zieh weitere Karten, wenn du wissen willst, ob die Veränderung eher hilfreich oder schwierig ist.']
+],
+'swords-8': [
+  ['other', 'Was ist die Kernbedeutung dieser Karte?', 'Die Acht der Schwerter ist das Gefühl, festzustecken, eingeschränkt zu sein oder keine Wahl zu haben. Im Bild sind die Fesseln locker und die Schwerter schließen den Weg nicht vollständig. Deshalb fragt die Karte oft, ob Angst oder Annahmen die Lage fester erscheinen lassen, als sie ist. Sie behauptet nicht, jedes Hindernis sei eingebildet; sie fragt, wo noch Bewegung möglich ist.'],
+  ['other', 'Wer hat diese Person also gefesselt?', 'Die Acht der Schwerter weist oft auf Überzeugungen hin, die eine ohnehin schwierige Lage noch enger wirken lassen. Manchmal liegt die Barriere im Inneren, doch äußere Grenzen können ebenfalls real sein. Die Karte fordert keine Selbstbeschuldigung. Frag, welchen Teil du beeinflussen kannst, wo du Unterstützung oder Ressourcen brauchst und welcher kleine Schritt dir wieder etwas Wahlfreiheit gibt.'],
+  ['love', 'Welche Persönlichkeit beschreibt diese Karte?', 'Diese Karte kann jemanden beschreiben, der sich leicht sorgt und in begrenzenden Gedanken festhängt. Unter Stress sieht die Person Risiken oft vor Möglichkeiten und glaubt schwer daran, überhaupt eine Wahl zu haben. Das ist ein veränderbarer Zustand und keine feste Definition eines Menschen.'],
+  ['love', 'Welche Gefühle hat diese Person für mich?', 'Die Antwort kann darauf hindeuten, dass Gefühle vorhanden sind, während die Person sich selbst zurückhält. Angst, alte Verletzungen, Unsicherheit oder die Überzeugung, dass es nicht funktionieren kann, können stärker sein als die Bereitschaft zu handeln. Entscheidend ist, ob sie diese Ängste erkennt und darüber spricht, statt dich immer wieder wegzustoßen.'],
+  ['love', 'Wir streiten. Soll ich mich trennen?', 'Die Karte sagt nicht, dass ihr euch trennen müsst. Sie betont das Gefühl von Ausweglosigkeit und wie ängstliche Gedanken ein Problem hoffnungsloser erscheinen lassen können, als es ist. Trenne Wissen von Vermutung und schau sowohl auf deinen Anteil als auch auf reale Grenzen der anderen Person. Gibt es Kontrolle, Drohungen oder Gewalt, ist das nicht nur eine Frage der Perspektive; Sicherheit und Unterstützung von außen gehen vor.'],
+  ['love', 'Kannst du ein Beispiel für einen Perspektivwechsel geben?', 'Stell dir vor, ein Kollege sagt etwas Unfreundliches über dich. Du könntest dich endlos fragen, was du falsch gemacht hast, oder zurückschlagen und den Konflikt vergrößern. Eine andere Reaktion ist, die Fakten zu prüfen, zu entscheiden, ob eine klare Grenze nötig ist oder ob der Kommentar keine weitere Energie verdient, und dann zum Wesentlichen zurückzukehren. Perspektivwechsel heißt nicht, Schaden schönzureden, sondern eine Reaktion zu wählen, die dich nicht im selben Konflikt festhält.'],
+  ['career', 'Finde ich bald einen neuen Job?', 'Die Karte deutet darauf hin, dass die Suche noch blockiert wirken kann, ohne dass die Ursache vollständig bei dir liegt. Vielleicht schließt du dich wegen mangelnden Selbstvertrauens selbst aus guten Stellen aus, während Markt oder Lebensumstände ebenfalls schwierig sind. Prüfe Jobs, die du automatisch verwirfst, hol dir Feedback zu Bewerbungen und erweitere die Suche dort, wo es sinnvoll ist.'],
+  ['career', 'Worauf sollte ich beruflich bald achten?', 'Etwas bei der Arbeit kann dich eingeengt fühlen lassen, auch wenn kein dramatisches Ereignis passiert. Frag, ob es eine echte strukturelle Grenze, eine schwierige Beziehung oder die Überzeugung ist, keine Alternative zu haben. Die Art der Einschränkung zu benennen ist wichtig, weil jede eine andere Antwort braucht: Gespräch, Grenze, praktischen Plan oder Richtungswechsel.']
+],
+'cups-8': [
+  ['other', 'Was ist die Kernbedeutung dieser Karte?', 'Die Acht der Kelche bedeutet, etwas zu verlassen, das noch Wert haben kann, weil dein Weg woanders weitergeht. Du musst einen Ort, Menschen oder Lebensabschnitt nicht hassen, um ihm entwachsen zu sein. Die Karte trägt Traurigkeit und Entschlossenheit zugleich: Du kannst das Gute würdigen und trotzdem wissen, dass es Zeit ist weiterzugehen.'],
+  ['love', 'Welche Persönlichkeit beschreibt diese Karte?', 'Die Acht der Kelche lässt sich besser als Lebensphase denn als feste Persönlichkeit lesen. Die Person hat vielleicht kürzlich etwas Wichtiges zurückgelassen, um einen anderen Weg zu beginnen. Eine solche Entscheidung kann gleichzeitig Traurigkeit, Erleichterung und Unsicherheit bringen und noch beeinflussen, wie sie heute Beziehungen erlebt.'],
+  ['love', 'Sind die Gefühle dieser Person für mich ehrlich?', 'Die Gefühle können echt sein, während die Person gerade einem Weg folgt, der wenig Raum für die Beziehung lässt. Sie kann dich mögen und sich trotzdem wegen Entfernung, Timing oder einer anderen Lebensrichtung gegen einen Anfang oder eine Fortsetzung entscheiden. Gefühle und Verfügbarkeit sind nicht dasselbe.'],
+  ['love', 'Wir streiten. Soll ich mich trennen?', 'Die Acht der Kelche zeigt, dass mindestens eine Person ernsthaft ans Gehen denkt oder eine andere Lebensrichtung braucht. Dadurch wird eine Trennung wahrscheinlicher, aber nicht unvermeidlich. Sprecht offen darüber, was jeder von euch will, was ihr noch gemeinsam aufbauen könnt und welche Unterschiede vielleicht zu groß geworden sind.'],
+  ['career', 'Ich bin seit drei Monaten arbeitslos. Finde ich einen Job, der zu mir passt?', 'Diese Karte fragt, was du möglicherweise loslassen musst, damit die Suche weitergeht. Vielleicht begrenzt du dich auf ein Feld, weil du bereits Jahre hineingesteckt hast, obwohl es nicht mehr passt. Vergangene Mühe ist nicht verschwendet, nur weil du die Richtung änderst. Überleg, welche Fähigkeiten du in eine andere Art von Arbeit mitnehmen kannst.']
+],
+'pentacles-8': [
+  ['other', 'Was ist die Kernbedeutung dieser Karte?', 'Die Acht der Münzen steht für Handwerk: sorgfältige Arbeit, Wiederholung, Geduld und Liebe zum Detail. Die Person im Bild verbessert Stück für Stück. Die Karte bevorzugt Übung und Beständigkeit gegenüber Abkürzungen.'],
+  ['love', 'Welche Persönlichkeit beschreibt diese Karte?', 'Das ist ein fleißiger, detailorientierter und oft perfektionistischer Mensch. Die Person arbeitet vielleicht sehr gut allein und ist stolz darauf, Dinge ordentlich zu machen. Die Schattenseite ist, Fehler so genau zu betrachten, dass das Gesamtbild verloren geht oder das bereits Gute kaum noch genossen werden kann.'],
+  ['love', 'Welche Gefühle hat diese Person für mich?', 'Die Antwort tendiert positiv, aber diese Person analysiert genau, bevor sie weitergeht. Vielleicht denkt sie über praktische Passung, Gewohnheiten und die langfristige Zukunft nach, statt nur der Anziehung zu folgen. Sorgfalt kann hilfreich sein; wird daraus das Prüfen jedes Mangels, bekommt die Beziehung kaum Raum, sich natürlich zu entwickeln.'],
+  ['love', 'Wir streiten. Soll ich mich trennen?', 'Der Konflikt kann entstehen, weil einer von euch oder beide kleine Fehler stärker sehen als das, was der andere beiträgt. Kleine Gewohnheiten, Verhalten in sozialen Medien oder harmlose Details werden dann zum Symbol einer größeren Sorge. Sprecht über das eigentliche Bedürfnis unter der Kritik, statt euch gegenseitig ständig bei Kleinigkeiten zu kontrollieren.'],
+  ['career', 'Finde ich bald einen Job?', 'Die Antwort tendiert zu Ja, besonders bei Arbeit, die Können, Konzentration und sorgfältige Wiederholung belohnt. Die Tätigkeit kann eigenständiges Arbeiten, Zahlen, Handwerk, Analyse oder jeden Prozess umfassen, bei dem Qualität durch Übung wächst. Buchhaltung und Prüfung sind Beispiele, aber die Karte ist nicht darauf beschränkt.'],
+  ['career', 'Verändert sich beruflich bald etwas?', 'Die Acht der Münzen zeigt meist Fortsetzung statt plötzlichen Wandel. Dein Fortschritt entsteht, indem du die Arbeit Stück für Stück verbesserst. Wenn du müde bist, ruh dich aus und passe das Tempo an, aber verwechsle das Fehlen eines dramatischen Durchbruchs nicht mit fehlendem Fortschritt.']
+]
+});
+
+Object.assign(ASK.de, {
+'wands-9': [
+  ['love', 'Welche Persönlichkeit beschreibt diese Karte?', 'Die Neun der Stäbe beschreibt einen widerstandsfähigen Menschen, der schon genug Schwierigkeiten erlebt hat, um vorsichtiger zu sein. Die Person gibt nicht leicht auf, doch Stärke kann in ständige Erwartung des nächsten Problems kippen. Ihre Kraft ist Ausdauer; ihre Lektion ist zu erkennen, wann weiteres Durchhalten sinnvoll ist und wann Ruhe oder ein anderer Weg besser wäre.'],
+  ['love', 'Welche Gefühle hat diese Person für mich?', 'Eine einzelne Neun der Stäbe reicht nicht für ein klares Ja oder Nein. Gefühle können vorhanden sein, während etwas die Person vorsichtig macht: aktueller Druck, frühere Enttäuschung oder Angst vor neuer Verletzung. Zieh weitere Karten, wenn du zwischen echtem Interesse, Vorsicht und emotionaler Nicht-Verfügbarkeit unterscheiden möchtest.'],
+  ['love', 'Warum bittet die Person mich zu warten?', 'Die Neun der Stäbe kann zeigen, dass die Person dich mag, aber langsam vorgeht, weil sie andere Belastungen trägt oder vergangene Verletzungen vorsichtiger gemacht haben. Wenn du wartest, sollte das Tempo auch für dich passen. Geduld bedeutet nicht, die eigenen Bedürfnisse unbegrenzt auf Eis zu legen.'],
+  ['love', 'Wir streiten. Soll ich mich trennen?', 'Diese Karte kann eine Beziehung beschreiben, die von Anfang an mehr Kraft verlangt hat, etwa wegen Entfernung, Familiendruck, kultureller Unterschiede oder wiederkehrender Belastungen. Sie entscheidet die Trennung nicht für dich. Frag, ob ihr noch auf derselben Seite arbeitet und ob die Mühe etwas Gesünderes aufbaut, statt „niemals aufgeben“ als Regel für jede Beziehung zu benutzen.'],
+  ['career', 'Ich suche Arbeit. Wie wird die Suche weitergehen?', 'Vielleicht hast du schon mehrere Absagen erlebt, doch die Neun der Stäbe bittet dich, sie nicht als Beweis dafür zu sehen, dass nichts funktionieren wird. Mach weiter und lerne aus jedem Versuch. Ausdauer ist am hilfreichsten, wenn sie Anpassung einschließt: Lebenslauf verbessern, Gespräche üben und die Strategie ändern, wenn die Ergebnisse dafür sprechen.'],
+  ['career', 'Worauf sollte ich beruflich bald achten?', 'Es kann ein lösbares, aber ermüdendes Hindernis auftauchen: eine schwierige Aufgabe, Verzögerung oder ein wiederkehrendes Problem. Die Karte steht für Ausdauer, nicht für Märtyrertum. Wenn dasselbe Thema immer wiederkommt, geh an die Ursache oder hol Hilfe, statt nur erneut zu beweisen, dass du es aushältst.'],
+  ['other', 'Welche Lehre trägt diese Karte?', 'Die Neun der Stäbe lehrt Ausdauer nach Schwierigkeiten. Es ist der Moment, in dem du müde bist, aber nicht unbedingt am Ende. Die tiefere Lektion ist, Ausdauer von Sturheit zu unterscheiden: Geh weiter, wenn das Ziel noch wichtig und der Weg tragbar ist, aber bleib nicht nur deshalb auf einem schädlichen Weg, weil du schon weit gekommen bist.']
+],
+'swords-9': [
+  ['love', 'Welche Persönlichkeit beschreibt diese Karte?', 'Die Neun der Schwerter spricht eher über einen seelischen Zustand als über eine feste Persönlichkeit. Jemand kann ängstlich sein, schlecht schlafen, sich selbst Vorwürfe machen oder alles durch eine sehr schwere Brille sehen. Wenn der Kopf überlastet ist, kann es sich anfühlen, als würde niemand verstehen und es gäbe keinen Ausweg, obwohl Unterstützung und Möglichkeiten noch vorhanden sind.'],
+  ['love', 'Sollte ich jemanden daten, der diese Energie trägt?', 'Entscheide nicht anhand einer Karte, ob du jemanden lieben solltest. Wenn die Person gerade unter Angst oder emotionalem Schmerz leidet, schau darauf, ob sie das erkennt, passende Unterstützung sucht und deine Grenzen trotzdem respektiert. Du kannst jemanden lieben, ohne für seine psychische Gesundheit verantwortlich zu werden.'],
+  ['love', 'Wir streiten viel. Soll ich mich trennen?', 'Die Neun der Schwerter zeigt, dass der Konflikt emotional sehr erschöpfend geworden ist. Einer von euch oder beide stecken vielleicht in Angst, Eifersucht, Groll oder wiederholten Forderungen fest, der andere müsse sich ändern. Die Karte garantiert weder Reparatur noch Scheitern. Entscheidend ist, ob beide Verantwortung übernehmen, sicher kommunizieren und das Muster tatsächlich verändern statt nur Versprechen zu machen.'],
+  ['love', 'Was soll ich in dieser Situation tun?', 'Such nach einer Lösung, die gegenseitig ist und nicht nur von einer Seite getragen wird. Du kannst den ersten ruhigen Schritt machen, aber eine Beziehung lässt sich nicht reparieren, wenn eine Person ständig nachgibt und die andere nichts verändert. Verursacht die Dynamik anhaltende Angst, Erniedrigung oder seelischen Schaden, darfst du Abstand nehmen und Unterstützung suchen.'],
+  ['career', 'Ich bin schon lange arbeitslos. Finde ich bald einen Job?', 'Die Neun der Schwerter zeigt, wie belastend die Suche geworden ist. Nach mehreren Absagen gehst du vielleicht schon mit der Erwartung des Scheiterns ins Gespräch, und das kann dein Auftreten beeinflussen. Es geht nicht darum, dass eine „niedrige Frequenz Misserfolg anzieht“. Konzentriere dich auf Beeinflussbares: Vorbereitung, Übung, Feedback, Schlaf und psychisches Wohlbefinden während der Suche.'],
+  ['career', 'Worauf sollte ich beruflich bald achten?', 'Die Arbeit kann Sorgen verstärken, doch trenne die Ursache sorgfältig. Ist der Job selbst unverhältnismäßig belastend, sind Erwartungen unklar, oder reagierst du auf normales Feedback besonders stark, weil du bereits erschöpft bist? Die Antwort kann eine Grenze, ein Gespräch, bessere Systeme, Erholung oder ein anderer Job sein. Unterstelle nicht jeder Kritik Verfolgung, aber rede einen wirklich ungesunden Arbeitsplatz auch nicht klein.'],
+  ['other', 'Wie ist eine Legung für jemanden mit dieser Energie?', 'Eine Legung mit einer sehr ängstlichen oder belasteten Person kann emotional ermüden, besonders wenn du lange konzentriert zuhörst und mitfühlst. Setz Zeitgrenzen, mach Pausen zwischen Legungen und erinnere dich daran, dass du die Gefühle eines anderen nach dem Termin nicht weitertragen musst.']
+],
+'cups-9': [
+  ['other', 'Was ist die Kernbedeutung dieser Karte?', 'Die Neun der Kelche steht für Zufriedenheit: das Vorhandene genießen und spüren, dass etwas gut gelaufen ist. Ihre Schattenseite ist Selbstzufriedenheit — ein gutes Ergebnis so zu behandeln, als gäbe es nichts mehr zu lernen oder zu verbessern. Die Karte lädt dazu ein, den Erfolg zu genießen, ohne Bequemlichkeit in Stillstand kippen zu lassen.'],
+  ['other', 'Kannst du ein Beispiel geben?', 'Stell dir vor, jemand erzielt in einer Probeprüfung ein hervorragendes Ergebnis. Die Neun der Kelche passt zur Freude und zum Selbstvertrauen danach. Die Warnung ist, aus einem guten Übungsergebnis eine Garantie für die Abschlussprüfung zu machen. Feier den Erfolg und behalte dann die Gewohnheiten bei, die ihn möglich gemacht haben.'],
+  ['love', 'Welche Persönlichkeit beschreibt diese Karte?', 'Diese Karte kann jemanden beschreiben, der optimistisch ist, Genuss mag und sich in seiner Haut wohlfühlt. In der Schattenseite wird Selbstvertrauen zu Selbstgefälligkeit oder dem Bedürfnis nach Bewunderung. Achte darauf, ob die Person den eigenen Erfolg genießen kann, ohne andere kleiner zu machen.'],
+  ['love', 'Welche Gefühle hat diese Person für mich?', 'Die Antwort kann positiv ausfallen, doch die Neun der Kelche fragt, ob die Person die Beziehung selbst schätzt oder vor allem die Aufmerksamkeit und Befriedigung genießt, die sie daraus bekommt. Anziehung und Freude können echt und trotzdem selbstbezogen sein. Beobachte, was passiert, wenn sie dich nicht mehr „gewinnen“ muss: Bleiben Fürsorge, Respekt und Einsatz?'],
+  ['love', 'Wir streiten. Wie sollen wir damit umgehen?', 'Stolz kann den Streit am Leben halten. Jeder fühlt sich vielleicht zu sicher, im Recht zu sein, um zuerst zuzuhören oder sich zu entschuldigen. Die Neun der Kelche fordert euch auf, die Beziehung höher zu gewichten als die Befriedigung, den Streit zu gewinnen. Wenn das Thema wichtig ist, sprecht über das eigentliche Bedürfnis darunter.'],
+  ['career', 'Finde ich bald einen Job, der mir gefällt?', 'Die Neun der Kelche empfiehlt zu prüfen, ob deine Erwartungen zu Erfahrung, Markt und deinen tatsächlichen Prioritäten passen. Das bedeutet nicht, dass du dich „zu hoch einschätzt“. Behalte Standards, die dir wichtig sind, und finde gleichzeitig heraus, wo du flexibel genug sein kannst, um mehr Möglichkeiten zu öffnen.'],
+  ['career', 'Worauf sollte ich beruflich bald achten?', 'Die Dinge können gut laufen, und genau deshalb ist Selbstzufriedenheit die Warnung. Freu dich über Anerkennung, ohne anzunehmen, du hättest nichts mehr zu lernen. Stell weiter Fragen, entwickle dein Können und achte darauf, was die nächste Stufe verlangt.']
+],
+'pentacles-9': [
+  ['other', 'Was ist die Kernbedeutung dieser Karte?', 'Die Neun der Münzen steht für materielle Unabhängigkeit, Komfort und das Genießen eines Lebens, das du dir aufgebaut hast. Sie bewertet nicht, ob jemand einfache oder teure Freuden bevorzugt. Wichtig ist, das Eigene schätzen zu können, ohne dass ein anderer Mensch das Gefühl von Sicherheit liefern muss.'],
+  ['love', 'Welche Persönlichkeit beschreibt diese Karte?', 'Diese Person schätzt Komfort, Unabhängigkeit und ein Leben, das sich wirklich wie das eigene anfühlt. Sie genießt vielleicht Besitz, gutes Essen, ein ruhiges Zuhause oder schlicht die Freiheit, selbst zu entscheiden. Die gesunde Form ist Selbstständigkeit; die Schattenseite ist so viel Eigenständigkeit, dass Partnerschaft wie ein Eindringen wirkt.'],
+  ['love', 'Welche Gefühle hat diese Person für mich?', 'Die Neun der Münzen zeigt jemanden, der Unabhängigkeit und die eigene Welt sehr schätzt. Die Person kann Gefühle für dich haben und trotzdem viel Raum brauchen oder nicht jedes Lebensgebiet in die Beziehung integrieren wollen. Achte darauf, ob Eigenständigkeit mit gegenseitiger Fürsorge und Geben verbunden bleibt oder in Distanz und einseitiges Nehmen kippt.'],
+  ['love', 'Wir streiten. Müssen wir uns trennen?', 'Die Spannung kann aus unterschiedlichen Bedürfnissen nach Unabhängigkeit und Nähe entstehen. Eine Person möchte vielleicht mehr gemeinsame Zeit und Verbindlichkeit, während die andere ihr starkes Privatleben schützt. Keines der Bedürfnisse ist automatisch falsch. Die Frage ist, ob ihr eine Balance findet, in der sich beide umsorgt fühlen, ohne kontrolliert oder vernachlässigt zu werden.'],
+  ['career', 'Finde ich bald einen neuen Job?', 'Die Antwort tendiert positiv, besonders bei Arbeit, die deine finanzielle Unabhängigkeit stärkt oder dir mehr Kontrolle über dein Leben gibt. Behandle die Karte nicht als Luxus-Garantie; beurteile anhand von Angebot, Gehalt und Bedingungen, ob die Stelle wirklich die Stabilität bietet, die du brauchst.'],
+  ['career', 'Wie hoch wird das Gehalt genau sein?', 'Tarot kann keine verlässliche Gehaltszahl nennen. Die Neun der Münzen steht für Komfort, Unabhängigkeit und materielle Auskömmlichkeit. Ob ein Angebot wirklich gut ist, solltest du mit Markt, Lebenshaltungskosten, Erfahrung und deinen realen finanziellen Zielen vergleichen.'],
+  ['career', 'Wie wird meine Arbeit in nächster Zeit laufen?', 'Die Arbeit kann stabil genug bleiben, um ein angenehmes Leben zu tragen, doch die Karte fragt auch, ob du Zeit hast, das Verdiente zu genießen. Mehr Einkommen ist nicht automatisch ein besseres Leben, wenn der Job jede Stunde verbraucht. Betrachte Geld, Freiheit, Zeit und Wohlbefinden gemeinsam.']
+]
+});
+
+Object.assign(ASK.de, {
+'wands-10': [
+  ['love', 'Welche Persönlichkeit beschreibt diese Karte?', 'Die Zehn der Stäbe beschreibt oft jemanden, der zu viele Verantwortungen trägt. Die Person sagt vielleicht schwer Nein, ist daran gewöhnt, alles selbst zu machen, oder hat Mühe mit Prioritäten. Manchmal kommt die Last tatsächlich aus den Umständen und ist nicht selbst geschaffen. Die hilfreiche Frage lautet: Was ist notwendig, was kann geteilt werden und was darf abgelegt werden?'],
+  ['love', 'Welche Gefühle hat diese Person für mich?', 'Die Person kann echte Gefühle für dich haben, während ihre Aufmerksamkeit auf viele Verantwortungen verteilt ist. Das Problem muss nicht fehlende Zuneigung sein, sondern fehlende Kapazität. Frag dich, ob die Zeit und Aufmerksamkeit, die sie realistisch geben kann, für dich ausreichen, und sag klar, was du brauchst.'],
+  ['love', 'Wir streiten. Soll ich mich trennen?', 'Der Konflikt kann aus Überlastung statt aus fehlender Liebe entstehen. Wenn beide erschöpft sind, geht Geduld schnell verloren und kleine Wünsche fühlen sich wie zusätzliche Last an. Die Karte rät nicht automatisch zur Trennung. Prüft zuerst, ob dies eine vorübergehende stressige Phase ist und ob ihr währenddessen etwas Verbindung schützen könnt.'],
+  ['love', 'Was soll ich tun, solange ich so beschäftigt bin?', 'Sag deinem Partner klar, wo deine Grenzen liegen, statt zu schweigen, bis du gereizt reagierst. Vereinbart kleine, realistische Wege, während der stressigen Zeit verbunden zu bleiben. Wenn der Druck nachlässt, stell die Balance aktiv wieder her. Hört die Überlastung nie auf, prüfe Aufgaben, Erwartungen und Unterstützung, statt dir allein die Schuld zu geben.'],
+  ['career', 'Finde ich bald einen Job, der zu mir passt?', 'Die Zehn der Stäbe zeigt, dass die Jobsuche mit zu vielen anderen Anforderungen konkurriert, sodass der Fortschritt langsamer sein kann als gewünscht. Lies das nicht als schlichtes Nein. Begrenze Prioritäten: Schütze Zeit für Bewerbungen, Gespräche und Firmenrecherche und verschiebe Unwichtiges, wenn möglich.'],
+  ['career', 'Was kann beruflich bald passieren?', 'Die nächste Zeit kann vor allem eines sein: voll. Projekte überschneiden sich, andere bitten um Hilfe und zusätzliche Aufgaben sammeln sich an. Die Warnung ist Überlastung, keine Katastrophe. Kläre Prioritäten früh, verhandle Fristen und frag, was delegiert werden kann, bevor alles gleichzeitig dringend wird.'],
+  ['other', 'Was soll ich also tun?', 'Beginne damit anzuerkennen, dass die Last zu groß geworden ist. Schreib alles auf, trenne Dringendes von Wichtigem und entscheide, was warten, delegiert oder abgelehnt werden kann. Tarot kann das Muster zeigen; die praktische Lösung heißt Prioritäten, Grenzen und Hilfe, wo sie sinnvoll ist.']
+],
+'swords-10': [
+  ['other', 'Was ist die Kernbedeutung dieser Karte?', 'Die Zehn der Schwerter ist das Gefühl, dass ein schmerzhafter Zyklus an seine Grenze gekommen ist: Erschöpfung, Enttäuschung oder der Gedanke, nichts mehr aushalten zu können. Gedanken können Schmerz verstärken, doch äußere Umstände können ebenfalls sehr real sein. Die konstruktive Seite ist, dass ein Ende sichtbar wird. Die Frage wechselt von „Wie lange halte ich noch durch?“ zu „Was muss enden und wie erhole ich mich?“'],
+  ['other', 'Manche sagen, diese Karte habe auch eine positive Seite. Stimmt das?', 'Ja. Die Zehn der Schwerter wird oft als Tiefpunkt eines Zyklus gelesen und enthält deshalb auch Ende und Erholung. Aber „die Zeit heilt alles von allein“ ist nicht die ganze Botschaft. Schau, was aufhören muss, welche Unterstützung gebraucht wird und welche Lehre helfen kann, dasselbe Muster nicht zu wiederholen.'],
+  ['love', 'Welche Persönlichkeit beschreibt diese Karte?', 'Die Zehn der Schwerter sollte nicht benutzt werden, um die gesamte Persönlichkeit eines Menschen festzulegen. Sie beschreibt oft eine Phase von Erschöpfung, Pessimismus oder dem Gefühl, an die Grenze gedrängt zu sein. In diesem Zustand sieht jemand positive Möglichkeiten schwerer und reagiert stärker als sonst. Der Zustand kann sich verändern, wenn sich Umstände und psychisches Wohlbefinden verbessern.'],
+  ['other', 'Wie kann es sich anfühlen, mit jemandem in dieser Energie zu sprechen?', 'Lange Gespräche mit jemandem, der ständig verzweifelt oder in einer Krise ist, können emotional ermüden. Das macht die Person nicht zu einem „Energievampir“. Du kannst zuhören und trotzdem Grenzen haben: Nicht immer hast du Kraft, alles aufzunehmen, und wenn das Problem deine Möglichkeiten übersteigt, ist es sinnvoll, vertraute Menschen oder professionelle Hilfe zu empfehlen.'],
+  ['love', 'Welche Gefühle hat diese Person für mich?', 'Die Person kann Gefühle für dich haben und die Beziehung trotzdem durch Angst, Misstrauen oder die Erwartung von Verletzung betrachten. Solche Ängste können gewöhnliches Verhalten verzerren. Statt dich endlos beweisen zu müssen, schau darauf, ob sie über ihre Ängste sprechen, Annahmen überprüfen und gemeinsam mit dir Vertrauen aufbauen kann.'],
+  ['love', 'Sollte ich jemandem in diesem Zustand helfen?', 'Du kannst im Rahmen deiner Möglichkeiten helfen, aber du kannst niemanden zwingen, sich zu verändern oder Hilfe anzunehmen, bevor er bereit ist. Sag klar, was du geben kannst und was nicht, und ermutige passende Unterstützung. Wenn die Beziehung dich wiederholt erschöpft oder verletzt, ist Abstand ebenfalls eine vernünftige Möglichkeit.'],
+  ['other', 'Warum kann eine Legung für jemanden in diesem Zustand wenig helfen?', 'Wenn jemand hoffnungslos ist, hilft eine Legung möglicherweise wenig, wenn nur Bestätigung gesucht wird, dass alles vom Schicksal festgelegt sei. Ein Reader sollte Hilflosigkeit nicht verstärken. Nutze Tarot, um Fragen und praktische Wahlmöglichkeiten zu öffnen, und benenne seine Grenzen. Bei einer ernsthaften psychischen Krise ersetzt eine Legung keine professionelle Unterstützung.'],
+  ['love', 'Wir streiten ständig. Soll ich mich trennen?', 'Die Zehn der Schwerter zeigt, dass die aktuelle Form der Beziehung tief erschöpfend oder schmerzhaft geworden ist. Etwas in diesem Zyklus muss enden, doch das kann das schädliche Muster, eine Pause zur Erholung oder die Beziehung selbst sein. Bei Gewalt, Drohungen oder Angst haben Sicherheit und Unterstützung von außen Vorrang vor einer Tarot-Entscheidung.'],
+  ['career', 'Finde ich einen Job, der mir gefällt?', 'Du bist durch die Suche vielleicht zu erschöpft oder entmutigt, um dich gerade von deiner besten Seite zu zeigen. Das bedeutet nicht, dass Arbeitgeber magisch „schlechte Energie spüren“. Wenn möglich, gönn dir etwas Erholung und geh gleichzeitig kleine praktische Schritte weiter: Lebenslauf verbessern, Gespräche üben und Hilfe holen. Es gibt keine vorgeschriebene Wartezeit von ein oder zwei Monaten.'],
+  ['career', 'Passiert beruflich bald etwas Schwieriges?', 'Die Zehn der Schwerter kann eine Arbeitssituation spiegeln, die bereits nahe am Bruchpunkt ist: Burnout, Projektende, Konflikt oder die Notwendigkeit, eine schlechte Konstellation zu verlassen. Eine Karte sagt nicht, wer schuld ist. Schau auf konkrete Fakten, schütze dein Wohlbefinden und nutze weitere Karten nur zur Reflexion, nicht als Beweis gegen Kollegen oder Vorgesetzte.']
+],
+'cups-10': [
+  ['other', 'Was ist die Kernbedeutung dieser Karte?', 'Die Zehn der Kelche steht für geteiltes Glück, emotionale Zugehörigkeit und einen harmonischen Abschluss eines Zyklus. Die Familienszene im Bild ist symbolisch und keine Vorschrift dafür, wie Glück aussehen muss. In ihrer besten Form beschreibt die Karte Verbindung, Dankbarkeit und das Gefühl, bei anderen Menschen zuhause zu sein.'],
+  ['other', 'Wie stark sind die Zehnen in den Kleinen Arkana?', 'In vielen Tarot-Lehrsystemen stellen die Zehnen die vollste Entwicklung ihrer nummerierten Farbe dar, bevor die Hofkarten separat betrachtet werden. Deshalb eignen sie sich gut für Abschluss und Kulmination. Behandle das als strukturelle Konvention des Decks und nicht als objektiv messbare „stärkere Energie“.'],
+  ['love', 'Welche Persönlichkeit beschreibt diese Karte?', 'Diese Karte kann einen warmen, emotional großzügigen Menschen beschreiben, der leicht ein Gefühl von Zugehörigkeit schafft. Die Person kann gut darin sein, andere einzubeziehen und ihnen das Gefühl zu geben, gehört zu werden. Die Karte garantiert keine hohe emotionale Intelligenz, begünstigt aber Offenheit, Verbindung und geteilte Freude.'],
+  ['love', 'Welche Gefühle hat diese Person für mich?', 'Das ist eine sehr positive Karte für Liebe. Sie deutet auf Zuneigung, Zugehörigkeit und den Wunsch nach einer harmonischen gemeinsamen Zukunft. Eine einzelne Karte ist trotzdem kein Beweis für Heiratspläne oder den genauen Grad der Bindung. Lass Worte, Handlungen und reale Pläne bestätigen, was die Karte symbolisiert.'],
+  ['love', 'Wir streiten. Welchen Rat gibt diese Karte?', 'Die Zehn der Kelche deutet darauf hin, dass die Beziehung trotz des aktuellen Ärgers eine gute emotionale Grundlage haben kann. Lass einen kleinen Streit nicht das gesamte Bild auslöschen, aber benutze eine „gute Karte“ auch nicht, um ein ernstes Problem kleinzureden. Kehrt zu dem zurück, was euch verbindet, und sprecht über den konkreten Konflikt.'],
+  ['career', 'Finde ich bald einen neuen Job?', 'Die Antwort kann positiv ausfallen für Arbeit, die emotional zufriedenstellt oder ein unterstützendes Umfeld bietet. Die Zehn der Kelche sagt mehr über Freude, Zugehörigkeit und Atmosphäre als über Gehalt oder Beförderung. Nutze eine weitere Karte oder besser die tatsächlichen Angebotsdetails, um Geld und Entwicklung zu bewerten.'],
+  ['career', 'Worauf sollte ich beruflich bald achten?', 'Die Karte zeigt eher Harmonie und Unterstützung als eine konkrete Warnung. Genieße eine kooperative Phase, stärke gute Beziehungen und nimm nicht an, dass „nichts zu befürchten“ bedeutet, es müsse nichts gepflegt werden. Gesunde Teams bleiben gesund, weil Menschen weiter zu ihnen beitragen.']
+],
+'pentacles-10': [
+  ['other', 'Was ist die Kernbedeutung dieser Karte?', 'Die Zehn der Münzen steht für langfristige materielle Stabilität, familiäre Ressourcen, weitergegebene Werte und Strukturen, die ein Leben über längere Zeit tragen. Wohlstand bedeutet hier mehr als Bargeld: Zuhause, Sicherheit, Netzwerke und das, was eine Generation an die nächste weitergibt, gehören ebenfalls dazu.'],
+  ['other', 'Wie unterscheidet sich diese Karte von der Zehn der Kelche?', 'Beide Karten können Erfüllung zeigen, aber der Schwerpunkt ist anders. Die Zehn der Kelche betont emotionale Zugehörigkeit und geteiltes Glück. Die Zehn der Münzen betont die Strukturen darum herum: Familie, Geld, Zuhause, Tradition und langfristige Sicherheit. Diese Strukturen können tragen, aber auch Erwartungen mitbringen, die einengend wirken.'],
+  ['love', 'Welche Persönlichkeit beschreibt diese Karte?', 'Das ist ein stabiler, praktischer Mensch, der oft langfristig denkt. Familie, Sicherheit, Rücklagen und nachhaltige Hilfe können wichtig sein. Die Großzügigkeit ist eher überlegt als impulsiv. Die Schattenseite ist, Tradition oder materielle Sicherheit wichtiger werden zu lassen als Flexibilität und individuelle Wahl.'],
+  ['love', 'Welche Gefühle hat diese Person für mich?', 'Die Zehn der Münzen kann jemanden zeigen, der Liebe langfristig und praktisch betrachtet: Familie, Zuhause, Finanzen, Lebensstil und die Frage, ob ein gemeinsames Leben funktionieren könnte. Ähnliche Hintergründe oder Werte können wichtig sein, aber die Karte bedeutet nicht, dass du wegen Status oder Familienbedingungen gewählt wurdest. Achte darauf, ob zur Vernunft auch Zuneigung, Respekt und echtes Verstehen kommen.'],
+  ['love', 'Warum streiten wir?', 'Eine einzelne Zehn der Münzen erklärt nicht jeden Beziehungskonflikt, weist aber oft auf Familiensysteme oder praktische Lebensfragen. Druck von Verwandten, Unterschiede in Tradition oder Religion, Wohnen, Geld und Ausgaben können Spannung erzeugen. Zieh weitere Karten, wenn du klären möchtest, welcher Bereich tatsächlich aktiv ist.'],
+  ['career', 'Finde ich einen neuen Job?', 'Die Zehn der Münzen ist ein positives Symbol für Stabilität und eine solide finanzielle Grundlage, kann aber weder einen Job noch ein bestimmtes Gehalt garantieren. Wenn eine neue Chance auftaucht, beurteile Bezahlung, Leistungen, Sicherheit und Entwicklung anhand realer Informationen. Die Karte steht eher für Nachhaltigkeit als für ein Versprechen von Reichtum.'],
+  ['career', 'Verändert sich meine Arbeit bald?', 'Die Zehn der Münzen bevorzugt meist Kontinuität und langsame Entwicklung statt plötzlicher Veränderung. Ist deine aktuelle Arbeit stabil, kann diese Stabilität anhalten. Wachstum entsteht eher durch gesammelte Erfahrung, Verantwortung und Ressourcen als durch einen Sprung über Nacht.']
+]
+});
+
+Object.assign(ASK.de, {
+  "wands-c0": [
+    [
+      "other",
+      "Was sind die Stichworte dieser Karte?",
+      "Der Bube der Stäbe ist ein frisch entzündeter Funke: Neugier, Begeisterung, Entdeckergeist und Lust auf etwas Neues. Die Schattenseite sind Impulsivität, Unerfahrenheit oder ein starker Start ohne Ausdauer. Denk bei jedem Buben an jemanden, der erst lernt, mit dem Element seiner Farbe umzugehen."
+    ],
+    [
+      "love",
+      "Was für eine Persönlichkeit beschreibt diese Karte?",
+      "Ein Mensch mit der Energie des Buben der Stäbe ist meist offen, lebhaft und handlungsorientiert. Neues begeistert ihn schnell; aus Unerfahrenheit kann er manchmal impulsiv sein. Seine Stärke ist echte Neugier und die Bereitschaft, aus Rückmeldungen zu lernen."
+    ],
+    [
+      "love",
+      "Wer ist impulsiver: der Bube oder der Ritter der Stäbe?",
+      "Der Ritter der Stäbe ist meist impulsiver und schneller unterwegs. Der Bube hat ebenfalls viel Feuer, wirkt aber eher wie ein Anfänger: begeistert, neugierig und noch eher bereit, kurz anzuhalten und zu lernen. Der Ritter handelt häufiger zuerst und denkt später."
+    ],
+    [
+      "love",
+      "Was empfindet diese Person für mich?",
+      "Diese Karte deutet oft auf einen neuen Funken hin. Die Person kann dich spannend und anziehend finden und dir näherkommen wollen. Das Interesse kann ehrlich und lebendig sein, ist aber noch jung; wie tief es wird, zeigt die Karte allein nicht. Achte darauf, ob die Aufmerksamkeit auch beständig bleibt."
+    ],
+    [
+      "love",
+      "Wir streiten. Wie sollten wir damit umgehen?",
+      "Der Streit kann daher kommen, dass ihr zu schnell reagiert oder starke Gefühle noch nicht gut auffangt, wenn es heiß wird. Verlangsamt das Gespräch, klärt ein Thema nach dem anderen und macht daraus keinen Wettbewerb. Dieselbe Leidenschaft, die den Streit antreibt, kann euch auch helfen, gemeinsam eine Lösung zu finden."
+    ],
+    [
+      "career",
+      "Finde ich bald einen neuen Job?",
+      "Der Bube der Stäbe unterstützt einen neuen Weg, verspricht aber nicht, dass ein Job von allein auftaucht. Werde aktiv: Bewirb dich, probier neue Bereiche aus und rechne damit, unterwegs zu lernen. Chancen zeigen sich eher, wenn du in Bewegung kommst."
+    ],
+    [
+      "career",
+      "Worauf sollte ich beruflich in nächster Zeit achten?",
+      "Eine neue Aufgabe, ein Projekt oder eine ungewohnte Fähigkeit kann auf dich zukommen. Du musst noch nicht alles können; diese Karte passt gut zum Lernen während der Arbeit. Achte nur darauf, aus Begeisterung nicht zu viel anzunehmen und später die Energie zu verlieren."
+    ],
+    [
+      "other",
+      "Wie kann ich mir die Buben leichter merken?",
+      "Denk bei jedem Buben an den Anfänger seines Elements. Der Bube der Stäbe lernt Handeln und Leidenschaft, der Bube der Kelche Gefühle, der Bube der Schwerter Denken und Kommunikation, der Bube der Münzen Fähigkeiten und die materielle Welt. Merk dir zuerst die Rolle und verbinde sie dann mit der Farbe."
+    ]
+  ],
+  "swords-c0": [
+    [
+      "love",
+      "Was für eine Persönlichkeit beschreibt diese Karte?",
+      "Der Bube der Schwerter ist oft schnell im Kopf, neugierig und aufmerksam, lernt aber noch, gut zu kommunizieren. Er kann zu direkt sprechen, zu viel fragen oder reagieren, bevor er bedenkt, wie seine Worte ankommen. Das ist Unerfahrenheit im Denken und Sprechen, kein schlechter Charakter."
+    ],
+    [
+      "love",
+      "Was empfindet diese Person für mich?",
+      "Diese Karte zeigt viel Beobachten und Nachdenken, doch die Gefühle müssen noch nicht klar oder tief sein. Die Person kann neugierig auf dich sein, mehr erfahren wollen und die Verbindung stark mit dem Verstand betrachten. Nenn sie nicht allein wegen einer Karte berechnend oder unehrlich; schau auf ihr tatsächliches Verhalten."
+    ],
+    [
+      "other",
+      "Worin unterscheidet sich dieser Bube von den anderen drei?",
+      "Der Bube der Schwerter bringt das Neue in die Welt von Ideen, Fragen und Kommunikation. Er kann auf eine frische, noch ungeprüfte Idee hinweisen oder auf jemanden, der erst lernt, mit Worten und Logik umzugehen. Seine Stärke ist Neugier, seine Schwäche vorschnelles Urteilen."
+    ],
+    [
+      "love",
+      "Wir streiten. Wie können wir das lösen?",
+      "Hier steht die Kommunikation im Mittelpunkt. Vielleicht hört ihr zu, um sofort zu widersprechen, statt wirklich zu verstehen, oder ihr redet im Ärger zu schnell. Frag nach, wenn etwas unklar ist, vermeide Vermutungen und lass den anderen ausreden."
+    ],
+    [
+      "career",
+      "Finde ich einen neuen Job?",
+      "Diese Karte macht die Jobsuche zu einer Frage von Informationen, Lernen und klaren Entscheidungen. Neue Möglichkeiten können auftauchen, doch lies die Details, frag nach den Bedingungen und ändere nicht nur aus momentaner Unsicherheit die Richtung. Viel hängt davon ab, wie gut du Informationen sammelst und danach handelst."
+    ],
+    [
+      "career",
+      "Worauf sollte ich beruflich bald achten?",
+      "Neue Ideen, Nachrichten oder Gespräche können schnell aufkommen. Prüfe Fakten, bevor du sie präsentierst, und achte auf deinen Ton, damit kleine Missverständnisse nicht größer werden. Eine gute Frage ist oft hilfreicher als ein vorschnelles Urteil."
+    ]
+  ],
+  "cups-c0": [
+    [
+      "other",
+      "Was sind die Stichworte dieser Karte?",
+      "Der Bube der Kelche steht für ein neu entstehendes Gefühl: Zartheit, Neugier, Fantasie, Kreativität und emotionale Offenheit. Das kann ein Schwarm, eine Freundschaft, ein neues Interesse oder frische Inspiration sein. Die Schattenseite sind Idealisierung, sich von Gefühlen mitreißen zu lassen oder noch nicht zu wissen, was man wirklich möchte."
+    ],
+    [
+      "love",
+      "Was für eine Persönlichkeit beschreibt diese Karte?",
+      "Diese Person ist oft sensibel, offen, fantasievoll und leicht von Neuem berührt. Sie wirkt jugendlich, interessiert sich für Menschen und erlebt vieles zuerst über Gefühle. Unreif gelebt kann die Energie zu Tagträumen oder schnell wechselnden Interessen führen."
+    ],
+    [
+      "love",
+      "Passt diese Person besser als Freund oder als Partner?",
+      "Die Karte kann nicht entscheiden, dass jemand „besser als Freund als als Partner“ geeignet ist. Sie zeigt einen Menschen mit frischen Gefühlen und Neugier, der sich selbst noch entdeckt. Ob eine Beziehung trägt, hängt von Beständigkeit, Grenzen und Kommunikation ab, nicht von dieser Karte allein."
+    ],
+    [
+      "love",
+      "Was empfindet diese Person für mich?",
+      "Es kann eine ehrliche, aber noch zarte und neue Anziehung da sein. Die Person findet dich vielleicht interessant, liebenswert oder emotional einladend. Gib dem Gefühl Zeit, sich zu entwickeln, statt es sofort festzulegen."
+    ],
+    [
+      "love",
+      "Was sollte ich tun, wenn wir streiten?",
+      "Versuch nicht, über Gefühle zu gewinnen. Sag, was dich traurig oder unsicher gemacht hat, und frag dann, was die andere Person empfindet, statt es zu erraten. Der Bube der Kelche lädt euch ein, wieder weicher und neugieriger miteinander zu werden."
+    ],
+    [
+      "love",
+      "Was soll ich jetzt konkret tun?",
+      "Gib dir etwas Zeit, das eigentliche Gefühl zu erkennen, bevor du reagierst. Wenn ihr reden müsst, sprich eher mit „Ich fühle…“ als mit Vorwürfen. Ein sanftes, ehrliches Gespräch passt besser zu dieser Karte als eine vorschnelle Entscheidung."
+    ],
+    [
+      "career",
+      "Finde ich einen neuen Job?",
+      "Diese Karte kann auf Arbeit hinweisen, die dich wirklich interessiert, besonders in kreativen, betreuenden oder menschenbezogenen Bereichen. Sie garantiert aber keine Einstellung. Nutze deine Neugier, um Chancen zu erkunden, und prüfe die praktischen Bedingungen, bevor du zusagst."
+    ],
+    [
+      "career",
+      "Worauf sollte ich beruflich bald achten?",
+      "Eine neue Idee, Einladung oder Begeisterung kann frischen Wind in die Arbeit bringen. Probier sie aus, aber ersetze einen Plan nicht durch bloße Inspiration. Wenn du mit Menschen arbeitest, kann emotionale Feinfühligkeit eine echte Stärke sein."
+    ]
+  ],
+  "pentacles-c0": [
+    [
+      "love",
+      "Was für eine Persönlichkeit beschreibt diese Karte?",
+      "Der Bube der Münzen ist meist praktisch, fleißig und lernt gern durch eigenes Tun. Fähigkeiten, Geld, Ausbildung oder ein messbares Ziel sind ihm wichtig. Seine Schwäche kann übermäßige Vorsicht, ein langsamer Start oder die Tendenz sein, nur dem unmittelbar Greifbaren zu vertrauen."
+    ],
+    [
+      "love",
+      "Was empfindet diese Person für mich?",
+      "Die Person kann dich auf eine langsame, praktische Weise ernsthaft kennenlernen wollen. Interesse zeigt sich eher durch kleine Taten, Zeit und Verlässlichkeit als durch große Romantik. Das Gefühl ist noch jung, kann aber wachsen, wenn ihr beide weiter investiert."
+    ],
+    [
+      "love",
+      "Warum streiten wir so oft?",
+      "Ihr könnt euch beim Tempo, bei Geld, Plänen oder der Frage unterscheiden, wie praktisch die Beziehung sein soll. Einer braucht bei jedem Schritt Sicherheit, der andere möchte schneller vorankommen. Sprecht darüber, was jeder braucht, um sich sicher zu fühlen, statt Langsamkeit als fehlende Liebe zu deuten."
+    ],
+    [
+      "career",
+      "Finde ich bald einen Job, der mir gefällt?",
+      "Der Bube der Münzen ist günstig für Ausbildung, Praktikum, eine neue Stelle oder Arbeit, in der du nützliche Fähigkeiten aufbaust. Er verspricht nicht sofort den perfekten Job, unterstützt aber eine Chance mit Entwicklungspotenzial. Bevorzuge einen Ort, an dem du wirklich etwas Wertvolles lernen kannst."
+    ],
+    [
+      "career",
+      "Was könnte sich beruflich in nächster Zeit tun?",
+      "Du kannst in eine Lernphase kommen, eine neue Aufgabe übernehmen oder ein konkreteres Ziel beginnen. Langsamer, stetiger Fortschritt passt zu dieser Karte. Unterschätze kleine Schritte nicht; diese Energie baut ein Fundament Stück für Stück."
+    ]
+  ]
+});
+
+Object.assign(ASK.de, {
+  "wands-c1": [
+    [
+      "other",
+      "Was sind die Stichworte dieser Karte?",
+      "Der Ritter der Stäbe steht für schnelle Bewegung, Leidenschaft, Risikobereitschaft und Lust auf Erfahrung. Er will los, sobald ihn etwas begeistert. Die Schattenseite sind Ungeduld, Unbeständigkeit und nachlassendes Interesse, sobald der erste Reiz vorbei ist."
+    ],
+    [
+      "other",
+      "Worin unterscheidet sich ein Ritter von Bube, Königin und König?",
+      "Der Bube lernt noch. Der Ritter hat schon genug Energie, um loszustürmen, beherrscht sein Element aber noch nicht vollständig. Königin und König gehen reifer damit um. Deshalb sind Ritter die beweglichsten Hofkarten und zugleich besonders anfällig dafür, ihre Farbe zu übertreiben."
+    ],
+    [
+      "love",
+      "Was empfindet diese Person für mich?",
+      "Die Person kann sich stark zu dir hingezogen fühlen und möchte vielleicht schnell vorankommen. Die Energie ist leidenschaftlich, aktiv und begeistert, bedeutet aber nicht automatisch langfristige Bindung. Achte darauf, ob das Interesse bleibt, wenn die Neuheit nachlässt."
+    ],
+    [
+      "love",
+      "Wie sieht so eine Anziehung konkret aus?",
+      "Typisch wäre jemand, der viel schreibt, dich schnell treffen will, Unternehmungen vorschlägt und die Verbindung beschleunigt. Das kann sehr aufregend sein, doch unterscheide einen Rausch von Beständigkeit. Der Ritter der Stäbe startet stark; Ausdauer zeigt sich erst mit der Zeit."
+    ],
+    [
+      "love",
+      "Warum streiten wir so oft?",
+      "Vielleicht reagiert ihr beide zu schnell, kämpft um die Führung oder werdet laut, bevor ihr nachdenkt. Streit wird größer, weil ihr noch im Ärger redet. Mach eine Pause vor der Antwort und lass jeweils eine Person ausreden."
+    ],
+    [
+      "other",
+      "Sollte ich wegen meines Partners eine Legung machen lassen?",
+      "Tarot kann dir helfen, deine eigenen Gefühle und Entscheidungen zu reflektieren. Nutze es aber nicht, um jemanden zu überwachen oder sicher zu behaupten, was in seinem Kopf vorgeht. Wenn du Klarheit brauchst, ist ein direktes Gespräch meist verlässlicher als eine Karte."
+    ],
+    [
+      "career",
+      "Finde ich bald einen Job, der mir gefällt?",
+      "Der Ritter der Stäbe unterstützt eine aktive Jobsuche mit Gesprächen, Bewegung oder schnell auftauchenden Chancen. Eine spannende Stelle kann kommen, doch lies die Bedingungen genau, bevor du nur aus Begeisterung zusagst. Tempo ist ein Vorteil, wenn Urteilskraft dazukommt."
+    ],
+    [
+      "career",
+      "Mache ich bei der Jobsuche etwas falsch?",
+      "Vielleicht tust du sehr viel, aber ohne klare Strategie: Bewerbungen überallhin, ständige Richtungswechsel oder zu schnelle Zusagen. Wähl einige klare Ziele, verfolge jede Bewerbung und bereite dich gezielt auf Gespräche vor. Weniger Aktivität mit mehr Absicht kann wirksamer sein."
+    ],
+    [
+      "career",
+      "Ich habe einen normalen Bürojob. Was könnte sich bald ändern?",
+      "Die Arbeit kann durch ein dringendes Projekt, Reisen oder eine Aufgabe mit schnellem Reaktionsbedarf hektischer werden. Initiative ist jetzt gut, aber Tempo darf nicht in Erschöpfung kippen. Entscheide bewusst, wofür sich der volle Einsatz lohnt."
+    ]
+  ],
+  "swords-c1": [
+    [
+      "other",
+      "Was für eine Persönlichkeit beschreibt diese Karte?",
+      "Der Ritter der Schwerter ist schnell im Denken, entschlossen, streitlustig und direkt. Wenn rasches Handeln gefragt ist, kann das sehr hilfreich sein; im Übermaß wird er scharf, ungeduldig oder zu sicher, recht zu haben. Die Aufgabe ist, geistige Geschwindigkeit zu nutzen, ohne sie zur Waffe zu machen."
+    ],
+    [
+      "other",
+      "Was haben Ritter und Bube gemeinsam?",
+      "Beide beherrschen ihre Farbe noch nicht vollständig. Der Bube lernt und stellt Fragen; der Ritter hat sich schon eine Meinung gebildet und stürmt los, deshalb ist Übertreibung wahrscheinlicher. Bei den Schwertern zeigt sich das in schnellem Denken, starken Worten und vorschnellen Entscheidungen."
+    ],
+    [
+      "love",
+      "Was denkt diese Person über mich?",
+      "Die Person kann sehr viel über dich nachdenken und möchte Klarheit darüber, wo ihr steht. Sie nähert sich der Verbindung über Logik, direkte Fragen und den Wunsch nach Definition. Das sagt noch nicht, wie tief die Liebe ist; es zeigt vor allem, wie aktiv ihr Kopf bei diesem Thema ist."
+    ],
+    [
+      "love",
+      "Ist diese Person die richtige für mich?",
+      "Eine Karte kann nicht entscheiden, wer „für dich bestimmt“ ist. Der Ritter der Schwerter kann gut zu jemandem passen, der Direktheit, Tempo und geistige Debatten mag, für einen Menschen mit Bedürfnis nach Sanftheit aber anstrengend sein. Entscheidend ist, wie ihr im echten Leben mit Konflikten umgeht."
+    ],
+    [
+      "love",
+      "Warum streiten wir so oft?",
+      "Vielleicht diskutiert ihr, um zu gewinnen, statt um zu verstehen. Jemand unterbricht, kontert zu schnell oder benutzt Fakten auf verletzende Weise. Werdet langsamer, trennt Tatsachen von Deutungen und vermeidet lange Nachrichten im Ärger."
+    ],
+    [
+      "career",
+      "Finde ich bald einen Job, der mir gefällt?",
+      "Diese Karte unterstützt schnelle Bewegung, besonders bei Tätigkeiten mit Denken, Kommunikation, Analyse oder rascher Problemlösung. Nimm trotzdem nicht nur deshalb eine Stelle an, weil du aus deiner jetzigen Situation herauswillst. Frag vorher nach Rolle, Arbeitsmenge und Erwartungen."
+    ],
+    [
+      "career",
+      "Ich suche schon lange erfolglos. Was soll ich tun?",
+      "Lass Ungeduld nicht zu wahllosen Bewerbungen führen. Überarbeite deinen Lebenslauf, übe Gespräche und bitte eine vertrauenswürdige Person, deine Suchstrategie anzusehen. Der Ritter der Schwerter braucht ein klares Ziel, damit seine Geschwindigkeit nicht verpufft."
+    ],
+    [
+      "career",
+      "Ich habe einen normalen Bürojob. Was könnte sich bald ändern?",
+      "Eine Phase mit schnellen Entscheidungen, dringenden Gesprächen oder Projekten mit viel Analyse kann beginnen. Auch eine sehr direkte, zielstrebige Person kann beruflich wichtiger werden. Halte Fakten klar und lass ein hohes Tempo nicht in unnötigen Streit kippen."
+    ],
+    [
+      "other",
+      "Wie sollte ich diese Karte richtig lernen?",
+      "Lern den Ritter der Schwerter nicht einfach als „scharfzüngig“. Denk an die Struktur: Ritter bedeutet Handlung und Bewegung, Schwerter bedeuten Denken, Sprache und Entscheidungen. Zusammen entsteht sehr hohe geistige Geschwindigkeit — stark bei Entschlossenheit, schwierig ohne Kontrolle."
+    ]
+  ],
+  "cups-c1": [
+    [
+      "other",
+      "Was zeigt das Bild auf dieser Karte?",
+      "Der Ritter der Kelche reitet vorwärts und hält einen Kelch nach vorn, als würde er eine Einladung, ein Gefühl oder ein Angebot bringen. Im Vergleich zu den anderen Rittern ist seine Bewegung sanfter und langsamer. Das Bild betont, wie ein Gefühl zu jemandem getragen wird."
+    ],
+    [
+      "other",
+      "Was ist das wichtigste Stichwort dieser Karte?",
+      "Das stärkste Stichwort ist Romantik. Dazu kommen Einladung, Charme, Fantasie, emotionale Annäherung und Idealisierung. Die Schattenseite ist, sich in das Gefühl des Verliebtseins zu verlieben, statt den Menschen vor sich wirklich kennenzulernen."
+    ],
+    [
+      "other",
+      "Was für eine Persönlichkeit beschreibt diese Karte?",
+      "Diese Person ist oft charmant, gefühlsbetont und lässt sich von Inspiration leiten. Sie kann romantisch und feinfühlig sein, macht unreif gelebt aber vielleicht Versprechen aus einem Gefühl heraus und ändert die Richtung, wenn sich das Gefühl ändert."
+    ],
+    [
+      "other",
+      "Warum soll dies die negativste Stufe der Hofkarten sein?",
+      "Der Ritter der Kelche sollte nicht pauschal als „negativste“ Hofkarte gelten. Jede Hofkarte hat Licht und Schatten. Hier liegt das Risiko darin, sich zu weit von Gefühlen und Idealen tragen zu lassen; die Stärke ist, Zuneigung, Kunst und Sanftheit aktiv nach außen zu bringen."
+    ],
+    [
+      "love",
+      "Was denkt diese Person über mich und wie geht sie mit der Beziehung um?",
+      "Die Person kann dich durch eine romantische Brille sehen und dir näherkommen wollen. Süße Worte, Einladungen und liebevolle Gesten fallen ihr leicht. Genieß das Schöne daran, aber lass die Zeit zeigen, ob das Gefühl auch von Beständigkeit getragen wird."
+    ],
+    [
+      "love",
+      "Ich fand solche Menschen früher sehr romantisch. Passt das?",
+      "Ja. Das ist eines der romantischsten Bilder unter den Hofkarten. Romantik allein macht eine Beziehung aber weder gesund noch dauerhaft. Achte ebenso auf Beständigkeit, Respekt vor Grenzen und darauf, ob Versprechen gehalten werden."
+    ],
+    [
+      "love",
+      "Wir streiten oft. Was sollten wir tun?",
+      "Vielleicht reagiert einer oder ihr beide stark aus dem Gefühl und erwartet, dass der andere ohne Worte versteht. Sag klar, was du brauchst, statt zu testen, dich zur Beruhigung zurückzuziehen oder ungelöste Themen mit großen Gesten zu überdecken. Einfache Ehrlichkeit wirkt besser als Drama."
+    ],
+    [
+      "love",
+      "Was ist, wenn wir beide diese Energie tragen?",
+      "Ihr könnt gemeinsam sehr schöne Gefühle erzeugen, aber die Beziehung auch idealisieren und praktische Themen meiden. Bewahrt die Romantik und sprecht zugleich über Zeit, Geld, Grenzen und Bindung. Auch schöne Gefühle brauchen einen stabilen Rahmen."
+    ],
+    [
+      "other",
+      "Sollte ich alle Gefühle einfach zeigen?",
+      "Gefühle auszudrücken heißt nicht, alles sofort zu sagen oder zu tun, sobald ein Gefühl auftaucht. Erlaub dir das Gefühl und wähl dann eine Form, die weder dich noch andere verletzt. Emotionale Reife bedeutet Ehrlichkeit plus Selbstregulation."
+    ],
+    [
+      "career",
+      "Finde ich bald einen neuen Job, der mir gefällt?",
+      "Der Ritter der Kelche kann auf eine Einladung oder Stelle hinweisen, die dich emotional anspricht, besonders in kreativen, künstlerischen, betreuenden oder menschenbezogenen Bereichen. Prüfe trotzdem Gehalt, Bedingungen und Entwicklung, denn die Karte spricht stärker über Passung als über materielle Stabilität."
+    ]
+  ],
+  "pentacles-c1": [
+    [
+      "other",
+      "Was für eine Persönlichkeit beschreibt diese Karte?",
+      "Der Ritter der Münzen ist ausdauernd, praktisch und verantwortungsbewusst. Er muss nicht schnell sein; ein klares Ziel und gleichmäßige Schritte sind ihm wichtiger. Die Schattenseite sind Starrheit, reines Gewohnheitshandeln oder das Festhalten an einem Weg, der längst angepasst werden müsste."
+    ],
+    [
+      "other",
+      "Was ist die negative Seite dieser Karte?",
+      "Ausdauer kann zu Sturheit werden und Praxisnähe zu Tunnelblick. Der Ritter der Münzen konzentriert sich manchmal so stark auf die aktuelle Aufgabe, dass er nicht mehr fragt, ob das ursprüngliche Ziel noch passt. Manchmal muss man die Richtung prüfen, nicht nur den Fortschritt."
+    ],
+    [
+      "love",
+      "Was möchte diese Person von mir und von der Beziehung?",
+      "Die Person kann etwas Stabiles und Klares wollen, das sich mit der Zeit aufbauen lässt. Interesse zeigt sich oft durch Anwesenheit, eingehaltene Versprechen und praktische Taten. Das Tempo kann langsam sein, doch langsam bedeutet nicht lieblos."
+    ],
+    [
+      "love",
+      "Warum streiten wir so oft?",
+      "Einer braucht vielleicht Stabilität und Planung, während der andere mehr Flexibilität oder Gefühlsausdruck möchte. Der Ritter der Münzen kann außerdem an „so machen wir es immer“ festhalten und Rückmeldungen schwer annehmen. Trennt echte Grundwerte von Gewohnheiten, über die man verhandeln kann."
+    ],
+    [
+      "other",
+      "Hast du ein Beispiel für den Tunnelblick dieser Karte?",
+      "Du sparst vielleicht sehr diszipliniert für ein Ziel, ohne zu merken, dass es gar nicht mehr zu deinem Leben passt. Oder du erledigst jede Aufgabe exakt nach Vorschrift, ohne nach einer besseren Methode zu fragen. Das Problem ist nicht fehlender Einsatz, sondern fehlender Abstand zum Gesamtbild."
+    ],
+    [
+      "career",
+      "Ich bin seit Monaten arbeitslos. Finde ich einen Job, der mir gefällt?",
+      "Der Ritter der Münzen unterstützt eher einen stabilen Weg als eine Veränderung über Nacht. Bewirb dich weiter, baue Fähigkeiten aus und bleib an Chancen dran. Eine passende Stelle kann durch beständige Arbeit entstehen; die Karte verspricht weder Zeitpunkt noch Gehalt."
+    ],
+    [
+      "money",
+      "Ist der Ritter der Münzen schlecht mit Geld?",
+      "Nein. Das ist eine der praktischsten und diszipliniertesten Energien für Geld. Ihre Stärken sind regelmäßiges Sparen, Planung und das Verfolgen eines Ziels; die Schwäche ist so viel Vorsicht, dass vernünftige Chancen verpasst werden."
+    ],
+    [
+      "career",
+      "Ich habe einen normalen Bürojob. Was könnte sich bald ändern?",
+      "Du kannst in eine Phase mit gleichmäßiger Arbeit, klaren Abläufen und einem längerfristigen Ziel kommen. Die Veränderung kann leise sein: mehr Verantwortung, stärkere Fähigkeiten oder ein klarerer Fokus. Unterschätze Fortschritt nicht, nur weil er nicht spektakulär ist."
+    ],
+    [
+      "other",
+      "Wie unterscheidet sich der Ritter der Münzen vom Ritter der Stäbe bei der Arbeit?",
+      "Der Ritter der Stäbe setzt auf Tempo, Ausprobieren und Begeisterung; der Ritter der Münzen auf Verlässlichkeit, Prozess und Abschluss. Einer startet schnell, der andere hält den Rhythmus. Gute Arbeit braucht oft beides: genug Feuer zum Beginnen und genug Ausdauer zum Fertigwerden."
+    ]
+  ]
+});
+
+Object.assign(ASK.de, {
+  "wands-c2": [
+    [
+      "other",
+      "Was zeigt das Bild auf dieser Karte?",
+      "Die Königin der Stäbe sitzt aufrecht auf ihrem Thron und hält einen Stab und eine Sonnenblume. Das Bild verbindet das Feuer der Stäbe mit der Ruhe einer Königin: Selbstvertrauen, Wärme, Kreativität und Führung, ohne ständig dominieren zu müssen."
+    ],
+    [
+      "other",
+      "Worin unterscheidet sich eine Königin von einem König?",
+      "Königin und König stehen beide für einen reifen Umgang mit ihrem Element. Königinnen drücken es oft durch Aufnahmefähigkeit, Fürsorge und Einfluss von innen aus; Könige eher durch Handeln, Entscheidungen und äußere Struktur. Das sind unterschiedliche Ausdrucksweisen, keine Rangordnung von besser und schlechter."
+    ],
+    [
+      "other",
+      "Warum gilt die Königin der Stäbe als ausgeglichener als der König der Stäbe?",
+      "In vielen Lehrtraditionen verbindet die Königin der Stäbe die Begeisterung des Feuers mit der Fähigkeit, ruhig zu bleiben und zu beobachten. Sie kann mutig handeln und trotzdem wissen, wann ein Schritt zurück sinnvoll ist. „Ausgeglichener“ ist eine hilfreiche Lernidee, kein starres Gesetz jeder Legung."
+    ],
+    [
+      "other",
+      "Was für eine Persönlichkeit beschreibt diese Karte?",
+      "Diese Person ist oft selbstbewusst, begeistert, charismatisch und kann andere gut motivieren. Sie muss nicht die fachlich stärkste im Raum sein; häufig ist sie diejenige, die aufsteht, zuerst ausprobiert und andere an die Möglichkeit glauben lässt. Die Schattenseite kann Stolz oder zu viel Kontrolle über das eigene Bild sein."
+    ],
+    [
+      "other",
+      "Wie wirkt die Königin der Stäbe nach außen?",
+      "Ihre Präsenz ist warm und zugleich gefestigt. Menschen mit dieser Energie müssen selten laut beweisen, dass sie da sind; Selbstvertrauen zeigt sich in Haltung, Sprache und Entscheidungen. Die Ausstrahlung kommt aus dem Gefühl, mit sich selbst im Reinen zu sein."
+    ],
+    [
+      "love",
+      "Hat diese Person Gefühle für mich?",
+      "Die Königin der Stäbe ist positiv für Anziehung, Wärme und Interesse. Die Person kann dich auffällig finden oder gern in deiner Nähe sein. Eine einzelne Karte kann die Gefühle eines anderen nicht sicher bestätigen; lass Handlungen und klare Worte im echten Leben die Legung ergänzen."
+    ],
+    [
+      "love",
+      "Wir streiten oft. Was können wir verbessern?",
+      "Diese Karte verlangt Ehrlichkeit und Respekt zugleich. Mach aus Selbstvertrauen keinen Machtkampf, aber schweig auch nicht nur, um Konflikte zu vermeiden. Sag, was du brauchst, wahre Grenzen und denk daran: Eine gesunde Beziehung verlangt von keinem, sich kleiner zu machen."
+    ],
+    [
+      "career",
+      "Finde ich bald einen Job, der mir gefällt?",
+      "Die Königin der Stäbe unterstützt eine starke Selbstdarstellung in Bewerbungen, Gesprächen und Netzwerken. Eine passende Chance kann auf sichtbare Initiative und Selbstvertrauen reagieren. Bewirb dich weiter, statt nur zu warten, aber verteile deine Energie nicht auf Stellen, die du eigentlich gar nicht willst."
+    ],
+    [
+      "career",
+      "Ich bin schon lange arbeitslos und niemand meldet sich. Was soll ich tun?",
+      "Mach aus der Arbeitslosigkeit nicht die Geschichte, du seist „nicht gut genug“. Prüfe Lebenslauf, Portfolio und Suchstrategie und hol dir ehrliches Feedback. Die Königin der Stäbe erinnert an Selbstvertrauen, das auf echter Fähigkeit beruht, und daran, diese Fähigkeit klarer zu zeigen."
+    ],
+    [
+      "career",
+      "Ich habe einen normalen Bürojob. Was könnte sich bald ändern?",
+      "Du kannst eine aktivere Rolle bekommen: eine kleine Gruppe führen, neue Kollegen einarbeiten, eine Idee präsentieren oder das Team vertreten. Das muss keine formelle Beförderung sein. Entscheidend ist, dass andere stärker auf deine Fähigkeit setzen, zu führen und Energie zu geben."
+    ]
+  ],
+  "swords-c2": [
+    [
+      "other",
+      "Was zeigt das Bild auf dieser Karte?",
+      "Die Königin der Schwerter sitzt auf ihrem Thron, hält das Schwert aufrecht und streckt die andere Hand offen nach vorn. Das Bild steht für Klarheit, deutliche Grenzen und die Fähigkeit, Wahrheit anzusehen und trotzdem zuzuhören."
+    ],
+    [
+      "other",
+      "Was für eine Persönlichkeit beschreibt diese Karte?",
+      "Diese Person ist oft intelligent, unabhängig, aufmerksam und kommuniziert klar. Sie nutzt den Verstand, ohne deshalb kalt sein zu müssen. Erfahrung hat ihr gezeigt, was gesagt werden sollte, was man loslassen kann und welche Grenzen wichtig sind."
+    ],
+    [
+      "other",
+      "Ist diese Person scharfzüngig?",
+      "Nicht unbedingt. Bei der Königin der Schwerter geht es mehr um Direktheit und Präzision als darum, andere absichtlich zu verletzen. In ihrer starken Form sagt sie Notwendiges und hört trotzdem zu; im Schatten können Abwehr oder Enttäuschung die Worte kalt und schneidend machen."
+    ],
+    [
+      "love",
+      "Was empfindet diese Person für mich?",
+      "Die Person kann Gefühle haben und die Beziehung zugleich mit Herz und Verstand prüfen wollen. Vereinbarkeit, Kommunikation, Werte und gegenseitiger Respekt sind ihr wichtig. Zuneigung kann stiller sein als offene Romantik, ohne weniger ehrlich zu sein."
+    ],
+    [
+      "love",
+      "Ist diese Person aufrichtig?",
+      "Diese Karte kann Aufrichtigkeit nicht beweisen. Sie zeigt eher jemanden, der sorgfältig abwägt und Klarheit braucht, bevor er sich ganz öffnet. Achte darauf, ob Worte und Handlungen zusammenpassen und deine Grenzen respektiert werden."
+    ],
+    [
+      "love",
+      "Ist diese Person die richtige für mich?",
+      "Das hängt davon ab, was du in einer Beziehung brauchst. Wenn du Klarheit, Unabhängigkeit und direkte Kommunikation schätzt, kann diese Energie sehr gut passen. Brauchst du viel sichtbare emotionale Bestätigung, müsst ihr vielleicht lernen, die Fürsorge des anderen richtig zu lesen."
+    ],
+    [
+      "love",
+      "Warum streiten wir so oft?",
+      "Vielleicht beginnt ihr beide mit Argumenten statt mit Gefühlen, oder einer glaubt, er sage „nur die Wahrheit“, während der andere sich verurteilt fühlt. Benennt Fakten und Gefühle und unterscheidet eine klare Grenze von einer kalten Art, sie auszusprechen."
+    ],
+    [
+      "love",
+      "Hast du ein Beispiel für so einen Streit?",
+      "Eine Person sagt: „Das ist unlogisch“, obwohl sie eigentlich meint: „Ich fühle mich nicht wichtig.“ Die andere antwortet mit noch mehr Logik, und das Gespräch entfernt sich weiter vom eigentlichen Gefühl. Die Königin der Schwerter lädt dazu ein, das Problem präzise zu benennen, ohne den menschlichen Teil herauszunehmen."
+    ],
+    [
+      "career",
+      "Finde ich bald einen Job, der mir gefällt?",
+      "Diese Karte passt zu Arbeit mit Analyse, Kommunikation, Schreiben, Forschung, Recht, Strategie oder eigenständigem Urteil. Chancen reagieren oft auf eine klare Darstellung deiner Fähigkeiten und gezielte Bewerbungen. Bewerte eine Stelle nach echten Kriterien, nicht nur danach, ob sich ein Gespräch gut angefühlt hat."
+    ],
+    [
+      "career",
+      "Ich habe einen normalen Bürojob. Was könnte sich bald ändern?",
+      "Du musst vielleicht eine klarere Entscheidung treffen, beruflich eine Grenze setzen oder wirst zur Ansprechperson für Analyse und Urteil. Ein direktes Gespräch kann nötig sein. Bereite Fakten vor und bleib in der Formulierung ruhig und präzise."
+    ]
+  ],
+  "cups-c2": [
+    [
+      "other",
+      "Was zeigt das Bild auf dieser Karte?",
+      "Die Königin der Kelche sitzt am Wasser und betrachtet einen kunstvoll geschlossenen Kelch. Das Bild deutet auf ein tiefes Gefühlsleben, starke Intuition und die Fähigkeit hin, Gefühle zu halten, ohne alles nach außen zu tragen."
+    ],
+    [
+      "other",
+      "Was für eine Persönlichkeit beschreibt diese Karte?",
+      "Diese Person ist oft empathisch, feinfühlig, intuitiv und bemerkt schnell, wie andere sich fühlen. Sie kann sehr gut zuhören und Sicherheit vermitteln. Die Schattenseite ist, zu viele fremde Gefühle aufzunehmen oder die eigenen Grenzen zu vergessen."
+    ],
+    [
+      "other",
+      "Warum sagt man, diese Person habe sich selbst geheilt?",
+      "Zieh aus der Königin der Kelche nicht den Schluss, jemand sei vollständig „geheilt“. Die Karte beschreibt eher eine reife Fähigkeit, Gefühle wahrzunehmen und zu versorgen. Erfahrung kann viel gelehrt haben, doch auch dieser Mensch bleibt verletzlich und hat weiterhin Themen, die Fürsorge brauchen."
+    ],
+    [
+      "love",
+      "Was empfindet diese Person für mich?",
+      "Das ist eine warme Karte für Fürsorge, Empathie und tiefe Zuneigung. Die Person kann deine Gefühle ernst nehmen und möchte vielleicht, dass du dich sicher fühlst. Achte trotzdem darauf, wie diese Zuneigung gezeigt wird und ob Grenzen respektiert werden; gute Gefühle brauchen auch klare Handlungen."
+    ],
+    [
+      "love",
+      "Warum streiten wir so oft?",
+      "Einer fühlt vielleicht sehr viel, sagt aber zu wenig, sodass der andere nicht weiß, was gebraucht wird. Vielleicht übernehmt ihr auch zu schnell die Stimmung des anderen. Sag klar, was du brauchst, und mach aus Empathie kein Gedankenlesen."
+    ],
+    [
+      "love",
+      "Wie weist diese Person jemanden zurück?",
+      "In reifer Form versucht sie freundlich Nein zu sagen, die Gefühle des anderen zu beachten und die Grenze trotzdem zu halten. Die Schattenseite ist, eine Antwort hinauszuzögern oder gemischte Signale zu senden, weil sie niemanden verletzen möchte."
+    ],
+    [
+      "career",
+      "Finde ich bald einen Job, der mir gefällt?",
+      "Die Königin der Kelche passt zu betreuender, beratender, kreativer, künstlerischer oder menschenbezogener Arbeit. Sie sagt mehr über emotionale Passung als über ein bestimmtes Gehalt. Prüfe deshalb auch die praktischen Bedingungen, damit Gefühl und materielle Bedürfnisse zusammenpassen."
+    ],
+    [
+      "career",
+      "Was könnte eine zweite berufliche Richtung für mich sein?",
+      "Eine weitere Richtung wäre, in deiner jetzigen Arbeit mehr Zuhören, Kreativität oder Menschenverständnis einzusetzen. Du musst nicht zwingend den Beruf wechseln; Beratung, Kundenbetreuung, Experience Design oder Community-Arbeit können diese Energie stärker einbringen."
+    ],
+    [
+      "career",
+      "Ich habe einen normalen Bürojob. Was könnte sich bald ändern?",
+      "Du kannst Aufgaben bekommen, die mehr Fingerspitzengefühl mit Menschen verlangen, oder Kollegen suchen häufiger deine Unterstützung. Nutze Empathie, ohne die Gefühle des ganzen Teams in dich aufzunehmen. Gute Grenzen helfen dir, zu unterstützen, ohne auszubrennen."
+    ],
+    [
+      "other",
+      "Hat diese Karte auch eine negative Seite?",
+      "Ja. Zu viel Empathie kann dazu führen, fremde Gefühle aufzusaugen, zu idealisieren, schwer Nein zu sagen oder die eigenen Bedürfnisse zu vernachlässigen. In ihrer starken Form fühlt die Königin der Kelche tief und weiß trotzdem, was zu ihr gehört und was nicht."
+    ]
+  ],
+  "pentacles-c2": [
+    [
+      "other",
+      "Was zeigt das Bild auf dieser Karte?",
+      "Die Königin der Münzen sitzt in einer üppigen Landschaft und hält eine Münze, als würde sie etwas Wertvolles versorgen. Das Bild verbindet Materielles mit Fürsorge: Stabilität aufbauen und sich um Körper, Zuhause, Geld und alles kümmern, was Zeit zum Wachsen braucht."
+    ],
+    [
+      "other",
+      "Was für eine Persönlichkeit beschreibt diese Karte?",
+      "Diese Person ist oft praktisch, verlässlich, fürsorglich und setzt Anteilnahme gern in konkrete Taten um. Geld, Gesundheit, Zuhause und alltägliche Bedürfnisse sind ihr wichtig. Die Schattenseite ist, zu viel Verantwortung zu tragen oder den eigenen Wert daran zu messen, wie nützlich man für andere ist."
+    ],
+    [
+      "other",
+      "Worin unterscheidet sich die Königin der Münzen vom König der Münzen?",
+      "Beide sind praktisch und schätzen Stabilität. Die Königin der Münzen zeigt das häufig durch Fürsorge, Pflege und den unmittelbaren Umgang mit Ressourcen; der König eher durch Systeme, Besitz, Verwaltung und langfristige Ergebnisse. Es sind zwei ergänzende Ausdrucksformen derselben Farbe."
+    ],
+    [
+      "love",
+      "Was denkt diese Person über mich, und liebt sie mich wirklich?",
+      "Die Person kann die Beziehung ernst und praktisch betrachten: Könnt ihr füreinander sorgen und ein stabiles Leben aufbauen? Das bedeutet nicht, dass Zuneigung nur an Bedingungen hängt. Achte darauf, ob zur Vernunft auch Wärme, Respekt und beständiger Einsatz kommen."
+    ],
+    [
+      "other",
+      "Können Münzen auch negative Bedeutungen haben?",
+      "Ja. Jede Farbe hat eine Schattenseite. Stabilität kann zu Festhalten werden, Praxisnähe zu Materialismus, Sparen zu Mangelangst und Fürsorge zu Kontrolle. Lies Intensität und Kontext, statt Münzen pauschal als „gut für Geld“ zu behandeln."
+    ],
+    [
+      "love",
+      "Warum streiten wir so oft?",
+      "Der Konflikt kann Geld, Haushalt, Zeit, Verantwortung oder das Gefühl betreffen, dass einer zu viel trägt. Vielleicht zeigt ihr beide Liebe durch Taten und vergesst dabei, Wichtiges auszusprechen. Teilt Aufgaben klar und fragt einander, wodurch sich jeder wirklich umsorgt fühlt."
+    ],
+    [
+      "career",
+      "Finde ich bald einen Job, der mir gefällt?",
+      "Die Königin der Münzen ist ermutigend für ein stabiles, praktisches Umfeld, das dein Leben tragen kann. Sie sollte aber kein bestimmtes Gehalt oder Einstellungsergebnis versprechen. Achte auf klare Bedingungen, eine nachhaltige Kultur und eine Arbeitsmenge, die du wirklich halten kannst."
+    ],
+    [
+      "money",
+      "Ich habe einen normalen Bürojob. Was könnte sich bald tun?",
+      "Dir können Ressourcen, Kunden, ein Budget oder Aufgaben anvertraut werden, die Verlässlichkeit brauchen. Finanzen können geordneter werden, wenn du stetig arbeitest und gut verwaltest. Nimm nicht jede Zusatzaufgabe nur deshalb an, weil andere wissen, dass sie sich auf dich verlassen können."
+    ],
+    [
+      "other",
+      "Welche der vier Königinnen ist am positivsten?",
+      "Keine Königin ist bei jeder Frage „am positivsten“. Jede hat ihre Stärke: Stäbe bei Selbstvertrauen und Handeln, Schwerter bei Klarheit, Kelche bei Gefühlen, Münzen bei Stabilität und Fürsorge. Welche am hilfreichsten ist, hängt von Frage und Position in der Legung ab."
+    ]
+  ]
+});
+
+Object.assign(ASK.de, {
+  "wands-c3": [
+    [
+      "other",
+      "Was zeigt das Bild auf dieser Karte?",
+      "Der König der Stäbe sitzt mit einem Stab auf seinem Thron, umgeben von Feuersymbolen. Das Bild zeigt jemanden, der gelernt hat, Leidenschaft in Richtung zu verwandeln: visionär, entschlossen und bereit, Verantwortung für den gewählten Weg zu tragen."
+    ],
+    [
+      "other",
+      "Was für eine Persönlichkeit beschreibt diese Karte?",
+      "Diese Person ist oft selbstbewusst, ehrgeizig, visionär und handelt gern aus eigener Initiative. Sie übernimmt leicht die Führung, weil sie andere mit Energie anstecken kann. Die Schattenseite sind Ungeduld, Dominanz oder die Überzeugung, nur der eigene Weg sei richtig."
+    ],
+    [
+      "other",
+      "Ist das jemand, der keine Angst kennt?",
+      "Nein. Mut bedeutet nicht, keine Angst zu haben. Der König der Stäbe erkennt Risiken meist und handelt trotzdem, wenn das Ziel es wert ist. In reifer Form nutzt er Angst als Information, statt sie die Entscheidung steuern zu lassen."
+    ],
+    [
+      "other",
+      "Wie unterscheidet sich der König der Stäbe von der Königin der Stäbe?",
+      "Beide sind selbstbewusst und charismatisch. Die Königin der Stäbe führt oft über Einfluss, Wärme und Ermutigung; der König setzt eher Richtung, trifft Entscheidungen und bewegt Menschen auf ein Ziel zu. Das sind zwei Führungsstile, keine Rangordnung."
+    ],
+    [
+      "career",
+      "Bedeutet ein König, dass die Person eine Führungskraft ist?",
+      "Nicht unbedingt. Ein König kann jemanden mit Entscheidungsmacht beschreiben, eine Rolle mit viel Eigenverantwortung oder einfach die Haltung, die du in der Situation brauchst. Mach aus einem symbolischen Rang keinen festen Berufstitel."
+    ],
+    [
+      "love",
+      "Was denkt diese Person über mich?",
+      "Die Person kann dich anziehend finden und die Beziehung aktiv voranbringen wollen. Sie weiß häufig, was sie möchte, und kann ihre Absicht klar zeigen. Achte darauf, ob diese Initiative auch dein Tempo und deine Entscheidungen respektiert."
+    ],
+    [
+      "love",
+      "Warum streiten wir so oft?",
+      "Konflikte entstehen leicht, wenn einer oder beide das Steuer übernehmen wollen. Selbstvertrauen wird zu Sturheit, Entschlossenheit klingt wie ein Befehl. Klärt, wo einer führen kann und wo Entscheidungen gemeinsam getroffen werden müssen."
+    ],
+    [
+      "career",
+      "Finde ich bald einen Job, der mir gefällt?",
+      "Der König der Stäbe passt zu Rollen mit Initiative, Kreativität, Führung oder der Chance, etwas Eigenes aufzubauen. Such nach einem Umfeld, in dem du Vision und Verantwortung einbringen kannst. Die Karte garantiert keine Einstellung, ermutigt aber dazu, deinen Wert und deine Richtung klar zu zeigen."
+    ],
+    [
+      "career",
+      "Ich habe einen normalen Bürojob. Worauf sollte ich bald achten?",
+      "Du kannst gebeten werden, ein Projekt zu führen, größere Entscheidungen zu treffen oder eng mit einer sehr willensstarken Person zu arbeiten. Sei aktiv, ohne alles kontrollieren zu wollen. Gute Führung gibt Richtung und lässt anderen Raum für ihren Beitrag."
+    ],
+    [
+      "other",
+      "Ist diese Karte positiv oder negativ?",
+      "Der König der Stäbe ist nicht automatisch gut oder schlecht. Seine helle Seite sind Vision, Mut und Führung; seine Schattenseite Ego, Ungeduld und Dominanz. Frage, Position und Nachbarkarten zeigen, wie die Energie gerade gelebt wird."
+    ]
+  ],
+  "swords-c3": [
+    [
+      "other",
+      "Was zeigt das Bild auf dieser Karte?",
+      "Der König der Schwerter sitzt aufrecht auf seinem Thron und hält das Schwert senkrecht. Das Bild betont Vernunft, Entscheidungsmacht, Prinzipien und systematisches Denken. Hier wird Intelligenz zum Urteilen und Entscheiden eingesetzt, nicht nur zum Beobachten."
+    ],
+    [
+      "other",
+      "Worin unterscheidet sich der König der Schwerter von der Königin der Schwerter?",
+      "Beide schätzen Wahrheit und klares Denken. Die Königin der Schwerter betont häufig Wahrnehmung, Grenzen und Unabhängigkeit; der König eher Entscheidungen, Regeln und Verantwortung für ein Urteil. Der Unterschied liegt in der Anwendung des Verstands, nicht darin, wer klüger ist."
+    ],
+    [
+      "other",
+      "Was bedeutet „rücksichtslos“ hier?",
+      "„Rücksichtslos“ lässt diese Karte schnell härter wirken als nötig. Treffender ist als Schatten: zu kalt, zu regelgebunden oder Effizienz wichtiger nehmen als menschliche Gefühle. In reifer Form kann der König der Schwerter schwierige Entscheidungen treffen und trotzdem auf Fakten und Ethik achten."
+    ],
+    [
+      "other",
+      "Ist der König der Schwerter so scharfzüngig wie der Ritter der Schwerter?",
+      "Der König der Schwerter kann sehr direkt sein, wählt in reifer Form seine Worte aber bewusst und kennt ihre Wirkung. Der Ritter reagiert schnell; der König spricht mit Absicht. Die Schattenseite beginnt, wenn Direktheit zu Geringschätzung wird oder Logik zum Überwältigen benutzt wird."
+    ],
+    [
+      "love",
+      "Was denkt diese Person über mich und die Beziehung?",
+      "Die Person kann die Beziehung ernsthaft und logisch prüfen: Passen eure Werte, könnt ihr kommunizieren und lässt sich eine Zukunft aufbauen? Sie zeigt Gefühle vielleicht weniger offen, doch das bedeutet nicht automatisch Unaufrichtigkeit. Achte auf Beständigkeit und Respekt."
+    ],
+    [
+      "love",
+      "Wie würde diese Person ihre Gefühle gestehen?",
+      "Sie bevorzugt meist Klarheit statt Ratespiele. Wenn sie vorankommen möchte, sagt sie vielleicht direkt, was sie will, und fragt nach deiner Sicht. Das kann weniger poetisch sein und trotzdem warm, wenn sie deine Antwort wirklich hört, statt nur eine Entscheidung zu verlangen."
+    ],
+    [
+      "love",
+      "Warum streiten wir so oft?",
+      "Vielleicht verwandelt einer jedes Thema sofort in ein Problem, das gelöst werden muss, während der andere erst gehört werden möchte. Oder ihr hängt beide zu stark daran, wer recht hat. Lernt zu unterscheiden, wann eine Lösung nötig ist und wann zuerst ein Gefühl anerkannt werden muss."
+    ],
+    [
+      "career",
+      "Ich bin seit Monaten arbeitslos. Finde ich Arbeit?",
+      "Der König der Schwerter passt zu einer strategischen Prüfung der Jobsuche: Zielrollen wählen, Lebenslauf überarbeiten, Gespräche üben und anhand von Rückmeldungen sehen, was nicht funktioniert. Analyse, Technik, Forschung, Recht oder fachliche Kommunikation können gut passen, doch die Karte garantiert keine Einstellung."
+    ],
+    [
+      "career",
+      "Welche Position werde ich in einem neuen Job haben?",
+      "Die Karte kann eine Rolle mit Urteilskraft, Verantwortung, Strategie oder fachlicher Kommunikation anzeigen. Das muss kein Führungstitel sein. Verlass dich auf die echte Stellenbeschreibung, um Befugnisse zu verstehen, statt sie aus dem Rang „König“ abzuleiten."
+    ],
+    [
+      "career",
+      "Ich habe einen normalen Bürojob. Was könnte sich bald ändern?",
+      "Eine wichtige Entscheidung, ein neuer Ablauf oder ein Problem mit hohem Analysebedarf kann anstehen. Auch eine sehr rationale Person mit Entscheidungsmacht kann wichtiger werden. Bereite Fakten vor, dokumentiere Absprachen und halte die Kommunikation professionell."
+    ]
+  ],
+  "cups-c3": [
+    [
+      "other",
+      "Was zeigt das Bild auf dieser Karte?",
+      "Der König der Kelche sitzt auf einem Thron, umgeben von bewegtem Wasser. Gefühle sind weiterhin um ihn herum, reißen ihn aber nicht mit. Das Bild steht für emotionale Reife, Ruhe und die Fähigkeit, bei sich zu bleiben, während sich die Umstände bewegen."
+    ],
+    [
+      "other",
+      "Was für eine Persönlichkeit beschreibt diese Karte?",
+      "Diese Person ist oft ruhig, hört gut zu und hat ein reiches Gefühlsleben, ohne jede Entscheidung vom jeweiligen Gefühl abhängig zu machen. Sie kann warm und unterstützend sein. Die Schattenseite ist, Gefühle zu stark zu verbergen oder Ruhe zu benutzen, um ein nötiges Gespräch zu vermeiden."
+    ],
+    [
+      "love",
+      "Wird diese Person mir ihre Gefühle gestehen?",
+      "Der König der Kelche kann jemanden zeigen, der seine Gefühle versteht und reif genug ist, sie auszudrücken. Tarot kann ein Geständnis aber nicht garantieren. Achte auf echte Zeichen: Initiative, Beständigkeit und darauf, wie die Person über eure Verbindung spricht."
+    ],
+    [
+      "love",
+      "Was empfindet diese Person für mich?",
+      "Das ist eine starke Karte für tiefe Zuneigung, Fürsorge und emotional reife Liebe. Die Person kann deine Gefühle wirklich verstehen und unterstützen wollen. Wie tief das geht, muss sich trotzdem in Handlungen und echter Kommunikation zeigen."
+    ],
+    [
+      "love",
+      "Wir lieben uns seit Jahren, streiten aber oft. Warum?",
+      "Streit bedeutet nicht, dass die Liebe verschwunden ist. Beim König der Kelche hält vielleicht einer zu viel zurück, um „ruhig zu bleiben“, oder übernimmt ständig die Rolle des Friedensstifters, bis eigene Bedürfnisse verschwinden. Ihr müsst möglicherweise auch Schwieriges aussprechen, nicht nur Harmonie bewahren."
+    ],
+    [
+      "career",
+      "Finde ich bald einen Job, der mir gefällt?",
+      "Der König der Kelche passt zu Arbeit, die Ruhe, Menschenkenntnis, Beratung, Kreativität, Fürsorge oder emotionale Stabilität unter Druck braucht. Er kann auf eine gute atmosphärische Passung hinweisen, verspricht aber weder Gehalt noch Einstellung."
+    ],
+    [
+      "other",
+      "Wie erkenne ich, ob der Job gut bezahlt wird?",
+      "Tarot kann weitere Fragen zu Geld anstoßen. Ob eine Stelle gut bezahlt wird, prüfst du aber über Gehalt, Zusatzleistungen, Fahrtkosten und realistische Entwicklung. Eine Kelchkarte sagt mehr über die emotionale Erfahrung als über die Zahl auf der Abrechnung."
+    ],
+    [
+      "career",
+      "Was könnte eine zweite berufliche Richtung für mich sein?",
+      "Eine weitere Richtung sind Tätigkeiten mit viel emotionaler Intelligenz: Beratung, Kundenbetreuung, Personalführung, Bildung, Kunst, Service oder Unterstützung. Du kannst solche Fähigkeiten auch stärker in deinen jetzigen Beruf einbringen, ohne die Branche komplett zu wechseln."
+    ],
+    [
+      "career",
+      "Ich habe einen normalen Bürojob. Was könnte sich bald ändern?",
+      "Eine Situation kann kommen, die ruhigen Umgang mit Menschen oder Vermittlung verlangt. Nutze deine Gelassenheit, aber mach dich nicht für die Gefühle des ganzen Teams verantwortlich. Unterstützung und Grenzen schließen einander nicht aus."
+    ],
+    [
+      "other",
+      "Kann diese Karte eine konkrete Person beschreiben?",
+      "Ja. Hofkarten können einen Menschen, eine Rolle oder eine Verhaltensweise beschreiben. Der König der Kelche kann für jemanden stehen, der ruhig, aufmerksam und emotional kompetent ist. Ordne die Karte nur dann einer konkreten Person zu, wenn Legung und reale Situation wirklich zusammenpassen."
+    ]
+  ],
+  "pentacles-c3": [
+    [
+      "other",
+      "Was zeigt das Bild auf dieser Karte?",
+      "Der König der Münzen sitzt auf einem Thron, umgeben von Symbolen für Fülle und Natur. Das Bild spricht von Ergebnissen, die über Zeit aufgebaut wurden: Geld, Ressourcen, Arbeit und Werte verwalten, die Bestand haben können."
+    ],
+    [
+      "other",
+      "Was für eine Persönlichkeit beschreibt diese Karte?",
+      "Diese Person ist oft praktisch, stabil, geduldig und gut im Umgang mit Ressourcen. Dauerhafte Ergebnisse sind ihr wichtiger als kurzfristige Aufregung, und sie denkt häufig langfristig. Die Schattenseite ist, Status, Geld, Kontrolle oder Sicherheit zu stark zu gewichten."
+    ],
+    [
+      "love",
+      "Was empfindet diese Person für mich?",
+      "Die Person kann die Beziehung langfristig und praktisch betrachten: gemeinsames Leben, Finanzen, Zuhause oder Pläne. Praxisnähe macht Liebe nicht weniger ehrlich. Achte neben materieller Unterstützung auch auf Wärme, Respekt und emotionale Investition."
+    ],
+    [
+      "love",
+      "Was ist anders daran, so einen Menschen zu lieben?",
+      "Diese Energie ist oft weniger spektakulär und dafür beständiger als eine sehr dramatische Romanze. Fürsorge zeigt sich durch eingehaltene Versprechen, Anwesenheit, Planung und Sicherheit. Wichtig ist, Stabilität von Kontrolle und materielle Versorgung von emotionaler Nähe zu unterscheiden."
+    ],
+    [
+      "love",
+      "Wir sind seit Jahren zusammen, streiten aber oft. Bedeutet das eine Trennung?",
+      "Eine Karte kann nicht entscheiden, ob ihr euch trennt. Der König der Münzen richtet den Blick auf langfristige Werte: Geld, Familie, Wohnort, Bindung und Zukunftsplanung. Wenn dort der Konflikt liegt, klärt, was verhandelbar ist und was wirklich nicht."
+    ],
+    [
+      "love",
+      "Wann müssen sich zwei Menschen trennen?",
+      "Keine Karte kann festlegen, dass zwei Menschen sich „trennen müssen“. Wenn Grundwerte wie Kinderwunsch, Ehe, Sicherheit, Respekt oder Lebensform nicht vereinbar sind, kann eine Trennung eine gesunde Entscheidung sein. Diese Entscheidung gehört den Beteiligten, nicht dem Tarot."
+    ],
+    [
+      "money",
+      "Finde ich bald einen Job?",
+      "Der König der Münzen ist ein positives Symbol für Stabilität und materielle Kompetenz, kann aber weder Stelle noch Gehalt garantieren. Achte auf klare Bezahlung, Bedingungen und Entwicklung. Symbolisch passt die Karte besonders zu Management, Geschäft oder Rollen mit materieller Verantwortung."
+    ],
+    [
+      "money",
+      "Ich habe einen normalen Bürojob. Was könnte sich bald ändern?",
+      "Du kannst mehr Verantwortung übernehmen, Ressourcen verwalten oder eine nachhaltige Möglichkeit zur Einkommensverbesserung sehen. Auch eine finanziell einflussreiche oder leitende Person kann wichtig werden. Prüfe Veränderungen mit echten Informationen statt die Karte als Beförderungsversprechen zu lesen."
+    ],
+    [
+      "other",
+      "Hast du ein Beispiel dafür, mit einer weiteren Karte tieferzugehen?",
+      "Ja. Wenn dich der König der Münzen an einen Vorgesetzten erinnert, leg vorher fest, dass die nächste Karte fragt: „Wie beeinflusst diese Person meine Arbeit?“. Die Drei der Münzen könnte dann zum Beispiel Zusammenarbeit oder Teambildung anzeigen. Stell pro Zusatzkarte eine klare Frage, statt so lange zu ziehen, bis dir eine Antwort gefällt."
+    ]
+  ]
+});

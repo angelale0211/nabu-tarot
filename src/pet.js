@@ -23,24 +23,24 @@ const PET_PRO = { phoenix: true, ninetails: true, dragon: true, tiger: true, qil
 /* A spirit beast learns twice as fast from every meal and every game. */
 const MYTH_XP = 2;
 const PET_NAMES = {
-  cat: { vi: 'Mèo Trăng', en: 'Moon cat' },
-  fox: { vi: 'Cáo Sao', en: 'Star fox' },
-  bunny: { vi: 'Thỏ Mây', en: 'Cloud bunny' },
-  turtle: { vi: 'Rùa Ngọc', en: 'Jade turtle' },
-  deer: { vi: 'Hươu Lành', en: 'Gentle deer' },
-  swallow: { vi: 'Én Gió', en: 'Wind swallow' },
-  phoenix: { vi: 'Phượng Hoàng', en: 'Phoenix' },
-  ninetails: { vi: 'Hồ Ly Chín Đuôi', en: 'Nine-tailed fox' },
-  dragon: { vi: 'Rồng Mây', en: 'Cloud dragon' },
-  tiger: { vi: 'Bạch Hổ', en: 'White tiger' },
-  qilin: { vi: 'Kỳ Lân', en: 'Qilin' },
-  owl: { vi: 'Cú Trăng', en: 'Moon owl' },
-  pixiu: { vi: 'Tỳ Hưu', en: 'Pixiu' },
-  toad: { vi: 'Thiềm Thừ', en: 'Money toad' },
-  crane: { vi: 'Bạch Hạc', en: 'White crane' },
-  kimquy: { vi: 'Kim Quy', en: 'Golden turtle' },
-  pegasus: { vi: 'Thiên Mã', en: 'Sky horse' },
-  eagle: { vi: 'Đại Bàng Vàng', en: 'Golden eagle' }
+  cat: { vi: 'Mèo Trăng', en: 'Moon cat', de: 'Mondkatze' },
+  fox: { vi: 'Cáo Sao', en: 'Star fox', de: 'Sternfuchs' },
+  bunny: { vi: 'Thỏ Mây', en: 'Cloud bunny', de: 'Wolkenhäschen' },
+  turtle: { vi: 'Rùa Ngọc', en: 'Jade turtle', de: 'Jadeschildkröte' },
+  deer: { vi: 'Hươu Lành', en: 'Gentle deer', de: 'Sanfter Hirsch' },
+  swallow: { vi: 'Én Gió', en: 'Wind swallow', de: 'Windschwalbe' },
+  phoenix: { vi: 'Phượng Hoàng', en: 'Phoenix', de: 'Phönix' },
+  ninetails: { vi: 'Hồ Ly Chín Đuôi', en: 'Nine-tailed fox', de: 'Neunschwänziger Fuchs' },
+  dragon: { vi: 'Rồng Mây', en: 'Cloud dragon', de: 'Wolkendrache' },
+  tiger: { vi: 'Bạch Hổ', en: 'White tiger', de: 'Weißer Tiger' },
+  qilin: { vi: 'Kỳ Lân', en: 'Qilin', de: 'Qilin' },
+  owl: { vi: 'Cú Trăng', en: 'Moon owl', de: 'Mondeule' },
+  pixiu: { vi: 'Tỳ Hưu', en: 'Pixiu', de: 'Pixiu' },
+  toad: { vi: 'Thiềm Thừ', en: 'Money toad', de: 'Geldkröte' },
+  crane: { vi: 'Bạch Hạc', en: 'White crane', de: 'Weißer Kranich' },
+  kimquy: { vi: 'Kim Quy', en: 'Golden turtle', de: 'Goldene Schildkröte' },
+  pegasus: { vi: 'Thiên Mã', en: 'Sky horse', de: 'Himmelspferd' },
+  eagle: { vi: 'Đại Bàng Vàng', en: 'Golden eagle', de: 'Goldener Adler' }
 };
 
 /* ---- what each one looks after ---- */
@@ -51,55 +51,55 @@ const PET_LUCK = {
 };
 /* Each spirit beast says its own version of its corner's promise. */
 const PET_LINES = {
-  phoenix: { vi: 'Phượng Hoàng bay qua những gì đã cũ và mở ra một mùa mới cho trái tim bạn.', en: 'The phoenix flies over what is finished and opens a new season for your heart.' },
-  ninetails: { vi: 'Hồ Ly Chín Đuôi có chín cái đuôi và chín cách khiến người ta nhớ đến bạn.', en: 'The nine-tailed fox has nine tails and nine ways of making you remembered.' },
-  dragon: { vi: 'Rồng Mây cưỡi gió đưa tên bạn đi xa hơn những gì bạn tự nói về mình.', en: 'The cloud dragon rides the wind and carries your name further than you could speak it.' },
-  tiger: { vi: 'Bạch Hổ đứng sau lưng bạn trong mọi cuộc thương lượng, nên không ai dám coi nhẹ bạn.', en: 'The white tiger stands behind you in every negotiation, so nobody takes you lightly.' },
-  qilin: { vi: 'Kỳ Lân chỉ hiện ra với người chịu học, và nó đang đứng cạnh bàn của bạn.', en: 'The qilin shows itself only to those who keep studying, and it is standing by your desk.' },
-  owl: { vi: 'Cú Trăng thức cùng bạn tới khuya và nhìn thấy những gì bạn còn bỏ sót.', en: 'The moon owl sits up late with you and sees what you are still missing.' },
-  pixiu: { vi: 'Tỳ Hưu chỉ nuốt vào mà không nhả ra, nên của cải ở lại trong nhà bạn.', en: 'The pixiu swallows and never gives back, so what comes in stays in your house.' },
-  toad: { vi: 'Thiềm Thừ ngậm đồng tiền vàng ngay cửa, ai bước vào cũng mang lộc theo.', en: 'The money toad sits at the door with a gold coin in its mouth, and everyone who enters brings something in.' },
-  crane: { vi: 'Bạch Hạc sống rất thọ, và nó đứng canh giấc ngủ của bạn mỗi đêm.', en: 'The white crane lives a long life, and it keeps watch over your sleep.' },
-  kimquy: { vi: 'Kim Quy đi chậm qua trăm năm, nên bên nó chuyện gì cũng kịp lành.', en: 'The golden turtle walks slowly through a hundred years, so beside it everything has time to heal.' },
-  pegasus: { vi: 'Thiên Mã đi cùng người đi xa, dù là đi làm hay đi chơi, để bạn thượng lộ bình an và về đến nhà nguyên vẹn.', en: 'The sky horse rides with whoever goes far, for work or for pleasure, and sees them safely there and safely home.' },
-  eagle: { vi: 'Đại Bàng Vàng nhìn thấy cả chặng đường trước khi bạn cất bước, nên bạn không đi lạc.', en: 'The golden eagle sees the whole road before you take a step, so you do not lose your way.' }
+  phoenix: { vi: 'Phượng Hoàng bay qua những gì đã cũ và mở ra một mùa mới cho trái tim bạn.', en: 'The phoenix flies over what is finished and opens a new season for your heart.', de: 'Der Phönix lässt Altes hinter sich und erinnert dein Herz daran, dass ein neuer Abschnitt beginnen darf.' },
+  ninetails: { vi: 'Hồ Ly Chín Đuôi có chín cái đuôi và chín cách khiến người ta nhớ đến bạn.', en: 'The nine-tailed fox has nine tails and nine ways of making you remembered.', de: 'Der Neunschwänzige Fuchs hat neun Schwänze und mindestens neun kleine Tricks, um in Erinnerung zu bleiben.' },
+  dragon: { vi: 'Rồng Mây cưỡi gió đưa tên bạn đi xa hơn những gì bạn tự nói về mình.', en: 'The cloud dragon rides the wind and carries your name further than you could speak it.', de: 'Der Wolkendrache trägt deinen Namen mit dem Wind ein Stück weiter – als kleine Erinnerung daran, deine Arbeit sichtbar zu machen.' },
+  tiger: { vi: 'Bạch Hổ đứng sau lưng bạn trong những cuộc thương lượng khó, nhắc bạn đừng tự hạ thấp giá trị của mình.', en: 'The white tiger stands behind you in difficult negotiations and reminds you not to make yourself smaller.', de: 'Der Weiße Tiger steht bei schwierigen Gesprächen hinter dir und erinnert dich daran, deinen eigenen Wert nicht kleinzureden.' },
+  qilin: { vi: 'Kỳ Lân đứng cạnh bàn học, nhắc bạn rằng mỗi bước nhỏ đều được tính.', en: 'The qilin stands beside your desk and reminds you that every small step of learning counts.', de: 'Der Qilin steht still neben deinem Schreibtisch und erinnert dich daran, dass jeder kleine Lernschritt zählt.' },
+  owl: { vi: 'Cú Trăng thức cùng bạn tới khuya và nhìn thấy những gì bạn còn bỏ sót.', en: 'The moon owl sits up late with you and sees what you are still missing.', de: 'Die Mondeule bleibt lange wach und hilft dir, noch einmal auf das zu schauen, was du vielleicht übersehen hast.' },
+  pixiu: { vi: 'Tỳ Hưu vốn là biểu tượng giữ tài lộc, hôm nay cứ để bạn ấy ngồi cạnh chiếc ví của bạn.', en: 'The pixiu is traditionally a symbol of keeping wealth; today, let it sit beside your wallet.', de: 'Der Pixiu gilt traditionell als Symbol dafür, Vermögen zu bewahren – heute darf er einfach neben deinem Sparschwein sitzen.' },
+  toad: { vi: 'Thiềm Thừ ngậm đồng tiền vàng ngay cửa, gửi một chút may mắn vào căn nhà của bạn.', en: 'The money toad sits at the door with a gold coin and sends a little luck into your home.', de: 'Die Geldkröte sitzt mit ihrer goldenen Münze an der Tür und wünscht deinem Zuhause ein kleines bisschen Glück.' },
+  crane: { vi: 'Bạch Hạc đứng canh giấc ngủ, nhắc bạn rằng nghỉ ngơi cũng quan trọng như cố gắng.', en: 'The white crane watches over your sleep and reminds you that rest matters as much as effort.', de: 'Der Weiße Kranich wacht still über deine Ruhe und erinnert dich daran, dass Erholung genauso wichtig ist wie Weitermachen.' },
+  kimquy: { vi: 'Kim Quy chẳng bao giờ vội. Ở cạnh bạn ấy, mọi điều cũng được phép lành lại theo nhịp riêng.', en: 'The golden turtle is never in a hurry. Beside it, everything is allowed to heal in its own time.', de: 'Die Goldene Schildkröte hat es nie eilig. Neben ihr darf auch Heilung ihre eigene Zeit brauchen.' },
+  pegasus: { vi: 'Thiên Mã đi cùng người đi xa, dù là đi làm hay đi chơi, để bạn thượng lộ bình an và về đến nhà nguyên vẹn.', en: 'The sky horse rides with whoever goes far, for work or for pleasure, and sees them safely there and safely home.', de: 'Das Himmelspferd begleitet in Gedanken alle, die weit reisen, und wünscht dir eine sichere Hin- und Rückreise.' },
+  eagle: { vi: 'Đại Bàng Vàng nhìn xa trên cả chặng đường, nhắc bạn xem lại phương hướng trước khi cất bước.', en: 'The golden eagle looks far along the road and reminds you to check your direction before setting out.', de: 'Der Goldene Adler blickt weit über den Weg hinaus und erinnert dich daran, vor dem Aufbruch noch einmal auf die Richtung zu schauen.' }
 };
 const LUCKS = {
   love: {
     id: 'love', sym: '💗', ink: '#D3557E', deep: '#8E2E4C', aura: '#FBD3E1',
-    name: { vi: 'Tình duyên', en: 'Love' },
-    line: { vi: 'Mèo Trăng ngồi canh chuyện tình cảm và giữ cho lòng bạn ấm.', en: 'The moon cat sits with matters of the heart and keeps you warm.' },
-    proLine: { vi: 'Phượng Hoàng bay qua những gì đã cũ và mở ra một mùa mới cho trái tim bạn.', en: 'The phoenix flies over what is finished and opens a new season for your heart.' }
+    name: { vi: 'Tình duyên', en: 'Love', de: 'Liebe' },
+    line: { vi: 'Mèo Trăng ngồi canh chuyện tình cảm và giữ cho lòng bạn ấm.', en: 'The moon cat sits with matters of the heart and keeps you warm.', de: 'Die Mondkatze sitzt bei deinen Herzensdingen und hält dein Herz ein bisschen warm.' },
+    proLine: { vi: 'Phượng Hoàng bay qua những gì đã cũ và mở ra một mùa mới cho trái tim bạn.', en: 'The phoenix flies over what is finished and opens a new season for your heart.', de: 'Der Phönix lässt Altes hinter sich und erinnert dein Herz daran, dass ein neuer Abschnitt beginnen darf.' }
   },
   career: {
     id: 'career', sym: '⭐', ink: '#B98420', deep: '#775010', aura: '#FBE7BE',
-    name: { vi: 'Sự nghiệp', en: 'Work' },
-    line: { vi: 'Cáo Sao đi trước một bước để mở đường cho công việc của bạn.', en: 'The star fox walks a step ahead and opens the way at work.' },
-    proLine: { vi: 'Rồng Mây cưỡi gió đưa tên bạn đi xa hơn những gì bạn tự nói về mình.', en: 'The cloud dragon rides the wind and carries your name further than you could speak it.' }
+    name: { vi: 'Sự nghiệp', en: 'Work', de: 'Arbeit' },
+    line: { vi: 'Cáo Sao đi trước một bước để mở đường cho công việc của bạn.', en: 'The star fox walks a step ahead and opens the way at work.', de: 'Der Sternfuchs läuft einen Schritt voraus und hält nach einem guten Weg für deine Arbeit Ausschau.' },
+    proLine: { vi: 'Rồng Mây cưỡi gió đưa tên bạn đi xa hơn những gì bạn tự nói về mình.', en: 'The cloud dragon rides the wind and carries your name further than you could speak it.', de: 'Der Wolkendrache trägt deinen Namen mit dem Wind ein Stück weiter – als kleine Erinnerung daran, deine Arbeit sichtbar zu machen.' }
   },
   study: {
     id: 'study', sym: '📖', ink: '#4173B8', deep: '#23477F', aura: '#CFE0F7',
-    name: { vi: 'Học hành', en: 'Study' },
-    line: { vi: 'Thỏ Mây thức cùng bạn qua những trang sách khó nhất.', en: 'The cloud bunny stays up with you through the hardest pages.' },
-    proLine: { vi: 'Kỳ Lân chỉ hiện ra với người chịu học, và nó đang đứng cạnh bàn của bạn.', en: 'The qilin shows itself only to those who keep studying, and it is standing by your desk.' }
+    name: { vi: 'Học hành', en: 'Study', de: 'Lernen' },
+    line: { vi: 'Thỏ Mây thức cùng bạn qua những trang sách khó nhất.', en: 'The cloud bunny stays up with you through the hardest pages.', de: 'Das Wolkenhäschen bleibt bei dir, auch wenn die Seiten heute besonders schwer sind.' },
+    proLine: { vi: 'Kỳ Lân chỉ hiện ra với người chịu học, và nó đang đứng cạnh bàn của bạn.', en: 'The qilin shows itself only to those who keep studying, and it is standing by your desk.', de: 'Der Qilin steht still neben deinem Schreibtisch und erinnert dich daran, dass jeder kleine Lernschritt zählt.' }
   },
   money: {
     id: 'money', sym: '🪙', ink: '#2E8A68', deep: '#145C43', aura: '#C6E8D9',
-    name: { vi: 'Tiền tài', en: 'Money' },
-    line: { vi: 'Rùa Ngọc đi chậm mà chắc, giữ lại những gì bạn đã có.', en: 'The jade turtle moves slowly and keeps what you already have.' },
-    proLine: { vi: 'Tỳ Hưu chỉ nuốt vào mà không nhả ra, nên của cải ở lại trong nhà bạn.', en: 'The pixiu swallows and never gives back, so what comes in stays in your house.' }
+    name: { vi: 'Tiền tài', en: 'Money', de: 'Geld' },
+    line: { vi: 'Rùa Ngọc đi chậm mà chắc, giữ lại những gì bạn đã có.', en: 'The jade turtle moves slowly and keeps what you already have.', de: 'Die Jadeschildkröte geht langsam und erinnert dich daran, gut auf das aufzupassen, was du schon hast.' },
+    proLine: { vi: 'Tỳ Hưu chỉ nuốt vào mà không nhả ra, nên của cải ở lại trong nhà bạn.', en: 'The pixiu swallows and never gives back, so what comes in stays in your house.', de: 'Der Pixiu gilt traditionell als Symbol dafür, Vermögen zu bewahren – heute darf er einfach neben deinem Sparschwein sitzen.' }
   },
   health: {
     id: 'health', sym: '🌿', ink: '#1F8A98', deep: '#14606B', aura: '#C7EAEE',
-    name: { vi: 'Sức khỏe', en: 'Health' },
-    line: { vi: 'Hươu Lành nhắc bạn đi chậm lại một chút để người còn theo kịp.', en: 'The gentle deer asks you to slow down so your body can keep up.' },
-    proLine: { vi: 'Bạch Hạc sống rất thọ, và nó đứng canh giấc ngủ của bạn mỗi đêm.', en: 'The white crane lives a long life, and it keeps watch over your sleep.' }
+    name: { vi: 'Sức khỏe', en: 'Health', de: 'Gesundheit' },
+    line: { vi: 'Hươu Lành nhắc bạn đi chậm lại một chút để người còn theo kịp.', en: 'The gentle deer asks you to slow down so your body can keep up.', de: 'Der Sanfte Hirsch erinnert dich daran, heute ein wenig langsamer zu machen, damit dein Körper mitkommt.' },
+    proLine: { vi: 'Bạch Hạc sống rất thọ, và nó đứng canh giấc ngủ của bạn mỗi đêm.', en: 'The white crane lives a long life, and it keeps watch over your sleep.', de: 'Der Weiße Kranich wacht still über deine Ruhe und erinnert dich daran, dass Erholung genauso wichtig ist wie Weitermachen.' }
   },
   travel: {
     id: 'travel', sym: '🧭', ink: '#C4643C', deep: '#8A3E1E', aura: '#F8D9C6',
-    name: { vi: 'Đi lại', en: 'Travel' },
-    line: { vi: 'Én Gió bay rất xa rồi vẫn về đúng tổ, nên đường bạn đi cũng luôn có lối về bình an.', en: 'The wind swallow flies far and still finds its own nest, so your road always has a safe way back.' },
-    proLine: { vi: 'Thiên Mã đi cùng người đi xa, dù là đi làm hay đi chơi, để bạn thượng lộ bình an và về đến nhà nguyên vẹn.', en: 'The sky horse rides with whoever goes far, for work or for pleasure, and sees them safely there and safely home.' }
+    name: { vi: 'Đi lại', en: 'Travel', de: 'Reisen' },
+    line: { vi: 'Én Gió bay rất xa rồi vẫn về đúng tổ, nên đường bạn đi cũng luôn có lối về bình an.', en: 'The wind swallow flies far and still finds its own nest, so your road always has a safe way back.', de: 'Die Windschwalbe fliegt weit und findet doch zurück. Sie wünscht dir einen ruhigen Weg und eine sichere Heimkehr.' },
+    proLine: { vi: 'Thiên Mã đi cùng người đi xa, dù là đi làm hay đi chơi, để bạn thượng lộ bình an và về đến nhà nguyên vẹn.', en: 'The sky horse rides with whoever goes far, for work or for pleasure, and sees them safely there and safely home.', de: 'Das Himmelspferd begleitet in Gedanken alle, die weit reisen – für Arbeit oder zum Vergnügen – und wünscht dir eine sichere Hin- und Rückreise.' }
   }
 };
 const petLuck = (kind) => LUCKS[PET_LUCK[kind] || 'love'];
@@ -175,39 +175,39 @@ const PET_COATS = [
   { id: 'gold', pro: true, body: '#EDD08A', dark: '#D4B25F', ink: '#5A4415' }
 ];
 const PET_FOODS = [
-  { id: 'rice', pro: false, add: 0, sym: '🍚', name: { vi: 'Cơm trắng', en: 'Plain rice' } },
-  { id: 'carrot', pro: false, add: 0, sym: '🥕', name: { vi: 'Cà rốt vườn', en: 'Garden carrot' } },
-  { id: 'moon', pro: true, add: 2, sym: '🍡', name: { vi: 'Bánh trôi ngũ sắc', en: 'Five-colour dumplings' } },
-  { id: 'fish', pro: true, add: 2, sym: '🐟', name: { vi: 'Cá nướng lá chuối', en: 'Fish in banana leaf' } },
-  { id: 'honey', pro: true, add: 2, sym: '🍯', name: { vi: 'Mật hoa rừng', en: 'Wild flower honey' } },
-  { id: 'berry', pro: true, add: 2, sym: '🍓', name: { vi: 'Dâu sương sớm', en: 'Morning-dew berries' } },
-  { id: 'cake', pro: true, add: 2, sym: '🍥', name: { vi: 'Bánh trăng rằm', en: 'Full-moon cake' } },
-  { id: 'star', pro: true, add: 2, sym: '🧁', name: { vi: 'Bánh kem sao', en: 'Star cream cake' } },
-  { id: 'tea', pro: true, add: 2, sym: '🍵', name: { vi: 'Trà sen ướp sương', en: 'Dew-steeped lotus tea' } }
+  { id: 'rice', pro: false, add: 0, sym: '🍚', name: { vi: 'Cơm trắng', en: 'Plain rice', de: 'Weißer Reis' } },
+  { id: 'carrot', pro: false, add: 0, sym: '🥕', name: { vi: 'Cà rốt vườn', en: 'Garden carrot', de: 'Gartenkarotte' } },
+  { id: 'moon', pro: true, add: 2, sym: '🍡', name: { vi: 'Bánh trôi ngũ sắc', en: 'Five-colour dumplings', de: 'Fünffarbige Reisbällchen' } },
+  { id: 'fish', pro: true, add: 2, sym: '🐟', name: { vi: 'Cá nướng lá chuối', en: 'Fish in banana leaf', de: 'Fisch im Bananenblatt' } },
+  { id: 'honey', pro: true, add: 2, sym: '🍯', name: { vi: 'Mật hoa rừng', en: 'Wild flower honey', de: 'Waldblütenhonig' } },
+  { id: 'berry', pro: true, add: 2, sym: '🍓', name: { vi: 'Dâu sương sớm', en: 'Morning-dew berries', de: 'Morgentau-Beeren' } },
+  { id: 'cake', pro: true, add: 2, sym: '🍥', name: { vi: 'Bánh trăng rằm', en: 'Full-moon cake', de: 'Vollmondkuchen' } },
+  { id: 'star', pro: true, add: 2, sym: '🧁', name: { vi: 'Bánh kem sao', en: 'Star cream cake', de: 'Sternenküchlein' } },
+  { id: 'tea', pro: true, add: 2, sym: '🍵', name: { vi: 'Trà sen ướp sương', en: 'Dew-steeped lotus tea', de: 'Lotustee mit Morgentau' } }
 ];
 const PET_HOMES = [
-  { id: 'mat', pro: false, add: 0, name: { vi: 'Chiếu cỏ', en: 'Grass mat' } },
-  { id: 'cloud', pro: true, add: 12, name: { vi: 'Nhà mây', en: 'Cloud cottage' } },
-  { id: 'shrine', pro: true, add: 12, name: { vi: 'Đền nhỏ', en: 'Little shrine' } },
-  { id: 'moon', pro: true, add: 12, name: { vi: 'Vườn trăng', en: 'Moon garden' } },
-  { id: 'heaven', pro: true, add: 12, name: { vi: 'Cổng trời', en: 'Gate of heaven' } },
-  { id: 'palace', pro: true, add: 12, name: { vi: 'Cung điện', en: 'The palace' } },
-  { id: 'castle', pro: true, add: 12, name: { vi: 'Lâu đài phép', en: 'Magic castle' } },
-  { id: 'lotus', pro: true, add: 12, name: { vi: 'Thủy tạ đầm sen', en: 'Lotus pavilion' } },
-  { id: 'isle', pro: true, add: 12, name: { vi: 'Đảo trời', en: 'Floating isle' } }
+  { id: 'mat', pro: false, add: 0, name: { vi: 'Chiếu cỏ', en: 'Grass mat', de: 'Grasmatte' } },
+  { id: 'cloud', pro: true, add: 12, name: { vi: 'Nhà mây', en: 'Cloud cottage', de: 'Wolkenhäuschen' } },
+  { id: 'shrine', pro: true, add: 12, name: { vi: 'Đền nhỏ', en: 'Little shrine', de: 'Kleiner Schrein' } },
+  { id: 'moon', pro: true, add: 12, name: { vi: 'Vườn trăng', en: 'Moon garden', de: 'Mondgarten' } },
+  { id: 'heaven', pro: true, add: 12, name: { vi: 'Cổng trời', en: 'Gate of heaven', de: 'Himmelstor' } },
+  { id: 'palace', pro: true, add: 12, name: { vi: 'Cung điện', en: 'The palace', de: 'Palast' } },
+  { id: 'castle', pro: true, add: 12, name: { vi: 'Lâu đài phép', en: 'Magic castle', de: 'Zauberschloss' } },
+  { id: 'lotus', pro: true, add: 12, name: { vi: 'Thủy tạ đầm sen', en: 'Lotus pavilion', de: 'Lotuspavillon' } },
+  { id: 'isle', pro: true, add: 12, name: { vi: 'Đảo trời', en: 'Floating isle', de: 'Schwebende Insel' } }
 ];
 const PET_WEARS = [
-  { id: 'none', pro: false, add: 0, name: { vi: 'Để mộc', en: 'Nothing' } },
-  { id: 'scarf', pro: true, add: 10, name: { vi: 'Khăn lụa', en: 'Silk scarf' } },
-  { id: 'bell', pro: true, add: 10, name: { vi: 'Chuông vàng', en: 'Gold bell' } },
-  { id: 'crown', pro: true, add: 10, name: { vi: 'Vòng hoa', en: 'Flower crown' } },
-  { id: 'hat', pro: true, add: 10, name: { vi: 'Nón trăng', en: 'Moon hat' } },
+  { id: 'none', pro: false, add: 0, name: { vi: 'Để mộc', en: 'Nothing', de: 'Ohne Accessoire' } },
+  { id: 'scarf', pro: true, add: 10, name: { vi: 'Khăn lụa', en: 'Silk scarf', de: 'Seidenschal' } },
+  { id: 'bell', pro: true, add: 10, name: { vi: 'Chuông vàng', en: 'Gold bell', de: 'Goldglöckchen' } },
+  { id: 'crown', pro: true, add: 10, name: { vi: 'Vòng hoa', en: 'Flower crown', de: 'Blumenkranz' } },
+  { id: 'hat', pro: true, add: 10, name: { vi: 'Nón trăng', en: 'Moon hat', de: 'Mondhut' } },
   /* Clothes rather than accessories: these are worn on the body. */
-  { id: 'jumper', pro: true, add: 10, name: { vi: 'Áo len', en: 'Knitted jumper' } },
-  { id: 'cloak', pro: true, add: 10, name: { vi: 'Áo choàng sao', en: 'Star cloak' } },
-  { id: 'armour', pro: true, add: 10, name: { vi: 'Giáp vàng', en: 'Gold armour' } },
+  { id: 'jumper', pro: true, add: 10, name: { vi: 'Áo len', en: 'Knitted jumper', de: 'Strickpullover' } },
+  { id: 'cloak', pro: true, add: 10, name: { vi: 'Áo choàng sao', en: 'Star cloak', de: 'Sternenumhang' } },
+  { id: 'armour', pro: true, add: 10, name: { vi: 'Giáp vàng', en: 'Gold armour', de: 'Goldene Rüstung' } },
   /* The only thing worn behind the companion rather than in front of it. */
-  { id: 'wings', pro: true, add: 10, name: { vi: 'Đôi cánh thần', en: 'Feathered wings' } }
+  { id: 'wings', pro: true, add: 10, name: { vi: 'Đôi cánh thần', en: 'Feathered wings', de: 'Federflügel' } }
 ];
 /* What gets thrown when the two of you play. */
 const PET_PAT_XP = 4;

@@ -754,7 +754,17 @@ const ONE_COL = ['love', 'wedding', 'pet', 'play', 'looks', 'rewards', 'me', 'bo
 /* Under #/learn only the hub and the card pages are wide; the rest is reading. */
 const ONE_COL_LEARN = ['astro', 'fortune', 'numbers', 'angel', 'quiz', 'manifest',
   'guide', 'spread', 'lesson'];
+/* The three chrome buttons live in the shell, outside any screen, so
+   their labels are set here rather than in the markup: this way they
+   follow the language switch like everything else. */
+function chromeLabels() {
+  const S = T();
+  const set = (id, text) => { const el = $(id); if (el) el.setAttribute('aria-label', text); };
+  set('#bell', S.a11yBell); set('#theme', S.a11yTheme); set('#totop', S.a11yTop);
+}
+
 function route() {
+  chromeLabels();
   const r = parseHash();
   const def = ROUTES[r.route];
   if (!def) { redirect('#/home'); return; }

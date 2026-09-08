@@ -67,7 +67,7 @@ function topicHelp(q) {
   if (/manifest|khang dinh|affirmation|369|scripting|kich ban/.test(f)) { const id = /369/.test(f) ? 'mani-369' : /script|kich ban/.test(f) ? 'mani-script' : /khang dinh|affirmation|biet on|gratitude/.test(f) ? 'mani-gratitude' : 'mani-what'; const g = GUIDES.filter((x) => x.id === id)[0]; return L(g.intro) + ' ' + L(g.sections[0].p); }
   if (/la nguoc|reversed/.test(f)) { const g = GUIDES.filter((x) => x.id === 'tarot-reversed')[0]; return L(g.intro) + ' ' + L(g.sections[0].p); }
   if (/hoang gia|court/.test(f)) { const g = GUIDES.filter((x) => x.id === 'tarot-court')[0]; return L(g.intro) + ' ' + L(g.sections[0].p); }
-  if (/mat trang|moon|trang non|trang tron|full moon|new moon|\btrang\b|\btrăng\b/.test(f)) { const g = GUIDES.filter((x) => x.id === 'astro-moon')[0]; const mp = moonPhase(new Date()); return (lang === 'vi' ? 'Hôm nay là ' : 'Today is ') + MOON_NAMES[lang][mp.idx] + '. ' + L(g.intro); }
+  if (/mat trang|moon|trang non|trang tron|full moon|new moon|\btrang\b|\btrăng\b/.test(f)) { const g = GUIDES.filter((x) => x.id === 'astro-moon')[0]; const mp = moonPhase(new Date()); return (lang === 'vi' ? 'Hôm nay là ' : (lang === 'de' ? 'Heute ist ' : 'Today is ')) + MOON_NAMES[lang][mp.idx] + '. ' + L(g.intro); }
   if (/nghich hanh|retrograde/.test(f)) { const g = GUIDES.filter((x) => x.id === 'astro-retro')[0]; return L(g.intro) + ' ' + L(g.sections[1].p); }
   if (/cung moc|rising|ascendant|cung mat trang|moon sign|big three|ba cung/.test(f)) { const g = GUIDES.filter((x) => x.id === 'astro-big3')[0]; return L(g.intro) + ' ' + L(g.sections[2].p); }
   if (/chi tay|palm/.test(f)) { const g = GUIDES.filter((x) => x.id === 'fort-palm')[0]; return L(g.intro); }
@@ -78,8 +78,9 @@ function topicHelp(q) {
   return '';
 }
 const SUIT_TIMING = {
-  vi: { wands: 'Gậy đi nhanh: vài ngày đến vài tuần.', cups: 'Cốc đi theo cảm xúc: vài tuần, đôi khi một mùa.', swords: 'Kiếm đi rất nhanh, thường tính bằng ngày, nhưng hay đến bất ngờ.', pentacles: 'Tiền đi chậm: tính bằng tháng, có khi cả năm.', major: 'Ẩn Chính không tính theo lịch: chuyện xảy ra khi bài học đã đủ, không sớm hơn.' },
-  en: { wands: 'Wands move fast: days to a few weeks.', cups: 'Cups move with feeling: weeks, sometimes a season.', swords: 'Swords move very fast, usually days, and often arrive unexpectedly.', pentacles: 'Pentacles are slow: months, sometimes a year.', major: 'A Major is not on the calendar: it happens when the lesson is complete, not before.' }
+  vi: { wands: 'Gậy đi nhanh: vài ngày đến vài tuần.', cups: 'Cốc đi theo cảm xúc: vài tuần, đôi khi một mùa.', swords: 'Kiếm đi rất nhanh, thường tính bằng ngày, nhưng hay đến bất ngờ.', pentacles: 'Tiền đi chậm: tính bằng tháng, có khi cả năm.', major: 'Ẩn Chính thường không hợp để chốt thời gian cụ thể. Hãy đọc chúng như những giai đoạn hoặc bài học lớn hơn là một mốc lịch chính xác.' },
+  en: { wands: 'Wands move fast: days to a few weeks.', cups: 'Cups move with feeling: weeks, sometimes a season.', swords: 'Swords move very fast, usually days, and often arrive unexpectedly.', pentacles: 'Pentacles are slow: months, sometimes a year.', major: 'Major Arcana are usually poor tools for exact timing. Read them as larger phases or lessons rather than a precise date.' },
+  de: { wands: 'Stäbe sind schnell: wenige Tage bis einige Wochen.', cups: 'Kelche folgen Gefühlen: einige Wochen, manchmal eine Jahreszeit.', swords: 'Schwerter sind sehr schnell, oft nur Tage, und kommen häufig unerwartet.', pentacles: 'Münzen sind langsam: Monate, manchmal ein Jahr.', major: 'Die Große Arkana eignet sich meist nicht für genaue Zeitangaben. Lies sie eher als größere Phasen oder Themen als als konkretes Datum.' }
 };
 const YES = { 'major-0': 1, 'major-1': 1, 'major-3': 1, 'major-6': 1, 'major-7': 1, 'major-8': 1, 'major-10': 1, 'major-14': 1, 'major-17': 1, 'major-19': 1, 'major-20': 1, 'major-21': 1, 'major-2': 0, 'major-9': 0, 'major-12': 0, 'major-13': -1, 'major-15': -1, 'major-16': -1, 'major-18': 0, 'major-4': 1, 'major-5': 1, 'major-11': 0 };
 function leanOf(id) {
@@ -115,7 +116,7 @@ function contextText(ctx) {
   }
   if (ctx.type === 'sign') {
     const z = ZSIGN[ctx.key], zp = ZODIAC[ctx.key][lang], dp = ZDEEP[ctx.key][lang];
-    return [z[lang] + ' · ' + (lang === 'vi' ? z.dvi : z.den) + ' · ' + ZELEM[z.el][lang] + ' · ' + ZMODE[z.mod][lang] + ' · ' + S.ruler + ' ' + ZPLANET[ZRULER[ctx.key]][lang],
+    return [z[lang] + ' · ' + (lang === 'vi' ? z.dvi : (lang === 'de' ? (z.dde || z.den) : z.den)) + ' · ' + ZELEM[z.el][lang] + ' · ' + ZMODE[z.mod][lang] + ' · ' + S.ruler + ' ' + ZPLANET[ZRULER[ctx.key]][lang],
       S.signAbout + ': ' + zp.about, S.signLove + ': ' + zp.love, S.signWork + ': ' + zp.work, S.signTip + ': ' + zp.tip, S.strengths + ': ' + dp.strengths.join(', '), S.challenges + ': ' + dp.challenges.join(', '), dp.moon, dp.rising].join('\n');
   }
   if (ctx.type === 'numbers') {
@@ -247,7 +248,7 @@ function localAnswer(q, ctx) {
   }
   lenMentioned(q).forEach((n) => { const d = lenCard(n); out.push(S.aiAbout(d.name) + ' ' + (d.kw.pos || []).slice(0, 3).join(', ') + '. ' + (d.cat === 'love' && d.love ? d.love : d.core)); });
   planetMentioned(q).forEach((p) => out.push(S.aiAbout(p.name[lang]) + ' ' + p[lang]));
-  { const h = houseMentioned(q); if (h) out.push(S.aiAbout((lang === 'vi' ? 'nhà ' : 'house ') + h) + ' ' + HOUSES[h - 1][lang][0] + '. ' + HOUSES[h - 1][lang][1]); }
+  { const h = houseMentioned(q); if (h) out.push(S.aiAbout((lang === 'vi' ? 'nhà ' : (lang === 'de' ? 'Haus ' : 'house ')) + h) + ' ' + HOUSES[h - 1][lang][0] + '. ' + HOUSES[h - 1][lang][1]); }
   animalMentioned(q).forEach((i) => out.push(S.aiAbout(ANIMALS[i][lang]) + ' ' + ANIMAL_INFO[lang][i][3]));
   { const n = numberMentioned(q); if (n && ctx.type !== 'numbers') out.push(S.lifePathOf(n) + ': ' + LIFEPATH[n][lang]); }
   if (ctx.type !== 'card' && ctx.type !== 'lesson' && ctx.type !== 'numbers' && !mentioned.length && !signs.length && !out.length) {
@@ -281,6 +282,7 @@ function searchCourse(q, course) {
 
 /* ---- Gemini (browser-side, free tier, web grounding) ---- */
 function aiSystemPrompt() {
+  if (lang === 'de') return 'Du bist Nabu AI, der Assistent in der Nabu-Tarot-App einer vietnamesischen Tarot-Readerin. Du beantwortest allgemeine Fragen ebenso wie Fragen zu Tarot, Lenormand, Astrologie und Numerologie. Antworte auf einfache Fragen direkt und präzise; nutze aktuelle Informationen, wenn sie nötig und verfügbar sind. Schreib in natürlichem, warmem Deutsch, sprich die Person mit \'du\' an und halte dich meist an 2–8 kurze Sätze. Wenn die Frage zu dem Inhalt gehört, den die Person gerade in der App sieht, nutze zuerst das bereitgestellte WISSEN. Stelle keine medizinischen Diagnosen, gib keine konkrete Rechts- oder Anlageberatung und versprich keine sicheren zukünftigen Ereignisse. Bei wichtigen persönlichen Themen kannst du eine private Legung bei Nabu empfehlen.';
   return lang === 'vi'
     ? 'Bạn là Nabu AI, trợ lý trong app Nabu Tarot (một reader tarot người Việt). Bạn trả lời MỌI câu hỏi như một trợ lý AI thông thường: toán, kiến thức chung, tin tức, dịch thuật, viết lách, và tất nhiên là tarot, Lenormand, chiêm tinh, thần số học. Câu hỏi đơn giản thì trả lời thẳng và chính xác (ví dụ "1 + 1 = 2"); câu hỏi cần thông tin mới thì tìm kiếm khi có thể. Trả lời bằng tiếng Việt đời thường, ấm áp, ngắn gọn (2 đến 8 câu ngắn), xưng "mình", gọi người dùng là "bạn". Khi câu hỏi liên quan tới thứ người dùng đang xem, ưu tiên KIẾN THỨC được cung cấp. Không chẩn đoán bệnh, không tư vấn pháp lý hay đầu tư cụ thể, không hứa điều gì chắc chắn xảy ra. Chuyện riêng quan trọng, gợi ý đặt lịch xem bài với Nabu.'
     : 'You are Nabu AI, the assistant inside the Nabu Tarot app (a Vietnamese tarot reader). You answer ANY question like a general assistant: maths, general knowledge, news, translation, writing, and of course tarot, Lenormand, astrology and numerology. Answer simple questions directly and precisely (for example "1 + 1 = 2"); search when a question needs current information. Answer in plain, warm English, 2 to 8 short sentences. When the question is about what the user is looking at, prefer the KNOWLEDGE provided. No medical diagnosis, no specific legal or investment advice, no promises. For important personal matters, suggest booking a reading with Nabu.';
@@ -309,7 +311,7 @@ async function geminiAnswer(q, ctx, history) {
     if (!text) { last = 'Gemini empty'; continue; }
     AI.model = model;
     const chunks = ((cand.groundingMetadata || {}).groundingChunks || []).map((c) => c.web).filter(Boolean).slice(0, 3);
-    return text + (chunks.length ? '\n\n' + (lang === 'vi' ? 'Tham khảo: ' : 'Sources: ') + chunks.map((c) => c.title || c.uri).join(' · ') : '');
+    return text + (chunks.length ? '\n\n' + (lang === 'vi' ? 'Tham khảo: ' : (lang === 'de' ? 'Quellen: ' : 'Sources: ')) + chunks.map((c) => c.title || c.uri).join(' · ') : '');
   }
   throw new Error(last);
 }

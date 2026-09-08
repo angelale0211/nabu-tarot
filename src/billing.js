@@ -49,7 +49,7 @@ const BILL = {
   priceOf(id) {
     const d = this.details[id];
     if (!d || !d.price) return '';
-    try { return new Intl.NumberFormat(lang === 'en' ? 'en-GB' : 'vi-VN', { style: 'currency', currency: d.price.currency }).format(Number(d.price.value)); }
+    try { return new Intl.NumberFormat(lang === 'vi' ? 'vi-VN' : (lang === 'de' ? 'de-DE' : 'en-GB'), { style: 'currency', currency: d.price.currency }).format(Number(d.price.value)); }
     catch (e) { return d.price.value + ' ' + d.price.currency; }
   },
 

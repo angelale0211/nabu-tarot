@@ -11,7 +11,7 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 SRC = os.path.join(HERE, 'src')
 OUT = os.environ.get('NABU_OUT', HERE)
 SCRIPTS = ['config.js', 'logo-data.js', 'services.js', 'strings.js', 'art.js', 'tarot-en.js', 'tarot-vi.js', 'tarot-de.js', 'kb-questions.js',
-           'insight-en.js', 'insight-vi.js', 'insight-majors.js', 'insight-minors.js', 'len-art.js', 'len-en.js', 'len-vi.js', 'len-de.js', 'astro.js',
+           'insight-en.js', 'insight-vi.js', 'insight-majors.js', 'insight-minors.js', 'insight-de.js', 'len-art.js', 'len-en.js', 'len-vi.js', 'len-de.js', 'astro.js',
            'zodiac.js', 'astro-kb.js', 'astro-deep.js', 'numerology.js', 'lunar.js', 'spreads.js', 'kb-guides.js',
            'core.js', 'backend.js', 'share.js', 'ai.js', 'home.js', 'pick.js', 'learn.js', 'lessons.js', 'fortune.js', 'playing.js', 'guide-visuals.js', 'codes.js', 'billing.js', 'angel.js', 'love.js', 'welcome.js', 'quiz.js', 'quiz-tarot.js', 'quiz-tarot-de.js', 'quiz-len.js', 'quiz-play.js', 'looks.js', 'luck.js', 'pet.js', 'book.js', 'me.js', 'signin.js', 'contact.js', 'privacy.js', 'install.js', 'hello.js', 'report.js', 'play.js', 'wedding.js', 'alerts.js', 'admin.js', 'main.js']
 
@@ -82,6 +82,6 @@ def block(lg):
     return '<h1>' + htmlmod.escape(P['title'][lg]) + '</h1><p class="d">' + htmlmod.escape(P['updated']) + '</p><p class="lead">' + htmlmod.escape(P['intro'][lg]) + '</p>' + ''.join('<h2>' + htmlmod.escape(s['h'][lg]) + '</h2><p>' + htmlmod.escape(s['p'][lg]) + '</p>' for s in P['sections'])
 priv = ('<!DOCTYPE html><html lang="vi"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Nabu Tarot: ' + htmlmod.escape(P['title']['vi']) + ' / ' + htmlmod.escape(P['title']['en']) + '</title>'
         '<style>body{margin:0;background:#EFE9FA;color:#3B2A5E;font-family:"Be Vietnam Pro","Segoe UI",Roboto,Arial,sans-serif;font-size:16px;line-height:1.6}main{max-width:680px;margin:0 auto;padding:28px 20px 48px}h1{font-family:Georgia,serif;font-weight:500;font-size:28px;margin:0 0 4px}h2{font-size:18px;margin:22px 0 6px}p{margin:0 0 10px}.d{color:#9C90B6;font-size:13px}.lead{color:#6B5C8A}hr{border:0;border-top:1px solid #DCD2EE;margin:36px 0}a{color:#3D2A6E}</style></head><body><main>'
-        '<p><a href="./">← Nabu Tarot</a></p>' + block('vi') + '<hr>' + block('en') + '</main></body></html>')
+        '<p><a href="./">← Nabu Tarot</a></p>' + block('vi') + '<hr>' + block('en') + '<hr>' + block('de') + '</main></body></html>')
 io.open(os.path.join(OUT, 'privacy.html'), 'w', encoding='utf-8', newline='\n').write(priv)
 print('privacy.html: %d bytes' % len(priv.encode('utf-8')))
