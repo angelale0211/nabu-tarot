@@ -1839,6 +1839,18 @@ button.unl{display:block;width:100%;text-align:left;font:inherit;color:inherit;c
   #main .paywall{max-width:640px;margin-left:auto;margin-right:auto}
   .course{max-width:640px}
 }
+
+/* ---- the home page on a desk ----
+   Two columns from 1100px: the feed and the things to do on the left, today's
+   date and the tour on the right, where they stay in view while the left
+   scrolls. The aside spans every row, which is what lets the left column flow
+   without gaps even though the two are interleaved in the markup. */
+@media (min-width:1100px){
+  body[data-route="home"] #main{display:grid;grid-template-columns:minmax(0,1fr) 380px;column-gap:28px;align-items:start}
+  body[data-route="home"] #main>*{grid-column:1;min-width:0}
+  body[data-route="home"] #main>.side{grid-column:2;grid-row:1/span 80;position:sticky;top:74px;align-self:start}
+  body[data-route="home"] #main>h1{margin-top:6px}
+}
 </style>
 </head>
 <body>

@@ -615,6 +615,10 @@ function route() {
   if (!def) { redirect('#/home'); return; }
   if (NAV.cleanup) { const c = NAV.cleanup; NAV.cleanup = null; try { c(); } catch (e) { /* already gone */ } }
   navRemember(location.hash || '#/home');
+  /* Which screen this is, on the body, so a stylesheet can lay one screen out
+     differently from the rest - the home page on a wide window, for one -
+     without any screen having to know it is being looked at. */
+  document.body.setAttribute('data-route', r.route);
   renderChrome(def.nav);
   renderBackBar(r);
   const y = NAV.restore;

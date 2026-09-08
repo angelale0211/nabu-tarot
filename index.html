@@ -12,7 +12,7 @@
      carries this notice with it. See LICENSE. -->
 <meta name="author" content="Nabu Tarot">
 <meta name="copyright" content="Copyright (c) 2025-2026 Nabu Tarot. All rights reserved.">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'none'; object-src 'none'; form-action 'self'; script-src 'self' 'sha256-80P+KVRhJOsnzBtfOmAFdylZwecAN9FipSoiNNdlzT4=' https://www.gstatic.com https://apis.google.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; font-src 'self' data:; media-src 'self' data: blob:; worker-src 'self'; connect-src 'self' https://*.googleapis.com https://*.google.com https://*.firebaseio.com https://*.cloudfunctions.net https://*.workers.dev https://generativelanguage.googleapis.com; frame-src https://*.firebaseapp.com https://accounts.google.com https://*.facebook.com">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'none'; object-src 'none'; form-action 'self'; script-src 'self' 'sha256-tYtO4I80ta2La7smazS0CYjU+YbNuYDikyFoz1t+GJQ=' https://www.gstatic.com https://apis.google.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; font-src 'self' data:; media-src 'self' data: blob:; worker-src 'self'; connect-src 'self' https://*.googleapis.com https://*.google.com https://*.firebaseio.com https://*.cloudfunctions.net https://*.workers.dev https://generativelanguage.googleapis.com; frame-src https://*.firebaseapp.com https://accounts.google.com https://*.facebook.com">
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <meta name="theme-color" content="#EFE9FA">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -2004,6 +2004,18 @@ button.unl{display:block;width:100%;text-align:left;font:inherit;color:inherit;c
   .chat{max-height:70vh}
   #main .paywall{max-width:640px;margin-left:auto;margin-right:auto}
   .course{max-width:640px}
+}
+
+/* ---- the home page on a desk ----
+   Two columns from 1100px: the feed and the things to do on the left, today's
+   date and the tour on the right, where they stay in view while the left
+   scrolls. The aside spans every row, which is what lets the left column flow
+   without gaps even though the two are interleaved in the markup. */
+@media (min-width:1100px){
+  body[data-route="home"] #main{display:grid;grid-template-columns:minmax(0,1fr) 380px;column-gap:28px;align-items:start}
+  body[data-route="home"] #main>*{grid-column:1;min-width:0}
+  body[data-route="home"] #main>.side{grid-column:2;grid-row:1/span 80;position:sticky;top:74px;align-self:start}
+  body[data-route="home"] #main>h1{margin-top:6px}
 }
 </style>
 </head>
@@ -11419,6 +11431,10 @@ function route() {
   if (!def) { redirect('#/home'); return; }
   if (NAV.cleanup) { const c = NAV.cleanup; NAV.cleanup = null; try { c(); } catch (e) { /* already gone */ } }
   navRemember(location.hash || '#/home');
+  /* Which screen this is, on the body, so a stylesheet can lay one screen out
+     differently from the rest - the home page on a wide window, for one -
+     without any screen having to know it is being looked at. */
+  document.body.setAttribute('data-route', r.route);
   renderChrome(def.nav);
   renderBackBar(r);
   const y = NAV.restore;
@@ -12743,9 +12759,15 @@ async function renderHome(args, params) {
   const saleBanner = sale
     ? '<a class="salebar" href="' + (sale.scope === 'unlock' ? '#/unlock?from=app' : '#/prices') + '"><span class="tag">🏷️ ' + esc(SALE.off()) + '</span><span class="txt">' + esc(SALE.title() || T().saleDefault) + '</span><span class="go">' + esc(T().saleSee) + ' ›</span></a>'
     : '';
+  /* The calendar and the tour sit together in an aside. On a phone that is
+     invisible: same order, same flow. On a wide window it becomes the right
+     column, sticky, so a desk sees today's date beside the feed rather than
+     above it and then never again. */
   m.innerHTML = saleBanner + '<div class="eyebrow">' + esc(CONFIG.brand) + '</div>'
+    + '<aside class="side">'
     + todayHTML()
     + (PROFILE.tourDone ? tourMiniHTML() : tourHTML(0))
+    + '</aside>'
     + '<h1 style="margin:18px 0 4px">' + esc(name ? S.hello(name) : S.helloGuest) + '</h1><p class="muted">' + esc(lang === 'vi' ? 'Hôm nay bạn muốn làm gì?' : 'What would you like to do today?') + '</p>'
     + upcomingHTML()
     + pickCtaHTML()
@@ -23375,7 +23397,7 @@ function adminSale(p) {
 ROUTES.admin = { nav: '', render: renderAdmin };
 
 /* ============================ boot ============================ */
-window.APP_VERSION = 'v169';
+window.APP_VERSION = 'v170';
 window.NABU = { CONFIG: CONFIG, SALE: SALE, salePrice: salePrice, loadActs: loadActs, BACK: BACK, LESSONS: LESSONS, localAnswer: localAnswer, compatVerdict: compatVerdict, numerologyOf: numerologyOf, ZDEEP: ZDEEP, lunarToday: lunarToday, solarToLunar: solarToLunar, DECK: DECK, INSIGHT: INSIGHT, KW: KW, ASK: ASK, TOPICS: TOPICS, GUIDES: GUIDES, SERVICES: SERVICES, COURSES: COURSES, ACCESS: ACCESS, plusOn: () => plusOn(), proOn: () => proOn(), luckUnlimited: () => luckUnlimited(), ZODIAC: ZODIAC, pick: pick, book: book,
   insightHTML: insightHTML, insightOf: insightOf, sunSignIndex: sunSignIndex, lifePath: lifePath, PROFILE: () => PROFILE, BE: BE, ACTS: ACTS,
   ANGELS: ANGELS, angelRead: angelRead, CODEBOOK: CODEBOOK, verifyCode: verifyCode, petHomeSVG: petHomeSVG, PET_HOMES: PET_HOMES, PET_WEARS: PET_WEARS, codeDigest: codeDigest, randomCode: randomCode, BANK: BANK, PETS: PETS, petSVG: petSVG, PET_COATS: PET_COATS, PET_KINDS: PET_KINDS, luckCut: luckCut, petLevel: petLevel, petStep: petStep, VOUCHERS: VOUCHERS, levelCoins: levelCoins, LOOKS: LOOKS,
