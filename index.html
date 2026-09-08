@@ -12,7 +12,7 @@
      carries this notice with it. See LICENSE. -->
 <meta name="author" content="Nabu Tarot">
 <meta name="copyright" content="Copyright (c) 2025-2026 Nabu Tarot. All rights reserved.">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'none'; object-src 'none'; form-action 'self'; script-src 'self' 'sha256-k+Z2Xe9yrudvuturVWi8Wr0sCgVZRtxsippcxVAC60c=' https://www.gstatic.com https://apis.google.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; font-src 'self' data:; media-src 'self' data: blob:; worker-src 'self'; connect-src 'self' https://*.googleapis.com https://*.google.com https://*.firebaseio.com https://*.cloudfunctions.net https://*.workers.dev https://generativelanguage.googleapis.com; frame-src https://*.firebaseapp.com https://accounts.google.com https://*.facebook.com">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'none'; object-src 'none'; form-action 'self'; script-src 'self' 'sha256-qajQvSYQ+W7RYkDBr03NCTyAi4ubX9Gotn6dews50uU=' https://www.gstatic.com https://apis.google.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; font-src 'self' data:; media-src 'self' data: blob:; worker-src 'self'; connect-src 'self' https://*.googleapis.com https://*.google.com https://*.firebaseio.com https://*.cloudfunctions.net https://*.workers.dev https://generativelanguage.googleapis.com; frame-src https://*.firebaseapp.com https://accounts.google.com https://*.facebook.com">
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <meta name="theme-color" content="#EFE9FA">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -10968,7 +10968,7 @@ const MOD = {
   },
   async report(rec) {
     if (typeof BE === 'undefined' || !BE.enabled || !BE.user || !BE.db) throw new Error('signin');
-    await BE.db.collection('reports').add({
+    await BE.db.collection('flags').add({
       by: BE.user.uid,
       byName: (typeof PROFILE !== 'undefined' && PROFILE.name) || '',
       kind: String(rec.kind || 'message').slice(0, 40),
@@ -22856,7 +22856,7 @@ function adminErrors(p) {
         + '</div>').join('') : '<p class="empty">' + esc(S.repNone) + '</p>');
     $$('[data-repgone]', box).forEach((b) => b.addEventListener('click', async () => {
       b.disabled = true;
-      try { await BE.db.collection('reports').doc(b.getAttribute('data-repgone')).delete(); toast(S.saved); }
+      try { await BE.db.collection('flags').doc(b.getAttribute('data-repgone')).delete(); toast(S.saved); }
       catch (e) { b.disabled = false; toast(loveWhy(e)); }
     }));
     $$('[data-person]', box).forEach((b) => b.addEventListener('click', () => {
@@ -22865,7 +22865,7 @@ function adminErrors(p) {
       location.hash = '#/admin?tab=inbox';
     }));
   };
-  admin.unsubs.push(BE.db.collection('reports').orderBy('at', 'desc').limit(200)
+  admin.unsubs.push(BE.db.collection('flags').orderBy('at', 'desc').limit(200)
     .onSnapshot((s) => { reps = s.docs.map((doc) => Object.assign({ id: doc.id }, doc.data())); drawReps(); },
       () => { const box = $('#replist'); if (box) box.innerHTML = '<p class="hint">' + esc(S.repNone) + '</p>'; }));
   const stamp = (ms) => { const t = new Date(Number(ms) || 0); return isNaN(t) || !ms ? '—' : t.toLocaleString(lang === 'en' ? 'en-GB' : 'vi-VN', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' }); };
@@ -23203,7 +23203,7 @@ function adminSale(p) {
 ROUTES.admin = { nav: '', render: renderAdmin };
 
 /* ============================ boot ============================ */
-window.APP_VERSION = 'v166';
+window.APP_VERSION = 'v167';
 window.NABU = { CONFIG: CONFIG, SALE: SALE, salePrice: salePrice, loadActs: loadActs, BACK: BACK, LESSONS: LESSONS, localAnswer: localAnswer, compatVerdict: compatVerdict, numerologyOf: numerologyOf, ZDEEP: ZDEEP, lunarToday: lunarToday, solarToLunar: solarToLunar, DECK: DECK, INSIGHT: INSIGHT, KW: KW, ASK: ASK, TOPICS: TOPICS, GUIDES: GUIDES, SERVICES: SERVICES, COURSES: COURSES, ACCESS: ACCESS, plusOn: () => plusOn(), proOn: () => proOn(), luckUnlimited: () => luckUnlimited(), ZODIAC: ZODIAC, pick: pick, book: book,
   insightHTML: insightHTML, insightOf: insightOf, sunSignIndex: sunSignIndex, lifePath: lifePath, PROFILE: () => PROFILE, BE: BE, ACTS: ACTS,
   ANGELS: ANGELS, angelRead: angelRead, CODEBOOK: CODEBOOK, verifyCode: verifyCode, petHomeSVG: petHomeSVG, PET_HOMES: PET_HOMES, PET_WEARS: PET_WEARS, codeDigest: codeDigest, randomCode: randomCode, BANK: BANK, PETS: PETS, petSVG: petSVG, PET_COATS: PET_COATS, PET_KINDS: PET_KINDS, luckCut: luckCut, petLevel: petLevel, petStep: petStep, VOUCHERS: VOUCHERS, levelCoins: levelCoins, LOOKS: LOOKS,

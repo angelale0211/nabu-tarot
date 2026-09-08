@@ -205,7 +205,7 @@ const MOD = {
   },
   async report(rec) {
     if (typeof BE === 'undefined' || !BE.enabled || !BE.user || !BE.db) throw new Error('signin');
-    await BE.db.collection('reports').add({
+    await BE.db.collection('flags').add({
       by: BE.user.uid,
       byName: (typeof PROFILE !== 'undefined' && PROFILE.name) || '',
       kind: String(rec.kind || 'message').slice(0, 40),

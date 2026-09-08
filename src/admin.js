@@ -318,7 +318,7 @@ function adminErrors(p) {
         + '</div>').join('') : '<p class="empty">' + esc(S.repNone) + '</p>');
     $$('[data-repgone]', box).forEach((b) => b.addEventListener('click', async () => {
       b.disabled = true;
-      try { await BE.db.collection('reports').doc(b.getAttribute('data-repgone')).delete(); toast(S.saved); }
+      try { await BE.db.collection('flags').doc(b.getAttribute('data-repgone')).delete(); toast(S.saved); }
       catch (e) { b.disabled = false; toast(loveWhy(e)); }
     }));
     $$('[data-person]', box).forEach((b) => b.addEventListener('click', () => {
@@ -327,7 +327,7 @@ function adminErrors(p) {
       location.hash = '#/admin?tab=inbox';
     }));
   };
-  admin.unsubs.push(BE.db.collection('reports').orderBy('at', 'desc').limit(200)
+  admin.unsubs.push(BE.db.collection('flags').orderBy('at', 'desc').limit(200)
     .onSnapshot((s) => { reps = s.docs.map((doc) => Object.assign({ id: doc.id }, doc.data())); drawReps(); },
       () => { const box = $('#replist'); if (box) box.innerHTML = '<p class="hint">' + esc(S.repNone) + '</p>'; }));
   const stamp = (ms) => { const t = new Date(Number(ms) || 0); return isNaN(t) || !ms ? '—' : t.toLocaleString(lang === 'en' ? 'en-GB' : 'vi-VN', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' }); };

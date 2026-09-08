@@ -71,30 +71,20 @@ service cloud.firestore {
       allow read: if doc != 'ai' || isAdmin();
       allow write: if isAdmin();
     }
-    /* ---- what broke, on somebody else's phone ----
-
-       An app that only finds out about its own errors when a client happens to
-       mention one is an app with no idea how well it works. The phone writes
-       what went wrong here, and Nabu reads it in the dashboard.
-
-       Write-only, by design: a person may add to this and can never read it
-       back, list it, change it or delete it. That way one collection cannot
-       become a way to learn anything about anybody. An account is required, so
-       this is not somewhere a stranger can pour rubbish into, and the fields
-       are capped so a runaway loop cannot write a novel.
-
-       Nothing here is private to the person: a message, a screen, a version and
-       a device. No question, no reading, no name. */
     /* ---- somebody saying "this is wrong" ----
 
-       Write-only, like the errors beside it, and for the same reason: a person
-       may report something and can never read the collection back. Nobody can
-       find out who complained about them, or about anybody else. An account is
+       Named flags rather than reports, because reports/ was already taken: it
+       is where the bug-report form writes, and putting two different shapes of
+       thing in one collection makes both of them harder to read.
+
+       Write-only, like the errors below, and for the same reason: a person may
+       flag something and can never read the collection back. Nobody can find
+       out who complained about them, or about anybody else. An account is
        required, so a stranger cannot fill it with rubbish, and every field is
        capped.
 
        Nabu reads them, and is the only one who can. */
-    match /reports/{id} {
+    match /flags/{id} {
       allow read: if isAdmin();
       allow create: if request.auth != null
                     && request.resource.data.by == request.auth.uid
@@ -108,6 +98,16 @@ service cloud.firestore {
       allow update: if false;
       allow delete: if isAdmin();
     }
+    /* ---- what broke, on somebody else's phone ----
+
+       An app that only finds out about its own errors when a client happens to
+       mention one is an app with no idea how well it works. The phone writes
+       what went wrong here, and Nabu reads it in the dashboard.
+
+       Write-only, on the same reasoning as the flags above, and the fields are
+       capped so a runaway loop cannot write a novel. Nothing here is private to
+       the person: a message, a screen, a version and a device. No question, no
+       reading, no name. */
     match /errors/{id} {
       allow read: if isAdmin();
       allow create: if request.auth != null
