@@ -148,42 +148,54 @@ irreversible must ask on the page itself (see `#lvsure`, `#acsure`, `#alsure`).
 
 ## 6. What the owner still has to do (nothing here is code)
 
-1. **Republish `firestore.rules`** — Firebase Console › Firestore Database ›
-   Rules, paste the whole file, Publish. Several shipped features refuse to
-   write until this happens: `ready` (two-key start), the `talk` subcollection
-   (private couple chat), `paid`/`startMs`/`moved` on weddings, and `revoked` on
-   users. **A "Missing or insufficient permissions" toast almost always means
-   this, not a bug.**
-2. **Check the admin account's email is verified** — `isAdmin()` in the rules
-   requires `email_verified == true`. An unverified admin is not an admin as far
-   as the database is concerned. Accepted addresses: `nabutarot@outlook.com`,
-   `angela_le_@outlook.com`, `angelale_le_@outlook.com`.
-3. **Firebase email templates** are blocked: "Email template updates are
-   currently unavailable for this project." Retry after custom-domain
-   verification finishes, else contact Firebase Support.
-4. **Google Play**: not created yet, deliberately — the owner wants the bugs
-   fixed first. Note the 12-testers-for-14-days clock only starts once the app
-   exists in the console, so creating the listing early costs nothing.
-5. **Cloudflare Pages move**: fully planned in `MOVING-TO-CLOUDFLARE.md`. The
-   point of it is that Pages deploys from a **private** repo for free and GitHub
-   Pages does not. `_headers` and `.well-known/assetlinks.json` are already in
-   place. The owner does the DNS themselves.
+1. **Republish `firestore.rules` whenever it changes.** It has `flags/` and
+   `errors/` blocks now that older published copies lack. A "Missing or
+   insufficient permissions" toast almost always means this, not a bug.
+2. **Google Play.** The app exists in the Console as `app.nabutarot.twa` and a
+   closed-testing release has been submitted once (rejected for the Financial
+   features declaration - untick "Rewards, points..."; the coin system is a
+   shop discount, not a financial product). Still needed: 12 opted-in testers
+   for 14 days; the content rating updated to say block and report exist
+   (they do since v166); and after the first successful upload, the SHA-256
+   from Setup > App integrity pasted into `.well-known/assetlinks.json`.
+3. **Play Billing, if it is ever wanted.** Built and dormant - see
+   `PLAN-PLAY-BILLING.md`, Phase 0. Needs eight in-app products, a service
+   account as a Worker secret, and a billing-enabled AAB. The owner has since
+   decided the website comes first and Play can wait; nothing switches on
+   until Phase 0 exists.
+4. **Cloudflare Worker secrets.** `CLOUDFLARE_API_TOKEN` is a repo secret and
+   `worker.yml` deploys on push. `FIREBASE_PROJECT_ID` in `wrangler.toml` is
+   still empty, so the AI endpoint still answers without a sign-in; set it to
+   `nabutarot` to require one.
 
-## 7. Outstanding work the owner has asked for
+## 7. Outstanding work
 
-- **Love system: refuse a thread with someone already tied.** Should say "this
-  person already has a thread with somebody else — try someone who has no
-  partner yet" (`loveTakenLead` / `loveTakenHint` are already written in
-  `strings.js`; the check itself is not built). Note `people/{uid}` may only be
-  written by its owner, so each person must mark their own card as taken.
-- **Both partners requesting different wedding times.** The owner's own
-  suggestion: lock the date/time behind a terms tick saying they have agreed one
-  time between them. Also make `WED.create` refuse to overwrite an existing room.
-- **Pre-entry instructions** exist (`wedHowTitle` / `wedHow`, folded on the
-  room-holding screen) — worth checking they read well on a phone.
-- **Desktop layout**: the site still renders as a 600px phone column on a
-  1440px screen.
-- Long-deferred and probably superseded: wedding invitation cards in 5 designs.
+- **Close the money leaks** - `PLAN-PLAY-BILLING.md` Phase 2. Rules let a
+  signed-in person write their own `access`; codes are not bound to an
+  account. Fix: `access`/`revoked` admin-only, code redemption through a
+  Worker `/redeem` endpoint that records `by: uid` and refuses reuse. This is
+  the highest-value remaining change and does not depend on Play.
+- **Orders**: `PLAN-ORDERS-AND-ACCESS.md` items 4-8 (codes show who redeemed
+  them, money summary on the Pay tab). Items 1-3 are done.
+- **Love system: refuse a thread with someone already tied** (`loveTakenLead`
+  / `loveTakenHint` exist in `strings.js`; the check is not built).
+- **Both partners requesting different wedding times**; `WED.create` should
+  refuse to overwrite an existing room.
+- CSP header in `_headers`; Firestore rules tests in CI; feed pagination.
+
+## 7a. What shipped after v162 (this session, v163 -> v171)
+
+| Version | What |
+|---|---|
+| v163 | Pay-tab fixes (button slid under the finger; confirmed orders vanished); "Nhắn cho họ" on every order; errors -> Firestore + admin tab; Worker verifies Firebase tokens, rate-limits, caches; `worker.yml`, `health.yml`; hosting moved to Cloudflare Pages |
+| v164 | Signing out clears profile/access; sign-in section forced open when signed out |
+| v165 | Installed app hides the courses list (Play reviewers) |
+| v166-167 | Report and block on wedding-room messages -> `flags/`; unblock list on Me; Reports tab |
+| v168 | Play Billing built, dormant (`billing.js`, `worker/src/play.ts`) |
+| v169-171 | Desktop layout: left rail, 1040px column, two-column home, wider grids, readable prose |
+
+Also: the test suite reports as it goes (see section 3) and is green at 562;
+scheduled Actions slowed to stay under the private-repo minute cap.
 
 ## 8. Architecture notes a new session will want
 
