@@ -419,7 +419,12 @@ function renderChrome(route) {
   document.documentElement.setAttribute('lang', lang);
   renderFooter();
   $('#brand').innerHTML = BRAND_SPARKLE;
+  /* The pill names the language you are reading, not the one a press would
+     switch to. Naming the next one read as the app simply being in the wrong
+     language. What the press does is said in the label underneath instead. */
   $('#lang').textContent = T().lang;
+  $('#lang').setAttribute('aria-label', T().langSwitch);
+  $('#lang').setAttribute('title', T().langSwitch);
   $('#nav').innerHTML = ['home', 'pick', 'play', 'learn', 'book', 'me'].map((k) =>
     '<a href="#/' + k + '" class="' + (route === k ? 'on' : '') + '">' + ICONS[k] + '<span>' + esc(T().nav[k]) + '</span>'
     + (k === 'me' && (UNREAD + NEWBK) ? '<span class="badge">' + (UNREAD + NEWBK) + '</span>' : '')

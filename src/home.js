@@ -229,7 +229,9 @@ async function renderHome(args, params) {
      invisible: same order, same flow. On a wide window it becomes the right
      column, sticky, so a desk sees today's date beside the feed rather than
      above it and then never again. */
-  m.innerHTML = saleBanner + '<div class="eyebrow">' + esc(CONFIG.brand) + '</div>'
+  /* No eyebrow with the name on it: the logo sits directly above this line
+     and already says it. */
+  m.innerHTML = saleBanner
     + '<aside class="side">'
     + todayHTML()
     + (PROFILE.tourDone ? tourMiniHTML() : tourHTML(0))

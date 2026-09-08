@@ -116,8 +116,11 @@ const COURSES = [
 /* best: the one Nabu would rather use, and says so on the card.
    needsId: somewhere Nabu cannot reach without being given an account. */
 const BOOK_WHERE = [
-  { id: 'app', icon: '💬', best: true, name: { vi: 'Trong app Nabu Tarot', en: 'Here in the Nabu Tarot app' },
-    sub: { vi: 'Nabu nhắn thẳng vào mục Hồ sơ của bạn, không lạc đi đâu được', en: 'Nabu replies straight into your Profile tab, where nothing can go astray' } },
+  { id: 'app', icon: '💬', best: true,
+    name: { vi: 'Trong Nabu Tarot', en: 'Here in Nabu Tarot', de: 'Hier in Nabu Tarot' },
+    sub: { vi: 'Nabu nhắn thẳng vào mục Hồ sơ của bạn. Bạn mở trên máy tính hay trên điện thoại đều thấy.',
+      en: 'Nabu replies straight into your Profile tab. You see it on the website and in the app.',
+      de: 'Nabu antwortet direkt in deinem Profil. Du siehst es auf der Website und in der App.' } },
   { id: 'ig', icon: '📸', needsId: true, name: { vi: 'Instagram', en: 'Instagram' },
     sub: { vi: 'Nabu nhắn qua tin nhắn Instagram', en: 'Nabu writes to you on Instagram' } },
   { id: 'fb', icon: '💬', needsId: true, name: { vi: 'Facebook', en: 'Facebook' },

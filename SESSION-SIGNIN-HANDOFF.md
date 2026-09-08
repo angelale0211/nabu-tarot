@@ -131,6 +131,15 @@ the flex column the body already is. Paddings are symmetric so the centre is
 exact. The form is ~850px tall, so on a 1080-high screen it centres with about
 18px to spare and on anything shorter it scrolls, which is right.
 
+**And later still, from an ultrawide screenshot:** the landing page (`#/hello`) now
+centres the same way (`body[data-route="hello"] main{flex:1;...}`), and both
+welcome pages scale up at `min-width:1600px` and `min-width:2200px` - the landing
+column, header and footer widen to 1240 / 1400px on those routes only, and the
+type and buttons go up two steps. Those two blocks sit **after** the 900px
+sign-in block on purpose: same specificity, the wider screen has to win. Measured
+at 3440x1440, 2560x1440, 2560x920, 1920x1080, 1366x768, 390 and 320: horizontal
+centre exact, vertical within 8px (the back bar), nothing overflowing.
+
 The probe is not in the repo. It lives in my scratch directory and served on
 port **8791**, never 8765, so it never touched your runs.
 

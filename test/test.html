@@ -162,13 +162,16 @@ async function go(hash, sel) { W().location.hash = hash; await sleep(30); return
     ok(!/If general is on your mind/.test(N.insightHTML('major-0', 'general')) && (N.insightHTML('major-0', 'general').match(/class="ins"/g) || []).length === 2 && /pack a bag first/.test(N.insightHTML('major-0', 'general')), 'general draw has no focus block; the advice is the second block');
     /* Round to Vietnamese rather than pressing once and assuming: the pill
        cycles through every language the app has, so a single press stopped
-       meaning "back" the moment a third one was added. The pill shows the
-       language it will move to next, so it reads EN when Vietnamese is on. */
-    for (let i = 0; i < 4 && d.querySelector('#lang').textContent.trim() !== 'EN'; i++) {
+       meaning "back" the moment a third one was added. The pill names the
+       language on screen, so it reads VI when Vietnamese is on. */
+    for (let i = 0; i < 4 && d.querySelector('#lang').textContent.trim() !== 'VI'; i++) {
       d.querySelector('#lang').click(); await sleep(120);
     }
-    ok(d.querySelector('#lang').textContent.trim() === 'EN' && /Rút bài/.test(d.querySelector('#nav').textContent),
+    ok(d.querySelector('#lang').textContent.trim() === 'VI' && /Rút bài/.test(d.querySelector('#nav').textContent),
       'the language pill cycles through all of them and comes back round to Vietnamese');
+    ok(d.getElementById('lang').getAttribute('title')
+      && d.getElementById('lang').getAttribute('title') !== d.getElementById('lang').textContent.trim(),
+      'and the button still says what pressing it does, since the pill no longer hints at it');
     // learn: courses are locked until a code is entered
     await go('#/learn', '.tile');
     ok(/Khóa học và thực hành/.test(d.querySelector('#main').textContent) && d.querySelectorAll('.tiles').length === 2 && d.querySelectorAll('.tiles')[0].querySelectorAll('.tile').length === 4, 'the three courses and manifestation share one group of four, above the free reads');
@@ -2700,6 +2703,7 @@ async function go(hash, sel) { W().location.hash = hash; await sleep(30); return
           'the card is still first on a phone and the ask box still last');
       }
     }
+
   } catch (e) { out.push('FAIL exception: ' + (e && e.stack || e)); }
   document.getElementById('results').textContent = out.join('\n');
   report(true);

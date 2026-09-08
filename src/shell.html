@@ -1840,7 +1840,38 @@ button.unl{display:block;width:100%;text-align:left;font:inherit;color:inherit;c
   .pickcta{grid-template-columns:170px 1fr;padding:22px}
   .pricesec{display:grid;grid-template-columns:repeat(2,1fr);gap:0 18px;align-items:start}
   .pricesec>h2,.pricesec>.hint,.pricesec>.paynote,.pricesec>p{grid-column:1/-1}
+  /* The section is two columns of tiles, so anything that is NOT a tile has to
+     be told to cross both or it silently becomes a tile-shaped thing in the
+     left column. That is what happened to the call to action and to the free
+     grid: a full-width button that only reached half way, and the free things
+     huddled on the left with an empty right half beside them. */
+  .pricesec>.btn,.pricesec>.freegrid{grid-column:1/-1}
+  /* The pay note is a <p>, so the 62ch prose cap further down held it to about
+     600px inside a 976px row and its centred text sat left of centre. It is a
+     bar, not running text. */
+  .pricesec>.paynote{max-width:none}
+  /* Three columns across the whole width leaves the tiles enormous; four fills
+     the row and lands the twelve free things in three even rows. */
+  .pricesec .freegrid{grid-template-columns:repeat(4,1fr);gap:12px}
   #svcwrap{display:grid;grid-template-columns:repeat(2,1fr);gap:0 18px;align-items:start}
+  /* ---- the calendar on a desk ----
+     The month and the times ran one under the other, which is right on a phone
+     and wasteful here: a wide month with nothing beside it, and the times so
+     far below that choosing one meant scrolling away from the day just picked.
+     The month takes two thirds on the left, the times a column of their own on
+     the right, and both are in view at once. The month gets smaller, which is
+     the point - a day cell has no use for a hundred pixels. */
+  /* The last row takes the slack rather than all three sharing it. With three
+     auto rows a tall column of times pushed the month's own header, weekday
+     strip and grid apart to fill the height beside it. */
+  .cal{display:grid;grid-template-columns:minmax(0,2fr) minmax(0,1fr);grid-template-rows:auto auto 1fr;column-gap:18px;align-items:start}
+  .cal>.head{grid-area:1/1}
+  .cal>.dow{grid-area:2/1}
+  .cal>.days{grid-area:3/1}
+  .cal>#slots{grid-area:1/2/4/3}
+  /* Three times across a third of the row is unreadable; two fits, and the
+     column then runs to about the height of the month beside it. */
+  .cal .slots{grid-template-columns:repeat(2,1fr);margin-top:0}
   .tabs{flex-wrap:wrap;overflow:visible}
   .chat{max-height:70vh}
   /* The locked-course pitch is a column of prose and reads better held in.
@@ -2087,6 +2118,12 @@ body[data-route="signin"] #main{width:100%}
 .orline::before,.orline::after{content:'';flex:1;height:1px;background:var(--rule-soft)}
 .srise{animation:srise .42s cubic-bezier(.2,.7,.3,1) backwards;animation-delay:calc(var(--i, 0) * 60ms)}
 @keyframes srise{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+/* The page a stranger arrives at stands in the middle of the screen the same
+   way the sign-in page does, rather than sitting high with the footer adrift
+   beneath it. On a phone it is taller than the space, so this does nothing. */
+body[data-route="hello"] main{flex:1;display:flex;align-items:center;padding:24px 0}
+body[data-route="hello"] #backbar+main{padding-top:24px}
+body[data-route="hello"] #main{width:100%}
 /* On a desk there is room to be a little grander still. */
 @media (min-width:900px){
   .signin{max-width:480px;padding:24px 0}
@@ -2097,6 +2134,60 @@ body[data-route="signin"] #main{width:100%}
   .signin .lead .ln2{font-size:16px}
   .signin .btn{min-height:54px;font-size:16.5px}
   .signin input{padding:15px 16px}
+}
+/* ---- the two welcome pages on a big screen ----
+   Kept after the 900px block above on purpose: same specificity, and the
+   wider screen has to win. */
+   A 1040px column and 15px buttons are right for a laptop. On a 27-inch or an
+   ultrawide they read as a postcard pinned to a wall: everything a size up, and
+   the landing page's own column, header and footer a little wider with it. */
+@media (min-width:1600px){
+  body[data-route="hello"] .wrap{max-width:1240px}
+  .hello-hero .hlogo .avatar{width:92px;height:92px}
+  .hello-hero .hlogo .word{font-size:34px}
+  .hello-hero h1{font-size:46px}
+  .hello-hero .lead{font-size:18px;max-width:56ch}
+  .hello-hero .btn{max-width:360px;font-size:17px;min-height:56px}
+  .hello-hero .hint{font-size:14.5px}
+  .hgrid{gap:18px}
+  .hcard{grid-template-columns:44px 1fr;padding:20px}
+  .hcard .hic{font-size:28px}
+  .hcard b{font-size:17px}
+  .hcard p{font-size:16px}
+  .signin{max-width:520px}
+  .signin .hlogo .avatar{width:96px;height:96px}
+  .signin .hlogo .word{font-size:36px}
+  .signin h1{font-size:36px}
+  .signin .lead .ln1{font-size:21px}
+  .signin .btn{min-height:58px;font-size:17px}
+  .signin input{font-size:17px;padding:16px 18px}
+  .signin label.f{font-size:15px}
+  #main .signin .links,#main .signin .later{font-size:15.5px}
+  .orline{font-size:14px}
+}
+@media (min-width:2200px){
+  body[data-route="hello"] .wrap{max-width:1400px}
+  .hello-hero .hlogo .avatar{width:104px;height:104px}
+  .hello-hero .hlogo .word{font-size:38px}
+  .hello-hero h1{font-size:54px}
+  .hello-hero .lead{font-size:20px}
+  .hello-hero .btn{max-width:400px;font-size:18px;min-height:60px}
+  .hello-hero .hint{font-size:15.5px}
+  .hgrid{gap:22px}
+  .hcard{grid-template-columns:48px 1fr;padding:24px}
+  .hcard .hic{font-size:31px}
+  .hcard b{font-size:19px}
+  .hcard p{font-size:17.5px}
+  .signin{max-width:560px}
+  .signin .hlogo .avatar{width:108px;height:108px}
+  .signin .hlogo .word{font-size:40px}
+  .signin h1{font-size:40px}
+  .signin .lead .ln1{font-size:23px}
+  .signin .btn{min-height:62px;font-size:18px}
+  .signin input{font-size:18px;padding:17px 20px}
+  .signin label.f{font-size:16px}
+  #main .signin .links,#main .signin .later{font-size:16.5px}
+  .orline{font-size:15px}
 }
 @media (prefers-reduced-motion:reduce){.srise{animation:none}}
 /* On a desk the column is already narrow, and the left rail moves the page
