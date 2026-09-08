@@ -50,8 +50,32 @@ function renderWelcome() {
   const m = $('#main');
   WEL.handleEdited = false;
   const draw = () => {
+    /* Nothing is saved until Continue is pressed, so a language chip - which
+       redraws the whole card in the new language - would otherwise throw away
+       everything already typed. The answers are carried across the redraw by
+       hand. On the first draw there is nothing to carry, and the card fills
+       itself from PROFILE instead. */
+    const had = !!$('#welname', m);
+    const keep = had ? {
+      name: $('#welname', m).value,
+      handle: $('#welhandle', m).value,
+      birthday: $('#welbday', m).value,
+      ints: $$('[data-int].on', m).map((x) => x.getAttribute('data-int'))
+    } : null;
     m.innerHTML = welcomeHTML();
     const nameEl = $('#welname', m), hEl = $('#welhandle', m);
+    if (keep) {
+      nameEl.value = keep.name;
+      hEl.value = keep.handle;
+      $('#welbday', m).value = keep.birthday;
+      $$('[data-int]', m).forEach((b) => {
+        if (keep.ints.indexOf(b.getAttribute('data-int')) > -1) b.classList.add('on');
+        else b.classList.remove('on');
+      });
+      /* An empty box is not a username somebody chose, so it goes back to
+         following the name rather than staying blank for good. */
+      if (!keep.handle) WEL.handleEdited = false;
+    }
 
     /* The username follows the name until the person takes it over. After
        that it is theirs, and typing more of their name must not overwrite it. */
@@ -100,7 +124,16 @@ function renderWelcome() {
    registration by a stranger's username. */
 async function claimFreeHandle(wanted, name) {
   for (let n = 0; n < 12; n++) {
-    const tryThis = n === 0 ? wanted : (wanted + (n + 1)).slice(0, 20);
+    /* The base is cut back by the length of the number rather than the whole
+       candidate cut back to twenty. A username is twenty characters at most,
+       so appending to one that is already twenty long and then slicing gives
+       the same twenty characters back every time: twelve identical claims and
+       an error at registration, which is the one thing that must not happen.
+       Trailing dots and underscores the cut exposes go too - a handle may not
+       end in one. */
+    const suffix = String(n + 1);
+    const tryThis = n === 0 ? wanted
+      : wanted.slice(0, 20 - suffix.length).replace(/[._]+$/, '') + suffix;
     try { return await LOVEDB.claimHandle(tryThis, name); }
     catch (e) { if (String(e.message) !== 'taken') throw e; }
   }

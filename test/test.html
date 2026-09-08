@@ -648,6 +648,8 @@ async function go(hash, sel) { W().location.hash = hash; await sleep(30); return
       await waitFor(() => d.querySelector('#tour'), 6000);
       ok(wdocs['handles/nabufan'] && wdocs['handles/nabufan'].uid === 'uidW'
          && wdocs['people/uidW'] && wdocs['people/uidW'].handle === 'nabufan'
+         && wdocs['users/uidW'] && wdocs['users/uidW'].handle === 'nabufan'
+         && typeof wdocs['users/uidW'].lang === 'string'
          && d.querySelector('#tour'),
         'finishing the welcome screen claims the username and shows the tour');
       N.BE.db = keepW.db; N.BE.user = keepW.user; N.BE.enabled = keepW.on; }
