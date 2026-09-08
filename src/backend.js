@@ -133,6 +133,7 @@ const BE = {
     }
     delete d.access; delete d.revoked; saveProfileLocal(d);
     this.profileRead = true;
+    if (typeof applyAccountLang === 'function' && applyAccountLang() && typeof route === 'function') route();
   },
   async pushProfile() {
     if (!this.user) return;

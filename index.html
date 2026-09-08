@@ -12,7 +12,7 @@
      carries this notice with it. See LICENSE. -->
 <meta name="author" content="Nabu Tarot">
 <meta name="copyright" content="Copyright (c) 2025-2026 Nabu Tarot. All rights reserved.">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'none'; object-src 'none'; form-action 'self'; script-src 'self' 'sha256-kHP0P4OX10Pv9pu/c5yfA1VYeT+U4uBWsrpuOU9zBG8=' https://www.gstatic.com https://apis.google.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; font-src 'self' data:; media-src 'self' data: blob:; worker-src 'self'; connect-src 'self' https://*.googleapis.com https://*.google.com https://*.firebaseio.com https://*.cloudfunctions.net https://*.workers.dev https://generativelanguage.googleapis.com; frame-src https://*.firebaseapp.com https://accounts.google.com https://*.facebook.com">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'none'; object-src 'none'; form-action 'self'; script-src 'self' 'sha256-Anpl8c6Q6onSDldLTp7aIWlpKprNQnBwHqY0mamud3A=' https://www.gstatic.com https://apis.google.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; font-src 'self' data:; media-src 'self' data: blob:; worker-src 'self'; connect-src 'self' https://*.googleapis.com https://*.google.com https://*.firebaseio.com https://*.cloudfunctions.net https://*.workers.dev https://generativelanguage.googleapis.com; frame-src https://*.firebaseapp.com https://accounts.google.com https://*.facebook.com">
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <meta name="theme-color" content="#EFE9FA">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -13015,6 +13015,16 @@ const isoDate = (d) => d.getFullYear() + '-' + pad2(d.getMonth() + 1) + '-' + pa
 
 /* ---- language + theme ---- */
 let lang = store.get('nabu-lang', 'vi');
+/* The language belongs to the person, not to the handset. It is chosen once on
+   the welcome screen and carried on the account, so a second phone or a
+   reinstall opens in the right language instead of falling back to Vietnamese.
+   The header button still works for everybody; while signed in it writes back. */
+function applyAccountLang() {
+  const want = PROFILE && PROFILE.lang;
+  if (!want || LANGS.indexOf(want) < 0 || want === lang) return false;
+  lang = want; store.set('nabu-lang', lang);
+  return true;
+}
 if (LANGS.indexOf(lang) < 0) lang = 'vi';
 const T = () => STR[lang];
 const L = (obj) => { if (obj == null) return ''; if (typeof obj === 'string') return obj; return obj[lang] || obj.en || obj.vi || ''; };
@@ -13916,7 +13926,14 @@ function boot() {
     if (!a) return;
     e.preventDefault(); NAV.popping = true; location.hash = a.getAttribute('href');
   });
-  $('#lang').addEventListener('click', () => { lang = LANGS[(LANGS.indexOf(lang) + 1) % LANGS.length]; store.set('nabu-lang', lang); route(); });
+  $('#lang').addEventListener('click', () => {
+    lang = LANGS[(LANGS.indexOf(lang) + 1) % LANGS.length];
+    store.set('nabu-lang', lang);
+    /* Signed in, the choice belongs to the account too, or the next device
+       would contradict this one. */
+    if (typeof BE !== 'undefined' && BE.user) { saveProfileLocal({ lang: lang }); BE.pushProfile().catch(() => {}); }
+    route();
+  });
   { const bell = $('#bell'); if (bell) bell.addEventListener('click', () => { location.hash = '#/alerts'; }); }
   { const bt = $('#totop');
     const seen = () => { bt.hidden = (window.scrollY || document.documentElement.scrollTop || 0) < 700; };
@@ -14081,6 +14098,7 @@ const BE = {
     }
     delete d.access; delete d.revoked; saveProfileLocal(d);
     this.profileRead = true;
+    if (typeof applyAccountLang === 'function' && applyAccountLang() && typeof route === 'function') route();
   },
   async pushProfile() {
     if (!this.user) return;

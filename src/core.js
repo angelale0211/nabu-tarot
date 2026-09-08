@@ -50,6 +50,16 @@ const isoDate = (d) => d.getFullYear() + '-' + pad2(d.getMonth() + 1) + '-' + pa
 
 /* ---- language + theme ---- */
 let lang = store.get('nabu-lang', 'vi');
+/* The language belongs to the person, not to the handset. It is chosen once on
+   the welcome screen and carried on the account, so a second phone or a
+   reinstall opens in the right language instead of falling back to Vietnamese.
+   The header button still works for everybody; while signed in it writes back. */
+function applyAccountLang() {
+  const want = PROFILE && PROFILE.lang;
+  if (!want || LANGS.indexOf(want) < 0 || want === lang) return false;
+  lang = want; store.set('nabu-lang', lang);
+  return true;
+}
 if (LANGS.indexOf(lang) < 0) lang = 'vi';
 const T = () => STR[lang];
 const L = (obj) => { if (obj == null) return ''; if (typeof obj === 'string') return obj; return obj[lang] || obj.en || obj.vi || ''; };
@@ -951,7 +961,14 @@ function boot() {
     if (!a) return;
     e.preventDefault(); NAV.popping = true; location.hash = a.getAttribute('href');
   });
-  $('#lang').addEventListener('click', () => { lang = LANGS[(LANGS.indexOf(lang) + 1) % LANGS.length]; store.set('nabu-lang', lang); route(); });
+  $('#lang').addEventListener('click', () => {
+    lang = LANGS[(LANGS.indexOf(lang) + 1) % LANGS.length];
+    store.set('nabu-lang', lang);
+    /* Signed in, the choice belongs to the account too, or the next device
+       would contradict this one. */
+    if (typeof BE !== 'undefined' && BE.user) { saveProfileLocal({ lang: lang }); BE.pushProfile().catch(() => {}); }
+    route();
+  });
   { const bell = $('#bell'); if (bell) bell.addEventListener('click', () => { location.hash = '#/alerts'; }); }
   { const bt = $('#totop');
     const seen = () => { bt.hidden = (window.scrollY || document.documentElement.scrollTop || 0) < 700; };
