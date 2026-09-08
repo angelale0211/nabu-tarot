@@ -161,7 +161,7 @@ h1,h2,h3,.eyebrow{text-wrap:balance}
 /* Blocks that are deliberately centred keep their own alignment. They are also
    the one place balancing belongs: a short centred block that wraps looks wrong
    when the second line holds a single word, and balancing evens the two out. */
-#main .pick-head p,#main .paynote,#main #tour p,#main .treewrap p,#main .coinwrap p,#main .done p,#main .paywall p,#main .tap-hint{text-align:center}
+#main .pick-head p,#main .paynote,#main #tour p,#main .treewrap p,#main .coinwrap p,#main .done p,#main .paywall p,#main .tap-hint,#main .hello-hero p,#main .hello-end p{text-align:center}
 #main .pick-head p,#main .tap-hint,#main #tour p,#main .paynote{text-wrap:balance}
 /* And these read as labels rather than prose. */
 #main .eyebrow,#main .date,#main .meta,#main .st,#main .kwl,#main .steps li{text-align:inherit;text-justify:auto}
@@ -1867,6 +1867,65 @@ button.unl{display:block;width:100%;text-align:left;font:inherit;color:inherit;c
 /* Off by default: the box in the aside exists on every width but only a wide
    home page shows it, so a phone never sees the forecast twice. */
 #sidehoro{display:none}
+
+/* ---- the page a stranger arrives at ----
+   Read once and left behind, so it is allowed to be a little grander than the
+   app it opens: the logo big, the sentence wide, and the things the app does
+   laid out as cards rather than a list. On a desk they go three across. */
+.hello-hero{text-align:center;padding:26px 0 10px}
+.hello-hero .hlogo{display:flex;justify-content:center;margin-bottom:14px}
+.hello-hero .hlogo .avatar{width:78px;height:78px}
+.hello-hero .hlogo .word{font-size:30px}
+.hello-hero h1{font-size:27px;line-height:1.25;margin:0 0 10px;text-wrap:balance}
+.hello-hero .lead{color:var(--fg-soft);margin:0 auto 18px;max-width:52ch;text-wrap:pretty}
+.hello-hero .btn{max-width:320px;margin:0 auto}
+.hello-hero .hint{margin-top:8px}
+.hgrid{display:grid;grid-template-columns:1fr;gap:10px;margin:18px 0 8px}
+.hcard{display:grid;grid-template-columns:38px 1fr;gap:12px;align-items:start;
+  background:var(--surface);border:1px solid var(--rule-soft);border-radius:18px;padding:14px 16px}
+.hcard .hic{font-size:24px;line-height:1.1}
+.hcard b{display:block;margin-bottom:3px}
+.hcard p{margin:0;font-size:14.5px;color:var(--fg-soft);line-height:1.5}
+.hello-end{text-align:center;padding:14px 0 26px}
+.hello-end .lead{font-weight:600;margin-bottom:4px}
+.hello-end .muted{max-width:52ch;margin:0 auto 16px}
+.hello-end .btn{max-width:320px;margin:0 auto}
+@media (min-width:760px){
+  .hgrid{grid-template-columns:repeat(2,1fr);gap:14px}
+  .hello-hero h1{font-size:34px}
+}
+@media (min-width:1100px){
+  .hgrid{grid-template-columns:repeat(3,1fr)}
+  .hello-hero{padding-top:40px}
+  .hello-hero h1{font-size:40px}
+}
+
+/* ---- the sparkle over the wordmark ----
+   Only in the header: the same lockup is used in the footer and under the
+   welcome note, and a name that glitters in three places at once is a
+   fairground. Gold and pink, the app's own two accents. */
+#brand .lockup{position:relative}
+#brand .spk{position:absolute;width:13px;height:13px;pointer-events:none;z-index:2;
+  opacity:0;transform:translate(-50%,-50%) scale(0) rotate(75deg);
+  animation-name:spk;animation-timing-function:ease-in-out;animation-iteration-count:infinite}
+@keyframes spk{
+  0%{opacity:0;transform:translate(-50%,-50%) scale(0) rotate(75deg)}
+  45%{opacity:.95;transform:translate(-50%,-50%) scale(var(--s,1)) rotate(120deg)}
+  100%{opacity:0;transform:translate(-50%,-50%) scale(0) rotate(150deg)}
+}
+:root{--spk-1:var(--gold);--spk-2:var(--pink-ink)}
+@media (prefers-reduced-motion:reduce){#brand .spk{animation:none;opacity:0}}
+
+/* ---- the tour, as a set of steps ----
+   A bar along the top so eight steps look finite, and the icon in a round
+   well so a row of unrelated emoji reads as one series. */
+.tourcard{padding-top:14px}
+.tourbar{height:6px;border-radius:999px;background:var(--surface-2);overflow:hidden;margin:0 0 14px}
+.tourbar span{display:block;height:100%;border-radius:999px;background:var(--primary);
+  transition:width .32s ease}
+.tourwell{width:64px;height:64px;margin:0 auto 4px;border-radius:50%;
+  background:var(--lav-soft);display:grid;place-content:center;font-size:32px;line-height:1}
+@media (prefers-reduced-motion:reduce){.tourbar span{transition:none}}
 </style>
 </head>
 <body>

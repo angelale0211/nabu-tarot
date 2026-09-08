@@ -348,10 +348,34 @@ function renderFooter() {
   links.push('<a href="#/report">' + esc(S.reportLink) + '</a>');
   $('#foot').innerHTML = '<div class="wrap">' + LOGO + '<div>' + esc(L(CONFIG.tagline)) + '<div class="links">' + links.join(' · ') + '</div><div class="copy">© ' + new Date().getFullYear() + ' ' + esc(CONFIG.brand) + '. ' + esc(S.rights) + '</div></div></div>';
 }
+/* ---- the sparkle over the wordmark ----
+   Four-pointed stars scattered across the name, each fading in, turning a
+   little and fading out again on its own loop.
+
+   Drawn once and kept: the header is rebuilt on every screen change, and stars
+   that jumped to new places each time somebody tapped a tab would be a fidget
+   rather than a shimmer. The animation is CSS, so it costs a compositor
+   nothing and there is no timer running behind it - and like everything else
+   that moves in this app, it stops for anyone who has asked for less motion. */
+const SPARK_D = 'M9.83.84a.72.72 0 0 1 1.35 0l.68 1.88c.54 1.47.53 3.67 1.64 4.78 1.11 1.11 3.31 1.1 4.78 1.64l1.88.69a.72.72 0 0 1 0 1.35l-1.88.68c-1.47.54-3.67.53-4.78 1.64-1.11 1.11-1.1 3.31-1.64 4.78l-.68 1.88a.72.72 0 0 1-1.35 0l-.69-1.88c-.54-1.47-.53-3.67-1.64-4.78-1.11-1.11-3.31-1.1-4.78-1.64l-1.88-.68a.72.72 0 0 1 0-1.35l1.88-.69C5.19 8.6 7.39 8.61 8.5 7.5c1.11-1.11 1.1-3.31 1.64-4.78L9.83.84Z';
+function sparklesHTML(n) {
+  let out = '';
+  for (let i = 0; i < n; i++) {
+    const x = Math.round(Math.random() * 96) + 2, y = Math.round(Math.random() * 90) + 5;
+    const sc = (Math.random() * 0.7 + 0.45).toFixed(2);
+    const delay = (Math.random() * 3.4).toFixed(2), dur = (Math.random() * 2 + 2.6).toFixed(2);
+    out += '<svg class="spk" viewBox="0 0 21 21" aria-hidden="true" focusable="false"'
+      + ' style="left:' + x + '%;top:' + y + '%;--s:' + sc + ';animation-delay:' + delay + 's;animation-duration:' + dur + 's">'
+      + '<path d="' + SPARK_D + '" fill="var(--spk-' + (i % 2 ? '2' : '1') + ')"/></svg>';
+  }
+  return out;
+}
+const BRAND_SPARKLE = LOGO.replace('</span>', sparklesHTML(9) + '</span>');
+
 function renderChrome(route) {
   document.documentElement.setAttribute('lang', lang);
   renderFooter();
-  $('#brand').innerHTML = LOGO;
+  $('#brand').innerHTML = BRAND_SPARKLE;
   $('#lang').textContent = T().lang;
   $('#nav').innerHTML = ['home', 'pick', 'play', 'learn', 'book', 'me'].map((k) =>
     '<a href="#/' + k + '" class="' + (route === k ? 'on' : '') + '">' + ICONS[k] + '<span>' + esc(T().nav[k]) + '</span>'
@@ -810,6 +834,10 @@ function boot() {
   applyTheme();
   pullToRefresh();
   imageViewer();
+  /* A stranger who typed the address gets told what this is before being shown
+     it. Everybody else - the installed app, a shared link, anyone who has been
+     here before - goes straight through. */
+  try { helloFirst(); } catch (e) { /* never keep somebody out of the app */ }
   route();
   if ('serviceWorker' in navigator && location.protocol !== 'file:') {
     window.addEventListener('load', () => {

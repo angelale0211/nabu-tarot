@@ -12,7 +12,7 @@
      carries this notice with it. See LICENSE. -->
 <meta name="author" content="Nabu Tarot">
 <meta name="copyright" content="Copyright (c) 2025-2026 Nabu Tarot. All rights reserved.">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'none'; object-src 'none'; form-action 'self'; script-src 'self' 'sha256-KcbDGwrqBYRXjbKfSiq7MfWdMn4qrfKx1ZJ5J7go4no=' https://www.gstatic.com https://apis.google.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; font-src 'self' data:; media-src 'self' data: blob:; worker-src 'self'; connect-src 'self' https://*.googleapis.com https://*.google.com https://*.firebaseio.com https://*.cloudfunctions.net https://*.workers.dev https://generativelanguage.googleapis.com; frame-src https://*.firebaseapp.com https://accounts.google.com https://*.facebook.com">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'none'; object-src 'none'; form-action 'self'; script-src 'self' 'sha256-LqjvFISkzoAF16wWCTfTC/p6oUzk2Ip3tgyr2ojCg7o=' https://www.gstatic.com https://apis.google.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; font-src 'self' data:; media-src 'self' data: blob:; worker-src 'self'; connect-src 'self' https://*.googleapis.com https://*.google.com https://*.firebaseio.com https://*.cloudfunctions.net https://*.workers.dev https://generativelanguage.googleapis.com; frame-src https://*.firebaseapp.com https://accounts.google.com https://*.facebook.com">
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <meta name="theme-color" content="#EFE9FA">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -327,7 +327,7 @@ h1,h2,h3,.eyebrow{text-wrap:balance}
 /* Blocks that are deliberately centred keep their own alignment. They are also
    the one place balancing belongs: a short centred block that wraps looks wrong
    when the second line holds a single word, and balancing evens the two out. */
-#main .pick-head p,#main .paynote,#main #tour p,#main .treewrap p,#main .coinwrap p,#main .done p,#main .paywall p,#main .tap-hint{text-align:center}
+#main .pick-head p,#main .paynote,#main #tour p,#main .treewrap p,#main .coinwrap p,#main .done p,#main .paywall p,#main .tap-hint,#main .hello-hero p,#main .hello-end p{text-align:center}
 #main .pick-head p,#main .tap-hint,#main #tour p,#main .paynote{text-wrap:balance}
 /* And these read as labels rather than prose. */
 #main .eyebrow,#main .date,#main .meta,#main .st,#main .kwl,#main .steps li{text-align:inherit;text-justify:auto}
@@ -2033,6 +2033,65 @@ button.unl{display:block;width:100%;text-align:left;font:inherit;color:inherit;c
 /* Off by default: the box in the aside exists on every width but only a wide
    home page shows it, so a phone never sees the forecast twice. */
 #sidehoro{display:none}
+
+/* ---- the page a stranger arrives at ----
+   Read once and left behind, so it is allowed to be a little grander than the
+   app it opens: the logo big, the sentence wide, and the things the app does
+   laid out as cards rather than a list. On a desk they go three across. */
+.hello-hero{text-align:center;padding:26px 0 10px}
+.hello-hero .hlogo{display:flex;justify-content:center;margin-bottom:14px}
+.hello-hero .hlogo .avatar{width:78px;height:78px}
+.hello-hero .hlogo .word{font-size:30px}
+.hello-hero h1{font-size:27px;line-height:1.25;margin:0 0 10px;text-wrap:balance}
+.hello-hero .lead{color:var(--fg-soft);margin:0 auto 18px;max-width:52ch;text-wrap:pretty}
+.hello-hero .btn{max-width:320px;margin:0 auto}
+.hello-hero .hint{margin-top:8px}
+.hgrid{display:grid;grid-template-columns:1fr;gap:10px;margin:18px 0 8px}
+.hcard{display:grid;grid-template-columns:38px 1fr;gap:12px;align-items:start;
+  background:var(--surface);border:1px solid var(--rule-soft);border-radius:18px;padding:14px 16px}
+.hcard .hic{font-size:24px;line-height:1.1}
+.hcard b{display:block;margin-bottom:3px}
+.hcard p{margin:0;font-size:14.5px;color:var(--fg-soft);line-height:1.5}
+.hello-end{text-align:center;padding:14px 0 26px}
+.hello-end .lead{font-weight:600;margin-bottom:4px}
+.hello-end .muted{max-width:52ch;margin:0 auto 16px}
+.hello-end .btn{max-width:320px;margin:0 auto}
+@media (min-width:760px){
+  .hgrid{grid-template-columns:repeat(2,1fr);gap:14px}
+  .hello-hero h1{font-size:34px}
+}
+@media (min-width:1100px){
+  .hgrid{grid-template-columns:repeat(3,1fr)}
+  .hello-hero{padding-top:40px}
+  .hello-hero h1{font-size:40px}
+}
+
+/* ---- the sparkle over the wordmark ----
+   Only in the header: the same lockup is used in the footer and under the
+   welcome note, and a name that glitters in three places at once is a
+   fairground. Gold and pink, the app's own two accents. */
+#brand .lockup{position:relative}
+#brand .spk{position:absolute;width:13px;height:13px;pointer-events:none;z-index:2;
+  opacity:0;transform:translate(-50%,-50%) scale(0) rotate(75deg);
+  animation-name:spk;animation-timing-function:ease-in-out;animation-iteration-count:infinite}
+@keyframes spk{
+  0%{opacity:0;transform:translate(-50%,-50%) scale(0) rotate(75deg)}
+  45%{opacity:.95;transform:translate(-50%,-50%) scale(var(--s,1)) rotate(120deg)}
+  100%{opacity:0;transform:translate(-50%,-50%) scale(0) rotate(150deg)}
+}
+:root{--spk-1:var(--gold);--spk-2:var(--pink-ink)}
+@media (prefers-reduced-motion:reduce){#brand .spk{animation:none;opacity:0}}
+
+/* ---- the tour, as a set of steps ----
+   A bar along the top so eight steps look finite, and the icon in a round
+   well so a row of unrelated emoji reads as one series. */
+.tourcard{padding-top:14px}
+.tourbar{height:6px;border-radius:999px;background:var(--surface-2);overflow:hidden;margin:0 0 14px}
+.tourbar span{display:block;height:100%;border-radius:999px;background:var(--primary);
+  transition:width .32s ease}
+.tourwell{width:64px;height:64px;margin:0 auto 4px;border-radius:50%;
+  background:var(--lav-soft);display:grid;place-content:center;font-size:32px;line-height:1}
+@media (prefers-reduced-motion:reduce){.tourbar span{transition:none}}
 </style>
 </head>
 <body>
@@ -3037,6 +3096,24 @@ const STR = {
     pickSpent: 'Hôm nay bạn đã rút một lá rồi. Mai quay lại rút lá mới nhé.',
     pickOffer: 'Nabu Plus rút bài không giới hạn mỗi ngày, tung xu và rung cây không giới hạn, kèm toàn bộ giao diện: 79.000đ.',
     pickPlus: 'Xem Nabu Plus',
+    helloHead: 'Tarot, chiêm tinh và lịch âm, bằng tiếng Việt',
+    helloLead: 'Nabu Tarot là một chỗ nhỏ để bạn ngồi lại với chính mình mỗi ngày: rút một lá bài, xem ngày âm, đọc dự đoán theo cung của bạn.',
+    helloGo: 'Vào app',
+    helloFree: 'Miễn phí, không cần đăng nhập để bắt đầu.',
+    helloDrawH: 'Rút bài mỗi ngày',
+    helloDrawP: 'Chọn chủ đề, lật một lá, và đọc lá đó nói gì về hôm nay của bạn. Có cả tiếng Việt và tiếng Anh.',
+    helloTodayH: 'Lịch âm và tuần trăng',
+    helloTodayP: 'Ngày dương, ngày âm, can chi, và trăng đang ở đâu. Có thêm lịch Hồi giáo, Do Thái, Ba Tư và Phật lịch.',
+    helloHoroH: 'Dự đoán theo cung của bạn',
+    helloHoroP: 'Dự đoán tuần và tháng, do Nabu viết, cho đúng cung của bạn chứ không phải cho tất cả mọi người.',
+    helloLearnH: 'Học tarot và chiêm tinh',
+    helloLearnP: 'Chiêm tinh, con số thiên thần, manifestation và bói toán dân gian đọc miễn phí. Tarot và Lenormand có khóa học riêng.',
+    helloPlayH: 'Hoạt động',
+    helloPlayP: 'Nuôi một bạn nhỏ may mắn, rung cây thông điệp, tung đồng xu, buộc sợi tơ hồng với người bạn thương.',
+    helloTalkH: 'Nhắn tin với Nabu',
+    helloTalkP: 'Bạn hỏi trực tiếp, hoặc đặt lịch xem bài theo giờ Nabu rảnh. Nabu trả lời trong ngày.',
+    helloMoreH: 'Phần lớn app là miễn phí.',
+    helloMoreP: 'Các khóa học và một vài phần mở rộng thì có trả phí, bạn xem trong app khi nào muốn. Không có quảng cáo.',
     modReport: 'Báo cáo', modBlock: 'Chặn người này',
     modAbout: (n) => 'Về ' + n + ':',
     modReported: 'Đã gửi báo cáo cho Nabu. Cảm ơn bạn.',
@@ -3842,6 +3919,24 @@ const STR = {
     pickSpent: 'You have drawn your card for today. Come back tomorrow for a new one.',
     pickOffer: 'Nabu Plus draws as many cards a day as you like, opens the coin and the tree without limit, and every design: 79,000đ.',
     pickPlus: 'See Nabu Plus',
+    helloHead: 'Tarot, astrology and the lunar calendar',
+    helloLead: 'Nabu Tarot is a small place to sit with yourself each day: draw a card, look at the lunar date, read the forecast for your own sign.',
+    helloGo: 'Go to the app',
+    helloFree: 'Free, and you need no account to start.',
+    helloDrawH: 'A card a day',
+    helloDrawP: 'Choose a focus, turn one card, and read what it says about your day. Fully in English or Vietnamese.',
+    helloTodayH: 'The lunar calendar and the moon',
+    helloTodayP: 'Today in the Gregorian and lunar calendars, the animal signs, and where the moon is. Islamic, Hebrew, Persian and Buddhist dates too.',
+    helloHoroH: 'Written for your sign',
+    helloHoroP: 'A forecast for the week and the month, written by Nabu, for your sign rather than for everybody at once.',
+    helloLearnH: 'Learn tarot and astrology',
+    helloLearnP: 'Astrology, angel numbers, manifestation and traditional fortune telling are free to read. Tarot and Lenormand have their own courses.',
+    helloPlayH: 'Things to do',
+    helloPlayP: 'Keep a lucky companion, shake the message tree, flip the coin, tie the red thread with somebody you love.',
+    helloTalkH: 'Talk to Nabu',
+    helloTalkP: 'Ask directly, or book a reading in one of Nabu\u2019s free hours. Nabu answers the same day.',
+    helloMoreH: 'Most of the app is free.',
+    helloMoreP: 'The courses and a few extras are paid, and you can look at those inside whenever you like. There are no adverts.',
     modReport: 'Report', modBlock: 'Block this person',
     modAbout: (n) => 'About ' + n + ':',
     modReported: 'Sent to Nabu. Thank you.',
@@ -11184,10 +11279,34 @@ function renderFooter() {
   links.push('<a href="#/report">' + esc(S.reportLink) + '</a>');
   $('#foot').innerHTML = '<div class="wrap">' + LOGO + '<div>' + esc(L(CONFIG.tagline)) + '<div class="links">' + links.join(' · ') + '</div><div class="copy">© ' + new Date().getFullYear() + ' ' + esc(CONFIG.brand) + '. ' + esc(S.rights) + '</div></div></div>';
 }
+/* ---- the sparkle over the wordmark ----
+   Four-pointed stars scattered across the name, each fading in, turning a
+   little and fading out again on its own loop.
+
+   Drawn once and kept: the header is rebuilt on every screen change, and stars
+   that jumped to new places each time somebody tapped a tab would be a fidget
+   rather than a shimmer. The animation is CSS, so it costs a compositor
+   nothing and there is no timer running behind it - and like everything else
+   that moves in this app, it stops for anyone who has asked for less motion. */
+const SPARK_D = 'M9.83.84a.72.72 0 0 1 1.35 0l.68 1.88c.54 1.47.53 3.67 1.64 4.78 1.11 1.11 3.31 1.1 4.78 1.64l1.88.69a.72.72 0 0 1 0 1.35l-1.88.68c-1.47.54-3.67.53-4.78 1.64-1.11 1.11-1.1 3.31-1.64 4.78l-.68 1.88a.72.72 0 0 1-1.35 0l-.69-1.88c-.54-1.47-.53-3.67-1.64-4.78-1.11-1.11-3.31-1.1-4.78-1.64l-1.88-.68a.72.72 0 0 1 0-1.35l1.88-.69C5.19 8.6 7.39 8.61 8.5 7.5c1.11-1.11 1.1-3.31 1.64-4.78L9.83.84Z';
+function sparklesHTML(n) {
+  let out = '';
+  for (let i = 0; i < n; i++) {
+    const x = Math.round(Math.random() * 96) + 2, y = Math.round(Math.random() * 90) + 5;
+    const sc = (Math.random() * 0.7 + 0.45).toFixed(2);
+    const delay = (Math.random() * 3.4).toFixed(2), dur = (Math.random() * 2 + 2.6).toFixed(2);
+    out += '<svg class="spk" viewBox="0 0 21 21" aria-hidden="true" focusable="false"'
+      + ' style="left:' + x + '%;top:' + y + '%;--s:' + sc + ';animation-delay:' + delay + 's;animation-duration:' + dur + 's">'
+      + '<path d="' + SPARK_D + '" fill="var(--spk-' + (i % 2 ? '2' : '1') + ')"/></svg>';
+  }
+  return out;
+}
+const BRAND_SPARKLE = LOGO.replace('</span>', sparklesHTML(9) + '</span>');
+
 function renderChrome(route) {
   document.documentElement.setAttribute('lang', lang);
   renderFooter();
-  $('#brand').innerHTML = LOGO;
+  $('#brand').innerHTML = BRAND_SPARKLE;
   $('#lang').textContent = T().lang;
   $('#nav').innerHTML = ['home', 'pick', 'play', 'learn', 'book', 'me'].map((k) =>
     '<a href="#/' + k + '" class="' + (route === k ? 'on' : '') + '">' + ICONS[k] + '<span>' + esc(T().nav[k]) + '</span>'
@@ -11646,6 +11765,10 @@ function boot() {
   applyTheme();
   pullToRefresh();
   imageViewer();
+  /* A stranger who typed the address gets told what this is before being shown
+     it. Everybody else - the installed app, a shared link, anyone who has been
+     here before - goes straight through. */
+  try { helloFirst(); } catch (e) { /* never keep somebody out of the app */ }
   route();
   if ('serviceWorker' in navigator && location.protocol !== 'file:') {
     window.addEventListener('load', () => {
@@ -11759,7 +11882,11 @@ const BE = {
   /* ---- profile ---- */
   async pullProfile() {
     const snap = await this.db.collection('users').doc(this.user.uid).get();
-    if (!snap.exists) { await this.pushProfile(); return; }
+    /* No profile in the cloud means this account has just been made. That is
+       the one moment the tour is worth showing whatever this device has seen
+       before: somebody who signed up is starting, even if the phone they did
+       it on has been used by somebody else. */
+    if (!snap.exists) { store.set('nabu-onboard', 1); await this.pushProfile(); return; }
     const d = snap.data();
     /* The withdrawal is read before the merge, and applied once. The merge
        keeps whichever date is later, so emptying the cloud copy on its own
@@ -12615,7 +12742,14 @@ const TOUR = [
 ];
 function tourHTML(step) {
   const t = TOUR[step], txt = t[lang];
-  return '<div class="card" id="tour" style="text-align:center;border-color:var(--lav)"><div style="font-size:40px">' + t.ic + '</div>'
+  const pct = Math.round((step + 1) / TOUR.length * 100);
+  /* A bar along the top, because eight steps with no sense of how many are
+     left is eight steps somebody abandons at the third. The icon sits in a
+     round well rather than loose on the card, which is what makes a row of
+     unrelated emoji read as one series. */
+  return '<div class="card tourcard" id="tour" style="text-align:center;border-color:var(--lav)">'
+    + '<div class="tourbar"><span style="width:' + pct + '%"></span></div>'
+    + '<div class="tourwell">' + t.ic + '</div>'
     + '<h3 style="margin:6px 0">' + esc(txt[0]) + '</h3><p class="muted" style="font-size:14.5px">' + esc(txt[1]) + '</p>'
     // Both arrows are always there, in the same place: back is greyed out on the first step, forward becomes a tick on the last.
     + '<div class="tournav"><button class="btn sm" data-tour="prev" aria-label="back"' + (step === 0 ? ' disabled' : '') + '>←</button><span class="faint">' + (step + 1) + ' / ' + TOUR.length + '</span><button class="btn sm primary" data-tour="next" aria-label="next">' + (step === TOUR.length - 1 ? '✓' : '→') + '</button></div>'
@@ -19792,6 +19926,73 @@ function renderInstall() {
 }
 ROUTES.install = { nav: 'me', render: renderInstall };
 
+/* ======================= the page a stranger arrives at =======================
+
+   Somebody who types nabutarot.com has not decided anything yet. Dropping them
+   into the app shell - a bottom tab bar, a lunar calendar, a greeting meant for
+   somebody who already knows what this is - answers a question they have not
+   asked. This page answers it: what the app is, what it costs (nothing, mostly),
+   and one way in.
+
+   Who sees it, and this is the whole rule: a browser, arriving with no hash at
+   all, that has not been here before. So:
+
+     - the installed app opens at ./index.html#/home  -> never sees it
+     - the checks open ../index.html#/home            -> never see it
+     - a bookmark or a shared link carries its hash   -> never sees it
+     - nabutarot.com, typed, first time               -> sees it once
+
+   Once is the point. A page you cannot get past is a wall, so going in is one
+   tap and is remembered; coming back later goes straight to the app. */
+
+const HELLO_SEEN = 'nabu-hello';
+
+/* The free things first, because they are what the app mostly is. Money is
+   mentioned once, at the end, without prices - a stranger deciding whether to
+   look does not need a price list, and inside the installed app there is not
+   supposed to be one. */
+function helloHTML() {
+  const S = T();
+  const card = (ic, h, p) => '<div class="hcard"><span class="hic">' + ic + '</span><div><b>' + esc(h) + '</b><p>' + esc(p) + '</p></div></div>';
+  return '<section class="hello-hero">'
+    + '<div class="hlogo">' + LOGO + '</div>'
+    + '<h1>' + esc(S.helloHead) + '</h1>'
+    + '<p class="lead">' + esc(S.helloLead) + '</p>'
+    + '<button type="button" class="btn primary block" id="hellogo">' + esc(S.helloGo) + '</button>'
+    + '<p class="hint">' + esc(S.helloFree) + '</p>'
+    + '</section>'
+    + '<div class="hgrid">'
+    + card('🃏', S.helloDrawH, S.helloDrawP)
+    + card('📅', S.helloTodayH, S.helloTodayP)
+    + card('🔮', S.helloHoroH, S.helloHoroP)
+    + card('📚', S.helloLearnH, S.helloLearnP)
+    + card('🎲', S.helloPlayH, S.helloPlayP)
+    + card('💬', S.helloTalkH, S.helloTalkP)
+    + '</div>'
+    + '<section class="hello-end">'
+    + '<p class="lead">' + esc(S.helloMoreH) + '</p>'
+    + '<p class="muted">' + esc(S.helloMoreP) + '</p>'
+    + '<button type="button" class="btn primary block" id="hellogo2">' + esc(S.helloGo) + '</button>'
+    + '</section>';
+}
+
+function renderHello() {
+  const m = $('#main');
+  m.innerHTML = helloHTML();
+  const go = () => { store.set(HELLO_SEEN, 1); location.hash = '#/home'; };
+  $$('#hellogo, #hellogo2', m).forEach((b) => b.addEventListener('click', go));
+}
+ROUTES.hello = { nav: '', render: renderHello };
+
+/* Called once, from boot, before the first route is drawn. */
+function helloFirst() {
+  if (location.hash) return false;                 // a hash means somebody knows where they are going
+  if (isTWA() || isStandalone()) return false;     // the installed app is not a stranger
+  if (store.get(HELLO_SEEN, 0)) return false;      // been here before
+  location.hash = '#/hello';
+  return true;
+}
+
 /* ============================ bug reports (#/report) ============================
    A short form plus what the app knows (screen, version, device, the last
    error it caught). Saved to Firestore when accounts are on and the visitor
@@ -23467,7 +23668,7 @@ function adminSale(p) {
 ROUTES.admin = { nav: '', render: renderAdmin };
 
 /* ============================ boot ============================ */
-window.APP_VERSION = 'v174';
+window.APP_VERSION = 'v175';
 window.NABU = { CONFIG: CONFIG, SALE: SALE, salePrice: salePrice, loadActs: loadActs, BACK: BACK, LESSONS: LESSONS, localAnswer: localAnswer, compatVerdict: compatVerdict, numerologyOf: numerologyOf, ZDEEP: ZDEEP, lunarToday: lunarToday, solarToLunar: solarToLunar, DECK: DECK, INSIGHT: INSIGHT, KW: KW, ASK: ASK, TOPICS: TOPICS, GUIDES: GUIDES, SERVICES: SERVICES, COURSES: COURSES, ACCESS: ACCESS, plusOn: () => plusOn(), proOn: () => proOn(), luckUnlimited: () => luckUnlimited(), ZODIAC: ZODIAC, pick: pick, book: book,
   insightHTML: insightHTML, insightOf: insightOf, sunSignIndex: sunSignIndex, lifePath: lifePath, PROFILE: () => PROFILE, BE: BE, ACTS: ACTS,
   ANGELS: ANGELS, angelRead: angelRead, CODEBOOK: CODEBOOK, verifyCode: verifyCode, petHomeSVG: petHomeSVG, PET_HOMES: PET_HOMES, PET_WEARS: PET_WEARS, codeDigest: codeDigest, randomCode: randomCode, BANK: BANK, PETS: PETS, petSVG: petSVG, PET_COATS: PET_COATS, PET_KINDS: PET_KINDS, luckCut: luckCut, petLevel: petLevel, petStep: petStep, VOUCHERS: VOUCHERS, levelCoins: levelCoins, LOOKS: LOOKS,

@@ -51,7 +51,14 @@ const TOUR = [
 ];
 function tourHTML(step) {
   const t = TOUR[step], txt = t[lang];
-  return '<div class="card" id="tour" style="text-align:center;border-color:var(--lav)"><div style="font-size:40px">' + t.ic + '</div>'
+  const pct = Math.round((step + 1) / TOUR.length * 100);
+  /* A bar along the top, because eight steps with no sense of how many are
+     left is eight steps somebody abandons at the third. The icon sits in a
+     round well rather than loose on the card, which is what makes a row of
+     unrelated emoji read as one series. */
+  return '<div class="card tourcard" id="tour" style="text-align:center;border-color:var(--lav)">'
+    + '<div class="tourbar"><span style="width:' + pct + '%"></span></div>'
+    + '<div class="tourwell">' + t.ic + '</div>'
     + '<h3 style="margin:6px 0">' + esc(txt[0]) + '</h3><p class="muted" style="font-size:14.5px">' + esc(txt[1]) + '</p>'
     // Both arrows are always there, in the same place: back is greyed out on the first step, forward becomes a tick on the last.
     + '<div class="tournav"><button class="btn sm" data-tour="prev" aria-label="back"' + (step === 0 ? ' disabled' : '') + '>←</button><span class="faint">' + (step + 1) + ' / ' + TOUR.length + '</span><button class="btn sm primary" data-tour="next" aria-label="next">' + (step === TOUR.length - 1 ? '✓' : '→') + '</button></div>'

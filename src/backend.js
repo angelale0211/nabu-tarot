@@ -95,7 +95,11 @@ const BE = {
   /* ---- profile ---- */
   async pullProfile() {
     const snap = await this.db.collection('users').doc(this.user.uid).get();
-    if (!snap.exists) { await this.pushProfile(); return; }
+    /* No profile in the cloud means this account has just been made. That is
+       the one moment the tour is worth showing whatever this device has seen
+       before: somebody who signed up is starting, even if the phone they did
+       it on has been used by somebody else. */
+    if (!snap.exists) { store.set('nabu-onboard', 1); await this.pushProfile(); return; }
     const d = snap.data();
     /* The withdrawal is read before the merge, and applied once. The merge
        keeps whichever date is later, so emptying the cloud copy on its own
