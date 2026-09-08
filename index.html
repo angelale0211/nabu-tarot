@@ -12,7 +12,7 @@
      carries this notice with it. See LICENSE. -->
 <meta name="author" content="Nabu Tarot">
 <meta name="copyright" content="Copyright (c) 2025-2026 Nabu Tarot. All rights reserved.">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'none'; object-src 'none'; form-action 'self'; script-src 'self' 'sha256-BHiB/0HbTrzJWIEDTRY6e/vadY1zFVdZMYirvbtCpCE=' https://www.gstatic.com https://apis.google.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; font-src 'self' data:; media-src 'self' data: blob:; worker-src 'self'; connect-src 'self' https://*.googleapis.com https://*.google.com https://*.firebaseio.com https://*.cloudfunctions.net https://*.workers.dev https://generativelanguage.googleapis.com; frame-src https://*.firebaseapp.com https://accounts.google.com https://*.facebook.com">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'none'; object-src 'none'; form-action 'self'; script-src 'self' 'sha256-w6uyoC4MtA9p1l5B8VxQmI1XbLdKSjcE7Eb/TD6zQE8=' https://www.gstatic.com https://apis.google.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; font-src 'self' data:; media-src 'self' data: blob:; worker-src 'self'; connect-src 'self' https://*.googleapis.com https://*.google.com https://*.firebaseio.com https://*.cloudfunctions.net https://*.workers.dev https://generativelanguage.googleapis.com; frame-src https://*.firebaseapp.com https://accounts.google.com https://*.facebook.com">
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <meta name="theme-color" content="#EFE9FA">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -2901,6 +2901,25 @@ function fmtPrice(n, abroad) {
   const v = (abroad && typeof abroad[lg] === 'number') ? abroad[lg] : p.v;
   return p.m.sym + (v % 1 ? v.toFixed(2) : String(v));
 }
+
+/* ======================= what Play sells =======================
+   Same table as worker/src/catalog.ts; the suite checks they agree. `key` is
+   the app's own name (COURSES ids, ACCESS keys), `sku` the Play product id.
+   Pro is two plans with the same contents; the wedding pays for one room. */
+const PLAY_SUB_SKUS = { manifest: '', plus: '', pro6: '', pro: '' };   // input B1
+const PLAY_ITEMS = [
+  { key: 'tarot', sku: 'tarot', kind: 'inapp', opens: ['tarot'], months: 6 },
+  { key: 'lenormand', sku: 'lenormand', kind: 'inapp', opens: ['lenormand'], months: 6 },
+  { key: 'playing', sku: 'playing', kind: 'inapp', opens: ['playing'], months: 6 },
+  { key: 'wedding', sku: 'wedding', kind: 'inapp', opens: [], months: 0 },
+  { key: 'manifest', sku: PLAY_SUB_SKUS.manifest, kind: 'subs', opens: ['manifest'], months: 12 },
+  { key: 'plus', sku: PLAY_SUB_SKUS.plus, kind: 'subs', opens: ['plus'], months: 12 },
+  { key: 'pro6', sku: PLAY_SUB_SKUS.pro6, kind: 'subs', opens: ['pro', 'plus'], months: 6 },
+  { key: 'pro', sku: PLAY_SUB_SKUS.pro, kind: 'subs', opens: ['pro', 'plus'], months: 12 }
+];
+const playItem = (key) => PLAY_ITEMS.filter((i) => i.key === key)[0] || null;
+const playItemBySku = (sku) => (sku && PLAY_ITEMS.filter((i) => i.sku === sku)[0]) || null;
+const PLAY_MANAGED_KEYS = ['manifest', 'plus', 'pro'];
 
 /* ============================ UI strings ============================
    Vietnamese is the first language of the app. Keep every line short and
@@ -31313,7 +31332,7 @@ ROUTES.admin = { nav: '', render: renderAdmin };
 
 /* ============================ boot ============================ */
 window.APP_VERSION = 'v190';
-window.NABU = { CONFIG: CONFIG, SALE: SALE, salePrice: salePrice, loadActs: loadActs, BACK: BACK, LESSONS: LESSONS, localAnswer: localAnswer, compatVerdict: compatVerdict, numerologyOf: numerologyOf, ZDEEP: ZDEEP, lunarToday: lunarToday, solarToLunar: solarToLunar, DECK: DECK, INSIGHT: INSIGHT, KW: KW, ASK: ASK, TOPICS: TOPICS, GUIDES: GUIDES, SERVICES: SERVICES, COURSES: COURSES, ACCESS: ACCESS, INTERESTS: INTERESTS, plusOn: () => plusOn(), proOn: () => proOn(), luckUnlimited: () => luckUnlimited(), ZODIAC: ZODIAC, pick: pick, book: book,
+window.NABU = { CONFIG: CONFIG, SALE: SALE, salePrice: salePrice, loadActs: loadActs, BACK: BACK, LESSONS: LESSONS, localAnswer: localAnswer, compatVerdict: compatVerdict, numerologyOf: numerologyOf, ZDEEP: ZDEEP, lunarToday: lunarToday, solarToLunar: solarToLunar, DECK: DECK, INSIGHT: INSIGHT, KW: KW, ASK: ASK, TOPICS: TOPICS, GUIDES: GUIDES, SERVICES: SERVICES, COURSES: COURSES, ACCESS: ACCESS, INTERESTS: INTERESTS, plusOn: () => plusOn(), proOn: () => proOn(), luckUnlimited: () => luckUnlimited(), ZODIAC: ZODIAC, pick: pick, book: book, PLAY_ITEMS: PLAY_ITEMS, PLAY_SUB_SKUS: PLAY_SUB_SKUS, playItem: playItem,
   insightHTML: insightHTML, insightOf: insightOf, sunSignIndex: sunSignIndex, lifePath: lifePath, PROFILE: () => PROFILE, BE: BE, ACTS: ACTS,
   ANGELS: ANGELS, angelRead: angelRead, CODEBOOK: CODEBOOK, redeemCode: redeemCode, loadCodebook: loadCodebook, petHomeSVG: petHomeSVG, PET_HOMES: PET_HOMES, PET_WEARS: PET_WEARS, codeDigest: codeDigest, randomCode: randomCode, BANK: BANK, PETS: PETS, petSVG: petSVG, PET_COATS: PET_COATS, PET_KINDS: PET_KINDS, luckCut: luckCut, petLevel: petLevel, petStep: petStep, VOUCHERS: VOUCHERS, levelCoins: levelCoins, LOOKS: LOOKS,
   LOVE: LOVE, LOVEDB: LOVEDB, HANDLE_RE: HANDLE_RE, loveBadgeHTML: loveBadgeHTML,
