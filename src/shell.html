@@ -1804,6 +1804,41 @@ button.unl{display:block;width:100%;text-align:left;font:inherit;color:inherit;c
 :root:not([data-theme="light"]) .tpick .ok,
 :root:not([data-theme="light"]) .sum .ok{color:#7BD9A0}
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .warn,:root:not([data-theme="light"]) .sum .warn{color:#FF9E86}}
+
+/* ---- wide screens ----
+   The app was drawn for a phone: one column, a tab bar along the bottom, a
+   thumb's reach for everything. On a laptop that same column sat in the
+   middle of a 1440px screen with a phone's tab bar fixed to the foot of a
+   window nobody holds. Nothing below 900px is touched here - the phone stays
+   exactly as it was, and so do the checks that guard it.
+
+   The tab bar becomes a rail down the left, the column widens to something a
+   desk can read, and the few grids that were two-across become three or four.
+   Screens whose geometry is drawn in pixels - the fan of cards, the rings -
+   are left alone; they were sized for a hand and still look right centred. */
+@media (min-width:900px){
+  :root{--rail-w:96px}
+  body{padding-bottom:0;padding-left:var(--rail-w)}
+  .wrap{max-width:1040px;padding:0 32px}
+
+  .nav{top:0;bottom:0;right:auto;left:0;width:var(--rail-w);border-top:0;border-right:1px solid var(--rule-soft)}
+  .nav .wrap{display:flex;flex-direction:column;height:auto;max-width:none;margin:0;padding:78px 0 0;gap:4px}
+  .nav a{height:64px;font-size:11px;gap:5px;border-radius:14px;margin:0 8px}
+  .nav a svg{width:26px;height:26px}
+
+  .toast{bottom:28px}
+  #totop{bottom:28px;right:28px}
+  .sheet{align-items:center}
+
+  .tiles{grid-template-columns:repeat(3,1fr);gap:14px}
+  .pickcta{grid-template-columns:170px 1fr;padding:22px}
+  .pricesec{display:grid;grid-template-columns:repeat(2,1fr);gap:0 18px;align-items:start}
+  .pricesec>h2,.pricesec>.hint,.pricesec>.paynote,.pricesec>p{grid-column:1/-1}
+  .tabs{flex-wrap:wrap;overflow:visible}
+  .chat{max-height:70vh}
+  #main .paywall{max-width:640px;margin-left:auto;margin-right:auto}
+  .course{max-width:640px}
+}
 </style>
 </head>
 <body>
