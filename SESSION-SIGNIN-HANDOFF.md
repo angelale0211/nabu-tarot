@@ -212,3 +212,61 @@ What that means for you:
 The landing strings are the owner's words verbatim (`helloHead`, `helloGo`,
 `helloFree`, six `helloXxxH/P`). `helloLearn*`, `helloPlay*`, `helloTalk*` and
 `helloMore*` are gone; nothing referenced them.
+
+
+## 9. Your push at ~16:10, and two things the owner wants from your layout pass
+
+Your commit `4b228a3` ("v179 - one column down the middle...") went to GitHub
+while my v181 suite was running, so my push was refused and I rebased onto
+yours. Two facts about that commit:
+
+- It already carries the tour, the booking how-to and my footer block, because
+  it committed the shared working tree. Good - nothing of mine is lost.
+- **It did not bump the version**: `main.js` and `sw.js` still say `v180`, which
+  is the cache name already live from my v180. Phones will not fetch your layout
+  work until the cache name changes. My v181 on top of your commit is exactly
+  that bump, plus one line in `learn.js` (below). **Your next release is v182.**
+
+The owner sent screenshots of the desk layout on the live site (tree, pets,
+a pet, a wish, a poll, the learn index) and chose to leave the desk to you. What
+they asked for, in their words, and what I measured against your uncommitted
+CSS at 1280 and 2560:
+
+- "All of the text in every category pushed to the left" - your 720px column
+  now centres the title block on the activity pages (h1 centre off by 1px), so
+  this is on its way. The learn index is still a 1040px column with the title
+  left and the tiles three across.
+- "The copyright is not centred" - done by me, one block at the very end of
+  `shell.html` (`.foot .wrap{align-items:center...}` at min-width:900px).
+  Measured: footer lockup and copyright both 0px off centre. Keep it.
+- "On a bigger resolution nothing gets bigger" - **not done, and yours.**
+  Everything past 1536px still renders at 28px h1 / 16px body. The two welcome
+  pages (`#/hello`, `#/signin`) have explicit `min-width:1600px` and `2200px`
+  blocks; the rest of the app has nothing. Whatever you choose (widen the
+  column and step the type, or a `zoom` on main past 1600px - mind `100dvh` on
+  the body if you zoom), it should end up one rule for the whole app, and the
+  two welcome-page blocks folded into it.
+- "The unlock price table is way to the left and not big enough" - on the learn
+  index (`#/learn`) the `💳 Bảng giá mở khoá` button is `.btn.block` inside a
+  `<p>`, and under your rules it sits narrower than the tiles above it and
+  hugs the left. It should span the tiles' width, or sit centred under them.
+- The tiles: the owner asked why some had a pink outline and others not. It was
+  `interests match OR one of five hard-coded keys`. I made it interests only
+  (`learn.js`, in v181), so the outline means one thing.
+
+
+## 10. The owner's two steps are done - stop listing them
+
+Checked from outside at 16:20 on 2026-09-08:
+
+- **Worker secrets are set.** `POST /redeem` and `POST /billing` with no sign-in
+  both answer `{"error":"signin"}` 401. An unconfigured worker answers
+  `{"error":"not configured"}` 500 before it ever looks at the sign-in, so both
+  `FIREBASE_PROJECT_ID` and `PLAY_SERVICE_ACCOUNT` are present, and the deployed
+  worker carries `/redeem`.
+- **Firestore rules are republished.** An unauthenticated read of
+  `content/codes` is `PERMISSION_DENIED`, while `content/sale` is `NOT_FOUND`
+  (the read was allowed; the document happens not to exist). That is the v177
+  rule: the codes book is Nabu's and the worker's only.
+
+`HANDOVER.md` §8 items 1 and 1b are therefore done and can be struck.
