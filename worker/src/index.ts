@@ -7,7 +7,8 @@
 import Anthropic from "@anthropic-ai/sdk";
 import { whoIsAsking } from "./auth";
 import { allow, cachedAnswer, keepAnswer } from "./limit";
-import { checkPurchase, acknowledge, grant } from "./play";
+import { checkPurchase, acknowledge, grant, grantUntil } from "./play";
+import { claimCode } from "./codes";
 
 /* How long each thing is sold for. Kept here rather than read from the app,
    because the app is the side that cannot be trusted about what it bought. */
@@ -164,6 +165,42 @@ export default {
       }
     }
 
+    /* ---- somebody typed an access code ----
+
+       The code is checked and claimed here, against a book only Nabu and this
+       worker can read, and bound to the account that typed it. The same
+       account may type it again on another phone; a different account is
+       refused. The access is then written from here, like a purchase. */
+    if (path.endsWith("/redeem")) {
+      if (!env.FIREBASE_PROJECT_ID || !env.PLAY_SERVICE_ACCOUNT) return new Response(JSON.stringify({ error: "not configured" }), { status: 500, headers });
+      const person = await whoIsAsking(request, env.FIREBASE_PROJECT_ID);
+      if (!person) return new Response(JSON.stringify({ error: "signin" }), { status: 401, headers });
+      /* Guessing is the only attack left, and a six-letter tail from a
+         32-letter alphabet is a billion codes: twenty tries a day gets nowhere. */
+      const v = await allow(env, "redeem:" + person.uid, 20, 5);
+      if (!v.ok) return tooMany(v, headers);
+
+      let b: { code?: string };
+      try { b = await request.json(); } catch { return new Response(JSON.stringify({ error: "bad json" }), { status: 400, headers }); }
+      const code = String(b.code || "").slice(0, 40);
+      try {
+        const got = await claimCode(env, person.uid, code);
+        if (!got.ok) {
+          console.log(JSON.stringify({ at: "redeem", uid: person.uid, refused: got.why }));
+          return new Response(JSON.stringify({ error: got.why }), { status: got.why === "check failed" ? 502 : 402, headers });
+        }
+        const ids = [got.course].concat(ALSO[got.course] || []);
+        const want: Record<string, string> = {};
+        for (const id of ids) want[id] = got.until;
+        const access = await grantUntil(env, person.uid, want);
+        console.log(JSON.stringify({ at: "redeem", uid: person.uid, granted: ids, until: got.until }));
+        return new Response(JSON.stringify({ ok: true, opened: ids, access }), { headers });
+      } catch (e) {
+        console.error(JSON.stringify({ at: "redeem", uid: person.uid, error: String((e as Error).message || e) }));
+        return new Response(JSON.stringify({ error: "check failed" }), { status: 502, headers });
+      }
+    }
+
     /* Asking costs money, so asking requires an account. Until the project id
        is set the worker keeps its old behaviour, so deploying this cannot lock
        the app out before the app is sending a token. */
@@ -197,9 +234,7 @@ export default {
     /* Gemini, with the key held here rather than in the browser. Set it with
        npx wrangler secret put GEMINI_API_KEY */
     if (env.GEMINI_API_KEY) {
-      const sys = (body.lang === "en" ? SYSTEM_EN : SYSTEM_VI) + "
-
-" + knowledge;
+      const sys = (body.lang === "en" ? SYSTEM_EN : SYSTEM_VI) + "\n\n" + knowledge;
       const contents: { role: string; parts: { text: string }[] }[] = [];
       for (const h of (body.history || []).slice(-6)) {
         if (h && h.text) contents.push({ role: h.role === "assistant" ? "model" : "user", parts: [{ text: h.text.slice(0, 2000) }] });

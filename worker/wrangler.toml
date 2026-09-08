@@ -12,7 +12,9 @@ ALLOWED_ORIGIN = "https://nabutarot.com"
 # Whose sign-ins this worker accepts. While it is empty the worker answers
 # anybody, exactly as it did before, so this can be deployed before the app is
 # sending a token. Set it once the app is, and asking needs an account.
-FIREBASE_PROJECT_ID = ""
+FIREBASE_PROJECT_ID = "nabutarot"
+# The Android app, for checking Play purchases.
+ANDROID_PACKAGE = "app.nabutarot.twa"
 
 # Where the per-person counts live. Without it the worker still answers, but
 # nothing is limited, so make it:
@@ -26,3 +28,6 @@ FIREBASE_PROJECT_ID = ""
 #   npx wrangler secret put GEMINI_API_KEY      (Gemini answers, key never in the browser)
 #   npx wrangler secret put ANTHROPIC_API_KEY   (Claude answers; optional)
 #   npx wrangler secret put RESEND_API_KEY      (booking invitations by email; resend.com free tier)
+#   npx wrangler secret put PLAY_SERVICE_ACCOUNT (the whole service-account JSON; checks Play purchases,
+#                                                reads the code book and writes access - /billing and /redeem
+#                                                answer "not configured" until it and FIREBASE_PROJECT_ID are set)

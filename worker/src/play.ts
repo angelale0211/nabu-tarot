@@ -20,6 +20,10 @@ export interface PlayEnv {
   FIREBASE_PROJECT_ID?: string;
 }
 
+/* One service account does three jobs: it asks Play about purchases, it reads
+   the code book, and it writes access. The same secret serves all three. */
+export type ServiceEnv = Pick<PlayEnv, "PLAY_SERVICE_ACCOUNT">;
+
 interface ServiceAccount { client_email: string; private_key: string }
 
 const b64url = (bytes: ArrayBuffer | Uint8Array): string => {
@@ -42,11 +46,12 @@ function pemToBytes(pem: string): ArrayBuffer {
 
 /* Access tokens last an hour and the worker stays warm, so one is kept until it
    is nearly out rather than fetched per purchase. */
-let tokenCache: { at: number; ttl: number; token: string } | null = null;
+let tokenCache: Record<string, { at: number; ttl: number; token: string }> = {};
 
-async function accessToken(env: PlayEnv, scope: string): Promise<string> {
+export async function serviceToken(env: ServiceEnv, scope: string): Promise<string> {
   const now = Date.now();
-  if (tokenCache && now - tokenCache.at < tokenCache.ttl) return tokenCache.token;
+  const had = tokenCache[scope];
+  if (had && now - had.at < had.ttl) return had.token;
   if (!env.PLAY_SERVICE_ACCOUNT) throw new Error("no service account");
   const sa = JSON.parse(env.PLAY_SERVICE_ACCOUNT) as ServiceAccount;
 
@@ -73,12 +78,13 @@ async function accessToken(env: PlayEnv, scope: string): Promise<string> {
   });
   if (!r.ok) throw new Error("oauth " + r.status);
   const j = (await r.json()) as { access_token: string; expires_in: number };
-  tokenCache = { at: now, ttl: Math.max(60, (j.expires_in || 3600) - 120) * 1000, token: j.access_token };
+  tokenCache[scope] = { at: now, ttl: Math.max(60, (j.expires_in || 3600) - 120) * 1000, token: j.access_token };
   return j.access_token;
 }
+const accessToken = serviceToken;
 
 const PLAY_SCOPE = "https://www.googleapis.com/auth/androidpublisher";
-const FS_SCOPE = "https://www.googleapis.com/auth/datastore";
+export const FS_SCOPE = "https://www.googleapis.com/auth/datastore";
 
 export interface Bought { ok: boolean; why?: string; sku?: string }
 
@@ -136,6 +142,13 @@ const isoPlusMonths = (months: number): string => {
 };
 
 export async function grant(env: PlayEnv, uid: string, ids: string[], months: Record<string, number>): Promise<Record<string, string>> {
+  const want: Record<string, string> = {};
+  for (const id of ids) want[id] = isoPlusMonths(months[id] || 12);
+  return grantUntil(env, uid, want);
+}
+
+/* The same, with the dates already decided - a code carries its own expiry. */
+export async function grantUntil(env: PlayEnv, uid: string, want: Record<string, string>): Promise<Record<string, string>> {
   if (!env.FIREBASE_PROJECT_ID) throw new Error("no project id");
   const at = await accessToken(env, FS_SCOPE);
   const base = "https://firestore.googleapis.com/v1/projects/"
@@ -152,9 +165,8 @@ export async function grant(env: PlayEnv, uid: string, ids: string[], months: Re
   }
 
   const out: Record<string, string> = { ...held };
-  for (const id of ids) {
-    const until = isoPlusMonths(months[id] || 12);
-    if (!out[id] || until > out[id]) out[id] = until;
+  for (const id of Object.keys(want)) {
+    if (!out[id] || want[id] > out[id]) out[id] = want[id];
   }
 
   const fields: Record<string, { stringValue: string }> = {};
