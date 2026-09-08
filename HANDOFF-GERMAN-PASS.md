@@ -28,7 +28,8 @@ Rewritten in VI/EN/DE, mirrored into `privacy.html`, with `PLAY-DATA-SAFETY.md`
 carrying the matching Play Console answers.
 
 **3 · German for the polls and wish posts** — `activities.json` and
-`activities-stock.json`, 298 blocks, 53 items. **Read the warning below.**
+`activities-stock.json`, 298 blocks, 53 items. They reach the screen on
+their own — see below.
 
 **4 · Both composers take German** — post title/body in `admin.js`; activity
 title, intro, poll options and pile messages in `play.js`.
@@ -53,31 +54,23 @@ If any of that changes, `privacy.json` sections 4, 7 and 8 and
 
 ---
 
-## ⚠ The one thing that is done but not yet visible to users
+## The polls: how the German gets there
 
-**The live polls come from Firestore, not from the JSON files.**
-`loadContent()` (`src/core.js:562`) reads the cloud copy first and only falls
-back to `activities.json`. Anything ever saved from the dashboard lives in the
-cloud, so the German added to the files does **not** reach visitors on its own.
-This was confirmed by rendering a poll page: the UI was German, the poll itself
-was still English.
+The published activity list is read from the cloud first (`loadContent`,
+`src/core.js:562`), and that copy can be older than a translation. So
+`loadActs()` (`src/play.js:14`) fills any missing locale text from
+`activities.json` and `activities-stock.json` on every load, in memory. A
+visitor switching to German sees German; nothing has to be pressed, and the
+file fetch only happens on loads where something is actually missing
+(`actsNeedDe`).
 
-**What the owner has to do, once, signed in as admin:**
-Dashboard → activities → **"🇩🇪 Lấy bản tiếng Đức từ tệp"** (Fill German from
-the files). It reads both JSON files, fills any missing `de` on the published
-activities, saves them back through `BE.setContent('activities', …)`, and
-reports how many strings it could not find German for. It only ever adds a
-missing `de`; nothing existing is touched.
-
-Until that button is pressed, task 3 is complete in the repo and invisible in
-the app. **Check this first if the polls still look English.**
-
----
+The dashboard button — "Fill German from the files" — does the same fill and
+saves it back to the cloud, so the work is stored once instead of repeated on
+every load. It is a tidy-up, not a requirement.
 
 ## Still open
 
-1. **Press the German import button** (above). Highest priority.
-2. **Install / distribution copy — section 17 of the review, deliberately not
+1. **Install / distribution copy — section 17 of the review, deliberately not
    applied.** The app is in Google Play closed testing with too few testers, so
    nothing is distributed yet. `#/install` still describes the APK sideload plus
    the iOS Safari route, which is accurate today. Once the Play track opens,
@@ -85,16 +78,16 @@ the app. **Check this first if the polls still look English.**
    should point at Play instead, in all three languages. The stale claims the
    review worried about ("Google Play will come later", "App do Nabu ký, an
    toàn") are **not** in the current source — already gone.
-3. **Play Console, two jobs that are not in the repo:** update the store
+2. **Play Console, two jobs that are not in the repo:** update the store
    listing description (review §31.1 gives VI/EN/DE), and redo the Data safety
    form from `PLAY-DATA-SAFETY.md`. No new `.aab` is needed for any of this —
    the Play app is a Trusted Web Activity that opens the live site, so testers
    get new copy as soon as the site is pushed.
-4. **Owner review of the German prose.** Machine checks pass, but nobody has
+3. **Owner review of the German prose.** Machine checks pass, but nobody has
    read it with a native eye yet.
-5. **`_patch/` is scratch** — every patch script, the audit tools, and
+4. **`_patch/` is scratch** — every patch script, the audit tools, and
    pre-change backups of each file touched. Untracked and safe to delete.
-6. Untracked and not mine: `docs/superpowers/specs/2026-09-08-play-billing-subscriptions-design.md`.
+5. Untracked and not mine: `docs/superpowers/specs/2026-09-08-play-billing-subscriptions-design.md`.
 
 ---
 

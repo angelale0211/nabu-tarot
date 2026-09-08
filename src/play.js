@@ -20,8 +20,27 @@ async function loadActs() {
   ACTS.stock = {};
   ((s.data && s.data.items) || []).forEach((a) => { ACTS.stock[a.id] = true; if (!have[a.id] && hidden.indexOf(a.id) < 0) items.push(a); });
   ACTS.hidden = hidden.slice();
+  /* An activity saved before a language existed has no text in it. Fill those
+     gaps from the files that ship with the app, so switching language is all a
+     visitor has to do. A failure here is never worth an empty screen. */
+  if (actsNeedDe(items)) {
+    try { fillActsDe(items, await germanFromFiles()); } catch (e) { /* the files can wait */ }
+  }
   ACTS.items = items; ACTS.loaded = true;
   return ACTS.items;
+}
+/* True when any piece of text on any activity is missing its German. Cheap,
+   and it keeps the file fetch to the loads that can actually use it. */
+function actsNeedDe(items) {
+  let need = false;
+  const walk = (o) => {
+    if (need || !o || typeof o !== 'object') return;
+    if (Array.isArray(o)) { o.forEach(walk); return; }
+    if (typeof o.vi === 'string' && typeof o.en === 'string') { if (!o.de) need = true; return; }
+    Object.keys(o).forEach((k) => walk(o[k]));
+  };
+  walk(items);
+  return need;
 }
 const actsDoc = (items) => { const doc = { items: items }; if (ACTS.hidden && ACTS.hidden.length) doc.hidden = ACTS.hidden; return doc; };
 /* The slips inside the jar: one per wish, stacked from the bottom up in a
@@ -899,12 +918,13 @@ async function homeActHTML(root) {
 ROUTES.play = { nav: 'play', render: renderPlay };
 
 /* ---- German for activities that were published before German existed ----
-   The list a visitor sees comes from the cloud when anything has been saved
-   from the dashboard, so the German added to activities.json and
-   activities-stock.json does not reach them on its own. This walks the loaded
-   activities and fills in any missing `de` from those two files, matching on
-   the English text, which is unique across both. Only missing values are
-   written; nothing already there is touched. */
+   The list a visitor sees comes from the cloud whenever anything has been
+   saved from the dashboard, and that copy can be older than a translation.
+   The two JSON files ship with the app and do carry it, so loadActs() fills
+   the gaps from them every time it loads, and nobody has to do anything for
+   the polls to read German. Only a missing value is written; text already
+   there is never touched. The dashboard button does the same fill and saves
+   it back, so the work is stored rather than repeated on every load. */
 async function germanFromFiles() {
   const map = {};
   /* Cached under their own keys: 'nabu-acts' belongs to the cloud copy and
@@ -914,7 +934,11 @@ async function germanFromFiles() {
     const walk = (o) => {
       if (!o || typeof o !== 'object') return;
       if (Array.isArray(o)) { o.forEach(walk); return; }
-      if (typeof o.en === 'string' && typeof o.de === 'string' && o.de) { map[o.en] = o.de; return; }
+      if (typeof o.de === 'string' && o.de) {
+        if (typeof o.vi === 'string' && o.vi) map[o.vi] = o.de;
+        if (typeof o.en === 'string' && o.en) map[o.en] = o.de;
+        return;
+      }
       Object.keys(o).forEach((k) => walk(o[k]));
     };
     walk((r.data && r.data.items) || []);
@@ -930,7 +954,8 @@ function fillActsDe(items, map) {
     if (Array.isArray(o)) { o.forEach(walk); return; }
     if (typeof o.vi === 'string' && typeof o.en === 'string') {
       if (!o.de) {
-        if (map[o.en]) { o.de = map[o.en]; filled++; }
+        const de = map[o.vi] || map[o.en];
+        if (de) { o.de = de; filled++; }
         else if (missing.indexOf(o.en) < 0) missing.push(o.en);
       }
       return;
