@@ -213,13 +213,17 @@ async function go(hash, sel) { W().location.hash = hash; await sleep(30); return
     };
     const codeMode = (on, uid) => {
       if (on) {
-        codeKeep = { fetch: w.fetch, ep: N.CONFIG.aiEndpoint, db: N.BE.db, on: N.BE.enabled, user: N.BE.user, access: w.localStorage.getItem('nabu-access') };
+        codeKeep = { fetch: w.fetch, ep: N.CONFIG.aiEndpoint, db: N.BE.db, on: N.BE.enabled, user: N.BE.user, access: w.localStorage.getItem('nabu-access'), pread: N.BE.profileRead, handle: N.PROFILE().handle };
         uid = uid || 'uidT';
-        cdocs['users/' + uid] = Object.assign({}, cdocs['users/' + uid] || {}, N.PROFILE());
+        /* Somebody typing a code is an established account, so the account this
+           stands in for has a username. Redeeming reads the account back, and a
+           read with no username is what sends somebody to the welcome screen. */
+        cdocs['users/' + uid] = Object.assign({}, cdocs['users/' + uid] || {}, N.PROFILE(), { handle: 'coded' });
         N.CONFIG.aiEndpoint = 'https://nabu-ai.test'; N.BE.db = cdb; N.BE.enabled = true; N.BE.user = { uid: uid, email: uid + '@test' };
         w.fetch = redeemStub;
       } else {
         w.fetch = codeKeep.fetch; N.CONFIG.aiEndpoint = codeKeep.ep; N.BE.db = codeKeep.db; N.BE.enabled = codeKeep.on; N.BE.user = codeKeep.user;
+        N.BE.profileRead = codeKeep.pread; w.saveProfileLocal({ handle: codeKeep.handle || '' });
         if (uid === 'keep-access') { if (codeKeep.access == null) w.localStorage.removeItem('nabu-access'); else w.localStorage.setItem('nabu-access', codeKeep.access); }
       }
     };
@@ -653,6 +657,20 @@ async function go(hash, sel) { W().location.hash = hash; await sleep(30); return
          && d.querySelector('#tour'),
         'finishing the welcome screen claims the username and shows the tour');
       N.BE.db = keepW.db; N.BE.user = keepW.user; N.BE.enabled = keepW.on; }
+    { /* An account with no username is sent to the welcome screen, wherever
+         it tries to go. An account that has one is left alone. */
+      const keepG = { user: N.BE.user, on: N.BE.enabled };
+      N.BE.enabled = true; N.BE.user = { uid: 'uidG2', email: 'g2@test' };
+      const hadRead = N.BE.profileRead; N.BE.profileRead = true;
+      const hadHandle = N.PROFILE().handle;
+      w.saveProfileLocal({ handle: '' });
+      await go('#/home', '#main'); await sleep(120);
+      ok(/#\/welcome/.test(w.location.hash), 'an account with no username is sent to the welcome screen');
+      w.saveProfileLocal({ handle: 'someone' });
+      await go('#/home', '#main'); await sleep(120);
+      ok(/#\/home/.test(w.location.hash), 'and an account that has one is left where it was');
+      w.saveProfileLocal({ handle: hadHandle || '' });
+      N.BE.profileRead = hadRead; N.BE.user = keepG.user; N.BE.enabled = keepG.on; }
     // admin
     await go('#/admin', '#atabs');
     ok(d.querySelectorAll('#atabs button').length === 9 && d.querySelectorAll('#cgrid button').length === 78 && Array.from(d.querySelectorAll('#atabs button')).every((b) => b.scrollWidth <= b.clientWidth + 1), 'admin has nine tabs whose labels fit inside their buttons, and the 78-card picker');

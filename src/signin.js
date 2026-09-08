@@ -77,7 +77,9 @@ function renderSignin(args, params) {
   const draw = (keepEmail) => {
     m.innerHTML = signinHTML(mode);
     const status = (msg, cls) => { const s = $('#astatus', m); if (s) { s.textContent = msg; s.className = 'hint ' + (cls || ''); } };
-    const onward = () => { if (BE.user) redirect(signinNext(params)); };
+    /* A brand new account goes to the welcome screen; somebody signing back in
+       carries on where they were headed. */
+    const onward = () => { if (BE.user) redirect(mode === 'create' ? '#/welcome' : signinNext(params)); };
     $$('[data-auth]', m).forEach((b) => b.addEventListener('click', async () => {
       const p = b.getAttribute('data-auth');
       if (!BE.enabled) { status(S.accountsSoon, 'err'); toast(S.accountsOff); return; }

@@ -748,6 +748,18 @@ function route() {
   const r = parseHash();
   const def = ROUTES[r.route];
   if (!def) { redirect('#/home'); return; }
+  /* Somebody who has an account but never answered the welcome screen is sent
+     to it, from wherever they were going. It is the one screen that may
+     interrupt, because everything after it assumes those answers exist.
+     Four screens are exempt: the welcome screen itself, because it is the
+     destination; the privacy page and the sign-in page, because they are how
+     somebody leaves or arrives; and the Me tab, where signing out lives, and
+     which after the next task shows a summary that itself links to the
+     welcome screen. */
+  if (r.route !== 'welcome' && r.route !== 'privacy' && r.route !== 'signin' && r.route !== 'me'
+      && typeof needsWelcome === 'function' && needsWelcome()) {
+    redirect('#/welcome'); return;
+  }
   if (NAV.cleanup) { const c = NAV.cleanup; NAV.cleanup = null; try { c(); } catch (e) { /* already gone */ } }
   navRemember(location.hash || '#/home');
   /* Which screen this is, on the body, so a stylesheet can lay one screen out

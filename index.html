@@ -12,7 +12,7 @@
      carries this notice with it. See LICENSE. -->
 <meta name="author" content="Nabu Tarot">
 <meta name="copyright" content="Copyright (c) 2025-2026 Nabu Tarot. All rights reserved.">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'none'; object-src 'none'; form-action 'self'; script-src 'self' 'sha256-BCbeTr94kgDxcPhPrN6Eh4P2sFE3jBbvwpNn9fIoADE=' https://www.gstatic.com https://apis.google.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; font-src 'self' data:; media-src 'self' data: blob:; worker-src 'self'; connect-src 'self' https://*.googleapis.com https://*.google.com https://*.firebaseio.com https://*.cloudfunctions.net https://*.workers.dev https://generativelanguage.googleapis.com; frame-src https://*.firebaseapp.com https://accounts.google.com https://*.facebook.com">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'none'; object-src 'none'; form-action 'self'; script-src 'self' 'sha256-I7yDV02RImpnaGpeVJeHic87H+iz+QoWYhnuTg7ptQk=' https://www.gstatic.com https://apis.google.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; font-src 'self' data:; media-src 'self' data: blob:; worker-src 'self'; connect-src 'self' https://*.googleapis.com https://*.google.com https://*.firebaseio.com https://*.cloudfunctions.net https://*.workers.dev https://generativelanguage.googleapis.com; frame-src https://*.firebaseapp.com https://accounts.google.com https://*.facebook.com">
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <meta name="theme-color" content="#EFE9FA">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -13710,6 +13710,18 @@ function route() {
   const r = parseHash();
   const def = ROUTES[r.route];
   if (!def) { redirect('#/home'); return; }
+  /* Somebody who has an account but never answered the welcome screen is sent
+     to it, from wherever they were going. It is the one screen that may
+     interrupt, because everything after it assumes those answers exist.
+     Four screens are exempt: the welcome screen itself, because it is the
+     destination; the privacy page and the sign-in page, because they are how
+     somebody leaves or arrives; and the Me tab, where signing out lives, and
+     which after the next task shows a summary that itself links to the
+     welcome screen. */
+  if (r.route !== 'welcome' && r.route !== 'privacy' && r.route !== 'signin' && r.route !== 'me'
+      && typeof needsWelcome === 'function' && needsWelcome()) {
+    redirect('#/welcome'); return;
+  }
   if (NAV.cleanup) { const c = NAV.cleanup; NAV.cleanup = null; try { c(); } catch (e) { /* already gone */ } }
   navRemember(location.hash || '#/home');
   /* Which screen this is, on the body, so a stylesheet can lay one screen out
@@ -22548,7 +22560,9 @@ function renderSignin(args, params) {
   const draw = (keepEmail) => {
     m.innerHTML = signinHTML(mode);
     const status = (msg, cls) => { const s = $('#astatus', m); if (s) { s.textContent = msg; s.className = 'hint ' + (cls || ''); } };
-    const onward = () => { if (BE.user) redirect(signinNext(params)); };
+    /* A brand new account goes to the welcome screen; somebody signing back in
+       carries on where they were headed. */
+    const onward = () => { if (BE.user) redirect(mode === 'create' ? '#/welcome' : signinNext(params)); };
     $$('[data-auth]', m).forEach((b) => b.addEventListener('click', async () => {
       const p = b.getAttribute('data-auth');
       if (!BE.enabled) { status(S.accountsSoon, 'err'); toast(S.accountsOff); return; }
