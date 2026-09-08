@@ -37,12 +37,12 @@ function helloHTML() {
     + '<p class="hint">' + esc(S.helloFree) + '</p>'
     + '</section>'
     + '<div class="hgrid">'
-    + card('🃏', S.helloDrawH, S.helloDrawP)
-    + card('📅', S.helloTodayH, S.helloTodayP)
-    + card('🔮', S.helloHoroH, S.helloHoroP)
-    + card('📚', S.helloLearnH, S.helloLearnP)
-    + card('🎲', S.helloPlayH, S.helloPlayP)
-    + card('💬', S.helloTalkH, S.helloTalkP)
+    + card('🔮', S.helloDrawH, S.helloDrawP)
+    + card('✨', S.helloHoroH, S.helloHoroP)
+    + card('🍀', S.helloLuckH, S.helloLuckP)
+    + card('🌙', S.helloTodayH, S.helloTodayP)
+    + card('📖', S.helloDiaryH, S.helloDiaryP)
+    + card('🔮', S.helloDeepH, S.helloDeepP)
     + '</div>';
 }
 
