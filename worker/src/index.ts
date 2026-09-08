@@ -9,7 +9,7 @@ import { whoIsAsking } from "./auth";
 import { allow, cachedAnswer, keepAnswer } from "./limit";
 import { checkPurchase, acknowledge, grant, grantUntil } from "./play";
 import { claimCode } from "./codes";
-import { recordPurchase, sweepRefunds } from "./refunds";
+import { claimPurchase, markGranted, sweepRefunds } from "./refunds";
 
 /* How long each thing is sold for. Kept here rather than read from the app,
    because the app is the side that cannot be trusted about what it bought. */
@@ -153,19 +153,26 @@ export default {
           return new Response(JSON.stringify({ error: bought.why || "refused" }), { status: 402, headers });
         }
         const ids = [sku].concat(ALSO[sku] || []);
+        /* The token is claimed before anything is opened. Google refuses a
+           token it has already handed over, but handing it over happens after
+           the access is written, and in that gap the same token would open the
+           course for a second account as well. The claim closes the gap, and
+           it doubles as the ledger row the nightly refund sweep needs. */
+        const claim = await claimPurchase(env, person.uid, sku, ids, token);
+        if (!claim.ok) {
+          console.log(JSON.stringify({ at: "billing", uid: person.uid, sku, refused: claim.why }));
+          return new Response(JSON.stringify({ error: claim.why || "already used" }), { status: 402, headers });
+        }
         const access = await grant(env, person.uid, ids, MONTHS);
-        /* Who bought what, filed under the token Google will name if it is
-           ever refunded. Without this the nightly sweep has nothing to match
-           a voided purchase against. It must not sink the sale, though: the
-           buyer already holds the course by this line. */
+        /* Written down as carried through, once it has been. Failing here
+           costs the ledger a word, not the buyer their course. */
         try {
-          await recordPurchase(env, person.uid, sku, ids, token);
+          await markGranted(env, token);
         } catch (e) {
           console.error(JSON.stringify({ at: "billing", uid: person.uid, sku, ledger: String((e as Error).message || e) }));
         }
-        /* Only once it is written down. A purchase acknowledged before the
-           access exists is a purchase Google will not refund and the buyer
-           never received. */
+        /* Only once the access exists. A purchase acknowledged before it does
+           is a purchase Google will not refund and the buyer never received. */
         ctx.waitUntil(acknowledge(env, sku, token));
         console.log(JSON.stringify({ at: "billing", uid: person.uid, sku, granted: ids }));
         return new Response(JSON.stringify({ ok: true, opened: ids, access }), { headers });

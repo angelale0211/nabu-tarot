@@ -1,8 +1,13 @@
-[{
-      "relation": ["delegate_permission/common.handle_all_urls"],
-      "target": {
-        "namespace": "android_app",
-        "package_name": "app.nabutarot.twa",
-        "sha256_cert_fingerprints": ["B3:BF:80:B1:57:E0:E7:AD:4A:57:69:0D:10:37:43:DB:BA:FC:59:14:1B:63:B1:CD:9B:28:88:D7:6A:FE:0B:FD"]
-      }
-    }]
+[
+  {
+    "relation": ["delegate_permission/common.handle_all_urls"],
+    "target": {
+      "namespace": "android_app",
+      "package_name": "app.nabutarot.twa",
+      "sha256_cert_fingerprints": [
+        "B3:BF:80:B1:57:E0:E7:AD:4A:57:69:0D:10:37:43:DB:BA:FC:59:14:1B:63:B1:CD:9B:28:88:D7:6A:FE:0B:FD",
+        "B7:56:6A:FA:62:7C:42:6C:A0:24:67:B1:EE:E8:0C:17:9A:0D:6B:36:E0:DD:6C:86:E5:6F:D3:78:23:06:CA:66"
+      ]
+    }
+  }
+]

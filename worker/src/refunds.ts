@@ -30,25 +30,70 @@ const docUrl = (env: PlayEnv, path: string): string =>
   "https://firestore.googleapis.com/v1/projects/" + encodeURIComponent(env.FIREBASE_PROJECT_ID || "")
   + "/databases/(default)/documents/" + path;
 
-/* ---- the ledger ----
+/* ---- the ledger, and the claim on a purchase token ----
 
-   Written after the access, and never in front of it: a purchase recorded that
-   was never granted would be revoked later for a course the buyer never had. */
-export async function recordPurchase(
+   One document per purchase, named after the token, and it is written BEFORE
+   the access rather than after. That order is the whole point.
+
+   Google is asked whether a token is real, and refuses a token it has already
+   handed over. But handing it over - consuming it - happens after the access
+   is written, and between those two moments the same token is still spendable.
+   Two accounts sending it in that gap both used to pass the check and both got
+   the course: one payment, two students. So the token is claimed first, with a
+   condition that the document must not already exist, and a second claimant is
+   turned away by Firestore rather than by luck.
+
+   The same buyer asking again is not a second claimant. A phone that lost the
+   answer, or a network that dropped it, will send the token again, and that
+   person has paid: their own claim lets them through and the grant runs again,
+   which changes nothing because it keeps whichever date is later. Only a
+   different account is refused. */
+export interface Claim { ok: boolean; why?: string }
+
+export async function claimPurchase(
   env: PlayEnv, uid: string, sku: string, ids: string[], token: string,
-): Promise<void> {
+): Promise<Claim> {
   const at = await serviceToken(env, FS_SCOPE);
   const id = await tokenId(token);
+  const url = docUrl(env, "purchases/" + id);
   const body = {
     fields: {
       uid: { stringValue: uid },
       sku: { stringValue: sku },
       ids: { arrayValue: { values: ids.map((x) => ({ stringValue: x })) } },
       at: { stringValue: new Date().toISOString() },
-      state: { stringValue: "granted" },
+      state: { stringValue: "claimed" },
     },
   };
-  const r = await fetch(docUrl(env, "purchases/" + id), {
+  const r = await fetch(url + "?currentDocument.exists=false", {
+    method: "PATCH",
+    headers: { Authorization: "Bearer " + at, "Content-Type": "application/json" },
+    body: JSON.stringify(body),
+  });
+  if (r.ok) return { ok: true };
+
+  /* Something stopped the write. Whether it was the condition or the network
+     is decided by looking, not by trusting a status code: if the document is
+     there, somebody claimed it; if it is not, the write itself failed and the
+     buyer should be able to try again rather than be told they already bought
+     what they did not get. */
+  const cur = await fetch(url, { headers: { Authorization: "Bearer " + at } });
+  if (!cur.ok) throw new Error("claim " + r.status);
+  const doc = (await cur.json()) as { fields?: { uid?: { stringValue?: string } } };
+  const owner = doc.fields?.uid?.stringValue || "";
+  if (owner && owner === uid) return { ok: true };
+  return { ok: false, why: "already used" };
+}
+
+/* Said out loud once the access exists, so the ledger distinguishes a purchase
+   that was carried through from one that stopped half way. Never in front of
+   the grant: a purchase recorded as granted that was not would be revoked
+   later for a course the buyer never had. */
+export async function markGranted(env: PlayEnv, token: string): Promise<void> {
+  const at = await serviceToken(env, FS_SCOPE);
+  const id = await tokenId(token);
+  const body = { fields: { state: { stringValue: "granted" } } };
+  const r = await fetch(docUrl(env, "purchases/" + id) + "?updateMask.fieldPaths=state", {
     method: "PATCH",
     headers: { Authorization: "Bearer " + at, "Content-Type": "application/json" },
     body: JSON.stringify(body),
