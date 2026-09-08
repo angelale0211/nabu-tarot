@@ -199,8 +199,14 @@ its own surcharge while the total carries one, so the total reads about €2 low
    is the only thing gating launch), the content rating updated to say block and
    report exist, and after the first upload the SHA-256 from Setup > App
    integrity pasted into `.well-known/assetlinks.json`.
-3. **Play Billing** - built, dormant. `PLAN-PLAY-BILLING.md` Phase 0: eight
-   in-app products, a service account as a worker secret, a billing-enabled AAB.
+3. **Play Billing** - the billing-enabled bundles now exist and are verified;
+   see `PLAN-PLAY-BILLING-FINDINGS.md`. Still needed from the Console:
+   the **App signing key** SHA-256 from Setup > App integrity pasted into
+   `.well-known/assetlinks.json` (without it the installed app cannot show a
+   Buy button at all), an upload of `nabu-tarot-keys\pkg-billing-*` to internal
+   testing (which folder depends on the Upload key fingerprint), the eight
+   consumable products, the payments profile, licence testers, and API access
+   for `nabu-worker@nabutarot.iam.gserviceaccount.com`.
 
 ## 9. Outstanding work
 

@@ -7,6 +7,11 @@ plan only. Nothing in it has been executed.
 
 ---
 
+> **Executed 2026-09-08.** Everything that does not need the Play Console
+> is done and verified; results in `PLAN-PLAY-BILLING-FINDINGS.md`. What is
+> left is listed there, and the App signing key fingerprint is the one thing
+> that will stop a test purchase working.
+
 ## 0. What the screenshot is saying
 
 Play Console > Monetise > One-time products says: *"To add one-time products,
@@ -129,7 +134,9 @@ not a condition for selling.
 15. Buy with the test card. Course opens; `users/{uid}.access` shows the date;
     worker log says `granted`.
 16. Buy again: offered again (consumed), date extends.
-17. Replay: send the same token twice (I do it from the log). Second answer `already used`.
+17. Replay: send the same token from a **second account** (I do it from the log).
+    Answer must be `already used`. The same account sending it twice is
+    expected to succeed and to open nothing twice.
 18. F4: send a real token under a different SKU. Must be refused.
 19. Refund from the Console. Next morning after 03:10 VN the course is gone
     from the account and `purchases/{id}` says `voided`.
