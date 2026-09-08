@@ -2,6 +2,9 @@ test/__pycache__/
 *.pyc
 test/_*.png
 
+# Installed packages: package-lock.json is committed, the tree is not.
+node_modules/
+
 # Layout probe output: screenshots and raw measurements, regenerated on demand.
 test/_probe/
 
