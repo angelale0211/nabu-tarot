@@ -693,7 +693,7 @@ const STR = {
     months: ['Tháng 1', 'Tháng 2', 'Tháng 3', 'Tháng 4', 'Tháng 5', 'Tháng 6', 'Tháng 7', 'Tháng 8', 'Tháng 9', 'Tháng 10', 'Tháng 11', 'Tháng 12'],
 
     meTitle: 'Hồ sơ của bạn',
-    meIntro: 'Ngày sinh và những điều bạn quan tâm giúp trang chủ chọn đúng nội dung cho bạn.',
+    meIntro: 'Tên và ngày sinh giúp Nabu mang đến những nội dung phù hợp và gần gũi hơn với bạn.',
     localOnly: 'Hồ sơ đang lưu trên máy này.',
     accountsSoon: 'Nabu chưa bật đăng nhập. Khi bật, bạn đăng nhập bằng Google, Facebook hoặc email và mật khẩu; hồ sơ, tin nhắn và lịch hẹn sẽ đi theo bạn. Hiện hồ sơ lưu trên máy này.', accountsOff: 'Đăng nhập chưa mở.',
     signIn: 'Đăng nhập',
@@ -1532,7 +1532,7 @@ const STR = {
     months: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
 
     meTitle: 'Your profile',
-    meIntro: 'Your birthday and interests help the home screen pick the right content for you.',
+    meIntro: 'Your name and birthday help Nabu bring you content that fits you better and feels more personal.',
     localOnly: 'Your profile is saved on this device.',
     accountsSoon: 'Nabu has not switched sign-in on yet. Once on, you sign in with Google, Facebook or email and password, and your profile, messages and bookings follow you. For now the profile stays on this device.', accountsOff: 'Sign-in is not open yet.',
     signIn: 'Sign in',
@@ -2370,7 +2370,7 @@ const STR = {
     months: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
 
     meTitle: 'Dein Profil',
-    meIntro: 'Dein Geburtstag und deine Interessen helfen der Startseite, die passenden Inhalte für dich zu wählen.',
+    meIntro: 'Dein Name und dein Geburtstag helfen Nabu, dir Inhalte zu zeigen, die besser zu dir passen und dir näher sind.',
     localOnly: 'Dein Profil ist nur auf diesem Gerät gespeichert.',
     accountsSoon: 'Nabu hat die Anmeldung noch nicht eingeschaltet. Sobald sie an ist, meldest du dich mit Google, Facebook oder E-Mail und Passwort an, und dein Profil, deine Nachrichten und deine Termine kommen mit. Bis dahin bleibt das Profil auf diesem Gerät.', accountsOff: 'Die Anmeldung ist noch nicht offen.',
     signIn: 'Anmelden',
