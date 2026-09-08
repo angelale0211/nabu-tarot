@@ -2,7 +2,7 @@
    Posts and availability are files in the repo, committed through the
    GitHub API with a fine-grained token. Bookings and the inbox live in
    Firestore and need an admin sign-in. */
-const admin = { tab: 'posts', editing: null, cards: [], busy: false, unsubs: [], openThread: null };
+const admin = { tab: 'posts', editing: null, cards: [], busy: false, unsubs: [], openThread: null, cameFrom: null };
 const ghHeaders = (token) => ({ Authorization: 'Bearer ' + token, Accept: 'application/vnd.github+json', 'X-GitHub-Api-Version': '2022-11-28' });
 const b64enc = (s) => btoa(unescape(encodeURIComponent(s)));
 const b64dec = (s) => decodeURIComponent(escape(atob(s.replace(/\n/g, ''))));
@@ -69,7 +69,11 @@ function renderAdmin(args, params) {
     + (BE.enabled ? '<p class="hint" style="margin-bottom:12px">☁️ ' + esc(S.cloudContent) + '</p>' : '<div class="card"><label class="f" for="gtoken">' + esc(S.token) + '</label><div class="row nw"><input id="gtoken" type="password" value="' + esc(ghToken()) + '" style="flex:1" autocomplete="off"><button class="btn sm" id="savetoken">' + esc(S.saveToken) + '</button></div><p class="hint">' + esc(S.tokenHint) + ' (' + esc(CONFIG.repo) + ')</p></div>')
     + '<div id="apanel"></div>';
   const stb = $('#savetoken'); if (stb) stb.addEventListener('click', () => { store.set('nabu-gh-token', $('#gtoken').value.trim()); toast(T().saved); show(admin.tab); });
-  $$('#atabs button').forEach((b) => b.addEventListener('click', () => { admin.tab = b.getAttribute('data-t'); $$('#atabs button').forEach((x) => x.classList.toggle('on', x === b)); show(admin.tab); }));
+  /* The tab goes into the address as it is chosen - replaced, not pushed, so
+     it does not itself become a Back step. Without this, Back from a thread
+     landed on "#/admin", which reopened whatever tab was last in memory: the
+     inbox again, rather than the orders somebody had just come from. */
+  $$('#atabs button').forEach((b) => b.addEventListener('click', () => { admin.tab = b.getAttribute('data-t'); $$('#atabs button').forEach((x) => x.classList.toggle('on', x === b)); try { history.replaceState(null, '', '#/admin?tab=' + admin.tab); } catch (e) { /* fine */ } show(admin.tab); }));
   const show = (t) => { adminCleanup(); const p = $('#apanel'); if (t === 'sale') adminSale(p); else if (t === 'posts') adminPosts(p); else if (t === 'acts') adminActivities(p); else if (t === 'schedule') adminSchedule(p); else if (t === 'bookings') adminBookings(p); else if (t === 'pay') adminPay(p); else if (t === 'codes') adminCodes(p); else if (t === 'errors') adminErrors(p); else adminInbox(p); };
   show(admin.tab);
 }
@@ -323,6 +327,7 @@ function adminErrors(p) {
     }));
     $$('[data-person]', box).forEach((b) => b.addEventListener('click', () => {
       admin.openThread = b.getAttribute('data-person');
+      admin.cameFrom = admin.tab;
       admin.tab = 'inbox';
       location.hash = '#/admin?tab=inbox';
     }));
@@ -421,6 +426,7 @@ function adminPay(p) {
        way to withdraw it, are on that screen too. */
     $$('[data-person]', p).forEach((b) => b.addEventListener('click', () => {
       admin.openThread = b.getAttribute('data-person');
+      admin.cameFrom = admin.tab;
       admin.tab = 'inbox';
       location.hash = '#/admin?tab=inbox';
     }));
@@ -500,7 +506,13 @@ function adminInbox(p) {
        under the conversation rather than over it: the thread is the point of
        the page. */
     if (!own) p.insertAdjacentHTML('beforeend', '<div class="card" id="accbox" style="margin-top:14px"><h3 style="margin-bottom:6px">\uD83D\uDD11 ' + esc(S.adminHolds) + '</h3><div id="acclist"><p class="hint">…</p></div></div>');
-    $('#backin').addEventListener('click', (e) => { e.preventDefault(); p.innerHTML = '<div id="threads"></div>'; list(); });
+    $('#backin').addEventListener('click', (e) => {
+      e.preventDefault();
+      /* Back means where you came from. From an order, that is the orders. */
+      const from = admin.cameFrom; admin.cameFrom = null;
+      if (from && from !== 'inbox') { admin.tab = from; location.hash = '#/admin?tab=' + from; return; }
+      p.innerHTML = '<div id="threads"></div>'; list();
+    });
     if (!own) drawAccess(uid);
     const chat = $('#achat');
     admin.unsubs.push(BE.watchMessages(uid, (msgs) => { chat.innerHTML = chatHTML(msgs, 'nabu'); chat.scrollTop = chat.scrollHeight; BE.markRead(uid, 'admin'); }));

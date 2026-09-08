@@ -12,7 +12,7 @@
      carries this notice with it. See LICENSE. -->
 <meta name="author" content="Nabu Tarot">
 <meta name="copyright" content="Copyright (c) 2025-2026 Nabu Tarot. All rights reserved.">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'none'; object-src 'none'; form-action 'self'; script-src 'self' 'sha256-X2JD9W5iXDbuVBBWZV1RM6/JXtk+rlStwiEZoWSBk8M=' https://www.gstatic.com https://apis.google.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; font-src 'self' data:; media-src 'self' data: blob:; worker-src 'self'; connect-src 'self' https://*.googleapis.com https://*.google.com https://*.firebaseio.com https://*.cloudfunctions.net https://*.workers.dev https://generativelanguage.googleapis.com; frame-src https://*.firebaseapp.com https://accounts.google.com https://*.facebook.com">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'none'; object-src 'none'; form-action 'self'; script-src 'self' 'sha256-sIXA1hr8tbjmgxMfbY6+f/SOP9S4uOP6GB0/oyY1dg8=' https://www.gstatic.com https://apis.google.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; font-src 'self' data:; media-src 'self' data: blob:; worker-src 'self'; connect-src 'self' https://*.googleapis.com https://*.google.com https://*.firebaseio.com https://*.cloudfunctions.net https://*.workers.dev https://generativelanguage.googleapis.com; frame-src https://*.firebaseapp.com https://accounts.google.com https://*.facebook.com">
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <meta name="theme-color" content="#EFE9FA">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -2021,9 +2021,16 @@ button.unl{display:block;width:100%;text-align:left;font:inherit;color:inherit;c
 @media (min-width:1100px){
   body[data-route="home"] #main{display:grid;grid-template-columns:minmax(0,1fr) 380px;column-gap:28px;align-items:start}
   body[data-route="home"] #main>*{grid-column:1;min-width:0}
-  body[data-route="home"] #main>.side{grid-column:2;grid-row:1/span 80;position:sticky;top:74px;align-self:start}
+  body[data-route="home"] #main>.side{grid-column:2;grid-row:1/span 80;position:sticky;top:74px;align-self:start;max-height:calc(100vh - 90px);overflow:auto;padding-right:2px}
   body[data-route="home"] #main>h1{margin-top:6px}
+  /* The forecast is drawn in the side column here and hidden from the left,
+     where it stays for phones. One of the two is ever visible. */
+  body[data-route="home"] #sidehoro{display:block;margin-top:14px}
+  body[data-route="home"] #foryouwrap{display:none}
 }
+/* Off by default: the box in the aside exists on every width but only a wide
+   home page shows it, so a phone never sees the forecast twice. */
+#sidehoro{display:none}
 </style>
 </head>
 <body>
@@ -3016,7 +3023,7 @@ const STR = {
     instIosIntro: 'iPhone không cho phép cài tệp ngoài App Store, nhưng Safari vẫn cài được app này chỉ với ba bước.', instIosSteps: ['Mở trang này bằng Safari (không phải trong Instagram hay Facebook).', 'Bấm nút Chia sẻ (hình ô vuông có mũi tên đi lên) ở thanh dưới.', 'Cuộn xuống, chọn "Thêm vào MH chính", rồi bấm Thêm.'], instIosNote: 'Biểu tượng Nabu Tarot xuất hiện như mọi app khác và mở toàn màn hình.',
     instUpdatesTitle: 'Cập nhật tự động', instUpdates: 'Cả hai bản đều mở nội dung mới nhất mỗi lần bạn vào: bài viết, khoá học, tính năng mới. Bạn không phải cài lại bao giờ.', instShareHint: 'Muốn giới thiệu cho bạn bè?', instShare: 'Gửi link cài app', instShareText: 'Cài app Nabu Tarot: rút bài mỗi ngày, học tarot, đặt lịch xem bài.',
     install: 'Trên iPhone: mở bằng Safari, bấm Chia sẻ, chọn "Thêm vào MH chính". Trên Android: bấm menu ⋮ rồi "Cài đặt ứng dụng".',
-    dismiss: 'Đóng', tourMini: 'Hướng dẫn dùng app', tourOpen: 'Xem lại',
+    dismiss: 'Đóng', tourMini: 'Hướng dẫn dùng Nabu Tarot', tourOpen: 'Xem lại',
     offlineReady: 'App đã sẵn sàng dùng offline.',
 
     adminTitle: 'Điều khiển',
@@ -3819,7 +3826,7 @@ const STR = {
     instIosIntro: 'iPhone does not allow installers outside the App Store, but Safari installs this app in three steps.', instIosSteps: ['Open this page in Safari (not inside Instagram or Facebook).', 'Tap the Share button (the square with an arrow) in the bottom bar.', 'Scroll down, choose "Add to Home Screen", then tap Add.'], instIosNote: 'The Nabu Tarot icon appears like any other app and opens full screen.',
     instUpdatesTitle: 'Automatic updates', instUpdates: 'Both versions open the newest content every time: posts, courses, new features. You never reinstall.', instShareHint: 'Want to tell friends?', instShare: 'Send the install link', instShareText: 'Install the Nabu Tarot app: a card a day, tarot lessons, book a reading.',
     install: 'iPhone: open in Safari, tap Share, then "Add to Home Screen". Android: tap the ⋮ menu, then "Install app".',
-    dismiss: 'Close', tourMini: 'How to use the app', tourOpen: 'Show again',
+    dismiss: 'Close', tourMini: 'How to use Nabu Tarot', tourOpen: 'Show again',
     offlineReady: 'The app is ready to use offline.',
 
     adminTitle: 'Dashboard',
@@ -12774,6 +12781,11 @@ async function renderHome(args, params) {
     + '<aside class="side">'
     + todayHTML()
     + (PROFILE.tourDone ? tourMiniHTML() : tourHTML(0))
+    /* On a desk the month and the week for this person's sign sit here, under
+       the calendar, rather than a long way down the left. On a phone this box
+       stays empty and hidden and the forecast keeps its old place further down
+       - the same two cards, drawn once for whichever column is showing. */
+    + '<div id="sidehoro" hidden></div>'
     + '</aside>'
     + '<h1 style="margin:18px 0 4px">' + esc(name ? S.hello(name) : S.helloGuest) + '</h1><p class="muted">' + esc(lang === 'vi' ? 'Hôm nay bạn muốn làm gì?' : 'What would you like to do today?') + '</p>'
     + upcomingHTML()
@@ -12788,6 +12800,7 @@ async function renderHome(args, params) {
   homeActHTML($('#actwrap')).catch(() => {});
   if (POSTS == null) await loadPosts();
   const fy = $('#foryouwrap'); if (fy) { fy.innerHTML = suggestedGuidesHTML(); bindPost(fy); bindAccordions(fy); }
+  const sh = $('#sidehoro'); if (sh) { sh.innerHTML = '<div class="eyebrow">' + esc(T().forInterests) + '</div>' + horoCardHTML('monthly') + horoCardHTML('weekly'); sh.hidden = false; }
   const feed = $('#feed'); if (!feed) return;
   const all = sortedPosts(), welcome = all.filter((p) => p.welcome)[0], list = all.filter((p) => !p.welcome);
   const wopen = store.get('nabu-welcome-open', true) !== false;
@@ -22741,7 +22754,7 @@ ROUTES.alerts = { nav: '', render: renderAlerts };
    Posts and availability are files in the repo, committed through the
    GitHub API with a fine-grained token. Bookings and the inbox live in
    Firestore and need an admin sign-in. */
-const admin = { tab: 'posts', editing: null, cards: [], busy: false, unsubs: [], openThread: null };
+const admin = { tab: 'posts', editing: null, cards: [], busy: false, unsubs: [], openThread: null, cameFrom: null };
 const ghHeaders = (token) => ({ Authorization: 'Bearer ' + token, Accept: 'application/vnd.github+json', 'X-GitHub-Api-Version': '2022-11-28' });
 const b64enc = (s) => btoa(unescape(encodeURIComponent(s)));
 const b64dec = (s) => decodeURIComponent(escape(atob(s.replace(/\n/g, ''))));
@@ -22808,7 +22821,11 @@ function renderAdmin(args, params) {
     + (BE.enabled ? '<p class="hint" style="margin-bottom:12px">☁️ ' + esc(S.cloudContent) + '</p>' : '<div class="card"><label class="f" for="gtoken">' + esc(S.token) + '</label><div class="row nw"><input id="gtoken" type="password" value="' + esc(ghToken()) + '" style="flex:1" autocomplete="off"><button class="btn sm" id="savetoken">' + esc(S.saveToken) + '</button></div><p class="hint">' + esc(S.tokenHint) + ' (' + esc(CONFIG.repo) + ')</p></div>')
     + '<div id="apanel"></div>';
   const stb = $('#savetoken'); if (stb) stb.addEventListener('click', () => { store.set('nabu-gh-token', $('#gtoken').value.trim()); toast(T().saved); show(admin.tab); });
-  $$('#atabs button').forEach((b) => b.addEventListener('click', () => { admin.tab = b.getAttribute('data-t'); $$('#atabs button').forEach((x) => x.classList.toggle('on', x === b)); show(admin.tab); }));
+  /* The tab goes into the address as it is chosen - replaced, not pushed, so
+     it does not itself become a Back step. Without this, Back from a thread
+     landed on "#/admin", which reopened whatever tab was last in memory: the
+     inbox again, rather than the orders somebody had just come from. */
+  $$('#atabs button').forEach((b) => b.addEventListener('click', () => { admin.tab = b.getAttribute('data-t'); $$('#atabs button').forEach((x) => x.classList.toggle('on', x === b)); try { history.replaceState(null, '', '#/admin?tab=' + admin.tab); } catch (e) { /* fine */ } show(admin.tab); }));
   const show = (t) => { adminCleanup(); const p = $('#apanel'); if (t === 'sale') adminSale(p); else if (t === 'posts') adminPosts(p); else if (t === 'acts') adminActivities(p); else if (t === 'schedule') adminSchedule(p); else if (t === 'bookings') adminBookings(p); else if (t === 'pay') adminPay(p); else if (t === 'codes') adminCodes(p); else if (t === 'errors') adminErrors(p); else adminInbox(p); };
   show(admin.tab);
 }
@@ -23062,6 +23079,7 @@ function adminErrors(p) {
     }));
     $$('[data-person]', box).forEach((b) => b.addEventListener('click', () => {
       admin.openThread = b.getAttribute('data-person');
+      admin.cameFrom = admin.tab;
       admin.tab = 'inbox';
       location.hash = '#/admin?tab=inbox';
     }));
@@ -23160,6 +23178,7 @@ function adminPay(p) {
        way to withdraw it, are on that screen too. */
     $$('[data-person]', p).forEach((b) => b.addEventListener('click', () => {
       admin.openThread = b.getAttribute('data-person');
+      admin.cameFrom = admin.tab;
       admin.tab = 'inbox';
       location.hash = '#/admin?tab=inbox';
     }));
@@ -23239,7 +23258,13 @@ function adminInbox(p) {
        under the conversation rather than over it: the thread is the point of
        the page. */
     if (!own) p.insertAdjacentHTML('beforeend', '<div class="card" id="accbox" style="margin-top:14px"><h3 style="margin-bottom:6px">\uD83D\uDD11 ' + esc(S.adminHolds) + '</h3><div id="acclist"><p class="hint">…</p></div></div>');
-    $('#backin').addEventListener('click', (e) => { e.preventDefault(); p.innerHTML = '<div id="threads"></div>'; list(); });
+    $('#backin').addEventListener('click', (e) => {
+      e.preventDefault();
+      /* Back means where you came from. From an order, that is the orders. */
+      const from = admin.cameFrom; admin.cameFrom = null;
+      if (from && from !== 'inbox') { admin.tab = from; location.hash = '#/admin?tab=' + from; return; }
+      p.innerHTML = '<div id="threads"></div>'; list();
+    });
     if (!own) drawAccess(uid);
     const chat = $('#achat');
     admin.unsubs.push(BE.watchMessages(uid, (msgs) => { chat.innerHTML = chatHTML(msgs, 'nabu'); chat.scrollTop = chat.scrollHeight; BE.markRead(uid, 'admin'); }));
@@ -23404,7 +23429,7 @@ function adminSale(p) {
 ROUTES.admin = { nav: '', render: renderAdmin };
 
 /* ============================ boot ============================ */
-window.APP_VERSION = 'v171';
+window.APP_VERSION = 'v172';
 window.NABU = { CONFIG: CONFIG, SALE: SALE, salePrice: salePrice, loadActs: loadActs, BACK: BACK, LESSONS: LESSONS, localAnswer: localAnswer, compatVerdict: compatVerdict, numerologyOf: numerologyOf, ZDEEP: ZDEEP, lunarToday: lunarToday, solarToLunar: solarToLunar, DECK: DECK, INSIGHT: INSIGHT, KW: KW, ASK: ASK, TOPICS: TOPICS, GUIDES: GUIDES, SERVICES: SERVICES, COURSES: COURSES, ACCESS: ACCESS, plusOn: () => plusOn(), proOn: () => proOn(), luckUnlimited: () => luckUnlimited(), ZODIAC: ZODIAC, pick: pick, book: book,
   insightHTML: insightHTML, insightOf: insightOf, sunSignIndex: sunSignIndex, lifePath: lifePath, PROFILE: () => PROFILE, BE: BE, ACTS: ACTS,
   ANGELS: ANGELS, angelRead: angelRead, CODEBOOK: CODEBOOK, verifyCode: verifyCode, petHomeSVG: petHomeSVG, PET_HOMES: PET_HOMES, PET_WEARS: PET_WEARS, codeDigest: codeDigest, randomCode: randomCode, BANK: BANK, PETS: PETS, petSVG: petSVG, PET_COATS: PET_COATS, PET_KINDS: PET_KINDS, luckCut: luckCut, petLevel: petLevel, petStep: petStep, VOUCHERS: VOUCHERS, levelCoins: levelCoins, LOOKS: LOOKS,

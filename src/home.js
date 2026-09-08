@@ -226,6 +226,11 @@ async function renderHome(args, params) {
     + '<aside class="side">'
     + todayHTML()
     + (PROFILE.tourDone ? tourMiniHTML() : tourHTML(0))
+    /* On a desk the month and the week for this person's sign sit here, under
+       the calendar, rather than a long way down the left. On a phone this box
+       stays empty and hidden and the forecast keeps its old place further down
+       - the same two cards, drawn once for whichever column is showing. */
+    + '<div id="sidehoro" hidden></div>'
     + '</aside>'
     + '<h1 style="margin:18px 0 4px">' + esc(name ? S.hello(name) : S.helloGuest) + '</h1><p class="muted">' + esc(lang === 'vi' ? 'Hôm nay bạn muốn làm gì?' : 'What would you like to do today?') + '</p>'
     + upcomingHTML()
@@ -240,6 +245,7 @@ async function renderHome(args, params) {
   homeActHTML($('#actwrap')).catch(() => {});
   if (POSTS == null) await loadPosts();
   const fy = $('#foryouwrap'); if (fy) { fy.innerHTML = suggestedGuidesHTML(); bindPost(fy); bindAccordions(fy); }
+  const sh = $('#sidehoro'); if (sh) { sh.innerHTML = '<div class="eyebrow">' + esc(T().forInterests) + '</div>' + horoCardHTML('monthly') + horoCardHTML('weekly'); sh.hidden = false; }
   const feed = $('#feed'); if (!feed) return;
   const all = sortedPosts(), welcome = all.filter((p) => p.welcome)[0], list = all.filter((p) => !p.welcome);
   const wopen = store.get('nabu-welcome-open', true) !== false;

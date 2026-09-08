@@ -722,7 +722,7 @@ const STR = {
     instIosIntro: 'iPhone không cho phép cài tệp ngoài App Store, nhưng Safari vẫn cài được app này chỉ với ba bước.', instIosSteps: ['Mở trang này bằng Safari (không phải trong Instagram hay Facebook).', 'Bấm nút Chia sẻ (hình ô vuông có mũi tên đi lên) ở thanh dưới.', 'Cuộn xuống, chọn "Thêm vào MH chính", rồi bấm Thêm.'], instIosNote: 'Biểu tượng Nabu Tarot xuất hiện như mọi app khác và mở toàn màn hình.',
     instUpdatesTitle: 'Cập nhật tự động', instUpdates: 'Cả hai bản đều mở nội dung mới nhất mỗi lần bạn vào: bài viết, khoá học, tính năng mới. Bạn không phải cài lại bao giờ.', instShareHint: 'Muốn giới thiệu cho bạn bè?', instShare: 'Gửi link cài app', instShareText: 'Cài app Nabu Tarot: rút bài mỗi ngày, học tarot, đặt lịch xem bài.',
     install: 'Trên iPhone: mở bằng Safari, bấm Chia sẻ, chọn "Thêm vào MH chính". Trên Android: bấm menu ⋮ rồi "Cài đặt ứng dụng".',
-    dismiss: 'Đóng', tourMini: 'Hướng dẫn dùng app', tourOpen: 'Xem lại',
+    dismiss: 'Đóng', tourMini: 'Hướng dẫn dùng Nabu Tarot', tourOpen: 'Xem lại',
     offlineReady: 'App đã sẵn sàng dùng offline.',
 
     adminTitle: 'Điều khiển',
@@ -1525,7 +1525,7 @@ const STR = {
     instIosIntro: 'iPhone does not allow installers outside the App Store, but Safari installs this app in three steps.', instIosSteps: ['Open this page in Safari (not inside Instagram or Facebook).', 'Tap the Share button (the square with an arrow) in the bottom bar.', 'Scroll down, choose "Add to Home Screen", then tap Add.'], instIosNote: 'The Nabu Tarot icon appears like any other app and opens full screen.',
     instUpdatesTitle: 'Automatic updates', instUpdates: 'Both versions open the newest content every time: posts, courses, new features. You never reinstall.', instShareHint: 'Want to tell friends?', instShare: 'Send the install link', instShareText: 'Install the Nabu Tarot app: a card a day, tarot lessons, book a reading.',
     install: 'iPhone: open in Safari, tap Share, then "Add to Home Screen". Android: tap the ⋮ menu, then "Install app".',
-    dismiss: 'Close', tourMini: 'How to use the app', tourOpen: 'Show again',
+    dismiss: 'Close', tourMini: 'How to use Nabu Tarot', tourOpen: 'Show again',
     offlineReady: 'The app is ready to use offline.',
 
     adminTitle: 'Dashboard',

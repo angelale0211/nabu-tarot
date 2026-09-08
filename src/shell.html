@@ -1855,9 +1855,16 @@ button.unl{display:block;width:100%;text-align:left;font:inherit;color:inherit;c
 @media (min-width:1100px){
   body[data-route="home"] #main{display:grid;grid-template-columns:minmax(0,1fr) 380px;column-gap:28px;align-items:start}
   body[data-route="home"] #main>*{grid-column:1;min-width:0}
-  body[data-route="home"] #main>.side{grid-column:2;grid-row:1/span 80;position:sticky;top:74px;align-self:start}
+  body[data-route="home"] #main>.side{grid-column:2;grid-row:1/span 80;position:sticky;top:74px;align-self:start;max-height:calc(100vh - 90px);overflow:auto;padding-right:2px}
   body[data-route="home"] #main>h1{margin-top:6px}
+  /* The forecast is drawn in the side column here and hidden from the left,
+     where it stays for phones. One of the two is ever visible. */
+  body[data-route="home"] #sidehoro{display:block;margin-top:14px}
+  body[data-route="home"] #foryouwrap{display:none}
 }
+/* Off by default: the box in the aside exists on every width but only a wide
+   home page shows it, so a phone never sees the forecast twice. */
+#sidehoro{display:none}
 </style>
 </head>
 <body>
