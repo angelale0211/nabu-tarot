@@ -128,7 +128,7 @@ function bindDeck(m) {
   update(); requestAnimationFrame(update);
 }
 function renderReveal(animate) {
-  const S = T(), id = pick.chosen, c = cardById(id), other = cardById(id, lang === 'vi' ? 'en' : 'vi'), I = insightOf(id);
+  const S = T(), id = pick.chosen, c = cardById(id), other = cardById(id, otherLang()), I = insightOf(id);
   const kws = I ? I.pos.slice(0, 3).join(', ') : '';
   const r = $('#reveal');
   r.innerHTML = '<div class="reveal-top"><div class="eyebrow">' + esc(S.yourCard) + '</div>' + (pickSpent() ? '' : '<button class="btn sm" id="redrawTop">🔄 ' + esc(S.redraw) + '</button>') + '</div>'

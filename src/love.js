@@ -656,7 +656,7 @@ function renderLove(wantHandle) {
     m.innerHTML = head()
       + '<div class="card lovecard">' + threadSVG('tied', true)
       + '<p class="lead">' + esc(S.loveNeedAccount) + '</p>'
-      + '<a class="btn primary block" href="#/me">' + esc(S.signIn) + '</a></div>' + foot();
+      + '<a class="btn primary block" href="' + esc(signinHref('/love')) + '">' + esc(S.signIn) + '</a></div>' + foot();
   };
 
   /* Both steps on one screen, always. Step two is greyed until step one is
@@ -1168,7 +1168,7 @@ function renderLoveJoin(token) {
       + '<div class="pair"><span>' + esc(who) + '</span><i>' + loveMarkSVG('tied', 'inline') + '</i><span>' + esc(S.loveYou) + '</span></div>'
       + '<p class="lead">' + esc(S.loveJoinFrom(who)) + '</p>' + body + '</div>');
     if (!BE.user) {
-      card('<p class="hint">' + esc(S.loveJoinSignIn) + '</p><a class="btn primary block" href="#/me">' + esc(S.signIn) + '</a>');
+      card('<p class="hint">' + esc(S.loveJoinSignIn) + '</p><a class="btn primary block" href="' + esc(signinHref()) + '">' + esc(S.signIn) + '</a>');
       return;
     }
     if (inv.from === BE.user.uid) {

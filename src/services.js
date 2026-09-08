@@ -6,7 +6,7 @@ const SERVICES = [
   { id: 'tarot', icon: PICK_ICON, tone: 'blue', name: { vi: 'Tarot', en: 'Tarot' },
     tagline: { vi: 'Bạn hỏi được thì Tarot trả lời được.', en: 'If you can ask it, Tarot can answer it.' },
     packages: [
-      { id: 'yn', name: { vi: '1 câu Yes/No', en: '1 yes/no question' }, price: 10000 },
+      { id: 'yn', name: { vi: '1 câu Yes/No', en: '1 yes/no question' }, price: 10000, abroad: { en: 1, de: 1 } },
       { id: 'q1', name: { vi: '1 câu chi tiết', en: '1 question in detail' }, price: 20000 },
       { id: 'q3', name: { vi: '3 câu chi tiết', en: '3 questions in detail' }, price: 50000 },
       { id: 'topic', name: { vi: '1 chủ đề sẵn (chọn trong 5 chủ đề)', en: '1 of the 5 preset topics' }, price: 60000, needsTopic: true },
@@ -15,7 +15,7 @@ const SERVICES = [
   { id: 'lenormand', icon: '🗝️', tone: 'lav', name: { vi: 'Lenormand', en: 'Lenormand' },
     tagline: { vi: 'Hỏi chuyện cụ thể, trả lời cụ thể.', en: 'Concrete questions, concrete answers.' },
     packages: [
-      { id: 'yn', name: { vi: '1 câu Yes/No', en: '1 yes/no question' }, price: 15000 },
+      { id: 'yn', name: { vi: '1 câu Yes/No', en: '1 yes/no question' }, price: 15000, abroad: { en: 1, de: 1 } },
       { id: 'q1', name: { vi: '1 câu chi tiết', en: '1 question in detail' }, price: 25000 },
       { id: 'q3', name: { vi: '3 câu chi tiết', en: '3 questions in detail' }, price: 60000 },
       { id: 'topic', name: { vi: '1 chủ đề sẵn (chọn trong 5 chủ đề)', en: '1 of the 5 preset topics' }, price: 75000, needsTopic: true },
@@ -152,8 +152,14 @@ function moneyOf(n) {
   const raw = v / m.rate + (v < m.under ? m.small : m.add);
   return { m: m, v: Math.ceil(raw * 2) / 2 };
 }
-function fmtPrice(n) {
+/* A package may name its own price abroad. The smallest question is the way in
+   to everything else, and the conversion plus a flat amount pushed it to a
+   number that made it look like a worse deal than the tier above it. Only the
+   dong price is real for the arithmetic; this is what a foreign reader sees. */
+function fmtPrice(n, abroad) {
   const p = moneyOf(n);
   if (p.m.rate === 1) return fmtNum(p.v) + p.m.sym;
-  return p.m.sym + (p.v % 1 ? p.v.toFixed(2) : String(p.v));
+  const lg = typeof lang !== 'undefined' ? lang : 'vi';
+  const v = (abroad && typeof abroad[lg] === 'number') ? abroad[lg] : p.v;
+  return p.m.sym + (v % 1 ? v.toFixed(2) : String(v));
 }

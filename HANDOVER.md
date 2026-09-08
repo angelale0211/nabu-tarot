@@ -74,8 +74,12 @@ irreversible asks on the page itself (`#lvsure`, `#acsure`, `#alsure`,
 
 **`LANGS` drives data, not just wording.** Adding `'de'` made thirteen
 language-keyed tables answer `undefined` and the whole app rendered blank.
-`src/main.js` now points each one at its English half for German; translating a
-table means filling it in and deleting its line there. The language pill also
+`deDefaults()` in `src/main.js` now walks the language tables — the ones keyed
+at the top (`KW.en`) and the ones keyed one record at a time (`ZODIAC.aries.en`,
+`NUM`, `LIFEPATH`, `PYEAR`, `TOUR[0].en`) — and fills German in from English
+wherever it is missing. A real `de` is never overwritten, so translating a table
+is a matter of filling it in. Without the record-keyed half, opening the tour in
+German blanked the whole app. The language pill also
 **cycles** rather than toggles - anything that pressed it twice to get back has
 to loop until the pill reads `EN`.
 
@@ -123,11 +127,39 @@ meaning.
 | v175 | Landing page for strangers; sparkles on the wordmark; tour as steps |
 | v176 | Sign-in gates; prices in $/€; landing wording; sliding button; **German stage 1** |
 
-## 6. German (stage 1 of 5)
+## 6. German (stages 1 and 2 of 5 — **done**)
 
-`STR.de` in `strings.js` began as a copy of `STR.en` and is being translated in
-place, so German **works at every point** and improves batch by batch. About 36
-of ~1,290 strings are German so far; everything else falls back to English.
+**Stage 2** is the cards, and it lives in three new files rather than as edits
+to the English ones, so a second window can never collide with it:
+
+| File | Fills |
+|---|---|
+| `src/tarot-de.js` | `LEX.de` and `DECKTEXT.de` — 22 Majors and all four suits |
+| `src/len-de.js` | `LEN.de` — 36 Lenormand cards, keeping the German originals |
+| `src/quiz-tarot-de.js` | German folded onto the 40 tarot quiz questions |
+
+`DECK.de` is now `buildDeck('de')` in `core.js`, guarded on both halves being
+present — without either, `buildDeck` throws and the app is a blank page.
+`GERMAN-GLOSSARY.md` holds the vocabulary every window must share.
+
+**A three-language bug fixed on the way.** Card pages show the name in a second
+language underneath, and the rule was `lang === 'vi' ? 'en' : 'vi'` — written
+when there were two languages, so a German reader was shown the **Vietnamese**
+name. `otherLang()` in `core.js` replaces it at six sites: English for
+everybody, Vietnamese for English readers.
+
+`STR.de` in `strings.js` began as a copy of `STR.en` and was translated in
+place, so German **worked at every point** while it was being done. **Stage 1 is
+now complete**: every string a person reads on a screen is German. What is left
+untranslated is deliberate — `Intl.DateTimeFormat` options (`numeric`, `long`),
+fragments of template functions (`' + kws + '`), proper nouns (Tarot, Lenormand,
+Nabu Plus, Nabu Cupid, Google Calendar) and words that are the same in German
+(Element, Name, Text, Video, Emoji, App, Dashboard, Mint, Gold).
+
+Two English strings named **79.000đ inside a sentence** — `luckOffer` and
+`pickOffer`. A đồng figure in a euro interface is wrong and a hard-coded number
+goes stale, so the German points at the price page instead. The English ones
+still say 79,000đ and should probably be fixed the same way.
 
 Terminology agreed with the owner: **Große Arkana**, **Kelche · Stäbe ·
 Schwerter · Münzen**, **Bube · Ritter · Königin · König**, **Der Gehängte**,
@@ -151,9 +183,17 @@ its own surcharge while the total carries one, so the total reads about €2 low
 
 ## 8. What the owner still has to do
 
-1. **Republish `firestore.rules`** whenever it changes. `flags/` and `errors/`
-   are newer than the published copy. "Missing or insufficient permissions"
-   almost always means this.
+1. **Republish `firestore.rules`** whenever it changes. `flags/`, `errors/`,
+   and now the `users/` and `content/codes` rules from v177 are newer than the
+   published copy. "Missing or insufficient permissions" almost always means
+   this. Until v177's rules are published, anyone can still write their own
+   `access` from a browser console.
+1b. **Configure the worker for codes** (v177). Typing a code goes through the
+   worker now and needs `PLAY_SERVICE_ACCOUNT` + `FIREBASE_PROJECT_ID` on the
+   worker and `CONFIG.aiEndpoint` in `src/config.js`. Until then a code says
+   "cannot be checked right now". Codes handed out before v177 that were not
+   redeemed are marked in the Codes tab and must be pasted into "codes handed
+   out before" once, because the book is keyed differently now.
 2. **Google Play**: `app.nabutarot.twa` exists; a closed-testing release passed
    review. Still needed: **12 opted-in testers for 14 days** (currently 0 - this
    is the only thing gating launch), the content rating updated to say block and
@@ -164,9 +204,11 @@ its own surcharge while the total carries one, so the total reads about €2 low
 
 ## 9. Outstanding work
 
-- **Close the money leaks** — `PLAN-PLAY-BILLING.md` Phase 2. Rules let a
-  signed-in person write their own `access`; codes are not bound to an account.
-  Highest-value remaining change, and it does not depend on Play.
+- ~~Close the money leaks~~ — built in v177 (`PLAN-PLAY-BILLING.md` Phase 2):
+  `access`/`revoked` are admin-only in the rules, codes are redeemed by the
+  worker and bound to an account, the phone is a cache of the account. Not
+  live until the owner republishes the rules and configures the worker (§8).
+  Still open from that plan: Phase 4 (refunds) and the `purchases/` ledger.
 - **German stages 2–5.**
 - **A `#/signin` page** replacing the sign-in card on the Me tab, agreed with the
   owner, not started.

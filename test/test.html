@@ -181,26 +181,77 @@ async function go(hash, sel) { W().location.hash = hash; await sleep(30); return
     await go('#/learn/card/major-1', '.paywall');
     ok(!!d.querySelector('.paywall'), 'the second card is locked');
     await go('#/learn/tarot', '.paywall');
-    w.NABU_CODE_ROUNDS = 1000; // the logic is the same; the wait is not
-    N.CODEBOOK.set({ salt: 'testsalt', codes: {} });
+    /* Codes are checked by the worker now, against a book only it and Nabu
+       can read, and the access is written onto the account. The suite cannot
+       run the worker, so this is it in miniature - the same decisions as
+       worker/src/codes.ts, in the same order - behind a stand-in fetch, with
+       a stand-in account document for the app to read back. */
+    const cdocs = {};
+    const cdb = { collection: (c) => ({ doc: (id) => ({
+      get: async () => ({ exists: cdocs[c + '/' + id] !== undefined, data: () => cdocs[c + '/' + id] }),
+      set: async (v, o) => { cdocs[c + '/' + id] = (o && o.merge) ? Object.assign({}, cdocs[c + '/' + id] || {}, v) : v; } }) }) };
+    const book = { salt: 'testsalt', codes: {} };
+    const say = (status, j) => ({ ok: status < 300, status: status, json: async () => j });
+    let codeKeep = null;
+    const redeemStub = async (url, opt) => {
+      if (!/\/redeem$/.test(String(url))) return codeKeep.fetch.call(w, url, opt);
+      const uid = N.BE.user && N.BE.user.uid;
+      if (!uid) return say(401, { error: 'signin' });
+      const body = JSON.parse((opt && opt.body) || '{}');
+      const e = book.codes[await N.codeDigest(body.code, book.salt)];
+      if (!e) return say(402, { error: 'bad' });
+      if (e.by && e.by !== uid) return say(402, { error: 'used' });
+      e.by = uid;
+      const opened = (e.c === 'pro' || e.c === 'pro6') ? ['pro', 'plus'] : [e.c];
+      const doc = cdocs['users/' + uid] || {}, acc = Object.assign({}, doc.access || {});
+      opened.forEach((id) => { if (!acc[id] || e.u > acc[id]) acc[id] = e.u; });
+      cdocs['users/' + uid] = Object.assign({}, doc, { access: acc });
+      return say(200, { ok: true, opened: opened, access: acc });
+    };
+    const codeMode = (on, uid) => {
+      if (on) {
+        codeKeep = { fetch: w.fetch, ep: N.CONFIG.aiEndpoint, db: N.BE.db, on: N.BE.enabled, user: N.BE.user, access: w.localStorage.getItem('nabu-access') };
+        uid = uid || 'uidT';
+        cdocs['users/' + uid] = Object.assign({}, cdocs['users/' + uid] || {}, N.PROFILE());
+        N.CONFIG.aiEndpoint = 'https://nabu-ai.test'; N.BE.db = cdb; N.BE.enabled = true; N.BE.user = { uid: uid, email: uid + '@test' };
+        w.fetch = redeemStub;
+      } else {
+        w.fetch = codeKeep.fetch; N.CONFIG.aiEndpoint = codeKeep.ep; N.BE.db = codeKeep.db; N.BE.enabled = codeKeep.on; N.BE.user = codeKeep.user;
+        if (uid === 'keep-access') { if (codeKeep.access == null) w.localStorage.removeItem('nabu-access'); else w.localStorage.setItem('nabu-access', codeKeep.access); }
+      }
+    };
+    const redeem = (code) => N.redeemCode(code).then((r) => r, (e) => e);
+    /* Issue a code the way the dashboard does: file it in the book under its
+       fingerprint, then hand back the code itself. */
+    const issue = async (course, until) => { const code = N.randomCode(course, until); book.codes[await N.codeDigest(code, book.salt)] = { c: course, u: until, at: '2026-01-01', v: 2 }; return code; };
+    codeMode(true);
     d.querySelector('#ccode').value = 'NABU-T-270101-ZZZZZZ'; d.querySelector('#cunlock').click(); await waitFor(() => /Mã không đúng/.test(d.querySelector('#cstatus').textContent), 6000).catch(() => null);
     ok(/Mã không đúng/.test(d.querySelector('#cstatus').textContent), 'a forged code is rejected');
-    /* Issue a code the way the dashboard does: publish its hash into the book,
-       then hand back the code itself. */
-    const issue = async (course, until) => {
-      const salt = N.CODEBOOK.salt() || 'testsalt';
-      const code = N.randomCode(course, until);
-      const h = await N.codeDigest(code, salt);
-      const codes = Object.assign({}, N.CODEBOOK.all());
-      codes[h] = { c: course, u: until, at: '2026-01-01' };
-      N.CODEBOOK.set({ salt: salt, codes: codes });
-      return code;
-    };
     const codeT = await issue('tarot', '2027-03-04');
-    ok(/^NABU-T-270304-[A-Z0-9]{6}$/.test(codeT) && (await N.verifyCode(codeT.toLowerCase())).until === '2027-03-04', 'a code carries its course letter and expiry, and is read back from the published book');
+    ok(/^NABU-T-270304-[A-Z0-9]{6}$/.test(codeT) && (await redeem(codeT.toLowerCase())).until === '2027-03-04', 'a code carries its course letter and expiry, and the worker reads them back from the private book');
     d.querySelector('#ccode').value = codeT; d.querySelector('#cunlock').click();
     await waitFor(() => d.querySelector('#ctabs'), 4000);
     ok(N.ACCESS.has('tarot') && d.querySelectorAll('#ctabs button').length === 4 && d.querySelectorAll('.lsn').length === 8, 'valid code unlocks the course: 8 sessions listed first');
+    { /* The point of moving the check: one code, one account. Another account
+         typing the same code is refused; the first account may type it again
+         on a new phone. */
+      codeMode(false); codeMode(true, 'uidOther');
+      const again = await redeem(codeT);
+      codeMode(false); codeMode(true);
+      const mine = await redeem(codeT);
+      ok(again && again.why === 'used' && mine && mine.courses && mine.courses[0] === 'tarot',
+        'a code is bound to the account that used it: another account is refused, the same account may use it again');
+      codeMode(false);
+      N.BE.user = null; N.BE.enabled = true; N.CONFIG.aiEndpoint = 'https://nabu-ai.test';
+      const out = await redeem(codeT);
+      N.BE.enabled = codeKeep.on; N.BE.user = codeKeep.user;
+      /* The second call is the 'no worker' case, so it is set here rather than
+         left to whatever config.js happens to ship - it now ships a real one. */
+      N.CONFIG.aiEndpoint = '';
+      const nowhere = await redeem(codeT);
+      N.CONFIG.aiEndpoint = codeKeep.ep;
+      ok(out && out.why === 'signin' && nowhere && nowhere.why === 'notready',
+        'signed out, a code asks for sign-in; with no worker configured it says so rather than opening anything on the phone'); }
     await go('#/learn/lesson/tarot/1', '.journey');
     ok(d.querySelectorAll('.journey .stage').length === 7 && d.querySelectorAll('.journey .vt').length === 78, 'session 1 draws the Fool journey (3 stages) and the 56 Minors in four element groups');
     ok(!!d.querySelector('.ai') && /Lá hoàng gia/.test(N.localAnswer('Lá hoàng gia là ai?', { type: 'lesson', course: 'tarot', n: 1 })), 'Nabu AI in the lesson finds course material');
@@ -276,7 +327,8 @@ async function go(hash, sel) { W().location.hash = hash; await sleep(30); return
       await go('#/learn/lesson/playing/1', '.pcsuits'); ok(d.querySelectorAll('.pcsuits .pcsuit').length === 4 && !d.querySelector('.paywall'), 'session 1 of the playing-card course is free and shows the four suits');
       await go('#/learn/lesson/playing/3', '.paywall, .pcgrid'); ok(d.querySelector('.paywall') && !d.querySelector('.pcgrid'), 'session 3 is locked');
       await go('#/learn/pc/h9', '.paywall, .pcbig'); ok(d.querySelector('.paywall'), 'a card page other than the preview card is locked');
-      const pcode = await issue('playing', '2099-01-01'); ok((await N.verifyCode(pcode)).course === 'playing' && /^NABU-P-/.test(pcode), 'playing-card codes carry the P letter');
+      codeMode(true); const pcode = await issue('playing', '2099-01-01'); const pr = await redeem(pcode); codeMode(false);
+      ok(pr && pr.courses && pr.courses[0] === 'playing' && /^NABU-P-/.test(pcode), 'playing-card codes carry the P letter');
       N.ACCESS.grant('playing', '2099-01-01'); await go('#/learn/playing', '#ctabs'); await sleep(40);
       ok(d.querySelectorAll('#ctabs button').length === 3 && d.querySelectorAll('#cpanel .lsn').length === 9, 'unlocked: three tabs and nine sessions');
       d.querySelector('[data-t="cards"]').click(); await sleep(60); ok(d.querySelectorAll('#cpanel [data-pc]').length === 52 && d.querySelectorAll('#cpanel .pcface').length === 52, 'the cards tab draws all 52 faces');
@@ -285,7 +337,8 @@ async function go(hash, sel) { W().location.hash = hash; await sleep(30); return
       await go('#/learn/lesson/playing/8', '.pcpairs'); ok(d.querySelectorAll('.pcpair').length === 12 && /Thời gian/.test(d.querySelector('#main').textContent), 'pairs and timing session');
       await go('#/learn/lesson/playing/9', '.spv-list'); ok(d.querySelectorAll('.spv-list .ins').length === 4 && d.querySelectorAll('.spv-list svg').length === 4, 'four spreads with diagrams incl. the wish spread');
       if (acc == null) w.localStorage.removeItem('nabu-access'); else w.localStorage.setItem('nabu-access', acc); N.ACCESS.grant('manifest', '2099-01-01'); }
-    { const code = await issue('manifest', '2099-01-01'); ok((await N.verifyCode(code)).course === 'manifest' && /^NABU-M-/.test(code), 'manifestation codes carry the M letter'); }
+    { codeMode(true); const code = await issue('manifest', '2099-01-01'); const mr = await redeem(code); codeMode(false);
+      ok(mr && mr.courses && mr.courses[0] === 'manifest' && /^NABU-M-/.test(code), 'manifestation codes carry the M letter'); }
     N.ACCESS.grant('manifest', '2099-01-01'); await go('#/learn/manifest', '.mani-banner, .acc'); await sleep(30);
     await go('#/learn/guide/mani-script', '.script textarea'); ok(d.querySelector('[data-clear="nabu-script"]') && d.querySelector('[data-tpl]'), 'scripting has an editable, saved page with template and clear buttons');
     d.querySelector('.script textarea').value = 'Hôm nay mình vui.'; d.querySelector('.script textarea').dispatchEvent(new w.Event('input')); await sleep(20);
@@ -495,8 +548,49 @@ async function go(hash, sel) { W().location.hash = hash; await sleep(30); return
       S.set(was); }
     await go('#/prices', '.svc');
     ok(d.querySelectorAll('.svc').length === 15 && /79\.000đ/.test(d.querySelector('#main').textContent) && /149\.000đ/.test(d.querySelector('#main').textContent) && /249\.000đ/.test(d.querySelector('#main').textContent) && /75\.000đ/.test(d.querySelector('#main').textContent) && /300\.000đ/.test(d.querySelector('#main').textContent) && /Khóa Tarot/.test(d.querySelector('#main').textContent) && /chuyển khoản/.test(d.querySelector('.paynote').textContent), 'the price sheet lists the readings, the four courses, Plus, both Pro terms and the wedding, under the payment note');
+    /* What this row shows is "a course you hold has a tick". It used to read
+       whatever twenty checks earlier had left in the phone, which stopped
+       being predictable once redeeming a code took its answer from the
+       account rather than writing the phone directly. So it says what it
+       needs and puts it back. */
+    const meAccessWas = w.localStorage.getItem('nabu-access');
+    w.localStorage.setItem('nabu-access', JSON.stringify({ tarot: '2027-03-04' }));
     await go('#/me', '#pname');
-    ok(/Hồ sơ đang lưu trên máy này/.test(d.body.textContent) && /Instagram/.test(d.body.textContent) && d.querySelectorAll('[data-auth]').length === 3 && /Nabu chưa bật đăng nhập/.test(d.body.textContent) && /Cài app lên điện thoại/.test(d.querySelector('#main').textContent) && d.querySelector('#main a[href="#/install"]') && d.querySelectorAll('.course').length === 8 && /✓/.test(d.querySelector('.course').textContent), 'me tab: device-only profile, Instagram, my courses with status');
+    { /* Named parts, so a failure says which one rather than "the tab". */
+      const parts = { local: /Hồ sơ đang lưu trên máy này/.test(d.body.textContent), ig: /Instagram/.test(d.body.textContent), auth: !!d.querySelector('#main .needin a[href^="#/signin"]'), off: /Nabu chưa bật đăng nhập/.test(d.body.textContent), install: /Cài app lên điện thoại/.test(d.querySelector('#main').textContent) && !!d.querySelector('#main a[href="#/install"]'), courses: d.querySelectorAll('.course').length === 8, tick: /✓/.test((d.querySelector('.course') || {}).textContent || '') };
+      const bad = Object.keys(parts).filter((k) => !parts[k]);
+      ok(!bad.length, 'me tab: device-only profile, Instagram, my courses with status' + (bad.length ? ' (failed: ' + bad.join(', ') + '; access=' + w.localStorage.getItem('nabu-access') + '; user=' + JSON.stringify(N.BE.user) + '; on=' + N.BE.enabled + ')' : '')); }
+    if (meAccessWas == null) w.localStorage.removeItem('nabu-access'); else w.localStorage.setItem('nabu-access', meAccessWas);
+    { /* The sign-in page: one page, the providers and the email form on it, the
+         way to an account and to a lost password, and a link out that does not
+         demand one. It is reached by a link that says where to go back to. */
+      await go('#/signin', '.signin');
+      const parts = {
+        one: d.querySelectorAll('.signin').length === 1,
+        prov: d.querySelectorAll('.signin [data-auth]').length === 2,
+        form: !!d.querySelector('.signin #aemail') && !!d.querySelector('.signin #apw') && !!d.querySelector('.signin #alogin'),
+        mode: !!d.querySelector('.signin #amode'),
+        forgot: !!d.querySelector('.signin #aforgot'),
+        out: !!d.querySelector('.signin a[href="#/home"]'),
+        tab: !!d.querySelector('.nav a[href="#/me"].on') || !!d.querySelector('.nav a.on[href="#/me"]')
+      };
+      const bad = Object.keys(parts).filter((k) => !parts[k]);
+      ok(!bad.length, 'the sign-in page carries the providers, the email form, the way to an account and a way out'
+        + (bad.length ? ' (failed: ' + bad.join(', ') + ')' : ''));
+      /* "Create account" is the same page wearing a different hat, and it must
+         not offer to email a password reset for an account that is not there. */
+      d.querySelector('#amode').click(); await sleep(60);
+      ok(!!d.querySelector('.signin #alogin') && !d.querySelector('.signin #aforgot') && d.querySelector('.signin #apw').getAttribute('autocomplete') === 'new-password',
+        'the same page makes an account, and then stops offering to reset a password');
+      d.querySelector('#amode').click(); await sleep(60);
+      /* A gate hands over where to come back to, and only ever a screen of
+         this app - never an address somewhere else. */
+      await go('#/play/coin', '.needin');
+      const href = d.querySelector('.needin a').getAttribute('href');
+      ok(/^#\/signin\?next=/.test(href) && decodeURIComponent(href.split('next=')[1]) === '/play/coin',
+        'a gate sends you to the sign-in page and says where to send you back');
+      await go('#/signin?next=' + encodeURIComponent('https://example.com/'), '.signin');
+      ok(d.querySelector('.signin'), 'the sign-in page ignores a way back that leads off the app'); }
     // admin
     await go('#/admin', '#atabs');
     ok(d.querySelectorAll('#atabs button').length === 9 && d.querySelectorAll('#cgrid button').length === 78 && Array.from(d.querySelectorAll('#atabs button')).every((b) => b.scrollWidth <= b.clientWidth + 1), 'admin has nine tabs whose labels fit inside their buttons, and the 78-card picker');
@@ -514,7 +608,7 @@ async function go(hash, sel) { W().location.hash = hash; await sleep(30); return
     d.querySelector('[data-t="codes"]').click(); await sleep(50);
     ok(d.querySelector('#gkey') && d.querySelector('#gsave'), 'the codes tab carries the Nabu AI key setting');
     d.querySelector('[data-t="bookings"]').click(); await sleep(50);
-    ok(/email quản trị/.test(d.querySelector('#apanel').textContent) && d.querySelector('#apanel a[href="#/me"]'), 'bookings tab asks for an admin sign-in now that accounts are on');
+    ok(/email quản trị/.test(d.querySelector('#apanel').textContent) && d.querySelector('#apanel a[href^="#/signin"]'), 'bookings tab asks for an admin sign-in now that accounts are on');
     // theme
     // theme: headless Edge may report either system preference, so compare against the state before each click
     const bgOf = () => w.getComputedStyle(d.body).backgroundColor, DARK = 'rgb(36, 26, 69)', LIGHT = 'rgb(239, 233, 250)';
@@ -578,9 +672,11 @@ async function go(hash, sel) { W().location.hash = hash; await sleep(30); return
       { const faces = Array.from(d.querySelectorAll('.lookstrip .lk-coin svg')).map((e) => e.innerHTML.replace(/#[0-9A-Fa-f]{6}/g, ''));
         ok(faces.length === 4 && new Set(faces).size === 4, 'the four coins are four different faces, not one face in four colours'); }
       ok(!d.querySelector('#coinflip') && d.querySelector('.luckbox') && /79\.000đ/.test(d.querySelector('.luckbox').textContent) && /Nabu Plus/.test(d.querySelector('.luckbox').textContent) && d.querySelector('#main > p > a[href^="#/unlock"]'), 'the free weekly turn is used up, and Nabu Plus is offered with a code box');
+      codeMode(true);
       d.querySelector('#luckcode').value = await issue('plus', '2099-01-01'); d.querySelector('#luckgo').click(); await waitFor(() => d.querySelector('#coinflip'), 6000);
       ok(d.querySelector('#coinflip') && !d.querySelector('.luckbox'), 'a Nabu Plus code lifts the limit on the coin');
       await go('#/play/tree', '#shake'); ok(d.querySelector('#shake') && !d.querySelector('.luckbox'), 'and on the message tree as well');
+      codeMode(false);
       w.localStorage.removeItem('nabu-access'); w.localStorage.removeItem('nabu-luck'); w.localStorage.removeItem('nabu-unlock-cart');
       /* Signed out again: everything after this is about what a visitor without
          an account sees, and leaving one signed in here quietly changed three
@@ -886,12 +982,14 @@ async function go(hash, sel) { W().location.hash = hash; await sleep(30); return
     w.localStorage.removeItem('nabu-angel-log'); w.localStorage.removeItem('nabu-angel-last');
     { /* a code nobody issued opens nothing, and neither does one whose expiry
          or course letter has been edited by hand */
+      codeMode(true);
       const real = await issue('tarot', '2030-01-01');
-      const made = await N.verifyCode('NABU-T-300101-QQQQQQ');
-      const edited = await N.verifyCode(real.replace(/-\d{6}-/, '-991231-'));
-      const swapped = await N.verifyCode(real.replace('NABU-T-', 'NABU-S-'));
-      const opened = await N.verifyCode(real);
-      ok(made === null && edited === null && swapped === null && opened && opened.course === 'tarot' && opened.until === '2030-01-01',
+      const made = await redeem('NABU-T-300101-QQQQQQ');
+      const edited = await redeem(real.replace(/-\d{6}-/, '-991231-'));
+      const swapped = await redeem(real.replace('NABU-T-', 'NABU-S-'));
+      const opened = await redeem(real);
+      codeMode(false, 'keep-access');
+      ok(made.why === 'bad' && edited.why === 'bad' && swapped.why === 'bad' && opened && opened.courses && opened.courses[0] === 'tarot' && opened.until === '2030-01-01',
         'a code only opens what Nabu published for it: invented codes, edited expiries and swapped courses are all refused'); }
     await go('#/install', '#instshare'); ok(d.querySelector('a[href="nabu-tarot.apk"][download]') && d.querySelectorAll('.steps li').length >= 7 && /Thêm vào MH chính/.test(d.querySelector('#main').textContent) && /Tải app/.test(d.querySelector('#foot').textContent), 'the install screen offers the Android installer and the iPhone steps, linked from the footer');
     await go('#/privacy', '.privacy .gsec'); ok(d.querySelectorAll('.privacy .gsec').length >= 10 && /Xoá tài khoản/.test(d.querySelector('.privacy').textContent) && /Gemini/.test(d.querySelector('.privacy').textContent), 'the in-app privacy policy lists every kind of data, Gemini, and how to delete the account');
@@ -1841,7 +1939,7 @@ async function go(hash, sel) { W().location.hash = hash; await sleep(30); return
         N.BE.user = null;
         w.localStorage.removeItem('nabu-wed-ask');
         await go('#/wedding/uidC__uidD', '.wedcard'); await sleep(200);
-        ok(w.localStorage.getItem('nabu-wed-ask') && d.querySelector('#main a[href*="/me"]'),
+        ok(w.localStorage.getItem('nabu-wed-ask') && d.querySelector('#main a[href*="/signin"], #main a[href*="/me"]'),
           'a link opened without an account asks for one, and remembers which wedding it was');
 
         N.BE.user = { uid: 'uidG2', email: 'g2@test' };
@@ -2029,8 +2127,19 @@ async function go(hash, sel) { W().location.hash = hash; await sleep(30); return
 
       N.BE.db = keep.db; N.BE.user = keep.user; N.BE.enabled = keep.on; w.confirm = keep.confirm;
       w.localStorage.removeItem('nabu-love');
+      /* This check is about the guest view, so it says so. Leaving it to the
+         previous block to have signed out makes it fail for a reason that
+         has nothing to do with what it is testing. */
+      N.BE.user = null;
+      /* Away and back: setting the hash to where it already is re-renders
+         nothing, and the screen left over would be the signed-in one. */
+      await go('#/home', '#main');
+      /* Both views of this screen are a .lovecard, so waiting for one proves
+         nothing about which arrived; the render has to be given its moment. */
       await go('#/love', '.lovecard');
-      ok(d.querySelector('.lovecard .threadart') && d.querySelector('a[href="#/me"]') && /ph\u00e1p l\u00fd|legal/i.test(d.querySelector('#main').textContent),
+      await sleep(220);
+      ok(d.querySelector('.lovecard .threadart') && d.querySelector('a[href^="#/signin"]')
+        && /ph\u00e1p l\u00fd|legal|rechtlich/i.test(d.querySelector('#main').textContent),
         'signed out it asks you to sign in, and it says on every screen that this carries no legal weight');
       /* A short screen is where the footer used to float up the page. */
       /* Emptied of its content the page is shorter than the screen, which is
@@ -2478,7 +2587,7 @@ async function go(hash, sel) { W().location.hash = hash; await sleep(30); return
       const bad = [];
       for (const px of [320, 360, 390]) {
         frame.style.width = px + 'px';
-        for (const route of ['#/me', '#/play/pet', '#/love', '#/prices', '#/book', '#/hello']) {
+        for (const route of ['#/me', '#/play/pet', '#/love', '#/prices', '#/book', '#/hello', '#/signin']) {
           await go('#/home', '#main');
           await go(route, '#main');
           await sleep(140);
@@ -2518,6 +2627,78 @@ async function go(hash, sel) { W().location.hash = hash; await sleep(30); return
       ok(uniq.length === 0,
         'nothing leaves the screen at 320, 360 or 390 across the five busiest screens'
         + (uniq.length ? ' [' + uniq.slice(0, 4).join('; ') + ']' : ''));
+    }
+
+    /* ---- the reading column on a desk ----
+       A card page written for a hand left the picture stranded top left on a
+       wide window, with the reading running a hundred and ten characters to
+       the line. These check the shape it takes instead, and that a phone is
+       left exactly as it was. */
+    {
+      const frame = document.getElementById('f'), wasWide = frame.style.width;
+      const lineChars = (el) => {
+        const t = (el.textContent || '').trim();
+        if (t.length < 60) return 0;
+        const rng = d.createRange(); rng.selectNodeContents(el);
+        const tops = {};
+        Array.prototype.slice.call(rng.getClientRects())
+          .filter((r) => r.height > 2 && r.width > 2)
+          .forEach((r) => { tops[Math.round(r.top)] = 1; });
+        const n = Object.keys(tops).length;
+        return n ? t.length / n : 0;
+      };
+      /* Earlier checks lock and unlock the course; the shape of a card page is
+         only on show to somebody who may read the deck. */
+      N.ACCESS.grant('tarot', '2099-01-01');
+      frame.style.width = '1280px';
+      await sleep(260);
+      await go('#/learn/card/major-0', '.detail');
+      await sleep(240);
+      const rail = d.querySelector('.detail > .rail');
+      ok(!!rail && !!rail.querySelector('.hero') && !!rail.querySelector('.cardnav') && !!rail.querySelector('.ai'),
+        'on a desk the card, its arrows and the Nabu AI box share one column');
+      ok(!!rail && W().getComputedStyle(rail).position === 'sticky',
+        'that column stays put while the reading scrolls');
+      const ins = d.querySelector('.detail .ins');
+      ok(!!ins && !!rail && ins.getBoundingClientRect().left > rail.getBoundingClientRect().right - 1,
+        'the reading sits beside the card, not under it');
+      ok(!!ins && ins.getBoundingClientRect().width <= 700,
+        'the reading column is held to a width the eye can follow');
+      {
+        const longest = Array.prototype.slice.call(d.querySelectorAll('#main p, #main li'))
+          .map(lineChars).reduce((a, b) => (b > a ? b : a), 0);
+        ok(longest <= 85, 'no line of the reading runs past eighty-five characters on a desk (' + Math.round(longest) + ')');
+      }
+      ok(d.documentElement.scrollWidth <= 1281, 'a card page does not scroll sideways on a desk');
+      {
+        const one = d.querySelector('.cardnav.one');
+        ok(!!one && W().getComputedStyle(one).gridTemplateColumns.split(' ').length === 1,
+          'the first card has one arrow and it takes the whole row');
+      }
+      await go('#/learn/guide/tarot-start', '.guide');
+      await sleep(200);
+      {
+        const gEl = d.querySelector('.guide'), mEl = d.querySelector('#main');
+        const g = gEl && gEl.getBoundingClientRect(), mb = mEl.getBoundingClientRect();
+        ok(!!g && g.width <= 700 && Math.abs((g.left + g.right) / 2 - (mb.left + mb.right) / 2) < 40,
+          'a guide reads as one column down the middle');
+      }
+      /* Back to a phone: the same nodes, in the order they were written. */
+      frame.style.width = wasWide || '430px';
+      await sleep(300);
+      await go('#/learn/card/major-0', '.detail');
+      await sleep(260);
+      const rail2 = d.querySelector('.detail > .rail');
+      ok(!!rail2 && W().getComputedStyle(rail2).display === 'contents',
+        'on a phone that column has no box of its own');
+      ok(!!rail2 && !rail2.querySelector('.ai') && !!d.querySelector('.detail > .ai'),
+        'and the Nabu AI box goes back under the reading it asks about');
+      {
+        const kids = Array.prototype.slice.call(d.querySelectorAll('.detail .hero, .detail .ins, .detail .ai'));
+        const hero = kids.indexOf(d.querySelector('.detail .hero'));
+        ok(hero === 0 && kids.indexOf(d.querySelector('.detail .ai')) === kids.length - 1,
+          'the card is still first on a phone and the ask box still last');
+      }
     }
   } catch (e) { out.push('FAIL exception: ' + (e && e.stack || e)); }
   document.getElementById('results').textContent = out.join('\n');

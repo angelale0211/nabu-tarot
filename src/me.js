@@ -21,35 +21,21 @@ function bindProfileForm(root, after) {
     toast(T().saved); if (after) after();
   });
 }
+/* Signing in has a page of its own at #/signin. What is left on the profile is
+   the door to it, so somebody who lands here without an account still sees one
+   obvious way in. */
 function authHTML() {
   const S = T();
   if (BE.user) return '';
-  const prov = CONFIG.authProviders;
-  return '<div class="card"><h3 style="margin-bottom:10px">' + esc(S.signIn) + '</h3><div class="providers">'
-    + (prov.indexOf('google') > -1 ? '<button class="btn block" data-auth="google"><svg viewBox="0 0 24 24"><path fill="#4285F4" d="M21.6 12.2c0-.7-.1-1.4-.2-2H12v3.9h5.4a4.6 4.6 0 0 1-2 3v2.5h3.2c1.9-1.7 3-4.3 3-7.4z"/><path fill="#34A853" d="M12 22c2.7 0 5-.9 6.6-2.4l-3.2-2.5c-.9.6-2 1-3.4 1-2.6 0-4.8-1.8-5.6-4.1H3.1v2.6A10 10 0 0 0 12 22z"/><path fill="#FBBC05" d="M6.4 14a6 6 0 0 1 0-3.9V7.5H3.1a10 10 0 0 0 0 9z"/><path fill="#EA4335" d="M12 6c1.5 0 2.8.5 3.8 1.5l2.8-2.8A10 10 0 0 0 3.1 7.5l3.3 2.6C7.2 7.8 9.4 6 12 6z"/></svg>' + esc(S.signInWith.google) + '</button>' : '')
-    + (prov.indexOf('facebook') > -1 ? '<button class="btn block" data-auth="facebook" style="background:#1461C7;color:#fff;border-color:transparent">' + esc(S.signInWith.facebook) + '</button>' : '')
-    + (prov.indexOf('email') > -1 ? '<button class="btn block" data-auth="email">' + esc(S.signInWith.email) + '</button>' : '')
-    + '</div><div id="emailform" hidden style="margin-top:12px"><label class="f" for="aemail">' + esc(S.emailLabel) + '</label><input id="aemail" type="email" autocomplete="email"><label class="f" for="apw">' + esc(S.passwordLabel) + '</label><input id="apw" type="password" autocomplete="current-password">'
-    + '<div class="row" style="margin-top:12px"><button class="btn primary" id="alogin">' + esc(S.signIn) + '</button><button class="btn" id="acreate">' + esc(S.createAccount) + '</button><button class="btn sm" id="aforgot">' + esc(S.forgot) + '</button></div></div>'
-    + '<p class="hint" id="astatus">' + (BE.enabled ? '' : esc(S.accountsSoon)) + '</p></div>';
+  return '<div class="card needin"><div class="ic">\uD83D\uDD11</div>'
+    + '<p class="lead">' + esc(S.signIn) + '</p>'
+    + '<p class="hint">' + esc(S.signinLead) + '</p>'
+    + '<a class="btn primary block" href="' + esc(signinHref('/me')) + '">' + esc(S.needInGo) + '</a>'
+    + (BE.enabled ? '' : '<p class="hint">' + esc(S.accountsSoon) + '</p>') + '</div>';
 }
-function bindAuth(root) {
-  const S = T();
-  const status = (msg, cls) => { const s = $('#astatus', root); if (s) { s.textContent = msg; s.className = 'hint ' + (cls || ''); } };
-  $$('[data-auth]', root).forEach((b) => b.addEventListener('click', async () => {
-    const p = b.getAttribute('data-auth');
-    if (!BE.enabled) { status(S.accountsSoon, 'err'); toast(S.accountsOff); return; }
-    if (p === 'email') { $('#emailform').hidden = !$('#emailform').hidden; return; }
-    try { await BE.signIn(p); } catch (e) { status(authMessage(e, p), 'err'); }
-  }));
-  const em = () => $('#aemail').value.trim(), pw = () => $('#apw').value;
-  const el = $('#alogin', root);
-  if (el && BE.enabled) {
-    el.addEventListener('click', async () => { try { await BE.signInEmail(em(), pw(), false); } catch (e) { status(S.authFail + ': ' + (e.message || e.code), 'err'); } });
-    $('#acreate', root).addEventListener('click', async () => { try { await BE.signInEmail(em(), pw(), true); } catch (e) { status(S.authFail + ': ' + (e.message || e.code), 'err'); } });
-    $('#aforgot', root).addEventListener('click', async () => { try { await BE.resetPassword(em()); status(S.resetSent, 'ok'); } catch (e) { status(e.message, 'err'); } });
-  }
-}
+/* Kept, and empty: the profile carries no sign-in control any more, and the
+   sign-in page binds its own. */
+function bindAuth() { }
 /* Nabu's own card on the Me tab: what is waiting, and the notification switch. */
 function adminSummaryHTML() {
   const S = T(), st = notifyState();
@@ -323,10 +309,10 @@ function meSect(id, icon, title, body, openByDefault, force) {
     $('#munlock').addEventListener('click', async () => {
       const st = $('#mcstatus'), btn = $('#munlock');
       st.textContent = S.codeChecking; st.className = 'hint'; btn.disabled = true;
-      const r = await verifyCode($('#mcode').value).catch(() => null);
+      const r = await redeemCode($('#mcode').value).catch((e) => e);
       btn.disabled = false;
-      if (!r) { st.textContent = CODEBOOK.ready() ? S.badCode : S.codeOffline; st.className = 'hint err'; return; }
-      ACCESS.grant(r.courses || [r.course], r.until); toast(S.unlocked); draw();
+      if (!r || r instanceof Error) { st.textContent = redeemWhy(r); st.className = 'hint err'; return; }
+      toast(S.unlocked); draw();
     });
     $$('[data-theme-pick]', body).forEach((b) => b.addEventListener('click', () => { setTheme(b.getAttribute('data-theme-pick')); $$('[data-theme-pick]', body).forEach((x) => x.classList.toggle('on', x === b)); }));
     // The tour opens here rather than throwing the visitor back to the home

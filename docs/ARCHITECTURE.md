@@ -57,10 +57,17 @@ This matters more than the boxes.
 - **The bundle is public.** Every lesson, every card meaning and every price is
   inside `index.html`, which anybody can read. Nothing in the app is secret
   because nothing in the app *can* be.
-- **`ACCESS` is client-trusted.** `ACCESS.has()` reads localStorage. It decides
-  what the app shows, not what a person is able to obtain. Binding an unlock to
-  an account stops it being *shared*; it does not stop it being *tampered with*.
-  Say so plainly when it comes up rather than implying the paywall is a lock.
+- **`ACCESS` is a cache of the account.** `users/{uid}.access` is the truth,
+  written only by Nabu's dashboard and by the worker (a Play purchase, a
+  redeemed code); the phone reads it back and never writes it. `ACCESS.has()`
+  still reads localStorage, so it decides what the app shows, not what a
+  person is able to obtain: binding an unlock to an account stops it being
+  *shared*; it does not stop it being *tampered with* on the person's own
+  device. Say so plainly when it comes up rather than implying the paywall is
+  a lock.
+- **Codes are checked by the worker.** The book (`content/codes`) is readable
+  by Nabu and the service account only; the phone sends the code to `/redeem`
+  with its sign-in, and the worker binds the code to that account.
 - **`firestore.rules` is the only real boundary.** Everything the phone does to
   the database, it does as the signed-in person. Whatever the rules permit is
   what the app can do, whoever is driving it. That is why an unpublished rules

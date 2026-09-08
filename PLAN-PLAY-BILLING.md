@@ -102,6 +102,30 @@ What is in the repo now:
 
 ## Phase 2 — close the leaks (the part that protects the money)
 
+**The worker has never been deployed.** Found on 2026-09-08: both `worker.yml`
+runs failed at the typecheck step, so `nabu-ai` does not exist in Cloudflare and
+`CONFIG.aiEndpoint` has always been empty. The cause was one line of
+`worker/src/index.ts`, where `"\n\n"` had become a real line break inside a
+string - the bash-heredoc trap in `HANDOVER.md` §3. Fixed. Anything that
+depends on the worker (Play billing, `/redeem`, booking mail, bug-report mail)
+was dead in the water until this, which is why it is written down here.
+
+**Built 2026-09-08 (v177).** What shipped, against the list below: the rules
+(1), `/redeem` in `worker/src/codes.ts` with the book made private (2), the
+phone as a cache of the account (3), the dashboard unchanged (4). Two things
+follow from it that Nabu has to do:
+
+- **Republish `firestore.rules`** - until then the old leak stays open.
+- **Set `PLAY_SERVICE_ACCOUNT` and `FIREBASE_PROJECT_ID` on the worker, and
+  `CONFIG.aiEndpoint` in the app** (Phase 0, items 3 and 4). Codes go through
+  the worker now; until it is configured, typing a code says "cannot be
+  checked right now" and opens nothing. Orders paid in the app are unaffected:
+  the dashboard writes access as admin, as before.
+- **Re-add outstanding codes.** The book is keyed differently now (a plain
+  SHA-256; Workers refuse the 250,000-round PBKDF2 the old book used). A code
+  handed out before v177 and not yet redeemed is marked in the Codes tab and
+  works again once pasted into "codes handed out before".
+
 This is the change I asked about twice as "should the cloud become the source
 of truth". Play Billing makes the answer yes.
 

@@ -97,12 +97,12 @@ function contextText(ctx) {
   const S = T();
   if (ctx.type === 'card' && ctx.lite) {
     const c = cardById(ctx.id), I = insightOf(ctx.id), f = ctx.focus && ctx.focus !== 'general' ? ctx.focus : '';
-    return [c.name + ' (' + cardById(ctx.id, lang === 'vi' ? 'en' : 'vi').name + ') · ' + c.meta, S.kwPos + ': ' + I.pos.slice(0, 3).join(', '), S.energyNow + ': ' + I.now, f ? S.focus[f] + ': ' + I[f] : 'Advice: ' + I.advice,
+    return [c.name + ' (' + cardById(ctx.id, otherLang()).name + ') · ' + c.meta, S.kwPos + ': ' + I.pos.slice(0, 3).join(', '), S.energyNow + ': ' + I.now, f ? S.focus[f] + ': ' + I[f] : 'Advice: ' + I.advice,
       'RULE: this is the free daily draw. Answer only from the lines above. Do not give the reversed meaning, the picture, or this card\'s meaning for other topics (love, work, study, money) unless it is the focus above; say those are in the Tarot course, and suggest booking a reading with Nabu for personal questions.'].join('\n');
   }
   if (ctx.type === 'card') {
     const c = cardById(ctx.id), I = insightOf(ctx.id);
-    return [c.name + ' (' + cardById(ctx.id, lang === 'vi' ? 'en' : 'vi').name + ') · ' + c.meta, S.onTheCard + ': ' + c.scene, S.kwPos + ': ' + I.pos.join(', '), S.kwNeg + ': ' + I.neg.join(', '),
+    return [c.name + ' (' + cardById(ctx.id, otherLang()).name + ') · ' + c.meta, S.onTheCard + ': ' + c.scene, S.kwPos + ': ' + I.pos.join(', '), S.kwNeg + ': ' + I.neg.join(', '),
       S.upright + ': ' + c.up + ' ' + I.now, S.reversed + ': ' + c.rev, S.focus.love + ': ' + I.love, S.focus.work + ': ' + I.work, S.focus.study + ': ' + I.study, S.focus.money + ': ' + I.money, 'Advice: ' + I.advice].join('\n');
   }
   if (ctx.type === 'lesson') {

@@ -1412,7 +1412,7 @@ function renderWedding(args) {
     m.innerHTML = head(S.wedGuestIntro)
       + '<div class="card wedcard">' + cupidSVG()
       + '<p class="lead">' + esc(S.wedNeedAccount) + '</p>'
-      + '<a class="btn primary block" href="#/me?next=wedding">' + esc(S.signIn) + '</a>'
+      + '<a class="btn primary block" href="' + esc(signinHref()) + '">' + esc(S.signIn) + '</a>'
       + '<p class="hint">' + esc(S.wedJoinHint) + '</p></div>';
     return;
   }

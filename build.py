@@ -2,16 +2,18 @@
 """Assemble index.html from src/. Run:  python build.py
 Order matters: settings and strings first, artwork before the card text
 (ART_CACHE needs pipArt), tarot-en before tarot-vi (DECKTEXT refers to
-MAJORS/MINORS), every data file before core.js, screens before main.js."""
+MAJORS/MINORS), tarot-de after tarot-vi (it adds LEX.de and DECKTEXT.de to
+tables tarot-vi declares), every data file before core.js, screens before
+main.js."""
 import base64, hashlib, io, os, re
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 SRC = os.path.join(HERE, 'src')
 OUT = os.environ.get('NABU_OUT', HERE)
-SCRIPTS = ['config.js', 'logo-data.js', 'services.js', 'strings.js', 'art.js', 'tarot-en.js', 'tarot-vi.js', 'kb-questions.js',
-           'insight-en.js', 'insight-vi.js', 'insight-majors.js', 'insight-minors.js', 'len-art.js', 'len-en.js', 'len-vi.js', 'astro.js',
+SCRIPTS = ['config.js', 'logo-data.js', 'services.js', 'strings.js', 'art.js', 'tarot-en.js', 'tarot-vi.js', 'tarot-de.js', 'kb-questions.js',
+           'insight-en.js', 'insight-vi.js', 'insight-majors.js', 'insight-minors.js', 'len-art.js', 'len-en.js', 'len-vi.js', 'len-de.js', 'astro.js',
            'zodiac.js', 'astro-kb.js', 'astro-deep.js', 'numerology.js', 'lunar.js', 'spreads.js', 'kb-guides.js',
-           'core.js', 'backend.js', 'share.js', 'ai.js', 'home.js', 'pick.js', 'learn.js', 'lessons.js', 'fortune.js', 'playing.js', 'guide-visuals.js', 'codes.js', 'billing.js', 'angel.js', 'love.js', 'quiz.js', 'quiz-tarot.js', 'quiz-len.js', 'quiz-play.js', 'looks.js', 'luck.js', 'pet.js', 'book.js', 'me.js', 'contact.js', 'privacy.js', 'install.js', 'hello.js', 'report.js', 'play.js', 'wedding.js', 'alerts.js', 'admin.js', 'main.js']
+           'core.js', 'backend.js', 'share.js', 'ai.js', 'home.js', 'pick.js', 'learn.js', 'lessons.js', 'fortune.js', 'playing.js', 'guide-visuals.js', 'codes.js', 'billing.js', 'angel.js', 'love.js', 'quiz.js', 'quiz-tarot.js', 'quiz-tarot-de.js', 'quiz-len.js', 'quiz-play.js', 'looks.js', 'luck.js', 'pet.js', 'book.js', 'me.js', 'signin.js', 'contact.js', 'privacy.js', 'install.js', 'hello.js', 'report.js', 'play.js', 'wedding.js', 'alerts.js', 'admin.js', 'main.js']
 
 
 # Data files transcribed from outside sources carry working notes in block

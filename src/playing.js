@@ -146,7 +146,7 @@ function renderPCCard(id) {
   const S = T(), m = $('#main');
   if (!/^[hdcs](A|[2-9]|10|J|Q|K)$/.test(id || '')) { redirect('#/learn/playing'); return; }
   if (id !== DEMO.playing.card && gate('playing', '#/learn/playing?tab=cards')) return;
-  m.innerHTML = backLink('#/learn/playing?tab=cards', S.cats.playing) + '<div class="detail">' + pcCardBodyHTML(id) + '</div>' + aiPanelHTML({ type: 'general' });
+  m.innerHTML = backLink('#/learn/playing?tab=cards', S.cats.playing) + '<div class="detail">' + pcCardBodyHTML(id) + aiPanelHTML({ type: 'general' }) + '</div>';
   bindCardLinks(m); bindAI(m);
 }
 

@@ -124,10 +124,10 @@ const SALE = {
 };
 const salePrice = (n, kind, id) => SALE.price(n, kind, id);
 /* A price with its old value struck through when a sale is on. */
-function priceHTML(n, kind, id) {
+function priceHTML(n, kind, id, abroad) {
   const now = SALE.price(n, kind, id);
-  if (now === Number(n)) return fmtPrice(n);
-  return '<span class="was">' + fmtPrice(n) + '</span> <span class="now">' + fmtPrice(now) + '</span>';
+  if (now === Number(n)) return fmtPrice(n, abroad);
+  return '<span class="was">' + fmtPrice(n, abroad) + '</span> <span class="now">' + fmtPrice(now, abroad) + '</span>';
 }
 
 /* ---- course access ----
@@ -153,11 +153,14 @@ const ACCESS = {
   // BE is a top-level const (not on window), so test for it with typeof.
   isAdmin() { const be = typeof BE !== 'undefined' ? BE : null; return !!((be && be.user && be.isAdmin()) || (!(be && be.ready) && store.get('nabu-admin', ''))); },
   has(course) { if (this.isAdmin()) return true; const a = this.get()[course]; return !!a && a >= isoDate(new Date()); },
+  /* What this phone shows as open. It is a cache of the account, not the
+     other way round: nothing here is sent up any more. The account is written
+     by Nabu's dashboard and by the worker (a purchase, a code), and
+     pullProfile() takes the account's copy as the truth. */
   grant(course, until) {
     const a = this.get(), list = Array.isArray(course) ? course : [course];
     list.forEach((c) => { a[c] = until; });
     store.set('nabu-access', a);
-    if (typeof BE !== 'undefined' && BE.user) BE.pushProfile();
     /* Say what was opened and how long it lasts. A code used simply to work,
        and nobody was ever told what they now had or until when. */
     if (typeof ALERTS !== 'undefined' && until) {
@@ -191,7 +194,7 @@ function needAccountHTML(why) {
   return '<div class="card needin"><div class="ic">\uD83D\uDD11</div>'
     + '<p class="lead">' + esc(S.needInTitle) + '</p>'
     + '<p class="hint">' + esc(why || S.needInWhy) + '</p>'
-    + '<a class="btn primary block" href="#/me">' + esc(S.needInGo) + '</a></div>';
+    + '<a class="btn primary block" href="' + esc(signinHref()) + '">' + esc(S.needInGo) + '</a></div>';
 }
 
 /* ---- reporting somebody, and refusing to see them ----
@@ -287,10 +290,19 @@ function buildDeck(lg) {
    so it points at the English deck rather than at nothing - which is what the
    whole app did the first time German was switched on. */
 const DECK = { vi: buildDeck('vi'), en: buildDeck('en') };
-DECK.de = DECK.en;
+/* German has its own deck from stage 2 (tarot-de.js). The guard is not
+   decoration: without both halves - LEX.de for the names the app assembles and
+   DECKTEXT.de for the words - buildDeck('de') throws and the whole app is a
+   blank page. */
+DECK.de = (LEX.de && DECKTEXT.de) ? buildDeck('de') : DECK.en;
 const INDEX = {};
 LANGS.forEach((lg) => { INDEX[lg] = {}; (DECK[lg] || DECK.en).forEach((c) => { INDEX[lg][c.id] = c; }); });
 const cardById = (id, lg) => INDEX[lg || lang][id];
+/* The card's name in a second language, shown under the first. Not a toggle:
+   with three languages English is the sensible second name for everybody
+   except English readers, who get Vietnamese. */
+const otherLang = () => (lang === 'en' ? 'vi' : 'en');
+
 /* Insight fields for a card in the current language. */
 function insightOf(id, lg) {
   const r = (INSIGHT[lg || lang] || {})[id];
@@ -628,6 +640,7 @@ function screenLabel(h) {
   if (r === 'play') return S.actTitle;
   if (r === 'love') return S.loveTitle;
   if (r === 'me') return S.nav.me;
+  if (r === 'signin') return S.signIn;
   if (r === 'learn') { if (!a.length) return S.learnTitle; if (a.length === 1 && S.cats[a[0]]) return S.cats[a[0]]; if (a[0] === 'fortune' && a.length === 2) return S.cats.fortune; }
   return S.back;
 }
@@ -661,6 +674,60 @@ function dedupeBackLinks() {
   $$('#homefoot a.backlink').forEach((a) => { if (here[a.getAttribute('href') || '']) a.remove(); });
   if (!$('#homefoot a')) foot.hidden = true;
 }
+/* ---- the reading column on a desk ----
+   A card page was written for a hand: the picture, its name and the arrows to
+   the cards either side sit at the top, and the reading runs underneath. On a
+   wide window that leaves the picture stranded in the top left with eight
+   hundred pixels of nothing beside it, and every line of the reading runs a
+   hundred and ten characters. So the three things that identify the card are
+   gathered into one column that stays put while the reading scrolls past it.
+
+   The gathering happens at every width. The wrapper is display:contents below
+   the desk breakpoint, so a phone lays the same nodes out exactly as it did
+   before - the wrapper has no box of its own to change spacing or collapsing.
+   The one thing that does move by width is the Nabu AI box: on a desk it joins
+   the column under the card, and on a phone it stays where it was written,
+   under the reading it asks questions about. Its seat marks the way back. */
+const RAIL_AT = 900;
+function railify() {
+  const d = $('#main > .detail');
+  if (!d) return;
+  let rail = d.querySelector('.rail');
+  if (!rail) {
+    /* Every card-shaped page has a picture at the top; the prose-only ones
+       (a guide, a spread, a lesson) have nothing to stand a rail on. */
+    const hero = d.querySelector('.hero, .angelhero');
+    if (!hero || hero.parentNode !== d) return;
+    rail = document.createElement('div');
+    rail.className = 'rail';
+    d.insertBefore(rail, d.firstChild);
+    const nav = $$('.cardnav', d).filter((n) => n.parentNode === d)[0];
+    /* Moved in the order they were written, so with the wrapper out of the
+       layout a phone sees the same sequence it always did. */
+    [hero, nav].filter(Boolean)
+      .sort((a, b) => (a.compareDocumentPosition(b) & Node.DOCUMENT_POSITION_FOLLOWING ? -1 : 1))
+      .forEach((el) => rail.appendChild(el));
+  }
+  const ai = d.querySelector('.ai');
+  if (!ai) return;
+  let seat = d.querySelector('.aiseat');
+  if (!seat) {
+    seat = document.createElement('span');
+    seat.className = 'aiseat';
+    seat.hidden = true;
+    ai.parentNode.insertBefore(seat, ai);
+  }
+  const wide = window.innerWidth >= RAIL_AT;
+  if (wide && ai.parentNode !== rail) rail.appendChild(ai);
+  else if (!wide && ai.parentNode === rail) seat.parentNode.insertBefore(ai, seat);
+}
+/* Dragging a window across the breakpoint has to re-home the AI box, and the
+   card page is the only screen that cares, so this asks and usually leaves. */
+let RAILWAIT = 0;
+window.addEventListener('resize', () => {
+  clearTimeout(RAILWAIT);
+  RAILWAIT = setTimeout(railify, 150);
+});
 function parseHash() {
   const h = location.hash.replace(/^#\/?/, '');
   const q = h.split('?'), path = q[0].split('/'), params = {};
@@ -683,6 +750,7 @@ function route() {
   if (y == null) window.scrollTo(0, 0);
   Promise.resolve(def.render(r.args, r.params)).then(() => {
     dedupeBackLinks();
+    railify();
     if (!y) return;  // nothing to restore, and never fight a visitor who has started scrolling
     window.scrollTo(0, y);
     requestAnimationFrame(() => window.scrollTo(0, y));

@@ -101,44 +101,41 @@ const BE = {
        it on has been used by somebody else. */
     if (!snap.exists) { store.set('nabu-onboard', 1); await this.pushProfile(); return; }
     const d = snap.data();
-    /* The withdrawal is read before the merge, and applied once. The merge
-       keeps whichever date is later, so emptying the cloud copy on its own
-       achieves nothing: the phone's copy simply wins and is pushed back up. A
-       withdrawal is not a date but an instruction, stamped with the moment it
-       was given, and a device applies it once and remembers that it has. */
+    /* The account's copy of what is open is the truth, and this phone takes
+       it as read - whatever was here before. It used to be a merge that kept
+       the later date, which meant a phone could never be told to hold less:
+       emptying the cloud copy achieved nothing, because the phone's copy won
+       and was pushed back up. Now only Nabu and the worker write that field,
+       so the phone has nothing to push and nothing to argue with. */
+    const before = ACCESS.get();
+    const cloud = d.access && typeof d.access === 'object' ? Object.assign({}, d.access) : {};
+    store.set('nabu-access', cloud);
+    /* A withdrawal carries a reason, stamped with the moment it was given, and
+       a device says it once. Said out loud, because access that disappears
+       without a word reads as a broken app rather than a decision somebody
+       made. */
     if (d.revoked && d.revoked.at && Number(d.revoked.at) > Number(store.get('nabu-revoked-at', 0))) {
-      const had = Object.keys(ACCESS.get()).length;
-      store.set('nabu-access', {});
       store.set('nabu-revoked-at', Number(d.revoked.at));
-      d.access = {};
-      /* Said out loud, because access that disappears without a word reads as
-         a broken app rather than a decision somebody made. */
-      if (had && typeof alertSay === 'function') {
+      if (Object.keys(before).length && !Object.keys(cloud).length && typeof alertSay === 'function') {
         alertSay({ id: 'revoked-' + d.revoked.at, k: 'app', t: T().accessGoneTitle,
           b: d.revoked.why || T().accessGoneBody, href: '#/me' }, true);
       }
     }
-    if (d.access) {
-      const a = ACCESS.get(), fresh = [];
-      Object.keys(d.access).forEach((k) => {
-        if (!a[k] || d.access[k] > a[k]) { if (!a[k]) fresh.push(k); a[k] = d.access[k]; }
-      });
-      store.set('nabu-access', a);
-      /* Opened by Nabu rather than by a code on this phone, so nothing has
-         said so yet. Somebody who has just paid should not have to go looking
-         for what they bought. */
-      if (fresh.length && typeof ALERTS !== 'undefined') {
-        ALERTS.add({ id: 'unlocked-' + fresh.join('+') + '-' + d.access[fresh[0]], k: 'app',
-          t: T().accessOnTitle(fresh.map(accessName).join(', ')),
-          b: T().accessOnBody(fmtDate(d.access[fresh[0]])), href: '#/me' });
-      }
+    /* Opened by Nabu or by a code, so nothing on this phone has said so yet.
+       Somebody who has just paid should not have to go looking for what they
+       bought. */
+    const fresh = Object.keys(cloud).filter((k) => !before[k]);
+    if (fresh.length && typeof ALERTS !== 'undefined') {
+      ALERTS.add({ id: 'unlocked-' + fresh.join('+') + '-' + cloud[fresh[0]], k: 'app',
+        t: T().accessOnTitle(fresh.map(accessName).join(', ')),
+        b: T().accessOnBody(fmtDate(cloud[fresh[0]])), href: '#/me' });
     }
     delete d.access; delete d.revoked; saveProfileLocal(d);
   },
   async pushProfile() {
     if (!this.user) return;
     const p = { name: PROFILE.name || this.user.displayName || '', birthday: PROFILE.birthday || '', interests: PROFILE.interests || [],
-      tourDone: !!PROFILE.tourDone, email: this.user.email || '', access: ACCESS.get(), updatedAt: firebase.firestore.FieldValue.serverTimestamp() };
+      tourDone: !!PROFILE.tourDone, email: this.user.email || '', updatedAt: firebase.firestore.FieldValue.serverTimestamp() };
     await this.db.collection('users').doc(this.user.uid).set(p, { merge: true });
   },
 

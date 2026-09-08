@@ -74,7 +74,7 @@ function bindPaywall(root, after) {
          they come back here rather than to the home screen. */
       toast(S.unlockNeedIn);
       store.set('nabu-unlock-from', 'learn');
-      location.hash = '#/me?next=unlock';
+      location.hash = signinHref('/unlock?from=learn');
       return;
     }
     b.disabled = true;
@@ -100,10 +100,9 @@ function bindPaywall(root, after) {
   if (btn) btn.addEventListener('click', async () => {
     const st = $('#cstatus', root);
     st.textContent = S.codeChecking; st.className = 'hint'; btn.disabled = true;
-    const r = await verifyCode($('#ccode', root).value).catch(() => null);
+    const r = await redeemCode($('#ccode', root).value).catch((e) => e);
     btn.disabled = false;
-    if (!r) { st.textContent = CODEBOOK.ready() ? S.badCode : S.codeOffline; st.className = 'hint err'; return; }
-    ACCESS.grant(r.courses || [r.course], r.until);
+    if (!r || r instanceof Error) { st.textContent = redeemWhy(r); st.className = 'hint err'; return; }
     toast(S.unlocked); if (after) after(); else route();
   });
 }
@@ -231,7 +230,7 @@ function renderCard(id) {
 }
 function cardBodyHTML(id) {
   const S = T(), c = cardById(id);
-  const other = cardById(id, lang === 'vi' ? 'en' : 'vi'), I = insightOf(id);
+  const other = cardById(id, otherLang()), I = insightOf(id);
   const pos = I ? I.pos : c.kw, neg = I ? I.neg : [];
   const asks = lang === 'vi' ? (ASK.vi[id] || []) : [];
   const groups = {};
@@ -269,7 +268,7 @@ function renderLen(n) {
 }
 function lenBodyHTML(n) {
   const S = T(), d = lenCard(n);
-  const other = lenCard(n, lang === 'vi' ? 'en' : 'vi');
+  const other = lenCard(n, otherLang());
   const sec = (h, t) => t ? '<h3>' + esc(h) + '</h3><p>' + esc(t) + '</p>' : '';
   return '<div class="detail">'
     + '<div class="hero"><span class="face">' + lenFace(n) + '</span><div><div class="name">' + n + '. ' + esc(d.name) + '</div><div class="en">' + esc(other.name) + '</div>'
@@ -294,7 +293,10 @@ function cardNavHTML(course, prev, next) {
     if (!it) return '<span class="cn-sp"></span>';
     return '<a class="' + (dir < 0 ? 'prev' : 'next') + '" href="' + it.href + '">' + (dir < 0 ? '<span class="ar">←</span>' : '') + '<b>' + esc(it.label) + '</b>' + (dir > 0 ? '<span class="ar">→</span>' : '') + '</a>';
   };
-  return '<div class="cardnav">' + link(prev, -1) + link(next, 1) + '</div>';
+  /* The first card has nothing before it and the last nothing after, and a
+     lone arrow in a two-cell row sat pinned against one edge with half the
+     row empty beside it. On its own it takes the whole row instead. */
+  return '<div class="cardnav' + (prev && next ? '' : ' one') + '">' + link(prev, -1) + link(next, 1) + '</div>';
 }
 function lenNavHTML(n) {
   const at = (i) => { const d = lenCard(i); return d ? { href: '#/learn/len/' + i, label: i + '. ' + d.name } : null; };
@@ -614,15 +616,15 @@ function renderUnlock(args, params) {
       // No account yet: keep the message route so the order still reaches Nabu.
       luckCommit(unlockLuck(), S.unlockCart);
       store.set('nabu-contact-draft', unlockMessage());
-      location.hash = BE.enabled ? '#/me?next=unlock' : '#/contact';
+      location.hash = BE.enabled ? signinHref('/unlock?from=' + (store.get('nabu-unlock-from', '') || '')) : '#/contact';
     });
     $('#ugo').addEventListener('click', async () => {
       const st = $('#ustatus'), btn = $('#ugo');
       st.textContent = S.codeChecking; st.className = 'hint'; btn.disabled = true;
-      const r = await verifyCode($('#ucode').value).catch(() => null);
+      const r = await redeemCode($('#ucode').value).catch((e) => e);
       btn.disabled = false;
-      if (!r) { st.textContent = CODEBOOK.ready() ? S.badCode : S.codeOffline; st.className = 'hint err'; return; }
-      ACCESS.grant(r.courses || [r.course], r.until); toast(S.unlocked); draw();
+      if (!r || r instanceof Error) { st.textContent = redeemWhy(r); st.className = 'hint err'; return; }
+      toast(S.unlocked); draw();
     });
   };
   draw();

@@ -96,7 +96,7 @@ function adminPosts(p) {
     + '<label class="f" for="ptitle_en">' + esc(S.postTitleEn) + '</label><input id="ptitle_en">'
     + '<label class="f" for="pbody_en">' + esc(S.postBodyEn) + '</label><textarea id="pbody_en"></textarea>'
     + '<div class="acc" id="cardpick" style="margin-top:14px"><button type="button"><span>🃏 ' + esc(S.postCards) + '</span></button><div class="in"><input id="csearch" placeholder="' + esc(S.searchCard) + '" style="margin-bottom:8px">'
-    + '<div class="grid" id="cgrid">' + DECK[lang].map((c) => '<button data-cid="' + c.id + '" data-name="' + esc((c.name + ' ' + cardById(c.id, lang === 'vi' ? 'en' : 'vi').name).toLowerCase()) + '">' + faceSVG(c) + '</button>').join('') + '</div></div></div><div class="mini" id="csel"></div>'
+    + '<div class="grid" id="cgrid">' + DECK[lang].map((c) => '<button data-cid="' + c.id + '" data-name="' + esc((c.name + ' ' + cardById(c.id, otherLang()).name).toLowerCase()) + '">' + faceSVG(c) + '</button>').join('') + '</div></div></div><div class="mini" id="csel"></div>'
     + '<label class="f">' + esc(S.postTopics) + '</label><div class="chips">' + INTERESTS.map((i) => '<button class="chip" data-topic-id="' + i.id + '">' + esc(i[lang]) + '</button>').join('') + '</div>'
     + '<label class="f" for="pinit">' + esc(S.markInitials) + '</label><input id="pinit" placeholder="C, E, H">'
     + '<label class="f">' + esc(S.markSigns) + '</label><div class="chips">' + S.zodiac.map((z, i) => '<button class="chip" data-sign="' + i + '">' + esc(z) + '</button>').join('') + '</div>'
@@ -239,7 +239,7 @@ async function adminSchedule(p) {
 function needAdmin(p) {
   const S = T();
   if (!BE.enabled) { p.innerHTML = '<p class="muted">' + esc(S.needFirebase) + '</p>'; return false; }
-  if (!BE.isAdmin()) { p.innerHTML = '<p class="muted">' + esc(S.adminLogin) + '</p><a class="btn" href="#/me">' + esc(S.signIn) + '</a>'; return false; }
+  if (!BE.isAdmin()) { p.innerHTML = '<p class="muted">' + esc(S.adminLogin) + '</p><a class="btn" href="' + esc(signinHref('/admin')) + '">' + esc(S.signIn) + '</a>'; return false; }
   return true;
 }
 function adminBookings(p) {
@@ -610,7 +610,13 @@ function adminCodes(p) {
       ? '<p class="hint">' + esc(S.codeNone) + '</p>'
       : '<ul class="codelist">' + ids.map((id) => {
         const r = book[id], c = COURSES.filter((x) => x.id === r.c)[0];
-        return '<li><span><b>' + esc(c ? L(c.name) : r.c) + '</b><span class="faint"> · ' + esc(S.codeUntil) + ' ' + esc(fmtDate(r.u)) + ' · ' + esc(S.codeMade) + ' ' + esc(fmtDate(r.at || r.u)) + '</span></span>'
+        /* Who used it, and a way to their thread - which is where access is
+           taken back. A code from before the check moved to the worker is
+           keyed the old way and cannot be redeemed until it is pasted in again. */
+        const state = r.by
+          ? '<span class="ok">' + esc(S.codeUsedBy) + ' ' + esc(fmtDate(r.usedAt || r.at || r.u)) + '</span> <button type="button" class="btn tiny" data-person="' + esc(r.by) + '">' + esc(S.codeOpenThread) + '</button>'
+          : (r.v ? '<span class="faint">' + esc(S.codeUnused) + '</span>' : '<span class="err">' + esc(S.codeOldStyle) + '</span>');
+        return '<li><span><b>' + esc(c ? L(c.name) : r.c) + '</b><span class="faint"> · ' + esc(S.codeUntil) + ' ' + esc(fmtDate(r.u)) + ' · ' + esc(S.codeMade) + ' ' + esc(fmtDate(r.at || r.u)) + '</span><br>' + state + '</span>'
           + '<button type="button" class="btn tiny" data-revoke="' + esc(id) + '">' + esc(S.codeRevoke) + '</button></li>';
       }).join('') + '</ul>';
     $$('[data-revoke]', wrap).forEach((b) => b.addEventListener('click', async () => {
@@ -618,8 +624,16 @@ function adminCodes(p) {
       try { await revokeCode(b.getAttribute('data-revoke')); drawBook(); toast(T().saved); }
       catch (e) { toast(S.publishFail); }
     }));
+    $$('[data-person]', wrap).forEach((b) => b.addEventListener('click', () => {
+      admin.openThread = b.getAttribute('data-person');
+      location.hash = '#/admin?tab=inbox';
+    }));
   }
-  drawBook();
+  /* The book is private and is read here, when the tab opens, rather than by
+     every phone at start-up as it used to be. */
+  $('#cbook').innerHTML = '<p class="hint">…</p>';
+  if (!cloud()) { $('#cbook').innerHTML = '<p class="hint">' + esc(S.adminLogin) + '</p>'; return; }
+  loadCodebook().then(drawBook).catch((e) => { $('#cbook').innerHTML = '<p class="hint err">' + esc(S.publishFail + ': ' + (e && e.message ? e.message : '')) + '</p>'; });
 }
 /* ---- the sale tool ----
    One record, so a sale can be switched on, aimed at readings or unlockables,

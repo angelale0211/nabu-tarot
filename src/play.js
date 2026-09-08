@@ -262,7 +262,7 @@ function bindActs(root, list) {
       const draw = (counts) => { const total = counts && counts.total || 0; $$('[data-opt]', card).forEach((b) => { const n = counts ? (counts[b.getAttribute('data-opt')] || 0) : 0, pct = total ? Math.round(n * 100 / total) : 0; $('.bar', b).style.width = pct + '%'; $('.pct', b).textContent = total ? pct + '%' : ''; }); const st = $('.pollstat', card); if (st) st.textContent = S.actResultsPublic + ': ' + (total ? S.actVotes(total) : S.actNoVotes); };
       countVotes(a.id).then(draw);
       $$('[data-opt]', card).forEach((b) => b.addEventListener('click', async () => {
-        if (!(BE.enabled && BE.user)) { toast(S.actVoteLogin); location.hash = '#/me?next=play'; return; }
+        if (!(BE.enabled && BE.user)) { toast(S.actVoteLogin); location.hash = signinHref(); return; }
         const i = Number(b.getAttribute('data-opt')); setChoice(a.id, i); await sendVote(a, i);
         $$('[data-opt]', card).forEach((x) => { x.classList.toggle('on', x === b); x.disabled = true; });
         $('.pollnote', card).textContent = S.actVoted; countVotes(a.id).then(draw);
@@ -372,10 +372,10 @@ function bindLuck(root, redraw) {
   go.addEventListener('click', async () => {
     const st = $('#luckstatus', root);
     st.textContent = S.codeChecking; st.className = 'hint'; go.disabled = true;
-    const r = await verifyCode($('#luckcode', root).value).catch(() => null);
+    const r = await redeemCode($('#luckcode', root).value).catch((e) => e);
     go.disabled = false;
-    if (!r) { st.textContent = CODEBOOK.ready() ? S.badCode : S.codeOffline; st.className = 'hint err'; return; }
-    ACCESS.grant(r.courses || [r.course], r.until); toast(S.unlocked); redraw();
+    if (!r || r instanceof Error) { st.textContent = redeemWhy(r); st.className = 'hint err'; return; }
+    toast(S.unlocked); redraw();
   });
 }
 

@@ -1,40 +1,37 @@
-/* ======================= access codes that cannot be forged =======================
-   The old scheme checked a code against a secret that shipped inside the app,
-   so anyone who read the JavaScript could mint a code for any course with any
-   expiry, and no code could ever be taken back.
+/* ======================= access codes =======================
+   Nabu makes a code and sends it to somebody who paid outside the app. The app
+   keeps no secret: it publishes only a fingerprint of the code - a SHA-256 of
+   the salt and the code - together with what the code opens and when it runs
+   out. The book of fingerprints is private: Nabu's dashboard and the worker
+   can read it, nobody else can.
 
-   This one keeps no secret in the app. Nabu makes a code; the app publishes
-   only a slow, salted hash of it, together with what that code opens and when
-   it runs out. Redeeming hashes what was typed and looks the result up. A code
-   Nabu never issued hashes to something that is not in the book, so it opens
-   nothing - and what a real code opens is read from the published record
-   rather than from the text of the code, so editing the letter or the date in
-   a real code gets nowhere either.
+   Redeeming happens in the worker, not here. The phone sends the code with the
+   person's sign-in; the worker looks it up, refuses one another account has
+   already used, binds it to this account, and writes the access onto the
+   account itself. The phone then reads the account back. Nothing typed on a
+   phone can open anything on its own any more, which is the point.
 
-   Why a slow hash. The book is public, so someone could try every possible
-   code against it offline. The tail is six characters from a 32-letter
-   alphabet - about a billion codes - and PBKDF2 with a quarter of a million
-   rounds makes trying them all a few thousand years of work, while costing the
-   person redeeming one about a seventh of a second.
-
-   One salt covers the book so that redeeming is a single hash and a lookup
-   rather than one hash per code ever issued, which would grow slower with
-   every sale. */
+   Why not a slow hash, as before. The old book was public and hashed with
+   250,000 rounds of PBKDF2 so that it could not be tried offline. A private
+   book cannot be tried offline at all, and the worker limits how often one
+   account may try online. (Workers also refuse PBKDF2 above 100,000 rounds, so
+   the old book could not have been checked there in any case.) Codes made
+   before this change are keyed the old way and no longer match: the dashboard
+   marks them, and pasting one into "codes handed out before" re-keys it. */
 
 const CODE_ALPHABET = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'; // no I, O, 0, 1
 const CODE_LEN = 6;
-const CODE_ROUNDS = 250000;
-/* Read per call. The checks lower it to keep the suite quick; a lower
-   number can only make a code fail to match, never match wrongly. */
-const codeRounds = () => Number(window.NABU_CODE_ROUNDS) || CODE_ROUNDS;
 
-/* The published book: { salt: hex, codes: { <hash>: { c: course, u: untilISO, at } } } */
+/* The book, as the dashboard sees it:
+   { salt: hex, codes: { <sha256 hex>: { c: course, u: untilISO, at, v: 2, by?: uid, usedAt? } } }
+   `loaded` says the book has been read from the cloud, even if it was empty;
+   publishing before that would write a book of one code over everything. */
 const CODEBOOK = {
-  doc: null,
-  set(doc) { this.doc = doc && typeof doc === 'object' && doc.codes ? doc : null; },
+  doc: null, loaded: false,
+  set(doc) { this.doc = doc && typeof doc === 'object' && doc.codes ? doc : null; this.loaded = true; },
   all() { return (this.doc && this.doc.codes) || {}; },
   salt() { return (this.doc && this.doc.salt) || ''; },
-  ready() { return !!(this.doc && this.doc.salt); }
+  ready() { return this.loaded; }
 };
 
 const tidyCode = (s) => String(s || '').toUpperCase().replace(/[^A-Z0-9]/g, '');
@@ -53,46 +50,85 @@ function randomCode(course, untilISO) {
   return 'NABU-' + (CODE_LETTER[course] || 'L') + '-' + untilISO.replace(/-/g, '').slice(2) + '-' + tail;
 }
 
-/* PBKDF2-SHA256 over the tidied code. Returns hex, or '' where the browser has
-   no SubtleCrypto, in which case a code simply cannot be redeemed there. */
+/* The key an entry is filed under. The worker computes the same thing
+   (codeKey in worker/src/codes.ts); the two must never drift apart. Returns ''
+   where the browser has no SubtleCrypto, in which case nothing can be
+   published there. */
 async function codeDigest(code, salt) {
   const subtle = window.crypto && window.crypto.subtle;
   if (!subtle) return '';
-  const enc = new TextEncoder();
-  const key = await subtle.importKey('raw', enc.encode(tidyCode(code)), 'PBKDF2', false, ['deriveBits']);
-  const bits = await subtle.deriveBits({ name: 'PBKDF2', salt: enc.encode(salt), iterations: codeRounds(), hash: 'SHA-256' }, key, 256);
+  const bits = await subtle.digest('SHA-256', new TextEncoder().encode(salt + '\n' + tidyCode(code)));
   return Array.from(new Uint8Array(bits)).map((x) => x.toString(16).padStart(2, '0')).join('');
 }
 
-/* What a typed code opens, or null: one hash and one lookup, however many
-   codes have been sold. */
-async function verifyCode(typed) {
+/* ---- redeeming ----
+   Resolves with { courses, until } once the account holds them; throws an
+   Error whose `why` names what went wrong, for redeemWhy() to put into words. */
+const codeFail = (why) => { const e = new Error(why); e.why = why; return e; };
+
+async function redeemCode(typed) {
   const clean = tidyCode(typed);
-  if (clean.length < 8 || !CODEBOOK.ready()) return null;
-  const h = await codeDigest(clean, CODEBOOK.salt());
-  const rec = h && CODEBOOK.all()[h];
-  if (!rec || !rec.c) return null;
-  /* Pro contains Plus, so a code for Pro opens both. */
-  /* Either Pro term opens Pro itself and Plus with it. */
-  return { hash: h, course: rec.c, courses: (rec.c === 'pro' || rec.c === 'pro6') ? ['pro', 'plus'] : [rec.c], until: rec.u };
+  if (clean.length < 8) throw codeFail('bad');
+  const be = typeof BE !== 'undefined' ? BE : null;
+  if (!be || !be.enabled || !CONFIG.aiEndpoint) throw codeFail('notready');
+  if (!be.user) throw codeFail('signin');
+  let r, j;
+  try {
+    const idTok = await be.token();
+    r = await withTimeout(fetch(CONFIG.aiEndpoint.replace(/\/$/, '') + '/redeem', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + idTok },
+      body: JSON.stringify({ code: clean })
+    }), 20000);
+    j = await r.json().catch(() => ({}));
+  } catch (e) { throw codeFail('offline'); }
+  if (r.ok && j.ok) {
+    const opened = j.opened || [], until = (j.access || {})[opened[0]] || '';
+    /* The worker has written it on the account. Reading the account back is
+       what makes it true on this phone; the grant is only for a phone that
+       cannot reach the account right now. */
+    try { await be.pullProfile(); } catch (e) { if (opened.length && until) ACCESS.grant(opened, until); }
+    return { courses: opened, until: until };
+  }
+  const why = String(j.error || '');
+  if (why === 'bad' || why === 'used' || why === 'expired' || why === 'signin') throw codeFail(why);
+  if (why === 'not configured') throw codeFail('notready');
+  throw codeFail('offline');
+}
+
+function redeemWhy(e) {
+  const S = T(), w = e && e.why;
+  return w === 'bad' ? S.badCode : w === 'used' ? S.codeUsed : w === 'expired' ? S.codeExpired
+    : w === 'signin' ? S.codeSignIn : w === 'notready' ? S.codeNotReady : S.codeOffline;
+}
+
+/* ---- the dashboard's side ---- */
+async function loadCodebook() {
+  const d = await BE.getContent('codes');
+  CODEBOOK.set(d);
+  return CODEBOOK.all();
 }
 
 /* Publishing merges into the book rather than replacing it, so two dashboards
    open at once cannot wipe each other's codes. The salt is made once and kept:
    changing it would invalidate every code already handed out. */
 async function publishCode(code, course, untilISO) {
+  if (!CODEBOOK.loaded) throw new Error('book not loaded');
   const salt = CODEBOOK.salt() || randomHex(16);
   const h = await codeDigest(code, salt);
   if (!h) throw new Error('no crypto');
   const codes = Object.assign({}, CODEBOOK.all());
-  codes[h] = { c: course, u: untilISO, at: isoDate(new Date()) };
+  codes[h] = { c: course, u: untilISO, at: isoDate(new Date()), v: 2 };
   const doc = { salt: salt, codes: codes };
   await BE.setContent('codes', doc);
   CODEBOOK.set(doc);
   return h;
 }
 
+/* Taking a code out of the book stops it being used again. It takes nothing
+   back from whoever already used it - that is done on their thread. */
 async function revokeCode(hash) {
+  if (!CODEBOOK.loaded) throw new Error('book not loaded');
   const codes = Object.assign({}, CODEBOOK.all());
   delete codes[hash];
   const doc = { salt: CODEBOOK.salt(), codes: codes };

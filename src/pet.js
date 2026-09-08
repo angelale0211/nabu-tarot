@@ -1607,7 +1607,7 @@ function renderPet(want) {
     $('#petkeep').addEventListener('click', () => {
       /* A companion is fed daily and remembers being fed. That has to live on
          an account or it is a promise the app cannot keep. */
-      if (!signedIn()) { toast(S.needInPet); location.hash = '#/me'; return; }
+      if (!signedIn()) { toast(S.needInPet); location.hash = signinHref(); return; }
       if (have) { open = kind; draw(); return; }
       if (swap) {
         if (!PETS.canChange()) { toast(S.petChangeWait(fmtDate(PETS.changeOn()))); return; }

@@ -20,7 +20,11 @@ BROWSERS = [os.environ.get('NABU_BROWSER'),
             r'C:\Program Files (x86)\Microsoft\Edge\Application\msedge.exe',
             '/usr/bin/google-chrome', '/usr/bin/chromium-browser', '/usr/bin/chromium']
 EDGE = next((b for b in BROWSERS if b and os.path.exists(b)), BROWSERS[1])
-PORT = 8765
+# One run per port. Two windows working in this repo at once both want the
+# suite, and on Windows the second one binds anyway and then talks to the first
+# one's server, which reports nothing at all. NABU_PORT lets the second run
+# stand aside: NABU_PORT=8766 python test/run.py
+PORT = int(os.environ.get('NABU_PORT') or 8765)
 
 # What the page has told us so far, and whether it says it is finished.
 RESULTS = {'text': '', 'done': False, 'at': 0.0}
@@ -57,8 +61,11 @@ def serve():
     return httpd
 
 
-TIMEOUT = 900      # the whole suite, wall clock
-QUIET = 90         # ... or this long with the page saying nothing new
+TIMEOUT = int(os.environ.get('NABU_TIMEOUT') or 900)   # the whole suite, wall clock
+# ... or this long with the page saying nothing new. Two suites running at once
+# on one machine starve each other, and a run that is merely slow then looks
+# like a run that has died; NABU_QUIET buys it more rope.
+QUIET = int(os.environ.get('NABU_QUIET') or 90)
 
 
 def run(url, extra=()):

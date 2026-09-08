@@ -60,9 +60,11 @@ const CONFIG = {
   reportEndpoint: '',
   authProviders: ['google', 'facebook', 'email'],
 
-  // Nabu AI. Leave empty to answer from the built-in knowledge base; set the
-  // URL of the deployed worker (see worker/) to answer with Claude.
-  aiEndpoint: '',
+  // The Cloudflare Worker (see worker/). It answers AI questions, checks Play
+  // purchases at /billing and redeems access codes at /redeem. Leave it empty
+  // and the AI answers from the built-in knowledge base - but codes then have
+  // nowhere to be checked, because a phone is not allowed to check its own.
+  aiEndpoint: 'https://nabu-ai.0211nhatanh.workers.dev',
   // Free option: a Google AI Studio key (aistudio.google.com -> Get API key),
   // restricted to this site's address in Google Cloud console. Gemini then
   // answers straight from the browser and can search the web for facts the

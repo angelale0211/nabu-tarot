@@ -20,7 +20,7 @@ function renderContact() {
     if (!need()) return;
     const ch = b.getAttribute('data-ch');
     if (ch === 'app') {
-      if (!BE.user) { st(S.needLogin); location.hash = '#/me?next=contact'; return; }
+      if (!BE.user) { st(S.needLogin); location.hash = signinHref('/contact'); return; }
       b.disabled = true;
       try { await BE.sendMessage(text(), null); st(S.contactSent, 'ok'); $('#ctext').value = ''; } catch (e) { st(S.publishFail + ': ' + e.message, 'err'); }
       b.disabled = false; return;
