@@ -12,7 +12,7 @@
      carries this notice with it. See LICENSE. -->
 <meta name="author" content="Nabu Tarot">
 <meta name="copyright" content="Copyright (c) 2025-2026 Nabu Tarot. All rights reserved.">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'none'; object-src 'none'; form-action 'self'; script-src 'self' 'sha256-UDuJ4Yi2BwIwpWJr7fncfi/JOVOrUTGQMGWTH9BoZBc=' https://www.gstatic.com https://apis.google.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; font-src 'self' data:; media-src 'self' data: blob:; worker-src 'self'; connect-src 'self' https://*.googleapis.com https://*.google.com https://*.firebaseio.com https://*.cloudfunctions.net https://*.workers.dev https://generativelanguage.googleapis.com; frame-src https://*.firebaseapp.com https://accounts.google.com https://*.facebook.com">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'none'; object-src 'none'; form-action 'self'; script-src 'self' 'sha256-9WJBj74nWN+TfOHEPHenboOHaDpUoHaheAa7R3UvZYg=' https://www.gstatic.com https://apis.google.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; font-src 'self' data:; media-src 'self' data: blob:; worker-src 'self'; connect-src 'self' https://*.googleapis.com https://*.google.com https://*.firebaseio.com https://*.cloudfunctions.net https://*.workers.dev https://generativelanguage.googleapis.com; frame-src https://*.firebaseapp.com https://accounts.google.com https://*.facebook.com">
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <meta name="theme-color" content="#EFE9FA">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -2466,6 +2466,38 @@ body[data-route="hello"] #main{width:100%}
   .foot .wrap>div{display:flex;flex-direction:column;align-items:center}
   .foot .links{justify-content:center}
 }
+/* The share sheet under a post: a link box with a copy mark on its end, two
+   buttons, the places. Rides on .sheet, so it rises on a phone and sits in the
+   middle of a desk. */
+.shdlg .sh-body{padding-top:12px}
+.shdlg .shx{position:absolute;top:10px;right:12px;width:36px;height:36px;border-radius:10px;font-size:24px;line-height:1;color:var(--fg-faint);background:transparent;border:0;cursor:pointer;display:flex;align-items:center;justify-content:center}
+.shdlg .shx:hover,.shdlg .shx:focus-visible{background:var(--surface-2);color:var(--fg);outline:none}
+.shdlg-h{margin:2px 40px 4px 0;font-size:19px;font-family:var(--display);font-weight:600}
+.shdlg-lead{margin:0 0 10px;font-size:14.5px;line-height:1.5;color:var(--fg-soft);text-align:left}
+.shdlg-what{margin:0 0 12px;padding:9px 12px;border-radius:12px;background:var(--surface-2);font-weight:600;font-size:14px;line-height:1.4;color:var(--fg);text-align:left;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.shlinkwrap{position:relative}
+.shlink{width:100%;min-height:44px;padding:10px 46px 10px 12px;border:1px solid var(--rule);border-radius:12px;background:var(--surface);color:var(--fg);font:inherit;font-size:14px;text-overflow:ellipsis;box-sizing:border-box}
+.shlink:focus{outline:none;border-color:var(--lav);box-shadow:0 0 0 3px var(--lav-soft)}
+.shcopyic{position:absolute;top:0;right:0;bottom:0;width:44px;display:flex;align-items:center;justify-content:center;border:0;background:transparent;color:var(--fg-soft);cursor:pointer;border-radius:0 12px 12px 0}
+.shcopyic:hover,.shcopyic:focus-visible{color:var(--fg);outline:none}
+.shcopyic .shmk{width:18px;height:18px;position:absolute;transition:transform .18s ease,opacity .18s ease}
+.shcopyic .shmk-check{transform:scale(0);opacity:0;color:var(--ok)}
+.shcopyic.done .shmk-copy{transform:scale(0);opacity:0}
+.shcopyic.done .shmk-check{transform:scale(1);opacity:1}
+.shcopyic[disabled]{cursor:default}
+.shcopyic[data-tip]::after{content:attr(data-tip);position:absolute;bottom:calc(100% + 6px);right:0;padding:5px 9px;border-radius:8px;background:var(--primary);color:var(--primary-ink);font-size:12px;font-weight:600;white-space:nowrap;opacity:0;transform:translateY(3px);transition:opacity .15s ease,transform .15s ease;pointer-events:none}
+.shcopyic:hover::after,.shcopyic:focus-visible::after,.shcopyic.done::after{opacity:1;transform:translateY(0)}
+.shdlg-btns{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px}
+.shdlg-btns .btn{padding:11px 10px;font-size:14px;min-height:44px}
+.shdlg-btns .btn svg{width:17px;height:17px;flex:none}
+.shdlg-to{margin:16px 0 2px}
+.shdlg .sharerow{margin-top:8px}
+@media (min-width:900px){
+  /* Beside the rail the content column is centred on what is left of the
+     window, so the sheet is centred there too: the margin box is what flex
+     centres, so a left margin the width of the rail shifts it by half. */
+  .shdlg .sh-body{border-radius:20px;padding-bottom:18px;box-shadow:0 18px 50px rgba(40,25,70,.3);margin-left:var(--rail-w)}
+}
 </style>
 </head>
 <body>
@@ -3138,7 +3170,7 @@ const STR = {
     saleBanner: (off, what) => 'Khuyến mãi ' + off + ' cho ' + what, saleSee: 'Xem ngay',
     adminShort: 'Tài khoản quản trị', unlockCodeLabel: 'Nhập mã Nabu gửi cho bạn', unlockReadings: 'Xem bảng giá xem bài riêng',
     luckFree: 'Bạn có 1 lượt miễn phí mỗi 3 ngày.', luckLeft: 'Lượt miễn phí của bạn vẫn còn.', luckSpent: (d) => 'Bạn đã dùng lượt miễn phí. Lượt mới mở vào ' + d + '.', luckOpen: 'Bạn đang mở không giới hạn.', luckOffer: 'Nabu Plus mở tung xu và rung cây không giới hạn cả năm, kèm toàn bộ giao diện: 79.000đ.', luckGet: 'Nhắn Nabu để lấy mã', luckCodePh: 'NABU-B-…',
-    treeTitle: 'Rung cây thông điệp', treeSub: 'một lời nhắn từ vũ trụ', treePets: 'Hiện bạn nhỏ dưới gốc cây', treePetsHint: 'Tắt đi thì chỉ còn cây. Chỉ áp dụng với tài khoản của bạn.',
+    treeTitle: 'Rung cây thông điệp', treeSub: 'một lời nhắn từ vũ trụ', treePets: 'Hiện bạn nhỏ dưới gốc cây', treePetsHint: 'Tắt tùy chọn này nếu bạn chỉ muốn nhìn thấy cây. Cài đặt này chỉ áp dụng cho tài khoản của bạn.',
     treeIntro: 'Bạn đứng trước cây, nghĩ về điều đang ở trong lòng mình, rồi rung nhẹ một cái. Cây sẽ thả xuống cho bạn một lời nhắn.', treeShake: 'Rung cây', treeAgain: 'Rung thêm một lần nữa', treeFor: 'Lời nhắn dành cho bạn', coinTitle: 'Tung đồng xu', coinSub: 'cho câu hỏi có hoặc không', coinIntro: 'Khi bạn có một câu hỏi chỉ cần trả lời có hoặc không, bạn hãy nghĩ thật rõ về câu hỏi đó rồi tung đồng xu.', coinQ: 'Câu hỏi của bạn', coinQPh: 'Ví dụ: mình có nên nhắn trước không?', coinFlip: 'Tung đồng xu', coinAgain: 'Tung lại', coinYes: 'CÓ', coinNo: 'KHÔNG', coinNote: 'Đồng xu chỉ cho bạn một trong hai câu trả lời. Điều đáng chú ý là cảm giác của bạn ngay khi nhìn thấy kết quả: nếu bạn thấy hụt hẫng, bạn đã biết mình muốn gì.',
     actNew: 'Hoạt động mới', actType: 'Loại', actTypes: { pile: 'Chọn tụ bài', poll: 'Bình chọn', wish: 'Điều ước' }, actResultsDate: 'Ngày đăng kết quả', actIntroLabel: 'Lời dẫn (thanh công cụ phía trên ô cho phép in đậm, in nghiêng, tô sáng, chèn ảnh, video và emoji)', actPilesHint: 'Từ 2 đến 5 tụ. Bạn có thể đăng trước với nhãn trống; vài ngày sau quay lại điền thông điệp và bật "Đã có kết quả".', actPileN: (n) => 'Tụ ' + n, actPileLabel: 'Nhãn ngắn (không bắt buộc), ví dụ: Trái · Giữa · Phải', actPileMsg: 'Thông điệp cho tụ này (đăng sau cũng được)', actPileMsgEn: 'English message (optional)', actPileAdd: 'Thêm tụ', actPileDel: 'Bớt tụ', actResultsOn: 'Đã có kết quả: cho phép lật bài', actOptions: 'Các lựa chọn, mỗi dòng một lựa chọn', actCloseOn: 'Đóng bình chọn', actExisting: 'Hoạt động đã đăng', actNeedPiles: 'Bạn điền ít nhất một tụ nhé.', actNeedOptions: 'Cần ít nhất hai lựa chọn.',
     diarySave: 'Lưu trang hôm nay', diaryUnsaved: 'Chưa lưu', diarySavedToast: 'Đã lưu vào nhật ký 📔',
@@ -3236,6 +3268,7 @@ const STR = {
     alertDiaryOff: (n) => '📕 Đã dừng chia sẻ nhật ký',
     alertDiaryOffBody: 'Nhật ký của bạn lại chỉ nằm trên máy này thôi.',
     shareCopy: 'Chép', shareMore: 'Khác', shareIgCopied: 'Đã chép. Bạn mở Instagram rồi dán vào story hoặc bài viết nhé.',
+    shareDlgTitle: "🔗 Chia sẻ bài viết", shareDlgLead: "🌙 Gửi bài này cho người bạn muốn chia sẻ. Nabu đã để sẵn đường dẫn cho bạn. ✨", shareLinkLabel: "Đường dẫn bài viết", shareCopyLink: "Chép đường dẫn", shareOpen: "Mở bài viết", shareToLabel: "Hoặc gửi thẳng tới", shareCopyTip: "Chép đường dẫn", shareCopiedBang: "Đã chép! ✨",
     loveTellTitle: 'Khoe với mọi người', loveTellHint: 'Bạn bấm một nơi bất kỳ, Nabu đã viết sẵn câu chữ kèm đường dẫn.',
     loveShareOf: {
       tied: (n, d) => 'Mình và ' + n + ' đã buộc sợi tơ hồng trên Nabu Tarot, hôm nay là ngày thứ ' + d + ' 🧧',
@@ -3969,7 +4002,7 @@ const STR = {
     saleBanner: (off, what) => off + ' off ' + what, saleSee: 'See it',
     adminShort: 'Admin account', unlockCodeLabel: 'Enter the code Nabu sent you', unlockReadings: 'See the prices for a reading',
     luckFree: 'You get one free turn every 3 days.', luckLeft: 'Your free turn is still open.', luckSpent: (d) => 'You have had your free turn. The next one opens on ' + d + '.', luckOpen: 'You have unlimited turns.', luckOffer: 'Nabu Plus opens the coin and the message tree without limit for a year, and every design with them. The price is on the price page.', luckGet: 'Message Nabu for a code', luckCodePh: 'NABU-B-…',
-    treeTitle: 'Shake the message tree', treeSub: 'a message from the universe', treePets: 'Show your companions under the tree', treePetsHint: 'Turn it off and the tree stands on its own. Your account only.',
+    treeTitle: 'Shake the message tree', treeSub: 'a message from the universe', treePets: 'Show your companions under the tree', treePetsHint: 'Turn this off if you only want to see the tree. This setting applies to your account only.',
     treeIntro: 'Stand in front of the tree, hold in mind whatever you are carrying, and give it a gentle shake. The tree will let a message fall for you.', treeShake: 'Shake the tree', treeAgain: 'Shake it once more', treeFor: 'A message for you', coinTitle: 'Flip a coin', coinSub: 'for a yes or no question', coinIntro: 'When a question needs nothing more than a yes or a no, hold the question clearly in mind and flip the coin.', coinQ: 'Your question', coinQPh: 'For example: should I message first?', coinFlip: 'Flip the coin', coinAgain: 'Flip again', coinYes: 'YES', coinNo: 'NO', coinNote: 'The coin gives you one of two answers. What matters is how you feel the moment you see it: if the result disappoints you, you already know what you want.',
     actNew: 'New activity', actType: 'Type', actTypes: { pile: 'Pick a pile', poll: 'Poll', wish: 'Wish' }, actResultsDate: 'Results date', actIntroLabel: 'Intro (the bar above the box: bold, italic, highlight, images, video, emoji)', actPilesHint: 'Two to five piles. You can publish with empty labels; come back days later, fill in the messages and switch on "Answered".', actPileN: (n) => 'Pile ' + n, actPileLabel: 'Short label (optional), e.g. Left · Middle · Right', actPileMsg: 'Message for this pile (can be added later)', actPileMsgEn: 'English message (optional)', actPileAdd: 'Add a pile', actPileDel: 'Remove a pile', actResultsOn: 'Answered: let people flip the piles', actOptions: 'Options, one per line', actCloseOn: 'Close the poll', actExisting: 'Published activities', actNeedPiles: 'Fill in at least one pile.', actNeedOptions: 'At least two options are needed.',
     diarySave: 'Save today\u2019s page', diaryUnsaved: 'Not saved', diarySavedToast: 'Saved to your diary \uD83D\uDCD4',
@@ -4067,6 +4100,7 @@ const STR = {
     alertDiaryOff: (n) => '\uD83D\uDCD5 Diary sharing has stopped',
     alertDiaryOffBody: 'Your diary is back to living on this phone only.',
     shareCopy: 'Copy', shareMore: 'More', shareIgCopied: 'Copied. Open Instagram and paste it into a story or a post.',
+    shareDlgTitle: "🔗 Share this post", shareDlgLead: "🌙 Send this post to someone you want to share it with. Nabu has the link ready for you. ✨", shareLinkLabel: "Post link", shareCopyLink: "Copy link", shareOpen: "Open post", shareToLabel: "Or send it straight to", shareCopyTip: "Copy link", shareCopiedBang: "Copied! ✨",
     loveTellTitle: 'Tell people', loveTellHint: 'Press anywhere below \u2014 the words and the link are written for you.',
     loveShareOf: {
       tied: (n, d) => n + ' and I tied the red thread on Nabu Tarot. Today is day ' + d + ' \uD83E\uDDE7',
@@ -4799,7 +4833,7 @@ const STR = {
     saleBanner: (off, what) => off + ' off ' + what, saleSee: 'Ansehen',
     adminShort: 'Admin-Konto', unlockCodeLabel: 'Gib den Code ein, den Nabu dir geschickt hat', unlockReadings: 'Die Preise für eine Legung ansehen',
     luckFree: 'Du hast alle 3 Tage eine kostenlose Runde.', luckLeft: 'Deine kostenlose Runde ist noch offen.', luckSpent: (d) => 'You have had your free turn. The next one opens on ' + d + '.', luckOpen: 'Du hast unbegrenzt viele Runden.', luckOffer: 'Nabu Plus öffnet die Münze und den Nachrichtenbaum ein Jahr lang ohne Grenze, samt allen Designs dazu. Den Preis findest du auf der Preisseite.', luckGet: 'Schreib Nabu für einen Code', luckCodePh: 'NABU-B-…',
-    treeTitle: 'Den Nachrichtenbaum schütteln', treeSub: 'eine Botschaft vom Universum', treePets: 'Deine Begleiter unter dem Baum zeigen', treePetsHint: 'Schalt es aus, und der Baum steht für sich allein. Gilt nur für dein Konto.',
+    treeTitle: 'Den Nachrichtenbaum schütteln', treeSub: 'eine Botschaft vom Universum', treePets: 'Deine Begleiter unter dem Baum zeigen', treePetsHint: 'Schalte das aus, wenn du nur den Baum sehen möchtest. Diese Einstellung gilt nur für dein Konto.',
     treeIntro: 'Stell dich vor den Baum, halt im Sinn, was dich beschäftigt, und schüttel ihn sanft. Der Baum lässt eine Botschaft für dich fallen.', treeShake: 'Den Baum schütteln', treeAgain: 'Noch einmal schütteln', treeFor: 'Eine Botschaft für dich', coinTitle: 'Eine Münze werfen', coinSub: 'für eine Ja-oder-Nein-Frage', coinIntro: 'Wenn eine Frage nur ein Ja oder ein Nein braucht, halt sie klar im Sinn und wirf die Münze.', coinQ: 'Deine Frage', coinQPh: 'Zum Beispiel: Soll ich zuerst schreiben?', coinFlip: 'Die Münze werfen', coinAgain: 'Nochmal werfen', coinYes: 'JA', coinNo: 'NEIN', coinNote: 'Die Münze gibt dir eine von zwei Antworten. Wichtig ist, wie du dich in dem Moment fühlst, in dem du sie siehst: Wenn dich das Ergebnis enttäuscht, weißt du schon, was du willst.',
     actNew: 'Neue Aktivität', actType: 'Art', actTypes: { pile: 'Stapel wählen', poll: 'Umfrage', wish: 'Wunsch' }, actResultsDate: 'Datum der Auflösung', actIntroLabel: 'Einleitung (die Leiste über dem Feld: fett, kursiv, Markierung, Bilder, Video, Emoji)', actPilesHint: 'Zwei bis fünf Stapel. Du kannst auch mit leeren Beschriftungen veröffentlichen; komm Tage später wieder, trag die Botschaften ein und schalt "Beantwortet" ein.', actPileN: (n) => 'Pile ' + n, actPileLabel: 'Kurze Beschriftung (freiwillig), z. B. Links · Mitte · Rechts', actPileMsg: 'Botschaft für diesen Stapel (kann später ergänzt werden)', actPileMsgEn: 'Englische Botschaft (freiwillig)', actPileAdd: 'Einen Stapel hinzufügen', actPileDel: 'Einen Stapel entfernen', actResultsOn: 'Beantwortet: Die Stapel dürfen umgedreht werden', actOptions: 'Antworten, eine pro Zeile', actCloseOn: 'Die Umfrage schließen', actExisting: 'Veröffentlichte Aktivitäten', actNeedPiles: 'Füll mindestens einen Stapel aus.', actNeedOptions: 'Es braucht mindestens zwei Antworten.',
     diarySave: 'Die heutige Seite speichern', diaryUnsaved: 'Nicht gespeichert', diarySavedToast: 'In deinem Tagebuch gespeichert \uD83D\uDCD4',
@@ -4897,6 +4931,7 @@ const STR = {
     alertDiaryOff: (n) => '\uD83D\uDCD5 Diary sharing has stopped',
     alertDiaryOffBody: 'Dein Tagebuch liegt wieder nur auf diesem Gerät.',
     shareCopy: 'Kopieren', shareMore: 'Mehr', shareIgCopied: 'Kopiert. Öffne Instagram und füg es in eine Story oder einen Beitrag ein.',
+    shareDlgTitle: "🔗 Beitrag teilen", shareDlgLead: "🌙 Schick diesen Beitrag jemandem, mit dem du ihn teilen möchtest. Nabu hat den Link schon für dich bereit. ✨", shareLinkLabel: "Link zum Beitrag", shareCopyLink: "Link kopieren", shareOpen: "Beitrag öffnen", shareToLabel: "Oder direkt senden an", shareCopyTip: "Link kopieren", shareCopiedBang: "Kopiert! ✨",
     loveTellTitle: 'Erzähl es weiter', loveTellHint: 'Tipp unten irgendwo an \u2014 der Text und der Link sind schon fertig.',
     loveShareOf: {
       tied: (n, d) => n + ' and I tied the red thread on Nabu Tarot. Today is day ' + d + ' \uD83E\uDDE7',
@@ -14291,15 +14326,15 @@ const SHARE_TO = [
 /* The row itself. `more` only appears where the phone actually has a share
    sheet, because a button that does nothing on a desktop is worse than no
    button. */
-function shareRowHTML(id) {
-  const S = T();
+function shareRowHTML(id, skip) {
+  const S = T(), hide = skip || [];
   const one = (t) => {
     const label = t.id === 'copy' ? S.shareCopy : t.name;
     return '<button type="button" class="shbtn" data-share="' + esc(t.id) + '" title="' + esc(label) + '" aria-label="' + esc(label) + '">'
       + SHARE_ART[t.id] + '<span>' + esc(label) + '</span></button>';
   };
   return '<div class="sharerow" id="' + esc(id || 'sharerow') + '">'
-    + SHARE_TO.map(one).join('')
+    + SHARE_TO.filter((t) => hide.indexOf(t.id) < 0).map(one).join('')
     + (navigator.share ? one({ id: 'more', name: S.shareMore }) : '')
     + '</div>';
 }
@@ -14323,6 +14358,86 @@ function bindShareRow(root, get) {
     }
     window.open(t.url(text, url), '_blank', 'noopener,noreferrer');
   }));
+}
+
+/* ============================ the share sheet ============================
+
+   A post's Share button used to go straight to the phone's share sheet, or
+   copy on a desk with nothing to show for it but a toast. This is the panel in
+   between: the post's link in a box with a copy mark on its end that turns
+   into a tick, a Copy link button and an Open button under it, and the row of
+   places above. Same sheet the companion's shelf uses, so it rises from the
+   bottom on a phone and sits in the middle of a desk. */
+
+const SHARE_MARK = {
+  copy: '<svg viewBox="0 0 24 24" class="shmk shmk-copy" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">'
+    + '<rect x="9" y="9" width="12" height="12" rx="2.5"/><path d="M5 15H4.5A1.5 1.5 0 0 1 3 13.5v-9A1.5 1.5 0 0 1 4.5 3h9A1.5 1.5 0 0 1 15 4.5V5"/></svg>',
+  check: '<svg viewBox="0 0 24 24" class="shmk shmk-check" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>',
+  link: '<svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">'
+    + '<path d="M10 13a5 5 0 0 0 7.5.5l3-3a5 5 0 0 0-7-7l-1.7 1.7"/><path d="M14 11a5 5 0 0 0-7.5-.5l-3 3a5 5 0 0 0 7 7l1.7-1.7"/></svg>',
+  open: '<svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">'
+    + '<path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><path d="M15 3h6v6"/><path d="M10 14 21 3"/></svg>'
+};
+
+function closeShareSheet() {
+  const el = $('#sharesheet'); if (!el) return;
+  const back = el._back; el.remove();
+  document.removeEventListener('keydown', el._esc);
+  window.removeEventListener('hashchange', el._go);
+  if (back && back.focus && document.contains(back)) back.focus();
+}
+
+/* `what` is { title, text, url }: the title sits under the lead so the sheet
+   says which post it is; text and url go to the row of places; url alone is
+   what the box holds and the copy buttons copy. */
+function openShareSheet(what) {
+  closeShareSheet();
+  const S = T(), w = what || {}, url = w.url || appURL(), back = document.activeElement;
+  const el = document.createElement('div');
+  el.className = 'sheet shdlg'; el.id = 'sharesheet';
+  el.innerHTML = '<div class="sh-back" data-close-share="1"></div>'
+    + '<div class="sh-body" role="dialog" aria-modal="true" aria-labelledby="shdlg-h">'
+    + '<div class="sh-grip"></div>'
+    + '<button type="button" class="shx" data-close-share="1" aria-label="' + esc(S.sheetClose) + '" title="' + esc(S.sheetClose) + '">×</button>'
+    + '<h3 class="shdlg-h" id="shdlg-h">' + esc(S.shareDlgTitle) + '</h3>'
+    + '<p class="shdlg-lead">' + esc(S.shareDlgLead) + '</p>'
+    + (w.title ? '<p class="shdlg-what">' + esc(w.title) + '</p>' : '')
+    + '<label class="sr" for="shlink">' + esc(S.shareLinkLabel) + '</label>'
+    + '<div class="shlinkwrap">'
+    + '<input class="shlink" id="shlink" type="text" readonly value="' + esc(url) + '">'
+    + '<button type="button" class="shcopyic" data-share-copyic="1" data-tip="' + esc(S.shareCopyTip) + '" aria-label="' + esc(S.shareCopyTip) + '">' + SHARE_MARK.copy + SHARE_MARK.check + '</button>'
+    + '</div>'
+    + '<div class="shdlg-btns">'
+    + '<button type="button" class="btn primary" data-share-copylink="1">' + SHARE_MARK.link + '<span>' + esc(S.shareCopyLink) + '</span></button>'
+    + '<a class="btn" href="' + esc(url) + '" target="_blank" rel="noopener">' + SHARE_MARK.open + '<span>' + esc(S.shareOpen) + '</span></a>'
+    + '</div>'
+    + '<div class="eyebrow shdlg-to">' + esc(S.shareToLabel) + '</div>'
+    + shareRowHTML('shdlgrow', ['copy'])
+    + '</div>';
+  document.body.appendChild(el);
+  el._back = back;
+  el._esc = (e) => { if (e.key === 'Escape') closeShareSheet(); };
+  el._go = () => closeShareSheet();
+  document.addEventListener('keydown', el._esc);
+  window.addEventListener('hashchange', el._go);
+  $$('[data-close-share]', el).forEach((b) => b.addEventListener('click', closeShareSheet));
+
+  /* The mark on the box turns into a tick for a moment, the way a copy button
+     should, and the tooltip says so; the big button says it in the toast. */
+  const ic = $('[data-share-copyic]', el);
+  let tick = null;
+  const copied = () => {
+    ic.classList.add('done'); ic.setAttribute('data-tip', S.shareCopiedBang); ic.setAttribute('aria-label', S.shareCopiedBang); ic.disabled = true;
+    clearTimeout(tick);
+    tick = setTimeout(() => { ic.classList.remove('done'); ic.setAttribute('data-tip', S.shareCopyTip); ic.setAttribute('aria-label', S.shareCopyTip); ic.disabled = false; }, 1500);
+  };
+  const copyLink = async () => { await copyText(url); copied(); toast(S.shareCopiedBang); };
+  ic.addEventListener('click', copyLink);
+  $('[data-share-copylink]', el).addEventListener('click', copyLink);
+  $('#shlink', el).addEventListener('focus', function () { this.select(); });
+  bindShareRow(el, () => ({ text: w.text || w.title || '', url: url }));
+  const first = $('[data-share-copylink]', el); if (first) first.focus();
+  return el;
 }
 
 /* ============================ Nabu AI ============================
@@ -14900,7 +15015,7 @@ function bindPost(root) {
   }));
   $$('[data-share]', root).forEach((b) => b.addEventListener('click', () => {
     const art = b.closest('article'), p = allPosts().filter((x) => x.id === art.getAttribute('data-id'))[0];
-    if (p) shareOrCopy(L(p.title) + '\n' + plainText(L(p.body)), p.link || (appURL() + '#/post/' + p.id));
+    if (p) openShareSheet({ title: L(p.title), text: L(p.title) + '\n' + plainText(L(p.body)), url: p.link || (appURL() + '#/post/' + p.id) });
   }));
   bindCardLinks(root); hydrateImages(root);
 }
@@ -14938,7 +15053,7 @@ function quickLinksHTML() {
     ['#/news', '✨', S.newsTitle, lang === 'vi' ? 'bài mới của Nabu' : 'new posts from Nabu'],
     ['#/learn/astro', '🔮', S.cats.astro, lang === 'vi' ? '12 cung, hành tinh, nhà' : '12 signs, planets, houses'],
     ['#/learn/tarot', PICK_ICON, S.cats.tarot, lang === 'vi' ? '78 lá, ý nghĩa' : '78 cards, meanings'],
-    ['#/book', '📅', S.nav.book, lang === 'vi' ? 'chọn giờ với Nabu' : 'pick a time with Nabu'],
+    ['#/book', '📅', S.nav.book, lang === 'vi' ? 'hẹn giờ với Nabu' : 'book a time with Nabu'],
     ['#/prices', '💜', S.priceTitle, lang === 'vi' ? 'các gói xem bài' : 'reading packages']];
   return '<div class="tiles">' + tiles.map((t) => '<a class="tile" href="' + t[0] + '"><div class="ic">' + t[1] + '</div><b>' + esc(t[2]) + '</b><span>' + esc(t[3]) + '</span></a>').join('') + '</div>'
     + (isStandalone() || isTWA() ? '' : '<a class="upnext" href="#/install" style="margin-top:-8px"><span class="ic">📲</span><span><b>' + esc(S.installTitle) + '</b><br>' + esc(S.instAndroidIntro) + '</span></a>');

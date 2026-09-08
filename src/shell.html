@@ -2327,7 +2327,10 @@ body[data-route="hello"] #main{width:100%}
 .shdlg-to{margin:16px 0 2px}
 .shdlg .sharerow{margin-top:8px}
 @media (min-width:900px){
-  .shdlg .sh-body{border-radius:20px;padding-bottom:18px;box-shadow:0 18px 50px rgba(40,25,70,.3)}
+  /* Beside the rail the content column is centred on what is left of the
+     window, so the sheet is centred there too: the margin box is what flex
+     centres, so a left margin the width of the rail shifts it by half. */
+  .shdlg .sh-body{border-radius:20px;padding-bottom:18px;box-shadow:0 18px 50px rgba(40,25,70,.3);margin-left:var(--rail-w)}
 }
 </style>
 </head>

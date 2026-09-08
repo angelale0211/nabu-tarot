@@ -270,3 +270,38 @@ Checked from outside at 16:20 on 2026-09-08:
   rule: the codes book is Nabu's and the worker's only.
 
 `HANDOVER.md` §8 items 1 and 1b are therefore done and can be struck.
+
+
+## 11. The share sheet under a post (owner's ask at ~16:30)
+
+The owner wanted the Share button under a post to open a dialog like a
+shadcn "Share & Collaborate" panel: the link in a box with a copy mark on its
+end that turns into a tick, a Copy link button, an Open button, and a lead
+line. Built in the app's own idiom (no React, no Tailwind):
+
+- `src/share.js`: `openShareSheet({ title, text, url })` / `closeShareSheet()`.
+  Rides on the existing `.sheet` (rises on a phone, centred on a desk).
+  Escape, the backdrop, the × and any hash change shut it; focus returns to
+  the button that opened it. `shareRowHTML(id, skip)` grew a second argument
+  so the sheet can drop the row's own Copy button.
+- `src/home.js` `bindPost`: the post's `[data-share]` opens the sheet instead
+  of `shareOrCopy`. Same URL as before: `p.link` or `#/post/<id>`.
+- `src/strings.js`: `shareDlgTitle, shareDlgLead, shareLinkLabel,
+  shareCopyLink, shareOpen, shareToLabel, shareCopyTip, shareCopiedBang` in
+  vi/en/de, after the `shareCopy` line of each block. Lead in the owner's
+  style: "🌙 Gửi bài này cho người bạn muốn chia sẻ. Nabu đã để sẵn đường dẫn
+  cho bạn. ✨".
+- `src/shell.html`: the `.shdlg*` block just before `</style>`, plus a
+  900px rule giving `.shdlg .sh-body` a `margin-left:var(--rail-w)` so the
+  sheet centres on the content column beside the rail, not on the window.
+- `test/test.html`: six checks after "search filters the posts".
+
+**Release state.** Your v183 commit (`a5269e5`) swept the src of all this in,
+but its `index.html` was built before those edits: the live v183 page has no
+`openShareSheet` at all. The next build carries it. The rail-margin rule is
+the one piece still uncommitted in `src/shell.html`. Whoever builds next ships
+the sheet; grep the built page for `openShareSheet` before calling it done.
+
+Verified in a clean worktree build (probe at 430/1280/2560 wide, vi/en/de):
+the sheet is centred to the pixel, nothing overflows, 8 places in the row,
+the copy mark turns into a tick and the tooltip says "Đã chép! ✨".
