@@ -171,13 +171,33 @@ German are mirrored from it. The lines needed:
 4. One line under the birthday saying what it unlocks.
 5. The button.
 
-Draft Vietnamese, to be corrected rather than accepted:
+**Settled with the owner, 2026-09-08.** Their wording, verbatim — do not
+retranslate or tidy it. English and German mirror it.
 
-1. `Chào bạn!`
-2. `Vài câu hỏi ngắn thôi. Bạn đổi lại lúc nào cũng được.`
-3. `Tên người dùng` — `Bạn bè tìm bạn bằng tên này.`
-4. `Nabu dùng ngày sinh để xem cung và dự đoán cho bạn.`
-5. `Xong`
+| Where | Vietnamese |
+|---|---|
+| Title | `Chào bạn! ✨` |
+| Under the title | `Chỉ vài câu thôi — bạn có thể đổi lại bất cứ lúc nào.` |
+| Display name label | `Tên hiển thị` (the existing `displayName` string) |
+| Username label | `Tên riêng của bạn` (the existing `loveHandle` string) |
+| Under the username | `Bạn bè có thể tìm bạn bằng tên này.` |
+| Under the birthday | `Ngày sinh giúp Nabu xác định cung và chọn dự đoán phù hợp với bạn.` |
+| Button | `Tiếp tục` |
+
+Two decisions worth keeping written down, because both are easy to get wrong
+later:
+
+**The username is not called `Tên hiển thị`.** The owner first proposed it, on
+the good reasoning that "username" sounds like a login credential. But
+`Tên hiển thị` is already the display-name field, in both `displayName` and
+`loveYourName`, so the screen would have carried two fields with one name.
+The owner had already solved this in the love system: the handle is
+`Tên riêng của bạn`, hinted as `Đây là tên để người ấy tìm ra bạn`. That
+wording is reused rather than invented.
+
+**The button is `Tiếp tục`, not `Xong` or `Hoàn tất`.** The tour follows this
+screen, so nothing is finished when it is pressed. If the tour is ever removed
+from this flow, the button becomes `Hoàn tất`.
 
 ## Not in this work
 
