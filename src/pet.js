@@ -108,55 +108,55 @@ const petIsPro = (kind) => !!PET_PRO[kind];
 const petLine = (kind) => PET_LINES[kind] || petLuck(kind).line;
 
 /* ---- what they say when you make a wish over them ----
-   Six lines each, so the answer feels like it belongs to that companion. */
+   Six lines each, in Vietnamese, English and German, so the answer feels like it belongs to that companion. */
 const PET_BLESS = {
   love: [
-    { vi: 'Hôm nay có một người nhớ đến bạn nhiều hơn bạn nghĩ đó. ♡', en: 'Someone is thinking of you more than you would guess today.' },
-    { vi: 'Bạn không cần cố chứng minh mình đáng được yêu. Người thật lòng sẽ tự chọn ở lại.', en: 'You do not need to prove anything. The right person stays.' },
-    { vi: 'Cứ giữ trái tim mềm mại nhé, nhưng đừng quên giữ ranh giới cho riêng mình.', en: 'Keep your heart soft and your limits clear.' },
-    { vi: 'Một cuộc gặp tưởng rất bình thường trong tuần này có thể khiến lòng bạn ấm lên đấy.', en: 'An ordinary meeting this week may turn out warmer than you expect.' },
-    { vi: 'Điều bạn đang chờ chưa biến mất đâu. Có lẽ nó chỉ đang vòng một con đường xa hơn để đến với bạn.', en: 'What you are waiting for is not lost. It is taking the long way.' },
-    { vi: 'Có điều muốn nói thì cứ nói thật lòng nhé. Giữ mãi trong tim đôi khi còn nặng hơn nhiều.', en: 'One honest sentence today weighs less than another week of silence.' }
+    { vi: 'Hôm nay có một người nhớ đến bạn nhiều hơn bạn nghĩ đó. ♡', en: 'Someone is thinking about you more than you realize today. ♡', de: 'Heute denkt jemand öfter an dich, als du vielleicht glaubst. ♡' },
+    { vi: 'Bạn không cần cố chứng minh mình đáng được yêu. Người thật lòng sẽ tự chọn ở lại.', en: 'You don’t have to prove that you’re worthy of love. The right person will choose to stay.', de: 'Du musst niemandem beweisen, dass du Liebe verdienst. Der richtige Mensch wird sich entscheiden zu bleiben.' },
+    { vi: 'Cứ giữ trái tim mềm mại nhé, nhưng đừng quên giữ ranh giới cho riêng mình.', en: 'Keep your heart soft, but don’t forget to protect your boundaries too.', de: 'Bewahre dir dein weiches Herz, aber vergiss deine Grenzen nicht.' },
+    { vi: 'Một cuộc gặp tưởng rất bình thường trong tuần này có thể khiến lòng bạn ấm lên đấy.', en: 'An ordinary little encounter this week may warm your heart more than you expect.', de: 'Eine ganz gewöhnliche Begegnung könnte dein Herz diese Woche mehr erwärmen, als du erwartest.' },
+    { vi: 'Điều bạn đang chờ chưa biến mất đâu. Có lẽ nó chỉ đang vòng một con đường xa hơn để đến với bạn.', en: 'What you’re waiting for hasn’t disappeared. Maybe it’s simply taking the long way to reach you.', de: 'Das, worauf du wartest, ist nicht verschwunden. Vielleicht nimmt es nur einen kleinen Umweg zu dir.' },
+    { vi: 'Có điều muốn nói thì cứ nói thật lòng nhé. Giữ mãi trong tim đôi khi còn nặng hơn nhiều.', en: 'If there’s something in your heart, say it honestly. Keeping it inside may feel heavier than you think.', de: 'Wenn dir etwas auf dem Herzen liegt, sag es ehrlich. Es festzuhalten kann schwerer sein, als du denkst.' }
   ],
   career: [
-    { vi: 'Điều bạn âm thầm cố gắng hôm nay rồi sẽ có người nhìn thấy.', en: 'The work you do quietly today is seen by someone.' },
-    { vi: 'Đừng ôm cả phần việc vốn không thuộc về mình nhé. Bạn cũng cần giữ sức cho mình mà.', en: 'Do not take on work that was never yours.' },
-    { vi: 'Có một cơ hội nhỏ đang hé cửa. Nếu thấy hợp, đừng để nó đợi bạn quá lâu.', en: 'A small opening is there. Answer it early.' },
-    { vi: 'Bạn đang làm tốt hơn chính mình của một năm trước rất nhiều rồi đó.', en: 'You are doing better than you were a year ago.' },
-    { vi: 'Hôm nay hợp để hỏi cho thật rõ, còn lời hứa thì cứ từ từ nhé.', en: 'A good day to ask. Not yet a day to promise.' },
-    { vi: 'Ở một nơi bạn không có mặt, có người vừa nhắc đến bạn bằng những lời rất đẹp.', en: 'Somewhere you are not, your name is being spoken kindly.' }
+    { vi: 'Điều bạn âm thầm cố gắng hôm nay rồi sẽ có người nhìn thấy.', en: 'The effort you quietly put in today will eventually be noticed.', de: 'Was du heute still und fleißig tust, wird irgendwann jemand bemerken.' },
+    { vi: 'Đừng ôm cả phần việc vốn không thuộc về mình nhé. Bạn cũng cần giữ sức cho mình mà.', en: 'Don’t carry work that was never yours to begin with. Save some energy for yourself too.', de: 'Trag nicht auch noch die Arbeit, die gar nicht zu dir gehört. Heb ein bisschen Kraft für dich selbst auf.' },
+    { vi: 'Có một cơ hội nhỏ đang hé cửa. Nếu thấy hợp, đừng để nó đợi bạn quá lâu.', en: 'A small opportunity is opening its door. If it feels right, don’t keep it waiting too long.', de: 'Eine kleine Chance öffnet gerade ihre Tür. Wenn sie sich richtig anfühlt, lass sie nicht zu lange warten.' },
+    { vi: 'Bạn đang làm tốt hơn chính mình của một năm trước rất nhiều rồi đó.', en: 'You’re doing much better than the version of you from a year ago.', de: 'Du machst vieles besser als dein Ich von vor einem Jahr.' },
+    { vi: 'Hôm nay hợp để hỏi cho thật rõ, còn lời hứa thì cứ từ từ nhé.', en: 'Today is a good day to ask questions and get clarity. Promises can wait a little longer.', de: 'Heute ist ein guter Tag, um nachzufragen und Klarheit zu schaffen. Mit Versprechen darfst du dir noch etwas Zeit lassen.' },
+    { vi: 'Ở một nơi bạn không có mặt, có người vừa nhắc đến bạn bằng những lời rất đẹp.', en: 'Somewhere you aren’t present, someone has just spoken kindly about you.', de: 'An einem Ort, an dem du gerade nicht bist, hat jemand freundlich über dich gesprochen.' }
   ],
   study: [
-    { vi: 'Mỗi ngày học một chút cũng được. Đi đều còn quan trọng hơn chạy thật nhanh.', en: 'A little every day beats everything at once.' },
-    { vi: 'Phần làm bạn đau đầu nhất có khi lại chính là phần sắp “à, ra là vậy!” rồi đó.', en: 'The part that feels hardest is the part about to open.' },
-    { vi: 'Thử ghi lại ba điều bạn vừa hiểu nhé. Não bạn sẽ giữ chúng lâu hơn một chút.', en: 'Write down three things you just understood. They will stay longer.' },
-    { vi: 'Đừng nhìn tốc độ của người khác. Bạn vẫn đang đi rất đúng trên con đường của mình.', en: 'Do not measure your speed against anyone. You are on your own road.' },
-    { vi: 'Câu hỏi bạn đang ngại hỏi có thể mở ra cả một điều rất hay đấy.', en: 'The question you are shy to ask opens more than you think.' },
-    { vi: 'Nghỉ đúng lúc không phải bỏ cuộc đâu. Não cũng cần được thở một chút mà.', en: 'Resting at the right moment is part of studying.' }
+    { vi: 'Mỗi ngày học một chút cũng được. Đi đều còn quan trọng hơn chạy thật nhanh.', en: 'A little every day is enough. Moving steadily matters more than rushing ahead.', de: 'Jeden Tag ein bisschen reicht völlig. Beständig weiterzugehen ist wichtiger, als schnell zu sein.' },
+    { vi: 'Phần làm bạn đau đầu nhất có khi lại chính là phần sắp “à, ra là vậy!” rồi đó.', en: 'The part that’s giving you the biggest headache may be the part that’s just about to click.', de: 'Gerade der Teil, der dir am meisten Kopfzerbrechen macht, könnte gleich endlich Sinn ergeben.' },
+    { vi: 'Thử ghi lại ba điều bạn vừa hiểu nhé. Não bạn sẽ giữ chúng lâu hơn một chút.', en: 'Write down three things you just learned. Your mind will hold on to them a little longer.', de: 'Schreib drei Dinge auf, die du gerade verstanden hast. So bleiben sie ein bisschen länger bei dir.' },
+    { vi: 'Đừng nhìn tốc độ của người khác. Bạn vẫn đang đi rất đúng trên con đường của mình.', en: 'Don’t measure your pace against someone else’s. You’re still on the right path for you.', de: 'Vergleiche dein Tempo nicht mit dem anderer. Du bist auf deinem eigenen Weg genau richtig.' },
+    { vi: 'Câu hỏi bạn đang ngại hỏi có thể mở ra cả một điều rất hay đấy.', en: 'The question you’re afraid to ask may open up more than you expect.', de: 'Die Frage, die du dich nicht zu stellen traust, könnte dir mehr eröffnen, als du erwartest.' },
+    { vi: 'Nghỉ đúng lúc không phải bỏ cuộc đâu. Não cũng cần được thở một chút mà.', en: 'Taking a break at the right time isn’t giving up. Your mind needs room to breathe too.', de: 'Zur richtigen Zeit eine Pause zu machen bedeutet nicht aufzugeben. Auch dein Kopf braucht etwas Luft.' }
   ],
   money: [
-    { vi: 'Có một khoản nhỏ có thể tìm đường quay về đúng lúc bạn đang cần. 🍀', en: 'A small amount comes back just when you need it.' },
-    { vi: 'Hôm nay chiếc ví muốn được nghỉ ngơi một chút. Giữ tiền sẽ hợp hơn tiêu tiền đó.', en: 'Today suits keeping money more than spending it.' },
-    { vi: 'Trước khi tìm thêm, thử nhìn lại những gì bạn đang có nhé. Có khi bạn giàu hơn mình tưởng.', en: 'Count what you already have before looking for more.' },
-    { vi: 'Một cơ hội kiếm thêm có thể đến qua một người quen cũ. Nhớ để ý nhé.', en: 'A chance to earn more comes through someone you already know.' },
-    { vi: 'Chuyện lớn cứ để lúc đầu óc tỉnh táo rồi quyết. Khi mệt, mình dễ chọn vội lắm.', en: 'Do not make a large decision while you are tired.' },
-    { vi: 'Tiền có thể đến hơi chậm, nhưng miễn là vẫn đều và chắc. Cứ giữ nhịp của bạn nhé.', en: 'Money comes in slowly and steadily. Keep your rhythm.' }
+    { vi: 'Có một khoản nhỏ có thể tìm đường quay về đúng lúc bạn đang cần. 🍀', en: 'A small amount of money may find its way back to you just when you need it. 🍀', de: 'Ein kleiner Geldbetrag könnte genau dann zu dir zurückfinden, wenn du ihn brauchst. 🍀' },
+    { vi: 'Hôm nay chiếc ví muốn được nghỉ ngơi một chút. Giữ tiền sẽ hợp hơn tiêu tiền đó.', en: 'Your wallet would like a little rest today. Saving may suit you better than spending.', de: 'Dein Geldbeutel hätte heute gern ein bisschen Ruhe. Sparen passt besser als Ausgeben.' },
+    { vi: 'Trước khi tìm thêm, thử nhìn lại những gì bạn đang có nhé. Có khi bạn giàu hơn mình tưởng.', en: 'Before looking for more, take another look at what you already have. You may have more than you think.', de: 'Bevor du nach mehr suchst, schau noch einmal auf das, was du schon hast. Vielleicht ist es mehr, als du denkst.' },
+    { vi: 'Một cơ hội kiếm thêm có thể đến qua một người quen cũ. Nhớ để ý nhé.', en: 'An extra earning opportunity may come through someone from your past. Keep an eye out.', de: 'Eine Möglichkeit, etwas dazuzuverdienen, könnte durch jemanden von früher auftauchen. Halt die Augen offen.' },
+    { vi: 'Chuyện lớn cứ để lúc đầu óc tỉnh táo rồi quyết. Khi mệt, mình dễ chọn vội lắm.', en: 'Leave big decisions for when your mind is clear. Tired minds tend to choose too quickly.', de: 'Große Entscheidungen dürfen warten, bis dein Kopf wieder klar ist. Wenn wir müde sind, entscheiden wir oft zu schnell.' },
+    { vi: 'Tiền có thể đến hơi chậm, nhưng miễn là vẫn đều và chắc. Cứ giữ nhịp của bạn nhé.', en: 'Money may come a little slowly, but steady is still good. Keep moving at your own pace.', de: 'Das Geld kommt vielleicht langsam, aber dafür stetig. Bleib einfach in deinem eigenen Rhythmus.' }
   ],
   health: [
-    { vi: 'Hôm nay uống thêm một cốc nước nhé, rồi tối cho mình đi ngủ sớm hơn một chút. 🌿', en: 'Drink one more glass of water today and go to bed a little earlier.' },
-    { vi: 'Cơ thể đang nhắn bạn một lời nhỏ đó. Nghe nó từ sớm thì nó không cần phải nhắc to hơn.', en: 'Your body is mentioning something quietly. Listen before it has to raise its voice.' },
-    { vi: 'Đi bộ một vòng ngắn hôm nay còn quý hơn một lời hứa tập luyện thật lớn để ngày mai.', en: 'A short walk today is worth more than a month of promises to start.' },
-    { vi: 'Bạn không lười đâu. Có những ngày cơ thể chỉ đang mệt và cần được nghỉ thôi.', en: 'You are not lazy. You are tired, and tired needs rest rather than blame.' },
-    { vi: 'Ăn một bữa tử tế cho chính mình cũng là một cách dịu dàng chăm sóc cơ thể.', en: 'Feeding yourself properly is its own kind of healing.' },
-    { vi: 'Nếu có điều về sức khỏe khiến bạn lo, hãy hỏi bác sĩ nhé. Có những chuyện không nên tự đoán một mình.', en: 'The worry you are carrying belongs to a doctor, not only to you.' }
+    { vi: 'Hôm nay uống thêm một cốc nước nhé, rồi tối cho mình đi ngủ sớm hơn một chút. 🌿', en: 'Have one more glass of water today, and let yourself go to bed a little earlier tonight. 🌿', de: 'Trink heute noch ein Glas Wasser und gönn dir heute Abend ein bisschen früher Ruhe. 🌿' },
+    { vi: 'Cơ thể đang nhắn bạn một lời nhỏ đó. Nghe nó từ sớm thì nó không cần phải nhắc to hơn.', en: 'Your body is sending you a little message. Listen now, so it doesn’t have to speak louder later.', de: 'Dein Körper schickt dir gerade eine kleine Nachricht. Hör jetzt hin, damit er später nicht lauter werden muss.' },
+    { vi: 'Đi bộ một vòng ngắn hôm nay còn quý hơn một lời hứa tập luyện thật lớn để ngày mai.', en: 'A short walk today is worth more than a big promise to exercise tomorrow.', de: 'Ein kurzer Spaziergang heute ist mehr wert als ein großes Sportversprechen für morgen.' },
+    { vi: 'Bạn không lười đâu. Có những ngày cơ thể chỉ đang mệt và cần được nghỉ thôi.', en: 'You’re not lazy. Some days, your body is simply tired and needs rest, not criticism.', de: 'Du bist nicht faul. An manchen Tagen ist dein Körper einfach müde und braucht Ruhe statt Vorwürfe.' },
+    { vi: 'Ăn một bữa tử tế cho chính mình cũng là một cách dịu dàng chăm sóc cơ thể.', en: 'Giving yourself a proper meal is also a gentle way of caring for your body.', de: 'Dir selbst eine gute Mahlzeit zu gönnen, ist auch eine liebevolle Art, für deinen Körper zu sorgen.' },
+    { vi: 'Nếu có điều về sức khỏe khiến bạn lo, hãy hỏi bác sĩ nhé. Có những chuyện không nên tự đoán một mình.', en: 'If something about your health worries you, ask a doctor. Some things shouldn’t be guessed at alone.', de: 'Wenn dir etwas an deiner Gesundheit Sorgen macht, frag bitte einen Arzt. Manche Dinge sollte man nicht allein erraten.' }
   ],
   travel: [
-    { vi: 'Chuyến đi sắp tới có vẻ khá thuận lợi đó. Cứ chuẩn bị thật tốt rồi yên tâm lên đường nhé. ✈️', en: 'The journey ahead of you runs smooth. Set out with an easy mind.' },
-    { vi: 'Kiểm tra lại giấy tờ và giờ khởi hành thêm một lần thôi, rồi cứ nhẹ lòng mà đi.', en: 'Check your papers and your departure time once more, then travel light in your mind.' },
-    { vi: 'Đi xa nhớ giữ sức nhé. Đến nơi bình an quan trọng hơn đến nơi thật sớm.', en: 'Look after yourself out there. Arriving safe matters more than arriving early.' },
-    { vi: 'Dù chuyến này là công việc hay rong chơi, vẫn có một người âm thầm mong bạn đi đến nơi về đến chốn.', en: 'Whether this trip is for work or for pleasure, someone is watching over you from home.' },
-    { vi: 'Con đường có thể đổi đôi chút, nhưng bạn vẫn sẽ tìm được đường đến nơi. Đừng lo quá nhé.', en: 'The road may change, and you will still arrive. Do not worry so much.' },
-    { vi: 'Thượng lộ bình an. Đến nơi rồi nhớ báo một tiếng cho người đang chờ bạn nhé. ♡', en: 'Safe travels. Send word to whoever is waiting once you are there.' }
+    { vi: 'Chuyến đi sắp tới có vẻ khá thuận lợi đó. Cứ chuẩn bị thật tốt rồi yên tâm lên đường nhé. ✈️', en: 'Your upcoming journey looks promising. Prepare well, then set off with an easy heart. ✈️', de: 'Deine nächste Reise sieht gut aus. Bereite alles in Ruhe vor und mach dich dann mit leichtem Herzen auf den Weg. ✈️' },
+    { vi: 'Kiểm tra lại giấy tờ và giờ khởi hành thêm một lần thôi, rồi cứ nhẹ lòng mà đi.', en: 'Check your documents and departure time one more time, then let yourself relax and go.', de: 'Prüf deine Unterlagen und die Abfahrtszeit noch einmal, dann kannst du ganz beruhigt los.' },
+    { vi: 'Đi xa nhớ giữ sức nhé. Đến nơi bình an quan trọng hơn đến nơi thật sớm.', en: 'Take care of yourself while travelling. Arriving safely matters more than arriving early.', de: 'Pass unterwegs gut auf dich auf. Sicher anzukommen ist wichtiger, als besonders früh da zu sein.' },
+    { vi: 'Dù chuyến này là công việc hay rong chơi, vẫn có một người âm thầm mong bạn đi đến nơi về đến chốn.', en: 'Whether this trip is for work or for fun, someone is quietly hoping you arrive safely and come home well.', de: 'Ob du beruflich oder zum Vergnügen unterwegs bist – jemand hofft still, dass du sicher ankommst und gut zurückkehrst.' },
+    { vi: 'Con đường có thể đổi đôi chút, nhưng bạn vẫn sẽ tìm được đường đến nơi. Đừng lo quá nhé.', en: 'The route may change a little, but you’ll still find your way there. Don’t worry too much.', de: 'Der Weg kann sich ein wenig ändern, aber du wirst trotzdem ans Ziel kommen. Mach dir nicht zu viele Sorgen.' },
+    { vi: 'Thượng lộ bình an. Đến nơi rồi nhớ báo một tiếng cho người đang chờ bạn nhé. ♡', en: 'Safe travels. And when you arrive, remember to send a little message to the person waiting for you. ♡', de: 'Gute Reise. Und wenn du angekommen bist, schick der Person, die auf dich wartet, eine kleine Nachricht. ♡' }
   ]
 };
 
