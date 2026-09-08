@@ -4,19 +4,39 @@
 let meUnsubs = [];
 function meCleanup() { meUnsubs.forEach((u) => { try { u(); } catch (e) { /* already gone */ } }); meUnsubs = []; }
 
+/* Two shapes, because two different people are looking.
+
+   Signed in, everything here was answered on the welcome screen, so this is a
+   summary and a way back to it - asking again is what made this tab confusing.
+
+   Signed out, the app still greets people by name and reads their sign, so
+   the two answers that do that are still offered. They are carried into the
+   welcome screen when the person registers, so nothing is asked twice. */
 function profileFormHTML() {
-  const S = T();
+  const S = T(), p = PROFILE || {};
+  if (BE.user) {
+    const line = (k, v) => '<p class="hint" style="margin:0 0 4px"><b>' + esc(k) + '</b> · ' + esc(v) + '</p>';
+    return '<div class="card"><h3 style="margin-bottom:8px">' + esc(S.meTitle) + '</h3>'
+      + line(S.displayName, p.name || '—')
+      + line(S.welHandle, p.handle ? '@' + p.handle : '—')
+      + line(S.birthday, p.birthday || '—')
+      + '<a class="btn block" href="#/welcome" style="margin-top:12px">' + esc(S.editProfile) + '</a></div>';
+  }
   return '<div class="card"><h3 style="margin-bottom:4px">' + esc(S.meTitle) + '</h3><p class="hint" style="margin-bottom:6px">' + esc(S.meIntro) + '</p>'
-    + '<label class="f" for="pname">' + esc(S.displayName) + '</label><input id="pname" value="' + esc(PROFILE.name || '') + '" autocomplete="nickname">'
-    + '<label class="f" for="pbday">' + esc(S.birthday) + '</label><input id="pbday" type="date" value="' + esc(PROFILE.birthday || '') + '" max="' + isoDate(new Date()) + '">'
-    + '<label class="f">' + esc(S.interests) + '</label><div class="chips">' + INTERESTS.map((i) => '<button class="chip' + ((PROFILE.interests || []).indexOf(i.id) > -1 ? ' on' : '') + '" data-int="' + i.id + '">' + esc(i[lang]) + '</button>').join('') + '</div>'
+    + '<label class="f" for="pname">' + esc(S.displayName) + '</label><input id="pname" value="' + esc(p.name || '') + '" autocomplete="nickname">'
+    + '<label class="f" for="pbday">' + esc(S.birthday) + '</label><input id="pbday" type="date" value="' + esc(p.birthday || '') + '" max="' + isoDate(new Date()) + '">'
     + '<button class="btn primary block" id="psave" style="margin-top:16px">' + esc(S.saveProfile) + '</button>'
-    + '<p class="hint" id="pstatus">' + esc(BE.user ? '' : S.localOnly) + '</p></div>';
+    + '<p class="hint" id="pstatus">' + esc(S.localOnly) + '</p></div>';
 }
 function bindProfileForm(root, after) {
+  const save = $('#psave', root);
+  if (!save) return;                 // signed in: a summary, nothing to bind
   $$('[data-int]', root).forEach((b) => b.addEventListener('click', () => b.classList.toggle('on')));
-  $('#psave', root).addEventListener('click', async () => {
-    saveProfileLocal({ name: $('#pname').value.trim(), birthday: $('#pbday').value, interests: $$('[data-int].on', root).map((b) => b.getAttribute('data-int')) });
+  save.addEventListener('click', async () => {
+    const chips = $$('[data-int]', root);
+    const next = { name: $('#pname').value.trim(), birthday: $('#pbday').value };
+    if (chips.length) next.interests = $$('[data-int].on', root).map((b) => b.getAttribute('data-int'));
+    saveProfileLocal(next);
     if (BE.user) { try { await BE.pushProfile(); } catch (e) { /* offline: local copy stays */ } }
     toast(T().saved); if (after) after();
   });

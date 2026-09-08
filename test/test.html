@@ -94,7 +94,7 @@ async function go(hash, sel) { W().location.hash = hash; await sleep(30); return
     // profile -> personalisation
     await go('#/me', '#pname');
     d.querySelector('#pname').value = 'Lan'; d.querySelector('#pbday').value = '1998-08-05';
-    d.querySelector('[data-int="love"]').click(); d.querySelector('[data-int="astro"]').click();
+    w.saveProfileLocal({ interests: ['love', 'astro'] });
     d.querySelector('#psave').click(); await sleep(100);
     ok(N.PROFILE().name === 'Lan' && N.PROFILE().birthday === '1998-08-05' && N.PROFILE().interests.length === 2, 'profile saved on device');
     await go('#/home', '.hello .sign');
@@ -593,6 +593,23 @@ async function go(hash, sel) { W().location.hash = hash; await sleep(30); return
       const bad = Object.keys(parts).filter((k) => !parts[k]);
       ok(!bad.length, 'me tab: device-only profile, Instagram, my courses with status' + (bad.length ? ' (failed: ' + bad.join(', ') + '; access=' + w.localStorage.getItem('nabu-access') + '; user=' + JSON.stringify(N.BE.user) + '; on=' + N.BE.enabled + ')' : '')); }
     if (meAccessWas == null) w.localStorage.removeItem('nabu-access'); else w.localStorage.setItem('nabu-access', meAccessWas);
+    { /* Signed in, the Me tab shows what they answered rather than asking
+         again. Signed out, it asks for the two things that make the home
+         screen personal, and nothing else. */
+      const keepM = { user: N.BE.user, on: N.BE.enabled };
+      const hadP = { name: N.PROFILE().name, handle: N.PROFILE().handle };
+      N.BE.enabled = true; N.BE.user = { uid: 'uidM', email: 'm@test' };
+      w.saveProfileLocal({ handle: 'someone', name: 'Mai' });
+      await go('#/home', '#main'); await go('#/me', '#main'); await sleep(60);
+      ok(!d.querySelector('#pname') && /@someone/.test(d.querySelector('#main').textContent)
+         && d.querySelector('#main a[href="#/welcome"]'),
+        'signed in, the Me tab shows the profile with an edit link, not the form again');
+      N.BE.user = null; N.BE.enabled = keepM.on;
+      await go('#/home', '#main'); await go('#/me', '#pname'); await sleep(60);
+      ok(d.querySelector('#pname') && d.querySelector('#pbday') && !d.querySelector('#welhandle'),
+        'signed out, it asks only for a name and a birthday');
+      N.BE.user = keepM.user; N.BE.enabled = keepM.on;
+      w.saveProfileLocal({ name: hadP.name || '', handle: hadP.handle || '' }); }
     { /* The sign-in page: one page, the providers and the email form on it, the
          way to an account and to a lost password, and a link out that does not
          demand one. It is reached by a link that says where to go back to. */
@@ -2449,6 +2466,7 @@ async function go(hash, sel) { W().location.hash = hash; await sleep(30); return
          looks like from outside. Both halves are checked. */
       const keptPets = w.localStorage.getItem('nabu-pets');
       const keptAcc = w.localStorage.getItem('nabu-access');
+      const keptUser = N.BE.user;
       w.localStorage.removeItem('nabu-pets');
       N.ACCESS.grant('pro', '2099-01-01');
       await go('#/home', '#main'); await go('#/play/pet', '[data-kind]'); await sleep(220);
@@ -2496,7 +2514,8 @@ async function go(hash, sel) { W().location.hash = hash; await sleep(30); return
       } else { ok(false, 'the food shelf opens'); ok(false, 'and changes nothing'); }
 
       if (keptPets != null) w.localStorage.setItem('nabu-pets', keptPets); else w.localStorage.removeItem('nabu-pets');
-      if (keptAcc != null) w.localStorage.setItem('nabu-access', keptAcc); }
+      if (keptAcc != null) w.localStorage.setItem('nabu-access', keptAcc);
+      N.BE.user = keptUser; }
     { /* The picker, a preview and a companion's own page are three screens on
          one route, so nothing scrolls between them. Tapping a companion near
          the bottom of the grid landed on the buttons under a picture nobody
