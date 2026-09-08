@@ -1,5 +1,5 @@
 /* Vietnamese card names and text (The Learner's Deck). */
-const LANGS = ['en', 'vi'];
+const LANGS = ['en', 'vi', 'de'];
 
 const LEX = {
   en: {

@@ -1,11 +1,30 @@
 /* ============================ boot ============================ */
-window.APP_VERSION = 'v175';
+window.APP_VERSION = 'v176';
 window.NABU = { CONFIG: CONFIG, SALE: SALE, salePrice: salePrice, loadActs: loadActs, BACK: BACK, LESSONS: LESSONS, localAnswer: localAnswer, compatVerdict: compatVerdict, numerologyOf: numerologyOf, ZDEEP: ZDEEP, lunarToday: lunarToday, solarToLunar: solarToLunar, DECK: DECK, INSIGHT: INSIGHT, KW: KW, ASK: ASK, TOPICS: TOPICS, GUIDES: GUIDES, SERVICES: SERVICES, COURSES: COURSES, ACCESS: ACCESS, plusOn: () => plusOn(), proOn: () => proOn(), luckUnlimited: () => luckUnlimited(), ZODIAC: ZODIAC, pick: pick, book: book,
   insightHTML: insightHTML, insightOf: insightOf, sunSignIndex: sunSignIndex, lifePath: lifePath, PROFILE: () => PROFILE, BE: BE, ACTS: ACTS,
   ANGELS: ANGELS, angelRead: angelRead, CODEBOOK: CODEBOOK, verifyCode: verifyCode, petHomeSVG: petHomeSVG, PET_HOMES: PET_HOMES, PET_WEARS: PET_WEARS, codeDigest: codeDigest, randomCode: randomCode, BANK: BANK, PETS: PETS, petSVG: petSVG, PET_COATS: PET_COATS, PET_KINDS: PET_KINDS, luckCut: luckCut, petLevel: petLevel, petStep: petStep, VOUCHERS: VOUCHERS, levelCoins: levelCoins, LOOKS: LOOKS,
   LOVE: LOVE, LOVEDB: LOVEDB, HANDLE_RE: HANDLE_RE, loveBadgeHTML: loveBadgeHTML,
   loveMarkSVG: loveMarkSVG, QUIZ: QUIZ, QSCORE: QSCORE, QUIZ_PASS: QUIZ_PASS, QUIZ_LEN: QUIZ_LEN, pileArtSVG: pileArtSVG, PILE_ARTS: PILE_ARTS, threadSVG: threadSVG, petParentsHTML: petParentsHTML, GIFTS: GIFTS, ALERTS: ALERTS, alertsStart: alertsStart, alertWas: alertWas,
   WED: WED, WED_STEPS: WED_STEPS, wedStep: wedStep, cupidSVG: cupidSVG, shareLine: shareLine };
+/* ---- German reads English where German does not exist yet ----
+   Every table in the app that is written per language is keyed 'vi' and 'en'.
+   Adding a third language to LANGS without this makes each of them answer
+   undefined for German, and the app stops on the first one it touches. Rather
+   than a check at every lookup, each table is pointed at its English half once,
+   here, after they are all defined. Translating one is then a matter of filling
+   it in and deleting its line. */
+[['DECKTEXT', typeof DECKTEXT !== 'undefined' && DECKTEXT], ['LEX', typeof LEX !== 'undefined' && LEX],
+ ['INSIGHT', typeof INSIGHT !== 'undefined' && INSIGHT], ['ASK', typeof ASK !== 'undefined' && ASK],
+ ['KW', typeof KW !== 'undefined' && KW], ['LEN', typeof LEN !== 'undefined' && LEN],
+ ['SPREADS', typeof SPREADS !== 'undefined' && SPREADS], ['MOON_NAMES', typeof MOON_NAMES !== 'undefined' && MOON_NAMES],
+ ['NUM_KW', typeof NUM_KW !== 'undefined' && NUM_KW], ['SUIT_TIMING', typeof SUIT_TIMING !== 'undefined' && SUIT_TIMING],
+ ['ANIMAL_INFO', typeof ANIMAL_INFO !== 'undefined' && ANIMAL_INFO], ['PC_TIMING', typeof PC_TIMING !== 'undefined' && PC_TIMING],
+ ['PAYMENT_NOTE', typeof PAYMENT_NOTE !== 'undefined' && PAYMENT_NOTE]
+].forEach((pair) => {
+  const t = pair[1];
+  if (t && typeof t === 'object' && t.en !== undefined && t.de === undefined) t.de = t.en;
+});
+
 try { petRemindCheck(); } catch (e) { /* nothing kept yet */ }
 /* The bell catches up on what happened while the app was shut, and keeps
    listening while it is open. Signing in or out changes what there is to

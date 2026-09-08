@@ -117,8 +117,8 @@ async function go(hash, sel) { W().location.hash = hash; await sleep(30); return
     w.localStorage.removeItem('nabu-pick-day'); const accBeforePick = w.localStorage.getItem('nabu-access');
     d.querySelector('[data-focus="love"]').click(); d.querySelectorAll('#fan button')[2].click();
     await waitFor(() => d.querySelector('#reveal .hero'), 4000);
-    ok(!d.querySelector('#redraw') && !d.querySelector('#redrawTop') && d.querySelector('#reveal .luckbox') && (JSON.parse(w.localStorage.getItem('nabu-pick-day') || '{}').id === N.pick.chosen),
-      'one card a day for free: today’s draw is kept, and there is no shuffle-and-draw-again until tomorrow');
+    ok(!d.querySelector('#redraw') && !d.querySelector('#redrawTop') && d.querySelector('#reveal .needin') && (JSON.parse(w.localStorage.getItem('nabu-pick-day') || '{}').id === N.pick.chosen),
+      'signed out, one card is free and the second asks for an account; the card drawn is kept either way');
     const chosen = N.pick.chosen;
     ok(!!d.querySelector('#reveal .hero .name') && d.querySelectorAll('#reveal .ins').length === 3 && d.querySelector('#reveal .teaser a[href="#/learn/tarot"]') && !/Mặt trái cần để ý/.test(d.querySelector('#reveal').textContent), 'card revealed with energy, a note, the CTA block and a course teaser; no reversed meaning or scene');
     ok(!/🃏/.test(d.querySelector('#main').innerHTML) && !/🃏/.test(d.querySelector('#nav').innerHTML), 'no joker emoji on the draw screen');
@@ -160,7 +160,15 @@ async function go(hash, sel) { W().location.hash = hash; await sleep(30); return
     for (const c of N.DECK.en) for (const fo of ['general', 'love', 'work', 'study', 'money']) { const h = N.insightHTML(c.id, fo); if (VI.test(h.replace(/<[^>]+>/g, '')) || h.length < 200) mixed++; }
     ok(mixed === 0, 'all 78 x 5 English insights are English (' + mixed + ' mixed)');
     ok(!/If general is on your mind/.test(N.insightHTML('major-0', 'general')) && (N.insightHTML('major-0', 'general').match(/class="ins"/g) || []).length === 2 && /pack a bag first/.test(N.insightHTML('major-0', 'general')), 'general draw has no focus block; the advice is the second block');
-    d.querySelector('#lang').click(); await sleep(100);
+    /* Round to Vietnamese rather than pressing once and assuming: the pill
+       cycles through every language the app has, so a single press stopped
+       meaning "back" the moment a third one was added. The pill shows the
+       language it will move to next, so it reads EN when Vietnamese is on. */
+    for (let i = 0; i < 4 && d.querySelector('#lang').textContent.trim() !== 'EN'; i++) {
+      d.querySelector('#lang').click(); await sleep(120);
+    }
+    ok(d.querySelector('#lang').textContent.trim() === 'EN' && /Rút bài/.test(d.querySelector('#nav').textContent),
+      'the language pill cycles through all of them and comes back round to Vietnamese');
     // learn: courses are locked until a code is entered
     await go('#/learn', '.tile');
     ok(/Khóa học và thực hành/.test(d.querySelector('#main').textContent) && d.querySelectorAll('.tiles').length === 2 && d.querySelectorAll('.tiles')[0].querySelectorAll('.tile').length === 4, 'the three courses and manifestation share one group of four, above the free reads');
@@ -550,6 +558,12 @@ async function go(hash, sel) { W().location.hash = hash; await sleep(30); return
       ok(!d.querySelector('#actwrap .post.act') && !d.querySelector('#actwrap .clamp') && !d.querySelector('#actwrap .tclamp') && !d.querySelector('#actwrap .actbtn')
         && d.querySelector('#actwrap a[href="#/play"]'),
         'the home page offers the activities as buttons and spells none of them out, so nothing there is ever faded off');
+      /* The coin, the tree and the diary keep something, so signed out they ask
+         for an account instead of a turn. The checks below are about the turns,
+         so they sign in the way a visitor would before using them. */
+      await go('#/play/coin', '.needin');
+      ok(d.querySelector('.needin') && !d.querySelector('#coinflip'), 'signed out, the coin asks for an account rather than a turn');
+      N.BE.user = { uid: 'guest1', email: 'g@test' };
       await go('#/play/tree', '#shake'); ok(d.querySelector('#tree svg') && d.querySelector('#treemsg').hidden, 'the message tree starts with no message shown');
       ok(d.querySelectorAll('.lookstrip .look').length === 4 && d.querySelectorAll('.lookstrip .look.locked').length === 3 && d.querySelector('.lookstrip .look.on'), 'the message tree carries the four trees themselves, three of them locked');
       d.querySelector('#shake').click(); await waitFor(() => !d.querySelector('#treemsg').hidden, 6000);
@@ -568,6 +582,10 @@ async function go(hash, sel) { W().location.hash = hash; await sleep(30); return
       ok(d.querySelector('#coinflip') && !d.querySelector('.luckbox'), 'a Nabu Plus code lifts the limit on the coin');
       await go('#/play/tree', '#shake'); ok(d.querySelector('#shake') && !d.querySelector('.luckbox'), 'and on the message tree as well');
       w.localStorage.removeItem('nabu-access'); w.localStorage.removeItem('nabu-luck'); w.localStorage.removeItem('nabu-unlock-cart');
+      /* Signed out again: everything after this is about what a visitor without
+         an account sees, and leaving one signed in here quietly changed three
+         later checks into something they were not written to test. */
+      N.BE.user = null;
       await go('#/unlock', '.unlist');
       d.querySelector('[data-unl="plus"]').click(); await sleep(60); d.querySelector('[data-unl="tarot"]').click(); await sleep(60);
       ok(/379\.000đ/.test(d.querySelector('#ucart').textContent) && d.querySelectorAll('#ucart .r').length === 3, 'chosen items build a summary with a total, the way booking does');
@@ -640,7 +658,16 @@ async function go(hash, sel) { W().location.hash = hash; await sleep(30); return
       await go('#/play', '#acts .actbtn'); await go('#/play/w1', '#acts .act-wish'); await sleep(40); d.querySelector('[data-wishlist]').click(); await sleep(20);
       ok(!d.querySelector('.wishlist').hidden && d.querySelectorAll('.wishlist li').length === 1 && /bình yên/.test(d.querySelector('.wishlist').textContent), 'the person can look back at the wishes they sent, with dates');
       w.localStorage.removeItem('nabu-diary'); w.localStorage.removeItem('nabu-diary-draft');
-      await go('#/play/diary', '#dtext');
+      /* The diary and a kept companion both need an account, for the same
+         reason: without one they live in a browser and go when it is cleared.
+         Signed out they ask for one, which is checked here, and the pages
+         themselves are checked signed in. */
+      await go('#/play/diary', '.needin');
+      ok(d.querySelector('.needin') && !d.querySelector('#dtext'), 'signed out, the diary asks for an account rather than a page to write on');
+      N.BE.user = { uid: 'guest1', email: 'g@test' };
+      /* Away and back: setting the hash to where it already is fires nothing,
+         so the screen would still be the one drawn while signed out. */
+      await go('#/play', '.actbtn'); await go('#/play/diary', '#dtext');
       d.querySelector('[data-mood="🙂"]').click();
       d.querySelector('#dtext').value = 'Một ngày yên.';
       d.querySelector('#dtext').dispatchEvent(new w.Event('input')); await sleep(40);
@@ -820,6 +847,10 @@ async function go(hash, sel) { W().location.hash = hash; await sleep(30); return
         'the basket shows what the rewards take off and what is left to pay, and the coins are not spent yet');
       w.localStorage.removeItem('nabu-pets'); w.localStorage.removeItem('nabu-coins'); w.localStorage.removeItem('nabu-luck-best');
       w.localStorage.removeItem('nabu-coin-day'); N.UNL_CART && N.UNL_CART.set([]);
+      /* Back to a visitor with no account: the poll and the wish below are
+         about exactly that, and the sign-in the diary and the companions needed
+         would otherwise still be in force here. */
+      N.BE.user = null;
       await go('#/play/q1', '#acts .act-poll'); await sleep(40);
       ok(d.querySelectorAll('.act-poll [data-opt]').length === 3 && /đăng nhập để bình chọn/.test(d.querySelector('.act-poll .pollnote').textContent) && d.querySelector('.act-poll .pollstat') && d.querySelectorAll('.act-poll .bar').length === 3, 'a guest is told to sign in to vote but still sees the overall results');
       await go('#/home', '#actwrap .aq'); ok(d.querySelector('#actwrap .aq[href="#/play/polls"]') && d.querySelector('#actwrap a[href="#/play"]') && !d.querySelector('#actwrap [data-opt]') && !d.querySelector('#actwrap .post'), 'home offers the activities as buttons rather than one expanded teaser');
@@ -2232,6 +2263,9 @@ async function go(hash, sel) { W().location.hash = hash; await sleep(30); return
       w.localStorage.removeItem('nabu-pets');
       N.ACCESS.grant('pro', '2099-01-01');
       await go('#/home', '#main'); await go('#/play/pet', '[data-kind]'); await sleep(220);
+      /* Keeping a companion needs an account now - it has to remember being
+         fed - so the shelves are checked as somebody signed in. */
+      N.BE.user = { uid: 'guest1', email: 'g@test' };
       /* A named ordinary companion, not whichever tile happens to be first: a
          spirit beast has its own coat rules, so the shelf would differ. */
       (d.querySelector('[data-kind="cat"]') || d.querySelector('[data-kind]:not(.locked)')).click();

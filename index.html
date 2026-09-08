@@ -12,7 +12,7 @@
      carries this notice with it. See LICENSE. -->
 <meta name="author" content="Nabu Tarot">
 <meta name="copyright" content="Copyright (c) 2025-2026 Nabu Tarot. All rights reserved.">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'none'; object-src 'none'; form-action 'self'; script-src 'self' 'sha256-LqjvFISkzoAF16wWCTfTC/p6oUzk2Ip3tgyr2ojCg7o=' https://www.gstatic.com https://apis.google.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; font-src 'self' data:; media-src 'self' data: blob:; worker-src 'self'; connect-src 'self' https://*.googleapis.com https://*.google.com https://*.firebaseio.com https://*.cloudfunctions.net https://*.workers.dev https://generativelanguage.googleapis.com; frame-src https://*.firebaseapp.com https://accounts.google.com https://*.facebook.com">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'none'; object-src 'none'; form-action 'self'; script-src 'self' 'sha256-l4ogxMK1lwr41AnF+Oz8wLanB9CiboKx6TVslVooItU=' https://www.gstatic.com https://apis.google.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; font-src 'self' data:; media-src 'self' data: blob:; worker-src 'self'; connect-src 'self' https://*.googleapis.com https://*.google.com https://*.firebaseio.com https://*.cloudfunctions.net https://*.workers.dev https://generativelanguage.googleapis.com; frame-src https://*.firebaseapp.com https://accounts.google.com https://*.facebook.com">
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <meta name="theme-color" content="#EFE9FA">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -2092,6 +2092,52 @@ button.unl{display:block;width:100%;text-align:left;font:inherit;color:inherit;c
 .tourwell{width:64px;height:64px;margin:0 auto 4px;border-radius:50%;
   background:var(--lav-soft);display:grid;place-content:center;font-size:32px;line-height:1}
 @media (prefers-reduced-motion:reduce){.tourbar span{transition:none}}
+
+/* The card shown where a button would be, when the thing behind it needs an
+   account to keep anything. */
+.needin{text-align:center;border-color:var(--lav)}
+.needin .ic{font-size:32px;line-height:1;margin-bottom:6px}
+.needin .lead{font-weight:600;margin:0 0 4px}
+.needin .hint{margin:0 auto 12px;max-width:44ch}
+.needin .btn{max-width:320px;margin:0 auto}
+#main .needin p{text-align:center}
+
+/* ---- a button whose arrow takes over ----
+   The chevron sits in a small panel at the right; on hover it grows across the
+   whole button while the label fades. A phone has no hover, so there it is
+   simply a button with an arrow on it, which is what it should look like
+   anyway - the effect is a reward for a pointer, not the only way to read it. */
+.slidebtn{position:relative;overflow:hidden;isolation:isolate}
+.slidebtn .lbl{position:relative;z-index:2;transition:opacity .45s ease}
+.slidebtn .chev{position:absolute;right:5px;top:5px;bottom:5px;width:22%;z-index:1;
+  display:grid;place-content:center;border-radius:11px;color:inherit;
+  background:color-mix(in srgb, currentColor 16%, transparent);
+  transition:width .45s cubic-bezier(.4,0,.2,1)}
+.slidebtn:hover .lbl,.slidebtn:focus-visible .lbl{opacity:0}
+.slidebtn:hover .chev,.slidebtn:focus-visible .chev{width:calc(100% - 10px)}
+.slidebtn:active .chev{transform:scale(.97)}
+@media (prefers-reduced-motion:reduce){
+  .slidebtn .lbl,.slidebtn .chev{transition:none}
+  .slidebtn:hover .lbl{opacity:1}
+  .slidebtn:hover .chev{width:22%}
+}
+
+/* ---- the draw screen on a desk ----
+   The cards being chosen from were 92px wide while the four card backs that
+   only change how they look took a quarter of a 1040px column each. The wrong
+   thing was large. On a wide window the deck is nearly twice the size, and the
+   backs are a modest row underneath, which is the order of importance. */
+@media (min-width:900px){
+  .fan.deck .slot{flex:0 0 168px;width:168px;height:274px}
+  .fan.deck{gap:12px;padding-top:8px;padding-bottom:8px}
+  .fan{max-width:640px;height:340px}
+  .fan .slot{width:150px;height:246px;margin-left:-75px}
+  /* Changing the back is a preference, not the point of the screen. */
+  .lookstrip{max-width:560px;margin-left:auto;margin-right:auto}
+  .lookgrid.four{grid-template-columns:repeat(4,1fr);gap:10px}
+  .lookstrip .look{padding:8px 6px}
+  .lookstrip .look svg{max-height:110px;width:auto}
+}
 </style>
 </head>
 <body>
@@ -2358,7 +2404,37 @@ const BOOK_WHERE = [
 const whereOf = (id) => BOOK_WHERE.filter((w) => w.id === id)[0] || null;
 const PAYMENT_NOTE = { vi: 'Vui lòng chuyển khoản trước khi xem.', en: 'Please transfer the fee in advance.' };
 const fmtNum = (n) => String(Math.round(Number(n) || 0)).replace(/\B(?=(\d{3})+(?!\d))/g, '.');
-const fmtPrice = (n) => fmtNum(n) + 'đ';
+/* ---- what a price looks like in the language being read ----
+
+   Vietnamese is the price itself, in dong. English and German are converted at
+   a rate kept right here - one number to change when the rate moves, rather
+   than thirty-four prices to recalculate - and then a flat amount is added,
+   because a card payment from abroad costs more to take than it does at home.
+
+   The flat amount is smaller on the cheap tiers on purpose. Two euros on a
+   ten-thousand-dong question is a five hundred per cent markup and flattens the
+   bottom of the ladder: the one-question price and the three-question price
+   come out the same number, which makes the cheap one look like a mistake.
+
+   Rounded up to the next half, never down. Rounding a price down gives money
+   away on every sale for the sake of a tidier number. */
+const MONEY = {
+  vi: { sym: 'đ', rate: 1 },
+  en: { sym: '$', rate: 25500, add: 2, small: 1, under: 30000 },
+  de: { sym: '€', rate: 27500, add: 2, small: 1, under: 30000 }
+};
+function moneyOf(n) {
+  const m = MONEY[typeof lang !== 'undefined' ? lang : 'vi'] || MONEY.vi;
+  const v = Math.max(0, Math.round(Number(n) || 0));
+  if (m.rate === 1) return { m: m, v: v };
+  const raw = v / m.rate + (v < m.under ? m.small : m.add);
+  return { m: m, v: Math.ceil(raw * 2) / 2 };
+}
+function fmtPrice(n) {
+  const p = moneyOf(n);
+  if (p.m.rate === 1) return fmtNum(p.v) + p.m.sym;
+  return p.m.sym + (p.v % 1 ? p.v.toFixed(2) : String(p.v));
+}
 
 /* ============================ UI strings ============================
    Vietnamese is the first language of the app. Keep every line short and
@@ -3098,7 +3174,7 @@ const STR = {
     pickPlus: 'Xem Nabu Plus',
     helloHead: 'Tarot, chiêm tinh và lịch âm, bằng tiếng Việt',
     helloLead: 'Nabu Tarot là một chỗ nhỏ để bạn ngồi lại với chính mình mỗi ngày: rút một lá bài, xem ngày âm, đọc dự đoán theo cung của bạn.',
-    helloGo: 'Vào app',
+    helloGo: 'Thử dạo một vòng',
     helloFree: 'Miễn phí, không cần đăng nhập để bắt đầu.',
     helloDrawH: 'Rút bài mỗi ngày',
     helloDrawP: 'Chọn chủ đề, lật một lá, và đọc lá đó nói gì về hôm nay của bạn. Có cả tiếng Việt và tiếng Anh.',
@@ -3114,6 +3190,13 @@ const STR = {
     helloTalkP: 'Bạn hỏi trực tiếp, hoặc đặt lịch xem bài theo giờ Nabu rảnh. Nabu trả lời trong ngày.',
     helloMoreH: 'Phần lớn app là miễn phí.',
     helloMoreP: 'Các khóa học và một vài phần mở rộng thì có trả phí, bạn xem trong app khi nào muốn. Không có quảng cáo.',
+    needInTitle: 'Bạn đăng nhập nhé',
+    needInWhy: 'Phần này lưu lại những gì bạn làm, nên cần một tài khoản.',
+    needInGo: 'Đăng nhập hoặc tạo tài khoản',
+    needInLuck: 'Lượt của bạn được lưu trên tài khoản, nên bạn vẫn còn lượt khi mở app trên máy khác.',
+    needInDiary: 'Nhật ký chỉ nằm trên máy này nếu bạn chưa đăng nhập, và sẽ mất khi bạn xoá dữ liệu trình duyệt.',
+    needInPet: 'Bạn đăng nhập trước nhé, để bạn nhỏ của bạn còn nhớ được bạn đã cho ăn.',
+    needInDraw: 'Bạn vừa rút thử một lá. Đăng nhập để rút mỗi ngày, và để app nhớ lá bạn đã rút.',
     modReport: 'Báo cáo', modBlock: 'Chặn người này',
     modAbout: (n) => 'Về ' + n + ':',
     modReported: 'Đã gửi báo cáo cho Nabu. Cảm ơn bạn.',
@@ -3188,7 +3271,7 @@ const STR = {
   },
 
   en: {
-    lang: 'VI',
+    lang: 'DE',
     nav: { home: 'Home', pick: 'Pick a card', play: 'Activities', learn: 'Learn', book: 'Book', me: 'Profile' },
 
     feedTitle: 'Latest readings',
@@ -3921,7 +4004,7 @@ const STR = {
     pickPlus: 'See Nabu Plus',
     helloHead: 'Tarot, astrology and the lunar calendar',
     helloLead: 'Nabu Tarot is a small place to sit with yourself each day: draw a card, look at the lunar date, read the forecast for your own sign.',
-    helloGo: 'Go to the app',
+    helloGo: 'Take a tour',
     helloFree: 'Free, and you need no account to start.',
     helloDrawH: 'A card a day',
     helloDrawP: 'Choose a focus, turn one card, and read what it says about your day. Fully in English or Vietnamese.',
@@ -3937,6 +4020,842 @@ const STR = {
     helloTalkP: 'Ask directly, or book a reading in one of Nabu\u2019s free hours. Nabu answers the same day.',
     helloMoreH: 'Most of the app is free.',
     helloMoreP: 'The courses and a few extras are paid, and you can look at those inside whenever you like. There are no adverts.',
+    needInTitle: 'Sign in first',
+    needInWhy: 'This part keeps what you do, so it needs an account.',
+    needInGo: 'Sign in or create an account',
+    needInLuck: 'Your turns are kept on your account, so they are still there when you open the app on another device.',
+    needInDiary: 'Without an account the diary sits on this device only, and goes when you clear your browser.',
+    needInPet: 'Sign in first, so your companion can remember being fed.',
+    needInDraw: 'That was your free card. Sign in to draw one every day, and to keep the card you drew.',
+    modReport: 'Report', modBlock: 'Block this person',
+    modAbout: (n) => 'About ' + n + ':',
+    modReported: 'Sent to Nabu. Thank you.',
+    modBlocked: (n) => 'Blocked ' + n + '. You will not see anything they write.',
+    modBlockedList: 'People you have blocked', modUnblock: 'Unblock',
+    modNoneBlocked: 'You have not blocked anybody.',
+    adminGotPaidSure: 'Sure the money arrived?',
+    adminMessageThem: 'Message them',
+    errIntro: 'What went wrong on other people’s phones. The same fault is gathered into one line.',
+    errTitle: 'Errors', errNone: 'No errors yet. That is good news.',
+    errHint: (n) => n + ' recorded, newest first.',
+    errWhere: 'Screen', errLast: 'last', errDone: 'Handled',
+    adminTabs: { posts: '📝 Posts', acts: '🎲 Activities', schedule: '🕒 Hours', bookings: '📅 Bookings', pay: '💰 Payments', inbox: '💬 Inbox', codes: '🔑 Codes', sale: '🏷️ Sale', errors: '🚩 Reports' },
+    codeChecking: 'Checking the code…', codeOffline: 'The code cannot be checked right now. Please try again when you are online.',
+    copyCode: 'Copy the code', codeOnceOnly: 'Keep this code somewhere. The app stores only a fingerprint of it, so it cannot be shown again.',
+    codePublishing: 'Saving the code…', codeOldLabel: 'Add codes you handed out before', codeOldAdd: 'Add these codes',
+    codeOldHint: 'Paste old codes here, one per line. They take the course and expiry chosen above.',
+    codeAdded: (n) => n + ' codes added.', codeBook: 'Codes handed out', codeNone: 'No codes have been handed out yet.',
+    codeMade: 'made', codeRevoke: 'Revoke', codeRevokeAsk: 'Revoke this code? Whoever is using it will lose access.',
+    codesIntro: 'Once a client has paid, make a code here and send it to them. The expiry date is built into the code.', codeCourse: 'Course', codeStart: 'Starts', codeMonths: 'Months', makeCode: 'Make code', codeUntil: 'Expires',
+    token: 'GitHub token',
+    tokenHint: 'The token stays on this device only. See the README to create one.',
+    saveToken: 'Save token',
+    postDate: 'Date',
+    postTitle: 'Title',
+    postBody: 'Text',
+    bodyHint: 'Leave a blank line to start a new paragraph.',
+    postTitleEn: 'Title (English, optional)',
+    postBodyEn: 'Text (English, optional)',
+    postCards: 'Cards in this post (tap to select)',
+    postTopics: 'Who this post is for',
+    searchCard: 'Find a card',
+    markInitials: 'Name starts with (comma separated)',
+    markSigns: 'Signs',
+    pinPost: 'Pin to top',
+    preview: 'Preview',
+    publish: 'Publish',
+    publishing: 'Publishing...',
+    published: 'Published. Everyone\'s feed updates within a few minutes.',
+    publishFail: 'Publishing failed',
+    copyJson: 'Copy JSON',
+    existing: 'Published posts',
+    edit: 'Edit',
+    del: 'Delete',
+    confirmDel: 'Delete this post?',
+    newPost: 'New post',
+    needBody: 'A post needs a title and some text.',
+    needToken: 'Paste a token first.',
+    weekly: 'Weekly free hours',
+    weeklyHint: 'Tap an hour to turn it on or off. Each hour is one session.',
+    blocked: 'Days off',
+    blockedHint: 'No bookings on these days even if hours are set.',
+    addDay: 'Add a day',
+    bookedSlots: 'Taken slots',
+    bookedHint: 'Bookings made through Instagram go here so the slot disappears.',
+    leadDays: 'Earliest booking after (days)',
+    horizonDays: 'Open calendar ahead (days)',
+    saveSchedule: 'Save availability', cloudContent: 'Posts and availability are saved straight to the app cloud. Save, and clients see it at once; no GitHub token needed.',
+    scheduleSaved: 'Saved. Clients see it within a few minutes.',
+    bookingsIntro: 'Requests sent inside the app. Confirming locks the slot.',
+    confirm: 'Confirm', decline: 'Decline',
+    needFirebase: 'This section needs accounts turned on (Firebase). See the README.',
+    adminLogin: 'Sign in with an admin email to see this section.',
+    inboxEmpty: 'No conversations yet.', inboxIntro: 'One row per person. Tap a row to open that conversation on its own.', youLabel: 'You', guestLabel: 'Guest', ownThread: 'your own account', ownThreadHint: 'This is the test inbox of your own account. Messages from clients live in the dashboard under Inbox, one conversation per person.', adminSummary: 'For Nabu', unreadMsgs: 'unread messages', newBookings: 'new bookings awaiting confirmation', openAdmin: 'Open the dashboard', enableNotif: 'Turn on notifications', notifOn: 'Notifications are on. You will be told about new messages and bookings.', notifDenied: 'The browser is blocking notifications for the app. Open the site settings and allow them.', notifUnsupported: 'This browser does not support notifications. On iPhone, add the app to the home screen and open it from there.', notifHint: 'You will be notified about new messages and bookings, even when the app is in the background. On iPhone, add the app to the home screen first.', notifNewMsg: 'New message from ', notifNewBooking: 'New booking from ',
+    reply: 'Reply',
+    back: 'Back',
+
+    suitOf: { major: 'Major', wands: 'Wands', cups: 'Cups', swords: 'Swords', pentacles: 'Pentacles' },
+    zodiac: ['Aries', 'Taurus', 'Gemini', 'Cancer', 'Leo', 'Virgo', 'Libra', 'Scorpio', 'Sagittarius', 'Capricorn', 'Aquarius', 'Pisces'],
+    dateFmt: (d) => d.toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' }),
+    dateShort: (d) => d.getDate() + '/' + (d.getMonth() + 1)
+  },
+  de: {
+    lang: 'VI',
+    nav: { home: 'Start', pick: 'Karte ziehen', play: 'Spiele', learn: 'Lernen', book: 'Termin', me: 'Profil' },
+
+    feedTitle: 'Neueste Beiträge',
+    feedEmpty: 'Noch nichts veröffentlicht. Schau bald wieder vorbei.',
+    feedOffline: 'Du siehst die gespeicherte Fassung. Geh online, um sie zu aktualisieren.',
+    pinned: 'Angeheftet',
+    readMore: 'Weiterlesen',
+    readLess: 'Weniger anzeigen',
+    share: 'Teilen',
+    copied: 'Kopiert',
+    forYouIf: 'Für dich, wenn',
+    forYou: 'Für dich',
+    initials: 'dein Name beginnt mit',
+    signs: 'Sternzeichen',
+    cardsDrawn: 'Karten in dieser Legung',
+    ctaPick: 'Zieh selbst eine Karte',
+    ctaBook: 'Beratung buchen',
+    backToFeed: 'Zurück zur Startseite',
+    notFound: 'Dieser Beitrag wurde nicht gefunden.',
+    helloGuest: 'Hallo',
+    hello: (n) => 'Hallo ' + n,
+    setupProfile: 'Sag Nabu deinen Geburtstag und was dich beschäftigt. Die Startseite wählt dann Passendes für dich aus.',
+    setupBtn: 'Profil einrichten',
+    yourSign: 'Dein Sternzeichen',
+    signCard: 'Die Tarotkarte deines Sternzeichens',
+    lifePath: 'Lebenszahl',
+    readSign: 'Mehr über dein Zeichen',
+    forInterests: 'Könnte dich interessieren', horoMonth: 'Vorschau für diesen Monat', horoWeek: 'Vorschau für diese Woche', horoNeedBirthday: 'Enter your birthday under Profile to see the forecast for your sign.', horoUpdating: 'The forecast is being updated. Please check back soon.', horoSource: 'From', horoUpdated: 'updated',
+
+    pickToday: 'Zieh heute eine Karte',
+    pickTitle: 'Deine Energie gerade jetzt',
+    pickIntro: 'Atme tief durch. Denk an deinen Tag.', pickIntro2: 'Dann dreh eine Karte um.',
+    focusLabel: 'Was dich beschäftigt',
+    focus: { general: 'Allgemein', love: 'Liebe', work: 'Arbeit', study: 'Lernen', money: 'Geld' },
+    tapACard: 'Wisch durch das Deck und tipp die Karte an, die dich anspricht.', deckPos: (i, n) => i + ' / ' + n,
+    redraw: 'Shuffle and pick again',
+    yourCard: 'Your card',
+    aiSugFocus: (f) => 'What does this card say about my ' + f.toLowerCase() + '?',
+    energyNow: 'Energy right now', adviceHead: 'A note for today', pickTeaser: 'This is only a quick reading for today. The full meaning of this card (upright, reversed, the picture, love, work, study, money and common questions) is in the Tarot course.', pickTeaserBtn: 'See the Tarot course', aiLiteRedirect: (n, f) => 'In the daily draw I read ' + n + ' only through the focus you chose (' + f.toLowerCase() + '). Its meaning for other topics, and its upright and reversed readings, are in the Tarot course; for your own situation, book a reading with Nabu.',
+    energyLine: (kws) => 'Right now you carry this energy: ' + kws + '.',
+    cardSays: 'What the card says',
+    onTheCard: 'On the card',
+    shadow: 'The shadow side',
+    shadowLine: (kws) => 'When this energy runs too hot, it turns into: ' + kws + '.',
+    focusHead: (f) => 'If ' + f.toLowerCase() + ' is on your mind',
+    noFocus: 'No lecture notes for this topic with this card yet. Read the energy section above.',
+    quickNote: 'This is a quick message from one card. For your own situation, book a full reading.',
+    shareCard: 'Share this card',
+    bookWithCard: 'Book a deeper reading',
+    learnCard: 'Read about this card',
+    shareText: (name, kws) => 'My card today: ' + name + '. Energy: ' + kws + '. See this card and draw your own at ',
+
+    learnTitle: 'Knowledge library',
+    learnIntro: 'Tarot, Lenormand, cartomancy, astrology, angel numbers, manifestation and fortune telling.',
+    cats: { tarot: 'Tarot', lenormand: 'Lenormand', playing: 'Cartomancy', astro: 'Astrology', angel: 'Angel numbers', manifest: 'Manifestation', fortune: 'Fortune telling' },
+    catSub: { tarot: '78 cards + 8 spreads', lenormand: '36 cards + 7 spreads', playing: '52 cards + 4 spreads', astro: '12 signs, planets, houses', angel: 'the numbers you keep seeing', manifest: 'methods + limits', fortune: 'numbers, palms, tea leaves' },
+    angelTitle: 'Angel numbers', angelIntro: 'Some numbers keep turning up in a day: on a clock, on a receipt, on a number plate. Type the one you keep seeing on the keypad below and read what it is taken to mean.',
+    angelAsk: 'The number you keep seeing', angelPadHint: 'Type a number and press ✓ to keep it. The app remembers which numbers you meet most.',
+    angelToday: 'Today’s number', angelAll: 'The groups', angelLog: 'Numbers you have met', angelClear: 'Clear the list',
+    angelTop: (n, c) => 'You meet ' + n + ' most often: ' + c + ' times.',
+    angelMore: 'Read this group in full', angelMeaning: 'What this group means', angelTodo: 'One small thing to do',
+    angelWhySame: (n) => n + ' is one digit repeated, so it is read as that group.',
+    angelWhyMirror: 'This is a mirror number: two halves repeating, or the same read either way.',
+    angelWhyLadder: 'This is a ladder: the digits rise one after another.',
+    angelWhyRoot: (r) => 'Adding the digits and reducing gives a root of ' + r + ', so it is read as the ' + r + ' group.',
+    angelNote: 'Angel numbers are folk reading, written down here for interest. A number is a prompt to look at something, not a prediction.',
+    priceReadings: 'A reading with Nabu', priceReadingsHint: 'Nabu reads for you directly. Pick a package, pick a time, then send it.',
+    priceCoursesHint: 'Learn at your own pace. Everything works without a connection.',
+    priceUnlocks: 'Open more in the app', priceUnlocksHint: 'Not lessons — these are things you use in the app every day.',
+    priceOpen: 'Take a look',
+    priceFree: 'Free', priceFreeHint: 'Most of this app is free: no code, nothing to pay. Tap anything to try it.',
+    courses: 'Courses', coursesPractice: 'Courses and practice', freeReads: 'Free to read', practice: 'Practice', lessonsIntro: (n) => 'The course has ' + n + ' sessions. Take them in order, about one a week.', markDone: 'Mark as done', lessonDone: 'Done', journeyHint: 'Tap a card to open its page.', lenGridHint: 'All 36 cards. Tap one to open it.',
+    aiIntro: 'Ask Nabu AI about what you are looking at. The more specific, the better.', aiIntroLesson: 'Anything in this lesson unclear? Ask Nabu AI here.', aiPlaceholder: 'For example: what does this card say about my love life?', aiAsk: 'Ask', aiOnline: 'answered by AI', aiBuiltin: 'answered from the knowledge base', aiNote: 'Nabu AI answers everyday questions as well as tarot, astrology and numerology, and looks things up online when needed. For anything personal and important, book a reading with Nabu.', aiFallback: 'AI is busy; this answer comes from the knowledge base.', aiNeedSignin: 'Sign in to ask Nabu AI. This answer comes from the knowledge base.', aiLimit: 'That is a lot of questions for one day. Try again later; this answer comes from the knowledge base.',
+    aiSugCard: ['What does this card say about my love life?', 'Should I keep going?', 'When will this happen?'], aiSugLesson: ['How do Majors differ from Minors?', 'Who are the court cards?', 'What if I do not understand a card?'], aiSugSign: ['Which signs suit this sign?', 'How is this sign in love?', 'What does the Moon in this sign mean?'], aiSugNumbers: ['What does my life path say?', 'What kind of year is this for me?', 'What is my destiny number from my name?'], aiSugGeneral: ['What does The Fool mean?', 'Do Leo and Aquarius get along?', 'What is my life path?'],
+    aiCardGeneral: (n) => n + ' speaks about your general energy right now.', aiCardFocus: (n, f) => 'For a question about ' + f.toLowerCase() + ', ' + n + ' says:', aiCardWhy: 'The card carries this energy:', aiCardShadow: 'The shadow to watch:', aiYes: (n) => 'As a yes-or-no: ' + n + ' leans YES, but one card cannot decide it. For a clear answer, book a reading.', aiNo: (n) => 'As a yes-or-no: ' + n + ' leans NO, or not yet. One card cannot decide it; for a clear answer, book a reading.', aiMaybe: (n) => 'As a yes-or-no: ' + n + ' does not lean either way. The answer depends on what you do next.', aiTiming: 'On timing, one card only hints at a pace, never an exact date.', aiFound: 'Found in the course:', aiLessonNone: 'Nothing matched yet. Try a card name or a keyword from the lesson.', aiChem: (a, b) => a + ' and ' + b + ':', aiCompatYes: 'This is one of the pairs usually seen as a good match.', aiCompatWork: 'Not among the easiest pairs, but the Sun sign is one part; the full chart says much more.', aiAbout: (n) => 'About ' + n + ':', aiGeneralHelp: 'I do not have a ready answer for that. I answer best when the question names a card, a sign, a planet, a house, a zodiac animal or a number.', aiOfflineHint: 'For your own situation, book a reading with Nabu.', aiBooking: 'See the price list and pick a time under Book. Choose a package, a free slot on the calendar, then send it to Nabu.',
+    compatHead: { same: (a, b) => a + ' and ' + b + ' are the same sign, so you understand each other easily. The short answer is yes, you match, as long as you do not share the same faults.', opposite: (a, b) => a + ' and ' + b + ' sit opposite each other on the zodiac. The short answer is yes, the attraction is strong, but you have to learn balance, because each of you is the missing half of the other.', good: (a, b) => a + ' and ' + b + ': the short answer is yes, this is one of the pairs usually seen as a good match.', ok: (a, b) => a + ' and ' + b + ': a fairly good match. The two signs are not the same element, but they feed each other.', work: (a, b) => a + ' and ' + b + ': it can work, but it takes effort. The two signs sit at a square angle, so you tend to clash over how things should be done.', neutral: (a, b) => a + ' and ' + b + ': an average match. Not among the easiest pairs, and not among the ones that clash most either.' },
+    compatWhy: { same: 'Why:', opposite: 'Why:', good: 'Why:', ok: 'Why:', work: 'Why:', neutral: 'Why:' },
+    compatBring: (a, ka, b, kb) => a + ' brings ' + ka + ' into the relationship, while ' + b + ' brings ' + kb + '.', compatTipGood: 'Advice: keep a little challenge alive and do not get lazy about talking, because easy matches tend to take each other for granted.', compatTipOpp: 'Advice: treat the differences as what completes you rather than what needs fixing in the other person.', compatTipWork: 'Advice: say what you need in words instead of waiting to be guessed. The Sun sign is only one part; the full chart says much more.',
+    compatWhich: (a) => a + ' usually matches best with:', compatAsk: 'Name the other sign in your question if you want to check a specific pair.',
+    strengths: 'Strengths', challenges: 'Watch out for', compat: 'Usually gets on with', moonSign: 'Moon in this sign', risingSign: 'Rising in this sign',
+    numExpr: 'Expression number (from your name)', numSoul: 'Soul urge number', numPers: 'Personality number', numYear: 'Personal year', numBirthday: 'Birthday number', numName: 'Full name (as on your birth certificate)', numNameHint: 'Pythagorean table; Vietnamese tone marks dropped, Đ read as D.',
+    fortuneIntro: 'Four old ways of reading, made visual. Tap to try one.', readMoreTitle: 'Read more', numIntro: 'Tap a number to see what it says. Your number is marked.', numTap: 'Tap a number above.', numYours: 'Your numbers', numCycle: 'Your 9-year cycle', numCycleHint: 'Each personal year is a step in a 9-year cycle. Year 1 plants, year 9 harvests and lets go.', numHow: 'How it is counted',
+    palmIntro: 'Tap a line on the hand, or pick a name below. Read the dominant hand as "now" and the other as what you were born with.', palmLines: 'Lines', palmMounts: 'Mounts', palmShapes: 'The four hand shapes', palmShapesHint: 'Is the palm square or long, are the fingers short or long? This is the first step of every reading.',
+    pcIntro: 'Playing cards can be read two ways. Traditional cartomancy has its own set of meanings for the 52 cards, in use since before tarot decks were common. The second way borrows the tarot Minors, because both decks share one root: Hearts are Cups, Diamonds Pentacles, Clubs Wands, Spades Swords. Pick a card to see both.', pcPick: 'Pick a playing card', pcNote: 'A playing-card deck has no Majors and only three court cards per suit, so the Jack is usually read as the Knight (some readers use the Page), the Queen as the Queen and the King as the King.', pcTrad: 'Traditional meaning', pcTarotWay: 'Read through tarot',
+    teaIntro: 'Tap each zone of the cup to see what the position means. The common shapes are below.', teaZones: { rim: 'Near the rim', mid: 'Middle', bottom: 'Bottom', handle: 'Near the handle' }, teaZoneText: { rim: 'Near the rim: soon, within days or weeks.', mid: 'Middle of the cup: weeks to months away.', bottom: 'Bottom: further away, or the root of the matter.', handle: 'Near the handle: about you directly. Opposite the handle: other people, outside events.' }, teaSymbols: 'Common shapes', teaPractice: 'Try one', teaPracticeHint: 'Tap for a random shape in a random zone, then practise reading it.', teaDraw: 'Draw a shape',
+    animalIntro: 'Tap an animal on the wheel. Yours is marked.', animalYours: 'your animal', animalTrio: 'Trio (tam hợp)', animalClash: 'Clash (tứ hành xung)', animalYears: 'Years',
+    quizTitle: 'Test yourself',
+    quizIntro: (n, p) => n + ' questions · pass at ' + p + '%',
+    quizBest: (p) => 'Your best so far: ' + p + '%',
+    quizHow: (n, p) => n + ' multiple-choice questions. You need ' + p + '% or more to pass, and you may retake it as often as you like.',
+    quizHard: 'Harder',
+    quizSubmit: 'Hand it in', quizAgain: 'Try again', quizBackLesson: 'Back to the lesson',
+    quizNeedAll: 'Answer every question first.',
+    quizScore: (r, n, p) => r + ' of ' + n + ' · ' + p + '%',
+    quizPassed: 'You passed. Well done.',
+    quizFailed: (p) => 'You need ' + p + '% or more. Read the notes below and take it again.',
+    quizProgress: (d, t) => d + ' of ' + t + ' tests passed.',
+    quizKept: 'Your score is kept on this device only. Nabu never receives it.',
+    unlockTiers: 'Two packages, one choice. Nabu Pro already contains all of Nabu Plus, so there is no need to buy both.',
+    whereBest: 'Nabu prefers this',
+    whereIdLabel: (n) => 'Your ' + n + ' account',
+    whereIdPh: 'Paste your profile link, or @yourname',
+    whereOpenDm: 'Please allow messages from people you do not follow. If the account is private, Nabu\u2019s message lands in a request folder or is refused outright, and you will never know it was sent.',
+    needWhereId: (n) => 'Give Nabu your ' + n + ' account, or Nabu cannot find you.',
+    reportTitle: 'Report a problem', reportIntro: 'Something looks wrong, a button does nothing, or a text is confusing? Tell Nabu here.', reportWhat: 'What went wrong?', reportPlaceholder: 'Which screen you were on, what you tapped, and what happened.', reportContact: 'How to reach you (optional)', reportAuto: 'The app attaches this so Nabu can find the bug faster:', reportSend: 'Send report', reportViaIg: 'Send through Instagram', reportNeed: 'Describe the problem first.', reportSent: 'Sent to Nabu. Thank you!', reportNoChannel: 'Direct sending is not switched on yet. The message is copied; please send it through Instagram.', reportMsgHead: 'Nabu Tarot app bug report:', reportLink: 'Report', rights: 'All rights reserved.', demoTag: 'Free preview', demoIntro: 'The first two lessons are open so you can see how the course works. Unlock to read everything.', lessonN: (n) => 'Lesson ' + n, lesson1: 'Overview and how to learn', lesson2: 'The first card', courseTabs: { cards: 'The cards', spreads: 'Spreads', guides: 'Guides' },
+    months6: 'months', adminAccess: 'Admin account: every course is open for Nabu.', accessUntil: (d) => 'Your access runs until ' + d + '.', courseExpired: (d) => 'Your code expired on ' + d + '. Buy again to continue.',
+    buyCourse: 'Send the request to Nabu', buyHint: 'Nabu writes back with how to transfer. After the transfer, Nabu sends an unlock code for the box below.',
+    unlockNeedIn: 'Sign in first, so Nabu knows whose request this is.',
+    buyMsg: (n, p, m) => 'Hi Nabu, I would like to buy the ' + n + ' (' + p + ', ' + m + ' months).', unlock: 'Unlock', unlocked: 'Unlocked', badCode: 'That code is not right. Please check it.',
+    myCourses: 'My courses', enterCode: 'Enter an unlock code', noCourses: 'You have no courses yet.', activeUntil: (d) => 'active until ' + d, expiredOn: (d) => 'expired ' + d,
+    recommended: 'Suggested for you',
+    allCards: 'All cards',
+    majors: 'Major Arcana', minors: 'Minor Arcana',
+    upright: 'Upright', reversed: 'Reversed',
+    kwPos: 'Positive keywords', kwNeg: 'Negative keywords',
+    questions: 'Frequently asked questions',
+    astroOf: 'Astrological link',
+    lenTone: { pos: 'Positive', neu: 'Neutral', neg: 'Negative' },
+    lenCore: 'Core meaning', lenLove: 'Love', lenWork: 'Work', lenWho: 'As a person', lenTime: 'Timing', lenCombo: 'Pairs', lenCard: 'Playing card',
+    lenNote: 'Lenormand is a different system from tarot with its own way of reading.',
+    signDates: 'Dates', element: 'Element', mode: 'Mode', ruler: 'Ruler',
+    signAbout: 'Character', signLove: 'In love', signWork: 'At work', signTip: 'A note',
+    signCards: 'Tarot cards of this sign',
+    astroNote: 'The 12 signs, the planets, the 12 houses and the aspects. Tap a sign to read more.',
+    spreadWhen: 'When to use it', spreadAsk: 'How to ask', spreadPos: 'Positions', spreadRead: 'How to read it', spreadNote: 'Note',
+    numerology: 'Your numerology',
+    lifePathOf: (n) => 'Life path ' + n,
+    enterBirthday: 'Enter your birthday under Profile to see your life path number and sign.',
+    animal: 'Zodiac animal',
+    animalNote: 'Counted by calendar year. If you were born before Lunar New Year, you belong to the previous animal.',
+
+    bookTitle: 'Book a reading',
+    priceTitle: 'Prices', priceIntro: 'Readings, courses and what you can open, all in one place. Most of the app is free — the last section lists every part of it.',
+    chooseService: '1. Choose a service', serviceHint: 'Tap the package you want. You can pick several. Tap again to remove one.', needService: 'Choose at least one package first.', bookTip: 'Tap a package to select it. You can choose as many as you like. Changed your mind? Simply tap the package once more to deselect it.', cartTitle: 'Your chosen packages', cartEmpty: 'No package chosen yet.', cartNeedsTopic: 'topic not chosen', msgTotal: 'Total', topicFor: 'Topic for', topicNone: 'This step appears once you choose a 1 preset topic package in step 1. Each such package gets its own topic picker.',
+    optional: 'optional', birthTime: 'Time of birth', birthHint: 'Tử vi needs the birth time as exact as possible.', needBirth: 'Tử vi needs your birth date.',
+    msgService: 'Service', msgBirth: 'Birth date and time',
+    chooseTopic: '2. Choose the topic for each preset-topic package',
+    presetTopics: 'Set topics',
+    topicHint: 'Choose one of the five topics. Each is a set of five questions Nabu lays cards for. Tap a topic to see its questions.',
+    ownTopic: 'Your own question',
+    ownTopicHint: 'Write your own question.',
+    chooseWhere: '4. Where it happens', whereHint: 'Where would you like Nabu to write to you? Choose one.',
+    needWhere: 'Choose where the reading happens first.', msgWhere: 'Where',
+    adminCancel: 'Cancel it', adminCancelAsk: 'Call this booking off? The hour goes back on the calendar and the client sees it as cancelled.', adminCancelDone: 'The booking is cancelled.',
+    chooseTime: '3. Choose a time',
+    timeHint: (tz) => 'Tap a day with a pink dot, then a time (' + tz + '). Times already taken are crossed out.',
+    noSlots: 'No free slots on this day.',
+    pickDay: 'Choose a day with a pink dot.',
+    yourPick: 'Your pick',
+    yourDetails: '5. Your details',
+    yourName: 'Your name (or nickname)',
+    yourNote: 'Anything to add?',
+    notePlaceholder: 'A few lines about your situation, or the question you want to ask.',
+    sendVia: '6. Send to Nabu',
+    sendHint: 'The message is copied for you. Open the app, then paste it into the chat.',
+    sendInApp: 'Send booking request',
+    sending: 'Sending...',
+    sentOk: 'Sent. Nabu will confirm soon. You can check it under Profile.',
+    welcomeHead: 'Welcome to Nabu Tarot 🌙', nabuPosts: 'Nabu Posts', versionLine: (v) => 'Version ' + v, checkUpdate: 'Check for updates', updating: 'Loading the new version…',
+    privacyTitle: 'Privacy policy', privacyLink: 'Privacy', delAccount: 'Delete account', delHint: 'Removes your login, profile, messages and bookings. This cannot be undone.', delConfirm: 'Delete your account and all your data? This cannot be undone.', delDone: 'Account deleted. Thank you for visiting Nabu Tarot.', delRelogin: 'To be sure it is you, sign in again and tap Delete account once more.', aiFlag: 'Report this answer', aiFlagged: 'Noted. Thank you, Nabu will review it.', storeCodeHint: 'Enter the unlock code Nabu sent you.',
+    actTitle: 'Activities', actIntro: 'Small things to drop in on each day: a lucky companion to keep, the red thread to tie, the message tree, the coin and the diary. When Nabu posts there are piles to pick, polls to vote in and wishes to send.', actEmpty: 'No activities yet. Come back soon.', actAll: 'All activities', actOpen: 'Open', actClosed: 'Closed', actHasResults: 'Answered',
+    actPickHint: 'Tap the pile that pulls you. Nabu posts each pile\'s message a few days later.', actPicked: (n) => 'You chose pile ' + n + '.', actComeBack: (d) => 'Come back on ' + d + ' to flip it over.', actChangePile: 'Switch to another pile?', actPickToSee: 'The messages are in. Tap a pile to flip it.', actTapOthers: 'Your pile is open. Tap another pile to peek.',
+    actVoteHint: 'Tap an option. One vote per person.', actVoteLogin: 'Sign in to vote and see the results.', actVoted: 'Thank you for voting!', actClosedNote: 'Voting is closed. Here are the results.', actVotes: (n) => n + ' votes',
+    actWishPh: 'Right now I wish…', actWishSend: 'Send it to the universe', actWishHint: 'Keep it short, in the present tense, then send. Wishes stay on your device; nobody reads them.', actWishCount: (n) => 'You have sent ' + n + ' wishes here.', actWishSent: 'Sent. Now the first step is yours. ✨', actWishEmpty: 'Write your wish first.', actWishClear: 'Clear the wishes saved on this device', actWishClearConfirm: 'Clear the wishes saved on this device?',
+    loveNoRules: 'This part of Nabu is not open yet. Let Nabu know through Contact — nothing here is your fault.',
+    loveNoRulesAdmin: 'Firestore refused the write: the rules for handles / people / bonds / requests / invites have not been published. Firebase Console › Firestore Database › Rules, paste the whole firestore.rules from the repo, then Publish.',
+    loveRoadTitle: 'The road',
+    loveRoadOf: { tied: 'Tied', proposed: 'Proposed', engaged: 'Engaged', married: 'Married' },
+    loveRoadHint: 'It starts with the thread. Then one of you offers a ring, the other answers, and the two of you hold the wedding. Each stage has a mark of its own, and it shows on your profile.',
+    loveStage: { tied: 'Tied by the thread', proposed: 'Waiting for an answer', engaged: 'Engaged', married: 'Married' },
+    loveTagOf: { tied: 'Tied', proposed: 'Waiting for an answer', engaged: 'Engaged', married: 'Married' },
+    loveAskTitle: 'Propose', loveAskHint: 'You send a ring across. They can answer, or not answer yet — and you can take it back at any time.',
+    loveAskNotePh: 'Something to say with it…', loveAskDo: '💍 Send the ring', loveAskDone: 'Sent 💍',
+    loveAskSent: 'You have proposed.', loveAskSentHint: (n) => 'Waiting for ' + n + ' to answer.', loveAskTakeBack: 'Take it back',
+    loveAskGot: (n) => n + ' has proposed to you.', loveAskYes: 'Yes', loveAskNotYet: 'Not yet',
+    loveAskNotYetHint: '“Not yet” leaves everything exactly as it is and simply puts the question away.',
+    loveAskYesDone: 'Engaged 💍', loveEngaged: 'You are engaged.', loveEngagedOn: (d) => 'Since ' + d,
+    loveMarryDo: 'Hold the wedding', loveMarryHint: 'Choosing the day together, the invitation card and the guests are coming in a later release.',
+    loveMarried: 'You are married.', loveMarriedOn: (d) => 'Since ' + d, loveMarriedDone: 'Congratulations 🌿',
+    loveRoleAsk: 'On the companion page, what would you like to be called?',
+    loveRoleMother: 'Mother', loveRoleFather: 'Father', loveRoleNone: 'Do not show me',
+    loveShowParents: 'Show the parents on the companion page',
+    loveShowParentsHint: 'On your phone only. You can turn it off whenever you like.',
+    loveShowParentsOn: 'Turned on.', loveShowParentsOff: 'Turned off.',
+    petParents: 'Parents',
+    loveGotTitle: 'They sent you', loveGotNone: 'Nothing has arrived yet. When they give you something, it appears here.',
+    loveGiftNew: 'New \u2728',
+    loveGiftTitle: 'Give something', loveGiftHint: 'Three a day each. What is given stays here.',
+    loveGiftNone: 'Nothing has been given yet. You could go first.',
+    loveGiftYouGave: (g) => 'You gave ' + g,
+    loveGiftTheyGave: (n, g) => n + ' gave you ' + g,
+    loveGiftNotePh: 'A line to go with it…', loveGiftSent: 'Given 🌿',
+    loveGiftStep1: '1. Pick something', loveGiftStep2: '2. Write a line (optional)', loveGiftStep3: '3. Send it',
+    loveGiftChosen: (n) => 'You have picked: ' + n + '. Tap another to change your mind.',
+    loveGiftSend: 'Send it', loveGiftNeedPick: 'Pick something first.',
+    loveGiftNotSent: 'Nothing has been sent yet. It only goes when you press Send it.',
+    loveGiftLeft: (n) => n + ' left to give today.', loveGiftDone: 'That is all for today. More tomorrow.',
+    loveYou: 'You',
+    loveNotHere: 'Nobody here has that handle.',
+    loveNotHereWhy: 'Usually that means they have never opened Nabu. Make an invitation link and send it to them — they open it, make an account, and your thread is waiting for them.',
+    loveInviteTitle: 'Invite someone who is not here yet',
+    loveInviteHint: 'Send this link however you like — Messenger, Zalo, anywhere. Whoever opens it sees your name and can take the thread once they have an account. Send it to one person only.',
+    loveMakeLink: 'Make an invitation link', loveNewLink: 'Make a new link',
+    loveLinkReady: 'The link is ready. Send it to them.',
+    loveCopy: 'Copy', loveCopied: 'The link is copied.', loveCopyFail: 'Press and hold the box above, then choose Copy.',
+    loveShare: 'Send it', loveShareText: 'I would like to tie the red thread with you on Nabu.',
+    loveJoinTitle: 'An invitation',
+    loveJoinFrom: (n) => n + ' would like to tie the red thread with you.',
+    loveJoinSignIn: 'Make an account or sign in first. This invitation will still be here.',
+    loveJoinNeedName: 'Choose the name you want shown first.',
+    loveJoinGone: 'This invitation cannot be used any more.',
+    loveJoinTake: 'Take the thread', loveJoinYours: 'This is your own link. Send it to them.',
+    loveJoinWaiting: 'An invitation is waiting for you', loveJoinOpen: 'Open',
+    loveAlreadyMine: 'You are already tied to someone.',
+    loveAlreadySent: 'You have already invited this person. Nabu is waiting for their answer.',
+    loveUnsend: 'Withdraw the invitation', loveUnsendHint: 'If you invited the wrong person, withdraw it here. They will be told it was taken back.',
+    loveUnsendAsk: (n) => 'Withdraw the invitation you sent to ' + n + '?',
+    loveUnsent: 'Withdrawn.',
+    loveSentTitle: 'Invitations you have sent', loveSentHint: 'Nabu is waiting for their answer. If you invited the wrong person, withdraw it here and they will be told.',
+    loveOpening: 'Opening your thread\u2026',
+    loveSlow: 'The connection is slow, so Nabu could not open your thread. Please try again.',
+    loveTryAgain: 'Try again',
+    loveTitle: 'The red thread', loveSub: 'Tie the red thread with someone',
+    loveIntro: 'An old story says two people meant to meet are tied at the little finger by a red thread. It can tangle and it can stretch, but it does not break.',
+    loveNote: 'This is a keepsake inside the app, not a document. It carries no legal weight anywhere. Either of you can untie your own thread at any time without asking the other.',
+    loveNeedAccount: 'Sign in first, so Nabu knows which two people this is.',
+    loveStepOne: 'Step 1 — Choose a name for yourself',
+    loveStepOneHint: 'This is a name you make up for yourself, not the other person\u2019s name. You give it to them, and they type it into the step 2 box to find you.',
+    loveStepTwo: 'Step 2 — Find them',
+    loveStepTwoLocked: 'Save your name in step 1 first. This box opens once you have.',
+    loveNameLabel: 'What would you like to be called?', loveNamePh: 'For example: Thu Anh',
+    loveNameShort: 'A name needs at least 3 letters or numbers.',
+    loveWillBe: (h) => 'They will find you at @' + h,
+    loveTookOther: (h) => 'That one was taken, so you are @' + h + '.',
+    loveNameSaved: (h) => 'Saved. You are @' + h + '. Give that to them.',
+    loveHandleTitle: 'Choose your handle', loveHandleHint: 'This is the name someone uses to find you: you give it to them, they type it into the search box. Lower case letters, numbers, dots and underscores, 3 to 20 characters. You can change it whenever you like.',
+    loveYourName: 'Name to show', loveHandle: 'Handle', loveClaim: 'Save', loveSaving: 'Saving…',
+    loveHandleBad: 'That handle will not work. Use lower case letters, numbers, dots or underscores, 3 to 20 characters.',
+    loveHandleTaken: 'Someone already has that handle. Try another.',
+    loveSingle: 'Your thread is not tied to anyone yet.', loveYouAre: 'They find you as',
+    loveRequests: 'Waiting for you', loveAccept: 'Take the thread', loveDecline: 'No thank you',
+    loveAcceptAsk: (n) => 'Tie the thread with ' + n + '? You will both be shown here.',
+    loveTied: 'Tied 🧵', loveTheyTied: 'They have just tied the thread with someone else.',
+    loveFindTitle: 'Find them', loveFindHint: 'Type their handle exactly. There is no list to browse here, so nobody finds you unless you give them your handle.',
+    loveHandlePh: 'theirhandle', loveFind: 'Find', loveChangeHandle: 'Change my handle', loveLooking: 'Looking…',
+    loveNoOne: 'Nobody has that handle.', loveThatsYou: 'That is you.', loveAlreadyTied: 'They are already tied to someone.',
+    loveNoteLabel: 'A line for them (optional)', loveNotePh: 'Say something…',
+    loveOffer: 'Send the thread', loveOffered: 'Sent. It is theirs to accept.', loveSomeone: 'Them',
+    loveDaysWord: 'days together', loveDaysN: (n) => n + ' days', loveSince: (d) => 'Since ' + d,
+    loveNextMark: (n, d) => d + ' days until you reach ' + n + '.',
+    loveDayTitle: 'The day it began', loveDayHint: 'If it began before today, set the real day. Either of you can change it, and it cannot be a day in the future.',
+    loveDayBad: 'Pick a day no later than today.', loveDaySaved: 'Saved.',
+    loveDaySave: 'Save this day', loveDayUnsaved: 'You changed the day but have not saved it.',
+    loveNextTitle: 'Coming next', loveNextSoon: 'The ceremony, invitations for the friends you want there, and their blessings are coming in a later release.',
+    loveUntie: 'Untie the thread', loveUntieHint: 'You can untie at any time without the other person agreeing. The page goes back to how it was for both of you.',
+    loveUntieAsk: 'Untie this thread? Neither of you will be shown as a couple any more, and this cannot be undone.',
+    loveUntieYes: 'Yes, untie it', loveCancel: 'No, keep it', loveUntied: 'Untied.',
+    loveTagTied: 'Tied',
+    actJoin: 'Join in', actBack: 'All activities', actPileMsgOf: (n) => 'Message of pile ' + n, actTypeIcon: { pile: PILE_ICON, poll: '📊', wish: '🌠' },
+    actPileArt: 'Pile picture', actArtAuto: 'Automatic', actArts: ['Candle', 'Blossom', 'Crescent', 'Amethyst', 'Sun', 'Key', 'Feather', 'Waves', 'Lotus', 'Diamond'],
+    translating: 'Translating into English…', translated: 'English version added (automatic translation).', translateFail: 'Could not translate into English; the Vietnamese text shows for everyone.',
+    actFilterAll: 'All', actMore: (n) => 'See ' + n + ' more', actLess: 'Show less', actResultsPublic: 'Overall results', actNoVotes: 'No votes yet. Be the first!', wishHistory: (n) => 'See the ' + n + ' wishes you sent', wishHide: 'Hide the list', diaryTitle: 'Daily diary', diarySub: 'how was your day?', diaryIntro: 'A few lines each evening about today: how it felt, one thing worth remembering, one thing to be grateful for. Saved only on your device; nobody can read it.', diaryMood: 'Today you feel', diaryPh: 'Today…', diaryToday: 'Today', diarySaved: 'Saved', diaryPast: 'Earlier days', diaryEmpty: 'No days yet. Start with today.', diaryDel: 'Delete this day', diaryCount: (n) => n + ' days written',
+    unlockTitle: 'Unlock more in the app', unlockLink: 'Unlock prices',
+    unlockIntro: 'These are the things you pay for once to open inside the app. A private reading with Nabu is a separate service with its own price sheet.',
+    unlockCourses: 'Courses and practice', unlockActs: 'Upgrade packages', unlockBest: 'Best value',
+    unlockOpenUntil: (d) => 'Open until ' + d, unlockNot: 'Not unlocked yet', unlockHow: 'How to unlock',
+    unlockStep1: 'Transfer the exact amount for the item you want.', unlockStep2: 'Message Nabu with the name of the item and a picture of the transfer.', unlockStep3: 'Nabu sends you a code. Paste it in the box below and you are done.',
+    unlockPick: 'Tap what you want to unlock. You can pick several, and tap again to remove one.', unlockCart: 'What you have chosen', unlockEmpty: 'You have not chosen anything yet.', unlockTotal: 'Total', unlockSend: 'Send the request to Nabu', unlockMsgHead: 'I would like to unlock these in the Nabu Tarot app:', unlockChosen: 'Chosen',
+    reqKindBooking: 'Booking', reqKindUnlock: 'Unlock', reqAll: 'All', reqNone: 'No requests of this kind yet.',
+    unlockSent: 'Request sent. Nabu will send your code once the transfer arrives.', unlockSendApp: 'Send the request in the app', unlockSendMsg: 'Send as a message',
+    saleTab: 'Sale', saleOn: 'A sale is running', saleScope: 'Applies to', saleScopes: { all: 'Everything', reading: 'Readings', unlock: 'Unlocks in the app' },
+    saleKind: 'Kind of discount', saleKinds: { percent: 'A percentage', amount: 'An amount' }, saleValue: 'Discount', saleFrom: 'Starts', saleTo: 'Ends',
+    plusName: 'Nabu Plus', proName: 'Nabu Pro', looksTitle: 'Decorations in your app', looksLink: 'Change the decorations',
+    looksIntro: 'Choose the decoration for each thing in the app: the back of the deck, the message tree, the coin and the diary page. This is separate from the light or dark setting.',
+    looksAll: 'All decorations', looksYours: 'You have Nabu Plus, so any of these is yours.',
+    looksStripNote: 'Tap to change. The three with a padlock come with Nabu Plus.',
+    looksAll: 'All looks', looksYours: 'You have Nabu Plus, so any of these is yours.',
+    looksStripNote: 'Tap to change. The three with a padlock come with Nabu Plus.',
+    looksHere: '🎨 Change this decoration', looksLocked: 'Open every decoration', looksPlusOn: 'You have Nabu Plus, so every decoration is open.', looksNeedPlus: 'That decoration comes with Nabu Plus.',
+    lookKinds: { cardback: 'Card backs', tree: 'The message tree', coin: 'The coin', diary: 'Diary paper' },
+    petTitle: 'Lucky pets', petSub: 'one meal and one wish a day',
+    petPick: 'Each companion looks after a different part of your life: love, work, study, money, health and travel.',
+    petIntro: 'Feed your companion once a day, then say one wish over it. The more steadily you care for it, the fuller its luck grows.',
+    petBrings: (n) => 'Looks after your ' + n.toLowerCase(), petCharm: 'Luck',
+    petFeedWith: (n) => 'Feed ' + n.toLowerCase(), petFedToday: '✓ Fed today. Come back tomorrow.', petThanks: 'Very happy!',
+    petPray: 'Say a wish over it', petPrayHint: 'Close your eyes, think of what you are hoping for, then tap. One wish a day.',
+    petNeedFeed: 'Feed your companion first, then make your wish.',
+    petStreak: (n) => n + ' days running', petMeals: (n) => n + ' meals', petCoat: 'Coat', petName: 'Name',
+    petSwap: 'Choose a different companion', petSwapAsk: 'Change to a different companion?', petLetGo: 'Let this companion go', petLetGoAsk: 'Let this companion go?',
+    petAdd: 'Take in another companion', petRoomLeft: (n) => n + ' places left', petBack: 'Back to your companion', petAllPets: 'All companions',
+    petLuckTotal: (n) => n + ' kinds of luck are walking with you.',
+    petPlusPitch: 'One companion is free. Nabu Pro opens all twelve spirit beasts and lets you keep up to six at once, so more corners of your life are looked after.',
+    petPlusItem: 'That one comes with Nabu Pro.',
+    petLuckNote: 'Your companion is here to give you one warm small thing each day. A blessing is a blessing, not a promise.',
+    sheetClose: 'Done', petCoatMyth: 'A spirit beast keeps its own colours, so coats are for the everyday companions.', petCoatNote: 'The first four are free. The four special coats come with Nabu Pro.',
+    coatNames: { cream: 'Cream', lilac: 'Lilac', rose: 'Rose', sky: 'Sky', mint: 'Mint', ember: 'Ember', midnight: 'Midnight', gold: 'Gold' },
+    petFoodTitle: 'Meals', petFoodNote: 'Better food makes a happier companion, and its luck fills faster.',
+    petHomeShort: 'Home', petHomeTitle: 'Its home', petHomeNote: 'A companion with a lovely home settles in and brings back more.',
+    petWearTitle: 'Clothes', petWearNote: 'A jumper, a cloak or a flower crown: a dressed companion shines.',
+    careDays: 'Coming back every day', careMeals: 'Meals given', careTreats: 'Good food', careCoat: 'A special coat', careWear: 'A charm', careHome: 'A proper home',
+    careMeal: 'A plain meal', petMealWorth: 'Every meal earns', petLevel: (n) => 'Level ' + n,
+    petPreviewIntro: 'Have a proper look first. Nothing is kept until you press the button below.',
+    petPrevFeed: 'Feeding', petPrevFeedN: (h) => 'a meal every ' + h + ' hours', petPrevPlay: 'Playing', petPrevPlayN: (n) => n + ' turns a day',
+    petPrevWish: 'A wish', petPrevWishN: 'once a day',
+    petPrevTake: 'Keep this companion', petPrevChange: 'Change to this companion', petPrevOpen: 'Open its page', petPrevOther: 'Look at another',
+    petPrevKeep: 'You keep one companion, and you can change once a fortnight.',
+    petPrevSwap: 'You are keeping a different companion. If you change, the new one starts again at level 1.',
+    petPrevHave: 'This one is already yours.',
+    petChangeAsk: 'The new companion starts again at level 1, and you can only change once a fortnight. Change anyway?',
+    petChangeWait: (d) => 'A companion can be changed once a fortnight. The next change opens on ' + d + '.',
+    petChangeFree: 'You can change companion now. The new one starts again at level 1.',
+    actNewest: 'Newest', actGroupIntro: { pile: 'Choose a pile, then come back when Nabu turns it over to read what it holds for you.', poll: 'Vote with everyone else and see how the answers fall.', wish: 'Send a wish into the jar. Your wishes stay on your own device.' },
+    petPreviewCan: 'When you keep this companion you can:',
+    petPickFree: 'Six everyday companions', petPickFreeNote: 'Keep one of them for free, and change your mind whenever you like.',
+    petPickPro: 'Nabu Pro spirit beasts', petPickProNote: 'Twelve creatures out of legend, two for each corner of life. A spirit beast earns double from every meal and every game, so it levels twice as fast and turns into Nabu coins twice as fast. Plus opens all twelve and lets you keep several at once.',
+    petLockedItem: (n) => '\u201C' + n + '\u201D comes with Nabu Pro.',
+    petXpWord: 'XP', petMythBonus: (n) => 'A spirit beast earns ' + n + '× the points from every meal and every game.',
+    petMythPlus: 'That spirit beast comes with Nabu Pro.',
+    petRename: 'Rename', petRenameOk: 'Save the name',
+    petRemind: 'Remind me to feed it', petRemindHint: 'When you open the app and a companion has gone more than a day without a meal, it says so, once a day. The app cannot reach you while it is closed.',
+    petRemindOk: 'You will be reminded when it is hungry.', petRemindNoPerm: 'Your phone has not allowed notifications, so the reminder appears inside the app.',
+    petHungryTitle: 'Your companion is hungry', petHungryOne: (n) => n + ' has gone more than a day without a meal.', petHungryMany: (n) => n + ' companions are waiting to be fed.',
+    petPatHint: 'Touch and stroke your companion with a finger, or drag the food from the corner onto it.',
+    petEarnTitle: 'How your companion earns',
+    petNextPays: (lv, c) => 'Level ' + lv + ' pays you ' + c + ' Nabu coins', petTopLevel: 'Top level reached. Coins still come in every day.',
+    earnMeal: 'A meal', earnStreak: 'Days running', earnPlay: 'Playing', earnGroom: 'Brushing', earnPat: 'Stroking', earnPray: 'A wish',
+    earnGood: 'Good food', earnWear: 'A charm', earnHome: 'A home', earnCoat: 'A coat',
+    petPlayShort: 'Play', petGroom: 'Brush', petGroomDone: 'Brushed today', petGroomThanks: 'Coat gleaming. It loved that.',
+    petPatThanks: (n) => 'It leans into your hand. That is ' + n + ' more points.', petDragFood: 'Drag onto your companion',
+    petPlay: 'Play together', petPlayLeft: (n) => n + ' turns left today', petPlayDone: '✓ You have played together today.',
+    petPlayMore: 'With Nabu Pro you get 3 turns a day.', petPlayThanks: 'Happy and bouncing. That is 12 more points.', luckEarnPlay: 'Each turn of play',
+    petFull: (w) => 'Full for now. Come back in ' + w + '.', petFasterPlus: 'With Nabu Pro the wait between meals is only 2 hours.',
+    petLevelUp: (lv, c) => 'Level ' + lv + ' reached. You earned ' + c + ' Nabu coins.', petThanksCoins: (c) => 'Very happy! You earned ' + c + ' Nabu coins.',
+    waitMin: (n) => n + ' minutes', waitHour: (n) => n + ' hours', waitHourMin: (h, m) => h + ' hours ' + m + ' minutes',
+    luckTitle: 'Nabu coins and rewards', luckLink: 'Your coins and rewards', luckCoins: 'Nabu coins',
+    luckIntro: 'Caring for your companion every day earns Nabu coins and opens a voucher. One coin is worth one đồng towards a reading or a course.',
+    luckHint: 'Use them now or keep them for next time. Nabu coins never expire. One order takes at most 100,000 coins, and never more than half its price.',
+    luckWorth: (s) => 'Worth ' + s + ' towards anything here.',
+    luckVoucher: 'Voucher by level', luckVoucherHint: 'The highest level any of your companions has reached sets how much comes off.',
+    luckVoucherOf: (p) => p + '% voucher', luckAtLevel: (n) => 'From level ' + n,
+    luckNextTier: (lv, p) => 'Reach level ' + lv + ' for a ' + p + '% voucher.', luckTopTier: 'You are at the highest reward level.',
+    luckEarnTitle: 'How coins are earned', luckEarnFeed: 'Each plain meal', luckEarnGood: 'Each good meal', luckEarnLevel: 'Each level reached', luckLevelWord: 'level',
+    luckEarnNote: (n) => 'Caring for a companion earns up to ' + n + ' coins a day. Coins for reaching a new level are on top of that.',
+    luckPaceNote: 'A companion learns at most 400 points a day. A Nabu Pro spirit beast earns double, so it climbs much faster.',
+    petDayLeft: (n, max) => 'Learned ' + n + '/' + max + ' points today.', petDayFull: 'That is everything it can learn today. Come back tomorrow.',
+    luckHoldTitle: 'Coins waiting on an order', luckHoldHint: 'If an order does not go ahead, you can take these coins back at any time.', luckTakeBack: 'Take back',
+    luckGaveBack: (n) => n + ' coins returned.', luckHave: (n) => 'You have ' + n + ' coins', luckKeep: 'Keep them', luckAll: 'Use all',
+    luckSaveUp: 'Save up a few more and use them next time.', luckCoinsUsed: (n) => n + ' Nabu coins used', luckAfter: 'You pay',
+    salePicks: 'Only these', salePicksHint: 'Tick nothing and the sale covers the whole group above.', saleLabel: 'Name of the sale', saleLabelPh: 'For example: Mid-Autumn', saleDefault: 'A sale is on', saleNone: 'No sale is running at the moment.',
+    saleSaved: 'Sale saved', saleHint: 'Switch it on, choose what it covers and how much comes off, then pick the first and last day. Old prices are struck through with the new price beside them.',
+    saleBanner: (off, what) => off + ' off ' + what, saleSee: 'See it',
+    adminShort: 'Admin account', unlockCodeLabel: 'Enter the code Nabu sent you', unlockReadings: 'See the prices for a reading',
+    luckFree: 'You get one free turn every 3 days.', luckLeft: 'Your free turn is still open.', luckSpent: (d) => 'You have had your free turn. The next one opens on ' + d + '.', luckOpen: 'You have unlimited turns.', luckOffer: 'Nabu Plus opens the coin and the message tree without limit for a year, and every design with them: 79,000đ.', luckGet: 'Message Nabu for a code', luckCodePh: 'NABU-B-…',
+    treeTitle: 'Shake the message tree', treeSub: 'a message from the universe', treePets: 'Show your companions under the tree', treePetsHint: 'Turn it off and the tree stands on its own. Your account only.',
+    treeIntro: 'Stand in front of the tree, hold in mind whatever you are carrying, and give it a gentle shake. The tree will let a message fall for you.', treeShake: 'Shake the tree', treeAgain: 'Shake it once more', treeFor: 'A message for you', coinTitle: 'Flip a coin', coinSub: 'for a yes or no question', coinIntro: 'When a question needs nothing more than a yes or a no, hold the question clearly in mind and flip the coin.', coinQ: 'Your question', coinQPh: 'For example: should I message first?', coinFlip: 'Flip the coin', coinAgain: 'Flip again', coinYes: 'YES', coinNo: 'NO', coinNote: 'The coin gives you one of two answers. What matters is how you feel the moment you see it: if the result disappoints you, you already know what you want.',
+    actNew: 'New activity', actType: 'Type', actTypes: { pile: 'Pick a pile', poll: 'Poll', wish: 'Wish' }, actResultsDate: 'Results date', actIntroLabel: 'Intro (the bar above the box: bold, italic, highlight, images, video, emoji)', actPilesHint: 'Two to five piles. You can publish with empty labels; come back days later, fill in the messages and switch on "Answered".', actPileN: (n) => 'Pile ' + n, actPileLabel: 'Short label (optional), e.g. Left · Middle · Right', actPileMsg: 'Message for this pile (can be added later)', actPileMsgEn: 'English message (optional)', actPileAdd: 'Add a pile', actPileDel: 'Remove a pile', actResultsOn: 'Answered: let people flip the piles', actOptions: 'Options, one per line', actCloseOn: 'Close the poll', actExisting: 'Published activities', actNeedPiles: 'Fill in at least one pile.', actNeedOptions: 'At least two options are needed.',
+    diarySave: 'Save today\u2019s page', diaryUnsaved: 'Not saved', diarySavedToast: 'Saved to your diary \uD83D\uDCD4',
+    diaryNothing: 'Write something, or pick a mood, first.',
+    diaryAsk: (n) => 'Ask ' + n + ' to share diaries',
+    diaryWait: (n) => 'Asked. When ' + n + ' agrees, you can read each other.',
+    diaryTakeBack: 'Take the request back',
+    diaryInvited: (n) => n + ' would like you to read each other\u2019s diaries \uD83D\uDC8C',
+    diaryInvitedHint: 'If you agree, you can both read. You can stop whenever you like, without asking.',
+    diaryApprove: 'Agree', diaryDecline: 'Not yet',
+    diaryStop: 'Stop sharing diaries',
+    diaryStopHint: 'You can stop on your own and it stops for both of you, with nobody\u2019s permission. The pages you sent are deleted.',
+    diaryAskSent: 'Sent \uD83D\uDC8C', diaryStopped: 'Sharing stopped.',
+    diaryShareTitle: 'Read each other\u2019s diary', diaryShareHint: 'Both of you have to switch this on. You can switch it off whenever you like, and the pages you sent are deleted.',
+    diaryShareAsk: (n) => 'Let ' + n + ' read my diary',
+    diaryShareOff: 'Off. Your diary stays on this phone only.',
+    diaryShareWait: (n) => 'You have switched it on. When ' + n + ' does too, you can read each other.',
+    diaryShareBoth: (n) => 'Both switched on. You and ' + n + ' can read each other \u2728',
+    diaryTheirs: (n) => n + '\u2019s diary', diaryTheirsNone: (n) => n + ' has not written a page since switching it on.',
+    accessOnTitle: (n) => 'Unlocked: ' + n,
+    accessOnBody: (until) => 'Yours until the end of ' + until + '. Thank you for supporting Nabu.',
+    accessGoneTitle: 'Your access has been withdrawn',
+    accessGoneBody: 'Nabu has withdrawn what you had open. If you think this is a mistake, write to Nabu from the Profile tab.',
+    adminHolds: 'Access', adminAccessNone: 'This person has nothing unlocked.',
+    adminRevoke: 'Withdraw access', adminRevokeYes: 'Yes, withdraw it',
+    adminRevokeAsk: 'Withdraw everything this person has open? This cannot be undone.',
+    adminRevokeWhy: 'Reason (they will read this)',
+    adminRevokeHint: 'They are told, and it takes hold the next time their phone reaches Nabu.',
+    adminRevoked: 'Access withdrawn.',
+    adminOrders: 'Waiting for payment',
+    adminOrdersHint: 'Unlock orders and weddings have no appointment hour, so they are not on the calendar. Once the money has arrived, confirm it here \u2014 for a wedding that opens the room for both partners at once.',
+    adminOrdersNone: 'Nothing waiting.',
+    alertWedPaid: 'Your wedding is confirmed \uD83D\uDC8D',
+    alertWedPaidBody: (pair) => 'Nabu has received the payment. The room for ' + pair + ' opens fifteen minutes before the ceremony.',
+    wedMoveAsked: 'Nabu has your request for a new hour.',
+    wedMoveWait: (when) => 'You have asked for ' + when + '. Nabu is looking at it, and the old hour stands until there is an answer.',
+    adminWedMoves: 'Wedding time changes',
+    adminWedMovesHint: 'You host the ceremony, so a new hour needs your yes. The old hour stands until you answer, and each couple may move once.',
+    adminWedWas: 'Held for', adminWedWants: 'Asking for',
+    alertWedMoveYes: 'Nabu agreed to the new time \uD83D\uDC8D',
+    alertWedMoveYesBody: (when) => 'Your wedding moves to ' + when + '. Do let your guests know.',
+    alertWedMoveNo: 'Nabu is keeping the old time',
+    alertWedMoveNoBody: (when) => 'The hour could not be moved this time, so the wedding stays at ' + when + '. Write to Nabu if you need to arrange something.',
+    alertWedInvite: (pair) => 'You are invited to the wedding of ' + pair + ' \uD83D\uDC8C',
+    alertWedInviteBody: (when) => 'The ceremony is on ' + when + '. Open it to accept or decline.',
+    adminWeds: 'Weddings being held',
+    adminWedsHint: 'Every wedding with an hour reserved is here. Once the 30,000\u0111 has arrived, press Payment received \u2014 the room opens for both partners and neither needs a code.',
+    adminWedPaid: 'Paid', adminWedOwed: 'Not paid yet',
+    adminWedGotPaid: 'Payment received', adminWedPaidDone: 'Their room is open.',
+    adminWedMoveOk: 'Agree to the new hour',
+    wedHereYes: (n) => n + ' is in the room',
+    wedHereNo: (n) => n + ' is not here yet',
+    wedHereBoth: 'The couple are here',
+    wedHereOne: (n) => n + ' is here',
+    wedHereNone: 'The couple are not in the room yet',
+    wedHereGuests: (n) => n === 0 ? 'no guests yet' : n + (n === 1 ? ' guest here' : ' guests here'),
+    wedCameIn: (n) => n + ' has just come in \uD83D\uDC95',
+    wedCoupleIn: 'The couple have just come in \uD83D\uDC8D',
+    wedByeThanks: (a, b) => 'Thank you for coming to the wedding of ' + a + ' and ' + b + '.',
+    wedByeDone: 'The ceremony has ended.',
+    wedByeNoShow: 'The ceremony could not take place today.',
+    wedByeShut: 'The room closes by itself when this runs out.',
+    wedByeGone: 'The room has closed. Thank you for coming \uD83D\uDC95',
+    alertClearAsk: 'Throw away every notification? There is no getting them back.',
+    alertClearYes: 'Yes, clear them', alertReadDone: 'Marked as read.',
+    payIntro: 'Where the money is tracked. Confirming an order is agreeing to sell; press Payment received once it has arrived \u2014 that is what opens what they bought, written onto their own account so it cannot be passed round.',
+    payBookings: 'Readings', payBookingsHint: 'A reading has nothing to unlock; this only records that it has been settled.',
+    payNone: 'Nothing waiting to be paid.',
+    adminGotPaid: 'Payment received', adminPaidTag: 'Paid',
+    payMarked: 'Marked as paid.',
+    payOpened: (n) => 'Opened ' + n + ' for them.',
+    storeFull: 'This phone has no storage left, so Nabu could not save that. Freeing some space in the browser or another app will fix it.',
+    wedStartBoth: 'One of you presses begin and the other confirms they are ready \u2014 the ceremony starts only then.',
+    wedImReady: 'I am ready',
+    wedWaitReady: (n) => 'Waiting for ' + n + '\u2026',
+    wedWaitReadyHint: (n) => 'You are ready. It begins the moment ' + n + ' confirms.',
+    wedReadySent: 'They have been told you are ready.',
+    wedAlmost: 'The couple are about to begin. One moment.',
+    wedTalkTitle: 'Only the two of you', 
+    wedTalkHint: 'Guests cannot see this. Sort out between you whether to begin now or wait for somebody.',
+    wedTalkNone: 'Nothing said yet.', wedTalkPh: 'A word to them alone\u2026',
+    wedAlreadyLead: 'You two are already married \uD83D\uDC95',
+    wedAlreadyHint: (d) => 'Your wedding took place on ' + d + ', so there is no second one to hold.',
+    loveTakenLead: 'This person already has a thread with somebody else.',
+    loveTakenHint: 'Try the name of somebody who has no partner in Nabu yet.',
+    meInboxHint: 'Every conversation with a visitor lives in the Inbox on the dashboard.',
+    meGroupYou: 'Who you are', meGroupTalk: 'Messages & bookings', meGroupOwn: 'What you have', meGroupApp: 'The app',
+    imgSaved: 'Saved to your phone \uD83D\uDCF7',
+    imgHold: 'Press and hold the picture, then choose Save Image.',
+    refreshed: 'Refreshed \u2728', pullHint: 'Pull down to refresh',
+    alertDiaryAsk: (n) => '\uD83D\uDC8C ' + n + ' would like you to read each other\u2019s diaries',
+    alertDiaryAskBody: 'Open the diary to answer.',
+    alertDiaryOn: (n) => '\uD83D\uDCD4 You and ' + n + ' can read each other\u2019s diaries!',
+    alertDiaryOnBody: 'From now on, every page you save, they can read.',
+    alertDiaryOff: (n) => '\uD83D\uDCD5 Diary sharing has stopped',
+    alertDiaryOffBody: 'Your diary is back to living on this phone only.',
+    shareCopy: 'Copy', shareMore: 'More', shareIgCopied: 'Copied. Open Instagram and paste it into a story or a post.',
+    loveTellTitle: 'Tell people', loveTellHint: 'Press anywhere below \u2014 the words and the link are written for you.',
+    loveShareOf: {
+      tied: (n, d) => n + ' and I tied the red thread on Nabu Tarot. Today is day ' + d + ' \uD83E\uDDE7',
+      proposed: (n) => 'There is a question waiting on the thread between ' + n + ' and me \uD83D\uDC8D',
+      engaged: (n, d) => n + ' and I are engaged on Nabu Tarot, after ' + d + ' days together \uD83D\uDC8D\u2728',
+      married: (n, d) => n + ' and I are married on Nabu Tarot \u2014 ' + d + ' days, and a long way to go \uD83D\uDC92'
+    },
+    unlockWedding: 'A wedding', unlockWeddingHint: 'Only one of you needs to pay \u2014 the room then opens for you both.',
+    wedFromThread: 'Or hold a ceremony with guests, with Nabu Cupid to marry you.',
+    wedJoinHint: 'Making a Nabu account takes a minute, and then this door opens for you.',
+    alertWedToday: (p) => '\uD83D\uDC92 Today is the wedding of ' + p,
+    alertWedTodayBody: 'Be there on time \u2014 the doors open 15 minutes before.',
+    alertWedOpen: (p) => '\uD83D\uDD14 The doors are open for ' + p,
+    alertWedOpenBody: 'Come in now so you do not miss the ceremony.',
+    wedComing: 'Coming up', wedMineComing: (n) => 'Your wedding with ' + n,
+    wedGuestComing: (p) => 'The wedding of ' + p,
+    wedAskTitle: 'Hold your wedding on Nabu?',
+    wedAskEngaged: 'You are engaged. If you would like, you can hold a ceremony inside the app: choose the day and hour, invite your friends, and Nabu Cupid will marry you.',
+    wedAskMarried: 'You are married on Nabu. If you would like, you can still hold a ceremony with guests, with Nabu Cupid to marry you.',
+    wedAskGo: 'See a wedding on Nabu',
+    alertWedAsk: (n) => '\uD83D\uDC92 Would you like to hold your wedding on Nabu?',
+    alertWedAskBody: 'Choose the day and hour, invite your friends, and Nabu Cupid will marry you. Only one of you needs to pay.',
+    wedPayIntro: 'One step to go.',
+    wedPayOnce: 'Paid once, for this ceremony.',
+    wedPayWhat: 'What the ceremony includes',
+    wedPayList: ['A room of your own, open 15 minutes before it starts',
+      'Invitations by link, as many guests as you like',
+      'Nabu Cupid to marry you, asking each of you your vows',
+      'Music, falling petals and effects throughout',
+      'Guests send congratulations and gifts, free',
+      'A bouquet toss to pick one lucky guest'],
+    wedPayHow: 'How to pay',
+    wedPayHold: (when) => 'Nabu is holding ' + when + ' for you. Transferring soon is what makes that hour certainly yours.',
+    wedPaySend: 'Send the request to Nabu', wedPaySent: 'Nabu has your request \uD83D\uDC8C You will hear back soon.',
+    wedChangeTime: 'Choose another time',
+    wedPlanPay: (p) => 'Choose the day and hour first \u2014 paying (' + p + ') comes after.',
+    wedMadeTitle: '\uD83D\uDC92 Your wedding room has been made',
+    wedMadeBody: (when) => 'The ceremony is ' + when + '. The doors open 15 minutes before.',
+    wedShutFor: 'The doors open 15 minutes before the ceremony. Come back then.',
+    wedUnpaid: 'The room is holding this hour for you. Transferring soon is what keeps it.',
+    wedPayNow: 'How to pay',
+    payTitle: 'Paying', payHow: 'Send Nabu the message below. Nabu replies with the account details and a QR code to transfer to.',
+    payRefIs: 'Your reference:',
+    payMsg: (what, price, ref) => 'Hi Nabu, I would like to pay for ' + what + ' (' + price + '). Reference: ' + ref + '. Could you send me the account details?',
+    paySend: 'Send this to Nabu', payCopy: 'Copy the message',
+    paySent: 'Sent to Nabu \uD83D\uDC8C Open the Profile tab to see the reply.',
+    payThen: 'Once you have transferred, photograph the receipt and send it back in the same chat.',
+    wedPayWhat2: (when) => 'a wedding on Nabu (' + when + ')',
+    wedEnterUnpaid: 'Waiting for Nabu to confirm the payment',
+    wedWaitPay: 'The room is holding this hour for you. Once Nabu has the transfer, the doors open at the time you chose.',
+    wedGave: (what) => 'sent ' + what,
+    wedGiftsTotal: (n) => n + ' in all',
+    wedNoWishes: 'Nothing yet \u2014 be the first.',
+    wedSayTitle: 'Live from the room', wedSayNone: 'Nobody has said anything yet. Go first.',
+    wedSayPh: 'Say something\u2026', wedSayGo: 'Send',
+    wedAskInApp: 'If your guest is on Nabu Tarot too, invite them straight from here: type their name and press Invite.',
+    wedAskSend: 'Invite', wedAskSelf: 'That is one of your own names.',
+    wedAskDone: (n) => 'Invited ' + n + ' \uD83D\uDC8C',
+    wedAsked: (n) => 'Invited from here: ' + n + ' \u2014',
+    alertWedAsked: (p) => '\uD83D\uDC8C You are invited to the wedding of ' + p,
+    alertWedAskedBody: (by) => (by ? by + ' invited you. ' : '') + 'Tap to see the day and the hour.',
+    wedBeThere: 'A few things to know before you choose the hour. One of you must be here and press Begin within 15 minutes of the hour; if nobody does, the room closes itself and your guests are told it is not happening. The day can be moved once, and no later than an hour before. And if the wedding is called off within that last hour, or during the ceremony, or closes itself because nobody came, it counts as held and the fee is not returned \u2014 holding another means booking and paying again.',
+    wedNoShow: 'The ceremony is not going ahead today.',
+    wedNoShowSorry: 'The couple were not here in time. Nabu is sorry for the wait, and thanks everybody who came.',
+    wedNoShowShut: 'This room closes in a few minutes.',
+    wedYouAreAsked: 'You are invited to join them.',
+    wedComing: 'I will be there', wedCannot: 'Sorry, I cannot',
+    wedRsvpHint: 'Answer so the couple know. You can change your mind later.',
+    wedComingYes: 'Accepted \uD83D\uDC8C See you there!',
+    wedComingNo: 'They have been told. Have a lovely day.',
+    wedSaidNo: 'You said you could not make this one.',
+    wedChangeMind: 'Actually, I can come', wedChangeMindHint: 'If you can make it after all, press this and the couple will know.',
+    wedNotAnswered: (n) => n + ' have not answered:',
+    wedCannotCome: (n) => n + ' cannot come:',
+    wedMoveRule: 'You may move it once, and no later than an hour before the ceremony.',
+    wedMoveOnce: 'You can only move the day once. Are you sure about the new time?',
+    wedMovedAlready: 'You have already moved this wedding once, so the day now stands.',
+    wedMoveTooLate: 'It is too close to the hour to move it \u2014 your guests may already be on their way.',
+    wedDropLate: 'Call the ceremony off',
+    wedDropLateHint: 'It is too close to the hour. Calling off now counts as held, and the fee is not returned; holding another means booking and paying again.',
+    wedDropLateAsk: 'Call the ceremony off now? Your guests will be told it is not happening, and the fee is not returned. Holding another means booking and paying again.',
+    wedDroppedLate: 'Called off.',
+    wedTermsTitle: 'Terms for the ceremony',
+    wedTerms: [
+      'The ceremony begins at the hour you choose. One of you must be here and press Begin within 15 minutes of it.',
+      'If nobody has begun by then, the room closes itself and your guests are told the ceremony is not happening.',
+      'The day and hour can be moved once, and no later than an hour before the ceremony.',
+      'If the wedding is called off within that last hour, called off during the ceremony, or closes itself because nobody came, it counts as held and the 30.000\u0111 is not returned. Holding another means booking and paying again.'
+    ],
+    wedAgree: 'I have read and agree to these terms.',
+    wedAgreeFirst: 'Please read the terms and tick the box to continue.',
+    wedHowTitle: 'How the room works',
+    wedHow: [
+      'It takes both of you to begin: one presses “Begin the ceremony” and the other confirms “I am ready”.',
+      'A line on the screen says whether the other one has arrived, and how many guests are here.',
+      'The two of you have a private box no guest can read.',
+      'To invite anybody else, scroll to the bottom — it works from inside the room too.',
+      'Nabu Cupid asks; you answer in turn in front of everyone. Then comes the bouquet.',
+      'If nobody has begun fifteen minutes after the hour, the room closes itself and the wedding counts as used.'
+    ],
+    wedRules: [
+      'It begins at the hour you chose \u2014 one of you presses Begin within the first 15 minutes.',
+      'Moving the day: once, and no later than an hour before.',
+      'Called off late, or nobody there: it counts as held, and the fee is not returned.'
+    ],
+    wedShareMine: (n) => n + ' and I are married on Nabu Tarot \uD83D\uDC92',
+    wedAnother: 'Hold another wedding',
+    wedAnotherHint: 'This ceremony is finished. To hold another, choose a new day and pay as you did the first time.',
+    wedAnotherAsk: 'Clear the old room and book a new ceremony? The new one is paid for again.',
+    wedAnotherDone: 'Choose your new day and hour \uD83D\uDC92',
+    wedStart: 'Begin the ceremony', wedStartsAt: (when) => 'The ceremony begins at ' + when + '. This button works at that hour, and not before.',
+    wedStartNow: 'It is time. Either of you may begin.',
+    wedGuestWait: (when) => 'The ceremony begins at ' + when + '. Stay where you are \u2014 it is nearly time.',
+    wedAttention: 'Everybody \u2014 the ceremony is about to begin!',
+    wedReady: 'Your wedding room is ready',
+    wedEnter: 'Go into the room', wedEnterLater: 'The room is not open yet',
+    wedEnterNow: 'The doors are open. Go in to begin the ceremony.',
+    wedDoorsOpen: 'Doors open',
+    wedTitle: 'A wedding on Nabu', wedIntro: 'A couple engaged on the red thread can hold a ceremony inside the app, with guests, and Nabu Cupid to marry them.',
+    wedCupid: 'Nabu Cupid',
+    wedNeedAccount: 'You need to be signed in to hold or attend a wedding.',
+    wedNeedThread: 'You need a red thread with somebody first.',
+    wedNeedEngaged: 'You need to be engaged on the red thread before you can hold a wedding.',
+    wedNoRoom: 'This wedding could not be found. It may have finished, or the link may be out of date.',
+    wedOfferLead: 'A small ceremony, for the two of you and whoever you invite.',
+    wedBuy: 'Open a wedding', wedBuyHint: 'Paid once, and you have 12 months to choose the day.',
+    wedPlanLead: (n) => 'You and ' + n + ' are ready. All that is left is the day and the hour.',
+    wedPlanHint: 'Guests can only come in from 15 minutes before it starts.',
+    wedWhen: 'The day and the hour', wedWhenHint: 'In the time on your own phone. Either of you can change it any time before the ceremony.',
+    wedWhenBad: 'Choose a time at least 10 minutes from now.',
+    wedMake: 'Make the room', wedMade: 'Your wedding room is ready \uD83D\uDC92',
+    wedMoveTitle: 'Move it', wedMove: 'Save the new time', wedMoved: 'Moved.',
+    wedDrop: 'Call the wedding off', wedDropHint: 'The room and the guest list are deleted. You can make another one later.',
+    wedDropAsk: 'Call this wedding off? The room and the guest list will be deleted.',
+    wedDropped: 'Called off.',
+    wedOpensSoon: 'The room opens 15 minutes before it starts.',
+    wedInviteTitle: 'Invite people', wedInviteHint: 'Send this link to anyone. Somebody without a Nabu account is asked to make one before they can come in.',
+    wedInviteText: (a, b, when) => 'You are invited to the wedding of ' + a + ' and ' + b + ' on Nabu Tarot, ' + when + ' \uD83D\uDC92',
+    wedGuests: (n) => 'Guests (' + n + ')', wedNoGuests: 'Nobody in the room yet.', wedNoGuestsYet: 'Nobody has accepted yet. Send them the link above.',
+    wedGuestIntro: 'You are invited to a wedding on Nabu.',
+    wedDoorEarly: 'The doors open 15 minutes before it starts. Come back then.',
+    wedRemember: 'Do not forget', wedRememberHint: 'Save it to your phone\u2019s calendar and be reminded on the day.',
+    wedAddCal: 'Save to my calendar', wedCalTitle: (a, b) => 'The wedding of ' + a + ' and ' + b + ' on Nabu',
+    wedInDays: (d, h) => d + 'd ' + h + 'h',
+    wedWatching: 'You are a guest. Watch, and send your congratulations \u2014 the vows are for the couple to answer.',
+    wedLeaveOk: 'You can step out and come back while the ceremony is going on.',
+    wedGoOn: 'Go on', wedIDo: 'I do', wedNotYet: 'Not yet',
+    wedAnswerHint: 'Take your time. Your answer appears in front of every guest.',
+    wedNoSure: 'Are you sure you want to answer \u201CNot yet\u201D? The ceremony will stop here.',
+    wedWaitingFor: (n) => 'Waiting for ' + n + ' to answer\u2026',
+    wedCalledOff: 'The ceremony has stopped. Your thread is still here, and you can hold another when you are both ready.',
+    wedMute: 'Music on or off',
+    wedSay: {
+      gather: () => 'Welcome, everyone. I am Nabu Cupid, who keeps the red thread. I have been asked here today to witness something rather lovely.',
+      thread: (a, b) => 'The thread between ' + a + ' and ' + b + ' was tied a long time ago. Today, in front of all these people, they will tie it once more.',
+      askA: (a, b) => a + ', will you take ' + b + ' to be your own, for the rest of your days?',
+      askB: (a, b) => b + ', will you take ' + a + ' to be your own, for the rest of your days?',
+      promiseA: (a) => a + ', do you promise to stand beside them on the good days, and to stay on the days that are not?',
+      promiseB: (a, b) => b + ', do you promise to stand beside them on the good days, and to stay on the days that are not?',
+      bind: () => 'Then let me tie this thread. From here, the two ends are one.',
+      declare: (a, b) => 'Before everybody here today, I declare ' + a + ' and ' + b + ' married. Every happiness to you both! \uD83C\uDF8A'
+    },
+    wedWishTitle: 'From the guests', wedWishHint: 'Guests can send their congratulations, free, as many as they like.',
+    wedBqTitle: 'Throw the bouquet', wedBqHint: 'Throw it to the guests who are here. Whoever catches it takes the luck in love with them.',
+    wedBqThrow: 'Throw it', wedBqReady: (n) => n + ' guests are in the room.',
+    wedBqNobody: 'Nobody is in the room to catch it.',
+    wedBqAir: 'The bouquet is in the air\u2026 who will catch it?',
+    wedCaught: (n) => n + ' caught the bouquet! \uD83D\uDC90',
+    wedOverMarried: 'The ceremony is over. Congratulations to you both!',
+    wedOverCalled: 'The ceremony stopped.',
+    wedTellTitle: 'Share the news',
+    wedShareGuest: (a, b) => 'I was just at the wedding of ' + a + ' and ' + b + ' on Nabu Tarot \uD83D\uDC92',
+    alertTitle: 'Notifications', alertIntro: 'What happened while you were away.',
+    alertNone: 'Nothing yet. When someone wants to tie a thread with you, when a gift arrives, when a booking is answered or when your companion is hungry, it will be here.',
+    alertPullTip: 'Pull down from the top to refresh and take the newest version.',
+    alertReadAll: 'Mark all as read', alertClear: 'Clear',
+    alertToday: 'Today', alertYesterday: 'Yesterday', alertEarlier: 'Earlier',
+    alertOfferGone: (n) => '🍃 ' + n + ' has withdrawn their invitation',
+    alertOfferGoneBody: 'They may have sent it by mistake, or changed their mind. Nothing to worry about.',
+    alertOffer: (n) => '💌 ' + n + ' would like to tie a thread with you',
+    alertOfferBody: 'Open the red thread to answer.',
+    alertTied: (n) => '🧧 You and ' + n + ' are tied!',
+    alertTiedBody: 'Nabu starts counting your days from today 💗',
+    alertAsked: (n) => '💍 ' + n + ' has asked you!',
+    alertAskedBody: 'Open the red thread to answer. There is no hurry.',
+    alertYes: (n) => '🎉 ' + n + ' said yes!',
+    alertYesBody: 'Congratulations to you both. You are engaged 💍✨',
+    alertNo: (n) => '🌿 ' + n + ' is not ready this time',
+    alertNoBody: 'That is all right. Some things simply need more time. Your thread is still here, and you can ask again later 💗',
+    alertWed: (n) => '💒 You and ' + n + ' are married!',
+    alertWedBody: 'Every happiness to you both 🎊🥂',
+    alertUntied: '💔 The thread has been untied',
+    alertUntiedBody: 'You can tie one again whenever you like.',
+    alertGift: (n, g) => '🎁 ' + n + ' gave you ' + g,
+    alertGiftBody: 'It stays in your thread.',
+    alertAnniv: (n, y) => '🎊 Today is ' + y + ' year' + (y > 1 ? 's' : '') + ' for you and ' + n + '!',
+    alertAnnivBody: 'Congratulations 🥳💐 Say something lovely to each other today.',
+    alertMark: (n, d) => '✨ Today is day ' + d + ' for you and ' + n + '!',
+    alertMarkBody: 'A small milestone worth marking 💗',
+    alertBookOk: '✅ Your booking is confirmed', alertBookNo: '📅 Your booking was cancelled',
+    alertMsg: '💬 Nabu has written to you',
+    alertPet: (n) => '🍚 ' + n + ' is hungry', alertPetMany: (k) => '🍚 ' + k + ' companions are hungry',
+    alertPetBody: 'Give them a meal.',
+    alertUp: (v) => '✨ Nabu has been updated (' + v + ')', alertUpBody: 'There is something new to look at.',
+    alertAnnivAsk: 'Remind me on our anniversary',
+    alertAnnivHint: 'On this day each year, Nabu will remind you. The reminder stays on your phone.',
+    newsTitle: 'Posts', newsIntro: 'Everything Nabu has posted: readings, thoughts, announcements. Type to search.', searchPosts: 'Search the posts…', noMatch: 'No post matches.', allPostsBtn: (n) => 'See all posts (' + n + ')', watchOn: (s) => 'Watch on ' + s,
+    addImage: 'Image', addVideo: 'Video', videoPrompt: 'Paste a video link (YouTube, Facebook, TikTok, Instagram):', imgNeedCloud: 'Sign in with the admin account to upload images.', imgTooBig: 'Image too large, try a smaller one.', imgAdded: 'Image added to the post.', wrapPlaceholder: 'text', boxLabel: 'Box', formatHint: 'Select text, then tap B / I / U / H for bold, italic, underline, highlight. H2 is a small heading, Box a separate title box. Images upload straight into the post; videos are pasted as links.',
+    contactTitle: 'Contact us', contactLink: 'Contact', contactIntro: 'Write a few lines to Nabu, then choose where to send them.', contactWhat: 'Your message', contactPlaceholder: 'For example: a question about a package, or feedback on the app…', contactChoose: 'Send via:', contactApp: 'Message inside the Nabu Tarot app', contactIg: 'Copy the message and open Instagram', contactFb: 'Copy the message and open Facebook', contactCopyHint: 'For Instagram and Facebook: your message is copied when you tap the button, so over there you only paste it into the chat and send.', contactNeed: 'Write a few lines first.', contactSent: 'Sent to Nabu. Replies show under Profile.', contactCopied: 'Your message is copied. Paste it into the chat when the app opens.',
+    addToCalendar: 'Add to my phone calendar', gcal: 'Google Calendar', icsDownloaded: 'Calendar file downloaded. Open it to add the event.', calendarHint: 'Your phone calendar will remind you 24 hours, 6 hours, 1 hour and 15 minutes before.', cancelBooking: 'Cancel booking', changeTitle: 'Change the time', changeIntro: 'Pick a new time below. Nabu reviews it before the new time takes effect.', currentSlot: 'Current time', sendChange: 'Send the change request', changeSent: 'Change request sent. Nabu will review it soon.', cancelSent: 'Cancellation request sent. Nabu will confirm it.', confirmCancel: 'Cancel this booking?', newSlotLabel: 'New time', adminApplyChange: 'Approve new time', adminKeep: 'Keep old time', adminApplyCancel: 'Approve cancellation', adminKeepBooking: 'Keep booking', reminderOn: 'Turn on booking reminders on this device', reminderHint: 'While the app is open you are reminded 24 hours, 6 hours, 1 hour and 15 minutes before. To be safe, add the booking to your phone calendar.', upcoming: 'Upcoming booking', remindTitle: (w) => 'Reading with Nabu ' + w, inHours: (h) => 'in ' + h + ' hours', inMinutes: (m) => 'in ' + m + ' minutes', allDays: 'All', bkOn: (d) => 'Bookings on ' + d, aiSettings: 'Nabu AI settings', aiKeyLabel: 'Gemini API key (Google AI Studio)', aiKeyHint: 'Paste the key here and save: every user gets Nabu AI answered by Gemini, with web search while the quota lasts. The key lives in the app cloud, not in the source code. Leave it empty to use the built-in answers.', aiKeySaved: 'Saved. Nabu AI now uses Gemini.', saveKey: 'Save key', emojiBtn: 'Emoji', imgTooBigChat: 'Image too large for a message, try a smaller one.',
+    maniIntro: 'Manifestation means naming a goal clearly, picturing it the right way and acting steadily. The first four guides are free, scripting included. The full set adds seven methods, each with a tool you use right in the app.', maniFree: 'Free', maniFull: 'Manifestation set', perYear: (p) => p + ' / year', maniUnlock: 'Unlock the full set', maniIncl: ['WOOP, if-then plans, a vision board with your own photos', 'New and full Moon rituals and a letting-go tool', 'Candles and stones by purpose, used safely'],
+    toolClear: 'Clear and redo', toolSaved: 'Saved on this device.', toolTemplate: 'New template', toolAdd: 'Add a line', toolRelease: 'Let go', toolReleased: 'Released. Lighter now. 🍃', releasedTimes: (n) => 'You have let go ' + n + ' times', tapPhoto: 'add photo', caption: 'short note', clearedToast: 'Cleared. Start again whenever you like.',
+    saveSlot: 'Save this time', changeSlot: 'Change', slotSaved: 'Time saved', summaryTitle: 'Your request', showMsg: 'Show the message that will be sent', bkItems: 'Packages',
+    doneTitle: 'Booking request sent', doneBody: 'Nabu will review it and confirm soon. Follow the status under Profile; you will be notified when Nabu replies.', doneMe: 'See my bookings', doneHome: 'Back to home', doneMore: 'Book another reading',
+    draftKept: 'Your choices are saved on this device automatically, so you can leave and come back.', topicNote: 'Choose the preset-topic package and the topics with their questions appear further down.', openInLibrary: 'Read the full guide in the library',
+    aiGreet: 'Hi! I am Nabu AI. Ask me about a card, a zodiac sign, your numbers, or tell me to draw a card for today.', aiDrew: (n) => 'I drew a card for you: ' + n + '.', aiDrawHint: 'For a fuller draw, open the Pick a card tab.', aiSignOf: (s) => 'For your sign, ' + s + ':', aiThanks: 'You are welcome! Ask me anything else.', aiTodayMoon: (m) => 'Today the Moon is in its ' + m + ' phase.',
+    needLogin: 'Sign in to send inside the app, or send through Instagram below.',
+    viaInstagram: 'Message on Instagram',
+    viaMessenger: 'Message on Messenger',
+    viaZalo: 'Message on Zalo',
+    viaEmail: 'Send an email',
+    copyMsg: 'Just copy the message',
+    needTopic: 'Choose a topic first.',
+    needSlot: 'Choose a time first.',
+    msgHello: 'Hi Nabu, I would like to book a reading.',
+    msgTopic: 'Topic',
+    msgTime: 'Time',
+    msgName: 'Name',
+    msgNote: 'Extra question',
+    msgCard: 'The card I just drew in the app',
+    howItWorks: 'How booking works',
+    aboutTitle: 'About Nabu Tarot',
+    dow: ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'],
+    months: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
+
+    meTitle: 'Your profile',
+    meIntro: 'Your birthday and interests help the home screen pick the right content for you.',
+    localOnly: 'Your profile is saved on this device.',
+    accountsSoon: 'Nabu has not switched sign-in on yet. Once on, you sign in with Google, Facebook or email and password, and your profile, messages and bookings follow you. For now the profile stays on this device.', accountsOff: 'Sign-in is not open yet.',
+    signIn: 'Sign in',
+    signInWith: { google: 'Continue with Google', facebook: 'Continue with Facebook', email: 'Continue with email' },
+    signOut: 'Sign out', tourLink: 'Tour', themeShort: { auto: '📱 Auto', light: '☀️ Light', dark: '🌙 Dark', pink: '🌸 Pink' },
+    emailLabel: 'Email', passwordLabel: 'Password',
+    createAccount: 'Create account', haveAccount: 'Have an account? Sign in', noAccount: 'No account? Create one',
+    forgot: 'Forgot password', resetSent: 'Password reset email sent.', authFbOff: 'Facebook sign-in is not open yet: Meta requires Nabu to register a developer app first. Please use Google or email.', authProviderOff: 'This sign-in method is not switched on. Please use Google or email.', authDomain: 'Firebase has not allowed this address yet. Nabu needs to add nabutarot.com to Authorized domains.', authCancelled: 'You closed the sign-in window.', authOtherProvider: 'This email is registered with a different method. Please sign in that way.', authNetwork: 'No network connection. Please try again.',
+    authFail: 'Sign-in failed',
+    displayName: 'Display name',
+    birthday: 'Birthday',
+    interests: 'What do you care about?',
+    saveProfile: 'Save profile',
+    saved: 'Saved',
+    myBookings: 'My bookings',
+    noBookings: 'You have no bookings yet.',
+    status: { requested: 'Awaiting confirmation', confirmed: 'Confirmed', declined: 'Declined', cancelled: 'Cancelled', change_requested: 'New time awaiting approval', cancel_requested: 'Cancellation awaiting approval' },
+    messages: 'Message Nabu',
+    messagesIntro: 'Nabu replies inside the app. A red dot shows when there is something new.',
+    messagesSoon: 'In-app messaging opens once Nabu turns on accounts. For now, message on Instagram.',
+    typeMsg: 'Write a message...', sendPhoto: 'Send a photo', holdToRecord: 'Tap to record, tap again to send', recording: 'Recording… tap 🎤 again to send.', uploading: 'Sending…', noMic: 'This device does not allow recording.', fileTooBig: 'Photo too large (8 MB max).',
+    send: 'Send',
+    noMsgs: 'No messages yet. Ask away, Nabu will answer.',
+    themeTitle: 'Light or dark', themes: { auto: 'Match my phone', light: 'Light', dark: 'Dark', pink: 'Pastel pink' }, themeHint: 'Match my phone: the app switches with your phone\'s light or dark setting. The top button cycles light → dark → pink.',
+    installTitle: 'Install on your phone', installLink: 'App', instIntro: 'Nabu Tarot runs as a real app on your phone: its own icon, full screen, works offline, and updates itself.', instAlready: 'You are already using the app. Send this page to friends so they can install it.',
+    instAndroidIntro: 'Download the installer, open it, tap Install. Done.', instDownload: 'Download for Android (2 MB)', instAndroidSteps: ['Tap the download button above. Chrome asks whether to download the file: choose Download.', 'Open nabu-tarot.apk from the notification bar or your Downloads.', 'If the phone asks "Allow from this source?", allow it and come back.', 'Tap Install. The Nabu Tarot icon appears on your home screen.'], instAndroidNote: 'The app is signed by Nabu and safe. The phone warns because the file comes from outside Google Play; the Play version follows later.',
+    instIosIntro: 'iPhone does not allow installers outside the App Store, but Safari installs this app in three steps.', instIosSteps: ['Open this page in Safari (not inside Instagram or Facebook).', 'Tap the Share button (the square with an arrow) in the bottom bar.', 'Scroll down, choose "Add to Home Screen", then tap Add.'], instIosNote: 'The Nabu Tarot icon appears like any other app and opens full screen.',
+    instUpdatesTitle: 'Automatic updates', instUpdates: 'Both versions open the newest content every time: posts, courses, new features. You never reinstall.', instShareHint: 'Want to tell friends?', instShare: 'Send the install link', instShareText: 'Install the Nabu Tarot app: a card a day, tarot lessons, book a reading.',
+    install: 'iPhone: open in Safari, tap Share, then "Add to Home Screen". Android: tap the ⋮ menu, then "Install app".',
+    dismiss: 'Close', tourMini: 'How to use Nabu Tarot', tourOpen: 'Show again',
+    offlineReady: 'The app is ready to use offline.',
+
+    adminTitle: 'Dashboard',
+    adminIntro: 'This page is for Nabu only.',
+    repTitle: 'Reports', repBy: 'From', repNone: 'No reports.',
+    repHint: 'What people have reported, from wedding rooms and threads.',
+    buyWorking: 'Working...', buyAlready: 'That purchase has already been used.',
+    buyFailed: 'That did not go through. Try again, or message Nabu.',
+    buyDone: (n) => 'Opened: ' + n + '.',
+    pickSpent: 'You have drawn your card for today. Come back tomorrow for a new one.',
+    pickOffer: 'Nabu Plus draws as many cards a day as you like, opens the coin and the tree without limit, and every design: 79,000đ.',
+    pickPlus: 'See Nabu Plus',
+    helloHead: 'Tarot, astrology and the lunar calendar',
+    helloLead: 'Nabu Tarot is a small place to sit with yourself each day: draw a card, look at the lunar date, read the forecast for your own sign.',
+    helloGo: 'Take a tour',
+    helloFree: 'Free, and you need no account to start.',
+    helloDrawH: 'A card a day',
+    helloDrawP: 'Choose a focus, turn one card, and read what it says about your day. Fully in English or Vietnamese.',
+    helloTodayH: 'The lunar calendar and the moon',
+    helloTodayP: 'Today in the Gregorian and lunar calendars, the animal signs, and where the moon is. Islamic, Hebrew, Persian and Buddhist dates too.',
+    helloHoroH: 'Written for your sign',
+    helloHoroP: 'A forecast for the week and the month, written by Nabu, for your sign rather than for everybody at once.',
+    helloLearnH: 'Learn tarot and astrology',
+    helloLearnP: 'Astrology, angel numbers, manifestation and traditional fortune telling are free to read. Tarot and Lenormand have their own courses.',
+    helloPlayH: 'Things to do',
+    helloPlayP: 'Keep a lucky companion, shake the message tree, flip the coin, tie the red thread with somebody you love.',
+    helloTalkH: 'Talk to Nabu',
+    helloTalkP: 'Ask directly, or book a reading in one of Nabu\u2019s free hours. Nabu answers the same day.',
+    helloMoreH: 'Most of the app is free.',
+    helloMoreP: 'The courses and a few extras are paid, and you can look at those inside whenever you like. There are no adverts.',
+    needInTitle: 'Sign in first',
+    needInWhy: 'This part keeps what you do, so it needs an account.',
+    needInGo: 'Sign in or create an account',
+    needInLuck: 'Your turns are kept on your account, so they are still there when you open the app on another device.',
+    needInDiary: 'Without an account the diary sits on this device only, and goes when you clear your browser.',
+    needInPet: 'Sign in first, so your companion can remember being fed.',
+    needInDraw: 'That was your free card. Sign in to draw one every day, and to keep the card you drew.',
     modReport: 'Report', modBlock: 'Block this person',
     modAbout: (n) => 'About ' + n + ':',
     modReported: 'Sent to Nabu. Thank you.',
@@ -4549,7 +5468,7 @@ pentacles:{
 };
 
 
-const LANGS = ['en', 'vi'];
+const LANGS = ['en', 'vi', 'de'];
 
 const LEX = {
   en: {
@@ -10983,7 +11902,7 @@ const isoDate = (d) => d.getFullYear() + '-' + pad2(d.getMonth() + 1) + '-' + pa
 let lang = store.get('nabu-lang', 'vi');
 if (LANGS.indexOf(lang) < 0) lang = 'vi';
 const T = () => STR[lang];
-const L = (obj) => { if (obj == null) return ''; if (typeof obj === 'string') return obj; return obj[lang] || obj.vi || obj.en || ''; };
+const L = (obj) => { if (obj == null) return ''; if (typeof obj === 'string') return obj; return obj[lang] || obj.en || obj.vi || ''; };
 const L2 = (obj, lg) => (obj == null ? '' : typeof obj === 'string' ? obj : (obj[lg] || ''));
 
 const darkMQ = window.matchMedia ? window.matchMedia('(prefers-color-scheme: dark)') : { matches: false, addEventListener: () => {} };
@@ -11099,6 +12018,32 @@ const ACCESS = {
   }
 };
 
+/* ---- what needs an account ----
+
+   Reading needs nothing: the cards, the calendar, the forecast, the guides are
+   there for anybody who opens the page. What needs an account is anything the
+   app has to keep - a turn used up, a message kept, a page written, a
+   companion that must still be hungry tomorrow. Without somewhere to keep it,
+   those are a lie: the visitor does the thing, clears their browser, and it
+   never happened.
+
+   Drawing a card is the exception, deliberately. The first one is free to
+   anybody, because a locked door is a poor way to introduce yourself and the
+   front page promises a card. The second one is where signing in is asked for,
+   by which point they have seen what they would be signing in for.
+
+   With accounts switched off entirely, nothing is gated - the app falls back to
+   being device-only, as it always has. */
+const signedIn = () => !(typeof BE !== 'undefined' && BE.enabled) || !!(typeof BE !== 'undefined' && BE.user);
+/* The card shown in place of whatever was asked for. */
+function needAccountHTML(why) {
+  const S = T();
+  return '<div class="card needin"><div class="ic">\uD83D\uDD11</div>'
+    + '<p class="lead">' + esc(S.needInTitle) + '</p>'
+    + '<p class="hint">' + esc(why || S.needInWhy) + '</p>'
+    + '<a class="btn primary block" href="#/me">' + esc(S.needInGo) + '</a></div>';
+}
+
 /* ---- reporting somebody, and refusing to see them ----
 
    Anywhere people can write to each other, they need a way to say "this is
@@ -11187,9 +12132,14 @@ function buildDeck(lg) {
   });
   return out;
 }
+/* The deck is built in the languages whose card texts exist. German reads the
+   interface in German and the cards in English until those are translated too,
+   so it points at the English deck rather than at nothing - which is what the
+   whole app did the first time German was switched on. */
 const DECK = { vi: buildDeck('vi'), en: buildDeck('en') };
+DECK.de = DECK.en;
 const INDEX = {};
-LANGS.forEach((lg) => { INDEX[lg] = {}; DECK[lg].forEach((c) => { INDEX[lg][c.id] = c; }); });
+LANGS.forEach((lg) => { INDEX[lg] = {}; (DECK[lg] || DECK.en).forEach((c) => { INDEX[lg][c.id] = c; }); });
 const cardById = (id, lg) => INDEX[lg || lang][id];
 /* Insight fields for a card in the current language. */
 function insightOf(id, lg) {
@@ -11755,7 +12705,7 @@ function boot() {
     if (!a) return;
     e.preventDefault(); NAV.popping = true; location.hash = a.getAttribute('href');
   });
-  $('#lang').addEventListener('click', () => { lang = lang === 'vi' ? 'en' : 'vi'; store.set('nabu-lang', lang); route(); });
+  $('#lang').addEventListener('click', () => { lang = LANGS[(LANGS.indexOf(lang) + 1) % LANGS.length]; store.set('nabu-lang', lang); route(); });
   { const bell = $('#bell'); if (bell) bell.addEventListener('click', () => { location.hash = '#/alerts'; }); }
   { const bt = $('#totop');
     const seen = () => { bt.hidden = (window.scrollY || document.documentElement.scrollTop || 0) < 700; };
@@ -13007,13 +13957,24 @@ function insightHTML(id, focus) {
    often as they like. Same rule on the website and in the app: it is one
    site. */
 const pickToday = () => { const s = store.get('nabu-pick-day', null); return s && s.d === isoDate(new Date()) && s.id ? s : null; };
-const pickSpent = () => !plusOn() && !!pickToday();
-function pickSpend(id, focus) { if (plusOn()) return; store.set('nabu-pick-day', { d: isoDate(new Date()), id: id, focus: focus }); }
+/* Signed out, one card ever - enough to see what this is, not enough to use
+   the app without an account. Signed in, one a day. On Plus, as many as you
+   like. */
+const guestSpent = () => !signedIn() && Number(store.get('nabu-guest-draw', 0)) >= 1;
+const pickSpent = () => !plusOn() && (guestSpent() || !!pickToday());
+function pickSpend(id, focus) {
+  if (plusOn()) return;
+  if (!signedIn()) store.set('nabu-guest-draw', Number(store.get('nabu-guest-draw', 0)) + 1);
+  store.set('nabu-pick-day', { d: isoDate(new Date()), id: id, focus: focus });
+}
 /* Inside the installed app the note stops at "tomorrow": a price next to a
    locked feature is what Play reviewers look for. On the web it says what
    unlimited costs and where it is. */
 function pickLimitHTML() {
   const S = T();
+  /* Two different sentences, because they ask for two different things: one
+     wants tomorrow, the other wants an account. */
+  if (guestSpent()) return needAccountHTML(S.needInDraw);
   return '<div class="card luckbox"><p class="lead">' + esc(S.pickSpent) + '</p>'
     + (isTWA() ? '' : '<p class="hint" style="margin-bottom:10px">' + esc(S.pickOffer) + '</p><a class="btn primary block" href="#/unlock?from=pick">' + esc(S.pickPlus) + '</a>')
     + '</div>';
@@ -18922,6 +19883,9 @@ function renderPet(want) {
     $('#petback2').addEventListener('click', () => drawPicker());
     { const top = $('#petbacktop'); if (top) top.addEventListener('click', () => drawPicker()); }
     $('#petkeep').addEventListener('click', () => {
+      /* A companion is fed daily and remembers being fed. That has to live on
+         an account or it is a promise the app cannot keep. */
+      if (!signedIn()) { toast(S.needInPet); location.hash = '#/me'; return; }
       if (have) { open = kind; draw(); return; }
       if (swap) {
         if (!PETS.canChange()) { toast(S.petChangeWait(fmtDate(PETS.changeOn()))); return; }
@@ -19958,7 +20922,10 @@ function helloHTML() {
     + '<div class="hlogo">' + LOGO + '</div>'
     + '<h1>' + esc(S.helloHead) + '</h1>'
     + '<p class="lead">' + esc(S.helloLead) + '</p>'
-    + '<button type="button" class="btn primary block" id="hellogo">' + esc(S.helloGo) + '</button>'
+    + '<button type="button" class="btn primary block slidebtn" id="hellogo">'
+      + '<span class="lbl">' + esc(S.helloGo) + '</span>'
+      + '<i class="chev" aria-hidden="true"><svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 6 6 6-6 6"/></svg></i>'
+      + '</button>'
     + '<p class="hint">' + esc(S.helloFree) + '</p>'
     + '</section>'
     + '<div class="hgrid">'
@@ -19968,19 +20935,14 @@ function helloHTML() {
     + card('📚', S.helloLearnH, S.helloLearnP)
     + card('🎲', S.helloPlayH, S.helloPlayP)
     + card('💬', S.helloTalkH, S.helloTalkP)
-    + '</div>'
-    + '<section class="hello-end">'
-    + '<p class="lead">' + esc(S.helloMoreH) + '</p>'
-    + '<p class="muted">' + esc(S.helloMoreP) + '</p>'
-    + '<button type="button" class="btn primary block" id="hellogo2">' + esc(S.helloGo) + '</button>'
-    + '</section>';
+    + '</div>';
 }
 
 function renderHello() {
   const m = $('#main');
   m.innerHTML = helloHTML();
   const go = () => { store.set(HELLO_SEEN, 1); location.hash = '#/home'; };
-  $$('#hellogo, #hellogo2', m).forEach((b) => b.addEventListener('click', go));
+  $$('#hellogo', m).forEach((b) => b.addEventListener('click', go));
 }
 ROUTES.hello = { nav: '', render: renderHello };
 
@@ -20613,7 +21575,7 @@ function renderTree() {
     m.innerHTML = '<div class="eyebrow">' + esc(S.actTitle) + '</div><h1 style="margin-bottom:6px">🌸 ' + esc(S.treeTitle) + '</h1><p class="muted">' + esc(S.treeIntro) + '</p>'
       + '<div class="card treewrap"><div class="treestage"><button type="button" class="tree" id="tree" aria-label="' + esc(S.treeShake) + '">' + treeSVG() + '<span class="petals" id="petals"></span></button>' + treePetHTML() + '</div>'
       + '<div class="treemsg" id="treemsg"' + (msg ? '' : ' hidden') + '><div class="eyebrow">' + esc(S.treeFor) + '</div><p id="treetext">' + (msg ? esc(L(msg)) : '') + '</p></div>'
-      + (luckSpent('tree') ? '' : '<button class="btn primary block" id="shake">' + esc(msg ? S.treeAgain : S.treeShake) + '</button>') + '</div>'
+      + (signedIn() ? (luckSpent('tree') ? '' : '<button class="btn primary block" id="shake">' + esc(msg ? S.treeAgain : S.treeShake) + '</button>') : needAccountHTML(S.needInLuck)) + '</div>'
       /* The designs come first, straight under the tree: somebody who never
          scrolls should still learn the tree can be changed. The switch for the
          companions goes to the foot of the screen, in a card of its own. */
@@ -20718,7 +21680,7 @@ function renderCoin() {
       + '<div class="card coinwrap"><label class="f" for="coinq">' + esc(S.coinQ) + '</label><input id="coinq" placeholder="' + esc(S.coinQPh) + '" value="' + esc(store.get('nabu-coinq', '') || '') + '">'
       + '<div class="coin" id="coin">' + coinFaceSVG(side) + '</div>'
       + '<div class="coinres" id="coinres" aria-live="polite">' + (side ? esc(side === 'yes' ? S.coinYes : S.coinNo) : '') + '</div>'
-      + (luckSpent('coin') ? '' : '<button class="btn primary block" id="coinflip">' + esc(side ? S.coinAgain : S.coinFlip) + '</button>') + '</div>'
+      + (signedIn() ? (luckSpent('coin') ? '' : '<button class="btn primary block" id="coinflip">' + esc(side ? S.coinAgain : S.coinFlip) + '</button>') : needAccountHTML(S.needInLuck)) + '</div>'
       + lookStripHTML('coin')
       + '<div class="luckline">' + luckPanelHTML('coin') + '</div>'
       + '<p class="hint">' + esc(S.coinNote) + '</p>'
@@ -20753,6 +21715,8 @@ function renderCoin() {
 const MOODS = ['😄', '🙂', '😌', '🥰', '🤩', '😐', '😔', '😢', '😤', '😰', '😴', '🤒'];
 function renderDiary() {
   const S = T(), m = $('#main'), today = isoDate(new Date());
+  /* A diary kept only in a browser is a diary somebody loses. */
+  if (!signedIn()) { m.innerHTML = '<div class="eyebrow">' + esc(S.actTitle) + '</div><h1 style="margin-bottom:6px">\uD83D\uDCD4 ' + esc(S.diaryTitle) + '</h1>' + needAccountHTML(S.needInDiary); return; }
   const all = () => store.get('nabu-diary', {}) || {};
   /* What is being typed, kept apart from what has been saved. Closing the tab
      mid-sentence loses nothing, and nothing counts as written until Save. */
@@ -23668,13 +24632,32 @@ function adminSale(p) {
 ROUTES.admin = { nav: '', render: renderAdmin };
 
 /* ============================ boot ============================ */
-window.APP_VERSION = 'v175';
+window.APP_VERSION = 'v176';
 window.NABU = { CONFIG: CONFIG, SALE: SALE, salePrice: salePrice, loadActs: loadActs, BACK: BACK, LESSONS: LESSONS, localAnswer: localAnswer, compatVerdict: compatVerdict, numerologyOf: numerologyOf, ZDEEP: ZDEEP, lunarToday: lunarToday, solarToLunar: solarToLunar, DECK: DECK, INSIGHT: INSIGHT, KW: KW, ASK: ASK, TOPICS: TOPICS, GUIDES: GUIDES, SERVICES: SERVICES, COURSES: COURSES, ACCESS: ACCESS, plusOn: () => plusOn(), proOn: () => proOn(), luckUnlimited: () => luckUnlimited(), ZODIAC: ZODIAC, pick: pick, book: book,
   insightHTML: insightHTML, insightOf: insightOf, sunSignIndex: sunSignIndex, lifePath: lifePath, PROFILE: () => PROFILE, BE: BE, ACTS: ACTS,
   ANGELS: ANGELS, angelRead: angelRead, CODEBOOK: CODEBOOK, verifyCode: verifyCode, petHomeSVG: petHomeSVG, PET_HOMES: PET_HOMES, PET_WEARS: PET_WEARS, codeDigest: codeDigest, randomCode: randomCode, BANK: BANK, PETS: PETS, petSVG: petSVG, PET_COATS: PET_COATS, PET_KINDS: PET_KINDS, luckCut: luckCut, petLevel: petLevel, petStep: petStep, VOUCHERS: VOUCHERS, levelCoins: levelCoins, LOOKS: LOOKS,
   LOVE: LOVE, LOVEDB: LOVEDB, HANDLE_RE: HANDLE_RE, loveBadgeHTML: loveBadgeHTML,
   loveMarkSVG: loveMarkSVG, QUIZ: QUIZ, QSCORE: QSCORE, QUIZ_PASS: QUIZ_PASS, QUIZ_LEN: QUIZ_LEN, pileArtSVG: pileArtSVG, PILE_ARTS: PILE_ARTS, threadSVG: threadSVG, petParentsHTML: petParentsHTML, GIFTS: GIFTS, ALERTS: ALERTS, alertsStart: alertsStart, alertWas: alertWas,
   WED: WED, WED_STEPS: WED_STEPS, wedStep: wedStep, cupidSVG: cupidSVG, shareLine: shareLine };
+/* ---- German reads English where German does not exist yet ----
+   Every table in the app that is written per language is keyed 'vi' and 'en'.
+   Adding a third language to LANGS without this makes each of them answer
+   undefined for German, and the app stops on the first one it touches. Rather
+   than a check at every lookup, each table is pointed at its English half once,
+   here, after they are all defined. Translating one is then a matter of filling
+   it in and deleting its line. */
+[['DECKTEXT', typeof DECKTEXT !== 'undefined' && DECKTEXT], ['LEX', typeof LEX !== 'undefined' && LEX],
+ ['INSIGHT', typeof INSIGHT !== 'undefined' && INSIGHT], ['ASK', typeof ASK !== 'undefined' && ASK],
+ ['KW', typeof KW !== 'undefined' && KW], ['LEN', typeof LEN !== 'undefined' && LEN],
+ ['SPREADS', typeof SPREADS !== 'undefined' && SPREADS], ['MOON_NAMES', typeof MOON_NAMES !== 'undefined' && MOON_NAMES],
+ ['NUM_KW', typeof NUM_KW !== 'undefined' && NUM_KW], ['SUIT_TIMING', typeof SUIT_TIMING !== 'undefined' && SUIT_TIMING],
+ ['ANIMAL_INFO', typeof ANIMAL_INFO !== 'undefined' && ANIMAL_INFO], ['PC_TIMING', typeof PC_TIMING !== 'undefined' && PC_TIMING],
+ ['PAYMENT_NOTE', typeof PAYMENT_NOTE !== 'undefined' && PAYMENT_NOTE]
+].forEach((pair) => {
+  const t = pair[1];
+  if (t && typeof t === 'object' && t.en !== undefined && t.de === undefined) t.de = t.en;
+});
+
 try { petRemindCheck(); } catch (e) { /* nothing kept yet */ }
 /* The bell catches up on what happened while the app was shut, and keeps
    listening while it is open. Signing in or out changes what there is to

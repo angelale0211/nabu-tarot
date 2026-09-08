@@ -1926,6 +1926,52 @@ button.unl{display:block;width:100%;text-align:left;font:inherit;color:inherit;c
 .tourwell{width:64px;height:64px;margin:0 auto 4px;border-radius:50%;
   background:var(--lav-soft);display:grid;place-content:center;font-size:32px;line-height:1}
 @media (prefers-reduced-motion:reduce){.tourbar span{transition:none}}
+
+/* The card shown where a button would be, when the thing behind it needs an
+   account to keep anything. */
+.needin{text-align:center;border-color:var(--lav)}
+.needin .ic{font-size:32px;line-height:1;margin-bottom:6px}
+.needin .lead{font-weight:600;margin:0 0 4px}
+.needin .hint{margin:0 auto 12px;max-width:44ch}
+.needin .btn{max-width:320px;margin:0 auto}
+#main .needin p{text-align:center}
+
+/* ---- a button whose arrow takes over ----
+   The chevron sits in a small panel at the right; on hover it grows across the
+   whole button while the label fades. A phone has no hover, so there it is
+   simply a button with an arrow on it, which is what it should look like
+   anyway - the effect is a reward for a pointer, not the only way to read it. */
+.slidebtn{position:relative;overflow:hidden;isolation:isolate}
+.slidebtn .lbl{position:relative;z-index:2;transition:opacity .45s ease}
+.slidebtn .chev{position:absolute;right:5px;top:5px;bottom:5px;width:22%;z-index:1;
+  display:grid;place-content:center;border-radius:11px;color:inherit;
+  background:color-mix(in srgb, currentColor 16%, transparent);
+  transition:width .45s cubic-bezier(.4,0,.2,1)}
+.slidebtn:hover .lbl,.slidebtn:focus-visible .lbl{opacity:0}
+.slidebtn:hover .chev,.slidebtn:focus-visible .chev{width:calc(100% - 10px)}
+.slidebtn:active .chev{transform:scale(.97)}
+@media (prefers-reduced-motion:reduce){
+  .slidebtn .lbl,.slidebtn .chev{transition:none}
+  .slidebtn:hover .lbl{opacity:1}
+  .slidebtn:hover .chev{width:22%}
+}
+
+/* ---- the draw screen on a desk ----
+   The cards being chosen from were 92px wide while the four card backs that
+   only change how they look took a quarter of a 1040px column each. The wrong
+   thing was large. On a wide window the deck is nearly twice the size, and the
+   backs are a modest row underneath, which is the order of importance. */
+@media (min-width:900px){
+  .fan.deck .slot{flex:0 0 168px;width:168px;height:274px}
+  .fan.deck{gap:12px;padding-top:8px;padding-bottom:8px}
+  .fan{max-width:640px;height:340px}
+  .fan .slot{width:150px;height:246px;margin-left:-75px}
+  /* Changing the back is a preference, not the point of the screen. */
+  .lookstrip{max-width:560px;margin-left:auto;margin-right:auto}
+  .lookgrid.four{grid-template-columns:repeat(4,1fr);gap:10px}
+  .lookstrip .look{padding:8px 6px}
+  .lookstrip .look svg{max-height:110px;width:auto}
+}
 </style>
 </head>
 <body>

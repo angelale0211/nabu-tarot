@@ -24,13 +24,24 @@ function insightHTML(id, focus) {
    often as they like. Same rule on the website and in the app: it is one
    site. */
 const pickToday = () => { const s = store.get('nabu-pick-day', null); return s && s.d === isoDate(new Date()) && s.id ? s : null; };
-const pickSpent = () => !plusOn() && !!pickToday();
-function pickSpend(id, focus) { if (plusOn()) return; store.set('nabu-pick-day', { d: isoDate(new Date()), id: id, focus: focus }); }
+/* Signed out, one card ever - enough to see what this is, not enough to use
+   the app without an account. Signed in, one a day. On Plus, as many as you
+   like. */
+const guestSpent = () => !signedIn() && Number(store.get('nabu-guest-draw', 0)) >= 1;
+const pickSpent = () => !plusOn() && (guestSpent() || !!pickToday());
+function pickSpend(id, focus) {
+  if (plusOn()) return;
+  if (!signedIn()) store.set('nabu-guest-draw', Number(store.get('nabu-guest-draw', 0)) + 1);
+  store.set('nabu-pick-day', { d: isoDate(new Date()), id: id, focus: focus });
+}
 /* Inside the installed app the note stops at "tomorrow": a price next to a
    locked feature is what Play reviewers look for. On the web it says what
    unlimited costs and where it is. */
 function pickLimitHTML() {
   const S = T();
+  /* Two different sentences, because they ask for two different things: one
+     wants tomorrow, the other wants an account. */
+  if (guestSpent()) return needAccountHTML(S.needInDraw);
   return '<div class="card luckbox"><p class="lead">' + esc(S.pickSpent) + '</p>'
     + (isTWA() ? '' : '<p class="hint" style="margin-bottom:10px">' + esc(S.pickOffer) + '</p><a class="btn primary block" href="#/unlock?from=pick">' + esc(S.pickPlus) + '</a>')
     + '</div>';

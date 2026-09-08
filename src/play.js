@@ -578,7 +578,7 @@ function renderTree() {
     m.innerHTML = '<div class="eyebrow">' + esc(S.actTitle) + '</div><h1 style="margin-bottom:6px">🌸 ' + esc(S.treeTitle) + '</h1><p class="muted">' + esc(S.treeIntro) + '</p>'
       + '<div class="card treewrap"><div class="treestage"><button type="button" class="tree" id="tree" aria-label="' + esc(S.treeShake) + '">' + treeSVG() + '<span class="petals" id="petals"></span></button>' + treePetHTML() + '</div>'
       + '<div class="treemsg" id="treemsg"' + (msg ? '' : ' hidden') + '><div class="eyebrow">' + esc(S.treeFor) + '</div><p id="treetext">' + (msg ? esc(L(msg)) : '') + '</p></div>'
-      + (luckSpent('tree') ? '' : '<button class="btn primary block" id="shake">' + esc(msg ? S.treeAgain : S.treeShake) + '</button>') + '</div>'
+      + (signedIn() ? (luckSpent('tree') ? '' : '<button class="btn primary block" id="shake">' + esc(msg ? S.treeAgain : S.treeShake) + '</button>') : needAccountHTML(S.needInLuck)) + '</div>'
       /* The designs come first, straight under the tree: somebody who never
          scrolls should still learn the tree can be changed. The switch for the
          companions goes to the foot of the screen, in a card of its own. */
@@ -683,7 +683,7 @@ function renderCoin() {
       + '<div class="card coinwrap"><label class="f" for="coinq">' + esc(S.coinQ) + '</label><input id="coinq" placeholder="' + esc(S.coinQPh) + '" value="' + esc(store.get('nabu-coinq', '') || '') + '">'
       + '<div class="coin" id="coin">' + coinFaceSVG(side) + '</div>'
       + '<div class="coinres" id="coinres" aria-live="polite">' + (side ? esc(side === 'yes' ? S.coinYes : S.coinNo) : '') + '</div>'
-      + (luckSpent('coin') ? '' : '<button class="btn primary block" id="coinflip">' + esc(side ? S.coinAgain : S.coinFlip) + '</button>') + '</div>'
+      + (signedIn() ? (luckSpent('coin') ? '' : '<button class="btn primary block" id="coinflip">' + esc(side ? S.coinAgain : S.coinFlip) + '</button>') : needAccountHTML(S.needInLuck)) + '</div>'
       + lookStripHTML('coin')
       + '<div class="luckline">' + luckPanelHTML('coin') + '</div>'
       + '<p class="hint">' + esc(S.coinNote) + '</p>'
@@ -718,6 +718,8 @@ function renderCoin() {
 const MOODS = ['😄', '🙂', '😌', '🥰', '🤩', '😐', '😔', '😢', '😤', '😰', '😴', '🤒'];
 function renderDiary() {
   const S = T(), m = $('#main'), today = isoDate(new Date());
+  /* A diary kept only in a browser is a diary somebody loses. */
+  if (!signedIn()) { m.innerHTML = '<div class="eyebrow">' + esc(S.actTitle) + '</div><h1 style="margin-bottom:6px">\uD83D\uDCD4 ' + esc(S.diaryTitle) + '</h1>' + needAccountHTML(S.needInDiary); return; }
   const all = () => store.get('nabu-diary', {}) || {};
   /* What is being typed, kept apart from what has been saved. Closing the tab
      mid-sentence loses nothing, and nothing counts as written until Save. */

@@ -30,7 +30,10 @@ function helloHTML() {
     + '<div class="hlogo">' + LOGO + '</div>'
     + '<h1>' + esc(S.helloHead) + '</h1>'
     + '<p class="lead">' + esc(S.helloLead) + '</p>'
-    + '<button type="button" class="btn primary block" id="hellogo">' + esc(S.helloGo) + '</button>'
+    + '<button type="button" class="btn primary block slidebtn" id="hellogo">'
+      + '<span class="lbl">' + esc(S.helloGo) + '</span>'
+      + '<i class="chev" aria-hidden="true"><svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 6 6 6-6 6"/></svg></i>'
+      + '</button>'
     + '<p class="hint">' + esc(S.helloFree) + '</p>'
     + '</section>'
     + '<div class="hgrid">'
@@ -40,19 +43,14 @@ function helloHTML() {
     + card('📚', S.helloLearnH, S.helloLearnP)
     + card('🎲', S.helloPlayH, S.helloPlayP)
     + card('💬', S.helloTalkH, S.helloTalkP)
-    + '</div>'
-    + '<section class="hello-end">'
-    + '<p class="lead">' + esc(S.helloMoreH) + '</p>'
-    + '<p class="muted">' + esc(S.helloMoreP) + '</p>'
-    + '<button type="button" class="btn primary block" id="hellogo2">' + esc(S.helloGo) + '</button>'
-    + '</section>';
+    + '</div>';
 }
 
 function renderHello() {
   const m = $('#main');
   m.innerHTML = helloHTML();
   const go = () => { store.set(HELLO_SEEN, 1); location.hash = '#/home'; };
-  $$('#hellogo, #hellogo2', m).forEach((b) => b.addEventListener('click', go));
+  $$('#hellogo', m).forEach((b) => b.addEventListener('click', go));
 }
 ROUTES.hello = { nav: '', render: renderHello };
 

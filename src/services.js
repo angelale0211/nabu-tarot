@@ -126,4 +126,34 @@ const BOOK_WHERE = [
 const whereOf = (id) => BOOK_WHERE.filter((w) => w.id === id)[0] || null;
 const PAYMENT_NOTE = { vi: 'Vui lòng chuyển khoản trước khi xem.', en: 'Please transfer the fee in advance.' };
 const fmtNum = (n) => String(Math.round(Number(n) || 0)).replace(/\B(?=(\d{3})+(?!\d))/g, '.');
-const fmtPrice = (n) => fmtNum(n) + 'đ';
+/* ---- what a price looks like in the language being read ----
+
+   Vietnamese is the price itself, in dong. English and German are converted at
+   a rate kept right here - one number to change when the rate moves, rather
+   than thirty-four prices to recalculate - and then a flat amount is added,
+   because a card payment from abroad costs more to take than it does at home.
+
+   The flat amount is smaller on the cheap tiers on purpose. Two euros on a
+   ten-thousand-dong question is a five hundred per cent markup and flattens the
+   bottom of the ladder: the one-question price and the three-question price
+   come out the same number, which makes the cheap one look like a mistake.
+
+   Rounded up to the next half, never down. Rounding a price down gives money
+   away on every sale for the sake of a tidier number. */
+const MONEY = {
+  vi: { sym: 'đ', rate: 1 },
+  en: { sym: '$', rate: 25500, add: 2, small: 1, under: 30000 },
+  de: { sym: '€', rate: 27500, add: 2, small: 1, under: 30000 }
+};
+function moneyOf(n) {
+  const m = MONEY[typeof lang !== 'undefined' ? lang : 'vi'] || MONEY.vi;
+  const v = Math.max(0, Math.round(Number(n) || 0));
+  if (m.rate === 1) return { m: m, v: v };
+  const raw = v / m.rate + (v < m.under ? m.small : m.add);
+  return { m: m, v: Math.ceil(raw * 2) / 2 };
+}
+function fmtPrice(n) {
+  const p = moneyOf(n);
+  if (p.m.rate === 1) return fmtNum(p.v) + p.m.sym;
+  return p.m.sym + (p.v % 1 ? p.v.toFixed(2) : String(p.v));
+}

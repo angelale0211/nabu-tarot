@@ -52,7 +52,7 @@ const isoDate = (d) => d.getFullYear() + '-' + pad2(d.getMonth() + 1) + '-' + pa
 let lang = store.get('nabu-lang', 'vi');
 if (LANGS.indexOf(lang) < 0) lang = 'vi';
 const T = () => STR[lang];
-const L = (obj) => { if (obj == null) return ''; if (typeof obj === 'string') return obj; return obj[lang] || obj.vi || obj.en || ''; };
+const L = (obj) => { if (obj == null) return ''; if (typeof obj === 'string') return obj; return obj[lang] || obj.en || obj.vi || ''; };
 const L2 = (obj, lg) => (obj == null ? '' : typeof obj === 'string' ? obj : (obj[lg] || ''));
 
 const darkMQ = window.matchMedia ? window.matchMedia('(prefers-color-scheme: dark)') : { matches: false, addEventListener: () => {} };
@@ -168,6 +168,32 @@ const ACCESS = {
   }
 };
 
+/* ---- what needs an account ----
+
+   Reading needs nothing: the cards, the calendar, the forecast, the guides are
+   there for anybody who opens the page. What needs an account is anything the
+   app has to keep - a turn used up, a message kept, a page written, a
+   companion that must still be hungry tomorrow. Without somewhere to keep it,
+   those are a lie: the visitor does the thing, clears their browser, and it
+   never happened.
+
+   Drawing a card is the exception, deliberately. The first one is free to
+   anybody, because a locked door is a poor way to introduce yourself and the
+   front page promises a card. The second one is where signing in is asked for,
+   by which point they have seen what they would be signing in for.
+
+   With accounts switched off entirely, nothing is gated - the app falls back to
+   being device-only, as it always has. */
+const signedIn = () => !(typeof BE !== 'undefined' && BE.enabled) || !!(typeof BE !== 'undefined' && BE.user);
+/* The card shown in place of whatever was asked for. */
+function needAccountHTML(why) {
+  const S = T();
+  return '<div class="card needin"><div class="ic">\uD83D\uDD11</div>'
+    + '<p class="lead">' + esc(S.needInTitle) + '</p>'
+    + '<p class="hint">' + esc(why || S.needInWhy) + '</p>'
+    + '<a class="btn primary block" href="#/me">' + esc(S.needInGo) + '</a></div>';
+}
+
 /* ---- reporting somebody, and refusing to see them ----
 
    Anywhere people can write to each other, they need a way to say "this is
@@ -256,9 +282,14 @@ function buildDeck(lg) {
   });
   return out;
 }
+/* The deck is built in the languages whose card texts exist. German reads the
+   interface in German and the cards in English until those are translated too,
+   so it points at the English deck rather than at nothing - which is what the
+   whole app did the first time German was switched on. */
 const DECK = { vi: buildDeck('vi'), en: buildDeck('en') };
+DECK.de = DECK.en;
 const INDEX = {};
-LANGS.forEach((lg) => { INDEX[lg] = {}; DECK[lg].forEach((c) => { INDEX[lg][c.id] = c; }); });
+LANGS.forEach((lg) => { INDEX[lg] = {}; (DECK[lg] || DECK.en).forEach((c) => { INDEX[lg][c.id] = c; }); });
 const cardById = (id, lg) => INDEX[lg || lang][id];
 /* Insight fields for a card in the current language. */
 function insightOf(id, lg) {
@@ -824,7 +855,7 @@ function boot() {
     if (!a) return;
     e.preventDefault(); NAV.popping = true; location.hash = a.getAttribute('href');
   });
-  $('#lang').addEventListener('click', () => { lang = lang === 'vi' ? 'en' : 'vi'; store.set('nabu-lang', lang); route(); });
+  $('#lang').addEventListener('click', () => { lang = LANGS[(LANGS.indexOf(lang) + 1) % LANGS.length]; store.set('nabu-lang', lang); route(); });
   { const bell = $('#bell'); if (bell) bell.addEventListener('click', () => { location.hash = '#/alerts'; }); }
   { const bt = $('#totop');
     const seen = () => { bt.hidden = (window.scrollY || document.documentElement.scrollTop || 0) < 700; };
