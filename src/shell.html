@@ -1834,10 +1834,17 @@ button.unl{display:block;width:100%;text-align:left;font:inherit;color:inherit;c
   .pickcta{grid-template-columns:170px 1fr;padding:22px}
   .pricesec{display:grid;grid-template-columns:repeat(2,1fr);gap:0 18px;align-items:start}
   .pricesec>h2,.pricesec>.hint,.pricesec>.paynote,.pricesec>p{grid-column:1/-1}
+  #svcwrap{display:grid;grid-template-columns:repeat(2,1fr);gap:0 18px;align-items:start}
   .tabs{flex-wrap:wrap;overflow:visible}
   .chat{max-height:70vh}
   #main .paywall{max-width:640px;margin-left:auto;margin-right:auto}
   .course{max-width:640px}
+  /* A line of prose that runs the full 1040px is a hundred and ten characters
+     long, which nobody reads comfortably. Text inside a card is held to about
+     seventy-five; the card keeps its width, so nothing else moves. */
+  .card p,.acc .in p,.post .body p,.lesson p{max-width:75ch}
+  /* "Install it on your phone" is not an offer a desk can take up. */
+  .upnext[href="#/install"]{display:none}
 }
 
 /* ---- the home page on a desk ----
