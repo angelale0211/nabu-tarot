@@ -2711,7 +2711,7 @@ async function go(hash, sel) { W().location.hash = hash; await sleep(30); return
       const bad = [];
       for (const px of [320, 360, 390]) {
         frame.style.width = px + 'px';
-        for (const route of ['#/me', '#/play/pet', '#/love', '#/prices', '#/book', '#/hello', '#/signin']) {
+        for (const route of ['#/me', '#/play/pet', '#/love', '#/prices', '#/book', '#/hello', '#/signin', '#/welcome']) {
           await go('#/home', '#main');
           await go(route, '#main');
           await sleep(140);
@@ -2749,7 +2749,7 @@ async function go(hash, sel) { W().location.hash = hash; await sleep(30); return
       await sleep(120);
       const uniq = bad.filter((x, i) => bad.indexOf(x) === i);
       ok(uniq.length === 0,
-        'nothing leaves the screen at 320, 360 or 390 across the five busiest screens'
+        'nothing leaves the screen at 320, 360 or 390 across the eight busiest screens'
         + (uniq.length ? ' [' + uniq.slice(0, 4).join('; ') + ']' : ''));
     }
 

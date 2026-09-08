@@ -750,7 +750,7 @@ function parseHash() {
   return { route: path[0] || 'home', args: path.slice(1), params: params };
 }
 const ONE_COL = ['love', 'wedding', 'pet', 'play', 'looks', 'rewards', 'me', 'book',
-  'contact', 'report', 'privacy', 'install', 'alerts', 'news', 'post', 'unlock'];
+  'contact', 'report', 'privacy', 'install', 'alerts', 'news', 'post', 'unlock', 'welcome'];
 /* Under #/learn only the hub and the card pages are wide; the rest is reading. */
 const ONE_COL_LEARN = ['astro', 'fortune', 'numbers', 'angel', 'quiz', 'manifest',
   'guide', 'spread', 'lesson'];

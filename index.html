@@ -12,7 +12,7 @@
      carries this notice with it. See LICENSE. -->
 <meta name="author" content="Nabu Tarot">
 <meta name="copyright" content="Copyright (c) 2025-2026 Nabu Tarot. All rights reserved.">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'none'; object-src 'none'; form-action 'self'; script-src 'self' 'sha256-Anpl8c6Q6onSDldLTp7aIWlpKprNQnBwHqY0mamud3A=' https://www.gstatic.com https://apis.google.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; font-src 'self' data:; media-src 'self' data: blob:; worker-src 'self'; connect-src 'self' https://*.googleapis.com https://*.google.com https://*.firebaseio.com https://*.cloudfunctions.net https://*.workers.dev https://generativelanguage.googleapis.com; frame-src https://*.firebaseapp.com https://accounts.google.com https://*.facebook.com">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'none'; object-src 'none'; form-action 'self'; script-src 'self' 'sha256-GmRPLL1Af0IjHX+62qn5u2SIzAjLr+Xa8QTppWcYpfI=' https://www.gstatic.com https://apis.google.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; font-src 'self' data:; media-src 'self' data: blob:; worker-src 'self'; connect-src 'self' https://*.googleapis.com https://*.google.com https://*.firebaseio.com https://*.cloudfunctions.net https://*.workers.dev https://generativelanguage.googleapis.com; frame-src https://*.firebaseapp.com https://accounts.google.com https://*.facebook.com">
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <meta name="theme-color" content="#EFE9FA">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -1415,6 +1415,12 @@ h1 .pileico{width:34px;height:27px;vertical-align:-3px;margin-right:2px}
 .reqcard .note{margin:8px 0 0;font-size:14px;background:var(--surface-2);border-radius:12px;padding:9px 12px;text-align:left}
 .reqcard.found{margin:12px 0 0;border-color:var(--lav)}
 .athandle .at{flex:none;color:var(--fg-faint);font-weight:600;font-size:17px}
+/* The welcome card is one column of questions, held to a readable width on a desk and kept inside the narrowest phone; the date box is the risky control, because Safari and Chrome size it differently and it will push the card wider than the screen unless it is told its own width. */
+.welcard { max-width: 520px; margin: 0 auto; }
+.welcard .chips { display: flex; flex-wrap: wrap; gap: 8px; }
+.welcard input[type=date] { width: 100%; box-sizing: border-box; min-height: 44px; }
+.welcard .athandle input { width: 100%; }
+.welcard .btn.block { width: 100%; }
 /* The tag on the profile: a fixed blush ground, so a fixed ink to go on it. */
 /* The tag carries its own ground in every theme, so the three inks on it are
    chosen against that ground rather than against the page - which is what keeps
@@ -13715,7 +13721,7 @@ function parseHash() {
   return { route: path[0] || 'home', args: path.slice(1), params: params };
 }
 const ONE_COL = ['love', 'wedding', 'pet', 'play', 'looks', 'rewards', 'me', 'book',
-  'contact', 'report', 'privacy', 'install', 'alerts', 'news', 'post', 'unlock'];
+  'contact', 'report', 'privacy', 'install', 'alerts', 'news', 'post', 'unlock', 'welcome'];
 /* Under #/learn only the hub and the card pages are wide; the rest is reading. */
 const ONE_COL_LEARN = ['astro', 'fortune', 'numbers', 'angel', 'quiz', 'manifest',
   'guide', 'spread', 'lesson'];
