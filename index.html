@@ -12,7 +12,7 @@
      carries this notice with it. See LICENSE. -->
 <meta name="author" content="Nabu Tarot">
 <meta name="copyright" content="Copyright (c) 2025-2026 Nabu Tarot. All rights reserved.">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'none'; object-src 'none'; form-action 'self'; script-src 'self' 'sha256-CSAK/TvQQ2dVRTdkAY1NS9FHAVgKhoktrcRefCCxOUk=' https://www.gstatic.com https://apis.google.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; font-src 'self' data:; media-src 'self' data: blob:; worker-src 'self'; connect-src 'self' https://*.googleapis.com https://*.google.com https://*.firebaseio.com https://*.cloudfunctions.net https://*.workers.dev https://generativelanguage.googleapis.com; frame-src https://*.firebaseapp.com https://accounts.google.com https://*.facebook.com">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'none'; object-src 'none'; form-action 'self'; script-src 'self' 'sha256-fD/hSudXXmLGfr9E1vE7gdy3V/stKIUOXN2wDl7iieM=' https://www.gstatic.com https://apis.google.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; font-src 'self' data:; media-src 'self' data: blob:; worker-src 'self'; connect-src 'self' https://*.googleapis.com https://*.google.com https://*.firebaseio.com https://*.cloudfunctions.net https://*.workers.dev https://generativelanguage.googleapis.com; frame-src https://*.firebaseapp.com https://accounts.google.com https://*.facebook.com">
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <meta name="theme-color" content="#EFE9FA">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -2271,6 +2271,7 @@ button.unl{display:block;width:100%;text-align:left;font:inherit;color:inherit;c
    A bar along the top so eight steps look finite, and the icon in a round
    well so a row of unrelated emoji reads as one series. */
 .tourcard{padding-top:14px}
+.tourtitle{text-align:center;max-width:520px;margin:4px auto 12px;font-size:22px}
 .tourbar{height:6px;border-radius:999px;background:var(--surface-2);overflow:hidden;margin:0 0 14px}
 .tourbar span{display:block;height:100%;border-radius:999px;background:var(--primary);
   transition:width .32s ease}
@@ -3635,7 +3636,7 @@ const STR = {
     welTitle: 'Chào bạn! ✨', welLead: 'Chỉ vài câu thôi — bạn có thể đổi lại bất cứ lúc nào.',
     welLang: 'Ngôn ngữ', welHandle: 'Tên riêng của bạn', welHandleHint: 'Bạn bè có thể tìm bạn bằng tên này.',
     welBirthHint: 'Ngày sinh giúp Nabu xác định cung và chọn dự đoán phù hợp với bạn.',
-    welGo: 'Tiếp tục', welSaving: 'Đang lưu…',
+    welGo: 'Tiếp tục', welSaving: 'Đang lưu…', welTourTitle: 'Bạn làm được những gì với Nabu?',
     welShort: 'Tên này ngắn quá. Bạn thêm vài ký tự nhé.',
     welTaken: 'Tên này có người dùng rồi, Nabu đã chọn giúp bạn một tên gần giống.',
     codeUsedBy: 'đã dùng', codeUnused: 'chưa dùng', codeOpenThread: 'Mở tin nhắn', codeOldStyle: 'Mã cũ, phát trước khi đổi cách kiểm tra. Dán lại mã vào ô phía trên để dùng được.',
@@ -4474,7 +4475,7 @@ const STR = {
     welTitle: 'Hello! ✨', welLead: 'Just a few questions — you can change any of it later.',
     welLang: 'Language', welHandle: 'Your own name', welHandleHint: 'This is how friends find you.',
     welBirthHint: 'Your birthday is what gives Nabu your sign and the right forecast for you.',
-    welGo: 'Continue', welSaving: 'Saving…',
+    welGo: 'Continue', welSaving: 'Saving…', welTourTitle: 'What you can do with Nabu',
     welShort: 'That is a little short. Add a few more characters.',
     welTaken: 'Somebody has that one already, so Nabu picked the nearest free name for you.',
     codeUsedBy: 'used', codeUnused: 'not used yet', codeOpenThread: 'Open their thread', codeOldStyle: 'Made before the check moved to the server. Paste it into the box above to make it work again.',
@@ -5312,7 +5313,7 @@ const STR = {
     welTitle: 'Hallo! ✨', welLead: 'Nur ein paar Fragen — du kannst alles später ändern.',
     welLang: 'Sprache', welHandle: 'Dein eigener Name', welHandleHint: 'So finden dich deine Freunde.',
     welBirthHint: 'Dein Geburtstag gibt Nabu dein Sternzeichen und die passende Vorhersage.',
-    welGo: 'Weiter', welSaving: 'Wird gespeichert…',
+    welGo: 'Weiter', welSaving: 'Wird gespeichert…', welTourTitle: 'Was du mit Nabu machen kannst',
     welShort: 'Das ist etwas kurz. Nimm noch ein paar Zeichen dazu.',
     welTaken: 'Den hat schon jemand, also hat Nabu den nächsten freien Namen für dich gewählt.',
     codeUsedBy: 'benutzt', codeUnused: 'noch nicht benutzt', codeOpenThread: 'Nachrichten öffnen', codeOldStyle: 'Vor der Umstellung erstellt. Oben noch einmal einfügen, damit der Code wieder gilt.',
@@ -18731,7 +18732,9 @@ async function claimFreeHandle(wanted, name) {
    would let the back button drop somebody onto a questionnaire they have
    already answered. */
 function showTour(m) {
-  m.innerHTML = tourHTML(0);
+  /* A heading over the card, so a new person knows the eight cards that follow
+     are the instructions and not another form. */
+  m.innerHTML = '<h1 class="tourtitle">' + esc(T().welTourTitle) + '</h1>' + tourHTML(0);
   bindTour(m, 0);
 }
 
@@ -22057,7 +22060,10 @@ async function renderBook(args, params) {
     if (k > -1) { book.items.splice(k, 1); syncCart(false); return; }
     const p = serviceOf(v[0]).packages.filter((x) => x.id === v[1])[0];
     book.items.push({ svc: v[0], pkg: v[1], topic: null });
-    syncCart(!!p.needsTopic);
+    /* No jump down to the topic picker: being pulled down the page right after
+       tapping a package confused people. The basket flags the missing topic,
+       and Send scrolls to it if it is still missing. */
+    syncCart(false);
   }));
   $('#bname').addEventListener('input', (e) => { book.name = e.target.value; prev(); });
   $('#bnote').addEventListener('input', (e) => { book.note = e.target.value; prev(); });
@@ -22423,7 +22429,6 @@ function meSect(id, icon, title, body, openByDefault, force) {
     } else if (CONFIG.instagram) {
       talk += '<div class="card"><h3 style="margin-bottom:4px">' + esc(S.messages) + '</h3><p class="muted" style="font-size:14px">' + esc(S.messagesSoon) + '</p><a class="btn block" href="https://ig.me/m/' + esc(CONFIG.instagram) + '" target="_blank" rel="noopener">' + esc(S.viaInstagram) + '</a></div>';
     }
-    talk += aiPanelHTML({ type: 'general' });
     /* Group two: everything that is a conversation - with Nabu, and with the
        machine. Open, because it is the half people come back for. */
     h += meSect('talk', '\uD83D\uDCAC', S.meGroupTalk, talk, true);
@@ -26496,7 +26501,7 @@ function adminSale(p) {
 ROUTES.admin = { nav: '', render: renderAdmin };
 
 /* ============================ boot ============================ */
-window.APP_VERSION = 'v188';
+window.APP_VERSION = 'v189';
 window.NABU = { CONFIG: CONFIG, SALE: SALE, salePrice: salePrice, loadActs: loadActs, BACK: BACK, LESSONS: LESSONS, localAnswer: localAnswer, compatVerdict: compatVerdict, numerologyOf: numerologyOf, ZDEEP: ZDEEP, lunarToday: lunarToday, solarToLunar: solarToLunar, DECK: DECK, INSIGHT: INSIGHT, KW: KW, ASK: ASK, TOPICS: TOPICS, GUIDES: GUIDES, SERVICES: SERVICES, COURSES: COURSES, ACCESS: ACCESS, INTERESTS: INTERESTS, plusOn: () => plusOn(), proOn: () => proOn(), luckUnlimited: () => luckUnlimited(), ZODIAC: ZODIAC, pick: pick, book: book,
   insightHTML: insightHTML, insightOf: insightOf, sunSignIndex: sunSignIndex, lifePath: lifePath, PROFILE: () => PROFILE, BE: BE, ACTS: ACTS,
   ANGELS: ANGELS, angelRead: angelRead, CODEBOOK: CODEBOOK, redeemCode: redeemCode, loadCodebook: loadCodebook, petHomeSVG: petHomeSVG, PET_HOMES: PET_HOMES, PET_WEARS: PET_WEARS, codeDigest: codeDigest, randomCode: randomCode, BANK: BANK, PETS: PETS, petSVG: petSVG, PET_COATS: PET_COATS, PET_KINDS: PET_KINDS, luckCut: luckCut, petLevel: petLevel, petStep: petStep, VOUCHERS: VOUCHERS, levelCoins: levelCoins, LOOKS: LOOKS,

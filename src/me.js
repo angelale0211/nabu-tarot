@@ -261,7 +261,6 @@ function meSect(id, icon, title, body, openByDefault, force) {
     } else if (CONFIG.instagram) {
       talk += '<div class="card"><h3 style="margin-bottom:4px">' + esc(S.messages) + '</h3><p class="muted" style="font-size:14px">' + esc(S.messagesSoon) + '</p><a class="btn block" href="https://ig.me/m/' + esc(CONFIG.instagram) + '" target="_blank" rel="noopener">' + esc(S.viaInstagram) + '</a></div>';
     }
-    talk += aiPanelHTML({ type: 'general' });
     /* Group two: everything that is a conversation - with Nabu, and with the
        machine. Open, because it is the half people come back for. */
     h += meSect('talk', '\uD83D\uDCAC', S.meGroupTalk, talk, true);

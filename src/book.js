@@ -315,7 +315,10 @@ async function renderBook(args, params) {
     if (k > -1) { book.items.splice(k, 1); syncCart(false); return; }
     const p = serviceOf(v[0]).packages.filter((x) => x.id === v[1])[0];
     book.items.push({ svc: v[0], pkg: v[1], topic: null });
-    syncCart(!!p.needsTopic);
+    /* No jump down to the topic picker: being pulled down the page right after
+       tapping a package confused people. The basket flags the missing topic,
+       and Send scrolls to it if it is still missing. */
+    syncCart(false);
   }));
   $('#bname').addEventListener('input', (e) => { book.name = e.target.value; prev(); });
   $('#bnote').addEventListener('input', (e) => { book.note = e.target.value; prev(); });

@@ -93,6 +93,7 @@ async function go(hash, sel) { W().location.hash = hash; await sleep(30); return
     { const np = d.querySelectorAll('#feed .post').length; ok(np <= 3 && (np === 0 || d.querySelector('#feed a[href="#/news"]')) && d.querySelector('.tiles a[href="#/news"]'), 'home shows at most three posts with a link to all of them, and the tile leads to the posts screen'); }
     // profile -> personalisation
     await go('#/me', '#pname');
+    ok(!d.querySelector('#main .ai'), 'no Nabu AI box on the Me tab');
     d.querySelector('#pname').value = 'Lan'; d.querySelector('#pbday').value = '1998-08-05';
     w.saveProfileLocal({ interests: ['love', 'astro'] });
     d.querySelector('#psave').click(); await sleep(100);
@@ -454,8 +455,11 @@ async function go(hash, sel) { W().location.hash = hash; await sleep(30); return
     ok(!d.querySelector('#birthwrap').hidden && d.querySelector('#bbirth').value === '1998-08-05' && /• Tử vi – Vận hạn năm: 333\.000đ/.test(d.querySelector('#msgtext').textContent) && /Tổng: 383\.000đ/.test(d.querySelector('#msgtext').textContent), 'two packages at once: numbered lines, a total, and tử vi asks for the birth date');
     d.querySelector('[data-pkg="tuvi/year"]').click();
     ok(d.querySelectorAll('#cartwrap .ci').length === 1 && d.querySelector('#birthwrap').hidden && !/Tổng/.test(d.querySelector('#msgtext').textContent), 'tapping a chosen package again removes it');
+    w.scrollTo(0, 0);
     d.querySelector('[data-pkg="tarot/topic"]').click();
     d.querySelector('[data-pkg="lenormand/topic"]').click();
+    await sleep(120);
+    ok((w.scrollY || d.documentElement.scrollTop || 0) < 30, 'choosing a preset-topic package does not pull the page down to the topic picker');
     ok(d.querySelectorAll('.tpick').length === 2 && d.querySelectorAll('[data-topic]').length === 10 && /Chủ đề cho Tarot/.test(d.querySelector('#topicwrap').textContent) && /Chủ đề cho Lenormand/.test(d.querySelector('#topicwrap').textContent) && d.querySelectorAll('.tpick h3').length === 2 && d.querySelectorAll('#cartwrap .warn').length === 2, 'each preset-topic package gets its own topic picker and is flagged until a topic is chosen');
     ok(d.querySelectorAll('.cal .d.has').length >= 5, 'calendar has days with free slots');
     d.querySelector('[data-topic="1/2"]').click(); await sleep(20);
@@ -685,6 +689,8 @@ async function go(hash, sel) { W().location.hash = hash; await sleep(30); return
          && typeof wdocs['users/uidW'].lang === 'string'
          && d.querySelector('#tour'),
         'finishing the welcome screen claims the username and shows the tour');
+      ok(d.querySelector('.tourtitle') && /Bạn làm được những gì với Nabu\?/.test(d.querySelector('.tourtitle').textContent) && d.querySelector('.tourtitle').nextElementSibling === d.querySelector('#tour'),
+        'the tour in the sign-up flow carries a title above the first card');
       N.BE.db = keepW.db; N.BE.user = keepW.user; N.BE.enabled = keepW.on; }
     { /* An account with no username is sent to the welcome screen, wherever
          it tries to go. An account that has one is left alone. */

@@ -144,7 +144,9 @@ async function claimFreeHandle(wanted, name) {
    would let the back button drop somebody onto a questionnaire they have
    already answered. */
 function showTour(m) {
-  m.innerHTML = tourHTML(0);
+  /* A heading over the card, so a new person knows the eight cards that follow
+     are the instructions and not another form. */
+  m.innerHTML = '<h1 class="tourtitle">' + esc(T().welTourTitle) + '</h1>' + tourHTML(0);
   bindTour(m, 0);
 }
 
