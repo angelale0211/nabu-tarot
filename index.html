@@ -12,7 +12,7 @@
      carries this notice with it. See LICENSE. -->
 <meta name="author" content="Nabu Tarot">
 <meta name="copyright" content="Copyright (c) 2025-2026 Nabu Tarot. All rights reserved.">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'none'; object-src 'none'; form-action 'self'; script-src 'self' 'sha256-BeafmOdJZK04wugpwHMDpr3RzFAnOMIWj+Tw+Krey0o=' https://www.gstatic.com https://apis.google.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; font-src 'self' data:; media-src 'self' data: blob:; worker-src 'self'; connect-src 'self' https://*.googleapis.com https://*.google.com https://*.firebaseio.com https://*.cloudfunctions.net https://*.workers.dev https://generativelanguage.googleapis.com; frame-src https://*.firebaseapp.com https://accounts.google.com https://*.facebook.com">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'none'; object-src 'none'; form-action 'self'; script-src 'self' 'sha256-Jk6cfU6BV1sauZQtRr2TZRPkRFdn2C67OS31DmGJlSQ=' https://www.gstatic.com https://apis.google.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; font-src 'self' data:; media-src 'self' data: blob:; worker-src 'self'; connect-src 'self' https://*.googleapis.com https://*.google.com https://*.firebaseio.com https://*.cloudfunctions.net https://*.workers.dev https://generativelanguage.googleapis.com; frame-src https://*.firebaseapp.com https://accounts.google.com https://*.facebook.com">
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <meta name="theme-color" content="#EFE9FA">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -408,7 +408,11 @@ button.chip,a.chip,label.chip{display:inline-flex;align-items:center;justify-con
 /* ---- card faces ---- */
 .face{display:block;position:relative}
 .face svg{display:block;width:100%;height:auto;border-radius:6px;box-shadow:0 2px 10px var(--shade)}
-.mini{display:grid;grid-template-columns:repeat(auto-fill,minmax(68px,1fr));gap:8px;margin:10px 0 4px;justify-items:center}
+/* auto-FIT, not auto-fill: an empty track still takes its share of the row, so
+   five cards in a box wide enough for eight were pushed against the left edge
+   with the gap all on the right. Fitting drops the empty tracks and the cards
+   centre as a group, at their own size rather than stretched to fill. */
+.mini{display:grid;grid-template-columns:repeat(auto-fit,minmax(68px,84px));gap:8px;margin:10px 0 4px;justify-content:center;justify-items:center}
 .mini .m{width:100%;max-width:84px;text-align:center;font-size:12px;color:var(--fg-soft);line-height:1.25;display:flex;flex-direction:column;align-items:center}
 .mini .m .face{display:block;width:100%}.mini .m svg{width:100%;height:auto;display:block;margin-bottom:4px}
 .mini button.m{display:flex}
@@ -791,6 +795,10 @@ button.chip,a.chip,label.chip{display:inline-flex;align-items:center;justify-con
 .tsym .ic{font-size:26px;display:block}.tsym b{display:block;font-size:12px}.tsym span:last-child{font-size:10.5px;color:var(--fg-faint);display:block}
 .tsym.big{padding:14px}.tsym.big .ic{font-size:44px}.tsym.big b{font-size:16px}.tsym.big span{font-size:13px}
 .awrapper{text-align:center;margin-bottom:14px}
+/* The signs listed under the compatibility wheel. The wheel above them is
+   centred and they were not, which read as a row that had come loose. Only
+   these ones - chips elsewhere start at the left on purpose. */
+.awrapper+.chips{justify-content:center}
 /* The animals wheel is plain HTML: emoji sit inside real circles and every name is on its own line, whatever font the phone uses. */
 .awheel{position:relative;width:min(330px,88vw);height:min(330px,88vw);margin:0 auto 6px}
 .awheel .aw{position:absolute;width:74px;display:flex;flex-direction:column;align-items:center;gap:3px;transform:translate(-50%,-20px);padding:0}
@@ -2121,33 +2129,57 @@ button.unl{display:block;width:100%;text-align:left;font:inherit;color:inherit;c
      card page without its left side. */
   .guide,.reading{max-width:680px;margin-left:auto;margin-right:auto}
   .reading .guide{max-width:none}
-  body[data-route="me"] #main,body[data-route="book"] #main,
-  body[data-route="report"] #main,body[data-route="contact"] #main,
-  body[data-route="privacy"] #main,body[data-route="install"] #main,
-  body[data-route="alerts"] #main,body[data-route="news"] #main,
-  body[data-route="post"] #main,body[data-route="unlock"] #main,
-  /* The way back and the way home sit in bars of their own outside the
-     screen, so they have to be brought in with it or they stand a hundred
-     pixels to its left. */
-  body[data-route="me"] #backbar,body[data-route="book"] #backbar,
-  body[data-route="report"] #backbar,body[data-route="contact"] #backbar,
-  body[data-route="privacy"] #backbar,body[data-route="install"] #backbar,
-  body[data-route="alerts"] #backbar,body[data-route="news"] #backbar,
-  body[data-route="post"] #backbar,body[data-route="unlock"] #backbar,
-  body[data-route="me"] #homefoot,body[data-route="book"] #homefoot,
-  body[data-route="report"] #homefoot,body[data-route="contact"] #homefoot,
-  body[data-route="privacy"] #homefoot,body[data-route="install"] #homefoot,
-  body[data-route="alerts"] #homefoot,body[data-route="news"] #homefoot,
-  body[data-route="post"] #homefoot,body[data-route="unlock"] #homefoot{
-    max-width:760px;margin-left:auto;margin-right:auto}
+  /* One column down the middle for a screen that is one thing. The way back
+     and the way home sit in bars of their own outside the screen, so they are
+     brought in with it or they stand a hundred pixels to its left. */
+  body[data-shape="one"] #main,
+  body[data-shape="one"] #backbar,
+  body[data-shape="one"] #homefoot{max-width:720px;margin-left:auto;margin-right:auto}
+  /* Inside that column nothing is narrower than anything else: a paragraph
+     that stopped two thirds of the way across while the card under it ran the
+     full width was the thing that read as broken. */
+  body[data-shape="one"] #main p,
+  body[data-shape="one"] #main li,
+  body[data-shape="one"] .guide,
+  body[data-shape="one"] .reading{max-width:none}
+  /* ---- the title block, on every screen ----
+     A heading and the sentence under it read as a title for what follows, so
+     they sit centred over it. Left-aligned they were the thing that looked
+     broken: the sentence is held to a readable measure, so against a grid
+     that runs the full row it stopped three hundred pixels short and the eye
+     read that gap as a mistake. Centred, the same measure is a subtitle. */
+  #main>.eyebrow,#main>h1,#main>h1+p,#main>h1+p+p,
+  #main>.eyebrow+h1,#main>h1+.muted,#main>h1+.hint,
+  /* The label over a group of cards belongs on the same axis as the title
+     over the page; one centred and the next left is what looks unfinished. */
+  #main>.sec>.eyebrow,#main>.sec>h2{text-align:center;text-wrap:pretty}
+  #main>h1{text-wrap:balance}
+  /* width:100% matters: on the home screen #main is a grid, and a grid item
+     with auto margins and no width shrinks to its own text instead of
+     centring inside the column. */
+  #main>h1+p,#main>h1+p+p,
+  #main>p.muted,#main>p.hint,#main>p.faint{width:100%;max-width:62ch;
+    margin-left:auto;margin-right:auto}
+  /* A line of status under the tabs - what a course costs, when access runs
+     out, where the posts are kept - belongs on the same axis as the title. */
+  #main>p.muted,#main>p.hint,#main>p.faint{text-align:center;text-wrap:pretty}
+  /* Choosing a card back is a preference rather than the point of a screen,
+     but a card narrower than everything around it reads as unfinished. */
+  .lookstrip{max-width:none}
 
   /* ---- every other line of running text ----
      v169 capped the prose inside a card. The meaning blocks on a card page,
      the answers under a question, and the notes that stand between blocks
      were never covered, and those are most of the words in the app. */
   .ins p,.ins .scene,.ins .qa .a,.guide p,.guide li,.lesson li,
-  .reading p,.reading li,#main>p,#main>ul li,#main>ol li,.sec>p,
-  #main p.muted,#main p.hint,#main p.lead,#main p.faint{max-width:62ch}
+  /* Prose only. A bare paragraph is not always prose: several screens wrap a
+     full-width button in one, and capping the paragraph capped the button,
+     which then stopped short of the grid above it and looked stranded. The
+     cap names the kinds of text it means. */
+  .reading p,.reading li,#main>ul li,#main>ol li,.sec>p,
+  #main p.muted,#main p.hint,#main p.lead,#main p.faint,#main>p.intro{max-width:62ch}
+  /* And nothing that holds a control is ever narrowed by it. */
+  #main p:has(.btn),#main p:has(button),#main p:has(input){max-width:none}
 }
 
 /* ---- the home page on a desk ----
@@ -2388,8 +2420,26 @@ body[data-route="hello"] #main{width:100%}
    thing was large. On a wide window the deck is nearly twice the size, and the
    backs are a modest row underneath, which is the order of importance. */
 @media (min-width:900px){
-  .fan.deck .slot{flex:0 0 168px;width:168px;height:274px}
-  .fan.deck{gap:12px;padding-top:8px;padding-bottom:8px}
+  /* 168 x 289 is the card's own shape (the back is drawn in a 100 x 172 box).
+     At 274 the slot was squarer than the art, so the art sat letterboxed
+     inside it and the lavender ring marking the middle card traced the slot
+     rather than the card - two stray vertical lines with a gap either side,
+     the rest of the ring hidden behind the neighbouring cards. */
+  .fan.deck .slot{flex:0 0 168px;width:168px;height:289px}
+  /* Two faults the wider card exposed. The strip carries margin:0 -18px so it
+     can reach the edges of a phone screen, but on a desk the column already
+     has 32px of air beside it, so the bleed only pushed the cards out of the
+     layout everything else keeps to. And the side padding is what lets the
+     first and last card reach the middle: it was half of a 92px card, so with
+     a 168px card neither end could ever centre. */
+  .fan.deck{gap:12px;padding:8px calc(50% - 84px);margin-left:0;margin-right:0}
+  /* The mark on the middle card was a square ring on the slot, and the card
+     inside it is drawn with rounded corners and a small inset of its own, so
+     the ring never touched it - at this size it read as two stray vertical
+     lines. A glow is drawn from the artwork's own outline, so it follows the
+     card whatever shape the back is. */
+  .fan.deck .slot.near{box-shadow:none}
+  .fan.deck .slot.near svg{filter:drop-shadow(0 4px 8px var(--shade)) drop-shadow(0 0 5px var(--lav))}
   .fan{max-width:640px;height:340px}
   .fan .slot{width:150px;height:246px;margin-left:-75px}
   /* Changing the back is a preference, not the point of the screen. */
@@ -2397,6 +2447,15 @@ body[data-route="hello"] #main{width:100%}
   .lookgrid.four{grid-template-columns:repeat(4,1fr);gap:10px}
   .lookstrip .look{padding:8px 6px}
   .lookstrip .look svg{max-height:110px;width:auto}
+}
+/* ---- the footer on a desk ----
+   On a phone it stacks from the left, which is right for a narrow column. On a
+   desk the same stack sat pinned to the left of a 1040px row, the copyright
+   ending nowhere near the middle. Centred, with its links on one line. */
+@media (min-width:900px){
+  .foot .wrap{align-items:center;text-align:center}
+  .foot .wrap>div{display:flex;flex-direction:column;align-items:center}
+  .foot .links{justify-content:center}
 }
 </style>
 </head>
@@ -2508,9 +2567,12 @@ const CONFIG = {
   tzLabel: { vi: 'giờ Việt Nam', en: 'Vietnam time' },
 
   // Booking page copy. Short sentences; this is what clients read.
+  // The owner's own words, one line per step; book.js draws the first line
+  // as the heading and the rest as a numbered list.
   bookingNote: {
-    vi: 'Bạn chọn gói, chọn chủ đề nếu gói yêu cầu, chọn giờ rồi gửi yêu cầu. Nabu xác nhận lại trong ngày, và bạn theo dõi lịch hẹn ở mục Hồ sơ.',
-    en: 'Four steps: pick a package, pick a topic (if the package needs one), pick a time, tap send. Nabu confirms within the day, and you follow it under Profile.'
+    vi: "💌 Cách đặt lịch\nChọn dịch vụ phù hợp.\nChọn chủ đề nếu là gói 1 chủ đề.\nChọn ngày & giờ còn trống.\nChọn hình thức xem.\nGửi yêu cầu cho Nabu.\nChuyển khoản trước buổi xem để hoàn tất đặt lịch. ✨",
+    en: "💌 How to book\nChoose the service that fits.\nChoose a topic if it is a one-topic package.\nChoose a free date & time.\nChoose how you want the reading.\nSend your request to Nabu.\nTransfer the payment before the session to complete the booking. ✨",
+    de: "💌 So buchst du\nWähl die passende Leistung.\nWähl ein Thema, wenn es ein Paket mit einem Thema ist.\nWähl einen freien Tag & eine Uhrzeit.\nWähl die Art der Legung.\nSchick deine Anfrage an Nabu.\nÜberweise vor dem Termin, um die Buchung abzuschließen. ✨"
   },
   tagline: { vi: 'Lắng nghe và thấu hiểu', en: 'Listening and understanding' },
   about: {
@@ -13541,6 +13603,11 @@ function parseHash() {
   (q[1] || '').split('&').forEach((kv) => { if (!kv) return; const p = kv.split('='); params[decodeURIComponent(p[0])] = decodeURIComponent(p[1] || ''); });
   return { route: path[0] || 'home', args: path.slice(1), params: params };
 }
+const ONE_COL = ['love', 'wedding', 'pet', 'play', 'looks', 'rewards', 'me', 'book',
+  'contact', 'report', 'privacy', 'install', 'alerts', 'news', 'post', 'unlock'];
+/* Under #/learn only the hub and the card pages are wide; the rest is reading. */
+const ONE_COL_LEARN = ['astro', 'fortune', 'numbers', 'angel', 'quiz', 'manifest',
+  'guide', 'spread', 'lesson'];
 function route() {
   const r = parseHash();
   const def = ROUTES[r.route];
@@ -13551,6 +13618,12 @@ function route() {
      differently from the rest - the home page on a wide window, for one -
      without any screen having to know it is being looked at. */
   document.body.setAttribute('data-route', r.route);
+  /* Screens that are one thing rather than a grid of things. On a desk they
+     read as a single column down the middle: the title, the card and the
+     button under it all the same width, so nothing stops short of anything
+     else. A grid screen keeps the full width it was given. */
+  document.body.setAttribute('data-shape',
+    ONE_COL.indexOf(r.route) > -1 || (r.route === 'learn' && ONE_COL_LEARN.indexOf(r.args[0]) > -1) ? 'one' : '');
   renderChrome(def.nav);
   renderBackBar(r);
   const y = NAV.restore;
@@ -14701,16 +14774,19 @@ function todayHTML() {
     + rows.map((r) => '<tr><td>' + esc(r[0]) + '</td><td>' + esc(r[1]) + '</td></tr>').join('') + '</table></div></div>';
 }
 
-/* ---- tour ---- */
+/* ---- tour ----
+   Eight steps in the owner's own words (Vietnamese verbatim; English and
+   German written to match). A step's text may be two paragraphs, split on a
+   newline. */
 const TOUR = [
-  { ic: DRAW_ICON, vi: ['Rút bài', 'Chọn chủ đề trước, rồi lật một lá để xem năng lượng hôm nay của bạn.'], en: ['Pick a card', 'Tap one card to see your energy today. Choose a focus first: love, work, study, money.'] },
-  { ic: '✨', vi: ['Dự đoán', 'Bài mới của Nabu nằm ở trang chủ. Bài ghi "dành cho bạn" hợp với cung của bạn.'], en: ['Readings', 'Nabu\'s new posts live on the home screen. Posts marked "for you" match your sign.'] },
-  { ic: '🎲', vi: ['Hoạt động', 'Nuôi bạn nhỏ may mắn, buộc sợi tơ hồng, rung cây thông điệp, tung đồng xu, viết nhật ký. Khi Nabu đăng thì có thêm tụ bài, bình chọn và điều ước.'], en: ['Activities', 'Keep a lucky companion, tie the red thread, shake the message tree, flip the coin, write the diary. When Nabu posts there are piles to pick, polls to vote in and wishes to send.'] },
-  { ic: '📚', vi: ['Học', 'Tarot, Lenormand, bài Tây, chiêm tinh, con số thiên thần, manifestation và bói toán. Bạn bấm vào một lá bài hoặc một cung để đọc.'], en: ['Learn', 'Tarot, Lenormand, cartomancy, astrology, angel numbers, manifestation and fortune telling. Tap a card or a sign to read.'] },
-  { ic: '\uD83E\uDDE7', vi: ['Sợi tơ hồng', 'Bạn đặt cho mình một cái tên rồi gửi cho người ấy. Khi người ấy đồng ý, Nabu bắt đầu đếm số ngày hai bạn bên nhau. Từ đó hai bạn có thể ngỏ lời, đính ước, tặng quà cho nhau và tổ chức lễ cưới ngay trong ứng dụng.'], en: ['The red thread', 'Tie a thread with somebody: choose a name, give it to them, and once they agree the app starts counting your days. After that you can ask, get engaged, send gifts and hold a wedding.'] },
-  { ic: '📅', vi: ['Đặt lịch', 'Bạn chọn gói, chọn giờ trên lịch rồi gửi yêu cầu cho Nabu.'], en: ['Book', 'Choose a topic, pick a time on the calendar, send it to Nabu.'] },
-  { ic: '\uD83D\uDD14', vi: ['Làm mới & thông báo', 'Ở bất kỳ trang nào, bạn kéo màn hình xuống từ trên cùng là app tự làm mới và cập nhật bản mới nhất. Chuông ở góc trên bên phải giữ lại những gì đã xảy ra khi bạn không mở app.'], en: ['Refresh & notifications', 'On any screen, pull down from the top and the app refreshes itself to the newest version. The bell in the top corner keeps whatever happened while you were away.'] },
-  { ic: '👤', vi: ['Hồ sơ', 'Nhập tên và ngày sinh để app chọn nội dung hợp với bạn. Đăng nhập để lưu hồ sơ và xem lịch hẹn.'], en: ['Profile', 'Enter your name and birthday so the app picks content for you. Sign in to keep your profile, message Nabu and see bookings.'] }
+  { ic: "🔮", vi: ["Rút bài", "Chọn chủ đề bạn đang quan tâm, sau đó rút một lá bài để nhận thông điệp và xem năng lượng dành cho bạn trong hôm nay. Mỗi chủ đề sẽ có cách diễn giải riêng, nên hãy chọn điều phù hợp nhất với câu hỏi của bạn."], en: ["Draw a card", "Choose the topic on your mind, then draw one card to receive its message and see the energy meant for you today. Each topic is read in its own way, so pick the one that fits your question best."], de: ["Karte ziehen", "Wähl das Thema, das dich gerade beschäftigt, und zieh dann eine Karte: Sie bringt dir ihre Botschaft und zeigt die Energie, die heute für dich gilt. Jedes Thema wird auf seine eigene Art gedeutet, also wähl das, was am besten zu deiner Frage passt."] },
+  { ic: "🌙", vi: ["Dự đoán", "Các bài dự đoán mới nhất của Nabu sẽ xuất hiện ngay trên trang chủ. Những bài có nhãn “Dành cho bạn” được chọn dựa trên cung hoàng đạo trong hồ sơ của bạn, để bạn dễ tìm đúng nội dung phù hợp với mình."], en: ["Forecasts", "Nabu’s newest forecasts appear right on the home screen. Those marked “For you” are chosen by the zodiac sign in your profile, so the right reading is easy to find."], de: ["Vorhersagen", "Nabus neueste Vorhersagen erscheinen direkt auf der Startseite. Die mit „Für dich“ markierten werden nach dem Sternzeichen in deinem Profil ausgewählt, damit du leicht das Passende findest."] },
+  { ic: "🍀", vi: ["Hoạt động", "Đây là nơi bạn có thể thư giãn và thử một chút vận may cùng Nabu: nuôi linh thú, buộc Sợi Tơ Hồng, rung Cây Thông Điệp, tung đồng xu và viết nhật ký.\nKhi Nabu mở các hoạt động đặc biệt, bạn còn có thể tham gia chọn tụ bài, bình chọn, gửi điều ước và nhiều sự kiện nhỏ khác."], en: ["Activities", "This is where you relax and try a little luck with Nabu: raise a companion, tie the Red Thread, shake the Message Tree, flip the coin and write your diary.\nWhen Nabu opens a special activity, you can also pick a pile, vote, send a wish and join other small events."], de: ["Aktivitäten", "Hier kannst du entspannen und mit Nabu ein bisschen Glück versuchen: einen Begleiter großziehen, den Roten Faden knüpfen, den Nachrichtenbaum schütteln, die Münze werfen und Tagebuch schreiben.\nWenn Nabu eine besondere Aktion öffnet, kannst du außerdem einen Stapel wählen, abstimmen, einen Wunsch schicken und bei anderen kleinen Ereignissen mitmachen."] },
+  { ic: "📚", vi: ["Học & khám phá", "Khám phá kiến thức về Tarot, Lenormand, bài Tây, chiêm tinh, số thiên thần, manifestation và các hình thức bói toán.\nBạn có thể chọn trực tiếp một lá bài, cung hoàng đạo hoặc chủ đề mình quan tâm để đọc giải thích chi tiết mà không cần tìm kiếm qua nhiều bài viết."], en: ["Learn & explore", "Explore Tarot, Lenormand, playing cards, astrology, angel numbers, manifestation and other forms of divination.\nGo straight to a card, a zodiac sign or a topic you care about and read its full explanation without searching through many posts."], de: ["Lernen & entdecken", "Entdecke Wissen über Tarot, Lenormand, Spielkarten, Astrologie, Engelszahlen, Manifestation und andere Formen des Wahrsagens.\nGeh direkt zu einer Karte, einem Sternzeichen oder einem Thema, das dich interessiert, und lies die ausführliche Erklärung, ohne viele Beiträge durchsuchen zu müssen."] },
+  { ic: "💞", vi: ["Sợi Tơ Hồng", "Tạo một Sợi Tơ Hồng dành riêng cho bạn và một người đặc biệt. Bạn đặt tên cho mối liên kết rồi gửi lời mời cho người ấy.\nKhi người ấy đồng ý, Nabu sẽ bắt đầu lưu lại số ngày hai bạn đồng hành cùng nhau. Từ đó, cả hai có thể ngỏ lời, đính ước, tặng quà và tổ chức một lễ cưới nhỏ ngay trong Nabu. 💍✨"], en: ["The Red Thread", "Create a Red Thread just for you and someone special. Name the bond, then send them an invitation.\nOnce they accept, Nabu starts counting the days you have walked together. From there you can propose, get engaged, exchange gifts and hold a small wedding right inside Nabu. 💍✨"], de: ["Der Rote Faden", "Knüpf einen Roten Faden nur für dich und einen besonderen Menschen. Gib der Verbindung einen Namen und schick eine Einladung.\nSobald der andere zusagt, zählt Nabu die Tage, die ihr gemeinsam geht. Von da an könnt ihr einen Antrag machen, euch verloben, Geschenke austauschen und eine kleine Hochzeit direkt in Nabu feiern. 💍✨"] },
+  { ic: "💌", vi: ["Đặt lịch với Nabu", "Chọn dịch vụ bạn muốn xem, chọn ngày giờ còn trống trên lịch và gửi yêu cầu đặt lịch.\nSau khi gửi, bạn có thể theo dõi trạng thái lịch hẹn trong tài khoản của mình."], en: ["Book with Nabu", "Choose the service you want, pick a free date and time on the calendar and send your booking request.\nAfterwards you can follow the status of your booking in your account."], de: ["Termin bei Nabu", "Wähl den gewünschten Dienst, such dir einen freien Tag und eine Uhrzeit im Kalender aus und schick deine Anfrage.\nDanach kannst du den Status deines Termins in deinem Konto verfolgen."] },
+  { ic: "🔔", vi: ["Làm mới & thông báo", "Muốn cập nhật nội dung mới nhất, bạn chỉ cần kéo màn hình xuống từ đầu trang rồi thả ra. Nabu sẽ tự làm mới và tải phiên bản nội dung mới nhất.\nBiểu tượng chuông 🔔 ở góc trên bên phải lưu lại những cập nhật và hoạt động đã diễn ra khi bạn không mở app, để bạn không bỏ lỡ điều gì."], en: ["Refresh & notifications", "To get the newest content, pull the screen down from the top and let go. Nabu refreshes itself and loads the latest version.\nThe bell 🔔 in the top right keeps the updates and activities that happened while you were away, so you miss nothing."], de: ["Aktualisieren & Benachrichtigungen", "Für die neuesten Inhalte ziehst du den Bildschirm oben einfach nach unten und lässt los. Nabu aktualisiert sich selbst und lädt die neueste Version.\nDie Glocke 🔔 oben rechts bewahrt die Neuigkeiten und Aktivitäten auf, die passiert sind, während du weg warst, damit dir nichts entgeht."] },
+  { ic: "👤", vi: ["Hồ sơ của bạn", "Nhập tên và ngày sinh để Nabu có thể cá nhân hóa một số nội dung, chẳng hạn như dự đoán phù hợp với cung hoàng đạo của bạn.\nĐăng nhập để lưu hồ sơ, lịch hẹn và những dữ liệu cá nhân khác, nhờ đó bạn vẫn có thể tiếp tục hành trình của mình khi đổi máy hoặc đăng nhập trên thiết bị khác. ✨"], en: ["Your profile", "Enter your name and birthday so Nabu can personalise some content, such as forecasts for your zodiac sign.\nSign in to keep your profile, bookings and other personal data, so you can carry on your journey when you change phones or sign in elsewhere. ✨"], de: ["Dein Profil", "Gib deinen Namen und dein Geburtsdatum ein, damit Nabu einige Inhalte für dich anpassen kann, zum Beispiel Vorhersagen für dein Sternzeichen.\nMeld dich an, um Profil, Termine und andere persönliche Daten zu behalten, damit du deinen Weg fortsetzen kannst, wenn du das Handy wechselst oder dich woanders anmeldest. ✨"] }
 ];
 function tourHTML(step) {
   const t = TOUR[step], txt = t[lang];
@@ -14722,7 +14798,7 @@ function tourHTML(step) {
   return '<div class="card tourcard" id="tour" style="text-align:center;border-color:var(--lav)">'
     + '<div class="tourbar"><span style="width:' + pct + '%"></span></div>'
     + '<div class="tourwell">' + t.ic + '</div>'
-    + '<h3 style="margin:6px 0">' + esc(txt[0]) + '</h3><p class="muted" style="font-size:14.5px">' + esc(txt[1]) + '</p>'
+    + '<h3 style="margin:6px 0">' + esc(txt[0]) + '</h3>' + txt[1].split('\n').map((para) => '<p class="muted" style="font-size:14.5px">' + esc(para) + '</p>').join('')
     // Both arrows are always there, in the same place: back is greyed out on the first step, forward becomes a tick on the last.
     + '<div class="tournav"><button class="btn sm" data-tour="prev" aria-label="back"' + (step === 0 ? ' disabled' : '') + '>←</button><span class="faint">' + (step + 1) + ' / ' + TOUR.length + '</span><button class="btn sm primary" data-tour="next" aria-label="next">' + (step === TOUR.length - 1 ? '✓' : '→') + '</button></div>'
     + '<button class="linkbtn" data-tour="skip" style="margin-top:8px;font-size:13px">' + esc(T().dismiss) + '</button></div>';
@@ -21517,13 +21593,22 @@ function renderPrices(args, params) {
     })();
 }
 
+/* The how-to under the title: the first line is the heading, every line after
+   it a step. Written by the owner, so the shape is theirs. */
+function bookHowHTML() {
+  const lines = String(L(CONFIG.bookingNote) || '').split('\n').filter((l) => l.trim());
+  if (lines.length < 2) return '<p class="muted">' + esc(lines[0] || '') + '</p>';
+  return '<p class="muted" style="margin:0 0 4px"><b>' + esc(lines[0]) + '</b></p>'
+    + '<ol class="muted" style="margin:0 0 12px 22px;padding:0;font-size:14.5px;line-height:1.6;text-align:left">'
+    + lines.slice(1).map((l) => '<li>' + esc(l) + '</li>').join('') + '</ol>';
+}
 async function renderBook(args, params) {
   const S = T(), m = $('#main');
   if (params.change) return renderChange(params.change);
   restoreBook();
   book.card = params.card || book.card || null; book.name = book.name || PROFILE.name || ''; book.birth = book.birth || PROFILE.birthday || '';
   if (!book.month) book.month = new Date(new Date().getFullYear(), new Date().getMonth(), 1);
-  m.innerHTML = '<div class="eyebrow">' + esc(CONFIG.brand) + '</div><h1 style="margin-bottom:6px">' + esc(S.bookTitle) + '</h1><p class="muted">' + esc(L(CONFIG.bookingNote)) + '</p><div class="notes"><div class="note"><span class="ni">👆</span><span>' + esc(S.bookTip) + '</span></div><div class="note"><span class="ni">💾</span><span>' + esc(S.draftKept) + '</span></div><div class="note"><span class="ni">📋</span><span>' + esc(S.topicNote) + '</span></div></div>'
+  m.innerHTML = '<div class="eyebrow">' + esc(CONFIG.brand) + '</div><h1 style="margin-bottom:6px">' + esc(S.bookTitle) + '</h1>' + bookHowHTML() + '<div class="notes"><div class="note"><span class="ni">👆</span><span>' + esc(S.bookTip) + '</span></div><div class="note"><span class="ni">💾</span><span>' + esc(S.draftKept) + '</span></div><div class="note"><span class="ni">📋</span><span>' + esc(S.topicNote) + '</span></div></div>'
     + '<div class="sec"><h2 style="margin:18px 0 4px">' + esc(S.chooseService) + '</h2><p class="hint" style="margin-bottom:12px">' + esc(S.serviceHint) + '</p><div id="svcwrap">' + priceSheetHTML(true) + '</div><div id="cartwrap">' + cartHTML() + '</div></div>'
     + '<div class="sec"><h2 style="margin:18px 0 4px">' + esc(S.chooseTopic) + '</h2><div id="topicwrap">' + topicSectionHTML() + '</div></div>'
     + '<div class="sec"><h2 style="margin-bottom:4px">' + esc(S.chooseTime) + '</h2><p class="hint" style="margin-bottom:10px">' + esc(S.timeHint(L(CONFIG.tzLabel))) + '</p><div id="calwrap"><p class="hint">…</p></div></div>'

@@ -85,9 +85,12 @@ const CONFIG = {
   tzLabel: { vi: 'giờ Việt Nam', en: 'Vietnam time' },
 
   // Booking page copy. Short sentences; this is what clients read.
+  // The owner's own words, one line per step; book.js draws the first line
+  // as the heading and the rest as a numbered list.
   bookingNote: {
-    vi: 'Bạn chọn gói, chọn chủ đề nếu gói yêu cầu, chọn giờ rồi gửi yêu cầu. Nabu xác nhận lại trong ngày, và bạn theo dõi lịch hẹn ở mục Hồ sơ.',
-    en: 'Four steps: pick a package, pick a topic (if the package needs one), pick a time, tap send. Nabu confirms within the day, and you follow it under Profile.'
+    vi: "💌 Cách đặt lịch\nChọn dịch vụ phù hợp.\nChọn chủ đề nếu là gói 1 chủ đề.\nChọn ngày & giờ còn trống.\nChọn hình thức xem.\nGửi yêu cầu cho Nabu.\nChuyển khoản trước buổi xem để hoàn tất đặt lịch. ✨",
+    en: "💌 How to book\nChoose the service that fits.\nChoose a topic if it is a one-topic package.\nChoose a free date & time.\nChoose how you want the reading.\nSend your request to Nabu.\nTransfer the payment before the session to complete the booking. ✨",
+    de: "💌 So buchst du\nWähl die passende Leistung.\nWähl ein Thema, wenn es ein Paket mit einem Thema ist.\nWähl einen freien Tag & eine Uhrzeit.\nWähl die Art der Legung.\nSchick deine Anfrage an Nabu.\nÜberweise vor dem Termin, um die Buchung abzuschließen. ✨"
   },
   tagline: { vi: 'Lắng nghe và thấu hiểu', en: 'Listening and understanding' },
   about: {

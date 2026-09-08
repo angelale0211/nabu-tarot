@@ -2678,6 +2678,17 @@ async function go(hash, sel) { W().location.hash = hash; await sleep(30); return
         ok(!!one && W().getComputedStyle(one).gridTemplateColumns.split(' ').length === 1,
           'the first card has one arrow and it takes the whole row');
       }
+      /* A paragraph that holds a button is not prose, and capping it left the
+         button stopping two thirds of the way across, short of the grid it
+         sits under. */
+      await go('#/learn', '.tiles');
+      await sleep(200);
+      {
+        const grid = d.querySelector('#main .tiles'), btn = d.querySelector('#main a.btn.block');
+        const g = grid && grid.getBoundingClientRect(), bb = btn && btn.getBoundingClientRect();
+        ok(!!g && !!bb && Math.abs(g.left - bb.left) < 2 && Math.abs(g.right - bb.right) < 2,
+          'a full-width button reaches as far as the grid above it, not as far as a line of text');
+      }
       await go('#/learn/guide/tarot-start', '.guide');
       await sleep(200);
       {
@@ -2686,11 +2697,13 @@ async function go(hash, sel) { W().location.hash = hash; await sleep(30); return
         ok(!!g && g.width <= 700 && Math.abs((g.left + g.right) / 2 - (mb.left + mb.right) / 2) < 40,
           'a guide reads as one column down the middle');
       }
-      /* Back to a phone: the same nodes, in the order they were written. */
+      /* Back to a phone: the same nodes, in the order they were written.
+         The move back is driven by a resize the browser reports when it is
+         ready, so this waits for the result rather than guessing at it. */
       frame.style.width = wasWide || '430px';
-      await sleep(300);
+      await waitFor(() => W().innerWidth < 900, 4000);
       await go('#/learn/card/major-0', '.detail');
-      await sleep(260);
+      await waitFor(() => d.querySelector('.detail > .ai'), 4000);
       const rail2 = d.querySelector('.detail > .rail');
       ok(!!rail2 && W().getComputedStyle(rail2).display === 'contents',
         'on a phone that column has no box of its own');

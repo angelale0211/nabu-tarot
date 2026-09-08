@@ -241,13 +241,22 @@ function renderPrices(args, params) {
     })();
 }
 
+/* The how-to under the title: the first line is the heading, every line after
+   it a step. Written by the owner, so the shape is theirs. */
+function bookHowHTML() {
+  const lines = String(L(CONFIG.bookingNote) || '').split('\n').filter((l) => l.trim());
+  if (lines.length < 2) return '<p class="muted">' + esc(lines[0] || '') + '</p>';
+  return '<p class="muted" style="margin:0 0 4px"><b>' + esc(lines[0]) + '</b></p>'
+    + '<ol class="muted" style="margin:0 0 12px 22px;padding:0;font-size:14.5px;line-height:1.6;text-align:left">'
+    + lines.slice(1).map((l) => '<li>' + esc(l) + '</li>').join('') + '</ol>';
+}
 async function renderBook(args, params) {
   const S = T(), m = $('#main');
   if (params.change) return renderChange(params.change);
   restoreBook();
   book.card = params.card || book.card || null; book.name = book.name || PROFILE.name || ''; book.birth = book.birth || PROFILE.birthday || '';
   if (!book.month) book.month = new Date(new Date().getFullYear(), new Date().getMonth(), 1);
-  m.innerHTML = '<div class="eyebrow">' + esc(CONFIG.brand) + '</div><h1 style="margin-bottom:6px">' + esc(S.bookTitle) + '</h1><p class="muted">' + esc(L(CONFIG.bookingNote)) + '</p><div class="notes"><div class="note"><span class="ni">👆</span><span>' + esc(S.bookTip) + '</span></div><div class="note"><span class="ni">💾</span><span>' + esc(S.draftKept) + '</span></div><div class="note"><span class="ni">📋</span><span>' + esc(S.topicNote) + '</span></div></div>'
+  m.innerHTML = '<div class="eyebrow">' + esc(CONFIG.brand) + '</div><h1 style="margin-bottom:6px">' + esc(S.bookTitle) + '</h1>' + bookHowHTML() + '<div class="notes"><div class="note"><span class="ni">👆</span><span>' + esc(S.bookTip) + '</span></div><div class="note"><span class="ni">💾</span><span>' + esc(S.draftKept) + '</span></div><div class="note"><span class="ni">📋</span><span>' + esc(S.topicNote) + '</span></div></div>'
     + '<div class="sec"><h2 style="margin:18px 0 4px">' + esc(S.chooseService) + '</h2><p class="hint" style="margin-bottom:12px">' + esc(S.serviceHint) + '</p><div id="svcwrap">' + priceSheetHTML(true) + '</div><div id="cartwrap">' + cartHTML() + '</div></div>'
     + '<div class="sec"><h2 style="margin:18px 0 4px">' + esc(S.chooseTopic) + '</h2><div id="topicwrap">' + topicSectionHTML() + '</div></div>'
     + '<div class="sec"><h2 style="margin-bottom:4px">' + esc(S.chooseTime) + '</h2><p class="hint" style="margin-bottom:10px">' + esc(S.timeHint(L(CONFIG.tzLabel))) + '</p><div id="calwrap"><p class="hint">…</p></div></div>'

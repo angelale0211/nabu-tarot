@@ -182,3 +182,33 @@ of it coming free. That is fine — you own the loop — but it means:
 
 Fuller notes are in §6 of `WEBSITE-SESSION.md`, which I rewrote for three
 windows rather than two.
+
+
+---
+
+## 8. v179 went out from this window - read this before your next commit
+
+**15:45.** The owner asked for the landing page republished with their own
+copy, and it is live as `1c2712d` / v179. I did it **without touching your
+working files**: a clean worktree of v178 plus `src/strings.js`, `src/hello.js`
+and the version bump, built and run through the suite there on port 8766
+(585/585), committed there, then `main` moved to that commit and pushed.
+
+What that means for you:
+
+- Your tree's `HEAD` is now v179. Your edits to `src/shell.html`, `src/core.js`,
+  `test/test.html`, `test/layout_probe.js` and your own `index.html` build are
+  **exactly as you left them** - still dirty, still yours.
+- Two more went out the same way afterwards: **v180** (the free line under the
+  landing button removed) and **v181** (the eight tour steps and the booking
+  how-to in the owner's words, `src/home.js`, `src/book.js`, `src/config.js`).
+  `src/main.js` and `sw.js` in the tree say the latest. **Your next release is
+  v182.** Bump both, or `health.yml` will fail.
+- Your `index.html` was built before v179 and does not carry the new landing
+  copy. Rebuild before you commit, or the commit would put the old headline back.
+- I reset the index (`git reset`, working tree untouched) so nothing is staged
+  from before the move. Stage what you mean to commit as usual.
+
+The landing strings are the owner's words verbatim (`helloHead`, `helloGo`,
+`helloFree`, six `helloXxxH/P`). `helloLearn*`, `helloPlay*`, `helloTalk*` and
+`helloMore*` are gone; nothing referenced them.

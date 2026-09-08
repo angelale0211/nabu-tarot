@@ -739,6 +739,11 @@ function parseHash() {
   (q[1] || '').split('&').forEach((kv) => { if (!kv) return; const p = kv.split('='); params[decodeURIComponent(p[0])] = decodeURIComponent(p[1] || ''); });
   return { route: path[0] || 'home', args: path.slice(1), params: params };
 }
+const ONE_COL = ['love', 'wedding', 'pet', 'play', 'looks', 'rewards', 'me', 'book',
+  'contact', 'report', 'privacy', 'install', 'alerts', 'news', 'post', 'unlock'];
+/* Under #/learn only the hub and the card pages are wide; the rest is reading. */
+const ONE_COL_LEARN = ['astro', 'fortune', 'numbers', 'angel', 'quiz', 'manifest',
+  'guide', 'spread', 'lesson'];
 function route() {
   const r = parseHash();
   const def = ROUTES[r.route];
@@ -749,6 +754,12 @@ function route() {
      differently from the rest - the home page on a wide window, for one -
      without any screen having to know it is being looked at. */
   document.body.setAttribute('data-route', r.route);
+  /* Screens that are one thing rather than a grid of things. On a desk they
+     read as a single column down the middle: the title, the card and the
+     button under it all the same width, so nothing stops short of anything
+     else. A grid screen keeps the full width it was given. */
+  document.body.setAttribute('data-shape',
+    ONE_COL.indexOf(r.route) > -1 || (r.route === 'learn' && ONE_COL_LEARN.indexOf(r.args[0]) > -1) ? 'one' : '');
   renderChrome(def.nav);
   renderBackBar(r);
   const y = NAV.restore;

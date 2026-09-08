@@ -87,6 +87,13 @@
       const r = k.getBoundingClientRect(); if (r.width < 2 || r.height < 2) return;
       lo = Math.min(lo, r.left); hi = Math.max(hi, r.right);
     });
+    if (hi > lo) return hi - lo;
+    /* No element children: the content is the text itself, so measure that. */
+    const t = (el.textContent || '').trim();
+    if (!t) return 0;
+    const rng = document.createRange(); rng.selectNodeContents(el);
+    const rects = Array.from(rng.getClientRects()).filter((r) => r.height > 2 && r.width > 2);
+    rects.forEach((r) => { lo = Math.min(lo, r.left); hi = Math.max(hi, r.right); });
     return hi > lo ? hi - lo : 0;
   };
   if (desk) {
@@ -97,11 +104,38 @@
         if (el.matches('p,h1,h2,h3,ul,ol,.eyebrow,.muted,.hint,.faint')) return;
         /* A row of chips or buttons is content that flows and stops; it is
            not meant to reach the far edge. */
-        if (el.matches('.kwl,.chips,.row,.mini,.btns,.seen,.keys,.tags,.tabs')) return;
+        if (el.matches('.kwl,.chips,.row,.mini,.btns,.seen,.keys,.tags,.tabs,.block,.btn')) return;
         if (el.matches('.fan,.deck,.awheel,.ring,.ringwrap,.tree,.treestage,.petstage,.petwrap,.spread-d,.starwheel,.keypad,.coin,script,style')) return;
         const w = spread(el);
         if (w && w / r.width < 0.55) add('orphan', el, Math.round((w / r.width) * 100), 'content ' + Math.round(w) + ' of ' + Math.round(r.width));
       });
+    /* ---- blocks that do not line up with each other ----
+       A paragraph capped at a reading width above a card that runs the full
+       row is what reads as the page being broken, even though neither block
+       is wrong on its own. */
+    {
+      const tops = Array.from(main.children).filter(vis).filter((el) => {
+        const r = el.getBoundingClientRect();
+        return r.width > 200 && r.height > 12 && !el.matches('aside,.side,script,style,.toast');
+      });
+      const w = tops.map((el) => Math.round(el.getBoundingClientRect().width));
+      if (w.length > 1) {
+        const lo = Math.min.apply(null, w), hi = Math.max.apply(null, w);
+        if (hi - lo > 24) {
+          /* A narrower block centred on the same axis reads as a subtitle,
+             not as a line that stopped short. Only one pushed to a side is
+             the thing this is looking for. */
+          const mid = (el) => { const r = el.getBoundingClientRect(); return (r.left + r.right) / 2; };
+          const axis = mid(tops[w.indexOf(hi)]);
+          const off = tops.filter((el, i) => w[i] < hi - 24 && Math.abs(mid(el) - axis) > 8);
+          if (off.length) {
+            const odd = off[0];
+            add('ragged', odd, Math.round(hi - odd.getBoundingClientRect().width),
+              'narrowest ' + Math.round(odd.getBoundingClientRect().width) + ' of ' + hi + ', off axis');
+          }
+        }
+      }
+    }
     /* ---- a big empty gap between two blocks ---- */
     const kids = Array.from(main.children).filter(vis);
     for (let i = 1; i < kids.length; i++) {
