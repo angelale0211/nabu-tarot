@@ -2685,7 +2685,7 @@ async function go(hash, sel) { W().location.hash = hash; await sleep(30); return
           }
         });
       };
-      for (const route of ['#/play/pet', '#/love', '#/me', '#/book', '#/prices']) {
+      for (const route of ['#/play/pet', '#/love', '#/me', '#/book', '#/prices', '#/welcome']) {
         await go('#/home', '#main'); await go(route, '#main'); await sleep(140);
         measure(route);
       }

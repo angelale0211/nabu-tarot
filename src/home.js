@@ -83,7 +83,7 @@ function bindTour(root, step) {
     // was opened on purpose, so closing it simply removes it.
     if (parseHash().route === 'home') { $('#tour').outerHTML = tourMiniHTML(); bindTour(root, 0); }
     // The welcome screen becomes the tour; when it closes the person goes home.
-    else { const el = $('#tour', root); if (el) el.remove(); if (parseHash().route === 'welcome') location.hash = '#/home'; }
+    else { const el = $('#tour', root); if (el) el.remove(); if (parseHash().route === 'welcome') redirect('#/home'); }
   }));
 }
 

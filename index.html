@@ -12,7 +12,7 @@
      carries this notice with it. See LICENSE. -->
 <meta name="author" content="Nabu Tarot">
 <meta name="copyright" content="Copyright (c) 2025-2026 Nabu Tarot. All rights reserved.">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'none'; object-src 'none'; form-action 'self'; script-src 'self' 'sha256-OLhRHoRhV7ckgAMXSaB/yceB+b7/dDdLv/UFqKgt4hQ=' https://www.gstatic.com https://apis.google.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; font-src 'self' data:; media-src 'self' data: blob:; worker-src 'self'; connect-src 'self' https://*.googleapis.com https://*.google.com https://*.firebaseio.com https://*.cloudfunctions.net https://*.workers.dev https://generativelanguage.googleapis.com; frame-src https://*.firebaseapp.com https://accounts.google.com https://*.facebook.com">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'none'; object-src 'none'; form-action 'self'; script-src 'self' 'sha256-lRRt7z6qC7beQKrRXl9g0q+w2dS4k5ScDITdiuS4gLc=' https://www.gstatic.com https://apis.google.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; font-src 'self' data:; media-src 'self' data: blob:; worker-src 'self'; connect-src 'self' https://*.googleapis.com https://*.google.com https://*.firebaseio.com https://*.cloudfunctions.net https://*.workers.dev https://generativelanguage.googleapis.com; frame-src https://*.firebaseapp.com https://accounts.google.com https://*.facebook.com">
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <meta name="theme-color" content="#EFE9FA">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -13737,9 +13737,8 @@ function route() {
      interrupt, because everything after it assumes those answers exist.
      Four screens are exempt: the welcome screen itself, because it is the
      destination; the privacy page and the sign-in page, because they are how
-     somebody leaves or arrives; and the Me tab, where signing out lives, and
-     which after the next task shows a summary that itself links to the
-     welcome screen. */
+     somebody leaves or arrives; and the Me tab, where signing out lives and
+     which shows a summary that links to the welcome screen. */
   if (r.route !== 'welcome' && r.route !== 'privacy' && r.route !== 'signin' && r.route !== 'me'
       && typeof needsWelcome === 'function' && needsWelcome()) {
     redirect('#/welcome'); return;
@@ -14046,7 +14045,12 @@ const BE = {
   async signOut() {
     try {
       this.profileRead = false;
-      saveProfileLocal({ name: '', birthday: '', interests: [] });
+      /* handle and lang go too. saveProfileLocal is a merge, so leaving them out
+         keeps them: the next account created on this phone would skip the welcome
+         screen and push the previous person's username into its own document.
+         Clearing lang here does not change the device language - that is
+         'nabu-lang' in store, which belongs to the phone. */
+      saveProfileLocal({ name: '', birthday: '', interests: [], handle: '', lang: '' });
       store.set('nabu-profile', PROFILE);
       store.set('nabu-access', {});
       store.set('nabu-admin', '');
@@ -14063,8 +14067,15 @@ const BE = {
     try { await db.collection('threads').doc(uid).delete(); } catch (e) { /* nothing there */ }
     try { await wipe(db.collection('bookings').where('uid', '==', uid)); } catch (e) { /* rules or offline */ }
     try { await db.collection('users').doc(uid).delete(); } catch (e) { /* nothing there */ }
+    /* Every registered person now has a public card and a reserved username, so
+       deletion has to take both with it: the card in 'people' and the row in
+       'handles' that holds the name for them. Left behind, the card would go on
+       showing somebody who has gone and the username would stay taken forever. */
+    try { const h = PROFILE.handle; if (h) await db.collection('handles').doc(h).delete(); } catch (e) { /* rules or offline */ }
+    try { await db.collection('people').doc(uid).delete(); } catch (e) { /* rules or offline */ }
     await this.user.delete();
     store.set('nabu-access', {});
+    saveProfileLocal({ handle: '', lang: '' });
   },
 
   /* ---- profile ---- */
@@ -14074,7 +14085,10 @@ const BE = {
        the one moment the tour is worth showing whatever this device has seen
        before: somebody who signed up is starting, even if the phone they did
        it on has been used by somebody else. */
-    if (!snap.exists) { store.set('nabu-onboard', 1); await this.pushProfile(); this.profileRead = true; return; }
+    /* An account that has just been made has no username yet, whichever button
+       made it - email, Google or Facebook - so it goes to the welcome screen from
+       here, rather than relying on the sign-in page knowing which mode it was in. */
+    if (!snap.exists) { store.set('nabu-onboard', 1); await this.pushProfile(); this.profileRead = true; if (typeof parseHash === 'function' && parseHash().route !== 'welcome') redirect('#/welcome'); return; }
     const d = snap.data();
     /* The account's copy of what is open is the truth, and this phone takes
        it as read - whatever was here before. It used to be a merge that kept
@@ -15042,7 +15056,7 @@ function bindTour(root, step) {
     // was opened on purpose, so closing it simply removes it.
     if (parseHash().route === 'home') { $('#tour').outerHTML = tourMiniHTML(); bindTour(root, 0); }
     // The welcome screen becomes the tour; when it closes the person goes home.
-    else { const el = $('#tour', root); if (el) el.remove(); if (parseHash().route === 'welcome') location.hash = '#/home'; }
+    else { const el = $('#tour', root); if (el) el.remove(); if (parseHash().route === 'welcome') redirect('#/home'); }
   }));
 }
 

@@ -763,9 +763,8 @@ function route() {
      interrupt, because everything after it assumes those answers exist.
      Four screens are exempt: the welcome screen itself, because it is the
      destination; the privacy page and the sign-in page, because they are how
-     somebody leaves or arrives; and the Me tab, where signing out lives, and
-     which after the next task shows a summary that itself links to the
-     welcome screen. */
+     somebody leaves or arrives; and the Me tab, where signing out lives and
+     which shows a summary that links to the welcome screen. */
   if (r.route !== 'welcome' && r.route !== 'privacy' && r.route !== 'signin' && r.route !== 'me'
       && typeof needsWelcome === 'function' && needsWelcome()) {
     redirect('#/welcome'); return;

@@ -72,7 +72,12 @@ const BE = {
   async signOut() {
     try {
       this.profileRead = false;
-      saveProfileLocal({ name: '', birthday: '', interests: [] });
+      /* handle and lang go too. saveProfileLocal is a merge, so leaving them out
+         keeps them: the next account created on this phone would skip the welcome
+         screen and push the previous person's username into its own document.
+         Clearing lang here does not change the device language - that is
+         'nabu-lang' in store, which belongs to the phone. */
+      saveProfileLocal({ name: '', birthday: '', interests: [], handle: '', lang: '' });
       store.set('nabu-profile', PROFILE);
       store.set('nabu-access', {});
       store.set('nabu-admin', '');
@@ -89,8 +94,15 @@ const BE = {
     try { await db.collection('threads').doc(uid).delete(); } catch (e) { /* nothing there */ }
     try { await wipe(db.collection('bookings').where('uid', '==', uid)); } catch (e) { /* rules or offline */ }
     try { await db.collection('users').doc(uid).delete(); } catch (e) { /* nothing there */ }
+    /* Every registered person now has a public card and a reserved username, so
+       deletion has to take both with it: the card in 'people' and the row in
+       'handles' that holds the name for them. Left behind, the card would go on
+       showing somebody who has gone and the username would stay taken forever. */
+    try { const h = PROFILE.handle; if (h) await db.collection('handles').doc(h).delete(); } catch (e) { /* rules or offline */ }
+    try { await db.collection('people').doc(uid).delete(); } catch (e) { /* rules or offline */ }
     await this.user.delete();
     store.set('nabu-access', {});
+    saveProfileLocal({ handle: '', lang: '' });
   },
 
   /* ---- profile ---- */
@@ -100,7 +112,10 @@ const BE = {
        the one moment the tour is worth showing whatever this device has seen
        before: somebody who signed up is starting, even if the phone they did
        it on has been used by somebody else. */
-    if (!snap.exists) { store.set('nabu-onboard', 1); await this.pushProfile(); this.profileRead = true; return; }
+    /* An account that has just been made has no username yet, whichever button
+       made it - email, Google or Facebook - so it goes to the welcome screen from
+       here, rather than relying on the sign-in page knowing which mode it was in. */
+    if (!snap.exists) { store.set('nabu-onboard', 1); await this.pushProfile(); this.profileRead = true; if (typeof parseHash === 'function' && parseHash().route !== 'welcome') redirect('#/welcome'); return; }
     const d = snap.data();
     /* The account's copy of what is open is the truth, and this phone takes
        it as read - whatever was here before. It used to be a merge that kept
