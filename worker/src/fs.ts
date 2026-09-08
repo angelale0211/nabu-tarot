@@ -51,7 +51,13 @@ export async function fsGet(env: PlayEnv, path: string): Promise<Record<string, 
 export async function fsPatch(env: PlayEnv, path: string, obj: Record<string, unknown>, mask?: string[], opts?: { createOnly?: boolean }): Promise<Response> {
   const at = await serviceToken(env, FS_SCOPE);
   const q: string[] = [];
-  for (const f of mask || Object.keys(obj)) q.push("updateMask.fieldPaths=" + encodeURIComponent(f));
+  // An empty array is truthy, so `mask || Object.keys(obj)` would pick []
+  // and emit zero fieldPaths. A Firestore PATCH with no updateMask at all
+  // replaces the whole document instead of merging, so treat an empty
+  // mask as absent, and refuse to send a request with no fields at all.
+  const fields = mask && mask.length ? mask : Object.keys(obj);
+  if (fields.length === 0) throw new Error("fsPatch: empty field mask for " + path);
+  for (const f of fields) q.push("updateMask.fieldPaths=" + encodeURIComponent(f));
   if (opts && opts.createOnly) q.push("currentDocument.exists=false");
   return fetch(docUrl(env, path) + (q.length ? "?" + q.join("&") : ""), {
     method: "PATCH",
