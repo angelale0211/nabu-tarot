@@ -14,12 +14,25 @@ function paywallHTML(courseId) {
   const expired = a && a < isoDate(new Date());
   return '<div class="paywall"><div class="ic">🔒</div><h2>' + esc(L(c.name)) + '</h2><p class="muted">' + esc(L(c.blurb)) + '</p>'
     + '<ul class="inc">' + L(c.includes).map((x) => '<li>' + esc(x) + '</li>').join('') + '</ul>'
-    + (isTWA() ? '' : '<div class="price">' + priceHTML(c.price, 'unlock', c.id) + ' <span>/ ' + c.months + ' ' + esc(S.months6) + '</span></div>')
+    /* Inside the Android app the price shown is Play's own, in the buyer's
+       currency, because Play is what they are about to pay. On the web it is
+       the price written here. */
+    + (isTWA()
+      ? (BILL.can() && BILL.priceOf(c.id)
+        ? '<div class="price">' + esc(BILL.priceOf(c.id)) + ' <span>/ ' + c.months + ' ' + esc(S.months6) + '</span></div>'
+        : '')
+      : '<div class="price">' + priceHTML(c.price, 'unlock', c.id) + ' <span>/ ' + c.months + ' ' + esc(S.months6) + '</span></div>')
     + (expired ? '<p class="hint err">' + esc(S.courseExpired(a)) + '</p>' : '')
     /* Asked here, in the app, the way a booking is - not copied to the
        clipboard and carried off to Instagram, where nothing knows what was
        asked for and Nabu has a message to answer instead of an order. */
-    + (isTWA() ? '<p class="hint" style="margin:8px 0">' + esc(S.storeCodeHint) + '</p>'
+    + (isTWA()
+      ? (BILL.can()
+        /* Through Play, because Google requires it of anything digital sold
+           inside an Android app. A reading is not sold here and never was. */
+        ? '<button type="button" class="btn primary block" data-playbuy="' + courseId + '">' + esc(S.buyCourse) + '</button>'
+          + '<p class="hint" id="bstatus" style="margin:8px 0"></p>'
+        : '<p class="hint" style="margin:8px 0">' + esc(S.storeCodeHint) + '</p>')
       : '<button type="button" class="btn primary block" data-buyreq="' + courseId + '">' + esc(S.buyCourse) + '</button>'
         + '<p class="hint" id="bstatus" style="margin:8px 0"></p>'
         + '<p class="hint" style="margin:8px 0">' + esc(S.buyHint) + '</p>'
@@ -28,6 +41,31 @@ function paywallHTML(courseId) {
 }
 function bindPaywall(root, after) {
   const S = T();
+  /* Buying through Play. Everything that decides whether it worked happens
+     somewhere else - Play takes the money, the worker asks Google whether that
+     really happened, and the access is written on the account rather than here.
+     What is left on this side is a button, a wait, and a sentence. */
+  $$('[data-playbuy]', root).forEach((b) => b.addEventListener('click', async () => {
+    const id = b.getAttribute('data-playbuy'), st = $('#bstatus', root);
+    b.disabled = true;
+    if (st) { st.textContent = S.buyWorking; st.className = 'hint'; }
+    try {
+      const opened = await BILL.buy(id);
+      if (st) { st.textContent = S.buyDone(opened.map(accessName).join(', ')); st.className = 'hint ok'; }
+      toast(S.unlocked);
+      if (after) after(); else route();
+    } catch (e) {
+      b.disabled = false;
+      const why = String((e && e.message) || '');
+      if (st) {
+        st.className = 'hint err';
+        st.textContent = why === 'signin' ? S.unlockNeedIn
+          : /AbortError|cancel/i.test(why) ? ''
+          : why === 'already used' ? S.buyAlready
+          : S.buyFailed;
+      }
+    }
+  }));
   /* One button, one order in the dashboard, signed by whoever asked. */
   $$('[data-buyreq]', root).forEach((b) => b.addEventListener('click', async () => {
     const c = courseOf(b.getAttribute('data-buyreq')), st = $('#bstatus', root);

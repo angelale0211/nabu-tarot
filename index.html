@@ -12,7 +12,7 @@
      carries this notice with it. See LICENSE. -->
 <meta name="author" content="Nabu Tarot">
 <meta name="copyright" content="Copyright (c) 2025-2026 Nabu Tarot. All rights reserved.">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'none'; object-src 'none'; form-action 'self'; script-src 'self' 'sha256-qajQvSYQ+W7RYkDBr03NCTyAi4ubX9Gotn6dews50uU=' https://www.gstatic.com https://apis.google.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; font-src 'self' data:; media-src 'self' data: blob:; worker-src 'self'; connect-src 'self' https://*.googleapis.com https://*.google.com https://*.firebaseio.com https://*.cloudfunctions.net https://*.workers.dev https://generativelanguage.googleapis.com; frame-src https://*.firebaseapp.com https://accounts.google.com https://*.facebook.com">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'none'; object-src 'none'; form-action 'self'; script-src 'self' 'sha256-BTLOmczEwDmcdafpS0VrJ3AKgrus0ZTS1GrYdwvGioI=' https://www.gstatic.com https://apis.google.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; font-src 'self' data:; media-src 'self' data: blob:; worker-src 'self'; connect-src 'self' https://*.googleapis.com https://*.google.com https://*.firebaseio.com https://*.cloudfunctions.net https://*.workers.dev https://generativelanguage.googleapis.com; frame-src https://*.firebaseapp.com https://accounts.google.com https://*.facebook.com">
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <meta name="theme-color" content="#EFE9FA">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -2969,6 +2969,9 @@ const STR = {
     adminIntro: 'Trang này chỉ dành cho Nabu.',
     repTitle: 'Báo cáo', repBy: 'Người báo', repNone: 'Chưa có báo cáo nào.',
     repHint: 'Những gì người dùng báo cáo trong phòng cưới hoặc trong trò chuyện.',
+    buyWorking: 'Đang xử lý…', buyAlready: 'Lần mua này đã được dùng rồi.',
+    buyFailed: 'Chưa mua được. Bạn thử lại, hoặc nhắn tin cho Nabu.',
+    buyDone: (n) => 'Đã mở: ' + n + '.',
     modReport: 'Báo cáo', modBlock: 'Chặn người này',
     modAbout: (n) => 'Về ' + n + ':',
     modReported: 'Đã gửi báo cáo cho Nabu. Cảm ơn bạn.',
@@ -3769,6 +3772,9 @@ const STR = {
     adminIntro: 'This page is for Nabu only.',
     repTitle: 'Reports', repBy: 'From', repNone: 'No reports.',
     repHint: 'What people have reported, from wedding rooms and threads.',
+    buyWorking: 'Working...', buyAlready: 'That purchase has already been used.',
+    buyFailed: 'That did not go through. Try again, or message Nabu.',
+    buyDone: (n) => 'Opened: ' + n + '.',
     modReport: 'Report', modBlock: 'Block this person',
     modAbout: (n) => 'About ' + n + ':',
     modReported: 'Sent to Nabu. Thank you.',
@@ -12889,12 +12895,25 @@ function paywallHTML(courseId) {
   const expired = a && a < isoDate(new Date());
   return '<div class="paywall"><div class="ic">🔒</div><h2>' + esc(L(c.name)) + '</h2><p class="muted">' + esc(L(c.blurb)) + '</p>'
     + '<ul class="inc">' + L(c.includes).map((x) => '<li>' + esc(x) + '</li>').join('') + '</ul>'
-    + (isTWA() ? '' : '<div class="price">' + priceHTML(c.price, 'unlock', c.id) + ' <span>/ ' + c.months + ' ' + esc(S.months6) + '</span></div>')
+    /* Inside the Android app the price shown is Play's own, in the buyer's
+       currency, because Play is what they are about to pay. On the web it is
+       the price written here. */
+    + (isTWA()
+      ? (BILL.can() && BILL.priceOf(c.id)
+        ? '<div class="price">' + esc(BILL.priceOf(c.id)) + ' <span>/ ' + c.months + ' ' + esc(S.months6) + '</span></div>'
+        : '')
+      : '<div class="price">' + priceHTML(c.price, 'unlock', c.id) + ' <span>/ ' + c.months + ' ' + esc(S.months6) + '</span></div>')
     + (expired ? '<p class="hint err">' + esc(S.courseExpired(a)) + '</p>' : '')
     /* Asked here, in the app, the way a booking is - not copied to the
        clipboard and carried off to Instagram, where nothing knows what was
        asked for and Nabu has a message to answer instead of an order. */
-    + (isTWA() ? '<p class="hint" style="margin:8px 0">' + esc(S.storeCodeHint) + '</p>'
+    + (isTWA()
+      ? (BILL.can()
+        /* Through Play, because Google requires it of anything digital sold
+           inside an Android app. A reading is not sold here and never was. */
+        ? '<button type="button" class="btn primary block" data-playbuy="' + courseId + '">' + esc(S.buyCourse) + '</button>'
+          + '<p class="hint" id="bstatus" style="margin:8px 0"></p>'
+        : '<p class="hint" style="margin:8px 0">' + esc(S.storeCodeHint) + '</p>')
       : '<button type="button" class="btn primary block" data-buyreq="' + courseId + '">' + esc(S.buyCourse) + '</button>'
         + '<p class="hint" id="bstatus" style="margin:8px 0"></p>'
         + '<p class="hint" style="margin:8px 0">' + esc(S.buyHint) + '</p>'
@@ -12903,6 +12922,31 @@ function paywallHTML(courseId) {
 }
 function bindPaywall(root, after) {
   const S = T();
+  /* Buying through Play. Everything that decides whether it worked happens
+     somewhere else - Play takes the money, the worker asks Google whether that
+     really happened, and the access is written on the account rather than here.
+     What is left on this side is a button, a wait, and a sentence. */
+  $$('[data-playbuy]', root).forEach((b) => b.addEventListener('click', async () => {
+    const id = b.getAttribute('data-playbuy'), st = $('#bstatus', root);
+    b.disabled = true;
+    if (st) { st.textContent = S.buyWorking; st.className = 'hint'; }
+    try {
+      const opened = await BILL.buy(id);
+      if (st) { st.textContent = S.buyDone(opened.map(accessName).join(', ')); st.className = 'hint ok'; }
+      toast(S.unlocked);
+      if (after) after(); else route();
+    } catch (e) {
+      b.disabled = false;
+      const why = String((e && e.message) || '');
+      if (st) {
+        st.className = 'hint err';
+        st.textContent = why === 'signin' ? S.unlockNeedIn
+          : /AbortError|cancel/i.test(why) ? ''
+          : why === 'already used' ? S.buyAlready
+          : S.buyFailed;
+      }
+    }
+  }));
   /* One button, one order in the dashboard, signed by whoever asked. */
   $$('[data-buyreq]', root).forEach((b) => b.addEventListener('click', async () => {
     const c = courseOf(b.getAttribute('data-buyreq')), st = $('#bstatus', root);
@@ -14308,6 +14352,99 @@ async function revokeCode(hash) {
   const doc = { salt: CODEBOOK.salt(), codes: codes };
   await BE.setContent('codes', doc);
   CODEBOOK.set(doc);
+}
+
+/* ======================= buying inside the Android app =======================
+
+   Google requires that digital things sold inside an Android app are sold
+   through Play, and takes a share for it. A reading with Nabu is not a digital
+   thing - it is an hour of somebody's time - so bookings are left alone and go
+   on being arranged by message and paid by bank transfer, as they always were.
+   What goes through Play is the courses and the unlocks.
+
+   None of this exists in a browser. The Digital Goods API is only there inside
+   the installed Android app, so BILL.can() is false on the web and every screen
+   falls back to what it did before. That is not a limitation to work around: it
+   is the reason the website can keep selling without paying a commission.
+
+   The phone is never trusted about what it bought. It sends the token Play
+   hands back to the worker, which asks Google directly and writes the access
+   itself. A phone that says "I bought the Pro course" and shows no token gets
+   nothing. */
+
+const PLAY_METHOD = 'https://play.google.com/billing';
+
+const BILL = {
+  service: null,
+  details: {},
+  ready: false,
+
+  /* Only inside the installed app, and only when Play answers. */
+  can() { return !!(this.ready && this.service); },
+
+  async start() {
+    if (this.ready) return this.can();
+    this.ready = true;
+    try {
+      if (!window.getDigitalGoodsService || !CONFIG.aiEndpoint) return false;
+      this.service = await window.getDigitalGoodsService(PLAY_METHOD);
+      const ids = COURSES.map((c) => c.id);
+      const list = await this.service.getDetails(ids);
+      (list || []).forEach((d) => { if (d && d.itemId) this.details[d.itemId] = d; });
+      return true;
+    } catch (e) {
+      /* No Play, an older webview, or the product list is not published yet.
+         Silence is right: on the web this is the normal case. */
+      this.service = null;
+      return false;
+    }
+  },
+
+  /* What Play says it costs, in the buyer's own currency, or '' to fall back to
+     the price written in the app. */
+  priceOf(id) {
+    const d = this.details[id];
+    if (!d || !d.price) return '';
+    try { return new Intl.NumberFormat(lang === 'en' ? 'en-GB' : 'vi-VN', { style: 'currency', currency: d.price.currency }).format(Number(d.price.value)); }
+    catch (e) { return d.price.value + ' ' + d.price.currency; }
+  },
+
+  /* Buy one thing. Resolves with what was opened, or throws with a reason the
+     caller can show. */
+  async buy(id) {
+    if (!this.can()) throw new Error('nostore');
+    if (!BE.enabled || !BE.user) throw new Error('signin');
+    if (!this.details[id]) throw new Error('noproduct');
+
+    const req = new PaymentRequest([{ supportedMethods: PLAY_METHOD, data: { sku: id } }],
+      { total: { label: L(courseById(id) ? courseById(id).name : id), amount: { currency: 'VND', value: '0' } } });
+    const res = await req.show();
+    /* The token is the only thing worth carrying out of here. */
+    const token = res && res.details && (res.details.purchaseToken || res.details.token);
+    try { await res.complete(token ? 'success' : 'fail'); } catch (e) { /* already closed */ }
+    if (!token) throw new Error('nopurchase');
+
+    const idTok = await BE.token();
+    const r = await withTimeout(fetch(CONFIG.aiEndpoint.replace(/\/$/, '') + '/billing', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + idTok },
+      body: JSON.stringify({ sku: id, token: token })
+    }), 30000);
+    const j = await r.json().catch(() => ({}));
+    if (!r.ok || !j.ok) throw new Error(j.error || ('billing ' + r.status));
+
+    /* The worker has already written it on the account. Pulling it down is what
+       makes it true on this phone, rather than writing it here and hoping. */
+    try { await BE.pullProfile(); } catch (e) { ACCESS.grant(j.opened || [id], (j.access || {})[id]); }
+    return j.opened || [id];
+  }
+};
+
+const courseById = (id) => COURSES.filter((c) => c.id === id)[0] || null;
+
+/* Started once, early, so a course page can ask BILL.can() without waiting. */
+if (typeof window !== 'undefined') {
+  setTimeout(() => { try { BILL.start(); } catch (e) { /* never block the app */ } }, 1200);
 }
 
 /* ======================= angel numbers (free) =======================
@@ -23203,7 +23340,7 @@ function adminSale(p) {
 ROUTES.admin = { nav: '', render: renderAdmin };
 
 /* ============================ boot ============================ */
-window.APP_VERSION = 'v167';
+window.APP_VERSION = 'v168';
 window.NABU = { CONFIG: CONFIG, SALE: SALE, salePrice: salePrice, loadActs: loadActs, BACK: BACK, LESSONS: LESSONS, localAnswer: localAnswer, compatVerdict: compatVerdict, numerologyOf: numerologyOf, ZDEEP: ZDEEP, lunarToday: lunarToday, solarToLunar: solarToLunar, DECK: DECK, INSIGHT: INSIGHT, KW: KW, ASK: ASK, TOPICS: TOPICS, GUIDES: GUIDES, SERVICES: SERVICES, COURSES: COURSES, ACCESS: ACCESS, plusOn: () => plusOn(), proOn: () => proOn(), luckUnlimited: () => luckUnlimited(), ZODIAC: ZODIAC, pick: pick, book: book,
   insightHTML: insightHTML, insightOf: insightOf, sunSignIndex: sunSignIndex, lifePath: lifePath, PROFILE: () => PROFILE, BE: BE, ACTS: ACTS,
   ANGELS: ANGELS, angelRead: angelRead, CODEBOOK: CODEBOOK, verifyCode: verifyCode, petHomeSVG: petHomeSVG, PET_HOMES: PET_HOMES, PET_WEARS: PET_WEARS, codeDigest: codeDigest, randomCode: randomCode, BANK: BANK, PETS: PETS, petSVG: petSVG, PET_COATS: PET_COATS, PET_KINDS: PET_KINDS, luckCut: luckCut, petLevel: petLevel, petStep: petStep, VOUCHERS: VOUCHERS, levelCoins: levelCoins, LOOKS: LOOKS,

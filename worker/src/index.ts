@@ -7,6 +7,16 @@
 import Anthropic from "@anthropic-ai/sdk";
 import { whoIsAsking } from "./auth";
 import { allow, cachedAnswer, keepAnswer } from "./limit";
+import { checkPurchase, acknowledge, grant } from "./play";
+
+/* How long each thing is sold for. Kept here rather than read from the app,
+   because the app is the side that cannot be trusted about what it bought. */
+const MONTHS: Record<string, number> = {
+  tarot: 6, lenormand: 6, playing: 6, manifest: 12,
+  plus: 12, pro6: 6, pro: 12, wedding: 12,
+};
+/* Pro contains Plus, exactly as a code for Pro has always opened both. */
+const ALSO: Record<string, string[]> = { pro: ["plus"], pro6: ["plus"] };
 
 export interface Env {
   ANTHROPIC_API_KEY?: string;
@@ -14,6 +24,8 @@ export interface Env {
   AI?: { run: (model: string, input: unknown) => Promise<{ response?: string }> }; // Workers AI binding (free tier, open models)
   ALLOWED_ORIGIN?: string; // e.g. https://nabutarot.com
   RESEND_API_KEY?: string; // for /booking: mails the reader a calendar invitation
+  PLAY_SERVICE_ACCOUNT?: string; // the service-account JSON, for checking purchases
+  ANDROID_PACKAGE?: string;      // app.nabutarot.twa
   FIREBASE_PROJECT_ID?: string; // whose sign-ins this worker accepts; unset = anybody may ask
   KV?: KVNamespace;            // where the per-person counts live; unset = no limits
 }
@@ -110,6 +122,46 @@ export default {
       const v = await allow(env, caller(request), MAIL_A_DAY, MAIL_A_MINUTE);
       if (!v.ok) return tooMany(v, headers);
       return path.endsWith("/booking") ? bookingMail(request, env, headers) : reportMail(request, env, headers);
+    }
+
+    /* ---- somebody bought something in the Android app ----
+
+       The phone sends the token Play gave it. Everything else is asked of
+       Google: is this token real, for this product, for this app, and has it
+       been handed over before. Then the access is written from here, with the
+       service account, so that granting it never depends on what a phone is
+       allowed to write. */
+    if (path.endsWith("/billing")) {
+      if (!env.FIREBASE_PROJECT_ID) return new Response(JSON.stringify({ error: "not configured" }), { status: 500, headers });
+      const person = await whoIsAsking(request, env.FIREBASE_PROJECT_ID);
+      if (!person) return new Response(JSON.stringify({ error: "signin" }), { status: 401, headers });
+      const v = await allow(env, person.uid, 40, 6);
+      if (!v.ok) return tooMany(v, headers);
+
+      let b: { sku?: string; token?: string };
+      try { b = await request.json(); } catch { return new Response(JSON.stringify({ error: "bad json" }), { status: 400, headers }); }
+      const sku = String(b.sku || "");
+      const token = String(b.token || "");
+      if (!MONTHS[sku] || !token) return new Response(JSON.stringify({ error: "unknown product" }), { status: 400, headers });
+
+      try {
+        const bought = await checkPurchase(env, sku, token);
+        if (!bought.ok) {
+          console.log(JSON.stringify({ at: "billing", uid: person.uid, sku, refused: bought.why }));
+          return new Response(JSON.stringify({ error: bought.why || "refused" }), { status: 402, headers });
+        }
+        const ids = [sku].concat(ALSO[sku] || []);
+        const access = await grant(env, person.uid, ids, MONTHS);
+        /* Only once it is written down. A purchase acknowledged before the
+           access exists is a purchase Google will not refund and the buyer
+           never received. */
+        ctx.waitUntil(acknowledge(env, sku, token));
+        console.log(JSON.stringify({ at: "billing", uid: person.uid, sku, granted: ids }));
+        return new Response(JSON.stringify({ ok: true, opened: ids, access }), { headers });
+      } catch (e) {
+        console.error(JSON.stringify({ at: "billing", uid: person.uid, sku, error: String((e as Error).message || e) }));
+        return new Response(JSON.stringify({ error: "check failed" }), { status: 502, headers });
+      }
     }
 
     /* Asking costs money, so asking requires an account. Until the project id
