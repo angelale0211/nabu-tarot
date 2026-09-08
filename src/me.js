@@ -15,7 +15,7 @@ function meCleanup() { meUnsubs.forEach((u) => { try { u(); } catch (e) { /* alr
 function profileFormHTML() {
   const S = T(), p = PROFILE || {};
   if (BE.user) {
-    const line = (k, v) => '<p class="hint" style="margin:0 0 4px"><b>' + esc(k) + '</b> · ' + esc(v) + '</p>';
+    const line = (k, v) => '<p class="hint" style="margin:0 0 6px"><b>' + esc(k) + '</b> · ' + esc(v) + '</p>';
     return '<div class="card"><h3 style="margin-bottom:8px">' + esc(S.meTitle) + '</h3>'
       + line(S.displayName, p.name || '—')
       + line(S.welHandle, p.handle ? '@' + p.handle : '—')
