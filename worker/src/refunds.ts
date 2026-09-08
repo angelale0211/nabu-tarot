@@ -16,6 +16,8 @@
    comes out the other end. */
 
 import { serviceToken, FS_SCOPE, PLAY_SCOPE, PlayEnv } from "./play";
+import { fsGet, fsPatch } from "./fs";
+import { unpayRoom } from "./entitle";
 
 /* A day is plenty - this runs daily - but a week of overlap costs nothing and
    covers a day the worker was down or a run that failed. */
@@ -48,57 +50,60 @@ const docUrl = (env: PlayEnv, path: string): string =>
    person has paid: their own claim lets them through and the grant runs again,
    which changes nothing because it keeps whichever date is later. Only a
    different account is refused. */
-export interface Claim { ok: boolean; why?: string }
+export interface LedgerRow {
+  uid: string; sku: string; kind: "inapp" | "subs"; ids: string[]; state: string; at: string;
+  /* The raw purchase token, not just its hash. The document id IS the hash -
+     one-way, on purpose, so a leaked ledger cannot be replayed at Google - but
+     the nightly subscription reconciliation has to ask Google about this same
+     purchase again, and Google is asked by token, never by hash. Without this
+     field that lookup has nothing to send. */
+  token: string;
+  until?: string; wid?: string; plan?: string;
+}
+export interface Claim { ok: boolean; why?: string; existing?: LedgerRow }
 
-export async function claimPurchase(
-  env: PlayEnv, uid: string, sku: string, ids: string[], token: string,
-): Promise<Claim> {
-  const at = await serviceToken(env, FS_SCOPE);
-  const id = await tokenId(token);
-  const url = docUrl(env, "purchases/" + id);
-  const body = {
-    fields: {
-      uid: { stringValue: uid },
-      sku: { stringValue: sku },
-      ids: { arrayValue: { values: ids.map((x) => ({ stringValue: x })) } },
-      at: { stringValue: new Date().toISOString() },
-      state: { stringValue: "claimed" },
-    },
-  };
-  const r = await fetch(url + "?currentDocument.exists=false", {
-    method: "PATCH",
-    headers: { Authorization: "Bearer " + at, "Content-Type": "application/json" },
-    body: JSON.stringify(body),
-  });
-  if (r.ok) return { ok: true };
-
-  /* Something stopped the write. Whether it was the condition or the network
-     is decided by looking, not by trusting a status code: if the document is
-     there, somebody claimed it; if it is not, the write itself failed and the
-     buyer should be able to try again rather than be told they already bought
-     what they did not get. */
-  const cur = await fetch(url, { headers: { Authorization: "Bearer " + at } });
-  if (!cur.ok) throw new Error("claim " + r.status);
-  const doc = (await cur.json()) as { fields?: { uid?: { stringValue?: string } } };
-  const owner = doc.fields?.uid?.stringValue || "";
-  if (owner && owner === uid) return { ok: true };
-  return { ok: false, why: "already used" };
+export async function ledgerGet(env: PlayEnv, hash: string): Promise<LedgerRow | null> {
+  const d = await fsGet(env, "purchases/" + hash);
+  return d ? (d as unknown as LedgerRow) : null;
+}
+export async function ledgerSet(env: PlayEnv, hash: string, patch: Partial<LedgerRow> & Record<string, unknown>): Promise<void> {
+  const w = await fsPatch(env, "purchases/" + hash, patch, Object.keys(patch));
+  if (!w.ok) throw new Error("ledger " + w.status);
 }
 
-/* Said out loud once the access exists, so the ledger distinguishes a purchase
-   that was carried through from one that stopped half way. Never in front of
-   the grant: a purchase recorded as granted that was not would be revoked
-   later for a course the buyer never had. */
-export async function markGranted(env: PlayEnv, token: string): Promise<void> {
-  const at = await serviceToken(env, FS_SCOPE);
+/* The claim. Created with the condition that it must not exist - the ONLY
+   thing stopping one purchase token being spent by two different accounts -
+   and if that write is refused, the row already there decides who this is:
+   the same account (and, for a wedding, the same room) is a retry and passes
+   with the row attached, so the caller can repeat exactly what was granted
+   before rather than granting again; anybody else is refused.
+
+   A failure to even read that row back (a network error, a Firestore outage)
+   is not the same as "somebody else already has it" and must never be
+   reported that way - it is thrown, so the caller sees a transient error
+   rather than a false "already used". */
+export async function claimPurchase(env: PlayEnv, uid: string, sku: string, ids: string[], token: string,
+  extra: { kind?: "inapp" | "subs"; wid?: string } = {}): Promise<Claim> {
   const id = await tokenId(token);
-  const body = { fields: { state: { stringValue: "granted" } } };
-  const r = await fetch(docUrl(env, "purchases/" + id) + "?updateMask.fieldPaths=state", {
-    method: "PATCH",
-    headers: { Authorization: "Bearer " + at, "Content-Type": "application/json" },
-    body: JSON.stringify(body),
-  });
-  if (!r.ok) throw new Error("ledger " + r.status);
+  const row: LedgerRow = { uid, sku, kind: extra.kind || "inapp", ids, state: "claimed", at: new Date().toISOString(), token };
+  if (extra.wid) row.wid = extra.wid;
+  const r = await fsPatch(env, "purchases/" + id, row as unknown as Record<string, unknown>, undefined, { createOnly: true });
+  if (r.ok) return { ok: true };
+  const cur = await ledgerGet(env, id);
+  if (!cur) throw new Error("claim " + r.status);
+  if (cur.uid !== uid) return { ok: false, why: "already used" };
+  if (extra.wid && cur.wid && cur.wid !== extra.wid) return { ok: false, why: "already used" };
+  return { ok: true, existing: cur };
+}
+
+/* Said once the access exists, so the ledger distinguishes a purchase that was
+   carried through from one that stopped half way. Never in front of the
+   grant: a purchase recorded as granted that was not would be revoked later
+   for a course the buyer never had. `until` is what a course or subscription
+   was granted to, kept so a retry repeats the same date rather than a fresh
+   six or twelve months. */
+export async function markGranted(env: PlayEnv, token: string, extra: { until?: string; state?: string; plan?: string } = {}): Promise<void> {
+  await ledgerSet(env, await tokenId(token), { state: extra.state || "granted", ...(extra.until ? { until: extra.until } : {}), ...(extra.plan ? { plan: extra.plan } : {}) });
 }
 
 /* ---- what Google says was voided ---- */
@@ -197,11 +202,17 @@ export async function sweepRefunds(env: PlayEnv): Promise<Swept> {
     if (!r.ok) { out.skipped++; continue; }
     const doc = (await r.json()) as {
       fields?: { uid?: { stringValue?: string }; state?: { stringValue?: string };
-                 ids?: { arrayValue?: { values?: { stringValue?: string }[] } } };
+                 ids?: { arrayValue?: { values?: { stringValue?: string }[] } };
+                 wid?: { stringValue?: string } };
     };
     const uid = doc.fields?.uid?.stringValue || "";
     if (doc.fields?.state?.stringValue === "voided") { out.skipped++; continue; }
     const ids = (doc.fields?.ids?.arrayValue?.values || []).map((x) => x.stringValue || "").filter(Boolean);
+    /* A wedding purchase opens no course key - it pays one room, named on the
+       row - so it never has ids to match against and would otherwise fall
+       through the "nothing to act on" check below and never be refunded. */
+    const wid = doc.fields?.wid?.stringValue || "";
+    if (wid) { await unpayRoom(env, wid); await markVoided(env, id, ["wedding:" + wid]); out.matched++; out.revoked++; continue; }
     if (!uid || !ids.length) { out.skipped++; continue; }
     out.matched++;
     const taken = await removeAccess(env, uid, ids);

@@ -23,7 +23,7 @@ export interface SubRow { sku: string; plan: string; state: string; until: strin
    that only looks at the current rows. */
 export function recompute(subs: Record<string, SubRow>, access: Record<string, string>): Record<string, string> {
   const out: Record<string, string> = {};
-  for (const k of Object.keys(access)) if (!PLAY_MANAGED_KEYS.has(k) && access[k]) out[k] = access[k];
+  for (const k of Object.keys(access)) if (!PLAY_MANAGED_KEYS.has(k) && k in access) out[k] = access[k];
   for (const row of Object.values(subs)) {
     if (!row || !row.grant) continue;
     for (const k of row.opens || []) if (!out[k] || row.until > out[k]) out[k] = row.until;
