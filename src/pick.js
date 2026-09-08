@@ -17,6 +17,24 @@ function insightHTML(id, focus) {
   return h;
 }
 
+/* ---- one card a day ----
+   For anyone not on Nabu Plus, one card a day: the card drawn today is kept,
+   and coming back to this screen the same day shows it again rather than a
+   fresh hand. A shared link is not a draw. Plus, and Pro with it, draw as
+   often as they like. Same rule on the website and in the app: it is one
+   site. */
+const pickToday = () => { const s = store.get('nabu-pick-day', null); return s && s.d === isoDate(new Date()) && s.id ? s : null; };
+const pickSpent = () => !plusOn() && !!pickToday();
+function pickSpend(id, focus) { if (plusOn()) return; store.set('nabu-pick-day', { d: isoDate(new Date()), id: id, focus: focus }); }
+/* Inside the installed app the note stops at "tomorrow": a price next to a
+   locked feature is what Play reviewers look for. On the web it says what
+   unlimited costs and where it is. */
+function pickLimitHTML() {
+  const S = T();
+  return '<div class="card luckbox"><p class="lead">' + esc(S.pickSpent) + '</p>'
+    + (isTWA() ? '' : '<p class="hint" style="margin-bottom:10px">' + esc(S.pickOffer) + '</p><a class="btn primary block" href="#/unlock?from=pick">' + esc(S.pickPlus) + '</a>')
+    + '</div>';
+}
 function renderPick(args, params) {
   // A shared link (#/pick?card=…) opens straight on that card, in the focus it was drawn with.
   const want = params && params.card && cardById(params.card) ? params.card : '';
@@ -25,6 +43,8 @@ function renderPick(args, params) {
     if (params.focus && T().focus[params.focus]) pick.focus = params.focus;
   }
   if (!pick.hand.length) newHand();
+  /* Same day, not on Plus: the card already drawn comes back, not the fan. */
+  if (!want && pick.chosen == null && pickSpent()) { const sv = pickToday(); if (cardById(sv.id)) { newHand(); pick.chosen = sv.id; if (T().focus[sv.focus]) pick.focus = sv.focus; } }
   const S = T(), m = $('#main');
   // Once a card is drawn the focus is fixed for that draw: the other chips stay visible but off until a redraw.
   const chips = Object.keys(S.focus).map((f) => '<button class="chip' + (pick.focus === f ? ' on' : '') + '" data-focus="' + f + '"' + (pick.chosen != null && pick.focus !== f ? ' disabled' : '') + '>' + esc(S.focus[f]) + '</button>').join('');
@@ -47,8 +67,9 @@ function renderPick(args, params) {
     $$('[data-focus]', m).forEach((x) => x.classList.toggle('on', x === b));
   }));
   $$('[data-card]', m).forEach((b) => b.addEventListener('click', () => {
-    if (pick.chosen != null) return;
+    if (pick.chosen != null || pickSpent()) return;
     pick.chosen = b.getAttribute('data-card');
+    pickSpend(pick.chosen, pick.focus);
     $$('.slot', m).forEach((s) => s.classList.add($('button', s) === b ? 'chosen' : 'dim'));
     $$('[data-focus]', m).forEach((x) => { if (!x.classList.contains('on')) x.disabled = true; });
     $('.tap-hint', m).textContent = '';
@@ -99,7 +120,7 @@ function renderReveal(animate) {
   const S = T(), id = pick.chosen, c = cardById(id), other = cardById(id, lang === 'vi' ? 'en' : 'vi'), I = insightOf(id);
   const kws = I ? I.pos.slice(0, 3).join(', ') : '';
   const r = $('#reveal');
-  r.innerHTML = '<div class="reveal-top"><div class="eyebrow">' + esc(S.yourCard) + '</div><button class="btn sm" id="redrawTop">🔄 ' + esc(S.redraw) + '</button></div>'
+  r.innerHTML = '<div class="reveal-top"><div class="eyebrow">' + esc(S.yourCard) + '</div>' + (pickSpent() ? '' : '<button class="btn sm" id="redrawTop">🔄 ' + esc(S.redraw) + '</button>') + '</div>'
     + '<div class="hero"><div class="flip"><div class="inner"' + (animate ? '' : ' style="animation:none"') + '><span class="face fr">' + faceSVG(c) + '</span><span class="face bk">' + backNow() + '</span></div></div>'
     + '<div><div class="name">' + esc(c.name) + '</div><div class="en">' + esc(other.name) + '</div><div class="meta m-' + c.suit + '"><i>' + esc(c.meta) + '</i></div></div></div>'
     + insightHTML(id, pick.focus)
@@ -107,11 +128,10 @@ function renderReveal(animate) {
     + '<div class="row"><a class="btn primary" href="#/book?card=' + id + '">' + esc(S.bookWithCard) + '</a><a class="btn" href="#/learn/card/' + id + '">' + esc(S.learnCard) + '</a>'
     + '<button class="btn" id="shareCard">' + esc(S.shareCard) + '</button></div></div>'
     + aiPanelHTML({ type: 'card', id: id, focus: pick.focus, lite: 1 })
-    + '<button class="btn block" id="redraw" style="margin-top:6px">' + esc(S.redraw) + '</button>';
+    + (pickSpent() ? pickLimitHTML() : '<button class="btn block" id="redraw" style="margin-top:6px">' + esc(S.redraw) + '</button>');
   bindAI(r);
   $('#shareCard').addEventListener('click', () => shareOrCopy(S.shareText(c.name, kws), appURL() + '#/pick?card=' + encodeURIComponent(id) + '&focus=' + pick.focus));
   const again = () => { newHand(); if (/\?/.test(location.hash)) redirect('#/pick'); else renderPick(); window.scrollTo({ top: 0, behavior: 'smooth' }); };
-  $('#redraw').addEventListener('click', again);
-  $('#redrawTop').addEventListener('click', again);
+  { const a = $('#redraw'), b = $('#redrawTop'); if (a) a.addEventListener('click', again); if (b) b.addEventListener('click', again); }
 }
 ROUTES.pick = { nav: 'pick', render: renderPick };

@@ -353,14 +353,14 @@ async function renderPlay(args) {
       return '<a class="aq" href="#/play/' + esc(g[2]) + '"><span class="ic">' + g[1] + '</span><b>' + esc(S.actTypes[g[0]]) + '</b>' + (n ? '<span class="cnt">' + n + '</span>' : '') + '</a>';
     }).join('') + '</div>';
 }
-/* ---- one free turn a week, or a code for unlimited ----
-   Shown under the coin and under the tree: where the visitor stands this week,
+/* ---- one free turn every three days, or a code for unlimited ----
+   Shown under the coin and under the tree: where the visitor stands today,
    and, when the free turn is gone, what unlimited costs and where the code goes. */
 function luckPanelHTML(kind) {
   const S = T();
   if (luckUnlimited(kind)) return '<p class="hint">✓ ' + esc(S.luckOpen) + '</p>';
   if (!luckSpent(kind)) return '<p class="hint">' + esc(S.luckFree) + '</p>';
-  return '<div class="card luckbox"><p class="lead">' + esc(S.luckSpent(fmtDate(weekNext()))) + '</p>'
+  return '<div class="card luckbox"><p class="lead">' + esc(S.luckSpent(fmtDate(luckNext(kind)))) + '</p>'
     + '<p class="hint" style="margin-bottom:10px">' + esc(S.luckOffer) + '</p>'
     + '<div class="row nw"><input id="luckcode" placeholder="' + esc(S.luckCodePh) + '" autocapitalize="characters"><button class="btn" id="luckgo">' + esc(S.unlock) + '</button></div>'
     + '<p class="hint" id="luckstatus"></p>'
