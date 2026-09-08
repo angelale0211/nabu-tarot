@@ -1249,10 +1249,13 @@ h1 .pileico{width:34px;height:27px;vertical-align:-3px;margin-right:2px}
 .reqcard .note{margin:8px 0 0;font-size:14px;background:var(--surface-2);border-radius:12px;padding:9px 12px;text-align:left}
 .reqcard.found{margin:12px 0 0;border-color:var(--lav)}
 .athandle .at{flex:none;color:var(--fg-faint);font-weight:600;font-size:17px}
-/* The welcome card is one column of questions, held to a readable width on a desk and kept inside the narrowest phone; the date box is the risky control, because Safari and Chrome size it differently and it will push the card wider than the screen unless it is told its own width. */
+/* The welcome card is one column of questions, held to a readable width on a
+   desk and kept inside the narrowest phone; the date box is the risky control,
+   because Safari and Chrome size it differently and it will push the card wider
+   than the screen unless it is told its own width. */
 .welcard { max-width: 520px; margin: 0 auto; }
 .welcard .chips { display: flex; flex-wrap: wrap; gap: 8px; }
-.welcard input[type=date] { width: 100%; box-sizing: border-box; min-height: 44px; }
+.welcard input[type=date] { width: 100%; box-sizing: border-box; }
 .welcard .athandle input { width: 100%; }
 .welcard .btn.block { width: 100%; }
 /* The tag on the profile: a fixed blush ground, so a fixed ink to go on it. */
