@@ -34,7 +34,6 @@ function helloHTML() {
       + '<span class="lbl">' + esc(S.helloGo) + '</span>'
       + '<i class="chev" aria-hidden="true"><svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 6 6 6-6 6"/></svg></i>'
       + '</button>'
-    + '<p class="hint">' + esc(S.helloFree) + '</p>'
     + '</section>'
     + '<div class="hgrid">'
     + card('🔮', S.helloDrawH, S.helloDrawP)

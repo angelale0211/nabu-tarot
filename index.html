@@ -12,7 +12,7 @@
      carries this notice with it. See LICENSE. -->
 <meta name="author" content="Nabu Tarot">
 <meta name="copyright" content="Copyright (c) 2025-2026 Nabu Tarot. All rights reserved.">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'none'; object-src 'none'; form-action 'self'; script-src 'self' 'sha256-Hej3wYxI1HfdA5w4KIDVxt+tLj6QqvP87RxK8HP7WnU=' https://www.gstatic.com https://apis.google.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; font-src 'self' data:; media-src 'self' data: blob:; worker-src 'self'; connect-src 'self' https://*.googleapis.com https://*.google.com https://*.firebaseio.com https://*.cloudfunctions.net https://*.workers.dev https://generativelanguage.googleapis.com; frame-src https://*.firebaseapp.com https://accounts.google.com https://*.facebook.com">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'none'; object-src 'none'; form-action 'self'; script-src 'self' 'sha256-BeafmOdJZK04wugpwHMDpr3RzFAnOMIWj+Tw+Krey0o=' https://www.gstatic.com https://apis.google.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; font-src 'self' data:; media-src 'self' data: blob:; worker-src 'self'; connect-src 'self' https://*.googleapis.com https://*.google.com https://*.firebaseio.com https://*.cloudfunctions.net https://*.workers.dev https://generativelanguage.googleapis.com; frame-src https://*.firebaseapp.com https://accounts.google.com https://*.facebook.com">
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <meta name="theme-color" content="#EFE9FA">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -3449,7 +3449,6 @@ const STR = {
     helloHead: 'Mỗi ngày một lá bài, một lời nhắn và một chút may mắn ✨',
     helloLead: 'Rút Tarot, xem dự đoán & lịch âm, rung Cây Thông Điệp, nuôi linh thú, viết nhật ký và manifest — tất cả trong Nabu.',
     helloGo: 'Khám phá Nabu',
-    helloFree: 'Miễn phí · Không cần đăng nhập để bắt đầu',
     helloDrawH: 'Rút bài cho hôm nay',
     helloDrawP: 'Chọn điều bạn đang nghĩ tới, rút một lá Tarot và nhận thông điệp dành cho bạn.',
     helloHoroH: 'Dự đoán dành cho bạn',
@@ -4281,7 +4280,6 @@ const STR = {
     helloHead: 'A card, a message and a little luck, every day ✨',
     helloLead: 'Draw Tarot, read your forecast and the lunar calendar, shake the Message Tree, raise a companion, keep a diary and manifest — all in Nabu.',
     helloGo: 'Explore Nabu',
-    helloFree: 'Free · No account needed to start',
     helloDrawH: 'Draw a card for today',
     helloDrawP: 'Choose what is on your mind, draw one Tarot card and receive a message meant for you.',
     helloHoroH: 'A forecast for you',
@@ -5112,7 +5110,6 @@ const STR = {
     helloHead: 'Jeden Tag eine Karte, eine Botschaft und ein bisschen Glück ✨',
     helloLead: 'Tarot ziehen, Vorhersage und Mondkalender lesen, den Nachrichtenbaum schütteln, einen Begleiter großziehen, Tagebuch schreiben und manifestieren — alles in Nabu.',
     helloGo: 'Nabu entdecken',
-    helloFree: 'Kostenlos · Kein Konto nötig, um anzufangen',
     helloDrawH: 'Eine Karte für heute',
     helloDrawP: 'Wähl, was dich gerade beschäftigt, zieh eine Tarotkarte und erhalte eine Botschaft für dich.',
     helloHoroH: 'Deine Vorhersage',
@@ -22283,7 +22280,6 @@ function helloHTML() {
       + '<span class="lbl">' + esc(S.helloGo) + '</span>'
       + '<i class="chev" aria-hidden="true"><svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 6 6 6-6 6"/></svg></i>'
       + '</button>'
-    + '<p class="hint">' + esc(S.helloFree) + '</p>'
     + '</section>'
     + '<div class="hgrid">'
     + card('🔮', S.helloDrawH, S.helloDrawP)
@@ -26003,7 +25999,7 @@ function adminSale(p) {
 ROUTES.admin = { nav: '', render: renderAdmin };
 
 /* ============================ boot ============================ */
-window.APP_VERSION = 'v179';
+window.APP_VERSION = 'v180';
 window.NABU = { CONFIG: CONFIG, SALE: SALE, salePrice: salePrice, loadActs: loadActs, BACK: BACK, LESSONS: LESSONS, localAnswer: localAnswer, compatVerdict: compatVerdict, numerologyOf: numerologyOf, ZDEEP: ZDEEP, lunarToday: lunarToday, solarToLunar: solarToLunar, DECK: DECK, INSIGHT: INSIGHT, KW: KW, ASK: ASK, TOPICS: TOPICS, GUIDES: GUIDES, SERVICES: SERVICES, COURSES: COURSES, ACCESS: ACCESS, plusOn: () => plusOn(), proOn: () => proOn(), luckUnlimited: () => luckUnlimited(), ZODIAC: ZODIAC, pick: pick, book: book,
   insightHTML: insightHTML, insightOf: insightOf, sunSignIndex: sunSignIndex, lifePath: lifePath, PROFILE: () => PROFILE, BE: BE, ACTS: ACTS,
   ANGELS: ANGELS, angelRead: angelRead, CODEBOOK: CODEBOOK, redeemCode: redeemCode, loadCodebook: loadCodebook, petHomeSVG: petHomeSVG, PET_HOMES: PET_HOMES, PET_WEARS: PET_WEARS, codeDigest: codeDigest, randomCode: randomCode, BANK: BANK, PETS: PETS, petSVG: petSVG, PET_COATS: PET_COATS, PET_KINDS: PET_KINDS, luckCut: luckCut, petLevel: petLevel, petStep: petStep, VOUCHERS: VOUCHERS, levelCoins: levelCoins, LOOKS: LOOKS,
