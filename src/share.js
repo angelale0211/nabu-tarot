@@ -140,15 +140,15 @@ const SHARE_TO = [
 /* The row itself. `more` only appears where the phone actually has a share
    sheet, because a button that does nothing on a desktop is worse than no
    button. */
-function shareRowHTML(id) {
-  const S = T();
+function shareRowHTML(id, skip) {
+  const S = T(), hide = skip || [];
   const one = (t) => {
     const label = t.id === 'copy' ? S.shareCopy : t.name;
     return '<button type="button" class="shbtn" data-share="' + esc(t.id) + '" title="' + esc(label) + '" aria-label="' + esc(label) + '">'
       + SHARE_ART[t.id] + '<span>' + esc(label) + '</span></button>';
   };
   return '<div class="sharerow" id="' + esc(id || 'sharerow') + '">'
-    + SHARE_TO.map(one).join('')
+    + SHARE_TO.filter((t) => hide.indexOf(t.id) < 0).map(one).join('')
     + (navigator.share ? one({ id: 'more', name: S.shareMore }) : '')
     + '</div>';
 }
@@ -172,4 +172,84 @@ function bindShareRow(root, get) {
     }
     window.open(t.url(text, url), '_blank', 'noopener,noreferrer');
   }));
+}
+
+/* ============================ the share sheet ============================
+
+   A post's Share button used to go straight to the phone's share sheet, or
+   copy on a desk with nothing to show for it but a toast. This is the panel in
+   between: the post's link in a box with a copy mark on its end that turns
+   into a tick, a Copy link button and an Open button under it, and the row of
+   places above. Same sheet the companion's shelf uses, so it rises from the
+   bottom on a phone and sits in the middle of a desk. */
+
+const SHARE_MARK = {
+  copy: '<svg viewBox="0 0 24 24" class="shmk shmk-copy" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">'
+    + '<rect x="9" y="9" width="12" height="12" rx="2.5"/><path d="M5 15H4.5A1.5 1.5 0 0 1 3 13.5v-9A1.5 1.5 0 0 1 4.5 3h9A1.5 1.5 0 0 1 15 4.5V5"/></svg>',
+  check: '<svg viewBox="0 0 24 24" class="shmk shmk-check" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>',
+  link: '<svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">'
+    + '<path d="M10 13a5 5 0 0 0 7.5.5l3-3a5 5 0 0 0-7-7l-1.7 1.7"/><path d="M14 11a5 5 0 0 0-7.5-.5l-3 3a5 5 0 0 0 7 7l1.7-1.7"/></svg>',
+  open: '<svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">'
+    + '<path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><path d="M15 3h6v6"/><path d="M10 14 21 3"/></svg>'
+};
+
+function closeShareSheet() {
+  const el = $('#sharesheet'); if (!el) return;
+  const back = el._back; el.remove();
+  document.removeEventListener('keydown', el._esc);
+  window.removeEventListener('hashchange', el._go);
+  if (back && back.focus && document.contains(back)) back.focus();
+}
+
+/* `what` is { title, text, url }: the title sits under the lead so the sheet
+   says which post it is; text and url go to the row of places; url alone is
+   what the box holds and the copy buttons copy. */
+function openShareSheet(what) {
+  closeShareSheet();
+  const S = T(), w = what || {}, url = w.url || appURL(), back = document.activeElement;
+  const el = document.createElement('div');
+  el.className = 'sheet shdlg'; el.id = 'sharesheet';
+  el.innerHTML = '<div class="sh-back" data-close-share="1"></div>'
+    + '<div class="sh-body" role="dialog" aria-modal="true" aria-labelledby="shdlg-h">'
+    + '<div class="sh-grip"></div>'
+    + '<button type="button" class="shx" data-close-share="1" aria-label="' + esc(S.sheetClose) + '" title="' + esc(S.sheetClose) + '">×</button>'
+    + '<h3 class="shdlg-h" id="shdlg-h">' + esc(S.shareDlgTitle) + '</h3>'
+    + '<p class="shdlg-lead">' + esc(S.shareDlgLead) + '</p>'
+    + (w.title ? '<p class="shdlg-what">' + esc(w.title) + '</p>' : '')
+    + '<label class="sr" for="shlink">' + esc(S.shareLinkLabel) + '</label>'
+    + '<div class="shlinkwrap">'
+    + '<input class="shlink" id="shlink" type="text" readonly value="' + esc(url) + '">'
+    + '<button type="button" class="shcopyic" data-share-copyic="1" data-tip="' + esc(S.shareCopyTip) + '" aria-label="' + esc(S.shareCopyTip) + '">' + SHARE_MARK.copy + SHARE_MARK.check + '</button>'
+    + '</div>'
+    + '<div class="shdlg-btns">'
+    + '<button type="button" class="btn primary" data-share-copylink="1">' + SHARE_MARK.link + '<span>' + esc(S.shareCopyLink) + '</span></button>'
+    + '<a class="btn" href="' + esc(url) + '" target="_blank" rel="noopener">' + SHARE_MARK.open + '<span>' + esc(S.shareOpen) + '</span></a>'
+    + '</div>'
+    + '<div class="eyebrow shdlg-to">' + esc(S.shareToLabel) + '</div>'
+    + shareRowHTML('shdlgrow', ['copy'])
+    + '</div>';
+  document.body.appendChild(el);
+  el._back = back;
+  el._esc = (e) => { if (e.key === 'Escape') closeShareSheet(); };
+  el._go = () => closeShareSheet();
+  document.addEventListener('keydown', el._esc);
+  window.addEventListener('hashchange', el._go);
+  $$('[data-close-share]', el).forEach((b) => b.addEventListener('click', closeShareSheet));
+
+  /* The mark on the box turns into a tick for a moment, the way a copy button
+     should, and the tooltip says so; the big button says it in the toast. */
+  const ic = $('[data-share-copyic]', el);
+  let tick = null;
+  const copied = () => {
+    ic.classList.add('done'); ic.setAttribute('data-tip', S.shareCopiedBang); ic.setAttribute('aria-label', S.shareCopiedBang); ic.disabled = true;
+    clearTimeout(tick);
+    tick = setTimeout(() => { ic.classList.remove('done'); ic.setAttribute('data-tip', S.shareCopyTip); ic.setAttribute('aria-label', S.shareCopyTip); ic.disabled = false; }, 1500);
+  };
+  const copyLink = async () => { await copyText(url); copied(); toast(S.shareCopiedBang); };
+  ic.addEventListener('click', copyLink);
+  $('[data-share-copylink]', el).addEventListener('click', copyLink);
+  $('#shlink', el).addEventListener('focus', function () { this.select(); });
+  bindShareRow(el, () => ({ text: w.text || w.title || '', url: url }));
+  const first = $('[data-share-copylink]', el); if (first) first.focus();
+  return el;
 }

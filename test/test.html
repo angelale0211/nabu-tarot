@@ -487,6 +487,31 @@ async function go(hash, sel) { W().location.hash = hash; await sleep(30); return
     ok(!d.querySelector('#news .welcome') && !/Chào mừng bạn đến với Nabu Tarot/.test(d.querySelector('#news').textContent), 'the posts screen lists every post without the welcome note');
     d.querySelector('#nsearch').value = 'zzzz-khong-co'; d.querySelector('#nsearch').dispatchEvent(new w.Event('input')); await sleep(30);
     ok(d.querySelectorAll('#news .post').length === 0 && d.querySelector('#news .empty'), 'search filters the posts');
+    { /* Share under a post lifts a sheet rather than going straight to the
+         phone: the link in a box, a copy mark that turns into a tick, Copy
+         link and Open, and the places. Escape shuts it. */
+      const sh = w.openShareSheet({ title: 'Bài thử', text: 'Bài thử\nnội dung', url: 'https://nabutarot.com/#/post/abc' });
+      ok(d.querySelector('#sharesheet .sh-body[role="dialog"]') && /Chia sẻ bài viết/.test(d.querySelector('#shdlg-h').textContent)
+        && d.querySelector('#shlink').value === 'https://nabutarot.com/#/post/abc'
+        && d.querySelector('#sharesheet a.btn[href="https://nabutarot.com/#/post/abc"][target="_blank"]')
+        && d.querySelector('#sharesheet [data-share-copylink]') && d.querySelector('#sharesheet [data-share-copyic]'),
+        'share under a post lifts a sheet: the link in a box, Copy link and Open under it');
+      ok(d.querySelectorAll('#sharesheet .sharerow [data-share]').length >= 7 && !d.querySelector('#sharesheet [data-share="copy"]'),
+        'with the places to send it, minus the copy button the box already has');
+      ok(/Bài thử/.test(d.querySelector('.shdlg-what').textContent) && /Nabu/.test(d.querySelector('.shdlg-lead').textContent),
+        'it names the post and speaks in Nabu\'s words');
+      d.querySelector('#sharesheet [data-share-copyic]').click(); await sleep(40);
+      ok(d.querySelector('#sharesheet [data-share-copyic]').classList.contains('done')
+        && /Đã chép/.test(d.querySelector('#sharesheet [data-share-copyic]').getAttribute('data-tip')),
+        'the copy mark turns into a tick and says so');
+      d.dispatchEvent(new w.KeyboardEvent('keydown', { key: 'Escape' }));
+      ok(!d.querySelector('#sharesheet'), 'Escape shuts it');
+      w.openShareSheet({ url: 'https://nabutarot.com/#/post/abc' });
+      d.querySelector('#sharesheet .sh-back').click();
+      ok(!d.querySelector('#sharesheet'), 'so does a tap outside');
+      const art = d.querySelector('#news .post [data-share]');
+      if (art) { art.click(); ok(d.querySelector('#sharesheet') && /#\/post\/|facebook/.test(d.querySelector('#shlink').value), 'and a real post\'s Share button opens it on that post\'s link'); w.closeShareSheet(); }
+      void sh; }
     ok(/1 \+ 1 = 2/.test(N.localAnswer('1 + 1 = ?', { type: 'general' })) && /12 x 3 = 36/.test(N.localAnswer('12 x 3', { type: 'general' })), 'the built-in engine answers sums instead of pulling a card');
     ok(/= 2/.test(N.localAnswer('1 cộng 1 bằng mấy?', { type: 'general' })) && !/Mây/.test(N.localAnswer('1 cộng 1 bằng mấy?', { type: 'general' })) && /= 7/.test(N.localAnswer('10 trừ 3 bằng bao nhiêu', { type: 'general' })) && !/Mây/.test(N.localAnswer('mấy giờ rồi?', { type: 'general' })), 'sums in words work, and "mấy" is never read as the card Mây');
     ok(N.CONFIG.geminiModel === 'gemini-3.5-flash-lite' && Array.isArray(w.GEMINI_MODELS) && w.GEMINI_MODELS.length >= 5, 'Gemini answers through a chain of models so one exhausted quota does not silence the assistant');

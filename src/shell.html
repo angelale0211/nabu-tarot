@@ -1845,6 +1845,11 @@ button.unl{display:block;width:100%;text-align:left;font:inherit;color:inherit;c
   .sheet{align-items:center}
 
   .tiles{grid-template-columns:repeat(3,1fr);gap:14px}
+  /* Four tiles in a row of three strands the fourth on a line of its own with
+     two thirds of the row empty beside it - the four courses on the Learn
+     page. Exactly four get a row to themselves instead. Browsers without
+     :has() ignore this and keep the three-across row. */
+  .tiles:has(>:nth-child(4):last-child){grid-template-columns:repeat(4,1fr)}
   .pickcta{grid-template-columns:170px 1fr;padding:22px}
   .pricesec{display:grid;grid-template-columns:repeat(2,1fr);gap:0 18px;align-items:start}
   .pricesec>h2,.pricesec>.hint,.pricesec>.paynote,.pricesec>p{grid-column:1/-1}
@@ -1862,6 +1867,10 @@ button.unl{display:block;width:100%;text-align:left;font:inherit;color:inherit;c
      the row and lands the twelve free things in three even rows. */
   .pricesec .freegrid{grid-template-columns:repeat(4,1fr);gap:12px}
   #svcwrap{display:grid;grid-template-columns:repeat(2,1fr);gap:0 18px;align-items:start}
+  /* The same trap as the price list: the basket note is not a service tile, so
+     without this it became one and sat in the right column beside the last
+     tile instead of spanning the row under all of them. */
+  #svcwrap>.paynote{grid-column:1/-1}
   /* ---- the calendar on a desk ----
      The month and the times ran one under the other, which is right on a phone
      and wasteful here: a wide month with nothing beside it, and the times so
@@ -2290,6 +2299,35 @@ body[data-route="hello"] #main{width:100%}
   .foot .wrap{align-items:center;text-align:center}
   .foot .wrap>div{display:flex;flex-direction:column;align-items:center}
   .foot .links{justify-content:center}
+}
+/* The share sheet under a post: a link box with a copy mark on its end, two
+   buttons, the places. Rides on .sheet, so it rises on a phone and sits in the
+   middle of a desk. */
+.shdlg .sh-body{padding-top:12px}
+.shdlg .shx{position:absolute;top:10px;right:12px;width:36px;height:36px;border-radius:10px;font-size:24px;line-height:1;color:var(--fg-faint);background:transparent;border:0;cursor:pointer;display:flex;align-items:center;justify-content:center}
+.shdlg .shx:hover,.shdlg .shx:focus-visible{background:var(--surface-2);color:var(--fg);outline:none}
+.shdlg-h{margin:2px 40px 4px 0;font-size:19px;font-family:var(--display);font-weight:600}
+.shdlg-lead{margin:0 0 10px;font-size:14.5px;line-height:1.5;color:var(--fg-soft);text-align:left}
+.shdlg-what{margin:0 0 12px;padding:9px 12px;border-radius:12px;background:var(--surface-2);font-weight:600;font-size:14px;line-height:1.4;color:var(--fg);text-align:left;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.shlinkwrap{position:relative}
+.shlink{width:100%;min-height:44px;padding:10px 46px 10px 12px;border:1px solid var(--rule);border-radius:12px;background:var(--surface);color:var(--fg);font:inherit;font-size:14px;text-overflow:ellipsis;box-sizing:border-box}
+.shlink:focus{outline:none;border-color:var(--lav);box-shadow:0 0 0 3px var(--lav-soft)}
+.shcopyic{position:absolute;top:0;right:0;bottom:0;width:44px;display:flex;align-items:center;justify-content:center;border:0;background:transparent;color:var(--fg-soft);cursor:pointer;border-radius:0 12px 12px 0}
+.shcopyic:hover,.shcopyic:focus-visible{color:var(--fg);outline:none}
+.shcopyic .shmk{width:18px;height:18px;position:absolute;transition:transform .18s ease,opacity .18s ease}
+.shcopyic .shmk-check{transform:scale(0);opacity:0;color:var(--ok)}
+.shcopyic.done .shmk-copy{transform:scale(0);opacity:0}
+.shcopyic.done .shmk-check{transform:scale(1);opacity:1}
+.shcopyic[disabled]{cursor:default}
+.shcopyic[data-tip]::after{content:attr(data-tip);position:absolute;bottom:calc(100% + 6px);right:0;padding:5px 9px;border-radius:8px;background:var(--primary);color:var(--primary-ink);font-size:12px;font-weight:600;white-space:nowrap;opacity:0;transform:translateY(3px);transition:opacity .15s ease,transform .15s ease;pointer-events:none}
+.shcopyic:hover::after,.shcopyic:focus-visible::after,.shcopyic.done::after{opacity:1;transform:translateY(0)}
+.shdlg-btns{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px}
+.shdlg-btns .btn{padding:11px 10px;font-size:14px;min-height:44px}
+.shdlg-btns .btn svg{width:17px;height:17px;flex:none}
+.shdlg-to{margin:16px 0 2px}
+.shdlg .sharerow{margin-top:8px}
+@media (min-width:900px){
+  .shdlg .sh-body{border-radius:20px;padding-bottom:18px;box-shadow:0 18px 50px rgba(40,25,70,.3)}
 }
 </style>
 </head>

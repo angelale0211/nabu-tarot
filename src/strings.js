@@ -456,6 +456,7 @@ const STR = {
     alertDiaryOff: (n) => '📕 Đã dừng chia sẻ nhật ký',
     alertDiaryOffBody: 'Nhật ký của bạn lại chỉ nằm trên máy này thôi.',
     shareCopy: 'Chép', shareMore: 'Khác', shareIgCopied: 'Đã chép. Bạn mở Instagram rồi dán vào story hoặc bài viết nhé.',
+    shareDlgTitle: "🔗 Chia sẻ bài viết", shareDlgLead: "🌙 Gửi bài này cho người bạn muốn chia sẻ. Nabu đã để sẵn đường dẫn cho bạn. ✨", shareLinkLabel: "Đường dẫn bài viết", shareCopyLink: "Chép đường dẫn", shareOpen: "Mở bài viết", shareToLabel: "Hoặc gửi thẳng tới", shareCopyTip: "Chép đường dẫn", shareCopiedBang: "Đã chép! ✨",
     loveTellTitle: 'Khoe với mọi người', loveTellHint: 'Bạn bấm một nơi bất kỳ, Nabu đã viết sẵn câu chữ kèm đường dẫn.',
     loveShareOf: {
       tied: (n, d) => 'Mình và ' + n + ' đã buộc sợi tơ hồng trên Nabu Tarot, hôm nay là ngày thứ ' + d + ' 🧧',
@@ -1287,6 +1288,7 @@ const STR = {
     alertDiaryOff: (n) => '\uD83D\uDCD5 Diary sharing has stopped',
     alertDiaryOffBody: 'Your diary is back to living on this phone only.',
     shareCopy: 'Copy', shareMore: 'More', shareIgCopied: 'Copied. Open Instagram and paste it into a story or a post.',
+    shareDlgTitle: "🔗 Share this post", shareDlgLead: "🌙 Send this post to someone you want to share it with. Nabu has the link ready for you. ✨", shareLinkLabel: "Post link", shareCopyLink: "Copy link", shareOpen: "Open post", shareToLabel: "Or send it straight to", shareCopyTip: "Copy link", shareCopiedBang: "Copied! ✨",
     loveTellTitle: 'Tell people', loveTellHint: 'Press anywhere below \u2014 the words and the link are written for you.',
     loveShareOf: {
       tied: (n, d) => n + ' and I tied the red thread on Nabu Tarot. Today is day ' + d + ' \uD83E\uDDE7',
@@ -2117,6 +2119,7 @@ const STR = {
     alertDiaryOff: (n) => '\uD83D\uDCD5 Diary sharing has stopped',
     alertDiaryOffBody: 'Dein Tagebuch liegt wieder nur auf diesem Gerät.',
     shareCopy: 'Kopieren', shareMore: 'Mehr', shareIgCopied: 'Kopiert. Öffne Instagram und füg es in eine Story oder einen Beitrag ein.',
+    shareDlgTitle: "🔗 Beitrag teilen", shareDlgLead: "🌙 Schick diesen Beitrag jemandem, mit dem du ihn teilen möchtest. Nabu hat den Link schon für dich bereit. ✨", shareLinkLabel: "Link zum Beitrag", shareCopyLink: "Link kopieren", shareOpen: "Beitrag öffnen", shareToLabel: "Oder direkt senden an", shareCopyTip: "Link kopieren", shareCopiedBang: "Kopiert! ✨",
     loveTellTitle: 'Erzähl es weiter', loveTellHint: 'Tipp unten irgendwo an \u2014 der Text und der Link sind schon fertig.',
     loveShareOf: {
       tied: (n, d) => n + ' and I tied the red thread on Nabu Tarot. Today is day ' + d + ' \uD83E\uDDE7',
