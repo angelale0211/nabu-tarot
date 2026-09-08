@@ -6,7 +6,7 @@ name: Sync Facebook and Instagram posts
 # IG_USER_ID (the Instagram professional account linked to the page).
 on:
   schedule:
-    - cron: '*/30 * * * *'
+    - cron: '25 */2 * * *'
   workflow_dispatch:
 
 permissions:
