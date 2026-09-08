@@ -298,7 +298,38 @@ function adminBookings(p) {
 function adminErrors(p) {
   const S = T();
   if (!needAdmin(p)) return;
-  p.innerHTML = '<p class="hint">' + esc(S.errIntro) + '</p><div id="errlist" class="card"><p class="hint">' + esc(S.loading) + '</p></div>';
+  p.innerHTML = '<div id="replist" class="card"><p class="hint">' + esc(S.loading) + '</p></div>'
+    + '<p class="hint">' + esc(S.errIntro) + '</p><div id="errlist" class="card"><p class="hint">' + esc(S.loading) + '</p></div>';
+
+  /* What people have reported to Nabu. Above the errors, because a person
+     saying something is wrong in a room matters more than a stack trace. */
+  let reps = [];
+  const drawReps = () => {
+    const box = $('#replist'); if (!box) return;
+    box.innerHTML = '<h3 style="margin-bottom:4px">🚩 ' + esc(S.repTitle) + (reps.length ? ' <span class="n">' + reps.length + '</span>' : '') + '</h3>'
+      + '<p class="hint" style="margin-bottom:10px">' + esc(S.repHint) + '</p>'
+      + (reps.length ? reps.map((r) => '<div class="bk"><div class="bkh"><b>' + esc(r.aboutName || r.about || '—') + '</b>'
+        + '<span class="st requested">' + esc(r.kind || '') + '</span></div>'
+        + (r.text ? '<p class="hint">“' + esc(r.text) + '”</p>' : '')
+        + '<p class="hint">' + esc(S.repBy) + ': ' + esc(r.byName || r.by || '') + ' · ' + esc(stamp(r.at)) + '</p>'
+        + '<div class="acts">'
+        + (r.about ? '<button type="button" class="btn sm" data-person="' + esc(r.about) + '">💬 ' + esc(S.adminMessageThem) + '</button>' : '')
+        + '<button type="button" class="btn sm" data-repgone="' + esc(r.id) + '">' + esc(S.errDone) + '</button></div>'
+        + '</div>').join('') : '<p class="empty">' + esc(S.repNone) + '</p>');
+    $$('[data-repgone]', box).forEach((b) => b.addEventListener('click', async () => {
+      b.disabled = true;
+      try { await BE.db.collection('reports').doc(b.getAttribute('data-repgone')).delete(); toast(S.saved); }
+      catch (e) { b.disabled = false; toast(loveWhy(e)); }
+    }));
+    $$('[data-person]', box).forEach((b) => b.addEventListener('click', () => {
+      admin.openThread = b.getAttribute('data-person');
+      admin.tab = 'inbox';
+      location.hash = '#/admin?tab=inbox';
+    }));
+  };
+  admin.unsubs.push(BE.db.collection('reports').orderBy('at', 'desc').limit(200)
+    .onSnapshot((s) => { reps = s.docs.map((doc) => Object.assign({ id: doc.id }, doc.data())); drawReps(); },
+      () => { const box = $('#replist'); if (box) box.innerHTML = '<p class="hint">' + esc(S.repNone) + '</p>'; }));
   const stamp = (ms) => { const t = new Date(Number(ms) || 0); return isNaN(t) || !ms ? '—' : t.toLocaleString(lang === 'en' ? 'en-GB' : 'vi-VN', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' }); };
   let rows = [];
   const draw = () => {

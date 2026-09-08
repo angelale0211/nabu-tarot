@@ -1437,6 +1437,14 @@ h1 .pileico{width:34px;height:27px;vertical-align:-3px;margin-right:2px}
   max-height:240px;overflow:auto}
 .saylist li{padding:8px 11px;border-radius:14px;background:var(--surface-2);font-size:14px;line-height:1.45}
 .saylist li.me{background:var(--tag-neu-bg);color:var(--tag-neu-ink)}
+/* The flag sits quietly at the end of somebody else's line: there when it is
+   wanted, not shouting at a room where nothing is wrong. */
+.saylist li{position:relative}
+.flagb{position:absolute;top:4px;right:6px;border:0;background:none;cursor:pointer;
+  font-size:13px;line-height:1;padding:4px;opacity:.35;color:inherit}
+.flagb:hover,.flagb:focus{opacity:1}
+.flagbox{margin:0 0 10px;padding:10px 12px;border-radius:14px;background:var(--surface-2)}
+.flagbox .row{gap:8px;flex-wrap:wrap}
 .saylist li b{display:block;font-size:12px;font-weight:700;color:var(--fg-soft);margin-bottom:1px}
 .saylist li.me b{color:inherit;opacity:.75}
 .saybar input{flex:1;min-width:0}

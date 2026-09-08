@@ -946,11 +946,26 @@ function renderWedding(args) {
       + giftBox
       /* A wedding you can speak at. Everyone in the room, the couple included. */
       + '<div class="card saycard"><div class="ghead"><span class="gk">\uD83D\uDCAC</span><h3>' + esc(S.wedSayTitle) + '</h3></div>'
-      + (says.length
-        ? '<ul class="saylist" id="saylist">' + says.slice(-60).map((x) =>
-          '<li' + (x.from === (BE.user ? BE.user.uid : '') ? ' class="me"' : '') + '>'
-          + '<b>' + esc(x.name || S.loveSomeone) + '</b><span>' + esc(x.text) + '</span></li>').join('') + '</ul>'
-        : '<p class="hint">' + esc(S.wedSayNone) + '</p>')
+      /* Anyone in the room can write here, which means anyone in the room can
+         write something that should not be read. Whoever is blocked is simply
+         not shown, and every line somebody else wrote carries a way to report
+         it. */
+      + (function () {
+        const me = BE.user ? BE.user.uid : '';
+        const shown = MOD.keep(says, (x) => x.from).slice(-60);
+        if (!shown.length) return '<p class="hint">' + esc(S.wedSayNone) + '</p>';
+        return '<ul class="saylist" id="saylist">' + shown.map((x) =>
+          '<li' + (x.from === me ? ' class="me"' : '') + '>'
+          + '<b>' + esc(x.name || S.loveSomeone) + '</b><span>' + esc(x.text) + '</span>'
+          + (x.from && x.from !== me
+            ? '<button type="button" class="flagb" data-flag="' + esc(x.from)
+              + '" data-flagname="' + esc(x.name || '')
+              + '" data-flagtext="' + esc(String(x.text || '').slice(0, 200))
+              + '" title="' + esc(S.modReport) + '" aria-label="' + esc(S.modReport) + '">⚑</button>'
+            : '')
+          + '</li>').join('') + '</ul>';
+      })()
+      + '<div class="flagbox" id="flagbox" hidden></div>'
       + '<div class="row nw saybar"><input id="wedsayin" maxlength="300" placeholder="' + esc(S.wedSayPh) + '">'
       + '<button type="button" class="btn primary" id="wedsaygo">' + esc(S.wedSayGo) + '</button></div>'
       + '</div>'
@@ -1076,6 +1091,38 @@ function renderWedding(args) {
           SAYAT.h = list.scrollHeight - list.clientHeight;
         });
       } }
+    /* Reporting a line, or refusing to see the person who wrote it. Asked on
+       the page rather than through confirm(), which some phone webviews skip
+       outright - and blocking somebody at a wedding on a single stray tap would
+       be its own small disaster. */
+    { const fb = $('#flagbox');
+      $$('[data-flag]', m).forEach((b) => b.addEventListener('click', () => {
+        if (!fb) return;
+        const uid = b.getAttribute('data-flag');
+        const who = b.getAttribute('data-flagname') || S.loveSomeone;
+        const said = b.getAttribute('data-flagtext') || '';
+        fb.hidden = false;
+        fb.innerHTML = '<p class="hint">' + esc(S.modAbout(who)) + '</p>'
+          + '<div class="row"><button type="button" class="btn sm" id="flagrep">⚑ ' + esc(S.modReport) + '</button>'
+          + '<button type="button" class="btn sm danger" id="flagblk">🚫 ' + esc(S.modBlock) + '</button>'
+          + '<button type="button" class="btn sm" id="flagno">' + esc(S.loveCancel) + '</button></div>';
+        fb.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        $('#flagno', fb).addEventListener('click', () => { fb.hidden = true; fb.innerHTML = ''; });
+        $('#flagrep', fb).addEventListener('click', async () => {
+          $('#flagrep', fb).disabled = true;
+          try {
+            await MOD.report({ kind: 'wedding-say', where: w.id, about: uid, aboutName: who, text: said });
+            fb.innerHTML = '<p class="hint">' + esc(S.modReported) + '</p>';
+          } catch (e) { fb.innerHTML = '<p class="hint err">' + esc(e && e.message === 'signin' ? S.needLogin : loveWhy(e)) + '</p>'; }
+        });
+        $('#flagblk', fb).addEventListener('click', async () => {
+          $('#flagblk', fb).disabled = true;
+          await MOD.block(uid);
+          fb.hidden = true; fb.innerHTML = '';
+          toast(S.modBlocked(who));
+          paint();
+        });
+      })); }
     { const mu = $('#wedmute');
       if (mu) mu.addEventListener('click', () => { WEDMUSIC.mute(WEDMUSIC.on); paint(); }); }
 

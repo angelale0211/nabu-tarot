@@ -168,6 +168,56 @@ const ACCESS = {
   }
 };
 
+/* ---- reporting somebody, and refusing to see them ----
+
+   Anywhere people can write to each other, they need a way to say "this is
+   wrong" and a way to stop hearing from one person. Google requires both of an
+   app with rooms in it, and quite apart from that a wedding is exactly the kind
+   of place where somebody turns up who should not have.
+
+   A block is kept on the device and on the account, so it follows somebody to a
+   new phone but still works with no signal. It hides that person's writing
+   here; it is not a punishment handed to them, and they are not told.
+
+   A report goes to Nabu, who decides. Reports are write-only for everybody but
+   Nabu, so this cannot become a way to find out who complained about whom. */
+const MOD = {
+  list() { const l = store.get('nabu-blocked', []); return Array.isArray(l) ? l : []; },
+  has(uid) { return !!uid && this.list().indexOf(uid) > -1; },
+  async block(uid) {
+    if (!uid || this.has(uid)) return;
+    const l = this.list().concat([uid]).slice(-200);
+    store.set('nabu-blocked', l);
+    try { if (typeof BE !== 'undefined' && BE.user && BE.db) await BE.db.collection('users').doc(BE.user.uid).set({ blocked: l }, { merge: true }); }
+    catch (e) { /* the device's own copy still holds */ }
+  },
+  async unblock(uid) {
+    const l = this.list().filter((x) => x !== uid);
+    store.set('nabu-blocked', l);
+    try { if (typeof BE !== 'undefined' && BE.user && BE.db) await BE.db.collection('users').doc(BE.user.uid).set({ blocked: l }, { merge: true }); }
+    catch (e) { /* the device's own copy still holds */ }
+  },
+  /* Drop anything written by somebody this person has blocked. */
+  keep(rows, whose) {
+    const l = this.list();
+    if (!l.length) return rows || [];
+    return (rows || []).filter((r) => l.indexOf(String((whose ? whose(r) : r.from) || '')) < 0);
+  },
+  async report(rec) {
+    if (typeof BE === 'undefined' || !BE.enabled || !BE.user || !BE.db) throw new Error('signin');
+    await BE.db.collection('reports').add({
+      by: BE.user.uid,
+      byName: (typeof PROFILE !== 'undefined' && PROFILE.name) || '',
+      kind: String(rec.kind || 'message').slice(0, 40),
+      where: String(rec.where || '').slice(0, 120),
+      about: String(rec.about || '').slice(0, 80),
+      aboutName: String(rec.aboutName || '').slice(0, 80),
+      text: String(rec.text || '').slice(0, 500),
+      at: Date.now()
+    });
+  }
+};
+
 /* ---- one free turn a week for the coin and the message tree ----
    Weeks run Monday to Sunday on the device clock. A code (or the bundle code,
    or an admin account) lifts the limit entirely. */

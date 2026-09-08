@@ -85,6 +85,29 @@ service cloud.firestore {
 
        Nothing here is private to the person: a message, a screen, a version and
        a device. No question, no reading, no name. */
+    /* ---- somebody saying "this is wrong" ----
+
+       Write-only, like the errors beside it, and for the same reason: a person
+       may report something and can never read the collection back. Nobody can
+       find out who complained about them, or about anybody else. An account is
+       required, so a stranger cannot fill it with rubbish, and every field is
+       capped.
+
+       Nabu reads them, and is the only one who can. */
+    match /reports/{id} {
+      allow read: if isAdmin();
+      allow create: if request.auth != null
+                    && request.resource.data.by == request.auth.uid
+                    && request.resource.data.keys().hasOnly(['by', 'byName', 'kind', 'where', 'about', 'aboutName', 'text', 'at'])
+                    && shorterThan('kind', 50)
+                    && shorterThan('where', 160)
+                    && shorterThan('about', 100)
+                    && shorterThan('aboutName', 100)
+                    && shorterThan('text', 600)
+                    && shorterThan('byName', 100);
+      allow update: if false;
+      allow delete: if isAdmin();
+    }
     match /errors/{id} {
       allow read: if isAdmin();
       allow create: if request.auth != null

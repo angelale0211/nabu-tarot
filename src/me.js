@@ -275,6 +275,15 @@ function meSect(id, icon, title, body, openByDefault, force) {
       const right = a ? esc(a.slice(8, 10) + '/' + a.slice(5, 7) + '/' + a.slice(0, 4)) : (isTWA() ? '' : priceHTML(c.price, 'unlock', c.id));
       return '<div class="course"><span class="nm">' + esc(L(c.name)) + '</span><span class="ic">' + ic + '</span><span class="pr faint">' + right + '</span></div>'; }).join(''))
       + '<label class="f" for="mcode">' + esc(S.enterCode) + '</label><div class="row nw"><input id="mcode" placeholder="NABU-T-…" autocapitalize="characters"><button class="btn" id="munlock">' + esc(S.unlock) + '</button></div><p class="hint" id="mcstatus"></p></div>';
+    /* A block nobody can undo is a trap rather than a tool: somebody blocks in
+       a bad moment and has no way back. Shown only once there is somebody on
+       the list, so it does not sit there puzzling people who never used it. */
+    if (MOD.list().length) {
+      own += '<div class="card"><h3 style="margin-bottom:8px">' + esc(S.modBlockedList) + '</h3>'
+        + MOD.list().map((uid) => '<div class="course"><span class="nm">' + esc(uid.slice(0, 10)) + '\u2026</span>'
+          + '<span class="pr"><button type="button" class="btn sm" data-unblock="' + esc(uid) + '">' + esc(S.modUnblock) + '</button></span></div>').join('')
+        + '</div>';
+    }
     own += '<div class="melinks"><a class="btn" href="#/looks">\uD83C\uDFA8 ' + esc(S.looksLink) + '</a><a class="btn" href="#/rewards">\uD83E\uDE99 ' + esc(S.luckLink) + '</a></div>';
     /* Group three: what this account holds. Folded by default - it is a place
        you go to check something, not a place you read. */
@@ -329,6 +338,11 @@ function meSect(id, icon, title, body, openByDefault, force) {
       bindTour(body, 0);
       $('#tour', body).scrollIntoView({ behavior: 'smooth', block: 'center' });
     });
+    $$('[data-unblock]', body).forEach((b) => b.addEventListener('click', async () => {
+      b.disabled = true;
+      await MOD.unblock(b.getAttribute('data-unblock'));
+      renderMe(args, params);
+    }));
     const so = $('#signout'); if (so) so.addEventListener('click', () => BE.signOut());
     const da = $('#delacct'); if (da) da.addEventListener('click', async () => {
       if (!confirm(S.delConfirm)) return;
