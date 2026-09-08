@@ -2332,6 +2332,42 @@ body[data-route="hello"] #main{width:100%}
      centres, so a left margin the width of the rail shifts it by half. */
   .shdlg .sh-body{border-radius:20px;padding-bottom:18px;box-shadow:0 18px 50px rgba(40,25,70,.3);margin-left:var(--rail-w)}
 }
+/* ---- a lesson on a desk ----
+   The reading column a card page uses had reached the lessons too: 650px of
+   words in a 976px card, the accordion's title at the card's edge and the
+   first line 130px further in, which the owner read as text pushed off
+   centre. A lesson is one thing, so it gets one column: the title and every
+   line under it share a left edge, and the words use the card. The #main
+   prefix outranks the 62ch/75ch caps set on p.lead and friends. */
+@media (min-width:900px){
+  .lesson>button{padding:16px 40px;font-size:18px}
+  #main .lesson .in{padding:22px 40px 28px}
+  #main .lesson .in .guide,#main .lesson .in .reading{max-width:none;margin-left:0;margin-right:0}
+  #main .lesson .in p,#main .lesson .in li,#main .lesson .in .lead{max-width:none}
+  #main .lesson .in p,#main .lesson .in li{font-size:16.5px;line-height:1.65}
+  #main .lesson .in h3{font-size:20px}
+}
+/* And a bigger screen gets bigger words, not the same words further apart. */
+@media (min-width:1600px){
+  .lesson>button{font-size:19.5px;padding:18px 48px}
+  #main .lesson .in{padding:26px 48px 32px}
+  #main .lesson .in p,#main .lesson .in li{font-size:17.5px}
+  #main .lesson .in h3{font-size:22px}
+  body[data-route="learn"] #main h1{font-size:33px}
+  body[data-route="learn"] .demo-head p,body[data-route="learn"] #main>p.faint{font-size:17px}
+}
+@media (min-width:2200px){
+  .lesson>button{font-size:21px;padding:20px 56px}
+  #main .lesson .in{padding:30px 56px 36px}
+  #main .lesson .in p,#main .lesson .in li{font-size:19px}
+  #main .lesson .in h3{font-size:24px}
+  body[data-route="learn"] #main h1{font-size:37px}
+  body[data-route="learn"] .demo-head p,body[data-route="learn"] #main>p.faint{font-size:18.5px}
+}
+/* The tiles on the Learn page are one set. Five carried the pink edge and two
+   did not, which the owner read as a mistake, twice. Every tile has it now;
+   .rec keeps its meaning in the markup and changes nothing on screen. */
+.tile,.tile.rec{border-color:var(--pink);box-shadow:0 0 0 1px var(--pink) inset}
 </style>
 </head>
 <body>
