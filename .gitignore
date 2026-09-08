@@ -4,3 +4,10 @@ test/_*.png
 
 # Layout probe output: screenshots and raw measurements, regenerated on demand.
 test/_probe/
+
+# Per-plan scratch for subagent-driven development: ledger, briefs, review
+# packages. Git history is the record; this is working memory.
+.superpowers/
+
+# Worktrees the editor manages for isolated sessions.
+.claude/worktrees/
