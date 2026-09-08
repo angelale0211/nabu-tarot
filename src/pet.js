@@ -1307,7 +1307,11 @@ function renderPet(want) {
       ? '<div class="pettabs">' + pets.map((x) => '<button type="button" class="pt' + (x.kind === open ? ' on' : '') + '" data-open="' + x.kind + '">' + petSVG(x.kind, PETS.coat(x), 'happy', PETS.wear(x)) + '<b>' + esc(x.name || L(PET_NAMES[x.kind])) + '</b></button>').join('') + '</div>'
       : '';
     const room = PETS.room(), left = PETS.cap() - pets.length;
+    /* And the same from a companion's own screen: the bar above it leads back
+       to wherever the visitor came from, which is usually the home page, so
+       the row of companions needs saying here. */
     m.innerHTML = '<div class="eyebrow">' + esc(S.actTitle) + '</div>'
+      + '<p style="margin:0 0 6px"><button type="button" class="linkbtn backlink" id="petlisttop">← ' + esc(S.petAllPets) + '</button></p>'
       + '<h1 class="pettitle" style="margin-bottom:6px"><span>🐾 ' + esc(p.name || L(PET_NAMES[p.kind])) + '</span>'
       + '<button type="button" class="renamebtn" id="petrename" aria-label="' + esc(S.petRename) + '" title="' + esc(S.petRename) + '">✏️</button></h1>'
       + '<p class="muted">' + esc(S.petIntro) + '</p>'
@@ -1327,6 +1331,7 @@ function renderPet(want) {
     $$('[data-open]', m).forEach((b) => b.addEventListener('click', () => { open = b.getAttribute('data-open'); draw(); }));
     const add = $('#addpet');
     if (add) add.addEventListener('click', () => drawPicker());
+    { const top = $('#petlisttop'); if (top) top.addEventListener('click', () => drawPicker()); }
     const fb = $('#petfeed');
     if (fb) fb.addEventListener('click', () => {
       if (busy) return;
@@ -1569,7 +1574,14 @@ function renderPet(want) {
     const luck = petLuck(kind), have = !!PETS.one(kind), pets = PETS.all();
     const swap = !have && !PETS.room();
     const blocked = swap && !PETS.canChange();
-    m.innerHTML = '<div class="eyebrow">' + esc(S.actTitle) + '</div><h1 style="margin-bottom:6px">' + esc(L(PET_NAMES[kind])) + '</h1>'
+    /* The way back to the row of companions, at the top where somebody looks
+       for it. The bar above this screen belongs to the router and leads
+       wherever they came from - usually the home page - which is no use to
+       somebody comparing one companion against the next. The same button is
+       still at the foot for anyone who reads to the end. */
+    m.innerHTML = '<div class="eyebrow">' + esc(S.actTitle) + '</div>'
+      + '<p style="margin:0 0 6px"><button type="button" class="linkbtn backlink" id="petbacktop">← ' + esc(S.petPrevOther) + '</button></p>'
+      + '<h1 style="margin-bottom:6px">' + esc(L(PET_NAMES[kind])) + '</h1>'
       + '<p class="muted">' + esc(S.petPreviewIntro) + '</p>'
       + '<div class="card petwrap luck-' + luck.id + '">'
       + '<div class="petstage">' + petHomeSVG('mat') + petAuraHTML(kind) + petSVG(kind, PET_COATS[0], 'happy')
@@ -1591,6 +1603,7 @@ function renderPet(want) {
       + '<button class="btn block" id="petback2" style="margin-top:10px">' + esc(S.petPrevOther) + '</button>'
       + '<p style="margin-top:14px"><a href="#/play" class="backlink">← ' + esc(S.actTitle) + '</a></p>';
     $('#petback2').addEventListener('click', () => drawPicker());
+    { const top = $('#petbacktop'); if (top) top.addEventListener('click', () => drawPicker()); }
     $('#petkeep').addEventListener('click', () => {
       if (have) { open = kind; draw(); return; }
       if (swap) {

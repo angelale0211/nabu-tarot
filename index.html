@@ -12,7 +12,7 @@
      carries this notice with it. See LICENSE. -->
 <meta name="author" content="Nabu Tarot">
 <meta name="copyright" content="Copyright (c) 2025-2026 Nabu Tarot. All rights reserved.">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'none'; object-src 'none'; form-action 'self'; script-src 'self' 'sha256-l4dKpIvm0gAOd2ZXuHqSg/AZ3kHKST3IAiVO4f+Mduc=' https://www.gstatic.com https://apis.google.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; font-src 'self' data:; media-src 'self' data: blob:; worker-src 'self'; connect-src 'self' https://*.googleapis.com https://*.google.com https://*.firebaseio.com https://*.cloudfunctions.net https://*.workers.dev https://generativelanguage.googleapis.com; frame-src https://*.firebaseapp.com https://accounts.google.com https://*.facebook.com">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'none'; object-src 'none'; form-action 'self'; script-src 'self' 'sha256-KcbDGwrqBYRXjbKfSiq7MfWdMn4qrfKx1ZJ5J7go4no=' https://www.gstatic.com https://apis.google.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; font-src 'self' data:; media-src 'self' data: blob:; worker-src 'self'; connect-src 'self' https://*.googleapis.com https://*.google.com https://*.firebaseio.com https://*.cloudfunctions.net https://*.workers.dev https://generativelanguage.googleapis.com; frame-src https://*.firebaseapp.com https://accounts.google.com https://*.facebook.com">
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <meta name="theme-color" content="#EFE9FA">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -2003,8 +2003,10 @@ button.unl{display:block;width:100%;text-align:left;font:inherit;color:inherit;c
   #svcwrap{display:grid;grid-template-columns:repeat(2,1fr);gap:0 18px;align-items:start}
   .tabs{flex-wrap:wrap;overflow:visible}
   .chat{max-height:70vh}
+  /* The locked-course pitch is a column of prose and reads better held in.
+     Not .course - that is one row of "what you hold", and capping it left
+     every tick and date stranded two thirds of the way across the card. */
   #main .paywall{max-width:640px;margin-left:auto;margin-right:auto}
-  .course{max-width:640px}
   /* A line of prose that runs the full 1040px is a hundred and ten characters
      long, which nobody reads comfortably. Text inside a card is held to about
      seventy-five; the card keeps its width, so nothing else moves. */
@@ -2263,15 +2265,15 @@ const COURSES = [
     name: { vi: 'Nabu Pro · 6 tháng', en: 'Nabu Pro · 6 months' },
     blurb: { vi: 'Nabu Pro bao gồm toàn bộ quyền lợi của Nabu Plus, cùng với khu vực bạn nhỏ: mười hai linh thú trong truyền thuyết, nuôi tối đa sáu bạn cùng lúc, đầy đủ thức ăn, nhà ở và trang phục dành cho các bạn ấy, thời gian chờ giữa hai bữa rút ngắn từ sáu giờ xuống còn hai giờ, và điểm kinh nghiệm nhân đôi.',
       en: 'Everything in Nabu Plus, and the companions besides: twelve spirit beasts, six of them at once, their good food, their homes and their clothes, a two-hour wait between meals instead of six, and double points.' },
-    includes: { vi: ['Giảm 15% cho mọi buổi xem bài cùng Nabu', 'Toàn bộ quyền lợi của Nabu Plus', '12 linh thú, nuôi tối đa 6 bạn cùng lúc', '9 món ăn, 8 ngôi nhà, 9 bộ trang phục', 'Chờ 2 giờ giữa hai bữa, 3 lượt chơi mỗi ngày, điểm kinh nghiệm nhân đôi', 'Voucher giảm 15% và 20%', 'Thời hạn sử dụng 6 tháng'],
-      en: ['15% off every reading with Nabu', 'Everything in Nabu Plus', '12 spirit beasts, six kept at once', '9 foods, 8 homes, 9 things to wear', '2 hours between meals, 3 plays a day, double points', 'The 15% and 20% vouchers', '6 months of access'] } },
+    includes: { vi: ['Toàn bộ quyền lợi của Nabu Plus', '12 linh thú, nuôi tối đa 6 bạn cùng lúc', '9 món ăn, 8 ngôi nhà, 9 bộ trang phục', 'Chờ 2 giờ giữa hai bữa, 3 lượt chơi mỗi ngày, điểm kinh nghiệm nhân đôi', 'Voucher giảm 15% và 20%', 'Thời hạn sử dụng 6 tháng'],
+      en: ['Everything in Nabu Plus', '12 spirit beasts, six kept at once', '9 foods, 8 homes, 9 things to wear', '2 hours between meals, 3 plays a day, double points', 'The 15% and 20% vouchers', '6 months of access'] } },
   { id: 'pro', kind: 'unlock', icon: '👑', to: '#/play/pet', price: 249000, months: 12,
     sum: { vi: 'Quyền lợi như gói 6 tháng, dùng trọn một năm và tiết kiệm 49.000đ.', en: 'The same, for a whole year — 49.000đ less than two half years.' },
     name: { vi: 'Nabu Pro · 12 tháng', en: 'Nabu Pro · 12 months' },
     blurb: { vi: 'Nabu Pro bao gồm toàn bộ quyền lợi của Nabu Plus, cùng với khu vực bạn nhỏ: mười hai linh thú trong truyền thuyết, nuôi tối đa sáu bạn cùng lúc, đầy đủ thức ăn, nhà ở và trang phục dành cho các bạn ấy, thời gian chờ giữa hai bữa rút ngắn từ sáu giờ xuống còn hai giờ, và điểm kinh nghiệm nhân đôi. Thanh toán một lần cho cả năm sẽ tiết kiệm hơn so với mua hai lần gói 6 tháng.',
       en: 'Everything in Nabu Plus, and the companions besides: twelve spirit beasts, six of them at once, their good food, their homes and their clothes, a two-hour wait between meals instead of six, and double points. Paying once for the year costs less.' },
-    includes: { vi: ['Giảm 15% cho mọi buổi xem bài cùng Nabu', 'Tiết kiệm 49.000đ so với mua hai lần gói 6 tháng', 'Toàn bộ quyền lợi của Nabu Plus', '12 linh thú, nuôi tối đa 6 bạn cùng lúc', '9 món ăn, 8 ngôi nhà, 9 bộ trang phục', 'Chờ 2 giờ giữa hai bữa, 3 lượt chơi mỗi ngày, điểm kinh nghiệm nhân đôi', 'Voucher giảm 15% và 20%', 'Thời hạn sử dụng 12 tháng'],
-      en: ['15% off every reading with Nabu', '49.000đ less than two half years', 'Everything in Nabu Plus', '12 spirit beasts, six kept at once', '9 foods, 8 homes, 9 things to wear', '2 hours between meals, 3 plays a day, double points', 'The 15% and 20% vouchers', '12 months of access'] } },
+    includes: { vi: ['Tiết kiệm 49.000đ so với mua hai lần gói 6 tháng', 'Toàn bộ quyền lợi của Nabu Plus', '12 linh thú, nuôi tối đa 6 bạn cùng lúc', '9 món ăn, 8 ngôi nhà, 9 bộ trang phục', 'Chờ 2 giờ giữa hai bữa, 3 lượt chơi mỗi ngày, điểm kinh nghiệm nhân đôi', 'Voucher giảm 15% và 20%', 'Thời hạn sử dụng 12 tháng'],
+      en: ['49.000đ less than two half years', 'Everything in Nabu Plus', '12 spirit beasts, six kept at once', '9 foods, 8 homes, 9 things to wear', '2 hours between meals, 3 plays a day, double points', 'The 15% and 20% vouchers', '12 months of access'] } },
   /* A wedding is bought once and held once, but the year is there so nobody
      loses what they paid for by having to move the date. */
   { id: 'wedding', kind: 'unlock', icon: '\uD83D\uDC92', to: '#/wedding', price: 30000, months: 12,
@@ -2404,7 +2406,6 @@ const STR = {
     quizProgress: (d, t) => 'Đã đạt ' + d + '/' + t + ' bài kiểm tra.',
     quizKept: 'Kết quả chỉ được lưu trên máy của bạn. Nabu không nhận được điểm này.',
     unlockTiers: 'Hai gói, bạn chọn một. Nabu Pro đã có sẵn toàn bộ Nabu Plus, nên không cần mua cả hai.',
-    luckProOff: (p) => 'Nabu Pro giảm ' + p + '%',
     whereBest: 'Nabu khuyên dùng',
     whereIdLabel: (n) => 'Trang cá nhân ' + n + ' của bạn',
     whereIdPh: 'Dán link trang cá nhân, hoặc @tên tài khoản',
@@ -2595,7 +2596,7 @@ const STR = {
     petNeedFeed: 'Bạn cho bạn nhỏ ăn trước, sau đó hãy khấn.',
     petStreak: (n) => n + ' ngày liền', petMeals: (n) => n + ' bữa', petCoat: 'Màu lông', petName: 'Đặt tên',
     petSwap: 'Đổi bạn nhỏ khác', petSwapAsk: 'Bạn muốn đổi sang một bạn nhỏ khác?', petLetGo: 'Tiễn bạn nhỏ này đi', petLetGoAsk: 'Bạn muốn tiễn bạn nhỏ này đi?',
-    petAdd: 'Nhận thêm một bạn nhỏ', petRoomLeft: (n) => 'còn ' + n + ' chỗ', petBack: 'Quay lại với bạn nhỏ',
+    petAdd: 'Nhận thêm một bạn nhỏ', petRoomLeft: (n) => 'còn ' + n + ' chỗ', petBack: 'Quay lại với bạn nhỏ', petAllPets: 'Tất cả bạn nhỏ',
     petLuckTotal: (n) => 'Bạn đang có ' + n + ' loại may mắn đi cùng.',
     petPlusPitch: 'Người dùng thường nuôi một bạn nhỏ. Nabu Pro mở cả mười hai linh thú và cho bạn nuôi cùng lúc tối đa sáu bạn, để nhiều góc trong đời bạn cùng được trông giữ.',
     petPlusItem: 'Món này thuộc Nabu Pro.',
@@ -3210,7 +3211,6 @@ const STR = {
     quizProgress: (d, t) => d + ' of ' + t + ' tests passed.',
     quizKept: 'Your score is kept on this device only. Nabu never receives it.',
     unlockTiers: 'Two packages, one choice. Nabu Pro already contains all of Nabu Plus, so there is no need to buy both.',
-    luckProOff: (p) => 'Nabu Pro, ' + p + '% off',
     whereBest: 'Nabu prefers this',
     whereIdLabel: (n) => 'Your ' + n + ' account',
     whereIdPh: 'Paste your profile link, or @yourname',
@@ -3401,7 +3401,7 @@ const STR = {
     petNeedFeed: 'Feed your companion first, then make your wish.',
     petStreak: (n) => n + ' days running', petMeals: (n) => n + ' meals', petCoat: 'Coat', petName: 'Name',
     petSwap: 'Choose a different companion', petSwapAsk: 'Change to a different companion?', petLetGo: 'Let this companion go', petLetGoAsk: 'Let this companion go?',
-    petAdd: 'Take in another companion', petRoomLeft: (n) => n + ' places left', petBack: 'Back to your companion',
+    petAdd: 'Take in another companion', petRoomLeft: (n) => n + ' places left', petBack: 'Back to your companion', petAllPets: 'All companions',
     petLuckTotal: (n) => n + ' kinds of luck are walking with you.',
     petPlusPitch: 'One companion is free. Nabu Pro opens all twelve spirit beasts and lets you keep up to six at once, so more corners of your life are looked after.',
     petPlusItem: 'That one comes with Nabu Pro.',
@@ -13527,7 +13527,7 @@ function unlockCartHTML() {
   const cut = unlockLuck();
   return '<div class="sum">' + rows.map((c) => '<div class="r"><span>' + esc(L(c.name)) + '</span><b>' + priceHTML(c.price, 'unlock', c.id) + '</b></div>').join('')
     + '<div class="r tot"><span>' + esc(S.unlockTotal) + '</span><b>' + fmtPrice(total) + '</b></div>'
-    + (cut.pctOff ? '<div class="r cut"><span>' + (cut.from === 'pro' ? '👑 ' + esc(S.luckProOff(cut.pct)) : '🎟️ ' + esc(S.luckVoucherOf(cut.pct))) + '</span><b>-' + fmtPrice(cut.pctOff) + '</b></div>' : '')
+    + (cut.pctOff ? '<div class="r cut"><span>🎟️ ' + esc(S.luckVoucherOf(cut.pct)) + '</span><b>-' + fmtPrice(cut.pctOff) + '</b></div>' : '')
     + (cut.coins ? '<div class="r cut"><span>🪙 ' + esc(S.luckCoinsUsed(fmtNum(cut.coins))) + '</span><b>-' + fmtPrice(cut.coins) + '</b></div>' : '')
     + ((cut.pctOff || cut.coins) ? '<div class="r tot"><span>' + esc(S.luckAfter) + '</span><b>' + fmtPrice(cut.final) + '</b></div>' : '')
     + '</div>';
@@ -17078,19 +17078,15 @@ const BANK = {
 /* ---- what an order costs after the person's own rewards ----
    The shop's own sale has already been taken off the price before this runs,
    so the voucher comes off the sale price and the coins come off last. */
-/* Anyone on Nabu Pro pays fifteen per cent less for every reading, always,
-   without having to earn or choose anything. */
-const PRO_READING_PCT = 15;
-
 function luckCut(total, use) {
   const base = Math.max(0, Math.round(Number(total) || 0));
   const tier = BANK.tier();
-  const vPct = (use && use.v && tier) ? tier.pct : 0;
-  const mPct = proOn() ? PRO_READING_PCT : 0;
-  /* The better of the two, never both: a voucher is worth spending only when it
-     beats what Pro already gives, and no price carries two discounts. */
-  const pct = Math.max(vPct, mPct);
-  const from = pct === 0 ? '' : (vPct > mPct ? 'voucher' : 'pro');
+  /* A voucher is the only thing that takes a percentage off a price now. Pro
+     used to take fifteen per cent off every reading simply for being held;
+     that is gone, and what Pro opens is the courses and the designs. The
+     vouchers are still there and are still earned, by raising a companion. */
+  const pct = (use && use.v && tier) ? tier.pct : 0;
+  const from = pct === 0 ? '' : 'voucher';
   const pctOff = pct ? Math.round(base * pct / 100 / 1000) * 1000 : 0;
   const afterPct = Math.max(0, base - pctOff);
   const ceiling = Math.min(COIN_MAX_PER_ORDER, Math.floor(base / 2));
@@ -17101,7 +17097,7 @@ function luckCut(total, use) {
 function luckLines(cut) {
   const S = T();
   let s = '';
-  if (cut.pctOff) s += '\n' + (cut.from === 'pro' ? '👑 ' + S.luckProOff(cut.pct) : '🎟️ ' + S.luckVoucherOf(cut.pct)) + ': -' + fmtPrice(cut.pctOff);
+  if (cut.pctOff) s += '\n🎟️ ' + S.luckVoucherOf(cut.pct) + ': -' + fmtPrice(cut.pctOff);
   if (cut.coins) s += '\n🪙 ' + S.luckCoinsUsed(fmtNum(cut.coins)) + ': -' + fmtPrice(cut.coins);
   return s;
 }
@@ -18494,7 +18490,11 @@ function renderPet(want) {
       ? '<div class="pettabs">' + pets.map((x) => '<button type="button" class="pt' + (x.kind === open ? ' on' : '') + '" data-open="' + x.kind + '">' + petSVG(x.kind, PETS.coat(x), 'happy', PETS.wear(x)) + '<b>' + esc(x.name || L(PET_NAMES[x.kind])) + '</b></button>').join('') + '</div>'
       : '';
     const room = PETS.room(), left = PETS.cap() - pets.length;
+    /* And the same from a companion's own screen: the bar above it leads back
+       to wherever the visitor came from, which is usually the home page, so
+       the row of companions needs saying here. */
     m.innerHTML = '<div class="eyebrow">' + esc(S.actTitle) + '</div>'
+      + '<p style="margin:0 0 6px"><button type="button" class="linkbtn backlink" id="petlisttop">← ' + esc(S.petAllPets) + '</button></p>'
       + '<h1 class="pettitle" style="margin-bottom:6px"><span>🐾 ' + esc(p.name || L(PET_NAMES[p.kind])) + '</span>'
       + '<button type="button" class="renamebtn" id="petrename" aria-label="' + esc(S.petRename) + '" title="' + esc(S.petRename) + '">✏️</button></h1>'
       + '<p class="muted">' + esc(S.petIntro) + '</p>'
@@ -18514,6 +18514,7 @@ function renderPet(want) {
     $$('[data-open]', m).forEach((b) => b.addEventListener('click', () => { open = b.getAttribute('data-open'); draw(); }));
     const add = $('#addpet');
     if (add) add.addEventListener('click', () => drawPicker());
+    { const top = $('#petlisttop'); if (top) top.addEventListener('click', () => drawPicker()); }
     const fb = $('#petfeed');
     if (fb) fb.addEventListener('click', () => {
       if (busy) return;
@@ -18756,7 +18757,14 @@ function renderPet(want) {
     const luck = petLuck(kind), have = !!PETS.one(kind), pets = PETS.all();
     const swap = !have && !PETS.room();
     const blocked = swap && !PETS.canChange();
-    m.innerHTML = '<div class="eyebrow">' + esc(S.actTitle) + '</div><h1 style="margin-bottom:6px">' + esc(L(PET_NAMES[kind])) + '</h1>'
+    /* The way back to the row of companions, at the top where somebody looks
+       for it. The bar above this screen belongs to the router and leads
+       wherever they came from - usually the home page - which is no use to
+       somebody comparing one companion against the next. The same button is
+       still at the foot for anyone who reads to the end. */
+    m.innerHTML = '<div class="eyebrow">' + esc(S.actTitle) + '</div>'
+      + '<p style="margin:0 0 6px"><button type="button" class="linkbtn backlink" id="petbacktop">← ' + esc(S.petPrevOther) + '</button></p>'
+      + '<h1 style="margin-bottom:6px">' + esc(L(PET_NAMES[kind])) + '</h1>'
       + '<p class="muted">' + esc(S.petPreviewIntro) + '</p>'
       + '<div class="card petwrap luck-' + luck.id + '">'
       + '<div class="petstage">' + petHomeSVG('mat') + petAuraHTML(kind) + petSVG(kind, PET_COATS[0], 'happy')
@@ -18778,6 +18786,7 @@ function renderPet(want) {
       + '<button class="btn block" id="petback2" style="margin-top:10px">' + esc(S.petPrevOther) + '</button>'
       + '<p style="margin-top:14px"><a href="#/play" class="backlink">← ' + esc(S.actTitle) + '</a></p>';
     $('#petback2').addEventListener('click', () => drawPicker());
+    { const top = $('#petbacktop'); if (top) top.addEventListener('click', () => drawPicker()); }
     $('#petkeep').addEventListener('click', () => {
       if (have) { open = kind; draw(); return; }
       if (swap) {
@@ -19060,7 +19069,7 @@ function summaryHTML(withPanel) {
   const items = book.items.map((it) => { const s = serviceOf(it.svc), p = pkgOfItem(it); if (!s || !p) return ''; return '<li>' + esc(L(s.name) + ' – ' + L(p.name)) + ' <b>' + priceHTML(p.price, 'reading', s.id) + '</b>' + (p.needsTopic ? '<br><small class="' + (it.topic ? 'ok' : 'warn') + '">' + esc(it.topic ? S.msgTopic + ': ' + topicLabel(it.topic) : S.cartNeedsTopic) + '</small>' : '') + '</li>'; }).join('');
   rows.push([S.bkItems, items ? '<ul>' + items + '</ul>' : '<span class="warn">' + esc(S.cartEmpty) + '</span>']);
   if (book.items.length > 1 || cut.pctOff || cut.coins) rows.push([S.msgTotal, '<b>' + fmtPrice(cartTotal()) + '</b>']);
-  if (cut.pctOff) rows.push([(cut.from === 'pro' ? '👑 ' + S.luckProOff(cut.pct) : '🎟️ ' + S.luckVoucherOf(cut.pct)), '<b>-' + fmtPrice(cut.pctOff) + '</b>']);
+  if (cut.pctOff) rows.push(['🎟️ ' + S.luckVoucherOf(cut.pct), '<b>-' + fmtPrice(cut.pctOff) + '</b>']);
   if (cut.coins) rows.push(['🪙 ' + S.luckCoinsUsed(fmtNum(cut.coins)), '<b>-' + fmtPrice(cut.coins) + '</b>']);
   if (cut.pctOff || cut.coins) rows.push([S.luckAfter, '<b>' + fmtPrice(cut.final) + '</b>']);
   rows.push([S.msgTime, book.slot ? esc(slotLabel(book.slot)) : '<span class="warn">' + esc(S.pickDay) + '</span>']);
@@ -23458,7 +23467,7 @@ function adminSale(p) {
 ROUTES.admin = { nav: '', render: renderAdmin };
 
 /* ============================ boot ============================ */
-window.APP_VERSION = 'v173';
+window.APP_VERSION = 'v174';
 window.NABU = { CONFIG: CONFIG, SALE: SALE, salePrice: salePrice, loadActs: loadActs, BACK: BACK, LESSONS: LESSONS, localAnswer: localAnswer, compatVerdict: compatVerdict, numerologyOf: numerologyOf, ZDEEP: ZDEEP, lunarToday: lunarToday, solarToLunar: solarToLunar, DECK: DECK, INSIGHT: INSIGHT, KW: KW, ASK: ASK, TOPICS: TOPICS, GUIDES: GUIDES, SERVICES: SERVICES, COURSES: COURSES, ACCESS: ACCESS, plusOn: () => plusOn(), proOn: () => proOn(), luckUnlimited: () => luckUnlimited(), ZODIAC: ZODIAC, pick: pick, book: book,
   insightHTML: insightHTML, insightOf: insightOf, sunSignIndex: sunSignIndex, lifePath: lifePath, PROFILE: () => PROFILE, BE: BE, ACTS: ACTS,
   ANGELS: ANGELS, angelRead: angelRead, CODEBOOK: CODEBOOK, verifyCode: verifyCode, petHomeSVG: petHomeSVG, PET_HOMES: PET_HOMES, PET_WEARS: PET_WEARS, codeDigest: codeDigest, randomCode: randomCode, BANK: BANK, PETS: PETS, petSVG: petSVG, PET_COATS: PET_COATS, PET_KINDS: PET_KINDS, luckCut: luckCut, petLevel: petLevel, petStep: petStep, VOUCHERS: VOUCHERS, levelCoins: levelCoins, LOOKS: LOOKS,

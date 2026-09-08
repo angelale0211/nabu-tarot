@@ -588,12 +588,13 @@ async function go(hash, sel) { W().location.hash = hash; await sleep(30); return
         w.localStorage.setItem('nabu-access', JSON.stringify({ plus: '2099-01-01' }));
         ok(N.plusOn() && !N.proOn() && N.luckUnlimited(),
           'holding Plus opens the coin and the tree, and does not open Pro');
-        /* Anyone on Pro pays fifteen per cent less for a reading, always, without
-           spending a voucher for it. */
+        /* Pro used to take fifteen per cent off every reading simply for being
+           held. It does not any more: what Pro opens is the courses and the
+           designs, and a percentage off a price is earned, not given. */
         w.localStorage.setItem('nabu-access', JSON.stringify({ pro: '2099-01-01' }));
         { const cut = N.luckCut(200000, { v: false, c: 0 });
-          ok(cut.pct === 15 && cut.from === 'pro' && cut.final === 170000,
-            'a reading costs fifteen per cent less on Pro, with no voucher spent'); }
+          ok(cut.pct === 0 && cut.from === '' && cut.final === 200000,
+            'holding Pro takes nothing off a reading'); }
         w.localStorage.removeItem('nabu-access');
         { const plain = N.luckCut(200000, { v: false, c: 0 });
           ok(plain.pct === 0 && plain.final === 200000, 'and full price without it'); }

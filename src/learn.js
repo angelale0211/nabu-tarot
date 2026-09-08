@@ -540,7 +540,7 @@ function unlockCartHTML() {
   const cut = unlockLuck();
   return '<div class="sum">' + rows.map((c) => '<div class="r"><span>' + esc(L(c.name)) + '</span><b>' + priceHTML(c.price, 'unlock', c.id) + '</b></div>').join('')
     + '<div class="r tot"><span>' + esc(S.unlockTotal) + '</span><b>' + fmtPrice(total) + '</b></div>'
-    + (cut.pctOff ? '<div class="r cut"><span>' + (cut.from === 'pro' ? '👑 ' + esc(S.luckProOff(cut.pct)) : '🎟️ ' + esc(S.luckVoucherOf(cut.pct))) + '</span><b>-' + fmtPrice(cut.pctOff) + '</b></div>' : '')
+    + (cut.pctOff ? '<div class="r cut"><span>🎟️ ' + esc(S.luckVoucherOf(cut.pct)) + '</span><b>-' + fmtPrice(cut.pctOff) + '</b></div>' : '')
     + (cut.coins ? '<div class="r cut"><span>🪙 ' + esc(S.luckCoinsUsed(fmtNum(cut.coins))) + '</span><b>-' + fmtPrice(cut.coins) + '</b></div>' : '')
     + ((cut.pctOff || cut.coins) ? '<div class="r tot"><span>' + esc(S.luckAfter) + '</span><b>' + fmtPrice(cut.final) + '</b></div>' : '')
     + '</div>';

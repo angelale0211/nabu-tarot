@@ -1837,8 +1837,10 @@ button.unl{display:block;width:100%;text-align:left;font:inherit;color:inherit;c
   #svcwrap{display:grid;grid-template-columns:repeat(2,1fr);gap:0 18px;align-items:start}
   .tabs{flex-wrap:wrap;overflow:visible}
   .chat{max-height:70vh}
+  /* The locked-course pitch is a column of prose and reads better held in.
+     Not .course - that is one row of "what you hold", and capping it left
+     every tick and date stranded two thirds of the way across the card. */
   #main .paywall{max-width:640px;margin-left:auto;margin-right:auto}
-  .course{max-width:640px}
   /* A line of prose that runs the full 1040px is a hundred and ten characters
      long, which nobody reads comfortably. Text inside a card is held to about
      seventy-five; the card keeps its width, so nothing else moves. */

@@ -83,19 +83,15 @@ const BANK = {
 /* ---- what an order costs after the person's own rewards ----
    The shop's own sale has already been taken off the price before this runs,
    so the voucher comes off the sale price and the coins come off last. */
-/* Anyone on Nabu Pro pays fifteen per cent less for every reading, always,
-   without having to earn or choose anything. */
-const PRO_READING_PCT = 15;
-
 function luckCut(total, use) {
   const base = Math.max(0, Math.round(Number(total) || 0));
   const tier = BANK.tier();
-  const vPct = (use && use.v && tier) ? tier.pct : 0;
-  const mPct = proOn() ? PRO_READING_PCT : 0;
-  /* The better of the two, never both: a voucher is worth spending only when it
-     beats what Pro already gives, and no price carries two discounts. */
-  const pct = Math.max(vPct, mPct);
-  const from = pct === 0 ? '' : (vPct > mPct ? 'voucher' : 'pro');
+  /* A voucher is the only thing that takes a percentage off a price now. Pro
+     used to take fifteen per cent off every reading simply for being held;
+     that is gone, and what Pro opens is the courses and the designs. The
+     vouchers are still there and are still earned, by raising a companion. */
+  const pct = (use && use.v && tier) ? tier.pct : 0;
+  const from = pct === 0 ? '' : 'voucher';
   const pctOff = pct ? Math.round(base * pct / 100 / 1000) * 1000 : 0;
   const afterPct = Math.max(0, base - pctOff);
   const ceiling = Math.min(COIN_MAX_PER_ORDER, Math.floor(base / 2));
@@ -106,7 +102,7 @@ function luckCut(total, use) {
 function luckLines(cut) {
   const S = T();
   let s = '';
-  if (cut.pctOff) s += '\n' + (cut.from === 'pro' ? '👑 ' + S.luckProOff(cut.pct) : '🎟️ ' + S.luckVoucherOf(cut.pct)) + ': -' + fmtPrice(cut.pctOff);
+  if (cut.pctOff) s += '\n🎟️ ' + S.luckVoucherOf(cut.pct) + ': -' + fmtPrice(cut.pctOff);
   if (cut.coins) s += '\n🪙 ' + S.luckCoinsUsed(fmtNum(cut.coins)) + ': -' + fmtPrice(cut.coins);
   return s;
 }
