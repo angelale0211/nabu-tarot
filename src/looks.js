@@ -68,28 +68,28 @@ const CARD_BACKS = {
 
 const LOOK_SETS = {
   cardback: [
-    { id: 'moon', pro: false, name: { vi: 'Trăng vàng', en: 'Gold crescent', de: 'Goldmond' }, card: ['#3D2A6E', '#4A3480'], gold: '#E5BE5E' },
-    { id: 'stars', pro: true, name: { vi: 'Trời sao', en: 'Night sky', de: 'Sternenhimmel' }, card: ['#1E2A57', '#2C3C74'], gold: '#FFE9A8' },
-    { id: 'bloom', pro: true, name: { vi: 'Hoa gấm', en: 'Damask bloom', de: 'Damastblüte' }, card: ['#5B2340', '#7A3055'], gold: '#F6BBCB' },
+    { id: 'moon', pro: false, name: { vi: 'Trăng vàng', en: 'Gold crescent', de: 'Gold­mond' }, card: ['#3D2A6E', '#4A3480'], gold: '#E5BE5E' },
+    { id: 'stars', pro: true, name: { vi: 'Trời sao', en: 'Night sky', de: 'Ster­nen­him­mel' }, card: ['#1E2A57', '#2C3C74'], gold: '#FFE9A8' },
+    { id: 'bloom', pro: true, name: { vi: 'Hoa gấm', en: 'Damask bloom', de: 'Damast­blüte' }, card: ['#5B2340', '#7A3055'], gold: '#F6BBCB' },
     { id: 'eye', pro: true, name: { vi: 'Mắt huyền', en: 'The seeing eye', de: 'Das sehende Auge' }, card: ['#173F3A', '#215750'], gold: '#9FE3C9' }
   ],
   tree: [
-    { id: 'sakura', pro: false, name: { vi: 'Anh đào', en: 'Cherry blossom', de: 'Kirschblüten' } },
-    { id: 'night', pro: true, name: { vi: 'Đêm đom đóm', en: 'Firefly night', de: 'Glühwürmchennacht' } },
-    { id: 'galaxy', pro: true, name: { vi: 'Cây ngân hà', en: 'Galaxy tree', de: 'Galaxienbaum' } },
-    { id: 'butterfly', pro: true, name: { vi: 'Vườn bướm', en: 'Butterfly garden', de: 'Schmetterlingsgarten' } }
+    { id: 'sakura', pro: false, name: { vi: 'Anh đào', en: 'Cherry blossom', de: 'Kirsch­blüten' } },
+    { id: 'night', pro: true, name: { vi: 'Đêm đom đóm', en: 'Firefly night', de: 'Glüh­würm­chen­nacht' } },
+    { id: 'galaxy', pro: true, name: { vi: 'Cây ngân hà', en: 'Galaxy tree', de: 'Ga­la­xien­baum' } },
+    { id: 'butterfly', pro: true, name: { vi: 'Vườn bướm', en: 'Butterfly garden', de: 'Schmet­ter­lings­gar­ten' } }
   ],
   coin: [
     { id: 'gold', pro: false, name: { vi: 'Vàng', en: 'Gold', de: 'Gold' }, face: '#E5BE5E', rim: '#B9913B', ink: '#5A3F18' },
-    { id: 'moonsilver', pro: true, name: { vi: 'Bạc trăng', en: 'Moon silver', de: 'Mondsilber' }, face: '#DCE3EF', rim: '#94A3BE', ink: '#2C3A52' },
-    { id: 'rose', pro: true, name: { vi: 'Vàng hồng', en: 'Rose gold', de: 'Roségold' }, face: '#F0C4C2', rim: '#C98A85', ink: '#63302C' },
-    { id: 'obsidian', pro: true, name: { vi: 'Hắc Ngọc', en: 'Obsidian', de: 'Obsidian' }, face: '#2A2340', rim: '#E5BE5E', ink: '#F3E4B8' }
+    { id: 'moonsilver', pro: true, name: { vi: 'Bạc trăng', en: 'Moon silver', de: 'Mond­silber' }, face: '#DCE3EF', rim: '#94A3BE', ink: '#2C3A52' },
+    { id: 'rose', pro: true, name: { vi: 'Vàng hồng', en: 'Rose gold', de: 'Rosé­gold' }, face: '#F0C4C2', rim: '#C98A85', ink: '#63302C' },
+    { id: 'obsidian', pro: true, name: { vi: 'Hắc Ngọc', en: 'Obsidian', de: 'Obsi­dian' }, face: '#2A2340', rim: '#E5BE5E', ink: '#F3E4B8' }
   ],
   diary: [
     { id: 'plain', pro: false, name: { vi: 'Giấy trơn', en: 'Plain paper', de: 'Schlichtes Papier' } },
-    { id: 'ruled', pro: true, name: { vi: 'Giấy kẻ cũ', en: 'Old ruled paper', de: 'Altes Linienpapier' } },
-    { id: 'floral', pro: true, name: { vi: 'Viền hoa', en: 'Floral border', de: 'Blumenrand' } },
-    { id: 'starry', pro: true, name: { vi: 'Đêm sao', en: 'Starry night', de: 'Sternennacht' } }
+    { id: 'ruled', pro: true, name: { vi: 'Giấy kẻ cũ', en: 'Old ruled paper', de: 'Altes Linien­papier' } },
+    { id: 'floral', pro: true, name: { vi: 'Viền hoa', en: 'Floral border', de: 'Blumen­rand' } },
+    { id: 'starry', pro: true, name: { vi: 'Đêm sao', en: 'Starry night', de: 'Sternen­nacht' } }
   ]
 };
 

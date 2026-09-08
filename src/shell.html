@@ -2381,6 +2381,49 @@ body[data-route="hello"] #main{width:100%}
    did not, which the owner read as a mistake, twice. Every tile has it now;
    .rec keeps its meaning in the markup and changes nothing on screen. */
 .tile,.tile.rec{border-color:var(--pink);box-shadow:0 0 0 1px var(--pink) inset}
+/* ---- German ----------------------------------------------------------
+   German words run far longer than the Vietnamese and English this layout
+   was measured against, so three habits that read well in those two break
+   in German. All three are relaxed here and nowhere else, which is why
+   every rule is behind html[lang="de"] — core.js sets that on each route,
+   and it is also what tells the browser how to hyphenate.
+
+   1. Justified text needs short words. With long ones it opens rivers of
+      white space down the middle of a paragraph, so German sets its own
+      ragged right instead.
+   2. Long words may hyphenate rather than overrun. The limits keep it to
+      words long enough to need it: ordinary prose is not peppered with
+      hyphens, and nothing shorter than ten letters is ever broken.
+   3. A label in a narrow tile may break inside a word. Spilling into the
+      next tile, or losing its ending to a line clamp, is worse than a
+      word broken across two lines. */
+html[lang="de"] #main p,html[lang="de"] #main li,
+html[lang="de"] .note span,html[lang="de"] #foot .tagline{text-align:left}
+html[lang="de"] #main p,html[lang="de"] #main li,html[lang="de"] .hint,
+html[lang="de"] .muted,html[lang="de"] .lead,html[lang="de"] .tbl td,
+html[lang="de"] .look b,html[lang="de"] .actquick .aq b,
+html[lang="de"] .actbtn b,html[lang="de"] .actbtn .meta,
+html[lang="de"] .freegrid .fg .s,html[lang="de"] .wherepick .wp .s,
+html[lang="de"] .aq b,html[lang="de"] .chip,html[lang="de"] .btn{
+  -webkit-hyphens:auto;hyphens:auto;
+  -webkit-hyphenate-limit-before:4;-webkit-hyphenate-limit-after:3;
+  hyphenate-limit-chars:10 4 3}
+/* Tiles are narrow enough that a word can be wider than the tile itself,
+   which hyphenation alone cannot fix. */
+html[lang="de"] .look b,html[lang="de"] .actquick .aq b,
+html[lang="de"] .actbtn b,html[lang="de"] .freegrid .fg .s{overflow-wrap:break-word}
+/* A label centred in a flex column is only as wide as its own text, so it
+   grows past the tile instead of wrapping inside it. Giving it the tile's
+   width is what lets the break above happen at all. */
+html[lang="de"] .look,html[lang="de"] .actquick .aq{min-width:0}
+html[lang="de"] .look b,html[lang="de"] .actquick .aq b{width:100%}
+/* One more line for a label that German needs two and a half of. */
+html[lang="de"] .actquick .aq b{-webkit-line-clamp:3}
+/* The label column of a data table is held on one line so it reads as a
+   column. A German label can be wider than the card, so in German it wraps
+   and the value keeps its half of the row. */
+html[lang="de"] .tbl td:first-child{white-space:normal;overflow-wrap:break-word}
+html[lang="de"] #today .tbl td:first-child{width:52%}
 </style>
 </head>
 <body>
