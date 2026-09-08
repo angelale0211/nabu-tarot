@@ -82,7 +82,8 @@ function bindTour(root, step) {
     // On the home screen the card folds into its little bar; anywhere else it
     // was opened on purpose, so closing it simply removes it.
     if (parseHash().route === 'home') { $('#tour').outerHTML = tourMiniHTML(); bindTour(root, 0); }
-    else { const el = $('#tour', root); if (el) el.remove(); }
+    // The welcome screen becomes the tour; when it closes the person goes home.
+    else { const el = $('#tour', root); if (el) el.remove(); if (parseHash().route === 'welcome') location.hash = '#/home'; }
   }));
 }
 

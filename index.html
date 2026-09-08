@@ -12,7 +12,7 @@
      carries this notice with it. See LICENSE. -->
 <meta name="author" content="Nabu Tarot">
 <meta name="copyright" content="Copyright (c) 2025-2026 Nabu Tarot. All rights reserved.">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'none'; object-src 'none'; form-action 'self'; script-src 'self' 'sha256-jXzhLP4hKEa9TEx8y6xnJtsGbI94yPSt3oUBEedufvI=' https://www.gstatic.com https://apis.google.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; font-src 'self' data:; media-src 'self' data: blob:; worker-src 'self'; connect-src 'self' https://*.googleapis.com https://*.google.com https://*.firebaseio.com https://*.cloudfunctions.net https://*.workers.dev https://generativelanguage.googleapis.com; frame-src https://*.firebaseapp.com https://accounts.google.com https://*.facebook.com">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'none'; object-src 'none'; form-action 'self'; script-src 'self' 'sha256-G3hL0KAXpCTHvdk9prR6FrnCMLwxlVNkUWB/jhc/0HQ=' https://www.gstatic.com https://apis.google.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; font-src 'self' data:; media-src 'self' data: blob:; worker-src 'self'; connect-src 'self' https://*.googleapis.com https://*.google.com https://*.firebaseio.com https://*.cloudfunctions.net https://*.workers.dev https://generativelanguage.googleapis.com; frame-src https://*.firebaseapp.com https://accounts.google.com https://*.facebook.com">
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <meta name="theme-color" content="#EFE9FA">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -3622,6 +3622,12 @@ const STR = {
     errWhere: 'Màn hình', errLast: 'gần nhất', errDone: 'Đã xử lý',
     adminTabs: { posts: '📝 Bài đăng', acts: '🎲 Hoạt động', schedule: '🕒 Lịch rảnh', bookings: '📅 Đặt lịch', pay: '💰 Thanh toán', inbox: '💬 Tin nhắn', codes: '🔑 Mã học', sale: '🏷️ Khuyến mãi', errors: '🚩 Báo cáo' },
     codeChecking: 'Đang kiểm tra mã…', codeOffline: 'Chưa kiểm tra được mã lúc này. Bạn thử lại khi có mạng nhé.', codeUsed: 'Mã này đã được dùng ở một tài khoản khác.', codeExpired: 'Mã này đã hết hạn.', codeSignIn: 'Bạn đăng nhập trước nhé. Mã được lưu trên tài khoản, nên máy nào cũng dùng được.', codeNotReady: 'Chưa kiểm tra được mã lúc này. Bạn nhắn cho Nabu ở mục Hồ sơ nhé.',
+    welTitle: 'Chào bạn! ✨', welLead: 'Chỉ vài câu thôi — bạn có thể đổi lại bất cứ lúc nào.',
+    welLang: 'Ngôn ngữ', welHandle: 'Tên riêng của bạn', welHandleHint: 'Bạn bè có thể tìm bạn bằng tên này.',
+    welBirthHint: 'Ngày sinh giúp Nabu xác định cung và chọn dự đoán phù hợp với bạn.',
+    welGo: 'Tiếp tục', welSaving: 'Đang lưu…',
+    welShort: 'Tên này ngắn quá. Bạn thêm vài ký tự nhé.',
+    welTaken: 'Tên này có người dùng rồi, Nabu đã chọn giúp bạn một tên gần giống.',
     codeUsedBy: 'đã dùng', codeUnused: 'chưa dùng', codeOpenThread: 'Mở tin nhắn', codeOldStyle: 'Mã cũ, phát trước khi đổi cách kiểm tra. Dán lại mã vào ô phía trên để dùng được.',
     copyCode: 'Sao chép mã', codeOnceOnly: 'Bạn hãy lưu mã này lại. App chỉ giữ dấu vân của mã nên sau này không xem lại được mã gốc.',
     codePublishing: 'Đang lưu mã…', codeOldLabel: 'Thêm mã bạn đã phát trước đây', codeOldAdd: 'Thêm các mã này',
@@ -4454,6 +4460,12 @@ const STR = {
     errWhere: 'Screen', errLast: 'last', errDone: 'Handled',
     adminTabs: { posts: '📝 Posts', acts: '🎲 Activities', schedule: '🕒 Hours', bookings: '📅 Bookings', pay: '💰 Payments', inbox: '💬 Inbox', codes: '🔑 Codes', sale: '🏷️ Sale', errors: '🚩 Reports' },
     codeChecking: 'Checking the code…', codeOffline: 'The code cannot be checked right now. Please try again when you are online.', codeUsed: 'This code has already been used on another account.', codeExpired: 'This code has expired.', codeSignIn: 'Sign in first. The code is kept on your account, so it works on every device you use.', codeNotReady: 'Codes cannot be checked right now. Please write to Nabu from the Profile tab.',
+    welTitle: 'Hello! ✨', welLead: 'Just a few questions — you can change any of it later.',
+    welLang: 'Language', welHandle: 'Your own name', welHandleHint: 'This is how friends find you.',
+    welBirthHint: 'Your birthday is what gives Nabu your sign and the right forecast for you.',
+    welGo: 'Continue', welSaving: 'Saving…',
+    welShort: 'That is a little short. Add a few more characters.',
+    welTaken: 'Somebody has that one already, so Nabu picked the nearest free name for you.',
     codeUsedBy: 'used', codeUnused: 'not used yet', codeOpenThread: 'Open their thread', codeOldStyle: 'Made before the check moved to the server. Paste it into the box above to make it work again.',
     copyCode: 'Copy the code', codeOnceOnly: 'Keep this code somewhere. The app stores only a fingerprint of it, so it cannot be shown again.',
     codePublishing: 'Saving the code…', codeOldLabel: 'Add codes you handed out before', codeOldAdd: 'Add these codes',
@@ -5285,6 +5297,12 @@ const STR = {
     errWhere: 'Bildschirm', errLast: 'zuletzt', errDone: 'Erledigt',
     adminTabs: { posts: '📝 Beiträge', acts: '🎲 Aktivitäten', schedule: '🕒 Zeiten', bookings: '📅 Termine', pay: '💰 Zahlungen', inbox: '💬 Posteingang', codes: '🔑 Codes', sale: '🏷️ Aktion', errors: '🚩 Meldungen' },
     codeChecking: 'Code wird geprüft…', codeOffline: 'Der Code lässt sich gerade nicht prüfen. Versuch es bitte noch einmal, wenn du online bist.', codeUsed: 'Dieser Code wurde schon mit einem anderen Konto benutzt.', codeExpired: 'Dieser Code ist abgelaufen.', codeSignIn: 'Bitte zuerst anmelden. Der Code wird auf deinem Konto gespeichert und gilt auf jedem Gerät.', codeNotReady: 'Codes können gerade nicht geprüft werden. Bitte schreib Nabu im Profil.',
+    welTitle: 'Hallo! ✨', welLead: 'Nur ein paar Fragen — du kannst alles später ändern.',
+    welLang: 'Sprache', welHandle: 'Dein eigener Name', welHandleHint: 'So finden dich deine Freunde.',
+    welBirthHint: 'Dein Geburtstag gibt Nabu dein Sternzeichen und die passende Vorhersage.',
+    welGo: 'Weiter', welSaving: 'Wird gespeichert…',
+    welShort: 'Das ist etwas kurz. Nimm noch ein paar Zeichen dazu.',
+    welTaken: 'Den hat schon jemand, also hat Nabu den nächsten freien Namen für dich gewählt.',
     codeUsedBy: 'benutzt', codeUnused: 'noch nicht benutzt', codeOpenThread: 'Nachrichten öffnen', codeOldStyle: 'Vor der Umstellung erstellt. Oben noch einmal einfügen, damit der Code wieder gilt.',
     copyCode: 'Den Code kopieren', codeOnceOnly: 'Heb diesen Code auf. Die App speichert nur seinen Fingerabdruck, er lässt sich also nicht noch einmal anzeigen.',
     codePublishing: 'Der Code wird gespeichert…', codeOldLabel: 'Früher ausgegebene Codes hinzufügen', codeOldAdd: 'Diese Codes hinzufügen',
@@ -13986,6 +14004,7 @@ const BE = {
      seen. Those belong to the phone, not to whoever was signed in on it. */
   async signOut() {
     try {
+      this.profileRead = false;
       saveProfileLocal({ name: '', birthday: '', interests: [] });
       store.set('nabu-profile', PROFILE);
       store.set('nabu-access', {});
@@ -14014,7 +14033,7 @@ const BE = {
        the one moment the tour is worth showing whatever this device has seen
        before: somebody who signed up is starting, even if the phone they did
        it on has been used by somebody else. */
-    if (!snap.exists) { store.set('nabu-onboard', 1); await this.pushProfile(); return; }
+    if (!snap.exists) { store.set('nabu-onboard', 1); await this.pushProfile(); this.profileRead = true; return; }
     const d = snap.data();
     /* The account's copy of what is open is the truth, and this phone takes
        it as read - whatever was here before. It used to be a merge that kept
@@ -14046,10 +14065,12 @@ const BE = {
         b: T().accessOnBody(fmtDate(cloud[fresh[0]])), href: '#/me' });
     }
     delete d.access; delete d.revoked; saveProfileLocal(d);
+    this.profileRead = true;
   },
   async pushProfile() {
     if (!this.user) return;
     const p = { name: PROFILE.name || this.user.displayName || '', birthday: PROFILE.birthday || '', interests: PROFILE.interests || [],
+      handle: PROFILE.handle || '', lang: PROFILE.lang || '',
       tourDone: !!PROFILE.tourDone, email: this.user.email || '', updatedAt: firebase.firestore.FieldValue.serverTimestamp() };
     await this.db.collection('users').doc(this.user.uid).set(p, { merge: true });
   },
@@ -14978,7 +14999,8 @@ function bindTour(root, step) {
     // On the home screen the card folds into its little bar; anywhere else it
     // was opened on purpose, so closing it simply removes it.
     if (parseHash().route === 'home') { $('#tour').outerHTML = tourMiniHTML(); bindTour(root, 0); }
-    else { const el = $('#tour', root); if (el) el.remove(); }
+    // The welcome screen becomes the tour; when it closes the person goes home.
+    else { const el = $('#tour', root); if (el) el.remove(); if (parseHash().route === 'welcome') location.hash = '#/home'; }
   }));
 }
 
@@ -18506,6 +18528,125 @@ ROUTES.love = {
     return renderLove(a === 'handle');
   }
 };
+
+/* ======================= the welcome screen =======================
+   Asked once, when the account is made, and never again.
+
+   Before this, the same person was asked for a name on the Me tab, asked to
+   register beside it, and then asked for a third name - a username - the first
+   time they opened the red thread. One person, three names.
+
+   It cannot come before the account exists: firestore.rules only lets a
+   signed-in person read handles/{handle}, so no username can be checked as
+   free until there is somebody to check it for. That is why this is a screen
+   after registration rather than a step inside it. */
+
+const WEL = { handleEdited: false };
+
+/* Somebody is sent here when their account holds no username.
+   BE.profileRead is what keeps this honest: it is only ever set by a real
+   pullProfile, so "no username" means the account was read and had none,
+   not merely that the account's profile has not been fetched yet. */
+function needsWelcome() {
+  return !!(BE && BE.enabled && BE.user && BE.profileRead === true && !(PROFILE && PROFILE.handle));
+}
+
+function welcomeHTML() {
+  const S = T(), p = PROFILE || {};
+  const langBtn = (code, label) => '<button type="button" class="chip' + (lang === code ? ' on' : '')
+    + '" data-wlang="' + code + '">' + esc(label) + '</button>';
+  return '<div class="card welcard">'
+    + '<h1 style="margin-bottom:4px">' + esc(S.welTitle) + '</h1>'
+    + '<p class="hint" style="margin-bottom:14px">' + esc(S.welLead) + '</p>'
+    + '<label class="f">' + esc(S.welLang) + '</label>'
+    + '<div class="chips">' + langBtn('vi', 'Tiếng Việt') + langBtn('en', 'English') + langBtn('de', 'Deutsch') + '</div>'
+    + '<label class="f" for="welname">' + esc(S.displayName) + '</label>'
+    + '<input id="welname" maxlength="24" autocomplete="nickname" value="' + esc(p.name || '') + '">'
+    + '<label class="f" for="welhandle">' + esc(S.welHandle) + '</label>'
+    + '<div class="row nw athandle"><span class="at">@</span>'
+    + '<input id="welhandle" maxlength="20" autocapitalize="none" spellcheck="false" value="' + esc(p.handle || '') + '"></div>'
+    + '<p class="hint">' + esc(S.welHandleHint) + '</p>'
+    + '<label class="f" for="welbday">' + esc(S.birthday) + '</label>'
+    + '<input id="welbday" type="date" value="' + esc(p.birthday || '') + '" max="' + isoDate(new Date()) + '">'
+    + '<p class="hint">' + esc(S.welBirthHint) + '</p>'
+    + '<label class="f">' + esc(S.interests) + '</label>'
+    + '<div class="chips">' + INTERESTS.map((i) => '<button type="button" class="chip'
+      + ((p.interests || []).indexOf(i.id) > -1 ? ' on' : '') + '" data-int="' + esc(i.id) + '">'
+      + esc(i[lang] || i.en) + '</button>').join('') + '</div>'
+    + '<button type="button" class="btn primary block" id="welgo" style="margin-top:16px">' + esc(S.welGo) + '</button>'
+    + '<p class="hint" id="welstatus"></p></div>';
+}
+
+function renderWelcome() {
+  const m = $('#main');
+  WEL.handleEdited = false;
+  const draw = () => {
+    m.innerHTML = welcomeHTML();
+    const nameEl = $('#welname', m), hEl = $('#welhandle', m);
+
+    /* The username follows the name until the person takes it over. After
+       that it is theirs, and typing more of their name must not overwrite it. */
+    nameEl.addEventListener('input', () => {
+      if (WEL.handleEdited) return;
+      hEl.value = handleFrom(nameEl.value);
+    });
+    hEl.addEventListener('input', () => { WEL.handleEdited = true; });
+
+    $$('[data-wlang]', m).forEach((b) => b.addEventListener('click', () => {
+      lang = b.getAttribute('data-wlang');
+      store.set('nabu-lang', lang);
+      draw();                                  // redraw so the rest is readable in it
+    }));
+    $$('[data-int]', m).forEach((b) => b.addEventListener('click', () => b.classList.toggle('on')));
+
+    $('#welgo', m).addEventListener('click', async () => {
+      const b = $('#welgo', m), st = $('#welstatus', m);
+      const name = nameEl.value.trim();
+      const wanted = handleFrom(hEl.value || name);
+      if (wanted.length < 3) { st.className = 'hint err'; st.textContent = T().welShort; return; }
+      b.disabled = true; st.className = 'hint'; st.textContent = T().welSaving;
+      try {
+        const got = await claimFreeHandle(wanted, name);
+        saveProfileLocal({
+          name: name, handle: got, lang: lang,
+          birthday: $('#welbday', m).value,
+          interests: $$('[data-int].on', m).map((x) => x.getAttribute('data-int'))
+        });
+        if (BE.user) { try { await BE.pushProfile(); } catch (e) { /* offline: the local copy stays */ } }
+        if (got !== wanted) toast(T().welTaken);
+        showTour(m);
+      } catch (e) {
+        b.disabled = false;
+        st.className = 'hint err';
+        st.textContent = (typeof loveWhy === 'function') ? loveWhy(e) : String(e.message || e);
+      }
+    });
+  };
+  draw();
+}
+
+/* Claim the name they asked for, or the nearest free one. love.js throws
+   'taken' rather than choosing for them, which is right on a screen they came
+   to on purpose and wrong on the way in - nobody should be stopped at
+   registration by a stranger's username. */
+async function claimFreeHandle(wanted, name) {
+  for (let n = 0; n < 12; n++) {
+    const tryThis = n === 0 ? wanted : (wanted + (n + 1)).slice(0, 20);
+    try { return await LOVEDB.claimHandle(tryThis, name); }
+    catch (e) { if (String(e.message) !== 'taken') throw e; }
+  }
+  throw new Error('taken');
+}
+
+/* The same screen becomes the tour. Not a route of its own: a second address
+   would let the back button drop somebody onto a questionnaire they have
+   already answered. */
+function showTour(m) {
+  m.innerHTML = tourHTML(0);
+  bindTour(m, 0);
+}
+
+ROUTES.welcome = { nav: 'me', render: renderWelcome };
 
 /* ============================ lesson quizzes ============================
    Five questions after every lesson of the three paid courses, and you pass at
@@ -26245,7 +26386,7 @@ ROUTES.admin = { nav: '', render: renderAdmin };
 
 /* ============================ boot ============================ */
 window.APP_VERSION = 'v184';
-window.NABU = { CONFIG: CONFIG, SALE: SALE, salePrice: salePrice, loadActs: loadActs, BACK: BACK, LESSONS: LESSONS, localAnswer: localAnswer, compatVerdict: compatVerdict, numerologyOf: numerologyOf, ZDEEP: ZDEEP, lunarToday: lunarToday, solarToLunar: solarToLunar, DECK: DECK, INSIGHT: INSIGHT, KW: KW, ASK: ASK, TOPICS: TOPICS, GUIDES: GUIDES, SERVICES: SERVICES, COURSES: COURSES, ACCESS: ACCESS, plusOn: () => plusOn(), proOn: () => proOn(), luckUnlimited: () => luckUnlimited(), ZODIAC: ZODIAC, pick: pick, book: book,
+window.NABU = { CONFIG: CONFIG, SALE: SALE, salePrice: salePrice, loadActs: loadActs, BACK: BACK, LESSONS: LESSONS, localAnswer: localAnswer, compatVerdict: compatVerdict, numerologyOf: numerologyOf, ZDEEP: ZDEEP, lunarToday: lunarToday, solarToLunar: solarToLunar, DECK: DECK, INSIGHT: INSIGHT, KW: KW, ASK: ASK, TOPICS: TOPICS, GUIDES: GUIDES, SERVICES: SERVICES, COURSES: COURSES, ACCESS: ACCESS, INTERESTS: INTERESTS, plusOn: () => plusOn(), proOn: () => proOn(), luckUnlimited: () => luckUnlimited(), ZODIAC: ZODIAC, pick: pick, book: book,
   insightHTML: insightHTML, insightOf: insightOf, sunSignIndex: sunSignIndex, lifePath: lifePath, PROFILE: () => PROFILE, BE: BE, ACTS: ACTS,
   ANGELS: ANGELS, angelRead: angelRead, CODEBOOK: CODEBOOK, redeemCode: redeemCode, loadCodebook: loadCodebook, petHomeSVG: petHomeSVG, PET_HOMES: PET_HOMES, PET_WEARS: PET_WEARS, codeDigest: codeDigest, randomCode: randomCode, BANK: BANK, PETS: PETS, petSVG: petSVG, PET_COATS: PET_COATS, PET_KINDS: PET_KINDS, luckCut: luckCut, petLevel: petLevel, petStep: petStep, VOUCHERS: VOUCHERS, levelCoins: levelCoins, LOOKS: LOOKS,
   LOVE: LOVE, LOVEDB: LOVEDB, HANDLE_RE: HANDLE_RE, loveBadgeHTML: loveBadgeHTML,

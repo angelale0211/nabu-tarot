@@ -71,6 +71,7 @@ const BE = {
      seen. Those belong to the phone, not to whoever was signed in on it. */
   async signOut() {
     try {
+      this.profileRead = false;
       saveProfileLocal({ name: '', birthday: '', interests: [] });
       store.set('nabu-profile', PROFILE);
       store.set('nabu-access', {});
@@ -99,7 +100,7 @@ const BE = {
        the one moment the tour is worth showing whatever this device has seen
        before: somebody who signed up is starting, even if the phone they did
        it on has been used by somebody else. */
-    if (!snap.exists) { store.set('nabu-onboard', 1); await this.pushProfile(); return; }
+    if (!snap.exists) { store.set('nabu-onboard', 1); await this.pushProfile(); this.profileRead = true; return; }
     const d = snap.data();
     /* The account's copy of what is open is the truth, and this phone takes
        it as read - whatever was here before. It used to be a merge that kept
@@ -131,10 +132,12 @@ const BE = {
         b: T().accessOnBody(fmtDate(cloud[fresh[0]])), href: '#/me' });
     }
     delete d.access; delete d.revoked; saveProfileLocal(d);
+    this.profileRead = true;
   },
   async pushProfile() {
     if (!this.user) return;
     const p = { name: PROFILE.name || this.user.displayName || '', birthday: PROFILE.birthday || '', interests: PROFILE.interests || [],
+      handle: PROFILE.handle || '', lang: PROFILE.lang || '',
       tourDone: !!PROFILE.tourDone, email: this.user.email || '', updatedAt: firebase.firestore.FieldValue.serverTimestamp() };
     await this.db.collection('users').doc(this.user.uid).set(p, { merge: true });
   },
