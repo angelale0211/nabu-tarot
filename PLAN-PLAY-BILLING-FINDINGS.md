@@ -39,7 +39,8 @@ rediscover:
 
 | # | What | Who |
 |---|---|---|
-| **F8** | **The Play Developer API is switched off in the Google Cloud project, and the worker cannot check a single purchase without it.** Asking it anything answers *"Google Play Android Developer API has not been used in project 609592701892 before or it is disabled"*. Every purchase would have come back `check failed`, after the buyer had paid. Found by calling the API with the worker's own service account. Enable it at `https://console.developers.google.com/apis/api/androidpublisher.googleapis.com/overview?project=609592701892`, then wait a few minutes. The service account cannot enable it itself: it has no permission to, which was also tried | owner, 2 minutes |
+| **F8b** | **The service account is not linked to the app in Play Console.** With the interface now on, the same call answers `The caller does not have permission`. Until `nabu-worker@nabutarot.iam.gserviceaccount.com` is invited under Play Console > Users and permissions (or Setup > API access) with *View app information*, *View financial data* and *Manage orders*, the worker cannot check a purchase and every buyer gets `check failed` | owner |
+| ~~F8~~ | ~~The Play Developer API is switched off in the Google Cloud project, and the worker cannot check a single purchase without it.** Asking it anything answers *"Google Play Android Developer API has not been used in project 609592701892 before or it is disabled"*. Every purchase would have come back `check failed`, after the buyer had paid. Found by calling the API with the worker's own service account. Enabled by the owner on 2026-09-08 and confirmed working. Superseded by F8b.~~ | done |
 | **F2 (rest)** | **The fingerprint that actually matters is still missing.** Play App Signing means the app on a tester's phone is signed by **Google's** key, not by either key here. Its SHA-256 is in Play Console > Setup > App integrity, *App signing key certificate*. Until it is in `assetlinks.json`, the installed app shows a browser bar and `getDigitalGoodsService` throws, so no Buy button ever appears. **This is the single most likely reason a test purchase will not work.** Send me the fingerprint and it is a two-minute change | owner reads it, me to publish |
 | F1 (upload) | Upload one bundle to internal testing. **Which one depends on the Upload key certificate** on the same Console page: B3:BF means `pkg-billing-pkg`, B7:56 means `pkg-billing-pkg-2026-09-08`. Version code 2; if Play says the code is taken, say so and I rebuild in five minutes | owner |
 | — | The eight consumable products, payments profile, licence testers, API access for `nabu-worker@nabutarot.iam.gserviceaccount.com` | owner, plan Phase B |
@@ -70,7 +71,9 @@ read by somebody who can sign in. A screenshot of that page is enough.
 
 Enabling the Play Developer API was attempted with the service account and
 refused: `Permission denied to enable service`. Only a person with owner or
-service-usage rights on the Cloud project can switch it on.
+service-usage rights on the Cloud project can switch it on. **The owner did
+so on 2026-09-08 and it is now Enabled**, confirmed by the error changing from
+"has not been used in project" to "the caller does not have permission".
 
 ## Worth knowing
 
