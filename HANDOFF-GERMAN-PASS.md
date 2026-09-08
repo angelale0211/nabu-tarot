@@ -1,7 +1,13 @@
 # Handover — German localization pass, privacy correction, composer German
 
-Session of 2026-09-08. Released as `4bf2839` on `main`, pushed, and confirmed
-live at https://nabutarot.com. Start here if you are picking the work up.
+Session of 2026-09-08. Three commits on `main`, pushed, and confirmed live at
+https://nabutarot.com. Start here if you are picking the work up.
+
+- `4bf2839` — the localization pass, the privacy correction, German in both composers
+- `1ccd517` — this handover
+- `9d0eaa5` — activities fill their own German at load
+
+The suite passes 604/604 as of `9d0eaa5`.
 
 ---
 
@@ -95,7 +101,7 @@ every load. It is a tidy-up, not a requirement.
 
 ```
 python build.py                  # src/ -> index.html + privacy.html
-python test/run.py               # 604 checks, all passing as of 4bf2839
+python test/run.py               # 604 checks, all passing as of 9d0eaa5
 python _patch/jscheck.py         # parse-only check, builds to a temp dir
 python _patch/de_audit.py        # every STR.de leaf identical to STR.en
 python _patch/parity.py          # key parity across the three STR blocks
