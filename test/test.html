@@ -662,6 +662,28 @@ async function go(hash, sel) { W().location.hash = hash; await sleep(30); return
       ok(typeof W().NABU.BE.pushTurns === 'function', 'the account has somewhere to write a spent turn');
       if (keepT.p === null) W().localStorage.removeItem('nabu-pick-day'); else W().localStorage.setItem('nabu-pick-day', keepT.p);
       if (keepT.l === null) W().localStorage.removeItem('nabu-luck'); else W().localStorage.setItem('nabu-luck', keepT.l); }
+    { /* The coin answers a question, so it will not flip without one. A yes on
+         its own means nothing, and the free flip is one every three days -
+         too expensive to spend on an empty box. */
+      const keepQ = W().localStorage.getItem('nabu-coinq'), keepCL = W().localStorage.getItem('nabu-luck');
+      /* The flip button is only drawn for somebody signed in. Device-only mode
+         is the cheapest way to be that here: signedIn() is true when there is
+         no backend to be signed in to, and nothing reaches the network. */
+      const keepBE = { on: W().NABU.BE.enabled, user: W().NABU.BE.user };
+      W().NABU.BE.enabled = false; W().NABU.BE.user = null;
+      W().localStorage.removeItem('nabu-coinq');
+      W().localStorage.setItem('nabu-luck', JSON.stringify({}));
+      await go('#/play/coin', '#coinq');
+      const typed = (v) => { const q = D().querySelector('#coinq'); q.value = v; q.dispatchEvent(new (W().Event)('input', { bubbles: true })); return D().querySelector('#coinflip'); };
+      const b0 = D().querySelector('#coinflip');
+      ok(!!b0 && b0.disabled, 'the coin will not flip until a question is written');
+      ok(!!D().querySelector('#coinq'), 'and the box to write it in is on the screen');
+      ok(!typed('Soll ich es tun?').disabled, 'writing a question wakes the button');
+      ok(typed('   ').disabled, 'a box of spaces is not a question');
+      ok(typed('').disabled, 'clearing the question puts the button back to sleep');
+      W().NABU.BE.enabled = keepBE.on; W().NABU.BE.user = keepBE.user;
+      if (keepQ === null) W().localStorage.removeItem('nabu-coinq'); else W().localStorage.setItem('nabu-coinq', keepQ);
+      if (keepCL === null) W().localStorage.removeItem('nabu-luck'); else W().localStorage.setItem('nabu-luck', keepCL); }
     { /* German reads exactly as Vietnamese and English do. An earlier layout
          pass gave German a ragged right of its own to avoid rivers of white
          space; paired with hyphenation that was the worst of both, breaking a
@@ -856,6 +878,10 @@ async function go(hash, sel) { W().location.hash = hash; await sleep(30); return
       d.querySelector('#shake').click(); await waitFor(() => !d.querySelector('#treemsg').hidden, 6000);
       ok(d.querySelector('#treetext').textContent.length > 20 && d.querySelectorAll('#tree .petals i').length === 0, 'shaking the tree drops one written message and clears the petals');
       await go('#/play/coin', '#coinflip'); ok(d.querySelector('#coin svg') && d.querySelector('#coinres').textContent === '', 'the coin starts unflipped');
+      /* The coin will not answer nothing, so the question comes first - the
+         same order a visitor does it in. */
+      ok(d.querySelector('#coinflip').disabled, 'and it will not flip while the question box is empty');
+      { const cq = d.querySelector('#coinq'); cq.value = 'Có nên không?'; cq.dispatchEvent(new (w.Event)('input', { bubbles: true })); }
       d.querySelector('#coinflip').click(); await waitFor(() => d.querySelector('#coinres').textContent, 6000);
       ok(/^(CÓ|KHÔNG)$/.test(d.querySelector('#coin svg text').textContent) && d.querySelector('#coin svg text').getBBox().width < 120, 'the coin carries its answer on its own face, inside the ring');
       { const tb = d.querySelector('#coin svg text').getBBox();
