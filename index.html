@@ -12,7 +12,7 @@
      carries this notice with it. See LICENSE. -->
 <meta name="author" content="Nabu Tarot">
 <meta name="copyright" content="Copyright (c) 2025-2026 Nabu Tarot. All rights reserved.">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'none'; object-src 'none'; form-action 'self'; script-src 'self' 'sha256-IOtqqx2EsI/IzV/lf6mkvkd+VEmyfT/RqnbM23+DfQw=' https://www.gstatic.com https://apis.google.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; font-src 'self' data:; media-src 'self' data: blob:; worker-src 'self'; connect-src 'self' https://*.googleapis.com https://*.google.com https://*.firebaseio.com https://*.cloudfunctions.net https://*.workers.dev https://generativelanguage.googleapis.com; frame-src https://*.firebaseapp.com https://accounts.google.com https://*.facebook.com">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'none'; object-src 'none'; form-action 'self'; script-src 'self' 'sha256-HEtYYjX+fwez5VjndJyr2Dtv3fX5QLdrILF6i3aqAAI=' https://www.gstatic.com https://apis.google.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; font-src 'self' data:; media-src 'self' data: blob:; worker-src 'self'; connect-src 'self' https://*.googleapis.com https://*.google.com https://*.firebaseio.com https://*.cloudfunctions.net https://*.workers.dev https://generativelanguage.googleapis.com; frame-src https://*.firebaseapp.com https://accounts.google.com https://*.facebook.com">
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <meta name="theme-color" content="#EFE9FA">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -2721,6 +2721,11 @@ const CONFIG = {
   repo: 'angelale0211/nabu-tarot',
   branch: 'main',
   postsPath: 'posts.json',
+  // The closed-test opt-in link. Only a Play install can buy anything: a
+  // sideloaded APK and the site added to a home screen look identical on
+  // the phone and neither can reach Play Billing. When the app goes public
+  // this becomes the ordinary store URL. Empty hides the Play card.
+  playTestUrl: 'https://play.google.com/apps/testing/app.nabutarot.twa',
   schedulePath: 'schedule.json',
 
   // Accounts, messages and bookings need a small cloud backend. Paste the
@@ -3741,7 +3746,7 @@ const STR = {
     noMsgs: 'Chưa có tin nhắn. Bạn cứ hỏi, Nabu sẽ trả lời.',
     themeTitle: 'Chế độ sáng tối', themes: { auto: 'Theo điện thoại', light: 'Sáng', dark: 'Tối', pink: 'Hồng pastel' }, themeHint: 'Chọn Theo điện thoại để Nabu tự đổi sáng/tối cùng hệ thống. Nút góc trên chuyển lần lượt: sáng → tối → hồng.',
     installTitle: 'Cài app lên điện thoại', installLink: 'Tải app', instIntro: 'Nabu Tarot chạy như một app thật trên điện thoại: có biểu tượng riêng, mở toàn màn hình, dùng được cả khi mất mạng, và tự cập nhật.', instAlready: 'Bạn đang dùng bản app rồi. Gửi trang này cho bạn bè để họ cài nhé.',
-    instAndroidIntro: 'Bạn tải tệp cài đặt về máy, mở tệp đó rồi bấm Cài đặt.', instDownload: 'Tải app cho Android (2 MB)', instAndroidSteps: ['Bấm nút tải ở trên. Chrome sẽ hỏi có tải tệp không, chọn Tải xuống.', 'Mở tệp nabu-tarot.apk từ thanh thông báo hoặc mục Tệp đã tải.', 'Nếu điện thoại hỏi "Cho phép cài từ nguồn này?", bật cho phép rồi quay lại.', 'Bấm Cài đặt. Biểu tượng Nabu Tarot xuất hiện trên màn hình chính.'], instAndroidNote: 'App do Nabu ký, an toàn. Điện thoại cảnh báo vì tệp tải ngoài Google Play; bản trên Google Play sẽ có sau.',
+    instAndroidIntro: 'Bạn tải tệp cài đặt về máy, mở tệp đó rồi bấm Cài đặt.', instDownload: 'Tải app cho Android (2 MB)', instAndroidSteps: ['Bấm nút tải ở trên. Chrome sẽ hỏi có tải tệp không, chọn Tải xuống.', 'Mở tệp nabu-tarot.apk từ thanh thông báo hoặc mục Tệp đã tải.', 'Nếu điện thoại hỏi "Cho phép cài từ nguồn này?", bật cho phép rồi quay lại.', 'Bấm Cài đặt. Biểu tượng Nabu Tarot xuất hiện trên màn hình chính.'], instAndroidNote: 'App do Nabu ký, an toàn. Điện thoại cảnh báo vì tệp tải ngoài Google Play.', instPlayIntro: 'Bản trên Google Play là bản đầy đủ. Chỉ bản này mới mua được gói trong app. App đang thử nghiệm kín, nên bạn cần được Nabu mời trước.', instPlayBtn: 'Mở Google Play', instPlayNote: 'Nếu Google báo không tìm thấy trang, tài khoản của bạn chưa có trong danh sách thử nghiệm. Bạn nhắn Nabu để được thêm vào.', instApkWarn: 'Bản này không mua được gói trong app. Muốn mua, bạn cài bản trên Google Play ở trên.',
     instIosIntro: 'iPhone không cho phép cài tệp ngoài App Store, nhưng Safari vẫn cài được app này chỉ với ba bước.', instIosSteps: ['Mở trang này bằng Safari (không phải trong Instagram hay Facebook).', 'Bấm nút Chia sẻ (hình ô vuông có mũi tên đi lên) ở thanh dưới.', 'Cuộn xuống, chọn "Thêm vào MH chính", rồi bấm Thêm.'], instIosNote: 'Biểu tượng Nabu Tarot xuất hiện như mọi app khác và mở toàn màn hình.',
     instUpdatesTitle: 'Cập nhật tự động', instUpdates: 'Cả hai bản đều mở nội dung mới nhất mỗi lần bạn vào: bài viết, khoá học, tính năng mới. Bạn không phải cài lại bao giờ.', instShareHint: 'Muốn giới thiệu cho bạn bè?', instShare: 'Gửi link cài app', instShareText: 'Cài app Nabu Tarot: rút bài mỗi ngày, học tarot, đặt lịch xem bài.',
     install: 'Trên iPhone: mở bằng Safari, bấm Chia sẻ, chọn "Thêm vào MH chính". Trên Android: bấm menu ⋮ rồi "Cài đặt ứng dụng".',
@@ -4572,7 +4577,7 @@ const STR = {
     noMsgs: 'No messages yet. Ask away, Nabu will answer.',
     themeTitle: 'Light or dark', themes: { auto: 'Match my phone', light: 'Light', dark: 'Dark', pink: 'Pastel pink' }, themeHint: 'Choose Follow device so Nabu switches between light and dark with your system. The top button cycles: light → dark → pink.',
     installTitle: 'Install on your phone', installLink: 'App', instIntro: 'Nabu Tarot runs as a real app on your phone: its own icon, full screen, works offline, and updates itself.', instAlready: 'You are already using the app. Send this page to friends so they can install it.',
-    instAndroidIntro: 'Download the installer, open it, tap Install. Done.', instDownload: 'Download for Android (2 MB)', instAndroidSteps: ['Tap the download button above. Chrome asks whether to download the file: choose Download.', 'Open nabu-tarot.apk from the notification bar or your Downloads.', 'If the phone asks "Allow from this source?", allow it and come back.', 'Tap Install. The Nabu Tarot icon appears on your home screen.'], instAndroidNote: 'The app is signed by Nabu and safe. The phone warns because the file comes from outside Google Play; the Play version follows later.',
+    instAndroidIntro: 'Download the installer, open it, tap Install. Done.', instDownload: 'Download for Android (2 MB)', instAndroidSteps: ['Tap the download button above. Chrome asks whether to download the file: choose Download.', 'Open nabu-tarot.apk from the notification bar or your Downloads.', 'If the phone asks "Allow from this source?", allow it and come back.', 'Tap Install. The Nabu Tarot icon appears on your home screen.'], instAndroidNote: 'The app is signed by Nabu and safe. The phone warns because the file comes from outside Google Play.', instPlayIntro: 'The Google Play version is the full one. Only this version can buy anything inside the app. The app is in a closed test, so Nabu has to invite you first.', instPlayBtn: 'Open on Google Play', instPlayNote: 'If Google says the page was not found, your account is not on the tester list yet. Message Nabu to be added.', instApkWarn: 'This version cannot buy anything inside the app. To buy, install the Google Play version above.',
     instIosIntro: 'iPhone does not allow installers outside the App Store, but Safari installs this app in three steps.', instIosSteps: ['Open this page in Safari (not inside Instagram or Facebook).', 'Tap the Share button (the square with an arrow) in the bottom bar.', 'Scroll down, choose "Add to Home Screen", then tap Add.'], instIosNote: 'The Nabu Tarot icon appears like any other app and opens full screen.',
     instUpdatesTitle: 'Automatic updates', instUpdates: 'Both versions open the newest content every time: posts, courses, new features. You never reinstall.', instShareHint: 'Want to tell friends?', instShare: 'Send the install link', instShareText: 'Install the Nabu Tarot app: a card a day, tarot lessons, book a reading.',
     install: 'iPhone: open in Safari, tap Share, then "Add to Home Screen". Android: tap the ⋮ menu, then "Install app".',
@@ -5395,7 +5400,7 @@ const STR = {
     noMsgs: 'Noch keine Nachrichten. Frag ruhig, Nabu antwortet.',
     themeTitle: 'Hell oder dunkel', themes: { auto: 'Wie mein Gerät', light: 'Hell', dark: 'Dunkel', pink: 'Pastellrosa' }, themeHint: 'Wähl „Gerät“, damit Nabu Hell/Dunkel mit deinem System übernimmt. Der obere Button wechselt der Reihe nach: hell → dunkel → rosa.',
     installTitle: 'Auf deinem Gerät installieren', installLink: 'App', instIntro: 'Nabu Tarot läuft als echte App auf deinem Gerät: eigenes Symbol, Vollbild, funktioniert offline und aktualisiert sich selbst.', instAlready: 'Du benutzt die App schon. Schick diese Seite an Freunde, damit sie sie installieren können.',
-    instAndroidIntro: 'Lad die Installationsdatei herunter, öffne sie, tipp auf Installieren. Fertig.', instDownload: 'Für Android herunterladen (2 MB)', instAndroidSteps: ['Tipp oben auf den Download-Button. Wenn Chrome fragt, ob die Datei heruntergeladen werden soll, wähle „Herunterladen“.', 'Öffne nabu-tarot.apk über die Benachrichtigungsleiste oder deinen Download-Ordner.', 'Wenn dein Handy nach „Apps aus dieser Quelle zulassen?“ fragt, erlaube es und geh anschließend zurück.', 'Tipp auf „Installieren“. Danach erscheint das Nabu-Tarot-Symbol auf deinem Startbildschirm.'], instAndroidNote: 'Die App ist von Nabu signiert und sicher. Das Gerät warnt, weil die Datei nicht von Google Play kommt; die Play-Version folgt später.',
+    instAndroidIntro: 'Lad die Installationsdatei herunter, öffne sie, tipp auf Installieren. Fertig.', instDownload: 'Für Android herunterladen (2 MB)', instAndroidSteps: ['Tipp oben auf den Download-Button. Wenn Chrome fragt, ob die Datei heruntergeladen werden soll, wähle „Herunterladen“.', 'Öffne nabu-tarot.apk über die Benachrichtigungsleiste oder deinen Download-Ordner.', 'Wenn dein Handy nach „Apps aus dieser Quelle zulassen?“ fragt, erlaube es und geh anschließend zurück.', 'Tipp auf „Installieren“. Danach erscheint das Nabu-Tarot-Symbol auf deinem Startbildschirm.'], instAndroidNote: 'Die App ist von Nabu signiert und sicher. Das Gerät warnt, weil die Datei nicht von Google Play kommt.', instPlayIntro: 'Die Version aus Google Play ist die vollständige. Nur mit ihr kannst du in der App etwas kaufen. Die App ist in einem geschlossenen Test, deshalb muss Nabu dich vorher einladen.', instPlayBtn: 'Bei Google Play öffnen', instPlayNote: 'Wenn Google meldet, die Seite sei nicht gefunden, steht dein Konto noch nicht auf der Testerliste. Schreib Nabu, damit du ergänzt wirst.', instApkWarn: 'Mit dieser Version kannst du in der App nichts kaufen. Zum Kaufen installier die Google-Play-Version oben.',
     instIosIntro: 'Das iPhone erlaubt keine Installationsdateien außerhalb des App Store, aber Safari installiert diese App in drei Schritten.', instIosSteps: ['Öffne diese Seite in Safari, nicht im Browser von Instagram oder Facebook.', 'Tipp unten auf „Teilen“ – das Quadrat mit dem Pfeil nach oben.', 'Scrolle nach unten, wähle „Zum Home-Bildschirm“ und tippe dann auf „Hinzufügen“.'], instIosNote: 'Das Nabu-Tarot-Symbol erscheint wie jede andere App und öffnet im Vollbild.',
     instUpdatesTitle: 'Automatische Updates', instUpdates: 'Beide Versionen öffnen jedes Mal die neuesten Inhalte: Beiträge, Kurse, neue Funktionen. Du installierst nie neu.', instShareHint: 'Willst du es Freunden erzählen?', instShare: 'Den Installationslink senden', instShareText: 'Installier die Nabu-Tarot-App: eine Karte am Tag, Tarot-Lektionen, eine Legung buchen.',
     install: 'iPhone: in Safari öffnen, auf Teilen tippen, dann "Zum Home-Bildschirm". Android: das ⋮-Menü antippen, dann "App installieren".',
@@ -27975,10 +27980,14 @@ async function renderPrivacy() {
 ROUTES.privacy = { nav: 'me', render: renderPrivacy };
 
 /* ============================ install (#/install) ============================
-   How to get the app on a phone. Android: a signed package (nabu-tarot.apk,
-   built from the live site as a Trusted Web Activity) downloads and installs
-   in two taps; it opens this site full screen, so every update is picked up
-   at once. iPhone: Safari's Add to Home Screen, which is the same app. */
+   How to get the app on a phone. Android has two doors and they are NOT
+   equal: the Play build can buy things, the downloaded .apk cannot. Play
+   Billing only answers an app Play itself installed, so a sideloaded copy -
+   and the site added to a home screen - look identical on the phone and can
+   never reach the store. Play goes first and the .apk carries that warning in
+   its own words; leaving them side by side unmarked cost a tester a day of
+   tapping Buy on a build that could not answer. iPhone: Safari's Add to Home
+   Screen, which is the same app and has the same limit. */
 function platformOf() {
   const ua = navigator.userAgent || '';
   if (/android/i.test(ua)) return 'android';
@@ -27988,14 +27997,18 @@ function platformOf() {
 const isStandalone = () => window.matchMedia('(display-mode: standalone)').matches || navigator.standalone === true;
 function renderInstall() {
   const S = T(), m = $('#main'), pf = platformOf(), inApp = isStandalone() || isTWA();
+  const play = CONFIG.playTestUrl ? '<div class="card"><h3>▶️ Google Play</h3><p class="muted" style="margin:6px 0 10px">' + esc(S.instPlayIntro) + '</p>'
+    + '<a class="btn primary block" href="' + esc(CONFIG.playTestUrl) + '" target="_blank" rel="noopener">' + esc(S.instPlayBtn) + '</a>'
+    + '<p class="hint">' + esc(S.instPlayNote) + '</p></div>' : '';
   const android = '<div class="card"><h3>🤖 Android</h3><p class="muted" style="margin:6px 0 10px">' + esc(S.instAndroidIntro) + '</p>'
-    + '<a class="btn primary block" href="nabu-tarot.apk" download="nabu-tarot.apk">⬇️ ' + esc(S.instDownload) + '</a>'
+    + (CONFIG.playTestUrl ? '<p class="hint err" style="margin:0 0 10px">' + esc(S.instApkWarn) + '</p>' : '')
+    + '<a class="btn' + (CONFIG.playTestUrl ? '' : ' primary') + ' block" href="nabu-tarot.apk" download="nabu-tarot.apk">⬇️ ' + esc(S.instDownload) + '</a>'
     + '<ol class="steps" style="margin-top:12px">' + S.instAndroidSteps.map((x) => '<li>' + esc(x) + '</li>').join('') + '</ol><p class="hint">' + esc(S.instAndroidNote) + '</p></div>';
   const ios = '<div class="card"><h3>🍎 iPhone / iPad</h3><p class="muted" style="margin:6px 0 10px">' + esc(S.instIosIntro) + '</p>'
     + '<ol class="steps">' + S.instIosSteps.map((x) => '<li>' + esc(x) + '</li>').join('') + '</ol><p class="hint">' + esc(S.instIosNote) + '</p></div>';
   m.innerHTML = '<div class="eyebrow">' + esc(CONFIG.brand) + '</div><h1 style="margin-bottom:6px">' + esc(S.installTitle) + '</h1><p class="muted">' + esc(S.instIntro) + '</p>'
     + (inApp ? '<div class="banner">✅ ' + esc(S.instAlready) + '</div>' : '')
-    + (pf === 'ios' ? ios + android : android + ios)
+    + (pf === 'ios' ? ios + play + android : play + android + ios)
     + '<div class="card"><h3>🔄 ' + esc(S.instUpdatesTitle) + '</h3><p class="muted" style="margin-top:6px">' + esc(S.instUpdates) + '</p></div>'
     + '<p class="hint" style="text-align:center">' + esc(S.instShareHint) + '</p><button class="btn block" id="instshare">🔗 ' + esc(S.instShare) + '</button>';
   $('#instshare').addEventListener('click', () => shareOrCopy(S.instShareText, appURL() + '#/install'));
@@ -31813,7 +31826,7 @@ function adminSale(p) {
 ROUTES.admin = { nav: '', render: renderAdmin };
 
 /* ============================ boot ============================ */
-window.APP_VERSION = 'v211';
+window.APP_VERSION = 'v212';
 window.NABU = { CONFIG: CONFIG, SALE: SALE, salePrice: salePrice, loadActs: loadActs, BACK: BACK, LESSONS: LESSONS, localAnswer: localAnswer, compatVerdict: compatVerdict, numerologyOf: numerologyOf, ZDEEP: ZDEEP, lunarToday: lunarToday, solarToLunar: solarToLunar, DECK: DECK, INSIGHT: INSIGHT, KW: KW, ASK: ASK, TOPICS: TOPICS, GUIDES: GUIDES, SERVICES: SERVICES, COURSES: COURSES, ACCESS: ACCESS, INTERESTS: INTERESTS, plusOn: () => plusOn(), proOn: () => proOn(), luckUnlimited: () => luckUnlimited(), ZODIAC: ZODIAC, pick: pick, book: book, PLAY_ITEMS: PLAY_ITEMS, PLAY_SUB_SKUS: PLAY_SUB_SKUS, playItem: playItem, BILL: BILL, SUBS: SUBS, renderStore: renderStore, subStateWord: subStateWord,
   insightHTML: insightHTML, insightOf: insightOf, sunSignIndex: sunSignIndex, lifePath: lifePath, PROFILE: () => PROFILE, BE: BE, ACTS: ACTS,
   ANGELS: ANGELS, angelRead: angelRead, CODEBOOK: CODEBOOK, redeemCode: redeemCode, loadCodebook: loadCodebook, petHomeSVG: petHomeSVG, PET_HOMES: PET_HOMES, PET_WEARS: PET_WEARS, codeDigest: codeDigest, randomCode: randomCode, BANK: BANK, PETS: PETS, petSVG: petSVG, PET_COATS: PET_COATS, PET_KINDS: PET_KINDS, turnsMerge: turnsMerge, turnsLocal: turnsLocal, priceText: priceText, termText: termText, proSaveText: () => proSaveText(), wedFeeText: () => wedFeeText(), fmtPrice: fmtPrice, luckCut: luckCut, petLevel: petLevel, petStep: petStep, VOUCHERS: VOUCHERS, levelCoins: levelCoins, LOOKS: LOOKS,

@@ -35,6 +35,11 @@ const CONFIG = {
   repo: 'angelale0211/nabu-tarot',
   branch: 'main',
   postsPath: 'posts.json',
+  // The closed-test opt-in link. Only a Play install can buy anything: a
+  // sideloaded APK and the site added to a home screen look identical on
+  // the phone and neither can reach Play Billing. When the app goes public
+  // this becomes the ordinary store URL. Empty hides the Play card.
+  playTestUrl: 'https://play.google.com/apps/testing/app.nabutarot.twa',
   schedulePath: 'schedule.json',
 
   // Accounts, messages and bookings need a small cloud backend. Paste the
