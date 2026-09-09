@@ -679,7 +679,7 @@ function adminSale(p) {
     SALE.set(read());
     const live = SALE.live();
     $('#sprev').innerHTML = live
-      ? '<p class="hint">' + esc(SALE.off()) + ' · ' + esc(S.saleScopes[live.scope] || '') + '</p><div class="sum"><div class="r"><span>300.000đ</span><b>' + priceHTML(300000, 'unlock', 'tarot') + '</b></div><div class="r"><span>60.000đ</span><b>' + priceHTML(60000, 'reading', 'tarot') + '</b></div></div>'
+      ? '<p class="hint">' + esc(SALE.off()) + ' · ' + esc(S.saleScopes[live.scope] || '') + '</p><div class="sum"><div class="r"><span>300.000đ</span><b>' + priceHTML(300000, 'unlock', 'tarot') + '</b></div><div class="r"><span>60.000đ</span><b>' + priceHTML(60000, 'reading', 'tarot') + '</b></div></div>' /* dong on purpose: the base price Nabu typed, shown beside what it converts to */
       : '<p class="hint">' + esc(S.saleNone) + '</p>';
     SALE.set(before);
   };
