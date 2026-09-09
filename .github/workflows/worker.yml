@@ -64,4 +64,16 @@ jobs:
             echo "Not the upstream repository, so this is not treated as a failure."
             exit 0
           fi
+          # Said out loud before the deploy, because the log of a failed deploy
+          # is the only place this can be read, and reading it needs admin
+          # rights on the repository. `whoami` is the one that matters: if the
+          # token can see more than one account, wrangler cannot choose between
+          # them without an account_id in wrangler.toml and stops here.
+          echo "::group::deploy diagnostics"
+          echo "token length: ${#CLOUDFLARE_API_TOKEN} (value never printed)"
+          echo "--- wrangler version ---"
+          npx wrangler --version || echo "(could not read version)"
+          echo "--- whoami: which account(s) this token can see ---"
+          npx wrangler whoami || echo "(whoami failed - usually a token scope problem)"
+          echo "::endgroup::"
           npx wrangler deploy
