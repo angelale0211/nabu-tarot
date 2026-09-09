@@ -1,8 +1,8 @@
 # Nabu Tarot: brief for the next session
 
-Rewritten 2026-09-09, after **v191** went live on the `play-billing` branch
-(not yet merged to `main` — that merge is the owner's call, not this
-session's).
+Rewritten 2026-09-09, after **v197** on the `play-billing` branch (commit
+`95720ca`). **Nothing has been pushed and nothing merged to `main`** — that
+merge is the owner's call, not a session's.
 
 Open a new Claude Code window in `C:\Users\angel\nabu-tarot` and say:
 **"read NEXT-SESSION.md"**.
@@ -16,10 +16,10 @@ facts. Read Part 2 before touching anything.
 
 ---
 
-## Before you merge anything into `main`: read this
+## Merge history: `main` (v190 → v196) into `play-billing`
 
-**`main` is at v196.** It moved six releases on 2026-09-09, from a second window,
-while the Play Billing work was going on in the `play-billing` branch:
+**Done.** `main` moved six releases on 2026-09-09, from a second window, while
+the Play Billing work was going on in the `play-billing` branch:
 
 | | |
 |---|---|
@@ -33,24 +33,37 @@ while the Play Billing work was going on in the `play-billing` branch:
 Those touched `src/shell.html`, `src/core.js`, `src/pick.js`, `src/backend.js`,
 `src/services.js`, `src/strings.js`, `src/book.js`, `src/learn.js`,
 `src/wedding.js`, `src/admin.js`, `src/main.js` and `test/test.html`. The
-`play-billing` branch was cut before all of them and carries none.
+`play-billing` branch was cut before all of them and carried none of them on
+its own.
 
-**So a merge is not enough.** The whole app is one committed `index.html` built
-by `build.py`. If you merge and commit a bundle built from a tree that predates
-these, every one of them silently disappears from the live site, and nothing in
-git will look wrong. This exact failure already happened once, on 2026-09-08.
+**The merge was done in commit `95720ca`** (a real merge, not a fast-forward).
+Five source conflicts were resolved so both sides survive: `sw.js`/`src/main.js`
+(version marker plus both sides' `NABU` exports), `src/strings.js` ×3 (the
+owner's newly approved wedding-terms wording replaces both branches' older
+text, VI/EN/DE), `src/services.js` (main's `{save}` currency placeholder kept,
+this branch's retired Pro-voucher lines dropped), and `src/learn.js` (both
+sides had added a price block; kept this branch's store-bound button, adopted
+main's `termText()` inside it). `index.html` was **rebuilt from the merged
+sources**, not carried over from either side.
+
+**Any future merge must do the same.** The whole app is one committed
+`index.html` built by `build.py`. If you merge and commit a bundle built from a
+tree that predates the other side's releases, every one of those releases
+silently disappears from the live site, and nothing in git will look wrong.
+This exact failure already happened once, on 2026-09-08.
 
 After merging, in this order:
 
 1. `python build.py` - rebuild from the merged sources, do not reuse a bundle.
-2. `PYTHONIOENCODING=utf-8 python test/run.py` - **630 checks** at v196. A lower
-   number means checks were lost in the merge, not that the suite got smaller.
-3. Grep the built `index.html` for a string from **both** sides. From this side:
-   `turnsMerge` (v192), `termText` (v195), `Die Gebühr wird nicht erstattet` (v196).
+2. `PYTHONIOENCODING=utf-8 python test/run.py` - confirm the combined check
+   count. A lower number than expected means checks were lost in the merge,
+   not that the suite got smaller.
+3. Grep the built `index.html` for a string from **both** sides.
 4. Bump `APP_VERSION` in `src/main.js` **and** `CACHE` in `sw.js` together.
-5. After pushing, fetch the live page and check the same strings are really there.
-   Pages can take several minutes; v196 outlasted a twenty-attempt poll before
-   it appeared.
+5. After pushing, fetch the live page and check the same strings are really
+   there. Pages can take several minutes to serve a new build, so "not there
+   yet" is not "broken" — v196 outlasted a twenty-attempt poll before it
+   appeared.
 
 **Still open, and nobody is working on it:** the free-turn limit is stored on
 the account but the account's owner may still write that field, so it is not
@@ -65,14 +78,14 @@ because it touches the same files.
 
 - Trilingual (vi / en / de) tarot PWA. Repo `C:\Users\angel\nabu-tarot`, branch `main`. Live at https://nabutarot.com, deployed from GitHub `main` in about a minute.
 - Vanilla JS, no framework. `python build.py` joins `src/*.js` and `src/shell.html` into the committed `index.html`. UI strings live in `src/strings.js` under `T()`.
-- Suite: `PYTHONIOENCODING=utf-8 python test/run.py`. About 6 minutes, **622 checks, all passing at v191**. A second window uses `NABU_PORT=8766`.
+- Suite: `PYTHONIOENCODING=utf-8 python test/run.py`. About 6 minutes, **648 checks, all passing at v197** (main's 630 plus this branch's 18). A second window uses `NABU_PORT=8766`.
 - **A release is: bump `APP_VERSION` in `src/main.js` AND `CACHE` in `sw.js` to the same new number, `python build.py`, run the suite, one commit, push.** Both markers, every time. A past session shipped four releases without bumping either and left the app reporting a stale version; do not repeat it.
 - One Cloudflare Worker, `nabu-ai`, at `https://nabu-ai.0211nhatanh.workers.dev`, reached through `CONFIG.aiEndpoint`. Deployed by `.github/workflows/worker.yml` on every push touching `worker/`.
 - The Android app is a **Trusted Web Activity** (`app.nabutarot.twa`): it opens the live site full screen. Content changes need no new bundle. Only the wrapper itself does.
 
 ---
 
-## Part 2. Google Play Billing — where it stands after v191
+## Part 2. Google Play Billing — where it stands after v197
 
 ### What now exists
 
@@ -155,16 +168,28 @@ That is true today, independent of anything else on this list.
 
 ### Known follow-ups, and why each was deferred
 
-(a) **Retire expired `subs` rows and record provenance on non-Play grants.**
-Today, `recompute` in `worker/src/entitle.ts` lets a Play subscription row
-that names a key win outright over a non-Play grant for that same key — so a
-customer who holds *both* a website code and a Play subscription for the
-same access key silently **loses the longer of the two**: even a
-far-in-the-future code-granted date is shortened down to whatever Play's row
-says, because there is no field recording that the code grant did not come
-from Play. This cannot hurt anyone until Play sales actually begin, since no
-customer has a Play row yet — but it **must land before the first
-subscription is sold**, not after.
+(a) **Provenance on non-Play grants — done for the code path.** `users/{uid}.granted`
+now holds what the website (bank transfer, then a redemption code) and the
+dashboard gave for a Play-managed key, separately from `users/{uid}.subs`
+(what Play's own rows say). `recompute` takes the **later** of the two, so
+Play can still shorten its own contribution to nothing (a refund) without
+ever eating a code grant, and a code grant can no longer be silently
+shortened to whatever a Play row says. Before this fix, a customer who paid
+by bank transfer and then held any Play subscription lost the bank-transfer
+grant at the next subscription event — and the 6-hourly reconcile repeated
+the wipe. `/redeem` now writes `granted` alongside `access` whenever a code
+opens a Play-managed key; existing customers were caught without a migration
+by capturing, at write time, any key a new Play row names that no existing
+row already named. Two things remain open from this:
+
+- **An admin grant made from the dashboard** for a key a live Play
+  subscription row already names is still lost at the next recompute — the
+  capture only fires for a key no *existing* row already names. Closing this
+  needs the dashboard to write `granted` too, the same way `/redeem` does.
+- **Any customer already wiped by the old behaviour** has nothing left for
+  the capture to recover — `access` records no provenance, so there is no way
+  to tell after the fact that a shortened date used to be a code grant. These
+  need re-issuing by hand.
 
 (b) **Optimistic concurrency** (`currentDocument.updateTime` compare-and-set)
 on the Firestore writes the worker makes. This closes three concurrency
@@ -195,8 +220,8 @@ accounts that hold it — a different app. Leave it unless the owner asks.
 
 Be plain about this with the owner: **nothing in this feature has been
 tested on a real phone, and no real purchase — test or otherwise — has ever
-been made.** Everything above is verified by the 622-check browser suite and
-the 50-check worker suite (both mocked), plus a clean `tsc --noEmit`. The
+been made.** Everything above is verified by the 648-check browser suite and
+the 60-check worker suite (both mocked), plus a clean `tsc --noEmit`. The
 first real signal will come from a licence tester on a real device, once the
 owner's checklist above is done.
 
@@ -212,23 +237,35 @@ back.
 
 ## Part 3. What the session before you changed
 
-### v191 (2026-09-09) — Google Play Billing, released on `play-billing`
+### v197 (2026-09-09) — merge onto main's six releases, plus a provenance fix, on `play-billing`
 
-Version bump, build and full suite only — the billing implementation itself
-was written and reviewed in earlier sessions on this branch (see Part 2 for
-the current state of that work). This release:
+Three things happened after the v191 release stamp that this section used to
+describe:
 
-- Bumped `APP_VERSION`/`CACHE` to `v191` and rebuilt (`index.html`, `1` hit
-  for `v191`, `1` hit for `class="store"`, `0` remaining `VI-OWNER:` markers
-  in `src/strings.js` — the release gate that every customer-facing string is
-  owner-approved).
-- Ran the full suite clean: **622 checks, 622 passed, 0 failed**. Worker
-  suite **50/50**, `npm run typecheck` clean.
-- Committed on `play-billing`. **Not pushed, not merged to `main`.** The
-  merge — which is what actually deploys the live site — is the owner's
-  decision, not a release step this session took.
-- v190 (German localisation pass) had already shipped and merged before
-  this; do not confuse the two numbers.
+- **The `granted` field fix.** `users/{uid}.granted` now records what the
+  website (bank transfer, then a redemption code) and the dashboard gave for
+  a Play-managed key, kept separate from what Play's own subscription rows
+  say. `recompute` in `worker/src/entitle.ts` takes the **later** of the two.
+  Before this, a customer who bought Pro by bank transfer lost it silently
+  the moment any Play subscription event touched their account, and the
+  6-hourly reconcile repeated the loss. `firestore.rules` now guards
+  `granted` the same way it guards `access`/`subs`. Ten new worker tests
+  (50 → 60).
+- **The merge.** `main` had moved from v190 to v196 (six releases, a second
+  window) while this branch was being built. That merge is commit `95720ca`
+  — a real merge, not a fast-forward, with five source conflicts resolved so
+  both sides survive (see "Merge history" above for the detail). `index.html`
+  was rebuilt from the merged sources, not carried over from either side.
+- **Version bump.** `APP_VERSION`/`CACHE` bumped to `v197` and rebuilt.
+- Ran the full suite clean: **648 checks, 648 passed, 0 failed** (main's 630
+  plus this branch's 18). Worker suite **60/60**, `npm run typecheck` clean.
+- Committed on `play-billing` as `95720ca`. **Not pushed, not merged to
+  `main`.** The merge of `play-billing` *into* `main` — which is what
+  actually deploys the live site — is still the owner's decision, not a
+  release step this session took.
+- v190 (German localisation pass) and v191–v196 (the second window's six
+  releases) had already shipped and merged into `main` before this; do not
+  confuse those numbers with this branch's own release.
 
 ### v190 and earlier (2026-09-08 → 09) — five releases ending at v190
 
