@@ -21,13 +21,32 @@ function subStateWord(row) {
   return S.stExpired;
 }
 const manageURL = (key) => 'https://play.google.com/store/account/subscriptions?sku=' + encodeURIComponent((playItem(key) || {}).sku || '') + '&package=app.nabutarot.twa';
-const buyButtonHTML = (key, label, opt) => '<button type="button" class="btn primary block" data-buy="' + key + '"' + (opt && opt.oldKey ? ' data-old="' + opt.oldKey + '"' : '') + (opt && opt.wid ? ' data-wid="' + esc(opt.wid) + '"' : '') + '>' + esc(label || T().stBuy) + '</button>';
+/* Every screen that sells anything comes through here, so this is where
+   "Play priced this one" is asked. A row whose product Play did not return
+   says so where its button was, rather than offering a button that can only
+   throw `noproduct` when it is pressed. Partial catalogues therefore keep
+   working: the products Play did price stay buyable. */
+const buyButtonHTML = (key, label, opt) => (BILL.canBuy(key)
+  ? '<button type="button" class="btn primary block" data-buy="' + key + '"' + (opt && opt.oldKey ? ' data-old="' + opt.oldKey + '"' : '') + (opt && opt.wid ? ' data-wid="' + esc(opt.wid) + '"' : '') + '>' + esc(label || T().stBuy) + '</button>'
+  : '<p class="hint err" data-off="' + key + '">' + esc(T().stItemOff) + (BILL.why ? ' (' + esc(BILL.why) + ')' : '') + '</p>');
+
+/* Only what a tester can safely send: BILL.diag() carries no token, no
+   account and no address. Selectable as well as copyable, because a phone
+   that refuses the clipboard is exactly the kind of phone reporting a fault. */
+const storeDiagHTML = (key) => '<details class="card billdiag"><summary>' + esc(T().stDiagTitle) + '</summary>'
+  + '<p class="hint" style="user-select:all;word-break:break-all;margin:8px 0;font-size:12px">' + esc(BILL.diag(key || '')) + '</p>'
+  + '<button type="button" class="btn block" data-diag="' + esc(key || '') + '">' + esc(T().stDiagCopy) + '</button>'
+  + '<p class="hint" data-diagst></p></details>';
 /* The reason is shown, not swallowed. `stNotReady` covers three different
    failures, and without the code beneath it a report of "it does not work"
    cannot be told apart from any other. Small, grey and selectable: a reader
    passes over it, a tester can read it out or copy it. */
 const storeNotReadyHTML = () => '<div class="card"><p class="hint">' + esc(T().stNotReady) + '</p><button type="button" class="btn block" data-retry>' + esc(T().stRetry) + '</button>'
-  + (BILL.why ? '<p class="hint" style="margin-top:8px;opacity:.6;font-size:12px;user-select:all">' + esc(BILL.why) + '</p>' : '') + '</div>';
+  + (BILL.why ? '<p class="hint" style="margin-top:8px;opacity:.6;font-size:12px;user-select:all">' + esc(BILL.why) + '</p>' : '') + '</div>'
+  /* The diagnostics have to be reachable from the one screen a stuck buyer
+     actually sees. Putting them only on the working store meant the phones
+     that needed them were the phones that could not open them. */
+  + storeDiagHTML('');
 
 function storeRowHTML(item) {
   /* priceText, not L alone: a sentence naming an amount carries it as a token
@@ -70,15 +89,16 @@ function bindStore(root, redraw) {
   const S = T();
   $$('[data-buy]', root).forEach((b) => b.addEventListener('click', async () => {
     const key = b.getAttribute('data-buy'), st = $('[data-st="' + key + '"]', root) || $('#bstatus', root);
+    if (b.disabled) return;   // a second tap on a button already working starts nothing
     if (!(BE.enabled && BE.user)) { toast(S.stNeedIn); location.hash = signinHref(location.hash.slice(1)); return; }
     b.disabled = true; if (st) { st.className = 'hint st'; st.textContent = S.buyWorking; }
     try {
       const opt = {}; if (b.getAttribute('data-old')) opt.oldKey = b.getAttribute('data-old'); if (b.getAttribute('data-wid')) opt.wid = b.getAttribute('data-wid');
       const r = await BILL.buy(key, opt);
-      if (r.pending) { if (st) st.textContent = S.stPending; b.disabled = false; return; }
+      if (r.pending) { if (st) st.textContent = S.stPending; return; }
       toast(S.unlocked); if (redraw) redraw(); else route();
     } catch (e) {
-      b.disabled = false; const why = String((e && e.message) || '');
+      const why = String((e && e.message) || '');
       /* 'offline' is not a failure and must never be said as one. It is
          thrown only after res.complete('success') and a real purchaseToken:
          Play has charged, the token is on the pending list, and restore()
@@ -87,31 +107,60 @@ function bindStore(root, redraw) {
          it is what a buyer saw on 2026-09-09 for a subscription they really
          did hold. It is the pending wording, and not in the error colour. */
       const paidNotConfirmed = why === 'offline';
-      /* An AbortError is the buyer closing Play's sheet, and silence is the
-         right answer to that: they meant to. It is the WRONG answer when the
-         sheet never opened, which rejects identically - BILL.buy marks that
-         one. Without the split, a buyer whose sheet failed to launch saw no
-         message at all and had nothing to report, which is how this reached a
-         tester on 2026-09-09. Play's own words for the failure are appended,
-         because a screenshot is the only place they are ever seen. */
-      const noSheet = !!(e && e.noSheet);
-      const cancelled = !noSheet && /Abort|cancel/i.test((e && e.name) + why);
+      /* Which of three answers is chosen by the name Play gave, never by how
+         long the sheet took to fail. v212 used a stopwatch and read a slow
+         launch failure as a deliberate cancellation, which it then answered
+         with silence - the same silence that hid this from three testers.
+
+         `nolaunch`  the sheet could not open. Said plainly, in the error colour.
+         `aborted`   AbortError, which Chrome uses BOTH for a buyer who closed
+                     the sheet and for several bridge failures of its own.
+                     Nobody can tell those apart, so it gets a short neutral
+                     line in the ordinary colour: it neither blames a buyer who
+                     simply changed their mind nor hides a fault from one who
+                     did not. Never silence.
+         anything else is a failure and says so.
+
+         Play's own word for it is appended, sanitized to a name, because a
+         screenshot is the only place it is ever seen. */
+      const out = e && e.outcome, busy = why === 'busy';
+      const soft = paidNotConfirmed || out === 'aborted' || busy;
       if (st) {
-        st.className = 'hint st' + (paidNotConfirmed || cancelled ? '' : ' err');
+        st.className = 'hint st' + (soft ? '' : ' err');
         const said = why === 'signin' ? S.stNeedIn
-          : cancelled ? ''
+          : busy ? S.stBusy
           : paidNotConfirmed ? S.stPending
+          : out === 'aborted' ? S.stAborted
+          : out === 'nolaunch' ? S.stNoSheet
           : why === 'already used' ? S.buyAlready
           : why === 'nostore' ? S.stNotReady
-          : noSheet ? S.stNoSheet
+          : why === 'noproduct' ? S.stItemOff
           : S.stFailed;
-        const code = [(e && e.name) || '', why].filter(Boolean).join(' / ');
-        const showCode = !!said && !cancelled && !paidNotConfirmed && why !== 'signin';
+        const safe = (w) => String(w || '').replace(/[^A-Za-z0-9 :._-]/g, '').slice(0, 40);
+        const code = [(e && e.playName) || (e && e.name) || '', out || '', safe(why)].filter(Boolean).join('/');
+        const showCode = !!said && why !== 'signin' && !busy;
         st.textContent = said + (showCode && code ? ' (' + code + ')' : '');
       }
     }
+    /* Whatever happened. A success redraws the card, so this button is already
+       gone from the document and must not be touched; every other path leaves
+       it pressable again. */
+    finally { if (b.isConnected) b.disabled = false; }
   }));
-  $$('[data-retry]', root).forEach((b) => b.addEventListener('click', async () => { b.disabled = true; await BILL.retry(); if (redraw) redraw(); else route(); }));
+  $$('[data-diag]', root).forEach((b) => b.addEventListener('click', async () => {
+    const st = $('[data-diagst]', root);
+    await copyText(BILL.diag(b.getAttribute('data-diag') || ''));
+    if (st) st.textContent = S.stDiagCopied;
+  }));
+  /* Repeated presses join the attempt already running rather than starting a
+     competitor - BILL.start() coalesces - and the button is released even when
+     the attempt times out, so a stuck screen is never a dead one. */
+  $$('[data-retry]', root).forEach((b) => b.addEventListener('click', async () => {
+    if (b.disabled) return;
+    b.disabled = true;
+    try { await BILL.retry(); } finally { if (b.isConnected) b.disabled = false; }
+    if (redraw) redraw(); else route();
+  }));
   const rs = $('#restore', root);
   if (rs) rs.addEventListener('click', async () => {
     const st = $('#rstatus', root); rs.disabled = true; if (st) { st.className = 'hint'; st.textContent = S.stRestoring; }
@@ -142,7 +191,8 @@ function renderStore(params) {
     const plans = '<div class="sec"><h2 style="margin-bottom:8px">' + esc(S.stPlans) + '</h2>' + group(['plus', 'pro6', 'pro', 'manifest']) + '</div>';
     m.innerHTML = '<div class="store"><div class="eyebrow">' + esc(CONFIG.brand) + '</div><h1 style="margin-bottom:6px">' + esc(S.stTitle) + '</h1><p class="muted">' + esc(S.stIntro) + '</p>'
       + (BILL.can() ? (from === 'app' ? plans + courses : courses + plans) : storeNotReadyHTML())
-      + '<div class="card"><button type="button" class="btn block" id="restore">' + esc(S.stRestore) + '</button><p class="hint" id="rstatus"></p></div></div>';
+      + '<div class="card"><button type="button" class="btn block" id="restore">' + esc(S.stRestore) + '</button><p class="hint" id="rstatus"></p></div>'
+      + (BILL.can() ? storeDiagHTML('') : '') + '</div>';
     bindStore(m, draw);
   };
   draw();

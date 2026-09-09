@@ -18,17 +18,63 @@ const PLAY_METHOD = 'https://play.google.com/billing';
 const PLAY_PENDING = 'nabu-play-pending';
 const PLAY_PENDING_MAX = 50;  // a hard ceiling; PLAY_GIVE_UP below is what actually retires a stuck row
 const PLAY_GIVE_UP = 8;       // tries before a row that keeps failing for a reason other than "already used" is surfaced and dropped
+const PLAY_CONNECT_MS = 10000;  // getDigitalGoodsService can stay pending for ever, and a Retry queued behind it would never run
+const PLAY_DETAILS_MS = 15000;  // so can getDetails
+const PLAY_BACKOFF = [0, 2000, 5000, 15000, 30000];  // between failed attempts, so a redraw loop cannot hammer Play
+
+/* Names PaymentRequest.show() rejects with when the sheet never launched.
+   Only AbortError is ever a person closing it, and even that is not certain:
+   Chrome's Play bridge reuses AbortError for failures of its own. */
+const SHEET_NOLAUNCH = /^(NotAllowedError|NotSupportedError|InvalidStateError|SecurityError|NotFoundError|NotReadableError|UnknownError)$/;
+
+/* A name safe to put on a screen and paste into a chat: letters only, and a
+   timeout of ours reported as `timeout` rather than the bare `Error` that
+   withTimeout would otherwise contribute. Never the message, which can carry
+   a url, an account or a price. */
+const errName = (e) => {
+  if (/timeout/i.test(String((e && e.message) || ''))) return 'timeout';
+  const n = String((e && e.name) || '');
+  return /^[A-Za-z]{1,40}$/.test(n) ? n : 'Error';
+};
 
 const BILL = {
   service: null, details: {}, starting: null, ready: false,
 
-  /* Below this, an AbortError out of Play's sheet is read as "the sheet never
-     opened" rather than "the buyer closed it": nobody reads a payment sheet
-     and dismisses it this fast. A field, not a literal, so the suite can ask
-     for either meaning without sleeping for a second to get one. */
-  sheetMinMs: 900,
+  /* Where the last attempt got to.
 
-  can() { return !!this.service; },
+       idle      nothing tried yet
+       starting  an attempt is running and everybody awaits the same promise
+       ready     Play answered AND priced at least one product
+       failed    it did not get there; `why` says where it stopped
+
+     `ready` (the older boolean) stays beside it meaning only "an attempt has
+     finished", because screens outside this file read it. */
+  state: 'idle',
+  /* Every attempt takes a number. An answer arriving after its attempt has
+     been superseded - a slow connect landing behind a Retry, a getDetails
+     resolving after we timed it out - writes nothing. Without this a stale
+     answer could hand the screen a catalogue the buyer had already
+     retried past, or reopen a failure they had just cleared. */
+  attempt: 0,
+  tries: 0, lastTryAt: 0, tookMs: 0,
+  /* Fields rather than the constants themselves: the suite has to prove that a
+     call which never answers is survivable, and it cannot spend ten seconds
+     per case to do it. */
+  connectMs: PLAY_CONNECT_MS, detailsMs: PLAY_DETAILS_MS,
+  stage: '',        // how far the last attempt got: 'connect', 'details', or ''
+  buying: '',       // the key whose sheet is open, so a second tap cannot start another
+  lastSheet: null,  // {outcome, name, ms} of the last show(), for the diagnostics
+
+  /* Two questions that used to be one. can() is "Play answered and priced
+     something", which decides whether a screen shows rows at all. canBuy(key)
+     is "Play priced THIS product", which decides whether that one row gets a
+     button. v211 asked only the first, so an empty or partial catalogue still
+     drew Buy buttons for products Play had never heard of, and the tap threw
+     `noproduct` into a status line nobody had a reason to be reading. */
+  can() { return this.state === 'ready' && !!this.service; },
+  canBuy(key) { return this.can() && !!this.detailsOf(key); },
+  priced() { return Object.keys(this.details).length; },
+  sellable() { return PLAY_ITEMS.filter((i) => i.sku).length; },
 
   /* Why the store could not open, in a few characters, for the screen to show.
      Three quite different failures used to arrive at the reader as one
@@ -43,6 +89,8 @@ const BILL = {
                         means the payment Permissions-Policy is blocking it
        details:<name>   Play was reached but refused to price the catalogue -
                         usually the account cannot see these products
+       connect:timeout  Play never answered at all within PLAY_CONNECT_MS
+       details:timeout  nor priced anything within PLAY_DETAILS_MS
        noproducts       Play answered with an empty list: the ids exist here
                         but not, for this account, over there
        error:<name>     anything else
@@ -51,30 +99,108 @@ const BILL = {
      it sees a few grey characters; a tester can read it down a phone line. */
   why: '',
 
-  /* One start, shared by everybody who awaits it. Silent on failure: on the
-     web this is the normal case. */
-  start() {
-    if (this.starting) return this.starting;
+  /* One attempt at a time, and a finished failure is not a life sentence.
+
+     v211 cached the promise for ever: once the first attempt failed - a Play
+     service still waking up after a cold start is enough - every later start()
+     handed back that same settled `false` and nothing ever reconnected. Only
+     the Retry button cleared it, and Retry lives on the one card a screen in
+     that state might not be showing. A failure is now retried on demand,
+     behind a backoff so a redraw loop cannot hammer Play; `force`, which Retry
+     passes, skips the wait.
+
+     Both calls into Play are bounded. Either can stay pending for ever, and
+     when they did, every caller awaiting start() - the Retry button among
+     them - waited with them. */
+  start(force) {
+    if (this.state === 'starting' && this.starting) return this.starting;
+    /* `force` is Retry, and Retry has to mean it even when we believe we are
+       connected: a service that has gone away since answers can() true right
+       up until the next call fails. */
+    if (this.state === 'ready' && !force) return Promise.resolve(true);
+    if (this.state === 'failed' && !force && Date.now() - this.lastTryAt < this.backoffMs()) return Promise.resolve(false);
+    const my = ++this.attempt, began = Date.now();
+    this.state = 'starting'; this.lastTryAt = began; this.stage = ''; this.why = '';
     this.starting = (async () => {
+      const mine = () => my === this.attempt;
       try {
-        if (!window.getDigitalGoodsService) { this.why = 'noapi'; return false; }
-        if (!CONFIG.aiEndpoint) { this.why = 'noendpoint'; return false; }
-        try { this.service = await window.getDigitalGoodsService(PLAY_METHOD); }
-        catch (e) { this.why = 'connect:' + ((e && e.name) || 'Error'); throw e; }
-        const skus = PLAY_ITEMS.map((i) => i.sku).filter(Boolean);
+        if (!window.getDigitalGoodsService) { if (mine()) this.fail('noapi', '', began); return false; }
+        if (!CONFIG.aiEndpoint) { if (mine()) this.fail('noendpoint', '', began); return false; }
+        let svc;
+        try { svc = await withTimeout(window.getDigitalGoodsService(PLAY_METHOD), this.connectMs); }
+        catch (e) { if (mine()) this.fail('connect:' + errName(e), 'connect', began); return false; }
+        if (!mine()) return false;
         let list;
-        try { list = await this.service.getDetails(skus); }
-        catch (e) { this.why = 'details:' + ((e && e.name) || 'Error'); throw e; }
-        (list || []).forEach((d) => { if (d && d.itemId) this.details[d.itemId] = d; });
-        this.why = Object.keys(this.details).length ? '' : 'noproducts';
+        try { list = await withTimeout(svc.getDetails(PLAY_ITEMS.map((i) => i.sku).filter(Boolean)), this.detailsMs); }
+        catch (e) { if (mine()) this.fail('details:' + errName(e), 'details', began); return false; }
+        if (!mine()) return false;
+        const got = {};
+        (list || []).forEach((d) => { if (d && d.itemId) got[d.itemId] = d; });
+        /* A service that priced nothing is not a shop. It used to answer true
+           and leave can() true, so the screen drew a catalogue of buttons over
+           an empty answer. The service is kept - restore() finds a purchase
+           already made through it, and a catalogue we could not price is no
+           reason to lose one - but the store says `noproducts` and offers
+           Retry instead of selling what Play does not have. */
+        this.service = svc;
+        if (!Object.keys(got).length) { this.fail('noproducts', 'details', began); return false; }
+        this.details = got; this.state = 'ready'; this.ready = true;
+        this.tries = 0; this.stage = ''; this.why = ''; this.tookMs = Date.now() - began;
         return true;
-      } catch (e) { this.service = null; if (!this.why) this.why = 'error:' + ((e && e.name) || 'Error'); return false; }
-      finally { this.ready = true; }
+      } catch (e) { if (mine()) this.fail('error:' + errName(e), this.stage, began); return false; }
     })();
     return this.starting;
   },
-  /* Play was silent, or the suite swapped the world under us. */
-  retry() { this.starting = null; this.ready = false; this.service = null; this.details = {}; this.why = ''; return this.start(); },
+  backoffMs() { return PLAY_BACKOFF[Math.min(this.tries, PLAY_BACKOFF.length - 1)]; },
+  fail(why, stage, began) {
+    this.details = {}; this.state = 'failed'; this.ready = true;
+    this.why = why; this.stage = stage || ''; this.tookMs = Date.now() - began; this.tries++;
+    return false;
+  },
+  /* Play was silent, or the suite swapped the world under us. Retry never
+     waits out the backoff and never runs beside another attempt: a second
+     press joins the first rather than starting a competitor. */
+  retry() { return this.start(true); },
+
+  /* What a rejection from PaymentRequest.show() actually means.
+
+     v212 decided this with a stopwatch: inside 900ms was "the sheet never
+     opened", slower was "the buyer closed it". Both halves are wrong. A phone
+     that takes a second and a half to fail to launch was read as a deliberate
+     cancellation and answered with silence - exactly how this stayed invisible
+     to three testers - and a buyer who dismissed the sheet at once was told
+     the sheet had failed.
+
+     The name carries the meaning. Only AbortError can be a person, and even
+     that is not certain, so AbortError earns a short neutral line rather than
+     silence or a false "payment failed". Elapsed time is still recorded, but
+     as evidence in the diagnostics, never as the decision. */
+  sheetOutcome(e) {
+    const n = errName(e);
+    if (SHEET_NOLAUNCH.test(n)) return 'nolaunch';
+    if (n === 'AbortError') return 'aborted';
+    return 'failed';
+  },
+
+  /* Everything a tester can safely send back, and nothing else: no purchase
+     token, no id token, no email, no address. A diagnostic that cannot be
+     pasted into a group chat is one nobody sends. */
+  diag(key) {
+    const ua = String((window.navigator || {}).userAgent || '');
+    const it = key ? playItem(key) : null, d = it && this.detailsOf(key);
+    const rows = [['web', String(window.APP_VERSION || '?')],
+      ['shell', isTWA() ? 'twa' : (window.matchMedia && window.matchMedia('(display-mode: standalone)').matches ? 'standalone' : 'browser')],
+      ['android', 'unavailable'],
+      ['chrome', (/Chrome\/(\d+)/.exec(ua) || [])[1] || 'unknown'],
+      ['dga', window.getDigitalGoodsService ? 'yes' : 'no'],
+      ['state', this.state], ['why', this.why || '-'], ['stage', this.stage || '-'],
+      ['priced', this.priced() + '/' + this.sellable()],
+      ['ms', String(this.tookMs || 0)], ['tries', String(this.tries)], ['try', String(this.attempt)]];
+    if (it) rows.push(['sku', String(it.sku)], ['plan', String((d && d.subscriptionPeriod) || '-')]);
+    if (this.lastSheet) rows.push(['sheet', this.lastSheet.outcome + '/' + this.lastSheet.name + '/' + this.lastSheet.ms + 'ms']);
+    rows.push(['at', new Date().toISOString().replace(/\.\d+Z$/, 'Z')]);
+    return rows.map((r) => r[0] + '=' + r[1]).join(' ');
+  },
 
   detailsOf(key) { const it = playItem(key); return (it && it.sku && this.details[it.sku]) || null; },
   /* Play's price in the buyer's own currency, or '' when Play has not said. */
@@ -164,6 +290,12 @@ const BILL = {
   async buy(key, opt) {
     opt = opt || {};
     const it = playItem(key);
+    /* One sheet at a time. A second tap while Play's sheet is open used to
+       build a second PaymentRequest; Chrome rejects that with InvalidStateError,
+       which the screen then reported as a failure of the purchase the buyer
+       was in the middle of making. Refused here instead, by name, and never by
+       reopening anything. */
+    if (this.buying) throw new Error('busy');
     if (!this.can()) throw new Error('nostore');
     if (!BE.enabled || !BE.user) throw new Error('signin');
     if (!it || !it.sku || !this.details[it.sku]) throw new Error('noproduct');
@@ -182,16 +314,21 @@ const BILL = {
     }
     const req = new PaymentRequest([{ supportedMethods: PLAY_METHOD, data: data }],
       { total: { label: L((courseOf(key) || { name: { vi: key, en: key } }).name), amount: { currency: 'VND', value: '0' } } });
-    /* Play rejects show() with the same AbortError whether the buyer closed
-       the sheet or the sheet never opened. Only one of those may be answered
-       with silence. Nobody reads a payment sheet and dismisses it inside a
-       second, so a rejection that fast is the sheet failing to appear, and the
-       screen must say so: on 2026-09-09 a tester tapped Buy and got no sheet,
-       no message and no error to report. */
+    /* The rejection is classified by name, not by stopwatch, and what came
+       back is kept for the diagnostics: on 2026-09-09 a tester tapped Buy, got
+       no sheet, no message and nothing to report, and there was no record of
+       what Play had actually said. */
     const shownAt = Date.now();
     let res;
+    this.buying = key;
     try { res = await req.show(); }
-    catch (e) { if (Date.now() - shownAt < this.sheetMinMs) e.noSheet = true; throw e; }
+    catch (e) {
+      e.stage = 'show'; e.playName = errName(e); e.elapsedMs = Date.now() - shownAt;
+      e.outcome = this.sheetOutcome(e);
+      this.lastSheet = { outcome: e.outcome, name: e.playName, ms: e.elapsedMs };
+      throw e;
+    }
+    finally { this.buying = ''; }
     const token = res && res.details && (res.details.purchaseToken || res.details.token);
     try { await res.complete(token ? 'success' : 'fail'); } catch (e) { /* already closed */ }
     if (!token) throw new Error('nopurchase');
@@ -230,7 +367,11 @@ const BILL = {
   async restore() {
     const out = { tried: 0, opened: 0, pending: 0, failed: 0 };
     await this.start();
-    if (!this.can() || !BE.enabled || !BE.user) return out;
+    /* `service`, not can(). A purchase already made must still be recoverable
+       when the catalogue came back empty or unpriced - that is exactly the
+       state a stuck buyer is in, and refusing to look would strand the very
+       token restore() exists to redeem. */
+    if (!this.service || !BE.enabled || !BE.user) return out;
     const list = (await this.service.listPurchases().catch(() => [])) || [];
     /* Keyed by token so each purchase is looked at once. A pending record
        already knows more than Play's bare list - its wid, its tries so far -

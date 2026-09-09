@@ -302,14 +302,23 @@ async function go(hash, sel) { W().location.hash = hash; await sleep(30); return
       if (on) {
         codeMode(true, uid || 'uidP'); playKeep = { dg: w.getDigitalGoodsService, pr: w.PaymentRequest };
         w.localStorage.setItem('nabu-twa', 'true');
-        w.getDigitalGoodsService = async () => ({
-          getDetails: async (ids) => ids.filter((s) => !!skuKey(s)).map((s) => { const it = playItem(skuKey(s)); return { itemId: s, title: it.key, description: '', type: it.kind === 'subs' ? 'subscription' : 'product', price: { currency: 'VND', value: String({ tarot: 300000, lenormand: 300000, playing: 300000, wedding: 30000, manifest: 75000, plus: 79000, pro6: 149000, pro: 249000 }[it.key]) }, subscriptionPeriod: it.kind === 'subs' ? 'P' + it.months + 'M' : undefined }; }),
+        w.getDigitalGoodsService = async () => {
+          if (play.holdConnect) await play.holdConnect;
+          if (play.hangConnect) return new Promise(() => {});
+          if (play.connectFail) { play.connectFail = false; const e = new Error('no'); e.name = play.connectFailName || 'InvalidStateError'; throw e; }
+          return {
+          getDetails: async (ids) => (play.hangDetails ? new Promise(() => {}) : play.emptyDetails ? [] : ids.filter((s) => !!skuKey(s) && (!play.onlySkus || play.onlySkus.indexOf(s) > -1)).map((s) => { const it = playItem(skuKey(s)); return { itemId: s, title: it.key, description: '', type: it.kind === 'subs' ? 'subscription' : 'product', price: { currency: 'VND', value: String({ tarot: 300000, lenormand: 300000, playing: 300000, wedding: 30000, manifest: 75000, plus: 79000, pro6: 149000, pro: 249000 }[it.key]) }, subscriptionPeriod: it.kind === 'subs' ? 'P' + it.months + 'M' : undefined }; })),
           listPurchases: async () => Object.keys(play.products).filter((t) => !play.products[t].consumed).map((t) => ({ itemId: play.products[t].sku, purchaseToken: t }))
             .concat(Object.keys(play.subs).map((t) => ({ itemId: play.subs[t].sku, purchaseToken: t }))),
           consume: async () => {}
-        });
+          }; };
         w.PaymentRequest = function (methods, total) { const data = methods[0].data; play.requests.push(data); const it = N.PLAY_ITEMS.filter((i) => i.sku === data.sku)[0]; const tok = 'tok' + (play.next++);
-          this.show = async () => { if (play.cancelNext) { play.cancelNext = false; const e = new Error('cancelled'); e.name = 'AbortError'; throw e; }
+          this.show = async () => {
+            /* Play's own shape of failure: a name, and however long it took to
+               arrive. The suite needs both halves because the point of the
+               classifier is that only the first half decides anything. */
+            if (play.showFail) { const f = play.showFail; play.showFail = null; if (f.delay) await new Promise((r) => setTimeout(r, f.delay)); const e = new Error(f.msg || 'sheet'); e.name = f.name; throw e; }
+            if (play.cancelNext) { play.cancelNext = false; const e = new Error('cancelled'); e.name = 'AbortError'; throw e; }
             if (it.kind === 'subs') { play.subs[tok] = { sku: it.sku, state: play.pendingNext ? 'SUBSCRIPTION_STATE_PENDING' : 'SUBSCRIPTION_STATE_ACTIVE', expiryMs: Date.now() + it.months * 30 * 86400000, plan: it.key + '-plan' }; if (data.oldSku) Object.keys(play.subs).forEach((t) => { if (play.subs[t].sku === data.oldSku && t !== tok) play.subs[t].state = 'SUBSCRIPTION_STATE_EXPIRED'; }); }
             else play.products[tok] = { sku: it.sku, state: play.pendingNext ? 'pending' : 'ok' };
             play.pendingNext = false; return { details: { purchaseToken: tok }, complete: async () => {} }; }; };
@@ -1381,22 +1390,83 @@ async function go(hash, sel) { W().location.hash = hash; await sleep(30); return
       play.products[N.BILL.pendingList()[0].token].state = 'ok';
       const rs = await N.BILL.restore();
       ok(N.ACCESS.has('lenormand') && N.BILL.pendingList().length === 0 && rs.opened >= 1, 'restore re-sends pending and listed purchases and clears what went through');
-      /* Play rejects show() with the same AbortError whether the buyer closed
-         the sheet or the sheet never opened. The stub aborts at once, so the
-         suite asks for each meaning by moving BILL's own threshold instead of
-         sleeping a second to earn one. */
-      const sheetMin = N.BILL.sheetMinMs;
-      N.BILL.sheetMinMs = 0; play.cancelNext = true;
+      play.cancelNext = true;
       const cancelled = await N.BILL.buy('playing').catch((e) => e);
-      ok(cancelled instanceof Error && /Abort|cancel/i.test(cancelled.name + cancelled.message) && !cancelled.noSheet && !N.ACCESS.has('playing'), 'a cancelled Play sheet opens nothing and is not an error the buyer is blamed for');
-      N.BILL.sheetMinMs = sheetMin; play.cancelNext = true;
-      const nosheet = await N.BILL.buy('playing').catch((e) => e);
-      ok(nosheet instanceof Error && nosheet.noSheet === true && !N.ACCESS.has('playing'),
-        'a sheet that never opened is told apart from a sheet the buyer closed, though Play aborts both the same way');
+      ok(cancelled instanceof Error && cancelled.outcome === 'aborted' && !N.ACCESS.has('playing'),
+        'a cancelled Play sheet opens nothing and is not an error the buyer is blamed for');
+      /* The whole point of the classifier: the NAME decides it, the clock never
+         does. The same failure is delivered at once and again a second and a
+         half later, and both must read the same way. v212 read the slow one as
+         a deliberate cancellation and answered it with silence, which is
+         precisely how a broken purchase stayed invisible to three testers. */
+      const sheetTry = async (name, delay) => { play.showFail = { name: name, delay: delay }; return await N.BILL.buy('playing').catch((e) => e); };
+      const fast = await sheetTry('NotAllowedError', 0), slow = await sheetTry('NotAllowedError', 1500);
+      ok(fast.outcome === 'nolaunch' && slow.outcome === 'nolaunch' && slow.elapsedMs >= 1400 && fast.playName === 'NotAllowedError' && !N.ACCESS.has('playing'),
+        'a sheet that could not launch reads the same at 0ms and at 1500ms: the name decides it, never the stopwatch');
+      const slowAbort = await sheetTry('AbortError', 1200);
+      ok(slowAbort.outcome === 'aborted' && slowAbort.elapsedMs >= 1100,
+        'AbortError stays ambiguous however long it took, because Chrome uses it for a closed sheet AND for its own bridge faults');
+      const odd = await sheetTry('WeirdError', 0);
+      ok(odd.outcome === 'failed' && odd.playName === 'WeirdError', 'a name nobody has seen before is a failure, not a cancellation');
       /* F1: switching away from a plan the account does not currently grant
          (never bought, or lapsed) is an ordinary purchase - Play naturally has
          no token for it, and that is fine. */
       const reqBefore = play.requests.length;
+      { /* B: a failed start is not a life sentence, and neither call into Play
+             can hang for ever. v211 cached the settled `false`, and only Retry
+             ever cleared it - Retry being on a card a stuck screen may not be
+             showing. */
+        const kc = N.BILL.connectMs, kd = N.BILL.detailsMs;
+        N.BILL.connectMs = 60; N.BILL.detailsMs = 60;
+        play.hangConnect = true; await N.BILL.retry();
+        ok(!N.BILL.can() && N.BILL.why === 'connect:timeout' && N.BILL.stage === 'connect',
+          'a connect that never answers is timed out and says where it stopped, instead of parking every caller behind it');
+        play.hangConnect = false; play.hangDetails = true; await N.BILL.retry();
+        ok(!N.BILL.can() && N.BILL.why === 'details:timeout', 'so is a catalogue query that never answers');
+        play.hangDetails = false; N.BILL.connectMs = kc; N.BILL.detailsMs = kd;
+        const n0 = N.BILL.attempt;
+        ok((await N.BILL.start()) === false && N.BILL.attempt === n0,
+          'a plain start() inside the backoff opens no second connection, so a redraw loop cannot hammer Play');
+        ok((await N.BILL.retry()) === true && N.BILL.can() && N.BILL.attempt === n0 + 1,
+          'Retry ignores the backoff and recovers: a transient failure is no longer permanent');
+        const n1 = N.BILL.attempt;
+        const three = await Promise.all([N.BILL.retry(), N.BILL.retry(), N.BILL.retry()]);
+        ok(three[0] === true && three[2] === true && N.BILL.attempt === n1 + 1,
+          'three Retries pressed together join one attempt instead of racing three at Play'); }
+      { /* An answer arriving after its attempt was superseded writes nothing
+           at all - not the catalogue it carries, not the failure it would
+           report. */
+        const kc = N.BILL.connectMs; N.BILL.connectMs = 4000;
+        N.BILL.state = 'idle';
+        let go; play.holdConnect = new Promise((r) => { go = r; });
+        const inflight = N.BILL.retry();
+        const seen = N.BILL.attempt;
+        N.BILL.attempt++;
+        play.holdConnect = null; go();
+        ok((await inflight) === false && N.BILL.state === 'starting' && N.BILL.why === '',
+          'an attempt superseded mid-flight writes no state over the newer one');
+        N.BILL.connectMs = kc; N.BILL.attempt = seen; N.BILL.state = 'idle'; await N.BILL.retry(); }
+      { /* C: a service that priced nothing is not a shop. v211 answered true
+             and left can() true, so the store drew a catalogue of buttons over
+             an empty answer. */
+        play.emptyDetails = true; await N.BILL.retry();
+        ok(!N.BILL.can() && N.BILL.why === 'noproducts' && N.BILL.priced() === 0 && !!N.BILL.service,
+          'an empty catalogue is not purchasable and says noproducts - yet the service is kept, so a purchase already made stays recoverable');
+        play.emptyDetails = false;
+        play.onlySkus = [N.playItem('plus').sku]; await N.BILL.retry();
+        const reqBefore0 = play.requests.length;
+        ok(N.BILL.can() && N.BILL.canBuy('plus') && !N.BILL.canBuy('tarot') && N.BILL.priced() === 1,
+          'a partial catalogue keeps what Play did price buyable and refuses only what it did not');
+        /* Not `instanceof Error`: this one is thrown inside the iframe's own
+           realm, whose Error prototype is not this page's. */
+        const off = await N.BILL.buy('tarot').catch((e) => e);
+        ok(off && off.message === 'noproduct' && play.requests.length === reqBefore0,
+          'and one Play never priced is refused before any sheet is asked for');
+        play.onlySkus = null; await N.BILL.retry(); }
+      { const dg = N.BILL.diag('plus');
+        ok(/web=v\d+/.test(dg) && /state=ready/.test(dg) && /dga=yes/.test(dg) && /sku=plus_sub/.test(dg) && /android=unavailable/.test(dg)
+           && !/tok\d|@|Bearer|purchaseToken/i.test(dg),
+          'the diagnostic line carries the version, the state, the stage and the sku, and never a token or an address'); }
       const swNorm = await N.BILL.buy('pro', { oldKey: 'pro6' });
       ok(swNorm.opened.indexOf('pro') > -1 && N.ACCESS.has('pro') && play.requests[play.requests.length - 1].oldSku === undefined && play.requests.length === reqBefore + 1,
         'switching away from a plan the account does not currently grant proceeds as an ordinary purchase, with nothing named as replaced');
@@ -1449,13 +1519,27 @@ async function go(hash, sel) { W().location.hash = hash; await sleep(30); return
       ok(d.querySelectorAll('.store [data-buy]').length >= 7 && !d.querySelector('#ucode') && !d.querySelector('#usend') && !d.querySelector('.paypanel') && !d.querySelector('.luckpanel') && !/đ\b/.test(d.querySelector('.store').textContent.replace(/₫/g, '')),
         'the in-app store lists every catalogue item with a Buy button and no basket, code field, transfer panel, reward panel or đồng price');
       /* The tester on 2026-09-09 tapped Buy, got no sheet, no message and no
-         error to report. The screen must now say something, and carry Play's
-         own words for it, because a screenshot is the only place they show. */
+         error to report. Every ending now says something, and carries the word
+         Play gave, because a screenshot is the only place it is ever seen. */
+      const stOf = (k) => d.querySelector('.store [data-st="' + k + '"]');
+      { play.showFail = { name: 'NotAllowedError', delay: 1200 };
+        d.querySelector('.store [data-buy="playing"]').click();
+        await waitFor(() => stOf('playing') && /\(/.test(stOf('playing').textContent), 6000);
+        ok(/chưa mở được/.test(stOf('playing').textContent) && /NotAllowedError/.test(stOf('playing').textContent)
+           && / err/.test(stOf('playing').className) && !d.querySelector('.store [data-buy="playing"]').disabled && !N.ACCESS.has('playing'),
+          'a launch failure that took over a second is still said out loud, names what Play gave, and hands the button back'); }
       { play.cancelNext = true; d.querySelector('.store [data-buy="playing"]').click();
-        await waitFor(() => { const s2 = d.querySelector('.store [data-st="playing"]'); return s2 && /\(/.test(s2.textContent); }, 4000);
-        const stp = d.querySelector('.store [data-st="playing"]');
-        ok(/chưa mở được/.test(stp.textContent) && /AbortError/.test(stp.textContent) && / err/.test(stp.className) && !N.ACCESS.has('playing'),
-          'a Buy that never opened the Play sheet says so on the screen, in the words Play gave, so a tester has something to screenshot'); }
+        await waitFor(() => stOf('playing') && /Chưa mua xong/.test(stOf('playing').textContent), 4000);
+        ok(!/ err/.test(stOf('playing').className) && !N.ACCESS.has('playing'),
+          'a buyer who closed the sheet gets a short neutral line - never silence, and never blamed for a failure that did not happen'); }
+      { const before = play.requests.length, btn = d.querySelector('.store [data-buy="playing"]');
+        play.showFail = { name: 'AbortError', delay: 120 };
+        btn.click(); btn.click(); btn.click();
+        await waitFor(() => stOf('playing') && /Chưa mua xong/.test(stOf('playing').textContent), 4000);
+        ok(play.requests.length === before + 1, 'three taps on Buy open one payment sheet, not three'); }
+      { const box = d.querySelector('.store .billdiag');
+        ok(box && /web=v/.test(box.textContent) && box.querySelector('[data-diag]'),
+          'the store carries a copyable diagnostic block a tester can send back'); }
       d.querySelector('.store [data-buy="plus"]').click(); await waitFor(() => N.ACCESS.has('plus'), 4000);
       await go('#/me', '[data-theme-pick]'); d.querySelector('details[data-sect="own"]').open = true;
       const plans = d.querySelector('.myplans');
@@ -1532,6 +1616,8 @@ async function go(hash, sel) { W().location.hash = hash; await sleep(30); return
       N.BILL.service = null;
       await go('#/unlock?from=app', '.store');
       ok(d.querySelector('.store [data-retry]') && !d.querySelector('.store [data-buy]') && !d.querySelector('#ucode'), 'when Play is silent the store says so and offers Retry - never the website\'s flow');
+      ok(d.querySelector('.store .billdiag [data-diag]') && /web=v/.test(d.querySelector('.store .billdiag').textContent),
+        'and the diagnostics are on that card too, because the phone that needs them is the one that cannot open the store');
       await playMode(false); }
     /* ---- the red thread ---- */
     { /* A stand-in for Firestore: documents in an object, and listeners told
