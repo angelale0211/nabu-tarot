@@ -181,6 +181,31 @@ def money_in_copy():
     return ['PASS no price is written in dong inside English or German copy']
 
 
+SUM_RENDER = re.compile(r"L\(\s*[A-Za-z_$][\w$]*\.sum\b")
+
+
+def money_token_rendered():
+    """A description that names an amount must go through priceText().
+
+    The amount is carried as a token ({save}, {wedfee}) because a saving is a
+    different number in every currency. `L(c.sum)` on its own puts the token
+    itself on the screen: the in-app store showed "{save} less than two half
+    years" to a real phone, because it was the one screen that printed a
+    description without the substitution every other screen already did.
+    """
+    bad = []
+    for path in sorted(glob.glob(os.path.join(ROOT, 'src', '*.js'))):
+        with open(path, encoding='utf-8') as fh:
+            body = fh.read()
+        for ln, line in enumerate(body.split(chr(10)), 1):
+            if SUM_RENDER.search(line) and 'priceText' not in line:
+                bad.append('%s:%d' % (os.path.basename(path), ln))
+    if bad:
+        return ['FAIL a description naming an amount is printed without priceText, so the '
+                'reader is shown the token instead of the money: ' + '; '.join(bad[:4])]
+    return ['PASS every description naming an amount goes through priceText']
+
+
 def payment_policy():
     """Whether the installed app is allowed to sell anything at all.
 
@@ -214,7 +239,7 @@ if __name__ == '__main__':
     print(res)
     # Read from the source, not from the page: this one is about what is
     # written down, and it renders perfectly while being the wrong money.
-    source = money_in_copy() + payment_policy()
+    source = money_in_copy() + payment_policy() + money_token_rendered()
     for line in source:
         print(line)
     lines = [l for l in res.split('\n') if l.strip()] + source

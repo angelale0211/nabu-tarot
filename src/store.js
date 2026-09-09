@@ -25,7 +25,12 @@ const buyButtonHTML = (key, label, opt) => '<button type="button" class="btn pri
 const storeNotReadyHTML = () => '<div class="card"><p class="hint">' + esc(T().stNotReady) + '</p><button type="button" class="btn block" data-retry>' + esc(T().stRetry) + '</button></div>';
 
 function storeRowHTML(item) {
-  const S = T(), c = courseOf(item.key), name = c ? L(c.name) : item.key, sum = c ? L(c.sum || c.blurb) : '';
+  /* priceText, not L alone: a sentence naming an amount carries it as a token
+     ({save}, {wedfee}) because the saving is a different number in every
+     currency. Without this the reader is shown the token itself - "{save} less
+     than two half years" - which is how it reached a phone in the store. Every
+     other screen that prints c.sum already does this. */
+  const S = T(), c = courseOf(item.key), name = c ? L(c.name) : item.key, sum = c ? priceText(L(c.sum || c.blurb)) : '';
   const price = BILL.priceOf(item.key), months = BILL.periodMonths(item.key);
   const held = ACCESS.has(item.key) || (item.opens.length && item.opens.every((k) => ACCESS.has(k)));
   const row = item.kind === 'subs' ? SUBS.of(item.key) : null;
