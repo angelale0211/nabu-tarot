@@ -136,7 +136,7 @@ export async function voidedSince(env: PlayEnv, sinceMs: number): Promise<Voided
    Only the courses this purchase opened, and only if they are still the ones
    it opened. Somebody who refunds one course and keeps another must keep the
    other. */
-async function removeAccess(env: PlayEnv, uid: string, ids: string[]): Promise<string[]> {
+export async function removeAccess(env: PlayEnv, uid: string, ids: string[]): Promise<string[]> {
   const at = await serviceToken(env, FS_SCOPE);
   const base = docUrl(env, "users/" + encodeURIComponent(uid));
   const cur = await fetch(base, { headers: { Authorization: "Bearer " + at } });
@@ -160,6 +160,11 @@ async function removeAccess(env: PlayEnv, uid: string, ids: string[]): Promise<s
   if (!w.ok) throw new Error("firestore " + w.status);
   return taken;
 }
+/* Same function, public name: the nightly sweep and the RTDN handler both
+   take back one-time course access by uid and ids. A voided *subscription*
+   is not this path - Google reports it EXPIRED/REVOKED and the recompute in
+   entitle.ts drops the keys - so this is only ever called for one-time rows. */
+export const removeAccessFor = removeAccess;
 
 /* Marked so the same refund is not processed every night for a week, and so
    the Pay tab can show what happened rather than a silent gap. */

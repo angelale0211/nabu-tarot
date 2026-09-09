@@ -24,6 +24,10 @@ test("recompute rewrites only play-managed keys from granting rows and leaves co
   const out = recompute({ pro6: row(["pro", "plus"], true, "2026-12-01"), manifest: row(["manifest"], false, "2026-01-01") }, access);
   assert.deepEqual(out, { tarot: "2027-01-01", pro: "2026-12-01", plus: "2026-12-01" });
 });
+test("a non-Play-managed key with a falsy value survives the rebuild (presence, not truthiness, decides)", () => {
+  const out = recompute({}, { tarot: "" });
+  assert.deepEqual(out, { tarot: "" });
+});
 test("two granting rows for the same key keep the later date", () => {
   const row = (opens: string[], until: string): SubRow => ({ sku: "s", plan: "p", state: "x", until, autoRenew: true, tok: "t", opens, grant: true });
   const out = recompute({ pro6: row(["pro", "plus"], "2026-06-01"), pro: row(["pro", "plus"], "2027-06-01") }, {});

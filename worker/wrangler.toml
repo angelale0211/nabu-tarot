@@ -20,6 +20,10 @@ ALLOWED_ORIGIN = "https://nabutarot.com"
 FIREBASE_PROJECT_ID = "nabutarot"
 # The Android app, for checking Play purchases.
 ANDROID_PACKAGE = "app.nabutarot.twa"
+# Pub/Sub pushes Play's notifications here. The audience is this URL, given
+# to the push subscription; the email is the service account it pushes as.
+RTDN_AUDIENCE = "https://nabu-ai.0211nhatanh.workers.dev/rtdn"
+RTDN_PUSH_EMAIL = "nabu-worker@nabutarot.iam.gserviceaccount.com"
 
 # Where the per-person counts live. Without it the worker still answers, but
 # nothing is limited, so make it:

@@ -12,6 +12,7 @@ import { claimCode } from "./codes";
 import { claimPurchase, markGranted, sweepRefunds, tokenId, ledgerSet } from "./refunds";
 import { itemBySku, itemByKey } from "./catalog";
 import { applySubscription, payRoom } from "./entitle";
+import { handleRtdn } from "./rtdn";
 
 export interface Env {
   ANTHROPIC_API_KEY?: string;
@@ -23,6 +24,8 @@ export interface Env {
   ANDROID_PACKAGE?: string;      // app.nabutarot.twa
   FIREBASE_PROJECT_ID?: string; // whose sign-ins this worker accepts; unset = anybody may ask
   KV?: KVNamespace;            // where the per-person counts live; unset = no limits
+  RTDN_AUDIENCE?: string;      // the /rtdn URL, as given to the Pub/Sub push subscription
+  RTDN_PUSH_EMAIL?: string;    // the service account Pub/Sub pushes as
 }
 
 /* What one person may ask for in a day. Generous for somebody using the app,
@@ -113,6 +116,7 @@ export default {
        somebody who cannot sign in is exactly the report worth having - so they
        are counted by address instead. */
     const path = new URL(request.url).pathname;
+    if (path.endsWith("/rtdn")) return handleRtdn(request, env);
     if (path.endsWith("/booking") || path.endsWith("/report")) {
       const v = await allow(env, caller(request), MAIL_A_DAY, MAIL_A_MINUTE);
       if (!v.ok) return tooMany(v, headers);

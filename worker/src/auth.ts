@@ -10,12 +10,14 @@
 
 export interface Who { uid: string; email: string; verified: boolean }
 
-const JWKS_URL = "https://www.googleapis.com/service_accounts/v1/jwk/securetoken@system.gserviceaccount.com";
+const FIREBASE_JWKS = "https://www.googleapis.com/service_accounts/v1/jwk/securetoken@system.gserviceaccount.com";
+const GOOGLE_JWKS = "https://www.googleapis.com/oauth2/v3/certs";
 
 /* Keys change rarely and the worker stays warm, so the ones we have are kept
    until Google's own cache header says they are stale. A cold worker fetches
-   once; every request after that is arithmetic. */
-let keyCache: { at: number; ttl: number; keys: Record<string, CryptoKey> } | null = null;
+   once; every request after that is arithmetic. Cached per JWKS url, because
+   Firebase sign-in and a Pub/Sub push are signed by different key sets. */
+let keyCache: Record<string, { at: number; ttl: number; keys: Record<string, CryptoKey> }> = {};
 
 const b64url = (s: string): Uint8Array => {
   const pad = s.replace(/-/g, "+").replace(/_/g, "/");
@@ -28,10 +30,10 @@ const b64url = (s: string): Uint8Array => {
 const jsonPart = (s: string): Record<string, unknown> =>
   JSON.parse(new TextDecoder().decode(b64url(s)));
 
-async function keys(): Promise<Record<string, CryptoKey>> {
-  const now = Date.now();
-  if (keyCache && now - keyCache.at < keyCache.ttl) return keyCache.keys;
-  const r = await fetch(JWKS_URL);
+async function keys(url: string): Promise<Record<string, CryptoKey>> {
+  const now = Date.now(), had = keyCache[url];
+  if (had && now - had.at < had.ttl) return had.keys;
+  const r = await fetch(url);
   if (!r.ok) throw new Error("jwks " + r.status);
   const body = (await r.json()) as { keys: JsonWebKey[] };
   const max = /max-age=(\d+)/.exec(r.headers.get("cache-control") || "");
@@ -42,8 +44,29 @@ async function keys(): Promise<Record<string, CryptoKey>> {
     out[kid] = await crypto.subtle.importKey(
       "jwk", jwk, { name: "RSASSA-PKCS1-v1_5", hash: "SHA-256" }, false, ["verify"]);
   }
-  keyCache = { at: now, ttl: Math.max(60, Number(max?.[1] || 3600)) * 1000, keys: out };
+  keyCache[url] = { at: now, ttl: Math.max(60, Number(max?.[1] || 3600)) * 1000, keys: out };
   return out;
+}
+
+/* Signature, expiry and clock skew only. Who it is for and who wrote it are
+   the caller's questions, because they differ between a Firebase sign-in and
+   a Pub/Sub push. */
+export async function verifyJwt(raw: string, jwksUrl: string): Promise<Record<string, unknown> | null> {
+  const bits = (raw || "").split(".");
+  if (bits.length !== 3) return null;
+  try {
+    const head = jsonPart(bits[0]) as { alg?: string; kid?: string };
+    if (head.alg !== "RS256" || !head.kid) return null;
+    const key = (await keys(jwksUrl))[head.kid];
+    if (!key) return null;
+    const okSig = await crypto.subtle.verify("RSASSA-PKCS1-v1_5", key, b64url(bits[2]) as unknown as BufferSource, new TextEncoder().encode(bits[0] + "." + bits[1]));
+    if (!okSig) return null;
+    const c = jsonPart(bits[1]) as { exp?: number; iat?: number };
+    const now = Math.floor(Date.now() / 1000);
+    if (!c.exp || c.exp <= now) return null;
+    if (c.iat && c.iat > now + 300) return null;
+    return c as Record<string, unknown>;
+  } catch { return null; }
 }
 
 /* Returns who is asking, or null. Null is never "probably fine": the caller
@@ -51,33 +74,21 @@ async function keys(): Promise<Record<string, CryptoKey>> {
 export async function whoIsAsking(request: Request, projectId: string): Promise<Who | null> {
   const raw = (request.headers.get("Authorization") || "").replace(/^Bearer\s+/i, "").trim();
   if (!raw) return null;
-  const bits = raw.split(".");
-  if (bits.length !== 3) return null;
-  try {
-    const head = jsonPart(bits[0]) as { alg?: string; kid?: string };
-    if (head.alg !== "RS256" || !head.kid) return null;
-    const key = (await keys())[head.kid];
-    if (!key) return null;
+  const c = await verifyJwt(raw, FIREBASE_JWKS) as { aud?: string; iss?: string; sub?: string; email?: string; email_verified?: boolean } | null;
+  if (!c) return null;
+  if (c.aud !== projectId) return null;
+  if (c.iss !== "https://securetoken.google.com/" + projectId) return null;
+  if (!c.sub) return null;
+  return { uid: c.sub, email: String(c.email || ""), verified: c.email_verified === true };
+}
 
-    const signed = new TextEncoder().encode(bits[0] + "." + bits[1]);
-    const okSig = await crypto.subtle.verify(
-      "RSASSA-PKCS1-v1_5", key, b64url(bits[2]) as unknown as BufferSource, signed);
-    if (!okSig) return null;
-
-    /* A signature only says Google wrote it. These say it was written for us,
-       recently, about somebody. */
-    const c = jsonPart(bits[1]) as {
-      aud?: string; iss?: string; sub?: string; exp?: number; iat?: number;
-      email?: string; email_verified?: boolean;
-    };
-    const now = Math.floor(Date.now() / 1000);
-    if (c.aud !== projectId) return null;
-    if (c.iss !== "https://securetoken.google.com/" + projectId) return null;
-    if (!c.sub) return null;
-    if (!c.exp || c.exp <= now) return null;
-    if (c.iat && c.iat > now + 300) return null;   // clocks differ; five minutes is plenty
-    return { uid: c.sub, email: String(c.email || ""), verified: c.email_verified === true };
-  } catch {
-    return null;
-  }
+/* A Pub/Sub push carries an OIDC token Google signed for the audience we gave
+   the subscription, on behalf of the service account we named. */
+export async function verifyGoogleJwt(raw: string, aud: string, email?: string): Promise<boolean> {
+  const c = await verifyJwt(raw, GOOGLE_JWKS) as { aud?: string; iss?: string; email?: string; email_verified?: boolean } | null;
+  if (!c) return false;
+  if (c.iss !== "https://accounts.google.com" && c.iss !== "accounts.google.com") return false;
+  if (c.aud !== aud) return false;
+  if (email && (c.email !== email || c.email_verified !== true)) return false;
+  return true;
 }
