@@ -189,7 +189,15 @@ service cloud.firestore {
     match /people/{uid} {
       allow get: if request.auth != null;
       allow list: if isAdmin();
-      allow write: if isOwner(uid) && shorterThan('name', 40) && shorterThan('handle', 30);
+      /* create and update, NOT write. `write` also covers delete, and on a
+         delete `request.resource` is null - so shorterThan(), which reads
+         request.resource.data, errored and the rule denied. Deleting a public
+         card was impossible for its own owner, which took account deletion
+         with it: the profile stayed behind after everything else had gone.
+         The length caps only mean anything for a document being written, so
+         the delete is the plain ownership test. */
+      allow create, update: if isOwner(uid) && shorterThan('name', 40) && shorterThan('handle', 30);
+      allow delete: if isOwner(uid);
     }
     /* An invitation lives under the person invited, so only they can read what
        has been sent to them. The sender may withdraw it, the receiver may
@@ -441,10 +449,20 @@ service cloud.firestore {
                     && request.resource.data.bookingId is string
                     && (isAdmin()
                         || get(/databases/$(database)/documents/bookings/$(request.resource.data.bookingId)).data.uid == request.auth.uid);
+      /* Both sides are checked, not just the incoming one. Asking only whether
+         the NEW bookingId belongs to the caller let anybody holding a booking
+         of their own point it at an hour somebody else had already claimed:
+         the rule looked at the booking being written, never at the row being
+         written over, and the slot changed hands. The caller must own what is
+         there now as well. A row whose booking has since been deleted fails
+         the second get and can only be moved by Nabu, which is the safe way
+         round. */
       allow update: if isAdmin()
                     || (request.auth != null
                         && request.resource.data.bookingId is string
-                        && get(/databases/$(database)/documents/bookings/$(request.resource.data.bookingId)).data.uid == request.auth.uid);
+                        && resource.data.bookingId is string
+                        && get(/databases/$(database)/documents/bookings/$(request.resource.data.bookingId)).data.uid == request.auth.uid
+                        && get(/databases/$(database)/documents/bookings/$(resource.data.bookingId)).data.uid == request.auth.uid);
       allow delete: if isAdmin();
     }
   }
