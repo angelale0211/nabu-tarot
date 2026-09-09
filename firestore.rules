@@ -340,7 +340,18 @@ service cloud.firestore {
                     && get(/databases/$(database)/documents/bonds/$(wid)).data.state in ['engaged', 'married']
                     && request.resource.data.step == 0
                     && request.resource.data.state == 'planned'
-                    && shorterThan('aName', 40) && shorterThan('bName', 40);
+                    && shorterThan('aName', 40) && shorterThan('bName', 40)
+                    // Whether it is paid for is not the couple's to say. Every
+                    // other rule here checked the values and left the field
+                    // SET open, so a signed-in member of an engaged bond could
+                    // create the room from a browser console with paid:true and
+                    // hold the wedding without paying - and w.paid is the only
+                    // gate there is now. The update rules already work this way
+                    // (a couple may touch only their own six fields, an admin
+                    // only 'paid'/'paidAt'); create had simply been left out.
+                    // The room is created UNPAID, before payment, so nothing
+                    // legitimate supplies any of these four.
+                    && !request.resource.data.keys().hasAny(['paid', 'paidAt', 'paidBy', 'purchase']);
       allow update: if (request.auth != null && request.auth.uid in resource.data.uids
                     && request.resource.data.uids == resource.data.uids
                     && request.resource.data.diff(resource.data).affectedKeys()

@@ -145,3 +145,52 @@ test("SELF-HEALING: a subs row missing from users/{uid} (lost to a concurrent wr
     assert.equal(again.failed, 0);
   } finally { m.restore(); }
 });
+
+/* onVoided used to write state:"voided" on a subs ledger row and remove
+   nothing - right for a plain refund, where the paired SUBSCRIPTION_REVOKED
+   push does the removing - and reconcile then skipped a "voided" row for
+   good. handleRtdn answers 204 whatever happens, so Pub/Sub never redelivers:
+   one transient failure on that paired push and paid access stood for ever,
+   with the backstop switched off for exactly the row that needed it. Nothing
+   but Google's own EXPIRED retires a row now. */
+test("a subs row marked voided is still re-examined, and loses its access when Google says it is gone", async () => {
+  const k = K;
+  const plus = itemByKey("plus")!;
+  const docs: Record<string, Record<string, unknown>> = {
+    "purchases/hv": fsDoc({ uid: "u1", sku: plus.sku, kind: "subs", ids: ["plus"], state: "voided", token: "SV" }).fields as Record<string, unknown>,
+    "users/u1": fsDoc({ access: { plus: "2099-01-01", tarot: "2099-01-01" }, subs: { plus: { sku: plus.sku, plan: "plus-12m", state: "SUBSCRIPTION_STATE_ACTIVE", until: "2099-01-01", autoRenew: true, tok: "hv", opens: ["plus"], grant: true } } }).fields as Record<string, unknown>,
+  };
+  const m = mockFetch(k, {
+    ":runQuery": () => json([{ document: { name: "projects/x/databases/(default)/documents/purchases/hv", fields: docs["purchases/hv"] } }]),
+    "androidpublisher.googleapis.com": () => json({ subscriptionState: "SUBSCRIPTION_STATE_EXPIRED", lineItems: [{ productId: plus.sku, expiryTime: new Date(Date.now() - 86400000).toISOString() }] }),
+    "firestore.googleapis.com": (url, init) => { const id = url.split("/documents/")[1].split("?")[0]; if (init.method === "PATCH") { docs[id] = Object.assign(docs[id] || {}, JSON.parse(String(init.body)).fields); return json({}); } return docs[id] ? json({ fields: docs[id] }) : json({}, 404); },
+  });
+  try {
+    const out = await reconcileSubs(env(k));
+    assert.equal(out.looked, 1, "the voided row was looked at, not skipped for good");
+    assert.equal(out.changed, 1);
+    const access = (docs["users/u1"].access as { mapValue: { fields: Record<string, { stringValue: string }> } }).mapValue.fields;
+    assert.equal(access.plus, undefined);                       // the access that should have gone, went
+    assert.equal(access.tarot.stringValue, "2099-01-01");       // the course it never touched, stayed
+  } finally { m.restore(); }
+});
+
+test("a voided subs row that Google cannot be asked about is NOT revoked - a transient failure never takes access away", async () => {
+  const k = K;
+  const plus = itemByKey("plus")!;
+  const docs: Record<string, Record<string, unknown>> = {
+    "purchases/hv2": fsDoc({ uid: "u9", sku: plus.sku, kind: "subs", ids: ["plus"], state: "voided", token: "SV2" }).fields as Record<string, unknown>,
+    "users/u9": fsDoc({ access: { plus: "2099-01-01" }, subs: { plus: { sku: plus.sku, plan: "plus-12m", state: "SUBSCRIPTION_STATE_ACTIVE", until: "2099-01-01", autoRenew: true, tok: "hv2", opens: ["plus"], grant: true } } }).fields as Record<string, unknown>,
+  };
+  const m = mockFetch(k, {
+    ":runQuery": () => json([{ document: { name: "projects/x/databases/(default)/documents/purchases/hv2", fields: docs["purchases/hv2"] } }]),
+    "androidpublisher.googleapis.com": () => json({ error: "boom" }, 503),
+    "firestore.googleapis.com": (url, init) => { const id = url.split("/documents/")[1].split("?")[0]; if (init.method === "PATCH") { docs[id] = Object.assign(docs[id] || {}, JSON.parse(String(init.body)).fields); return json({}); } return docs[id] ? json({ fields: docs[id] }) : json({}, 404); },
+  });
+  try {
+    const before = JSON.stringify(docs["users/u9"]);
+    const out = await reconcileSubs(env(k));
+    assert.equal(out.looked, 1); assert.equal(out.failed, 1); assert.equal(out.changed, 0);
+    assert.equal(JSON.stringify(docs["users/u9"]), before);
+  } finally { m.restore(); }
+});

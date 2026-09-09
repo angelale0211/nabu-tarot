@@ -15,4 +15,3 @@ const PLAY_ITEMS = [
 ];
 const playItem = (key) => PLAY_ITEMS.filter((i) => i.key === key)[0] || null;
 const playItemBySku = (sku) => (sku && PLAY_ITEMS.filter((i) => i.sku === sku)[0]) || null;
-const PLAY_MANAGED_KEYS = ['manifest', 'plus', 'pro'];

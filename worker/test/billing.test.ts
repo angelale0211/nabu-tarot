@@ -269,3 +269,43 @@ test("a wedding token whose confirming write keeps failing still answers 5xx and
     assert.notEqual(docs["weddings/s__t"] && (docs["weddings/s__t"].paid as { booleanValue?: boolean } | undefined)?.booleanValue, true);
   } finally { m.restore(); }
 });
+
+/* acknowledge() does not look at the HTTP status, and it runs in waitUntil.
+   Guarded by `!claim.existing`, a first attempt that failed could never be
+   made again: every retry for the same token found its own claim already on
+   the ledger and skipped the acknowledge. Google auto-refunds an
+   unacknowledged purchase after three days, and the nightly refund sweep then
+   takes the course back off somebody who believes they bought it. The wedding
+   path was already made unconditional and subscriptions have sub.acknowledged
+   to go on; only the course path kept the old shape. */
+test("a course retry acknowledges again - a first acknowledge that failed is never the last one", async () => {
+  const k = K;
+  let acks = 0;
+  const docs: Record<string, Record<string, unknown>> = {};
+  const m = mockFetch(k, {
+    "androidpublisher.googleapis.com": (url, init) => {
+      if (init.method === "POST") {
+        if (url.endsWith(":acknowledge")) { acks++; return json({ error: "boom" }, 500); }   // and it fails, every time
+        return json({});
+      }
+      return json({ purchaseState: 0, consumptionState: 0 });
+    },
+    "firestore.googleapis.com": (url, init) => {
+      const id = url.split("/documents/")[1].split("?")[0];
+      if (init.method === "PATCH") {
+        if (url.includes("currentDocument.exists=false") && docs[id]) return json({}, 409);
+        docs[id] = Object.assign(docs[id] || {}, JSON.parse(String(init.body)).fields);
+        return json({ name: id });
+      }
+      return docs[id] ? json({ fields: docs[id] }) : json({}, 404);
+    },
+  });
+  try {
+    const a = await post(k, "u1", { sku: "tarot", token: "TACK" });
+    assert.equal(a.status, 200);
+    assert.equal(acks, 1);
+    const b = await post(k, "u1", { sku: "tarot", token: "TACK" });   // the same phone asking again
+    assert.equal(b.status, 200);
+    assert.equal(acks, 2, "the retry acknowledged as well, rather than trusting the first attempt");
+  } finally { m.restore(); }
+});

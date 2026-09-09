@@ -1,7 +1,9 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
 import { decodeNote, handleRtdn } from "../src/rtdn";
-import { makeKeys, env, mockFetch, json, signJwt } from "./util";
+import { itemByKey } from "../src/catalog";
+import { tokenId } from "../src/refunds";
+import { makeKeys, env, mockFetch, json, fsDoc, signJwt } from "./util";
 
 const push = (note: unknown) => JSON.stringify({ message: { data: Buffer.from(JSON.stringify(note)).toString("base64"), messageId: "1" }, subscription: "s" });
 
@@ -64,5 +66,85 @@ test("with RTDN_PUSH_EMAIL unset, even a validly-signed, right-audience token is
     const good = await signJwt(k, { iss: "https://accounts.google.com", aud: "https://nabu-ai.test/rtdn", email: "anybody@any-project.iam.gserviceaccount.com", email_verified: true, exp: now + 600, iat: now, sub: "3" });
     const r = await handleRtdn(new Request("https://nabu-ai.test/rtdn", { method: "POST", headers: { Authorization: "Bearer " + good }, body }), e as never);
     assert.equal(r.status, 401);
+  } finally { m.restore(); }
+});
+
+/* A voided-purchase notification about a SUBSCRIPTION is never taken as
+   final. It used to write state:"voided" on the ledger row and remove
+   nothing, on the understanding that the paired SUBSCRIPTION_REVOKED push
+   would do the removing - but handleRtdn answers 204 whatever happens, so
+   Pub/Sub never redelivers a push this worker dropped, and reconcile then
+   skipped the "voided" row for good. Google is asked instead, and its answer
+   is what is written: the same rule the rest of this file already follows. */
+const pushed = async (k: Awaited<ReturnType<typeof makeKeys>>, e: Record<string, string>, body: string) => {
+  const now = Math.floor(Date.now() / 1000);
+  const jwt = await signJwt(k, { iss: "https://accounts.google.com", aud: "https://nabu-ai.test/rtdn", email: "nabu-worker@nabutarot.iam.gserviceaccount.com", email_verified: true, exp: now + 600, iat: now, sub: "1" });
+  return handleRtdn(new Request("https://nabu-ai.test/rtdn", { method: "POST", headers: { Authorization: "Bearer " + jwt }, body }), e as never);
+};
+const rtdnEnv = (k: Awaited<ReturnType<typeof makeKeys>>) => env(k, { RTDN_AUDIENCE: "https://nabu-ai.test/rtdn", RTDN_PUSH_EMAIL: "nabu-worker@nabutarot.iam.gserviceaccount.com" });
+
+test("a voided SUBSCRIPTION is re-asked of Google and written off from its real answer, not from the notification", async () => {
+  const k = K;
+  const plus = itemByKey("plus")!;
+  const hash = await tokenId("SV1");
+  const docs: Record<string, Record<string, unknown>> = {
+    ["purchases/" + hash]: fsDoc({ uid: "u1", sku: plus.sku, kind: "subs", ids: ["plus"], state: "SUBSCRIPTION_STATE_ACTIVE", token: "SV1" }).fields as Record<string, unknown>,
+    "users/u1": fsDoc({ access: { plus: "2099-01-01", tarot: "2099-01-01" }, subs: { plus: { sku: plus.sku, plan: "plus-12m", state: "SUBSCRIPTION_STATE_ACTIVE", until: "2099-01-01", autoRenew: true, tok: hash, opens: ["plus"], grant: true } } }).fields as Record<string, unknown>,
+  };
+  const m = mockFetch(k, {
+    "androidpublisher.googleapis.com": () => json({ subscriptionState: "SUBSCRIPTION_STATE_EXPIRED", lineItems: [{ productId: plus.sku, expiryTime: new Date(Date.now() - 86400000).toISOString() }] }),
+    "firestore.googleapis.com": (url, init) => { const id = url.split("/documents/")[1].split("?")[0]; if (init.method === "PATCH") { docs[id] = Object.assign(docs[id] || {}, JSON.parse(String(init.body)).fields); return json({}); } return docs[id] ? json({ fields: docs[id] }) : json({}, 404); },
+  });
+  try {
+    const r = await pushed(k, rtdnEnv(k), push({ version: "1.0", packageName: "app.nabutarot.twa", voidedPurchaseNotification: { purchaseToken: "SV1", orderId: "GPA.1", productType: 2 } }));
+    assert.equal(r.status, 204);
+    const access = (docs["users/u1"].access as { mapValue: { fields: Record<string, { stringValue: string }> } }).mapValue.fields;
+    assert.equal(access.plus, undefined);
+    assert.equal(access.tarot.stringValue, "2099-01-01");
+    // Google's state, not the word "voided" - so reconcile keeps this row in view.
+    assert.equal((docs["purchases/" + hash].state as { stringValue?: string }).stringValue, "SUBSCRIPTION_STATE_EXPIRED");
+  } finally { m.restore(); }
+});
+
+test("a voided SUBSCRIPTION Google cannot be asked about revokes nothing at all", async () => {
+  const k = K;
+  const plus = itemByKey("plus")!;
+  const hash = await tokenId("SV3");
+  const docs: Record<string, Record<string, unknown>> = {
+    ["purchases/" + hash]: fsDoc({ uid: "u3", sku: plus.sku, kind: "subs", ids: ["plus"], state: "SUBSCRIPTION_STATE_ACTIVE", token: "SV3" }).fields as Record<string, unknown>,
+    "users/u3": fsDoc({ access: { plus: "2099-01-01" } }).fields as Record<string, unknown>,
+  };
+  const m = mockFetch(k, {
+    "androidpublisher.googleapis.com": () => json({ error: "boom" }, 503),
+    "firestore.googleapis.com": (url, init) => { const id = url.split("/documents/")[1].split("?")[0]; if (init.method === "PATCH") { docs[id] = Object.assign(docs[id] || {}, JSON.parse(String(init.body)).fields); return json({}); } return docs[id] ? json({ fields: docs[id] }) : json({}, 404); },
+  });
+  try {
+    const before = JSON.stringify(docs);
+    const r = await pushed(k, rtdnEnv(k), push({ version: "1.0", packageName: "app.nabutarot.twa", voidedPurchaseNotification: { purchaseToken: "SV3", orderId: "GPA.3", productType: 2 } }));
+    assert.equal(r.status, 204);
+    assert.equal(JSON.stringify(docs), before, "nothing written: the row stays live for the next reconcile pass");
+  } finally { m.restore(); }
+});
+
+/* A one-time purchase keeps the old behaviour: Google's voided list is the
+   answer for a course, and a wedding is un-paid on the room that purchase
+   actually paid for - never on a room that is no longer there. */
+test("a voided one-time COURSE still takes its access back on the notification's word", async () => {
+  const k = K;
+  const hash = await tokenId("C1");
+  const docs: Record<string, Record<string, unknown>> = {
+    ["purchases/" + hash]: fsDoc({ uid: "u4", sku: "tarot", kind: "inapp", ids: ["tarot"], state: "granted", token: "C1" }).fields as Record<string, unknown>,
+    "users/u4": fsDoc({ access: { tarot: "2099-01-01", lenormand: "2099-01-01" } }).fields as Record<string, unknown>,
+  };
+  const m = mockFetch(k, {
+    "firestore.googleapis.com": (url, init) => { const id = url.split("/documents/")[1].split("?")[0]; if (init.method === "PATCH") { docs[id] = Object.assign(docs[id] || {}, JSON.parse(String(init.body)).fields); return json({}); } return docs[id] ? json({ fields: docs[id] }) : json({}, 404); },
+  });
+  try {
+    const r = await pushed(k, rtdnEnv(k), push({ version: "1.0", packageName: "app.nabutarot.twa", voidedPurchaseNotification: { purchaseToken: "C1", orderId: "GPA.4", productType: 1 } }));
+    assert.equal(r.status, 204);
+    const access = (docs["users/u4"].access as { mapValue: { fields: Record<string, { stringValue: string }> } }).mapValue.fields;
+    assert.equal(access.tarot, undefined);
+    assert.equal(access.lenormand.stringValue, "2099-01-01");
+    assert.equal((docs["purchases/" + hash].state as { stringValue?: string }).stringValue, "voided");
   } finally { m.restore(); }
 });

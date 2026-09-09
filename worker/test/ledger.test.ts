@@ -152,3 +152,63 @@ test("R3: sweepRefunds skips (never revokes) a row it could not read because of 
     assert.equal(docs["purchases/" + badId], undefined); // never written to - nothing guessed
   } finally { m.restore(); }
 });
+
+/* A Firestore REST PATCH creates a document that is not there. Cancel-then-
+   refund is an ordinary sequence - cancelling deletes the room, and the room
+   is spent by design - so the refund arrives at a wid with nothing behind it.
+   A blind PATCH left a ghost holding paid:false and no `uids`, and because
+   wedding ids are deterministic (uidA__uidB) and firestore.rules gates update
+   and delete on being in resource.data.uids, that couple could never make
+   another wedding: create no longer applied, and nothing else was allowed. */
+test("sweepRefunds: a refund for a room that no longer exists creates nothing", async () => {
+  const k = await makeKeys();
+  const purchaseId = await tokenId("GONETOK");
+  const docs: Record<string, Record<string, unknown>> = {
+    ["purchases/" + purchaseId]: fsDoc({ uid: "u1", sku: "wedding", ids: [], wid: "a__b", state: "granted" }).fields,
+  };
+  const m = mockFetch(k, {
+    "voidedpurchases": () => json({ voidedPurchases: [{ purchaseToken: "GONETOK", orderId: "GPA.gone" }] }),
+    "firestore.googleapis.com": (url, init) => {
+      const id = url.split("/documents/")[1].split("?")[0];
+      if (init.method === "PATCH") { docs[id] = Object.assign(docs[id] || {}, JSON.parse(String(init.body)).fields); return json({ name: id }); }
+      return docs[id] ? json({ fields: docs[id] }) : json({}, 404);
+    },
+  });
+  try {
+    const swept = await sweepRefunds(env(k));
+    assert.equal(swept.matched, 1);
+    assert.equal(swept.revoked, 0);                       // there was nothing to take back
+    assert.equal(docs["weddings/a__b"], undefined);       // and nothing was conjured in its place
+    assert.equal(m.log.some((c) => c.method === "PATCH" && c.url.includes("/weddings/")), false);
+    // The refund is still filed, so the sweep does not look at it again every night.
+    assert.equal((docs["purchases/" + purchaseId].state as { stringValue?: string }).stringValue, "voided");
+  } finally { m.restore(); }
+});
+
+/* Wedding ids are deterministic, so the same wid can be paid for a second
+   time, by a second purchase - and only the purchase that actually paid for
+   the room may un-pay it. The same guard protects a room Nabu was paid for by
+   bank transfer and marked paid by hand: it carries no `purchase` at all. */
+test("sweepRefunds: a room paid for by a DIFFERENT purchase is left alone", async () => {
+  const k = await makeKeys();
+  const refundedId = await tokenId("OLDTOK");
+  const otherId = await tokenId("NEWTOK");
+  const docs: Record<string, Record<string, unknown>> = {
+    ["purchases/" + refundedId]: fsDoc({ uid: "u1", sku: "wedding", ids: [], wid: "a__b", state: "granted" }).fields,
+    ["weddings/a__b"]: fsDoc({ paid: true, paidBy: "u1", purchase: otherId, uids: ["a", "b"] }).fields,
+  };
+  const m = mockFetch(k, {
+    "voidedpurchases": () => json({ voidedPurchases: [{ purchaseToken: "OLDTOK", orderId: "GPA.old" }] }),
+    "firestore.googleapis.com": (url, init) => {
+      const id = url.split("/documents/")[1].split("?")[0];
+      if (init.method === "PATCH") { docs[id] = Object.assign(docs[id] || {}, JSON.parse(String(init.body)).fields); return json({ name: id }); }
+      return docs[id] ? json({ fields: docs[id] }) : json({}, 404);
+    },
+  });
+  try {
+    const swept = await sweepRefunds(env(k));
+    assert.equal(swept.revoked, 0);
+    assert.equal((docs["weddings/a__b"].paid as { booleanValue?: boolean }).booleanValue, true);
+    assert.equal((docs["weddings/a__b"].purchase as { stringValue?: string }).stringValue, otherId);
+  } finally { m.restore(); }
+});

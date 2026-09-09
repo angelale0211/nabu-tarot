@@ -77,11 +77,24 @@ const BILL = {
     store.set(PLAY_PENDING, list);
   },
   forget(token) { store.set(PLAY_PENDING, this.pendingList().filter((p) => p.token !== token)); },
+  /* One purchase, one id, for the life of that purchase. A row rediscovered
+     from Play's own list has no `at` - only a row this phone remembered
+     itself ever had one - so keying on `rec.at || Date.now()` gave every
+     give-up a brand new id, and an unresolvable wedding token raised a fresh
+     alert every eight restore cycles for ever. The token is what identifies
+     the purchase, but it must never be repeated in an alert, so it is folded
+     to a short number that cannot be read back. */
+  stuckKey(rec) {
+    const s = String((rec && rec.token) || '');
+    let h = 0;
+    for (let i = 0; i < s.length; i++) h = ((h << 5) - h + s.charCodeAt(i)) | 0;
+    return s ? (h >>> 0).toString(36) : 'x';
+  },
   /* A row that could not be resolved after every bounded retry, said once,
      without ever repeating the token it cost. */
   flagStuck(rec) {
     if (typeof ALERTS === 'undefined') return;
-    ALERTS.add({ id: 'billstuck-' + (rec.sku || 'x') + '-' + (rec.at || Date.now()), k: 'app', t: T().buyFailed, b: '', href: '#/me' });
+    ALERTS.add({ id: 'billstuck-' + (rec.sku || 'x') + '-' + this.stuckKey(rec), k: 'app', t: T().buyFailed, b: '', href: '#/me' });
   },
   /* A wedding is paid for a room, but Play only ever knows the sku, never
      which room - the room's id lives only in the wid this phone carried at

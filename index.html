@@ -12,7 +12,7 @@
      carries this notice with it. See LICENSE. -->
 <meta name="author" content="Nabu Tarot">
 <meta name="copyright" content="Copyright (c) 2025-2026 Nabu Tarot. All rights reserved.">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'none'; object-src 'none'; form-action 'self'; script-src 'self' 'sha256-bo57KGC6XzRjjXI5vk1HbCkj0lPVLifWIZYTuz44088=' https://www.gstatic.com https://apis.google.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; font-src 'self' data:; media-src 'self' data: blob:; worker-src 'self'; connect-src 'self' https://*.googleapis.com https://*.google.com https://*.firebaseio.com https://*.cloudfunctions.net https://*.workers.dev https://generativelanguage.googleapis.com; frame-src https://*.firebaseapp.com https://accounts.google.com https://*.facebook.com">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'none'; object-src 'none'; form-action 'self'; script-src 'self' 'sha256-E9A2L46jdwhZuItwJPKMNGvqVCxuiiIq+g3v0A6cb+Y=' https://www.gstatic.com https://apis.google.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; font-src 'self' data:; media-src 'self' data: blob:; worker-src 'self'; connect-src 'self' https://*.googleapis.com https://*.google.com https://*.firebaseio.com https://*.cloudfunctions.net https://*.workers.dev https://generativelanguage.googleapis.com; frame-src https://*.firebaseapp.com https://accounts.google.com https://*.facebook.com">
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <meta name="theme-color" content="#EFE9FA">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -2918,7 +2918,6 @@ const PLAY_ITEMS = [
 ];
 const playItem = (key) => PLAY_ITEMS.filter((i) => i.key === key)[0] || null;
 const playItemBySku = (sku) => (sku && PLAY_ITEMS.filter((i) => i.sku === sku)[0]) || null;
-const PLAY_MANAGED_KEYS = ['manifest', 'plus', 'pro'];
 
 /* ============================ UI strings ============================
    Vietnamese is the first language of the app. Keep every line short and
@@ -3087,7 +3086,7 @@ const STR = {
     sending: 'Đang gửi...',
     sentOk: 'Đã gửi. Nabu sẽ xác nhận sớm. Bạn xem lại trong mục Hồ sơ.',
     welcomeHead: 'Nabu Tarot xin chào! 🌙', nabuPosts: 'Bài viết của Nabu', versionLine: (v) => 'Phiên bản ' + v, checkUpdate: 'Kiểm tra cập nhật', updating: 'Đang tải bản mới…',
-    privacyTitle: 'Chính sách quyền riêng tư', privacyLink: 'Quyền riêng tư', delAccount: 'Xoá tài khoản', delHint: 'Thao tác này sẽ xóa tài khoản, hồ sơ, tin nhắn và lịch hẹn của bạn. Dữ liệu không thể khôi phục.', delConfirm: 'Xóa tài khoản và toàn bộ dữ liệu? Thao tác này không thể hoàn tác.', delDone: 'Đã xoá tài khoản. Cảm ơn bạn đã ghé Nabu Tarot.', delRelogin: 'Để xác nhận đúng là bạn, hãy đăng nhập lại rồi chọn Xóa tài khoản một lần nữa.', aiFlag: 'Báo cáo câu trả lời này', aiFlagged: 'Đã ghi nhận. Cảm ơn bạn, Nabu sẽ xem lại.', storeCodeHint: 'Nhập mã mở khoá mà Nabu đã gửi cho bạn.',
+    privacyTitle: 'Chính sách quyền riêng tư', privacyLink: 'Quyền riêng tư', delAccount: 'Xoá tài khoản', delHint: 'Thao tác này sẽ xóa tài khoản, hồ sơ, tin nhắn và lịch hẹn của bạn. Dữ liệu không thể khôi phục.', delConfirm: 'Xóa tài khoản và toàn bộ dữ liệu? Thao tác này không thể hoàn tác.', delDone: 'Đã xoá tài khoản. Cảm ơn bạn đã ghé Nabu Tarot.', delRelogin: 'Để xác nhận đúng là bạn, hãy đăng nhập lại rồi chọn Xóa tài khoản một lần nữa.', aiFlag: 'Báo cáo câu trả lời này', aiFlagged: 'Đã ghi nhận. Cảm ơn bạn, Nabu sẽ xem lại.',
     actTitle: 'Hoạt động', actIntro: 'Những việc nhỏ để bạn ghé qua mỗi ngày: nuôi bạn nhỏ may mắn, buộc sợi tơ hồng với người ấy, rung cây thông điệp, tung đồng xu và viết nhật ký. Khi Nabu đăng thì có thêm tụ bài để chọn, bình chọn để tham gia và điều ước để gửi.', actEmpty: 'Chưa có hoạt động nào. Quay lại sau nhé.', actAll: 'Tất cả hoạt động', actOpen: 'Đang mở', actClosed: 'Đã đóng', actHasResults: 'Đã có kết quả',
     actPickHint: 'Bạn chạm vào tụ bài mà mình thấy bị thu hút nhất. Nabu sẽ đăng thông điệp của từng tụ sau vài ngày.', actPicked: (n) => 'Bạn đã chọn tụ ' + n + '.', actComeBack: (d) => 'Quay lại vào ' + d + ' để lật bài xem thông điệp.', actChangePile: 'Đổi sang tụ khác?', actPickToSee: 'Thông điệp đã có. Chạm vào một tụ để lật lên.', actTapOthers: 'Tụ bạn chọn đã lật lên. Bạn có thể chạm vào tụ khác để xem thử.',
     actVoteHint: 'Bạn chạm vào một lựa chọn. Mỗi người chỉ được bình chọn một lần.', actVoteLogin: 'Bạn cần đăng nhập để bình chọn và xem kết quả.', actVoted: 'Cảm ơn bạn đã bình chọn!', actClosedNote: 'Bình chọn đã đóng. Đây là kết quả.', actVotes: (n) => n + ' phiếu',
@@ -3641,7 +3640,6 @@ const STR = {
     repHint: 'Những gì người dùng báo cáo trong phòng cưới hoặc trong trò chuyện.',
     buyWorking: 'Đang xử lý…', buyAlready: 'Lần mua này đã được dùng rồi.',
     buyFailed: 'Chưa mua được. Bạn thử lại, hoặc nhắn tin cho Nabu.',
-    buyDone: (n) => 'Đã mở: ' + n + '.',
     stTitle: 'Cửa hàng', stIntro: 'Thanh toán qua Google Play. Mở khóa ngay sau khi thanh toán thành công.',
     stCourses: 'Khóa học', stPlans: 'Gói thành viên', stBuy: 'Mua', stSubscribe: 'Đăng ký',
     stEveryMonths: (n) => 'Tự động gia hạn mỗi ' + n + ' tháng đến khi bạn hủy.', stRenews: (d) => 'Gia hạn vào ' + d, stEndsOn: (d) => 'Dùng đến ' + d + ' · Không gia hạn',
@@ -3919,7 +3917,7 @@ const STR = {
     sending: 'Sending...',
     sentOk: 'Sent. Nabu will confirm soon. You can check it under Profile.',
     welcomeHead: 'Welcome to Nabu Tarot 🌙', nabuPosts: 'Nabu Posts', versionLine: (v) => 'Version ' + v, checkUpdate: 'Check for updates', updating: 'Loading the new version…',
-    privacyTitle: 'Privacy policy', privacyLink: 'Privacy', delAccount: 'Delete account', delHint: 'This deletes your account, profile, messages and bookings. The data cannot be restored.', delConfirm: 'Delete your account and all data? This cannot be undone.', delDone: 'Account deleted. Thank you for visiting Nabu Tarot.', delRelogin: 'To confirm it is really you, sign in again and choose Delete account once more.', aiFlag: 'Report this answer', aiFlagged: 'Noted. Thank you, Nabu will review it.', storeCodeHint: 'Enter the unlock code Nabu sent you.',
+    privacyTitle: 'Privacy policy', privacyLink: 'Privacy', delAccount: 'Delete account', delHint: 'This deletes your account, profile, messages and bookings. The data cannot be restored.', delConfirm: 'Delete your account and all data? This cannot be undone.', delDone: 'Account deleted. Thank you for visiting Nabu Tarot.', delRelogin: 'To confirm it is really you, sign in again and choose Delete account once more.', aiFlag: 'Report this answer', aiFlagged: 'Noted. Thank you, Nabu will review it.',
     actTitle: 'Activities', actIntro: 'Small things to drop in on each day: a lucky companion to keep, the red thread to tie, the message tree, the coin and the diary. When Nabu posts there are piles to pick, polls to vote in and wishes to send.', actEmpty: 'No activities yet. Come back soon.', actAll: 'All activities', actOpen: 'Open', actClosed: 'Closed', actHasResults: 'Answered',
     actPickHint: 'Tap the pile that pulls you. Nabu posts each pile\'s message a few days later.', actPicked: (n) => 'You chose pile ' + n + '.', actComeBack: (d) => 'Come back on ' + d + ' to flip it over.', actChangePile: 'Switch to another pile?', actPickToSee: 'The messages are in. Tap a pile to flip it.', actTapOthers: 'Your pile is open. Tap another pile to peek.',
     actVoteHint: 'Tap an option. One vote per person.', actVoteLogin: 'Sign in to vote and see the results.', actVoted: 'Thank you for voting!', actClosedNote: 'Voting is closed. Here are the results.', actVotes: (n) => n + ' votes',
@@ -4473,7 +4471,6 @@ const STR = {
     repHint: 'What people have reported, from wedding rooms and threads.',
     buyWorking: 'Working...', buyAlready: 'That purchase has already been used.',
     buyFailed: 'That did not go through. Try again, or message Nabu.',
-    buyDone: (n) => 'Opened: ' + n + '.',
     stTitle: 'Store', stIntro: 'Pay through Google Play. Access unlocks as soon as your payment is complete.',
     stCourses: 'Courses', stPlans: 'Memberships', stBuy: 'Buy', stSubscribe: 'Subscribe',
     stEveryMonths: (n) => 'Renews automatically every ' + n + ' months until canceled.', stRenews: (d) => 'Renews on ' + d, stEndsOn: (d) => 'Access until ' + d + ' · Won’t renew',
@@ -4750,7 +4747,7 @@ const STR = {
     sending: 'Wird gesendet...',
     sentOk: 'Gesendet. Nabu bestätigt bald. Du siehst es im Profil.',
     welcomeHead: 'Willkommen bei Nabu Tarot 🌙', nabuPosts: 'Beiträge von Nabu', versionLine: (v) => 'Version ' + v, checkUpdate: 'Nach Updates suchen', updating: 'Die neue Version wird geladen…',
-    privacyTitle: 'Datenschutzerklärung', privacyLink: 'Datenschutz', delAccount: 'Konto löschen', delHint: 'Dadurch werden dein Konto, Profil, deine Nachrichten und Termine gelöscht. Die Daten können nicht wiederhergestellt werden.', delConfirm: 'Konto und alle Daten löschen? Das kann nicht rückgängig gemacht werden.', delDone: 'Konto gelöscht. Danke, dass du bei Nabu Tarot warst.', delRelogin: 'Melde dich zur Bestätigung noch einmal an und wähle danach erneut Konto löschen.', aiFlag: 'Diese Antwort melden', aiFlagged: 'Notiert. Danke dir, Nabu schaut es sich an.', storeCodeHint: 'Gib den Freischaltcode ein, den Nabu dir geschickt hat.',
+    privacyTitle: 'Datenschutzerklärung', privacyLink: 'Datenschutz', delAccount: 'Konto löschen', delHint: 'Dadurch werden dein Konto, Profil, deine Nachrichten und Termine gelöscht. Die Daten können nicht wiederhergestellt werden.', delConfirm: 'Konto und alle Daten löschen? Das kann nicht rückgängig gemacht werden.', delDone: 'Konto gelöscht. Danke, dass du bei Nabu Tarot warst.', delRelogin: 'Melde dich zur Bestätigung noch einmal an und wähle danach erneut Konto löschen.', aiFlag: 'Diese Antwort melden', aiFlagged: 'Notiert. Danke dir, Nabu schaut es sich an.',
     actTitle: 'Aktivitäten', actIntro: 'Kleine Dinge für jeden Tag: ein Glücksbegleiter zum Behalten, der rote Faden zum Knüpfen, der Nachrichtenbaum, die Münze und das Tagebuch. Wenn Nabu etwas postet, gibt es Stapel zum Wählen, Umfragen zum Abstimmen und Wünsche zum Senden.', actEmpty: 'Noch keine Aktivitäten. Schau bald wieder vorbei.', actAll: 'Alle Aktivitäten', actOpen: 'Offen', actClosed: 'Geschlossen', actHasResults: 'Beantwortet',
     actPickHint: 'Tipp den Stapel an, der dich anzieht. Die Botschaft jedes Stapels postet Nabu ein paar Tage später.', actPicked: (n) => 'Du hast Stapel ' + n + ' gewählt.', actComeBack: (d) => 'Komm am ' + d + ' zurück, um ihn umzudrehen.', actChangePile: 'Zu einem anderen Stapel wechseln?', actPickToSee: 'Die Botschaften sind da. Tipp einen Stapel an, um ihn umzudrehen.', actTapOthers: 'Dein Stapel ist offen. Tipp einen anderen Stapel an, um hineinzuschauen.',
     actVoteHint: 'Tipp eine Antwort an. Eine Stimme pro Person.', actVoteLogin: 'Melde dich an, um abzustimmen und die Ergebnisse zu sehen.', actVoted: 'Danke für deine Stimme!', actClosedNote: 'Die Abstimmung ist beendet. Hier sind die Ergebnisse.', actVotes: (n) => n + ' Stimmen',
@@ -5297,7 +5294,6 @@ const STR = {
     repHint: 'Was Leute gemeldet haben, aus Hochzeitsräumen und Fäden.',
     buyWorking: 'Läuft...', buyAlready: 'Dieser Kauf wurde bereits eingelöst.',
     buyFailed: 'Das hat nicht geklappt. Versuch es noch einmal oder schreib Nabu.',
-    buyDone: (n) => 'Opened: ' + n + '.',
     stTitle: 'Shop', stIntro: 'Zahlung über Google Play. Nach erfolgreicher Zahlung wird sofort freigeschaltet.',
     stCourses: 'Kurse', stPlans: 'Mitgliedschaften', stBuy: 'Kaufen', stSubscribe: 'Abonnieren',
     stEveryMonths: (n) => 'Verlängert sich automatisch alle ' + n + ' Monate, bis du kündigst.', stRenews: (d) => 'Verlängerung am ' + d, stEndsOn: (d) => 'Zugang bis ' + d + ' · Keine Verlängerung',
@@ -21520,11 +21516,24 @@ const BILL = {
     store.set(PLAY_PENDING, list);
   },
   forget(token) { store.set(PLAY_PENDING, this.pendingList().filter((p) => p.token !== token)); },
+  /* One purchase, one id, for the life of that purchase. A row rediscovered
+     from Play's own list has no `at` - only a row this phone remembered
+     itself ever had one - so keying on `rec.at || Date.now()` gave every
+     give-up a brand new id, and an unresolvable wedding token raised a fresh
+     alert every eight restore cycles for ever. The token is what identifies
+     the purchase, but it must never be repeated in an alert, so it is folded
+     to a short number that cannot be read back. */
+  stuckKey(rec) {
+    const s = String((rec && rec.token) || '');
+    let h = 0;
+    for (let i = 0; i < s.length; i++) h = ((h << 5) - h + s.charCodeAt(i)) | 0;
+    return s ? (h >>> 0).toString(36) : 'x';
+  },
   /* A row that could not be resolved after every bounded retry, said once,
      without ever repeating the token it cost. */
   flagStuck(rec) {
     if (typeof ALERTS === 'undefined') return;
-    ALERTS.add({ id: 'billstuck-' + (rec.sku || 'x') + '-' + (rec.at || Date.now()), k: 'app', t: T().buyFailed, b: '', href: '#/me' });
+    ALERTS.add({ id: 'billstuck-' + (rec.sku || 'x') + '-' + this.stuckKey(rec), k: 'app', t: T().buyFailed, b: '', href: '#/me' });
   },
   /* A wedding is paid for a room, but Play only ever knows the sku, never
      which room - the room's id lives only in the wid this phone carried at
@@ -24731,8 +24740,9 @@ ROUTES.looks = { nav: '', render: renderLooks };
    voucher that grows with the highest level reached.
 
    One coin is worth one đồng. Coins are earned slowly and never expire, so
-   they can be saved for a course or spent on a single reading; using them is
-   always a choice, offered at the moment of ordering and never automatic.
+   they can be saved up or spent on a single reading - a reading is the only
+   thing they come off; using them is always a choice, offered at the moment
+   of ordering and never automatic.
 
    Everything is kept on the device. Nothing is deducted until an order is
    actually sent, and coins put into an order can be taken back if the order
@@ -28975,8 +28985,6 @@ const WED = {
       { paid: yes !== false, paidAt: Date.now() }, { merge: true });
   },
   isPaid(w) { return !!(w && w.paid); },
-  /* D1: a room given up before its hour is still a wedding paid for. */
-  dropCountsAsUsed: true,
 
   watch(id, cb) {
     if (!this.ok() || !id) return () => {};

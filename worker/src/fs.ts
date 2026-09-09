@@ -47,8 +47,11 @@ export async function fsGet(env: PlayEnv, path: string): Promise<Record<string, 
 
 /* PATCH with an update mask writes only the named top-level fields and leaves
    the rest of the document alone. createOnly adds the precondition that the
-   document must not exist yet, which is how a purchase token is claimed. */
-export async function fsPatch(env: PlayEnv, path: string, obj: Record<string, unknown>, mask?: string[], opts?: { createOnly?: boolean }): Promise<Response> {
+   document must not exist yet, which is how a purchase token is claimed;
+   `exists` is the opposite precondition, for a write that must never bring a
+   deleted document back to life - a PATCH with no precondition at all creates
+   whatever it cannot find. */
+export async function fsPatch(env: PlayEnv, path: string, obj: Record<string, unknown>, mask?: string[], opts?: { createOnly?: boolean; exists?: boolean }): Promise<Response> {
   const at = await serviceToken(env, FS_SCOPE);
   const q: string[] = [];
   // An empty array is truthy, so `mask || Object.keys(obj)` would pick []
@@ -59,6 +62,7 @@ export async function fsPatch(env: PlayEnv, path: string, obj: Record<string, un
   if (fields.length === 0) throw new Error("fsPatch: empty field mask for " + path);
   for (const f of fields) q.push("updateMask.fieldPaths=" + encodeURIComponent(f));
   if (opts && opts.createOnly) q.push("currentDocument.exists=false");
+  else if (opts && opts.exists) q.push("currentDocument.exists=true");
   return fetch(docUrl(env, path) + (q.length ? "?" + q.join("&") : ""), {
     method: "PATCH",
     headers: { Authorization: "Bearer " + at, "Content-Type": "application/json" },

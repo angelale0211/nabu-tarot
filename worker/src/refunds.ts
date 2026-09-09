@@ -217,7 +217,11 @@ export async function sweepRefunds(env: PlayEnv): Promise<Swept> {
        row - so it never has ids to match against and would otherwise fall
        through the "nothing to act on" check below and never be refunded. */
     const wid = doc.fields?.wid?.stringValue || "";
-    if (wid) { await unpayRoom(env, wid); await markVoided(env, id, ["wedding:" + wid]); out.matched++; out.revoked++; continue; }
+    /* The hash IS the ledger document id, and payRoom wrote that same hash
+       onto the room as `purchase`. Passing it is what stops this refund
+       un-paying a room some other purchase paid for - or re-creating a room
+       the couple already deleted. */
+    if (wid) { const undone = await unpayRoom(env, wid, id); await markVoided(env, id, undone ? ["wedding:" + wid] : []); out.matched++; if (undone) out.revoked++; continue; }
     if (!uid || !ids.length) { out.skipped++; continue; }
     out.matched++;
     const taken = await removeAccess(env, uid, ids);

@@ -4,8 +4,9 @@
    voucher that grows with the highest level reached.
 
    One coin is worth one đồng. Coins are earned slowly and never expire, so
-   they can be saved for a course or spent on a single reading; using them is
-   always a choice, offered at the moment of ordering and never automatic.
+   they can be saved up or spent on a single reading - a reading is the only
+   thing they come off; using them is always a choice, offered at the moment
+   of ordering and never automatic.
 
    Everything is kept on the device. Nothing is deducted until an order is
    actually sent, and coins put into an order can be taken back if the order

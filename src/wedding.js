@@ -150,8 +150,6 @@ const WED = {
       { paid: yes !== false, paidAt: Date.now() }, { merge: true });
   },
   isPaid(w) { return !!(w && w.paid); },
-  /* D1: a room given up before its hour is still a wedding paid for. */
-  dropCountsAsUsed: true,
 
   watch(id, cb) {
     if (!this.ok() || !id) return () => {};

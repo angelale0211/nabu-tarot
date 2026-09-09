@@ -60,11 +60,27 @@ async function onSubscription(env: RtdnEnv, token: string, type: number): Promis
   console.log(JSON.stringify({ at: "rtdn", type, uid: row.uid, key: item.key, state: got.sub.state }));
 }
 
+/* A one-time purchase taken back. A SUBSCRIPTION never comes through here:
+   it is sent to onSubscription instead, so Google is asked what the
+   subscription is now and that answer is applied.
+
+   Writing a subs row off on the notification's word alone was the hole. It
+   set the ledger row to state "voided" and removed nothing (right for a plain
+   refund, where the paired SUBSCRIPTION_REVOKED push does the removing) - but
+   reconcile then skipped a "voided" row for good, so the backstop was gone,
+   and handleRtdn answers 204 whatever happens, so Pub/Sub never redelivers.
+   One dropped push and paid access stood for ever. Asking Google instead
+   means the notification is only ever a nudge to go and look: a revoked
+   subscription comes back EXPIRED and loses its keys through the ordinary
+   recompute, and a transient failure to reach Google revokes nothing at all
+   and is picked up by the next reconcile pass. */
 async function onVoided(env: RtdnEnv, token: string): Promise<void> {
   const hash = await tokenId(token);
   const row = await ledgerGet(env, hash);
-  if (!row || row.state === "voided") return;
-  if (row.wid) await unpayRoom(env, row.wid);
+  if (!row) return;
+  if (row.kind === "subs") { await onSubscription(env, token, 0); return; }
+  if (row.state === "voided") return;
+  if (row.wid) await unpayRoom(env, row.wid, hash);
   else if (row.kind === "inapp" && row.ids.length) await removeAccessFor(env, row.uid, row.ids);
   await ledgerSet(env, hash, { state: "voided", voidedAt: new Date().toISOString() });
   console.log(JSON.stringify({ at: "rtdn", voided: row.uid, ids: row.ids, wid: row.wid || "" }));

@@ -33,3 +33,30 @@ test("two granting rows for the same key keep the later date", () => {
   const out = recompute({ pro6: row(["pro", "plus"], "2026-06-01"), pro: row(["pro", "plus"], "2027-06-01") }, {});
   assert.deepEqual(out, { pro: "2027-06-01", plus: "2027-06-01" });
 });
+
+/* The website sells the same three keys the Play subscriptions open. Somebody
+   who paid 249.000d by bank transfer for Nabu Pro and redeemed the code Nabu
+   sent them holds access.pro and access.plus with no subscription behind them.
+   Applying a subscription for a DIFFERENT product must not touch either: the
+   manifest row names only "manifest", so "pro" and "plus" are not Play's to
+   rebuild. Before this, recompute threw away every Play-managed key it could
+   not explain and the customer lost what they had paid for - unrecoverably,
+   because reconcile re-ran the same wipe every six hours. */
+test("a website-code Pro customer who then subscribes to a DIFFERENT product keeps pro and plus", () => {
+  const row = (opens: string[], until: string): SubRow => ({ sku: "s", plan: "p", state: "SUBSCRIPTION_STATE_ACTIVE", until, autoRenew: true, tok: "t", opens, grant: true });
+  const access = { pro: "2027-03-01", plus: "2027-03-01", tarot: "2026-05-05" };
+  const out = recompute({ manifest: row(["manifest"], "2027-09-01") }, access);
+  assert.deepEqual(out, { pro: "2027-03-01", plus: "2027-03-01", tarot: "2026-05-05", manifest: "2027-09-01" });
+});
+test("a Play row still wins for a key it names, granting a later date over an existing value", () => {
+  const row = (opens: string[], until: string): SubRow => ({ sku: "s", plan: "p", state: "SUBSCRIPTION_STATE_ACTIVE", until, autoRenew: true, tok: "t", opens, grant: true });
+  const out = recompute({ pro: row(["pro", "plus"], "2028-01-01") }, { pro: "2026-01-01", plus: "2026-01-01" });
+  assert.deepEqual(out, { pro: "2028-01-01", plus: "2028-01-01" });
+});
+/* The other half of the same rule: a row that names a key still names it when
+   it stops granting, which is how an expired subscription takes its access
+   away. Preserving "unexplained" keys must not become "never revoke". */
+test("a subscription row that has stopped granting still takes back the key it names", () => {
+  const dead: SubRow = { sku: "s", plan: "p", state: "SUBSCRIPTION_STATE_EXPIRED", until: "2026-01-01", autoRenew: false, tok: "t", opens: ["pro", "plus"], grant: false };
+  assert.deepEqual(recompute({ pro: dead }, { pro: "2026-01-01", plus: "2026-01-01", tarot: "2027-01-01" }), { tarot: "2027-01-01" });
+});

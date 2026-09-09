@@ -1249,6 +1249,16 @@ async function go(hash, sel) { W().location.hash = hash; await sleep(30); return
       for (let i = 0; i < 8; i++) { const rr = await N.BILL.restore(); failedTotal += rr.failed; }
       ok(failedTotal >= 1 && !N.BILL.pendingList().some((p) => p.token === wtok) && N.ALERTS.all().some((a) => a.id.indexOf('billstuck-') === 0),
         'a wedding purchase whose room cannot be resolved is retried a bounded number of times, then surfaced and dropped - never forever and never silently');
+      /* Said once, not once per give-up. Play still hands the token back
+         after it was dropped, so the whole count starts again - and a row
+         rediscovered from Play's own list carries no `at`, which is what the
+         alert id used to be keyed on. Keyed on the clock, every eight cycles
+         raised a brand new alert about the same purchase, for ever. */
+      const stuckAfterOne = N.ALERTS.all().filter((a) => a.id.indexOf('billstuck-') === 0).length;
+      for (let i = 0; i < 8; i++) await N.BILL.restore();
+      const stuckAfterTwo = N.ALERTS.all().filter((a) => a.id.indexOf('billstuck-') === 0).length;
+      ok(stuckAfterOne === 1 && stuckAfterTwo === 1,
+        'and giving up on that same purchase again says nothing new - one stuck purchase is one alert, not a fresh one every eight restores');
       delete play.products[wtok];
       N.ALERTS.clear();
       /* The store below is exercised on a clean account: F1/F2 above already
@@ -1853,10 +1863,10 @@ async function go(hash, sel) { W().location.hash = hash; await sleep(30); return
 
         { /* F1: one confirmation now covers every case - early or late - and
              it has to name both consequences: the room and guest list are
-             deleted, and the wedding still counts as used. wedDropLateAsk
-             named only the second and is unreachable now that
-             WED.dropCountsAsUsed is always true, so this is the string that
-             must actually be shown. */
+             deleted, and the wedding still counts as used. A room given up
+             before its hour is a wedding paid for, so there is no second,
+             gentler question to reach and no flag that could reverse it -
+             this is the string that must actually be shown. */
           const origConfirm = w.confirm;
           let asked = '';
           w.confirm = (msg) => { asked = msg; return false; };

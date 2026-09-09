@@ -256,7 +256,16 @@ export default {
         for (const k of item.opens) want[k] = until;
         const access = await grantUntil(env, person.uid, want);
         await markGranted(env, token, { until }).catch((e) => log({ ledger: String(e) }));
-        if (!claim.existing) ctx.waitUntil(acknowledge(env, sku, token));
+        /* Unconditional, exactly as on the wedding path above. Guarded by
+           `!claim.existing`, a first acknowledge that failed - a dropped
+           waitUntil, a Play hiccup, and acknowledge() does not look at the
+           status either way - could never be retried: every later attempt
+           with the same token saw its own claim already on the ledger and
+           skipped it. Google auto-refunds an unacknowledged purchase after
+           three days, and the refund sweep then takes the course back off
+           somebody who believes they bought it. Acknowledging twice is
+           harmless; acknowledging once is what costs money. */
+        ctx.waitUntil(acknowledge(env, sku, token));
         log({ granted: item.opens, until });
         return say(200, { ok: true, opened: item.opens, access });
       } catch (e) {

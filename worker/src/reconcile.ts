@@ -33,7 +33,11 @@ export async function reconcileSubs(env: PlayEnv): Promise<{ looked: number; cha
   for (const it of rows) {
     if (!it.document) continue;
     const row = decode(it.document as { fields?: Record<string, Record<string, unknown>> }) as unknown as LedgerRow & { token?: string };
-    if (row.state === "SUBSCRIPTION_STATE_EXPIRED" || row.state === "voided" || !row.token) continue;
+    /* "voided" is deliberately NOT skipped. A voided-purchase notification
+       used to write that state and stop the row being looked at ever again,
+       which turned one dropped SUBSCRIPTION_REVOKED push into paid access
+       standing for ever. Nothing but Google's own EXPIRED retires a row now. */
+    if (row.state === "SUBSCRIPTION_STATE_EXPIRED" || !row.token) continue;
     const item = itemBySku(row.sku);
     if (!item) continue;
     out.looked++;
