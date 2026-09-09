@@ -37,8 +37,8 @@ service cloud.firestore {
          that reads it belongs where that meaning exists. */
       function touchesPaid() {
         return resource == null
-          ? request.resource.data.keys().hasAny(['revoked']) || !emptyAccess()
-          : request.resource.data.diff(resource.data).affectedKeys().hasAny(['access', 'revoked']);
+          ? request.resource.data.keys().hasAny(['revoked', 'subs']) || !emptyAccess()
+          : request.resource.data.diff(resource.data).affectedKeys().hasAny(['access', 'revoked', 'subs']);
       }
       /* A phone still running an older version sends `access: {}` with the very
          first write of a new account, and refusing that would refuse the account
@@ -344,13 +344,12 @@ service cloud.firestore {
       allow update: if (request.auth != null && request.auth.uid in resource.data.uids
                     && request.resource.data.uids == resource.data.uids
                     && request.resource.data.diff(resource.data).affectedKeys()
-                         .hasOnly(['state', 'step', 'vows', 'doneAt', 'bouquet', 'guestCount', 'wantMs', 'moveAsk', 'ready']))
-                    // The hour itself, and whether it has been paid for, are
-                    // Nabu's to write: Nabu hosts the ceremony and has to be
-                    // there, and one payment covers both partners. The couple
-                    // ask; this answers.
+                         .hasOnly(['state', 'step', 'vows', 'doneAt', 'bouquet', 'guestCount', 'ready']))
+                    // Whether it has been paid for is Nabu's to write (a web order),
+                    // or the worker's (a Play purchase; the service account is not
+                    // bound by these rules). The hour is nobody's to change.
                     || (isAdmin() && request.resource.data.diff(resource.data).affectedKeys()
-                         .hasOnly(['paid', 'paidAt', 'startMs', 'moved', 'wantMs', 'moveAsk']));
+                         .hasOnly(['paid', 'paidAt']));
       allow delete: if request.auth != null && request.auth.uid in resource.data.uids;
 
       /* The couple's own line. Everything else in that room is said in front

@@ -393,11 +393,8 @@ function adminPay(p) {
       + asks.map((w) => '<div class="bk"><div class="bkh"><b>\uD83D\uDC8D ' + esc(((w.aName || '') + ' & ' + (w.bName || '')).replace(/^ & $/, S.loveSomeone)) + '</b>'
         + '<span class="st ' + (w.paid ? 'confirmed' : 'requested') + '">' + esc(w.paid ? S.adminWedPaid : S.adminWedOwed) + '</span></div>'
         + '<p class="hint">' + esc(S.adminWedWas) + ': <b>' + esc(wedWhen(Number(w.startMs) || 0)) + '</b></p>'
-        + (WED.asking(w) ? '<p class="hint">' + esc(S.adminWedWants) + ': <b>' + esc(wedWhen(Number(w.wantMs) || 0)) + '</b></p>' : '')
         + '<div class="acts">'
         + (w.paid ? '' : '<button type="button" class="btn sm primary" data-wpaid="' + esc(w.id) + '">\uD83D\uDCB0 ' + esc(S.adminWedGotPaid) + '</button>')
-        + (WED.asking(w) ? '<button type="button" class="btn sm primary" data-wmv="' + esc(w.id) + '">\uD83D\uDD01 ' + esc(S.adminWedMoveOk) + '</button>'
-          + '<button type="button" class="btn sm" data-wmvno="' + esc(w.id) + '">' + esc(S.adminKeep) + '</button>' : '')
         + '</div></div>').join('')
       + '</div>' : '';
     /* An order has no hour in it, so the list arrives sorted by document id -
@@ -470,14 +467,6 @@ function adminPay(p) {
       const id = b.getAttribute('data-wpaid');
       b.disabled = true;
       try { await WED.setPaid(id, true); toast(T().adminWedPaidDone); } catch (e) { b.disabled = false; toast(loveWhy(e)); }
-    }));
-    $$('[data-wmv]', p).forEach((b) => b.addEventListener('click', async () => {
-      const w = asks.filter((x) => x.id === b.getAttribute('data-wmv'))[0];
-      try { await WED.answerMove(w.id, w, true); toast(T().saved); } catch (e) { toast(loveWhy(e)); }
-    }));
-    $$('[data-wmvno]', p).forEach((b) => b.addEventListener('click', async () => {
-      const w = asks.filter((x) => x.id === b.getAttribute('data-wmvno'))[0];
-      try { await WED.answerMove(w.id, w, false); toast(T().saved); } catch (e) { toast(loveWhy(e)); }
     }));
   };
   admin.unsubs.push(WED.watchRooms((l) => { asks = l; draw(); }));

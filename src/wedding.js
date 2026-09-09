@@ -39,7 +39,7 @@ const WED_SEEN_MS = 45 * 1000;        /* a seat still warm counts as present */
 const WED_CALL_MS = 2 * 60 * 1000;    /* and this long before, the room is called to order */
 const WED_GRACE_MS = 15 * 60 * 1000;  /* how late a couple may be before the room gives up */
 const WED_SHUT_MS = 3 * 60 * 1000;    /* and how long it stays open to say so */
-const WED_MOVE_MS = 60 * 60 * 1000;   /* how close to the hour it may still be moved */
+const WED_LATE_MS = 60 * 60 * 1000;   /* inside the last hour, calling off is final */
 const WED_BYE_MS = 2 * 60 * 1000;     /* and this long before it closes, it says so */
 
 /* Three, not eight. A wedding gift is chosen in a second, in front of a room -
@@ -149,7 +149,9 @@ const WED = {
     return BE.db.collection('weddings').doc(id).set(
       { paid: yes !== false, paidAt: Date.now() }, { merge: true });
   },
-  isPaid(w) { return !!(w && w.paid) || (typeof ACCESS !== 'undefined' && ACCESS.has('wedding')); },
+  isPaid(w) { return !!(w && w.paid); },
+  /* D1: a room given up before its hour is still a wedding paid for. */
+  dropCountsAsUsed: true,
 
   watch(id, cb) {
     if (!this.ok() || !id) return () => {};
@@ -160,35 +162,9 @@ const WED = {
     const d = await BE.db.collection('weddings').doc(id).get();
     return d.exists ? Object.assign({ id: d.id }, d.data()) : null;
   },
-  /* Moved once, and never inside the last hour: guests are already on their
-     way by then, and a room that moves under them is worse than one that
-     starts late. */
-  moved(w) { return Number((w && w.moved) || 0); },
-  /* An hour asked for and not yet answered. */
-  asking(w) { return !!(w && w.moveAsk && Number(w.wantMs) > 0); },
-  wantMs(w) { return Number((w && w.wantMs) || 0); },
-  /* Once, never inside the last hour, and not while an answer is awaited. */
-  canMove(w) { return this.moved(w) < 1 && !this.asking(w) && Date.now() < this.startMs(w) - WED_MOVE_MS; },
   /* Inside the last hour, or once it has begun, calling off is final: the hour
      was held and then not used, which is the same to Nabu as nobody coming. */
-  lateNow(w) { return Date.now() > this.startMs(w) - WED_MOVE_MS; },
-  /* Nabu hosts the ceremony, so the hour is asked for rather than taken. The
-     old hour stands until the answer comes, which is what makes it safe to
-     ask: nothing moves under the guests who are already invited. */
-  askMove(id, wantMs) {
-    return BE.db.collection('weddings').doc(id).update({
-      wantMs: Number(wantMs) || 0, moveAsk: true
-    });
-  },
-  /* Answered. Yes counts the move, which is what shuts the button for good;
-     no leaves the hour exactly where it was. Two writes, never one, so a
-     refused write cannot leave a room that has moved without counting it. */
-  answerMove(id, w, yes) {
-    const at = this.wantMs(w);
-    return BE.db.collection('weddings').doc(id).update(yes && at
-      ? { startMs: at, moved: this.moved(w) + 1, wantMs: 0, moveAsk: false }
-      : { wantMs: 0, moveAsk: false });
-  },
+  lateNow(w) { return Date.now() > this.startMs(w) - WED_LATE_MS; },
   /* Every room Nabu is holding. Filtered here rather than in the query: a
      room with no `paid` field at all is exactly the room that has not been
      paid for, and a where() on a field that is not there matches nothing. */
@@ -828,8 +804,7 @@ function renderWedding(args) {
       act = '<p class="lead">' + esc(S.wedNoShow) + '</p>'
         + '<p class="hint">' + esc(S.wedNoShowSorry) + '</p>'
         + '<p class="wedcount" id="wedshut">' + esc(wedCountdown(Date.now() + Math.max(0, WED.shutsIn(w)))) + '</p>'
-        + '<p class="hint">' + esc(S.wedNoShowShut) + '</p>'
-        + (mine ? '<a class="btn block" href="#/wedding" style="margin-top:10px">' + esc(S.wedMoveTitle) + '</a>' : '');
+        + '<p class="hint">' + esc(S.wedNoShowShut) + '</p>';
     } else if (waiting) {
       /* Everybody in the room is reading the same clock, so nobody has to be
          told when it is about to happen. */
@@ -1155,55 +1130,42 @@ function renderWedding(args) {
 
 
   /* One page about this wedding: when it is, what it costs, what happens, and
-     one button that tells Nabu. Not a price list - they have already chosen. */
+     the way to pay for it. Not a price list - they have already chosen, and
+     the room already exists: paying is the only thing left to ask for. */
   const drawPay = (bond) => {
+    const w = wedding;
+    if (!w) { location.hash = '#/wedding'; return; }
     const me = WED.me(), you = LOVE.other(bond, me);
     const nm = (you && (you.name || (you.handle ? '@' + you.handle : ''))) || S.loveSomeone;
-    /* The hour they are paying for: the one waiting to be booked, or - once
-       the room exists - the room's own. It used to look only at the first, so
-       "how to pay" from an existing room bounced straight back out. */
-    const ms = Number(store.get('nabu-wed-want', 0)) || WED.startMs(wedding) || 0;
-    if (!ms) { location.hash = '#/wedding'; return; }
+    const ms = WED.startMs(w);
     const price = salePrice(WED_PRICE, 'unlock', 'wedding');
     m.innerHTML = head(S.wedPayIntro)
       + '<div class="card wedcard">' + cupidSVG()
       + '<p class="wedpair">' + esc((PROFILE && PROFILE.name) || S.loveYou) + ' \u2764 ' + esc(nm) + '</p>'
       + '<p class="wedwhen">' + esc(wedWhen(ms)) + '</p>'
-      + '<p class="wedprice">' + esc(fmtPrice(price)) + '</p>'
+      + (isTWA() ? '' : '<p class="wedprice">' + esc(fmtPrice(price)) + '</p>')
       + '<p class="hint" style="text-align:center">' + esc(S.wedPayOnce) + '</p></div>'
       + '<div class="card"><h3 style="margin-bottom:6px">' + esc(S.wedPayWhat) + '</h3>'
       + '<ul class="carelist">' + S.wedPayList.map((x) => '<li><span>' + esc(x) + '</span><b>\u2713</b></li>').join('') + '</ul></div>'
-      + '<p class="hint hold">' + esc(S.wedPayHold(wedWhen(ms))) + '</p>'
-      + (wedding
-        ? payPanelHTML(S.wedPayWhat2(wedWhen(ms)), price, payRef('wedding|' + wedding.id), 'wedpanel')
-        : '<div class="card"><h3 style="margin-bottom:6px">' + esc(S.wedPayHow) + '</h3>'
-          + '<button type="button" class="btn primary block" id="wedpay">' + esc(S.wedPaySend) + '</button>'
-          + '<p class="hint" id="wedpayst"></p></div>')
-      + '<p style="margin-top:10px"><a class="backlink" href="#/wedding">\u2190 ' + esc(S.wedChangeTime) + '</a></p>';
+      + (isTWA() ? '' : '<p class="hint hold">' + esc(S.wedPayHold(wedWhen(ms))) + '</p>')
+      + (isTWA()
+        ? (BILL.can()
+          ? '<div class="card"><h3 style="margin-bottom:6px">' + esc(S.wedPayHow) + '</h3>'
+            + (BILL.priceOf('wedding') ? '<p class="wedprice">' + esc(BILL.priceOf('wedding')) + '</p>' : '')
+            + buyButtonHTML('wedding', S.wedBuy, { wid: w.id }) + '<p class="hint st" data-st="wedding"></p></div>'
+          : storeNotReadyHTML())
+        : payPanelHTML(S.wedPayWhat2(wedWhen(ms)), price, payRef('wedding|' + w.id), 'wedpanel'));
 
-    if (wedding) {
-      bindPayPanel(m, () => ({ what: S.wedPayWhat2(wedWhen(ms)), total: price, ref: payRef('wedding|' + wedding.id) }));
-      return;
-    }
-    $('#wedpay').addEventListener('click', async () => {
-      const b = $('#wedpay'), st = $('#wedpayst');
-      if (!BE.enabled || !BE.user) { st.className = 'hint err'; st.textContent = S.unlockSendMsg; return; }
-      b.disabled = true; st.className = 'hint'; st.textContent = S.loveSaving;
-      try {
-        await BE.createUnlockOrder([{ id: 'wedding', wid: WED.idFor(bond), name: L(COURSES.filter((c) => c.id === 'wedding')[0].name)
-          + ' \u00b7 ' + wedWhen(ms), price: price }], price);
-        /* And the room itself, because the hour is what is being held and an
-           hour cannot be held by a room that does not exist. */
-        if (!wedding) await WED.create(bond, ms);
-        ALERTS.add({ id: 'wed-made-' + WED.idFor(bond) + '-' + ms, k: 'love',
-          t: S.wedMadeTitle, b: S.wedMadeBody(wedWhen(ms)), href: '#/wedding' });
-        st.className = 'hint ok'; st.textContent = S.wedPaySent;
-        toast(S.wedPaySent);
-        /* Only if they are still standing here. A delayed jump that fires
-           after somebody has walked away drags them back from wherever they
-           went, which is worse than not moving them at all. */
-        setTimeout(() => { if (location.hash.indexOf('/wedding/pay') > -1) location.hash = '#/wedding'; }, 1200);
-      } catch (e) { b.disabled = false; st.className = 'hint err'; st.textContent = loveWhy(e); }
+    if (isTWA()) { bindStore(m, () => drawPay(bond)); return; }
+    bindPayPanel(m, () => ({ what: S.wedPayWhat2(wedWhen(ms)), total: price, ref: payRef('wedding|' + w.id) }));
+    /* The website's own record for the dashboard's order list, filed
+       alongside the message the pay panel already sends - the room itself
+       (and whether it is paid) stays Nabu's to write, same as ever. */
+    const send = $('[data-paysend]', m);
+    if (send) send.addEventListener('click', () => {
+      if (!BE.enabled || !BE.user) return;
+      BE.createUnlockOrder([{ id: 'wedding', wid: w.id, name: L(COURSES.filter((c) => c.id === 'wedding')[0].name)
+        + ' \u00b7 ' + wedWhen(ms), price: price }], price).catch(() => {});
     });
   };
 
@@ -1232,7 +1194,7 @@ function renderWedding(args) {
       m.innerHTML = head()
         + '<div class="card wedcard">' + cupidSVG()
         + '<p class="lead" style="text-align:center">' + esc(S.wedPlanLead(nm)) + '</p>'
-        + '<p class="hint" style="text-align:center">' + esc(ACCESS.has('wedding') ? S.wedPlanHint : S.wedPlanPay(fmtPrice(salePrice(WED_PRICE, 'unlock', 'wedding')))) + '</p></div>'
+        + '<p class="hint" style="text-align:center">' + esc(S.wedPlanHint) + '</p></div>'
         + '<div class="card"><h3 style="margin-bottom:6px">\uD83D\uDD52 ' + esc(S.wedWhen) + '</h3>'
         + '<p class="hint" style="margin-bottom:10px">' + esc(S.wedWhenHint) + '</p>'
         + '<input type="datetime-local" id="wedat" value="' + esc(wedLocalValue(soon.getTime())) + '"></div>'
@@ -1261,10 +1223,17 @@ function renderWedding(args) {
         /* Recorded, because a record of what was agreed and when is the point
            of asking. */
         store.set('nabu-wed-terms', { at: Date.now(), v: 1 });
-        if (!ACCESS.has('wedding')) { location.hash = '#/wedding/pay'; return; }
+        /* The room is made at once - it is what holds the hour - and paying
+           is the very next screen, not a second decision. */
         b.disabled = true; st.className = 'hint'; st.textContent = S.loveSaving;
-        try { await WED.create(bond, ms); store.set('nabu-wed-want', 0); toast(S.wedMade); }
-        catch (e) { b.disabled = false; st.className = 'hint err'; st.textContent = loveWhy(e); }
+        try {
+          await WED.create(bond, ms);
+          store.set('nabu-wed-want', 0);
+          toast(S.wedMade);
+          ALERTS.add({ id: 'wed-made-' + WED.idFor(bond) + '-' + ms, k: 'love',
+            t: S.wedMadeTitle, b: S.wedMadeBody(wedWhen(ms)), href: '#/wedding' });
+          location.hash = '#/wedding/pay';
+        } catch (e) { b.disabled = false; st.className = 'hint err'; st.textContent = loveWhy(e); }
       });
       return;
     }
@@ -1305,18 +1274,11 @@ function renderWedding(args) {
          had invited, and work it out live. */
       + '<details class="sect howroom"><summary><span class="si">\uD83D\uDCD6</span><b>' + esc(S.wedHowTitle) + '</b><span class="sx">\u203A</span></summary>'
       + '<div class="sbody"><ol class="terms">' + S.wedHow.map((x) => '<li>' + esc(x) + '</li>').join('') + '</ol></div></details>'
-      /* Unpaid, said once, softly, with the way to settle it. */
-      + (ACCESS.has('wedding') ? ''
+      /* Unpaid, said once, softly, with the way to settle it. The room's own
+         flag decides this - not an account key that a second, unpaid wedding
+         could no longer be told apart from. */
+      + (WED.isPaid(w) ? ''
         : '<p class="hint hold">' + esc(S.wedUnpaid) + ' <a href="#/wedding/pay">' + esc(S.wedPayNow) + ' \u2192</a></p>')
-      /* And moving it, immediately beneath, folded until it is wanted. */
-      + (WED.canMove(w)
-        ? '<details class="sect movewhen"><summary><span class="si">\uD83D\uDD52</span><b>' + esc(S.wedMoveTitle) + '</b><span class="sx">\u203A</span></summary>'
-          + '<div class="sbody"><p class="hint">' + esc(S.wedMoveRule) + '</p>'
-          + '<input type="datetime-local" id="wedat" value="' + esc(wedLocalValue(w.startMs)) + '">'
-          + '<button type="button" class="btn block" id="wedmove" style="margin-top:8px">' + esc(S.wedMove) + '</button>'
-          + '<p class="hint" id="wedst"></p></div></details>'
-        : '<p class="hint movewhy">' + esc(WED.asking(w) ? S.wedMoveWait(wedWhen(WED.wantMs(w)))
-          : WED.moved(w) ? S.wedMovedAlready : S.wedMoveTooLate) + '</p>')
       + '</div>'
       + inviteHTML(w)
       + guestListHTML(w, guests)
@@ -1334,20 +1296,12 @@ function renderWedding(args) {
       }, 1000);
     }
     bindInvite(w);
-    { const mv = $('#wedmove');
-      if (mv) mv.addEventListener('click', async () => {
-        const st = $('#wedst'), v = $('#wedat').value, ms = new Date(v).getTime();
-        if (!v || isNaN(ms) || ms < Date.now() + 10 * 60000) { st.className = 'hint err'; st.textContent = S.wedWhenBad; return; }
-        if (!confirm(S.wedMoveOnce)) return;
-        st.className = 'hint'; st.textContent = S.loveSaving;
-        try { await WED.askMove(w.id, ms); st.className = 'hint ok'; st.textContent = S.wedMoveAsked; }
-        catch (e) { st.className = 'hint err'; st.textContent = loveWhy(e); }
-      }); }
     $('#weddrop').addEventListener('click', async () => {
       /* Two different acts wearing one button: giving up a room nobody has
-         used yet, and abandoning an hour that has already been held. */
+         used yet, and abandoning an hour that has already been held. Both of
+         them count as used now (D1), so both ask the same way. */
       const late = WED.lateNow(w);
-      if (!confirm(late ? S.wedDropLateAsk : S.wedDropAsk)) return;
+      if (!confirm(late || WED.dropCountsAsUsed ? S.wedDropLateAsk : S.wedDropAsk)) return;
       try {
         if (late) {
           await BE.db.collection('weddings').doc(w.id).update({ state: 'called-off', doneAt: Date.now() });

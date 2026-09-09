@@ -1382,11 +1382,10 @@ h1 .pileico{width:34px;height:27px;vertical-align:-3px;margin-right:2px}
 #main .wedrules li:last-child{margin-bottom:0}
 #main .wedrules li::before{content:'\2022';position:absolute;left:4px;top:-1px;color:var(--gold);font-weight:700}
 /* .sect is declared later with the same weight and sets margin:0 0 12px,
-   so this needs one more class to keep its space. Two single-class rules
-   and the later one wins, which is how the gap kept coming out as zero. */
-.sect.movewhen{margin:22px 0 6px;text-align:left;background:var(--bg)}
-.movewhy{margin-top:16px}
-.movewhen > summary{padding:10px 12px;font-size:14px}
+   so this needs one more class to keep its own space above the rules list -
+   two single-class rules and the later one wins, which is how the gap kept
+   coming out as zero. */
+.sect.howroom{margin:22px 0 6px}
 .wedcount{margin:2px 0 8px;font-size:26px;font-weight:700;font-variant-numeric:tabular-nums;color:var(--fg)}
 .wedsay{margin:6px 0 14px;font-size:16.5px;line-height:1.6;font-family:var(--display)}
 :root[lang="vi"] .wedsay,:root[lang="vi"] .wedpair{line-height:1.75}

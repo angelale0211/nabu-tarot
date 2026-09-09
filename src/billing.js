@@ -69,7 +69,11 @@ const BILL = {
      are the ones dropped, never a token still on its first try. */
   remember(rec) {
     const list = this.pendingList().filter((p) => p.token !== rec.token).concat([rec]);
-    if (list.length > PLAY_PENDING_MAX) { list.sort((a, b) => (b.tries || 0) - (a.tries || 0)); list.length = PLAY_PENDING_MAX; }
+    /* Ascending, so the tail truncated away is the rows nearest giving up
+       (the most tries so far) - never a token still on its first try. Sorting
+       the other way and cutting the tail evicted exactly the freshest,
+       never-yet-verified purchases: the one thing this cap must not do. */
+    if (list.length > PLAY_PENDING_MAX) { list.sort((a, b) => (a.tries || 0) - (b.tries || 0)); list.length = PLAY_PENDING_MAX; }
     store.set(PLAY_PENDING, list);
   },
   forget(token) { store.set(PLAY_PENDING, this.pendingList().filter((p) => p.token !== token)); },

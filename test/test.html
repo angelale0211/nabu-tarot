@@ -204,13 +204,27 @@ async function go(hash, sel) { W().location.hash = hash; await sleep(30); return
     const cdb = { collection: (c) => ({
       doc: (id) => ({
         get: async () => ({ exists: cdocs[c + '/' + id] !== undefined, data: () => cdocs[c + '/' + id] }),
-        set: async (v, o) => { cdocs[c + '/' + id] = (o && o.merge) ? Object.assign({}, cdocs[c + '/' + id] || {}, v) : v; } }),
-      /* Enough of a query stand-in for BILL.resolveWeddingWid(): array-contains
-         over the fake weddings/bonds documents kept in cdocs. */
-      where: (field, op, val) => ({
-        get: async () => ({ docs: Object.keys(cdocs).filter((k) => k.indexOf(c + '/') === 0).map((k) => ({ id: k.slice(c.length + 1), data: () => cdocs[k] }))
-          .filter((d) => { const v = d.data()[field]; return op === 'array-contains' ? (Array.isArray(v) && v.indexOf(val) > -1) : v === val; }) })
-      }) }) };
+        set: async (v, o) => { cdocs[c + '/' + id] = (o && o.merge) ? Object.assign({}, cdocs[c + '/' + id] || {}, v) : v; },
+        /* One shot, not live: every fixture here is written before the screen
+           that reads it is opened, so a snapshot taken once at subscribe time
+           is enough for #/wedding/pay (WED.watch) and its own bond
+           (LOVEDB.watchMine) - nothing in these tests needs telling twice. */
+        onSnapshot: (cb) => { cb({ exists: cdocs[c + '/' + id] !== undefined, id: id, data: () => cdocs[c + '/' + id] }); return () => {}; } }),
+      /* Enough of a query stand-in for BILL.resolveWeddingWid() and
+         LOVEDB.watchMine(): array-contains over the fake weddings/bonds
+         documents kept in cdocs, with a one-shot onSnapshot the way doc()
+         serves it above. */
+      where: (field, op, val) => {
+        const rows = () => Object.keys(cdocs).filter((k) => k.indexOf(c + '/') === 0).map((k) => ({ id: k.slice(c.length + 1), data: () => cdocs[k] }))
+          .filter((d) => { const v = d.data()[field]; return op === 'array-contains' ? (Array.isArray(v) && v.indexOf(val) > -1) : v === val; });
+        return {
+          get: async () => ({ docs: rows() }),
+          limit: (n) => ({
+            get: async () => ({ docs: rows().slice(0, n) }),
+            onSnapshot: (cb) => { cb({ docs: rows().slice(0, n) }); return () => {}; }
+          })
+        };
+      } }) };
     const book = { salt: 'testsalt', codes: {} };
     const say = (status, j) => ({ ok: status < 300, status: status, json: async () => j });
     let codeKeep = null;
@@ -1273,13 +1287,42 @@ async function go(hash, sel) { W().location.hash = hash; await sleep(30); return
       ok(d.querySelector('.paywall [data-buy="lenormand"]') && !d.querySelector('#ccode') && !d.querySelector('[data-buyreq]'), 'a course paywall in the app has Play\'s Buy button and nothing else');
       await go('#/play/coin', '.luckbox, .coinwrap, #main');
       ok(!d.querySelector('#luckcode') && (!d.querySelector('.luckbox') || d.querySelector('.luckbox [data-buy="plus"]')), 'the coin\'s limit box in the app offers Plus through Play, not a code');
+      { /* Task 10: the wedding now pays for one room through Play, inside the
+           app - a fake engaged bond and a room already made, the way the
+           couple's own screen makes one before ever reaching this page. */
+        cdocs['bonds/uidP__uidQ'] = { uids: ['uidP', 'uidQ'], a: 'uidP', b: 'uidQ', aName: 'Nguoi P', bName: 'Nguoi Q', state: 'engaged' };
+        w.localStorage.setItem('nabu-love', JSON.stringify({ bond: 'uidP__uidQ', stage: 'engaged' }));
+        cdocs['weddings/uidP__uidQ'] = { uids: ['uidP', 'uidQ'], a: 'uidP', b: 'uidQ', startMs: Date.now() + 3 * 86400000, state: 'planned', step: 0 };
+        await go('#/wedding/pay', '[data-buy="wedding"], .wedcard');
+        const wb = d.querySelector('[data-buy="wedding"]');
+        ok(wb && wb.getAttribute('data-wid') === 'uidP__uidQ' && !d.querySelector('#wedpay') && !d.querySelector('.paypanel'),
+          'in the app the wedding is paid through Play for the room that already exists');
+        if (wb) { wb.click(); await waitFor(() => cdocs['weddings/uidP__uidQ'].paid === true, 4000); }
+        ok(cdocs['weddings/uidP__uidQ'].paid === true, 'paying marks that room paid');
+        delete cdocs['weddings/uidP__uidQ']; delete cdocs['bonds/uidP__uidQ'];
+        w.localStorage.removeItem('nabu-love'); w.localStorage.removeItem('nabu-weddings'); w.localStorage.removeItem('nabu-wed-mine'); }
+      { /* R2a: the pending-list cap must evict the row nearest giving up, not
+           a fresh purchase still on its first try - the exact inverse of what
+           a descending sort cut from the tail used to do. */
+        w.localStorage.removeItem('nabu-play-pending');
+        for (let i = 0; i < 49; i++) N.BILL.remember({ token: 'eR2-' + i, sku: 'x', tries: 5, at: Date.now() });
+        N.BILL.remember({ token: 'nearGiveUp', sku: 'x', tries: 7, at: Date.now() });
+        N.BILL.remember({ token: 'fresh', sku: 'x', tries: 0, at: Date.now() });
+        const toks = N.BILL.pendingList().map((p) => p.token);
+        ok(N.BILL.pendingList().length === 50 && toks.indexOf('fresh') > -1 && toks.indexOf('nearGiveUp') === -1,
+          'the pending-list cap keeps a fresh, never-yet-verified purchase and drops the row nearest giving up');
+        w.localStorage.removeItem('nabu-play-pending'); }
+      { /* R2b: resolveWeddingWid()'s success path - exactly one unpaid room
+           for this account is found, and its wid is the one used. */
+        cdocs['weddings/uidP__wA'] = { uids: ['uidP', 'wA'], a: 'uidP', b: 'wA', startMs: Date.now() + 86400000, state: 'planned', step: 0, paid: true };
+        cdocs['weddings/uidP__wB'] = { uids: ['uidP', 'wB'], a: 'uidP', b: 'wB', startMs: Date.now() + 2 * 86400000, state: 'planned', step: 0 };
+        const wid = await N.BILL.resolveWeddingWid();
+        ok(wid === 'uidP__wB', 'with exactly one unpaid room for this account, resolveWeddingWid finds it and no other');
+        delete cdocs['weddings/uidP__wA']; delete cdocs['weddings/uidP__wB']; }
       /* the sweep: nothing on any screen in the app asks for a transfer, an order or a code */
       /* #/prices and #/book are readings and may legitimately say "chuyển
-         khoản" - they are outside Play. #/wedding is the one Play item this
-         task deliberately leaves alone (see the brief): its own pay screen
-         still offers the website's bank-transfer flow, unguarded by isTWA(),
-         and turning that into a Play purchase is later work. */
-      const twaRoutes = ['#/home', '#/learn', '#/learn/tarot', '#/learn/lenormand', '#/learn/playing', '#/learn/manifest', '#/learn/guide/mani-woop', '#/unlock', '#/unlock?from=app', '#/me', '#/looks', '#/play/coin', '#/play/tree', '#/pick', '#/play/pet', '#/rewards'];
+         khoản" - they are outside Play. */
+      const twaRoutes = ['#/home', '#/learn', '#/learn/tarot', '#/learn/lenormand', '#/learn/playing', '#/learn/manifest', '#/learn/guide/mani-woop', '#/unlock', '#/unlock?from=app', '#/me', '#/looks', '#/play/coin', '#/play/tree', '#/pick', '#/play/pet', '#/rewards', '#/wedding'];
       const leaks = [];
       for (const r of twaRoutes) { await go(r, '#main'); await sleep(150); const main = d.querySelector('#main');
         if (main.querySelector('#ccode,#ucode,#mcode,#luckcode,input[placeholder^="NABU-"],.paypanel,[data-buyreq],#usend,#wedpay') || /chuyển khoản|mã mở kho|Gửi yêu cầu mở khoá|transfer|unlock code|Freischaltcode|überweis/i.test(main.textContent)) leaks.push(r); }
@@ -1741,17 +1784,25 @@ async function go(hash, sel) { W().location.hash = hash; await sleep(30); return
             'asked once, not again every time the app is opened');
           N.ALERTS.clear(); }
 
-        /* The hour comes first, whether or not it has been paid for: being
-           shown a price list before choosing anything answers nothing. */
-        delete acc.wedding; w.localStorage.setItem('nabu-access', JSON.stringify(acc));
+        /* The hour comes first: agreeing to it makes the room at once, and
+           paying is the very next screen - not a second decision. */
         w.localStorage.removeItem('nabu-wed-want');
         /* Not already married: a pair who have had their day cannot have a
            second one, and this check is about the day being arranged. */
         if (db.docs[B]) db.put(B, Object.assign({}, db.docs[B], { marriedOn: null, state: 'engaged' }));
         await go('#/wedding', '#wedat'); await sleep(240);
-        ok(d.querySelector('#wedat') && d.querySelector('#wedmake')
-          && /30\.000/.test(d.querySelector('#main').textContent),
-          'a couple who have not paid still choose the hour first, and are told what it will cost');
+        ok(d.querySelector('#wedat') && d.querySelector('#wedmake') && d.querySelectorAll('.terms li').length === 4,
+          'a couple choose the hour first, with the terms shown before anything is booked');
+        { const terms = Array.prototype.map.call(d.querySelectorAll('.terms li'), (li) => li.textContent);
+          ok(terms.length === 4 && /thanh to\u00e1n/i.test(terms[2]) && !/30\.000/.test(terms.join(' ')),
+            'the terms name the no-change and counts-as-used policy, and a fourth line keeps the fee non-refundable without a hardcoded price'); }
+        ok(typeof N.WED.askMove === 'undefined' && typeof N.WED.canMove === 'undefined' && !d.querySelector('.movewhen')
+          && !/\u0110\u1ed5i ng\u00e0y gi\u1edd|Choose another time|Eine andere Zeit/.test(d.body.textContent),
+          'the wedding hour can no longer be moved: no move code, no move panel, no move wording');
+        ok(N.WED.isPaid({ paid: false }) === false && N.WED.isPaid({ paid: true }) === true
+          && (w.localStorage.setItem('nabu-access', JSON.stringify(Object.assign(JSON.parse(w.localStorage.getItem('nabu-access') || '{}'), { wedding: '2099-01-01' }))), N.WED.isPaid({ paid: false }) === false),
+          'a room is paid only if the room says so - account access to "wedding" no longer counts');
+        w.localStorage.setItem('nabu-access', JSON.stringify(acc));
 
         const want = Date.now() + 4 * 86400000;
         d.querySelector('#wedat').value = new Date(want - new Date().getTimezoneOffset() * 60000).toISOString().slice(0, 16);
@@ -1764,32 +1815,28 @@ async function go(hash, sel) { W().location.hash = hash; await sleep(30); return
         await sleep(60);
         ok(!d.querySelector('#wedmake').disabled, 'and ticking the box opens the button');
         d.querySelector('#wedmake').click(); await sleep(340);
-        ok(/#\/wedding\/pay/.test(w.location.hash) && !db.docs[W],
-          'and pressing the button takes them to pay rather than making a room nobody has paid for');
-        ok(d.querySelector('#wedpay') && /30\.000/.test(d.querySelector('#main').textContent)
+        ok(/#\/wedding\/pay/.test(w.location.hash) && !!db.docs[W] && db.docs[W].state === 'planned'
+          && db.docs[W].step === 0 && db.docs[W].uids.length === 2 && Math.abs(db.docs[W].startMs - want) < 120000,
+          'and pressing the button makes the room at once, at the hour they chose, then takes them to pay for it');
+        ok(!d.querySelector('#wedpay') && /30\.000/.test(d.querySelector('#main').textContent)
           && d.querySelectorAll('.carelist li').length >= 5,
-          'the page is about this wedding: the hour, the fee, and what will happen in the room');
+          'the page is about this wedding: the fee, and what will happen in the room, with no separate order button');
         ok(/gi\u1eef|holding/i.test(d.querySelector('.hint.hold').textContent),
           'and it says the hour is being held, softly, rather than demanding payment');
 
-        /* The request has to reach Nabu, or none of this is true. */
-        d.querySelector('#wedpay').click(); await sleep(320);
+        /* The message panel reaches Nabu, and files the order the dashboard
+           already knows how to read - the room itself, and whether it is
+           paid, stay Nabu's to write, same as before. */
+        d.querySelector('[data-paysend]').click(); await sleep(320);
         { const orders = Object.keys(db.docs).filter((k) => k.indexOf('bookings/') === 0)
             .map((k) => db.docs[k])
             .filter((x) => x && x.kind === 'unlock' && x.items && x.items[0].id === 'wedding');
           ok(orders.length === 1 && orders[0].price === 30000
             && orders[0].status === 'requested' && orders[0].uid === 'uidA',
-            'sending it writes one order to the dashboard, signed by whoever asked'); }
+            'sending the payment message also files one order on the dashboard, signed by whoever asked'); }
 
-        /* Asking is what makes the room: the hour is the thing being held, and
-           it cannot be held by a room that does not exist. */
-        ok(db.docs[W] && db.docs[W].step === 0 && db.docs[W].state === 'planned'
-          && db.docs[W].uids.length === 2 && Math.abs(db.docs[W].startMs - want) < 120000,
-          'sending the request makes the room, at the hour they chose, holding it');
-        { /* Moved once, and not inside the last hour: guests are already on
-             their way by then. */
-          { /* Three short lines, not a centred paragraph, and standing clear of
-             the control underneath - which kept coming out flush because a
+        { /* Three short lines, not a centred paragraph, and standing clear of
+             the section underneath - which kept coming out flush because a
              later rule of equal weight flattened its margin. */
           /* A pair who have already had their day are shown that, not a room
              card - so this block, which is about the room card, needs a pair
@@ -1805,14 +1852,9 @@ async function go(hash, sel) { W().location.hash = hash; await sleep(30); return
             'the rules on the room card are three short lines, left-aligned');
           const long = Array.prototype.filter.call(d.querySelectorAll('.wedcard p'), (p2) => p2.textContent.length > 220);
           ok(long.length === 0, 'with no paragraph of small print left on the card');
-          const below = d.querySelector('.movewhen') || d.querySelector('.movewhy');
+          const below = d.querySelector('.howroom');
           ok(below && below.getBoundingClientRect().top - rules.getBoundingClientRect().bottom >= 12,
-            'and clear space between them and whatever comes next'); }
-        ok(N.WED.canMove(db.docs[W]), 'a wedding days away can still be moved');
-          ok(!N.WED.canMove(Object.assign({}, db.docs[W], { moved: 1 })),
-            'but only once, because one moved three times is one nobody attends');
-          ok(!N.WED.canMove(Object.assign({}, db.docs[W], { startMs: Date.now() + 30 * 60000 })),
-            'and never inside the last hour'); }
+            'and clear space between them and the folded how-it-works section that replaced the move panel'); }
 
         await go('#/home', '#main'); await go('#/wedding', '#main'); await sleep(300);
         ok(!d.querySelector('#wedmake'),
@@ -1837,10 +1879,12 @@ async function go(hash, sel) { W().location.hash = hash; await sleep(30); return
           ok(new RegExp('^' + hours + 'h').test(shown) || /\d/.test(shown),
             'and it counts down to the doors rather than to the wedding [' + shown + ']'); }
 
-        acc.wedding = '2099-01-01'; w.localStorage.setItem('nabu-access', JSON.stringify(acc));
+        /* The room's own flag, not an account key: a second, unpaid wedding
+           must not be able to hide behind access bought for the first one. */
+        db.put(W, Object.assign({}, db.docs[W], { paid: true, paidAt: Date.now() }));
         await go('#/home', '#main'); await go('#/wedding', '#main'); await sleep(260);
         ok(!/\u0111ang gi\u1eef|holding this hour/i.test(d.querySelector('#main').textContent),
-          'and once it is paid for, it stops asking');
+          'and once the room itself is marked paid, it stops asking');
         const soon = db.docs[W].startMs;
 
         /* A guest opens the link. The first thing is the invitation itself:
@@ -2195,30 +2239,6 @@ async function go(hash, sel) { W().location.hash = hash; await sleep(30); return
           && !d.querySelector('#pyweds [data-wpaid="uidE__uidF"]'),
           'and saying it arrived opens that room, without an order and without a code');
 
-        /* Moving the hour used to be done on the spot, and Nabu - who has to be
-           there to host it - was never told. */
-        const W2 = 'weddings/uidC__uidD', was = db.docs[W2].startMs;
-        db.put(W2, Object.assign({}, db.docs[W2], { wantMs: was + 3600000, moveAsk: true }));
-        ok(!N.WED.canMove(db.docs[W2]),
-          'a couple waiting on an answer cannot ask for a second hour meanwhile');
-        await sleep(320);
-        const mv = d.querySelector('#pyweds [data-wmv]');
-        ok(mv && /uidC|&/.test(d.querySelector('#pyweds').textContent),
-          'and the hour they want waits for Nabu beside the orders, rather than nowhere');
-        ok(db.docs[W2].startMs === was,
-          'the old hour stands until it is answered, so nothing moves under the guests');
-        mv.click(); await sleep(320);
-        ok(db.docs[W2].startMs === was + 3600000 && db.docs[W2].moved === 1 && !db.docs[W2].moveAsk,
-          'saying yes moves the hour and counts the move in the same breath');
-        ok(!N.WED.canMove(db.docs[W2]),
-          'and the button is shut for good afterwards, because a wedding moves once');
-
-        /* Saying no has to leave the hour exactly where it was. */
-        db.put(W2, Object.assign({}, db.docs[W2], { moved: 0, wantMs: was + 7200000, moveAsk: true }));
-        await sleep(320);
-        d.querySelector('#pyweds [data-wmvno]').click(); await sleep(320);
-        ok(db.docs[W2].startMs === was + 3600000 && db.docs[W2].moved === 0 && !db.docs[W2].moveAsk,
-          'and saying no leaves the hour where it was without spending their one move');
         N.BE.user = userWas2; }
 
       { /* An invitation link travels outside Nabu - a message, a group chat -
