@@ -7,10 +7,10 @@ compatibility_flags = ["nodejs_compat"]
 # [ai]
 # binding = "AI"
 
-# Once a day, take back what Google refunded. 20:10 UTC is 03:10 in Việt Nam,
-# which is when nobody is buying and nothing else is running.
+# Every six hours: refunds taken back, subscriptions re-read. Minute 10 so it
+# never lands on the hour with every other cron job everyone else schedules.
 [triggers]
-crons = ["10 20 * * *"]
+crons = ["10 */6 * * *"]
 
 [vars]
 ALLOWED_ORIGIN = "https://nabutarot.com"

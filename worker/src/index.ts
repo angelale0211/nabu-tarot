@@ -13,6 +13,7 @@ import { claimPurchase, markGranted, sweepRefunds, tokenId, ledgerSet } from "./
 import { itemBySku, itemByKey } from "./catalog";
 import { applySubscription, payRoom } from "./entitle";
 import { handleRtdn } from "./rtdn";
+import { reconcileSubs } from "./reconcile";
 
 export interface Env {
   ANTHROPIC_API_KEY?: string;
@@ -408,23 +409,25 @@ export default {
     }
   },
 
-  /* ---- once a day: anything Google refunded, taken back ----
+  /* ---- every six hours: anything Google refunded taken back, every live
+     subscription re-read ----
 
      A buyer can refund within 48 hours and Nabu can refund from the Console at
-     any time, and neither of those tells this worker anything. So once a day it
-     asks Google what was voided and closes what those purchases opened.
+     any time, and neither of those tells this worker anything. So this asks
+     Google what was voided and closes what those purchases opened. It also
+     re-reads every subscription this worker has ever seen and not yet written
+     off, and re-applies Google's answer - the safety net for any RTDN this
+     worker missed or lost, and the repair for a lost users/{uid}.subs row.
 
-     It never throws. A scheduled handler that throws is a red mark in a
-     dashboard nobody opens; one that logs says what happened in a place the
-     logs already go. */
+     Both run every time, and neither's failure stops the other: a scheduled
+     handler that throws is a red mark in a dashboard nobody opens; one that
+     logs says what happened in a place the logs already go. */
   async scheduled(_controller: ScheduledController, env: Env, ctx: ExecutionContext): Promise<void> {
     ctx.waitUntil((async () => {
-      try {
-        const swept = await sweepRefunds(env);
-        console.log(JSON.stringify({ at: "refund-sweep", ...swept }));
-      } catch (e) {
-        console.error(JSON.stringify({ at: "refund-sweep", error: String((e as Error).message || e) }));
-      }
+      try { console.log(JSON.stringify({ at: "refund-sweep", ...(await sweepRefunds(env)) })); }
+      catch (e) { console.error(JSON.stringify({ at: "refund-sweep", error: String((e as Error).message || e) })); }
+      try { console.log(JSON.stringify({ at: "reconcile", ...(await reconcileSubs(env)) })); }
+      catch (e) { console.error(JSON.stringify({ at: "reconcile", error: String((e as Error).message || e) })); }
     })());
   },
 };
