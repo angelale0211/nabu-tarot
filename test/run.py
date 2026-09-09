@@ -181,6 +181,32 @@ def money_in_copy():
     return ['PASS no price is written in dong inside English or German copy']
 
 
+def payment_policy():
+    """Whether the installed app is allowed to sell anything at all.
+
+    The Digital Goods API is gated on the `payment` Permissions-Policy. With
+    `payment=()` the browser refuses it before any Play code runs, so
+    getDigitalGoodsService() throws "Payment permissions policy not granted",
+    BILL.can() stays false, and the store can only say it had no answer from
+    Google Play. Nothing in the app, the bundle or the Play Console looks
+    wrong. That is exactly what happened between 2026-09-07 and 2026-09-09,
+    and it cost a day to find, so it is checked here rather than trusted.
+    """
+    path = os.path.join(ROOT, '_headers')
+    if not os.path.exists(path):
+        return ['FAIL _headers is missing, so no security header is served at all']
+    with open(path, encoding='utf-8') as fh:
+        said = [l for l in fh.read().split(chr(10))
+                if l.strip().startswith('Permissions-Policy:')]
+    if not said:
+        return ['FAIL _headers names no Permissions-Policy']
+    pol = said[0].strip()
+    if 'payment=(self)' in pol:
+        return ['PASS _headers grants payment=(self), so the app can reach Play billing']
+    return ['FAIL _headers does not grant payment=(self), so the Digital Goods API is '
+            'refused and nothing can be bought inside the Android app: ' + pol]
+
+
 if __name__ == '__main__':
     httpd = serve()
     time.sleep(0.3)
@@ -188,7 +214,7 @@ if __name__ == '__main__':
     print(res)
     # Read from the source, not from the page: this one is about what is
     # written down, and it renders perfectly while being the wrong money.
-    source = money_in_copy()
+    source = money_in_copy() + payment_policy()
     for line in source:
         print(line)
     lines = [l for l in res.split('\n') if l.strip()] + source

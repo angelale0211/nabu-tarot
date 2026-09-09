@@ -12,7 +12,13 @@
   X-Content-Type-Options: nosniff
   Referrer-Policy: strict-origin-when-cross-origin
   X-Frame-Options: SAMEORIGIN
-  Permissions-Policy: geolocation=(), camera=(), payment=()
+  # payment=(self) is what lets the installed Android app sell anything. The
+  # Digital Goods API is gated on this policy, so payment=() made
+  # getDigitalGoodsService() throw "Payment permissions policy not granted"
+  # before a single line of Play code ran - and the app could only say "no
+  # response from Google Play". (self) is the narrowest value that works: this
+  # origin only, never a third-party frame.
+  Permissions-Policy: geolocation=(), camera=(), payment=(self)
 
 /sw.js
   Cache-Control: no-cache, no-store, must-revalidate
