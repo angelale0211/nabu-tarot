@@ -7,18 +7,11 @@
 import Anthropic from "@anthropic-ai/sdk";
 import { whoIsAsking } from "./auth";
 import { allow, cachedAnswer, keepAnswer } from "./limit";
-import { checkPurchase, acknowledge, grant, grantUntil } from "./play";
+import { checkPurchase, acknowledge, grantUntil, checkSubscription, acknowledgeSub } from "./play";
 import { claimCode } from "./codes";
-import { claimPurchase, markGranted, sweepRefunds } from "./refunds";
-
-/* How long each thing is sold for. Kept here rather than read from the app,
-   because the app is the side that cannot be trusted about what it bought. */
-const MONTHS: Record<string, number> = {
-  tarot: 6, lenormand: 6, playing: 6, manifest: 12,
-  plus: 12, pro6: 6, pro: 12, wedding: 12,
-};
-/* Pro contains Plus, exactly as a code for Pro has always opened both. */
-const ALSO: Record<string, string[]> = { pro: ["plus"], pro6: ["plus"] };
+import { claimPurchase, markGranted, sweepRefunds, tokenId, ledgerGet } from "./refunds";
+import { itemBySku, itemByKey } from "./catalog";
+import { applySubscription, payRoom } from "./entitle";
 
 export interface Env {
   ANTHROPIC_API_KEY?: string;
@@ -140,45 +133,107 @@ export default {
       const v = await allow(env, person.uid, 40, 6);
       if (!v.ok) return tooMany(v, headers);
 
-      let b: { sku?: string; token?: string };
+      let b: { sku?: string; token?: string; wid?: string };
       try { b = await request.json(); } catch { return new Response(JSON.stringify({ error: "bad json" }), { status: 400, headers }); }
-      const sku = String(b.sku || "");
-      const token = String(b.token || "");
-      if (!MONTHS[sku] || !token) return new Response(JSON.stringify({ error: "unknown product" }), { status: 400, headers });
+      const sku = String(b.sku || ""), token = String(b.token || ""), wid = String(b.wid || "");
+      const item = itemBySku(sku);
+      if (!item || !token) return new Response(JSON.stringify({ error: "unknown product" }), { status: 400, headers });
+      if (item.key === "wedding" && !wid) return new Response(JSON.stringify({ error: "no room" }), { status: 400, headers });
+      const say = (status: number, body: unknown) => new Response(JSON.stringify(body), { status, headers });
+      const log = (rec: Record<string, unknown>) => console.log(JSON.stringify({ at: "billing", uid: person.uid, sku, ...rec }));
+      /* A 404 from Google is a real answer: no such purchase. Anything else -
+         500, 503, a timeout surfaced by checkPurchase/checkSubscription as
+         "play <status>" - is Google's outage, not the buyer's fault. Reading
+         that as "invalid purchase" would refuse a paying customer for a
+         problem on our side, which is the one mistake this endpoint must
+         never make. It is answered with a 5xx instead, so the phone retries. */
+      const transient = (why?: string): boolean => !!why && why.indexOf("play ") === 0;
 
       try {
+        /* ---- a subscription: Google's state is the state ---- */
+        if (item.kind === "subs") {
+          const got = await checkSubscription(env, token);
+          if (!got.ok || !got.sub) {
+            if (transient(got.why)) { log({ transient: got.why }); return say(502, { error: got.why }); }
+            log({ refused: got.why }); return say(402, { error: got.why || "refused" });
+          }
+          const sub = got.sub;
+          if (sub.productId !== sku) { log({ refused: "product mismatch", product: sub.productId }); return say(402, { error: "product mismatch" }); }
+          if (sub.state === "SUBSCRIPTION_STATE_PENDING") return say(202, { pending: true });
+          const claim = await claimPurchase(env, person.uid, sku, item.opens, token, { kind: "subs" });
+          if (!claim.ok) { log({ refused: claim.why }); return say(402, { error: claim.why || "already used" }); }
+          const hash = await tokenId(token);
+          const out = await applySubscription(env, person.uid, item, sub, hash);
+          await markGranted(env, token, { state: sub.state, plan: sub.basePlanId }).catch((e) => log({ ledger: String(e) }));
+          const opened = out.subs[item.key].grant ? item.opens : [];
+          if (!sub.acknowledged && opened.length) ctx.waitUntil(acknowledgeSub(env, sku, token));
+          log({ granted: opened, state: sub.state });
+          return say(200, { ok: true, opened, access: out.access, subs: out.subs });
+        }
+
+        /* ---- a one-time purchase ---- */
         const bought = await checkPurchase(env, sku, token);
         if (!bought.ok) {
-          console.log(JSON.stringify({ at: "billing", uid: person.uid, sku, refused: bought.why }));
-          return new Response(JSON.stringify({ error: bought.why || "refused" }), { status: 402, headers });
+          if (bought.why === "pending") return say(202, { pending: true });
+          if (transient(bought.why)) { log({ transient: bought.why }); return say(502, { error: bought.why }); }
+          log({ refused: bought.why }); return say(402, { error: bought.why || "refused" });
         }
-        const ids = [sku].concat(ALSO[sku] || []);
-        /* The token is claimed before anything is opened. Google refuses a
-           token it has already handed over, but handing it over happens after
-           the access is written, and in that gap the same token would open the
-           course for a second account as well. The claim closes the gap, and
-           it doubles as the ledger row the nightly refund sweep needs. */
-        const claim = await claimPurchase(env, person.uid, sku, ids, token);
-        if (!claim.ok) {
-          console.log(JSON.stringify({ at: "billing", uid: person.uid, sku, refused: claim.why }));
-          return new Response(JSON.stringify({ error: claim.why || "already used" }), { status: 402, headers });
+
+        if (item.key === "wedding") {
+          /* A wedding pays a room, named in the request, and a room belongs to
+             the couple who booked it - never the phone that happens to send
+             the token. So the token is checked against Google, then against
+             the room, and only claimed - locked to this uid and this wid -
+             once both agree. Claiming first, the way a course does, would let
+             a first guess at the wrong room (a guest who is not on the
+             couple's own account, say) permanently tie the token to that
+             wrong room: claimPurchase itself refuses a second claim whose wid
+             does not match the first, with no way back. So instead the
+             ledger is only peeked at here - enough to catch "this token is
+             already somebody else's room" without ever writing a claim for a
+             room that turns out not to be this buyer's. */
+          const hash = await tokenId(token);
+          const existing = await ledgerGet(env, hash);
+          if (existing && (existing.uid !== person.uid || (existing.wid && existing.wid !== wid))) {
+            log({ refused: "already used", wid }); return say(402, { error: "already used" });
+          }
+          const paid = await payRoom(env, person.uid, wid, hash);
+          if (!paid.ok) { log({ refused: paid.why, wid }); return say(paid.why === "not yours" ? 403 : 409, { error: paid.why }); }
+          /* Only now, with the room actually paid, is the token locked to it. */
+          const claim = await claimPurchase(env, person.uid, sku, item.opens, token, { kind: "inapp", wid });
+          if (!claim.ok) { log({ refused: claim.why, wid }); return say(402, { error: claim.why || "already used" }); }
+          await markGranted(env, token).catch((e) => log({ ledger: String(e) }));
+          /* Only once the room is paid and the claim recorded: a purchase
+             consumed before both are true is money Google will not refund
+             and a room that never opens. */
+          if (!claim.existing) ctx.waitUntil(acknowledge(env, sku, token));
+          log({ granted: ["wedding"], wid });
+          return say(200, { ok: true, opened: ["wedding"], wid });
         }
-        const access = await grant(env, person.uid, ids, MONTHS);
-        /* Written down as carried through, once it has been. Failing here
-           costs the ledger a word, not the buyer their course. */
-        try {
-          await markGranted(env, token);
-        } catch (e) {
-          console.error(JSON.stringify({ at: "billing", uid: person.uid, sku, ledger: String((e as Error).message || e) }));
-        }
-        /* Only once the access exists. A purchase acknowledged before it does
-           is a purchase Google will not refund and the buyer never received. */
-        ctx.waitUntil(acknowledge(env, sku, token));
-        console.log(JSON.stringify({ at: "billing", uid: person.uid, sku, granted: ids }));
-        return new Response(JSON.stringify({ ok: true, opened: ids, access }), { headers });
+
+        /* A course. The token is claimed before anything is opened. Google
+           refuses a token it has already handed over, but handing it over
+           happens after the access is written, and in that gap the same
+           token would open the course for a second account as well. The
+           claim closes the gap, and it doubles as the ledger row the nightly
+           refund sweep needs. */
+        const claim = await claimPurchase(env, person.uid, sku, item.opens, token, { kind: "inapp" });
+        if (!claim.ok) { log({ refused: claim.why }); return say(402, { error: claim.why || "already used" }); }
+
+        /* The date is decided once and written to the ledger; a retry reads
+           it back rather than adding another six months. */
+        let until = claim.existing && claim.existing.until;
+        if (!until) { const d = new Date(); d.setMonth(d.getMonth() + item.months); until = d.toISOString().slice(0, 10); }
+        const want: Record<string, string> = {};
+        for (const k of item.opens) want[k] = until;
+        const access = await grantUntil(env, person.uid, want);
+        await markGranted(env, token, { until }).catch((e) => log({ ledger: String(e) }));
+        if (!claim.existing) ctx.waitUntil(acknowledge(env, sku, token));
+        log({ granted: item.opens, until });
+        return say(200, { ok: true, opened: item.opens, access });
       } catch (e) {
         console.error(JSON.stringify({ at: "billing", uid: person.uid, sku, error: String((e as Error).message || e) }));
-        return new Response(JSON.stringify({ error: "check failed" }), { status: 502, headers });
+        return say(502, { error: "check failed" });
       }
     }
 
@@ -206,7 +261,7 @@ export default {
           console.log(JSON.stringify({ at: "redeem", uid: person.uid, refused: got.why }));
           return new Response(JSON.stringify({ error: got.why }), { status: got.why === "check failed" ? 502 : 402, headers });
         }
-        const ids = [got.course].concat(ALSO[got.course] || []);
+        const ids = itemByKey(got.course)?.opens || [got.course];
         const want: Record<string, string> = {};
         for (const id of ids) want[id] = got.until;
         const access = await grantUntil(env, person.uid, want);
