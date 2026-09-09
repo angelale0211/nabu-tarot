@@ -22,7 +22,12 @@ function subStateWord(row) {
 }
 const manageURL = (key) => 'https://play.google.com/store/account/subscriptions?sku=' + encodeURIComponent((playItem(key) || {}).sku || '') + '&package=app.nabutarot.twa';
 const buyButtonHTML = (key, label, opt) => '<button type="button" class="btn primary block" data-buy="' + key + '"' + (opt && opt.oldKey ? ' data-old="' + opt.oldKey + '"' : '') + (opt && opt.wid ? ' data-wid="' + esc(opt.wid) + '"' : '') + '>' + esc(label || T().stBuy) + '</button>';
-const storeNotReadyHTML = () => '<div class="card"><p class="hint">' + esc(T().stNotReady) + '</p><button type="button" class="btn block" data-retry>' + esc(T().stRetry) + '</button></div>';
+/* The reason is shown, not swallowed. `stNotReady` covers three different
+   failures, and without the code beneath it a report of "it does not work"
+   cannot be told apart from any other. Small, grey and selectable: a reader
+   passes over it, a tester can read it out or copy it. */
+const storeNotReadyHTML = () => '<div class="card"><p class="hint">' + esc(T().stNotReady) + '</p><button type="button" class="btn block" data-retry>' + esc(T().stRetry) + '</button>'
+  + (BILL.why ? '<p class="hint" style="margin-top:8px;opacity:.6;font-size:12px;user-select:all">' + esc(BILL.why) + '</p>' : '') + '</div>';
 
 function storeRowHTML(item) {
   /* priceText, not L alone: a sentence naming an amount carries it as a token

@@ -30,25 +30,51 @@ const BILL = {
 
   can() { return !!this.service; },
 
+  /* Why the store could not open, in a few characters, for the screen to show.
+     Three quite different failures used to arrive at the reader as one
+     sentence - "no response from Google Play" - and the exception behind them
+     was thrown away, so neither the reader, nor a tester, nor anybody reading
+     their report could tell which had happened. A whole day went on guessing
+     between them once. The codes:
+
+       noapi            the Digital Goods API is not here at all - a browser,
+                        or an installed app whose wrapper has no Play Billing
+       connect:<name>   asking Play for the service threw. NotAllowedError
+                        means the payment Permissions-Policy is blocking it
+       details:<name>   Play was reached but refused to price the catalogue -
+                        usually the account cannot see these products
+       noproducts       Play answered with an empty list: the ids exist here
+                        but not, for this account, over there
+       error:<name>     anything else
+
+     It is deliberately short and unexplained. A reader who is not looking for
+     it sees a few grey characters; a tester can read it down a phone line. */
+  why: '',
+
   /* One start, shared by everybody who awaits it. Silent on failure: on the
      web this is the normal case. */
   start() {
     if (this.starting) return this.starting;
     this.starting = (async () => {
       try {
-        if (!window.getDigitalGoodsService || !CONFIG.aiEndpoint) return false;
-        this.service = await window.getDigitalGoodsService(PLAY_METHOD);
+        if (!window.getDigitalGoodsService) { this.why = 'noapi'; return false; }
+        if (!CONFIG.aiEndpoint) { this.why = 'noendpoint'; return false; }
+        try { this.service = await window.getDigitalGoodsService(PLAY_METHOD); }
+        catch (e) { this.why = 'connect:' + ((e && e.name) || 'Error'); throw e; }
         const skus = PLAY_ITEMS.map((i) => i.sku).filter(Boolean);
-        const list = await this.service.getDetails(skus);
+        let list;
+        try { list = await this.service.getDetails(skus); }
+        catch (e) { this.why = 'details:' + ((e && e.name) || 'Error'); throw e; }
         (list || []).forEach((d) => { if (d && d.itemId) this.details[d.itemId] = d; });
+        this.why = Object.keys(this.details).length ? '' : 'noproducts';
         return true;
-      } catch (e) { this.service = null; return false; }
+      } catch (e) { this.service = null; if (!this.why) this.why = 'error:' + ((e && e.name) || 'Error'); return false; }
       finally { this.ready = true; }
     })();
     return this.starting;
   },
   /* Play was silent, or the suite swapped the world under us. */
-  retry() { this.starting = null; this.ready = false; this.service = null; this.details = {}; return this.start(); },
+  retry() { this.starting = null; this.ready = false; this.service = null; this.details = {}; this.why = ''; return this.start(); },
 
   detailsOf(key) { const it = playItem(key); return (it && it.sku && this.details[it.sku]) || null; },
   /* Play's price in the buyer's own currency, or '' when Play has not said. */

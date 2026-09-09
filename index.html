@@ -12,7 +12,7 @@
      carries this notice with it. See LICENSE. -->
 <meta name="author" content="Nabu Tarot">
 <meta name="copyright" content="Copyright (c) 2025-2026 Nabu Tarot. All rights reserved.">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'none'; object-src 'none'; form-action 'self'; script-src 'self' 'sha256-ZZEPHFbQjCEsFHJPUvGX0l/sA09dfhViDfZU9U6eqD0=' https://www.gstatic.com https://apis.google.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; font-src 'self' data:; media-src 'self' data: blob:; worker-src 'self'; connect-src 'self' https://*.googleapis.com https://*.google.com https://*.firebaseio.com https://*.cloudfunctions.net https://*.workers.dev https://generativelanguage.googleapis.com; frame-src https://*.firebaseapp.com https://accounts.google.com https://*.facebook.com">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'none'; object-src 'none'; form-action 'self'; script-src 'self' 'sha256-IOtqqx2EsI/IzV/lf6mkvkd+VEmyfT/RqnbM23+DfQw=' https://www.gstatic.com https://apis.google.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; font-src 'self' data:; media-src 'self' data: blob:; worker-src 'self'; connect-src 'self' https://*.googleapis.com https://*.google.com https://*.firebaseio.com https://*.cloudfunctions.net https://*.workers.dev https://generativelanguage.googleapis.com; frame-src https://*.firebaseapp.com https://accounts.google.com https://*.facebook.com">
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <meta name="theme-color" content="#EFE9FA">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -21676,25 +21676,51 @@ const BILL = {
 
   can() { return !!this.service; },
 
+  /* Why the store could not open, in a few characters, for the screen to show.
+     Three quite different failures used to arrive at the reader as one
+     sentence - "no response from Google Play" - and the exception behind them
+     was thrown away, so neither the reader, nor a tester, nor anybody reading
+     their report could tell which had happened. A whole day went on guessing
+     between them once. The codes:
+
+       noapi            the Digital Goods API is not here at all - a browser,
+                        or an installed app whose wrapper has no Play Billing
+       connect:<name>   asking Play for the service threw. NotAllowedError
+                        means the payment Permissions-Policy is blocking it
+       details:<name>   Play was reached but refused to price the catalogue -
+                        usually the account cannot see these products
+       noproducts       Play answered with an empty list: the ids exist here
+                        but not, for this account, over there
+       error:<name>     anything else
+
+     It is deliberately short and unexplained. A reader who is not looking for
+     it sees a few grey characters; a tester can read it down a phone line. */
+  why: '',
+
   /* One start, shared by everybody who awaits it. Silent on failure: on the
      web this is the normal case. */
   start() {
     if (this.starting) return this.starting;
     this.starting = (async () => {
       try {
-        if (!window.getDigitalGoodsService || !CONFIG.aiEndpoint) return false;
-        this.service = await window.getDigitalGoodsService(PLAY_METHOD);
+        if (!window.getDigitalGoodsService) { this.why = 'noapi'; return false; }
+        if (!CONFIG.aiEndpoint) { this.why = 'noendpoint'; return false; }
+        try { this.service = await window.getDigitalGoodsService(PLAY_METHOD); }
+        catch (e) { this.why = 'connect:' + ((e && e.name) || 'Error'); throw e; }
         const skus = PLAY_ITEMS.map((i) => i.sku).filter(Boolean);
-        const list = await this.service.getDetails(skus);
+        let list;
+        try { list = await this.service.getDetails(skus); }
+        catch (e) { this.why = 'details:' + ((e && e.name) || 'Error'); throw e; }
         (list || []).forEach((d) => { if (d && d.itemId) this.details[d.itemId] = d; });
+        this.why = Object.keys(this.details).length ? '' : 'noproducts';
         return true;
-      } catch (e) { this.service = null; return false; }
+      } catch (e) { this.service = null; if (!this.why) this.why = 'error:' + ((e && e.name) || 'Error'); return false; }
       finally { this.ready = true; }
     })();
     return this.starting;
   },
   /* Play was silent, or the suite swapped the world under us. */
-  retry() { this.starting = null; this.ready = false; this.service = null; this.details = {}; return this.start(); },
+  retry() { this.starting = null; this.ready = false; this.service = null; this.details = {}; this.why = ''; return this.start(); },
 
   detailsOf(key) { const it = playItem(key); return (it && it.sku && this.details[it.sku]) || null; },
   /* Play's price in the buyer's own currency, or '' when Play has not said. */
@@ -21921,7 +21947,12 @@ function subStateWord(row) {
 }
 const manageURL = (key) => 'https://play.google.com/store/account/subscriptions?sku=' + encodeURIComponent((playItem(key) || {}).sku || '') + '&package=app.nabutarot.twa';
 const buyButtonHTML = (key, label, opt) => '<button type="button" class="btn primary block" data-buy="' + key + '"' + (opt && opt.oldKey ? ' data-old="' + opt.oldKey + '"' : '') + (opt && opt.wid ? ' data-wid="' + esc(opt.wid) + '"' : '') + '>' + esc(label || T().stBuy) + '</button>';
-const storeNotReadyHTML = () => '<div class="card"><p class="hint">' + esc(T().stNotReady) + '</p><button type="button" class="btn block" data-retry>' + esc(T().stRetry) + '</button></div>';
+/* The reason is shown, not swallowed. `stNotReady` covers three different
+   failures, and without the code beneath it a report of "it does not work"
+   cannot be told apart from any other. Small, grey and selectable: a reader
+   passes over it, a tester can read it out or copy it. */
+const storeNotReadyHTML = () => '<div class="card"><p class="hint">' + esc(T().stNotReady) + '</p><button type="button" class="btn block" data-retry>' + esc(T().stRetry) + '</button>'
+  + (BILL.why ? '<p class="hint" style="margin-top:8px;opacity:.6;font-size:12px;user-select:all">' + esc(BILL.why) + '</p>' : '') + '</div>';
 
 function storeRowHTML(item) {
   /* priceText, not L alone: a sentence naming an amount carries it as a token
@@ -31782,7 +31813,7 @@ function adminSale(p) {
 ROUTES.admin = { nav: '', render: renderAdmin };
 
 /* ============================ boot ============================ */
-window.APP_VERSION = 'v210';
+window.APP_VERSION = 'v211';
 window.NABU = { CONFIG: CONFIG, SALE: SALE, salePrice: salePrice, loadActs: loadActs, BACK: BACK, LESSONS: LESSONS, localAnswer: localAnswer, compatVerdict: compatVerdict, numerologyOf: numerologyOf, ZDEEP: ZDEEP, lunarToday: lunarToday, solarToLunar: solarToLunar, DECK: DECK, INSIGHT: INSIGHT, KW: KW, ASK: ASK, TOPICS: TOPICS, GUIDES: GUIDES, SERVICES: SERVICES, COURSES: COURSES, ACCESS: ACCESS, INTERESTS: INTERESTS, plusOn: () => plusOn(), proOn: () => proOn(), luckUnlimited: () => luckUnlimited(), ZODIAC: ZODIAC, pick: pick, book: book, PLAY_ITEMS: PLAY_ITEMS, PLAY_SUB_SKUS: PLAY_SUB_SKUS, playItem: playItem, BILL: BILL, SUBS: SUBS, renderStore: renderStore, subStateWord: subStateWord,
   insightHTML: insightHTML, insightOf: insightOf, sunSignIndex: sunSignIndex, lifePath: lifePath, PROFILE: () => PROFILE, BE: BE, ACTS: ACTS,
   ANGELS: ANGELS, angelRead: angelRead, CODEBOOK: CODEBOOK, redeemCode: redeemCode, loadCodebook: loadCodebook, petHomeSVG: petHomeSVG, PET_HOMES: PET_HOMES, PET_WEARS: PET_WEARS, codeDigest: codeDigest, randomCode: randomCode, BANK: BANK, PETS: PETS, petSVG: petSVG, PET_COATS: PET_COATS, PET_KINDS: PET_KINDS, turnsMerge: turnsMerge, turnsLocal: turnsLocal, priceText: priceText, termText: termText, proSaveText: () => proSaveText(), wedFeeText: () => wedFeeText(), fmtPrice: fmtPrice, luckCut: luckCut, petLevel: petLevel, petStep: petStep, VOUCHERS: VOUCHERS, levelCoins: levelCoins, LOOKS: LOOKS,
