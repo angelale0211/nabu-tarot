@@ -51,8 +51,17 @@ jobs:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
         run: |
           if [ -z "$CLOUDFLARE_API_TOKEN" ]; then
-            echo "No CLOUDFLARE_API_TOKEN secret, so nothing was deployed."
-            echo "The worker still runs whatever was last pushed by hand."
+            echo "::error::CLOUDFLARE_API_TOKEN is not set, so the worker was NOT deployed."
+            echo "The live worker is still whatever was last pushed by hand, and it is now"
+            echo "older than this commit. Add the secret at Settings > Secrets and variables"
+            echo "> Actions, then re-run this workflow."
+            # This used to `exit 0`, so the run went green while deploying nothing.
+            # That is exactly how the four subscription ids sat undeployed from
+            # 2026-09-08 until 2026-09-09: every buyer got "unknown product" while
+            # the badge said the worker was fine. A deploy that cannot deploy must
+            # be loud. Forks are spared because they are not this repository.
+            if [ "$GITHUB_REPOSITORY" = "angelale0211/nabu-tarot" ]; then exit 1; fi
+            echo "Not the upstream repository, so this is not treated as a failure."
             exit 0
           fi
           npx wrangler deploy
