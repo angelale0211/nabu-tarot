@@ -628,6 +628,43 @@ async function go(hash, sel) { W().location.hash = hash; await sleep(30); return
       w.saveProfileLocal({ lang: keepL.plang || '' });
       if (keepL.lang == null) w.localStorage.removeItem('nabu-lang'); else w.localStorage.setItem('nabu-lang', keepL.lang);
       N.BE.user = keepL.user; N.BE.enabled = keepL.on; }
+    { /* German reads exactly as Vietnamese and English do. An earlier layout
+         pass gave German a ragged right of its own to avoid rivers of white
+         space; paired with hyphenation that was the worst of both, breaking a
+         word across two lines and leaving the line short anyway. Hyphenation is
+         what makes justified German safe, so the alignment is shared and only
+         the hyphens are German. Measured against Vietnamese rather than against
+         a constant, so the two can never drift apart again. */
+      const keepG = { lang: W().localStorage.getItem('nabu-lang'), plang: W().NABU.PROFILE().lang };
+      /* D() and W() are re-read here rather than using the d and w captured at
+         the top: an earlier check reloads the frame, which leaves those stale. */
+      const readIn = async (lg) => {
+        W().saveProfileLocal({ lang: lg }); W().applyAccountLang();
+        await go('#/report', '#main p');
+        /* Read the values now, not after the next navigation: getComputedStyle
+           is live, and every value on a detached element comes back empty. */
+        const pr = D().querySelector('#main p'), cp = pr ? W().getComputedStyle(pr) : null;
+        const prose = cp ? cp.textAlign : '', hyph = cp ? (cp.hyphens || cp.webkitHyphens || '') : '';
+        await go('#/pick', '.pick-head p');
+        const md = D().querySelector('.pick-head p');
+        const mid = md ? W().getComputedStyle(md).textAlign : '';
+        return { on: D().documentElement.getAttribute('lang'), prose: prose, hyph: hyph, mid: mid };
+      };
+      const gv = await readIn('vi'), gd = await readIn('de');
+      ok(gd.on === 'de' && gv.on === 'vi', 'the html lang attribute follows the chosen language');
+      ok(gd.prose === gv.prose && gd.prose === 'justify',
+        'German prose is justified, exactly as Vietnamese is (vi ' + gv.prose + ' / de ' + gd.prose + ')');
+      ok(gd.mid === gv.mid && gd.mid === 'center',
+        'the centred instruction blocks stay centred in German (vi ' + gv.mid + ' / de ' + gd.mid + ')');
+      ok(gd.hyph === 'auto',
+        'German hyphenates, which is what keeps justified German from opening rivers');
+      ok(gv.hyph !== 'auto', 'and Vietnamese does not hyphenate, which it never needed');
+      W().saveProfileLocal({ lang: 'vi' }); W().applyAccountLang();
+      W().saveProfileLocal({ lang: keepG.plang || '' });
+      if (keepG.lang == null) W().localStorage.removeItem('nabu-lang'); else W().localStorage.setItem('nabu-lang', keepG.lang);
+      await go('#/home', '#main');
+      ok(D().documentElement.getAttribute('lang') === 'vi',
+        'and the suite is back in Vietnamese for the checks that follow'); }
     { /* The sign-in page: one page, the providers and the email form on it, the
          way to an account and to a lost password, and a link out that does not
          demand one. It is reached by a link that says where to go back to. */
