@@ -13,7 +13,7 @@ export interface PlayItem { key: string; sku: string; kind: Kind; opens: string[
 
 /* Input B1: the subscription product ids created in Play Console. Empty
    until confirmed; an empty sku is never matched and never sold. */
-export const PLAY_SUB_SKUS = { manifest: "", plus: "", pro6: "", pro: "" };
+export const PLAY_SUB_SKUS = { manifest: "manifest_sub", plus: "plus_sub", pro6: "pro_sub", pro: "pro12_sub" };
 
 export const PLAY_ITEMS: PlayItem[] = [
   { key: "tarot", sku: "tarot", kind: "inapp", opens: ["tarot"], months: 6 },

@@ -2,7 +2,7 @@
    Same table as worker/src/catalog.ts; the suite checks they agree. `key` is
    the app's own name (COURSES ids, ACCESS keys), `sku` the Play product id.
    Pro is two plans with the same contents; the wedding pays for one room. */
-const PLAY_SUB_SKUS = { manifest: '', plus: '', pro6: '', pro: '' };   // input B1
+const PLAY_SUB_SKUS = { manifest: 'manifest_sub', plus: 'plus_sub', pro6: 'pro_sub', pro: 'pro12_sub' };   // input B1
 const PLAY_ITEMS = [
   { key: 'tarot', sku: 'tarot', kind: 'inapp', opens: ['tarot'], months: 6 },
   { key: 'lenormand', sku: 'lenormand', kind: 'inapp', opens: ['lenormand'], months: 6 },

@@ -12,7 +12,7 @@
      carries this notice with it. See LICENSE. -->
 <meta name="author" content="Nabu Tarot">
 <meta name="copyright" content="Copyright (c) 2025-2026 Nabu Tarot. All rights reserved.">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'none'; object-src 'none'; form-action 'self'; script-src 'self' 'sha256-w6uyoC4MtA9p1l5B8VxQmI1XbLdKSjcE7Eb/TD6zQE8=' https://www.gstatic.com https://apis.google.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; font-src 'self' data:; media-src 'self' data: blob:; worker-src 'self'; connect-src 'self' https://*.googleapis.com https://*.google.com https://*.firebaseio.com https://*.cloudfunctions.net https://*.workers.dev https://generativelanguage.googleapis.com; frame-src https://*.firebaseapp.com https://accounts.google.com https://*.facebook.com">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'none'; object-src 'none'; form-action 'self'; script-src 'self' 'sha256-NHFhsjCzFt+ivU0b599fVSr0ZStbW6nn1SgjixXfuHc=' https://www.gstatic.com https://apis.google.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; font-src 'self' data:; media-src 'self' data: blob:; worker-src 'self'; connect-src 'self' https://*.googleapis.com https://*.google.com https://*.firebaseio.com https://*.cloudfunctions.net https://*.workers.dev https://generativelanguage.googleapis.com; frame-src https://*.firebaseapp.com https://accounts.google.com https://*.facebook.com">
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <meta name="theme-color" content="#EFE9FA">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -2906,7 +2906,7 @@ function fmtPrice(n, abroad) {
    Same table as worker/src/catalog.ts; the suite checks they agree. `key` is
    the app's own name (COURSES ids, ACCESS keys), `sku` the Play product id.
    Pro is two plans with the same contents; the wedding pays for one room. */
-const PLAY_SUB_SKUS = { manifest: '', plus: '', pro6: '', pro: '' };   // input B1
+const PLAY_SUB_SKUS = { manifest: 'manifest_sub', plus: 'plus_sub', pro6: 'pro_sub', pro: 'pro12_sub' };   // input B1
 const PLAY_ITEMS = [
   { key: 'tarot', sku: 'tarot', kind: 'inapp', opens: ['tarot'], months: 6 },
   { key: 'lenormand', sku: 'lenormand', kind: 'inapp', opens: ['lenormand'], months: 6 },
