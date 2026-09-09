@@ -377,7 +377,7 @@ test("redeeming a Pro code writes granted as well as access, so a later Play sub
   } finally { w.m.restore(); }
 });
 
-test("redeeming a COURSE code writes no granted at all - nothing rebuilds a course key", async () => {
+test("redeeming a COURSE code records it in granted, so a refund can see the website paid for it", async () => {
   const k = K;
   const w = codeWorld(k, { TARCODE1: { c: "tarot", u: "2099-01-01" } });
   await w.ready;
@@ -386,6 +386,12 @@ test("redeeming a COURSE code writes no granted at all - nothing rebuilds a cour
     assert.equal(a.status, 200);
     assert.deepEqual(a.body.opened, ["tarot"]);
     assert.deepEqual(mapOf(w.docs, "ug2", "access"), { tarot: "2099-01-01" });
-    assert.equal(mapOf(w.docs, "ug2", "granted"), undefined, "no granted field is written for a course");
+    /* Course keys are written here now. They used to be left out on the
+       reasoning that nothing rebuilds a course key from `granted` - still
+       true, recompute filters them out - but a REFUND asks this field what
+       paid for a course besides Play. With it empty, refunding a Play
+       purchase of a course somebody had ALSO paid for by bank transfer took
+       the bank transfer away too. */
+    assert.deepEqual(mapOf(w.docs, "ug2", "granted"), { tarot: "2099-01-01" }, "the website's own grant is recorded");
   } finally { w.m.restore(); }
 });

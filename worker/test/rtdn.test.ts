@@ -137,6 +137,11 @@ test("a voided one-time COURSE still takes its access back on the notification's
     "users/u4": fsDoc({ access: { tarot: "2099-01-01", lenormand: "2099-01-01" } }).fields as Record<string, unknown>,
   };
   const m = mockFetch(k, {
+    /* Before the plain firestore route - first match wins. A refund now asks
+       the ledger what else still pays for the key. u4's only purchase is the
+       one being refunded, and it is set aside, so the floor is empty and
+       tarot really does go. */
+    ":runQuery": () => json([{ document: { name: "projects/x/databases/(default)/documents/purchases/" + hash, fields: docs["purchases/" + hash] } }]),
     "firestore.googleapis.com": (url, init) => { const id = url.split("/documents/")[1].split("?")[0]; if (init.method === "PATCH") { docs[id] = Object.assign(docs[id] || {}, JSON.parse(String(init.body)).fields); return json({}); } return docs[id] ? json({ fields: docs[id] }) : json({}, 404); },
   });
   try {

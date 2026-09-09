@@ -130,6 +130,11 @@ test("R3: sweepRefunds skips (never revokes) a row it could not read because of 
       { purchaseToken: "BADTOK", orderId: "GPA.bad" },
       { purchaseToken: "GOODTOK", orderId: "GPA.good" },
     ] }),
+    /* Listed before the plain firestore route: first match wins, and a
+       refund now asks the ledger what ELSE still pays for the key before it
+       takes anything away. u2 holds only the purchase being refunded, so the
+       floor is empty and tarot really does go. */
+    ":runQuery": () => json([{ document: { name: "projects/x/databases/(default)/documents/purchases/" + goodId, fields: docs["purchases/" + goodId] } }]),
     "firestore.googleapis.com": (url, init) => {
       const id = url.split("/documents/")[1].split("?")[0];
       if (id === "purchases/" + badId && init.method !== "PATCH") return json({ error: "boom" }, 500);
@@ -277,5 +282,72 @@ test("R3b: a 404 on the account is a real answer - nothing to take, and the refu
     assert.equal(swept.matched, 1);
     assert.equal(swept.revoked, 0);
     assert.equal((docs["purchases/" + id].state as { stringValue?: string }).stringValue, "voided");
+  } finally { m.restore(); }
+});
+
+/* ---- a refund takes back a purchase, not a course ----
+
+   `access` holds one date per key and no record of who paid for it, so a
+   refund that simply deleted the key took away everything else that had ever
+   paid for the same course. Two ways that happens in real life: the course
+   bought twice on Play, and the course bought on Play by somebody who had
+   ALSO paid Nabu by bank transfer. Both below. */
+
+test("a refund LOWERS a course to what another purchase still covers, instead of deleting it", async () => {
+  const k = await makeKeys();
+  const goneId = await tokenId("TWICE-A");     // the one being refunded, the longer one
+  const liveId = await tokenId("TWICE-B");     // still paid for, shorter
+  const docs: Record<string, Record<string, unknown>> = {
+    ["purchases/" + goneId]: fsDoc({ uid: "u7", sku: "tarot", kind: "inapp", ids: ["tarot"], state: "granted", until: "2028-06-01" }).fields,
+    ["purchases/" + liveId]: fsDoc({ uid: "u7", sku: "tarot", kind: "inapp", ids: ["tarot"], state: "granted", until: "2027-01-01" }).fields,
+    "users/u7": fsDoc({ access: { tarot: "2028-06-01" } }).fields,
+  };
+  const m = mockFetch(k, {
+    "voidedpurchases": () => json({ voidedPurchases: [{ purchaseToken: "TWICE-A", orderId: "GPA.twice" }] }),
+    ":runQuery": () => json([
+      { document: { name: "projects/x/databases/(default)/documents/purchases/" + goneId, fields: docs["purchases/" + goneId] } },
+      { document: { name: "projects/x/databases/(default)/documents/purchases/" + liveId, fields: docs["purchases/" + liveId] } },
+    ]),
+    "firestore.googleapis.com": (url, init) => {
+      const key = url.split("/documents/")[1].split("?")[0];
+      if (init.method === "PATCH") { docs[key] = Object.assign(docs[key] || {}, JSON.parse(String(init.body)).fields); return json({ name: key }); }
+      return docs[key] ? json({ fields: docs[key] }) : json({}, 404);
+    },
+  });
+  try {
+    const swept = await sweepRefunds(env(k));
+    const access = (docs["users/u7"].access as { mapValue: { fields: Record<string, { stringValue: string }> } }).mapValue.fields;
+    // lowered to what the surviving purchase justifies - NOT gone
+    assert.equal(access.tarot.stringValue, "2027-01-01");
+    assert.equal(swept.revoked, 0, "nothing was revoked: the course is still paid for");
+    const row = docs["purchases/" + goneId];
+    assert.equal((row.state as { stringValue?: string }).stringValue, "voided");
+    assert.deepEqual((row.took as { arrayValue: { values?: unknown[] } }).arrayValue.values ?? [], []);
+    assert.equal(((row.kept as { arrayValue: { values: { stringValue: string }[] } }).arrayValue.values || [])[0].stringValue, "tarot");
+  } finally { m.restore(); }
+});
+
+test("a Play refund never takes away what the website was paid for separately", async () => {
+  const k = await makeKeys();
+  const id = await tokenId("BANKALSO");
+  const docs: Record<string, Record<string, unknown>> = {
+    ["purchases/" + id]: fsDoc({ uid: "u8", sku: "tarot", kind: "inapp", ids: ["tarot"], state: "granted", until: "2028-06-01" }).fields,
+    // the bank transfer is recorded in `granted`; `access` shows only the later date
+    "users/u8": fsDoc({ access: { tarot: "2028-06-01" }, granted: { tarot: "2027-03-01" } }).fields,
+  };
+  const m = mockFetch(k, {
+    "voidedpurchases": () => json({ voidedPurchases: [{ purchaseToken: "BANKALSO", orderId: "GPA.bank" }] }),
+    ":runQuery": () => json([{ document: { name: "projects/x/databases/(default)/documents/purchases/" + id, fields: docs["purchases/" + id] } }]),
+    "firestore.googleapis.com": (url, init) => {
+      const key = url.split("/documents/")[1].split("?")[0];
+      if (init.method === "PATCH") { docs[key] = Object.assign(docs[key] || {}, JSON.parse(String(init.body)).fields); return json({ name: key }); }
+      return docs[key] ? json({ fields: docs[key] }) : json({}, 404);
+    },
+  });
+  try {
+    const swept = await sweepRefunds(env(k));
+    const access = (docs["users/u8"].access as { mapValue: { fields: Record<string, { stringValue: string }> } }).mapValue.fields;
+    assert.equal(access.tarot.stringValue, "2027-03-01", "the bank transfer survives the Play refund");
+    assert.equal(swept.revoked, 0);
   } finally { m.restore(); }
 });

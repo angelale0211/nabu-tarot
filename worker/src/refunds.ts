@@ -16,7 +16,7 @@
    comes out the other end. */
 
 import { serviceToken, FS_SCOPE, PLAY_SCOPE, PlayEnv } from "./play";
-import { fsGet, fsPatch } from "./fs";
+import { fsGet, fsPatch, decode } from "./fs";
 import { unpayRoom } from "./entitle";
 
 /* A day is plenty - this runs daily - but a week of overlap costs nothing and
@@ -136,7 +136,62 @@ export async function voidedSince(env: PlayEnv, sinceMs: number): Promise<Voided
    Only the courses this purchase opened, and only if they are still the ones
    it opened. Somebody who refunds one course and keeps another must keep the
    other. */
-async function removeAccess(env: PlayEnv, uid: string, ids: string[]): Promise<string[]> {
+const LEDGER_PAGE = 500;
+
+/* ---- what is still paid for ----
+
+   A refund takes back ONE purchase, not a key. The same course can be paid
+   for more than once: bought twice on Play, or bought on Play and also given
+   for a bank transfer or a redemption code. `access` holds one date per key
+   and keeps no record of who paid for it, so it cannot answer this on its
+   own. The ledger and `granted` can.
+
+   With the refunded purchase set aside, this asks both what the latest date
+   is that the surviving evidence still justifies for each key. What nothing
+   justifies is dropped; what something does is LOWERED to that date rather
+   than deleted. That is the whole difference between taking back a purchase
+   and taking away a course. */
+async function survivingFloor(env: PlayEnv, uid: string, ids: string[], exceptHash: string): Promise<Record<string, string>> {
+  const floor: Record<string, string> = {};
+  const at = await serviceToken(env, FS_SCOPE);
+  const r = await fetch("https://firestore.googleapis.com/v1/projects/"
+    + encodeURIComponent(env.FIREBASE_PROJECT_ID || "") + "/databases/(default)/documents:runQuery", {
+    method: "POST",
+    headers: { Authorization: "Bearer " + at, "Content-Type": "application/json" },
+    body: JSON.stringify({ structuredQuery: {
+      from: [{ collectionId: "purchases" }],
+      where: { fieldFilter: { field: { fieldPath: "uid" }, op: "EQUAL", value: { stringValue: uid } } },
+      limit: LEDGER_PAGE,
+    } }),
+  });
+  /* A failure here must never be read as "nothing else pays for it". That
+     would delete a key precisely because the evidence for it could not be
+     read. Throwing leaves the refund for the next pass, the same way an
+     unreadable account does below. */
+  if (!r.ok) throw new Error("query " + r.status);
+  const rows = (await r.json()) as { document?: { name: string; fields?: Record<string, unknown> } }[];
+  for (const it of rows) {
+    if (!it.document) continue;
+    if (it.document.name.split("/purchases/")[1] === exceptHash) continue;   // the one being refunded
+    const row = decode(it.document as { fields?: Record<string, never> }) as unknown as LedgerRow;
+    if (row.state === "voided" || !row.until) continue;
+    for (const k of row.ids || []) {
+      if (ids.indexOf(k) < 0) continue;
+      if (!floor[k] || row.until > floor[k]) floor[k] = row.until;
+    }
+  }
+  /* And the side Play knows nothing about: a bank transfer, a redemption
+     code. noteGranted writes course keys here for exactly this moment. */
+  const acct = (await fsGet(env, "users/" + encodeURIComponent(uid))) || {};
+  const granted = (acct.granted as Record<string, string>) || {};
+  for (const k of ids) {
+    const g = granted[k];
+    if (g && (!floor[k] || g > floor[k])) floor[k] = g;
+  }
+  return floor;
+}
+
+async function removeAccess(env: PlayEnv, uid: string, ids: string[], exceptHash: string): Promise<{ taken: string[]; kept: string[] }> {
   const at = await serviceToken(env, FS_SCOPE);
   const base = docUrl(env, "users/" + encodeURIComponent(uid));
   const cur = await fetch(base, { headers: { Authorization: "Bearer " + at } });
@@ -147,18 +202,33 @@ async function removeAccess(env: PlayEnv, uid: string, ids: string[]): Promise<s
      course for ever: the next sweep sees state=voided and skips the row. The
      one thing this sweep must never do is record a refund it did not carry
      out. Throwing leaves the row untouched for the next pass. */
-  if (cur.status === 404) return [];
+  if (cur.status === 404) return { taken: [], kept: [] };
   if (!cur.ok) throw new Error("firestore " + cur.status);
   const doc = (await cur.json()) as { fields?: { access?: { mapValue?: { fields?: Record<string, { stringValue?: string }> } } } };
   const held = doc.fields?.access?.mapValue?.fields || {};
 
+  const floor = await survivingFloor(env, uid, ids, exceptHash);
+
   const fields: Record<string, { stringValue: string }> = {};
   const taken: string[] = [];
+  const kept: string[] = [];
+  let moved = false;
   for (const k of Object.keys(held)) {
-    if (ids.indexOf(k) > -1) { taken.push(k); continue; }
-    if (held[k].stringValue) fields[k] = { stringValue: held[k].stringValue as string };
+    const had = held[k].stringValue;
+    /* Not this purchase's key: carried across untouched. */
+    if (ids.indexOf(k) < 0) { if (had) fields[k] = { stringValue: had }; continue; }
+    const f = floor[k];
+    /* Nothing else pays for it, so it goes - the ordinary refund. */
+    if (!f) { taken.push(k); moved = true; continue; }
+    /* Something does. Lower it to what is still justified, and never raise it:
+       if `access` is already below the floor it was cut somewhere else, and a
+       refund is not the moment to hand anything back. */
+    const val = had && had < f ? had : f;
+    if (val !== had) moved = true;
+    fields[k] = { stringValue: val };
+    kept.push(k);
   }
-  if (!taken.length) return [];
+  if (!moved) return { taken: [], kept };
 
   const w = await fetch(base + "?updateMask.fieldPaths=access", {
     method: "PATCH",
@@ -166,7 +236,7 @@ async function removeAccess(env: PlayEnv, uid: string, ids: string[]): Promise<s
     body: JSON.stringify({ fields: { access: { mapValue: { fields } } } }),
   });
   if (!w.ok) throw new Error("firestore " + w.status);
-  return taken;
+  return { taken, kept };
 }
 /* Same function, public name: the nightly sweep and the RTDN handler both
    take back one-time course access by uid and ids. A voided *subscription*
@@ -176,16 +246,21 @@ export const removeAccessFor = removeAccess;
 
 /* Marked so the same refund is not processed every night for a week, and so
    the Pay tab can show what happened rather than a silent gap. */
-async function markVoided(env: PlayEnv, id: string, taken: string[]): Promise<void> {
+async function markVoided(env: PlayEnv, id: string, taken: string[], kept: string[] = []): Promise<void> {
   const at = await serviceToken(env, FS_SCOPE);
   const body = {
     fields: {
       state: { stringValue: "voided" },
       voidedAt: { stringValue: new Date().toISOString() },
       took: { arrayValue: { values: taken.map((x) => ({ stringValue: x })) } },
+      /* What this refund found was still paid for by something else and
+         therefore left standing. Without it a refund that correctly took
+         nothing back is indistinguishable, on the row, from one that failed
+         to - and the Pay tab would show an empty `took` for both. */
+      kept: { arrayValue: { values: kept.map((x) => ({ stringValue: x })) } },
     },
   };
-  const mask = ["state", "voidedAt", "took"].map((f) => "updateMask.fieldPaths=" + f).join("&");
+  const mask = ["state", "voidedAt", "took", "kept"].map((f) => "updateMask.fieldPaths=" + f).join("&");
   await fetch(docUrl(env, "purchases/" + id) + "?" + mask, {
     method: "PATCH",
     headers: { Authorization: "Bearer " + at, "Content-Type": "application/json" },
@@ -236,16 +311,16 @@ export async function sweepRefunds(env: PlayEnv): Promise<Swept> {
        tried again next pass. Marking it voided here would close the refund on
        a course that was never taken back - the same shape as the R3 finding
        above, one level further in. */
-    let taken: string[];
-    try { taken = await removeAccess(env, uid, ids); }
+    let got: { taken: string[]; kept: string[] };
+    try { got = await removeAccess(env, uid, ids, id); }
     catch (e) {
       out.matched--; out.skipped++;
       console.log(JSON.stringify({ at: "refund", uid, deferred: String((e as Error).message || e), order: v.orderId || "" }));
       continue;
     }
-    await markVoided(env, id, taken);
-    if (taken.length) out.revoked++;
-    console.log(JSON.stringify({ at: "refund", uid, took: taken, order: v.orderId || "" }));
+    await markVoided(env, id, got.taken, got.kept);
+    if (got.taken.length) out.revoked++;
+    console.log(JSON.stringify({ at: "refund", uid, took: got.taken, kept: got.kept, order: v.orderId || "" }));
   }
   return out;
 }

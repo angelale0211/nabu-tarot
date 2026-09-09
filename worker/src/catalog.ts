@@ -36,3 +36,13 @@ export const itemByKey = (key: string): PlayItem | null =>
    event; course keys are never touched by that. */
 export const PLAY_MANAGED_KEYS: ReadonlySet<string> = new Set(
   PLAY_ITEMS.filter((i) => i.kind === "subs").flatMap((i) => i.opens));
+
+/* The keys a one-time purchase opens: tarot, lenormand, playing. A wedding
+   contributes none - it opens no key at all, it pays for one room named on
+   its own purchase row - so weddings stay outside every rule that uses this.
+
+   These are the keys more than one thing can pay for: the same course bought
+   twice on Play, or bought on Play and also given for a bank transfer. That
+   is why a refund of one of them cannot simply delete the key. */
+export const PLAY_COURSE_KEYS: ReadonlySet<string> = new Set(
+  PLAY_ITEMS.filter((i) => i.kind === "inapp").flatMap((i) => i.opens));

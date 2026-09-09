@@ -81,7 +81,10 @@ async function onVoided(env: RtdnEnv, token: string): Promise<void> {
   if (row.kind === "subs") { await onSubscription(env, token, 0); return; }
   if (row.state === "voided") return;
   if (row.wid) await unpayRoom(env, row.wid, hash);
-  else if (row.kind === "inapp" && row.ids.length) await removeAccessFor(env, row.uid, row.ids);
+  /* The hash is passed so the refund can set its own purchase aside while it
+     asks what is still paid for: without it, the row being refunded would
+     count as evidence for the key it is taking back. */
+  else if (row.kind === "inapp" && row.ids.length) await removeAccessFor(env, row.uid, row.ids, hash);
   await ledgerSet(env, hash, { state: "voided", voidedAt: new Date().toISOString() });
   console.log(JSON.stringify({ at: "rtdn", voided: row.uid, ids: row.ids, wid: row.wid || "" }));
 }

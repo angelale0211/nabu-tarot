@@ -1,7 +1,7 @@
 /* What a subscription opens, decided from Google's word alone, and written
    onto the account by the only party allowed to write it. */
 import { PlayEnv, SubInfo } from "./play";
-import { PlayItem, PLAY_MANAGED_KEYS } from "./catalog";
+import { PlayItem, PLAY_MANAGED_KEYS, PLAY_COURSE_KEYS } from "./catalog";
 import { fsGet, fsPatch } from "./fs";
 
 const GRANTING = new Set(["SUBSCRIPTION_STATE_ACTIVE", "SUBSCRIPTION_STATE_CANCELED", "SUBSCRIPTION_STATE_IN_GRACE_PERIOD"]);
@@ -147,13 +147,25 @@ export async function applySubscription(env: PlayEnv, uid: string, item: PlayIte
    from a Play grant once a row names the key, and the recompute would cut a
    two-year bank transfer back to a one-year subscription.
 
-   Play-managed keys only. `tarot`, `lenormand`, `playing` and `wedding` are
-   never rebuilt from the subscription rows, so nothing can take them away and
-   nothing needs to be written here. Later date wins, exactly as grantUntil
-   does for `access`, so redeeming a shorter code after a longer one cannot
-   shorten what was already bought. */
+   Subscription keys AND course keys, for two different reasons. A
+   subscription key needs this because `recompute` rebuilds it from the Play
+   rows and would otherwise cut a two-year bank transfer back to a one-year
+   subscription. A course key needs it because a REFUND now asks what is still
+   paid for before it takes a course back (`removeAccess`, refunds.ts) - and
+   the only place that can answer "the website gave this, not Play" is here.
+   Without it, refunding a Play purchase of a course somebody had ALSO paid
+   for by bank transfer took that away too.
+
+   `recompute` is deliberately NOT widened to match. Its own filter keeps
+   course keys out of the subscription fold, because a course key must never
+   be rebuilt or resurrected from a subscription row. This field says what a
+   non-Play source gave; which readers may act on it is each reader's own
+   business. `wedding` opens no key and is not written here at all.
+
+   Later date wins, exactly as grantUntil does for `access`, so redeeming a
+   shorter code after a longer one cannot shorten what was already bought. */
 export async function noteGranted(env: PlayEnv, uid: string, want: Record<string, string>): Promise<Record<string, string>> {
-  const keys = Object.keys(want).filter((k) => PLAY_MANAGED_KEYS.has(k) && want[k]);
+  const keys = Object.keys(want).filter((k) => (PLAY_MANAGED_KEYS.has(k) || PLAY_COURSE_KEYS.has(k)) && want[k]);
   if (!keys.length) return {};
   const doc = (await fsGet(env, "users/" + encodeURIComponent(uid))) || {};
   const granted = { ...((doc.granted as Record<string, string>) || {}) };
