@@ -31,7 +31,15 @@ jobs:
 
       - uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          # 22, not 20: wrangler is `^4.0.0` in worker/package.json, so CI
+          # installs whatever 4.x is newest, and a release after 2026-09-08
+          # raised its minimum to Node 22. Deploys had been green until then;
+          # after it every run died with "Wrangler requires at least Node.js
+          # v22.0.0. You are using v20.20.2." - which nobody could read,
+          # because a job log needs admin rights on the repository. Two days of
+          # "unknown product" on every subscription purchase came from this
+          # one line. The real lesson is the unpinned `^4.0.0`; see below.
+          node-version: '22'
 
       - name: Install
         run: npm install
