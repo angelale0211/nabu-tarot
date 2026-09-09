@@ -12,7 +12,7 @@
      carries this notice with it. See LICENSE. -->
 <meta name="author" content="Nabu Tarot">
 <meta name="copyright" content="Copyright (c) 2025-2026 Nabu Tarot. All rights reserved.">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'none'; object-src 'none'; form-action 'self'; script-src 'self' 'sha256-AeRsmyakt91bqSjr+A5oYJeUwfBMYZIIJLGSmPrDYic=' https://www.gstatic.com https://apis.google.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; font-src 'self' data:; media-src 'self' data: blob:; worker-src 'self'; connect-src 'self' https://*.googleapis.com https://*.google.com https://*.firebaseio.com https://*.cloudfunctions.net https://*.workers.dev https://generativelanguage.googleapis.com; frame-src https://*.firebaseapp.com https://accounts.google.com https://*.facebook.com">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'none'; object-src 'none'; form-action 'self'; script-src 'self' 'sha256-eu7AhAuRkZXk3+Y50yDAi/+FZfSRzLKLUFztsEhWHsw=' https://www.gstatic.com https://apis.google.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; font-src 'self' data:; media-src 'self' data: blob:; worker-src 'self'; connect-src 'self' https://*.googleapis.com https://*.google.com https://*.firebaseio.com https://*.cloudfunctions.net https://*.workers.dev https://generativelanguage.googleapis.com; frame-src https://*.firebaseapp.com https://accounts.google.com https://*.facebook.com">
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <meta name="theme-color" content="#EFE9FA">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -2837,12 +2837,12 @@ const COURSES = [
     includes: { vi: ['Toàn bộ quyền lợi của Nabu Plus', '12 linh thú, nuôi tối đa 6 bạn cùng lúc', '9 món ăn, 8 ngôi nhà, 9 bộ trang phục', 'Chờ 2 giờ giữa hai bữa, 3 lượt chơi mỗi ngày, điểm kinh nghiệm nhân đôi', 'Voucher giảm 15% và 20%', 'Thời hạn sử dụng 6 tháng'],
       en: ['Everything in Nabu Plus', '12 spirit beasts, six kept at once', '9 foods, 8 homes, 9 things to wear', '2 hours between meals, 3 plays a day, double points', 'The 15% and 20% vouchers', '6 months of access'], de: ['Alle Vorteile von Nabu Plus', '12 Begleiter, bis zu 6 gleichzeitig', '9 Futtersorten, 8 Zuhause, 9 Kleidungsstücke', '2 Stunden zwischen Mahlzeiten, 3 Spiele pro Tag, doppelte Erfahrungspunkte', 'Gutscheine mit 15 % und 20 % Rabatt', '6 Monate Zugriff'] } },
   { id: 'pro', kind: 'unlock', icon: '👑', to: '#/play/pet', price: 249000, months: 12,
-    sum: { vi: 'Quyền lợi như gói 6 tháng, dùng trọn một năm và tiết kiệm 49.000đ.', en: 'The same, for a whole year — 49.000đ less than two half years.', de: 'Dieselben Vorteile wie im 6-Monats-Paket, für ein ganzes Jahr und 49.000đ günstiger als zweimal 6 Monate.' },
+    sum: { vi: 'Quyền lợi như gói 6 tháng, dùng trọn một năm và tiết kiệm {save}.', en: 'The same, for a whole year — {save} less than two half years.', de: 'Dieselben Vorteile wie im 6-Monats-Paket, für ein ganzes Jahr und {save} günstiger als zweimal 6 Monate.' },
     name: { vi: 'Nabu Pro · 12 tháng', en: 'Nabu Pro · 12 months', de: 'Nabu Pro · 12 Monate' },
     blurb: { vi: 'Nabu Pro bao gồm toàn bộ quyền lợi của Nabu Plus, cùng với khu vực bạn nhỏ: mười hai linh thú trong truyền thuyết, nuôi tối đa sáu bạn cùng lúc, đầy đủ thức ăn, nhà ở và trang phục dành cho các bạn ấy, thời gian chờ giữa hai bữa rút ngắn từ sáu giờ xuống còn hai giờ, và điểm kinh nghiệm nhân đôi. Thanh toán một lần cho cả năm sẽ tiết kiệm hơn so với mua hai lần gói 6 tháng.',
       en: 'Everything in Nabu Plus, and the companions besides: twelve spirit beasts, six of them at once, their good food, their homes and their clothes, a two-hour wait between meals instead of six, and double points. Paying once for the year costs less.', de: 'Nabu Pro enthält alles aus Nabu Plus und zusätzlich die Begleiterwelt: zwölf mythische Begleiter, bis zu sechs gleichzeitig, alle Futtersorten, Zuhause und Kleidungsstücke, nur zwei statt sechs Stunden Wartezeit zwischen den Mahlzeiten und doppelte Erfahrungspunkte. Die Jahreszahlung ist günstiger als zwei 6-Monats-Pakete.' },
-    includes: { vi: ['Tiết kiệm 49.000đ so với mua hai lần gói 6 tháng', 'Toàn bộ quyền lợi của Nabu Plus', '12 linh thú, nuôi tối đa 6 bạn cùng lúc', '9 món ăn, 8 ngôi nhà, 9 bộ trang phục', 'Chờ 2 giờ giữa hai bữa, 3 lượt chơi mỗi ngày, điểm kinh nghiệm nhân đôi', 'Voucher giảm 15% và 20%', 'Thời hạn sử dụng 12 tháng'],
-      en: ['49.000đ less than two half years', 'Everything in Nabu Plus', '12 spirit beasts, six kept at once', '9 foods, 8 homes, 9 things to wear', '2 hours between meals, 3 plays a day, double points', 'The 15% and 20% vouchers', '12 months of access'], de: ['49.000đ günstiger als zweimal 6 Monate', 'Alle Vorteile von Nabu Plus', '12 Begleiter, bis zu 6 gleichzeitig', '9 Futtersorten, 8 Zuhause, 9 Kleidungsstücke', '2 Stunden zwischen Mahlzeiten, 3 Spiele pro Tag, doppelte Erfahrungspunkte', 'Gutscheine mit 15 % und 20 % Rabatt', '12 Monate Zugriff'] } },
+    includes: { vi: ['Tiết kiệm {save} so với mua hai lần gói 6 tháng', 'Toàn bộ quyền lợi của Nabu Plus', '12 linh thú, nuôi tối đa 6 bạn cùng lúc', '9 món ăn, 8 ngôi nhà, 9 bộ trang phục', 'Chờ 2 giờ giữa hai bữa, 3 lượt chơi mỗi ngày, điểm kinh nghiệm nhân đôi', 'Voucher giảm 15% và 20%', 'Thời hạn sử dụng 12 tháng'],
+      en: ['{save} less than two half years', 'Everything in Nabu Plus', '12 spirit beasts, six kept at once', '9 foods, 8 homes, 9 things to wear', '2 hours between meals, 3 plays a day, double points', 'The 15% and 20% vouchers', '12 months of access'], de: ['{save} günstiger als zweimal 6 Monate', 'Alle Vorteile von Nabu Plus', '12 Begleiter, bis zu 6 gleichzeitig', '9 Futtersorten, 8 Zuhause, 9 Kleidungsstücke', '2 Stunden zwischen Mahlzeiten, 3 Spiele pro Tag, doppelte Erfahrungspunkte', 'Gutscheine mit 15 % und 20 % Rabatt', '12 Monate Zugriff'] } },
   /* A wedding is bought once and held once, but the year is there so nobody
      loses what they paid for by having to move the date. */
   { id: 'wedding', kind: 'unlock', icon: '\uD83D\uDC92', to: '#/wedding', price: 30000, months: 12,
@@ -2907,6 +2907,38 @@ function fmtPrice(n, abroad) {
   const lg = typeof lang !== 'undefined' ? lang : 'vi';
   const v = (abroad && typeof abroad[lg] === 'number') ? abroad[lg] : p.v;
   return p.m.sym + (v % 1 ? v.toFixed(2) : String(v));
+}
+
+/* ---- an amount named inside a sentence ----
+   Only the dong price is real. What a reader abroad is charged is that price
+   converted, given its flat amount and rounded up on its own - which means a
+   saving is not one number in three languages. The year against two half years
+   saves 49.000d in dong, but the same two packages save $4 and EUR 3.50,
+   because each of the four prices was rounded separately. Writing the dong
+   figure into the English and German sentences put "49.000d" beside a price in
+   dollars, which is what the owner reported.
+
+   So the sentences carry a token and the amount is worked out here, in the
+   currency on screen. The saving is the difference of the two prices a buyer
+   actually sees - not the dong difference converted, which rounds to EUR 4 and
+   would not match the two prices printed above it. */
+function moneyText(v) {
+  const m = MONEY[typeof lang !== 'undefined' ? lang : 'vi'] || MONEY.vi;
+  if (m.rate === 1) return fmtNum(v) + m.sym;
+  return m.sym + (v % 1 ? v.toFixed(2) : String(v));
+}
+const priceOf = (id) => { const c = COURSES.filter((x) => x.id === id)[0]; return c ? c.price : 0; };
+const proSaveText = () => moneyText(Math.max(0, moneyOf(priceOf('pro6')).v * 2 - moneyOf(priceOf('pro')).v));
+const wedFeeText = () => fmtPrice(priceOf('wedding'));
+const MONEY_IN_TEXT = { '{save}': proSaveText, '{wedfee}': wedFeeText };
+/* Every sentence that names one of these amounts is passed through here on its
+   way to the screen. A string with no token is returned untouched. */
+function priceText(s) {
+  let out = String(s == null ? '' : s);
+  Object.keys(MONEY_IN_TEXT).forEach((k) => {
+    if (out.indexOf(k) > -1) out = out.split(k).join(MONEY_IN_TEXT[k]());
+  });
+  return out;
 }
 
 /* ============================ UI strings ============================
@@ -3317,7 +3349,7 @@ const STR = {
     alertWedInvite: (pair) => 'Bạn được mời dự lễ cưới của ' + pair + ' 💌',
     alertWedInviteBody: (when) => 'Lễ cưới diễn ra vào ' + when + '. Bạn mở ra để nhận lời hoặc từ chối nhé.',
     adminWeds: 'Lễ cưới đang giữ',
-    adminWedsHint: 'Mỗi lễ cưới đang đặt chỗ đều ở đây. Khi bạn đã nhận được 30.000đ, bạn bấm Đã nhận tiền — phòng cưới mở ra cho cả hai người, không ai cần nhập mã nữa.',
+    adminWedsHint: 'Mỗi lễ cưới đang đặt chỗ đều ở đây. Khi bạn đã nhận được {wedfee}, bạn bấm Đã nhận tiền — phòng cưới mở ra cho cả hai người, không ai cần nhập mã nữa.',
     adminWedPaid: 'Đã thanh toán', adminWedOwed: 'Chưa thanh toán',
     adminWedGotPaid: 'Đã nhận tiền', adminWedPaidDone: 'Đã mở phòng cưới cho hai bạn ấy.',
     adminWedMoveOk: 'Đồng ý giờ mới',
@@ -3456,7 +3488,7 @@ const STR = {
       'Buổi lễ bắt đầu đúng giờ hai bạn đã chọn. Một trong hai người cần có mặt và bấm “Bắt đầu buổi lễ” trong vòng 15 phút sau giờ đó.',
       'Nếu quá 15 phút mà chưa ai bắt đầu, phòng cưới sẽ tự đóng và khách mời được báo là buổi lễ không diễn ra.',
       'Ngày giờ chỉ được đổi một lần, và chậm nhất là trước giờ làm lễ 1 tiếng.',
-      'Nếu buổi lễ bị huỷ trong vòng 1 tiếng trước giờ hẹn, bị huỷ khi đang diễn ra, hoặc tự đóng vì không ai có mặt, thì lễ cưới coi như đã dùng và phí 30.000đ không được hoàn lại. Muốn tổ chức lại, hai bạn đăng ký và thanh toán một lần nữa.'
+      'Nếu buổi lễ bị huỷ trong vòng 1 tiếng trước giờ hẹn, bị huỷ khi đang diễn ra, hoặc tự đóng vì không ai có mặt, thì lễ cưới coi như đã dùng và phí {wedfee} không được hoàn lại. Muốn tổ chức lại, hai bạn đăng ký và thanh toán một lần nữa.'
     ],
     wedAgree: 'Tôi đã đọc và đồng ý với các điều khoản trên.',
     wedAgreeFirst: 'Bạn đọc và tích vào ô đồng ý ở trên để tiếp tục nhé.',
@@ -4296,7 +4328,7 @@ const STR = {
       'The ceremony begins at the hour you choose. One of you must be here and press Begin within 15 minutes of it.',
       'If nobody has begun by then, the room closes itself and your guests are told the ceremony is not happening.',
       'The day and hour can be moved once, and no later than an hour before the ceremony.',
-      'If the wedding is called off within that last hour, called off during the ceremony, or closes itself because nobody came, it counts as held and the 30.000\u0111 is not returned. Holding another means booking and paying again.'
+      'If the wedding is called off within that last hour, called off during the ceremony, or closes itself because nobody came, it counts as held and the {wedfee} is not returned. Holding another means booking and paying again.'
     ],
     wedAgree: 'I have read and agree to these terms.',
     wedAgreeFirst: 'Please read the terms and tick the box to continue.',
@@ -4996,7 +5028,7 @@ const STR = {
     alertWedInvite: (pair) => '💌 Du bist zur Hochzeit von ' + pair + ' eingeladen.',
     alertWedInviteBody: (when) => 'Die Zeremonie ist am ' + when + '. Öffne die Einladung, um zu- oder abzusagen.',
     adminWeds: 'Anstehende Hochzeiten',
-    adminWedsHint: 'Jede Hochzeit mit reservierter Stunde steht hier. Sobald die 30.000\u0111 angekommen sind, drück auf Zahlung erhalten \u2014 der Raum öffnet sich für beide Partner und niemand braucht einen Code.',
+    adminWedsHint: 'Jede Hochzeit mit reservierter Stunde steht hier. Sobald die {wedfee} angekommen sind, drück auf Zahlung erhalten \u2014 der Raum öffnet sich für beide Partner und niemand braucht einen Code.',
     adminWedPaid: 'Bezahlt', adminWedOwed: 'Noch nicht bezahlt',
     adminWedGotPaid: 'Zahlung erhalten', adminWedPaidDone: 'Ihr Raum ist offen.',
     adminWedMoveOk: 'Der neuen Stunde zustimmen',
@@ -5129,7 +5161,7 @@ const STR = {
       'Die Zeremonie beginnt zur gewählten Uhrzeit. Eine Person von euch muss innerhalb der ersten 15 Minuten im Raum sein und „Zeremonie beginnen“ drücken.',
       'Wenn bis dahin niemand begonnen hat, schließt sich der Raum automatisch und die Gäste werden informiert, dass die Zeremonie nicht stattfindet.',
       'Tag und Uhrzeit können einmal geändert werden, spätestens eine Stunde vor der Zeremonie.',
-      'Wird die Hochzeit innerhalb der letzten Stunde abgesagt, während der Zeremonie beendet oder automatisch geschlossen, weil niemand gekommen ist, gilt sie als durchgeführt und die 30.000đ werden nicht erstattet. Für eine weitere Zeremonie ist eine neue Buchung und Zahlung nötig.'
+      'Wird die Hochzeit innerhalb der letzten Stunde abgesagt, während der Zeremonie beendet oder automatisch geschlossen, weil niemand gekommen ist, gilt sie als durchgeführt und die {wedfee} werden nicht erstattet. Für eine weitere Zeremonie ist eine neue Buchung und Zahlung nötig.'
     ],
     wedAgree: 'Ich habe die Bedingungen gelesen und stimme ihnen zu.',
     wedAgreeFirst: 'Lies bitte die Bedingungen und setz das Häkchen, um weiterzugehen.',
@@ -20023,7 +20055,7 @@ function paywallHTML(courseId) {
   const S = T(), c = courseOf(courseId), a = ACCESS.get()[courseId];
   const expired = a && a < isoDate(new Date());
   return '<div class="paywall"><div class="ic">🔒</div><h2>' + esc(L(c.name)) + '</h2><p class="muted">' + esc(L(c.blurb)) + '</p>'
-    + '<ul class="inc">' + L(c.includes).map((x) => '<li>' + esc(x) + '</li>').join('') + '</ul>'
+    + '<ul class="inc">' + L(c.includes).map((x) => '<li>' + esc(priceText(x)) + '</li>').join('') + '</ul>'
     /* Inside the Android app the price shown is Play's own, in the buyer's
        currency, because Play is what they are about to pay. On the web it is
        the price written here. */
@@ -20532,7 +20564,7 @@ function unlockRowHTML(c) {
   const open = ACCESS.has(c.id) || (UNL_TIERS.indexOf(c.id) > -1 && ACCESS.has('pro'));
   const picked = !open && UNL_CART.has(c.id);
   const body = '<div class="unl-h"><b>' + esc(L(c.name)) + '</b>' + (isTWA() ? '' : '<span class="pr">' + priceHTML(c.price, 'unlock', c.id) + '</span>') + '</div>'
-    + '<p class="hint">' + esc(L(c.sum || c.blurb)) + '</p>'
+    + '<p class="hint">' + esc(priceText(L(c.sum || c.blurb))) + '</p>'
     + '<div class="unl-f">' + (c.id === 'pro' ? '<span class="chip pink">' + esc(S.unlockBest) + '</span>' : '')
     + '<span class="unl-st">' + (open ? '✓ ' + esc(ACCESS.isAdmin() && !until ? S.adminShort : S.unlockOpenUntil(fmtDate(until)))
       : picked ? '✓ ' + esc(S.unlockChosen) : esc(S.unlockNot) + (isTWA() ? '' : ' · ' + esc(c.months + ' ' + S.months6))) + '</span></div>';
@@ -26721,7 +26753,7 @@ function priceCardHTML(c) {
   const label = c.kind === 'course' ? (S.cats[c.id] || L(c.name)) : S.priceOpen;
   return '<div class="svc ' + (c.kind === 'course' ? 'lav' : 'gold') + '">'
     + '<div class="t"><span class="ic">' + c.icon + '</span><div><b>' + esc(L(c.name)) + '</b>'
-    + '<div class="tag">' + esc(L(c.sum)) + '</div></div></div>'
+    + '<div class="tag">' + esc(priceText(L(c.sum))) + '</div></div></div>'
     + (isTWA() ? '' : '<div class="pk"><div class="pkg"><span>' + c.months + ' ' + esc(S.months6) + '</span><b>' + priceHTML(c.price, 'unlock', c.id) + '</b></div></div>')
     + '<a class="btn sm block" href="' + esc(c.to) + '" style="margin-top:8px">' + esc(label) + ' \u2192</a></div>';
 }
@@ -29948,7 +29980,7 @@ function renderWedding(args) {
            passing above a button. Four facts, one sentence each, because that
            is the difference between terms read and terms scrolled past. */
         + '<div class="card termscard"><div class="ghead"><span class="gk">\uD83D\uDCDC</span><h3>' + esc(S.wedTermsTitle) + '</h3></div>'
-        + '<ol class="terms">' + S.wedTerms.map((t) => '<li>' + esc(t) + '</li>').join('') + '</ol>'
+        + '<ol class="terms">' + S.wedTerms.map((t) => '<li>' + esc(priceText(t)) + '</li>').join('') + '</ol>'
         + '<label class="remind"><input type="checkbox" id="wedagree"><span>' + esc(S.wedAgree) + '</span></label>'
         + '<button type="button" class="btn primary block" id="wedmake" style="margin-top:12px" disabled>' + esc(S.wedMake) + '</button>'
         + '<p class="hint" id="wedst">' + esc(S.wedAgreeFirst) + '</p></div>';
@@ -31097,7 +31129,7 @@ function adminPay(p) {
     if (!$('#pyweds')) return;
     const owed = asks.filter((w) => !w.paid).length;
     $('#pyweds').innerHTML = asks.length ? '<div class="card"><h3 style="margin-bottom:4px">\uD83D\uDC8D ' + esc(S.adminWeds) + (owed ? ' <span class="n">' + owed + '</span>' : '') + '</h3>'
-      + '<p class="hint" style="margin-bottom:10px">' + esc(S.adminWedsHint) + '</p>'
+      + '<p class="hint" style="margin-bottom:10px">' + esc(priceText(S.adminWedsHint)) + '</p>'
       + asks.map((w) => '<div class="bk"><div class="bkh"><b>\uD83D\uDC8D ' + esc(((w.aName || '') + ' & ' + (w.bName || '')).replace(/^ & $/, S.loveSomeone)) + '</b>'
         + '<span class="st ' + (w.paid ? 'confirmed' : 'requested') + '">' + esc(w.paid ? S.adminWedPaid : S.adminWedOwed) + '</span></div>'
         + '<p class="hint">' + esc(S.adminWedWas) + ': <b>' + esc(wedWhen(Number(w.startMs) || 0)) + '</b></p>'
@@ -31404,10 +31436,10 @@ function adminSale(p) {
 ROUTES.admin = { nav: '', render: renderAdmin };
 
 /* ============================ boot ============================ */
-window.APP_VERSION = 'v193';
+window.APP_VERSION = 'v194';
 window.NABU = { CONFIG: CONFIG, SALE: SALE, salePrice: salePrice, loadActs: loadActs, BACK: BACK, LESSONS: LESSONS, localAnswer: localAnswer, compatVerdict: compatVerdict, numerologyOf: numerologyOf, ZDEEP: ZDEEP, lunarToday: lunarToday, solarToLunar: solarToLunar, DECK: DECK, INSIGHT: INSIGHT, KW: KW, ASK: ASK, TOPICS: TOPICS, GUIDES: GUIDES, SERVICES: SERVICES, COURSES: COURSES, ACCESS: ACCESS, INTERESTS: INTERESTS, plusOn: () => plusOn(), proOn: () => proOn(), luckUnlimited: () => luckUnlimited(), ZODIAC: ZODIAC, pick: pick, book: book,
   insightHTML: insightHTML, insightOf: insightOf, sunSignIndex: sunSignIndex, lifePath: lifePath, PROFILE: () => PROFILE, BE: BE, ACTS: ACTS,
-  ANGELS: ANGELS, angelRead: angelRead, CODEBOOK: CODEBOOK, redeemCode: redeemCode, loadCodebook: loadCodebook, petHomeSVG: petHomeSVG, PET_HOMES: PET_HOMES, PET_WEARS: PET_WEARS, codeDigest: codeDigest, randomCode: randomCode, BANK: BANK, PETS: PETS, petSVG: petSVG, PET_COATS: PET_COATS, PET_KINDS: PET_KINDS, turnsMerge: turnsMerge, turnsLocal: turnsLocal, luckCut: luckCut, petLevel: petLevel, petStep: petStep, VOUCHERS: VOUCHERS, levelCoins: levelCoins, LOOKS: LOOKS,
+  ANGELS: ANGELS, angelRead: angelRead, CODEBOOK: CODEBOOK, redeemCode: redeemCode, loadCodebook: loadCodebook, petHomeSVG: petHomeSVG, PET_HOMES: PET_HOMES, PET_WEARS: PET_WEARS, codeDigest: codeDigest, randomCode: randomCode, BANK: BANK, PETS: PETS, petSVG: petSVG, PET_COATS: PET_COATS, PET_KINDS: PET_KINDS, turnsMerge: turnsMerge, turnsLocal: turnsLocal, priceText: priceText, proSaveText: () => proSaveText(), wedFeeText: () => wedFeeText(), fmtPrice: fmtPrice, luckCut: luckCut, petLevel: petLevel, petStep: petStep, VOUCHERS: VOUCHERS, levelCoins: levelCoins, LOOKS: LOOKS,
   LOVE: LOVE, LOVEDB: LOVEDB, HANDLE_RE: HANDLE_RE, loveBadgeHTML: loveBadgeHTML,
   loveMarkSVG: loveMarkSVG, QUIZ: QUIZ, QSCORE: QSCORE, QUIZ_PASS: QUIZ_PASS, QUIZ_LEN: QUIZ_LEN, pileArtSVG: pileArtSVG, PILE_ARTS: PILE_ARTS, threadSVG: threadSVG, petParentsHTML: petParentsHTML, GIFTS: GIFTS, ALERTS: ALERTS, alertsStart: alertsStart, alertWas: alertWas,
   WED: WED, WED_STEPS: WED_STEPS, wedStep: wedStep, cupidSVG: cupidSVG, shareLine: shareLine };

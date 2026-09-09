@@ -95,12 +95,12 @@ const COURSES = [
     includes: { vi: ['Toàn bộ quyền lợi của Nabu Plus', '12 linh thú, nuôi tối đa 6 bạn cùng lúc', '9 món ăn, 8 ngôi nhà, 9 bộ trang phục', 'Chờ 2 giờ giữa hai bữa, 3 lượt chơi mỗi ngày, điểm kinh nghiệm nhân đôi', 'Voucher giảm 15% và 20%', 'Thời hạn sử dụng 6 tháng'],
       en: ['Everything in Nabu Plus', '12 spirit beasts, six kept at once', '9 foods, 8 homes, 9 things to wear', '2 hours between meals, 3 plays a day, double points', 'The 15% and 20% vouchers', '6 months of access'], de: ['Alle Vorteile von Nabu Plus', '12 Begleiter, bis zu 6 gleichzeitig', '9 Futtersorten, 8 Zuhause, 9 Kleidungsstücke', '2 Stunden zwischen Mahlzeiten, 3 Spiele pro Tag, doppelte Erfahrungspunkte', 'Gutscheine mit 15 % und 20 % Rabatt', '6 Monate Zugriff'] } },
   { id: 'pro', kind: 'unlock', icon: '👑', to: '#/play/pet', price: 249000, months: 12,
-    sum: { vi: 'Quyền lợi như gói 6 tháng, dùng trọn một năm và tiết kiệm 49.000đ.', en: 'The same, for a whole year — 49.000đ less than two half years.', de: 'Dieselben Vorteile wie im 6-Monats-Paket, für ein ganzes Jahr und 49.000đ günstiger als zweimal 6 Monate.' },
+    sum: { vi: 'Quyền lợi như gói 6 tháng, dùng trọn một năm và tiết kiệm {save}.', en: 'The same, for a whole year — {save} less than two half years.', de: 'Dieselben Vorteile wie im 6-Monats-Paket, für ein ganzes Jahr und {save} günstiger als zweimal 6 Monate.' },
     name: { vi: 'Nabu Pro · 12 tháng', en: 'Nabu Pro · 12 months', de: 'Nabu Pro · 12 Monate' },
     blurb: { vi: 'Nabu Pro bao gồm toàn bộ quyền lợi của Nabu Plus, cùng với khu vực bạn nhỏ: mười hai linh thú trong truyền thuyết, nuôi tối đa sáu bạn cùng lúc, đầy đủ thức ăn, nhà ở và trang phục dành cho các bạn ấy, thời gian chờ giữa hai bữa rút ngắn từ sáu giờ xuống còn hai giờ, và điểm kinh nghiệm nhân đôi. Thanh toán một lần cho cả năm sẽ tiết kiệm hơn so với mua hai lần gói 6 tháng.',
       en: 'Everything in Nabu Plus, and the companions besides: twelve spirit beasts, six of them at once, their good food, their homes and their clothes, a two-hour wait between meals instead of six, and double points. Paying once for the year costs less.', de: 'Nabu Pro enthält alles aus Nabu Plus und zusätzlich die Begleiterwelt: zwölf mythische Begleiter, bis zu sechs gleichzeitig, alle Futtersorten, Zuhause und Kleidungsstücke, nur zwei statt sechs Stunden Wartezeit zwischen den Mahlzeiten und doppelte Erfahrungspunkte. Die Jahreszahlung ist günstiger als zwei 6-Monats-Pakete.' },
-    includes: { vi: ['Tiết kiệm 49.000đ so với mua hai lần gói 6 tháng', 'Toàn bộ quyền lợi của Nabu Plus', '12 linh thú, nuôi tối đa 6 bạn cùng lúc', '9 món ăn, 8 ngôi nhà, 9 bộ trang phục', 'Chờ 2 giờ giữa hai bữa, 3 lượt chơi mỗi ngày, điểm kinh nghiệm nhân đôi', 'Voucher giảm 15% và 20%', 'Thời hạn sử dụng 12 tháng'],
-      en: ['49.000đ less than two half years', 'Everything in Nabu Plus', '12 spirit beasts, six kept at once', '9 foods, 8 homes, 9 things to wear', '2 hours between meals, 3 plays a day, double points', 'The 15% and 20% vouchers', '12 months of access'], de: ['49.000đ günstiger als zweimal 6 Monate', 'Alle Vorteile von Nabu Plus', '12 Begleiter, bis zu 6 gleichzeitig', '9 Futtersorten, 8 Zuhause, 9 Kleidungsstücke', '2 Stunden zwischen Mahlzeiten, 3 Spiele pro Tag, doppelte Erfahrungspunkte', 'Gutscheine mit 15 % und 20 % Rabatt', '12 Monate Zugriff'] } },
+    includes: { vi: ['Tiết kiệm {save} so với mua hai lần gói 6 tháng', 'Toàn bộ quyền lợi của Nabu Plus', '12 linh thú, nuôi tối đa 6 bạn cùng lúc', '9 món ăn, 8 ngôi nhà, 9 bộ trang phục', 'Chờ 2 giờ giữa hai bữa, 3 lượt chơi mỗi ngày, điểm kinh nghiệm nhân đôi', 'Voucher giảm 15% và 20%', 'Thời hạn sử dụng 12 tháng'],
+      en: ['{save} less than two half years', 'Everything in Nabu Plus', '12 spirit beasts, six kept at once', '9 foods, 8 homes, 9 things to wear', '2 hours between meals, 3 plays a day, double points', 'The 15% and 20% vouchers', '12 months of access'], de: ['{save} günstiger als zweimal 6 Monate', 'Alle Vorteile von Nabu Plus', '12 Begleiter, bis zu 6 gleichzeitig', '9 Futtersorten, 8 Zuhause, 9 Kleidungsstücke', '2 Stunden zwischen Mahlzeiten, 3 Spiele pro Tag, doppelte Erfahrungspunkte', 'Gutscheine mit 15 % und 20 % Rabatt', '12 Monate Zugriff'] } },
   /* A wedding is bought once and held once, but the year is there so nobody
      loses what they paid for by having to move the date. */
   { id: 'wedding', kind: 'unlock', icon: '\uD83D\uDC92', to: '#/wedding', price: 30000, months: 12,
@@ -165,4 +165,36 @@ function fmtPrice(n, abroad) {
   const lg = typeof lang !== 'undefined' ? lang : 'vi';
   const v = (abroad && typeof abroad[lg] === 'number') ? abroad[lg] : p.v;
   return p.m.sym + (v % 1 ? v.toFixed(2) : String(v));
+}
+
+/* ---- an amount named inside a sentence ----
+   Only the dong price is real. What a reader abroad is charged is that price
+   converted, given its flat amount and rounded up on its own - which means a
+   saving is not one number in three languages. The year against two half years
+   saves 49.000d in dong, but the same two packages save $4 and EUR 3.50,
+   because each of the four prices was rounded separately. Writing the dong
+   figure into the English and German sentences put "49.000d" beside a price in
+   dollars, which is what the owner reported.
+
+   So the sentences carry a token and the amount is worked out here, in the
+   currency on screen. The saving is the difference of the two prices a buyer
+   actually sees - not the dong difference converted, which rounds to EUR 4 and
+   would not match the two prices printed above it. */
+function moneyText(v) {
+  const m = MONEY[typeof lang !== 'undefined' ? lang : 'vi'] || MONEY.vi;
+  if (m.rate === 1) return fmtNum(v) + m.sym;
+  return m.sym + (v % 1 ? v.toFixed(2) : String(v));
+}
+const priceOf = (id) => { const c = COURSES.filter((x) => x.id === id)[0]; return c ? c.price : 0; };
+const proSaveText = () => moneyText(Math.max(0, moneyOf(priceOf('pro6')).v * 2 - moneyOf(priceOf('pro')).v));
+const wedFeeText = () => fmtPrice(priceOf('wedding'));
+const MONEY_IN_TEXT = { '{save}': proSaveText, '{wedfee}': wedFeeText };
+/* Every sentence that names one of these amounts is passed through here on its
+   way to the screen. A string with no token is returned untouched. */
+function priceText(s) {
+  let out = String(s == null ? '' : s);
+  Object.keys(MONEY_IN_TEXT).forEach((k) => {
+    if (out.indexOf(k) > -1) out = out.split(k).join(MONEY_IN_TEXT[k]());
+  });
+  return out;
 }

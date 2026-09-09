@@ -406,7 +406,7 @@ const STR = {
     alertWedInvite: (pair) => 'Bạn được mời dự lễ cưới của ' + pair + ' 💌',
     alertWedInviteBody: (when) => 'Lễ cưới diễn ra vào ' + when + '. Bạn mở ra để nhận lời hoặc từ chối nhé.',
     adminWeds: 'Lễ cưới đang giữ',
-    adminWedsHint: 'Mỗi lễ cưới đang đặt chỗ đều ở đây. Khi bạn đã nhận được 30.000đ, bạn bấm Đã nhận tiền — phòng cưới mở ra cho cả hai người, không ai cần nhập mã nữa.',
+    adminWedsHint: 'Mỗi lễ cưới đang đặt chỗ đều ở đây. Khi bạn đã nhận được {wedfee}, bạn bấm Đã nhận tiền — phòng cưới mở ra cho cả hai người, không ai cần nhập mã nữa.',
     adminWedPaid: 'Đã thanh toán', adminWedOwed: 'Chưa thanh toán',
     adminWedGotPaid: 'Đã nhận tiền', adminWedPaidDone: 'Đã mở phòng cưới cho hai bạn ấy.',
     adminWedMoveOk: 'Đồng ý giờ mới',
@@ -545,7 +545,7 @@ const STR = {
       'Buổi lễ bắt đầu đúng giờ hai bạn đã chọn. Một trong hai người cần có mặt và bấm “Bắt đầu buổi lễ” trong vòng 15 phút sau giờ đó.',
       'Nếu quá 15 phút mà chưa ai bắt đầu, phòng cưới sẽ tự đóng và khách mời được báo là buổi lễ không diễn ra.',
       'Ngày giờ chỉ được đổi một lần, và chậm nhất là trước giờ làm lễ 1 tiếng.',
-      'Nếu buổi lễ bị huỷ trong vòng 1 tiếng trước giờ hẹn, bị huỷ khi đang diễn ra, hoặc tự đóng vì không ai có mặt, thì lễ cưới coi như đã dùng và phí 30.000đ không được hoàn lại. Muốn tổ chức lại, hai bạn đăng ký và thanh toán một lần nữa.'
+      'Nếu buổi lễ bị huỷ trong vòng 1 tiếng trước giờ hẹn, bị huỷ khi đang diễn ra, hoặc tự đóng vì không ai có mặt, thì lễ cưới coi như đã dùng và phí {wedfee} không được hoàn lại. Muốn tổ chức lại, hai bạn đăng ký và thanh toán một lần nữa.'
     ],
     wedAgree: 'Tôi đã đọc và đồng ý với các điều khoản trên.',
     wedAgreeFirst: 'Bạn đọc và tích vào ô đồng ý ở trên để tiếp tục nhé.',
@@ -1385,7 +1385,7 @@ const STR = {
       'The ceremony begins at the hour you choose. One of you must be here and press Begin within 15 minutes of it.',
       'If nobody has begun by then, the room closes itself and your guests are told the ceremony is not happening.',
       'The day and hour can be moved once, and no later than an hour before the ceremony.',
-      'If the wedding is called off within that last hour, called off during the ceremony, or closes itself because nobody came, it counts as held and the 30.000\u0111 is not returned. Holding another means booking and paying again.'
+      'If the wedding is called off within that last hour, called off during the ceremony, or closes itself because nobody came, it counts as held and the {wedfee} is not returned. Holding another means booking and paying again.'
     ],
     wedAgree: 'I have read and agree to these terms.',
     wedAgreeFirst: 'Please read the terms and tick the box to continue.',
@@ -2085,7 +2085,7 @@ const STR = {
     alertWedInvite: (pair) => '💌 Du bist zur Hochzeit von ' + pair + ' eingeladen.',
     alertWedInviteBody: (when) => 'Die Zeremonie ist am ' + when + '. Öffne die Einladung, um zu- oder abzusagen.',
     adminWeds: 'Anstehende Hochzeiten',
-    adminWedsHint: 'Jede Hochzeit mit reservierter Stunde steht hier. Sobald die 30.000\u0111 angekommen sind, drück auf Zahlung erhalten \u2014 der Raum öffnet sich für beide Partner und niemand braucht einen Code.',
+    adminWedsHint: 'Jede Hochzeit mit reservierter Stunde steht hier. Sobald die {wedfee} angekommen sind, drück auf Zahlung erhalten \u2014 der Raum öffnet sich für beide Partner und niemand braucht einen Code.',
     adminWedPaid: 'Bezahlt', adminWedOwed: 'Noch nicht bezahlt',
     adminWedGotPaid: 'Zahlung erhalten', adminWedPaidDone: 'Ihr Raum ist offen.',
     adminWedMoveOk: 'Der neuen Stunde zustimmen',
@@ -2218,7 +2218,7 @@ const STR = {
       'Die Zeremonie beginnt zur gewählten Uhrzeit. Eine Person von euch muss innerhalb der ersten 15 Minuten im Raum sein und „Zeremonie beginnen“ drücken.',
       'Wenn bis dahin niemand begonnen hat, schließt sich der Raum automatisch und die Gäste werden informiert, dass die Zeremonie nicht stattfindet.',
       'Tag und Uhrzeit können einmal geändert werden, spätestens eine Stunde vor der Zeremonie.',
-      'Wird die Hochzeit innerhalb der letzten Stunde abgesagt, während der Zeremonie beendet oder automatisch geschlossen, weil niemand gekommen ist, gilt sie als durchgeführt und die 30.000đ werden nicht erstattet. Für eine weitere Zeremonie ist eine neue Buchung und Zahlung nötig.'
+      'Wird die Hochzeit innerhalb der letzten Stunde abgesagt, während der Zeremonie beendet oder automatisch geschlossen, weil niemand gekommen ist, gilt sie als durchgeführt und die {wedfee} werden nicht erstattet. Für eine weitere Zeremonie ist eine neue Buchung und Zahlung nötig.'
     ],
     wedAgree: 'Ich habe die Bedingungen gelesen und stimme ihnen zu.',
     wedAgreeFirst: 'Lies bitte die Bedingungen und setz das Häkchen, um weiterzugehen.',
