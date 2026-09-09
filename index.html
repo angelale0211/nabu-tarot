@@ -12,7 +12,7 @@
      carries this notice with it. See LICENSE. -->
 <meta name="author" content="Nabu Tarot">
 <meta name="copyright" content="Copyright (c) 2025-2026 Nabu Tarot. All rights reserved.">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'none'; object-src 'none'; form-action 'self'; script-src 'self' 'sha256-5eAfMyINZwjQ3Zp5zXImyg/cJWb5ei0nMiy+MM4i1ws=' https://www.gstatic.com https://apis.google.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; font-src 'self' data:; media-src 'self' data: blob:; worker-src 'self'; connect-src 'self' https://*.googleapis.com https://*.google.com https://*.firebaseio.com https://*.cloudfunctions.net https://*.workers.dev https://generativelanguage.googleapis.com; frame-src https://*.firebaseapp.com https://accounts.google.com https://*.facebook.com">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'none'; object-src 'none'; form-action 'self'; script-src 'self' 'sha256-qMOS8lWemwDLRYNG2ziT2nmv5Q5P+n2OULqq4u1bOTk=' https://www.gstatic.com https://apis.google.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; font-src 'self' data:; media-src 'self' data: blob:; worker-src 'self'; connect-src 'self' https://*.googleapis.com https://*.google.com https://*.firebaseio.com https://*.cloudfunctions.net https://*.workers.dev https://generativelanguage.googleapis.com; frame-src https://*.firebaseapp.com https://accounts.google.com https://*.facebook.com">
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <meta name="theme-color" content="#EFE9FA">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -903,6 +903,14 @@ h1 .pileico{width:34px;height:27px;vertical-align:-3px;margin-right:2px}
 /* A fixed right column so the icons form one straight line down the card,
    whether the row shows a date or a price. */
 .course .pr{text-align:right;white-space:nowrap}
+/* "What you hold" is the same row with no padlock: two spans, not three. The
+   grid above then puts the status in the 20px icon column, and `nowrap` sent
+   "Đang mở đến 9 tháng 9, 2027" straight off the right of the card. Two
+   columns here, and the status is allowed to wrap - a date written out in
+   words does not fit 78px in any of the three languages, which is why the
+   card above it shortens its own date to 09/09/2026 instead. */
+.myplans .course{grid-template-columns:minmax(0,1fr) minmax(0,auto)}
+.myplans .course .pr{white-space:normal;overflow-wrap:anywhere}
 .codebox{font-family:Georgia,serif;font-size:22px;letter-spacing:.06em;background:var(--surface-2);border-radius:12px;padding:12px;text-align:center;margin:10px 0;user-select:all}
 
 /* ---- booking ---- */
@@ -21865,8 +21873,19 @@ function bindStore(root, redraw) {
   if (rs) rs.addEventListener('click', async () => {
     const st = $('#rstatus', root); rs.disabled = true; if (st) { st.className = 'hint'; st.textContent = S.stRestoring; }
     const out = await BILL.restore(); rs.disabled = false;
-    if (st) st.textContent = out.opened || out.pending ? S.stRestored(out.opened + out.pending) : S.stRestoreNone;
+    /* The answer is written AFTER the redraw, not before it. redraw() rebuilds
+       the whole card, so the #rstatus this handler started with is gone by the
+       time anybody could read it: the button appeared to do nothing at all,
+       which is what it looked like to the owner. A row that could not be
+       resolved is also said out loud now - counting only `opened` and
+       `pending` told somebody whose restore had just failed that there was
+       nothing to restore. */
+    const word = out.failed ? S.buyFailed
+      : (out.opened || out.pending) ? S.stRestored(out.opened + out.pending)
+      : S.stRestoreNone;
     if (redraw) redraw();
+    const after = $('#rstatus', root);
+    if (after) { after.className = out.failed ? 'hint err' : 'hint'; after.textContent = word; }
   });
 }
 
@@ -31618,7 +31637,7 @@ function adminSale(p) {
 ROUTES.admin = { nav: '', render: renderAdmin };
 
 /* ============================ boot ============================ */
-window.APP_VERSION = 'v201';
+window.APP_VERSION = 'v202';
 window.NABU = { CONFIG: CONFIG, SALE: SALE, salePrice: salePrice, loadActs: loadActs, BACK: BACK, LESSONS: LESSONS, localAnswer: localAnswer, compatVerdict: compatVerdict, numerologyOf: numerologyOf, ZDEEP: ZDEEP, lunarToday: lunarToday, solarToLunar: solarToLunar, DECK: DECK, INSIGHT: INSIGHT, KW: KW, ASK: ASK, TOPICS: TOPICS, GUIDES: GUIDES, SERVICES: SERVICES, COURSES: COURSES, ACCESS: ACCESS, INTERESTS: INTERESTS, plusOn: () => plusOn(), proOn: () => proOn(), luckUnlimited: () => luckUnlimited(), ZODIAC: ZODIAC, pick: pick, book: book, PLAY_ITEMS: PLAY_ITEMS, PLAY_SUB_SKUS: PLAY_SUB_SKUS, playItem: playItem, BILL: BILL, SUBS: SUBS, renderStore: renderStore, subStateWord: subStateWord,
   insightHTML: insightHTML, insightOf: insightOf, sunSignIndex: sunSignIndex, lifePath: lifePath, PROFILE: () => PROFILE, BE: BE, ACTS: ACTS,
   ANGELS: ANGELS, angelRead: angelRead, CODEBOOK: CODEBOOK, redeemCode: redeemCode, loadCodebook: loadCodebook, petHomeSVG: petHomeSVG, PET_HOMES: PET_HOMES, PET_WEARS: PET_WEARS, codeDigest: codeDigest, randomCode: randomCode, BANK: BANK, PETS: PETS, petSVG: petSVG, PET_COATS: PET_COATS, PET_KINDS: PET_KINDS, turnsMerge: turnsMerge, turnsLocal: turnsLocal, priceText: priceText, termText: termText, proSaveText: () => proSaveText(), wedFeeText: () => wedFeeText(), fmtPrice: fmtPrice, luckCut: luckCut, petLevel: petLevel, petStep: petStep, VOUCHERS: VOUCHERS, levelCoins: levelCoins, LOOKS: LOOKS,

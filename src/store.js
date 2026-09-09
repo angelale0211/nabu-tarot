@@ -71,8 +71,19 @@ function bindStore(root, redraw) {
   if (rs) rs.addEventListener('click', async () => {
     const st = $('#rstatus', root); rs.disabled = true; if (st) { st.className = 'hint'; st.textContent = S.stRestoring; }
     const out = await BILL.restore(); rs.disabled = false;
-    if (st) st.textContent = out.opened || out.pending ? S.stRestored(out.opened + out.pending) : S.stRestoreNone;
+    /* The answer is written AFTER the redraw, not before it. redraw() rebuilds
+       the whole card, so the #rstatus this handler started with is gone by the
+       time anybody could read it: the button appeared to do nothing at all,
+       which is what it looked like to the owner. A row that could not be
+       resolved is also said out loud now - counting only `opened` and
+       `pending` told somebody whose restore had just failed that there was
+       nothing to restore. */
+    const word = out.failed ? S.buyFailed
+      : (out.opened || out.pending) ? S.stRestored(out.opened + out.pending)
+      : S.stRestoreNone;
     if (redraw) redraw();
+    const after = $('#rstatus', root);
+    if (after) { after.className = out.failed ? 'hint err' : 'hint'; after.textContent = word; }
   });
 }
 
