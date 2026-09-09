@@ -368,15 +368,25 @@ function meSect(id, icon, title, body, openByDefault, force) {
       $('#msend').addEventListener('click', async () => { const t = $('#mtext').value.trim(); if (!t) return; $('#mtext').value = ''; try { await sendUser(t); } catch (e) { toast(e.message); } });
       bindChatBar(body, sendUser); }
       meUnsubs.push(BE.watchMyBookings((list) => {
-        $('#mybk').innerHTML = list.length ? list.map((b) => bookingRow(b, false)).join('') : '<p class="hint">' + esc(S.noBookings) + '</p>';
-        $$('[data-ics]', body).forEach((x) => x.addEventListener('click', () => { const bk = list.filter((y) => y.id === x.getAttribute('data-ics'))[0]; if (bk) addToCalendar(bk); }));
-        /* Nabu can call one off from here too, behind a question. */
-        $$('[data-bkoff]', body).forEach((x) => x.addEventListener('click', async () => {
-          const bk = list.filter((y) => y.id === x.getAttribute('data-bkoff'))[0];
-          if (!bk || !confirm(S.adminCancelAsk)) return;
-          try { await BE.setBookingStatus(bk, 'cancelled'); toast(S.adminCancelDone); } catch (e) { toast(e.message); }
-        }));
-        $$('[data-cancel]', body).forEach((x) => x.addEventListener('click', async () => { const bk = list.filter((y) => y.id === x.getAttribute('data-cancel'))[0]; if (!bk || !confirm(S.confirmCancel)) return; try { await BE.requestCancel(bk); toast(S.cancelSent); } catch (e) { toast(e.message); } }));
+        /* This is a live listener, so the snapshot can land after the screen
+           that made it has gone - the reader tapped away while it was still
+           in flight - and then `#mybk` is null. Writing to it threw, and
+           because that throw was the first line, everything below it was lost
+           too: the reminders were never set. So the screen is filled only
+           when it is still there, and the reminders are set either way. They
+           are timers and a stored row, not part of any screen. */
+        const box = $('#mybk');
+        if (box) {
+          box.innerHTML = list.length ? list.map((b) => bookingRow(b, false)).join('') : '<p class="hint">' + esc(S.noBookings) + '</p>';
+          $$('[data-ics]', body).forEach((x) => x.addEventListener('click', () => { const bk = list.filter((y) => y.id === x.getAttribute('data-ics'))[0]; if (bk) addToCalendar(bk); }));
+          /* Nabu can call one off from here too, behind a question. */
+          $$('[data-bkoff]', body).forEach((x) => x.addEventListener('click', async () => {
+            const bk = list.filter((y) => y.id === x.getAttribute('data-bkoff'))[0];
+            if (!bk || !confirm(S.adminCancelAsk)) return;
+            try { await BE.setBookingStatus(bk, 'cancelled'); toast(S.adminCancelDone); } catch (e) { toast(e.message); }
+          }));
+          $$('[data-cancel]', body).forEach((x) => x.addEventListener('click', async () => { const bk = list.filter((y) => y.id === x.getAttribute('data-cancel'))[0]; if (!bk || !confirm(S.confirmCancel)) return; try { await BE.requestCancel(bk); toast(S.cancelSent); } catch (e) { toast(e.message); } }));
+        }
         scheduleReminders(list);
       }));
     }
