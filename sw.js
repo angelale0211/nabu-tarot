@@ -1,6 +1,10 @@
 /* Nabu Tarot -- offline cache. Bump CACHE on every release. */
-const CACHE = 'nabu-tarot-v204';
-const SHELL = ['./', './index.html', './manifest.webmanifest', './icon-180.png', './icon-512.png', './icon-512-maskable.png', './posts.json', './schedule.json', './fb.json', './horoscope.json'];
+const CACHE = 'nabu-tarot-v205';
+/* icon-512-round.png is the loading screen's mark, so it belongs here with the
+   rest of the shell: it is wanted at the very first paint of a cold start, and
+   an app opened with no signal would otherwise show the purple with nothing on
+   it - which is the thing the loading screen exists to avoid. */
+const SHELL = ['./', './index.html', './manifest.webmanifest', './icon-180.png', './icon-512.png', './icon-512-maskable.png', './icon-512-round.png', './posts.json', './schedule.json', './fb.json', './horoscope.json'];
 const LIVE = /\/(posts|schedule|fb|horoscope|activities|activities-stock)\.json$/;
 
 self.addEventListener('install', (e) => {

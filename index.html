@@ -12,7 +12,7 @@
      carries this notice with it. See LICENSE. -->
 <meta name="author" content="Nabu Tarot">
 <meta name="copyright" content="Copyright (c) 2025-2026 Nabu Tarot. All rights reserved.">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'none'; object-src 'none'; form-action 'self'; script-src 'self' 'sha256-D8D6B/m6MuVgPO5H51xM79MuUHXm3cPgxQ9NYM6PtqE=' https://www.gstatic.com https://apis.google.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; font-src 'self' data:; media-src 'self' data: blob:; worker-src 'self'; connect-src 'self' https://*.googleapis.com https://*.google.com https://*.firebaseio.com https://*.cloudfunctions.net https://*.workers.dev https://generativelanguage.googleapis.com; frame-src https://*.firebaseapp.com https://accounts.google.com https://*.facebook.com">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'none'; object-src 'none'; form-action 'self'; script-src 'self' 'sha256-4gsDnFLCK/sGLZqYZ9YUW8OEvfB71TQHh+aZchMBBgE=' https://www.gstatic.com https://apis.google.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; font-src 'self' data:; media-src 'self' data: blob:; worker-src 'self'; connect-src 'self' https://*.googleapis.com https://*.google.com https://*.firebaseio.com https://*.cloudfunctions.net https://*.workers.dev https://generativelanguage.googleapis.com; frame-src https://*.firebaseapp.com https://accounts.google.com https://*.facebook.com">
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <meta name="theme-color" content="#EFE9FA">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -2604,9 +2604,39 @@ html[lang="de"] .actquick .aq b{-webkit-line-clamp:3}
    and the value keeps its half of the row. */
 html[lang="de"] .tbl td:first-child{white-space:normal;overflow-wrap:break-word}
 html[lang="de"] #today .tbl td:first-child{width:52%}
+
+/* ---- the first seconds inside the installed app ----
+
+   Opening the app from the home screen shows Android's own splash first: a
+   still picture built into the bundle out of icon-512.png and the manifest's
+   background_color, #B8A4E3. Android then hands over to Chrome, which has
+   nothing to show until the page has run - three or four seconds of nothing
+   on a cold start. This fills that gap with the same mark on the same purple,
+   turning, so the two screens read as one.
+
+   #B8A4E3 is written out rather than taken from a variable on purpose: it has
+   to match what is baked into the Android bundle, and it must be right before
+   any theme has been decided.
+
+   It fades in only after 250ms, so the website - which paints almost at once -
+   never flashes purple at anybody. main.js takes it down as soon as the first
+   screen is drawn. The 8s bail-out is there because a loading screen that
+   cannot end is worse than none at all: a page whose script never runs must
+   still show what little it has rather than a purple rectangle for ever. */
+#boot{position:fixed;inset:0;z-index:9999;background:#B8A4E3;display:grid;place-items:center;opacity:0;
+      animation:bootin .3s ease .25s forwards, bootbail 0s linear 8s forwards}
+#boot img{animation:bootspin 1.6s linear infinite}
+#boot.gone{opacity:0;visibility:hidden;transition:opacity .3s ease;animation:none}
+@keyframes bootin{to{opacity:1}}
+@keyframes bootbail{to{opacity:0;visibility:hidden}}
+@keyframes bootspin{to{transform:rotate(360deg)}}
+/* Somebody who has asked their phone to stop things moving gets the mark
+   held still, not a spinner they cannot switch off. */
+@media (prefers-reduced-motion:reduce){#boot img{animation:none}}
 </style>
 </head>
 <body>
+<div id="boot" aria-hidden="true"><img src="icon-512-round.png" width="104" height="104" alt=""></div>
 <header class="top"><div class="wrap">
   <a class="brand" href="#/home" id="brand"></a>
   <div class="tools">
@@ -31664,7 +31694,7 @@ function adminSale(p) {
 ROUTES.admin = { nav: '', render: renderAdmin };
 
 /* ============================ boot ============================ */
-window.APP_VERSION = 'v204';
+window.APP_VERSION = 'v205';
 window.NABU = { CONFIG: CONFIG, SALE: SALE, salePrice: salePrice, loadActs: loadActs, BACK: BACK, LESSONS: LESSONS, localAnswer: localAnswer, compatVerdict: compatVerdict, numerologyOf: numerologyOf, ZDEEP: ZDEEP, lunarToday: lunarToday, solarToLunar: solarToLunar, DECK: DECK, INSIGHT: INSIGHT, KW: KW, ASK: ASK, TOPICS: TOPICS, GUIDES: GUIDES, SERVICES: SERVICES, COURSES: COURSES, ACCESS: ACCESS, INTERESTS: INTERESTS, plusOn: () => plusOn(), proOn: () => proOn(), luckUnlimited: () => luckUnlimited(), ZODIAC: ZODIAC, pick: pick, book: book, PLAY_ITEMS: PLAY_ITEMS, PLAY_SUB_SKUS: PLAY_SUB_SKUS, playItem: playItem, BILL: BILL, SUBS: SUBS, renderStore: renderStore, subStateWord: subStateWord,
   insightHTML: insightHTML, insightOf: insightOf, sunSignIndex: sunSignIndex, lifePath: lifePath, PROFILE: () => PROFILE, BE: BE, ACTS: ACTS,
   ANGELS: ANGELS, angelRead: angelRead, CODEBOOK: CODEBOOK, redeemCode: redeemCode, loadCodebook: loadCodebook, petHomeSVG: petHomeSVG, PET_HOMES: PET_HOMES, PET_WEARS: PET_WEARS, codeDigest: codeDigest, randomCode: randomCode, BANK: BANK, PETS: PETS, petSVG: petSVG, PET_COATS: PET_COATS, PET_KINDS: PET_KINDS, turnsMerge: turnsMerge, turnsLocal: turnsLocal, priceText: priceText, termText: termText, proSaveText: () => proSaveText(), wedFeeText: () => wedFeeText(), fmtPrice: fmtPrice, luckCut: luckCut, petLevel: petLevel, petStep: petStep, VOUCHERS: VOUCHERS, levelCoins: levelCoins, LOOKS: LOOKS,
@@ -31732,6 +31762,36 @@ BE.onAuth(() => {
   if (['learn', 'me', 'home'].indexOf(parseHash().route) > -1) route();
 });
 boot();
+
+/* ---- take the purple loading screen down ----
+
+   #boot (src/shell.html) covers the cold start inside the installed app,
+   where Android's own splash hands over to a Chrome that has nothing drawn
+   yet. It comes off the moment #main has its first screen in it, watched
+   rather than guessed: the first paint can come from route() here, from the
+   sale file landing, or from onAuth, and tying it to any one of those would
+   leave it up too long on the days the others won. The 8s timer matches the
+   CSS bail-out, so the overlay cannot outlive a script that dies before
+   drawing anything. */
+(function dropBootScreen() {
+  const box = document.getElementById('boot');
+  if (!box) return;
+  const main = document.getElementById('main');
+  let gone = false;
+  const drop = () => {
+    if (gone) return;
+    gone = true;
+    box.className = 'gone';
+    setTimeout(() => { try { box.remove(); } catch (e) { /* already gone */ } }, 400);
+  };
+  if (!main) return drop();
+  if (main.childNodes.length) return drop();
+  try {
+    const obs = new MutationObserver(() => { if (main.childNodes.length) { obs.disconnect(); drop(); } });
+    obs.observe(main, { childList: true });
+  } catch (e) { /* no observer: the timer below still takes it down */ }
+  setTimeout(drop, 8000);
+})();
 </script>
 </body>
 </html>

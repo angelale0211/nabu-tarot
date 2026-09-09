@@ -1,5 +1,5 @@
 /* ============================ boot ============================ */
-window.APP_VERSION = 'v204';
+window.APP_VERSION = 'v205';
 window.NABU = { CONFIG: CONFIG, SALE: SALE, salePrice: salePrice, loadActs: loadActs, BACK: BACK, LESSONS: LESSONS, localAnswer: localAnswer, compatVerdict: compatVerdict, numerologyOf: numerologyOf, ZDEEP: ZDEEP, lunarToday: lunarToday, solarToLunar: solarToLunar, DECK: DECK, INSIGHT: INSIGHT, KW: KW, ASK: ASK, TOPICS: TOPICS, GUIDES: GUIDES, SERVICES: SERVICES, COURSES: COURSES, ACCESS: ACCESS, INTERESTS: INTERESTS, plusOn: () => plusOn(), proOn: () => proOn(), luckUnlimited: () => luckUnlimited(), ZODIAC: ZODIAC, pick: pick, book: book, PLAY_ITEMS: PLAY_ITEMS, PLAY_SUB_SKUS: PLAY_SUB_SKUS, playItem: playItem, BILL: BILL, SUBS: SUBS, renderStore: renderStore, subStateWord: subStateWord,
   insightHTML: insightHTML, insightOf: insightOf, sunSignIndex: sunSignIndex, lifePath: lifePath, PROFILE: () => PROFILE, BE: BE, ACTS: ACTS,
   ANGELS: ANGELS, angelRead: angelRead, CODEBOOK: CODEBOOK, redeemCode: redeemCode, loadCodebook: loadCodebook, petHomeSVG: petHomeSVG, PET_HOMES: PET_HOMES, PET_WEARS: PET_WEARS, codeDigest: codeDigest, randomCode: randomCode, BANK: BANK, PETS: PETS, petSVG: petSVG, PET_COATS: PET_COATS, PET_KINDS: PET_KINDS, turnsMerge: turnsMerge, turnsLocal: turnsLocal, priceText: priceText, termText: termText, proSaveText: () => proSaveText(), wedFeeText: () => wedFeeText(), fmtPrice: fmtPrice, luckCut: luckCut, petLevel: petLevel, petStep: petStep, VOUCHERS: VOUCHERS, levelCoins: levelCoins, LOOKS: LOOKS,
@@ -67,3 +67,33 @@ BE.onAuth(() => {
   if (['learn', 'me', 'home'].indexOf(parseHash().route) > -1) route();
 });
 boot();
+
+/* ---- take the purple loading screen down ----
+
+   #boot (src/shell.html) covers the cold start inside the installed app,
+   where Android's own splash hands over to a Chrome that has nothing drawn
+   yet. It comes off the moment #main has its first screen in it, watched
+   rather than guessed: the first paint can come from route() here, from the
+   sale file landing, or from onAuth, and tying it to any one of those would
+   leave it up too long on the days the others won. The 8s timer matches the
+   CSS bail-out, so the overlay cannot outlive a script that dies before
+   drawing anything. */
+(function dropBootScreen() {
+  const box = document.getElementById('boot');
+  if (!box) return;
+  const main = document.getElementById('main');
+  let gone = false;
+  const drop = () => {
+    if (gone) return;
+    gone = true;
+    box.className = 'gone';
+    setTimeout(() => { try { box.remove(); } catch (e) { /* already gone */ } }, 400);
+  };
+  if (!main) return drop();
+  if (main.childNodes.length) return drop();
+  try {
+    const obs = new MutationObserver(() => { if (main.childNodes.length) { obs.disconnect(); drop(); } });
+    obs.observe(main, { childList: true });
+  } catch (e) { /* no observer: the timer below still takes it down */ }
+  setTimeout(drop, 8000);
+})();
