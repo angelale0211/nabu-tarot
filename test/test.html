@@ -1377,9 +1377,18 @@ async function go(hash, sel) { W().location.hash = hash; await sleep(30); return
       play.products[N.BILL.pendingList()[0].token].state = 'ok';
       const rs = await N.BILL.restore();
       ok(N.ACCESS.has('lenormand') && N.BILL.pendingList().length === 0 && rs.opened >= 1, 'restore re-sends pending and listed purchases and clears what went through');
-      play.cancelNext = true;
+      /* Play rejects show() with the same AbortError whether the buyer closed
+         the sheet or the sheet never opened. The stub aborts at once, so the
+         suite asks for each meaning by moving BILL's own threshold instead of
+         sleeping a second to earn one. */
+      const sheetMin = N.BILL.sheetMinMs;
+      N.BILL.sheetMinMs = 0; play.cancelNext = true;
       const cancelled = await N.BILL.buy('playing').catch((e) => e);
-      ok(cancelled instanceof Error && /Abort|cancel/i.test(cancelled.name + cancelled.message) && !N.ACCESS.has('playing'), 'a cancelled Play sheet opens nothing and is not an error the buyer is blamed for');
+      ok(cancelled instanceof Error && /Abort|cancel/i.test(cancelled.name + cancelled.message) && !cancelled.noSheet && !N.ACCESS.has('playing'), 'a cancelled Play sheet opens nothing and is not an error the buyer is blamed for');
+      N.BILL.sheetMinMs = sheetMin; play.cancelNext = true;
+      const nosheet = await N.BILL.buy('playing').catch((e) => e);
+      ok(nosheet instanceof Error && nosheet.noSheet === true && !N.ACCESS.has('playing'),
+        'a sheet that never opened is told apart from a sheet the buyer closed, though Play aborts both the same way');
       /* F1: switching away from a plan the account does not currently grant
          (never bought, or lapsed) is an ordinary purchase - Play naturally has
          no token for it, and that is fine. */
@@ -1435,6 +1444,14 @@ async function go(hash, sel) { W().location.hash = hash; await sleep(30); return
       await go('#/unlock?from=app', '.store');
       ok(d.querySelectorAll('.store [data-buy]').length >= 7 && !d.querySelector('#ucode') && !d.querySelector('#usend') && !d.querySelector('.paypanel') && !d.querySelector('.luckpanel') && !/đ\b/.test(d.querySelector('.store').textContent.replace(/₫/g, '')),
         'the in-app store lists every catalogue item with a Buy button and no basket, code field, transfer panel, reward panel or đồng price');
+      /* The tester on 2026-09-09 tapped Buy, got no sheet, no message and no
+         error to report. The screen must now say something, and carry Play's
+         own words for it, because a screenshot is the only place they show. */
+      { play.cancelNext = true; d.querySelector('.store [data-buy="playing"]').click();
+        await waitFor(() => { const s2 = d.querySelector('.store [data-st="playing"]'); return s2 && /\(/.test(s2.textContent); }, 4000);
+        const stp = d.querySelector('.store [data-st="playing"]');
+        ok(/chưa mở được/.test(stp.textContent) && /AbortError/.test(stp.textContent) && / err/.test(stp.className) && !N.ACCESS.has('playing'),
+          'a Buy that never opened the Play sheet says so on the screen, in the words Play gave, so a tester has something to screenshot'); }
       d.querySelector('.store [data-buy="plus"]').click(); await waitFor(() => N.ACCESS.has('plus'), 4000);
       await go('#/me', '[data-theme-pick]'); d.querySelector('details[data-sect="own"]').open = true;
       const plans = d.querySelector('.myplans');

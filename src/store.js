@@ -82,14 +82,27 @@ function bindStore(root, redraw) {
          it is what a buyer saw on 2026-09-09 for a subscription they really
          did hold. It is the pending wording, and not in the error colour. */
       const paidNotConfirmed = why === 'offline';
+      /* An AbortError is the buyer closing Play's sheet, and silence is the
+         right answer to that: they meant to. It is the WRONG answer when the
+         sheet never opened, which rejects identically - BILL.buy marks that
+         one. Without the split, a buyer whose sheet failed to launch saw no
+         message at all and had nothing to report, which is how this reached a
+         tester on 2026-09-09. Play's own words for the failure are appended,
+         because a screenshot is the only place they are ever seen. */
+      const noSheet = !!(e && e.noSheet);
+      const cancelled = !noSheet && /Abort|cancel/i.test((e && e.name) + why);
       if (st) {
-        st.className = 'hint st' + (paidNotConfirmed ? '' : ' err');
-        st.textContent = why === 'signin' ? S.stNeedIn
-          : /Abort|cancel/i.test((e && e.name) + why) ? ''
+        st.className = 'hint st' + (paidNotConfirmed || cancelled ? '' : ' err');
+        const said = why === 'signin' ? S.stNeedIn
+          : cancelled ? ''
           : paidNotConfirmed ? S.stPending
           : why === 'already used' ? S.buyAlready
           : why === 'nostore' ? S.stNotReady
+          : noSheet ? S.stNoSheet
           : S.stFailed;
+        const code = [(e && e.name) || '', why].filter(Boolean).join(' / ');
+        const showCode = !!said && !cancelled && !paidNotConfirmed && why !== 'signin';
+        st.textContent = said + (showCode && code ? ' (' + code + ')' : '');
       }
     }
   }));

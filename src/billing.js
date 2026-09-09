@@ -22,6 +22,12 @@ const PLAY_GIVE_UP = 8;       // tries before a row that keeps failing for a rea
 const BILL = {
   service: null, details: {}, starting: null, ready: false,
 
+  /* Below this, an AbortError out of Play's sheet is read as "the sheet never
+     opened" rather than "the buyer closed it": nobody reads a payment sheet
+     and dismisses it this fast. A field, not a literal, so the suite can ask
+     for either meaning without sleeping for a second to get one. */
+  sheetMinMs: 900,
+
   can() { return !!this.service; },
 
   /* One start, shared by everybody who awaits it. Silent on failure: on the
@@ -150,7 +156,16 @@ const BILL = {
     }
     const req = new PaymentRequest([{ supportedMethods: PLAY_METHOD, data: data }],
       { total: { label: L((courseOf(key) || { name: { vi: key, en: key } }).name), amount: { currency: 'VND', value: '0' } } });
-    const res = await req.show();
+    /* Play rejects show() with the same AbortError whether the buyer closed
+       the sheet or the sheet never opened. Only one of those may be answered
+       with silence. Nobody reads a payment sheet and dismisses it inside a
+       second, so a rejection that fast is the sheet failing to appear, and the
+       screen must say so: on 2026-09-09 a tester tapped Buy and got no sheet,
+       no message and no error to report. */
+    const shownAt = Date.now();
+    let res;
+    try { res = await req.show(); }
+    catch (e) { if (Date.now() - shownAt < this.sheetMinMs) e.noSheet = true; throw e; }
     const token = res && res.details && (res.details.purchaseToken || res.details.token);
     try { await res.complete(token ? 'success' : 'fail'); } catch (e) { /* already closed */ }
     if (!token) throw new Error('nopurchase');

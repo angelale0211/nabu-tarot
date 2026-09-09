@@ -12,7 +12,7 @@
      carries this notice with it. See LICENSE. -->
 <meta name="author" content="Nabu Tarot">
 <meta name="copyright" content="Copyright (c) 2025-2026 Nabu Tarot. All rights reserved.">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'none'; object-src 'none'; form-action 'self'; script-src 'self' 'sha256-VBZJqLjYoA2LeYG4xw8gcwY/i629AR2DjU68Io6Di0w=' https://www.gstatic.com https://apis.google.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; font-src 'self' data:; media-src 'self' data: blob:; worker-src 'self'; connect-src 'self' https://*.googleapis.com https://*.google.com https://*.firebaseio.com https://*.cloudfunctions.net https://*.workers.dev https://generativelanguage.googleapis.com; frame-src https://*.firebaseapp.com https://accounts.google.com https://*.facebook.com">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'none'; object-src 'none'; form-action 'self'; script-src 'self' 'sha256-ZZEPHFbQjCEsFHJPUvGX0l/sA09dfhViDfZU9U6eqD0=' https://www.gstatic.com https://apis.google.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; font-src 'self' data:; media-src 'self' data: blob:; worker-src 'self'; connect-src 'self' https://*.googleapis.com https://*.google.com https://*.firebaseio.com https://*.cloudfunctions.net https://*.workers.dev https://generativelanguage.googleapis.com; frame-src https://*.firebaseapp.com https://accounts.google.com https://*.facebook.com">
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <meta name="theme-color" content="#EFE9FA">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -3761,7 +3761,7 @@ const STR = {
     stCancelMeaning: 'Bạn có thể hủy bất cứ lúc nào trong Google Play. Gói vẫn dùng được đến hết kỳ đã thanh toán.',
     stManage: 'Quản lý trong Google Play', stRestore: 'Khôi phục mua hàng', stRestoring: 'Đang khôi phục…', stRestored: (n) => 'Đã khôi phục ' + n + ' mục', stRestoreNone: 'Không có gì để khôi phục',
     stNotReady: 'Không nhận được phản hồi từ Google Play.', stRetry: 'Thử lại', stPending: 'Đang chờ thanh toán. Hoàn tất xong, quyền truy cập sẽ tự mở.',
-    stIncludedPro: 'Đã bao gồm trong Nabu Pro', stSwitchTo: (n) => 'Chuyển sang gói ' + n, stNeedIn: 'Mục này chỉ có thể mua trong ứng dụng Nabu Tarot trên Android.', stFailed: 'Mua chưa thành công. Vui lòng thử lại.',
+    stIncludedPro: 'Đã bao gồm trong Nabu Pro', stSwitchTo: (n) => 'Chuyển sang gói ' + n, stNeedIn: 'Mục này chỉ có thể mua trong ứng dụng Nabu Tarot trên Android.', stFailed: 'Mua chưa thành công. Vui lòng thử lại.', stNoSheet: 'Google Play chưa mở được ô thanh toán. Bạn mở Cửa hàng Play, kiểm tra đúng tài khoản Google, rồi thử lại.',
     myPlans: 'Gói của bạn', stPlusPitch: 'Nabu Plus mở lượt xem không giới hạn và giúp bạn nhỏ lớn nhanh hơn.',
     pickSpent: 'Hôm nay bạn đã rút một lá rồi. Mai quay lại rút lá mới nhé.',
     pickOffer: 'Nabu Plus rút bài không giới hạn mỗi ngày, tung xu và rung cây không giới hạn, kèm toàn bộ giao diện: 79.000đ.',
@@ -4592,7 +4592,7 @@ const STR = {
     stCancelMeaning: 'Cancel anytime in Google Play. You’ll keep access until the end of your paid period.',
     stManage: 'Manage in Google Play', stRestore: 'Restore purchases', stRestoring: 'Restoring…', stRestored: (n) => 'Restored ' + n + ' items', stRestoreNone: 'Nothing to restore',
     stNotReady: 'No response from Google Play.', stRetry: 'Try again', stPending: 'Payment pending. Access will unlock automatically once it’s complete.',
-    stIncludedPro: 'Included in Nabu Pro', stSwitchTo: (n) => 'Switch to ' + n, stNeedIn: 'This item can only be purchased in the Nabu Tarot Android app.', stFailed: 'Purchase didn’t go through. Please try again.',
+    stIncludedPro: 'Included in Nabu Pro', stSwitchTo: (n) => 'Switch to ' + n, stNeedIn: 'This item can only be purchased in the Nabu Tarot Android app.', stFailed: 'Purchase didn’t go through. Please try again.', stNoSheet: 'Google Play could not open the payment sheet. Open the Play Store, check you are signed in to the right Google account, then try again.',
     myPlans: 'Your plans', stPlusPitch: 'Nabu Plus gives you unlimited readings and helps your companion grow faster.',
     pickSpent: 'You have drawn your card for today. Come back tomorrow for a new one.',
     pickOffer: 'Nabu Plus draws as many cards a day as you like, opens the coin and the tree without limit, and every design. The price is on the price page.',
@@ -5415,7 +5415,7 @@ const STR = {
     stCancelMeaning: 'Du kannst jederzeit in Google Play kündigen. Dein Zugang bleibt bis zum Ende des bezahlten Zeitraums bestehen.',
     stManage: 'In Google Play verwalten', stRestore: 'Käufe wiederherstellen', stRestoring: 'Wird wiederhergestellt…', stRestored: (n) => n + ' Elemente wiederhergestellt', stRestoreNone: 'Nichts zum Wiederherstellen',
     stNotReady: 'Keine Antwort von Google Play.', stRetry: 'Erneut versuchen', stPending: 'Zahlung ausstehend. Nach Abschluss wird der Zugang automatisch freigeschaltet.',
-    stIncludedPro: 'In Nabu Pro enthalten', stSwitchTo: (n) => 'Zu ' + n + ' wechseln', stNeedIn: 'Dieser Artikel kann nur in der Nabu-Tarot-App für Android gekauft werden.', stFailed: 'Kauf nicht abgeschlossen. Bitte erneut versuchen.',
+    stIncludedPro: 'In Nabu Pro enthalten', stSwitchTo: (n) => 'Zu ' + n + ' wechseln', stNeedIn: 'Dieser Artikel kann nur in der Nabu-Tarot-App für Android gekauft werden.', stFailed: 'Kauf nicht abgeschlossen. Bitte erneut versuchen.', stNoSheet: 'Google Play konnte das Zahlungsfenster nicht öffnen. Öffne den Play Store, prüfe dein Google-Konto und versuch es noch einmal.',
     myPlans: 'Deine Abos', stPlusPitch: 'Nabu Plus bietet unbegrenzte Legungen und lässt deinen kleinen Begleiter schneller wachsen.',
     pickSpent: 'Du hast deine Karte für heute gezogen. Komm morgen für eine neue wieder.',
     pickOffer: 'Nabu Plus zieht so viele Karten am Tag, wie du magst, öffnet Münze und Baum ohne Grenze und dazu jedes Design. Den Preis findest du auf der Preisseite.',
@@ -18970,12 +18970,20 @@ const BE = {
     notifyBooking(Object.assign({}, b, { status: 'cancel_requested' }));
   },
   async getBooking(id) { const d = await this.db.collection('bookings').doc(id).get(); return d.exists ? Object.assign({ id: d.id }, d.data()) : null; },
+  /* null, not {}, when the answer could not be had. An empty object is a real
+     answer - nobody has claimed an hour yet - and returning it for a timeout,
+     a dropped connection or a rules refusal made every hour look free on a
+     slow morning. Somebody then picks an hour that is already somebody
+     else's. The write itself is still refused (firestore.rules requires the
+     taken/ document not to exist), so nobody is double-booked; but they are
+     told so only after choosing, which is a poor way to find out. The caller
+     can now tell the two apart and say the calendar is not fully known. */
   async takenSlots() {
     const out = {};
     try {
       const s = await Promise.race([this.db.collection('taken').get(), new Promise((_, rej) => setTimeout(() => rej(new Error('timeout')), 3000))]);
       s.forEach((d) => { out[d.id] = true; });
-    } catch (e) { /* offline, slow, or rules */ }
+    } catch (e) { return null; }
     return out;
   }
 };
@@ -21660,6 +21668,12 @@ const PLAY_GIVE_UP = 8;       // tries before a row that keeps failing for a rea
 const BILL = {
   service: null, details: {}, starting: null, ready: false,
 
+  /* Below this, an AbortError out of Play's sheet is read as "the sheet never
+     opened" rather than "the buyer closed it": nobody reads a payment sheet
+     and dismisses it this fast. A field, not a literal, so the suite can ask
+     for either meaning without sleeping for a second to get one. */
+  sheetMinMs: 900,
+
   can() { return !!this.service; },
 
   /* One start, shared by everybody who awaits it. Silent on failure: on the
@@ -21788,7 +21802,16 @@ const BILL = {
     }
     const req = new PaymentRequest([{ supportedMethods: PLAY_METHOD, data: data }],
       { total: { label: L((courseOf(key) || { name: { vi: key, en: key } }).name), amount: { currency: 'VND', value: '0' } } });
-    const res = await req.show();
+    /* Play rejects show() with the same AbortError whether the buyer closed
+       the sheet or the sheet never opened. Only one of those may be answered
+       with silence. Nobody reads a payment sheet and dismisses it inside a
+       second, so a rejection that fast is the sheet failing to appear, and the
+       screen must say so: on 2026-09-09 a tester tapped Buy and got no sheet,
+       no message and no error to report. */
+    const shownAt = Date.now();
+    let res;
+    try { res = await req.show(); }
+    catch (e) { if (Date.now() - shownAt < this.sheetMinMs) e.noSheet = true; throw e; }
     const token = res && res.details && (res.details.purchaseToken || res.details.token);
     try { await res.complete(token ? 'success' : 'fail'); } catch (e) { /* already closed */ }
     if (!token) throw new Error('nopurchase');
@@ -21958,14 +21981,27 @@ function bindStore(root, redraw) {
          it is what a buyer saw on 2026-09-09 for a subscription they really
          did hold. It is the pending wording, and not in the error colour. */
       const paidNotConfirmed = why === 'offline';
+      /* An AbortError is the buyer closing Play's sheet, and silence is the
+         right answer to that: they meant to. It is the WRONG answer when the
+         sheet never opened, which rejects identically - BILL.buy marks that
+         one. Without the split, a buyer whose sheet failed to launch saw no
+         message at all and had nothing to report, which is how this reached a
+         tester on 2026-09-09. Play's own words for the failure are appended,
+         because a screenshot is the only place they are ever seen. */
+      const noSheet = !!(e && e.noSheet);
+      const cancelled = !noSheet && /Abort|cancel/i.test((e && e.name) + why);
       if (st) {
-        st.className = 'hint st' + (paidNotConfirmed ? '' : ' err');
-        st.textContent = why === 'signin' ? S.stNeedIn
-          : /Abort|cancel/i.test((e && e.name) + why) ? ''
+        st.className = 'hint st' + (paidNotConfirmed || cancelled ? '' : ' err');
+        const said = why === 'signin' ? S.stNeedIn
+          : cancelled ? ''
           : paidNotConfirmed ? S.stPending
           : why === 'already used' ? S.buyAlready
           : why === 'nostore' ? S.stNotReady
+          : noSheet ? S.stNoSheet
           : S.stFailed;
+        const code = [(e && e.name) || '', why].filter(Boolean).join(' / ');
+        const showCode = !!said && !cancelled && !paidNotConfirmed && why !== 'signin';
+        st.textContent = said + (showCode && code ? ' (' + code + ')' : '');
       }
     }
   }));
@@ -26920,12 +26956,12 @@ const BOOK_KEYS = ['items', 'name', 'note', 'birth', 'birthTime', 'slot', 'day',
 function saveBook() { const o = {}; BOOK_KEYS.forEach((k) => { o[k] = book[k]; }); store.set('nabu-book', o); }
 function restoreBook() { if (book.restored) return; book.restored = true; const o = store.get('nabu-book', null); if (!o) return; BOOK_KEYS.forEach((k) => { if (o[k] != null) book[k] = o[k]; }); if (!Array.isArray(book.items)) book.items = []; }
 function clearBook() { book.items = []; book.slot = null; book.day = null; book.timeSaved = false; book.note = ''; book.card = null; book.where = ''; book.whereId = ''; store.set('nabu-book', null); }
-let SCHEDULE = null, TAKEN = {};
+let SCHEDULE = null, TAKEN = {}, TAKEN_KNOWN = true;
 
 async function loadSchedule() {
   const s = await loadContent('schedule', CONFIG.schedulePath, 'nabu-schedule');
   SCHEDULE = s.data || { slotMinutes: 60, weekly: {}, blocked: [], extra: {}, booked: [], leadDays: 1, horizonDays: 42 };
-  if (BE.enabled) { await Promise.race([BE.initP || Promise.resolve(), new Promise((r) => setTimeout(r, 3000))]); if (BE.db) TAKEN = await BE.takenSlots(); }
+  if (BE.enabled) { await Promise.race([BE.initP || Promise.resolve(), new Promise((r) => setTimeout(r, 3000))]); if (BE.db) { const t = await BE.takenSlots(); TAKEN_KNOWN = t !== null; TAKEN = t || {}; } }
   return SCHEDULE;
 }
 const slotKey = (dateStr, time) => dateStr + 'T' + time;
@@ -26958,7 +26994,10 @@ function slotsHTML() {
   if (!book.day) return '<p class="hint">' + esc(S.pickDay) + '</p>';
   const list = slotsFor(book.day);
   if (!list.length) return '<p class="hint">' + esc(S.noSlots) + '</p>';
-  return '<div class="slots">' + list.map((s) => '<button data-slot="' + s.key + '" class="' + (s.taken ? 'taken' : '') + (book.slot === s.key ? ' on' : '') + '">' + s.time + '</button>').join('') + '</div>'
+  /* Said out loud when the taken hours could not be read: without it every
+     hour looks free and the refusal comes only after somebody has chosen. */
+  const unsure = TAKEN_KNOWN ? '' : '<p class="hint err">' + esc(S.feedOffline) + '</p>';
+  return unsure + '<div class="slots">' + list.map((s) => '<button data-slot="' + s.key + '" class="' + (s.taken ? 'taken' : '') + (book.slot === s.key ? ' on' : '') + '">' + s.time + '</button>').join('') + '</div>'
     + (book.slot ? '<div class="picked">📅 ' + esc(slotLabel(book.slot)) + '</div><button class="btn primary block" id="saveslot" style="margin-top:8px">✓ ' + esc(S.saveSlot) + '</button>' : '');
 }
 function slotLabel(key) { return T().dateFmt(new Date(key.slice(0, 10) + 'T00:00:00')) + ' · ' + key.slice(11) + ' (' + L(CONFIG.tzLabel) + ')'; }
@@ -27269,7 +27308,7 @@ async function renderBook(args, params) {
         whereId: String(book.whereId || '').trim(),
         note: book.note.trim(), message: composeMessage(), luck: bookLuck(), birth: needsBirth() ? (book.birth + (book.birthTime ? ' ' + book.birthTime : '')) : '', card: book.card ? cardById(book.card).name : '' });
       luckCommit(bookLuck(), S.bkItems); book.use.v = false; book.use.c = 0;
-      toast(T().saved); try { TAKEN = await BE.takenSlots(); } catch (e2) { /* refreshed on the next visit */ }
+      toast(T().saved); try { const t2 = await BE.takenSlots(); TAKEN_KNOWN = t2 !== null; TAKEN = t2 || {}; } catch (e2) { /* refreshed on the next visit */ }
       done(); return;
     } catch (e) { $('#sendstatus').textContent = S.publishFail + ': ' + e.message; $('#sendstatus').className = 'hint err'; }
     sendBtn.disabled = false; sendBtn.textContent = S.sendInApp;
@@ -31743,7 +31782,7 @@ function adminSale(p) {
 ROUTES.admin = { nav: '', render: renderAdmin };
 
 /* ============================ boot ============================ */
-window.APP_VERSION = 'v209';
+window.APP_VERSION = 'v210';
 window.NABU = { CONFIG: CONFIG, SALE: SALE, salePrice: salePrice, loadActs: loadActs, BACK: BACK, LESSONS: LESSONS, localAnswer: localAnswer, compatVerdict: compatVerdict, numerologyOf: numerologyOf, ZDEEP: ZDEEP, lunarToday: lunarToday, solarToLunar: solarToLunar, DECK: DECK, INSIGHT: INSIGHT, KW: KW, ASK: ASK, TOPICS: TOPICS, GUIDES: GUIDES, SERVICES: SERVICES, COURSES: COURSES, ACCESS: ACCESS, INTERESTS: INTERESTS, plusOn: () => plusOn(), proOn: () => proOn(), luckUnlimited: () => luckUnlimited(), ZODIAC: ZODIAC, pick: pick, book: book, PLAY_ITEMS: PLAY_ITEMS, PLAY_SUB_SKUS: PLAY_SUB_SKUS, playItem: playItem, BILL: BILL, SUBS: SUBS, renderStore: renderStore, subStateWord: subStateWord,
   insightHTML: insightHTML, insightOf: insightOf, sunSignIndex: sunSignIndex, lifePath: lifePath, PROFILE: () => PROFILE, BE: BE, ACTS: ACTS,
   ANGELS: ANGELS, angelRead: angelRead, CODEBOOK: CODEBOOK, redeemCode: redeemCode, loadCodebook: loadCodebook, petHomeSVG: petHomeSVG, PET_HOMES: PET_HOMES, PET_WEARS: PET_WEARS, codeDigest: codeDigest, randomCode: randomCode, BANK: BANK, PETS: PETS, petSVG: petSVG, PET_COATS: PET_COATS, PET_KINDS: PET_KINDS, turnsMerge: turnsMerge, turnsLocal: turnsLocal, priceText: priceText, termText: termText, proSaveText: () => proSaveText(), wedFeeText: () => wedFeeText(), fmtPrice: fmtPrice, luckCut: luckCut, petLevel: petLevel, petStep: petStep, VOUCHERS: VOUCHERS, levelCoins: levelCoins, LOOKS: LOOKS,
