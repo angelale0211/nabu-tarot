@@ -718,6 +718,146 @@ async function go(hash, sel) { W().location.hash = hash; await sleep(30); return
       w.saveProfileLocal({ lang: keepL.plang || '' });
       if (keepL.lang == null) w.localStorage.removeItem('nabu-lang'); else w.localStorage.setItem('nabu-lang', keepL.lang);
       N.BE.user = keepL.user; N.BE.enabled = keepL.on; }
+    { /* A free turn belongs to the person, not to the handset. The counters are
+         still read from the device, but a signed-in copy rides on the account
+         and the two are reconciled with "later date wins" - so clearing the
+         app's data, or opening the same account in another browser, can never
+         hand out a second card or a second coin. */
+      const keepT = { p: W().localStorage.getItem('nabu-pick-day'), l: W().localStorage.getItem('nabu-luck') };
+      const set = (p, l) => {
+        if (p === null) W().localStorage.removeItem('nabu-pick-day'); else W().localStorage.setItem('nabu-pick-day', JSON.stringify(p));
+        if (l === null) W().localStorage.removeItem('nabu-luck'); else W().localStorage.setItem('nabu-luck', JSON.stringify(l));
+      };
+      // A phone with nothing on it, meeting an account that drew today.
+      set(null, null);
+      let m = W().NABU.turnsMerge({ pick: { d: '2026-09-09', id: 'major-3', focus: 'love' }, luck: { coin: '2026-09-09' } });
+      ok(m.pick && m.pick.d === '2026-09-09' && m.pick.id === 'major-3' && m.luck.coin === '2026-09-09',
+        'a cleared phone is told what the account has already spent');
+      // The account is behind: the device keeps the later date, and is not given a turn back.
+      set({ d: '2026-09-09', id: 'major-1', focus: 'general' }, { coin: '2026-09-09', tree: '2026-09-09' });
+      m = W().NABU.turnsMerge({ pick: { d: '2026-09-01', id: 'major-9', focus: 'work' }, luck: { coin: '2026-09-02' } });
+      ok(m.pick.d === '2026-09-09' && m.pick.id === 'major-1' && m.luck.coin === '2026-09-09' && m.luck.tree === '2026-09-09',
+        'an older copy on the account never gives a spent turn back');
+      // Each counter is merged on its own.
+      set({ d: '2026-09-09', id: 'major-1', focus: 'general' }, { coin: '2026-09-01' });
+      m = W().NABU.turnsMerge({ luck: { coin: '2026-09-08', tree: '2026-09-08' } });
+      ok(m.luck.coin === '2026-09-08' && m.luck.tree === '2026-09-08' && m.pick.d === '2026-09-09',
+        'the coin, the tree and the card are each merged on their own');
+      // Nothing anywhere stays nothing, and rubbish from the cloud is ignored.
+      set(null, null);
+      m = W().NABU.turnsMerge(null);
+      const m2 = W().NABU.turnsMerge({ pick: 'nonsense', luck: 7 });
+      ok(m.pick === null && !Object.keys(m.luck).length && m2.pick === null && !Object.keys(m2.luck).length,
+        'no turns spent anywhere leaves the gate open, and a malformed account copy is ignored');
+      ok(typeof W().NABU.BE.pushTurns === 'function', 'the account has somewhere to write a spent turn');
+      if (keepT.p === null) W().localStorage.removeItem('nabu-pick-day'); else W().localStorage.setItem('nabu-pick-day', keepT.p);
+      if (keepT.l === null) W().localStorage.removeItem('nabu-luck'); else W().localStorage.setItem('nabu-luck', keepT.l); }
+    { /* The coin answers a question, so it will not flip without one. A yes on
+         its own means nothing, and the free flip is one every three days -
+         too expensive to spend on an empty box. */
+      const keepQ = W().localStorage.getItem('nabu-coinq'), keepCL = W().localStorage.getItem('nabu-luck');
+      /* The flip button is only drawn for somebody signed in. Device-only mode
+         is the cheapest way to be that here: signedIn() is true when there is
+         no backend to be signed in to, and nothing reaches the network. */
+      const keepBE = { on: W().NABU.BE.enabled, user: W().NABU.BE.user };
+      W().NABU.BE.enabled = false; W().NABU.BE.user = null;
+      W().localStorage.removeItem('nabu-coinq');
+      W().localStorage.setItem('nabu-luck', JSON.stringify({}));
+      await go('#/play/coin', '#coinq');
+      const typed = (v) => { const q = D().querySelector('#coinq'); q.value = v; q.dispatchEvent(new (W().Event)('input', { bubbles: true })); return D().querySelector('#coinflip'); };
+      const b0 = D().querySelector('#coinflip');
+      ok(!!b0 && b0.disabled, 'the coin will not flip until a question is written');
+      ok(!!D().querySelector('#coinq'), 'and the box to write it in is on the screen');
+      ok(!typed('Soll ich es tun?').disabled, 'writing a question wakes the button');
+      ok(typed('   ').disabled, 'a box of spaces is not a question');
+      ok(typed('').disabled, 'clearing the question puts the button back to sleep');
+      W().NABU.BE.enabled = keepBE.on; W().NABU.BE.user = keepBE.user;
+      if (keepQ === null) W().localStorage.removeItem('nabu-coinq'); else W().localStorage.setItem('nabu-coinq', keepQ);
+      if (keepCL === null) W().localStorage.removeItem('nabu-luck'); else W().localStorage.setItem('nabu-luck', keepCL); }
+    { /* Money named inside a sentence has to be money the reader is charged.
+         Only the dong price is real; each currency converts and rounds on its
+         own, so the year saves 49.000d, $4 and EUR 3.50 - three numbers, not
+         one. The dong figure used to be written into the English and German
+         sentences, which printed 49.000d beside a price in dollars. */
+      const keepP = { lang: W().localStorage.getItem('nabu-lang'), plang: W().NABU.PROFILE().lang };
+      const inLang = async (lg) => {
+        W().saveProfileLocal({ lang: lg }); W().applyAccountLang();
+        await go('#/unlock', '#main');
+        const N2 = W().NABU;
+        const sixItem = N2.COURSES.filter((c) => c.id === 'pro6')[0];
+        const yearItem = N2.COURSES.filter((c) => c.id === 'pro')[0];
+        const wedItem = N2.COURSES.filter((c) => c.id === 'wedding')[0];
+        return { save: N2.proSaveText(), wed: N2.wedFeeText(),
+          six: N2.fmtPrice(sixItem.price), year: N2.fmtPrice(yearItem.price),
+          wedTerm: N2.termText(wedItem), proTerm: N2.termText(yearItem),
+          wedInc: (wedItem.includes[lg] || []).join(' | '),
+          text: D().querySelector('#main').textContent };
+      };
+      const vi = await inLang('vi'), en = await inLang('en'), de = await inLang('de');
+      ok(vi.save === '49.000đ' && en.save === '$4' && de.save === '€3.50',
+        'the year names what it saves in the currency on screen (' + vi.save + ' / ' + en.save + ' / ' + de.save + ')');
+      ok(vi.wed === '30.000đ' && en.wed === '$3.50' && de.wed === '€3.50',
+        'and the wedding fee is named in that currency too (' + vi.wed + ' / ' + en.wed + ' / ' + de.wed + ')');
+      /* The saving must be the difference of the two prices printed above it,
+         not the dong saving converted - which rounds to EUR 4 and would not add up. */
+      ok(de.six === '€7.50' && de.year === '€11.50' && de.save === '€3.50'
+        && en.six === '$8' && en.year === '$12' && en.save === '$4',
+        'and the saving is the difference of the two prices shown, so the sums add up (de '
+          + de.six + ' x2 - ' + de.year + ' = ' + de.save + ')');
+      ok([vi, en, de].every((r) => r.text.indexOf('{save}') < 0 && r.text.indexOf('{wedfee}') < 0),
+        'no screen ever shows a raw price token');
+      ok(W().NABU.priceText('a {save} b') !== 'a {save} b' && W().NABU.priceText('nothing here') === 'nothing here',
+        'a sentence with no amount in it is left alone');
+      /* A wedding is one ceremony, bought once. It is granted for a year only so
+         that moving the date does not lose it, which is not what a buyer is
+         being sold - and "12 months" beside it read as a subscription. */
+      ok(vi.wedTerm === '1 lễ cưới' && en.wedTerm === '1 wedding' && de.wedTerm === '1 Hochzeit',
+        'a wedding is sold as one ceremony, not as a number of months (' + vi.wedTerm + ' / ' + en.wedTerm + ' / ' + de.wedTerm + ')');
+      ok(vi.proTerm === '12 tháng' && en.proTerm === '12 months' && de.proTerm === '12 Monate',
+        'and what really is sold by the month still counts months (' + en.proTerm + ')');
+      ok(vi.wedInc.indexOf('12 tháng') < 0 && en.wedInc.indexOf('12 months') < 0 && de.wedInc.indexOf('12 Monate') < 0,
+        'nothing in what a wedding includes counts months either');
+      W().saveProfileLocal({ lang: 'vi' }); W().applyAccountLang();
+      W().saveProfileLocal({ lang: keepP.plang || '' });
+      if (keepP.lang == null) W().localStorage.removeItem('nabu-lang'); else W().localStorage.setItem('nabu-lang', keepP.lang);
+      await go('#/home', '#main'); }
+    { /* German reads exactly as Vietnamese and English do. An earlier layout
+         pass gave German a ragged right of its own to avoid rivers of white
+         space; paired with hyphenation that was the worst of both, breaking a
+         word across two lines and leaving the line short anyway. Hyphenation is
+         what makes justified German safe, so the alignment is shared and only
+         the hyphens are German. Measured against Vietnamese rather than against
+         a constant, so the two can never drift apart again. */
+      const keepG = { lang: W().localStorage.getItem('nabu-lang'), plang: W().NABU.PROFILE().lang };
+      /* D() and W() are re-read here rather than using the d and w captured at
+         the top: an earlier check reloads the frame, which leaves those stale. */
+      const readIn = async (lg) => {
+        W().saveProfileLocal({ lang: lg }); W().applyAccountLang();
+        await go('#/report', '#main p');
+        /* Read the values now, not after the next navigation: getComputedStyle
+           is live, and every value on a detached element comes back empty. */
+        const pr = D().querySelector('#main p'), cp = pr ? W().getComputedStyle(pr) : null;
+        const prose = cp ? cp.textAlign : '', hyph = cp ? (cp.hyphens || cp.webkitHyphens || '') : '';
+        await go('#/pick', '.pick-head p');
+        const md = D().querySelector('.pick-head p');
+        const mid = md ? W().getComputedStyle(md).textAlign : '';
+        return { on: D().documentElement.getAttribute('lang'), prose: prose, hyph: hyph, mid: mid };
+      };
+      const gv = await readIn('vi'), gd = await readIn('de');
+      ok(gd.on === 'de' && gv.on === 'vi', 'the html lang attribute follows the chosen language');
+      ok(gd.prose === gv.prose && gd.prose === 'justify',
+        'German prose is justified, exactly as Vietnamese is (vi ' + gv.prose + ' / de ' + gd.prose + ')');
+      ok(gd.mid === gv.mid && gd.mid === 'center',
+        'the centred instruction blocks stay centred in German (vi ' + gv.mid + ' / de ' + gd.mid + ')');
+      ok(gd.hyph === 'auto',
+        'German hyphenates, which is what keeps justified German from opening rivers');
+      ok(gv.hyph !== 'auto', 'and Vietnamese does not hyphenate, which it never needed');
+      W().saveProfileLocal({ lang: 'vi' }); W().applyAccountLang();
+      W().saveProfileLocal({ lang: keepG.plang || '' });
+      if (keepG.lang == null) W().localStorage.removeItem('nabu-lang'); else W().localStorage.setItem('nabu-lang', keepG.lang);
+      await go('#/home', '#main');
+      ok(D().documentElement.getAttribute('lang') === 'vi',
+        'and the suite is back in Vietnamese for the checks that follow'); }
     { /* The sign-in page: one page, the providers and the email form on it, the
          way to an account and to a lost password, and a link out that does not
          demand one. It is reached by a link that says where to go back to. */
@@ -875,6 +1015,10 @@ async function go(hash, sel) { W().location.hash = hash; await sleep(30); return
       d.querySelector('#shake').click(); await waitFor(() => !d.querySelector('#treemsg').hidden, 6000);
       ok(d.querySelector('#treetext').textContent.length > 20 && d.querySelectorAll('#tree .petals i').length === 0, 'shaking the tree drops one written message and clears the petals');
       await go('#/play/coin', '#coinflip'); ok(d.querySelector('#coin svg') && d.querySelector('#coinres').textContent === '', 'the coin starts unflipped');
+      /* The coin will not answer nothing, so the question comes first - the
+         same order a visitor does it in. */
+      ok(d.querySelector('#coinflip').disabled, 'and it will not flip while the question box is empty');
+      { const cq = d.querySelector('#coinq'); cq.value = 'Có nên không?'; cq.dispatchEvent(new (w.Event)('input', { bubbles: true })); }
       d.querySelector('#coinflip').click(); await waitFor(() => d.querySelector('#coinres').textContent, 6000);
       ok(/^(CÓ|KHÔNG)$/.test(d.querySelector('#coin svg text').textContent) && d.querySelector('#coin svg text').getBBox().width < 120, 'the coin carries its answer on its own face, inside the ring');
       { const tb = d.querySelector('#coin svg text').getBBox();
@@ -1815,6 +1959,16 @@ async function go(hash, sel) { W().location.hash = hash; await sleep(30); return
            bought, so the button is shut until the box is ticked. */
         ok(d.querySelector('#wedmake').disabled && d.querySelectorAll('.terms li').length === 4,
           'the terms are shown as separate facts, and nothing can be booked until they are agreed');
+        { /* The terms no longer quote the fee at all - the owner took the amount
+             out so the terms cannot go stale when a price changes, keeping only
+             the statement that it is not returned. What still must hold is that
+             no raw money token ever reaches the screen, and that the promise
+             itself is present. The currency machinery is covered on its own,
+             where {wedfee} is still used. */
+          const tt = Array.from(d.querySelectorAll('.terms li')).map((li) => li.textContent).join(' ');
+          ok(tt.indexOf('{wedfee}') < 0 && tt.indexOf('{save}') < 0
+            && /không được hoàn lại|non-refundable|nicht erstattungsfähig/i.test(tt),
+            'the wedding terms say the fee is not returned, with no raw price token'); }
         d.querySelector('#wedagree').checked = true;
         d.querySelector('#wedagree').dispatchEvent(new w.Event('change'));
         await sleep(60);

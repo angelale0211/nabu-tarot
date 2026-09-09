@@ -13,7 +13,7 @@ function paywallHTML(courseId) {
   const S = T(), c = courseOf(courseId), a = ACCESS.get()[courseId];
   const expired = a && a < isoDate(new Date());
   return '<div class="paywall"><div class="ic">🔒</div><h2>' + esc(L(c.name)) + '</h2><p class="muted">' + esc(L(c.blurb)) + '</p>'
-    + '<ul class="inc">' + L(c.includes).map((x) => '<li>' + esc(x) + '</li>').join('') + '</ul>'
+    + '<ul class="inc">' + L(c.includes).map((x) => '<li>' + esc(priceText(x)) + '</li>').join('') + '</ul>'
     /* Inside the Android app the price shown is Play's own, in the buyer's
        currency, because Play is what they are about to pay. On the web it is
        the price written here. Buying itself goes through Play too - Google
@@ -22,11 +22,11 @@ function paywallHTML(courseId) {
        kept here. */
     + (isTWA()
       ? (BILL.can()
-        ? (BILL.priceOf(c.id) ? '<div class="price">' + esc(BILL.priceOf(c.id)) + ' <span>/ ' + c.months + ' ' + esc(S.months6) + '</span></div>' : '')
+        ? (BILL.priceOf(c.id) ? '<div class="price">' + esc(BILL.priceOf(c.id)) + ' <span>/ ' + esc(termText(c)) + '</span></div>' : '')
           + (expired ? '<p class="hint err">' + esc(S.courseExpired(a)) + '</p>' : '')
           + buyButtonHTML(c.id) + '<p class="hint st" data-st="' + c.id + '" style="margin:8px 0"></p>'
         : storeNotReadyHTML())
-      : '<div class="price">' + priceHTML(c.price, 'unlock', c.id) + ' <span>/ ' + c.months + ' ' + esc(S.months6) + '</span></div>'
+      : '<div class="price">' + priceHTML(c.price, 'unlock', c.id) + ' <span>/ ' + esc(termText(c)) + '</span></div>'
         + (expired ? '<p class="hint err">' + esc(S.courseExpired(a)) + '</p>' : '')
         + '<button type="button" class="btn primary block" data-buyreq="' + courseId + '">' + esc(S.buyCourse) + '</button>'
         + '<p class="hint" id="bstatus" style="margin:8px 0"></p><p class="hint" style="margin:8px 0">' + esc(S.buyHint) + '</p>'
@@ -499,10 +499,10 @@ function unlockRowHTML(c) {
   const open = ACCESS.has(c.id) || (UNL_TIERS.indexOf(c.id) > -1 && ACCESS.has('pro'));
   const picked = !open && UNL_CART.has(c.id);
   const body = '<div class="unl-h"><b>' + esc(L(c.name)) + '</b>' + (isTWA() ? '' : '<span class="pr">' + priceHTML(c.price, 'unlock', c.id) + '</span>') + '</div>'
-    + '<p class="hint">' + esc(L(c.sum || c.blurb)) + '</p>'
+    + '<p class="hint">' + esc(priceText(L(c.sum || c.blurb))) + '</p>'
     + '<div class="unl-f">' + (c.id === 'pro' ? '<span class="chip pink">' + esc(S.unlockBest) + '</span>' : '')
     + '<span class="unl-st">' + (open ? '✓ ' + esc(ACCESS.isAdmin() && !until ? S.adminShort : S.unlockOpenUntil(fmtDate(until)))
-      : picked ? '✓ ' + esc(S.unlockChosen) : esc(S.unlockNot) + (isTWA() ? '' : ' · ' + esc(c.months + ' ' + S.months6))) + '</span></div>';
+      : picked ? '✓ ' + esc(S.unlockChosen) : esc(S.unlockNot) + (isTWA() ? '' : ' · ' + esc(termText(c)))) + '</span></div>';
   if (open) return '<div class="unl on' + (c.id === 'pro' ? ' best' : '') + '">' + body + '</div>';
   return '<button type="button" class="unl pickable' + (picked ? ' pick' : '') + (c.id === 'pro' ? ' best' : '') + '" data-unl="' + c.id + '">' + body + '</button>';
 }

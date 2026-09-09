@@ -697,6 +697,14 @@ function coinFaceFor(metal, side) {
     + '</svg>';
 }
 
+/* ---- the coin answers a question, so there has to be one ----
+   A yes or a no means nothing on its own, and a turn spent on nothing is a
+   turn wasted: the free flip is one every three days. So the button is dead
+   until something is written in the box, and .btn[disabled] already draws it
+   at half strength and refuses the press. The box writes to the store on every
+   keystroke, so the store is what the button is built from. */
+const askedQ = () => String(store.get('nabu-coinq', '') || '').trim().length > 0;
+
 function renderCoin() {
   const S = T(), m = $('#main');
   let side = '';
@@ -705,19 +713,28 @@ function renderCoin() {
       + '<div class="card coinwrap"><label class="f" for="coinq">' + esc(S.coinQ) + '</label><input id="coinq" placeholder="' + esc(S.coinQPh) + '" value="' + esc(store.get('nabu-coinq', '') || '') + '">'
       + '<div class="coin" id="coin">' + coinFaceSVG(side) + '</div>'
       + '<div class="coinres" id="coinres" aria-live="polite">' + (side ? esc(side === 'yes' ? S.coinYes : S.coinNo) : '') + '</div>'
-      + (signedIn() ? (luckSpent('coin') ? '' : '<button class="btn primary block" id="coinflip">' + esc(side ? S.coinAgain : S.coinFlip) + '</button>') : needAccountHTML(S.needInLuck)) + '</div>'
+      + (signedIn() ? (luckSpent('coin') ? '' : '<button class="btn primary block" id="coinflip"' + (askedQ() ? '' : ' disabled') + '>' + esc(side ? S.coinAgain : S.coinFlip) + '</button>') : needAccountHTML(S.needInLuck)) + '</div>'
       + lookStripHTML('coin')
       + '<div class="luckline">' + luckPanelHTML('coin') + '</div>'
       + '<p class="hint">' + esc(S.coinNote) + '</p>'
       + '<p style="margin-top:14px"><a class="btn block" href="#/unlock?from=app">💳 ' + esc(S.unlockLink) + '</a></p>'
       + '<p style="margin-top:14px"><a href="#/play" class="backlink">← ' + esc(S.actTitle) + '</a></p>';
     bindLookStrip(m, draw);
-    const q = $('#coinq'); q.addEventListener('input', () => store.set('nabu-coinq', q.value));
+    const q = $('#coinq');
+    q.addEventListener('input', () => {
+      store.set('nabu-coinq', q.value);
+      /* Not while it is spinning: that press already happened. */
+      const b = $('#coinflip'), c = $('#coin');
+      if (b && !(c && c.classList.contains('spin'))) b.disabled = !q.value.trim();
+    });
     bindLuck(m, draw);
     const fb = $('#coinflip'); if (!fb) return;
     fb.addEventListener('click', () => {
       const el = $('#coin'), btn = $('#coinflip');
       if (el.classList.contains('spin')) return;
+      /* The press cannot normally arrive with an empty box, but a turn is too
+         expensive to lose to a keyboard or a script that gets one through. */
+      if (!askedQ()) { btn.disabled = true; return; }
       luckSpend('coin');
       btn.disabled = true; $('#coinres').textContent = '';
       el.classList.add('spin');
@@ -728,7 +745,7 @@ function renderCoin() {
         side = bits ? 'yes' : 'no'; el.classList.remove('spin'); el.innerHTML = coinFaceSVG(side);
         $('#coinres').textContent = side === 'yes' ? S.coinYes : S.coinNo;
         if (luckSpent('coin')) { draw(); return; }
-        btn.disabled = false; btn.textContent = S.coinAgain;
+        btn.disabled = !askedQ(); btn.textContent = S.coinAgain;
       }, 1000);
     });
   };

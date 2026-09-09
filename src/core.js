@@ -276,8 +276,53 @@ const daysSince = (iso) => { const a = new Date(String(iso) + 'T00:00:00'), b = 
 const luckUnlimited = () => plusOn();
 const luckLast = (kind) => String((store.get('nabu-luck', {}) || {})[kind] || '');
 const luckSpent = (kind) => !luckUnlimited(kind) && !!luckLast(kind) && daysSince(luckLast(kind)) < LUCK_DAYS;
-function luckSpend(kind) { if (luckUnlimited(kind)) return; const a = store.get('nabu-luck', {}) || {}; a[kind] = isoDate(new Date()); store.set('nabu-luck', a); }
+function luckSpend(kind) { if (luckUnlimited(kind)) return; const a = store.get('nabu-luck', {}) || {}; a[kind] = isoDate(new Date()); store.set('nabu-luck', a); turnsPush(); }
 function luckNext(kind) { const d = new Date((luckLast(kind) || isoDate(new Date())) + 'T00:00:00'); d.setDate(d.getDate() + LUCK_DAYS); return isoDate(d); }
+
+/* ---- a free turn is spent by the person, not by the handset ----
+   Both counters have to live on the device: the gate is drawn before the
+   network answers, and it has to be right on a phone with no signal. But
+   device-only storage made the limit device-only as well - clearing the app's
+   data, or opening the same account in another browser, handed out a fresh
+   card and a fresh coin. So a signed-in copy rides on the account document and
+   the two are reconciled every time the profile is read.
+
+   The merge keeps the LATER date, per counter. That is the one direction that
+   cannot be gamed: another device can only ever be told a turn is already
+   spent, never that it has one back. ISO dates compare correctly as plain
+   strings, so "later" is just ">".
+
+   It is not tamper-proof. The account document is writable by its owner, so
+   somebody determined can still edit it; only the worker could settle that.
+   What it ends is the ordinary bypass, which is clearing the storage. */
+function turnsLocal() {
+  const p = store.get('nabu-pick-day', null);
+  return { pick: (p && p.d && p.id) ? p : null, luck: store.get('nabu-luck', {}) || {} };
+}
+function turnsMerge(cloud) {
+  const mine = turnsLocal(), c = (cloud && typeof cloud === 'object') ? cloud : {};
+  const out = { pick: mine.pick, luck: Object.assign({}, mine.luck) };
+  const cp = (c.pick && typeof c.pick === 'object') ? c.pick : null;
+  if (cp && cp.d && cp.id && (!out.pick || String(cp.d) > String(out.pick.d))) {
+    out.pick = { d: String(cp.d), id: String(cp.id), focus: String(cp.focus || 'general') };
+  }
+  const cl = (c.luck && typeof c.luck === 'object') ? c.luck : {};
+  Object.keys(cl).forEach((k) => {
+    const v = String(cl[k] || '');
+    if (v && (!out.luck[k] || v > String(out.luck[k]))) out.luck[k] = v;
+  });
+  return out;
+}
+function turnsApply(m) {
+  if (m && m.pick) store.set('nabu-pick-day', m.pick);
+  if (m) store.set('nabu-luck', m.luck || {});
+}
+/* Called from the two places that spend a turn. BE is defined in backend.js,
+   which loads after this file, so it is asked for when needed rather than
+   captured now - and a failure here is never allowed to break the draw. */
+function turnsPush() {
+  try { if (typeof BE !== 'undefined' && BE.user && BE.pushTurns) BE.pushTurns(); } catch (e) { /* the device copy still stands */ }
+}
 const CODE_LETTER = { tarot: 'T', manifest: 'M', playing: 'P', coin: 'C', tree: 'Y', luck: 'B', pro: 'S', lenormand: 'L', wedding: 'W' };
 const CODE_COURSE = { T: 'tarot', M: 'manifest', P: 'playing', C: 'coin', Y: 'tree', B: 'luck', S: 'pro', L: 'lenormand', W: 'wedding' };
 function addMonths(iso, n) { const d = new Date(iso + 'T00:00:00'); d.setMonth(d.getMonth() + n); return isoDate(d); }

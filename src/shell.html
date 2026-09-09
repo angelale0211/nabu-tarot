@@ -2387,18 +2387,25 @@ body[data-route="hello"] #main{width:100%}
    every rule is behind html[lang="de"] — core.js sets that on each route,
    and it is also what tells the browser how to hyphenate.
 
-   1. Justified text needs short words. With long ones it opens rivers of
-      white space down the middle of a paragraph, so German sets its own
-      ragged right instead.
-   2. Long words may hyphenate rather than overrun. The limits keep it to
+   1. Long words may hyphenate rather than overrun. The limits keep it to
       words long enough to need it: ordinary prose is not peppered with
       hyphens, and nothing shorter than ten letters is ever broken.
-   3. A label in a narrow tile may break inside a word. Spilling into the
+   2. A label in a narrow tile may break inside a word. Spilling into the
       next tile, or losing its ending to a line clamp, is worse than a
-      word broken across two lines. */
+      word broken across two lines.
+
+   German does NOT set its own alignment. It reads justified, exactly as
+   Vietnamese and English do, and the centred blocks stay centred. An earlier
+   pass gave German ragged right to avoid rivers of white space, but that is
+   what hyphenation is for: ragged right AND hyphens is the worst pairing,
+   because a word is broken across two lines and the line is short anyway.
+   Owner's rule, 2026-09-09: the three languages must line up. */
+/* Everything the base rule justifies must be able to hyphenate, or German
+   gets the rivers the earlier pass was afraid of. The four justified
+   selectors are #main p, #main li, .note span and #foot .tagline; the rest
+   of this list is narrow labels that would otherwise overrun. */
 html[lang="de"] #main p,html[lang="de"] #main li,
-html[lang="de"] .note span,html[lang="de"] #foot .tagline{text-align:left}
-html[lang="de"] #main p,html[lang="de"] #main li,html[lang="de"] .hint,
+html[lang="de"] .note span,html[lang="de"] #foot .tagline,html[lang="de"] .hint,
 html[lang="de"] .muted,html[lang="de"] .lead,html[lang="de"] .tbl td,
 html[lang="de"] .look b,html[lang="de"] .actquick .aq b,
 html[lang="de"] .actbtn b,html[lang="de"] .actbtn .meta,

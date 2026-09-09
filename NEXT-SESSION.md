@@ -16,6 +16,51 @@ facts. Read Part 2 before touching anything.
 
 ---
 
+## Before you merge anything into `main`: read this
+
+**`main` is at v196.** It moved six releases on 2026-09-09, from a second window,
+while the Play Billing work was going on in the `play-billing` branch:
+
+| | |
+|---|---|
+| v191 | German reads justified, exactly as VI/EN do; centred blocks centre again |
+| v192 | A free turn is spent by the person, not the handset (`turns` on the account) |
+| v193 | The coin will not flip until a question is written |
+| v194 | An amount named in a sentence is named in the reader's own currency |
+| v195 | A wedding is `1 wedding`, not `12 months` |
+| v196 | The German wedding terms say "Die Gebühr wird nicht erstattet." |
+
+Those touched `src/shell.html`, `src/core.js`, `src/pick.js`, `src/backend.js`,
+`src/services.js`, `src/strings.js`, `src/book.js`, `src/learn.js`,
+`src/wedding.js`, `src/admin.js`, `src/main.js` and `test/test.html`. The
+`play-billing` branch was cut before all of them and carries none.
+
+**So a merge is not enough.** The whole app is one committed `index.html` built
+by `build.py`. If you merge and commit a bundle built from a tree that predates
+these, every one of them silently disappears from the live site, and nothing in
+git will look wrong. This exact failure already happened once, on 2026-09-08.
+
+After merging, in this order:
+
+1. `python build.py` - rebuild from the merged sources, do not reuse a bundle.
+2. `PYTHONIOENCODING=utf-8 python test/run.py` - **630 checks** at v196. A lower
+   number means checks were lost in the merge, not that the suite got smaller.
+3. Grep the built `index.html` for a string from **both** sides. From this side:
+   `turnsMerge` (v192), `termText` (v195), `Die Gebühr wird nicht erstattet` (v196).
+4. Bump `APP_VERSION` in `src/main.js` **and** `CACHE` in `sw.js` together.
+5. After pushing, fetch the live page and check the same strings are really there.
+   Pages can take several minutes; v196 outlasted a twenty-attempt poll before
+   it appeared.
+
+**Still open, and nobody is working on it:** the free-turn limit is stored on
+the account but the account's owner may still write that field, so it is not
+tamper-proof. The fix is to forbid `turns` in `firestore.rules` the way `access`
+already is, and to spend a turn through a worker endpoint using the `fsGet` /
+`fsPatch` helpers this branch built. It was left until Play Billing lands
+because it touches the same files.
+
+---
+
 ## Part 1. The project in six lines
 
 - Trilingual (vi / en / de) tarot PWA. Repo `C:\Users\angel\nabu-tarot`, branch `main`. Live at https://nabutarot.com, deployed from GitHub `main` in about a minute.

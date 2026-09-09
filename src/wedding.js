@@ -1200,7 +1200,7 @@ function renderWedding(args) {
            passing above a button. Four facts, one sentence each, because that
            is the difference between terms read and terms scrolled past. */
         + '<div class="card termscard"><div class="ghead"><span class="gk">\uD83D\uDCDC</span><h3>' + esc(S.wedTermsTitle) + '</h3></div>'
-        + '<ol class="terms">' + S.wedTerms.map((t) => '<li>' + esc(t) + '</li>').join('') + '</ol>'
+        + '<ol class="terms">' + S.wedTerms.map((t) => '<li>' + esc(priceText(t)) + '</li>').join('') + '</ol>'
         + '<label class="remind"><input type="checkbox" id="wedagree"><span>' + esc(S.wedAgree) + '</span></label>'
         + '<button type="button" class="btn primary block" id="wedmake" style="margin-top:12px" disabled>' + esc(S.wedMake) + '</button>'
         + '<p class="hint" id="wedst">' + esc(S.wedAgreeFirst) + '</p></div>';
