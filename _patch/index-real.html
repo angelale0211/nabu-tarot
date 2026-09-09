@@ -12,7 +12,7 @@
      carries this notice with it. See LICENSE. -->
 <meta name="author" content="Nabu Tarot">
 <meta name="copyright" content="Copyright (c) 2025-2026 Nabu Tarot. All rights reserved.">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'none'; object-src 'none'; form-action 'self'; script-src 'self' 'sha256-W9EAIiGcunDNKr54DHFs5bYXS0vLt2IMvQpURctDrLY=' https://www.gstatic.com https://apis.google.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; font-src 'self' data:; media-src 'self' data: blob:; worker-src 'self'; connect-src 'self' https://*.googleapis.com https://*.google.com https://*.firebaseio.com https://*.cloudfunctions.net https://*.workers.dev https://generativelanguage.googleapis.com; frame-src https://*.firebaseapp.com https://accounts.google.com https://*.facebook.com">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'none'; object-src 'none'; form-action 'self'; script-src 'self' 'sha256-I/n1byod7NAQZ57G1uRid61zm3Nu6tEB0aEqcMUtmB0=' https://www.gstatic.com https://apis.google.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; font-src 'self' data:; media-src 'self' data: blob:; worker-src 'self'; connect-src 'self' https://*.googleapis.com https://*.google.com https://*.firebaseio.com https://*.cloudfunctions.net https://*.workers.dev https://generativelanguage.googleapis.com; frame-src https://*.firebaseapp.com https://accounts.google.com https://*.facebook.com">
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <meta name="theme-color" content="#EFE9FA">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -903,14 +903,6 @@ h1 .pileico{width:34px;height:27px;vertical-align:-3px;margin-right:2px}
 /* A fixed right column so the icons form one straight line down the card,
    whether the row shows a date or a price. */
 .course .pr{text-align:right;white-space:nowrap}
-/* "What you hold" is the same row with no padlock: two spans, not three. The
-   grid above then puts the status in the 20px icon column, and `nowrap` sent
-   "Đang mở đến 9 tháng 9, 2027" straight off the right of the card. Two
-   columns here, and the status is allowed to wrap - a date written out in
-   words does not fit 78px in any of the three languages, which is why the
-   card above it shortens its own date to 09/09/2026 instead. */
-.myplans .course{grid-template-columns:minmax(0,1fr) minmax(0,auto)}
-.myplans .course .pr{white-space:normal;overflow-wrap:anywhere}
 .codebox{font-family:Georgia,serif;font-size:22px;letter-spacing:.06em;background:var(--surface-2);border-radius:12px;padding:12px;text-align:center;margin:10px 0;user-select:all}
 
 /* ---- booking ---- */
@@ -1556,10 +1548,11 @@ h1 .pileico{width:34px;height:27px;vertical-align:-3px;margin-right:2px}
 #main .wedrules li:last-child{margin-bottom:0}
 #main .wedrules li::before{content:'\2022';position:absolute;left:4px;top:-1px;color:var(--gold);font-weight:700}
 /* .sect is declared later with the same weight and sets margin:0 0 12px,
-   so this needs one more class to keep its own space above the rules list -
-   two single-class rules and the later one wins, which is how the gap kept
-   coming out as zero. */
-.sect.howroom{margin:22px 0 6px}
+   so this needs one more class to keep its space. Two single-class rules
+   and the later one wins, which is how the gap kept coming out as zero. */
+.sect.movewhen{margin:22px 0 6px;text-align:left;background:var(--bg)}
+.movewhy{margin-top:16px}
+.movewhen > summary{padding:10px 12px;font-size:14px}
 .wedcount{margin:2px 0 8px;font-size:26px;font-weight:700;font-variant-numeric:tabular-nums;color:var(--fg)}
 .wedsay{margin:6px 0 14px;font-size:16.5px;line-height:1.6;font-family:var(--display)}
 :root[lang="vi"] .wedsay,:root[lang="vi"] .wedpair{line-height:1.75}
@@ -2554,116 +2547,9 @@ body[data-route="hello"] #main{width:100%}
    did not, which the owner read as a mistake, twice. Every tile has it now;
    .rec keeps its meaning in the markup and changes nothing on screen. */
 .tile,.tile.rec{border-color:var(--pink);box-shadow:0 0 0 1px var(--pink) inset}
-/* ---- German ----------------------------------------------------------
-   German words run far longer than the Vietnamese and English this layout
-   was measured against, so three habits that read well in those two break
-   in German. All three are relaxed here and nowhere else, which is why
-   every rule is behind html[lang="de"] — core.js sets that on each route,
-   and it is also what tells the browser how to hyphenate.
-
-   1. Long words may hyphenate rather than overrun. The limits keep it to
-      words long enough to need it: ordinary prose is not peppered with
-      hyphens, and nothing shorter than ten letters is ever broken.
-   2. A label in a narrow tile may break inside a word. Spilling into the
-      next tile, or losing its ending to a line clamp, is worse than a
-      word broken across two lines.
-
-   German does NOT set its own alignment. It reads justified, exactly as
-   Vietnamese and English do, and the centred blocks stay centred. An earlier
-   pass gave German ragged right to avoid rivers of white space, but that is
-   what hyphenation is for: ragged right AND hyphens is the worst pairing,
-   because a word is broken across two lines and the line is short anyway.
-   Owner's rule, 2026-09-09: the three languages must line up. */
-/* Everything the base rule justifies must be able to hyphenate, or German
-   gets the rivers the earlier pass was afraid of. The four justified
-   selectors are #main p, #main li, .note span and #foot .tagline; the rest
-   of this list is narrow labels that would otherwise overrun. */
-html[lang="de"] #main p,html[lang="de"] #main li,
-html[lang="de"] .note span,html[lang="de"] #foot .tagline,html[lang="de"] .hint,
-html[lang="de"] .muted,html[lang="de"] .lead,html[lang="de"] .tbl td,
-html[lang="de"] .look b,html[lang="de"] .actquick .aq b,
-html[lang="de"] .actbtn b,html[lang="de"] .actbtn .meta,
-html[lang="de"] .freegrid .fg .s,html[lang="de"] .wherepick .wp .s,
-html[lang="de"] .aq b,html[lang="de"] .chip,html[lang="de"] .btn{
-  -webkit-hyphens:auto;hyphens:auto;
-  -webkit-hyphenate-limit-before:4;-webkit-hyphenate-limit-after:3;
-  hyphenate-limit-chars:10 4 3}
-/* Tiles are narrow enough that a word can be wider than the tile itself,
-   which hyphenation alone cannot fix. */
-html[lang="de"] .look b,html[lang="de"] .actquick .aq b,
-html[lang="de"] .actbtn b,html[lang="de"] .freegrid .fg .s{overflow-wrap:break-word}
-/* A label centred in a flex column is only as wide as its own text, so it
-   grows past the tile instead of wrapping inside it. Giving it the tile's
-   width is what lets the break above happen at all. */
-html[lang="de"] .look,html[lang="de"] .actquick .aq{min-width:0}
-html[lang="de"] .look b,html[lang="de"] .actquick .aq b{width:100%}
-/* One more line for a label that German needs two and a half of. */
-html[lang="de"] .actquick .aq b{-webkit-line-clamp:3}
-/* The label column of a data table is held on one line so it reads as a
-   column. A German label can be wider than the card, so in German it wraps
-   and the value keeps its half of the row. */
-html[lang="de"] .tbl td:first-child{white-space:normal;overflow-wrap:break-word}
-html[lang="de"] #today .tbl td:first-child{width:52%}
-
-/* ---- the first seconds inside the installed app ----
-
-   Opening the app from the home screen shows Android's own splash first: a
-   still picture built into the bundle out of icon-512.png and the manifest's
-   background_color, #B8A4E3. Android then hands over to Chrome, which has
-   nothing to show until the page has run - three or four seconds of nothing
-   on a cold start. This fills that gap on the same purple, so the two screens
-   read as one.
-
-   It fades in only after 250ms, so the website - which paints almost at once -
-   never flashes purple at anybody. main.js takes it down as soon as the first
-   screen is drawn. The 8s bail-out is there because a loading screen that
-   cannot end is worse than none at all: a page whose script never runs must
-   still show what little it has rather than a purple rectangle for ever.
-
-   The mark is three card backs being dealt into a fan, over and over: the
-   gesture the whole app is about, rather than a spinner, and it carries on
-   from the still picture of cards Android has just shown. It is drawn in CSS,
-   so the loading screen costs no file to fetch and none to cache.
-
-   The colours are written out rather than taken from the tokens above. They
-   have to match what is baked into the Android bundle, they must be right
-   before any theme has been decided, and they must not follow the app into
-   dark mode - the native splash cannot. #B8A4E3 is the manifest's
-   background_color; #3D2A6E and #4B3684 are --back-1 and --back-2, the card
-   backs; #E5BE5E is --gold. */
-#boot{position:fixed;inset:0;z-index:9999;background:#B8A4E3;display:grid;place-items:center;opacity:0;
-      animation:bootin .3s ease .25s forwards, bootbail 0s linear 8s forwards}
-#boot.gone{opacity:0;visibility:hidden;transition:opacity .3s ease;animation:none}
-@keyframes bootin{to{opacity:1}}
-@keyframes bootbail{to{opacity:0;visibility:hidden}}
-
-#boot .deal{position:relative;width:132px;height:132px}
-#boot .deal span{position:absolute;left:50%;top:50%;width:52px;height:80px;margin:-40px 0 0 -26px;border-radius:7px;
-  background:linear-gradient(160deg,#4B3684,#3D2A6E);border:1.5px solid rgba(251,246,241,.55);
-  box-shadow:0 3px 10px rgba(38,25,74,.32);opacity:0;
-  animation:deal 2.6s cubic-bezier(.22,.9,.3,1) infinite}
-/* Left, then right, then the middle one last and on top - later siblings
-   paint over earlier ones, so the card that lands last is the one in front,
-   and it is the one carrying the moon. */
-#boot .deal span:nth-child(1){--r:-17deg;--x:-30px}
-#boot .deal span:nth-child(2){--r:17deg;--x:30px;animation-delay:.22s}
-#boot .deal span:nth-child(3){--r:0deg;--x:0px;animation-delay:.44s}
-#boot .deal i{position:absolute;left:50%;top:50%;width:9px;height:9px;margin:-4.5px 0 0 -4.5px;border-radius:50%;background:#E5BE5E}
-@keyframes deal{
-  0%{opacity:0;transform:translate(0,26px) rotate(0deg) scale(.94)}
-  16%{opacity:1;transform:translate(var(--x),0) rotate(var(--r)) scale(1)}
-  62%{opacity:1;transform:translate(var(--x),0) rotate(var(--r)) scale(1)}
-  78%,100%{opacity:0;transform:translate(var(--x),-10px) rotate(var(--r)) scale(1)}
-}
-/* Somebody who has asked their phone to stop things moving gets the fan laid
-   out and still, not cards they cannot switch off. */
-@media (prefers-reduced-motion:reduce){
-  #boot .deal span{animation:none;opacity:1;transform:translate(var(--x),0) rotate(var(--r))}
-}
 </style>
 </head>
 <body>
-<div id="boot" aria-hidden="true"><div class="deal"><span></span><span></span><span><i></i></span></div></div>
 <header class="top"><div class="wrap">
   <a class="brand" href="#/home" id="brand"></a>
   <div class="tools">
@@ -2898,31 +2784,24 @@ const COURSES = [
     name: { vi: 'Nabu Pro · 6 tháng', en: 'Nabu Pro · 6 months', de: 'Nabu Pro · 6 Monate' },
     blurb: { vi: 'Nabu Pro bao gồm toàn bộ quyền lợi của Nabu Plus, cùng với khu vực bạn nhỏ: mười hai linh thú trong truyền thuyết, nuôi tối đa sáu bạn cùng lúc, đầy đủ thức ăn, nhà ở và trang phục dành cho các bạn ấy, thời gian chờ giữa hai bữa rút ngắn từ sáu giờ xuống còn hai giờ, và điểm kinh nghiệm nhân đôi.',
       en: 'Everything in Nabu Plus, and the companions besides: twelve spirit beasts, six of them at once, their good food, their homes and their clothes, a two-hour wait between meals instead of six, and double points.', de: 'Nabu Pro enthält alles aus Nabu Plus und zusätzlich die Begleiterwelt: zwölf mythische Begleiter, bis zu sechs gleichzeitig, alle Futtersorten, Zuhause und Kleidungsstücke, nur zwei statt sechs Stunden Wartezeit zwischen den Mahlzeiten und doppelte Erfahrungspunkte.' },
-    includes: { vi: ['Toàn bộ quyền lợi của Nabu Plus', '12 linh thú, nuôi tối đa 6 bạn cùng lúc', '9 món ăn, 8 ngôi nhà, 9 bộ trang phục', 'Chờ 2 giờ giữa hai bữa, 3 lượt chơi mỗi ngày, điểm kinh nghiệm nhân đôi', 'Thời hạn sử dụng 6 tháng'],
-      en: ['Everything in Nabu Plus', '12 spirit beasts, six kept at once', '9 foods, 8 homes, 9 things to wear', '2 hours between meals, 3 plays a day, double points', '6 months of access'], de: ['Alle Vorteile von Nabu Plus', '12 Begleiter, bis zu 6 gleichzeitig', '9 Futtersorten, 8 Zuhause, 9 Kleidungsstücke', '2 Stunden zwischen Mahlzeiten, 3 Spiele pro Tag, doppelte Erfahrungspunkte', '6 Monate Zugriff'] } },
+    includes: { vi: ['Toàn bộ quyền lợi của Nabu Plus', '12 linh thú, nuôi tối đa 6 bạn cùng lúc', '9 món ăn, 8 ngôi nhà, 9 bộ trang phục', 'Chờ 2 giờ giữa hai bữa, 3 lượt chơi mỗi ngày, điểm kinh nghiệm nhân đôi', 'Voucher giảm 15% và 20%', 'Thời hạn sử dụng 6 tháng'],
+      en: ['Everything in Nabu Plus', '12 spirit beasts, six kept at once', '9 foods, 8 homes, 9 things to wear', '2 hours between meals, 3 plays a day, double points', 'The 15% and 20% vouchers', '6 months of access'], de: ['Alle Vorteile von Nabu Plus', '12 Begleiter, bis zu 6 gleichzeitig', '9 Futtersorten, 8 Zuhause, 9 Kleidungsstücke', '2 Stunden zwischen Mahlzeiten, 3 Spiele pro Tag, doppelte Erfahrungspunkte', 'Gutscheine mit 15 % und 20 % Rabatt', '6 Monate Zugriff'] } },
   { id: 'pro', kind: 'unlock', icon: '👑', to: '#/play/pet', price: 249000, months: 12,
-    /* No amount here on purpose. The saving is a different number in every
-       currency Play sells in, and naming one invites the reader to check it
-       against a price that was rounded separately. "Saves more" is true in
-       all of them. */
-    sum: { vi: 'Quyền lợi như gói 6 tháng, dùng trọn một năm và tiết kiệm hơn.', en: 'The same, for a whole year — and cheaper than two half years.', de: 'Dieselben Vorteile wie im 6-Monats-Paket, für ein ganzes Jahr und günstiger als zweimal 6 Monate.' },
+    sum: { vi: 'Quyền lợi như gói 6 tháng, dùng trọn một năm và tiết kiệm 49.000đ.', en: 'The same, for a whole year — 49.000đ less than two half years.', de: 'Dieselben Vorteile wie im 6-Monats-Paket, für ein ganzes Jahr und 49.000đ günstiger als zweimal 6 Monate.' },
     name: { vi: 'Nabu Pro · 12 tháng', en: 'Nabu Pro · 12 months', de: 'Nabu Pro · 12 Monate' },
     blurb: { vi: 'Nabu Pro bao gồm toàn bộ quyền lợi của Nabu Plus, cùng với khu vực bạn nhỏ: mười hai linh thú trong truyền thuyết, nuôi tối đa sáu bạn cùng lúc, đầy đủ thức ăn, nhà ở và trang phục dành cho các bạn ấy, thời gian chờ giữa hai bữa rút ngắn từ sáu giờ xuống còn hai giờ, và điểm kinh nghiệm nhân đôi. Thanh toán một lần cho cả năm sẽ tiết kiệm hơn so với mua hai lần gói 6 tháng.',
       en: 'Everything in Nabu Plus, and the companions besides: twelve spirit beasts, six of them at once, their good food, their homes and their clothes, a two-hour wait between meals instead of six, and double points. Paying once for the year costs less.', de: 'Nabu Pro enthält alles aus Nabu Plus und zusätzlich die Begleiterwelt: zwölf mythische Begleiter, bis zu sechs gleichzeitig, alle Futtersorten, Zuhause und Kleidungsstücke, nur zwei statt sechs Stunden Wartezeit zwischen den Mahlzeiten und doppelte Erfahrungspunkte. Die Jahreszahlung ist günstiger als zwei 6-Monats-Pakete.' },
-    includes: { vi: ['Tiết kiệm hơn so với mua hai lần gói 6 tháng', 'Toàn bộ quyền lợi của Nabu Plus', '12 linh thú, nuôi tối đa 6 bạn cùng lúc', '9 món ăn, 8 ngôi nhà, 9 bộ trang phục', 'Chờ 2 giờ giữa hai bữa, 3 lượt chơi mỗi ngày, điểm kinh nghiệm nhân đôi', 'Thời hạn sử dụng 12 tháng'],
-      en: ['Cheaper than two half years', 'Everything in Nabu Plus', '12 spirit beasts, six kept at once', '9 foods, 8 homes, 9 things to wear', '2 hours between meals, 3 plays a day, double points', '12 months of access'], de: ['Günstiger als zweimal 6 Monate', 'Alle Vorteile von Nabu Plus', '12 Begleiter, bis zu 6 gleichzeitig', '9 Futtersorten, 8 Zuhause, 9 Kleidungsstücke', '2 Stunden zwischen Mahlzeiten, 3 Spiele pro Tag, doppelte Erfahrungspunkte', '12 Monate Zugriff'] } },
-  /* A wedding is bought once and held once. `months` is not what is being sold
-     here - it is only the window the access is granted for, so that moving the
-     date does not lose what was paid for. What a buyer is told is `term`:
-     "12 months" beside a single ceremony read as a subscription. */
+    includes: { vi: ['Tiết kiệm 49.000đ so với mua hai lần gói 6 tháng', 'Toàn bộ quyền lợi của Nabu Plus', '12 linh thú, nuôi tối đa 6 bạn cùng lúc', '9 món ăn, 8 ngôi nhà, 9 bộ trang phục', 'Chờ 2 giờ giữa hai bữa, 3 lượt chơi mỗi ngày, điểm kinh nghiệm nhân đôi', 'Voucher giảm 15% và 20%', 'Thời hạn sử dụng 12 tháng'],
+      en: ['49.000đ less than two half years', 'Everything in Nabu Plus', '12 spirit beasts, six kept at once', '9 foods, 8 homes, 9 things to wear', '2 hours between meals, 3 plays a day, double points', 'The 15% and 20% vouchers', '12 months of access'], de: ['49.000đ günstiger als zweimal 6 Monate', 'Alle Vorteile von Nabu Plus', '12 Begleiter, bis zu 6 gleichzeitig', '9 Futtersorten, 8 Zuhause, 9 Kleidungsstücke', '2 Stunden zwischen Mahlzeiten, 3 Spiele pro Tag, doppelte Erfahrungspunkte', 'Gutscheine mit 15 % und 20 % Rabatt', '12 Monate Zugriff'] } },
+  /* A wedding is bought once and held once, but the year is there so nobody
+     loses what they paid for by having to move the date. */
   { id: 'wedding', kind: 'unlock', icon: '\uD83D\uDC92', to: '#/wedding', price: 30000, months: 12,
-    term: { vi: '1 lễ cưới', en: '1 wedding', de: '1 Hochzeit' },
     sum: { vi: 'Tổ chức lễ cưới trong ứng dụng, có khách mời và Nabu Cupid chủ hôn.', en: 'Hold a ceremony inside the app, with guests and Nabu Cupid to marry you.', de: 'Eine Zeremonie in der App – mit Gästen und Nabu Cupid als Zeremonienmeister.' },
     name: { vi: 'Lễ cưới trên Nabu', en: 'A wedding on Nabu', de: 'Hochzeit auf Nabu' },
     blurb: { vi: 'Hai bạn đã đính ước trên sợi tơ hồng có thể tổ chức một lễ cưới ngay trong ứng dụng. Bạn chọn ngày giờ, gửi thiệp mời cho bạn bè, và đến giờ, Nabu Cupid sẽ chủ hôn: hỏi lời thề của từng người, chờ hai bạn trả lời, rồi tuyên bố hai bạn nên duyên. Khách mời vào xem, gửi quà chúc mừng miễn phí, và tham gia màn tung hoa cưới ở cuối buổi lễ.',
       en: 'A couple engaged on the red thread can hold a ceremony inside the app. You choose the day and the hour, send invitations to your friends, and when the time comes Nabu Cupid marries you: the vows are asked one at a time, you answer them in front of everybody, and then you are declared married. Guests watch, send free congratulations, and join the bouquet toss at the end.', de: 'Wenn ihr euch über den Roten Faden verlobt habt, könnt ihr eine Zeremonie direkt in der App feiern. Ihr wählt Datum und Uhrzeit, verschickt Einladungen und Nabu Cupid führt euch durch die Zeremonie: Eure Versprechen werden nacheinander gefragt, ihr antwortet vor euren Gästen und werdet anschließend als verheiratet erklärt. Gäste können zuschauen, kostenlose Glückwünsche und Geschenke senden und am Ende beim Brautstraußwurf mitmachen.' },
-    includes: { vi: ['Phòng cưới riêng, có ngày giờ do hai bạn chọn', 'Thiệp mời gửi bằng đường dẫn, không giới hạn khách', 'Nabu Cupid chủ hôn, hỏi lời thề từng người', 'Nhạc lễ và hiệu ứng trong suốt buổi', 'Khách gửi lời chúc và quà miễn phí', 'Màn tung hoa cưới chọn người may mắn', '1 lễ cưới'],
-      en: ['A room of your own, at an hour you choose', 'Invitations by link, as many guests as you like', 'Nabu Cupid asks each of you your vows', 'Music and effects throughout', 'Guests send congratulations and gifts, free', 'A bouquet toss to pick one lucky guest', '1 wedding'], de: ['Eigener Hochzeitsraum zu eurem gewählten Termin', 'Einladungslink für beliebig viele Gäste', 'Nabu Cupid führt durch eure Versprechen', 'Musik und Effekte während der Zeremonie', 'Kostenlose Glückwünsche und Geschenke von Gästen', 'Brautstraußwurf für einen glücklichen Gast', '1 Hochzeit'] } }
+    includes: { vi: ['Phòng cưới riêng, có ngày giờ do hai bạn chọn', 'Thiệp mời gửi bằng đường dẫn, không giới hạn khách', 'Nabu Cupid chủ hôn, hỏi lời thề từng người', 'Nhạc lễ và hiệu ứng trong suốt buổi', 'Khách gửi lời chúc và quà miễn phí', 'Màn tung hoa cưới chọn người may mắn', 'Thời hạn sử dụng 12 tháng'],
+      en: ['A room of your own, at an hour you choose', 'Invitations by link, as many guests as you like', 'Nabu Cupid asks each of you your vows', 'Music and effects throughout', 'Guests send congratulations and gifts, free', 'A bouquet toss to pick one lucky guest', '12 months to hold it'], de: ['Eigener Hochzeitsraum zu eurem gewählten Termin', 'Einladungslink für beliebig viele Gäste', 'Nabu Cupid führt durch eure Versprechen', 'Musik und Effekte während der Zeremonie', 'Kostenlose Glückwünsche und Geschenke von Gästen', 'Brautstraußwurf für einen glücklichen Gast', '12 Monate Zeit, die Zeremonie zu feiern'] } }
 ];
 /* Where the reading itself happens. Three, because these are the three
    places Nabu actually reads. */
@@ -2979,59 +2858,6 @@ function fmtPrice(n, abroad) {
   const v = (abroad && typeof abroad[lg] === 'number') ? abroad[lg] : p.v;
   return p.m.sym + (v % 1 ? v.toFixed(2) : String(v));
 }
-
-/* ---- an amount named inside a sentence ----
-   Only the dong price is real. What a reader abroad is charged is that price
-   converted, given its flat amount and rounded up on its own - which means a
-   saving is not one number in three languages. The year against two half years
-   saves 49.000d in dong, but the same two packages save $4 and EUR 3.50,
-   because each of the four prices was rounded separately. Writing the dong
-   figure into the English and German sentences put "49.000d" beside a price in
-   dollars, which is what the owner reported.
-
-   So the sentences carry a token and the amount is worked out here, in the
-   currency on screen. The saving is the difference of the two prices a buyer
-   actually sees - not the dong difference converted, which rounds to EUR 4 and
-   would not match the two prices printed above it. */
-function moneyText(v) {
-  const m = MONEY[typeof lang !== 'undefined' ? lang : 'vi'] || MONEY.vi;
-  if (m.rate === 1) return fmtNum(v) + m.sym;
-  return m.sym + (v % 1 ? v.toFixed(2) : String(v));
-}
-const priceOf = (id) => { const c = COURSES.filter((x) => x.id === id)[0]; return c ? c.price : 0; };
-/* How long a purchase lasts, as a buyer is told it. Almost everything here is
-   sold by the month and says so; a thing bought once names itself instead. */
-const termText = (c) => (c && c.term) ? L(c.term) : (((c && c.months) || 12) + ' ' + T().months6);
-const proSaveText = () => moneyText(Math.max(0, moneyOf(priceOf('pro6')).v * 2 - moneyOf(priceOf('pro')).v));
-const wedFeeText = () => fmtPrice(priceOf('wedding'));
-const MONEY_IN_TEXT = { '{save}': proSaveText, '{wedfee}': wedFeeText };
-/* Every sentence that names one of these amounts is passed through here on its
-   way to the screen. A string with no token is returned untouched. */
-function priceText(s) {
-  let out = String(s == null ? '' : s);
-  Object.keys(MONEY_IN_TEXT).forEach((k) => {
-    if (out.indexOf(k) > -1) out = out.split(k).join(MONEY_IN_TEXT[k]());
-  });
-  return out;
-}
-
-/* ======================= what Play sells =======================
-   Same table as worker/src/catalog.ts; the suite checks they agree. `key` is
-   the app's own name (COURSES ids, ACCESS keys), `sku` the Play product id.
-   Pro is two plans with the same contents; the wedding pays for one room. */
-const PLAY_SUB_SKUS = { manifest: 'manifest_sub', plus: 'plus_sub', pro6: 'pro_sub', pro: 'pro12_sub' };   // input B1
-const PLAY_ITEMS = [
-  { key: 'tarot', sku: 'tarot', kind: 'inapp', opens: ['tarot'], months: 6 },
-  { key: 'lenormand', sku: 'lenormand', kind: 'inapp', opens: ['lenormand'], months: 6 },
-  { key: 'playing', sku: 'playing', kind: 'inapp', opens: ['playing'], months: 6 },
-  { key: 'wedding', sku: 'wedding', kind: 'inapp', opens: [], months: 0 },
-  { key: 'manifest', sku: PLAY_SUB_SKUS.manifest, kind: 'subs', opens: ['manifest'], months: 12 },
-  { key: 'plus', sku: PLAY_SUB_SKUS.plus, kind: 'subs', opens: ['plus'], months: 12 },
-  { key: 'pro6', sku: PLAY_SUB_SKUS.pro6, kind: 'subs', opens: ['pro', 'plus'], months: 6 },
-  { key: 'pro', sku: PLAY_SUB_SKUS.pro, kind: 'subs', opens: ['pro', 'plus'], months: 12 }
-];
-const playItem = (key) => PLAY_ITEMS.filter((i) => i.key === key)[0] || null;
-const playItemBySku = (sku) => (sku && PLAY_ITEMS.filter((i) => i.sku === sku)[0]) || null;
 
 /* ============================ UI strings ============================
    Vietnamese is the first language of the app. Keep every line short and
@@ -3200,7 +3026,7 @@ const STR = {
     sending: 'Đang gửi...',
     sentOk: 'Đã gửi. Nabu sẽ xác nhận sớm. Bạn xem lại trong mục Hồ sơ.',
     welcomeHead: 'Nabu Tarot xin chào! 🌙', nabuPosts: 'Bài viết của Nabu', versionLine: (v) => 'Phiên bản ' + v, checkUpdate: 'Kiểm tra cập nhật', updating: 'Đang tải bản mới…',
-    privacyTitle: 'Chính sách quyền riêng tư', privacyLink: 'Quyền riêng tư', delAccount: 'Xoá tài khoản', delHint: 'Thao tác này sẽ xóa tài khoản, hồ sơ, tin nhắn và lịch hẹn của bạn. Dữ liệu không thể khôi phục.', delConfirm: 'Xóa tài khoản và toàn bộ dữ liệu? Thao tác này không thể hoàn tác.', delDone: 'Đã xoá tài khoản. Cảm ơn bạn đã ghé Nabu Tarot.', delRelogin: 'Để xác nhận đúng là bạn, hãy đăng nhập lại rồi chọn Xóa tài khoản một lần nữa.', aiFlag: 'Báo cáo câu trả lời này', aiFlagged: 'Đã ghi nhận. Cảm ơn bạn, Nabu sẽ xem lại.',
+    privacyTitle: 'Chính sách quyền riêng tư', privacyLink: 'Quyền riêng tư', delAccount: 'Xoá tài khoản', delHint: 'Thao tác này sẽ xóa tài khoản, hồ sơ, tin nhắn và lịch hẹn của bạn. Dữ liệu không thể khôi phục.', delConfirm: 'Xóa tài khoản và toàn bộ dữ liệu? Thao tác này không thể hoàn tác.', delDone: 'Đã xoá tài khoản. Cảm ơn bạn đã ghé Nabu Tarot.', delRelogin: 'Để xác nhận đúng là bạn, hãy đăng nhập lại rồi chọn Xóa tài khoản một lần nữa.', aiFlag: 'Báo cáo câu trả lời này', aiFlagged: 'Đã ghi nhận. Cảm ơn bạn, Nabu sẽ xem lại.', storeCodeHint: 'Nhập mã mở khoá mà Nabu đã gửi cho bạn.',
     actTitle: 'Hoạt động', actIntro: 'Những việc nhỏ để bạn ghé qua mỗi ngày: nuôi bạn nhỏ may mắn, buộc sợi tơ hồng với người ấy, rung cây thông điệp, tung đồng xu và viết nhật ký. Khi Nabu đăng thì có thêm tụ bài để chọn, bình chọn để tham gia và điều ước để gửi.', actEmpty: 'Chưa có hoạt động nào. Quay lại sau nhé.', actAll: 'Tất cả hoạt động', actOpen: 'Đang mở', actClosed: 'Đã đóng', actHasResults: 'Đã có kết quả',
     actPickHint: 'Bạn chạm vào tụ bài mà mình thấy bị thu hút nhất. Nabu sẽ đăng thông điệp của từng tụ sau vài ngày.', actPicked: (n) => 'Bạn đã chọn tụ ' + n + '.', actComeBack: (d) => 'Quay lại vào ' + d + ' để lật bài xem thông điệp.', actChangePile: 'Đổi sang tụ khác?', actPickToSee: 'Thông điệp đã có. Chạm vào một tụ để lật lên.', actTapOthers: 'Tụ bạn chọn đã lật lên. Bạn có thể chạm vào tụ khác để xem thử.',
     actVoteHint: 'Bạn chạm vào một lựa chọn. Mỗi người chỉ được bình chọn một lần.', actVoteLogin: 'Bạn cần đăng nhập để bình chọn và xem kết quả.', actVoted: 'Cảm ơn bạn đã bình chọn!', actClosedNote: 'Bình chọn đã đóng. Đây là kết quả.', actVotes: (n) => n + ' phiếu',
@@ -3376,9 +3202,9 @@ const STR = {
     petLevelUp: (lv, c) => 'Bạn nhỏ lên cấp ' + lv + '. Bạn nhận được ' + c + ' xu Nabu.', petThanksCoins: (c) => 'Bạn nhỏ vui lắm. Bạn nhận được ' + c + ' xu Nabu.',
     waitMin: (n) => n + ' phút', waitHour: (n) => n + ' giờ', waitHourMin: (h, m) => h + ' giờ ' + m + ' phút',
     luckTitle: 'Xu Nabu và ưu đãi', luckLink: 'Xu và ưu đãi của bạn', luckCoins: 'xu Nabu',
-    luckIntro: 'Chăm bạn nhỏ mỗi ngày để tích xu Nabu và mở khóa phiếu giảm giá. 1 xu = 1₫ khi đặt lịch xem bài với Nabu.',
+    luckIntro: 'Chăm bạn nhỏ mỗi ngày để tích Xu Nabu và mở phiếu giảm giá. 1 Xu Nabu = 1đ khi đặt lịch hoặc mở khóa khóa học.',
     luckHint: 'Xu Nabu không hết hạn. Mỗi đơn dùng tối đa 100.000 xu và không quá 50% giá trị đơn.',
-    luckWorth: '1 xu = 1₫ khi đặt lịch xem bài.',
+    luckWorth: (s) => 'Tương đương ' + s + ' khi bạn đặt dịch vụ.',
     luckVoucher: 'Phiếu giảm giá theo cấp', luckVoucherHint: 'Cấp cao nhất mà bạn nhỏ của bạn từng đạt sẽ quyết định mức giảm.',
     luckVoucherOf: (p) => 'Phiếu giảm ' + p + '%', luckAtLevel: (n) => 'Từ cấp ' + n,
     luckNextTier: (lv, p) => 'Bạn nuôi bạn nhỏ lên cấp ' + lv + ' để nhận phiếu giảm ' + p + '%.', luckTopTier: 'Bạn đã đạt mức ưu đãi cao nhất.',
@@ -3429,13 +3255,22 @@ const STR = {
     adminOrdersNone: 'Chưa có đơn nào.',
     alertWedPaid: 'Lễ cưới của bạn đã được xác nhận 💍',
     alertWedPaidBody: (pair) => 'Nabu đã nhận được thanh toán. Phòng cưới của ' + pair + ' sẽ mở trước giờ làm lễ 15 phút nhé.',
-    adminWedWas: 'Giờ đang giữ',
+    wedMoveAsked: 'Nabu đã nhận được yêu cầu đổi giờ của bạn rồi nhé.',
+    wedMoveWait: (when) => 'Bạn đã xin đổi sang ' + when + '. Nabu đang xem lại, giờ cũ vẫn giữ nguyên cho tới khi Nabu trả lời.',
+    adminWedMoves: 'Xin đổi giờ lễ cưới',
+    adminWedMovesHint: 'Bạn là người chủ trì nên giờ mới cần bạn đồng ý. Giờ cũ vẫn giữ nguyên cho tới khi bạn trả lời, và mỗi cặp chỉ được đổi một lần.',
+    adminWedWas: 'Giờ đang giữ', adminWedWants: 'Xin đổi sang',
+    alertWedMoveYes: 'Nabu đã đồng ý giờ mới 💍',
+    alertWedMoveYesBody: (when) => 'Lễ cưới của bạn chuyển sang ' + when + '. Bạn nhớ báo lại cho khách nhé.',
+    alertWedMoveNo: 'Nabu giữ giờ cũ',
+    alertWedMoveNoBody: (when) => 'Lần này Nabu chưa đổi được giờ, lễ cưới vẫn diễn ra vào ' + when + '. Bạn nhắn cho Nabu nếu cần sắp xếp thêm nhé.',
     alertWedInvite: (pair) => 'Bạn được mời dự lễ cưới của ' + pair + ' 💌',
     alertWedInviteBody: (when) => 'Lễ cưới diễn ra vào ' + when + '. Bạn mở ra để nhận lời hoặc từ chối nhé.',
     adminWeds: 'Lễ cưới đang giữ',
-    adminWedsHint: 'Mỗi lễ cưới đang đặt chỗ đều ở đây. Khi bạn đã nhận được {wedfee}, bạn bấm Đã nhận tiền — phòng cưới mở ra cho cả hai người, không ai cần nhập mã nữa.',
+    adminWedsHint: 'Mỗi lễ cưới đang đặt chỗ đều ở đây. Khi bạn đã nhận được 30.000đ, bạn bấm Đã nhận tiền — phòng cưới mở ra cho cả hai người, không ai cần nhập mã nữa.',
     adminWedPaid: 'Đã thanh toán', adminWedOwed: 'Chưa thanh toán',
     adminWedGotPaid: 'Đã nhận tiền', adminWedPaidDone: 'Đã mở phòng cưới cho hai bạn ấy.',
+    adminWedMoveOk: 'Đồng ý giờ mới',
     wedHereYes: (n) => n + ' đã ở trong phòng',
     wedHereNo: (n) => n + ' chưa vào phòng',
     wedHereBoth: 'Cô dâu và chú rể đã có mặt',
@@ -3518,6 +3353,8 @@ const STR = {
     wedPayHow: 'Cách thanh toán',
     wedPayHold: (when) => 'Nabu sẽ giữ khung giờ ' + when + ' cho hai bạn. Bạn chuyển khoản sớm giúp Nabu nhé, để khung giờ này chắc chắn là của hai bạn.',
     wedPaySend: 'Gửi yêu cầu cho Nabu', wedPaySent: 'Nabu đã nhận được yêu cầu của bạn 💌 Nabu sẽ nhắn lại sớm.',
+    wedChangeTime: 'Chọn lại ngày giờ',
+    wedPlanPay: (p) => 'Hai bạn chọn ngày giờ trước, bước sau mới là thanh toán (' + p + ').',
     wedMadeTitle: '💒 Phòng cưới của hai bạn đã được tạo',
     wedMadeBody: (when) => 'Buổi lễ diễn ra ' + when + '. Cửa phòng mở trước 15 phút.',
     wedShutFor: 'Cửa phòng sẽ mở trước giờ làm lễ 15 phút. Bạn quay lại lúc đó nhé.',
@@ -3556,15 +3393,20 @@ const STR = {
     wedChangeMind: 'Mình đến được rồi', wedChangeMindHint: 'Nếu bạn thu xếp được, bấm vào đây là cô dâu chú rể biết ngay.',
     wedNotAnswered: (n) => n + ' người chưa trả lời:',
     wedCannotCome: (n) => n + ' người báo bận:',
+    wedMoveRule: 'Hai bạn chỉ đổi được một lần, và chậm nhất là trước giờ làm lễ 1 tiếng.',
+    wedMoveOnce: 'Hai bạn chỉ được đổi ngày giờ một lần thôi. Bạn chắc chắn với ngày giờ mới chứ?',
+    wedMovedAlready: 'Hai bạn đã đổi ngày giờ một lần rồi, nên lần này Nabu giữ nguyên lịch cũ nhé.',
+    wedMoveTooLate: 'Đã quá gần giờ làm lễ nên không đổi được nữa. Khách mời có thể đang trên đường tới rồi.',
     wedDropLate: 'Huỷ buổi lễ',
     wedDropLateHint: 'Đã quá gần giờ làm lễ. Nếu huỷ bây giờ, lễ cưới coi như đã dùng và Nabu không hoàn lại phí; muốn tổ chức lại thì hai bạn đăng ký và thanh toán một lần nữa.',
+    wedDropLateAsk: 'Huỷ buổi lễ ngay lúc này? Khách mời sẽ được báo là lễ cưới không diễn ra, và phí đã đóng sẽ không được hoàn lại. Muốn tổ chức lại, hai bạn cần đăng ký và thanh toán mới.',
     wedDroppedLate: 'Đã huỷ buổi lễ.',
     wedTermsTitle: 'Điều khoản của lễ cưới',
     wedTerms: [
-      'Hai bạn hãy vào phòng trong 15 phút đầu.',
-      'Nếu cả hai không vào, phòng sẽ đóng và lượt vẫn được tính là đã dùng.',
-      'Không thể đổi ngày giờ. Hủy lễ vẫn tính là đã dùng; muốn tổ chức lại, hai bạn cần thanh toán lại.',
-      'Phí tổ chức lễ cưới không được hoàn lại.'
+      'Buổi lễ bắt đầu đúng giờ hai bạn đã chọn. Một trong hai người cần có mặt và bấm “Bắt đầu buổi lễ” trong vòng 15 phút sau giờ đó.',
+      'Nếu quá 15 phút mà chưa ai bắt đầu, phòng cưới sẽ tự đóng và khách mời được báo là buổi lễ không diễn ra.',
+      'Ngày giờ chỉ được đổi một lần, và chậm nhất là trước giờ làm lễ 1 tiếng.',
+      'Nếu buổi lễ bị huỷ trong vòng 1 tiếng trước giờ hẹn, bị huỷ khi đang diễn ra, hoặc tự đóng vì không ai có mặt, thì lễ cưới coi như đã dùng và phí 30.000đ không được hoàn lại. Muốn tổ chức lại, hai bạn đăng ký và thanh toán một lần nữa.'
     ],
     wedAgree: 'Tôi đã đọc và đồng ý với các điều khoản trên.',
     wedAgreeFirst: 'Bạn đọc và tích vào ô đồng ý ở trên để tiếp tục nhé.',
@@ -3579,7 +3421,7 @@ const STR = {
     ],
     wedRules: [
       'Buổi lễ bắt đầu đúng giờ đã chọn — một trong hai bạn cần bấm “Bắt đầu” trong 15 phút đầu.',
-      'Ngày giờ đã chọn không thể thay đổi.',
+      'Đổi ngày giờ: được một lần, chậm nhất trước giờ lễ 1 tiếng.',
       'Huỷ muộn hoặc không ai có mặt: lễ coi như đã dùng, không hoàn phí.'
     ],
     wedShareMine: (n) => 'Mình và ' + n + ' đã chính thức nên duyên vợ chồng trên Nabu Tarot 💒',
@@ -3605,11 +3447,12 @@ const STR = {
     wedBuy: 'Mở lễ cưới', wedBuyHint: 'Bạn thanh toán một lần và có 12 tháng để chọn ngày tổ chức.',
     wedPlanLead: (n) => 'Bạn và ' + n + ' đã sẵn sàng. Bây giờ chỉ còn chọn ngày và giờ.',
     wedPlanHint: 'Khách mời chỉ vào được phòng cưới từ 15 phút trước giờ bắt đầu.',
-    wedWhen: 'Ngày và giờ tổ chức', wedWhenHint: 'Thời gian hiển thị theo múi giờ trên thiết bị của bạn. Sau khi chọn, ngày giờ không thể thay đổi.',
+    wedWhen: 'Ngày và giờ tổ chức', wedWhenHint: 'Giờ được tính theo múi giờ trên máy của bạn. Hai bạn có thể đổi lại bất cứ lúc nào trước buổi lễ.',
     wedWhenBad: 'Bạn chọn một thời điểm cách hiện tại ít nhất 10 phút.',
     wedMake: 'Tạo phòng cưới', wedMade: 'Đã tạo phòng cưới 💒',
-    wedDrop: 'Huỷ lễ cưới', wedDropHint: 'Nếu hủy, phòng cưới và danh sách khách mời sẽ bị xóa. Lượt tổ chức này vẫn được tính là đã dùng; muốn tổ chức lại, hai bạn cần thanh toán lại.',
-    wedDropAsk: 'Hủy lễ cưới này? Phòng cưới và danh sách khách mời sẽ bị xóa, và lượt tổ chức này vẫn được tính là đã dùng.',
+    wedMoveTitle: 'Đổi ngày giờ', wedMove: 'Lưu ngày giờ mới', wedMoved: 'Đã đổi ngày giờ.',
+    wedDrop: 'Huỷ lễ cưới', wedDropHint: 'Nếu huỷ, phòng cưới và danh sách khách mời sẽ bị xoá. Bạn vẫn có thể tạo lại sau.',
+    wedDropAsk: 'Huỷ lễ cưới này? Phòng cưới và danh sách khách mời sẽ bị xoá.',
     wedDropped: 'Đã huỷ lễ cưới.',
     wedOpensSoon: 'Phòng cưới mở cửa 15 phút trước giờ bắt đầu.',
     wedInviteTitle: 'Mời khách', wedInviteHint: 'Bạn có thể gửi đường dẫn này cho bất cứ ai. Người chưa có tài khoản Nabu sẽ được mời tạo tài khoản trước khi vào phòng.',
@@ -3754,15 +3597,7 @@ const STR = {
     repHint: 'Những gì người dùng báo cáo trong phòng cưới hoặc trong trò chuyện.',
     buyWorking: 'Đang xử lý…', buyAlready: 'Lần mua này đã được dùng rồi.',
     buyFailed: 'Chưa mua được. Bạn thử lại, hoặc nhắn tin cho Nabu.',
-    stTitle: 'Cửa hàng', stIntro: 'Thanh toán qua Google Play. Mở khóa ngay sau khi thanh toán thành công.',
-    stCourses: 'Khóa học', stPlans: 'Gói thành viên', stBuy: 'Mua', stSubscribe: 'Đăng ký',
-    stEveryMonths: (n) => 'Tự động gia hạn mỗi ' + n + ' tháng đến khi bạn hủy.', stRenews: (d) => 'Gia hạn vào ' + d, stEndsOn: (d) => 'Dùng đến ' + d + ' · Không gia hạn',
-    stProblem: 'Thanh toán không thành công · Vui lòng kiểm tra trong Google Play', stExpired: 'Đã hết hạn', stActive: 'Đang hoạt động', stHeld: 'Tạm dừng · Chờ thanh toán',
-    stCancelMeaning: 'Bạn có thể hủy bất cứ lúc nào trong Google Play. Gói vẫn dùng được đến hết kỳ đã thanh toán.',
-    stManage: 'Quản lý trong Google Play', stRestore: 'Khôi phục mua hàng', stRestoring: 'Đang khôi phục…', stRestored: (n) => 'Đã khôi phục ' + n + ' mục', stRestoreNone: 'Không có gì để khôi phục',
-    stNotReady: 'Không nhận được phản hồi từ Google Play.', stRetry: 'Thử lại', stPending: 'Đang chờ thanh toán. Hoàn tất xong, quyền truy cập sẽ tự mở.',
-    stIncludedPro: 'Đã bao gồm trong Nabu Pro', stSwitchTo: (n) => 'Chuyển sang gói ' + n, stNeedIn: 'Mục này chỉ có thể mua trong ứng dụng Nabu Tarot trên Android.', stFailed: 'Mua chưa thành công. Vui lòng thử lại.',
-    myPlans: 'Gói của bạn', stPlusPitch: 'Nabu Plus mở lượt xem không giới hạn và giúp bạn nhỏ lớn nhanh hơn.',
+    buyDone: (n) => 'Đã mở: ' + n + '.',
     pickSpent: 'Hôm nay bạn đã rút một lá rồi. Mai quay lại rút lá mới nhé.',
     pickOffer: 'Nabu Plus rút bài không giới hạn mỗi ngày, tung xu và rung cây không giới hạn, kèm toàn bộ giao diện: 79.000đ.',
     pickPlus: 'Xem Nabu Plus',
@@ -3822,7 +3657,7 @@ const STR = {
     postTitle: 'Tiêu đề',
     postBody: 'Nội dung',
     bodyHint: 'Bạn cách một dòng trống để sang đoạn mới.',
-    ppostTitleDe: 'Tiêu đề (tiếng Đức)', postBodyDe: 'Nội dung (tiếng Đức)', actOptionsDe: 'Lựa chọn (tiếng Đức, mỗi dòng một lựa chọn)', actIntroDe: 'Lời dẫn (tiếng Đức)', actPileMsgDe: 'Thông điệp tiếng Đức', actFillDeNone: 'Không có mục nào thiếu tiếng Đức.', actFillDeDone: (n, m) => 'Đã điền tiếng Đức cho ' + n + ' mục.' + (m ? ' Còn ' + m + ' câu chưa có bản dịch.' : ''), actFillDe: '🇩🇪 Lấy bản tiếng Đức từ tệp', actFillDeHint: 'Bản tiếng Đức đã tự hiển thị khi đọc. Nút này lưu luôn phần tiếng Đức vào hoạt động đã đăng, lấy từ activities.json và activities-stock.json.', ostTitleEn: 'Tiêu đề (English, không bắt buộc)',
+    ppostTitleDe: 'Tiêu đề (tiếng Đức)', postBodyDe: 'Nội dung (tiếng Đức)', actOptionsDe: 'Lựa chọn (tiếng Đức, mỗi dòng một lựa chọn)', actIntroDe: 'Lời dẫn (tiếng Đức)', actPileMsgDe: 'Thông điệp tiếng Đức', actFillDeNone: 'Không có mục nào thiếu tiếng Đức.', actFillDeDone: (n, m) => 'Đã điền tiếng Đức cho ' + n + ' mục.' + (m ? ' Còn ' + m + ' câu chưa có bản dịch.' : ''), actFillDe: '🇩🇪 Lấy bản tiếng Đức từ tệp', actFillDeHint: 'Điền phần tiếng Đức còn thiếu cho các hoạt động đã đăng, lấy từ activities.json và activities-stock.json.', ostTitleEn: 'Tiêu đề (English, không bắt buộc)',
     postBodyEn: 'Nội dung (English, không bắt buộc)',
     postCards: 'Lá bài trong bài (chạm để chọn)',
     postTopics: 'Bài này hợp với ai quan tâm',
@@ -4031,7 +3866,7 @@ const STR = {
     sending: 'Sending...',
     sentOk: 'Sent. Nabu will confirm soon. You can check it under Profile.',
     welcomeHead: 'Welcome to Nabu Tarot 🌙', nabuPosts: 'Nabu Posts', versionLine: (v) => 'Version ' + v, checkUpdate: 'Check for updates', updating: 'Loading the new version…',
-    privacyTitle: 'Privacy policy', privacyLink: 'Privacy', delAccount: 'Delete account', delHint: 'This deletes your account, profile, messages and bookings. The data cannot be restored.', delConfirm: 'Delete your account and all data? This cannot be undone.', delDone: 'Account deleted. Thank you for visiting Nabu Tarot.', delRelogin: 'To confirm it is really you, sign in again and choose Delete account once more.', aiFlag: 'Report this answer', aiFlagged: 'Noted. Thank you, Nabu will review it.',
+    privacyTitle: 'Privacy policy', privacyLink: 'Privacy', delAccount: 'Delete account', delHint: 'This deletes your account, profile, messages and bookings. The data cannot be restored.', delConfirm: 'Delete your account and all data? This cannot be undone.', delDone: 'Account deleted. Thank you for visiting Nabu Tarot.', delRelogin: 'To confirm it is really you, sign in again and choose Delete account once more.', aiFlag: 'Report this answer', aiFlagged: 'Noted. Thank you, Nabu will review it.', storeCodeHint: 'Enter the unlock code Nabu sent you.',
     actTitle: 'Activities', actIntro: 'Small things to drop in on each day: a lucky companion to keep, the red thread to tie, the message tree, the coin and the diary. When Nabu posts there are piles to pick, polls to vote in and wishes to send.', actEmpty: 'No activities yet. Come back soon.', actAll: 'All activities', actOpen: 'Open', actClosed: 'Closed', actHasResults: 'Answered',
     actPickHint: 'Tap the pile that pulls you. Nabu posts each pile\'s message a few days later.', actPicked: (n) => 'You chose pile ' + n + '.', actComeBack: (d) => 'Come back on ' + d + ' to flip it over.', actChangePile: 'Switch to another pile?', actPickToSee: 'The messages are in. Tap a pile to flip it.', actTapOthers: 'Your pile is open. Tap another pile to peek.',
     actVoteHint: 'Tap an option. One vote per person.', actVoteLogin: 'Sign in to vote and see the results.', actVoted: 'Thank you for voting!', actClosedNote: 'Voting is closed. Here are the results.', actVotes: (n) => n + ' votes',
@@ -4207,9 +4042,9 @@ const STR = {
     petLevelUp: (lv, c) => 'Level ' + lv + ' reached. You earned ' + c + ' Nabu coins.', petThanksCoins: (c) => 'Very happy! You earned ' + c + ' Nabu coins.',
     waitMin: (n) => n + ' minutes', waitHour: (n) => n + ' hours', waitHourMin: (h, m) => h + ' hours ' + m + ' minutes',
     luckTitle: 'Nabu coins and rewards', luckLink: 'Your coins and rewards', luckCoins: 'Nabu coins',
-    luckIntro: 'Care for your companion daily to earn Nabu Coins and unlock coupons. 1 Coin = ₫1 toward a reading booked with Nabu.',
+    luckIntro: 'Care for your little companion each day to earn Nabu Coins and unlock vouchers. 1 Nabu Coin = 1₫ toward bookings or course unlocks.',
     luckHint: 'Nabu Coins do not expire. You can use up to 100,000 coins per order, covering no more than 50% of its value.',
-    luckWorth: '1 Coin = ₫1 toward a reading.',
+    luckWorth: (s) => 'Worth ' + s + ' towards anything here.',
     luckVoucher: 'Voucher by level', luckVoucherHint: 'The highest level any of your companions has reached sets how much comes off.',
     luckVoucherOf: (p) => p + '% voucher', luckAtLevel: (n) => 'From level ' + n,
     luckNextTier: (lv, p) => 'Reach level ' + lv + ' for a ' + p + '% voucher.', luckTopTier: 'You are at the highest reward level.',
@@ -4260,13 +4095,22 @@ const STR = {
     adminOrdersNone: 'Nothing waiting.',
     alertWedPaid: 'Your wedding is confirmed \uD83D\uDC8D',
     alertWedPaidBody: (pair) => 'Nabu has received the payment. The room for ' + pair + ' opens fifteen minutes before the ceremony.',
-    adminWedWas: 'Held for',
+    wedMoveAsked: 'Nabu has your request for a new hour.',
+    wedMoveWait: (when) => 'You have asked for ' + when + '. Nabu is looking at it, and the old hour stands until there is an answer.',
+    adminWedMoves: 'Wedding time changes',
+    adminWedMovesHint: 'You host the ceremony, so a new hour needs your yes. The old hour stands until you answer, and each couple may move once.',
+    adminWedWas: 'Held for', adminWedWants: 'Asking for',
+    alertWedMoveYes: 'Nabu agreed to the new time \uD83D\uDC8D',
+    alertWedMoveYesBody: (when) => 'Your wedding moves to ' + when + '. Do let your guests know.',
+    alertWedMoveNo: 'Nabu is keeping the old time',
+    alertWedMoveNoBody: (when) => 'The hour could not be moved this time, so the wedding stays at ' + when + '. Write to Nabu if you need to arrange something.',
     alertWedInvite: (pair) => 'You are invited to the wedding of ' + pair + ' \uD83D\uDC8C',
     alertWedInviteBody: (when) => 'The ceremony is on ' + when + '. Open it to accept or decline.',
     adminWeds: 'Weddings being held',
     adminWedsHint: 'Every wedding with an hour reserved is here. Once the 30,000\u0111 has arrived, press Payment received \u2014 the room opens for both partners and neither needs a code.',
     adminWedPaid: 'Paid', adminWedOwed: 'Not paid yet',
     adminWedGotPaid: 'Payment received', adminWedPaidDone: 'Their room is open.',
+    adminWedMoveOk: 'Agree to the new hour',
     wedHereYes: (n) => n + ' is in the room',
     wedHereNo: (n) => n + ' is not here yet',
     wedHereBoth: 'The couple are here',
@@ -4349,6 +4193,8 @@ const STR = {
     wedPayHow: 'How to pay',
     wedPayHold: (when) => 'Nabu is holding ' + when + ' for you. Transferring soon is what makes that hour certainly yours.',
     wedPaySend: 'Send the request to Nabu', wedPaySent: 'Nabu has your request \uD83D\uDC8C You will hear back soon.',
+    wedChangeTime: 'Choose another time',
+    wedPlanPay: (p) => 'Choose the day and hour first \u2014 paying (' + p + ') comes after.',
     wedMadeTitle: '\uD83D\uDC92 Your wedding room has been made',
     wedMadeBody: (when) => 'The ceremony is ' + when + '. The doors open 15 minutes before.',
     wedShutFor: 'The doors open 15 minutes before the ceremony. Come back then.',
@@ -4387,15 +4233,20 @@ const STR = {
     wedChangeMind: 'Actually, I can come', wedChangeMindHint: 'If you can make it after all, press this and the couple will know.',
     wedNotAnswered: (n) => n + ' have not answered:',
     wedCannotCome: (n) => n + ' cannot come:',
+    wedMoveRule: 'You may move it once, and no later than an hour before the ceremony.',
+    wedMoveOnce: 'You can only move the day once. Are you sure about the new time?',
+    wedMovedAlready: 'You have already moved this wedding once, so the day now stands.',
+    wedMoveTooLate: 'It is too close to the hour to move it \u2014 your guests may already be on their way.',
     wedDropLate: 'Call the ceremony off',
     wedDropLateHint: 'It is too close to the hour. Calling off now counts as held, and the fee is not returned; holding another means booking and paying again.',
+    wedDropLateAsk: 'Call the ceremony off now? Your guests will be told it is not happening, and the fee is not returned. Holding another means booking and paying again.',
     wedDroppedLate: 'Called off.',
     wedTermsTitle: 'Terms for the ceremony',
     wedTerms: [
-      'Both of you need to enter the room within the first 15 minutes.',
-      'If neither of you joins, the room will close and the session will still count as used.',
-      'The date and time can\u2019t be changed. Canceling still counts as used; to hold another ceremony, you\u2019ll need to pay again.',
-      'The wedding fee is non-refundable.'
+      'The ceremony begins at the hour you choose. One of you must be here and press Begin within 15 minutes of it.',
+      'If nobody has begun by then, the room closes itself and your guests are told the ceremony is not happening.',
+      'The day and hour can be moved once, and no later than an hour before the ceremony.',
+      'If the wedding is called off within that last hour, called off during the ceremony, or closes itself because nobody came, it counts as held and the 30.000\u0111 is not returned. Holding another means booking and paying again.'
     ],
     wedAgree: 'I have read and agree to these terms.',
     wedAgreeFirst: 'Please read the terms and tick the box to continue.',
@@ -4410,7 +4261,7 @@ const STR = {
     ],
     wedRules: [
       'It begins at the hour you chose \u2014 one of you presses Begin within the first 15 minutes.',
-      'The selected date and time can\u2019t be changed.',
+      'Moving the day: once, and no later than an hour before.',
       'Called off late, or nobody there: it counts as held, and the fee is not returned.'
     ],
     wedShareMine: (n) => n + ' and I are married on Nabu Tarot \uD83D\uDC92',
@@ -4436,11 +4287,12 @@ const STR = {
     wedBuy: 'Open a wedding', wedBuyHint: 'Paid once, and you have 12 months to choose the day.',
     wedPlanLead: (n) => 'You and ' + n + ' are ready. All that is left is the day and the hour.',
     wedPlanHint: 'Guests can only come in from 15 minutes before it starts.',
-    wedWhen: 'The day and the hour', wedWhenHint: 'Times are shown in your device\u2019s time zone. Once selected, the date and time can\u2019t be changed.',
+    wedWhen: 'The day and the hour', wedWhenHint: 'In the time on your own phone. Either of you can change it any time before the ceremony.',
     wedWhenBad: 'Choose a time at least 10 minutes from now.',
     wedMake: 'Make the room', wedMade: 'Your wedding room is ready \uD83D\uDC92',
-    wedDrop: 'Call the wedding off', wedDropHint: 'If you cancel, the wedding room and guest list will be deleted. This wedding will count as used; to hold another one, you\u2019ll need to pay again.',
-    wedDropAsk: 'Cancel this wedding? The wedding room and guest list will be deleted, and this wedding will count as used.',
+    wedMoveTitle: 'Move it', wedMove: 'Save the new time', wedMoved: 'Moved.',
+    wedDrop: 'Call the wedding off', wedDropHint: 'The room and the guest list are deleted. You can make another one later.',
+    wedDropAsk: 'Call this wedding off? The room and the guest list will be deleted.',
     wedDropped: 'Called off.',
     wedOpensSoon: 'The room opens 15 minutes before it starts.',
     wedInviteTitle: 'Invite people', wedInviteHint: 'Send this link to anyone. Somebody without a Nabu account is asked to make one before they can come in.',
@@ -4585,15 +4437,7 @@ const STR = {
     repHint: 'What people have reported, from wedding rooms and threads.',
     buyWorking: 'Working...', buyAlready: 'That purchase has already been used.',
     buyFailed: 'That did not go through. Try again, or message Nabu.',
-    stTitle: 'Store', stIntro: 'Pay through Google Play. Access unlocks as soon as your payment is complete.',
-    stCourses: 'Courses', stPlans: 'Memberships', stBuy: 'Buy', stSubscribe: 'Subscribe',
-    stEveryMonths: (n) => 'Renews automatically every ' + n + ' months until canceled.', stRenews: (d) => 'Renews on ' + d, stEndsOn: (d) => 'Access until ' + d + ' · Won’t renew',
-    stProblem: 'Payment declined · Check your payment method in Google Play', stExpired: 'Expired', stActive: 'Active', stHeld: 'On hold · Payment required',
-    stCancelMeaning: 'Cancel anytime in Google Play. You’ll keep access until the end of your paid period.',
-    stManage: 'Manage in Google Play', stRestore: 'Restore purchases', stRestoring: 'Restoring…', stRestored: (n) => 'Restored ' + n + ' items', stRestoreNone: 'Nothing to restore',
-    stNotReady: 'No response from Google Play.', stRetry: 'Try again', stPending: 'Payment pending. Access will unlock automatically once it’s complete.',
-    stIncludedPro: 'Included in Nabu Pro', stSwitchTo: (n) => 'Switch to ' + n, stNeedIn: 'This item can only be purchased in the Nabu Tarot Android app.', stFailed: 'Purchase didn’t go through. Please try again.',
-    myPlans: 'Your plans', stPlusPitch: 'Nabu Plus gives you unlimited readings and helps your companion grow faster.',
+    buyDone: (n) => 'Opened: ' + n + '.',
     pickSpent: 'You have drawn your card for today. Come back tomorrow for a new one.',
     pickOffer: 'Nabu Plus draws as many cards a day as you like, opens the coin and the tree without limit, and every design. The price is on the price page.',
     pickPlus: 'See Nabu Plus',
@@ -4653,7 +4497,7 @@ const STR = {
     postTitle: 'Title',
     postBody: 'Text',
     bodyHint: 'Leave a blank line to start a new paragraph.',
-    ppostTitleDe: 'Title (German)', postBodyDe: 'Body (German)', actOptionsDe: 'Options in German, one per line', actIntroDe: 'Intro (German)', actPileMsgDe: 'German message', actFillDeNone: 'Nothing was missing German.', actFillDeDone: (n, m) => 'German filled in for ' + n + ' entries.' + (m ? ' ' + m + ' strings still have no German.' : ''), actFillDe: '🇩🇪 Fill German from the files', actFillDeHint: 'German already shows on its own when reading. This button saves it into the published activities as well, from activities.json and activities-stock.json.', ostTitleEn: 'Title (English, optional)',
+    ppostTitleDe: 'Title (German)', postBodyDe: 'Body (German)', actOptionsDe: 'Options in German, one per line', actIntroDe: 'Intro (German)', actPileMsgDe: 'German message', actFillDeNone: 'Nothing was missing German.', actFillDeDone: (n, m) => 'German filled in for ' + n + ' entries.' + (m ? ' ' + m + ' strings still have no German.' : ''), actFillDe: '🇩🇪 Fill German from the files', actFillDeHint: 'Fills any missing German on the published activities from activities.json and activities-stock.json.', ostTitleEn: 'Title (English, optional)',
     postBodyEn: 'Text (English, optional)',
     postCards: 'Cards in this post (tap to select)',
     postTopics: 'Who this post is for',
@@ -4861,7 +4705,7 @@ const STR = {
     sending: 'Wird gesendet...',
     sentOk: 'Gesendet. Nabu bestätigt bald. Du siehst es im Profil.',
     welcomeHead: 'Willkommen bei Nabu Tarot 🌙', nabuPosts: 'Beiträge von Nabu', versionLine: (v) => 'Version ' + v, checkUpdate: 'Nach Updates suchen', updating: 'Die neue Version wird geladen…',
-    privacyTitle: 'Datenschutzerklärung', privacyLink: 'Datenschutz', delAccount: 'Konto löschen', delHint: 'Dadurch werden dein Konto, Profil, deine Nachrichten und Termine gelöscht. Die Daten können nicht wiederhergestellt werden.', delConfirm: 'Konto und alle Daten löschen? Das kann nicht rückgängig gemacht werden.', delDone: 'Konto gelöscht. Danke, dass du bei Nabu Tarot warst.', delRelogin: 'Melde dich zur Bestätigung noch einmal an und wähle danach erneut Konto löschen.', aiFlag: 'Diese Antwort melden', aiFlagged: 'Notiert. Danke dir, Nabu schaut es sich an.',
+    privacyTitle: 'Datenschutzerklärung', privacyLink: 'Datenschutz', delAccount: 'Konto löschen', delHint: 'Dadurch werden dein Konto, Profil, deine Nachrichten und Termine gelöscht. Die Daten können nicht wiederhergestellt werden.', delConfirm: 'Konto und alle Daten löschen? Das kann nicht rückgängig gemacht werden.', delDone: 'Konto gelöscht. Danke, dass du bei Nabu Tarot warst.', delRelogin: 'Melde dich zur Bestätigung noch einmal an und wähle danach erneut Konto löschen.', aiFlag: 'Diese Antwort melden', aiFlagged: 'Notiert. Danke dir, Nabu schaut es sich an.', storeCodeHint: 'Gib den Freischaltcode ein, den Nabu dir geschickt hat.',
     actTitle: 'Aktivitäten', actIntro: 'Kleine Dinge für jeden Tag: ein Glücksbegleiter zum Behalten, der rote Faden zum Knüpfen, der Nachrichtenbaum, die Münze und das Tagebuch. Wenn Nabu etwas postet, gibt es Stapel zum Wählen, Umfragen zum Abstimmen und Wünsche zum Senden.', actEmpty: 'Noch keine Aktivitäten. Schau bald wieder vorbei.', actAll: 'Alle Aktivitäten', actOpen: 'Offen', actClosed: 'Geschlossen', actHasResults: 'Beantwortet',
     actPickHint: 'Tipp den Stapel an, der dich anzieht. Die Botschaft jedes Stapels postet Nabu ein paar Tage später.', actPicked: (n) => 'Du hast Stapel ' + n + ' gewählt.', actComeBack: (d) => 'Komm am ' + d + ' zurück, um ihn umzudrehen.', actChangePile: 'Zu einem anderen Stapel wechseln?', actPickToSee: 'Die Botschaften sind da. Tipp einen Stapel an, um ihn umzudrehen.', actTapOthers: 'Dein Stapel ist offen. Tipp einen anderen Stapel an, um hineinzuschauen.',
     actVoteHint: 'Tipp eine Antwort an. Eine Stimme pro Person.', actVoteLogin: 'Melde dich an, um abzustimmen und die Ergebnisse zu sehen.', actVoted: 'Danke für deine Stimme!', actClosedNote: 'Die Abstimmung ist beendet. Hier sind die Ergebnisse.', actVotes: (n) => n + ' Stimmen',
@@ -5037,9 +4881,9 @@ const STR = {
     petLevelUp: (lv, c) => 'Level ' + lv + ' erreicht. Du bekommst ' + c + ' Nabu-Münzen.', petThanksCoins: (c) => 'Ganz glücklich! Du bekommst ' + c + ' Nabu-Münzen.',
     waitMin: (n) => n + ' Min.', waitHour: (n) => n + ' Std.', waitHourMin: (h, m) => h + ' Std. ' + m + ' Min.',
     luckTitle: 'Nabu-Münzen und Belohnungen', luckLink: 'Deine Münzen und Belohnungen', luckCoins: 'Nabu-Münzen',
-    luckIntro: 'Pflege deinen kleinen Begleiter täglich, sammle Nabu Coins und schalte Gutscheine frei. 1 Coin = 1 ₫ bei einer Buchung bei Nabu.',
+    luckIntro: 'Kümmere dich jeden Tag um deinen kleinen Begleiter, sammle Nabu-Münzen und schalte Gutscheine frei. 1 Nabu-Münze = 1₫ bei Buchungen oder Kursfreischaltungen.',
     luckHint: 'Nabu-Münzen verfallen nicht. Pro Bestellung kannst du höchstens 100.000 Münzen einsetzen, maximal bis zu 50 % des Bestellwerts.',
-    luckWorth: '1 Coin = 1 ₫ bei einer Buchung.',
+    luckWorth: (s) => 'Entspricht ' + s + ' bei allem, was es hier gibt.',
     luckVoucher: 'Gutschein nach Stufe', luckVoucherHint: 'Die höchste Stufe, die einer deiner Begleiter erreicht hat, bestimmt, wie viel abgezogen wird.',
     luckVoucherOf: (p) => p + '%-Gutschein', luckAtLevel: (n) => 'Ab Level ' + n,
     luckNextTier: (lv, p) => 'Erreiche Level ' + lv + ' für einen Gutschein über ' + p + ' %.', luckTopTier: 'Du bist auf der höchsten Belohnungsstufe.',
@@ -5090,13 +4934,22 @@ const STR = {
     adminOrdersNone: 'Nichts offen.',
     alertWedPaid: 'Eure Hochzeit ist bestätigt \uD83D\uDC8D',
     alertWedPaidBody: (pair) => 'Nabu hat die Zahlung erhalten. Der Hochzeitsraum für ' + pair + ' öffnet 15 Minuten vor der Zeremonie.',
-    adminWedWas: 'Reserviert für',
+    wedMoveAsked: 'Nabu hat deine Anfrage für eine neue Stunde.',
+    wedMoveWait: (when) => 'Du hast ' + when + ' angefragt. Nabu prüft die Änderung; bis zur Antwort bleibt die bisherige Uhrzeit bestehen.',
+    adminWedMoves: 'Terminänderungen für Hochzeiten',
+    adminWedMovesHint: 'Du hältst die Zeremonie, also braucht eine neue Stunde dein Ja. Bis du antwortest, gilt die alte Stunde, und jedes Paar darf einmal verschieben.',
+    adminWedWas: 'Reserviert für', adminWedWants: 'Gewünscht',
+    alertWedMoveYes: 'Nabu hat der neuen Zeit zugestimmt \uD83D\uDC8D',
+    alertWedMoveYesBody: (when) => 'Eure Hochzeit wurde auf ' + when + ' verschoben. Sag euren Gästen bitte Bescheid.',
+    alertWedMoveNo: 'Nabu bleibt bei der alten Zeit',
+    alertWedMoveNoBody: (when) => 'Die Uhrzeit konnte diesmal nicht geändert werden. Eure Hochzeit bleibt bei ' + when + '. Schreib Nabu, wenn du etwas klären möchtest.',
     alertWedInvite: (pair) => '💌 Du bist zur Hochzeit von ' + pair + ' eingeladen.',
     alertWedInviteBody: (when) => 'Die Zeremonie ist am ' + when + '. Öffne die Einladung, um zu- oder abzusagen.',
     adminWeds: 'Anstehende Hochzeiten',
-    adminWedsHint: 'Jede Hochzeit mit reservierter Stunde steht hier. Sobald die {wedfee} angekommen sind, drück auf Zahlung erhalten \u2014 der Raum öffnet sich für beide Partner und niemand braucht einen Code.',
+    adminWedsHint: 'Jede Hochzeit mit reservierter Stunde steht hier. Sobald die 30.000\u0111 angekommen sind, drück auf Zahlung erhalten \u2014 der Raum öffnet sich für beide Partner und niemand braucht einen Code.',
     adminWedPaid: 'Bezahlt', adminWedOwed: 'Noch nicht bezahlt',
     adminWedGotPaid: 'Zahlung erhalten', adminWedPaidDone: 'Ihr Raum ist offen.',
+    adminWedMoveOk: 'Der neuen Stunde zustimmen',
     wedHereYes: (n) => n + ' ist im Raum.',
     wedHereNo: (n) => n + ' ist noch nicht da.',
     wedHereBoth: 'Das Paar ist da',
@@ -5173,6 +5026,8 @@ const STR = {
     wedPayHow: 'So bezahlst du',
     wedPayHold: (when) => 'Nabu hält ' + when + ' vorläufig für euch frei. Erst nach der Zahlung ist die Uhrzeit fest reserviert.',
     wedPaySend: 'Anfrage an Nabu senden', wedPaySent: 'Nabu hat deine Anfrage \uD83D\uDC8C Du hörst bald davon.',
+    wedChangeTime: 'Eine andere Zeit wählen',
+    wedPlanPay: (p) => 'Wählt zuerst Tag und Uhrzeit. Die Zahlung (' + p + ') kommt danach.',
     wedMadeTitle: '\uD83D\uDC92 Euer Hochzeitsraum ist bereit',
     wedMadeBody: (when) => 'Die Zeremonie ist am ' + when + '. Die Türen öffnen 15 Minuten vorher.',
     wedShutFor: 'Die Türen öffnen 15 Minuten vor der Zeremonie. Komm dann wieder.',
@@ -5211,15 +5066,20 @@ const STR = {
     wedChangeMind: 'Ich kann doch kommen', wedChangeMindHint: 'Wenn es doch klappt, drück hier, und das Paar weiß Bescheid.',
     wedNotAnswered: (n) => n + ' haben noch nicht geantwortet:',
     wedCannotCome: (n) => n + ' können nicht kommen:',
+    wedMoveRule: 'Du darfst einmal verschieben, spätestens eine Stunde vor der Zeremonie.',
+    wedMoveOnce: 'Du kannst den Tag nur einmal verschieben. Bist du dir bei der neuen Zeit sicher?',
+    wedMovedAlready: 'Du hast diese Hochzeit schon einmal verschoben, der Tag steht jetzt fest.',
+    wedMoveTooLate: 'Es ist zu kurz vor der Stunde, um noch zu verschieben \u2014 deine Gäste sind vielleicht schon unterwegs.',
     wedDropLate: 'Die Zeremonie absagen',
     wedDropLateHint: 'Es ist zu kurz vor der Stunde. Eine Absage jetzt gilt als gehalten, und die Gebühr wird nicht zurückgezahlt; für eine weitere Zeremonie musst du neu buchen und neu zahlen.',
+    wedDropLateAsk: 'Die Zeremonie jetzt absagen? Deine Gäste erfahren, dass sie nicht stattfindet, und die Gebühr wird nicht zurückgezahlt. Für eine weitere musst du neu buchen und neu zahlen.',
     wedDroppedLate: 'Abgesagt.',
     wedTermsTitle: 'Bedingungen für die Zeremonie',
     wedTerms: [
-      'Betretet den Raum innerhalb der ersten 15 Minuten.',
-      'Wenn keiner von euch kommt, wird der Raum geschlossen und trotzdem als genutzt gezählt.',
-      'Datum und Uhrzeit können nicht geändert werden. Auch eine Absage zählt als genutzt; für eine neue Feier müsst ihr erneut bezahlen.',
-      'Die Hochzeitsgebühr ist nicht erstattungsfähig.'
+      'Die Zeremonie beginnt zur gewählten Uhrzeit. Eine Person von euch muss innerhalb der ersten 15 Minuten im Raum sein und „Zeremonie beginnen“ drücken.',
+      'Wenn bis dahin niemand begonnen hat, schließt sich der Raum automatisch und die Gäste werden informiert, dass die Zeremonie nicht stattfindet.',
+      'Tag und Uhrzeit können einmal geändert werden, spätestens eine Stunde vor der Zeremonie.',
+      'Wird die Hochzeit innerhalb der letzten Stunde abgesagt, während der Zeremonie beendet oder automatisch geschlossen, weil niemand gekommen ist, gilt sie als durchgeführt und die 30.000đ werden nicht erstattet. Für eine weitere Zeremonie ist eine neue Buchung und Zahlung nötig.'
     ],
     wedAgree: 'Ich habe die Bedingungen gelesen und stimme ihnen zu.',
     wedAgreeFirst: 'Lies bitte die Bedingungen und setz das Häkchen, um weiterzugehen.',
@@ -5234,7 +5094,7 @@ const STR = {
     ],
     wedRules: [
       'Die Zeremonie beginnt zur gebuchten Uhrzeit – eine Person von euch muss innerhalb der ersten 15 Minuten starten.',
-      'Das gewählte Datum und die gewählte Uhrzeit können nicht geändert werden.',
+      'Tag oder Uhrzeit können einmal geändert werden, spätestens eine Stunde vorher.',
       'Bei später Absage oder wenn niemand erscheint, gilt die Hochzeit als durchgeführt und die Gebühr wird nicht erstattet.'
     ],
     wedShareMine: (n) => n + ' und ich sind bei Nabu Tarot verheiratet 💒',
@@ -5260,11 +5120,12 @@ const STR = {
     wedBuy: 'Eine Hochzeit freischalten', wedBuyHint: 'Einmal bezahlt, und ihr habt 12 Monate Zeit, den Tag zu wählen.',
     wedPlanLead: (n) => 'Du und ' + n + ' seid bereit. Jetzt fehlen nur noch Tag und Uhrzeit.',
     wedPlanHint: 'Gäste können erst 15 Minuten vor dem Beginn hereinkommen.',
-    wedWhen: 'Der Tag und die Stunde', wedWhenHint: 'Die Zeiten werden in der Zeitzone deines Geräts angezeigt. Nach der Auswahl können Datum und Uhrzeit nicht mehr geändert werden.',
+    wedWhen: 'Der Tag und die Stunde', wedWhenHint: 'In der Zeit auf deinem eigenen Gerät. Jeder von euch kann sie bis zur Zeremonie jederzeit ändern.',
     wedWhenBad: 'Wähl eine Zeit, die mindestens 10 Minuten in der Zukunft liegt.',
     wedMake: 'Den Raum anlegen', wedMade: 'Euer Hochzeitsraum ist bereit \uD83D\uDC92',
-    wedDrop: 'Die Hochzeit absagen', wedDropHint: 'Bei einer Absage werden Hochzeitsraum und Gästeliste gelöscht. Die Hochzeit gilt als genutzt; für eine neue Hochzeit ist eine erneute Zahlung erforderlich.',
-    wedDropAsk: 'Diese Hochzeit absagen? Hochzeitsraum und Gästeliste werden gelöscht, und die Hochzeit gilt als genutzt.',
+    wedMoveTitle: 'Verschieben', wedMove: 'Die neue Zeit speichern', wedMoved: 'Verschoben.',
+    wedDrop: 'Die Hochzeit absagen', wedDropHint: 'Der Raum und die Gästeliste werden gelöscht. Du kannst später eine neue anlegen.',
+    wedDropAsk: 'Diese Hochzeit absagen? Der Raum und die Gästeliste werden gelöscht.',
     wedDropped: 'Abgesagt.',
     wedOpensSoon: 'Der Raum öffnet 15 Minuten vor dem Beginn.',
     wedInviteTitle: 'Leute einladen', wedInviteHint: 'Schick diesen Link an wen du magst. Wer kein Nabu-Konto hat, wird gebeten, eines anzulegen, bevor er hereinkommt.',
@@ -5408,15 +5269,7 @@ const STR = {
     repHint: 'Was Leute gemeldet haben, aus Hochzeitsräumen und Fäden.',
     buyWorking: 'Läuft...', buyAlready: 'Dieser Kauf wurde bereits eingelöst.',
     buyFailed: 'Das hat nicht geklappt. Versuch es noch einmal oder schreib Nabu.',
-    stTitle: 'Shop', stIntro: 'Zahlung über Google Play. Nach erfolgreicher Zahlung wird sofort freigeschaltet.',
-    stCourses: 'Kurse', stPlans: 'Mitgliedschaften', stBuy: 'Kaufen', stSubscribe: 'Abonnieren',
-    stEveryMonths: (n) => 'Verlängert sich automatisch alle ' + n + ' Monate, bis du kündigst.', stRenews: (d) => 'Verlängerung am ' + d, stEndsOn: (d) => 'Zugang bis ' + d + ' · Keine Verlängerung',
-    stProblem: 'Zahlung abgelehnt · Bitte Zahlungsmethode in Google Play prüfen', stExpired: 'Abgelaufen', stActive: 'Aktiv', stHeld: 'Pausiert · Zahlung ausstehend',
-    stCancelMeaning: 'Du kannst jederzeit in Google Play kündigen. Dein Zugang bleibt bis zum Ende des bezahlten Zeitraums bestehen.',
-    stManage: 'In Google Play verwalten', stRestore: 'Käufe wiederherstellen', stRestoring: 'Wird wiederhergestellt…', stRestored: (n) => n + ' Elemente wiederhergestellt', stRestoreNone: 'Nichts zum Wiederherstellen',
-    stNotReady: 'Keine Antwort von Google Play.', stRetry: 'Erneut versuchen', stPending: 'Zahlung ausstehend. Nach Abschluss wird der Zugang automatisch freigeschaltet.',
-    stIncludedPro: 'In Nabu Pro enthalten', stSwitchTo: (n) => 'Zu ' + n + ' wechseln', stNeedIn: 'Dieser Artikel kann nur in der Nabu-Tarot-App für Android gekauft werden.', stFailed: 'Kauf nicht abgeschlossen. Bitte erneut versuchen.',
-    myPlans: 'Deine Abos', stPlusPitch: 'Nabu Plus bietet unbegrenzte Legungen und lässt deinen kleinen Begleiter schneller wachsen.',
+    buyDone: (n) => 'Opened: ' + n + '.',
     pickSpent: 'Du hast deine Karte für heute gezogen. Komm morgen für eine neue wieder.',
     pickOffer: 'Nabu Plus zieht so viele Karten am Tag, wie du magst, öffnet Münze und Baum ohne Grenze und dazu jedes Design. Den Preis findest du auf der Preisseite.',
     pickPlus: 'Nabu Plus ansehen',
@@ -5476,7 +5329,7 @@ const STR = {
     postTitle: 'Titel',
     postBody: 'Text',
     bodyHint: 'Lass eine Leerzeile, um einen neuen Absatz zu beginnen.',
-    ppostTitleDe: 'Titel (Deutsch)', postBodyDe: 'Text (Deutsch)', actOptionsDe: 'Antworten auf Deutsch, eine pro Zeile', actIntroDe: 'Einleitung (Deutsch)', actPileMsgDe: 'Deutsche Botschaft', actFillDeNone: 'Es fehlte nirgends Deutsch.', actFillDeDone: (n, m) => 'Deutsch für ' + n + ' Einträge ergänzt.' + (m ? ' Für ' + m + ' Texte gibt es noch kein Deutsch.' : ''), actFillDe: '🇩🇪 Deutsch aus den Dateien übernehmen', actFillDeHint: 'Deutsch erscheint beim Lesen schon von selbst. Dieser Button speichert es zusätzlich in den veröffentlichten Aktivitäten, aus activities.json und activities-stock.json.', ostTitleEn: 'Titel (Englisch, freiwillig)',
+    ppostTitleDe: 'Titel (Deutsch)', postBodyDe: 'Text (Deutsch)', actOptionsDe: 'Antworten auf Deutsch, eine pro Zeile', actIntroDe: 'Einleitung (Deutsch)', actPileMsgDe: 'Deutsche Botschaft', actFillDeNone: 'Es fehlte nirgends Deutsch.', actFillDeDone: (n, m) => 'Deutsch für ' + n + ' Einträge ergänzt.' + (m ? ' Für ' + m + ' Texte gibt es noch kein Deutsch.' : ''), actFillDe: '🇩🇪 Deutsch aus den Dateien übernehmen', actFillDeHint: 'Ergänzt fehlendes Deutsch bei den veröffentlichten Aktivitäten aus activities.json und activities-stock.json.', ostTitleEn: 'Titel (Englisch, freiwillig)',
     postBodyEn: 'Text (Englisch, freiwillig)',
     postCards: 'Karten in diesem Beitrag (zum Wählen antippen)',
     postTopics: 'Für wen dieser Beitrag ist',
@@ -17755,13 +17608,6 @@ const ACCESS = {
   }
 };
 
-/* What the account says about each subscription: Google's state, when it
-   runs to, whether it renews. Written by the worker, read for the Me tab. */
-const SUBS = {
-  get() { const s = store.get('nabu-subs', {}); return s && typeof s === 'object' ? s : {}; },
-  of(key) { return this.get()[key] || null; }
-};
-
 /* ---- what needs an account ----
 
    Reading needs nothing: the cards, the calendar, the forecast, the guides are
@@ -17850,53 +17696,8 @@ const daysSince = (iso) => { const a = new Date(String(iso) + 'T00:00:00'), b = 
 const luckUnlimited = () => plusOn();
 const luckLast = (kind) => String((store.get('nabu-luck', {}) || {})[kind] || '');
 const luckSpent = (kind) => !luckUnlimited(kind) && !!luckLast(kind) && daysSince(luckLast(kind)) < LUCK_DAYS;
-function luckSpend(kind) { if (luckUnlimited(kind)) return; const a = store.get('nabu-luck', {}) || {}; a[kind] = isoDate(new Date()); store.set('nabu-luck', a); turnsPush(); }
+function luckSpend(kind) { if (luckUnlimited(kind)) return; const a = store.get('nabu-luck', {}) || {}; a[kind] = isoDate(new Date()); store.set('nabu-luck', a); }
 function luckNext(kind) { const d = new Date((luckLast(kind) || isoDate(new Date())) + 'T00:00:00'); d.setDate(d.getDate() + LUCK_DAYS); return isoDate(d); }
-
-/* ---- a free turn is spent by the person, not by the handset ----
-   Both counters have to live on the device: the gate is drawn before the
-   network answers, and it has to be right on a phone with no signal. But
-   device-only storage made the limit device-only as well - clearing the app's
-   data, or opening the same account in another browser, handed out a fresh
-   card and a fresh coin. So a signed-in copy rides on the account document and
-   the two are reconciled every time the profile is read.
-
-   The merge keeps the LATER date, per counter. That is the one direction that
-   cannot be gamed: another device can only ever be told a turn is already
-   spent, never that it has one back. ISO dates compare correctly as plain
-   strings, so "later" is just ">".
-
-   It is not tamper-proof. The account document is writable by its owner, so
-   somebody determined can still edit it; only the worker could settle that.
-   What it ends is the ordinary bypass, which is clearing the storage. */
-function turnsLocal() {
-  const p = store.get('nabu-pick-day', null);
-  return { pick: (p && p.d && p.id) ? p : null, luck: store.get('nabu-luck', {}) || {} };
-}
-function turnsMerge(cloud) {
-  const mine = turnsLocal(), c = (cloud && typeof cloud === 'object') ? cloud : {};
-  const out = { pick: mine.pick, luck: Object.assign({}, mine.luck) };
-  const cp = (c.pick && typeof c.pick === 'object') ? c.pick : null;
-  if (cp && cp.d && cp.id && (!out.pick || String(cp.d) > String(out.pick.d))) {
-    out.pick = { d: String(cp.d), id: String(cp.id), focus: String(cp.focus || 'general') };
-  }
-  const cl = (c.luck && typeof c.luck === 'object') ? c.luck : {};
-  Object.keys(cl).forEach((k) => {
-    const v = String(cl[k] || '');
-    if (v && (!out.luck[k] || v > String(out.luck[k]))) out.luck[k] = v;
-  });
-  return out;
-}
-function turnsApply(m) {
-  if (m && m.pick) store.set('nabu-pick-day', m.pick);
-  if (m) store.set('nabu-luck', m.luck || {});
-}
-/* Called from the two places that spend a turn. BE is defined in backend.js,
-   which loads after this file, so it is asked for when needed rather than
-   captured now - and a failure here is never allowed to break the draw. */
-function turnsPush() {
-  try { if (typeof BE !== 'undefined' && BE.user && BE.pushTurns) BE.pushTurns(); } catch (e) { /* the device copy still stands */ }
-}
 const CODE_LETTER = { tarot: 'T', manifest: 'M', playing: 'P', coin: 'C', tree: 'Y', luck: 'B', pro: 'S', lenormand: 'L', wedding: 'W' };
 const CODE_COURSE = { T: 'tarot', M: 'manifest', P: 'playing', C: 'coin', Y: 'tree', B: 'luck', S: 'pro', L: 'lenormand', W: 'wedding' };
 function addMonths(iso, n) { const d = new Date(iso + 'T00:00:00'); d.setMonth(d.getMonth() + n); return isoDate(d); }
@@ -18662,7 +18463,7 @@ const BE = {
     this.auth.onAuthStateChanged(async (u) => {
       this.user = u; this.ready = true;
       store.set('nabu-admin', u && this.isAdmin() ? (u.email || 'admin') : '');
-      if (u) { await this.pullProfile(); if (typeof BILL !== 'undefined') BILL.sync(); this.watchUnread(); } else { this.stopUnread(); }
+      if (u) { await this.pullProfile(); this.watchUnread(); } else { this.stopUnread(); }
       this.listeners.forEach((cb) => cb(u));
     });
   },
@@ -18761,7 +18562,6 @@ const BE = {
     const before = ACCESS.get();
     const cloud = d.access && typeof d.access === 'object' ? Object.assign({}, d.access) : {};
     store.set('nabu-access', cloud);
-    store.set('nabu-subs', d.subs && typeof d.subs === 'object' ? d.subs : {});
     /* A withdrawal carries a reason, stamped with the moment it was given, and
        a device says it once. Said out loud, because access that disappears
        without a word reads as a broken app rather than a decision somebody
@@ -18782,29 +18582,9 @@ const BE = {
         t: T().accessOnTitle(fresh.map(accessName).join(', ')),
         b: T().accessOnBody(fmtDate(cloud[fresh[0]])), href: '#/me' });
     }
-    /* The free turns are the person's, not the handset's. Later date wins, so
-       this device can be told a turn is already spent but never given one
-       back; if this device is the one that is ahead, the account is caught up.
-       A write that fails leaves the device copy in charge, which is correct. */
-    const merged = turnsMerge(d.turns);
-    turnsApply(merged);
-    const cl = (d.turns && d.turns.luck && typeof d.turns.luck === 'object') ? d.turns.luck : {};
-    const cpd = (d.turns && d.turns.pick && d.turns.pick.d) ? String(d.turns.pick.d) : '';
-    const ahead = (merged.pick ? String(merged.pick.d) : '') !== cpd
-      || Object.keys(merged.luck).some((k) => String(merged.luck[k] || '') !== String(cl[k] || ''));
-    if (ahead) this.pushTurns().catch(() => { /* offline; the device copy holds */ });
-    delete d.turns;
     delete d.access; delete d.revoked; saveProfileLocal(d);
     this.profileRead = true;
     if (typeof applyAccountLang === 'function' && applyAccountLang() && typeof route === 'function') route();
-  },
-  /* Kept apart from pushProfile on purpose: saving a name must not overwrite
-     what somebody has spent, and spending a turn must not rewrite the name. */
-  async pushTurns() {
-    if (!this.user || !this.db) return;
-    const t = turnsLocal();
-    await this.db.collection('users').doc(this.user.uid)
-      .set({ turns: { pick: t.pick || null, luck: t.luck || {} } }, { merge: true });
   },
   async pushProfile() {
     if (!this.user) return;
@@ -19829,23 +19609,6 @@ function allPosts() { return (POSTS || []).concat(FBPOSTS.map((f) => Object.assi
 function sortedPosts() {
   return allPosts().sort((a, b) => (b.pinned ? 1 : 0) - (a.pinned ? 1 : 0) || postScore(b) - postScore(a) || String(b.date).localeCompare(String(a.date)));
 }
-/* The feed on #/home is ordered for the reader: pinned first, then whatever
-   matches their sign, their initial and their interests, and only then by
-   date. That is the point of a feed.
-
-   "See all posts" makes the opposite promise. It is the whole list, and a
-   list is read newest first. Ordering it by score put a post from the 3rd
-   above one from the 6th for anybody whose sign it named - so the owner, who
-   has a profile, saw an order with no pattern in it, and every reader saw a
-   different one. Date decides here, and nothing else.
-
-   Pinned still leads: pinning is a deliberate act, not a guess about the
-   reader. Array.prototype.sort is stable and a new post is prepended
-   (admin.js:190), so posts sharing a date stay newest-first among themselves
-   - which is the same order the dashboard itself shows at admin.js:169. */
-function datedPosts() {
-  return allPosts().sort((a, b) => (b.pinned ? 1 : 0) - (a.pinned ? 1 : 0) || String(b.date).localeCompare(String(a.date)));
-}
 
 /* ---- personal block ---- */
 function personalHTML() {
@@ -19967,7 +19730,7 @@ async function renderNews() {
     + '<input id="nsearch" type="search" placeholder="' + esc(S.searchPosts) + '" autocomplete="off"><div id="news" style="margin-top:12px"></div>';
   const draw = () => {
     const q = fold($('#nsearch').value.trim());
-    const list = datedPosts().filter((p) => !p.welcome).filter((p) => !q || fold(L(p.title) + ' ' + plainText(L(p.body))).indexOf(q) > -1);
+    const list = sortedPosts().filter((p) => !p.welcome).filter((p) => !q || fold(L(p.title) + ' ' + plainText(L(p.body))).indexOf(q) > -1);
     const newsBox = $('#news');
     newsBox.innerHTML = list.length ? list.map((p) => postHTML(p, false)).join('') : '<p class="empty">' + esc(q ? S.noMatch : S.feedEmpty) + '</p>';
     bindPost($('#news'));
@@ -20013,9 +19776,6 @@ function pickSpend(id, focus) {
   if (plusOn()) return;
   if (!signedIn()) store.set('nabu-guest-draw', Number(store.get('nabu-guest-draw', 0)) + 1);
   store.set('nabu-pick-day', { d: isoDate(new Date()), id: id, focus: focus });
-  /* And on the account, so the same person does not get a second card by
-     opening this in another browser or clearing the app's data. */
-  turnsPush();
 }
 /* Inside the installed app the note stops at "tomorrow": a price next to a
    locked feature is what Play reviewers look for. On the web it says what
@@ -20026,9 +19786,7 @@ function pickLimitHTML() {
      wants tomorrow, the other wants an account. */
   if (guestSpent()) return needAccountHTML(S.needInDraw);
   return '<div class="card luckbox"><p class="lead">' + esc(S.pickSpent) + '</p>'
-    + (isTWA()
-      ? (BILL.can() ? '<p class="hint" style="margin-bottom:10px">' + esc(S.stPlusPitch) + '</p>' + buyButtonHTML('plus', S.stSubscribe) + '<p class="hint st" data-st="plus"></p>' : storeNotReadyHTML())
-      : '<p class="hint" style="margin-bottom:10px">' + esc(S.pickOffer) + '</p><a class="btn primary block" href="#/unlock?from=pick">' + esc(S.pickPlus) + '</a>')
+    + (isTWA() ? '' : '<p class="hint" style="margin-bottom:10px">' + esc(S.pickOffer) + '</p><a class="btn primary block" href="#/unlock?from=pick">' + esc(S.pickPlus) + '</a>')
     + '</div>';
 }
 function renderPick(args, params) {
@@ -20126,7 +19884,6 @@ function renderReveal(animate) {
     + aiPanelHTML({ type: 'card', id: id, focus: pick.focus, lite: 1 })
     + (pickSpent() ? pickLimitHTML() : '<button class="btn block" id="redraw" style="margin-top:6px">' + esc(S.redraw) + '</button>');
   bindAI(r);
-  if (pickSpent()) bindStore(r, () => renderReveal(false));
   $('#shareCard').addEventListener('click', () => shareOrCopy(S.shareText(c.name, kws), appURL() + '#/pick?card=' + encodeURIComponent(id) + '&focus=' + pick.focus));
   const again = () => { newHand(); if (/\?/.test(location.hash)) redirect('#/pick'); else renderPick(); window.scrollTo({ top: 0, behavior: 'smooth' }); };
   { const a = $('#redraw'), b = $('#redrawTop'); if (a) a.addEventListener('click', again); if (b) b.addEventListener('click', again); }
@@ -20148,35 +19905,59 @@ function paywallHTML(courseId) {
   const S = T(), c = courseOf(courseId), a = ACCESS.get()[courseId];
   const expired = a && a < isoDate(new Date());
   return '<div class="paywall"><div class="ic">🔒</div><h2>' + esc(L(c.name)) + '</h2><p class="muted">' + esc(L(c.blurb)) + '</p>'
-    + '<ul class="inc">' + L(c.includes).map((x) => '<li>' + esc(priceText(x)) + '</li>').join('') + '</ul>'
+    + '<ul class="inc">' + L(c.includes).map((x) => '<li>' + esc(x) + '</li>').join('') + '</ul>'
     /* Inside the Android app the price shown is Play's own, in the buyer's
        currency, because Play is what they are about to pay. On the web it is
-       the price written here. Buying itself goes through Play too - Google
-       requires it of anything digital sold inside an Android app - so the
-       button is the store's own, bound by bindStore rather than a handler
-       kept here. */
+       the price written here. */
+    + (isTWA()
+      ? (BILL.can() && BILL.priceOf(c.id)
+        ? '<div class="price">' + esc(BILL.priceOf(c.id)) + ' <span>/ ' + c.months + ' ' + esc(S.months6) + '</span></div>'
+        : '')
+      : '<div class="price">' + priceHTML(c.price, 'unlock', c.id) + ' <span>/ ' + c.months + ' ' + esc(S.months6) + '</span></div>')
+    + (expired ? '<p class="hint err">' + esc(S.courseExpired(a)) + '</p>' : '')
+    /* Asked here, in the app, the way a booking is - not copied to the
+       clipboard and carried off to Instagram, where nothing knows what was
+       asked for and Nabu has a message to answer instead of an order. */
     + (isTWA()
       ? (BILL.can()
-        ? (BILL.priceOf(c.id) ? '<div class="price">' + esc(BILL.priceOf(c.id)) + ' <span>/ ' + esc(termText(c)) + '</span></div>' : '')
-          + (expired ? '<p class="hint err">' + esc(S.courseExpired(a)) + '</p>' : '')
-          + buyButtonHTML(c.id) + '<p class="hint st" data-st="' + c.id + '" style="margin:8px 0"></p>'
-        : storeNotReadyHTML())
-      : '<div class="price">' + priceHTML(c.price, 'unlock', c.id) + ' <span>/ ' + esc(termText(c)) + '</span></div>'
-        + (expired ? '<p class="hint err">' + esc(S.courseExpired(a)) + '</p>' : '')
-        + '<button type="button" class="btn primary block" data-buyreq="' + courseId + '">' + esc(S.buyCourse) + '</button>'
-        + '<p class="hint" id="bstatus" style="margin:8px 0"></p><p class="hint" style="margin:8px 0">' + esc(S.buyHint) + '</p>'
-        + '<p style="margin:8px 0"><a class="backlink" href="#/unlock?from=learn">' + esc(S.unlockLink) + ' \u2192</a></p>'
-        + '<div class="row"><input id="ccode" placeholder="NABU-T-…" autocapitalize="characters" style="flex:1"><button class="btn" id="cunlock">' + esc(S.unlock) + '</button></div><p class="hint" id="cstatus"></p>')
-    + '</div>';
+        /* Through Play, because Google requires it of anything digital sold
+           inside an Android app. A reading is not sold here and never was. */
+        ? '<button type="button" class="btn primary block" data-playbuy="' + courseId + '">' + esc(S.buyCourse) + '</button>'
+          + '<p class="hint" id="bstatus" style="margin:8px 0"></p>'
+        : '<p class="hint" style="margin:8px 0">' + esc(S.storeCodeHint) + '</p>')
+      : '<button type="button" class="btn primary block" data-buyreq="' + courseId + '">' + esc(S.buyCourse) + '</button>'
+        + '<p class="hint" id="bstatus" style="margin:8px 0"></p>'
+        + '<p class="hint" style="margin:8px 0">' + esc(S.buyHint) + '</p>'
+        + '<p style="margin:8px 0"><a class="backlink" href="#/unlock?from=learn">' + esc(S.unlockLink) + ' \u2192</a></p>')
+    + '<div class="row"><input id="ccode" placeholder="NABU-T-…" autocapitalize="characters" style="flex:1"><button class="btn" id="cunlock">' + esc(S.unlock) + '</button></div><p class="hint" id="cstatus"></p></div>';
 }
 function bindPaywall(root, after) {
   const S = T();
   /* Buying through Play. Everything that decides whether it worked happens
      somewhere else - Play takes the money, the worker asks Google whether that
      really happened, and the access is written on the account rather than here.
-     What is left on this side is a button, a wait, and a sentence - and that
-     button is bound the same way the store binds its own: bindStore(). */
-  bindStore(root, after);
+     What is left on this side is a button, a wait, and a sentence. */
+  $$('[data-playbuy]', root).forEach((b) => b.addEventListener('click', async () => {
+    const id = b.getAttribute('data-playbuy'), st = $('#bstatus', root);
+    b.disabled = true;
+    if (st) { st.textContent = S.buyWorking; st.className = 'hint'; }
+    try {
+      const opened = await BILL.buy(id);
+      if (st) { st.textContent = S.buyDone(opened.map(accessName).join(', ')); st.className = 'hint ok'; }
+      toast(S.unlocked);
+      if (after) after(); else route();
+    } catch (e) {
+      b.disabled = false;
+      const why = String((e && e.message) || '');
+      if (st) {
+        st.className = 'hint err';
+        st.textContent = why === 'signin' ? S.unlockNeedIn
+          : /AbortError|cancel/i.test(why) ? ''
+          : why === 'already used' ? S.buyAlready
+          : S.buyFailed;
+      }
+    }
+  }));
   /* One button, one order in the dashboard, signed by whoever asked. */
   $$('[data-buyreq]', root).forEach((b) => b.addEventListener('click', async () => {
     const c = courseOf(b.getAttribute('data-buyreq')), st = $('#bstatus', root);
@@ -20270,9 +20051,8 @@ function renderLearn(args, params) {
 }
 
 /* ---- the two courses: cards | spreads | guides ---- */
-async function renderCourse(courseId, tab) {
+function renderCourse(courseId, tab) {
   if (!ACCESS.has(courseId)) {
-    if (isTWA()) await BILL.start();
     const S = T(), m = $('#main');
     m.innerHTML = backLink('#/learn', S.learnTitle) + '<h1 style="margin-bottom:8px">' + esc(S.cats[courseId]) + '</h1>' + demoHTML(courseId) + '<div id="unlockwrap" style="margin-top:18px">' + paywallHTML(courseId) + '</div>';
     bindAccordions(m); bindPaywall(m); bindCardLinks(m); bindAI(m); bindPC(m);
@@ -20634,10 +20414,10 @@ function unlockRowHTML(c) {
   const open = ACCESS.has(c.id) || (UNL_TIERS.indexOf(c.id) > -1 && ACCESS.has('pro'));
   const picked = !open && UNL_CART.has(c.id);
   const body = '<div class="unl-h"><b>' + esc(L(c.name)) + '</b>' + (isTWA() ? '' : '<span class="pr">' + priceHTML(c.price, 'unlock', c.id) + '</span>') + '</div>'
-    + '<p class="hint">' + esc(priceText(L(c.sum || c.blurb))) + '</p>'
+    + '<p class="hint">' + esc(L(c.sum || c.blurb)) + '</p>'
     + '<div class="unl-f">' + (c.id === 'pro' ? '<span class="chip pink">' + esc(S.unlockBest) + '</span>' : '')
     + '<span class="unl-st">' + (open ? '✓ ' + esc(ACCESS.isAdmin() && !until ? S.adminShort : S.unlockOpenUntil(fmtDate(until)))
-      : picked ? '✓ ' + esc(S.unlockChosen) : esc(S.unlockNot) + (isTWA() ? '' : ' · ' + esc(termText(c)))) + '</span></div>';
+      : picked ? '✓ ' + esc(S.unlockChosen) : esc(S.unlockNot) + (isTWA() ? '' : ' · ' + esc(c.months + ' ' + S.months6))) + '</span></div>';
   if (open) return '<div class="unl on' + (c.id === 'pro' ? ' best' : '') + '">' + body + '</div>';
   return '<button type="button" class="unl pickable' + (picked ? ' pick' : '') + (c.id === 'pro' ? ' best' : '') + '" data-unl="' + c.id + '">' + body + '</button>';
 }
@@ -20645,6 +20425,12 @@ function unlockRowHTML(c) {
 function unlockBase() {
   const ids = UNL_CART.get().filter((id) => COURSES.some((c) => c.id === id) && !ACCESS.has(id));
   return COURSES.filter((c) => ids.indexOf(c.id) > -1).reduce((n, c) => n + salePrice(c.price, 'unlock', c.id), 0);
+}
+/* The person's own rewards, as they currently stand on this screen. */
+const UNL_USE = { v: false, c: 0 };
+function unlockLuck() {
+  const base = unlockBase();
+  return luckCut(base, { v: UNL_USE.v, c: luckWanted(UNL_USE, base) });
 }
 /* What is actually in the basket, so the page can talk about it as well as
    draw it. */
@@ -20657,22 +20443,24 @@ function unlockCartHTML() {
   if (!ids.length) return '<p class="hint">' + esc(S.unlockEmpty) + '</p>';
   const rows = COURSES.filter((c) => ids.indexOf(c.id) > -1);
   const total = rows.reduce((n, c) => n + salePrice(c.price, 'unlock', c.id), 0);
+  const cut = unlockLuck();
   return '<div class="sum">' + rows.map((c) => '<div class="r"><span>' + esc(L(c.name)) + '</span><b>' + priceHTML(c.price, 'unlock', c.id) + '</b></div>').join('')
     + '<div class="r tot"><span>' + esc(S.unlockTotal) + '</span><b>' + fmtPrice(total) + '</b></div>'
+    + (cut.pctOff ? '<div class="r cut"><span>🎟️ ' + esc(S.luckVoucherOf(cut.pct)) + '</span><b>-' + fmtPrice(cut.pctOff) + '</b></div>' : '')
+    + (cut.coins ? '<div class="r cut"><span>🪙 ' + esc(S.luckCoinsUsed(fmtNum(cut.coins))) + '</span><b>-' + fmtPrice(cut.coins) + '</b></div>' : '')
+    + ((cut.pctOff || cut.coins) ? '<div class="r tot"><span>' + esc(S.luckAfter) + '</span><b>' + fmtPrice(cut.final) + '</b></div>' : '')
     + '</div>';
 }
 function unlockMessage() {
   const S = T(), ids = UNL_CART.get(), rows = COURSES.filter((c) => ids.indexOf(c.id) > -1 && !ACCESS.has(c.id));
   if (!rows.length) return '';
   const total = rows.reduce((n, c) => n + salePrice(c.price, 'unlock', c.id), 0);
+  const cut = unlockLuck();
   return '🔓 ' + S.unlockMsgHead + '\n' + rows.map((c) => '• ' + L(c.name) + ': ' + fmtPrice(salePrice(c.price, 'unlock', c.id))).join('\n')
-    + '\n💰 ' + S.unlockTotal + ': ' + fmtPrice(total);
+    + '\n💰 ' + S.unlockTotal + ': ' + fmtPrice(total) + luckLines(cut)
+    + ((cut.pctOff || cut.coins) ? '\n✅ ' + S.luckAfter + ': ' + fmtPrice(cut.final) : '');
 }
 function renderUnlock(args, params) {
-  /* Inside the app Play is the only shop: a different screen entirely, with
-     Play's own prices and a Buy or Subscribe button for each of the four
-     catalogue rows. Nothing below this line ever runs in the app any more. */
-  if (isTWA()) { renderStore(params); return; }
   const S = T(), m = $('#main');
   /* Arriving from something's own offer, that thing is already chosen: being
      sent to a list and having to find it again is a small insult. */
@@ -20682,7 +20470,7 @@ function renderUnlock(args, params) {
   const draw = () => {
     const group = (ids) => '<div class="unlist">' + COURSES.filter((c) => ids.indexOf(c.id) > -1).map(unlockRowHTML).join('') + '</div>';
     m.innerHTML = '<div class="eyebrow">' + esc(CONFIG.brand) + '</div><h1 style="margin-bottom:6px">' + esc(S.unlockTitle) + '</h1><p class="muted">' + esc(S.unlockIntro) + '</p>'
-      + '<p class="hint" style="margin-bottom:14px">' + esc(S.unlockPick) + '</p>'
+      + (isTWA() ? '' : '<p class="hint" style="margin-bottom:14px">' + esc(S.unlockPick) + '</p>')
       + (() => {
         const courses = '<div class="sec" data-sec="courses"><h2 style="margin-bottom:8px">' + esc(S.unlockCourses) + '</h2>' + group(['tarot', 'lenormand', 'playing', 'manifest']) + '</div>';
         const tiers = '<div class="sec" data-sec="tiers"><h2 style="margin-bottom:8px">' + esc(S.unlockActs) + '</h2>'
@@ -20697,19 +20485,21 @@ function renderUnlock(args, params) {
         if (from === 'app') return tiers + courses;
         return courses + tiers;
       })()
-      + '<div class="sec"><h2 style="margin-bottom:8px">' + esc(S.unlockCart) + '</h2><div id="ucart">' + unlockCartHTML() + '</div>'
+      + (isTWA() ? '' : '<div class="sec"><h2 style="margin-bottom:8px">' + esc(S.unlockCart) + '</h2><div id="ucart">' + unlockCartHTML() + '</div>'
+        + rewardPanelHTML(unlockBase(), UNL_USE)
         + '<button class="btn primary block" id="usend" style="margin-top:12px">' + esc(S.unlockSend) + '</button>'
-        + '<p class="hint" id="ustatus">' + esc(BE.enabled && BE.user ? '' : S.unlockSendMsg) + '</p></div>'
-      + (!unlockCartRows().length ? ''
-        : payPanelHTML(unlockCartRows().map((c) => L(c.name)).join(', '), unlockBase(),
+        + '<p class="hint" id="ustatus">' + esc(BE.enabled && BE.user ? '' : S.unlockSendMsg) + '</p></div>')
+      + (isTWA() || !unlockCartRows().length ? ''
+        : payPanelHTML(unlockCartRows().map((c) => L(c.name)).join(', '), unlockLuck().final,
             payRef('unlock|' + unlockCartRows().map((c) => c.id).join('+')), 'unlockpay'))
       + '<div class="card"><label class="f" for="ucode">' + esc(S.unlockCodeLabel) + '</label><div class="row nw"><input id="ucode" placeholder="' + esc(S.luckCodePh) + '" autocapitalize="characters"><button class="btn" id="ugo">' + esc(S.unlock) + '</button></div><p class="hint" id="ustatus"></p></div>'
-      + '<p style="margin-top:14px"><a class="backlink" href="#/prices">' + esc(S.unlockReadings) + ' →</a></p>';
+      + (isTWA() ? '' : '<p style="margin-top:14px"><a class="backlink" href="#/prices">' + esc(S.unlockReadings) + ' →</a></p>');
     $$('[data-unl]', m).forEach((b) => b.addEventListener('click', () => { UNL_CART.toggle(b.getAttribute('data-unl')); draw(); }));
     if (unlockCartRows().length) {
       bindPayPanel(m, () => ({ what: unlockCartRows().map((c) => L(c.name)).join(', '),
-        total: unlockBase(), ref: payRef('unlock|' + unlockCartRows().map((c) => c.id).join('+')) }));
+        total: unlockLuck().final, ref: payRef('unlock|' + unlockCartRows().map((c) => c.id).join('+')) }));
     }
+    bindRewardPanel(m, UNL_USE, draw);
     const send = $('#usend');
     if (send) send.addEventListener('click', async () => {
       const ids = UNL_CART.get(), rows = COURSES.filter((c) => ids.indexOf(c.id) > -1 && !ACCESS.has(c.id));
@@ -20718,14 +20508,17 @@ function renderUnlock(args, params) {
       if (BE.enabled && BE.user) {
         send.disabled = true;
         try {
-          await BE.createUnlockOrder(rows.map((c) => ({ id: c.id, name: L(c.name), price: salePrice(c.price, 'unlock', c.id) })), unlockBase());
-          UNL_CART.set([]); toast(S.unlockSent); draw();
+          const cut = unlockLuck();
+          await BE.createUnlockOrder(rows.map((c) => ({ id: c.id, name: L(c.name), price: salePrice(c.price, 'unlock', c.id) })), cut.final);
+          luckCommit(cut, S.unlockCart);
+          UNL_CART.set([]); UNL_USE.v = false; UNL_USE.c = 0; toast(S.unlockSent); draw();
           const s2 = $('#ustatus'); if (s2) { s2.textContent = S.unlockSent; s2.className = 'hint ok'; }
           return;
         } catch (e) { st.textContent = S.publishFail + ': ' + e.message; st.className = 'hint err'; }
         send.disabled = false; return;
       }
       // No account yet: keep the message route so the order still reaches Nabu.
+      luckCommit(unlockLuck(), S.unlockCart);
       store.set('nabu-contact-draft', unlockMessage());
       location.hash = BE.enabled ? signinHref('/unlock?from=' + (store.get('nabu-unlock-from', '') || '')) : '#/contact';
     });
@@ -21639,386 +21432,95 @@ async function revokeCode(hash) {
 /* ======================= buying inside the Android app =======================
 
    Google requires that digital things sold inside an Android app are sold
-   through Play. A reading is an hour of somebody's time and is not sold here.
-   What goes through Play is the catalogue in play-catalog.js: three courses
-   and the wedding once, and four subscriptions that renew until cancelled.
+   through Play, and takes a share for it. A reading with Nabu is not a digital
+   thing - it is an hour of somebody's time - so bookings are left alone and go
+   on being arranged by message and paid by bank transfer, as they always were.
+   What goes through Play is the courses and the unlocks.
 
    None of this exists in a browser. The Digital Goods API is only there inside
-   the installed app, so BILL.can() is false on the web and every screen falls
-   back to what it did before. That is not a limitation: it is how the website
-   keeps selling without a commission.
+   the installed Android app, so BILL.can() is false on the web and every screen
+   falls back to what it did before. That is not a limitation to work around: it
+   is the reason the website can keep selling without paying a commission.
 
    The phone is never trusted about what it bought. It sends the token Play
-   hands back to the worker; the worker asks Google and writes the account.
-   The phone then reads the account back. Nothing here opens anything. */
+   hands back to the worker, which asks Google directly and writes the access
+   itself. A phone that says "I bought the Pro course" and shows no token gets
+   nothing. */
 
 const PLAY_METHOD = 'https://play.google.com/billing';
-const PLAY_PENDING = 'nabu-play-pending';
-const PLAY_PENDING_MAX = 50;  // a hard ceiling; PLAY_GIVE_UP below is what actually retires a stuck row
-const PLAY_GIVE_UP = 8;       // tries before a row that keeps failing for a reason other than "already used" is surfaced and dropped
 
 const BILL = {
-  service: null, details: {}, starting: null, ready: false,
+  service: null,
+  details: {},
+  ready: false,
 
-  can() { return !!this.service; },
+  /* Only inside the installed app, and only when Play answers. */
+  can() { return !!(this.ready && this.service); },
 
-  /* One start, shared by everybody who awaits it. Silent on failure: on the
-     web this is the normal case. */
-  start() {
-    if (this.starting) return this.starting;
-    this.starting = (async () => {
-      try {
-        if (!window.getDigitalGoodsService || !CONFIG.aiEndpoint) return false;
-        this.service = await window.getDigitalGoodsService(PLAY_METHOD);
-        const skus = PLAY_ITEMS.map((i) => i.sku).filter(Boolean);
-        const list = await this.service.getDetails(skus);
-        (list || []).forEach((d) => { if (d && d.itemId) this.details[d.itemId] = d; });
-        return true;
-      } catch (e) { this.service = null; return false; }
-      finally { this.ready = true; }
-    })();
-    return this.starting;
+  async start() {
+    if (this.ready) return this.can();
+    this.ready = true;
+    try {
+      if (!window.getDigitalGoodsService || !CONFIG.aiEndpoint) return false;
+      this.service = await window.getDigitalGoodsService(PLAY_METHOD);
+      const ids = COURSES.map((c) => c.id);
+      const list = await this.service.getDetails(ids);
+      (list || []).forEach((d) => { if (d && d.itemId) this.details[d.itemId] = d; });
+      return true;
+    } catch (e) {
+      /* No Play, an older webview, or the product list is not published yet.
+         Silence is right: on the web this is the normal case. */
+      this.service = null;
+      return false;
+    }
   },
-  /* Play was silent, or the suite swapped the world under us. */
-  retry() { this.starting = null; this.ready = false; this.service = null; this.details = {}; return this.start(); },
 
-  detailsOf(key) { const it = playItem(key); return (it && it.sku && this.details[it.sku]) || null; },
-  /* Play's price in the buyer's own currency, or '' when Play has not said. */
-  priceOf(key) {
-    const d = this.detailsOf(key);
+  /* What Play says it costs, in the buyer's own currency, or '' to fall back to
+     the price written in the app. */
+  priceOf(id) {
+    const d = this.details[id];
     if (!d || !d.price) return '';
-    const loc = lang === 'vi' ? 'vi-VN' : lang === 'de' ? 'de-DE' : 'en-GB';
-    try { return new Intl.NumberFormat(loc, { style: 'currency', currency: d.price.currency, maximumFractionDigits: d.price.currency === 'VND' ? 0 : 2 }).format(Number(d.price.value)); }
+    try { return new Intl.NumberFormat(lang === 'vi' ? 'vi-VN' : (lang === 'de' ? 'de-DE' : 'en-GB'), { style: 'currency', currency: d.price.currency }).format(Number(d.price.value)); }
     catch (e) { return d.price.value + ' ' + d.price.currency; }
   },
-  /* ISO 8601 from Play (P6M, P1Y) → months; the catalogue's number when Play
-     has not said. */
-  periodMonths(key) {
-    const d = this.detailsOf(key), it = playItem(key);
-    const m = d && d.subscriptionPeriod && /^P(?:(\d+)Y)?(?:(\d+)M)?/.exec(d.subscriptionPeriod);
-    return m ? (Number(m[1] || 0) * 12 + Number(m[2] || 0)) : (it ? it.months : 0);
-  },
 
-  pendingList() { const a = store.get(PLAY_PENDING, []); return Array.isArray(a) ? a : []; },
-  /* A token that has not yet been accepted by the worker is never silently
-     dropped to make room. The cap is a last resort - the real way this list
-     shrinks is give-up, in restore(), which is never silent - so if it is
-     ever reached, the rows nearest giving up anyway (the most tries so far)
-     are the ones dropped, never a token still on its first try. */
-  remember(rec) {
-    const list = this.pendingList().filter((p) => p.token !== rec.token).concat([rec]);
-    /* Ascending, so the tail truncated away is the rows nearest giving up
-       (the most tries so far) - never a token still on its first try. Sorting
-       the other way and cutting the tail evicted exactly the freshest,
-       never-yet-verified purchases: the one thing this cap must not do. */
-    if (list.length > PLAY_PENDING_MAX) { list.sort((a, b) => (a.tries || 0) - (b.tries || 0)); list.length = PLAY_PENDING_MAX; }
-    store.set(PLAY_PENDING, list);
-  },
-  forget(token) { store.set(PLAY_PENDING, this.pendingList().filter((p) => p.token !== token)); },
-  /* One purchase, one id, for the life of that purchase. A row rediscovered
-     from Play's own list has no `at` - only a row this phone remembered
-     itself ever had one - so keying on `rec.at || Date.now()` gave every
-     give-up a brand new id, and an unresolvable wedding token raised a fresh
-     alert every eight restore cycles for ever. The token is what identifies
-     the purchase, but it must never be repeated in an alert, so it is folded
-     to a short number that cannot be read back. */
-  stuckKey(rec) {
-    const s = String((rec && rec.token) || '');
-    let h = 0;
-    for (let i = 0; i < s.length; i++) h = ((h << 5) - h + s.charCodeAt(i)) | 0;
-    return s ? (h >>> 0).toString(36) : 'x';
-  },
-  /* A row that could not be resolved after every bounded retry, said once,
-     without ever repeating the token it cost. */
-  flagStuck(rec) {
-    if (typeof ALERTS === 'undefined') return;
-    ALERTS.add({ id: 'billstuck-' + (rec.sku || 'x') + '-' + this.stuckKey(rec), k: 'app', t: T().buyFailed, b: '', href: '#/me' });
-  },
-  /* A wedding is paid for a room, but Play only ever knows the sku, never
-     which room - the room's id lives only in the wid this phone carried at
-     the moment of paying. If that is lost (a reinstall, cleared storage, the
-     pending list evicted), the room can still be found: it was made before it
-     was paid for, so the signed-in buyer is already a member of it. Guessed
-     only when there is exactly one unpaid room to guess - none or several and
-     this returns '', which is "do not guess", not "pick one". */
-  async resolveWeddingWid() {
-    if (!BE.db || !BE.user) return '';
-    try {
-      const s = await BE.db.collection('weddings').where('uids', 'array-contains', BE.user.uid).get();
-      const rooms = (s.docs || []).map((d) => Object.assign({ id: d.id }, d.data())).filter((w) => !w.paid);
-      return rooms.length === 1 ? rooms[0].id : '';
-    } catch (e) { return ''; }
-  },
-
-  /* Hand a token to the worker. Resolves { ok, opened, access, subs } or
-     { pending: true }; throws with the worker's word for anything refused. */
-  async verify(sku, token, extra) {
-    const idTok = await BE.token();
-    const r = await withTimeout(fetch(CONFIG.aiEndpoint.replace(/\/$/, '') + '/billing', {
-      method: 'POST', headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + idTok },
-      body: JSON.stringify(Object.assign({ sku: sku, token: token }, extra || {}))
-    }), 30000);
-    const j = await r.json().catch(() => ({}));
-    if (r.status === 202 && j.pending) { this.remember(Object.assign({ sku: sku, token: token, at: Date.now() }, extra || {})); return { pending: true }; }
-    if (!r.ok || !j.ok) throw new Error(j.error || ('billing ' + r.status));
-    this.forget(token);
-    return j;
-  },
-
-  /* Buy one thing. opt.oldKey: the plan being replaced (Pro 6 → Pro 12);
-     opt.wid: the wedding room this pays for. */
-  async buy(key, opt) {
-    opt = opt || {};
-    const it = playItem(key);
+  /* Buy one thing. Resolves with what was opened, or throws with a reason the
+     caller can show. */
+  async buy(id) {
     if (!this.can()) throw new Error('nostore');
     if (!BE.enabled || !BE.user) throw new Error('signin');
-    if (!it || !it.sku || !this.details[it.sku]) throw new Error('noproduct');
-    const data = { sku: it.sku };
-    if (opt.oldKey) {
-      /* The bridge replaces a subscription when told which one, by its sku and
-         its own token; the token is what listPurchases hands back. If the
-         account is currently holding the old plan but Play cannot produce its
-         token, buying a new one anyway would double-bill silently - a lapsed
-         or already-expired old plan is the only case safe to proceed as a
-         plain new purchase. */
-      const old = playItem(opt.oldKey), held = await this.service.listPurchases().catch(() => []);
-      const row = (held || []).filter((p) => old && p.itemId === old.sku)[0];
-      if (row) { data.oldSku = old.sku; data.purchaseToken = row.purchaseToken; }
-      else if ((SUBS.of(opt.oldKey) || {}).grant) throw new Error('oldmissing');
-    }
-    const req = new PaymentRequest([{ supportedMethods: PLAY_METHOD, data: data }],
-      { total: { label: L((courseOf(key) || { name: { vi: key, en: key } }).name), amount: { currency: 'VND', value: '0' } } });
+    if (!this.details[id]) throw new Error('noproduct');
+
+    const req = new PaymentRequest([{ supportedMethods: PLAY_METHOD, data: { sku: id } }],
+      { total: { label: L(courseById(id) ? courseById(id).name : id), amount: { currency: 'VND', value: '0' } } });
     const res = await req.show();
+    /* The token is the only thing worth carrying out of here. */
     const token = res && res.details && (res.details.purchaseToken || res.details.token);
     try { await res.complete(token ? 'success' : 'fail'); } catch (e) { /* already closed */ }
     if (!token) throw new Error('nopurchase');
-    const extra = opt.wid ? { wid: opt.wid } : undefined;
-    let out;
-    try { out = await this.verify(it.sku, token, extra); }
-    catch (e) {
-      /* Paid, and the worker could not be reached: remembered, and restore
-         will finish it. Never lost. */
-      if (/billing 5|Failed to fetch|timeout|NetworkError/i.test(String(e && e.message))) { this.remember(Object.assign({ sku: it.sku, token: token, at: Date.now() }, extra || {})); throw new Error('offline'); }
-      throw e;
-    }
-    if (out.pending) return out;
-    /* A wedding is used up the moment it is granted - one room, one payment -
-       so it is consumed rather than left for Play to keep handing back
-       forever, which is what would make a later restore() unable to tell a
-       done purchase from a stuck one. */
-    if (it.key === 'wedding' && this.service && typeof this.service.consume === 'function') { try { await this.service.consume(token); } catch (e) { /* best effort */ } }
-    /* The worker's own answer is written first and unconditionally - it is
-       the one place that knows what was just bought - then sync() reconciles
-       everything else Play or the account may also be holding. sync() never
-       throws, so nothing here is lost if that reconciliation cannot reach the
-       network right now. */
-    if (out.access) store.set('nabu-access', out.access);
-    if (out.subs) store.set('nabu-subs', out.subs);
-    await this.sync();
-    return { opened: out.opened || it.opens };
-  },
 
-  /* Everything Play says this Google account holds, plus everything this
-     phone is still waiting on, sent to the worker again. Safe to repeat: the
-     worker answers a repeat with what it already did. A row that keeps
-     failing for a reason that is not "already used" is retried a bounded
-     number of times and then given up on out loud - never forever, and never
-     silently. */
-  async restore() {
-    const out = { tried: 0, opened: 0, pending: 0, failed: 0 };
-    await this.start();
-    if (!this.can() || !BE.enabled || !BE.user) return out;
-    const list = (await this.service.listPurchases().catch(() => [])) || [];
-    /* Keyed by token so each purchase is looked at once. A pending record
-       already knows more than Play's bare list - its wid, its tries so far -
-       so it wins the merge rather than being shadowed by a fresh, empty-
-       looking row that happens to carry the same token. */
-    const byToken = {};
-    list.forEach((p) => { if (p.purchaseToken) byToken[p.purchaseToken] = { sku: p.itemId, token: p.purchaseToken }; });
-    this.pendingList().forEach((p) => { if (p.token) byToken[p.token] = Object.assign({}, byToken[p.token], p); });
-    for (const token of Object.keys(byToken)) {
-      const p = byToken[token], it = playItemBySku(p.sku);
-      if (!it) continue;
-      out.tried++;
-      let wid = p.wid;
-      try {
-        /* Play never carries the room's id, only the sku, so a wedding token
-           rediscovered with no wid has to be resolved before it is sent -
-           never guessed. */
-        if (it.key === 'wedding' && !wid) wid = await this.resolveWeddingWid();
-        if (it.key === 'wedding' && !wid) throw new Error('noroom');
-        const r = await this.verify(p.sku, token, wid ? { wid: wid } : undefined);
-        if (r.pending) { out.pending++; }
-        else {
-          out.opened++;
-          if (it.key === 'wedding' && this.service && typeof this.service.consume === 'function') { try { await this.service.consume(token); } catch (e2) { /* best effort */ } }
-        }
-      } catch (e) {
-        const msg = String(e && e.message);
-        if (msg === 'already used') { this.forget(token); continue; }
-        const tries = (p.tries || 0) + 1;
-        if (tries >= PLAY_GIVE_UP) { this.forget(token); out.failed++; this.flagStuck(p); }
-        else this.remember(Object.assign({}, p, { token: token, tries: tries }));
-      }
-    }
-    try { await BE.pullProfile(); } catch (e) { /* offline: the account is read next time */ }
-    return out;
-  },
-  /* Quietly, at the moments something may have changed. */
-  sync() { return this.restore().catch(() => null); }
-};
+    const idTok = await BE.token();
+    const r = await withTimeout(fetch(CONFIG.aiEndpoint.replace(/\/$/, '') + '/billing', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + idTok },
+      body: JSON.stringify({ sku: id, token: token })
+    }), 30000);
+    const j = await r.json().catch(() => ({}));
+    if (!r.ok || !j.ok) throw new Error(j.error || ('billing ' + r.status));
 
-/* Started once, early, so a course page can ask BILL.can() without waiting;
-   and once the account is known, whatever Play holds is reconciled. */
-if (typeof window !== 'undefined') {
-  setTimeout(() => { try { BILL.start().then(() => { if (BILL.can() && typeof BE !== 'undefined' && BE.user) BILL.sync(); }); } catch (e) { /* never block the app */ } }, 1200);
-}
-
-/* ======================= the store inside the Android app =======================
-   #/unlock, when the app is the installed one. One row per thing Play sells,
-   with Play's own price, and a button that opens Play's sheet. Nothing here
-   asks for a transfer, an order or a code: inside the app, Play is the shop.
-   The website's #/unlock (learn.js) is untouched. */
-
-/* Google's grace period and paused states both read as "there is a payment
-   problem to sort out" (stProblem); on hold is said in Play's own words
-   (stHeld), which is a different sentence from a card being declined. */
-const SUB_WORDS = {
-  SUBSCRIPTION_STATE_ACTIVE: 'active', SUBSCRIPTION_STATE_CANCELED: 'ending', SUBSCRIPTION_STATE_IN_GRACE_PERIOD: 'problem',
-  SUBSCRIPTION_STATE_ON_HOLD: 'held', SUBSCRIPTION_STATE_PAUSED: 'problem', SUBSCRIPTION_STATE_EXPIRED: 'expired'
-};
-/* One sentence about a held subscription, from Google's state. */
-function subStateWord(row) {
-  const S = T(), k = SUB_WORDS[row && row.state] || 'expired', d = row && row.until ? fmtDate(row.until) : '';
-  if (k === 'active') return (row.autoRenew ? S.stRenews(d) : S.stEndsOn(d));
-  if (k === 'ending') return S.stEndsOn(d);
-  if (k === 'held') return S.stHeld;
-  if (k === 'problem') return S.stProblem;
-  return S.stExpired;
-}
-const manageURL = (key) => 'https://play.google.com/store/account/subscriptions?sku=' + encodeURIComponent((playItem(key) || {}).sku || '') + '&package=app.nabutarot.twa';
-const buyButtonHTML = (key, label, opt) => '<button type="button" class="btn primary block" data-buy="' + key + '"' + (opt && opt.oldKey ? ' data-old="' + opt.oldKey + '"' : '') + (opt && opt.wid ? ' data-wid="' + esc(opt.wid) + '"' : '') + '>' + esc(label || T().stBuy) + '</button>';
-const storeNotReadyHTML = () => '<div class="card"><p class="hint">' + esc(T().stNotReady) + '</p><button type="button" class="btn block" data-retry>' + esc(T().stRetry) + '</button></div>';
-
-function storeRowHTML(item) {
-  /* priceText, not L alone: a sentence naming an amount carries it as a token
-     ({save}, {wedfee}) because the saving is a different number in every
-     currency. Without this the reader is shown the token itself - "{save} less
-     than two half years" - which is how it reached a phone in the store. Every
-     other screen that prints c.sum already does this. */
-  const S = T(), c = courseOf(item.key), name = c ? L(c.name) : item.key, sum = c ? priceText(L(c.sum || c.blurb)) : '';
-  const price = BILL.priceOf(item.key), months = BILL.periodMonths(item.key);
-  const held = ACCESS.has(item.key) || (item.opens.length && item.opens.every((k) => ACCESS.has(k)));
-  const row = item.kind === 'subs' ? SUBS.of(item.key) : null;
-  let foot;
-  if (item.kind === 'subs') {
-    /* plus, pro6 and pro are one ladder: Pro opens everything Plus opens, so
-       holding two of them at once is never anything but a double charge. The
-       plan being replaced used to be looked for between pro6 and pro alone,
-       so somebody holding Plus who subscribed to Pro was sold a SECOND
-       subscription running beside the first - both renewing, for ever, with
-       nothing on the screen saying so. It is whichever rung is actually held
-       now. `manifest` is not on this ladder and is never replaced. */
-    const TIER = ['plus', 'pro6', 'pro'];
-    const proHeld = ACCESS.has('pro'), isPlus = item.key === 'plus';
-    const other = TIER.indexOf(item.key) > -1
-      ? (TIER.filter((k) => k !== item.key && (SUBS.of(k) || {}).grant)[0] || '')
-      : '';
-    if (row && row.grant) foot = '<p class="hint st">✓ ' + esc(subStateWord(row)) + '</p><a class="btn block" href="' + manageURL(item.key) + '" target="_blank" rel="noopener">' + esc(S.stManage) + '</a>';
-    else if (isPlus && proHeld) foot = '<p class="hint st">✓ ' + esc(S.stIncludedPro) + '</p>';
-    else if (other && (SUBS.of(other) || {}).grant) foot = buyButtonHTML(item.key, S.stSwitchTo(name), { oldKey: other });
-    else foot = (row && SUB_WORDS[row.state] === 'problem' ? '<p class="hint err">' + esc(S.stProblem) + '</p><a class="btn block" href="' + manageURL(item.key) + '" target="_blank" rel="noopener">' + esc(S.stManage) + '</a>' : '')
-      + '<p class="hint">' + esc(S.stEveryMonths(months)) + '</p>' + buyButtonHTML(item.key, S.stSubscribe) + '<p class="hint">' + esc(S.stCancelMeaning) + '</p>';
-  } else {
-    foot = held ? '<p class="hint st">✓ ' + esc(S.stActive) + (ACCESS.get()[item.key] ? ' · ' + esc(S.unlockOpenUntil(fmtDate(ACCESS.get()[item.key]))) : '') + '</p>'
-      : '<p class="hint">' + esc(item.months + ' ' + S.months6) + '</p>' + buyButtonHTML(item.key);
+    /* The worker has already written it on the account. Pulling it down is what
+       makes it true on this phone, rather than writing it here and hoping. */
+    try { await BE.pullProfile(); } catch (e) { ACCESS.grant(j.opened || [id], (j.access || {})[id]); }
+    return j.opened || [id];
   }
-  return '<div class="unl store-row' + (held || (row && row.grant) ? ' on' : '') + '" data-key="' + item.key + '"><div class="unl-h"><b>' + esc(name) + '</b>' + (price ? '<span class="pr">' + esc(price) + (item.kind === 'subs' ? ' <small>/ ' + months + ' ' + esc(S.months6) + '</small>' : '') + '</span>' : '') + '</div>'
-    + (sum ? '<p class="hint">' + esc(sum) + '</p>' : '') + '<div class="unl-f">' + foot + '<p class="hint st" data-st="' + item.key + '"></p></div></div>';
-}
+};
 
-function bindStore(root, redraw) {
-  const S = T();
-  $$('[data-buy]', root).forEach((b) => b.addEventListener('click', async () => {
-    const key = b.getAttribute('data-buy'), st = $('[data-st="' + key + '"]', root) || $('#bstatus', root);
-    if (!(BE.enabled && BE.user)) { toast(S.stNeedIn); location.hash = signinHref(location.hash.slice(1)); return; }
-    b.disabled = true; if (st) { st.className = 'hint st'; st.textContent = S.buyWorking; }
-    try {
-      const opt = {}; if (b.getAttribute('data-old')) opt.oldKey = b.getAttribute('data-old'); if (b.getAttribute('data-wid')) opt.wid = b.getAttribute('data-wid');
-      const r = await BILL.buy(key, opt);
-      if (r.pending) { if (st) st.textContent = S.stPending; b.disabled = false; return; }
-      toast(S.unlocked); if (redraw) redraw(); else route();
-    } catch (e) {
-      b.disabled = false; const why = String((e && e.message) || '');
-      /* 'offline' is not a failure and must never be said as one. It is
-         thrown only after res.complete('success') and a real purchaseToken:
-         Play has charged, the token is on the pending list, and restore()
-         finishes it on the next app open. Saying "Mua chưa thành công" there
-         is the app contradicting the receipt Google has already emailed, and
-         it is what a buyer saw on 2026-09-09 for a subscription they really
-         did hold. It is the pending wording, and not in the error colour. */
-      const paidNotConfirmed = why === 'offline';
-      if (st) {
-        st.className = 'hint st' + (paidNotConfirmed ? '' : ' err');
-        st.textContent = why === 'signin' ? S.stNeedIn
-          : /Abort|cancel/i.test((e && e.name) + why) ? ''
-          : paidNotConfirmed ? S.stPending
-          : why === 'already used' ? S.buyAlready
-          : why === 'nostore' ? S.stNotReady
-          : S.stFailed;
-      }
-    }
-  }));
-  $$('[data-retry]', root).forEach((b) => b.addEventListener('click', async () => { b.disabled = true; await BILL.retry(); if (redraw) redraw(); else route(); }));
-  const rs = $('#restore', root);
-  if (rs) rs.addEventListener('click', async () => {
-    const st = $('#rstatus', root); rs.disabled = true; if (st) { st.className = 'hint'; st.textContent = S.stRestoring; }
-    const out = await BILL.restore(); rs.disabled = false;
-    /* The answer is written AFTER the redraw, not before it. redraw() rebuilds
-       the whole card, so the #rstatus this handler started with is gone by the
-       time anybody could read it: the button appeared to do nothing at all,
-       which is what it looked like to the owner. A row that could not be
-       resolved is also said out loud now - counting only `opened` and
-       `pending` told somebody whose restore had just failed that there was
-       nothing to restore. */
-    const word = out.failed ? S.buyFailed
-      : (out.opened || out.pending) ? S.stRestored(out.opened + out.pending)
-      : S.stRestoreNone;
-    if (redraw) redraw();
-    const after = $('#rstatus', root);
-    if (after) { after.className = out.failed ? 'hint err' : 'hint'; after.textContent = word; }
-  });
-}
+const courseById = (id) => COURSES.filter((c) => c.id === id)[0] || null;
 
-function renderStore(params) {
-  const S = T(), m = $('#main');
-  const draw = async () => {
-    await BILL.start();
-    const group = (keys) => '<div class="unlist">' + PLAY_ITEMS.filter((i) => keys.indexOf(i.key) > -1 && i.sku).map(storeRowHTML).join('') + '</div>';
-    const from = (params && params.from) || '';
-    const courses = '<div class="sec"><h2 style="margin-bottom:8px">' + esc(S.stCourses) + '</h2>' + group(['tarot', 'lenormand', 'playing']) + '</div>';
-    const plans = '<div class="sec"><h2 style="margin-bottom:8px">' + esc(S.stPlans) + '</h2>' + group(['plus', 'pro6', 'pro', 'manifest']) + '</div>';
-    m.innerHTML = '<div class="store"><div class="eyebrow">' + esc(CONFIG.brand) + '</div><h1 style="margin-bottom:6px">' + esc(S.stTitle) + '</h1><p class="muted">' + esc(S.stIntro) + '</p>'
-      + (BILL.can() ? (from === 'app' ? plans + courses : courses + plans) : storeNotReadyHTML())
-      + '<div class="card"><button type="button" class="btn block" id="restore">' + esc(S.stRestore) + '</button><p class="hint" id="rstatus"></p></div></div>';
-    bindStore(m, draw);
-  };
-  draw();
+/* Started once, early, so a course page can ask BILL.can() without waiting. */
+if (typeof window !== 'undefined') {
+  setTimeout(() => { try { BILL.start(); } catch (e) { /* never block the app */ } }, 1200);
 }
-
-/* The Me tab: what this account holds, said the way Play says it. */
-function myPlansHTML() {
-  const S = T();
-  const rows = PLAY_ITEMS.filter((i) => i.sku && (i.kind === 'subs' ? SUBS.of(i.key) : ACCESS.get()[i.key]));
-  return '<div class="card myplans"><h3 style="margin-bottom:8px">' + esc(S.myPlans) + '</h3>'
-    + (rows.length ? rows.map((i) => { const c = courseOf(i.key), row = i.kind === 'subs' ? SUBS.of(i.key) : null;
-        return '<div class="course"><span class="nm">' + esc(c ? L(c.name) : i.key) + '</span><span class="pr faint">' + esc(row ? subStateWord(row) : S.unlockOpenUntil(fmtDate(ACCESS.get()[i.key]))) + '</span></div>'
-          + (row ? '<p class="hint"><a href="' + manageURL(i.key) + '" target="_blank" rel="noopener">' + esc(S.stManage) + ' →</a></p>' : ''); }).join('')
-      : '<p class="hint">' + esc(S.unlockEmpty) + '</p>')
-    + '<button type="button" class="btn block" id="restore" style="margin-top:8px">' + esc(S.stRestore) + '</button><p class="hint" id="rstatus"></p>'
-    + '<p style="margin-top:8px"><a class="backlink" href="#/unlock?from=app">' + esc(S.stTitle) + ' →</a></p></div>';
-}
-const bindMyPlans = (root, redraw) => bindStore(root, redraw);
 
 /* ======================= angel numbers (free) =======================
    The numbers people keep seeing: on a clock, on a receipt, on a number plate.
@@ -24780,28 +24282,28 @@ const CARD_BACKS = {
 
 const LOOK_SETS = {
   cardback: [
-    { id: 'moon', pro: false, name: { vi: 'Trăng vàng', en: 'Gold crescent', de: 'Gold­mond' }, card: ['#3D2A6E', '#4A3480'], gold: '#E5BE5E' },
-    { id: 'stars', pro: true, name: { vi: 'Trời sao', en: 'Night sky', de: 'Ster­nen­him­mel' }, card: ['#1E2A57', '#2C3C74'], gold: '#FFE9A8' },
-    { id: 'bloom', pro: true, name: { vi: 'Hoa gấm', en: 'Damask bloom', de: 'Damast­blüte' }, card: ['#5B2340', '#7A3055'], gold: '#F6BBCB' },
+    { id: 'moon', pro: false, name: { vi: 'Trăng vàng', en: 'Gold crescent', de: 'Goldmond' }, card: ['#3D2A6E', '#4A3480'], gold: '#E5BE5E' },
+    { id: 'stars', pro: true, name: { vi: 'Trời sao', en: 'Night sky', de: 'Sternenhimmel' }, card: ['#1E2A57', '#2C3C74'], gold: '#FFE9A8' },
+    { id: 'bloom', pro: true, name: { vi: 'Hoa gấm', en: 'Damask bloom', de: 'Damastblüte' }, card: ['#5B2340', '#7A3055'], gold: '#F6BBCB' },
     { id: 'eye', pro: true, name: { vi: 'Mắt huyền', en: 'The seeing eye', de: 'Das sehende Auge' }, card: ['#173F3A', '#215750'], gold: '#9FE3C9' }
   ],
   tree: [
-    { id: 'sakura', pro: false, name: { vi: 'Anh đào', en: 'Cherry blossom', de: 'Kirsch­blüten' } },
-    { id: 'night', pro: true, name: { vi: 'Đêm đom đóm', en: 'Firefly night', de: 'Glüh­würm­chen­nacht' } },
-    { id: 'galaxy', pro: true, name: { vi: 'Cây ngân hà', en: 'Galaxy tree', de: 'Ga­la­xien­baum' } },
-    { id: 'butterfly', pro: true, name: { vi: 'Vườn bướm', en: 'Butterfly garden', de: 'Schmet­ter­lings­gar­ten' } }
+    { id: 'sakura', pro: false, name: { vi: 'Anh đào', en: 'Cherry blossom', de: 'Kirschblüten' } },
+    { id: 'night', pro: true, name: { vi: 'Đêm đom đóm', en: 'Firefly night', de: 'Glühwürmchennacht' } },
+    { id: 'galaxy', pro: true, name: { vi: 'Cây ngân hà', en: 'Galaxy tree', de: 'Galaxienbaum' } },
+    { id: 'butterfly', pro: true, name: { vi: 'Vườn bướm', en: 'Butterfly garden', de: 'Schmetterlingsgarten' } }
   ],
   coin: [
     { id: 'gold', pro: false, name: { vi: 'Vàng', en: 'Gold', de: 'Gold' }, face: '#E5BE5E', rim: '#B9913B', ink: '#5A3F18' },
-    { id: 'moonsilver', pro: true, name: { vi: 'Bạc trăng', en: 'Moon silver', de: 'Mond­silber' }, face: '#DCE3EF', rim: '#94A3BE', ink: '#2C3A52' },
-    { id: 'rose', pro: true, name: { vi: 'Vàng hồng', en: 'Rose gold', de: 'Rosé­gold' }, face: '#F0C4C2', rim: '#C98A85', ink: '#63302C' },
-    { id: 'obsidian', pro: true, name: { vi: 'Hắc Ngọc', en: 'Obsidian', de: 'Obsi­dian' }, face: '#2A2340', rim: '#E5BE5E', ink: '#F3E4B8' }
+    { id: 'moonsilver', pro: true, name: { vi: 'Bạc trăng', en: 'Moon silver', de: 'Mondsilber' }, face: '#DCE3EF', rim: '#94A3BE', ink: '#2C3A52' },
+    { id: 'rose', pro: true, name: { vi: 'Vàng hồng', en: 'Rose gold', de: 'Roségold' }, face: '#F0C4C2', rim: '#C98A85', ink: '#63302C' },
+    { id: 'obsidian', pro: true, name: { vi: 'Hắc Ngọc', en: 'Obsidian', de: 'Obsidian' }, face: '#2A2340', rim: '#E5BE5E', ink: '#F3E4B8' }
   ],
   diary: [
     { id: 'plain', pro: false, name: { vi: 'Giấy trơn', en: 'Plain paper', de: 'Schlichtes Papier' } },
-    { id: 'ruled', pro: true, name: { vi: 'Giấy kẻ cũ', en: 'Old ruled paper', de: 'Altes Linien­papier' } },
-    { id: 'floral', pro: true, name: { vi: 'Viền hoa', en: 'Floral border', de: 'Blumen­rand' } },
-    { id: 'starry', pro: true, name: { vi: 'Đêm sao', en: 'Starry night', de: 'Sternen­nacht' } }
+    { id: 'ruled', pro: true, name: { vi: 'Giấy kẻ cũ', en: 'Old ruled paper', de: 'Altes Linienpapier' } },
+    { id: 'floral', pro: true, name: { vi: 'Viền hoa', en: 'Floral border', de: 'Blumenrand' } },
+    { id: 'starry', pro: true, name: { vi: 'Đêm sao', en: 'Starry night', de: 'Sternennacht' } }
   ]
 };
 
@@ -24978,13 +24480,12 @@ ROUTES.looks = { nav: '', render: renderLooks };
 
 /* ======================= levels, coins and vouchers =======================
    Caring for a companion earns it experience, and experience earns the person
-   something real: Nabu coins, which come off the price of a reading, and a
-   voucher that grows with the highest level reached.
+   something real: Nabu coins, which come off the price of anything sold here,
+   and a voucher that grows with the highest level reached.
 
    One coin is worth one đồng. Coins are earned slowly and never expire, so
-   they can be saved up or spent on a single reading - a reading is the only
-   thing they come off; using them is always a choice, offered at the moment
-   of ordering and never automatic.
+   they can be saved for a course or spent on a single reading; using them is
+   always a choice, offered at the moment of ordering and never automatic.
 
    Everything is kept on the device. Nothing is deducted until an order is
    actually sent, and coins put into an order can be taken back if the order
@@ -25010,11 +24511,13 @@ function petStep(xp) {
 }
 
 /* The vouchers the levels unlock, kept in order. */
-/* Two tiers, for readings. There used to be two more held back for Pro; a
-   subscription is not a discount card, so they went. */
+/* The last two are held for Plus: reaching level seven without it still
+   counts, but the voucher stays at ten per cent until Plus is on. */
 const VOUCHERS = [
   { lv: 3, pct: 5 },
-  { lv: 5, pct: 10 }
+  { lv: 5, pct: 10 },
+  { lv: 7, pct: 15, pro: true },
+  { lv: 10, pct: 20, pro: true }
 ];
 /* What a level-up pays into the purse. */
 const levelCoins = (lv) => lv * 200;
@@ -25044,8 +24547,8 @@ const BANK = {
      voucher is based on. It never goes down, even if a companion is let go. */
   best() { return Math.max(1, Number(store.get('nabu-luck-best', 1)) || 1); },
   mark(lv) { if (lv > this.best()) store.set('nabu-luck-best', lv); },
-  tier() { let out = null; VOUCHERS.forEach((v) => { if (BANK.best() >= v.lv) out = v; }); return out; },
-  next() { let out = null; VOUCHERS.slice().reverse().forEach((v) => { if (BANK.best() < v.lv) out = v; }); return out; },
+  tier() { let out = null; VOUCHERS.forEach((v) => { if (BANK.best() >= v.lv && (!v.pro || proOn())) out = v; }); return out; },
+  next() { let out = null; VOUCHERS.slice().reverse().forEach((v) => { if (BANK.best() < v.lv || (v.pro && !proOn())) out = v; }); return out; },
   /* Coins put into an order that has been sent but not yet answered. */
   holds() { const a = store.get('nabu-luck-hold', []); return Array.isArray(a) ? a : []; },
   hold(rec) { const a = this.holds(); a.unshift(rec); store.set('nabu-luck-hold', a.slice(0, 12)); },
@@ -25134,10 +24637,10 @@ function renderRewards() {
     m.innerHTML = '<div class="eyebrow">' + esc(CONFIG.brand) + '</div><h1 style="margin-bottom:6px">🪙 ' + esc(S.luckTitle) + '</h1>'
       + '<p class="muted">' + esc(S.luckIntro) + '</p>'
       + '<div class="card coinbox"><span class="n">' + fmtNum(BANK.coins()) + '</span><span class="u">' + esc(S.luckCoins) + '</span>'
-      + '<p class="hint">' + esc(S.luckWorth) + '</p></div>'
+      + '<p class="hint">' + esc(S.luckWorth(fmtPrice(BANK.coins()))) + '</p></div>'
       + '<div class="card"><h3 style="margin-bottom:8px">🎟️ ' + esc(S.luckVoucher) + '</h3>'
       + '<p class="hint" style="margin-bottom:10px">' + esc(S.luckVoucherHint) + '</p>'
-      + '<ul class="vlist">' + VOUCHERS.map((v) => { const open = best >= v.lv; return '<li class="' + (open ? 'on' : '') + '"><span>' + esc(S.luckAtLevel(v.lv)) + '</span><b>' + (open ? '✓ ' : '🔒 ') + '-' + v.pct + '%</b></li>'; }).join('') + '</ul>'
+      + '<ul class="vlist">' + VOUCHERS.map((v) => { const open = best >= v.lv && (!v.pro || proOn()); return '<li class="' + (open ? 'on' : '') + '"><span>' + esc(S.luckAtLevel(v.lv)) + (v.pro ? ' · ✨ ' + esc(S.proName) : '') + '</span><b>' + (open ? '✓ ' : '🔒 ') + '-' + v.pct + '%</b></li>'; }).join('') + '</ul>'
       + (next ? '<p class="hint">' + esc(S.luckNextTier(next.lv, next.pct)) + '</p>' : '<p class="hint ok">' + esc(S.luckTopTier) + '</p>')
       + '</div>'
       + '<div class="card"><h3 style="margin-bottom:8px">' + esc(S.luckEarnTitle) + '</h3><ul class="carelist">'
@@ -26380,7 +25883,7 @@ function renderPet(want) {
   const nextReward = (lv) => {
     if (lv >= PET_MAXLV) return S.petTopLevel;
     const to = lv + 1, tier = VOUCHERS.filter((v) => v.lv === to)[0];
-    return S.petNextPays(to, fmtNum(levelCoins(to))) + (tier ? ' · ' + S.luckVoucherOf(tier.pct) : '');
+    return S.petNextPays(to, fmtNum(levelCoins(to))) + (tier ? ' · ' + S.luckVoucherOf(tier.pct) + (tier.pro ? ' ✨' : '') : '');
   };
 
   const petCardHTML = (p) => {
@@ -27100,8 +26603,8 @@ function priceCardHTML(c) {
   const label = c.kind === 'course' ? (S.cats[c.id] || L(c.name)) : S.priceOpen;
   return '<div class="svc ' + (c.kind === 'course' ? 'lav' : 'gold') + '">'
     + '<div class="t"><span class="ic">' + c.icon + '</span><div><b>' + esc(L(c.name)) + '</b>'
-    + '<div class="tag">' + esc(priceText(L(c.sum))) + '</div></div></div>'
-    + (isTWA() ? '' : '<div class="pk"><div class="pkg"><span>' + esc(termText(c)) + '</span><b>' + priceHTML(c.price, 'unlock', c.id) + '</b></div></div>')
+    + '<div class="tag">' + esc(L(c.sum)) + '</div></div></div>'
+    + (isTWA() ? '' : '<div class="pk"><div class="pkg"><span>' + c.months + ' ' + esc(S.months6) + '</span><b>' + priceHTML(c.price, 'unlock', c.id) + '</b></div></div>')
     + '<a class="btn sm block" href="' + esc(c.to) + '" style="margin-top:8px">' + esc(label) + ' \u2192</a></div>';
 }
 
@@ -27607,15 +27110,13 @@ function meSect(id, icon, title, body, openByDefault, force) {
        goods outside Play whatever the truth of it. The prices were already kept
        out of the app for that reason; the rest of the row belongs with them.
        The box for entering a code stays, so an unlock still works here. */
-    let own = isTWA()
-      ? myPlansHTML()
-      : '<div class="card"><h3 style="margin-bottom:8px">' + esc(S.myCourses) + '</h3>' + COURSES.map((c) => { const a = ACCESS.isAdmin() ? '9999-12-31' : ACCESS.get()[c.id]; const on = ACCESS.has(c.id);
+    let own = '<div class="card"><h3 style="margin-bottom:8px">' + esc(S.myCourses) + '</h3>' + (isTWA() ? '' : COURSES.map((c) => { const a = ACCESS.isAdmin() ? '9999-12-31' : ACCESS.get()[c.id]; const on = ACCESS.has(c.id);
       const ic = a ? (on ? '✓' : '⌛') : '🔒';
       // The tick and the hourglass already say open or expired, so the column
       // only carries the date. Spelling it out pushed long course names onto a
       // second line and left the column ragged.
-      const right = a ? esc(a.slice(8, 10) + '/' + a.slice(5, 7) + '/' + a.slice(0, 4)) : priceHTML(c.price, 'unlock', c.id);
-      return '<div class="course"><span class="nm">' + esc(L(c.name)) + '</span><span class="ic">' + ic + '</span><span class="pr faint">' + right + '</span></div>'; }).join('')
+      const right = a ? esc(a.slice(8, 10) + '/' + a.slice(5, 7) + '/' + a.slice(0, 4)) : (isTWA() ? '' : priceHTML(c.price, 'unlock', c.id));
+      return '<div class="course"><span class="nm">' + esc(L(c.name)) + '</span><span class="ic">' + ic + '</span><span class="pr faint">' + right + '</span></div>'; }).join(''))
       + '<label class="f" for="mcode">' + esc(S.enterCode) + '</label><div class="row nw"><input id="mcode" placeholder="NABU-T-…" autocapitalize="characters"><button class="btn" id="munlock">' + esc(S.unlock) + '</button></div><p class="hint" id="mcstatus"></p></div>';
     /* A block nobody can undo is a trap rather than a tool: somebody blocks in
        a bad moment and has no way back. Shown only once there is somebody on
@@ -27648,7 +27149,6 @@ function meSect(id, icon, title, body, openByDefault, force) {
       store.set('nabu-me-open', m);
     }));
     bindAuth(body); bindAI(body); bindNotify(body);
-    if (isTWA()) bindMyPlans(body, draw);
     $('#chkupd').addEventListener('click', async () => {
       toast(S.updating);
       try { if ('serviceWorker' in navigator) { const reg = await navigator.serviceWorker.getRegistration(); if (reg) await reg.update(); } } catch (e) { /* offline */ }
@@ -27663,8 +27163,7 @@ function meSect(id, icon, title, body, openByDefault, force) {
          make an account. */
       else if (params.next === 'wedding') { const w = store.get('nabu-wed-next', ''); location.hash = w ? '#/wedding/' + w : '#/wedding'; }
     });
-    const mu = $('#munlock');
-    if (mu) mu.addEventListener('click', async () => {
+    $('#munlock').addEventListener('click', async () => {
       const st = $('#mcstatus'), btn = $('#munlock');
       st.textContent = S.codeChecking; st.className = 'hint'; btn.disabled = true;
       const r = await redeemCode($('#mcode').value).catch((e) => e);
@@ -27703,25 +27202,15 @@ function meSect(id, icon, title, body, openByDefault, force) {
       $('#msend').addEventListener('click', async () => { const t = $('#mtext').value.trim(); if (!t) return; $('#mtext').value = ''; try { await sendUser(t); } catch (e) { toast(e.message); } });
       bindChatBar(body, sendUser); }
       meUnsubs.push(BE.watchMyBookings((list) => {
-        /* This is a live listener, so the snapshot can land after the screen
-           that made it has gone - the reader tapped away while it was still
-           in flight - and then `#mybk` is null. Writing to it threw, and
-           because that throw was the first line, everything below it was lost
-           too: the reminders were never set. So the screen is filled only
-           when it is still there, and the reminders are set either way. They
-           are timers and a stored row, not part of any screen. */
-        const box = $('#mybk');
-        if (box) {
-          box.innerHTML = list.length ? list.map((b) => bookingRow(b, false)).join('') : '<p class="hint">' + esc(S.noBookings) + '</p>';
-          $$('[data-ics]', body).forEach((x) => x.addEventListener('click', () => { const bk = list.filter((y) => y.id === x.getAttribute('data-ics'))[0]; if (bk) addToCalendar(bk); }));
-          /* Nabu can call one off from here too, behind a question. */
-          $$('[data-bkoff]', body).forEach((x) => x.addEventListener('click', async () => {
-            const bk = list.filter((y) => y.id === x.getAttribute('data-bkoff'))[0];
-            if (!bk || !confirm(S.adminCancelAsk)) return;
-            try { await BE.setBookingStatus(bk, 'cancelled'); toast(S.adminCancelDone); } catch (e) { toast(e.message); }
-          }));
-          $$('[data-cancel]', body).forEach((x) => x.addEventListener('click', async () => { const bk = list.filter((y) => y.id === x.getAttribute('data-cancel'))[0]; if (!bk || !confirm(S.confirmCancel)) return; try { await BE.requestCancel(bk); toast(S.cancelSent); } catch (e) { toast(e.message); } }));
-        }
+        $('#mybk').innerHTML = list.length ? list.map((b) => bookingRow(b, false)).join('') : '<p class="hint">' + esc(S.noBookings) + '</p>';
+        $$('[data-ics]', body).forEach((x) => x.addEventListener('click', () => { const bk = list.filter((y) => y.id === x.getAttribute('data-ics'))[0]; if (bk) addToCalendar(bk); }));
+        /* Nabu can call one off from here too, behind a question. */
+        $$('[data-bkoff]', body).forEach((x) => x.addEventListener('click', async () => {
+          const bk = list.filter((y) => y.id === x.getAttribute('data-bkoff'))[0];
+          if (!bk || !confirm(S.adminCancelAsk)) return;
+          try { await BE.setBookingStatus(bk, 'cancelled'); toast(S.adminCancelDone); } catch (e) { toast(e.message); }
+        }));
+        $$('[data-cancel]', body).forEach((x) => x.addEventListener('click', async () => { const bk = list.filter((y) => y.id === x.getAttribute('data-cancel'))[0]; if (!bk || !confirm(S.confirmCancel)) return; try { await BE.requestCancel(bk); toast(S.cancelSent); } catch (e) { toast(e.message); } }));
         scheduleReminders(list);
       }));
     }
@@ -28053,27 +27542,8 @@ async function loadActs() {
   ACTS.stock = {};
   ((s.data && s.data.items) || []).forEach((a) => { ACTS.stock[a.id] = true; if (!have[a.id] && hidden.indexOf(a.id) < 0) items.push(a); });
   ACTS.hidden = hidden.slice();
-  /* An activity saved before a language existed has no text in it. Fill those
-     gaps from the files that ship with the app, so switching language is all a
-     visitor has to do. A failure here is never worth an empty screen. */
-  if (actsNeedDe(items)) {
-    try { fillActsDe(items, await germanFromFiles()); } catch (e) { /* the files can wait */ }
-  }
   ACTS.items = items; ACTS.loaded = true;
   return ACTS.items;
-}
-/* True when any piece of text on any activity is missing its German. Cheap,
-   and it keeps the file fetch to the loads that can actually use it. */
-function actsNeedDe(items) {
-  let need = false;
-  const walk = (o) => {
-    if (need || !o || typeof o !== 'object') return;
-    if (Array.isArray(o)) { o.forEach(walk); return; }
-    if (typeof o.vi === 'string' && typeof o.en === 'string') { if (!o.de) need = true; return; }
-    Object.keys(o).forEach((k) => walk(o[k]));
-  };
-  walk(items);
-  return need;
 }
 const actsDoc = (items) => { const doc = { items: items }; if (ACTS.hidden && ACTS.hidden.length) doc.hidden = ACTS.hidden; return doc; };
 /* The slips inside the jar: one per wish, stacked from the bottom up in a
@@ -28413,16 +27883,13 @@ function luckPanelHTML(kind) {
   if (luckUnlimited(kind)) return '<p class="hint">✓ ' + esc(S.luckOpen) + '</p>';
   if (!luckSpent(kind)) return '<p class="hint">' + esc(S.luckFree) + '</p>';
   return '<div class="card luckbox"><p class="lead">' + esc(S.luckSpent(fmtDate(luckNext(kind)))) + '</p>'
-    + '<p class="hint" style="margin-bottom:10px">' + esc(isTWA() ? S.stPlusPitch : S.luckOffer) + '</p>'
-    + (isTWA()
-      ? (BILL.can() ? buyButtonHTML('plus', S.stSubscribe) + '<p class="hint st" data-st="plus"></p>' : storeNotReadyHTML())
-      : '<div class="row nw"><input id="luckcode" placeholder="' + esc(S.luckCodePh) + '" autocapitalize="characters"><button class="btn" id="luckgo">' + esc(S.unlock) + '</button></div><p class="hint" id="luckstatus"></p>')
+    + '<p class="hint" style="margin-bottom:10px">' + esc(S.luckOffer) + '</p>'
+    + '<div class="row nw"><input id="luckcode" placeholder="' + esc(S.luckCodePh) + '" autocapitalize="characters"><button class="btn" id="luckgo">' + esc(S.unlock) + '</button></div>'
+    + '<p class="hint" id="luckstatus"></p>'
     + '</div>';
 }
 function bindLuck(root, redraw) {
-  const S = T();
-  bindStore(root, redraw);
-  const go = $('#luckgo', root);
+  const S = T(), go = $('#luckgo', root);
   if (!go) return;
   go.addEventListener('click', async () => {
     const st = $('#luckstatus', root);
@@ -28730,14 +28197,6 @@ function coinFaceFor(metal, side) {
     + '</svg>';
 }
 
-/* ---- the coin answers a question, so there has to be one ----
-   A yes or a no means nothing on its own, and a turn spent on nothing is a
-   turn wasted: the free flip is one every three days. So the button is dead
-   until something is written in the box, and .btn[disabled] already draws it
-   at half strength and refuses the press. The box writes to the store on every
-   keystroke, so the store is what the button is built from. */
-const askedQ = () => String(store.get('nabu-coinq', '') || '').trim().length > 0;
-
 function renderCoin() {
   const S = T(), m = $('#main');
   let side = '';
@@ -28746,28 +28205,19 @@ function renderCoin() {
       + '<div class="card coinwrap"><label class="f" for="coinq">' + esc(S.coinQ) + '</label><input id="coinq" placeholder="' + esc(S.coinQPh) + '" value="' + esc(store.get('nabu-coinq', '') || '') + '">'
       + '<div class="coin" id="coin">' + coinFaceSVG(side) + '</div>'
       + '<div class="coinres" id="coinres" aria-live="polite">' + (side ? esc(side === 'yes' ? S.coinYes : S.coinNo) : '') + '</div>'
-      + (signedIn() ? (luckSpent('coin') ? '' : '<button class="btn primary block" id="coinflip"' + (askedQ() ? '' : ' disabled') + '>' + esc(side ? S.coinAgain : S.coinFlip) + '</button>') : needAccountHTML(S.needInLuck)) + '</div>'
+      + (signedIn() ? (luckSpent('coin') ? '' : '<button class="btn primary block" id="coinflip">' + esc(side ? S.coinAgain : S.coinFlip) + '</button>') : needAccountHTML(S.needInLuck)) + '</div>'
       + lookStripHTML('coin')
       + '<div class="luckline">' + luckPanelHTML('coin') + '</div>'
       + '<p class="hint">' + esc(S.coinNote) + '</p>'
       + '<p style="margin-top:14px"><a class="btn block" href="#/unlock?from=app">💳 ' + esc(S.unlockLink) + '</a></p>'
       + '<p style="margin-top:14px"><a href="#/play" class="backlink">← ' + esc(S.actTitle) + '</a></p>';
     bindLookStrip(m, draw);
-    const q = $('#coinq');
-    q.addEventListener('input', () => {
-      store.set('nabu-coinq', q.value);
-      /* Not while it is spinning: that press already happened. */
-      const b = $('#coinflip'), c = $('#coin');
-      if (b && !(c && c.classList.contains('spin'))) b.disabled = !q.value.trim();
-    });
+    const q = $('#coinq'); q.addEventListener('input', () => store.set('nabu-coinq', q.value));
     bindLuck(m, draw);
     const fb = $('#coinflip'); if (!fb) return;
     fb.addEventListener('click', () => {
       const el = $('#coin'), btn = $('#coinflip');
       if (el.classList.contains('spin')) return;
-      /* The press cannot normally arrive with an empty box, but a turn is too
-         expensive to lose to a keyboard or a script that gets one through. */
-      if (!askedQ()) { btn.disabled = true; return; }
       luckSpend('coin');
       btn.disabled = true; $('#coinres').textContent = '';
       el.classList.add('spin');
@@ -28778,7 +28228,7 @@ function renderCoin() {
         side = bits ? 'yes' : 'no'; el.classList.remove('spin'); el.innerHTML = coinFaceSVG(side);
         $('#coinres').textContent = side === 'yes' ? S.coinYes : S.coinNo;
         if (luckSpent('coin')) { draw(); return; }
-        btn.disabled = !askedQ(); btn.textContent = S.coinAgain;
+        btn.disabled = false; btn.textContent = S.coinAgain;
       }, 1000);
     });
   };
@@ -28971,13 +28421,12 @@ async function homeActHTML(root) {
 ROUTES.play = { nav: 'play', render: renderPlay };
 
 /* ---- German for activities that were published before German existed ----
-   The list a visitor sees comes from the cloud whenever anything has been
-   saved from the dashboard, and that copy can be older than a translation.
-   The two JSON files ship with the app and do carry it, so loadActs() fills
-   the gaps from them every time it loads, and nobody has to do anything for
-   the polls to read German. Only a missing value is written; text already
-   there is never touched. The dashboard button does the same fill and saves
-   it back, so the work is stored rather than repeated on every load. */
+   The list a visitor sees comes from the cloud when anything has been saved
+   from the dashboard, so the German added to activities.json and
+   activities-stock.json does not reach them on its own. This walks the loaded
+   activities and fills in any missing `de` from those two files, matching on
+   the English text, which is unique across both. Only missing values are
+   written; nothing already there is touched. */
 async function germanFromFiles() {
   const map = {};
   /* Cached under their own keys: 'nabu-acts' belongs to the cloud copy and
@@ -28987,11 +28436,7 @@ async function germanFromFiles() {
     const walk = (o) => {
       if (!o || typeof o !== 'object') return;
       if (Array.isArray(o)) { o.forEach(walk); return; }
-      if (typeof o.de === 'string' && o.de) {
-        if (typeof o.vi === 'string' && o.vi) map[o.vi] = o.de;
-        if (typeof o.en === 'string' && o.en) map[o.en] = o.de;
-        return;
-      }
+      if (typeof o.en === 'string' && typeof o.de === 'string' && o.de) { map[o.en] = o.de; return; }
       Object.keys(o).forEach((k) => walk(o[k]));
     };
     walk((r.data && r.data.items) || []);
@@ -29007,8 +28452,7 @@ function fillActsDe(items, map) {
     if (Array.isArray(o)) { o.forEach(walk); return; }
     if (typeof o.vi === 'string' && typeof o.en === 'string') {
       if (!o.de) {
-        const de = map[o.vi] || map[o.en];
-        if (de) { o.de = de; filled++; }
+        if (map[o.en]) { o.de = map[o.en]; filled++; }
         else if (missing.indexOf(o.en) < 0) missing.push(o.en);
       }
       return;
@@ -29143,7 +28587,7 @@ const WED_SEEN_MS = 45 * 1000;        /* a seat still warm counts as present */
 const WED_CALL_MS = 2 * 60 * 1000;    /* and this long before, the room is called to order */
 const WED_GRACE_MS = 15 * 60 * 1000;  /* how late a couple may be before the room gives up */
 const WED_SHUT_MS = 3 * 60 * 1000;    /* and how long it stays open to say so */
-const WED_LATE_MS = 60 * 60 * 1000;   /* inside the last hour, calling off is final */
+const WED_MOVE_MS = 60 * 60 * 1000;   /* how close to the hour it may still be moved */
 const WED_BYE_MS = 2 * 60 * 1000;     /* and this long before it closes, it says so */
 
 /* Three, not eight. A wedding gift is chosen in a second, in front of a room -
@@ -29253,7 +28697,7 @@ const WED = {
     return BE.db.collection('weddings').doc(id).set(
       { paid: yes !== false, paidAt: Date.now() }, { merge: true });
   },
-  isPaid(w) { return !!(w && w.paid); },
+  isPaid(w) { return !!(w && w.paid) || (typeof ACCESS !== 'undefined' && ACCESS.has('wedding')); },
 
   watch(id, cb) {
     if (!this.ok() || !id) return () => {};
@@ -29264,9 +28708,35 @@ const WED = {
     const d = await BE.db.collection('weddings').doc(id).get();
     return d.exists ? Object.assign({ id: d.id }, d.data()) : null;
   },
+  /* Moved once, and never inside the last hour: guests are already on their
+     way by then, and a room that moves under them is worse than one that
+     starts late. */
+  moved(w) { return Number((w && w.moved) || 0); },
+  /* An hour asked for and not yet answered. */
+  asking(w) { return !!(w && w.moveAsk && Number(w.wantMs) > 0); },
+  wantMs(w) { return Number((w && w.wantMs) || 0); },
+  /* Once, never inside the last hour, and not while an answer is awaited. */
+  canMove(w) { return this.moved(w) < 1 && !this.asking(w) && Date.now() < this.startMs(w) - WED_MOVE_MS; },
   /* Inside the last hour, or once it has begun, calling off is final: the hour
      was held and then not used, which is the same to Nabu as nobody coming. */
-  lateNow(w) { return Date.now() > this.startMs(w) - WED_LATE_MS; },
+  lateNow(w) { return Date.now() > this.startMs(w) - WED_MOVE_MS; },
+  /* Nabu hosts the ceremony, so the hour is asked for rather than taken. The
+     old hour stands until the answer comes, which is what makes it safe to
+     ask: nothing moves under the guests who are already invited. */
+  askMove(id, wantMs) {
+    return BE.db.collection('weddings').doc(id).update({
+      wantMs: Number(wantMs) || 0, moveAsk: true
+    });
+  },
+  /* Answered. Yes counts the move, which is what shuts the button for good;
+     no leaves the hour exactly where it was. Two writes, never one, so a
+     refused write cannot leave a room that has moved without counting it. */
+  answerMove(id, w, yes) {
+    const at = this.wantMs(w);
+    return BE.db.collection('weddings').doc(id).update(yes && at
+      ? { startMs: at, moved: this.moved(w) + 1, wantMs: 0, moveAsk: false }
+      : { wantMs: 0, moveAsk: false });
+  },
   /* Every room Nabu is holding. Filtered here rather than in the query: a
      room with no `paid` field at all is exactly the room that has not been
      paid for, and a where() on a field that is not there matches nothing. */
@@ -29906,7 +29376,8 @@ function renderWedding(args) {
       act = '<p class="lead">' + esc(S.wedNoShow) + '</p>'
         + '<p class="hint">' + esc(S.wedNoShowSorry) + '</p>'
         + '<p class="wedcount" id="wedshut">' + esc(wedCountdown(Date.now() + Math.max(0, WED.shutsIn(w)))) + '</p>'
-        + '<p class="hint">' + esc(S.wedNoShowShut) + '</p>';
+        + '<p class="hint">' + esc(S.wedNoShowShut) + '</p>'
+        + (mine ? '<a class="btn block" href="#/wedding" style="margin-top:10px">' + esc(S.wedMoveTitle) + '</a>' : '');
     } else if (waiting) {
       /* Everybody in the room is reading the same clock, so nobody has to be
          told when it is about to happen. */
@@ -30232,42 +29703,55 @@ function renderWedding(args) {
 
 
   /* One page about this wedding: when it is, what it costs, what happens, and
-     the way to pay for it. Not a price list - they have already chosen, and
-     the room already exists: paying is the only thing left to ask for. */
+     one button that tells Nabu. Not a price list - they have already chosen. */
   const drawPay = (bond) => {
-    const w = wedding;
-    if (!w) { location.hash = '#/wedding'; return; }
     const me = WED.me(), you = LOVE.other(bond, me);
     const nm = (you && (you.name || (you.handle ? '@' + you.handle : ''))) || S.loveSomeone;
-    const ms = WED.startMs(w);
+    /* The hour they are paying for: the one waiting to be booked, or - once
+       the room exists - the room's own. It used to look only at the first, so
+       "how to pay" from an existing room bounced straight back out. */
+    const ms = Number(store.get('nabu-wed-want', 0)) || WED.startMs(wedding) || 0;
+    if (!ms) { location.hash = '#/wedding'; return; }
     const price = salePrice(WED_PRICE, 'unlock', 'wedding');
     m.innerHTML = head(S.wedPayIntro)
       + '<div class="card wedcard">' + cupidSVG()
       + '<p class="wedpair">' + esc((PROFILE && PROFILE.name) || S.loveYou) + ' \u2764 ' + esc(nm) + '</p>'
       + '<p class="wedwhen">' + esc(wedWhen(ms)) + '</p>'
-      + (isTWA() ? '' : '<p class="wedprice">' + esc(fmtPrice(price)) + '</p>')
+      + '<p class="wedprice">' + esc(fmtPrice(price)) + '</p>'
       + '<p class="hint" style="text-align:center">' + esc(S.wedPayOnce) + '</p></div>'
       + '<div class="card"><h3 style="margin-bottom:6px">' + esc(S.wedPayWhat) + '</h3>'
       + '<ul class="carelist">' + S.wedPayList.map((x) => '<li><span>' + esc(x) + '</span><b>\u2713</b></li>').join('') + '</ul></div>'
-      + (isTWA() ? '' : '<p class="hint hold">' + esc(S.wedPayHold(wedWhen(ms))) + '</p>')
-      + (isTWA()
-        ? (BILL.can()
-          ? '<div class="card"><h3 style="margin-bottom:6px">' + esc(S.wedPayHow) + '</h3>'
-            + (BILL.priceOf('wedding') ? '<p class="wedprice">' + esc(BILL.priceOf('wedding')) + '</p>' : '')
-            + buyButtonHTML('wedding', S.wedBuy, { wid: w.id }) + '<p class="hint st" data-st="wedding"></p></div>'
-          : storeNotReadyHTML())
-        : payPanelHTML(S.wedPayWhat2(wedWhen(ms)), price, payRef('wedding|' + w.id), 'wedpanel'));
+      + '<p class="hint hold">' + esc(S.wedPayHold(wedWhen(ms))) + '</p>'
+      + (wedding
+        ? payPanelHTML(S.wedPayWhat2(wedWhen(ms)), price, payRef('wedding|' + wedding.id), 'wedpanel')
+        : '<div class="card"><h3 style="margin-bottom:6px">' + esc(S.wedPayHow) + '</h3>'
+          + '<button type="button" class="btn primary block" id="wedpay">' + esc(S.wedPaySend) + '</button>'
+          + '<p class="hint" id="wedpayst"></p></div>')
+      + '<p style="margin-top:10px"><a class="backlink" href="#/wedding">\u2190 ' + esc(S.wedChangeTime) + '</a></p>';
 
-    if (isTWA()) { bindStore(m, () => drawPay(bond)); return; }
-    bindPayPanel(m, () => ({ what: S.wedPayWhat2(wedWhen(ms)), total: price, ref: payRef('wedding|' + w.id) }));
-    /* The website's own record for the dashboard's order list, filed
-       alongside the message the pay panel already sends - the room itself
-       (and whether it is paid) stays Nabu's to write, same as ever. */
-    const send = $('[data-paysend]', m);
-    if (send) send.addEventListener('click', () => {
-      if (!BE.enabled || !BE.user) return;
-      BE.createUnlockOrder([{ id: 'wedding', wid: w.id, name: L(COURSES.filter((c) => c.id === 'wedding')[0].name)
-        + ' \u00b7 ' + wedWhen(ms), price: price }], price).catch(() => {});
+    if (wedding) {
+      bindPayPanel(m, () => ({ what: S.wedPayWhat2(wedWhen(ms)), total: price, ref: payRef('wedding|' + wedding.id) }));
+      return;
+    }
+    $('#wedpay').addEventListener('click', async () => {
+      const b = $('#wedpay'), st = $('#wedpayst');
+      if (!BE.enabled || !BE.user) { st.className = 'hint err'; st.textContent = S.unlockSendMsg; return; }
+      b.disabled = true; st.className = 'hint'; st.textContent = S.loveSaving;
+      try {
+        await BE.createUnlockOrder([{ id: 'wedding', wid: WED.idFor(bond), name: L(COURSES.filter((c) => c.id === 'wedding')[0].name)
+          + ' \u00b7 ' + wedWhen(ms), price: price }], price);
+        /* And the room itself, because the hour is what is being held and an
+           hour cannot be held by a room that does not exist. */
+        if (!wedding) await WED.create(bond, ms);
+        ALERTS.add({ id: 'wed-made-' + WED.idFor(bond) + '-' + ms, k: 'love',
+          t: S.wedMadeTitle, b: S.wedMadeBody(wedWhen(ms)), href: '#/wedding' });
+        st.className = 'hint ok'; st.textContent = S.wedPaySent;
+        toast(S.wedPaySent);
+        /* Only if they are still standing here. A delayed jump that fires
+           after somebody has walked away drags them back from wherever they
+           went, which is worse than not moving them at all. */
+        setTimeout(() => { if (location.hash.indexOf('/wedding/pay') > -1) location.hash = '#/wedding'; }, 1200);
+      } catch (e) { b.disabled = false; st.className = 'hint err'; st.textContent = loveWhy(e); }
     });
   };
 
@@ -30296,7 +29780,7 @@ function renderWedding(args) {
       m.innerHTML = head()
         + '<div class="card wedcard">' + cupidSVG()
         + '<p class="lead" style="text-align:center">' + esc(S.wedPlanLead(nm)) + '</p>'
-        + '<p class="hint" style="text-align:center">' + esc(S.wedPlanHint) + '</p></div>'
+        + '<p class="hint" style="text-align:center">' + esc(ACCESS.has('wedding') ? S.wedPlanHint : S.wedPlanPay(fmtPrice(salePrice(WED_PRICE, 'unlock', 'wedding')))) + '</p></div>'
         + '<div class="card"><h3 style="margin-bottom:6px">\uD83D\uDD52 ' + esc(S.wedWhen) + '</h3>'
         + '<p class="hint" style="margin-bottom:10px">' + esc(S.wedWhenHint) + '</p>'
         + '<input type="datetime-local" id="wedat" value="' + esc(wedLocalValue(soon.getTime())) + '"></div>'
@@ -30304,7 +29788,7 @@ function renderWedding(args) {
            passing above a button. Four facts, one sentence each, because that
            is the difference between terms read and terms scrolled past. */
         + '<div class="card termscard"><div class="ghead"><span class="gk">\uD83D\uDCDC</span><h3>' + esc(S.wedTermsTitle) + '</h3></div>'
-        + '<ol class="terms">' + S.wedTerms.map((t) => '<li>' + esc(priceText(t)) + '</li>').join('') + '</ol>'
+        + '<ol class="terms">' + S.wedTerms.map((t) => '<li>' + esc(t) + '</li>').join('') + '</ol>'
         + '<label class="remind"><input type="checkbox" id="wedagree"><span>' + esc(S.wedAgree) + '</span></label>'
         + '<button type="button" class="btn primary block" id="wedmake" style="margin-top:12px" disabled>' + esc(S.wedMake) + '</button>'
         + '<p class="hint" id="wedst">' + esc(S.wedAgreeFirst) + '</p></div>';
@@ -30325,17 +29809,10 @@ function renderWedding(args) {
         /* Recorded, because a record of what was agreed and when is the point
            of asking. */
         store.set('nabu-wed-terms', { at: Date.now(), v: 1 });
-        /* The room is made at once - it is what holds the hour - and paying
-           is the very next screen, not a second decision. */
+        if (!ACCESS.has('wedding')) { location.hash = '#/wedding/pay'; return; }
         b.disabled = true; st.className = 'hint'; st.textContent = S.loveSaving;
-        try {
-          await WED.create(bond, ms);
-          store.set('nabu-wed-want', 0);
-          toast(S.wedMade);
-          ALERTS.add({ id: 'wed-made-' + WED.idFor(bond) + '-' + ms, k: 'love',
-            t: S.wedMadeTitle, b: S.wedMadeBody(wedWhen(ms)), href: '#/wedding' });
-          location.hash = '#/wedding/pay';
-        } catch (e) { b.disabled = false; st.className = 'hint err'; st.textContent = loveWhy(e); }
+        try { await WED.create(bond, ms); store.set('nabu-wed-want', 0); toast(S.wedMade); }
+        catch (e) { b.disabled = false; st.className = 'hint err'; st.textContent = loveWhy(e); }
       });
       return;
     }
@@ -30376,11 +29853,18 @@ function renderWedding(args) {
          had invited, and work it out live. */
       + '<details class="sect howroom"><summary><span class="si">\uD83D\uDCD6</span><b>' + esc(S.wedHowTitle) + '</b><span class="sx">\u203A</span></summary>'
       + '<div class="sbody"><ol class="terms">' + S.wedHow.map((x) => '<li>' + esc(x) + '</li>').join('') + '</ol></div></details>'
-      /* Unpaid, said once, softly, with the way to settle it. The room's own
-         flag decides this - not an account key that a second, unpaid wedding
-         could no longer be told apart from. */
-      + (WED.isPaid(w) ? ''
+      /* Unpaid, said once, softly, with the way to settle it. */
+      + (ACCESS.has('wedding') ? ''
         : '<p class="hint hold">' + esc(S.wedUnpaid) + ' <a href="#/wedding/pay">' + esc(S.wedPayNow) + ' \u2192</a></p>')
+      /* And moving it, immediately beneath, folded until it is wanted. */
+      + (WED.canMove(w)
+        ? '<details class="sect movewhen"><summary><span class="si">\uD83D\uDD52</span><b>' + esc(S.wedMoveTitle) + '</b><span class="sx">\u203A</span></summary>'
+          + '<div class="sbody"><p class="hint">' + esc(S.wedMoveRule) + '</p>'
+          + '<input type="datetime-local" id="wedat" value="' + esc(wedLocalValue(w.startMs)) + '">'
+          + '<button type="button" class="btn block" id="wedmove" style="margin-top:8px">' + esc(S.wedMove) + '</button>'
+          + '<p class="hint" id="wedst"></p></div></details>'
+        : '<p class="hint movewhy">' + esc(WED.asking(w) ? S.wedMoveWait(wedWhen(WED.wantMs(w)))
+          : WED.moved(w) ? S.wedMovedAlready : S.wedMoveTooLate) + '</p>')
       + '</div>'
       + inviteHTML(w)
       + guestListHTML(w, guests)
@@ -30398,14 +29882,20 @@ function renderWedding(args) {
       }, 1000);
     }
     bindInvite(w);
+    { const mv = $('#wedmove');
+      if (mv) mv.addEventListener('click', async () => {
+        const st = $('#wedst'), v = $('#wedat').value, ms = new Date(v).getTime();
+        if (!v || isNaN(ms) || ms < Date.now() + 10 * 60000) { st.className = 'hint err'; st.textContent = S.wedWhenBad; return; }
+        if (!confirm(S.wedMoveOnce)) return;
+        st.className = 'hint'; st.textContent = S.loveSaving;
+        try { await WED.askMove(w.id, ms); st.className = 'hint ok'; st.textContent = S.wedMoveAsked; }
+        catch (e) { st.className = 'hint err'; st.textContent = loveWhy(e); }
+      }); }
     $('#weddrop').addEventListener('click', async () => {
       /* Two different acts wearing one button: giving up a room nobody has
-         used yet, and abandoning an hour that has already been held. Both of
-         them count as used now (D1), and an early drop deletes the room and
-         guest list same as a late one - so one confirmation, naming both
-         consequences, now covers every case. */
+         used yet, and abandoning an hour that has already been held. */
       const late = WED.lateNow(w);
-      if (!confirm(S.wedDropAsk)) return;
+      if (!confirm(late ? S.wedDropLateAsk : S.wedDropAsk)) return;
       try {
         if (late) {
           await BE.db.collection('weddings').doc(w.id).update({ state: 'called-off', doneAt: Date.now() });
@@ -30762,13 +30252,11 @@ function alertsWatchLove() {
       alertSay({ id: 'love-wed-' + bond.id + '-' + (bond.marriedOn || ''), k: 'love', t: S.alertWed(name), b: S.alertWedBody, href: '#/love' }, true);
     }
     /* Asked once, at the moment somebody would want to be asked - and not at
-       all if this bond's own room is already paid for. A wedding is bought
-       per room now, not per account, so the room - not an account key - is
-       what says whether they still need asking. */
-    if ((state === 'engaged' || state === 'married') && wasState !== null && wasState !== state) {
-      const nudge = () => ALERTS.add({ id: 'wed-ask-' + bond.id + '-' + state, k: 'love',
+       all if they have already paid for one. */
+    if ((state === 'engaged' || state === 'married') && wasState !== null && wasState !== state
+        && !ACCESS.has('wedding')) {
+      ALERTS.add({ id: 'wed-ask-' + bond.id + '-' + state, k: 'love',
         t: S.alertWedAsk(name), b: S.alertWedAskBody, href: '#/wedding' });
-      WED.get(bond.id).then((w) => { if (!WED.isPaid(w)) nudge(); }).catch(nudge);
     }
 
     /* Asking to share diaries, and the answer to it. Neither used to be said
@@ -30922,6 +30410,18 @@ function alertsWatchWeddings() {
       if (day === isoDate(new Date()) && !w.doneAt) {
         ALERTS.add({ id: 'wed-today-' + id + '-' + day, k: 'love',
           t: S.alertWedToday(pair), b: S.alertWedTodayBody, href: '#/wedding/' + id });
+      }
+      /* An hour asked for and answered. Which answer it was is the hour
+         itself: if it moved, Nabu said yes. */
+      if (WED.mine(w) && !w.doneAt) {
+        const before = alertWas('wedmove.' + id, (w.moveAsk ? 'ask' : 'no') + ':' + (Number(w.startMs) || 0));
+        if (before && before.indexOf('ask:') === 0 && !w.moveAsk) {
+          const yes = before.slice(4) !== String(Number(w.startMs) || 0);
+          alertSay({ id: 'wedmove-' + id + '-' + w.startMs + '-' + (yes ? 'y' : 'n'), k: 'love',
+            t: yes ? S.alertWedMoveYes : S.alertWedMoveNo,
+            b: yes ? S.alertWedMoveYesBody(wedWhen(Number(w.startMs) || 0)) : S.alertWedMoveNoBody(wedWhen(Number(w.startMs) || 0)),
+            href: '#/wedding/' + id }, true);
+        }
       }
       /* Paid for. Both of them hear it, including the one who paid nothing. */
       if (w.paid && WED.mine(w) && !w.doneAt) {
@@ -31437,12 +30937,15 @@ function adminPay(p) {
     if (!$('#pyweds')) return;
     const owed = asks.filter((w) => !w.paid).length;
     $('#pyweds').innerHTML = asks.length ? '<div class="card"><h3 style="margin-bottom:4px">\uD83D\uDC8D ' + esc(S.adminWeds) + (owed ? ' <span class="n">' + owed + '</span>' : '') + '</h3>'
-      + '<p class="hint" style="margin-bottom:10px">' + esc(priceText(S.adminWedsHint)) + '</p>'
+      + '<p class="hint" style="margin-bottom:10px">' + esc(S.adminWedsHint) + '</p>'
       + asks.map((w) => '<div class="bk"><div class="bkh"><b>\uD83D\uDC8D ' + esc(((w.aName || '') + ' & ' + (w.bName || '')).replace(/^ & $/, S.loveSomeone)) + '</b>'
         + '<span class="st ' + (w.paid ? 'confirmed' : 'requested') + '">' + esc(w.paid ? S.adminWedPaid : S.adminWedOwed) + '</span></div>'
         + '<p class="hint">' + esc(S.adminWedWas) + ': <b>' + esc(wedWhen(Number(w.startMs) || 0)) + '</b></p>'
+        + (WED.asking(w) ? '<p class="hint">' + esc(S.adminWedWants) + ': <b>' + esc(wedWhen(Number(w.wantMs) || 0)) + '</b></p>' : '')
         + '<div class="acts">'
         + (w.paid ? '' : '<button type="button" class="btn sm primary" data-wpaid="' + esc(w.id) + '">\uD83D\uDCB0 ' + esc(S.adminWedGotPaid) + '</button>')
+        + (WED.asking(w) ? '<button type="button" class="btn sm primary" data-wmv="' + esc(w.id) + '">\uD83D\uDD01 ' + esc(S.adminWedMoveOk) + '</button>'
+          + '<button type="button" class="btn sm" data-wmvno="' + esc(w.id) + '">' + esc(S.adminKeep) + '</button>' : '')
         + '</div></div>').join('')
       + '</div>' : '';
     /* An order has no hour in it, so the list arrives sorted by document id -
@@ -31515,6 +31018,14 @@ function adminPay(p) {
       const id = b.getAttribute('data-wpaid');
       b.disabled = true;
       try { await WED.setPaid(id, true); toast(T().adminWedPaidDone); } catch (e) { b.disabled = false; toast(loveWhy(e)); }
+    }));
+    $$('[data-wmv]', p).forEach((b) => b.addEventListener('click', async () => {
+      const w = asks.filter((x) => x.id === b.getAttribute('data-wmv'))[0];
+      try { await WED.answerMove(w.id, w, true); toast(T().saved); } catch (e) { toast(loveWhy(e)); }
+    }));
+    $$('[data-wmvno]', p).forEach((b) => b.addEventListener('click', async () => {
+      const w = asks.filter((x) => x.id === b.getAttribute('data-wmvno'))[0];
+      try { await WED.answerMove(w.id, w, false); toast(T().saved); } catch (e) { toast(loveWhy(e)); }
     }));
   };
   admin.unsubs.push(WED.watchRooms((l) => { asks = l; draw(); }));
@@ -31594,12 +31105,7 @@ function adminInbox(p) {
 function adminCodes(p) {
   const S = T();
   p.innerHTML = '<div class="card"><p class="hint" style="margin-bottom:10px">' + esc(S.codesIntro) + '</p>'
-    + '<label class="f" for="ccourse">' + esc(S.codeCourse) + '</label><select id="ccourse">'
-    /* Not the wedding. A wedding is paid for one room now, not for the
-       account, so a wedding code would unlock nothing at all - the room is
-       opened from the list above with Payment received. Offering one here
-       would let Nabu send a paying couple a code that does nothing. */
-    + COURSES.filter((c) => c.id !== 'wedding').map((c) => '<option value="' + c.id + '">' + esc(L(c.name)) + ' · ' + fmtPrice(c.price) + '</option>').join('') + '</select>'
+    + '<label class="f" for="ccourse">' + esc(S.codeCourse) + '</label><select id="ccourse">' + COURSES.map((c) => '<option value="' + c.id + '">' + esc(L(c.name)) + ' · ' + fmtPrice(c.price) + '</option>').join('') + '</select>'
     + '<div class="two"><div><label class="f" for="cstart">' + esc(S.codeStart) + '</label><input id="cstart" type="date" value="' + isoDate(new Date()) + '"></div><div><label class="f" for="cmonths">' + esc(S.codeMonths) + '</label><input id="cmonths" type="number" min="1" value="6"></div></div>'
     + '<button class="btn primary block" id="cmake" style="margin-top:14px">' + esc(S.makeCode) + '</button><div id="cout"></div>'
     + '<label class="f" for="cold" style="margin-top:16px">' + esc(S.codeOldLabel) + '</label><textarea id="cold" placeholder="NABU-T-260901-ABC234"></textarea>'
@@ -31721,7 +31227,7 @@ function adminSale(p) {
     SALE.set(read());
     const live = SALE.live();
     $('#sprev').innerHTML = live
-      ? '<p class="hint">' + esc(SALE.off()) + ' · ' + esc(S.saleScopes[live.scope] || '') + '</p><div class="sum"><div class="r"><span>300.000đ</span><b>' + priceHTML(300000, 'unlock', 'tarot') + '</b></div><div class="r"><span>60.000đ</span><b>' + priceHTML(60000, 'reading', 'tarot') + '</b></div></div>' /* dong on purpose: the base price Nabu typed, shown beside what it converts to */
+      ? '<p class="hint">' + esc(SALE.off()) + ' · ' + esc(S.saleScopes[live.scope] || '') + '</p><div class="sum"><div class="r"><span>300.000đ</span><b>' + priceHTML(300000, 'unlock', 'tarot') + '</b></div><div class="r"><span>60.000đ</span><b>' + priceHTML(60000, 'reading', 'tarot') + '</b></div></div>'
       : '<p class="hint">' + esc(S.saleNone) + '</p>';
     SALE.set(before);
   };
@@ -31738,10 +31244,10 @@ function adminSale(p) {
 ROUTES.admin = { nav: '', render: renderAdmin };
 
 /* ============================ boot ============================ */
-window.APP_VERSION = 'v207';
-window.NABU = { CONFIG: CONFIG, SALE: SALE, salePrice: salePrice, loadActs: loadActs, BACK: BACK, LESSONS: LESSONS, localAnswer: localAnswer, compatVerdict: compatVerdict, numerologyOf: numerologyOf, ZDEEP: ZDEEP, lunarToday: lunarToday, solarToLunar: solarToLunar, DECK: DECK, INSIGHT: INSIGHT, KW: KW, ASK: ASK, TOPICS: TOPICS, GUIDES: GUIDES, SERVICES: SERVICES, COURSES: COURSES, ACCESS: ACCESS, INTERESTS: INTERESTS, plusOn: () => plusOn(), proOn: () => proOn(), luckUnlimited: () => luckUnlimited(), ZODIAC: ZODIAC, pick: pick, book: book, PLAY_ITEMS: PLAY_ITEMS, PLAY_SUB_SKUS: PLAY_SUB_SKUS, playItem: playItem, BILL: BILL, SUBS: SUBS, renderStore: renderStore, subStateWord: subStateWord,
+window.APP_VERSION = 'v189';
+window.NABU = { CONFIG: CONFIG, SALE: SALE, salePrice: salePrice, loadActs: loadActs, BACK: BACK, LESSONS: LESSONS, localAnswer: localAnswer, compatVerdict: compatVerdict, numerologyOf: numerologyOf, ZDEEP: ZDEEP, lunarToday: lunarToday, solarToLunar: solarToLunar, DECK: DECK, INSIGHT: INSIGHT, KW: KW, ASK: ASK, TOPICS: TOPICS, GUIDES: GUIDES, SERVICES: SERVICES, COURSES: COURSES, ACCESS: ACCESS, INTERESTS: INTERESTS, plusOn: () => plusOn(), proOn: () => proOn(), luckUnlimited: () => luckUnlimited(), ZODIAC: ZODIAC, pick: pick, book: book,
   insightHTML: insightHTML, insightOf: insightOf, sunSignIndex: sunSignIndex, lifePath: lifePath, PROFILE: () => PROFILE, BE: BE, ACTS: ACTS,
-  ANGELS: ANGELS, angelRead: angelRead, CODEBOOK: CODEBOOK, redeemCode: redeemCode, loadCodebook: loadCodebook, petHomeSVG: petHomeSVG, PET_HOMES: PET_HOMES, PET_WEARS: PET_WEARS, codeDigest: codeDigest, randomCode: randomCode, BANK: BANK, PETS: PETS, petSVG: petSVG, PET_COATS: PET_COATS, PET_KINDS: PET_KINDS, turnsMerge: turnsMerge, turnsLocal: turnsLocal, priceText: priceText, termText: termText, proSaveText: () => proSaveText(), wedFeeText: () => wedFeeText(), fmtPrice: fmtPrice, luckCut: luckCut, petLevel: petLevel, petStep: petStep, VOUCHERS: VOUCHERS, levelCoins: levelCoins, LOOKS: LOOKS,
+  ANGELS: ANGELS, angelRead: angelRead, CODEBOOK: CODEBOOK, redeemCode: redeemCode, loadCodebook: loadCodebook, petHomeSVG: petHomeSVG, PET_HOMES: PET_HOMES, PET_WEARS: PET_WEARS, codeDigest: codeDigest, randomCode: randomCode, BANK: BANK, PETS: PETS, petSVG: petSVG, PET_COATS: PET_COATS, PET_KINDS: PET_KINDS, luckCut: luckCut, petLevel: petLevel, petStep: petStep, VOUCHERS: VOUCHERS, levelCoins: levelCoins, LOOKS: LOOKS,
   LOVE: LOVE, LOVEDB: LOVEDB, HANDLE_RE: HANDLE_RE, loveBadgeHTML: loveBadgeHTML,
   loveMarkSVG: loveMarkSVG, QUIZ: QUIZ, QSCORE: QSCORE, QUIZ_PASS: QUIZ_PASS, QUIZ_LEN: QUIZ_LEN, pileArtSVG: pileArtSVG, PILE_ARTS: PILE_ARTS, threadSVG: threadSVG, petParentsHTML: petParentsHTML, GIFTS: GIFTS, ALERTS: ALERTS, alertsStart: alertsStart, alertWas: alertWas,
   WED: WED, WED_STEPS: WED_STEPS, wedStep: wedStep, cupidSVG: cupidSVG, shareLine: shareLine };
@@ -31806,36 +31312,6 @@ BE.onAuth(() => {
   if (['learn', 'me', 'home'].indexOf(parseHash().route) > -1) route();
 });
 boot();
-
-/* ---- take the purple loading screen down ----
-
-   #boot (src/shell.html) covers the cold start inside the installed app,
-   where Android's own splash hands over to a Chrome that has nothing drawn
-   yet. It comes off the moment #main has its first screen in it, watched
-   rather than guessed: the first paint can come from route() here, from the
-   sale file landing, or from onAuth, and tying it to any one of those would
-   leave it up too long on the days the others won. The 8s timer matches the
-   CSS bail-out, so the overlay cannot outlive a script that dies before
-   drawing anything. */
-(function dropBootScreen() {
-  const box = document.getElementById('boot');
-  if (!box) return;
-  const main = document.getElementById('main');
-  let gone = false;
-  const drop = () => {
-    if (gone) return;
-    gone = true;
-    box.className = 'gone';
-    setTimeout(() => { try { box.remove(); } catch (e) { /* already gone */ } }, 400);
-  };
-  if (!main) return drop();
-  if (main.childNodes.length) return drop();
-  try {
-    const obs = new MutationObserver(() => { if (main.childNodes.length) { obs.disconnect(); drop(); } });
-    obs.observe(main, { childList: true });
-  } catch (e) { /* no observer: the timer below still takes it down */ }
-  setTimeout(drop, 8000);
-})();
 </script>
 </body>
 </html>

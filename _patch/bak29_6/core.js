@@ -1,0 +1,998 @@
+/* ============================ Nabu Tarot: core ============================
+   Utilities, language and theme, the deck, the logo, the chrome and the
+   router. Screen modules register themselves in ROUTES. */
+
+const $ = (s, r) => (r || document).querySelector(s);
+const $$ = (s, r) => Array.prototype.slice.call((r || document).querySelectorAll(s));
+/* Titles often carry a date range. Non-breaking spaces are not enough on their
+   own, because the dash between the two dates is itself a place a line may
+   break, so the whole range is wrapped in a span that cannot be split.
+   Escaping happens first, and escaping never touches digits, dots, slashes,
+   dashes or spaces, so the pattern still matches afterwards. */
+function titleHTML(text) {
+  return esc(text).replace(/(\d[\d.\/-]*)\s*([–—-])\s*(\d[\d.\/-]*)/g, '<span class="nb">$1 $2 $3</span>');
+}
+const esc = (s) => String(s == null ? '' : s).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+/* Copies of files the app can simply fetch again. They are the first thing to
+   go when the phone says it has no room, because losing them costs a moment of
+   waiting and losing anything else costs the thing itself. */
+const STORE_SPARE = ['nabu-fb', 'nabu-horo', 'nabu-acts', 'nabu-acts-stock', 'nabu-privacy', 'nabu-posts'];
+let STORE_SAID = 0;
+
+const store = {
+  get(k, d) { try { const v = localStorage.getItem(k); return v == null ? d : JSON.parse(v); } catch (e) { return d; } },
+  /* A write that fails is not a write, and this used to pretend otherwise.
+     When the phone is full every set() throws; swallowing that made the app
+     forget things without ever saying so - a notification marked read that
+     came back unread, because the screen then redrew itself from the last list
+     that had stored successfully, which was an older one. Same three lines
+     behind every setting, every diary page, and everything unlocked. */
+  set(k, v) {
+    try { localStorage.setItem(k, JSON.stringify(v)); return true; } catch (e) { /* full, probably */ }
+    let freed = false;
+    STORE_SPARE.forEach((s) => {
+      if (s === k) return;
+      try { if (localStorage.getItem(s) != null) { localStorage.removeItem(s); freed = true; } } catch (e2) { /* nothing there */ }
+    });
+    if (freed) { try { localStorage.setItem(k, JSON.stringify(v)); return true; } catch (e3) { /* still full */ } }
+    /* Said once in a while, not once per write: a full phone fails every write
+       there is, and sixty toasts is not a clearer message than one. */
+    if (Date.now() - STORE_SAID > 60000) {
+      STORE_SAID = Date.now();
+      try { toast(T().storeFull); } catch (e4) { /* too early to have a screen */ }
+    }
+    return false;
+  },
+  del(k) { try { localStorage.removeItem(k); } catch (e) { /* private mode */ } }
+};
+const pad2 = (n) => String(n).padStart(2, '0');
+const isoDate = (d) => d.getFullYear() + '-' + pad2(d.getMonth() + 1) + '-' + pad2(d.getDate());
+
+/* ---- language + theme ---- */
+let lang = store.get('nabu-lang', 'vi');
+/* The language belongs to the person, not to the handset. It is chosen once on
+   the welcome screen and carried on the account, so a second phone or a
+   reinstall opens in the right language instead of falling back to Vietnamese.
+   The header button still works for everybody; while signed in it writes back. */
+function applyAccountLang() {
+  const want = PROFILE && PROFILE.lang;
+  if (!want || LANGS.indexOf(want) < 0 || want === lang) return false;
+  lang = want; store.set('nabu-lang', lang);
+  return true;
+}
+if (LANGS.indexOf(lang) < 0) lang = 'vi';
+const T = () => STR[lang];
+const L = (obj) => { if (obj == null) return ''; if (typeof obj === 'string') return obj; return obj[lang] || obj.en || obj.vi || ''; };
+const L2 = (obj, lg) => (obj == null ? '' : typeof obj === 'string' ? obj : (obj[lg] || ''));
+
+const darkMQ = window.matchMedia ? window.matchMedia('(prefers-color-scheme: dark)') : { matches: false, addEventListener: () => {} };
+const THEMES = ['light', 'dark', 'pink'];
+function themeChoice() { const t = store.get('nabu-theme', ''); return THEMES.indexOf(t) > -1 ? t : 'auto'; }
+function effectiveTheme() { const t = themeChoice(); return t === 'auto' ? (darkMQ.matches ? 'dark' : 'light') : t; }
+function setTheme(t) { store.set('nabu-theme', t === 'auto' ? '' : t); applyTheme(); }
+function applyTheme() {
+  const t = themeChoice();
+  if (t === 'auto') document.documentElement.removeAttribute('data-theme'); else document.documentElement.setAttribute('data-theme', t);
+  const cur = effectiveTheme();
+  // The pill shows the theme that comes next: light → dark → pink → light.
+  $('#theme').textContent = cur === 'light' ? '🌙' : cur === 'dark' ? '🌸' : '☀️';
+  $('meta[name="theme-color"]').setAttribute('content', cur === 'dark' ? '#241A45' : cur === 'pink' ? '#FBEEF2' : '#EFE9FA');
+}
+darkMQ.addEventListener('change', applyTheme);
+
+/* ---- profile (local first; backend.js syncs it when signed in) ---- */
+let PROFILE = Object.assign({ name: '', birthday: '', interests: [], tourDone: false }, store.get('nabu-profile', {}));
+function saveProfileLocal(p) { PROFILE = Object.assign(PROFILE, p); store.set('nabu-profile', PROFILE); }
+function birthParts() {
+  const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(PROFILE.birthday || '');
+  return m ? { y: Number(m[1]), m: Number(m[2]), d: Number(m[3]) } : null;
+}
+function mySign() { const b = birthParts(); return b ? sunSignIndex(b.m, b.d) : -1; }
+
+/* ---- a sale ----
+   Held as one record: content/sale = { on, scope, kind, value, from, to, label }.
+   scope is 'reading', 'unlock' or 'all'; kind is 'percent' or 'amount'.
+   Every price shown and every total added up goes through salePrice, so the
+   arithmetic can only be wrong in one place, and it is tested. */
+const SALE = {
+  data: null,
+  set(d) { this.data = d && d.on ? d : null; },
+  live() {
+    const d = this.data;
+    if (!d) return null;
+    const today = isoDate(new Date());
+    if (d.from && today < d.from) return null;
+    if (d.to && today > d.to) return null;
+    return d;
+  },
+  /* kind is 'reading' or 'unlock'; id names the service or the unlockable.
+     A sale with no picks covers its whole category, which is what an empty
+     list has always meant. Picks are stored as 'r:tarot' or 'u:manifest' so a
+     reading and a course of the same name never collide. */
+  covers(kind, id) {
+    const d = this.live();
+    if (!d || (d.scope !== 'all' && d.scope !== kind)) return null;
+    const picks = Array.isArray(d.items) ? d.items.filter(Boolean) : [];
+    if (!picks.length) return d;
+    if (!id) return null;
+    return picks.indexOf((kind === 'unlock' ? 'u:' : 'r:') + id) > -1 ? d : null;
+  },
+  price(n, kind, id) {
+    const d = this.covers(kind, id), base = Number(n) || 0;
+    if (!d || base <= 0) return base;
+    const v = Math.max(0, Number(d.value) || 0);
+    let out = d.kind === 'amount' ? base - v : base * (100 - Math.min(100, v)) / 100;
+    out = Math.round(Math.max(0, out) / 1000) * 1000;   // Vietnamese prices land on thousands
+    return Math.min(base, out);
+  },
+  off() {
+    const d = this.live();
+    if (!d) return '';
+    return d.kind === 'amount' ? '-' + fmtPrice(Math.max(0, Number(d.value) || 0)) : '-' + Math.max(0, Number(d.value) || 0) + '%';
+  },
+  title() { const d = this.live(); return d && d.label ? L(d.label) : (T().saleDefault || ''); }
+};
+const salePrice = (n, kind, id) => SALE.price(n, kind, id);
+/* A price with its old value struck through when a sale is on. */
+function priceHTML(n, kind, id, abroad) {
+  const now = SALE.price(n, kind, id);
+  if (now === Number(n)) return fmtPrice(n, abroad);
+  return '<span class="was">' + fmtPrice(n, abroad) + '</span> <span class="now">' + fmtPrice(now, abroad) + '</span>';
+}
+
+/* ---- course access ----
+   Codes: NABU-T-YYMMDD-XXXX (T = tarot, L = lenormand, M = manifestation,
+   P = playing cards, C = coin, Y = message tree, B = both of those two), the
+   date is the expiry and the tail is random. A code opens nothing on its own:
+   it is checked against the list of hashes Nabu publishes (see codes.js), so
+   a code that was never issued cannot be made up, and one that was issued can
+   be taken back. */
+/* The name of a thing somebody has unlocked. Codes are issued against the
+   list of courses and packages, so the name is almost always there; a key from
+   somewhere else is shown as it stands rather than hidden. */
+function accessName(id) {
+  const list = typeof COURSES !== 'undefined' ? COURSES.filter((c) => c.id === id) : [];
+  return list.length ? L(list[0].name) : String(id);
+}
+
+const ACCESS = {
+  get() { return store.get('nabu-access', {}); },
+  // Nabu (any admin email) always has every course open.
+  // Admins: true as soon as sign-in resolves, and remembered on the device so a
+  // cold start does not flash the paywall before Firebase answers.
+  // BE is a top-level const (not on window), so test for it with typeof.
+  isAdmin() { const be = typeof BE !== 'undefined' ? BE : null; return !!((be && be.user && be.isAdmin()) || (!(be && be.ready) && store.get('nabu-admin', ''))); },
+  has(course) { if (this.isAdmin()) return true; const a = this.get()[course]; return !!a && a >= isoDate(new Date()); },
+  /* What this phone shows as open. It is a cache of the account, not the
+     other way round: nothing here is sent up any more. The account is written
+     by Nabu's dashboard and by the worker (a purchase, a code), and
+     pullProfile() takes the account's copy as the truth. */
+  grant(course, until) {
+    const a = this.get(), list = Array.isArray(course) ? course : [course];
+    list.forEach((c) => { a[c] = until; });
+    store.set('nabu-access', a);
+    /* Say what was opened and how long it lasts. A code used simply to work,
+       and nobody was ever told what they now had or until when. */
+    if (typeof ALERTS !== 'undefined' && until) {
+      ALERTS.add({ id: 'unlocked-' + list.join('+') + '-' + until, k: 'app',
+        t: T().accessOnTitle(list.map(accessName).join(', ')),
+        b: T().accessOnBody(fmtDate(until)), href: '#/me' });
+    }
+  }
+};
+
+/* ---- what needs an account ----
+
+   Reading needs nothing: the cards, the calendar, the forecast, the guides are
+   there for anybody who opens the page. What needs an account is anything the
+   app has to keep - a turn used up, a message kept, a page written, a
+   companion that must still be hungry tomorrow. Without somewhere to keep it,
+   those are a lie: the visitor does the thing, clears their browser, and it
+   never happened.
+
+   Drawing a card is the exception, deliberately. The first one is free to
+   anybody, because a locked door is a poor way to introduce yourself and the
+   front page promises a card. The second one is where signing in is asked for,
+   by which point they have seen what they would be signing in for.
+
+   With accounts switched off entirely, nothing is gated - the app falls back to
+   being device-only, as it always has. */
+const signedIn = () => !(typeof BE !== 'undefined' && BE.enabled) || !!(typeof BE !== 'undefined' && BE.user);
+/* The card shown in place of whatever was asked for. */
+function needAccountHTML(why) {
+  const S = T();
+  return '<div class="card needin"><div class="ic">\uD83D\uDD11</div>'
+    + '<p class="lead">' + esc(S.needInTitle) + '</p>'
+    + '<p class="hint">' + esc(why || S.needInWhy) + '</p>'
+    + '<a class="btn primary block" href="' + esc(signinHref()) + '">' + esc(S.needInGo) + '</a></div>';
+}
+
+/* ---- reporting somebody, and refusing to see them ----
+
+   Anywhere people can write to each other, they need a way to say "this is
+   wrong" and a way to stop hearing from one person. Google requires both of an
+   app with rooms in it, and quite apart from that a wedding is exactly the kind
+   of place where somebody turns up who should not have.
+
+   A block is kept on the device and on the account, so it follows somebody to a
+   new phone but still works with no signal. It hides that person's writing
+   here; it is not a punishment handed to them, and they are not told.
+
+   A report goes to Nabu, who decides. Reports are write-only for everybody but
+   Nabu, so this cannot become a way to find out who complained about whom. */
+const MOD = {
+  list() { const l = store.get('nabu-blocked', []); return Array.isArray(l) ? l : []; },
+  has(uid) { return !!uid && this.list().indexOf(uid) > -1; },
+  async block(uid) {
+    if (!uid || this.has(uid)) return;
+    const l = this.list().concat([uid]).slice(-200);
+    store.set('nabu-blocked', l);
+    try { if (typeof BE !== 'undefined' && BE.user && BE.db) await BE.db.collection('users').doc(BE.user.uid).set({ blocked: l }, { merge: true }); }
+    catch (e) { /* the device's own copy still holds */ }
+  },
+  async unblock(uid) {
+    const l = this.list().filter((x) => x !== uid);
+    store.set('nabu-blocked', l);
+    try { if (typeof BE !== 'undefined' && BE.user && BE.db) await BE.db.collection('users').doc(BE.user.uid).set({ blocked: l }, { merge: true }); }
+    catch (e) { /* the device's own copy still holds */ }
+  },
+  /* Drop anything written by somebody this person has blocked. */
+  keep(rows, whose) {
+    const l = this.list();
+    if (!l.length) return rows || [];
+    return (rows || []).filter((r) => l.indexOf(String((whose ? whose(r) : r.from) || '')) < 0);
+  },
+  async report(rec) {
+    if (typeof BE === 'undefined' || !BE.enabled || !BE.user || !BE.db) throw new Error('signin');
+    await BE.db.collection('flags').add({
+      by: BE.user.uid,
+      byName: (typeof PROFILE !== 'undefined' && PROFILE.name) || '',
+      kind: String(rec.kind || 'message').slice(0, 40),
+      where: String(rec.where || '').slice(0, 120),
+      about: String(rec.about || '').slice(0, 80),
+      aboutName: String(rec.aboutName || '').slice(0, 80),
+      text: String(rec.text || '').slice(0, 500),
+      at: Date.now()
+    });
+  }
+};
+
+/* ---- one free turn every three days for the coin and the message tree ----
+   Counted from the day it was last used, on the device clock: used on Monday,
+   open again on Thursday. It was once a week, Monday to Sunday, and the date
+   the older rule stored is still a date, read the same way. Anyone on Nabu
+   Plus runs without limit, and Pro contains Plus. plusOn() is defined in
+   looks.js, which loads after this file, so it is asked for when called
+   rather than captured now. */
+const LUCK_DAYS = 3;
+const daysSince = (iso) => { const a = new Date(String(iso) + 'T00:00:00'), b = new Date(); b.setHours(0, 0, 0, 0); return isNaN(a) ? 999 : Math.floor((b - a) / 86400000); };
+const luckUnlimited = () => plusOn();
+const luckLast = (kind) => String((store.get('nabu-luck', {}) || {})[kind] || '');
+const luckSpent = (kind) => !luckUnlimited(kind) && !!luckLast(kind) && daysSince(luckLast(kind)) < LUCK_DAYS;
+function luckSpend(kind) { if (luckUnlimited(kind)) return; const a = store.get('nabu-luck', {}) || {}; a[kind] = isoDate(new Date()); store.set('nabu-luck', a); }
+function luckNext(kind) { const d = new Date((luckLast(kind) || isoDate(new Date())) + 'T00:00:00'); d.setDate(d.getDate() + LUCK_DAYS); return isoDate(d); }
+const CODE_LETTER = { tarot: 'T', manifest: 'M', playing: 'P', coin: 'C', tree: 'Y', luck: 'B', pro: 'S', lenormand: 'L', wedding: 'W' };
+const CODE_COURSE = { T: 'tarot', M: 'manifest', P: 'playing', C: 'coin', Y: 'tree', B: 'luck', S: 'pro', L: 'lenormand', W: 'wedding' };
+function addMonths(iso, n) { const d = new Date(iso + 'T00:00:00'); d.setMonth(d.getMonth() + n); return isoDate(d); }
+
+/* ---- the deck ---- */
+function buildDeck(lg) {
+  const X = LEX[lg], D = DECKTEXT[lg], out = [];
+  D.majors.forEach((m, i) => {
+    out.push({ id: 'major-' + i, suit: 'major', badge: ROMAN[i], name: m[0], meta: X.suitNames.major + ' · ' + ROMAN[i],
+      kw: m[1].split(' · '), scene: m[2], up: m[3], rev: m[4], art: MAJOR_ART[i] });
+  });
+  SUIT_KEYS.forEach((suit) => {
+    const S = D.minors[suit], sn = X.suitNames[suit], el = X.elements[suit];
+    S.pips.forEach((p, i) => {
+      out.push({ id: suit + '-' + (i + 1), suit: suit, badge: '', name: X.pipName(X.numbers[i], sn), meta: sn + ' · ' + el,
+        kw: [], scene: p[0], up: p[1], rev: p[2], art: ART_CACHE[suit + '-' + (i + 1)] });
+    });
+    S.court.forEach((c, i) => {
+      out.push({ id: suit + '-c' + i, suit: suit, badge: '', name: X.courtName(X.courts[i], sn), meta: sn + ' · ' + el + ' · ' + X.courtTag,
+        kw: [], scene: c[0], up: c[1], rev: c[2], art: ART_CACHE[suit + '-c' + i] });
+    });
+  });
+  return out;
+}
+/* The deck is built in the languages whose card texts exist. German reads the
+   interface in German and the cards in English until those are translated too,
+   so it points at the English deck rather than at nothing - which is what the
+   whole app did the first time German was switched on. */
+const DECK = { vi: buildDeck('vi'), en: buildDeck('en') };
+/* German has its own deck from stage 2 (tarot-de.js). The guard is not
+   decoration: without both halves - LEX.de for the names the app assembles and
+   DECKTEXT.de for the words - buildDeck('de') throws and the whole app is a
+   blank page. */
+DECK.de = (LEX.de && DECKTEXT.de) ? buildDeck('de') : DECK.en;
+const INDEX = {};
+LANGS.forEach((lg) => { INDEX[lg] = {}; (DECK[lg] || DECK.en).forEach((c) => { INDEX[lg][c.id] = c; }); });
+const cardById = (id, lg) => INDEX[lg || lang][id];
+/* The card's name in a second language, shown under the first. Not a toggle:
+   with three languages English is the sensible second name for everybody
+   except English readers, who get Vietnamese. */
+const otherLang = () => (lang === 'en' ? 'vi' : 'en');
+
+/* Insight fields for a card in the current language. */
+function insightOf(id, lg) {
+  const r = (INSIGHT[lg || lang] || {})[id];
+  if (!r) return null;
+  return { pos: r[0].split('|'), neg: r[1].split('|'), now: r[2], love: r[3], work: r[4], study: r[5], money: r[6], advice: r[7] };
+}
+
+function faceSVG(card) {
+  const b = card.badge;
+  const numeral = b
+    ? '<g><rect x="' + (50 - Math.max(9, b.length * 3.4)) + '" y="6" width="' + Math.max(18, b.length * 6.8) + '" height="15" fill="var(--card-bg)" stroke="var(--card-ink)" stroke-width="1"/>'
+      + '<text x="50" y="17.2" text-anchor="middle" font-family="Georgia,serif" font-size="9.5" fill="var(--card-ink)">' + b + '</text></g>' : '';
+  return '<svg viewBox="0 0 100 172" role="img" aria-label="' + esc(card.name) + '">'
+    + '<rect x="1.3" y="1.3" width="97.4" height="169.4" rx="3" fill="var(--card-bg)" stroke="var(--card-ink)" stroke-width="2.6"/>'
+    + '<g stroke="var(--card-ink)" stroke-linejoin="round" stroke-linecap="round" fill="none">' + card.art
+    + '<rect x="5" y="5" width="90" height="135" fill="none" stroke-width="1"/><rect x="5" y="140" width="90" height="27" fill="none" stroke-width="1"/></g>' + numeral
+    + '<text x="50" y="157" text-anchor="middle" font-family="Be Vietnam Pro, sans-serif" font-size="' + (card.name.length > 16 ? 6.2 : 7.4) + '" fill="var(--card-ink)">' + esc(card.name) + '</text></svg>';
+}
+/* Card back drawn after the logo: purple card, gold crescent, and a gold dot
+   toward each of the four corners of the frame. */
+function backSVG() {
+  return '<svg viewBox="0 0 100 172" aria-hidden="true">'
+    + '<rect x="1.3" y="1.3" width="97.4" height="169.4" rx="8" fill="var(--back-1)" stroke="#2A1D4E" stroke-width="2.6"/>'
+    + '<rect x="9" y="9" width="82" height="154" rx="5" fill="var(--back-2)" stroke="#E5BE5E" stroke-width="1.4"/>'
+    + '<path d="M56 60 A26 26 0 1 0 56 112 A21 21 0 1 1 56 60 Z" fill="#E5BE5E"/>'
+    + [[26, 32], [74, 32], [26, 140], [74, 140]].map((p) => '<circle cx="' + p[0] + '" cy="' + p[1] + '" r="3.4" fill="#E5BE5E"/>').join('')
+    + '</svg>';
+}
+const BACK = backSVG();
+/* Drawn fresh each time, because the visitor can change the look. */
+const backNow = () => (typeof LOOKS === 'undefined' ? BACK : backSVGFor());
+/* The logo's three cards, for the home block. */
+function logoCardSVG(kind) {
+  const fill = kind === 'blue' ? '#AFC8F0' : kind === 'pink' ? '#F6BBCB' : '#3D2A6E';
+  let mark = '';
+  if (kind === 'blue') mark = '<path d="M50 60 l4 10 10 4 -10 4 -4 10 -4 -10 -10 -4 10 -4z" fill="#E5BE5E"/><circle cx="50" cy="108" r="3" fill="#E5BE5E"/>';
+  else if (kind === 'pink') mark = '<path d="M50 62 l3 6.5 6.5 3 -6.5 3 -3 6.5 -3 -6.5 -6.5 -3 6.5 -3z" fill="#E5BE5E"/><path d="M50 98 l2 4.4 4.4 2 -4.4 2 -2 4.4 -2 -4.4 -4.4 -2 4.4 -2z" fill="#E5BE5E"/>';
+  else mark = '<path d="M56 60 A26 26 0 1 0 56 112 A21 21 0 1 1 56 60 Z" fill="#E5BE5E"/>' + [[26, 32], [74, 32], [26, 140], [74, 140]].map((p) => '<circle cx="' + p[0] + '" cy="' + p[1] + '" r="3.4" fill="#E5BE5E"/>').join('');
+  return '<svg viewBox="0 0 100 172" aria-hidden="true"><rect x="1.3" y="1.3" width="97.4" height="169.4" rx="10" fill="' + fill + '" stroke="#3B2A5E" stroke-width="3"/>'
+    + '<rect x="10" y="10" width="80" height="152" rx="6" fill="none" stroke="#E5BE5E" stroke-width="1.6"/>' + mark + '</svg>';
+}
+const miniHTML = (id, link) => {
+  const c = cardById(id);
+  if (!c) return '';
+  const inner = '<span class="face">' + faceSVG(c) + '</span>' + esc(c.name);
+  return link ? '<button class="m" data-open-card="' + id + '">' + inner + '</button>' : '<div class="m">' + inner + '</div>';
+};
+
+/* The logo: cream disc, three fanned cards (blue, purple, pink), gold crescent. */
+const LOGO = '<span class="lockup" aria-label="Nabu Tarot"><img src="' + LOGO_PNG + '" alt="" class="avatar"><span class="word">Nabu Tarot</span></span>';
+
+/* ---- chrome ---- */
+const ICONS = {
+  home: '<svg viewBox="0 0 24 24"><path d="M3 11l9-7 9 7v9a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/></svg>',
+  pick: '<svg viewBox="0 0 24 24"><rect x="4.5" y="5" width="11" height="16" rx="2" transform="rotate(-10 10 13)"/><rect x="9" y="3.5" width="11" height="16" rx="2" transform="rotate(8 14.5 11.5)"/><path d="M16.2 8.2a2.3 2.3 0 1 0 0 4.2 1.8 1.8 0 1 1 0-4.2z"/></svg>',
+  learn: '<svg viewBox="0 0 24 24"><path d="M4 5a2 2 0 0 1 2-2h5v18H6a2 2 0 0 1-2-2zM13 3h5a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-5z"/></svg>',
+  book: '<svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></svg>',
+  play: '<svg viewBox="0 0 24 24"><rect x="3.5" y="3.5" width="17" height="17" rx="4"/><circle cx="8.5" cy="8.5" r="1.3" fill="currentColor"/><circle cx="15.5" cy="8.5" r="1.3" fill="currentColor"/><circle cx="12" cy="12" r="1.3" fill="currentColor"/><circle cx="8.5" cy="15.5" r="1.3" fill="currentColor"/><circle cx="15.5" cy="15.5" r="1.3" fill="currentColor"/></svg>',
+  me: '<svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg>'
+};
+let UNREAD = 0, NEWBK = 0;
+/* Notifications for Nabu: a system notification when the browser allows it
+   (Android, desktop, and iPhone once the app is on the home screen), and
+   always a toast while the app is open. */
+function notifyAdmin(title, body, hash) {
+  toast(title + (body ? ': ' + body : ''));
+  if (!('Notification' in window) || Notification.permission !== 'granted') return;
+  try {
+    const n = new Notification(title, { body: body || '', icon: 'icon-180.png', badge: 'icon-180.png', tag: hash || 'nabu' });
+    n.onclick = () => { window.focus(); if (hash) location.hash = hash; n.close(); };
+  } catch (e) { /* some browsers only allow this from a service worker */ }
+}
+function notifyState() { return !('Notification' in window) ? 'unsupported' : Notification.permission; }
+async function askNotify() { if (!('Notification' in window)) return 'unsupported'; try { return await Notification.requestPermission(); } catch (e) { return Notification.permission; } }
+/* Drawn in one stroke weight so they sit in the row of text links without
+   shouting, and in currentColor so they follow the theme. */
+const IG_ICON = '<svg class="sico" viewBox="0 0 24 24" aria-hidden="true"><rect x="3.2" y="3.2" width="17.6" height="17.6" rx="5.2" fill="none" stroke="currentColor" stroke-width="1.9"/><circle cx="12" cy="12" r="4.1" fill="none" stroke="currentColor" stroke-width="1.9"/><circle cx="17.1" cy="6.9" r="1.25" fill="currentColor"/></svg>';
+const FB_ICON = '<svg class="sico" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8.8" fill="none" stroke="currentColor" stroke-width="1.9"/><path d="M13.6 21.2v-8.1h2.3l.4-2.8h-2.7V8.5c0-.8.25-1.35 1.4-1.35h1.45V4.65c-.25-.03-1.1-.11-2.1-.11-2.1 0-3.5 1.25-3.5 3.6v2.15H8.5v2.8h2.35v8.1z" fill="currentColor"/></svg>';
+function renderFooter() {
+  const S = T(), links = [];
+  if (CONFIG.instagram) links.push('<a class="sl" href="https://instagram.com/' + esc(CONFIG.instagram) + '" target="_blank" rel="noopener" title="Instagram" aria-label="Instagram">' + IG_ICON + '</a>');
+  if (CONFIG.facebookUrl) links.push('<a class="sl" href="' + esc(CONFIG.facebookUrl) + '" target="_blank" rel="noopener" title="Facebook" aria-label="Facebook">' + FB_ICON + '</a>');
+  links.push('<a href="#/contact">' + esc(S.contactLink) + '</a>');
+  links.push('<a href="#/install">' + esc(S.installLink) + '</a>');
+  links.push('<a href="#/privacy">' + esc(S.privacyLink) + '</a>');
+  links.push('<a href="#/report">' + esc(S.reportLink) + '</a>');
+  $('#foot').innerHTML = '<div class="wrap">' + LOGO + '<div>' + esc(L(CONFIG.tagline)) + '<div class="links">' + links.join(' · ') + '</div><div class="copy">© ' + new Date().getFullYear() + ' ' + esc(CONFIG.brand) + '. ' + esc(S.rights) + '</div></div></div>';
+}
+/* ---- the sparkle over the wordmark ----
+   Four-pointed stars scattered across the name, each fading in, turning a
+   little and fading out again on its own loop.
+
+   Drawn once and kept: the header is rebuilt on every screen change, and stars
+   that jumped to new places each time somebody tapped a tab would be a fidget
+   rather than a shimmer. The animation is CSS, so it costs a compositor
+   nothing and there is no timer running behind it - and like everything else
+   that moves in this app, it stops for anyone who has asked for less motion. */
+const SPARK_D = 'M9.83.84a.72.72 0 0 1 1.35 0l.68 1.88c.54 1.47.53 3.67 1.64 4.78 1.11 1.11 3.31 1.1 4.78 1.64l1.88.69a.72.72 0 0 1 0 1.35l-1.88.68c-1.47.54-3.67.53-4.78 1.64-1.11 1.11-1.1 3.31-1.64 4.78l-.68 1.88a.72.72 0 0 1-1.35 0l-.69-1.88c-.54-1.47-.53-3.67-1.64-4.78-1.11-1.11-3.31-1.1-4.78-1.64l-1.88-.68a.72.72 0 0 1 0-1.35l1.88-.69C5.19 8.6 7.39 8.61 8.5 7.5c1.11-1.11 1.1-3.31 1.64-4.78L9.83.84Z';
+function sparklesHTML(n) {
+  let out = '';
+  for (let i = 0; i < n; i++) {
+    const x = Math.round(Math.random() * 96) + 2, y = Math.round(Math.random() * 90) + 5;
+    const sc = (Math.random() * 0.7 + 0.45).toFixed(2);
+    const delay = (Math.random() * 3.4).toFixed(2), dur = (Math.random() * 2 + 2.6).toFixed(2);
+    out += '<svg class="spk" viewBox="0 0 21 21" aria-hidden="true" focusable="false"'
+      + ' style="left:' + x + '%;top:' + y + '%;--s:' + sc + ';animation-delay:' + delay + 's;animation-duration:' + dur + 's">'
+      + '<path d="' + SPARK_D + '" fill="var(--spk-' + (i % 2 ? '2' : '1') + ')"/></svg>';
+  }
+  return out;
+}
+const BRAND_SPARKLE = LOGO.replace('</span>', sparklesHTML(9) + '</span>');
+
+function renderChrome(route) {
+  document.documentElement.setAttribute('lang', lang);
+  renderFooter();
+  $('#brand').innerHTML = BRAND_SPARKLE;
+  /* The pill names the language you are reading, not the one a press would
+     switch to. Naming the next one read as the app simply being in the wrong
+     language. What the press does is said in the label underneath instead. */
+  $('#lang').textContent = T().lang;
+  $('#lang').setAttribute('aria-label', T().langSwitch);
+  $('#lang').setAttribute('title', T().langSwitch);
+  $('#nav').innerHTML = ['home', 'pick', 'play', 'learn', 'book', 'me'].map((k) =>
+    '<a href="#/' + k + '" class="' + (route === k ? 'on' : '') + '">' + ICONS[k] + '<span>' + esc(T().nav[k]) + '</span>'
+    + (k === 'me' && (UNREAD + NEWBK) ? '<span class="badge">' + (UNREAD + NEWBK) + '</span>' : '')
+    // A sale on readings shows up on the tab where readings are booked.
+    + (k === 'book' && SALE.covers('reading') ? '<span class="saletag" aria-hidden="true">🏷️</span>' : '')
+    + (k === 'learn' && SALE.covers('unlock') ? '<span class="saletag" aria-hidden="true">🏷️</span>' : '') + '</a>').join('');
+  if (typeof alertsBadge === 'function') alertsBadge();
+  if (typeof adminTabBadges === 'function') adminTabBadges();
+}
+let toastTimer = null;
+function toast(msg) {
+  const t = $('#toast'); t.textContent = msg; t.classList.add('show');
+  clearTimeout(toastTimer); toastTimer = setTimeout(() => t.classList.remove('show'), 2400);
+}
+function copyText(text) {
+  if (navigator.clipboard && navigator.clipboard.writeText) return navigator.clipboard.writeText(text).catch(() => copyFallback(text));
+  return Promise.resolve(copyFallback(text));
+}
+function copyFallback(text) {
+  const ta = document.createElement('textarea');
+  ta.value = text; ta.setAttribute('readonly', ''); ta.style.position = 'fixed'; ta.style.top = '-1000px';
+  document.body.appendChild(ta); ta.select();
+  try { document.execCommand('copy'); } catch (e) { /* nothing more to try */ }
+  document.body.removeChild(ta);
+}
+/* Photos for posts are shrunk on the phone before they go to the cloud, so each stays well under the 1 MB document limit. */
+function shrinkImage(file, max, quality) {
+  return new Promise((resolve, reject) => {
+    const url = URL.createObjectURL(file), img = new Image();
+    img.onload = () => {
+      const k = Math.min(1, (max || 1100) / Math.max(img.width, img.height)), w = Math.round(img.width * k), h = Math.round(img.height * k);
+      const c = document.createElement('canvas'); c.width = w; c.height = h; c.getContext('2d').drawImage(img, 0, 0, w, h);
+      URL.revokeObjectURL(url); resolve(c.toDataURL('image/jpeg', quality || 0.82));
+    };
+    img.onerror = () => { URL.revokeObjectURL(url); reject(new Error('image')); };
+    img.src = url;
+  });
+}
+/* Inside the Google Play build (a Trusted Web Activity) the page is opened with an android-app:// referrer. Play's
+   rules forbid pointing people to outside payment for digital content, so that build hides course prices and
+   the "buy" buttons and only takes an unlock code. Remembered on the device after the first launch. */
+try { if (/^android-app:\/\//.test(document.referrer || '')) store.set('nabu-twa', true); } catch (e) { /* no referrer */ }
+const isTWA = () => store.get('nabu-twa', false) === true;
+const EMOJIS = ['✨', '💜', '🔮', '🌙', '☀️', '⭐', '🌟', '💫', '🃏', '🗝️', '🌸', '🌿', '🕯️', '🧿', '💌', '❤️', '💔', '💰', '💼', '📚', '😊', '🙏', '👉', '⚠️', '✅', '📅', '🎁', '🎉'];
+/* A booking as a calendar file with four reminders (24 h, 6 h, 1 h, 15 min).
+   Times are Vietnam time (UTC+7, no daylight saving), written as UTC. */
+function icsFor(b) {
+  const m = /^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2})/.exec(String(b.slot || ''));
+  if (!m) return '';
+  const start = new Date(Date.UTC(+m[1], +m[2] - 1, +m[3], +m[4] - 7, +m[5])), end = new Date(start.getTime() + 60 * 60000);
+  const f = (d) => d.toISOString().replace(/[-:]/g, '').replace(/\.\d{3}/, '');
+  const clean = (s) => String(s || '').replace(/[\\;,]/g, (c) => '\\' + c).replace(/\n/g, '\\n');
+  const alarms = [['-P1D', '24 h'], ['-PT6H', '6 h'], ['-PT1H', '1 h'], ['-PT15M', '15 min']].map((a) => 'BEGIN:VALARM\r\nTRIGGER:' + a[0] + '\r\nACTION:DISPLAY\r\nDESCRIPTION:Nabu Tarot ' + a[1] + '\r\nEND:VALARM').join('\r\n');
+  const what = clean(CONFIG.brand + (b.service ? ' · ' + b.service : '')), who = clean(b.name ? b.name : '');
+  return ['BEGIN:VCALENDAR', 'VERSION:2.0', 'PRODID:-//Nabu Tarot//app//VI', 'BEGIN:VEVENT', 'UID:' + (b.id || Date.now()) + '@nabutarot', 'DTSTAMP:' + f(new Date()), 'DTSTART:' + f(start), 'DTEND:' + f(end),
+    'SUMMARY:' + what, 'DESCRIPTION:' + clean((b.topic ? b.topic + '\n' : '') + (b.note || '') + (who ? '\n' + who : '')), 'URL:' + appURL() + '#/me', alarms, 'END:VEVENT', 'END:VCALENDAR'].join('\r\n');
+}
+const icsLink = (b) => 'data:text/calendar;charset=utf-8,' + encodeURIComponent(icsFor(b));
+/* Google Calendar's "add event" page, for people who keep their calendar there. */
+function gcalLink(b) {
+  const m = /^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2})/.exec(String(b.slot || ''));
+  if (!m) return '';
+  const start = new Date(Date.UTC(+m[1], +m[2] - 1, +m[3], +m[4] - 7, +m[5])), end = new Date(start.getTime() + 3600000);
+  const f = (d) => d.toISOString().replace(/[-:]/g, '').replace(/\.\d{3}/, '');
+  return 'https://calendar.google.com/calendar/render?action=TEMPLATE&text=' + encodeURIComponent(CONFIG.brand + (b.service ? ' · ' + b.service : '')) + '&dates=' + f(start) + '/' + f(end) + '&ctz=Asia%2FHo_Chi_Minh&details=' + encodeURIComponent((b.topic ? b.topic + '\n' : '') + (b.note || '') + '\n' + appURL() + '#/me');
+}
+/* Hand the .ics to the phone: the share sheet (Calendar, Files…) where it exists, otherwise a download. */
+async function addToCalendar(b) {
+  const S = T(), ics = icsFor(b); if (!ics) return;
+  const name = 'nabu-tarot-' + String(b.slot || '').slice(0, 10) + '.ics';
+  try {
+    const file = new File([ics], name, { type: 'text/calendar' });
+    if (navigator.canShare && navigator.canShare({ files: [file] })) { await navigator.share({ files: [file], title: CONFIG.brand }); return; }
+  } catch (e) { if (e && e.name === 'AbortError') return; }
+  try {
+    const url = URL.createObjectURL(new Blob([ics], { type: 'text/calendar;charset=utf-8' })), a = document.createElement('a');
+    a.href = url; a.download = name; a.rel = 'noopener'; document.body.appendChild(a); a.click(); setTimeout(() => { document.body.removeChild(a); URL.revokeObjectURL(url); }, 4000);
+    toast(S.icsDownloaded);
+  } catch (e) { window.open(gcalLink(b), '_blank', 'noopener'); }
+}
+const slotDate = (slot) => { const m = /^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2})/.exec(String(slot || '')); return m ? new Date(+m[1], +m[2] - 1, +m[3], +m[4], +m[5]) : null; };
+/* Reminders while the app is open: 24 h, 6 h, 1 h and 15 min before every upcoming booking. */
+const REM = { timers: [] };
+function scheduleReminders(list) {
+  REM.timers.forEach(clearTimeout); REM.timers = [];
+  const S = T(), now = Date.now(), soon = [];
+  (list || []).filter((b) => ['requested', 'confirmed', 'change_requested'].indexOf(b.status) > -1).forEach((b) => {
+    const d = slotDate(b.slot); if (!d || d.getTime() < now) return;
+    soon.push(b);
+    [[24 * 60, S.inHours(24)], [6 * 60, S.inHours(6)], [60, S.inHours(1)], [15, S.inMinutes(15)]].forEach((r) => {
+      const at = d.getTime() - r[0] * 60000, wait = at - now;
+      if (wait > 0 && wait < 36 * 3600000) REM.timers.push(setTimeout(() => notifyAdmin(S.remindTitle(r[1]), slotLabel(b.slot), '#/me'), wait));
+    });
+  });
+  soon.sort((a, b) => String(a.slot).localeCompare(String(b.slot)));
+  store.set('nabu-nextbk', soon[0] ? { slot: soon[0].slot, status: soon[0].status, service: soon[0].service || '' } : null);
+}
+function shareOrCopy(text, url) {
+  if (navigator.share) return navigator.share({ text: text, url: url }).catch(() => {});
+  return copyText(text + (url ? ' ' + url : '')).then(() => toast(T().copied));
+}
+const appURL = () => location.href.split('#')[0];
+function fmtDate(s) { const d = new Date(String(s) + 'T00:00:00'); return isNaN(d) ? esc(s) : T().dateFmt(d); }
+function paras(text) {
+  return String(text || '').split(/\n\s*\n/).filter((x) => x.trim()).map((p) => '<p>' + esc(p.trim()).replace(/\n/g, '<br>') + '</p>').join('');
+}
+function bindAccordions(root) {
+  $$('.acc > button', root).forEach((b) => b.addEventListener('click', () => b.parentNode.classList.toggle('open')));
+}
+function bindCardLinks(root) {
+  $$('[data-open-card]', root).forEach((b) => b.addEventListener('click', () => { location.hash = '#/learn/card/' + b.getAttribute('data-open-card'); }));
+}
+
+/* ---- remote JSON with an offline copy ---- */
+async function loadJSON(path, key) {
+  try {
+    const r = await fetch(path + '?t=' + Date.now(), { cache: 'no-store' });
+    if (r.ok) { const j = await r.json(); store.set(key, j); return { data: j, fromCache: false }; }
+  } catch (e) { /* offline */ }
+  return { data: store.get(key, null), fromCache: true };
+}
+
+/* Content that Nabu edits in the dashboard: the cloud copy wins when it
+   exists, the repo file is the fallback (and the offline cache after that). */
+async function loadContent(name, path, key) {
+  const be = typeof BE !== 'undefined' ? BE : null;
+  if (be && be.enabled) {
+    try {
+      await Promise.race([be.initP || Promise.resolve(), new Promise((r) => setTimeout(r, 2500))]);
+      if (be.db) {
+        const d = await Promise.race([be.getContent(name), new Promise((_, rej) => setTimeout(() => rej(new Error('timeout')), 2500))]);
+        // `key` is falsy for anything that must not be kept on the device.
+        if (d) { delete d.updatedAt; if (key) store.set(key, d); return { data: d, fromCache: false }; }
+      }
+    } catch (e) { /* offline, rules, or not saved yet: use the file */ }
+  }
+  return loadJSON(path, key);
+}
+
+/* ---- what went wrong ----
+   The last few errors are kept in memory so the bug report can carry them. */
+const OOPS = [];
+
+/* Until now that was the end of it: unless somebody opened the bug-report form
+   and sent it, an error that broke the app for them was known only to their own
+   phone. Nabu found out when a client mentioned it in a message, or never.
+   So errors are also written down where Nabu can read them.
+
+   Kept deliberately small. Five per session, never the same message twice, and
+   only when somebody is signed in - the rules require an account, which is what
+   stops the collection being a place strangers can write to. Everything here
+   fails quietly: an app that cannot report a problem must not make a second
+   one, and it must never show the reader a wall about it. */
+const OOPS_SENT = [];
+function noteOops(what, where) {
+  const msg = String(what || '').slice(0, 300);
+  if (!msg) return;
+  OOPS.unshift(msg + (where ? ' @' + where : ''));
+  OOPS.length = Math.min(OOPS.length, 3);
+  try {
+    if (OOPS_SENT.length >= 5 || OOPS_SENT.indexOf(msg) > -1) return;
+    OOPS_SENT.push(msg);
+    if (typeof BE === 'undefined' || !BE.enabled || !BE.user || !BE.db) return;
+    BE.db.collection('errors').add({
+      uid: BE.user.uid,
+      version: String(window.APP_VERSION || ''),
+      screen: String(location.hash || '#/').slice(0, 80),
+      message: msg,
+      where: String(where || '').slice(0, 120),
+      ua: String(navigator.userAgent || '').replace(/\).*$/, ')').slice(0, 200),
+      size: window.innerWidth + 'x' + window.innerHeight,
+      lang: typeof lang === 'string' ? lang : '',
+      at: Date.now()
+    }).catch(() => {});
+  } catch (e) { /* never make a second problem out of the first */ }
+}
+window.addEventListener('error', (e) => {
+  noteOops((e && e.message) || 'error',
+    e && e.filename ? String(e.filename).split('/').pop() + ':' + e.lineno : '');
+});
+window.addEventListener('unhandledrejection', (e) => {
+  noteOops('promise: ' + String((e && e.reason && e.reason.message) || e.reason || ''), '');
+});
+
+/* ---- router ---- */
+const ROUTES = {};
+/* In-app history: the back arrow on a screen returns to the screen the
+   visitor actually came from (home, a tab, a list), not to a fixed parent. */
+/* cleanup: a screen that opens a live listener leaves one here, and the
+   router calls it on the way out so the listener does not outlive the
+   screen that wanted it. */
+const NAV = { current: '', stack: [], popping: false, skip: false, scroll: {}, restore: null, cleanup: null };
+try { NAV.stack = JSON.parse(sessionStorage.getItem('nabu-nav') || '[]'); } catch (e) { NAV.stack = []; }
+function navRemember(h) {
+  // Where the visitor was on the screen they are leaving, so a return lands there.
+  if (NAV.current) NAV.scroll[NAV.current] = window.scrollY || 0;
+  const top = NAV.stack[NAV.stack.length - 1];
+  NAV.restore = null;
+  if (NAV.skip) { NAV.skip = false; }
+  else if (NAV.popping || (top && top === h && NAV.current !== h)) { NAV.popping = false; NAV.stack.pop(); NAV.restore = NAV.scroll[h] || 0; }
+  else if (NAV.current && NAV.current !== h) { NAV.stack.push(NAV.current); if (NAV.stack.length > 40) NAV.stack.shift(); }
+  NAV.current = h;
+  try { sessionStorage.setItem('nabu-nav', JSON.stringify(NAV.stack)); } catch (e) { /* private mode */ }
+}
+function redirect(h) { NAV.skip = true; location.replace(h); }
+/* A short name for a hash, used as the back arrow's label. */
+function screenLabel(h) {
+  const S = T(), p = String(h || '').replace(/^#\/?/, '').split('?')[0].split('/'), r = p[0] || 'home', a = p.slice(1);
+  if (r === 'home') return S.nav.home;
+  if (r === 'pick') return S.nav.pick;
+  if (r === 'book') return S.nav.book;
+  if (r === 'prices') return S.priceTitle;
+  if (r === 'news') return S.newsTitle;
+  if (r === 'alerts') return S.alertTitle;
+  if (r === 'contact') return S.contactTitle;
+  if (r === 'privacy') return S.privacyTitle;
+  if (r === 'install') return S.installTitle;
+  if (r === 'play') return S.actTitle;
+  if (r === 'love') return S.loveTitle;
+  if (r === 'me') return S.nav.me;
+  if (r === 'signin') return S.signIn;
+  if (r === 'learn') { if (!a.length) return S.learnTitle; if (a.length === 1 && S.cats[a[0]]) return S.cats[a[0]]; if (a[0] === 'fortune' && a.length === 2) return S.cats.fortune; }
+  return S.back;
+}
+function backTarget() { const prev = NAV.stack[NAV.stack.length - 1]; return prev && prev !== NAV.current ? prev : ''; }
+function backLink(href, label) {
+  if (backTarget()) return '';  // the bar above the screen already shows the way back
+  return '<p><a href="' + esc(href) + '" class="backlink">← ' + esc(label) + '</a></p>';
+}
+/* The main tabs always lead back to home; deeper screens lead back to where
+   the visitor came from. */
+const TAB_ROOTS = { pick: 1, play: 1, learn: 1, book: 1, prices: 1, me: 1 };
+function renderBackBar(r) {
+  const bar = $('#backbar');
+  const isTab = TAB_ROOTS[r.route] && !r.args.length;
+  const prev = r.route === 'home' ? '' : isTab ? '#/home' : backTarget();
+  bar.hidden = !prev;
+  const link = prev ? '<a href="' + esc(prev) + '" class="backlink"' + (isTab ? '' : ' data-back="1"') + '>← ' + esc(screenLabel(prev)) + '</a>' : '';
+  bar.innerHTML = link;
+  // The same way back sits under the screen too, so nobody has to scroll up after a long read; deeper screens add a straight jump home.
+  const foot = $('#homefoot');
+  if (foot) { foot.hidden = !prev; foot.innerHTML = link + (prev && prev !== '#/home' ? '<a href="#/home" class="backlink">🏠 ' + esc(T().nav.home) + '</a>' : ''); }
+}
+/* A screen that writes its own way back keeps it; the router simply stops
+   offering the same destination underneath it. Three links in a row - back to
+   Activities, back to Activities, home - is what this removes. */
+function dedupeBackLinks() {
+  const foot = $('#homefoot');
+  if (!foot || foot.hidden) return;
+  const here = {};
+  $$('#main a.backlink').forEach((a) => { here[a.getAttribute('href') || ''] = true; });
+  $$('#homefoot a.backlink').forEach((a) => { if (here[a.getAttribute('href') || '']) a.remove(); });
+  if (!$('#homefoot a')) foot.hidden = true;
+}
+/* ---- the reading column on a desk ----
+   A card page was written for a hand: the picture, its name and the arrows to
+   the cards either side sit at the top, and the reading runs underneath. On a
+   wide window that leaves the picture stranded in the top left with eight
+   hundred pixels of nothing beside it, and every line of the reading runs a
+   hundred and ten characters. So the three things that identify the card are
+   gathered into one column that stays put while the reading scrolls past it.
+
+   The gathering happens at every width. The wrapper is display:contents below
+   the desk breakpoint, so a phone lays the same nodes out exactly as it did
+   before - the wrapper has no box of its own to change spacing or collapsing.
+   The one thing that does move by width is the Nabu AI box: on a desk it joins
+   the column under the card, and on a phone it stays where it was written,
+   under the reading it asks questions about. Its seat marks the way back. */
+const RAIL_AT = 900;
+function railify() {
+  const d = $('#main > .detail');
+  if (!d) return;
+  let rail = d.querySelector('.rail');
+  if (!rail) {
+    /* Every card-shaped page has a picture at the top; the prose-only ones
+       (a guide, a spread, a lesson) have nothing to stand a rail on. */
+    const hero = d.querySelector('.hero, .angelhero');
+    if (!hero || hero.parentNode !== d) return;
+    rail = document.createElement('div');
+    rail.className = 'rail';
+    d.insertBefore(rail, d.firstChild);
+    const nav = $$('.cardnav', d).filter((n) => n.parentNode === d)[0];
+    /* Moved in the order they were written, so with the wrapper out of the
+       layout a phone sees the same sequence it always did. */
+    [hero, nav].filter(Boolean)
+      .sort((a, b) => (a.compareDocumentPosition(b) & Node.DOCUMENT_POSITION_FOLLOWING ? -1 : 1))
+      .forEach((el) => rail.appendChild(el));
+  }
+  const ai = d.querySelector('.ai');
+  if (!ai) return;
+  let seat = d.querySelector('.aiseat');
+  if (!seat) {
+    seat = document.createElement('span');
+    seat.className = 'aiseat';
+    seat.hidden = true;
+    ai.parentNode.insertBefore(seat, ai);
+  }
+  const wide = window.innerWidth >= RAIL_AT;
+  if (wide && ai.parentNode !== rail) rail.appendChild(ai);
+  else if (!wide && ai.parentNode === rail) seat.parentNode.insertBefore(ai, seat);
+}
+/* Dragging a window across the breakpoint has to re-home the AI box, and the
+   card page is the only screen that cares, so this asks and usually leaves. */
+let RAILWAIT = 0;
+window.addEventListener('resize', () => {
+  clearTimeout(RAILWAIT);
+  RAILWAIT = setTimeout(railify, 150);
+});
+function parseHash() {
+  const h = location.hash.replace(/^#\/?/, '');
+  const q = h.split('?'), path = q[0].split('/'), params = {};
+  (q[1] || '').split('&').forEach((kv) => { if (!kv) return; const p = kv.split('='); params[decodeURIComponent(p[0])] = decodeURIComponent(p[1] || ''); });
+  return { route: path[0] || 'home', args: path.slice(1), params: params };
+}
+const ONE_COL = ['love', 'wedding', 'pet', 'play', 'looks', 'rewards', 'me', 'book',
+  'contact', 'report', 'privacy', 'install', 'alerts', 'news', 'post', 'unlock', 'welcome'];
+/* Under #/learn only the hub and the card pages are wide; the rest is reading. */
+const ONE_COL_LEARN = ['astro', 'fortune', 'numbers', 'angel', 'quiz', 'manifest',
+  'guide', 'spread', 'lesson'];
+function route() {
+  const r = parseHash();
+  const def = ROUTES[r.route];
+  if (!def) { redirect('#/home'); return; }
+  /* Somebody who has an account but never answered the welcome screen is sent
+     to it, from wherever they were going. It is the one screen that may
+     interrupt, because everything after it assumes those answers exist.
+     Four screens are exempt: the welcome screen itself, because it is the
+     destination; the privacy page and the sign-in page, because they are how
+     somebody leaves or arrives; and the Me tab, where signing out lives and
+     which shows a summary that links to the welcome screen. */
+  if (r.route !== 'welcome' && r.route !== 'privacy' && r.route !== 'signin' && r.route !== 'me'
+      && typeof needsWelcome === 'function' && needsWelcome()) {
+    redirect('#/welcome'); return;
+  }
+  if (NAV.cleanup) { const c = NAV.cleanup; NAV.cleanup = null; try { c(); } catch (e) { /* already gone */ } }
+  navRemember(location.hash || '#/home');
+  /* Which screen this is, on the body, so a stylesheet can lay one screen out
+     differently from the rest - the home page on a wide window, for one -
+     without any screen having to know it is being looked at. */
+  document.body.setAttribute('data-route', r.route);
+  /* Screens that are one thing rather than a grid of things. On a desk they
+     read as a single column down the middle: the title, the card and the
+     button under it all the same width, so nothing stops short of anything
+     else. A grid screen keeps the full width it was given. */
+  document.body.setAttribute('data-shape',
+    ONE_COL.indexOf(r.route) > -1 || (r.route === 'learn' && ONE_COL_LEARN.indexOf(r.args[0]) > -1) ? 'one' : '');
+  renderChrome(def.nav);
+  renderBackBar(r);
+  const y = NAV.restore;
+  if (y == null) window.scrollTo(0, 0);
+  Promise.resolve(def.render(r.args, r.params)).then(() => {
+    dedupeBackLinks();
+    railify();
+    if (!y) return;  // nothing to restore, and never fight a visitor who has started scrolling
+    window.scrollTo(0, y);
+    requestAnimationFrame(() => window.scrollTo(0, y));
+    setTimeout(() => { if (window.scrollY < 4) window.scrollTo(0, y); }, 120);
+  });
+}
+/* ---- pull down to refresh ----
+   The gesture every feed on a phone has. It lives here rather than on any one
+   screen, so it works on all of them, including ones written later.
+
+   The browser's own version is switched off in CSS: it reloads the whole page
+   and throws away where you were. This asks the service worker whether there
+   is a newer Nabu - if there is, the reload that already exists takes over -
+   then refetches what the app reads from the cloud and redraws the screen. */
+let REFRESHING = false;
+async function refreshNow() {
+  if (REFRESHING) return;
+  REFRESHING = true;
+  const S = T();
+  /* A refresh on a bad connection must still end. Whatever has not answered in
+     five seconds is left behind and the screen redraws with what did. */
+  const capped = (p, ms) => Promise.race([p, new Promise((r) => setTimeout(r, ms || 5000))]);
+  await capped(Promise.all([
+    (async () => {
+      try {
+        if ('serviceWorker' in navigator && navigator.serviceWorker.getRegistration) {
+          const reg = await navigator.serviceWorker.getRegistration();
+          if (reg) await reg.update();
+        }
+      } catch (e) { /* no worker, or offline: the rest is still worth doing */ }
+    })(),
+    loadContent('posts', CONFIG.postsPath, 'nabu-posts').catch(() => null),
+    loadContent('sale', 'sale.json', 'nabu-sale').then((r) => { SALE.set(r && r.data); }).catch(() => {}),
+    loadContent('schedule', CONFIG.schedulePath, 'nabu-schedule').catch(() => null)
+  ]).catch(() => {}));
+  try { if (typeof alertsStart === 'function') alertsStart(); } catch (e) { /* nothing to listen to */ }
+  /* Whatever happens in the redraw, the latch has to come off. It did not,
+     and a single throw in a render would have left pull-to-refresh dead for
+     the rest of the session with nothing to show for it. */
+  try {
+    route();
+    toast(S.refreshed);
+    /* When it last happened, so a test can see the gesture arrive rather than
+       guessing from what it redrew. */
+    if (window.NABU) window.NABU.REFRESHED_AT = Date.now();
+  } finally {
+    REFRESHING = false;
+  }
+}
+
+function pullToRefresh() {
+  const el = document.createElement('div');
+  el.id = 'pull';
+  el.innerHTML = '<span class="parrow">\u2193</span>';
+  document.body.appendChild(el);
+
+  const TRIP = 74, MAX = 104;
+  let startY = 0, startX = 0, pulling = false, dist = 0, busy = false;
+  const show = (d) => {
+    el.style.transform = 'translate(-50%,' + Math.round(Math.min(d, MAX) * 0.6) + 'px)';
+    el.style.opacity = String(Math.min(1, d / TRIP));
+    el.classList.toggle('ready', d >= TRIP);
+  };
+  const atTop = () => (window.scrollY || document.documentElement.scrollTop || 0) <= 0;
+
+  document.addEventListener('touchstart', (e) => {
+    if (busy || e.touches.length !== 1 || !atTop()) { pulling = false; return; }
+    /* Not from inside a box that scrolls sideways of its own accord, and not
+       from a field somebody is typing in. */
+    const t = e.target;
+    if (t.closest && t.closest('input,textarea,select,[contenteditable]')) { pulling = false; return; }
+    startY = e.touches[0].clientY; startX = e.touches[0].clientX;
+    pulling = true; dist = 0;
+  }, { passive: true });
+
+  document.addEventListener('touchmove', (e) => {
+    if (!pulling) return;
+    const dy = e.touches[0].clientY - startY, dx = e.touches[0].clientX - startX;
+    if (dy <= 0 || Math.abs(dx) > Math.abs(dy)) { pulling = false; show(0); return; }
+    if (!atTop()) { pulling = false; show(0); return; }
+    dist = dy;
+    /* Held back, so a small drag feels like resistance rather than a launch. */
+    if (e.cancelable) e.preventDefault();
+    show(dist);
+  }, { passive: false });
+
+  const let_go = async () => {
+    if (!pulling) return;
+    pulling = false;
+    if (dist < TRIP) { show(0); dist = 0; return; }
+    busy = true;
+    el.classList.add('spin');
+    show(TRIP);
+    try { await refreshNow(); } catch (e) { /* said its piece already */ }
+    el.classList.remove('spin');
+    show(0);
+    dist = 0; busy = false;
+  };
+  document.addEventListener('touchend', let_go, { passive: true });
+  document.addEventListener('touchcancel', () => { pulling = false; show(0); dist = 0; }, { passive: true });
+}
+
+/* ---- a photograph from the chat ----
+
+   The chat carries pictures both ways: Nabu sends the bank QR code, and the
+   receipt comes back. Tapping one used to follow a link to a data: URL, which
+   every browser blocks at the top level - so nothing happened at all, and
+   nothing said why.
+
+   One tap now puts it on the phone and says so. Saving goes through a blob,
+   because that is the form browsers will write to disk; a data: URL on a
+   download link is ignored as often as not.
+
+   iOS is the exception and cannot be argued with: Safari ignores the download
+   attribute entirely. There the tap opens the picture large and gives the
+   instruction that does work - press and hold, then Save Image. A button that
+   quietly fails would be worse than saying so plainly. */
+function imageViewer() {
+  const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent)
+    || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+  let box = null;
+  const shut = () => { if (box) { box.remove(); box = null; } };
+
+  /* Big, with the one instruction that works on this phone. */
+  const show = (src) => {
+    const S = T();
+    shut();
+    box = document.createElement('div');
+    box.className = 'imgview';
+    box.innerHTML = '<button type="button" class="ivx" aria-label="' + esc(S.sheetClose) + '">\u2715</button>'
+      + '<img src="' + esc(src) + '" alt="">'
+      + '<p class="hint">' + esc(S.imgHold) + '</p>';
+    document.body.appendChild(box);
+    box.addEventListener('click', (e) => { if (e.target === box) shut(); });
+    box.querySelector('.ivx').addEventListener('click', shut);
+  };
+
+  const keep = async (src) => {
+    try {
+      const blob = await (await fetch(src)).blob();
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'nabu-' + Date.now() + '.jpg';
+      document.body.appendChild(a);
+      a.click();
+      setTimeout(() => { URL.revokeObjectURL(url); a.remove(); }, 1000);
+      toast(T().imgSaved);
+    } catch (e) {
+      /* If the phone would not take it, show it and say how to keep it by
+         hand rather than failing in silence. */
+      show(src);
+    }
+  };
+
+  /* One listener for every chat there is or ever will be. */
+  document.addEventListener('click', (e) => {
+    const img = e.target.closest && e.target.closest('img.att[data-img]');
+    if (!img) return;
+    const src = img.getAttribute('src');
+    if (isIOS) show(src); else keep(src);
+  });
+  document.addEventListener('keydown', (e) => { if (e.key === 'Escape') shut(); });
+}
+
+function boot() {
+  window.addEventListener('hashchange', route);
+  document.addEventListener('click', (e) => {
+    const a = e.target.closest && e.target.closest('a[data-back]');
+    if (!a) return;
+    e.preventDefault(); NAV.popping = true; location.hash = a.getAttribute('href');
+  });
+  $('#lang').addEventListener('click', () => {
+    lang = LANGS[(LANGS.indexOf(lang) + 1) % LANGS.length];
+    store.set('nabu-lang', lang);
+    /* Signed in, the choice belongs to the account too, or the next device
+       would contradict this one. */
+    if (typeof BE !== 'undefined' && BE.user) { saveProfileLocal({ lang: lang }); BE.pushProfile().catch(() => {}); }
+    route();
+  });
+  { const bell = $('#bell'); if (bell) bell.addEventListener('click', () => { location.hash = '#/alerts'; }); }
+  { const bt = $('#totop');
+    const seen = () => { bt.hidden = (window.scrollY || document.documentElement.scrollTop || 0) < 700; };
+    window.addEventListener('scroll', seen, { passive: true }); seen();
+    bt.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' })); }
+  $('#theme').addEventListener('click', () => { const cur = effectiveTheme(); setTheme(THEMES[(THEMES.indexOf(cur) + 1) % THEMES.length]); });
+  applyTheme();
+  pullToRefresh();
+  imageViewer();
+  /* A stranger who typed the address gets told what this is before being shown
+     it. Everybody else - the installed app, a shared link, anyone who has been
+     here before - goes straight through. */
+  try { helloFirst(); } catch (e) { /* never keep somebody out of the app */ }
+  route();
+  if ('serviceWorker' in navigator && location.protocol !== 'file:') {
+    window.addEventListener('load', () => {
+      const had = !!navigator.serviceWorker.controller;
+      // A new release takes over on the next open; reload once so the visitor
+      // sees it right away instead of the cached page.
+      navigator.serviceWorker.addEventListener('controllerchange', () => { if (had && !window.__reloaded) { window.__reloaded = true; location.reload(); } });
+      navigator.serviceWorker.register('sw.js').then((reg) => {
+        const w = reg.installing;
+        if (w && !had) w.addEventListener('statechange', () => { if (w.state === 'activated') toast(T().offlineReady); });
+        reg.update().catch(() => {});
+      }).catch(() => {});
+    });
+  }
+}

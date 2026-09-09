@@ -1,0 +1,16 @@
+<!doctype html><meta charset="utf-8"><title>PENDING</title><iframe id="f" src="/index.html" style="width:420px;height:900px"></iframe><script>
+const f = document.getElementById("f");
+f.addEventListener("load", function once() {
+  f.removeEventListener("load", once);
+  const w = f.contentWindow;
+  try { w.localStorage.setItem("nabu-lang", JSON.stringify("de"));
+        w.localStorage.setItem("nabu-hello", JSON.stringify(1));
+        w.localStorage.setItem("nabu-welcome", JSON.stringify(1)); } catch (e) {}
+  f.src = "/index.html#/play";
+  setTimeout(function () {
+    const d = f.contentDocument;
+    const text = (d.getElementById("main") || d.body).innerText;
+    document.title = "RESULT " + JSON.stringify(text.slice(0, 4000));
+  }, 6000);
+});
+</script>

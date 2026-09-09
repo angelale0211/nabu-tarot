@@ -1,0 +1,606 @@
+PASS deck has 78 cards in both languages
+PASS insights cover 78 cards in EN and VI
+PASS every insight has keywords and six texts in both languages
+PASS the Vietnamese question readings cover 78 cards and no lecture keyword sets remain
+PASS preset topics verbatim
+PASS guides present in both languages (26)
+PASS no source names in guides or on screen
+PASS sun sign boundaries
+PASS life path arithmetic
+PASS greeting sits below the date panel, right above the quick links
+PASS today panel: full lunar date with year name, can chi and the moon
+PASS lunar animal names follow the language on screen: 5/9/2026 is a Horse day in the Monkey month of the Horse year
+PASS lunar algorithm matches lịch vạn niên: Tết 2025 = 29/1, Tết 2024 = 10/2, 4/9/2026 = 23/7 âm lịch
+PASS Firebase project wired with admin emails; chat attachments follow CONFIG.attachments; bookings notify the calendar endpoint
+PASS header and footer show the real round avatar with the wordmark
+PASS footer with Instagram, Facebook, copyright and the bug-report link
+PASS tour shows on first visit
+PASS six quick links; activities have their own tab in the bottom bar
+PASS draw tile has the lifted cream card, Tarot tile the purple logo card
+PASS big pick-a-card block shows the three logo cards and leads to the draw
+PASS pick tab uses the two-card line icon
+PASS the tour shows both arrows from step one in fixed slots; back is greyed out at the start
+PASS later steps enable the back arrow in the same place
+PASS the back arrow steps back
+PASS tour completes, is remembered, and shrinks to a one-line bar
+PASS the bar reopens the tour from step one
+PASS closing shrinks it again
+PASS welcome post heads the feed with the logo as signature, no date line, no "Dự đoán mới"
+PASS the welcome note opens folded-out with a toggle
+PASS tapping the welcome title folds it and the choice is remembered
+PASS tapping again reopens it; other posts sit under the Nabu Posts heading
+PASS home shows at most three posts with a link to all of them, and the tile leads to the posts screen
+PASS no Nabu AI box on the Me tab
+PASS profile saved on device
+PASS greeting uses the name
+PASS home shows sign (Leo), life path and animal
+PASS home links the sign to its tarot card
+PASS You may also like: the monthly and weekly forecast for Leo, written by Nabu rather than taken from anybody else
+PASS forecast shows as short emoji paragraphs, addressed to the reader’s sign, with no adverts in them
+PASS the whole deck of 78 cards, five focuses
+PASS the deck is a swipeable carousel with one highlighted middle card, arrows and a position counter
+PASS the arrow steps to the next card
+PASS pressing and dragging with the mouse slides the deck
+PASS signed out, one card is free and the second asks for an account; the card drawn is kept either way
+PASS card revealed with energy, a note, the CTA block and a course teaser; no reversed meaning or scene
+PASS no joker emoji on the draw screen
+PASS no grounding badges or source names in the rendered page
+PASS Vietnamese insight sections
+PASS no source line under the insight
+PASS Nabu AI panel under the drawn card
+PASS built-in engine answers the chosen focus (love) from the card
+PASS every AI answer carries a report flag
+PASS on the free draw other topics are kept for the course; on the card page they are answered
+PASS yes/no lean and timing hints
+PASS mentions of cards and signs are picked up; compatibility gets a straight verdict
+PASS compatibility verdicts: opposite, good, square
+PASS built-in engine knows Lenormand cards, planets, houses and animals
+PASS built-in engine handles moon, booking and how-to-start questions
+PASS after the draw the other focus chips are switched off but still visible
+PASS a switched-off chip does nothing
+PASS Nabu Plus draws without limit: the shuffle buttons are back
+PASS redraw clears the choice and re-enables the chips
+PASS English insight is fully English
+PASS all 78 x 5 English insights are English (0 mixed)
+PASS general draw has no focus block; the advice is the second block
+PASS the language pill cycles through all of them and comes back round to Vietnamese
+PASS and the button still says what pressing it does, since the pill no longer hints at it
+PASS the three courses and manifestation share one group of four, above the free reads
+PASS learn shows four locked courses and three free areas including angel numbers; no separate spreads tile
+PASS lesson 1 introduces 22 Majors, 56 Minors and the Fool's Journey; lesson 2 is The Fool
+PASS price and code entry sit below the demo
+PASS the demo card opens directly while locked
+PASS the second card is locked
+PASS a forged code is rejected
+PASS a code carries its course letter and expiry, and the worker reads them back from the private book
+PASS valid code unlocks the course: 8 sessions listed first
+PASS a code is bound to the account that used it: another account is refused, the same account may use it again
+PASS signed out, a code asks for sign-in; with no worker configured it says so rather than opening anything on the phone
+PASS session 1 draws the Fool journey (3 stages) and the 56 Minors in four element groups
+PASS Nabu AI in the lesson finds course material
+PASS card faces in a strip sit on one line even when a name wraps (3252,3252,3252,3252,3252,3252,3252)
+PASS session 5: element wheel and two suit strips
+PASS session 7: the 4x4 court grid
+PASS session 8: spread diagrams
+PASS a session can be marked done
+PASS cards tab still lists the 22 majors first
+PASS suit tab shows 14 cards
+PASS eight tarot spreads inside the course, none of the preset topics
+PASS tarot guides inside the course
+PASS card page: meanings, FAQ heading, no astrology block
+PASS lenormand demo: overview + daily practice + 36-card grid, then the Rider
+PASS other lenormand cards are locked
+PASS seven lenormand spreads inside the course
+PASS lenormand session 2: twelve cards with tone key
+PASS lenormand session 5: pairs shown as two faces
+PASS lenormand session 6: seven spread diagrams incl. the Grand Tableau
+PASS bug report screen: direct send button, Instagram, copy, auto-attached info
+PASS without a sign-in the send button explains and points at the contact screen
+PASS notifications go to nabutarot@outlook.com first
+PASS Lenormand card page
+PASS twelve signs on a ring and in a list, mine marked
+PASS planets as an orbit and a grid three to a row, with a detail card, both of them tappable
+PASS tapping a planet chip shows it
+PASS tapping the planet in the orbit selects it and marks its tile too
+PASS twelve houses on a wheel
+PASS tapping a house shows it
+PASS aspects drawn as five diagrams
+PASS sign page: ruler, cards, Moon/Rising, compatibility ring, Nabu AI
+PASS the five preset-topic spreads are no longer in the library
+PASS an unlocked tarot card carries arrows to the card before and after, under the picture and at the foot
+PASS spread instructions read as numbered steps in plain Vietnamese
+PASS eleven manifestation guides listed, no grounding badges, oracle guide removed
+PASS manifestation: three guides free, eight locked behind the 75.000đ yearly set
+PASS a locked manifestation guide shows the yearly paywall
+PASS the playing-card course is locked with a two-session preview (suits, the Ace of Hearts page) and a paywall
+PASS session 1 of the playing-card course is free and shows the four suits
+PASS session 3 is locked
+PASS a card page other than the preview card is locked
+PASS playing-card codes carry the P letter
+PASS unlocked: three tabs and nine sessions
+PASS the cards tab draws all 52 faces
+PASS a card page: special name, traditional meaning, why, pairs and the tarot twin
+PASS the court session shows twelve people
+PASS pairs and timing session
+PASS four spreads with diagrams incl. the wish spread
+PASS manifestation codes carry the M letter
+PASS scripting has an editable, saved page with template and clear buttons
+PASS what is typed is saved on the device
+PASS clear brings the fresh template back
+PASS if-then plans are editable rows
+PASS a row can be added
+PASS candles and stones guide with a visual grid
+PASS WOOP has four editable boxes, one inside each step
+PASS WOOP reads as one four-step flow chart with arrows and no repeated list
+PASS the overview is a flow chart instead of a step strip plus a repeated list
+PASS vision board has six life areas that take photos
+PASS the Moon ritual is a three-step flow: intentions inside the New Moon step, the release box inside the Full Moon step
+PASS opened from home, the astrology screen points its back arrow at home
+PASS tapping the back arrow returns to home
+PASS opened from the library, the same screen points back at the library
+PASS only one back arrow above the screen, none inside it
+PASS the booking notes start at the same edge as the title and the about tail is gone
+PASS a main tab always points its arrow at home, even when opened from another tab
+PASS the draw tab opened from home shows a back arrow to home
+PASS back from the draw tab lands on home, where the bar is hidden
+PASS the built-in Nabu AI greets, draws a card for a yes-or-no question, and still answers sign matches
+PASS dashboard actions sit in a grid and the 78-card picker is folded until needed
+PASS home has no bottom back bar
+PASS a main tab also has a back-to-home link under its content
+PASS a deeper screen has both the way back and a jump home at the bottom
+PASS a shared link opens on that exact card with the focus it was drawn with
+PASS drawing again from a shared card clears the link and deals a fresh hand
+PASS home is scrolled down before leaving (500)
+PASS a new screen opens at the top
+PASS returning to home lands where the visitor left off (500)
+PASS guide renders numbered section cards with a visual on top
+PASS 369 tracker counts taps
+PASS moon guide shows the eight phases with today marked
+PASS the free fortune hub shows four tools, with playing cards left to the paid course
+PASS palm map with seven tappable lines and the four hand shapes
+PASS mounts mode shows seven tappable mounts with planet glyphs instead of chopped letters
+PASS only the active chip row is visible
+PASS tapping a mount explains it
+PASS tapping a line explains it
+PASS 3 of spades maps to Three of Swords with its face
+PASS playing card shows its traditional meaning and the tarot reading side by side
+PASS Queen of spades maps to the Queen of Swords
+PASS cup map with four zones and sixteen symbols
+PASS practice draw shows a shape
+PASS the animals wheel is HTML: every emoji in its own circle with the name under it
+PASS animal wheel opens on the visitor's animal (Dần) with its trio
+PASS numbers tool: number wheel with life path 22 marked, 9-year ring, name numbers, Nabu AI
+PASS tapping a number explains it
+PASS name numbers computed with tone marks dropped
+PASS price sheet: Lenormand 15/25/60/75/90k, oracle combos with 60-minute tiers, Tử vi 99/333/666k, Just talk wording
+PASS seven services: no standalone oracle; tea, combos and just-talk present
+PASS price sheet renders every package
+PASS prices formatted in VND
+PASS no topic pickers until a preset-topic package is chosen; the basket starts empty
+PASS the booking notes say each thing once: many packages up top, tap-again-to-deselect at the service list
+PASS a package goes into the basket and the message
+PASS two packages at once: numbered lines, a total, and tử vi asks for the birth date
+PASS tapping a chosen package again removes it
+PASS choosing a preset-topic package does not pull the page down to the topic picker
+PASS each preset-topic package gets its own topic picker and is flagged until a topic is chosen
+PASS calendar has days with free slots
+PASS two preset topics booked together, each with its own topic, and the total adds up
+PASS day shows time slots
+PASS chosen slot and the name from the profile appear in the message
+PASS the request is shown as a labelled summary card and the chosen slot offers a save button
+PASS saving the time folds the calendar away and the draft is kept on the device
+PASS change brings the calendar back with the slot still marked
+PASS a booking card lists every package, the total, the status and the admin actions in a row
+PASS a second tap clears that package's topic and flags it again
+PASS every bubble names its sender; admin notification helpers exist
+PASS in the client view the reply is labelled Nabu
+PASS dashboard content goes through the cloud helpers, no token needed
+PASS sign-in errors are explained in plain words
+PASS the ✕ in the basket removes a package and the rest renumber
+PASS booking keeps only the in-app send and a contact link; no Instagram or copy buttons
+PASS contact screen: a text box with in-app, Instagram and Facebook channels, linked from the footer
+PASS the Instagram and Facebook buttons say the message is copied first
+PASS posts render headings, bold, underline, highlight, title boxes, video embeds and images, and never raw HTML
+PASS the posts screen lists every post without the welcome note
+PASS search filters the posts
+PASS share under a post lifts a sheet: the link in a box, Copy link and Open under it
+PASS with the places to send it, minus the copy button the box already has
+PASS it names the post and speaks in Nabu's words
+PASS the copy mark turns into a tick and says so
+PASS Escape shuts it
+PASS so does a tap outside
+PASS the built-in engine answers sums instead of pulling a card
+PASS sums in words work, and "mấy" is never read as the card Mây
+PASS Gemini answers through a chain of models so one exhausted quota does not silence the assistant
+PASS the online assistant uses the current Gemini model; the key is a cloud setting
+PASS a booking exports as a calendar event in Vietnam time with reminders at 24 h, 6 h, 1 h and 15 min
+PASS an admin sees a change request with approve and keep-old-time buttons and the calendar file
+PASS a client can ask to move or cancel a live booking and add it to the phone calendar
+PASS the app cannot be pinch-zoomed
+PASS the reveal has a shuffle-and-draw-again button at the top as well as at the bottom
+PASS the top button reshuffles the whole 78-card deck
+PASS an admin email opens every course without a code
+PASS admin sees all eight tarot lessons and no unlock button
+PASS admin opens a locked card directly
+PASS admin opens lesson 5 of Lenormand
+PASS signed out again, the card is locked
+PASS a redeemed code opens all lessons and shows the expiry date (Bạn có quyền xem đến 4 tháng 3, 2027.)
+PASS lesson 8 opens for a paying client
+PASS a minor arcana card opens for a paying client
+PASS Me tab lists the paid course with its expiry and the other one still locked
+PASS an expired code locks the course again
+PASS the sale works out every price correctly: percentage, amount, limits, dates and named services ()
+PASS the price sheet lists the readings, the four courses, Plus, both Pro terms and the wedding, under the payment note
+PASS me tab: device-only profile, Instagram, my courses with status
+PASS signed in, the Me tab shows the profile with an edit link, not the form again
+PASS signed out, it asks only for a name and a birthday
+PASS the account language is applied to the device on sign-in
+PASS the sign-in page carries the providers, the email form, the way to an account and a way out
+PASS the same page makes an account, and then stops offering to reset a password
+PASS a gate sends you to the sign-in page and says where to send you back
+PASS the sign-in page ignores a way back that leads off the app
+PASS the welcome screen asks language, name, username, birthday and interests on one page
+PASS the username follows the display name as it is typed
+PASS once the username is edited by hand it stops following the name
+PASS finishing the welcome screen claims the username and shows the tour
+PASS the tour in the sign-up flow carries a title above the first card
+PASS an account with no username is sent to the welcome screen
+PASS and an account that has one is left where it was
+PASS admin has nine tabs whose labels fit inside their buttons, and the 78-card picker
+PASS the activities tab has a form with three types, three piles with picture choosers, and a formatting bar on every text box
+PASS the codes tab issues a code, takes in codes handed out earlier, and lists what has been issued so any of it can be revoked
+PASS the availability editor offers the whole clock in half-hour steps, the small hours included
+PASS the codes tab carries the Nabu AI key setting
+PASS bookings tab asks for an admin sign-in now that accounts are on
+PASS the header button cycles light, dark and pastel pink and comes back to where it started
+PASS and flips back
+PASS Me tab offers auto / light / dark / pastel pink with the current one marked
+PASS Me shows the version with a check-for-updates button
+PASS the four themes sit on one line as icon chips
+PASS contact, report and tour share one line, each with an icon
+PASS the Me tab is called Hồ sơ (Profile)
+PASS one type scale: 28px screen titles, 21px sections, 16px body, 13.5px hints
+PASS account deletion exists and the privacy policy is linked from Me and the footer
+PASS the activities screen is five everyday buttons and one line of three, with nothing spelled out in full
+PASS each of the three opens its own page with only that kind on it
+PASS a pile, poll or wish page shows its whole introduction and title, with nothing faded out ()
+PASS the home page offers the activities as buttons and spells none of them out, so nothing there is ever faded off
+PASS signed out, the coin asks for an account rather than a turn
+PASS the message tree starts with no message shown
+PASS the message tree carries the four trees themselves, three of them locked
+PASS shaking the tree drops one written message and clears the petals
+PASS the coin starts unflipped
+PASS the coin carries its answer on its own face, inside the ring
+PASS the answer sits on the middle of the coin, not below it
+PASS the coin screen carries the four coins themselves, three of them locked
+PASS the four coins are four different faces, not one face in four colours
+PASS the free weekly turn is used up, and Nabu Plus is offered with a code box
+PASS a Nabu Plus code lifts the limit on the coin
+PASS and on the message tree as well
+PASS chosen items build a summary with a total, the way booking does
+PASS Pro contains Plus, so choosing a Pro term drops Plus from the basket and nobody pays twice
+PASS and the two Pro terms displace each other, so only one length of time is ever bought
+PASS without an account the order is written out in full, ready to send to Nabu
+PASS holding Pro opens Plus with it, so the coin and the tree run without limit too
+PASS holding Plus opens the coin and the tree, and does not open Pro
+PASS holding Pro takes nothing off a reading
+PASS and full price without it
+PASS and holding neither opens neither
+PASS one screen lists the four courses, Plus and both Pro terms - and not the wedding, which needs a thread and two people - marks the year as the best of them, and carries a code box
+PASS arriving from a locked design, the packages that open it come first
+PASS and arriving from a locked lesson, the courses do
+PASS while a wedding is not something to browse beside a tarot course
+PASS and is on the page only for somebody who came from the thread that needs it
+PASS a back-to-top button exists and stays hidden until the screen is scrolled
+PASS the card back carries four dots, one per corner
+PASS a pile activity opens on its own page with three equal piles
+PASS every pile has its own drawn picture, all three different
+FAIL picking a pile is remembered and says when to come back; nothing flips yet
+PASS once Nabu answers, the chosen pile arrives flipped over
+PASS the message of the flipped pile opens in the panel under the row
+PASS the card is marked as answered
+PASS other piles can be peeked at afterwards, one at a time
+PASS a wish flies out of the jar and is kept on the device
+PASS the person can look back at the wishes they sent, with dates
+PASS signed out, the diary asks for an account rather than a page to write on
+PASS typing keeps a draft and writes no page, and the corner says it is not saved yet
+PASS and walking away and back brings the unsaved draft with it
+PASS the daily diary saves today's mood and text on the device when Save is pressed
+PASS and the saved page goes up onto the shelf with the other days, marked as today
+PASS six free companions cover love, work, study, money, health and travel, with twelve spirit beasts locked behind Plus
+PASS a spirit beast cannot be kept without Plus and sends the visitor to the price list
+PASS tapping a companion shows it at full size, with what caring for it involves and the four things it can be given, locked
+PASS the visitor can go back and look at another
+PASS the chosen companion arrives with a home, a halo, four ways to dress it on the scene itself, and four locked ways to earn more
+PASS a button on the scene lifts one sheet holding all four groups; two plain foods are free and seven need Plus
+PASS the grass mat is free and the eight homes need Plus
+PASS every garment and charm needs Plus, and each has a picture of its own on the shelf
+PASS the sheet closes again
+PASS stroking the companion leaves hearts under the finger and earns a little as it goes
+PASS the brush is offered once a day without Plus
+PASS brushing the fur earns points, counts against the day, and the button gives way to a tick
+PASS food let go away from the companion is cleared rather than left stuck on the screen
+PASS the food can be picked up and dropped on the companion, which feeds it
+PASS a meal earns experience and a couple of coins, then the companion is full for six hours
+PASS a wish can be said once the companion has eaten
+PASS the companion stands on the ground under the tree, big enough to see, inside the picture
+PASS the companions under the tree come with a switch, on to begin with
+PASS turning it off leaves the tree standing on its own, and the switch stays to turn it back
+PASS and back on again
+PASS the activities tab describes the everyday things on it, not only the three Nabu publishes
+PASS the blessing sits centred in its box and keeps clear of whatever is above it
+PASS the companion answers with a blessing of its own kind, once a day
+PASS a companion learns at most four hundred points a day, however often it is fed
+PASS a companion can only be changed once a fortnight
+PASS and the change opens again once the fortnight is up
+PASS a free account keeps one companion and is told that the rest belongs to Pro
+PASS ten levels, each one further than the last, and every level reached pays into the purse
+PASS without Plus the voucher stops at ten per cent
+PASS coins never take more than half an order, and never more than 100.000 in one order, however large the purse claims to be
+PASS Plus opens the fifteen and twenty per cent steps
+PASS the rewards screen shows the purse, the four voucher steps, which are open, and which need Pro
+PASS the basket offers the voucher and the coins, with nothing spent unless it is chosen
+PASS the basket shows what the rewards take off and what is left to pay, and the coins are not spent yet
+PASS a guest is told to sign in to vote but still sees the overall results
+PASS home offers the activities as buttons rather than one expanded teaser
+PASS home offers all eight activities as their own buttons: two rows of four, with the red thread beside picking a pile and voting
+PASS a pile reading answers itself once its results date has passed
+PASS the stock of polls and wishes merges into the published activities
+PASS the free knowledge offers angel numbers beside astrology
+PASS the angel numbers screen leads with a keypad, twelve groups, a number for today, and says plainly what this is
+PASS typing a number reads it back, says why it was read that way, and keeps it in the list
+PASS a repeated digit, a mirror, a palindrome, a ladder and anything else reduced to its root all find a reading
+PASS a group reads in full inside the same framed cards the other knowledge pages use, with arrows either side of it
+PASS a code only opens what Nabu published for it: invented codes, edited expiries and swapped courses are all refused
+PASS the install screen offers the Android installer and the iPhone steps, linked from the footer
+PASS the in-app privacy policy lists every kind of data, who answers Nabu AI, and how to delete the account
+PASS the Play build shows no outside-payment button or price on a paywall, only the code field
+PASS the thread asks for one name only, and shows the search step greyed beside it
+PASS and shows what the partner will have to type, accents folded away, before anything is saved
+PASS a database that refuses the write says the rules are not published, rather than "it did not work"
+PASS a name somebody already has gets a number rather than a refusal, and the search opens
+PASS someone is found by their handle alone, and can be offered the thread
+PASS an offer is only an invitation under the other person: nothing is shown as tied until they answer
+PASS an invitation already sent stays on the screen, with the way to take it back
+PASS and it can be withdrawn, for whoever was invited by mistake
+PASS after which nothing is left outstanding
+PASS an invitation arrives with the line that came with it, and can be taken or refused
+PASS accepting writes one bond holding both people, clears the invitation, and the page starts counting from nought
+PASS the days are counted from the day it began, and the next round number is named
+PASS the tag says where someone stands without asking the cloud again
+PASS proposing records only who is asking, and the asker waits with a way to take it back
+PASS the scene itself changes: one ring above the knot while the question is out
+PASS the other one sees the question, the line that came with it, and both answers
+PASS saying yes moves the stage on and puts the question away
+PASS the wedding sets the last stage, and each is asked what they want to be called - and whether to show it at all
+PASS each of them writes only their own name for it
+PASS choosing a gift marks it as chosen and sends nothing
+PASS and they may change their mind as often as they like, still without sending
+PASS only Send gives it: one document, signed by whoever gave it, with the line they wrote
+PASS a milestone can be told to eight places, each with a mark of its own
+PASS and the words are written for them, naming the other person and this app
+PASS and every mark is drawn here, with nothing fetched from any of those companies
+PASS what somebody sent you is its own card, apart from the one for sending
+PASS eight things to give, each with a picture of its own
+PASS each of the four stages has a mark of its own, not one emoji for all of them
+PASS a married pair are named on the companion page, each by the sign and the word they chose
+PASS and nothing is shown there unless it was asked for
+PASS a partner who has not chosen a sign is still named, rather than left out of their own family
+PASS while one name on its own is no line at all
+PASS a device seeing a thread it already had is not told that it just happened
+PASS being turned down is said out loud instead of the screen silently reverting
+PASS and it is said gently: more time, the thread is still there, never the word refused
+PASS and being said yes to is a congratulation, not a silent change of state
+PASS the couple say they have married, naming the person they married
+PASS while a guest says they were at the wedding of both of them
+PASS a gift given to me is a line on the bell, and one I gave is not
+PASS the same state seen twice adds nothing: only a change is news
+PASS the bell carries the count of what has not been read
+PASS and opening it lists them, newest first, each with a mark of its kind
+PASS they stay marked new while somebody is looking at them, with the button that marks them read
+PASS the chat bar stands level: buttons, box and Send are one height [94/94/94]
+PASS and the small buttons are stacked down the left, not strung along the row
+PASS and it stays level when the box grows
+PASS an order with no hour in it can be approved
+PASS and nothing is written into the calendar for an order that has no hour
+PASS while a booking with an hour still holds it
+PASS the unlock basket offers the message that starts the conversation, with a reference
+PASS the message names the reference and the amount, so Nabu can match it
+PASS and pressing send puts exactly that message in the chat with Nabu
+PASS and the chat with Nabu takes a photograph, which is how the QR code and the receipt travel
+PASS a locked lesson offers to ask Nabu, rather than opening an Instagram chat
+PASS and pressing it writes one order to the dashboard, named and signed
+PASS without leaving the lesson they were looking at
+PASS an engaged couple are offered the ceremony on the thread, as a card of its own
+PASS and the bell asks the same question the moment they become engaged
+PASS asked once, not again every time the app is opened
+PASS a couple who have not paid still choose the hour first, and are told what it will cost
+PASS the terms are shown as separate facts, and nothing can be booked until they are agreed
+PASS and ticking the box opens the button
+PASS and pressing the button takes them to pay rather than making a room nobody has paid for
+PASS the page is about this wedding: the hour, the fee, and what will happen in the room
+PASS and it says the hour is being held, softly, rather than demanding payment
+PASS sending it writes one order to the dashboard, signed by whoever asked
+PASS sending the request makes the room, at the hour they chose, holding it
+PASS the rules on the room card are three short lines, left-aligned
+PASS with no paragraph of small print left on the card
+PASS and clear space between them and whatever comes next
+PASS a wedding days away can still be moved
+PASS but only once, because one moved three times is one nobody attends
+PASS and never inside the last hour
+PASS so they do not come back to the same empty form they just filled in
+PASS and the room says it is holding the hour until it is paid for
+PASS the link to send is there from the moment the room is, with the places to send it
+PASS the way in is there but locked until a quarter of an hour before
+PASS and it counts down to the doors rather than to the wedding [3 ngày 23 giờ]
+PASS and once it is paid for, it stops asking
+PASS opening an invitation asks, and seats nobody by itself
+PASS saying no is recorded, so the couple know not to wait
+PASS and can be changed, because people change their minds
+PASS saying yes afterwards makes them a guest
+PASS a guest arriving early finds the door shut, and is told when it opens
+PASS a guest who accepted holds a seat, which says when they were last looking
+PASS a guest can send congratulations but is given nothing to answer with
+PASS a guest is offered three things to bring, not a long shelf
+PASS and it appears in the room, naming who sent it
+PASS with a tally the couple can read at a glance
+PASS anybody in the room can say something
+PASS and it is signed with who said it
+PASS and appears in the room for everybody
+PASS the couple see who is coming, who cannot, and who has not answered
+PASS once the doors open the couple are offered the way in, and keep the invitation link beside it
+PASS and can invite somebody already on Nabu by name, not only by link
+PASS inside before the hour, the way to begin is there but cannot be pressed
+PASS at the hour the couple are asked to say they are ready, not handed the ceremony
+PASS and inside the room the couple can still invite, by name or by link
+PASS with it moved below the ceremony, where an errand belongs
+PASS and one of them saying so is written down without starting anything
+PASS and once both have, the ceremony begins and is walked one line at a time
+PASS and when it is somebody’s turn they are asked, with a real yes and a real no
+PASS answering no stops the ceremony and marries nobody
+PASS the one who is not being asked is given nothing to answer with
+PASS entering the room again does not leave the last visit listening (12)
+PASS entering the room again does not leave the last visit listening (12)
+PASS entering the room again does not leave the last visit listening (12)
+PASS entering the room again does not leave the last visit listening (12)
+PASS four questions, four answers, and the room moves on with each one
+PASS and a guest can see what each of them answered, which is why it was asked out loud
+PASS the declaration marries them on the thread itself, not only in the story
+PASS and then the bouquet is offered to be thrown
+PASS throwing it puts it in the air with nobody named yet, so the wait is the same for everybody
+PASS and the room shows it flying
+PASS ten seconds later it lands on a guest who was really there, never on the couple
+PASS a room full of well-wishers scrolls inside its own box rather than down the page
+PASS and opens on the newest line, which is the one being said now
+PASS and a new comment does not drag a reader off the older ones they were reading
+PASS a room about to close thanks the people in it and counts down in front of them
+PASS and at nought everybody is walked back out, with the marriage still on the record
+PASS while an hour nobody came to is written off, so it stops being a room Nabu is holding
+PASS a reply from Nabu reaches the bell, rather than waiting to be noticed
+PASS and the profile tab shows how many are waiting
+PASS unlocking says what was opened and how long it lasts
+PASS a withdrawal beats the merge, rather than being refilled from the phone
+PASS and the person is told, with the reason Nabu gave rather than silence
+PASS and a code issued afterwards opens the course again, because the withdrawal is applied once
+PASS the inbox shows what this person has unlocked, beside the conversation about it
+PASS and does not withdraw anything on a single tap
+PASS it asks on the page itself, which a phone webview cannot skip the way it skips confirm()
+PASS and the withdrawal is written with a time on it, which is what the other phone obeys
+PASS an order with no hour in it waits under the money, not on a calendar of hours
+PASS and the calendar of hours is a different screen entirely
+PASS confirming an order agrees to sell it and opens nothing, because the money has not come
+PASS one press on "the money arrived" asks rather than opening anything
+PASS and the money arriving is the press that opens it
+PASS so the partner who paid nothing is let in too, without a code of their own
+PASS a wedding with no order behind it still asks Nabu whether the money arrived
+PASS and saying it arrived opens that room, without an order and without a code
+PASS a couple waiting on an answer cannot ask for a second hour meanwhile
+PASS and the hour they want waits for Nabu beside the orders, rather than nowhere
+PASS the old hour stands until it is answered, so nothing moves under the guests
+PASS saying yes moves the hour and counts the move in the same breath
+PASS and the button is shut for good afterwards, because a wedding moves once
+PASS and saying no leaves the hour where it was without spending their one move
+PASS a link opened without an account asks for one, and remembers which wedding it was
+PASS and once there is an account the invitation is waiting in the bell, to be answered there
+PASS and it is spent, so it does not arrive again at every start
+PASS a diary offers to be shared once there is somebody to share it with, as something to ask for
+PASS asking alone shares nothing, and turns into a request that can be taken back
+PASS a page saved after agreeing is sent, one page for the day it belongs to
+PASS the person asked sees the request itself, with agree and not-yet on it
+PASS agreeing opens it both ways at once
+PASS once it is on, there is a way to stop it
+PASS stopping needs nobody’s permission: it deletes my pages and closes both directions
+PASS a page written while it is on is sent
+PASS and untying the thread takes my diary pages with it, not just out of reach
+PASS and the wedding room too, so coming back together is not met with the ceremony they left
+PASS the first tap on untie asks again in the page and unties nothing
+PASS and saying no leaves the thread exactly where it was
+PASS either of them unties alone, and the page and the tag go back to how they were
+PASS the Activities tab shows the thread as the knot, not the old abstract mark
+PASS and so does the thread page’s own title
+PASS the timeline runs mark to mark, on their centre line
+PASS the road wears the knot for being tied and rings for the three stages after it
+PASS the four stages are drawn from the first screen, before there is anybody to share them with, none of them reached yet
+PASS a handle nobody holds says they are probably not on Nabu yet and offers a link, instead of a dead end
+PASS the link carries a random token, and the invitation under it says who is asking
+PASS the link is kept, so it can be copied again rather than made afresh every time
+PASS opening the link says who is asking before it asks anything, and the answer is theirs to give
+PASS taking the thread from a link writes the bond, names the link it came from, and uses the link up
+PASS an invitation opened before there was an account waits on the profile screen afterwards
+PASS a handle is lower case, three to twenty, and neither starts nor ends with a dot
+PASS signed out it asks you to sign in, and it says on every screen that this carries no legal weight
+PASS the footer sits the same distance above the navigation bar however short the screen is
+PASS picking a pile is marked with fanned card backs, not a joker
+PASS a checkbox fills in and shows a tick when it is ticked
+PASS a spirit beast carries its glow inside the drawing, so nothing has to be rasterised while it moves
+PASS a pair of wings is wide but stays inside the frame, so no feather is cut off at the edge
+PASS every lesson of all three courses carries five questions, four options each, both languages, no repeats, exactly two marked harder
+PASS the pass mark is eighty per cent
+PASS a lesson offers its quiz, and it is not marked passed before it has been taken
+PASS the quiz screen shows five questions, four answers each, with the two harder ones marked
+PASS three right out of five is sixty per cent and does not pass
+PASS after marking, the right answer is shown on every question along with why it is right
+PASS four right out of five is exactly eighty per cent and passes
+PASS a worse retry never takes away a pass already earned
+PASS and the lesson shows it as passed afterwards
+PASS ten faces for the piles, each clipped to the card itself so nothing runs off its edge
+PASS no two faces are the same drawing, and each carries its own ground and its own fan
+PASS the price list is four numbered sections: readings, courses, what you can open, and what is free
+PASS every paid card carries a real label on its button, not a bare arrow
+PASS every icon on the page sits in a tile of exactly the same size, whatever is drawn inside it
+PASS the page says what the app gives away, all of it, linked
+PASS a booking asks where the reading happens: in the app, on Instagram or on Facebook, and none is chosen to begin with
+PASS the in-app option is marked as the one Nabu prefers, and nothing extra is asked for until it is needed
+PASS each of the three places wears a drawn mark, not an emoji
+PASS and all three are drawn at the same size, so the row reads as three of a kind [30x30 30x30 30x30]
+PASS while the message sent to Nabu stays plain text
+PASS the choice is carried in the message that goes to Nabu
+PASS choosing Instagram asks for the account and warns that a private profile silently refuses the message
+PASS and the account travels in the message with it
+PASS choosing the app again puts the question away
+PASS pastel pink choice paints the blush palette
+PASS dark choice paints dark
+PASS light choice paints light
+PASS auto follows the phone setting
+PASS no horizontal overflow (415)
+PASS the thread draws something within a moment of the press, before the network is asked
+PASS and says it is opening, rather than showing an empty page
+PASS every way into the unlock page carries the door it came through (16 tagged, 0 bare)
+PASS every shelf stores what is chosen from it
+PASS a locked one says so where it was tapped, without throwing anybody off the page
+PASS and changes nothing
+PASS the companion picker is long enough that where you are standing matters
+PASS and it can be scrolled down
+PASS opening a companion from the bottom of the grid starts at the top of it
+PASS and going back to the grid starts at the top of that
+PASS no press is answered with a wordless mark
+PASS the design screen offers looks that are free to choose (4)
+PASS choosing a look says nothing over the top of the look it just changed
+PASS and the chosen one wears the tick, which is where a tick belongs
+PASS the profile is four named groups rather than one pile of cards
+PASS and everything the pile held is still there, inside a group
+PASS who you are starts open and the app settings start folded, so the page opens short
+PASS a group left open comes back open, rather than the way it was designed
+PASS every screen carries the pull-to-refresh indicator, so it works on all of them
+PASS a short drag shows the indicator without arming it
+PASS and dragging past the trip point arms it, so the gesture says what it will do
+PASS letting go past the trip point refreshes
+PASS a sideways drag is left to whatever scrolls sideways
+PASS a drag that stops short of the trip point refreshes nothing
+PASS no screen offers the same way back more than once
+PASS nothing is jammed against the note that explains it
+PASS nothing leaves the screen at 320, 360 or 390 across the eight busiest screens
+PASS on a desk the card, its arrows and the Nabu AI box share one column
+PASS that column stays put while the reading scrolls
+PASS the reading sits beside the card, not under it
+PASS the reading column is held to a width the eye can follow
+PASS no line of the reading runs past eighty-five characters on a desk (73)
+PASS a card page does not scroll sideways on a desk
+PASS the first card has one arrow and it takes the whole row
+PASS a full-width button reaches as far as the grid above it, not as far as a line of text
+PASS a guide reads as one column down the middle
+PASS on a phone that column has no box of its own
+PASS and the Nabu AI box goes back under the reading it asks about
+PASS the card is still first on a phone and the ask box still last
+
+604 checks, 603 passed, 1 failed
