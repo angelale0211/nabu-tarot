@@ -36,7 +36,18 @@ function storeRowHTML(item) {
   const row = item.kind === 'subs' ? SUBS.of(item.key) : null;
   let foot;
   if (item.kind === 'subs') {
-    const proHeld = ACCESS.has('pro'), isPlus = item.key === 'plus', other = item.key === 'pro6' ? 'pro' : item.key === 'pro' ? 'pro6' : '';
+    /* plus, pro6 and pro are one ladder: Pro opens everything Plus opens, so
+       holding two of them at once is never anything but a double charge. The
+       plan being replaced used to be looked for between pro6 and pro alone,
+       so somebody holding Plus who subscribed to Pro was sold a SECOND
+       subscription running beside the first - both renewing, for ever, with
+       nothing on the screen saying so. It is whichever rung is actually held
+       now. `manifest` is not on this ladder and is never replaced. */
+    const TIER = ['plus', 'pro6', 'pro'];
+    const proHeld = ACCESS.has('pro'), isPlus = item.key === 'plus';
+    const other = TIER.indexOf(item.key) > -1
+      ? (TIER.filter((k) => k !== item.key && (SUBS.of(k) || {}).grant)[0] || '')
+      : '';
     if (row && row.grant) foot = '<p class="hint st">✓ ' + esc(subStateWord(row)) + '</p><a class="btn block" href="' + manageURL(item.key) + '" target="_blank" rel="noopener">' + esc(S.stManage) + '</a>';
     else if (isPlus && proHeld) foot = '<p class="hint st">✓ ' + esc(S.stIncludedPro) + '</p>';
     else if (other && (SUBS.of(other) || {}).grant) foot = buyButtonHTML(item.key, S.stSwitchTo(name), { oldKey: other });
