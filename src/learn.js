@@ -16,56 +16,32 @@ function paywallHTML(courseId) {
     + '<ul class="inc">' + L(c.includes).map((x) => '<li>' + esc(x) + '</li>').join('') + '</ul>'
     /* Inside the Android app the price shown is Play's own, in the buyer's
        currency, because Play is what they are about to pay. On the web it is
-       the price written here. */
-    + (isTWA()
-      ? (BILL.can() && BILL.priceOf(c.id)
-        ? '<div class="price">' + esc(BILL.priceOf(c.id)) + ' <span>/ ' + c.months + ' ' + esc(S.months6) + '</span></div>'
-        : '')
-      : '<div class="price">' + priceHTML(c.price, 'unlock', c.id) + ' <span>/ ' + c.months + ' ' + esc(S.months6) + '</span></div>')
-    + (expired ? '<p class="hint err">' + esc(S.courseExpired(a)) + '</p>' : '')
-    /* Asked here, in the app, the way a booking is - not copied to the
-       clipboard and carried off to Instagram, where nothing knows what was
-       asked for and Nabu has a message to answer instead of an order. */
+       the price written here. Buying itself goes through Play too - Google
+       requires it of anything digital sold inside an Android app - so the
+       button is the store's own, bound by bindStore rather than a handler
+       kept here. */
     + (isTWA()
       ? (BILL.can()
-        /* Through Play, because Google requires it of anything digital sold
-           inside an Android app. A reading is not sold here and never was. */
-        ? '<button type="button" class="btn primary block" data-playbuy="' + courseId + '">' + esc(S.buyCourse) + '</button>'
-          + '<p class="hint" id="bstatus" style="margin:8px 0"></p>'
-        : '<p class="hint" style="margin:8px 0">' + esc(S.storeCodeHint) + '</p>')
-      : '<button type="button" class="btn primary block" data-buyreq="' + courseId + '">' + esc(S.buyCourse) + '</button>'
-        + '<p class="hint" id="bstatus" style="margin:8px 0"></p>'
-        + '<p class="hint" style="margin:8px 0">' + esc(S.buyHint) + '</p>'
-        + '<p style="margin:8px 0"><a class="backlink" href="#/unlock?from=learn">' + esc(S.unlockLink) + ' \u2192</a></p>')
-    + '<div class="row"><input id="ccode" placeholder="NABU-T-…" autocapitalize="characters" style="flex:1"><button class="btn" id="cunlock">' + esc(S.unlock) + '</button></div><p class="hint" id="cstatus"></p></div>';
+        ? (BILL.priceOf(c.id) ? '<div class="price">' + esc(BILL.priceOf(c.id)) + ' <span>/ ' + c.months + ' ' + esc(S.months6) + '</span></div>' : '')
+          + (expired ? '<p class="hint err">' + esc(S.courseExpired(a)) + '</p>' : '')
+          + buyButtonHTML(c.id) + '<p class="hint st" data-st="' + c.id + '" style="margin:8px 0"></p>'
+        : storeNotReadyHTML())
+      : '<div class="price">' + priceHTML(c.price, 'unlock', c.id) + ' <span>/ ' + c.months + ' ' + esc(S.months6) + '</span></div>'
+        + (expired ? '<p class="hint err">' + esc(S.courseExpired(a)) + '</p>' : '')
+        + '<button type="button" class="btn primary block" data-buyreq="' + courseId + '">' + esc(S.buyCourse) + '</button>'
+        + '<p class="hint" id="bstatus" style="margin:8px 0"></p><p class="hint" style="margin:8px 0">' + esc(S.buyHint) + '</p>'
+        + '<p style="margin:8px 0"><a class="backlink" href="#/unlock?from=learn">' + esc(S.unlockLink) + ' \u2192</a></p>'
+        + '<div class="row"><input id="ccode" placeholder="NABU-T-…" autocapitalize="characters" style="flex:1"><button class="btn" id="cunlock">' + esc(S.unlock) + '</button></div><p class="hint" id="cstatus"></p>')
+    + '</div>';
 }
 function bindPaywall(root, after) {
   const S = T();
   /* Buying through Play. Everything that decides whether it worked happens
      somewhere else - Play takes the money, the worker asks Google whether that
      really happened, and the access is written on the account rather than here.
-     What is left on this side is a button, a wait, and a sentence. */
-  $$('[data-playbuy]', root).forEach((b) => b.addEventListener('click', async () => {
-    const id = b.getAttribute('data-playbuy'), st = $('#bstatus', root);
-    b.disabled = true;
-    if (st) { st.textContent = S.buyWorking; st.className = 'hint'; }
-    try {
-      const opened = await BILL.buy(id);
-      if (st) { st.textContent = S.buyDone(opened.map(accessName).join(', ')); st.className = 'hint ok'; }
-      toast(S.unlocked);
-      if (after) after(); else route();
-    } catch (e) {
-      b.disabled = false;
-      const why = String((e && e.message) || '');
-      if (st) {
-        st.className = 'hint err';
-        st.textContent = why === 'signin' ? S.unlockNeedIn
-          : /AbortError|cancel/i.test(why) ? ''
-          : why === 'already used' ? S.buyAlready
-          : S.buyFailed;
-      }
-    }
-  }));
+     What is left on this side is a button, a wait, and a sentence - and that
+     button is bound the same way the store binds its own: bindStore(). */
+  bindStore(root, after);
   /* One button, one order in the dashboard, signed by whoever asked. */
   $$('[data-buyreq]', root).forEach((b) => b.addEventListener('click', async () => {
     const c = courseOf(b.getAttribute('data-buyreq')), st = $('#bstatus', root);
@@ -159,8 +135,9 @@ function renderLearn(args, params) {
 }
 
 /* ---- the two courses: cards | spreads | guides ---- */
-function renderCourse(courseId, tab) {
+async function renderCourse(courseId, tab) {
   if (!ACCESS.has(courseId)) {
+    if (isTWA()) await BILL.start();
     const S = T(), m = $('#main');
     m.innerHTML = backLink('#/learn', S.learnTitle) + '<h1 style="margin-bottom:8px">' + esc(S.cats[courseId]) + '</h1>' + demoHTML(courseId) + '<div id="unlockwrap" style="margin-top:18px">' + paywallHTML(courseId) + '</div>';
     bindAccordions(m); bindPaywall(m); bindCardLinks(m); bindAI(m); bindPC(m);
@@ -569,6 +546,10 @@ function unlockMessage() {
     + ((cut.pctOff || cut.coins) ? '\n✅ ' + S.luckAfter + ': ' + fmtPrice(cut.final) : '');
 }
 function renderUnlock(args, params) {
+  /* Inside the app Play is the only shop: a different screen entirely, with
+     Play's own prices and a Buy or Subscribe button for each of the four
+     catalogue rows. Nothing below this line ever runs in the app any more. */
+  if (isTWA()) { renderStore(params); return; }
   const S = T(), m = $('#main');
   /* Arriving from something's own offer, that thing is already chosen: being
      sent to a list and having to find it again is a small insult. */
@@ -578,7 +559,7 @@ function renderUnlock(args, params) {
   const draw = () => {
     const group = (ids) => '<div class="unlist">' + COURSES.filter((c) => ids.indexOf(c.id) > -1).map(unlockRowHTML).join('') + '</div>';
     m.innerHTML = '<div class="eyebrow">' + esc(CONFIG.brand) + '</div><h1 style="margin-bottom:6px">' + esc(S.unlockTitle) + '</h1><p class="muted">' + esc(S.unlockIntro) + '</p>'
-      + (isTWA() ? '' : '<p class="hint" style="margin-bottom:14px">' + esc(S.unlockPick) + '</p>')
+      + '<p class="hint" style="margin-bottom:14px">' + esc(S.unlockPick) + '</p>'
       + (() => {
         const courses = '<div class="sec" data-sec="courses"><h2 style="margin-bottom:8px">' + esc(S.unlockCourses) + '</h2>' + group(['tarot', 'lenormand', 'playing', 'manifest']) + '</div>';
         const tiers = '<div class="sec" data-sec="tiers"><h2 style="margin-bottom:8px">' + esc(S.unlockActs) + '</h2>'
@@ -593,15 +574,15 @@ function renderUnlock(args, params) {
         if (from === 'app') return tiers + courses;
         return courses + tiers;
       })()
-      + (isTWA() ? '' : '<div class="sec"><h2 style="margin-bottom:8px">' + esc(S.unlockCart) + '</h2><div id="ucart">' + unlockCartHTML() + '</div>'
+      + '<div class="sec"><h2 style="margin-bottom:8px">' + esc(S.unlockCart) + '</h2><div id="ucart">' + unlockCartHTML() + '</div>'
         + rewardPanelHTML(unlockBase(), UNL_USE)
         + '<button class="btn primary block" id="usend" style="margin-top:12px">' + esc(S.unlockSend) + '</button>'
-        + '<p class="hint" id="ustatus">' + esc(BE.enabled && BE.user ? '' : S.unlockSendMsg) + '</p></div>')
-      + (isTWA() || !unlockCartRows().length ? ''
+        + '<p class="hint" id="ustatus">' + esc(BE.enabled && BE.user ? '' : S.unlockSendMsg) + '</p></div>'
+      + (!unlockCartRows().length ? ''
         : payPanelHTML(unlockCartRows().map((c) => L(c.name)).join(', '), unlockLuck().final,
             payRef('unlock|' + unlockCartRows().map((c) => c.id).join('+')), 'unlockpay'))
       + '<div class="card"><label class="f" for="ucode">' + esc(S.unlockCodeLabel) + '</label><div class="row nw"><input id="ucode" placeholder="' + esc(S.luckCodePh) + '" autocapitalize="characters"><button class="btn" id="ugo">' + esc(S.unlock) + '</button></div><p class="hint" id="ustatus"></p></div>'
-      + (isTWA() ? '' : '<p style="margin-top:14px"><a class="backlink" href="#/prices">' + esc(S.unlockReadings) + ' →</a></p>');
+      + '<p style="margin-top:14px"><a class="backlink" href="#/prices">' + esc(S.unlockReadings) + ' →</a></p>';
     $$('[data-unl]', m).forEach((b) => b.addEventListener('click', () => { UNL_CART.toggle(b.getAttribute('data-unl')); draw(); }));
     if (unlockCartRows().length) {
       bindPayPanel(m, () => ({ what: unlockCartRows().map((c) => L(c.name)).join(', '),

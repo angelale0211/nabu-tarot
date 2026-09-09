@@ -1242,6 +1242,51 @@ async function go(hash, sel) { W().location.hash = hash; await sleep(30); return
         'a wedding purchase whose room cannot be resolved is retried a bounded number of times, then surfaced and dropped - never forever and never silently');
       delete play.products[wtok];
       N.ALERTS.clear();
+      /* The store below is exercised on a clean account: F1/F2 above already
+         left this same uid holding Pro (which grants Plus on its own), and
+         Pro's leftover token would keep granting Plus throughout regardless
+         of whatever the Plus row itself is doing - defeating the point of
+         the on-hold/cancelled checks that follow. */
+      { const uid = N.BE.user.uid, doc = cdocs['users/' + uid]; if (doc) { doc.access = {}; doc.subs = {}; }
+        play.products = {}; play.subs = {};
+        w.localStorage.removeItem('nabu-access'); w.localStorage.removeItem('nabu-subs'); w.localStorage.removeItem('nabu-play-pending'); }
+      await go('#/unlock?from=app', '.store');
+      ok(d.querySelectorAll('.store [data-buy]').length >= 7 && !d.querySelector('#ucode') && !d.querySelector('#usend') && !d.querySelector('.paypanel') && !d.querySelector('.luckpanel') && !/đ\b/.test(d.querySelector('.store').textContent.replace(/₫/g, '')),
+        'the in-app store lists every catalogue item with a Buy button and no basket, code field, transfer panel, reward panel or đồng price');
+      d.querySelector('.store [data-buy="plus"]').click(); await waitFor(() => N.ACCESS.has('plus'), 4000);
+      await go('#/me', '[data-theme-pick]'); d.querySelector('details[data-sect="own"]').open = true;
+      const plans = d.querySelector('.myplans');
+      ok(N.SUBS.of('plus') && N.SUBS.of('plus').state === 'SUBSCRIPTION_STATE_ACTIVE' && plans && /renew|gia hạn|verlängert/i.test(plans.textContent) && plans.querySelector('a[href*="play.google.com/store/account/subscriptions?sku="]') && !d.querySelector('#mcode') && d.querySelector('#restore'),
+        'the Me tab shows the subscription as active with its renewal date and a Manage link, a Restore button, and no code field');
+      Object.keys(play.subs).forEach((t) => { play.subs[t].state = 'SUBSCRIPTION_STATE_CANCELED'; }); await N.BILL.restore();
+      await go('#/unlock?from=app', '.store');
+      ok(N.ACCESS.has('plus') && /won.t renew|không gia hạn|keine verlängerung/i.test(d.querySelector('.store [data-key="plus"]').textContent), 'cancelled but paid: access stays and the row says when it ends');
+      Object.keys(play.subs).forEach((t) => { play.subs[t].state = 'SUBSCRIPTION_STATE_ON_HOLD'; }); await N.BILL.restore();
+      ok(!N.ACCESS.has('plus') && N.SUBS.of('plus').state === 'SUBSCRIPTION_STATE_ON_HOLD', 'a payment problem (on hold) closes access until Google says it is paid');
+      Object.keys(play.subs).forEach((t) => { play.subs[t].state = 'SUBSCRIPTION_STATE_EXPIRED'; }); await N.BILL.restore();
+      await N.BILL.buy('pro6'); await N.BILL.buy('pro', { oldKey: 'pro6' });
+      const last = play.requests[play.requests.length - 1];
+      ok(last.oldSku === playItem('pro6').sku && last.purchaseToken && N.ACCESS.has('pro') && N.ACCESS.has('plus') && N.SUBS.of('pro6').state === 'SUBSCRIPTION_STATE_EXPIRED',
+        'switching Pro plans tells Play which subscription it replaces, and the account ends up holding Pro once');
+      await go('#/learn/tarot', '.paywall, #ctabs');
+      w.localStorage.removeItem('nabu-access'); await go('#/learn/lenormand', '.paywall');
+      ok(d.querySelector('.paywall [data-buy="lenormand"]') && !d.querySelector('#ccode') && !d.querySelector('[data-buyreq]'), 'a course paywall in the app has Play\'s Buy button and nothing else');
+      await go('#/play/coin', '.luckbox, .coinwrap, #main');
+      ok(!d.querySelector('#luckcode') && (!d.querySelector('.luckbox') || d.querySelector('.luckbox [data-buy="plus"]')), 'the coin\'s limit box in the app offers Plus through Play, not a code');
+      /* the sweep: nothing on any screen in the app asks for a transfer, an order or a code */
+      /* #/prices and #/book are readings and may legitimately say "chuyển
+         khoản" - they are outside Play. #/wedding is the one Play item this
+         task deliberately leaves alone (see the brief): its own pay screen
+         still offers the website's bank-transfer flow, unguarded by isTWA(),
+         and turning that into a Play purchase is later work. */
+      const twaRoutes = ['#/home', '#/learn', '#/learn/tarot', '#/learn/lenormand', '#/learn/playing', '#/learn/manifest', '#/learn/guide/mani-woop', '#/unlock', '#/unlock?from=app', '#/me', '#/looks', '#/play/coin', '#/play/tree', '#/pick', '#/play/pet', '#/rewards'];
+      const leaks = [];
+      for (const r of twaRoutes) { await go(r, '#main'); await sleep(150); const main = d.querySelector('#main');
+        if (main.querySelector('#ccode,#ucode,#mcode,#luckcode,input[placeholder^="NABU-"],.paypanel,[data-buyreq],#usend,#wedpay') || /chuyển khoản|mã mở kho|Gửi yêu cầu mở khoá|transfer|unlock code|Freischaltcode|überweis/i.test(main.textContent)) leaks.push(r); }
+      ok(leaks.length === 0, 'with the app flag set no screen asks for a transfer, an order to Nabu or a code (leaks: ' + leaks.join(' ') + ')');
+      N.BILL.service = null;
+      await go('#/unlock?from=app', '.store');
+      ok(d.querySelector('.store [data-retry]') && !d.querySelector('.store [data-buy]') && !d.querySelector('#ucode'), 'when Play is silent the store says so and offers Retry - never the website\'s flow');
       await playMode(false); }
     /* ---- the red thread ---- */
     { /* A stand-in for Firestore: documents in an object, and listeners told

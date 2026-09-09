@@ -380,13 +380,16 @@ function luckPanelHTML(kind) {
   if (luckUnlimited(kind)) return '<p class="hint">✓ ' + esc(S.luckOpen) + '</p>';
   if (!luckSpent(kind)) return '<p class="hint">' + esc(S.luckFree) + '</p>';
   return '<div class="card luckbox"><p class="lead">' + esc(S.luckSpent(fmtDate(luckNext(kind)))) + '</p>'
-    + '<p class="hint" style="margin-bottom:10px">' + esc(S.luckOffer) + '</p>'
-    + '<div class="row nw"><input id="luckcode" placeholder="' + esc(S.luckCodePh) + '" autocapitalize="characters"><button class="btn" id="luckgo">' + esc(S.unlock) + '</button></div>'
-    + '<p class="hint" id="luckstatus"></p>'
+    + '<p class="hint" style="margin-bottom:10px">' + esc(isTWA() ? S.stPlusPitch : S.luckOffer) + '</p>'
+    + (isTWA()
+      ? (BILL.can() ? buyButtonHTML('plus', S.stSubscribe) + '<p class="hint st" data-st="plus"></p>' : storeNotReadyHTML())
+      : '<div class="row nw"><input id="luckcode" placeholder="' + esc(S.luckCodePh) + '" autocapitalize="characters"><button class="btn" id="luckgo">' + esc(S.unlock) + '</button></div><p class="hint" id="luckstatus"></p>')
     + '</div>';
 }
 function bindLuck(root, redraw) {
-  const S = T(), go = $('#luckgo', root);
+  const S = T();
+  bindStore(root, redraw);
+  const go = $('#luckgo', root);
   if (!go) return;
   go.addEventListener('click', async () => {
     const st = $('#luckstatus', root);

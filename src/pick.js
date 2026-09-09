@@ -43,7 +43,9 @@ function pickLimitHTML() {
      wants tomorrow, the other wants an account. */
   if (guestSpent()) return needAccountHTML(S.needInDraw);
   return '<div class="card luckbox"><p class="lead">' + esc(S.pickSpent) + '</p>'
-    + (isTWA() ? '' : '<p class="hint" style="margin-bottom:10px">' + esc(S.pickOffer) + '</p><a class="btn primary block" href="#/unlock?from=pick">' + esc(S.pickPlus) + '</a>')
+    + (isTWA()
+      ? (BILL.can() ? '<p class="hint" style="margin-bottom:10px">' + esc(S.stPlusPitch) + '</p>' + buyButtonHTML('plus', S.stSubscribe) + '<p class="hint st" data-st="plus"></p>' : storeNotReadyHTML())
+      : '<p class="hint" style="margin-bottom:10px">' + esc(S.pickOffer) + '</p><a class="btn primary block" href="#/unlock?from=pick">' + esc(S.pickPlus) + '</a>')
     + '</div>';
 }
 function renderPick(args, params) {
@@ -141,6 +143,7 @@ function renderReveal(animate) {
     + aiPanelHTML({ type: 'card', id: id, focus: pick.focus, lite: 1 })
     + (pickSpent() ? pickLimitHTML() : '<button class="btn block" id="redraw" style="margin-top:6px">' + esc(S.redraw) + '</button>');
   bindAI(r);
+  if (pickSpent()) bindStore(r, () => renderReveal(false));
   $('#shareCard').addEventListener('click', () => shareOrCopy(S.shareText(c.name, kws), appURL() + '#/pick?card=' + encodeURIComponent(id) + '&focus=' + pick.focus));
   const again = () => { newHand(); if (/\?/.test(location.hash)) redirect('#/pick'); else renderPick(); window.scrollTo({ top: 0, behavior: 'smooth' }); };
   { const a = $('#redraw'), b = $('#redrawTop'); if (a) a.addEventListener('click', again); if (b) b.addEventListener('click', again); }

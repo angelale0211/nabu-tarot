@@ -272,13 +272,15 @@ function meSect(id, icon, title, body, openByDefault, force) {
        goods outside Play whatever the truth of it. The prices were already kept
        out of the app for that reason; the rest of the row belongs with them.
        The box for entering a code stays, so an unlock still works here. */
-    let own = '<div class="card"><h3 style="margin-bottom:8px">' + esc(S.myCourses) + '</h3>' + (isTWA() ? '' : COURSES.map((c) => { const a = ACCESS.isAdmin() ? '9999-12-31' : ACCESS.get()[c.id]; const on = ACCESS.has(c.id);
+    let own = isTWA()
+      ? myPlansHTML()
+      : '<div class="card"><h3 style="margin-bottom:8px">' + esc(S.myCourses) + '</h3>' + COURSES.map((c) => { const a = ACCESS.isAdmin() ? '9999-12-31' : ACCESS.get()[c.id]; const on = ACCESS.has(c.id);
       const ic = a ? (on ? '✓' : '⌛') : '🔒';
       // The tick and the hourglass already say open or expired, so the column
       // only carries the date. Spelling it out pushed long course names onto a
       // second line and left the column ragged.
-      const right = a ? esc(a.slice(8, 10) + '/' + a.slice(5, 7) + '/' + a.slice(0, 4)) : (isTWA() ? '' : priceHTML(c.price, 'unlock', c.id));
-      return '<div class="course"><span class="nm">' + esc(L(c.name)) + '</span><span class="ic">' + ic + '</span><span class="pr faint">' + right + '</span></div>'; }).join(''))
+      const right = a ? esc(a.slice(8, 10) + '/' + a.slice(5, 7) + '/' + a.slice(0, 4)) : priceHTML(c.price, 'unlock', c.id);
+      return '<div class="course"><span class="nm">' + esc(L(c.name)) + '</span><span class="ic">' + ic + '</span><span class="pr faint">' + right + '</span></div>'; }).join('')
       + '<label class="f" for="mcode">' + esc(S.enterCode) + '</label><div class="row nw"><input id="mcode" placeholder="NABU-T-…" autocapitalize="characters"><button class="btn" id="munlock">' + esc(S.unlock) + '</button></div><p class="hint" id="mcstatus"></p></div>';
     /* A block nobody can undo is a trap rather than a tool: somebody blocks in
        a bad moment and has no way back. Shown only once there is somebody on
@@ -311,6 +313,7 @@ function meSect(id, icon, title, body, openByDefault, force) {
       store.set('nabu-me-open', m);
     }));
     bindAuth(body); bindAI(body); bindNotify(body);
+    if (isTWA()) bindMyPlans(body, draw);
     $('#chkupd').addEventListener('click', async () => {
       toast(S.updating);
       try { if ('serviceWorker' in navigator) { const reg = await navigator.serviceWorker.getRegistration(); if (reg) await reg.update(); } } catch (e) { /* offline */ }
@@ -325,7 +328,8 @@ function meSect(id, icon, title, body, openByDefault, force) {
          make an account. */
       else if (params.next === 'wedding') { const w = store.get('nabu-wed-next', ''); location.hash = w ? '#/wedding/' + w : '#/wedding'; }
     });
-    $('#munlock').addEventListener('click', async () => {
+    const mu = $('#munlock');
+    if (mu) mu.addEventListener('click', async () => {
       const st = $('#mcstatus'), btn = $('#munlock');
       st.textContent = S.codeChecking; st.className = 'hint'; btn.disabled = true;
       const r = await redeemCode($('#mcode').value).catch((e) => e);
