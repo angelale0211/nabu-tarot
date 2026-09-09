@@ -11,7 +11,7 @@ import { checkPurchase, acknowledge, grantUntil, checkSubscription, acknowledgeS
 import { claimCode } from "./codes";
 import { claimPurchase, markGranted, sweepRefunds, tokenId, ledgerSet } from "./refunds";
 import { itemBySku, itemByKey } from "./catalog";
-import { applySubscription, payRoom } from "./entitle";
+import { applySubscription, payRoom, noteGranted } from "./entitle";
 import { handleRtdn } from "./rtdn";
 import { reconcileSubs } from "./reconcile";
 
@@ -305,6 +305,18 @@ export default {
         const ids = opens && opens.length ? opens : [got.course];
         const want: Record<string, string> = {};
         for (const id of ids) want[id] = got.until;
+        /* The provenance FIRST, then the access.
+
+           `manifest`, `plus` and `pro` are sold on the website as well as on
+           Play, and once a subscription row names one of them the recompute
+           rebuilds it from Play alone unless something says otherwise.
+           `granted` is that something. Written before `access` on purpose: if
+           the second write fails the customer is told so and retries (the
+           code is already bound to them, so it still works), and at no moment
+           does `access` hold a code grant that `granted` has no record of -
+           which is the one state in which a later subscription event could
+           quietly shorten it. A course code writes nothing here. */
+        await noteGranted(env, person.uid, want);
         const access = await grantUntil(env, person.uid, want);
         console.log(JSON.stringify({ at: "redeem", uid: person.uid, granted: ids, until: got.until }));
         return new Response(JSON.stringify({ ok: true, opened: ids, access }), { headers });

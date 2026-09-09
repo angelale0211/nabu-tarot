@@ -309,3 +309,83 @@ test("a course retry acknowledges again - a first acknowledge that failed is nev
     assert.equal(acks, 2, "the retry acknowledged as well, rather than trusting the first attempt");
   } finally { m.restore(); }
 });
+
+/* ---- a code writes down where it came from ----
+
+   `manifest`, `plus` and `pro` are sold on the website (bank transfer, then a
+   code) as well as on Play, and the recompute in entitle.ts rebuilds every
+   such key from the subscription rows. `granted` is the only thing that tells
+   it a key was ALSO paid for directly, so /redeem has to write it or the
+   customer is safe only until their first subscription event.
+
+   And only for those keys. `tarot`, `lenormand`, `playing` and `wedding` are
+   never rebuilt from anything, so a course code has nothing to write down -
+   and writing one anyway would put a course key in a field whose whole meaning
+   is "a Play-managed key somebody else paid for". */
+function codeWorld(k: Awaited<ReturnType<typeof makeKeys>>, entries: Record<string, { c: string; u: string }>) {
+  const salt = "s-granted";
+  const docs: Record<string, Record<string, unknown>> = {};
+  const book: Record<string, unknown> = {};
+  const m = mockFetch(k, {
+    "/content/codes": (_url, init) => {
+      if (init.method === "PATCH") return json({});
+      return json({ updateTime: "2026-01-01T00:00:00Z", fields: { salt: { stringValue: salt }, codes: { mapValue: { fields: book } } } });
+    },
+    "firestore.googleapis.com": (url, init) => {
+      const id = url.split("/documents/")[1].split("?")[0];
+      if (init.method === "PATCH") { docs[id] = Object.assign(docs[id] || {}, JSON.parse(String(init.body)).fields); return json({ name: id }); }
+      return docs[id] ? json({ fields: docs[id] }) : json({}, 404);
+    },
+  });
+  const ready = (async () => {
+    for (const code of Object.keys(entries)) {
+      const key = await codeKey(code, salt);
+      book[key] = { mapValue: { fields: { c: { stringValue: entries[code].c }, u: { stringValue: entries[code].u } } } };
+    }
+  })();
+  return { docs, m, ready };
+}
+const redeem = async (k: Awaited<ReturnType<typeof makeKeys>>, uid: string, code: string) => {
+  const c = ctx();
+  const r = await worker.fetch(new Request("https://nabu-ai.test/redeem", {
+    method: "POST",
+    headers: { Authorization: "Bearer " + await idToken(k, uid), "Content-Type": "application/json" },
+    body: JSON.stringify({ code }),
+  }), env(k) as never, c as never);
+  await c.done();
+  return { status: r.status, body: await r.json() as Record<string, unknown> };
+};
+const mapOf = (docs: Record<string, Record<string, unknown>>, uid: string, field: string): Record<string, string> | undefined => {
+  const f = (docs["users/" + uid] || {})[field] as { mapValue?: { fields?: Record<string, { stringValue?: string }> } } | undefined;
+  if (!f) return undefined;
+  const out: Record<string, string> = {};
+  const fields = f.mapValue?.fields || {};
+  for (const key of Object.keys(fields)) out[key] = fields[key].stringValue || "";
+  return out;
+};
+
+test("redeeming a Pro code writes granted as well as access, so a later Play subscription cannot shorten it", async () => {
+  const k = K;
+  const w = codeWorld(k, { PROCODE1: { c: "pro", u: "2099-01-01" } });
+  await w.ready;
+  try {
+    const a = await redeem(k, "ug1", "PROCODE1");
+    assert.equal(a.status, 200);
+    assert.deepEqual(a.body.opened, ["pro", "plus"]);
+    assert.deepEqual(mapOf(w.docs, "ug1", "access"), { pro: "2099-01-01", plus: "2099-01-01" });
+    assert.deepEqual(mapOf(w.docs, "ug1", "granted"), { pro: "2099-01-01", plus: "2099-01-01" });
+  } finally { w.m.restore(); }
+});
+
+test("redeeming a COURSE code writes no granted at all - nothing rebuilds a course key", async () => {
+  const k = K;
+  const w = codeWorld(k, { TARCODE1: { c: "tarot", u: "2099-01-01" } });
+  await w.ready;
+  try {
+    const a = await redeem(k, "ug2", "TARCODE1");
+    assert.equal(a.status, 200);
+    assert.deepEqual(a.body.opened, ["tarot"]);
+    assert.deepEqual(mapOf(w.docs, "ug2", "access"), { tarot: "2099-01-01" });
+    assert.equal(mapOf(w.docs, "ug2", "granted"), undefined, "no granted field is written for a course");
+  } finally { w.m.restore(); }
+});

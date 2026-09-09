@@ -35,10 +35,18 @@ service cloud.firestore {
       /* Declared inside this block on purpose. `resource` means "the document
          being written to", and it only has a meaning inside a match - a helper
          that reads it belongs where that meaning exists. */
+      /* `granted` belongs here for exactly the reason `access` does, and it is
+         the more dangerous of the two: it records what the website and the
+         dashboard gave for a Play-managed key, and the worker's recompute
+         takes it as the floor no subscription may go below. A signed-in
+         person who could write their own `granted` from a browser console
+         would not merely open a course - they would open it permanently, past
+         every refund and every expiry, because that is precisely what the
+         field is for. Worker-written only, like `access` and `subs`. */
       function touchesPaid() {
         return resource == null
-          ? request.resource.data.keys().hasAny(['revoked', 'subs']) || !emptyAccess()
-          : request.resource.data.diff(resource.data).affectedKeys().hasAny(['access', 'revoked', 'subs']);
+          ? request.resource.data.keys().hasAny(['revoked', 'subs', 'granted']) || !emptyAccess()
+          : request.resource.data.diff(resource.data).affectedKeys().hasAny(['access', 'revoked', 'subs', 'granted']);
       }
       /* A phone still running an older version sends `access: {}` with the very
          first write of a new account, and refusing that would refuse the account

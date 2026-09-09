@@ -19,7 +19,23 @@ const K = await makeKeys();
 test("reconcile re-reads every live subscription row and rewrites the account", { skip: !PLAY_ITEMS.find((i) => i.key === "plus")!.sku && "B1: plus sku not filled" }, async () => {
   const k = K;
   const plus = PLAY_ITEMS.find((i) => i.key === "plus")!;
-  const docs: Record<string, Record<string, unknown>> = { "purchases/h1": fsDoc({ uid: "u1", sku: plus.sku, kind: "subs", ids: ["plus"], state: "SUBSCRIPTION_STATE_ACTIVE", token: "S1" }).fields as Record<string, unknown>, "users/u1": fsDoc({ access: { plus: "2099-01-01" }, subs: {} }).fields as Record<string, unknown> };
+  /* The account is set up as Play actually leaves it: the live "plus" row is
+     in users/u1.subs as well as in the ledger, and access.plus is what THAT
+     row granted. The fixture used to carry access.plus with an empty subs
+     map, which is not a state Play can produce - applySubscription writes
+     `access` and `subs` in one masked PATCH, so a row and the access it
+     granted are lost or kept together (see the SELF-HEALING test below, which
+     drops both). It IS the state a redeemed website code produces, and since
+     `granted` landed that access is deliberately kept, so the old fixture was
+     asserting the bug. What this test is actually about - an EXPIRED
+     subscription losing the access it granted - needs the row present. */
+  const docs: Record<string, Record<string, unknown>> = {
+    "purchases/h1": fsDoc({ uid: "u1", sku: plus.sku, kind: "subs", ids: ["plus"], state: "SUBSCRIPTION_STATE_ACTIVE", token: "S1" }).fields as Record<string, unknown>,
+    "users/u1": fsDoc({
+      access: { plus: "2099-01-01" },
+      subs: { plus: { sku: plus.sku, plan: "plus-12m", state: "SUBSCRIPTION_STATE_ACTIVE", until: "2099-01-01", autoRenew: true, tok: "h1", opens: ["plus"], grant: true } },
+    }).fields as Record<string, unknown>,
+  };
   const m = mockFetch(k, {
     ":runQuery": () => json([{ document: { name: "projects/x/databases/(default)/documents/purchases/h1", fields: docs["purchases/h1"] } }]),
     "androidpublisher.googleapis.com": () => json({ subscriptionState: "SUBSCRIPTION_STATE_EXPIRED", lineItems: [{ productId: plus.sku, expiryTime: new Date(Date.now() - 1000).toISOString() }] }),

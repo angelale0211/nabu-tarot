@@ -37,39 +37,132 @@ export interface SubRow { sku: string; plan: string; state: string; until: strin
    key. Order of events still cannot matter: this looks only at the rows and
    the account as they are now.
 
-   What this deliberately does not do is merge a code grant with a Play row
-   for the SAME key - a Play row that names the key wins outright, so a
-   longer code-granted date for a key the buyer also holds on Play is still
-   shortened to Play's. Keeping the later of the two instead would mean an
-   expiry that moves earlier (a plan change, a revoked extension) could never
-   shorten access, which is worse. Closing that last gap needs provenance
-   written next to the grant, and a code redeemed before that field exists
-   would have none - so it is not what this branch relies on. */
-export function recompute(subs: Record<string, SubRow>, access: Record<string, string>): Record<string, string> {
-  const out: Record<string, string> = {};
+   That left one hole, and `granted` closes it. Where a Play row and a code
+   named the SAME key, the row used to win outright: a customer who had paid
+   by bank transfer for Pro to 2027-06 and later subscribed to Play Pro to
+   2026-12 was silently cut back to Play's date and lost six months they had
+   paid for. Keeping simply the later of the two would be worse - Google could
+   then never SHORTEN its own grant, and a refund or a revocation would never
+   take anything back.
+
+   So the two sources are kept in separate boxes and combined here. `access`
+   is the answer, not an input to itself; `granted` holds what the website and
+   the dashboard gave, per key, and Play's rows hold what Play gave. The
+   effective date for a Play-managed key is the later of the two. Play may
+   shorten its own contribution to nothing - a refund drops every row's grant
+   - and the customer is left with exactly what `granted` says, which is
+   nothing at all if they never had a code. Keys no subscription manages
+   (`tarot`, `lenormand`, `playing`, `wedding`) are untouched by any of it. */
+export function namedByRows(subs: Record<string, SubRow>): Set<string> {
   const named = new Set<string>();
   for (const row of Object.values(subs)) {
     if (!row) continue;
     for (const k of row.opens || []) if (PLAY_MANAGED_KEYS.has(k)) named.add(k);
   }
+  return named;
+}
+
+export function recompute(subs: Record<string, SubRow>, access: Record<string, string>, granted: Record<string, string> = {}): Record<string, string> {
+  const out: Record<string, string> = {};
+  const named = namedByRows(subs);
   for (const k of Object.keys(access)) if (!named.has(k)) out[k] = access[k];
   for (const row of Object.values(subs)) {
     if (!row || !row.grant) continue;
     for (const k of row.opens || []) if (!out[k] || row.until > out[k]) out[k] = row.until;
   }
+  /* What the website and the dashboard gave, folded in last. Only ever for a
+     key subscriptions manage: a course key is already carried through above,
+     and `granted` has no business inventing one. Later date wins, so a Play
+     row that runs longer than the code keeps its own date and a code that
+     runs longer than Play keeps its. */
+  for (const k of Object.keys(granted)) {
+    if (!PLAY_MANAGED_KEYS.has(k)) continue;
+    const g = granted[k];
+    if (!g) continue;
+    if (!out[k] || g > out[k]) out[k] = g;
+  }
   return out;
 }
 
-export async function applySubscription(env: PlayEnv, uid: string, item: PlayItem, sub: SubInfo, tokenHash: string): Promise<{ access: Record<string, string>; subs: Record<string, SubRow> }> {
+/* ---- catching what is already there, without a migration ----
+
+   `granted` is new, and every customer who redeemed a code before it existed
+   has their bank-transfer access sitting in `access` alone, with nothing to
+   say where it came from. Rather than a one-off script over the whole user
+   collection - which would have to guess, because `access` records no
+   provenance - the value is captured at the one moment it can still be read
+   truthfully: just before Play takes the key over.
+
+   For each key the NEW row names, if NO EXISTING row names it, then whatever
+   `access` holds for that key cannot have come from Play - no subscription
+   row has ever claimed it - so it is a code or an admin grant, and it is
+   folded into `granted` before the new row is written.
+
+   Both halves of the ordering matter.
+
+   It is checked against the rows as they are BEFORE this write. Check after,
+   and the row being written names the key itself, so the capture never fires
+   and the value it exists to rescue is thrown away by the recompute in the
+   next line.
+
+   And it must NOT fire when a row already named the key. `access[key]` would
+   then be Play's own previous grant, and copying it into `granted` would make
+   it permanent: the very next event that legitimately SHORTENS the
+   subscription - a refund, a revocation, a downgrade, an expiry - would find
+   the old, longer date sitting in `granted` and hand back the access Google
+   had just taken away. That is the opposite failure and just as expensive, so
+   the guard is a hard one: a key any current row names is Play's, and is
+   never captured. */
+function capture(subs: Record<string, SubRow>, access: Record<string, string>, granted: Record<string, string>, opens: string[]): void {
+  const already = namedByRows(subs);
+  for (const k of opens) {
+    if (!PLAY_MANAGED_KEYS.has(k)) continue;   // a course key is never rebuilt, so it needs no rescuing
+    if (already.has(k)) continue;              // Play holds this key already: whatever access says is Play's own
+    const held = access[k];
+    if (!held) continue;
+    if (!granted[k] || held > granted[k]) granted[k] = held;
+  }
+}
+
+export async function applySubscription(env: PlayEnv, uid: string, item: PlayItem, sub: SubInfo, tokenHash: string): Promise<{ access: Record<string, string>; subs: Record<string, SubRow>; granted: Record<string, string> }> {
   const doc = (await fsGet(env, "users/" + encodeURIComponent(uid))) || {};
   const access = (doc.access as Record<string, string>) || {};
   const subs = { ...((doc.subs as Record<string, SubRow>) || {}) };
+  const granted = { ...((doc.granted as Record<string, string>) || {}) };
+  /* Before the new row, never after. */
+  capture(subs, access, granted, item.opens);
   const a = subAccess(sub);
   subs[item.key] = { sku: item.sku, plan: sub.basePlanId, state: sub.state, until: a.until, autoRenew: sub.autoRenew, tok: tokenHash, opens: item.opens, grant: a.grant };
-  const next = recompute(subs, access);
-  const w = await fsPatch(env, "users/" + encodeURIComponent(uid), { access: next, subs }, ["access", "subs"]);
+  const next = recompute(subs, access, granted);
+  const w = await fsPatch(env, "users/" + encodeURIComponent(uid), { access: next, subs, granted }, ["access", "subs", "granted"]);
   if (!w.ok) throw new Error("firestore " + w.status);
-  return { access: next, subs };
+  return { access: next, subs, granted };
+}
+
+/* ---- writing down a grant that did not come from Play ----
+
+   Called by /redeem, so a code that opens a Play-managed key leaves a record
+   of itself next to the access it wrote. Without it the customer is safe only
+   until their first subscription event: `access` alone cannot be told apart
+   from a Play grant once a row names the key, and the recompute would cut a
+   two-year bank transfer back to a one-year subscription.
+
+   Play-managed keys only. `tarot`, `lenormand`, `playing` and `wedding` are
+   never rebuilt from the subscription rows, so nothing can take them away and
+   nothing needs to be written here. Later date wins, exactly as grantUntil
+   does for `access`, so redeeming a shorter code after a longer one cannot
+   shorten what was already bought. */
+export async function noteGranted(env: PlayEnv, uid: string, want: Record<string, string>): Promise<Record<string, string>> {
+  const keys = Object.keys(want).filter((k) => PLAY_MANAGED_KEYS.has(k) && want[k]);
+  if (!keys.length) return {};
+  const doc = (await fsGet(env, "users/" + encodeURIComponent(uid))) || {};
+  const granted = { ...((doc.granted as Record<string, string>) || {}) };
+  let moved = false;
+  for (const k of keys) if (!granted[k] || want[k] > granted[k]) { granted[k] = want[k]; moved = true; }
+  if (!moved) return granted;
+  const w = await fsPatch(env, "users/" + encodeURIComponent(uid), { granted }, ["granted"]);
+  if (!w.ok) throw new Error("firestore " + w.status);
+  return granted;
 }
 
 /* ---- the wedding: one purchase pays one room ---- */
