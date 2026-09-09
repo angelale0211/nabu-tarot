@@ -2,6 +2,7 @@ import { test } from "node:test";
 import assert from "node:assert/strict";
 import worker from "../src/index";
 import { PLAY_ITEMS } from "../src/catalog";
+import { codeKey } from "../src/codes";
 import { makeKeys, env, ctx, mockFetch, json, idToken } from "./util";
 
 /* One keypair for the whole file, not one per test. auth.ts caches Google's
@@ -129,5 +130,99 @@ test("a transient Google failure (500) is answered with a 5xx, never as an inval
     assert.notEqual(a.body.error, "invalid purchase");
     assert.equal(a.body.error, "play 500");
     assert.equal(docs["users/u1"], undefined);
+  } finally { m.restore(); }
+});
+
+/* CRITICAL fix round 1: claimPurchase's currentDocument.exists=false is the
+   only atomic gate in this whole flow. A design that peeks the ledger with
+   an ordinary read before paying a room, and only claims the token
+   afterwards, has a window where the claim never lands - a Firestore blip on
+   that write is exactly such a case - and a retry with a DIFFERENT room then
+   sails through the same "no existing row" peek a second time. One token
+   must never pay two rooms, on any account. This is the scenario from the
+   review, reproduced deterministically: the token's very first claim attempt
+   fails with a transient 500 (a real ledger write blip, not a precondition
+   failure), so no row is ever created for it and the room from that attempt
+   is never touched; the very next call, same token, a different room, must
+   be the only one that ever gets paid. */
+test("a wedding token that failed to claim after a Firestore blip must not later pay a second room", async () => {
+  const k = K;
+  const docs: Record<string, Record<string, unknown>> = {};
+  docs["weddings/e__f"] = { uids: { arrayValue: { values: [{ stringValue: "a" }, { stringValue: "f" }] } } };
+  docs["weddings/g__h"] = { uids: { arrayValue: { values: [{ stringValue: "a" }, { stringValue: "h" }] } } };
+  let claimAttempts = 0;
+  const m = mockFetch(k, {
+    "androidpublisher.googleapis.com": (_url, init) => (init.method === "POST" ? json({}) : json({ purchaseState: 0, consumptionState: 0 })),
+    "firestore.googleapis.com": (url, init) => {
+      const id = url.split("/documents/")[1].split("?")[0];
+      if (init.method === "PATCH") {
+        if (id.startsWith("purchases/") && url.includes("currentDocument.exists=false")) {
+          claimAttempts++;
+          if (claimAttempts === 1) return json({ error: "boom" }, 500); // a genuine Firestore blip, not "already claimed"
+        }
+        if (url.includes("currentDocument.exists=false") && docs[id]) return json({}, 409);
+        docs[id] = Object.assign(docs[id] || {}, JSON.parse(String(init.body)).fields);
+        return json({ name: id });
+      }
+      return docs[id] ? json({ fields: docs[id] }) : json({}, 404);
+    },
+  });
+  try {
+    const first = await post(k, "a", { sku: "wedding", token: "WFAULT", wid: "e__f" });
+    assert.equal(first.status, 502); // the blip surfaces as retryable, never as a grant
+    assert.notEqual(docs["weddings/e__f"] && (docs["weddings/e__f"].paid as { booleanValue?: boolean } | undefined)?.booleanValue, true);
+
+    const second = await post(k, "a", { sku: "wedding", token: "WFAULT", wid: "g__h" });
+    assert.equal(second.status, 200);
+    assert.equal((docs["weddings/g__h"].paid as { booleanValue: boolean }).booleanValue, true);
+
+    // the room from the failed first attempt must still be unpaid: one token
+    // never buys two rooms, however the failure lands.
+    assert.notEqual(docs["weddings/e__f"] && (docs["weddings/e__f"].paid as { booleanValue?: boolean } | undefined)?.booleanValue, true);
+  } finally { m.restore(); }
+});
+
+/* IMPORTANT fix round 1: itemByKey("wedding").opens is [], and [] || [x] is
+   [] - an empty array is truthy in JavaScript, so the old `opens ||
+   [got.course]` fallback in /redeem silently picked the empty array and
+   opened nothing. A wedding code must open the "wedding" access key, the
+   same one src/wedding.js and src/alerts.js read with ACCESS.has('wedding'),
+   and claimCode has already burned the code by the time this runs - so
+   opening nothing here means the customer loses the code for good. */
+test("redeeming a wedding code opens the wedding access key, not nothing", async () => {
+  const k = K;
+  const salt = "s1";
+  const code = "WEDDING1";
+  const key = await codeKey(code, salt);
+  const codesDoc = {
+    updateTime: "2026-01-01T00:00:00Z",
+    fields: {
+      salt: { stringValue: salt },
+      codes: { mapValue: { fields: { [key]: { mapValue: { fields: {
+        c: { stringValue: "wedding" }, u: { stringValue: "2099-01-01" },
+      } } } } } },
+    },
+  };
+  const docs: Record<string, Record<string, unknown>> = {};
+  const m = mockFetch(k, {
+    "firestore.googleapis.com": (url, init) => {
+      if (url.includes("/content/codes")) return init.method === "PATCH" ? json({}) : json(codesDoc);
+      const id = url.split("/documents/")[1].split("?")[0];
+      if (init.method === "PATCH") { docs[id] = Object.assign(docs[id] || {}, JSON.parse(String(init.body)).fields); return json({ name: id }); }
+      return docs[id] ? json({ fields: docs[id] }) : json({}, 404);
+    },
+  });
+  try {
+    const c = ctx();
+    const r = await worker.fetch(new Request("https://nabu-ai.test/redeem", {
+      method: "POST",
+      headers: { Authorization: "Bearer " + await idToken(k, "u1"), "Content-Type": "application/json" },
+      body: JSON.stringify({ code }),
+    }), env(k) as never, c as never);
+    await c.done();
+    const body = await r.json() as Record<string, unknown>;
+    assert.equal(r.status, 200);
+    assert.deepEqual(body.opened, ["wedding"]);
+    assert.equal((body.access as Record<string, string>).wedding, "2099-01-01");
   } finally { m.restore(); }
 });

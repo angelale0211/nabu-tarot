@@ -9,7 +9,7 @@ import { whoIsAsking } from "./auth";
 import { allow, cachedAnswer, keepAnswer } from "./limit";
 import { checkPurchase, acknowledge, grantUntil, checkSubscription, acknowledgeSub } from "./play";
 import { claimCode } from "./codes";
-import { claimPurchase, markGranted, sweepRefunds, tokenId, ledgerGet } from "./refunds";
+import { claimPurchase, markGranted, sweepRefunds, tokenId, ledgerSet } from "./refunds";
 import { itemBySku, itemByKey } from "./catalog";
 import { applySubscription, payRoom } from "./entitle";
 
@@ -180,33 +180,33 @@ export default {
         }
 
         if (item.key === "wedding") {
-          /* A wedding pays a room, named in the request, and a room belongs to
-             the couple who booked it - never the phone that happens to send
-             the token. So the token is checked against Google, then against
-             the room, and only claimed - locked to this uid and this wid -
-             once both agree. Claiming first, the way a course does, would let
-             a first guess at the wrong room (a guest who is not on the
-             couple's own account, say) permanently tie the token to that
-             wrong room: claimPurchase itself refuses a second claim whose wid
-             does not match the first, with no way back. So instead the
-             ledger is only peeked at here - enough to catch "this token is
-             already somebody else's room" without ever writing a claim for a
-             room that turns out not to be this buyer's. */
-          const hash = await tokenId(token);
-          const existing = await ledgerGet(env, hash);
-          if (existing && (existing.uid !== person.uid || (existing.wid && existing.wid !== wid))) {
+          /* The token is claimed first, exactly like a course - the only
+             atomic thing in this whole system is claimPurchase's
+             currentDocument.exists=false, and nothing here may give that up.
+             But it is claimed WITHOUT a wid: which room this token pays for
+             is not decided yet, so nothing binds a room to it here. A first
+             guess at the wrong room (a guest typing a room that is not
+             theirs) then costs nothing - the claim exists, but no wid is on
+             it, so a later, correct room can still be tried against the same
+             claim. Only once payRoom has actually succeeded is the wid
+             written onto the row, and only from that moment does a
+             DIFFERENT wid on the same token mean "already used". */
+          const claim = await claimPurchase(env, person.uid, sku, item.opens, token, { kind: "inapp" });
+          if (!claim.ok) { log({ refused: claim.why }); return say(402, { error: claim.why || "already used" }); }
+          if (claim.existing && claim.existing.wid && claim.existing.wid !== wid) {
             log({ refused: "already used", wid }); return say(402, { error: "already used" });
           }
+          const hash = await tokenId(token);
           const paid = await payRoom(env, person.uid, wid, hash);
           if (!paid.ok) { log({ refused: paid.why, wid }); return say(paid.why === "not yours" ? 403 : 409, { error: paid.why }); }
-          /* Only now, with the room actually paid, is the token locked to it. */
-          const claim = await claimPurchase(env, person.uid, sku, item.opens, token, { kind: "inapp", wid });
-          if (!claim.ok) { log({ refused: claim.why, wid }); return say(402, { error: claim.why || "already used" }); }
-          await markGranted(env, token).catch((e) => log({ ledger: String(e) }));
-          /* Only once the room is paid and the claim recorded: a purchase
-             consumed before both are true is money Google will not refund
-             and a room that never opens. */
-          if (!claim.existing) ctx.waitUntil(acknowledge(env, sku, token));
+          /* Only now, with the room actually paid, is the wid written down. */
+          await ledgerSet(env, hash, { wid, state: "granted" }).catch((e) => log({ ledger: String(e) }));
+          /* Unconditional, on purpose: a first acknowledge that failed (a
+             dropped waitUntil, a Play hiccup) must still be retried on the
+             next call for the same token, or Google auto-refunds an
+             unacknowledged purchase after three days. Acknowledging twice is
+             harmless - it is not acknowledging once that costs money. */
+          ctx.waitUntil(acknowledge(env, sku, token));
           log({ granted: ["wedding"], wid });
           return say(200, { ok: true, opened: ["wedding"], wid });
         }
@@ -261,7 +261,11 @@ export default {
           console.log(JSON.stringify({ at: "redeem", uid: person.uid, refused: got.why }));
           return new Response(JSON.stringify({ error: got.why }), { status: got.why === "check failed" ? 502 : 402, headers });
         }
-        const ids = itemByKey(got.course)?.opens || [got.course];
+        /* opens is [] for a wedding code (a wedding opens no access key, it
+           pays a room) - and [] is truthy, so `opens || [got.course]` would
+           silently pick the empty array and open nothing at all. */
+        const opens = itemByKey(got.course)?.opens;
+        const ids = opens && opens.length ? opens : [got.course];
         const want: Record<string, string> = {};
         for (const id of ids) want[id] = got.until;
         const access = await grantUntil(env, person.uid, want);
