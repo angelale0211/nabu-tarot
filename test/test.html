@@ -1128,31 +1128,26 @@ async function go(hash, sel) { W().location.hash = hash; await sleep(30); return
         const c3 = N.luckCut(10000, { v: true, c: 999999 });
         ok(c1.pct === 10 && c1.pctOff === 30000 && c1.coins === 20000 && c1.final === 250000
           && c2.final === 300000 && c3.pctOff === 1000 && N.BANK.tier().pct === 10,
-          'without Plus the voucher stops at ten per cent'); 
+          'the voucher tops out at ten per cent, with no higher tier held back for Pro');
         N.BANK.put(9999999);
         ok(c3.coins === 5000 && c3.final === 4000 && c3.cap === 5000
           && N.luckCut(400000, { v: false, c: 999999 }).coins === 100000
           && N.luckCut(40000, { v: false, c: 999999 }).coins === 20000,
           'coins never take more than half an order, and never more than 100.000 in one order, however large the purse claims to be');
         N.BANK.put(30000); }
-      { N.ACCESS.grant(['pro'], '2099-01-01');
-        const c4 = N.luckCut(300000, { v: true, c: 0 });
-        ok(N.BANK.tier().pct === 15 && c4.pctOff === 45000 && c4.final === 255000, 'Plus opens the fifteen and twenty per cent steps');
-        w.localStorage.removeItem('nabu-access'); }
+      ok(N.VOUCHERS.length === 2 && N.VOUCHERS.every((v) => !v.pro) && N.VOUCHERS[1].pct === 10,
+        'two level vouchers, 5% and 10%, none gated on Pro');
+      ok(!JSON.stringify(N.COURSES).match(/Voucher gi|15% and 20%|15 % und 20 %/), 'Pro no longer advertises vouchers');
       await go('#/rewards', '.coinbox');
-      ok(/30.000/.test(d.querySelector('.coinbox .n').textContent) && d.querySelectorAll('.vlist li').length === 4
-        && d.querySelectorAll('.vlist li.on').length === 2 && /20%/.test(d.querySelector('#main').textContent)
-        && /Nabu Pro/.test(d.querySelector('.vlist').textContent),
-        'the rewards screen shows the purse, the four voucher steps, which are open, and which need Pro');
+      ok(/30.000/.test(d.querySelector('.coinbox .n').textContent) && d.querySelectorAll('.vlist li').length === 2
+        && d.querySelectorAll('.vlist li.on').length === 2,
+        'the rewards screen shows the purse and the two voucher steps, both open at this level');
       await go('#/unlock', '.unlist');
       d.querySelector('[data-unl="tarot"]').click(); await sleep(40);
-      ok(d.querySelector('.luckpanel') && d.querySelector('#luckv') && d.querySelectorAll('[data-coin]').length >= 3,
-        'the basket offers the voucher and the coins, with nothing spent unless it is chosen');
-      d.querySelector('#luckv').click(); await sleep(40);
-      d.querySelector('[data-coin="20000"]').click(); await sleep(40);
-      ok(d.querySelectorAll('#ucart .r.cut').length === 2 && /250.000đ/.test(d.querySelector('#ucart').textContent)
-        && Number(w.localStorage.getItem('nabu-coins')) === 30000,
-        'the basket shows what the rewards take off and what is left to pay, and the coins are not spent yet');
+      ok(!d.querySelector('.luckpanel') && !/Phiếu giảm|voucher|Gutschein/i.test(d.querySelector('#ucart').textContent),
+        'the web unlock page offers no coins or vouchers');
+      await go('#/book', '.luckpanel, #main');
+      ok(!!d.querySelector('.luckpanel'), 'booking a reading still offers coins and the voucher');
       w.localStorage.removeItem('nabu-pets'); w.localStorage.removeItem('nabu-coins'); w.localStorage.removeItem('nabu-luck-best');
       w.localStorage.removeItem('nabu-coin-day'); N.UNL_CART && N.UNL_CART.set([]);
       /* Back to a visitor with no account: the poll and the wish below are

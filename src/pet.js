@@ -1215,7 +1215,7 @@ function renderPet(want) {
   const nextReward = (lv) => {
     if (lv >= PET_MAXLV) return S.petTopLevel;
     const to = lv + 1, tier = VOUCHERS.filter((v) => v.lv === to)[0];
-    return S.petNextPays(to, fmtNum(levelCoins(to))) + (tier ? ' · ' + S.luckVoucherOf(tier.pct) + (tier.pro ? ' ✨' : '') : '');
+    return S.petNextPays(to, fmtNum(levelCoins(to))) + (tier ? ' · ' + S.luckVoucherOf(tier.pct) : '');
   };
 
   const petCardHTML = (p) => {

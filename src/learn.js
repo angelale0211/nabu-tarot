@@ -511,12 +511,6 @@ function unlockBase() {
   const ids = UNL_CART.get().filter((id) => COURSES.some((c) => c.id === id) && !ACCESS.has(id));
   return COURSES.filter((c) => ids.indexOf(c.id) > -1).reduce((n, c) => n + salePrice(c.price, 'unlock', c.id), 0);
 }
-/* The person's own rewards, as they currently stand on this screen. */
-const UNL_USE = { v: false, c: 0 };
-function unlockLuck() {
-  const base = unlockBase();
-  return luckCut(base, { v: UNL_USE.v, c: luckWanted(UNL_USE, base) });
-}
 /* What is actually in the basket, so the page can talk about it as well as
    draw it. */
 function unlockCartRows() {
@@ -528,22 +522,16 @@ function unlockCartHTML() {
   if (!ids.length) return '<p class="hint">' + esc(S.unlockEmpty) + '</p>';
   const rows = COURSES.filter((c) => ids.indexOf(c.id) > -1);
   const total = rows.reduce((n, c) => n + salePrice(c.price, 'unlock', c.id), 0);
-  const cut = unlockLuck();
   return '<div class="sum">' + rows.map((c) => '<div class="r"><span>' + esc(L(c.name)) + '</span><b>' + priceHTML(c.price, 'unlock', c.id) + '</b></div>').join('')
     + '<div class="r tot"><span>' + esc(S.unlockTotal) + '</span><b>' + fmtPrice(total) + '</b></div>'
-    + (cut.pctOff ? '<div class="r cut"><span>🎟️ ' + esc(S.luckVoucherOf(cut.pct)) + '</span><b>-' + fmtPrice(cut.pctOff) + '</b></div>' : '')
-    + (cut.coins ? '<div class="r cut"><span>🪙 ' + esc(S.luckCoinsUsed(fmtNum(cut.coins))) + '</span><b>-' + fmtPrice(cut.coins) + '</b></div>' : '')
-    + ((cut.pctOff || cut.coins) ? '<div class="r tot"><span>' + esc(S.luckAfter) + '</span><b>' + fmtPrice(cut.final) + '</b></div>' : '')
     + '</div>';
 }
 function unlockMessage() {
   const S = T(), ids = UNL_CART.get(), rows = COURSES.filter((c) => ids.indexOf(c.id) > -1 && !ACCESS.has(c.id));
   if (!rows.length) return '';
   const total = rows.reduce((n, c) => n + salePrice(c.price, 'unlock', c.id), 0);
-  const cut = unlockLuck();
   return '🔓 ' + S.unlockMsgHead + '\n' + rows.map((c) => '• ' + L(c.name) + ': ' + fmtPrice(salePrice(c.price, 'unlock', c.id))).join('\n')
-    + '\n💰 ' + S.unlockTotal + ': ' + fmtPrice(total) + luckLines(cut)
-    + ((cut.pctOff || cut.coins) ? '\n✅ ' + S.luckAfter + ': ' + fmtPrice(cut.final) : '');
+    + '\n💰 ' + S.unlockTotal + ': ' + fmtPrice(total);
 }
 function renderUnlock(args, params) {
   /* Inside the app Play is the only shop: a different screen entirely, with
@@ -575,20 +563,18 @@ function renderUnlock(args, params) {
         return courses + tiers;
       })()
       + '<div class="sec"><h2 style="margin-bottom:8px">' + esc(S.unlockCart) + '</h2><div id="ucart">' + unlockCartHTML() + '</div>'
-        + rewardPanelHTML(unlockBase(), UNL_USE)
         + '<button class="btn primary block" id="usend" style="margin-top:12px">' + esc(S.unlockSend) + '</button>'
         + '<p class="hint" id="ustatus">' + esc(BE.enabled && BE.user ? '' : S.unlockSendMsg) + '</p></div>'
       + (!unlockCartRows().length ? ''
-        : payPanelHTML(unlockCartRows().map((c) => L(c.name)).join(', '), unlockLuck().final,
+        : payPanelHTML(unlockCartRows().map((c) => L(c.name)).join(', '), unlockBase(),
             payRef('unlock|' + unlockCartRows().map((c) => c.id).join('+')), 'unlockpay'))
       + '<div class="card"><label class="f" for="ucode">' + esc(S.unlockCodeLabel) + '</label><div class="row nw"><input id="ucode" placeholder="' + esc(S.luckCodePh) + '" autocapitalize="characters"><button class="btn" id="ugo">' + esc(S.unlock) + '</button></div><p class="hint" id="ustatus"></p></div>'
       + '<p style="margin-top:14px"><a class="backlink" href="#/prices">' + esc(S.unlockReadings) + ' →</a></p>';
     $$('[data-unl]', m).forEach((b) => b.addEventListener('click', () => { UNL_CART.toggle(b.getAttribute('data-unl')); draw(); }));
     if (unlockCartRows().length) {
       bindPayPanel(m, () => ({ what: unlockCartRows().map((c) => L(c.name)).join(', '),
-        total: unlockLuck().final, ref: payRef('unlock|' + unlockCartRows().map((c) => c.id).join('+')) }));
+        total: unlockBase(), ref: payRef('unlock|' + unlockCartRows().map((c) => c.id).join('+')) }));
     }
-    bindRewardPanel(m, UNL_USE, draw);
     const send = $('#usend');
     if (send) send.addEventListener('click', async () => {
       const ids = UNL_CART.get(), rows = COURSES.filter((c) => ids.indexOf(c.id) > -1 && !ACCESS.has(c.id));
@@ -597,17 +583,14 @@ function renderUnlock(args, params) {
       if (BE.enabled && BE.user) {
         send.disabled = true;
         try {
-          const cut = unlockLuck();
-          await BE.createUnlockOrder(rows.map((c) => ({ id: c.id, name: L(c.name), price: salePrice(c.price, 'unlock', c.id) })), cut.final);
-          luckCommit(cut, S.unlockCart);
-          UNL_CART.set([]); UNL_USE.v = false; UNL_USE.c = 0; toast(S.unlockSent); draw();
+          await BE.createUnlockOrder(rows.map((c) => ({ id: c.id, name: L(c.name), price: salePrice(c.price, 'unlock', c.id) })), unlockBase());
+          UNL_CART.set([]); toast(S.unlockSent); draw();
           const s2 = $('#ustatus'); if (s2) { s2.textContent = S.unlockSent; s2.className = 'hint ok'; }
           return;
         } catch (e) { st.textContent = S.publishFail + ': ' + e.message; st.className = 'hint err'; }
         send.disabled = false; return;
       }
       // No account yet: keep the message route so the order still reaches Nabu.
-      luckCommit(unlockLuck(), S.unlockCart);
       store.set('nabu-contact-draft', unlockMessage());
       location.hash = BE.enabled ? signinHref('/unlock?from=' + (store.get('nabu-unlock-from', '') || '')) : '#/contact';
     });

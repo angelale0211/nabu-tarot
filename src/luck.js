@@ -1,7 +1,7 @@
 /* ======================= levels, coins and vouchers =======================
    Caring for a companion earns it experience, and experience earns the person
-   something real: Nabu coins, which come off the price of anything sold here,
-   and a voucher that grows with the highest level reached.
+   something real: Nabu coins, which come off the price of a reading, and a
+   voucher that grows with the highest level reached.
 
    One coin is worth one đồng. Coins are earned slowly and never expire, so
    they can be saved for a course or spent on a single reading; using them is
@@ -31,13 +31,11 @@ function petStep(xp) {
 }
 
 /* The vouchers the levels unlock, kept in order. */
-/* The last two are held for Plus: reaching level seven without it still
-   counts, but the voucher stays at ten per cent until Plus is on. */
+/* Two tiers, for readings. There used to be two more held back for Pro; a
+   subscription is not a discount card, so they went. */
 const VOUCHERS = [
   { lv: 3, pct: 5 },
-  { lv: 5, pct: 10 },
-  { lv: 7, pct: 15, pro: true },
-  { lv: 10, pct: 20, pro: true }
+  { lv: 5, pct: 10 }
 ];
 /* What a level-up pays into the purse. */
 const levelCoins = (lv) => lv * 200;
@@ -67,8 +65,8 @@ const BANK = {
      voucher is based on. It never goes down, even if a companion is let go. */
   best() { return Math.max(1, Number(store.get('nabu-luck-best', 1)) || 1); },
   mark(lv) { if (lv > this.best()) store.set('nabu-luck-best', lv); },
-  tier() { let out = null; VOUCHERS.forEach((v) => { if (BANK.best() >= v.lv && (!v.pro || proOn())) out = v; }); return out; },
-  next() { let out = null; VOUCHERS.slice().reverse().forEach((v) => { if (BANK.best() < v.lv || (v.pro && !proOn())) out = v; }); return out; },
+  tier() { let out = null; VOUCHERS.forEach((v) => { if (BANK.best() >= v.lv) out = v; }); return out; },
+  next() { let out = null; VOUCHERS.slice().reverse().forEach((v) => { if (BANK.best() < v.lv) out = v; }); return out; },
   /* Coins put into an order that has been sent but not yet answered. */
   holds() { const a = store.get('nabu-luck-hold', []); return Array.isArray(a) ? a : []; },
   hold(rec) { const a = this.holds(); a.unshift(rec); store.set('nabu-luck-hold', a.slice(0, 12)); },
@@ -157,10 +155,10 @@ function renderRewards() {
     m.innerHTML = '<div class="eyebrow">' + esc(CONFIG.brand) + '</div><h1 style="margin-bottom:6px">🪙 ' + esc(S.luckTitle) + '</h1>'
       + '<p class="muted">' + esc(S.luckIntro) + '</p>'
       + '<div class="card coinbox"><span class="n">' + fmtNum(BANK.coins()) + '</span><span class="u">' + esc(S.luckCoins) + '</span>'
-      + '<p class="hint">' + esc(S.luckWorth(fmtPrice(BANK.coins()))) + '</p></div>'
+      + '<p class="hint">' + esc(S.luckWorth) + '</p></div>'
       + '<div class="card"><h3 style="margin-bottom:8px">🎟️ ' + esc(S.luckVoucher) + '</h3>'
       + '<p class="hint" style="margin-bottom:10px">' + esc(S.luckVoucherHint) + '</p>'
-      + '<ul class="vlist">' + VOUCHERS.map((v) => { const open = best >= v.lv && (!v.pro || proOn()); return '<li class="' + (open ? 'on' : '') + '"><span>' + esc(S.luckAtLevel(v.lv)) + (v.pro ? ' · ✨ ' + esc(S.proName) : '') + '</span><b>' + (open ? '✓ ' : '🔒 ') + '-' + v.pct + '%</b></li>'; }).join('') + '</ul>'
+      + '<ul class="vlist">' + VOUCHERS.map((v) => { const open = best >= v.lv; return '<li class="' + (open ? 'on' : '') + '"><span>' + esc(S.luckAtLevel(v.lv)) + '</span><b>' + (open ? '✓ ' : '🔒 ') + '-' + v.pct + '%</b></li>'; }).join('') + '</ul>'
       + (next ? '<p class="hint">' + esc(S.luckNextTier(next.lv, next.pct)) + '</p>' : '<p class="hint ok">' + esc(S.luckTopTier) + '</p>')
       + '</div>'
       + '<div class="card"><h3 style="margin-bottom:8px">' + esc(S.luckEarnTitle) + '</h3><ul class="carelist">'
