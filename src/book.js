@@ -8,12 +8,12 @@ const BOOK_KEYS = ['items', 'name', 'note', 'birth', 'birthTime', 'slot', 'day',
 function saveBook() { const o = {}; BOOK_KEYS.forEach((k) => { o[k] = book[k]; }); store.set('nabu-book', o); }
 function restoreBook() { if (book.restored) return; book.restored = true; const o = store.get('nabu-book', null); if (!o) return; BOOK_KEYS.forEach((k) => { if (o[k] != null) book[k] = o[k]; }); if (!Array.isArray(book.items)) book.items = []; }
 function clearBook() { book.items = []; book.slot = null; book.day = null; book.timeSaved = false; book.note = ''; book.card = null; book.where = ''; book.whereId = ''; store.set('nabu-book', null); }
-let SCHEDULE = null, TAKEN = {};
+let SCHEDULE = null, TAKEN = {}, TAKEN_KNOWN = true;
 
 async function loadSchedule() {
   const s = await loadContent('schedule', CONFIG.schedulePath, 'nabu-schedule');
   SCHEDULE = s.data || { slotMinutes: 60, weekly: {}, blocked: [], extra: {}, booked: [], leadDays: 1, horizonDays: 42 };
-  if (BE.enabled) { await Promise.race([BE.initP || Promise.resolve(), new Promise((r) => setTimeout(r, 3000))]); if (BE.db) TAKEN = await BE.takenSlots(); }
+  if (BE.enabled) { await Promise.race([BE.initP || Promise.resolve(), new Promise((r) => setTimeout(r, 3000))]); if (BE.db) { const t = await BE.takenSlots(); TAKEN_KNOWN = t !== null; TAKEN = t || {}; } }
   return SCHEDULE;
 }
 const slotKey = (dateStr, time) => dateStr + 'T' + time;
@@ -46,7 +46,10 @@ function slotsHTML() {
   if (!book.day) return '<p class="hint">' + esc(S.pickDay) + '</p>';
   const list = slotsFor(book.day);
   if (!list.length) return '<p class="hint">' + esc(S.noSlots) + '</p>';
-  return '<div class="slots">' + list.map((s) => '<button data-slot="' + s.key + '" class="' + (s.taken ? 'taken' : '') + (book.slot === s.key ? ' on' : '') + '">' + s.time + '</button>').join('') + '</div>'
+  /* Said out loud when the taken hours could not be read: without it every
+     hour looks free and the refusal comes only after somebody has chosen. */
+  const unsure = TAKEN_KNOWN ? '' : '<p class="hint err">' + esc(S.feedOffline) + '</p>';
+  return unsure + '<div class="slots">' + list.map((s) => '<button data-slot="' + s.key + '" class="' + (s.taken ? 'taken' : '') + (book.slot === s.key ? ' on' : '') + '">' + s.time + '</button>').join('') + '</div>'
     + (book.slot ? '<div class="picked">📅 ' + esc(slotLabel(book.slot)) + '</div><button class="btn primary block" id="saveslot" style="margin-top:8px">✓ ' + esc(S.saveSlot) + '</button>' : '');
 }
 function slotLabel(key) { return T().dateFmt(new Date(key.slice(0, 10) + 'T00:00:00')) + ' · ' + key.slice(11) + ' (' + L(CONFIG.tzLabel) + ')'; }
@@ -357,7 +360,7 @@ async function renderBook(args, params) {
         whereId: String(book.whereId || '').trim(),
         note: book.note.trim(), message: composeMessage(), luck: bookLuck(), birth: needsBirth() ? (book.birth + (book.birthTime ? ' ' + book.birthTime : '')) : '', card: book.card ? cardById(book.card).name : '' });
       luckCommit(bookLuck(), S.bkItems); book.use.v = false; book.use.c = 0;
-      toast(T().saved); try { TAKEN = await BE.takenSlots(); } catch (e2) { /* refreshed on the next visit */ }
+      toast(T().saved); try { const t2 = await BE.takenSlots(); TAKEN_KNOWN = t2 !== null; TAKEN = t2 || {}; } catch (e2) { /* refreshed on the next visit */ }
       done(); return;
     } catch (e) { $('#sendstatus').textContent = S.publishFail + ': ' + e.message; $('#sendstatus').className = 'hint err'; }
     sendBtn.disabled = false; sendBtn.textContent = S.sendInApp;

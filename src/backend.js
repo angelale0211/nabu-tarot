@@ -335,12 +335,20 @@ const BE = {
     notifyBooking(Object.assign({}, b, { status: 'cancel_requested' }));
   },
   async getBooking(id) { const d = await this.db.collection('bookings').doc(id).get(); return d.exists ? Object.assign({ id: d.id }, d.data()) : null; },
+  /* null, not {}, when the answer could not be had. An empty object is a real
+     answer - nobody has claimed an hour yet - and returning it for a timeout,
+     a dropped connection or a rules refusal made every hour look free on a
+     slow morning. Somebody then picks an hour that is already somebody
+     else's. The write itself is still refused (firestore.rules requires the
+     taken/ document not to exist), so nobody is double-booked; but they are
+     told so only after choosing, which is a poor way to find out. The caller
+     can now tell the two apart and say the calendar is not fully known. */
   async takenSlots() {
     const out = {};
     try {
       const s = await Promise.race([this.db.collection('taken').get(), new Promise((_, rej) => setTimeout(() => rej(new Error('timeout')), 3000))]);
       s.forEach((d) => { out[d.id] = true; });
-    } catch (e) { /* offline, slow, or rules */ }
+    } catch (e) { return null; }
     return out;
   }
 };
