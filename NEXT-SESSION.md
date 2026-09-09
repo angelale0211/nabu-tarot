@@ -72,7 +72,7 @@ helpers that branch built.
 
 - Trilingual (vi / en / de) tarot PWA. Repo `C:\Users\angel\nabu-tarot`, branch `main`. Live at https://nabutarot.com, deployed from GitHub `main` in about a minute.
 - Vanilla JS, no framework. `python build.py` joins `src/*.js` and `src/shell.html` into the committed `index.html`. UI strings live in `src/strings.js` under `T()`.
-- Suite: `PYTHONIOENCODING=utf-8 python test/run.py`. **650 checks, all passing at v198.** Worker suite **60/60**, `npm run typecheck` clean. A second window uses `NABU_PORT=8766`.
+- Suite: `PYTHONIOENCODING=utf-8 python test/run.py`. **651 checks, all passing at v198.** Worker suite **60/60**, `npm run typecheck` clean. A second window uses `NABU_PORT=8766`.
 - **A release is: bump `APP_VERSION` in `src/main.js` AND `CACHE` in `sw.js` to the same new number, `python build.py`, run the suite, one commit, push.** Both markers, every time. Never hand-edit `index.html` — it only ever comes from `build.py`, which pins the inline script by SHA-256 in the CSP; hand-editing blocks the script and gives a blank page.
 - One Cloudflare Worker, `nabu-ai`, at `https://nabu-ai.0211nhatanh.workers.dev`, reached through `CONFIG.aiEndpoint`. Deployed by `.github/workflows/worker.yml` on every push touching `worker/`.
 - The Android app is a **Trusted Web Activity** (`app.nabutarot.twa`): it opens the live site full screen. Content changes need no new bundle. Only the wrapper itself does.
@@ -181,11 +181,22 @@ something that is actually for sale, are still wanted.
 
 ### Developer account note
 
-The Play listing shows the owner's full legal name because it's a personal
-developer account, and Google displays the verified individual's name.
-Changing it to a brand needs an organisation account (registered business +
-D-U-N-S), which is a support request, not a setting. Worth settling before
-there are paying customers.
+**Corrected 2026-09-09. The earlier claim here was wrong.** It said Play
+shows the owner's legal name because it is a personal account. It does not.
+On Play, a personal account's **public developer name is a free-text field,
+different from the verified legal name, and changeable at any time** — the
+owner found this themselves and set it. The legal name comes from the linked
+Google Payments profile and is used for verification only; a personal
+account's public profile shows the email address, not the name.
+
+**Apple is not the same, and the workaround does not carry over.** An
+individual Apple Developer account displays the person's legal name as the
+seller, DBA or made-up names are not permitted for individuals, and changing
+the name on the Apple Account does not change the seller name. Showing a
+brand requires an **organisation** account: a registered legal entity plus a
+D-U-N-S number, and individual → organisation is a support request, not a
+setting. So the decision has to be made **before** enrolling, not after.
+Undecided as of this writing.
 
 ### Known follow-ups, and why each was deferred
 
@@ -250,6 +261,57 @@ takes more than an hour to walk back.
 ---
 
 ## Part 3. What the session before you changed
+
+### 2026-09-09, later — `payment=(self)`: the store had never once loaded
+
+**The first time Play ever answered this app.** A tester on an Android Studio
+emulator pressed buy and got "Không nhận được phản hồi từ Google Play". The
+cause was not Play, the bundle, the Console or the catalogue. `_headers` line
+15 said `Permissions-Policy: ... payment=()`, which denies the payment policy
+to **every** origin including this one. The Digital Goods API is gated on
+exactly that policy, so `getDigitalGoodsService()` threw
+`NotAllowedError: Payment permissions policy not granted` before a single
+line of Play code ran, `BILL.can()` stayed false, and every store screen fell
+back to the not-ready card. The header was written 2026-09-07, two days
+before billing merged; nothing on either side looked wrong.
+
+Fixed to `payment=(self)` — this origin only, never a third-party frame;
+camera and geolocation stay closed. Commit `e0a7736`. **No rebuild and no
+version bump**: `_headers` is served by Cloudflare and is not built into
+`index.html`, and `sw.js` is network-first for navigations, so an online
+phone picks it up the next time the app opens.
+
+`test/run.py` now reads `_headers` (`payment_policy()`), so this cannot come
+back quietly. That is the 651st check.
+
+**Verified end to end on the emulator afterwards**, through the Chrome
+DevTools protocol over `adb forward tcp:9222 localabstract:chrome_devtools_remote`:
+
+    BILL.can()                   :: ready=true can=true
+    getDigitalGoodsService       :: OK - got a service object
+    getDetails (8 skus)          :: returned 8 products
+
+**The four one-time EUR prices, read from Play for the first time** (these
+were listed as unreadable — the old API is retired and the new one 404s —
+and they block item (d), website pricing): `tarot` €11.99, `lenormand`
+€11.99, `playing` €11.99, `wedding` €1.19 (the ₫30,000 room fee). The four
+subscription prices Play returned match what was already recorded exactly:
+manifest €2.99, plus €3.09, pro 6m €5.99, pro 12m €9.99. **USD is still
+unread** — the emulator's account is a euro one.
+
+**Two stale claims corrected while here:**
+
+- `PLAN-PLAY-BILLING-FINDINGS.md` still lists **F1 (upload)** as owner work.
+  It is done. The installed versionCode 2 was pulled off the device and
+  decoded: it declares `com.android.vending.BILLING`, `PaymentActivity` with
+  the `org.chromium.intent.action.PAY` filter, `PaymentService` and
+  `ProxyBillingActivity`, and is signed `E0:A4…`, which `assetlinks.json`
+  names. The wrapper was never the problem.
+- The Play developer-name claim in Part 2 was wrong — see that section.
+
+**A rebuilt bundle is never the fix for a content bug.** The app is a TWA; a
+new versionCode would be byte-for-byte the same wrapper. This was nearly done
+by mistake.
 
 ### v198 (2026-09-09) — Play Billing merged onto main, pushed, live
 
