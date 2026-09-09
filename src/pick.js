@@ -33,6 +33,9 @@ function pickSpend(id, focus) {
   if (plusOn()) return;
   if (!signedIn()) store.set('nabu-guest-draw', Number(store.get('nabu-guest-draw', 0)) + 1);
   store.set('nabu-pick-day', { d: isoDate(new Date()), id: id, focus: focus });
+  /* And on the account, so the same person does not get a second card by
+     opening this in another browser or clearing the app's data. */
+  turnsPush();
 }
 /* Inside the installed app the note stops at "tomorrow": a price next to a
    locked feature is what Play reviewers look for. On the web it says what

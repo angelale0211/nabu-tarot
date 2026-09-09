@@ -146,9 +146,29 @@ const BE = {
         t: T().accessOnTitle(fresh.map(accessName).join(', ')),
         b: T().accessOnBody(fmtDate(cloud[fresh[0]])), href: '#/me' });
     }
+    /* The free turns are the person's, not the handset's. Later date wins, so
+       this device can be told a turn is already spent but never given one
+       back; if this device is the one that is ahead, the account is caught up.
+       A write that fails leaves the device copy in charge, which is correct. */
+    const merged = turnsMerge(d.turns);
+    turnsApply(merged);
+    const cl = (d.turns && d.turns.luck && typeof d.turns.luck === 'object') ? d.turns.luck : {};
+    const cpd = (d.turns && d.turns.pick && d.turns.pick.d) ? String(d.turns.pick.d) : '';
+    const ahead = (merged.pick ? String(merged.pick.d) : '') !== cpd
+      || Object.keys(merged.luck).some((k) => String(merged.luck[k] || '') !== String(cl[k] || ''));
+    if (ahead) this.pushTurns().catch(() => { /* offline; the device copy holds */ });
+    delete d.turns;
     delete d.access; delete d.revoked; saveProfileLocal(d);
     this.profileRead = true;
     if (typeof applyAccountLang === 'function' && applyAccountLang() && typeof route === 'function') route();
+  },
+  /* Kept apart from pushProfile on purpose: saving a name must not overwrite
+     what somebody has spent, and spending a turn must not rewrite the name. */
+  async pushTurns() {
+    if (!this.user || !this.db) return;
+    const t = turnsLocal();
+    await this.db.collection('users').doc(this.user.uid)
+      .set({ turns: { pick: t.pick || null, luck: t.luck || {} } }, { merge: true });
   },
   async pushProfile() {
     if (!this.user) return;

@@ -12,7 +12,7 @@
      carries this notice with it. See LICENSE. -->
 <meta name="author" content="Nabu Tarot">
 <meta name="copyright" content="Copyright (c) 2025-2026 Nabu Tarot. All rights reserved.">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'none'; object-src 'none'; form-action 'self'; script-src 'self' 'sha256-599bmJ6h5iz0SH/3kxCaOQC+RNL0o0lpYO6l/RBjqtg=' https://www.gstatic.com https://apis.google.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; font-src 'self' data:; media-src 'self' data: blob:; worker-src 'self'; connect-src 'self' https://*.googleapis.com https://*.google.com https://*.firebaseio.com https://*.cloudfunctions.net https://*.workers.dev https://generativelanguage.googleapis.com; frame-src https://*.firebaseapp.com https://accounts.google.com https://*.facebook.com">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'none'; object-src 'none'; form-action 'self'; script-src 'self' 'sha256-Rhjz5uLipssmJiHvbQ45NjKVufyma+12kUQoAx8I8KU=' https://www.gstatic.com https://apis.google.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; font-src 'self' data:; media-src 'self' data: blob:; worker-src 'self'; connect-src 'self' https://*.googleapis.com https://*.google.com https://*.firebaseio.com https://*.cloudfunctions.net https://*.workers.dev https://generativelanguage.googleapis.com; frame-src https://*.firebaseapp.com https://accounts.google.com https://*.facebook.com">
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <meta name="theme-color" content="#EFE9FA">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -17746,8 +17746,53 @@ const daysSince = (iso) => { const a = new Date(String(iso) + 'T00:00:00'), b = 
 const luckUnlimited = () => plusOn();
 const luckLast = (kind) => String((store.get('nabu-luck', {}) || {})[kind] || '');
 const luckSpent = (kind) => !luckUnlimited(kind) && !!luckLast(kind) && daysSince(luckLast(kind)) < LUCK_DAYS;
-function luckSpend(kind) { if (luckUnlimited(kind)) return; const a = store.get('nabu-luck', {}) || {}; a[kind] = isoDate(new Date()); store.set('nabu-luck', a); }
+function luckSpend(kind) { if (luckUnlimited(kind)) return; const a = store.get('nabu-luck', {}) || {}; a[kind] = isoDate(new Date()); store.set('nabu-luck', a); turnsPush(); }
 function luckNext(kind) { const d = new Date((luckLast(kind) || isoDate(new Date())) + 'T00:00:00'); d.setDate(d.getDate() + LUCK_DAYS); return isoDate(d); }
+
+/* ---- a free turn is spent by the person, not by the handset ----
+   Both counters have to live on the device: the gate is drawn before the
+   network answers, and it has to be right on a phone with no signal. But
+   device-only storage made the limit device-only as well - clearing the app's
+   data, or opening the same account in another browser, handed out a fresh
+   card and a fresh coin. So a signed-in copy rides on the account document and
+   the two are reconciled every time the profile is read.
+
+   The merge keeps the LATER date, per counter. That is the one direction that
+   cannot be gamed: another device can only ever be told a turn is already
+   spent, never that it has one back. ISO dates compare correctly as plain
+   strings, so "later" is just ">".
+
+   It is not tamper-proof. The account document is writable by its owner, so
+   somebody determined can still edit it; only the worker could settle that.
+   What it ends is the ordinary bypass, which is clearing the storage. */
+function turnsLocal() {
+  const p = store.get('nabu-pick-day', null);
+  return { pick: (p && p.d && p.id) ? p : null, luck: store.get('nabu-luck', {}) || {} };
+}
+function turnsMerge(cloud) {
+  const mine = turnsLocal(), c = (cloud && typeof cloud === 'object') ? cloud : {};
+  const out = { pick: mine.pick, luck: Object.assign({}, mine.luck) };
+  const cp = (c.pick && typeof c.pick === 'object') ? c.pick : null;
+  if (cp && cp.d && cp.id && (!out.pick || String(cp.d) > String(out.pick.d))) {
+    out.pick = { d: String(cp.d), id: String(cp.id), focus: String(cp.focus || 'general') };
+  }
+  const cl = (c.luck && typeof c.luck === 'object') ? c.luck : {};
+  Object.keys(cl).forEach((k) => {
+    const v = String(cl[k] || '');
+    if (v && (!out.luck[k] || v > String(out.luck[k]))) out.luck[k] = v;
+  });
+  return out;
+}
+function turnsApply(m) {
+  if (m && m.pick) store.set('nabu-pick-day', m.pick);
+  if (m) store.set('nabu-luck', m.luck || {});
+}
+/* Called from the two places that spend a turn. BE is defined in backend.js,
+   which loads after this file, so it is asked for when needed rather than
+   captured now - and a failure here is never allowed to break the draw. */
+function turnsPush() {
+  try { if (typeof BE !== 'undefined' && BE.user && BE.pushTurns) BE.pushTurns(); } catch (e) { /* the device copy still stands */ }
+}
 const CODE_LETTER = { tarot: 'T', manifest: 'M', playing: 'P', coin: 'C', tree: 'Y', luck: 'B', pro: 'S', lenormand: 'L', wedding: 'W' };
 const CODE_COURSE = { T: 'tarot', M: 'manifest', P: 'playing', C: 'coin', Y: 'tree', B: 'luck', S: 'pro', L: 'lenormand', W: 'wedding' };
 function addMonths(iso, n) { const d = new Date(iso + 'T00:00:00'); d.setMonth(d.getMonth() + n); return isoDate(d); }
@@ -18632,9 +18677,29 @@ const BE = {
         t: T().accessOnTitle(fresh.map(accessName).join(', ')),
         b: T().accessOnBody(fmtDate(cloud[fresh[0]])), href: '#/me' });
     }
+    /* The free turns are the person's, not the handset's. Later date wins, so
+       this device can be told a turn is already spent but never given one
+       back; if this device is the one that is ahead, the account is caught up.
+       A write that fails leaves the device copy in charge, which is correct. */
+    const merged = turnsMerge(d.turns);
+    turnsApply(merged);
+    const cl = (d.turns && d.turns.luck && typeof d.turns.luck === 'object') ? d.turns.luck : {};
+    const cpd = (d.turns && d.turns.pick && d.turns.pick.d) ? String(d.turns.pick.d) : '';
+    const ahead = (merged.pick ? String(merged.pick.d) : '') !== cpd
+      || Object.keys(merged.luck).some((k) => String(merged.luck[k] || '') !== String(cl[k] || ''));
+    if (ahead) this.pushTurns().catch(() => { /* offline; the device copy holds */ });
+    delete d.turns;
     delete d.access; delete d.revoked; saveProfileLocal(d);
     this.profileRead = true;
     if (typeof applyAccountLang === 'function' && applyAccountLang() && typeof route === 'function') route();
+  },
+  /* Kept apart from pushProfile on purpose: saving a name must not overwrite
+     what somebody has spent, and spending a turn must not rewrite the name. */
+  async pushTurns() {
+    if (!this.user || !this.db) return;
+    const t = turnsLocal();
+    await this.db.collection('users').doc(this.user.uid)
+      .set({ turns: { pick: t.pick || null, luck: t.luck || {} } }, { merge: true });
   },
   async pushProfile() {
     if (!this.user) return;
@@ -19826,6 +19891,9 @@ function pickSpend(id, focus) {
   if (plusOn()) return;
   if (!signedIn()) store.set('nabu-guest-draw', Number(store.get('nabu-guest-draw', 0)) + 1);
   store.set('nabu-pick-day', { d: isoDate(new Date()), id: id, focus: focus });
+  /* And on the account, so the same person does not get a second card by
+     opening this in another browser or clearing the app's data. */
+  turnsPush();
 }
 /* Inside the installed app the note stops at "tomorrow": a price next to a
    locked feature is what Play reviewers look for. On the web it says what
@@ -31319,10 +31387,10 @@ function adminSale(p) {
 ROUTES.admin = { nav: '', render: renderAdmin };
 
 /* ============================ boot ============================ */
-window.APP_VERSION = 'v191';
+window.APP_VERSION = 'v192';
 window.NABU = { CONFIG: CONFIG, SALE: SALE, salePrice: salePrice, loadActs: loadActs, BACK: BACK, LESSONS: LESSONS, localAnswer: localAnswer, compatVerdict: compatVerdict, numerologyOf: numerologyOf, ZDEEP: ZDEEP, lunarToday: lunarToday, solarToLunar: solarToLunar, DECK: DECK, INSIGHT: INSIGHT, KW: KW, ASK: ASK, TOPICS: TOPICS, GUIDES: GUIDES, SERVICES: SERVICES, COURSES: COURSES, ACCESS: ACCESS, INTERESTS: INTERESTS, plusOn: () => plusOn(), proOn: () => proOn(), luckUnlimited: () => luckUnlimited(), ZODIAC: ZODIAC, pick: pick, book: book,
   insightHTML: insightHTML, insightOf: insightOf, sunSignIndex: sunSignIndex, lifePath: lifePath, PROFILE: () => PROFILE, BE: BE, ACTS: ACTS,
-  ANGELS: ANGELS, angelRead: angelRead, CODEBOOK: CODEBOOK, redeemCode: redeemCode, loadCodebook: loadCodebook, petHomeSVG: petHomeSVG, PET_HOMES: PET_HOMES, PET_WEARS: PET_WEARS, codeDigest: codeDigest, randomCode: randomCode, BANK: BANK, PETS: PETS, petSVG: petSVG, PET_COATS: PET_COATS, PET_KINDS: PET_KINDS, luckCut: luckCut, petLevel: petLevel, petStep: petStep, VOUCHERS: VOUCHERS, levelCoins: levelCoins, LOOKS: LOOKS,
+  ANGELS: ANGELS, angelRead: angelRead, CODEBOOK: CODEBOOK, redeemCode: redeemCode, loadCodebook: loadCodebook, petHomeSVG: petHomeSVG, PET_HOMES: PET_HOMES, PET_WEARS: PET_WEARS, codeDigest: codeDigest, randomCode: randomCode, BANK: BANK, PETS: PETS, petSVG: petSVG, PET_COATS: PET_COATS, PET_KINDS: PET_KINDS, turnsMerge: turnsMerge, turnsLocal: turnsLocal, luckCut: luckCut, petLevel: petLevel, petStep: petStep, VOUCHERS: VOUCHERS, levelCoins: levelCoins, LOOKS: LOOKS,
   LOVE: LOVE, LOVEDB: LOVEDB, HANDLE_RE: HANDLE_RE, loveBadgeHTML: loveBadgeHTML,
   loveMarkSVG: loveMarkSVG, QUIZ: QUIZ, QSCORE: QSCORE, QUIZ_PASS: QUIZ_PASS, QUIZ_LEN: QUIZ_LEN, pileArtSVG: pileArtSVG, PILE_ARTS: PILE_ARTS, threadSVG: threadSVG, petParentsHTML: petParentsHTML, GIFTS: GIFTS, ALERTS: ALERTS, alertsStart: alertsStart, alertWas: alertWas,
   WED: WED, WED_STEPS: WED_STEPS, wedStep: wedStep, cupidSVG: cupidSVG, shareLine: shareLine };
