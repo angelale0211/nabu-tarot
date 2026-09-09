@@ -2218,7 +2218,7 @@ const STR = {
       'Die Zeremonie beginnt zur gewählten Uhrzeit. Eine Person von euch muss innerhalb der ersten 15 Minuten im Raum sein und „Zeremonie beginnen“ drücken.',
       'Wenn bis dahin niemand begonnen hat, schließt sich der Raum automatisch und die Gäste werden informiert, dass die Zeremonie nicht stattfindet.',
       'Tag und Uhrzeit können einmal geändert werden, spätestens eine Stunde vor der Zeremonie.',
-      'Wird die Hochzeit innerhalb der letzten Stunde abgesagt, während der Zeremonie beendet oder automatisch geschlossen, weil niemand gekommen ist, gilt sie als durchgeführt und die {wedfee} werden nicht erstattet. Für eine weitere Zeremonie ist eine neue Buchung und Zahlung nötig.'
+      'Wird die Hochzeit innerhalb der letzten Stunde abgesagt, während der Zeremonie beendet oder automatisch geschlossen, weil niemand gekommen ist, gilt sie als durchgeführt. Die Gebühr wird nicht erstattet. Für eine weitere Zeremonie ist eine neue Buchung und Zahlung nötig.'
     ],
     wedAgree: 'Ich habe die Bedingungen gelesen und stimme ihnen zu.',
     wedAgreeFirst: 'Lies bitte die Bedingungen und setz das Häkchen, um weiterzugehen.',
