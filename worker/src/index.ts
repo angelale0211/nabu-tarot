@@ -148,6 +148,14 @@ export default {
          problem on our side, which is the one mistake this endpoint must
          never make. It is answered with a 5xx instead, so the phone retries. */
       const transient = (why?: string): boolean => !!why && why.indexOf("play ") === 0;
+      /* One immediate extra try for a write whose failure this handler would
+         otherwise have to answer with a 502: it costs nothing (the write is a
+         plain merge PATCH, safe to repeat) and clears most one-off blips
+         before the phone ever has to make a whole new round trip. It does
+         not close the window where the room is paid but not yet recorded -
+         only the phone's retry, once this does answer 502, can do that -
+         it just makes reaching that window less likely. */
+      const onceMore = async <T>(fn: () => Promise<T>): Promise<T> => { try { return await fn(); } catch { return await fn(); } };
 
       try {
         /* ---- a subscription: Google's state is the state ---- */
@@ -180,27 +188,42 @@ export default {
         }
 
         if (item.key === "wedding") {
-          /* The token is claimed first, exactly like a course - the only
-             atomic thing in this whole system is claimPurchase's
-             currentDocument.exists=false, and nothing here may give that up.
-             But it is claimed WITHOUT a wid: which room this token pays for
-             is not decided yet, so nothing binds a room to it here. A first
-             guess at the wrong room (a guest typing a room that is not
-             theirs) then costs nothing - the claim exists, but no wid is on
-             it, so a later, correct room can still be tried against the same
-             claim. Only once payRoom has actually succeeded is the wid
-             written onto the row, and only from that moment does a
-             DIFFERENT wid on the same token mean "already used". */
-          const claim = await claimPurchase(env, person.uid, sku, item.opens, token, { kind: "inapp" });
+          /* The token is claimed WITH its wid this time. For a fresh token
+             that one write is atomic - claimPurchase's own
+             currentDocument.exists=false create either lands the whole row,
+             wid included, or nothing at all - so a payment that succeeds on
+             its first try never passes through a moment where the room is
+             paid but no record exists of which one. A wrong guess still
+             costs nothing: if payRoom then refuses it, the wid is taken back
+             off the row below, so a later, correct room can still be tried
+             against the very same claim. Only a room payRoom actually
+             accepted stays bound - and from that moment claimPurchase's own
+             mismatch check refuses a different wid on this token by itself,
+             with nothing further to reimplement here. */
+          const claim = await claimPurchase(env, person.uid, sku, item.opens, token, { kind: "inapp", wid });
           if (!claim.ok) { log({ refused: claim.why }); return say(402, { error: claim.why || "already used" }); }
-          if (claim.existing && claim.existing.wid && claim.existing.wid !== wid) {
-            log({ refused: "already used", wid }); return say(402, { error: "already used" });
-          }
           const hash = await tokenId(token);
           const paid = await payRoom(env, person.uid, wid, hash);
-          if (!paid.ok) { log({ refused: paid.why, wid }); return say(paid.why === "not yours" ? 403 : 409, { error: paid.why }); }
-          /* Only now, with the room actually paid, is the wid written down. */
-          await ledgerSet(env, hash, { wid, state: "granted" }).catch((e) => log({ ledger: String(e) }));
+          if (!paid.ok) {
+            /* This guess paid nothing. Left bound, it would refuse a later,
+               correct room as "already used" for a payment that never
+               happened - so it is taken back off the row. If even that
+               cannot be made to land, the room's own refusal is not handed
+               back as final: a stuck wid is worse than one extra round trip,
+               so this answers 502 and lets the phone try again. */
+            try { await onceMore(() => ledgerSet(env, hash, { wid: "" })); }
+            catch (e) { log({ ledger: String(e), refused: paid.why, wid }); return say(502, { error: "check failed" }); }
+            log({ refused: paid.why, wid }); return say(paid.why === "not yours" ? 403 : 409, { error: paid.why });
+          }
+          /* For a fresh claim the wid is already on the row, written in the
+             same atomic step as the claim itself - this write only needs to
+             move state to "granted". For a retry of a claim whose wid was
+             just cleared above, it is not yet on the row, so this write is
+             what puts it there. Either way it is never swallowed: a paid
+             room with no wid on record - the exact failure mode this whole
+             design exists to prevent - is exactly what silently accepting
+             its failure would produce. */
+          await onceMore(() => ledgerSet(env, hash, { wid, state: "granted" }));
           /* Unconditional, on purpose: a first acknowledge that failed (a
              dropped waitUntil, a Play hiccup) must still be retried on the
              next call for the same token, or Google auto-refunds an

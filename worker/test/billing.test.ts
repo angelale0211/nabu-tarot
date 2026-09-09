@@ -226,3 +226,46 @@ test("redeeming a wedding code opens the wedding access key, not nothing", async
     assert.equal((body.access as Record<string, string>).wedding, "2099-01-01");
   } finally { m.restore(); }
 });
+
+/* Fix round 2, F4: the write that lands (or confirms) a wedding token's wid
+   on its ledger row must never fail silently behind a 200. If it did, the
+   row could be left paid for one room with no wid on record, and a
+   follow-up request for a DIFFERENT room would pass the "same wid?" check
+   claimPurchase makes and pay a second room from the one token. Because the
+   wid is now claimed atomically with the row itself (claimPurchase's own
+   currentDocument.exists=false create, not a later write), a fresh claim's
+   wid is on the row from the moment the claim succeeds - before payRoom or
+   any confirming write ever runs - so this must hold even while the
+   *confirming* write (state -> "granted") is persistently failing. */
+test("a wedding token whose confirming write keeps failing still answers 5xx and still refuses a second room", async () => {
+  const k = K;
+  const docs: Record<string, Record<string, unknown>> = {};
+  docs["weddings/q__r"] = { uids: { arrayValue: { values: [{ stringValue: "a" }] } } };
+  docs["weddings/s__t"] = { uids: { arrayValue: { values: [{ stringValue: "a" }] } } };
+  const m = mockFetch(k, {
+    "androidpublisher.googleapis.com": (_url, init) => (init.method === "POST" ? json({}) : json({ purchaseState: 0, consumptionState: 0 })),
+    "firestore.googleapis.com": (url, init) => {
+      const id = url.split("/documents/")[1].split("?")[0];
+      if (init.method === "PATCH") {
+        // The claim's own create-only write must still succeed - only the
+        // later, non-create-only confirm write on the same purchase doc fails.
+        if (id.startsWith("purchases/") && !url.includes("currentDocument.exists=false")) return json({ error: "boom" }, 500);
+        if (url.includes("currentDocument.exists=false") && docs[id]) return json({}, 409);
+        docs[id] = Object.assign(docs[id] || {}, JSON.parse(String(init.body)).fields);
+        return json({ name: id });
+      }
+      return docs[id] ? json({ fields: docs[id] }) : json({}, 404);
+    },
+  });
+  try {
+    const first = await post(k, "a", { sku: "wedding", token: "WCONFIRM", wid: "q__r" });
+    assert.equal(first.status, 502); // the confirm write's own failure, honestly reported
+    assert.equal((docs["weddings/q__r"].paid as { booleanValue: boolean }).booleanValue, true); // payRoom itself did land
+
+    // A different room, same token, attempted while the row is still stuck
+    // on the failing confirm write: must not be allowed to pay it too.
+    const second = await post(k, "a", { sku: "wedding", token: "WCONFIRM", wid: "s__t" });
+    assert.equal(second.status, 402);
+    assert.notEqual(docs["weddings/s__t"] && (docs["weddings/s__t"].paid as { booleanValue?: boolean } | undefined)?.booleanValue, true);
+  } finally { m.restore(); }
+});
