@@ -63,7 +63,23 @@ function bindStore(root, redraw) {
       toast(S.unlocked); if (redraw) redraw(); else route();
     } catch (e) {
       b.disabled = false; const why = String((e && e.message) || '');
-      if (st) { st.className = 'hint st err'; st.textContent = why === 'signin' ? S.stNeedIn : /Abort|cancel/i.test((e && e.name) + why) ? '' : why === 'already used' ? S.buyAlready : why === 'nostore' ? S.stNotReady : S.stFailed; }
+      /* 'offline' is not a failure and must never be said as one. It is
+         thrown only after res.complete('success') and a real purchaseToken:
+         Play has charged, the token is on the pending list, and restore()
+         finishes it on the next app open. Saying "Mua chưa thành công" there
+         is the app contradicting the receipt Google has already emailed, and
+         it is what a buyer saw on 2026-09-09 for a subscription they really
+         did hold. It is the pending wording, and not in the error colour. */
+      const paidNotConfirmed = why === 'offline';
+      if (st) {
+        st.className = 'hint st' + (paidNotConfirmed ? '' : ' err');
+        st.textContent = why === 'signin' ? S.stNeedIn
+          : /Abort|cancel/i.test((e && e.name) + why) ? ''
+          : paidNotConfirmed ? S.stPending
+          : why === 'already used' ? S.buyAlready
+          : why === 'nostore' ? S.stNotReady
+          : S.stFailed;
+      }
     }
   }));
   $$('[data-retry]', root).forEach((b) => b.addEventListener('click', async () => { b.disabled = true; await BILL.retry(); if (redraw) redraw(); else route(); }));
