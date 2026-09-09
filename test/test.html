@@ -585,6 +585,18 @@ async function go(hash, sel) { W().location.hash = hash; await sleep(30); return
       ok(/<h3>Tiêu đề<\/h3>/.test(h) && /<b>đậm<\/b>/.test(h) && /<i>nghiêng<\/i>/.test(w.richHTML('chữ *nghiêng* và **đậm**')) && !/<i>/.test(w.richHTML('**đậm**')) && /<u>gạch<\/u>/.test(h) && /<mark>nổi<\/mark>/.test(h) && /class="callout"/.test(h) && /youtube\.com\/embed\/abc12345/.test(h) && /data-img="test1"/.test(h) && !/<script/.test(w.richHTML('<scr' + 'ipt>x</scr' + 'ipt>')), 'posts render headings, bold, underline, highlight, title boxes, video embeds and images, and never raw HTML'); }
     await go('#/news', '#nsearch'); await sleep(150);
     ok(!d.querySelector('#news .welcome') && !/Chào mừng bạn đến với Nabu Tarot/.test(d.querySelector('#news').textContent), 'the posts screen lists every post without the welcome note');
+    { /* "See all posts" is the whole list, and a list is read newest first.
+         It used to be ordered by postScore - the reader's sign, initial and
+         interests - which put a post from the 3rd above one from the 6th for
+         anybody with a profile, so the owner saw an order with no pattern in
+         it and every reader saw a different one. A post's id begins with its
+         date, so the rendered order can be read straight off the cards. */
+      const dates = Array.prototype.map.call(d.querySelectorAll('#news .post'), (el) => el.getAttribute('data-id').slice(0, 10));
+      const unpinned = dates.filter((x) => /^\d{4}-\d{2}-\d{2}$/.test(x));
+      let falling = true;
+      for (let i = 1; i < unpinned.length; i++) if (unpinned[i] > unpinned[i - 1]) falling = false;
+      ok(unpinned.length > 2 && falling, 'the posts screen is newest first, whatever the reader’s sign and interests are');
+    }
     d.querySelector('#nsearch').value = 'zzzz-khong-co'; d.querySelector('#nsearch').dispatchEvent(new w.Event('input')); await sleep(30);
     ok(d.querySelectorAll('#news .post').length === 0 && d.querySelector('#news .empty'), 'search filters the posts');
     { /* Share under a post lifts a sheet rather than going straight to the

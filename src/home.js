@@ -171,6 +171,23 @@ function allPosts() { return (POSTS || []).concat(FBPOSTS.map((f) => Object.assi
 function sortedPosts() {
   return allPosts().sort((a, b) => (b.pinned ? 1 : 0) - (a.pinned ? 1 : 0) || postScore(b) - postScore(a) || String(b.date).localeCompare(String(a.date)));
 }
+/* The feed on #/home is ordered for the reader: pinned first, then whatever
+   matches their sign, their initial and their interests, and only then by
+   date. That is the point of a feed.
+
+   "See all posts" makes the opposite promise. It is the whole list, and a
+   list is read newest first. Ordering it by score put a post from the 3rd
+   above one from the 6th for anybody whose sign it named - so the owner, who
+   has a profile, saw an order with no pattern in it, and every reader saw a
+   different one. Date decides here, and nothing else.
+
+   Pinned still leads: pinning is a deliberate act, not a guess about the
+   reader. Array.prototype.sort is stable and a new post is prepended
+   (admin.js:190), so posts sharing a date stay newest-first among themselves
+   - which is the same order the dashboard itself shows at admin.js:169. */
+function datedPosts() {
+  return allPosts().sort((a, b) => (b.pinned ? 1 : 0) - (a.pinned ? 1 : 0) || String(b.date).localeCompare(String(a.date)));
+}
 
 /* ---- personal block ---- */
 function personalHTML() {
@@ -292,7 +309,7 @@ async function renderNews() {
     + '<input id="nsearch" type="search" placeholder="' + esc(S.searchPosts) + '" autocomplete="off"><div id="news" style="margin-top:12px"></div>';
   const draw = () => {
     const q = fold($('#nsearch').value.trim());
-    const list = sortedPosts().filter((p) => !p.welcome).filter((p) => !q || fold(L(p.title) + ' ' + plainText(L(p.body))).indexOf(q) > -1);
+    const list = datedPosts().filter((p) => !p.welcome).filter((p) => !q || fold(L(p.title) + ' ' + plainText(L(p.body))).indexOf(q) > -1);
     const newsBox = $('#news');
     newsBox.innerHTML = list.length ? list.map((p) => postHTML(p, false)).join('') : '<p class="empty">' + esc(q ? S.noMatch : S.feedEmpty) + '</p>';
     bindPost($('#news'));

@@ -1,5 +1,5 @@
 /* Nabu Tarot -- offline cache. Bump CACHE on every release. */
-const CACHE = 'nabu-tarot-v205';
+const CACHE = 'nabu-tarot-v206';
 /* icon-512-round.png is the loading screen's mark, so it belongs here with the
    rest of the shell: it is wanted at the very first paint of a cold start, and
    an app opened with no signal would otherwise show the purple with nothing on
