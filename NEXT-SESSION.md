@@ -1,56 +1,51 @@
 # Nabu Tarot: brief for the next session
 
-Rewritten 2026-09-09, after **v197** on the `play-billing` branch (commit
-`95720ca`). **Nothing has been pushed and nothing merged to `main`** — that
-merge is the owner's call, not a session's.
+Rewritten 2026-09-09, after **v198 shipped and is live**. Google Play Billing
+is **merged into `main`, pushed, and live at nabutarot.com** as v198 (commit
+`84ca0fe`, plus `7c11ae1` adding Firebase CLI config). Both `APP_VERSION` in
+`src/main.js` and `CACHE` in `sw.js` say v198. If anything below still talks
+about a `play-billing` branch waiting on a merge, that description is stale —
+the merge already happened.
 
 Open a new Claude Code window in `C:\Users\angel\nabu-tarot` and say:
 **"read NEXT-SESSION.md"**.
 
-**Google Play Billing is code-complete.** The client and worker sides are
-built, tested and committed. What is left is Google-Console configuration
-only the owner can do, plus four known follow-ups. Part 1 is the project.
-Part 2 is the billing state and what is left. Part 3 is what the session
-before you changed. Part 4 is the owner's standing rules and the layout
-facts. Read Part 2 before touching anything.
+**Google Play Billing is code-complete and live.** The client and worker
+sides are built, tested, merged and deployed. What is left is entirely
+Google Console configuration and testing only the owner can do — see Part 2.
+Part 1 is the project. Part 2 is the billing state and what is left. Part 3
+is what the session before you changed. Part 4 is the owner's standing rules
+and the layout facts. Read Part 2 before touching anything.
 
 ---
 
-## Merge history: `main` (v190 → v196) into `play-billing`
+## Merge history: `main` (v190 → v197) merged with the billing work → v198
 
-**Done.** `main` moved six releases on 2026-09-09, from a second window, while
-the Play Billing work was going on in the `play-billing` branch:
+**Done.** `main` moved from v190 to v197 in a second window while the Play
+Billing work was going on in its own branch. The merge into `main` was done
+in **two passes**: five source conflicts were resolved so both sides
+survived, and `index.html` was **rebuilt from the merged sources** rather
+than carried over from either side.
 
-| | |
-|---|---|
-| v191 | German reads justified, exactly as VI/EN do; centred blocks centre again |
-| v192 | A free turn is spent by the person, not the handset (`turns` on the account) |
-| v193 | The coin will not flip until a question is written |
-| v194 | An amount named in a sentence is named in the reader's own currency |
-| v195 | A wedding is `1 wedding`, not `12 months` |
-| v196 | The German wedding terms say "Die Gebühr wird nicht erstattet." |
+Verified live on nabutarot.com after the merge — present from the other
+window's six releases: `turnsMerge`, `turnsLocal`, `termText`, `askedQ`,
+`wedFeeText`. Present from the billing work: the in-app `store`,
+`pro12_sub`, `PLAY_SUB_SKUS`, `manifest_sub`, `stuckKey`. Both sides survived
+the rebuild.
 
-Those touched `src/shell.html`, `src/core.js`, `src/pick.js`, `src/backend.js`,
-`src/services.js`, `src/strings.js`, `src/book.js`, `src/learn.js`,
-`src/wedding.js`, `src/admin.js`, `src/main.js` and `test/test.html`. The
-`play-billing` branch was cut before all of them and carried none of them on
-its own.
+**One deliberate copy replacement, not a lost merge.** The other window's
+v196 added the German wedding-terms sentence "Die Gebühr wird nicht
+erstattet." The owner then approved a whole new terms block, so that exact
+sentence is now gone — replaced by the approved wording, "Die
+Hochzeitsgebühr ist nicht erstattungsfähig." Same promise, newer wording. If
+someone greps for the v196 sentence and doesn't find it, this is why.
 
-**The merge was done in commit `95720ca`** (a real merge, not a fast-forward).
-Five source conflicts were resolved so both sides survive: `sw.js`/`src/main.js`
-(version marker plus both sides' `NABU` exports), `src/strings.js` ×3 (the
-owner's newly approved wedding-terms wording replaces both branches' older
-text, VI/EN/DE), `src/services.js` (main's `{save}` currency placeholder kept,
-this branch's retired Pro-voucher lines dropped), and `src/learn.js` (both
-sides had added a price block; kept this branch's store-bound button, adopted
-main's `termText()` inside it). `index.html` was **rebuilt from the merged
-sources**, not carried over from either side.
-
-**Any future merge must do the same.** The whole app is one committed
-`index.html` built by `build.py`. If you merge and commit a bundle built from a
-tree that predates the other side's releases, every one of those releases
-silently disappears from the live site, and nothing in git will look wrong.
-This exact failure already happened once, on 2026-09-08.
+**Any future merge must do the same: rebuild, don't carry over.** The whole
+app is one committed `index.html` built by `build.py`. If you merge and
+commit a bundle built from a tree that predates the other side's releases,
+every one of those releases silently disappears from the live site, and
+nothing in git will look wrong. This exact failure already happened once, on
+2026-09-08.
 
 After merging, in this order:
 
@@ -62,15 +57,14 @@ After merging, in this order:
 4. Bump `APP_VERSION` in `src/main.js` **and** `CACHE` in `sw.js` together.
 5. After pushing, fetch the live page and check the same strings are really
    there. Pages can take several minutes to serve a new build, so "not there
-   yet" is not "broken" — v196 outlasted a twenty-attempt poll before it
-   appeared.
+   yet" is not "broken".
 
-**Still open, and nobody is working on it:** the free-turn limit is stored on
-the account but the account's owner may still write that field, so it is not
-tamper-proof. The fix is to forbid `turns` in `firestore.rules` the way `access`
-already is, and to spend a turn through a worker endpoint using the `fsGet` /
-`fsPatch` helpers this branch built. It was left until Play Billing lands
-because it touches the same files.
+**Still open, and nobody is working on it — this is the other window's
+item, left intact:** the free-turn limit is stored on the account but the
+account's owner may still write that field, so it is not tamper-proof. The
+fix is to forbid `turns` in `firestore.rules` the way `access` already is,
+and to spend a turn through a worker endpoint using the `fsGet` / `fsPatch`
+helpers that branch built.
 
 ---
 
@@ -78,14 +72,14 @@ because it touches the same files.
 
 - Trilingual (vi / en / de) tarot PWA. Repo `C:\Users\angel\nabu-tarot`, branch `main`. Live at https://nabutarot.com, deployed from GitHub `main` in about a minute.
 - Vanilla JS, no framework. `python build.py` joins `src/*.js` and `src/shell.html` into the committed `index.html`. UI strings live in `src/strings.js` under `T()`.
-- Suite: `PYTHONIOENCODING=utf-8 python test/run.py`. About 6 minutes, **648 checks, all passing at v197** (main's 630 plus this branch's 18). A second window uses `NABU_PORT=8766`.
-- **A release is: bump `APP_VERSION` in `src/main.js` AND `CACHE` in `sw.js` to the same new number, `python build.py`, run the suite, one commit, push.** Both markers, every time. A past session shipped four releases without bumping either and left the app reporting a stale version; do not repeat it.
+- Suite: `PYTHONIOENCODING=utf-8 python test/run.py`. **650 checks, all passing at v198.** Worker suite **60/60**, `npm run typecheck` clean. A second window uses `NABU_PORT=8766`.
+- **A release is: bump `APP_VERSION` in `src/main.js` AND `CACHE` in `sw.js` to the same new number, `python build.py`, run the suite, one commit, push.** Both markers, every time. Never hand-edit `index.html` — it only ever comes from `build.py`, which pins the inline script by SHA-256 in the CSP; hand-editing blocks the script and gives a blank page.
 - One Cloudflare Worker, `nabu-ai`, at `https://nabu-ai.0211nhatanh.workers.dev`, reached through `CONFIG.aiEndpoint`. Deployed by `.github/workflows/worker.yml` on every push touching `worker/`.
 - The Android app is a **Trusted Web Activity** (`app.nabutarot.twa`): it opens the live site full screen. Content changes need no new bundle. Only the wrapper itself does.
 
 ---
 
-## Part 2. Google Play Billing — where it stands after v197
+## Part 2. Google Play Billing — live as v198, what's left is console work
 
 ### What now exists
 
@@ -101,8 +95,7 @@ Play gave it, and the worker is the **only writer of entitlements**:
   never be spent twice by two different accounts.
 - `/rtdn` receives Google's Real-time Developer Notifications (a signed
   Pub/Sub push) and re-asks Google for the token's current truth rather than
-  trusting the notification's own claim — a duplicate, a late arrival or an
-  out-of-order push all land on the same answer.
+  trusting the notification's own claim.
 - A **cron reconciles every 6 hours** (`10 */6 * * *` in `worker/wrangler.toml`,
   `reconcileSubs` in `worker/src/reconcile.ts`): it re-reads every live
   subscription purchase row and rewrites the account from Google's actual
@@ -116,98 +109,118 @@ Play gave it, and the worker is the **only writer of entitlements**:
 - Readings with Nabu are still never sold through Play, on any platform: an
   hour of a person's time is not a digital good.
 
-### The four Play subscription product ids, confirmed against Google
+### `firestore.rules` has been published — verify one thing on the live site
 
-| Key | Play product id | Base plan length |
-|---|---|---|
-| `manifest` | `manifest_sub` | 12 months |
-| `plus` | `plus_sub` | 12 months |
-| `pro6` | `pro_sub` | 6 months (this is "Pro", the 6-month product) |
-| `pro` | `pro12_sub` | 12 months |
+The owner has **published `firestore.rules`**. This was the single biggest
+open security item on this project and it is now closed. `firebase.json`
+and `.firebaserc` now exist in the repo, so publishing a future change is
+just `npx firebase-tools login` once, then
+`npx firebase-tools deploy --only firestore:rules` — no more pasting 27kB
+into a console editor.
 
-Each of these four products has **exactly one active base plan**, and that is
-load-bearing: the TWA bridge (`android-browser-helper`) always launches a
-subscription's **first offer** and has no way to choose among several base
-plans. **Never add a second active base plan to any of these products, and
-never attach a free trial or promotional offer to one** — the code path that
-*displays* a price and the code path that *charges* the buyer pick their own
-offer independently, so a second offer can silently make those two paths
-disagree about what the buyer is getting or paying.
+**Nobody has yet confirmed that a wedding room can still be created since
+publishing.** The rules forbid a client setting `paid` on document create,
+and if that clause is written wrong, no couple could book a wedding. Worth
+checking on the live site early in the next session.
 
-The four one-time products are unchanged in shape: `tarot`, `lenormand`,
-`playing`, `wedding` — each a one-time Play product, no subscription.
+### Google Play state — read from the API, do not re-derive it
 
-### What the owner still has to do
+- Four subscription products, each with exactly **one** active base plan:
+  `manifest_sub` (manifest-12m, P1Y), `plus_sub` (plus-12m, P1Y), `pro_sub`
+  (pro-6m, P6M — this is "Pro 6 months"), `pro12_sub` (pro-annual, P1Y — this
+  is "Pro 12 months").
+- Four one-time products exist and are active: `tarot`, `lenormand`,
+  `playing`, `wedding`. The Play API will **not** list these (the old
+  endpoint is retired, the new one 404s for this app), so their US/EUR
+  prices must be read by hand from Play Console.
+- Regional subscription prices already read: manifest ₫75,000 / $2.89 /
+  €2.99 · plus ₫79,000 / $2.99 / €3.09 · pro 6m ₫149,000 / $5.49 / €5.99 ·
+  pro 12m ₫249,000 / $9.49 / €9.99. Google has priced 11 regions.
+- **versionCode 2 is already uploaded and released to the internal testing
+  track** (status `completed`, name "2 (1.0.1)"). versionCode 1 is on
+  alpha. There is nothing to upload — a session that tries this will hit
+  "Version code 2 has already been used", which means it's already there,
+  not that something failed.
+- **Never add a second active base plan to any subscription product, and
+  never attach a free trial or promotional offer.** The TWA bridge
+  (`android-browser-helper`) always launches a subscription's **first**
+  offer and cannot choose a base plan; the code that displays a price and
+  the code that charges pick their offer independently. This was verified
+  by disassembling the shipped bundle.
 
-Nothing above needs more code. What is left is Google/Firebase console work
-only the owner can do:
+### What the owner still has to do, in this order
 
-1. **Verify `firestore.rules` in the Firebase rules playground, then publish
-   it.** Until this is published, a signed-in person can still write their
-   own `access`/`subs` from a browser console — this is the single biggest
-   open hole and has nothing to do with Play.
-2. **Create the Pub/Sub topic and push subscription for Real-time Developer
-   Notifications**, and point Play at it (topic `play-rtdn`, push
-   subscription to `https://nabu-ai.0211nhatanh.workers.dev/rtdn` with
-   authentication enabled, service account
-   `nabu-worker@nabutarot.iam.gserviceaccount.com`, audience the same `/rtdn`
-   URL). Without this, entitlement changes only ever reach the account
-   through the 6-hourly reconcile, not immediately.
-3. **Add licence testers** (Play Console → Setup → Licence testing) — the
-   only way to buy without spending real money.
-4. **Upload the existing versionCode 2 AAB** to internal testing. Nothing new
-   needs building for this; the billing bridge this plan uses is already in
-   that bundle.
-5. **Check the payments profile is verified** (Play Console → Setup →
-   Payments profile). Until it says *Verified*, test purchases work but no
-   money is ever paid out.
+1. **Licence testing** — Play Console, **account level** (not inside the
+   app): Settings → Licence testing → add each tester's Gmail →
+   RESPOND_NORMALLY. There are 12 testers. Without this, a purchase charges
+   real money. The owner could not find this screen on a phone; it's
+   account-level, which is why.
+2. **Internal testing → Testers** — add the same Gmail addresses, share the
+   "Join on the web" link.
+3. **Make a real test purchase.** Nothing in this system has ever touched
+   real Google Play. All 650 checks are stubs. A licence-tester purchase is
+   the first genuine proof this works.
+4. **Real-time Developer Notifications** — Pub/Sub topic `play-rtdn` → push
+   subscription → point Play at it. Not urgent: the 6-hourly reconcile
+   covers the gap in the meantime.
+5. **Payments profile verification** — only needed before real money moves.
 
-Say this plainly to the owner: **until step 1 (the rules) is published, a
-signed-in person can still write their own access from a browser console.**
-That is true today, independent of anything else on this list.
+**A blocker on testing:** the owner uses an iPhone. Play Billing exists only
+inside the Android app, so none of the purchase flow can be tested from
+their own device. They need an Android phone or an emulator with Google
+Play services.
+
+### Store listing
+
+Three screenshots were converted from iOS to Play spec (1080×1920, iOS
+status bar removed) and are at
+`C:\Users\angel\OneDrive\Desktop\play-screenshots\`. They are all Vietnamese
+and all show free features — the red thread, the companion, the message
+tree. English and German versions, and at least one screenshot showing
+something that is actually for sale, are still wanted.
+
+### Developer account note
+
+The Play listing shows the owner's full legal name because it's a personal
+developer account, and Google displays the verified individual's name.
+Changing it to a brand needs an organisation account (registered business +
+D-U-N-S), which is a support request, not a setting. Worth settling before
+there are paying customers.
 
 ### Known follow-ups, and why each was deferred
 
-(a) **Provenance on non-Play grants — done for the code path.** `users/{uid}.granted`
-now holds what the website (bank transfer, then a redemption code) and the
-dashboard gave for a Play-managed key, separately from `users/{uid}.subs`
-(what Play's own rows say). `recompute` takes the **later** of the two, so
-Play can still shorten its own contribution to nothing (a refund) without
-ever eating a code grant, and a code grant can no longer be silently
-shortened to whatever a Play row says. Before this fix, a customer who paid
-by bank transfer and then held any Play subscription lost the bank-transfer
-grant at the next subscription event — and the 6-hourly reconcile repeated
-the wipe. `/redeem` now writes `granted` alongside `access` whenever a code
-opens a Play-managed key; existing customers were caught without a migration
-by capturing, at write time, any key a new Play row names that no existing
-row already named. Two things remain open from this:
+(a) **Provenance on non-Play grants — done for the website path, not the
+dashboard.** `users/{uid}.granted` now holds what the website (bank
+transfer, then a redemption code) gave for a Play-managed key, separately
+from `users/{uid}.subs` (what Play's own rows say). `recompute` takes the
+**later** of the two, so Play can still shorten its own contribution to
+nothing (a refund) without ever eating a code grant, and a code grant can no
+longer be silently shortened to whatever a Play row says. Two things remain
+open:
 
-- **An admin grant made from the dashboard** for a key a live Play
-  subscription row already names is still lost at the next recompute — the
-  capture only fires for a key no *existing* row already names. Closing this
-  needs the dashboard to write `granted` too, the same way `/redeem` does.
-- **Any customer already wiped by the old behaviour** has nothing left for
-  the capture to recover — `access` records no provenance, so there is no way
-  to tell after the fact that a shortened date used to be a code grant. These
-  need re-issuing by hand.
+- **An admin grant made from the dashboard**, for an access key that a live
+  Play subscription row already names, is still lost at the next recompute
+  — the dashboard path was never fixed to write `granted` the way the
+  website redemption-code path was.
+- **Customers already wiped by the old behaviour** have nothing left for
+  any capture to recover, and need re-issuing by hand.
 
 (b) **Optimistic concurrency** (`currentDocument.updateTime` compare-and-set)
 on the Firestore writes the worker makes. This closes three concurrency
 findings that are currently parked/accepted rather than fixed — two
-concurrent writers (say, a `/billing` call and a `/rtdn` push landing at the
+concurrent writers (say, a `/billing` call and an `/rtdn` push landing at the
 same moment) can each read-then-write without noticing the other's change.
 
-(c) **`reconcile`'s Firestore query uses `limit: 500` with no cursor** —
-`worker/src/reconcile.ts`, the `structuredQuery` in `reconcileSubs`. Once
-there are meaningfully more than about 300 active subscription rows, some
-will silently stop being reconciled every 6 hours (RTDN still covers them
-individually). Revisit before the subscriber count gets near there.
+(c) **`reconcileSubs` pages at `limit: 500` with no cursor** —
+`worker/src/reconcile.ts`. Once there are meaningfully more than about 300
+active subscription rows, some will silently stop being reconciled every 6
+hours (RTDN still covers them individually). Revisit before the subscriber
+count gets near there.
 
-(d) **Website pricing in USD/EUR** for the English and German interfaces is
-still blocked: the four one-time products' prices are not returned by the
-Play API in a form the worker can currently surface to the website (which
-never talks to Play at all — it is bank-transfer only). This needs its own
-pricing source before it can ship.
+(d) **Website pricing.** The owner chose to show the local price only — USD
+on the English interface, EUR on the German one. This is blocked on the
+four one-time products' US/EUR prices, which must be read by hand from Play
+Console (the subscription prices are already known — see above).
 
 ### Not fixed, on purpose
 
@@ -220,52 +233,45 @@ accounts that hold it — a different app. Leave it unless the owner asks.
 
 Be plain about this with the owner: **nothing in this feature has been
 tested on a real phone, and no real purchase — test or otherwise — has ever
-been made.** Everything above is verified by the 648-check browser suite and
-the 60-check worker suite (both mocked), plus a clean `tsc --noEmit`. The
-first real signal will come from a licence tester on a real device, once the
-owner's checklist above is done.
+been made.** Everything above is verified by the 650-check browser suite and
+the 60-check worker suite (both mocked/stubbed), plus a clean
+`tsc --noEmit`. The first real signal will come from a licence tester on a
+real Android device, once the owner's checklist above is done.
 
 ### Rollback
 
 Every piece degrades on its own: remove the worker secret and `/billing`
 answers `not configured`; the client's store hides itself when
-`BILL.can()` is false (any device outside the installed, verified TWA); the
-rules can be republished from git. No step takes more than an hour to walk
-back.
+`BILL.can()` is false (any device outside the installed, verified TWA);
+`firestore.rules` is already published from git and any future change
+redeploys with `npx firebase-tools deploy --only firestore:rules`. No step
+takes more than an hour to walk back.
 
 ---
 
 ## Part 3. What the session before you changed
 
-### v197 (2026-09-09) — merge onto main's six releases, plus a provenance fix, on `play-billing`
+### v198 (2026-09-09) — Play Billing merged onto main, pushed, live
 
-Three things happened after the v191 release stamp that this section used to
-describe:
-
-- **The `granted` field fix.** `users/{uid}.granted` now records what the
-  website (bank transfer, then a redemption code) and the dashboard gave for
-  a Play-managed key, kept separate from what Play's own subscription rows
-  say. `recompute` in `worker/src/entitle.ts` takes the **later** of the two.
-  Before this, a customer who bought Pro by bank transfer lost it silently
-  the moment any Play subscription event touched their account, and the
-  6-hourly reconcile repeated the loss. `firestore.rules` now guards
-  `granted` the same way it guards `access`/`subs`. Ten new worker tests
-  (50 → 60).
-- **The merge.** `main` had moved from v190 to v196 (six releases, a second
-  window) while this branch was being built. That merge is commit `95720ca`
-  — a real merge, not a fast-forward, with five source conflicts resolved so
-  both sides survive (see "Merge history" above for the detail). `index.html`
-  was rebuilt from the merged sources, not carried over from either side.
-- **Version bump.** `APP_VERSION`/`CACHE` bumped to `v197` and rebuilt.
-- Ran the full suite clean: **648 checks, 648 passed, 0 failed** (main's 630
-  plus this branch's 18). Worker suite **60/60**, `npm run typecheck` clean.
-- Committed on `play-billing` as `95720ca`. **Not pushed, not merged to
-  `main`.** The merge of `play-billing` *into* `main` — which is what
-  actually deploys the live site — is still the owner's decision, not a
-  release step this session took.
-- v190 (German localisation pass) and v191–v196 (the second window's six
-  releases) had already shipped and merged into `main` before this; do not
-  confuse those numbers with this branch's own release.
+- **The merge.** `main` had moved from v190 to v197 (six-plus releases, a
+  second window) while the Play Billing work was being built on its own
+  branch. The merge into `main` happened in two passes; five source
+  conflicts were resolved so both sides survived, and `index.html` was
+  rebuilt from the merged sources rather than carried over from either
+  side. Verified live afterward: strings/functions from both sides (see
+  "Merge history" above for the specific names checked).
+- **Version bump.** `APP_VERSION`/`CACHE` bumped to `v198` and rebuilt.
+- Ran the full suite clean: **650 checks passing**. Worker suite **60/60**,
+  typecheck clean.
+- Committed to `main` as `84ca0fe`, then pushed. Confirmed live at
+  nabutarot.com.
+- **Firebase CLI config added** in a follow-up commit, `7c11ae1`:
+  `firebase.json` and `.firebaserc`, so `firestore.rules` publishing no
+  longer requires pasting into the console — `npx firebase-tools login`
+  once, then `npx firebase-tools deploy --only firestore:rules`.
+- **The owner published `firestore.rules`** — see Part 2's section on this;
+  it's the biggest security item on the project and it's now done, but the
+  wedding-room-creation path deserves a live check.
 
 ### v190 and earlier (2026-09-08 → 09) — five releases ending at v190
 
