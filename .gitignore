@@ -14,3 +14,8 @@ test/_probe/
 
 # Worktrees the editor manages for isolated sessions.
 .claude/worktrees/
+
+# Per-session scratch from the localization work: patch scripts, audit
+# tools and pre-change backups. Git history is the record; this is working
+# memory, and it was committed once by accident on 2026-09-09.
+_patch/
