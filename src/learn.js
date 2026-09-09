@@ -19,9 +19,9 @@ function paywallHTML(courseId) {
        the price written here. */
     + (isTWA()
       ? (BILL.can() && BILL.priceOf(c.id)
-        ? '<div class="price">' + esc(BILL.priceOf(c.id)) + ' <span>/ ' + c.months + ' ' + esc(S.months6) + '</span></div>'
+        ? '<div class="price">' + esc(BILL.priceOf(c.id)) + ' <span>/ ' + esc(termText(c)) + '</span></div>'
         : '')
-      : '<div class="price">' + priceHTML(c.price, 'unlock', c.id) + ' <span>/ ' + c.months + ' ' + esc(S.months6) + '</span></div>')
+      : '<div class="price">' + priceHTML(c.price, 'unlock', c.id) + ' <span>/ ' + esc(termText(c)) + '</span></div>')
     + (expired ? '<p class="hint err">' + esc(S.courseExpired(a)) + '</p>' : '')
     /* Asked here, in the app, the way a booking is - not copied to the
        clipboard and carried off to Instagram, where nothing knows what was
@@ -525,7 +525,7 @@ function unlockRowHTML(c) {
     + '<p class="hint">' + esc(priceText(L(c.sum || c.blurb))) + '</p>'
     + '<div class="unl-f">' + (c.id === 'pro' ? '<span class="chip pink">' + esc(S.unlockBest) + '</span>' : '')
     + '<span class="unl-st">' + (open ? '✓ ' + esc(ACCESS.isAdmin() && !until ? S.adminShort : S.unlockOpenUntil(fmtDate(until)))
-      : picked ? '✓ ' + esc(S.unlockChosen) : esc(S.unlockNot) + (isTWA() ? '' : ' · ' + esc(c.months + ' ' + S.months6))) + '</span></div>';
+      : picked ? '✓ ' + esc(S.unlockChosen) : esc(S.unlockNot) + (isTWA() ? '' : ' · ' + esc(termText(c)))) + '</span></div>';
   if (open) return '<div class="unl on' + (c.id === 'pro' ? ' best' : '') + '">' + body + '</div>';
   return '<button type="button" class="unl pickable' + (picked ? ' pick' : '') + (c.id === 'pro' ? ' best' : '') + '" data-unl="' + c.id + '">' + body + '</button>';
 }

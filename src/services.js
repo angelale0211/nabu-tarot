@@ -101,15 +101,18 @@ const COURSES = [
       en: 'Everything in Nabu Plus, and the companions besides: twelve spirit beasts, six of them at once, their good food, their homes and their clothes, a two-hour wait between meals instead of six, and double points. Paying once for the year costs less.', de: 'Nabu Pro enthält alles aus Nabu Plus und zusätzlich die Begleiterwelt: zwölf mythische Begleiter, bis zu sechs gleichzeitig, alle Futtersorten, Zuhause und Kleidungsstücke, nur zwei statt sechs Stunden Wartezeit zwischen den Mahlzeiten und doppelte Erfahrungspunkte. Die Jahreszahlung ist günstiger als zwei 6-Monats-Pakete.' },
     includes: { vi: ['Tiết kiệm {save} so với mua hai lần gói 6 tháng', 'Toàn bộ quyền lợi của Nabu Plus', '12 linh thú, nuôi tối đa 6 bạn cùng lúc', '9 món ăn, 8 ngôi nhà, 9 bộ trang phục', 'Chờ 2 giờ giữa hai bữa, 3 lượt chơi mỗi ngày, điểm kinh nghiệm nhân đôi', 'Voucher giảm 15% và 20%', 'Thời hạn sử dụng 12 tháng'],
       en: ['{save} less than two half years', 'Everything in Nabu Plus', '12 spirit beasts, six kept at once', '9 foods, 8 homes, 9 things to wear', '2 hours between meals, 3 plays a day, double points', 'The 15% and 20% vouchers', '12 months of access'], de: ['{save} günstiger als zweimal 6 Monate', 'Alle Vorteile von Nabu Plus', '12 Begleiter, bis zu 6 gleichzeitig', '9 Futtersorten, 8 Zuhause, 9 Kleidungsstücke', '2 Stunden zwischen Mahlzeiten, 3 Spiele pro Tag, doppelte Erfahrungspunkte', 'Gutscheine mit 15 % und 20 % Rabatt', '12 Monate Zugriff'] } },
-  /* A wedding is bought once and held once, but the year is there so nobody
-     loses what they paid for by having to move the date. */
+  /* A wedding is bought once and held once. `months` is not what is being sold
+     here - it is only the window the access is granted for, so that moving the
+     date does not lose what was paid for. What a buyer is told is `term`:
+     "12 months" beside a single ceremony read as a subscription. */
   { id: 'wedding', kind: 'unlock', icon: '\uD83D\uDC92', to: '#/wedding', price: 30000, months: 12,
+    term: { vi: '1 lễ cưới', en: '1 wedding', de: '1 Hochzeit' },
     sum: { vi: 'Tổ chức lễ cưới trong ứng dụng, có khách mời và Nabu Cupid chủ hôn.', en: 'Hold a ceremony inside the app, with guests and Nabu Cupid to marry you.', de: 'Eine Zeremonie in der App – mit Gästen und Nabu Cupid als Zeremonienmeister.' },
     name: { vi: 'Lễ cưới trên Nabu', en: 'A wedding on Nabu', de: 'Hochzeit auf Nabu' },
     blurb: { vi: 'Hai bạn đã đính ước trên sợi tơ hồng có thể tổ chức một lễ cưới ngay trong ứng dụng. Bạn chọn ngày giờ, gửi thiệp mời cho bạn bè, và đến giờ, Nabu Cupid sẽ chủ hôn: hỏi lời thề của từng người, chờ hai bạn trả lời, rồi tuyên bố hai bạn nên duyên. Khách mời vào xem, gửi quà chúc mừng miễn phí, và tham gia màn tung hoa cưới ở cuối buổi lễ.',
       en: 'A couple engaged on the red thread can hold a ceremony inside the app. You choose the day and the hour, send invitations to your friends, and when the time comes Nabu Cupid marries you: the vows are asked one at a time, you answer them in front of everybody, and then you are declared married. Guests watch, send free congratulations, and join the bouquet toss at the end.', de: 'Wenn ihr euch über den Roten Faden verlobt habt, könnt ihr eine Zeremonie direkt in der App feiern. Ihr wählt Datum und Uhrzeit, verschickt Einladungen und Nabu Cupid führt euch durch die Zeremonie: Eure Versprechen werden nacheinander gefragt, ihr antwortet vor euren Gästen und werdet anschließend als verheiratet erklärt. Gäste können zuschauen, kostenlose Glückwünsche und Geschenke senden und am Ende beim Brautstraußwurf mitmachen.' },
-    includes: { vi: ['Phòng cưới riêng, có ngày giờ do hai bạn chọn', 'Thiệp mời gửi bằng đường dẫn, không giới hạn khách', 'Nabu Cupid chủ hôn, hỏi lời thề từng người', 'Nhạc lễ và hiệu ứng trong suốt buổi', 'Khách gửi lời chúc và quà miễn phí', 'Màn tung hoa cưới chọn người may mắn', 'Thời hạn sử dụng 12 tháng'],
-      en: ['A room of your own, at an hour you choose', 'Invitations by link, as many guests as you like', 'Nabu Cupid asks each of you your vows', 'Music and effects throughout', 'Guests send congratulations and gifts, free', 'A bouquet toss to pick one lucky guest', '12 months to hold it'], de: ['Eigener Hochzeitsraum zu eurem gewählten Termin', 'Einladungslink für beliebig viele Gäste', 'Nabu Cupid führt durch eure Versprechen', 'Musik und Effekte während der Zeremonie', 'Kostenlose Glückwünsche und Geschenke von Gästen', 'Brautstraußwurf für einen glücklichen Gast', '12 Monate Zeit, die Zeremonie zu feiern'] } }
+    includes: { vi: ['Phòng cưới riêng, có ngày giờ do hai bạn chọn', 'Thiệp mời gửi bằng đường dẫn, không giới hạn khách', 'Nabu Cupid chủ hôn, hỏi lời thề từng người', 'Nhạc lễ và hiệu ứng trong suốt buổi', 'Khách gửi lời chúc và quà miễn phí', 'Màn tung hoa cưới chọn người may mắn', '1 lễ cưới'],
+      en: ['A room of your own, at an hour you choose', 'Invitations by link, as many guests as you like', 'Nabu Cupid asks each of you your vows', 'Music and effects throughout', 'Guests send congratulations and gifts, free', 'A bouquet toss to pick one lucky guest', '1 wedding'], de: ['Eigener Hochzeitsraum zu eurem gewählten Termin', 'Einladungslink für beliebig viele Gäste', 'Nabu Cupid führt durch eure Versprechen', 'Musik und Effekte während der Zeremonie', 'Kostenlose Glückwünsche und Geschenke von Gästen', 'Brautstraußwurf für einen glücklichen Gast', '1 Hochzeit'] } }
 ];
 /* Where the reading itself happens. Three, because these are the three
    places Nabu actually reads. */
@@ -186,6 +189,9 @@ function moneyText(v) {
   return m.sym + (v % 1 ? v.toFixed(2) : String(v));
 }
 const priceOf = (id) => { const c = COURSES.filter((x) => x.id === id)[0]; return c ? c.price : 0; };
+/* How long a purchase lasts, as a buyer is told it. Almost everything here is
+   sold by the month and says so; a thing bought once names itself instead. */
+const termText = (c) => (c && c.term) ? L(c.term) : (((c && c.months) || 12) + ' ' + T().months6);
 const proSaveText = () => moneyText(Math.max(0, moneyOf(priceOf('pro6')).v * 2 - moneyOf(priceOf('pro')).v));
 const wedFeeText = () => fmtPrice(priceOf('wedding'));
 const MONEY_IN_TEXT = { '{save}': proSaveText, '{wedfee}': wedFeeText };

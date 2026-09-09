@@ -694,9 +694,13 @@ async function go(hash, sel) { W().location.hash = hash; await sleep(30); return
         W().saveProfileLocal({ lang: lg }); W().applyAccountLang();
         await go('#/unlock', '#main');
         const N2 = W().NABU;
-        const six = N2.COURSES.filter((c) => c.id === 'pro6')[0].price;
-        const year = N2.COURSES.filter((c) => c.id === 'pro')[0].price;
-        return { save: N2.proSaveText(), wed: N2.wedFeeText(), six: N2.fmtPrice(six), year: N2.fmtPrice(year),
+        const sixItem = N2.COURSES.filter((c) => c.id === 'pro6')[0];
+        const yearItem = N2.COURSES.filter((c) => c.id === 'pro')[0];
+        const wedItem = N2.COURSES.filter((c) => c.id === 'wedding')[0];
+        return { save: N2.proSaveText(), wed: N2.wedFeeText(),
+          six: N2.fmtPrice(sixItem.price), year: N2.fmtPrice(yearItem.price),
+          wedTerm: N2.termText(wedItem), proTerm: N2.termText(yearItem),
+          wedInc: (wedItem.includes[lg] || []).join(' | '),
           text: D().querySelector('#main').textContent };
       };
       const vi = await inLang('vi'), en = await inLang('en'), de = await inLang('de');
@@ -714,6 +718,15 @@ async function go(hash, sel) { W().location.hash = hash; await sleep(30); return
         'no screen ever shows a raw price token');
       ok(W().NABU.priceText('a {save} b') !== 'a {save} b' && W().NABU.priceText('nothing here') === 'nothing here',
         'a sentence with no amount in it is left alone');
+      /* A wedding is one ceremony, bought once. It is granted for a year only so
+         that moving the date does not lose it, which is not what a buyer is
+         being sold - and "12 months" beside it read as a subscription. */
+      ok(vi.wedTerm === '1 lễ cưới' && en.wedTerm === '1 wedding' && de.wedTerm === '1 Hochzeit',
+        'a wedding is sold as one ceremony, not as a number of months (' + vi.wedTerm + ' / ' + en.wedTerm + ' / ' + de.wedTerm + ')');
+      ok(vi.proTerm === '12 tháng' && en.proTerm === '12 months' && de.proTerm === '12 Monate',
+        'and what really is sold by the month still counts months (' + en.proTerm + ')');
+      ok(vi.wedInc.indexOf('12 tháng') < 0 && en.wedInc.indexOf('12 months') < 0 && de.wedInc.indexOf('12 Monate') < 0,
+        'nothing in what a wedding includes counts months either');
       W().saveProfileLocal({ lang: 'vi' }); W().applyAccountLang();
       W().saveProfileLocal({ lang: keepP.plang || '' });
       if (keepP.lang == null) W().localStorage.removeItem('nabu-lang'); else W().localStorage.setItem('nabu-lang', keepP.lang);
