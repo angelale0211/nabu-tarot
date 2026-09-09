@@ -12,7 +12,7 @@
      carries this notice with it. See LICENSE. -->
 <meta name="author" content="Nabu Tarot">
 <meta name="copyright" content="Copyright (c) 2025-2026 Nabu Tarot. All rights reserved.">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'none'; object-src 'none'; form-action 'self'; script-src 'self' 'sha256-czKSwX2RHkRC3dEsiTt7W9ZFMc4iRNbfv/gh4nO/Rqo=' https://www.gstatic.com https://apis.google.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; font-src 'self' data:; media-src 'self' data: blob:; worker-src 'self'; connect-src 'self' https://*.googleapis.com https://*.google.com https://*.firebaseio.com https://*.cloudfunctions.net https://*.workers.dev https://generativelanguage.googleapis.com; frame-src https://*.firebaseapp.com https://accounts.google.com https://*.facebook.com">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'none'; object-src 'none'; form-action 'self'; script-src 'self' 'sha256-Zu8E/x42UrxlMrNMbyqWGNhv9owdlUGkPgAsqo5nlVk=' https://www.gstatic.com https://apis.google.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; font-src 'self' data:; media-src 'self' data: blob:; worker-src 'self'; connect-src 'self' https://*.googleapis.com https://*.google.com https://*.firebaseio.com https://*.cloudfunctions.net https://*.workers.dev https://generativelanguage.googleapis.com; frame-src https://*.firebaseapp.com https://accounts.google.com https://*.facebook.com">
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <meta name="theme-color" content="#EFE9FA">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -31455,7 +31455,12 @@ function adminInbox(p) {
 function adminCodes(p) {
   const S = T();
   p.innerHTML = '<div class="card"><p class="hint" style="margin-bottom:10px">' + esc(S.codesIntro) + '</p>'
-    + '<label class="f" for="ccourse">' + esc(S.codeCourse) + '</label><select id="ccourse">' + COURSES.map((c) => '<option value="' + c.id + '">' + esc(L(c.name)) + ' · ' + fmtPrice(c.price) + '</option>').join('') + '</select>'
+    + '<label class="f" for="ccourse">' + esc(S.codeCourse) + '</label><select id="ccourse">'
+    /* Not the wedding. A wedding is paid for one room now, not for the
+       account, so a wedding code would unlock nothing at all - the room is
+       opened from the list above with Payment received. Offering one here
+       would let Nabu send a paying couple a code that does nothing. */
+    + COURSES.filter((c) => c.id !== 'wedding').map((c) => '<option value="' + c.id + '">' + esc(L(c.name)) + ' · ' + fmtPrice(c.price) + '</option>').join('') + '</select>'
     + '<div class="two"><div><label class="f" for="cstart">' + esc(S.codeStart) + '</label><input id="cstart" type="date" value="' + isoDate(new Date()) + '"></div><div><label class="f" for="cmonths">' + esc(S.codeMonths) + '</label><input id="cmonths" type="number" min="1" value="6"></div></div>'
     + '<button class="btn primary block" id="cmake" style="margin-top:14px">' + esc(S.makeCode) + '</button><div id="cout"></div>'
     + '<label class="f" for="cold" style="margin-top:16px">' + esc(S.codeOldLabel) + '</label><textarea id="cold" placeholder="NABU-T-260901-ABC234"></textarea>'
@@ -31577,7 +31582,7 @@ function adminSale(p) {
     SALE.set(read());
     const live = SALE.live();
     $('#sprev').innerHTML = live
-      ? '<p class="hint">' + esc(SALE.off()) + ' · ' + esc(S.saleScopes[live.scope] || '') + '</p><div class="sum"><div class="r"><span>300.000đ</span><b>' + priceHTML(300000, 'unlock', 'tarot') + '</b></div><div class="r"><span>60.000đ</span><b>' + priceHTML(60000, 'reading', 'tarot') + '</b></div></div>'
+      ? '<p class="hint">' + esc(SALE.off()) + ' · ' + esc(S.saleScopes[live.scope] || '') + '</p><div class="sum"><div class="r"><span>300.000đ</span><b>' + priceHTML(300000, 'unlock', 'tarot') + '</b></div><div class="r"><span>60.000đ</span><b>' + priceHTML(60000, 'reading', 'tarot') + '</b></div></div>' /* dong on purpose: the base price Nabu typed, shown beside what it converts to */
       : '<p class="hint">' + esc(S.saleNone) + '</p>';
     SALE.set(before);
   };
@@ -31594,7 +31599,7 @@ function adminSale(p) {
 ROUTES.admin = { nav: '', render: renderAdmin };
 
 /* ============================ boot ============================ */
-window.APP_VERSION = 'v197';
+window.APP_VERSION = 'v198';
 window.NABU = { CONFIG: CONFIG, SALE: SALE, salePrice: salePrice, loadActs: loadActs, BACK: BACK, LESSONS: LESSONS, localAnswer: localAnswer, compatVerdict: compatVerdict, numerologyOf: numerologyOf, ZDEEP: ZDEEP, lunarToday: lunarToday, solarToLunar: solarToLunar, DECK: DECK, INSIGHT: INSIGHT, KW: KW, ASK: ASK, TOPICS: TOPICS, GUIDES: GUIDES, SERVICES: SERVICES, COURSES: COURSES, ACCESS: ACCESS, INTERESTS: INTERESTS, plusOn: () => plusOn(), proOn: () => proOn(), luckUnlimited: () => luckUnlimited(), ZODIAC: ZODIAC, pick: pick, book: book, PLAY_ITEMS: PLAY_ITEMS, PLAY_SUB_SKUS: PLAY_SUB_SKUS, playItem: playItem, BILL: BILL, SUBS: SUBS, renderStore: renderStore, subStateWord: subStateWord,
   insightHTML: insightHTML, insightOf: insightOf, sunSignIndex: sunSignIndex, lifePath: lifePath, PROFILE: () => PROFILE, BE: BE, ACTS: ACTS,
   ANGELS: ANGELS, angelRead: angelRead, CODEBOOK: CODEBOOK, redeemCode: redeemCode, loadCodebook: loadCodebook, petHomeSVG: petHomeSVG, PET_HOMES: PET_HOMES, PET_WEARS: PET_WEARS, codeDigest: codeDigest, randomCode: randomCode, BANK: BANK, PETS: PETS, petSVG: petSVG, PET_COATS: PET_COATS, PET_KINDS: PET_KINDS, turnsMerge: turnsMerge, turnsLocal: turnsLocal, priceText: priceText, termText: termText, proSaveText: () => proSaveText(), wedFeeText: () => wedFeeText(), fmtPrice: fmtPrice, luckCut: luckCut, petLevel: petLevel, petStep: petStep, VOUCHERS: VOUCHERS, levelCoins: levelCoins, LOOKS: LOOKS,

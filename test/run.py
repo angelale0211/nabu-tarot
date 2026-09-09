@@ -131,12 +131,67 @@ def run(url, extra=()):
     return text
 
 
+# ---- money written into copy, instead of formatted for the reader ----
+# Prices are kept in dong and converted per language, so a dong amount typed
+# into an English or German sentence shows the wrong money beside a converted
+# price. No browser check can catch that: the text renders perfectly, it is
+# simply the wrong currency. It reached customers three times - 8876fe1,
+# 4cf39b9 and 4bf2839, one of them the very commit that added dollar and euro
+# prices - and was found on a phone rather than here.
+#
+# Only the thousands form is flagged, because that is what a price looks like;
+# a bare digit before a Vietnamese word is not one. A string counts as
+# Vietnamese when what is left after removing the amount still carries
+# Vietnamese marks, and in Vietnamese copy a dong figure is correct.
+PRICE_IN_TEXT = re.compile(u"[0-9]{1,3}(?:[.][0-9]{3})+ *đ")
+VI_MARKS = re.compile(u"[ăâđêôơưĂÂĐÊÔƠƯ"
+                      u"àáảãạằắẳẵặầấẩẫậ"
+                      u"èéẻẽẹềếểễệìíỉĩị"
+                      u"òóỏõọồốổỗộờớởỡợ"
+                      u"ùúủũụừứửữựỳýỷỹỵ]")
+JS_STRING = re.compile(u"'([^']*)'")
+# The source writes some non-ascii as escapes, and the English wedding terms
+# hid a dong sign that way - the first scan of this walked straight past it.
+JS_ESCAPE = re.compile(chr(92) + chr(92) + u"u([0-9a-fA-F]{4})")
+
+
+def money_in_copy():
+    """Every string that names a dong price outside Vietnamese copy."""
+    bad = []
+    for path in sorted(glob.glob(os.path.join(ROOT, 'src', '*.js'))):
+        with open(path, encoding='utf-8') as fh:
+            body = fh.read()
+        for ln, line in enumerate(body.split(chr(10)), 1):
+            # A line may say, in so many words, that its dong figure is meant:
+            # the dashboard shows the owner the base price they typed, beside
+            # what it converts to. Say why at the line, or it counts.
+            if 'dong on purpose' in line:
+                continue
+            line = JS_ESCAPE.sub(lambda m: chr(int(m.group(1), 16)), line)
+            for m in JS_STRING.finditer(line):
+                s = m.group(1)
+                if not PRICE_IN_TEXT.search(s):
+                    continue
+                if VI_MARKS.search(PRICE_IN_TEXT.sub(' ', s)):
+                    continue
+                bad.append('%s:%d %s' % (os.path.basename(path), ln, s[:64]))
+    if bad:
+        return ['FAIL a price is written in dong inside copy that is not Vietnamese, so a reader '
+                'paying in dollars or euros is shown the wrong money: ' + '; '.join(bad[:4])]
+    return ['PASS no price is written in dong inside English or German copy']
+
+
 if __name__ == '__main__':
     httpd = serve()
     time.sleep(0.3)
     res = run('http://127.0.0.1:%d/test/test.html' % PORT)
     print(res)
-    lines = [l for l in res.split('\n') if l.strip()]
+    # Read from the source, not from the page: this one is about what is
+    # written down, and it renders perfectly while being the wrong money.
+    source = money_in_copy()
+    for line in source:
+        print(line)
+    lines = [l for l in res.split('\n') if l.strip()] + source
     bad = [l for l in lines if l.startswith('FAIL')]
     print('\n%d checks, %d passed, %d failed' % (len(lines), len(lines) - len(bad), len(bad)))
     httpd.shutdown()

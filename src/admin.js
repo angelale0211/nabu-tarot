@@ -546,7 +546,12 @@ function adminInbox(p) {
 function adminCodes(p) {
   const S = T();
   p.innerHTML = '<div class="card"><p class="hint" style="margin-bottom:10px">' + esc(S.codesIntro) + '</p>'
-    + '<label class="f" for="ccourse">' + esc(S.codeCourse) + '</label><select id="ccourse">' + COURSES.map((c) => '<option value="' + c.id + '">' + esc(L(c.name)) + ' · ' + fmtPrice(c.price) + '</option>').join('') + '</select>'
+    + '<label class="f" for="ccourse">' + esc(S.codeCourse) + '</label><select id="ccourse">'
+    /* Not the wedding. A wedding is paid for one room now, not for the
+       account, so a wedding code would unlock nothing at all - the room is
+       opened from the list above with Payment received. Offering one here
+       would let Nabu send a paying couple a code that does nothing. */
+    + COURSES.filter((c) => c.id !== 'wedding').map((c) => '<option value="' + c.id + '">' + esc(L(c.name)) + ' · ' + fmtPrice(c.price) + '</option>').join('') + '</select>'
     + '<div class="two"><div><label class="f" for="cstart">' + esc(S.codeStart) + '</label><input id="cstart" type="date" value="' + isoDate(new Date()) + '"></div><div><label class="f" for="cmonths">' + esc(S.codeMonths) + '</label><input id="cmonths" type="number" min="1" value="6"></div></div>'
     + '<button class="btn primary block" id="cmake" style="margin-top:14px">' + esc(S.makeCode) + '</button><div id="cout"></div>'
     + '<label class="f" for="cold" style="margin-top:16px">' + esc(S.codeOldLabel) + '</label><textarea id="cold" placeholder="NABU-T-260901-ABC234"></textarea>'
@@ -668,7 +673,7 @@ function adminSale(p) {
     SALE.set(read());
     const live = SALE.live();
     $('#sprev').innerHTML = live
-      ? '<p class="hint">' + esc(SALE.off()) + ' · ' + esc(S.saleScopes[live.scope] || '') + '</p><div class="sum"><div class="r"><span>300.000đ</span><b>' + priceHTML(300000, 'unlock', 'tarot') + '</b></div><div class="r"><span>60.000đ</span><b>' + priceHTML(60000, 'reading', 'tarot') + '</b></div></div>'
+      ? '<p class="hint">' + esc(SALE.off()) + ' · ' + esc(S.saleScopes[live.scope] || '') + '</p><div class="sum"><div class="r"><span>300.000đ</span><b>' + priceHTML(300000, 'unlock', 'tarot') + '</b></div><div class="r"><span>60.000đ</span><b>' + priceHTML(60000, 'reading', 'tarot') + '</b></div></div>' /* dong on purpose: the base price Nabu typed, shown beside what it converts to */
       : '<p class="hint">' + esc(S.saleNone) + '</p>';
     SALE.set(before);
   };
