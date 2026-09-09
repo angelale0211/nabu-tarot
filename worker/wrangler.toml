@@ -12,6 +12,20 @@ compatibility_flags = ["nodejs_compat"]
 [triggers]
 crons = ["10 */6 * * *"]
 
+# Logs, declared here rather than switched on in the dashboard, because
+# `wrangler deploy` applies this file as the whole truth: a setting that lives
+# only in the dashboard is turned back off by the next deploy, quietly.
+#
+# They are worth having. This worker answers /billing, and when it refuses a
+# purchase it says only "check failed" to the phone - the real reason goes to
+# console.error, which went nowhere at all while logging was off. A buyer's
+# money was on the other side of that silence for two days.
+[observability.logs]
+enabled = true
+head_sampling_rate = 1
+invocation_logs = true
+persist = true
+
 [vars]
 ALLOWED_ORIGIN = "https://nabutarot.com"
 # Whose sign-ins this worker accepts. While it is empty the worker answers
