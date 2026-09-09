@@ -1,15 +1,18 @@
 # Nabu Tarot: brief for the next session
 
-Rewritten 2026-09-09, after **v190** went live.
+Rewritten 2026-09-09, after **v191** went live on the `play-billing` branch
+(not yet merged to `main` — that merge is the owner's call, not this
+session's).
 
 Open a new Claude Code window in `C:\Users\angel\nabu-tarot` and say:
 **"read NEXT-SESSION.md"**.
 
-**The task is Google Play Billing**, end to end: the bundle, the backend, the
-Play Console settings, and the change to how access works. Part 1 is the
-project. Part 2 is that task. Part 3 is what the session before you changed.
-Part 4 is the owner's standing rules and the layout facts. Read Part 2 before
-touching anything.
+**Google Play Billing is code-complete.** The client and worker sides are
+built, tested and committed. What is left is Google-Console configuration
+only the owner can do, plus four known follow-ups. Part 1 is the project.
+Part 2 is the billing state and what is left. Part 3 is what the session
+before you changed. Part 4 is the owner's standing rules and the layout
+facts. Read Part 2 before touching anything.
 
 ---
 
@@ -17,143 +20,175 @@ touching anything.
 
 - Trilingual (vi / en / de) tarot PWA. Repo `C:\Users\angel\nabu-tarot`, branch `main`. Live at https://nabutarot.com, deployed from GitHub `main` in about a minute.
 - Vanilla JS, no framework. `python build.py` joins `src/*.js` and `src/shell.html` into the committed `index.html`. UI strings live in `src/strings.js` under `T()`.
-- Suite: `PYTHONIOENCODING=utf-8 python test/run.py`. About 6 minutes, **604 checks, all passing at v190**. A second window uses `NABU_PORT=8766`.
-- **A release is: bump `APP_VERSION` in `src/main.js` AND `CACHE` in `sw.js` to the same new number, `python build.py`, run the suite, one commit, push.** Both markers, every time. The session before you shipped four releases without bumping either and left the app reporting a stale version; do not repeat it.
+- Suite: `PYTHONIOENCODING=utf-8 python test/run.py`. About 6 minutes, **622 checks, all passing at v191**. A second window uses `NABU_PORT=8766`.
+- **A release is: bump `APP_VERSION` in `src/main.js` AND `CACHE` in `sw.js` to the same new number, `python build.py`, run the suite, one commit, push.** Both markers, every time. A past session shipped four releases without bumping either and left the app reporting a stale version; do not repeat it.
 - One Cloudflare Worker, `nabu-ai`, at `https://nabu-ai.0211nhatanh.workers.dev`, reached through `CONFIG.aiEndpoint`. Deployed by `.github/workflows/worker.yml` on every push touching `worker/`.
 - The Android app is a **Trusted Web Activity** (`app.nabutarot.twa`): it opens the live site full screen. Content changes need no new bundle. Only the wrapper itself does.
 
 ---
 
-## Part 2. Your task — Google Play Billing
+## Part 2. Google Play Billing — where it stands after v191
 
-### What this is
+### What now exists
 
-Inside the Android app, the digital things — the four courses and the four
-unlocks, plus the wedding — are bought through Google Play, which takes 15%.
-On the website nothing changes: the same things are bought by bank transfer
-and unlocked by a code. **Readings with Nabu are never sold through Play**, on
-any platform: an hour of a person's time is not a digital good and Google's
-rule does not cover it.
+Both sides of the catalogue agree: `src/play-catalog.js` on the client and
+`worker/src/catalog.ts` on the worker list the same eight products with the
+same ids. Nothing is trusted from the phone — it hands the worker the token
+Play gave it, and the worker is the **only writer of entitlements**:
 
-The phone is never trusted about what it bought. It hands the worker the token
-Play gave it; the worker asks Google whether that token is real, for that
-product, for this app, and unused; then the worker writes the access onto the
-account.
+- The worker verifies every purchase directly with Google (product, app,
+  token, state) before writing anything.
+- A **token-keyed ledger** (`purchases/{sha256(token)}`, written by
+  `claimPurchase`) is claimed before access is granted, so the same token can
+  never be spent twice by two different accounts.
+- `/rtdn` receives Google's Real-time Developer Notifications (a signed
+  Pub/Sub push) and re-asks Google for the token's current truth rather than
+  trusting the notification's own claim — a duplicate, a late arrival or an
+  out-of-order push all land on the same answer.
+- A **cron reconciles every 6 hours** (`10 */6 * * *` in `worker/wrangler.toml`,
+  `reconcileSubs` in `worker/src/reconcile.ts`): it re-reads every live
+  subscription purchase row and rewrites the account from Google's actual
+  state, as a safety net for any missed RTDN and a repair for a lost
+  `users/{uid}.subs` row. The same scheduled tick also sweeps voided
+  one-time purchases (`sweepRefunds`).
+- The client has an **in-app store** (`class="store"` in the built page), a
+  **plans card**, and Play is the *only* payment method inside the Android
+  app. The **website is untouched**: bank transfer and codes only, no Play
+  UI rendered there (`BILL.can()` is false outside the installed app).
+- Readings with Nabu are still never sold through Play, on any platform: an
+  hour of a person's time is not a digital good.
 
-### Read these first, in this order
+### The four Play subscription product ids, confirmed against Google
 
-| File | What it is |
-|---|---|
-| `PLAN-PLAY-BILLING.md` | The risk analysis and the four phases. Still the best statement of *why* each piece exists |
-| `PLAN-PLAY-BILLING-FINDINGS.md` | What was built and **proved**, and what is left. Every line was checked against a real artefact |
-| `PLAN-PLAY-BILLING-UNBLOCK.md` | How the packaging blocker was diagnosed and cleared |
-| `docs/superpowers/specs/2026-09-08-play-billing-subscriptions-design.md` | The newer design. **Supersedes the "eight consumable products" plan.** Subscriptions for the recurring things |
-| `docs/superpowers/plans/2026-09-08-play-billing-subscriptions.md` | The plan that goes with it |
-| `PLAN-ORDERS-AND-ACCESS.md` | How orders, codes and access fit together |
+| Key | Play product id | Base plan length |
+|---|---|---|
+| `manifest` | `manifest_sub` | 12 months |
+| `plus` | `plus_sub` | 12 months |
+| `pro6` | `pro_sub` | 6 months (this is "Pro", the 6-month product) |
+| `pro` | `pro12_sub` | 12 months |
 
-⚠ **The `docs/superpowers/` files are untracked.** They are not in git and a
-careless `git clean` destroys them. Commit them early.
+Each of these four products has **exactly one active base plan**, and that is
+load-bearing: the TWA bridge (`android-browser-helper`) always launches a
+subscription's **first offer** and has no way to choose among several base
+plans. **Never add a second active base plan to any of these products, and
+never attach a free trial or promotional offer to one** — the code path that
+*displays* a price and the code path that *charges* the buyer pick their own
+offer independently, so a second offer can silently make those two paths
+disagree about what the buyer is getting or paying.
 
-### What is already built and deployed
+The four one-time products are unchanged in shape: `tarot`, `lenormand`,
+`playing`, `wedding` — each a one-time Play product, no subscription.
 
-Do not rebuild any of this. Read it first.
+### What the owner still has to do
 
-- `src/billing.js` — the Digital Goods API client. Absent on the web by design; `BILL.can()` is false outside the app.
-- `worker/src/play.ts` — signs a service-account JWT, checks the purchase with Google, refuses cancelled / pending / already-consumed tokens, writes access through the Firestore REST API, then acknowledges and consumes.
-- `worker/src/index.ts` `/billing` — requires a Firebase sign-in, rate limited, maps `pro` and `pro6` to also open `plus`.
-- `worker/src/refunds.ts` — a purchase is claimed in `purchases/{sha256(token)}` **before** any access is written, so the same token cannot be spent twice by two accounts. A daily cron sweeps Play's voided-purchases list and removes the access.
-- `worker/src/codes.ts` `/redeem` — codes are claimed on the worker, bound to an account, single use.
-- `firestore.rules` — `access` and `revoked` are admin-only; `purchases` takes no client writes.
+Nothing above needs more code. What is left is Google/Firebase console work
+only the owner can do:
 
-### What is verified, and what is only believed
+1. **Verify `firestore.rules` in the Firebase rules playground, then publish
+   it.** Until this is published, a signed-in person can still write their
+   own `access`/`subs` from a browser console — this is the single biggest
+   open hole and has nothing to do with Play.
+2. **Create the Pub/Sub topic and push subscription for Real-time Developer
+   Notifications**, and point Play at it (topic `play-rtdn`, push
+   subscription to `https://nabu-ai.0211nhatanh.workers.dev/rtdn` with
+   authentication enabled, service account
+   `nabu-worker@nabutarot.iam.gserviceaccount.com`, audience the same `/rtdn`
+   URL). Without this, entitlement changes only ever reach the account
+   through the 6-hourly reconcile, not immediately.
+3. **Add licence testers** (Play Console → Setup → Licence testing) — the
+   only way to buy without spending real money.
+4. **Upload the existing versionCode 2 AAB** to internal testing. Nothing new
+   needs building for this; the billing bridge this plan uses is already in
+   that bundle.
+5. **Check the payments profile is verified** (Play Console → Setup →
+   Payments profile). Until it says *Verified*, test purchases work but no
+   money is ever paid out.
 
-Verified on 2026-09-08 against real artefacts:
+Say this plainly to the owner: **until step 1 (the rules) is published, a
+signed-in person can still write their own access from a browser console.**
+That is true today, independent of anything else on this list.
 
-- A **billing-enabled AAB exists**: `C:\Users\angel\nabu-tarot-keys\pkg-billing-pkg-2026-09-08\Nabu Tarot.aab`, versionCode 2, upload key `B7:56`, `com.android.vending.BILLING` in the manifest, every URL inside pointing at `nabutarot.com`.
-- **Asset links are correct**: Google's Digital Asset Links service returns four verified keys for `app.nabutarot.twa` (deployment, hybrid classical, and both upload keys). Billing does not appear at all if this is wrong.
-- The **Play Developer API is enabled** on the Cloud project.
-- Play Billing forces **minSdkVersion 23**. Android 5 can no longer install. Unavoidable.
+### Known follow-ups, and why each was deferred
 
-Believed but **not proved**, and worth proving with the first real token:
+(a) **Retire expired `subs` rows and record provenance on non-Play grants.**
+Today, `recompute` in `worker/src/entitle.ts` lets a Play subscription row
+that names a key win outright over a non-Play grant for that same key — so a
+customer who holds *both* a website code and a Play subscription for the
+same access key silently **loses the longer of the two**: even a
+far-in-the-future code-granted date is shortened down to whatever Play's row
+says, because there is no field recording that the code grant did not come
+from Play. This cannot hurt anyone until Play sales actually begin, since no
+customer has a Play row yet — but it **must land before the first
+subscription is sold**, not after.
 
-- That Google refuses a token presented under a different product id.
-- The replay test should be run as the same token from **two different accounts**; the second must be refused. The same account twice is expected to succeed and must not open anything twice.
+(b) **Optimistic concurrency** (`currentDocument.updateTime` compare-and-set)
+on the Firestore writes the worker makes. This closes three concurrency
+findings that are currently parked/accepted rather than fixed — two
+concurrent writers (say, a `/billing` call and a `/rtdn` push landing at the
+same moment) can each read-then-write without noticing the other's change.
 
-### Blocked on the owner — nothing works until these are done
+(c) **`reconcile`'s Firestore query uses `limit: 500` with no cursor** —
+`worker/src/reconcile.ts`, the `structuredQuery` in `reconcileSubs`. Once
+there are meaningfully more than about 300 active subscription rows, some
+will silently stop being reconciled every 6 hours (RTDN still covers them
+individually). Revisit before the subscriber count gets near there.
 
-These are Play Console and Firebase jobs. You cannot do them.
-
-1. **Invite the service account.** `nabu-worker@nabutarot.iam.gserviceaccount.com` under Play Console → Users and permissions, with *View app information*, *View financial data*, *Manage orders*. Until then every purchase check answers `The caller does not have permission` and every buyer gets `check failed` **after paying**. This is the single biggest blocker.
-2. **Upload the AAB** above to the internal testing track. Version code 1 is taken; this is code 2.
-3. **Payments profile**, or Google sells nothing.
-4. **Create the products** — see the design decision below before creating any.
-5. **Licence testers** (Play Console → Setup → Licence testing). The only way to test without real money.
-6. **Republish `firestore.rules`.** Until this is done a signed-in person can still write their own access from a browser console. Nothing to do with Play, and the bigger hole of the two.
-
-### The design decision waiting for you
-
-The old plan said eight **consumable** one-time products. The newer design says
-one-time products for the courses and **subscriptions** for the recurring ones,
-and it found a hard constraint:
-
-> The android-browser-helper bridge inside the TWA launches a subscription with
-> `offerDetails.get(0)` — the *first* offer of the product. Nothing from the web
-> can pick a base plan.
-
-So **each offering must be its own Play product with a single base plan**. Pro
-6 months and Pro 12 months are two separate products, not two plans of one.
-Get this wrong in the Console and it cannot be fixed from the app.
-
-Confirm with the owner which shape they want before any product is created,
-because products are hard to change once they have buyers.
-
-### A live bug to fix before `pro6` is ever sold
-
-`worker/src/index.ts` grants `pro6` the access keys `['pro6', 'plus']`. But
-every Pro gate reads `proOn()`, which is `ACCESS.has('pro')` — `src/looks.js:15`
-— and `ACCESS.has()` (`src/core.js:165`) is a plain lookup with no aliasing.
-
-**So somebody who buys "Nabu Pro · 6 tháng" gets Plus and none of the companion
-features Pro is sold for.** This is true on the Play path and the `/redeem`
-code path alike. Verified in the current source on 2026-09-09. Decide whether
-`pro6` should grant `pro`, or `proOn()` should accept either, and fix it before
-that product can be bought.
+(d) **Website pricing in USD/EUR** for the English and German interfaces is
+still blocked: the four one-time products' prices are not returned by the
+Play API in a form the worker can currently surface to the website (which
+never talks to Play at all — it is bank-transfer only). This needs its own
+pricing source before it can ship.
 
 ### Not fixed, on purpose
 
-`ACCESS.has()` reads local storage, so somebody willing to edit their own
-browser can switch a course on. Closing that means the lesson text not being in
-the downloaded page at all, served from the worker only to accounts that hold
-it. That is a different app. Leave it unless the owner asks.
+`ACCESS.has()` (`src/core.js`) reads local storage, so somebody willing to
+edit their own browser can switch a course on. Closing that means the lesson
+text not being in the downloaded page at all, served from the worker only to
+accounts that hold it — a different app. Leave it unless the owner asks.
 
-### How to test — none of it on this PC
+### What has NOT been tested
 
-Nothing here can be tested locally or in the 604-check suite. Each step needs a
-real phone and a licence-tester account.
-
-1. Internal testing track (instant, no review).
-2. Install; the app must open with no browser bar, or billing will not appear.
-3. Open a course page; Play's own price and a Buy button must show.
-4. Buy with the test card. The course opens, `users/{uid}.access` shows the date in the Firebase console, the worker log says `granted`.
-5. Buy again: the date extends rather than resets.
-6. Refund from the Console; the daily sweep must revoke it.
-7. Sign in on a second phone; the course is open there too.
-
-Budget about a week of elapsed time, most of it waiting for uploads.
+Be plain about this with the owner: **nothing in this feature has been
+tested on a real phone, and no real purchase — test or otherwise — has ever
+been made.** Everything above is verified by the 622-check browser suite and
+the 50-check worker suite (both mocked), plus a clean `tsc --noEmit`. The
+first real signal will come from a licence tester on a real device, once the
+owner's checklist above is done.
 
 ### Rollback
 
 Every piece degrades on its own: remove the worker secret and `/billing`
-answers `not configured` and the app shows the code box; an old AAB or the web
-leaves `BILL.can()` false; the rules can be republished from git. No step takes
-more than an hour to walk back.
+answers `not configured`; the client's store hides itself when
+`BILL.can()` is false (any device outside the installed, verified TWA); the
+rules can be republished from git. No step takes more than an hour to walk
+back.
 
 ---
 
-## Part 3. What the session before you changed (2026-09-08 → 09)
+## Part 3. What the session before you changed
 
-Five releases, ending at **v190**. Full detail in **`HANDOFF-GERMAN-PASS.md`**;
-this is what you need to know so nothing surprises you.
+### v191 (2026-09-09) — Google Play Billing, released on `play-billing`
+
+Version bump, build and full suite only — the billing implementation itself
+was written and reviewed in earlier sessions on this branch (see Part 2 for
+the current state of that work). This release:
+
+- Bumped `APP_VERSION`/`CACHE` to `v191` and rebuilt (`index.html`, `1` hit
+  for `v191`, `1` hit for `class="store"`, `0` remaining `VI-OWNER:` markers
+  in `src/strings.js` — the release gate that every customer-facing string is
+  owner-approved).
+- Ran the full suite clean: **622 checks, 622 passed, 0 failed**. Worker
+  suite **50/50**, `npm run typecheck` clean.
+- Committed on `play-billing`. **Not pushed, not merged to `main`.** The
+  merge — which is what actually deploys the live site — is the owner's
+  decision, not a release step this session took.
+- v190 (German localisation pass) had already shipped and merged before
+  this; do not confuse the two numbers.
+
+### v190 and earlier (2026-09-08 → 09) — five releases ending at v190
+
+Full detail in **`HANDOFF-GERMAN-PASS.md`**; this is what you need to know so
+nothing surprises you.
 
 - **The whole localization review was applied.** German now covers the 540 course Q&A, all 78 card insights (`src/insight-de.js`, a new file registered in `build.py`), the 26 guides, spreads, lessons, quizzes, and `STR.de` with no English fallback. All three `STR` blocks hold exactly 1609 keys.
 - **The privacy policy was factually wrong and is corrected.** It said Nabu AI used Google Gemini. It does not: `CONFIG.geminiKey` is empty, so questions go to the Cloudflare Worker, which answers with Anthropic Claude. `PLAY-DATA-SAFETY.md` (new, repo root) carries the matching Play Console Data safety answers — **read it before you touch that form as part of the billing work**.

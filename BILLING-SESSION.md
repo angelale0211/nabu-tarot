@@ -4,19 +4,53 @@ Open a new Claude Code window in `C:\Users\angel\nabu-tarot` and say:
 **"read BILLING-SESSION.md"**.
 
 Read `HANDOVER.md` too for the traps that will otherwise cost you an hour, and
-`PLAN-PLAY-BILLING.md` for the full risk analysis. This file is the short version.
+`docs/superpowers/specs/2026-09-08-play-billing-subscriptions-design.md` for
+the full design. This file is the short version. For the fuller current
+picture — the owner's remaining checklist and the known follow-ups — see
+`NEXT-SESSION.md` Part 2.
 
 ---
 
 ## The state in one paragraph
 
-Billing is **written and shipped, and switched off**. Shipped in v168, dormant
-because it needs configuration that only the owner can create in Google's
-consoles. Nothing is half-finished in the code: with the configuration absent
-the endpoint answers `not configured` and the app shows its code box, exactly as
-before. Nothing here can be tested on this machine - Play Billing only works
-through a published Play track, so the first real test is a licence-tester
-account on a real Android phone.
+As of **v191** (released on branch `play-billing`, not yet merged to `main`),
+billing is **code-complete on both sides and covered by the automated
+suites, and still switched off in practice** — not because anything is
+missing in the code, but because it needs configuration only the owner can
+create in Google's and Firebase's consoles (see `NEXT-SESSION.md` Part 2 for
+the exact checklist). Nothing here has been tested on a real phone, and no
+real purchase — test or otherwise — has ever been made: the 622-check
+browser suite and the 50-check worker suite are both mocked. The first real
+signal will come from a licence tester on a real device, once the owner's
+console checklist is done.
+
+## The catalogue — four one-time products, four subscriptions
+
+| Key | Play product id | Kind | Length |
+|---|---|---|---|
+| `tarot` | `tarot` | one-time (in-app product) | opens the Tarot course |
+| `lenormand` | `lenormand` | one-time (in-app product) | opens the Lenormand course |
+| `playing` | `playing` | one-time (in-app product) | opens the Playing-cards course |
+| `wedding` | `wedding` | one-time (in-app product) | pays for one named wedding room |
+| `manifest` | `manifest_sub` | subscription | 12 months |
+| `plus` | `plus_sub` | subscription | 12 months |
+| `pro6` | `pro_sub` | subscription | 6 months — this is "Nabu Pro · 6 tháng" |
+| `pro` | `pro12_sub` | subscription | 12 months — "Nabu Pro · 12 tháng" |
+
+**Pro is two separate subscription products** (`pro_sub` for 6 months,
+`pro12_sub` for 12 months), not one product with two base plans — every
+subscription product here has exactly one active base plan. That is
+load-bearing: the TWA bridge (`android-browser-helper`) always launches a
+subscription's **first offer**, so a second base plan on one product is
+unreachable from the app, and a promotional/trial offer would let the price
+shown and the price charged disagree. Both `src/play-catalog.js` (client)
+and `worker/src/catalog.ts` (worker) list the same eight ids —
+`PLAY_SUB_SKUS` in each file is the single place the four subscription ids
+are named, and a test asserts the two files agree.
+
+Readings with Nabu are **never** sold through Play, on any platform: an hour
+of a person's time is not a digital good and Google's rule does not cover
+it.
 
 ## What is already built
 
@@ -24,9 +58,13 @@ account on a real Android phone.
 |---|---|
 | `worker/src/play.ts` | Signs a service-account JWT with WebCrypto, swaps it for an OAuth token, asks Google whether a purchase token is real, refuses cancelled / pending / already-consumed, writes the access through the Firestore REST API, then acknowledges **and** consumes |
 | `worker/src/index.ts` → `/billing` | Requires a Firebase sign-in, rate limited, maps `pro`/`pro6` to also open `plus` |
-| `src/billing.js` | The Digital Goods API client. `BILL.can()` is false anywhere but the installed Android app, so the website is untouched |
-| `src/learn.js` | Inside the app: Play's own price and a Buy button when Play answers; the code box otherwise |
-| `worker/wrangler.toml` | `FIREBASE_PROJECT_ID` and `ANDROID_PACKAGE`, both empty on purpose |
+| `worker/src/rtdn.ts` → `/rtdn` | Receives Google's Real-time Developer Notifications through a signed Pub/Sub push. Never trusts the notification's own claim about what changed — it re-asks Google for the token's current truth and applies that, so a duplicate, late, or out-of-order push all land on the same answer. Always answers `204` once the caller is verified as Google, so Pub/Sub does not retry forever on an unrelated error |
+| `worker/src/reconcile.ts` → `reconcileSubs`, run from the `scheduled` handler in `index.ts` | Every 6 hours (`10 */6 * * *` in `wrangler.toml`), re-reads every live subscription purchase row and rewrites the account from Google's actual state — the safety net for a missed RTDN and the repair for a lost `users/{uid}.subs` row. The same tick also sweeps voided one-time purchases (`sweepRefunds` in `worker/src/refunds.ts`) |
+| `worker/src/refunds.ts` | A purchase is claimed in `purchases/{sha256(token)}` **before** any access is written, so the same token cannot be spent twice by two accounts. Also exports `removeAccessFor`, used by both the refund sweep and `/rtdn` |
+| `src/billing.js` | The Digital Goods API client. `BILL.can()` is false anywhere but the installed, verified Android app, so the website is untouched |
+| `worker/src/codes.ts` → `/redeem` | Codes are claimed on the worker, bound to an account, single use |
+| `firestore.rules` | `access`, `revoked` and `subs` are admin-only; `purchases` takes no client writes — **not live until the owner republishes it in the Firebase console** |
+| `worker/wrangler.toml` | `FIREBASE_PROJECT_ID`, `ANDROID_PACKAGE`, `RTDN_AUDIENCE`, `RTDN_PUSH_EMAIL` |
 
 Order of operations in the worker matters and is deliberate: **the access is
 written before the purchase is acknowledged**. An acknowledged purchase Google
@@ -34,24 +72,18 @@ will not refund, that the buyer never received, is the worst outcome available.
 
 ## What has to exist before any of it runs (the owner's work)
 
-1. **Payments profile** — Play Console → Setup → Payments profile.
-2. **Eight in-app products**, Monetise → Products → In-app products, each a
-   **consumable** managed product, IDs exactly:
-   `tarot` `lenormand` `playing` `manifest` `plus` `pro6` `pro` `wedding`
-   (300k, 300k, 300k, 75k, 79k, 149k, 249k, 30k đồng respectively).
-   Consumable because every one of them runs out — six months or twelve — and
-   is then bought again.
-3. **A service account** — Google Cloud → IAM → Service accounts → JSON key.
-   Link it in Play Console → Setup → API access with *View financial data* and
-   *Manage orders*; in Firebase give it *Cloud Datastore User*.
-4. **Worker secrets** — `npx wrangler secret put PLAY_SERVICE_ACCOUNT` (the whole
-   JSON), and in `wrangler.toml` set `FIREBASE_PROJECT_ID = "nabutarot"` and
-   `ANDROID_PACKAGE = "app.nabutarot.twa"`. **There is no Node on this machine**;
-   either the owner runs this elsewhere or it goes through `worker.yml` in CI.
-5. **A billing-enabled AAB** from PWABuilder (there is a checkbox), uploaded to a
-   testing track. The current AAB has no billing library in it.
-6. **Licence testers** — Play Console → Setup → Licence testing. The only way to
-   buy without real money.
+The full numbered checklist lives in `NEXT-SESSION.md` Part 2. In short:
+
+1. **Verify and publish `firestore.rules`** in the Firebase rules
+   playground. Until this is done, a signed-in person can still write their
+   own access from a browser console.
+2. **Create the Pub/Sub topic and push subscription** for Real-time
+   Developer Notifications and point Play at `/rtdn`.
+3. **Add licence testers** (Play Console → Setup → Licence testing) — the
+   only way to buy without real money.
+4. **Upload the existing versionCode 2 AAB** to internal testing — nothing
+   new needs building.
+5. **Check the payments profile is verified**, or no money is ever paid out.
 
 ## Then, in this order
 
@@ -66,28 +98,32 @@ will not refund, that the buyer never received, is the worst outcome available.
    date in the Firebase console, and the worker log says `granted`.
 6. Buy again — it should be offered again (consumed) and the date should extend
    rather than reset.
-7. Refund it from the Console and confirm nothing revokes it yet — that is
-   Phase 4, below, and is not built.
+7. Refund it from the Console and confirm the access is revoked — either at
+   once through `/rtdn`, or within 6 hours through the reconcile/refund-sweep
+   cron. Both are built and covered by the worker suite; neither has been
+   exercised against a real refund yet.
 
 Budget a week of elapsed time. Most of it is waiting for uploads to propagate.
 
-## What is deliberately not built yet
+## Known follow-ups (not blockers, but real)
 
-**Phase 2 — close the money leaks.** This matters more than billing does.
-`firestore.rules` currently lets a signed-in person write their own `access`
-field, so anyone who opens a browser console can grant themselves every course;
-and a code is not bound to the account that redeemed it, so one code works for
-everybody it is passed to. Billing satisfies Google's policy either way, but it
-protects no revenue until this is done. The work: `access` and `revoked` become
-admin-only in the rules, and code redemption moves to a worker `/redeem`
-endpoint that records `by: uid` and refuses a code already used by somebody
-else. It does not depend on Play at all and can be done first.
+These are tracked in full in `NEXT-SESSION.md` Part 2; short version:
 
-**Phase 4 — refunds.** A buyer can refund within 48 hours and keep the access
-the worker granted. Nothing tells the worker. Needs a daily job calling
-`purchases.voidedpurchases.list` and removing what it finds, plus a
-`purchases/{token}` document per grant so a voided token maps back to whose
-access to take away. That document is also the sales ledger the Pay tab wants.
+- **Retire expired `subs` rows and record provenance on non-Play grants.** A
+  Play subscription row that names a key wins outright over a non-Play grant
+  for that key, so a customer holding both a website code and a Play
+  subscription for the same key silently **loses the longer of the two** —
+  even a far-future code date gets shortened to Play's. Harmless until Play
+  sales begin (no customer has a Play row yet), but must land before the
+  first subscription is sold.
+- **Optimistic concurrency** (`currentDocument.updateTime` compare-and-set)
+  on the worker's Firestore writes — closes three concurrency findings
+  currently accepted rather than fixed.
+- **`reconcileSubs`'s Firestore query has `limit: 500` and no cursor** —
+  revisit before the subscriber count gets near there.
+- **Website pricing in USD/EUR** is still blocked on the four one-time
+  products' prices, which the Play API does not return to a channel that
+  never talks to Play (the website is bank-transfer only).
 
 **Not fixable at all**: `ACCESS.has()` reads localStorage, so somebody willing
 to edit their own browser storage can switch a course on regardless. Closing
