@@ -201,9 +201,16 @@ async function go(hash, sel) { W().location.hash = hash; await sleep(30); return
        worker/src/codes.ts, in the same order - behind a stand-in fetch, with
        a stand-in account document for the app to read back. */
     const cdocs = {};
-    const cdb = { collection: (c) => ({ doc: (id) => ({
-      get: async () => ({ exists: cdocs[c + '/' + id] !== undefined, data: () => cdocs[c + '/' + id] }),
-      set: async (v, o) => { cdocs[c + '/' + id] = (o && o.merge) ? Object.assign({}, cdocs[c + '/' + id] || {}, v) : v; } }) }) };
+    const cdb = { collection: (c) => ({
+      doc: (id) => ({
+        get: async () => ({ exists: cdocs[c + '/' + id] !== undefined, data: () => cdocs[c + '/' + id] }),
+        set: async (v, o) => { cdocs[c + '/' + id] = (o && o.merge) ? Object.assign({}, cdocs[c + '/' + id] || {}, v) : v; } }),
+      /* Enough of a query stand-in for BILL.resolveWeddingWid(): array-contains
+         over the fake weddings/bonds documents kept in cdocs. */
+      where: (field, op, val) => ({
+        get: async () => ({ docs: Object.keys(cdocs).filter((k) => k.indexOf(c + '/') === 0).map((k) => ({ id: k.slice(c.length + 1), data: () => cdocs[k] }))
+          .filter((d) => { const v = d.data()[field]; return op === 'array-contains' ? (Array.isArray(v) && v.indexOf(val) > -1) : v === val; }) })
+      }) }) };
     const book = { salt: 'testsalt', codes: {} };
     const say = (status, j) => ({ ok: status < 300, status: status, json: async () => j });
     let codeKeep = null;
@@ -1201,6 +1208,40 @@ async function go(hash, sel) { W().location.hash = hash; await sleep(30); return
       play.cancelNext = true;
       const cancelled = await N.BILL.buy('playing').catch((e) => e);
       ok(cancelled instanceof Error && /Abort|cancel/i.test(cancelled.name + cancelled.message) && !N.ACCESS.has('playing'), 'a cancelled Play sheet opens nothing and is not an error the buyer is blamed for');
+      /* F1: switching away from a plan the account does not currently grant
+         (never bought, or lapsed) is an ordinary purchase - Play naturally has
+         no token for it, and that is fine. */
+      const reqBefore = play.requests.length;
+      const swNorm = await N.BILL.buy('pro', { oldKey: 'pro6' });
+      ok(swNorm.opened.indexOf('pro') > -1 && N.ACCESS.has('pro') && play.requests[play.requests.length - 1].oldSku === undefined && play.requests.length === reqBefore + 1,
+        'switching away from a plan the account does not currently grant proceeds as an ordinary purchase, with nothing named as replaced');
+      /* F1: the account currently grants pro6, but Play can no longer produce
+         its token (lost, uninstalled, whatever the reason) - buying pro on top
+         must be refused, never quietly doubled. */
+      await N.BILL.buy('pro6');
+      ok(N.SUBS.of('pro6') && N.SUBS.of('pro6').grant, 'pro6 grants right after buying it');
+      const pro6Tok = Object.keys(play.subs).filter((t) => play.subs[t].sku === N.playItem('pro6').sku)[0];
+      delete play.subs[pro6Tok];
+      const reqBefore2 = play.requests.length;
+      const oldmissing = await N.BILL.buy('pro', { oldKey: 'pro6' }).catch((e) => e);
+      /* Not "instanceof Error": the throw happens inside the iframe's own
+         realm, so its Error prototype is not this page's Error prototype -
+         the message is what carries across. */
+      ok(oldmissing && oldmissing.message === 'oldmissing' && play.requests.length === reqBefore2,
+        'switching away from a plan the account still grants, when Play can no longer find its token, is refused before any purchase starts - never a silent second bill');
+      /* F2: a wedding token Play still remembers but that matches no unpaid
+         room for this account (lost wid, evicted pending entry, whatever the
+         cause) is retried a bounded number of times, then surfaced - never
+         retried forever in silence. */
+      w.localStorage.removeItem('nabu-alerts');
+      const wtok = 'tokWed' + (play.next++);
+      play.products[wtok] = { sku: N.playItem('wedding').sku, state: 'ok' };
+      let failedTotal = 0;
+      for (let i = 0; i < 8; i++) { const rr = await N.BILL.restore(); failedTotal += rr.failed; }
+      ok(failedTotal >= 1 && !N.BILL.pendingList().some((p) => p.token === wtok) && N.ALERTS.all().some((a) => a.id.indexOf('billstuck-') === 0),
+        'a wedding purchase whose room cannot be resolved is retried a bounded number of times, then surfaced and dropped - never forever and never silently');
+      delete play.products[wtok];
+      N.ALERTS.clear();
       await playMode(false); }
     /* ---- the red thread ---- */
     { /* A stand-in for Firestore: documents in an object, and listeners told

@@ -12,7 +12,7 @@
      carries this notice with it. See LICENSE. -->
 <meta name="author" content="Nabu Tarot">
 <meta name="copyright" content="Copyright (c) 2025-2026 Nabu Tarot. All rights reserved.">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'none'; object-src 'none'; form-action 'self'; script-src 'self' 'sha256-8u3atUn69d8zJ58f+OhER1bQfT4Qt/N8eofPGNE2QAc=' https://www.gstatic.com https://apis.google.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; font-src 'self' data:; media-src 'self' data: blob:; worker-src 'self'; connect-src 'self' https://*.googleapis.com https://*.google.com https://*.firebaseio.com https://*.cloudfunctions.net https://*.workers.dev https://generativelanguage.googleapis.com; frame-src https://*.firebaseapp.com https://accounts.google.com https://*.facebook.com">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'none'; object-src 'none'; form-action 'self'; script-src 'self' 'sha256-rVBiTOlE9FKVJucNtzzcMYj8CxdO0fV3kTaO4E6ldog=' https://www.gstatic.com https://apis.google.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; font-src 'self' data:; media-src 'self' data: blob:; worker-src 'self'; connect-src 'self' https://*.googleapis.com https://*.google.com https://*.firebaseio.com https://*.cloudfunctions.net https://*.workers.dev https://generativelanguage.googleapis.com; frame-src https://*.firebaseapp.com https://accounts.google.com https://*.facebook.com">
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <meta name="theme-color" content="#EFE9FA">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -21517,6 +21517,8 @@ async function revokeCode(hash) {
 
 const PLAY_METHOD = 'https://play.google.com/billing';
 const PLAY_PENDING = 'nabu-play-pending';
+const PLAY_PENDING_MAX = 50;  // a hard ceiling; PLAY_GIVE_UP below is what actually retires a stuck row
+const PLAY_GIVE_UP = 8;       // tries before a row that keeps failing for a reason other than "already used" is surfaced and dropped
 
 const BILL = {
   service: null, details: {}, starting: null, ready: false,
@@ -21561,8 +21563,38 @@ const BILL = {
   },
 
   pendingList() { const a = store.get(PLAY_PENDING, []); return Array.isArray(a) ? a : []; },
-  remember(rec) { store.set(PLAY_PENDING, this.pendingList().filter((p) => p.token !== rec.token).concat([rec]).slice(-10)); },
+  /* A token that has not yet been accepted by the worker is never silently
+     dropped to make room. The cap is a last resort - the real way this list
+     shrinks is give-up, in restore(), which is never silent - so if it is
+     ever reached, the rows nearest giving up anyway (the most tries so far)
+     are the ones dropped, never a token still on its first try. */
+  remember(rec) {
+    const list = this.pendingList().filter((p) => p.token !== rec.token).concat([rec]);
+    if (list.length > PLAY_PENDING_MAX) { list.sort((a, b) => (b.tries || 0) - (a.tries || 0)); list.length = PLAY_PENDING_MAX; }
+    store.set(PLAY_PENDING, list);
+  },
   forget(token) { store.set(PLAY_PENDING, this.pendingList().filter((p) => p.token !== token)); },
+  /* A row that could not be resolved after every bounded retry, said once,
+     without ever repeating the token it cost. */
+  flagStuck(rec) {
+    if (typeof ALERTS === 'undefined') return;
+    ALERTS.add({ id: 'billstuck-' + (rec.sku || 'x') + '-' + (rec.at || Date.now()), k: 'app', t: T().buyFailed, b: '', href: '#/me' });
+  },
+  /* A wedding is paid for a room, but Play only ever knows the sku, never
+     which room - the room's id lives only in the wid this phone carried at
+     the moment of paying. If that is lost (a reinstall, cleared storage, the
+     pending list evicted), the room can still be found: it was made before it
+     was paid for, so the signed-in buyer is already a member of it. Guessed
+     only when there is exactly one unpaid room to guess - none or several and
+     this returns '', which is "do not guess", not "pick one". */
+  async resolveWeddingWid() {
+    if (!BE.db || !BE.user) return '';
+    try {
+      const s = await BE.db.collection('weddings').where('uids', 'array-contains', BE.user.uid).get();
+      const rooms = (s.docs || []).map((d) => Object.assign({ id: d.id }, d.data())).filter((w) => !w.paid);
+      return rooms.length === 1 ? rooms[0].id : '';
+    } catch (e) { return ''; }
+  },
 
   /* Hand a token to the worker. Resolves { ok, opened, access, subs } or
      { pending: true }; throws with the worker's word for anything refused. */
@@ -21590,10 +21622,15 @@ const BILL = {
     const data = { sku: it.sku };
     if (opt.oldKey) {
       /* The bridge replaces a subscription when told which one, by its sku and
-         its own token; the token is what listPurchases hands back. */
+         its own token; the token is what listPurchases hands back. If the
+         account is currently holding the old plan but Play cannot produce its
+         token, buying a new one anyway would double-bill silently - a lapsed
+         or already-expired old plan is the only case safe to proceed as a
+         plain new purchase. */
       const old = playItem(opt.oldKey), held = await this.service.listPurchases().catch(() => []);
       const row = (held || []).filter((p) => old && p.itemId === old.sku)[0];
       if (row) { data.oldSku = old.sku; data.purchaseToken = row.purchaseToken; }
+      else if ((SUBS.of(opt.oldKey) || {}).grant) throw new Error('oldmissing');
     }
     const req = new PaymentRequest([{ supportedMethods: PLAY_METHOD, data: data }],
       { total: { label: L((courseOf(key) || { name: { vi: key, en: key } }).name), amount: { currency: 'VND', value: '0' } } });
@@ -21611,28 +21648,64 @@ const BILL = {
       throw e;
     }
     if (out.pending) return out;
-    try { await BE.pullProfile(); } catch (e) { if (out.access) store.set('nabu-access', out.access); if (out.subs) store.set('nabu-subs', out.subs); }
+    /* A wedding is used up the moment it is granted - one room, one payment -
+       so it is consumed rather than left for Play to keep handing back
+       forever, which is what would make a later restore() unable to tell a
+       done purchase from a stuck one. */
+    if (it.key === 'wedding' && this.service && typeof this.service.consume === 'function') { try { await this.service.consume(token); } catch (e) { /* best effort */ } }
+    /* The worker's own answer is written first and unconditionally - it is
+       the one place that knows what was just bought - then sync() reconciles
+       everything else Play or the account may also be holding. sync() never
+       throws, so nothing here is lost if that reconciliation cannot reach the
+       network right now. */
+    if (out.access) store.set('nabu-access', out.access);
+    if (out.subs) store.set('nabu-subs', out.subs);
+    await this.sync();
     return { opened: out.opened || it.opens };
   },
 
   /* Everything Play says this Google account holds, plus everything this
      phone is still waiting on, sent to the worker again. Safe to repeat: the
-     worker answers a repeat with what it already did. */
+     worker answers a repeat with what it already did. A row that keeps
+     failing for a reason that is not "already used" is retried a bounded
+     number of times and then given up on out loud - never forever, and never
+     silently. */
   async restore() {
-    const out = { tried: 0, opened: 0, pending: 0 };
+    const out = { tried: 0, opened: 0, pending: 0, failed: 0 };
     await this.start();
     if (!this.can() || !BE.enabled || !BE.user) return out;
-    const seen = {};
     const list = (await this.service.listPurchases().catch(() => [])) || [];
-    const rows = list.map((p) => ({ sku: p.itemId, token: p.purchaseToken })).concat(this.pendingList());
-    for (const p of rows) {
-      if (!p.token || seen[p.token] || !playItemBySku(p.sku)) continue;
-      seen[p.token] = true; out.tried++;
+    /* Keyed by token so each purchase is looked at once. A pending record
+       already knows more than Play's bare list - its wid, its tries so far -
+       so it wins the merge rather than being shadowed by a fresh, empty-
+       looking row that happens to carry the same token. */
+    const byToken = {};
+    list.forEach((p) => { if (p.purchaseToken) byToken[p.purchaseToken] = { sku: p.itemId, token: p.purchaseToken }; });
+    this.pendingList().forEach((p) => { if (p.token) byToken[p.token] = Object.assign({}, byToken[p.token], p); });
+    for (const token of Object.keys(byToken)) {
+      const p = byToken[token], it = playItemBySku(p.sku);
+      if (!it) continue;
+      out.tried++;
+      let wid = p.wid;
       try {
-        const extra = p.wid ? { wid: p.wid } : undefined;
-        const r = await this.verify(p.sku, p.token, extra);
-        if (r.pending) out.pending++; else out.opened++;
-      } catch (e) { if (String(e && e.message) === 'already used') this.forget(p.token); }
+        /* Play never carries the room's id, only the sku, so a wedding token
+           rediscovered with no wid has to be resolved before it is sent -
+           never guessed. */
+        if (it.key === 'wedding' && !wid) wid = await this.resolveWeddingWid();
+        if (it.key === 'wedding' && !wid) throw new Error('noroom');
+        const r = await this.verify(p.sku, token, wid ? { wid: wid } : undefined);
+        if (r.pending) { out.pending++; }
+        else {
+          out.opened++;
+          if (it.key === 'wedding' && this.service && typeof this.service.consume === 'function') { try { await this.service.consume(token); } catch (e2) { /* best effort */ } }
+        }
+      } catch (e) {
+        const msg = String(e && e.message);
+        if (msg === 'already used') { this.forget(token); continue; }
+        const tries = (p.tries || 0) + 1;
+        if (tries >= PLAY_GIVE_UP) { this.forget(token); out.failed++; this.flagStuck(p); }
+        else this.remember(Object.assign({}, p, { token: token, tries: tries }));
+      }
     }
     try { await BE.pullProfile(); } catch (e) { /* offline: the account is read next time */ }
     return out;
