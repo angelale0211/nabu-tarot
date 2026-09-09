@@ -140,7 +140,15 @@ async function removeAccess(env: PlayEnv, uid: string, ids: string[]): Promise<s
   const at = await serviceToken(env, FS_SCOPE);
   const base = docUrl(env, "users/" + encodeURIComponent(uid));
   const cur = await fetch(base, { headers: { Authorization: "Bearer " + at } });
-  if (!cur.ok) return [];
+  /* 404 is an answer: there is no such account document, so it holds nothing
+     and there is nothing to take back. Every other failure - 429, 500, 503, a
+     dropped connection - is OUR problem, not an empty account, and returning
+     [] for it let the caller mark the refund `voided` while the buyer kept the
+     course for ever: the next sweep sees state=voided and skips the row. The
+     one thing this sweep must never do is record a refund it did not carry
+     out. Throwing leaves the row untouched for the next pass. */
+  if (cur.status === 404) return [];
+  if (!cur.ok) throw new Error("firestore " + cur.status);
   const doc = (await cur.json()) as { fields?: { access?: { mapValue?: { fields?: Record<string, { stringValue?: string }> } } } };
   const held = doc.fields?.access?.mapValue?.fields || {};
 
@@ -224,7 +232,17 @@ export async function sweepRefunds(env: PlayEnv): Promise<Swept> {
     if (wid) { const undone = await unpayRoom(env, wid, id); await markVoided(env, id, undone ? ["wedding:" + wid] : []); out.matched++; if (undone) out.revoked++; continue; }
     if (!uid || !ids.length) { out.skipped++; continue; }
     out.matched++;
-    const taken = await removeAccess(env, uid, ids);
+    /* If the account could not be read, the row is left exactly as it is and
+       tried again next pass. Marking it voided here would close the refund on
+       a course that was never taken back - the same shape as the R3 finding
+       above, one level further in. */
+    let taken: string[];
+    try { taken = await removeAccess(env, uid, ids); }
+    catch (e) {
+      out.matched--; out.skipped++;
+      console.log(JSON.stringify({ at: "refund", uid, deferred: String((e as Error).message || e), order: v.orderId || "" }));
+      continue;
+    }
     await markVoided(env, id, taken);
     if (taken.length) out.revoked++;
     console.log(JSON.stringify({ at: "refund", uid, took: taken, order: v.orderId || "" }));

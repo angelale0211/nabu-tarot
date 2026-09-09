@@ -212,3 +212,70 @@ test("sweepRefunds: a room paid for by a DIFFERENT purchase is left alone", asyn
     assert.equal((docs["weddings/a__b"].purchase as { stringValue?: string }).stringValue, otherId);
   } finally { m.restore(); }
 });
+
+/* The refund sweep's job is to take a course back. The one thing it must never
+   do is record that it did so when it did not. removeAccess() read
+   users/{uid} and answered [] for every failure - a 503 as readily as a
+   genuinely empty account - and the caller then marked the ledger row
+   `voided`. The next pass sees state=voided and skips it, so a single blip
+   during one nightly sweep left a refunded buyer holding the course for ever,
+   with the ledger saying it had been handled. 404 still means "no such
+   account", which really is nothing to take. */
+test("R3b: a transient failure READING the account defers the refund, and never marks it voided", async () => {
+  const k = await makeKeys();
+  const id = await tokenId("SOFTTOK");
+  const docs: Record<string, Record<string, unknown>> = {
+    ["purchases/" + id]: fsDoc({ uid: "u9", sku: "tarot", ids: ["tarot"], state: "granted" }).fields,
+    ["users/u9"]: fsDoc({ access: { tarot: "2099-01-01" } }).fields,
+  };
+  const m = mockFetch(k, {
+    "voidedpurchases": () => json({ voidedPurchases: [{ purchaseToken: "SOFTTOK", orderId: "GPA.soft" }] }),
+    "firestore.googleapis.com": (url, init) => {
+      const key = url.split("/documents/")[1].split("?")[0];
+      if (key === "users/u9" && init.method !== "PATCH") return json({ error: "unavailable" }, 503);
+      if (init.method === "PATCH") {
+        docs[key] = Object.assign(docs[key] || {}, JSON.parse(String(init.body)).fields);
+        return json({ name: key });
+      }
+      return docs[key] ? json({ fields: docs[key] }) : json({}, 404);
+    },
+  });
+  try {
+    const swept = await sweepRefunds(env(k));
+    assert.equal(swept.revoked, 0);
+    assert.equal(swept.skipped, 1);
+    assert.equal(swept.matched, 0);
+    // the ledger row is untouched, so the next pass tries again
+    assert.equal((docs["purchases/" + id].state as { stringValue?: string }).stringValue, "granted");
+    // and the course was not quietly left behind a "voided" mark
+    assert.ok(!("voidedAt" in docs["purchases/" + id]));
+  } finally { m.restore(); }
+});
+
+/* The opposite case, so the 404 shortcut cannot rot into "swallow everything":
+   an account document that genuinely does not exist holds nothing, the refund
+   is real, and it must be closed rather than retried every night for a week. */
+test("R3b: a 404 on the account is a real answer - nothing to take, and the refund is closed", async () => {
+  const k = await makeKeys();
+  const id = await tokenId("NOACCTTOK");
+  const docs: Record<string, Record<string, unknown>> = {
+    ["purchases/" + id]: fsDoc({ uid: "gone", sku: "tarot", ids: ["tarot"], state: "granted" }).fields,
+  };
+  const m = mockFetch(k, {
+    "voidedpurchases": () => json({ voidedPurchases: [{ purchaseToken: "NOACCTTOK", orderId: "GPA.gone" }] }),
+    "firestore.googleapis.com": (url, init) => {
+      const key = url.split("/documents/")[1].split("?")[0];
+      if (init.method === "PATCH") {
+        docs[key] = Object.assign(docs[key] || {}, JSON.parse(String(init.body)).fields);
+        return json({ name: key });
+      }
+      return docs[key] ? json({ fields: docs[key] }) : json({}, 404);
+    },
+  });
+  try {
+    const swept = await sweepRefunds(env(k));
+    assert.equal(swept.matched, 1);
+    assert.equal(swept.revoked, 0);
+    assert.equal((docs["purchases/" + id].state as { stringValue?: string }).stringValue, "voided");
+  } finally { m.restore(); }
+});
