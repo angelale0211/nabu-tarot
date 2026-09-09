@@ -136,7 +136,7 @@ export async function voidedSince(env: PlayEnv, sinceMs: number): Promise<Voided
    Only the courses this purchase opened, and only if they are still the ones
    it opened. Somebody who refunds one course and keeps another must keep the
    other. */
-export async function removeAccess(env: PlayEnv, uid: string, ids: string[]): Promise<string[]> {
+async function removeAccess(env: PlayEnv, uid: string, ids: string[]): Promise<string[]> {
   const at = await serviceToken(env, FS_SCOPE);
   const base = docUrl(env, "users/" + encodeURIComponent(uid));
   const cur = await fetch(base, { headers: { Authorization: "Bearer " + at } });

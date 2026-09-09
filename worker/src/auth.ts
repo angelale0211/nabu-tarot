@@ -85,10 +85,16 @@ export async function whoIsAsking(request: Request, projectId: string): Promise<
 /* A Pub/Sub push carries an OIDC token Google signed for the audience we gave
    the subscription, on behalf of the service account we named. */
 export async function verifyGoogleJwt(raw: string, aud: string, email?: string): Promise<boolean> {
+  /* The audience is just a URL string, so anyone with a GCP account can mint
+     a token naming it as their own audience. The service-account email is
+     the only thing that tells Google-the-publisher apart from any other GCP
+     customer, so it is mandatory here, not merely checked when supplied - an
+     unset or empty `email` fails closed rather than skipping the check. */
+  if (!email) return false;
   const c = await verifyJwt(raw, GOOGLE_JWKS) as { aud?: string; iss?: string; email?: string; email_verified?: boolean } | null;
   if (!c) return false;
   if (c.iss !== "https://accounts.google.com" && c.iss !== "accounts.google.com") return false;
   if (c.aud !== aud) return false;
-  if (email && (c.email !== email || c.email_verified !== true)) return false;
+  if (c.email !== email || c.email_verified !== true) return false;
   return true;
 }
