@@ -12,7 +12,7 @@
      carries this notice with it. See LICENSE. -->
 <meta name="author" content="Nabu Tarot">
 <meta name="copyright" content="Copyright (c) 2025-2026 Nabu Tarot. All rights reserved.">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'none'; object-src 'none'; form-action 'self'; script-src 'self' 'sha256-3YiJuR/P7ZdPt2LfVQ8QJpkDcR8lSU4+n+bB0M5L/WE=' https://www.gstatic.com https://apis.google.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; font-src 'self' data:; media-src 'self' data: blob:; worker-src 'self'; connect-src 'self' https://*.googleapis.com https://*.google.com https://*.firebaseio.com https://*.cloudfunctions.net https://*.workers.dev https://generativelanguage.googleapis.com; frame-src https://*.firebaseapp.com https://accounts.google.com https://*.facebook.com">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'none'; object-src 'none'; form-action 'self'; script-src 'self' 'sha256-bo57KGC6XzRjjXI5vk1HbCkj0lPVLifWIZYTuz44088=' https://www.gstatic.com https://apis.google.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; font-src 'self' data:; media-src 'self' data: blob:; worker-src 'self'; connect-src 'self' https://*.googleapis.com https://*.google.com https://*.firebaseio.com https://*.cloudfunctions.net https://*.workers.dev https://generativelanguage.googleapis.com; frame-src https://*.firebaseapp.com https://accounts.google.com https://*.facebook.com">
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <meta name="theme-color" content="#EFE9FA">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -3317,10 +3317,6 @@ const STR = {
     alertWedPaid: 'Lễ cưới của bạn đã được xác nhận 💍',
     alertWedPaidBody: (pair) => 'Nabu đã nhận được thanh toán. Phòng cưới của ' + pair + ' sẽ mở trước giờ làm lễ 15 phút nhé.',
     adminWedWas: 'Giờ đang giữ',
-    alertWedMoveYes: 'Nabu đã đồng ý giờ mới 💍',
-    alertWedMoveYesBody: (when) => 'Lễ cưới của bạn chuyển sang ' + when + '. Bạn nhớ báo lại cho khách nhé.',
-    alertWedMoveNo: 'Nabu giữ giờ cũ',
-    alertWedMoveNoBody: (when) => 'Lần này Nabu chưa đổi được giờ, lễ cưới vẫn diễn ra vào ' + when + '. Bạn nhắn cho Nabu nếu cần sắp xếp thêm nhé.',
     alertWedInvite: (pair) => 'Bạn được mời dự lễ cưới của ' + pair + ' 💌',
     alertWedInviteBody: (when) => 'Lễ cưới diễn ra vào ' + when + '. Bạn mở ra để nhận lời hoặc từ chối nhé.',
     adminWeds: 'Lễ cưới đang giữ',
@@ -3449,7 +3445,6 @@ const STR = {
     wedCannotCome: (n) => n + ' người báo bận:',
     wedDropLate: 'Huỷ buổi lễ',
     wedDropLateHint: 'Đã quá gần giờ làm lễ. Nếu huỷ bây giờ, lễ cưới coi như đã dùng và Nabu không hoàn lại phí; muốn tổ chức lại thì hai bạn đăng ký và thanh toán một lần nữa.',
-    wedDropLateAsk: 'Huỷ buổi lễ ngay lúc này? Khách mời sẽ được báo là lễ cưới không diễn ra, và phí đã đóng sẽ không được hoàn lại. Muốn tổ chức lại, hai bạn cần đăng ký và thanh toán mới.',
     wedDroppedLate: 'Đã huỷ buổi lễ.',
     wedTermsTitle: 'Điều khoản của lễ cưới',
     wedTerms: [
@@ -4154,10 +4149,6 @@ const STR = {
     alertWedPaid: 'Your wedding is confirmed \uD83D\uDC8D',
     alertWedPaidBody: (pair) => 'Nabu has received the payment. The room for ' + pair + ' opens fifteen minutes before the ceremony.',
     adminWedWas: 'Held for',
-    alertWedMoveYes: 'Nabu agreed to the new time \uD83D\uDC8D',
-    alertWedMoveYesBody: (when) => 'Your wedding moves to ' + when + '. Do let your guests know.',
-    alertWedMoveNo: 'Nabu is keeping the old time',
-    alertWedMoveNoBody: (when) => 'The hour could not be moved this time, so the wedding stays at ' + when + '. Write to Nabu if you need to arrange something.',
     alertWedInvite: (pair) => 'You are invited to the wedding of ' + pair + ' \uD83D\uDC8C',
     alertWedInviteBody: (when) => 'The ceremony is on ' + when + '. Open it to accept or decline.',
     adminWeds: 'Weddings being held',
@@ -4286,7 +4277,6 @@ const STR = {
     wedCannotCome: (n) => n + ' cannot come:',
     wedDropLate: 'Call the ceremony off',
     wedDropLateHint: 'It is too close to the hour. Calling off now counts as held, and the fee is not returned; holding another means booking and paying again.',
-    wedDropLateAsk: 'Call the ceremony off now? Your guests will be told it is not happening, and the fee is not returned. Holding another means booking and paying again.',
     wedDroppedLate: 'Called off.',
     wedTermsTitle: 'Terms for the ceremony',
     wedTerms: [
@@ -4990,10 +4980,6 @@ const STR = {
     alertWedPaid: 'Eure Hochzeit ist bestätigt \uD83D\uDC8D',
     alertWedPaidBody: (pair) => 'Nabu hat die Zahlung erhalten. Der Hochzeitsraum für ' + pair + ' öffnet 15 Minuten vor der Zeremonie.',
     adminWedWas: 'Reserviert für',
-    alertWedMoveYes: 'Nabu hat der neuen Zeit zugestimmt \uD83D\uDC8D',
-    alertWedMoveYesBody: (when) => 'Eure Hochzeit wurde auf ' + when + ' verschoben. Sag euren Gästen bitte Bescheid.',
-    alertWedMoveNo: 'Nabu bleibt bei der alten Zeit',
-    alertWedMoveNoBody: (when) => 'Die Uhrzeit konnte diesmal nicht geändert werden. Eure Hochzeit bleibt bei ' + when + '. Schreib Nabu, wenn du etwas klären möchtest.',
     alertWedInvite: (pair) => '💌 Du bist zur Hochzeit von ' + pair + ' eingeladen.',
     alertWedInviteBody: (when) => 'Die Zeremonie ist am ' + when + '. Öffne die Einladung, um zu- oder abzusagen.',
     adminWeds: 'Anstehende Hochzeiten',
@@ -5116,7 +5102,6 @@ const STR = {
     wedCannotCome: (n) => n + ' können nicht kommen:',
     wedDropLate: 'Die Zeremonie absagen',
     wedDropLateHint: 'Es ist zu kurz vor der Stunde. Eine Absage jetzt gilt als gehalten, und die Gebühr wird nicht zurückgezahlt; für eine weitere Zeremonie musst du neu buchen und neu zahlen.',
-    wedDropLateAsk: 'Die Zeremonie jetzt absagen? Deine Gäste erfahren, dass sie nicht stattfindet, und die Gebühr wird nicht zurückgezahlt. Für eine weitere musst du neu buchen und neu zahlen.',
     wedDroppedLate: 'Abgesagt.',
     wedTermsTitle: 'Bedingungen für die Zeremonie',
     wedTerms: [
@@ -30139,9 +30124,11 @@ function renderWedding(args) {
     $('#weddrop').addEventListener('click', async () => {
       /* Two different acts wearing one button: giving up a room nobody has
          used yet, and abandoning an hour that has already been held. Both of
-         them count as used now (D1), so both ask the same way. */
+         them count as used now (D1), and an early drop deletes the room and
+         guest list same as a late one - so one confirmation, naming both
+         consequences, now covers every case. */
       const late = WED.lateNow(w);
-      if (!confirm(late || WED.dropCountsAsUsed ? S.wedDropLateAsk : S.wedDropAsk)) return;
+      if (!confirm(S.wedDropAsk)) return;
       try {
         if (late) {
           await BE.db.collection('weddings').doc(w.id).update({ state: 'called-off', doneAt: Date.now() });
@@ -30498,11 +30485,13 @@ function alertsWatchLove() {
       alertSay({ id: 'love-wed-' + bond.id + '-' + (bond.marriedOn || ''), k: 'love', t: S.alertWed(name), b: S.alertWedBody, href: '#/love' }, true);
     }
     /* Asked once, at the moment somebody would want to be asked - and not at
-       all if they have already paid for one. */
-    if ((state === 'engaged' || state === 'married') && wasState !== null && wasState !== state
-        && !ACCESS.has('wedding')) {
-      ALERTS.add({ id: 'wed-ask-' + bond.id + '-' + state, k: 'love',
+       all if this bond's own room is already paid for. A wedding is bought
+       per room now, not per account, so the room - not an account key - is
+       what says whether they still need asking. */
+    if ((state === 'engaged' || state === 'married') && wasState !== null && wasState !== state) {
+      const nudge = () => ALERTS.add({ id: 'wed-ask-' + bond.id + '-' + state, k: 'love',
         t: S.alertWedAsk(name), b: S.alertWedAskBody, href: '#/wedding' });
+      WED.get(bond.id).then((w) => { if (!WED.isPaid(w)) nudge(); }).catch(nudge);
     }
 
     /* Asking to share diaries, and the answer to it. Neither used to be said
@@ -30656,18 +30645,6 @@ function alertsWatchWeddings() {
       if (day === isoDate(new Date()) && !w.doneAt) {
         ALERTS.add({ id: 'wed-today-' + id + '-' + day, k: 'love',
           t: S.alertWedToday(pair), b: S.alertWedTodayBody, href: '#/wedding/' + id });
-      }
-      /* An hour asked for and answered. Which answer it was is the hour
-         itself: if it moved, Nabu said yes. */
-      if (WED.mine(w) && !w.doneAt) {
-        const before = alertWas('wedmove.' + id, (w.moveAsk ? 'ask' : 'no') + ':' + (Number(w.startMs) || 0));
-        if (before && before.indexOf('ask:') === 0 && !w.moveAsk) {
-          const yes = before.slice(4) !== String(Number(w.startMs) || 0);
-          alertSay({ id: 'wedmove-' + id + '-' + w.startMs + '-' + (yes ? 'y' : 'n'), k: 'love',
-            t: yes ? S.alertWedMoveYes : S.alertWedMoveNo,
-            b: yes ? S.alertWedMoveYesBody(wedWhen(Number(w.startMs) || 0)) : S.alertWedMoveNoBody(wedWhen(Number(w.startMs) || 0)),
-            href: '#/wedding/' + id }, true);
-        }
       }
       /* Paid for. Both of them hear it, including the one who paid nothing. */
       if (w.paid && WED.mine(w) && !w.doneAt) {

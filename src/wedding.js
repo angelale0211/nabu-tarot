@@ -1299,9 +1299,11 @@ function renderWedding(args) {
     $('#weddrop').addEventListener('click', async () => {
       /* Two different acts wearing one button: giving up a room nobody has
          used yet, and abandoning an hour that has already been held. Both of
-         them count as used now (D1), so both ask the same way. */
+         them count as used now (D1), and an early drop deletes the room and
+         guest list same as a late one - so one confirmation, naming both
+         consequences, now covers every case. */
       const late = WED.lateNow(w);
-      if (!confirm(late || WED.dropCountsAsUsed ? S.wedDropLateAsk : S.wedDropAsk)) return;
+      if (!confirm(S.wedDropAsk)) return;
       try {
         if (late) {
           await BE.db.collection('weddings').doc(w.id).update({ state: 'called-off', doneAt: Date.now() });

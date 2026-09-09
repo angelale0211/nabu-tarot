@@ -157,11 +157,13 @@ function alertsWatchLove() {
       alertSay({ id: 'love-wed-' + bond.id + '-' + (bond.marriedOn || ''), k: 'love', t: S.alertWed(name), b: S.alertWedBody, href: '#/love' }, true);
     }
     /* Asked once, at the moment somebody would want to be asked - and not at
-       all if they have already paid for one. */
-    if ((state === 'engaged' || state === 'married') && wasState !== null && wasState !== state
-        && !ACCESS.has('wedding')) {
-      ALERTS.add({ id: 'wed-ask-' + bond.id + '-' + state, k: 'love',
+       all if this bond's own room is already paid for. A wedding is bought
+       per room now, not per account, so the room - not an account key - is
+       what says whether they still need asking. */
+    if ((state === 'engaged' || state === 'married') && wasState !== null && wasState !== state) {
+      const nudge = () => ALERTS.add({ id: 'wed-ask-' + bond.id + '-' + state, k: 'love',
         t: S.alertWedAsk(name), b: S.alertWedAskBody, href: '#/wedding' });
+      WED.get(bond.id).then((w) => { if (!WED.isPaid(w)) nudge(); }).catch(nudge);
     }
 
     /* Asking to share diaries, and the answer to it. Neither used to be said
@@ -315,18 +317,6 @@ function alertsWatchWeddings() {
       if (day === isoDate(new Date()) && !w.doneAt) {
         ALERTS.add({ id: 'wed-today-' + id + '-' + day, k: 'love',
           t: S.alertWedToday(pair), b: S.alertWedTodayBody, href: '#/wedding/' + id });
-      }
-      /* An hour asked for and answered. Which answer it was is the hour
-         itself: if it moved, Nabu said yes. */
-      if (WED.mine(w) && !w.doneAt) {
-        const before = alertWas('wedmove.' + id, (w.moveAsk ? 'ask' : 'no') + ':' + (Number(w.startMs) || 0));
-        if (before && before.indexOf('ask:') === 0 && !w.moveAsk) {
-          const yes = before.slice(4) !== String(Number(w.startMs) || 0);
-          alertSay({ id: 'wedmove-' + id + '-' + w.startMs + '-' + (yes ? 'y' : 'n'), k: 'love',
-            t: yes ? S.alertWedMoveYes : S.alertWedMoveNo,
-            b: yes ? S.alertWedMoveYesBody(wedWhen(Number(w.startMs) || 0)) : S.alertWedMoveNoBody(wedWhen(Number(w.startMs) || 0)),
-            href: '#/wedding/' + id }, true);
-        }
       }
       /* Paid for. Both of them hear it, including the one who paid nothing. */
       if (w.paid && WED.mine(w) && !w.doneAt) {

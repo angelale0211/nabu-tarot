@@ -1851,6 +1851,20 @@ async function go(hash, sel) { W().location.hash = hash; await sleep(30); return
           ok(below && below.getBoundingClientRect().top - rules.getBoundingClientRect().bottom >= 12,
             'and clear space between them and the folded how-it-works section that replaced the move panel'); }
 
+        { /* F1: one confirmation now covers every case - early or late - and
+             it has to name both consequences: the room and guest list are
+             deleted, and the wedding still counts as used. wedDropLateAsk
+             named only the second and is unreachable now that
+             WED.dropCountsAsUsed is always true, so this is the string that
+             must actually be shown. */
+          const origConfirm = w.confirm;
+          let asked = '';
+          w.confirm = (msg) => { asked = msg; return false; };
+          d.querySelector('#weddrop').click();
+          ok(/xóa|xoá/i.test(asked) && /đã dùng/i.test(asked),
+            'cancelling - early or late - asks with one confirmation naming both the deletion and that it counts as used');
+          w.confirm = origConfirm; }
+
         await go('#/home', '#main'); await go('#/wedding', '#main'); await sleep(300);
         ok(!d.querySelector('#wedmake'),
           'so they do not come back to the same empty form they just filled in');
