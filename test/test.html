@@ -201,7 +201,13 @@ async function go(hash, sel) { W().location.hash = hash; await sleep(30); return
        worker/src/codes.ts, in the same order - behind a stand-in fetch, with
        a stand-in account document for the app to read back. */
     const cdocs = {};
+    /* Its own counter: the messages stub further down has a `GEN` of its own,
+       scoped to that block. */
+    let GEN2 = 0;
     const cdb = { collection: (c) => ({
+      /* noteOops() writes here - a purchase that fails files its diagnostic
+         line into errors/ - so the stub has to be able to add, not only set. */
+      add: async (v) => { const id = 'gen' + (++GEN2); cdocs[c + '/' + id] = v; return { id: id }; },
       doc: (id) => ({
         get: async () => ({ exists: cdocs[c + '/' + id] !== undefined, data: () => cdocs[c + '/' + id] }),
         set: async (v, o) => { cdocs[c + '/' + id] = (o && o.merge) ? Object.assign({}, cdocs[c + '/' + id] || {}, v) : v; },
@@ -1527,7 +1533,14 @@ async function go(hash, sel) { W().location.hash = hash; await sleep(30); return
         await waitFor(() => stOf('playing') && /\(/.test(stOf('playing').textContent), 6000);
         ok(/chưa mở được/.test(stOf('playing').textContent) && /NotAllowedError/.test(stOf('playing').textContent)
            && / err/.test(stOf('playing').className) && !d.querySelector('.store [data-buy="playing"]').disabled && !N.ACCESS.has('playing'),
-          'a launch failure that took over a second is still said out loud, names what Play gave, and hands the button back'); }
+          'a launch failure that took over a second is still said out loud, names what Play gave, and hands the button back');
+        { const rows = Object.keys(cdocs).filter((k) => k.indexOf('errors/') === 0).map((k) => cdocs[k]);
+          const mine = rows.filter((r) => /^billing /.test(r.message || ''));
+          ok(mine.length >= 1 && /sheet=nolaunch\/NotAllowedError/.test(mine[mine.length - 1].message)
+             && /web=v/.test(mine[mine.length - 1].message) && !/tok\d|@/.test(mine[mine.length - 1].message)
+             && mine[mine.length - 1].where === 'store',
+            'a purchase that failed files its own diagnostic line into errors/, so the owner reads it in the dashboard without asking the tester for anything'); }
+        ok(('billing ' + N.BILL.diag('plus')).length < 300, 'the filed line stays under the rules cap with room to spare'); }
       { play.cancelNext = true; d.querySelector('.store [data-buy="playing"]').click();
         await waitFor(() => stOf('playing') && /Chưa mua xong/.test(stOf('playing').textContent), 4000);
         ok(!/ err/.test(stOf('playing').className) && !N.ACCESS.has('playing'),
@@ -1540,6 +1553,20 @@ async function go(hash, sel) { W().location.hash = hash; await sleep(30); return
       { const box = d.querySelector('.store .billdiag');
         ok(box && /web=v/.test(box.textContent) && box.querySelector('[data-diag]'),
           'the store carries a copyable diagnostic block a tester can send back'); }
+      /* The other half of the same channel. A phone whose store never opened
+         has no button to tap and so files nothing from the catch above - and
+         that is precisely the phone whose `why=` the owner needs. The
+         not-ready card files it on the way in instead. */
+      /* By way of another screen both times: go() only sets location.hash, and
+         setting it to the value it already holds fires no hashchange, so the
+         store would never be drawn again and the line never filed. */
+      { play.emptyDetails = true; await N.BILL.retry();
+        await go('#/learn', '.tile'); await go('#/unlock?from=app', '.store');
+        { const rows = Object.keys(cdocs).filter((k) => k.indexOf('errors/') === 0).map((k) => cdocs[k]);
+          ok(rows.some((r) => /^billing .*why=noproducts/.test(r.message || '') && r.where === 'store:start'),
+            'a store that could not open files why= too, from the not-ready card'); }
+        play.emptyDetails = false; await N.BILL.retry();
+        await go('#/learn', '.tile'); await go('#/unlock?from=app', '.store'); }
       d.querySelector('.store [data-buy="plus"]').click(); await waitFor(() => N.ACCESS.has('plus'), 4000);
       await go('#/me', '[data-theme-pick]'); d.querySelector('details[data-sect="own"]').open = true;
       const plans = d.querySelector('.myplans');

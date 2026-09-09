@@ -141,6 +141,11 @@ function bindStore(root, redraw) {
         const showCode = !!said && why !== 'signin' && !busy;
         st.textContent = said + (showCode && code ? ' (' + code + ')' : '');
       }
+      /* The line the screen shows is also filed where the owner can read it
+         without asking anybody for a screenshot. errors/ is write-only for
+         the phone and read in the dashboard; the message carries no token,
+         account or address (BILL.diag), and the prefix lets the tab filter. */
+      if (!(why === 'signin' || busy || paidNotConfirmed)) noteOops('billing ' + BILL.diag(key), 'store');
     }
     /* Whatever happened. A success redraws the card, so this button is already
        gone from the document and must not be touched; every other path leaves
@@ -185,6 +190,10 @@ function renderStore(params) {
   const S = T(), m = $('#main');
   const draw = async () => {
     await BILL.start();
+    /* A phone whose store never opened has no button to fail on, and it is
+       exactly the phone whose `why=` is worth reading. Filed on the way in,
+       so the not-ready card the buyer sees arrives in the dashboard too. */
+    if (!BILL.can()) noteOops('billing ' + BILL.diag(''), 'store:start');
     const group = (keys) => '<div class="unlist">' + PLAY_ITEMS.filter((i) => keys.indexOf(i.key) > -1 && i.sku).map(storeRowHTML).join('') + '</div>';
     const from = (params && params.from) || '';
     const courses = '<div class="sec"><h2 style="margin-bottom:8px">' + esc(S.stCourses) + '</h2>' + group(['tarot', 'lenormand', 'playing']) + '</div>';
