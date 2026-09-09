@@ -314,12 +314,16 @@ async function go(hash, sel) { W().location.hash = hash; await sleep(30); return
           if (play.connectFail) { play.connectFail = false; const e = new Error('no'); e.name = play.connectFailName || 'InvalidStateError'; throw e; }
           return {
           getDetails: async (ids) => (play.hangDetails ? new Promise(() => {}) : play.emptyDetails ? [] : ids.filter((s) => !!skuKey(s) && (!play.onlySkus || play.onlySkus.indexOf(s) > -1)).map((s) => { const it = playItem(skuKey(s)); return { itemId: s, title: it.key, description: '', type: it.kind === 'subs' ? 'subscription' : 'product', price: { currency: 'VND', value: String({ tarot: 300000, lenormand: 300000, playing: 300000, wedding: 30000, manifest: 75000, plus: 79000, pro6: 149000, pro: 249000 }[it.key]) }, subscriptionPeriod: it.kind === 'subs' ? 'P' + it.months + 'M' : undefined }; })),
-          listPurchases: async () => Object.keys(play.products).filter((t) => !play.products[t].consumed).map((t) => ({ itemId: play.products[t].sku, purchaseToken: t }))
-            .concat(Object.keys(play.subs).map((t) => ({ itemId: play.subs[t].sku, purchaseToken: t }))),
+          listPurchases: async () => (play.hangPurchases ? new Promise(() => {}) : Object.keys(play.products).filter((t) => !play.products[t].consumed).map((t) => ({ itemId: play.products[t].sku, purchaseToken: t }))
+            .concat(Object.keys(play.subs).map((t) => ({ itemId: play.subs[t].sku, purchaseToken: t })))),
           consume: async () => {}
           }; };
         w.PaymentRequest = function (methods, total) { const data = methods[0].data; play.requests.push(data); const it = N.PLAY_ITEMS.filter((i) => i.sku === data.sku)[0]; const tok = 'tok' + (play.next++);
+          /* Play's own abort: it agrees when no sheet was ever really under
+             way, and refuses when one is open somewhere. */
+          this.abort = async () => { if (play.showHang === 'sheet') throw new Error('open'); play.showHang = false; };
           this.show = async () => {
+            if (play.showHang) return new Promise(() => {});
             /* Play's own shape of failure: a name, and however long it took to
                arrive. The suite needs both halves because the point of the
                classifier is that only the first half decides anything. */
@@ -1566,6 +1570,99 @@ async function go(hash, sel) { W().location.hash = hash; await sleep(30); return
           ok(rows.some((r) => /^billing .*why=noproducts/.test(r.message || '') && r.where === 'store:start'),
             'a store that could not open files why= too, from the not-ready card'); }
         play.emptyDetails = false; await N.BILL.retry();
+        await go('#/learn', '.tile'); await go('#/unlock?from=app', '.store'); }
+      { /* Signed out: the tap must say "sign in", not "only in the Android app",
+           and it must leave a line under the button, because a toast is gone
+           before anybody reads it. */
+        const keepUser = N.BE.user; N.BE.user = null;
+        const btn = d.querySelector('.store [data-buy="playing"]');
+        btn.click();
+        /* Read in the same tick as the click: the handler writes the line and
+           sets the hash together, and the router then draws the sign-in screen
+           over the store. */
+        const st = d.querySelector('.store [data-st="playing"]'), said = st ? st.textContent : '';
+        await new Promise((r) => setTimeout(r, 50));
+        ok(st && /đăng nhập/i.test(said) && /^#\/signin/.test(d.defaultView.location.hash),
+          'a signed-out tap on Buy says sign in, under the button, and goes to the sign-in screen');
+        ok(/ user=no /.test(' ' + N.BILL.diag('playing') + ' '), 'and the diagnostic line says user=no');
+        N.BE.user = keepUser; await go('#/unlock?from=app', '.store');
+        ok(/ user=yes /.test(' ' + N.BILL.diag('playing') + ' '), 'user=yes once signed in again'); }
+      { /* A wrapper app runs in the phone's DEFAULT browser, and only Chrome
+           carries the Play Billing bridge. Samsung Internet names itself in
+           the UA; Brave ships Chrome's UA verbatim, so the app may only name
+           what it can actually observe. The suite runs in Edge, so the UA is
+           overridden. Every redraw of the store goes by way of another screen:
+           go() only sets location.hash, and setting it to the value it already
+           holds fires no hashchange, so the store would never be drawn again. */
+        const nav = d.defaultView.navigator;
+        Object.defineProperty(nav, 'userAgent', { configurable: true, get: () => 'Mozilla/5.0 (Linux; Android 14; SM-A546B) AppleWebKit/537.36 (KHTML, like Gecko) SamsungBrowser/26.0 Chrome/122.0.0.0 Mobile Safari/537.36' });
+        ok(N.BILL.provider() === 'samsung' && / browser=samsung /.test(' ' + N.BILL.diag('') + ' '), 'the provider is read from the UA and printed in the diagnostic line');
+        const keepDG = d.defaultView.getDigitalGoodsService; d.defaultView.getDigitalGoodsService = undefined; await N.BILL.retry();
+        await go('#/learn', '.tile'); await go('#/unlock?from=app', '.store');
+        ok(N.BILL.why === 'noapi' && /Chrome/.test(d.querySelector('.store').textContent) && /Samsung Internet/.test(d.querySelector('.store').textContent) && d.querySelector('.store [data-retry]'),
+          'when the wrapper has no Play bridge the card says so, names the browser it knows, and points at Chrome');
+        d.defaultView.getDigitalGoodsService = keepDG; await N.BILL.retry();
+        await go('#/learn', '.tile'); await go('#/unlock?from=app', '.store');
+        play.showFail = { name: 'AbortError', delay: 30 };
+        d.querySelector('.store [data-buy="playing"]').click();
+        await waitFor(() => stOf('playing') && /Samsung Internet/.test(stOf('playing').textContent), 4000);
+        ok(/ err/.test(stOf('playing').className), 'inside Samsung Internet an aborted sheet is not read as the buyer changing their mind - the browser cannot open one');
+        delete nav.userAgent;
+        ok(N.BILL.provider() !== 'samsung', 'the override is gone');
+        ok(N.BILL.provider() !== 'chrome' || /Google Chrome/i.test(((d.defaultView.navigator.userAgentData || {}).brands || []).map((b) => b.brand).join(' ')),
+          'chrome is only ever answered from userAgentData brands, never from the UA string'); }
+      { /* The previous person's subscriptions must not survive sign-out: the
+           store would hide their Buy buttons and pass their plan as oldKey. */
+        await N.BILL.buy('plus');
+        ok(N.SUBS.of('plus') && N.SUBS.of('plus').grant, 'plus is held before sign-out');
+        await N.BE.signOut().catch(() => {});
+        ok(Object.keys(N.SUBS.get()).length === 0 && Object.keys(N.ACCESS.get()).length === 0, 'sign-out forgets subs as well as access');
+        await playMode(false); await playMode(true); }
+      { /* listPurchases() can hang like any other call into Play. Bounded, a
+           hung answer becomes "no token", which the ladder already handles. */
+        const kd = N.BILL.detailsMs; N.BILL.detailsMs = 80;
+        await N.BILL.buy('pro6');
+        play.hangPurchases = true;
+        const t0 = Date.now();
+        const sw = await N.BILL.buy('pro', { oldKey: 'pro6' }).catch((e) => e);
+        ok(sw && sw.message === 'oldmissing' && Date.now() - t0 < 2000,
+          'a hung listPurchases() during a plan switch is refused as oldmissing within the bound, never left hanging');
+        const t1 = Date.now(); const rs = await N.BILL.restore();
+        ok(rs && typeof rs.tried === 'number' && Date.now() - t1 < 2000, 'and restore() still returns when Play will not list purchases');
+        play.hangPurchases = false; N.BILL.detailsMs = kd;
+        Object.keys(play.subs).forEach((t) => { play.subs[t].state = 'SUBSCRIPTION_STATE_EXPIRED'; }); await N.BILL.restore();
+        /* and the fake Play forgets them: the checks below sweep every token
+           it still holds into one state, which would resurrect these. */
+        play.subs = {}; }
+      { /* A sheet that never answers. Abort agrees -> the buyer is told and
+           gets the button back. Abort refuses -> a sheet is open, nothing may
+           start another, and the buyer is told to finish it or Restore. */
+        const kw = N.BILL.sheetWaitMs; N.BILL.sheetWaitMs = 100;
+        play.showHang = true; d.querySelector('.store [data-buy="playing"]').click();
+        await waitFor(() => stOf('playing') && /\(/.test(stOf('playing').textContent), 4000);
+        ok(/TimeoutError\/hung/.test(stOf('playing').textContent) && / err/.test(stOf('playing').className)
+           && !d.querySelector('.store [data-buy="playing"]').disabled && N.BILL.buying === '',
+          'a sheet Play never opened is aborted after the wait, said out loud, and the button comes back');
+        play.showHang = 'sheet'; d.querySelector('.store [data-buy="playing"]').click();
+        await waitFor(() => stOf('playing') && /TimeoutError\/waiting/.test(stOf('playing').textContent), 4000);
+        ok(!/ err/.test(stOf('playing').className) && d.querySelector('.store [data-buy="playing"]').disabled && N.BILL.buying === 'playing',
+          'a sheet that is really open keeps the button locked - no second purchase can start - and says Play is still working');
+        const busy = await N.BILL.buy('playing').catch((e) => e);
+        ok(busy && busy.message === 'busy', 'and a programmatic second buy is refused as busy');
+        play.showHang = false; N.BILL.buying = ''; N.BILL.sheetWaitMs = kw;
+        await go('#/learn', '.tile'); await go('#/unlock?from=app', '.store'); }
+      { /* Three renders of a broken store must file one row, not three.
+           Counted at noteOops itself: its own five-per-session budget is
+           spent by the failed buys above, and the page's CSP forbids eval, so
+           the budget cannot be cleared from out here - what is counted is
+           what the store hands it, which is the thing under test. */
+        const keepNote = w.noteOops; let filed = 0;
+        w.noteOops = function (msg, where) { if (where === 'store:start') filed++; return keepNote.apply(this, arguments); };
+        play.hangConnect = true; const kc = N.BILL.connectMs; N.BILL.connectMs = 60; await N.BILL.retry();
+        for (let i = 0; i < 3; i++) { await go('#/learn', '.tile'); await go('#/unlock?from=app', '.store'); }
+        w.noteOops = keepNote;
+        ok(filed === 1, 'the same billing failure is filed once per session, however often the screen is drawn');
+        play.hangConnect = false; N.BILL.connectMs = kc; await N.BILL.retry();
         await go('#/learn', '.tile'); await go('#/unlock?from=app', '.store'); }
       d.querySelector('.store [data-buy="plus"]').click(); await waitFor(() => N.ACCESS.has('plus'), 4000);
       await go('#/me', '[data-theme-pick]'); d.querySelector('details[data-sect="own"]').open = true;

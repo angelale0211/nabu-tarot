@@ -41,7 +41,13 @@ const storeDiagHTML = (key) => '<details class="card billdiag"><summary>' + esc(
    failures, and without the code beneath it a report of "it does not work"
    cannot be told apart from any other. Small, grey and selectable: a reader
    passes over it, a tester can read it out or copy it. */
-const storeNotReadyHTML = () => '<div class="card"><p class="hint">' + esc(T().stNotReady) + '</p><button type="button" class="btn block" data-retry>' + esc(T().stRetry) + '</button>'
+const storeNotReadyHTML = () => '<div class="card">'
+  /* Keyed on what the app can prove, not on a browser sniff: inside the
+     installed app, no Play bridge at all means the wrapper opened in a
+     browser that does not carry one. The browser is only named when it can
+     actually be recognised - Brave ships Chrome's UA verbatim. */
+  + (isTWA() && BILL.why === 'noapi' ? '<p class="hint err" style="margin-bottom:10px">' + esc(T().stNeedChrome({ samsung: 'Samsung Internet', brave: 'Brave', edge: 'Microsoft Edge' }[BILL.provider()] || '')) + '</p>' : '')
+  + '<p class="hint">' + esc(T().stNotReady) + '</p><button type="button" class="btn block" data-retry>' + esc(T().stRetry) + '</button>'
   + (BILL.why ? '<p class="hint" style="margin-top:8px;opacity:.6;font-size:12px;user-select:all">' + esc(BILL.why) + '</p>' : '') + '</div>'
   /* The diagnostics have to be reachable from the one screen a stuck buyer
      actually sees. Putting them only on the working store meant the phones
@@ -85,12 +91,32 @@ function storeRowHTML(item) {
     + (sum ? '<p class="hint">' + esc(sum) + '</p>' : '') + '<div class="unl-f">' + foot + '<p class="hint st" data-st="' + item.key + '"></p></div></div>';
 }
 
+/* One row per distinct failure per session. diag() ends in a timestamp, so
+   two lines are never equal and noteOops's own dedup never fires; the key
+   here is the line without `at=` and without the counters, which change on
+   their own between two readings of the very same failure. */
+const BILL_FILED = {};
+function fileBilling(line, where) {
+  const key = where + '|' + line.replace(/ at=\S+/, '').replace(/ tries=\d+/, '').replace(/ try=\d+/, '').replace(/ ms=\d+/, '');
+  if (BILL_FILED[key]) return;
+  BILL_FILED[key] = true;
+  noteOops(line, where);
+}
+
 function bindStore(root, redraw) {
   const S = T();
   $$('[data-buy]', root).forEach((b) => b.addEventListener('click', async () => {
     const key = b.getAttribute('data-buy'), st = $('[data-st="' + key + '"]', root) || $('#bstatus', root);
     if (b.disabled) return;   // a second tap on a button already working starts nothing
-    if (!(BE.enabled && BE.user)) { toast(S.stNeedIn); location.hash = signinHref(location.hash.slice(1)); return; }
+    /* Signed out. The old line here said "this item can only be bought in the
+       Nabu Tarot Android app" - to somebody inside the Android app - and left
+       nothing under the button, so a signed-out tester reported "nothing
+       happens" and the diagnostic line looked healthy. Say the actual reason,
+       leave it where it can be read, then go to sign-in as before. */
+    if (!(BE.enabled && BE.user)) {
+      if (st) { st.className = 'hint st'; st.textContent = S.stSignInToBuy; }
+      toast(S.stSignInToBuy); location.hash = signinHref(location.hash.slice(1)); return;
+    }
     b.disabled = true; if (st) { st.className = 'hint st'; st.textContent = S.buyWorking; }
     try {
       const opt = {}; if (b.getAttribute('data-old')) opt.oldKey = b.getAttribute('data-old'); if (b.getAttribute('data-wid')) opt.wid = b.getAttribute('data-wid');
@@ -124,11 +150,18 @@ function bindStore(root, redraw) {
          Play's own word for it is appended, sanitized to a name, because a
          screenshot is the only place it is ever seen. */
       const out = e && e.outcome, busy = why === 'busy';
-      const soft = paidNotConfirmed || out === 'aborted' || busy;
+      /* Samsung Internet is the one browser known to load the catalogue and
+         then fail the sheet, so an AbortError there is never the buyer
+         changing their mind. The browser is the discriminator, not the clock. */
+      const samsung = isTWA() && BILL.provider() === 'samsung' && (out === 'aborted' || out === 'nolaunch');
+      const soft = paidNotConfirmed || (out === 'aborted' && !samsung) || busy || out === 'waiting';
       if (st) {
         st.className = 'hint st' + (soft ? '' : ' err');
-        const said = why === 'signin' ? S.stNeedIn
+        const said = why === 'signin' ? S.stSignInToBuy
           : busy ? S.stBusy
+          : samsung ? S.stNeedChrome('Samsung Internet')
+          : out === 'hung' ? S.stSheetHung
+          : out === 'waiting' ? S.stSheetWaiting
           : paidNotConfirmed ? S.stPending
           : out === 'aborted' ? S.stAborted
           : out === 'nolaunch' ? S.stNoSheet
@@ -145,12 +178,14 @@ function bindStore(root, redraw) {
          without asking anybody for a screenshot. errors/ is write-only for
          the phone and read in the dashboard; the message carries no token,
          account or address (BILL.diag), and the prefix lets the tab filter. */
-      if (!(why === 'signin' || busy || paidNotConfirmed)) noteOops('billing ' + BILL.diag(key), 'store');
+      if (!(why === 'signin' || busy || paidNotConfirmed)) fileBilling('billing ' + BILL.diag(key), 'store');
     }
     /* Whatever happened. A success redraws the card, so this button is already
        gone from the document and must not be touched; every other path leaves
-       it pressable again. */
-    finally { if (b.isConnected) b.disabled = false; }
+       it pressable again - except one: while Play says a sheet is still open
+       (`buying` still set), the button stays locked, because nothing may start
+       a second purchase beside a live one. */
+    finally { if (b.isConnected && BILL.buying !== key) b.disabled = false; }
   }));
   $$('[data-diag]', root).forEach((b) => b.addEventListener('click', async () => {
     const st = $('[data-diagst]', root);
@@ -193,7 +228,7 @@ function renderStore(params) {
     /* A phone whose store never opened has no button to fail on, and it is
        exactly the phone whose `why=` is worth reading. Filed on the way in,
        so the not-ready card the buyer sees arrives in the dashboard too. */
-    if (!BILL.can()) noteOops('billing ' + BILL.diag(''), 'store:start');
+    if (!BILL.can()) fileBilling('billing ' + BILL.diag(''), 'store:start');
     const group = (keys) => '<div class="unlist">' + PLAY_ITEMS.filter((i) => keys.indexOf(i.key) > -1 && i.sku).map(storeRowHTML).join('') + '</div>';
     const from = (params && params.from) || '';
     const courses = '<div class="sec"><h2 style="margin-bottom:8px">' + esc(S.stCourses) + '</h2>' + group(['tarot', 'lenormand', 'playing']) + '</div>';

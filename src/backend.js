@@ -80,6 +80,8 @@ const BE = {
       saveProfileLocal({ name: '', birthday: '', interests: [], handle: '', lang: '' });
       store.set('nabu-profile', PROFILE);
       store.set('nabu-access', {});
+      /* the plans too: they belong to the account, not the phone */
+      store.set('nabu-subs', {});
       store.set('nabu-admin', '');
       store.set('nabu-revoked-at', 0);
     } catch (e) { /* a full phone must not be able to trap somebody signed in */ }
@@ -102,6 +104,7 @@ const BE = {
     try { await db.collection('people').doc(uid).delete(); } catch (e) { /* rules or offline */ }
     await this.user.delete();
     store.set('nabu-access', {});
+    store.set('nabu-subs', {});
     saveProfileLocal({ handle: '', lang: '' });
   },
 

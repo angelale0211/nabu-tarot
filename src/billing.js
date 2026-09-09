@@ -61,6 +61,7 @@ const BILL = {
      call which never answers is survivable, and it cannot spend ten seconds
      per case to do it. */
   connectMs: PLAY_CONNECT_MS, detailsMs: PLAY_DETAILS_MS,
+  sheetWaitMs: 20000,  // how long a sheet may stay silent before the app asks Play whether it is really open
   stage: '',        // how far the last attempt got: 'connect', 'details', or ''
   buying: '',       // the key whose sheet is open, so a second tap cannot start another
   lastSheet: null,  // {outcome, name, ms} of the last show(), for the diagnostics
@@ -182,6 +183,24 @@ const BILL = {
     return 'failed';
   },
 
+  /* Which browser the wrapper is running in. A Trusted Web Activity opens in
+     the phone's DEFAULT browser, invisibly, and only Chrome carries the Play
+     Billing bridge. Samsung Internet names itself in the UA; Brave and others
+     ship Chrome's UA verbatim, so 'chrome' is only ever answered from
+     navigator.userAgentData.brands, never from the UA string. 'unknown' is an
+     honest answer; a wrong 'chrome' misleads the next reader. */
+  provider() {
+    const ua = String((window.navigator || {}).userAgent || '');
+    if (/SamsungBrowser\//.test(ua)) return 'samsung';
+    const brands = ((window.navigator || {}).userAgentData || {}).brands || [];
+    const names = brands.map((b) => String(b.brand || '')).join(' ');
+    if (/Samsung/i.test(names)) return 'samsung';
+    if (/Brave/i.test(names) || (window.navigator && typeof window.navigator.brave === 'object')) return 'brave';
+    if (/Edge/i.test(names)) return 'edge';
+    if (/Google Chrome/i.test(names)) return 'chrome';
+    return 'unknown';
+  },
+
   /* Everything a tester can safely send back, and nothing else: no purchase
      token, no id token, no email, no address. A diagnostic that cannot be
      pasted into a group chat is one nobody sends. */
@@ -192,7 +211,9 @@ const BILL = {
       ['shell', isTWA() ? 'twa' : (window.matchMedia && window.matchMedia('(display-mode: standalone)').matches ? 'standalone' : 'browser')],
       ['android', 'unavailable'],
       ['chrome', (/Chrome\/(\d+)/.exec(ua) || [])[1] || 'unknown'],
+      ['browser', this.provider()],
       ['dga', window.getDigitalGoodsService ? 'yes' : 'no'],
+      ['user', (typeof BE !== 'undefined' && BE.user) ? 'yes' : 'no'],
       ['state', this.state], ['why', this.why || '-'], ['stage', this.stage || '-'],
       ['priced', this.priced() + '/' + this.sellable()],
       ['ms', String(this.tookMs || 0)], ['tries', String(this.tries)], ['try', String(this.attempt)]];
@@ -307,7 +328,11 @@ const BILL = {
          token, buying a new one anyway would double-bill silently - a lapsed
          or already-expired old plan is the only case safe to proceed as a
          plain new purchase. */
-      const old = playItem(opt.oldKey), held = await this.service.listPurchases().catch(() => []);
+      /* Bounded, like connect and details: on 2026-09-09 this call was watched
+         hanging for 25 s on an emulator, which left the button disabled and
+         the screen silent. A hung answer is treated as "no token" - the
+         branch below already refuses to double-bill on that. */
+      const old = playItem(opt.oldKey), held = await withTimeout(this.service.listPurchases(), this.detailsMs).catch(() => []);
       const row = (held || []).filter((p) => old && p.itemId === old.sku)[0];
       if (row) { data.oldSku = old.sku; data.purchaseToken = row.purchaseToken; }
       else if ((SUBS.of(opt.oldKey) || {}).grant) throw new Error('oldmissing');
@@ -319,16 +344,40 @@ const BILL = {
        no sheet, no message and nothing to report, and there was no record of
        what Play had actually said. */
     const shownAt = Date.now();
-    let res;
     this.buying = key;
-    try { res = await req.show(); }
-    catch (e) {
+    /* A sheet that never answers (H7, 2026-09-09): show() can stay pending
+       with no sheet on a phone where Play never answers, and the button then
+       stays disabled while the diagnostic line looks healthy. On the emulator
+       a pending show() turned out to be an open sheet, which is why abort is
+       asked before anything is concluded. After sheetWaitMs the app asks Play
+       to abort. If Play agrees
+       the request was never under way: the buyer is told and gets the button
+       back. If Play refuses, a sheet IS open: the buyer is told, `buying`
+       stays set so nothing can start a second purchase, and a late answer is
+       still completed and remembered for restore(). Never a plain timeout. */
+    let hung = '';
+    const showP = req.show();
+    const guard = new Promise((resolve) => setTimeout(async () => {
+      try { await req.abort(); hung = 'hung'; } catch (e2) { hung = 'waiting'; }
+      resolve('__guard');
+    }, this.sheetWaitMs));
+    showP.then((late) => {
+      if (hung !== 'waiting') return;
+      this.buying = '';
+      const tok = late && late.details && (late.details.purchaseToken || late.details.token);
+      try { late.complete(tok ? 'success' : 'fail').catch(() => {}); } catch (e3) { /* closed */ }
+      if (tok) this.remember(Object.assign({ sku: it.sku, token: tok, at: Date.now() }, opt.wid ? { wid: opt.wid } : {}));
+    }, () => { if (hung === 'waiting') this.buying = ''; });
+    let res;
+    try {
+      res = await Promise.race([showP, guard]);
+      if (res === '__guard') { const e = new Error(hung); e.name = 'TimeoutError'; throw e; }
+    } catch (e) {
       e.stage = 'show'; e.playName = errName(e); e.elapsedMs = Date.now() - shownAt;
-      e.outcome = this.sheetOutcome(e);
+      e.outcome = hung || this.sheetOutcome(e);
       this.lastSheet = { outcome: e.outcome, name: e.playName, ms: e.elapsedMs };
       throw e;
-    }
-    finally { this.buying = ''; }
+    } finally { if (hung !== 'waiting') this.buying = ''; }
     const token = res && res.details && (res.details.purchaseToken || res.details.token);
     try { await res.complete(token ? 'success' : 'fail'); } catch (e) { /* already closed */ }
     if (!token) throw new Error('nopurchase');
@@ -372,7 +421,7 @@ const BILL = {
        state a stuck buyer is in, and refusing to look would strand the very
        token restore() exists to redeem. */
     if (!this.service || !BE.enabled || !BE.user) return out;
-    const list = (await this.service.listPurchases().catch(() => [])) || [];
+    const list = (await withTimeout(this.service.listPurchases(), this.detailsMs).catch(() => [])) || [];
     /* Keyed by token so each purchase is looked at once. A pending record
        already knows more than Play's bare list - its wid, its tries so far -
        so it wins the merge rather than being shadowed by a fresh, empty-
