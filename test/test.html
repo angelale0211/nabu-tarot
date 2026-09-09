@@ -238,6 +238,67 @@ async function go(hash, sel) { W().location.hash = hash; await sleep(30); return
         if (uid === 'keep-access') { if (codeKeep.access == null) w.localStorage.removeItem('nabu-access'); else w.localStorage.setItem('nabu-access', codeKeep.access); }
       }
     };
+    /* ---- a fake Play, a fake worker, for the Android build ----
+       The Digital Goods API is only inside the installed app, so the suite
+       stands one up: getDetails answers with prices, listPurchases with what
+       this fake Google remembers, PaymentRequest hands back a token, and the
+       /billing stub verifies against the same memory and writes the fake
+       account the way the worker does. */
+    const play = { products: {}, subs: {}, next: 1, requests: [] };
+    const playItem = (k) => N.PLAY_ITEMS.filter((i) => i.key === k)[0];
+    const skuKey = (sku) => (N.PLAY_ITEMS.filter((i) => i.sku === sku)[0] || {}).key;
+    let playKeep = null;
+    const playStub = async (url, opt) => {
+      const say = (status, body) => ({ ok: status < 300, status: status, json: async () => body });
+      if (!/\/billing$/.test(url)) return codeKeep.fetch(url, opt);
+      const body = JSON.parse((opt && opt.body) || '{}'), uid = (N.BE.user || {}).uid;
+      if (!uid) return say(401, { error: 'signin' });
+      const it = N.PLAY_ITEMS.filter((i) => i.sku && i.sku === body.sku)[0];
+      if (!it) return say(400, { error: 'unknown product' });
+      const doc = cdocs['users/' + uid] || {}, acc = Object.assign({}, doc.access || {}), subs = Object.assign({}, doc.subs || {});
+      if (it.kind === 'subs') {
+        const s = play.subs[body.token]; if (!s) return say(402, { error: 'unknown purchase' });
+        if (s.state === 'SUBSCRIPTION_STATE_PENDING') return say(202, { pending: true });
+        if (s.uid && s.uid !== uid) return say(402, { error: 'already used' }); s.uid = uid;
+        const grant = ['SUBSCRIPTION_STATE_ACTIVE', 'SUBSCRIPTION_STATE_CANCELED', 'SUBSCRIPTION_STATE_IN_GRACE_PERIOD'].indexOf(s.state) > -1 && s.expiryMs > Date.now();
+        const until = new Date(s.expiryMs).toISOString().slice(0, 10);
+        subs[it.key] = { sku: it.sku, plan: s.plan || '', state: s.state, until: until, autoRenew: s.autoRenew !== false, tok: 'h' + body.token, opens: it.opens, grant: grant };
+        ['manifest', 'plus', 'pro'].forEach((k) => delete acc[k]);
+        Object.keys(subs).forEach((k) => { if (subs[k].grant) subs[k].opens.forEach((o) => { if (!acc[o] || subs[k].until > acc[o]) acc[o] = subs[k].until; }); });
+        cdocs['users/' + uid] = Object.assign({}, doc, { access: acc, subs: subs });
+        return say(200, { ok: true, opened: grant ? it.opens : [], access: acc, subs: subs });
+      }
+      const p = play.products[body.token]; if (!p) return say(402, { error: 'unknown purchase' });
+      if (p.state === 'pending') return say(202, { pending: true });
+      if (p.uid && p.uid !== uid) return say(402, { error: 'already used' }); p.uid = uid;
+      if (it.key === 'wedding') { if (!body.wid) return say(400, { error: 'no room' }); if (p.wid && p.wid !== body.wid) return say(402, { error: 'already used' }); p.wid = body.wid; cdocs['weddings/' + body.wid] = Object.assign({}, cdocs['weddings/' + body.wid] || {}, { paid: true, paidBy: uid }); return say(200, { ok: true, opened: ['wedding'], wid: body.wid }); }
+      if (!p.until) { const d = new Date(); d.setMonth(d.getMonth() + it.months); p.until = d.toISOString().slice(0, 10); }
+      it.opens.forEach((o) => { if (!acc[o] || p.until > acc[o]) acc[o] = p.until; });
+      cdocs['users/' + uid] = Object.assign({}, doc, { access: acc });
+      return say(200, { ok: true, opened: it.opens, access: acc });
+    };
+    const playMode = async (on, uid) => {
+      if (on) {
+        codeMode(true, uid || 'uidP'); playKeep = { dg: w.getDigitalGoodsService, pr: w.PaymentRequest };
+        w.localStorage.setItem('nabu-twa', 'true');
+        w.getDigitalGoodsService = async () => ({
+          getDetails: async (ids) => ids.filter((s) => !!skuKey(s)).map((s) => { const it = playItem(skuKey(s)); return { itemId: s, title: it.key, description: '', type: it.kind === 'subs' ? 'subscription' : 'product', price: { currency: 'VND', value: String({ tarot: 300000, lenormand: 300000, playing: 300000, wedding: 30000, manifest: 75000, plus: 79000, pro6: 149000, pro: 249000 }[it.key]) }, subscriptionPeriod: it.kind === 'subs' ? 'P' + it.months + 'M' : undefined }; }),
+          listPurchases: async () => Object.keys(play.products).filter((t) => !play.products[t].consumed).map((t) => ({ itemId: play.products[t].sku, purchaseToken: t }))
+            .concat(Object.keys(play.subs).map((t) => ({ itemId: play.subs[t].sku, purchaseToken: t }))),
+          consume: async () => {}
+        });
+        w.PaymentRequest = function (methods, total) { const data = methods[0].data; play.requests.push(data); const it = N.PLAY_ITEMS.filter((i) => i.sku === data.sku)[0]; const tok = 'tok' + (play.next++);
+          this.show = async () => { if (play.cancelNext) { play.cancelNext = false; const e = new Error('cancelled'); e.name = 'AbortError'; throw e; }
+            if (it.kind === 'subs') { play.subs[tok] = { sku: it.sku, state: play.pendingNext ? 'SUBSCRIPTION_STATE_PENDING' : 'SUBSCRIPTION_STATE_ACTIVE', expiryMs: Date.now() + it.months * 30 * 86400000, plan: it.key + '-plan' }; if (data.oldSku) Object.keys(play.subs).forEach((t) => { if (play.subs[t].sku === data.oldSku && t !== tok) play.subs[t].state = 'SUBSCRIPTION_STATE_EXPIRED'; }); }
+            else play.products[tok] = { sku: it.sku, state: play.pendingNext ? 'pending' : 'ok' };
+            play.pendingNext = false; return { details: { purchaseToken: tok }, complete: async () => {} }; }; };
+        w.fetch = playStub;
+        await N.BILL.retry();
+      } else {
+        w.getDigitalGoodsService = playKeep.dg; w.PaymentRequest = playKeep.pr; w.localStorage.removeItem('nabu-twa'); w.localStorage.removeItem('nabu-play-pending'); w.localStorage.removeItem('nabu-subs');
+        codeMode(false, uid); await N.BILL.retry();
+      }
+    };
     const redeem = (code) => N.redeemCode(code).then((r) => r, (e) => e);
     /* Issue a code the way the dashboard does: file it in the book under its
        fingerprint, then hand back the code itself. */
@@ -1123,10 +1184,24 @@ async function go(hash, sel) { W().location.hash = hash; await sleep(30); return
         'a code only opens what Nabu published for it: invented codes, edited expiries and swapped courses are all refused'); }
     await go('#/install', '#instshare'); ok(d.querySelector('a[href="nabu-tarot.apk"][download]') && d.querySelectorAll('.steps li').length >= 7 && /Thêm vào MH chính/.test(d.querySelector('#main').textContent) && /Tải app/.test(d.querySelector('#foot').textContent), 'the install screen offers the Android installer and the iPhone steps, linked from the footer');
     await go('#/privacy', '.privacy .gsec'); ok(d.querySelectorAll('.privacy .gsec').length >= 10 && /Xoá tài khoản/.test(d.querySelector('.privacy').textContent) && /Cloudflare/.test(d.querySelector('.privacy').textContent) && /Anthropic/.test(d.querySelector('.privacy').textContent), 'the in-app privacy policy lists every kind of data, who answers Nabu AI, and how to delete the account');
-    { w.localStorage.setItem('nabu-twa', 'true'); const acc = w.localStorage.getItem('nabu-access'); w.localStorage.removeItem('nabu-access');
-      await go('#/learn/guide/mani-woop', '.paywall'); ok(!d.querySelector('.paywall [data-buy]') && !/75\.000đ/.test(d.querySelector('.paywall').textContent) && d.querySelector('#ccode'), 'the Play build shows no outside-payment button or price on a paywall, only the code field');
-      w.localStorage.removeItem('nabu-twa'); if (acc != null) w.localStorage.setItem('nabu-access', acc);
-      await go('#/learn/manifest', '.acc'); await go('#/learn/guide/mani-woop', '.paywall, .flow'); await go('#/me', '[data-theme-pick]'); }
+    { await playMode(true);
+      ok(N.BILL.can() && N.BILL.priceOf('tarot') && /300/.test(N.BILL.priceOf('tarot')) && N.BILL.periodMonths('pro6') === 6,
+        'inside the app BILL answers with Play\'s own prices and periods for every catalogue item');
+      const r1 = await N.BILL.buy('tarot');
+      const until1 = N.ACCESS.get().tarot;
+      const r2 = await N.BILL.verify('tarot', 'tok1');
+      ok(r1.opened[0] === 'tarot' && N.ACCESS.has('tarot') && until1 && N.ACCESS.get().tarot === until1 && r2.ok,
+        'buying a course opens it on the account, and sending the same token again returns the same date');
+      play.pendingNext = true;
+      const r3 = await N.BILL.buy('lenormand');
+      ok(r3.pending === true && N.BILL.pendingList().length === 1 && !N.ACCESS.has('lenormand'), 'a pending purchase is remembered and opens nothing yet');
+      play.products[N.BILL.pendingList()[0].token].state = 'ok';
+      const rs = await N.BILL.restore();
+      ok(N.ACCESS.has('lenormand') && N.BILL.pendingList().length === 0 && rs.opened >= 1, 'restore re-sends pending and listed purchases and clears what went through');
+      play.cancelNext = true;
+      const cancelled = await N.BILL.buy('playing').catch((e) => e);
+      ok(cancelled instanceof Error && /Abort|cancel/i.test(cancelled.name + cancelled.message) && !N.ACCESS.has('playing'), 'a cancelled Play sheet opens nothing and is not an error the buyer is blamed for');
+      await playMode(false); }
     /* ---- the red thread ---- */
     { /* A stand-in for Firestore: documents in an object, and listeners told
          when one changes. Paths are the real ones, so the code under test is

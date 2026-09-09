@@ -181,6 +181,13 @@ const ACCESS = {
   }
 };
 
+/* What the account says about each subscription: Google's state, when it
+   runs to, whether it renews. Written by the worker, read for the Me tab. */
+const SUBS = {
+  get() { const s = store.get('nabu-subs', {}); return s && typeof s === 'object' ? s : {}; },
+  of(key) { return this.get()[key] || null; }
+};
+
 /* ---- what needs an account ----
 
    Reading needs nothing: the cards, the calendar, the forecast, the guides are

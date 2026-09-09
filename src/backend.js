@@ -27,7 +27,7 @@ const BE = {
     this.auth.onAuthStateChanged(async (u) => {
       this.user = u; this.ready = true;
       store.set('nabu-admin', u && this.isAdmin() ? (u.email || 'admin') : '');
-      if (u) { await this.pullProfile(); this.watchUnread(); } else { this.stopUnread(); }
+      if (u) { await this.pullProfile(); if (typeof BILL !== 'undefined') BILL.sync(); this.watchUnread(); } else { this.stopUnread(); }
       this.listeners.forEach((cb) => cb(u));
     });
   },
@@ -126,6 +126,7 @@ const BE = {
     const before = ACCESS.get();
     const cloud = d.access && typeof d.access === 'object' ? Object.assign({}, d.access) : {};
     store.set('nabu-access', cloud);
+    store.set('nabu-subs', d.subs && typeof d.subs === 'object' ? d.subs : {});
     /* A withdrawal carries a reason, stamped with the moment it was given, and
        a device says it once. Said out loud, because access that disappears
        without a word reads as a broken app rather than a decision somebody
