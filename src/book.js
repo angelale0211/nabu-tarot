@@ -196,20 +196,25 @@ function priceCardHTML(c) {
 /* What the app gives away. Somebody reading a price list has no way of knowing
    how much of this costs nothing unless the price list says so. */
 function freeGridHTML() {
-  const S = T(), vi = lang === 'vi';
+  const S = T();
   const rows = [
-    ['#/pick', DRAW_ICON, S.nav.pick, vi ? 'm\u1ed7i ng\u00e0y m\u1ed9t l\u00e1' : 'a card a day'],
+    ['#/pick', DRAW_ICON, S.nav.pick, L({ vi: 'm\u1ed7i ng\u00e0y m\u1ed9t l\u00e1', en: 'a card a day', de: 't\u00E4glich eine Karte' })],
     ['#/learn/astro', '\uD83D\uDD2E', S.cats.astro, S.catSub.astro],
     ['#/learn/angel', '\uD83D\uDC7C', S.cats.angel, S.catSub.angel],
     ['#/learn/fortune', '\uD83D\uDD22', S.cats.fortune, S.catSub.fortune],
-    ['#/play/pet', '\uD83D\uDC3E', S.petTitle, vi ? 'm\u1ed9t b\u1ea1n nh\u1ecf' : 'one companion'],
-    ['#/play/tree', '\uD83C\uDF38', S.treeTitle, vi ? '1 l\u01b0\u1ee3t m\u1ed7i tu\u1ea7n' : 'once a week'],
-    ['#/play/coin', '\uD83E\uDE99', S.coinTitle, vi ? '1 l\u01b0\u1ee3t m\u1ed7i tu\u1ea7n' : 'once a week'],
+    ['#/play/pet', '\uD83D\uDC3E', S.petTitle, L({ vi: 'm\u1ed9t b\u1ea1n nh\u1ecf', en: 'one companion', de: 'ein kleiner Begleiter' })],
+    ['#/play/tree', '\uD83C\uDF38', S.treeTitle, L({ vi: '1 l\u01b0\u1ee3t m\u1ed7i tu\u1ea7n', en: 'once a week', de: 'einmal pro Woche' })],
+    ['#/play/coin', '\uD83E\uDE99', S.coinTitle, L({ vi: '1 l\u01b0\u1ee3t m\u1ed7i tu\u1ea7n', en: 'once a week', de: 'einmal pro Woche' })],
     ['#/play/diary', '\uD83D\uDCD4', S.diaryTitle, S.diarySub],
     ['#/love', loveKnotSVG(), S.loveTitle, S.loveSub],
-    ['#/play/piles', PILE_ICON, S.actTypes.pile, vi ? 'khi Nabu \u0111\u0103ng' : 'when Nabu posts'],
-    ['#/play/polls', '\uD83D\uDCCA', S.actTypes.poll, vi ? 'khi Nabu \u0111\u0103ng' : 'when Nabu posts'],
-    ['#/play/wishes', '\uD83C\uDF20', S.actTypes.wish, vi ? 'khi Nabu \u0111\u0103ng' : 'when Nabu posts']
+    /* These three said "khi Nabu \u0111\u0103ng" / "when Nabu posts", which named the
+       moment the activity exists rather than anything the reader does - and
+       reading them beside "m\u1ed7i ng\u00e0y m\u1ed9t l\u00e1" made them sound like Nabu's
+       errand rather than the reader's own. Each now says what the reader
+       finds there. The owner gave the Vietnamese. */
+    ['#/play/piles', PILE_ICON, S.actTypes.pile, L({ vi: '3-4 t\u1EE5', en: '3-4 piles', de: '3-4 Stapel' })],
+    ['#/play/polls', '\uD83D\uDCCA', S.actTypes.poll, L({ vi: 'c\u1EE7a ri\u00EAng b\u1ea1n', en: 'your own answer', de: 'deine eigene Antwort' })],
+    ['#/play/wishes', '\uD83C\uDF20', S.actTypes.wish, L({ vi: 'th\u00e0nh hi\u1EC7n th\u1EF1c', en: 'may it come true', de: 'm\u00F6ge er wahr werden' })]
   ];
   return '<div class="freegrid">' + rows.map((r) => '<a class="fg" href="' + r[0] + '">'
     + '<span class="ic">' + r[1] + '</span><b>' + esc(r[2]) + '</b><span class="s">' + esc(r[3]) + '</span></a>').join('') + '</div>';
