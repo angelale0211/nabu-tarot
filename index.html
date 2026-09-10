@@ -1100,6 +1100,10 @@ h1 .pileico{width:34px;height:27px;vertical-align:-3px;margin-right:2px}
 .turnlist li:first-child{border-top:0}
 .turnlist .t{flex:none;color:var(--fg-faint);font-size:12.5px;font-variant-numeric:tabular-nums}
 .turnlist .r{min-width:0;overflow-wrap:anywhere}
+/* A card's name in the list is a link back to its reading: 18px of text, so
+   the padding makes it a 40px target on a phone and the negative margin keeps
+   the row the height it was. */
+.turnlist a{display:inline-block;padding:11px 0;margin:-11px 0}
 #main .turnsnote{margin:6px 0 0}
 .sico{width:17px;height:17px;display:block}
 .links .sl{display:inline-flex;align-items:center;text-decoration:none;vertical-align:-3px}
