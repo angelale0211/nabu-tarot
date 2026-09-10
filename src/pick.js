@@ -85,7 +85,11 @@ function renderPick(args, params) {
     + '<div class="faint" style="text-align:center">' + esc(S.focusLabel) + '</div><div class="chips focus">' + chips + '</div>'
     + '<div class="fan deck" id="fan">' + fan + '</div>'
     + '<div class="deckbar"><button type="button" class="btn sm" data-step="-1" aria-label="prev">‹</button><span id="deckpos" class="faint"></span><button type="button" class="btn sm" data-step="1" aria-label="next">›</button></div>'
-    + '<div class="tap-hint">' + (pick.chosen == null ? esc(S.tapACard) : '') + '</div><div class="reveal" id="reveal"></div>'
+    /* A visitor whose one card was on an earlier day cannot tap this fan, and
+       the fan must not simply do nothing: the sign-in card says what to do. */
+    + '<div class="tap-hint">' + (pick.chosen == null && !guestSpent() ? esc(S.tapACard) : '') + '</div>'
+    + (pick.chosen == null && guestSpent() ? needAccountHTML(S.needInDraw) : '')
+    + '<div class="reveal" id="reveal"></div>'
     + lookStripHTML('cardback');
   bindDeck(m);
   // Changing the back redraws the fan, so the new one is seen straight away.

@@ -4046,6 +4046,17 @@ async function go(hash, sel) { W().location.hash = hash; await sleep(30); return
         'after a reload on Plus the latest card is back with its list, and a fresh draw is still offered');
       d2.querySelector('#redraw').click(); await sleep(80);
       ok(N2.pick.chosen === null && d2.querySelectorAll('#fan .slot').length === 78 && !d2.querySelector('#reveal .hero'), 'and drawing again still deals a fresh fan rather than the kept card');   // (guard)
+      /* ---- a visitor without an account: one card ever ----
+         The same day it comes back. The day after there is no card to show,
+         and the screen has to say so instead of failing to draw. */
+      N2.BE.enabled = true; N2.BE.user = null; plus(false);
+      put('nabu-today', null); put('nabu-guest-draw', 1); put('nabu-pick-day', { d: tiso, id: 'major-7', focus: 'love' }); fresh();
+      await go('#/home', '.tiles'); await go('#/pick', '#reveal .hero');
+      ok(N2.pick.chosen === 'major-7' && !!d2.querySelector('#reveal .needin') && !d2.querySelector('#redraw'), 'a visitor\'s one card comes back the same day, with the sign-in card under it');   // (guard)
+      put('nabu-pick-day', { d: yiso, id: 'major-7', focus: 'love' }); fresh();
+      await go('#/home', '.tiles'); const drew = await go('#/pick', '#fan .slot');
+      ok(drew && d2.querySelectorAll('#fan .slot').length === 78 && !d2.querySelector('#reveal .hero') && !!d2.querySelector('#main .needin') && d2.querySelector('.tap-hint').textContent === '',
+        'the day after, the visitor is shown the fan and asked to sign in, instead of a screen that fails to draw');
       /* ---- put the phone back the way it was ---- */
       N2.BE.enabled = keepBE.on; N2.BE.user = keepBE.user;
       W().saveProfileLocal({ lang: 'vi' }); W().applyAccountLang();
