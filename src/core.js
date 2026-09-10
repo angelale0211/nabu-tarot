@@ -264,20 +264,25 @@ const MOD = {
   }
 };
 
-/* ---- one free turn every three days for the coin and the message tree ----
-   Counted from the day it was last used, on the device clock: used on Monday,
-   open again on Thursday. It was once a week, Monday to Sunday, and the date
-   the older rule stored is still a date, read the same way. Anyone on Nabu
-   Plus runs without limit, and Pro contains Plus. plusOn() is defined in
-   looks.js, which loads after this file, so it is asked for when called
-   rather than captured now. */
-const LUCK_DAYS = 3;
+/* ---- a free turn: one a day for the coin, one every three days for the tree ----
+   Counted from the day it was last used, on the device clock. The coin answers
+   a single yes-or-no question, which is a small enough thing to want again
+   tomorrow, so it opens the next morning; the message tree keeps the longer
+   wait, because a message is meant to be sat with. Both were once a week, then
+   both were three days, and every rule so far has stored a plain ISO date, so
+   a date written under an older one is read exactly the same way. An unknown
+   kind falls back to three days rather than to none. Anyone on Nabu Plus runs
+   without limit, and Pro contains Plus. plusOn() is defined in looks.js, which
+   loads after this file, so it is asked for when called rather than captured
+   now. */
+const LUCK_DAYS = { coin: 1, tree: 3 };
+const luckDays = (kind) => LUCK_DAYS[kind] || 3;
 const daysSince = (iso) => { const a = new Date(String(iso) + 'T00:00:00'), b = new Date(); b.setHours(0, 0, 0, 0); return isNaN(a) ? 999 : Math.floor((b - a) / 86400000); };
 const luckUnlimited = () => plusOn();
 const luckLast = (kind) => String((store.get('nabu-luck', {}) || {})[kind] || '');
-const luckSpent = (kind) => !luckUnlimited(kind) && !!luckLast(kind) && daysSince(luckLast(kind)) < LUCK_DAYS;
+const luckSpent = (kind) => !luckUnlimited(kind) && !!luckLast(kind) && daysSince(luckLast(kind)) < luckDays(kind);
 function luckSpend(kind) { if (luckUnlimited(kind)) return; const a = store.get('nabu-luck', {}) || {}; a[kind] = isoDate(new Date()); store.set('nabu-luck', a); turnsPush(); }
-function luckNext(kind) { const d = new Date((luckLast(kind) || isoDate(new Date())) + 'T00:00:00'); d.setDate(d.getDate() + LUCK_DAYS); return isoDate(d); }
+function luckNext(kind) { const d = new Date((luckLast(kind) || isoDate(new Date())) + 'T00:00:00'); d.setDate(d.getDate() + luckDays(kind)); return isoDate(d); }
 
 /* ---- a free turn is spent by the person, not by the handset ----
    Both counters have to live on the device: the gate is drawn before the

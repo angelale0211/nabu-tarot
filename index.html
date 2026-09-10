@@ -12,7 +12,7 @@
      carries this notice with it. See LICENSE. -->
 <meta name="author" content="Nabu Tarot">
 <meta name="copyright" content="Copyright (c) 2025-2026 Nabu Tarot. All rights reserved.">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'none'; object-src 'none'; form-action 'self'; script-src 'self' 'sha256-YFvEzkuh47tgrOE+mJN4G9B1G2jSf665rrDD9avtPFM=' https://www.gstatic.com https://apis.google.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; font-src 'self' data:; media-src 'self' data: blob:; worker-src 'self'; connect-src 'self' https://*.googleapis.com https://*.google.com https://*.firebaseio.com https://*.cloudfunctions.net https://*.workers.dev https://generativelanguage.googleapis.com; frame-src https://*.firebaseapp.com https://accounts.google.com https://*.facebook.com">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'none'; object-src 'none'; form-action 'self'; script-src 'self' 'sha256-IX0rusNlYSZhNPYmBbd8FniVHqJUvszWw1Cjw5zefdI=' https://www.gstatic.com https://apis.google.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; font-src 'self' data:; media-src 'self' data: blob:; worker-src 'self'; connect-src 'self' https://*.googleapis.com https://*.google.com https://*.firebaseio.com https://*.cloudfunctions.net https://*.workers.dev https://generativelanguage.googleapis.com; frame-src https://*.firebaseapp.com https://accounts.google.com https://*.facebook.com">
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <meta name="theme-color" content="#EFE9FA">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -3398,7 +3398,7 @@ const STR = {
     saleSaved: 'Đã lưu khuyến mãi', saleHint: 'Bật, chọn phạm vi và mức giảm, rồi chọn ngày bắt đầu và ngày kết thúc. Giá cũ sẽ bị gạch ngang và giá mới hiện bên cạnh.',
     saleBanner: (off, what) => 'Khuyến mãi ' + off + ' cho ' + what, saleSee: 'Xem ngay',
     adminShort: 'Tài khoản quản trị', unlockCodeLabel: 'Nhập mã Nabu gửi cho bạn', unlockReadings: 'Xem bảng giá xem bài riêng',
-    luckFree: 'Bạn có 1 lượt miễn phí mỗi 3 ngày.', luckLeft: 'Lượt miễn phí của bạn vẫn còn.', luckSpent: (d) => 'Bạn đã dùng lượt miễn phí. Lượt mới mở vào ' + d + '.', luckOpen: 'Bạn đang mở không giới hạn.', luckOffer: 'Nabu Plus mở tung xu và rung cây không giới hạn cả năm, kèm toàn bộ giao diện: 79.000đ.', luckGet: 'Nhắn Nabu để lấy mã', luckCodePh: 'NABU-B-…',
+    luckFree: 'Bạn có 1 lượt miễn phí mỗi 3 ngày.', luckFreeDay: 'Bạn có 1 lượt miễn phí mỗi ngày.', luckLeft: 'Lượt miễn phí của bạn vẫn còn.', luckSpent: (d) => 'Bạn đã dùng lượt miễn phí. Lượt mới mở vào ' + d + '.', luckOpen: 'Bạn đang mở không giới hạn.', luckOffer: 'Nabu Plus mở tung xu và rung cây không giới hạn cả năm, kèm toàn bộ giao diện: 79.000đ.', luckGet: 'Nhắn Nabu để lấy mã', luckCodePh: 'NABU-B-…',
     treeTitle: 'Rung cây thông điệp', treeSub: 'một lời nhắn từ vũ trụ', treePets: 'Hiện bạn nhỏ dưới gốc cây', treePetsHint: 'Tắt tùy chọn này nếu bạn chỉ muốn nhìn thấy cây. Cài đặt này chỉ áp dụng cho tài khoản của bạn.',
     treeIntro: 'Nghĩ về điều đang ở trong lòng, rồi rung cây thật nhẹ. Một lời nhắn sẽ rơi xuống dành cho bạn.', treeShake: 'Rung cây', treeAgain: 'Rung thêm một lần nữa', treeFor: 'Lời nhắn dành cho bạn', coinTitle: 'Tung đồng xu', coinSub: 'cho câu hỏi có hoặc không', coinIntro: 'Nghĩ thật rõ về một câu hỏi có thể trả lời bằng có hoặc không, rồi tung đồng xu.', coinQ: 'Câu hỏi của bạn', coinQPh: 'Ví dụ: mình có nên nhắn trước không?', coinFlip: 'Tung đồng xu', coinAgain: 'Tung lại', coinYes: 'CÓ', coinNo: 'KHÔNG', coinNote: 'Đồng xu chỉ cho bạn một trong hai câu trả lời. Điều đáng chú ý là cảm giác của bạn ngay khi nhìn thấy kết quả: nếu bạn thấy hụt hẫng, bạn đã biết mình muốn gì.',
     actNew: 'Hoạt động mới', actType: 'Loại', actTypes: { pile: 'Chọn tụ bài', poll: 'Bình chọn', wish: 'Điều ước' }, actResultsDate: 'Ngày đăng kết quả', actIntroLabel: 'Lời dẫn (thanh công cụ phía trên ô cho phép in đậm, in nghiêng, tô sáng, chèn ảnh, video và emoji)', actPilesHint: 'Từ 2 đến 5 tụ. Bạn có thể đăng trước với nhãn trống; vài ngày sau quay lại điền thông điệp và bật "Đã có kết quả".', actPileN: (n) => 'Tụ ' + n, actPileLabel: 'Nhãn ngắn (không bắt buộc), ví dụ: Trái · Giữa · Phải', actPileMsg: 'Thông điệp cho tụ này (đăng sau cũng được)', actPileMsgEn: 'English message (optional)', actPileAdd: 'Thêm tụ', actPileDel: 'Bớt tụ', actResultsOn: 'Đã có kết quả: cho phép lật bài', actOptions: 'Các lựa chọn, mỗi dòng một lựa chọn', actCloseOn: 'Đóng bình chọn', actExisting: 'Hoạt động đã đăng', actNeedPiles: 'Bạn điền ít nhất một tụ nhé.', actNeedOptions: 'Cần ít nhất hai lựa chọn.',
@@ -4229,7 +4229,7 @@ const STR = {
     saleSaved: 'Sale saved', saleHint: 'Switch it on, choose what it covers and how much comes off, then pick the first and last day. Old prices are struck through with the new price beside them.',
     saleBanner: (off, what) => off + ' off ' + what, saleSee: 'See it',
     adminShort: 'Admin account', unlockCodeLabel: 'Enter the code Nabu sent you', unlockReadings: 'See the prices for a reading',
-    luckFree: 'You get one free turn every 3 days.', luckLeft: 'Your free turn is still open.', luckSpent: (d) => 'You have had your free turn. The next one opens on ' + d + '.', luckOpen: 'You have unlimited turns.', luckOffer: 'Nabu Plus opens the coin and the message tree without limit for a year, and every design with them. The price is on the price page.', luckGet: 'Message Nabu for a code', luckCodePh: 'NABU-B-…',
+    luckFree: 'You get one free turn every 3 days.', luckFreeDay: 'You get one free turn every day.', luckLeft: 'Your free turn is still open.', luckSpent: (d) => 'You have had your free turn. The next one opens on ' + d + '.', luckOpen: 'You have unlimited turns.', luckOffer: 'Nabu Plus opens the coin and the message tree without limit for a year, and every design with them. The price is on the price page.', luckGet: 'Message Nabu for a code', luckCodePh: 'NABU-B-…',
     treeTitle: 'Shake the message tree', treeSub: 'a message from the universe', treePets: 'Show your companions under the tree', treePetsHint: 'Turn this off if you only want to see the tree. This setting applies to your account only.',
     treeIntro: 'Think about what is on your heart, then gently shake the tree. A message will fall for you.', treeShake: 'Shake the tree', treeAgain: 'Shake it once more', treeFor: 'A message for you', coinTitle: 'Flip a coin', coinSub: 'for a yes or no question', coinIntro: 'Think of a clear question that can be answered with yes or no, then toss the coin.', coinQ: 'Your question', coinQPh: 'For example: should I message first?', coinFlip: 'Flip the coin', coinAgain: 'Flip again', coinYes: 'YES', coinNo: 'NO', coinNote: 'The coin gives you one of two answers. What matters is how you feel the moment you see it: if the result disappoints you, you already know what you want.',
     actNew: 'New activity', actType: 'Type', actTypes: { pile: 'Pick a pile', poll: 'Poll', wish: 'Wish' }, actResultsDate: 'Results date', actIntroLabel: 'Intro (the bar above the box: bold, italic, highlight, images, video, emoji)', actPilesHint: 'Two to five piles. You can publish with empty labels; come back days later, fill in the messages and switch on "Answered".', actPileN: (n) => 'Pile ' + n, actPileLabel: 'Short label (optional), e.g. Left · Middle · Right', actPileMsg: 'Message for this pile (can be added later)', actPileMsgEn: 'English message (optional)', actPileAdd: 'Add a pile', actPileDel: 'Remove a pile', actResultsOn: 'Answered: let people flip the piles', actOptions: 'Options, one per line', actCloseOn: 'Close the poll', actExisting: 'Published activities', actNeedPiles: 'Fill in at least one pile.', actNeedOptions: 'At least two options are needed.',
@@ -5059,7 +5059,7 @@ const STR = {
     saleSaved: 'Aktion gespeichert', saleHint: 'Schalt sie ein, wähl, wofür sie gilt und wie viel abgeht, und leg dann den ersten und den letzten Tag fest. Alte Preise werden durchgestrichen und der neue Preis daneben gezeigt.',
     saleBanner: (off, what) => off + ' Rabatt auf ' + what, saleSee: 'Ansehen',
     adminShort: 'Admin-Konto', unlockCodeLabel: 'Gib den Code ein, den Nabu dir geschickt hat', unlockReadings: 'Die Preise für eine Legung ansehen',
-    luckFree: 'Du hast alle 3 Tage eine kostenlose Runde.', luckLeft: 'Deine kostenlose Runde ist noch offen.', luckSpent: (d) => 'Deinen Gratisversuch hast du schon genutzt. Der nächste ist ab ' + d + ' verfügbar.', luckOpen: 'Du hast unbegrenzt viele Runden.', luckOffer: 'Nabu Plus öffnet die Münze und den Nachrichtenbaum ein Jahr lang ohne Grenze, samt allen Designs dazu. Den Preis findest du auf der Preisseite.', luckGet: 'Schreib Nabu für einen Code', luckCodePh: 'NABU-B-…',
+    luckFree: 'Du hast alle 3 Tage eine kostenlose Runde.', luckFreeDay: 'Du hast jeden Tag eine kostenlose Runde.', luckLeft: 'Deine kostenlose Runde ist noch offen.', luckSpent: (d) => 'Deinen Gratisversuch hast du schon genutzt. Der nächste ist ab ' + d + ' verfügbar.', luckOpen: 'Du hast unbegrenzt viele Runden.', luckOffer: 'Nabu Plus öffnet die Münze und den Nachrichtenbaum ein Jahr lang ohne Grenze, samt allen Designs dazu. Den Preis findest du auf der Preisseite.', luckGet: 'Schreib Nabu für einen Code', luckCodePh: 'NABU-B-…',
     treeTitle: 'Den Nachrichtenbaum schütteln', treeSub: 'eine Botschaft vom Universum', treePets: 'Deine Begleiter unter dem Baum zeigen', treePetsHint: 'Schalte das aus, wenn du nur den Baum sehen möchtest. Diese Einstellung gilt nur für dein Konto.',
     treeIntro: 'Denk an das, was dir gerade im Herzen liegt, und schüttle den Baum ganz sanft. Eine Botschaft fällt für dich herab.', treeShake: 'Den Baum schütteln', treeAgain: 'Noch einmal schütteln', treeFor: 'Eine Botschaft für dich', coinTitle: 'Eine Münze werfen', coinSub: 'für eine Ja-oder-Nein-Frage', coinIntro: 'Denk an eine klare Frage, die sich mit Ja oder Nein beantworten lässt, und wirf dann die Münze.', coinQ: 'Deine Frage', coinQPh: 'Zum Beispiel: Soll ich zuerst schreiben?', coinFlip: 'Die Münze werfen', coinAgain: 'Nochmal werfen', coinYes: 'JA', coinNo: 'NEIN', coinNote: 'Die Münze gibt dir eine von zwei Antworten. Wichtig ist, wie du dich in dem Moment fühlst, in dem du sie siehst: Wenn dich das Ergebnis enttäuscht, weißt du schon, was du willst.',
     actNew: 'Neue Aktivität', actType: 'Art', actTypes: { pile: 'Stapel wählen', poll: 'Umfrage', wish: 'Wunsch' }, actResultsDate: 'Datum der Auflösung', actIntroLabel: 'Einleitung (die Leiste über dem Feld: fett, kursiv, Markierung, Bilder, Video, Emoji)', actPilesHint: 'Zwei bis fünf Stapel. Du kannst auch mit leeren Beschriftungen veröffentlichen; komm Tage später wieder, trag die Botschaften ein und schalt "Beantwortet" ein.', actPileN: (n) => 'Stapel ' + n, actPileLabel: 'Kurze Beschriftung (freiwillig), z. B. Links · Mitte · Rechts', actPileMsg: 'Botschaft für diesen Stapel (kann später ergänzt werden)', actPileMsgEn: 'Englische Botschaft (freiwillig)', actPileAdd: 'Einen Stapel hinzufügen', actPileDel: 'Einen Stapel entfernen', actResultsOn: 'Beantwortet: Die Stapel dürfen umgedreht werden', actOptions: 'Antworten, eine pro Zeile', actCloseOn: 'Die Umfrage schließen', actExisting: 'Veröffentlichte Aktivitäten', actNeedPiles: 'Füll mindestens einen Stapel aus.', actNeedOptions: 'Es braucht mindestens zwei Antworten.',
@@ -17843,20 +17843,25 @@ const MOD = {
   }
 };
 
-/* ---- one free turn every three days for the coin and the message tree ----
-   Counted from the day it was last used, on the device clock: used on Monday,
-   open again on Thursday. It was once a week, Monday to Sunday, and the date
-   the older rule stored is still a date, read the same way. Anyone on Nabu
-   Plus runs without limit, and Pro contains Plus. plusOn() is defined in
-   looks.js, which loads after this file, so it is asked for when called
-   rather than captured now. */
-const LUCK_DAYS = 3;
+/* ---- a free turn: one a day for the coin, one every three days for the tree ----
+   Counted from the day it was last used, on the device clock. The coin answers
+   a single yes-or-no question, which is a small enough thing to want again
+   tomorrow, so it opens the next morning; the message tree keeps the longer
+   wait, because a message is meant to be sat with. Both were once a week, then
+   both were three days, and every rule so far has stored a plain ISO date, so
+   a date written under an older one is read exactly the same way. An unknown
+   kind falls back to three days rather than to none. Anyone on Nabu Plus runs
+   without limit, and Pro contains Plus. plusOn() is defined in looks.js, which
+   loads after this file, so it is asked for when called rather than captured
+   now. */
+const LUCK_DAYS = { coin: 1, tree: 3 };
+const luckDays = (kind) => LUCK_DAYS[kind] || 3;
 const daysSince = (iso) => { const a = new Date(String(iso) + 'T00:00:00'), b = new Date(); b.setHours(0, 0, 0, 0); return isNaN(a) ? 999 : Math.floor((b - a) / 86400000); };
 const luckUnlimited = () => plusOn();
 const luckLast = (kind) => String((store.get('nabu-luck', {}) || {})[kind] || '');
-const luckSpent = (kind) => !luckUnlimited(kind) && !!luckLast(kind) && daysSince(luckLast(kind)) < LUCK_DAYS;
+const luckSpent = (kind) => !luckUnlimited(kind) && !!luckLast(kind) && daysSince(luckLast(kind)) < luckDays(kind);
 function luckSpend(kind) { if (luckUnlimited(kind)) return; const a = store.get('nabu-luck', {}) || {}; a[kind] = isoDate(new Date()); store.set('nabu-luck', a); turnsPush(); }
-function luckNext(kind) { const d = new Date((luckLast(kind) || isoDate(new Date())) + 'T00:00:00'); d.setDate(d.getDate() + LUCK_DAYS); return isoDate(d); }
+function luckNext(kind) { const d = new Date((luckLast(kind) || isoDate(new Date())) + 'T00:00:00'); d.setDate(d.getDate() + luckDays(kind)); return isoDate(d); }
 
 /* ---- a free turn is spent by the person, not by the handset ----
    Both counters have to live on the device: the gate is drawn before the
@@ -27477,8 +27482,8 @@ function freeGridHTML() {
     ['#/learn/angel', '\uD83D\uDC7C', S.cats.angel, S.catSub.angel],
     ['#/learn/fortune', '\uD83D\uDD22', S.cats.fortune, S.catSub.fortune],
     ['#/play/pet', '\uD83D\uDC3E', S.petTitle, L({ vi: 'm\u1ed9t b\u1ea1n nh\u1ecf', en: 'one companion', de: 'ein kleiner Begleiter' })],
-    ['#/play/tree', '\uD83C\uDF38', S.treeTitle, L({ vi: '1 l\u01b0\u1ee3t m\u1ed7i tu\u1ea7n', en: 'once a week', de: 'einmal pro Woche' })],
-    ['#/play/coin', '\uD83E\uDE99', S.coinTitle, L({ vi: '1 l\u01b0\u1ee3t m\u1ed7i tu\u1ea7n', en: 'once a week', de: 'einmal pro Woche' })],
+    ['#/play/tree', '\uD83C\uDF38', S.treeTitle, L({ vi: '1 l\u01b0\u1ee3t m\u1ed7i 3 ng\u00e0y', en: 'once every 3 days', de: 'alle 3 Tage einmal' })],
+    ['#/play/coin', '\uD83E\uDE99', S.coinTitle, L({ vi: '1 l\u01b0\u1ee3t m\u1ed7i ng\u00e0y', en: 'once a day', de: 'einmal pro Tag' })],
     ['#/play/diary', '\uD83D\uDCD4', S.diaryTitle, S.diarySub],
     ['#/love', loveKnotSVG(), S.loveTitle, S.loveSub],
     /* These three said "khi Nabu \u0111\u0103ng" / "when Nabu posts", which named the
@@ -28780,13 +28785,13 @@ async function renderPlay(args) {
       return '<a class="aq" href="#/play/' + esc(g[2]) + '"><span class="ic">' + g[1] + '</span><b>' + esc(S.actTypes[g[0]]) + '</b>' + (n ? '<span class="cnt">' + n + '</span>' : '') + '</a>';
     }).join('') + '</div>';
 }
-/* ---- one free turn every three days, or a code for unlimited ----
+/* ---- the free turn, or a code for unlimited ----
    Shown under the coin and under the tree: where the visitor stands today,
    and, when the free turn is gone, what unlimited costs and where the code goes. */
 function luckPanelHTML(kind) {
   const S = T();
   if (luckUnlimited(kind)) return '<p class="hint">✓ ' + esc(S.luckOpen) + '</p>';
-  if (!luckSpent(kind)) return '<p class="hint">' + esc(S.luckFree) + '</p>';
+  if (!luckSpent(kind)) return '<p class="hint">' + esc(luckDays(kind) === 1 ? S.luckFreeDay : S.luckFree) + '</p>';
   return '<div class="card luckbox"><p class="lead">' + esc(S.luckSpent(fmtDate(luckNext(kind)))) + '</p>'
     + '<p class="hint" style="margin-bottom:10px">' + esc(isTWA() ? S.stPlusPitch : S.luckOffer) + '</p>'
     + (isTWA()
@@ -29107,7 +29112,7 @@ function coinFaceFor(metal, side) {
 
 /* ---- the coin answers a question, so there has to be one ----
    A yes or a no means nothing on its own, and a turn spent on nothing is a
-   turn wasted: the free flip is one every three days. So the button is dead
+   turn wasted, and the free flip is only one a day. So the button is dead
    until something is written in the box, and .btn[disabled] already draws it
    at half strength and refuses the press. The box writes to the store on every
    keystroke, so the store is what the button is built from. */
@@ -32113,7 +32118,7 @@ function adminSale(p) {
 ROUTES.admin = { nav: '', render: renderAdmin };
 
 /* ============================ boot ============================ */
-window.APP_VERSION = 'v215';
+window.APP_VERSION = 'v216';
 window.NABU = { CONFIG: CONFIG, SALE: SALE, salePrice: salePrice, loadActs: loadActs, BACK: BACK, LESSONS: LESSONS, localAnswer: localAnswer, compatVerdict: compatVerdict, numerologyOf: numerologyOf, ZDEEP: ZDEEP, lunarToday: lunarToday, solarToLunar: solarToLunar, DECK: DECK, INSIGHT: INSIGHT, KW: KW, ASK: ASK, TOPICS: TOPICS, GUIDES: GUIDES, SERVICES: SERVICES, COURSES: COURSES, ACCESS: ACCESS, INTERESTS: INTERESTS, plusOn: () => plusOn(), proOn: () => proOn(), luckUnlimited: () => luckUnlimited(), ZODIAC: ZODIAC, pick: pick, book: book, PLAY_ITEMS: PLAY_ITEMS, PLAY_SUB_SKUS: PLAY_SUB_SKUS, playItem: playItem, BILL: BILL, SUBS: SUBS, renderStore: renderStore, subStateWord: subStateWord,
   insightHTML: insightHTML, insightOf: insightOf, sunSignIndex: sunSignIndex, lifePath: lifePath, PROFILE: () => PROFILE, BE: BE, ACTS: ACTS,
   ANGELS: ANGELS, angelRead: angelRead, CODEBOOK: CODEBOOK, redeemCode: redeemCode, loadCodebook: loadCodebook, petHomeSVG: petHomeSVG, PET_HOMES: PET_HOMES, PET_WEARS: PET_WEARS, codeDigest: codeDigest, randomCode: randomCode, BANK: BANK, PETS: PETS, petSVG: petSVG, PET_COATS: PET_COATS, PET_KINDS: PET_KINDS, turnsMerge: turnsMerge, turnsLocal: turnsLocal, priceText: priceText, termText: termText, proSaveText: () => proSaveText(), wedFeeText: () => wedFeeText(), fmtPrice: fmtPrice, luckCut: luckCut, petLevel: petLevel, petStep: petStep, VOUCHERS: VOUCHERS, levelCoins: levelCoins, LOOKS: LOOKS,

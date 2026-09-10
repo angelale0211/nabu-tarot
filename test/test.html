@@ -1065,13 +1065,27 @@ async function go(hash, sel) { W().location.hash = hash; await sleep(30); return
       ok(d.querySelectorAll('.lookstrip .look').length === 4 && d.querySelectorAll('.lookstrip .look.locked').length === 3 && d.querySelector('.lookstrip .lk-coin svg'), 'the coin screen carries the four coins themselves, three of them locked');
       { const faces = Array.from(d.querySelectorAll('.lookstrip .lk-coin svg')).map((e) => e.innerHTML.replace(/#[0-9A-Fa-f]{6}/g, ''));
         ok(faces.length === 4 && new Set(faces).size === 4, 'the four coins are four different faces, not one face in four colours'); }
-      ok(!d.querySelector('#coinflip') && d.querySelector('.luckbox') && /79\.000đ/.test(d.querySelector('.luckbox').textContent) && /Nabu Plus/.test(d.querySelector('.luckbox').textContent) && d.querySelector('#main > p > a[href^="#/unlock"]'), 'the free weekly turn is used up, and Nabu Plus is offered with a code box');
+      ok(!d.querySelector('#coinflip') && d.querySelector('.luckbox') && /79\.000đ/.test(d.querySelector('.luckbox').textContent) && /Nabu Plus/.test(d.querySelector('.luckbox').textContent) && d.querySelector('#main > p > a[href^="#/unlock"]'), 'the free turn is used up, and Nabu Plus is offered with a code box');
       codeMode(true);
       d.querySelector('#luckcode').value = await issue('plus', '2099-01-01'); d.querySelector('#luckgo').click(); await waitFor(() => d.querySelector('#coinflip'), 6000);
       ok(d.querySelector('#coinflip') && !d.querySelector('.luckbox'), 'a Nabu Plus code lifts the limit on the coin');
       await go('#/play/tree', '#shake'); ok(d.querySelector('#shake') && !d.querySelector('.luckbox'), 'and on the message tree as well');
       codeMode(false);
       w.localStorage.removeItem('nabu-access'); w.localStorage.removeItem('nabu-luck'); w.localStorage.removeItem('nabu-unlock-cart');
+      /* The coin opens again the next morning; the message tree keeps the
+         three-day wait. Yesterday's date on both is the single moment the two
+         rules disagree, so it is the one worth pinning - and it is what the
+         screen has to say out loud, since a wrong promise is worse than none. */
+      { const y = new Date(); y.setDate(y.getDate() - 1);
+        const iso = y.getFullYear() + '-' + String(y.getMonth() + 1).padStart(2, '0') + '-' + String(y.getDate()).padStart(2, '0');
+        w.localStorage.setItem('nabu-luck', JSON.stringify({ coin: iso, tree: iso }));
+        await go('#/play/coin', '#coinflip, .luckbox');
+        ok(d.querySelector('#coinflip') && !d.querySelector('.luckbox') && /miễn phí mỗi ngày/.test(d.querySelector('#main').textContent),
+          'a coin flipped yesterday is free again today, and the screen says so');
+        await go('#/play/tree', '#shake, .luckbox');
+        ok(!d.querySelector('#shake') && d.querySelector('.luckbox'),
+          'but the message tree shaken yesterday is still waiting out its three days');
+        w.localStorage.removeItem('nabu-luck'); }
       /* Signed out again: everything after this is about what a visitor without
          an account sees, and leaving one signed in here quietly changed three
          later checks into something they were not written to test. */

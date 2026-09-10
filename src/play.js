@@ -372,13 +372,13 @@ async function renderPlay(args) {
       return '<a class="aq" href="#/play/' + esc(g[2]) + '"><span class="ic">' + g[1] + '</span><b>' + esc(S.actTypes[g[0]]) + '</b>' + (n ? '<span class="cnt">' + n + '</span>' : '') + '</a>';
     }).join('') + '</div>';
 }
-/* ---- one free turn every three days, or a code for unlimited ----
+/* ---- the free turn, or a code for unlimited ----
    Shown under the coin and under the tree: where the visitor stands today,
    and, when the free turn is gone, what unlimited costs and where the code goes. */
 function luckPanelHTML(kind) {
   const S = T();
   if (luckUnlimited(kind)) return '<p class="hint">✓ ' + esc(S.luckOpen) + '</p>';
-  if (!luckSpent(kind)) return '<p class="hint">' + esc(S.luckFree) + '</p>';
+  if (!luckSpent(kind)) return '<p class="hint">' + esc(luckDays(kind) === 1 ? S.luckFreeDay : S.luckFree) + '</p>';
   return '<div class="card luckbox"><p class="lead">' + esc(S.luckSpent(fmtDate(luckNext(kind)))) + '</p>'
     + '<p class="hint" style="margin-bottom:10px">' + esc(isTWA() ? S.stPlusPitch : S.luckOffer) + '</p>'
     + (isTWA()
@@ -699,7 +699,7 @@ function coinFaceFor(metal, side) {
 
 /* ---- the coin answers a question, so there has to be one ----
    A yes or a no means nothing on its own, and a turn spent on nothing is a
-   turn wasted: the free flip is one every three days. So the button is dead
+   turn wasted, and the free flip is only one a day. So the button is dead
    until something is written in the box, and .btn[disabled] already draws it
    at half strength and refuses the press. The box writes to the store on every
    keystroke, so the store is what the button is built from. */

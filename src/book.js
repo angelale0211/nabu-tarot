@@ -206,8 +206,8 @@ function freeGridHTML() {
     ['#/learn/angel', '\uD83D\uDC7C', S.cats.angel, S.catSub.angel],
     ['#/learn/fortune', '\uD83D\uDD22', S.cats.fortune, S.catSub.fortune],
     ['#/play/pet', '\uD83D\uDC3E', S.petTitle, L({ vi: 'm\u1ed9t b\u1ea1n nh\u1ecf', en: 'one companion', de: 'ein kleiner Begleiter' })],
-    ['#/play/tree', '\uD83C\uDF38', S.treeTitle, L({ vi: '1 l\u01b0\u1ee3t m\u1ed7i tu\u1ea7n', en: 'once a week', de: 'einmal pro Woche' })],
-    ['#/play/coin', '\uD83E\uDE99', S.coinTitle, L({ vi: '1 l\u01b0\u1ee3t m\u1ed7i tu\u1ea7n', en: 'once a week', de: 'einmal pro Woche' })],
+    ['#/play/tree', '\uD83C\uDF38', S.treeTitle, L({ vi: '1 l\u01b0\u1ee3t m\u1ed7i 3 ng\u00e0y', en: 'once every 3 days', de: 'alle 3 Tage einmal' })],
+    ['#/play/coin', '\uD83E\uDE99', S.coinTitle, L({ vi: '1 l\u01b0\u1ee3t m\u1ed7i ng\u00e0y', en: 'once a day', de: 'einmal pro Tag' })],
     ['#/play/diary', '\uD83D\uDCD4', S.diaryTitle, S.diarySub],
     ['#/love', loveKnotSVG(), S.loveTitle, S.loveSub],
     /* These three said "khi Nabu \u0111\u0103ng" / "when Nabu posts", which named the
