@@ -1,5 +1,5 @@
 /* Nabu Tarot -- offline cache. Bump CACHE on every release. */
-const CACHE = 'nabu-tarot-v222';
+const CACHE = 'nabu-tarot-v223';
 const SHELL = ['./', './index.html', './manifest.webmanifest', './icon-180.png', './icon-512.png', './icon-512-maskable.png', './posts.json', './schedule.json', './fb.json', './horoscope.json'];
 const LIVE = /\/(posts|schedule|fb|horoscope|activities|activities-stock)\.json$/;
 
@@ -36,4 +36,18 @@ self.addEventListener('fetch', (e) => {
     if (res && res.ok && res.type === 'basic') { const copy = res.clone(); caches.open(CACHE).then((c) => c.put(e.request, copy)).catch(() => {}); }
     return res;
   }).catch(() => caches.match('./index.html'))));
+});
+
+// A tap on a notification the page raised through this worker. Android only
+// shows worker-raised notifications, so this is where their tap lands: bring
+// the app to the front and tell the page where to go. With no window open,
+// open one at that place.
+self.addEventListener('notificationclick', (e) => {
+  e.notification.close();
+  const hash = (e.notification.data && e.notification.data.hash) || '';
+  e.waitUntil(self.clients.matchAll({ type: 'window', includeUncontrolled: true }).then((list) => {
+    const c = list[0];
+    if (c) return c.focus().then(() => { if (hash) c.postMessage({ type: 'nabu-open', hash: hash }); }).catch(() => {});
+    return self.clients.openWindow('./' + hash);
+  }));
 });

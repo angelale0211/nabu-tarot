@@ -3691,6 +3691,35 @@ async function go(hash, sel) { W().location.hash = hash; await sleep(30); return
         + (uniq.length ? ' [' + uniq.slice(0, 4).join('; ') + ']' : ''));
     }
 
+    { /* Android - the installed app too - refuses new Notification() outright
+         and shows only a notification the service worker raises, so until
+         v223 no Android phone ever saw one from this app. Every notification
+         now goes through the worker first, and a tap on it is handed back to
+         the page as a place inside the app. */
+      const calls = [], realN = W().Notification;
+      function AndroidN() { throw new TypeError("Failed to construct 'Notification': Illegal constructor."); }
+      AndroidN.permission = 'granted';
+      W().Notification = AndroidN;
+      N.NOTE.reg = { showNotification: (t, o) => { calls.push([t, o]); return Promise.resolve(); } };
+      W().notifyAdmin('Tin nhắn mới', 'Xin chào', '#/admin?tab=inbox');
+      await sleep(40);
+      ok(calls.length === 1 && calls[0][0] === 'Tin nhắn mới' && calls[0][1].body === 'Xin chào' && calls[0][1].data.hash === '#/admin?tab=inbox',
+        'a notification is raised through the service worker, the only way Android allows, and carries where a tap should lead');
+      N.NOTE.reg = null; W().Notification = realN;
+      const sw = W().navigator.serviceWorker;
+      if (sw && sw.dispatchEvent) {
+        await go('#/home', '#main');
+        sw.dispatchEvent(new (W().MessageEvent)('message', { data: { type: 'nabu-open', hash: '#/learn' } }));
+        await sleep(60);
+        const went = W().location.hash;
+        sw.dispatchEvent(new (W().MessageEvent)('message', { data: { type: 'nabu-open', hash: 'javascript:alert(1)' } }));
+        await sleep(40);
+        ok(went === '#/learn' && W().location.hash === '#/learn',
+          'a tapped notification opens the place it points to inside the app, and nothing that is not a place inside the app');
+        await go('#/home', '#main');
+      }
+    }
+
     { /* The card-back pictures are capped in height on a desk, so they end up
          narrower than the tile holding them - and a drawing with room to spare
          sits against the left edge unless it is told not to. They were centred

@@ -449,11 +449,31 @@ let UNREAD = 0, NEWBK = 0;
    always a toast while the app is open. */
 function notifyAdmin(title, body, hash) {
   toast(title + (body ? ': ' + body : ''));
-  if (!('Notification' in window) || Notification.permission !== 'granted') return;
-  try {
-    const n = new Notification(title, { body: body || '', icon: 'icon-180.png', badge: 'icon-180.png', tag: hash || 'nabu' });
-    n.onclick = () => { window.focus(); if (hash) location.hash = hash; n.close(); };
-  } catch (e) { /* some browsers only allow this from a service worker */ }
+  showNote(title, body, hash || 'nabu', hash);
+}
+/* One way to raise a system notification, for every screen that wants one.
+   Android - the installed app included - refuses `new Notification()`
+   outright ("Illegal constructor") and only shows one raised by the service
+   worker, so until 2026-09-10 no Android phone ever saw a single notification
+   from this app. The worker is asked first; the constructor is kept only as
+   the fallback where there is no worker. A tap on a worker-raised
+   notification reaches sw.js (notificationclick), which brings the app to
+   the front and hands `hash` back to the page. NOTE.reg lets the suite stand
+   in for the worker. */
+const NOTE = { reg: null };
+function showNote(title, body, tag, hash) {
+  if (!('Notification' in window) || window.Notification.permission !== 'granted') return;
+  const opts = { body: body || '', icon: 'icon-192.png?v=222', badge: 'icon-192.png?v=222', tag: tag || 'nabu', data: { hash: hash || '' } };
+  const direct = () => {
+    try {
+      const n = new window.Notification(title, opts);
+      n.onclick = () => { window.focus(); if (hash) location.hash = hash; n.close(); };
+    } catch (e) { /* no system notifications here; the toast has said it */ }
+  };
+  const sw = navigator.serviceWorker;
+  const reg = NOTE.reg ? Promise.resolve(NOTE.reg) : (sw && sw.controller ? sw.ready : null);
+  if (!reg) { direct(); return; }
+  reg.then((r) => r.showNotification(title, opts)).catch(direct);
 }
 function notifyState() { return !('Notification' in window) ? 'unsupported' : Notification.permission; }
 async function askNotify() { if (!('Notification' in window)) return 'unsupported'; try { return await Notification.requestPermission(); } catch (e) { return Notification.permission; } }
@@ -1079,6 +1099,9 @@ function boot() {
          sheet's answer with it. Nothing is queued - the new worker already
          controls the page, so the next open is the new release anyway. */
       navigator.serviceWorker.addEventListener('controllerchange', () => { if (had && !window.__reloaded && !(typeof BILL !== 'undefined' && BILL && BILL.buying)) { window.__reloaded = true; location.reload(); } });
+      // A tapped notification: the worker hands back where it points. Only a
+      // place inside the app is followed, never anything else in the message.
+      navigator.serviceWorker.addEventListener('message', (e) => { const m = e.data || {}; if (m.type === 'nabu-open' && typeof m.hash === 'string' && /^#\/[\w\-/?=&.%]*$/.test(m.hash)) location.hash = m.hash; });
       navigator.serviceWorker.register('sw.js').then((reg) => {
         const w = reg.installing;
         if (w && !had) w.addEventListener('statechange', () => { if (w.state === 'activated') toast(T().offlineReady); });

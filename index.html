@@ -12,7 +12,7 @@
      carries this notice with it. See LICENSE. -->
 <meta name="author" content="Nabu Tarot">
 <meta name="copyright" content="Copyright (c) 2025-2026 Nabu Tarot. All rights reserved.">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'none'; object-src 'none'; form-action 'self'; script-src 'self' 'sha256-Efa/6CWjraO4wxddG0YGHw2C+tmO3MbpDlSErmWp6uE=' https://www.gstatic.com https://apis.google.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; font-src 'self' data:; media-src 'self' data: blob:; worker-src 'self'; connect-src 'self' https://*.googleapis.com https://*.google.com https://*.firebaseio.com https://*.cloudfunctions.net https://*.workers.dev https://generativelanguage.googleapis.com; frame-src https://*.firebaseapp.com https://accounts.google.com https://*.facebook.com">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'none'; object-src 'none'; form-action 'self'; script-src 'self' 'sha256-Jt/ZCRcCOaipxcZKH5KEC6Nx+7ksranBDh1/zCR6Qjo=' https://www.gstatic.com https://apis.google.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; font-src 'self' data:; media-src 'self' data: blob:; worker-src 'self'; connect-src 'self' https://*.googleapis.com https://*.google.com https://*.firebaseio.com https://*.cloudfunctions.net https://*.workers.dev https://generativelanguage.googleapis.com; frame-src https://*.firebaseapp.com https://accounts.google.com https://*.facebook.com">
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <meta name="theme-color" content="#EFE9FA">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -18059,11 +18059,31 @@ let UNREAD = 0, NEWBK = 0;
    always a toast while the app is open. */
 function notifyAdmin(title, body, hash) {
   toast(title + (body ? ': ' + body : ''));
-  if (!('Notification' in window) || Notification.permission !== 'granted') return;
-  try {
-    const n = new Notification(title, { body: body || '', icon: 'icon-180.png', badge: 'icon-180.png', tag: hash || 'nabu' });
-    n.onclick = () => { window.focus(); if (hash) location.hash = hash; n.close(); };
-  } catch (e) { /* some browsers only allow this from a service worker */ }
+  showNote(title, body, hash || 'nabu', hash);
+}
+/* One way to raise a system notification, for every screen that wants one.
+   Android - the installed app included - refuses `new Notification()`
+   outright ("Illegal constructor") and only shows one raised by the service
+   worker, so until 2026-09-10 no Android phone ever saw a single notification
+   from this app. The worker is asked first; the constructor is kept only as
+   the fallback where there is no worker. A tap on a worker-raised
+   notification reaches sw.js (notificationclick), which brings the app to
+   the front and hands `hash` back to the page. NOTE.reg lets the suite stand
+   in for the worker. */
+const NOTE = { reg: null };
+function showNote(title, body, tag, hash) {
+  if (!('Notification' in window) || window.Notification.permission !== 'granted') return;
+  const opts = { body: body || '', icon: 'icon-192.png?v=222', badge: 'icon-192.png?v=222', tag: tag || 'nabu', data: { hash: hash || '' } };
+  const direct = () => {
+    try {
+      const n = new window.Notification(title, opts);
+      n.onclick = () => { window.focus(); if (hash) location.hash = hash; n.close(); };
+    } catch (e) { /* no system notifications here; the toast has said it */ }
+  };
+  const sw = navigator.serviceWorker;
+  const reg = NOTE.reg ? Promise.resolve(NOTE.reg) : (sw && sw.controller ? sw.ready : null);
+  if (!reg) { direct(); return; }
+  reg.then((r) => r.showNotification(title, opts)).catch(direct);
 }
 function notifyState() { return !('Notification' in window) ? 'unsupported' : Notification.permission; }
 async function askNotify() { if (!('Notification' in window)) return 'unsupported'; try { return await Notification.requestPermission(); } catch (e) { return Notification.permission; } }
@@ -18689,6 +18709,9 @@ function boot() {
          sheet's answer with it. Nothing is queued - the new worker already
          controls the page, so the next open is the new release anyway. */
       navigator.serviceWorker.addEventListener('controllerchange', () => { if (had && !window.__reloaded && !(typeof BILL !== 'undefined' && BILL && BILL.buying)) { window.__reloaded = true; location.reload(); } });
+      // A tapped notification: the worker hands back where it points. Only a
+      // place inside the app is followed, never anything else in the message.
+      navigator.serviceWorker.addEventListener('message', (e) => { const m = e.data || {}; if (m.type === 'nabu-open' && typeof m.hash === 'string' && /^#\/[\w\-/?=&.%]*$/.test(m.hash)) location.hash = m.hash; });
       navigator.serviceWorker.register('sw.js').then((reg) => {
         const w = reg.installing;
         if (w && !had) w.addEventListener('statechange', () => { if (w.state === 'activated') toast(T().offlineReady); });
@@ -27451,12 +27474,7 @@ function petRemindCheck() {
   const name = p.name || L(PET_NAMES[p.kind]);
   const body = hungry.length > 1 ? S.petHungryMany(hungry.length) : S.petHungryOne(name);
   toast('🍚 ' + body);
-  if ('Notification' in window && Notification.permission === 'granted') {
-    try {
-      const n = new Notification(S.petHungryTitle, { body: body, icon: 'icon-180.png', badge: 'icon-180.png', tag: 'nabu-pet' });
-      n.onclick = () => { window.focus(); location.hash = '#/play/pet'; n.close(); };
-    } catch (e) { /* some browsers only allow this from a service worker */ }
-  }
+  showNote(S.petHungryTitle, body, 'nabu-pet', '#/play/pet');
 }
 ROUTES.pet = { nav: 'play', render: renderPet };
 
@@ -31254,12 +31272,7 @@ function alertSay(item, loud) {
   if (!ALERTS.add(item)) return;
   if (!loud) return;
   toast(item.t);
-  if ('Notification' in window && Notification.permission === 'granted') {
-    try {
-      const n = new Notification(item.t, { body: item.b || '', icon: 'icon-180.png', badge: 'icon-180.png', tag: item.id });
-      n.onclick = () => { window.focus(); if (item.href) location.hash = item.href; n.close(); };
-    } catch (e) { /* the phone said no, and the bell is enough */ }
-  }
+  showNote(item.t, item.b, item.id, item.href);
 }
 
 /* ---------------------------------------------------------------- the streams */
@@ -32304,13 +32317,13 @@ function adminSale(p) {
 ROUTES.admin = { nav: '', render: renderAdmin };
 
 /* ============================ boot ============================ */
-window.APP_VERSION = 'v222';
+window.APP_VERSION = 'v223';
 window.NABU = { CONFIG: CONFIG, SALE: SALE, salePrice: salePrice, loadActs: loadActs, BACK: BACK, LESSONS: LESSONS, localAnswer: localAnswer, compatVerdict: compatVerdict, numerologyOf: numerologyOf, ZDEEP: ZDEEP, lunarToday: lunarToday, solarToLunar: solarToLunar, DECK: DECK, INSIGHT: INSIGHT, KW: KW, ASK: ASK, TOPICS: TOPICS, GUIDES: GUIDES, SERVICES: SERVICES, COURSES: COURSES, ACCESS: ACCESS, INTERESTS: INTERESTS, plusOn: () => plusOn(), proOn: () => proOn(), luckUnlimited: () => luckUnlimited(), ZODIAC: ZODIAC, pick: pick, book: book, PLAY_ITEMS: PLAY_ITEMS, PLAY_SUB_SKUS: PLAY_SUB_SKUS, playItem: playItem, BILL: BILL, SUBS: SUBS, renderStore: renderStore, subStateWord: subStateWord,
   insightHTML: insightHTML, insightOf: insightOf, sunSignIndex: sunSignIndex, lifePath: lifePath, PROFILE: () => PROFILE, BE: BE, ACTS: ACTS,
   ANGELS: ANGELS, angelRead: angelRead, CODEBOOK: CODEBOOK, redeemCode: redeemCode, loadCodebook: loadCodebook, petHomeSVG: petHomeSVG, PET_HOMES: PET_HOMES, PET_WEARS: PET_WEARS, codeDigest: codeDigest, randomCode: randomCode, BANK: BANK, PETS: PETS, petSVG: petSVG, PET_COATS: PET_COATS, PET_KINDS: PET_KINDS, turnsMerge: turnsMerge, turnsLocal: turnsLocal, priceText: priceText, termText: termText, proSaveText: () => proSaveText(), wedFeeText: () => wedFeeText(), fmtPrice: fmtPrice, luckCut: luckCut, petLevel: petLevel, petStep: petStep, VOUCHERS: VOUCHERS, levelCoins: levelCoins, LOOKS: LOOKS,
   LOVE: LOVE, LOVEDB: LOVEDB, HANDLE_RE: HANDLE_RE, loveBadgeHTML: loveBadgeHTML,
   loveMarkSVG: loveMarkSVG, QUIZ: QUIZ, QSCORE: QSCORE, QUIZ_PASS: QUIZ_PASS, QUIZ_LEN: QUIZ_LEN, pileArtSVG: pileArtSVG, PILE_ARTS: PILE_ARTS, threadSVG: threadSVG, petParentsHTML: petParentsHTML, GIFTS: GIFTS, ALERTS: ALERTS, alertsStart: alertsStart, alertWas: alertWas,
-  WED: WED, WED_STEPS: WED_STEPS, wedStep: wedStep, cupidSVG: cupidSVG, shareLine: shareLine, UPD: UPD };
+  WED: WED, WED_STEPS: WED_STEPS, wedStep: wedStep, cupidSVG: cupidSVG, shareLine: shareLine, UPD: UPD, NOTE: NOTE };
 /* ---- German reads English where German does not exist yet ----
    Every table in the app that is written per language is keyed 'vi' and 'en'.
    Adding a third language to LANGS without this makes each of them answer

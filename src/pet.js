@@ -1736,11 +1736,6 @@ function petRemindCheck() {
   const name = p.name || L(PET_NAMES[p.kind]);
   const body = hungry.length > 1 ? S.petHungryMany(hungry.length) : S.petHungryOne(name);
   toast('🍚 ' + body);
-  if ('Notification' in window && Notification.permission === 'granted') {
-    try {
-      const n = new Notification(S.petHungryTitle, { body: body, icon: 'icon-180.png', badge: 'icon-180.png', tag: 'nabu-pet' });
-      n.onclick = () => { window.focus(); location.hash = '#/play/pet'; n.close(); };
-    } catch (e) { /* some browsers only allow this from a service worker */ }
-  }
+  showNote(S.petHungryTitle, body, 'nabu-pet', '#/play/pet');
 }
 ROUTES.pet = { nav: 'play', render: renderPet };

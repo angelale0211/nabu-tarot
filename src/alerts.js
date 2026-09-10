@@ -83,12 +83,7 @@ function alertSay(item, loud) {
   if (!ALERTS.add(item)) return;
   if (!loud) return;
   toast(item.t);
-  if ('Notification' in window && Notification.permission === 'granted') {
-    try {
-      const n = new Notification(item.t, { body: item.b || '', icon: 'icon-180.png', badge: 'icon-180.png', tag: item.id });
-      n.onclick = () => { window.focus(); if (item.href) location.hash = item.href; n.close(); };
-    } catch (e) { /* the phone said no, and the bell is enough */ }
-  }
+  showNote(item.t, item.b, item.id, item.href);
 }
 
 /* ---------------------------------------------------------------- the streams */
