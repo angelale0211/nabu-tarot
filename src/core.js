@@ -73,9 +73,16 @@ const L2 = (obj, lg) => (obj == null ? '' : typeof obj === 'string' ? obj : (obj
 
 const darkMQ = window.matchMedia ? window.matchMedia('(prefers-color-scheme: dark)') : { matches: false, addEventListener: () => {} };
 const THEMES = ['light', 'dark', 'pink'];
-function themeChoice() { const t = store.get('nabu-theme', ''); return THEMES.indexOf(t) > -1 ? t : 'auto'; }
+/* Nobody has chosen yet: the pastel pink is what a stranger meets, on the
+   website and inside both apps, whatever their phone is set to. Following the
+   phone is still there, but it is now something a person picks rather than
+   what happens by default - so it is written down as 'auto' instead of as the
+   blank that also means "never asked". <html data-theme="pink"> in the shell
+   paints the first frame, so there is no flash of another theme before this
+   runs. */
+function themeChoice() { const t = store.get('nabu-theme', ''); if (t === 'auto') return 'auto'; return THEMES.indexOf(t) > -1 ? t : 'pink'; }
 function effectiveTheme() { const t = themeChoice(); return t === 'auto' ? (darkMQ.matches ? 'dark' : 'light') : t; }
-function setTheme(t) { store.set('nabu-theme', t === 'auto' ? '' : t); applyTheme(); }
+function setTheme(t) { store.set('nabu-theme', THEMES.indexOf(t) > -1 ? t : 'auto'); applyTheme(); }
 function applyTheme() {
   const t = themeChoice();
   if (t === 'auto') document.documentElement.removeAttribute('data-theme'); else document.documentElement.setAttribute('data-theme', t);

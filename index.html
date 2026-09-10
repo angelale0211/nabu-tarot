@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="vi">
+<html lang="vi" data-theme="pink">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
@@ -12,7 +12,7 @@
      carries this notice with it. See LICENSE. -->
 <meta name="author" content="Nabu Tarot">
 <meta name="copyright" content="Copyright (c) 2025-2026 Nabu Tarot. All rights reserved.">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'none'; object-src 'none'; form-action 'self'; script-src 'self' 'sha256-vT+T7QhJdqK5RajPq79x3oaypGOFz6A8PMxdCbKNN40=' https://www.gstatic.com https://apis.google.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; font-src 'self' data:; media-src 'self' data: blob:; worker-src 'self'; connect-src 'self' https://*.googleapis.com https://*.google.com https://*.firebaseio.com https://*.cloudfunctions.net https://*.workers.dev https://generativelanguage.googleapis.com; frame-src https://*.firebaseapp.com https://accounts.google.com https://*.facebook.com">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'none'; object-src 'none'; form-action 'self'; script-src 'self' 'sha256-Sjzg0H+Wu7i5pLIoAorvn1RDFs3BnDwJMSmvcdtA1Cw=' https://www.gstatic.com https://apis.google.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; font-src 'self' data:; media-src 'self' data: blob:; worker-src 'self'; connect-src 'self' https://*.googleapis.com https://*.google.com https://*.firebaseio.com https://*.cloudfunctions.net https://*.workers.dev https://generativelanguage.googleapis.com; frame-src https://*.firebaseapp.com https://accounts.google.com https://*.facebook.com">
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <meta name="theme-color" content="#EFE9FA">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -20,8 +20,8 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="Nabu Tarot">
 <link rel="manifest" href="manifest.webmanifest">
-<link rel="icon" href="icon-180.png">
-<link rel="apple-touch-icon" href="icon-180.png">
+<link rel="icon" href="icon-192.png?v=220">
+<link rel="apple-touch-icon" href="icon-180.png?v=220">
 <style>
 /* Be Vietnam Pro + Playfair Display + Lora, Latin and Vietnamese subsets,
    embedded so the app works offline. Lora carries the Vietnamese headings:
@@ -2486,7 +2486,11 @@ body[data-route="hello"] #main{width:100%}
   .lookstrip{max-width:560px;margin-left:auto;margin-right:auto}
   .lookgrid.four{grid-template-columns:repeat(4,1fr);gap:10px}
   .lookstrip .look{padding:8px 6px}
-  .lookstrip .look svg{max-height:110px;width:auto}
+  /* Capped so a wide window does not blow the preview up to full height. The
+     cap makes the picture narrower than its tile, and a block-level drawing
+     with room to spare sits against the left edge unless it is told not to -
+     which is why these read as leaning left on a desk and centred on a phone. */
+  .lookstrip .look svg{max-height:110px;width:auto;margin-inline:auto}
 }
 /* ---- the footer on a desk ----
    On a phone it stacks from the left, which is right for a narrow column. On a
@@ -17663,9 +17667,16 @@ const L2 = (obj, lg) => (obj == null ? '' : typeof obj === 'string' ? obj : (obj
 
 const darkMQ = window.matchMedia ? window.matchMedia('(prefers-color-scheme: dark)') : { matches: false, addEventListener: () => {} };
 const THEMES = ['light', 'dark', 'pink'];
-function themeChoice() { const t = store.get('nabu-theme', ''); return THEMES.indexOf(t) > -1 ? t : 'auto'; }
+/* Nobody has chosen yet: the pastel pink is what a stranger meets, on the
+   website and inside both apps, whatever their phone is set to. Following the
+   phone is still there, but it is now something a person picks rather than
+   what happens by default - so it is written down as 'auto' instead of as the
+   blank that also means "never asked". <html data-theme="pink"> in the shell
+   paints the first frame, so there is no flash of another theme before this
+   runs. */
+function themeChoice() { const t = store.get('nabu-theme', ''); if (t === 'auto') return 'auto'; return THEMES.indexOf(t) > -1 ? t : 'pink'; }
 function effectiveTheme() { const t = themeChoice(); return t === 'auto' ? (darkMQ.matches ? 'dark' : 'light') : t; }
-function setTheme(t) { store.set('nabu-theme', t === 'auto' ? '' : t); applyTheme(); }
+function setTheme(t) { store.set('nabu-theme', THEMES.indexOf(t) > -1 ? t : 'auto'); applyTheme(); }
 function applyTheme() {
   const t = themeChoice();
   if (t === 'auto') document.documentElement.removeAttribute('data-theme'); else document.documentElement.setAttribute('data-theme', t);
@@ -32277,7 +32288,7 @@ function adminSale(p) {
 ROUTES.admin = { nav: '', render: renderAdmin };
 
 /* ============================ boot ============================ */
-window.APP_VERSION = 'v219';
+window.APP_VERSION = 'v220';
 window.NABU = { CONFIG: CONFIG, SALE: SALE, salePrice: salePrice, loadActs: loadActs, BACK: BACK, LESSONS: LESSONS, localAnswer: localAnswer, compatVerdict: compatVerdict, numerologyOf: numerologyOf, ZDEEP: ZDEEP, lunarToday: lunarToday, solarToLunar: solarToLunar, DECK: DECK, INSIGHT: INSIGHT, KW: KW, ASK: ASK, TOPICS: TOPICS, GUIDES: GUIDES, SERVICES: SERVICES, COURSES: COURSES, ACCESS: ACCESS, INTERESTS: INTERESTS, plusOn: () => plusOn(), proOn: () => proOn(), luckUnlimited: () => luckUnlimited(), ZODIAC: ZODIAC, pick: pick, book: book, PLAY_ITEMS: PLAY_ITEMS, PLAY_SUB_SKUS: PLAY_SUB_SKUS, playItem: playItem, BILL: BILL, SUBS: SUBS, renderStore: renderStore, subStateWord: subStateWord,
   insightHTML: insightHTML, insightOf: insightOf, sunSignIndex: sunSignIndex, lifePath: lifePath, PROFILE: () => PROFILE, BE: BE, ACTS: ACTS,
   ANGELS: ANGELS, angelRead: angelRead, CODEBOOK: CODEBOOK, redeemCode: redeemCode, loadCodebook: loadCodebook, petHomeSVG: petHomeSVG, PET_HOMES: PET_HOMES, PET_WEARS: PET_WEARS, codeDigest: codeDigest, randomCode: randomCode, BANK: BANK, PETS: PETS, petSVG: petSVG, PET_COATS: PET_COATS, PET_KINDS: PET_KINDS, turnsMerge: turnsMerge, turnsLocal: turnsLocal, priceText: priceText, termText: termText, proSaveText: () => proSaveText(), wedFeeText: () => wedFeeText(), fmtPrice: fmtPrice, luckCut: luckCut, petLevel: petLevel, petStep: petStep, VOUCHERS: VOUCHERS, levelCoins: levelCoins, LOOKS: LOOKS,

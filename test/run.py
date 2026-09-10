@@ -232,6 +232,51 @@ def payment_policy():
             'refused and nothing can be bought inside the Android app: ' + pol]
 
 
+def icons_round():
+    """The app icons, checked as pixels rather than as good intentions.
+
+    make_icons.py used to paint the round avatar onto a pale square, and that
+    square is what showed up as a white box on the purple Android splash and as
+    a pale tile on an iPhone home screen. Two rules keep it away:
+
+      the badge is round and see-through where the corners used to be, for the
+      splash, the browser tab and the install icon;
+
+      except icon-180.png, which iOS paints black wherever a PNG is
+      transparent, so that one keeps the brand purple behind the circle - and
+      icon-512-maskable.png, which Android masks itself and therefore needs
+      artwork all the way to the edge.
+    """
+    try:
+        from PIL import Image
+    except ImportError:
+        return ['PASS icon shapes not checked: Pillow is not installed here']
+    out = []
+    for name in ('icon-512.png', 'icon-192.png'):
+        im = Image.open(os.path.join(ROOT, name)).convert('RGBA')
+        if im.getpixel((2, 2))[3] == 0:
+            out.append('PASS %s is the round badge with nothing in its corners' % name)
+        else:
+            out.append('FAIL %s has opaque corners again: that square is what floats on '
+                       'the purple splash and the browser tab' % name)
+    im = Image.open(os.path.join(ROOT, 'icon-180.png'))
+    corner = im.convert('RGBA').getpixel((2, 2))
+    if im.mode == 'RGB' and corner[:3] == (184, 164, 227):
+        out.append('PASS icon-180.png keeps the brand purple behind the circle, which is what '
+                   'an iPhone home screen needs instead of transparency')
+    else:
+        out.append('FAIL icon-180.png must be opaque on #B8A4E3 for iOS, which paints '
+                   'transparent pixels black; found mode %s corner %s' % (im.mode, corner))
+    mask = Image.open(os.path.join(ROOT, 'icon-512-maskable.png')).convert('RGBA')
+    if mask.getpixel((2, 2))[3] == 255:
+        out.append('PASS icon-512-maskable.png still reaches its own edges, which is what '
+                   'Android needs before it applies its own mask')
+    else:
+        out.append('FAIL icon-512-maskable.png has transparent corners: Android would mask '
+                   'a hole into the launcher icon')
+    return out
+
+
 if __name__ == '__main__':
     httpd = serve()
     time.sleep(0.3)
@@ -239,7 +284,7 @@ if __name__ == '__main__':
     print(res)
     # Read from the source, not from the page: this one is about what is
     # written down, and it renders perfectly while being the wrong money.
-    source = money_in_copy() + payment_policy() + money_token_rendered()
+    source = money_in_copy() + payment_policy() + money_token_rendered() + icons_round()
     for line in source:
         print(line)
     lines = [l for l in res.split('\n') if l.strip()] + source
