@@ -12,7 +12,7 @@
      carries this notice with it. See LICENSE. -->
 <meta name="author" content="Nabu Tarot">
 <meta name="copyright" content="Copyright (c) 2025-2026 Nabu Tarot. All rights reserved.">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'none'; object-src 'none'; form-action 'self'; script-src 'self' 'sha256-nun4AGapBZ3EQUaRnTXApMEgIeMO+0UcEFOWD3DTiXw=' https://www.gstatic.com https://apis.google.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; font-src 'self' data:; media-src 'self' data: blob:; worker-src 'self'; connect-src 'self' https://*.googleapis.com https://*.google.com https://*.firebaseio.com https://*.cloudfunctions.net https://*.workers.dev https://generativelanguage.googleapis.com; frame-src https://*.firebaseapp.com https://accounts.google.com https://*.facebook.com">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'none'; object-src 'none'; form-action 'self'; script-src 'self' 'sha256-kawMYvnhdaBZQ+C8KXJjqnr+iOqn1TkB7V0GGCHEvkA=' https://www.gstatic.com https://apis.google.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; font-src 'self' data:; media-src 'self' data: blob:; worker-src 'self'; connect-src 'self' https://*.googleapis.com https://*.google.com https://*.firebaseio.com https://*.cloudfunctions.net https://*.workers.dev https://generativelanguage.googleapis.com; frame-src https://*.firebaseapp.com https://accounts.google.com https://*.facebook.com">
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <meta name="theme-color" content="#EFE9FA">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -1087,6 +1087,20 @@ h1 .pileico{width:34px;height:27px;vertical-align:-3px;margin-right:2px}
 .setcard{margin-top:18px}
 .setcard .remind{margin-top:0}
 .luckbox{margin-top:12px}.luckbox .lead{font-weight:600;margin:0 0 4px}.luckbox .btn.block{margin-top:8px}
+/* ---- today's turns ----
+   Under the coin, the tree and the drawn card on Nabu Plus: the day's results
+   folded shut, so a long day does not flood the screen. The fold itself is the
+   profile's .sect; this only adds the count and the list. .sect is declared
+   further down with the same weight and sets margin:0 0 12px, so the space
+   above the fold needs both classes to hold. */
+.sect.turns{margin:14px 0 0}
+.turns > summary .cnt{flex:none;min-width:22px;padding:2px 8px;border-radius:999px;background:var(--surface-3);color:var(--fg-soft);font-size:12.5px;font-weight:700;text-align:center}
+.turnlist{list-style:none;margin:0;padding:0}
+.turnlist li{display:flex;gap:10px;align-items:baseline;padding:8px 0;border-top:1px solid var(--rule-soft);font-size:14px;line-height:1.45}
+.turnlist li:first-child{border-top:0}
+.turnlist .t{flex:none;color:var(--fg-faint);font-size:12.5px;font-variant-numeric:tabular-nums}
+.turnlist .r{min-width:0;overflow-wrap:anywhere}
+#main .turnsnote{margin:6px 0 0}
 .sico{width:17px;height:17px;display:block}
 .links .sl{display:inline-flex;align-items:center;text-decoration:none;vertical-align:-3px}
 /* The phases are buttons now, so they need the plain-button reset. */
@@ -20338,6 +20352,7 @@ function renderReveal(animate) {
     + '<div class="ins" style="border-color:var(--gold)"><p class="muted" style="margin-bottom:12px">' + esc(S.quickNote) + '</p>'
     + '<div class="row"><a class="btn primary" href="#/book?card=' + id + '">' + esc(S.bookWithCard) + '</a><a class="btn" href="#/learn/card/' + id + '">' + esc(S.learnCard) + '</a>'
     + '<button class="btn" id="shareCard">' + esc(S.shareCard) + '</button></div></div>'
+    + todayHistoryHTML('pick')
     + aiPanelHTML({ type: 'card', id: id, focus: pick.focus, lite: 1 })
     + (pickSpent() ? pickLimitHTML() : '<button class="btn block" id="redraw" style="margin-top:6px">' + esc(S.redraw) + '</button>');
   bindAI(r);
@@ -29312,6 +29327,7 @@ function renderTree() {
       + '<div class="card treewrap"><div class="treestage"><button type="button" class="tree" id="tree" aria-label="' + esc(S.treeShake) + '">' + treeSVG() + '<span class="petals" id="petals"></span></button>' + treePetHTML() + '</div>'
       + '<div class="treemsg" id="treemsg"' + (msg ? '' : ' hidden') + '><div class="eyebrow">' + esc(S.treeFor) + '</div><p id="treetext">' + (msg ? esc(L(msg)) : '') + '</p></div>'
       + (signedIn() ? (luckSpent('tree') ? '' : '<button class="btn primary block" id="shake">' + esc(msg ? S.treeAgain : S.treeShake) + '</button>') : needAccountHTML(S.needInLuck)) + '</div>'
+      + todayHistoryHTML('tree')
       /* The designs come first, straight under the tree: somebody who never
          scrolls should still learn the tree can be changed. The switch for the
          companions goes to the foot of the screen, in a card of its own. */
@@ -29349,8 +29365,10 @@ function renderTree() {
         $('#treetext').textContent = L(msg); box.hidden = false;
         tree.classList.remove('sway'); pet.innerHTML = '';
         busy = false;
-        if (luckSpent('tree')) { draw(); $('#treemsg').hidden = false; $('#treetext').textContent = L(msg); return; }
-        btn.disabled = false; btn.textContent = S.treeAgain;
+        /* Redrawn either way: the free turn is now spent and the screen says so,
+           and on Plus the day's list under the tree has a new line. draw() shows
+           the message from msg and labels the button from it. */
+        draw();
       }, 1400);
     };
     const sb = $('#shake'); if (sb) sb.addEventListener('click', shake);
@@ -29426,6 +29444,7 @@ function renderCoin() {
       + '<div class="coin" id="coin">' + coinFaceSVG(side) + '</div>'
       + '<div class="coinres" id="coinres" aria-live="polite">' + (side ? esc(side === 'yes' ? S.coinYes : S.coinNo) : '') + '</div>'
       + (signedIn() ? (luckSpent('coin') ? '' : '<button class="btn primary block" id="coinflip"' + (askedQ() ? '' : ' disabled') + '>' + esc(side ? S.coinAgain : S.coinFlip) + '</button>') : needAccountHTML(S.needInLuck)) + '</div>'
+      + todayHistoryHTML('coin')
       + lookStripHTML('coin')
       + '<div class="luckline">' + luckPanelHTML('coin') + '</div>'
       + '<p class="hint">' + esc(S.coinNote) + '</p>'
@@ -29457,8 +29476,10 @@ function renderCoin() {
       setTimeout(() => {
         side = bits ? 'yes' : 'no'; el.classList.remove('spin'); el.innerHTML = coinFaceSVG(side);
         $('#coinres').textContent = side === 'yes' ? S.coinYes : S.coinNo;
-        if (luckSpent('coin')) { draw(); return; }
-        btn.disabled = !askedQ(); btn.textContent = S.coinAgain;
+        /* Redrawn either way: the free turn is now spent and the screen says so,
+           and on Plus the day's list under the coin has a new line. The face is
+           drawn from side, so the answer stays where it landed. */
+        draw();
       }, 1000);
     });
   };

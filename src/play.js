@@ -601,6 +601,7 @@ function renderTree() {
       + '<div class="card treewrap"><div class="treestage"><button type="button" class="tree" id="tree" aria-label="' + esc(S.treeShake) + '">' + treeSVG() + '<span class="petals" id="petals"></span></button>' + treePetHTML() + '</div>'
       + '<div class="treemsg" id="treemsg"' + (msg ? '' : ' hidden') + '><div class="eyebrow">' + esc(S.treeFor) + '</div><p id="treetext">' + (msg ? esc(L(msg)) : '') + '</p></div>'
       + (signedIn() ? (luckSpent('tree') ? '' : '<button class="btn primary block" id="shake">' + esc(msg ? S.treeAgain : S.treeShake) + '</button>') : needAccountHTML(S.needInLuck)) + '</div>'
+      + todayHistoryHTML('tree')
       /* The designs come first, straight under the tree: somebody who never
          scrolls should still learn the tree can be changed. The switch for the
          companions goes to the foot of the screen, in a card of its own. */
@@ -638,8 +639,10 @@ function renderTree() {
         $('#treetext').textContent = L(msg); box.hidden = false;
         tree.classList.remove('sway'); pet.innerHTML = '';
         busy = false;
-        if (luckSpent('tree')) { draw(); $('#treemsg').hidden = false; $('#treetext').textContent = L(msg); return; }
-        btn.disabled = false; btn.textContent = S.treeAgain;
+        /* Redrawn either way: the free turn is now spent and the screen says so,
+           and on Plus the day's list under the tree has a new line. draw() shows
+           the message from msg and labels the button from it. */
+        draw();
       }, 1400);
     };
     const sb = $('#shake'); if (sb) sb.addEventListener('click', shake);
@@ -715,6 +718,7 @@ function renderCoin() {
       + '<div class="coin" id="coin">' + coinFaceSVG(side) + '</div>'
       + '<div class="coinres" id="coinres" aria-live="polite">' + (side ? esc(side === 'yes' ? S.coinYes : S.coinNo) : '') + '</div>'
       + (signedIn() ? (luckSpent('coin') ? '' : '<button class="btn primary block" id="coinflip"' + (askedQ() ? '' : ' disabled') + '>' + esc(side ? S.coinAgain : S.coinFlip) + '</button>') : needAccountHTML(S.needInLuck)) + '</div>'
+      + todayHistoryHTML('coin')
       + lookStripHTML('coin')
       + '<div class="luckline">' + luckPanelHTML('coin') + '</div>'
       + '<p class="hint">' + esc(S.coinNote) + '</p>'
@@ -746,8 +750,10 @@ function renderCoin() {
       setTimeout(() => {
         side = bits ? 'yes' : 'no'; el.classList.remove('spin'); el.innerHTML = coinFaceSVG(side);
         $('#coinres').textContent = side === 'yes' ? S.coinYes : S.coinNo;
-        if (luckSpent('coin')) { draw(); return; }
-        btn.disabled = !askedQ(); btn.textContent = S.coinAgain;
+        /* Redrawn either way: the free turn is now spent and the screen says so,
+           and on Plus the day's list under the coin has a new line. The face is
+           drawn from side, so the answer stays where it landed. */
+        draw();
       }, 1000);
     });
   };

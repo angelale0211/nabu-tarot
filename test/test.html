@@ -4001,6 +4001,51 @@ async function go(hash, sel) { W().location.hash = hash; await sleep(30); return
       await go('#/home', '.tiles'); await go('#/pick', '#fan .slot');
       ok(!d2.querySelector('#reveal .hero') && d2.querySelectorAll('#fan .slot').length === 78 && N2.pick.chosen === null && d2.querySelector('.tap-hint').textContent.length > 0,
         'the next morning the fan is dealt afresh');   // (guard)
+      /* ---- Nabu Plus: every turn of the day, folded under the result ---- */
+      plus(true); put('nabu-today', null); put('nabu-luck', {});
+      await go('#/home', '.tiles'); await go('#/play/coin', '#coinflip');
+      const flip = async (q) => { const cq = d2.querySelector('#coinq'); cq.value = q; cq.dispatchEvent(new (w2.Event)('input', { bubbles: true })); d2.querySelector('#coinflip').click(); await waitFor(() => d2.querySelector('#coinres').textContent, 6000); };
+      await flip('Một?');
+      ok(!d2.querySelector('.turns') && !!d2.querySelector('#coinflip') && !d2.querySelector('#coinflip').disabled, 'on Plus one flip shows no list, and the coin can be flipped again');   // (guard)
+      await flip('Hai?'); await flip('Ba?');
+      const det = d2.querySelector('details.turns[data-turns="coin"]');
+      ok(!!det && !det.open && det.querySelector('summary .cnt').textContent === '3' && /Các lượt hôm nay/.test(det.querySelector('summary').textContent),
+        'three flips fold into a shut list that says how many there are');
+      ok(!!det && det.querySelectorAll('.turnlist li').length === 3 && /Ba\?/.test(det.querySelector('.turnlist li').textContent) && /Một\?/.test(det.querySelectorAll('.turnlist li')[2].textContent) && /CÓ|KHÔNG/.test(det.querySelector('.turnlist li').textContent) && /^\d\d:\d\d$/.test(det.querySelector('.turnlist li .t').textContent),
+        'the list runs newest first, each line with its time, its question and its answer');
+      ok(!!det && !!det.nextElementSibling && det.nextElementSibling.classList.contains('turnsnote') && /Lượt trước sẽ được xoá vào ngày mai/.test(det.nextElementSibling.textContent),
+        'and under the list a line says the earlier turns go tomorrow');
+      if (det) { det.querySelector('summary').click(); await sleep(60); }
+      ok(!!det && det.open, 'the list opens on a tap');
+      { const said = {};
+        for (const lg of ['en', 'de']) {
+          W().saveProfileLocal({ lang: lg }); W().applyAccountLang();
+          await go('#/home', '.tiles'); await go('#/play/coin', 'details.turns');
+          const dd = d2.querySelector('details.turns');
+          said[lg] = (dd ? dd.querySelector('summary').textContent : '') + ' | ' + (dd && dd.nextElementSibling ? dd.nextElementSibling.textContent : '');
+        }
+        ok(/Today/.test(said.en) && /tomorrow/.test(said.en) && !VI.test(said.en) && /heute/.test(said.de) && /morgen/.test(said.de) && !VI.test(said.de),
+          'the list and its note speak English and German too (' + said.en + ' / ' + said.de + ')');
+        W().saveProfileLocal({ lang: 'vi' }); W().applyAccountLang(); }
+      await go('#/home', '.tiles'); await go('#/play/tree', '#shake');
+      d2.querySelector('#shake').click(); await waitFor(() => !d2.querySelector('#treemsg').hidden, 6000);
+      d2.querySelector('#shake').click(); await waitFor(() => d2.querySelector('details.turns[data-turns="tree"]'), 6000);
+      const det2 = d2.querySelector('details.turns[data-turns="tree"]');
+      ok(!!det2 && !det2.open && det2.querySelectorAll('.turnlist li').length === 2 && det2.querySelector('.turnlist li .r').textContent === d2.querySelector('#treetext').textContent,
+        'two shakes on Plus fold into a list whose first line is the message now on the tree');
+      fresh(); await go('#/home', '.tiles'); await go('#/pick', '#fan .slot');
+      d2.querySelectorAll('#fan button')[3].click(); await waitFor(() => d2.querySelector('#reveal .hero'), 4000);
+      const pa = N2.pick.chosen;
+      d2.querySelector('#redraw').click(); await sleep(80);
+      Array.from(d2.querySelectorAll('#fan button')).filter((b) => b.getAttribute('data-card') !== pa)[9].click(); await waitFor(() => d2.querySelector('#reveal .hero'), 4000);
+      const pb = N2.pick.chosen, det3 = d2.querySelector('#reveal details.turns[data-turns="pick"]');
+      ok(pa !== pb && !!det3 && det3.querySelectorAll('.turnlist li').length === 2 && det3.querySelector('.turnlist li a').getAttribute('href') === '#/pick?card=' + pb + '&focus=' + N2.pick.focus && det3.querySelectorAll('.turnlist li a')[1].getAttribute('href').indexOf('card=' + pa) > 0,
+        'two draws on Plus fold under the card into a list that links each card back to its reading');
+      fresh(); await go('#/home', '.tiles'); await go('#/pick', '#reveal .hero');
+      ok(N2.pick.chosen === pb && !!d2.querySelector('#redraw') && !!d2.querySelector('#reveal details.turns'),
+        'after a reload on Plus the latest card is back with its list, and a fresh draw is still offered');
+      d2.querySelector('#redraw').click(); await sleep(80);
+      ok(N2.pick.chosen === null && d2.querySelectorAll('#fan .slot').length === 78 && !d2.querySelector('#reveal .hero'), 'and drawing again still deals a fresh fan rather than the kept card');   // (guard)
       /* ---- put the phone back the way it was ---- */
       N2.BE.enabled = keepBE.on; N2.BE.user = keepBE.user;
       W().saveProfileLocal({ lang: 'vi' }); W().applyAccountLang();

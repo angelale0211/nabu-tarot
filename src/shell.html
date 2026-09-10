@@ -921,6 +921,20 @@ h1 .pileico{width:34px;height:27px;vertical-align:-3px;margin-right:2px}
 .setcard{margin-top:18px}
 .setcard .remind{margin-top:0}
 .luckbox{margin-top:12px}.luckbox .lead{font-weight:600;margin:0 0 4px}.luckbox .btn.block{margin-top:8px}
+/* ---- today's turns ----
+   Under the coin, the tree and the drawn card on Nabu Plus: the day's results
+   folded shut, so a long day does not flood the screen. The fold itself is the
+   profile's .sect; this only adds the count and the list. .sect is declared
+   further down with the same weight and sets margin:0 0 12px, so the space
+   above the fold needs both classes to hold. */
+.sect.turns{margin:14px 0 0}
+.turns > summary .cnt{flex:none;min-width:22px;padding:2px 8px;border-radius:999px;background:var(--surface-3);color:var(--fg-soft);font-size:12.5px;font-weight:700;text-align:center}
+.turnlist{list-style:none;margin:0;padding:0}
+.turnlist li{display:flex;gap:10px;align-items:baseline;padding:8px 0;border-top:1px solid var(--rule-soft);font-size:14px;line-height:1.45}
+.turnlist li:first-child{border-top:0}
+.turnlist .t{flex:none;color:var(--fg-faint);font-size:12.5px;font-variant-numeric:tabular-nums}
+.turnlist .r{min-width:0;overflow-wrap:anywhere}
+#main .turnsnote{margin:6px 0 0}
 .sico{width:17px;height:17px;display:block}
 .links .sl{display:inline-flex;align-items:center;text-decoration:none;vertical-align:-3px}
 /* The phases are buttons now, so they need the plain-button reset. */

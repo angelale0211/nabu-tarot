@@ -157,6 +157,7 @@ function renderReveal(animate) {
     + '<div class="ins" style="border-color:var(--gold)"><p class="muted" style="margin-bottom:12px">' + esc(S.quickNote) + '</p>'
     + '<div class="row"><a class="btn primary" href="#/book?card=' + id + '">' + esc(S.bookWithCard) + '</a><a class="btn" href="#/learn/card/' + id + '">' + esc(S.learnCard) + '</a>'
     + '<button class="btn" id="shareCard">' + esc(S.shareCard) + '</button></div></div>'
+    + todayHistoryHTML('pick')
     + aiPanelHTML({ type: 'card', id: id, focus: pick.focus, lite: 1 })
     + (pickSpent() ? pickLimitHTML() : '<button class="btn block" id="redraw" style="margin-top:6px">' + esc(S.redraw) + '</button>');
   bindAI(r);
