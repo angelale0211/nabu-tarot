@@ -749,7 +749,7 @@ const STR = {
     needInTitle: 'Bạn đăng nhập nhé',
     needInWhy: 'Phần này lưu lại những gì bạn làm, nên cần một tài khoản.',
     needInGo: 'Đăng nhập hoặc tạo tài khoản',
-    needInLuck: 'Lượt của bạn được lưu trên tài khoản, nên bạn vẫn còn lượt khi mở app trên máy khác.',
+    needInLuck: 'Lượt dùng của bạn sẽ được lưu vào tài khoản và vẫn còn khi bạn đăng nhập trên thiết bị khác.',
     needInDiary: 'Nhật ký chỉ nằm trên máy này nếu bạn chưa đăng nhập, và sẽ mất khi bạn xoá dữ liệu trình duyệt.',
     needInPet: 'Bạn đăng nhập trước nhé, để bạn nhỏ của bạn còn nhớ được bạn đã cho ăn.',
     needInDraw: 'Bạn vừa rút thử một lá. Đăng nhập để rút mỗi ngày, và để app nhớ lá bạn đã rút.',

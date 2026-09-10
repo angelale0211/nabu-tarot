@@ -20,8 +20,8 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="Nabu Tarot">
 <link rel="manifest" href="manifest.webmanifest">
-<link rel="icon" href="icon-192.png?v=220">
-<link rel="apple-touch-icon" href="icon-180.png?v=220">
+<link rel="icon" href="icon-192.png?v=222">
+<link rel="apple-touch-icon" href="icon-180.png?v=222">
 <style>
 /* __FONTS__ */
 
@@ -853,6 +853,16 @@ h1 .pileico{width:34px;height:27px;vertical-align:-3px;margin-right:2px}
 .upnext{display:flex;gap:10px;align-items:center;background:var(--tag-gold-bg);color:var(--tag-gold-ink);border-radius:14px;padding:12px 14px;margin-bottom:14px;text-decoration:none;font-weight:600}.upnext .ic{font-size:24px}
 .st{font-size:12px;font-weight:700;border-radius:8px;padding:3px 8px;background:var(--surface-3);white-space:nowrap}
 .st.confirmed{background:var(--tag-green-bg);color:var(--tag-green-ink)}.st.declined{background:var(--tag-pink-bg);color:var(--tag-pink-ink)}.st.requested{background:var(--tag-gold-bg);color:var(--tag-gold-ink)}
+/* The line under a Buy button (p.hint.st) borrows the chip's colours, but it
+   says a sentence, not one word: it wraps inside its card and sits centred.
+   With nothing to say it is not drawn at all - empty, the chip's padding and
+   background left a small pink dash under every item in the store, and a
+   long line such as a cancelled purchase ran off the side of the card. */
+.hint.st{display:block;white-space:normal;text-align:center;line-height:1.4;padding:6px 10px;max-width:100%;box-sizing:border-box;overflow-wrap:anywhere}
+.hint.st:empty{display:none}
+.unl-f .hint.st{flex:1 1 100%}
+/* #main p is justified for running prose, and an id outranks two classes. */
+#main .hint.st{text-align:center}
 
 /* ---- admin ---- */
 .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(64px,1fr));gap:8px;max-height:260px;overflow:auto;padding:4px;border:1px solid var(--rule-soft);border-radius:12px}
@@ -2463,10 +2473,11 @@ html[lang="de"] #today .tbl td:first-child{width:52%}
 
    Opening the app from the home screen shows Android's own splash first: a
    still picture built into the bundle out of icon-512.png and the manifest's
-   background_color, #B8A4E3. Android then hands over to Chrome, which has
-   nothing to show until the page has run - three or four seconds of nothing
-   on a cold start. This fills that gap on the same purple, so the two screens
-   read as one.
+   background_color, #FBEEF2 (the pastel pink theme's own ground; the owner
+   chose it over the old purple on 2026-09-10). Android then hands over to
+   Chrome, which has nothing to show until the page has run - three or four
+   seconds of nothing on a cold start. This fills that gap on the same pink,
+   so the two screens read as one - and so does the app that follows.
 
    It fades in only after 250ms, so the website - which paints almost at once -
    never flashes purple at anybody. main.js takes it down as soon as the first
@@ -2482,10 +2493,10 @@ html[lang="de"] #today .tbl td:first-child{width:52%}
    The colours are written out rather than taken from the tokens above. They
    have to match what is baked into the Android bundle, they must be right
    before any theme has been decided, and they must not follow the app into
-   dark mode - the native splash cannot. #B8A4E3 is the manifest's
+   dark mode - the native splash cannot. #FBEEF2 is the manifest's
    background_color; #3D2A6E and #4B3684 are --back-1 and --back-2, the card
    backs; #E5BE5E is --gold. */
-#boot{position:fixed;inset:0;z-index:9999;background:#B8A4E3;display:grid;place-items:center;opacity:0;
+#boot{position:fixed;inset:0;z-index:9999;background:#FBEEF2;display:grid;place-items:center;opacity:0;
       animation:bootin .3s ease .25s forwards, bootbail 0s linear 8s forwards}
 #boot.gone{opacity:0;visibility:hidden;transition:opacity .3s ease;animation:none}
 @keyframes bootin{to{opacity:1}}

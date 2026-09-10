@@ -274,6 +274,18 @@ def icons_round():
     else:
         out.append('FAIL icon-512-maskable.png has transparent corners: Android would mask '
                    'a hole into the launcher icon')
+    # The avatar's thin outline ring, drawn just inside the launcher's own round
+    # mask, read as a purple border around the app. Where it used to run (four
+    # fifths of the canvas holds the avatar; the ring sits at 233.5/256 of its
+    # radius) the launcher icon must now be the plain pale disc.
+    r = 256 * 0.8 * (233.5 / 256)
+    spots = [(round(256 - r), 256), (round(256 + r), 256), (256, round(256 - r)), (256, round(256 + r))]
+    dark = [p for p in spots if sum(mask.getpixel(p)[:3]) < 600]
+    if not dark:
+        out.append('PASS the launcher icon has no outline ring inside its round edge')
+    else:
+        out.append('FAIL the launcher icon still draws the outline ring at %s: it shows as a '
+                   'purple border inside the round mask of the phone' % dark)
     return out
 
 

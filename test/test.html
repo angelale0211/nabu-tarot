@@ -1631,6 +1631,24 @@ async function go(hash, sel) { W().location.hash = hash; await sleep(30); return
          error to report. Every ending now says something, and carries the word
          Play gave, because a screenshot is the only place it is ever seen. */
       const stOf = (k) => d.querySelector('.store [data-st="' + k + '"]');
+      { /* On a phone the line under each Buy button was a one-word chip: empty, it
+           drew a small pink dash under every item; with a sentence in it, it ran
+           off the side of the card. Measured at a phone width, where the owner
+           saw it. */
+        const frame = document.getElementById('f'), wasWide = frame.style.width;
+        frame.style.width = '390px'; await sleep(200);
+        const empties = [...d.querySelectorAll('.store [data-st]')].filter((e) => !e.textContent);
+        ok(empties.length > 3 && empties.every((e) => e.getBoundingClientRect().height === 0),
+          'a status line with nothing to say takes no room and draws no dash under the Buy button');
+        const line = stOf('playing'), card = line.closest('.unl') || line.parentElement;
+        line.textContent = 'Chưa mua xong. Nếu bạn không thấy ô thanh toán của Google Play, bạn thử lại nhé. (AbortError)';
+        await sleep(60);
+        const lr = line.getBoundingClientRect(), cr = card.getBoundingClientRect();
+        ok(lr.right <= cr.right + 0.5 && lr.left >= cr.left - 0.5 && lr.height > 30 && w.getComputedStyle(line).textAlign === 'center',
+          'a long status line wraps inside its card and sits centred, instead of running off the side'
+          + ' [line ' + Math.round(lr.left) + '-' + Math.round(lr.right) + ' h' + Math.round(lr.height) + ', card ' + Math.round(cr.left) + '-' + Math.round(cr.right) + ', ' + w.getComputedStyle(line).textAlign + ']');
+        line.textContent = '';
+        frame.style.width = wasWide || '430px'; await sleep(120); }
       { play.showFail = { name: 'NotAllowedError', delay: 1200 };
         d.querySelector('.store [data-buy="playing"]').click();
         await waitFor(() => stOf('playing') && /\(/.test(stOf('playing').textContent), 6000);
