@@ -106,22 +106,38 @@ function cmtRowHTML(c) {
       : '')
     + '</li>';
 }
+/* The writing box. Above Send, the name the comment will carry, from the
+   same rule that publishes it, and the way to change it; under the box, that
+   comments are public. */
+function cmtFormHTML() {
+  const S = T();
+  return '<div class="cmtform"><textarea class="cmtin" maxlength="' + CMT_MAX + '" placeholder="' + esc(S.cmtPh) + '"></textarea>'
+    + '<p class="hint cmtas">' + esc(S.cmtAs) + ' <b>' + esc(CMT.myName()) + '</b>'
+    + (BE.isAdmin() ? '' : ' <a class="linkbtn" href="#/me">' + esc(S.cmtRename) + '</a>') + '</p>'
+    + '<div class="row"><button type="button" class="btn primary" data-cmtsend>' + esc(S.cmtSend) + '</button><span class="hint cmtst"></span></div>'
+    + '<p class="hint cmtpublic">' + esc(S.cmtPublic) + '</p></div>';
+}
+/* Before a first comment, the comment rules stand where the box would be, and
+   one tap agrees to them for good on this phone. Google Play asks that people
+   accept terms before they post. The card is the wedding room's terms card.
+   Nabu is not asked: the rules are hers. */
+function cmtAgreed() { return BE.isAdmin() || !!store.get('nabu-cmt-ok', 0); }
+function cmtRulesHTML() {
+  const S = T();
+  return '<div class="card termscard cmtrules"><div class="ghead"><span class="gk">📜</span><h3>' + esc(S.cmtRulesTitle) + '</h3></div>'
+    + '<ol class="terms">' + S.cmtRules.map((r) => '<li>' + esc(r) + '</li>').join('') + '</ol>'
+    + '<button type="button" class="btn primary block" data-cmtagree>' + esc(S.cmtAgree) + '</button></div>';
+}
 /* The block under a post or an activity: heading with the count, the list,
-   the report box, and either the writing box or - signed out - one line that
-   says sign in, with the link. Never a dead box. Above Send, the name the
-   comment will carry, from the same rule that publishes it, and the way to
-   change it; under the box, that comments are public. */
+   the report box, and then the writing box, the rules to agree to first, or -
+   signed out - one line that says sign in, with the link. Never a dead box. */
 function cmtBoxHTML(key) {
   const S = T();
   return '<section class="cmts" data-cmts="' + esc(key) + '"><h3>💬 ' + esc(S.cmtTitle) + ' <span class="n" data-cmtn-head hidden></span></h3>'
     + '<ul class="saylist cmtlist"><li class="hint">…</li></ul>'
     + '<div class="flagbox" data-cmtflag hidden></div>'
     + (BE.enabled && BE.user
-      ? '<div class="cmtform"><textarea class="cmtin" maxlength="' + CMT_MAX + '" placeholder="' + esc(S.cmtPh) + '"></textarea>'
-        + '<p class="hint cmtas">' + esc(S.cmtAs) + ' <b>' + esc(CMT.myName()) + '</b>'
-        + (BE.isAdmin() ? '' : ' <a class="linkbtn" href="#/me">' + esc(S.cmtRename) + '</a>') + '</p>'
-        + '<div class="row"><button type="button" class="btn primary" data-cmtsend>' + esc(S.cmtSend) + '</button><span class="hint cmtst"></span></div>'
-        + '<p class="hint cmtpublic">' + esc(S.cmtPublic) + '</p></div>'
+      ? (cmtAgreed() ? cmtFormHTML() : cmtRulesHTML())
       : (BE.enabled ? '<p class="hint cmtsignin">' + esc(S.cmtSignIn) + ' <a href="' + esc(signinHref()) + '">' + esc(S.signIn) + '</a></p>' : ''))
     + '</section>';
 }
@@ -177,28 +193,43 @@ function cmtMount(root, key) {
     if (r === null) { list.innerHTML = '<li class="hint">' + esc(S.cmtOffline) + '</li>'; return; }
     rows = r; paint();
   });
-  const send = $('[data-cmtsend]', box), ta = $('.cmtin', box), st = $('.cmtst', box);
-  if (send) send.addEventListener('click', async () => {
-    const text = (ta.value || '').trim();
-    if (!text) { st.textContent = S.cmtEmpty; ta.focus(); return; }
-    if (text.length > CMT_MAX) { st.textContent = S.cmtTooLong; return; }
-    send.disabled = true; st.textContent = '';
-    /* Offline, the write waits in the phone's queue and the listener has
-       already drawn the line; the button must not wait with it. A refusal
-       that comes later still has to be heard: the words go back into the box
-       (unless something new is being written there) and the reason is said. */
-    let refused = false;
-    const write = CMT.add(key, text);
-    write.catch((e) => {
-      refused = true;
-      if (!ta.value.trim()) ta.value = text;
-      st.textContent = e && e.message === 'signin' ? S.cmtSignIn : loveWhy(e);
+  /* The box is wired whenever it is on the page: at once, or once the rules
+     have been agreed to. */
+  const bindForm = () => {
+    const send = $('[data-cmtsend]', box), ta = $('.cmtin', box), st = $('.cmtst', box);
+    if (!send) return null;
+    send.addEventListener('click', async () => {
+      const text = (ta.value || '').trim();
+      if (!text) { st.textContent = S.cmtEmpty; ta.focus(); return; }
+      if (text.length > CMT_MAX) { st.textContent = S.cmtTooLong; return; }
+      send.disabled = true; st.textContent = '';
+      /* Offline, the write waits in the phone's queue and the listener has
+         already drawn the line; the button must not wait with it. A refusal
+         that comes later still has to be heard: the words go back into the
+         box (unless something new is being written there) and the reason is
+         said. */
+      let refused = false;
+      const write = CMT.add(key, text);
+      write.catch((e) => {
+        refused = true;
+        if (!ta.value.trim()) ta.value = text;
+        st.textContent = e && e.message === 'signin' ? S.cmtSignIn : loveWhy(e);
+      });
+      try {
+        await Promise.race([write, new Promise((r) => setTimeout(r, 2500))]);
+        if (!refused) { ta.value = ''; toast(S.cmtSent); }
+      } catch (e) { /* said by the catch above */ }
+      send.disabled = false;
     });
-    try {
-      await Promise.race([write, new Promise((r) => setTimeout(r, 2500))]);
-      if (!refused) { ta.value = ''; toast(S.cmtSent); }
-    } catch (e) { /* said by the catch above */ }
-    send.disabled = false;
+    return ta;
+  };
+  bindForm();
+  const agree = $('[data-cmtagree]', box);
+  if (agree) agree.addEventListener('click', () => {
+    store.set('nabu-cmt-ok', Date.now());
+    const card = $('.cmtrules', box); if (!card) return;
+    card.outerHTML = cmtFormHTML();
+    const ta = bindForm(); if (ta) ta.focus();
   });
   return stop;
 }

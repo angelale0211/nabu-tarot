@@ -12,7 +12,7 @@
      carries this notice with it. See LICENSE. -->
 <meta name="author" content="Nabu Tarot">
 <meta name="copyright" content="Copyright (c) 2025-2026 Nabu Tarot. All rights reserved.">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'none'; object-src 'none'; form-action 'self'; script-src 'self' 'sha256-IvVlk96jAM6BUWWx2D1LwfylsCqV5+qd7AOzL2+/Q/k=' https://www.gstatic.com https://apis.google.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; font-src 'self' data:; media-src 'self' data: blob:; worker-src 'self'; connect-src 'self' https://*.googleapis.com https://*.google.com https://*.firebaseio.com https://*.cloudfunctions.net https://*.workers.dev https://generativelanguage.googleapis.com; frame-src https://*.firebaseapp.com https://accounts.google.com https://*.facebook.com">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'none'; object-src 'none'; form-action 'self'; script-src 'self' 'sha256-DdrXK+CkLB3TTOEul+RoZXPuavEE1IX1NeXqFDgTfC4=' https://www.gstatic.com https://apis.google.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; font-src 'self' data:; media-src 'self' data: blob:; worker-src 'self'; connect-src 'self' https://*.googleapis.com https://*.google.com https://*.firebaseio.com https://*.cloudfunctions.net https://*.workers.dev https://generativelanguage.googleapis.com; frame-src https://*.firebaseapp.com https://accounts.google.com https://*.facebook.com">
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <meta name="theme-color" content="#EFE9FA">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -1685,6 +1685,8 @@ h1 .pileico{width:34px;height:27px;vertical-align:-3px;margin-right:2px}
 .cmts .cmtdel{margin-left:10px;font-size:12.5px;min-height:40px;display:inline-flex;align-items:center;padding:0 8px}
 .cmts .cmtform textarea{width:100%;min-height:72px;border-radius:14px;padding:10px 14px}
 .cmts .cmtform .row{margin-top:8px;align-items:center;gap:10px}
+/* The comment rules: the wedding's terms card, with its button set apart. */
+.cmts .cmtrules .btn{margin-top:12px}
 .post .foot .cmtn{min-height:40px;display:inline-flex;align-items:center;gap:4px;color:var(--fg-soft);font-size:13.5px;font-weight:600;padding:6px 10px;border-radius:8px;text-decoration:none;margin-right:auto}
 .wishcard{position:relative;overflow:hidden}
 .wgtally{display:flex;flex-wrap:wrap;align-items:center;gap:10px;margin-bottom:12px;padding:9px 12px;
@@ -3265,6 +3267,8 @@ const STR = {
     cmtAdminIntro: 'Bình luận mới nhất dưới các bài và hoạt động. Mở bài để trả lời ngay dưới bình luận.', cmtAdminNone: 'Chưa có bình luận nào.', cmtOpen: 'Mở bài', cmtOn: (t) => 'Dưới: ' + t,
     notifNewComment: 'Bình luận mới từ ', newComments: 'bình luận mới',
     cmtAs: 'Bạn bình luận với tên:', cmtRename: 'Đổi tên', cmtPublic: 'Bình luận hiển thị công khai với tên bạn chọn.', cmtAuthor: 'Tác giả',
+    cmtRulesTitle: 'Quy tắc bình luận', cmtAgree: 'Tôi đồng ý',
+    cmtRules: ['Nói chuyện tử tế, tôn trọng người khác.', 'Không quảng cáo, không để số điện thoại hay đường link lạ.', 'Nabu có thể xoá bình luận không phù hợp.'],
     loveNoRules: 'Phần này của Nabu chưa được mở. Bạn báo giúp Nabu qua mục Liên hệ nhé, không phải lỗi của bạn đâu.',
     loveNoRulesAdmin: 'Firestore từ chối ghi: rules cho handles / people / bonds / requests / invites chưa được publish. Vào Firebase Console › Firestore Database › Rules, dán toàn bộ file firestore.rules trong repo rồi bấm Publish.',
     loveRoadTitle: 'Chặng đường',
@@ -4102,6 +4106,8 @@ const STR = {
     cmtAdminIntro: 'The newest comments under posts and activities. Open the post to answer right under the comment.', cmtAdminNone: 'No comments yet.', cmtOpen: 'Open the post', cmtOn: (t) => 'Under: ' + t,
     notifNewComment: 'New comment from ', newComments: 'new comments',
     cmtAs: 'You comment as:', cmtRename: 'Change', cmtPublic: 'Comments are public, under the name you choose.', cmtAuthor: 'Author',
+    cmtRulesTitle: 'Comment rules', cmtAgree: 'I agree',
+    cmtRules: ['Be kind and respectful.', 'No ads, phone numbers or strange links.', 'Nabu may remove any comment that breaks these rules.'],
     loveNoRules: 'This part of Nabu is not open yet. Let Nabu know through Contact — nothing here is your fault.',
     loveNoRulesAdmin: 'Firestore refused the write: the rules for handles / people / bonds / requests / invites have not been published. Firebase Console › Firestore Database › Rules, paste the whole firestore.rules from the repo, then Publish.',
     loveRoadTitle: 'The road',
@@ -4938,6 +4944,8 @@ const STR = {
     cmtAdminIntro: 'Die neuesten Kommentare unter Beiträgen und Aktivitäten. Öffne den Beitrag, um direkt unter dem Kommentar zu antworten.', cmtAdminNone: 'Noch keine Kommentare.', cmtOpen: 'Beitrag öffnen', cmtOn: (t) => 'Unter: ' + t,
     notifNewComment: 'Neuer Kommentar von ', newComments: 'neue Kommentare',
     cmtAs: 'Du kommentierst als:', cmtRename: 'Ändern', cmtPublic: 'Kommentare sind öffentlich, unter dem Namen, den du wählst.', cmtAuthor: 'Autor',
+    cmtRulesTitle: 'Kommentarregeln', cmtAgree: 'Ich stimme zu',
+    cmtRules: ['Sei freundlich und respektvoll.', 'Keine Werbung, keine Telefonnummern, keine fremden Links.', 'Nabu kann Kommentare entfernen, die gegen diese Regeln verstoßen.'],
     loveNoRules: 'Dieser Teil von Nabu ist noch nicht offen. Sag Nabu über Kontakt Bescheid - es liegt nicht an dir.',
     loveNoRulesAdmin: 'Firestore hat den Schreibzugriff abgelehnt: Die Regeln für handles / people / bonds / requests / invites sind nicht veröffentlicht. Firebase Console › Firestore Database › Rules, die ganze firestore.rules aus dem Repo einfügen, dann Publish.',
     loveRoadTitle: 'Der Weg',
@@ -19254,22 +19262,38 @@ function cmtRowHTML(c) {
       : '')
     + '</li>';
 }
+/* The writing box. Above Send, the name the comment will carry, from the
+   same rule that publishes it, and the way to change it; under the box, that
+   comments are public. */
+function cmtFormHTML() {
+  const S = T();
+  return '<div class="cmtform"><textarea class="cmtin" maxlength="' + CMT_MAX + '" placeholder="' + esc(S.cmtPh) + '"></textarea>'
+    + '<p class="hint cmtas">' + esc(S.cmtAs) + ' <b>' + esc(CMT.myName()) + '</b>'
+    + (BE.isAdmin() ? '' : ' <a class="linkbtn" href="#/me">' + esc(S.cmtRename) + '</a>') + '</p>'
+    + '<div class="row"><button type="button" class="btn primary" data-cmtsend>' + esc(S.cmtSend) + '</button><span class="hint cmtst"></span></div>'
+    + '<p class="hint cmtpublic">' + esc(S.cmtPublic) + '</p></div>';
+}
+/* Before a first comment, the comment rules stand where the box would be, and
+   one tap agrees to them for good on this phone. Google Play asks that people
+   accept terms before they post. The card is the wedding room's terms card.
+   Nabu is not asked: the rules are hers. */
+function cmtAgreed() { return BE.isAdmin() || !!store.get('nabu-cmt-ok', 0); }
+function cmtRulesHTML() {
+  const S = T();
+  return '<div class="card termscard cmtrules"><div class="ghead"><span class="gk">📜</span><h3>' + esc(S.cmtRulesTitle) + '</h3></div>'
+    + '<ol class="terms">' + S.cmtRules.map((r) => '<li>' + esc(r) + '</li>').join('') + '</ol>'
+    + '<button type="button" class="btn primary block" data-cmtagree>' + esc(S.cmtAgree) + '</button></div>';
+}
 /* The block under a post or an activity: heading with the count, the list,
-   the report box, and either the writing box or - signed out - one line that
-   says sign in, with the link. Never a dead box. Above Send, the name the
-   comment will carry, from the same rule that publishes it, and the way to
-   change it; under the box, that comments are public. */
+   the report box, and then the writing box, the rules to agree to first, or -
+   signed out - one line that says sign in, with the link. Never a dead box. */
 function cmtBoxHTML(key) {
   const S = T();
   return '<section class="cmts" data-cmts="' + esc(key) + '"><h3>💬 ' + esc(S.cmtTitle) + ' <span class="n" data-cmtn-head hidden></span></h3>'
     + '<ul class="saylist cmtlist"><li class="hint">…</li></ul>'
     + '<div class="flagbox" data-cmtflag hidden></div>'
     + (BE.enabled && BE.user
-      ? '<div class="cmtform"><textarea class="cmtin" maxlength="' + CMT_MAX + '" placeholder="' + esc(S.cmtPh) + '"></textarea>'
-        + '<p class="hint cmtas">' + esc(S.cmtAs) + ' <b>' + esc(CMT.myName()) + '</b>'
-        + (BE.isAdmin() ? '' : ' <a class="linkbtn" href="#/me">' + esc(S.cmtRename) + '</a>') + '</p>'
-        + '<div class="row"><button type="button" class="btn primary" data-cmtsend>' + esc(S.cmtSend) + '</button><span class="hint cmtst"></span></div>'
-        + '<p class="hint cmtpublic">' + esc(S.cmtPublic) + '</p></div>'
+      ? (cmtAgreed() ? cmtFormHTML() : cmtRulesHTML())
       : (BE.enabled ? '<p class="hint cmtsignin">' + esc(S.cmtSignIn) + ' <a href="' + esc(signinHref()) + '">' + esc(S.signIn) + '</a></p>' : ''))
     + '</section>';
 }
@@ -19325,28 +19349,43 @@ function cmtMount(root, key) {
     if (r === null) { list.innerHTML = '<li class="hint">' + esc(S.cmtOffline) + '</li>'; return; }
     rows = r; paint();
   });
-  const send = $('[data-cmtsend]', box), ta = $('.cmtin', box), st = $('.cmtst', box);
-  if (send) send.addEventListener('click', async () => {
-    const text = (ta.value || '').trim();
-    if (!text) { st.textContent = S.cmtEmpty; ta.focus(); return; }
-    if (text.length > CMT_MAX) { st.textContent = S.cmtTooLong; return; }
-    send.disabled = true; st.textContent = '';
-    /* Offline, the write waits in the phone's queue and the listener has
-       already drawn the line; the button must not wait with it. A refusal
-       that comes later still has to be heard: the words go back into the box
-       (unless something new is being written there) and the reason is said. */
-    let refused = false;
-    const write = CMT.add(key, text);
-    write.catch((e) => {
-      refused = true;
-      if (!ta.value.trim()) ta.value = text;
-      st.textContent = e && e.message === 'signin' ? S.cmtSignIn : loveWhy(e);
+  /* The box is wired whenever it is on the page: at once, or once the rules
+     have been agreed to. */
+  const bindForm = () => {
+    const send = $('[data-cmtsend]', box), ta = $('.cmtin', box), st = $('.cmtst', box);
+    if (!send) return null;
+    send.addEventListener('click', async () => {
+      const text = (ta.value || '').trim();
+      if (!text) { st.textContent = S.cmtEmpty; ta.focus(); return; }
+      if (text.length > CMT_MAX) { st.textContent = S.cmtTooLong; return; }
+      send.disabled = true; st.textContent = '';
+      /* Offline, the write waits in the phone's queue and the listener has
+         already drawn the line; the button must not wait with it. A refusal
+         that comes later still has to be heard: the words go back into the
+         box (unless something new is being written there) and the reason is
+         said. */
+      let refused = false;
+      const write = CMT.add(key, text);
+      write.catch((e) => {
+        refused = true;
+        if (!ta.value.trim()) ta.value = text;
+        st.textContent = e && e.message === 'signin' ? S.cmtSignIn : loveWhy(e);
+      });
+      try {
+        await Promise.race([write, new Promise((r) => setTimeout(r, 2500))]);
+        if (!refused) { ta.value = ''; toast(S.cmtSent); }
+      } catch (e) { /* said by the catch above */ }
+      send.disabled = false;
     });
-    try {
-      await Promise.race([write, new Promise((r) => setTimeout(r, 2500))]);
-      if (!refused) { ta.value = ''; toast(S.cmtSent); }
-    } catch (e) { /* said by the catch above */ }
-    send.disabled = false;
+    return ta;
+  };
+  bindForm();
+  const agree = $('[data-cmtagree]', box);
+  if (agree) agree.addEventListener('click', () => {
+    store.set('nabu-cmt-ok', Date.now());
+    const card = $('.cmtrules', box); if (!card) return;
+    card.outerHTML = cmtFormHTML();
+    const ta = bindForm(); if (ta) ta.focus();
   });
   return stop;
 }

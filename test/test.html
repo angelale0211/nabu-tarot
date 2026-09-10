@@ -3192,6 +3192,10 @@ async function go(hash, sel) { W().location.hash = hash; await sleep(30); return
 
       /* ---- comments ---- */
       { const nameWas = N.PROFILE().name;
+        /* The comment rules are agreed to once per phone before a first
+           comment; the checks below are about everything after that. Put back
+           as it was at the end of the block. */
+        const cmtOkWas = w.localStorage.getItem('nabu-cmt-ok'); w.localStorage.setItem('nabu-cmt-ok', '1');
         await go('#/home', '#feed .post');
         const pid = d.querySelector('#feed .post').getAttribute('data-id');
         const cm = 'post:' + pid;
@@ -3319,6 +3323,35 @@ async function go(hash, sel) { W().location.hash = hash; await sleep(30); return
             'under the box one line says comments are public, under the name chosen');
           ok(tag === '✦ Tác giả' && who === 'Nabu ✦ Tác giả',
             'Nabu\'s own line is marked with the role, "Tác giả", instead of her name twice' + ' [' + who + ']'); }
+        { /* Before a person's first comment, the comment rules - once, on this
+             phone - stand where the box would be: a title, three rules, one
+             button. Google Play asks that people accept terms before they post.
+             Measured on a 360px phone, by the house rules. */
+          const frame = document.getElementById('f'), wasWide = frame.style.width;
+          frame.style.width = '360px';
+          w.localStorage.removeItem('nabu-cmt-ok');
+          await go('#/home', '.tiles'); await go('#/post/' + pid, '.cmts .cmtrules'); await sleep(140);
+          const card = d.querySelector('.cmts .cmtrules'), agree = d.querySelector('.cmts [data-cmtagree]');
+          const items = d.querySelectorAll('.cmts .cmtrules li'), vw = d.documentElement.clientWidth, bad = [];
+          Array.from(d.querySelectorAll('.cmts, .cmts *')).forEach((el) => {
+            const r = el.getBoundingClientRect(); if (!r.width || !r.height) return;
+            const name = String(el.className || el.tagName).split(/\s+/)[0];
+            if (r.right > vw + 1 || r.left < -1) bad.push(name + ' off-screen');
+            if (el.scrollWidth > el.clientWidth + 1 && el.clientWidth > 0 && w.getComputedStyle(el).overflowX !== 'auto') bad.push(name + ' overflows');
+            if (!el.children.length && (el.textContent || '').trim() && parseFloat(w.getComputedStyle(el).fontSize) < 12) bad.push(name + ' text under 12px');
+          });
+          const ar = agree ? agree.getBoundingClientRect() : { width: 0, height: 0 };
+          ok(!!card && items.length === 3 && !!agree && ar.height >= 40 && ar.width >= 40 && !bad.length && !d.querySelector('.cmts .cmtin')
+            && w.getComputedStyle(items[0]).textAlign === 'left' && /Quy tắc bình luận/.test(card.textContent) && /Tôi đồng ý/.test(agree.textContent),
+            'signed in and never agreed, the comment rules stand where the box would be: a title, three rules, one button, and no box yet'
+            + (bad.length ? ' [' + bad.slice(0, 4).join('; ') + ']' : ''));
+          if (agree) agree.click(); await sleep(60);
+          const ta = d.querySelector('.cmts .cmtin');
+          ok(!!ta && d.activeElement === ta && Number(JSON.parse(w.localStorage.getItem('nabu-cmt-ok') || '0')) > 0 && !d.querySelector('.cmts .cmtrules'),
+            'agreeing keeps the answer on the phone and puts the box in the rules\' place, ready to type in');
+          await go('#/home', '.tiles'); await go('#/post/' + pid, '.cmts .cmtin');
+          ok(!!d.querySelector('.cmts .cmtin') && !d.querySelector('.cmts .cmtrules'), 'and the rules are not asked again on this phone');
+          frame.style.width = wasWide || '430px'; await sleep(60); }
         { /* Phones first. 360 and 390 are where most Android phones and iPhones
              sit. Signed in as Nabu, every control a comment can carry is on the
              screen at once - a delete on each line, a flag on a reader's line,
@@ -3506,12 +3539,20 @@ async function go(hash, sel) { W().location.hash = hash; await sleep(30); return
              time: going to the hash already showing redraws nothing. */
           const keepC = { lang: w.localStorage.getItem('nabu-lang'), plang: N.PROFILE().lang, user: N.BE.user };
           const want = {
-            en: ['Comments', 'No comments yet. Be the first.', 'Write a comment…', 'Send', 'You comment as: Mai Change', 'Comments are public, under the name you choose.', '✦ Author', 'Sign in to comment. Sign in'],
-            de: ['Kommentare', 'Noch keine Kommentare. Schreib den ersten.', 'Kommentar schreiben…', 'Senden', 'Du kommentierst als: Mai Ändern', 'Kommentare sind öffentlich, unter dem Namen, den du wählst.', '✦ Autor', 'Melde dich an, um zu kommentieren. Anmelden'] };
+            en: ['Comments', 'No comments yet. Be the first.', 'Write a comment…', 'Send', 'You comment as: Mai Change', 'Comments are public, under the name you choose.', '✦ Author', 'Sign in to comment. Sign in',
+              'Comment rules', 'Be kind and respectful.|No ads, phone numbers or strange links.|Nabu may remove any comment that breaks these rules.', 'I agree'],
+            de: ['Kommentare', 'Noch keine Kommentare. Schreib den ersten.', 'Kommentar schreiben…', 'Senden', 'Du kommentierst als: Mai Ändern', 'Kommentare sind öffentlich, unter dem Namen, den du wählst.', '✦ Autor', 'Melde dich an, um zu kommentieren. Anmelden',
+              'Kommentarregeln', 'Sei freundlich und respektvoll.|Keine Werbung, keine Telefonnummern, keine fremden Links.|Nabu kann Kommentare entfernen, die gegen diese Regeln verstoßen.', 'Ich stimme zu'] };
           const got = {}, bad = [];
           for (const lg of ['en', 'de']) {
             w.saveProfileLocal({ lang: lg }); w.applyAccountLang();
             N.BE.user = { uid: 'uidA', email: 'a@test' };
+            const txt0 = (sel) => ((d.querySelector(sel) || {}).textContent || '').replace(/\s+/g, ' ').trim();
+            w.localStorage.removeItem('nabu-cmt-ok');
+            await go('#/learn', '#main'); await go('#/post/' + pid, '.cmts .cmtrules');
+            const rulesT = txt0('.cmts .cmtrules h3'), rulesL = Array.from(d.querySelectorAll('.cmts .cmtrules li')).map((li) => li.textContent.trim()).join('|'),
+              agreeT = txt0('.cmts [data-cmtagree]');
+            w.localStorage.setItem('nabu-cmt-ok', '1');
             await go('#/learn', '#main'); await go('#/post/' + pid, '.cmts [data-cmtsend]');
             await waitFor(() => d.querySelector('.cmts .cmtlist li') && !/…/.test(d.querySelector('.cmts .cmtlist li').textContent), 3000);
             const txt = (sel) => ((d.querySelector(sel) || {}).textContent || '').replace(/\s+/g, ' ').trim();
@@ -3524,7 +3565,7 @@ async function go(hash, sel) { W().location.hash = hash; await sleep(30); return
             await db.collection('comments').doc('lgnabu').delete();
             N.BE.user = null;
             await go('#/learn', '#main'); await go('#/post/' + pid, '.cmts .cmtsignin');
-            got[lg] = [head, none, ph, send, as, pub, tag, txt('.cmts .cmtsignin')];
+            got[lg] = [head, none, ph, send, as, pub, tag, txt('.cmts .cmtsignin'), rulesT, rulesL, agreeT];
             want[lg].forEach((t, i) => { if (got[lg][i] !== t) bad.push(lg + ' "' + got[lg][i] + '"'); });
             if (VI.test(got[lg].join(' '))) bad.push(lg + ' still has Vietnamese');
           }
@@ -3534,7 +3575,7 @@ async function go(hash, sel) { W().location.hash = hash; await sleep(30); return
           N.BE.user = keepC.user;
           await go('#/home', '.tiles');
           ok(bad.length === 0 && d.documentElement.getAttribute('lang') === 'vi',
-            'the comments read in English and in German too: the heading, the empty line, the box, its button, the name line, the public notice, Nabu\'s tag and the sign-in line, with no Vietnamese left over'
+            'the comments read in English and in German too: the heading, the empty line, the box, its button, the name line, the public notice, Nabu\'s tag, the sign-in line and the comment rules, with no Vietnamese left over'
             + (bad.length ? ' [' + bad.slice(0, 4).join('; ') + ']' : '')); }
         { /* The count on a card is capped. The Firebase SDK the app loads has no
              count() on a query, so the number is read from the comments
@@ -3560,6 +3601,7 @@ async function go(hash, sel) { W().location.hash = hash; await sleep(30); return
           Object.keys(db.docs).filter((k) => k.indexOf('comments/many') === 0).forEach((k) => { delete db.docs[k]; });
           ok(viaCount === '99+' && viaGet === '99+' && asked === 100,
             'a card with more than ninety-nine comments says 99+, and reads no more than a hundred of them to know it [' + viaCount + ' | ' + viaGet + ' | ' + asked + ']'); }
+        if (cmtOkWas == null) w.localStorage.removeItem('nabu-cmt-ok'); else w.localStorage.setItem('nabu-cmt-ok', cmtOkWas);
         w.saveProfileLocal({ name: nameWas }); N.CMT.counts = {}; }
       N.BE.db = keep.db; N.BE.user = keep.user; N.BE.enabled = keep.on; w.confirm = keep.confirm;
       w.localStorage.removeItem('nabu-love');
