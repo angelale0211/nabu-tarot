@@ -63,24 +63,28 @@ function adminCleanup() { admin.unsubs.forEach((u) => { try { u(); } catch (e) {
 function renderAdmin(args, params) {
   adminCleanup();
   const S = T(), m = $('#main');
-  if (params && params.tab && ['posts', 'acts', 'schedule', 'bookings', 'pay', 'inbox', 'codes', 'sale', 'errors'].indexOf(params.tab) > -1) admin.tab = params.tab;
+  if (params && params.tab && ['posts', 'acts', 'schedule', 'bookings', 'pay', 'inbox', 'comments', 'codes', 'sale', 'errors'].indexOf(params.tab) > -1) admin.tab = params.tab;
   m.innerHTML = '<div class="eyebrow">' + esc(CONFIG.brand) + '</div><h1 style="margin-bottom:6px">' + esc(S.adminTitle) + '</h1><p class="muted">' + esc(S.adminIntro) + '</p>'
-    + '<div class="tabs" id="atabs">' + ['posts', 'acts', 'schedule', 'bookings', 'pay', 'inbox', 'codes', 'sale', 'errors'].map((k) => '<button data-t="' + k + '" class="' + (admin.tab === k ? 'on' : '') + '">' + esc(S.adminTabs[k]) + '<span class="tb" data-tb="' + k + '" hidden></span></button>').join('') + '</div>'
+    + '<div class="tabs" id="atabs">' + ['posts', 'acts', 'schedule', 'bookings', 'pay', 'inbox', 'comments', 'codes', 'sale', 'errors'].map((k) => '<button data-t="' + k + '" class="' + (admin.tab === k ? 'on' : '') + '">' + esc(S.adminTabs[k]) + '<span class="tb" data-tb="' + k + '" hidden></span></button>').join('') + '</div>'
     + (BE.enabled ? '<p class="hint" style="margin-bottom:12px">☁️ ' + esc(S.cloudContent) + '</p>' : '<div class="card"><label class="f" for="gtoken">' + esc(S.token) + '</label><div class="row nw"><input id="gtoken" type="password" value="' + esc(ghToken()) + '" style="flex:1" autocomplete="off"><button class="btn sm" id="savetoken">' + esc(S.saveToken) + '</button></div><p class="hint">' + esc(S.tokenHint) + ' (' + esc(CONFIG.repo) + ')</p></div>')
     + '<div id="apanel"></div>';
+  /* The counts on the tabs are drawn by renderChrome, which runs before a
+     screen renders: without this, tabs just drawn wait for the next change in
+     a count before showing theirs. */
+  adminTabBadges();
   const stb = $('#savetoken'); if (stb) stb.addEventListener('click', () => { store.set('nabu-gh-token', $('#gtoken').value.trim()); toast(T().saved); show(admin.tab); });
   /* The tab goes into the address as it is chosen - replaced, not pushed, so
      it does not itself become a Back step. Without this, Back from a thread
      landed on "#/admin", which reopened whatever tab was last in memory: the
      inbox again, rather than the orders somebody had just come from. */
   $$('#atabs button').forEach((b) => b.addEventListener('click', () => { admin.tab = b.getAttribute('data-t'); $$('#atabs button').forEach((x) => x.classList.toggle('on', x === b)); try { history.replaceState(null, '', '#/admin?tab=' + admin.tab); } catch (e) { /* fine */ } show(admin.tab); }));
-  const show = (t) => { adminCleanup(); const p = $('#apanel'); if (t === 'sale') adminSale(p); else if (t === 'posts') adminPosts(p); else if (t === 'acts') adminActivities(p); else if (t === 'schedule') adminSchedule(p); else if (t === 'bookings') adminBookings(p); else if (t === 'pay') adminPay(p); else if (t === 'codes') adminCodes(p); else if (t === 'errors') adminErrors(p); else adminInbox(p); };
+  const show = (t) => { adminCleanup(); const p = $('#apanel'); if (t === 'sale') adminSale(p); else if (t === 'posts') adminPosts(p); else if (t === 'acts') adminActivities(p); else if (t === 'schedule') adminSchedule(p); else if (t === 'bookings') adminBookings(p); else if (t === 'pay') adminPay(p); else if (t === 'codes') adminCodes(p); else if (t === 'errors') adminErrors(p); else if (t === 'comments') adminComments(p); else adminInbox(p); };
   show(admin.tab);
 }
 
 /* Unread counts on the Inbox and Bookings tabs, refreshed whenever the counts change. */
 function adminTabBadges() {
-  const map = { inbox: UNREAD, bookings: NEWBK };
+  const map = { inbox: UNREAD, bookings: NEWBK, comments: NEWC };
   $$('[data-tb]').forEach((el) => { const n = map[el.getAttribute('data-tb')] || 0; el.hidden = !n; el.textContent = n; });
 }
 /* ---- posts ---- */
@@ -378,6 +382,45 @@ function adminErrors(p) {
   admin.unsubs.push(BE.db.collection('errors').orderBy('at', 'desc').limit(300)
     .onSnapshot((s) => { rows = s.docs.map((doc) => Object.assign({ id: doc.id }, doc.data())); draw(); },
       () => { const box = $('#errlist'); if (box) box.innerHTML = '<p class="hint">' + esc(S.errNone) + '</p>'; }));
+}
+/* The newest comments across every post and activity, so Nabu never has to
+   open each one to find out. Opening the tab is what marks them seen. */
+function adminComments(p) {
+  const S = T();
+  if (!needAdmin(p)) return;
+  p.innerHTML = '<p class="hint">' + esc(S.cmtAdminIntro) + '</p><div id="cmtlist" class="card"><p class="hint">' + esc(S.loading) + '</p></div>';
+  store.set('nabu-cmt-seen', Date.now()); NEWC = 0; renderChrome((ROUTES[parseHash().route] || {}).nav);
+  const target = (key) => {
+    const m = /^(post|act):(.+)$/.exec(key || '');
+    if (!m) return { href: '#/home', title: key || '' };
+    if (m[1] === 'post') { const post = allPosts().filter((x) => x.id === m[2])[0]; return { href: '#/post/' + m[2], title: post ? L(post.title) : m[2] }; }
+    const a = (ACTS.items || []).filter((x) => x.id === m[2])[0]; return { href: '#/play/' + m[2], title: a ? L(a.title) : m[2] };
+  };
+  let rows = [];
+  const draw = () => {
+    const box = $('#cmtlist'); if (!box) return;
+    box.innerHTML = '<h3 style="margin-bottom:4px">💬 ' + esc(S.cmtTitle) + (rows.length ? ' <span class="n">' + rows.length + '</span>' : '') + '</h3>'
+      + (rows.length ? rows.map((c) => { const t = target(c.on);
+        return '<div class="bk"><div class="bkh"><b>' + esc(c.nabu ? 'Nabu' : (c.name || S.cmtSomeone)) + '</b><span class="faint">' + esc(cmtWhen(c)) + '</span></div>'
+          + '<p>' + esc(c.text || '') + '</p><p class="hint">' + esc(S.cmtOn(t.title)) + '</p>'
+          + '<div class="acts"><a class="btn sm" href="' + esc(t.href) + '">' + esc(S.cmtOpen) + '</a>'
+          + '<button type="button" class="btn sm danger" data-cmtgone="' + esc(c.id) + '">' + esc(S.cmtDelete) + '</button></div></div>'; }).join('')
+        : '<p class="empty">' + esc(S.cmtAdminNone) + '</p>');
+    $$('[data-cmtgone]', box).forEach((b) => b.addEventListener('click', async () => {
+      if (!b.getAttribute('data-sure')) { b.setAttribute('data-sure', '1'); b.textContent = S.cmtDeleteSure; return; }
+      b.disabled = true;
+      try { await CMT.remove(b.getAttribute('data-cmtgone')); toast(S.saved); }
+      catch (e) { b.disabled = false; toast(loveWhy(e)); }
+    }));
+  };
+  /* Titles for the rows: the feed and the activities may not be loaded yet
+     when the dashboard is the first screen opened. */
+  Promise.all([POSTS == null ? loadPosts() : null, loadActs()]).then(draw).catch(() => {});
+  admin.unsubs.push(BE.db.collection('comments').orderBy('at', 'desc').limit(100).onSnapshot((s) => {
+    rows = s.docs.map((doc) => Object.assign({ id: doc.id }, doc.data()));
+    rows.sort((a, b) => cmtMs(b) - cmtMs(a));
+    draw();
+  }, () => { const box = $('#cmtlist'); if (box) box.innerHTML = '<p class="hint">' + esc(S.cmtAdminNone) + '</p>'; }));
 }
 
 function adminPay(p) {

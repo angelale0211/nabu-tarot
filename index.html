@@ -12,7 +12,7 @@
      carries this notice with it. See LICENSE. -->
 <meta name="author" content="Nabu Tarot">
 <meta name="copyright" content="Copyright (c) 2025-2026 Nabu Tarot. All rights reserved.">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'none'; object-src 'none'; form-action 'self'; script-src 'self' 'sha256-vh2R1x3bH2vYvw//LwxGQpPf3KBaPQy+83KCn6WPwRg=' https://www.gstatic.com https://apis.google.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; font-src 'self' data:; media-src 'self' data: blob:; worker-src 'self'; connect-src 'self' https://*.googleapis.com https://*.google.com https://*.firebaseio.com https://*.cloudfunctions.net https://*.workers.dev https://generativelanguage.googleapis.com; frame-src https://*.firebaseapp.com https://accounts.google.com https://*.facebook.com">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'none'; object-src 'none'; form-action 'self'; script-src 'self' 'sha256-n1nT67WzHok7QCkuIRbizEooetJjxnTXK18Vn+2jJik=' https://www.gstatic.com https://apis.google.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; font-src 'self' data:; media-src 'self' data: blob:; worker-src 'self'; connect-src 'self' https://*.googleapis.com https://*.google.com https://*.firebaseio.com https://*.cloudfunctions.net https://*.workers.dev https://generativelanguage.googleapis.com; frame-src https://*.firebaseapp.com https://accounts.google.com https://*.facebook.com">
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <meta name="theme-color" content="#EFE9FA">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -18084,7 +18084,7 @@ const ICONS = {
   play: '<svg viewBox="0 0 24 24"><rect x="3.5" y="3.5" width="17" height="17" rx="4"/><circle cx="8.5" cy="8.5" r="1.3" fill="currentColor"/><circle cx="15.5" cy="8.5" r="1.3" fill="currentColor"/><circle cx="12" cy="12" r="1.3" fill="currentColor"/><circle cx="8.5" cy="15.5" r="1.3" fill="currentColor"/><circle cx="15.5" cy="15.5" r="1.3" fill="currentColor"/></svg>',
   me: '<svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg>'
 };
-let UNREAD = 0, NEWBK = 0;
+let UNREAD = 0, NEWBK = 0, NEWC = 0;
 /* Notifications for Nabu: a system notification when the browser allows it
    (Android, desktop, and iPhone once the app is on the home screen), and
    always a toast while the app is open. */
@@ -18156,7 +18156,7 @@ function renderChrome(route) {
   $('#lang').setAttribute('title', T().langSwitch);
   $('#nav').innerHTML = ['home', 'pick', 'play', 'learn', 'book', 'me'].map((k) =>
     '<a href="#/' + k + '" class="' + (route === k ? 'on' : '') + '">' + ICONS[k] + '<span>' + esc(T().nav[k]) + '</span>'
-    + (k === 'me' && (UNREAD + NEWBK) ? '<span class="badge">' + (UNREAD + NEWBK) + '</span>' : '')
+    + (k === 'me' && (UNREAD + NEWBK + NEWC) ? '<span class="badge">' + (UNREAD + NEWBK + NEWC) + '</span>' : '')
     // A sale on readings shows up on the tab where readings are booked.
     + (k === 'book' && SALE.covers('reading') ? '<span class="saletag" aria-hidden="true">🏷️</span>' : '')
     + (k === 'learn' && SALE.covers('unlock') ? '<span class="saletag" aria-hidden="true">🏷️</span>' : '') + '</a>').join('');
@@ -19019,13 +19019,38 @@ const BE = {
         if (!firstB) s.docChanges().forEach((c) => { if (c.type === 'added') { const b = c.doc.data(); notifyAdmin(S.notifNewBooking + (b.name || b.email || S.guestLabel), (b.service || '') + (b.slot ? ' · ' + b.slot.replace('T', ' ') : ''), '#/admin?tab=bookings'); } });
         firstB = false;
       });
+      this.watchComments();
     } else {
       this._unsubUnread = this.thread().onSnapshot((d) => { UNREAD = (d.exists && d.data().userUnread) || 0; renderChrome((ROUTES[parseHash().route] || {}).nav); });
     }
     void self;
   },
   _unsubBk: null,
-  stopUnread() { if (this._unsubUnread) { this._unsubUnread(); this._unsubUnread = null; } if (this._unsubBk) { this._unsubBk(); this._unsubBk = null; } UNREAD = 0; NEWBK = 0; },
+  stopUnread() { if (this._unsubUnread) { this._unsubUnread(); this._unsubUnread = null; } if (this._unsubBk) { this._unsubBk(); this._unsubBk = null; } UNREAD = 0; NEWBK = 0; if (this._unsubCmt) { this._unsubCmt(); this._unsubCmt = null; } NEWC = 0; },
+  /* ---- comments: Nabu hears about a new one without opening every post ----
+     The newest twenty, live. What counts as new is anything a reader wrote
+     after the last time the dashboard's comments tab was opened on this
+     device; what is said out loud is anything that arrives while the app is
+     open. New rows are told apart by id rather than by docChanges(), so the
+     same code runs against the suite's stand-in. */
+  _unsubCmt: null,
+  watchComments() {
+    if (this._unsubCmt) { this._unsubCmt(); this._unsubCmt = null; }
+    if (!this.db || !this.isAdmin()) return;
+    const S = T(), seen = {}; let first = true;
+    const nav = () => renderChrome(parseHash().route === 'post' ? 'home' : (ROUTES[parseHash().route] || {}).nav);
+    this._unsubCmt = this.db.collection('comments').orderBy('at', 'desc').limit(20).onSnapshot((s) => {
+      const since = Number(store.get('nabu-cmt-seen', 0)) || 0;
+      const rows = (s.docs || []).map((d) => Object.assign({ id: d.id }, d.data()));
+      NEWC = rows.filter((c) => !c.nabu && cmtMs(c) !== Number.MAX_SAFE_INTEGER && cmtMs(c) > since).length;
+      nav();
+      rows.forEach((c) => {
+        if (!first && !seen[c.id] && !c.nabu) notifyAdmin(S.notifNewComment + (c.name || S.cmtSomeone), c.text || '', '#/admin?tab=comments');
+        seen[c.id] = true;
+      });
+      first = false;
+    }, () => {});
+  },
   /* Posts and availability live in content/{posts,schedule} once Nabu has
      saved them from the dashboard; until then the JSON files in the repo are used. */
   async getContent(name) { const d = await this.db.collection('content').doc(name).get(); return d.exists ? d.data() : null; },
@@ -28165,7 +28190,7 @@ function bindAuth() { }
 function adminSummaryHTML() {
   const S = T(), st = notifyState();
   return '<div class="card admin-sum"><div class="eyebrow">' + esc(S.adminSummary) + '</div>'
-    + '<div class="cnt"><a href="#/admin?tab=inbox"><b>' + UNREAD + '</b><span>' + esc(S.unreadMsgs) + '</span></a><a href="#/admin?tab=bookings"><b>' + NEWBK + '</b><span>' + esc(S.newBookings) + '</span></a></div>'
+    + '<div class="cnt"><a href="#/admin?tab=inbox"><b>' + UNREAD + '</b><span>' + esc(S.unreadMsgs) + '</span></a><a href="#/admin?tab=bookings"><b>' + NEWBK + '</b><span>' + esc(S.newBookings) + '</span></a><a href="#/admin?tab=comments"><b>' + NEWC + '</b><span>' + esc(S.newComments) + '</span></a></div>'
     + '<a class="btn primary block" href="#/admin">' + esc(S.openAdmin) + '</a>'
     + (st === 'granted' ? '<p class="hint ok">🔔 ' + esc(S.notifOn) + '</p>' : st === 'denied' ? '<p class="hint err">' + esc(S.notifDenied) + '</p>' : st === 'unsupported' ? '<p class="hint">' + esc(S.notifUnsupported) + '</p>' : '<button class="btn block" id="notifon">🔔 ' + esc(S.enableNotif) + '</button><p class="hint">' + esc(S.notifHint) + '</p>')
     + '</div>';
@@ -31893,24 +31918,28 @@ function adminCleanup() { admin.unsubs.forEach((u) => { try { u(); } catch (e) {
 function renderAdmin(args, params) {
   adminCleanup();
   const S = T(), m = $('#main');
-  if (params && params.tab && ['posts', 'acts', 'schedule', 'bookings', 'pay', 'inbox', 'codes', 'sale', 'errors'].indexOf(params.tab) > -1) admin.tab = params.tab;
+  if (params && params.tab && ['posts', 'acts', 'schedule', 'bookings', 'pay', 'inbox', 'comments', 'codes', 'sale', 'errors'].indexOf(params.tab) > -1) admin.tab = params.tab;
   m.innerHTML = '<div class="eyebrow">' + esc(CONFIG.brand) + '</div><h1 style="margin-bottom:6px">' + esc(S.adminTitle) + '</h1><p class="muted">' + esc(S.adminIntro) + '</p>'
-    + '<div class="tabs" id="atabs">' + ['posts', 'acts', 'schedule', 'bookings', 'pay', 'inbox', 'codes', 'sale', 'errors'].map((k) => '<button data-t="' + k + '" class="' + (admin.tab === k ? 'on' : '') + '">' + esc(S.adminTabs[k]) + '<span class="tb" data-tb="' + k + '" hidden></span></button>').join('') + '</div>'
+    + '<div class="tabs" id="atabs">' + ['posts', 'acts', 'schedule', 'bookings', 'pay', 'inbox', 'comments', 'codes', 'sale', 'errors'].map((k) => '<button data-t="' + k + '" class="' + (admin.tab === k ? 'on' : '') + '">' + esc(S.adminTabs[k]) + '<span class="tb" data-tb="' + k + '" hidden></span></button>').join('') + '</div>'
     + (BE.enabled ? '<p class="hint" style="margin-bottom:12px">☁️ ' + esc(S.cloudContent) + '</p>' : '<div class="card"><label class="f" for="gtoken">' + esc(S.token) + '</label><div class="row nw"><input id="gtoken" type="password" value="' + esc(ghToken()) + '" style="flex:1" autocomplete="off"><button class="btn sm" id="savetoken">' + esc(S.saveToken) + '</button></div><p class="hint">' + esc(S.tokenHint) + ' (' + esc(CONFIG.repo) + ')</p></div>')
     + '<div id="apanel"></div>';
+  /* The counts on the tabs are drawn by renderChrome, which runs before a
+     screen renders: without this, tabs just drawn wait for the next change in
+     a count before showing theirs. */
+  adminTabBadges();
   const stb = $('#savetoken'); if (stb) stb.addEventListener('click', () => { store.set('nabu-gh-token', $('#gtoken').value.trim()); toast(T().saved); show(admin.tab); });
   /* The tab goes into the address as it is chosen - replaced, not pushed, so
      it does not itself become a Back step. Without this, Back from a thread
      landed on "#/admin", which reopened whatever tab was last in memory: the
      inbox again, rather than the orders somebody had just come from. */
   $$('#atabs button').forEach((b) => b.addEventListener('click', () => { admin.tab = b.getAttribute('data-t'); $$('#atabs button').forEach((x) => x.classList.toggle('on', x === b)); try { history.replaceState(null, '', '#/admin?tab=' + admin.tab); } catch (e) { /* fine */ } show(admin.tab); }));
-  const show = (t) => { adminCleanup(); const p = $('#apanel'); if (t === 'sale') adminSale(p); else if (t === 'posts') adminPosts(p); else if (t === 'acts') adminActivities(p); else if (t === 'schedule') adminSchedule(p); else if (t === 'bookings') adminBookings(p); else if (t === 'pay') adminPay(p); else if (t === 'codes') adminCodes(p); else if (t === 'errors') adminErrors(p); else adminInbox(p); };
+  const show = (t) => { adminCleanup(); const p = $('#apanel'); if (t === 'sale') adminSale(p); else if (t === 'posts') adminPosts(p); else if (t === 'acts') adminActivities(p); else if (t === 'schedule') adminSchedule(p); else if (t === 'bookings') adminBookings(p); else if (t === 'pay') adminPay(p); else if (t === 'codes') adminCodes(p); else if (t === 'errors') adminErrors(p); else if (t === 'comments') adminComments(p); else adminInbox(p); };
   show(admin.tab);
 }
 
 /* Unread counts on the Inbox and Bookings tabs, refreshed whenever the counts change. */
 function adminTabBadges() {
-  const map = { inbox: UNREAD, bookings: NEWBK };
+  const map = { inbox: UNREAD, bookings: NEWBK, comments: NEWC };
   $$('[data-tb]').forEach((el) => { const n = map[el.getAttribute('data-tb')] || 0; el.hidden = !n; el.textContent = n; });
 }
 /* ---- posts ---- */
@@ -32208,6 +32237,45 @@ function adminErrors(p) {
   admin.unsubs.push(BE.db.collection('errors').orderBy('at', 'desc').limit(300)
     .onSnapshot((s) => { rows = s.docs.map((doc) => Object.assign({ id: doc.id }, doc.data())); draw(); },
       () => { const box = $('#errlist'); if (box) box.innerHTML = '<p class="hint">' + esc(S.errNone) + '</p>'; }));
+}
+/* The newest comments across every post and activity, so Nabu never has to
+   open each one to find out. Opening the tab is what marks them seen. */
+function adminComments(p) {
+  const S = T();
+  if (!needAdmin(p)) return;
+  p.innerHTML = '<p class="hint">' + esc(S.cmtAdminIntro) + '</p><div id="cmtlist" class="card"><p class="hint">' + esc(S.loading) + '</p></div>';
+  store.set('nabu-cmt-seen', Date.now()); NEWC = 0; renderChrome((ROUTES[parseHash().route] || {}).nav);
+  const target = (key) => {
+    const m = /^(post|act):(.+)$/.exec(key || '');
+    if (!m) return { href: '#/home', title: key || '' };
+    if (m[1] === 'post') { const post = allPosts().filter((x) => x.id === m[2])[0]; return { href: '#/post/' + m[2], title: post ? L(post.title) : m[2] }; }
+    const a = (ACTS.items || []).filter((x) => x.id === m[2])[0]; return { href: '#/play/' + m[2], title: a ? L(a.title) : m[2] };
+  };
+  let rows = [];
+  const draw = () => {
+    const box = $('#cmtlist'); if (!box) return;
+    box.innerHTML = '<h3 style="margin-bottom:4px">💬 ' + esc(S.cmtTitle) + (rows.length ? ' <span class="n">' + rows.length + '</span>' : '') + '</h3>'
+      + (rows.length ? rows.map((c) => { const t = target(c.on);
+        return '<div class="bk"><div class="bkh"><b>' + esc(c.nabu ? 'Nabu' : (c.name || S.cmtSomeone)) + '</b><span class="faint">' + esc(cmtWhen(c)) + '</span></div>'
+          + '<p>' + esc(c.text || '') + '</p><p class="hint">' + esc(S.cmtOn(t.title)) + '</p>'
+          + '<div class="acts"><a class="btn sm" href="' + esc(t.href) + '">' + esc(S.cmtOpen) + '</a>'
+          + '<button type="button" class="btn sm danger" data-cmtgone="' + esc(c.id) + '">' + esc(S.cmtDelete) + '</button></div></div>'; }).join('')
+        : '<p class="empty">' + esc(S.cmtAdminNone) + '</p>');
+    $$('[data-cmtgone]', box).forEach((b) => b.addEventListener('click', async () => {
+      if (!b.getAttribute('data-sure')) { b.setAttribute('data-sure', '1'); b.textContent = S.cmtDeleteSure; return; }
+      b.disabled = true;
+      try { await CMT.remove(b.getAttribute('data-cmtgone')); toast(S.saved); }
+      catch (e) { b.disabled = false; toast(loveWhy(e)); }
+    }));
+  };
+  /* Titles for the rows: the feed and the activities may not be loaded yet
+     when the dashboard is the first screen opened. */
+  Promise.all([POSTS == null ? loadPosts() : null, loadActs()]).then(draw).catch(() => {});
+  admin.unsubs.push(BE.db.collection('comments').orderBy('at', 'desc').limit(100).onSnapshot((s) => {
+    rows = s.docs.map((doc) => Object.assign({ id: doc.id }, doc.data()));
+    rows.sort((a, b) => cmtMs(b) - cmtMs(a));
+    draw();
+  }, () => { const box = $('#cmtlist'); if (box) box.innerHTML = '<p class="hint">' + esc(S.cmtAdminNone) + '</p>'; }));
 }
 
 function adminPay(p) {

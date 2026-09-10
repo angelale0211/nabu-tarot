@@ -999,7 +999,7 @@ async function go(hash, sel) { W().location.hash = hash; await sleep(30); return
       N.BE.profileRead = hadRead; N.BE.user = keepG.user; N.BE.enabled = keepG.on; }
     // admin
     await go('#/admin', '#atabs');
-    ok(d.querySelectorAll('#atabs button').length === 9 && d.querySelectorAll('#cgrid button').length === 78 && Array.from(d.querySelectorAll('#atabs button')).every((b) => b.scrollWidth <= b.clientWidth + 1), 'admin has nine tabs whose labels fit inside their buttons, and the 78-card picker');
+    ok(d.querySelectorAll('#atabs button').length === 10 && d.querySelectorAll('#cgrid button').length === 78 && Array.from(d.querySelectorAll('#atabs button')).every((b) => b.scrollWidth <= b.clientWidth + 1), 'admin has ten tabs whose labels fit inside their buttons, and the 78-card picker');
     d.querySelector('[data-t="acts"]').click(); await waitFor(() => d.querySelector('#apub'), 6000);
     ok(d.querySelector('#apub') && d.querySelectorAll('[data-atype]').length === 3 && d.querySelectorAll('[data-pl]').length === 3 && d.querySelector('#aresults') && d.querySelectorAll('#apanel .tb').length === 7 && d.querySelectorAll('#apanel .tb [data-w="i"]').length === 7 && d.querySelectorAll('[data-part]').length === 3, 'the activities tab has a form with three types, three piles with picture choosers, and a formatting bar on every text box');
     d.querySelector('[data-t="codes"]').click(); await waitFor(() => d.querySelector('#cmake'), 4000);
@@ -3320,7 +3320,32 @@ async function go(hash, sel) { W().location.hash = hash; await sleep(30); return
           ok(d.querySelectorAll('.cmts .cmt').length === 1 && (JSON.parse(w.localStorage.getItem('nabu-blocked') || '[]')).indexOf('uidA') > -1,
             'blocking hides that person\'s lines here and on every screen that asks MOD');
           w.localStorage.removeItem('nabu-blocked'); delete db.docs['users/uidB']; }
-        /* Task 6 continues here */
+        N.BE.user = { uid: 'admin1', email: 'angela_le_@outlook.com' }; w.localStorage.removeItem('nabu-cmt-seen');
+        /* The bell check further up left uidA's unread-message listener running,
+           which holds one unread message on the Me tab. Switching account stops
+           it in the app (watchUnread begins with stopUnread); so here. */
+        N.BE.stopUnread();
+        N.BE.watchComments(); await sleep(30);
+        db.put('comments/x9', { on: cm, uid: 'uidC', name: 'Thu', text: 'Tụ 3 ạ', nabu: false, at: { toMillis: () => Date.now(), toDate: () => new Date() } });
+        await sleep(40);
+        ok(/Bình luận mới từ Thu/.test(d.querySelector('#toast').textContent) && d.querySelector('#nav a[href="#/me"] .badge') && d.querySelector('#nav a[href="#/me"] .badge').textContent === '1',
+          'a comment that lands while Nabu has the app open is said out loud with the name on it, and counts on the Me tab');
+        await go('#/me', '.admin-sum'); await sleep(60);
+        ok(d.querySelector('.admin-sum a[href="#/admin?tab=comments"] b') && d.querySelector('.admin-sum a[href="#/admin?tab=comments"] b').textContent === '1',
+          'the admin card on the Me tab counts new comments beside messages and bookings');
+        await go('#/admin?tab=posts', '#atabs'); await sleep(60);
+        ok(d.querySelector('[data-t="comments"]') && !d.querySelector('[data-tb="comments"]').hidden && d.querySelector('[data-tb="comments"]').textContent === '1',
+          'the dashboard has a comments tab whose badge counts what Nabu has not looked at');
+        d.querySelector('[data-t="comments"]').click(); await waitFor(() => d.querySelector('#cmtlist .bk'), 4000);
+        ok(d.querySelectorAll('#cmtlist .bk').length === 3 && Array.from(d.querySelectorAll('#cmtlist .bk')).some((b) => /Thu/.test(b.textContent) && /Tụ 3/.test(b.textContent))
+          && d.querySelector('#cmtlist .bk a[href="#/post/' + pid + '"]') && d.querySelector('[data-tb="comments"]').hidden,
+          'the tab lists the newest comments with a link to what each is under, and opening it clears the badge');
+        { const gone = d.querySelector('#cmtlist [data-cmtgone="x9"]'); gone.click(); await sleep(20); gone.click();
+          await waitFor(() => !db.docs['comments/x9'], 3000);
+          ok(!db.docs['comments/x9'] && d.querySelectorAll('#cmtlist .bk').length === 2, 'Nabu deletes any comment from the dashboard, with the same two taps'); }
+        N.BE.stopUnread(); w.localStorage.removeItem('nabu-cmt-seen');
+        Object.keys(db.docs).filter((k) => k.indexOf('comments/') === 0).forEach((k) => { delete db.docs[k]; });
+        await go('#/home', '.tiles');
         w.saveProfileLocal({ name: nameWas }); N.CMT.counts = {}; }
       N.BE.db = keep.db; N.BE.user = keep.user; N.BE.enabled = keep.on; w.confirm = keep.confirm;
       w.localStorage.removeItem('nabu-love');

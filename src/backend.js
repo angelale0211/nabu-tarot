@@ -266,13 +266,38 @@ const BE = {
         if (!firstB) s.docChanges().forEach((c) => { if (c.type === 'added') { const b = c.doc.data(); notifyAdmin(S.notifNewBooking + (b.name || b.email || S.guestLabel), (b.service || '') + (b.slot ? ' · ' + b.slot.replace('T', ' ') : ''), '#/admin?tab=bookings'); } });
         firstB = false;
       });
+      this.watchComments();
     } else {
       this._unsubUnread = this.thread().onSnapshot((d) => { UNREAD = (d.exists && d.data().userUnread) || 0; renderChrome((ROUTES[parseHash().route] || {}).nav); });
     }
     void self;
   },
   _unsubBk: null,
-  stopUnread() { if (this._unsubUnread) { this._unsubUnread(); this._unsubUnread = null; } if (this._unsubBk) { this._unsubBk(); this._unsubBk = null; } UNREAD = 0; NEWBK = 0; },
+  stopUnread() { if (this._unsubUnread) { this._unsubUnread(); this._unsubUnread = null; } if (this._unsubBk) { this._unsubBk(); this._unsubBk = null; } UNREAD = 0; NEWBK = 0; if (this._unsubCmt) { this._unsubCmt(); this._unsubCmt = null; } NEWC = 0; },
+  /* ---- comments: Nabu hears about a new one without opening every post ----
+     The newest twenty, live. What counts as new is anything a reader wrote
+     after the last time the dashboard's comments tab was opened on this
+     device; what is said out loud is anything that arrives while the app is
+     open. New rows are told apart by id rather than by docChanges(), so the
+     same code runs against the suite's stand-in. */
+  _unsubCmt: null,
+  watchComments() {
+    if (this._unsubCmt) { this._unsubCmt(); this._unsubCmt = null; }
+    if (!this.db || !this.isAdmin()) return;
+    const S = T(), seen = {}; let first = true;
+    const nav = () => renderChrome(parseHash().route === 'post' ? 'home' : (ROUTES[parseHash().route] || {}).nav);
+    this._unsubCmt = this.db.collection('comments').orderBy('at', 'desc').limit(20).onSnapshot((s) => {
+      const since = Number(store.get('nabu-cmt-seen', 0)) || 0;
+      const rows = (s.docs || []).map((d) => Object.assign({ id: d.id }, d.data()));
+      NEWC = rows.filter((c) => !c.nabu && cmtMs(c) !== Number.MAX_SAFE_INTEGER && cmtMs(c) > since).length;
+      nav();
+      rows.forEach((c) => {
+        if (!first && !seen[c.id] && !c.nabu) notifyAdmin(S.notifNewComment + (c.name || S.cmtSomeone), c.text || '', '#/admin?tab=comments');
+        seen[c.id] = true;
+      });
+      first = false;
+    }, () => {});
+  },
   /* Posts and availability live in content/{posts,schedule} once Nabu has
      saved them from the dashboard; until then the JSON files in the repo are used. */
   async getContent(name) { const d = await this.db.collection('content').doc(name).get(); return d.exists ? d.data() : null; },
