@@ -98,6 +98,7 @@ const BE = {
     try { await wipe(db.collection('threads').doc(uid).collection('messages')); } catch (e) { /* rules or offline */ }
     try { await db.collection('threads').doc(uid).delete(); } catch (e) { /* nothing there */ }
     try { await wipe(db.collection('bookings').where('uid', '==', uid)); } catch (e) { /* rules or offline */ }
+    try { await wipe(db.collection('comments').where('uid', '==', uid)); } catch (e) { /* rules or offline */ }
     try { await db.collection('users').doc(uid).delete(); } catch (e) { /* nothing there */ }
     /* Every registered person now has a public card and a reserved username, so
        deletion has to take both with it: the card in 'people' and the row in
@@ -269,13 +270,44 @@ const BE = {
         if (!firstB) s.docChanges().forEach((c) => { if (c.type === 'added') { const b = c.doc.data(); notifyAdmin(S.notifNewBooking + (b.name || b.email || S.guestLabel), (b.service || '') + (b.slot ? ' · ' + b.slot.replace('T', ' ') : ''), '#/admin?tab=bookings'); } });
         firstB = false;
       });
+      this.watchComments();
     } else {
       this._unsubUnread = this.thread().onSnapshot((d) => { UNREAD = (d.exists && d.data().userUnread) || 0; renderChrome((ROUTES[parseHash().route] || {}).nav); });
     }
     void self;
   },
   _unsubBk: null,
-  stopUnread() { if (this._unsubUnread) { this._unsubUnread(); this._unsubUnread = null; } if (this._unsubBk) { this._unsubBk(); this._unsubBk = null; } UNREAD = 0; NEWBK = 0; },
+  stopUnread() { if (this._unsubUnread) { this._unsubUnread(); this._unsubUnread = null; } if (this._unsubBk) { this._unsubBk(); this._unsubBk = null; } UNREAD = 0; NEWBK = 0; if (this._unsubCmt) { this._unsubCmt(); this._unsubCmt = null; } NEWC = 0; },
+  /* ---- comments: Nabu hears about a new one without opening every post ----
+     The newest twenty, live. What counts as new is anything a reader wrote
+     after the last time the dashboard's comments tab was opened on this
+     device. What is said out loud is only what is newer than every comment
+     this watcher has already seen, by the server's clock. Not by id: deleting
+     one of the twenty brings an old twenty-first into view with an id never
+     seen before, and it was announced as new. Not by docChanges() either, so
+     the same code runs against the suite's stand-in. A row the server has not
+     stamped yet has no time to compare, and waits until it has one. */
+  _unsubCmt: null,
+  watchComments() {
+    if (this._unsubCmt) { this._unsubCmt(); this._unsubCmt = null; }
+    if (!this.db || !this.isAdmin()) return;
+    const S = T(), pending = Number.MAX_SAFE_INTEGER; let first = true, top = 0;
+    const nav = () => renderChrome(parseHash().route === 'post' ? 'home' : (ROUTES[parseHash().route] || {}).nav);
+    this._unsubCmt = this.db.collection('comments').orderBy('at', 'desc').limit(20).onSnapshot((s) => {
+      const since = Number(store.get('nabu-cmt-seen', 0)) || 0;
+      const rows = (s.docs || []).map((d) => Object.assign({ id: d.id }, d.data()));
+      NEWC = rows.filter((c) => !c.nabu && cmtMs(c) !== pending && cmtMs(c) > since).length;
+      nav();
+      let high = top;
+      rows.forEach((c) => {
+        const ms = cmtMs(c);
+        if (ms === pending || ms <= top) return;
+        if (!first && !c.nabu) notifyAdmin(S.notifNewComment + (c.name || S.cmtSomeone), c.text || '', '#/admin?tab=comments');
+        if (ms > high) high = ms;
+      });
+      top = high; first = false;
+    }, () => {});
+  },
   /* Posts and availability live in content/{posts,schedule} once Nabu has
      saved them from the dashboard; until then the JSON files in the repo are used. */
   async getContent(name) { const d = await this.db.collection('content').doc(name).get(); return d.exists ? d.data() : null; },

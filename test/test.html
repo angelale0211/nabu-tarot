@@ -999,7 +999,7 @@ async function go(hash, sel) { W().location.hash = hash; await sleep(30); return
       N.BE.profileRead = hadRead; N.BE.user = keepG.user; N.BE.enabled = keepG.on; }
     // admin
     await go('#/admin', '#atabs');
-    ok(d.querySelectorAll('#atabs button').length === 9 && d.querySelectorAll('#cgrid button').length === 78 && Array.from(d.querySelectorAll('#atabs button')).every((b) => b.scrollWidth <= b.clientWidth + 1), 'admin has nine tabs whose labels fit inside their buttons, and the 78-card picker');
+    ok(d.querySelectorAll('#atabs button').length === 10 && d.querySelectorAll('#cgrid button').length === 78 && Array.from(d.querySelectorAll('#atabs button')).every((b) => b.scrollWidth <= b.clientWidth + 1), 'admin has ten tabs whose labels fit inside their buttons, and the 78-card picker');
     d.querySelector('[data-t="acts"]').click(); await waitFor(() => d.querySelector('#apub'), 6000);
     ok(d.querySelector('#apub') && d.querySelectorAll('[data-atype]').length === 3 && d.querySelectorAll('[data-pl]').length === 3 && d.querySelector('#aresults') && d.querySelectorAll('#apanel .tb').length === 7 && d.querySelectorAll('#apanel .tb [data-w="i"]').length === 7 && d.querySelectorAll('[data-part]').length === 3, 'the activities tab has a form with three types, three piles with picture choosers, and a formatting bar on every text box');
     d.querySelector('[data-t="codes"]').click(); await waitFor(() => d.querySelector('#cmake'), 4000);
@@ -1485,6 +1485,12 @@ async function go(hash, sel) { W().location.hash = hash; await sleep(30); return
          && !/primary/.test(apk.className) && /không mua được/.test(main.textContent),
         'Play is the first door on the install screen, and the downloaded copy says in its own words that it cannot buy'); }
     await go('#/privacy', '.privacy .gsec'); ok(d.querySelectorAll('.privacy .gsec').length >= 10 && /Xoá tài khoản/.test(d.querySelector('.privacy').textContent) && /Cloudflare/.test(d.querySelector('.privacy').textContent) && /Anthropic/.test(d.querySelector('.privacy').textContent), 'the in-app privacy policy lists every kind of data, who answers Nabu AI, and how to delete the account');
+    { const pv = d.querySelector('.privacy') ? d.querySelector('.privacy').textContent : '';
+      const pub = await fetch('/privacy.html', { cache: 'no-store' }).then((r) => r.text()).catch(() => '');
+      ok(/Bình luận thì khác/.test(pv) && /công khai/.test(pv)
+        && pub.indexOf('Bình luận thì khác') > -1 && pub.indexOf('Comments you write under a post') > -1
+        && pub.indexOf('Kommentare, die du unter einen Beitrag') > -1 && pub.indexOf('2026-09-10') > -1,
+        'the privacy policy says, in all three languages, that comments are public, show the chosen name only, can be deleted, and go with the account'); }
     { await playMode(true);
       ok(N.BILL.can() && N.BILL.priceOf('tarot') && /300/.test(N.BILL.priceOf('tarot')) && N.BILL.periodMonths('pro6') === 6,
         'inside the app BILL answers with Play\'s own prices and periods for every catalogue item');
@@ -2053,7 +2059,20 @@ async function go(hash, sel) { W().location.hash = hash; await sleep(30); return
         const notify = () => ls.slice().forEach((f) => f());
         /* Real snapshots carry a handle back to the document they came from,
            which is how anything deletes what a query found. */
-        const snap = (k) => ({ exists: docs[k] !== undefined, id: k.split('/').pop(), data: () => docs[k],
+        /* Asked for serverTimestamps: 'estimate', Firestore fills a time the
+           server has not stamped yet with the phone's own clock. The stand-in
+           does the same, so a screen that asks for estimates is seen doing
+           it; asked for nothing, the placeholder stays as it is, which the app
+           reads as no time yet. */
+        const pendingAt = (v) => !!v && typeof v === 'object' && typeof v.isEqual === 'function' && typeof v.toMillis !== 'function';
+        const estimated = (v) => {
+          if (!v || typeof v !== 'object') return v;
+          const o = Object.assign({}, v);
+          Object.keys(o).forEach((f) => { if (pendingAt(o[f])) { const t = Date.now(); o[f] = { toMillis: () => t, toDate: () => new Date(t) }; } });
+          return o;
+        };
+        const snap = (k) => ({ exists: docs[k] !== undefined, id: k.split('/').pop(),
+          data: (o) => (o && o.serverTimestamps === 'estimate') ? estimated(docs[k]) : docs[k],
           get ref() { return docRef(k); } });
         const watch = (make) => (cb) => { const f = () => cb(make()); ls.push(f); f(); return () => { const i = ls.indexOf(f); if (i > -1) ls.splice(i, 1); }; };
         const docRef = (k) => ({
@@ -2099,6 +2118,7 @@ async function go(hash, sel) { W().location.hash = hash; await sleep(30); return
               return docRef(base + '/' + id);
             }, where: (fl, op, v) => colRef(base, [fl, op, v]), orderBy: () => q,
             limit: () => q, get: async () => ({ docs: pick() }), onSnapshot: watch(() => ({ docs: pick() })),
+            count: () => ({ get: async () => ({ data: () => ({ count: pick().length }) }) }),
             /* Firestore makes the id itself when nobody supplies one, which is
                how every booking and order in this app is written. */
             add: async (v) => { const id = 'gen' + (++GEN); docs[base + '/' + id] = v; notify(); return { id: id }; } };
@@ -3172,6 +3192,419 @@ async function go(hash, sel) { W().location.hash = hash; await sleep(30); return
         && !N.HANDLE_RE.test('.mai') && !N.HANDLE_RE.test('mai..') && !N.HANDLE_RE.test('a'.repeat(21)),
         'a handle is lower case, three to twenty, and neither starts nor ends with a dot');
 
+      /* ---- comments ---- */
+      { const nameWas = N.PROFILE().name;
+        /* The comment rules are agreed to once per phone before a first
+           comment; the checks below are about everything after that. Put back
+           as it was at the end of the block. */
+        const cmtOkWas = w.localStorage.getItem('nabu-cmt-ok'); w.localStorage.setItem('nabu-cmt-ok', '1');
+        await go('#/home', '#feed .post');
+        const pid = d.querySelector('#feed .post').getAttribute('data-id');
+        const cm = 'post:' + pid;
+        N.BE.user = { uid: 'uidA', email: 'a@test' }; w.saveProfileLocal({ name: 'Mai' });
+        ok(N.CMT.allowed('post', { id: 'x' }) && !N.CMT.allowed('post', { id: '2026-09-04-welcome', welcome: true })
+          && N.CMT.allowed('act', { id: 'q1', type: 'poll' }) && N.CMT.allowed('act', { id: 'p1', type: 'pile' })
+          && !N.CMT.allowed('act', { id: 'w1', type: 'wish' }),
+          'comments are offered under posts, polls and piles - never under the welcome note or the wish jar');
+        await N.CMT.add(cm, '  Cảm ơn Nabu!  ');
+        const ck = () => Object.keys(db.docs).filter((k) => k.indexOf('comments/') === 0);
+        const c0 = db.docs[ck()[0]];
+        ok(ck().length === 1 && c0.on === cm && c0.uid === 'uidA' && c0.name === 'Mai' && c0.text === 'Cảm ơn Nabu!' && c0.nabu === false
+          && Object.keys(c0).sort().join(',') === 'at,nabu,name,on,text,uid' && !/@/.test(JSON.stringify(c0)),
+          'a comment is six fields: where, who, the shown name, the words trimmed, not Nabu, a server time - and no email anywhere in it');
+        let threw = ''; try { await N.CMT.add(cm, 'x'.repeat(601)); } catch (e) { threw = e.message; }
+        ok(threw === 'long' && ck().length === 1, 'six hundred and one characters are refused before they leave the phone');
+        N.BE.user = { uid: 'admin1', email: 'angela_le_@outlook.com' };
+        await N.CMT.add(cm, 'Cảm ơn bạn nhé');
+        const cA = ck().map((k) => db.docs[k]).filter((c) => c.nabu)[0];
+        ok(cA && cA.name === 'Nabu' && cA.uid === 'admin1', 'Nabu signs as Nabu, and the row says so');
+        { /* The name a comment carries is the one the person typed for their
+             profile, never the one their Google or Facebook account came with:
+             signing in copies the account's full name into an empty profile.
+             A profile name equal to it is not published, nor an address, nor a
+             name that would pass for Nabu - those go out as "Bạn đọc". Each
+             probe is taken back afterwards, count included. */
+          const cWas = N.CMT.counts[cm];
+          const published = async (user, name) => {
+            N.BE.user = user; w.saveProfileLocal({ name: name });
+            const had = ck(); await N.CMT.add(cm, 'thử tên');
+            const k = ck().filter((x) => had.indexOf(x) < 0)[0], row = k ? db.docs[k] : null;
+            if (k) delete db.docs[k];
+            return row ? row.name : '(nothing written)';
+          };
+          const got = [
+            await published({ uid: 'uidA', email: 'a@test', displayName: 'Nguyễn Thị Mai' }, ' nguyễn thị  MAI '),
+            await published({ uid: 'uidA', email: 'a@test' }, 'mai@gmail.com'),
+            await published({ uid: 'uidA', email: 'a@test' }, 'Nabu Tarot'),
+            await published({ uid: 'uidA', email: 'a@test' }, 'fan của NABU'),
+            await published({ uid: 'uidA', email: 'a@test', displayName: 'Nguyễn Thị Mai' }, 'Mai')];
+          w.saveProfileLocal({ name: 'Mai' }); N.CMT.counts[cm] = cWas;
+          ok(got.slice(0, 4).every((n) => n === 'Bạn đọc') && got[4] === 'Mai',
+            'a comment never carries the name the Google or Facebook account came with, an address, or a name that passes for Nabu: those go out as "Bạn đọc", and a nickname goes out as itself'
+            + ' [' + got.join(', ') + ']'); }
+        N.BE.user = { uid: 'uidA', email: 'a@test' };
+        /* Already on #/home, and going to the hash already showing redraws
+           nothing: away and back, so the card is drawn after the comments. The
+           comments above went straight through CMT with no page listening, and
+           the count kept for the feed is set by a page's listener; a new
+           session is what asks the number afresh. */
+        N.CMT.counts = {};
+        await go('#/news', '#news .post'); await go('#/home', '#feed .post');
+        await waitFor(() => d.querySelector('#feed .post [data-cmtn="' + cm + '"] span') && /2/.test(d.querySelector('#feed .post [data-cmtn="' + cm + '"] span').textContent), 3000);
+        ok(d.querySelector('#feed .post [data-cmtn="' + cm + '"]').getAttribute('href') === '#/post/' + pid
+          && /2/.test(d.querySelector('#feed .post [data-cmtn="' + cm + '"] span').textContent) && !d.querySelector('.welcome [data-cmtn]'),
+          'a card in the feed carries a comments link to its page with the number on it; the welcome note has none');
+        const w0 = db.watchers();
+        await go('#/post/' + pid, '.cmts');
+        await waitFor(() => d.querySelectorAll('.cmts .cmt').length === 2, 3000);
+        ok(d.querySelectorAll('.cmts .cmt').length === 2 && /Mai/.test(d.querySelector('.cmts .cmt').textContent)
+          && d.querySelector('.cmts .cmt.nabu .nabutag') && /Vừa xong/.test(d.querySelector('.cmts .cmt .when').textContent)
+          && d.querySelector('.cmts .cmtin') && !d.querySelector('.post .foot [data-cmtn]'),
+          'the post page lists the comments oldest first, marks Nabu\'s, says "just now" for a time the server has not stamped, and offers the box');
+        ok(db.watchers() === w0 + 1, 'the page holds exactly one live listener for its comments');
+        d.querySelector('.cmts .cmtin').value = 'Mình chọn tụ 2'; d.querySelector('[data-cmtsend]').click();
+        await waitFor(() => d.querySelectorAll('.cmts .cmt').length === 3 && d.querySelector('.cmts .cmtin').value === '', 3000);
+        ok(d.querySelectorAll('.cmts .cmt').length === 3 && d.querySelector('.cmts .cmtin').value === '' && d.querySelector('.cmts h3 .n').textContent === '3',
+          'sending shows the line at once, empties the box, and the heading counts it');
+        ok(N.CMT.counts[cm] === 3, 'the number kept for the card in the feed is the number of lines on the page, not one more [' + N.CMT.counts[cm] + ']');
+        ok(d.querySelectorAll('.cmts .cmt.me [data-cmtdel]').length === 2 && !d.querySelector('.cmts .cmt.nabu [data-cmtdel]')
+          && !d.querySelector('.cmts .cmt.nabu [data-flag]') && !d.querySelector('.cmts .cmt.me [data-flag]'),
+          'a reader may delete their own lines only, and is offered no flag on themselves or on Nabu');
+        { const del = d.querySelector('.cmts .cmt.me [data-cmtdel]'); del.click(); await sleep(30);
+          ok(d.querySelectorAll('.cmts .cmt').length === 3 && /Chắc chắn/.test(del.textContent), 'one tap on delete asks; nothing is gone yet');
+          del.click(); await waitFor(() => d.querySelectorAll('.cmts .cmt').length === 2, 3000);
+          ok(d.querySelectorAll('.cmts .cmt').length === 2, 'the second tap removes it'); }
+        { /* A write the server refuses late - after the button has stopped
+             waiting and said "Đã gửi." - must not leave the words gone: they go
+             back into the box, and the reason is said under it. */
+          const realDb = N.BE.db;
+          N.BE.db = { collection: (c) => { const r = realDb.collection(c); return c !== 'comments' ? r
+            : Object.assign({}, r, { add: () => new Promise((res, rej) => setTimeout(() => {
+              const e = new Error('Missing or insufficient permissions.'); e.code = 'permission-denied'; rej(e); }, 3000)) }); } };
+          d.querySelector('.cmts .cmtin').value = 'Lời bị từ chối'; d.querySelector('[data-cmtsend]').click();
+          await sleep(2700);
+          await waitFor(() => d.querySelector('.cmts .cmtin').value === 'Lời bị từ chối' && d.querySelector('.cmts .cmtst').textContent, 2500);
+          N.BE.db = realDb;
+          const back = d.querySelector('.cmts .cmtin').value, why = d.querySelector('.cmts .cmtst').textContent;
+          d.querySelector('.cmts .cmtin').value = ''; d.querySelector('.cmts .cmtst').textContent = '';
+          ok(back === 'Lời bị từ chối' && /mở|Firestore|rules/i.test(why),
+            'a comment the server refuses after the button stopped waiting comes back into the box, with the reason under it [' + back + ' | ' + why + ']'); }
+        await go('#/home', '.tiles'); await sleep(60);
+        ok(db.watchers() === w0, 'leaving the post page drops its listener');
+        N.BE.user = null;
+        await go('#/post/' + pid, '.cmts'); await waitFor(() => d.querySelectorAll('.cmts .cmt').length === 2, 3000);
+        ok(d.querySelectorAll('.cmts .cmt').length === 2 && !d.querySelector('.cmts .cmtin') && d.querySelector('.cmts .cmtsignin a[href^="#/signin"]')
+          && !d.querySelector('.cmts [data-cmtdel]') && !d.querySelector('.cmts [data-flag]'),
+          'signed out, the comments still read and a sign-in line stands where the box would be: never a dead box, never a delete, never a flag');
+        /* Opened from a shared link, the page is drawn before Firebase has
+           said who this is. It has to redraw when it hears. */
+        N.BE.user = { uid: 'uidA', email: 'a@test' }; N.BE.listeners.forEach((cb) => { try { cb(N.BE.user); } catch (e) { /* the alerts streams */ } });
+        await waitFor(() => d.querySelector('.cmts .cmtin'), 3000);
+        ok(!!d.querySelector('.cmts .cmtin'), 'a post page opened before sign-in resolved gets its box once the account is known');
+        await go('#/post/2026-09-04-welcome', '#main .post[data-id="2026-09-04-welcome"]'); await sleep(60);
+        ok(!!d.querySelector('#main .post[data-id="2026-09-04-welcome"]') && !d.querySelector('.cmts'), 'the note that introduces Nabu Tarot has no comments, even on its own page');
+        { /* Right above Send the box says which name the comment will carry, and
+             how to change it. The same rule decides both, so what it says is
+             what is published. */
+          const line = (sel) => ((d.querySelector(sel) || {}).textContent || '').replace(/\s+/g, ' ').trim();
+          await go('#/home', '.tiles'); await go('#/post/' + pid, '.cmts .cmtin');
+          await waitFor(() => d.querySelector('.cmts .cmt.nabu'), 3000);
+          const plain = line('.cmts .cmtas'), a = d.querySelector('.cmts .cmtas a[href="#/me"]'), ah = a ? a.getBoundingClientRect().height : 0;
+          const pub = d.querySelector('.cmts .cmtform .cmtpublic'), row = d.querySelector('.cmts .cmtform .row'), asEl = d.querySelector('.cmts .cmtas');
+          const above = !!(asEl && row && (asEl.compareDocumentPosition(row) & 4));
+          const tag = line('.cmts .cmt.nabu .nabutag'), who = line('.cmts .cmt.nabu b');
+          N.BE.user = { uid: 'uidA', email: 'a@test', displayName: ' mai ' };
+          await go('#/home', '.tiles'); await go('#/post/' + pid, '.cmts .cmtin');
+          const masked = line('.cmts .cmtas');
+          N.BE.user = { uid: 'uidA', email: 'a@test' };
+          ok(plain === 'Bạn bình luận với tên: Mai Đổi tên' && ah >= 40 && masked === 'Bạn bình luận với tên: Bạn đọc Đổi tên'
+            && above,
+            'right above Send the box says which name the comment will carry - the nickname, or "Bạn đọc" when it is only the name the account came with - with a 40px link to change it'
+            + ' [' + plain + ' | ' + masked + ']');
+          ok(!!pub && !!row && pub.textContent === 'Bình luận hiển thị công khai với tên bạn chọn.' && !!(row.compareDocumentPosition(pub) & 4),
+            'under the box one line says comments are public, under the name chosen');
+          ok(tag === '✦ Tác giả' && who === 'Nabu ✦ Tác giả',
+            'Nabu\'s own line is marked with the role, "Tác giả", instead of her name twice' + ' [' + who + ']'); }
+        { /* Before a person's first comment, the comment rules - once, on this
+             phone - stand where the box would be: a title, three rules, one
+             button. Google Play asks that people accept terms before they post.
+             Measured on a 360px phone, by the house rules. */
+          const frame = document.getElementById('f'), wasWide = frame.style.width;
+          frame.style.width = '360px';
+          w.localStorage.removeItem('nabu-cmt-ok');
+          await go('#/home', '.tiles'); await go('#/post/' + pid, '.cmts .cmtrules'); await sleep(140);
+          const card = d.querySelector('.cmts .cmtrules'), agree = d.querySelector('.cmts [data-cmtagree]');
+          const items = d.querySelectorAll('.cmts .cmtrules li'), vw = d.documentElement.clientWidth, bad = [];
+          Array.from(d.querySelectorAll('.cmts, .cmts *')).forEach((el) => {
+            const r = el.getBoundingClientRect(); if (!r.width || !r.height) return;
+            const name = String(el.className || el.tagName).split(/\s+/)[0];
+            if (r.right > vw + 1 || r.left < -1) bad.push(name + ' off-screen');
+            if (el.scrollWidth > el.clientWidth + 1 && el.clientWidth > 0 && w.getComputedStyle(el).overflowX !== 'auto') bad.push(name + ' overflows');
+            if (!el.children.length && (el.textContent || '').trim() && parseFloat(w.getComputedStyle(el).fontSize) < 12) bad.push(name + ' text under 12px');
+          });
+          const ar = agree ? agree.getBoundingClientRect() : { width: 0, height: 0 };
+          ok(!!card && items.length === 3 && !!agree && ar.height >= 40 && ar.width >= 40 && !bad.length && !d.querySelector('.cmts .cmtin')
+            && w.getComputedStyle(items[0]).textAlign === 'left' && /Quy tắc bình luận/.test(card.textContent) && /Tôi đồng ý/.test(agree.textContent),
+            'signed in and never agreed, the comment rules stand where the box would be: a title, three rules, one button, and no box yet'
+            + (bad.length ? ' [' + bad.slice(0, 4).join('; ') + ']' : ''));
+          if (agree) agree.click(); await sleep(60);
+          const ta = d.querySelector('.cmts .cmtin');
+          ok(!!ta && d.activeElement === ta && Number(JSON.parse(w.localStorage.getItem('nabu-cmt-ok') || '0')) > 0 && !d.querySelector('.cmts .cmtrules'),
+            'agreeing keeps the answer on the phone and puts the box in the rules\' place, ready to type in');
+          await go('#/home', '.tiles'); await go('#/post/' + pid, '.cmts .cmtin');
+          ok(!!d.querySelector('.cmts .cmtin') && !d.querySelector('.cmts .cmtrules'), 'and the rules are not asked again on this phone');
+          frame.style.width = wasWide || '430px'; await sleep(60); }
+        { /* Phones first. 360 and 390 are where most Android phones and iPhones
+             sit. Signed in as Nabu, every control a comment can carry is on the
+             screen at once - a delete on each line, a flag on a reader's line,
+             the box - beside a link too long to break at a space, which is what
+             pushes a page sideways. The house rules the layout probe measures
+             hold here: nothing leaves the comments or the screen, every button
+             is a 40px target, and no text is under 12px. */
+          const frame = document.getElementById('f'), wasWide = frame.style.width, bad = [];
+          N.BE.user = { uid: 'admin1', email: 'angela_le_@outlook.com' };
+          db.put('comments/zlong', { on: cm, uid: 'uidZ', name: 'Lan', text: 'https://nabutarot.com/' + 'a'.repeat(140), nabu: false, at: 1 });
+          for (const px of [360, 390]) {
+            frame.style.width = px + 'px';
+            await go('#/home', '.tiles'); await go('#/post/' + pid, '.cmts');
+            await waitFor(() => d.querySelectorAll('.cmts .cmt').length === 3, 3000); await sleep(140);
+            const box = d.querySelector('.cmts'), vw = d.documentElement.clientWidth;
+            if (!box || d.querySelectorAll('.cmts .cmt').length !== 3 || !d.querySelector('.cmts .cmt.nabu') || !d.querySelector('.cmts .cmtin')
+              || !d.querySelector('.cmts [data-flag]') || !d.querySelector('.cmts [data-cmtdel]')) { bad.push(px + ' the comments and their controls are not all there'); continue; }
+            const br = box.getBoundingClientRect();
+            [box].concat(Array.from(box.querySelectorAll('*'))).forEach((el) => {
+              const r = el.getBoundingClientRect(); if (!r.width || !r.height) return;
+              const name = String(el.className || el.tagName).split(/\s+/)[0];
+              if (r.right > vw + 1 || r.left < -1) bad.push(px + ' ' + name + ' off-screen');
+              else if (r.right > br.right + 1 || r.left < br.left - 1) bad.push(px + ' ' + name + ' leaves the comments');
+              if (el.scrollWidth > el.clientWidth + 1 && el.clientWidth > 0) bad.push(px + ' ' + name + ' overflows its box');
+              if (el.matches('button, a') && (r.height < 40 || r.width < 40)) bad.push(px + ' ' + name + ' is a ' + Math.round(r.width) + 'x' + Math.round(r.height) + ' target');
+              const fs = parseFloat(w.getComputedStyle(el).fontSize);
+              if (!el.children.length && (el.textContent || '').trim() && fs < 12) bad.push(px + ' ' + name + ' has ' + fs + 'px text');
+            });
+            if (d.documentElement.scrollWidth > px + 1) bad.push(px + ' page scrolls sideways');
+          }
+          await db.collection('comments').doc('zlong').delete();
+          frame.style.width = wasWide || '430px';
+          N.BE.user = { uid: 'uidA', email: 'a@test' };
+          await go('#/home', '.tiles'); await sleep(120);
+          const uniq = bad.filter((x, i) => bad.indexOf(x) === i);
+          ok(uniq.length === 0, 'on a 360 or 390 phone the comments stay inside their box and the screen, every button in them is a 40px target, and no text is under 12px'
+            + (uniq.length ? ' [' + uniq.slice(0, 4).join('; ') + ']' : '')); }
+        { const actsWere = N.ACTS.items;
+          N.ACTS.items = [
+            { id: 'q9', type: 'poll', date: '2026-09-04', title: { vi: 'Cung nào nhạy cảm nhất?' }, options: [{ vi: 'Cự Giải' }, { vi: 'Song Ngư' }], closed: false },
+            { id: 'p9', type: 'pile', date: '2026-09-05', resultsDate: '2099-01-01', title: { vi: 'Chọn 1 tụ' }, piles: [{ msg: { vi: 'A' } }, { msg: { vi: 'B' } }], results: false },
+            { id: 'w9', type: 'wish', date: '2026-09-03', title: { vi: 'Ước gì?' } }]; N.ACTS.loaded = true;
+          await go('#/play/q9', '.cmts');
+          ok(d.querySelector('#acts .act-poll') && d.querySelector('.cmts[data-cmts="act:q9"]') && d.querySelector('.cmts .cmtin')
+            && d.querySelector('#acts').compareDocumentPosition(d.querySelector('.cmts')) & 4,
+            'a poll page carries the comments under the poll');
+          { /* A shared link opened cold is routed more than once before it
+               settles - the first paint, the sale settings, the account - and
+               each pass opens a listener. Only one may be left holding. */
+            await sleep(60);
+            const w1 = db.watchers();
+            w.route(); w.route(); w.route(); await sleep(250);
+            ok(!!d.querySelector('.cmts[data-cmts="act:q9"]') && db.watchers() === w1,
+              'a page routed three times over keeps one live listener for its comments, not three [' + w1 + ' -> ' + db.watchers() + ']'); }
+          await go('#/play/p9', '.cmts');
+          ok(!!d.querySelector('.cmts[data-cmts="act:p9"]'), 'so does a pile page');
+          { const at = (ms) => ({ toMillis: () => ms, toDate: () => new Date(ms) });
+            db.put('comments/o2', { on: 'act:p9', uid: 'uidB', name: 'Sau', text: 'viết sau', nabu: false, at: at(2000000) });
+            db.put('comments/o1', { on: 'act:p9', uid: 'uidC', name: 'Trước', text: 'viết trước', nabu: false, at: at(1000000) });
+            await waitFor(() => d.querySelectorAll('.cmts .cmt').length === 2, 2000);
+            const order = Array.from(d.querySelectorAll('.cmts .cmt b')).map((b) => b.textContent);
+            await db.collection('comments').doc('o1').delete(); await db.collection('comments').doc('o2').delete();
+            ok(order.join(',') === 'Trước,Sau', 'comments are listed oldest first by the time the server gave them, whatever order they arrive in [' + order.join(',') + ']'); }
+          await go('#/play/w9', '#acts .act-wish'); await sleep(60);
+          ok(!d.querySelector('.cmts'), 'the wish jar keeps its promise: no comments, because nobody reads what is written there');
+          { /* On a desk the page is one column down the middle, and the comments
+               belong to what is above them: the same left and right edges as the
+               post card on a post page, and as the poll on an activity page -
+               never the full width of the window, never a narrower measure. */
+            const frame = document.getElementById('f'), wasWide = frame.style.width, off = [];
+            frame.style.width = '1280px';
+            for (const [route, above] of [['#/post/' + pid, '#main > .post'], ['#/play/q9', '#main > #acts']]) {
+              await go('#/home', '.tiles'); await go(route, '.cmts'); await sleep(220);
+              const a = d.querySelector(above), c = d.querySelector('.cmts');
+              if (!a || !c) { off.push(route + ': no ' + (a ? 'comments' : above)); continue; }
+              const ra = a.getBoundingClientRect(), rc = c.getBoundingClientRect();
+              if (Math.abs(ra.left - rc.left) > 1 || Math.abs(ra.right - rc.right) > 1) {
+                off.push(route + ': comments ' + Math.round(rc.left) + '-' + Math.round(rc.right) + ' under ' + Math.round(ra.left) + '-' + Math.round(ra.right));
+              }
+            }
+            frame.style.width = wasWide || '430px';
+            await go('#/home', '.tiles'); await sleep(120);
+            ok(off.length === 0, 'on a desk the comments line up with the post card and the poll above them, edge for edge'
+              + (off.length ? ' [' + off.join('; ') + ']' : '')); }
+          N.ACTS.items = actsWere; }
+        N.BE.user = { uid: 'uidB', email: 'b@test' };
+        await go('#/home', '.tiles'); await go('#/post/' + pid, '.cmts'); await waitFor(() => d.querySelectorAll('.cmts .cmt').length === 2, 3000);
+        { const fl = d.querySelector('.cmts .cmt:not(.nabu) [data-flag]');
+          ok(!!fl, 'another reader sees a flag on a line that is not theirs');
+          fl.click(); await sleep(30);
+          ok(!d.querySelector('[data-cmtflag]').hidden && d.querySelector('[data-cmtflag] #flagrep') && d.querySelector('[data-cmtflag] #flagblk'),
+            'the flag opens the same report-or-block box the wedding room uses');
+          d.querySelector('[data-cmtflag] #flagrep').click(); await sleep(200);
+          const fk = Object.keys(db.docs).filter((k) => k.indexOf('flags/') === 0), fr = db.docs[fk[fk.length - 1]];
+          ok(fr && fr.kind === 'comment' && fr.by === 'uidB' && fr.about === 'uidA' && fr.where === cm && /tụ 2/.test(fr.text) && /Đã gửi báo cáo/.test(d.querySelector('[data-cmtflag]').textContent),
+            'reporting files a flag Nabu reads in the dashboard: who, about whom, under which post, the words - and thanks the person');
+          d.querySelector('.cmts .cmt:not(.nabu) [data-flag]').click(); await sleep(30);
+          /* The stand-in tells every listener about every write, so the block's
+             own write to the account would redraw the list by itself and hide a
+             missing redraw. That write is taken out of the way: the block must
+             redraw the list. */
+          { const realDb = N.BE.db;
+            N.BE.db = { collection: (c) => c === 'users' ? { doc: () => ({ set: async () => {} }) } : realDb.collection(c) };
+            d.querySelector('[data-cmtflag] #flagblk').click(); await sleep(100);
+            N.BE.db = realDb; }
+          ok(d.querySelectorAll('.cmts .cmt').length === 1 && (JSON.parse(w.localStorage.getItem('nabu-blocked') || '[]')).indexOf('uidA') > -1,
+            'blocking hides that person\'s lines here and on every screen that asks MOD');
+          w.localStorage.removeItem('nabu-blocked'); delete db.docs['users/uidB']; }
+        N.BE.user = { uid: 'admin1', email: 'angela_le_@outlook.com' }; w.localStorage.removeItem('nabu-cmt-seen');
+        /* The bell check further up left uidA's unread-message listener running,
+           which holds one unread message on the Me tab. Switching account stops
+           it in the app (watchUnread begins with stopUnread); so here. */
+        N.BE.stopUnread();
+        N.BE.watchComments(); await sleep(30);
+        db.put('comments/x9', { on: cm, uid: 'uidC', name: 'Thu', text: 'Tụ 3 ạ', nabu: false, at: { toMillis: () => Date.now(), toDate: () => new Date() } });
+        await sleep(40);
+        ok(/Bình luận mới từ Thu/.test(d.querySelector('#toast').textContent) && d.querySelector('#nav a[href="#/me"] .badge') && d.querySelector('#nav a[href="#/me"] .badge').textContent === '1',
+          'a comment that lands while Nabu has the app open is said out loud with the name on it, and counts on the Me tab');
+        await go('#/me', '.admin-sum'); await sleep(60);
+        ok(d.querySelector('.admin-sum a[href="#/admin?tab=comments"] b') && d.querySelector('.admin-sum a[href="#/admin?tab=comments"] b').textContent === '1',
+          'the admin card on the Me tab counts new comments beside messages and bookings');
+        { const tiles = Array.from(d.querySelectorAll('.admin-sum .cnt a')).map((t) => t.getBoundingClientRect()), cnt = d.querySelector('.admin-sum .cnt');
+          const rc = cnt ? cnt.getBoundingClientRect() : null;
+          ok(tiles.length === 3 && !!rc && Math.abs(tiles[0].top - tiles[1].top) < 1 && tiles[2].top > tiles[0].bottom
+            && Math.abs(tiles[2].left - rc.left) < 1 && Math.abs(tiles[2].right - rc.right) < 1,
+            'on the Me tab the third count spans the row under the first two, rather than standing half width on its own'); }
+        { /* While a list is on its way the dashboard says so, in words, in each
+             language. The two lists on the reports tab are held back here so the
+             words stay long enough to be read. */
+          const keepL = { lang: w.localStorage.getItem('nabu-lang'), plang: N.PROFILE().lang }, realDb = N.BE.db, said = [];
+          N.BE.db = { collection: (c) => (c === 'flags' || c === 'errors') ? { orderBy: () => ({ limit: () => ({ onSnapshot: () => () => {} }) }) } : realDb.collection(c) };
+          for (const lg of ['vi', 'en', 'de']) {
+            w.saveProfileLocal({ lang: lg }); w.applyAccountLang();
+            await go('#/learn', '#main'); await go('#/admin?tab=errors', '#replist');
+            said.push(((d.querySelector('#replist .hint') || {}).textContent || '').trim());
+          }
+          N.BE.db = realDb;
+          w.saveProfileLocal({ lang: 'vi' }); w.applyAccountLang();
+          w.saveProfileLocal({ lang: keepL.plang || '' });
+          if (keepL.lang == null) w.localStorage.removeItem('nabu-lang'); else w.localStorage.setItem('nabu-lang', keepL.lang);
+          await go('#/home', '.tiles');
+          ok(said.join('|') === 'Đang tải…|Loading…|Wird geladen…', 'while a list is on its way the dashboard says so in words, in all three languages [' + said.join('|') + ']'); }
+        await go('#/admin?tab=posts', '#atabs'); await sleep(60);
+        ok(d.querySelector('[data-t="comments"]') && !d.querySelector('[data-tb="comments"]').hidden && d.querySelector('[data-tb="comments"]').textContent === '1',
+          'the dashboard has a comments tab whose badge counts what Nabu has not looked at');
+        d.querySelector('[data-t="comments"]').click(); await waitFor(() => d.querySelector('#cmtlist .bk'), 4000);
+        ok(d.querySelectorAll('#cmtlist .bk').length === 3 && Array.from(d.querySelectorAll('#cmtlist .bk')).some((b) => /Thu/.test(b.textContent) && /Tụ 3/.test(b.textContent))
+          && d.querySelector('#cmtlist .bk a[href="#/post/' + pid + '"]') && d.querySelector('[data-tb="comments"]').hidden,
+          'the tab lists the newest comments with a link to what each is under, and opening it clears the badge');
+        { const gone = d.querySelector('#cmtlist [data-cmtgone="x9"]'); gone.click(); await sleep(20); gone.click();
+          await waitFor(() => !db.docs['comments/x9'], 3000);
+          ok(!db.docs['comments/x9'] && d.querySelectorAll('#cmtlist .bk').length === 2, 'Nabu deletes any comment from the dashboard, with the same two taps'); }
+        N.BE.stopUnread(); w.localStorage.removeItem('nabu-cmt-seen');
+        Object.keys(db.docs).filter((k) => k.indexOf('comments/') === 0).forEach((k) => { delete db.docs[k]; });
+        await go('#/home', '.tiles');
+        { /* A deleted comment must not make an old one look new. The watcher
+             reads the newest twenty; take one of them away and the twenty-first
+             slides into view with an id it has never seen. Only what is newer
+             than everything it has seen is said out loud. The stand-in ignores
+             orderBy and limit, so this one watcher is given a query that
+             honours both, over the same documents. */
+          N.BE.user = { uid: 'admin1', email: 'angela_le_@outlook.com' };
+          const T0 = Date.now() - 3600000, at = (i) => ({ toMillis: () => T0 + i * 1000, toDate: () => new Date(T0 + i * 1000) });
+          for (let i = 0; i < 21; i++) db.put('comments/old' + i, { on: cm, uid: 'uidR' + i, name: 'Khách ' + i, text: 'cũ ' + i, nabu: false, at: at(i) });
+          const realDb = N.BE.db, msOf = (x) => { const a = x.data().at; return a && a.toMillis ? a.toMillis() : 0; };
+          N.BE.db = { collection: (c) => {
+            const r = realDb.collection(c);
+            return c !== 'comments' ? r : { orderBy: () => ({ limit: (n) => ({ onSnapshot: (cb, err) => r.onSnapshot((snap) => cb({ docs: snap.docs.slice().sort((a, b) => msOf(b) - msOf(a)).slice(0, n) }), err) }) }) };
+          } };
+          N.BE.watchComments(); N.BE.db = realDb; await sleep(30);
+          d.querySelector('#toast').textContent = '';
+          await db.collection('comments').doc('old20').delete(); await sleep(40);
+          const afterDelete = d.querySelector('#toast').textContent;
+          db.put('comments/new21', { on: cm, uid: 'uidS', name: 'Hạnh', text: 'mới', nabu: false, at: at(21) }); await sleep(40);
+          const afterNew = d.querySelector('#toast').textContent;
+          N.BE.stopUnread(); w.localStorage.removeItem('nabu-cmt-seen');
+          Object.keys(db.docs).filter((k) => k.indexOf('comments/') === 0).forEach((k) => { delete db.docs[k]; });
+          ok(!/Bình luận mới/.test(afterDelete) && /Bình luận mới từ Hạnh/.test(afterNew),
+            'deleting one of the newest comments does not announce an old one as new, and a comment that really is new is still announced'
+            + ' [' + afterDelete + ' | ' + afterNew + ']'); }
+        { /* All three languages, not one. What everybody sees of the comments -
+             the heading, the empty line, the box and its button, and the line
+             that asks a visitor to sign in - is read in English and in German,
+             word for word, with nothing Vietnamese left in it. Away and back each
+             time: going to the hash already showing redraws nothing. */
+          const keepC = { lang: w.localStorage.getItem('nabu-lang'), plang: N.PROFILE().lang, user: N.BE.user };
+          const want = {
+            en: ['Comments', 'No comments yet. Be the first.', 'Write a comment…', 'Send', 'You comment as: Mai Change', 'Comments are public, under the name you choose.', '✦ Author', 'Sign in to comment. Sign in',
+              'Comment rules', 'Be kind and respectful.|No ads, phone numbers or strange links.|Nabu may remove any comment that breaks these rules.', 'I agree'],
+            de: ['Kommentare', 'Noch keine Kommentare. Schreib den ersten.', 'Kommentar schreiben…', 'Senden', 'Du kommentierst als: Mai Ändern', 'Kommentare sind öffentlich, unter dem Namen, den du wählst.', '✦ Autor', 'Melde dich an, um zu kommentieren. Anmelden',
+              'Kommentarregeln', 'Sei freundlich und respektvoll.|Keine Werbung, keine Telefonnummern, keine fremden Links.|Nabu kann Kommentare entfernen, die gegen diese Regeln verstoßen.', 'Ich stimme zu'] };
+          const got = {}, bad = [];
+          for (const lg of ['en', 'de']) {
+            w.saveProfileLocal({ lang: lg }); w.applyAccountLang();
+            N.BE.user = { uid: 'uidA', email: 'a@test' };
+            const txt0 = (sel) => ((d.querySelector(sel) || {}).textContent || '').replace(/\s+/g, ' ').trim();
+            w.localStorage.removeItem('nabu-cmt-ok');
+            await go('#/learn', '#main'); await go('#/post/' + pid, '.cmts .cmtrules');
+            const rulesT = txt0('.cmts .cmtrules h3'), rulesL = Array.from(d.querySelectorAll('.cmts .cmtrules li')).map((li) => li.textContent.trim()).join('|'),
+              agreeT = txt0('.cmts [data-cmtagree]');
+            w.localStorage.setItem('nabu-cmt-ok', '1');
+            await go('#/learn', '#main'); await go('#/post/' + pid, '.cmts [data-cmtsend]');
+            await waitFor(() => d.querySelector('.cmts .cmtlist li') && !/…/.test(d.querySelector('.cmts .cmtlist li').textContent), 3000);
+            const txt = (sel) => ((d.querySelector(sel) || {}).textContent || '').replace(/\s+/g, ' ').trim();
+            const h3 = d.querySelector('.cmts h3'), head = h3 && h3.firstChild ? h3.firstChild.textContent.replace(/^💬\s*/, '').trim() : '', none = txt('.cmts .cmtlist li'),
+              ph = (d.querySelector('.cmts .cmtin') || {}).placeholder || '', send = txt('.cmts [data-cmtsend]');
+            const as = txt('.cmts .cmtas'), pub = txt('.cmts .cmtpublic');
+            db.put('comments/lgnabu', { on: cm, uid: 'admin1', name: 'Nabu', text: 'x', nabu: true, at: 1 });
+            await waitFor(() => d.querySelector('.cmts .cmt.nabu'), 2000);
+            const tag = txt('.cmts .cmt.nabu .nabutag');
+            await db.collection('comments').doc('lgnabu').delete();
+            N.BE.user = null;
+            await go('#/learn', '#main'); await go('#/post/' + pid, '.cmts .cmtsignin');
+            got[lg] = [head, none, ph, send, as, pub, tag, txt('.cmts .cmtsignin'), rulesT, rulesL, agreeT];
+            want[lg].forEach((t, i) => { if (got[lg][i] !== t) bad.push(lg + ' "' + got[lg][i] + '"'); });
+            if (VI.test(got[lg].join(' '))) bad.push(lg + ' still has Vietnamese');
+          }
+          w.saveProfileLocal({ lang: 'vi' }); w.applyAccountLang();
+          w.saveProfileLocal({ lang: keepC.plang || '' });
+          if (keepC.lang == null) w.localStorage.removeItem('nabu-lang'); else w.localStorage.setItem('nabu-lang', keepC.lang);
+          N.BE.user = keepC.user;
+          await go('#/home', '.tiles');
+          ok(bad.length === 0 && d.documentElement.getAttribute('lang') === 'vi',
+            'the comments read in English and in German too: the heading, the empty line, the box, its button, the name line, the public notice, Nabu\'s tag, the sign-in line and the comment rules, with no Vietnamese left over'
+            + (bad.length ? ' [' + bad.slice(0, 4).join('; ') + ']' : '')); }
+        { /* The count on a card is capped. The Firebase SDK the app loads has no
+             count() on a query, so the number is read from the comments
+             themselves, at most a hundred of them; a card with more says 99+.
+             Both paths: the stand-in's count(), and a query that has none and
+             honours limit(), as the real one does. */
+          for (let i = 0; i < 120; i++) db.docs['comments/many' + i] = { on: cm, uid: 'uidM', name: 'M', text: 't', nabu: false, at: i };
+          const shown = async () => {
+            N.CMT.counts = {}; await go('#/news', '#news .post'); await go('#/home', '#feed .post');
+            await waitFor(() => { const sp = d.querySelector('#feed .post [data-cmtn="' + cm + '"] span'); return sp && sp.textContent; }, 3000);
+            return (d.querySelector('#feed .post [data-cmtn="' + cm + '"] span') || {}).textContent || '';
+          };
+          const viaCount = await shown();
+          const realDb = N.BE.db; let asked = null;
+          N.BE.db = { collection: (c) => {
+            const r = realDb.collection(c); if (c !== 'comments') return r;
+            return { where: (f, op, v) => { const q = r.where(f, op, v);
+              return { get: () => q.get(), onSnapshot: q.onSnapshot,
+                limit: (n) => ({ get: async () => { asked = n; const sn = await q.get(); return { docs: sn.docs.slice(0, n) }; } }) }; } };
+          } };
+          const viaGet = await shown();
+          N.BE.db = realDb;
+          Object.keys(db.docs).filter((k) => k.indexOf('comments/many') === 0).forEach((k) => { delete db.docs[k]; });
+          ok(viaCount === '99+' && viaGet === '99+' && asked === 100,
+            'a card with more than ninety-nine comments says 99+, and reads no more than a hundred of them to know it [' + viaCount + ' | ' + viaGet + ' | ' + asked + ']'); }
+        if (cmtOkWas == null) w.localStorage.removeItem('nabu-cmt-ok'); else w.localStorage.setItem('nabu-cmt-ok', cmtOkWas);
+        w.saveProfileLocal({ name: nameWas }); N.CMT.counts = {}; }
       N.BE.db = keep.db; N.BE.user = keep.user; N.BE.enabled = keep.on; w.confirm = keep.confirm;
       w.localStorage.removeItem('nabu-love');
       /* This check is about the guest view, so it says so. Leaving it to the
@@ -3560,9 +3993,13 @@ async function go(hash, sel) { W().location.hash = hash; await sleep(30); return
       touch('touchmove', 100, 140); await sleep(30);
       ok(pull.classList.contains('ready'),
         'and dragging past the trip point arms it, so the gesture says what it will do');
-      /* A refresh goes and asks the cloud, which is allowed to take a moment. */
+      /* A refresh goes and asks the cloud, which is allowed to take a moment:
+         up to five seconds, after which it redraws with whatever answered. The
+         wait here is a little longer than that. At four seconds it was shorter
+         than the refresh it waits for, so a slow worker update failed this
+         check and then, landing late, the sideways one after it. */
       touch('touchend', 100, 140);
-      for (let i = 0; i < 40 && !w.NABU.REFRESHED_AT; i++) await sleep(100);
+      for (let i = 0; i < 60 && !w.NABU.REFRESHED_AT; i++) await sleep(100);
       ok(w.NABU.REFRESHED_AT > 0, 'letting go past the trip point refreshes');
 
       /* A sideways drag belongs to whatever is scrolling sideways. */

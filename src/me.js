@@ -60,7 +60,7 @@ function bindAuth() { }
 function adminSummaryHTML() {
   const S = T(), st = notifyState();
   return '<div class="card admin-sum"><div class="eyebrow">' + esc(S.adminSummary) + '</div>'
-    + '<div class="cnt"><a href="#/admin?tab=inbox"><b>' + UNREAD + '</b><span>' + esc(S.unreadMsgs) + '</span></a><a href="#/admin?tab=bookings"><b>' + NEWBK + '</b><span>' + esc(S.newBookings) + '</span></a></div>'
+    + '<div class="cnt"><a href="#/admin?tab=inbox"><b>' + UNREAD + '</b><span>' + esc(S.unreadMsgs) + '</span></a><a href="#/admin?tab=bookings"><b>' + NEWBK + '</b><span>' + esc(S.newBookings) + '</span></a><a href="#/admin?tab=comments"><b>' + NEWC + '</b><span>' + esc(S.newComments) + '</span></a></div>'
     + '<a class="btn primary block" href="#/admin">' + esc(S.openAdmin) + '</a>'
     + (st === 'granted' ? '<p class="hint ok">🔔 ' + esc(S.notifOn) + '</p>' : st === 'denied' ? '<p class="hint err">' + esc(S.notifDenied) + '</p>' : st === 'unsupported' ? '<p class="hint">' + esc(S.notifUnsupported) + '</p>' : '<button class="btn block" id="notifon">🔔 ' + esc(S.enableNotif) + '</button><p class="hint">' + esc(S.notifHint) + '</p>')
     + '</div>';

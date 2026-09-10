@@ -443,7 +443,7 @@ const ICONS = {
   play: '<svg viewBox="0 0 24 24"><rect x="3.5" y="3.5" width="17" height="17" rx="4"/><circle cx="8.5" cy="8.5" r="1.3" fill="currentColor"/><circle cx="15.5" cy="8.5" r="1.3" fill="currentColor"/><circle cx="12" cy="12" r="1.3" fill="currentColor"/><circle cx="8.5" cy="15.5" r="1.3" fill="currentColor"/><circle cx="15.5" cy="15.5" r="1.3" fill="currentColor"/></svg>',
   me: '<svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg>'
 };
-let UNREAD = 0, NEWBK = 0;
+let UNREAD = 0, NEWBK = 0, NEWC = 0;
 /* Notifications for Nabu: a system notification when the browser allows it
    (Android, desktop, and iPhone once the app is on the home screen), and
    always a toast while the app is open. */
@@ -535,7 +535,7 @@ function renderChrome(route) {
   $('#lang').setAttribute('title', T().langSwitch);
   $('#nav').innerHTML = ['home', 'pick', 'play', 'learn', 'book', 'me'].map((k) =>
     '<a href="#/' + k + '" class="' + (route === k ? 'on' : '') + '">' + ICONS[k] + '<span>' + esc(T().nav[k]) + '</span>'
-    + (k === 'me' && (UNREAD + NEWBK) ? '<span class="badge">' + (UNREAD + NEWBK) + '</span>' : '')
+    + (k === 'me' && (UNREAD + NEWBK + NEWC) ? '<span class="badge">' + (UNREAD + NEWBK + NEWC) + '</span>' : '')
     // A sale on readings shows up on the tab where readings are booked.
     + (k === 'book' && SALE.covers('reading') ? '<span class="saletag" aria-hidden="true">🏷️</span>' : '')
     + (k === 'learn' && SALE.covers('unlock') ? '<span class="saletag" aria-hidden="true">🏷️</span>' : '') + '</a>').join('');

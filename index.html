@@ -12,7 +12,7 @@
      carries this notice with it. See LICENSE. -->
 <meta name="author" content="Nabu Tarot">
 <meta name="copyright" content="Copyright (c) 2025-2026 Nabu Tarot. All rights reserved.">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'none'; object-src 'none'; form-action 'self'; script-src 'self' 'sha256-LWIDDAJsO0WNwBjPNE6ehmrMOFqBzoygOcgEyvopi3c=' https://www.gstatic.com https://apis.google.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; font-src 'self' data:; media-src 'self' data: blob:; worker-src 'self'; connect-src 'self' https://*.googleapis.com https://*.google.com https://*.firebaseio.com https://*.cloudfunctions.net https://*.workers.dev https://generativelanguage.googleapis.com; frame-src https://*.firebaseapp.com https://accounts.google.com https://*.facebook.com">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'none'; object-src 'none'; form-action 'self'; script-src 'self' 'sha256-gBw40O6WqtHAA+fvSxYxYsu6S1GGWbdTgHvkRzqvlp8=' https://www.gstatic.com https://apis.google.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; font-src 'self' data:; media-src 'self' data: blob:; worker-src 'self'; connect-src 'self' https://*.googleapis.com https://*.google.com https://*.firebaseio.com https://*.cloudfunctions.net https://*.workers.dev https://generativelanguage.googleapis.com; frame-src https://*.firebaseapp.com https://accounts.google.com https://*.facebook.com">
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <meta name="theme-color" content="#EFE9FA">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -998,6 +998,8 @@ h1 .pileico{width:34px;height:27px;vertical-align:-3px;margin-right:2px}
 .thr-head{display:flex;align-items:center;gap:12px;margin-bottom:10px}.thr-head b{display:block}.thr-head i{font-style:normal;color:var(--fg-faint);font-size:12.5px;font-weight:500}
 .tabs button{position:relative}.tabs .tb{display:inline-block;margin-left:6px;background:var(--pink-ink);color:#fff;font-size:10.5px;border-radius:999px;min-width:17px;height:17px;line-height:17px;text-align:center;padding:0 5px;vertical-align:1px}
 .admin-sum .cnt{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:8px 0 10px}.admin-sum .cnt a{background:var(--surface-2);border-radius:14px;padding:12px;text-align:center;text-decoration:none;color:inherit}.admin-sum .cnt b{display:block;font-size:26px;font-family:var(--display);color:var(--link)}.admin-sum .cnt span{font-size:12.5px;color:var(--fg-soft)}
+/* A third count sits under the first two and takes the whole row. */
+.admin-sum .cnt a:nth-child(3){grid-column:1/-1}
 /* Three columns that stretch to the same height: the small buttons, the box
    to type in, and Send. Pinned to the bottom they were level only when the box
    held one line. */
@@ -1686,6 +1688,24 @@ h1 .pileico{width:34px;height:27px;vertical-align:-3px;margin-right:2px}
 .saylist li b{display:block;font-size:12px;font-weight:700;color:var(--fg-soft);margin-bottom:1px}
 .saylist li.me b{color:inherit;opacity:.75}
 .saybar input{flex:1;min-width:0}
+/* ---- comments under a post or an activity ---- */
+.cmts{margin-top:14px}
+.cmts h3{margin-bottom:8px}
+.cmts h3 .n{display:inline-block;margin-left:6px;background:var(--lav-soft);color:var(--fg);font-size:12.5px;border-radius:999px;min-width:20px;padding:1px 7px;text-align:center;vertical-align:2px}
+/* The wedding room's flag, as it is, with a box a thumb can hit: 40px, the
+   house minimum. The glyph, its colour and its quiet opacity are unchanged. */
+.cmts .cmtlist li{padding-right:40px}
+.cmts .flagb{top:0;right:0;min-width:40px;min-height:40px}
+.cmts .cmtlist li.nabu{background:var(--tag-gold-bg);color:var(--tag-gold-ink)}
+.cmts .nabutag{display:inline-block;margin-left:6px;padding:0 6px;border-radius:8px;font-size:12px;background:var(--primary);color:var(--primary-ink);vertical-align:1px}
+.cmts .cmttext{display:block;white-space:pre-wrap;overflow-wrap:anywhere}
+.cmts .when{display:inline-block;margin-top:4px;font-size:12px;color:var(--fg-faint)}
+.cmts .cmtdel{margin-left:10px;font-size:12.5px;min-height:40px;display:inline-flex;align-items:center;padding:0 8px}
+.cmts .cmtform textarea{width:100%;min-height:72px;border-radius:14px;padding:10px 14px}
+.cmts .cmtform .row{margin-top:8px;align-items:center;gap:10px}
+/* The comment rules: the wedding's terms card, with its button set apart. */
+.cmts .cmtrules .btn{margin-top:12px}
+.post .foot .cmtn{min-height:40px;display:inline-flex;align-items:center;gap:4px;color:var(--fg-soft);font-size:13.5px;font-weight:600;padding:6px 10px;border-radius:8px;text-decoration:none;margin-right:auto}
 .wishcard{position:relative;overflow:hidden}
 .wgtally{display:flex;flex-wrap:wrap;align-items:center;gap:10px;margin-bottom:12px;padding:9px 12px;
   border-radius:12px;background:var(--surface-2);font-size:14px;font-weight:600}
@@ -3259,6 +3279,14 @@ const STR = {
     actPickHint: 'Bạn chạm vào tụ bài mà mình thấy bị thu hút nhất. Nabu sẽ đăng thông điệp của từng tụ sau vài ngày.', actPicked: (n) => 'Bạn đã chọn tụ ' + n + '.', actComeBack: (d) => 'Quay lại vào ' + d + ' để lật bài xem thông điệp.', actChangePile: 'Đổi sang tụ khác?', actPickToSee: 'Thông điệp đã có. Chạm vào một tụ để lật lên.', actTapOthers: 'Tụ bạn chọn đã lật lên. Bạn có thể chạm vào tụ khác để xem thử.',
     actVoteHint: 'Bạn chạm vào một lựa chọn. Mỗi người chỉ được bình chọn một lần.', actVoteLogin: 'Bạn cần đăng nhập để bình chọn và xem kết quả.', actVoted: 'Cảm ơn bạn đã bình chọn!', actClosedNote: 'Bình chọn đã đóng. Đây là kết quả.', actVotes: (n) => n + ' phiếu',
     actWishPh: 'Điều mình ước lúc này là…', actWishSend: 'Gửi vào vũ trụ', actWishHint: 'Bạn viết ngắn gọn, ở thì hiện tại, rồi gửi đi. Điều ước chỉ được lưu trên máy của bạn và không ai đọc được.', actWishCount: (n) => 'Bạn đã gửi ' + n + ' điều ước ở đây.', actWishSent: 'Đã gửi. Giờ đến lượt bạn làm bước đầu tiên. ✨', actWishEmpty: 'Bạn viết điều ước trước nhé.', actWishClear: 'Xoá các điều ước đã lưu trên máy', actWishClearConfirm: 'Xoá các điều ước đã lưu trên máy này?',
+    cmtTitle: 'Bình luận', cmtNone: 'Chưa có bình luận nào. Bạn viết đầu tiên nhé.', cmtPh: 'Viết bình luận…', cmtSend: 'Gửi', cmtSent: 'Đã gửi.',
+    cmtSignIn: 'Đăng nhập để bình luận.', cmtSomeone: 'Bạn đọc', cmtJustNow: 'Vừa xong', cmtDelete: 'Xoá', cmtDeleteSure: 'Chắc chắn xoá?', cmtDeleted: 'Đã xoá.',
+    cmtEmpty: 'Bạn viết gì đó trước nhé.', cmtTooLong: 'Bình luận dài quá. Tối đa 600 ký tự.', cmtOffline: 'Chưa tải được bình luận. Bạn thử lại khi có mạng nhé.',
+    cmtAdminIntro: 'Bình luận mới nhất dưới các bài và hoạt động. Mở bài để trả lời ngay dưới bình luận.', cmtAdminNone: 'Chưa có bình luận nào.', cmtOpen: 'Mở bài', cmtOn: (t) => 'Dưới: ' + t,
+    notifNewComment: 'Bình luận mới từ ', newComments: 'bình luận mới',
+    cmtAs: 'Bạn bình luận với tên:', cmtRename: 'Đổi tên', cmtPublic: 'Bình luận hiển thị công khai với tên bạn chọn.', cmtAuthor: 'Tác giả',
+    cmtRulesTitle: 'Quy tắc bình luận', cmtAgree: 'Tôi đồng ý',
+    cmtRules: ['Nói chuyện tử tế, tôn trọng người khác.', 'Không quảng cáo, không để số điện thoại hay đường link lạ.', 'Nabu có thể xoá bình luận không phù hợp.'],
     loveNoRules: 'Phần này của Nabu chưa được mở. Bạn báo giúp Nabu qua mục Liên hệ nhé, không phải lỗi của bạn đâu.',
     loveNoRulesAdmin: 'Firestore từ chối ghi: rules cho handles / people / bonds / requests / invites chưa được publish. Vào Firebase Console › Firestore Database › Rules, dán toàn bộ file firestore.rules trong repo rồi bấm Publish.',
     loveRoadTitle: 'Chặng đường',
@@ -3784,7 +3812,7 @@ const STR = {
     interests: 'Bạn quan tâm điều gì?',
     saveProfile: 'Lưu hồ sơ',
     editProfile: 'Sửa hồ sơ',
-    saved: 'Đã lưu',
+    saved: 'Đã lưu', loading: 'Đang tải…',
     myBookings: 'Lịch hẹn của tôi',
     noBookings: 'Bạn chưa có lịch hẹn nào.',
     status: { requested: 'Chờ xác nhận', confirmed: 'Đã xác nhận', declined: 'Không nhận', cancelled: 'Đã hủy', change_requested: 'Chờ duyệt giờ mới', cancel_requested: 'Chờ duyệt hủy' },
@@ -3855,7 +3883,7 @@ const STR = {
     errTitle: 'Lỗi', errNone: 'Chưa có lỗi nào. Đó là tin tốt.',
     errHint: (n) => n + ' lần được ghi lại, mới nhất trước.',
     errWhere: 'Màn hình', errLast: 'gần nhất', errDone: 'Đã xử lý',
-    adminTabs: { posts: '📝 Bài đăng', acts: '🎲 Hoạt động', schedule: '🕒 Lịch rảnh', bookings: '📅 Đặt lịch', pay: '💰 Thanh toán', inbox: '💬 Tin nhắn', codes: '🔑 Mã học', sale: '🏷️ Khuyến mãi', errors: '🚩 Báo cáo' },
+    adminTabs: { posts: '📝 Bài đăng', acts: '🎲 Hoạt động', schedule: '🕒 Lịch rảnh', bookings: '📅 Đặt lịch', pay: '💰 Thanh toán', inbox: '💬 Tin nhắn', comments: '💬 Bình luận', codes: '🔑 Mã học', sale: '🏷️ Khuyến mãi', errors: '🚩 Báo cáo' },
     codeChecking: 'Đang kiểm tra mã…', codeOffline: 'Chưa kiểm tra được mã lúc này. Bạn thử lại khi có mạng nhé.', codeUsed: 'Mã này đã được dùng ở một tài khoản khác.', codeExpired: 'Mã này đã hết hạn.', codeSignIn: 'Bạn đăng nhập trước nhé. Mã được lưu trên tài khoản, nên máy nào cũng dùng được.', codeNotReady: 'Chưa kiểm tra được mã lúc này. Bạn nhắn cho Nabu ở mục Hồ sơ nhé.',
     welTitle: 'Chào bạn! ✨', welLead: 'Chỉ vài câu thôi — bạn có thể đổi lại bất cứ lúc nào.',
     welLang: 'Ngôn ngữ', welHandle: 'Tên riêng của bạn', welHandleHint: 'Bạn bè có thể tìm bạn bằng tên này.',
@@ -4091,6 +4119,14 @@ const STR = {
     actPickHint: 'Tap the pile that pulls you. Nabu posts each pile\'s message a few days later.', actPicked: (n) => 'You chose pile ' + n + '.', actComeBack: (d) => 'Come back on ' + d + ' to flip it over.', actChangePile: 'Switch to another pile?', actPickToSee: 'The messages are in. Tap a pile to flip it.', actTapOthers: 'Your pile is open. Tap another pile to peek.',
     actVoteHint: 'Tap an option. One vote per person.', actVoteLogin: 'Sign in to vote and see the results.', actVoted: 'Thank you for voting!', actClosedNote: 'Voting is closed. Here are the results.', actVotes: (n) => n + ' votes',
     actWishPh: 'Right now I wish…', actWishSend: 'Send it to the universe', actWishHint: 'Keep it short, in the present tense, then send. Wishes stay on your device; nobody reads them.', actWishCount: (n) => 'You have sent ' + n + ' wishes here.', actWishSent: 'Sent. Now the first step is yours. ✨', actWishEmpty: 'Write your wish first.', actWishClear: 'Clear the wishes saved on this device', actWishClearConfirm: 'Clear the wishes saved on this device?',
+    cmtTitle: 'Comments', cmtNone: 'No comments yet. Be the first.', cmtPh: 'Write a comment…', cmtSend: 'Send', cmtSent: 'Sent.',
+    cmtSignIn: 'Sign in to comment.', cmtSomeone: 'A reader', cmtJustNow: 'Just now', cmtDelete: 'Delete', cmtDeleteSure: 'Really delete?', cmtDeleted: 'Deleted.',
+    cmtEmpty: 'Write something first.', cmtTooLong: 'Too long. 600 characters at most.', cmtOffline: 'The comments could not be loaded. Try again when you are online.',
+    cmtAdminIntro: 'The newest comments under posts and activities. Open the post to answer right under the comment.', cmtAdminNone: 'No comments yet.', cmtOpen: 'Open the post', cmtOn: (t) => 'Under: ' + t,
+    notifNewComment: 'New comment from ', newComments: 'new comments',
+    cmtAs: 'You comment as:', cmtRename: 'Change', cmtPublic: 'Comments are public, under the name you choose.', cmtAuthor: 'Author',
+    cmtRulesTitle: 'Comment rules', cmtAgree: 'I agree',
+    cmtRules: ['Be kind and respectful.', 'No ads, phone numbers or strange links.', 'Nabu may remove any comment that breaks these rules.'],
     loveNoRules: 'This part of Nabu is not open yet. Let Nabu know through Contact — nothing here is your fault.',
     loveNoRulesAdmin: 'Firestore refused the write: the rules for handles / people / bonds / requests / invites have not been published. Firebase Console › Firestore Database › Rules, paste the whole firestore.rules from the repo, then Publish.',
     loveRoadTitle: 'The road',
@@ -4616,7 +4652,7 @@ const STR = {
     interests: 'What do you care about?',
     saveProfile: 'Save profile',
     editProfile: 'Edit profile',
-    saved: 'Saved',
+    saved: 'Saved', loading: 'Loading…',
     myBookings: 'My bookings',
     noBookings: 'You have no bookings yet.',
     status: { requested: 'Awaiting confirmation', confirmed: 'Confirmed', declined: 'Declined', cancelled: 'Cancelled', change_requested: 'New time awaiting approval', cancel_requested: 'Cancellation pending' },
@@ -4687,7 +4723,7 @@ const STR = {
     errTitle: 'Errors', errNone: 'No errors yet. That is good news.',
     errHint: (n) => n + ' recorded, newest first.',
     errWhere: 'Screen', errLast: 'last', errDone: 'Handled',
-    adminTabs: { posts: '📝 Posts', acts: '🎲 Activities', schedule: '🕒 Hours', bookings: '📅 Bookings', pay: '💰 Payments', inbox: '💬 Inbox', codes: '🔑 Codes', sale: '🏷️ Sale', errors: '🚩 Reports' },
+    adminTabs: { posts: '📝 Posts', acts: '🎲 Activities', schedule: '🕒 Hours', bookings: '📅 Bookings', pay: '💰 Payments', inbox: '💬 Inbox', comments: '💬 Comments', codes: '🔑 Codes', sale: '🏷️ Sale', errors: '🚩 Reports' },
     codeChecking: 'Checking the code…', codeOffline: 'The code cannot be checked right now. Please try again when you are online.', codeUsed: 'This code has already been used on another account.', codeExpired: 'This code has expired.', codeSignIn: 'Sign in first. The code is kept on your account, so it works on every device you use.', codeNotReady: 'Codes cannot be checked right now. Please write to Nabu from the Profile tab.',
     welTitle: 'Hello! ✨', welLead: 'Just a few questions — you can change any of it later.',
     welLang: 'Language', welHandle: 'Your own name', welHandleHint: 'This is how friends find you.',
@@ -4922,6 +4958,14 @@ const STR = {
     actPickHint: 'Tipp den Stapel an, der dich anzieht. Die Botschaft jedes Stapels postet Nabu ein paar Tage später.', actPicked: (n) => 'Du hast Stapel ' + n + ' gewählt.', actComeBack: (d) => 'Komm am ' + d + ' zurück, um ihn umzudrehen.', actChangePile: 'Zu einem anderen Stapel wechseln?', actPickToSee: 'Die Botschaften sind da. Tipp einen Stapel an, um ihn umzudrehen.', actTapOthers: 'Dein Stapel ist offen. Tipp einen anderen Stapel an, um hineinzuschauen.',
     actVoteHint: 'Tipp eine Antwort an. Eine Stimme pro Person.', actVoteLogin: 'Melde dich an, um abzustimmen und die Ergebnisse zu sehen.', actVoted: 'Danke für deine Stimme!', actClosedNote: 'Die Abstimmung ist beendet. Hier sind die Ergebnisse.', actVotes: (n) => n + ' Stimmen',
     actWishPh: 'Gerade wünsche ich mir…', actWishSend: 'Ans Universum schicken', actWishHint: 'Halt ihn kurz, in der Gegenwart, und schick ihn ab. Wünsche bleiben auf deinem Gerät; niemand liest sie.', actWishCount: (n) => 'Du hast hier ' + n + ' Wünsche abgeschickt.', actWishSent: 'Abgeschickt. Der erste Schritt liegt jetzt bei dir. ✨', actWishEmpty: 'Schreib zuerst deinen Wunsch.', actWishClear: 'Die auf diesem Gerät gespeicherten Wünsche löschen', actWishClearConfirm: 'Die auf diesem Gerät gespeicherten Wünsche löschen?',
+    cmtTitle: 'Kommentare', cmtNone: 'Noch keine Kommentare. Schreib den ersten.', cmtPh: 'Kommentar schreiben…', cmtSend: 'Senden', cmtSent: 'Gesendet.',
+    cmtSignIn: 'Melde dich an, um zu kommentieren.', cmtSomeone: 'Jemand', cmtJustNow: 'Gerade eben', cmtDelete: 'Löschen', cmtDeleteSure: 'Wirklich löschen?', cmtDeleted: 'Gelöscht.',
+    cmtEmpty: 'Schreib zuerst etwas.', cmtTooLong: 'Zu lang. Höchstens 600 Zeichen.', cmtOffline: 'Die Kommentare konnten nicht geladen werden. Versuch es, wenn du online bist.',
+    cmtAdminIntro: 'Die neuesten Kommentare unter Beiträgen und Aktivitäten. Öffne den Beitrag, um direkt unter dem Kommentar zu antworten.', cmtAdminNone: 'Noch keine Kommentare.', cmtOpen: 'Beitrag öffnen', cmtOn: (t) => 'Unter: ' + t,
+    notifNewComment: 'Neuer Kommentar von ', newComments: 'neue Kommentare',
+    cmtAs: 'Du kommentierst als:', cmtRename: 'Ändern', cmtPublic: 'Kommentare sind öffentlich, unter dem Namen, den du wählst.', cmtAuthor: 'Autor',
+    cmtRulesTitle: 'Kommentarregeln', cmtAgree: 'Ich stimme zu',
+    cmtRules: ['Sei freundlich und respektvoll.', 'Keine Werbung, keine Telefonnummern, keine fremden Links.', 'Nabu kann Kommentare entfernen, die gegen diese Regeln verstoßen.'],
     loveNoRules: 'Dieser Teil von Nabu ist noch nicht offen. Sag Nabu über Kontakt Bescheid - es liegt nicht an dir.',
     loveNoRulesAdmin: 'Firestore hat den Schreibzugriff abgelehnt: Die Regeln für handles / people / bonds / requests / invites sind nicht veröffentlicht. Firebase Console › Firestore Database › Rules, die ganze firestore.rules aus dem Repo einfügen, dann Publish.',
     loveRoadTitle: 'Der Weg',
@@ -5440,7 +5484,7 @@ const STR = {
     interests: 'Was ist dir wichtig?',
     saveProfile: 'Profil speichern',
     editProfile: 'Profil bearbeiten',
-    saved: 'Gespeichert',
+    saved: 'Gespeichert', loading: 'Wird geladen…',
     myBookings: 'Meine Termine',
     noBookings: 'Du hast noch keine Termine.',
     status: { requested: 'Wartet auf Bestätigung', confirmed: 'Bestätigt', declined: 'Abgelehnt', cancelled: 'Abgesagt', change_requested: 'Neue Zeit wartet auf Zustimmung', cancel_requested: 'Absage wartet auf Bestätigung' },
@@ -5511,7 +5555,7 @@ const STR = {
     errTitle: 'Fehler', errNone: 'Noch keine Fehler. Das ist eine gute Nachricht.',
     errHint: (n) => n + ' erfasst, neueste zuerst.',
     errWhere: 'Bildschirm', errLast: 'zuletzt', errDone: 'Erledigt',
-    adminTabs: { posts: '📝 Beiträge', acts: '🎲 Aktivitäten', schedule: '🕒 Zeiten', bookings: '📅 Termine', pay: '💰 Zahlungen', inbox: '💬 Posteingang', codes: '🔑 Codes', sale: '🏷️ Aktion', errors: '🚩 Meldungen' },
+    adminTabs: { posts: '📝 Beiträge', acts: '🎲 Aktivitäten', schedule: '🕒 Zeiten', bookings: '📅 Termine', pay: '💰 Zahlungen', inbox: '💬 Posteingang', comments: '💬 Kommentare', codes: '🔑 Codes', sale: '🏷️ Aktion', errors: '🚩 Meldungen' },
     codeChecking: 'Code wird geprüft…', codeOffline: 'Der Code lässt sich gerade nicht prüfen. Versuch es bitte noch einmal, wenn du online bist.', codeUsed: 'Dieser Code wurde schon mit einem anderen Konto benutzt.', codeExpired: 'Dieser Code ist abgelaufen.', codeSignIn: 'Bitte zuerst anmelden. Der Code wird auf deinem Konto gespeichert und gilt auf jedem Gerät.', codeNotReady: 'Codes können gerade nicht geprüft werden. Bitte schreib Nabu im Profil.',
     welTitle: 'Hallo! ✨', welLead: 'Nur ein paar Fragen — du kannst alles später ändern.',
     welLang: 'Sprache', welHandle: 'Dein eigener Name', welHandleHint: 'So finden dich deine Freunde.',
@@ -18074,7 +18118,7 @@ const ICONS = {
   play: '<svg viewBox="0 0 24 24"><rect x="3.5" y="3.5" width="17" height="17" rx="4"/><circle cx="8.5" cy="8.5" r="1.3" fill="currentColor"/><circle cx="15.5" cy="8.5" r="1.3" fill="currentColor"/><circle cx="12" cy="12" r="1.3" fill="currentColor"/><circle cx="8.5" cy="15.5" r="1.3" fill="currentColor"/><circle cx="15.5" cy="15.5" r="1.3" fill="currentColor"/></svg>',
   me: '<svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg>'
 };
-let UNREAD = 0, NEWBK = 0;
+let UNREAD = 0, NEWBK = 0, NEWC = 0;
 /* Notifications for Nabu: a system notification when the browser allows it
    (Android, desktop, and iPhone once the app is on the home screen), and
    always a toast while the app is open. */
@@ -18166,7 +18210,7 @@ function renderChrome(route) {
   $('#lang').setAttribute('title', T().langSwitch);
   $('#nav').innerHTML = ['home', 'pick', 'play', 'learn', 'book', 'me'].map((k) =>
     '<a href="#/' + k + '" class="' + (route === k ? 'on' : '') + '">' + ICONS[k] + '<span>' + esc(T().nav[k]) + '</span>'
-    + (k === 'me' && (UNREAD + NEWBK) ? '<span class="badge">' + (UNREAD + NEWBK) + '</span>' : '')
+    + (k === 'me' && (UNREAD + NEWBK + NEWC) ? '<span class="badge">' + (UNREAD + NEWBK + NEWC) + '</span>' : '')
     // A sale on readings shows up on the tab where readings are booked.
     + (k === 'book' && SALE.covers('reading') ? '<span class="saletag" aria-hidden="true">🏷️</span>' : '')
     + (k === 'learn' && SALE.covers('unlock') ? '<span class="saletag" aria-hidden="true">🏷️</span>' : '') + '</a>').join('');
@@ -18953,6 +18997,7 @@ const BE = {
     try { await wipe(db.collection('threads').doc(uid).collection('messages')); } catch (e) { /* rules or offline */ }
     try { await db.collection('threads').doc(uid).delete(); } catch (e) { /* nothing there */ }
     try { await wipe(db.collection('bookings').where('uid', '==', uid)); } catch (e) { /* rules or offline */ }
+    try { await wipe(db.collection('comments').where('uid', '==', uid)); } catch (e) { /* rules or offline */ }
     try { await db.collection('users').doc(uid).delete(); } catch (e) { /* nothing there */ }
     /* Every registered person now has a public card and a reserved username, so
        deletion has to take both with it: the card in 'people' and the row in
@@ -19124,13 +19169,44 @@ const BE = {
         if (!firstB) s.docChanges().forEach((c) => { if (c.type === 'added') { const b = c.doc.data(); notifyAdmin(S.notifNewBooking + (b.name || b.email || S.guestLabel), (b.service || '') + (b.slot ? ' · ' + b.slot.replace('T', ' ') : ''), '#/admin?tab=bookings'); } });
         firstB = false;
       });
+      this.watchComments();
     } else {
       this._unsubUnread = this.thread().onSnapshot((d) => { UNREAD = (d.exists && d.data().userUnread) || 0; renderChrome((ROUTES[parseHash().route] || {}).nav); });
     }
     void self;
   },
   _unsubBk: null,
-  stopUnread() { if (this._unsubUnread) { this._unsubUnread(); this._unsubUnread = null; } if (this._unsubBk) { this._unsubBk(); this._unsubBk = null; } UNREAD = 0; NEWBK = 0; },
+  stopUnread() { if (this._unsubUnread) { this._unsubUnread(); this._unsubUnread = null; } if (this._unsubBk) { this._unsubBk(); this._unsubBk = null; } UNREAD = 0; NEWBK = 0; if (this._unsubCmt) { this._unsubCmt(); this._unsubCmt = null; } NEWC = 0; },
+  /* ---- comments: Nabu hears about a new one without opening every post ----
+     The newest twenty, live. What counts as new is anything a reader wrote
+     after the last time the dashboard's comments tab was opened on this
+     device. What is said out loud is only what is newer than every comment
+     this watcher has already seen, by the server's clock. Not by id: deleting
+     one of the twenty brings an old twenty-first into view with an id never
+     seen before, and it was announced as new. Not by docChanges() either, so
+     the same code runs against the suite's stand-in. A row the server has not
+     stamped yet has no time to compare, and waits until it has one. */
+  _unsubCmt: null,
+  watchComments() {
+    if (this._unsubCmt) { this._unsubCmt(); this._unsubCmt = null; }
+    if (!this.db || !this.isAdmin()) return;
+    const S = T(), pending = Number.MAX_SAFE_INTEGER; let first = true, top = 0;
+    const nav = () => renderChrome(parseHash().route === 'post' ? 'home' : (ROUTES[parseHash().route] || {}).nav);
+    this._unsubCmt = this.db.collection('comments').orderBy('at', 'desc').limit(20).onSnapshot((s) => {
+      const since = Number(store.get('nabu-cmt-seen', 0)) || 0;
+      const rows = (s.docs || []).map((d) => Object.assign({ id: d.id }, d.data()));
+      NEWC = rows.filter((c) => !c.nabu && cmtMs(c) !== pending && cmtMs(c) > since).length;
+      nav();
+      let high = top;
+      rows.forEach((c) => {
+        const ms = cmtMs(c);
+        if (ms === pending || ms <= top) return;
+        if (!first && !c.nabu) notifyAdmin(S.notifNewComment + (c.name || S.cmtSomeone), c.text || '', '#/admin?tab=comments');
+        if (ms > high) high = ms;
+      });
+      top = high; first = false;
+    }, () => {});
+  },
   /* Posts and availability live in content/{posts,schedule} once Nabu has
      saved them from the dashboard; until then the JSON files in the repo are used. */
   async getContent(name) { const d = await this.db.collection('content').doc(name).get(); return d.exists ? d.data() : null; },
@@ -19214,6 +19290,248 @@ const BE = {
     return out;
   }
 };
+
+/* ============================ comments ============================
+   A flat list under a post, a poll or a pile reading. Anyone reads; a
+   signed-in person writes; the writer or Nabu deletes. One document per
+   comment in comments/ - firestore.rules caps every field and stamps the
+   time on the server. The wish jar has none: its own copy promises that a
+   wish stays on the phone and nobody reads it.
+
+   Reads are live (onSnapshot) only on the page that shows the list, and the
+   router drops the listener when the page is left (NAV.cleanup). The feed
+   shows a count per card from an aggregation query, kept for the session in
+   CMT.counts so a card is not counted twice. No query here combines where()
+   with orderBy() on another field: that needs a composite index the owner
+   would have to make in the console by hand. */
+const CMT_MAX = 600;
+/* A card in the feed counts up to a hundred, then says 99+. */
+const CMT_CAP = 100;
+/* When a comment happened, as milliseconds. A row the server has not
+   stamped yet - just written, or written offline - counts as newest. */
+const cmtMs = (c) => (c && c.at && typeof c.at.toMillis === 'function') ? c.at.toMillis()
+  : (typeof (c && c.at) === 'number' ? c.at : Number.MAX_SAFE_INTEGER);
+const CMT = {
+  counts: {},
+  key(kind, id) { return kind + ':' + String(id || ''); },
+  /* What may carry comments: any feed post except the note that introduces
+     Nabu Tarot (the same `welcome` flag the feed uses to set it apart), and
+     the two activity kinds people take part in together. */
+  allowed(kind, item) {
+    if (!item || !item.id) return false;
+    if (kind === 'post') return !item.welcome;
+    if (kind === 'act') return item.type === 'poll' || item.type === 'pile';
+    return false;
+  },
+  ok() { return !!(typeof BE !== 'undefined' && BE.enabled && BE.db); },
+  col() { return BE.db.collection('comments'); },
+  /* The shown name is the name the person typed for their profile and
+     nothing else: never the login email, never the uid, never the provider's
+     photo. Signing in with Google or Facebook copies the account's full name
+     into a profile that has none yet (backend.js), so a profile name equal to
+     that one is not published; nor one with an @ in it, which is an address
+     and which the rules refuse; nor one that would pass for Nabu. What is
+     left goes out as "Bạn đọc". Nabu signs as Nabu. */
+  myName() {
+    if (BE.isAdmin()) return 'Nabu';
+    const fold = (s) => String(s || '').replace(/\s+/g, ' ').trim().toLowerCase();
+    const full = String((typeof PROFILE !== 'undefined' && PROFILE.name) || '').trim();
+    const given = BE.user && BE.user.displayName ? fold(BE.user.displayName) : '';
+    if (!full || (given && fold(full) === given) || full.indexOf('@') > -1 || /nabu/i.test(full)) return T().cmtSomeone;
+    return full.slice(0, 40);
+  },
+  async add(key, text) {
+    if (!this.ok() || !BE.user) throw new Error('signin');
+    const t = String(text || '').trim();
+    if (!t) throw new Error('empty');
+    if (t.length > CMT_MAX) throw new Error('long');
+    await this.col().add({ on: key, uid: BE.user.uid, name: this.myName(), text: t, nabu: BE.isAdmin(),
+      at: firebase.firestore.FieldValue.serverTimestamp() });
+  },
+  remove(id) { return this.col().doc(id).delete(); },
+  watch(key, cb) {
+    return this.col().where('on', '==', key).onSnapshot((s) => {
+      const rows = (s.docs || []).map((d) => Object.assign({ id: d.id }, d.data()));
+      rows.sort((a, b) => cmtMs(a) - cmtMs(b));
+      this.counts[key] = rows.length;
+      cb(rows);
+    }, () => cb(null));
+  },
+  async count(key) {
+    if (!this.ok()) return null;
+    if (this.counts[key] != null) return this.counts[key];
+    /* The Firebase SDK the app loads has no count() on a query, so the number
+       is read from the comments themselves - never more than the card shows. */
+    try {
+      const q = this.col().where('on', '==', key);
+      const n = typeof q.count === 'function' ? (await q.count().get()).data().count : (await q.limit(CMT_CAP).get()).docs.length;
+      this.counts[key] = n;
+      return n;
+    } catch (e) { return null; }
+  }
+};
+function cmtCountText(n) { return !n ? '' : (n >= CMT_CAP ? (CMT_CAP - 1) + '+' : String(n)); }
+/* A page that shows comments holds one listener. A link opened cold is routed
+   more than once before it settles, and each pass that finishes would leave
+   its own listener behind; the one that finishes last stops the one before. */
+function cmtHold(stop) {
+  if (!stop) return;
+  if (NAV.cleanup) { const c = NAV.cleanup; NAV.cleanup = null; try { c(); } catch (e) { /* already gone */ } }
+  NAV.cleanup = stop;
+}
+function cmtWhen(c) {
+  const S = T(), ms = cmtMs(c);
+  if (ms === Number.MAX_SAFE_INTEGER) return S.cmtJustNow;
+  const d = new Date(ms);
+  return S.dateShort(d) + ' ' + pad2(d.getHours()) + ':' + pad2(d.getMinutes());
+}
+function cmtRowHTML(c) {
+  const S = T(), me = BE.user ? BE.user.uid : '';
+  const mine = !!me && c.uid === me, canDel = mine || BE.isAdmin();
+  return '<li class="cmt' + (mine ? ' me' : '') + (c.nabu ? ' nabu' : '') + '" data-cmt="' + esc(c.id) + '">'
+    + '<b>' + esc(c.nabu ? 'Nabu' : (c.name || S.cmtSomeone)) + (c.nabu ? ' <span class="nabutag">✦ ' + esc(S.cmtAuthor) + '</span>' : '') + '</b>'
+    + '<span class="cmttext">' + esc(c.text || '') + '</span>'
+    + '<span class="when">' + esc(cmtWhen(c)) + '</span>'
+    + (canDel ? '<button type="button" class="linkbtn cmtdel" data-cmtdel="' + esc(c.id) + '">' + esc(S.cmtDelete) + '</button>' : '')
+    + (me && !mine && !c.nabu && c.uid
+      ? '<button type="button" class="flagb" data-flag="' + esc(c.uid) + '" data-flagname="' + esc(c.name || '')
+        + '" data-flagtext="' + esc(String(c.text || '').slice(0, 200)) + '" title="' + esc(S.modReport) + '" aria-label="' + esc(S.modReport) + '">⚑</button>'
+      : '')
+    + '</li>';
+}
+/* The writing box. Above Send, the name the comment will carry, from the
+   same rule that publishes it, and the way to change it; under the box, that
+   comments are public. */
+function cmtFormHTML() {
+  const S = T();
+  return '<div class="cmtform"><textarea class="cmtin" maxlength="' + CMT_MAX + '" placeholder="' + esc(S.cmtPh) + '"></textarea>'
+    + '<p class="hint cmtas">' + esc(S.cmtAs) + ' <b>' + esc(CMT.myName()) + '</b>'
+    + (BE.isAdmin() ? '' : ' <a class="linkbtn" href="#/me">' + esc(S.cmtRename) + '</a>') + '</p>'
+    + '<div class="row"><button type="button" class="btn primary" data-cmtsend>' + esc(S.cmtSend) + '</button><span class="hint cmtst"></span></div>'
+    + '<p class="hint cmtpublic">' + esc(S.cmtPublic) + '</p></div>';
+}
+/* Before a first comment, the comment rules stand where the box would be, and
+   one tap agrees to them for good on this phone. Google Play asks that people
+   accept terms before they post. The card is the wedding room's terms card.
+   Nabu is not asked: the rules are hers. */
+function cmtAgreed() { return BE.isAdmin() || !!store.get('nabu-cmt-ok', 0); }
+function cmtRulesHTML() {
+  const S = T();
+  return '<div class="card termscard cmtrules"><div class="ghead"><span class="gk">📜</span><h3>' + esc(S.cmtRulesTitle) + '</h3></div>'
+    + '<ol class="terms">' + S.cmtRules.map((r) => '<li>' + esc(r) + '</li>').join('') + '</ol>'
+    + '<button type="button" class="btn primary block" data-cmtagree>' + esc(S.cmtAgree) + '</button></div>';
+}
+/* The block under a post or an activity: heading with the count, the list,
+   the report box, and then the writing box, the rules to agree to first, or -
+   signed out - one line that says sign in, with the link. Never a dead box. */
+function cmtBoxHTML(key) {
+  const S = T();
+  return '<section class="cmts" data-cmts="' + esc(key) + '"><h3>💬 ' + esc(S.cmtTitle) + ' <span class="n" data-cmtn-head hidden></span></h3>'
+    + '<ul class="saylist cmtlist"><li class="hint">…</li></ul>'
+    + '<div class="flagbox" data-cmtflag hidden></div>'
+    + (BE.enabled && BE.user
+      ? (cmtAgreed() ? cmtFormHTML() : cmtRulesHTML())
+      : (BE.enabled ? '<p class="hint cmtsignin">' + esc(S.cmtSignIn) + ' <a href="' + esc(signinHref()) + '">' + esc(S.signIn) + '</a></p>' : ''))
+    + '</section>';
+}
+/* Report or block, the same box the wedding room uses (wedding.js). */
+function cmtFlag(fb, b, key, repaint) {
+  const S = T();
+  const uid = b.getAttribute('data-flag'), who = b.getAttribute('data-flagname') || S.cmtSomeone, said = b.getAttribute('data-flagtext') || '';
+  fb.hidden = false;
+  fb.innerHTML = '<p class="hint">' + esc(S.modAbout(who)) + '</p>'
+    + '<div class="row"><button type="button" class="btn sm" id="flagrep">⚑ ' + esc(S.modReport) + '</button>'
+    + '<button type="button" class="btn sm danger" id="flagblk">🚫 ' + esc(S.modBlock) + '</button>'
+    + '<button type="button" class="btn sm" id="flagno">' + esc(S.loveCancel) + '</button></div>';
+  fb.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  $('#flagno', fb).addEventListener('click', () => { fb.hidden = true; fb.innerHTML = ''; });
+  $('#flagrep', fb).addEventListener('click', async () => {
+    $('#flagrep', fb).disabled = true;
+    try { await MOD.report({ kind: 'comment', where: key, about: uid, aboutName: who, text: said }); fb.innerHTML = '<p class="hint">' + esc(S.modReported) + '</p>'; }
+    catch (e) { fb.innerHTML = '<p class="hint err">' + esc(e && e.message === 'signin' ? S.cmtSignIn : loveWhy(e)) + '</p>'; }
+  });
+  $('#flagblk', fb).addEventListener('click', async () => {
+    $('#flagblk', fb).disabled = true;
+    await MOD.block(uid);
+    fb.hidden = true; fb.innerHTML = '';
+    toast(S.modBlocked(who));
+    repaint();
+  });
+}
+/* Wires the block: the live list, delete in two taps, the flag, and sending.
+   Returns the function that stops the listener, for NAV.cleanup. */
+function cmtMount(root, key) {
+  const S = T(), box = $('[data-cmts="' + key + '"]', root); if (!box) return null;
+  const list = $('.cmtlist', box), head = $('[data-cmtn-head]', box), fb = $('[data-cmtflag]', box);
+  if (!CMT.ok()) { list.innerHTML = '<li class="hint">' + esc(S.cmtOffline) + '</li>'; return null; }
+  let rows = [];
+  const paint = () => {
+    /* The list is the wedding room's box that scrolls (wedding.js): it opens
+       on the newest line and follows new ones, unless the reader has scrolled
+       up to read the older ones. */
+    const near = list.scrollHeight - list.scrollTop - list.clientHeight < 60;
+    const shown = MOD.keep(rows, (r) => r.uid);
+    list.innerHTML = shown.length ? shown.map(cmtRowHTML).join('') : '<li class="hint">' + esc(S.cmtNone) + '</li>';
+    if (near) list.scrollTop = list.scrollHeight;
+    head.hidden = !shown.length; head.textContent = String(shown.length);
+    $$('[data-cmtdel]', list).forEach((b) => b.addEventListener('click', async () => {
+      if (!b.getAttribute('data-sure')) { b.setAttribute('data-sure', '1'); b.textContent = S.cmtDeleteSure; return; }
+      b.disabled = true;
+      try { await CMT.remove(b.getAttribute('data-cmtdel')); toast(S.cmtDeleted); }
+      catch (e) { b.disabled = false; toast(loveWhy(e)); }
+    }));
+    $$('[data-flag]', list).forEach((b) => b.addEventListener('click', () => cmtFlag(fb, b, key, paint)));
+  };
+  const stop = CMT.watch(key, (r) => {
+    if (r === null) { list.innerHTML = '<li class="hint">' + esc(S.cmtOffline) + '</li>'; return; }
+    rows = r; paint();
+  });
+  /* The box is wired whenever it is on the page: at once, or once the rules
+     have been agreed to. */
+  const bindForm = () => {
+    const send = $('[data-cmtsend]', box), ta = $('.cmtin', box), st = $('.cmtst', box);
+    if (!send) return null;
+    send.addEventListener('click', async () => {
+      const text = (ta.value || '').trim();
+      if (!text) { st.textContent = S.cmtEmpty; ta.focus(); return; }
+      if (text.length > CMT_MAX) { st.textContent = S.cmtTooLong; return; }
+      send.disabled = true; st.textContent = '';
+      /* Offline, the write waits in the phone's queue and the listener has
+         already drawn the line; the button must not wait with it. A refusal
+         that comes later still has to be heard: the words go back into the
+         box (unless something new is being written there) and the reason is
+         said. */
+      let refused = false;
+      const write = CMT.add(key, text);
+      write.catch((e) => {
+        refused = true;
+        if (!ta.value.trim()) ta.value = text;
+        st.textContent = e && e.message === 'signin' ? S.cmtSignIn : loveWhy(e);
+      });
+      try {
+        await Promise.race([write, new Promise((r) => setTimeout(r, 2500))]);
+        if (!refused) { ta.value = ''; toast(S.cmtSent); }
+      } catch (e) { /* said by the catch above */ }
+      send.disabled = false;
+    });
+    return ta;
+  };
+  bindForm();
+  const agree = $('[data-cmtagree]', box);
+  if (agree) agree.addEventListener('click', () => {
+    store.set('nabu-cmt-ok', Date.now());
+    const card = $('.cmtrules', box); if (!card) return;
+    card.outerHTML = cmtFormHTML();
+    const ta = bindForm(); if (ta) ta.focus();
+  });
+  return stop;
+}
+/* The number on each card in the feed. Asked once per card per session. */
+function cmtFillCounts(root) {
+  $$('[data-cmtn]', root).forEach((el) => {
+    CMT.count(el.getAttribute('data-cmtn')).then((n) => { const s = $('span', el); if (s) s.textContent = cmtCountText(n); });
+  });
+}
 
 /* ======================== asking to pay for something ======================
 
@@ -20047,7 +20365,7 @@ function postHTML(p, full) {
     + '<div class="body' + (long ? ' clamp' : '') + '">' + richHTML(raw) + '</div>'
     + (long ? '<button class="more" data-more>' + T().readMore + '</button>' : '')
     + (p.cards && p.cards.length ? '<div class="faint">' + T().cardsDrawn + '</div><div class="mini">' + p.cards.map((c) => miniHTML(c, true)).join('') + '</div>' : '')
-    + '<div class="foot">' + (p.link ? '<a class="btn sm" href="' + esc(p.link) + '" target="_blank" rel="noopener">' + esc(p.source || 'Facebook') + ' ↗</a>' : '') + '<button data-share>' + T().share + '</button></div>'
+    + '<div class="foot">' + (!full && CMT.allowed('post', p) ? '<a class="cmtn" data-cmtn="' + esc(CMT.key('post', p.id)) + '" href="#/post/' + esc(p.id) + '" aria-label="' + esc(T().cmtTitle) + '">💬 <span>' + cmtCountText(CMT.counts[CMT.key('post', p.id)]) + '</span></a>' : '') + (p.link ? '<a class="btn sm" href="' + esc(p.link) + '" target="_blank" rel="noopener">' + esc(p.source || 'Facebook') + ' ↗</a>' : '') + '<button data-share>' + T().share + '</button></div>'
     + '</article>';
 }
 function bindPost(root) {
@@ -20058,7 +20376,7 @@ function bindPost(root) {
     const art = b.closest('article'), p = allPosts().filter((x) => x.id === art.getAttribute('data-id'))[0];
     if (p) openShareSheet({ title: L(p.title), text: L(p.title) + '\n' + plainText(L(p.body)), url: p.link || (appURL() + '#/post/' + p.id) });
   }));
-  bindCardLinks(root); hydrateImages(root);
+  bindCardLinks(root); hydrateImages(root); cmtFillCounts(root);
 }
 function allPosts() { return (POSTS || []).concat(FBPOSTS.map((f) => Object.assign({ source: f.source || 'Facebook' }, f))); }
 function sortedPosts() {
@@ -20191,8 +20509,11 @@ async function renderPost(args) {
   const m = $('#main');
   if (POSTS == null) await loadPosts();
   const p = allPosts().filter((x) => x.id === args[0])[0];
-  m.innerHTML = '<p><a href="#/home">← ' + esc(T().backToFeed) + '</a></p>' + (p ? postHTML(p, true) : '<p class="empty">' + esc(T().notFound) + '</p>');
+  const talk = !!(p && CMT.allowed('post', p)), key = talk ? CMT.key('post', p.id) : '';
+  m.innerHTML = '<p><a href="#/home">← ' + esc(T().backToFeed) + '</a></p>'
+    + (p ? postHTML(p, true) + (talk ? cmtBoxHTML(key) : '') : '<p class="empty">' + esc(T().notFound) + '</p>');
   bindPost(m);
+  if (talk) cmtHold(cmtMount(m, key));
 }
 /* ---- all posts, with search (#/news) ---- */
 async function renderNews() {
@@ -28107,7 +28428,7 @@ function bindAuth() { }
 function adminSummaryHTML() {
   const S = T(), st = notifyState();
   return '<div class="card admin-sum"><div class="eyebrow">' + esc(S.adminSummary) + '</div>'
-    + '<div class="cnt"><a href="#/admin?tab=inbox"><b>' + UNREAD + '</b><span>' + esc(S.unreadMsgs) + '</span></a><a href="#/admin?tab=bookings"><b>' + NEWBK + '</b><span>' + esc(S.newBookings) + '</span></a></div>'
+    + '<div class="cnt"><a href="#/admin?tab=inbox"><b>' + UNREAD + '</b><span>' + esc(S.unreadMsgs) + '</span></a><a href="#/admin?tab=bookings"><b>' + NEWBK + '</b><span>' + esc(S.newBookings) + '</span></a><a href="#/admin?tab=comments"><b>' + NEWC + '</b><span>' + esc(S.newComments) + '</span></a></div>'
     + '<a class="btn primary block" href="#/admin">' + esc(S.openAdmin) + '</a>'
     + (st === 'granted' ? '<p class="hint ok">🔔 ' + esc(S.notifOn) + '</p>' : st === 'denied' ? '<p class="hint err">' + esc(S.notifDenied) + '</p>' : st === 'unsupported' ? '<p class="hint">' + esc(S.notifUnsupported) + '</p>' : '<button class="btn block" id="notifon">🔔 ' + esc(S.enableNotif) + '</button><p class="hint">' + esc(S.notifHint) + '</p>')
     + '</div>';
@@ -29108,8 +29429,12 @@ async function renderPlay(args) {
   if (args && args[0]) {
     const a = list.filter((x) => x.id === args[0])[0];
     if (!a) { redirect('#/play'); return; }
-    m.innerHTML = '<div class="eyebrow">' + esc(S.actTitle) + '</div><div id="acts">' + actHTML(a, false) + '</div><p style="margin-top:12px"><a href="#/play" class="backlink">← ' + esc(S.actBack) + '</a></p>';
+    const talk = CMT.allowed('act', a), key = talk ? CMT.key('act', a.id) : '';
+    m.innerHTML = '<div class="eyebrow">' + esc(S.actTitle) + '</div><div id="acts">' + actHTML(a, false) + '</div>'
+      + (talk ? cmtBoxHTML(key) : '')
+      + '<p style="margin-top:12px"><a href="#/play" class="backlink">← ' + esc(S.actBack) + '</a></p>';
     bindActs($('#acts'), list);
+    if (talk) cmtHold(cmtMount(m, key));
     return;
   }
   const diaryN = Object.keys(store.get('nabu-diary', {}) || {}).length;
@@ -31838,24 +32163,28 @@ function adminCleanup() { admin.unsubs.forEach((u) => { try { u(); } catch (e) {
 function renderAdmin(args, params) {
   adminCleanup();
   const S = T(), m = $('#main');
-  if (params && params.tab && ['posts', 'acts', 'schedule', 'bookings', 'pay', 'inbox', 'codes', 'sale', 'errors'].indexOf(params.tab) > -1) admin.tab = params.tab;
+  if (params && params.tab && ['posts', 'acts', 'schedule', 'bookings', 'pay', 'inbox', 'comments', 'codes', 'sale', 'errors'].indexOf(params.tab) > -1) admin.tab = params.tab;
   m.innerHTML = '<div class="eyebrow">' + esc(CONFIG.brand) + '</div><h1 style="margin-bottom:6px">' + esc(S.adminTitle) + '</h1><p class="muted">' + esc(S.adminIntro) + '</p>'
-    + '<div class="tabs" id="atabs">' + ['posts', 'acts', 'schedule', 'bookings', 'pay', 'inbox', 'codes', 'sale', 'errors'].map((k) => '<button data-t="' + k + '" class="' + (admin.tab === k ? 'on' : '') + '">' + esc(S.adminTabs[k]) + '<span class="tb" data-tb="' + k + '" hidden></span></button>').join('') + '</div>'
+    + '<div class="tabs" id="atabs">' + ['posts', 'acts', 'schedule', 'bookings', 'pay', 'inbox', 'comments', 'codes', 'sale', 'errors'].map((k) => '<button data-t="' + k + '" class="' + (admin.tab === k ? 'on' : '') + '">' + esc(S.adminTabs[k]) + '<span class="tb" data-tb="' + k + '" hidden></span></button>').join('') + '</div>'
     + (BE.enabled ? '<p class="hint" style="margin-bottom:12px">☁️ ' + esc(S.cloudContent) + '</p>' : '<div class="card"><label class="f" for="gtoken">' + esc(S.token) + '</label><div class="row nw"><input id="gtoken" type="password" value="' + esc(ghToken()) + '" style="flex:1" autocomplete="off"><button class="btn sm" id="savetoken">' + esc(S.saveToken) + '</button></div><p class="hint">' + esc(S.tokenHint) + ' (' + esc(CONFIG.repo) + ')</p></div>')
     + '<div id="apanel"></div>';
+  /* The counts on the tabs are drawn by renderChrome, which runs before a
+     screen renders: without this, tabs just drawn wait for the next change in
+     a count before showing theirs. */
+  adminTabBadges();
   const stb = $('#savetoken'); if (stb) stb.addEventListener('click', () => { store.set('nabu-gh-token', $('#gtoken').value.trim()); toast(T().saved); show(admin.tab); });
   /* The tab goes into the address as it is chosen - replaced, not pushed, so
      it does not itself become a Back step. Without this, Back from a thread
      landed on "#/admin", which reopened whatever tab was last in memory: the
      inbox again, rather than the orders somebody had just come from. */
   $$('#atabs button').forEach((b) => b.addEventListener('click', () => { admin.tab = b.getAttribute('data-t'); $$('#atabs button').forEach((x) => x.classList.toggle('on', x === b)); try { history.replaceState(null, '', '#/admin?tab=' + admin.tab); } catch (e) { /* fine */ } show(admin.tab); }));
-  const show = (t) => { adminCleanup(); const p = $('#apanel'); if (t === 'sale') adminSale(p); else if (t === 'posts') adminPosts(p); else if (t === 'acts') adminActivities(p); else if (t === 'schedule') adminSchedule(p); else if (t === 'bookings') adminBookings(p); else if (t === 'pay') adminPay(p); else if (t === 'codes') adminCodes(p); else if (t === 'errors') adminErrors(p); else adminInbox(p); };
+  const show = (t) => { adminCleanup(); const p = $('#apanel'); if (t === 'sale') adminSale(p); else if (t === 'posts') adminPosts(p); else if (t === 'acts') adminActivities(p); else if (t === 'schedule') adminSchedule(p); else if (t === 'bookings') adminBookings(p); else if (t === 'pay') adminPay(p); else if (t === 'codes') adminCodes(p); else if (t === 'errors') adminErrors(p); else if (t === 'comments') adminComments(p); else adminInbox(p); };
   show(admin.tab);
 }
 
 /* Unread counts on the Inbox and Bookings tabs, refreshed whenever the counts change. */
 function adminTabBadges() {
-  const map = { inbox: UNREAD, bookings: NEWBK };
+  const map = { inbox: UNREAD, bookings: NEWBK, comments: NEWC };
   $$('[data-tb]').forEach((el) => { const n = map[el.getAttribute('data-tb')] || 0; el.hidden = !n; el.textContent = n; });
 }
 /* ---- posts ---- */
@@ -32153,6 +32482,45 @@ function adminErrors(p) {
   admin.unsubs.push(BE.db.collection('errors').orderBy('at', 'desc').limit(300)
     .onSnapshot((s) => { rows = s.docs.map((doc) => Object.assign({ id: doc.id }, doc.data())); draw(); },
       () => { const box = $('#errlist'); if (box) box.innerHTML = '<p class="hint">' + esc(S.errNone) + '</p>'; }));
+}
+/* The newest comments across every post and activity, so Nabu never has to
+   open each one to find out. Opening the tab is what marks them seen. */
+function adminComments(p) {
+  const S = T();
+  if (!needAdmin(p)) return;
+  p.innerHTML = '<p class="hint">' + esc(S.cmtAdminIntro) + '</p><div id="cmtlist" class="card"><p class="hint">' + esc(S.loading) + '</p></div>';
+  store.set('nabu-cmt-seen', Date.now()); NEWC = 0; renderChrome((ROUTES[parseHash().route] || {}).nav);
+  const target = (key) => {
+    const m = /^(post|act):(.+)$/.exec(key || '');
+    if (!m) return { href: '#/home', title: key || '' };
+    if (m[1] === 'post') { const post = allPosts().filter((x) => x.id === m[2])[0]; return { href: '#/post/' + m[2], title: post ? L(post.title) : m[2] }; }
+    const a = (ACTS.items || []).filter((x) => x.id === m[2])[0]; return { href: '#/play/' + m[2], title: a ? L(a.title) : m[2] };
+  };
+  let rows = [];
+  const draw = () => {
+    const box = $('#cmtlist'); if (!box) return;
+    box.innerHTML = '<h3 style="margin-bottom:4px">💬 ' + esc(S.cmtTitle) + (rows.length ? ' <span class="n">' + rows.length + '</span>' : '') + '</h3>'
+      + (rows.length ? rows.map((c) => { const t = target(c.on);
+        return '<div class="bk"><div class="bkh"><b>' + esc(c.nabu ? 'Nabu' : (c.name || S.cmtSomeone)) + '</b><span class="faint">' + esc(cmtWhen(c)) + '</span></div>'
+          + '<p>' + esc(c.text || '') + '</p><p class="hint">' + esc(S.cmtOn(t.title)) + '</p>'
+          + '<div class="acts"><a class="btn sm" href="' + esc(t.href) + '">' + esc(S.cmtOpen) + '</a>'
+          + '<button type="button" class="btn sm danger" data-cmtgone="' + esc(c.id) + '">' + esc(S.cmtDelete) + '</button></div></div>'; }).join('')
+        : '<p class="empty">' + esc(S.cmtAdminNone) + '</p>');
+    $$('[data-cmtgone]', box).forEach((b) => b.addEventListener('click', async () => {
+      if (!b.getAttribute('data-sure')) { b.setAttribute('data-sure', '1'); b.textContent = S.cmtDeleteSure; return; }
+      b.disabled = true;
+      try { await CMT.remove(b.getAttribute('data-cmtgone')); toast(S.saved); }
+      catch (e) { b.disabled = false; toast(loveWhy(e)); }
+    }));
+  };
+  /* Titles for the rows: the feed and the activities may not be loaded yet
+     when the dashboard is the first screen opened. */
+  Promise.all([POSTS == null ? loadPosts() : null, loadActs()]).then(draw).catch(() => {});
+  admin.unsubs.push(BE.db.collection('comments').orderBy('at', 'desc').limit(100).onSnapshot((s) => {
+    rows = s.docs.map((doc) => Object.assign({ id: doc.id }, doc.data()));
+    rows.sort((a, b) => cmtMs(b) - cmtMs(a));
+    draw();
+  }, () => { const box = $('#cmtlist'); if (box) box.innerHTML = '<p class="hint">' + esc(S.cmtAdminNone) + '</p>'; }));
 }
 
 function adminPay(p) {
@@ -32465,9 +32833,9 @@ function adminSale(p) {
 ROUTES.admin = { nav: '', render: renderAdmin };
 
 /* ============================ boot ============================ */
-window.APP_VERSION = 'v224';
+window.APP_VERSION = 'v225';
 window.NABU = { CONFIG: CONFIG, SALE: SALE, salePrice: salePrice, loadActs: loadActs, BACK: BACK, LESSONS: LESSONS, localAnswer: localAnswer, compatVerdict: compatVerdict, numerologyOf: numerologyOf, ZDEEP: ZDEEP, lunarToday: lunarToday, solarToLunar: solarToLunar, DECK: DECK, INSIGHT: INSIGHT, KW: KW, ASK: ASK, TOPICS: TOPICS, GUIDES: GUIDES, SERVICES: SERVICES, COURSES: COURSES, ACCESS: ACCESS, INTERESTS: INTERESTS, plusOn: () => plusOn(), proOn: () => proOn(), luckUnlimited: () => luckUnlimited(), ZODIAC: ZODIAC, pick: pick, book: book, PLAY_ITEMS: PLAY_ITEMS, PLAY_SUB_SKUS: PLAY_SUB_SKUS, playItem: playItem, BILL: BILL, SUBS: SUBS, renderStore: renderStore, subStateWord: subStateWord,
-  insightHTML: insightHTML, insightOf: insightOf, sunSignIndex: sunSignIndex, lifePath: lifePath, PROFILE: () => PROFILE, BE: BE, ACTS: ACTS,
+  insightHTML: insightHTML, insightOf: insightOf, sunSignIndex: sunSignIndex, lifePath: lifePath, PROFILE: () => PROFILE, BE: BE, ACTS: ACTS, CMT: CMT,
   ANGELS: ANGELS, angelRead: angelRead, CODEBOOK: CODEBOOK, redeemCode: redeemCode, loadCodebook: loadCodebook, petHomeSVG: petHomeSVG, PET_HOMES: PET_HOMES, PET_WEARS: PET_WEARS, codeDigest: codeDigest, randomCode: randomCode, BANK: BANK, PETS: PETS, petSVG: petSVG, PET_COATS: PET_COATS, PET_KINDS: PET_KINDS, turnsMerge: turnsMerge, turnsLocal: turnsLocal, TODAY: TODAY, treeMsgOf: treeMsgOf, priceText: priceText, termText: termText, proSaveText: () => proSaveText(), wedFeeText: () => wedFeeText(), fmtPrice: fmtPrice, luckCut: luckCut, petLevel: petLevel, petStep: petStep, VOUCHERS: VOUCHERS, levelCoins: levelCoins, LOOKS: LOOKS,
   LOVE: LOVE, LOVEDB: LOVEDB, HANDLE_RE: HANDLE_RE, loveBadgeHTML: loveBadgeHTML,
   loveMarkSVG: loveMarkSVG, QUIZ: QUIZ, QSCORE: QSCORE, QUIZ_PASS: QUIZ_PASS, QUIZ_LEN: QUIZ_LEN, pileArtSVG: pileArtSVG, PILE_ARTS: PILE_ARTS, threadSVG: threadSVG, petParentsHTML: petParentsHTML, GIFTS: GIFTS, ALERTS: ALERTS, alertsStart: alertsStart, alertWas: alertWas,
@@ -32530,9 +32898,12 @@ let lastTouch = 0; document.addEventListener('touchend', (e) => { const now = Da
 // Signing in can unlock things (admin sees every course), so redraw the open screen.
 BE.onAuth(() => {
   try { alertsStart(); } catch (e) { /* not reachable */ }
-  /* The draw screen too: drawn before the account answers, it cannot know
-     whether today's free card is spent, or that this is a Plus phone. */
-  if (['learn', 'me', 'home', 'pick'].indexOf(parseHash().route) > -1) route();
+  /* Redrawn once the account answers: the draw screen cannot know whether
+     today's free card is spent or that this is a Plus phone, and a post or
+     activity page opened from a shared link has to swap its sign-in line
+     for the comment box. */
+  const r = parseHash().route;
+  if (['learn', 'me', 'home', 'pick', 'post'].indexOf(r) > -1 || (r === 'play' && $('.cmts'))) route();
 });
 boot();
 

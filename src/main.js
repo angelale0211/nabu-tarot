@@ -1,7 +1,7 @@
 /* ============================ boot ============================ */
-window.APP_VERSION = 'v224';
+window.APP_VERSION = 'v225';
 window.NABU = { CONFIG: CONFIG, SALE: SALE, salePrice: salePrice, loadActs: loadActs, BACK: BACK, LESSONS: LESSONS, localAnswer: localAnswer, compatVerdict: compatVerdict, numerologyOf: numerologyOf, ZDEEP: ZDEEP, lunarToday: lunarToday, solarToLunar: solarToLunar, DECK: DECK, INSIGHT: INSIGHT, KW: KW, ASK: ASK, TOPICS: TOPICS, GUIDES: GUIDES, SERVICES: SERVICES, COURSES: COURSES, ACCESS: ACCESS, INTERESTS: INTERESTS, plusOn: () => plusOn(), proOn: () => proOn(), luckUnlimited: () => luckUnlimited(), ZODIAC: ZODIAC, pick: pick, book: book, PLAY_ITEMS: PLAY_ITEMS, PLAY_SUB_SKUS: PLAY_SUB_SKUS, playItem: playItem, BILL: BILL, SUBS: SUBS, renderStore: renderStore, subStateWord: subStateWord,
-  insightHTML: insightHTML, insightOf: insightOf, sunSignIndex: sunSignIndex, lifePath: lifePath, PROFILE: () => PROFILE, BE: BE, ACTS: ACTS,
+  insightHTML: insightHTML, insightOf: insightOf, sunSignIndex: sunSignIndex, lifePath: lifePath, PROFILE: () => PROFILE, BE: BE, ACTS: ACTS, CMT: CMT,
   ANGELS: ANGELS, angelRead: angelRead, CODEBOOK: CODEBOOK, redeemCode: redeemCode, loadCodebook: loadCodebook, petHomeSVG: petHomeSVG, PET_HOMES: PET_HOMES, PET_WEARS: PET_WEARS, codeDigest: codeDigest, randomCode: randomCode, BANK: BANK, PETS: PETS, petSVG: petSVG, PET_COATS: PET_COATS, PET_KINDS: PET_KINDS, turnsMerge: turnsMerge, turnsLocal: turnsLocal, TODAY: TODAY, treeMsgOf: treeMsgOf, priceText: priceText, termText: termText, proSaveText: () => proSaveText(), wedFeeText: () => wedFeeText(), fmtPrice: fmtPrice, luckCut: luckCut, petLevel: petLevel, petStep: petStep, VOUCHERS: VOUCHERS, levelCoins: levelCoins, LOOKS: LOOKS,
   LOVE: LOVE, LOVEDB: LOVEDB, HANDLE_RE: HANDLE_RE, loveBadgeHTML: loveBadgeHTML,
   loveMarkSVG: loveMarkSVG, QUIZ: QUIZ, QSCORE: QSCORE, QUIZ_PASS: QUIZ_PASS, QUIZ_LEN: QUIZ_LEN, pileArtSVG: pileArtSVG, PILE_ARTS: PILE_ARTS, threadSVG: threadSVG, petParentsHTML: petParentsHTML, GIFTS: GIFTS, ALERTS: ALERTS, alertsStart: alertsStart, alertWas: alertWas,
@@ -64,9 +64,12 @@ let lastTouch = 0; document.addEventListener('touchend', (e) => { const now = Da
 // Signing in can unlock things (admin sees every course), so redraw the open screen.
 BE.onAuth(() => {
   try { alertsStart(); } catch (e) { /* not reachable */ }
-  /* The draw screen too: drawn before the account answers, it cannot know
-     whether today's free card is spent, or that this is a Plus phone. */
-  if (['learn', 'me', 'home', 'pick'].indexOf(parseHash().route) > -1) route();
+  /* Redrawn once the account answers: the draw screen cannot know whether
+     today's free card is spent or that this is a Plus phone, and a post or
+     activity page opened from a shared link has to swap its sign-in line
+     for the comment box. */
+  const r = parseHash().route;
+  if (['learn', 'me', 'home', 'pick', 'post'].indexOf(r) > -1 || (r === 'play' && $('.cmts'))) route();
 });
 boot();
 
