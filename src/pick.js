@@ -1,5 +1,5 @@
 /* ============================ pick a card ============================ */
-const pick = { focus: store.get('nabu-focus', 'general'), hand: [], chosen: null };
+const pick = { focus: store.get('nabu-focus', 'general'), hand: [], chosen: null, day: '' };
 function shuffle(a) { for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); const t = a[i]; a[i] = a[j]; a[j] = t; } return a; }
 /* All 78 cards, shuffled, face down: the visitor picks any one of them. */
 function newHand() { pick.hand = shuffle(DECK.vi.map((c) => c.id)); pick.chosen = null; }
@@ -52,15 +52,28 @@ function pickLimitHTML() {
     + '</div>';
 }
 function renderPick(args, params) {
+  /* A new day deals afresh. Whatever this screen held yesterday, in the memory
+     of an app left open overnight, is not today's card. */
+  { const today = isoDate(new Date()); if (pick.day !== today) { pick.day = today; pick.hand = []; pick.chosen = null; } }
   // A shared link (#/pick?card=…) opens straight on that card, in the focus it was drawn with.
   const want = params && params.card && cardById(params.card) ? params.card : '';
   if (want && pick.chosen !== want) {
     newHand(); pick.chosen = want;
     if (params.focus && T().focus[params.focus]) pick.focus = params.focus;
   }
-  if (!pick.hand.length) newHand();
-  /* Same day, not on Plus: the card already drawn comes back, not the fan. */
-  if (!want && pick.chosen == null && pickSpent()) { const sv = pickToday(); if (cardById(sv.id)) { newHand(); pick.chosen = sv.id; if (T().focus[sv.focus]) pick.focus = sv.focus; } }
+  if (!pick.hand.length) {
+    /* First time on this screen since the app opened: the day's last card
+       comes back rather than a fresh fan, for everyone. Drawing again (on
+       Plus) deals a hand and clears the choice, so it is never undone here. */
+    newHand();
+    const sv = want ? null : TODAY.last('pick');
+    if (sv && cardById(sv.id)) { pick.chosen = sv.id; if (T().focus[sv.focus]) pick.focus = sv.focus; }
+  }
+  /* Same day, not on Plus: the card already drawn comes back, not the fan -
+     including one drawn on another phone, which the account carries. A visitor
+     without an account who drew on an earlier day has no card to show, and the
+     screen must not fall over on that. */
+  if (!want && pick.chosen == null && pickSpent()) { const sv = pickToday(); if (sv && cardById(sv.id)) { newHand(); pick.chosen = sv.id; if (T().focus[sv.focus]) pick.focus = sv.focus; } }
   const S = T(), m = $('#main');
   // Once a card is drawn the focus is fixed for that draw: the other chips stay visible but off until a redraw.
   const chips = Object.keys(S.focus).map((f) => '<button class="chip' + (pick.focus === f ? ' on' : '') + '" data-focus="' + f + '"' + (pick.chosen != null && pick.focus !== f ? ' disabled' : '') + '>' + esc(S.focus[f]) + '</button>').join('');
@@ -86,6 +99,7 @@ function renderPick(args, params) {
     if (pick.chosen != null || pickSpent()) return;
     pick.chosen = b.getAttribute('data-card');
     pickSpend(pick.chosen, pick.focus);
+    TODAY.add('pick', { id: pick.chosen, focus: pick.focus });
     $$('.slot', m).forEach((s) => s.classList.add($('button', s) === b ? 'chosen' : 'dim'));
     $$('[data-focus]', m).forEach((x) => { if (!x.classList.contains('on')) x.disabled = true; });
     $('.tap-hint', m).textContent = '';

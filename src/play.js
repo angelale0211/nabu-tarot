@@ -595,7 +595,7 @@ function treePetHTML() {
 }
 function renderTree() {
   const S = T(), m = $('#main');
-  let msg = null, busy = false;
+  let msg = treeMsgOf(TODAY.last('tree')), busy = false;
   const draw = () => {
     m.innerHTML = '<div class="eyebrow">' + esc(S.actTitle) + '</div><h1 style="margin-bottom:6px">🌸 ' + esc(S.treeTitle) + '</h1><p class="muted">' + esc(S.treeIntro) + '</p>'
       + '<div class="card treewrap"><div class="treestage"><button type="button" class="tree" id="tree" aria-label="' + esc(S.treeShake) + '">' + treeSVG() + '<span class="petals" id="petals"></span></button>' + treePetHTML() + '</div>'
@@ -632,6 +632,7 @@ function renderTree() {
       let k = 0;
       try { const a = new Uint32Array(1); crypto.getRandomValues(a); k = a[0] % TREE_MSGS.length; }
       catch (e) { k = Math.floor(Math.random() * TREE_MSGS.length); }
+      TODAY.add('tree', { k: k, fp: treeFp(TREE_MSGS[k]) });   // written the moment the turn is spent, beside the counter
       setTimeout(() => {
         msg = TREE_MSGS[k];
         $('#treetext').textContent = L(msg); box.hidden = false;
@@ -707,7 +708,7 @@ const askedQ = () => String(store.get('nabu-coinq', '') || '').trim().length > 0
 
 function renderCoin() {
   const S = T(), m = $('#main');
-  let side = '';
+  const lastC = TODAY.last('coin'); let side = lastC && (lastC.side === 'yes' || lastC.side === 'no') ? lastC.side : '';
   const draw = () => {
     m.innerHTML = '<div class="eyebrow">' + esc(S.actTitle) + '</div><h1 style="margin-bottom:6px">🪙 ' + esc(S.coinTitle) + '</h1><p class="muted">' + esc(S.coinIntro) + '</p>'
       + '<div class="card coinwrap"><label class="f" for="coinq">' + esc(S.coinQ) + '</label><input id="coinq" placeholder="' + esc(S.coinQPh) + '" value="' + esc(store.get('nabu-coinq', '') || '') + '">'
@@ -741,6 +742,7 @@ function renderCoin() {
       let bits = 0;
       try { const a = new Uint8Array(1); crypto.getRandomValues(a); bits = a[0] & 1; }
       catch (e) { bits = Math.random() < 0.5 ? 0 : 1; }
+      TODAY.add('coin', { q: String(store.get('nabu-coinq', '') || '').trim().slice(0, 120), side: bits ? 'yes' : 'no' });
       setTimeout(() => {
         side = bits ? 'yes' : 'no'; el.classList.remove('spin'); el.innerHTML = coinFaceSVG(side);
         $('#coinres').textContent = side === 'yes' ? S.coinYes : S.coinNo;

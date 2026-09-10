@@ -12,7 +12,7 @@
      carries this notice with it. See LICENSE. -->
 <meta name="author" content="Nabu Tarot">
 <meta name="copyright" content="Copyright (c) 2025-2026 Nabu Tarot. All rights reserved.">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'none'; object-src 'none'; form-action 'self'; script-src 'self' 'sha256-kxZvX+NvGxefvdBOszvvIdMoehszXwV3B0Z64/thlfo=' https://www.gstatic.com https://apis.google.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; font-src 'self' data:; media-src 'self' data: blob:; worker-src 'self'; connect-src 'self' https://*.googleapis.com https://*.google.com https://*.firebaseio.com https://*.cloudfunctions.net https://*.workers.dev https://generativelanguage.googleapis.com; frame-src https://*.firebaseapp.com https://accounts.google.com https://*.facebook.com">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'none'; object-src 'none'; form-action 'self'; script-src 'self' 'sha256-nun4AGapBZ3EQUaRnTXApMEgIeMO+0UcEFOWD3DTiXw=' https://www.gstatic.com https://apis.google.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; font-src 'self' data:; media-src 'self' data: blob:; worker-src 'self'; connect-src 'self' https://*.googleapis.com https://*.google.com https://*.firebaseio.com https://*.cloudfunctions.net https://*.workers.dev https://generativelanguage.googleapis.com; frame-src https://*.firebaseapp.com https://accounts.google.com https://*.facebook.com">
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <meta name="theme-color" content="#EFE9FA">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -20180,7 +20180,7 @@ ROUTES.news = { nav: 'home', render: renderNews };
 ROUTES.post = { nav: 'home', render: renderPost };
 
 /* ============================ pick a card ============================ */
-const pick = { focus: store.get('nabu-focus', 'general'), hand: [], chosen: null };
+const pick = { focus: store.get('nabu-focus', 'general'), hand: [], chosen: null, day: '' };
 function shuffle(a) { for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); const t = a[i]; a[i] = a[j]; a[j] = t; } return a; }
 /* All 78 cards, shuffled, face down: the visitor picks any one of them. */
 function newHand() { pick.hand = shuffle(DECK.vi.map((c) => c.id)); pick.chosen = null; }
@@ -20233,15 +20233,28 @@ function pickLimitHTML() {
     + '</div>';
 }
 function renderPick(args, params) {
+  /* A new day deals afresh. Whatever this screen held yesterday, in the memory
+     of an app left open overnight, is not today's card. */
+  { const today = isoDate(new Date()); if (pick.day !== today) { pick.day = today; pick.hand = []; pick.chosen = null; } }
   // A shared link (#/pick?card=…) opens straight on that card, in the focus it was drawn with.
   const want = params && params.card && cardById(params.card) ? params.card : '';
   if (want && pick.chosen !== want) {
     newHand(); pick.chosen = want;
     if (params.focus && T().focus[params.focus]) pick.focus = params.focus;
   }
-  if (!pick.hand.length) newHand();
-  /* Same day, not on Plus: the card already drawn comes back, not the fan. */
-  if (!want && pick.chosen == null && pickSpent()) { const sv = pickToday(); if (cardById(sv.id)) { newHand(); pick.chosen = sv.id; if (T().focus[sv.focus]) pick.focus = sv.focus; } }
+  if (!pick.hand.length) {
+    /* First time on this screen since the app opened: the day's last card
+       comes back rather than a fresh fan, for everyone. Drawing again (on
+       Plus) deals a hand and clears the choice, so it is never undone here. */
+    newHand();
+    const sv = want ? null : TODAY.last('pick');
+    if (sv && cardById(sv.id)) { pick.chosen = sv.id; if (T().focus[sv.focus]) pick.focus = sv.focus; }
+  }
+  /* Same day, not on Plus: the card already drawn comes back, not the fan -
+     including one drawn on another phone, which the account carries. A visitor
+     without an account who drew on an earlier day has no card to show, and the
+     screen must not fall over on that. */
+  if (!want && pick.chosen == null && pickSpent()) { const sv = pickToday(); if (sv && cardById(sv.id)) { newHand(); pick.chosen = sv.id; if (T().focus[sv.focus]) pick.focus = sv.focus; } }
   const S = T(), m = $('#main');
   // Once a card is drawn the focus is fixed for that draw: the other chips stay visible but off until a redraw.
   const chips = Object.keys(S.focus).map((f) => '<button class="chip' + (pick.focus === f ? ' on' : '') + '" data-focus="' + f + '"' + (pick.chosen != null && pick.focus !== f ? ' disabled' : '') + '>' + esc(S.focus[f]) + '</button>').join('');
@@ -20267,6 +20280,7 @@ function renderPick(args, params) {
     if (pick.chosen != null || pickSpent()) return;
     pick.chosen = b.getAttribute('data-card');
     pickSpend(pick.chosen, pick.focus);
+    TODAY.add('pick', { id: pick.chosen, focus: pick.focus });
     $$('.slot', m).forEach((s) => s.classList.add($('button', s) === b ? 'chosen' : 'dim'));
     $$('[data-focus]', m).forEach((x) => { if (!x.classList.contains('on')) x.disabled = true; });
     $('.tap-hint', m).textContent = '';
@@ -29292,7 +29306,7 @@ function treePetHTML() {
 }
 function renderTree() {
   const S = T(), m = $('#main');
-  let msg = null, busy = false;
+  let msg = treeMsgOf(TODAY.last('tree')), busy = false;
   const draw = () => {
     m.innerHTML = '<div class="eyebrow">' + esc(S.actTitle) + '</div><h1 style="margin-bottom:6px">🌸 ' + esc(S.treeTitle) + '</h1><p class="muted">' + esc(S.treeIntro) + '</p>'
       + '<div class="card treewrap"><div class="treestage"><button type="button" class="tree" id="tree" aria-label="' + esc(S.treeShake) + '">' + treeSVG() + '<span class="petals" id="petals"></span></button>' + treePetHTML() + '</div>'
@@ -29329,6 +29343,7 @@ function renderTree() {
       let k = 0;
       try { const a = new Uint32Array(1); crypto.getRandomValues(a); k = a[0] % TREE_MSGS.length; }
       catch (e) { k = Math.floor(Math.random() * TREE_MSGS.length); }
+      TODAY.add('tree', { k: k, fp: treeFp(TREE_MSGS[k]) });   // written the moment the turn is spent, beside the counter
       setTimeout(() => {
         msg = TREE_MSGS[k];
         $('#treetext').textContent = L(msg); box.hidden = false;
@@ -29404,7 +29419,7 @@ const askedQ = () => String(store.get('nabu-coinq', '') || '').trim().length > 0
 
 function renderCoin() {
   const S = T(), m = $('#main');
-  let side = '';
+  const lastC = TODAY.last('coin'); let side = lastC && (lastC.side === 'yes' || lastC.side === 'no') ? lastC.side : '';
   const draw = () => {
     m.innerHTML = '<div class="eyebrow">' + esc(S.actTitle) + '</div><h1 style="margin-bottom:6px">🪙 ' + esc(S.coinTitle) + '</h1><p class="muted">' + esc(S.coinIntro) + '</p>'
       + '<div class="card coinwrap"><label class="f" for="coinq">' + esc(S.coinQ) + '</label><input id="coinq" placeholder="' + esc(S.coinQPh) + '" value="' + esc(store.get('nabu-coinq', '') || '') + '">'
@@ -29438,6 +29453,7 @@ function renderCoin() {
       let bits = 0;
       try { const a = new Uint8Array(1); crypto.getRandomValues(a); bits = a[0] & 1; }
       catch (e) { bits = Math.random() < 0.5 ? 0 : 1; }
+      TODAY.add('coin', { q: String(store.get('nabu-coinq', '') || '').trim().slice(0, 120), side: bits ? 'yes' : 'no' });
       setTimeout(() => {
         side = bits ? 'yes' : 'no'; el.classList.remove('spin'); el.innerHTML = coinFaceSVG(side);
         $('#coinres').textContent = side === 'yes' ? S.coinYes : S.coinNo;
