@@ -3923,6 +3923,51 @@ async function go(hash, sel) { W().location.hash = hash; await sleep(30); return
       }
     }
 
+    { /* ---- what today brought ----
+         The card drawn, the coin's answer and the tree's message come back on
+         the same day, for everybody; on Nabu Plus the day's turns fold away
+         under the result; and all of it is gone the next morning. The
+         free-turn counters are read and written by nobody here. */
+      const w2 = W(), d2 = D(), N2 = w2.NABU;
+      const keep = {};
+      ['nabu-today', 'nabu-luck', 'nabu-pick-day', 'nabu-guest-draw', 'nabu-access', 'nabu-coinq', 'nabu-focus', 'nabu-lang'].forEach((k) => { keep[k] = w2.localStorage.getItem(k); });
+      const keepBE = { on: N2.BE.enabled, user: N2.BE.user }, keepPL = N2.PROFILE().lang;
+      const put = (k, v) => { if (v == null) w2.localStorage.removeItem(k); else w2.localStorage.setItem(k, typeof v === 'string' ? v : JSON.stringify(v)); };
+      const ymd = (dt) => dt.getFullYear() + '-' + String(dt.getMonth() + 1).padStart(2, '0') + '-' + String(dt.getDate()).padStart(2, '0');
+      const tiso = ymd(new Date()), y = new Date(); y.setDate(y.getDate() - 1); const yiso = ymd(y);
+      const fresh = () => { N2.pick.hand = []; N2.pick.chosen = null; };   // what a reload does to the deck
+      const plus = (on) => { const a = JSON.parse(w2.localStorage.getItem('nabu-access') || '{}'); if (on) a.plus = '2099-12-31'; else delete a.plus; put('nabu-access', a); };
+      const rec = () => JSON.parse(w2.localStorage.getItem('nabu-today') || 'null');
+      const yesterday = () => { const r = rec(); if (r) { r.d = yiso; put('nabu-today', r); } };
+      const TD = N2.TODAY;
+      /* Device-only mode is the cheapest way to be signed in without the
+         network: signedIn() is true when there is no backend to sign in to. */
+      N2.BE.enabled = false; N2.BE.user = null;
+      W().saveProfileLocal({ lang: 'vi' }); W().applyAccountLang();
+      put('nabu-luck', { coin: '2026-01-01', tree: '2026-01-02' }); put('nabu-pick-day', { d: '2026-01-03', id: 'major-5', focus: 'work' });
+      put('nabu-today', null); put('nabu-coinq', null); plus(false);
+      /* the record itself */
+      if (TD) { TD.add('coin', { q: 'a', side: 'yes' }); TD.add('coin', { q: 'b', side: 'no' }); }
+      ok(!!TD && TD.list('coin').length === 2 && TD.last('coin').q === 'b' && TD.list('coin')[1].q === 'a' && TD.list('coin')[0].at > 0 && rec().d === tiso,
+        'a turn is written down under today\'s date, newest first');
+      ok(!!TD && w2.localStorage.getItem('nabu-luck') === JSON.stringify({ coin: '2026-01-01', tree: '2026-01-02' }) && JSON.parse(w2.localStorage.getItem('nabu-pick-day')).id === 'major-5' && N2.turnsLocal().luck.coin === '2026-01-01',
+        'writing a result down touches neither free-turn counter');
+      if (TD) for (let i = 0; i < 40; i++) TD.add('tree', { k: i, fp: 'x' + i });
+      ok(!!TD && TD.list('tree').length === 30 && TD.list('tree')[0].k === 39 && TD.list('tree')[29].k === 10,
+        'a kind keeps its thirty newest turns and drops the rest');
+      yesterday();
+      ok(!!TD && TD.list('coin').length === 0 && TD.last('tree') === null, 'a record from yesterday is not read today');
+      if (TD) TD.add('pick', { id: 'major-0', focus: 'love' });
+      ok(!!TD && rec().d === tiso && TD.list('coin').length === 0 && TD.list('pick').length === 1,
+        'and the first turn of a new day starts a new record in its place');
+      /* ---- put the phone back the way it was ---- */
+      N2.BE.enabled = keepBE.on; N2.BE.user = keepBE.user;
+      W().saveProfileLocal({ lang: 'vi' }); W().applyAccountLang();
+      Object.keys(keep).forEach((k) => put(k, keep[k]));
+      W().saveProfileLocal({ lang: keepPL || '' });
+      fresh(); await go('#/home', '.tiles');
+    }
+
   } catch (e) { out.push('FAIL exception: ' + (e && e.stack || e)); }
   document.getElementById('results').textContent = out.join('\n');
   report(true);

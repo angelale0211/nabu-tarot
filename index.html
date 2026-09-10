@@ -12,7 +12,7 @@
      carries this notice with it. See LICENSE. -->
 <meta name="author" content="Nabu Tarot">
 <meta name="copyright" content="Copyright (c) 2025-2026 Nabu Tarot. All rights reserved.">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'none'; object-src 'none'; form-action 'self'; script-src 'self' 'sha256-Jt/ZCRcCOaipxcZKH5KEC6Nx+7ksranBDh1/zCR6Qjo=' https://www.gstatic.com https://apis.google.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; font-src 'self' data:; media-src 'self' data: blob:; worker-src 'self'; connect-src 'self' https://*.googleapis.com https://*.google.com https://*.firebaseio.com https://*.cloudfunctions.net https://*.workers.dev https://generativelanguage.googleapis.com; frame-src https://*.firebaseapp.com https://accounts.google.com https://*.facebook.com">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'none'; object-src 'none'; form-action 'self'; script-src 'self' 'sha256-kxZvX+NvGxefvdBOszvvIdMoehszXwV3B0Z64/thlfo=' https://www.gstatic.com https://apis.google.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; font-src 'self' data:; media-src 'self' data: blob:; worker-src 'self'; connect-src 'self' https://*.googleapis.com https://*.google.com https://*.firebaseio.com https://*.cloudfunctions.net https://*.workers.dev https://generativelanguage.googleapis.com; frame-src https://*.firebaseapp.com https://accounts.google.com https://*.facebook.com">
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <meta name="theme-color" content="#EFE9FA">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -3430,6 +3430,7 @@ const STR = {
     saleBanner: (off, what) => 'Khuyến mãi ' + off + ' cho ' + what, saleSee: 'Xem ngay',
     adminShort: 'Tài khoản quản trị', unlockCodeLabel: 'Nhập mã Nabu gửi cho bạn', unlockReadings: 'Xem bảng giá xem bài riêng',
     luckFree: 'Bạn có 1 lượt miễn phí mỗi 3 ngày.', luckFreeDay: 'Bạn có 1 lượt miễn phí mỗi ngày.', luckLeft: 'Lượt miễn phí của bạn vẫn còn.', luckSpent: (d) => 'Bạn đã dùng lượt miễn phí. Lượt mới mở vào ' + d + '.', luckOpen: 'Bạn đang mở không giới hạn.', luckOffer: 'Nabu Plus mở tung xu và rung cây không giới hạn cả năm, kèm toàn bộ giao diện: 79.000đ.', luckGet: 'Nhắn Nabu để lấy mã', luckCodePh: 'NABU-B-…',
+    todayTurns: 'Các lượt hôm nay', todayReset: 'Lượt trước sẽ được xoá vào ngày mai.',
     treeTitle: 'Rung cây thông điệp', treeSub: 'một lời nhắn từ vũ trụ', treePets: 'Hiện bạn nhỏ dưới gốc cây', treePetsHint: 'Tắt tùy chọn này nếu bạn chỉ muốn nhìn thấy cây. Cài đặt này chỉ áp dụng cho tài khoản của bạn.',
     treeIntro: 'Nghĩ về điều đang ở trong lòng, rồi rung cây thật nhẹ. Một lời nhắn sẽ rơi xuống dành cho bạn.', treeShake: 'Rung cây', treeAgain: 'Rung thêm một lần nữa', treeFor: 'Lời nhắn dành cho bạn', coinTitle: 'Tung đồng xu', coinSub: 'cho câu hỏi có hoặc không', coinIntro: 'Nghĩ thật rõ về một câu hỏi có thể trả lời bằng có hoặc không, rồi tung đồng xu.', coinQ: 'Câu hỏi của bạn', coinQPh: 'Ví dụ: mình có nên nhắn trước không?', coinFlip: 'Tung đồng xu', coinAgain: 'Tung lại', coinYes: 'CÓ', coinNo: 'KHÔNG', coinNote: 'Đồng xu chỉ cho bạn một trong hai câu trả lời. Điều đáng chú ý là cảm giác của bạn ngay khi nhìn thấy kết quả: nếu bạn thấy hụt hẫng, bạn đã biết mình muốn gì.',
     actNew: 'Hoạt động mới', actType: 'Loại', actTypes: { pile: 'Chọn tụ bài', poll: 'Bình chọn', wish: 'Điều ước' }, actResultsDate: 'Ngày đăng kết quả', actIntroLabel: 'Lời dẫn (thanh công cụ phía trên ô cho phép in đậm, in nghiêng, tô sáng, chèn ảnh, video và emoji)', actPilesHint: 'Từ 2 đến 5 tụ. Bạn có thể đăng trước với nhãn trống; vài ngày sau quay lại điền thông điệp và bật "Đã có kết quả".', actPileN: (n) => 'Tụ ' + n, actPileLabel: 'Nhãn ngắn (không bắt buộc), ví dụ: Trái · Giữa · Phải', actPileMsg: 'Thông điệp cho tụ này (đăng sau cũng được)', actPileMsgEn: 'English message (optional)', actPileAdd: 'Thêm tụ', actPileDel: 'Bớt tụ', actResultsOn: 'Đã có kết quả: cho phép lật bài', actOptions: 'Các lựa chọn, mỗi dòng một lựa chọn', actCloseOn: 'Đóng bình chọn', actExisting: 'Hoạt động đã đăng', actNeedPiles: 'Bạn điền ít nhất một tụ nhé.', actNeedOptions: 'Cần ít nhất hai lựa chọn.',
@@ -4261,6 +4262,7 @@ const STR = {
     saleBanner: (off, what) => off + ' off ' + what, saleSee: 'See it',
     adminShort: 'Admin account', unlockCodeLabel: 'Enter the code Nabu sent you', unlockReadings: 'See the prices for a reading',
     luckFree: 'You get one free turn every 3 days.', luckFreeDay: 'You get one free turn every day.', luckLeft: 'Your free turn is still open.', luckSpent: (d) => 'You have had your free turn. The next one opens on ' + d + '.', luckOpen: 'You have unlimited turns.', luckOffer: 'Nabu Plus opens the coin and the message tree without limit for a year, and every design with them. The price is on the price page.', luckGet: 'Message Nabu for a code', luckCodePh: 'NABU-B-…',
+    todayTurns: 'Today\u2019s turns', todayReset: 'Earlier turns are cleared tomorrow.',
     treeTitle: 'Shake the message tree', treeSub: 'a message from the universe', treePets: 'Show your companions under the tree', treePetsHint: 'Turn this off if you only want to see the tree. This setting applies to your account only.',
     treeIntro: 'Think about what is on your heart, then gently shake the tree. A message will fall for you.', treeShake: 'Shake the tree', treeAgain: 'Shake it once more', treeFor: 'A message for you', coinTitle: 'Flip a coin', coinSub: 'for a yes or no question', coinIntro: 'Think of a clear question that can be answered with yes or no, then toss the coin.', coinQ: 'Your question', coinQPh: 'For example: should I message first?', coinFlip: 'Flip the coin', coinAgain: 'Flip again', coinYes: 'YES', coinNo: 'NO', coinNote: 'The coin gives you one of two answers. What matters is how you feel the moment you see it: if the result disappoints you, you already know what you want.',
     actNew: 'New activity', actType: 'Type', actTypes: { pile: 'Pick a pile', poll: 'Poll', wish: 'Wish' }, actResultsDate: 'Results date', actIntroLabel: 'Intro (the bar above the box: bold, italic, highlight, images, video, emoji)', actPilesHint: 'Two to five piles. You can publish with empty labels; come back days later, fill in the messages and switch on "Answered".', actPileN: (n) => 'Pile ' + n, actPileLabel: 'Short label (optional), e.g. Left · Middle · Right', actPileMsg: 'Message for this pile (can be added later)', actPileMsgEn: 'English message (optional)', actPileAdd: 'Add a pile', actPileDel: 'Remove a pile', actResultsOn: 'Answered: let people flip the piles', actOptions: 'Options, one per line', actCloseOn: 'Close the poll', actExisting: 'Published activities', actNeedPiles: 'Fill in at least one pile.', actNeedOptions: 'At least two options are needed.',
@@ -5091,6 +5093,7 @@ const STR = {
     saleBanner: (off, what) => off + ' Rabatt auf ' + what, saleSee: 'Ansehen',
     adminShort: 'Admin-Konto', unlockCodeLabel: 'Gib den Code ein, den Nabu dir geschickt hat', unlockReadings: 'Die Preise für eine Legung ansehen',
     luckFree: 'Du hast alle 3 Tage eine kostenlose Runde.', luckFreeDay: 'Du hast jeden Tag eine kostenlose Runde.', luckLeft: 'Deine kostenlose Runde ist noch offen.', luckSpent: (d) => 'Deinen Gratisversuch hast du schon genutzt. Der nächste ist ab ' + d + ' verfügbar.', luckOpen: 'Du hast unbegrenzt viele Runden.', luckOffer: 'Nabu Plus öffnet die Münze und den Nachrichtenbaum ein Jahr lang ohne Grenze, samt allen Designs dazu. Den Preis findest du auf der Preisseite.', luckGet: 'Schreib Nabu für einen Code', luckCodePh: 'NABU-B-…',
+    todayTurns: 'Deine Runden heute', todayReset: 'Frühere Runden werden morgen gelöscht.',
     treeTitle: 'Den Nachrichtenbaum schütteln', treeSub: 'eine Botschaft vom Universum', treePets: 'Deine Begleiter unter dem Baum zeigen', treePetsHint: 'Schalte das aus, wenn du nur den Baum sehen möchtest. Diese Einstellung gilt nur für dein Konto.',
     treeIntro: 'Denk an das, was dir gerade im Herzen liegt, und schüttle den Baum ganz sanft. Eine Botschaft fällt für dich herab.', treeShake: 'Den Baum schütteln', treeAgain: 'Noch einmal schütteln', treeFor: 'Eine Botschaft für dich', coinTitle: 'Eine Münze werfen', coinSub: 'für eine Ja-oder-Nein-Frage', coinIntro: 'Denk an eine klare Frage, die sich mit Ja oder Nein beantworten lässt, und wirf dann die Münze.', coinQ: 'Deine Frage', coinQPh: 'Zum Beispiel: Soll ich zuerst schreiben?', coinFlip: 'Die Münze werfen', coinAgain: 'Nochmal werfen', coinYes: 'JA', coinNo: 'NEIN', coinNote: 'Die Münze gibt dir eine von zwei Antworten. Wichtig ist, wie du dich in dem Moment fühlst, in dem du sie siehst: Wenn dich das Ergebnis enttäuscht, weißt du schon, was du willst.',
     actNew: 'Neue Aktivität', actType: 'Art', actTypes: { pile: 'Stapel wählen', poll: 'Umfrage', wish: 'Wunsch' }, actResultsDate: 'Datum der Auflösung', actIntroLabel: 'Einleitung (die Leiste über dem Feld: fett, kursiv, Markierung, Bilder, Video, Emoji)', actPilesHint: 'Zwei bis fünf Stapel. Du kannst auch mit leeren Beschriftungen veröffentlichen; komm Tage später wieder, trag die Botschaften ein und schalt "Beantwortet" ein.', actPileN: (n) => 'Stapel ' + n, actPileLabel: 'Kurze Beschriftung (freiwillig), z. B. Links · Mitte · Rechts', actPileMsg: 'Botschaft für diesen Stapel (kann später ergänzt werden)', actPileMsgEn: 'Englische Botschaft (freiwillig)', actPileAdd: 'Einen Stapel hinzufügen', actPileDel: 'Einen Stapel entfernen', actResultsOn: 'Beantwortet: Die Stapel dürfen umgedreht werden', actOptions: 'Antworten, eine pro Zeile', actCloseOn: 'Die Umfrage schließen', actExisting: 'Veröffentlichte Aktivitäten', actNeedPiles: 'Füll mindestens einen Stapel aus.', actNeedOptions: 'Es braucht mindestens zwei Antworten.',
@@ -18743,6 +18746,83 @@ function boot() {
   }
 }
 
+/* ======================= what today brought =======================
+   The card drawn, the coin's answer and the tree's message are kept on the
+   phone for the rest of the day, so coming back to the screen shows the
+   result again instead of a fresh fan, a blank coin or a bare tree. One
+   record for all three, stamped with the day it belongs to; a record from
+   another day is simply not read, so the reset at midnight costs nothing and
+   needs no timer.
+
+   This is a memory, not an entitlement. The free-turn counters (nabu-pick-day,
+   nabu-luck, and their copy on the account) decide whether a turn may be
+   taken, and are never read or written here: a phone that loses this record
+   loses a picture of the day, nothing more. That is also why it stays on the
+   device. Syncing it would mean a write on every Plus turn and a merge rule
+   for two phones' lists, to protect something that resets at midnight on the
+   phone's own clock. Newest first, thirty a kind, so a long day cannot fill
+   the storage. */
+const TODAY_KEY = 'nabu-today', TODAY_MAX = 30;
+const TODAY = {
+  /* Today's record, or an empty one when what is stored belongs to another day. */
+  rec() {
+    const d = isoDate(new Date()), r = store.get(TODAY_KEY, null);
+    return (r && typeof r === 'object' && r.d === d) ? r : { d: d, pick: [], coin: [], tree: [] };
+  },
+  list(kind) { const a = this.rec()[kind]; return Array.isArray(a) ? a : []; },
+  last(kind) { return this.list(kind)[0] || null; },
+  add(kind, entry) {
+    const r = this.rec(), a = Array.isArray(r[kind]) ? r[kind] : [];
+    a.unshift(Object.assign({ at: Date.now() }, entry));
+    r[kind] = a.slice(0, TODAY_MAX);
+    store.set(TODAY_KEY, r);
+  }
+};
+
+/* A message from the tree is written down as its place in the list and the
+   first words of its Vietnamese. An update that adds or moves a message still
+   finds the right one by the words; one that is gone is dropped rather than
+   replaced by a stranger. TREE_MSGS lives in play.js, which loads later, so it
+   is read when asked for rather than captured now. */
+const treeFp = (m) => String((m && m.vi) || '').slice(0, 24);
+function treeMsgOf(e) {
+  if (!e) return null;
+  const at = TREE_MSGS[Number(e.k)];
+  if (at && treeFp(at) === e.fp) return at;
+  return TREE_MSGS.filter((m) => treeFp(m) === e.fp)[0] || null;
+}
+
+/* ---- the day's turns, folded under the result ----
+   Only on Nabu Plus: a free turn is one a day, so the result on the screen is
+   the whole story. Two or more, or nothing at all: one turn is what the screen
+   already shows. Shut to begin with, newest first, each line with its time,
+   and under the fold a line saying the list goes at midnight. The fold is the
+   profile's .sect, so it opens and looks the way the profile's groups do. */
+const todayTime = (at) => { const d = new Date(Number(at) || 0); return pad2(d.getHours()) + ':' + pad2(d.getMinutes()); };
+function todayRowHTML(kind, e) {
+  const S = T(); let r = '';
+  if (kind === 'pick') {
+    const c = cardById(e.id); if (!c) return '';
+    const f = S.focus[e.focus] ? e.focus : 'general';
+    /* The shared-link route opens that exact card in that focus, and is not a draw. */
+    r = '<a href="#/pick?card=' + encodeURIComponent(e.id) + '&focus=' + f + '"><b>' + esc(c.name) + '</b></a> \u00b7 ' + esc(S.focus[f]);
+  } else if (kind === 'coin') {
+    r = esc(e.q || '') + ' \u2192 <b>' + esc(e.side === 'yes' ? S.coinYes : S.coinNo) + '</b>';
+  } else if (kind === 'tree') {
+    const m = treeMsgOf(e); if (!m) return '';
+    r = esc(L(m));
+  } else return '';
+  return '<li><span class="t">' + todayTime(e.at) + '</span><span class="r">' + r + '</span></li>';
+}
+function todayHistoryHTML(kind) {
+  if (!plusOn()) return '';
+  const S = T(), rows = TODAY.list(kind).map((e) => todayRowHTML(kind, e)).filter(Boolean);
+  if (rows.length < 2) return '';
+  return '<details class="sect turns" data-turns="' + kind + '"><summary><span class="si">\uD83D\uDD52</span><b>' + esc(S.todayTurns) + '</b><span class="cnt">' + rows.length + '</span><span class="sx" aria-hidden="true">\u203A</span></summary>'
+    + '<div class="sbody"><ul class="turnlist">' + rows.join('') + '</ul></div></details>'
+    + '<p class="hint turnsnote">' + esc(S.todayReset) + '</p>';
+}
+
 /* ============================ backend ============================
    Accounts, profiles, messages and bookings live in Firebase (Auth +
    Firestore) when CONFIG.firebase is set. Without it, BE.enabled is false and
@@ -32320,7 +32400,7 @@ ROUTES.admin = { nav: '', render: renderAdmin };
 window.APP_VERSION = 'v223';
 window.NABU = { CONFIG: CONFIG, SALE: SALE, salePrice: salePrice, loadActs: loadActs, BACK: BACK, LESSONS: LESSONS, localAnswer: localAnswer, compatVerdict: compatVerdict, numerologyOf: numerologyOf, ZDEEP: ZDEEP, lunarToday: lunarToday, solarToLunar: solarToLunar, DECK: DECK, INSIGHT: INSIGHT, KW: KW, ASK: ASK, TOPICS: TOPICS, GUIDES: GUIDES, SERVICES: SERVICES, COURSES: COURSES, ACCESS: ACCESS, INTERESTS: INTERESTS, plusOn: () => plusOn(), proOn: () => proOn(), luckUnlimited: () => luckUnlimited(), ZODIAC: ZODIAC, pick: pick, book: book, PLAY_ITEMS: PLAY_ITEMS, PLAY_SUB_SKUS: PLAY_SUB_SKUS, playItem: playItem, BILL: BILL, SUBS: SUBS, renderStore: renderStore, subStateWord: subStateWord,
   insightHTML: insightHTML, insightOf: insightOf, sunSignIndex: sunSignIndex, lifePath: lifePath, PROFILE: () => PROFILE, BE: BE, ACTS: ACTS,
-  ANGELS: ANGELS, angelRead: angelRead, CODEBOOK: CODEBOOK, redeemCode: redeemCode, loadCodebook: loadCodebook, petHomeSVG: petHomeSVG, PET_HOMES: PET_HOMES, PET_WEARS: PET_WEARS, codeDigest: codeDigest, randomCode: randomCode, BANK: BANK, PETS: PETS, petSVG: petSVG, PET_COATS: PET_COATS, PET_KINDS: PET_KINDS, turnsMerge: turnsMerge, turnsLocal: turnsLocal, priceText: priceText, termText: termText, proSaveText: () => proSaveText(), wedFeeText: () => wedFeeText(), fmtPrice: fmtPrice, luckCut: luckCut, petLevel: petLevel, petStep: petStep, VOUCHERS: VOUCHERS, levelCoins: levelCoins, LOOKS: LOOKS,
+  ANGELS: ANGELS, angelRead: angelRead, CODEBOOK: CODEBOOK, redeemCode: redeemCode, loadCodebook: loadCodebook, petHomeSVG: petHomeSVG, PET_HOMES: PET_HOMES, PET_WEARS: PET_WEARS, codeDigest: codeDigest, randomCode: randomCode, BANK: BANK, PETS: PETS, petSVG: petSVG, PET_COATS: PET_COATS, PET_KINDS: PET_KINDS, turnsMerge: turnsMerge, turnsLocal: turnsLocal, TODAY: TODAY, treeMsgOf: treeMsgOf, priceText: priceText, termText: termText, proSaveText: () => proSaveText(), wedFeeText: () => wedFeeText(), fmtPrice: fmtPrice, luckCut: luckCut, petLevel: petLevel, petStep: petStep, VOUCHERS: VOUCHERS, levelCoins: levelCoins, LOOKS: LOOKS,
   LOVE: LOVE, LOVEDB: LOVEDB, HANDLE_RE: HANDLE_RE, loveBadgeHTML: loveBadgeHTML,
   loveMarkSVG: loveMarkSVG, QUIZ: QUIZ, QSCORE: QSCORE, QUIZ_PASS: QUIZ_PASS, QUIZ_LEN: QUIZ_LEN, pileArtSVG: pileArtSVG, PILE_ARTS: PILE_ARTS, threadSVG: threadSVG, petParentsHTML: petParentsHTML, GIFTS: GIFTS, ALERTS: ALERTS, alertsStart: alertsStart, alertWas: alertWas,
   WED: WED, WED_STEPS: WED_STEPS, wedStep: wedStep, cupidSVG: cupidSVG, shareLine: shareLine, UPD: UPD, NOTE: NOTE };
