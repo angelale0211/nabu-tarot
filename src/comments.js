@@ -30,12 +30,20 @@ const CMT = {
   },
   ok() { return !!(typeof BE !== 'undefined' && BE.enabled && BE.db); },
   col() { return BE.db.collection('comments'); },
-  /* The shown name is the profile name and nothing else: never the login
-     email, never the uid, never the provider's photo. Nabu signs as Nabu. */
+  /* The shown name is the name the person typed for their profile and
+     nothing else: never the login email, never the uid, never the provider's
+     photo. Signing in with Google or Facebook copies the account's full name
+     into a profile that has none yet (backend.js), so a profile name equal to
+     that one is not published; nor one with an @ in it, which is an address
+     and which the rules refuse; nor one that would pass for Nabu. What is
+     left goes out as "Bạn đọc". Nabu signs as Nabu. */
   myName() {
     if (BE.isAdmin()) return 'Nabu';
-    const n = String((typeof PROFILE !== 'undefined' && PROFILE.name) || '').trim().slice(0, 40);
-    return n || T().cmtSomeone;
+    const fold = (s) => String(s || '').replace(/\s+/g, ' ').trim().toLowerCase();
+    const full = String((typeof PROFILE !== 'undefined' && PROFILE.name) || '').trim();
+    const given = BE.user && BE.user.displayName ? fold(BE.user.displayName) : '';
+    if (!full || (given && fold(full) === given) || full.indexOf('@') > -1 || /nabu/i.test(full)) return T().cmtSomeone;
+    return full.slice(0, 40);
   },
   async add(key, text) {
     if (!this.ok() || !BE.user) throw new Error('signin');
@@ -76,7 +84,7 @@ function cmtRowHTML(c) {
   const S = T(), me = BE.user ? BE.user.uid : '';
   const mine = !!me && c.uid === me, canDel = mine || BE.isAdmin();
   return '<li class="cmt' + (mine ? ' me' : '') + (c.nabu ? ' nabu' : '') + '" data-cmt="' + esc(c.id) + '">'
-    + '<b>' + esc(c.nabu ? 'Nabu' : (c.name || S.cmtSomeone)) + (c.nabu ? ' <span class="nabutag">✦ Nabu</span>' : '') + '</b>'
+    + '<b>' + esc(c.nabu ? 'Nabu' : (c.name || S.cmtSomeone)) + (c.nabu ? ' <span class="nabutag">✦ ' + esc(S.cmtAuthor) + '</span>' : '') + '</b>'
     + '<span class="cmttext">' + esc(c.text || '') + '</span>'
     + '<span class="when">' + esc(cmtWhen(c)) + '</span>'
     + (canDel ? '<button type="button" class="linkbtn cmtdel" data-cmtdel="' + esc(c.id) + '">' + esc(S.cmtDelete) + '</button>' : '')
@@ -88,7 +96,9 @@ function cmtRowHTML(c) {
 }
 /* The block under a post or an activity: heading with the count, the list,
    the report box, and either the writing box or - signed out - one line that
-   says sign in, with the link. Never a dead box. */
+   says sign in, with the link. Never a dead box. Above Send, the name the
+   comment will carry, from the same rule that publishes it, and the way to
+   change it; under the box, that comments are public. */
 function cmtBoxHTML(key) {
   const S = T();
   return '<section class="cmts" data-cmts="' + esc(key) + '"><h3>💬 ' + esc(S.cmtTitle) + ' <span class="n" data-cmtn-head hidden></span></h3>'
@@ -96,7 +106,10 @@ function cmtBoxHTML(key) {
     + '<div class="flagbox" data-cmtflag hidden></div>'
     + (BE.enabled && BE.user
       ? '<div class="cmtform"><textarea class="cmtin" maxlength="' + CMT_MAX + '" placeholder="' + esc(S.cmtPh) + '"></textarea>'
-        + '<div class="row"><button type="button" class="btn primary" data-cmtsend>' + esc(S.cmtSend) + '</button><span class="hint cmtst"></span></div></div>'
+        + '<p class="hint cmtas">' + esc(S.cmtAs) + ' <b>' + esc(CMT.myName()) + '</b>'
+        + (BE.isAdmin() ? '' : ' <a class="linkbtn" href="#/me">' + esc(S.cmtRename) + '</a>') + '</p>'
+        + '<div class="row"><button type="button" class="btn primary" data-cmtsend>' + esc(S.cmtSend) + '</button><span class="hint cmtst"></span></div>'
+        + '<p class="hint cmtpublic">' + esc(S.cmtPublic) + '</p></div>'
       : (BE.enabled ? '<p class="hint cmtsignin">' + esc(S.cmtSignIn) + ' <a href="' + esc(signinHref()) + '">' + esc(S.signIn) + '</a></p>' : ''))
     + '</section>';
 }

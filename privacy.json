@@ -1,5 +1,5 @@
 {
- "updated": "2026-09-05",
+ "updated": "2026-09-10",
  "title": {
   "vi": "Chính sách quyền riêng tư",
   "en": "Privacy policy",
@@ -42,9 +42,9 @@
     "de": "Nachrichten und Fotos"
    },
    "p": {
-    "vi": "Tin nhắn bạn gửi trong app, kể cả ảnh, được lưu trên Cloud Firestore của Google và chỉ bạn và Nabu đọc được. Ảnh được thu nhỏ trên điện thoại trước khi gửi. Nabu trả lời từ cùng cuộc trò chuyện đó.",
-    "en": "Messages you send inside the app, photos included, are stored in Google Cloud Firestore and can be read only by you and Nabu. Photos are shrunk on your phone before sending. Nabu replies inside the same conversation.",
-    "de": "Nachrichten, die du in der App sendest, einschließlich Fotos, werden in Google Cloud Firestore gespeichert und können von dir und Nabu gelesen werden. Fotos werden vor dem Senden auf deinem Gerät verkleinert. Nabu antwortet im selben Gespräch."
+    "vi": "Tin nhắn bạn gửi trong app, kể cả ảnh, được lưu trên Cloud Firestore của Google và chỉ bạn và Nabu đọc được. Ảnh được thu nhỏ trên điện thoại trước khi gửi. Nabu trả lời từ cùng cuộc trò chuyện đó. Bình luận thì khác: bình luận bạn viết dưới bài đăng, bình chọn hay chọn tụ bài là công khai, ai cũng đọc được, và chỉ hiện tên bạn chọn. Bạn hoặc Nabu có thể xoá bình luận, và bình luận cũng bị xoá khi bạn xoá tài khoản.",
+    "en": "Messages you send inside the app, photos included, are stored in Google Cloud Firestore and can be read only by you and Nabu. Photos are shrunk on your phone before sending. Nabu replies inside the same conversation. Comments you write under a post, a poll or a pick-a-pile reading are different: they are public, show only the name you chose, can be deleted by you or by Nabu, and go when you delete your account.",
+    "de": "Nachrichten, die du in der App sendest, einschließlich Fotos, werden in Google Cloud Firestore gespeichert und können von dir und Nabu gelesen werden. Fotos werden vor dem Senden auf deinem Gerät verkleinert. Nabu antwortet im selben Gespräch. Kommentare, die du unter einen Beitrag, eine Umfrage oder ein „Stapel wählen“ schreibst, sind dagegen öffentlich: Sie zeigen nur den Namen, den du gewählt hast, du oder Nabu könnt sie löschen, und sie werden gelöscht, wenn du dein Konto löschst."
    }
   },
   {

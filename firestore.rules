@@ -181,7 +181,10 @@ service cloud.firestore {
        six fields: what it is under, who wrote it, the name they chose to
        show, the words, whether it is Nabu's, and the moment the server took
        it. Nothing else gets in - not an email, not a photo, not a uid dressed
-       up as a name - and nobody may sign as Nabu but Nabu.
+       up as a name - and nobody may sign as Nabu but Nabu: the flag that marks
+       her line is hers alone, and so is any name with "nabu" in it, in any
+       case. The name is read whole, line breaks included: [^@]* rather than
+       .*@.*, which let an address through on a second line.
 
        No editing: a comment is what was said at the time. The writer may take
        theirs back; Nabu may take any of them down.
@@ -203,7 +206,8 @@ service cloud.firestore {
                     && request.resource.data.text.size() <= 600
                     && request.resource.data.name is string
                     && request.resource.data.name.size() <= 40
-                    && !request.resource.data.name.matches('.*@.*')
+                    && request.resource.data.name.matches('[^@]*')
+                    && (isAdmin() || !request.resource.data.name.lower().matches('(?s).*nabu.*'))
                     && request.resource.data.nabu is bool
                     && (request.resource.data.nabu == false || isAdmin())
                     && request.resource.data.at == request.time;

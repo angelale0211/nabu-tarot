@@ -1485,6 +1485,12 @@ async function go(hash, sel) { W().location.hash = hash; await sleep(30); return
          && !/primary/.test(apk.className) && /không mua được/.test(main.textContent),
         'Play is the first door on the install screen, and the downloaded copy says in its own words that it cannot buy'); }
     await go('#/privacy', '.privacy .gsec'); ok(d.querySelectorAll('.privacy .gsec').length >= 10 && /Xoá tài khoản/.test(d.querySelector('.privacy').textContent) && /Cloudflare/.test(d.querySelector('.privacy').textContent) && /Anthropic/.test(d.querySelector('.privacy').textContent), 'the in-app privacy policy lists every kind of data, who answers Nabu AI, and how to delete the account');
+    { const pv = d.querySelector('.privacy') ? d.querySelector('.privacy').textContent : '';
+      const pub = await fetch('/privacy.html', { cache: 'no-store' }).then((r) => r.text()).catch(() => '');
+      ok(/Bình luận thì khác/.test(pv) && /công khai/.test(pv)
+        && pub.indexOf('Bình luận thì khác') > -1 && pub.indexOf('Comments you write under a post') > -1
+        && pub.indexOf('Kommentare, die du unter einen Beitrag') > -1 && pub.indexOf('2026-09-10') > -1,
+        'the privacy policy says, in all three languages, that comments are public, show the chosen name only, can be deleted, and go with the account'); }
     { await playMode(true);
       ok(N.BILL.can() && N.BILL.priceOf('tarot') && /300/.test(N.BILL.priceOf('tarot')) && N.BILL.periodMonths('pro6') === 6,
         'inside the app BILL answers with Play\'s own prices and periods for every catalogue item');
@@ -3193,6 +3199,30 @@ async function go(hash, sel) { W().location.hash = hash; await sleep(30); return
         await N.CMT.add(cm, 'Cảm ơn bạn nhé');
         const cA = ck().map((k) => db.docs[k]).filter((c) => c.nabu)[0];
         ok(cA && cA.name === 'Nabu' && cA.uid === 'admin1', 'Nabu signs as Nabu, and the row says so');
+        { /* The name a comment carries is the one the person typed for their
+             profile, never the one their Google or Facebook account came with:
+             signing in copies the account's full name into an empty profile.
+             A profile name equal to it is not published, nor an address, nor a
+             name that would pass for Nabu - those go out as "Bạn đọc". Each
+             probe is taken back afterwards, count included. */
+          const cWas = N.CMT.counts[cm];
+          const published = async (user, name) => {
+            N.BE.user = user; w.saveProfileLocal({ name: name });
+            const had = ck(); await N.CMT.add(cm, 'thử tên');
+            const k = ck().filter((x) => had.indexOf(x) < 0)[0], row = k ? db.docs[k] : null;
+            if (k) delete db.docs[k];
+            return row ? row.name : '(nothing written)';
+          };
+          const got = [
+            await published({ uid: 'uidA', email: 'a@test', displayName: 'Nguyễn Thị Mai' }, ' nguyễn thị  MAI '),
+            await published({ uid: 'uidA', email: 'a@test' }, 'mai@gmail.com'),
+            await published({ uid: 'uidA', email: 'a@test' }, 'Nabu Tarot'),
+            await published({ uid: 'uidA', email: 'a@test' }, 'fan của NABU'),
+            await published({ uid: 'uidA', email: 'a@test', displayName: 'Nguyễn Thị Mai' }, 'Mai')];
+          w.saveProfileLocal({ name: 'Mai' }); N.CMT.counts[cm] = cWas;
+          ok(got.slice(0, 4).every((n) => n === 'Bạn đọc') && got[4] === 'Mai',
+            'a comment never carries the name the Google or Facebook account came with, an address, or a name that passes for Nabu: those go out as "Bạn đọc", and a nickname goes out as itself'
+            + ' [' + got.join(', ') + ']'); }
         N.BE.user = { uid: 'uidA', email: 'a@test' };
         /* Already on #/home, and going to the hash already showing redraws
            nothing: away and back, so the card is drawn after the comments. */
@@ -3234,6 +3264,27 @@ async function go(hash, sel) { W().location.hash = hash; await sleep(30); return
         ok(!!d.querySelector('.cmts .cmtin'), 'a post page opened before sign-in resolved gets its box once the account is known');
         await go('#/post/2026-09-04-welcome', '#main .post, #main .empty'); await sleep(60);
         ok(!d.querySelector('.cmts'), 'the note that introduces Nabu Tarot has no comments, even on its own page');
+        { /* Right above Send the box says which name the comment will carry, and
+             how to change it. The same rule decides both, so what it says is
+             what is published. */
+          const line = (sel) => ((d.querySelector(sel) || {}).textContent || '').replace(/\s+/g, ' ').trim();
+          await go('#/home', '.tiles'); await go('#/post/' + pid, '.cmts .cmtin');
+          await waitFor(() => d.querySelector('.cmts .cmt.nabu'), 3000);
+          const plain = line('.cmts .cmtas'), a = d.querySelector('.cmts .cmtas a[href="#/me"]'), ah = a ? a.getBoundingClientRect().height : 0;
+          const pub = d.querySelector('.cmts .cmtform .cmtpublic'), row = d.querySelector('.cmts .cmtform .row');
+          const tag = line('.cmts .cmt.nabu .nabutag'), who = line('.cmts .cmt.nabu b');
+          N.BE.user = { uid: 'uidA', email: 'a@test', displayName: ' mai ' };
+          await go('#/home', '.tiles'); await go('#/post/' + pid, '.cmts .cmtin');
+          const masked = line('.cmts .cmtas');
+          N.BE.user = { uid: 'uidA', email: 'a@test' };
+          ok(plain === 'Bạn bình luận với tên: Mai Đổi tên' && ah >= 40 && masked === 'Bạn bình luận với tên: Bạn đọc Đổi tên'
+            && !!row && !!d.querySelector('.cmts .cmtas') && !!(d.querySelector('.cmts .cmtas').compareDocumentPosition(row) & 4),
+            'right above Send the box says which name the comment will carry - the nickname, or "Bạn đọc" when it is only the name the account came with - with a 40px link to change it'
+            + ' [' + plain + ' | ' + masked + ']');
+          ok(!!pub && !!row && pub.textContent === 'Bình luận hiển thị công khai với tên bạn chọn.' && !!(row.compareDocumentPosition(pub) & 4),
+            'under the box one line says comments are public, under the name chosen');
+          ok(tag === '✦ Tác giả' && who === 'Nabu ✦ Tác giả',
+            'Nabu\'s own line is marked with the role, "Tác giả", instead of her name twice' + ' [' + who + ']'); }
         { /* Phones first. 360 and 390 are where most Android phones and iPhones
              sit. Signed in as Nabu, every control a comment can carry is on the
              screen at once - a delete on each line, a flag on a reader's line,
@@ -3353,8 +3404,8 @@ async function go(hash, sel) { W().location.hash = hash; await sleep(30); return
              time: going to the hash already showing redraws nothing. */
           const keepC = { lang: w.localStorage.getItem('nabu-lang'), plang: N.PROFILE().lang, user: N.BE.user };
           const want = {
-            en: ['Comments', 'No comments yet. Be the first.', 'Write a comment…', 'Send', 'Sign in to comment. Sign in'],
-            de: ['Kommentare', 'Noch keine Kommentare. Schreib den ersten.', 'Kommentar schreiben…', 'Senden', 'Melde dich an, um zu kommentieren. Anmelden'] };
+            en: ['Comments', 'No comments yet. Be the first.', 'Write a comment…', 'Send', 'You comment as: Mai Change', 'Comments are public, under the name you choose.', '✦ Author', 'Sign in to comment. Sign in'],
+            de: ['Kommentare', 'Noch keine Kommentare. Schreib den ersten.', 'Kommentar schreiben…', 'Senden', 'Du kommentierst als: Mai Ändern', 'Kommentare sind öffentlich, unter dem Namen, den du wählst.', '✦ Autor', 'Melde dich an, um zu kommentieren. Anmelden'] };
           const got = {}, bad = [];
           for (const lg of ['en', 'de']) {
             w.saveProfileLocal({ lang: lg }); w.applyAccountLang();
@@ -3364,9 +3415,14 @@ async function go(hash, sel) { W().location.hash = hash; await sleep(30); return
             const txt = (sel) => ((d.querySelector(sel) || {}).textContent || '').replace(/\s+/g, ' ').trim();
             const h3 = d.querySelector('.cmts h3'), head = h3 && h3.firstChild ? h3.firstChild.textContent.replace(/^💬\s*/, '').trim() : '', none = txt('.cmts .cmtlist li'),
               ph = (d.querySelector('.cmts .cmtin') || {}).placeholder || '', send = txt('.cmts [data-cmtsend]');
+            const as = txt('.cmts .cmtas'), pub = txt('.cmts .cmtpublic');
+            db.put('comments/lgnabu', { on: cm, uid: 'admin1', name: 'Nabu', text: 'x', nabu: true, at: 1 });
+            await waitFor(() => d.querySelector('.cmts .cmt.nabu'), 2000);
+            const tag = txt('.cmts .cmt.nabu .nabutag');
+            await db.collection('comments').doc('lgnabu').delete();
             N.BE.user = null;
             await go('#/learn', '#main'); await go('#/post/' + pid, '.cmts .cmtsignin');
-            got[lg] = [head, none, ph, send, txt('.cmts .cmtsignin')];
+            got[lg] = [head, none, ph, send, as, pub, tag, txt('.cmts .cmtsignin')];
             want[lg].forEach((t, i) => { if (got[lg][i] !== t) bad.push(lg + ' "' + got[lg][i] + '"'); });
             if (VI.test(got[lg].join(' '))) bad.push(lg + ' still has Vietnamese');
           }
@@ -3376,7 +3432,7 @@ async function go(hash, sel) { W().location.hash = hash; await sleep(30); return
           N.BE.user = keepC.user;
           await go('#/home', '.tiles');
           ok(bad.length === 0 && d.documentElement.getAttribute('lang') === 'vi',
-            'the comments read in English and in German too: the heading, the empty line, the box, its button and the sign-in line, with no Vietnamese left over'
+            'the comments read in English and in German too: the heading, the empty line, the box, its button, the name line, the public notice, Nabu\'s tag and the sign-in line, with no Vietnamese left over'
             + (bad.length ? ' [' + bad.slice(0, 4).join('; ') + ']' : '')); }
         w.saveProfileLocal({ name: nameWas }); N.CMT.counts = {}; }
       N.BE.db = keep.db; N.BE.user = keep.user; N.BE.enabled = keep.on; w.confirm = keep.confirm;
