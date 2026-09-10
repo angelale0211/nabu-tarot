@@ -12,7 +12,7 @@
      carries this notice with it. See LICENSE. -->
 <meta name="author" content="Nabu Tarot">
 <meta name="copyright" content="Copyright (c) 2025-2026 Nabu Tarot. All rights reserved.">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'none'; object-src 'none'; form-action 'self'; script-src 'self' 'sha256-uw41+gKhIMaypQIREfaXsWGf1vIrASUTDbJ+ylUAn6s=' https://www.gstatic.com https://apis.google.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; font-src 'self' data:; media-src 'self' data: blob:; worker-src 'self'; connect-src 'self' https://*.googleapis.com https://*.google.com https://*.firebaseio.com https://*.cloudfunctions.net https://*.workers.dev https://generativelanguage.googleapis.com; frame-src https://*.firebaseapp.com https://accounts.google.com https://*.facebook.com">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'none'; object-src 'none'; form-action 'self'; script-src 'self' 'sha256-XSfZGx2YfF1xG+QJw0AC/znfAlyHnV/HdFkWVlFj1U8=' https://www.gstatic.com https://apis.google.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; font-src 'self' data:; media-src 'self' data: blob:; worker-src 'self'; connect-src 'self' https://*.googleapis.com https://*.google.com https://*.firebaseio.com https://*.cloudfunctions.net https://*.workers.dev https://generativelanguage.googleapis.com; frame-src https://*.firebaseapp.com https://accounts.google.com https://*.facebook.com">
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <meta name="theme-color" content="#EFE9FA">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -1668,6 +1668,22 @@ h1 .pileico{width:34px;height:27px;vertical-align:-3px;margin-right:2px}
 .saylist li b{display:block;font-size:12px;font-weight:700;color:var(--fg-soft);margin-bottom:1px}
 .saylist li.me b{color:inherit;opacity:.75}
 .saybar input{flex:1;min-width:0}
+/* ---- comments under a post or an activity ---- */
+.cmts{margin-top:14px}
+.cmts h3{margin-bottom:8px}
+.cmts h3 .n{display:inline-block;margin-left:6px;background:var(--lav-soft);color:var(--fg);font-size:12.5px;border-radius:999px;min-width:20px;padding:1px 7px;text-align:center;vertical-align:2px}
+/* The wedding room's flag, as it is, with a box a thumb can hit: 40px, the
+   house minimum. The glyph, its colour and its quiet opacity are unchanged. */
+.cmts .cmtlist li{padding-right:40px}
+.cmts .flagb{top:0;right:0;min-width:40px;min-height:40px}
+.cmts .cmtlist li.nabu{background:var(--tag-gold-bg);color:var(--tag-gold-ink)}
+.cmts .nabutag{display:inline-block;margin-left:6px;padding:0 6px;border-radius:8px;font-size:12px;background:var(--primary);color:var(--primary-ink);vertical-align:1px}
+.cmts .cmttext{display:block;white-space:pre-wrap;overflow-wrap:anywhere}
+.cmts .when{display:inline-block;margin-top:4px;font-size:12px;color:var(--fg-faint)}
+.cmts .cmtdel{margin-left:10px;font-size:12.5px;min-height:40px;display:inline-flex;align-items:center;padding:0 8px}
+.cmts .cmtform textarea{width:100%;min-height:72px;border-radius:14px;padding:10px 14px}
+.cmts .cmtform .row{margin-top:8px;align-items:center;gap:10px}
+.post .foot .cmtn{min-height:40px;display:inline-flex;align-items:center;gap:4px;color:var(--fg-soft);font-size:13.5px;font-weight:600;padding:6px 10px;border-radius:8px;text-decoration:none;margin-right:auto}
 .wishcard{position:relative;overflow:hidden}
 .wgtally{display:flex;flex-wrap:wrap;align-items:center;gap:10px;margin-bottom:12px;padding:9px 12px;
   border-radius:12px;background:var(--surface-2);font-size:14px;font-weight:600}
@@ -20103,7 +20119,7 @@ function postHTML(p, full) {
     + '<div class="body' + (long ? ' clamp' : '') + '">' + richHTML(raw) + '</div>'
     + (long ? '<button class="more" data-more>' + T().readMore + '</button>' : '')
     + (p.cards && p.cards.length ? '<div class="faint">' + T().cardsDrawn + '</div><div class="mini">' + p.cards.map((c) => miniHTML(c, true)).join('') + '</div>' : '')
-    + '<div class="foot">' + (p.link ? '<a class="btn sm" href="' + esc(p.link) + '" target="_blank" rel="noopener">' + esc(p.source || 'Facebook') + ' ↗</a>' : '') + '<button data-share>' + T().share + '</button></div>'
+    + '<div class="foot">' + (!full && CMT.allowed('post', p) ? '<a class="cmtn" data-cmtn="' + esc(CMT.key('post', p.id)) + '" href="#/post/' + esc(p.id) + '" aria-label="' + esc(T().cmtTitle) + '">💬 <span>' + (CMT.counts[CMT.key('post', p.id)] || '') + '</span></a>' : '') + (p.link ? '<a class="btn sm" href="' + esc(p.link) + '" target="_blank" rel="noopener">' + esc(p.source || 'Facebook') + ' ↗</a>' : '') + '<button data-share>' + T().share + '</button></div>'
     + '</article>';
 }
 function bindPost(root) {
@@ -20114,7 +20130,7 @@ function bindPost(root) {
     const art = b.closest('article'), p = allPosts().filter((x) => x.id === art.getAttribute('data-id'))[0];
     if (p) openShareSheet({ title: L(p.title), text: L(p.title) + '\n' + plainText(L(p.body)), url: p.link || (appURL() + '#/post/' + p.id) });
   }));
-  bindCardLinks(root); hydrateImages(root);
+  bindCardLinks(root); hydrateImages(root); cmtFillCounts(root);
 }
 function allPosts() { return (POSTS || []).concat(FBPOSTS.map((f) => Object.assign({ source: f.source || 'Facebook' }, f))); }
 function sortedPosts() {
@@ -20247,8 +20263,11 @@ async function renderPost(args) {
   const m = $('#main');
   if (POSTS == null) await loadPosts();
   const p = allPosts().filter((x) => x.id === args[0])[0];
-  m.innerHTML = '<p><a href="#/home">← ' + esc(T().backToFeed) + '</a></p>' + (p ? postHTML(p, true) : '<p class="empty">' + esc(T().notFound) + '</p>');
+  const talk = !!(p && CMT.allowed('post', p)), key = talk ? CMT.key('post', p.id) : '';
+  m.innerHTML = '<p><a href="#/home">← ' + esc(T().backToFeed) + '</a></p>'
+    + (p ? postHTML(p, true) + (talk ? cmtBoxHTML(key) : '') : '<p class="empty">' + esc(T().notFound) + '</p>');
   bindPost(m);
+  if (talk) { const stop = cmtMount(m, key); if (stop) NAV.cleanup = stop; }
 }
 /* ---- all posts, with search (#/news) ---- */
 async function renderNews() {
@@ -32562,7 +32581,8 @@ let lastTouch = 0; document.addEventListener('touchend', (e) => { const now = Da
 // Signing in can unlock things (admin sees every course), so redraw the open screen.
 BE.onAuth(() => {
   try { alertsStart(); } catch (e) { /* not reachable */ }
-  if (['learn', 'me', 'home'].indexOf(parseHash().route) > -1) route();
+  const r = parseHash().route;
+  if (['learn', 'me', 'home', 'post'].indexOf(r) > -1 || (r === 'play' && $('.cmts'))) route();
 });
 boot();
 

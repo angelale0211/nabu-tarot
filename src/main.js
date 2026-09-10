@@ -64,7 +64,8 @@ let lastTouch = 0; document.addEventListener('touchend', (e) => { const now = Da
 // Signing in can unlock things (admin sees every course), so redraw the open screen.
 BE.onAuth(() => {
   try { alertsStart(); } catch (e) { /* not reachable */ }
-  if (['learn', 'me', 'home'].indexOf(parseHash().route) > -1) route();
+  const r = parseHash().route;
+  if (['learn', 'me', 'home', 'post'].indexOf(r) > -1 || (r === 'play' && $('.cmts'))) route();
 });
 boot();
 

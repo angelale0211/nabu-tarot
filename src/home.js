@@ -154,7 +154,7 @@ function postHTML(p, full) {
     + '<div class="body' + (long ? ' clamp' : '') + '">' + richHTML(raw) + '</div>'
     + (long ? '<button class="more" data-more>' + T().readMore + '</button>' : '')
     + (p.cards && p.cards.length ? '<div class="faint">' + T().cardsDrawn + '</div><div class="mini">' + p.cards.map((c) => miniHTML(c, true)).join('') + '</div>' : '')
-    + '<div class="foot">' + (p.link ? '<a class="btn sm" href="' + esc(p.link) + '" target="_blank" rel="noopener">' + esc(p.source || 'Facebook') + ' ↗</a>' : '') + '<button data-share>' + T().share + '</button></div>'
+    + '<div class="foot">' + (!full && CMT.allowed('post', p) ? '<a class="cmtn" data-cmtn="' + esc(CMT.key('post', p.id)) + '" href="#/post/' + esc(p.id) + '" aria-label="' + esc(T().cmtTitle) + '">💬 <span>' + (CMT.counts[CMT.key('post', p.id)] || '') + '</span></a>' : '') + (p.link ? '<a class="btn sm" href="' + esc(p.link) + '" target="_blank" rel="noopener">' + esc(p.source || 'Facebook') + ' ↗</a>' : '') + '<button data-share>' + T().share + '</button></div>'
     + '</article>';
 }
 function bindPost(root) {
@@ -165,7 +165,7 @@ function bindPost(root) {
     const art = b.closest('article'), p = allPosts().filter((x) => x.id === art.getAttribute('data-id'))[0];
     if (p) openShareSheet({ title: L(p.title), text: L(p.title) + '\n' + plainText(L(p.body)), url: p.link || (appURL() + '#/post/' + p.id) });
   }));
-  bindCardLinks(root); hydrateImages(root);
+  bindCardLinks(root); hydrateImages(root); cmtFillCounts(root);
 }
 function allPosts() { return (POSTS || []).concat(FBPOSTS.map((f) => Object.assign({ source: f.source || 'Facebook' }, f))); }
 function sortedPosts() {
@@ -298,8 +298,11 @@ async function renderPost(args) {
   const m = $('#main');
   if (POSTS == null) await loadPosts();
   const p = allPosts().filter((x) => x.id === args[0])[0];
-  m.innerHTML = '<p><a href="#/home">← ' + esc(T().backToFeed) + '</a></p>' + (p ? postHTML(p, true) : '<p class="empty">' + esc(T().notFound) + '</p>');
+  const talk = !!(p && CMT.allowed('post', p)), key = talk ? CMT.key('post', p.id) : '';
+  m.innerHTML = '<p><a href="#/home">← ' + esc(T().backToFeed) + '</a></p>'
+    + (p ? postHTML(p, true) + (talk ? cmtBoxHTML(key) : '') : '<p class="empty">' + esc(T().notFound) + '</p>');
   bindPost(m);
+  if (talk) { const stop = cmtMount(m, key); if (stop) NAV.cleanup = stop; }
 }
 /* ---- all posts, with search (#/news) ---- */
 async function renderNews() {
