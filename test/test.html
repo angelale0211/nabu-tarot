@@ -320,10 +320,32 @@ async function go(hash, sel) { W().location.hash = hash; await sleep(30); return
           }; };
         w.PaymentRequest = function (methods, total) { const data = methods[0].data; play.requests.push(data); const it = N.PLAY_ITEMS.filter((i) => i.sku === data.sku)[0]; const tok = 'tok' + (play.next++);
           /* Play's own abort: it agrees when no sheet was ever really under
-             way, and refuses when one is open somewhere. */
-          this.abort = async () => { play.aborts++; if (play.showHang === 'sheet') throw new Error('open'); play.showHang = false; };
-          this.show = async () => {
-            if (play.showHang) return new Promise(() => {});
+             way, and refuses when one is open somewhere - which is what a
+             device showed on 2026-09-10, the sheet surviving the ask. When it
+             does agree, the real API rejects the pending show() with
+             AbortError BEFORE abort() itself answers, so the stub does too:
+             the app has to read that AbortError as its own asking, never as
+             the buyer changing their mind. */
+          this.abort = async () => {
+            play.aborts++;
+            if (play.showHang === 'sheet') throw new Error('open');
+            const rj = play.rejectShow; play.rejectShow = null; play.resolveShow = null;
+            if (rj) { const e = new Error('aborted'); e.name = 'AbortError'; rj(e); }
+            play.showHang = false;
+          };
+          /* Not an async function: Chrome throws several launch failures out
+             of show() itself, before there is a promise to reject, and a stub
+             that can only reject cannot stand in for that. */
+          this.show = () => {
+            if (play.showThrow) { const t = play.showThrow; play.showThrow = null; const e = new Error('sync'); e.name = t.name; throw e; }
+            return this.showAsync();
+          };
+          this.showAsync = async () => {
+            /* A sheet that says nothing yet. The handles are how the suite
+               plays the two things that really happen afterwards: Play
+               finishing the purchase, or the buyer closing the sheet, long
+               after the app has given up waiting. */
+            if (play.showHang) return new Promise((res, rej) => { play.resolveShow = res; play.rejectShow = rej; });
             /* Play's own shape of failure: a name, and however long it took to
                arrive. The suite needs both halves because the point of the
                classifier is that only the first half decides anything. */
@@ -1623,6 +1645,29 @@ async function go(hash, sel) { W().location.hash = hash; await sleep(30); return
         ok(/ err/.test(stOf('playing').className), 'inside Samsung Internet an aborted sheet is not read as the buyer changing their mind - the browser cannot open one');
         delete nav.userAgent;
         ok(N.BILL.provider() !== 'samsung', 'the override is gone');
+        /* Brave sends Chrome's user agent word for word, so the UA cannot be
+           asked who is running. The brand list can, and it is the only thing
+           the app is allowed to believe. An own property here shadows the
+           prototype's accessor, and is deleted again after each case. */
+        const fakeBrands = (list) => Object.defineProperty(nav, 'userAgentData', { value: { brands: list.map((b) => ({ brand: b, version: '1' })) }, configurable: true });
+        const unfake = () => { delete nav.userAgentData; };
+        fakeBrands(['Brave', 'Chromium', 'Not-A.Brand']);
+        ok(N.BILL.provider() === 'brave', 'Brave is recognised from the brand list, which is the only place it ever says its name');
+        fakeBrands(['Google Chrome', 'Chromium', 'Not-A.Brand']);
+        ok(N.BILL.provider() === 'chrome', 'and the one browser that can reach Play billing is recognised as itself');
+        fakeBrands(['Microsoft Edge', 'Chromium', 'Not-A.Brand']);
+        ok(N.BILL.provider() === 'edge', 'Edge is named as Edge, not as the Chromium underneath it');
+        fakeBrands([]);
+        Object.defineProperty(nav, 'userAgent', { configurable: true, get: () => 'Mozilla/5.0 (Linux; Android 14; Pixel 8) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Mobile Safari/537.36' });
+        ok(N.BILL.provider() === 'unknown', 'a browser that will not say what it is stays unknown - a Chrome-shaped user agent is not taken as proof');
+        delete nav.userAgent;
+        fakeBrands(['Brave', 'Chromium', 'Not-A.Brand']);
+        const keepDG2 = d.defaultView.getDigitalGoodsService; d.defaultView.getDigitalGoodsService = undefined; await N.BILL.retry();
+        await go('#/learn', '.tile'); await go('#/unlock?from=app', '.store');
+        ok(N.BILL.why === 'noapi' && /Brave/.test(d.querySelector('.store').textContent) && /trình duyệt mặc định/.test(d.querySelector('.store').textContent),
+          'a wrapper opened in Brave is told so by name, and told to make Chrome the default browser');
+        unfake(); d.defaultView.getDigitalGoodsService = keepDG2; await N.BILL.retry();
+        await go('#/learn', '.tile'); await go('#/unlock?from=app', '.store');
         ok(N.BILL.provider() !== 'chrome' || /Google Chrome/i.test(((d.defaultView.navigator.userAgentData || {}).brands || []).map((b) => b.brand).join(' ')),
           'chrome is only ever answered from userAgentData brands, never from the UA string'); }
       { /* The previous person's subscriptions must not survive sign-out: the
@@ -1654,15 +1699,44 @@ async function go(hash, sel) { W().location.hash = hash; await sleep(30); return
         const kw = N.BILL.sheetWaitMs; N.BILL.sheetWaitMs = 100;
         play.showHang = true; d.querySelector('.store [data-buy="playing"]').click();
         await waitFor(() => stOf('playing') && /\(/.test(stOf('playing').textContent), 4000);
-        ok(/TimeoutError\/hung/.test(stOf('playing').textContent) && / err/.test(stOf('playing').className)
-           && !d.querySelector('.store [data-buy="playing"]').disabled && N.BILL.buying === '',
-          'a sheet Play never opened is aborted after the wait, said out loud, and the button comes back');
+        ok(/AbortError\/hung/.test(stOf('playing').textContent) && / err/.test(stOf('playing').className)
+           && !d.querySelector('.store [data-buy="playing"]').disabled && N.BILL.buying === ''
+           && N.BILL.lastSheet && N.BILL.lastSheet.outcome === 'hung' && N.BILL.lastSheet.name === 'AbortError',
+          'the app closing a sheet Play never opened is booked as exactly that, never as the buyer changing their mind, and the button comes back');
         play.showHang = 'sheet'; d.querySelector('.store [data-buy="playing"]').click();
         await waitFor(() => stOf('playing') && /TimeoutError\/waiting/.test(stOf('playing').textContent), 4000);
         ok(!/ err/.test(stOf('playing').className) && d.querySelector('.store [data-buy="playing"]').disabled && N.BILL.buying === 'playing',
           'a sheet that is really open keeps the button locked - no second purchase can start - and says Play is still working');
         const busy = await N.BILL.buy('playing').catch((e) => e);
         ok(busy && busy.message === 'busy', 'and a programmatic second buy is refused as busy');
+        { /* The buyer closed the sheet a minute after the app had given up
+             waiting. Nothing else speaks for that: on 2026-09-10 the purchase
+             ended correctly and the screen never heard, so the button stayed
+             grey and the line still said Play was working until the app was
+             opened again. */
+          const rj = play.rejectShow; play.rejectShow = null; play.resolveShow = null;
+          const shut = new Error('cancelled'); shut.name = 'AbortError'; if (rj) rj(shut);
+          await waitFor(() => N.BILL.buying === '' && stOf('playing') && !/đang xử lý/.test(stOf('playing').textContent), 4000);
+          ok(N.BILL.buying === '' && N.BILL.lastSheet && N.BILL.lastSheet.outcome === 'aborted'
+             && !d.querySelector('.store [data-buy="playing"]').disabled && /Chưa mua xong/.test(stOf('playing').textContent),
+            'a sheet closed long after the app stopped waiting hands the button back and stops telling the buyer to wait'); }
+        { /* And the other late answer: Play finishes the purchase after the
+             app has stopped waiting. That token is money already taken, so it
+             is kept and handed to restore(), which finishes it without the
+             buyer pressing anything. */
+          play.showHang = 'sheet'; d.querySelector('.store [data-buy="playing"]').click();
+          await waitFor(() => stOf('playing') && /đang xử lý/.test(stOf('playing').textContent), 4000);
+          const res = play.resolveShow; play.resolveShow = null; play.rejectShow = null;
+          if (res) res({ details: { purchaseToken: 'lateTok' }, complete: async () => {} });
+          await waitFor(() => N.BILL.buying === '' && N.BILL.lastSheet && N.BILL.lastSheet.outcome === 'done', 4000);
+          ok(N.BILL.buying === '' && N.BILL.lastSheet.outcome === 'done'
+             && N.BILL.pendingList().filter((p) => p.token === 'lateTok').length === 1
+             && !d.querySelector('.store [data-buy="playing"]').disabled && /khôi phục/i.test(stOf('playing').textContent),
+            'a purchase Play finishes after the app gave up waiting is kept and restored, never lost, and the screen stops asking the buyer to wait');
+          /* Let restore() finish with it before it is dropped, or the row it
+             writes back would outlive this check. */
+          await waitFor(() => ((N.BILL.pendingList().filter((p) => p.token === 'lateTok')[0] || {}).tries || 0) >= 1, 4000);
+          N.BILL.forget('lateTok'); }
         play.showHang = false; N.BILL.buying = ''; N.BILL.sheetWaitMs = kw;
         await go('#/learn', '.tile'); await go('#/unlock?from=app', '.store'); }
       { /* The wait only guards a sheet that never answered. Once the buyer
@@ -1676,6 +1750,35 @@ async function go(hash, sel) { W().location.hash = hash; await sleep(30); return
         await new Promise((r) => setTimeout(r, 250));
         ok(play.aborts === 0, 'a sheet the buyer already closed is not asked to close again half a minute later');
         N.BILL.sheetWaitMs = kw; play.showFail = null; play.aborts = 0; }
+      { /* Not every refusal arrives as a rejected promise: Chrome throws some
+           of them out of show() itself, before there is a promise at all. That
+           throw used to leave the shop believing a sheet was open, and every
+           later tap in that session was told to wait for it. */
+        play.showThrow = { name: 'InvalidStateError' };
+        const thrown = await N.BILL.buy('playing').catch((e) => e);
+        ok(thrown && thrown.outcome === 'nolaunch' && thrown.playName === 'InvalidStateError',
+          'a sheet that fails on the way up is read as a sheet that never opened, and says what Play gave');
+        ok(N.BILL.buying === '', 'and it leaves nothing behind pretending a sheet is open');
+        play.showFail = { name: 'AbortError', delay: 20 };
+        const after = await N.BILL.buy('playing').catch((e) => e);
+        ok(after && after.message !== 'busy' && after.outcome === 'aborted',
+          'so the next tap gets a sheet of its own instead of being told to wait for one that never was');
+        play.showThrow = null; play.showFail = null; N.BILL.buying = ''; }
+      { /* The same tap failing twice is one thing that went wrong. The filed
+           line ends in how long Play took, which is never the same twice, so
+           two readings of one failure only look different - and the owner's
+           Errors tab would fill up with copies of a single tap. */
+        const keepNote = w.noteOops; let filed = 0;
+        w.noteOops = function (msg, where) { if (where === 'store' && /sheet=nolaunch\/NotSupportedError/.test(String(msg))) filed++; return keepNote.apply(this, arguments); };
+        const waits = [20, 60];
+        for (let i = 0; i < waits.length; i++) {
+          play.showFail = { name: 'NotSupportedError', delay: waits[i] };
+          d.querySelector('.store [data-buy="playing"]').click();
+          await waitFor(() => stOf('playing') && /NotSupportedError/.test(stOf('playing').textContent), 4000);
+        }
+        w.noteOops = keepNote;
+        ok(filed === 1, 'one failure tapped twice is filed once, however many milliseconds apart the two readings were');
+        play.showFail = null; }
       { /* Three renders of a broken store must file one row, not three.
            Counted at noteOops itself: its own five-per-session budget is
            spent by the failed buys above, and the page's CSP forbids eval, so

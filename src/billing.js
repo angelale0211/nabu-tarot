@@ -65,6 +65,7 @@ const BILL = {
   stage: '',        // how far the last attempt got: 'connect', 'details', or ''
   buying: '',       // the key whose sheet is open, so a second tap cannot start another
   lastSheet: null,  // {outcome, name, ms} of the last show(), for the diagnostics
+  onSettled: null,  // the screen's hook: an answer that landed after the watchdog had already spoken
 
   /* Two questions that used to be one. can() is "Play answered and priced
      something", which decides whether a screen shows rows at all. canBuy(key)
@@ -345,39 +346,79 @@ const BILL = {
        what Play had actually said. */
     const shownAt = Date.now();
     this.buying = key;
-    /* A sheet that never answers (H7, 2026-09-09): show() can stay pending
-       with no sheet on a phone where Play never answers, and the button then
-       stays disabled while the diagnostic line looks healthy. On the emulator
-       a pending show() turned out to be an open sheet, which is why abort is
-       asked before anything is concluded. After sheetWaitMs the app asks Play
-       to abort. If Play agrees
-       the request was never under way: the buyer is told and gets the button
-       back. If Play refuses, a sheet IS open: the buyer is told, `buying`
-       stays set so nothing can start a second purchase, and a late answer is
-       still completed and remembered for restore(). Never a plain timeout. */
-    let hung = '';
-    const showP = req.show();
+    /* A sheet that never answers (H7, 2026-09-09). show() can stay pending
+       with no sheet in sight, and the button then stays disabled while the
+       diagnostic line still looks healthy. After sheetWaitMs with no answer
+       the app asks Play to abort. On a device (2026-09-10) Play refuses while
+       a sheet is open, so the request is left alone: the buyer is told the app
+       is still waiting, `buying` stays set so nothing can start a second
+       purchase, and a late answer is completed and remembered. Only when Play
+       agrees - no request is under way - does the buyer get the button back.
+       The abort's own AbortError is classified as `hung`, never as the buyer
+       cancelling. Play's answer to the abort can land after that error has
+       been thrown, which changes nothing: the guard it resolves is then read
+       by nobody. Never a plain timeout - and where listPurchases() hangs
+       beside an open sheet, as it did on the emulator, restore()'s own bound
+       is what keeps it answerable. */
+    let hung = '', asked = false;
+    /* Not every refusal is a rejected promise. Chrome throws several of them
+       out of show() itself - InvalidStateError, SecurityError,
+       NotSupportedError - and a throw here used to leave `buying` set for the
+       rest of the session, so every later tap was refused as busy and every
+       Buy button stayed disabled until the app was restarted. */
+    let showP;
+    try { showP = req.show(); }
+    catch (e) {
+      this.buying = '';
+      e.stage = 'show'; e.playName = errName(e); e.elapsedMs = 0; e.outcome = this.sheetOutcome(e);
+      this.lastSheet = { outcome: e.outcome, name: e.playName, ms: 0 };
+      throw e;
+    }
     /* Only ever read through the Promise.race below, so a guard left pending once show() has answered is awaited by nobody and costs nothing. */
     let wd = 0;
     const guard = new Promise((resolve) => { wd = setTimeout(async () => {
+      asked = true;
       try { await req.abort(); hung = 'hung'; } catch (e2) { hung = 'waiting'; }
       resolve('__guard');
     }, this.sheetWaitMs); });
+    /* An answer that arrives after the watchdog has spoken, whichever way it
+       spoke, and nobody else will speak for it. On 2026-09-10 a buyer closed
+       the sheet a minute after the app had said it was still waiting: the
+       purchase ended correctly and the screen never heard, so the button
+       stayed grey and the line still said Play was working until the app was
+       opened again. A late token is completed, remembered and handed to
+       restore(), which finishes it without the buyer pressing anything; a
+       late cancel is booked as what it was; either way onSettled tells the
+       screen. */
     showP.then((late) => {
       clearTimeout(wd);
-      if (hung !== 'waiting') return;
+      if (!hung) return;
       this.buying = '';
       const tok = late && late.details && (late.details.purchaseToken || late.details.token);
       try { late.complete(tok ? 'success' : 'fail').catch(() => {}); } catch (e3) { /* closed */ }
-      if (tok) this.remember(Object.assign({ sku: it.sku, token: tok, at: Date.now() }, opt.wid ? { wid: opt.wid } : {}));
-    }, () => { clearTimeout(wd); if (hung === 'waiting') this.buying = ''; });
+      if (tok) {
+        this.remember(Object.assign({ sku: it.sku, token: tok, at: Date.now() }, opt.wid ? { wid: opt.wid } : {}));
+        this.lastSheet = { outcome: 'done', name: '', ms: Date.now() - shownAt };
+        this.restore().catch(() => {});
+      }
+      if (typeof this.onSettled === 'function') { try { this.onSettled(key, this.lastSheet); } catch (e4) { /* never block */ } }
+    }, (err) => {
+      clearTimeout(wd);
+      if (!hung) return;
+      this.buying = '';
+      this.lastSheet = { outcome: this.sheetOutcome(err), name: errName(err), ms: Date.now() - shownAt };
+      if (typeof this.onSettled === 'function') { try { this.onSettled(key, this.lastSheet); } catch (e4) { /* never block */ } }
+    });
     let res;
     try {
       res = await Promise.race([showP, guard]);
       if (res === '__guard') { const e = new Error(hung); e.name = 'TimeoutError'; throw e; }
     } catch (e) {
       e.stage = 'show'; e.playName = errName(e); e.elapsedMs = Date.now() - shownAt;
-      e.outcome = hung || this.sheetOutcome(e);
+      /* The app's own abort rejects the pending show() with AbortError before
+         Play answers the abort itself, and that is not the buyer changing
+         their mind: once we have asked, an AbortError is the asking. */
+      e.outcome = hung || ((asked && e.playName === 'AbortError') ? 'hung' : this.sheetOutcome(e));
       this.lastSheet = { outcome: e.outcome, name: e.playName, ms: e.elapsedMs };
       throw e;
     } finally { if (hung !== 'waiting') this.buying = ''; }

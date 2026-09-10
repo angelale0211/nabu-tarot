@@ -93,11 +93,13 @@ function storeRowHTML(item) {
 
 /* One row per distinct failure per session. diag() ends in a timestamp, so
    two lines are never equal and noteOops's own dedup never fires; the key
-   here is the line without `at=` and without the counters, which change on
-   their own between two readings of the very same failure. */
+   here is the line without `at=`, without the counters, and without how long
+   the sheet took - all of which change on their own between two readings of
+   the very same failure. The sheet's own outcome and name are kept, because
+   those are what make one failure a different failure from another. */
 const BILL_FILED = {};
 function fileBilling(line, where) {
-  const key = where + '|' + line.replace(/ at=\S+/, '').replace(/ tries=\d+/, '').replace(/ try=\d+/, '').replace(/ ms=\d+/, '');
+  const key = where + '|' + line.replace(/ at=\S+/, '').replace(/ tries=\d+/, '').replace(/ try=\d+/, '').replace(/ ms=\d+/, '').replace(/ sheet=(\S+?)\/\d+ms/, ' sheet=$1');
   if (BILL_FILED[key]) return;
   BILL_FILED[key] = true;
   noteOops(line, where);
@@ -170,7 +172,11 @@ function bindStore(root, redraw) {
           : why === 'noproduct' ? S.stItemOff
           : S.stFailed;
         const safe = (w) => String(w || '').replace(/[^A-Za-z0-9 :._-]/g, '').slice(0, 40);
-        const code = [(e && e.playName) || (e && e.name) || '', out || '', safe(why)].filter(Boolean).join('/');
+        /* The message behind a watchdog ending IS the outcome, and printing
+           both gives the reader `TimeoutError/hung/hung`, which reads like two
+           different things went wrong. Say it once. */
+        const wsafe = safe(why);
+        const code = [(e && e.playName) || (e && e.name) || '', out || '', wsafe === (out || '') ? '' : wsafe].filter(Boolean).join('/');
         const showCode = !!said && why !== 'signin' && !busy;
         st.textContent = said + (showCode && code ? ' (' + code + ')' : '');
       }
@@ -187,6 +193,19 @@ function bindStore(root, redraw) {
        a second purchase beside a live one. */
     finally { if (b.isConnected && BILL.buying !== key) b.disabled = false; }
   }));
+  /* An answer that lands after the app has stopped waiting has nobody to
+     tell. On 2026-09-10 a buyer closed the sheet a minute after the waiting
+     line appeared: the purchase ended correctly, and the screen sat there
+     with a grey button and a line saying Play was still working until the app
+     was opened again. Looked up in the live document, because the render this
+     was bound to may be long gone; if the store is not on screen there is
+     nothing to say and nothing to do. */
+  BILL.onSettled = (key, sheet) => {
+    const b = $('[data-buy="' + key + '"]'), st = $('[data-st="' + key + '"]'), S2 = T();
+    if (!b || !b.isConnected) return;
+    b.disabled = false;
+    if (st) { st.className = 'hint st'; st.textContent = (sheet && sheet.outcome === 'done') ? S2.stRestoring : S2.stAborted; }
+  };
   $$('[data-diag]', root).forEach((b) => b.addEventListener('click', async () => {
     const st = $('[data-diagst]', root);
     await copyText(BILL.diag(b.getAttribute('data-diag') || ''));
