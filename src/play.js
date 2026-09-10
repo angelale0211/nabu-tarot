@@ -620,6 +620,7 @@ function renderTree() {
       if (busy) return;
       busy = true;
       const tree = $('#tree'), pet = $('#petals'), btn = $('#shake'), box = $('#treemsg');
+      const fid = document.activeElement === btn || document.activeElement === tree ? document.activeElement.id : '';   // read before the spin switches the button off
       luckSpend('tree');
       btn.disabled = true; box.hidden = true;
       tree.classList.remove('sway'); void tree.offsetWidth; tree.classList.add('sway');
@@ -641,8 +642,9 @@ function renderTree() {
         busy = false;
         /* Redrawn either way: the free turn is now spent and the screen says so,
            and on Plus the day's list under the tree has a new line. draw() shows
-           the message from msg and labels the button from it. */
-        draw();
+           the message from msg and labels the button from it. An open list
+           stays open and the focus stays where it was. */
+        todayRedraw(draw, fid);
       }, 1400);
     };
     const sb = $('#shake'); if (sb) sb.addEventListener('click', shake);
@@ -740,6 +742,7 @@ function renderCoin() {
       /* The press cannot normally arrive with an empty box, but a turn is too
          expensive to lose to a keyboard or a script that gets one through. */
       if (!askedQ()) { btn.disabled = true; return; }
+      const fid = document.activeElement === btn ? btn.id : '';   // read before the spin switches the button off
       luckSpend('coin');
       btn.disabled = true; $('#coinres').textContent = '';
       el.classList.add('spin');
@@ -752,8 +755,9 @@ function renderCoin() {
         $('#coinres').textContent = side === 'yes' ? S.coinYes : S.coinNo;
         /* Redrawn either way: the free turn is now spent and the screen says so,
            and on Plus the day's list under the coin has a new line. The face is
-           drawn from side, so the answer stays where it landed. */
-        draw();
+           drawn from side, so the answer stays where it landed. An open list
+           stays open and the focus stays on the button. */
+        todayRedraw(draw, fid);
       }, 1000);
     });
   };

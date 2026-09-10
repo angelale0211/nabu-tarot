@@ -12,7 +12,7 @@
      carries this notice with it. See LICENSE. -->
 <meta name="author" content="Nabu Tarot">
 <meta name="copyright" content="Copyright (c) 2025-2026 Nabu Tarot. All rights reserved.">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'none'; object-src 'none'; form-action 'self'; script-src 'self' 'sha256-qAafI3fDXkUPXA8G/x6WjRznaxCPhhK7ZxQEEqvUP2E=' https://www.gstatic.com https://apis.google.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; font-src 'self' data:; media-src 'self' data: blob:; worker-src 'self'; connect-src 'self' https://*.googleapis.com https://*.google.com https://*.firebaseio.com https://*.cloudfunctions.net https://*.workers.dev https://generativelanguage.googleapis.com; frame-src https://*.firebaseapp.com https://accounts.google.com https://*.facebook.com">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'none'; object-src 'none'; form-action 'self'; script-src 'self' 'sha256-AZmWMhIpwnbjEPbuRVVjPVN77529Ozn6nGCi1dl3q/Q=' https://www.gstatic.com https://apis.google.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; font-src 'self' data:; media-src 'self' data: blob:; worker-src 'self'; connect-src 'self' https://*.googleapis.com https://*.google.com https://*.firebaseio.com https://*.cloudfunctions.net https://*.workers.dev https://generativelanguage.googleapis.com; frame-src https://*.firebaseapp.com https://accounts.google.com https://*.facebook.com">
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <meta name="theme-color" content="#EFE9FA">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -18841,6 +18841,18 @@ function todayHistoryHTML(kind) {
     + '<p class="hint turnsnote">' + esc(S.todayReset) + '</p>';
 }
 
+/* The coin and the tree redraw their whole screen after a turn, so the day's
+   list gets its new line. The redraw must not undo what the person did: a list
+   they opened stays open, and the button they pressed keeps the keyboard's
+   focus. Which button had it is read when the turn begins, because the button
+   is switched off for the spin and a switched-off button loses the focus. */
+function todayRedraw(draw, focusId) {
+  const was = $('#main details.turns'), open = !!(was && was.open);
+  draw();
+  if (open) { const now = $('#main details.turns'); if (now) now.open = true; }
+  if (focusId) { const b = document.getElementById(focusId); if (b) b.focus({ preventScroll: true }); }
+}
+
 /* ============================ backend ============================
    Accounts, profiles, messages and bookings live in Firebase (Auth +
    Firestore) when CONFIG.firebase is set. Without it, BE.enabled is false and
@@ -20285,9 +20297,12 @@ function renderPick(args, params) {
     + '<div class="fan deck" id="fan">' + fan + '</div>'
     + '<div class="deckbar"><button type="button" class="btn sm" data-step="-1" aria-label="prev">‹</button><span id="deckpos" class="faint"></span><button type="button" class="btn sm" data-step="1" aria-label="next">›</button></div>'
     /* A visitor whose one card was on an earlier day cannot tap this fan, and
-       the fan must not simply do nothing: the sign-in card says what to do. */
-    + '<div class="tap-hint">' + (pick.chosen == null && !guestSpent() ? esc(S.tapACard) : '') + '</div>'
-    + (pick.chosen == null && guestSpent() ? needAccountHTML(S.needInDraw) : '')
+       the fan must not simply do nothing: the sign-in card says what to do.
+       Both follow pickSpent(), the rule the tap itself obeys. On a cold start
+       the screen is drawn before the account answers, so a phone with Nabu
+       Plus looks signed out for a moment, and it may still draw. */
+    + '<div class="tap-hint">' + (pick.chosen == null && !pickSpent() ? esc(S.tapACard) : '') + '</div>'
+    + (pick.chosen == null && pickSpent() && guestSpent() ? needAccountHTML(S.needInDraw) : '')
     + '<div class="reveal" id="reveal"></div>'
     + lookStripHTML('cardback');
   bindDeck(m);
@@ -29354,6 +29369,7 @@ function renderTree() {
       if (busy) return;
       busy = true;
       const tree = $('#tree'), pet = $('#petals'), btn = $('#shake'), box = $('#treemsg');
+      const fid = document.activeElement === btn || document.activeElement === tree ? document.activeElement.id : '';   // read before the spin switches the button off
       luckSpend('tree');
       btn.disabled = true; box.hidden = true;
       tree.classList.remove('sway'); void tree.offsetWidth; tree.classList.add('sway');
@@ -29375,8 +29391,9 @@ function renderTree() {
         busy = false;
         /* Redrawn either way: the free turn is now spent and the screen says so,
            and on Plus the day's list under the tree has a new line. draw() shows
-           the message from msg and labels the button from it. */
-        draw();
+           the message from msg and labels the button from it. An open list
+           stays open and the focus stays where it was. */
+        todayRedraw(draw, fid);
       }, 1400);
     };
     const sb = $('#shake'); if (sb) sb.addEventListener('click', shake);
@@ -29474,6 +29491,7 @@ function renderCoin() {
       /* The press cannot normally arrive with an empty box, but a turn is too
          expensive to lose to a keyboard or a script that gets one through. */
       if (!askedQ()) { btn.disabled = true; return; }
+      const fid = document.activeElement === btn ? btn.id : '';   // read before the spin switches the button off
       luckSpend('coin');
       btn.disabled = true; $('#coinres').textContent = '';
       el.classList.add('spin');
@@ -29486,8 +29504,9 @@ function renderCoin() {
         $('#coinres').textContent = side === 'yes' ? S.coinYes : S.coinNo;
         /* Redrawn either way: the free turn is now spent and the screen says so,
            and on Plus the day's list under the coin has a new line. The face is
-           drawn from side, so the answer stays where it landed. */
-        draw();
+           drawn from side, so the answer stays where it landed. An open list
+           stays open and the focus stays on the button. */
+        todayRedraw(draw, fid);
       }, 1000);
     });
   };

@@ -86,9 +86,12 @@ function renderPick(args, params) {
     + '<div class="fan deck" id="fan">' + fan + '</div>'
     + '<div class="deckbar"><button type="button" class="btn sm" data-step="-1" aria-label="prev">‹</button><span id="deckpos" class="faint"></span><button type="button" class="btn sm" data-step="1" aria-label="next">›</button></div>'
     /* A visitor whose one card was on an earlier day cannot tap this fan, and
-       the fan must not simply do nothing: the sign-in card says what to do. */
-    + '<div class="tap-hint">' + (pick.chosen == null && !guestSpent() ? esc(S.tapACard) : '') + '</div>'
-    + (pick.chosen == null && guestSpent() ? needAccountHTML(S.needInDraw) : '')
+       the fan must not simply do nothing: the sign-in card says what to do.
+       Both follow pickSpent(), the rule the tap itself obeys. On a cold start
+       the screen is drawn before the account answers, so a phone with Nabu
+       Plus looks signed out for a moment, and it may still draw. */
+    + '<div class="tap-hint">' + (pick.chosen == null && !pickSpent() ? esc(S.tapACard) : '') + '</div>'
+    + (pick.chosen == null && pickSpent() && guestSpent() ? needAccountHTML(S.needInDraw) : '')
     + '<div class="reveal" id="reveal"></div>'
     + lookStripHTML('cardback');
   bindDeck(m);

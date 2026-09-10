@@ -74,3 +74,15 @@ function todayHistoryHTML(kind) {
     + '<div class="sbody"><ul class="turnlist">' + rows.join('') + '</ul></div></details>'
     + '<p class="hint turnsnote">' + esc(S.todayReset) + '</p>';
 }
+
+/* The coin and the tree redraw their whole screen after a turn, so the day's
+   list gets its new line. The redraw must not undo what the person did: a list
+   they opened stays open, and the button they pressed keeps the keyboard's
+   focus. Which button had it is read when the turn begins, because the button
+   is switched off for the spin and a switched-off button loses the focus. */
+function todayRedraw(draw, focusId) {
+  const was = $('#main details.turns'), open = !!(was && was.open);
+  draw();
+  if (open) { const now = $('#main details.turns'); if (now) now.open = true; }
+  if (focusId) { const b = document.getElementById(focusId); if (b) b.focus({ preventScroll: true }); }
+}

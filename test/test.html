@@ -3997,6 +3997,12 @@ async function go(hash, sel) { W().location.hash = hash; await sleep(30); return
       fresh(); await go('#/home', '.tiles'); await go('#/pick', '#reveal .hero');
       ok(!!p1 && N2.pick.chosen === p1.id && N2.pick.focus === 'money' && d2.querySelector('.hero .name').textContent === N2.DECK.vi.filter((c) => c.id === p1.id)[0].name && !d2.querySelector('#redraw') && /Hôm nay bạn đã rút/.test(d2.querySelector('#reveal').textContent),
         'after a reload the same day, the same card in the same focus is back, and the day\'s one draw is spent');
+      /* An app left open overnight: nothing reloads, the deck still holds
+         yesterday's card, and the first visit of the new day deals afresh. */
+      N2.pick.day = yiso; yesterday(); put('nabu-pick-day', { d: yiso, id: (p1 ? p1.id : 'major-1'), focus: 'money' });
+      await go('#/home', '.tiles'); await go('#/pick', '#fan .slot');
+      ok(N2.pick.chosen === null && d2.querySelectorAll('#fan .slot').length === 78 && !d2.querySelector('#reveal .hero'),
+        'an app left open overnight deals a fresh fan in the morning, without a reload');   // (guard)
       yesterday(); put('nabu-pick-day', { d: yiso, id: (p1 ? p1.id : 'major-1'), focus: 'money' }); fresh();
       await go('#/home', '.tiles'); await go('#/pick', '#fan .slot');
       ok(!d2.querySelector('#reveal .hero') && d2.querySelectorAll('#fan .slot').length === 78 && N2.pick.chosen === null && d2.querySelector('.tap-hint').textContent.length > 0,
@@ -4017,6 +4023,14 @@ async function go(hash, sel) { W().location.hash = hash; await sleep(30); return
         'and under the list a line says the earlier turns go tomorrow');
       if (det) { det.querySelector('summary').click(); await sleep(60); }
       ok(!!det && det.open, 'the list opens on a tap');
+      /* The screen redraws after every turn so the new line shows. That must
+         not shut a list the person opened, or lose the keyboard's place. */
+      d2.querySelector('#coinflip').focus();
+      await flip('Bốn?');
+      { const d4 = d2.querySelector('details.turns[data-turns="coin"]');
+        ok(!!d4 && d4.open && d4.querySelectorAll('.turnlist li').length === 4 && /Bốn\?/.test(d4.querySelector('.turnlist li').textContent),
+          'a flip with the list open leaves it open, with the new turn at the top');
+        ok(!!d2.querySelector('#coinflip') && d2.activeElement === d2.querySelector('#coinflip'), 'and the flip button keeps the keyboard\'s focus'); }
       { const said = {};
         for (const lg of ['en', 'de']) {
           W().saveProfileLocal({ lang: lg }); W().applyAccountLang();
@@ -4041,6 +4055,14 @@ async function go(hash, sel) { W().location.hash = hash; await sleep(30); return
       const pb = N2.pick.chosen, det3 = d2.querySelector('#reveal details.turns[data-turns="pick"]');
       ok(pa !== pb && !!det3 && det3.querySelectorAll('.turnlist li').length === 2 && det3.querySelector('.turnlist li a').getAttribute('href') === '#/pick?card=' + pb + '&focus=' + N2.pick.focus && det3.querySelectorAll('.turnlist li a')[1].getAttribute('href').indexOf('card=' + pa) > 0,
         'two draws on Plus fold under the card into a list that links each card back to its reading');
+      { /* A link in the list opens that card's reading again. That is not a
+           draw, so neither the list nor the day's card changes. */
+        const pd = w2.localStorage.getItem('nabu-pick-day'), n0 = TD ? TD.list('pick').length : -1;
+        if (det3) { det3.open = true; det3.querySelectorAll('.turnlist li a')[1].click(); }
+        await waitFor(() => N2.pick.chosen === pa && d2.querySelector('#reveal .hero'), 4000);
+        ok(!!det3 && n0 === 2 && N2.pick.chosen === pa && TD.list('pick').length === n0 && w2.localStorage.getItem('nabu-pick-day') === pd,
+          'opening an earlier card from the list shows its reading and does not count as a draw');   // (guard)
+      }
       fresh(); await go('#/home', '.tiles'); await go('#/pick', '#reveal .hero');
       ok(N2.pick.chosen === pb && !!d2.querySelector('#redraw') && !!d2.querySelector('#reveal details.turns'),
         'after a reload on Plus the latest card is back with its list, and a fresh draw is still offered');
@@ -4057,6 +4079,15 @@ async function go(hash, sel) { W().location.hash = hash; await sleep(30); return
       await go('#/home', '.tiles'); const drew = await go('#/pick', '#fan .slot');
       ok(drew && d2.querySelectorAll('#fan .slot').length === 78 && !d2.querySelector('#reveal .hero') && !!d2.querySelector('#main .needin') && d2.querySelector('.tap-hint').textContent === '',
         'the day after, the visitor is shown the fan and asked to sign in, instead of a screen that fails to draw');
+      /* The same phone on a cold start with Nabu Plus: the screen is drawn
+         before the account answers, so for a moment nobody is signed in, but
+         Plus is on the phone and a card may be drawn. The fan has to say so
+         rather than ask for a sign-in. */
+      plus(true); fresh();
+      await go('#/home', '.tiles'); await go('#/pick', '#fan .slot');
+      ok(d2.querySelector('.tap-hint').textContent.length > 0 && !d2.querySelector('#main > .needin'),
+        'before the account answers, a phone with Nabu Plus is invited to tap a card, not asked to sign in');
+      plus(false);
       /* ---- put the phone back the way it was ---- */
       N2.BE.enabled = keepBE.on; N2.BE.user = keepBE.user;
       W().saveProfileLocal({ lang: 'vi' }); W().applyAccountLang();
