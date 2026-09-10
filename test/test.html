@@ -3659,6 +3659,54 @@ async function go(hash, sel) { W().location.hash = hash; await sleep(30); return
         + (uniq.length ? ' [' + uniq.slice(0, 4).join('; ') + ']' : ''));
     }
 
+    { /* The quick links under the logo used to break onto a second row on a
+         phone, with Báo lỗi stranded on a line of its own: every separator was
+         a flex item with a gap on each side, so the five dots ate more than a
+         hundred pixels of a 324px row. Measured in all three languages, since
+         Vietnamese and German carry the longest labels. */
+      const frame = document.getElementById('f'), wasWide = frame.style.width;
+      const keepF = { lang: W().localStorage.getItem('nabu-lang'), plang: W().NABU.PROFILE().lang };
+      const rowsAt = async (lg, px) => {
+        W().saveProfileLocal({ lang: lg }); W().applyAccountLang();
+        frame.style.width = px + 'px';
+        /* applyAccountLang only sets the language; the footer is written by the
+           next render. Going to the same hash fires no change and renders
+           nothing, so this steps away and back - without it the check reads
+           Vietnamese three times and calls it three languages. */
+        await go('#/learn', '#main');
+        await go('#/home', '#main');
+        await sleep(160);
+        const box = D().querySelector('.foot .links');
+        if (!box) return { rows: 0, on: '' };
+        const tops = [];
+        for (const el of box.children) {
+          const t = Math.round(el.getBoundingClientRect().top);
+          if (!tops.some((v) => Math.abs(v - t) < 6)) tops.push(t);
+        }
+        return { rows: tops.length, on: D().documentElement.getAttribute('lang') };
+      };
+      const spill = [];
+      for (const lg of ['vi', 'en', 'de']) {
+        for (const px of [360, 390, 430]) {
+          const r = await rowsAt(lg, px);
+          if (r.on !== lg) spill.push('read ' + lg + ' as ' + r.on);
+          else if (r.rows !== 1) spill.push(lg + ' at ' + px + ': ' + r.rows + ' rows');
+        }
+      }
+      ok(spill.length === 0,
+        'every link under the logo fits on one row on a phone, in all three languages'
+        + (spill.length ? ' [' + spill.join('; ') + ']' : ''));
+      const pair = D().querySelector('.foot .links .soc');
+      ok(pair && pair.querySelectorAll('a').length === 2 && !pair.querySelector('.dot'),
+        'Instagram and Facebook sit together as one pair, with no dot between them');
+      W().saveProfileLocal({ lang: 'vi' }); W().applyAccountLang();
+      W().saveProfileLocal({ lang: keepF.plang || '' });
+      if (keepF.lang == null) W().localStorage.removeItem('nabu-lang'); else W().localStorage.setItem('nabu-lang', keepF.lang);
+      frame.style.width = wasWide || '430px';
+      await go('#/home', '#main');
+      await sleep(120);
+    }
+
     /* ---- the reading column on a desk ----
        A card page written for a hand left the picture stranded top left on a
        wide window, with the reading running a hundred and ten characters to
