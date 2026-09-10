@@ -1039,10 +1039,11 @@ async function go(hash, sel) { W().location.hash = hash; await sleep(30); return
       const sw = w.navigator.serviceWorker; let calls = 0;
       sw.getRegistration = () => Promise.resolve({ update: () => { calls++; return Promise.resolve(); } });
       Object.defineProperty(d, 'visibilityState', { configurable: true, get: () => 'visible' });
+      N.UPD.last = Date.now();
       d.dispatchEvent(new w.Event('visibilitychange'));
       await sleep(60);
       const throttled = calls === 0;
-      if (N.UPD) N.UPD.last = 0;
+      N.UPD.last = 0;
       d.dispatchEvent(new w.Event('visibilitychange'));
       await sleep(60);
       const asked = calls === 1;
@@ -1050,12 +1051,25 @@ async function go(hash, sel) { W().location.hash = hash; await sleep(30); return
       await sleep(60);
       ok(throttled && asked && calls === 1,
         'an app brought back days later asks for the new release once, not on every glance at the screen');
-      if (N.UPD) N.UPD.last = 0;
+      /* The Play sheet hides the page while it is open and shows it again the
+         moment it closes, so this fires in the middle of a purchase. A release
+         installed then would take the sheet's answer, the lock and the late
+         handlers down with the document - and this repo ships several times a
+         day, while testers are buying. */
+      N.UPD.last = 0; N.BILL.buying = 'playing';
+      d.dispatchEvent(new w.Event('visibilitychange'));
+      await sleep(60);
+      const waited = calls === 1;
+      N.BILL.buying = '';
+      d.dispatchEvent(new w.Event('visibilitychange'));
+      await sleep(60);
+      ok(waited && calls === 2, 'a new release waits until the purchase in flight is over');
+      N.UPD.last = 0;
       Object.defineProperty(d, 'visibilityState', { configurable: true, get: () => 'hidden' });
       d.dispatchEvent(new w.Event('visibilitychange'));
       await sleep(60);
-      ok(calls === 1, 'and an app on its way out of sight asks for nothing');
-      delete d.visibilityState; delete sw.getRegistration; if (N.UPD) N.UPD.last = Date.now(); }
+      ok(calls === 2, 'and an app on its way out of sight asks for nothing');
+      delete d.visibilityState; delete sw.getRegistration; N.UPD.last = Date.now(); }
     ok(d.querySelectorAll('.themes [data-theme-pick]').length === 4 && /📱/.test(d.querySelector('.themes').textContent) && d.querySelector('.themes').getBoundingClientRect().height < 60, 'the four themes sit on one line as icon chips');
     ok(d.querySelectorAll('.row3 .btn').length === 3 && /💬/.test(d.querySelector('.row3').textContent) && /🎓/.test(d.querySelector('.row3').textContent) && d.querySelector('.row3').getBoundingClientRect().height < 60, 'contact, report and tour share one line, each with an icon');
     ok(/Hồ sơ/.test(d.querySelector('.nav a[href="#/me"]').textContent) && !/Tôi/.test(d.querySelector('.nav').textContent), 'the Me tab is called Hồ sơ (Profile)');

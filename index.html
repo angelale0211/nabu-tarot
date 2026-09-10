@@ -12,7 +12,7 @@
      carries this notice with it. See LICENSE. -->
 <meta name="author" content="Nabu Tarot">
 <meta name="copyright" content="Copyright (c) 2025-2026 Nabu Tarot. All rights reserved.">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'none'; object-src 'none'; form-action 'self'; script-src 'self' 'sha256-C/MkEnlC7OPG6gFmRkxiTi6Ic1WMTm7wtdzh6ITe+o0=' https://www.gstatic.com https://apis.google.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; font-src 'self' data:; media-src 'self' data: blob:; worker-src 'self'; connect-src 'self' https://*.googleapis.com https://*.google.com https://*.firebaseio.com https://*.cloudfunctions.net https://*.workers.dev https://generativelanguage.googleapis.com; frame-src https://*.firebaseapp.com https://accounts.google.com https://*.facebook.com">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'none'; object-src 'none'; form-action 'self'; script-src 'self' 'sha256-Aoh6Y3bWoT3pJyjiAnIrqdqwQbTBULXL9lpzW1q6edc=' https://www.gstatic.com https://apis.google.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; font-src 'self' data:; media-src 'self' data: blob:; worker-src 'self'; connect-src 'self' https://*.googleapis.com https://*.google.com https://*.firebaseio.com https://*.cloudfunctions.net https://*.workers.dev https://generativelanguage.googleapis.com; frame-src https://*.firebaseapp.com https://accounts.google.com https://*.facebook.com">
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <meta name="theme-color" content="#EFE9FA">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -18658,6 +18658,12 @@ function boot() {
     UPD.last = Date.now();
     document.addEventListener('visibilitychange', () => {
       if (document.visibilityState !== 'visible') return;
+      /* Never while a purchase is in flight. The Play sheet hides this page
+         while it is open and shows it again the moment it closes, so this
+         fires in the middle of a purchase; a release installed then takes the
+         sheet's answer, the lock and the late handlers down with the
+         document. The next return to the screen checks instead. */
+      if (typeof BILL !== 'undefined' && BILL && BILL.buying) return;
       if (Date.now() - UPD.last < UPD.every) return;
       UPD.last = Date.now();
       navigator.serviceWorker.getRegistration().then((reg) => { if (reg) return reg.update(); }).catch(() => { /* offline, or no worker yet */ });

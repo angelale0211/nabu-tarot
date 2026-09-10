@@ -1079,6 +1079,12 @@ function boot() {
     UPD.last = Date.now();
     document.addEventListener('visibilitychange', () => {
       if (document.visibilityState !== 'visible') return;
+      /* Never while a purchase is in flight. The Play sheet hides this page
+         while it is open and shows it again the moment it closes, so this
+         fires in the middle of a purchase; a release installed then takes the
+         sheet's answer, the lock and the late handlers down with the
+         document. The next return to the screen checks instead. */
+      if (typeof BILL !== 'undefined' && BILL && BILL.buying) return;
       if (Date.now() - UPD.last < UPD.every) return;
       UPD.last = Date.now();
       navigator.serviceWorker.getRegistration().then((reg) => { if (reg) return reg.update(); }).catch(() => { /* offline, or no worker yet */ });
