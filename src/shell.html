@@ -1882,6 +1882,11 @@ button.unl{display:block;width:100%;text-align:left;font:inherit;color:inherit;c
   .tiles:has(>:nth-child(4):last-child){grid-template-columns:repeat(4,1fr)}
   .pickcta{grid-template-columns:170px 1fr;padding:22px}
   .pricesec{display:grid;grid-template-columns:repeat(2,1fr);gap:0 18px;align-items:start}
+  /* .hint + * gives whatever follows a hint a 12px top margin - the gap under
+     the hint in a single column. In this grid that margin landed on the left
+     card only, so the first row of every section started 12px lower on the
+     left than on the right. The hint's own bottom margin is the gap here. */
+  .pricesec>.hint + *,#svcwrap>.hint + *{margin-top:0}
   .pricesec>h2,.pricesec>.hint,.pricesec>.paynote,.pricesec>p{grid-column:1/-1}
   /* The section is two columns of tiles, so anything that is NOT a tile has to
      be told to cross both or it silently becomes a tile-shaped thing in the

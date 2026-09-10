@@ -12,7 +12,7 @@
      carries this notice with it. See LICENSE. -->
 <meta name="author" content="Nabu Tarot">
 <meta name="copyright" content="Copyright (c) 2025-2026 Nabu Tarot. All rights reserved.">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'none'; object-src 'none'; form-action 'self'; script-src 'self' 'sha256-Sjzg0H+Wu7i5pLIoAorvn1RDFs3BnDwJMSmvcdtA1Cw=' https://www.gstatic.com https://apis.google.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; font-src 'self' data:; media-src 'self' data: blob:; worker-src 'self'; connect-src 'self' https://*.googleapis.com https://*.google.com https://*.firebaseio.com https://*.cloudfunctions.net https://*.workers.dev https://generativelanguage.googleapis.com; frame-src https://*.firebaseapp.com https://accounts.google.com https://*.facebook.com">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'none'; object-src 'none'; form-action 'self'; script-src 'self' 'sha256-HgumWCXC0RjeXRdH3ja6Yj/8ygpCZUCI/kyhGCksrkc=' https://www.gstatic.com https://apis.google.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; font-src 'self' data:; media-src 'self' data: blob:; worker-src 'self'; connect-src 'self' https://*.googleapis.com https://*.google.com https://*.firebaseio.com https://*.cloudfunctions.net https://*.workers.dev https://generativelanguage.googleapis.com; frame-src https://*.firebaseapp.com https://accounts.google.com https://*.facebook.com">
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <meta name="theme-color" content="#EFE9FA">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -2048,6 +2048,11 @@ button.unl{display:block;width:100%;text-align:left;font:inherit;color:inherit;c
   .tiles:has(>:nth-child(4):last-child){grid-template-columns:repeat(4,1fr)}
   .pickcta{grid-template-columns:170px 1fr;padding:22px}
   .pricesec{display:grid;grid-template-columns:repeat(2,1fr);gap:0 18px;align-items:start}
+  /* .hint + * gives whatever follows a hint a 12px top margin - the gap under
+     the hint in a single column. In this grid that margin landed on the left
+     card only, so the first row of every section started 12px lower on the
+     left than on the right. The hint's own bottom margin is the gap here. */
+  .pricesec>.hint + *,#svcwrap>.hint + *{margin-top:0}
   .pricesec>h2,.pricesec>.hint,.pricesec>.paynote,.pricesec>p{grid-column:1/-1}
   /* The section is two columns of tiles, so anything that is NOT a tile has to
      be told to cross both or it silently becomes a tile-shaped thing in the
@@ -2903,7 +2908,7 @@ const COURSES = [
     blurb: { vi: 'Bảy phương pháp có công cụ làm ngay trong app: WOOP, bảng tầm nhìn có ảnh, nghi thức trăng, kế hoạch nếu-thì, buông bỏ, giới hạn, nến và đá. Mọi thứ bạn viết được lưu trên máy và có thể xoá làm lại bất cứ lúc nào.', en: 'Seven methods with tools you use right in the app: WOOP, a vision board with photos, Moon rituals, if-then plans, letting go, limits, candles and stones. Everything you write is saved on your device and can be cleared and redone any time.', de: 'Sieben Methoden mit Werkzeugen direkt in der App: WOOP, Vision Board mit Bildern, Mondrituale, Wenn-dann-Pläne, Loslassen, Grenzen sowie Kerzen und Steine. Deine Einträge werden auf deinem Gerät gespeichert und können jederzeit gelöscht oder neu begonnen werden.' },
     includes: { vi: ['7 bài hướng dẫn nâng cao', 'Bảng ảnh, kế hoạch, nghi thức, buông bỏ', 'Nến và đá theo mục đích', 'Dùng 12 tháng, xem offline'], en: ['7 advanced guides', 'Photo board, plans, ritual and letting-go tools', 'Candles and stones by purpose', '12 months of access, works offline'], de: ['7 vertiefende Guides', 'Vision Board, Pläne, Rituale und Loslassen', 'Kerzen und Steine nach Absicht', '12 Monate Zugriff, auch offline'] } },
   { id: 'plus', kind: 'unlock', icon: '✨', to: '#/play/coin', price: 79000, months: 12,
-    sum: { vi: 'Không giới hạn lượt tung đồng xu và rung cây, mở toàn bộ giao diện.', en: 'The coin and the tree without limit, and every design.', de: 'Unbegrenzt Münze werfen und den Botschaftsbaum schütteln – plus alle Designs.' },
+    sum: { vi: 'Không giới hạn lượt tung đồng xu, rung cây, mở mọi giao diện.', en: 'The coin and the tree without limit, and every design.', de: 'Unbegrenzt Münze werfen und den Botschaftsbaum schütteln – plus alle Designs.' },
     name: { vi: 'Nabu Plus', en: 'Nabu Plus', de: 'Nabu Plus' },
     blurb: { vi: 'Nabu Plus mở toàn bộ các phần ngoài khu vực bạn nhỏ. Bạn được tung đồng xu và rung cây thông điệp không giới hạn số lượt, đồng thời sử dụng tất cả giao diện của ứng dụng: mặt sau lá bài, cây thông điệp, đồng xu và trang nhật ký.',
       en: 'Everything that is not a companion: flip the coin and shake the message tree as often as you like, and take every design in the app — card backs, message trees, coins and diary pages.', de: 'Nabu Plus schaltet alle Bereiche außerhalb der Begleiterwelt frei. Du kannst die Münze und den Botschaftsbaum unbegrenzt nutzen und alle Designs verwenden: Kartenrückseiten, Botschaftsbäume, Münzen und Tagebuchseiten.' },
@@ -2914,7 +2919,7 @@ const COURSES = [
      better deal and reads as one. Both open exactly the same thing; only the
      date they run to differs. */
   { id: 'pro6', kind: 'unlock', icon: '👑', to: '#/play/pet', price: 149000, months: 6,
-    sum: { vi: 'Trọn quyền lợi Nabu Plus, thêm linh thú và vật phẩm cho bạn nhỏ.', en: 'All of Plus, and the companions with everything for them.', de: 'Alles aus Nabu Plus, dazu Begleiter und ihre Gegenstände.' },
+    sum: { vi: 'Trọn quyền lợi Plus, thêm linh thú và vật phẩm cho bạn nhỏ.', en: 'All of Plus, and the companions with everything for them.', de: 'Alles aus Nabu Plus, dazu Begleiter und ihre Gegenstände.' },
     name: { vi: 'Nabu Pro · 6 tháng', en: 'Nabu Pro · 6 months', de: 'Nabu Pro · 6 Monate' },
     blurb: { vi: 'Nabu Pro bao gồm toàn bộ quyền lợi của Nabu Plus, cùng với khu vực bạn nhỏ: mười hai linh thú trong truyền thuyết, nuôi tối đa sáu bạn cùng lúc, đầy đủ thức ăn, nhà ở và trang phục dành cho các bạn ấy, thời gian chờ giữa hai bữa rút ngắn từ sáu giờ xuống còn hai giờ, và điểm kinh nghiệm nhân đôi.',
       en: 'Everything in Nabu Plus, and the companions besides: twelve spirit beasts, six of them at once, their good food, their homes and their clothes, a two-hour wait between meals instead of six, and double points.', de: 'Nabu Pro enthält alles aus Nabu Plus und zusätzlich die Begleiterwelt: zwölf mythische Begleiter, bis zu sechs gleichzeitig, alle Futtersorten, Zuhause und Kleidungsstücke, nur zwei statt sechs Stunden Wartezeit zwischen den Mahlzeiten und doppelte Erfahrungspunkte.' },
@@ -2937,7 +2942,7 @@ const COURSES = [
      "12 months" beside a single ceremony read as a subscription. */
   { id: 'wedding', kind: 'unlock', icon: '\uD83D\uDC92', to: '#/wedding', price: 30000, months: 12,
     term: { vi: '1 lễ cưới', en: '1 wedding', de: '1 Hochzeit' },
-    sum: { vi: 'Tổ chức lễ cưới trong ứng dụng, có khách mời và Nabu Cupid chủ hôn.', en: 'Hold a ceremony inside the app, with guests and Nabu Cupid to marry you.', de: 'Eine Zeremonie in der App – mit Gästen und Nabu Cupid als Zeremonienmeister.' },
+    sum: { vi: 'Tổ chức lễ cưới trên Nabu, có khách mời và Nabu Cupid chủ hôn.', en: 'A ceremony on Nabu, with guests and Nabu Cupid to marry you.', de: 'Heiraten auf Nabu – mit Gästen und Nabu Cupid als Trauredner.' },
     name: { vi: 'Lễ cưới trên Nabu', en: 'A wedding on Nabu', de: 'Hochzeit auf Nabu' },
     blurb: { vi: 'Hai bạn đã đính ước trên sợi tơ hồng có thể tổ chức một lễ cưới ngay trong ứng dụng. Bạn chọn ngày giờ, gửi thiệp mời cho bạn bè, và đến giờ, Nabu Cupid sẽ chủ hôn: hỏi lời thề của từng người, chờ hai bạn trả lời, rồi tuyên bố hai bạn nên duyên. Khách mời vào xem, gửi quà chúc mừng miễn phí, và tham gia màn tung hoa cưới ở cuối buổi lễ.',
       en: 'A couple engaged on the red thread can hold a ceremony inside the app. You choose the day and the hour, send invitations to your friends, and when the time comes Nabu Cupid marries you: the vows are asked one at a time, you answer them in front of everybody, and then you are declared married. Guests watch, send free congratulations, and join the bouquet toss at the end.', de: 'Wenn ihr euch über den Roten Faden verlobt habt, könnt ihr eine Zeremonie direkt in der App feiern. Ihr wählt Datum und Uhrzeit, verschickt Einladungen und Nabu Cupid führt euch durch die Zeremonie: Eure Versprechen werden nacheinander gefragt, ihr antwortet vor euren Gästen und werdet anschließend als verheiratet erklärt. Gäste können zuschauen, kostenlose Glückwünsche und Geschenke senden und am Ende beim Brautstraußwurf mitmachen.' },
@@ -3521,7 +3526,7 @@ const STR = {
     wedComing: 'Lễ cưới sắp tới', wedMineComing: (n) => 'Lễ cưới của bạn và ' + n,
     wedGuestComing: (p) => 'Lễ cưới của ' + p,
     wedAskTitle: 'Tổ chức lễ cưới trên Nabu?',
-    wedAskEngaged: 'Hai bạn đã đính ước. Nếu muốn, hai bạn có thể tổ chức một buổi lễ ngay trong ứng dụng: chọn ngày giờ, mời bạn bè, và Nabu Cupid sẽ chủ hôn.',
+    wedAskEngaged: 'Hai bạn đã đính ước. Nếu muốn, hai bạn có thể tổ chức một buổi lễ ngay trên Nabu: chọn ngày giờ, mời bạn bè, và Nabu Cupid sẽ chủ hôn.',
     wedAskMarried: 'Hai bạn đã là vợ chồng trên Nabu. Nếu muốn, hai bạn vẫn có thể tổ chức một buổi lễ có khách mời, do Nabu Cupid chủ hôn.',
     wedAskGo: 'Xem lễ cưới trên Nabu',
     alertWedAsk: () => '💒 Hai bạn có muốn tổ chức lễ cưới trên Nabu không?',
@@ -3615,7 +3620,7 @@ const STR = {
     wedEnter: 'Vào phòng cưới', wedEnterLater: 'Phòng cưới chưa mở cửa',
     wedEnterNow: 'Cửa đã mở. Hai bạn vào phòng để bắt đầu buổi lễ.',
     wedDoorsOpen: 'Đã mở cửa',
-    wedTitle: 'Lễ cưới trên Nabu', wedIntro: 'Hai người đã đính ước trên sợi tơ hồng có thể tổ chức một buổi lễ ngay trong ứng dụng, có khách mời và có Nabu Cupid chủ hôn.',
+    wedTitle: 'Lễ cưới trên Nabu', wedIntro: 'Hai người đã đính ước trên sợi tơ hồng có thể tổ chức một buổi lễ ngay trên Nabu, có khách mời và có Nabu Cupid chủ hôn.',
     wedCupid: 'Nabu Cupid',
     wedNeedAccount: 'Bạn cần đăng nhập để mở hoặc tham dự một lễ cưới.',
     wedNeedThread: 'Trước tiên bạn cần buộc sợi tơ hồng với một người.',
@@ -4352,7 +4357,7 @@ const STR = {
     wedComing: 'Coming up', wedMineComing: (n) => 'Your wedding with ' + n,
     wedGuestComing: (p) => 'The wedding of ' + p,
     wedAskTitle: 'Hold your wedding on Nabu?',
-    wedAskEngaged: 'You are engaged. If you would like, you can hold a ceremony inside the app: choose the day and hour, invite your friends, and Nabu Cupid will marry you.',
+    wedAskEngaged: 'You are engaged. If you would like, you can hold a ceremony on Nabu: choose the day and hour, invite your friends, and Nabu Cupid will marry you.',
     wedAskMarried: 'You are married on Nabu. If you would like, you can still hold a ceremony with guests, with Nabu Cupid to marry you.',
     wedAskGo: 'See a wedding on Nabu',
     alertWedAsk: (n) => '\uD83D\uDC92 Would you like to hold your wedding on Nabu?',
@@ -4446,7 +4451,7 @@ const STR = {
     wedEnter: 'Go into the room', wedEnterLater: 'The room is not open yet',
     wedEnterNow: 'The doors are open. Go in to begin the ceremony.',
     wedDoorsOpen: 'Doors open',
-    wedTitle: 'A wedding on Nabu', wedIntro: 'A couple engaged on the red thread can hold a ceremony inside the app, with guests, and Nabu Cupid to marry them.',
+    wedTitle: 'A wedding on Nabu', wedIntro: 'A couple engaged on the red thread can hold a ceremony on Nabu, with guests, and Nabu Cupid to marry them.',
     wedCupid: 'Nabu Cupid',
     wedNeedAccount: 'You need to be signed in to hold or attend a wedding.',
     wedNeedThread: 'You need a red thread with somebody first.',
@@ -5181,7 +5186,7 @@ const STR = {
     wedComing: 'Steht bevor', wedMineComing: (n) => 'Deine Hochzeit mit ' + n,
     wedGuestComing: (p) => 'Die Hochzeit von ' + p,
     wedAskTitle: 'Eure Hochzeit auf Nabu feiern?',
-    wedAskEngaged: 'Ihr seid verlobt. Wenn ihr möchtet, könnt ihr die Zeremonie in der App feiern: Wählt Tag und Stunde, ladet eure Freunde ein, und Nabu Cupid traut euch.',
+    wedAskEngaged: 'Ihr seid verlobt. Wenn ihr möchtet, könnt ihr die Zeremonie auf Nabu feiern: Wählt Tag und Stunde, ladet eure Freunde ein, und Nabu Cupid traut euch.',
     wedAskMarried: 'Ihr seid auf Nabu verheiratet. Wenn ihr möchtet, könnt ihr trotzdem eine Zeremonie mit Gästen feiern, bei der Nabu Cupid euch traut.',
     wedAskGo: 'Eine Hochzeit auf Nabu ansehen',
     alertWedAsk: (n) => '💒 Möchtet ihr eure Hochzeit bei Nabu feiern?',
@@ -5270,7 +5275,7 @@ const STR = {
     wedEnter: 'In den Raum gehen', wedEnterLater: 'Der Raum ist noch nicht offen',
     wedEnterNow: 'Die Türen sind offen. Geh hinein, um die Zeremonie zu beginnen.',
     wedDoorsOpen: 'Türöffnung',
-    wedTitle: 'Eine Hochzeit auf Nabu', wedIntro: 'Ein Paar, das auf dem roten Faden verlobt ist, kann die Zeremonie in der App feiern, mit Gästen, und Nabu Cupid traut die beiden.',
+    wedTitle: 'Eine Hochzeit auf Nabu', wedIntro: 'Ein Paar, das auf dem roten Faden verlobt ist, kann die Zeremonie auf Nabu feiern, mit Gästen, und Nabu Cupid traut die beiden.',
     wedCupid: 'Nabu Cupid',
     wedNeedAccount: 'Du musst angemeldet sein, um eine Hochzeit zu feiern oder dabei zu sein.',
     wedNeedThread: 'Du brauchst zuerst einen roten Faden mit jemandem.',
@@ -32288,7 +32293,7 @@ function adminSale(p) {
 ROUTES.admin = { nav: '', render: renderAdmin };
 
 /* ============================ boot ============================ */
-window.APP_VERSION = 'v220';
+window.APP_VERSION = 'v221';
 window.NABU = { CONFIG: CONFIG, SALE: SALE, salePrice: salePrice, loadActs: loadActs, BACK: BACK, LESSONS: LESSONS, localAnswer: localAnswer, compatVerdict: compatVerdict, numerologyOf: numerologyOf, ZDEEP: ZDEEP, lunarToday: lunarToday, solarToLunar: solarToLunar, DECK: DECK, INSIGHT: INSIGHT, KW: KW, ASK: ASK, TOPICS: TOPICS, GUIDES: GUIDES, SERVICES: SERVICES, COURSES: COURSES, ACCESS: ACCESS, INTERESTS: INTERESTS, plusOn: () => plusOn(), proOn: () => proOn(), luckUnlimited: () => luckUnlimited(), ZODIAC: ZODIAC, pick: pick, book: book, PLAY_ITEMS: PLAY_ITEMS, PLAY_SUB_SKUS: PLAY_SUB_SKUS, playItem: playItem, BILL: BILL, SUBS: SUBS, renderStore: renderStore, subStateWord: subStateWord,
   insightHTML: insightHTML, insightOf: insightOf, sunSignIndex: sunSignIndex, lifePath: lifePath, PROFILE: () => PROFILE, BE: BE, ACTS: ACTS,
   ANGELS: ANGELS, angelRead: angelRead, CODEBOOK: CODEBOOK, redeemCode: redeemCode, loadCodebook: loadCodebook, petHomeSVG: petHomeSVG, PET_HOMES: PET_HOMES, PET_WEARS: PET_WEARS, codeDigest: codeDigest, randomCode: randomCode, BANK: BANK, PETS: PETS, petSVG: petSVG, PET_COATS: PET_COATS, PET_KINDS: PET_KINDS, turnsMerge: turnsMerge, turnsLocal: turnsLocal, priceText: priceText, termText: termText, proSaveText: () => proSaveText(), wedFeeText: () => wedFeeText(), fmtPrice: fmtPrice, luckCut: luckCut, petLevel: petLevel, petStep: petStep, VOUCHERS: VOUCHERS, levelCoins: levelCoins, LOOKS: LOOKS,
