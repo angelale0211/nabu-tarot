@@ -3170,6 +3170,31 @@ async function go(hash, sel) { W().location.hash = hash; await sleep(30); return
         && !N.HANDLE_RE.test('.mai') && !N.HANDLE_RE.test('mai..') && !N.HANDLE_RE.test('a'.repeat(21)),
         'a handle is lower case, three to twenty, and neither starts nor ends with a dot');
 
+      /* ---- comments ---- */
+      { const nameWas = N.PROFILE().name;
+        await go('#/home', '#feed .post');
+        const pid = d.querySelector('#feed .post').getAttribute('data-id');
+        const cm = 'post:' + pid;
+        N.BE.user = { uid: 'uidA', email: 'a@test' }; w.saveProfileLocal({ name: 'Mai' });
+        ok(N.CMT.allowed('post', { id: 'x' }) && !N.CMT.allowed('post', { id: '2026-09-04-welcome', welcome: true })
+          && N.CMT.allowed('act', { id: 'q1', type: 'poll' }) && N.CMT.allowed('act', { id: 'p1', type: 'pile' })
+          && !N.CMT.allowed('act', { id: 'w1', type: 'wish' }),
+          'comments are offered under posts, polls and piles - never under the welcome note or the wish jar');
+        await N.CMT.add(cm, '  Cảm ơn Nabu!  ');
+        const ck = () => Object.keys(db.docs).filter((k) => k.indexOf('comments/') === 0);
+        const c0 = db.docs[ck()[0]];
+        ok(ck().length === 1 && c0.on === cm && c0.uid === 'uidA' && c0.name === 'Mai' && c0.text === 'Cảm ơn Nabu!' && c0.nabu === false
+          && Object.keys(c0).sort().join(',') === 'at,nabu,name,on,text,uid' && !/@/.test(JSON.stringify(c0)),
+          'a comment is six fields: where, who, the shown name, the words trimmed, not Nabu, a server time - and no email anywhere in it');
+        let threw = ''; try { await N.CMT.add(cm, 'x'.repeat(601)); } catch (e) { threw = e.message; }
+        ok(threw === 'long' && ck().length === 1, 'six hundred and one characters are refused before they leave the phone');
+        N.BE.user = { uid: 'admin1', email: 'angela_le_@outlook.com' };
+        await N.CMT.add(cm, 'Cảm ơn bạn nhé');
+        const cA = ck().map((k) => db.docs[k]).filter((c) => c.nabu)[0];
+        ok(cA && cA.name === 'Nabu' && cA.uid === 'admin1', 'Nabu signs as Nabu, and the row says so');
+        N.BE.user = { uid: 'uidA', email: 'a@test' };
+        /* Task 3 continues here */
+        w.saveProfileLocal({ name: nameWas }); N.CMT.counts = {}; }
       N.BE.db = keep.db; N.BE.user = keep.user; N.BE.enabled = keep.on; w.confirm = keep.confirm;
       w.localStorage.removeItem('nabu-love');
       /* This check is about the guest view, so it says so. Leaving it to the
