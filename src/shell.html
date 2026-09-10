@@ -832,6 +832,8 @@ h1 .pileico{width:34px;height:27px;vertical-align:-3px;margin-right:2px}
 .thr-head{display:flex;align-items:center;gap:12px;margin-bottom:10px}.thr-head b{display:block}.thr-head i{font-style:normal;color:var(--fg-faint);font-size:12.5px;font-weight:500}
 .tabs button{position:relative}.tabs .tb{display:inline-block;margin-left:6px;background:var(--pink-ink);color:#fff;font-size:10.5px;border-radius:999px;min-width:17px;height:17px;line-height:17px;text-align:center;padding:0 5px;vertical-align:1px}
 .admin-sum .cnt{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:8px 0 10px}.admin-sum .cnt a{background:var(--surface-2);border-radius:14px;padding:12px;text-align:center;text-decoration:none;color:inherit}.admin-sum .cnt b{display:block;font-size:26px;font-family:var(--display);color:var(--link)}.admin-sum .cnt span{font-size:12.5px;color:var(--fg-soft)}
+/* A third count sits under the first two and takes the whole row. */
+.admin-sum .cnt a:nth-child(3){grid-column:1/-1}
 /* Three columns that stretch to the same height: the small buttons, the box
    to type in, and Send. Pinned to the bottom they were level only when the box
    held one line. */

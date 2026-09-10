@@ -2057,7 +2057,20 @@ async function go(hash, sel) { W().location.hash = hash; await sleep(30); return
         const notify = () => ls.slice().forEach((f) => f());
         /* Real snapshots carry a handle back to the document they came from,
            which is how anything deletes what a query found. */
-        const snap = (k) => ({ exists: docs[k] !== undefined, id: k.split('/').pop(), data: () => docs[k],
+        /* Asked for serverTimestamps: 'estimate', Firestore fills a time the
+           server has not stamped yet with the phone's own clock. The stand-in
+           does the same, so a screen that asks for estimates is seen doing
+           it; asked for nothing, the placeholder stays as it is, which the app
+           reads as no time yet. */
+        const pendingAt = (v) => !!v && typeof v === 'object' && typeof v.isEqual === 'function' && typeof v.toMillis !== 'function';
+        const estimated = (v) => {
+          if (!v || typeof v !== 'object') return v;
+          const o = Object.assign({}, v);
+          Object.keys(o).forEach((f) => { if (pendingAt(o[f])) { const t = Date.now(); o[f] = { toMillis: () => t, toDate: () => new Date(t) }; } });
+          return o;
+        };
+        const snap = (k) => ({ exists: docs[k] !== undefined, id: k.split('/').pop(),
+          data: (o) => (o && o.serverTimestamps === 'estimate') ? estimated(docs[k]) : docs[k],
           get ref() { return docRef(k); } });
         const watch = (make) => (cb) => { const f = () => cb(make()); ls.push(f); f(); return () => { const i = ls.indexOf(f); if (i > -1) ls.splice(i, 1); }; };
         const docRef = (k) => ({
@@ -3225,7 +3238,11 @@ async function go(hash, sel) { W().location.hash = hash; await sleep(30); return
             + ' [' + got.join(', ') + ']'); }
         N.BE.user = { uid: 'uidA', email: 'a@test' };
         /* Already on #/home, and going to the hash already showing redraws
-           nothing: away and back, so the card is drawn after the comments. */
+           nothing: away and back, so the card is drawn after the comments. The
+           comments above went straight through CMT with no page listening, and
+           the count kept for the feed is set by a page's listener; a new
+           session is what asks the number afresh. */
+        N.CMT.counts = {};
         await go('#/news', '#news .post'); await go('#/home', '#feed .post');
         await waitFor(() => d.querySelector('#feed .post [data-cmtn="' + cm + '"] span') && /2/.test(d.querySelector('#feed .post [data-cmtn="' + cm + '"] span').textContent), 3000);
         ok(d.querySelector('#feed .post [data-cmtn="' + cm + '"]').getAttribute('href') === '#/post/' + pid
@@ -3243,6 +3260,7 @@ async function go(hash, sel) { W().location.hash = hash; await sleep(30); return
         await waitFor(() => d.querySelectorAll('.cmts .cmt').length === 3 && d.querySelector('.cmts .cmtin').value === '', 3000);
         ok(d.querySelectorAll('.cmts .cmt').length === 3 && d.querySelector('.cmts .cmtin').value === '' && d.querySelector('.cmts h3 .n').textContent === '3',
           'sending shows the line at once, empties the box, and the heading counts it');
+        ok(N.CMT.counts[cm] === 3, 'the number kept for the card in the feed is the number of lines on the page, not one more [' + N.CMT.counts[cm] + ']');
         ok(d.querySelectorAll('.cmts .cmt.me [data-cmtdel]').length === 2 && !d.querySelector('.cmts .cmt.nabu [data-cmtdel]')
           && !d.querySelector('.cmts .cmt.nabu [data-flag]') && !d.querySelector('.cmts .cmt.me [data-flag]'),
           'a reader may delete their own lines only, and is offered no flag on themselves or on Nabu');
@@ -3250,6 +3268,21 @@ async function go(hash, sel) { W().location.hash = hash; await sleep(30); return
           ok(d.querySelectorAll('.cmts .cmt').length === 3 && /Chắc chắn/.test(del.textContent), 'one tap on delete asks; nothing is gone yet');
           del.click(); await waitFor(() => d.querySelectorAll('.cmts .cmt').length === 2, 3000);
           ok(d.querySelectorAll('.cmts .cmt').length === 2, 'the second tap removes it'); }
+        { /* A write the server refuses late - after the button has stopped
+             waiting and said "Đã gửi." - must not leave the words gone: they go
+             back into the box, and the reason is said under it. */
+          const realDb = N.BE.db;
+          N.BE.db = { collection: (c) => { const r = realDb.collection(c); return c !== 'comments' ? r
+            : Object.assign({}, r, { add: () => new Promise((res, rej) => setTimeout(() => {
+              const e = new Error('Missing or insufficient permissions.'); e.code = 'permission-denied'; rej(e); }, 3000)) }); } };
+          d.querySelector('.cmts .cmtin').value = 'Lời bị từ chối'; d.querySelector('[data-cmtsend]').click();
+          await sleep(2700);
+          await waitFor(() => d.querySelector('.cmts .cmtin').value === 'Lời bị từ chối' && d.querySelector('.cmts .cmtst').textContent, 2500);
+          N.BE.db = realDb;
+          const back = d.querySelector('.cmts .cmtin').value, why = d.querySelector('.cmts .cmtst').textContent;
+          d.querySelector('.cmts .cmtin').value = ''; d.querySelector('.cmts .cmtst').textContent = '';
+          ok(back === 'Lời bị từ chối' && /mở|Firestore|rules/i.test(why),
+            'a comment the server refuses after the button stopped waiting comes back into the box, with the reason under it [' + back + ' | ' + why + ']'); }
         await go('#/home', '.tiles'); await sleep(60);
         ok(db.watchers() === w0, 'leaving the post page drops its listener');
         N.BE.user = null;
@@ -3262,8 +3295,8 @@ async function go(hash, sel) { W().location.hash = hash; await sleep(30); return
         N.BE.user = { uid: 'uidA', email: 'a@test' }; N.BE.listeners.forEach((cb) => { try { cb(N.BE.user); } catch (e) { /* the alerts streams */ } });
         await waitFor(() => d.querySelector('.cmts .cmtin'), 3000);
         ok(!!d.querySelector('.cmts .cmtin'), 'a post page opened before sign-in resolved gets its box once the account is known');
-        await go('#/post/2026-09-04-welcome', '#main .post, #main .empty'); await sleep(60);
-        ok(!d.querySelector('.cmts'), 'the note that introduces Nabu Tarot has no comments, even on its own page');
+        await go('#/post/2026-09-04-welcome', '#main .post[data-id="2026-09-04-welcome"]'); await sleep(60);
+        ok(!!d.querySelector('#main .post[data-id="2026-09-04-welcome"]') && !d.querySelector('.cmts'), 'the note that introduces Nabu Tarot has no comments, even on its own page');
         { /* Right above Send the box says which name the comment will carry, and
              how to change it. The same rule decides both, so what it says is
              what is published. */
@@ -3271,14 +3304,15 @@ async function go(hash, sel) { W().location.hash = hash; await sleep(30); return
           await go('#/home', '.tiles'); await go('#/post/' + pid, '.cmts .cmtin');
           await waitFor(() => d.querySelector('.cmts .cmt.nabu'), 3000);
           const plain = line('.cmts .cmtas'), a = d.querySelector('.cmts .cmtas a[href="#/me"]'), ah = a ? a.getBoundingClientRect().height : 0;
-          const pub = d.querySelector('.cmts .cmtform .cmtpublic'), row = d.querySelector('.cmts .cmtform .row');
+          const pub = d.querySelector('.cmts .cmtform .cmtpublic'), row = d.querySelector('.cmts .cmtform .row'), asEl = d.querySelector('.cmts .cmtas');
+          const above = !!(asEl && row && (asEl.compareDocumentPosition(row) & 4));
           const tag = line('.cmts .cmt.nabu .nabutag'), who = line('.cmts .cmt.nabu b');
           N.BE.user = { uid: 'uidA', email: 'a@test', displayName: ' mai ' };
           await go('#/home', '.tiles'); await go('#/post/' + pid, '.cmts .cmtin');
           const masked = line('.cmts .cmtas');
           N.BE.user = { uid: 'uidA', email: 'a@test' };
           ok(plain === 'Bạn bình luận với tên: Mai Đổi tên' && ah >= 40 && masked === 'Bạn bình luận với tên: Bạn đọc Đổi tên'
-            && !!row && !!d.querySelector('.cmts .cmtas') && !!(d.querySelector('.cmts .cmtas').compareDocumentPosition(row) & 4),
+            && above,
             'right above Send the box says which name the comment will carry - the nickname, or "Bạn đọc" when it is only the name the account came with - with a 40px link to change it'
             + ' [' + plain + ' | ' + masked + ']');
           ok(!!pub && !!row && pub.textContent === 'Bình luận hiển thị công khai với tên bạn chọn.' && !!(row.compareDocumentPosition(pub) & 4),
@@ -3331,8 +3365,23 @@ async function go(hash, sel) { W().location.hash = hash; await sleep(30); return
           ok(d.querySelector('#acts .act-poll') && d.querySelector('.cmts[data-cmts="act:q9"]') && d.querySelector('.cmts .cmtin')
             && d.querySelector('#acts').compareDocumentPosition(d.querySelector('.cmts')) & 4,
             'a poll page carries the comments under the poll');
+          { /* A shared link opened cold is routed more than once before it
+               settles - the first paint, the sale settings, the account - and
+               each pass opens a listener. Only one may be left holding. */
+            await sleep(60);
+            const w1 = db.watchers();
+            w.route(); w.route(); w.route(); await sleep(250);
+            ok(!!d.querySelector('.cmts[data-cmts="act:q9"]') && db.watchers() === w1,
+              'a page routed three times over keeps one live listener for its comments, not three [' + w1 + ' -> ' + db.watchers() + ']'); }
           await go('#/play/p9', '.cmts');
           ok(!!d.querySelector('.cmts[data-cmts="act:p9"]'), 'so does a pile page');
+          { const at = (ms) => ({ toMillis: () => ms, toDate: () => new Date(ms) });
+            db.put('comments/o2', { on: 'act:p9', uid: 'uidB', name: 'Sau', text: 'viết sau', nabu: false, at: at(2000000) });
+            db.put('comments/o1', { on: 'act:p9', uid: 'uidC', name: 'Trước', text: 'viết trước', nabu: false, at: at(1000000) });
+            await waitFor(() => d.querySelectorAll('.cmts .cmt').length === 2, 2000);
+            const order = Array.from(d.querySelectorAll('.cmts .cmt b')).map((b) => b.textContent);
+            await db.collection('comments').doc('o1').delete(); await db.collection('comments').doc('o2').delete();
+            ok(order.join(',') === 'Trước,Sau', 'comments are listed oldest first by the time the server gave them, whatever order they arrive in [' + order.join(',') + ']'); }
           await go('#/play/w9', '#acts .act-wish'); await sleep(60);
           ok(!d.querySelector('.cmts'), 'the wish jar keeps its promise: no comments, because nobody reads what is written there');
           { /* On a desk the page is one column down the middle, and the comments
@@ -3367,7 +3416,14 @@ async function go(hash, sel) { W().location.hash = hash; await sleep(30); return
           ok(fr && fr.kind === 'comment' && fr.by === 'uidB' && fr.about === 'uidA' && fr.where === cm && /tụ 2/.test(fr.text) && /Đã gửi báo cáo/.test(d.querySelector('[data-cmtflag]').textContent),
             'reporting files a flag Nabu reads in the dashboard: who, about whom, under which post, the words - and thanks the person');
           d.querySelector('.cmts .cmt:not(.nabu) [data-flag]').click(); await sleep(30);
-          d.querySelector('[data-cmtflag] #flagblk').click(); await sleep(100);
+          /* The stand-in tells every listener about every write, so the block's
+             own write to the account would redraw the list by itself and hide a
+             missing redraw. That write is taken out of the way: the block must
+             redraw the list. */
+          { const realDb = N.BE.db;
+            N.BE.db = { collection: (c) => c === 'users' ? { doc: () => ({ set: async () => {} }) } : realDb.collection(c) };
+            d.querySelector('[data-cmtflag] #flagblk').click(); await sleep(100);
+            N.BE.db = realDb; }
           ok(d.querySelectorAll('.cmts .cmt').length === 1 && (JSON.parse(w.localStorage.getItem('nabu-blocked') || '[]')).indexOf('uidA') > -1,
             'blocking hides that person\'s lines here and on every screen that asks MOD');
           w.localStorage.removeItem('nabu-blocked'); delete db.docs['users/uidB']; }
@@ -3384,6 +3440,27 @@ async function go(hash, sel) { W().location.hash = hash; await sleep(30); return
         await go('#/me', '.admin-sum'); await sleep(60);
         ok(d.querySelector('.admin-sum a[href="#/admin?tab=comments"] b') && d.querySelector('.admin-sum a[href="#/admin?tab=comments"] b').textContent === '1',
           'the admin card on the Me tab counts new comments beside messages and bookings');
+        { const tiles = Array.from(d.querySelectorAll('.admin-sum .cnt a')).map((t) => t.getBoundingClientRect()), cnt = d.querySelector('.admin-sum .cnt');
+          const rc = cnt ? cnt.getBoundingClientRect() : null;
+          ok(tiles.length === 3 && !!rc && Math.abs(tiles[0].top - tiles[1].top) < 1 && tiles[2].top > tiles[0].bottom
+            && Math.abs(tiles[2].left - rc.left) < 1 && Math.abs(tiles[2].right - rc.right) < 1,
+            'on the Me tab the third count spans the row under the first two, rather than standing half width on its own'); }
+        { /* While a list is on its way the dashboard says so, in words, in each
+             language. The two lists on the reports tab are held back here so the
+             words stay long enough to be read. */
+          const keepL = { lang: w.localStorage.getItem('nabu-lang'), plang: N.PROFILE().lang }, realDb = N.BE.db, said = [];
+          N.BE.db = { collection: (c) => (c === 'flags' || c === 'errors') ? { orderBy: () => ({ limit: () => ({ onSnapshot: () => () => {} }) }) } : realDb.collection(c) };
+          for (const lg of ['vi', 'en', 'de']) {
+            w.saveProfileLocal({ lang: lg }); w.applyAccountLang();
+            await go('#/learn', '#main'); await go('#/admin?tab=errors', '#replist');
+            said.push(((d.querySelector('#replist .hint') || {}).textContent || '').trim());
+          }
+          N.BE.db = realDb;
+          w.saveProfileLocal({ lang: 'vi' }); w.applyAccountLang();
+          w.saveProfileLocal({ lang: keepL.plang || '' });
+          if (keepL.lang == null) w.localStorage.removeItem('nabu-lang'); else w.localStorage.setItem('nabu-lang', keepL.lang);
+          await go('#/home', '.tiles');
+          ok(said.join('|') === 'Đang tải…|Loading…|Wird geladen…', 'while a list is on its way the dashboard says so in words, in all three languages [' + said.join('|') + ']'); }
         await go('#/admin?tab=posts', '#atabs'); await sleep(60);
         ok(d.querySelector('[data-t="comments"]') && !d.querySelector('[data-tb="comments"]').hidden && d.querySelector('[data-tb="comments"]').textContent === '1',
           'the dashboard has a comments tab whose badge counts what Nabu has not looked at');
@@ -3459,6 +3536,30 @@ async function go(hash, sel) { W().location.hash = hash; await sleep(30); return
           ok(bad.length === 0 && d.documentElement.getAttribute('lang') === 'vi',
             'the comments read in English and in German too: the heading, the empty line, the box, its button, the name line, the public notice, Nabu\'s tag and the sign-in line, with no Vietnamese left over'
             + (bad.length ? ' [' + bad.slice(0, 4).join('; ') + ']' : '')); }
+        { /* The count on a card is capped. The Firebase SDK the app loads has no
+             count() on a query, so the number is read from the comments
+             themselves, at most a hundred of them; a card with more says 99+.
+             Both paths: the stand-in's count(), and a query that has none and
+             honours limit(), as the real one does. */
+          for (let i = 0; i < 120; i++) db.docs['comments/many' + i] = { on: cm, uid: 'uidM', name: 'M', text: 't', nabu: false, at: i };
+          const shown = async () => {
+            N.CMT.counts = {}; await go('#/news', '#news .post'); await go('#/home', '#feed .post');
+            await waitFor(() => { const sp = d.querySelector('#feed .post [data-cmtn="' + cm + '"] span'); return sp && sp.textContent; }, 3000);
+            return (d.querySelector('#feed .post [data-cmtn="' + cm + '"] span') || {}).textContent || '';
+          };
+          const viaCount = await shown();
+          const realDb = N.BE.db; let asked = null;
+          N.BE.db = { collection: (c) => {
+            const r = realDb.collection(c); if (c !== 'comments') return r;
+            return { where: (f, op, v) => { const q = r.where(f, op, v);
+              return { get: () => q.get(), onSnapshot: q.onSnapshot,
+                limit: (n) => ({ get: async () => { asked = n; const sn = await q.get(); return { docs: sn.docs.slice(0, n) }; } }) }; } };
+          } };
+          const viaGet = await shown();
+          N.BE.db = realDb;
+          Object.keys(db.docs).filter((k) => k.indexOf('comments/many') === 0).forEach((k) => { delete db.docs[k]; });
+          ok(viaCount === '99+' && viaGet === '99+' && asked === 100,
+            'a card with more than ninety-nine comments says 99+, and reads no more than a hundred of them to know it [' + viaCount + ' | ' + viaGet + ' | ' + asked + ']'); }
         w.saveProfileLocal({ name: nameWas }); N.CMT.counts = {}; }
       N.BE.db = keep.db; N.BE.user = keep.user; N.BE.enabled = keep.on; w.confirm = keep.confirm;
       w.localStorage.removeItem('nabu-love');

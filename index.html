@@ -12,7 +12,7 @@
      carries this notice with it. See LICENSE. -->
 <meta name="author" content="Nabu Tarot">
 <meta name="copyright" content="Copyright (c) 2025-2026 Nabu Tarot. All rights reserved.">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'none'; object-src 'none'; form-action 'self'; script-src 'self' 'sha256-bXCGdKRvAFAgJTkCEa5R0bEkL7PgcLuUdJd6P9Yu/p8=' https://www.gstatic.com https://apis.google.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; font-src 'self' data:; media-src 'self' data: blob:; worker-src 'self'; connect-src 'self' https://*.googleapis.com https://*.google.com https://*.firebaseio.com https://*.cloudfunctions.net https://*.workers.dev https://generativelanguage.googleapis.com; frame-src https://*.firebaseapp.com https://accounts.google.com https://*.facebook.com">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'none'; object-src 'none'; form-action 'self'; script-src 'self' 'sha256-IvVlk96jAM6BUWWx2D1LwfylsCqV5+qd7AOzL2+/Q/k=' https://www.gstatic.com https://apis.google.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; font-src 'self' data:; media-src 'self' data: blob:; worker-src 'self'; connect-src 'self' https://*.googleapis.com https://*.google.com https://*.firebaseio.com https://*.cloudfunctions.net https://*.workers.dev https://generativelanguage.googleapis.com; frame-src https://*.firebaseapp.com https://accounts.google.com https://*.facebook.com">
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <meta name="theme-color" content="#EFE9FA">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -998,6 +998,8 @@ h1 .pileico{width:34px;height:27px;vertical-align:-3px;margin-right:2px}
 .thr-head{display:flex;align-items:center;gap:12px;margin-bottom:10px}.thr-head b{display:block}.thr-head i{font-style:normal;color:var(--fg-faint);font-size:12.5px;font-weight:500}
 .tabs button{position:relative}.tabs .tb{display:inline-block;margin-left:6px;background:var(--pink-ink);color:#fff;font-size:10.5px;border-radius:999px;min-width:17px;height:17px;line-height:17px;text-align:center;padding:0 5px;vertical-align:1px}
 .admin-sum .cnt{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:8px 0 10px}.admin-sum .cnt a{background:var(--surface-2);border-radius:14px;padding:12px;text-align:center;text-decoration:none;color:inherit}.admin-sum .cnt b{display:block;font-size:26px;font-family:var(--display);color:var(--link)}.admin-sum .cnt span{font-size:12.5px;color:var(--fg-soft)}
+/* A third count sits under the first two and takes the whole row. */
+.admin-sum .cnt a:nth-child(3){grid-column:1/-1}
 /* Three columns that stretch to the same height: the small buttons, the box
    to type in, and Send. Pinned to the bottom they were level only when the box
    held one line. */
@@ -3787,7 +3789,7 @@ const STR = {
     interests: 'Bạn quan tâm điều gì?',
     saveProfile: 'Lưu hồ sơ',
     editProfile: 'Sửa hồ sơ',
-    saved: 'Đã lưu',
+    saved: 'Đã lưu', loading: 'Đang tải…',
     myBookings: 'Lịch hẹn của tôi',
     noBookings: 'Bạn chưa có lịch hẹn nào.',
     status: { requested: 'Chờ xác nhận', confirmed: 'Đã xác nhận', declined: 'Không nhận', cancelled: 'Đã hủy', change_requested: 'Chờ duyệt giờ mới', cancel_requested: 'Chờ duyệt hủy' },
@@ -4624,7 +4626,7 @@ const STR = {
     interests: 'What do you care about?',
     saveProfile: 'Save profile',
     editProfile: 'Edit profile',
-    saved: 'Saved',
+    saved: 'Saved', loading: 'Loading…',
     myBookings: 'My bookings',
     noBookings: 'You have no bookings yet.',
     status: { requested: 'Awaiting confirmation', confirmed: 'Confirmed', declined: 'Declined', cancelled: 'Cancelled', change_requested: 'New time awaiting approval', cancel_requested: 'Cancellation pending' },
@@ -5453,7 +5455,7 @@ const STR = {
     interests: 'Was ist dir wichtig?',
     saveProfile: 'Profil speichern',
     editProfile: 'Profil bearbeiten',
-    saved: 'Gespeichert',
+    saved: 'Gespeichert', loading: 'Wird geladen…',
     myBookings: 'Meine Termine',
     noBookings: 'Du hast noch keine Termine.',
     status: { requested: 'Wartet auf Bestätigung', confirmed: 'Bestätigt', declined: 'Abgelehnt', cancelled: 'Abgesagt', change_requested: 'Neue Zeit wartet auf Zustimmung', cancel_requested: 'Absage wartet auf Bestätigung' },
@@ -19158,6 +19160,8 @@ const BE = {
    with orderBy() on another field: that needs a composite index the owner
    would have to make in the console by hand. */
 const CMT_MAX = 600;
+/* A card in the feed counts up to a hundred, then says 99+. */
+const CMT_CAP = 100;
 /* When a comment happened, as milliseconds. A row the server has not
    stamped yet - just written, or written offline - counts as newest. */
 const cmtMs = (c) => (c && c.at && typeof c.at.toMillis === 'function') ? c.at.toMillis()
@@ -19198,12 +19202,11 @@ const CMT = {
     if (t.length > CMT_MAX) throw new Error('long');
     await this.col().add({ on: key, uid: BE.user.uid, name: this.myName(), text: t, nabu: BE.isAdmin(),
       at: firebase.firestore.FieldValue.serverTimestamp() });
-    if (this.counts[key] != null) this.counts[key]++;
   },
   remove(id) { return this.col().doc(id).delete(); },
   watch(key, cb) {
     return this.col().where('on', '==', key).onSnapshot((s) => {
-      const rows = (s.docs || []).map((d) => Object.assign({ id: d.id }, d.data({ serverTimestamps: 'estimate' })));
+      const rows = (s.docs || []).map((d) => Object.assign({ id: d.id }, d.data()));
       rows.sort((a, b) => cmtMs(a) - cmtMs(b));
       this.counts[key] = rows.length;
       cb(rows);
@@ -19212,14 +19215,25 @@ const CMT = {
   async count(key) {
     if (!this.ok()) return null;
     if (this.counts[key] != null) return this.counts[key];
+    /* The Firebase SDK the app loads has no count() on a query, so the number
+       is read from the comments themselves - never more than the card shows. */
     try {
       const q = this.col().where('on', '==', key);
-      const n = typeof q.count === 'function' ? (await q.count().get()).data().count : (await q.get()).docs.length;
+      const n = typeof q.count === 'function' ? (await q.count().get()).data().count : (await q.limit(CMT_CAP).get()).docs.length;
       this.counts[key] = n;
       return n;
     } catch (e) { return null; }
   }
 };
+function cmtCountText(n) { return !n ? '' : (n >= CMT_CAP ? (CMT_CAP - 1) + '+' : String(n)); }
+/* A page that shows comments holds one listener. A link opened cold is routed
+   more than once before it settles, and each pass that finishes would leave
+   its own listener behind; the one that finishes last stops the one before. */
+function cmtHold(stop) {
+  if (!stop) return;
+  if (NAV.cleanup) { const c = NAV.cleanup; NAV.cleanup = null; try { c(); } catch (e) { /* already gone */ } }
+  NAV.cleanup = stop;
+}
 function cmtWhen(c) {
   const S = T(), ms = cmtMs(c);
   if (ms === Number.MAX_SAFE_INTEGER) return S.cmtJustNow;
@@ -19317,12 +19331,21 @@ function cmtMount(root, key) {
     if (!text) { st.textContent = S.cmtEmpty; ta.focus(); return; }
     if (text.length > CMT_MAX) { st.textContent = S.cmtTooLong; return; }
     send.disabled = true; st.textContent = '';
+    /* Offline, the write waits in the phone's queue and the listener has
+       already drawn the line; the button must not wait with it. A refusal
+       that comes later still has to be heard: the words go back into the box
+       (unless something new is being written there) and the reason is said. */
+    let refused = false;
+    const write = CMT.add(key, text);
+    write.catch((e) => {
+      refused = true;
+      if (!ta.value.trim()) ta.value = text;
+      st.textContent = e && e.message === 'signin' ? S.cmtSignIn : loveWhy(e);
+    });
     try {
-      /* Offline, the write waits in the phone's queue and the listener has
-         already drawn the line; the button must not wait with it. */
-      await Promise.race([CMT.add(key, text), new Promise((r) => setTimeout(r, 2500))]);
-      ta.value = ''; toast(S.cmtSent);
-    } catch (e) { st.textContent = e && e.message === 'signin' ? S.cmtSignIn : loveWhy(e); }
+      await Promise.race([write, new Promise((r) => setTimeout(r, 2500))]);
+      if (!refused) { ta.value = ''; toast(S.cmtSent); }
+    } catch (e) { /* said by the catch above */ }
     send.disabled = false;
   });
   return stop;
@@ -19330,7 +19353,7 @@ function cmtMount(root, key) {
 /* The number on each card in the feed. Asked once per card per session. */
 function cmtFillCounts(root) {
   $$('[data-cmtn]', root).forEach((el) => {
-    CMT.count(el.getAttribute('data-cmtn')).then((n) => { const s = $('span', el); if (s) s.textContent = n ? String(n) : ''; });
+    CMT.count(el.getAttribute('data-cmtn')).then((n) => { const s = $('span', el); if (s) s.textContent = cmtCountText(n); });
   });
 }
 
@@ -20166,7 +20189,7 @@ function postHTML(p, full) {
     + '<div class="body' + (long ? ' clamp' : '') + '">' + richHTML(raw) + '</div>'
     + (long ? '<button class="more" data-more>' + T().readMore + '</button>' : '')
     + (p.cards && p.cards.length ? '<div class="faint">' + T().cardsDrawn + '</div><div class="mini">' + p.cards.map((c) => miniHTML(c, true)).join('') + '</div>' : '')
-    + '<div class="foot">' + (!full && CMT.allowed('post', p) ? '<a class="cmtn" data-cmtn="' + esc(CMT.key('post', p.id)) + '" href="#/post/' + esc(p.id) + '" aria-label="' + esc(T().cmtTitle) + '">💬 <span>' + (CMT.counts[CMT.key('post', p.id)] || '') + '</span></a>' : '') + (p.link ? '<a class="btn sm" href="' + esc(p.link) + '" target="_blank" rel="noopener">' + esc(p.source || 'Facebook') + ' ↗</a>' : '') + '<button data-share>' + T().share + '</button></div>'
+    + '<div class="foot">' + (!full && CMT.allowed('post', p) ? '<a class="cmtn" data-cmtn="' + esc(CMT.key('post', p.id)) + '" href="#/post/' + esc(p.id) + '" aria-label="' + esc(T().cmtTitle) + '">💬 <span>' + cmtCountText(CMT.counts[CMT.key('post', p.id)]) + '</span></a>' : '') + (p.link ? '<a class="btn sm" href="' + esc(p.link) + '" target="_blank" rel="noopener">' + esc(p.source || 'Facebook') + ' ↗</a>' : '') + '<button data-share>' + T().share + '</button></div>'
     + '</article>';
 }
 function bindPost(root) {
@@ -20314,7 +20337,7 @@ async function renderPost(args) {
   m.innerHTML = '<p><a href="#/home">← ' + esc(T().backToFeed) + '</a></p>'
     + (p ? postHTML(p, true) + (talk ? cmtBoxHTML(key) : '') : '<p class="empty">' + esc(T().notFound) + '</p>');
   bindPost(m);
-  if (talk) { const stop = cmtMount(m, key); if (stop) NAV.cleanup = stop; }
+  if (talk) cmtHold(cmtMount(m, key));
 }
 /* ---- all posts, with search (#/news) ---- */
 async function renderNews() {
@@ -29218,7 +29241,7 @@ async function renderPlay(args) {
       + (talk ? cmtBoxHTML(key) : '')
       + '<p style="margin-top:12px"><a href="#/play" class="backlink">← ' + esc(S.actBack) + '</a></p>';
     bindActs($('#acts'), list);
-    if (talk) { const stop = cmtMount(m, key); if (stop) NAV.cleanup = stop; }
+    if (talk) cmtHold(cmtMount(m, key));
     return;
   }
   const diaryN = Object.keys(store.get('nabu-diary', {}) || {}).length;

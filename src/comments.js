@@ -12,6 +12,8 @@
    with orderBy() on another field: that needs a composite index the owner
    would have to make in the console by hand. */
 const CMT_MAX = 600;
+/* A card in the feed counts up to a hundred, then says 99+. */
+const CMT_CAP = 100;
 /* When a comment happened, as milliseconds. A row the server has not
    stamped yet - just written, or written offline - counts as newest. */
 const cmtMs = (c) => (c && c.at && typeof c.at.toMillis === 'function') ? c.at.toMillis()
@@ -52,12 +54,11 @@ const CMT = {
     if (t.length > CMT_MAX) throw new Error('long');
     await this.col().add({ on: key, uid: BE.user.uid, name: this.myName(), text: t, nabu: BE.isAdmin(),
       at: firebase.firestore.FieldValue.serverTimestamp() });
-    if (this.counts[key] != null) this.counts[key]++;
   },
   remove(id) { return this.col().doc(id).delete(); },
   watch(key, cb) {
     return this.col().where('on', '==', key).onSnapshot((s) => {
-      const rows = (s.docs || []).map((d) => Object.assign({ id: d.id }, d.data({ serverTimestamps: 'estimate' })));
+      const rows = (s.docs || []).map((d) => Object.assign({ id: d.id }, d.data()));
       rows.sort((a, b) => cmtMs(a) - cmtMs(b));
       this.counts[key] = rows.length;
       cb(rows);
@@ -66,14 +67,25 @@ const CMT = {
   async count(key) {
     if (!this.ok()) return null;
     if (this.counts[key] != null) return this.counts[key];
+    /* The Firebase SDK the app loads has no count() on a query, so the number
+       is read from the comments themselves - never more than the card shows. */
     try {
       const q = this.col().where('on', '==', key);
-      const n = typeof q.count === 'function' ? (await q.count().get()).data().count : (await q.get()).docs.length;
+      const n = typeof q.count === 'function' ? (await q.count().get()).data().count : (await q.limit(CMT_CAP).get()).docs.length;
       this.counts[key] = n;
       return n;
     } catch (e) { return null; }
   }
 };
+function cmtCountText(n) { return !n ? '' : (n >= CMT_CAP ? (CMT_CAP - 1) + '+' : String(n)); }
+/* A page that shows comments holds one listener. A link opened cold is routed
+   more than once before it settles, and each pass that finishes would leave
+   its own listener behind; the one that finishes last stops the one before. */
+function cmtHold(stop) {
+  if (!stop) return;
+  if (NAV.cleanup) { const c = NAV.cleanup; NAV.cleanup = null; try { c(); } catch (e) { /* already gone */ } }
+  NAV.cleanup = stop;
+}
 function cmtWhen(c) {
   const S = T(), ms = cmtMs(c);
   if (ms === Number.MAX_SAFE_INTEGER) return S.cmtJustNow;
@@ -171,12 +183,21 @@ function cmtMount(root, key) {
     if (!text) { st.textContent = S.cmtEmpty; ta.focus(); return; }
     if (text.length > CMT_MAX) { st.textContent = S.cmtTooLong; return; }
     send.disabled = true; st.textContent = '';
+    /* Offline, the write waits in the phone's queue and the listener has
+       already drawn the line; the button must not wait with it. A refusal
+       that comes later still has to be heard: the words go back into the box
+       (unless something new is being written there) and the reason is said. */
+    let refused = false;
+    const write = CMT.add(key, text);
+    write.catch((e) => {
+      refused = true;
+      if (!ta.value.trim()) ta.value = text;
+      st.textContent = e && e.message === 'signin' ? S.cmtSignIn : loveWhy(e);
+    });
     try {
-      /* Offline, the write waits in the phone's queue and the listener has
-         already drawn the line; the button must not wait with it. */
-      await Promise.race([CMT.add(key, text), new Promise((r) => setTimeout(r, 2500))]);
-      ta.value = ''; toast(S.cmtSent);
-    } catch (e) { st.textContent = e && e.message === 'signin' ? S.cmtSignIn : loveWhy(e); }
+      await Promise.race([write, new Promise((r) => setTimeout(r, 2500))]);
+      if (!refused) { ta.value = ''; toast(S.cmtSent); }
+    } catch (e) { /* said by the catch above */ }
     send.disabled = false;
   });
   return stop;
@@ -184,6 +205,6 @@ function cmtMount(root, key) {
 /* The number on each card in the feed. Asked once per card per session. */
 function cmtFillCounts(root) {
   $$('[data-cmtn]', root).forEach((el) => {
-    CMT.count(el.getAttribute('data-cmtn')).then((n) => { const s = $('span', el); if (s) s.textContent = n ? String(n) : ''; });
+    CMT.count(el.getAttribute('data-cmtn')).then((n) => { const s = $('span', el); if (s) s.textContent = cmtCountText(n); });
   });
 }

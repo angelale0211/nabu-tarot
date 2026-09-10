@@ -360,7 +360,7 @@ async function renderPlay(args) {
       + (talk ? cmtBoxHTML(key) : '')
       + '<p style="margin-top:12px"><a href="#/play" class="backlink">← ' + esc(S.actBack) + '</a></p>';
     bindActs($('#acts'), list);
-    if (talk) { const stop = cmtMount(m, key); if (stop) NAV.cleanup = stop; }
+    if (talk) cmtHold(cmtMount(m, key));
     return;
   }
   const diaryN = Object.keys(store.get('nabu-diary', {}) || {}).length;

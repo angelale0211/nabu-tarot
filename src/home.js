@@ -154,7 +154,7 @@ function postHTML(p, full) {
     + '<div class="body' + (long ? ' clamp' : '') + '">' + richHTML(raw) + '</div>'
     + (long ? '<button class="more" data-more>' + T().readMore + '</button>' : '')
     + (p.cards && p.cards.length ? '<div class="faint">' + T().cardsDrawn + '</div><div class="mini">' + p.cards.map((c) => miniHTML(c, true)).join('') + '</div>' : '')
-    + '<div class="foot">' + (!full && CMT.allowed('post', p) ? '<a class="cmtn" data-cmtn="' + esc(CMT.key('post', p.id)) + '" href="#/post/' + esc(p.id) + '" aria-label="' + esc(T().cmtTitle) + '">💬 <span>' + (CMT.counts[CMT.key('post', p.id)] || '') + '</span></a>' : '') + (p.link ? '<a class="btn sm" href="' + esc(p.link) + '" target="_blank" rel="noopener">' + esc(p.source || 'Facebook') + ' ↗</a>' : '') + '<button data-share>' + T().share + '</button></div>'
+    + '<div class="foot">' + (!full && CMT.allowed('post', p) ? '<a class="cmtn" data-cmtn="' + esc(CMT.key('post', p.id)) + '" href="#/post/' + esc(p.id) + '" aria-label="' + esc(T().cmtTitle) + '">💬 <span>' + cmtCountText(CMT.counts[CMT.key('post', p.id)]) + '</span></a>' : '') + (p.link ? '<a class="btn sm" href="' + esc(p.link) + '" target="_blank" rel="noopener">' + esc(p.source || 'Facebook') + ' ↗</a>' : '') + '<button data-share>' + T().share + '</button></div>'
     + '</article>';
 }
 function bindPost(root) {
@@ -302,7 +302,7 @@ async function renderPost(args) {
   m.innerHTML = '<p><a href="#/home">← ' + esc(T().backToFeed) + '</a></p>'
     + (p ? postHTML(p, true) + (talk ? cmtBoxHTML(key) : '') : '<p class="empty">' + esc(T().notFound) + '</p>');
   bindPost(m);
-  if (talk) { const stop = cmtMount(m, key); if (stop) NAV.cleanup = stop; }
+  if (talk) cmtHold(cmtMount(m, key));
 }
 /* ---- all posts, with search (#/news) ---- */
 async function renderNews() {
