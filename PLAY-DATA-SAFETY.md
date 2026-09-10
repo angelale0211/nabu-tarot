@@ -26,7 +26,7 @@ third-party sharing answers change: it is no longer "Google only".
 | Personal info | Other info (birthday, star sign, interests, search handle) | Yes | Star sign only → Anthropic | Personalisation, App functionality | Optional | `saveProfileLocal`, `src/ai.js:348` `profile.sign` |
 | Messages | Other in-app messages | Yes | No | App functionality | Optional | `threads/{uid}/messages` in Firestore |
 | Photos and videos | Photos | Yes | No | App functionality | Optional | chat images, shrunk on device (`chatImages: true`) |
-| App activity | Other user-generated content (bookings: package, topic, time, name, extra question, and birth date/time for a Tử vi package) | Yes | No | App functionality | Optional | `bookings` collection |
+| App activity | Other user-generated content (bookings: package, topic, time, name, extra question, and birth date/time for a Tử vi package; comments under posts, polls and pile readings: the nickname the person chose and their words, shown publicly because they chose to post them, since v225) | Yes | No | App functionality | Optional | `bookings` and `comments` collections |
 | App activity | Other actions (Nabu AI questions and the last six turns of that conversation) | Yes | **Yes → Cloudflare, Anthropic** | App functionality | Optional | `src/ai.js:341-348` |
 | App info and performance | Crash logs / diagnostics (app version, screen, browser, last error) | Yes | No | Diagnostics | Optional — only when you send a bug report | `src/report.js:32` |
 
@@ -39,7 +39,7 @@ the app, so no card or payment data is handled.
 - **Data is encrypted in transit** — yes. Everything is HTTPS; the built page
   carries a CSP that names each host it may reach (`build.py`).
 - **You can request that data be deleted** — yes. In the app: Profile →
-  Delete account, which removes the login, profile, messages and bookings
+  Delete account, which removes the login, profile, messages, bookings and comments
   (`BE.deleteAccount`, `src/backend.js:90`). There is also an email route in
   the policy, answered within 7 days.
 - **Committed to the Play Families Policy** — no; the app is stated as 13+.
