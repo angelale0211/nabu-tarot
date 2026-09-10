@@ -12,7 +12,7 @@
      carries this notice with it. See LICENSE. -->
 <meta name="author" content="Nabu Tarot">
 <meta name="copyright" content="Copyright (c) 2025-2026 Nabu Tarot. All rights reserved.">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'none'; object-src 'none'; form-action 'self'; script-src 'self' 'sha256-IX0rusNlYSZhNPYmBbd8FniVHqJUvszWw1Cjw5zefdI=' https://www.gstatic.com https://apis.google.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; font-src 'self' data:; media-src 'self' data: blob:; worker-src 'self'; connect-src 'self' https://*.googleapis.com https://*.google.com https://*.firebaseio.com https://*.cloudfunctions.net https://*.workers.dev https://generativelanguage.googleapis.com; frame-src https://*.firebaseapp.com https://accounts.google.com https://*.facebook.com">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'none'; object-src 'none'; form-action 'self'; script-src 'self' 'sha256-jxG4CEwxgznY5d6eMjKqjq1N+O5sHnahpzK9gPWsIp4=' https://www.gstatic.com https://apis.google.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; font-src 'self' data:; media-src 'self' data: blob:; worker-src 'self'; connect-src 'self' https://*.googleapis.com https://*.google.com https://*.firebaseio.com https://*.cloudfunctions.net https://*.workers.dev https://generativelanguage.googleapis.com; frame-src https://*.firebaseapp.com https://accounts.google.com https://*.facebook.com">
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <meta name="theme-color" content="#EFE9FA">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -22016,17 +22016,20 @@ const BILL = {
        still completed and remembered for restore(). Never a plain timeout. */
     let hung = '';
     const showP = req.show();
-    const guard = new Promise((resolve) => setTimeout(async () => {
+    /* Only ever read through the Promise.race below, so a guard left pending once show() has answered is awaited by nobody and costs nothing. */
+    let wd = 0;
+    const guard = new Promise((resolve) => { wd = setTimeout(async () => {
       try { await req.abort(); hung = 'hung'; } catch (e2) { hung = 'waiting'; }
       resolve('__guard');
-    }, this.sheetWaitMs));
+    }, this.sheetWaitMs); });
     showP.then((late) => {
+      clearTimeout(wd);
       if (hung !== 'waiting') return;
       this.buying = '';
       const tok = late && late.details && (late.details.purchaseToken || late.details.token);
       try { late.complete(tok ? 'success' : 'fail').catch(() => {}); } catch (e3) { /* closed */ }
       if (tok) this.remember(Object.assign({ sku: it.sku, token: tok, at: Date.now() }, opt.wid ? { wid: opt.wid } : {}));
-    }, () => { if (hung === 'waiting') this.buying = ''; });
+    }, () => { clearTimeout(wd); if (hung === 'waiting') this.buying = ''; });
     let res;
     try {
       res = await Promise.race([showP, guard]);

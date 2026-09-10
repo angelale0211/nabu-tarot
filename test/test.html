@@ -271,7 +271,7 @@ async function go(hash, sel) { W().location.hash = hash; await sleep(30); return
        this fake Google remembers, PaymentRequest hands back a token, and the
        /billing stub verifies against the same memory and writes the fake
        account the way the worker does. */
-    const play = { products: {}, subs: {}, next: 1, requests: [] };
+    const play = { products: {}, subs: {}, next: 1, requests: [], aborts: 0 };
     const playItem = (k) => N.PLAY_ITEMS.filter((i) => i.key === k)[0];
     const skuKey = (sku) => (N.PLAY_ITEMS.filter((i) => i.sku === sku)[0] || {}).key;
     let playKeep = null;
@@ -321,7 +321,7 @@ async function go(hash, sel) { W().location.hash = hash; await sleep(30); return
         w.PaymentRequest = function (methods, total) { const data = methods[0].data; play.requests.push(data); const it = N.PLAY_ITEMS.filter((i) => i.sku === data.sku)[0]; const tok = 'tok' + (play.next++);
           /* Play's own abort: it agrees when no sheet was ever really under
              way, and refuses when one is open somewhere. */
-          this.abort = async () => { if (play.showHang === 'sheet') throw new Error('open'); play.showHang = false; };
+          this.abort = async () => { play.aborts++; if (play.showHang === 'sheet') throw new Error('open'); play.showHang = false; };
           this.show = async () => {
             if (play.showHang) return new Promise(() => {});
             /* Play's own shape of failure: a name, and however long it took to
@@ -1665,6 +1665,17 @@ async function go(hash, sel) { W().location.hash = hash; await sleep(30); return
         ok(busy && busy.message === 'busy', 'and a programmatic second buy is refused as busy');
         play.showHang = false; N.BILL.buying = ''; N.BILL.sheetWaitMs = kw;
         await go('#/learn', '.tile'); await go('#/unlock?from=app', '.store'); }
+      { /* The wait only guards a sheet that never answered. Once the buyer
+           has closed one, Play must be left alone: an abort arriving long
+           after the sheet is gone is a stray call into somebody's Google
+           account, and it is what the buyer would see in a log they never
+           asked for. */
+        const kw = N.BILL.sheetWaitMs; N.BILL.sheetWaitMs = 100;
+        play.aborts = 0; play.showFail = { name: 'AbortError', delay: 30 };
+        await N.BILL.buy('playing').catch(() => {});
+        await new Promise((r) => setTimeout(r, 250));
+        ok(play.aborts === 0, 'a sheet the buyer already closed is not asked to close again half a minute later');
+        N.BILL.sheetWaitMs = kw; play.showFail = null; play.aborts = 0; }
       { /* Three renders of a broken store must file one row, not three.
            Counted at noteOops itself: its own five-per-session budget is
            spent by the failed buys above, and the page's CSP forbids eval, so

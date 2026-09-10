@@ -357,17 +357,20 @@ const BILL = {
        still completed and remembered for restore(). Never a plain timeout. */
     let hung = '';
     const showP = req.show();
-    const guard = new Promise((resolve) => setTimeout(async () => {
+    /* Only ever read through the Promise.race below, so a guard left pending once show() has answered is awaited by nobody and costs nothing. */
+    let wd = 0;
+    const guard = new Promise((resolve) => { wd = setTimeout(async () => {
       try { await req.abort(); hung = 'hung'; } catch (e2) { hung = 'waiting'; }
       resolve('__guard');
-    }, this.sheetWaitMs));
+    }, this.sheetWaitMs); });
     showP.then((late) => {
+      clearTimeout(wd);
       if (hung !== 'waiting') return;
       this.buying = '';
       const tok = late && late.details && (late.details.purchaseToken || late.details.token);
       try { late.complete(tok ? 'success' : 'fail').catch(() => {}); } catch (e3) { /* closed */ }
       if (tok) this.remember(Object.assign({ sku: it.sku, token: tok, at: Date.now() }, opt.wid ? { wid: opt.wid } : {}));
-    }, () => { if (hung === 'waiting') this.buying = ''; });
+    }, () => { clearTimeout(wd); if (hung === 'waiting') this.buying = ''; });
     let res;
     try {
       res = await Promise.race([showP, guard]);
