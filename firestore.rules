@@ -173,6 +173,43 @@ service cloud.firestore {
                             && shorterThan('aid', 120);
       allow delete: if isAdmin() || (request.auth != null && resource.data.uid == request.auth.uid);
     }
+    /* ---- comments under a post, a poll or a pile ----
+
+       Everyone reads them: a conversation under a post is public by nature,
+       and a stranger seeing that people talk here is the point of the count
+       in the feed. Only a signed-in person writes one, and it carries exactly
+       six fields: what it is under, who wrote it, the name they chose to
+       show, the words, whether it is Nabu's, and the moment the server took
+       it. Nothing else gets in - not an email, not a photo, not a uid dressed
+       up as a name - and nobody may sign as Nabu but Nabu.
+
+       No editing: a comment is what was said at the time. The writer may take
+       theirs back; Nabu may take any of them down.
+
+       The note that introduces Nabu Tarot is named here as well as in the
+       app: it is a welcome, not a conversation. The wish jar never reaches
+       this rule, because the app offers no box under it. */
+    match /comments/{id} {
+      allow read: if true;
+      allow create: if request.auth != null
+                    && request.resource.data.uid == request.auth.uid
+                    && request.resource.data.keys().hasOnly(['on', 'uid', 'name', 'text', 'nabu', 'at'])
+                    && request.resource.data.keys().hasAll(['on', 'uid', 'name', 'text', 'nabu', 'at'])
+                    && request.resource.data.on is string
+                    && request.resource.data.on.matches('^(post|act):[A-Za-z0-9._-]{1,80}$')
+                    && request.resource.data.on != 'post:2026-09-04-welcome'
+                    && request.resource.data.text is string
+                    && request.resource.data.text.trim().size() > 0
+                    && request.resource.data.text.size() <= 600
+                    && request.resource.data.name is string
+                    && request.resource.data.name.size() <= 40
+                    && !request.resource.data.name.matches('.*@.*')
+                    && request.resource.data.nabu is bool
+                    && (request.resource.data.nabu == false || isAdmin())
+                    && request.resource.data.at == request.time;
+      allow update: if false;
+      allow delete: if isAdmin() || (request.auth != null && resource.data.uid == request.auth.uid);
+    }
     /* ---- the red thread ----
        A handle points at one account and is claimed by that account alone.
        Readable one at a time by anyone signed in, because that is how you find
