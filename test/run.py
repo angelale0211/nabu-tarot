@@ -72,8 +72,19 @@ def run(url, extra=()):
     # Every run used to leave its browser profile behind. Six hundred of them
     # later the temp folder is slow enough to stall the run that made them, and
     # a suite that fails because of its own litter is worse than no suite.
+    # Only OLD ones, though: another window's suite may be running right now
+    # with its own profile, and deleting that from under its browser stalls or
+    # breaks that run (on 2026-09-10 three runs lost checks this way while two
+    # branches were tested side by side). A run takes minutes and Edge keeps
+    # touching a profile it is using, so anything untouched for half an hour
+    # is litter.
+    cutoff = time.time() - 30 * 60
     for old in glob.glob(os.path.join(tempfile.gettempdir(), 'nabu-edge-*')):
-        shutil.rmtree(old, ignore_errors=True)
+        try:
+            if os.path.getmtime(old) < cutoff:
+                shutil.rmtree(old, ignore_errors=True)
+        except OSError:
+            pass
     prof = tempfile.mkdtemp(prefix='nabu-edge-')
     # The suite is written against a fast-forwarded clock: it waits 30ms for a
     # screen to redraw, which is true when the clock is pretend and often false
