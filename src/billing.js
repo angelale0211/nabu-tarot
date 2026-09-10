@@ -357,9 +357,11 @@ const BILL = {
        The abort's own AbortError is classified as `hung`, never as the buyer
        cancelling. Play's answer to the abort can land after that error has
        been thrown, which changes nothing: the guard it resolves is then read
-       by nobody. Never a plain timeout - and where listPurchases() hangs
-       beside an open sheet, as it did on the emulator, restore()'s own bound
-       is what keeps it answerable. */
+       by nobody. Never a plain timeout: the abort is bounded like every other
+       call into Play, so a refusal, a rejection and a silence all end as
+       `waiting` - and where listPurchases() hangs beside an open sheet, as it
+       did on the emulator, restore()'s own bound is what keeps it
+       answerable. */
     let hung = '', asked = false;
     /* Not every refusal is a rejected promise. Chrome throws several of them
        out of show() itself - InvalidStateError, SecurityError,
@@ -378,7 +380,11 @@ const BILL = {
     let wd = 0;
     const guard = new Promise((resolve) => { wd = setTimeout(async () => {
       asked = true;
-      try { await req.abort(); hung = 'hung'; } catch (e2) { hung = 'waiting'; }
+      /* Bounded like every other call into Play: a refusal, a rejection and a
+         silence all end as `waiting`, which locks the button and abandons
+         nothing. An unbounded abort could hang here for ever, and then the
+         buyer would be left with a grey button and no line at all. */
+      try { await withTimeout(req.abort(), this.detailsMs); hung = 'hung'; } catch (e2) { hung = 'waiting'; }
       resolve('__guard');
     }, this.sheetWaitMs); });
     /* An answer that arrives after the watchdog has spoken, whichever way it
@@ -393,21 +399,32 @@ const BILL = {
     showP.then((late) => {
       clearTimeout(wd);
       if (!hung) return;
-      this.buying = '';
+      /* Only ever this purchase. If the shop has moved on - a second purchase
+         started while this one was waiting - the lock and the line belong to
+         that one now, and an answer to a sheet nobody is waiting on must not
+         unlock it or write over what it says. */
+      const mine = this.buying === key;
+      if (mine) this.buying = '';
       const tok = late && late.details && (late.details.purchaseToken || late.details.token);
       try { late.complete(tok ? 'success' : 'fail').catch(() => {}); } catch (e3) { /* closed */ }
       if (tok) {
         this.remember(Object.assign({ sku: it.sku, token: tok, at: Date.now() }, opt.wid ? { wid: opt.wid } : {}));
         this.lastSheet = { outcome: 'done', name: '', ms: Date.now() - shownAt };
         this.restore().catch(() => {});
+      } else {
+        /* Answered, and nothing was bought. Left as it was, the diagnostic
+           line would go on saying Play is still working on a sheet that has
+           closed. */
+        this.lastSheet = { outcome: 'aborted', name: 'NoToken', ms: Date.now() - shownAt };
       }
-      if (typeof this.onSettled === 'function') { try { this.onSettled(key, this.lastSheet); } catch (e4) { /* never block */ } }
+      if (mine && typeof this.onSettled === 'function') { try { this.onSettled(key, this.lastSheet); } catch (e4) { /* never block */ } }
     }, (err) => {
       clearTimeout(wd);
       if (!hung) return;
-      this.buying = '';
+      const mine = this.buying === key;
+      if (mine) this.buying = '';
       this.lastSheet = { outcome: this.sheetOutcome(err), name: errName(err), ms: Date.now() - shownAt };
-      if (typeof this.onSettled === 'function') { try { this.onSettled(key, this.lastSheet); } catch (e4) { /* never block */ } }
+      if (mine && typeof this.onSettled === 'function') { try { this.onSettled(key, this.lastSheet); } catch (e4) { /* never block */ } }
     });
     let res;
     try {

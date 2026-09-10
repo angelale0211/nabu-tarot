@@ -328,6 +328,9 @@ async function go(hash, sel) { W().location.hash = hash; await sleep(30); return
              the buyer changing their mind. */
           this.abort = async () => {
             play.aborts++;
+            /* And Play saying nothing at all, which is neither agreement nor
+               refusal and used to leave the app waiting for ever. */
+            if (play.abortHang) return new Promise(() => {});
             if (play.showHang === 'sheet') throw new Error('open');
             const rj = play.rejectShow; play.rejectShow = null; play.resolveShow = null;
             if (rj) { const e = new Error('aborted'); e.name = 'AbortError'; rj(e); }
@@ -1764,6 +1767,47 @@ async function go(hash, sel) { W().location.hash = hash; await sleep(30); return
           await waitFor(() => ((N.BILL.pendingList().filter((p) => p.token === 'lateTok')[0] || {}).tries || 0) >= 1, 4000);
           N.BILL.forget('lateTok'); }
         play.showHang = false; N.BILL.buying = ''; N.BILL.sheetWaitMs = kw;
+        { /* Three ways the wait could be confused, and must not be: an answer
+             arriving for a purchase nobody is waiting on any more, a sheet
+             that closed having bought nothing, and a Play that says nothing
+             at all to the abort it was asked for. */
+          const kw2 = N.BILL.sheetWaitMs; N.BILL.sheetWaitMs = 100;
+          play.showHang = 'sheet'; d.querySelector('.store [data-buy="playing"]').click();
+          await waitFor(() => stOf('playing') && /đang xử lý/.test(stOf('playing').textContent), 4000);
+          const saidWaiting = stOf('playing').textContent;
+          N.BILL.buying = 'other';
+          { const rj = play.rejectShow; play.rejectShow = null; play.resolveShow = null;
+            const shut = new Error('cancelled'); shut.name = 'AbortError'; if (rj) rj(shut);
+            await sleep(150); }
+          ok(N.BILL.buying === 'other' && d.querySelector('.store [data-buy="playing"]').disabled
+             && stOf('playing').textContent === saidWaiting,
+            'an answer to one purchase never unlocks the shop for another one that began while it was waiting');
+          /* That button is still locked and that line still says waiting,
+             which is the point of the check above - so the screen is drawn
+             again before the next one, exactly as a buyer leaving the store
+             and coming back would draw it. */
+          N.BILL.buying = ''; play.showHang = false;
+          await go('#/learn', '.tile'); await go('#/unlock?from=app', '.store');
+          play.showHang = 'sheet'; d.querySelector('.store [data-buy="playing"]').click();
+          await waitFor(() => stOf('playing') && /đang xử lý/.test(stOf('playing').textContent), 4000);
+          { const res = play.resolveShow; play.resolveShow = null; play.rejectShow = null;
+            if (res) res({ details: {}, complete: () => Promise.resolve() });
+            await waitFor(() => N.BILL.buying === '' && N.BILL.lastSheet && N.BILL.lastSheet.outcome !== 'waiting', 4000); }
+          ok(N.BILL.buying === '' && N.BILL.lastSheet && N.BILL.lastSheet.outcome === 'aborted' && N.BILL.lastSheet.name === 'NoToken'
+             && !/sheet=waiting/.test(N.BILL.diag('playing')),
+            'a sheet that closed having bought nothing stops the diagnostic line saying Play is still working');
+          play.showHang = false;
+          await go('#/learn', '.tile'); await go('#/unlock?from=app', '.store');
+          { const kd = N.BILL.detailsMs; N.BILL.detailsMs = 150;
+            play.abortHang = true; play.showHang = true;
+            d.querySelector('.store [data-buy="playing"]').click();
+            const spoke = await waitFor(() => stOf('playing') && /đang xử lý/.test(stOf('playing').textContent), 1200);
+            ok(spoke && N.BILL.buying === 'playing' && d.querySelector('.store [data-buy="playing"]').disabled,
+              'an abort Google Play never answers still ends in the waiting line, not in a button that stays grey in silence');
+            play.abortHang = false; N.BILL.detailsMs = kd; }
+          play.showHang = false; N.BILL.buying = ''; N.BILL.sheetWaitMs = kw2;
+          play.resolveShow = null; play.rejectShow = null;
+          await go('#/learn', '.tile'); await go('#/unlock?from=app', '.store'); }
         await go('#/learn', '.tile'); await go('#/unlock?from=app', '.store'); }
       { /* The wait only guards a sheet that never answered. Once the buyer
            has closed one, Play must be left alone: an abort arriving long
