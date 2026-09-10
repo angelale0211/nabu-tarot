@@ -277,25 +277,31 @@ const BE = {
   /* ---- comments: Nabu hears about a new one without opening every post ----
      The newest twenty, live. What counts as new is anything a reader wrote
      after the last time the dashboard's comments tab was opened on this
-     device; what is said out loud is anything that arrives while the app is
-     open. New rows are told apart by id rather than by docChanges(), so the
-     same code runs against the suite's stand-in. */
+     device. What is said out loud is only what is newer than every comment
+     this watcher has already seen, by the server's clock. Not by id: deleting
+     one of the twenty brings an old twenty-first into view with an id never
+     seen before, and it was announced as new. Not by docChanges() either, so
+     the same code runs against the suite's stand-in. A row the server has not
+     stamped yet has no time to compare, and waits until it has one. */
   _unsubCmt: null,
   watchComments() {
     if (this._unsubCmt) { this._unsubCmt(); this._unsubCmt = null; }
     if (!this.db || !this.isAdmin()) return;
-    const S = T(), seen = {}; let first = true;
+    const S = T(), pending = Number.MAX_SAFE_INTEGER; let first = true, top = 0;
     const nav = () => renderChrome(parseHash().route === 'post' ? 'home' : (ROUTES[parseHash().route] || {}).nav);
     this._unsubCmt = this.db.collection('comments').orderBy('at', 'desc').limit(20).onSnapshot((s) => {
       const since = Number(store.get('nabu-cmt-seen', 0)) || 0;
       const rows = (s.docs || []).map((d) => Object.assign({ id: d.id }, d.data()));
-      NEWC = rows.filter((c) => !c.nabu && cmtMs(c) !== Number.MAX_SAFE_INTEGER && cmtMs(c) > since).length;
+      NEWC = rows.filter((c) => !c.nabu && cmtMs(c) !== pending && cmtMs(c) > since).length;
       nav();
+      let high = top;
       rows.forEach((c) => {
-        if (!first && !seen[c.id] && !c.nabu) notifyAdmin(S.notifNewComment + (c.name || S.cmtSomeone), c.text || '', '#/admin?tab=comments');
-        seen[c.id] = true;
+        const ms = cmtMs(c);
+        if (ms === pending || ms <= top) return;
+        if (!first && !c.nabu) notifyAdmin(S.notifNewComment + (c.name || S.cmtSomeone), c.text || '', '#/admin?tab=comments');
+        if (ms > high) high = ms;
       });
-      first = false;
+      top = high; first = false;
     }, () => {});
   },
   /* Posts and availability live in content/{posts,schedule} once Nabu has

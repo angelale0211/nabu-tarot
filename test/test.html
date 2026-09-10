@@ -3397,6 +3397,31 @@ async function go(hash, sel) { W().location.hash = hash; await sleep(30); return
         N.BE.stopUnread(); w.localStorage.removeItem('nabu-cmt-seen');
         Object.keys(db.docs).filter((k) => k.indexOf('comments/') === 0).forEach((k) => { delete db.docs[k]; });
         await go('#/home', '.tiles');
+        { /* A deleted comment must not make an old one look new. The watcher
+             reads the newest twenty; take one of them away and the twenty-first
+             slides into view with an id it has never seen. Only what is newer
+             than everything it has seen is said out loud. The stand-in ignores
+             orderBy and limit, so this one watcher is given a query that
+             honours both, over the same documents. */
+          N.BE.user = { uid: 'admin1', email: 'angela_le_@outlook.com' };
+          const T0 = Date.now() - 3600000, at = (i) => ({ toMillis: () => T0 + i * 1000, toDate: () => new Date(T0 + i * 1000) });
+          for (let i = 0; i < 21; i++) db.put('comments/old' + i, { on: cm, uid: 'uidR' + i, name: 'Khách ' + i, text: 'cũ ' + i, nabu: false, at: at(i) });
+          const realDb = N.BE.db, msOf = (x) => { const a = x.data().at; return a && a.toMillis ? a.toMillis() : 0; };
+          N.BE.db = { collection: (c) => {
+            const r = realDb.collection(c);
+            return c !== 'comments' ? r : { orderBy: () => ({ limit: (n) => ({ onSnapshot: (cb, err) => r.onSnapshot((snap) => cb({ docs: snap.docs.slice().sort((a, b) => msOf(b) - msOf(a)).slice(0, n) }), err) }) }) };
+          } };
+          N.BE.watchComments(); N.BE.db = realDb; await sleep(30);
+          d.querySelector('#toast').textContent = '';
+          await db.collection('comments').doc('old20').delete(); await sleep(40);
+          const afterDelete = d.querySelector('#toast').textContent;
+          db.put('comments/new21', { on: cm, uid: 'uidS', name: 'Hạnh', text: 'mới', nabu: false, at: at(21) }); await sleep(40);
+          const afterNew = d.querySelector('#toast').textContent;
+          N.BE.stopUnread(); w.localStorage.removeItem('nabu-cmt-seen');
+          Object.keys(db.docs).filter((k) => k.indexOf('comments/') === 0).forEach((k) => { delete db.docs[k]; });
+          ok(!/Bình luận mới/.test(afterDelete) && /Bình luận mới từ Hạnh/.test(afterNew),
+            'deleting one of the newest comments does not announce an old one as new, and a comment that really is new is still announced'
+            + ' [' + afterDelete + ' | ' + afterNew + ']'); }
         { /* All three languages, not one. What everybody sees of the comments -
              the heading, the empty line, the box and its button, and the line
              that asks a visitor to sign in - is read in English and in German,
