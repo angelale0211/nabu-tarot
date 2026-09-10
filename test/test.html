@@ -3271,7 +3271,40 @@ async function go(hash, sel) { W().location.hash = hash; await sleep(30); return
           const uniq = bad.filter((x, i) => bad.indexOf(x) === i);
           ok(uniq.length === 0, 'on a 360 or 390 phone the comments stay inside their box and the screen, every button in them is a 40px target, and no text is under 12px'
             + (uniq.length ? ' [' + uniq.slice(0, 4).join('; ') + ']' : '')); }
-        /* Task 4 continues here */
+        { const actsWere = N.ACTS.items;
+          N.ACTS.items = [
+            { id: 'q9', type: 'poll', date: '2026-09-04', title: { vi: 'Cung nào nhạy cảm nhất?' }, options: [{ vi: 'Cự Giải' }, { vi: 'Song Ngư' }], closed: false },
+            { id: 'p9', type: 'pile', date: '2026-09-05', resultsDate: '2099-01-01', title: { vi: 'Chọn 1 tụ' }, piles: [{ msg: { vi: 'A' } }, { msg: { vi: 'B' } }], results: false },
+            { id: 'w9', type: 'wish', date: '2026-09-03', title: { vi: 'Ước gì?' } }]; N.ACTS.loaded = true;
+          await go('#/play/q9', '.cmts');
+          ok(d.querySelector('#acts .act-poll') && d.querySelector('.cmts[data-cmts="act:q9"]') && d.querySelector('.cmts .cmtin')
+            && d.querySelector('#acts').compareDocumentPosition(d.querySelector('.cmts')) & 4,
+            'a poll page carries the comments under the poll');
+          await go('#/play/p9', '.cmts');
+          ok(!!d.querySelector('.cmts[data-cmts="act:p9"]'), 'so does a pile page');
+          await go('#/play/w9', '#acts .act-wish'); await sleep(60);
+          ok(!d.querySelector('.cmts'), 'the wish jar keeps its promise: no comments, because nobody reads what is written there');
+          { /* On a desk the page is one column down the middle, and the comments
+               belong to what is above them: the same left and right edges as the
+               post card on a post page, and as the poll on an activity page -
+               never the full width of the window, never a narrower measure. */
+            const frame = document.getElementById('f'), wasWide = frame.style.width, off = [];
+            frame.style.width = '1280px';
+            for (const [route, above] of [['#/post/' + pid, '#main > .post'], ['#/play/q9', '#main > #acts']]) {
+              await go('#/home', '.tiles'); await go(route, '.cmts'); await sleep(220);
+              const a = d.querySelector(above), c = d.querySelector('.cmts');
+              if (!a || !c) { off.push(route + ': no ' + (a ? 'comments' : above)); continue; }
+              const ra = a.getBoundingClientRect(), rc = c.getBoundingClientRect();
+              if (Math.abs(ra.left - rc.left) > 1 || Math.abs(ra.right - rc.right) > 1) {
+                off.push(route + ': comments ' + Math.round(rc.left) + '-' + Math.round(rc.right) + ' under ' + Math.round(ra.left) + '-' + Math.round(ra.right));
+              }
+            }
+            frame.style.width = wasWide || '430px';
+            await go('#/home', '.tiles'); await sleep(120);
+            ok(off.length === 0, 'on a desk the comments line up with the post card and the poll above them, edge for edge'
+              + (off.length ? ' [' + off.join('; ') + ']' : '')); }
+          N.ACTS.items = actsWere; }
+        /* Task 5 continues here */
         w.saveProfileLocal({ name: nameWas }); N.CMT.counts = {}; }
       N.BE.db = keep.db; N.BE.user = keep.user; N.BE.enabled = keep.on; w.confirm = keep.confirm;
       w.localStorage.removeItem('nabu-love');

@@ -355,8 +355,12 @@ async function renderPlay(args) {
   if (args && args[0]) {
     const a = list.filter((x) => x.id === args[0])[0];
     if (!a) { redirect('#/play'); return; }
-    m.innerHTML = '<div class="eyebrow">' + esc(S.actTitle) + '</div><div id="acts">' + actHTML(a, false) + '</div><p style="margin-top:12px"><a href="#/play" class="backlink">← ' + esc(S.actBack) + '</a></p>';
+    const talk = CMT.allowed('act', a), key = talk ? CMT.key('act', a.id) : '';
+    m.innerHTML = '<div class="eyebrow">' + esc(S.actTitle) + '</div><div id="acts">' + actHTML(a, false) + '</div>'
+      + (talk ? cmtBoxHTML(key) : '')
+      + '<p style="margin-top:12px"><a href="#/play" class="backlink">← ' + esc(S.actBack) + '</a></p>';
     bindActs($('#acts'), list);
+    if (talk) { const stop = cmtMount(m, key); if (stop) NAV.cleanup = stop; }
     return;
   }
   const diaryN = Object.keys(store.get('nabu-diary', {}) || {}).length;
