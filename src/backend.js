@@ -82,6 +82,9 @@ const BE = {
       store.set('nabu-access', {});
       /* the plans too: they belong to the account, not the phone */
       store.set('nabu-subs', {});
+      /* and today's card, coin answer and tree message: on a shared phone the
+         next person must not open the draw screen on someone else's day */
+      store.set('nabu-today', null);
       store.set('nabu-admin', '');
       store.set('nabu-revoked-at', 0);
     } catch (e) { /* a full phone must not be able to trap somebody signed in */ }
@@ -105,6 +108,7 @@ const BE = {
     await this.user.delete();
     store.set('nabu-access', {});
     store.set('nabu-subs', {});
+    store.set('nabu-today', null);
     saveProfileLocal({ handle: '', lang: '' });
   },
 

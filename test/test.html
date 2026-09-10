@@ -1764,8 +1764,10 @@ async function go(hash, sel) { W().location.hash = hash; await sleep(30); return
            store would hide their Buy buttons and pass their plan as oldKey. */
         await N.BILL.buy('plus');
         ok(N.SUBS.of('plus') && N.SUBS.of('plus').grant, 'plus is held before sign-out');
+        N.TODAY.add('coin', { q: 'Của người trước?', side: 'yes' });
         await N.BE.signOut().catch(() => {});
         ok(Object.keys(N.SUBS.get()).length === 0 && Object.keys(N.ACCESS.get()).length === 0, 'sign-out forgets subs as well as access');
+        ok(N.TODAY.list('coin').length === 0, 'and forgets the card, coin answer and tree message of the day, so the next person on the phone starts clean');
         await playMode(false); await playMode(true); }
       { /* listPurchases() can hang like any other call into Play. Bounded, a
            hung answer becomes "no token", which the ladder already handles. */
@@ -3921,6 +3923,179 @@ async function go(hash, sel) { W().location.hash = hash; await sleep(30); return
         ok(hero === 0 && kids.indexOf(d.querySelector('.detail .ai')) === kids.length - 1,
           'the card is still first on a phone and the ask box still last');
       }
+    }
+
+    { /* ---- what today brought ----
+         The card drawn, the coin's answer and the tree's message come back on
+         the same day, for everybody; on Nabu Plus the day's turns fold away
+         under the result; and all of it is gone the next morning. The
+         free-turn counters are read and written by nobody here. */
+      const w2 = W(), d2 = D(), N2 = w2.NABU;
+      const keep = {};
+      ['nabu-today', 'nabu-luck', 'nabu-pick-day', 'nabu-guest-draw', 'nabu-access', 'nabu-coinq', 'nabu-focus', 'nabu-lang'].forEach((k) => { keep[k] = w2.localStorage.getItem(k); });
+      const keepBE = { on: N2.BE.enabled, user: N2.BE.user }, keepPL = N2.PROFILE().lang;
+      const put = (k, v) => { if (v == null) w2.localStorage.removeItem(k); else w2.localStorage.setItem(k, typeof v === 'string' ? v : JSON.stringify(v)); };
+      const ymd = (dt) => dt.getFullYear() + '-' + String(dt.getMonth() + 1).padStart(2, '0') + '-' + String(dt.getDate()).padStart(2, '0');
+      const tiso = ymd(new Date()), y = new Date(); y.setDate(y.getDate() - 1); const yiso = ymd(y);
+      const fresh = () => { N2.pick.hand = []; N2.pick.chosen = null; };   // what a reload does to the deck
+      const plus = (on) => { const a = JSON.parse(w2.localStorage.getItem('nabu-access') || '{}'); if (on) a.plus = '2099-12-31'; else delete a.plus; put('nabu-access', a); };
+      const rec = () => JSON.parse(w2.localStorage.getItem('nabu-today') || 'null');
+      const yesterday = () => { const r = rec(); if (r) { r.d = yiso; put('nabu-today', r); } };
+      const TD = N2.TODAY;
+      /* Device-only mode is the cheapest way to be signed in without the
+         network: signedIn() is true when there is no backend to sign in to. */
+      N2.BE.enabled = false; N2.BE.user = null;
+      W().saveProfileLocal({ lang: 'vi' }); W().applyAccountLang();
+      put('nabu-luck', { coin: '2026-01-01', tree: '2026-01-02' }); put('nabu-pick-day', { d: '2026-01-03', id: 'major-5', focus: 'work' });
+      put('nabu-today', null); put('nabu-coinq', null); plus(false);
+      /* the record itself */
+      if (TD) { TD.add('coin', { q: 'a', side: 'yes' }); TD.add('coin', { q: 'b', side: 'no' }); }
+      ok(!!TD && TD.list('coin').length === 2 && TD.last('coin').q === 'b' && TD.list('coin')[1].q === 'a' && TD.list('coin')[0].at > 0 && rec().d === tiso,
+        'a turn is written down under today\'s date, newest first');
+      ok(!!TD && w2.localStorage.getItem('nabu-luck') === JSON.stringify({ coin: '2026-01-01', tree: '2026-01-02' }) && JSON.parse(w2.localStorage.getItem('nabu-pick-day')).id === 'major-5' && N2.turnsLocal().luck.coin === '2026-01-01',
+        'writing a result down touches neither free-turn counter');
+      if (TD) for (let i = 0; i < 40; i++) TD.add('tree', { k: i, fp: 'x' + i });
+      ok(!!TD && TD.list('tree').length === 30 && TD.list('tree')[0].k === 39 && TD.list('tree')[29].k === 10,
+        'a kind keeps its thirty newest turns and drops the rest');
+      yesterday();
+      ok(!!TD && TD.list('coin').length === 0 && TD.last('tree') === null, 'a record from yesterday is not read today');
+      if (TD) TD.add('pick', { id: 'major-0', focus: 'love' });
+      ok(!!TD && rec().d === tiso && TD.list('coin').length === 0 && TD.list('pick').length === 1,
+        'and the first turn of a new day starts a new record in its place');
+      /* ---- the coin, free: the answer stays on its face until tomorrow ---- */
+      put('nabu-luck', {}); put('nabu-today', null);
+      await go('#/home', '.tiles'); await go('#/play/coin', '#coinflip');
+      { const cq = d2.querySelector('#coinq'); cq.value = 'Có nên đi không?'; cq.dispatchEvent(new (w2.Event)('input', { bubbles: true })); }
+      d2.querySelector('#coinflip').click(); await waitFor(() => d2.querySelector('#coinres').textContent, 6000);
+      const face1 = d2.querySelector('#coin svg text').textContent, c1 = TD ? TD.last('coin') : null;
+      ok(!!c1 && c1.q === 'Có nên đi không?' && (c1.side === 'yes' ? 'CÓ' : 'KHÔNG') === face1, 'the coin writes down the question and the answer it gave');
+      await go('#/home', '.tiles'); await go('#/play/coin', '#coin svg');
+      ok(d2.querySelector('#coin svg text').textContent === face1 && d2.querySelector('#coinres').textContent === face1 && !d2.querySelector('#coinflip') && !!d2.querySelector('.luckbox') && !d2.querySelector('.turns'),
+        'back on the coin the same day, the same answer is on its face, with no second flip and no list of turns');
+      yesterday(); put('nabu-luck', { coin: yiso });
+      await go('#/home', '.tiles'); await go('#/play/coin', '#coinflip');
+      ok(d2.querySelector('#coin svg text').textContent === '?' && !!d2.querySelector('#coinflip'), 'the next morning the coin is blank again and ready to flip');   // (guard)
+      /* ---- the tree, free: the message hangs there today, and only today ---- */
+      put('nabu-luck', {}); put('nabu-today', null);
+      await go('#/home', '.tiles'); await go('#/play/tree', '#shake');
+      d2.querySelector('#shake').click(); await waitFor(() => !d2.querySelector('#treemsg').hidden, 6000);
+      const t1 = d2.querySelector('#treetext').textContent, e1 = TD ? TD.last('tree') : null, mo = typeof N2.treeMsgOf === 'function' ? N2.treeMsgOf : () => null;
+      ok(!!e1 && !!mo(e1) && mo(e1).vi === t1, 'the tree writes down which message fell');
+      ok(!!e1 && !!mo({ k: 999, fp: e1.fp }) && mo({ k: 999, fp: e1.fp }).vi === t1 && mo({ k: e1.k, fp: 'not these words' }) === null,
+        'a message moved by an update is still found by its words, and one that is gone is dropped');
+      await go('#/home', '.tiles'); await go('#/play/tree', '#treemsg');
+      ok(!d2.querySelector('#treemsg').hidden && d2.querySelector('#treetext').textContent === t1 && !d2.querySelector('#shake') && !!d2.querySelector('.luckbox') && !d2.querySelector('.turns'),
+        'back at the tree the same day, the same message hangs there, with no second shake and no list');
+      yesterday(); put('nabu-luck', { tree: yiso });
+      await go('#/home', '.tiles'); await go('#/play/tree', '.luckbox');
+      ok(d2.querySelector('#treemsg').hidden && !d2.querySelector('#shake') && !!d2.querySelector('.luckbox'),
+        'on the second of the tree\'s three days the message is gone and only the wait is shown');   // (guard)
+      /* ---- the card, free: the same card in the same focus, until tomorrow ---- */
+      put('nabu-pick-day', null); put('nabu-today', null); put('nabu-guest-draw', null); fresh();
+      await go('#/home', '.tiles'); await go('#/pick', '#fan .slot');
+      d2.querySelector('[data-focus="money"]').click(); d2.querySelectorAll('#fan button')[7].click(); await waitFor(() => d2.querySelector('#reveal .hero'), 4000);
+      const p1 = TD ? TD.last('pick') : null;
+      ok(!!p1 && p1.id === N2.pick.chosen && p1.focus === 'money' && !d2.querySelector('#reveal .turns'), 'the card and its focus are written down; one turn makes no list');
+      fresh(); await go('#/home', '.tiles'); await go('#/pick', '#reveal .hero');
+      ok(!!p1 && N2.pick.chosen === p1.id && N2.pick.focus === 'money' && d2.querySelector('.hero .name').textContent === N2.DECK.vi.filter((c) => c.id === p1.id)[0].name && !d2.querySelector('#redraw') && /Hôm nay bạn đã rút/.test(d2.querySelector('#reveal').textContent),
+        'after a reload the same day, the same card in the same focus is back, and the day\'s one draw is spent');
+      /* An app left open overnight: nothing reloads, the deck still holds
+         yesterday's card, and the first visit of the new day deals afresh. */
+      N2.pick.day = yiso; yesterday(); put('nabu-pick-day', { d: yiso, id: (p1 ? p1.id : 'major-1'), focus: 'money' });
+      await go('#/home', '.tiles'); await go('#/pick', '#fan .slot');
+      ok(N2.pick.chosen === null && d2.querySelectorAll('#fan .slot').length === 78 && !d2.querySelector('#reveal .hero'),
+        'an app left open overnight deals a fresh fan in the morning, without a reload');   // (guard)
+      yesterday(); put('nabu-pick-day', { d: yiso, id: (p1 ? p1.id : 'major-1'), focus: 'money' }); fresh();
+      await go('#/home', '.tiles'); await go('#/pick', '#fan .slot');
+      ok(!d2.querySelector('#reveal .hero') && d2.querySelectorAll('#fan .slot').length === 78 && N2.pick.chosen === null && d2.querySelector('.tap-hint').textContent.length > 0,
+        'the next morning the fan is dealt afresh');   // (guard)
+      /* ---- Nabu Plus: every turn of the day, folded under the result ---- */
+      plus(true); put('nabu-today', null); put('nabu-luck', {});
+      await go('#/home', '.tiles'); await go('#/play/coin', '#coinflip');
+      const flip = async (q) => { const cq = d2.querySelector('#coinq'); cq.value = q; cq.dispatchEvent(new (w2.Event)('input', { bubbles: true })); d2.querySelector('#coinflip').click(); await waitFor(() => d2.querySelector('#coinres').textContent, 6000); };
+      await flip('Một?');
+      ok(!d2.querySelector('.turns') && !!d2.querySelector('#coinflip') && !d2.querySelector('#coinflip').disabled, 'on Plus one flip shows no list, and the coin can be flipped again');   // (guard)
+      await flip('Hai?'); await flip('Ba?');
+      const det = d2.querySelector('details.turns[data-turns="coin"]');
+      ok(!!det && !det.open && det.querySelector('summary .cnt').textContent === '3' && /Các lượt hôm nay/.test(det.querySelector('summary').textContent),
+        'three flips fold into a shut list that says how many there are');
+      ok(!!det && det.querySelectorAll('.turnlist li').length === 3 && /Ba\?/.test(det.querySelector('.turnlist li').textContent) && /Một\?/.test(det.querySelectorAll('.turnlist li')[2].textContent) && /CÓ|KHÔNG/.test(det.querySelector('.turnlist li').textContent) && /^\d\d:\d\d$/.test(det.querySelector('.turnlist li .t').textContent),
+        'the list runs newest first, each line with its time, its question and its answer');
+      ok(!!det && !!det.nextElementSibling && det.nextElementSibling.classList.contains('turnsnote') && /Lượt trước sẽ được xoá vào ngày mai/.test(det.nextElementSibling.textContent),
+        'and under the list a line says the earlier turns go tomorrow');
+      if (det) { det.querySelector('summary').click(); await sleep(60); }
+      ok(!!det && det.open, 'the list opens on a tap');
+      /* The screen redraws after every turn so the new line shows. That must
+         not shut a list the person opened, or lose the keyboard's place. */
+      d2.querySelector('#coinflip').focus();
+      await flip('Bốn?');
+      { const d4 = d2.querySelector('details.turns[data-turns="coin"]');
+        ok(!!d4 && d4.open && d4.querySelectorAll('.turnlist li').length === 4 && /Bốn\?/.test(d4.querySelector('.turnlist li').textContent),
+          'a flip with the list open leaves it open, with the new turn at the top');
+        ok(!!d2.querySelector('#coinflip') && d2.activeElement === d2.querySelector('#coinflip'), 'and the flip button keeps the keyboard\'s focus'); }
+      { const said = {};
+        for (const lg of ['en', 'de']) {
+          W().saveProfileLocal({ lang: lg }); W().applyAccountLang();
+          await go('#/home', '.tiles'); await go('#/play/coin', 'details.turns');
+          const dd = d2.querySelector('details.turns');
+          said[lg] = (dd ? dd.querySelector('summary').textContent : '') + ' | ' + (dd && dd.nextElementSibling ? dd.nextElementSibling.textContent : '');
+        }
+        ok(/Today/.test(said.en) && /tomorrow/.test(said.en) && !VI.test(said.en) && /heute/.test(said.de) && /morgen/.test(said.de) && !VI.test(said.de),
+          'the list and its note speak English and German too (' + said.en + ' / ' + said.de + ')');
+        W().saveProfileLocal({ lang: 'vi' }); W().applyAccountLang(); }
+      await go('#/home', '.tiles'); await go('#/play/tree', '#shake');
+      d2.querySelector('#shake').click(); await waitFor(() => !d2.querySelector('#treemsg').hidden, 6000);
+      d2.querySelector('#shake').click(); await waitFor(() => d2.querySelector('details.turns[data-turns="tree"]'), 6000);
+      const det2 = d2.querySelector('details.turns[data-turns="tree"]');
+      ok(!!det2 && !det2.open && det2.querySelectorAll('.turnlist li').length === 2 && det2.querySelector('.turnlist li .r').textContent === d2.querySelector('#treetext').textContent,
+        'two shakes on Plus fold into a list whose first line is the message now on the tree');
+      fresh(); await go('#/home', '.tiles'); await go('#/pick', '#fan .slot');
+      d2.querySelectorAll('#fan button')[3].click(); await waitFor(() => d2.querySelector('#reveal .hero'), 4000);
+      const pa = N2.pick.chosen;
+      d2.querySelector('#redraw').click(); await sleep(80);
+      Array.from(d2.querySelectorAll('#fan button')).filter((b) => b.getAttribute('data-card') !== pa)[9].click(); await waitFor(() => d2.querySelector('#reveal .hero'), 4000);
+      const pb = N2.pick.chosen, det3 = d2.querySelector('#reveal details.turns[data-turns="pick"]');
+      ok(pa !== pb && !!det3 && det3.querySelectorAll('.turnlist li').length === 2 && det3.querySelector('.turnlist li a').getAttribute('href') === '#/pick?card=' + pb + '&focus=' + N2.pick.focus && det3.querySelectorAll('.turnlist li a')[1].getAttribute('href').indexOf('card=' + pa) > 0,
+        'two draws on Plus fold under the card into a list that links each card back to its reading');
+      { /* A link in the list opens that card's reading again. That is not a
+           draw, so neither the list nor the day's card changes. */
+        const pd = w2.localStorage.getItem('nabu-pick-day'), n0 = TD ? TD.list('pick').length : -1;
+        if (det3) { det3.open = true; det3.querySelectorAll('.turnlist li a')[1].click(); }
+        await waitFor(() => N2.pick.chosen === pa && d2.querySelector('#reveal .hero'), 4000);
+        ok(!!det3 && n0 === 2 && N2.pick.chosen === pa && TD.list('pick').length === n0 && w2.localStorage.getItem('nabu-pick-day') === pd,
+          'opening an earlier card from the list shows its reading and does not count as a draw');   // (guard)
+      }
+      fresh(); await go('#/home', '.tiles'); await go('#/pick', '#reveal .hero');
+      ok(N2.pick.chosen === pb && !!d2.querySelector('#redraw') && !!d2.querySelector('#reveal details.turns'),
+        'after a reload on Plus the latest card is back with its list, and a fresh draw is still offered');
+      d2.querySelector('#redraw').click(); await sleep(80);
+      ok(N2.pick.chosen === null && d2.querySelectorAll('#fan .slot').length === 78 && !d2.querySelector('#reveal .hero'), 'and drawing again still deals a fresh fan rather than the kept card');   // (guard)
+      /* ---- a visitor without an account: one card ever ----
+         The same day it comes back. The day after there is no card to show,
+         and the screen has to say so instead of failing to draw. */
+      N2.BE.enabled = true; N2.BE.user = null; plus(false);
+      put('nabu-today', null); put('nabu-guest-draw', 1); put('nabu-pick-day', { d: tiso, id: 'major-7', focus: 'love' }); fresh();
+      await go('#/home', '.tiles'); await go('#/pick', '#reveal .hero');
+      ok(N2.pick.chosen === 'major-7' && !!d2.querySelector('#reveal .needin') && !d2.querySelector('#redraw'), 'a visitor\'s one card comes back the same day, with the sign-in card under it');   // (guard)
+      put('nabu-pick-day', { d: yiso, id: 'major-7', focus: 'love' }); fresh();
+      await go('#/home', '.tiles'); const drew = await go('#/pick', '#fan .slot');
+      ok(drew && d2.querySelectorAll('#fan .slot').length === 78 && !d2.querySelector('#reveal .hero') && !!d2.querySelector('#main .needin') && d2.querySelector('.tap-hint').textContent === '',
+        'the day after, the visitor is shown the fan and asked to sign in, instead of a screen that fails to draw');
+      /* The same phone on a cold start with Nabu Plus: the screen is drawn
+         before the account answers, so for a moment nobody is signed in, but
+         Plus is on the phone and a card may be drawn. The fan has to say so
+         rather than ask for a sign-in. */
+      plus(true); fresh();
+      await go('#/home', '.tiles'); await go('#/pick', '#fan .slot');
+      ok(d2.querySelector('.tap-hint').textContent.length > 0 && !d2.querySelector('#main > .needin'),
+        'before the account answers, a phone with Nabu Plus is invited to tap a card, not asked to sign in');
+      plus(false);
+      /* ---- put the phone back the way it was ---- */
+      N2.BE.enabled = keepBE.on; N2.BE.user = keepBE.user;
+      W().saveProfileLocal({ lang: 'vi' }); W().applyAccountLang();
+      Object.keys(keep).forEach((k) => put(k, keep[k]));
+      W().saveProfileLocal({ lang: keepPL || '' });
+      fresh(); await go('#/home', '.tiles');
     }
 
   } catch (e) { out.push('FAIL exception: ' + (e && e.stack || e)); }

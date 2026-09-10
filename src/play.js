@@ -595,12 +595,13 @@ function treePetHTML() {
 }
 function renderTree() {
   const S = T(), m = $('#main');
-  let msg = null, busy = false;
+  let msg = treeMsgOf(TODAY.last('tree')), busy = false;
   const draw = () => {
     m.innerHTML = '<div class="eyebrow">' + esc(S.actTitle) + '</div><h1 style="margin-bottom:6px">🌸 ' + esc(S.treeTitle) + '</h1><p class="muted">' + esc(S.treeIntro) + '</p>'
       + '<div class="card treewrap"><div class="treestage"><button type="button" class="tree" id="tree" aria-label="' + esc(S.treeShake) + '">' + treeSVG() + '<span class="petals" id="petals"></span></button>' + treePetHTML() + '</div>'
       + '<div class="treemsg" id="treemsg"' + (msg ? '' : ' hidden') + '><div class="eyebrow">' + esc(S.treeFor) + '</div><p id="treetext">' + (msg ? esc(L(msg)) : '') + '</p></div>'
       + (signedIn() ? (luckSpent('tree') ? '' : '<button class="btn primary block" id="shake">' + esc(msg ? S.treeAgain : S.treeShake) + '</button>') : needAccountHTML(S.needInLuck)) + '</div>'
+      + todayHistoryHTML('tree')
       /* The designs come first, straight under the tree: somebody who never
          scrolls should still learn the tree can be changed. The switch for the
          companions goes to the foot of the screen, in a card of its own. */
@@ -619,6 +620,7 @@ function renderTree() {
       if (busy) return;
       busy = true;
       const tree = $('#tree'), pet = $('#petals'), btn = $('#shake'), box = $('#treemsg');
+      const fid = document.activeElement === btn || document.activeElement === tree ? document.activeElement.id : '';   // read before the spin switches the button off
       luckSpend('tree');
       btn.disabled = true; box.hidden = true;
       tree.classList.remove('sway'); void tree.offsetWidth; tree.classList.add('sway');
@@ -632,13 +634,17 @@ function renderTree() {
       let k = 0;
       try { const a = new Uint32Array(1); crypto.getRandomValues(a); k = a[0] % TREE_MSGS.length; }
       catch (e) { k = Math.floor(Math.random() * TREE_MSGS.length); }
+      TODAY.add('tree', { k: k, fp: treeFp(TREE_MSGS[k]) });   // written the moment the turn is spent, beside the counter
       setTimeout(() => {
         msg = TREE_MSGS[k];
         $('#treetext').textContent = L(msg); box.hidden = false;
         tree.classList.remove('sway'); pet.innerHTML = '';
         busy = false;
-        if (luckSpent('tree')) { draw(); $('#treemsg').hidden = false; $('#treetext').textContent = L(msg); return; }
-        btn.disabled = false; btn.textContent = S.treeAgain;
+        /* Redrawn either way: the free turn is now spent and the screen says so,
+           and on Plus the day's list under the tree has a new line. draw() shows
+           the message from msg and labels the button from it. An open list
+           stays open and the focus stays where it was. */
+        todayRedraw(draw, fid);
       }, 1400);
     };
     const sb = $('#shake'); if (sb) sb.addEventListener('click', shake);
@@ -707,13 +713,14 @@ const askedQ = () => String(store.get('nabu-coinq', '') || '').trim().length > 0
 
 function renderCoin() {
   const S = T(), m = $('#main');
-  let side = '';
+  const lastC = TODAY.last('coin'); let side = lastC && (lastC.side === 'yes' || lastC.side === 'no') ? lastC.side : '';
   const draw = () => {
     m.innerHTML = '<div class="eyebrow">' + esc(S.actTitle) + '</div><h1 style="margin-bottom:6px">🪙 ' + esc(S.coinTitle) + '</h1><p class="muted">' + esc(S.coinIntro) + '</p>'
       + '<div class="card coinwrap"><label class="f" for="coinq">' + esc(S.coinQ) + '</label><input id="coinq" placeholder="' + esc(S.coinQPh) + '" value="' + esc(store.get('nabu-coinq', '') || '') + '">'
       + '<div class="coin" id="coin">' + coinFaceSVG(side) + '</div>'
       + '<div class="coinres" id="coinres" aria-live="polite">' + (side ? esc(side === 'yes' ? S.coinYes : S.coinNo) : '') + '</div>'
       + (signedIn() ? (luckSpent('coin') ? '' : '<button class="btn primary block" id="coinflip"' + (askedQ() ? '' : ' disabled') + '>' + esc(side ? S.coinAgain : S.coinFlip) + '</button>') : needAccountHTML(S.needInLuck)) + '</div>'
+      + todayHistoryHTML('coin')
       + lookStripHTML('coin')
       + '<div class="luckline">' + luckPanelHTML('coin') + '</div>'
       + '<p class="hint">' + esc(S.coinNote) + '</p>'
@@ -735,17 +742,22 @@ function renderCoin() {
       /* The press cannot normally arrive with an empty box, but a turn is too
          expensive to lose to a keyboard or a script that gets one through. */
       if (!askedQ()) { btn.disabled = true; return; }
+      const fid = document.activeElement === btn ? btn.id : '';   // read before the spin switches the button off
       luckSpend('coin');
       btn.disabled = true; $('#coinres').textContent = '';
       el.classList.add('spin');
       let bits = 0;
       try { const a = new Uint8Array(1); crypto.getRandomValues(a); bits = a[0] & 1; }
       catch (e) { bits = Math.random() < 0.5 ? 0 : 1; }
+      TODAY.add('coin', { q: String(store.get('nabu-coinq', '') || '').trim().slice(0, 120), side: bits ? 'yes' : 'no' });
       setTimeout(() => {
         side = bits ? 'yes' : 'no'; el.classList.remove('spin'); el.innerHTML = coinFaceSVG(side);
         $('#coinres').textContent = side === 'yes' ? S.coinYes : S.coinNo;
-        if (luckSpent('coin')) { draw(); return; }
-        btn.disabled = !askedQ(); btn.textContent = S.coinAgain;
+        /* Redrawn either way: the free turn is now spent and the screen says so,
+           and on Plus the day's list under the coin has a new line. The face is
+           drawn from side, so the answer stays where it landed. An open list
+           stays open and the focus stays on the button. */
+        todayRedraw(draw, fid);
       }, 1000);
     });
   };
