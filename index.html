@@ -12,7 +12,7 @@
      carries this notice with it. See LICENSE. -->
 <meta name="author" content="Nabu Tarot">
 <meta name="copyright" content="Copyright (c) 2025-2026 Nabu Tarot. All rights reserved.">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'none'; object-src 'none'; form-action 'self'; script-src 'self' 'sha256-gZgBJOMHE5YfOagJStdzkI2sbMYp/JF7z8PosO4ooVw=' https://www.gstatic.com https://apis.google.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; font-src 'self' data:; media-src 'self' data: blob:; worker-src 'self'; connect-src 'self' https://*.googleapis.com https://*.google.com https://*.firebaseio.com https://*.cloudfunctions.net https://*.workers.dev https://generativelanguage.googleapis.com; frame-src https://*.firebaseapp.com https://accounts.google.com https://*.facebook.com">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'none'; object-src 'none'; form-action 'self'; script-src 'self' 'sha256-YfvuaetM1X2w7opUOmwDV4IJciZBkEPsGfY42taa1FE=' https://www.gstatic.com https://apis.google.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; font-src 'self' data:; media-src 'self' data: blob:; worker-src 'self'; connect-src 'self' https://*.googleapis.com https://*.google.com https://*.firebaseio.com https://*.cloudfunctions.net https://*.workers.dev https://generativelanguage.googleapis.com; frame-src https://*.firebaseapp.com https://accounts.google.com https://*.facebook.com">
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <meta name="theme-color" content="#EFE9FA">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -17596,6 +17596,12 @@ const esc = (s) => String(s == null ? '' : s).replace(/[&<>"']/g, (c) => ({ '&':
    go when the phone says it has no room, because losing them costs a moment of
    waiting and losing anything else costs the thing itself. */
 const STORE_SPARE = ['nabu-fb', 'nabu-horo', 'nabu-acts', 'nabu-acts-stock', 'nabu-privacy', 'nabu-posts'];
+/* When the app last asked whether there is a new release, and how often it is
+   allowed to ask. An installed app is usually never closed, only put away, so
+   coming back to the screen is the one moment worth asking at - and a person
+   who glances at their phone every minute must not become a call to the
+   network every minute. */
+const UPD = { last: 0, every: 10 * 60 * 1000 };
 let STORE_SAID = 0;
 
 const store = {
@@ -18639,6 +18645,22 @@ function boot() {
         if (w && !had) w.addEventListener('statechange', () => { if (w.state === 'activated') toast(T().offlineReady); });
         reg.update().catch(() => {});
       }).catch(() => {});
+    });
+    /* An app brought back from the recents list days later never fires `load`
+       again: the document is still the one it started with, and the only
+       update checks are the one above and the two a person can press. On an
+       emulator (2026-09-10) that left the app on an old release while the
+       server had a new one, which is how a tester ends up reporting a bug
+       that was already fixed. So each return to the screen asks the worker
+       for a new release, at most once every UPD.every. Nothing reloads here:
+       the controllerchange handler above still decides that, and only when a
+       new worker really takes over. */
+    UPD.last = Date.now();
+    document.addEventListener('visibilitychange', () => {
+      if (document.visibilityState !== 'visible') return;
+      if (Date.now() - UPD.last < UPD.every) return;
+      UPD.last = Date.now();
+      navigator.serviceWorker.getRegistration().then((reg) => { if (reg) return reg.update(); }).catch(() => { /* offline, or no worker yet */ });
     });
   }
 }
@@ -32181,13 +32203,13 @@ function adminSale(p) {
 ROUTES.admin = { nav: '', render: renderAdmin };
 
 /* ============================ boot ============================ */
-window.APP_VERSION = 'v217';
+window.APP_VERSION = 'v218';
 window.NABU = { CONFIG: CONFIG, SALE: SALE, salePrice: salePrice, loadActs: loadActs, BACK: BACK, LESSONS: LESSONS, localAnswer: localAnswer, compatVerdict: compatVerdict, numerologyOf: numerologyOf, ZDEEP: ZDEEP, lunarToday: lunarToday, solarToLunar: solarToLunar, DECK: DECK, INSIGHT: INSIGHT, KW: KW, ASK: ASK, TOPICS: TOPICS, GUIDES: GUIDES, SERVICES: SERVICES, COURSES: COURSES, ACCESS: ACCESS, INTERESTS: INTERESTS, plusOn: () => plusOn(), proOn: () => proOn(), luckUnlimited: () => luckUnlimited(), ZODIAC: ZODIAC, pick: pick, book: book, PLAY_ITEMS: PLAY_ITEMS, PLAY_SUB_SKUS: PLAY_SUB_SKUS, playItem: playItem, BILL: BILL, SUBS: SUBS, renderStore: renderStore, subStateWord: subStateWord,
   insightHTML: insightHTML, insightOf: insightOf, sunSignIndex: sunSignIndex, lifePath: lifePath, PROFILE: () => PROFILE, BE: BE, ACTS: ACTS,
   ANGELS: ANGELS, angelRead: angelRead, CODEBOOK: CODEBOOK, redeemCode: redeemCode, loadCodebook: loadCodebook, petHomeSVG: petHomeSVG, PET_HOMES: PET_HOMES, PET_WEARS: PET_WEARS, codeDigest: codeDigest, randomCode: randomCode, BANK: BANK, PETS: PETS, petSVG: petSVG, PET_COATS: PET_COATS, PET_KINDS: PET_KINDS, turnsMerge: turnsMerge, turnsLocal: turnsLocal, priceText: priceText, termText: termText, proSaveText: () => proSaveText(), wedFeeText: () => wedFeeText(), fmtPrice: fmtPrice, luckCut: luckCut, petLevel: petLevel, petStep: petStep, VOUCHERS: VOUCHERS, levelCoins: levelCoins, LOOKS: LOOKS,
   LOVE: LOVE, LOVEDB: LOVEDB, HANDLE_RE: HANDLE_RE, loveBadgeHTML: loveBadgeHTML,
   loveMarkSVG: loveMarkSVG, QUIZ: QUIZ, QSCORE: QSCORE, QUIZ_PASS: QUIZ_PASS, QUIZ_LEN: QUIZ_LEN, pileArtSVG: pileArtSVG, PILE_ARTS: PILE_ARTS, threadSVG: threadSVG, petParentsHTML: petParentsHTML, GIFTS: GIFTS, ALERTS: ALERTS, alertsStart: alertsStart, alertWas: alertWas,
-  WED: WED, WED_STEPS: WED_STEPS, wedStep: wedStep, cupidSVG: cupidSVG, shareLine: shareLine };
+  WED: WED, WED_STEPS: WED_STEPS, wedStep: wedStep, cupidSVG: cupidSVG, shareLine: shareLine, UPD: UPD };
 /* ---- German reads English where German does not exist yet ----
    Every table in the app that is written per language is keyed 'vi' and 'en'.
    Adding a third language to LANGS without this makes each of them answer

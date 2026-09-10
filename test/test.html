@@ -1027,6 +1027,32 @@ async function go(hash, sel) { W().location.hash = hash; await sleep(30); return
     await go('#/me', '[data-theme-pick]');
     ok(d.querySelectorAll('[data-theme-pick]').length === 4 && d.querySelector('[data-theme-pick].on'), 'Me tab offers auto / light / dark / pastel pink with the current one marked');
     ok(d.querySelector('#chkupd') && d.querySelector('#main').textContent.indexOf('Phiên bản ' + w.APP_VERSION) > -1, 'Me shows the version with a check-for-updates button');
+    { /* An app that is only ever brought back from the recents list never
+         fires load again, so it would run whatever release it started on for
+         days - which is how a tester ends up on an old build while believing
+         they have the newest one. It asks on the way back in, and asks once:
+         a glance at the screen every few minutes must not become a call to
+         the network every few minutes. */
+      const sw = w.navigator.serviceWorker; let calls = 0;
+      sw.getRegistration = () => Promise.resolve({ update: () => { calls++; return Promise.resolve(); } });
+      Object.defineProperty(d, 'visibilityState', { configurable: true, get: () => 'visible' });
+      d.dispatchEvent(new w.Event('visibilitychange'));
+      await sleep(60);
+      const throttled = calls === 0;
+      if (N.UPD) N.UPD.last = 0;
+      d.dispatchEvent(new w.Event('visibilitychange'));
+      await sleep(60);
+      const asked = calls === 1;
+      d.dispatchEvent(new w.Event('visibilitychange'));
+      await sleep(60);
+      ok(throttled && asked && calls === 1,
+        'an app brought back days later asks for the new release once, not on every glance at the screen');
+      if (N.UPD) N.UPD.last = 0;
+      Object.defineProperty(d, 'visibilityState', { configurable: true, get: () => 'hidden' });
+      d.dispatchEvent(new w.Event('visibilitychange'));
+      await sleep(60);
+      ok(calls === 1, 'and an app on its way out of sight asks for nothing');
+      delete d.visibilityState; delete sw.getRegistration; if (N.UPD) N.UPD.last = Date.now(); }
     ok(d.querySelectorAll('.themes [data-theme-pick]').length === 4 && /📱/.test(d.querySelector('.themes').textContent) && d.querySelector('.themes').getBoundingClientRect().height < 60, 'the four themes sit on one line as icon chips');
     ok(d.querySelectorAll('.row3 .btn').length === 3 && /💬/.test(d.querySelector('.row3').textContent) && /🎓/.test(d.querySelector('.row3').textContent) && d.querySelector('.row3').getBoundingClientRect().height < 60, 'contact, report and tour share one line, each with an icon');
     ok(/Hồ sơ/.test(d.querySelector('.nav a[href="#/me"]').textContent) && !/Tôi/.test(d.querySelector('.nav').textContent), 'the Me tab is called Hồ sơ (Profile)');

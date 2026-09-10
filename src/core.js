@@ -17,6 +17,12 @@ const esc = (s) => String(s == null ? '' : s).replace(/[&<>"']/g, (c) => ({ '&':
    go when the phone says it has no room, because losing them costs a moment of
    waiting and losing anything else costs the thing itself. */
 const STORE_SPARE = ['nabu-fb', 'nabu-horo', 'nabu-acts', 'nabu-acts-stock', 'nabu-privacy', 'nabu-posts'];
+/* When the app last asked whether there is a new release, and how often it is
+   allowed to ask. An installed app is usually never closed, only put away, so
+   coming back to the screen is the one moment worth asking at - and a person
+   who glances at their phone every minute must not become a call to the
+   network every minute. */
+const UPD = { last: 0, every: 10 * 60 * 1000 };
 let STORE_SAID = 0;
 
 const store = {
@@ -1060,6 +1066,22 @@ function boot() {
         if (w && !had) w.addEventListener('statechange', () => { if (w.state === 'activated') toast(T().offlineReady); });
         reg.update().catch(() => {});
       }).catch(() => {});
+    });
+    /* An app brought back from the recents list days later never fires `load`
+       again: the document is still the one it started with, and the only
+       update checks are the one above and the two a person can press. On an
+       emulator (2026-09-10) that left the app on an old release while the
+       server had a new one, which is how a tester ends up reporting a bug
+       that was already fixed. So each return to the screen asks the worker
+       for a new release, at most once every UPD.every. Nothing reloads here:
+       the controllerchange handler above still decides that, and only when a
+       new worker really takes over. */
+    UPD.last = Date.now();
+    document.addEventListener('visibilitychange', () => {
+      if (document.visibilityState !== 'visible') return;
+      if (Date.now() - UPD.last < UPD.every) return;
+      UPD.last = Date.now();
+      navigator.serviceWorker.getRegistration().then((reg) => { if (reg) return reg.update(); }).catch(() => { /* offline, or no worker yet */ });
     });
   }
 }
