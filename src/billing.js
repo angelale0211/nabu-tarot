@@ -64,6 +64,8 @@ const BILL = {
   sheetWaitMs: 20000,  // how long a sheet may stay silent before the app asks Play whether it is really open
   stage: '',        // how far the last attempt got: 'connect', 'details', or ''
   buying: '',       // the key whose sheet is open, so a second tap cannot start another
+  seq: 0,           // every purchase takes a number, so a late answer can tell its own from the next one
+  buyingSeq: 0,     // the number of the purchase `buying` refers to
   lastSheet: null,  // {outcome, name, ms} of the last show(), for the diagnostics
   onSettled: null,  // the screen's hook: an answer that landed after the watchdog had already spoken
 
@@ -345,7 +347,11 @@ const BILL = {
        no sheet, no message and nothing to report, and there was no record of
        what Play had actually said. */
     const shownAt = Date.now();
-    this.buying = key;
+    /* A number per purchase. The same product tapped twice is two purchases,
+       and an answer to the first must not be read as an answer to the second
+       just because they are for the same thing. */
+    this.seq = (this.seq || 0) + 1; const my = this.seq;
+    this.buying = key; this.buyingSeq = my;
     /* A sheet that never answers (H7, 2026-09-09). show() can stay pending
        with no sheet in sight, and the button then stays disabled while the
        diagnostic line still looks healthy. After sheetWaitMs with no answer
@@ -371,7 +377,7 @@ const BILL = {
     let showP;
     try { showP = req.show(); }
     catch (e) {
-      this.buying = '';
+      this.buying = ''; this.buyingSeq = 0;
       e.stage = 'show'; e.playName = errName(e); e.elapsedMs = 0; e.outcome = this.sheetOutcome(e);
       this.lastSheet = { outcome: e.outcome, name: e.playName, ms: 0 };
       throw e;
@@ -403,28 +409,34 @@ const BILL = {
          started while this one was waiting - the lock and the line belong to
          that one now, and an answer to a sheet nobody is waiting on must not
          unlock it or write over what it says. */
-      const mine = this.buying === key;
-      if (mine) this.buying = '';
+      const mine = this.buying === key && this.buyingSeq === my;
+      if (mine) { this.buying = ''; this.buyingSeq = 0; }
       const tok = late && late.details && (late.details.purchaseToken || late.details.token);
       try { late.complete(tok ? 'success' : 'fail').catch(() => {}); } catch (e3) { /* closed */ }
+      /* The screen is handed the restore itself, not only the news of it: a
+         purchase finished this late is unlocked by restore(), and on a phone
+         where listPurchases() is slow - fifteen seconds, on the emulator -
+         the buyer would otherwise sit in front of "being unlocked" and a live
+         Buy button until they left the screen and came back. */
+      let fin = null;
       if (tok) {
         this.remember(Object.assign({ sku: it.sku, token: tok, at: Date.now() }, opt.wid ? { wid: opt.wid } : {}));
-        this.lastSheet = { outcome: 'done', name: '', ms: Date.now() - shownAt };
-        this.restore().catch(() => {});
+        this.lastSheet = { outcome: 'done', name: '-', ms: Date.now() - shownAt };
+        fin = this.restore().catch(() => {});
       } else {
         /* Answered, and nothing was bought. Left as it was, the diagnostic
            line would go on saying Play is still working on a sheet that has
            closed. */
         this.lastSheet = { outcome: 'aborted', name: 'NoToken', ms: Date.now() - shownAt };
       }
-      if (mine && typeof this.onSettled === 'function') { try { this.onSettled(key, this.lastSheet); } catch (e4) { /* never block */ } }
+      if (mine && typeof this.onSettled === 'function') { try { this.onSettled(key, this.lastSheet, fin); } catch (e4) { /* never block */ } }
     }, (err) => {
       clearTimeout(wd);
       if (!hung) return;
-      const mine = this.buying === key;
-      if (mine) this.buying = '';
+      const mine = this.buying === key && this.buyingSeq === my;
+      if (mine) { this.buying = ''; this.buyingSeq = 0; }
       this.lastSheet = { outcome: this.sheetOutcome(err), name: errName(err), ms: Date.now() - shownAt };
-      if (mine && typeof this.onSettled === 'function') { try { this.onSettled(key, this.lastSheet); } catch (e4) { /* never block */ } }
+      if (mine && typeof this.onSettled === 'function') { try { this.onSettled(key, this.lastSheet, null); } catch (e4) { /* never block */ } }
     });
     let res;
     try {
@@ -438,11 +450,19 @@ const BILL = {
       e.outcome = hung || ((asked && e.playName === 'AbortError') ? 'hung' : this.sheetOutcome(e));
       this.lastSheet = { outcome: e.outcome, name: e.playName, ms: e.elapsedMs };
       throw e;
-    } finally { if (hung !== 'waiting') this.buying = ''; }
+    } finally { if (hung !== 'waiting') { this.buying = ''; this.buyingSeq = 0; } }
     const token = res && res.details && (res.details.purchaseToken || res.details.token);
+    const extra = opt.wid ? { wid: opt.wid } : undefined;
+    /* Written down before anything else is done with it. Between here and the
+       worker's answer the page can still go away - the sheet closing brings
+       the app back to the screen, and a release that took over in the
+       meantime reloads it - and Play's own list would then be the only place
+       this purchase existed. verify() tears the note up when the worker has
+       answered, and keeps it when the answer is `pending`, which is exactly
+       what restore() needs to finish it later. */
+    if (token) this.remember(Object.assign({ sku: it.sku, token: token, at: Date.now() }, extra || {}));
     try { await res.complete(token ? 'success' : 'fail'); } catch (e) { /* already closed */ }
     if (!token) throw new Error('nopurchase');
-    const extra = opt.wid ? { wid: opt.wid } : undefined;
     let out;
     try { out = await this.verify(it.sku, token, extra); }
     catch (e) {

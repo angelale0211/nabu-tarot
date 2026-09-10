@@ -46,7 +46,7 @@ const storeNotReadyHTML = () => '<div class="card">'
      installed app, no Play bridge at all means the wrapper opened in a
      browser that does not carry one. The browser is only named when it can
      actually be recognised - Brave ships Chrome's UA verbatim. */
-  + (isTWA() && BILL.why === 'noapi' ? '<p class="hint err" style="margin-bottom:10px">' + esc(T().stNeedChrome({ samsung: 'Samsung Internet', brave: 'Brave', edge: 'Microsoft Edge' }[BILL.provider()] || '')) + '</p>' : '')
+  + (isTWA() && (BILL.why === 'noapi' || (BILL.provider() === 'samsung' && /^connect:/.test(BILL.why))) ? '<p class="hint err" style="margin-bottom:10px">' + esc(T().stNeedChrome({ samsung: 'Samsung Internet', brave: 'Brave', edge: 'Microsoft Edge' }[BILL.provider()] || '')) + '</p>' : '')
   + '<p class="hint">' + esc(T().stNotReady) + '</p><button type="button" class="btn block" data-retry>' + esc(T().stRetry) + '</button>'
   + (BILL.why ? '<p class="hint" style="margin-top:8px;opacity:.6;font-size:12px;user-select:all">' + esc(BILL.why) + '</p>' : '') + '</div>'
   /* The diagnostics have to be reachable from the one screen a stuck buyer
@@ -200,11 +200,20 @@ function bindStore(root, redraw) {
      was opened again. Looked up in the live document, because the render this
      was bound to may be long gone; if the store is not on screen there is
      nothing to say and nothing to do. */
-  BILL.onSettled = (key, sheet) => {
+  BILL.onSettled = (key, sheet, fin) => {
     const b = $('[data-buy="' + key + '"]'), st = $('[data-st="' + key + '"]'), S2 = T();
     if (!b || !b.isConnected) return;
+    if (sheet && sheet.outcome === 'done') {
+      /* Paid, and the worker is finishing it. Offering the same thing to buy
+         again while that runs is how somebody pays twice, so the button stays
+         shut until the screen has been drawn from what the account now says. */
+      b.disabled = true;
+      if (st) { st.className = 'hint st'; st.textContent = S2.stPending; }
+      (fin || Promise.resolve()).then(() => { if (redraw) redraw(); else route(); }).catch(() => {});
+      return;
+    }
     b.disabled = false;
-    if (st) { st.className = 'hint st'; st.textContent = (sheet && sheet.outcome === 'done') ? S2.stRestoring : S2.stAborted; }
+    if (st) { st.className = 'hint st'; st.textContent = S2.stAborted; }
   };
   $$('[data-diag]', root).forEach((b) => b.addEventListener('click', async () => {
     const st = $('[data-diagst]', root);

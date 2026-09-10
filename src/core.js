@@ -1060,7 +1060,10 @@ function boot() {
       const had = !!navigator.serviceWorker.controller;
       // A new release takes over on the next open; reload once so the visitor
       // sees it right away instead of the cached page.
-      navigator.serviceWorker.addEventListener('controllerchange', () => { if (had && !window.__reloaded) { window.__reloaded = true; location.reload(); } });
+      /* Not while a purchase is in flight: reloading then would take the
+         sheet's answer with it. Nothing is queued - the new worker already
+         controls the page, so the next open is the new release anyway. */
+      navigator.serviceWorker.addEventListener('controllerchange', () => { if (had && !window.__reloaded && !(typeof BILL !== 'undefined' && BILL && BILL.buying)) { window.__reloaded = true; location.reload(); } });
       navigator.serviceWorker.register('sw.js').then((reg) => {
         const w = reg.installing;
         if (w && !had) w.addEventListener('statechange', () => { if (w.state === 'activated') toast(T().offlineReady); });

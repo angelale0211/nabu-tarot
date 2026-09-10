@@ -12,7 +12,7 @@
      carries this notice with it. See LICENSE. -->
 <meta name="author" content="Nabu Tarot">
 <meta name="copyright" content="Copyright (c) 2025-2026 Nabu Tarot. All rights reserved.">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'none'; object-src 'none'; form-action 'self'; script-src 'self' 'sha256-Aoh6Y3bWoT3pJyjiAnIrqdqwQbTBULXL9lpzW1q6edc=' https://www.gstatic.com https://apis.google.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; font-src 'self' data:; media-src 'self' data: blob:; worker-src 'self'; connect-src 'self' https://*.googleapis.com https://*.google.com https://*.firebaseio.com https://*.cloudfunctions.net https://*.workers.dev https://generativelanguage.googleapis.com; frame-src https://*.firebaseapp.com https://accounts.google.com https://*.facebook.com">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'none'; object-src 'none'; form-action 'self'; script-src 'self' 'sha256-ChZFGZkAdSypnqWtPp6ygc0M0SAxUIa57UryDmBHKNc=' https://www.gstatic.com https://apis.google.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; font-src 'self' data:; media-src 'self' data: blob:; worker-src 'self'; connect-src 'self' https://*.googleapis.com https://*.google.com https://*.firebaseio.com https://*.cloudfunctions.net https://*.workers.dev https://generativelanguage.googleapis.com; frame-src https://*.firebaseapp.com https://accounts.google.com https://*.facebook.com">
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <meta name="theme-color" content="#EFE9FA">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -3769,7 +3769,7 @@ const STR = {
     stIncludedPro: 'Đã bao gồm trong Nabu Pro', stSwitchTo: (n) => 'Chuyển sang gói ' + n, stNeedIn: 'Mục này chỉ có thể mua trong ứng dụng Nabu Tarot trên Android.', stFailed: 'Mua chưa thành công. Vui lòng thử lại.', stNoSheet: 'Google Play chưa mở được ô thanh toán. Bạn mở Cửa hàng Play, kiểm tra đúng tài khoản Google, rồi thử lại.', stSignInToBuy: 'Bạn cần đăng nhập để mua. Đang mở trang đăng nhập…', stNeedChrome: (b) => (b ? 'App đang chạy trong ' + b + ', trình duyệt này' : 'App đang chạy trong một trình duyệt') + ' không hỗ trợ thanh toán Google Play. Bạn đặt Chrome làm trình duyệt mặc định: Cài đặt → Ứng dụng → Chọn ứng dụng mặc định → Ứng dụng trình duyệt → Chrome. Nếu máy chưa có Chrome, cài từ CH Play trước. Rồi đóng hẳn app và mở lại. Có thể bạn sẽ phải đăng nhập lại.', stSheetHung: 'Google Play không trả lời. Bạn đóng hẳn app, mở lại rồi thử lần nữa.', stSheetWaiting: 'Google Play đang xử lý. Nếu bạn đã thanh toán xong, đợi một phút rồi bấm Khôi phục mua hàng.', stAborted: 'Chưa mua xong. Nếu bạn không thấy ô thanh toán của Google Play hiện ra, bạn thử lại nhé.', stBusy: 'Đang mở ô thanh toán. Bạn đợi một chút nhé.', stItemOff: 'Google Play chưa cho mua mục này trên tài khoản của bạn.', stDiagTitle: 'Thông tin kỹ thuật', stDiagCopy: 'Chép thông tin kỹ thuật', stDiagCopied: 'Đã chép. Bạn gửi cho Nabu giúp mình nhé.',
     myPlans: 'Gói của bạn', stPlusPitch: 'Nabu Plus mở lượt xem không giới hạn và giúp bạn nhỏ lớn nhanh hơn.',
     pickSpent: 'Hôm nay bạn đã rút một lá rồi. Mai quay lại rút lá mới nhé.',
-    pickOffer: 'Nabu Plus rút bài không giới hạn mỗi ngày, tung xu và rung cây không giới hạn, kèm toàn bộ giao diện: 79.000đ.',
+    pickOffer: 'Nabu Plus rút bài không giới hạn mỗi ngày, tung xu và rung cây không giới hạn, kèm toàn bộ giao diện. Giá xem ở trang Bảng giá.',
     pickPlus: 'Xem Nabu Plus',
     helloHead: 'Mỗi ngày một lá bài, một lời nhắn và một chút may mắn ✨',
     helloLead: 'Rút Tarot, xem dự đoán & lịch âm, rung Cây Thông Điệp, nuôi linh thú, viết nhật ký và manifest — tất cả trong Nabu.',
@@ -4597,7 +4597,7 @@ const STR = {
     stCancelMeaning: 'Cancel anytime in Google Play. You’ll keep access until the end of your paid period.',
     stManage: 'Manage in Google Play', stRestore: 'Restore purchases', stRestoring: 'Restoring…', stRestored: (n) => 'Restored ' + n + ' items', stRestoreNone: 'Nothing to restore',
     stNotReady: 'No response from Google Play.', stRetry: 'Try again', stPending: 'Payment pending. Access will unlock automatically once it’s complete.',
-    stIncludedPro: 'Included in Nabu Pro', stSwitchTo: (n) => 'Switch to ' + n, stNeedIn: 'This item can only be purchased in the Nabu Tarot Android app.', stFailed: 'Purchase didn’t go through. Please try again.', stNoSheet: 'Google Play could not open the payment sheet. Open the Play Store, check you are signed in to the right Google account, then try again.', stSignInToBuy: 'Please sign in to buy. Opening the sign-in screen…', stNeedChrome: (b) => 'The app is running in ' + (b || 'a browser') + ' that cannot reach Google Play payments. Set Chrome as the default browser: Settings → Apps → Default apps → Browser → Chrome. If Chrome is not installed, get it from the Play Store first. Then close the app fully and open it again. You may need to sign in again.', stSheetHung: 'Google Play did not answer. Close the app fully, open it again and try once more.', stSheetWaiting: 'Google Play is still working. If you have already paid, wait a minute and tap Restore purchases.', stAborted: 'The purchase did not complete. If you never saw the Google Play payment sheet, please try again.', stBusy: 'The payment sheet is opening. One moment.', stItemOff: 'Google Play is not offering this item to your account.', stDiagTitle: 'Technical details', stDiagCopy: 'Copy technical details', stDiagCopied: 'Copied. Please send it to Nabu.',
+    stIncludedPro: 'Included in Nabu Pro', stSwitchTo: (n) => 'Switch to ' + n, stNeedIn: 'This item can only be purchased in the Nabu Tarot Android app.', stFailed: 'Purchase didn’t go through. Please try again.', stNoSheet: 'Google Play could not open the payment sheet. Open the Play Store, check you are signed in to the right Google account, then try again.', stSignInToBuy: 'Please sign in to buy. Opening the sign-in screen…', stNeedChrome: (b) => (b ? 'The app is running in ' + b + ', which cannot reach Google Play payments' : 'The app is running in a browser that cannot reach Google Play payments') + '. Set Chrome as the default browser: Settings → Apps → Default apps → Browser → Chrome. If Chrome is not installed, get it from the Play Store first. Then close the app fully and open it again. You may need to sign in again.', stSheetHung: 'Google Play did not answer. Close the app fully, open it again and try once more.', stSheetWaiting: 'Google Play is still working. If you have already paid, wait a minute and tap Restore purchases.', stAborted: 'The purchase did not complete. If you never saw the Google Play payment sheet, please try again.', stBusy: 'The payment sheet is opening. One moment.', stItemOff: 'Google Play is not offering this item to your account.', stDiagTitle: 'Technical details', stDiagCopy: 'Copy technical details', stDiagCopied: 'Copied. Please send it to Nabu.',
     myPlans: 'Your plans', stPlusPitch: 'Nabu Plus gives you unlimited readings and helps your companion grow faster.',
     pickSpent: 'You have drawn your card for today. Come back tomorrow for a new one.',
     pickOffer: 'Nabu Plus draws as many cards a day as you like, opens the coin and the tree without limit, and every design. The price is on the price page.',
@@ -5420,7 +5420,7 @@ const STR = {
     stCancelMeaning: 'Du kannst jederzeit in Google Play kündigen. Dein Zugang bleibt bis zum Ende des bezahlten Zeitraums bestehen.',
     stManage: 'In Google Play verwalten', stRestore: 'Käufe wiederherstellen', stRestoring: 'Wird wiederhergestellt…', stRestored: (n) => n + ' Elemente wiederhergestellt', stRestoreNone: 'Nichts zum Wiederherstellen',
     stNotReady: 'Keine Antwort von Google Play.', stRetry: 'Erneut versuchen', stPending: 'Zahlung ausstehend. Nach Abschluss wird der Zugang automatisch freigeschaltet.',
-    stIncludedPro: 'In Nabu Pro enthalten', stSwitchTo: (n) => 'Zu ' + n + ' wechseln', stNeedIn: 'Dieser Artikel kann nur in der Nabu-Tarot-App für Android gekauft werden.', stFailed: 'Kauf nicht abgeschlossen. Bitte erneut versuchen.', stNoSheet: 'Google Play konnte das Zahlungsfenster nicht öffnen. Öffne den Play Store, prüfe dein Google-Konto und versuch es noch einmal.', stSignInToBuy: 'Zum Kaufen bitte anmelden. Die Anmeldeseite wird geöffnet…', stNeedChrome: (b) => 'Die App läuft in ' + (b || 'einem Browser') + ', der Google-Play-Zahlungen nicht erreichen kann. Mach Chrome zum Standardbrowser: Einstellungen → Apps → Standard-Apps → Browser → Chrome. Falls Chrome fehlt, zuerst aus dem Play Store installieren. Dann die App ganz schließen und neu öffnen. Eventuell musst du dich neu anmelden.', stSheetHung: 'Google Play hat nicht geantwortet. Schließe die App vollständig, öffne sie erneut und versuche es noch einmal.', stSheetWaiting: 'Google Play arbeitet noch. Wenn du schon bezahlt hast, warte eine Minute und tipp auf Käufe wiederherstellen.', stAborted: 'Der Kauf wurde nicht abgeschlossen. Wenn du das Zahlungsfenster von Google Play nicht gesehen hast, versuch es bitte noch einmal.', stBusy: 'Das Zahlungsfenster wird geöffnet. Einen Moment.', stItemOff: 'Google Play bietet diesen Artikel deinem Konto nicht an.', stDiagTitle: 'Technische Details', stDiagCopy: 'Technische Details kopieren', stDiagCopied: 'Kopiert. Bitte schick es an Nabu.',
+    stIncludedPro: 'In Nabu Pro enthalten', stSwitchTo: (n) => 'Zu ' + n + ' wechseln', stNeedIn: 'Dieser Artikel kann nur in der Nabu-Tarot-App für Android gekauft werden.', stFailed: 'Kauf nicht abgeschlossen. Bitte erneut versuchen.', stNoSheet: 'Google Play konnte das Zahlungsfenster nicht öffnen. Öffne den Play Store, prüfe dein Google-Konto und versuch es noch einmal.', stSignInToBuy: 'Zum Kaufen bitte anmelden. Die Anmeldeseite wird geöffnet…', stNeedChrome: (b) => 'Die App läuft in ' + (b || 'einem Browser') + ', der Google-Play-Zahlungen nicht erreichen kann. Mach Chrome zum Standardbrowser: Einstellungen → Apps → Standard-Apps → Browser → Chrome. Falls Chrome fehlt, zuerst aus dem Play Store installieren. Dann die App ganz schließen und neu öffnen. Eventuell musst du dich neu anmelden.', stSheetHung: 'Google Play hat nicht geantwortet. Schließ die App ganz, öffne sie neu und versuch es noch mal.', stSheetWaiting: 'Google Play arbeitet noch. Wenn du schon bezahlt hast, warte eine Minute und tipp auf Käufe wiederherstellen.', stAborted: 'Der Kauf wurde nicht abgeschlossen. Wenn du das Zahlungsfenster von Google Play nicht gesehen hast, versuch es bitte noch einmal.', stBusy: 'Das Zahlungsfenster wird geöffnet. Einen Moment.', stItemOff: 'Google Play bietet diesen Artikel deinem Konto nicht an.', stDiagTitle: 'Technische Details', stDiagCopy: 'Technische Details kopieren', stDiagCopied: 'Kopiert. Bitte schick es an Nabu.',
     myPlans: 'Deine Abos', stPlusPitch: 'Nabu Plus bietet unbegrenzte Legungen und lässt deinen kleinen Begleiter schneller wachsen.',
     pickSpent: 'Du hast deine Karte für heute gezogen. Komm morgen für eine neue wieder.',
     pickOffer: 'Nabu Plus zieht so viele Karten am Tag, wie du magst, öffnet Münze und Baum ohne Grenze und dazu jedes Design. Den Preis findest du auf der Preisseite.',
@@ -18639,7 +18639,10 @@ function boot() {
       const had = !!navigator.serviceWorker.controller;
       // A new release takes over on the next open; reload once so the visitor
       // sees it right away instead of the cached page.
-      navigator.serviceWorker.addEventListener('controllerchange', () => { if (had && !window.__reloaded) { window.__reloaded = true; location.reload(); } });
+      /* Not while a purchase is in flight: reloading then would take the
+         sheet's answer with it. Nothing is queued - the new worker already
+         controls the page, so the next open is the new release anyway. */
+      navigator.serviceWorker.addEventListener('controllerchange', () => { if (had && !window.__reloaded && !(typeof BILL !== 'undefined' && BILL && BILL.buying)) { window.__reloaded = true; location.reload(); } });
       navigator.serviceWorker.register('sw.js').then((reg) => {
         const w = reg.installing;
         if (w && !had) w.addEventListener('statechange', () => { if (w.state === 'activated') toast(T().offlineReady); });
@@ -21751,6 +21754,8 @@ const BILL = {
   sheetWaitMs: 20000,  // how long a sheet may stay silent before the app asks Play whether it is really open
   stage: '',        // how far the last attempt got: 'connect', 'details', or ''
   buying: '',       // the key whose sheet is open, so a second tap cannot start another
+  seq: 0,           // every purchase takes a number, so a late answer can tell its own from the next one
+  buyingSeq: 0,     // the number of the purchase `buying` refers to
   lastSheet: null,  // {outcome, name, ms} of the last show(), for the diagnostics
   onSettled: null,  // the screen's hook: an answer that landed after the watchdog had already spoken
 
@@ -22032,7 +22037,11 @@ const BILL = {
        no sheet, no message and nothing to report, and there was no record of
        what Play had actually said. */
     const shownAt = Date.now();
-    this.buying = key;
+    /* A number per purchase. The same product tapped twice is two purchases,
+       and an answer to the first must not be read as an answer to the second
+       just because they are for the same thing. */
+    this.seq = (this.seq || 0) + 1; const my = this.seq;
+    this.buying = key; this.buyingSeq = my;
     /* A sheet that never answers (H7, 2026-09-09). show() can stay pending
        with no sheet in sight, and the button then stays disabled while the
        diagnostic line still looks healthy. After sheetWaitMs with no answer
@@ -22058,7 +22067,7 @@ const BILL = {
     let showP;
     try { showP = req.show(); }
     catch (e) {
-      this.buying = '';
+      this.buying = ''; this.buyingSeq = 0;
       e.stage = 'show'; e.playName = errName(e); e.elapsedMs = 0; e.outcome = this.sheetOutcome(e);
       this.lastSheet = { outcome: e.outcome, name: e.playName, ms: 0 };
       throw e;
@@ -22090,28 +22099,34 @@ const BILL = {
          started while this one was waiting - the lock and the line belong to
          that one now, and an answer to a sheet nobody is waiting on must not
          unlock it or write over what it says. */
-      const mine = this.buying === key;
-      if (mine) this.buying = '';
+      const mine = this.buying === key && this.buyingSeq === my;
+      if (mine) { this.buying = ''; this.buyingSeq = 0; }
       const tok = late && late.details && (late.details.purchaseToken || late.details.token);
       try { late.complete(tok ? 'success' : 'fail').catch(() => {}); } catch (e3) { /* closed */ }
+      /* The screen is handed the restore itself, not only the news of it: a
+         purchase finished this late is unlocked by restore(), and on a phone
+         where listPurchases() is slow - fifteen seconds, on the emulator -
+         the buyer would otherwise sit in front of "being unlocked" and a live
+         Buy button until they left the screen and came back. */
+      let fin = null;
       if (tok) {
         this.remember(Object.assign({ sku: it.sku, token: tok, at: Date.now() }, opt.wid ? { wid: opt.wid } : {}));
-        this.lastSheet = { outcome: 'done', name: '', ms: Date.now() - shownAt };
-        this.restore().catch(() => {});
+        this.lastSheet = { outcome: 'done', name: '-', ms: Date.now() - shownAt };
+        fin = this.restore().catch(() => {});
       } else {
         /* Answered, and nothing was bought. Left as it was, the diagnostic
            line would go on saying Play is still working on a sheet that has
            closed. */
         this.lastSheet = { outcome: 'aborted', name: 'NoToken', ms: Date.now() - shownAt };
       }
-      if (mine && typeof this.onSettled === 'function') { try { this.onSettled(key, this.lastSheet); } catch (e4) { /* never block */ } }
+      if (mine && typeof this.onSettled === 'function') { try { this.onSettled(key, this.lastSheet, fin); } catch (e4) { /* never block */ } }
     }, (err) => {
       clearTimeout(wd);
       if (!hung) return;
-      const mine = this.buying === key;
-      if (mine) this.buying = '';
+      const mine = this.buying === key && this.buyingSeq === my;
+      if (mine) { this.buying = ''; this.buyingSeq = 0; }
       this.lastSheet = { outcome: this.sheetOutcome(err), name: errName(err), ms: Date.now() - shownAt };
-      if (mine && typeof this.onSettled === 'function') { try { this.onSettled(key, this.lastSheet); } catch (e4) { /* never block */ } }
+      if (mine && typeof this.onSettled === 'function') { try { this.onSettled(key, this.lastSheet, null); } catch (e4) { /* never block */ } }
     });
     let res;
     try {
@@ -22125,11 +22140,19 @@ const BILL = {
       e.outcome = hung || ((asked && e.playName === 'AbortError') ? 'hung' : this.sheetOutcome(e));
       this.lastSheet = { outcome: e.outcome, name: e.playName, ms: e.elapsedMs };
       throw e;
-    } finally { if (hung !== 'waiting') this.buying = ''; }
+    } finally { if (hung !== 'waiting') { this.buying = ''; this.buyingSeq = 0; } }
     const token = res && res.details && (res.details.purchaseToken || res.details.token);
+    const extra = opt.wid ? { wid: opt.wid } : undefined;
+    /* Written down before anything else is done with it. Between here and the
+       worker's answer the page can still go away - the sheet closing brings
+       the app back to the screen, and a release that took over in the
+       meantime reloads it - and Play's own list would then be the only place
+       this purchase existed. verify() tears the note up when the worker has
+       answered, and keeps it when the answer is `pending`, which is exactly
+       what restore() needs to finish it later. */
+    if (token) this.remember(Object.assign({ sku: it.sku, token: token, at: Date.now() }, extra || {}));
     try { await res.complete(token ? 'success' : 'fail'); } catch (e) { /* already closed */ }
     if (!token) throw new Error('nopurchase');
-    const extra = opt.wid ? { wid: opt.wid } : undefined;
     let out;
     try { out = await this.verify(it.sku, token, extra); }
     catch (e) {
@@ -22263,7 +22286,7 @@ const storeNotReadyHTML = () => '<div class="card">'
      installed app, no Play bridge at all means the wrapper opened in a
      browser that does not carry one. The browser is only named when it can
      actually be recognised - Brave ships Chrome's UA verbatim. */
-  + (isTWA() && BILL.why === 'noapi' ? '<p class="hint err" style="margin-bottom:10px">' + esc(T().stNeedChrome({ samsung: 'Samsung Internet', brave: 'Brave', edge: 'Microsoft Edge' }[BILL.provider()] || '')) + '</p>' : '')
+  + (isTWA() && (BILL.why === 'noapi' || (BILL.provider() === 'samsung' && /^connect:/.test(BILL.why))) ? '<p class="hint err" style="margin-bottom:10px">' + esc(T().stNeedChrome({ samsung: 'Samsung Internet', brave: 'Brave', edge: 'Microsoft Edge' }[BILL.provider()] || '')) + '</p>' : '')
   + '<p class="hint">' + esc(T().stNotReady) + '</p><button type="button" class="btn block" data-retry>' + esc(T().stRetry) + '</button>'
   + (BILL.why ? '<p class="hint" style="margin-top:8px;opacity:.6;font-size:12px;user-select:all">' + esc(BILL.why) + '</p>' : '') + '</div>'
   /* The diagnostics have to be reachable from the one screen a stuck buyer
@@ -22417,11 +22440,20 @@ function bindStore(root, redraw) {
      was opened again. Looked up in the live document, because the render this
      was bound to may be long gone; if the store is not on screen there is
      nothing to say and nothing to do. */
-  BILL.onSettled = (key, sheet) => {
+  BILL.onSettled = (key, sheet, fin) => {
     const b = $('[data-buy="' + key + '"]'), st = $('[data-st="' + key + '"]'), S2 = T();
     if (!b || !b.isConnected) return;
+    if (sheet && sheet.outcome === 'done') {
+      /* Paid, and the worker is finishing it. Offering the same thing to buy
+         again while that runs is how somebody pays twice, so the button stays
+         shut until the screen has been drawn from what the account now says. */
+      b.disabled = true;
+      if (st) { st.className = 'hint st'; st.textContent = S2.stPending; }
+      (fin || Promise.resolve()).then(() => { if (redraw) redraw(); else route(); }).catch(() => {});
+      return;
+    }
     b.disabled = false;
-    if (st) { st.className = 'hint st'; st.textContent = (sheet && sheet.outcome === 'done') ? S2.stRestoring : S2.stAborted; }
+    if (st) { st.className = 'hint st'; st.textContent = S2.stAborted; }
   };
   $$('[data-diag]', root).forEach((b) => b.addEventListener('click', async () => {
     const st = $('[data-diagst]', root);
@@ -32226,7 +32258,7 @@ function adminSale(p) {
 ROUTES.admin = { nav: '', render: renderAdmin };
 
 /* ============================ boot ============================ */
-window.APP_VERSION = 'v218';
+window.APP_VERSION = 'v219';
 window.NABU = { CONFIG: CONFIG, SALE: SALE, salePrice: salePrice, loadActs: loadActs, BACK: BACK, LESSONS: LESSONS, localAnswer: localAnswer, compatVerdict: compatVerdict, numerologyOf: numerologyOf, ZDEEP: ZDEEP, lunarToday: lunarToday, solarToLunar: solarToLunar, DECK: DECK, INSIGHT: INSIGHT, KW: KW, ASK: ASK, TOPICS: TOPICS, GUIDES: GUIDES, SERVICES: SERVICES, COURSES: COURSES, ACCESS: ACCESS, INTERESTS: INTERESTS, plusOn: () => plusOn(), proOn: () => proOn(), luckUnlimited: () => luckUnlimited(), ZODIAC: ZODIAC, pick: pick, book: book, PLAY_ITEMS: PLAY_ITEMS, PLAY_SUB_SKUS: PLAY_SUB_SKUS, playItem: playItem, BILL: BILL, SUBS: SUBS, renderStore: renderStore, subStateWord: subStateWord,
   insightHTML: insightHTML, insightOf: insightOf, sunSignIndex: sunSignIndex, lifePath: lifePath, PROFILE: () => PROFILE, BE: BE, ACTS: ACTS,
   ANGELS: ANGELS, angelRead: angelRead, CODEBOOK: CODEBOOK, redeemCode: redeemCode, loadCodebook: loadCodebook, petHomeSVG: petHomeSVG, PET_HOMES: PET_HOMES, PET_WEARS: PET_WEARS, codeDigest: codeDigest, randomCode: randomCode, BANK: BANK, PETS: PETS, petSVG: petSVG, PET_COATS: PET_COATS, PET_KINDS: PET_KINDS, turnsMerge: turnsMerge, turnsLocal: turnsLocal, priceText: priceText, termText: termText, proSaveText: () => proSaveText(), wedFeeText: () => wedFeeText(), fmtPrice: fmtPrice, luckCut: luckCut, petLevel: petLevel, petStep: petStep, VOUCHERS: VOUCHERS, levelCoins: levelCoins, LOOKS: LOOKS,

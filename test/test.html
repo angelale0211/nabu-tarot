@@ -278,6 +278,9 @@ async function go(hash, sel) { W().location.hash = hash; await sleep(30); return
     const playStub = async (url, opt) => {
       const say = (status, body) => ({ ok: status < 300, status: status, json: async () => body });
       if (!/\/billing$/.test(url)) return codeKeep.fetch(url, opt);
+      /* The worker taking its time. The window between a sheet closing and
+         the worker answering is the one a reload can fall into. */
+      if (play.holdVerify) await play.holdVerify;
       const body = JSON.parse((opt && opt.body) || '{}'), uid = (N.BE.user || {}).uid;
       if (!uid) return say(401, { error: 'signin' });
       const it = N.PLAY_ITEMS.filter((i) => i.sku && i.sku === body.sku)[0];
@@ -1069,6 +1072,11 @@ async function go(hash, sel) { W().location.hash = hash; await sleep(30); return
       d.dispatchEvent(new w.Event('visibilitychange'));
       await sleep(60);
       ok(calls === 2, 'and an app on its way out of sight asks for nothing');
+      /* Read out of the built page rather than fired: a real controllerchange
+         would reload the suite's own app frame and take the run with it. */
+      const built = await (await fetch('../index.html')).text();
+      ok(built.indexOf("BILL.buying)) { window.__reloaded = true; location.reload();") > -1,
+        'and the reload a new release brings is not taken in the middle of a purchase either (read from the built page: firing it here would reload the app)');
       delete d.visibilityState; delete sw.getRegistration; N.UPD.last = Date.now(); }
     ok(d.querySelectorAll('.themes [data-theme-pick]').length === 4 && /📱/.test(d.querySelector('.themes').textContent) && d.querySelector('.themes').getBoundingClientRect().height < 60, 'the four themes sit on one line as icon chips');
     ok(d.querySelectorAll('.row3 .btn').length === 3 && /💬/.test(d.querySelector('.row3').textContent) && /🎓/.test(d.querySelector('.row3').textContent) && d.querySelector('.row3').getBoundingClientRect().height < 60, 'contact, report and tour share one line, each with an icon');
@@ -1681,6 +1689,15 @@ async function go(hash, sel) { W().location.hash = hash; await sleep(30); return
         ok(N.BILL.why === 'noapi' && /Chrome/.test(d.querySelector('.store').textContent) && /Samsung Internet/.test(d.querySelector('.store').textContent) && d.querySelector('.store [data-retry]'),
           'when the wrapper has no Play bridge the card says so, names the browser it knows, and points at Chrome');
         d.defaultView.getDigitalGoodsService = keepDG; await N.BILL.retry();
+        /* The bridge is there and answers with a refusal, which is what a
+           browser that carries one but cannot reach Play does. The buyer
+           still has to be told which browser is in the way. */
+        play.connectFail = true; play.connectFailName = 'NotAllowedError'; await N.BILL.retry();
+        await go('#/learn', '.tile'); await go('#/unlock?from=app', '.store');
+        ok(/^connect:/.test(N.BILL.why) && /Samsung Internet/.test(d.querySelector('.store').textContent)
+           && /trình duyệt mặc định/.test(d.querySelector('.store').textContent),
+          'inside Samsung Internet a store that cannot reach Play at all still names the browser in the way, not only that something failed');
+        play.connectFail = false; play.connectFailName = null; await N.BILL.retry();
         await go('#/learn', '.tile'); await go('#/unlock?from=app', '.store');
         play.showFail = { name: 'AbortError', delay: 30 };
         d.querySelector('.store [data-buy="playing"]').click();
@@ -1769,16 +1786,24 @@ async function go(hash, sel) { W().location.hash = hash; await sleep(30); return
              buyer pressing anything. */
           play.showHang = 'sheet'; d.querySelector('.store [data-buy="playing"]').click();
           await waitFor(() => stOf('playing') && /đang xử lý/.test(stOf('playing').textContent), 4000);
+          /* The worker is held while the two halves are read, because
+             restore() answers in a blink against a stub and the redraw would
+             otherwise arrive before the line it replaces could be seen. */
+          let releaseLate = null; play.holdVerify = new Promise((r) => { releaseLate = r; });
           const res = play.resolveShow; play.resolveShow = null; play.rejectShow = null;
           if (res) res({ details: { purchaseToken: 'lateTok' }, complete: async () => {} });
           await waitFor(() => N.BILL.buying === '' && N.BILL.lastSheet && N.BILL.lastSheet.outcome === 'done', 4000);
           ok(N.BILL.buying === '' && N.BILL.lastSheet.outcome === 'done'
              && N.BILL.pendingList().filter((p) => p.token === 'lateTok').length === 1
-             && !d.querySelector('.store [data-buy="playing"]').disabled && /khôi phục/i.test(stOf('playing').textContent),
-            'a purchase Play finishes after the app gave up waiting is kept and restored, never lost, and the screen stops asking the buyer to wait');
-          /* Let restore() finish with it before it is dropped, or the row it
-             writes back would outlive this check. */
-          await waitFor(() => ((N.BILL.pendingList().filter((p) => p.token === 'lateTok')[0] || {}).tries || 0) >= 1, 4000);
+             && d.querySelector('.store [data-buy="playing"]').disabled && /tự mở/.test(stOf('playing').textContent),
+            'a purchase Play finishes after the app gave up waiting is kept, and the buyer is told it is being unlocked rather than offered the same thing to buy again');
+          /* And when the worker has finished with that token the shop draws
+             itself again, so nobody is left looking at a line that has
+             stopped being true. */
+          if (releaseLate) releaseLate(); play.holdVerify = null;
+          await waitFor(() => stOf('playing') && stOf('playing').textContent === '', 4000);
+          ok(stOf('playing') && stOf('playing').textContent === '' && !d.querySelector('.store [data-buy="playing"]').disabled,
+            'and once the worker has answered the shop draws itself again instead of waiting to be left and come back to');
           N.BILL.forget('lateTok'); }
         play.showHang = false; N.BILL.buying = ''; N.BILL.sheetWaitMs = kw;
         { /* Three ways the wait could be confused, and must not be: an answer
@@ -1801,6 +1826,21 @@ async function go(hash, sel) { W().location.hash = hash; await sleep(30); return
              again before the next one, exactly as a buyer leaving the store
              and coming back would draw it. */
           N.BILL.buying = ''; play.showHang = false;
+          await go('#/learn', '.tile'); await go('#/unlock?from=app', '.store');
+          /* The same thing tapped again is not the same purchase. Comparing
+             only the product would let the first sheet's answer unlock the
+             second attempt at it. */
+          play.showHang = 'sheet'; d.querySelector('.store [data-buy="playing"]').click();
+          await waitFor(() => stOf('playing') && /đang xử lý/.test(stOf('playing').textContent), 4000);
+          const saidAgain = stOf('playing').textContent;
+          N.BILL.buying = 'playing'; N.BILL.buyingSeq = 999;
+          { const rj = play.rejectShow; play.rejectShow = null; play.resolveShow = null;
+            const shut = new Error('cancelled'); shut.name = 'AbortError'; if (rj) rj(shut);
+            await sleep(150); }
+          ok(N.BILL.buying === 'playing' && N.BILL.buyingSeq === 999
+             && d.querySelector('.store [data-buy="playing"]').disabled && stOf('playing').textContent === saidAgain,
+            'and a second try at the very same thing is a purchase of its own: the first sheet closing does not unlock it');
+          N.BILL.buying = ''; N.BILL.buyingSeq = 0; play.showHang = false;
           await go('#/learn', '.tile'); await go('#/unlock?from=app', '.store');
           play.showHang = 'sheet'; d.querySelector('.store [data-buy="playing"]').click();
           await waitFor(() => stOf('playing') && /đang xử lý/.test(stOf('playing').textContent), 4000);
@@ -1876,6 +1916,22 @@ async function go(hash, sel) { W().location.hash = hash; await sleep(30); return
         ok(filed === 1, 'the same billing failure is filed once per session, however often the screen is drawn');
         play.hangConnect = false; N.BILL.connectMs = kc; await N.BILL.retry();
         await go('#/learn', '.tile'); await go('#/unlock?from=app', '.store'); }
+      { /* Between the sheet closing and the worker answering, the page can
+           still be reloaded - a new release taking over is enough - and Play's
+           own list would then be the only place that purchase existed. So the
+           token is written down first, and torn up once the worker has
+           answered for it. */
+        let release = null; play.holdVerify = new Promise((r) => { release = r; });
+        const paying = N.BILL.buy('playing');
+        const psku = playItem('playing').sku;
+        await waitFor(() => N.BILL.pendingList().some((x) => x.sku === psku), 4000);
+        const row = N.BILL.pendingList().filter((x) => x.sku === psku)[0];
+        ok(row && row.token && !N.ACCESS.has('playing'),
+          'a token Google Play has already charged for is written down before the worker is asked, so a reload in that moment cannot lose it');
+        if (release) release(); play.holdVerify = null;
+        const paid = await paying.catch((e) => e);
+        ok(paid && paid.opened && N.ACCESS.has('playing') && !N.BILL.pendingList().some((x) => x.token === row.token),
+          'and once the worker has answered for it the note is torn up'); }
       d.querySelector('.store [data-buy="plus"]').click(); await waitFor(() => N.ACCESS.has('plus'), 4000);
       await go('#/me', '[data-theme-pick]'); d.querySelector('details[data-sect="own"]').open = true;
       const plans = d.querySelector('.myplans');
