@@ -12,7 +12,7 @@
      carries this notice with it. See LICENSE. -->
 <meta name="author" content="Nabu Tarot">
 <meta name="copyright" content="Copyright (c) 2025-2026 Nabu Tarot. All rights reserved.">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'none'; object-src 'none'; form-action 'self'; script-src 'self' 'sha256-CeIrV3I5VnfNDLEcAJmH4aN32WEpdzPLsslazTQ/2dU=' https://www.gstatic.com https://apis.google.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; font-src 'self' data:; media-src 'self' data: blob:; worker-src 'self'; connect-src 'self' https://*.googleapis.com https://*.google.com https://*.firebaseio.com https://*.cloudfunctions.net https://*.workers.dev https://generativelanguage.googleapis.com; frame-src https://*.firebaseapp.com https://accounts.google.com https://*.facebook.com">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'none'; object-src 'none'; form-action 'self'; script-src 'self' 'sha256-tUchUQVXd+baYQnloL8z32RcjrdiJv6GgmgcRtfGgQ8=' https://www.gstatic.com https://apis.google.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; font-src 'self' data:; media-src 'self' data: blob:; worker-src 'self'; connect-src 'self' https://*.googleapis.com https://*.google.com https://*.firebaseio.com https://*.cloudfunctions.net https://*.workers.dev https://generativelanguage.googleapis.com; frame-src https://*.firebaseapp.com https://accounts.google.com https://*.facebook.com">
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <meta name="theme-color" content="#EFE9FA">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -2453,6 +2453,13 @@ body[data-route="signin"] #main{width:100%}
 #main .signin .hint{text-align:center}
 #main .signin .later{margin-top:18px}
 .signin .later a{color:var(--fg-faint);text-decoration:underline}
+/* Opened inside Instagram, Facebook, TikTok or Zalo: the way out to the real
+   browser, above the buttons that would otherwise fail there. */
+#main .signin .inapp{margin:0 0 16px;padding:14px 16px;border-radius:16px;background:var(--surface-2);border:1px solid var(--rule-soft);text-align:center}
+.signin .inapp strong{display:block;font-size:16px;color:var(--fg);margin-bottom:6px}
+#main .signin .inapp p{margin:0 0 12px;color:var(--fg-soft);font-size:15px;line-height:1.5}
+.signin .inapp .btn+.btn{margin-top:8px}
+#main .signin .inapp .hint{margin:12px 0 0;font-size:13.5px}
 /* A rule with the word "or" sitting in it, rather than a bare line. */
 .orline{display:flex;align-items:center;gap:12px;margin:16px 0 4px;color:var(--fg-faint);font-size:13px}
 .orline::before,.orline::after{content:'';flex:1;height:1px;background:var(--rule-soft)}
@@ -3854,7 +3861,12 @@ const STR = {
     signOut: 'Đăng xuất', tourLink: 'Hướng dẫn', themeShort: { auto: '📱 Máy', light: '☀️ Sáng', dark: '🌙 Tối', pink: '🌸 Hồng' },
     emailLabel: 'Email', passwordLabel: 'Mật khẩu',
     signinLead: '🌙 Đăng nhập để Nabu ghi nhớ hành trình của bạn.',
-    signinOr: 'hoặc', signinLater: 'Để sau, bạn vào xem trước đã',
+    inAppTitle: (app) => 'Bạn đang mở Nabu trong ' + app, inAppOther: 'một ứng dụng khác',
+    inAppBody: (b) => 'Google không cho đăng nhập bên trong trình duyệt của ứng dụng này. Bạn mở Nabu bằng ' + b + ' để đăng nhập nhé, hoặc dùng email ở bên dưới.',
+    inAppOpen: (b) => 'Mở bằng ' + b, inAppCopy: 'Sao chép đường dẫn',
+    inAppMenu: (b) => 'Bấm không được? Bạn bấm nút ⋯ ở góc màn hình, chọn "Mở bằng trình duyệt", hoặc sao chép đường dẫn rồi dán vào ' + b + '.',
+    inAppGoogle: (app, b) => 'Google chặn đăng nhập trong ' + app + '. Bạn mở Nabu bằng ' + b + ' nhé.',
+    signinOr: 'hoặc',signinLater: 'Để sau, bạn vào xem trước đã',
     createAccount: 'Tạo tài khoản', haveAccount: 'Đã có tài khoản? Đăng nhập', noAccount: 'Chưa có tài khoản? Tạo mới',
     forgot: 'Quên mật khẩu', resetSent: 'Đã gửi email đặt lại mật khẩu.', authFbOff: 'Đăng nhập Facebook chưa mở: Meta yêu cầu Nabu đăng ký một ứng dụng nhà phát triển trước. Bạn dùng Google hoặc email giúp Nabu nhé.', authProviderOff: 'Cách đăng nhập này chưa được bật. Bạn dùng Google hoặc email nhé.', authDomain: 'Địa chỉ app chưa được Firebase cho phép. Nabu cần thêm nabutarot.com vào Authorized domains.', authCancelled: 'Bạn đã đóng cửa sổ đăng nhập.', authOtherProvider: 'Email này đã đăng ký bằng cách khác. Bạn đăng nhập bằng cách đó nhé.', authNetwork: 'Không có kết nối mạng. Bạn thử lại sau nhé.',
     authFail: 'Đăng nhập không thành công',
@@ -4696,7 +4708,12 @@ const STR = {
     signOut: 'Sign out', tourLink: 'Tour', themeShort: { auto: '📱 Auto', light: '☀️ Light', dark: '🌙 Dark', pink: '🌸 Pink' },
     emailLabel: 'Email', passwordLabel: 'Password',
     signinLead: '🌙 Sign in and Nabu remembers your journey.',
-    signinOr: 'or', signinLater: 'Later — let me look around first',
+    inAppTitle: (app) => 'You opened Nabu inside ' + app, inAppOther: 'another app',
+    inAppBody: (b) => 'Google does not allow signing in from inside this app. Open Nabu in ' + b + ' to sign in, or use email below.',
+    inAppOpen: (b) => 'Open in ' + b, inAppCopy: 'Copy link',
+    inAppMenu: (b) => 'Nothing happens? Tap the ⋯ menu in a corner and choose "Open in browser", or copy the link and paste it into ' + b + '.',
+    inAppGoogle: (app, b) => 'Google blocks sign-in inside ' + app + '. Please open Nabu in ' + b + '.',
+    signinOr: 'or',signinLater: 'Later — let me look around first',
     createAccount: 'Create account', haveAccount: 'Have an account? Sign in', noAccount: 'No account? Create one',
     forgot: 'Forgot password', resetSent: 'Password reset email sent.', authFbOff: 'Facebook sign-in is not open yet: Meta requires Nabu to register a developer app first. Please use Google or email.', authProviderOff: 'This sign-in method is not switched on. Please use Google or email.', authDomain: 'Firebase has not allowed this address yet. Nabu needs to add nabutarot.com to Authorized domains.', authCancelled: 'You closed the sign-in window.', authOtherProvider: 'This email is registered with a different method. Please sign in that way.', authNetwork: 'No network connection. Please try again.',
     authFail: 'Sign-in failed',
@@ -5530,7 +5547,12 @@ const STR = {
     signOut: 'Abmelden', tourLink: 'Rundgang', themeShort: { auto: '📱 Automatisch', light: '☀️ Hell', dark: '🌙 Dunkel', pink: '🌸 Rosa' },
     emailLabel: 'E-Mail', passwordLabel: 'Passwort',
     signinLead: '🌙 Melde dich an, damit Nabu deinen Weg behält.',
-    signinOr: 'oder', signinLater: 'Später — erst einmal umsehen',
+    inAppTitle: (app) => 'Du hast Nabu in ' + app + ' geöffnet', inAppOther: 'einer anderen App',
+    inAppBody: (b) => 'Google erlaubt die Anmeldung innerhalb dieser App nicht. Öffne Nabu in ' + b + ', um dich anzumelden, oder nimm unten die E-Mail.',
+    inAppOpen: (b) => 'In ' + b + ' öffnen', inAppCopy: 'Link kopieren',
+    inAppMenu: (b) => 'Passiert nichts? Tippe auf das ⋯-Menü in einer Ecke und wähle „Im Browser öffnen“, oder kopiere den Link und füge ihn in ' + b + ' ein.',
+    inAppGoogle: (app, b) => 'Google sperrt die Anmeldung in ' + app + '. Öffne Nabu bitte in ' + b + '.',
+    signinOr: 'oder',signinLater: 'Später — erst einmal umsehen',
     createAccount: 'Konto erstellen', haveAccount: 'Schon ein Konto? Anmelden', noAccount: 'Noch kein Konto? Erstell eines',
     forgot: 'Passwort vergessen', resetSent: 'E-Mail zum Zurücksetzen des Passworts gesendet.', authFbOff: 'Die Anmeldung mit Facebook ist noch nicht offen: Meta verlangt, dass Nabu zuerst eine Entwickler-App anmeldet. Nimm bitte Google oder E-Mail.', authProviderOff: 'Diese Anmeldeart ist nicht eingeschaltet. Nimm bitte Google oder E-Mail.', authDomain: 'Firebase hat diese Adresse noch nicht erlaubt. Nabu muss nabutarot.com zu den autorisierten Domains hinzufügen.', authCancelled: 'Du hast das Anmeldefenster geschlossen.', authOtherProvider: 'Diese E-Mail ist mit einer anderen Methode angemeldet. Melde dich bitte so an.', authNetwork: 'Keine Netzverbindung. Versuch es bitte noch einmal.',
     authFail: 'Anmeldung fehlgeschlagen',
@@ -24502,7 +24524,46 @@ function signinNext(params) {
   return '#' + n;
 }
 
-const GOOGLE_MARK = '<svg viewBox="0 0 24 24"><path fill="#4285F4" d="M21.6 12.2c0-.7-.1-1.4-.2-2H12v3.9h5.4a4.6 4.6 0 0 1-2 3v2.5h3.2c1.9-1.7 3-4.3 3-7.4z"/><path fill="#34A853" d="M12 22c2.7 0 5-.9 6.6-2.4l-3.2-2.5c-.9.6-2 1-3.4 1-2.6 0-4.8-1.8-5.6-4.1H3.1v2.6A10 10 0 0 0 12 22z"/><path fill="#FBBC05" d="M6.4 14a6 6 0 0 1 0-3.9V7.5H3.1a10 10 0 0 0 0 9z"/><path fill="#EA4335" d="M12 6c1.5 0 2.8.5 3.8 1.5l2.8-2.8A10 10 0 0 0 3.1 7.5l3.3 2.6C7.2 7.8 9.4 6 12 6z"/></svg>';
+/* A link tapped inside Instagram, Facebook, TikTok or Zalo opens in that app's
+   own browser, and Google refuses to sign anyone in there: its page answers
+   403 disallowed_useragent, and the visitor is left on it. These apps name
+   themselves in the user agent, so only what they say is believed. 'app' is
+   a plain Android WebView (the "; wv)" token) whose app did not say its name.
+   Chrome, Samsung Internet, Safari and the Android app itself (which runs in
+   the real browser) answer ''. */
+function inAppBrowser(ua) {
+  const s = String(ua == null ? ((window.navigator || {}).userAgent || '') : ua);
+  if (/FBAN\/Messenger|MessengerForiOS|MessengerLite/.test(s)) return 'Messenger';
+  if (/Instagram/.test(s)) return 'Instagram';
+  if (/Barcelona/.test(s)) return 'Threads';
+  if (/FBAN\/|FBAV\/|FB_IAB\//.test(s)) return 'Facebook';
+  if (/musical_ly|BytedanceWebview|TikTok/.test(s)) return 'TikTok';
+  if (/Zalo/.test(s)) return 'Zalo';
+  if (/\bLine\//.test(s)) return 'LINE';
+  if (/Android/.test(s) && /; wv\)/.test(s)) return 'app';
+  return '';
+}
+/* The way out of an in-app browser, to this same page in the real one. On
+   Android an intent link names Chrome; Intent.parseUri reads the last '#' as
+   the start of the intent, so the page's own #/signin route survives it. On
+   an iPhone x-safari-https opens Safari (iOS 17 and later); where it does
+   nothing, the menu instruction and the copied link still work. */
+function inAppExit() {
+  const ua = String((window.navigator || {}).userAgent || ''), href = location.href;
+  if (/iPad|iPhone|iPod/.test(ua)) return { browser: 'Safari', href: href.replace(/^https?:\/\//, 'x-safari-https://') };
+  if (/Android/.test(ua)) return { browser: 'Chrome', href: href.replace(/^https?:\/\//, 'intent://') + '#Intent;scheme=https;package=com.android.chrome;end' };
+  return { browser: 'Chrome / Safari', href: '' };
+}
+function inAppHTML(app) {
+  const S = T(), exit = inAppExit(), name = app === 'app' ? S.inAppOther : app;
+  return '<div class="inapp" role="note"><strong>' + esc(S.inAppTitle(name)) + '</strong>'
+    + '<p>' + esc(S.inAppBody(exit.browser)) + '</p>'
+    + (exit.href ? '<a class="btn primary block inappopen" href="' + esc(exit.href) + '">' + esc(S.inAppOpen(exit.browser)) + '</a>' : '')
+    + '<button type="button" class="btn block" data-inappcopy>' + esc(S.inAppCopy) + '</button>'
+    + '<p class="hint">' + esc(S.inAppMenu(exit.browser)) + '</p></div>';
+}
+
+const GOOGLE_MARK ='<svg viewBox="0 0 24 24"><path fill="#4285F4" d="M21.6 12.2c0-.7-.1-1.4-.2-2H12v3.9h5.4a4.6 4.6 0 0 1-2 3v2.5h3.2c1.9-1.7 3-4.3 3-7.4z"/><path fill="#34A853" d="M12 22c2.7 0 5-.9 6.6-2.4l-3.2-2.5c-.9.6-2 1-3.4 1-2.6 0-4.8-1.8-5.6-4.1H3.1v2.6A10 10 0 0 0 12 22z"/><path fill="#FBBC05" d="M6.4 14a6 6 0 0 1 0-3.9V7.5H3.1a10 10 0 0 0 0 9z"/><path fill="#EA4335" d="M12 6c1.5 0 2.8.5 3.8 1.5l2.8-2.8A10 10 0 0 0 3.1 7.5l3.3 2.6C7.2 7.8 9.4 6 12 6z"/></svg>';
 
 /* Each block rises into place a beat after the one above it (.srise, with
    --i counting the beats). The stagger is decoration: with reduced motion on
@@ -24522,7 +24583,7 @@ function signinHTML(mode) {
   };
   const social = (prov.indexOf('google') > -1 ? '<button type="button" class="btn block" data-auth="google">' + GOOGLE_MARK + esc(S.signInWith.google) + '</button>' : '')
     + (prov.indexOf('facebook') > -1 ? '<button type="button" class="btn block" data-auth="facebook" style="background:#1461C7;color:#fff;border-color:transparent">' + esc(S.signInWith.facebook) + '</button>' : '');
-  const email = prov.indexOf('email') > -1;
+  const email = prov.indexOf('email') > -1, app = inAppBrowser();
   return '<section class="signin">'
     + rise('<div class="hlogo">' + LOGO + '</div>')
     + rise('<h1>' + esc(create ? S.createAccount : S.signIn) + '</h1>')
@@ -24530,6 +24591,7 @@ function signinHTML(mode) {
        reassurance - and each is its own block so the first can lead and the
        second can sit softer beneath it, whatever the width. */
     + rise('<p class="lead">' + esc(S.signinLead).split('\n').map((l, i) => '<span class="ln ln' + (i + 1) + '">' + l + '</span>').join('') + '</p>')
+    + (app && social ? rise(inAppHTML(app)) : '')
     + (social ? rise('<div class="providers">' + social + '</div>') : '')
     + (social && email ? rise('<div class="orline"><span>' + esc(S.signinOr) + '</span></div>') : '')
     + (email ? '<form id="aform">'
@@ -24557,12 +24619,16 @@ function renderSignin(args, params) {
        carries on where they were headed. */
     const onward = () => { if (BE.user) redirect(mode === 'create' ? '#/welcome' : signinNext(params)); };
     $$('[data-auth]', m).forEach((b) => b.addEventListener('click', async () => {
-      const p = b.getAttribute('data-auth');
+      const p = b.getAttribute('data-auth'), app = inAppBrowser();
+      /* Google would only show its own refusal page; say why here instead. */
+      if (p === 'google' && app) { status(S.inAppGoogle(app === 'app' ? S.inAppOther : app, inAppExit().browser), 'err'); return; }
       if (!BE.enabled) { status(S.accountsSoon, 'err'); toast(S.accountsOff); return; }
       b.disabled = true;
       try { await BE.signIn(p); onward(); } catch (e) { status(authMessage(e, p), 'err'); }
       b.disabled = false;
     }));
+    const copyBtn = $('[data-inappcopy]', m);
+    if (copyBtn) copyBtn.addEventListener('click', () => copyText(location.href).then(() => toast(S.copied)));
     const form = $('#aform', m);
     if (form) {
       const em = () => $('#aemail', m).value.trim(), pw = () => $('#apw', m).value;
@@ -28543,9 +28609,9 @@ function adminSale(p) {
 ROUTES.admin = { nav: '', render: renderAdmin };
 
 /* ============================ boot ============================ */
-window.APP_VERSION = 'v226';
+window.APP_VERSION = 'v228';
 window.NABU = { CONFIG: CONFIG, SALE: SALE, salePrice: salePrice, loadActs: loadActs, BACK: BACK, LESSONS: LESSONS, localAnswer: localAnswer, compatVerdict: compatVerdict, numerologyOf: numerologyOf, ZDEEP: ZDEEP, lunarToday: lunarToday, solarToLunar: solarToLunar, DECK: DECK, INSIGHT: INSIGHT, KW: KW, ASK: ASK, TOPICS: TOPICS, GUIDES: GUIDES, SERVICES: SERVICES, COURSES: COURSES, ACCESS: ACCESS, INTERESTS: INTERESTS, plusOn: () => plusOn(), proOn: () => proOn(), luckUnlimited: () => luckUnlimited(), ZODIAC: ZODIAC, pick: pick, book: book, PLAY_ITEMS: PLAY_ITEMS, PLAY_SUB_SKUS: PLAY_SUB_SKUS, playItem: playItem, BILL: BILL, SUBS: SUBS, renderStore: renderStore, subStateWord: subStateWord,
-  insightHTML: insightHTML, insightOf: insightOf, sunSignIndex: sunSignIndex, lifePath: lifePath, PROFILE: () => PROFILE, BE: BE, ACTS: ACTS, CMT: CMT, LIKES: LIKES, kbReady: kbReady, AI: AI, STR: STR, KB_URL: (typeof KB_URL === 'string' ? KB_URL : ''),
+  insightHTML: insightHTML, insightOf: insightOf, sunSignIndex: sunSignIndex, lifePath: lifePath, PROFILE: () => PROFILE, BE: BE, inAppBrowser: inAppBrowser, ACTS: ACTS, CMT: CMT, LIKES: LIKES, kbReady: kbReady, AI: AI, STR: STR, KB_URL: (typeof KB_URL === 'string' ? KB_URL : ''),
   ANGELS: ANGELS, angelRead: angelRead, CODEBOOK: CODEBOOK, redeemCode: redeemCode, loadCodebook: loadCodebook, petHomeSVG: petHomeSVG, PET_HOMES: PET_HOMES, PET_WEARS: PET_WEARS, codeDigest: codeDigest, randomCode: randomCode, BANK: BANK, PETS: PETS, petSVG: petSVG, PET_COATS: PET_COATS, PET_KINDS: PET_KINDS, turnsMerge: turnsMerge, turnsLocal: turnsLocal, TODAY: TODAY, treeMsgOf: treeMsgOf, priceText: priceText, termText: termText, proSaveText: () => proSaveText(), wedFeeText: () => wedFeeText(), fmtPrice: fmtPrice, luckCut: luckCut, petLevel: petLevel, petStep: petStep, VOUCHERS: VOUCHERS, levelCoins: levelCoins, LOOKS: LOOKS,
   LOVE: LOVE, LOVEDB: LOVEDB, HANDLE_RE: HANDLE_RE, loveBadgeHTML: loveBadgeHTML,
   loveMarkSVG: loveMarkSVG, QUIZ: QUIZ, QSCORE: QSCORE, QUIZ_PASS: QUIZ_PASS, QUIZ_LEN: QUIZ_LEN, pileArtSVG: pileArtSVG, PILE_ARTS: PILE_ARTS, threadSVG: threadSVG, petParentsHTML: petParentsHTML, GIFTS: GIFTS, ALERTS: ALERTS, alertsStart: alertsStart, alertWas: alertWas,

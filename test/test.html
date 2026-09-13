@@ -963,6 +963,67 @@ async function go(hash, sel) { W().location.hash = hash; await sleep(30); return
         'a gate sends you to the sign-in page and says where to send you back');
       await go('#/signin?next=' + encodeURIComponent('https://example.com/'), '.signin');
       ok(d.querySelector('.signin'), 'the sign-in page ignores a way back that leads off the app'); }
+    { /* A link tapped inside Instagram, Facebook, TikTok or Zalo opens in that
+         app's own browser, and Google refuses to sign anyone in there
+         (disallowed_useragent). The sign-in page names the app, offers the
+         way out to Chrome or Safari, and does not send a Google tap into an
+         error page. The suite runs in Edge, so the UA is overridden; every
+         redraw goes by way of another screen, because setting the hash it
+         already holds fires no hashchange. */
+      const IG_IOS = 'Mozilla/5.0 (iPhone; CPU iPhone OS 17_5 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148 Instagram 339.0.3.12.91 (iPhone15,2; iOS 17_5; en_US; en; scale=3.00; 1179x2556; 624573346)';
+      const FB_AND = 'Mozilla/5.0 (Linux; Android 14; SM-A546B Build/UP1A.231005.007; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/125.0.6422.165 Mobile Safari/537.36 [FB_IAB/FB4A;FBAV/468.0.0.55.105;]';
+      const cases = {
+        [IG_IOS]: 'Instagram',
+        [FB_AND]: 'Facebook',
+        'Mozilla/5.0 (iPhone; CPU iPhone OS 17_5 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148 [FBAN/FBIOS;FBAV/468.0.0.43.107;FBBV/620188938;FBDV/iPhone15,2;FBMD/iPhone;FBSN/iOS;FBSV/17.5;FBSS/3;FBID/phone;FBLC/vi_VN;FBOP/5]': 'Facebook',
+        'Mozilla/5.0 (iPhone; CPU iPhone OS 17_5 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148 [FBAN/MessengerForiOS;FBAV/458.0.0.30.109;FBBV/617014580]': 'Messenger',
+        'Mozilla/5.0 (Linux; Android 14; SM-A546B Build/UP1A.231005.007; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/125.0.6422.165 Mobile Safari/537.36 trill_350402 JsSdk/1.0 NetType/WIFI Channel/googleplay AppName/musical_ly app_version/35.4.2 ByteLocale/vi-VN BytedanceWebview/d8a21c6': 'TikTok',
+        'Mozilla/5.0 (iPhone; CPU iPhone OS 17_5 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148 Zalo iOS/476 ZaloTheme/light ZaloLanguage/vn': 'Zalo',
+        'Mozilla/5.0 (iPhone; CPU iPhone OS 17_5 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148 Barcelona 339.0.0.21.110 (iPhone15,2; iOS 17_5; en_US; en)': 'Threads',
+        'Mozilla/5.0 (iPhone; CPU iPhone OS 17_5 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148 Line/14.9.0': 'LINE',
+        'Mozilla/5.0 (Linux; Android 13; Pixel 7 Build/TQ3A.230901.001; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/125.0.6422.165 Mobile Safari/537.36': 'app',
+        'Mozilla/5.0 (Linux; Android 14; Pixel 8) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Mobile Safari/537.36': '',
+        'Mozilla/5.0 (Linux; Android 14; SM-A546B) AppleWebKit/537.36 (KHTML, like Gecko) SamsungBrowser/26.0 Chrome/122.0.0.0 Mobile Safari/537.36': '',
+        'Mozilla/5.0 (iPhone; CPU iPhone OS 17_5 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.5 Mobile/15E148 Safari/604.1': '',
+        'Mozilla/5.0 (iPhone; CPU iPhone OS 17_5 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) CriOS/125.0.6422.80 Mobile/15E148 Safari/604.1': ''
+      };
+      const wrong = Object.keys(cases).filter((ua) => N.inAppBrowser(ua) !== cases[ua]);
+      ok(!wrong.length, 'in-app browsers are named from the user agent, and Chrome, Samsung Internet, Safari and Chrome on iPhone are not taken for one'
+        + (wrong.length ? ' (wrong: ' + wrong.map((ua) => cases[ua] + '=' + N.inAppBrowser(ua)).join(', ') + ')' : ''));
+      const nav = d.defaultView.navigator;
+      const keepA = { user: N.BE.user, on: N.BE.enabled, signIn: N.BE.signIn };
+      const asked = [];
+      N.BE.user = null; N.BE.enabled = true; N.BE.signIn = async (p) => { asked.push(p); };
+      Object.defineProperty(nav, 'userAgent', { configurable: true, get: () => IG_IOS });
+      await go('#/home', '#main'); await go('#/signin', '.signin');
+      const box = d.querySelector('.signin .inapp');
+      const safari = box && box.querySelector('a.inappopen');
+      ok(box && /Instagram/.test(box.textContent) && /Safari/.test(box.textContent) && safari
+         && /^x-safari-https:\/\//.test(safari.getAttribute('href')) && /#\/signin/.test(safari.getAttribute('href'))
+         && box.querySelector('[data-inappcopy]') && d.querySelectorAll('.signin [data-auth]').length === 2 && d.querySelector('.signin #aemail'),
+        'inside Instagram on an iPhone the sign-in page names Instagram, opens this same page in Safari, offers the link to copy, and keeps every way to sign in');
+      d.querySelector('.signin [data-auth="google"]').click(); await sleep(60);
+      ok(!asked.length && /Instagram/.test(d.querySelector('#astatus').textContent) && / err/.test(d.querySelector('#astatus').className),
+        'a Google tap inside Instagram is not sent to the error page Google would show; it says why, in the status line');
+      d.querySelector('.signin [data-auth="facebook"]').click(); await sleep(60);
+      ok(asked.join() === 'facebook', 'Facebook is still asked as usual - only Google is known to refuse');
+      /* An earlier toast may still be up; clear it so only this copy can answer. */
+      d.querySelector('#toast').textContent = ''; d.querySelector('#toast').classList.remove('show');
+      box.querySelector('[data-inappcopy]').click();
+      await waitFor(() => d.querySelector('#toast').textContent === 'Đã sao chép', 3000);
+      ok(d.querySelector('#toast').textContent === 'Đã sao chép', 'the link is copied and the toast says so (toast: "' + d.querySelector('#toast').textContent + '")');
+      Object.defineProperty(nav, 'userAgent', { configurable: true, get: () => FB_AND });
+      await go('#/home', '#main'); await go('#/signin', '.signin');
+      const chrome = d.querySelector('.signin .inapp a.inappopen');
+      ok(chrome && /Facebook/.test(d.querySelector('.signin .inapp').textContent) && /Chrome/.test(d.querySelector('.signin .inapp').textContent)
+         && /^intent:\/\/.+#\/signin.*#Intent;scheme=https;package=com\.android\.chrome;end$/.test(chrome.getAttribute('href')),
+        'inside Facebook on Android the way out opens this same page in Chrome');
+      delete nav.userAgent;
+      await go('#/home', '#main'); await go('#/signin', '.signin');
+      ok(!d.querySelector('.signin .inapp'), 'in an ordinary browser the sign-in page says nothing about in-app browsers');
+      d.querySelector('.signin [data-auth="google"]').click(); await sleep(60);
+      ok(asked.join() === 'facebook,google', 'and Google is asked as usual there');
+      N.BE.user = keepA.user; N.BE.enabled = keepA.on; N.BE.signIn = keepA.signIn; }
     { /* The welcome screen: asked once, at registration, and never again. */
       const keepW = { db: N.BE.db, user: N.BE.user, on: N.BE.enabled };
       const wdocs = {};

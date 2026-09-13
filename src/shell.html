@@ -2287,6 +2287,13 @@ body[data-route="signin"] #main{width:100%}
 #main .signin .hint{text-align:center}
 #main .signin .later{margin-top:18px}
 .signin .later a{color:var(--fg-faint);text-decoration:underline}
+/* Opened inside Instagram, Facebook, TikTok or Zalo: the way out to the real
+   browser, above the buttons that would otherwise fail there. */
+#main .signin .inapp{margin:0 0 16px;padding:14px 16px;border-radius:16px;background:var(--surface-2);border:1px solid var(--rule-soft);text-align:center}
+.signin .inapp strong{display:block;font-size:16px;color:var(--fg);margin-bottom:6px}
+#main .signin .inapp p{margin:0 0 12px;color:var(--fg-soft);font-size:15px;line-height:1.5}
+.signin .inapp .btn+.btn{margin-top:8px}
+#main .signin .inapp .hint{margin:12px 0 0;font-size:13.5px}
 /* A rule with the word "or" sitting in it, rather than a bare line. */
 .orline{display:flex;align-items:center;gap:12px;margin:16px 0 4px;color:var(--fg-faint);font-size:13px}
 .orline::before,.orline::after{content:'';flex:1;height:1px;background:var(--rule-soft)}
