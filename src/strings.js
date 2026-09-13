@@ -45,7 +45,10 @@ const STR = {
     yourCard: 'Lá bài của bạn',
     aiSugFocus: (f) => 'Lá này nói gì về ' + f.toLowerCase() + ' của mình?',
     energyNow: 'Năng lượng lúc này', adviceHead: 'Lời nhắn cho hôm nay', pickTeaser: 'Đây là phần đọc nhanh cho hôm nay. Nghĩa đầy đủ của lá bài — xuôi, ngược và theo từng chủ đề — nằm trong Khóa Tarot.', pickTeaserBtn: 'Xem Khóa Tarot', aiLiteRedirect: (n, f) => 'Ở phần rút bài, mình chỉ đọc lá ' + n + ' theo góc bạn đã chọn (' + f.toLowerCase() + '). Nghĩa của lá này về các chủ đề khác, cùng nghĩa xuôi và ngược, có trong Khóa Tarot; muốn hỏi riêng chuyện của bạn thì đặt lịch với Nabu nhé.',
-    energyLine: (kws) => 'Lúc này bạn đang mang năng lượng: ' + kws + '.',
+    /* The two keywords as a sentence a person would say - 'khó khăn và lo âu' -
+       rather than a colon and a comma list, which read as a label and repeated
+       the heading above it. */
+    energyLine: (kws) => 'Hai từ khóa của bạn lúc này: ' + String(kws).split(', ').join(' và ') + '.',
     cardSays: 'Lá bài nói gì',
     onTheCard: 'Trên lá bài',
     shadow: 'Mặt trái cần để ý',

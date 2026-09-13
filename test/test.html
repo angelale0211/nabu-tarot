@@ -50,6 +50,19 @@ async function go(hash, sel) { W().location.hash = hash; await sleep(30); return
     // data
     ok(N.DECK.vi.length === 78 && N.DECK.en.length === 78, 'deck has 78 cards in both languages');
     ok(Object.keys(N.INSIGHT.en).length === 78 && Object.keys(N.INSIGHT.vi).length === 78, 'insights cover 78 cards in EN and VI');
+    { /* The owner's voice for the cards (2026-09-13): plain Vietnamese that sounds
+         written in Vietnamese. The Minors had been carried over from English
+         almost word for word - 184 of their 336 lines said "bạn hãy", and some
+         kept English idioms: "bị bỏ ngoài trời lạnh" (left out in the cold),
+         "một khoản tiền đau" (a painful sum). They were rewritten; this keeps a
+         re-import from bringing that back. */
+      const lines = Object.keys(N.INSIGHT.vi).flatMap((id) => { const r = N.INSIGHT.vi[id]; return r.slice(2).map((t) => [id, t]); });
+      const hay = lines.filter((x) => /bạn hãy/i.test(x[1]));
+      const calques = ['bỏ ngoài trời lạnh', 'khoản tiền đau', 'đời sống xã hội', 'để nó ra', 'nỗi đau sắc', 'đứng giữa ban ngày', 'thật đến trần trụi', 'mang năng lượng:']
+        .filter((k) => lines.some((x) => x[1].indexOf(k) > -1));
+      ok(hay.length <= 12 && calques.length === 0,
+        'the Vietnamese card readings are written in Vietnamese: "bạn hãy" is rare, not a habit, and none of the literal translations of English idioms is back'
+        + ' [bạn hãy: ' + hay.length + (hay.length > 12 ? ' e.g. ' + hay.slice(0, 2).map((x) => x[0]).join(', ') : '') + (calques.length ? ' | calques: ' + calques.join(', ') : '') + ']'); }
     ok(N.DECK.vi.every((c) => { const i = N.insightOf(c.id, 'vi'), j = N.insightOf(c.id, 'en'); return i && j && i.pos.length >= 3 && i.neg.length >= 3 && j.pos.length >= 3 && [i.now, i.love, i.work, i.study, i.money, i.advice, j.now, j.love, j.work, j.study, j.money, j.advice].every((t) => t && t.length > 10); }), 'every insight has keywords and six texts in both languages');
     /* The question readings are fetched rather than carried by the page
        (build.py splits kb-questions.js), so they have to be asked for
@@ -136,7 +149,7 @@ async function go(hash, sel) { W().location.hash = hash; await sleep(30); return
     ok(!!d.querySelector('#reveal .hero .name') && d.querySelectorAll('#reveal .ins').length === 3 && d.querySelector('#reveal .teaser a[href="#/learn/tarot"]') && !/Mặt trái cần để ý/.test(d.querySelector('#reveal').textContent), 'card revealed with energy, a note, the CTA block and a course teaser; no reversed meaning or scene');
     ok(!/🃏/.test(d.querySelector('#main').innerHTML) && !/🃏/.test(d.querySelector('#nav').innerHTML), 'no joker emoji on the draw screen');
     ok(!/Có nguồn rõ|Nhiều người dùng|Tự đặt ra|badge-src|Golden Dawn|Book T/.test(d.documentElement.innerHTML.replace(/<script[^]*?<.script>/g, '')), 'no grounding badges or source names in the rendered page');
-    ok(/Lúc này bạn đang mang năng lượng/.test(d.querySelector('#reveal').textContent) && /Nếu bạn đang nghĩ về tình cảm/.test(d.querySelector('#reveal').textContent), 'Vietnamese insight sections');
+    ok(/Hai từ khóa của bạn lúc này: [^.]+ và [^.]+\./.test(d.querySelector('#reveal').textContent) && /Nếu bạn đang nghĩ về tình cảm/.test(d.querySelector('#reveal').textContent), 'Vietnamese insight sections');
     ok(!/Thu Anh/.test(d.querySelector('#reveal').textContent), 'no source line under the insight');
     ok(!!d.querySelector('#reveal .ai') && d.querySelectorAll('#reveal .ai [data-ai-sug]').length === 3, 'Nabu AI panel under the drawn card');
     const gk = N.CONFIG.geminiKey; N.CONFIG.geminiKey = '';  // built-in engine for this check; the online one is tested separately
