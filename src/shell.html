@@ -1145,6 +1145,21 @@ h1 .pileico{width:34px;height:27px;vertical-align:-3px;margin-right:2px}
 @media (prefers-reduced-motion:reduce){.petart .glowoff,.petart .mythring{animation:none}}
 .petstage .aura{left:12%;top:26%;width:64%;height:58%}
 /* What can be given to a companion, on the edge of its own scene. */
+/* The two buttons of the companion preview, riding above the bottom
+   navigation for as long as the real ones at the foot of the page are out of
+   sight. Below the navigation's z-index on purpose: the tab bar is how
+   somebody leaves, and nothing may sit on top of that. */
+.petbar{position:fixed;left:0;right:0;bottom:calc(var(--nav-h) + env(safe-area-inset-bottom,0px));z-index:19;
+  background:color-mix(in srgb,var(--surface) 94%,transparent);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
+  border-top:1px solid var(--rule-soft);box-shadow:0 -6px 18px var(--shade)}
+.petbar .wrap{display:flex;align-items:center;gap:10px;padding:10px 18px}
+.petbar .btn{margin:0;min-height:46px}
+.petbar .btn.primary{flex:1 1 auto}
+.petbar .btn:not(.primary){flex:0 0 auto;white-space:nowrap}
+/* Room under the last line of the preview, so that a phone with no
+   IntersectionObserver - where the bar never steps aside - still has nothing
+   of the page left underneath it. */
+.petprevend{margin-bottom:104px}
 .stagebtns{position:absolute;top:8%;z-index:5;display:flex;flex-direction:column;gap:8px}
 .stagebtns.left{left:6px;align-items:flex-start}
 .stagebtns.right{right:6px;align-items:flex-end}
@@ -1535,11 +1550,35 @@ h1 .pileico{width:34px;height:27px;vertical-align:-3px;margin-right:2px}
 .cmts .cmttext{display:block;white-space:pre-wrap;overflow-wrap:anywhere}
 .cmts .when{display:inline-block;margin-top:4px;font-size:12px;color:var(--fg-faint)}
 .cmts .cmtdel{margin-left:10px;font-size:12.5px;min-height:40px;display:inline-flex;align-items:center;padding:0 8px}
+.cmts .cmtedit{margin-left:10px;font-size:12.5px;min-height:40px;min-width:40px;display:inline-flex;align-items:center;justify-content:center;padding:0 8px}
+/* The words become a box in the place the words were, so nothing below moves
+   further than the box is taller than the line it replaced. */
+.cmts .cmtedbox{margin-top:6px}
+.cmts .cmtedbox textarea{width:100%;min-height:64px;border-radius:12px;padding:8px 12px;font-size:14px}
+.cmts .cmtedbox .row{margin-top:6px;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.cmts .cmtedbox .cmtedst{font-size:12.5px}
 .cmts .cmtform textarea{width:100%;min-height:72px;border-radius:14px;padding:10px 14px}
 .cmts .cmtform .row{margin-top:8px;align-items:center;gap:10px}
 /* The comment rules: the wedding's terms card, with its button set apart. */
 .cmts .cmtrules .btn{margin-top:12px}
 .post .foot .cmtn{min-height:40px;display:inline-flex;align-items:center;gap:4px;color:var(--fg-soft);font-size:13.5px;font-weight:600;padding:6px 10px;border-radius:8px;text-decoration:none;margin-right:auto}
+/* The heart sits next to the comment count, both at the left end of the row,
+   because they are the two things a reader does with a post and the buttons
+   at the other end are what they do with the app. On a post's own page there
+   is no count beside it - the comments are already open further down - so the
+   heart takes the auto margin itself and stays where it was on the card. */
+.post .foot .likeb{min-height:40px;display:inline-flex;align-items:center;gap:5px;border:0;background:none;cursor:pointer;
+  color:var(--fg-soft);font-size:13.5px;font-weight:600;padding:6px 10px;border-radius:8px}
+.post .foot .likeb.alone{margin-right:auto}
+.post .foot .likeb .lk{font-size:15px;line-height:1}
+.post .foot .likeb.on{color:var(--fg)}
+.post .foot .likeb:disabled{opacity:.55;cursor:default}
+/* The heart grows a little as it is given, once, and not at all for somebody
+   who has asked their phone to stop moving things. */
+@media (prefers-reduced-motion:no-preference){
+  .post .foot .likeb .lk{transition:transform .18s cubic-bezier(.2,.7,.3,1)}
+  .post .foot .likeb.on .lk{transform:scale(1.18)}
+}
 .wishcard{position:relative;overflow:hidden}
 .wgtally{display:flex;flex-wrap:wrap;align-items:center;gap:10px;margin-bottom:12px;padding:9px 12px;
   border-radius:12px;background:var(--surface-2);font-size:14px;font-weight:600}

@@ -1,5 +1,5 @@
 /* Nabu Tarot -- offline cache. Bump CACHE on every release. */
-const CACHE = 'nabu-tarot-v225';
+const CACHE = 'nabu-tarot-v226';
 const SHELL = ['./', './index.html', './manifest.webmanifest', './icon-180.png', './icon-512.png', './icon-512-maskable.png', './posts.json', './schedule.json', './fb.json', './horoscope.json'];
 const LIVE = /\/(posts|schedule|fb|horoscope|activities|activities-stock)\.json$/;
 
@@ -32,10 +32,21 @@ self.addEventListener('fetch', (e) => {
     }).catch(() => caches.match('./index.html')));
     return;
   }
+  /* Everything else - the icons, the course answers that index.html fetches
+     when a card is opened - is served from the cache first and kept there the
+     first time it is fetched.
+
+     The last resort is the page itself, which is right for a navigation that
+     arrived here by some other route and wrong for anything the page loads:
+     handing index.html back as if it were a script means the browser parses
+     HTML as JavaScript and reports a syntax error, which says nothing about
+     the real problem, no signal. A script that cannot be fetched fails as a
+     script, and learn.js already treats that as "no answers this time". */
+  const asPage = !/\.(js|css|png|jpg|jpeg|svg|webp|woff2?|json)$/.test(url.pathname);
   e.respondWith(caches.match(e.request, { ignoreSearch: true }).then((hit) => hit || fetch(e.request).then((res) => {
     if (res && res.ok && res.type === 'basic') { const copy = res.clone(); caches.open(CACHE).then((c) => c.put(e.request, copy)).catch(() => {}); }
     return res;
-  }).catch(() => caches.match('./index.html'))));
+  }).catch(() => (asPage ? caches.match('./index.html') : Response.error()))));
 });
 
 // A tap on a notification the page raised through this worker. Android only

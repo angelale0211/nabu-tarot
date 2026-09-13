@@ -585,7 +585,7 @@ function renderWedding(args) {
     if (tick) { clearInterval(tick); tick = null; }
     if (beat) { clearInterval(beat); beat = null; }
   };
-  NAV.cleanup = cleanup;
+  navOnLeave(cleanup);
 
   const head = (sub) => '<div class="eyebrow">' + esc(CONFIG.brand) + '</div>'
     + '<h1 style="margin-bottom:6px">\uD83D\uDC92 ' + esc(S.wedTitle) + '</h1>'

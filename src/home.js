@@ -154,7 +154,7 @@ function postHTML(p, full) {
     + '<div class="body' + (long ? ' clamp' : '') + '">' + richHTML(raw) + '</div>'
     + (long ? '<button class="more" data-more>' + T().readMore + '</button>' : '')
     + (p.cards && p.cards.length ? '<div class="faint">' + T().cardsDrawn + '</div><div class="mini">' + p.cards.map((c) => miniHTML(c, true)).join('') + '</div>' : '')
-    + '<div class="foot">' + (!full && CMT.allowed('post', p) ? '<a class="cmtn" data-cmtn="' + esc(CMT.key('post', p.id)) + '" href="#/post/' + esc(p.id) + '" aria-label="' + esc(T().cmtTitle) + '">💬 <span>' + cmtCountText(CMT.counts[CMT.key('post', p.id)]) + '</span></a>' : '') + (p.link ? '<a class="btn sm" href="' + esc(p.link) + '" target="_blank" rel="noopener">' + esc(p.source || 'Facebook') + ' ↗</a>' : '') + '<button data-share>' + T().share + '</button></div>'
+    + '<div class="foot">' + (LIKES.allowed(p) ? likeBtnHTML(p, full || !CMT.allowed('post', p)) : '') + (!full && CMT.allowed('post', p) ? '<a class="cmtn" data-cmtn="' + esc(CMT.key('post', p.id)) + '" href="#/post/' + esc(p.id) + '" aria-label="' + esc(T().cmtTitle) + '">💬 <span>' + cmtCountText(CMT.counts[CMT.key('post', p.id)]) + '</span></a>' : '') + (p.link ? '<a class="btn sm" href="' + esc(p.link) + '" target="_blank" rel="noopener">' + esc(p.source || 'Facebook') + ' ↗</a>' : '') + '<button data-share>' + T().share + '</button></div>'
     + '</article>';
 }
 function bindPost(root) {
@@ -165,9 +165,11 @@ function bindPost(root) {
     const art = b.closest('article'), p = allPosts().filter((x) => x.id === art.getAttribute('data-id'))[0];
     if (p) openShareSheet({ title: L(p.title), text: L(p.title) + '\n' + plainText(L(p.body)), url: p.link || (appURL() + '#/post/' + p.id) });
   }));
-  bindCardLinks(root); hydrateImages(root); cmtFillCounts(root);
+  bindCardLinks(root); hydrateImages(root); cmtFillCounts(root); likeBind(root); likeFill(root);
 }
-function allPosts() { return (POSTS || []).concat(FBPOSTS.map((f) => Object.assign({ source: f.source || 'Facebook' }, f))); }
+/* `fb` marks a post carried here from Facebook. It decides where a heart
+   may go (likes.js): those posts keep their hearts where they were given. */
+function allPosts() { return (POSTS || []).concat(FBPOSTS.map((f) => Object.assign({ source: f.source || 'Facebook', fb: true }, f))); }
 function sortedPosts() {
   return allPosts().sort((a, b) => (b.pinned ? 1 : 0) - (a.pinned ? 1 : 0) || postScore(b) - postScore(a) || String(b.date).localeCompare(String(a.date)));
 }

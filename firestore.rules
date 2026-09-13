@@ -173,6 +173,40 @@ service cloud.firestore {
                             && shorterThan('aid', 120);
       allow delete: if isAdmin() || (request.auth != null && resource.data.uid == request.auth.uid);
     }
+    /* ---- a heart on one of Nabu's posts ----
+
+       The same shape as a vote, for the same reason: the document is named
+       after the post and the person together, so one person's heart on one
+       post is one row no matter how many times they tap, and counting them
+       is counting rows. A heart carries three fields and no name at all -
+       who liked a post is not shown to anybody, so publishing a name here
+       would be collecting something the app never uses.
+
+       Everyone reads: the number under a post is public, as the comment
+       count beside it already is. Only the person themselves adds or takes
+       back their own. There is nothing to update - a heart is given or it is
+       not - so update is refused outright rather than left to a check that
+       would have to get every field right.
+
+       Nabu's own posts only, and never the welcome note, which is named here
+       exactly as it is for comments below. A post carried here from Facebook
+       keeps its hearts on Facebook: the app offers no heart on one, and this
+       rule does not have to know that, because `on` is the post id and a
+       Facebook post's id never reaches this collection. */
+    match /likes/{id} {
+      allow read: if true;
+      allow create: if request.auth != null
+                    && request.resource.data.keys().hasOnly(['on', 'uid', 'at'])
+                    && request.resource.data.keys().hasAll(['on', 'uid', 'at'])
+                    && request.resource.data.uid == request.auth.uid
+                    && id == request.resource.data.on + '_' + request.auth.uid
+                    && request.resource.data.on is string
+                    && request.resource.data.on.matches('^post:[A-Za-z0-9._-]{1,80}$')
+                    && request.resource.data.on != 'post:2026-09-04-welcome'
+                    && request.resource.data.at == request.time;
+      allow update: if false;
+      allow delete: if isAdmin() || (request.auth != null && resource.data.uid == request.auth.uid);
+    }
     /* ---- comments under a post, a poll or a pile ----
 
        Everyone reads them: a conversation under a post is public by nature,
@@ -186,8 +220,20 @@ service cloud.firestore {
        case. The name is read whole, line breaks included: [^@]* rather than
        .*@.*, which let an address through on a second line.
 
-       No editing: a comment is what was said at the time. The writer may take
-       theirs back; Nabu may take any of them down.
+       The writer may fix their own words, and the line says so. This used to
+       be forbidden outright - a comment was what was said at the time - but a
+       typo somebody could only answer by deleting and writing the whole
+       thought again was the commoner problem, so an edit is allowed and made
+       visible instead of hidden. Two fields may move and no others: `text`,
+       and `edited`, which the server stamps and the app shows as "đã sửa".
+       Everything that says whose comment this is and where it hangs - uid,
+       on, name, nabu, at - is fixed at the moment it was written, so an edit
+       can never move a comment to another post or put it under another name.
+       Only the writer edits. Nabu may take any comment down but may not
+       rewrite one: editing somebody else's words under their own name is not
+       moderation, and nothing here should let it look like one.
+
+       The writer may still take theirs back; Nabu may take any of them down.
 
        The note that introduces Nabu Tarot is named here as well as in the
        app: it is a welcome, not a conversation. The wish jar never reaches
@@ -211,7 +257,13 @@ service cloud.firestore {
                     && request.resource.data.nabu is bool
                     && (request.resource.data.nabu == false || isAdmin())
                     && request.resource.data.at == request.time;
-      allow update: if false;
+      allow update: if request.auth != null
+                    && resource.data.uid == request.auth.uid
+                    && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['text', 'edited'])
+                    && request.resource.data.text is string
+                    && request.resource.data.text.trim().size() > 0
+                    && request.resource.data.text.size() <= 600
+                    && request.resource.data.edited == request.time;
       allow delete: if isAdmin() || (request.auth != null && resource.data.uid == request.auth.uid);
     }
     /* ---- the red thread ----

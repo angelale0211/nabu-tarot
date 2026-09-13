@@ -646,7 +646,7 @@ function renderLove(wantHandle) {
   const S = T(), m = $('#main');
   let stop = [], forceHandle = !!wantHandle;
   const cleanup = () => { stop.forEach((f) => { try { f(); } catch (e) { /* already gone */ } }); stop = []; };
-  NAV.cleanup = cleanup;
+  navOnLeave(cleanup);
 
   const head = () => '<div class="eyebrow">' + esc(CONFIG.brand) + '</div><h1 style="margin-bottom:6px">' + loveKnotSVG('inline') + ' ' + esc(S.loveTitle) + '</h1>'
     + '<p class="muted">' + esc(S.loveIntro) + '</p>';

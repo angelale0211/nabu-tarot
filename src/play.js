@@ -791,7 +791,7 @@ function renderDiary() {
     if (stopBond) { stopBond(); stopBond = null; }
     if (stopDiary) { stopDiary(); stopDiary = null; }
   };
-  NAV.cleanup = stopAll;
+  navOnLeave(stopAll);
 
   /* One question at a time. Whose move it is decides what the card says and
      what button is on it - never two switches with nobody told to press one. */

@@ -1183,6 +1183,29 @@ function petAuraHTML(kind, n) {
 }
 
 /* ---- the screen ---- */
+/* The bar at the foot of the screen stands in for the buttons at the foot of
+   the page, and only while those are out of sight: once somebody has scrolled
+   far enough to see the real ones, a second copy floating over them would be
+   two offers of the same choice. Without IntersectionObserver the bar simply
+   stays, which is the behaviour worth having if only one can be had.
+
+   One watcher at a time. Previewing a second companion redraws the screen
+   without leaving the route, so the watcher from the previous preview is
+   dropped here rather than waiting for the router. */
+let PET_BAR_WATCH = null;
+function petBarDrop() { if (PET_BAR_WATCH) { try { PET_BAR_WATCH.disconnect(); } catch (e) { /* already gone */ } PET_BAR_WATCH = null; } }
+function petBarWatch(real, bar) {
+  petBarDrop();
+  if (!real || !bar) return;
+  bar.hidden = false;
+  if (typeof IntersectionObserver !== 'function') return;
+  /* The last stretch of the page is the backlink under the buttons, so the
+     bottom margin keeps the bar up until the real buttons are properly on
+     screen rather than one pixel into it. */
+  PET_BAR_WATCH = new IntersectionObserver((es) => { es.forEach((e) => { bar.hidden = e.isIntersecting; }); }, { rootMargin: '0px 0px -70px 0px' });
+  PET_BAR_WATCH.observe(real);
+  navOnLeave(petBarDrop);
+}
 function renderPet(want) {
   const S = T(), m = $('#main');
   let busy = false, open = '', sheet = '';
@@ -1574,6 +1597,9 @@ function renderPet(want) {
     const luck = petLuck(kind), have = !!PETS.one(kind), pets = PETS.all();
     const swap = !have && !PETS.room();
     const blocked = swap && !PETS.canChange();
+    /* One word, on the button at the foot of the page and on the bar, which
+       are the same button in two places and must never disagree. */
+    const keepWord = have ? S.petPrevOpen : (swap ? S.petPrevChange : S.petPrevTake);
     /* The way back to the row of companions, at the top where somebody looks
        for it. The bar above this screen belongs to the router and leads
        wherever they came from - usually the home page - which is no use to
@@ -1599,12 +1625,28 @@ function renderPet(want) {
       + '</ul></div>'
       + '<p class="hint">' + esc(have ? S.petPrevHave : (swap ? S.petPrevSwap : S.petPrevKeep)) + '</p>'
       + (blocked ? '<p class="hint err">' + esc(S.petChangeWait(fmtDate(PETS.changeOn()))) + '</p>' : '')
-      + '<button class="btn primary block" id="petkeep"' + (blocked ? ' disabled' : '') + '>' + esc(have ? S.petPrevOpen : (swap ? S.petPrevChange : S.petPrevTake)) + '</button>'
+      + '<button class="btn primary block" id="petkeep"' + (blocked ? ' disabled' : '') + '>' + esc(keepWord) + '</button>'
       + '<button class="btn block" id="petback2" style="margin-top:10px">' + esc(S.petPrevOther) + '</button>'
-      + '<p style="margin-top:14px"><a href="#/play" class="backlink">← ' + esc(S.actTitle) + '</a></p>';
-    $('#petback2').addEventListener('click', () => drawPicker());
-    { const top = $('#petbacktop'); if (top) top.addEventListener('click', () => drawPicker()); }
-    $('#petkeep').addEventListener('click', () => {
+      + '<p class="petprevend" style="margin-top:14px"><a href="#/play" class="backlink">← ' + esc(S.actTitle) + '</a></p>'
+      /* The same two buttons, riding at the foot of the screen for as long as
+         the preview is open.
+
+         Three testers said they did not know a companion had to be chosen at
+         all. The picture, the luck tag, the line and the four care rows come
+         to more than a phone screen, so the buttons that do the choosing sat
+         below the fold, and somebody who did not think to scroll saw a
+         companion with nothing to press. The bar is the fix: it is the first
+         thing on the screen that looks like a choice, and it is there before
+         any scrolling happens. The pair at the foot of the page stays where
+         it was for whoever does read to the end - the bar hides itself once
+         those are actually in view, so the choice is never offered twice at
+         once. */
+      + '<div class="petbar" id="petbar" hidden><div class="wrap">'
+      + '<button class="btn primary block" id="petkeepbar"' + (blocked ? ' disabled' : '') + '>' + esc(keepWord) + '</button>'
+      + '<button class="btn block" id="petbackbar">' + esc(S.petPrevOther) + '</button>'
+      + '</div></div>';
+    const goOther = () => drawPicker();
+    const doKeep = () => {
       /* A companion is fed daily and remembers being fed. That has to live on
          an account or it is a promise the app cannot keep. */
       if (!signedIn()) { toast(S.needInPet); location.hash = signinHref(); return; }
@@ -1616,7 +1658,13 @@ function renderPet(want) {
         PETS.markChange();
       }
       PETS.put(PETS.fresh(kind)); open = kind; draw();
-    });
+    };
+    $('#petback2').addEventListener('click', goOther);
+    $('#petbackbar').addEventListener('click', goOther);
+    { const top = $('#petbacktop'); if (top) top.addEventListener('click', goOther); }
+    $('#petkeep').addEventListener('click', doKeep);
+    $('#petkeepbar').addEventListener('click', doKeep);
+    petBarWatch($('#petkeep'), $('#petbar'));
   };
 
   /* The picker shows every companion, with what each one looks after, because

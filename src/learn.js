@@ -138,6 +138,8 @@ function renderLearn(args, params) {
 async function renderCourse(courseId, tab) {
   if (!ACCESS.has(courseId)) {
     if (isTWA()) await BILL.start();
+    // The tarot sample lesson is a card page, so it wants the answers too.
+    if (courseId === 'tarot') await kbReady();
     const S = T(), m = $('#main');
     m.innerHTML = backLink('#/learn', S.learnTitle) + '<h1 style="margin-bottom:8px">' + esc(S.cats[courseId]) + '</h1>' + demoHTML(courseId) + '<div id="unlockwrap" style="margin-top:18px">' + paywallHTML(courseId) + '</div>';
     bindAccordions(m); bindPaywall(m); bindCardLinks(m); bindAI(m); bindPC(m);
@@ -197,11 +199,40 @@ function bindGrid(panel, courseId) {
   }
 }
 
+/* ---- the course answers, fetched the first time one is wanted ----
+
+   ASK and KW are declared in the page and filled by a script beside it
+   (build.py splits kb-questions.js in two). They are the biggest table the
+   app has and the only one a reader may go months without opening, so the
+   page no longer carries them: it fetches them here, once, the first time
+   somebody opens a card or a locked course's sample lesson.
+
+   A fetch that fails resolves false rather than rejecting. ASK stays as it
+   was declared - empty - and the card still shows its meaning, its keywords
+   and its picture, with the questions section simply absent. A card page
+   that refused to open at all would be the worse answer. */
+let KB_WANT = null;
+function kbReady() {
+  if (KB_WANT) return KB_WANT;
+  if (typeof KB_URL !== 'string' || !KB_URL) return (KB_WANT = Promise.resolve(false));
+  KB_WANT = new Promise((done) => {
+    const s = document.createElement('script');
+    s.src = KB_URL;
+    s.async = true;
+    s.onload = () => done(true);
+    /* Not remembered as a failure: a reader who opens a card again after
+       their signal comes back gets another try. */
+    s.onerror = () => { KB_WANT = null; s.remove(); done(false); };
+    document.head.appendChild(s);
+  });
+  return KB_WANT;
+}
 /* ---- tarot card page ---- */
-function renderCard(id) {
+async function renderCard(id) {
   if (id !== DEMO.tarot.card && gate('tarot', '#/learn/tarot')) return;
   const S = T(), m = $('#main');
   if (!cardById(id)) { redirect('#/learn/tarot'); return; }
+  await kbReady();
   m.innerHTML = backLink('#/learn/tarot', S.cats.tarot) + cardBodyHTML(id);
   bindAccordions(m); bindAI(m);
 }

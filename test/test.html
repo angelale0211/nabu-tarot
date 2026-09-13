@@ -51,6 +51,10 @@ async function go(hash, sel) { W().location.hash = hash; await sleep(30); return
     ok(N.DECK.vi.length === 78 && N.DECK.en.length === 78, 'deck has 78 cards in both languages');
     ok(Object.keys(N.INSIGHT.en).length === 78 && Object.keys(N.INSIGHT.vi).length === 78, 'insights cover 78 cards in EN and VI');
     ok(N.DECK.vi.every((c) => { const i = N.insightOf(c.id, 'vi'), j = N.insightOf(c.id, 'en'); return i && j && i.pos.length >= 3 && i.neg.length >= 3 && j.pos.length >= 3 && [i.now, i.love, i.work, i.study, i.money, i.advice, j.now, j.love, j.work, j.study, j.money, j.advice].every((t) => t && t.length > 10); }), 'every insight has keywords and six texts in both languages');
+    /* The question readings are fetched rather than carried by the page
+       (build.py splits kb-questions.js), so they have to be asked for
+       before they can be counted. */
+    ok(await N.kbReady(), 'the course answers can be fetched');
     ok(Object.keys(N.ASK.vi).length === 78 && Object.keys(N.KW.vi).length === 0, 'the Vietnamese question readings cover 78 cards and no lecture keyword sets remain');
     ok(N.TOPICS.length === 5 && N.TOPICS[1].q.vi[4] === 'Mình nên tiếp tục chờ đợi hay buông bỏ?', 'preset topics verbatim');
     ok(N.GUIDES.length >= 20 && N.GUIDES.every((g) => g.sections.length >= 2 && g.title.vi && g.title.en), 'guides present in both languages (' + N.GUIDES.length + ')');
@@ -1489,8 +1493,19 @@ async function go(hash, sel) { W().location.hash = hash; await sleep(30); return
       const pub = await fetch('/privacy.html', { cache: 'no-store' }).then((r) => r.text()).catch(() => '');
       ok(/Bình luận thì khác/.test(pv) && /công khai/.test(pv)
         && pub.indexOf('Bình luận thì khác') > -1 && pub.indexOf('Comments you write under a post') > -1
-        && pub.indexOf('Kommentare, die du unter einen Beitrag') > -1 && pub.indexOf('2026-09-10') > -1,
+        && pub.indexOf('Kommentare, die du unter einen Beitrag') > -1 && pub.indexOf('2026-09-13') > -1,
         'the privacy policy says, in all three languages, that comments are public, show the chosen name only, can be deleted, and go with the account'); }
+    { /* v226 added two things a reader gives without typing anything: an edit,
+         which changes what a comment says after other people have read it, and
+         a heart, which is the only thing the app records about a post that the
+         person never wrote. Both are named in the policy, in all three
+         languages, or they are not disclosed at all. */
+      const pub2 = await fetch('/privacy.html', { cache: 'no-store' }).then((r) => r.text()).catch(() => '');
+      const saysEdit = /đã sửa/.test(pub2) && pub2.indexOf('the line says it was edited') > -1 && pub2.indexOf('bearbeitet wurde') > -1;
+      const saysHeart = pub2.indexOf('không lưu tên bạn') > -1 && pub2.indexOf('never your name') > -1 && pub2.indexOf('nie deinen Namen') > -1;
+      ok(saysEdit && saysHeart,
+        'the policy says in all three languages that a comment can be edited and shows it, and that a heart records the post and the account but never a name'
+        + ' [edit ' + saysEdit + ', heart ' + saysHeart + ']'); }
     { await playMode(true);
       ok(N.BILL.can() && N.BILL.priceOf('tarot') && /300/.test(N.BILL.priceOf('tarot')) && N.BILL.periodMonths('pro6') === 6,
         'inside the app BILL answers with Play\'s own prices and periods for every catalogue item');
@@ -3605,6 +3620,225 @@ async function go(hash, sel) { W().location.hash = hash; await sleep(30); return
             'a card with more than ninety-nine comments says 99+, and reads no more than a hundred of them to know it [' + viaCount + ' | ' + viaGet + ' | ' + asked + ']'); }
         if (cmtOkWas == null) w.localStorage.removeItem('nabu-cmt-ok'); else w.localStorage.setItem('nabu-cmt-ok', cmtOkWas);
         w.saveProfileLocal({ name: nameWas }); N.CMT.counts = {}; }
+
+      /* ---- a heart on one of Nabu's posts ---- */
+      { N.BE.user = { uid: 'uidA', email: 'a@test' };
+        N.LIKES.counts = {}; N.LIKES.mine = {};
+        ok(N.LIKES.allowed({ id: 'x' }) && !N.LIKES.allowed({ id: '2026-09-04-welcome', welcome: true })
+          && !N.LIKES.allowed({ id: 'f1', fb: true }) && !N.LIKES.allowed({}) && !N.LIKES.allowed({ id: '' }),
+          'a heart is offered on Nabu\'s own posts - never on the welcome note, never on one carried from Facebook, never on a post with no id');
+        await go('#/news', '#news .post'); await go('#/home', '#feed .post');
+        const lpid = d.querySelector('#feed .post').getAttribute('data-id'), lk = 'post:' + lpid;
+        const heart = () => d.querySelector('#feed .post [data-like="' + lk + '"]');
+        const rows = () => Object.keys(db.docs).filter((k) => k.indexOf('likes/') === 0);
+        /* The button refuses a tap while the last one is still being written,
+           which is the point of it; so the test waits for it to be ready
+           rather than guessing how long that takes. */
+        const tap = async () => { await waitFor(() => heart() && !heart().disabled, 3000); heart().click(); };
+        ok(!!heart() && !d.querySelector('.welcome [data-like]'),
+          'the card in the feed carries a heart, and the welcome note carries none');
+        await tap();
+        await waitFor(() => rows().length === 1, 3000);
+        const row = db.docs[rows()[0]];
+        ok(rows().length === 1 && rows()[0] === 'likes/' + lk + '_uidA' && row.on === lk && row.uid === 'uidA'
+          && Object.keys(row).sort().join(',') === 'at,on,uid' && !/@/.test(JSON.stringify(row)),
+          'a heart is one row, named after the post and the person together, carrying three fields and no name or address');
+        ok(heart().getAttribute('aria-pressed') === 'true' && /1/.test(heart().textContent),
+          'the heart shows as given straight away, with the number beside it');
+        /* Tapping the same heart twice is one person changing their mind, not
+           two hearts: the row is named, so the second tap can only remove the
+           row the first one made. */
+        await tap();
+        await waitFor(() => rows().length === 0, 3000);
+        await tap();
+        await waitFor(() => rows().length === 1, 3000);
+        ok(rows().length === 1, 'tapping a heart off and on again leaves one row, never two [' + rows().length + ']');
+        await tap();
+        await waitFor(() => rows().length === 0, 3000);
+        ok(rows().length === 0 && heart().getAttribute('aria-pressed') === 'false' && !/[0-9]/.test(heart().textContent),
+          'taking a heart back removes the row, and a post nobody has hearted shows no number at all'
+          + ' [' + rows().length + ' rows, pressed=' + heart().getAttribute('aria-pressed') + ', "' + heart().textContent.trim() + '"]');
+        /* A refused write must not leave a heart the server never took. */
+        { const realDb = N.BE.db;
+          N.BE.db = { collection: (c) => { const r = realDb.collection(c); return c !== 'likes' ? r
+            : Object.assign({}, r, { doc: (id) => Object.assign({}, r.doc(id), { set: () => {
+              const e = new Error('Missing or insufficient permissions.'); e.code = 'permission-denied'; return Promise.reject(e); } }) }); } };
+          await tap();
+          await waitFor(() => heart().getAttribute('aria-pressed') === 'false', 3000);
+          N.BE.db = realDb;
+          ok(heart().getAttribute('aria-pressed') === 'false' && rows().length === 0,
+            'a heart the server refuses goes back to where it was rather than sitting there as a lie'); }
+        /* Signed out the heart still reads, and shows as not given. */
+        N.BE.user = null; N.LIKES.forget();
+        await go('#/news', '#news .post'); await go('#/home', '#feed .post');
+        ok(!!heart() && heart().getAttribute('aria-pressed') === 'false',
+          'signed out the heart is still there to see, and shows as not given');
+        { /* Signing in after the feed has been drawn: the number was already
+             known, and the question "is one of these mine?" had never been
+             asked, because nobody was signed in to ask it for. It has to be
+             asked now, or a reader's own hearts all look empty until the app
+             is closed and opened again. */
+          N.BE.user = { uid: 'uidA', email: 'a@test' };
+          await N.LIKES.add(lk);
+          N.LIKES.mine = {};                 // as if this session had never asked
+          N.BE.user = null; N.LIKES.counts = {};
+          await go('#/news', '#news .post'); await go('#/home', '#feed .post');
+          await waitFor(() => N.LIKES.counts[lk] != null, 3000);
+          N.BE.user = { uid: 'uidA', email: 'a@test' };
+          await go('#/news', '#news .post'); await go('#/home', '#feed .post');
+          await waitFor(() => heart() && heart().getAttribute('aria-pressed') === 'true', 3000);
+          ok(heart().getAttribute('aria-pressed') === 'true',
+            'a heart given earlier shows as given once the reader signs in, even though the number was already known from before they did');
+          await N.LIKES.remove(lk); N.LIKES.counts = {}; N.LIKES.mine = {}; }
+        N.BE.user = { uid: 'uidA', email: 'a@test' }; N.LIKES.counts = {}; N.LIKES.mine = {}; }
+
+      /* ---- a writer fixes their own words ---- */
+      { const cmtOk2 = w.localStorage.getItem('nabu-cmt-ok'); w.localStorage.setItem('nabu-cmt-ok', '1');
+        N.BE.user = { uid: 'uidA', email: 'a@test' }; w.saveProfileLocal({ name: 'Mai' });
+        await go('#/home', '#feed .post');
+        const epid = d.querySelector('#feed .post').getAttribute('data-id'), ek = 'post:' + epid;
+        Object.keys(db.docs).filter((k) => k.indexOf('comments/') === 0).forEach((k) => { delete db.docs[k]; });
+        N.CMT.counts = {};
+        db.put('comments/e1', { on: ek, uid: 'uidA', name: 'Mai', text: 'Cam on Nabu', nabu: false, at: 1 });
+        db.put('comments/e2', { on: ek, uid: 'uidB', name: 'Lan', text: 'Hay qua', nabu: false, at: 2 });
+        await go('#/post/' + epid, '.cmts');
+        await waitFor(() => d.querySelectorAll('.cmts .cmt').length === 2, 3000);
+        ok(d.querySelectorAll('.cmts .cmt.me [data-cmtedit]').length === 1
+          && d.querySelectorAll('.cmts [data-cmtedit]').length === 1,
+          'a reader is offered an edit on their own comment and on nobody else\'s');
+        d.querySelector('.cmts .cmt.me [data-cmtedit]').click();
+        await waitFor(() => d.querySelector('.cmts .cmtedbox textarea'), 2000);
+        const ta2 = d.querySelector('.cmts .cmtedbox textarea');
+        ok(ta2 && ta2.value === 'Cam on Nabu' && d.querySelector('.cmts .cmtedbox [data-cmtsave]')
+          && d.querySelector('.cmts .cmtedbox [data-cmtnope]'),
+          'the words become a box holding the same words, with save and cancel under it');
+        /* A line arriving while somebody is typing must not replace the box. */
+        db.put('comments/e3', { on: ek, uid: 'uidB', name: 'Lan', text: 'Them mot cau', nabu: false, at: 3 });
+        await sleep(140);
+        ok(d.querySelector('.cmts .cmtedbox textarea') === ta2,
+          'a new comment arriving mid-edit does not throw away what is being typed');
+        ta2.value = 'Cam on Nabu nhieu';
+        d.querySelector('.cmts .cmtedbox [data-cmtsave]').click();
+        await waitFor(() => db.docs['comments/e1'].text === 'Cam on Nabu nhieu', 3000);
+        const e1 = db.docs['comments/e1'];
+        ok(e1.text === 'Cam on Nabu nhieu' && !!e1.edited && e1.uid === 'uidA' && e1.on === ek
+          && e1.name === 'Mai' && e1.nabu === false && e1.at === 1
+          && Object.keys(e1).sort().join(',') === 'at,edited,nabu,name,on,text,uid',
+          'an edit moves the words and the moment they changed, and nothing else: never who wrote it, never where it hangs, never when it was written'
+          + ' [' + Object.keys(e1).sort().join(',') + ' | at=' + JSON.stringify(e1.at) + ' | edited=' + (e1.edited ? 'set' : 'missing') + ']');
+        await waitFor(() => !d.querySelector('.cmts .cmtedbox'), 2000);
+        ok(!d.querySelector('.cmts .cmtedbox') && /\u0111\u00e3 s\u1eeda/.test(d.querySelector('.cmts .cmt.me .when').textContent),
+          'the box closes when it is saved, and the line says it was edited');
+        { /* Cancel puts the old words back and writes nothing. */
+          d.querySelector('.cmts .cmt.me [data-cmtedit]').click();
+          await waitFor(() => d.querySelector('.cmts .cmtedbox textarea'), 2000);
+          d.querySelector('.cmts .cmtedbox textarea').value = 'khong luu cau nay';
+          d.querySelector('.cmts .cmtedbox [data-cmtnope]').click();
+          await waitFor(() => !d.querySelector('.cmts .cmtedbox'), 2000);
+          ok(!d.querySelector('.cmts .cmtedbox') && db.docs['comments/e1'].text === 'Cam on Nabu nhieu'
+            && /Cam on Nabu nhieu/.test(d.querySelector('.cmts .cmt.me .cmttext').textContent),
+            'cancelling closes the box, writes nothing, and puts the words back on the line'); }
+        { /* Nabu may take any comment down and rewrite none. */
+          N.BE.user = { uid: 'admin1', email: 'angela_le_@outlook.com' };
+          await go('#/home', '#feed .post'); await go('#/post/' + epid, '.cmts');
+          await waitFor(() => d.querySelectorAll('.cmts .cmt').length === 3, 3000);
+          ok(d.querySelectorAll('.cmts [data-cmtdel]').length === 3 && !d.querySelector('.cmts [data-cmtedit]'),
+            'Nabu may take any comment down and is offered no way to rewrite somebody else\'s words');
+          N.BE.user = { uid: 'uidA', email: 'a@test' }; }
+        Object.keys(db.docs).filter((k) => k.indexOf('comments/') === 0).forEach((k) => { delete db.docs[k]; });
+        N.CMT.counts = {};
+        if (cmtOk2 == null) w.localStorage.removeItem('nabu-cmt-ok'); else w.localStorage.setItem('nabu-cmt-ok', cmtOk2); }
+
+      /* ---- choosing a companion is offered before anybody has to scroll ---- */
+      { await go('#/play/pet/add', '.petpick');
+        const tile = d.querySelector('.petpick [data-kind]:not(.locked)');
+        tile.click();
+        await waitFor(() => d.querySelector('#petkeep'), 2000);
+        const bar = d.querySelector('#petbar'), inflow = d.querySelector('#petkeep');
+        ok(!!bar && !!d.querySelector('#petbar #petkeepbar') && !!d.querySelector('#petbar #petbackbar'),
+          'the companion preview carries a bar with both choices on it: keep this one, and see the others');
+        ok(!!bar && !!inflow && d.querySelector('#petkeepbar').textContent === inflow.textContent
+          && d.querySelector('#petbackbar').textContent === d.querySelector('#petback2').textContent,
+          'the bar says exactly what the buttons at the foot of the page say, so one choice is never offered in two wordings');
+        { /* The bar is over the page rather than at the end of it: that is
+             what puts it on the screen before anybody has scrolled. */
+          const cs = w.getComputedStyle(bar);
+          ok(cs.position === 'fixed', 'the bar is fixed to the screen rather than sitting at the end of the page [' + cs.position + ']'); }
+        { /* Both tap targets clear the house minimum. */
+          const r1 = d.querySelector('#petkeepbar').getBoundingClientRect(), r2 = d.querySelector('#petbackbar').getBoundingClientRect();
+          ok(r1.height >= 40 && r2.height >= 40,
+            'both buttons on the bar are at least 40px tall [' + Math.round(r1.height) + ', ' + Math.round(r2.height) + ']'); }
+        { /* Keeping from the bar keeps the companion being previewed. */
+          const kind = tile.getAttribute('data-kind');
+          N.PETS.all().forEach((x) => N.PETS.drop(x.kind));
+          d.querySelector('#petkeepbar').click();
+          await sleep(140);
+          ok(!!N.PETS.one(kind), 'the keep button on the bar keeps the companion that is being previewed');
+          N.PETS.all().forEach((x) => N.PETS.drop(x.kind)); } }
+
+      /* ---- the course answers are fetched, not carried ---- */
+      { ok(typeof N.KB_URL === 'string' && /^\.\/kb-[0-9a-f]{12}\.js$/.test(N.KB_URL),
+          'the page names the file its course answers live in, and the name carries a hash of their contents [' + N.KB_URL + ']');
+        const size = async (u) => { const r = await w.fetch(u, { method: 'HEAD' }); return r.ok ? Number(r.headers.get('content-length') || 0) : -1; };
+        const pageBytes = await size('/index.html'), kbBytes = await size('/' + String(N.KB_URL || '').replace('./', ''));
+        ok(pageBytes > 0 && kbBytes > 400000 && pageBytes < 3500000,
+          'the biggest table in the app sits beside the page rather than inside it, so a cold open no longer parses it'
+          + ' [page ' + Math.round(pageBytes / 1024) + 'KB, answers ' + Math.round(kbBytes / 1024) + 'KB]');
+        const got = await N.kbReady();
+        const asks = N.ASK.vi['major-0'];
+        ok(got === true && !!asks && asks.length > 0 && asks[0].length === 3,
+          'opening a card fetches them, and the questions are there once it has');
+        await go('#/learn/card/major-0', '#main .acc');
+        ok(/T\u00ecnh c\u1ea3m|Love|Liebe/.test(d.querySelector('#main').textContent),
+          'and the card page shows its questions'); }
+
+      /* ---- two screens' listeners both get dropped ---- */
+      { const ran = [];
+        w.navOnLeave(() => ran.push('a'));
+        w.navOnLeave(() => ran.push('b'));
+        await go('#/me', '#main');
+        ok(ran.length === 2 && ran.join(',') === 'b,a',
+          'a screen that opens two live listeners drops both on the way out, the last one first [' + ran.join(',') + ']');
+        await go('#/home', '#main');
+        ok(ran.length === 2,
+          'and neither is left behind to run again on the next screen [' + ran.join(',') + ']'); }
+
+      /* ---- Nabu AI says which of the two actually answered ---- */
+      { const wasOff = N.AI.off;
+        const word = async () => { await go('#/home', '#main'); await go('#/learn/sign/leo', '.ai'); return d.querySelector('.ai .ai-h .faint').textContent; };
+        N.AI.off = false;
+        const on = await word();
+        N.AI.off = true;
+        const off = await word();
+        ok(on !== off && /kho ki\u1ebfn th\u1ee9c|knowledge base|Wissensbasis/.test(off),
+          'the panel calls an answer an AI answer only while one is possible; once the service says it has no model, it says the knowledge base answered [' + on + ' -> ' + off + ']');
+        { /* An endpoint being configured is not proof it can answer. That was
+             the whole bug: every answer came from the knowledge base under a
+             heading saying an AI wrote it. A panel already on the screen is
+             corrected the moment the service says otherwise, with no reload. */
+          N.AI.off = false;
+          await go('#/home', '#main'); await go('#/learn/sign/leo', '.ai');
+          const before = d.querySelector('.ai .ai-h .faint').textContent;
+          N.AI.off = true; w.aiSayBuiltin();
+          const after = d.querySelector('.ai .ai-h .faint').textContent;
+          ok(before !== after && /kho ki\u1ebfn th\u1ee9c|knowledge base|Wissensbasis/.test(after),
+            'a panel already on the screen stops claiming an AI answer as soon as the service says it cannot give one [' + before + ' -> ' + after + ']'); }
+        ok(N.STR.vi.aiOff && N.STR.en.aiOff && N.STR.de.aiOff
+          && N.STR.vi.aiOff !== N.STR.vi.aiFallback && N.STR.en.aiOff !== N.STR.en.aiFallback && N.STR.de.aiOff !== N.STR.de.aiFallback,
+          '"Nabu AI is not switched on" is its own sentence in all three languages, never the "the AI is busy" one, which means something a reader can wait out');
+        N.AI.off = wasOff; }
+
+      /* ---- nothing a reader can see says "undefined" ---- */
+      { /* Every key the Vietnamese table has, the English and German ones
+           have too. A key added to one language and forgotten in another
+           reaches the reader as the word "undefined" in the middle of a
+           sentence, and nothing else in this suite would catch it. */
+        const miss = (lg) => Object.keys(N.STR.vi).filter((k) => !(k in N.STR[lg]));
+        const en = miss('en'), de = miss('de');
+        ok(en.length === 0 && de.length === 0,
+          'every line the app can say in Vietnamese it can also say in English and German'
+          + (en.length || de.length ? ' [missing en: ' + en.slice(0, 6).join(', ') + ' | missing de: ' + de.slice(0, 6).join(', ') + ']' : '')); }
+
       N.BE.db = keep.db; N.BE.user = keep.user; N.BE.enabled = keep.on; w.confirm = keep.confirm;
       w.localStorage.removeItem('nabu-love');
       /* This check is about the guest view, so it says so. Leaving it to the

@@ -5,7 +5,13 @@
      with the same context and the visitor's question;
    - built-in: when no endpoint is set, answers are assembled here from the
      app's own knowledge base, so the feature works offline and costs nothing. */
-const AI = { history: {}, busy: false, model: '', noSearchUntil: 0 };
+/* off: the answering service has told us it has no model to answer with -
+   no key, no binding, nothing. Not the same as busy, and the difference is
+   the whole of what readers were complaining about: every answer came from
+   the knowledge base with "AI is busy" under it, for months, because the
+   worker was never given a provider. Once it says so, the panel stops
+   calling itself an AI answer. */
+const AI = { history: {}, busy: false, model: '', noSearchUntil: 0, off: false };
 const fold = (s) => String(s || '').normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/đ/g, 'd').replace(/Đ/g, 'D').toLowerCase();
 const CATS = {
   love: ['yeu', 'tinh cam', 'nguoi ay', 'crush', 'nguoi cu', 'chia tay', 'hen ho', 'ket hon', 'cuoi', 'ban trai', 'ban gai', 'chong', 'vo', 'love', 'relationship', 'partner', 'boyfriend', 'girlfriend', 'ex ', 'marriage', 'date'],
@@ -349,6 +355,13 @@ async function remoteAnswer(q, ctx, history) {
   /* Two refusals worth saying plainly, because both have something the reader
      can actually do about them. */
   if (r.status === 401) throw new Error('AI-SIGNIN');
+  /* 503 no-provider: the worker is reachable and has nothing to answer with.
+     Saying "busy" here would be a guess, and the wrong one - busy passes, this
+     does not until somebody sets a key. */
+  if (r.status === 503) {
+    let e503 = ''; try { e503 = String(((await r.json()) || {}).error || ''); } catch (e) { /* no body */ }
+    if (e503 === 'no-provider') { AI.off = true; throw new Error('AI-OFF'); }
+  }
   if (r.status === 429) {
     let wait = 0; try { wait = Number((await r.json()).retryAfter) || 0; } catch (e) { /* no body */ }
     const e = new Error('AI-LIMIT'); e.retryAfter = wait; throw e;
@@ -356,10 +369,24 @@ async function remoteAnswer(q, ctx, history) {
   if (!r.ok) throw new Error('AI ' + r.status);
   const j = await r.json();
   if (!j.answer) throw new Error(j.error || 'AI');
+  AI.off = false;
   return j.answer;
 }
 
 /* ---- panel ---- */
+/* Which of the two this panel can honestly call itself. An endpoint being
+   configured is not the same as an endpoint that can answer: the app used to
+   read the first as proof of the second, so every knowledge-base answer sat
+   under a heading that said an AI had written it. */
+function aiSourceWord() {
+  const S = T();
+  return (CONFIG.geminiKey || CONFIG.aiEndpoint) && !AI.off ? S.aiOnline : S.aiBuiltin;
+}
+/* Every panel already on the screen, corrected at once. */
+function aiSayBuiltin() {
+  const S = T();
+  $$('.ai .ai-h .faint', document).forEach((el) => { el.textContent = S.aiBuiltin; });
+}
 function aiSuggestions(ctx) {
   const S = T();
   if (ctx.type === 'card') return ctx.lite && ctx.focus && ctx.focus !== 'general' ? [S.aiSugFocus(S.focus[ctx.focus])].concat(S.aiSugCard.slice(1)) : S.aiSugCard;
@@ -370,7 +397,7 @@ function aiSuggestions(ctx) {
 }
 function aiPanelHTML(ctx) {
   const S = T(), key = JSON.stringify(ctx), hist = AI.history[key] || [];
-  return '<div class="ai" data-ai=\'' + esc(key) + '\'><div class="ai-h"><span class="ai-logo">✦</span><b>Nabu AI</b><span class="faint">' + esc(CONFIG.geminiKey || CONFIG.aiEndpoint ? S.aiOnline : S.aiBuiltin) + '</span></div>'
+  return '<div class="ai" data-ai=\'' + esc(key) + '\'><div class="ai-h"><span class="ai-logo">✦</span><b>Nabu AI</b><span class="faint">' + esc(aiSourceWord()) + '</span></div>'
     + '<p class="hint">' + esc(ctx.type === 'lesson' ? S.aiIntroLesson : S.aiIntro) + '</p>'
     + '<div class="chips sugs">' + aiSuggestions(ctx).map((s) => '<button class="chip" data-ai-sug>' + esc(s) + '</button>').join('') + '</div>'
     + '<div class="chat ai-chat">' + hist.map((m) => aiMsgHTML(m.role, m.text)).join('') + '</div>'
@@ -399,9 +426,14 @@ function bindAI(root) {
         /* Busy, signed out and asked-too-much all still get an answer from the
            knowledge base. Only the line underneath it changes, because only one
            of the three is something the reader can do anything about. */
-        const why = String((e && e.message) || '') === 'AI-SIGNIN' ? T().aiNeedSignin
-          : String((e && e.message) || '') === 'AI-LIMIT' ? T().aiLimit
+        const said = String((e && e.message) || '');
+        const why = said === 'AI-SIGNIN' ? T().aiNeedSignin
+          : said === 'AI-LIMIT' ? T().aiLimit
+          : said === 'AI-OFF' ? T().aiOff
           : T().aiFallback;
+        /* The heading says "answered by AI"; once the service has said it
+           cannot, every panel on the page has to stop saying that. */
+        if (said === 'AI-OFF') aiSayBuiltin(); 
         try { a = localAnswer(q, ctx) + '\n\n(' + why + ')'; } catch (e2) { a = T().aiGeneralHelp; }
       }
       finally { thinking.remove(); busy = false; send.disabled = false; }

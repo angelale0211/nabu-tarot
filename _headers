@@ -47,3 +47,11 @@
 # Pictures and icons never change without changing their name.
 /*.png
   Cache-Control: public, max-age=604800
+
+# The course answers that index.html fetches when somebody opens a card. The
+# file is named after a hash of its own contents, so a change to the answers
+# is a change of name and this copy is never the wrong one: it can be kept for
+# a year and never revalidated. The page that names it is `no-cache` above, so
+# a new release is still picked up at once - it simply asks for a new file.
+/kb-*.js
+  Cache-Control: public, max-age=31536000, immutable

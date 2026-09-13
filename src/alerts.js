@@ -431,7 +431,7 @@ function renderAlerts() {
      highlight for as long as somebody is looking at it - which is the only
      thing on the screen saying which ones they have not seen - and leaves the
      button with something to do while they are here. */
-  NAV.cleanup = () => { ALERTS.markSeen(); };
+  navOnLeave(() => { ALERTS.markSeen(); });
 }
 
 ROUTES.alerts = { nav: '', render: renderAlerts };

@@ -87,6 +87,10 @@ const BE = {
       store.set('nabu-today', null);
       store.set('nabu-admin', '');
       store.set('nabu-revoked-at', 0);
+      /* Which posts this phone had hearted: that was the person signing out,
+         not the phone. The counts stay - they are the public number and the
+         next reader sees the same one a stranger would. */
+      if (typeof LIKES !== 'undefined') LIKES.forget();
     } catch (e) { /* a full phone must not be able to trap somebody signed in */ }
     return this.auth.signOut();
   },
@@ -99,6 +103,10 @@ const BE = {
     try { await db.collection('threads').doc(uid).delete(); } catch (e) { /* nothing there */ }
     try { await wipe(db.collection('bookings').where('uid', '==', uid)); } catch (e) { /* rules or offline */ }
     try { await wipe(db.collection('comments').where('uid', '==', uid)); } catch (e) { /* rules or offline */ }
+    /* The hearts too. They carry the uid, so an account that is gone must not
+       leave rows behind that still name it - and a post's number should not
+       count somebody who no longer has an account. */
+    try { await wipe(db.collection('likes').where('uid', '==', uid)); } catch (e) { /* rules or offline */ }
     try { await db.collection('users').doc(uid).delete(); } catch (e) { /* nothing there */ }
     /* Every registered person now has a public card and a reserved username, so
        deletion has to take both with it: the card in 'people' and the row in

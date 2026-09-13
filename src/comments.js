@@ -6,7 +6,7 @@
    wish stays on the phone and nobody reads it.
 
    Reads are live (onSnapshot) only on the page that shows the list, and the
-   router drops the listener when the page is left (NAV.cleanup). The feed
+   router drops the listener when the page is left (navOnLeave). The feed
    shows a count per card from an aggregation query, kept for the session in
    CMT.counts so a card is not counted twice. No query here combines where()
    with orderBy() on another field: that needs a composite index the owner
@@ -56,6 +56,20 @@ const CMT = {
       at: firebase.firestore.FieldValue.serverTimestamp() });
   },
   remove(id) { return this.col().doc(id).delete(); },
+  /* The writer fixes their own words. Two fields move and no others: the
+     words, and the moment they were changed - which is what puts "đã sửa" on
+     the line, so a conversation never quietly becomes a different one. The
+     rules check the same thing on the server; this check is only so a phone
+     with no signal says why before it tries. Nabu deletes anyone's comment
+     but edits only her own: rewriting somebody else's words under their own
+     name is not moderation. */
+  async edit(id, text) {
+    if (!this.ok() || !BE.user) throw new Error('signin');
+    const t = String(text || '').trim();
+    if (!t) throw new Error('empty');
+    if (t.length > CMT_MAX) throw new Error('long');
+    await this.col().doc(id).update({ text: t, edited: firebase.firestore.FieldValue.serverTimestamp() });
+  },
   watch(key, cb) {
     return this.col().where('on', '==', key).onSnapshot((s) => {
       const rows = (s.docs || []).map((d) => Object.assign({ id: d.id }, d.data()));
@@ -80,11 +94,20 @@ const CMT = {
 function cmtCountText(n) { return !n ? '' : (n >= CMT_CAP ? (CMT_CAP - 1) + '+' : String(n)); }
 /* A page that shows comments holds one listener. A link opened cold is routed
    more than once before it settles, and each pass that finishes would leave
-   its own listener behind; the one that finishes last stops the one before. */
+   its own listener behind; the one that finishes last stops the one before.
+
+   That "one before" is this module's own listener, kept here rather than in
+   NAV: the router's list drops everything on the way out, but two passes over
+   the same page never leave it, so the earlier listener has to be stopped as
+   soon as the later one exists. The disposer handed to the router reads the
+   slot when it runs, so registering it twice costs nothing. */
+let cmtStop = null;
+function cmtDrop() { if (!cmtStop) return; const s = cmtStop; cmtStop = null; try { s(); } catch (e) { /* already gone */ } }
 function cmtHold(stop) {
   if (!stop) return;
-  if (NAV.cleanup) { const c = NAV.cleanup; NAV.cleanup = null; try { c(); } catch (e) { /* already gone */ } }
-  NAV.cleanup = stop;
+  cmtDrop();
+  cmtStop = stop;
+  navOnLeave(cmtDrop);
 }
 function cmtWhen(c) {
   const S = T(), ms = cmtMs(c);
@@ -98,7 +121,8 @@ function cmtRowHTML(c) {
   return '<li class="cmt' + (mine ? ' me' : '') + (c.nabu ? ' nabu' : '') + '" data-cmt="' + esc(c.id) + '">'
     + '<b>' + esc(c.nabu ? 'Nabu' : (c.name || S.cmtSomeone)) + (c.nabu ? ' <span class="nabutag">✦ ' + esc(S.cmtAuthor) + '</span>' : '') + '</b>'
     + '<span class="cmttext">' + esc(c.text || '') + '</span>'
-    + '<span class="when">' + esc(cmtWhen(c)) + '</span>'
+    + '<span class="when">' + esc(cmtWhen(c)) + (c.edited ? ' · ' + esc(S.cmtEdited) : '') + '</span>'
+    + (mine ? '<button type="button" class="linkbtn cmtedit" data-cmtedit="' + esc(c.id) + '">' + esc(S.cmtEdit) + '</button>' : '')
     + (canDel ? '<button type="button" class="linkbtn cmtdel" data-cmtdel="' + esc(c.id) + '">' + esc(S.cmtDelete) + '</button>' : '')
     + (me && !mine && !c.nabu && c.uid
       ? '<button type="button" class="flagb" data-flag="' + esc(c.uid) + '" data-flagname="' + esc(c.name || '')
@@ -166,13 +190,18 @@ function cmtFlag(fb, b, key, repaint) {
   });
 }
 /* Wires the block: the live list, delete in two taps, the flag, and sending.
-   Returns the function that stops the listener, for NAV.cleanup. */
+   Returns the function that stops the listener, for cmtHold. */
 function cmtMount(root, key) {
   const S = T(), box = $('[data-cmts="' + key + '"]', root); if (!box) return null;
   const list = $('.cmtlist', box), head = $('[data-cmtn-head]', box), fb = $('[data-cmtflag]', box);
   if (!CMT.ok()) { list.innerHTML = '<li class="hint">' + esc(S.cmtOffline) + '</li>'; return null; }
-  let rows = [];
+  /* editing: the id of the line whose words are open in a box right now, or
+     ''. A redraw while somebody is typing would replace the box with the old
+     words, so the redraw is held until the edit is done - and done means
+     saved or cancelled, both of which repaint on their way out. */
+  let rows = [], editing = '';
   const paint = () => {
+    if (editing) return;
     /* The list is the wedding room's box that scrolls (wedding.js): it opens
        on the newest line and follows new ones, unless the reader has scrolled
        up to read the older ones. */
@@ -186,6 +215,41 @@ function cmtMount(root, key) {
       b.disabled = true;
       try { await CMT.remove(b.getAttribute('data-cmtdel')); toast(S.cmtDeleted); }
       catch (e) { b.disabled = false; toast(loveWhy(e)); }
+    }));
+    /* Editing happens on the line itself: the words become a box holding the
+       same words, with Save and Cancel under it. The listener redraws this
+       whole list whenever anything changes, and a redraw mid-edit would throw
+       away what was being typed - so `editing` holds the line's id, paint()
+       leaves that one line alone, and Cancel or a saved edit lets it go. */
+    $$('[data-cmtedit]', list).forEach((b) => b.addEventListener('click', () => {
+      const id = b.getAttribute('data-cmtedit'), li = b.closest('li'), span = $('.cmttext', li);
+      if (!span || $('.cmtedbox', li)) return;
+      const was = rows.filter((r) => r.id === id)[0];
+      editing = id;
+      span.hidden = true;
+      const box = document.createElement('div');
+      box.className = 'cmtedbox';
+      box.innerHTML = '<textarea class="cmtin cmted" maxlength="' + CMT_MAX + '"></textarea>'
+        + '<div class="row"><button type="button" class="btn sm primary" data-cmtsave>' + esc(S.cmtSave) + '</button>'
+        + '<button type="button" class="btn sm" data-cmtnope>' + esc(S.cmtCancel) + '</button><span class="hint cmtedst"></span></div>';
+      span.insertAdjacentElement('afterend', box);
+      const ta = $('textarea', box), st = $('.cmtedst', box);
+      ta.value = (was && was.text) || span.textContent || '';
+      ta.focus();
+      const stop = () => { editing = ''; paint(); };
+      $('[data-cmtnope]', box).addEventListener('click', stop);
+      $('[data-cmtsave]', box).addEventListener('click', async () => {
+        const text = (ta.value || '').trim();
+        if (!text) { st.textContent = S.cmtEmpty; ta.focus(); return; }
+        if (text.length > CMT_MAX) { st.textContent = S.cmtTooLong; return; }
+        if (was && text === String(was.text || '').trim()) { stop(); return; }
+        $('[data-cmtsave]', box).disabled = true; st.textContent = '';
+        try { await CMT.edit(id, text); editing = ''; paint(); toast(S.cmtEditSaved); }
+        catch (e) {
+          $('[data-cmtsave]', box).disabled = false;
+          st.textContent = e && e.message === 'signin' ? S.cmtSignIn : loveWhy(e);
+        }
+      });
     }));
     $$('[data-flag]', list).forEach((b) => b.addEventListener('click', () => cmtFlag(fb, b, key, paint)));
   };

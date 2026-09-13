@@ -721,10 +721,25 @@ window.addEventListener('unhandledrejection', (e) => {
 const ROUTES = {};
 /* In-app history: the back arrow on a screen returns to the screen the
    visitor actually came from (home, a tab, a list), not to a fixed parent. */
-/* cleanup: a screen that opens a live listener leaves one here, and the
-   router calls it on the way out so the listener does not outlive the
-   screen that wanted it. */
-const NAV = { current: '', stack: [], popping: false, skip: false, scroll: {}, restore: null, cleanup: null };
+/* leave: a screen that opens a live listener leaves its stop function here,
+   and the router calls every one of them on the way out so no listener
+   outlives the screen that wanted it.
+
+   It is a list, not one slot. It used to be one slot, `NAV.cleanup`, which
+   only ever held the last thing written to it: a screen that wanted two -
+   a comment listener and a countdown, say - lost the first the moment the
+   second was set, and that listener then ran for the rest of the session.
+   Nothing on today's screens collided, but the shape invited it. Add with
+   navOnLeave(), never by assignment. */
+const NAV = { current: '', stack: [], popping: false, skip: false, scroll: {}, restore: null, leave: [] };
+/* Registered in the order they were opened, run in the reverse: the last
+   listener a screen opened is the first one dropped. A cleanup that throws
+   is already gone; the ones after it still run. */
+function navOnLeave(fn) { if (typeof fn === 'function') NAV.leave.push(fn); }
+function navLeave() {
+  const fns = NAV.leave; NAV.leave = [];
+  for (let i = fns.length - 1; i >= 0; i--) { try { fns[i](); } catch (e) { /* already gone */ } }
+}
 try { NAV.stack = JSON.parse(sessionStorage.getItem('nabu-nav') || '[]'); } catch (e) { NAV.stack = []; }
 function navRemember(h) {
   // Where the visitor was on the screen they are leaving, so a return lands there.
@@ -877,7 +892,7 @@ function route() {
       && typeof needsWelcome === 'function' && needsWelcome()) {
     redirect('#/welcome'); return;
   }
-  if (NAV.cleanup) { const c = NAV.cleanup; NAV.cleanup = null; try { c(); } catch (e) { /* already gone */ } }
+  navLeave();
   navRemember(location.hash || '#/home');
   /* Which screen this is, on the body, so a stylesheet can lay one screen out
      differently from the rest - the home page on a wide window, for one -

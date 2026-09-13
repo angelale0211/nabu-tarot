@@ -19,3 +19,6 @@ test/_probe/
 # tools and pre-change backups. Git history is the record; this is working
 # memory, and it was committed once by accident on 2026-09-09.
 _patch/
+
+# Wrangler's local dev cache (wrangler dev). Build state, not source.
+worker/.wrangler/

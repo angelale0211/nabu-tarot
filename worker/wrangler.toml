@@ -3,9 +3,15 @@ main = "src/index.ts"
 compatibility_date = "2026-06-01"
 compatibility_flags = ["nodejs_compat"]
 
-# Free open-model option: uncomment to answer with Llama on Workers AI when no Anthropic key is set.
-# [ai]
-# binding = "AI"
+# The answer of last resort. With no GEMINI_API_KEY and no ANTHROPIC_API_KEY
+# set, this binding is the only thing standing between a reader and "Nabu AI is
+# not switched on" - it answers with an open model on Workers AI, on the free
+# tier, with no key to buy and nothing to configure. It cannot look anything up
+# on the web; a key can. It was commented out, and with no key set either, every
+# question the app has ever asked fell through to the app's own knowledge base
+# with "the AI is busy" printed under it.
+[ai]
+binding = "AI"
 
 # Every six hours: refunds taken back, subscriptions re-read. Minute 10 so it
 # never lands on the hour with every other cron job everyone else schedules.
