@@ -8,6 +8,8 @@ import Anthropic from "@anthropic-ai/sdk";
 import { whoIsAsking } from "./auth";
 import { allow, cachedAnswer, keepAnswer } from "./limit";
 import { checkPurchase, acknowledge, grantUntil, checkSubscription, acknowledgeSub } from "./play";
+import type { PlayEnv } from "./play";
+import { fsGet } from "./fs";
 import { claimCode } from "./codes";
 import { claimPurchase, markGranted, sweepRefunds, tokenId, ledgerSet } from "./refunds";
 import { itemBySku, itemByKey } from "./catalog";
@@ -29,9 +31,28 @@ export interface Env {
   RTDN_PUSH_EMAIL?: string;    // the service account Pub/Sub pushes as
 }
 
-/* What one person may ask for in a day. Generous for somebody using the app,
-   nowhere near enough to be worth abusing. */
-const ASK_A_DAY = 40, ASK_A_MINUTE = 6;
+/* What one person may ask in a day.
+
+   Answering costs money, so the allowance follows what somebody has bought.
+   A reader with an account and nothing else gets enough to try Nabu AI
+   properly and find out whether it is worth having; a reader who has bought
+   any one of the three courses gets the same allowance as Pro, which is what
+   the owner asked for - buying one course should not feel like a smaller
+   version of the same feature.
+
+   The minute is about bursts rather than money: it is the same for everybody
+   and only stops a stuck loop or a script.
+
+   These numbers are worth revisiting against whatever is answering. On
+   Workers AI's free tier the whole project gets roughly a hundred questions
+   a day before requests start failing for everyone, so the per-person
+   allowance is not the binding constraint there - the daily total is. */
+const ASK_A_DAY_FREE = 5, ASK_A_DAY_PAID = 50, ASK_A_MINUTE = 6;
+/* The entitlements that earn the larger allowance: the three courses, and
+   Pro - both the six-month and the twelve-month plan, which each open the
+   key `pro`. `plus` on its own and `manifest` on its own do not: they are
+   not courses, and the owner named the courses. */
+const ASK_PAID_KEYS = ["tarot", "lenormand", "playing", "pro"];
 const MAIL_A_DAY = 20, MAIL_A_MINUTE = 3;
 
 interface AskBody {
@@ -59,6 +80,37 @@ Keine medizinischen Diagnosen, keine konkrete Rechts- oder Anlageberatung, keine
 const systemFor = (lang: string) => (lang === "en" ? SYSTEM_EN : lang === "de" ? SYSTEM_DE : SYSTEM_VI);
 /* What to call the list of pages an answer leaned on. */
 const SOURCES_WORD: Record<string, string> = { vi: "Tham khảo", de: "Quellen", en: "Sources" };
+
+/* What this person may ask today.
+
+   `users/{uid}.access` holds one ISO date per opened key, written by this
+   worker when a purchase is checked and by the dashboard for a code. A key
+   counts while its date has not passed - the same test the app makes in
+   ACCESS.has(), so the phone and the worker never disagree about who has
+   bought what.
+
+   Nabu asks with the same account she answers from, and every course is open
+   to her by definition, so she lands on the larger allowance through the
+   ordinary path with no special case here.
+
+   A read that fails gives the smaller allowance. That is the safe direction:
+   somebody who has paid and is wrongly given five is annoyed and writes in,
+   which is recoverable; the other way round, an outage becomes an open bar. */
+async function asksADay(env: Env, uid: string): Promise<number> {
+  try {
+    const doc = await fsGet(env as unknown as PlayEnv, "users/" + uid);
+    const access = (doc && (doc.access as Record<string, unknown>)) || {};
+    const d = new Date();
+    const today = d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, "0") + "-" + String(d.getDate()).padStart(2, "0");
+    for (const k of ASK_PAID_KEYS) {
+      const until = String(access[k] || "");
+      if (until && until.slice(0, 10) >= today) return ASK_A_DAY_PAID;
+    }
+  } catch (e) {
+    console.error(JSON.stringify({ at: "ai", uid, allowance: "read failed, using the smaller one", error: String(e) }));
+  }
+  return ASK_A_DAY_FREE;
+}
 
 const cors = (origin: string | undefined, env: Env) => ({
   "Access-Control-Allow-Origin": env.ALLOWED_ORIGIN && origin === env.ALLOWED_ORIGIN ? origin : env.ALLOWED_ORIGIN || "*",
@@ -347,7 +399,13 @@ export default {
     } else {
       who = caller(request);
     }
-    const verdict = await allow(env, who, ASK_A_DAY, ASK_A_MINUTE);
+    /* Asking requires an account, so `who` is a uid here and not an address;
+       the allowance is read for that account before anything is counted. */
+    /* Without KV nothing is counted at all, so asking Firestore what this
+       person is allowed would be a read per question to decide a number that
+       is never used. */
+    const perDay = (env.KV && env.FIREBASE_PROJECT_ID) ? await asksADay(env, who) : ASK_A_DAY_PAID;
+    const verdict = await allow(env, who, perDay, ASK_A_MINUTE);
     if (!verdict.ok) return tooMany(verdict, headers);
 
     let body: AskBody;

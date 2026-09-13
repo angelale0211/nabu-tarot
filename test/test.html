@@ -140,11 +140,23 @@ async function go(hash, sel) { W().location.hash = hash; await sleep(30); return
     ok(!/Thu Anh/.test(d.querySelector('#reveal').textContent), 'no source line under the insight');
     ok(!!d.querySelector('#reveal .ai') && d.querySelectorAll('#reveal .ai [data-ai-sug]').length === 3, 'Nabu AI panel under the drawn card');
     const gk = N.CONFIG.geminiKey; N.CONFIG.geminiKey = '';  // built-in engine for this check; the online one is tested separately
+    /* The visitor who drew this card has no account, and Nabu AI is not
+       offered to one: answering costs money and the worker refuses without a
+       sign-in, so there is no box here to type a question into and be turned
+       away afterwards. The rest of this check is about the engine, so it signs
+       in and redraws the panel, then puts the visitor back as they were. */
+    ok(!d.querySelector('#reveal .ai [data-ai-q]') && !!d.querySelector('#reveal .ai .aisignin'),
+      'the panel under a freshly drawn card offers a visitor with no account the way to sign in, not a box');
+    const aiWas = N.BE.user;
+    N.BE.user = { uid: 'aitest', email: 'ai@test' };
+    { const panel = d.querySelector('#reveal .ai');
+      panel.outerHTML = w.aiPanelHTML(JSON.parse(panel.getAttribute('data-ai')));
+      w.bindAI(d.querySelector('#reveal')); }
     d.querySelector('#reveal .ai [data-ai-q]').value = 'Lá này nói gì về chuyện tình cảm của mình?'; d.querySelector('#reveal .ai [data-ai-send]').click(); await sleep(150);
     ok(d.querySelectorAll('#reveal .ai-chat .msg').length === 2 && /Với câu hỏi về tình cảm/.test(d.querySelector('#reveal .ai-chat').textContent), 'built-in engine answers the chosen focus (love) from the card');
     ok(d.querySelector('#reveal .ai-chat .msg.them [data-ai-flag]'), 'every AI answer carries a report flag');
     ok(/Khóa Tarot/.test(N.localAnswer('Lá này nói gì về công việc của mình?', { type: 'card', id: N.pick.chosen, focus: 'love', lite: 1 })) && !/Khóa Tarot/.test(N.localAnswer('Lá này nói gì về công việc của mình?', { type: 'card', id: N.pick.chosen, focus: 'love' })), 'on the free draw other topics are kept for the course; on the card page they are answered');
-    N.CONFIG.geminiKey = gk;
+    N.CONFIG.geminiKey = gk; N.BE.user = aiWas;
     const yn = N.localAnswer('Mình có nên tiếp tục không?', { type: 'card', id: 'major-19' }), tm = N.localAnswer('Khi nào chuyện này xảy ra?', { type: 'card', id: 'wands-8' });
     ok(/thiên về CÓ/.test(yn) && /Gậy đi nhanh/.test(tm), 'yes/no lean and timing hints');
     ok(/Gã Khờ/.test(N.localAnswer('Gã Khờ nghĩa là gì?', { type: 'general' })) && /Sư Tử và Bảo Bình là hai cung đối diện/.test(N.localAnswer('Sư Tử hợp với Bảo Bình không?', { type: 'sign', key: 'leo' })), 'mentions of cards and signs are picked up; compatibility gets a straight verdict');
@@ -3827,6 +3839,27 @@ async function go(hash, sel) { W().location.hash = hash; await sleep(30); return
           && N.STR.vi.aiOff !== N.STR.vi.aiFallback && N.STR.en.aiOff !== N.STR.en.aiFallback && N.STR.de.aiOff !== N.STR.de.aiFallback,
           '"Nabu AI is not switched on" is its own sentence in all three languages, never the "the AI is busy" one, which means something a reader can wait out');
         N.AI.off = wasOff; }
+
+      /* ---- no account, no box ---- */
+      { /* Answering costs money and the worker refuses without an account, so
+           a signed-out reader must not be handed a box, allowed to write a
+           question into it, and only then told no. */
+        const keepU = N.BE.user;
+        N.BE.user = null;
+        await go('#/home', '#main'); await go('#/learn/sign/leo', '.ai');
+        const locked = d.querySelector('.ai');
+        ok(!!locked && !locked.querySelector('[data-ai-q]') && !locked.querySelector('[data-ai-send]')
+          && !!locked.querySelector('.aisignin a[href^="#/signin"]'),
+          'signed out, Nabu AI offers no box and no Ask button, only the way to sign in');
+        ok(Array.prototype.every.call(locked.querySelectorAll('[data-ai-sug]'), (b) => b.disabled),
+          'and the example questions cannot be pressed either, though they still say what could be asked');
+        N.BE.user = { uid: 'uidA', email: 'a@test' };
+        await go('#/home', '#main'); await go('#/learn/sign/leo', '.ai');
+        const open2 = d.querySelector('.ai');
+        ok(!!open2.querySelector('[data-ai-q]') && !!open2.querySelector('[data-ai-send]') && !open2.querySelector('.aisignin')
+          && Array.prototype.every.call(open2.querySelectorAll('[data-ai-sug]'), (b) => !b.disabled),
+          'signed in, the box, the Ask button and the example questions are all there');
+        N.BE.user = keepU; }
 
       /* ---- nothing a reader can see says "undefined" ---- */
       { /* Every key the Vietnamese table has, the English and German ones

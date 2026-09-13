@@ -395,13 +395,24 @@ function aiSuggestions(ctx) {
   if (ctx.type === 'numbers') return S.aiSugNumbers;
   return S.aiSugGeneral;
 }
+/* Asking costs money and the worker refuses an answer without an account,
+   so a signed-out reader is not given a box to type into and then told no
+   after they have written their question. They see what Nabu AI is, what it
+   could be asked, and the way in - which is how the comment box already
+   behaves a screen further down.
+
+   BE.enabled false means accounts are off altogether (the app is running
+   with no backend); then the built-in engine answers and the box stays. */
+function aiLocked() { return !!(typeof BE !== 'undefined' && BE.enabled && !BE.user); }
 function aiPanelHTML(ctx) {
   const S = T(), key = JSON.stringify(ctx), hist = AI.history[key] || [];
   return '<div class="ai" data-ai=\'' + esc(key) + '\'><div class="ai-h"><span class="ai-logo">✦</span><b>Nabu AI</b><span class="faint">' + esc(aiSourceWord()) + '</span></div>'
     + '<p class="hint">' + esc(ctx.type === 'lesson' ? S.aiIntroLesson : S.aiIntro) + '</p>'
-    + '<div class="chips sugs">' + aiSuggestions(ctx).map((s) => '<button class="chip" data-ai-sug>' + esc(s) + '</button>').join('') + '</div>'
+    + '<div class="chips sugs">' + aiSuggestions(ctx).map((s) => '<button class="chip" data-ai-sug' + (aiLocked() ? ' disabled' : '') + '>' + esc(s) + '</button>').join('') + '</div>'
     + '<div class="chat ai-chat">' + hist.map((m) => aiMsgHTML(m.role, m.text)).join('') + '</div>'
-    + '<div class="chatbar"><textarea data-ai-q placeholder="' + esc(S.aiPlaceholder) + '"></textarea><button class="btn primary" data-ai-send>' + esc(S.aiAsk) + '</button></div>'
+    + (aiLocked()
+      ? '<p class="hint aisignin">' + esc(S.aiSignIn) + ' <a href="' + esc(signinHref()) + '">' + esc(S.signIn) + '</a></p>'
+      : '<div class="chatbar"><textarea data-ai-q placeholder="' + esc(S.aiPlaceholder) + '"></textarea><button class="btn primary" data-ai-send>' + esc(S.aiAsk) + '</button></div>')
     + '<p class="faint" style="margin-top:8px">' + esc(S.aiNote) + '</p></div>';
 }
 const aiMsgHTML = (role, text) => '<div class="msg ' + (role === 'user' ? 'me' : 'them') + '">' + (role === 'user' ? '' : '<button type="button" class="flag" data-ai-flag title="' + esc(T().aiFlag) + '" aria-label="' + esc(T().aiFlag) + '">⚑</button>') + paras(text) + '</div>';
@@ -414,6 +425,9 @@ async function flagAnswer(question, answer) {
 function bindAI(root) {
   $$('.ai', root).forEach((panel) => {
     const ctx = JSON.parse(panel.getAttribute('data-ai')), key = panel.getAttribute('data-ai'), ta = $('[data-ai-q]', panel), chat = $('.ai-chat', panel), send = $('[data-ai-send]', panel);
+    /* Signed out there is no box and no Ask button, only the line that says
+       where to sign in; there is nothing here to wire. */
+    if (!ta || !send) return;
     let busy = false;  // per box, and always released, so a slow answer can never lock typing
     const push = (role, text) => { AI.history[key] = AI.history[key] || []; AI.history[key].push({ role: role, text: text }); chat.insertAdjacentHTML('beforeend', aiMsgHTML(role, text)); chat.scrollTop = chat.scrollHeight; };
     const ask = async (q) => {
