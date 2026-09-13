@@ -216,7 +216,7 @@ main{padding:22px 0 30px}
 button.chip,a.chip,label.chip{display:inline-flex;align-items:center;justify-content:center;min-height:40px}
 .chip.on{background:var(--primary);color:var(--primary-ink);border-color:transparent}
 .chip[disabled]{opacity:.4;pointer-events:none}
-.chip.tag{background:var(--tag-neu-bg);color:var(--tag-neu-ink);font-weight:600;padding:4px 10px;font-size:12.5px;border-color:transparent}
+.chip.tag{background:var(--tag-neu-bg);color:var(--tag-neu-ink);font-weight:600;padding:4px 10px;font-size:12.5px;border-color:transparent;white-space:nowrap}
 .chip.pink{background:var(--tag-pink-bg);color:var(--tag-pink-ink);border-color:transparent}
 .chip.blue{background:var(--tag-blue-bg);color:var(--tag-blue-ink);border-color:transparent}
 .chip.lav{background:var(--lav-soft);color:var(--fg);border-color:transparent}
@@ -411,13 +411,18 @@ button.chip,a.chip,label.chip{display:inline-flex;align-items:center;justify-con
 #main .pricesec>.hint{margin:0 0 12px}
 .pricesec .paynote{margin-bottom:12px}
 /* The free half, all one shape. */
-.freegrid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+/* As many columns as fit tiles of a readable width, and never more than four.
+   Three fixed columns at 320 squeezed German names past their tiles and cut
+   "Den Nachrichtenbaum schütteln" to "Nachrichtenbau…". Twelve tiles divide
+   evenly by two, three and four, so no row is ever left with one. */
+.freegrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(max(var(--fgmin,104px),calc((100% - 24px) / 4)),1fr));gap:8px}
+html[lang="de"] .freegrid{--fgmin:132px}
 .freegrid .fg{display:flex;flex-direction:column;align-items:center;gap:4px;background:var(--surface);border:1px solid var(--rule-soft);border-radius:14px;padding:11px 5px;text-decoration:none;color:inherit;min-width:0}
 .freegrid .fg .ic{height:26px;display:grid;place-content:center;font-size:21px;line-height:1}
 .freegrid .fg .ic .pickico{width:16px;height:27px}
 .freegrid .fg .ic .lovemark{width:24px;height:24px}
 .freegrid .fg .ic .pileico{width:26px;height:21px}
-.freegrid .fg b{font-size:12px;font-weight:600;line-height:1.25;text-align:center;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
+.freegrid .fg b{font-size:12px;font-weight:600;line-height:1.25;text-align:center;overflow:hidden;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical}
 .freegrid .fg .s{font-size:12px;line-height:1.25;color:var(--fg-faint);text-align:center;overflow:hidden;overflow-wrap:anywhere;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical}
 /* Forty-eight half hours a day: a grid keeps them in columns you can read
    down, where wrapping chips would be a wall. */
@@ -767,23 +772,42 @@ h1 .pileico{width:34px;height:27px;vertical-align:-3px;margin-right:2px}
 .tip{background:var(--tag-lav-bg,var(--surface-2));color:var(--fg);border-radius:12px;padding:10px 12px;font-size:14.5px;line-height:1.5;margin:10px 0 4px}
 /* instruction rows: icon column + text, every row starts at the same edge */
 .notes{margin:2px 0 8px}.note{display:flex;gap:10px;align-items:flex-start;font-size:14.5px;line-height:1.5;color:var(--fg-soft);margin:0 0 8px}.note .ni{flex:none;width:22px;text-align:center;font-size:16px;line-height:1.35}
-/* The fourth row with the same fault, and the one the tester actually saw: at
-   320 the two labels are longer than half the screen, nowrap forbids them to
-   wrap, so the paint icon ends up sitting outside its own button. */
-.melinks{display:grid;grid-template-columns:1fr 1fr;gap:8px}
-.melinks .btn{padding:11px 6px;font-size:13.5px;text-align:center;min-width:0;line-height:1.25;overflow-wrap:anywhere}
-/* A grid column with min-width:0 may shrink below its contents; nowrap then
-   forbids the text to wrap, so it leaves the button instead of getting
-   narrower. Wrapping is allowed here, and below 360 the three sit two and one
-   rather than being squeezed into a strip. */
-.row3{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
-.row3 .btn{padding:11px 6px;font-size:13.5px;text-align:center;min-width:0;line-height:1.25;overflow-wrap:anywhere}
-@media (max-width:359px){.row3{grid-template-columns:repeat(2,1fr)}}
-/* Same fault, same fix. Four across down to 375; two by two below it, because a
-   wrapped label in a squeezed chip reads worse than a second row. */
-.themes{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}
-.themes .chip{padding:8px 4px;font-size:12.5px;text-align:center;min-width:0;line-height:1.25;overflow-wrap:anywhere}
-@media (max-width:374px){.themes{grid-template-columns:repeat(2,1fr)}}
+/* Rows of short buttons and chips (the Me tab's links, its three actions, the
+   theme picker).
+
+   History: these were first nowrap, and at 320 a label longer than half the
+   screen left its own button. Then they became fixed grid columns allowed to
+   break anywhere, which fixed the overflow and made a new fault: a label one
+   word too long for its column broke in the middle of a word ("Auto-matisch",
+   "Fehler / melden", "Hướng / dẫn"), or left its emoji alone on the line above.
+   German hyphenation made it worse, and it showed in all three languages.
+
+   The rows now follow the labels instead of a column count. A label never
+   breaks inside a word. Buttons share a row only while every label fits on one
+   line; when they do not, one moves down and the row reflows (two and one,
+   then one each) with each button filling its line. So the same rule is right
+   at 320 and at 1280, in Vietnamese, English and German, with no width to tune.
+   A button left alone on its line may still wrap between words. */
+.melinks,.row3{display:flex;flex-wrap:wrap;gap:8px}
+.melinks .btn,.row3 .btn{flex:1 1 auto;padding:11px 12px;font-size:13.5px;text-align:center;line-height:1.25;overflow-wrap:normal;-webkit-hyphens:manual;hyphens:manual}
+/* The theme picker is four across or two by two - never three and one - so it
+   asks its card how wide it is. Four across needs about 70px a chip for
+   "📱 Auto" or "🌸 Hồng", and about 115px for "📱 Automatisch". A browser
+   without container queries (Safari before 16) keeps two by two, which fits
+   every language. */
+.themecard{container-type:inline-size}
+.themes{display:grid;grid-template-columns:repeat(2,1fr);gap:6px}
+.themes .chip{padding:8px 6px;font-size:12.5px;text-align:center;min-width:0;line-height:1.25;white-space:nowrap;-webkit-hyphens:manual;hyphens:manual}
+@container (min-width:290px){.themes{grid-template-columns:repeat(4,1fr)}}
+@container (max-width:479px){html[lang="de"] .themes{grid-template-columns:repeat(2,1fr)}}
+/* The line under the Me tab: version, update check, privacy. Each piece stays
+   whole, so a narrow phone moves a piece to the next line rather than breaking
+   "Daten-schutz" or "Quyền riêng / tư". */
+.verline>*{white-space:nowrap}
+.verline{-webkit-hyphens:manual;hyphens:manual}
+/* The tour reminder: the message may wrap, the button beside it may not. */
+.tourmini>span{min-width:0}
+.tourmini .btn{flex:none;white-space:nowrap}
 
 .cart{background:var(--surface);border:1.5px solid var(--primary);border-radius:16px;padding:12px 14px;margin:4px 0 6px;font-size:14.5px;max-width:100%;overflow:hidden}.cart.empty{border-style:dashed;border-color:var(--rule);color:var(--fg-faint)}.cart>b{display:block;margin-bottom:8px}
 .ci{display:flex;align-items:center;flex-wrap:wrap;gap:4px 10px;padding:7px 0;border-top:1px solid var(--rule-soft)}.ci>span{flex:1 1 140px}.ci b{margin-left:auto}.ci>span{flex:1;min-width:0}.ci b{white-space:nowrap}.ci .x{background:none;border:1px solid var(--rule);border-radius:50%;width:28px;height:28px;font-size:12px;color:var(--fg-soft)}.ci.total{border-top:2px solid var(--rule);font-weight:700}.ci small.warn,.tpick .warn{color:#B04A2E;font-size:12.5px;font-weight:600}.ci small.ok,.tpick .ok{color:#2E7D46;font-size:12.5px;font-weight:600}
@@ -1305,7 +1329,12 @@ h1 .pileico{width:34px;height:27px;vertical-align:-3px;margin-right:2px}
 .actquick .aq .cnt{position:absolute;top:5px;right:6px;background:var(--tag-gold-bg);color:var(--tag-gold-ink);border-radius:999px;padding:0 6px;font-size:10.5px;font-weight:700}
 .actquick .aq{display:flex;flex-direction:column;align-items:center;gap:5px;background:var(--surface);border:1px solid var(--rule-soft);border-radius:14px;padding:10px 4px;text-decoration:none;color:inherit;min-width:0}
 .actquick .aq .ic{font-size:21px;line-height:1}
-.actquick .aq b{font-size:11px;font-weight:600;line-height:1.25;text-align:center;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
+.actquick .aq b{font-size:11px;font-weight:600;line-height:1.25;text-align:center;overflow:hidden;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical}
+/* Four across leaves a German name about 70px on a phone: "Glücksbegleiter"
+   and "Den Nachrichtenbaum schütteln" were hyphenated into three broken lines.
+   Two by two gives them room to stay whole. English and Vietnamese keep four
+   across, with the third line that "Shake the message tree" needed at 320. */
+@media (max-width:599px){html[lang="de"] .actquick:not(.three){grid-template-columns:repeat(2,1fr)}}
 /* ---- the red thread ---- */
 .lovecard{text-align:center}
 .threadart{display:block;width:100%;max-width:250px;margin:0 auto 4px}
@@ -2535,14 +2564,16 @@ body[data-route="hello"] #main{width:100%}
 /* Everything the base rule justifies must be able to hyphenate, or German
    gets the rivers the earlier pass was afraid of. The four justified
    selectors are #main p, #main li, .note span and #foot .tagline; the rest
-   of this list is narrow labels that would otherwise overrun. */
+   of this list is narrow labels that would otherwise overrun. Buttons and
+   chips are not on it: a short control that hyphenates reads as broken, so
+   their rows reflow instead (see .melinks and .themes). */
 html[lang="de"] #main p,html[lang="de"] #main li,
 html[lang="de"] .note span,html[lang="de"] #foot .tagline,html[lang="de"] .hint,
 html[lang="de"] .muted,html[lang="de"] .lead,html[lang="de"] .tbl td,
 html[lang="de"] .look b,html[lang="de"] .actquick .aq b,
 html[lang="de"] .actbtn b,html[lang="de"] .actbtn .meta,
 html[lang="de"] .freegrid .fg .s,html[lang="de"] .wherepick .wp .s,
-html[lang="de"] .aq b,html[lang="de"] .chip,html[lang="de"] .btn{
+html[lang="de"] .aq b{
   -webkit-hyphens:auto;hyphens:auto;
   -webkit-hyphenate-limit-before:4;-webkit-hyphenate-limit-after:3;
   hyphenate-limit-chars:10 4 3}
@@ -2557,6 +2588,7 @@ html[lang="de"] .look,html[lang="de"] .actquick .aq{min-width:0}
 html[lang="de"] .look b,html[lang="de"] .actquick .aq b{width:100%}
 /* One more line for a label that German needs two and a half of. */
 html[lang="de"] .actquick .aq b{-webkit-line-clamp:3}
+@media (max-width:599px){html[lang="de"] .actquick:not(.three) .aq b{-webkit-hyphens:manual;hyphens:manual;overflow-wrap:normal}}
 /* The label column of a data table is held on one line so it reads as a
    column. A German label can be wider than the card, so in German it wraps
    and the value keeps its half of the row. */
