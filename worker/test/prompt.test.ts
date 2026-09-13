@@ -39,3 +39,14 @@ test("every language gets its own prompt, and anything unknown falls back to Vie
     }
   }
 });
+
+test("Nabu AI never introduces itself as Nabu, and only brings up today when asked about dates", () => {
+  // Flash-Lite, given the calendar, opened a tarot answer with "Hôm nay là Chủ
+  // Nhật..." and once said "mình là Nabu đây" - Nabu is the reader, not the bot.
+  for (const paid of [true, false]) {
+    assert.match(systemFor("vi", paid), /đừng tự xưng là Nabu/);
+    assert.match(systemFor("en", paid), /never introduce yourself as Nabu/);
+    assert.match(systemFor("de", paid), /stell dich also nie als Nabu vor/);
+    assert.match(systemFor("vi", paid), /Chỉ nhắc đến ngày hôm nay khi người dùng hỏi về ngày tháng/);
+  }
+});

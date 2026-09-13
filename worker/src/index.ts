@@ -78,9 +78,9 @@ interface AskBody {
    counts as that knowledge for both, because it is exact where a model's
    memory of Vietnamese lunar dates is not. */
 const VOICE: Record<string, string> = {
-  vi: `Bạn là Nabu AI, trợ lý của Nabu Tarot, một reader tarot người Việt. Bạn nói chuyện ấm áp, ngắn gọn, bằng tiếng Việt đời thường (xưng "mình", gọi người dùng là "bạn"). Câu ngắn, mỗi đoạn một ý, không dùng từ hoa mỹ.`,
-  en: `You are Nabu AI, the assistant of Nabu Tarot, a Vietnamese tarot reader. You speak warmly and briefly in plain English. Short sentences, one idea per paragraph, no flowery words.`,
-  de: `Du bist Nabu AI, die Assistenz von Nabu Tarot, einer vietnamesischen Kartenlegerin. Du sprichst warm und knapp in einfachem Deutsch und duzt die Person. Kurze Sätze, ein Gedanke pro Absatz, keine geschwollenen Wörter.`,
+  vi: `Bạn là Nabu AI, trợ lý của Nabu Tarot, một reader tarot người Việt. Bạn nói chuyện ấm áp, ngắn gọn, bằng tiếng Việt đời thường (xưng "mình", gọi người dùng là "bạn"). Câu ngắn, mỗi đoạn một ý, không dùng từ hoa mỹ. Bạn là Nabu AI chứ không phải Nabu: Nabu là người xem bài thật, bạn đừng tự xưng là Nabu. Chỉ nhắc đến ngày hôm nay khi người dùng hỏi về ngày tháng.`,
+  en: `You are Nabu AI, the assistant of Nabu Tarot, a Vietnamese tarot reader. You speak warmly and briefly in plain English. Short sentences, one idea per paragraph, no flowery words. You are Nabu AI, not Nabu: Nabu is the real reader, so never introduce yourself as Nabu. Only mention today's date when the visitor asks about dates.`,
+  de: `Du bist Nabu AI, die Assistenz von Nabu Tarot, einer vietnamesischen Kartenlegerin. Du sprichst warm und knapp in einfachem Deutsch und duzt die Person. Kurze Sätze, ein Gedanke pro Absatz, keine geschwollenen Wörter. Du bist Nabu AI, nicht Nabu: Nabu ist die echte Kartenlegerin, stell dich also nie als Nabu vor. Das heutige Datum erwähnst du nur, wenn die Person nach einem Datum fragt.`,
 };
 const SCOPE_FREE: Record<string, string> = {
   vi: `Bạn trả lời dựa trên PHẦN KIẾN THỨC được cung cấp (lá bài, bài học, cung hoàng đạo hoặc các con số của người dùng). Phần CALENDAR cũng là kiến thức của app: câu hỏi về hôm nay, ngày lễ hay ngày âm dương thì bạn trả lời đúng theo phần đó. Khi câu hỏi vượt ngoài những phần này, bạn nói thẳng là một lá bài hay một cung không trả lời được, và gợi ý người dùng đặt lịch xem bài đầy đủ với Nabu.`,
@@ -181,15 +181,21 @@ async function gemini(env: Env, sys: string, body: AskBody, question: string, se
      Gemini 3 models, and 900 was spent thinking: answers came back cut off
      mid-word ("rơi vào ngày **2"). The system prompt keeps the answer itself to
      a few sentences; this is only the ceiling. */
-  const base = { systemInstruction: { parts: [{ text: sys }] }, contents: history(body, question), generationConfig: { temperature: 0.6, maxOutputTokens: 4096 } };
+  const base = { systemInstruction: { parts: [{ text: sys }] }, contents: history(body, question), generationConfig: { temperature: 0.6, maxOutputTokens: 4096, thinkingConfig: { thinkingLevel: "low" } } };
   let why = "";
-  /* The models Google names itself. The 2.5 models answer 404 to any key made
+  /* Flash-Lite first, for speed. Measured on 13 September 2026 with the
+     calendar context the app sends: gemini-3.6-flash took 5-6 seconds to answer
+     a short tarot or date question whatever its thinking level, and
+     gemini-3.5-flash-lite 0.9-1.4 seconds, with the same dates right and the
+     same readings. Flash stays as the fallback.
+
+     The models Google names itself. The 2.5 models answer 404 to any key made
      after they were retired - "no longer available to new users. Please update
      your code to use models/gemini-3.6-flash" - and a key made on 13 September
      2026 is exactly that, so every paid question fell through to Workers AI,
      which cannot search and invented a date. If Google retires these too, the
      404 names their successor in the worker's logs (wrangler tail). */
-  for (const model of ["gemini-3.6-flash", "gemini-3.5-flash-lite"]) {
+  for (const model of ["gemini-3.5-flash-lite", "gemini-3.6-flash"]) {
     try {
       const r = await fetch("https://generativelanguage.googleapis.com/v1beta/models/" + encodeURIComponent(model) + ":generateContent?key=" + encodeURIComponent(env.GEMINI_API_KEY), {
         method: "POST",
@@ -529,6 +535,16 @@ export default {
     /* Asking costs money, so asking requires an account. Until the project id
        is set the worker keeps its old behaviour, so deploying this cannot lock
        the app out before the app is sending a token. */
+    /* Where the time goes, stage by stage, in the logs and in a response
+       header - so "Nabu AI is slow" can be answered with numbers rather than
+       guesses. */
+    const T0 = Date.now(), marks: Record<string, number> = {};
+    const mark = (k: string): void => { marks[k] = Date.now() - T0; };
+    const timed = (via: string, extra: Record<string, string> = {}): Record<string, string> => {
+      const t = { via, ...marks, total: Date.now() - T0 };
+      console.log(JSON.stringify({ at: "ai-timing", ...t }));
+      return { ...headers, "X-Nabu-Timing": JSON.stringify(t), ...extra };
+    };
     let who = "";
     if (env.FIREBASE_PROJECT_ID) {
       const person = await whoIsAsking(request, env.FIREBASE_PROJECT_ID);
@@ -537,10 +553,13 @@ export default {
     } else {
       who = caller(request);
     }
+    mark("auth");
     /* Paid or not, read once: it sets the allowance and whether the answer may
        search. Asking requires an account, so `who` is a uid here. */
     const paid = env.FIREBASE_PROJECT_ID ? await isPaid(env, who) : true;
+    mark("tier");
     const verdict = await allow(env, who, paid ? ASK_A_DAY_PAID : ASK_A_DAY_FREE, ASK_A_MINUTE);
+    mark("allow");
     if (!verdict.ok) return tooMany(verdict, headers);
 
     let body: AskBody;
@@ -563,10 +582,13 @@ export default {
        thinking had used up, and were cached. */
     /* 4 - the prompt stopped telling Gemini to turn down questions that are not
        about tarot for readers who have paid; their cached refusals go. */
-    const cacheKey = { gen: 4, lang: body.lang, kind: body.kind, question, context: (body.context || "").slice(0, 12000), tier: paid ? "paid" : "free" };
+    /* 5 - Flash-Lite answers first, and the prompt stops it opening unrelated
+       answers with today's date or calling itself Nabu. */
+    const cacheKey = { gen: 5, lang: body.lang, kind: body.kind, question, context: (body.context || "").slice(0, 12000), tier: paid ? "paid" : "free" };
     if (fresh) {
       const hit = await cachedAnswer(cacheKey);
-      if (hit) return new Response(JSON.stringify({ answer: hit }), { headers });
+      mark("cache");
+      if (hit) return new Response(JSON.stringify({ answer: hit }), { headers: timed("cache") });
     }
     const keep = (answer: string): void => { if (fresh && answer) keepAnswer(cacheKey, answer, ctx); };
 
@@ -589,14 +611,16 @@ export default {
        the next line, and past the last one the reader is told the AI is busy,
        which by then is true. */
     const searchOff = env.KV ? !!(await env.KV.get(SEARCH_OFF_KEY).catch(() => null)) : false;
-    const order: (() => Promise<Said>)[] = paid
-      ? (searchOff ? [] : [() => gemini(env, sys, body, question, true)])
-          .concat([() => gemini(env, sys, body, question, false), () => workersAi(env, sys, body, question)])
-      : [() => workersAi(env, sys, body, question), () => gemini(env, sys, body, question, false)];
+    mark("searchflag");
+    const order: [string, () => Promise<Said>][] = paid
+      ? (searchOff ? [] : [["gemini-search", () => gemini(env, sys, body, question, true)] as [string, () => Promise<Said>]])
+          .concat([["gemini", () => gemini(env, sys, body, question, false)], ["workers-ai", () => workersAi(env, sys, body, question)]])
+      : [["workers-ai", () => workersAi(env, sys, body, question)], ["gemini", () => gemini(env, sys, body, question, false)]];
     let why = "";
-    for (const attempt of order) {
+    for (const [label, attempt] of order) {
       const got = await attempt();
-      if (got.text) { if (!got.partial) keep(got.text); return new Response(JSON.stringify({ answer: got.text }), { headers }); }
+      mark(label);
+      if (got.text) { if (!got.partial) keep(got.text); return new Response(JSON.stringify({ answer: got.text }), { headers: timed(label) }); }
       if (got.why) why = got.why;
     }
 
