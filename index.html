@@ -12,7 +12,7 @@
      carries this notice with it. See LICENSE. -->
 <meta name="author" content="Nabu Tarot">
 <meta name="copyright" content="Copyright (c) 2025-2026 Nabu Tarot. All rights reserved.">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'none'; object-src 'none'; form-action 'self'; script-src 'self' 'sha256-Z6XLjMDwdLWCKzttZjB/bcsRjdUIyhu7YWHT86dhZ2M=' https://www.gstatic.com https://apis.google.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; font-src 'self' data:; media-src 'self' data: blob:; worker-src 'self'; connect-src 'self' https://*.googleapis.com https://*.google.com https://*.firebaseio.com https://*.cloudfunctions.net https://*.workers.dev https://generativelanguage.googleapis.com; frame-src https://*.firebaseapp.com https://accounts.google.com https://*.facebook.com">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'none'; object-src 'none'; form-action 'self'; script-src 'self' 'sha256-64EspFscZCA1kTZoyMW8SuCUU/ICCwMXkNXn92Ed9ng=' https://www.gstatic.com https://apis.google.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; font-src 'self' data:; media-src 'self' data: blob:; worker-src 'self'; connect-src 'self' https://*.googleapis.com https://*.google.com https://*.firebaseio.com https://*.cloudfunctions.net https://*.workers.dev https://generativelanguage.googleapis.com; frame-src https://*.firebaseapp.com https://accounts.google.com https://*.facebook.com">
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <meta name="theme-color" content="#EFE9FA">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -828,6 +828,14 @@ html.iosapp[lang="en"] #today .tbl td:first-child{white-space:normal;width:36%}
 .tsym .ic{font-size:26px;display:block}.tsym b{display:block;font-size:12px}.tsym span:last-child{font-size:10.5px;color:var(--fg-faint);display:block}
 .tsym.big{padding:14px}.tsym.big .ic{font-size:44px}.tsym.big b{font-size:16px}.tsym.big span{font-size:13px}
 .awrapper{text-align:center;margin-bottom:14px}
+/* The 12 animals: which zodiac this is, and how China and Korea differ. */
+.avn{margin:-2px 0 10px}
+.anote h3{margin-bottom:8px}
+.anote ul{margin:0;padding-left:20px}
+/* Short bullets in a narrow card: justified, a phone opened rivers between four words a line, and German
+   hyphenated on top. Left-aligned, in all three languages alike. */
+#main .anote li{margin:0 0 6px;font-size:14.5px;line-height:1.5;text-align:left;-webkit-hyphens:manual;hyphens:manual}
+.anote li:last-child{margin-bottom:0}
 /* The signs listed under the compatibility wheel. The wheel above them is
    centred and they were not, which read as a row that had come loose. Only
    these ones - chips elsewhere start at the left on purpose. */
@@ -839,6 +847,15 @@ html.iosapp[lang="en"] #today .tbl td:first-child{white-space:normal;width:36%}
 .awheel .aw .e{width:40px;height:40px;border-radius:50%;background:var(--surface);border:1px solid var(--rule);display:flex;align-items:center;justify-content:center;font-size:21px;line-height:1;box-shadow:0 1px 3px var(--shade)}
 .awheel .aw.on .e{width:48px;height:48px;background:var(--primary);font-size:25px;border-color:transparent}
 .awheel .aw b{font-size:12.5px;line-height:1.1;white-space:nowrap}.awheel .aw.on b{color:var(--primary)}
+/* The bottom animal's name hangs below the square, so the wheel keeps room for it. On a small phone the
+   English and German names ("Schlange", "Rooster") are longer than Tý or Sửu and reached the next circle,
+   so there the circles and names are a size smaller, in every language alike. */
+.awheel{margin-bottom:24px}
+@media (max-width:399px){
+  .awheel .aw .e{width:34px;height:34px;font-size:18px}
+  .awheel .aw.on .e{width:42px;height:42px;font-size:22px}
+  .awheel .aw b{font-size:11px}
+}
 @media (max-width:380px){.ringwrap{grid-template-columns:120px 1fr}.ring{width:120px;height:120px}}
 
 /* ---- guide visuals ---- */
@@ -3345,6 +3362,8 @@ const STR = {
     enterBirthday: 'Nhập ngày sinh ở mục Hồ sơ để xem số đường đời và cung của bạn.',
     animal: 'Con giáp',
     animalNote: 'Con giáp được tính theo năm âm lịch. Nếu bạn sinh trước Tết âm lịch, hãy tính theo năm trước đó.',
+    animalVN: 'Theo 12 con giáp Việt Nam', animalDiffH: 'Khác với Trung\u00a0Quốc và Hàn\u00a0Quốc',
+    animalDiff: ['Mão là Mèo. Ở Trung\u00a0Quốc và Hàn\u00a0Quốc, Mão là Thỏ.', 'Sửu là Trâu. Ở Trung\u00a0Quốc và Hàn\u00a0Quốc, Sửu là Bò.', 'Mùi là Dê. Ở Hàn\u00a0Quốc, Mùi thường là Cừu.', 'Việt\u00a0Nam đổi con giáp vào Tết. Nhiều thầy xem tuổi ở Trung\u00a0Quốc và Hàn\u00a0Quốc tính năm mới từ Lập\u00a0Xuân, khoảng ngày\u00a04/2.'],
 
     bookTitle: 'Đặt lịch xem bài',
     priceTitle: 'Bảng giá', priceIntro: 'Tất cả dịch vụ, khóa học và nội dung mở thêm của Nabu đều ở đây. Phần lớn ứng dụng vẫn miễn phí.',
@@ -4192,6 +4211,8 @@ const STR = {
     enterBirthday: 'Enter your birthday under Profile to see your life path number and sign.',
     animal: 'Zodiac animal',
     animalNote: 'The zodiac animal follows the lunar year. If you were born before Lunar New Year, use the previous year.',
+    animalVN: 'Following the Vietnamese zodiac', animalDiffH: 'How China and Korea differ',
+    animalDiff: ['Mão is the Cat. In China and Korea, it is the Rabbit.', 'Sửu is the Buffalo. In China and Korea, it is the Ox.', 'Mùi is the Goat. In Korea, it is usually the Sheep.', 'Vietnam changes the animal at Tết. Many fortune-tellers in China and Korea start the year at Lichun, the start of spring, around 4\u00a0February.'],
 
     bookTitle: 'Book a reading',
     priceTitle: 'Prices', priceIntro: 'All Nabu readings, courses and optional unlocks are listed here. Most of the app is still free.',
@@ -5038,6 +5059,8 @@ const STR = {
     enterBirthday: 'Trag dein Geburtsdatum im Profil ein, um deine Lebenszahl und dein Sternzeichen zu sehen.',
     animal: 'Tierkreiszeichen',
     animalNote: 'Das Tierkreiszeichen richtet sich nach dem Mondjahr. Wenn du vor dem Mondneujahr geboren bist, zählt noch das vorherige Jahr.',
+    animalVN: 'Nach dem vietnamesischen Tierkreis', animalDiffH: 'Unterschiede zu China und Korea',
+    animalDiff: ['Mão ist die Katze. In China und Korea ist es der Hase.', 'Sửu ist der Büffel. In China und Korea ist es der Ochse.', 'Mùi ist die Ziege. In Korea ist es meist das Schaf.', 'In Vietnam wechselt das Tier zu Tết. Viele Wahrsager in China und Korea beginnen das Jahr mit Lichun, dem Frühlingsanfang, um den 4.\u00a0Februar.'],
 
     bookTitle: 'Eine Legung buchen',
     priceTitle: 'Preise', priceIntro: 'Hier findest du alle Legungen, Kurse und optionalen Freischaltungen von Nabu. Der größte Teil der App bleibt kostenlos.',
@@ -11878,7 +11901,7 @@ const LIFEPATH = {
 
 /* Vietnamese zodiac animals by calendar year (Tết boundary noted in the UI). */
 const ANIMALS = [
-  { vi: 'Tý (Chuột)', en: 'Rat', de: 'Ratte' }, { vi: 'Sửu (Trâu)', en: 'Ox', de: 'Büffel' }, { vi: 'Dần (Hổ)', en: 'Tiger', de: 'Tiger' }, { vi: 'Mão (Mèo)', en: 'Cat', de: 'Katze' },
+  { vi: 'Tý (Chuột)', en: 'Rat', de: 'Ratte' }, { vi: 'Sửu (Trâu)', en: 'Buffalo', de: 'Büffel' }, { vi: 'Dần (Hổ)', en: 'Tiger', de: 'Tiger' }, { vi: 'Mão (Mèo)', en: 'Cat', de: 'Katze' },
   { vi: 'Thìn (Rồng)', en: 'Dragon', de: 'Drache' }, { vi: 'Tỵ (Rắn)', en: 'Snake', de: 'Schlange' }, { vi: 'Ngọ (Ngựa)', en: 'Horse', de: 'Pferd' }, { vi: 'Mùi (Dê)', en: 'Goat', de: 'Ziege' },
   { vi: 'Thân (Khỉ)', en: 'Monkey', de: 'Affe' }, { vi: 'Dậu (Gà)', en: 'Rooster', de: 'Hahn' }, { vi: 'Tuất (Chó)', en: 'Dog', de: 'Hund' }, { vi: 'Hợi (Lợn)', en: 'Pig', de: 'Schwein' }
 ];
@@ -17309,7 +17332,7 @@ const NUM_KW = {
 const ANIMAL_EMOJI = ['🐀', '🐂', '🐅', '🐈', '🐉', '🐍', '🐎', '🐐', '🐒', '🐓', '🐕', '🐖'];
 const ANIMAL_INFO = {
   vi: [['nhanh trí', 'khéo léo', 'tiết kiệm', 'Chuột nhanh, khôn và biết xoay xở. Hợp việc cần đầu óc và quan hệ.'], ['bền bỉ', 'thật thà', 'chậm mà chắc', 'Trâu chăm, chịu khó và giữ lời. Hợp việc cần kiên nhẫn.'], ['can đảm', 'nhiệt', 'thích dẫn đầu', 'Hổ mạnh mẽ, dám làm, hay bốc đồng. Hợp việc cần quyết đoán.'], ['nhẹ nhàng', 'khéo', 'cẩn trọng', 'Mèo tinh tế, hoà nhã, biết giữ mình. Hợp việc cần khéo léo.'], ['tự tin', 'may mắn', 'tự tôn', 'Rồng nổi bật, nhiều năng lượng và tham vọng. Hợp việc lớn.'], ['sâu sắc', 'bí ẩn', 'trực giác', 'Rắn khôn ngoan, kín đáo, suy nghĩ kỹ. Hợp việc cần chiều sâu.'], ['tự do', 'nhanh', 'nhiệt tình', 'Ngựa yêu tự do, hoạt bát, thích đi. Hợp việc di chuyển, giao tiếp.'], ['hiền', 'sáng tạo', 'nhạy cảm', 'Dê dịu dàng, nghệ sĩ, cần được yên. Hợp việc sáng tạo.'], ['thông minh', 'vui', 'tinh nghịch', 'Khỉ lanh lợi, sáng ý, thích đùa. Hợp việc cần ứng biến.'], ['chăm', 'thẳng', 'tỉ mỉ', 'Gà siêng năng, rõ ràng, hay góp ý. Hợp việc cần chính xác.'], ['trung thành', 'công bằng', 'cẩn trọng', 'Chó tận tuỵ, thật thà, bảo vệ người thân. Hợp việc phục vụ.'], ['rộng lượng', 'tốt bụng', 'dễ tin', 'Lợn hiền, hào phóng, thích vui vẻ. Hợp việc chăm sóc, ẩm thực.']],
-  en: [['quick', 'resourceful', 'thrifty', 'The Rat is quick, clever and adaptable. Suits work of the mind and networks.'], ['steady', 'honest', 'slow but sure', 'The Ox is diligent and keeps its word. Suits patient work.'], ['brave', 'fiery', 'leads', 'The Tiger is strong, bold, sometimes rash. Suits decisive work.'], ['gentle', 'tactful', 'careful', 'The Cat is refined, gracious, self-protective. Suits delicate work.'], ['confident', 'lucky', 'proud', 'The Dragon stands out, full of energy and ambition. Suits big things.'], ['deep', 'mysterious', 'intuitive', 'The Snake is wise, private, thinks it through. Suits work with depth.'], ['free', 'fast', 'enthusiastic', 'The Horse loves freedom, lively, always moving. Suits travel and talk.'], ['gentle', 'creative', 'sensitive', 'The Goat is soft, artistic, needs peace. Suits creative work.'], ['clever', 'fun', 'mischievous', 'The Monkey is sharp, inventive, playful. Suits improvisation.'], ['hard-working', 'direct', 'precise', 'The Rooster is diligent, clear, quick to advise. Suits exact work.'], ['loyal', 'fair', 'cautious', 'The Dog is devoted, honest, protective. Suits service.'], ['generous', 'kind', 'trusting', 'The Pig is gentle, giving, fond of fun. Suits care and food.']],
+  en: [['quick', 'resourceful', 'thrifty', 'The Rat is quick, clever and adaptable. Suits work of the mind and networks.'], ['steady', 'honest', 'slow but sure', 'The Buffalo is diligent and keeps its word. Suits patient work.'], ['brave', 'fiery', 'leads', 'The Tiger is strong, bold, sometimes rash. Suits decisive work.'], ['gentle', 'tactful', 'careful', 'The Cat is refined, gracious, self-protective. Suits delicate work.'], ['confident', 'lucky', 'proud', 'The Dragon stands out, full of energy and ambition. Suits big things.'], ['deep', 'mysterious', 'intuitive', 'The Snake is wise, private, thinks it through. Suits work with depth.'], ['free', 'fast', 'enthusiastic', 'The Horse loves freedom, lively, always moving. Suits travel and talk.'], ['gentle', 'creative', 'sensitive', 'The Goat is soft, artistic, needs peace. Suits creative work.'], ['clever', 'fun', 'mischievous', 'The Monkey is sharp, inventive, playful. Suits improvisation.'], ['hard-working', 'direct', 'precise', 'The Rooster is diligent, clear, quick to advise. Suits exact work.'], ['loyal', 'fair', 'cautious', 'The Dog is devoted, honest, protective. Suits service.'], ['generous', 'kind', 'trusting', 'The Pig is gentle, giving, fond of fun. Suits care and food.']],
   de: [['schnell', 'einfallsreich', 'sparsam', 'Die Ratte gilt als schnell, clever und anpassungsfähig. Traditionell passt sie zu Aufgaben, die Köpfchen und gute Kontakte verlangen.'], ['beständig', 'ehrlich', 'langsam, aber sicher', 'Der Büffel gilt als fleißig, verlässlich und ausdauernd. Traditionell passt er zu Arbeit, die Geduld braucht.'], ['mutig', 'feurig', 'führungsstark', 'Der Tiger gilt als kraftvoll, mutig und manchmal impulsiv. Traditionell passt er zu Situationen, in denen Entschlossenheit gefragt ist.'], ['sanft', 'taktvoll', 'vorsichtig', 'Die Katze gilt in der vietnamesischen Tierkreis-Tradition als feinfühlig, höflich und umsichtig. Sie wird mit Geschick und Diplomatie verbunden.'], ['selbstbewusst', 'glücklich', 'stolz', 'Der Drache gilt als auffällig, energiegeladen und ehrgeizig. Traditionell wird er mit großen Vorhaben und sichtbarer Verantwortung verbunden.'], ['tiefgründig', 'geheimnisvoll', 'intuitiv', 'Die Schlange gilt als klug, zurückhaltend und überlegt. Traditionell wird sie mit Tiefe und sorgfältigem Denken verbunden.'], ['freiheitsliebend', 'schnell', 'begeisterungsfähig', 'Das Pferd liebt Bewegung und Freiheit. Traditionell wird es mit Reisen, Kommunikation und einem aktiven Leben verbunden.'], ['sanft', 'kreativ', 'sensibel', 'Die Ziege gilt als feinfühlig, kreativ und friedliebend. Traditionell passt sie zu künstlerischen oder fürsorglichen Tätigkeiten.'], ['clever', 'fröhlich', 'verspielt', 'Der Affe werden Einfallsreichtum, Humor und schnelle Reaktionen zugeschrieben. Sie passt symbolisch zu Aufgaben, die Improvisation verlangen.'], ['fleißig', 'direkt', 'genau', 'Der Hahn gilt als arbeitsam, klar und detailorientiert. Traditionell wird er mit Aufgaben verbunden, bei denen Genauigkeit wichtig ist.'], ['loyal', 'fair', 'vorsichtig', 'Der Hund gilt als treu, ehrlich und beschützend. Traditionell wird er mit Verantwortung und Dienst an anderen verbunden.'], ['großzügig', 'freundlich', 'vertrauensvoll', 'Das Schwein gilt als sanft, großzügig und lebensfroh. Traditionell wird es mit Fürsorge, Genuss und Gastfreundschaft verbunden.']]
 };
 const TRIOS = [[8, 0, 4], [2, 6, 10], [11, 3, 7], [5, 9, 1]];       // tam hợp: Thân Tý Thìn · Dần Ngọ Tuất · Hợi Mão Mùi · Tỵ Dậu Sửu
@@ -17551,7 +17574,10 @@ function animalsWheelSVG(active) {
   let s = '<div class="awheel">';
   for (let i = 0; i < 12; i++) {
     const a = i / 12 * Math.PI * 2 - Math.PI / 2, x = 50 + 39 * Math.cos(a), y = 50 + 39 * Math.sin(a), on = i === active;
-    s += '<button class="aw' + (on ? ' on' : '') + '" data-animal="' + i + '" style="left:' + x.toFixed(1) + '%;top:' + y.toFixed(1) + '%" aria-label="' + CHI[i] + '"><span class="e">' + ANIMAL_EMOJI[i] + '</span><b>' + CHI[i] + '</b></button>';
+    /* The wheel speaks the reader's language: Tý, Sửu, Dần in Vietnamese; Rat, Buffalo, Tiger in English;
+       Ratte, Büffel, Tiger in German. */
+    const name = lang === 'vi' ? CHI[i] : ANIMALS[i][lang] || ANIMALS[i].en;
+    s += '<button class="aw' + (on ? ' on' : '') + '" data-animal="' + i + '" style="left:' + x.toFixed(1) + '%;top:' + y.toFixed(1) + '%" aria-label="' + esc(name) + '"><span class="e">' + ANIMAL_EMOJI[i] + '</span><b>' + esc(name) + '</b></button>';
   }
   return s + '</div>';
 }
@@ -17565,7 +17591,10 @@ function renderAnimals(m, head) {
       + '<p><b>' + esc(S.animalTrio) + ':</b> ' + trio.map((t) => ANIMAL_EMOJI[t] + ' ' + esc(ANIMALS[t][lang])).join(' · ') + '</p><p><b>' + esc(S.animalClash) + ':</b> ' + clash.map((t) => ANIMAL_EMOJI[t] + ' ' + esc(ANIMALS[t][lang])).join(' · ') + '</p><p class="faint">' + esc(S.animalYears) + ': ' + years.slice(0, 6).join(', ') + '</p></div></div>';
     $$('[data-animal]', m).forEach((g) => g.addEventListener('click', () => draw(Number(g.getAttribute('data-animal')))));
   };
-  m.innerHTML = head + '<p class="muted">' + esc(S.animalIntro) + '</p><div class="awrapper"><div id="awrap"></div></div><div class="ins" id="aout"></div><p class="hint">' + esc(S.animalNote) + '</p>'
+  /* The wheel is the Vietnamese one - Mèo, Trâu, Dê - and says so at the top. Below it, what China and
+     Korea do differently, in the owner's short sentences. */
+  m.innerHTML = head + '<p class="avn"><span class="chip tag">🇻🇳 ' + esc(S.animalVN) + '</span></p><p class="muted">' + esc(S.animalIntro) + '</p><div class="awrapper"><div id="awrap"></div></div><div class="ins" id="aout"></div>'
+    + '<div class="card anote"><h3>' + esc(S.animalDiffH) + '</h3><ul>' + S.animalDiff.map((x) => '<li>' + esc(x) + '</li>').join('') + '</ul></div><p class="hint">' + esc(S.animalNote) + '</p>'
     + '<div class="acc"><button><span>' + esc(S.readMoreTitle) + '</span></button><div class="in">' + guideBodyHTML(GUIDES.filter((g) => g.id === 'fort-animals')[0]) + '</div></div>';
   draw(mine > -1 ? mine : 4); bindAccordions(m);
 }
@@ -28769,7 +28798,7 @@ function adminSale(p) {
 ROUTES.admin = { nav: '', render: renderAdmin };
 
 /* ============================ boot ============================ */
-window.APP_VERSION = 'v238';
+window.APP_VERSION = 'v239';
 window.NABU = { CONFIG: CONFIG, SALE: SALE, salePrice: salePrice, loadActs: loadActs, BACK: BACK, LESSONS: LESSONS, localAnswer: localAnswer, compatVerdict: compatVerdict, numerologyOf: numerologyOf, ZDEEP: ZDEEP, lunarToday: lunarToday, solarToLunar: solarToLunar, DECK: DECK, INSIGHT: INSIGHT, KW: KW, ASK: ASK, TOPICS: TOPICS, GUIDES: GUIDES, SERVICES: SERVICES, COURSES: COURSES, ACCESS: ACCESS, INTERESTS: INTERESTS, plusOn: () => plusOn(), proOn: () => proOn(), luckUnlimited: () => luckUnlimited(), ZODIAC: ZODIAC, pick: pick, book: book, PLAY_ITEMS: PLAY_ITEMS, PLAY_SUB_SKUS: PLAY_SUB_SKUS, playItem: playItem, BILL: BILL, SUBS: SUBS, renderStore: renderStore, subStateWord: subStateWord,
   insightHTML: insightHTML, insightOf: insightOf, sunSignIndex: sunSignIndex, lifePath: lifePath, PROFILE: () => PROFILE, BE: BE, inAppBrowser: inAppBrowser, ACTS: ACTS, CMT: CMT, LIKES: LIKES, kbReady: kbReady, AI: AI, STR: STR, KB_URL: (typeof KB_URL === 'string' ? KB_URL : ''),
   ANGELS: ANGELS, angelRead: angelRead, CODEBOOK: CODEBOOK, redeemCode: redeemCode, loadCodebook: loadCodebook, petHomeSVG: petHomeSVG, PET_HOMES: PET_HOMES, PET_WEARS: PET_WEARS, codeDigest: codeDigest, randomCode: randomCode, BANK: BANK, PETS: PETS, petSVG: petSVG, PET_COATS: PET_COATS, PET_KINDS: PET_KINDS, turnsMerge: turnsMerge, turnsLocal: turnsLocal, TODAY: TODAY, treeMsgOf: treeMsgOf, priceText: priceText, termText: termText, proSaveText: () => proSaveText(), wedFeeText: () => wedFeeText(), fmtPrice: fmtPrice, luckCut: luckCut, petLevel: petLevel, petStep: petStep, VOUCHERS: VOUCHERS, levelCoins: levelCoins, LOOKS: LOOKS,

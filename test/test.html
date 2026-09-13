@@ -87,13 +87,30 @@ async function go(hash, sel) { W().location.hash = hash; await sleep(30); return
     ok(d.querySelector('#today') && /Âm lịch/.test(d.querySelector('#today').textContent) && /Ngày \d+ tháng \d+ năm \S+ \S+ \(\d{4}\)/.test(d.querySelector('#today').textContent) && !/Can chi/.test(d.querySelector('#today').textContent) && /Trăng/.test(d.querySelector('#today').textContent), 'today panel: full lunar date with year name and the moon, and no can chi row');
     { /* English and German name the calendar for what it is - lunisolar - and
          carry no animal signs, neither as a row nor inside the date. */
-      const keepLang = N.PROFILE().lang || '';
       W().saveProfileLocal({ lang: 'en' }); W().applyAccountLang(); const enToday = W().todayHTML();
       W().saveProfileLocal({ lang: 'de' }); W().applyAccountLang(); const deToday = W().todayHTML();
-      W().saveProfileLocal({ lang: 'vi' }); W().applyAccountLang(); W().saveProfileLocal({ lang: keepLang });
+      W().saveProfileLocal({ lang: 'vi' }); W().applyAccountLang();
       ok(/Vietnamese \(lunisolar\)/.test(enToday) && /Day \d+ of lunar month \d+.*, \d{4}/.test(enToday) && !/Animal signs|year of the/.test(enToday)
         && /Vietnamesischer Kalender \(lunisolar\)/.test(deToday) && !/Tierzeichen|Mondkalender/.test(deToday),
         'the English and German today panel says lunisolar calendar and shows no animal signs'); }
+    { /* The 12 animals page says whose zodiac it is and how China and Korea differ, in every language. */
+      /* Never through #/home while switching: its feed loads late and would land in the next language. */
+      const seen = {}, wheel = {};
+      for (const L of ['vi', 'en', 'de']) {
+        W().saveProfileLocal({ lang: L }); W().applyAccountLang();
+        await go('#/learn', '#main'); await go('#/learn/fortune/animals', '.anote');
+        const main = d.querySelector('#main');
+        wheel[L] = Array.from(main.querySelectorAll('.awheel .aw b')).map((b) => b.textContent);
+        seen[L] = !!main.querySelector('.avn .chip') && main.querySelectorAll('.anote li').length === 4
+          && main.querySelector('.avn').compareDocumentPosition(main.querySelector('.awrapper')) & 4
+          && main.querySelector('#aout').compareDocumentPosition(main.querySelector('.anote')) & 4;
+      }
+      W().saveProfileLocal({ lang: 'vi' }); W().applyAccountLang();
+      ok(wheel.vi[0] === 'Tý' && wheel.vi[3] === 'Mão' && wheel.en[0] === 'Rat' && wheel.en[1] === 'Buffalo' && wheel.en[3] === 'Cat' && wheel.de[1] === 'Büffel' && wheel.de[3] === 'Katze' && wheel.en.length === 12,
+        'the animal wheel is labelled in the reader\'s language (' + [wheel.vi[1], wheel.en[1], wheel.de[1]].join(' / ') + ')');
+      ok(seen.vi && seen.en && seen.de && N.STR.en.animalDiff.length === 4 && N.STR.de.animalDiff.length === 4 && /Việt Nam/.test(N.STR.vi.animalVN),
+        'the 12 animals page is marked Vietnamese at the top and lists four differences from China and Korea, in vi, en and de');
+      await go('#/learn', '#main'); await go('#/home', '.tiles'); }
     const lt = N.lunarToday(new Date(2026, 8, 5));
     ok(lt.yearAn === 'Ngọ (Ngựa)' && lt.monthAn === 'Thân (Khỉ)' && lt.dayAn === 'Ngọ (Ngựa)' && /Bính Ngọ/.test(lt.yearCC), 'lunar animal names follow the language on screen: 5/9/2026 is a Horse day in the Monkey month of the Horse year');
     const l1 = N.solarToLunar(29, 1, 2025), l2 = N.solarToLunar(10, 2, 2024), l3 = N.solarToLunar(4, 9, 2026);
@@ -118,7 +135,8 @@ async function go(hash, sel) { W().location.hash = hash; await sleep(30); return
     d.querySelector('[data-tour="skip"]').click(); await sleep(30);
     ok(d.querySelector('#tour.tourmini'), 'closing shrinks it again');
     await waitFor(() => d.querySelector('.welcome'), 6000);
-    ok(/Nabu Tarot xin chào/.test(d.querySelector('.welcome h2').textContent) && d.querySelector('.welcome .sig img') && !d.querySelector('.welcome .date') && !/Dự đoán mới/.test(d.querySelector('#feed').textContent), 'welcome post heads the feed with the logo as signature, no date line, no "Dự đoán mới"');
+    ok(/Nabu Tarot xin chào/.test(d.querySelector('.welcome h2').textContent) && d.querySelector('.welcome .sig img') && !d.querySelector('.welcome .date') && !/Dự đoán mới/.test(d.querySelector('#feed').textContent), 'welcome post heads the feed with the logo as signature, no date line, no "Dự đoán mới"'
+      + (() => { const w = d.querySelector('.welcome'), f = d.querySelector('#feed'); return ' (h2=' + !!(w && w.querySelector('h2') && /Nabu Tarot xin chào/.test(w.querySelector('h2').textContent)) + ' sig=' + !!(w && w.querySelector('.sig img')) + ' date=' + !!(w && w.querySelector('.date')) + ' new=' + !!(f && /Dự đoán mới/.test(f.textContent)) + ')'; })());
     ok(d.querySelector('.welcome.open [data-wtoggle]') && d.querySelector('.welcome .in'), 'the welcome note opens folded-out with a toggle');
     d.querySelector('[data-wtoggle]').click(); await sleep(30);
     ok(!d.querySelector('.welcome').classList.contains('open') && JSON.parse(w.localStorage.getItem('nabu-welcome-open')) === false && d.querySelector('.welcome .chev').textContent === '+', 'tapping the welcome title folds it and the choice is remembered');

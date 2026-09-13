@@ -139,6 +139,8 @@ const STR = {
     enterBirthday: 'Nhập ngày sinh ở mục Hồ sơ để xem số đường đời và cung của bạn.',
     animal: 'Con giáp',
     animalNote: 'Con giáp được tính theo năm âm lịch. Nếu bạn sinh trước Tết âm lịch, hãy tính theo năm trước đó.',
+    animalVN: 'Theo 12 con giáp Việt Nam', animalDiffH: 'Khác với Trung\u00a0Quốc và Hàn\u00a0Quốc',
+    animalDiff: ['Mão là Mèo. Ở Trung\u00a0Quốc và Hàn\u00a0Quốc, Mão là Thỏ.', 'Sửu là Trâu. Ở Trung\u00a0Quốc và Hàn\u00a0Quốc, Sửu là Bò.', 'Mùi là Dê. Ở Hàn\u00a0Quốc, Mùi thường là Cừu.', 'Việt\u00a0Nam đổi con giáp vào Tết. Nhiều thầy xem tuổi ở Trung\u00a0Quốc và Hàn\u00a0Quốc tính năm mới từ Lập\u00a0Xuân, khoảng ngày\u00a04/2.'],
 
     bookTitle: 'Đặt lịch xem bài',
     priceTitle: 'Bảng giá', priceIntro: 'Tất cả dịch vụ, khóa học và nội dung mở thêm của Nabu đều ở đây. Phần lớn ứng dụng vẫn miễn phí.',
@@ -986,6 +988,8 @@ const STR = {
     enterBirthday: 'Enter your birthday under Profile to see your life path number and sign.',
     animal: 'Zodiac animal',
     animalNote: 'The zodiac animal follows the lunar year. If you were born before Lunar New Year, use the previous year.',
+    animalVN: 'Following the Vietnamese zodiac', animalDiffH: 'How China and Korea differ',
+    animalDiff: ['Mão is the Cat. In China and Korea, it is the Rabbit.', 'Sửu is the Buffalo. In China and Korea, it is the Ox.', 'Mùi is the Goat. In Korea, it is usually the Sheep.', 'Vietnam changes the animal at Tết. Many fortune-tellers in China and Korea start the year at Lichun, the start of spring, around 4\u00a0February.'],
 
     bookTitle: 'Book a reading',
     priceTitle: 'Prices', priceIntro: 'All Nabu readings, courses and optional unlocks are listed here. Most of the app is still free.',
@@ -1832,6 +1836,8 @@ const STR = {
     enterBirthday: 'Trag dein Geburtsdatum im Profil ein, um deine Lebenszahl und dein Sternzeichen zu sehen.',
     animal: 'Tierkreiszeichen',
     animalNote: 'Das Tierkreiszeichen richtet sich nach dem Mondjahr. Wenn du vor dem Mondneujahr geboren bist, zählt noch das vorherige Jahr.',
+    animalVN: 'Nach dem vietnamesischen Tierkreis', animalDiffH: 'Unterschiede zu China und Korea',
+    animalDiff: ['Mão ist die Katze. In China und Korea ist es der Hase.', 'Sửu ist der Büffel. In China und Korea ist es der Ochse.', 'Mùi ist die Ziege. In Korea ist es meist das Schaf.', 'In Vietnam wechselt das Tier zu Tết. Viele Wahrsager in China und Korea beginnen das Jahr mit Lichun, dem Frühlingsanfang, um den 4.\u00a0Februar.'],
 
     bookTitle: 'Eine Legung buchen',
     priceTitle: 'Preise', priceIntro: 'Hier findest du alle Legungen, Kurse und optionalen Freischaltungen von Nabu. Der größte Teil der App bleibt kostenlos.',

@@ -662,6 +662,14 @@ html.iosapp[lang="en"] #today .tbl td:first-child{white-space:normal;width:36%}
 .tsym .ic{font-size:26px;display:block}.tsym b{display:block;font-size:12px}.tsym span:last-child{font-size:10.5px;color:var(--fg-faint);display:block}
 .tsym.big{padding:14px}.tsym.big .ic{font-size:44px}.tsym.big b{font-size:16px}.tsym.big span{font-size:13px}
 .awrapper{text-align:center;margin-bottom:14px}
+/* The 12 animals: which zodiac this is, and how China and Korea differ. */
+.avn{margin:-2px 0 10px}
+.anote h3{margin-bottom:8px}
+.anote ul{margin:0;padding-left:20px}
+/* Short bullets in a narrow card: justified, a phone opened rivers between four words a line, and German
+   hyphenated on top. Left-aligned, in all three languages alike. */
+#main .anote li{margin:0 0 6px;font-size:14.5px;line-height:1.5;text-align:left;-webkit-hyphens:manual;hyphens:manual}
+.anote li:last-child{margin-bottom:0}
 /* The signs listed under the compatibility wheel. The wheel above them is
    centred and they were not, which read as a row that had come loose. Only
    these ones - chips elsewhere start at the left on purpose. */
@@ -673,6 +681,15 @@ html.iosapp[lang="en"] #today .tbl td:first-child{white-space:normal;width:36%}
 .awheel .aw .e{width:40px;height:40px;border-radius:50%;background:var(--surface);border:1px solid var(--rule);display:flex;align-items:center;justify-content:center;font-size:21px;line-height:1;box-shadow:0 1px 3px var(--shade)}
 .awheel .aw.on .e{width:48px;height:48px;background:var(--primary);font-size:25px;border-color:transparent}
 .awheel .aw b{font-size:12.5px;line-height:1.1;white-space:nowrap}.awheel .aw.on b{color:var(--primary)}
+/* The bottom animal's name hangs below the square, so the wheel keeps room for it. On a small phone the
+   English and German names ("Schlange", "Rooster") are longer than Tý or Sửu and reached the next circle,
+   so there the circles and names are a size smaller, in every language alike. */
+.awheel{margin-bottom:24px}
+@media (max-width:399px){
+  .awheel .aw .e{width:34px;height:34px;font-size:18px}
+  .awheel .aw.on .e{width:42px;height:42px;font-size:22px}
+  .awheel .aw b{font-size:11px}
+}
 @media (max-width:380px){.ringwrap{grid-template-columns:120px 1fr}.ring{width:120px;height:120px}}
 
 /* ---- guide visuals ---- */
