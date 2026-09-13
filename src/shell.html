@@ -493,6 +493,10 @@ html[lang="de"] .freegrid{--fgmin:132px}
 .tbl{width:100%;border-collapse:collapse;font-size:14px}
 .tbl td{padding:8px 6px;border-bottom:1px solid var(--rule-soft);vertical-align:top}
 .tbl td:first-child{font-weight:600;white-space:nowrap}
+/* On the smallest phones a label held on one line takes the row from its
+   value: "Vietnamese (lunisolar)" at 320 left the dates four words a line.
+   There the label may wrap between words and keeps under half the row. */
+@media (max-width:359px){#today .tbl td:first-child{white-space:normal;width:46%}}
 
 /* ---- services / prices ---- */
 .svc{background:var(--surface);border:1.5px solid var(--rule);border-radius:18px;padding:14px 14px 10px;margin-bottom:12px;max-width:100%;overflow:hidden}

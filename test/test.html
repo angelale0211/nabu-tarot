@@ -84,7 +84,16 @@ async function go(hash, sel) { W().location.hash = hash; await sleep(30); return
         'the client and the worker carry the same Play catalogue: 4 one-time items, 4 subscriptions, same keys, contents and months, and both sides actually parsed 8 entries'); }
     // home
     ok(/Chào bạn/.test(d.querySelector('h1').textContent) && d.querySelector('h1').nextElementSibling.nextElementSibling.classList.contains('pickcta') && d.querySelector('#today').compareDocumentPosition(d.querySelector('h1')) & 4, 'greeting sits below the date panel, right above the quick links');
-    ok(d.querySelector('#today') && /Âm lịch/.test(d.querySelector('#today').textContent) && /Ngày \d+ tháng \d+ năm \S+ \S+ \(\d{4}\)/.test(d.querySelector('#today').textContent) && /Can chi/.test(d.querySelector('#today').textContent) && /Trăng/.test(d.querySelector('#today').textContent), 'today panel: full lunar date with year name, can chi and the moon');
+    ok(d.querySelector('#today') && /Âm lịch/.test(d.querySelector('#today').textContent) && /Ngày \d+ tháng \d+ năm \S+ \S+ \(\d{4}\)/.test(d.querySelector('#today').textContent) && !/Can chi/.test(d.querySelector('#today').textContent) && /Trăng/.test(d.querySelector('#today').textContent), 'today panel: full lunar date with year name and the moon, and no can chi row');
+    { /* English and German name the calendar for what it is - lunisolar - and
+         carry no animal signs, neither as a row nor inside the date. */
+      const keepLang = N.PROFILE().lang || '';
+      W().saveProfileLocal({ lang: 'en' }); W().applyAccountLang(); const enToday = W().todayHTML();
+      W().saveProfileLocal({ lang: 'de' }); W().applyAccountLang(); const deToday = W().todayHTML();
+      W().saveProfileLocal({ lang: 'vi' }); W().applyAccountLang(); W().saveProfileLocal({ lang: keepLang });
+      ok(/Vietnamese \(lunisolar\)/.test(enToday) && /Day \d+ of lunar month \d+.*, \d{4}/.test(enToday) && !/Animal signs|year of the/.test(enToday)
+        && /Vietnamesischer Kalender \(lunisolar\)/.test(deToday) && !/Tierzeichen|Mondkalender/.test(deToday),
+        'the English and German today panel says lunisolar calendar and shows no animal signs'); }
     const lt = N.lunarToday(new Date(2026, 8, 5));
     ok(lt.yearAn === 'Ngọ (Ngựa)' && lt.monthAn === 'Thân (Khỉ)' && lt.dayAn === 'Ngọ (Ngựa)' && /Bính Ngọ/.test(lt.yearCC), 'lunar animal names follow the language on screen: 5/9/2026 is a Horse day in the Monkey month of the Horse year');
     const l1 = N.solarToLunar(29, 1, 2025), l2 = N.solarToLunar(10, 2, 2024), l3 = N.solarToLunar(4, 9, 2026);

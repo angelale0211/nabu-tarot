@@ -24,18 +24,16 @@ function todayHTML() {
   const intlLocale = lang === 'vi' ? 'vi' : (lang === 'de' ? 'de' : 'en');
   const greg = now.toLocaleDateString(dateLocale, { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
   const rows = [];
-  // Vietnamese lunar calendar (Hồ Ngọc Đức's algorithm, UTC+7), as on the lịch vạn niên.
+  /* The Vietnamese calendar (Hồ Ngọc Đức's algorithm, UTC+7), as on the lịch vạn niên. It is lunisolar -
+     months follow the moon, a leap month keeps the year with the sun - so English and German name it that
+     way rather than "lunar". The row of can chi / animal signs was removed at the owner's request. */
   const lu = lunarToday(now);
   const leap = lu.leap ? (lang === 'vi' ? ' (nhuận)' : (lang === 'de' ? ' · Schaltmonat' : ' (leap)')) : '';
-  rows.push([lang === 'vi' ? 'Âm lịch' : (lang === 'de' ? 'Mondkalender (VN)' : 'Lunar (VN)'), lang === 'vi'
+  rows.push([lang === 'vi' ? 'Âm lịch' : (lang === 'de' ? 'Vietnamesischer Kalender (lunisolar)' : 'Vietnamese (lunisolar)'), lang === 'vi'
     ? 'Ngày ' + lu.day + ' tháng ' + lu.month + leap + ' năm ' + lu.yearCC + ' (' + lu.year + ')'
     : (lang === 'de'
       ? 'Tag ' + lu.day + ' · Mondmonat ' + lu.month + leap + ' · Jahr ' + lu.year
-      : 'Day ' + lu.day + ' of lunar month ' + lu.month + leap + ', year of the ' + lu.yearAn + ' (' + lu.year + ')')]);
-  rows.push(lang === 'vi' ? ['Can chi', 'Ngày ' + lu.dayCC + ' · tháng ' + lu.monthCC + ' · năm ' + lu.yearCC]
-    : (lang === 'de'
-      ? ['Tierzeichen', lu.dayAn + ' · ' + lu.monthAn + ' · ' + lu.yearAn]
-      : ['Animal signs', 'Day of the ' + lu.dayAn + ' · month of the ' + lu.monthAn + ' · year of the ' + lu.yearAn]));
+      : 'Day ' + lu.day + ' of lunar month ' + lu.month + leap + ', ' + lu.year)]);
   const calName = (vi, en, de) => lang === 'vi' ? vi : (lang === 'de' ? de : en);
   const others = [['islamic-umalqura', calName('Hồi giáo (Hijri)', 'Islamic (Hijri)', 'Islamischer Kalender (Hijri)')], ['hebrew', calName('Do Thái', 'Hebrew', 'Hebräischer Kalender')], ['persian', calName('Ba Tư', 'Persian', 'Persischer Kalender')], ['buddhist', calName('Phật lịch (Thái)', 'Buddhist (Thai)', 'Buddhistischer Kalender (Thailand)')]];
   others.forEach((o) => { const v = calLine(o[0], intlLocale, { day: 'numeric', month: 'long', year: 'numeric' }); if (v) rows.push([o[1], v]); });
