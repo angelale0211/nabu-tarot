@@ -45,13 +45,17 @@ ANDROID_PACKAGE = "app.nabutarot.twa"
 RTDN_AUDIENCE = "https://nabu-ai.0211nhatanh.workers.dev/rtdn"
 RTDN_PUSH_EMAIL = "nabu-worker@nabutarot.iam.gserviceaccount.com"
 
-# Where the per-person counts live. Without it the worker still answers, but
-# nothing is limited, so make it:
+# Where the per-person counts live. Without it the worker still answers and
+# says so in its logs, but nothing is limited at all - which is how Nabu AI
+# ran uncapped on the day it first worked.
+#
+# The namespace is titled NABU_LIMITS; the binding is KV, which is the name
+# limit.ts reads. Those two do not have to match and here they do not: the
+# title is for the dashboard, the binding is for the code.
 #   npx wrangler kv namespace create NABU_LIMITS
-# then paste the id it prints below and uncomment both lines.
-# [[kv_namespaces]]
-# binding = "KV"
-# id = "paste-the-id-here"
+[[kv_namespaces]]
+binding = "KV"
+id = "fe90fd7038bf476b8f167676dc19c730"
 
 # Secrets (never in this file):
 #   npx wrangler secret put GEMINI_API_KEY      (Gemini answers, key never in the browser)
