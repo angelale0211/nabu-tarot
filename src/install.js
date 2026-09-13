@@ -15,7 +15,7 @@ function platformOf() {
 }
 const isStandalone = () => window.matchMedia('(display-mode: standalone)').matches || navigator.standalone === true;
 function renderInstall() {
-  const S = T(), m = $('#main'), pf = platformOf(), inApp = isStandalone() || isTWA();
+  const S = T(), m = $('#main'), pf = platformOf(), inApp = isStandalone() || inStoreApp();
   const play = CONFIG.playTestUrl ? '<div class="card"><h3>▶️ Google Play</h3><p class="muted" style="margin:6px 0 10px">' + esc(S.instPlayIntro) + '</p>'
     + '<a class="btn primary block" href="' + esc(CONFIG.playTestUrl) + '" target="_blank" rel="noopener">' + esc(S.instPlayBtn) + '</a>'
     + '<p class="hint">' + esc(S.instPlayNote) + '</p></div>' : '';

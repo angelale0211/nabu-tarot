@@ -223,7 +223,7 @@ function quickLinksHTML() {
     ['#/book', '📅', S.nav.book, lang === 'vi' ? 'hẹn giờ với Nabu' : (lang === 'de' ? 'Termin bei Nabu' : 'book a time with Nabu')],
     ['#/prices', '💜', S.priceTitle, lang === 'vi' ? 'các gói xem bài' : (lang === 'de' ? 'Legungspakete' : 'reading packages')]];
   return '<div class="tiles">' + tiles.map((t) => '<a class="tile" href="' + t[0] + '"><div class="ic">' + t[1] + '</div><b>' + esc(t[2]) + '</b><span>' + esc(t[3]) + '</span></a>').join('') + '</div>'
-    + (isStandalone() || isTWA() ? '' : '<a class="upnext" href="#/install" style="margin-top:-8px"><span class="ic">📲</span><span><b>' + esc(S.installTitle) + '</b><br>' + esc(S.instAndroidIntro) + '</span></a>');
+    + (isStandalone() || inStoreApp() ? '' : '<a class="upnext" href="#/install" style="margin-top:-8px"><span class="ic">📲</span><span><b>' + esc(S.installTitle) + '</b><br>' + esc(S.instAndroidIntro) + '</span></a>');
 }
 const SIGN_EN = ['aries', 'taurus', 'gemini', 'cancer', 'leo', 'virgo', 'libra', 'scorpio', 'sagittarius', 'capricorn', 'aquarius', 'pisces'];
 function horoCardHTML(period) {

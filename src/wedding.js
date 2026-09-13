@@ -1141,12 +1141,12 @@ function renderWedding(args) {
       + '<div class="card wedcard">' + cupidSVG()
       + '<p class="wedpair">' + esc((PROFILE && PROFILE.name) || S.loveYou) + ' \u2764 ' + esc(nm) + '</p>'
       + '<p class="wedwhen">' + esc(wedWhen(ms)) + '</p>'
-      + (isTWA() ? '' : '<p class="wedprice">' + esc(fmtPrice(price)) + '</p>')
+      + (inStoreApp() ? '' : '<p class="wedprice">' + esc(fmtPrice(price)) + '</p>')
       + '<p class="hint" style="text-align:center">' + esc(S.wedPayOnce) + '</p></div>'
       + '<div class="card"><h3 style="margin-bottom:6px">' + esc(S.wedPayWhat) + '</h3>'
       + '<ul class="carelist">' + S.wedPayList.map((x) => '<li><span>' + esc(x) + '</span><b>\u2713</b></li>').join('') + '</ul></div>'
-      + (isTWA() ? '' : '<p class="hint hold">' + esc(S.wedPayHold(wedWhen(ms))) + '</p>')
-      + (isTWA()
+      + (inStoreApp() ? '' : '<p class="hint hold">' + esc(S.wedPayHold(wedWhen(ms))) + '</p>')
+      + (inStoreApp()
         ? (BILL.can()
           ? '<div class="card"><h3 style="margin-bottom:6px">' + esc(S.wedPayHow) + '</h3>'
             + (BILL.priceOf('wedding') ? '<p class="wedprice">' + esc(BILL.priceOf('wedding')) + '</p>' : '')
@@ -1154,7 +1154,7 @@ function renderWedding(args) {
           : storeNotReadyHTML())
         : payPanelHTML(S.wedPayWhat2(wedWhen(ms)), price, payRef('wedding|' + w.id), 'wedpanel'));
 
-    if (isTWA()) { bindStore(m, () => drawPay(bond)); return; }
+    if (inStoreApp()) { bindStore(m, () => drawPay(bond)); return; }
     bindPayPanel(m, () => ({ what: S.wedPayWhat2(wedWhen(ms)), total: price, ref: payRef('wedding|' + w.id) }));
     /* The website's own record for the dashboard's order list, filed
        alongside the message the pay panel already sends - the room itself
@@ -1349,7 +1349,7 @@ function renderWedding(args) {
       + '<p class="lead" style="text-align:center">' + esc(S.wedOfferLead) + '</p>'
       + '<p class="hint">' + esc(L(item.blurb)) + '</p>'
       + '<ul class="carelist">' + L(item.includes).map((x) => '<li><span>' + esc(x) + '</span><b>\u2713</b></li>').join('') + '</ul>'
-      + (isTWA() ? '' : '<p class="wedprice">' + esc(fmtPrice(salePrice(item.price, 'unlock', 'wedding'))) + '</p>')
+      + (inStoreApp() ? '' : '<p class="wedprice">' + esc(fmtPrice(salePrice(item.price, 'unlock', 'wedding'))) + '</p>')
       + '<a class="btn primary block" href="#/unlock?item=wedding&from=wedding">' + esc(S.wedBuy) + '</a>'
       + '<p class="hint">' + esc(S.wedBuyHint) + '</p></div>';
   };

@@ -2155,6 +2155,30 @@ async function go(hash, sel) { W().location.hash = hash; await sleep(30); return
       ok(d.querySelector('.store .billdiag [data-diag]') && /web=v/.test(d.querySelector('.store .billdiag').textContent),
         'and the diagnostics are on that card too, because the phone that needs them is the one that cannot open the store');
       await playMode(false); }
+    { /* The App Store build: a Capacitor shell around this same site, which
+         adds NabuTarotiOS to the user agent and carries window.Capacitor.
+         Apple forbids what Play forbids, so the same sweep has to come back
+         clean - and Play's own advice about Chrome must never reach an iPhone. */
+      const nav = d.defaultView.navigator;
+      codeMode(true, 'uidI'); w.localStorage.removeItem('nabu-twa');
+      const IOS_APP = 'Mozilla/5.0 (iPhone; CPU iPhone OS 26_5 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148 NabuTarotiOS';
+      Object.defineProperty(nav, 'userAgent', { configurable: true, get: () => IOS_APP });
+      await N.BILL.retry();
+      ok(/shell=ios/.test(N.BILL.diag('')), 'the iPhone app is known by the marker its shell adds to the user agent');
+      delete nav.userAgent; w.Capacitor = { getPlatform: () => 'ios' };
+      ok(/shell=ios/.test(N.BILL.diag('')), 'and by Capacitor saying ios, when the marker is missing');
+      const iosRoutes = ['#/home', '#/learn', '#/learn/tarot', '#/learn/lenormand', '#/learn/playing', '#/learn/manifest', '#/learn/guide/mani-woop', '#/unlock', '#/unlock?from=app', '#/me', '#/looks', '#/play/coin', '#/play/tree', '#/pick', '#/play/pet', '#/rewards', '#/wedding'];
+      const iosLeaks = [];
+      for (const r of iosRoutes) { await go(r, '#main'); await sleep(150); const main = d.querySelector('#main');
+        if (main.querySelector('#ccode,#ucode,#mcode,#luckcode,input[placeholder^="NABU-"],.paypanel,[data-buyreq],#usend,#wedpay,a[href="#/install"]') || /chuyển khoản|mã mở kho|Gửi yêu cầu mở khoá|transfer|unlock code|Freischaltcode|überweis/i.test(main.textContent)) iosLeaks.push(r); }
+      ok(iosLeaks.length === 0, 'inside the iPhone app no screen asks for a transfer, an order to Nabu, a code or an install (leaks: ' + iosLeaks.join(' ') + ')');
+      await go('#/unlock?from=app', '.store');
+      ok(d.querySelector('.store [data-retry]') && !d.querySelector('.store [data-buy]') && !/Chrome/.test(d.querySelector('.store').textContent),
+        'the iPhone app opens the in-app store rather than the website\'s, and never tells an iPhone to use Chrome');
+      delete w.Capacitor;
+      await go('#/home', '.tiles'); await go('#/unlock', '.unlist');
+      ok(!d.querySelector('.store') && d.querySelector('[data-unl]') && !/shell=ios/.test(N.BILL.diag('')), 'without the shell the same phone is given the website\'s unlock page again');
+      codeMode(false, 'uidI'); await N.BILL.retry(); }
     /* ---- the red thread ---- */
     { /* A stand-in for Firestore: documents in an object, and listeners told
          when one changes. Paths are the real ones, so the code under test is

@@ -576,6 +576,16 @@ function shrinkImage(file, max, quality) {
    the "buy" buttons and only takes an unlock code. Remembered on the device after the first launch. */
 try { if (/^android-app:\/\//.test(document.referrer || '')) store.set('nabu-twa', true); } catch (e) { /* no referrer */ }
 const isTWA = () => store.get('nabu-twa', false) === true;
+/* The App Store build is a Capacitor shell around this same site, and it adds NabuTarotiOS to the user agent
+   (appendUserAgent in the shell's capacitor.config.json). Apple's rule is Play's rule: anything digital sold
+   inside the app is sold through Apple, so that build hides the same prices, transfers and codes. Read fresh on
+   every load and never remembered - the marker arrives with every page the shell opens, and Safari on the
+   same phone must never inherit it. */
+const isIOSApp = () => /\bNabuTarotiOS\b/.test(String((window.navigator || {}).userAgent || ''))
+  || !!(window.Capacitor && typeof window.Capacitor.getPlatform === 'function' && window.Capacitor.getPlatform() === 'ios');
+/* Either store build. Whatever a store forbids - a web price, a bank transfer, a code box, an install nudge -
+   asks this. What only Play has (its bridge, its browsers, its account pages) still asks isTWA(). */
+const inStoreApp = () => isTWA() || isIOSApp();
 const EMOJIS = ['✨', '💜', '🔮', '🌙', '☀️', '⭐', '🌟', '💫', '🃏', '🗝️', '🌸', '🌿', '🕯️', '🧿', '💌', '❤️', '💔', '💰', '💼', '📚', '😊', '🙏', '👉', '⚠️', '✅', '📅', '🎁', '🎉'];
 /* A booking as a calendar file with four reminders (24 h, 6 h, 1 h, 15 min).
    Times are Vietnam time (UTC+7, no daylight saving), written as UTC. */

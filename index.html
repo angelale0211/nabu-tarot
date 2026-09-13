@@ -12,7 +12,7 @@
      carries this notice with it. See LICENSE. -->
 <meta name="author" content="Nabu Tarot">
 <meta name="copyright" content="Copyright (c) 2025-2026 Nabu Tarot. All rights reserved.">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'none'; object-src 'none'; form-action 'self'; script-src 'self' 'sha256-MwY9XHN/Ys5lEq7c+su7cLStFjtqctoXxvmmJnMIilA=' https://www.gstatic.com https://apis.google.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; font-src 'self' data:; media-src 'self' data: blob:; worker-src 'self'; connect-src 'self' https://*.googleapis.com https://*.google.com https://*.firebaseio.com https://*.cloudfunctions.net https://*.workers.dev https://generativelanguage.googleapis.com; frame-src https://*.firebaseapp.com https://accounts.google.com https://*.facebook.com">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'none'; object-src 'none'; form-action 'self'; script-src 'self' 'sha256-cMKRQ7U1NZplRc4m253J4gLMZmJsbWhWJ/mQ/wp2RHU=' https://www.gstatic.com https://apis.google.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; font-src 'self' data:; media-src 'self' data: blob:; worker-src 'self'; connect-src 'self' https://*.googleapis.com https://*.google.com https://*.firebaseio.com https://*.cloudfunctions.net https://*.workers.dev https://generativelanguage.googleapis.com; frame-src https://*.firebaseapp.com https://accounts.google.com https://*.facebook.com">
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <meta name="theme-color" content="#EFE9FA">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -13631,6 +13631,16 @@ function shrinkImage(file, max, quality) {
    the "buy" buttons and only takes an unlock code. Remembered on the device after the first launch. */
 try { if (/^android-app:\/\//.test(document.referrer || '')) store.set('nabu-twa', true); } catch (e) { /* no referrer */ }
 const isTWA = () => store.get('nabu-twa', false) === true;
+/* The App Store build is a Capacitor shell around this same site, and it adds NabuTarotiOS to the user agent
+   (appendUserAgent in the shell's capacitor.config.json). Apple's rule is Play's rule: anything digital sold
+   inside the app is sold through Apple, so that build hides the same prices, transfers and codes. Read fresh on
+   every load and never remembered - the marker arrives with every page the shell opens, and Safari on the
+   same phone must never inherit it. */
+const isIOSApp = () => /\bNabuTarotiOS\b/.test(String((window.navigator || {}).userAgent || ''))
+  || !!(window.Capacitor && typeof window.Capacitor.getPlatform === 'function' && window.Capacitor.getPlatform() === 'ios');
+/* Either store build. Whatever a store forbids - a web price, a bank transfer, a code box, an install nudge -
+   asks this. What only Play has (its bridge, its browsers, its account pages) still asks isTWA(). */
+const inStoreApp = () => isTWA() || isIOSApp();
 const EMOJIS = ['✨', '💜', '🔮', '🌙', '☀️', '⭐', '🌟', '💫', '🃏', '🗝️', '🌸', '🌿', '🕯️', '🧿', '💌', '❤️', '💔', '💰', '💼', '📚', '😊', '🙏', '👉', '⚠️', '✅', '📅', '🎁', '🎉'];
 /* A booking as a calendar file with four reminders (24 h, 6 h, 1 h, 15 min).
    Times are Vietnam time (UTC+7, no daylight saving), written as UTC. */
@@ -16130,7 +16140,7 @@ function quickLinksHTML() {
     ['#/book', '📅', S.nav.book, lang === 'vi' ? 'hẹn giờ với Nabu' : (lang === 'de' ? 'Termin bei Nabu' : 'book a time with Nabu')],
     ['#/prices', '💜', S.priceTitle, lang === 'vi' ? 'các gói xem bài' : (lang === 'de' ? 'Legungspakete' : 'reading packages')]];
   return '<div class="tiles">' + tiles.map((t) => '<a class="tile" href="' + t[0] + '"><div class="ic">' + t[1] + '</div><b>' + esc(t[2]) + '</b><span>' + esc(t[3]) + '</span></a>').join('') + '</div>'
-    + (isStandalone() || isTWA() ? '' : '<a class="upnext" href="#/install" style="margin-top:-8px"><span class="ic">📲</span><span><b>' + esc(S.installTitle) + '</b><br>' + esc(S.instAndroidIntro) + '</span></a>');
+    + (isStandalone() || inStoreApp() ? '' : '<a class="upnext" href="#/install" style="margin-top:-8px"><span class="ic">📲</span><span><b>' + esc(S.installTitle) + '</b><br>' + esc(S.instAndroidIntro) + '</span></a>');
 }
 const SIGN_EN = ['aries', 'taurus', 'gemini', 'cancer', 'leo', 'virgo', 'libra', 'scorpio', 'sagittarius', 'capricorn', 'aquarius', 'pisces'];
 function horoCardHTML(period) {
@@ -16280,7 +16290,7 @@ function pickLimitHTML() {
      wants tomorrow, the other wants an account. */
   if (guestSpent()) return needAccountHTML(S.needInDraw);
   return '<div class="card luckbox"><p class="lead">' + esc(S.pickSpent) + '</p>'
-    + (isTWA()
+    + (inStoreApp()
       ? (BILL.can() ? '<p class="hint" style="margin-bottom:10px">' + esc(S.stPlusPitch) + '</p>' + buyButtonHTML('plus', S.stSubscribe) + '<p class="hint st" data-st="plus"></p>' : storeNotReadyHTML())
       : '<p class="hint" style="margin-bottom:10px">' + esc(S.pickOffer) + '</p><a class="btn primary block" href="#/unlock?from=pick">' + esc(S.pickPlus) + '</a>')
     + '</div>';
@@ -16431,7 +16441,7 @@ function paywallHTML(courseId) {
        requires it of anything digital sold inside an Android app - so the
        button is the store's own, bound by bindStore rather than a handler
        kept here. */
-    + (isTWA()
+    + (inStoreApp()
       ? (BILL.can()
         ? (BILL.priceOf(c.id) ? '<div class="price">' + esc(BILL.priceOf(c.id)) + ' <span>/ ' + esc(termText(c)) + '</span></div>' : '')
           + (expired ? '<p class="hint err">' + esc(S.courseExpired(a)) + '</p>' : '')
@@ -16548,7 +16558,7 @@ function renderLearn(args, params) {
 /* ---- the two courses: cards | spreads | guides ---- */
 async function renderCourse(courseId, tab) {
   if (!ACCESS.has(courseId)) {
-    if (isTWA()) await BILL.start();
+    if (inStoreApp()) await BILL.start();
     // The tarot sample lesson is a card page, so it wants the answers too.
     if (courseId === 'tarot') await kbReady();
     const S = T(), m = $('#main');
@@ -16867,8 +16877,8 @@ function renderManifest() {
   const S = T(), m = $('#main'), all = GUIDES.filter((g) => g.cat === 'manifest'), free = all.filter((g) => FREE_MANI.indexOf(g.id) > -1), rest = all.filter((g) => FREE_MANI.indexOf(g.id) < 0), has = ACCESS.has('manifest'), c = courseOf('manifest');
   m.innerHTML = backLink('#/learn', S.learnTitle) + '<h1 style="margin-bottom:6px">' + esc(S.cats.manifest) + '</h1><p class="muted">' + esc(S.maniIntro) + '</p>'
     + '<div class="eyebrow">' + esc(S.maniFree) + '</div>' + free.map(guideRow).join('')
-    + '<div class="eyebrow" style="margin-top:18px">' + esc(S.maniFull) + (has ? ' ✓' : (isTWA() ? '' : ' · ' + esc(S.perYear(fmtPrice(c.price))))) + '</div>'
-    + (has ? '' : '<div class="mani-banner"><b>✨ ' + esc(L(c.name)) + '</b><ul>' + S.maniIncl.map((x) => '<li>' + esc(x) + '</li>').join('') + '</ul><a class="btn primary block" href="#/learn/manifest/unlock">🔓 ' + esc(S.maniUnlock) + (isTWA() ? '' : ' · ' + esc(S.perYear(fmtPrice(c.price)))) + '</a></div>')
+    + '<div class="eyebrow" style="margin-top:18px">' + esc(S.maniFull) + (has ? ' ✓' : (inStoreApp() ? '' : ' · ' + esc(S.perYear(fmtPrice(c.price))))) + '</div>'
+    + (has ? '' : '<div class="mani-banner"><b>✨ ' + esc(L(c.name)) + '</b><ul>' + S.maniIncl.map((x) => '<li>' + esc(x) + '</li>').join('') + '</ul><a class="btn primary block" href="#/learn/manifest/unlock">🔓 ' + esc(S.maniUnlock) + (inStoreApp() ? '' : ' · ' + esc(S.perYear(fmtPrice(c.price)))) + '</a></div>')
     + rest.map(guideRow).join('');
 }
 function renderGuideList(cat) {
@@ -16940,11 +16950,11 @@ function unlockRowHTML(c) {
   const S = T(), until = ACCESS.get()[c.id];
   const open = ACCESS.has(c.id) || (UNL_TIERS.indexOf(c.id) > -1 && ACCESS.has('pro'));
   const picked = !open && UNL_CART.has(c.id);
-  const body = '<div class="unl-h"><b>' + esc(L(c.name)) + '</b>' + (isTWA() ? '' : '<span class="pr">' + priceHTML(c.price, 'unlock', c.id) + '</span>') + '</div>'
+  const body = '<div class="unl-h"><b>' + esc(L(c.name)) + '</b>' + (inStoreApp() ? '' : '<span class="pr">' + priceHTML(c.price, 'unlock', c.id) + '</span>') + '</div>'
     + '<p class="hint">' + esc(priceText(L(c.sum || c.blurb))) + '</p>'
     + '<div class="unl-f">' + (c.id === 'pro' ? '<span class="chip pink">' + esc(S.unlockBest) + '</span>' : '')
     + '<span class="unl-st">' + (open ? '✓ ' + esc(ACCESS.isAdmin() && !until ? S.adminShort : S.unlockOpenUntil(fmtDate(until)))
-      : picked ? '✓ ' + esc(S.unlockChosen) : esc(S.unlockNot) + (isTWA() ? '' : ' · ' + esc(termText(c)))) + '</span></div>';
+      : picked ? '✓ ' + esc(S.unlockChosen) : esc(S.unlockNot) + (inStoreApp() ? '' : ' · ' + esc(termText(c)))) + '</span></div>';
   if (open) return '<div class="unl on' + (c.id === 'pro' ? ' best' : '') + '">' + body + '</div>';
   return '<button type="button" class="unl pickable' + (picked ? ' pick' : '') + (c.id === 'pro' ? ' best' : '') + '" data-unl="' + c.id + '">' + body + '</button>';
 }
@@ -16979,7 +16989,7 @@ function renderUnlock(args, params) {
   /* Inside the app Play is the only shop: a different screen entirely, with
      Play's own prices and a Buy or Subscribe button for each of the four
      catalogue rows. Nothing below this line ever runs in the app any more. */
-  if (isTWA()) { renderStore(params); return; }
+  if (inStoreApp()) { renderStore(params); return; }
   const S = T(), m = $('#main');
   /* Arriving from something's own offer, that thing is already chosen: being
      sent to a list and having to find it again is a small insult. */
@@ -18156,7 +18166,7 @@ const BILL = {
     const ua = String((window.navigator || {}).userAgent || '');
     const it = key ? playItem(key) : null, d = it && this.detailsOf(key);
     const rows = [['web', String(window.APP_VERSION || '?')],
-      ['shell', isTWA() ? 'twa' : (window.matchMedia && window.matchMedia('(display-mode: standalone)').matches ? 'standalone' : 'browser')],
+      ['shell', isTWA() ? 'twa' : isIOSApp() ? 'ios' : (window.matchMedia && window.matchMedia('(display-mode: standalone)').matches ? 'standalone' : 'browser')],
       ['android', 'unavailable'],
       ['chrome', (/Chrome\/(\d+)/.exec(ua) || [])[1] || 'unknown'],
       ['browser', this.provider()],
@@ -23910,7 +23920,7 @@ function priceCardHTML(c) {
   return '<div class="svc ' + (c.kind === 'course' ? 'lav' : 'gold') + '">'
     + '<div class="t"><span class="ic">' + c.icon + '</span><div><b>' + esc(L(c.name)) + '</b>'
     + '<div class="tag">' + esc(priceText(L(c.sum))) + '</div></div></div>'
-    + (isTWA() ? '' : '<div class="pk"><div class="pkg"><span>' + esc(termText(c)) + '</span><b>' + priceHTML(c.price, 'unlock', c.id) + '</b></div></div>')
+    + (inStoreApp() ? '' : '<div class="pk"><div class="pkg"><span>' + esc(termText(c)) + '</span><b>' + priceHTML(c.price, 'unlock', c.id) + '</b></div></div>')
     + '<a class="btn sm block" href="' + esc(c.to) + '" style="margin-top:8px">' + esc(label) + ' \u2192</a></div>';
 }
 
@@ -24421,7 +24431,7 @@ function meSect(id, icon, title, body, openByDefault, force) {
        goods outside Play whatever the truth of it. The prices were already kept
        out of the app for that reason; the rest of the row belongs with them.
        The box for entering a code stays, so an unlock still works here. */
-    let own = isTWA()
+    let own = inStoreApp()
       ? myPlansHTML()
       : '<div class="card"><h3 style="margin-bottom:8px">' + esc(S.myCourses) + '</h3>' + COURSES.map((c) => { const a = ACCESS.isAdmin() ? '9999-12-31' : ACCESS.get()[c.id]; const on = ACCESS.has(c.id);
       const ic = a ? (on ? '✓' : '⌛') : '🔒';
@@ -24446,7 +24456,7 @@ function meSect(id, icon, title, body, openByDefault, force) {
     h += meSect('own', '\uD83D\uDD11', S.meGroupOwn, own, false);
 
     let app = '<div class="card"><h3 style="margin-bottom:8px">' + esc(S.themeTitle) + '</h3><div class="themes">' + ['auto', 'light', 'dark', 'pink'].map((t) => '<button class="chip' + (themeChoice() === t ? ' on' : '') + '" data-theme-pick="' + t + '" title="' + esc(S.themes[t]) + '">' + esc(S.themeShort[t]) + '</button>').join('') + '</div></div>';
-    if (!(isStandalone() || isTWA())) app += '<a class="card" href="#/install" style="display:block;text-decoration:none;color:inherit"><h3 style="margin-bottom:4px">\uD83D\uDCF2 ' + esc(S.installTitle) + '</h3><p class="hint">' + esc(S.instIntro) + '</p></a>';
+    if (!(isStandalone() || inStoreApp())) app += '<a class="card" href="#/install" style="display:block;text-decoration:none;color:inherit"><h3 style="margin-bottom:4px">\uD83D\uDCF2 ' + esc(S.installTitle) + '</h3><p class="hint">' + esc(S.instIntro) + '</p></a>';
     app += '<div class="meacts"><div class="row3"><a class="btn" href="#/contact">💬 ' + esc(S.contactLink) + '</a><a class="btn" href="#/report">🐞 ' + esc(S.reportLink) + '</a><button class="btn" id="retour">🎓 ' + esc(S.tourLink) + '</button></div>'
       + (BE.user || BE.isAdmin() ? '<div class="row">' + (BE.user ? '<button class="btn" id="signout" style="flex:1">🚪 ' + esc(S.signOut) + '</button>' : '') + (BE.isAdmin() ? '<a class="btn gold" href="#/admin" style="flex:1">🛠 ' + esc(S.adminTitle) + '</a>' : '') + '</div>' : '') + '</div>';
     if (BE.enabled && BE.user) app += '<div class="card danger"><h3 style="margin-bottom:4px">' + esc(S.delAccount) + '</h3><p class="hint" style="margin-bottom:10px">' + esc(S.delHint) + '</p><button class="btn block" id="delacct">🗑 ' + esc(S.delAccount) + '</button><p class="hint" id="delstatus"></p></div>';
@@ -24462,7 +24472,7 @@ function meSect(id, icon, title, body, openByDefault, force) {
       store.set('nabu-me-open', m);
     }));
     bindAuth(body); bindAI(body); bindNotify(body);
-    if (isTWA()) bindMyPlans(body, draw);
+    if (inStoreApp()) bindMyPlans(body, draw);
     $('#chkupd').addEventListener('click', async () => {
       toast(S.updating);
       try { if ('serviceWorker' in navigator) { const reg = await navigator.serviceWorker.getRegistration(); if (reg) await reg.update(); } } catch (e) { /* offline */ }
@@ -24774,7 +24784,7 @@ function platformOf() {
 }
 const isStandalone = () => window.matchMedia('(display-mode: standalone)').matches || navigator.standalone === true;
 function renderInstall() {
-  const S = T(), m = $('#main'), pf = platformOf(), inApp = isStandalone() || isTWA();
+  const S = T(), m = $('#main'), pf = platformOf(), inApp = isStandalone() || inStoreApp();
   const play = CONFIG.playTestUrl ? '<div class="card"><h3>▶️ Google Play</h3><p class="muted" style="margin:6px 0 10px">' + esc(S.instPlayIntro) + '</p>'
     + '<a class="btn primary block" href="' + esc(CONFIG.playTestUrl) + '" target="_blank" rel="noopener">' + esc(S.instPlayBtn) + '</a>'
     + '<p class="hint">' + esc(S.instPlayNote) + '</p></div>' : '';
@@ -24851,7 +24861,7 @@ ROUTES.hello = { nav: '', render: renderHello };
 /* Called once, from boot, before the first route is drawn. */
 function helloFirst() {
   if (location.hash) return false;                 // a hash means somebody knows where they are going
-  if (isTWA() || isStandalone()) return false;     // the installed app is not a stranger
+  if (inStoreApp() || isStandalone()) return false;     // the installed app is not a stranger
   if (store.get(HELLO_SEEN, 0)) return false;      // been here before
   location.hash = '#/hello';
   return true;
@@ -25283,8 +25293,8 @@ function luckPanelHTML(kind) {
   if (luckUnlimited(kind)) return '<p class="hint">✓ ' + esc(S.luckOpen) + '</p>';
   if (!luckSpent(kind)) return '<p class="hint">' + esc(luckDays(kind) === 1 ? S.luckFreeDay : S.luckFree) + '</p>';
   return '<div class="card luckbox"><p class="lead">' + esc(S.luckSpent(fmtDate(luckNext(kind)))) + '</p>'
-    + '<p class="hint" style="margin-bottom:10px">' + esc(isTWA() ? S.stPlusPitch : S.luckOffer) + '</p>'
-    + (isTWA()
+    + '<p class="hint" style="margin-bottom:10px">' + esc(inStoreApp() ? S.stPlusPitch : S.luckOffer) + '</p>'
+    + (inStoreApp()
       ? (BILL.can() ? buyButtonHTML('plus', S.stSubscribe) + '<p class="hint st" data-st="plus"></p>' : storeNotReadyHTML())
       : '<div class="row nw"><input id="luckcode" placeholder="' + esc(S.luckCodePh) + '" autocapitalize="characters"><button class="btn" id="luckgo">' + esc(S.unlock) + '</button></div><p class="hint" id="luckstatus"></p>')
     + '</div>';
@@ -27127,12 +27137,12 @@ function renderWedding(args) {
       + '<div class="card wedcard">' + cupidSVG()
       + '<p class="wedpair">' + esc((PROFILE && PROFILE.name) || S.loveYou) + ' \u2764 ' + esc(nm) + '</p>'
       + '<p class="wedwhen">' + esc(wedWhen(ms)) + '</p>'
-      + (isTWA() ? '' : '<p class="wedprice">' + esc(fmtPrice(price)) + '</p>')
+      + (inStoreApp() ? '' : '<p class="wedprice">' + esc(fmtPrice(price)) + '</p>')
       + '<p class="hint" style="text-align:center">' + esc(S.wedPayOnce) + '</p></div>'
       + '<div class="card"><h3 style="margin-bottom:6px">' + esc(S.wedPayWhat) + '</h3>'
       + '<ul class="carelist">' + S.wedPayList.map((x) => '<li><span>' + esc(x) + '</span><b>\u2713</b></li>').join('') + '</ul></div>'
-      + (isTWA() ? '' : '<p class="hint hold">' + esc(S.wedPayHold(wedWhen(ms))) + '</p>')
-      + (isTWA()
+      + (inStoreApp() ? '' : '<p class="hint hold">' + esc(S.wedPayHold(wedWhen(ms))) + '</p>')
+      + (inStoreApp()
         ? (BILL.can()
           ? '<div class="card"><h3 style="margin-bottom:6px">' + esc(S.wedPayHow) + '</h3>'
             + (BILL.priceOf('wedding') ? '<p class="wedprice">' + esc(BILL.priceOf('wedding')) + '</p>' : '')
@@ -27140,7 +27150,7 @@ function renderWedding(args) {
           : storeNotReadyHTML())
         : payPanelHTML(S.wedPayWhat2(wedWhen(ms)), price, payRef('wedding|' + w.id), 'wedpanel'));
 
-    if (isTWA()) { bindStore(m, () => drawPay(bond)); return; }
+    if (inStoreApp()) { bindStore(m, () => drawPay(bond)); return; }
     bindPayPanel(m, () => ({ what: S.wedPayWhat2(wedWhen(ms)), total: price, ref: payRef('wedding|' + w.id) }));
     /* The website's own record for the dashboard's order list, filed
        alongside the message the pay panel already sends - the room itself
@@ -27335,7 +27345,7 @@ function renderWedding(args) {
       + '<p class="lead" style="text-align:center">' + esc(S.wedOfferLead) + '</p>'
       + '<p class="hint">' + esc(L(item.blurb)) + '</p>'
       + '<ul class="carelist">' + L(item.includes).map((x) => '<li><span>' + esc(x) + '</span><b>\u2713</b></li>').join('') + '</ul>'
-      + (isTWA() ? '' : '<p class="wedprice">' + esc(fmtPrice(salePrice(item.price, 'unlock', 'wedding'))) + '</p>')
+      + (inStoreApp() ? '' : '<p class="wedprice">' + esc(fmtPrice(salePrice(item.price, 'unlock', 'wedding'))) + '</p>')
       + '<a class="btn primary block" href="#/unlock?item=wedding&from=wedding">' + esc(S.wedBuy) + '</a>'
       + '<p class="hint">' + esc(S.wedBuyHint) + '</p></div>';
   };
@@ -28664,7 +28674,7 @@ function adminSale(p) {
 ROUTES.admin = { nav: '', render: renderAdmin };
 
 /* ============================ boot ============================ */
-window.APP_VERSION = 'v233';
+window.APP_VERSION = 'v234';
 window.NABU = { CONFIG: CONFIG, SALE: SALE, salePrice: salePrice, loadActs: loadActs, BACK: BACK, LESSONS: LESSONS, localAnswer: localAnswer, compatVerdict: compatVerdict, numerologyOf: numerologyOf, ZDEEP: ZDEEP, lunarToday: lunarToday, solarToLunar: solarToLunar, DECK: DECK, INSIGHT: INSIGHT, KW: KW, ASK: ASK, TOPICS: TOPICS, GUIDES: GUIDES, SERVICES: SERVICES, COURSES: COURSES, ACCESS: ACCESS, INTERESTS: INTERESTS, plusOn: () => plusOn(), proOn: () => proOn(), luckUnlimited: () => luckUnlimited(), ZODIAC: ZODIAC, pick: pick, book: book, PLAY_ITEMS: PLAY_ITEMS, PLAY_SUB_SKUS: PLAY_SUB_SKUS, playItem: playItem, BILL: BILL, SUBS: SUBS, renderStore: renderStore, subStateWord: subStateWord,
   insightHTML: insightHTML, insightOf: insightOf, sunSignIndex: sunSignIndex, lifePath: lifePath, PROFILE: () => PROFILE, BE: BE, inAppBrowser: inAppBrowser, ACTS: ACTS, CMT: CMT, LIKES: LIKES, kbReady: kbReady, AI: AI, STR: STR, KB_URL: (typeof KB_URL === 'string' ? KB_URL : ''),
   ANGELS: ANGELS, angelRead: angelRead, CODEBOOK: CODEBOOK, redeemCode: redeemCode, loadCodebook: loadCodebook, petHomeSVG: petHomeSVG, PET_HOMES: PET_HOMES, PET_WEARS: PET_WEARS, codeDigest: codeDigest, randomCode: randomCode, BANK: BANK, PETS: PETS, petSVG: petSVG, PET_COATS: PET_COATS, PET_KINDS: PET_KINDS, turnsMerge: turnsMerge, turnsLocal: turnsLocal, TODAY: TODAY, treeMsgOf: treeMsgOf, priceText: priceText, termText: termText, proSaveText: () => proSaveText(), wedFeeText: () => wedFeeText(), fmtPrice: fmtPrice, luckCut: luckCut, petLevel: petLevel, petStep: petStep, VOUCHERS: VOUCHERS, levelCoins: levelCoins, LOOKS: LOOKS,

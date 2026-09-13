@@ -211,7 +211,7 @@ const BILL = {
     const ua = String((window.navigator || {}).userAgent || '');
     const it = key ? playItem(key) : null, d = it && this.detailsOf(key);
     const rows = [['web', String(window.APP_VERSION || '?')],
-      ['shell', isTWA() ? 'twa' : (window.matchMedia && window.matchMedia('(display-mode: standalone)').matches ? 'standalone' : 'browser')],
+      ['shell', isTWA() ? 'twa' : isIOSApp() ? 'ios' : (window.matchMedia && window.matchMedia('(display-mode: standalone)').matches ? 'standalone' : 'browser')],
       ['android', 'unavailable'],
       ['chrome', (/Chrome\/(\d+)/.exec(ua) || [])[1] || 'unknown'],
       ['browser', this.provider()],
