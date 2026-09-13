@@ -586,6 +586,8 @@ const isIOSApp = () => /\bNabuTarotiOS\b/.test(String((window.navigator || {}).u
 /* Either store build. Whatever a store forbids - a web price, a bank transfer, a code box, an install nudge -
    asks this. What only Play has (its bridge, its browsers, its account pages) still asks isTWA(). */
 const inStoreApp = () => isTWA() || isIOSApp();
+/* A class on the page root for the few looks that are the iPhone app's own. CSS cannot read the user agent. */
+try { if (isIOSApp()) document.documentElement.classList.add('iosapp'); } catch (e) { /* no document */ }
 const EMOJIS = ['✨', '💜', '🔮', '🌙', '☀️', '⭐', '🌟', '💫', '🃏', '🗝️', '🌸', '🌿', '🕯️', '🧿', '💌', '❤️', '💔', '💰', '💼', '📚', '😊', '🙏', '👉', '⚠️', '✅', '📅', '🎁', '🎉'];
 /* A booking as a calendar file with four reminders (24 h, 6 h, 1 h, 15 min).
    Times are Vietnam time (UTC+7, no daylight saving), written as UTC. */

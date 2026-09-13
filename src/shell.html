@@ -497,6 +497,11 @@ html[lang="de"] .freegrid{--fgmin:132px}
    value: "Vietnamese (lunisolar)" at 320 left the dates four words a line.
    There the label may wrap between words and keeps under half the row. */
 @media (max-width:359px){#today .tbl td:first-child{white-space:normal;width:46%}}
+/* The iPhone app in English: "Vietnamese (lunisolar)" held on one line took
+   nearly half the row and pushed every date onto two. The owner asked for a
+   narrower label column there, and only there - Android and the website keep
+   the layout above. */
+html.iosapp[lang="en"] #today .tbl td:first-child{white-space:normal;width:36%}
 
 /* ---- services / prices ---- */
 .svc{background:var(--surface);border:1.5px solid var(--rule);border-radius:18px;padding:14px 14px 10px;margin-bottom:12px;max-width:100%;overflow:hidden}
