@@ -2869,6 +2869,23 @@ async function go(hash, sel) { W().location.hash = hash; await sleep(30); return
         db.put(W, { uids: ['uidA', 'uidB'], a: 'uidA', b: 'uidB', aName: 'Mai', bName: 'Nam',
           startMs: Date.now() - 1000, state: 'planned', step: 2, vows: {}, by: 'uidA', at: 1 });
         await sleep(300);
+        { /* A couple entering an open room takes their seat once. The room's
+             listener used to write the seat before it set the flag that stops
+             it writing again; a database that tells listeners about a write at
+             once - as this suite's does - ran the listener again inside the
+             write, which sat again, about a thousand levels deep until the
+             stack gave out. Every level then started its own twenty-second
+             "still here" timer, and the room was repainted a thousand times
+             every twenty seconds for the rest of the run. That is the freeze
+             that stopped CI in the wedding checks on most runs since 9
+             September. */
+          const sitWas = N.WED.sit; let sits = 0;
+          N.WED.sit = function () { sits++; return sitWas.apply(this, arguments); };
+          N.BE.user = { uid: 'uidA', email: 'a@test' };
+          await go('#/home', '#main'); await go('#/wedding/room', '#main'); await sleep(300);
+          N.WED.sit = sitWas;
+          await go('#/home', '#main'); await sleep(60);
+          ok(sits === 1, 'a couple walking into an open room takes their seat once, not once more for every write that seat causes [' + sits + ']'); }
         /* Two people answer, in turn - which is the point of asking. Only the
            one being asked is given anything to press. */
         const answerAs = async (uid) => {
@@ -3867,12 +3884,18 @@ async function go(hash, sel) { W().location.hash = hash; await sleep(30); return
           const frame = document.getElementById('f'), wasWide = frame.style.width, off = [];
           const bar2 = d.querySelector('#petbar'), k = d.querySelector('#petkeepbar'), o = d.querySelector('#petbackbar');
           const keepWas = k.textContent, otherWas = o.textContent, hiddenWas = bar2.hidden;
+          /* The bar's own watcher hides it whenever the real buttons are on
+             screen, which in this tall frame they are - and its callback can
+             land between one measurement and the next. That only showed once
+             the wedding fix made the suite six times faster. The watcher is
+             stopped for the measurement; the preview is left right after. */
+          w.petBarDrop();
           const labels = [['vi', N.STR.vi.petPrevChange, N.STR.vi.petPrevOther], ['en', N.STR.en.petPrevChange, N.STR.en.petPrevOther],
             ['de', N.STR.de.petPrevChange, N.STR.de.petPrevOther], ['as drawn', keepWas, otherWas]];
           for (const px of [360, 390, 1180]) {
             frame.style.width = px + 'px'; await sleep(180);
-            bar2.hidden = false;
             for (const [lg, keepLabel, otherLabel] of labels) {
+              bar2.hidden = false;
               k.textContent = keepLabel; o.textContent = otherLabel; await sleep(30);
               const rk = k.getBoundingClientRect(), ro = o.getBoundingClientRect(), vw = d.documentElement.clientWidth, at = px + ' ' + lg;
               if (Math.abs(rk.width - ro.width) > 1) off.push(at + ': widths ' + Math.round(rk.width) + ' vs ' + Math.round(ro.width));

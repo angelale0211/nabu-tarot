@@ -1416,8 +1416,14 @@ function renderWedding(args) {
       const open2 = w && WED.doorState(w) === 'open';
       if (w && WED.mine(w) && open2 && !beat) {
         const nm = WED.side(w) === 'a' ? (w.aName || '') : (w.bName || '');
-        WED.sit(w.id, nm).catch(() => {});
+        /* The flag first, then the write. Writing the seat tells every
+           listener, this one included, and a listener told at once - before
+           the write has returned - found `beat` still empty and sat again:
+           1461 seats and 1461 twenty-second timers from one visit, measured,
+           which is what froze the room. Set first, the second arrival finds
+           the seat already kept and does nothing. */
         beat = setInterval(() => WED.stillHere(w.id), 20000);
+        WED.sit(w.id, nm).catch(() => {});
       }
       /* And it stops when the room does. A seat kept warm in a room that has
          closed is a timer writing to nothing for as long as the app is open. */
