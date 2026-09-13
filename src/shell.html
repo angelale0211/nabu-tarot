@@ -158,11 +158,16 @@ h1,h2,h3,.eyebrow{text-wrap:balance}
    the last line of a block never is, so a one-line caption or a two-word note
    is untouched; nothing else has to be excluded by length. */
 #main p,#main li,.note span,#foot .tagline{text-align:justify;text-justify:inter-word}
-/* Blocks that are deliberately centred keep their own alignment. They are also
-   the one place balancing belongs: a short centred block that wraps looks wrong
-   when the second line holds a single word, and balancing evens the two out. */
+/* Blocks that are deliberately centred keep their own alignment.
+
+   The app's convention for every line of text, owner's rule (2026-09-13): a
+   line runs to the end of its box before it breaks. Nothing narrows a
+   paragraph to a reading measure and nothing balances one. Both used to
+   happen - a 62ch cap on prose on a desk, and balancing on short centred
+   blocks - and the result was justified text stopping two thirds of the way
+   across a card, with the rest of the card empty. Headings may still balance:
+   a title is a label, and the rule is about running text. */
 #main .pick-head p,#main .paynote,#main #tour p,#main .treewrap p,#main .coinwrap p,#main .done p,#main .paywall p,#main .tap-hint,#main .hello-hero p,#main .hello-end p{text-align:center}
-#main .pick-head p,#main .tap-hint,#main #tour p,#main .paynote{text-wrap:balance}
 /* And these read as labels rather than prose. */
 #main .eyebrow,#main .date,#main .meta,#main .st,#main .kwl,#main .steps li{text-align:inherit;text-justify:auto}
 .wrap{max-width:600px;margin:0 auto;padding:0 18px}
@@ -1152,14 +1157,24 @@ h1 .pileico{width:34px;height:27px;vertical-align:-3px;margin-right:2px}
 .petbar{position:fixed;left:0;right:0;bottom:calc(var(--nav-h) + env(safe-area-inset-bottom,0px));z-index:19;
   background:color-mix(in srgb,var(--surface) 94%,transparent);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
   border-top:1px solid var(--rule-soft);box-shadow:0 -6px 18px var(--shade)}
-.petbar .wrap{display:flex;align-items:center;gap:10px;padding:10px 18px}
-.petbar .btn{margin:0;min-height:46px}
-.petbar .btn.primary{flex:1 1 auto}
-.petbar .btn:not(.primary){flex:0 0 auto;white-space:nowrap}
-/* Room under the last line of the preview, so that a phone with no
-   IntersectionObserver - where the bar never steps aside - still has nothing
-   of the page left underneath it. */
-.petprevend{margin-bottom:104px}
+/* The two choices are stacked, each the full width of the bar and the same
+   height, primary above - the same pair, in the same order, as the buttons at
+   the foot of the page.
+
+   They were side by side at first, to keep the bar short. Both buttons carry
+   .btn.block, which is width:100%, and the second was told not to shrink, so
+   it took the whole row and squeezed "Chọn bạn nhỏ này" into one word per
+   line beside a wide empty button. Side by side cannot work on a phone in any
+   case: "Đổi sang bạn nhỏ này" and "Zu diesem Begleiter wechseln" do not fit
+   on one line in half of a 390px screen, so one of the two would always be
+   crushed. A grid of one column makes the widths equal by construction rather
+   than by negotiation between flex items. */
+.petbar .wrap{display:grid;grid-template-columns:minmax(0,1fr);gap:8px;padding:8px 18px}
+.petbar .btn{margin:0;width:100%;min-height:44px;white-space:nowrap}
+/* Room under the last line of the preview, at least the bar's own height, so
+   that a phone with no IntersectionObserver - where the bar never steps aside -
+   still has nothing of the page left underneath it. */
+.petprevend{margin-bottom:128px}
 .stagebtns{position:absolute;top:8%;z-index:5;display:flex;flex-direction:column;gap:8px}
 .stagebtns.left{left:6px;align-items:flex-start}
 .stagebtns.right{right:6px;align-items:flex-end}
@@ -1213,7 +1228,7 @@ h1 .pileico{width:34px;height:27px;vertical-align:-3px;margin-right:2px}
 .petstage.patting .petart{animation:none;transform:translateY(-3px) rotate(-1.5deg) scale(1.02)}
 .petstage.hoverfeed{box-shadow:inset 0 0 0 3px var(--gold)}
 /* Said under the picture, where the hands actually go. */
-#main p.handhint{text-align:center;margin:0 0 12px;font-size:13px;color:var(--fg-soft);text-wrap:balance}
+#main p.handhint{text-align:center;margin:0 0 12px;font-size:13px;color:var(--fg-soft)}
 /* What the next level pays, said where the level is shown. */
 .nextpay{display:flex;align-items:center;gap:8px;margin:0 0 12px;padding:8px 12px;border-radius:12px;background:var(--tag-gold-bg);color:var(--tag-gold-ink);font-size:12.5px;font-weight:600;text-decoration:none}
 .nextpay .go{margin-left:auto;font-weight:700}
@@ -1257,7 +1272,7 @@ h1 .pileico{width:34px;height:27px;vertical-align:-3px;margin-right:2px}
    which was chosen to sit on the page rather than on its own pastel. */
 .lucktag{display:inline-flex;align-items:center;gap:5px;background:var(--aura);color:var(--ink);border-radius:999px;padding:4px 12px;font-size:13px;font-weight:700;filter:saturate(1.1)}
 .lucktag,.petpick .pl{text-shadow:none}
-#main p.petline{margin:8px 0 12px;font-size:13.5px;color:var(--fg-soft);text-align:center;text-wrap:balance}
+#main p.petline{margin:8px 0 12px;font-size:13.5px;color:var(--fg-soft);text-align:center}
 /* The luck bar, and the list of what fills it. */
 .charm{display:flex;align-items:center;gap:8px;margin-bottom:10px}
 .charm .lbl{font-size:13px;color:var(--fg-soft)}
@@ -1799,7 +1814,7 @@ html,body{overscroll-behavior-y:contain}
 .petwrap .lucktag{display:flex;width:max-content;max-width:100%;margin:16px auto 0}
 .bless{position:relative;margin:22px 0 18px;padding:18px 16px 14px;border-radius:14px;background:var(--surface-2);border:1px solid var(--rule-soft)}
 .bless .q{position:absolute;top:-13px;left:14px;background:var(--surface);border:1px solid var(--rule-soft);border-radius:999px;padding:2px 8px;font-size:15px;line-height:1.2}
-#main .bless p{margin:0 0 8px;font-size:14.5px;line-height:1.65;text-align:center;text-wrap:balance;hyphens:none}
+#main .bless p{margin:0 0 8px;font-size:14.5px;line-height:1.65;text-align:center;hyphens:none}
 .bless .who{display:block;text-align:center;font-size:12px;color:var(--fg-soft)}
 .btn.off{opacity:.55}
 /* Switching between the companions you keep. */
@@ -2022,11 +2037,10 @@ button.unl{display:block;width:100%;text-align:left;font:inherit;color:inherit;c
      Not .course - that is one row of "what you hold", and capping it left
      every tick and date stranded two thirds of the way across the card. */
   #main .paywall{max-width:640px;margin-left:auto;margin-right:auto}
-  /* A line of prose that runs the full 1040px is a hundred and ten characters
-     long, which nobody reads comfortably. Text inside a card is held to about
-     seventy-five; the card keeps its width, so nothing else moves. */
-  .card p,.acc .in p,.lesson p{max-width:75ch}
-  .post .body p,.horo .body p,.welcome p,.acc .in .lead{max-width:62ch}
+  /* Text inside a card used to be held to 62-75 characters here, for
+     comfortable reading. It left justified lines stopping two thirds of the
+     way across the card, and the owner's convention is that a line reaches
+     the end of its box before it breaks, so the cap is gone. */
   /* "Install it on your phone" is not an offer a desk can take up. */
   .upnext[href="#/install"]{display:none}
 }
@@ -2128,28 +2142,19 @@ button.unl{display:block;width:100%;text-align:left;font:inherit;color:inherit;c
      with auto margins and no width shrinks to its own text instead of
      centring inside the column. */
   #main>h1+p,#main>h1+p+p,
-  #main>p.muted,#main>p.hint,#main>p.faint{width:100%;max-width:62ch;
+  #main>p.muted,#main>p.hint,#main>p.faint{width:100%;
     margin-left:auto;margin-right:auto}
   /* A line of status under the tabs - what a course costs, when access runs
      out, where the posts are kept - belongs on the same axis as the title. */
-  #main>p.muted,#main>p.hint,#main>p.faint{text-align:center;text-wrap:pretty}
+  #main>p.muted,#main>p.hint,#main>p.faint{text-align:center}
   /* Choosing a card back is a preference rather than the point of a screen,
      but a card narrower than everything around it reads as unfinished. */
   .lookstrip{max-width:none}
 
   /* ---- every other line of running text ----
-     v169 capped the prose inside a card. The meaning blocks on a card page,
-     the answers under a question, and the notes that stand between blocks
-     were never covered, and those are most of the words in the app. */
-  .ins p,.ins .scene,.ins .qa .a,.guide p,.guide li,.lesson li,
-  /* Prose only. A bare paragraph is not always prose: several screens wrap a
-     full-width button in one, and capping the paragraph capped the button,
-     which then stopped short of the grid above it and looked stranded. The
-     cap names the kinds of text it means. */
-  .reading p,.reading li,#main>ul li,#main>ol li,.sec>p,
-  #main p.muted,#main p.hint,#main p.lead,#main p.faint,#main>p.intro{max-width:62ch}
-  /* And nothing that holds a control is ever narrowed by it. */
-  #main p:has(.btn),#main p:has(button),#main p:has(input){max-width:none}
+     Was capped at 62 characters: the meaning blocks on a card page, the
+     answers under a question, the Nabu AI notes, every hint. Removed with the
+     card cap above, for the same reason. */
 }
 
 /* ---- the home page on a desk ----
@@ -2180,7 +2185,7 @@ button.unl{display:block;width:100%;text-align:left;font:inherit;color:inherit;c
 .hello-hero .hlogo .avatar{width:78px;height:78px}
 .hello-hero .hlogo .word{font-size:30px}
 .hello-hero h1{font-size:27px;line-height:1.25;margin:0 0 10px;text-wrap:balance}
-.hello-hero .lead{color:var(--fg-soft);margin:0 auto 18px;max-width:52ch;text-wrap:pretty}
+.hello-hero .lead{color:var(--fg-soft);margin:0 auto 18px}
 .hello-hero .btn{max-width:320px;margin:0 auto}
 .hello-hero .hint{margin-top:8px}
 .hgrid{display:grid;grid-template-columns:1fr;gap:10px;margin:18px 0 8px}
@@ -2191,7 +2196,7 @@ button.unl{display:block;width:100%;text-align:left;font:inherit;color:inherit;c
 .hcard p{margin:0;font-size:14.5px;color:var(--fg-soft);line-height:1.5}
 .hello-end{text-align:center;padding:14px 0 26px}
 .hello-end .lead{font-weight:600;margin-bottom:4px}
-.hello-end .muted{max-width:52ch;margin:0 auto 16px}
+.hello-end .muted{margin:0 auto 16px}
 .hello-end .btn{max-width:320px;margin:0 auto}
 @media (min-width:760px){
   .hgrid{grid-template-columns:repeat(2,1fr);gap:14px}
@@ -2236,7 +2241,7 @@ button.unl{display:block;width:100%;text-align:left;font:inherit;color:inherit;c
 .needin{text-align:center;border-color:var(--lav)}
 .needin .ic{font-size:32px;line-height:1;margin-bottom:6px}
 .needin .lead{font-weight:600;margin:0 0 4px}
-.needin .hint{margin:0 auto 12px;max-width:44ch}
+.needin .hint{margin:0 auto 12px}
 .needin .btn{max-width:320px;margin:0 auto}
 #main .needin p{text-align:center}
 
@@ -2264,7 +2269,7 @@ body[data-route="signin"] #main{width:100%}
    the home screen greets with, so the sign-in page speaks in the app's own
    voice. */
 #main .signin .lead{text-align:center;margin:0 0 22px;padding:16px 18px;border-radius:16px;
-  background:linear-gradient(135deg,var(--lav-soft),var(--surface-2));border:1px solid var(--rule-soft);text-wrap:balance}
+  background:linear-gradient(135deg,var(--lav-soft),var(--surface-2));border:1px solid var(--rule-soft)}
 .signin .lead .ln{display:block}
 .signin .lead .ln1{color:var(--fg);font-weight:600;font-size:17px;line-height:1.45}
 .signin .lead .ln2{color:var(--fg-soft);font-size:15px;line-height:1.55;margin-top:6px}
@@ -2315,7 +2320,7 @@ body[data-route="hello"] #main{width:100%}
   .hello-hero .hlogo .avatar{width:92px;height:92px}
   .hello-hero .hlogo .word{font-size:34px}
   .hello-hero h1{font-size:46px}
-  .hello-hero .lead{font-size:18px;max-width:56ch}
+  .hello-hero .lead{font-size:18px}
   .hello-hero .btn{max-width:360px;font-size:17px;min-height:56px}
   .hello-hero .hint{font-size:14.5px}
   .hgrid{gap:18px}

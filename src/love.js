@@ -643,7 +643,7 @@ async function claimFrom(name) {
 }
 
 function renderLove(wantHandle) {
-  const S = T(), m = $('#main');
+  const S = T(), m = $('#main'), here = navStillHere();
   let stop = [], forceHandle = !!wantHandle;
   const cleanup = () => { stop.forEach((f) => { try { f(); } catch (e) { /* already gone */ } }); stop = []; };
   navOnLeave(cleanup);
@@ -1090,6 +1090,7 @@ function renderLove(wantHandle) {
 
   const draw = async () => {
     cleanup();
+    if (!here()) return;
     if (!LOVEDB.ok()) { drawGuest(); return; }
     drawOpening();
     /* Who this account is, which only fills in a name - so it must never be
@@ -1101,17 +1102,20 @@ function renderLove(wantHandle) {
         new Promise((r) => setTimeout(() => r(null), 2500))
       ]);
     } catch (e) { person = null; }
+    /* Up to two and a half seconds have passed. If the reader has gone, the
+       cleanup has already run with nothing to stop - so open nothing now. */
+    if (!here()) return;
     if (person) LOVE.save({ handle: person.handle || '', name: person.name || '' });
     if (forceHandle || !LOVE.handle()) { drawHandle(); return; }
     /* Two listeners, one screen: the bond decides which half is drawn, and
        either of them arriving repaints it. */
     let reqs = [], bond = null, ready = false, gifts = [], giftStop = null;
-    const paint = () => { if (!ready) return; if (bond) drawBond(bond, gifts); else drawSingle(reqs); };
+    const paint = () => { if (!ready || !here()) return; if (bond) drawBond(bond, gifts); else drawSingle(reqs); };
     /* And if nothing has been heard at all, say so rather than waiting in
        silence. A listener that never fires is indistinguishable, from the
        outside, from an app that is broken. */
     const stall = setTimeout(() => {
-      if (ready) return;
+      if (ready || !here()) return;
       m.innerHTML = head()
         + '<div class="card lovecard">' + threadSVG('tied', true)
         + '<p class="lead" style="text-align:center">' + esc(S.loveSlow) + '</p>'

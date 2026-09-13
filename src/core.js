@@ -731,12 +731,25 @@ const ROUTES = {};
    second was set, and that listener then ran for the rest of the session.
    Nothing on today's screens collided, but the shape invited it. Add with
    navOnLeave(), never by assignment. */
-const NAV = { current: '', stack: [], popping: false, skip: false, scroll: {}, restore: null, leave: [] };
+const NAV = { current: '', stack: [], popping: false, skip: false, scroll: {}, restore: null, leave: [], gen: 0 };
 /* Registered in the order they were opened, run in the reverse: the last
    listener a screen opened is the first one dropped. A cleanup that throws
    is already gone; the ones after it still run. */
 function navOnLeave(fn) { if (typeof fn === 'function') NAV.leave.push(fn); }
+/* For a screen that waits for something before it opens its listeners.
+
+   A cleanup registered with navOnLeave runs the moment the reader leaves - and
+   if that moment falls inside the wait, there is nothing yet for it to stop.
+   The listeners open afterwards, nobody ever stops them, and every change in
+   the database repaints the old screen over whatever is showing now: the Red
+   Thread page painting itself over a companion, seconds after the reader left
+   it. Capture this at the start of the render and ask it after every wait;
+   once the router has moved on it answers false for good. A page routed twice
+   while it settles counts as moved on too, so the first pass gives way to the
+   second. */
+function navStillHere() { const gen = NAV.gen; return () => gen === NAV.gen; }
 function navLeave() {
+  NAV.gen++;
   const fns = NAV.leave; NAV.leave = [];
   for (let i = fns.length - 1; i >= 0; i--) { try { fns[i](); } catch (e) { /* already gone */ } }
 }

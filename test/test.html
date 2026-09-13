@@ -1500,7 +1500,7 @@ async function go(hash, sel) { W().location.hash = hash; await sleep(30); return
       ok(/Google Play/.test(h3.textContent) && main.querySelector('a[href*="play.google.com/apps/testing"].primary')
          && !/primary/.test(apk.className) && /không mua được/.test(main.textContent),
         'Play is the first door on the install screen, and the downloaded copy says in its own words that it cannot buy'); }
-    await go('#/privacy', '.privacy .gsec'); ok(d.querySelectorAll('.privacy .gsec').length >= 10 && /Xoá tài khoản/.test(d.querySelector('.privacy').textContent) && /Cloudflare/.test(d.querySelector('.privacy').textContent) && /Anthropic/.test(d.querySelector('.privacy').textContent), 'the in-app privacy policy lists every kind of data, who answers Nabu AI, and how to delete the account');
+    await go('#/privacy', '.privacy .gsec'); ok(d.querySelectorAll('.privacy .gsec').length >= 10 && /Xoá tài khoản/.test(d.querySelector('.privacy').textContent) && /Cloudflare/.test(d.querySelector('.privacy').textContent) && /Workers AI/.test(d.querySelector('.privacy').textContent) && /Gemini/.test(d.querySelector('.privacy').textContent) && /Google Search/.test(d.querySelector('.privacy').textContent) && !/Anthropic/.test(d.querySelector('.privacy').textContent), 'the in-app privacy policy lists every kind of data, names the services that really write Nabu AI answers and search for them, no longer one that does not, and says how to delete the account');
     { const pv = d.querySelector('.privacy') ? d.querySelector('.privacy').textContent : '';
       const pub = await fetch('/privacy.html', { cache: 'no-store' }).then((r) => r.text()).catch(() => '');
       ok(/Bình luận thì khác/.test(pv) && /công khai/.test(pv)
@@ -1514,6 +1514,11 @@ async function go(hash, sel) { W().location.hash = hash; await sleep(30); return
          languages, or they are not disclosed at all. */
       const pub2 = await fetch('/privacy.html', { cache: 'no-store' }).then((r) => r.text()).catch(() => '');
       const saysEdit = /đã sửa/.test(pub2) && pub2.indexOf('the line says it was edited') > -1 && pub2.indexOf('bearbeitet wurde') > -1;
+      /* And that Google may read what Gemini is asked - true on the unpaid tier for an app run from
+         Vietnam, and not something a reader should find out any other way. */
+      ok(pub2.indexOf('nhân viên của Google có thể đọc') > -1 && pub2.indexOf('people at Google may read them') > -1
+        && pub2.indexOf('Mitarbeitende von Google können sie lesen') > -1,
+        'the policy says in all three languages that when Gemini answers, Google may use the question and people at Google may read it');
       const saysHeart = pub2.indexOf('không lưu tên bạn') > -1 && pub2.indexOf('never your name') > -1 && pub2.indexOf('nie deinen Namen') > -1;
       ok(saysEdit && saysHeart,
         'the policy says in all three languages that a comment can be edited and shows it, and that a heart records the post and the account but never a name'
@@ -3776,10 +3781,39 @@ async function go(hash, sel) { W().location.hash = hash; await sleep(30); return
              what puts it on the screen before anybody has scrolled. */
           const cs = w.getComputedStyle(bar);
           ok(cs.position === 'fixed', 'the bar is fixed to the screen rather than sitting at the end of the page [' + cs.position + ']'); }
-        { /* Both tap targets clear the house minimum. */
-          const r1 = d.querySelector('#petkeepbar').getBoundingClientRect(), r2 = d.querySelector('#petbackbar').getBoundingClientRect();
-          ok(r1.height >= 40 && r2.height >= 40,
-            'both buttons on the bar are at least 40px tall [' + Math.round(r1.height) + ', ' + Math.round(r2.height) + ']'); }
+        { /* The two choices are a matched pair. Checking only that each was
+             40px tall let a bar through where one button was squeezed to a word
+             per line beside another that filled the row - reported as ugly and
+             lopsided, rightly. So: same width, same height, at least 40px, and
+             every label on one line inside its button - measured with the
+             longest label the bar can be given in each language, since the keep
+             button's words change with the situation, on two phones and a desk.
+             The bar steps aside when the real buttons are on screen, so it is
+             shown for the measurement. */
+          const frame = document.getElementById('f'), wasWide = frame.style.width, off = [];
+          const bar2 = d.querySelector('#petbar'), k = d.querySelector('#petkeepbar'), o = d.querySelector('#petbackbar');
+          const keepWas = k.textContent, otherWas = o.textContent, hiddenWas = bar2.hidden;
+          const labels = [['vi', N.STR.vi.petPrevChange, N.STR.vi.petPrevOther], ['en', N.STR.en.petPrevChange, N.STR.en.petPrevOther],
+            ['de', N.STR.de.petPrevChange, N.STR.de.petPrevOther], ['as drawn', keepWas, otherWas]];
+          for (const px of [360, 390, 1180]) {
+            frame.style.width = px + 'px'; await sleep(180);
+            bar2.hidden = false;
+            for (const [lg, keepLabel, otherLabel] of labels) {
+              k.textContent = keepLabel; o.textContent = otherLabel; await sleep(30);
+              const rk = k.getBoundingClientRect(), ro = o.getBoundingClientRect(), vw = d.documentElement.clientWidth, at = px + ' ' + lg;
+              if (Math.abs(rk.width - ro.width) > 1) off.push(at + ': widths ' + Math.round(rk.width) + ' vs ' + Math.round(ro.width));
+              if (Math.abs(rk.height - ro.height) > 1) off.push(at + ': heights ' + Math.round(rk.height) + ' vs ' + Math.round(ro.height));
+              if (rk.height < 40 || ro.height < 40) off.push(at + ': under 40px');
+              if (k.scrollWidth > k.clientWidth + 1) off.push(at + ': "' + keepLabel + '" does not fit');
+              if (o.scrollWidth > o.clientWidth + 1) off.push(at + ': "' + otherLabel + '" does not fit');
+              if (rk.right > vw + 1 || ro.right > vw + 1 || rk.left < -1) off.push(at + ': off the screen');
+            }
+          }
+          k.textContent = keepWas; o.textContent = otherWas; bar2.hidden = hiddenWas;
+          frame.style.width = wasWide || '430px'; await sleep(120);
+          ok(off.length === 0,
+            'the two choices on the bar are the same width and the same height, at least 40px, and the longest label in each language fits on one line - on a 360 and a 390 phone and on a desk'
+            + (off.length ? ' [' + off.slice(0, 5).join('; ') + ']' : '')); }
         { /* Keeping from the bar keeps the companion being previewed. */
           const kind = tile.getAttribute('data-kind');
           N.PETS.all().forEach((x) => N.PETS.drop(x.kind));
@@ -3860,6 +3894,95 @@ async function go(hash, sel) { W().location.hash = hash; await sleep(30); return
           && Array.prototype.every.call(open2.querySelectorAll('[data-ai-sug]'), (b) => !b.disabled),
           'signed in, the box, the Ask button and the example questions are all there');
         N.BE.user = keepU; }
+
+      /* ---- a line of text runs to the end of its box before it breaks ---- */
+      { /* The owner's convention. On a desk, prose used to be held to 62-75
+           characters and short centred blocks were balanced, so justified text
+           stopped two thirds of the way across a card with the rest of the card
+           empty - reported on the card drawn for today, Năm Tiền, whose "Bạn đang
+           ở trong một đoạn khó..." broke long before the edge. Checked on that
+           exact screen and on the others with running text, at the width of the
+           owner's screenshot and on a phone.
+
+           A paragraph or list item that wraps must be as wide as the box it sits
+           in, and must not be balanced. Only block-flow text is measured: text
+           that shares a flex or grid row with a button has its room decided by
+           the row, not by a cap. */
+        const frame = document.getElementById('f'), wasWide = frame.style.width, bad = [];
+        const pickWas = w.localStorage.getItem('nabu-pick-day');
+        const today = (() => { const x = new Date(); return x.getFullYear() + '-' + String(x.getMonth() + 1).padStart(2, '0') + '-' + String(x.getDate()).padStart(2, '0'); })();
+        const screens = [
+          ['#/pick (Năm Tiền, today)', async () => {
+            w.localStorage.setItem('nabu-pick-day', JSON.stringify({ d: today, id: 'pentacles-5', focus: 'general' }));
+            await go('#/home', '#main'); await go('#/pick', '#reveal .ins'); }],
+          ['#/learn/card/major-0', async () => { await go('#/home', '#main'); await go('#/learn/card/major-0', '#main .ins'); }],
+          ['#/learn/sign/leo', async () => { await go('#/home', '#main'); await go('#/learn/sign/leo', '#main .ai'); }],
+          ['#/privacy', async () => { await go('#/home', '#main'); await go('#/privacy', '.privacy .gsec'); }],
+        ];
+        for (const px of [1180, 390]) {
+          frame.style.width = px + 'px';
+          for (const [label, open] of screens) {
+            await open(); await sleep(260);
+            Array.from(d.querySelectorAll('#main p, #main li')).forEach((el) => {
+              const text = (el.textContent || '').trim();
+              if (text.length < 20 || el.closest('.nav, button, .btn, .chip, .chips, [hidden]')) return;
+              const cs = w.getComputedStyle(el), parent = el.parentElement, ps = w.getComputedStyle(parent);
+              if (cs.display === 'none' || cs.position === 'absolute' || cs.position === 'fixed') return;
+              if (!/^(block|list-item|flow-root)$/.test(ps.display) || /^(inline|contents)$/.test(cs.display)) return;
+              const lineH = parseFloat(cs.lineHeight) || parseFloat(cs.fontSize) * 1.5;
+              const r = el.getBoundingClientRect();
+              if (r.height < lineH * 1.6) return;                       // one line: nothing to fill
+              const room = parent.clientWidth - parseFloat(ps.paddingLeft) - parseFloat(ps.paddingRight)
+                - parseFloat(cs.marginLeft) - parseFloat(cs.marginRight);
+              const where = label + ' @' + px + ' "' + text.slice(0, 28) + '…"';
+              if (r.width < room - 2) bad.push(where + ' is ' + Math.round(r.width) + 'px in ' + Math.round(room) + 'px');
+              const wrapStyle = cs.textWrapStyle || cs.textWrap || '';
+              if (/balance|pretty/.test(wrapStyle)) bad.push(where + ' is text-wrap:' + wrapStyle);
+            });
+          }
+        }
+        frame.style.width = wasWide || '430px';
+        if (pickWas == null) w.localStorage.removeItem('nabu-pick-day'); else w.localStorage.setItem('nabu-pick-day', pickWas);
+        await go('#/home', '#main'); await sleep(120);
+        const uniq = bad.filter((x, i) => bad.indexOf(x) === i);
+        ok(uniq.length === 0,
+          'every line of running text reaches the end of its box before it breaks - on today\'s card, a card page, a sign page and the policy, on a desk and on a phone'
+          + (uniq.length ? ' [' + uniq.length + ': ' + uniq.slice(0, 4).join('; ') + ']' : '')); }
+
+      /* ---- a screen that is left while it waits does not come back ---- */
+      { /* The Red Thread waits for the account's public card before it opens
+           its listeners. A reader who left during that wait had their cleanup
+           run with nothing to stop; the listeners opened afterwards, ran for
+           the rest of the session, and repainted the Red Thread over the next
+           screen on every change - found when it painted itself over a
+           companion. Reproduced here with a slow lookup: open it, leave at
+           once, let the lookup land, change something, and look. */
+        const personWas = N.LOVEDB.myPerson, loveWas = w.localStorage.getItem('nabu-love');
+        N.BE.user = { uid: 'uidA', email: 'a@test' };
+        N.LOVE.save({ handle: 'maiprobe', name: 'Mai' });
+        N.LOVEDB.myPerson = () => new Promise((r) => setTimeout(() => r({ handle: 'maiprobe', name: 'Mai' }), 700));
+        await go('#/home', '#main');
+        const w0 = db.watchers();
+        w.location.hash = '#/love'; await sleep(60);
+        await go('#/play/pet', '#main'); await sleep(40);
+        const shown = () => d.querySelector('#main').textContent;
+        await sleep(1000);                                    // the lookup lands long after the reader left
+        db.put('bonds/leakprobe', { uids: ['uidA', 'uidZ'], since: '2026-01-01' });
+        db.put('requests/uidA/from/uidZ', { from: 'uidZ', at: 1 });
+        await sleep(200);
+        const loveTitle = N.STR.vi.loveTitle;
+        /* The Red Thread's own heading, not its name anywhere: the activities
+           list names it too, and that is not a leak. */
+        const h1 = d.querySelector('#main h1');
+        const leaked = !!d.querySelector('#main .lovecard') || !!(h1 && h1.textContent.indexOf(loveTitle) > -1);
+        const grew = db.watchers() - w0;
+        delete db.docs['bonds/leakprobe']; delete db.docs['requests/uidA/from/uidZ'];
+        N.LOVEDB.myPerson = personWas;
+        if (loveWas == null) w.localStorage.removeItem('nabu-love'); else w.localStorage.setItem('nabu-love', loveWas);
+        await go('#/home', '#main'); await sleep(80);
+        ok(!leaked && grew <= 0,
+          'leaving the Red Thread while it is still waiting leaves nothing listening, and it never paints itself over the next screen'
+          + ' [painted over: ' + leaked + ', listeners left: ' + grew + ']'); }
 
       /* ---- nothing a reader can see says "undefined" ---- */
       { /* Every key the Vietnamese table has, the English and German ones
@@ -4137,10 +4260,12 @@ async function go(hash, sel) { W().location.hash = hash; await sleep(30); return
            cannot leave the next in a state it did not expect. */
         await go('#/home', '#main'); await go('#/play/pet', '#main'); await sleep(240);
         const op = d.querySelector('[data-open-sheet="' + pair[0] + '"]');
-        if (!op) { bad.push(pair[0] + ' has no way to open it'); continue; }
+        /* Say what is on the screen instead, so a failure here names its cause. */
+        const seen = () => ' {' + w.location.hash + ' | sheet=' + !!d.querySelector('.sheet') + ' | kind=' + (d.querySelector('[data-kind]') ? 'picker' : 'pet') + ' | stagebtns=' + d.querySelectorAll('[data-open-sheet]').length + ' | "' + (d.querySelector('#main') ? d.querySelector('#main').textContent.replace(/\s+/g, ' ').trim().slice(0, 70) : '') + '"}';
+        if (!op) { bad.push(pair[0] + ' has no way to open it' + seen()); continue; }
         op.click(); await sleep(220);
         const item = d.querySelector('[data-shelf="' + pair[0] + ':' + pair[1] + '"]');
-        if (!item) { bad.push(pair[0] + ' has no ' + pair[1]); continue; }
+        if (!item) { bad.push(pair[0] + ' has no ' + pair[1] + seen() + ' shelf=[' + Array.from(d.querySelectorAll('[data-shelf^="' + pair[0] + ':"]')).map((x) => x.getAttribute('data-shelf').split(':')[1]).join(',') + ']'); continue; }
         item.click(); await sleep(240);
         const p = N.PETS.all()[0] || {};
         if (p[pair[0]] !== pair[1]) bad.push(pair[0] + ' stayed ' + p[pair[0]] + ' instead of ' + pair[1]);

@@ -81,9 +81,10 @@ const systemFor = (lang: string) => (lang === "en" ? SYSTEM_EN : lang === "de" ?
 /* What to call the list of pages an answer leaned on. */
 const SOURCES_WORD: Record<string, string> = { vi: "Tham khảo", de: "Quellen", en: "Sources" };
 
-/* What this person may ask today.
+/* Whether this person has bought something that counts.
 
-   `users/{uid}.access` holds one ISO date per opened key, written by this
+   It decides two things: the daily allowance, and whether Nabu AI may search
+   the web for them. `users/{uid}.access` holds one ISO date per opened key, written by this
    worker when a purchase is checked and by the dashboard for a code. A key
    counts while its date has not passed - the same test the app makes in
    ACCESS.has(), so the phone and the worker never disagree about who has
@@ -93,10 +94,11 @@ const SOURCES_WORD: Record<string, string> = { vi: "Tham khảo", de: "Quellen",
    to her by definition, so she lands on the larger allowance through the
    ordinary path with no special case here.
 
-   A read that fails gives the smaller allowance. That is the safe direction:
-   somebody who has paid and is wrongly given five is annoyed and writes in,
-   which is recoverable; the other way round, an outage becomes an open bar. */
-async function asksADay(env: Env, uid: string): Promise<number> {
+   A read that fails counts as not paid. That is the safe direction: somebody
+   who has paid and is wrongly given five questions without search is annoyed
+   and writes in, which is recoverable; the other way round, an outage becomes
+   an open bar. */
+async function isPaid(env: Env, uid: string): Promise<boolean> {
   try {
     const doc = await fsGet(env as unknown as PlayEnv, "users/" + uid);
     const access = (doc && (doc.access as Record<string, unknown>)) || {};
@@ -104,12 +106,84 @@ async function asksADay(env: Env, uid: string): Promise<number> {
     const today = d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, "0") + "-" + String(d.getDate()).padStart(2, "0");
     for (const k of ASK_PAID_KEYS) {
       const until = String(access[k] || "");
-      if (until && until.slice(0, 10) >= today) return ASK_A_DAY_PAID;
+      if (until && until.slice(0, 10) >= today) return true;
     }
   } catch (e) {
-    console.error(JSON.stringify({ at: "ai", uid, allowance: "read failed, using the smaller one", error: String(e) }));
+    console.error(JSON.stringify({ at: "ai", uid, tier: "read failed, treating as free", error: String(e) }));
   }
-  return ASK_A_DAY_FREE;
+  return false;
+}
+
+/* ---- the two free answering services ----
+
+   Each returns the words, or why it has none. "Not configured" is neither -
+   an empty object - so a service that was never set up does not overwrite
+   the reason a real attempt gave. */
+type Said = { text?: string; why?: string };
+type Turn = { role: string; parts: { text: string }[] };
+
+function history(body: AskBody, question: string): Turn[] {
+  const out: Turn[] = [];
+  for (const h of (body.history || []).slice(-6)) {
+    if (h && h.text) out.push({ role: h.role === "assistant" ? "model" : "user", parts: [{ text: h.text.slice(0, 2000) }] });
+  }
+  if (out.length && out[out.length - 1].role === "user") out.pop();
+  out.push({ role: "user", parts: [{ text: question }] });
+  return out;
+}
+
+/* Gemini, optionally with Google Search.
+
+   Search is what lets a paying reader ask about something the app's own
+   knowledge does not hold - today's date, a piece of news, a festival. On the
+   free tier it has its own allowance (500 requests a day, shared between
+   Flash and Flash-Lite), and when that is spent Google answers 429 for the
+   search request only; the caller then asks again without it. */
+async function gemini(env: Env, sys: string, body: AskBody, question: string, search: boolean): Promise<Said> {
+  if (!env.GEMINI_API_KEY) return {};
+  const base = { systemInstruction: { parts: [{ text: sys }] }, contents: history(body, question), generationConfig: { temperature: 0.6, maxOutputTokens: 900 } };
+  let why = "";
+  for (const model of ["gemini-2.5-flash", "gemini-2.5-flash-lite"]) {
+    try {
+      const r = await fetch("https://generativelanguage.googleapis.com/v1beta/models/" + encodeURIComponent(model) + ":generateContent?key=" + encodeURIComponent(env.GEMINI_API_KEY), {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(search ? { ...base, tools: [{ google_search: {} }] } : base),
+      });
+      if (!r.ok) {
+        why = "gemini " + r.status + (search ? " with search" : "") + " on " + model;
+        console.error(JSON.stringify({ at: "ai", model, search, status: r.status, said: (await r.text()).slice(0, 300) }));
+        continue;
+      }
+      const j = (await r.json()) as any;
+      const cand = j?.candidates?.[0];
+      const text = (cand?.content?.parts || []).map((p: any) => p.text || "").join("").trim();
+      if (!text) { why = "gemini answered nothing on " + model; continue; }
+      /* Where it looked, so a reader can tell a searched answer from a card
+         reading - named the way the app names things elsewhere. */
+      const pages = ((cand?.groundingMetadata?.groundingChunks || []) as any[]).map((c) => c?.web).filter(Boolean).slice(0, 3);
+      return { text: text + (pages.length ? "\n\n" + (SOURCES_WORD[body.lang] || SOURCES_WORD.en) + ": " + pages.map((c: any) => c.title || c.uri).join(" · ") : "") };
+    } catch (e) {
+      why = "gemini threw on " + model + ": " + String((e as Error).message || e);
+      console.error(JSON.stringify({ at: "ai", model, search, error: String(e) }));
+    }
+  }
+  return { why };
+}
+
+/* Llama on Workers AI: no key, no search, Cloudflare's free Neurons. */
+async function workersAi(env: Env, sys: string, body: AskBody, question: string): Promise<Said> {
+  if (!env.AI) return {};
+  const msgs = [{ role: "system", content: sys }].concat(
+    history(body, question).map((t) => ({ role: t.role === "model" ? "assistant" : "user", content: t.parts[0].text })));
+  try {
+    const out = await env.AI.run("@cf/meta/llama-3.3-70b-instruct-fp8-fast", { messages: msgs, max_tokens: 700 });
+    const text = (out.response || "").trim();
+    return text ? { text } : { why: "workers-ai answered nothing" };
+  } catch (e) {
+    console.error(JSON.stringify({ at: "ai", model: "workers-ai", error: String(e) }));
+    return { why: "workers-ai: " + String((e as Error).message || e) };
+  }
 }
 
 const cors = (origin: string | undefined, env: Env) => ({
@@ -399,13 +473,10 @@ export default {
     } else {
       who = caller(request);
     }
-    /* Asking requires an account, so `who` is a uid here and not an address;
-       the allowance is read for that account before anything is counted. */
-    /* Without KV nothing is counted at all, so asking Firestore what this
-       person is allowed would be a read per question to decide a number that
-       is never used. */
-    const perDay = (env.KV && env.FIREBASE_PROJECT_ID) ? await asksADay(env, who) : ASK_A_DAY_PAID;
-    const verdict = await allow(env, who, perDay, ASK_A_MINUTE);
+    /* Paid or not, read once: it sets the allowance and whether the answer may
+       search. Asking requires an account, so `who` is a uid here. */
+    const paid = env.FIREBASE_PROJECT_ID ? await isPaid(env, who) : true;
+    const verdict = await allow(env, who, paid ? ASK_A_DAY_PAID : ASK_A_DAY_FREE, ASK_A_MINUTE);
     if (!verdict.ok) return tooMany(verdict, headers);
 
     let body: AskBody;
@@ -414,9 +485,13 @@ export default {
     if (!question) return new Response(JSON.stringify({ error: "empty question" }), { status: 400, headers });
 
     /* The same question with nothing said before it has the same answer for
-       everybody, and the card meanings are asked all day long. */
+       everybody on the same tier, and the card meanings are asked all day.
+       The tiers are cached apart: a paying reader's answer may have searched
+       the web, and handing that to a reader with nothing bought would give
+       away the one thing paying buys; the other way round, a paying reader
+       would be served a knowledge-only answer they did not ask for. */
     const fresh = !(body.history || []).length;
-    const cacheKey = { lang: body.lang, kind: body.kind, question, context: (body.context || "").slice(0, 12000) };
+    const cacheKey = { lang: body.lang, kind: body.kind, question, context: (body.context || "").slice(0, 12000), tier: paid ? "paid" : "free" };
     if (fresh) {
       const hit = await cachedAnswer(cacheKey);
       if (hit) return new Response(JSON.stringify({ answer: hit }), { headers });
@@ -424,92 +499,43 @@ export default {
     const keep = (answer: string): void => { if (fresh && answer) keepAnswer(cacheKey, answer, ctx); };
 
     const knowledge = `KIND: ${body.kind}\nVISITOR: ${body.profile?.name || "-"} ${body.profile?.sign ? "(" + body.profile.sign + ")" : ""}\nKNOWLEDGE:\n${(body.context || "").slice(0, 12000)}`;
-    /* Gemini, with the key held here rather than in the browser. Set it with
-       npx wrangler secret put GEMINI_API_KEY */
-    if (env.GEMINI_API_KEY) {
-      const sys = systemFor(body.lang) + "\n\n" + knowledge;
-      const contents: { role: string; parts: { text: string }[] }[] = [];
-      for (const h of (body.history || []).slice(-6)) {
-        if (h && h.text) contents.push({ role: h.role === "assistant" ? "model" : "user", parts: [{ text: h.text.slice(0, 2000) }] });
-      }
-      if (contents.length && contents[contents.length - 1].role === "user") contents.pop();
-      contents.push({ role: "user", parts: [{ text: question }] });
-      const models = ["gemini-2.5-flash", "gemini-2.5-flash-lite", "gemini-2.0-flash"];
-      const base = { systemInstruction: { parts: [{ text: sys }] }, contents, generationConfig: { temperature: 0.6, maxOutputTokens: 900 } };
-      /* Why the last attempt did not answer. It used to be thrown away by a
-         bare `continue`, so a wrong model name, an expired key and a quota
-         that had run out all reached the phone as the same silent 502 - and
-         the app said "the AI is busy" for every one of them. Whatever the
-         reason is, it is logged here and named in the reply. */
-      let why = "no model answered";
-      for (const model of models) {
-        /* The app's own knowledge is in the system prompt; the search tool is
-           for the rest - a date, a piece of news, anything the card text does
-           not contain. Search has its own, smaller quota, so a refusal of the
-           search request is not a refusal of the question: the same model is
-           asked again without it before moving on. */
-        for (const withSearch of [true, false]) {
-          try {
-            const body2: Record<string, unknown> = withSearch ? { ...base, tools: [{ google_search: {} }] } : base;
-            const r = await fetch("https://generativelanguage.googleapis.com/v1beta/models/" + encodeURIComponent(model) + ":generateContent?key=" + encodeURIComponent(env.GEMINI_API_KEY), {
-              method: "POST",
-              headers: { "Content-Type": "application/json" },
-              body: JSON.stringify(body2),
-            });
-            if (!r.ok) {
-              const said = (await r.text()).slice(0, 300);
-              why = "gemini " + r.status + (withSearch ? " (with search)" : "") + " on " + model;
-              console.error(JSON.stringify({ at: "ai", model, search: withSearch, status: r.status, said }));
-              continue;
-            }
-            const j = (await r.json()) as any;
-            const cand = j?.candidates?.[0];
-            const text = (cand?.content?.parts || []).map((p: any) => p.text || "").join("").trim();
-            if (!text) { why = "gemini answered nothing on " + model; continue; }
-            /* Where it looked, named the way the app names things elsewhere. */
-            const chunks = ((cand?.groundingMetadata?.groundingChunks || []) as any[])
-              .map((c) => c?.web).filter(Boolean).slice(0, 3);
-            const out = text + (chunks.length
-              ? "\n\n" + (SOURCES_WORD[body.lang] || SOURCES_WORD.en) + ": " + chunks.map((c: any) => c.title || c.uri).join(" · ")
-              : "");
-            keep(out);
-            return new Response(JSON.stringify({ answer: out }), { headers });
-          } catch (e) {
-            why = "gemini threw on " + model + ": " + String((e as Error).message || e);
-            console.error(JSON.stringify({ at: "ai", model, search: withSearch, error: String(e) }));
-          }
-        }
-      }
-      console.error(JSON.stringify({ at: "ai", giving_up: why }));
-      return new Response(JSON.stringify({ error: "gemini", why }), { status: 502, headers });
+    const sys = systemFor(body.lang) + "\n\n" + knowledge;
+
+    /* Who answers, in order - and none of it costs money.
+
+         paid:  Gemini with Google Search -> Gemini without it -> Workers AI
+         free:  Workers AI -> Gemini without search
+
+       Two separate free allowances, used deliberately: Cloudflare's daily
+       Neurons carry the readers who have bought nothing, so they never spend
+       Google's search requests, which are the thing a paying reader is owed.
+       Each falls back on the other when its own allowance runs out.
+
+       Nothing here can run up a bill by itself. With no billing account on the
+       Google project the key belongs to, and Workers on the Free plan, running
+       out of an allowance is a refusal and never a charge - the fallback is
+       the next line, and past the last one the reader is told the AI is busy,
+       which by then is true. */
+    const order: (() => Promise<Said>)[] = paid
+      ? [() => gemini(env, sys, body, question, true), () => gemini(env, sys, body, question, false), () => workersAi(env, sys, body, question)]
+      : [() => workersAi(env, sys, body, question), () => gemini(env, sys, body, question, false)];
+    let why = "";
+    for (const attempt of order) {
+      const got = await attempt();
+      if (got.text) { keep(got.text); return new Response(JSON.stringify({ answer: got.text }), { headers }); }
+      if (got.why) why = got.why;
     }
-    // No Anthropic key: answer with an open model on Workers AI (free tier).
-    if (!env.ANTHROPIC_API_KEY && env.AI) {
-      const msgs: { role: string; content: string }[] = [{ role: "system", content: systemFor(body.lang) + "\n\n" + knowledge }];
-      for (const h of (body.history || []).slice(-6)) if (h && h.text) msgs.push({ role: h.role === "assistant" ? "assistant" : "user", content: h.text.slice(0, 2000) });
-      if (msgs[msgs.length - 1].role === "user") msgs.pop();
-      msgs.push({ role: "user", content: question });
-      try {
-        const out = await env.AI.run("@cf/meta/llama-3.3-70b-instruct-fp8-fast", { messages: msgs, max_tokens: 700 });
-        const said = (out.response || "").trim();
-        keep(said);
-        return new Response(JSON.stringify({ answer: said }), { headers });
-      } catch (e) {
-        console.error(JSON.stringify({ at: "ai", model: "workers-ai", error: String(e) }));
-        return new Response(JSON.stringify({ error: "workers-ai" }), { status: 502, headers });
-      }
-    }
-    /* No key and no Workers AI binding: the worker cannot answer at all, and
-       the app must not dress that up as the AI being busy. It is a 503 with a
-       reason the app knows by name, so the reader is told plainly that Nabu AI
-       is not switched on and the answer they are reading came from the app's
-       own knowledge. Set one of:
-         npx wrangler secret put GEMINI_API_KEY        (answers, and can look things up)
-         npx wrangler secret put ANTHROPIC_API_KEY     (answers, and can look things up)
-       or uncomment the [ai] binding in wrangler.toml for the free open model. */
+
     if (!env.ANTHROPIC_API_KEY) {
-      console.error(JSON.stringify({ at: "ai", giving_up: "no provider: no GEMINI_API_KEY, no ANTHROPIC_API_KEY, no AI binding" }));
-      return new Response(JSON.stringify({ error: "no-provider" }), { status: 503, headers });
+      /* Nothing configured at all is not "busy": it is a 503 the app names, so
+         the reader is told Nabu AI is not switched on. */
+      if (!env.GEMINI_API_KEY && !env.AI) {
+        console.error(JSON.stringify({ at: "ai", giving_up: "no provider: no GEMINI_API_KEY, no ANTHROPIC_API_KEY, no AI binding" }));
+        return new Response(JSON.stringify({ error: "no-provider" }), { status: 503, headers });
+      }
+      /* Something is configured and every allowance is spent or failing. */
+      console.error(JSON.stringify({ at: "ai", giving_up: why, paid }));
+      return new Response(JSON.stringify({ error: "busy", why }), { status: 502, headers });
     }
     const client = new Anthropic({ apiKey: env.ANTHROPIC_API_KEY });
     const messages: Anthropic.MessageParam[] = [];
