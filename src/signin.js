@@ -26,7 +26,46 @@ function signinNext(params) {
   return '#' + n;
 }
 
-const GOOGLE_MARK = '<svg viewBox="0 0 24 24"><path fill="#4285F4" d="M21.6 12.2c0-.7-.1-1.4-.2-2H12v3.9h5.4a4.6 4.6 0 0 1-2 3v2.5h3.2c1.9-1.7 3-4.3 3-7.4z"/><path fill="#34A853" d="M12 22c2.7 0 5-.9 6.6-2.4l-3.2-2.5c-.9.6-2 1-3.4 1-2.6 0-4.8-1.8-5.6-4.1H3.1v2.6A10 10 0 0 0 12 22z"/><path fill="#FBBC05" d="M6.4 14a6 6 0 0 1 0-3.9V7.5H3.1a10 10 0 0 0 0 9z"/><path fill="#EA4335" d="M12 6c1.5 0 2.8.5 3.8 1.5l2.8-2.8A10 10 0 0 0 3.1 7.5l3.3 2.6C7.2 7.8 9.4 6 12 6z"/></svg>';
+/* A link tapped inside Instagram, Facebook, TikTok or Zalo opens in that app's
+   own browser, and Google refuses to sign anyone in there: its page answers
+   403 disallowed_useragent, and the visitor is left on it. These apps name
+   themselves in the user agent, so only what they say is believed. 'app' is
+   a plain Android WebView (the "; wv)" token) whose app did not say its name.
+   Chrome, Samsung Internet, Safari and the Android app itself (which runs in
+   the real browser) answer ''. */
+function inAppBrowser(ua) {
+  const s = String(ua == null ? ((window.navigator || {}).userAgent || '') : ua);
+  if (/FBAN\/Messenger|MessengerForiOS|MessengerLite/.test(s)) return 'Messenger';
+  if (/Instagram/.test(s)) return 'Instagram';
+  if (/Barcelona/.test(s)) return 'Threads';
+  if (/FBAN\/|FBAV\/|FB_IAB\//.test(s)) return 'Facebook';
+  if (/musical_ly|BytedanceWebview|TikTok/.test(s)) return 'TikTok';
+  if (/Zalo/.test(s)) return 'Zalo';
+  if (/\bLine\//.test(s)) return 'LINE';
+  if (/Android/.test(s) && /; wv\)/.test(s)) return 'app';
+  return '';
+}
+/* The way out of an in-app browser, to this same page in the real one. On
+   Android an intent link names Chrome; Intent.parseUri reads the last '#' as
+   the start of the intent, so the page's own #/signin route survives it. On
+   an iPhone x-safari-https opens Safari (iOS 17 and later); where it does
+   nothing, the menu instruction and the copied link still work. */
+function inAppExit() {
+  const ua = String((window.navigator || {}).userAgent || ''), href = location.href;
+  if (/iPad|iPhone|iPod/.test(ua)) return { browser: 'Safari', href: href.replace(/^https?:\/\//, 'x-safari-https://') };
+  if (/Android/.test(ua)) return { browser: 'Chrome', href: href.replace(/^https?:\/\//, 'intent://') + '#Intent;scheme=https;package=com.android.chrome;end' };
+  return { browser: 'Chrome / Safari', href: '' };
+}
+function inAppHTML(app) {
+  const S = T(), exit = inAppExit(), name = app === 'app' ? S.inAppOther : app;
+  return '<div class="inapp" role="note"><strong>' + esc(S.inAppTitle(name)) + '</strong>'
+    + '<p>' + esc(S.inAppBody(exit.browser)) + '</p>'
+    + (exit.href ? '<a class="btn primary block inappopen" href="' + esc(exit.href) + '">' + esc(S.inAppOpen(exit.browser)) + '</a>' : '')
+    + '<button type="button" class="btn block" data-inappcopy>' + esc(S.inAppCopy) + '</button>'
+    + '<p class="hint">' + esc(S.inAppMenu(exit.browser)) + '</p></div>';
+}
+
+const GOOGLE_MARK ='<svg viewBox="0 0 24 24"><path fill="#4285F4" d="M21.6 12.2c0-.7-.1-1.4-.2-2H12v3.9h5.4a4.6 4.6 0 0 1-2 3v2.5h3.2c1.9-1.7 3-4.3 3-7.4z"/><path fill="#34A853" d="M12 22c2.7 0 5-.9 6.6-2.4l-3.2-2.5c-.9.6-2 1-3.4 1-2.6 0-4.8-1.8-5.6-4.1H3.1v2.6A10 10 0 0 0 12 22z"/><path fill="#FBBC05" d="M6.4 14a6 6 0 0 1 0-3.9V7.5H3.1a10 10 0 0 0 0 9z"/><path fill="#EA4335" d="M12 6c1.5 0 2.8.5 3.8 1.5l2.8-2.8A10 10 0 0 0 3.1 7.5l3.3 2.6C7.2 7.8 9.4 6 12 6z"/></svg>';
 
 /* Each block rises into place a beat after the one above it (.srise, with
    --i counting the beats). The stagger is decoration: with reduced motion on
@@ -46,7 +85,7 @@ function signinHTML(mode) {
   };
   const social = (prov.indexOf('google') > -1 ? '<button type="button" class="btn block" data-auth="google">' + GOOGLE_MARK + esc(S.signInWith.google) + '</button>' : '')
     + (prov.indexOf('facebook') > -1 ? '<button type="button" class="btn block" data-auth="facebook" style="background:#1461C7;color:#fff;border-color:transparent">' + esc(S.signInWith.facebook) + '</button>' : '');
-  const email = prov.indexOf('email') > -1;
+  const email = prov.indexOf('email') > -1, app = inAppBrowser();
   return '<section class="signin">'
     + rise('<div class="hlogo">' + LOGO + '</div>')
     + rise('<h1>' + esc(create ? S.createAccount : S.signIn) + '</h1>')
@@ -54,6 +93,7 @@ function signinHTML(mode) {
        reassurance - and each is its own block so the first can lead and the
        second can sit softer beneath it, whatever the width. */
     + rise('<p class="lead">' + esc(S.signinLead).split('\n').map((l, i) => '<span class="ln ln' + (i + 1) + '">' + l + '</span>').join('') + '</p>')
+    + (app && social ? rise(inAppHTML(app)) : '')
     + (social ? rise('<div class="providers">' + social + '</div>') : '')
     + (social && email ? rise('<div class="orline"><span>' + esc(S.signinOr) + '</span></div>') : '')
     + (email ? '<form id="aform">'
@@ -81,12 +121,16 @@ function renderSignin(args, params) {
        carries on where they were headed. */
     const onward = () => { if (BE.user) redirect(mode === 'create' ? '#/welcome' : signinNext(params)); };
     $$('[data-auth]', m).forEach((b) => b.addEventListener('click', async () => {
-      const p = b.getAttribute('data-auth');
+      const p = b.getAttribute('data-auth'), app = inAppBrowser();
+      /* Google would only show its own refusal page; say why here instead. */
+      if (p === 'google' && app) { status(S.inAppGoogle(app === 'app' ? S.inAppOther : app, inAppExit().browser), 'err'); return; }
       if (!BE.enabled) { status(S.accountsSoon, 'err'); toast(S.accountsOff); return; }
       b.disabled = true;
       try { await BE.signIn(p); onward(); } catch (e) { status(authMessage(e, p), 'err'); }
       b.disabled = false;
     }));
+    const copyBtn = $('[data-inappcopy]', m);
+    if (copyBtn) copyBtn.addEventListener('click', () => copyText(location.href).then(() => toast(S.copied)));
     const form = $('#aform', m);
     if (form) {
       const em = () => $('#aemail', m).value.trim(), pw = () => $('#apw', m).value;
