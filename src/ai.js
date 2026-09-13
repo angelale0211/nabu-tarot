@@ -100,7 +100,53 @@ function leanOf(id) {
 }
 
 /* ---- context text (shared by both engines) ---- */
+/* ---- the calendar, from the app's own lunar table ----
+
+   A language model does not know what day it is, and it guesses Vietnamese
+   lunar dates: asked for Tết Đoan Ngọ 2027 it said Tuesday 8 June, when the
+   Vietnamese calendar - reckoned at UTC+7, which is what lunar.js does - puts
+   it on Wednesday 9 June. The Chinese calendar can land a day apart, and a
+   model trained mostly on that is not a reliable source for this one. So every
+   question carries today's date and the festivals of the next sixteen months,
+   worked out here, and the prompt tells the model to take dates from this
+   rather than from memory. It costs nothing and it is exact.
+
+   Worked out once a day: the context is part of the answer cache's key, so it
+   must not change within a day, and a day's answers are right for that day. */
+const AI_FESTIVALS = [
+  [1, 1, 'Tết Nguyên Đán (Lunar New Year)'], [15, 1, 'Rằm tháng Giêng / Tết Nguyên Tiêu (Lantern Festival)'],
+  [3, 3, 'Tết Hàn Thực (Cold Food Festival)'], [10, 3, 'Giỗ Tổ Hùng Vương (Hùng Kings Commemoration)'],
+  [15, 4, 'Lễ Phật Đản (Buddha’s Birthday)'], [5, 5, 'Tết Đoan Ngọ (Dragon Boat Festival)'],
+  [15, 7, 'Lễ Vu Lan (Vu Lan / Ghost Festival)'], [15, 8, 'Tết Trung Thu (Mid-Autumn Festival)'],
+  [23, 12, 'Ông Công Ông Táo (Kitchen Gods Day)']
+];
+let AI_CAL = { day: '', text: '' };
+function calendarText(now) {
+  const today = now || new Date(), key = isoDate(today);
+  if (AI_CAL.day === key) return AI_CAL.text;
+  const loc = lang === 'vi' ? 'vi-VN' : (lang === 'de' ? 'de-DE' : 'en-GB');
+  const day = (d) => { try { return new Intl.DateTimeFormat(loc, { weekday: 'long' }).format(d); } catch (e) { return ''; } };
+  const dmy = (d) => pad2(d.getDate()) + '/' + pad2(d.getMonth() + 1) + '/' + d.getFullYear();
+  const t = lunarToday(today);
+  const lines = ['CALENDAR (Vietnamese lunar calendar, computed by the app - use these dates, not your memory):',
+    'Today: ' + day(today) + ' ' + dmy(today) + ' = lunar ' + t.day + '/' + t.month + (t.leap ? ' (leap month)' : '') + ', year ' + t.yearCC];
+  const start = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+  for (let i = 0; i < 490; i++) {
+    const d = new Date(start.getFullYear(), start.getMonth(), start.getDate() + i);
+    const l = solarToLunar(d.getDate(), d.getMonth() + 1, d.getFullYear());
+    if (l.leap) continue;
+    AI_FESTIVALS.forEach((f) => { if (l.day === f[0] && l.month === f[1]) lines.push(f[2] + ' ' + l.year + ': ' + day(d) + ' ' + dmy(d) + ' (lunar ' + f[0] + '/' + f[1] + ')'); });
+  }
+  AI_CAL = { day: key, text: lines.join('\n') };
+  return AI_CAL.text;
+}
+/* What the model is told, in full: whatever the reader is looking at, then
+   the calendar. */
 function contextText(ctx) {
+  const body = contextBody(ctx);
+  return (body ? body + '\n\n' : '') + calendarText();
+}
+function contextBody(ctx) {
   const S = T();
   if (ctx.type === 'card' && ctx.lite) {
     const c = cardById(ctx.id), I = insightOf(ctx.id), f = ctx.focus && ctx.focus !== 'general' ? ctx.focus : '';

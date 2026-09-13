@@ -3935,6 +3935,30 @@ async function go(hash, sel) { W().location.hash = hash; await sleep(30); return
           '"Nabu AI is not switched on" is its own sentence in all three languages, never the "the AI is busy" one, which means something a reader can wait out');
         N.AI.off = wasOff; }
 
+      /* ---- Nabu AI is told the date, from the app's own lunar calendar ---- */
+      { /* A model does not know what day it is, and guesses Vietnamese lunar
+           dates - asked for Tết Đoan Ngọ 2027 it said Tuesday 8 June; the
+           Vietnamese calendar says Wednesday 9 June. Every question now carries
+           today and the festivals of the coming months, worked out by lunar.js.
+           Each date is checked here by turning it back into a lunar date, not
+           by comparing text. */
+        const ctx = w.contextText({ type: 'general' });
+        const lines = ctx.split('\n').filter((l) => /\(lunar \d+\/\d+\)$/.test(l));
+        const wrong = lines.filter((l) => {
+          const m = l.match(/(\d{2})\/(\d{2})\/(\d{4}) \(lunar (\d+)\/(\d+)\)$/);
+          if (!m) return true;
+          const lu = N.solarToLunar(+m[1], +m[2], +m[3]);
+          return !(lu.day === +m[4] && lu.month === +m[5] && !lu.leap);
+        });
+        const names = ['Tết Nguyên Đán', 'Tết Trung Thu', 'Lễ Vu Lan', 'Tết Đoan Ngọ'];
+        ok(/^CALENDAR/m.test(ctx) && /^Today: .+ = lunar \d+\/\d+/m.test(ctx),
+          'every Nabu AI question carries a calendar with today in solar and lunar dates');
+        ok(lines.length >= 9 && wrong.length === 0 && names.every((n) => lines.some((l) => l.indexOf(n) === 0)),
+          'and the festivals of the coming months, each on the solar day the app\'s own lunar calendar gives it'
+          + ' [' + lines.length + ' lines' + (wrong.length ? ', wrong: ' + wrong.slice(0, 2).join(' | ') : '') + ']');
+        ok(w.contextText({ type: 'general' }) === ctx,
+          'and it is the same all day, so a question asked twice is answered from the cache rather than asked again'); }
+
       /* ---- no account, no box ---- */
       { /* Answering costs money and the worker refuses without an account, so
            a signed-out reader must not be handed a box, allowed to write a

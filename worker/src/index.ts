@@ -64,20 +64,49 @@ interface AskBody {
   profile?: { name?: string; sign?: string };
 }
 
-const SYSTEM_VI = `Bạn là Nabu AI, trợ lý của Nabu Tarot, một reader tarot người Việt. Bạn nói chuyện ấm áp, ngắn gọn, bằng tiếng Việt đời thường (xưng "mình", gọi người dùng là "bạn"). Câu ngắn, mỗi đoạn một ý, không dùng từ hoa mỹ.
-Bạn trả lời dựa trên PHẦN KIẾN THỨC được cung cấp (lá bài, bài học, cung hoàng đạo hoặc các con số của người dùng). Khi câu hỏi vượt ngoài phần đó, bạn nói thẳng là một lá bài hay một cung không trả lời được, và gợi ý người dùng đặt lịch xem bài đầy đủ với Nabu.
-Bạn không chẩn đoán bệnh, không tư vấn pháp lý hay đầu tư cụ thể, không hứa điều gì chắc chắn xảy ra. Bạn không nhắc đến tên nguồn, sách hay kênh nào. Trả lời trong 4 đến 8 câu, trừ khi người dùng hỏi giải thích bài học thì có thể dài hơn một chút.`;
-const SYSTEM_EN = `You are Nabu AI, the assistant of Nabu Tarot, a Vietnamese tarot reader. You speak warmly and briefly in plain English. Short sentences, one idea per paragraph, no flowery words.
-Answer from the KNOWLEDGE section provided (the card, the lesson, the visitor's sign or numbers). When a question goes beyond it, say plainly that one card or one sign cannot answer that, and suggest booking a full reading with Nabu.
-No medical diagnosis, no specific legal or investment advice, no promises that something will certainly happen. Never name sources, books or channels. Answer in 4 to 8 sentences, a little longer only when explaining a lesson.`;
+/* The prompt is three parts: who Nabu AI is and how it speaks, what it may
+   answer - which depends on whether the reader has bought something - and the
+   limits that hold for everybody.
 
-const SYSTEM_DE = `Du bist Nabu AI, die Assistenz von Nabu Tarot, einer vietnamesischen Kartenlegerin. Du sprichst warm und knapp in einfachem Deutsch und duzt die Person. Kurze Sätze, ein Gedanke pro Absatz, keine geschwollenen Wörter.
-Du antwortest aus dem Abschnitt KNOWLEDGE (die Karte, die Lektion, das Sternzeichen oder die Zahlen der Person). Wenn eine Frage darüber hinausgeht, sag klar, dass eine einzelne Karte oder ein einzelnes Sternzeichen das nicht beantworten kann, und schlag eine ausführliche Legung bei Nabu vor.
-Keine medizinischen Diagnosen, keine konkrete Rechts- oder Anlageberatung, keine Versprechen, dass etwas sicher eintritt. Nenne niemals Quellen, Bücher oder Kanäle. Antworte in 4 bis 8 Sätzen, nur beim Erklären einer Lektion etwas länger.`;
+   The scope used to be one sentence for everyone: answer from the card or the
+   lesson, and when a question goes beyond it, say a card cannot answer that.
+   Given to Gemini for a reader with Pro, it turned down "when is Lễ Vu Lan in
+   2027" as outside tarot - the opposite of what paying for Nabu AI is meant to
+   buy. A reader who has bought something now gets an assistant that uses the
+   app's knowledge where it applies and answers everything else plainly; a
+   reader who has not keeps the app's own knowledge. The CALENDAR the app sends
+   counts as that knowledge for both, because it is exact where a model's
+   memory of Vietnamese lunar dates is not. */
+const VOICE: Record<string, string> = {
+  vi: `Bạn là Nabu AI, trợ lý của Nabu Tarot, một reader tarot người Việt. Bạn nói chuyện ấm áp, ngắn gọn, bằng tiếng Việt đời thường (xưng "mình", gọi người dùng là "bạn"). Câu ngắn, mỗi đoạn một ý, không dùng từ hoa mỹ.`,
+  en: `You are Nabu AI, the assistant of Nabu Tarot, a Vietnamese tarot reader. You speak warmly and briefly in plain English. Short sentences, one idea per paragraph, no flowery words.`,
+  de: `Du bist Nabu AI, die Assistenz von Nabu Tarot, einer vietnamesischen Kartenlegerin. Du sprichst warm und knapp in einfachem Deutsch und duzt die Person. Kurze Sätze, ein Gedanke pro Absatz, keine geschwollenen Wörter.`,
+};
+const SCOPE_FREE: Record<string, string> = {
+  vi: `Bạn trả lời dựa trên PHẦN KIẾN THỨC được cung cấp (lá bài, bài học, cung hoàng đạo hoặc các con số của người dùng). Phần CALENDAR cũng là kiến thức của app: câu hỏi về hôm nay, ngày lễ hay ngày âm dương thì bạn trả lời đúng theo phần đó. Khi câu hỏi vượt ngoài những phần này, bạn nói thẳng là một lá bài hay một cung không trả lời được, và gợi ý người dùng đặt lịch xem bài đầy đủ với Nabu.`,
+  en: `Answer from the KNOWLEDGE section provided (the card, the lesson, the visitor's sign or numbers). The CALENDAR section is the app's knowledge too: questions about today, a festival or a lunar date are answered exactly from it. When a question goes beyond these, say plainly that one card or one sign cannot answer that, and suggest booking a full reading with Nabu.`,
+  de: `Du antwortest aus dem Abschnitt KNOWLEDGE (die Karte, die Lektion, das Sternzeichen oder die Zahlen der Person). Der Abschnitt CALENDAR gehört ebenfalls zum Wissen der App: Fragen zu heute, zu einem Fest oder einem Mondkalenderdatum beantwortest du genau danach. Wenn eine Frage darüber hinausgeht, sag klar, dass eine einzelne Karte oder ein einzelnes Sternzeichen das nicht beantworten kann, und schlag eine ausführliche Legung bei Nabu vor.`,
+};
+const SCOPE_PAID: Record<string, string> = {
+  vi: `Với câu hỏi về lá bài, bài học, cung hoàng đạo hay các con số, bạn dựa vào PHẦN KIẾN THỨC được cung cấp. Với những câu hỏi khác – ngày lễ, lịch âm dương, kiến thức phổ thông, giải thích một điều gì đó, dịch hay viết một đoạn ngắn – bạn trả lời thẳng và chính xác, không từ chối chỉ vì câu hỏi không liên quan đến tarot. Ngày tháng thì luôn lấy theo phần CALENDAR, vì phần đó được tính theo lịch âm Việt Nam. Nếu không chắc chắn, bạn nói rõ là mình không chắc.`,
+  en: `For questions about the card, the lesson, the visitor's sign or numbers, use the KNOWLEDGE section provided. Answer other questions too - festivals, lunar and solar dates, general knowledge, explaining something, translating or writing a short passage - directly and accurately; do not turn a question down only because it is not about tarot. Always take dates from the CALENDAR section, which follows the Vietnamese lunar calendar. If you are not sure of something, say so.`,
+  de: `Bei Fragen zur Karte, zur Lektion, zum Sternzeichen oder zu den Zahlen der Person nutzt du den Abschnitt KNOWLEDGE. Auch andere Fragen beantwortest du – Feste, Mond- und Sonnendaten, Allgemeinwissen, Erklärungen, Übersetzungen oder einen kurzen Text – direkt und genau; lehne eine Frage nicht nur deshalb ab, weil sie nichts mit Tarot zu tun hat. Daten nimmst du immer aus dem Abschnitt CALENDAR, der dem vietnamesischen Mondkalender folgt. Wenn du dir bei etwas nicht sicher bist, sag es.`,
+};
+const LIMITS: Record<string, string> = {
+  vi: `Bạn không chẩn đoán bệnh, không tư vấn pháp lý hay đầu tư cụ thể, không hứa điều gì chắc chắn xảy ra. Bạn không nhắc đến tên nguồn, sách hay kênh nào. Trả lời trong 4 đến 8 câu, trừ khi người dùng hỏi giải thích bài học thì có thể dài hơn một chút.`,
+  en: `No medical diagnosis, no specific legal or investment advice, no promises that something will certainly happen. Never name sources, books or channels. Answer in 4 to 8 sentences, a little longer only when explaining a lesson.`,
+  de: `Keine medizinischen Diagnosen, keine konkrete Rechts- oder Anlageberatung, keine Versprechen, dass etwas sicher eintritt. Nenne niemals Quellen, Bücher oder Kanäle. Antworte in 4 bis 8 Sätzen, nur beim Erklären einer Lektion etwas länger.`,
+};
 /* German used to fall through to the Vietnamese prompt, because the choice was
    written as "English, or else Vietnamese" back when there were two languages.
    A German reader was answered in Vietnamese by a prompt they could not read. */
-const systemFor = (lang: string) => (lang === "en" ? SYSTEM_EN : lang === "de" ? SYSTEM_DE : SYSTEM_VI);
+export const systemFor = (lang: string, paid = false): string => {
+  const lg = lang === "en" || lang === "de" ? lang : "vi";
+  return [VOICE[lg], (paid ? SCOPE_PAID : SCOPE_FREE)[lg], LIMITS[lg]].join("\n");
+};
+/* Set for an hour when Google refuses a search for quota; while it exists,
+   paying readers are answered by Gemini without search. */
+const SEARCH_OFF_KEY = "ai:search-off";
 /* What to call the list of pages an answer leaned on. */
 const SOURCES_WORD: Record<string, string> = { vi: "Tham khảo", de: "Quellen", en: "Sources" };
 
@@ -119,7 +148,9 @@ async function isPaid(env: Env, uid: string): Promise<boolean> {
    Each returns the words, or why it has none. "Not configured" is neither -
    an empty object - so a service that was never set up does not overwrite
    the reason a real attempt gave. */
-type Said = { text?: string; why?: string };
+/* partial: the model stopped before it finished (a token ceiling, a safety
+   stop). Shown, because something beats nothing, but never cached. */
+type Said = { text?: string; why?: string; partial?: boolean };
 type Turn = { role: string; parts: { text: string }[] };
 
 function history(body: AskBody, question: string): Turn[] {
@@ -135,15 +166,30 @@ function history(body: AskBody, question: string): Turn[] {
 /* Gemini, optionally with Google Search.
 
    Search is what lets a paying reader ask about something the app's own
-   knowledge does not hold - today's date, a piece of news, a festival. On the
-   free tier it has its own allowance (500 requests a day, shared between
-   Flash and Flash-Lite), and when that is spent Google answers 429 for the
-   search request only; the caller then asks again without it. */
+   knowledge does not hold - a piece of news, anything after the model's
+   training. It needs billing on the key's Google project: without it, Google
+   answers 429 to the first search of the day as readily as the thousandth
+   (seen 13 September 2026, on a key made that day - the free 500 a day the
+   pricing page lists belonged to the 2.5 models, which new keys cannot use).
+   A refused search switches search off for an hour (SEARCH_OFF_KEY) and the
+   reader is answered without it. Gemini without search still knows dates,
+   festivals and most general facts up to its training, which is most of what
+   a tarot reader is asked. */
 async function gemini(env: Env, sys: string, body: AskBody, question: string, search: boolean): Promise<Said> {
   if (!env.GEMINI_API_KEY) return {};
-  const base = { systemInstruction: { parts: [{ text: sys }] }, contents: history(body, question), generationConfig: { temperature: 0.6, maxOutputTokens: 900 } };
+  /* maxOutputTokens covers the model's thinking as well as its answer on the
+     Gemini 3 models, and 900 was spent thinking: answers came back cut off
+     mid-word ("rơi vào ngày **2"). The system prompt keeps the answer itself to
+     a few sentences; this is only the ceiling. */
+  const base = { systemInstruction: { parts: [{ text: sys }] }, contents: history(body, question), generationConfig: { temperature: 0.6, maxOutputTokens: 4096 } };
   let why = "";
-  for (const model of ["gemini-2.5-flash", "gemini-2.5-flash-lite"]) {
+  /* The models Google names itself. The 2.5 models answer 404 to any key made
+     after they were retired - "no longer available to new users. Please update
+     your code to use models/gemini-3.6-flash" - and a key made on 13 September
+     2026 is exactly that, so every paid question fell through to Workers AI,
+     which cannot search and invented a date. If Google retires these too, the
+     404 names their successor in the worker's logs (wrangler tail). */
+  for (const model of ["gemini-3.6-flash", "gemini-3.5-flash-lite"]) {
     try {
       const r = await fetch("https://generativelanguage.googleapis.com/v1beta/models/" + encodeURIComponent(model) + ":generateContent?key=" + encodeURIComponent(env.GEMINI_API_KEY), {
         method: "POST",
@@ -152,17 +198,35 @@ async function gemini(env: Env, sys: string, body: AskBody, question: string, se
       });
       if (!r.ok) {
         why = "gemini " + r.status + (search ? " with search" : "") + " on " + model;
-        console.error(JSON.stringify({ at: "ai", model, search, status: r.status, said: (await r.text()).slice(0, 300) }));
+        /* Long enough to keep Google's quota details, which name the exact
+           limit a 429 hit and come after the message. */
+        console.error(JSON.stringify({ at: "ai", model, search, status: r.status, said: (await r.text()).slice(0, 3000) }));
+        /* A search refused for quota is refused for every model on the key -
+           they share it - so there is no point asking the next one. And on a
+           key with no billing the allowance is not merely spent but absent:
+           Google refused the first search of the day on 13 September 2026. So
+           search is switched off for an hour rather than costing every paying
+           reader two refused round trips before their answer; if billing is
+           ever enabled, it comes back by itself within that hour. */
+        if (search && r.status === 429) {
+          if (env.KV) await env.KV.put(SEARCH_OFF_KEY, "1", { expirationTtl: 3600 }).catch(() => {});
+          return { why };
+        }
         continue;
       }
       const j = (await r.json()) as any;
       const cand = j?.candidates?.[0];
       const text = (cand?.content?.parts || []).map((p: any) => p.text || "").join("").trim();
       if (!text) { why = "gemini answered nothing on " + model; continue; }
+      /* A cut-off answer is still returned - it is better than nothing - but
+         said, so a ceiling that is too low shows up in the logs, and it is not
+         cached, so a reader asking again gets a fresh try. */
+      const partial = !!cand?.finishReason && cand.finishReason !== "STOP";
+      if (partial) console.error(JSON.stringify({ at: "ai", model, search, finishReason: cand.finishReason }));
       /* Where it looked, so a reader can tell a searched answer from a card
          reading - named the way the app names things elsewhere. */
       const pages = ((cand?.groundingMetadata?.groundingChunks || []) as any[]).map((c) => c?.web).filter(Boolean).slice(0, 3);
-      return { text: text + (pages.length ? "\n\n" + (SOURCES_WORD[body.lang] || SOURCES_WORD.en) + ": " + pages.map((c: any) => c.title || c.uri).join(" · ") : "") };
+      return { partial, text: text + (pages.length ? "\n\n" + (SOURCES_WORD[body.lang] || SOURCES_WORD.en) + ": " + pages.map((c: any) => c.title || c.uri).join(" · ") : "") };
     } catch (e) {
       why = "gemini threw on " + model + ": " + String((e as Error).message || e);
       console.error(JSON.stringify({ at: "ai", model, search, error: String(e) }));
@@ -491,7 +555,15 @@ export default {
        away the one thing paying buys; the other way round, a paying reader
        would be served a knowledge-only answer they did not ask for. */
     const fresh = !(body.history || []).length;
-    const cacheKey = { lang: body.lang, kind: body.kind, question, context: (body.context || "").slice(0, 12000), tier: paid ? "paid" : "free" };
+    /* gen: bumped whenever answers already in the cache should stop being
+       served. 2 - every paid answer cached before it was written by Workers AI
+       while Gemini was answering 404, without search, and at least one of them
+       gave a wrong date for Tết Trung Thu. */
+    /* 3 - Gemini's first answers were cut off by a 900-token ceiling that its
+       thinking had used up, and were cached. */
+    /* 4 - the prompt stopped telling Gemini to turn down questions that are not
+       about tarot for readers who have paid; their cached refusals go. */
+    const cacheKey = { gen: 4, lang: body.lang, kind: body.kind, question, context: (body.context || "").slice(0, 12000), tier: paid ? "paid" : "free" };
     if (fresh) {
       const hit = await cachedAnswer(cacheKey);
       if (hit) return new Response(JSON.stringify({ answer: hit }), { headers });
@@ -499,7 +571,7 @@ export default {
     const keep = (answer: string): void => { if (fresh && answer) keepAnswer(cacheKey, answer, ctx); };
 
     const knowledge = `KIND: ${body.kind}\nVISITOR: ${body.profile?.name || "-"} ${body.profile?.sign ? "(" + body.profile.sign + ")" : ""}\nKNOWLEDGE:\n${(body.context || "").slice(0, 12000)}`;
-    const sys = systemFor(body.lang) + "\n\n" + knowledge;
+    const sys = systemFor(body.lang, paid) + "\n\n" + knowledge;
 
     /* Who answers, in order - and none of it costs money.
 
@@ -516,13 +588,15 @@ export default {
        out of an allowance is a refusal and never a charge - the fallback is
        the next line, and past the last one the reader is told the AI is busy,
        which by then is true. */
+    const searchOff = env.KV ? !!(await env.KV.get(SEARCH_OFF_KEY).catch(() => null)) : false;
     const order: (() => Promise<Said>)[] = paid
-      ? [() => gemini(env, sys, body, question, true), () => gemini(env, sys, body, question, false), () => workersAi(env, sys, body, question)]
+      ? (searchOff ? [] : [() => gemini(env, sys, body, question, true)])
+          .concat([() => gemini(env, sys, body, question, false), () => workersAi(env, sys, body, question)])
       : [() => workersAi(env, sys, body, question), () => gemini(env, sys, body, question, false)];
     let why = "";
     for (const attempt of order) {
       const got = await attempt();
-      if (got.text) { keep(got.text); return new Response(JSON.stringify({ answer: got.text }), { headers }); }
+      if (got.text) { if (!got.partial) keep(got.text); return new Response(JSON.stringify({ answer: got.text }), { headers }); }
       if (got.why) why = got.why;
     }
 
@@ -560,7 +634,7 @@ export default {
            property. Worth adding with the next SDK bump; until then the
            refusal is answered in the reader's own language further down. */
         system: [
-          { type: "text", text: systemFor(body.lang), cache_control: { type: "ephemeral" } },
+          { type: "text", text: systemFor(body.lang, paid), cache_control: { type: "ephemeral" } },
           { type: "text", text: knowledge },
         ],
         messages,
