@@ -12,7 +12,7 @@
      carries this notice with it. See LICENSE. -->
 <meta name="author" content="Nabu Tarot">
 <meta name="copyright" content="Copyright (c) 2025-2026 Nabu Tarot. All rights reserved.">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'none'; object-src 'none'; form-action 'self'; script-src 'self' 'sha256-cMKRQ7U1NZplRc4m253J4gLMZmJsbWhWJ/mQ/wp2RHU=' https://www.gstatic.com https://apis.google.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; font-src 'self' data:; media-src 'self' data: blob:; worker-src 'self'; connect-src 'self' https://*.googleapis.com https://*.google.com https://*.firebaseio.com https://*.cloudfunctions.net https://*.workers.dev https://generativelanguage.googleapis.com; frame-src https://*.firebaseapp.com https://accounts.google.com https://*.facebook.com">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'none'; object-src 'none'; form-action 'self'; script-src 'self' 'sha256-WG//I3RTKT9voESvsK8thgJVJX6qLPn5eyFUksynmxo=' https://www.gstatic.com https://apis.google.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; font-src 'self' data:; media-src 'self' data: blob:; worker-src 'self'; connect-src 'self' https://*.googleapis.com https://*.google.com https://*.firebaseio.com https://*.cloudfunctions.net https://*.workers.dev https://generativelanguage.googleapis.com; frame-src https://*.firebaseapp.com https://accounts.google.com https://*.facebook.com">
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <meta name="theme-color" content="#EFE9FA">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -3860,7 +3860,7 @@ const STR = {
     localOnly: 'Hồ sơ đang lưu trên máy này.',
     accountsSoon: 'Nabu chưa bật đăng nhập. Khi bật, bạn đăng nhập bằng Google, Facebook hoặc email và mật khẩu; hồ sơ, tin nhắn và lịch hẹn sẽ đi theo bạn. Hiện hồ sơ lưu trên máy này.', accountsOff: 'Đăng nhập chưa mở.',
     signIn: 'Đăng nhập',
-    signInWith: { google: 'Tiếp tục với Google', facebook: 'Tiếp tục với Facebook', email: 'Tiếp tục với email' },
+    signInWith: { google: 'Tiếp tục với Google', facebook: 'Tiếp tục với Facebook', apple: 'Đăng nhập bằng Apple', email: 'Tiếp tục với email' },
     signOut: 'Đăng xuất', tourLink: 'Hướng dẫn', themeShort: { auto: '📱 Máy', light: '☀️ Sáng', dark: '🌙 Tối', pink: '🌸 Hồng' },
     emailLabel: 'Email', passwordLabel: 'Mật khẩu',
     signinLead: '🌙 Đăng nhập để Nabu ghi nhớ hành trình của bạn.',
@@ -4707,7 +4707,7 @@ const STR = {
     localOnly: 'Your profile is saved on this device.',
     accountsSoon: 'Nabu has not switched sign-in on yet. Once on, you sign in with Google, Facebook or email and password, and your profile, messages and bookings follow you. For now the profile stays on this device.', accountsOff: 'Sign-in is not open yet.',
     signIn: 'Sign in',
-    signInWith: { google: 'Continue with Google', facebook: 'Continue with Facebook', email: 'Continue with email' },
+    signInWith: { google: 'Continue with Google', facebook: 'Continue with Facebook', apple: 'Sign in with Apple', email: 'Continue with email' },
     signOut: 'Sign out', tourLink: 'Tour', themeShort: { auto: '📱 Auto', light: '☀️ Light', dark: '🌙 Dark', pink: '🌸 Pink' },
     emailLabel: 'Email', passwordLabel: 'Password',
     signinLead: '🌙 Sign in and Nabu remembers your journey.',
@@ -5546,7 +5546,7 @@ const STR = {
     localOnly: 'Dein Profil ist nur auf diesem Gerät gespeichert.',
     accountsSoon: 'Nabu hat die Anmeldung noch nicht eingeschaltet. Sobald sie an ist, meldest du dich mit Google, Facebook oder E-Mail und Passwort an, und dein Profil, deine Nachrichten und deine Termine kommen mit. Bis dahin bleibt das Profil auf diesem Gerät.', accountsOff: 'Die Anmeldung ist noch nicht offen.',
     signIn: 'Anmelden',
-    signInWith: { google: 'Weiter mit Google', facebook: 'Weiter mit Facebook', email: 'Weiter mit E-Mail' },
+    signInWith: { google: 'Weiter mit Google', facebook: 'Weiter mit Facebook', apple: 'Mit Apple anmelden', email: 'Weiter mit E-Mail' },
     signOut: 'Abmelden', tourLink: 'Rundgang', themeShort: { auto: '📱 Automatisch', light: '☀️ Hell', dark: '🌙 Dunkel', pink: '🌸 Rosa' },
     emailLabel: 'E-Mail', passwordLabel: 'Passwort',
     signinLead: '🌙 Melde dich an, damit Nabu deinen Weg behält.',
@@ -14359,8 +14359,45 @@ const BE = {
     catch (e) { return ''; }
   },
   async signIn(provider) {
+    if (isIOSApp()) return this.signInNative(provider);
     const P = provider === 'google' ? new firebase.auth.GoogleAuthProvider() : new firebase.auth.FacebookAuthProvider();
     try { await this.auth.signInWithPopup(P); } catch (e) { if (/popup/i.test(e.code || '')) await this.auth.signInWithRedirect(P); else throw e; }
+  },
+  /* The iPhone app. Google refuses to sign anybody in inside an app's own web
+     view (403 disallowed_useragent), and Apple requires its own sign-in beside
+     Google's, so both are asked of the phone itself: the shell's
+     FirebaseAuthentication plugin shows Google's or Apple's native sheet and
+     hands back the proof, and Firebase here signs in with it. The account is
+     the same account the website and the Android app use. skipNativeAuth keeps
+     the plugin from signing in a second, native Firebase session beside this
+     one, which is also what lets Apple's nonce reach this page. */
+  nativeAuth() {
+    const C = window.Capacitor;
+    if (!C) return null;
+    if (C.Plugins && C.Plugins.FirebaseAuthentication) return C.Plugins.FirebaseAuthentication;
+    return typeof C.isPluginAvailable === 'function' && C.isPluginAvailable('FirebaseAuthentication') && typeof C.registerPlugin === 'function'
+      ? C.registerPlugin('FirebaseAuthentication') : null;
+  },
+  async signInNative(provider) {
+    const FA = this.nativeAuth();
+    if (!FA) throw Object.assign(new Error('native sign-in unavailable'), { code: 'auth/native-unavailable' });
+    let cred;
+    try {
+      if (provider === 'apple') {
+        const r = await FA.signInWithApple({ skipNativeAuth: true }), c = (r && r.credential) || {};
+        cred = new firebase.auth.OAuthProvider('apple.com').credential({ idToken: c.idToken, rawNonce: c.nonce });
+      } else if (provider === 'google') {
+        const r = await FA.signInWithGoogle({ skipNativeAuth: true }), c = (r && r.credential) || {};
+        cred = firebase.auth.GoogleAuthProvider.credential(c.idToken, c.accessToken);
+      } else throw Object.assign(new Error('provider'), { code: 'auth/operation-not-allowed' });
+    } catch (e) {
+      /* The native sheets say a closed sheet in words, not in a Firebase
+         code: Google's "canceled the sign-in flow", Apple's AuthorizationError
+         1001. Said the way a closed popup already is. */
+      if (e && !/^auth\//.test(e.code || '') && /cancel|error 1001/i.test(String(e.message || ''))) throw Object.assign(new Error('cancelled'), { code: 'auth/popup-closed-by-user' });
+      throw e;
+    }
+    await this.auth.signInWithCredential(cred);
   },
   async signInEmail(email, pw, create) {
     this.speakTheirLanguage();
@@ -14409,6 +14446,10 @@ const BE = {
          next reader sees the same one a stranger would. */
       if (typeof LIKES !== 'undefined') LIKES.forget();
     } catch (e) { /* a full phone must not be able to trap somebody signed in */ }
+    /* In the iPhone app Google's own SDK remembers who signed in, apart from
+       Firebase. Forgotten too, so the next person on the phone is asked to
+       choose an account rather than handed the last one. Never waited on. */
+    if (isIOSApp()) { const FA = this.nativeAuth(); if (FA) Promise.resolve().then(() => FA.signOut()).catch(() => {}); }
     return this.auth.signOut();
   },
   /* Account deletion (a store requirement): profile, thread and messages, bookings, then the login itself.
@@ -24627,8 +24668,20 @@ const GOOGLE_MARK ='<svg viewBox="0 0 24 24"><path fill="#4285F4" d="M21.6 12.2c
 /* Each block rises into place a beat after the one above it (.srise, with
    --i counting the beats). The stagger is decoration: with reduced motion on
    the page simply appears, complete. */
+/* Which doors this page offers. The website and the Android app offer what
+   CONFIG lists. The iPhone app offers Google, Apple and email: Apple requires
+   its own sign-in wherever Google's is offered, and Facebook's native SDK was
+   left out of the shell - an account made with Facebook still signs in on the
+   website. */
+function authProvidersHere() {
+  const prov = CONFIG.authProviders || [];
+  if (!isIOSApp()) return prov;
+  return ['google', 'apple', 'email'].filter((p) => p === 'apple' ? prov.indexOf('google') > -1 : prov.indexOf(p) > -1);
+}
+const APPLE_MARK = '<svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M16.4 12.6c0-2.5 2-3.7 2.1-3.8-1.2-1.7-3-1.9-3.6-2-1.5-.2-3 .9-3.8.9-.8 0-2-.9-3.3-.8-1.7 0-3.3 1-4.2 2.5-1.8 3.1-.5 7.7 1.3 10.2.9 1.2 1.9 2.6 3.2 2.6 1.3-.1 1.8-.8 3.3-.8 1.6 0 2 .8 3.4.8 1.4 0 2.3-1.3 3.1-2.5 1-1.4 1.4-2.8 1.4-2.9 0 0-2.8-1.1-2.9-4.2zM13.9 5.1c.7-.9 1.2-2 1-3.1-1 0-2.2.7-2.9 1.5-.6.7-1.2 1.9-1.1 3 1.1.1 2.3-.6 3-1.4z"/></svg>';
+
 function signinHTML(mode) {
-  const S = T(), prov = CONFIG.authProviders || [], create = mode === 'create';
+  const S = T(), prov = authProvidersHere(), create = mode === 'create';
   let i = 0;
   /* The beat is added to whatever the block already is, never in front of it.
      Writing a second class attribute instead loses the first: the parser keeps
@@ -24641,6 +24694,7 @@ function signinHTML(mode) {
       : html.replace(/^(<\w+)/, '$1 class="srise"' + beat);
   };
   const social = (prov.indexOf('google') > -1 ? '<button type="button" class="btn block" data-auth="google">' + GOOGLE_MARK + esc(S.signInWith.google) + '</button>' : '')
+    + (prov.indexOf('apple') > -1 ? '<button type="button" class="btn block" data-auth="apple" style="background:#000;color:#fff;border-color:transparent">' + APPLE_MARK + esc(S.signInWith.apple) + '</button>' : '')
     + (prov.indexOf('facebook') > -1 ? '<button type="button" class="btn block" data-auth="facebook" style="background:#1461C7;color:#fff;border-color:transparent">' + esc(S.signInWith.facebook) + '</button>' : '');
   const email = prov.indexOf('email') > -1, app = inAppBrowser();
   return '<section class="signin">'
@@ -28674,7 +28728,7 @@ function adminSale(p) {
 ROUTES.admin = { nav: '', render: renderAdmin };
 
 /* ============================ boot ============================ */
-window.APP_VERSION = 'v234';
+window.APP_VERSION = 'v235';
 window.NABU = { CONFIG: CONFIG, SALE: SALE, salePrice: salePrice, loadActs: loadActs, BACK: BACK, LESSONS: LESSONS, localAnswer: localAnswer, compatVerdict: compatVerdict, numerologyOf: numerologyOf, ZDEEP: ZDEEP, lunarToday: lunarToday, solarToLunar: solarToLunar, DECK: DECK, INSIGHT: INSIGHT, KW: KW, ASK: ASK, TOPICS: TOPICS, GUIDES: GUIDES, SERVICES: SERVICES, COURSES: COURSES, ACCESS: ACCESS, INTERESTS: INTERESTS, plusOn: () => plusOn(), proOn: () => proOn(), luckUnlimited: () => luckUnlimited(), ZODIAC: ZODIAC, pick: pick, book: book, PLAY_ITEMS: PLAY_ITEMS, PLAY_SUB_SKUS: PLAY_SUB_SKUS, playItem: playItem, BILL: BILL, SUBS: SUBS, renderStore: renderStore, subStateWord: subStateWord,
   insightHTML: insightHTML, insightOf: insightOf, sunSignIndex: sunSignIndex, lifePath: lifePath, PROFILE: () => PROFILE, BE: BE, inAppBrowser: inAppBrowser, ACTS: ACTS, CMT: CMT, LIKES: LIKES, kbReady: kbReady, AI: AI, STR: STR, KB_URL: (typeof KB_URL === 'string' ? KB_URL : ''),
   ANGELS: ANGELS, angelRead: angelRead, CODEBOOK: CODEBOOK, redeemCode: redeemCode, loadCodebook: loadCodebook, petHomeSVG: petHomeSVG, PET_HOMES: PET_HOMES, PET_WEARS: PET_WEARS, codeDigest: codeDigest, randomCode: randomCode, BANK: BANK, PETS: PETS, petSVG: petSVG, PET_COATS: PET_COATS, PET_KINDS: PET_KINDS, turnsMerge: turnsMerge, turnsLocal: turnsLocal, TODAY: TODAY, treeMsgOf: treeMsgOf, priceText: priceText, termText: termText, proSaveText: () => proSaveText(), wedFeeText: () => wedFeeText(), fmtPrice: fmtPrice, luckCut: luckCut, petLevel: petLevel, petStep: petStep, VOUCHERS: VOUCHERS, levelCoins: levelCoins, LOOKS: LOOKS,

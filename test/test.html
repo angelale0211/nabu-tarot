@@ -2175,6 +2175,41 @@ async function go(hash, sel) { W().location.hash = hash; await sleep(30); return
       await go('#/unlock?from=app', '.store');
       ok(d.querySelector('.store [data-retry]') && !d.querySelector('.store [data-buy]') && !/Chrome/.test(d.querySelector('.store').textContent),
         'the iPhone app opens the in-app store rather than the website\'s, and never tells an iPhone to use Chrome');
+      { /* Signing in inside the iPhone app. Google refuses an app's web view,
+           so Google and Apple are asked of the shell's native plugin, and
+           Firebase here signs in with the proof it hands back. Facebook has no
+           native SDK in the shell, so its button is not offered there. */
+        const keepS = { user: N.BE.user, auth: N.BE.auth, fb: w.firebase }, calls = [], creds = [];
+        N.BE.user = null;
+        await go('#/home', '.tiles'); await go('#/signin', '.signin');
+        const doors = Array.from(d.querySelectorAll('.signin [data-auth]')).map((b) => b.getAttribute('data-auth')).join(',');
+        ok(doors === 'google,apple' && d.querySelector('.signin #aemail') && /Đăng nhập bằng Apple/.test(d.querySelector('.signin [data-auth="apple"]').textContent),
+          'the iPhone app\'s sign-in page offers Google, Apple and email, and not Facebook (' + doors + ')');
+        w.Capacitor.Plugins = { FirebaseAuthentication: {
+          signInWithApple: async (o) => { calls.push('apple:' + (o && o.skipNativeAuth)); return { credential: { idToken: 'appleTok', nonce: 'rawNonce' } }; },
+          signInWithGoogle: async (o) => { calls.push('google:' + (o && o.skipNativeAuth)); if (calls.cancel) throw new Error('The user canceled the sign-in flow.'); return { credential: { idToken: 'gTok', accessToken: 'gAcc' } }; },
+          signOut: async () => { calls.push('out'); } } };
+        w.firebase = { auth: { GoogleAuthProvider: { credential: (id, acc) => ({ p: 'google.com', id: id, acc: acc }) },
+          OAuthProvider: function (p) { this.credential = (o) => ({ p: p, id: o.idToken, nonce: o.rawNonce }); } } };
+        N.BE.auth = { signInWithCredential: async (c) => { creds.push(c); }, signOut: async () => {} };
+        await N.BE.signIn('apple'); await N.BE.signIn('google');
+        ok(calls.join(' ') === 'apple:true google:true' && creds[0].p === 'apple.com' && creds[0].id === 'appleTok' && creds[0].nonce === 'rawNonce' && creds[1].p === 'google.com' && creds[1].id === 'gTok',
+          'in the iPhone app Apple and Google sign in natively, and Firebase signs in with the token and Apple\'s nonce (' + calls.join(' ') + ')');
+        calls.cancel = true;
+        const cancelled = await N.BE.signIn('google').then(() => null, (e) => e);
+        ok(cancelled && cancelled.code === 'auth/popup-closed-by-user', 'closing the native sheet reads as a closed sign-in, not a failure');
+        await N.BE.signOut(); await sleep(30);
+        ok(calls.indexOf('out') > -1, 'signing out in the iPhone app forgets the native Google account too');
+        delete w.Capacitor.Plugins;
+        const missing = await N.BE.signIn('apple').then(() => null, (e) => e);
+        ok(missing && missing.code === 'auth/native-unavailable' && creds.length === 2, 'an older shell without the plugin says so rather than opening a popup Google will refuse');
+        delete w.Capacitor;
+        await go('#/home', '.tiles'); await go('#/signin', '.signin');
+        const webDoors = Array.from(d.querySelectorAll('.signin [data-auth]')).map((b) => b.getAttribute('data-auth')).join(',');
+        ok(webDoors.indexOf('apple') === -1 && webDoors === (N.CONFIG.authProviders || []).filter((p) => p !== 'email').join(','),
+          'outside the iPhone app the sign-in page is unchanged: no Apple, and every provider CONFIG lists (' + webDoors + ')');
+        w.Capacitor = { getPlatform: () => 'ios' };
+        N.BE.user = keepS.user; N.BE.auth = keepS.auth; if (keepS.fb === undefined) delete w.firebase; else w.firebase = keepS.fb; }
       delete w.Capacitor;
       await go('#/home', '.tiles'); await go('#/unlock', '.unlist');
       ok(!d.querySelector('.store') && d.querySelector('[data-unl]') && !/shell=ios/.test(N.BILL.diag('')), 'without the shell the same phone is given the website\'s unlock page again');
