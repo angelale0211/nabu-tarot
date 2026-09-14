@@ -84,6 +84,11 @@ round_badge = badge()
 save(round_badge, 'icon-512.png', 512)
 save(round_badge, 'icon-192.png', 192)
 save(round_badge, 'icon-180.png', 180, flatten=PURPLE)
+# The App Store icon and the iPhone app's home-screen icon: the same picture as
+# icon-180 - iOS applies its own rounded mask and paints transparency black, so
+# the purple is kept behind the circle and there is no alpha - at the 1024px
+# Apple asks for. BIG is 2048, so this is still one clean step down.
+save(round_badge, 'icon-1024.png', 1024, flatten=PURPLE)
 
 def ringless():
     """The avatar with its outline ring lifted off, and nothing else.
@@ -132,3 +137,24 @@ canvas = Image.new('RGBA', (BIG, BIG), PALE + (255,))
 inner = int(BIG * (1 - 2 * pad))
 canvas.alpha_composite(ringless().resize((inner, inner), Image.LANCZOS), ((BIG - inner) // 2, (BIG - inner) // 2))
 save(canvas, 'icon-512-maskable.png', 512, flatten=PALE)
+
+
+# ---- the iPhone app's launch screen ----
+# Only when asked for, with NABU_IOS pointing at the Capacitor shell: the file
+# belongs to that project, not to the website. The storyboard shows it scaled
+# to fill the screen, so a 2732px square is cropped to a phone-shaped strip of
+# its middle: the badge is drawn at about 14% of the square, which comes out
+# near 120pt tall on a phone. The ground is the app's own pale pink (#FBEEF2),
+# the same as the Android splash and the loading screen that follows it.
+IOS = os.environ.get('NABU_IOS', '')
+if IOS:
+    GROUND = (251, 238, 242)
+    SPLASH, MARK = 2732, 380
+    sheet = Image.new('RGBA', (SPLASH, SPLASH), GROUND + (255,))
+    sheet.alpha_composite(round_badge.resize((MARK, MARK), Image.LANCZOS), ((SPLASH - MARK) // 2, (SPLASH - MARK) // 2))
+    sheet = sheet.convert('RGB')
+    dst = os.path.join(IOS, 'ios', 'App', 'App', 'Assets.xcassets')
+    for name in ('splash-2732x2732.png', 'splash-2732x2732-1.png', 'splash-2732x2732-2.png'):
+        sheet.save(os.path.join(dst, 'Splash.imageset', name), optimize=True)
+    Image.open(os.path.join(HERE, 'icon-1024.png')).convert('RGB').save(os.path.join(dst, 'AppIcon.appiconset', 'AppIcon-512@2x.png'), optimize=True)
+    print('iOS shell assets ->', dst)
