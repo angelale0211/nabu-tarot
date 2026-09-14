@@ -16,7 +16,7 @@ import { itemBySku, itemByKey } from "./catalog";
 import { applySubscription, payRoom, noteGranted } from "./entitle";
 import { handleRtdn } from "./rtdn";
 import { reconcileSubs } from "./reconcile";
-import { appleBill, handleAsn, sweepAppleRefunds } from "./apple";
+import { appleBill, handleAsn, sweepAppleRefunds, appleRevoke } from "./apple";
 
 export interface Env {
   ANTHROPIC_API_KEY?: string;
@@ -34,6 +34,9 @@ export interface Env {
   APPLE_ISSUER_ID?: string;    // the In-App Purchase key's issuer, from App Store Connect
   APPLE_KEY_ID?: string;       // that key's id
   APPLE_PRIVATE_KEY?: string;  // the .p8, as a secret
+  APPLE_TEAM_ID?: string;           // for Sign in with Apple
+  APPLE_SIWA_KEY_ID?: string;       // the Sign in with Apple key's id
+  APPLE_SIWA_PRIVATE_KEY?: string;  // its .p8, as a secret
 }
 
 /* What one person may ask in a day.
@@ -349,6 +352,19 @@ export default {
        been handed over before. Then the access is written from here, with the
        service account, so that granting it never depends on what a phone is
        allowed to write. */
+    /* ---- an account signed in with Apple is being deleted: revoke the Apple sign-in (apple.ts) ---- */
+    if (path.endsWith("/apple-revoke")) {
+      if (!env.FIREBASE_PROJECT_ID) return new Response(JSON.stringify({ error: "not configured" }), { status: 500, headers });
+      const person = await whoIsAsking(request, env.FIREBASE_PROJECT_ID);
+      if (!person) return new Response(JSON.stringify({ error: "signin" }), { status: 401, headers });
+      const v = await allow(env, "revoke:" + person.uid, 10, 3);
+      if (!v.ok) return tooMany(v, headers);
+      let b: { code?: string };
+      try { b = await request.json(); } catch { return new Response(JSON.stringify({ error: "bad json" }), { status: 400, headers }); }
+      try { const a = await appleRevoke(env, person, String(b.code || "")); return new Response(JSON.stringify(a.body), { status: a.status, headers }); }
+      catch (e) { console.error(JSON.stringify({ at: "apple-revoke", uid: person.uid, error: String((e as Error).message || e) })); return new Response(JSON.stringify({ error: "revoke failed" }), { status: 502, headers }); }
+    }
+
     if (path.endsWith("/billing")) {
       if (!env.FIREBASE_PROJECT_ID) return new Response(JSON.stringify({ error: "not configured" }), { status: 500, headers });
       const person = await whoIsAsking(request, env.FIREBASE_PROJECT_ID);

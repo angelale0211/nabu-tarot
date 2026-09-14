@@ -135,9 +135,41 @@ const BE = {
     if (isIOSApp()) { const FA = this.nativeAuth(); if (FA) Promise.resolve().then(() => FA.signOut()).catch(() => {}); }
     return this.auth.signOut();
   },
+  /* Apple's rule for an app with Sign in with Apple: deleting the account also revokes the Apple sign-in.
+     Inside the iPhone app, for an account that signs in with Apple, Apple is asked to sign the person in once
+     more. That does two jobs. Firebase wants a recent sign-in before it deletes a login - without it the
+     deletion used to stop half way with auth/requires-recent-login, the data already gone - and Apple's
+     answer carries a one-time code the worker exchanges and revokes (/apple-revoke, worker/src/apple.ts).
+     A failure to reach the worker does not stop the deletion: what the person asked for still happens, and
+     the worker's log says what it could not do. Anywhere but the iPhone app this does nothing. */
+  async appleBeforeDelete() {
+    if (!isIOSApp() || !this.user) return;
+    if (!(this.user.providerData || []).some((p) => p && p.providerId === 'apple.com')) return;
+    const FA = this.nativeAuth();
+    if (!FA) return;
+    let r;
+    try { r = await FA.signInWithApple({ skipNativeAuth: true }); }
+    catch (e) {
+      if (/cancel|error 1001/i.test(String((e && e.message) || ''))) throw Object.assign(new Error('cancelled'), { code: 'auth/popup-closed-by-user' });
+      throw e;
+    }
+    const c = (r && r.credential) || {};
+    await this.user.reauthenticateWithCredential(new firebase.auth.OAuthProvider('apple.com').credential({ idToken: c.idToken, rawNonce: c.nonce }));
+    if (!c.authorizationCode || !CONFIG.aiEndpoint) return;
+    try {
+      const idTok = await this.token();
+      await withTimeout(fetch(CONFIG.aiEndpoint.replace(/\/$/, '') + '/apple-revoke', {
+        method: 'POST', headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + idTok },
+        body: JSON.stringify({ code: c.authorizationCode })
+      }), 20000);
+    } catch (e) { /* offline or not configured: the deletion goes on */ }
+  },
   /* Account deletion (a store requirement): profile, thread and messages, bookings, then the login itself.
      Firebase asks for a recent sign-in before deleting a login; the caller handles that error. */
   async deleteAccount() {
+    /* First, while nothing is gone yet: an account that signs in with Apple is confirmed with Apple and its
+       Apple sign-in revoked. If the person closes Apple's sheet here, nothing at all has been deleted. */
+    await this.appleBeforeDelete();
     const uid = this.user.uid, db = this.db;
     const wipe = async (q) => { const s = await q.get(); await Promise.all(s.docs.map((d) => d.ref.delete().catch(() => {}))); };
     try { await wipe(db.collection('threads').doc(uid).collection('messages')); } catch (e) { /* rules or offline */ }

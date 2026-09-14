@@ -357,7 +357,7 @@ function meSect(id, icon, title, body, openByDefault, force) {
       if (!confirm(S.delConfirm)) return;
       da.disabled = true; const st = $('#delstatus'); st.textContent = S.sending;
       try { await BE.deleteAccount(); toast(S.delDone); location.hash = '#/home'; }
-      catch (e) { da.disabled = false; if (e && e.code === 'auth/requires-recent-login') { st.textContent = S.delRelogin; st.className = 'hint err'; try { await BE.signOut(); } catch (e2) { /* already out */ } } else { st.textContent = S.publishFail + ': ' + (e && e.message || e); st.className = 'hint err'; } }
+      catch (e) { da.disabled = false; if (e && e.code === 'auth/popup-closed-by-user') { st.textContent = S.authCancelled; st.className = 'hint'; } else if (e && e.code === 'auth/requires-recent-login') { st.textContent = S.delRelogin; st.className = 'hint err'; try { await BE.signOut(); } catch (e2) { /* already out */ } } else { st.textContent = S.publishFail + ': ' + (e && e.message || e); st.className = 'hint err'; } }
     });
     if (BE.enabled && BE.user) {
       /* Nabu's own profile has no chat box, so there is nothing to bind. */

@@ -2620,6 +2620,8 @@ html[lang="de"] .actquick .aq b{-webkit-line-clamp:3}
    and the value keeps its half of the row. */
 html[lang="de"] .tbl td:first-child{white-space:normal;overflow-wrap:break-word}
 html[lang="de"] #today .tbl td:first-child{width:52%}
+/* A calendar's name breaks between its words, never inside one: "Vietnamesischer Kalen-der" at 440px. */
+html[lang="de"] #today .tbl td:first-child{-webkit-hyphens:manual;hyphens:manual}
 
 /* ---- the first seconds inside the installed app ----
 

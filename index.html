@@ -12,7 +12,7 @@
      carries this notice with it. See LICENSE. -->
 <meta name="author" content="Nabu Tarot">
 <meta name="copyright" content="Copyright (c) 2025-2026 Nabu Tarot. All rights reserved.">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'none'; object-src 'none'; form-action 'self'; script-src 'self' 'sha256-wlQp0pZVOOrnEjtyuMnMet+YWZaIKe01OCxJ3EgcRIM=' https://www.gstatic.com https://apis.google.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; font-src 'self' data:; media-src 'self' data: blob:; worker-src 'self'; connect-src 'self' https://*.googleapis.com https://*.google.com https://*.firebaseio.com https://*.cloudfunctions.net https://*.workers.dev https://generativelanguage.googleapis.com; frame-src https://*.firebaseapp.com https://accounts.google.com https://*.facebook.com">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'none'; object-src 'none'; form-action 'self'; script-src 'self' 'sha256-bBRmTtQ8Qz4+v9is9x4a7rCSq1mgSCjB6tpaLq+Dak8=' https://www.gstatic.com https://apis.google.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; font-src 'self' data:; media-src 'self' data: blob:; worker-src 'self'; connect-src 'self' https://*.googleapis.com https://*.google.com https://*.firebaseio.com https://*.cloudfunctions.net https://*.workers.dev https://generativelanguage.googleapis.com; frame-src https://*.firebaseapp.com https://accounts.google.com https://*.facebook.com">
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <meta name="theme-color" content="#EFE9FA">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -2786,6 +2786,8 @@ html[lang="de"] .actquick .aq b{-webkit-line-clamp:3}
    and the value keeps its half of the row. */
 html[lang="de"] .tbl td:first-child{white-space:normal;overflow-wrap:break-word}
 html[lang="de"] #today .tbl td:first-child{width:52%}
+/* A calendar's name breaks between its words, never inside one: "Vietnamesischer Kalen-der" at 440px. */
+html[lang="de"] #today .tbl td:first-child{-webkit-hyphens:manual;hyphens:manual}
 
 /* ---- the first seconds inside the installed app ----
 
@@ -14531,9 +14533,41 @@ const BE = {
     if (isIOSApp()) { const FA = this.nativeAuth(); if (FA) Promise.resolve().then(() => FA.signOut()).catch(() => {}); }
     return this.auth.signOut();
   },
+  /* Apple's rule for an app with Sign in with Apple: deleting the account also revokes the Apple sign-in.
+     Inside the iPhone app, for an account that signs in with Apple, Apple is asked to sign the person in once
+     more. That does two jobs. Firebase wants a recent sign-in before it deletes a login - without it the
+     deletion used to stop half way with auth/requires-recent-login, the data already gone - and Apple's
+     answer carries a one-time code the worker exchanges and revokes (/apple-revoke, worker/src/apple.ts).
+     A failure to reach the worker does not stop the deletion: what the person asked for still happens, and
+     the worker's log says what it could not do. Anywhere but the iPhone app this does nothing. */
+  async appleBeforeDelete() {
+    if (!isIOSApp() || !this.user) return;
+    if (!(this.user.providerData || []).some((p) => p && p.providerId === 'apple.com')) return;
+    const FA = this.nativeAuth();
+    if (!FA) return;
+    let r;
+    try { r = await FA.signInWithApple({ skipNativeAuth: true }); }
+    catch (e) {
+      if (/cancel|error 1001/i.test(String((e && e.message) || ''))) throw Object.assign(new Error('cancelled'), { code: 'auth/popup-closed-by-user' });
+      throw e;
+    }
+    const c = (r && r.credential) || {};
+    await this.user.reauthenticateWithCredential(new firebase.auth.OAuthProvider('apple.com').credential({ idToken: c.idToken, rawNonce: c.nonce }));
+    if (!c.authorizationCode || !CONFIG.aiEndpoint) return;
+    try {
+      const idTok = await this.token();
+      await withTimeout(fetch(CONFIG.aiEndpoint.replace(/\/$/, '') + '/apple-revoke', {
+        method: 'POST', headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + idTok },
+        body: JSON.stringify({ code: c.authorizationCode })
+      }), 20000);
+    } catch (e) { /* offline or not configured: the deletion goes on */ }
+  },
   /* Account deletion (a store requirement): profile, thread and messages, bookings, then the login itself.
      Firebase asks for a recent sign-in before deleting a login; the caller handles that error. */
   async deleteAccount() {
+    /* First, while nothing is gone yet: an account that signs in with Apple is confirmed with Apple and its
+       Apple sign-in revoked. If the person closes Apple's sheet here, nothing at all has been deleted. */
+    await this.appleBeforeDelete();
     const uid = this.user.uid, db = this.db;
     const wipe = async (q) => { const s = await q.get(); await Promise.all(s.docs.map((d) => d.ref.delete().catch(() => {}))); };
     try { await wipe(db.collection('threads').doc(uid).collection('messages')); } catch (e) { /* rules or offline */ }
@@ -24922,7 +24956,7 @@ function meSect(id, icon, title, body, openByDefault, force) {
       if (!confirm(S.delConfirm)) return;
       da.disabled = true; const st = $('#delstatus'); st.textContent = S.sending;
       try { await BE.deleteAccount(); toast(S.delDone); location.hash = '#/home'; }
-      catch (e) { da.disabled = false; if (e && e.code === 'auth/requires-recent-login') { st.textContent = S.delRelogin; st.className = 'hint err'; try { await BE.signOut(); } catch (e2) { /* already out */ } } else { st.textContent = S.publishFail + ': ' + (e && e.message || e); st.className = 'hint err'; } }
+      catch (e) { da.disabled = false; if (e && e.code === 'auth/popup-closed-by-user') { st.textContent = S.authCancelled; st.className = 'hint'; } else if (e && e.code === 'auth/requires-recent-login') { st.textContent = S.delRelogin; st.className = 'hint err'; try { await BE.signOut(); } catch (e2) { /* already out */ } } else { st.textContent = S.publishFail + ': ' + (e && e.message || e); st.className = 'hint err'; } }
     });
     if (BE.enabled && BE.user) {
       /* Nabu's own profile has no chat box, so there is nothing to bind. */
@@ -29093,7 +29127,7 @@ function adminSale(p) {
 ROUTES.admin = { nav: '', render: renderAdmin };
 
 /* ============================ boot ============================ */
-window.APP_VERSION = 'v240';
+window.APP_VERSION = 'v241';
 window.NABU = { CONFIG: CONFIG, SALE: SALE, salePrice: salePrice, loadActs: loadActs, BACK: BACK, LESSONS: LESSONS, localAnswer: localAnswer, compatVerdict: compatVerdict, numerologyOf: numerologyOf, ZDEEP: ZDEEP, lunarToday: lunarToday, solarToLunar: solarToLunar, DECK: DECK, INSIGHT: INSIGHT, KW: KW, ASK: ASK, TOPICS: TOPICS, GUIDES: GUIDES, SERVICES: SERVICES, COURSES: COURSES, ACCESS: ACCESS, INTERESTS: INTERESTS, plusOn: () => plusOn(), proOn: () => proOn(), luckUnlimited: () => luckUnlimited(), ZODIAC: ZODIAC, pick: pick, book: book, PLAY_ITEMS: PLAY_ITEMS, PLAY_SUB_SKUS: PLAY_SUB_SKUS, playItem: playItem, BILL: BILL, SUBS: SUBS, billUse: billUse, APPLE_BILL: APPLE_BILL, appleAccountToken: appleAccountToken, renderStore: renderStore, subStateWord: subStateWord,
   insightHTML: insightHTML, insightOf: insightOf, sunSignIndex: sunSignIndex, lifePath: lifePath, PROFILE: () => PROFILE, BE: BE, inAppBrowser: inAppBrowser, ACTS: ACTS, CMT: CMT, LIKES: LIKES, kbReady: kbReady, AI: AI, STR: STR, KB_URL: (typeof KB_URL === 'string' ? KB_URL : ''),
   ANGELS: ANGELS, angelRead: angelRead, CODEBOOK: CODEBOOK, redeemCode: redeemCode, loadCodebook: loadCodebook, petHomeSVG: petHomeSVG, PET_HOMES: PET_HOMES, PET_WEARS: PET_WEARS, codeDigest: codeDigest, randomCode: randomCode, BANK: BANK, PETS: PETS, petSVG: petSVG, PET_COATS: PET_COATS, PET_KINDS: PET_KINDS, turnsMerge: turnsMerge, turnsLocal: turnsLocal, TODAY: TODAY, treeMsgOf: treeMsgOf, priceText: priceText, termText: termText, proSaveText: () => proSaveText(), wedFeeText: () => wedFeeText(), fmtPrice: fmtPrice, luckCut: luckCut, petLevel: petLevel, petStep: petStep, VOUCHERS: VOUCHERS, levelCoins: levelCoins, LOOKS: LOOKS,

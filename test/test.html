@@ -2209,6 +2209,25 @@ async function go(hash, sel) { W().location.hash = hash; await sleep(30); return
         ok(cancelled && cancelled.code === 'auth/popup-closed-by-user', 'closing the native sheet reads as a closed sign-in, not a failure');
         await N.BE.signOut(); await sleep(30);
         ok(calls.indexOf('out') > -1, 'signing out in the iPhone app forgets the native Google account too');
+        { /* Deleting an account that signs in with Apple, in the iPhone app: Apple confirms the person once more,
+             Firebase is re-authenticated with that answer, and the one-time code goes to /apple-revoke - all
+             before anything is deleted. Closing Apple's sheet stops the deletion. */
+          const keepUser = N.BE.user, keepF = w.fetch, sent = [], reauth = [];
+          w.Capacitor.Plugins.FirebaseAuthentication.signInWithApple = async (o) => { calls.push('apple-again:' + (o && o.skipNativeAuth)); if (calls.cancelApple) throw new Error('The operation couldn’t be completed. (com.apple.AuthenticationServices.AuthorizationError error 1001.)'); return { credential: { idToken: 'appleTok2', nonce: 'n2', authorizationCode: 'code-123' } }; };
+          N.BE.user = { uid: 'uA', providerData: [{ providerId: 'apple.com' }], reauthenticateWithCredential: async (c) => { reauth.push(c); } };
+          N.BE.auth.currentUser = { getIdToken: async () => 'idtok' };
+          w.fetch = async (url, opt) => { if (/\/apple-revoke$/.test(url)) { sent.push(JSON.parse(opt.body).code); return { ok: true, status: 200, json: async () => ({ ok: true }) }; } return keepF(url, opt); };
+          await N.BE.appleBeforeDelete();
+          ok(reauth.length === 1 && reauth[0].p === 'apple.com' && reauth[0].nonce === 'n2' && sent[0] === 'code-123',
+            'deleting an Apple account in the iPhone app re-authenticates with Apple and sends the one-time code to be revoked first');
+          calls.cancelApple = true;
+          const stopped = await N.BE.appleBeforeDelete().then(() => null, (e) => e);
+          ok(stopped && stopped.code === 'auth/popup-closed-by-user' && sent.length === 1, 'closing Apple\'s sheet stops the deletion before anything is sent or deleted');
+          calls.cancelApple = false;
+          N.BE.user = { uid: 'uG', providerData: [{ providerId: 'google.com' }], reauthenticateWithCredential: async (c) => { reauth.push(c); } };
+          await N.BE.appleBeforeDelete();
+          ok(reauth.length === 1 && sent.length === 1, 'an account that does not sign in with Apple is deleted as before, with nothing asked of Apple');
+          N.BE.user = keepUser; w.fetch = keepF; delete N.BE.auth.currentUser; }
         delete w.Capacitor.Plugins;
         const missing = await N.BE.signIn('apple').then(() => null, (e) => e);
         ok(missing && missing.code === 'auth/native-unavailable' && creds.length === 2, 'an older shell without the plugin says so rather than opening a popup Google will refuse');

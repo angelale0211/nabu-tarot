@@ -25,6 +25,9 @@ import { serviceToken, FS_SCOPE, grantUntil } from "./play";
 
 export interface AppleEnv extends PlayEnv {
   APPLE_BUNDLE_ID?: string;    // app.nabutarot.ios
+  APPLE_TEAM_ID?: string;         // the developer team, for Sign in with Apple
+  APPLE_SIWA_KEY_ID?: string;     // a Sign in with Apple key (a different key from the In-App Purchase one)
+  APPLE_SIWA_PRIVATE_KEY?: string; // that key's .p8, as a secret
   APPLE_ISSUER_ID?: string;    // App Store Connect > Users and Access > Integrations > In-App Purchase
   APPLE_KEY_ID?: string;       // the id of that key
   APPLE_PRIVATE_KEY?: string;  // the .p8 file's contents, as a secret
@@ -357,4 +360,53 @@ export async function sweepAppleRefunds(env: AppleEnv, cap = 200): Promise<{ loo
     } catch { out.failed++; }
   }
   return out;
+}
+
+/* ---- Sign in with Apple, taken back when the account is deleted ----
+
+   Apple's rule for an app that offers Sign in with Apple and lets somebody
+   delete their account: the deletion must also revoke the Apple sign-in, so
+   the app no longer appears under "Sign in with Apple" in that person's Apple
+   ID. It takes Apple's REST API and a client secret signed with a Sign in with
+   Apple key, which is why it happens here and not on the phone.
+
+   The phone has just asked Apple to sign the person in again - Firebase needs
+   a fresh sign-in before it deletes a login anyway - and hands over the
+   one-time authorization code that came with it. That code is exchanged for
+   the refresh token, and the refresh token is revoked. The code is only taken
+   for the Apple ID this Nabu account signs in with: Apple's own id_token says
+   whose it is, and Firebase's token says whose the account is. */
+async function siwaSecret(env: AppleEnv): Promise<string> {
+  const iat = Math.floor(Date.now() / 1000);
+  const header = b64url(utf8(JSON.stringify({ alg: "ES256", kid: env.APPLE_SIWA_KEY_ID })));
+  const claim = b64url(utf8(JSON.stringify({ iss: env.APPLE_TEAM_ID, iat, exp: iat + 300, aud: "https://appleid.apple.com", sub: bundleOf(env) })));
+  const key = await crypto.subtle.importKey("pkcs8", pemToBytes(env.APPLE_SIWA_PRIVATE_KEY || ""), { name: "ECDSA", namedCurve: "P-256" }, false, ["sign"]);
+  const sig = await crypto.subtle.sign({ name: "ECDSA", hash: "SHA-256" }, key, utf8(header + "." + claim));
+  return header + "." + claim + "." + b64url(sig);
+}
+export const siwaConfigured = (env: AppleEnv): boolean => !!(env.APPLE_TEAM_ID && env.APPLE_SIWA_KEY_ID && env.APPLE_SIWA_PRIVATE_KEY);
+
+export async function appleRevoke(env: AppleEnv, who: { uid: string; appleSub?: string }, code: string): Promise<Answer> {
+  if (!siwaConfigured(env)) return { status: 501, body: { error: "not configured" } };
+  if (!code || code.length > 2000) return { status: 400, body: { error: "no code" } };
+  if (!who.appleSub) return { status: 409, body: { error: "not an apple account" } };
+  const form = (o: Record<string, string>) => Object.keys(o).map((k) => encodeURIComponent(k) + "=" + encodeURIComponent(o[k])).join("&");
+  const secret = await siwaSecret(env);
+  const t = await fetch("https://appleid.apple.com/auth/token", {
+    method: "POST", headers: { "Content-Type": "application/x-www-form-urlencoded" },
+    body: form({ client_id: bundleOf(env), client_secret: secret, code, grant_type: "authorization_code" }),
+  });
+  const tok = (await t.json().catch(() => ({}))) as { refresh_token?: string; access_token?: string; id_token?: string; error?: string };
+  if (t.status >= 500) return { status: 502, body: { error: "apple " + t.status } };
+  if (!t.ok || (!tok.refresh_token && !tok.access_token)) return { status: 400, body: { error: tok.error || "bad code" } };
+  const idc = jwsPayload<{ sub?: string; aud?: string }>(tok.id_token);
+  if (!idc || idc.sub !== who.appleSub) { console.log(JSON.stringify({ at: "apple-revoke", uid: who.uid, refused: "other apple id" })); return { status: 403, body: { error: "not yours" } }; }
+  const token = tok.refresh_token || tok.access_token || "";
+  const r = await fetch("https://appleid.apple.com/auth/revoke", {
+    method: "POST", headers: { "Content-Type": "application/x-www-form-urlencoded" },
+    body: form({ client_id: bundleOf(env), client_secret: secret, token, token_type_hint: tok.refresh_token ? "refresh_token" : "access_token" }),
+  });
+  if (!r.ok) return { status: r.status >= 500 ? 502 : 400, body: { error: "revoke " + r.status } };
+  console.log(JSON.stringify({ at: "apple-revoke", uid: who.uid, revoked: true }));
+  return { status: 200, body: { ok: true } };
 }

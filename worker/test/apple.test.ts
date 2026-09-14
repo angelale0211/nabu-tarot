@@ -5,7 +5,7 @@ import worker from "../src/index";
 import { accountToken, appleState, appleJwt, jwsPayload } from "../src/apple";
 import { reconcileSubs } from "../src/reconcile";
 import { itemByKey } from "../src/catalog";
-import { makeKeys, env, ctx, mockFetch, json, idToken, fsDoc } from "./util";
+import { makeKeys, env, ctx, mockFetch, json, idToken, fsDoc, signJwt } from "./util";
 
 /* One keypair for the whole file, for the same module-cache reason as
    billing.test.ts. The App Store key is its own EC P-256 key, as a real .p8 is. */
@@ -243,5 +243,43 @@ test("with no App Store key the iPhone path says not configured, and /asn is not
     assert.equal(r.status, 500);
     const a = await worker.fetch(new Request("https://nabu-ai.test/asn", { method: "POST", body: "{}" }), env(K) as never, ctx() as never);
     assert.equal(a.status, 404);
+  } finally { m.restore(); }
+});
+
+/* ---- revoking Sign in with Apple when an account is deleted ---- */
+const SIWA = { APPLE_TEAM_ID: "TEAM1", APPLE_SIWA_KEY_ID: "SIWA1", APPLE_SIWA_PRIVATE_KEY: P8 };
+const appleUser = (uid: string, appleSub: string) => {
+  const now = Math.floor(Date.now() / 1000);
+  return signJwt(K, { aud: "nabutarot", iss: "https://securetoken.google.com/nabutarot", sub: uid, exp: now + 3600, iat: now, firebase: { identities: appleSub ? { "apple.com": [appleSub] } : {}, sign_in_provider: appleSub ? "apple.com" : "password" } });
+};
+const revoke = async (tok: string, code: string, extra: Record<string, string> = SIWA) => {
+  const r = await worker.fetch(new Request("https://nabu-ai.test/apple-revoke", { method: "POST", headers: { Authorization: "Bearer " + tok, "Content-Type": "application/json" }, body: JSON.stringify({ code }) }), env(K, { ...APPLE, ...extra }) as never, ctx() as never);
+  return { status: r.status, body: await r.json() as Record<string, unknown> };
+};
+
+test("deleting an Apple account revokes its Sign in with Apple - the code is exchanged, and only this Apple ID's token is revoked", async () => {
+  const calls: { url: string; body: string }[] = [];
+  const m = mockFetch(K, {
+    "appleid.apple.com/auth/token": (url, init) => { calls.push({ url, body: String(init.body) }); const code = new URLSearchParams(String(init.body)).get("code");
+      return json({ refresh_token: "r-" + code, access_token: "a", id_token: jws({ sub: code === "mine" ? "001.apple.sub" : "002.someone.else", aud: "app.nabutarot.ios" }) }); },
+    "appleid.apple.com/auth/revoke": (url, init) => { calls.push({ url, body: String(init.body) }); return json({}); },
+  });
+  try {
+    const me = await appleUser("u1", "001.apple.sub");
+    const ok = await revoke(me, "mine");
+    assert.equal(ok.status, 200);
+    const exchange = new URLSearchParams(calls[0].body), rev = new URLSearchParams(calls[1].body);
+    assert.equal(exchange.get("client_id"), "app.nabutarot.ios"); assert.equal(exchange.get("grant_type"), "authorization_code");
+    const secret = JSON.parse(Buffer.from(String(exchange.get("client_secret")).split(".")[1], "base64url").toString());
+    assert.equal(secret.iss, "TEAM1"); assert.equal(secret.sub, "app.nabutarot.ios"); assert.equal(secret.aud, "https://appleid.apple.com");
+    assert.ok(calls[1].url.includes("/auth/revoke")); assert.equal(rev.get("token"), "r-mine"); assert.equal(rev.get("token_type_hint"), "refresh_token");
+    /* A code for a different Apple ID: exchanged, never revoked. */
+    calls.length = 0;
+    const other = await revoke(me, "theirs");
+    assert.equal(other.status, 403); assert.equal(calls.filter((c) => c.url.includes("/auth/revoke")).length, 0);
+    /* An account that does not sign in with Apple has nothing to revoke. */
+    assert.equal((await revoke(await appleUser("u2", ""), "mine")).status, 409);
+    /* Without the Sign in with Apple key the phone is told so, and goes on deleting. */
+    assert.equal((await revoke(me, "mine", {})).status, 501);
   } finally { m.restore(); }
 });
