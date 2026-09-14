@@ -67,7 +67,11 @@ function applyAccountLang() {
   return true;
 }
 if (LANGS.indexOf(lang) < 0) lang = 'vi';
-const T = () => STR[lang];
+/* Inside the iPhone app the store's few sentences that name Google Play are said about the App Store
+   instead: STR[lang].appStore holds them, laid over the language once and kept. iosShell is a hoisted
+   declaration so this works even for a T() called before isIOSApp below exists. */
+const T_IOS = {};
+const T = () => { const s = STR[lang]; if (!s || !s.appStore || !iosShell()) return s; return T_IOS[lang] || (T_IOS[lang] = Object.assign({}, s, s.appStore)); };
 const L = (obj) => { if (obj == null) return ''; if (typeof obj === 'string') return obj; return obj[lang] || obj.en || obj.vi || ''; };
 const L2 = (obj, lg) => (obj == null ? '' : typeof obj === 'string' ? obj : (obj[lg] || ''));
 
@@ -581,8 +585,11 @@ const isTWA = () => store.get('nabu-twa', false) === true;
    inside the app is sold through Apple, so that build hides the same prices, transfers and codes. Read fresh on
    every load and never remembered - the marker arrives with every page the shell opens, and Safari on the
    same phone must never inherit it. */
-const isIOSApp = () => /\bNabuTarotiOS\b/.test(String((window.navigator || {}).userAgent || ''))
-  || !!(window.Capacitor && typeof window.Capacitor.getPlatform === 'function' && window.Capacitor.getPlatform() === 'ios');
+function iosShell() {
+  return /\bNabuTarotiOS\b/.test(String((window.navigator || {}).userAgent || ''))
+    || !!(window.Capacitor && typeof window.Capacitor.getPlatform === 'function' && window.Capacitor.getPlatform() === 'ios');
+}
+const isIOSApp = iosShell;
 /* Either store build. Whatever a store forbids - a web price, a bank transfer, a code box, an install nudge -
    asks this. What only Play has (its bridge, its browsers, its account pages) still asks isTWA(). */
 const inStoreApp = () => isTWA() || isIOSApp();

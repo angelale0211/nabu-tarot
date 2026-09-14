@@ -15,7 +15,9 @@ export function subAccess(s: SubInfo, nowMs: number = Date.now()): { grant: bool
   return { grant: GRANTING.has(s.state) && s.expiryMs > nowMs, until };
 }
 
-export interface SubRow { sku: string; plan: string; state: string; until: string; autoRenew: boolean; tok: string; opens: string[]; grant: boolean }
+/* `store` is "apple" on a row the App Store decided and absent on a Play row, so the app can send a
+   buyer to the right place to manage it. */
+export interface SubRow { sku: string; plan: string; state: string; until: string; autoRenew: boolean; tok: string; opens: string[]; grant: boolean; store?: string }
 
 /* Play decides only the keys its own rows name.
 
@@ -124,7 +126,7 @@ function capture(subs: Record<string, SubRow>, access: Record<string, string>, g
   }
 }
 
-export async function applySubscription(env: PlayEnv, uid: string, item: PlayItem, sub: SubInfo, tokenHash: string): Promise<{ access: Record<string, string>; subs: Record<string, SubRow>; granted: Record<string, string> }> {
+export async function applySubscription(env: PlayEnv, uid: string, item: PlayItem, sub: SubInfo, tokenHash: string, store?: string): Promise<{ access: Record<string, string>; subs: Record<string, SubRow>; granted: Record<string, string> }> {
   const doc = (await fsGet(env, "users/" + encodeURIComponent(uid))) || {};
   const access = (doc.access as Record<string, string>) || {};
   const subs = { ...((doc.subs as Record<string, SubRow>) || {}) };
@@ -132,7 +134,16 @@ export async function applySubscription(env: PlayEnv, uid: string, item: PlayIte
   /* Before the new row, never after. */
   capture(subs, access, granted, item.opens);
   const a = subAccess(sub);
-  subs[item.key] = { sku: item.sku, plan: sub.basePlanId, state: sub.state, until: a.until, autoRenew: sub.autoRenew, tok: tokenHash, opens: item.opens, grant: a.grant };
+  subs[item.key] = { sku: item.sku, plan: sub.basePlanId, state: sub.state, until: a.until, autoRenew: sub.autoRenew, tok: tokenHash, opens: item.opens, grant: a.grant, ...(store ? { store } : {}) };
+  /* One purchase, one plan. The App Store keeps a single original transaction for a whole subscription
+     group, so moving from Plus to Pro arrives as the SAME purchase naming a new product - and the row the
+     old product wrote would otherwise go on granting beside the new one until its own date. Any other row
+     filed under this purchase is therefore retired here. Play issues a new token on a plan change, so no
+     Play row ever shares a token with another and this changes nothing there. */
+  for (const k of Object.keys(subs)) {
+    const row = subs[k];
+    if (k !== item.key && row && row.tok === tokenHash && row.grant) subs[k] = { ...row, grant: false, state: "SUBSCRIPTION_STATE_EXPIRED" };
+  }
   const next = recompute(subs, access, granted);
   const w = await fsPatch(env, "users/" + encodeURIComponent(uid), { access: next, subs, granted }, ["access", "subs", "granted"]);
   if (!w.ok) throw new Error("firestore " + w.status);

@@ -93,27 +93,6 @@ async function go(hash, sel) { W().location.hash = hash; await sleep(30); return
       ok(/Vietnamese \(lunisolar\)/.test(enToday) && /Day \d+ of lunar month \d+.*, \d{4}/.test(enToday) && !/Animal signs|year of the/.test(enToday)
         && /Vietnamesischer Kalender \(lunisolar\)/.test(deToday) && !/Tierzeichen|Mondkalender/.test(deToday),
         'the English and German today panel says lunisolar calendar and shows no animal signs'); }
-    { /* The 12 animals page says whose zodiac it is and how China and Korea differ, in every language. */
-      /* Never through #/home while switching: its feed loads late and would land in the next language. */
-      const seen = {}, wheel = {};
-      for (const L of ['vi', 'en', 'de']) {
-        W().saveProfileLocal({ lang: L }); W().applyAccountLang();
-        await go('#/learn', '#main'); await go('#/learn/fortune/animals', '.anote');
-        const main = d.querySelector('#main');
-        wheel[L] = Array.from(main.querySelectorAll('.awheel .aw b')).map((b) => b.textContent);
-        seen[L] = !!main.querySelector('.avn .chip') && main.querySelectorAll('.anote li').length === 4
-          && main.querySelector('.avn').compareDocumentPosition(main.querySelector('.awrapper')) & 4
-          && main.querySelector('#aout').compareDocumentPosition(main.querySelector('.anote')) & 4;
-      }
-      W().saveProfileLocal({ lang: 'vi' }); W().applyAccountLang();
-      ok(wheel.vi[0] === 'Tý' && wheel.vi[3] === 'Mão' && wheel.en[0] === 'Rat' && wheel.en[1] === 'Buffalo' && wheel.en[3] === 'Cat' && wheel.de[1] === 'Büffel' && wheel.de[3] === 'Katze' && wheel.en.length === 12,
-        'the animal wheel is labelled in the reader\'s language (' + [wheel.vi[1], wheel.en[1], wheel.de[1]].join(' / ') + ')');
-      ok(seen.vi && seen.en && seen.de && N.STR.en.animalDiff.length === 4 && N.STR.de.animalDiff.length === 4 && /Việt Nam/.test(N.STR.vi.animalVN),
-        'the 12 animals page is marked Vietnamese at the top and lists four differences from China and Korea, in vi, en and de');
-      /* Back on #/home, the tour checks below click through its steps. A home page still loading its feed
-         redraws under them on a slow machine (CI did), so wait for the feed to land and settle first. */
-      await go('#/learn', '#main'); await go('#/home', '.tiles');
-      await waitFor(() => d.querySelector('#feed .welcome, #feed .empty, #feed .post'), 8000); await sleep(400); }
     const lt = N.lunarToday(new Date(2026, 8, 5));
     ok(lt.yearAn === 'Ngọ (Ngựa)' && lt.monthAn === 'Thân (Khỉ)' && lt.dayAn === 'Ngọ (Ngựa)' && /Bính Ngọ/.test(lt.yearCC), 'lunar animal names follow the language on screen: 5/9/2026 is a Horse day in the Monkey month of the Horse year');
     const l1 = N.solarToLunar(29, 1, 2025), l2 = N.solarToLunar(10, 2, 2024), l3 = N.solarToLunar(4, 9, 2026);
@@ -2240,10 +2219,102 @@ async function go(hash, sel) { W().location.hash = hash; await sleep(30); return
           'outside the iPhone app the sign-in page is unchanged: no Apple, and every provider CONFIG lists (' + webDoors + ')');
         w.Capacitor = { getPlatform: () => 'ios' };
         N.BE.user = keepS.user; N.BE.auth = keepS.auth; if (keepS.fb === undefined) delete w.firebase; else w.firebase = keepS.fb; }
+      { /* Buying inside the iPhone app. BILL is pointed at the App Store; a stand-in for the shell's
+           NativePurchases plugin plays StoreKit, and a stand-in for /billing plays the worker. What is checked
+           is the contract between them: the account token, finishing only after the worker answers, keeping
+           a paid transaction the worker could not be reached for, and the App Store's own words on screen. */
+        ok(await N.appleAccountToken('nabu-test-uid') === 'ec2a04c5-cd2f-51f4-8637-9e01fe79f858',
+          'the phone derives the same App Store account token as the worker does for the same account');
+        const sk = { calls: [], finished: [], next: 5000, held: [], cancelNext: false, pendingNext: false };
+        w.Capacitor.Plugins = { NativePurchases: {
+          getProducts: async (o) => ({ products: o.productIdentifiers.map((id) => ({ identifier: id, priceString: id === 'plus_sub' ? '79.000 ₫' : '300.000 ₫', price: 1, currencyCode: 'VND' })) }),
+          purchaseProduct: async (o) => { sk.calls.push(o);
+            if (sk.cancelNext) { sk.cancelNext = false; throw new Error('User cancelled'); }
+            if (sk.pendingNext) { sk.pendingNext = false; throw new Error('Transaction pending'); }
+            const tx = { transactionId: String(sk.next++), productIdentifier: o.productIdentifier, appAccountToken: String(o.appAccountToken).toUpperCase() }; sk.held.push(tx); return tx; },
+          getPurchases: async () => ({ purchases: sk.held.slice() }),
+          acknowledgePurchase: async (o) => { sk.finished.push(o.purchaseToken); },
+          addListener: async () => ({ remove() {} }),
+          manageSubscriptions: async () => { sk.managed = true; } } };
+        const keepF = w.fetch, worker = { answer: 200, seen: [] };
+        w.fetch = async (url, opt) => {
+          if (!/\/billing$/.test(url)) return keepF(url, opt);
+          const b = JSON.parse(opt.body); worker.seen.push(b);
+          if (worker.answer === 'down') throw new TypeError('Failed to fetch');
+          const say = (status, body) => ({ ok: status < 300, status: status, json: async () => body });
+          if (worker.answer !== 200) return say(worker.answer, { error: 'already used' });
+          /* Written into the stand-in account as the real worker writes it, because the phone reads the
+             account back straight after (sync -> pullProfile) and would otherwise read the purchase away. */
+          const it = N.PLAY_ITEMS.filter((i) => i.sku === b.sku)[0], uid = N.BE.user.uid, doc = cdocs['users/' + uid] || {};
+          const acc = Object.assign({}, doc.access || {}), subs = Object.assign({}, doc.subs || {});
+          it.opens.forEach((k) => { acc[k] = '2027-03-01'; });
+          if (it.kind === 'subs') subs[it.key] = { sku: it.sku, plan: it.sku, state: 'SUBSCRIPTION_STATE_ACTIVE', until: '2027-03-01', autoRenew: true, tok: 'h', opens: it.opens, grant: true, store: 'apple' };
+          cdocs['users/' + uid] = Object.assign({}, doc, { access: acc, subs: subs });
+          return say(200, { ok: true, opened: it.opens, access: acc, subs: it.kind === 'subs' ? subs : undefined });
+        };
+        w.localStorage.removeItem('nabu-apple-pending');
+        N.billUse('apple'); await N.BILL.retry();
+        ok(N.BILL.store === 'apple' && N.BILL.can() && N.BILL.priceOf('plus') === '79.000 ₫' && N.BILL.provider() === 'appstore' && /store=appstore/.test(N.BILL.diag('')),
+          'in the iPhone app BILL answers from the App Store, with its own prices (' + N.BILL.why + ')');
+        await go('#/home', '.tiles'); await go('#/unlock?from=app', '.store');
+        const storeText = d.querySelector('.store').textContent;
+        ok(d.querySelector('.store [data-buy="plus"]') && /79\.000 ₫/.test(storeText) && /App Store/.test(storeText) && !/Google Play/.test(storeText),
+          'the store in the iPhone app shows App Store prices and speaks of the App Store, never of Google Play');
+        const got = await N.BILL.buy('tarot');
+        const mine = await N.appleAccountToken(N.BE.user.uid), last = sk.calls[sk.calls.length - 1];
+        ok(got.opened && got.opened[0] === 'tarot' && last.appAccountToken === mine && last.autoAcknowledgePurchases === false && worker.seen[worker.seen.length - 1].store === 'apple'
+          && worker.seen[worker.seen.length - 1].token === '5000' && sk.finished.indexOf('5000') > -1 && N.ACCESS.has('tarot'),
+          'a purchase carries the account token, goes to the worker as an App Store transaction, and is finished in StoreKit only after the worker granted it');
+        worker.answer = 'down';
+        const off = await N.BILL.buy('lenormand').then(() => null, (e) => e);
+        ok(off && off.message === 'offline' && sk.finished.indexOf('5001') < 0 && N.BILL.pendingList().some((p) => p.token === '5001'),
+          'paid while the worker cannot be reached: kept unfinished and written down, never lost and never finished');
+        worker.answer = 200;
+        const rs = await N.BILL.restore();
+        ok(sk.finished.indexOf('5001') > -1 && !N.BILL.pendingList().length && rs.opened >= 1,
+          'restore sends it again once the worker answers, and only then finishes it');
+        worker.answer = 402;
+        const refused = await N.BILL.buy('playing').then(() => null, (e) => e);
+        ok(refused && refused.message === 'already used' && sk.finished.indexOf('5002') > -1 && !N.BILL.pendingList().some((p) => p.token === '5002'),
+          'a final refusal from the worker is final for StoreKit too: finished, and not retried for ever');
+        worker.answer = 200; sk.cancelNext = true;
+        const cancelled = await N.BILL.buy('plus').then(() => null, (e) => e);
+        ok(cancelled && cancelled.outcome === 'aborted' && !N.BILL.buying, 'closing the App Store sheet is a cancelled purchase, and the Buy button is free again');
+        sk.pendingNext = true;
+        ok((await N.BILL.buy('plus')).pending === true, 'Ask to Buy answers pending and charges nothing yet');
+        await N.BILL.buy('plus');
+        await go('#/home', '.tiles'); await go('#/unlock?from=app', '.store');
+        const manage = d.querySelector('.store a[href="https://apps.apple.com/account/subscriptions"]');
+        if (manage) manage.click(); await sleep(30);
+        ok(manage && sk.managed === true, 'a plan the App Store sold is managed on Apple\'s own subscriptions sheet');
+        N.billUse('play'); w.fetch = keepF; delete w.Capacitor.Plugins; w.localStorage.removeItem('nabu-apple-pending');
+        ['nabu-access', 'nabu-subs'].forEach((k) => w.localStorage.removeItem(k));
+        { const u = cdocs['users/' + N.BE.user.uid]; if (u) { delete u.subs; delete u.access; } }
+        ok(N.BILL.store === undefined && N.BILL.provider() !== 'appstore', 'pointed back, BILL is Play\'s again'); }
       delete w.Capacitor;
       await go('#/home', '.tiles'); await go('#/unlock', '.unlist');
       ok(!d.querySelector('.store') && d.querySelector('[data-unl]') && !/shell=ios/.test(N.BILL.diag('')), 'without the shell the same phone is given the website\'s unlock page again');
       codeMode(false, 'uidI'); await N.BILL.retry(); }
+    { /* The 12 animals page says whose zodiac it is and how China and Korea differ, in every language.
+         Kept here, well after the home-page checks: switching the language three times leaves a late redraw
+         behind it, and the tour checks click through steps 30ms apart. In front of them it failed CI. */
+      /* Never through #/home while switching: its feed loads late and would land in the next language. */
+      const seen = {}, wheel = {};
+      for (const L of ['vi', 'en', 'de']) {
+        W().saveProfileLocal({ lang: L }); W().applyAccountLang();
+        await go('#/learn', '#main'); await go('#/learn/fortune/animals', '.anote');
+        const main = d.querySelector('#main');
+        wheel[L] = Array.from(main.querySelectorAll('.awheel .aw b')).map((b) => b.textContent);
+        seen[L] = !!main.querySelector('.avn .chip') && main.querySelectorAll('.anote li').length === 4
+          && main.querySelector('.avn').compareDocumentPosition(main.querySelector('.awrapper')) & 4
+          && main.querySelector('#aout').compareDocumentPosition(main.querySelector('.anote')) & 4;
+      }
+      W().saveProfileLocal({ lang: 'vi' }); W().applyAccountLang();
+      ok(wheel.vi[0] === 'Tý' && wheel.vi[3] === 'Mão' && wheel.en[0] === 'Rat' && wheel.en[1] === 'Buffalo' && wheel.en[3] === 'Cat' && wheel.de[1] === 'Büffel' && wheel.de[3] === 'Katze' && wheel.en.length === 12,
+        'the animal wheel is labelled in the reader\'s language (' + [wheel.vi[1], wheel.en[1], wheel.de[1]].join(' / ') + ')');
+      ok(seen.vi && seen.en && seen.de && N.STR.en.animalDiff.length === 4 && N.STR.de.animalDiff.length === 4 && /Việt Nam/.test(N.STR.vi.animalVN),
+        'the 12 animals page is marked Vietnamese at the top and lists four differences from China and Korea, in vi, en and de');
+      await go('#/learn', '#main'); await go('#/home', '.tiles'); }
     /* ---- the red thread ---- */
     { /* A stand-in for Firestore: documents in an object, and listeners told
          when one changes. Paths are the real ones, so the code under test is

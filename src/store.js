@@ -20,7 +20,10 @@ function subStateWord(row) {
   if (k === 'problem') return S.stProblem;
   return S.stExpired;
 }
-const manageURL = (key) => 'https://play.google.com/store/account/subscriptions?sku=' + encodeURIComponent((playItem(key) || {}).sku || '') + '&package=app.nabutarot.twa';
+/* Where a buyer manages a plan is the store that sold it: a row the App Store decided says so (store: "apple"). */
+const APPLE_MANAGE = 'https://apps.apple.com/account/subscriptions';
+const manageURL = (key) => ((SUBS.of(key) || {}).store === 'apple' ? APPLE_MANAGE
+  : 'https://play.google.com/store/account/subscriptions?sku=' + encodeURIComponent((playItem(key) || {}).sku || '') + '&package=app.nabutarot.twa');
 /* Every screen that sells anything comes through here, so this is where
    "Play priced this one" is asked. A row whose product Play did not return
    says so where its button was, rather than offering a button that can only
@@ -107,6 +110,8 @@ function fileBilling(line, where) {
 
 function bindStore(root, redraw) {
   const S = T();
+  /* Inside the iPhone app Apple's own subscriptions sheet opens over the app, rather than a web page. */
+  $$('a[href="' + APPLE_MANAGE + '"]', root).forEach((a) => a.addEventListener('click', (ev) => { if (BILL.store === 'apple' && typeof BILL.manage === 'function') { ev.preventDefault(); BILL.manage(); } }));
   $$('[data-buy]', root).forEach((b) => b.addEventListener('click', async () => {
     const key = b.getAttribute('data-buy'), st = $('[data-st="' + key + '"]', root) || $('#bstatus', root);
     if (b.disabled) return;   // a second tap on a button already working starts nothing

@@ -12,7 +12,7 @@
      carries this notice with it. See LICENSE. -->
 <meta name="author" content="Nabu Tarot">
 <meta name="copyright" content="Copyright (c) 2025-2026 Nabu Tarot. All rights reserved.">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'none'; object-src 'none'; form-action 'self'; script-src 'self' 'sha256-64EspFscZCA1kTZoyMW8SuCUU/ICCwMXkNXn92Ed9ng=' https://www.gstatic.com https://apis.google.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; font-src 'self' data:; media-src 'self' data: blob:; worker-src 'self'; connect-src 'self' https://*.googleapis.com https://*.google.com https://*.firebaseio.com https://*.cloudfunctions.net https://*.workers.dev https://generativelanguage.googleapis.com; frame-src https://*.firebaseapp.com https://accounts.google.com https://*.facebook.com">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'none'; object-src 'none'; form-action 'self'; script-src 'self' 'sha256-wlQp0pZVOOrnEjtyuMnMet+YWZaIKe01OCxJ3EgcRIM=' https://www.gstatic.com https://apis.google.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; font-src 'self' data:; media-src 'self' data: blob:; worker-src 'self'; connect-src 'self' https://*.googleapis.com https://*.google.com https://*.firebaseio.com https://*.cloudfunctions.net https://*.workers.dev https://generativelanguage.googleapis.com; frame-src https://*.firebaseapp.com https://accounts.google.com https://*.facebook.com">
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <meta name="theme-color" content="#EFE9FA">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -3969,6 +3969,8 @@ const STR = {
     stProblem: 'Thanh toán không thành công · Vui lòng kiểm tra trong Google Play', stExpired: 'Đã hết hạn', stActive: 'Đang hoạt động', stHeld: 'Tạm dừng · Chờ thanh toán',
     stCancelMeaning: 'Bạn có thể hủy bất cứ lúc nào trong Google Play. Gói vẫn dùng được đến hết kỳ đã thanh toán.',
     stManage: 'Quản lý trong Google Play', stRestore: 'Khôi phục mua hàng', stRestoring: 'Đang khôi phục…', stRestored: (n) => 'Đã khôi phục ' + n + ' mục', stRestoreNone: 'Không có gì để khôi phục',
+    /* The same store sentences inside the iPhone app, where the App Store takes the payment (core.js lays them over the rest). */
+    appStore: { stIntro: 'Thanh toán qua App Store. Mở khóa ngay sau khi thanh toán thành công.', stProblem: 'Thanh toán không thành công · Vui lòng kiểm tra trong App Store', stCancelMeaning: 'Bạn có thể hủy bất cứ lúc nào trong phần Cài đặt tài khoản Apple. Gói vẫn dùng được đến hết kỳ đã thanh toán.', stManage: 'Quản lý trong App Store', stNotReady: 'Không nhận được phản hồi từ App Store.', stNoSheet: 'App Store chưa mở được ô thanh toán. Bạn kiểm tra đã đăng nhập tài khoản Apple trong Cài đặt, rồi thử lại.', stSheetHung: 'App Store không trả lời. Bạn đóng hẳn app, mở lại rồi thử lần nữa.', stSheetWaiting: 'App Store đang xử lý. Nếu bạn đã thanh toán xong, đợi một phút rồi bấm Khôi phục mua hàng.', stAborted: 'Chưa mua xong. Nếu bạn không thấy ô thanh toán của App Store hiện ra, bạn thử lại nhé.', stItemOff: 'App Store chưa cho mua mục này trên tài khoản của bạn.' },
     stNotReady: 'Không nhận được phản hồi từ Google Play.', stRetry: 'Thử lại', stPending: 'Đang chờ thanh toán. Hoàn tất xong, quyền truy cập sẽ tự mở.',
     stIncludedPro: 'Đã bao gồm trong Nabu Pro', stSwitchTo: (n) => 'Chuyển sang gói ' + n, stNeedIn: 'Mục này chỉ có thể mua trong ứng dụng Nabu Tarot trên Android.', stFailed: 'Mua chưa thành công. Vui lòng thử lại.', stNoSheet: 'Google Play chưa mở được ô thanh toán. Bạn mở Cửa hàng Play, kiểm tra đúng tài khoản Google, rồi thử lại.', stSignInToBuy: 'Bạn cần đăng nhập để mua. Đang mở trang đăng nhập…', stNeedChrome: (b) => (b ? 'App đang chạy trong ' + b + ', trình duyệt này' : 'App đang chạy trong một trình duyệt') + ' không hỗ trợ thanh toán Google Play. Bạn đặt Chrome làm trình duyệt mặc định: Cài đặt → Ứng dụng → Chọn ứng dụng mặc định → Ứng dụng trình duyệt → Chrome. Nếu máy chưa có Chrome, cài từ CH Play trước. Rồi đóng hẳn app và mở lại. Có thể bạn sẽ phải đăng nhập lại.', stSheetHung: 'Google Play không trả lời. Bạn đóng hẳn app, mở lại rồi thử lần nữa.', stSheetWaiting: 'Google Play đang xử lý. Nếu bạn đã thanh toán xong, đợi một phút rồi bấm Khôi phục mua hàng.', stAborted: 'Chưa mua xong. Nếu bạn không thấy ô thanh toán của Google Play hiện ra, bạn thử lại nhé.', stBusy: 'Đang mở ô thanh toán. Bạn đợi một chút nhé.', stItemOff: 'Google Play chưa cho mua mục này trên tài khoản của bạn.', stDiagTitle: 'Thông tin kỹ thuật', stDiagCopy: 'Chép thông tin kỹ thuật', stDiagCopied: 'Đã chép. Bạn gửi cho Nabu giúp mình nhé.',
     myPlans: 'Gói của bạn', stPlusPitch: 'Nabu Plus mở lượt xem không giới hạn và giúp bạn nhỏ lớn nhanh hơn.',
@@ -4818,6 +4820,8 @@ const STR = {
     stProblem: 'Payment declined · Check your payment method in Google Play', stExpired: 'Expired', stActive: 'Active', stHeld: 'On hold · Payment required',
     stCancelMeaning: 'Cancel anytime in Google Play. You’ll keep access until the end of your paid period.',
     stManage: 'Manage in Google Play', stRestore: 'Restore purchases', stRestoring: 'Restoring…', stRestored: (n) => 'Restored ' + n + ' items', stRestoreNone: 'Nothing to restore',
+    /* The same store sentences inside the iPhone app, where the App Store takes the payment (core.js lays them over the rest). */
+    appStore: { stIntro: 'Pay through the App Store. Access unlocks as soon as your payment is complete.', stProblem: 'Payment declined · Check your payment method in the App Store', stCancelMeaning: 'Cancel anytime in your Apple account settings. You’ll keep access until the end of your paid period.', stManage: 'Manage in the App Store', stNotReady: 'No response from the App Store.', stNoSheet: 'The App Store could not open the payment sheet. Check that you are signed in to your Apple account in Settings, then try again.', stSheetHung: 'The App Store did not answer. Close the app fully, open it again and try once more.', stSheetWaiting: 'The App Store is still working. If you have already paid, wait a minute and tap Restore purchases.', stAborted: 'The purchase did not complete. If you never saw the App Store payment sheet, please try again.', stItemOff: 'The App Store is not offering this item to your account.' },
     stNotReady: 'No response from Google Play.', stRetry: 'Try again', stPending: 'Payment pending. Access will unlock automatically once it’s complete.',
     stIncludedPro: 'Included in Nabu Pro', stSwitchTo: (n) => 'Switch to ' + n, stNeedIn: 'This item can only be purchased in the Nabu Tarot Android app.', stFailed: 'Purchase didn’t go through. Please try again.', stNoSheet: 'Google Play could not open the payment sheet. Open the Play Store, check you are signed in to the right Google account, then try again.', stSignInToBuy: 'Please sign in to buy. Opening the sign-in screen…', stNeedChrome: (b) => (b ? 'The app is running in ' + b + ', which cannot reach Google Play payments' : 'The app is running in a browser that cannot reach Google Play payments') + '. Set Chrome as the default browser: Settings → Apps → Default apps → Browser → Chrome. If Chrome is not installed, get it from the Play Store first. Then close the app fully and open it again. You may need to sign in again.', stSheetHung: 'Google Play did not answer. Close the app fully, open it again and try once more.', stSheetWaiting: 'Google Play is still working. If you have already paid, wait a minute and tap Restore purchases.', stAborted: 'The purchase did not complete. If you never saw the Google Play payment sheet, please try again.', stBusy: 'The payment sheet is opening. One moment.', stItemOff: 'Google Play is not offering this item to your account.', stDiagTitle: 'Technical details', stDiagCopy: 'Copy technical details', stDiagCopied: 'Copied. Please send it to Nabu.',
     myPlans: 'Your plans', stPlusPitch: 'Nabu Plus gives you unlimited readings and helps your companion grow faster.',
@@ -5659,6 +5663,8 @@ const STR = {
     stProblem: 'Zahlung abgelehnt · Bitte Zahlungsmethode in Google Play prüfen', stExpired: 'Abgelaufen', stActive: 'Aktiv', stHeld: 'Pausiert · Zahlung ausstehend',
     stCancelMeaning: 'Du kannst jederzeit in Google Play kündigen. Dein Zugang bleibt bis zum Ende des bezahlten Zeitraums bestehen.',
     stManage: 'In Google Play verwalten', stRestore: 'Käufe wiederherstellen', stRestoring: 'Wird wiederhergestellt…', stRestored: (n) => n + ' Elemente wiederhergestellt', stRestoreNone: 'Nichts zum Wiederherstellen',
+    /* The same store sentences inside the iPhone app, where the App Store takes the payment (core.js lays them over the rest). */
+    appStore: { stIntro: 'Zahlung über den App Store. Nach erfolgreicher Zahlung wird sofort freigeschaltet.', stProblem: 'Zahlung abgelehnt · Bitte Zahlungsmethode im App Store prüfen', stCancelMeaning: 'Du kannst jederzeit in den Einstellungen deines Apple-Accounts kündigen. Dein Zugang bleibt bis zum Ende des bezahlten Zeitraums bestehen.', stManage: 'Im App Store verwalten', stNotReady: 'Keine Antwort vom App Store.', stNoSheet: 'Der App Store konnte das Zahlungsfenster nicht öffnen. Prüf in den Einstellungen, ob du mit deinem Apple-Account angemeldet bist, und versuch es noch einmal.', stSheetHung: 'Der App Store hat nicht geantwortet. Schließ die App ganz, öffne sie neu und versuch es noch mal.', stSheetWaiting: 'Der App Store arbeitet noch. Wenn du schon bezahlt hast, warte eine Minute und tipp auf Käufe wiederherstellen.', stAborted: 'Der Kauf wurde nicht abgeschlossen. Wenn du das Zahlungsfenster des App Store nicht gesehen hast, versuch es bitte noch einmal.', stItemOff: 'Der App Store bietet diesen Artikel deinem Konto nicht an.' },
     stNotReady: 'Keine Antwort von Google Play.', stRetry: 'Erneut versuchen', stPending: 'Zahlung ausstehend. Nach Abschluss wird der Zugang automatisch freigeschaltet.',
     stIncludedPro: 'In Nabu Pro enthalten', stSwitchTo: (n) => 'Zu ' + n + ' wechseln', stNeedIn: 'Dieser Artikel kann nur in der Nabu-Tarot-App für Android gekauft werden.', stFailed: 'Kauf nicht abgeschlossen. Bitte erneut versuchen.', stNoSheet: 'Google Play konnte das Zahlungsfenster nicht öffnen. Öffne den Play Store, prüfe dein Google-Konto und versuch es noch einmal.', stSignInToBuy: 'Zum Kaufen bitte anmelden. Die Anmeldeseite wird geöffnet…', stNeedChrome: (b) => 'Die App läuft in ' + (b || 'einem Browser') + ', der Google-Play-Zahlungen nicht erreichen kann. Mach Chrome zum Standardbrowser: Einstellungen → Apps → Standard-Apps → Browser → Chrome. Falls Chrome fehlt, zuerst aus dem Play Store installieren. Dann die App ganz schließen und neu öffnen. Eventuell musst du dich neu anmelden.', stSheetHung: 'Google Play hat nicht geantwortet. Schließ die App ganz, öffne sie neu und versuch es noch mal.', stSheetWaiting: 'Google Play arbeitet noch. Wenn du schon bezahlt hast, warte eine Minute und tipp auf Käufe wiederherstellen.', stAborted: 'Der Kauf wurde nicht abgeschlossen. Wenn du das Zahlungsfenster von Google Play nicht gesehen hast, versuch es bitte noch einmal.', stBusy: 'Das Zahlungsfenster wird geöffnet. Einen Moment.', stItemOff: 'Google Play bietet diesen Artikel deinem Konto nicht an.', stDiagTitle: 'Technische Details', stDiagCopy: 'Technische Details kopieren', stDiagCopied: 'Kopiert. Bitte schick es an Nabu.',
     myPlans: 'Deine Abos', stPlusPitch: 'Nabu Plus bietet unbegrenzte Legungen und lässt deinen kleinen Begleiter schneller wachsen.',
@@ -13186,7 +13192,11 @@ function applyAccountLang() {
   return true;
 }
 if (LANGS.indexOf(lang) < 0) lang = 'vi';
-const T = () => STR[lang];
+/* Inside the iPhone app the store's few sentences that name Google Play are said about the App Store
+   instead: STR[lang].appStore holds them, laid over the language once and kept. iosShell is a hoisted
+   declaration so this works even for a T() called before isIOSApp below exists. */
+const T_IOS = {};
+const T = () => { const s = STR[lang]; if (!s || !s.appStore || !iosShell()) return s; return T_IOS[lang] || (T_IOS[lang] = Object.assign({}, s, s.appStore)); };
 const L = (obj) => { if (obj == null) return ''; if (typeof obj === 'string') return obj; return obj[lang] || obj.en || obj.vi || ''; };
 const L2 = (obj, lg) => (obj == null ? '' : typeof obj === 'string' ? obj : (obj[lg] || ''));
 
@@ -13700,8 +13710,11 @@ const isTWA = () => store.get('nabu-twa', false) === true;
    inside the app is sold through Apple, so that build hides the same prices, transfers and codes. Read fresh on
    every load and never remembered - the marker arrives with every page the shell opens, and Safari on the
    same phone must never inherit it. */
-const isIOSApp = () => /\bNabuTarotiOS\b/.test(String((window.navigator || {}).userAgent || ''))
-  || !!(window.Capacitor && typeof window.Capacitor.getPlatform === 'function' && window.Capacitor.getPlatform() === 'ios');
+function iosShell() {
+  return /\bNabuTarotiOS\b/.test(String((window.navigator || {}).userAgent || ''))
+    || !!(window.Capacitor && typeof window.Capacitor.getPlatform === 'function' && window.Capacitor.getPlatform() === 'ios');
+}
+const isIOSApp = iosShell;
 /* Either store build. Whatever a store forbids - a web price, a bank transfer, a code box, an install nudge -
    asks this. What only Play has (its bridge, its browsers, its account pages) still asks isTWA(). */
 const inStoreApp = () => isTWA() || isIOSApp();
@@ -18614,6 +18627,283 @@ if (typeof window !== 'undefined') {
   setTimeout(() => { try { BILL.start().then(() => { if (BILL.can() && typeof BE !== 'undefined' && BE.user) BILL.sync(); }); } catch (e) { /* never block the app */ } }, 1200);
 }
 
+/* ======================= buying inside the iPhone app =======================
+
+   Apple requires what Google requires: anything digital sold inside the app
+   is sold through the App Store. The iPhone app is a Capacitor shell around
+   this same site, and its NativePurchases plugin (@capgo/native-purchases,
+   StoreKit 2) is the App Store's side of the counter.
+
+   Nothing on any screen changes. The store, the paywalls, the coin and the
+   wedding all ask BILL; inside the iPhone app BILL answers from the App Store
+   instead of Google Play, with the same questions and the same shape of
+   answer: can(), canBuy(key), priceOf(key), buy(key, opt), restore(), diag().
+
+   The rule from billing.js holds here too. The phone is never trusted about
+   what it bought: it hands the worker the transaction id StoreKit gave it,
+   the worker asks Apple (worker/src/apple.ts) and writes the account, and the
+   phone reads the account back. A transaction is only marked finished in
+   StoreKit once the worker has answered for it - an unfinished one stays in
+   Apple's queue and is sent again - so a purchase can be delayed by a lost
+   connection but never lost. */
+
+const APPLE_PENDING = 'nabu-apple-pending';
+const APPLE_GIVE_UP = 8;
+
+function applePlugin() {
+  const C = window.Capacitor;
+  if (!C) return null;
+  if (C.Plugins && C.Plugins.NativePurchases) return C.Plugins.NativePurchases;
+  return typeof C.isPluginAvailable === 'function' && C.isPluginAvailable('NativePurchases') && typeof C.registerPlugin === 'function'
+    ? C.registerPlugin('NativePurchases') : null;
+}
+
+/* The Nabu account a purchase belongs to, as the UUID StoreKit carries on the
+   transaction and every renewal: sha256("nabu-tarot:" + uid), first 16 bytes,
+   version-5 and variant bits. worker/src/apple.ts derives the same value and
+   refuses a transaction whose token names a different account. */
+async function appleAccountToken(uid) {
+  const h = new Uint8Array(await crypto.subtle.digest('SHA-256', new TextEncoder().encode('nabu-tarot:' + uid))).slice(0, 16);
+  h[6] = (h[6] & 0x0f) | 0x50; h[8] = (h[8] & 0x3f) | 0x80;
+  const x = Array.from(h).map((b) => b.toString(16).padStart(2, '0')).join('');
+  return x.slice(0, 8) + '-' + x.slice(8, 12) + '-' + x.slice(12, 16) + '-' + x.slice(16, 20) + '-' + x.slice(20);
+}
+
+const APPLE_BILL = {
+  store: 'apple',
+  service: null, details: {}, starting: null, ready: false, state: 'idle', why: '', stage: '',
+  attempt: 0, tries: 0, lastTryAt: 0, tookMs: 0, buying: '', buyingSeq: 0, seq: 0, lastSheet: null, onSettled: null,
+  connectMs: 10000, detailsMs: 15000, listening: false,
+
+  can() { return this.state === 'ready' && !!this.service; },
+  canBuy(key) { return this.can() && !!this.detailsOf(key); },
+  priced() { return Object.keys(this.details).length; },
+  sellable() { return PLAY_ITEMS.filter((i) => i.sku).length; },
+  provider() { return 'appstore'; },
+  detailsOf(key) { const it = playItem(key); return (it && it.sku && this.details[it.sku]) || null; },
+  /* The App Store's own price string, already in the buyer's currency and format. */
+  priceOf(key) { const d = this.detailsOf(key); return (d && d.priceString) || ''; },
+  /* The catalogue's months: the App Store describes a period in its own terms and the store's sentence only needs a number. */
+  periodMonths(key) { const it = playItem(key); return it ? it.months : 0; },
+  backoffMs() { return [0, 2000, 5000, 15000, 30000][Math.min(this.tries, 4)]; },
+  retry() { return this.start(true); },
+
+  /* Ask the App Store for the catalogue. The same guard-rails as Play: one
+     attempt at a time, bounded, a failure retried on demand behind a backoff,
+     and the reason kept in a few characters for the screen:
+
+       noplugin      the shell has no purchase plugin (an old build of the app)
+       noendpoint    no worker to check purchases with
+       details:<n>   the App Store refused to price the catalogue
+       noproducts    it answered with nothing - the products are not live yet
+                     for this Apple account, or the agreements are unsigned */
+  start(force) {
+    if (this.state === 'starting' && this.starting) return this.starting;
+    if (this.state === 'ready' && !force) return Promise.resolve(true);
+    if (this.state === 'failed' && !force && Date.now() - this.lastTryAt < this.backoffMs()) return Promise.resolve(false);
+    const my = ++this.attempt, began = Date.now();
+    this.state = 'starting'; this.lastTryAt = began; this.why = ''; this.stage = '';
+    this.starting = (async () => {
+      const mine = () => my === this.attempt;
+      const fail = (why, stage) => { if (!mine()) return false; this.details = {}; this.state = 'failed'; this.ready = true; this.why = why; this.stage = stage || ''; this.tookMs = Date.now() - began; this.tries++; return false; };
+      const P = applePlugin();
+      if (!P) return fail('noplugin');
+      if (!CONFIG.aiEndpoint) return fail('noendpoint');
+      this.listen(P);
+      let got;
+      try { got = await withTimeout(P.getProducts({ productIdentifiers: PLAY_ITEMS.map((i) => i.sku).filter(Boolean) }), this.detailsMs); }
+      catch (e) { return fail('details:' + errName(e), 'details'); }
+      if (!mine()) return false;
+      const map = {};
+      ((got && got.products) || []).forEach((p) => { if (p && p.identifier) map[p.identifier] = p; });
+      this.service = P;
+      if (!Object.keys(map).length) return fail('noproducts', 'details');
+      this.details = map; this.state = 'ready'; this.ready = true; this.tries = 0; this.why = ''; this.tookMs = Date.now() - began;
+      return true;
+    })();
+    return this.starting;
+  },
+
+  /* What StoreKit delivers on its own - a renewal, an Ask to Buy a parent has
+     approved, a purchase finished while the app was closed - is handed to the
+     worker the same way a purchase made on the screen is. */
+  listen(P) {
+    if (this.listening || !P || typeof P.addListener !== 'function') return;
+    this.listening = true;
+    try {
+      P.addListener('transactionUpdated', (tx) => {
+        if (!tx || !tx.transactionId || !tx.productIdentifier) return;
+        this.remember({ sku: tx.productIdentifier, token: String(tx.transactionId), at: Date.now() });
+        if (typeof BE !== 'undefined' && BE.user) this.restore().catch(() => {});
+      });
+    } catch (e) { this.listening = false; }
+  },
+
+  pendingList() { const a = store.get(APPLE_PENDING, []); return Array.isArray(a) ? a : []; },
+  remember(rec) {
+    const list = this.pendingList().filter((p) => p.token !== rec.token).concat([Object.assign({}, this.pendingList().filter((p) => p.token === rec.token)[0] || {}, rec)]);
+    if (list.length > 50) { list.sort((a, b) => (a.tries || 0) - (b.tries || 0)); list.length = 50; }
+    store.set(APPLE_PENDING, list);
+  },
+  forget(token) { store.set(APPLE_PENDING, this.pendingList().filter((p) => p.token !== token)); },
+  stuckKey(rec) { return BILL_PLAY.stuckKey(rec); },
+  flagStuck(rec) { return BILL_PLAY.flagStuck.call(this, rec); },
+  resolveWeddingWid() { return BILL_PLAY.resolveWeddingWid.call(this); },
+
+  /* The worker's word on one transaction. Resolves { ok, opened, access, subs };
+     throws with the worker's reason for a refusal, or 'offline' for anything
+     that is not an answer. */
+  async verify(sku, token, extra) {
+    const idTok = await BE.token();
+    let r;
+    try {
+      r = await withTimeout(fetch(CONFIG.aiEndpoint.replace(/\/$/, '') + '/billing', {
+        method: 'POST', headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + idTok },
+        body: JSON.stringify(Object.assign({ store: 'apple', sku: sku, token: token }, extra || {}))
+      }), 30000);
+    } catch (e) { throw new Error('offline'); }
+    const j = await r.json().catch(() => ({}));
+    if (r.status >= 500 || r.status === 429) throw new Error('offline');
+    if (!r.ok || !j.ok) throw new Error(j.error || ('billing ' + r.status));
+    return j;
+  },
+
+  /* StoreKit is told the purchase is done only once the worker has answered
+     for it - granted, or refused for good. */
+  async finish(token) {
+    const P = this.service || applePlugin();
+    if (!P || typeof P.acknowledgePurchase !== 'function') return;
+    try { await withTimeout(P.acknowledgePurchase({ purchaseToken: String(token) }), this.detailsMs); } catch (e) { /* already finished, or gone: nothing left to do */ }
+  },
+
+  /* One transaction, from StoreKit to the account. */
+  async settle(rec) {
+    this.remember(rec);
+    let out;
+    try { out = await this.verify(rec.sku, rec.token, rec.wid ? { wid: rec.wid } : undefined); }
+    catch (e) {
+      const why = String((e && e.message) || '');
+      /* Apple has the money and the worker could not be reached: kept, unfinished, for restore(). */
+      if (why === 'offline') throw e;
+      /* A final answer - already used by another account, refunded, not this app - is final for StoreKit too. */
+      this.forget(rec.token); await this.finish(rec.token);
+      throw e;
+    }
+    this.forget(rec.token);
+    await this.finish(rec.token);
+    if (out.access) store.set('nabu-access', out.access);
+    if (out.subs) store.set('nabu-subs', out.subs);
+    return out;
+  },
+
+  /* Buy one thing. opt.wid: the wedding room it pays for. opt.oldKey is Play's
+     business - the App Store moves a subscription within its group by itself,
+     so buying Pro while holding Plus is simply buying Pro. */
+  async buy(key, opt) {
+    opt = opt || {};
+    const it = playItem(key);
+    if (this.buying) throw new Error('busy');
+    if (!this.can()) throw new Error('nostore');
+    if (!BE.enabled || !BE.user) throw new Error('signin');
+    if (!it || !it.sku || !this.details[it.sku]) throw new Error('noproduct');
+    const shownAt = Date.now();
+    this.seq++; this.buying = key; this.buyingSeq = this.seq;
+    let tx;
+    try {
+      tx = await this.service.purchaseProduct({
+        productIdentifier: it.sku, productType: it.kind === 'subs' ? 'subs' : 'inapp', quantity: 1,
+        appAccountToken: await appleAccountToken(BE.user.uid), autoAcknowledgePurchases: false
+      });
+    } catch (e) {
+      const msg = String((e && e.message) || e || '');
+      this.buying = ''; this.buyingSeq = 0;
+      /* Ask to Buy: nothing is charged until somebody approves, and the approval arrives through listen(). */
+      if (/pending/i.test(msg)) { this.lastSheet = { outcome: 'done', name: 'Pending', ms: Date.now() - shownAt }; return { pending: true }; }
+      const err = new Error(msg || 'failed');
+      err.outcome = /cancel/i.test(msg) ? 'aborted' : 'failed';
+      err.playName = /cancel/i.test(msg) ? 'UserCancelled' : 'StoreKitError';
+      this.lastSheet = { outcome: err.outcome, name: err.playName, ms: Date.now() - shownAt };
+      throw err;
+    }
+    this.buying = ''; this.buyingSeq = 0;
+    this.lastSheet = { outcome: 'done', name: '-', ms: Date.now() - shownAt };
+    if (!tx || !tx.transactionId) throw new Error('nopurchase');
+    const out = await this.settle({ sku: tx.productIdentifier || it.sku, token: String(tx.transactionId), at: Date.now(), wid: opt.wid || undefined });
+    await this.sync();
+    return { opened: out.opened || it.opens };
+  },
+
+  /* Everything this Apple account currently holds, and every transaction this
+     phone is still waiting on, sent to the worker again. Safe to repeat: the
+     worker answers a repeat with what it already did. */
+  async restore() {
+    const out = { tried: 0, opened: 0, pending: 0, failed: 0 };
+    await this.start();
+    const P = this.service || applePlugin();
+    if (!P || !BE.enabled || !BE.user) return out;
+    const held = await withTimeout(P.getPurchases({ onlyCurrentEntitlements: true }), this.detailsMs).catch(() => ({ purchases: [] }));
+    const mine = (await appleAccountToken(BE.user.uid)).toLowerCase();
+    const byToken = {};
+    ((held && held.purchases) || []).forEach((t) => {
+      /* Only what this Nabu account bought. StoreKit writes the token in capitals; a purchase with none
+         (an offer code redeemed in the App Store) is sent too, and the worker's ledger decides. */
+      const tok = String(t.appAccountToken || '').toLowerCase();
+      if (t.transactionId && (!tok || tok === mine)) byToken[String(t.transactionId)] = { sku: t.productIdentifier, token: String(t.transactionId) };
+    });
+    this.pendingList().forEach((p) => { if (p.token) byToken[p.token] = Object.assign({}, byToken[p.token], p); });
+    for (const token of Object.keys(byToken)) {
+      const p = byToken[token], it = playItemBySku(p.sku);
+      if (!it) continue;
+      out.tried++;
+      let wid = p.wid;
+      try {
+        if (it.key === 'wedding' && !wid) wid = await this.resolveWeddingWid();
+        if (it.key === 'wedding' && !wid) throw new Error('noroom');
+        await this.settle(Object.assign({}, p, { token: token, wid: wid || undefined }));
+        out.opened++;
+      } catch (e) {
+        const msg = String((e && e.message) || '');
+        if (msg !== 'offline' && msg !== 'noroom') continue;   // a final answer: settle() has already let it go
+        const tries = (p.tries || 0) + 1;
+        if (tries >= APPLE_GIVE_UP) { this.forget(token); out.failed++; this.flagStuck(p); }
+        else this.remember(Object.assign({}, p, { token: token, tries: tries }));
+      }
+    }
+    try { await BE.pullProfile(); } catch (e) { /* offline: the account is read next time */ }
+    return out;
+  },
+  sync() { return this.restore().catch(() => null); },
+
+  /* Apple's own page for the subscriptions on this Apple account. */
+  manage() { const P = this.service || applePlugin(); if (P && typeof P.manageSubscriptions === 'function') return P.manageSubscriptions().catch(() => {}); return Promise.resolve(); },
+
+  diag(key) {
+    const it = key ? playItem(key) : null;
+    const rows = [['web', String(window.APP_VERSION || '?')], ['shell', 'ios'], ['store', 'appstore'],
+      ['plugin', applePlugin() ? 'yes' : 'no'], ['user', (typeof BE !== 'undefined' && BE.user) ? 'yes' : 'no'],
+      ['state', this.state], ['why', this.why || '-'], ['stage', this.stage || '-'],
+      ['priced', this.priced() + '/' + this.sellable()], ['ms', String(this.tookMs || 0)], ['tries', String(this.tries)], ['try', String(this.attempt)],
+      ['waiting', String(this.pendingList().length)]];
+    if (it) rows.push(['sku', String(it.sku)]);
+    if (this.lastSheet) rows.push(['sheet', this.lastSheet.outcome + '/' + this.lastSheet.name + '/' + this.lastSheet.ms + 'ms']);
+    rows.push(['at', new Date().toISOString().replace(/\.\d+Z$/, 'Z')]);
+    return rows.map((r) => r[0] + '=' + r[1]).join(' ');
+  }
+};
+
+/* Play's BILL exactly as billing.js built it, kept whole, so the one object
+   every screen holds can be pointed at either store - the iPhone app points
+   it at the App Store before anything is drawn, and the suite points it back
+   and forth to check both. */
+const BILL_PLAY = Object.assign({}, BILL);
+function billUse(which) {
+  Object.keys(BILL).forEach((k) => { delete BILL[k]; });
+  Object.assign(BILL, BILL_PLAY, { details: {}, state: 'idle', service: null, starting: null, ready: false, why: '', tries: 0, attempt: 0, lastSheet: null, buying: '' });
+  if (which === 'apple') Object.assign(BILL, APPLE_BILL, { details: {}, state: 'idle', service: null, starting: null, listening: false, why: '', tries: 0, attempt: 0, lastSheet: null, buying: '' });
+  return BILL;
+}
+if (typeof window !== 'undefined' && isIOSApp()) billUse('apple');
+
 /* ======================= the store inside the Android app =======================
    #/unlock, when the app is the installed one. One row per thing Play sells,
    with Play's own price, and a button that opens Play's sheet. Nothing here
@@ -18636,7 +18926,10 @@ function subStateWord(row) {
   if (k === 'problem') return S.stProblem;
   return S.stExpired;
 }
-const manageURL = (key) => 'https://play.google.com/store/account/subscriptions?sku=' + encodeURIComponent((playItem(key) || {}).sku || '') + '&package=app.nabutarot.twa';
+/* Where a buyer manages a plan is the store that sold it: a row the App Store decided says so (store: "apple"). */
+const APPLE_MANAGE = 'https://apps.apple.com/account/subscriptions';
+const manageURL = (key) => ((SUBS.of(key) || {}).store === 'apple' ? APPLE_MANAGE
+  : 'https://play.google.com/store/account/subscriptions?sku=' + encodeURIComponent((playItem(key) || {}).sku || '') + '&package=app.nabutarot.twa');
 /* Every screen that sells anything comes through here, so this is where
    "Play priced this one" is asked. A row whose product Play did not return
    says so where its button was, rather than offering a button that can only
@@ -18723,6 +19016,8 @@ function fileBilling(line, where) {
 
 function bindStore(root, redraw) {
   const S = T();
+  /* Inside the iPhone app Apple's own subscriptions sheet opens over the app, rather than a web page. */
+  $$('a[href="' + APPLE_MANAGE + '"]', root).forEach((a) => a.addEventListener('click', (ev) => { if (BILL.store === 'apple' && typeof BILL.manage === 'function') { ev.preventDefault(); BILL.manage(); } }));
   $$('[data-buy]', root).forEach((b) => b.addEventListener('click', async () => {
     const key = b.getAttribute('data-buy'), st = $('[data-st="' + key + '"]', root) || $('#bstatus', root);
     if (b.disabled) return;   // a second tap on a button already working starts nothing
@@ -28798,8 +29093,8 @@ function adminSale(p) {
 ROUTES.admin = { nav: '', render: renderAdmin };
 
 /* ============================ boot ============================ */
-window.APP_VERSION = 'v239';
-window.NABU = { CONFIG: CONFIG, SALE: SALE, salePrice: salePrice, loadActs: loadActs, BACK: BACK, LESSONS: LESSONS, localAnswer: localAnswer, compatVerdict: compatVerdict, numerologyOf: numerologyOf, ZDEEP: ZDEEP, lunarToday: lunarToday, solarToLunar: solarToLunar, DECK: DECK, INSIGHT: INSIGHT, KW: KW, ASK: ASK, TOPICS: TOPICS, GUIDES: GUIDES, SERVICES: SERVICES, COURSES: COURSES, ACCESS: ACCESS, INTERESTS: INTERESTS, plusOn: () => plusOn(), proOn: () => proOn(), luckUnlimited: () => luckUnlimited(), ZODIAC: ZODIAC, pick: pick, book: book, PLAY_ITEMS: PLAY_ITEMS, PLAY_SUB_SKUS: PLAY_SUB_SKUS, playItem: playItem, BILL: BILL, SUBS: SUBS, renderStore: renderStore, subStateWord: subStateWord,
+window.APP_VERSION = 'v240';
+window.NABU = { CONFIG: CONFIG, SALE: SALE, salePrice: salePrice, loadActs: loadActs, BACK: BACK, LESSONS: LESSONS, localAnswer: localAnswer, compatVerdict: compatVerdict, numerologyOf: numerologyOf, ZDEEP: ZDEEP, lunarToday: lunarToday, solarToLunar: solarToLunar, DECK: DECK, INSIGHT: INSIGHT, KW: KW, ASK: ASK, TOPICS: TOPICS, GUIDES: GUIDES, SERVICES: SERVICES, COURSES: COURSES, ACCESS: ACCESS, INTERESTS: INTERESTS, plusOn: () => plusOn(), proOn: () => proOn(), luckUnlimited: () => luckUnlimited(), ZODIAC: ZODIAC, pick: pick, book: book, PLAY_ITEMS: PLAY_ITEMS, PLAY_SUB_SKUS: PLAY_SUB_SKUS, playItem: playItem, BILL: BILL, SUBS: SUBS, billUse: billUse, APPLE_BILL: APPLE_BILL, appleAccountToken: appleAccountToken, renderStore: renderStore, subStateWord: subStateWord,
   insightHTML: insightHTML, insightOf: insightOf, sunSignIndex: sunSignIndex, lifePath: lifePath, PROFILE: () => PROFILE, BE: BE, inAppBrowser: inAppBrowser, ACTS: ACTS, CMT: CMT, LIKES: LIKES, kbReady: kbReady, AI: AI, STR: STR, KB_URL: (typeof KB_URL === 'string' ? KB_URL : ''),
   ANGELS: ANGELS, angelRead: angelRead, CODEBOOK: CODEBOOK, redeemCode: redeemCode, loadCodebook: loadCodebook, petHomeSVG: petHomeSVG, PET_HOMES: PET_HOMES, PET_WEARS: PET_WEARS, codeDigest: codeDigest, randomCode: randomCode, BANK: BANK, PETS: PETS, petSVG: petSVG, PET_COATS: PET_COATS, PET_KINDS: PET_KINDS, turnsMerge: turnsMerge, turnsLocal: turnsLocal, TODAY: TODAY, treeMsgOf: treeMsgOf, priceText: priceText, termText: termText, proSaveText: () => proSaveText(), wedFeeText: () => wedFeeText(), fmtPrice: fmtPrice, luckCut: luckCut, petLevel: petLevel, petStep: petStep, VOUCHERS: VOUCHERS, levelCoins: levelCoins, LOOKS: LOOKS,
   LOVE: LOVE, LOVEDB: LOVEDB, HANDLE_RE: HANDLE_RE, loveBadgeHTML: loveBadgeHTML,
