@@ -19,6 +19,9 @@ Where each file goes, and why it looks the way it does:
                         BLACK and applies its own rounded mask, so this one
                         keeps the brand purple behind the circle instead of a
                         hole. Saved without alpha for the same reason.
+  icon-1024.png         the App Store and iPhone app icon: the same full pale
+                        square as the Android launcher icon below, for the
+                        same reason - the device's mask is the only edge.
   icon-512-maskable.png the Android launcher icon. Android masks it to the
                         device's own shape and needs the artwork to reach the
                         edges, so this one is a full pale square with the
@@ -84,11 +87,6 @@ round_badge = badge()
 save(round_badge, 'icon-512.png', 512)
 save(round_badge, 'icon-192.png', 192)
 save(round_badge, 'icon-180.png', 180, flatten=PURPLE)
-# The App Store icon and the iPhone app's home-screen icon: the same picture as
-# icon-180 - iOS applies its own rounded mask and paints transparency black, so
-# the purple is kept behind the circle and there is no alpha - at the 1024px
-# Apple asks for. BIG is 2048, so this is still one clean step down.
-save(round_badge, 'icon-1024.png', 1024, flatten=PURPLE)
 
 def ringless():
     """The avatar with its outline ring lifted off, and nothing else.
@@ -137,6 +135,12 @@ canvas = Image.new('RGBA', (BIG, BIG), PALE + (255,))
 inner = int(BIG * (1 - 2 * pad))
 canvas.alpha_composite(ringless().resize((inner, inner), Image.LANCZOS), ((BIG - inner) // 2, (BIG - inner) // 2))
 save(canvas, 'icon-512-maskable.png', 512, flatten=PALE)
+# The App Store icon and the iPhone app's home-screen icon, at the 1024px Apple
+# asks for: the launcher picture, not the round badge. The badge on a purple
+# square is what the owner saw on the home screen as a circle stuck inside a
+# tile - iOS's own rounded square is the edge, exactly as Android's mask is.
+# No alpha: iOS paints transparency black.
+save(canvas, 'icon-1024.png', 1024, flatten=PALE)
 
 
 # ---- the iPhone app's launch screen ----
