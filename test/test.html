@@ -1588,8 +1588,16 @@ async function go(hash, sel) { W().location.hash = hash; await sleep(30); return
       const pub = await fetch('/privacy.html', { cache: 'no-store' }).then((r) => r.text()).catch(() => '');
       ok(/Bình luận thì khác/.test(pv) && /công khai/.test(pv)
         && pub.indexOf('Bình luận thì khác') > -1 && pub.indexOf('Comments you write under a post') > -1
-        && pub.indexOf('Kommentare, die du unter einen Beitrag') > -1 && pub.indexOf('2026-09-13') > -1,
+        && pub.indexOf('Kommentare, die du unter einen Beitrag') > -1 && pub.indexOf('2026-09-17') > -1,
         'the privacy policy says, in all three languages, that comments are public, show the chosen name only, can be deleted, and go with the account'); }
+    { /* v242: the iPhone app. App Review reads the policy against the app, and
+         the policy predated Sign in with Apple and App Store purchases. */
+      const pub = await fetch('/privacy.html', { cache: 'no-store' }).then((r) => r.text()).catch(() => '');
+      ok(pub.indexOf('Mua trong app') > -1 && pub.indexOf('In-app purchases') > -1 && pub.indexOf('Käufe in der App') > -1
+        && pub.indexOf('Đăng nhập bằng Google, Apple, Facebook') > -1 && pub.indexOf('If you sign in with Apple and choose to hide your email') > -1
+        && pub.indexOf('không tự hủy khi bạn xóa tài khoản') > -1 && pub.indexOf('are not cancelled when you delete your account') > -1
+        && pub.indexOf('werden beim Löschen des Kontos nicht gekündigt') > -1 && pub.indexOf('Sợi tơ hồng và lễ cưới') > -1 && pub.indexOf('danh sách khách mà mọi người trong phòng đều thấy') > -1,
+        'the privacy policy names Sign in with Apple and store purchases, says a store subscription outlives a deleted account, and covers the red thread, in all three languages'); }
     { /* v226 added two things a reader gives without typing anything: an edit,
          which changes what a comment says after other people have read it, and
          a heart, which is the only thing the app records about a post that the
