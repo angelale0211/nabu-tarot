@@ -140,7 +140,35 @@ save(canvas, 'icon-512-maskable.png', 512, flatten=PALE)
 # square is what the owner saw on the home screen as a circle stuck inside a
 # tile - iOS's own rounded square is the edge, exactly as Android's mask is.
 # No alpha: iOS paints transparency black.
-save(canvas, 'icon-1024.png', 1024, flatten=PALE)
+ICON_INK = 0.92
+def inked():
+    """The iPhone icon, measured from the drawing rather than from the canvas.
+
+    Android's mask is a circle, so its picture keeps a tenth of the canvas clear
+    on every side, and the drawing itself ends up spanning about 60% of the
+    tile. Behind iOS's rounded square that simply reads as small - the owner's
+    word, beside TikTok and Threads on the same home screen, was ugly. So here
+    everything that is not the pale ground is cropped out and drawn at
+    ICON_INK of the width. A rounded square barely cuts its corners, so 92%
+    keeps the flowers and the stars inside it."""
+    flat = Image.new('RGB', canvas.size, PALE)
+    flat.paste(canvas.convert('RGB'), (0, 0))
+    px, (w, h) = flat.load(), flat.size
+    mark = Image.new('L', (w, h), 0)
+    mp = mark.load()
+    for y in range(h):
+        for x in range(w):
+            r, g, b = px[x, y]
+            if max(abs(r - PALE[0]), abs(g - PALE[1]), abs(b - PALE[2])) > 12: mp[x, y] = 255
+    art = flat.crop(mark.getbbox())
+    k = (BIG * ICON_INK) / max(art.size)
+    art = art.resize((int(art.size[0] * k), int(art.size[1] * k)), Image.LANCZOS)
+    out = Image.new('RGB', (BIG, BIG), PALE)
+    out.paste(art, ((BIG - art.size[0]) // 2, (BIG - art.size[1]) // 2))
+    return out
+
+
+save(inked(), 'icon-1024.png', 1024)
 
 
 # ---- the iPhone app's launch screen ----

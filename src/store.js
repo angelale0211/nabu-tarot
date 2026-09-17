@@ -108,6 +108,30 @@ function fileBilling(line, where) {
   noteOops(line, where);
 }
 
+/* A purchase is paid for, the worker has written the account, and the screen
+   has to show it - without the buyer being told to close the app and open it
+   again, which is what the owner hit on the iPhone with the Manifestation set:
+   "successful", and the paywall still there until a force quit.
+
+   The buy already stores what the worker answered, and BILL.sync() re-reads
+   the account afterwards; a read that lands before the write is visible puts
+   the old, empty access back. So before redrawing, wait for the keys this
+   purchase opens to actually be there - reading the account again, a few times,
+   a little further apart each time. Everything is already paid and granted at
+   this point: this only decides when the screen is redrawn. Three tries over
+   about four seconds, then redraw anyway rather than hold the button for ever.
+
+   Both stores go through here, so Play gets the same guarantee. */
+async function settled(key) {
+  const it = typeof playItem === 'function' ? playItem(key) : null;
+  const keys = (it && it.opens && it.opens.length) ? it.opens : [];
+  if (!keys.length || typeof BE === 'undefined' || !BE.user) return;
+  for (let i = 0; i < 3 && !keys.every((k) => ACCESS.has(k)); i++) {
+    await new Promise((ok) => setTimeout(ok, 700 * (i + 1)));
+    try { await BE.pullProfile(); } catch (e) { /* offline: the next open reads it */ }
+  }
+}
+
 function bindStore(root, redraw) {
   const S = T();
   /* Inside the iPhone app Apple's own subscriptions sheet opens over the app, rather than a web page. */
@@ -129,6 +153,7 @@ function bindStore(root, redraw) {
       const opt = {}; if (b.getAttribute('data-old')) opt.oldKey = b.getAttribute('data-old'); if (b.getAttribute('data-wid')) opt.wid = b.getAttribute('data-wid');
       const r = await BILL.buy(key, opt);
       if (r.pending) { if (st) st.textContent = S.stPending; return; }
+      await settled(key);
       toast(S.unlocked); if (redraw) redraw(); else route();
     } catch (e) {
       const why = String((e && e.message) || '');
