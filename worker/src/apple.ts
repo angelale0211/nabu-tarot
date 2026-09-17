@@ -40,7 +40,14 @@ const bundleOf = (env: AppleEnv) => env.APPLE_BUNDLE_ID || "app.nabutarot.ios";
    Apple's own reviewers all buy in the sandbox, so a build under review would
    fail every purchase if only production were asked. Apple's own advice is
    exactly this order: a transaction production does not know (404) is asked of
-   the sandbox. */
+   the sandbox.
+
+   401 moves on to the sandbox as well. Before an app has ever been on the
+   store, the production server refuses the key outright - 401, not 404 - for
+   every request, a test notification included. Falling through only on 404
+   meant the first TestFlight purchase answered "apple 401" and nothing was
+   ever unlocked, which is exactly what the owner saw. A key that is genuinely
+   wrong gets 401 from both hosts and still ends as "apple 401". */
 const HOSTS = ["https://api.storekit.itunes.apple.com", "https://api.storekit-sandbox.itunes.apple.com"];
 
 /* What the ledger files an App Store purchase under. */
@@ -115,7 +122,7 @@ async function ask(env: AppleEnv, path: string): Promise<{ status: number; body:
     let body: Record<string, unknown> = {};
     try { body = (await r.json()) as Record<string, unknown>; } catch { /* an empty or broken body */ }
     last = { status: r.status, body };
-    if (r.status !== 404) return last;
+    if (r.status !== 404 && r.status !== 401) return last;
   }
   return last;
 }
