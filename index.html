@@ -12,7 +12,7 @@
      carries this notice with it. See LICENSE. -->
 <meta name="author" content="Nabu Tarot">
 <meta name="copyright" content="Copyright (c) 2025-2026 Nabu Tarot. All rights reserved.">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'none'; object-src 'none'; form-action 'self'; script-src 'self' 'sha256-K3IQSeezQOOZFpgU9uNtdXuKaUVQnY/vktTWCfiRSms=' https://www.gstatic.com https://apis.google.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; font-src 'self' data:; media-src 'self' data: blob:; worker-src 'self'; connect-src 'self' https://*.googleapis.com https://*.google.com https://*.firebaseio.com https://*.cloudfunctions.net https://*.workers.dev https://generativelanguage.googleapis.com; frame-src https://*.firebaseapp.com https://accounts.google.com https://*.facebook.com">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'none'; object-src 'none'; form-action 'self'; script-src 'self' 'sha256-6QFNddx3nkQRGjSwskLG/4dwKbwhPcJvrfd5fTQfAzM=' https://www.gstatic.com https://apis.google.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; font-src 'self' data:; media-src 'self' data: blob:; worker-src 'self'; connect-src 'self' https://*.googleapis.com https://*.google.com https://*.firebaseio.com https://*.cloudfunctions.net https://*.workers.dev https://generativelanguage.googleapis.com; frame-src https://*.firebaseapp.com https://accounts.google.com https://*.facebook.com">
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <meta name="theme-color" content="#EFE9FA">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -18179,6 +18179,7 @@ const BILL = {
   buying: '',       // the key whose sheet is open, so a second tap cannot start another
   seq: 0,           // every purchase takes a number, so a late answer can tell its own from the next one
   buyingSeq: 0,     // the number of the purchase `buying` refers to
+  storefront: '',   // set by APPLE_BILL; Play leaves it empty
   lastSheet: null,  // {outcome, name, ms} of the last show(), for the diagnostics
   onSettled: null,  // the screen's hook: an answer that landed after the watchdog had already spoken
 
@@ -18333,6 +18334,9 @@ const BILL = {
       ['state', this.state], ['why', this.why || '-'], ['stage', this.stage || '-'],
       ['priced', this.priced() + '/' + this.sellable()],
       ['ms', String(this.tookMs || 0)], ['tries', String(this.tries)], ['try', String(this.attempt)]];
+    if (this.storefront) rows.push(['storefront', String(this.storefront)]);
+    { const any = d || this.details[Object.keys(this.details)[0]];
+      if (any && any.price && any.price.currency) rows.push(['currency', String(any.price.currency)]); }
     if (it) rows.push(['sku', String(it.sku)], ['plan', String((d && d.subscriptionPeriod) || '-')]);
     if (this.lastSheet) rows.push(['sheet', this.lastSheet.outcome + '/' + this.lastSheet.name + '/' + this.lastSheet.ms + 'ms']);
     rows.push(['at', new Date().toISOString().replace(/\.\d+Z$/, 'Z')]);
@@ -18752,6 +18756,13 @@ const APPLE_BILL = {
       ((got && got.products) || []).forEach((p) => { if (p && p.identifier) map[p.identifier] = p; });
       this.service = P;
       if (!Object.keys(map).length) return fail('noproducts', 'details');
+      /* Which storefront StoreKit is actually pricing in. The owner's App Store
+         account is Vietnam and the payment sheet charges dong, while the price
+         list came back in dollars; this is the one number that says which
+         country StoreKit thinks it is selling to, rather than guessing from
+         the prices. Kept for the diagnostics only - nothing is decided by it. */
+      try { const sf = await withTimeout(P.getStorefront(), this.detailsMs); this.storefront = (sf && sf.countryCode) || ''; }
+      catch (e) { this.storefront = ''; }
       this.details = map; this.state = 'ready'; this.ready = true; this.tries = 0; this.why = ''; this.tookMs = Date.now() - began;
       return true;
     })();
@@ -25354,7 +25365,7 @@ window.addEventListener('error', (e) => { window.__lastError = (e.message || '')
 window.addEventListener('unhandledrejection', (e) => { window.__lastError = 'promise: ' + ((e.reason && e.reason.message) || String(e.reason || '')); });
 
 function reportInfo() {
-  return [CONFIG.brand + ' ' + (window.APP_VERSION || ''), location.hash, navigator.userAgent.replace(/\).*$/, ')'), (window.innerWidth + 'x' + window.innerHeight), lang, OOPS.length ? 'errors: ' + OOPS.join(' | ') : (window.__lastError ? 'error: ' + window.__lastError : '')].filter(Boolean).join(' · ');
+  return [CONFIG.brand + ' ' + (window.APP_VERSION || ''), location.hash, navigator.userAgent.replace(/\).*$/, ')'), (window.innerWidth + 'x' + window.innerHeight), lang, (typeof BILL !== 'undefined' && BILL.storefront ? 'storefront ' + BILL.storefront + (BILL.details && Object.keys(BILL.details).length && (BILL.details[Object.keys(BILL.details)[0]] || {}).price ? '/' + (BILL.details[Object.keys(BILL.details)[0]].price.currency || '?') : '') : ''), OOPS.length ? 'errors: ' + OOPS.join(' | ') : (window.__lastError ? 'error: ' + window.__lastError : '')].filter(Boolean).join(' · ');
 }
 function renderReport(args, params) {
   const S = T(), m = $('#main');
@@ -29152,7 +29163,7 @@ function adminSale(p) {
 ROUTES.admin = { nav: '', render: renderAdmin };
 
 /* ============================ boot ============================ */
-window.APP_VERSION = 'v243';
+window.APP_VERSION = 'v244';
 window.NABU = { CONFIG: CONFIG, SALE: SALE, salePrice: salePrice, loadActs: loadActs, BACK: BACK, LESSONS: LESSONS, localAnswer: localAnswer, compatVerdict: compatVerdict, numerologyOf: numerologyOf, ZDEEP: ZDEEP, lunarToday: lunarToday, solarToLunar: solarToLunar, DECK: DECK, INSIGHT: INSIGHT, KW: KW, ASK: ASK, TOPICS: TOPICS, GUIDES: GUIDES, SERVICES: SERVICES, COURSES: COURSES, ACCESS: ACCESS, INTERESTS: INTERESTS, plusOn: () => plusOn(), proOn: () => proOn(), luckUnlimited: () => luckUnlimited(), ZODIAC: ZODIAC, pick: pick, book: book, PLAY_ITEMS: PLAY_ITEMS, PLAY_SUB_SKUS: PLAY_SUB_SKUS, playItem: playItem, BILL: BILL, SUBS: SUBS, billUse: billUse, APPLE_BILL: APPLE_BILL, appleAccountToken: appleAccountToken, renderStore: renderStore, subStateWord: subStateWord,
   insightHTML: insightHTML, insightOf: insightOf, sunSignIndex: sunSignIndex, lifePath: lifePath, PROFILE: () => PROFILE, BE: BE, inAppBrowser: inAppBrowser, ACTS: ACTS, CMT: CMT, LIKES: LIKES, kbReady: kbReady, AI: AI, STR: STR, KB_URL: (typeof KB_URL === 'string' ? KB_URL : ''),
   ANGELS: ANGELS, angelRead: angelRead, CODEBOOK: CODEBOOK, redeemCode: redeemCode, loadCodebook: loadCodebook, petHomeSVG: petHomeSVG, PET_HOMES: PET_HOMES, PET_WEARS: PET_WEARS, codeDigest: codeDigest, randomCode: randomCode, BANK: BANK, PETS: PETS, petSVG: petSVG, PET_COATS: PET_COATS, PET_KINDS: PET_KINDS, turnsMerge: turnsMerge, turnsLocal: turnsLocal, TODAY: TODAY, treeMsgOf: treeMsgOf, priceText: priceText, termText: termText, proSaveText: () => proSaveText(), wedFeeText: () => wedFeeText(), fmtPrice: fmtPrice, luckCut: luckCut, petLevel: petLevel, petStep: petStep, VOUCHERS: VOUCHERS, levelCoins: levelCoins, LOOKS: LOOKS,

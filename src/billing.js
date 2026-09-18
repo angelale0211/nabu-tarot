@@ -66,6 +66,7 @@ const BILL = {
   buying: '',       // the key whose sheet is open, so a second tap cannot start another
   seq: 0,           // every purchase takes a number, so a late answer can tell its own from the next one
   buyingSeq: 0,     // the number of the purchase `buying` refers to
+  storefront: '',   // set by APPLE_BILL; Play leaves it empty
   lastSheet: null,  // {outcome, name, ms} of the last show(), for the diagnostics
   onSettled: null,  // the screen's hook: an answer that landed after the watchdog had already spoken
 
@@ -220,6 +221,9 @@ const BILL = {
       ['state', this.state], ['why', this.why || '-'], ['stage', this.stage || '-'],
       ['priced', this.priced() + '/' + this.sellable()],
       ['ms', String(this.tookMs || 0)], ['tries', String(this.tries)], ['try', String(this.attempt)]];
+    if (this.storefront) rows.push(['storefront', String(this.storefront)]);
+    { const any = d || this.details[Object.keys(this.details)[0]];
+      if (any && any.price && any.price.currency) rows.push(['currency', String(any.price.currency)]); }
     if (it) rows.push(['sku', String(it.sku)], ['plan', String((d && d.subscriptionPeriod) || '-')]);
     if (this.lastSheet) rows.push(['sheet', this.lastSheet.outcome + '/' + this.lastSheet.name + '/' + this.lastSheet.ms + 'ms']);
     rows.push(['at', new Date().toISOString().replace(/\.\d+Z$/, 'Z')]);

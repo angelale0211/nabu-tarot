@@ -89,6 +89,13 @@ const APPLE_BILL = {
       ((got && got.products) || []).forEach((p) => { if (p && p.identifier) map[p.identifier] = p; });
       this.service = P;
       if (!Object.keys(map).length) return fail('noproducts', 'details');
+      /* Which storefront StoreKit is actually pricing in. The owner's App Store
+         account is Vietnam and the payment sheet charges dong, while the price
+         list came back in dollars; this is the one number that says which
+         country StoreKit thinks it is selling to, rather than guessing from
+         the prices. Kept for the diagnostics only - nothing is decided by it. */
+      try { const sf = await withTimeout(P.getStorefront(), this.detailsMs); this.storefront = (sf && sf.countryCode) || ''; }
+      catch (e) { this.storefront = ''; }
       this.details = map; this.state = 'ready'; this.ready = true; this.tries = 0; this.why = ''; this.tookMs = Date.now() - began;
       return true;
     })();
