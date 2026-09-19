@@ -22,6 +22,12 @@ function subStateWord(row) {
 }
 /* Where a buyer manages a plan is the store that sold it: a row the App Store decided says so (store: "apple"). */
 const APPLE_MANAGE = 'https://apps.apple.com/account/subscriptions';
+/* App Review asks every subscription screen for the Terms of Use and the
+   privacy policy. On the iPhone the terms are Apple's standard licence, the
+   same link the App Store listing gives; Play asks for neither, so Android
+   and the web show nothing new. */
+const APPLE_EULA = 'https://www.apple.com/legal/internet-services/itunes/dev/stdeula/';
+const legalHTML = () => (isIOSApp() ? '<p class="hint legal"><a href="' + APPLE_EULA + '" target="_blank" rel="noopener">' + esc(T().stTerms) + '</a> · <a href="#/privacy">' + esc(T().stPrivacy) + '</a></p>' : '');
 const manageURL = (key) => ((SUBS.of(key) || {}).store === 'apple' ? APPLE_MANAGE
   : 'https://play.google.com/store/account/subscriptions?sku=' + encodeURIComponent((playItem(key) || {}).sku || '') + '&package=app.nabutarot.twa');
 /* Every screen that sells anything comes through here, so this is where
@@ -293,7 +299,7 @@ function renderStore(params) {
     const plans = '<div class="sec"><h2 style="margin-bottom:8px">' + esc(S.stPlans) + '</h2>' + group(['plus', 'pro6', 'pro', 'manifest']) + '</div>';
     m.innerHTML = '<div class="store"><div class="eyebrow">' + esc(CONFIG.brand) + '</div><h1 style="margin-bottom:6px">' + esc(S.stTitle) + '</h1><p class="muted">' + esc(S.stIntro) + '</p>'
       + (BILL.can() ? (from === 'app' ? plans + courses : courses + plans) : storeNotReadyHTML())
-      + '<div class="card"><button type="button" class="btn block" id="restore">' + esc(S.stRestore) + '</button><p class="hint" id="rstatus"></p></div>'
+      + '<div class="card"><button type="button" class="btn block" id="restore">' + esc(S.stRestore) + '</button><p class="hint" id="rstatus"></p>' + legalHTML() + '</div>'
       + (BILL.can() ? storeDiagHTML('') : '') + '</div>';
     bindStore(m, draw);
   };
