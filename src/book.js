@@ -192,7 +192,7 @@ function priceCardHTML(c) {
   return '<div class="svc ' + (c.kind === 'course' ? 'lav' : 'gold') + '">'
     + '<div class="t"><span class="ic">' + c.icon + '</span><div><b>' + esc(L(c.name)) + '</b>'
     + '<div class="tag">' + esc(priceText(L(c.sum))) + '</div></div></div>'
-    + (isTWA() ? '' : '<div class="pk"><div class="pkg"><span>' + esc(termText(c)) + '</span><b>' + priceHTML(c.price, 'unlock', c.id) + '</b></div></div>')
+    + (inStoreApp() ? '' : '<div class="pk"><div class="pkg"><span>' + esc(termText(c)) + '</span><b>' + priceHTML(c.price, 'unlock', c.id) + '</b></div></div>')
     + '<a class="btn sm block" href="' + esc(c.to) + '" style="margin-top:8px">' + esc(label) + ' \u2192</a></div>';
 }
 

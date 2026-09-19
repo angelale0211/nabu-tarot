@@ -16,6 +16,7 @@ import { itemBySku, itemByKey } from "./catalog";
 import { applySubscription, payRoom, noteGranted } from "./entitle";
 import { handleRtdn } from "./rtdn";
 import { reconcileSubs } from "./reconcile";
+import { appleBill, handleAsn, sweepAppleRefunds, appleRevoke } from "./apple";
 
 export interface Env {
   ANTHROPIC_API_KEY?: string;
@@ -29,6 +30,13 @@ export interface Env {
   KV?: KVNamespace;            // where the per-person counts live; unset = no limits
   RTDN_AUDIENCE?: string;      // the /rtdn URL, as given to the Pub/Sub push subscription
   RTDN_PUSH_EMAIL?: string;    // the service account Pub/Sub pushes as
+  APPLE_BUNDLE_ID?: string;    // app.nabutarot.ios, for checking App Store purchases
+  APPLE_ISSUER_ID?: string;    // the In-App Purchase key's issuer, from App Store Connect
+  APPLE_KEY_ID?: string;       // that key's id
+  APPLE_PRIVATE_KEY?: string;  // the .p8, as a secret
+  APPLE_TEAM_ID?: string;           // for Sign in with Apple
+  APPLE_SIWA_KEY_ID?: string;       // the Sign in with Apple key's id
+  APPLE_SIWA_PRIVATE_KEY?: string;  // its .p8, as a secret
 }
 
 /* What one person may ask in a day.
@@ -324,6 +332,13 @@ export default {
        are counted by address instead. */
     const path = new URL(request.url).pathname;
     if (path.endsWith("/rtdn")) return handleRtdn(request, env);
+    /* The App Store's notifications. Counted by address like the mail endpoints, generously - Apple sends
+       bursts - so a flood of forged ones cannot turn into a flood of calls to Apple. */
+    if (path.endsWith("/asn")) {
+      const v = await allow(env, "asn:" + caller(request), 20000, 600);
+      if (!v.ok) return tooMany(v, headers);
+      return handleAsn(request, env);
+    }
     if (path.endsWith("/booking") || path.endsWith("/report")) {
       const v = await allow(env, caller(request), MAIL_A_DAY, MAIL_A_MINUTE);
       if (!v.ok) return tooMany(v, headers);
@@ -337,6 +352,19 @@ export default {
        been handed over before. Then the access is written from here, with the
        service account, so that granting it never depends on what a phone is
        allowed to write. */
+    /* ---- an account signed in with Apple is being deleted: revoke the Apple sign-in (apple.ts) ---- */
+    if (path.endsWith("/apple-revoke")) {
+      if (!env.FIREBASE_PROJECT_ID) return new Response(JSON.stringify({ error: "not configured" }), { status: 500, headers });
+      const person = await whoIsAsking(request, env.FIREBASE_PROJECT_ID);
+      if (!person) return new Response(JSON.stringify({ error: "signin" }), { status: 401, headers });
+      const v = await allow(env, "revoke:" + person.uid, 10, 3);
+      if (!v.ok) return tooMany(v, headers);
+      let b: { code?: string };
+      try { b = await request.json(); } catch { return new Response(JSON.stringify({ error: "bad json" }), { status: 400, headers }); }
+      try { const a = await appleRevoke(env, person, String(b.code || "")); return new Response(JSON.stringify(a.body), { status: a.status, headers }); }
+      catch (e) { console.error(JSON.stringify({ at: "apple-revoke", uid: person.uid, error: String((e as Error).message || e) })); return new Response(JSON.stringify({ error: "revoke failed" }), { status: 502, headers }); }
+    }
+
     if (path.endsWith("/billing")) {
       if (!env.FIREBASE_PROJECT_ID) return new Response(JSON.stringify({ error: "not configured" }), { status: 500, headers });
       const person = await whoIsAsking(request, env.FIREBASE_PROJECT_ID);
@@ -344,8 +372,14 @@ export default {
       const v = await allow(env, person.uid, 40, 6);
       if (!v.ok) return tooMany(v, headers);
 
-      let b: { sku?: string; token?: string; wid?: string };
+      let b: { sku?: string; token?: string; wid?: string; store?: string };
       try { b = await request.json(); } catch { return new Response(JSON.stringify({ error: "bad json" }), { status: 400, headers }); }
+      /* Bought in the iPhone app: the App Store is asked instead of Google (apple.ts), and everything it
+         grants goes through the same ledger and the same account writes as a Play purchase. */
+      if (b.store === "apple") {
+        try { const a = await appleBill(env, person.uid, b); return new Response(JSON.stringify(a.body), { status: a.status, headers }); }
+        catch (e) { console.error(JSON.stringify({ at: "billing", store: "apple", uid: person.uid, error: String((e as Error).message || e) })); return new Response(JSON.stringify({ error: "check failed" }), { status: 502, headers }); }
+      }
       const sku = String(b.sku || ""), token = String(b.token || ""), wid = String(b.wid || "");
       const item = itemBySku(sku);
       if (!item || !token) return new Response(JSON.stringify({ error: "unknown product" }), { status: 400, headers });
@@ -699,6 +733,8 @@ export default {
       catch (e) { console.error(JSON.stringify({ at: "refund-sweep", error: String((e as Error).message || e) })); }
       try { console.log(JSON.stringify({ at: "reconcile", ...(await reconcileSubs(env)) })); }
       catch (e) { console.error(JSON.stringify({ at: "reconcile", error: String((e as Error).message || e) })); }
+      try { console.log(JSON.stringify({ at: "apple-refund-sweep", ...(await sweepAppleRefunds(env)) })); }
+      catch (e) { console.error(JSON.stringify({ at: "apple-refund-sweep", error: String((e as Error).message || e) })); }
     })());
   },
 };

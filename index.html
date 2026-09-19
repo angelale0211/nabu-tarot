@@ -12,7 +12,7 @@
      carries this notice with it. See LICENSE. -->
 <meta name="author" content="Nabu Tarot">
 <meta name="copyright" content="Copyright (c) 2025-2026 Nabu Tarot. All rights reserved.">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'none'; object-src 'none'; form-action 'self'; script-src 'self' 'sha256-oNHx5EIC/6TiMISNDxTFfGSF3FvZXJm6RlvD0X8oc8c=' https://www.gstatic.com https://apis.google.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; font-src 'self' data:; media-src 'self' data: blob:; worker-src 'self'; connect-src 'self' https://*.googleapis.com https://*.google.com https://*.firebaseio.com https://*.cloudfunctions.net https://*.workers.dev https://generativelanguage.googleapis.com; frame-src https://*.firebaseapp.com https://accounts.google.com https://*.facebook.com">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'none'; object-src 'none'; form-action 'self'; script-src 'self' 'sha256-b2utjMgNaym22liEtBFP5Lml4ZSLCFUjmeMvzLeFF3E=' https://www.gstatic.com https://apis.google.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; font-src 'self' data:; media-src 'self' data: blob:; worker-src 'self'; connect-src 'self' https://*.googleapis.com https://*.google.com https://*.firebaseio.com https://*.cloudfunctions.net https://*.workers.dev https://generativelanguage.googleapis.com; frame-src https://*.firebaseapp.com https://accounts.google.com https://*.facebook.com">
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <meta name="theme-color" content="#EFE9FA">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -382,7 +382,7 @@ main{padding:22px 0 30px}
 button.chip,a.chip,label.chip{display:inline-flex;align-items:center;justify-content:center;min-height:40px}
 .chip.on{background:var(--primary);color:var(--primary-ink);border-color:transparent}
 .chip[disabled]{opacity:.4;pointer-events:none}
-.chip.tag{background:var(--tag-neu-bg);color:var(--tag-neu-ink);font-weight:600;padding:4px 10px;font-size:12.5px;border-color:transparent}
+.chip.tag{background:var(--tag-neu-bg);color:var(--tag-neu-ink);font-weight:600;padding:4px 10px;font-size:12.5px;border-color:transparent;white-space:nowrap}
 .chip.pink{background:var(--tag-pink-bg);color:var(--tag-pink-ink);border-color:transparent}
 .chip.blue{background:var(--tag-blue-bg);color:var(--tag-blue-ink);border-color:transparent}
 .chip.lav{background:var(--lav-soft);color:var(--fg);border-color:transparent}
@@ -577,13 +577,18 @@ button.chip,a.chip,label.chip{display:inline-flex;align-items:center;justify-con
 #main .pricesec>.hint{margin:0 0 12px}
 .pricesec .paynote{margin-bottom:12px}
 /* The free half, all one shape. */
-.freegrid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+/* As many columns as fit tiles of a readable width, and never more than four.
+   Three fixed columns at 320 squeezed German names past their tiles and cut
+   "Den Nachrichtenbaum schütteln" to "Nachrichtenbau…". Twelve tiles divide
+   evenly by two, three and four, so no row is ever left with one. */
+.freegrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(max(var(--fgmin,104px),calc((100% - 24px) / 4)),1fr));gap:8px}
+html[lang="de"] .freegrid{--fgmin:132px}
 .freegrid .fg{display:flex;flex-direction:column;align-items:center;gap:4px;background:var(--surface);border:1px solid var(--rule-soft);border-radius:14px;padding:11px 5px;text-decoration:none;color:inherit;min-width:0}
 .freegrid .fg .ic{height:26px;display:grid;place-content:center;font-size:21px;line-height:1}
 .freegrid .fg .ic .pickico{width:16px;height:27px}
 .freegrid .fg .ic .lovemark{width:24px;height:24px}
 .freegrid .fg .ic .pileico{width:26px;height:21px}
-.freegrid .fg b{font-size:12px;font-weight:600;line-height:1.25;text-align:center;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
+.freegrid .fg b{font-size:12px;font-weight:600;line-height:1.25;text-align:center;overflow:hidden;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical}
 .freegrid .fg .s{font-size:12px;line-height:1.25;color:var(--fg-faint);text-align:center;overflow:hidden;overflow-wrap:anywhere;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical}
 /* Forty-eight half hours a day: a grid keeps them in columns you can read
    down, where wrapping chips would be a wall. */
@@ -654,6 +659,15 @@ button.chip,a.chip,label.chip{display:inline-flex;align-items:center;justify-con
 .tbl{width:100%;border-collapse:collapse;font-size:14px}
 .tbl td{padding:8px 6px;border-bottom:1px solid var(--rule-soft);vertical-align:top}
 .tbl td:first-child{font-weight:600;white-space:nowrap}
+/* On the smallest phones a label held on one line takes the row from its
+   value: "Vietnamese (lunisolar)" at 320 left the dates four words a line.
+   There the label may wrap between words and keeps under half the row. */
+@media (max-width:359px){#today .tbl td:first-child{white-space:normal;width:46%}}
+/* The iPhone app in English: "Vietnamese (lunisolar)" held on one line took
+   nearly half the row and pushed every date onto two. The owner asked for a
+   narrower label column there, and only there - Android and the website keep
+   the layout above. */
+html.iosapp[lang="en"] #today .tbl td:first-child{white-space:normal;width:36%}
 
 /* ---- services / prices ---- */
 .svc{background:var(--surface);border:1.5px solid var(--rule);border-radius:18px;padding:14px 14px 10px;margin-bottom:12px;max-width:100%;overflow:hidden}
@@ -814,6 +828,14 @@ button.chip,a.chip,label.chip{display:inline-flex;align-items:center;justify-con
 .tsym .ic{font-size:26px;display:block}.tsym b{display:block;font-size:12px}.tsym span:last-child{font-size:10.5px;color:var(--fg-faint);display:block}
 .tsym.big{padding:14px}.tsym.big .ic{font-size:44px}.tsym.big b{font-size:16px}.tsym.big span{font-size:13px}
 .awrapper{text-align:center;margin-bottom:14px}
+/* The 12 animals: which zodiac this is, and how China and Korea differ. */
+.avn{margin:-2px 0 10px}
+.anote h3{margin-bottom:8px}
+.anote ul{margin:0;padding-left:20px}
+/* Short bullets in a narrow card: justified, a phone opened rivers between four words a line, and German
+   hyphenated on top. Left-aligned, in all three languages alike. */
+#main .anote li{margin:0 0 6px;font-size:14.5px;line-height:1.5;text-align:left;-webkit-hyphens:manual;hyphens:manual}
+.anote li:last-child{margin-bottom:0}
 /* The signs listed under the compatibility wheel. The wheel above them is
    centred and they were not, which read as a row that had come loose. Only
    these ones - chips elsewhere start at the left on purpose. */
@@ -825,6 +847,15 @@ button.chip,a.chip,label.chip{display:inline-flex;align-items:center;justify-con
 .awheel .aw .e{width:40px;height:40px;border-radius:50%;background:var(--surface);border:1px solid var(--rule);display:flex;align-items:center;justify-content:center;font-size:21px;line-height:1;box-shadow:0 1px 3px var(--shade)}
 .awheel .aw.on .e{width:48px;height:48px;background:var(--primary);font-size:25px;border-color:transparent}
 .awheel .aw b{font-size:12.5px;line-height:1.1;white-space:nowrap}.awheel .aw.on b{color:var(--primary)}
+/* The bottom animal's name hangs below the square, so the wheel keeps room for it. On a small phone the
+   English and German names ("Schlange", "Rooster") are longer than Tý or Sửu and reached the next circle,
+   so there the circles and names are a size smaller, in every language alike. */
+.awheel{margin-bottom:24px}
+@media (max-width:399px){
+  .awheel .aw .e{width:34px;height:34px;font-size:18px}
+  .awheel .aw.on .e{width:42px;height:42px;font-size:22px}
+  .awheel .aw b{font-size:11px}
+}
 @media (max-width:380px){.ringwrap{grid-template-columns:120px 1fr}.ring{width:120px;height:120px}}
 
 /* ---- guide visuals ---- */
@@ -933,23 +964,42 @@ h1 .pileico{width:34px;height:27px;vertical-align:-3px;margin-right:2px}
 .tip{background:var(--tag-lav-bg,var(--surface-2));color:var(--fg);border-radius:12px;padding:10px 12px;font-size:14.5px;line-height:1.5;margin:10px 0 4px}
 /* instruction rows: icon column + text, every row starts at the same edge */
 .notes{margin:2px 0 8px}.note{display:flex;gap:10px;align-items:flex-start;font-size:14.5px;line-height:1.5;color:var(--fg-soft);margin:0 0 8px}.note .ni{flex:none;width:22px;text-align:center;font-size:16px;line-height:1.35}
-/* The fourth row with the same fault, and the one the tester actually saw: at
-   320 the two labels are longer than half the screen, nowrap forbids them to
-   wrap, so the paint icon ends up sitting outside its own button. */
-.melinks{display:grid;grid-template-columns:1fr 1fr;gap:8px}
-.melinks .btn{padding:11px 6px;font-size:13.5px;text-align:center;min-width:0;line-height:1.25;overflow-wrap:anywhere}
-/* A grid column with min-width:0 may shrink below its contents; nowrap then
-   forbids the text to wrap, so it leaves the button instead of getting
-   narrower. Wrapping is allowed here, and below 360 the three sit two and one
-   rather than being squeezed into a strip. */
-.row3{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
-.row3 .btn{padding:11px 6px;font-size:13.5px;text-align:center;min-width:0;line-height:1.25;overflow-wrap:anywhere}
-@media (max-width:359px){.row3{grid-template-columns:repeat(2,1fr)}}
-/* Same fault, same fix. Four across down to 375; two by two below it, because a
-   wrapped label in a squeezed chip reads worse than a second row. */
-.themes{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}
-.themes .chip{padding:8px 4px;font-size:12.5px;text-align:center;min-width:0;line-height:1.25;overflow-wrap:anywhere}
-@media (max-width:374px){.themes{grid-template-columns:repeat(2,1fr)}}
+/* Rows of short buttons and chips (the Me tab's links, its three actions, the
+   theme picker).
+
+   History: these were first nowrap, and at 320 a label longer than half the
+   screen left its own button. Then they became fixed grid columns allowed to
+   break anywhere, which fixed the overflow and made a new fault: a label one
+   word too long for its column broke in the middle of a word ("Auto-matisch",
+   "Fehler / melden", "Hướng / dẫn"), or left its emoji alone on the line above.
+   German hyphenation made it worse, and it showed in all three languages.
+
+   The rows now follow the labels instead of a column count. A label never
+   breaks inside a word. Buttons share a row only while every label fits on one
+   line; when they do not, one moves down and the row reflows (two and one,
+   then one each) with each button filling its line. So the same rule is right
+   at 320 and at 1280, in Vietnamese, English and German, with no width to tune.
+   A button left alone on its line may still wrap between words. */
+.melinks,.row3{display:flex;flex-wrap:wrap;gap:8px}
+.melinks .btn,.row3 .btn{flex:1 1 auto;padding:11px 12px;font-size:13.5px;text-align:center;line-height:1.25;overflow-wrap:normal;-webkit-hyphens:manual;hyphens:manual}
+/* The theme picker is four across or two by two - never three and one - so it
+   asks its card how wide it is. Four across needs about 70px a chip for
+   "📱 Auto" or "🌸 Hồng", and about 115px for "📱 Automatisch". A browser
+   without container queries (Safari before 16) keeps two by two, which fits
+   every language. */
+.themecard{container-type:inline-size}
+.themes{display:grid;grid-template-columns:repeat(2,1fr);gap:6px}
+.themes .chip{padding:8px 6px;font-size:12.5px;text-align:center;min-width:0;line-height:1.25;white-space:nowrap;-webkit-hyphens:manual;hyphens:manual}
+@container (min-width:290px){.themes{grid-template-columns:repeat(4,1fr)}}
+@container (max-width:479px){html[lang="de"] .themes{grid-template-columns:repeat(2,1fr)}}
+/* The line under the Me tab: version, update check, privacy. Each piece stays
+   whole, so a narrow phone moves a piece to the next line rather than breaking
+   "Daten-schutz" or "Quyền riêng / tư". */
+.verline>*{white-space:nowrap}
+.verline{-webkit-hyphens:manual;hyphens:manual}
+/* The tour reminder: the message may wrap, the button beside it may not. */
+.tourmini>span{min-width:0}
+.tourmini .btn{flex:none;white-space:nowrap}
 
 .cart{background:var(--surface);border:1.5px solid var(--primary);border-radius:16px;padding:12px 14px;margin:4px 0 6px;font-size:14.5px;max-width:100%;overflow:hidden}.cart.empty{border-style:dashed;border-color:var(--rule);color:var(--fg-faint)}.cart>b{display:block;margin-bottom:8px}
 .ci{display:flex;align-items:center;flex-wrap:wrap;gap:4px 10px;padding:7px 0;border-top:1px solid var(--rule-soft)}.ci>span{flex:1 1 140px}.ci b{margin-left:auto}.ci>span{flex:1;min-width:0}.ci b{white-space:nowrap}.ci .x{background:none;border:1px solid var(--rule);border-radius:50%;width:28px;height:28px;font-size:12px;color:var(--fg-soft)}.ci.total{border-top:2px solid var(--rule);font-weight:700}.ci small.warn,.tpick .warn{color:#B04A2E;font-size:12.5px;font-weight:600}.ci small.ok,.tpick .ok{color:#2E7D46;font-size:12.5px;font-weight:600}
@@ -1471,7 +1521,12 @@ h1 .pileico{width:34px;height:27px;vertical-align:-3px;margin-right:2px}
 .actquick .aq .cnt{position:absolute;top:5px;right:6px;background:var(--tag-gold-bg);color:var(--tag-gold-ink);border-radius:999px;padding:0 6px;font-size:10.5px;font-weight:700}
 .actquick .aq{display:flex;flex-direction:column;align-items:center;gap:5px;background:var(--surface);border:1px solid var(--rule-soft);border-radius:14px;padding:10px 4px;text-decoration:none;color:inherit;min-width:0}
 .actquick .aq .ic{font-size:21px;line-height:1}
-.actquick .aq b{font-size:11px;font-weight:600;line-height:1.25;text-align:center;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
+.actquick .aq b{font-size:11px;font-weight:600;line-height:1.25;text-align:center;overflow:hidden;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical}
+/* Four across leaves a German name about 70px on a phone: "Glücksbegleiter"
+   and "Den Nachrichtenbaum schütteln" were hyphenated into three broken lines.
+   Two by two gives them room to stay whole. English and Vietnamese keep four
+   across, with the third line that "Shake the message tree" needed at 320. */
+@media (max-width:599px){html[lang="de"] .actquick:not(.three){grid-template-columns:repeat(2,1fr)}}
 /* ---- the red thread ---- */
 .lovecard{text-align:center}
 .threadart{display:block;width:100%;max-width:250px;margin:0 auto 4px}
@@ -2867,14 +2922,16 @@ body[data-route="hello"] #main{width:100%}
 /* Everything the base rule justifies must be able to hyphenate, or German
    gets the rivers the earlier pass was afraid of. The four justified
    selectors are #main p, #main li, .note span and #foot .tagline; the rest
-   of this list is narrow labels that would otherwise overrun. */
+   of this list is narrow labels that would otherwise overrun. Buttons and
+   chips are not on it: a short control that hyphenates reads as broken, so
+   their rows reflow instead (see .melinks and .themes). */
 html[lang="de"] #main p,html[lang="de"] #main li,
 html[lang="de"] .note span,html[lang="de"] #foot .tagline,html[lang="de"] .hint,
 html[lang="de"] .muted,html[lang="de"] .lead,html[lang="de"] .tbl td,
 html[lang="de"] .look b,html[lang="de"] .actquick .aq b,
 html[lang="de"] .actbtn b,html[lang="de"] .actbtn .meta,
 html[lang="de"] .freegrid .fg .s,html[lang="de"] .wherepick .wp .s,
-html[lang="de"] .aq b,html[lang="de"] .chip,html[lang="de"] .btn{
+html[lang="de"] .aq b{
   -webkit-hyphens:auto;hyphens:auto;
   -webkit-hyphenate-limit-before:4;-webkit-hyphenate-limit-after:3;
   hyphenate-limit-chars:10 4 3}
@@ -2889,11 +2946,14 @@ html[lang="de"] .look,html[lang="de"] .actquick .aq{min-width:0}
 html[lang="de"] .look b,html[lang="de"] .actquick .aq b{width:100%}
 /* One more line for a label that German needs two and a half of. */
 html[lang="de"] .actquick .aq b{-webkit-line-clamp:3}
+@media (max-width:599px){html[lang="de"] .actquick:not(.three) .aq b{-webkit-hyphens:manual;hyphens:manual;overflow-wrap:normal}}
 /* The label column of a data table is held on one line so it reads as a
    column. A German label can be wider than the card, so in German it wraps
    and the value keeps its half of the row. */
 html[lang="de"] .tbl td:first-child{white-space:normal;overflow-wrap:break-word}
 html[lang="de"] #today .tbl td:first-child{width:52%}
+/* A calendar's name breaks between its words, never inside one: "Vietnamesischer Kalen-der" at 440px. */
+html[lang="de"] #today .tbl td:first-child{-webkit-hyphens:manual;hyphens:manual}
 
 /* ---- the first seconds inside the installed app ----
 
@@ -3470,6 +3530,8 @@ const STR = {
     enterBirthday: 'Nhập ngày sinh ở mục Hồ sơ để xem số đường đời và cung của bạn.',
     animal: 'Con giáp',
     animalNote: 'Con giáp được tính theo năm âm lịch. Nếu bạn sinh trước Tết âm lịch, hãy tính theo năm trước đó.',
+    animalVN: 'Theo 12 con giáp Việt Nam', animalDiffH: 'Khác với Trung\u00a0Quốc và Hàn\u00a0Quốc',
+    animalDiff: ['Mão là Mèo. Ở Trung\u00a0Quốc và Hàn\u00a0Quốc, Mão là Thỏ.', 'Sửu là Trâu. Ở Trung\u00a0Quốc và Hàn\u00a0Quốc, Sửu là Bò.', 'Mùi là Dê. Ở Hàn\u00a0Quốc, Mùi thường là Cừu.', 'Việt\u00a0Nam đổi con giáp vào Tết. Nhiều thầy xem tuổi ở Trung\u00a0Quốc và Hàn\u00a0Quốc tính năm mới từ Lập\u00a0Xuân, khoảng ngày\u00a04/2.'],
 
     bookTitle: 'Đặt lịch xem bài',
     priceTitle: 'Bảng giá', priceIntro: 'Tất cả dịch vụ, khóa học và nội dung mở thêm của Nabu đều ở đây. Phần lớn ứng dụng vẫn miễn phí.',
@@ -4046,7 +4108,7 @@ const STR = {
     localOnly: 'Hồ sơ đang lưu trên máy này.',
     accountsSoon: 'Nabu chưa bật đăng nhập. Khi bật, bạn đăng nhập bằng Google, Facebook hoặc email và mật khẩu; hồ sơ, tin nhắn và lịch hẹn sẽ đi theo bạn. Hiện hồ sơ lưu trên máy này.', accountsOff: 'Đăng nhập chưa mở.',
     signIn: 'Đăng nhập',
-    signInWith: { google: 'Tiếp tục với Google', facebook: 'Tiếp tục với Facebook', email: 'Tiếp tục với email' },
+    signInWith: { google: 'Tiếp tục với Google', facebook: 'Tiếp tục với Facebook', apple: 'Đăng nhập bằng Apple', email: 'Tiếp tục với email' },
     signOut: 'Đăng xuất', tourLink: 'Hướng dẫn', themeShort: { auto: '📱 Máy', light: '☀️ Sáng', dark: '🌙 Tối', pink: '🌸 Hồng' },
     emailLabel: 'Email', passwordLabel: 'Mật khẩu',
     signinLead: '🌙 Đăng nhập để Nabu ghi nhớ hành trình của bạn.',
@@ -4095,6 +4157,8 @@ const STR = {
     stProblem: 'Thanh toán không thành công · Vui lòng kiểm tra trong Google Play', stExpired: 'Đã hết hạn', stActive: 'Đang hoạt động', stHeld: 'Tạm dừng · Chờ thanh toán',
     stCancelMeaning: 'Bạn có thể hủy bất cứ lúc nào trong Google Play. Gói vẫn dùng được đến hết kỳ đã thanh toán.',
     stManage: 'Quản lý trong Google Play', stRestore: 'Khôi phục mua hàng', stRestoring: 'Đang khôi phục…', stRestored: (n) => 'Đã khôi phục ' + n + ' mục', stRestoreNone: 'Không có gì để khôi phục',
+    /* The same store sentences inside the iPhone app, where the App Store takes the payment (core.js lays them over the rest). */
+    appStore: { stIntro: 'Thanh toán qua App Store. Mở khóa ngay sau khi thanh toán thành công.', stProblem: 'Thanh toán không thành công · Vui lòng kiểm tra trong App Store', stCancelMeaning: 'Bạn có thể hủy bất cứ lúc nào trong phần Cài đặt tài khoản Apple. Gói vẫn dùng được đến hết kỳ đã thanh toán.', stManage: 'Quản lý trong App Store', stNotReady: 'Không nhận được phản hồi từ App Store.', stNoSheet: 'App Store chưa mở được ô thanh toán. Bạn kiểm tra đã đăng nhập tài khoản Apple trong Cài đặt, rồi thử lại.', stSheetHung: 'App Store không trả lời. Bạn đóng hẳn app, mở lại rồi thử lần nữa.', stSheetWaiting: 'App Store đang xử lý. Nếu bạn đã thanh toán xong, đợi một phút rồi bấm Khôi phục mua hàng.', stAborted: 'Chưa mua xong. Nếu bạn không thấy ô thanh toán của App Store hiện ra, bạn thử lại nhé.', stItemOff: 'App Store chưa cho mua mục này trên tài khoản của bạn.', stTerms: 'Điều khoản sử dụng', stPrivacy: 'Chính sách quyền riêng tư' },
     stNotReady: 'Không nhận được phản hồi từ Google Play.', stRetry: 'Thử lại', stPending: 'Đang chờ thanh toán. Hoàn tất xong, quyền truy cập sẽ tự mở.',
     stIncludedPro: 'Đã bao gồm trong Nabu Pro', stSwitchTo: (n) => 'Chuyển sang gói ' + n, stNeedIn: 'Mục này chỉ có thể mua trong ứng dụng Nabu Tarot trên Android.', stFailed: 'Mua chưa thành công. Vui lòng thử lại.', stNoSheet: 'Google Play chưa mở được ô thanh toán. Bạn mở Cửa hàng Play, kiểm tra đúng tài khoản Google, rồi thử lại.', stSignInToBuy: 'Bạn cần đăng nhập để mua. Đang mở trang đăng nhập…', stNeedChrome: (b) => (b ? 'App đang chạy trong ' + b + ', trình duyệt này' : 'App đang chạy trong một trình duyệt') + ' không hỗ trợ thanh toán Google Play. Bạn đặt Chrome làm trình duyệt mặc định: Cài đặt → Ứng dụng → Chọn ứng dụng mặc định → Ứng dụng trình duyệt → Chrome. Nếu máy chưa có Chrome, cài từ CH Play trước. Rồi đóng hẳn app và mở lại. Có thể bạn sẽ phải đăng nhập lại.', stSheetHung: 'Google Play không trả lời. Bạn đóng hẳn app, mở lại rồi thử lần nữa.', stSheetWaiting: 'Google Play đang xử lý. Nếu bạn đã thanh toán xong, đợi một phút rồi bấm Khôi phục mua hàng.', stAborted: 'Chưa mua xong. Nếu bạn không thấy ô thanh toán của Google Play hiện ra, bạn thử lại nhé.', stBusy: 'Đang mở ô thanh toán. Bạn đợi một chút nhé.', stItemOff: 'Google Play chưa cho mua mục này trên tài khoản của bạn.', stDiagTitle: 'Thông tin kỹ thuật', stDiagCopy: 'Chép thông tin kỹ thuật', stDiagCopied: 'Đã chép. Bạn gửi cho Nabu giúp mình nhé.',
     myPlans: 'Gói của bạn', stPlusPitch: 'Nabu Plus mở lượt xem không giới hạn và giúp bạn nhỏ lớn nhanh hơn.',
@@ -4279,7 +4343,7 @@ const STR = {
     priceOpen: 'Take a look',
     priceFree: 'Free', priceFreeHint: 'Most of Nabu is free and needs no code. Tap to explore.',
     courses: 'Courses', coursesPractice: 'Courses and practice', freeReads: 'Free to read', practice: 'Practice', lessonsIntro: (n) => 'The course has ' + n + ' sessions. Take them in order, about one a week.', markDone: 'Mark as done', lessonDone: 'Done', journeyHint: 'Tap a card to open its page.', lenGridHint: 'All 36 cards. Tap one to open it.',
-    aiIntro: 'Ask Nabu AI about what you are looking at. The more specific, the better.', aiIntroLesson: 'Anything in this lesson unclear? Ask Nabu AI here.', aiPlaceholder: 'For example: what does this card say about my love life?', aiAsk: 'Ask', aiOnline: 'answered by AI', aiBuiltin: 'answered from the knowledge base', aiNote: 'Nabu AI answers questions about Tarot, astrology, numerology and the lunar calendar. For personal questions that need a closer reading, you can book with Nabu.', aiFallback: 'AI is busy; this answer comes from the knowledge base.', aiOff: 'Nabu AI is not switched on yet. This answer comes from the knowledge base inside the app.', aiSignIn: 'Sign in to ask Nabu AI.', aiNeedSignin: 'Sign in to ask Nabu AI. This answer comes from the knowledge base.', aiLimit: 'That is a lot of questions for one day. Try again later; this answer comes from the knowledge base.',
+    aiIntro: 'Ask Nabu AI about what you are looking at. The more specific, the better.', aiIntroLesson: 'Anything in this lesson unclear? Ask Nabu AI here.', aiPlaceholder: 'For example: what does this card say about my love life?', aiAsk: 'Ask', aiOnline: 'answered by AI', aiBuiltin: 'answered from the knowledge base', aiNote: 'Nabu AI answers questions about Tarot, astrology, numerology and the Vietnamese lunisolar calendar. For personal questions that need a closer reading, you can book with Nabu.', aiFallback: 'AI is busy; this answer comes from the knowledge base.', aiOff: 'Nabu AI is not switched on yet. This answer comes from the knowledge base inside the app.', aiSignIn: 'Sign in to ask Nabu AI.', aiNeedSignin: 'Sign in to ask Nabu AI. This answer comes from the knowledge base.', aiLimit: 'That is a lot of questions for one day. Try again later; this answer comes from the knowledge base.',
     aiSugCard: ['What does this card say about my love life?', 'Should I keep going?', 'When will this happen?'], aiSugLesson: ['How do Majors differ from Minors?', 'Who do the court cards represent?', 'What if I do not understand a card?'], aiSugSign: ['Which signs suit this sign?', 'How is this sign in love?', 'What does the Moon in this sign mean?'], aiSugNumbers: ['What does my life path say?', 'What kind of year is this for me?', 'What is my destiny number from my name?'], aiSugGeneral: ['What does The Fool mean?', 'Do Leo and Aquarius get along?', 'What is my life path?'],
     aiCardGeneral: (n) => n + ' speaks about your general energy right now.', aiCardFocus: (n, f) => 'For a question about ' + f.toLowerCase() + ', ' + n + ' says:', aiCardWhy: 'The card carries this energy:', aiCardShadow: 'The shadow to watch:', aiYes: (n) => 'As a yes-or-no: ' + n + ' leans YES, but one card cannot decide it. For a clear answer, book a reading.', aiNo: (n) => 'As a yes-or-no: ' + n + ' leans NO, or not yet. One card cannot decide it; for a clear answer, book a reading.', aiMaybe: (n) => 'As a yes-or-no: ' + n + ' does not lean either way. The answer depends on what you do next.', aiTiming: 'For timing, one card only suggests the pace of events, not an exact date.', aiFound: 'Found in the course:', aiLessonNone: 'Nothing matched yet. Try a card name or a keyword from the lesson.', aiChem: (a, b) => a + ' and ' + b + ':', aiCompatYes: 'This is one of the pairs usually seen as a good match.', aiCompatWork: 'Not among the easiest pairs, but the Sun sign is one part; the full chart says much more.', aiAbout: (n) => 'About ' + n + ':', aiGeneralHelp: 'I do not have a ready answer for that. I answer best when the question names a card, a sign, a planet, a house, a zodiac animal or a number.', aiOfflineHint: 'For your own situation, book a reading with Nabu.', aiBooking: 'See the price list and pick a time under Book. Choose a package, a free slot on the calendar, then send it to Nabu.',
     compatHead: { same: (a, b) => a + ' and ' + b + ' are the same sign, so you understand each other easily. The short answer is yes, you match, as long as you do not share the same faults.', opposite: (a, b) => a + ' and ' + b + ' sit opposite each other on the zodiac. The short answer is yes, the attraction is strong, but you have to learn balance, because each of you is the missing half of the other.', good: (a, b) => a + ' and ' + b + ': the short answer is yes, this is one of the pairs usually seen as a good match.', ok: (a, b) => a + ' and ' + b + ': a fairly good match. The two signs are not the same element, but they feed each other.', work: (a, b) => a + ' and ' + b + ': it can work, but it takes effort. The two signs sit at a square angle, so you tend to clash over how things should be done.', neutral: (a, b) => a + ' and ' + b + ': an average match. Not among the easiest pairs, and not among the ones that clash most either.' },
@@ -4337,6 +4401,8 @@ const STR = {
     enterBirthday: 'Enter your birthday under Profile to see your life path number and sign.',
     animal: 'Zodiac animal',
     animalNote: 'The zodiac animal follows the lunar year. If you were born before Lunar New Year, use the previous year.',
+    animalVN: 'Following the Vietnamese zodiac', animalDiffH: 'How China and Korea differ',
+    animalDiff: ['Mão is the Cat. In China and Korea, it is the Rabbit.', 'Sửu is the Buffalo. In China and Korea, it is the Ox.', 'Mùi is the Goat. In Korea, it is usually the Sheep.', 'Vietnam changes the animal at Tết. Many fortune-tellers in China and Korea start the year at Lichun, the start of spring, around 4\u00a0February.'],
 
     bookTitle: 'Book a reading',
     priceTitle: 'Prices', priceIntro: 'All Nabu readings, courses and optional unlocks are listed here. Most of the app is still free.',
@@ -4913,7 +4979,7 @@ const STR = {
     localOnly: 'Your profile is saved on this device.',
     accountsSoon: 'Nabu has not switched sign-in on yet. Once on, you sign in with Google, Facebook or email and password, and your profile, messages and bookings follow you. For now the profile stays on this device.', accountsOff: 'Sign-in is not open yet.',
     signIn: 'Sign in',
-    signInWith: { google: 'Continue with Google', facebook: 'Continue with Facebook', email: 'Continue with email' },
+    signInWith: { google: 'Continue with Google', facebook: 'Continue with Facebook', apple: 'Sign in with Apple', email: 'Continue with email' },
     signOut: 'Sign out', tourLink: 'Tour', themeShort: { auto: '📱 Auto', light: '☀️ Light', dark: '🌙 Dark', pink: '🌸 Pink' },
     emailLabel: 'Email', passwordLabel: 'Password',
     signinLead: '🌙 Sign in and Nabu remembers your journey.',
@@ -4962,6 +5028,8 @@ const STR = {
     stProblem: 'Payment declined · Check your payment method in Google Play', stExpired: 'Expired', stActive: 'Active', stHeld: 'On hold · Payment required',
     stCancelMeaning: 'Cancel anytime in Google Play. You’ll keep access until the end of your paid period.',
     stManage: 'Manage in Google Play', stRestore: 'Restore purchases', stRestoring: 'Restoring…', stRestored: (n) => 'Restored ' + n + ' items', stRestoreNone: 'Nothing to restore',
+    /* The same store sentences inside the iPhone app, where the App Store takes the payment (core.js lays them over the rest). */
+    appStore: { stIntro: 'Pay through the App Store. Access unlocks as soon as your payment is complete.', stProblem: 'Payment declined · Check your payment method in the App Store', stCancelMeaning: 'Cancel anytime in your Apple account settings. You’ll keep access until the end of your paid period.', stManage: 'Manage in the App Store', stNotReady: 'No response from the App Store.', stNoSheet: 'The App Store could not open the payment sheet. Check that you are signed in to your Apple account in Settings, then try again.', stSheetHung: 'The App Store did not answer. Close the app fully, open it again and try once more.', stSheetWaiting: 'The App Store is still working. If you have already paid, wait a minute and tap Restore purchases.', stAborted: 'The purchase did not complete. If you never saw the App Store payment sheet, please try again.', stItemOff: 'The App Store is not offering this item to your account.', stTerms: 'Terms of Use', stPrivacy: 'Privacy Policy' },
     stNotReady: 'No response from Google Play.', stRetry: 'Try again', stPending: 'Payment pending. Access will unlock automatically once it’s complete.',
     stIncludedPro: 'Included in Nabu Pro', stSwitchTo: (n) => 'Switch to ' + n, stNeedIn: 'This item can only be purchased in the Nabu Tarot Android app.', stFailed: 'Purchase didn’t go through. Please try again.', stNoSheet: 'Google Play could not open the payment sheet. Open the Play Store, check you are signed in to the right Google account, then try again.', stSignInToBuy: 'Please sign in to buy. Opening the sign-in screen…', stNeedChrome: (b) => (b ? 'The app is running in ' + b + ', which cannot reach Google Play payments' : 'The app is running in a browser that cannot reach Google Play payments') + '. Set Chrome as the default browser: Settings → Apps → Default apps → Browser → Chrome. If Chrome is not installed, get it from the Play Store first. Then close the app fully and open it again. You may need to sign in again.', stSheetHung: 'Google Play did not answer. Close the app fully, open it again and try once more.', stSheetWaiting: 'Google Play is still working. If you have already paid, wait a minute and tap Restore purchases.', stAborted: 'The purchase did not complete. If you never saw the Google Play payment sheet, please try again.', stBusy: 'The payment sheet is opening. One moment.', stItemOff: 'Google Play is not offering this item to your account.', stDiagTitle: 'Technical details', stDiagCopy: 'Copy technical details', stDiagCopied: 'Copied. Please send it to Nabu.',
     myPlans: 'Your plans', stPlusPitch: 'Nabu Plus gives you unlimited readings and helps your companion grow faster.',
@@ -4969,7 +5037,7 @@ const STR = {
     pickOffer: 'Nabu Plus draws as many cards a day as you like, opens the coin and the tree without limit, and every design. The price is on the price page.',
     pickPlus: 'See Nabu Plus',
     helloHead: 'A card, a message and a little luck, every day ✨',
-    helloLead: 'Draw Tarot, read your forecast and the lunar calendar, shake the Message Tree, raise a companion, keep a diary and manifest — all in Nabu.',
+    helloLead: 'Draw Tarot, read your forecast and the lunisolar calendar, shake the Message Tree, raise a companion, keep a diary and manifest — all in Nabu.',
     helloGo: 'Explore Nabu',
     helloDrawH: 'Draw a card for today',
     helloDrawP: 'Choose what is on your mind, draw one Tarot card and receive a message meant for you.',
@@ -4977,7 +5045,7 @@ const STR = {
     helloHoroP: 'Weekly and monthly forecasts for your sign and the topics you care about.',
     helloLuckH: 'A touch of luck',
     helloLuckP: 'Raise a companion, shake the Message Tree, flip the coin and try little activities for luck and love.',
-    helloTodayH: 'Lunar calendar & moon phase',
+    helloTodayH: 'Lunisolar calendar & moon phase',
     helloTodayP: 'Today’s lunar date, the phase of the moon and the astrology of the day.',
     helloDiaryH: 'Diary & manifestation',
     helloDiaryP: 'Write what you are thinking, keep your wishes and follow your own manifestation journey.',
@@ -5145,7 +5213,7 @@ const STR = {
     priceOpen: 'Ansehen',
     priceFree: 'Kostenlos', priceFreeHint: 'Das meiste in Nabu ist kostenlos und braucht keinen Code. Tipp dich einfach durch.',
     courses: 'Kurse', coursesPractice: 'Kurse und Übung', freeReads: 'Kostenlos zu lesen', practice: 'Übung', lessonsIntro: (n) => 'Der Kurs hat ' + n + ' Einheiten. Geh sie am besten der Reihe nach durch, ungefähr eine pro Woche.', markDone: 'Als erledigt markieren', lessonDone: 'Erledigt', journeyHint: 'Tipp eine Karte an, um ihre Seite zu öffnen.', lenGridHint: 'Alle 36 Karten. Tipp eine an, um sie zu öffnen.',
-    aiIntro: 'Frag Nabu AI zu dem, was du gerade vor dir hast. Je genauer die Frage, desto besser.', aiIntroLesson: 'Ist in dieser Lektion etwas unklar? Frag hier Nabu AI.', aiPlaceholder: 'Zum Beispiel: Was sagt diese Karte über mein Liebesleben?', aiAsk: 'Fragen', aiOnline: 'von der KI beantwortet', aiBuiltin: 'aus der Wissensbasis beantwortet', aiNote: 'Nabu AI beantwortet Fragen zu Tarot, Astrologie, Numerologie und zum Mondkalender. Für persönliche Themen, die genauer betrachtet werden sollen, kannst du eine Legung bei Nabu buchen.', aiFallback: 'Die KI ist gerade beschäftigt; diese Antwort kommt aus der Wissensbasis.', aiOff: 'Nabu AI ist noch nicht eingeschaltet. Diese Antwort kommt aus der Wissensbasis der App.', aiSignIn: 'Melde dich an, um Nabu AI zu fragen.', aiNeedSignin: 'Melde dich an, um Nabu AI zu fragen. Diese Antwort kommt aus der Wissensbasis.', aiLimit: 'Das sind viele Fragen für einen Tag. Versuch es später noch einmal; diese Antwort kommt aus der Wissensbasis.',
+    aiIntro: 'Frag Nabu AI zu dem, was du gerade vor dir hast. Je genauer die Frage, desto besser.', aiIntroLesson: 'Ist in dieser Lektion etwas unklar? Frag hier Nabu AI.', aiPlaceholder: 'Zum Beispiel: Was sagt diese Karte über mein Liebesleben?', aiAsk: 'Fragen', aiOnline: 'von der KI beantwortet', aiBuiltin: 'aus der Wissensbasis beantwortet', aiNote: 'Nabu AI beantwortet Fragen zu Tarot, Astrologie, Numerologie und zum vietnamesischen Lunisolarkalender. Für persönliche Themen, die genauer betrachtet werden sollen, kannst du eine Legung bei Nabu buchen.', aiFallback: 'Die KI ist gerade beschäftigt; diese Antwort kommt aus der Wissensbasis.', aiOff: 'Nabu AI ist noch nicht eingeschaltet. Diese Antwort kommt aus der Wissensbasis der App.', aiSignIn: 'Melde dich an, um Nabu AI zu fragen.', aiNeedSignin: 'Melde dich an, um Nabu AI zu fragen. Diese Antwort kommt aus der Wissensbasis.', aiLimit: 'Das sind viele Fragen für einen Tag. Versuch es später noch einmal; diese Antwort kommt aus der Wissensbasis.',
     aiSugCard: ['Was sagt diese Karte über mein Liebesleben?', 'Soll ich weitermachen?', 'Wann könnte das passieren?'], aiSugLesson: ['Was unterscheidet die Große von der Kleinen Arkana?', 'Wer sind die Hofkarten?', 'Was mache ich, wenn ich eine Karte nicht verstehe?'], aiSugSign: ['Welche Sternzeichen passen zu diesem Zeichen?', 'Wie ist dieses Sternzeichen in der Liebe?', 'Was bedeutet der Mond in diesem Zeichen?'], aiSugNumbers: ['Was sagt meine Lebenszahl über mich aus?', 'Was für ein persönliches Jahr ist das für mich?', 'Wie lautet meine Schicksalszahl aus meinem Namen?'], aiSugGeneral: ['Was bedeutet Der Narr?', 'Passen Löwe und Wassermann zusammen?', 'Wie lautet meine Lebenszahl?'],
     aiCardGeneral: (n) => n + ' beschreibt deine allgemeine Energie im Moment.', aiCardFocus: (n, f) => 'Bei einer Frage zum Thema „' + f + '“ sagt ' + n + ':', aiCardWhy: 'Die Karte trägt diese Energie:', aiCardShadow: 'Der Schatten, auf den du achten solltest:', aiYes: (n) => 'Bei einer Ja-oder-Nein-Frage tendiert ' + n + ' zu JA. Eine einzelne Karte entscheidet aber nichts sicher. Für eine persönliche Einordnung kannst du eine Legung bei Nabu buchen.', aiNo: (n) => 'Bei einer Ja-oder-Nein-Frage tendiert ' + n + ' zu NEIN oder „noch nicht“. Eine einzelne Karte entscheidet aber nichts sicher. Für eine persönliche Einordnung kannst du eine Legung bei Nabu buchen.', aiMaybe: (n) => 'Bei einer Ja-oder-Nein-Frage legt sich ' + n + ' nicht eindeutig fest. Viel hängt davon ab, was du als Nächstes tust.', aiTiming: 'Beim Timing deutet eine einzelne Karte nur das Tempo an, kein genaues Datum.', aiFound: 'Im Kurs gefunden:', aiLessonNone: 'Dazu habe ich noch nichts gefunden. Versuch einen Kartennamen oder ein Stichwort aus der Lektion.', aiChem: (a, b) => a + ' und ' + b + ':', aiCompatYes: 'Das ist eines der Paare, die üblicherweise als gute Verbindung gelten.', aiCompatWork: 'Nicht zu den leichtesten Paaren, aber das Sternzeichen ist nur ein Teil; das ganze Horoskop sagt viel mehr.', aiAbout: (n) => 'Über ' + n + ':', aiGeneralHelp: 'Darauf habe ich keine fertige Antwort. Am besten antworte ich, wenn die Frage eine Karte, ein Sternzeichen, einen Planeten, ein Haus, ein Tierkreiszeichen oder eine Zahl nennt.', aiOfflineHint: 'Für deine eigene Lage buch dir eine Legung bei Nabu.', aiBooking: 'Die Preisliste und die freien Zeiten findest du unter Buchen. Wähl ein Paket, einen freien Termin im Kalender und schick es an Nabu.',
     compatHead: { same: (a, b) => a + ' und ' + b + ' haben dasselbe Sternzeichen und verstehen vieles intuitiv ähnlich. Das kann sehr stimmig sein, solange ihr euch nicht gegenseitig in denselben Schwächen verstärkt.', opposite: (a, b) => a + ' und ' + b + ' liegen sich im Tierkreis gegenüber. Das kann starke Anziehung schaffen, braucht aber auch Ausgleich, weil ihr vieles aus entgegengesetzten Blickwinkeln angeht.', good: (a, b) => a + ' und ' + b + ' gelten in der Astrologie oft als harmonische Kombination.', ok: (a, b) => a + ' und ' + b + ' können gut zusammenpassen. Eure Elemente sind verschieden, können sich aber gegenseitig unterstützen.', work: (a, b) => a + ' und ' + b + ' können funktionieren, brauchen aber etwas mehr Verständnis füreinander. Die Zeichen stehen im Quadrat und geraten deshalb leichter darüber aneinander, wie etwas laufen sollte.', neutral: (a, b) => a + ' und ' + b + ' sind astrologisch eher eine neutrale Kombination: weder besonders mühelos noch besonders konfliktreich.'},
@@ -5203,6 +5271,8 @@ const STR = {
     enterBirthday: 'Trag dein Geburtsdatum im Profil ein, um deine Lebenszahl und dein Sternzeichen zu sehen.',
     animal: 'Tierkreiszeichen',
     animalNote: 'Das Tierkreiszeichen richtet sich nach dem Mondjahr. Wenn du vor dem Mondneujahr geboren bist, zählt noch das vorherige Jahr.',
+    animalVN: 'Nach dem vietnamesischen Tierkreis', animalDiffH: 'Unterschiede zu China und Korea',
+    animalDiff: ['Mão ist die Katze. In China und Korea ist es der Hase.', 'Sửu ist der Büffel. In China und Korea ist es der Ochse.', 'Mùi ist die Ziege. In Korea ist es meist das Schaf.', 'In Vietnam wechselt das Tier zu Tết. Viele Wahrsager in China und Korea beginnen das Jahr mit Lichun, dem Frühlingsanfang, um den 4.\u00a0Februar.'],
 
     bookTitle: 'Eine Legung buchen',
     priceTitle: 'Preise', priceIntro: 'Hier findest du alle Legungen, Kurse und optionalen Freischaltungen von Nabu. Der größte Teil der App bleibt kostenlos.',
@@ -5772,7 +5842,7 @@ const STR = {
     localOnly: 'Dein Profil ist nur auf diesem Gerät gespeichert.',
     accountsSoon: 'Nabu hat die Anmeldung noch nicht eingeschaltet. Sobald sie an ist, meldest du dich mit Google, Facebook oder E-Mail und Passwort an, und dein Profil, deine Nachrichten und deine Termine kommen mit. Bis dahin bleibt das Profil auf diesem Gerät.', accountsOff: 'Die Anmeldung ist noch nicht offen.',
     signIn: 'Anmelden',
-    signInWith: { google: 'Weiter mit Google', facebook: 'Weiter mit Facebook', email: 'Weiter mit E-Mail' },
+    signInWith: { google: 'Weiter mit Google', facebook: 'Weiter mit Facebook', apple: 'Mit Apple anmelden', email: 'Weiter mit E-Mail' },
     signOut: 'Abmelden', tourLink: 'Rundgang', themeShort: { auto: '📱 Automatisch', light: '☀️ Hell', dark: '🌙 Dunkel', pink: '🌸 Rosa' },
     emailLabel: 'E-Mail', passwordLabel: 'Passwort',
     signinLead: '🌙 Melde dich an, damit Nabu deinen Weg behält.',
@@ -5821,6 +5891,8 @@ const STR = {
     stProblem: 'Zahlung abgelehnt · Bitte Zahlungsmethode in Google Play prüfen', stExpired: 'Abgelaufen', stActive: 'Aktiv', stHeld: 'Pausiert · Zahlung ausstehend',
     stCancelMeaning: 'Du kannst jederzeit in Google Play kündigen. Dein Zugang bleibt bis zum Ende des bezahlten Zeitraums bestehen.',
     stManage: 'In Google Play verwalten', stRestore: 'Käufe wiederherstellen', stRestoring: 'Wird wiederhergestellt…', stRestored: (n) => n + ' Elemente wiederhergestellt', stRestoreNone: 'Nichts zum Wiederherstellen',
+    /* The same store sentences inside the iPhone app, where the App Store takes the payment (core.js lays them over the rest). */
+    appStore: { stIntro: 'Zahlung über den App Store. Nach erfolgreicher Zahlung wird sofort freigeschaltet.', stProblem: 'Zahlung abgelehnt · Bitte Zahlungsmethode im App Store prüfen', stCancelMeaning: 'Du kannst jederzeit in den Einstellungen deines Apple-Accounts kündigen. Dein Zugang bleibt bis zum Ende des bezahlten Zeitraums bestehen.', stManage: 'Im App Store verwalten', stNotReady: 'Keine Antwort vom App Store.', stNoSheet: 'Der App Store konnte das Zahlungsfenster nicht öffnen. Prüf in den Einstellungen, ob du mit deinem Apple-Account angemeldet bist, und versuch es noch einmal.', stSheetHung: 'Der App Store hat nicht geantwortet. Schließ die App ganz, öffne sie neu und versuch es noch mal.', stSheetWaiting: 'Der App Store arbeitet noch. Wenn du schon bezahlt hast, warte eine Minute und tipp auf Käufe wiederherstellen.', stAborted: 'Der Kauf wurde nicht abgeschlossen. Wenn du das Zahlungsfenster des App Store nicht gesehen hast, versuch es bitte noch einmal.', stItemOff: 'Der App Store bietet diesen Artikel deinem Konto nicht an.', stTerms: 'Nutzungsbedingungen', stPrivacy: 'Datenschutz' },
     stNotReady: 'Keine Antwort von Google Play.', stRetry: 'Erneut versuchen', stPending: 'Zahlung ausstehend. Nach Abschluss wird der Zugang automatisch freigeschaltet.',
     stIncludedPro: 'In Nabu Pro enthalten', stSwitchTo: (n) => 'Zu ' + n + ' wechseln', stNeedIn: 'Dieser Artikel kann nur in der Nabu-Tarot-App für Android gekauft werden.', stFailed: 'Kauf nicht abgeschlossen. Bitte erneut versuchen.', stNoSheet: 'Google Play konnte das Zahlungsfenster nicht öffnen. Öffne den Play Store, prüfe dein Google-Konto und versuch es noch einmal.', stSignInToBuy: 'Zum Kaufen bitte anmelden. Die Anmeldeseite wird geöffnet…', stNeedChrome: (b) => 'Die App läuft in ' + (b || 'einem Browser') + ', der Google-Play-Zahlungen nicht erreichen kann. Mach Chrome zum Standardbrowser: Einstellungen → Apps → Standard-Apps → Browser → Chrome. Falls Chrome fehlt, zuerst aus dem Play Store installieren. Dann die App ganz schließen und neu öffnen. Eventuell musst du dich neu anmelden.', stSheetHung: 'Google Play hat nicht geantwortet. Schließ die App ganz, öffne sie neu und versuch es noch mal.', stSheetWaiting: 'Google Play arbeitet noch. Wenn du schon bezahlt hast, warte eine Minute und tipp auf Käufe wiederherstellen.', stAborted: 'Der Kauf wurde nicht abgeschlossen. Wenn du das Zahlungsfenster von Google Play nicht gesehen hast, versuch es bitte noch einmal.', stBusy: 'Das Zahlungsfenster wird geöffnet. Einen Moment.', stItemOff: 'Google Play bietet diesen Artikel deinem Konto nicht an.', stDiagTitle: 'Technische Details', stDiagCopy: 'Technische Details kopieren', stDiagCopied: 'Kopiert. Bitte schick es an Nabu.',
     myPlans: 'Deine Abos', stPlusPitch: 'Nabu Plus bietet unbegrenzte Legungen und lässt deinen kleinen Begleiter schneller wachsen.',
@@ -5828,7 +5900,7 @@ const STR = {
     pickOffer: 'Nabu Plus zieht so viele Karten am Tag, wie du magst, öffnet Münze und Baum ohne Grenze und dazu jedes Design. Den Preis findest du auf der Preisseite.',
     pickPlus: 'Nabu Plus ansehen',
     helloHead: 'Jeden Tag eine Karte, eine Botschaft und ein bisschen Glück ✨',
-    helloLead: 'Tarot ziehen, Vorhersage und Mondkalender lesen, den Nachrichtenbaum schütteln, einen Begleiter großziehen, Tagebuch schreiben und manifestieren — alles in Nabu.',
+    helloLead: 'Tarot ziehen, Vorhersage und Lunisolarkalender lesen, den Nachrichtenbaum schütteln, einen Begleiter großziehen, Tagebuch schreiben und manifestieren — alles in Nabu.',
     helloGo: 'Nabu entdecken',
     helloDrawH: 'Eine Karte für heute',
     helloDrawP: 'Wähl, was dich gerade beschäftigt, zieh eine Tarotkarte und erhalte eine Botschaft für dich.',
@@ -5836,7 +5908,7 @@ const STR = {
     helloHoroP: 'Wochen- und Monatsvorhersagen für dein Sternzeichen und die Themen, die dir wichtig sind.',
     helloLuckH: 'Ein bisschen Glück',
     helloLuckP: 'Zieh einen Begleiter groß, schüttel den Nachrichtenbaum, wirf die Münze und probier kleine Aktivitäten für Glück und Liebe.',
-    helloTodayH: 'Mondkalender & Mondphase',
+    helloTodayH: 'Lunisolarkalender & Mondphase',
     helloTodayP: 'Das heutige Monddatum, die Mondphase und die Astrologie des Tages.',
     helloDiaryH: 'Tagebuch & Manifestation',
     helloDiaryP: 'Schreib auf, was du denkst, halte deine Wünsche fest und verfolge deinen eigenen Weg der Manifestation.',
@@ -12063,7 +12135,7 @@ const LIFEPATH = {
 
 /* Vietnamese zodiac animals by calendar year (Tết boundary noted in the UI). */
 const ANIMALS = [
-  { vi: 'Tý (Chuột)', en: 'Rat', de: 'Ratte' }, { vi: 'Sửu (Trâu)', en: 'Ox', de: 'Büffel' }, { vi: 'Dần (Hổ)', en: 'Tiger', de: 'Tiger' }, { vi: 'Mão (Mèo)', en: 'Cat', de: 'Katze' },
+  { vi: 'Tý (Chuột)', en: 'Rat', de: 'Ratte' }, { vi: 'Sửu (Trâu)', en: 'Buffalo', de: 'Büffel' }, { vi: 'Dần (Hổ)', en: 'Tiger', de: 'Tiger' }, { vi: 'Mão (Mèo)', en: 'Cat', de: 'Katze' },
   { vi: 'Thìn (Rồng)', en: 'Dragon', de: 'Drache' }, { vi: 'Tỵ (Rắn)', en: 'Snake', de: 'Schlange' }, { vi: 'Ngọ (Ngựa)', en: 'Horse', de: 'Pferd' }, { vi: 'Mùi (Dê)', en: 'Goat', de: 'Ziege' },
   { vi: 'Thân (Khỉ)', en: 'Monkey', de: 'Affe' }, { vi: 'Dậu (Gà)', en: 'Rooster', de: 'Hahn' }, { vi: 'Tuất (Chó)', en: 'Dog', de: 'Hund' }, { vi: 'Hợi (Lợn)', en: 'Pig', de: 'Schwein' }
 ];
@@ -13348,7 +13420,11 @@ function applyAccountLang() {
   return true;
 }
 if (LANGS.indexOf(lang) < 0) lang = 'vi';
-const T = () => STR[lang];
+/* Inside the iPhone app the store's few sentences that name Google Play are said about the App Store
+   instead: STR[lang].appStore holds them, laid over the language once and kept. iosShell is a hoisted
+   declaration so this works even for a T() called before isIOSApp below exists. */
+const T_IOS = {};
+const T = () => { const s = STR[lang]; if (!s || !s.appStore || !iosShell()) return s; return T_IOS[lang] || (T_IOS[lang] = Object.assign({}, s, s.appStore)); };
 const L = (obj) => { if (obj == null) return ''; if (typeof obj === 'string') return obj; return obj[lang] || obj.en || obj.vi || ''; };
 const L2 = (obj, lg) => (obj == null ? '' : typeof obj === 'string' ? obj : (obj[lg] || ''));
 
@@ -13857,6 +13933,21 @@ function shrinkImage(file, max, quality) {
    the "buy" buttons and only takes an unlock code. Remembered on the device after the first launch. */
 try { if (/^android-app:\/\//.test(document.referrer || '')) store.set('nabu-twa', true); } catch (e) { /* no referrer */ }
 const isTWA = () => store.get('nabu-twa', false) === true;
+/* The App Store build is a Capacitor shell around this same site, and it adds NabuTarotiOS to the user agent
+   (appendUserAgent in the shell's capacitor.config.json). Apple's rule is Play's rule: anything digital sold
+   inside the app is sold through Apple, so that build hides the same prices, transfers and codes. Read fresh on
+   every load and never remembered - the marker arrives with every page the shell opens, and Safari on the
+   same phone must never inherit it. */
+function iosShell() {
+  return /\bNabuTarotiOS\b/.test(String((window.navigator || {}).userAgent || ''))
+    || !!(window.Capacitor && typeof window.Capacitor.getPlatform === 'function' && window.Capacitor.getPlatform() === 'ios');
+}
+const isIOSApp = iosShell;
+/* Either store build. Whatever a store forbids - a web price, a bank transfer, a code box, an install nudge -
+   asks this. What only Play has (its bridge, its browsers, its account pages) still asks isTWA(). */
+const inStoreApp = () => isTWA() || isIOSApp();
+/* A class on the page root for the few looks that are the iPhone app's own. CSS cannot read the user agent. */
+try { if (isIOSApp()) document.documentElement.classList.add('iosapp'); } catch (e) { /* no document */ }
 const EMOJIS = ['✨', '💜', '🔮', '🌙', '☀️', '⭐', '🌟', '💫', '🃏', '🗝️', '🌸', '🌿', '🕯️', '🧿', '💌', '❤️', '💔', '💰', '💼', '📚', '😊', '🙏', '👉', '⚠️', '✅', '📅', '🎁', '🎉'];
 /* A booking as a calendar file with four reminders (24 h, 6 h, 1 h, 15 min).
    Times are Vietnam time (UTC+7, no daylight saving), written as UTC. */
@@ -14575,8 +14666,45 @@ const BE = {
     catch (e) { return ''; }
   },
   async signIn(provider) {
+    if (isIOSApp()) return this.signInNative(provider);
     const P = provider === 'google' ? new firebase.auth.GoogleAuthProvider() : new firebase.auth.FacebookAuthProvider();
     try { await this.auth.signInWithPopup(P); } catch (e) { if (/popup/i.test(e.code || '')) await this.auth.signInWithRedirect(P); else throw e; }
+  },
+  /* The iPhone app. Google refuses to sign anybody in inside an app's own web
+     view (403 disallowed_useragent), and Apple requires its own sign-in beside
+     Google's, so both are asked of the phone itself: the shell's
+     FirebaseAuthentication plugin shows Google's or Apple's native sheet and
+     hands back the proof, and Firebase here signs in with it. The account is
+     the same account the website and the Android app use. skipNativeAuth keeps
+     the plugin from signing in a second, native Firebase session beside this
+     one, which is also what lets Apple's nonce reach this page. */
+  nativeAuth() {
+    const C = window.Capacitor;
+    if (!C) return null;
+    if (C.Plugins && C.Plugins.FirebaseAuthentication) return C.Plugins.FirebaseAuthentication;
+    return typeof C.isPluginAvailable === 'function' && C.isPluginAvailable('FirebaseAuthentication') && typeof C.registerPlugin === 'function'
+      ? C.registerPlugin('FirebaseAuthentication') : null;
+  },
+  async signInNative(provider) {
+    const FA = this.nativeAuth();
+    if (!FA) throw Object.assign(new Error('native sign-in unavailable'), { code: 'auth/native-unavailable' });
+    let cred;
+    try {
+      if (provider === 'apple') {
+        const r = await FA.signInWithApple({ skipNativeAuth: true }), c = (r && r.credential) || {};
+        cred = new firebase.auth.OAuthProvider('apple.com').credential({ idToken: c.idToken, rawNonce: c.nonce });
+      } else if (provider === 'google') {
+        const r = await FA.signInWithGoogle({ skipNativeAuth: true }), c = (r && r.credential) || {};
+        cred = firebase.auth.GoogleAuthProvider.credential(c.idToken, c.accessToken);
+      } else throw Object.assign(new Error('provider'), { code: 'auth/operation-not-allowed' });
+    } catch (e) {
+      /* The native sheets say a closed sheet in words, not in a Firebase
+         code: Google's "canceled the sign-in flow", Apple's AuthorizationError
+         1001. Said the way a closed popup already is. */
+      if (e && !/^auth\//.test(e.code || '') && /cancel|error 1001/i.test(String(e.message || ''))) throw Object.assign(new Error('cancelled'), { code: 'auth/popup-closed-by-user' });
+      throw e;
+    }
+    await this.auth.signInWithCredential(cred);
   },
   async signInEmail(email, pw, create) {
     this.speakTheirLanguage();
@@ -14625,11 +14753,47 @@ const BE = {
          next reader sees the same one a stranger would. */
       if (typeof LIKES !== 'undefined') LIKES.forget();
     } catch (e) { /* a full phone must not be able to trap somebody signed in */ }
+    /* In the iPhone app Google's own SDK remembers who signed in, apart from
+       Firebase. Forgotten too, so the next person on the phone is asked to
+       choose an account rather than handed the last one. Never waited on. */
+    if (isIOSApp()) { const FA = this.nativeAuth(); if (FA) Promise.resolve().then(() => FA.signOut()).catch(() => {}); }
     return this.auth.signOut();
+  },
+  /* Apple's rule for an app with Sign in with Apple: deleting the account also revokes the Apple sign-in.
+     Inside the iPhone app, for an account that signs in with Apple, Apple is asked to sign the person in once
+     more. That does two jobs. Firebase wants a recent sign-in before it deletes a login - without it the
+     deletion used to stop half way with auth/requires-recent-login, the data already gone - and Apple's
+     answer carries a one-time code the worker exchanges and revokes (/apple-revoke, worker/src/apple.ts).
+     A failure to reach the worker does not stop the deletion: what the person asked for still happens, and
+     the worker's log says what it could not do. Anywhere but the iPhone app this does nothing. */
+  async appleBeforeDelete() {
+    if (!isIOSApp() || !this.user) return;
+    if (!(this.user.providerData || []).some((p) => p && p.providerId === 'apple.com')) return;
+    const FA = this.nativeAuth();
+    if (!FA) return;
+    let r;
+    try { r = await FA.signInWithApple({ skipNativeAuth: true }); }
+    catch (e) {
+      if (/cancel|error 1001/i.test(String((e && e.message) || ''))) throw Object.assign(new Error('cancelled'), { code: 'auth/popup-closed-by-user' });
+      throw e;
+    }
+    const c = (r && r.credential) || {};
+    await this.user.reauthenticateWithCredential(new firebase.auth.OAuthProvider('apple.com').credential({ idToken: c.idToken, rawNonce: c.nonce }));
+    if (!c.authorizationCode || !CONFIG.aiEndpoint) return;
+    try {
+      const idTok = await this.token();
+      await withTimeout(fetch(CONFIG.aiEndpoint.replace(/\/$/, '') + '/apple-revoke', {
+        method: 'POST', headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + idTok },
+        body: JSON.stringify({ code: c.authorizationCode })
+      }), 20000);
+    } catch (e) { /* offline or not configured: the deletion goes on */ }
   },
   /* Account deletion (a store requirement): profile, thread and messages, bookings, then the login itself.
      Firebase asks for a recent sign-in before deleting a login; the caller handles that error. */
   async deleteAccount() {
+    /* First, while nothing is gone yet: an account that signs in with Apple is confirmed with Apple and its
+       Apple sign-in revoked. If the person closes Apple's sheet here, nothing at all has been deleted. */
+    await this.appleBeforeDelete();
     const uid = this.user.uid, db = this.db;
     const wipe = async (q) => { const s = await q.get(); await Promise.all(s.docs.map((d) => d.ref.delete().catch(() => {}))); };
     try { await wipe(db.collection('threads').doc(uid).collection('messages')); } catch (e) { /* rules or offline */ }
@@ -16157,18 +16321,16 @@ function todayHTML() {
   const intlLocale = lang === 'vi' ? 'vi' : (lang === 'de' ? 'de' : 'en');
   const greg = now.toLocaleDateString(dateLocale, { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
   const rows = [];
-  // Vietnamese lunar calendar (Hồ Ngọc Đức's algorithm, UTC+7), as on the lịch vạn niên.
+  /* The Vietnamese calendar (Hồ Ngọc Đức's algorithm, UTC+7), as on the lịch vạn niên. It is lunisolar -
+     months follow the moon, a leap month keeps the year with the sun - so English and German name it that
+     way rather than "lunar". The row of can chi / animal signs was removed at the owner's request. */
   const lu = lunarToday(now);
   const leap = lu.leap ? (lang === 'vi' ? ' (nhuận)' : (lang === 'de' ? ' · Schaltmonat' : ' (leap)')) : '';
-  rows.push([lang === 'vi' ? 'Âm lịch' : (lang === 'de' ? 'Mondkalender (VN)' : 'Lunar (VN)'), lang === 'vi'
+  rows.push([lang === 'vi' ? 'Âm lịch' : (lang === 'de' ? 'Vietnamesischer Kalender (lunisolar)' : 'Vietnamese (lunisolar)'), lang === 'vi'
     ? 'Ngày ' + lu.day + ' tháng ' + lu.month + leap + ' năm ' + lu.yearCC + ' (' + lu.year + ')'
     : (lang === 'de'
       ? 'Tag ' + lu.day + ' · Mondmonat ' + lu.month + leap + ' · Jahr ' + lu.year
-      : 'Day ' + lu.day + ' of lunar month ' + lu.month + leap + ', year of the ' + lu.yearAn + ' (' + lu.year + ')')]);
-  rows.push(lang === 'vi' ? ['Can chi', 'Ngày ' + lu.dayCC + ' · tháng ' + lu.monthCC + ' · năm ' + lu.yearCC]
-    : (lang === 'de'
-      ? ['Tierzeichen', lu.dayAn + ' · ' + lu.monthAn + ' · ' + lu.yearAn]
-      : ['Animal signs', 'Day of the ' + lu.dayAn + ' · month of the ' + lu.monthAn + ' · year of the ' + lu.yearAn]));
+      : 'Day ' + lu.day + ' of lunar month ' + lu.month + leap + ', ' + lu.year)]);
   const calName = (vi, en, de) => lang === 'vi' ? vi : (lang === 'de' ? de : en);
   const others = [['islamic-umalqura', calName('Hồi giáo (Hijri)', 'Islamic (Hijri)', 'Islamischer Kalender (Hijri)')], ['hebrew', calName('Do Thái', 'Hebrew', 'Hebräischer Kalender')], ['persian', calName('Ba Tư', 'Persian', 'Persischer Kalender')], ['buddhist', calName('Phật lịch (Thái)', 'Buddhist (Thai)', 'Buddhistischer Kalender (Thailand)')]];
   others.forEach((o) => { const v = calLine(o[0], intlLocale, { day: 'numeric', month: 'long', year: 'numeric' }); if (v) rows.push([o[1], v]); });
@@ -16356,7 +16518,7 @@ function quickLinksHTML() {
     ['#/book', '📅', S.nav.book, lang === 'vi' ? 'hẹn giờ với Nabu' : (lang === 'de' ? 'Termin bei Nabu' : 'book a time with Nabu')],
     ['#/prices', '💜', S.priceTitle, lang === 'vi' ? 'các gói xem bài' : (lang === 'de' ? 'Legungspakete' : 'reading packages')]];
   return '<div class="tiles">' + tiles.map((t) => '<a class="tile" href="' + t[0] + '"><div class="ic">' + t[1] + '</div><b>' + esc(t[2]) + '</b><span>' + esc(t[3]) + '</span></a>').join('') + '</div>'
-    + (isStandalone() || isTWA() ? '' : '<a class="upnext" href="#/install" style="margin-top:-8px"><span class="ic">📲</span><span><b>' + esc(S.installTitle) + '</b><br>' + esc(S.instAndroidIntro) + '</span></a>');
+    + (isStandalone() || inStoreApp() ? '' : '<a class="upnext" href="#/install" style="margin-top:-8px"><span class="ic">📲</span><span><b>' + esc(S.installTitle) + '</b><br>' + esc(S.instAndroidIntro) + '</span></a>');
 }
 const SIGN_EN = ['aries', 'taurus', 'gemini', 'cancer', 'leo', 'virgo', 'libra', 'scorpio', 'sagittarius', 'capricorn', 'aquarius', 'pisces'];
 function horoCardHTML(period) {
@@ -16506,7 +16668,7 @@ function pickLimitHTML() {
      wants tomorrow, the other wants an account. */
   if (guestSpent()) return needAccountHTML(S.needInDraw);
   return '<div class="card luckbox"><p class="lead">' + esc(S.pickSpent) + '</p>'
-    + (isTWA()
+    + (inStoreApp()
       ? (BILL.can() ? '<p class="hint" style="margin-bottom:10px">' + esc(S.stPlusPitch) + '</p>' + buyButtonHTML('plus', S.stSubscribe) + '<p class="hint st" data-st="plus"></p>' : storeNotReadyHTML())
       : '<p class="hint" style="margin-bottom:10px">' + esc(S.pickOffer) + '</p><a class="btn primary block" href="#/unlock?from=pick">' + esc(S.pickPlus) + '</a>')
     + '</div>';
@@ -16657,7 +16819,7 @@ function paywallHTML(courseId) {
        requires it of anything digital sold inside an Android app - so the
        button is the store's own, bound by bindStore rather than a handler
        kept here. */
-    + (isTWA()
+    + (inStoreApp()
       ? (BILL.can()
         ? (BILL.priceOf(c.id) ? '<div class="price">' + esc(BILL.priceOf(c.id)) + ' <span>/ ' + esc(termText(c)) + '</span></div>' : '')
           + (expired ? '<p class="hint err">' + esc(S.courseExpired(a)) + '</p>' : '')
@@ -16774,7 +16936,7 @@ function renderLearn(args, params) {
 /* ---- the two courses: cards | spreads | guides ---- */
 async function renderCourse(courseId, tab) {
   if (!ACCESS.has(courseId)) {
-    if (isTWA()) await BILL.start();
+    if (inStoreApp()) await BILL.start();
     // The tarot sample lesson is a card page, so it wants the answers too.
     if (courseId === 'tarot') await kbReady();
     const S = T(), m = $('#main');
@@ -17093,8 +17255,8 @@ function renderManifest() {
   const S = T(), m = $('#main'), all = GUIDES.filter((g) => g.cat === 'manifest'), free = all.filter((g) => FREE_MANI.indexOf(g.id) > -1), rest = all.filter((g) => FREE_MANI.indexOf(g.id) < 0), has = ACCESS.has('manifest'), c = courseOf('manifest');
   m.innerHTML = backLink('#/learn', S.learnTitle) + '<h1 style="margin-bottom:6px">' + esc(S.cats.manifest) + '</h1><p class="muted">' + esc(S.maniIntro) + '</p>'
     + '<div class="eyebrow">' + esc(S.maniFree) + '</div>' + free.map(guideRow).join('')
-    + '<div class="eyebrow" style="margin-top:18px">' + esc(S.maniFull) + (has ? ' ✓' : (isTWA() ? '' : ' · ' + esc(S.perYear(fmtPrice(c.price))))) + '</div>'
-    + (has ? '' : '<div class="mani-banner"><b>✨ ' + esc(L(c.name)) + '</b><ul>' + S.maniIncl.map((x) => '<li>' + esc(x) + '</li>').join('') + '</ul><a class="btn primary block" href="#/learn/manifest/unlock">🔓 ' + esc(S.maniUnlock) + (isTWA() ? '' : ' · ' + esc(S.perYear(fmtPrice(c.price)))) + '</a></div>')
+    + '<div class="eyebrow" style="margin-top:18px">' + esc(S.maniFull) + (has ? ' ✓' : (inStoreApp() ? '' : ' · ' + esc(S.perYear(fmtPrice(c.price))))) + '</div>'
+    + (has ? '' : '<div class="mani-banner"><b>✨ ' + esc(L(c.name)) + '</b><ul>' + S.maniIncl.map((x) => '<li>' + esc(x) + '</li>').join('') + '</ul><a class="btn primary block" href="#/learn/manifest/unlock">🔓 ' + esc(S.maniUnlock) + (inStoreApp() ? '' : ' · ' + esc(S.perYear(fmtPrice(c.price)))) + '</a></div>')
     + rest.map(guideRow).join('');
 }
 function renderGuideList(cat) {
@@ -17166,11 +17328,11 @@ function unlockRowHTML(c) {
   const S = T(), until = ACCESS.get()[c.id];
   const open = ACCESS.has(c.id) || (UNL_TIERS.indexOf(c.id) > -1 && ACCESS.has('pro'));
   const picked = !open && UNL_CART.has(c.id);
-  const body = '<div class="unl-h"><b>' + esc(L(c.name)) + '</b>' + (isTWA() ? '' : '<span class="pr">' + priceHTML(c.price, 'unlock', c.id) + '</span>') + '</div>'
+  const body = '<div class="unl-h"><b>' + esc(L(c.name)) + '</b>' + (inStoreApp() ? '' : '<span class="pr">' + priceHTML(c.price, 'unlock', c.id) + '</span>') + '</div>'
     + '<p class="hint">' + esc(priceText(L(c.sum || c.blurb))) + '</p>'
     + '<div class="unl-f">' + (c.id === 'pro' ? '<span class="chip pink">' + esc(S.unlockBest) + '</span>' : '')
     + '<span class="unl-st">' + (open ? '✓ ' + esc(ACCESS.isAdmin() && !until ? S.adminShort : S.unlockOpenUntil(fmtDate(until)))
-      : picked ? '✓ ' + esc(S.unlockChosen) : esc(S.unlockNot) + (isTWA() ? '' : ' · ' + esc(termText(c)))) + '</span></div>';
+      : picked ? '✓ ' + esc(S.unlockChosen) : esc(S.unlockNot) + (inStoreApp() ? '' : ' · ' + esc(termText(c)))) + '</span></div>';
   if (open) return '<div class="unl on' + (c.id === 'pro' ? ' best' : '') + '">' + body + '</div>';
   return '<button type="button" class="unl pickable' + (picked ? ' pick' : '') + (c.id === 'pro' ? ' best' : '') + '" data-unl="' + c.id + '">' + body + '</button>';
 }
@@ -17205,7 +17367,7 @@ function renderUnlock(args, params) {
   /* Inside the app Play is the only shop: a different screen entirely, with
      Play's own prices and a Buy or Subscribe button for each of the four
      catalogue rows. Nothing below this line ever runs in the app any more. */
-  if (isTWA()) { renderStore(params); return; }
+  if (inStoreApp()) { renderStore(params); return; }
   const S = T(), m = $('#main');
   /* Arriving from something's own offer, that thing is already chosen: being
      sent to a list and having to find it again is a small insult. */
@@ -17443,7 +17605,7 @@ const NUM_KW = {
 const ANIMAL_EMOJI = ['🐀', '🐂', '🐅', '🐈', '🐉', '🐍', '🐎', '🐐', '🐒', '🐓', '🐕', '🐖'];
 const ANIMAL_INFO = {
   vi: [['nhanh trí', 'khéo léo', 'tiết kiệm', 'Chuột nhanh, khôn và biết xoay xở. Hợp việc cần đầu óc và quan hệ.'], ['bền bỉ', 'thật thà', 'chậm mà chắc', 'Trâu chăm, chịu khó và giữ lời. Hợp việc cần kiên nhẫn.'], ['can đảm', 'nhiệt', 'thích dẫn đầu', 'Hổ mạnh mẽ, dám làm, hay bốc đồng. Hợp việc cần quyết đoán.'], ['nhẹ nhàng', 'khéo', 'cẩn trọng', 'Mèo tinh tế, hoà nhã, biết giữ mình. Hợp việc cần khéo léo.'], ['tự tin', 'may mắn', 'tự tôn', 'Rồng nổi bật, nhiều năng lượng và tham vọng. Hợp việc lớn.'], ['sâu sắc', 'bí ẩn', 'trực giác', 'Rắn khôn ngoan, kín đáo, suy nghĩ kỹ. Hợp việc cần chiều sâu.'], ['tự do', 'nhanh', 'nhiệt tình', 'Ngựa yêu tự do, hoạt bát, thích đi. Hợp việc di chuyển, giao tiếp.'], ['hiền', 'sáng tạo', 'nhạy cảm', 'Dê dịu dàng, nghệ sĩ, cần được yên. Hợp việc sáng tạo.'], ['thông minh', 'vui', 'tinh nghịch', 'Khỉ lanh lợi, sáng ý, thích đùa. Hợp việc cần ứng biến.'], ['chăm', 'thẳng', 'tỉ mỉ', 'Gà siêng năng, rõ ràng, hay góp ý. Hợp việc cần chính xác.'], ['trung thành', 'công bằng', 'cẩn trọng', 'Chó tận tuỵ, thật thà, bảo vệ người thân. Hợp việc phục vụ.'], ['rộng lượng', 'tốt bụng', 'dễ tin', 'Lợn hiền, hào phóng, thích vui vẻ. Hợp việc chăm sóc, ẩm thực.']],
-  en: [['quick', 'resourceful', 'thrifty', 'The Rat is quick, clever and adaptable. Suits work of the mind and networks.'], ['steady', 'honest', 'slow but sure', 'The Ox is diligent and keeps its word. Suits patient work.'], ['brave', 'fiery', 'leads', 'The Tiger is strong, bold, sometimes rash. Suits decisive work.'], ['gentle', 'tactful', 'careful', 'The Cat is refined, gracious, self-protective. Suits delicate work.'], ['confident', 'lucky', 'proud', 'The Dragon stands out, full of energy and ambition. Suits big things.'], ['deep', 'mysterious', 'intuitive', 'The Snake is wise, private, thinks it through. Suits work with depth.'], ['free', 'fast', 'enthusiastic', 'The Horse loves freedom, lively, always moving. Suits travel and talk.'], ['gentle', 'creative', 'sensitive', 'The Goat is soft, artistic, needs peace. Suits creative work.'], ['clever', 'fun', 'mischievous', 'The Monkey is sharp, inventive, playful. Suits improvisation.'], ['hard-working', 'direct', 'precise', 'The Rooster is diligent, clear, quick to advise. Suits exact work.'], ['loyal', 'fair', 'cautious', 'The Dog is devoted, honest, protective. Suits service.'], ['generous', 'kind', 'trusting', 'The Pig is gentle, giving, fond of fun. Suits care and food.']],
+  en: [['quick', 'resourceful', 'thrifty', 'The Rat is quick, clever and adaptable. Suits work of the mind and networks.'], ['steady', 'honest', 'slow but sure', 'The Buffalo is diligent and keeps its word. Suits patient work.'], ['brave', 'fiery', 'leads', 'The Tiger is strong, bold, sometimes rash. Suits decisive work.'], ['gentle', 'tactful', 'careful', 'The Cat is refined, gracious, self-protective. Suits delicate work.'], ['confident', 'lucky', 'proud', 'The Dragon stands out, full of energy and ambition. Suits big things.'], ['deep', 'mysterious', 'intuitive', 'The Snake is wise, private, thinks it through. Suits work with depth.'], ['free', 'fast', 'enthusiastic', 'The Horse loves freedom, lively, always moving. Suits travel and talk.'], ['gentle', 'creative', 'sensitive', 'The Goat is soft, artistic, needs peace. Suits creative work.'], ['clever', 'fun', 'mischievous', 'The Monkey is sharp, inventive, playful. Suits improvisation.'], ['hard-working', 'direct', 'precise', 'The Rooster is diligent, clear, quick to advise. Suits exact work.'], ['loyal', 'fair', 'cautious', 'The Dog is devoted, honest, protective. Suits service.'], ['generous', 'kind', 'trusting', 'The Pig is gentle, giving, fond of fun. Suits care and food.']],
   de: [['schnell', 'einfallsreich', 'sparsam', 'Die Ratte gilt als schnell, clever und anpassungsfähig. Traditionell passt sie zu Aufgaben, die Köpfchen und gute Kontakte verlangen.'], ['beständig', 'ehrlich', 'langsam, aber sicher', 'Der Büffel gilt als fleißig, verlässlich und ausdauernd. Traditionell passt er zu Arbeit, die Geduld braucht.'], ['mutig', 'feurig', 'führungsstark', 'Der Tiger gilt als kraftvoll, mutig und manchmal impulsiv. Traditionell passt er zu Situationen, in denen Entschlossenheit gefragt ist.'], ['sanft', 'taktvoll', 'vorsichtig', 'Die Katze gilt in der vietnamesischen Tierkreis-Tradition als feinfühlig, höflich und umsichtig. Sie wird mit Geschick und Diplomatie verbunden.'], ['selbstbewusst', 'glücklich', 'stolz', 'Der Drache gilt als auffällig, energiegeladen und ehrgeizig. Traditionell wird er mit großen Vorhaben und sichtbarer Verantwortung verbunden.'], ['tiefgründig', 'geheimnisvoll', 'intuitiv', 'Die Schlange gilt als klug, zurückhaltend und überlegt. Traditionell wird sie mit Tiefe und sorgfältigem Denken verbunden.'], ['freiheitsliebend', 'schnell', 'begeisterungsfähig', 'Das Pferd liebt Bewegung und Freiheit. Traditionell wird es mit Reisen, Kommunikation und einem aktiven Leben verbunden.'], ['sanft', 'kreativ', 'sensibel', 'Die Ziege gilt als feinfühlig, kreativ und friedliebend. Traditionell passt sie zu künstlerischen oder fürsorglichen Tätigkeiten.'], ['clever', 'fröhlich', 'verspielt', 'Der Affe werden Einfallsreichtum, Humor und schnelle Reaktionen zugeschrieben. Sie passt symbolisch zu Aufgaben, die Improvisation verlangen.'], ['fleißig', 'direkt', 'genau', 'Der Hahn gilt als arbeitsam, klar und detailorientiert. Traditionell wird er mit Aufgaben verbunden, bei denen Genauigkeit wichtig ist.'], ['loyal', 'fair', 'vorsichtig', 'Der Hund gilt als treu, ehrlich und beschützend. Traditionell wird er mit Verantwortung und Dienst an anderen verbunden.'], ['großzügig', 'freundlich', 'vertrauensvoll', 'Das Schwein gilt als sanft, großzügig und lebensfroh. Traditionell wird es mit Fürsorge, Genuss und Gastfreundschaft verbunden.']]
 };
 const TRIOS = [[8, 0, 4], [2, 6, 10], [11, 3, 7], [5, 9, 1]];       // tam hợp: Thân Tý Thìn · Dần Ngọ Tuất · Hợi Mão Mùi · Tỵ Dậu Sửu
@@ -17685,7 +17847,10 @@ function animalsWheelSVG(active) {
   let s = '<div class="awheel">';
   for (let i = 0; i < 12; i++) {
     const a = i / 12 * Math.PI * 2 - Math.PI / 2, x = 50 + 39 * Math.cos(a), y = 50 + 39 * Math.sin(a), on = i === active;
-    s += '<button class="aw' + (on ? ' on' : '') + '" data-animal="' + i + '" style="left:' + x.toFixed(1) + '%;top:' + y.toFixed(1) + '%" aria-label="' + CHI[i] + '"><span class="e">' + ANIMAL_EMOJI[i] + '</span><b>' + CHI[i] + '</b></button>';
+    /* The wheel speaks the reader's language: Tý, Sửu, Dần in Vietnamese; Rat, Buffalo, Tiger in English;
+       Ratte, Büffel, Tiger in German. */
+    const name = lang === 'vi' ? CHI[i] : ANIMALS[i][lang] || ANIMALS[i].en;
+    s += '<button class="aw' + (on ? ' on' : '') + '" data-animal="' + i + '" style="left:' + x.toFixed(1) + '%;top:' + y.toFixed(1) + '%" aria-label="' + esc(name) + '"><span class="e">' + ANIMAL_EMOJI[i] + '</span><b>' + esc(name) + '</b></button>';
   }
   return s + '</div>';
 }
@@ -17699,7 +17864,10 @@ function renderAnimals(m, head) {
       + '<p><b>' + esc(S.animalTrio) + ':</b> ' + trio.map((t) => ANIMAL_EMOJI[t] + ' ' + esc(ANIMALS[t][lang])).join(' · ') + '</p><p><b>' + esc(S.animalClash) + ':</b> ' + clash.map((t) => ANIMAL_EMOJI[t] + ' ' + esc(ANIMALS[t][lang])).join(' · ') + '</p><p class="faint">' + esc(S.animalYears) + ': ' + years.slice(0, 6).join(', ') + '</p></div></div>';
     $$('[data-animal]', m).forEach((g) => g.addEventListener('click', () => draw(Number(g.getAttribute('data-animal')))));
   };
-  m.innerHTML = head + '<p class="muted">' + esc(S.animalIntro) + '</p><div class="awrapper"><div id="awrap"></div></div><div class="ins" id="aout"></div><p class="hint">' + esc(S.animalNote) + '</p>'
+  /* The wheel is the Vietnamese one - Mèo, Trâu, Dê - and says so at the top. Below it, what China and
+     Korea do differently, in the owner's short sentences. */
+  m.innerHTML = head + '<p class="avn"><span class="chip tag">🇻🇳 ' + esc(S.animalVN) + '</span></p><p class="muted">' + esc(S.animalIntro) + '</p><div class="awrapper"><div id="awrap"></div></div><div class="ins" id="aout"></div>'
+    + '<div class="card anote"><h3>' + esc(S.animalDiffH) + '</h3><ul>' + S.animalDiff.map((x) => '<li>' + esc(x) + '</li>').join('') + '</ul></div><p class="hint">' + esc(S.animalNote) + '</p>'
     + '<div class="acc"><button><span>' + esc(S.readMoreTitle) + '</span></button><div class="in">' + guideBodyHTML(GUIDES.filter((g) => g.id === 'fort-animals')[0]) + '</div></div>';
   draw(mine > -1 ? mine : 4); bindAccordions(m);
 }
@@ -18237,6 +18405,7 @@ const BILL = {
   buying: '',       // the key whose sheet is open, so a second tap cannot start another
   seq: 0,           // every purchase takes a number, so a late answer can tell its own from the next one
   buyingSeq: 0,     // the number of the purchase `buying` refers to
+  storefront: '',   // set by APPLE_BILL; Play leaves it empty
   lastSheet: null,  // {outcome, name, ms} of the last show(), for the diagnostics
   onSettled: null,  // the screen's hook: an answer that landed after the watchdog had already spoken
 
@@ -18382,7 +18551,7 @@ const BILL = {
     const ua = String((window.navigator || {}).userAgent || '');
     const it = key ? playItem(key) : null, d = it && this.detailsOf(key);
     const rows = [['web', String(window.APP_VERSION || '?')],
-      ['shell', isTWA() ? 'twa' : (window.matchMedia && window.matchMedia('(display-mode: standalone)').matches ? 'standalone' : 'browser')],
+      ['shell', isTWA() ? 'twa' : isIOSApp() ? 'ios' : (window.matchMedia && window.matchMedia('(display-mode: standalone)').matches ? 'standalone' : 'browser')],
       ['android', 'unavailable'],
       ['chrome', (/Chrome\/(\d+)/.exec(ua) || [])[1] || 'unknown'],
       ['browser', this.provider()],
@@ -18391,6 +18560,9 @@ const BILL = {
       ['state', this.state], ['why', this.why || '-'], ['stage', this.stage || '-'],
       ['priced', this.priced() + '/' + this.sellable()],
       ['ms', String(this.tookMs || 0)], ['tries', String(this.tries)], ['try', String(this.attempt)]];
+    if (this.storefront) rows.push(['storefront', String(this.storefront)]);
+    { const any = d || this.details[Object.keys(this.details)[0]];
+      if (any && any.price && any.price.currency) rows.push(['currency', String(any.price.currency)]); }
     if (it) rows.push(['sku', String(it.sku)], ['plan', String((d && d.subscriptionPeriod) || '-')]);
     if (this.lastSheet) rows.push(['sheet', this.lastSheet.outcome + '/' + this.lastSheet.name + '/' + this.lastSheet.ms + 'ms']);
     rows.push(['at', new Date().toISOString().replace(/\.\d+Z$/, 'Z')]);
@@ -18719,6 +18891,290 @@ if (typeof window !== 'undefined') {
   setTimeout(() => { try { BILL.start().then(() => { if (BILL.can() && typeof BE !== 'undefined' && BE.user) BILL.sync(); }); } catch (e) { /* never block the app */ } }, 1200);
 }
 
+/* ======================= buying inside the iPhone app =======================
+
+   Apple requires what Google requires: anything digital sold inside the app
+   is sold through the App Store. The iPhone app is a Capacitor shell around
+   this same site, and its NativePurchases plugin (@capgo/native-purchases,
+   StoreKit 2) is the App Store's side of the counter.
+
+   Nothing on any screen changes. The store, the paywalls, the coin and the
+   wedding all ask BILL; inside the iPhone app BILL answers from the App Store
+   instead of Google Play, with the same questions and the same shape of
+   answer: can(), canBuy(key), priceOf(key), buy(key, opt), restore(), diag().
+
+   The rule from billing.js holds here too. The phone is never trusted about
+   what it bought: it hands the worker the transaction id StoreKit gave it,
+   the worker asks Apple (worker/src/apple.ts) and writes the account, and the
+   phone reads the account back. A transaction is only marked finished in
+   StoreKit once the worker has answered for it - an unfinished one stays in
+   Apple's queue and is sent again - so a purchase can be delayed by a lost
+   connection but never lost. */
+
+const APPLE_PENDING = 'nabu-apple-pending';
+const APPLE_GIVE_UP = 8;
+
+function applePlugin() {
+  const C = window.Capacitor;
+  if (!C) return null;
+  if (C.Plugins && C.Plugins.NativePurchases) return C.Plugins.NativePurchases;
+  return typeof C.isPluginAvailable === 'function' && C.isPluginAvailable('NativePurchases') && typeof C.registerPlugin === 'function'
+    ? C.registerPlugin('NativePurchases') : null;
+}
+
+/* The Nabu account a purchase belongs to, as the UUID StoreKit carries on the
+   transaction and every renewal: sha256("nabu-tarot:" + uid), first 16 bytes,
+   version-5 and variant bits. worker/src/apple.ts derives the same value and
+   refuses a transaction whose token names a different account. */
+async function appleAccountToken(uid) {
+  const h = new Uint8Array(await crypto.subtle.digest('SHA-256', new TextEncoder().encode('nabu-tarot:' + uid))).slice(0, 16);
+  h[6] = (h[6] & 0x0f) | 0x50; h[8] = (h[8] & 0x3f) | 0x80;
+  const x = Array.from(h).map((b) => b.toString(16).padStart(2, '0')).join('');
+  return x.slice(0, 8) + '-' + x.slice(8, 12) + '-' + x.slice(12, 16) + '-' + x.slice(16, 20) + '-' + x.slice(20);
+}
+
+const APPLE_BILL = {
+  store: 'apple',
+  service: null, details: {}, starting: null, ready: false, state: 'idle', why: '', stage: '',
+  attempt: 0, tries: 0, lastTryAt: 0, tookMs: 0, buying: '', buyingSeq: 0, seq: 0, lastSheet: null, onSettled: null,
+  connectMs: 10000, detailsMs: 15000, listening: false,
+
+  can() { return this.state === 'ready' && !!this.service; },
+  canBuy(key) { return this.can() && !!this.detailsOf(key); },
+  priced() { return Object.keys(this.details).length; },
+  sellable() { return PLAY_ITEMS.filter((i) => i.sku).length; },
+  provider() { return 'appstore'; },
+  detailsOf(key) { const it = playItem(key); return (it && it.sku && this.details[it.sku]) || null; },
+  /* The App Store's own price string, already in the buyer's currency and format. */
+  priceOf(key) { const d = this.detailsOf(key); return (d && d.priceString) || ''; },
+  /* The catalogue's months: the App Store describes a period in its own terms and the store's sentence only needs a number. */
+  periodMonths(key) { const it = playItem(key); return it ? it.months : 0; },
+  backoffMs() { return [0, 2000, 5000, 15000, 30000][Math.min(this.tries, 4)]; },
+  retry() { return this.start(true); },
+
+  /* Ask the App Store for the catalogue. The same guard-rails as Play: one
+     attempt at a time, bounded, a failure retried on demand behind a backoff,
+     and the reason kept in a few characters for the screen:
+
+       noplugin      the shell has no purchase plugin (an old build of the app)
+       noendpoint    no worker to check purchases with
+       details:<n>   the App Store refused to price the catalogue
+       noproducts    it answered with nothing - the products are not live yet
+                     for this Apple account, or the agreements are unsigned */
+  start(force) {
+    if (this.state === 'starting' && this.starting) return this.starting;
+    if (this.state === 'ready' && !force) return Promise.resolve(true);
+    if (this.state === 'failed' && !force && Date.now() - this.lastTryAt < this.backoffMs()) return Promise.resolve(false);
+    const my = ++this.attempt, began = Date.now();
+    this.state = 'starting'; this.lastTryAt = began; this.why = ''; this.stage = '';
+    this.starting = (async () => {
+      const mine = () => my === this.attempt;
+      const fail = (why, stage) => { if (!mine()) return false; this.details = {}; this.state = 'failed'; this.ready = true; this.why = why; this.stage = stage || ''; this.tookMs = Date.now() - began; this.tries++; return false; };
+      const P = applePlugin();
+      if (!P) return fail('noplugin');
+      if (!CONFIG.aiEndpoint) return fail('noendpoint');
+      this.listen(P);
+      let got;
+      try { got = await withTimeout(P.getProducts({ productIdentifiers: PLAY_ITEMS.map((i) => i.sku).filter(Boolean) }), this.detailsMs); }
+      catch (e) { return fail('details:' + errName(e), 'details'); }
+      if (!mine()) return false;
+      const map = {};
+      ((got && got.products) || []).forEach((p) => { if (p && p.identifier) map[p.identifier] = p; });
+      this.service = P;
+      if (!Object.keys(map).length) return fail('noproducts', 'details');
+      /* Which storefront StoreKit is actually pricing in. The owner's App Store
+         account is Vietnam and the payment sheet charges dong, while the price
+         list came back in dollars; this is the one number that says which
+         country StoreKit thinks it is selling to, rather than guessing from
+         the prices. Kept for the diagnostics only - nothing is decided by it. */
+      try { const sf = await withTimeout(P.getStorefront(), this.detailsMs); this.storefront = (sf && sf.countryCode) || ''; }
+      catch (e) { this.storefront = ''; }
+      this.details = map; this.state = 'ready'; this.ready = true; this.tries = 0; this.why = ''; this.tookMs = Date.now() - began;
+      return true;
+    })();
+    return this.starting;
+  },
+
+  /* What StoreKit delivers on its own - a renewal, an Ask to Buy a parent has
+     approved, a purchase finished while the app was closed - is handed to the
+     worker the same way a purchase made on the screen is. */
+  listen(P) {
+    if (this.listening || !P || typeof P.addListener !== 'function') return;
+    this.listening = true;
+    try {
+      P.addListener('transactionUpdated', (tx) => {
+        if (!tx || !tx.transactionId || !tx.productIdentifier) return;
+        this.remember({ sku: tx.productIdentifier, token: String(tx.transactionId), at: Date.now() });
+        if (typeof BE !== 'undefined' && BE.user) this.restore().catch(() => {});
+      });
+    } catch (e) { this.listening = false; }
+  },
+
+  pendingList() { const a = store.get(APPLE_PENDING, []); return Array.isArray(a) ? a : []; },
+  remember(rec) {
+    const list = this.pendingList().filter((p) => p.token !== rec.token).concat([Object.assign({}, this.pendingList().filter((p) => p.token === rec.token)[0] || {}, rec)]);
+    if (list.length > 50) { list.sort((a, b) => (a.tries || 0) - (b.tries || 0)); list.length = 50; }
+    store.set(APPLE_PENDING, list);
+  },
+  forget(token) { store.set(APPLE_PENDING, this.pendingList().filter((p) => p.token !== token)); },
+  stuckKey(rec) { return BILL_PLAY.stuckKey(rec); },
+  flagStuck(rec) { return BILL_PLAY.flagStuck.call(this, rec); },
+  resolveWeddingWid() { return BILL_PLAY.resolveWeddingWid.call(this); },
+
+  /* The worker's word on one transaction. Resolves { ok, opened, access, subs };
+     throws with the worker's reason for a refusal, or 'offline' for anything
+     that is not an answer. */
+  async verify(sku, token, extra) {
+    const idTok = await BE.token();
+    let r;
+    try {
+      r = await withTimeout(fetch(CONFIG.aiEndpoint.replace(/\/$/, '') + '/billing', {
+        method: 'POST', headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + idTok },
+        body: JSON.stringify(Object.assign({ store: 'apple', sku: sku, token: token }, extra || {}))
+      }), 30000);
+    } catch (e) { throw new Error('offline'); }
+    const j = await r.json().catch(() => ({}));
+    if (r.status >= 500 || r.status === 429) throw new Error('offline');
+    if (!r.ok || !j.ok) throw new Error(j.error || ('billing ' + r.status));
+    return j;
+  },
+
+  /* StoreKit is told the purchase is done only once the worker has answered
+     for it - granted, or refused for good. */
+  async finish(token) {
+    const P = this.service || applePlugin();
+    if (!P || typeof P.acknowledgePurchase !== 'function') return;
+    try { await withTimeout(P.acknowledgePurchase({ purchaseToken: String(token) }), this.detailsMs); } catch (e) { /* already finished, or gone: nothing left to do */ }
+  },
+
+  /* One transaction, from StoreKit to the account. */
+  async settle(rec) {
+    this.remember(rec);
+    let out;
+    try { out = await this.verify(rec.sku, rec.token, rec.wid ? { wid: rec.wid } : undefined); }
+    catch (e) {
+      const why = String((e && e.message) || '');
+      /* Apple has the money and the worker could not be reached: kept, unfinished, for restore(). */
+      if (why === 'offline') throw e;
+      /* A final answer - already used by another account, refunded, not this app - is final for StoreKit too. */
+      this.forget(rec.token); await this.finish(rec.token);
+      throw e;
+    }
+    this.forget(rec.token);
+    await this.finish(rec.token);
+    if (out.access) store.set('nabu-access', out.access);
+    if (out.subs) store.set('nabu-subs', out.subs);
+    return out;
+  },
+
+  /* Buy one thing. opt.wid: the wedding room it pays for. opt.oldKey is Play's
+     business - the App Store moves a subscription within its group by itself,
+     so buying Pro while holding Plus is simply buying Pro. */
+  async buy(key, opt) {
+    opt = opt || {};
+    const it = playItem(key);
+    if (this.buying) throw new Error('busy');
+    if (!this.can()) throw new Error('nostore');
+    if (!BE.enabled || !BE.user) throw new Error('signin');
+    if (!it || !it.sku || !this.details[it.sku]) throw new Error('noproduct');
+    const shownAt = Date.now();
+    this.seq++; this.buying = key; this.buyingSeq = this.seq;
+    let tx;
+    try {
+      tx = await this.service.purchaseProduct({
+        productIdentifier: it.sku, productType: it.kind === 'subs' ? 'subs' : 'inapp', quantity: 1,
+        appAccountToken: await appleAccountToken(BE.user.uid), autoAcknowledgePurchases: false
+      });
+    } catch (e) {
+      const msg = String((e && e.message) || e || '');
+      this.buying = ''; this.buyingSeq = 0;
+      /* Ask to Buy: nothing is charged until somebody approves, and the approval arrives through listen(). */
+      if (/pending/i.test(msg)) { this.lastSheet = { outcome: 'done', name: 'Pending', ms: Date.now() - shownAt }; return { pending: true }; }
+      const err = new Error(msg || 'failed');
+      err.outcome = /cancel/i.test(msg) ? 'aborted' : 'failed';
+      err.playName = /cancel/i.test(msg) ? 'UserCancelled' : 'StoreKitError';
+      this.lastSheet = { outcome: err.outcome, name: err.playName, ms: Date.now() - shownAt };
+      throw err;
+    }
+    this.buying = ''; this.buyingSeq = 0;
+    this.lastSheet = { outcome: 'done', name: '-', ms: Date.now() - shownAt };
+    if (!tx || !tx.transactionId) throw new Error('nopurchase');
+    const out = await this.settle({ sku: tx.productIdentifier || it.sku, token: String(tx.transactionId), at: Date.now(), wid: opt.wid || undefined });
+    await this.sync();
+    return { opened: out.opened || it.opens };
+  },
+
+  /* Everything this Apple account currently holds, and every transaction this
+     phone is still waiting on, sent to the worker again. Safe to repeat: the
+     worker answers a repeat with what it already did. */
+  async restore() {
+    const out = { tried: 0, opened: 0, pending: 0, failed: 0 };
+    await this.start();
+    const P = this.service || applePlugin();
+    if (!P || !BE.enabled || !BE.user) return out;
+    const held = await withTimeout(P.getPurchases({ onlyCurrentEntitlements: true }), this.detailsMs).catch(() => ({ purchases: [] }));
+    const mine = (await appleAccountToken(BE.user.uid)).toLowerCase();
+    const byToken = {};
+    ((held && held.purchases) || []).forEach((t) => {
+      /* Only what this Nabu account bought. StoreKit writes the token in capitals; a purchase with none
+         (an offer code redeemed in the App Store) is sent too, and the worker's ledger decides. */
+      const tok = String(t.appAccountToken || '').toLowerCase();
+      if (t.transactionId && (!tok || tok === mine)) byToken[String(t.transactionId)] = { sku: t.productIdentifier, token: String(t.transactionId) };
+    });
+    this.pendingList().forEach((p) => { if (p.token) byToken[p.token] = Object.assign({}, byToken[p.token], p); });
+    for (const token of Object.keys(byToken)) {
+      const p = byToken[token], it = playItemBySku(p.sku);
+      if (!it) continue;
+      out.tried++;
+      let wid = p.wid;
+      try {
+        if (it.key === 'wedding' && !wid) wid = await this.resolveWeddingWid();
+        if (it.key === 'wedding' && !wid) throw new Error('noroom');
+        await this.settle(Object.assign({}, p, { token: token, wid: wid || undefined }));
+        out.opened++;
+      } catch (e) {
+        const msg = String((e && e.message) || '');
+        if (msg !== 'offline' && msg !== 'noroom') continue;   // a final answer: settle() has already let it go
+        const tries = (p.tries || 0) + 1;
+        if (tries >= APPLE_GIVE_UP) { this.forget(token); out.failed++; this.flagStuck(p); }
+        else this.remember(Object.assign({}, p, { token: token, tries: tries }));
+      }
+    }
+    try { await BE.pullProfile(); } catch (e) { /* offline: the account is read next time */ }
+    return out;
+  },
+  sync() { return this.restore().catch(() => null); },
+
+  /* Apple's own page for the subscriptions on this Apple account. */
+  manage() { const P = this.service || applePlugin(); if (P && typeof P.manageSubscriptions === 'function') return P.manageSubscriptions().catch(() => {}); return Promise.resolve(); },
+
+  diag(key) {
+    const it = key ? playItem(key) : null;
+    const rows = [['web', String(window.APP_VERSION || '?')], ['shell', 'ios'], ['store', 'appstore'],
+      ['plugin', applePlugin() ? 'yes' : 'no'], ['user', (typeof BE !== 'undefined' && BE.user) ? 'yes' : 'no'],
+      ['state', this.state], ['why', this.why || '-'], ['stage', this.stage || '-'],
+      ['priced', this.priced() + '/' + this.sellable()], ['ms', String(this.tookMs || 0)], ['tries', String(this.tries)], ['try', String(this.attempt)],
+      ['waiting', String(this.pendingList().length)]];
+    if (it) rows.push(['sku', String(it.sku)]);
+    if (this.lastSheet) rows.push(['sheet', this.lastSheet.outcome + '/' + this.lastSheet.name + '/' + this.lastSheet.ms + 'ms']);
+    rows.push(['at', new Date().toISOString().replace(/\.\d+Z$/, 'Z')]);
+    return rows.map((r) => r[0] + '=' + r[1]).join(' ');
+  }
+};
+
+/* Play's BILL exactly as billing.js built it, kept whole, so the one object
+   every screen holds can be pointed at either store - the iPhone app points
+   it at the App Store before anything is drawn, and the suite points it back
+   and forth to check both. */
+const BILL_PLAY = Object.assign({}, BILL);
+function billUse(which) {
+  Object.keys(BILL).forEach((k) => { delete BILL[k]; });
+  Object.assign(BILL, BILL_PLAY, { details: {}, state: 'idle', service: null, starting: null, ready: false, why: '', tries: 0, attempt: 0, lastSheet: null, buying: '' });
+  if (which === 'apple') Object.assign(BILL, APPLE_BILL, { details: {}, state: 'idle', service: null, starting: null, listening: false, why: '', tries: 0, attempt: 0, lastSheet: null, buying: '' });
+  return BILL;
+}
+if (typeof window !== 'undefined' && isIOSApp()) billUse('apple');
+
 /* ======================= the store inside the Android app =======================
    #/unlock, when the app is the installed one. One row per thing Play sells,
    with Play's own price, and a button that opens Play's sheet. Nothing here
@@ -18741,7 +19197,16 @@ function subStateWord(row) {
   if (k === 'problem') return S.stProblem;
   return S.stExpired;
 }
-const manageURL = (key) => 'https://play.google.com/store/account/subscriptions?sku=' + encodeURIComponent((playItem(key) || {}).sku || '') + '&package=app.nabutarot.twa';
+/* Where a buyer manages a plan is the store that sold it: a row the App Store decided says so (store: "apple"). */
+const APPLE_MANAGE = 'https://apps.apple.com/account/subscriptions';
+/* App Review asks every subscription screen for the Terms of Use and the
+   privacy policy. On the iPhone the terms are Apple's standard licence, the
+   same link the App Store listing gives; Play asks for neither, so Android
+   and the web show nothing new. */
+const APPLE_EULA = 'https://www.apple.com/legal/internet-services/itunes/dev/stdeula/';
+const legalHTML = () => (isIOSApp() ? '<p class="hint legal"><a href="' + APPLE_EULA + '" target="_blank" rel="noopener">' + esc(T().stTerms) + '</a> · <a href="#/privacy">' + esc(T().stPrivacy) + '</a></p>' : '');
+const manageURL = (key) => ((SUBS.of(key) || {}).store === 'apple' ? APPLE_MANAGE
+  : 'https://play.google.com/store/account/subscriptions?sku=' + encodeURIComponent((playItem(key) || {}).sku || '') + '&package=app.nabutarot.twa');
 /* Every screen that sells anything comes through here, so this is where
    "Play priced this one" is asked. A row whose product Play did not return
    says so where its button was, rather than offering a button that can only
@@ -18826,8 +19291,34 @@ function fileBilling(line, where) {
   noteOops(line, where);
 }
 
+/* A purchase is paid for, the worker has written the account, and the screen
+   has to show it - without the buyer being told to close the app and open it
+   again, which is what the owner hit on the iPhone with the Manifestation set:
+   "successful", and the paywall still there until a force quit.
+
+   The buy already stores what the worker answered, and BILL.sync() re-reads
+   the account afterwards; a read that lands before the write is visible puts
+   the old, empty access back. So before redrawing, wait for the keys this
+   purchase opens to actually be there - reading the account again, a few times,
+   a little further apart each time. Everything is already paid and granted at
+   this point: this only decides when the screen is redrawn. Three tries over
+   about four seconds, then redraw anyway rather than hold the button for ever.
+
+   Both stores go through here, so Play gets the same guarantee. */
+async function settled(key) {
+  const it = typeof playItem === 'function' ? playItem(key) : null;
+  const keys = (it && it.opens && it.opens.length) ? it.opens : [];
+  if (!keys.length || typeof BE === 'undefined' || !BE.user) return;
+  for (let i = 0; i < 3 && !keys.every((k) => ACCESS.has(k)); i++) {
+    await new Promise((ok) => setTimeout(ok, 700 * (i + 1)));
+    try { await BE.pullProfile(); } catch (e) { /* offline: the next open reads it */ }
+  }
+}
+
 function bindStore(root, redraw) {
   const S = T();
+  /* Inside the iPhone app Apple's own subscriptions sheet opens over the app, rather than a web page. */
+  $$('a[href="' + APPLE_MANAGE + '"]', root).forEach((a) => a.addEventListener('click', (ev) => { if (BILL.store === 'apple' && typeof BILL.manage === 'function') { ev.preventDefault(); BILL.manage(); } }));
   $$('[data-buy]', root).forEach((b) => b.addEventListener('click', async () => {
     const key = b.getAttribute('data-buy'), st = $('[data-st="' + key + '"]', root) || $('#bstatus', root);
     if (b.disabled) return;   // a second tap on a button already working starts nothing
@@ -18845,6 +19336,7 @@ function bindStore(root, redraw) {
       const opt = {}; if (b.getAttribute('data-old')) opt.oldKey = b.getAttribute('data-old'); if (b.getAttribute('data-wid')) opt.wid = b.getAttribute('data-wid');
       const r = await BILL.buy(key, opt);
       if (r.pending) { if (st) st.textContent = S.stPending; return; }
+      await settled(key);
       toast(S.unlocked); if (redraw) redraw(); else route();
     } catch (e) {
       const why = String((e && e.message) || '');
@@ -18984,7 +19476,7 @@ function renderStore(params) {
     const plans = '<div class="sec"><h2 style="margin-bottom:8px">' + esc(S.stPlans) + '</h2>' + group(['plus', 'pro6', 'pro', 'manifest']) + '</div>';
     m.innerHTML = '<div class="store"><div class="eyebrow">' + esc(CONFIG.brand) + '</div><h1 style="margin-bottom:6px">' + esc(S.stTitle) + '</h1><p class="muted">' + esc(S.stIntro) + '</p>'
       + (BILL.can() ? (from === 'app' ? plans + courses : courses + plans) : storeNotReadyHTML())
-      + '<div class="card"><button type="button" class="btn block" id="restore">' + esc(S.stRestore) + '</button><p class="hint" id="rstatus"></p></div>'
+      + '<div class="card"><button type="button" class="btn block" id="restore">' + esc(S.stRestore) + '</button><p class="hint" id="rstatus"></p>' + legalHTML() + '</div>'
       + (BILL.can() ? storeDiagHTML('') : '') + '</div>';
     bindStore(m, draw);
   };
@@ -25469,7 +25961,7 @@ function priceCardHTML(c) {
   return '<div class="svc ' + (c.kind === 'course' ? 'lav' : 'gold') + '">'
     + '<div class="t"><span class="ic">' + c.icon + '</span><div><b>' + esc(L(c.name)) + '</b>'
     + '<div class="tag">' + esc(priceText(L(c.sum))) + '</div></div></div>'
-    + (isTWA() ? '' : '<div class="pk"><div class="pkg"><span>' + esc(termText(c)) + '</span><b>' + priceHTML(c.price, 'unlock', c.id) + '</b></div></div>')
+    + (inStoreApp() ? '' : '<div class="pk"><div class="pkg"><span>' + esc(termText(c)) + '</span><b>' + priceHTML(c.price, 'unlock', c.id) + '</b></div></div>')
     + '<a class="btn sm block" href="' + esc(c.to) + '" style="margin-top:8px">' + esc(label) + ' \u2192</a></div>';
 }
 
@@ -25980,7 +26472,7 @@ function meSect(id, icon, title, body, openByDefault, force) {
        goods outside Play whatever the truth of it. The prices were already kept
        out of the app for that reason; the rest of the row belongs with them.
        The box for entering a code stays, so an unlock still works here. */
-    let own = isTWA()
+    let own = inStoreApp()
       ? myPlansHTML()
       : '<div class="card"><h3 style="margin-bottom:8px">' + esc(S.myCourses) + '</h3>' + COURSES.map((c) => { const a = ACCESS.isAdmin() ? '9999-12-31' : ACCESS.get()[c.id]; const on = ACCESS.has(c.id);
       const ic = a ? (on ? '✓' : '⌛') : '🔒';
@@ -26004,12 +26496,12 @@ function meSect(id, icon, title, body, openByDefault, force) {
        you go to check something, not a place you read. */
     h += meSect('own', '\uD83D\uDD11', S.meGroupOwn, own, false);
 
-    let app = '<div class="card"><h3 style="margin-bottom:8px">' + esc(S.themeTitle) + '</h3><div class="themes">' + ['auto', 'light', 'dark', 'pink'].map((t) => '<button class="chip' + (themeChoice() === t ? ' on' : '') + '" data-theme-pick="' + t + '" title="' + esc(S.themes[t]) + '">' + esc(S.themeShort[t]) + '</button>').join('') + '</div></div>';
-    if (!(isStandalone() || isTWA())) app += '<a class="card" href="#/install" style="display:block;text-decoration:none;color:inherit"><h3 style="margin-bottom:4px">\uD83D\uDCF2 ' + esc(S.installTitle) + '</h3><p class="hint">' + esc(S.instIntro) + '</p></a>';
+    let app = '<div class="card themecard"><h3 style="margin-bottom:8px">' + esc(S.themeTitle) + '</h3><div class="themes">' + ['auto', 'light', 'dark', 'pink'].map((t) => '<button class="chip' + (themeChoice() === t ? ' on' : '') + '" data-theme-pick="' + t + '" title="' + esc(S.themes[t]) + '">' + esc(S.themeShort[t]) + '</button>').join('') + '</div></div>';
+    if (!(isStandalone() || inStoreApp())) app += '<a class="card" href="#/install" style="display:block;text-decoration:none;color:inherit"><h3 style="margin-bottom:4px">\uD83D\uDCF2 ' + esc(S.installTitle) + '</h3><p class="hint">' + esc(S.instIntro) + '</p></a>';
     app += '<div class="meacts"><div class="row3"><a class="btn" href="#/contact">💬 ' + esc(S.contactLink) + '</a><a class="btn" href="#/report">🐞 ' + esc(S.reportLink) + '</a><button class="btn" id="retour">🎓 ' + esc(S.tourLink) + '</button></div>'
       + (BE.user || BE.isAdmin() ? '<div class="row">' + (BE.user ? '<button class="btn" id="signout" style="flex:1">🚪 ' + esc(S.signOut) + '</button>' : '') + (BE.isAdmin() ? '<a class="btn gold" href="#/admin" style="flex:1">🛠 ' + esc(S.adminTitle) + '</a>' : '') + '</div>' : '') + '</div>';
     if (BE.enabled && BE.user) app += '<div class="card danger"><h3 style="margin-bottom:4px">' + esc(S.delAccount) + '</h3><p class="hint" style="margin-bottom:10px">' + esc(S.delHint) + '</p><button class="btn block" id="delacct">🗑 ' + esc(S.delAccount) + '</button><p class="hint" id="delstatus"></p></div>';
-    app += '<p class="hint" style="text-align:center;margin-top:16px">' + esc(S.versionLine(window.APP_VERSION || '')) + ' · <button type="button" class="linkbtn" id="chkupd">' + esc(S.checkUpdate) + '</button> · <a href="#/privacy">' + esc(S.privacyLink) + '</a></p>';
+    app += '<p class="hint verline" style="text-align:center;margin-top:16px"><span>' + esc(S.versionLine(window.APP_VERSION || '')) + '</span> <span>· <button type="button" class="linkbtn" id="chkupd">' + esc(S.checkUpdate) + '</button></span> <span>· <a href="#/privacy">' + esc(S.privacyLink) + '</a></span></p>';
     /* Group four: the app itself. Folded - nobody changes their theme twice a
        day, and deleting the account should take a deliberate reach. */
     h += meSect('app', '\u2699\uFE0F', S.meGroupApp, app, false);
@@ -26021,7 +26513,7 @@ function meSect(id, icon, title, body, openByDefault, force) {
       store.set('nabu-me-open', m);
     }));
     bindAuth(body); bindAI(body); bindNotify(body);
-    if (isTWA()) bindMyPlans(body, draw);
+    if (inStoreApp()) bindMyPlans(body, draw);
     $('#chkupd').addEventListener('click', async () => {
       toast(S.updating);
       try { if ('serviceWorker' in navigator) { const reg = await navigator.serviceWorker.getRegistration(); if (reg) await reg.update(); } } catch (e) { /* offline */ }
@@ -26065,7 +26557,7 @@ function meSect(id, icon, title, body, openByDefault, force) {
       if (!confirm(S.delConfirm)) return;
       da.disabled = true; const st = $('#delstatus'); st.textContent = S.sending;
       try { await BE.deleteAccount(); toast(S.delDone); location.hash = '#/home'; }
-      catch (e) { da.disabled = false; if (e && e.code === 'auth/requires-recent-login') { st.textContent = S.delRelogin; st.className = 'hint err'; try { await BE.signOut(); } catch (e2) { /* already out */ } } else { st.textContent = S.publishFail + ': ' + (e && e.message || e); st.className = 'hint err'; } }
+      catch (e) { da.disabled = false; if (e && e.code === 'auth/popup-closed-by-user') { st.textContent = S.authCancelled; st.className = 'hint'; } else if (e && e.code === 'auth/requires-recent-login') { st.textContent = S.delRelogin; st.className = 'hint err'; try { await BE.signOut(); } catch (e2) { /* already out */ } } else { st.textContent = S.publishFail + ': ' + (e && e.message || e); st.className = 'hint err'; } }
     });
     if (BE.enabled && BE.user) {
       /* Nabu's own profile has no chat box, so there is nothing to bind. */
@@ -26176,8 +26668,20 @@ const GOOGLE_MARK ='<svg viewBox="0 0 24 24"><path fill="#4285F4" d="M21.6 12.2c
 /* Each block rises into place a beat after the one above it (.srise, with
    --i counting the beats). The stagger is decoration: with reduced motion on
    the page simply appears, complete. */
+/* Which doors this page offers. The website and the Android app offer what
+   CONFIG lists. The iPhone app offers Google, Apple and email: Apple requires
+   its own sign-in wherever Google's is offered, and Facebook's native SDK was
+   left out of the shell - an account made with Facebook still signs in on the
+   website. */
+function authProvidersHere() {
+  const prov = CONFIG.authProviders || [];
+  if (!isIOSApp()) return prov;
+  return ['google', 'apple', 'email'].filter((p) => p === 'apple' ? prov.indexOf('google') > -1 : prov.indexOf(p) > -1);
+}
+const APPLE_MARK = '<svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M16.4 12.6c0-2.5 2-3.7 2.1-3.8-1.2-1.7-3-1.9-3.6-2-1.5-.2-3 .9-3.8.9-.8 0-2-.9-3.3-.8-1.7 0-3.3 1-4.2 2.5-1.8 3.1-.5 7.7 1.3 10.2.9 1.2 1.9 2.6 3.2 2.6 1.3-.1 1.8-.8 3.3-.8 1.6 0 2 .8 3.4.8 1.4 0 2.3-1.3 3.1-2.5 1-1.4 1.4-2.8 1.4-2.9 0 0-2.8-1.1-2.9-4.2zM13.9 5.1c.7-.9 1.2-2 1-3.1-1 0-2.2.7-2.9 1.5-.6.7-1.2 1.9-1.1 3 1.1.1 2.3-.6 3-1.4z"/></svg>';
+
 function signinHTML(mode) {
-  const S = T(), prov = CONFIG.authProviders || [], create = mode === 'create';
+  const S = T(), prov = authProvidersHere(), create = mode === 'create';
   let i = 0;
   /* The beat is added to whatever the block already is, never in front of it.
      Writing a second class attribute instead loses the first: the parser keeps
@@ -26190,6 +26694,7 @@ function signinHTML(mode) {
       : html.replace(/^(<\w+)/, '$1 class="srise"' + beat);
   };
   const social = (prov.indexOf('google') > -1 ? '<button type="button" class="btn block" data-auth="google">' + GOOGLE_MARK + esc(S.signInWith.google) + '</button>' : '')
+    + (prov.indexOf('apple') > -1 ? '<button type="button" class="btn block" data-auth="apple" style="background:#000;color:#fff;border-color:transparent">' + APPLE_MARK + esc(S.signInWith.apple) + '</button>' : '')
     + (prov.indexOf('facebook') > -1 ? '<button type="button" class="btn block" data-auth="facebook" style="background:#1461C7;color:#fff;border-color:transparent">' + esc(S.signInWith.facebook) + '</button>' : '');
   const email = prov.indexOf('email') > -1, app = inAppBrowser();
   return '<section class="signin">'
@@ -26333,7 +26838,7 @@ function platformOf() {
 }
 const isStandalone = () => window.matchMedia('(display-mode: standalone)').matches || navigator.standalone === true;
 function renderInstall() {
-  const S = T(), m = $('#main'), pf = platformOf(), inApp = isStandalone() || isTWA();
+  const S = T(), m = $('#main'), pf = platformOf(), inApp = isStandalone() || inStoreApp();
   const play = CONFIG.playTestUrl ? '<div class="card"><h3>▶️ Google Play</h3><p class="muted" style="margin:6px 0 10px">' + esc(S.instPlayIntro) + '</p>'
     + '<a class="btn primary block" href="' + esc(CONFIG.playTestUrl) + '" target="_blank" rel="noopener">' + esc(S.instPlayBtn) + '</a>'
     + '<p class="hint">' + esc(S.instPlayNote) + '</p></div>' : '';
@@ -26410,7 +26915,7 @@ ROUTES.hello = { nav: '', render: renderHello };
 /* Called once, from boot, before the first route is drawn. */
 function helloFirst() {
   if (location.hash) return false;                 // a hash means somebody knows where they are going
-  if (isTWA() || isStandalone()) return false;     // the installed app is not a stranger
+  if (inStoreApp() || isStandalone()) return false;     // the installed app is not a stranger
   if (store.get(HELLO_SEEN, 0)) return false;      // been here before
   location.hash = '#/hello';
   return true;
@@ -26425,7 +26930,7 @@ window.addEventListener('error', (e) => { window.__lastError = (e.message || '')
 window.addEventListener('unhandledrejection', (e) => { window.__lastError = 'promise: ' + ((e.reason && e.reason.message) || String(e.reason || '')); });
 
 function reportInfo() {
-  return [CONFIG.brand + ' ' + (window.APP_VERSION || ''), location.hash, navigator.userAgent.replace(/\).*$/, ')'), (window.innerWidth + 'x' + window.innerHeight), lang, OOPS.length ? 'errors: ' + OOPS.join(' | ') : (window.__lastError ? 'error: ' + window.__lastError : '')].filter(Boolean).join(' · ');
+  return [CONFIG.brand + ' ' + (window.APP_VERSION || ''), location.hash, navigator.userAgent.replace(/\).*$/, ')'), (window.innerWidth + 'x' + window.innerHeight), lang, (typeof BILL !== 'undefined' && BILL.storefront ? 'storefront ' + BILL.storefront + (BILL.details && Object.keys(BILL.details).length && (BILL.details[Object.keys(BILL.details)[0]] || {}).price ? '/' + (BILL.details[Object.keys(BILL.details)[0]].price.currency || '?') : '') : ''), OOPS.length ? 'errors: ' + OOPS.join(' | ') : (window.__lastError ? 'error: ' + window.__lastError : '')].filter(Boolean).join(' · ');
 }
 function renderReport(args, params) {
   const S = T(), m = $('#main');
@@ -26842,8 +27347,8 @@ function luckPanelHTML(kind) {
   if (luckUnlimited(kind)) return '<p class="hint">✓ ' + esc(S.luckOpen) + '</p>';
   if (!luckSpent(kind)) return '<p class="hint">' + esc(luckDays(kind) === 1 ? S.luckFreeDay : S.luckFree) + '</p>';
   return '<div class="card luckbox"><p class="lead">' + esc(S.luckSpent(fmtDate(luckNext(kind)))) + '</p>'
-    + '<p class="hint" style="margin-bottom:10px">' + esc(isTWA() ? S.stPlusPitch : S.luckOffer) + '</p>'
-    + (isTWA()
+    + '<p class="hint" style="margin-bottom:10px">' + esc(inStoreApp() ? S.stPlusPitch : S.luckOffer) + '</p>'
+    + (inStoreApp()
       ? (BILL.can() ? buyButtonHTML('plus', S.stSubscribe) + '<p class="hint st" data-st="plus"></p>' : storeNotReadyHTML())
       : '<div class="row nw"><input id="luckcode" placeholder="' + esc(S.luckCodePh) + '" autocapitalize="characters"><button class="btn" id="luckgo">' + esc(S.unlock) + '</button></div><p class="hint" id="luckstatus"></p>')
     + '</div>';
@@ -28686,12 +29191,12 @@ function renderWedding(args) {
       + '<div class="card wedcard">' + cupidSVG()
       + '<p class="wedpair">' + esc((PROFILE && PROFILE.name) || S.loveYou) + ' \u2764 ' + esc(nm) + '</p>'
       + '<p class="wedwhen">' + esc(wedWhen(ms)) + '</p>'
-      + (isTWA() ? '' : '<p class="wedprice">' + esc(fmtPrice(price)) + '</p>')
+      + (inStoreApp() ? '' : '<p class="wedprice">' + esc(fmtPrice(price)) + '</p>')
       + '<p class="hint" style="text-align:center">' + esc(S.wedPayOnce) + '</p></div>'
       + '<div class="card"><h3 style="margin-bottom:6px">' + esc(S.wedPayWhat) + '</h3>'
       + '<ul class="carelist">' + S.wedPayList.map((x) => '<li><span>' + esc(x) + '</span><b>\u2713</b></li>').join('') + '</ul></div>'
-      + (isTWA() ? '' : '<p class="hint hold">' + esc(S.wedPayHold(wedWhen(ms))) + '</p>')
-      + (isTWA()
+      + (inStoreApp() ? '' : '<p class="hint hold">' + esc(S.wedPayHold(wedWhen(ms))) + '</p>')
+      + (inStoreApp()
         ? (BILL.can()
           ? '<div class="card"><h3 style="margin-bottom:6px">' + esc(S.wedPayHow) + '</h3>'
             + (BILL.priceOf('wedding') ? '<p class="wedprice">' + esc(BILL.priceOf('wedding')) + '</p>' : '')
@@ -28699,7 +29204,7 @@ function renderWedding(args) {
           : storeNotReadyHTML())
         : payPanelHTML(S.wedPayWhat2(wedWhen(ms)), price, payRef('wedding|' + w.id), 'wedpanel'));
 
-    if (isTWA()) { bindStore(m, () => drawPay(bond)); return; }
+    if (inStoreApp()) { bindStore(m, () => drawPay(bond)); return; }
     bindPayPanel(m, () => ({ what: S.wedPayWhat2(wedWhen(ms)), total: price, ref: payRef('wedding|' + w.id) }));
     /* The website's own record for the dashboard's order list, filed
        alongside the message the pay panel already sends - the room itself
@@ -28894,7 +29399,7 @@ function renderWedding(args) {
       + '<p class="lead" style="text-align:center">' + esc(S.wedOfferLead) + '</p>'
       + '<p class="hint">' + esc(L(item.blurb)) + '</p>'
       + '<ul class="carelist">' + L(item.includes).map((x) => '<li><span>' + esc(x) + '</span><b>\u2713</b></li>').join('') + '</ul>'
-      + (isTWA() ? '' : '<p class="wedprice">' + esc(fmtPrice(salePrice(item.price, 'unlock', 'wedding'))) + '</p>')
+      + (inStoreApp() ? '' : '<p class="wedprice">' + esc(fmtPrice(salePrice(item.price, 'unlock', 'wedding'))) + '</p>')
       + '<a class="btn primary block" href="#/unlock?item=wedding&from=wedding">' + esc(S.wedBuy) + '</a>'
       + '<p class="hint">' + esc(S.wedBuyHint) + '</p></div>';
   };
@@ -30223,8 +30728,8 @@ function adminSale(p) {
 ROUTES.admin = { nav: '', render: renderAdmin };
 
 /* ============================ boot ============================ */
-window.APP_VERSION = 'v234';
-window.NABU = { CONFIG: CONFIG, SALE: SALE, salePrice: salePrice, loadActs: loadActs, BACK: BACK, LESSONS: LESSONS, localAnswer: localAnswer, compatVerdict: compatVerdict, numerologyOf: numerologyOf, ZDEEP: ZDEEP, lunarToday: lunarToday, solarToLunar: solarToLunar, DECK: DECK, INSIGHT: INSIGHT, KW: KW, ASK: ASK, TOPICS: TOPICS, GUIDES: GUIDES, SERVICES: SERVICES, COURSES: COURSES, ACCESS: ACCESS, INTERESTS: INTERESTS, plusOn: () => plusOn(), proOn: () => proOn(), luckUnlimited: () => luckUnlimited(), ZODIAC: ZODIAC, pick: pick, book: book, PLAY_ITEMS: PLAY_ITEMS, PLAY_SUB_SKUS: PLAY_SUB_SKUS, playItem: playItem, BILL: BILL, SUBS: SUBS, renderStore: renderStore, subStateWord: subStateWord,
+window.APP_VERSION = 'v246';
+window.NABU = { CONFIG: CONFIG, SALE: SALE, salePrice: salePrice, loadActs: loadActs, BACK: BACK, LESSONS: LESSONS, localAnswer: localAnswer, compatVerdict: compatVerdict, numerologyOf: numerologyOf, ZDEEP: ZDEEP, lunarToday: lunarToday, solarToLunar: solarToLunar, DECK: DECK, INSIGHT: INSIGHT, KW: KW, ASK: ASK, TOPICS: TOPICS, GUIDES: GUIDES, SERVICES: SERVICES, COURSES: COURSES, ACCESS: ACCESS, INTERESTS: INTERESTS, plusOn: () => plusOn(), proOn: () => proOn(), luckUnlimited: () => luckUnlimited(), ZODIAC: ZODIAC, pick: pick, book: book, PLAY_ITEMS: PLAY_ITEMS, PLAY_SUB_SKUS: PLAY_SUB_SKUS, playItem: playItem, BILL: BILL, SUBS: SUBS, billUse: billUse, APPLE_BILL: APPLE_BILL, appleAccountToken: appleAccountToken, renderStore: renderStore, subStateWord: subStateWord,
   insightHTML: insightHTML, insightOf: insightOf, sunSignIndex: sunSignIndex, lifePath: lifePath, PROFILE: () => PROFILE, BE: BE, inAppBrowser: inAppBrowser, ACTS: ACTS, CMT: CMT, LIKES: LIKES, kbReady: kbReady, AI: AI, STR: STR, KB_URL: (typeof KB_URL === 'string' ? KB_URL : ''),
   ANGELS: ANGELS, angelRead: angelRead, CODEBOOK: CODEBOOK, redeemCode: redeemCode, loadCodebook: loadCodebook, petHomeSVG: petHomeSVG, PET_HOMES: PET_HOMES, PET_WARDROBE: PET_WARDROBE, PET_SLOTS: PET_SLOTS,
   PET_SKIES: PET_SKIES, PET_FX: PET_FX, petSkySVG: petSkySVG, petFxSVG: petFxSVG, wearTile: wearTile, wearDraw: wearDraw, WEAR_DEF: WEAR_DEF,

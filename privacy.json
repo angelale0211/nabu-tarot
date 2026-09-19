@@ -1,5 +1,5 @@
 {
- "updated": "2026-09-13",
+ "updated": "2026-09-17",
  "title": {
   "vi": "Chính sách quyền riêng tư",
   "en": "Privacy policy",
@@ -30,9 +30,9 @@
     "de": "Wenn du dich anmeldest"
    },
    "p": {
-    "vi": "Đăng nhập bằng Google, Facebook hoặc email và mật khẩu qua Firebase Authentication của Google. App lưu địa chỉ email, tên hiển thị, và bản sao hồ sơ (ngày sinh, sở thích, khóa học đã mở) để bạn thấy giống nhau trên mọi máy. App không nhận mật khẩu của bạn; Firebase giữ và xác thực nó.",
-    "en": "You sign in with Google, Facebook, or email and password through Google's Firebase Authentication. The app stores your email address, display name, and a copy of your profile (birthday, interests, unlocked courses) so it looks the same on every device. The app never receives your password; Firebase holds and checks it.",
-    "de": "Du meldest dich über Google Firebase Authentication mit Google, Facebook oder E-Mail und Passwort an. Die App speichert deine E-Mail-Adresse, deinen Anzeigenamen und eine Kopie deines Profils – etwa Geburtstag, Interessen und freigeschaltete Kurse –, damit du auf verschiedenen Geräten denselben Stand siehst. Die App erhält dein Passwort nicht; Firebase verwaltet und prüft es."
+    "vi": "Đăng nhập bằng Google, Apple, Facebook hoặc email và mật khẩu qua Firebase Authentication của Google; trong app iPhone có Google, Apple và email. App lưu địa chỉ email, tên hiển thị, và bản sao hồ sơ (ngày sinh, sở thích, khóa học đã mở) để bạn thấy giống nhau trên mọi máy. App không nhận mật khẩu của bạn; Firebase giữ và xác thực nó. Nếu bạn đăng nhập bằng Apple và chọn ẩn email, app chỉ nhận địa chỉ chuyển tiếp mà Apple tạo cho bạn.",
+    "en": "You sign in with Google, Apple, Facebook, or email and password through Google's Firebase Authentication; the iPhone app offers Google, Apple and email. The app stores your email address, display name, and a copy of your profile (birthday, interests, unlocked courses) so it looks the same on every device. The app never receives your password; Firebase holds and checks it. If you sign in with Apple and choose to hide your email, the app receives only the relay address Apple creates for you.",
+    "de": "Du meldest dich über Google Firebase Authentication mit Google, Apple, Facebook oder E-Mail und Passwort an; in der iPhone-App stehen Google, Apple und E-Mail zur Verfügung. Die App speichert deine E-Mail-Adresse, deinen Anzeigenamen und eine Kopie deines Profils – etwa Geburtstag, Interessen und freigeschaltete Kurse –, damit du auf verschiedenen Geräten denselben Stand siehst. Die App erhält dein Passwort nicht; Firebase verwaltet und prüft es. Wenn du dich mit Apple anmeldest und deine E-Mail-Adresse verbirgst, erhält die App nur die Weiterleitungsadresse, die Apple für dich erstellt."
    }
   },
   {
@@ -49,6 +49,18 @@
   },
   {
    "h": {
+    "vi": "Sợi tơ hồng và lễ cưới",
+    "en": "The red thread and weddings",
+    "de": "Roter Faden und Hochzeiten"
+   },
+   "p": {
+    "vi": "Người khác chỉ tìm được bạn trên sợi tơ hồng khi gõ đúng tên định danh (handle) của bạn. Họ chỉ thấy tên bạn chọn, handle, và việc hai bạn đã nối tơ từ ngày nào; không có email, ngày sinh hay vị trí. Khi hai bạn tổ chức lễ cưới, khách có đường dẫn mời sẽ thấy tên hai bạn, lời thề, lời chúc và quà gửi trong phòng cưới. Khi bạn vào phòng cưới làm khách, tên bạn chọn sẽ hiện trong danh sách khách mà mọi người trong phòng đều thấy.",
+    "en": "On the red thread, other people can find you only by typing your handle exactly. They see only the name you chose, your handle, and that the two of you are tied and since when; never your email, birthday or location. When the two of you hold a wedding, guests with the invitation link see both your names, the vows, the wishes and the gifts sent in the wedding room. When you join a wedding room as a guest, the name you chose appears on the guest list that everyone in the room can see.",
+    "de": "Beim Roten Faden können andere dich nur finden, wenn sie deinen Handle genau eingeben. Sie sehen nur den Namen, den du gewählt hast, deinen Handle und dass ihr verbunden seid und seit wann – nie deine E-Mail-Adresse, deinen Geburtstag oder deinen Standort. Wenn ihr eine Hochzeit feiert, sehen Gäste mit dem Einladungslink eure beiden Namen, die Gelübde, die Glückwünsche und die Geschenke im Hochzeitsraum. Wenn du einen Hochzeitsraum als Gast betrittst, erscheint dein gewählter Name auf der Gästeliste, die alle im Raum sehen können."
+   }
+  },
+  {
+   "h": {
     "vi": "Đặt lịch",
     "en": "Bookings",
     "de": "Buchungen"
@@ -57,6 +69,18 @@
     "vi": "Khi đặt lịch, app lưu gói bạn chọn, chủ đề, giờ hẹn, tên, câu hỏi thêm, và ngày giờ sinh nếu bạn chọn gói Tử vi. Nabu dùng những thông tin này để xác nhận và chuẩn bị buổi xem. Giờ đã đặt được đánh dấu là hết chỗ trên lịch chung, nhưng không kèm tên hay thông tin nào của bạn.",
     "en": "When you book, the app stores the package, the topic, the time, your name, your extra question, and your birth date and time if you chose a Tử vi package. Nabu uses this to confirm and prepare the session. A booked slot is marked as taken on the shared calendar, without your name or any other detail.",
     "de": "Bei einer Buchung speichert die App das gewählte Paket, das Thema, den Termin, deinen Namen, eine zusätzliche Frage und – bei einem Tử-vi-Paket – Geburtsdatum und Geburtszeit. Nabu nutzt diese Angaben, um den Termin zu bestätigen und die Legung vorzubereiten. Ein belegter Termin wird im gemeinsamen Kalender als nicht verfügbar markiert, ohne deinen Namen oder andere persönliche Angaben anzuzeigen."
+   }
+  },
+  {
+   "h": {
+    "vi": "Mua trong app",
+    "en": "In-app purchases",
+    "de": "Käufe in der App"
+   },
+   "p": {
+    "vi": "Trong app Android và iPhone, gói thành viên, khóa học và lễ cưới được mua qua Google Play hoặc App Store. Google hoặc Apple xử lý thanh toán; app không bao giờ thấy số thẻ hay thông tin thanh toán của bạn. Sau khi mua, app gửi mã giao dịch tới máy chủ của Nabu tại Cloudflare. Máy chủ hỏi lại Google hoặc Apple rằng giao dịch có thật, rồi mở quyền truy cập trên tài khoản của bạn. Nabu lưu gói đã mua, thời hạn và mã giao dịch để khôi phục mua hàng và xử lý hoàn tiền. Google và Apple cũng báo cho máy chủ này khi gói được gia hạn, bị hủy hoặc hoàn tiền.",
+    "en": "In the Android and iPhone apps, memberships, courses and weddings are bought through Google Play or the App Store. Google or Apple handles the payment; the app never sees your card number or payment details. After a purchase, the app sends the transaction ID to Nabu's server at Cloudflare. The server checks with Google or Apple that the transaction is real, then unlocks access on your account. Nabu keeps the item bought, how long it lasts and the transaction ID, to restore purchases and handle refunds. Google and Apple also tell this server when a subscription renews, is cancelled or is refunded.",
+    "de": "In der Android- und der iPhone-App werden Mitgliedschaften, Kurse und Hochzeiten über Google Play oder den App Store gekauft. Google bzw. Apple wickelt die Zahlung ab; die App sieht deine Kartennummer oder Zahlungsdaten nie. Nach einem Kauf sendet die App die Transaktions-ID an Nabus Server bei Cloudflare. Der Server prüft bei Google bzw. Apple, ob die Transaktion echt ist, und schaltet dann den Zugang in deinem Konto frei. Nabu speichert, was gekauft wurde, wie lange es gilt, und die Transaktions-ID, um Käufe wiederherzustellen und Erstattungen zu bearbeiten. Google und Apple informieren diesen Server außerdem, wenn ein Abo verlängert, gekündigt oder erstattet wird."
    }
   },
   {
@@ -102,9 +126,9 @@
     "de": "Was die App nicht tut"
    },
    "p": {
-    "vi": "Không quảng cáo. Không bán hay cho thuê dữ liệu của bạn. Không theo dõi bạn trên trang khác. Không lưu số thẻ hay thông tin thanh toán: việc chuyển khoản diễn ra ngoài app. Hai công ty tham gia với vai trò hạ tầng kỹ thuật: Google giữ tài khoản, tin nhắn và lịch hẹn trên Firebase, và có thể viết câu trả lời của Nabu AI qua Gemini; Cloudflare chạy máy chủ nhận câu hỏi cho Nabu AI và có thể viết câu trả lời bằng Workers AI. Ngoài hai công ty này, không bên thứ ba nào nhận dữ liệu của bạn.",
-    "en": "No ads. Your data is never sold or rented. No tracking across other sites. No card numbers or payment details are stored: bank transfers happen outside the app. Two companies are involved as technical infrastructure: Google, which holds accounts, messages and bookings in Firebase and may write Nabu AI answers with Gemini; and Cloudflare, which runs the server that receives Nabu AI questions and may write the answers with Workers AI. Beyond these two, no third party receives your data.",
-    "de": "Keine Werbung. Deine Daten werden weder verkauft noch vermietet. Kein Tracking über andere Websites hinweg. Karten- oder Zahlungsdaten werden nicht gespeichert; Überweisungen finden außerhalb der App statt. Zwei Unternehmen sind als technische Infrastruktur beteiligt: Google speichert Konten, Nachrichten und Buchungen in Firebase und kann über Gemini Antworten von Nabu AI schreiben; Cloudflare betreibt den Server, der die Fragen an Nabu AI entgegennimmt, und kann die Antworten mit Workers AI schreiben. Darüber hinaus erhalten keine weiteren Drittanbieter deine Daten."
+    "vi": "Không quảng cáo. Không bán hay cho thuê dữ liệu của bạn. Không theo dõi bạn trên trang khác. Không lưu số thẻ hay thông tin thanh toán: trên web, việc chuyển khoản diễn ra ngoài app; trong app Android và iPhone, Google Play và App Store xử lý thanh toán. Hai công ty tham gia với vai trò hạ tầng kỹ thuật: Google giữ tài khoản, tin nhắn và lịch hẹn trên Firebase, và có thể viết câu trả lời của Nabu AI qua Gemini; Cloudflare chạy máy chủ nhận câu hỏi cho Nabu AI và kiểm tra giao dịch mua, và có thể viết câu trả lời bằng Workers AI. Apple, Google và Facebook cũng nhận dữ liệu khi bạn đăng nhập bằng tài khoản của họ, và Apple hay Google khi bạn mua qua App Store hay Google Play. Ngoài những công ty này, không bên thứ ba nào nhận dữ liệu của bạn.",
+    "en": "No ads. Your data is never sold or rented. No tracking across other sites. No card numbers or payment details are stored: on the web, bank transfers happen outside the app; in the Android and iPhone apps, Google Play and the App Store handle payment. Two companies are involved as technical infrastructure: Google, which holds accounts, messages and bookings in Firebase and may write Nabu AI answers with Gemini; and Cloudflare, which runs the server that receives Nabu AI questions and checks purchases, and may write the answers with Workers AI. Apple, Google and Facebook also receive data when you sign in with their accounts, and Apple or Google when you buy through the App Store or Google Play. Beyond these companies, no third party receives your data.",
+    "de": "Keine Werbung. Deine Daten werden weder verkauft noch vermietet. Kein Tracking über andere Websites hinweg. Karten- oder Zahlungsdaten werden nicht gespeichert: Im Web finden Überweisungen außerhalb der App statt; in der Android- und der iPhone-App wickeln Google Play und der App Store die Zahlung ab. Zwei Unternehmen sind als technische Infrastruktur beteiligt: Google speichert Konten, Nachrichten und Buchungen in Firebase und kann über Gemini Antworten von Nabu AI schreiben; Cloudflare betreibt den Server, der die Fragen an Nabu AI entgegennimmt und Käufe prüft, und kann die Antworten mit Workers AI schreiben. Apple, Google und Facebook erhalten außerdem Daten, wenn du dich mit ihrem Konto anmeldest, und Apple bzw. Google, wenn du über den App Store oder Google Play kaufst. Darüber hinaus erhalten keine weiteren Drittanbieter deine Daten."
    }
   },
   {
@@ -126,9 +150,9 @@
     "de": "Konto und Daten löschen"
    },
    "p": {
-    "vi": "Trong app: mở mục Hồ sơ, cuộn xuống dưới và bấm \"Xoá tài khoản\". Việc này xóa tài khoản đăng nhập, hồ sơ, toàn bộ tin nhắn và lịch hẹn của bạn ngay lập tức và không hoàn lại được. Nếu bạn đã gỡ app, hãy gửi email tới nabutarot@outlook.com từ địa chỉ email đã đăng ký, ghi \"Xoá tài khoản\"; Nabu xóa trong vòng 7 ngày và trả lời xác nhận.",
-    "en": "Inside the app: open Me, scroll to the bottom and tap \"Delete account\". This removes your login, profile, all your messages and bookings at once, and cannot be undone. If you have already uninstalled the app, email nabutarot@outlook.com from the registered address with the subject \"Delete account\"; Nabu deletes it within 7 days and replies to confirm.",
-    "de": "Öffne in der App dein Profil, scrolle nach unten und tippe auf „Konto löschen“. Dadurch werden nach der derzeit beschriebenen Funktionsweise dein Login, dein Profil sowie deine Nachrichten und Buchungen gelöscht; dieser Vorgang kann nicht rückgängig gemacht werden. Wenn du die App bereits deinstalliert hast, schreib von deiner registrierten E-Mail-Adresse an nabutarot@outlook.com mit dem Betreff „Konto löschen“. Nabu bearbeitet die Anfrage innerhalb von 7 Tagen und bestätigt die Löschung per E-Mail."
+    "vi": "Trong app: mở mục Hồ sơ, cuộn xuống dưới và bấm \"Xoá tài khoản\". Việc này xóa tài khoản đăng nhập, hồ sơ, toàn bộ tin nhắn và lịch hẹn của bạn ngay lập tức và không hoàn lại được. Nếu bạn đã gỡ app, hãy gửi email tới nabutarot@outlook.com từ địa chỉ email đã đăng ký, ghi \"Xoá tài khoản\"; Nabu xóa trong vòng 7 ngày và trả lời xác nhận. Nếu bạn đăng nhập bằng Apple, app cũng yêu cầu Apple thu hồi quyền đăng nhập của Nabu Tarot. Gói đã mua qua App Store hay Google Play không tự hủy khi bạn xóa tài khoản; bạn hủy gia hạn trong phần cài đặt tài khoản Apple hoặc Google.",
+    "en": "Inside the app: open Me, scroll to the bottom and tap \"Delete account\". This removes your login, profile, all your messages and bookings at once, and cannot be undone. If you have already uninstalled the app, email nabutarot@outlook.com from the registered address with the subject \"Delete account\"; Nabu deletes it within 7 days and replies to confirm. If you signed in with Apple, the app also asks Apple to revoke Nabu Tarot's sign-in access. Subscriptions bought through the App Store or Google Play are not cancelled when you delete your account; cancel the renewal in your Apple or Google account settings.",
+    "de": "Öffne in der App dein Profil, scrolle nach unten und tippe auf „Konto löschen“. Dadurch werden nach der derzeit beschriebenen Funktionsweise dein Login, dein Profil sowie deine Nachrichten und Buchungen gelöscht; dieser Vorgang kann nicht rückgängig gemacht werden. Wenn du die App bereits deinstalliert hast, schreib von deiner registrierten E-Mail-Adresse an nabutarot@outlook.com mit dem Betreff „Konto löschen“. Nabu bearbeitet die Anfrage innerhalb von 7 Tagen und bestätigt die Löschung per E-Mail. Wenn du dich mit Apple angemeldet hast, bittet die App Apple außerdem, die Anmeldeberechtigung von Nabu Tarot zu widerrufen. Über den App Store oder Google Play gekaufte Abos werden beim Löschen des Kontos nicht gekündigt; kündige die Verlängerung in den Einstellungen deines Apple- oder Google-Kontos."
    }
   },
   {

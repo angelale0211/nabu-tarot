@@ -19,8 +19,9 @@ import { itemBySku } from "./catalog";
 import { applySubscription } from "./entitle";
 import { decode } from "./fs";
 import { ledgerSet, LedgerRow } from "./refunds";
+import { AppleEnv, appleConfigured, checkAppleSubscription, isAppleToken } from "./apple";
 
-export async function reconcileSubs(env: PlayEnv): Promise<{ looked: number; changed: number; failed: number }> {
+export async function reconcileSubs(env: PlayEnv & AppleEnv): Promise<{ looked: number; changed: number; failed: number }> {
   const out = { looked: 0, changed: 0, failed: 0 };
   if (!env.PLAY_SERVICE_ACCOUNT || !env.FIREBASE_PROJECT_ID) return out;
   const at = await serviceToken(env, FS_SCOPE);
@@ -38,6 +39,21 @@ export async function reconcileSubs(env: PlayEnv): Promise<{ looked: number; cha
        which turned one dropped SUBSCRIPTION_REVOKED push into paid access
        standing for ever. Nothing but Google's own EXPIRED retires a row now. */
     if (row.state === "SUBSCRIPTION_STATE_EXPIRED" || !row.token) continue;
+    /* An App Store subscription is asked of Apple, and the product Apple says is current decides the
+       row - after an upgrade the same purchase is Pro. Without Apple's key it is left for a later pass. */
+    if (isAppleToken(row.token)) {
+      if (!appleConfigured(env)) continue;
+      out.looked++;
+      try {
+        const got = await checkAppleSubscription(env, row.token.slice("apple:".length));
+        const item = got.sub && itemBySku(got.sub.productId);
+        if (!got.ok || !got.sub || !item || item.kind !== "subs") { out.failed++; continue; }
+        const hash = it.document.name.split("/purchases/")[1];
+        await applySubscription(env, row.uid, item, got.sub, hash, "apple");
+        if (got.sub.state !== row.state || item.sku !== row.sku) { await ledgerSet(env, hash, { state: got.sub.state, sku: item.sku, ids: item.opens }); out.changed++; }
+      } catch { out.failed++; }
+      continue;
+    }
     const item = itemBySku(row.sku);
     if (!item) continue;
     out.looked++;

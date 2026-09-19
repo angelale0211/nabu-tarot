@@ -19,6 +19,9 @@ Where each file goes, and why it looks the way it does:
                         BLACK and applies its own rounded mask, so this one
                         keeps the brand purple behind the circle instead of a
                         hole. Saved without alpha for the same reason.
+  icon-1024.png         the App Store and iPhone app icon: the same full pale
+                        square as the Android launcher icon below, for the
+                        same reason - the device's mask is the only edge.
   icon-512-maskable.png the Android launcher icon. Android masks it to the
                         device's own shape and needs the artwork to reach the
                         edges, so this one is a full pale square with the
@@ -132,3 +135,58 @@ canvas = Image.new('RGBA', (BIG, BIG), PALE + (255,))
 inner = int(BIG * (1 - 2 * pad))
 canvas.alpha_composite(ringless().resize((inner, inner), Image.LANCZOS), ((BIG - inner) // 2, (BIG - inner) // 2))
 save(canvas, 'icon-512-maskable.png', 512, flatten=PALE)
+# The App Store icon and the iPhone app's home-screen icon, at the 1024px Apple
+# asks for: the launcher picture, not the round badge. The badge on a purple
+# square is what the owner saw on the home screen as a circle stuck inside a
+# tile - iOS's own rounded square is the edge, exactly as Android's mask is.
+# No alpha: iOS paints transparency black.
+ICON_INK = 0.92
+def inked():
+    """The iPhone icon, measured from the drawing rather than from the canvas.
+
+    Android's mask is a circle, so its picture keeps a tenth of the canvas clear
+    on every side, and the drawing itself ends up spanning about 60% of the
+    tile. Behind iOS's rounded square that simply reads as small - the owner's
+    word, beside TikTok and Threads on the same home screen, was ugly. So here
+    everything that is not the pale ground is cropped out and drawn at
+    ICON_INK of the width. A rounded square barely cuts its corners, so 92%
+    keeps the flowers and the stars inside it."""
+    flat = Image.new('RGB', canvas.size, PALE)
+    flat.paste(canvas.convert('RGB'), (0, 0))
+    px, (w, h) = flat.load(), flat.size
+    mark = Image.new('L', (w, h), 0)
+    mp = mark.load()
+    for y in range(h):
+        for x in range(w):
+            r, g, b = px[x, y]
+            if max(abs(r - PALE[0]), abs(g - PALE[1]), abs(b - PALE[2])) > 12: mp[x, y] = 255
+    art = flat.crop(mark.getbbox())
+    k = (BIG * ICON_INK) / max(art.size)
+    art = art.resize((int(art.size[0] * k), int(art.size[1] * k)), Image.LANCZOS)
+    out = Image.new('RGB', (BIG, BIG), PALE)
+    out.paste(art, ((BIG - art.size[0]) // 2, (BIG - art.size[1]) // 2))
+    return out
+
+
+save(inked(), 'icon-1024.png', 1024)
+
+
+# ---- the iPhone app's launch screen ----
+# Only when asked for, with NABU_IOS pointing at the Capacitor shell: the file
+# belongs to that project, not to the website. The storyboard shows it scaled
+# to fill the screen, so a 2732px square is cropped to a phone-shaped strip of
+# its middle: the badge is drawn at about 14% of the square, which comes out
+# near 120pt tall on a phone. The ground is the app's own pale pink (#FBEEF2),
+# the same as the Android splash and the loading screen that follows it.
+IOS = os.environ.get('NABU_IOS', '')
+if IOS:
+    GROUND = (251, 238, 242)
+    SPLASH, MARK = 2732, 380
+    sheet = Image.new('RGBA', (SPLASH, SPLASH), GROUND + (255,))
+    sheet.alpha_composite(round_badge.resize((MARK, MARK), Image.LANCZOS), ((SPLASH - MARK) // 2, (SPLASH - MARK) // 2))
+    sheet = sheet.convert('RGB')
+    dst = os.path.join(IOS, 'ios', 'App', 'App', 'Assets.xcassets')
+    for name in ('splash-2732x2732.png', 'splash-2732x2732-1.png', 'splash-2732x2732-2.png'):
+        sheet.save(os.path.join(dst, 'Splash.imageset', name), optimize=True)
+    Image.open(os.path.join(HERE, 'icon-1024.png')).convert('RGB').save(os.path.join(dst, 'AppIcon.appiconset', 'AppIcon-512@2x.png'), optimize=True)
+    print('iOS shell assets ->', dst)

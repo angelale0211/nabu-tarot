@@ -42,8 +42,45 @@ const BE = {
     catch (e) { return ''; }
   },
   async signIn(provider) {
+    if (isIOSApp()) return this.signInNative(provider);
     const P = provider === 'google' ? new firebase.auth.GoogleAuthProvider() : new firebase.auth.FacebookAuthProvider();
     try { await this.auth.signInWithPopup(P); } catch (e) { if (/popup/i.test(e.code || '')) await this.auth.signInWithRedirect(P); else throw e; }
+  },
+  /* The iPhone app. Google refuses to sign anybody in inside an app's own web
+     view (403 disallowed_useragent), and Apple requires its own sign-in beside
+     Google's, so both are asked of the phone itself: the shell's
+     FirebaseAuthentication plugin shows Google's or Apple's native sheet and
+     hands back the proof, and Firebase here signs in with it. The account is
+     the same account the website and the Android app use. skipNativeAuth keeps
+     the plugin from signing in a second, native Firebase session beside this
+     one, which is also what lets Apple's nonce reach this page. */
+  nativeAuth() {
+    const C = window.Capacitor;
+    if (!C) return null;
+    if (C.Plugins && C.Plugins.FirebaseAuthentication) return C.Plugins.FirebaseAuthentication;
+    return typeof C.isPluginAvailable === 'function' && C.isPluginAvailable('FirebaseAuthentication') && typeof C.registerPlugin === 'function'
+      ? C.registerPlugin('FirebaseAuthentication') : null;
+  },
+  async signInNative(provider) {
+    const FA = this.nativeAuth();
+    if (!FA) throw Object.assign(new Error('native sign-in unavailable'), { code: 'auth/native-unavailable' });
+    let cred;
+    try {
+      if (provider === 'apple') {
+        const r = await FA.signInWithApple({ skipNativeAuth: true }), c = (r && r.credential) || {};
+        cred = new firebase.auth.OAuthProvider('apple.com').credential({ idToken: c.idToken, rawNonce: c.nonce });
+      } else if (provider === 'google') {
+        const r = await FA.signInWithGoogle({ skipNativeAuth: true }), c = (r && r.credential) || {};
+        cred = firebase.auth.GoogleAuthProvider.credential(c.idToken, c.accessToken);
+      } else throw Object.assign(new Error('provider'), { code: 'auth/operation-not-allowed' });
+    } catch (e) {
+      /* The native sheets say a closed sheet in words, not in a Firebase
+         code: Google's "canceled the sign-in flow", Apple's AuthorizationError
+         1001. Said the way a closed popup already is. */
+      if (e && !/^auth\//.test(e.code || '') && /cancel|error 1001/i.test(String(e.message || ''))) throw Object.assign(new Error('cancelled'), { code: 'auth/popup-closed-by-user' });
+      throw e;
+    }
+    await this.auth.signInWithCredential(cred);
   },
   async signInEmail(email, pw, create) {
     this.speakTheirLanguage();
@@ -92,11 +129,47 @@ const BE = {
          next reader sees the same one a stranger would. */
       if (typeof LIKES !== 'undefined') LIKES.forget();
     } catch (e) { /* a full phone must not be able to trap somebody signed in */ }
+    /* In the iPhone app Google's own SDK remembers who signed in, apart from
+       Firebase. Forgotten too, so the next person on the phone is asked to
+       choose an account rather than handed the last one. Never waited on. */
+    if (isIOSApp()) { const FA = this.nativeAuth(); if (FA) Promise.resolve().then(() => FA.signOut()).catch(() => {}); }
     return this.auth.signOut();
+  },
+  /* Apple's rule for an app with Sign in with Apple: deleting the account also revokes the Apple sign-in.
+     Inside the iPhone app, for an account that signs in with Apple, Apple is asked to sign the person in once
+     more. That does two jobs. Firebase wants a recent sign-in before it deletes a login - without it the
+     deletion used to stop half way with auth/requires-recent-login, the data already gone - and Apple's
+     answer carries a one-time code the worker exchanges and revokes (/apple-revoke, worker/src/apple.ts).
+     A failure to reach the worker does not stop the deletion: what the person asked for still happens, and
+     the worker's log says what it could not do. Anywhere but the iPhone app this does nothing. */
+  async appleBeforeDelete() {
+    if (!isIOSApp() || !this.user) return;
+    if (!(this.user.providerData || []).some((p) => p && p.providerId === 'apple.com')) return;
+    const FA = this.nativeAuth();
+    if (!FA) return;
+    let r;
+    try { r = await FA.signInWithApple({ skipNativeAuth: true }); }
+    catch (e) {
+      if (/cancel|error 1001/i.test(String((e && e.message) || ''))) throw Object.assign(new Error('cancelled'), { code: 'auth/popup-closed-by-user' });
+      throw e;
+    }
+    const c = (r && r.credential) || {};
+    await this.user.reauthenticateWithCredential(new firebase.auth.OAuthProvider('apple.com').credential({ idToken: c.idToken, rawNonce: c.nonce }));
+    if (!c.authorizationCode || !CONFIG.aiEndpoint) return;
+    try {
+      const idTok = await this.token();
+      await withTimeout(fetch(CONFIG.aiEndpoint.replace(/\/$/, '') + '/apple-revoke', {
+        method: 'POST', headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + idTok },
+        body: JSON.stringify({ code: c.authorizationCode })
+      }), 20000);
+    } catch (e) { /* offline or not configured: the deletion goes on */ }
   },
   /* Account deletion (a store requirement): profile, thread and messages, bookings, then the login itself.
      Firebase asks for a recent sign-in before deleting a login; the caller handles that error. */
   async deleteAccount() {
+    /* First, while nothing is gone yet: an account that signs in with Apple is confirmed with Apple and its
+       Apple sign-in revoked. If the person closes Apple's sheet here, nothing at all has been deleted. */
+    await this.appleBeforeDelete();
     const uid = this.user.uid, db = this.db;
     const wipe = async (q) => { const s = await q.get(); await Promise.all(s.docs.map((d) => d.ref.delete().catch(() => {}))); };
     try { await wipe(db.collection('threads').doc(uid).collection('messages')); } catch (e) { /* rules or offline */ }

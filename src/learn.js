@@ -20,7 +20,7 @@ function paywallHTML(courseId) {
        requires it of anything digital sold inside an Android app - so the
        button is the store's own, bound by bindStore rather than a handler
        kept here. */
-    + (isTWA()
+    + (inStoreApp()
       ? (BILL.can()
         ? (BILL.priceOf(c.id) ? '<div class="price">' + esc(BILL.priceOf(c.id)) + ' <span>/ ' + esc(termText(c)) + '</span></div>' : '')
           + (expired ? '<p class="hint err">' + esc(S.courseExpired(a)) + '</p>' : '')
@@ -137,7 +137,7 @@ function renderLearn(args, params) {
 /* ---- the two courses: cards | spreads | guides ---- */
 async function renderCourse(courseId, tab) {
   if (!ACCESS.has(courseId)) {
-    if (isTWA()) await BILL.start();
+    if (inStoreApp()) await BILL.start();
     // The tarot sample lesson is a card page, so it wants the answers too.
     if (courseId === 'tarot') await kbReady();
     const S = T(), m = $('#main');
@@ -456,8 +456,8 @@ function renderManifest() {
   const S = T(), m = $('#main'), all = GUIDES.filter((g) => g.cat === 'manifest'), free = all.filter((g) => FREE_MANI.indexOf(g.id) > -1), rest = all.filter((g) => FREE_MANI.indexOf(g.id) < 0), has = ACCESS.has('manifest'), c = courseOf('manifest');
   m.innerHTML = backLink('#/learn', S.learnTitle) + '<h1 style="margin-bottom:6px">' + esc(S.cats.manifest) + '</h1><p class="muted">' + esc(S.maniIntro) + '</p>'
     + '<div class="eyebrow">' + esc(S.maniFree) + '</div>' + free.map(guideRow).join('')
-    + '<div class="eyebrow" style="margin-top:18px">' + esc(S.maniFull) + (has ? ' ✓' : (isTWA() ? '' : ' · ' + esc(S.perYear(fmtPrice(c.price))))) + '</div>'
-    + (has ? '' : '<div class="mani-banner"><b>✨ ' + esc(L(c.name)) + '</b><ul>' + S.maniIncl.map((x) => '<li>' + esc(x) + '</li>').join('') + '</ul><a class="btn primary block" href="#/learn/manifest/unlock">🔓 ' + esc(S.maniUnlock) + (isTWA() ? '' : ' · ' + esc(S.perYear(fmtPrice(c.price)))) + '</a></div>')
+    + '<div class="eyebrow" style="margin-top:18px">' + esc(S.maniFull) + (has ? ' ✓' : (inStoreApp() ? '' : ' · ' + esc(S.perYear(fmtPrice(c.price))))) + '</div>'
+    + (has ? '' : '<div class="mani-banner"><b>✨ ' + esc(L(c.name)) + '</b><ul>' + S.maniIncl.map((x) => '<li>' + esc(x) + '</li>').join('') + '</ul><a class="btn primary block" href="#/learn/manifest/unlock">🔓 ' + esc(S.maniUnlock) + (inStoreApp() ? '' : ' · ' + esc(S.perYear(fmtPrice(c.price)))) + '</a></div>')
     + rest.map(guideRow).join('');
 }
 function renderGuideList(cat) {
@@ -529,11 +529,11 @@ function unlockRowHTML(c) {
   const S = T(), until = ACCESS.get()[c.id];
   const open = ACCESS.has(c.id) || (UNL_TIERS.indexOf(c.id) > -1 && ACCESS.has('pro'));
   const picked = !open && UNL_CART.has(c.id);
-  const body = '<div class="unl-h"><b>' + esc(L(c.name)) + '</b>' + (isTWA() ? '' : '<span class="pr">' + priceHTML(c.price, 'unlock', c.id) + '</span>') + '</div>'
+  const body = '<div class="unl-h"><b>' + esc(L(c.name)) + '</b>' + (inStoreApp() ? '' : '<span class="pr">' + priceHTML(c.price, 'unlock', c.id) + '</span>') + '</div>'
     + '<p class="hint">' + esc(priceText(L(c.sum || c.blurb))) + '</p>'
     + '<div class="unl-f">' + (c.id === 'pro' ? '<span class="chip pink">' + esc(S.unlockBest) + '</span>' : '')
     + '<span class="unl-st">' + (open ? '✓ ' + esc(ACCESS.isAdmin() && !until ? S.adminShort : S.unlockOpenUntil(fmtDate(until)))
-      : picked ? '✓ ' + esc(S.unlockChosen) : esc(S.unlockNot) + (isTWA() ? '' : ' · ' + esc(termText(c)))) + '</span></div>';
+      : picked ? '✓ ' + esc(S.unlockChosen) : esc(S.unlockNot) + (inStoreApp() ? '' : ' · ' + esc(termText(c)))) + '</span></div>';
   if (open) return '<div class="unl on' + (c.id === 'pro' ? ' best' : '') + '">' + body + '</div>';
   return '<button type="button" class="unl pickable' + (picked ? ' pick' : '') + (c.id === 'pro' ? ' best' : '') + '" data-unl="' + c.id + '">' + body + '</button>';
 }
@@ -568,7 +568,7 @@ function renderUnlock(args, params) {
   /* Inside the app Play is the only shop: a different screen entirely, with
      Play's own prices and a Buy or Subscribe button for each of the four
      catalogue rows. Nothing below this line ever runs in the app any more. */
-  if (isTWA()) { renderStore(params); return; }
+  if (inStoreApp()) { renderStore(params); return; }
   const S = T(), m = $('#main');
   /* Arriving from something's own offer, that thing is already chosen: being
      sent to a list and having to find it again is a small insult. */

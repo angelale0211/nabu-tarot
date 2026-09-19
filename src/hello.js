@@ -56,7 +56,7 @@ ROUTES.hello = { nav: '', render: renderHello };
 /* Called once, from boot, before the first route is drawn. */
 function helloFirst() {
   if (location.hash) return false;                 // a hash means somebody knows where they are going
-  if (isTWA() || isStandalone()) return false;     // the installed app is not a stranger
+  if (inStoreApp() || isStandalone()) return false;     // the installed app is not a stranger
   if (store.get(HELLO_SEEN, 0)) return false;      // been here before
   location.hash = '#/hello';
   return true;

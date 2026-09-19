@@ -67,7 +67,11 @@ function applyAccountLang() {
   return true;
 }
 if (LANGS.indexOf(lang) < 0) lang = 'vi';
-const T = () => STR[lang];
+/* Inside the iPhone app the store's few sentences that name Google Play are said about the App Store
+   instead: STR[lang].appStore holds them, laid over the language once and kept. iosShell is a hoisted
+   declaration so this works even for a T() called before isIOSApp below exists. */
+const T_IOS = {};
+const T = () => { const s = STR[lang]; if (!s || !s.appStore || !iosShell()) return s; return T_IOS[lang] || (T_IOS[lang] = Object.assign({}, s, s.appStore)); };
 const L = (obj) => { if (obj == null) return ''; if (typeof obj === 'string') return obj; return obj[lang] || obj.en || obj.vi || ''; };
 const L2 = (obj, lg) => (obj == null ? '' : typeof obj === 'string' ? obj : (obj[lg] || ''));
 
@@ -576,6 +580,21 @@ function shrinkImage(file, max, quality) {
    the "buy" buttons and only takes an unlock code. Remembered on the device after the first launch. */
 try { if (/^android-app:\/\//.test(document.referrer || '')) store.set('nabu-twa', true); } catch (e) { /* no referrer */ }
 const isTWA = () => store.get('nabu-twa', false) === true;
+/* The App Store build is a Capacitor shell around this same site, and it adds NabuTarotiOS to the user agent
+   (appendUserAgent in the shell's capacitor.config.json). Apple's rule is Play's rule: anything digital sold
+   inside the app is sold through Apple, so that build hides the same prices, transfers and codes. Read fresh on
+   every load and never remembered - the marker arrives with every page the shell opens, and Safari on the
+   same phone must never inherit it. */
+function iosShell() {
+  return /\bNabuTarotiOS\b/.test(String((window.navigator || {}).userAgent || ''))
+    || !!(window.Capacitor && typeof window.Capacitor.getPlatform === 'function' && window.Capacitor.getPlatform() === 'ios');
+}
+const isIOSApp = iosShell;
+/* Either store build. Whatever a store forbids - a web price, a bank transfer, a code box, an install nudge -
+   asks this. What only Play has (its bridge, its browsers, its account pages) still asks isTWA(). */
+const inStoreApp = () => isTWA() || isIOSApp();
+/* A class on the page root for the few looks that are the iPhone app's own. CSS cannot read the user agent. */
+try { if (isIOSApp()) document.documentElement.classList.add('iosapp'); } catch (e) { /* no document */ }
 const EMOJIS = ['✨', '💜', '🔮', '🌙', '☀️', '⭐', '🌟', '💫', '🃏', '🗝️', '🌸', '🌿', '🕯️', '🧿', '💌', '❤️', '💔', '💰', '💼', '📚', '😊', '🙏', '👉', '⚠️', '✅', '📅', '🎁', '🎉'];
 /* A booking as a calendar file with four reminders (24 h, 6 h, 1 h, 15 min).
    Times are Vietnam time (UTC+7, no daylight saving), written as UTC. */

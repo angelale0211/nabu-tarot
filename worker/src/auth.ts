@@ -8,7 +8,7 @@
    No library: Google publishes the signing keys as JWKs, and Workers have
    WebCrypto, so verifying is a fetch, an importKey and a verify. */
 
-export interface Who { uid: string; email: string; verified: boolean }
+export interface Who { uid: string; email: string; verified: boolean; appleSub?: string }
 
 const FIREBASE_JWKS = "https://www.googleapis.com/service_accounts/v1/jwk/securetoken@system.gserviceaccount.com";
 const GOOGLE_JWKS = "https://www.googleapis.com/oauth2/v3/certs";
@@ -74,12 +74,15 @@ export async function verifyJwt(raw: string, jwksUrl: string): Promise<Record<st
 export async function whoIsAsking(request: Request, projectId: string): Promise<Who | null> {
   const raw = (request.headers.get("Authorization") || "").replace(/^Bearer\s+/i, "").trim();
   if (!raw) return null;
-  const c = await verifyJwt(raw, FIREBASE_JWKS) as { aud?: string; iss?: string; sub?: string; email?: string; email_verified?: boolean } | null;
+  const c = await verifyJwt(raw, FIREBASE_JWKS) as { aud?: string; iss?: string; sub?: string; email?: string; email_verified?: boolean; firebase?: { identities?: Record<string, unknown[]> } } | null;
   if (!c) return null;
   if (c.aud !== projectId) return null;
   if (c.iss !== "https://securetoken.google.com/" + projectId) return null;
   if (!c.sub) return null;
-  return { uid: c.sub, email: String(c.email || ""), verified: c.email_verified === true };
+  /* The Apple ID behind the account, when it signs in with Apple: Firebase lists it under identities, and
+     /apple-revoke checks a code it is handed belongs to this same Apple ID before revoking anything. */
+  const apple = c.firebase && c.firebase.identities && c.firebase.identities["apple.com"];
+  return { uid: c.sub, email: String(c.email || ""), verified: c.email_verified === true, appleSub: Array.isArray(apple) && apple.length ? String(apple[0]) : "" };
 }
 
 /* A Pub/Sub push carries an OIDC token Google signed for the audience we gave

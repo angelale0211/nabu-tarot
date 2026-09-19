@@ -79,7 +79,8 @@ def main():
     ap.add_argument('--routes', nargs='*', help='routes without the leading #/')
     ap.add_argument('--all', action='store_true', help='every family')
     ap.add_argument('--widths', nargs='*', type=int, help='default: all seven')
-    ap.add_argument('--engine', choices=['edge', 'webkit', 'both'], default='edge')
+    # 'chromium' is Playwright's own build, for a machine without Edge (a Mac).
+    ap.add_argument('--engine', choices=['edge', 'chromium', 'webkit', 'both', 'mac'], default='edge')
     ap.add_argument('--lang', default='vi')
     ap.add_argument('--theme', default='', help='light, dark or pink; blank = the app default')
     ap.add_argument('--locked', action='store_true', help='no course access, so the free demo is what renders')
@@ -95,7 +96,7 @@ def main():
     if not routes:
         routes = FAMILIES['A']
     widths = a.widths or ALL_W
-    engines = ['edge', 'webkit'] if a.engine == 'both' else [a.engine]
+    engines = ['edge', 'webkit'] if a.engine == 'both' else ['chromium', 'webkit'] if a.engine == 'mac' else [a.engine]
 
     from playwright.sync_api import sync_playwright
     os.makedirs(SHOTS, exist_ok=True)
@@ -105,7 +106,7 @@ def main():
     try:
         with sync_playwright() as p:
             for eng in engines:
-                b = p.chromium.launch(channel='msedge') if eng == 'edge' else p.webkit.launch()
+                b = p.chromium.launch(channel='msedge') if eng == 'edge' else p.chromium.launch() if eng == 'chromium' else p.webkit.launch()
                 for w in widths:
                     desk = w >= 900
                     ctx = b.new_context(viewport={'width': w, 'height': 900}, device_scale_factor=1,
@@ -124,7 +125,7 @@ def main():
                         except Exception as e:
                             found = [{'kind': 'error', 'sel': '', 'n': 0, 'note': str(e)[:120], 'text': ''}]
                         renders += 1
-                        tag = '%s_%d_%s' % (eng, w, r.replace('/', '_').replace('?', '~').replace('=', '-'))
+                        tag = '%s_%s_%d_%s' % (a.lang, eng, w, r.replace('/', '_').replace('?', '~').replace('=', '-'))
                         if a.shots == 'all' or (a.shots == 'flagged' and found):
                             try:
                                 pg.screenshot(path=os.path.join(SHOTS, tag + '.png'), full_page=True)

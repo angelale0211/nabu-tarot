@@ -236,7 +236,7 @@ const LIFEPATH = {
 
 /* Vietnamese zodiac animals by calendar year (Tết boundary noted in the UI). */
 const ANIMALS = [
-  { vi: 'Tý (Chuột)', en: 'Rat', de: 'Ratte' }, { vi: 'Sửu (Trâu)', en: 'Ox', de: 'Büffel' }, { vi: 'Dần (Hổ)', en: 'Tiger', de: 'Tiger' }, { vi: 'Mão (Mèo)', en: 'Cat', de: 'Katze' },
+  { vi: 'Tý (Chuột)', en: 'Rat', de: 'Ratte' }, { vi: 'Sửu (Trâu)', en: 'Buffalo', de: 'Büffel' }, { vi: 'Dần (Hổ)', en: 'Tiger', de: 'Tiger' }, { vi: 'Mão (Mèo)', en: 'Cat', de: 'Katze' },
   { vi: 'Thìn (Rồng)', en: 'Dragon', de: 'Drache' }, { vi: 'Tỵ (Rắn)', en: 'Snake', de: 'Schlange' }, { vi: 'Ngọ (Ngựa)', en: 'Horse', de: 'Pferd' }, { vi: 'Mùi (Dê)', en: 'Goat', de: 'Ziege' },
   { vi: 'Thân (Khỉ)', en: 'Monkey', de: 'Affe' }, { vi: 'Dậu (Gà)', en: 'Rooster', de: 'Hahn' }, { vi: 'Tuất (Chó)', en: 'Dog', de: 'Hund' }, { vi: 'Hợi (Lợn)', en: 'Pig', de: 'Schwein' }
 ];

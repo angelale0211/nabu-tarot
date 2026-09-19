@@ -70,8 +70,20 @@ const GOOGLE_MARK ='<svg viewBox="0 0 24 24"><path fill="#4285F4" d="M21.6 12.2c
 /* Each block rises into place a beat after the one above it (.srise, with
    --i counting the beats). The stagger is decoration: with reduced motion on
    the page simply appears, complete. */
+/* Which doors this page offers. The website and the Android app offer what
+   CONFIG lists. The iPhone app offers Google, Apple and email: Apple requires
+   its own sign-in wherever Google's is offered, and Facebook's native SDK was
+   left out of the shell - an account made with Facebook still signs in on the
+   website. */
+function authProvidersHere() {
+  const prov = CONFIG.authProviders || [];
+  if (!isIOSApp()) return prov;
+  return ['google', 'apple', 'email'].filter((p) => p === 'apple' ? prov.indexOf('google') > -1 : prov.indexOf(p) > -1);
+}
+const APPLE_MARK = '<svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M16.4 12.6c0-2.5 2-3.7 2.1-3.8-1.2-1.7-3-1.9-3.6-2-1.5-.2-3 .9-3.8.9-.8 0-2-.9-3.3-.8-1.7 0-3.3 1-4.2 2.5-1.8 3.1-.5 7.7 1.3 10.2.9 1.2 1.9 2.6 3.2 2.6 1.3-.1 1.8-.8 3.3-.8 1.6 0 2 .8 3.4.8 1.4 0 2.3-1.3 3.1-2.5 1-1.4 1.4-2.8 1.4-2.9 0 0-2.8-1.1-2.9-4.2zM13.9 5.1c.7-.9 1.2-2 1-3.1-1 0-2.2.7-2.9 1.5-.6.7-1.2 1.9-1.1 3 1.1.1 2.3-.6 3-1.4z"/></svg>';
+
 function signinHTML(mode) {
-  const S = T(), prov = CONFIG.authProviders || [], create = mode === 'create';
+  const S = T(), prov = authProvidersHere(), create = mode === 'create';
   let i = 0;
   /* The beat is added to whatever the block already is, never in front of it.
      Writing a second class attribute instead loses the first: the parser keeps
@@ -84,6 +96,7 @@ function signinHTML(mode) {
       : html.replace(/^(<\w+)/, '$1 class="srise"' + beat);
   };
   const social = (prov.indexOf('google') > -1 ? '<button type="button" class="btn block" data-auth="google">' + GOOGLE_MARK + esc(S.signInWith.google) + '</button>' : '')
+    + (prov.indexOf('apple') > -1 ? '<button type="button" class="btn block" data-auth="apple" style="background:#000;color:#fff;border-color:transparent">' + APPLE_MARK + esc(S.signInWith.apple) + '</button>' : '')
     + (prov.indexOf('facebook') > -1 ? '<button type="button" class="btn block" data-auth="facebook" style="background:#1461C7;color:#fff;border-color:transparent">' + esc(S.signInWith.facebook) + '</button>' : '');
   const email = prov.indexOf('email') > -1, app = inAppBrowser();
   return '<section class="signin">'

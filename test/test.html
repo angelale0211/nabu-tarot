@@ -84,7 +84,15 @@ async function go(hash, sel) { W().location.hash = hash; await sleep(30); return
         'the client and the worker carry the same Play catalogue: 4 one-time items, 4 subscriptions, same keys, contents and months, and both sides actually parsed 8 entries'); }
     // home
     ok(/Chào bạn/.test(d.querySelector('h1').textContent) && d.querySelector('h1').nextElementSibling.nextElementSibling.classList.contains('pickcta') && d.querySelector('#today').compareDocumentPosition(d.querySelector('h1')) & 4, 'greeting sits below the date panel, right above the quick links');
-    ok(d.querySelector('#today') && /Âm lịch/.test(d.querySelector('#today').textContent) && /Ngày \d+ tháng \d+ năm \S+ \S+ \(\d{4}\)/.test(d.querySelector('#today').textContent) && /Can chi/.test(d.querySelector('#today').textContent) && /Trăng/.test(d.querySelector('#today').textContent), 'today panel: full lunar date with year name, can chi and the moon');
+    ok(d.querySelector('#today') && /Âm lịch/.test(d.querySelector('#today').textContent) && /Ngày \d+ tháng \d+ năm \S+ \S+ \(\d{4}\)/.test(d.querySelector('#today').textContent) && !/Can chi/.test(d.querySelector('#today').textContent) && /Trăng/.test(d.querySelector('#today').textContent), 'today panel: full lunar date with year name and the moon, and no can chi row');
+    { /* English and German name the calendar for what it is - lunisolar - and
+         carry no animal signs, neither as a row nor inside the date. */
+      W().saveProfileLocal({ lang: 'en' }); W().applyAccountLang(); const enToday = W().todayHTML();
+      W().saveProfileLocal({ lang: 'de' }); W().applyAccountLang(); const deToday = W().todayHTML();
+      W().saveProfileLocal({ lang: 'vi' }); W().applyAccountLang();
+      ok(/Vietnamese \(lunisolar\)/.test(enToday) && /Day \d+ of lunar month \d+.*, \d{4}/.test(enToday) && !/Animal signs|year of the/.test(enToday)
+        && /Vietnamesischer Kalender \(lunisolar\)/.test(deToday) && !/Tierzeichen|Mondkalender/.test(deToday),
+        'the English and German today panel says lunisolar calendar and shows no animal signs'); }
     const lt = N.lunarToday(new Date(2026, 8, 5));
     ok(lt.yearAn === 'Ngọ (Ngựa)' && lt.monthAn === 'Thân (Khỉ)' && lt.dayAn === 'Ngọ (Ngựa)' && /Bính Ngọ/.test(lt.yearCC), 'lunar animal names follow the language on screen: 5/9/2026 is a Horse day in the Monkey month of the Horse year');
     const l1 = N.solarToLunar(29, 1, 2025), l2 = N.solarToLunar(10, 2, 2024), l3 = N.solarToLunar(4, 9, 2026);
@@ -109,7 +117,8 @@ async function go(hash, sel) { W().location.hash = hash; await sleep(30); return
     d.querySelector('[data-tour="skip"]').click(); await sleep(30);
     ok(d.querySelector('#tour.tourmini'), 'closing shrinks it again');
     await waitFor(() => d.querySelector('.welcome'), 6000);
-    ok(/Nabu Tarot xin chào/.test(d.querySelector('.welcome h2').textContent) && d.querySelector('.welcome .sig img') && !d.querySelector('.welcome .date') && !/Dự đoán mới/.test(d.querySelector('#feed').textContent), 'welcome post heads the feed with the logo as signature, no date line, no "Dự đoán mới"');
+    ok(/Nabu Tarot xin chào/.test(d.querySelector('.welcome h2').textContent) && d.querySelector('.welcome .sig img') && !d.querySelector('.welcome .date') && !/Dự đoán mới/.test(d.querySelector('#feed').textContent), 'welcome post heads the feed with the logo as signature, no date line, no "Dự đoán mới"'
+      + (() => { const w = d.querySelector('.welcome'), f = d.querySelector('#feed'); return ' (h2=' + !!(w && w.querySelector('h2') && /Nabu Tarot xin chào/.test(w.querySelector('h2').textContent)) + ' sig=' + !!(w && w.querySelector('.sig img')) + ' date=' + !!(w && w.querySelector('.date')) + ' new=' + !!(f && /Dự đoán mới/.test(f.textContent)) + ')'; })());
     ok(d.querySelector('.welcome.open [data-wtoggle]') && d.querySelector('.welcome .in'), 'the welcome note opens folded-out with a toggle');
     d.querySelector('[data-wtoggle]').click(); await sleep(30);
     ok(!d.querySelector('.welcome').classList.contains('open') && JSON.parse(w.localStorage.getItem('nabu-welcome-open')) === false && d.querySelector('.welcome .chev').textContent === '+', 'tapping the welcome title folds it and the choice is remembered');
@@ -1579,8 +1588,16 @@ async function go(hash, sel) { W().location.hash = hash; await sleep(30); return
       const pub = await fetch('/privacy.html', { cache: 'no-store' }).then((r) => r.text()).catch(() => '');
       ok(/Bình luận thì khác/.test(pv) && /công khai/.test(pv)
         && pub.indexOf('Bình luận thì khác') > -1 && pub.indexOf('Comments you write under a post') > -1
-        && pub.indexOf('Kommentare, die du unter einen Beitrag') > -1 && pub.indexOf('2026-09-13') > -1,
+        && pub.indexOf('Kommentare, die du unter einen Beitrag') > -1 && pub.indexOf('2026-09-17') > -1,
         'the privacy policy says, in all three languages, that comments are public, show the chosen name only, can be deleted, and go with the account'); }
+    { /* v242: the iPhone app. App Review reads the policy against the app, and
+         the policy predated Sign in with Apple and App Store purchases. */
+      const pub = await fetch('/privacy.html', { cache: 'no-store' }).then((r) => r.text()).catch(() => '');
+      ok(pub.indexOf('Mua trong app') > -1 && pub.indexOf('In-app purchases') > -1 && pub.indexOf('Käufe in der App') > -1
+        && pub.indexOf('Đăng nhập bằng Google, Apple, Facebook') > -1 && pub.indexOf('If you sign in with Apple and choose to hide your email') > -1
+        && pub.indexOf('không tự hủy khi bạn xóa tài khoản') > -1 && pub.indexOf('are not cancelled when you delete your account') > -1
+        && pub.indexOf('werden beim Löschen des Kontos nicht gekündigt') > -1 && pub.indexOf('Sợi tơ hồng và lễ cưới') > -1 && pub.indexOf('danh sách khách mà mọi người trong phòng đều thấy') > -1,
+        'the privacy policy names Sign in with Apple and store purchases, says a store subscription outlives a deleted account, and covers the red thread, in all three languages'); }
     { /* v226 added two things a reader gives without typing anything: an edit,
          which changes what a comment says after other people have read it, and
          a heart, which is the only thing the app records about a post that the
@@ -2155,6 +2172,176 @@ async function go(hash, sel) { W().location.hash = hash; await sleep(30); return
       ok(d.querySelector('.store .billdiag [data-diag]') && /web=v/.test(d.querySelector('.store .billdiag').textContent),
         'and the diagnostics are on that card too, because the phone that needs them is the one that cannot open the store');
       await playMode(false); }
+    { /* The App Store build: a Capacitor shell around this same site, which
+         adds NabuTarotiOS to the user agent and carries window.Capacitor.
+         Apple forbids what Play forbids, so the same sweep has to come back
+         clean - and Play's own advice about Chrome must never reach an iPhone. */
+      const nav = d.defaultView.navigator;
+      codeMode(true, 'uidI'); w.localStorage.removeItem('nabu-twa');
+      const IOS_APP = 'Mozilla/5.0 (iPhone; CPU iPhone OS 26_5 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148 NabuTarotiOS';
+      Object.defineProperty(nav, 'userAgent', { configurable: true, get: () => IOS_APP });
+      await N.BILL.retry();
+      ok(/shell=ios/.test(N.BILL.diag('')), 'the iPhone app is known by the marker its shell adds to the user agent');
+      delete nav.userAgent; w.Capacitor = { getPlatform: () => 'ios' };
+      ok(/shell=ios/.test(N.BILL.diag('')), 'and by Capacitor saying ios, when the marker is missing');
+      const iosRoutes = ['#/home', '#/learn', '#/learn/tarot', '#/learn/lenormand', '#/learn/playing', '#/learn/manifest', '#/learn/guide/mani-woop', '#/unlock', '#/unlock?from=app', '#/me', '#/looks', '#/play/coin', '#/play/tree', '#/pick', '#/play/pet', '#/rewards', '#/wedding'];
+      const iosLeaks = [];
+      for (const r of iosRoutes) { await go(r, '#main'); await sleep(150); const main = d.querySelector('#main');
+        if (main.querySelector('#ccode,#ucode,#mcode,#luckcode,input[placeholder^="NABU-"],.paypanel,[data-buyreq],#usend,#wedpay,a[href="#/install"]') || /chuyển khoản|mã mở kho|Gửi yêu cầu mở khoá|transfer|unlock code|Freischaltcode|überweis/i.test(main.textContent)) iosLeaks.push(r); }
+      ok(iosLeaks.length === 0, 'inside the iPhone app no screen asks for a transfer, an order to Nabu, a code or an install (leaks: ' + iosLeaks.join(' ') + ')');
+      await go('#/unlock?from=app', '.store');
+      ok(d.querySelector('.store [data-retry]') && !d.querySelector('.store [data-buy]') && !/Chrome/.test(d.querySelector('.store').textContent),
+        'the iPhone app opens the in-app store rather than the website\'s, and never tells an iPhone to use Chrome');
+      { /* Signing in inside the iPhone app. Google refuses an app's web view,
+           so Google and Apple are asked of the shell's native plugin, and
+           Firebase here signs in with the proof it hands back. Facebook has no
+           native SDK in the shell, so its button is not offered there. */
+        const keepS = { user: N.BE.user, auth: N.BE.auth, fb: w.firebase }, calls = [], creds = [];
+        N.BE.user = null;
+        await go('#/home', '.tiles'); await go('#/signin', '.signin');
+        const doors = Array.from(d.querySelectorAll('.signin [data-auth]')).map((b) => b.getAttribute('data-auth')).join(',');
+        ok(doors === 'google,apple' && d.querySelector('.signin #aemail') && /Đăng nhập bằng Apple/.test(d.querySelector('.signin [data-auth="apple"]').textContent),
+          'the iPhone app\'s sign-in page offers Google, Apple and email, and not Facebook (' + doors + ')');
+        w.Capacitor.Plugins = { FirebaseAuthentication: {
+          signInWithApple: async (o) => { calls.push('apple:' + (o && o.skipNativeAuth)); return { credential: { idToken: 'appleTok', nonce: 'rawNonce' } }; },
+          signInWithGoogle: async (o) => { calls.push('google:' + (o && o.skipNativeAuth)); if (calls.cancel) throw new Error('The user canceled the sign-in flow.'); return { credential: { idToken: 'gTok', accessToken: 'gAcc' } }; },
+          signOut: async () => { calls.push('out'); } } };
+        w.firebase = { auth: { GoogleAuthProvider: { credential: (id, acc) => ({ p: 'google.com', id: id, acc: acc }) },
+          OAuthProvider: function (p) { this.credential = (o) => ({ p: p, id: o.idToken, nonce: o.rawNonce }); } } };
+        N.BE.auth = { signInWithCredential: async (c) => { creds.push(c); }, signOut: async () => {} };
+        await N.BE.signIn('apple'); await N.BE.signIn('google');
+        ok(calls.join(' ') === 'apple:true google:true' && creds[0].p === 'apple.com' && creds[0].id === 'appleTok' && creds[0].nonce === 'rawNonce' && creds[1].p === 'google.com' && creds[1].id === 'gTok',
+          'in the iPhone app Apple and Google sign in natively, and Firebase signs in with the token and Apple\'s nonce (' + calls.join(' ') + ')');
+        calls.cancel = true;
+        const cancelled = await N.BE.signIn('google').then(() => null, (e) => e);
+        ok(cancelled && cancelled.code === 'auth/popup-closed-by-user', 'closing the native sheet reads as a closed sign-in, not a failure');
+        await N.BE.signOut(); await sleep(30);
+        ok(calls.indexOf('out') > -1, 'signing out in the iPhone app forgets the native Google account too');
+        { /* Deleting an account that signs in with Apple, in the iPhone app: Apple confirms the person once more,
+             Firebase is re-authenticated with that answer, and the one-time code goes to /apple-revoke - all
+             before anything is deleted. Closing Apple's sheet stops the deletion. */
+          const keepUser = N.BE.user, keepF = w.fetch, sent = [], reauth = [];
+          w.Capacitor.Plugins.FirebaseAuthentication.signInWithApple = async (o) => { calls.push('apple-again:' + (o && o.skipNativeAuth)); if (calls.cancelApple) throw new Error('The operation couldn’t be completed. (com.apple.AuthenticationServices.AuthorizationError error 1001.)'); return { credential: { idToken: 'appleTok2', nonce: 'n2', authorizationCode: 'code-123' } }; };
+          N.BE.user = { uid: 'uA', providerData: [{ providerId: 'apple.com' }], reauthenticateWithCredential: async (c) => { reauth.push(c); } };
+          N.BE.auth.currentUser = { getIdToken: async () => 'idtok' };
+          w.fetch = async (url, opt) => { if (/\/apple-revoke$/.test(url)) { sent.push(JSON.parse(opt.body).code); return { ok: true, status: 200, json: async () => ({ ok: true }) }; } return keepF(url, opt); };
+          await N.BE.appleBeforeDelete();
+          ok(reauth.length === 1 && reauth[0].p === 'apple.com' && reauth[0].nonce === 'n2' && sent[0] === 'code-123',
+            'deleting an Apple account in the iPhone app re-authenticates with Apple and sends the one-time code to be revoked first');
+          calls.cancelApple = true;
+          const stopped = await N.BE.appleBeforeDelete().then(() => null, (e) => e);
+          ok(stopped && stopped.code === 'auth/popup-closed-by-user' && sent.length === 1, 'closing Apple\'s sheet stops the deletion before anything is sent or deleted');
+          calls.cancelApple = false;
+          N.BE.user = { uid: 'uG', providerData: [{ providerId: 'google.com' }], reauthenticateWithCredential: async (c) => { reauth.push(c); } };
+          await N.BE.appleBeforeDelete();
+          ok(reauth.length === 1 && sent.length === 1, 'an account that does not sign in with Apple is deleted as before, with nothing asked of Apple');
+          N.BE.user = keepUser; w.fetch = keepF; delete N.BE.auth.currentUser; }
+        delete w.Capacitor.Plugins;
+        const missing = await N.BE.signIn('apple').then(() => null, (e) => e);
+        ok(missing && missing.code === 'auth/native-unavailable' && creds.length === 2, 'an older shell without the plugin says so rather than opening a popup Google will refuse');
+        delete w.Capacitor;
+        await go('#/home', '.tiles'); await go('#/signin', '.signin');
+        const webDoors = Array.from(d.querySelectorAll('.signin [data-auth]')).map((b) => b.getAttribute('data-auth')).join(',');
+        ok(webDoors.indexOf('apple') === -1 && webDoors === (N.CONFIG.authProviders || []).filter((p) => p !== 'email').join(','),
+          'outside the iPhone app the sign-in page is unchanged: no Apple, and every provider CONFIG lists (' + webDoors + ')');
+        w.Capacitor = { getPlatform: () => 'ios' };
+        N.BE.user = keepS.user; N.BE.auth = keepS.auth; if (keepS.fb === undefined) delete w.firebase; else w.firebase = keepS.fb; }
+      { /* Buying inside the iPhone app. BILL is pointed at the App Store; a stand-in for the shell's
+           NativePurchases plugin plays StoreKit, and a stand-in for /billing plays the worker. What is checked
+           is the contract between them: the account token, finishing only after the worker answers, keeping
+           a paid transaction the worker could not be reached for, and the App Store's own words on screen. */
+        ok(await N.appleAccountToken('nabu-test-uid') === 'ec2a04c5-cd2f-51f4-8637-9e01fe79f858',
+          'the phone derives the same App Store account token as the worker does for the same account');
+        const sk = { calls: [], finished: [], next: 5000, held: [], cancelNext: false, pendingNext: false };
+        w.Capacitor.Plugins = { NativePurchases: {
+          getProducts: async (o) => ({ products: o.productIdentifiers.map((id) => ({ identifier: id, priceString: id === 'plus_sub' ? '79.000 ₫' : '300.000 ₫', price: 1, currencyCode: 'VND' })) }),
+          purchaseProduct: async (o) => { sk.calls.push(o);
+            if (sk.cancelNext) { sk.cancelNext = false; throw new Error('User cancelled'); }
+            if (sk.pendingNext) { sk.pendingNext = false; throw new Error('Transaction pending'); }
+            const tx = { transactionId: String(sk.next++), productIdentifier: o.productIdentifier, appAccountToken: String(o.appAccountToken).toUpperCase() }; sk.held.push(tx); return tx; },
+          getPurchases: async () => ({ purchases: sk.held.slice() }),
+          acknowledgePurchase: async (o) => { sk.finished.push(o.purchaseToken); },
+          addListener: async () => ({ remove() {} }),
+          manageSubscriptions: async () => { sk.managed = true; } } };
+        const keepF = w.fetch, worker = { answer: 200, seen: [] };
+        w.fetch = async (url, opt) => {
+          if (!/\/billing$/.test(url)) return keepF(url, opt);
+          const b = JSON.parse(opt.body); worker.seen.push(b);
+          if (worker.answer === 'down') throw new TypeError('Failed to fetch');
+          const say = (status, body) => ({ ok: status < 300, status: status, json: async () => body });
+          if (worker.answer !== 200) return say(worker.answer, { error: 'already used' });
+          /* Written into the stand-in account as the real worker writes it, because the phone reads the
+             account back straight after (sync -> pullProfile) and would otherwise read the purchase away. */
+          const it = N.PLAY_ITEMS.filter((i) => i.sku === b.sku)[0], uid = N.BE.user.uid, doc = cdocs['users/' + uid] || {};
+          const acc = Object.assign({}, doc.access || {}), subs = Object.assign({}, doc.subs || {});
+          it.opens.forEach((k) => { acc[k] = '2027-03-01'; });
+          if (it.kind === 'subs') subs[it.key] = { sku: it.sku, plan: it.sku, state: 'SUBSCRIPTION_STATE_ACTIVE', until: '2027-03-01', autoRenew: true, tok: 'h', opens: it.opens, grant: true, store: 'apple' };
+          cdocs['users/' + uid] = Object.assign({}, doc, { access: acc, subs: subs });
+          return say(200, { ok: true, opened: it.opens, access: acc, subs: it.kind === 'subs' ? subs : undefined });
+        };
+        w.localStorage.removeItem('nabu-apple-pending');
+        N.billUse('apple'); await N.BILL.retry();
+        ok(N.BILL.store === 'apple' && N.BILL.can() && N.BILL.priceOf('plus') === '79.000 ₫' && N.BILL.provider() === 'appstore' && /store=appstore/.test(N.BILL.diag('')),
+          'in the iPhone app BILL answers from the App Store, with its own prices (' + N.BILL.why + ')');
+        await go('#/home', '.tiles'); await go('#/unlock?from=app', '.store');
+        const storeText = d.querySelector('.store').textContent;
+        ok(d.querySelector('.store [data-buy="plus"]') && /79\.000 ₫/.test(storeText) && /App Store/.test(storeText) && !/Google Play/.test(storeText),
+          'the store in the iPhone app shows App Store prices and speaks of the App Store, never of Google Play');
+        const got = await N.BILL.buy('tarot');
+        const mine = await N.appleAccountToken(N.BE.user.uid), last = sk.calls[sk.calls.length - 1];
+        ok(got.opened && got.opened[0] === 'tarot' && last.appAccountToken === mine && last.autoAcknowledgePurchases === false && worker.seen[worker.seen.length - 1].store === 'apple'
+          && worker.seen[worker.seen.length - 1].token === '5000' && sk.finished.indexOf('5000') > -1 && N.ACCESS.has('tarot'),
+          'a purchase carries the account token, goes to the worker as an App Store transaction, and is finished in StoreKit only after the worker granted it');
+        worker.answer = 'down';
+        const off = await N.BILL.buy('lenormand').then(() => null, (e) => e);
+        ok(off && off.message === 'offline' && sk.finished.indexOf('5001') < 0 && N.BILL.pendingList().some((p) => p.token === '5001'),
+          'paid while the worker cannot be reached: kept unfinished and written down, never lost and never finished');
+        worker.answer = 200;
+        const rs = await N.BILL.restore();
+        ok(sk.finished.indexOf('5001') > -1 && !N.BILL.pendingList().length && rs.opened >= 1,
+          'restore sends it again once the worker answers, and only then finishes it');
+        worker.answer = 402;
+        const refused = await N.BILL.buy('playing').then(() => null, (e) => e);
+        ok(refused && refused.message === 'already used' && sk.finished.indexOf('5002') > -1 && !N.BILL.pendingList().some((p) => p.token === '5002'),
+          'a final refusal from the worker is final for StoreKit too: finished, and not retried for ever');
+        worker.answer = 200; sk.cancelNext = true;
+        const cancelled = await N.BILL.buy('plus').then(() => null, (e) => e);
+        ok(cancelled && cancelled.outcome === 'aborted' && !N.BILL.buying, 'closing the App Store sheet is a cancelled purchase, and the Buy button is free again');
+        sk.pendingNext = true;
+        ok((await N.BILL.buy('plus')).pending === true, 'Ask to Buy answers pending and charges nothing yet');
+        await N.BILL.buy('plus');
+        await go('#/home', '.tiles'); await go('#/unlock?from=app', '.store');
+        const manage = d.querySelector('.store a[href="https://apps.apple.com/account/subscriptions"]');
+        if (manage) manage.click(); await sleep(30);
+        ok(manage && sk.managed === true, 'a plan the App Store sold is managed on Apple\'s own subscriptions sheet');
+        N.billUse('play'); w.fetch = keepF; delete w.Capacitor.Plugins; w.localStorage.removeItem('nabu-apple-pending');
+        ['nabu-access', 'nabu-subs'].forEach((k) => w.localStorage.removeItem(k));
+        { const u = cdocs['users/' + N.BE.user.uid]; if (u) { delete u.subs; delete u.access; } }
+        ok(N.BILL.store === undefined && N.BILL.provider() !== 'appstore', 'pointed back, BILL is Play\'s again'); }
+      delete w.Capacitor;
+      await go('#/home', '.tiles'); await go('#/unlock', '.unlist');
+      ok(!d.querySelector('.store') && d.querySelector('[data-unl]') && !/shell=ios/.test(N.BILL.diag('')), 'without the shell the same phone is given the website\'s unlock page again');
+      codeMode(false, 'uidI'); await N.BILL.retry(); }
+    { /* The 12 animals page says whose zodiac it is and how China and Korea differ, in every language.
+         Kept here, well after the home-page checks: switching the language three times leaves a late redraw
+         behind it, and the tour checks click through steps 30ms apart. In front of them it failed CI. */
+      /* Never through #/home while switching: its feed loads late and would land in the next language. */
+      const seen = {}, wheel = {};
+      for (const L of ['vi', 'en', 'de']) {
+        W().saveProfileLocal({ lang: L }); W().applyAccountLang();
+        await go('#/learn', '#main'); await go('#/learn/fortune/animals', '.anote');
+        const main = d.querySelector('#main');
+        wheel[L] = Array.from(main.querySelectorAll('.awheel .aw b')).map((b) => b.textContent);
+        seen[L] = !!main.querySelector('.avn .chip') && main.querySelectorAll('.anote li').length === 4
+          && main.querySelector('.avn').compareDocumentPosition(main.querySelector('.awrapper')) & 4
+          && main.querySelector('#aout').compareDocumentPosition(main.querySelector('.anote')) & 4;
+      }
+      W().saveProfileLocal({ lang: 'vi' }); W().applyAccountLang();
+      ok(wheel.vi[0] === 'Tý' && wheel.vi[3] === 'Mão' && wheel.en[0] === 'Rat' && wheel.en[1] === 'Buffalo' && wheel.en[3] === 'Cat' && wheel.de[1] === 'Büffel' && wheel.de[3] === 'Katze' && wheel.en.length === 12,
+        'the animal wheel is labelled in the reader\'s language (' + [wheel.vi[1], wheel.en[1], wheel.de[1]].join(' / ') + ')');
+      ok(seen.vi && seen.en && seen.de && N.STR.en.animalDiff.length === 4 && N.STR.de.animalDiff.length === 4 && /Việt Nam/.test(N.STR.vi.animalVN),
+        'the 12 animals page is marked Vietnamese at the top and lists four differences from China and Korea, in vi, en and de');
+      await go('#/learn', '#main'); await go('#/home', '.tiles'); }
     /* ---- the red thread ---- */
     { /* A stand-in for Firestore: documents in an object, and listeners told
          when one changes. Paths are the real ones, so the code under test is

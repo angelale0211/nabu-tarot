@@ -26,17 +26,17 @@ export type ServiceEnv = Pick<PlayEnv, "PLAY_SERVICE_ACCOUNT">;
 
 interface ServiceAccount { client_email: string; private_key: string }
 
-const b64url = (bytes: ArrayBuffer | Uint8Array): string => {
+export const b64url = (bytes: ArrayBuffer | Uint8Array): string => {
   const b = bytes instanceof Uint8Array ? bytes : new Uint8Array(bytes);
   let s = "";
   for (let i = 0; i < b.length; i++) s += String.fromCharCode(b[i]);
   return btoa(s).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
 };
 
-const utf8 = (s: string) => new TextEncoder().encode(s);
+export const utf8 = (s: string) => new TextEncoder().encode(s);
 
 /* A PEM private key is base64 with a header and footer and newlines through it. */
-function pemToBytes(pem: string): ArrayBuffer {
+export function pemToBytes(pem: string): ArrayBuffer {
   const body = pem.replace(/-----[^-]+-----/g, "").replace(/\s+/g, "");
   const bin = atob(body);
   const out = new Uint8Array(bin.length);

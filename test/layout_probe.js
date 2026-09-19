@@ -152,6 +152,38 @@
       if (cols > 1 && kids.length === 1) add('lonecell', el, cols, kids.length + ' of ' + cols);
     });
 
+  /* ---- a short control label broken across lines ----
+     A button, chip or tab whose label is a word or three should read as one
+     line. When it does not, the break is what the eye lands on: a word split
+     by a hyphen ("Auto-matisch"), an emoji left alone above its word, two
+     buttons of a row at different heights. Only controls whose label is plain
+     short text are measured - a card-like link carrying a title and a line
+     under it is meant to take two lines. */
+  const lineCount = (el) => {
+    const rng = document.createRange(); rng.selectNodeContents(el);
+    const tops = [];
+    Array.from(rng.getClientRects()).filter((r) => r.height > 4 && r.width > 1).forEach((r) => {
+      if (!tops.some((t) => Math.abs(t - r.top) < r.height * 0.5)) tops.push(r.top);
+    });
+    return tops.length;
+  };
+  Array.from(document.querySelectorAll('#main button, #main a.btn, #main .chip, #main [role=button], #main .tabs a, #backbar a, #backbar button'))
+    .filter(vis).forEach((el) => {
+      if (el.querySelector('br,p,div,ul,li,h1,h2,h3,h4,small,.hint,input,textarea,select')) return;
+      /* A tile - a picture or number on top, a name under it - stacks by
+         design. Anything laid out in blocks, or a flex column, is one. */
+      const cs = getComputedStyle(el);
+      if (/flex|grid/.test(cs.display) && /column/.test(cs.flexDirection)) return;
+      if (cs.display === 'grid') return;
+      if (Array.from(el.querySelectorAll('*')).some((k) => !k.ownerSVGElement && k.tagName !== 'svg' && k.tagName !== 'IMG' && !/^inline/.test(getComputedStyle(k).display) && getComputedStyle(k).display !== 'none')) return;
+      const t = (el.textContent || '').trim().replace(/\s+/g, ' ');
+      if (!t || t.length > 34) return;
+      const words = t.replace(/[\u{1F000}-\u{1FFFF}\u{2600}-\u{27BF}\u{FE0F}\u{200D}·→←›‹✓✔↗]/gu, ' ').trim().split(/\s+/).filter(Boolean);
+      if (!words.length || words.length > 4) return;
+      const n = lineCount(el);
+      if (n > 1) add('wrap', el, n, n + ' lines, ' + Math.round(el.getBoundingClientRect().width) + 'px wide');
+    });
+
   /* ---- text you cannot read against what is behind it ---- */
   if (opts.contrast) {
     const lum = (c) => {

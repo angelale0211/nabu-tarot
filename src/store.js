@@ -20,7 +20,16 @@ function subStateWord(row) {
   if (k === 'problem') return S.stProblem;
   return S.stExpired;
 }
-const manageURL = (key) => 'https://play.google.com/store/account/subscriptions?sku=' + encodeURIComponent((playItem(key) || {}).sku || '') + '&package=app.nabutarot.twa';
+/* Where a buyer manages a plan is the store that sold it: a row the App Store decided says so (store: "apple"). */
+const APPLE_MANAGE = 'https://apps.apple.com/account/subscriptions';
+/* App Review asks every subscription screen for the Terms of Use and the
+   privacy policy. On the iPhone the terms are Apple's standard licence, the
+   same link the App Store listing gives; Play asks for neither, so Android
+   and the web show nothing new. */
+const APPLE_EULA = 'https://www.apple.com/legal/internet-services/itunes/dev/stdeula/';
+const legalHTML = () => (isIOSApp() ? '<p class="hint legal"><a href="' + APPLE_EULA + '" target="_blank" rel="noopener">' + esc(T().stTerms) + '</a> · <a href="#/privacy">' + esc(T().stPrivacy) + '</a></p>' : '');
+const manageURL = (key) => ((SUBS.of(key) || {}).store === 'apple' ? APPLE_MANAGE
+  : 'https://play.google.com/store/account/subscriptions?sku=' + encodeURIComponent((playItem(key) || {}).sku || '') + '&package=app.nabutarot.twa');
 /* Every screen that sells anything comes through here, so this is where
    "Play priced this one" is asked. A row whose product Play did not return
    says so where its button was, rather than offering a button that can only
@@ -105,8 +114,34 @@ function fileBilling(line, where) {
   noteOops(line, where);
 }
 
+/* A purchase is paid for, the worker has written the account, and the screen
+   has to show it - without the buyer being told to close the app and open it
+   again, which is what the owner hit on the iPhone with the Manifestation set:
+   "successful", and the paywall still there until a force quit.
+
+   The buy already stores what the worker answered, and BILL.sync() re-reads
+   the account afterwards; a read that lands before the write is visible puts
+   the old, empty access back. So before redrawing, wait for the keys this
+   purchase opens to actually be there - reading the account again, a few times,
+   a little further apart each time. Everything is already paid and granted at
+   this point: this only decides when the screen is redrawn. Three tries over
+   about four seconds, then redraw anyway rather than hold the button for ever.
+
+   Both stores go through here, so Play gets the same guarantee. */
+async function settled(key) {
+  const it = typeof playItem === 'function' ? playItem(key) : null;
+  const keys = (it && it.opens && it.opens.length) ? it.opens : [];
+  if (!keys.length || typeof BE === 'undefined' || !BE.user) return;
+  for (let i = 0; i < 3 && !keys.every((k) => ACCESS.has(k)); i++) {
+    await new Promise((ok) => setTimeout(ok, 700 * (i + 1)));
+    try { await BE.pullProfile(); } catch (e) { /* offline: the next open reads it */ }
+  }
+}
+
 function bindStore(root, redraw) {
   const S = T();
+  /* Inside the iPhone app Apple's own subscriptions sheet opens over the app, rather than a web page. */
+  $$('a[href="' + APPLE_MANAGE + '"]', root).forEach((a) => a.addEventListener('click', (ev) => { if (BILL.store === 'apple' && typeof BILL.manage === 'function') { ev.preventDefault(); BILL.manage(); } }));
   $$('[data-buy]', root).forEach((b) => b.addEventListener('click', async () => {
     const key = b.getAttribute('data-buy'), st = $('[data-st="' + key + '"]', root) || $('#bstatus', root);
     if (b.disabled) return;   // a second tap on a button already working starts nothing
@@ -124,6 +159,7 @@ function bindStore(root, redraw) {
       const opt = {}; if (b.getAttribute('data-old')) opt.oldKey = b.getAttribute('data-old'); if (b.getAttribute('data-wid')) opt.wid = b.getAttribute('data-wid');
       const r = await BILL.buy(key, opt);
       if (r.pending) { if (st) st.textContent = S.stPending; return; }
+      await settled(key);
       toast(S.unlocked); if (redraw) redraw(); else route();
     } catch (e) {
       const why = String((e && e.message) || '');
@@ -263,7 +299,7 @@ function renderStore(params) {
     const plans = '<div class="sec"><h2 style="margin-bottom:8px">' + esc(S.stPlans) + '</h2>' + group(['plus', 'pro6', 'pro', 'manifest']) + '</div>';
     m.innerHTML = '<div class="store"><div class="eyebrow">' + esc(CONFIG.brand) + '</div><h1 style="margin-bottom:6px">' + esc(S.stTitle) + '</h1><p class="muted">' + esc(S.stIntro) + '</p>'
       + (BILL.can() ? (from === 'app' ? plans + courses : courses + plans) : storeNotReadyHTML())
-      + '<div class="card"><button type="button" class="btn block" id="restore">' + esc(S.stRestore) + '</button><p class="hint" id="rstatus"></p></div>'
+      + '<div class="card"><button type="button" class="btn block" id="restore">' + esc(S.stRestore) + '</button><p class="hint" id="rstatus"></p>' + legalHTML() + '</div>'
       + (BILL.can() ? storeDiagHTML('') : '') + '</div>';
     bindStore(m, draw);
   };

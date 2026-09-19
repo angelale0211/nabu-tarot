@@ -7,7 +7,15 @@
    open exactly the same keys; only the months differ.
 
    The client has the same table in src/play-catalog.js. A test on each side
-   checks they agree. */
+   checks they agree.
+
+   The App Store sells the same eight things under the SAME product ids, so
+   one table serves both stores and `sku` is also the App Store Connect product
+   id. Their App Store types: the four subscriptions are auto-renewable, in two
+   groups - plus_sub, pro_sub and pro12_sub together (so Apple itself handles a
+   move between them), manifest_sub alone; tarot, lenormand and playing are
+   non-renewing subscriptions (six months, bought again); wedding is a
+   consumable. */
 export type Kind = "inapp" | "subs";
 export interface PlayItem { key: string; sku: string; kind: Kind; opens: string[]; months: number }
 
