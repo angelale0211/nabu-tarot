@@ -1896,6 +1896,172 @@ html,body{overscroll-behavior-y:contain}
 .shelf .plus{font-size:11px;font-weight:700;color:var(--gold-deep);background:var(--tag-gold-bg);border-radius:999px;padding:0 6px}
 .shelf .sh-lock{position:absolute;top:6px;right:7px;font-size:13px}
 .shelf .sh-on{position:absolute;top:6px;left:7px;color:var(--primary);font-weight:700;font-size:13px}
+
+/* ---- the sky over a home, and the Pro effects ----
+   The sky is a second square laid exactly over the home, so the nine hand-drawn
+   homes did not have to be touched to gain a time of day. Everything that moves
+   here animates transform or opacity and nothing else: a filter would force the
+   whole drawing to rasterise, which is the fault the pet art comments record. */
+.petstage .petsky{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:2}
+/* Only the stacking order. An earlier version of this line also said
+   position:relative, which has the same specificity as the rule above that
+   places the companion and comes after it - so it won, the companion stopped
+   being positioned at all and flowed to the top-left corner of its stage, on
+   the companion screen as well as in the wardrobe preview. Set nothing here
+   that the placement rule owns. */
+.petstage .petart{z-index:3}
+.petfx{pointer-events:none}
+@keyframes skfall{0%{transform:translateY(0)}100%{transform:translateY(256px)}}
+@keyframes sksway{0%,100%{transform:translateX(-6px)}50%{transform:translateX(6px)}}
+@keyframes skrise{0%{transform:translateY(0);opacity:0}12%{opacity:.95}100%{transform:translateY(-250px);opacity:0}}
+@keyframes skwander{0%{transform:translate(0,0);opacity:.35}25%{transform:translate(14px,-12px);opacity:1}
+  50%{transform:translate(-8px,-22px);opacity:.5}75%{transform:translate(-18px,-8px);opacity:1}100%{transform:translate(0,0);opacity:.35}}
+@keyframes skaurora{0%,100%{transform:translateX(-12px) scaleY(1);opacity:.28}50%{transform:translateX(12px) scaleY(1.25);opacity:.46}}
+.skfall{animation:skfall 7s linear infinite}
+.skfall.fast{animation-duration:1.5s}
+.skfall.sway>*{animation:sksway 2.6s ease-in-out infinite}
+.skrise{animation:skrise 11s linear infinite}
+.skwander{animation:skwander 9s ease-in-out infinite}
+.skaurora>path{animation:skaurora 9s ease-in-out infinite}
+
+@keyframes fxshoot{0%{transform:translate(126px,0);opacity:0}8%{opacity:1}42%{transform:translate(-18px,46px);opacity:0}100%{transform:translate(-18px,46px);opacity:0}}
+@keyframes fxrise{0%{transform:translateY(0);opacity:0}15%{opacity:.95}100%{transform:translateY(-84px);opacity:0}}
+@keyframes fxfall{0%{transform:translateY(0);opacity:0}10%{opacity:1}100%{transform:translateY(128px);opacity:0}}
+@keyframes fxwander{0%,100%{transform:translate(0,0);opacity:.4}30%{transform:translate(10px,-10px);opacity:1}60%{transform:translate(-9px,-16px);opacity:.6}}
+@keyframes fxspin{0%{transform:scale(1,0.3) rotate(0)}100%{transform:scale(1,0.3) rotate(360deg)}}
+@keyframes fxorbit{0%{transform:rotate(0)}100%{transform:rotate(360deg)}}
+@keyframes fxflap{0%,100%{transform:scaleX(1)}50%{transform:scaleX(.45)}}
+@keyframes fxripple{0%{transform:scale(.5);opacity:.8}100%{transform:scale(2.4);opacity:0}}
+@keyframes fxsheen{0%{transform:translateX(0)}100%{transform:translateX(180px)}}
+.fxshoot{animation:fxshoot 5.5s linear infinite;transform-origin:60px 60px}
+.fxrise{animation:fxrise 4.4s linear infinite}
+.fxfall{animation:fxfall 6s linear infinite}
+.fxfall.sway{animation:fxfall 6s linear infinite,sksway 2.4s ease-in-out infinite}
+.fxwander{animation:fxwander 7s ease-in-out infinite}
+.fxspin{animation:fxspin 14s linear infinite}
+.fxorbit{animation:fxorbit 7s linear infinite}
+.fxflap{animation:fxflap .5s ease-in-out infinite;transform-origin:center}
+.fxripple{animation:fxripple 3.3s ease-out infinite;transform-origin:60px 112px}
+.fxsheen{animation:fxsheen 4.6s ease-in-out infinite}
+
+/* An effect is decoration. Somebody who has asked their phone to stop moving
+   things keeps the stars and loses only the blinking. */
+@media (prefers-reduced-motion:reduce){
+  .skfall,.skfall.sway>*,.skrise,.skwander,.skaurora>path,
+  .fxshoot,.fxrise,.fxfall,.fxfall.sway,.fxwander,.fxspin,.fxorbit,.fxflap,.fxripple,.fxsheen{animation:none!important}
+  .fxshoot,.fxfall,.fxrise{opacity:.85}
+}
+
+/* ---- the wardrobe screen ----
+   Rides on .sheet so the backdrop tap and the close button already work, but
+   takes the whole height: seven slots, nine collections and a live preview do
+   not fit in a short sheet. */
+.dresssheet .sh-body{max-height:94vh;display:flex;flex-direction:column;padding:0}
+.dresssheet .whead{position:sticky;top:0;z-index:4;background:var(--surface);
+  padding:10px 14px 8px;border-bottom:1px solid var(--rule-soft);border-radius:20px 20px 0 0}
+.dresssheet .wtitle{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:8px}
+.dresssheet .wtitle b{font-size:15px}
+.dresssheet .wclose{background:var(--surface-2);border:1px solid var(--rule-soft);border-radius:999px;
+  width:30px;height:30px;font-size:14px;color:var(--fg);cursor:pointer;line-height:1}
+.dresssheet .wpreview{display:flex;gap:12px;align-items:center}
+.dresssheet .wpreview .petstage{position:relative;flex:0 0 132px;width:132px;height:132px;
+  border-radius:16px;overflow:hidden;box-shadow:0 3px 14px rgba(60,40,90,.16)}
+/* On the companion screen the companion stands left of centre because every
+   home is drawn with its building on the right. The preview is not that scene -
+   it is a mirror, and the only thing in it that matters is what is being worn -
+   so here it stands in the middle. Placed with `left` rather than a transform,
+   because the idle animation owns transform on this element. */
+.dresssheet .wpreview .petstage .petart{left:16%}
+.dresssheet .wmeta{display:flex;flex-direction:column;gap:3px;min-width:0}
+.dresssheet .wname{font-weight:700;font-size:14px}
+.dresssheet .wcount{font-size:12.5px;color:var(--muted)}
+.dresssheet .wcount.full{color:var(--gold-deep);font-weight:700}
+.dresssheet .wpay{font-size:12.5px;color:var(--muted)}
+.dresssheet .wpay b{color:var(--primary)}
+.dresssheet .wtip{font-size:11.5px;color:var(--muted);line-height:1.35}
+
+/* the slot rail: what is on, at a glance, without opening anything */
+.dresssheet .wrail{display:flex;gap:6px;margin-top:9px;overflow-x:auto;scrollbar-width:none;padding-bottom:2px}
+.dresssheet .wrail::-webkit-scrollbar{display:none}
+.dresssheet .wslot{flex:0 0 auto;display:flex;flex-direction:column;align-items:center;gap:3px;
+  background:none;border:0;padding:0;font:inherit;color:var(--muted);cursor:pointer}
+.dresssheet .wthumb{display:flex;align-items:center;justify-content:center;width:44px;height:44px;
+  border-radius:50%;background:var(--surface-2);border:1.5px dashed var(--rule);overflow:hidden}
+.dresssheet .wthumb i{font-size:18px;font-style:normal;opacity:.6}
+.dresssheet .wthumb svg{width:100%;height:100%}
+.dresssheet .wslot.worn .wthumb{border-style:solid;border-color:var(--rule-soft);background:var(--surface)}
+.dresssheet .wslot.on .wthumb{border-color:var(--primary);border-width:2px;border-style:solid;
+  box-shadow:0 0 0 3px color-mix(in srgb,var(--primary) 18%,transparent)}
+.dresssheet .wslot.on{color:var(--fg)}
+.dresssheet .wslot u{text-decoration:none;font-size:10.5px;font-weight:600;white-space:nowrap}
+.dresssheet .wsep{flex:0 0 1px;background:var(--rule-soft);margin:4px 4px 18px}
+
+.dresssheet .wbody{flex:1 1 auto;overflow-y:auto;padding:10px 14px 4px}
+/* a ribbon per collection, so a slot reads as named wardrobes not one long list */
+.dresssheet .wrib{display:flex;align-items:center;justify-content:space-between;gap:8px;
+  margin:12px 0 7px;padding:5px 11px;border-radius:999px;
+  background:linear-gradient(90deg,var(--soft),transparent);border-left:3px solid var(--accent)}
+.dresssheet .wrib b{font-size:12.5px;color:var(--accent)}
+.dresssheet .wrib span{font-size:11px;color:var(--muted);white-space:nowrap}
+.dresssheet .wgrid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}
+@media (min-width:520px){.dresssheet .wgrid{grid-template-columns:repeat(4,1fr)}}
+.dresssheet .wgrid.sky{grid-template-columns:repeat(2,1fr)}
+@media (min-width:520px){.dresssheet .wgrid.sky{grid-template-columns:repeat(3,1fr)}}
+
+.wtile{position:relative;display:flex;flex-direction:column;align-items:center;gap:5px;
+  background:var(--surface-2);border:1px solid var(--rule-soft);border-radius:15px;
+  padding:9px 6px 8px;font:inherit;color:inherit;cursor:pointer;transition:transform .12s ease,box-shadow .12s ease}
+.wtile:active{transform:scale(.97)}
+.wtile b{font-size:11.5px;font-weight:600;line-height:1.3;text-align:center}
+.wtile .wart{display:flex;align-items:center;justify-content:center;width:100%;height:56px;
+  border-radius:11px;background:radial-gradient(circle at 50% 38%,var(--soft,var(--surface)),transparent 72%)}
+.wtile .wart svg{max-width:100%;max-height:56px;width:auto;height:auto}
+.wtile.on{border-color:var(--primary);border-width:1.5px;background:var(--surface);
+  box-shadow:0 2px 12px color-mix(in srgb,var(--primary) 16%,transparent)}
+.wtile.locked{border-style:dashed}
+.wtile.locked .wart{opacity:.62}
+.wtile .won{position:absolute;top:6px;left:7px;color:var(--primary);font-weight:700;font-size:12.5px}
+.wtile .wbadge{position:absolute;top:5px;right:6px;font-size:10.5px;border-radius:999px;padding:1px 5px;line-height:1.5}
+.wtile .wbadge.plus{background:var(--tag-gold-bg);color:var(--gold-deep)}
+.wtile .wbadge.pro{background:#3B2A5E;color:#FFF3C4}
+/* the shimmer that marks a piece somebody does not own yet */
+.wtile.locked .wart::after{content:'';position:absolute;inset:0;border-radius:11px;pointer-events:none;
+  background:linear-gradient(105deg,transparent 40%,rgba(255,255,255,.5) 50%,transparent 60%);
+  background-size:280% 100%;animation:wshine 3.4s ease-in-out infinite}
+.wtile .wart{position:relative;overflow:hidden}
+@keyframes wshine{0%{background-position:150% 0}55%,100%{background-position:-60% 0}}
+@media (prefers-reduced-motion:reduce){.wtile.locked .wart::after{animation:none;opacity:.25}}
+
+/* a sky tile is the real home under the real sky, so the choice is honest */
+/* A sky tile has to show the sky. The homes are drawn xMidYMax slice, so a wide
+   short box crops to the floor of the scene and every sky looked the same -
+   which is what the first UI pass showed. Nearly square, and the sky is back. */
+.wtile .wscene{position:relative;width:100%;height:112px;border-radius:11px;overflow:hidden;background:var(--surface)}
+.wtile .wscene svg{position:absolute;inset:0;width:100%;height:100%}
+/* Effects are stars, motes and fireflies. On the pale tile ground they were
+   invisible, which made the one Pro-only tab look empty - so the effect gets
+   the night it is drawn for. */
+.wtile .fxbox{background:radial-gradient(circle at 50% 38%,#4A3E80,#241B4A 78%)}
+.wtile .fxbox svg{width:100%;height:100%}
+.wtile.fxtile.locked .wart{opacity:.9}
+
+.dresssheet .wfoot{position:sticky;bottom:0;background:var(--surface);border-top:1px solid var(--rule-soft);
+  padding:9px 14px calc(12px + env(safe-area-inset-bottom))}
+.dresssheet .wlooks{display:flex;align-items:center;gap:7px;margin-bottom:8px;overflow-x:auto;scrollbar-width:none}
+.dresssheet .wlooks::-webkit-scrollbar{display:none}
+.dresssheet .wlooks .lbl{font-size:11.5px;color:var(--muted);white-space:nowrap}
+.dresssheet .wlook{display:flex;flex-direction:column;align-items:center;gap:1px;flex:0 0 auto}
+.dresssheet .wlook .btn.small{padding:3px 10px;font-size:11.5px;min-width:52px}
+.dresssheet .wlook .linkbtn{font-size:10.5px}
+.dresssheet .wacts{gap:6px}
+.dresssheet .wacts .btn{font-size:12px;padding:8px 6px}
+
+/* the burst when a piece goes on */
+.wsparks{position:absolute;inset:0;pointer-events:none;z-index:6}
+.wsparks i{position:absolute;font-style:normal;font-size:15px;opacity:0;animation:wspark .95s ease-out forwards}
+@keyframes wspark{0%{opacity:0;transform:scale(.4) translateY(4px)}35%{opacity:1;transform:scale(1.1) translateY(-4px)}100%{opacity:0;transform:scale(.9) translateY(-16px)}}
+@media (prefers-reduced-motion:reduce){.wsparks{display:none}}
+
 .coats{justify-content:center}
 .coat{width:34px;height:34px;border-radius:50%;border:2px solid var(--rule);cursor:pointer;font-size:13px;line-height:1;padding:0}
 .coat.on{border-color:var(--primary);box-shadow:0 0 0 2px var(--primary) inset}
