@@ -282,7 +282,7 @@ const WEAR_ART = {
   sleepcap: () => '<path d="M34 38 Q36 14 58 10 Q78 7 93 3 Q84 19 76 38 Z" fill="#C9B0EA"/>'
     + wRibs('M46 14 v23 M60 11 v26', '#DCCBF5', 1.6)
     + '<path d="M31 37 q26 8 50 0 q2 6 -1 9 q-24 7 -48 0 q-3 -3 -1 -9 Z" fill="#F1E9FF"/>'
-    + '<circle cx="95" cy="2" r="5.6" fill="#FFF7EE"/>',
+    + '<circle cx="93" cy="7" r="5.6" fill="#FFF7EE"/>',
   hat: () => '<ellipse cx="60" cy="34" rx="30" ry="7" fill="#E8CFA0"/><path d="M38 34 L60 6 L82 34 Z" fill="#F0DFC8" stroke="#C6A98A" stroke-width="1.6"/>'
     + '<path d="M46 28 q14 -6 28 0" fill="none" stroke="#C6A98A" stroke-width="1.4"/>'
     + '<path d="M60 8 A9 9 0 1 0 60 26 A7 7 0 1 1 60 8 Z" fill="#E5BE5E"/>',
@@ -623,7 +623,7 @@ Object.assign(WEAR_ART, {
     + '<path d="M35 90 q25 9 50 0 q1 3 2 5 q-27 9 -53 0 q0 -2 1 -5 Z" fill="#F7A9C6"/>'
     + '<path d="M40 112 q24 8 46 0" fill="none" stroke="#E5BE5E" stroke-width="1.8"/>'
     + '<path d="M84 94 q10 14 6 26 q-7 -1 -8 -8 Z" fill="#F7A9C6" opacity=".85"/>',
-  hakama: () => '<path d="M31 92 q29 9 58 0 q7 14 5 27 q-32 7 -68 0 q-2 -13 5 -27 Z" fill="#3A4E78"/>'
+  hakama: () => '<path d="M31 92 q29 9 58 0 q7 13 5 24 q-32 7 -68 0 q-2 -11 5 -24 Z" fill="#3A4E78"/>'
     /* box pleats: wide flat panels with a hard shadow between, not thin lines */
     + '<g fill="#2E3E60" opacity=".55"><path d="M45 95 h4 v22 h-4 Z"/><path d="M58 97 h4 v21 h-4 Z"/><path d="M71 95 h4 v22 h-4 Z"/></g>'
     + '<rect x="33" y="88" width="54" height="8" rx="2" fill="#6E8FBD"/>'
@@ -637,17 +637,17 @@ Object.assign(WEAR_ART, {
      be the same edge in two greens */
   leafskirt: () => '<path d="M35 92 q25 9 50 0 q2 8 1 13 q-26 7 -52 0 q-1 -5 1 -13 Z" fill="#5E9E76"/>'
     + '<g fill="#7FBF95">'
-    + [34, 45, 56, 67, 78].map((x, i) => '<path d="M' + x + ' 102 l6.5 ' + (16 + (i % 2) * 6) + ' l6.5 -' + (16 + (i % 2) * 6) + ' Z"/>').join('')
+    + [34, 45, 56, 67, 78].map((x, i) => '<path d="M' + x + ' 101 l6.5 ' + (12 + (i % 2) * 4) + ' l6.5 -' + (12 + (i % 2) * 4) + ' Z"/>').join('')
     + '</g>'
     + '<g fill="none" stroke="#3E7A58" stroke-width="0.9">'
-    + [42, 53, 64, 75, 86].map((x, i) => '<path d="M' + x + ' 103 v' + (13 + (i % 2) * 5) + '"/>').join('')
+    + [42, 53, 64, 75, 86].map((x, i) => '<path d="M' + x + ' 102 v' + (11 + (i % 2) * 4) + '"/>').join('')
     + '</g>'
     + '<path d="M35 92 q25 9 50 0 q0 3 0 5 q-25 8 -50 0 q0 -2 0 -5 Z" fill="#96D3AB"/>',
-  snowpuff: () => '<path d="M33 90 q27 10 54 0 q5 14 1 25 q-28 7 -56 0 q-4 -11 1 -25 Z" fill="#AFCEDF"/>'
+  snowpuff: () => '<path d="M33 90 q27 10 54 0 q5 12 1 21 q-28 7 -56 0 q-4 -9 1 -21 Z" fill="#AFCEDF"/>'
     /* quilted rolls, matching the puffer coat it is worn with */
     + '<g fill="#CFE4EE"><path d="M34 92 q26 9 52 0 q1 5 0 9 q-26 8 -52 0 q-1 -4 0 -9 Z"/>'
     + '<path d="M35 105 q25 8 50 0 q0 5 -1 8 q-24 7 -48 0 q-1 -3 -1 -8 Z"/></g>'
-    + wScallop(116, 32, 88, 8, 5.2, '#FFFFFF')
+    + wScallop(113, 32, 88, 8, 5.2, '#FFFFFF')
     + '<path d="M33 90 q27 10 54 0 q0 2 0 4 q-27 9 -54 0 q0 -2 0 -4 Z" fill="#EAF2FA"/>',
   denimskirt: () => '<path d="M38 92 q22 9 44 0 q3 10 1 17 l-48 0 q-2 -7 1 -17 Z" fill="#6E8FBD"/>'
     + '<path d="M35 92 q25 9 50 0 q0 4 0 6 q-25 8 -50 0 q0 -2 0 -6 Z" fill="#4A6FA8"/>'
@@ -694,11 +694,11 @@ Object.assign(WEAR_ART, {
   fringe: () => '<path d="M31 104 q29 9 58 0 q0 4 -1 6 q-28 8 -56 0 q-1 -2 -1 -6 Z" fill="#C94C6C"/>'
     + '<g stroke="#F5A6BF" stroke-width="1.8" stroke-linecap="round">'
     + [34, 40, 46, 52, 58, 64, 70, 76, 82, 88].map((x, i) =>
-      '<path d="M' + x + ' 110 v' + (9 + (i % 3) * 5) + '"/>').join('')
+      '<path d="M' + x + ' 109 v' + (5 + (i % 3) * 3) + '"/>').join('')
     + '</g>',
   goldthread: () => '<path d="M32 105 q28 8 56 0" fill="none" stroke="#E5BE5E" stroke-width="2.4"/>'
     + '<path d="M34 110 l6 -5 6 5 6 -5 6 5 6 -5 6 5 6 -5 6 5" fill="none" stroke="#E5BE5E" stroke-width="1.8" stroke-linejoin="round"/>'
-    + '<g>' + wTassel(40, 112, '#C6485C') + wTassel(60, 114, '#C6485C') + wTassel(80, 112, '#C6485C') + '</g>',
+    + '<g>' + wTassel(40, 109, '#C6485C') + wTassel(60, 111, '#C6485C') + wTassel(80, 109, '#C6485C') + '</g>',
   bells: () => '<path d="M31 105 q29 9 58 0" fill="none" stroke="#C6485C" stroke-width="2.2"/>'
     + [37, 49, 60, 71, 83].map((x, i) => {
       const y = 110 + (i % 2) * 3;
@@ -730,8 +730,8 @@ Object.assign(WEAR_ART, {
   /* the only hem that hangs in long points; everything else is a band */
   feathertrim: () => '<path d="M31 104 q29 9 58 0" fill="none" stroke="#D9C7F2" stroke-width="2.2"/>'
     + '<g>' + [35, 43, 51, 59, 67, 75, 83].map((x, i) =>
-      '<path d="M' + x + ' 106 q4.4 ' + (7 + (i % 2) * 3) + ' 0 ' + (16 + (i % 2) * 6)
-      + ' q-4.4 -' + (9 + (i % 2) * 3) + ' 0 -' + (16 + (i % 2) * 6) + ' Z" fill="'
+      '<path d="M' + x + ' 105 q4.4 ' + (5 + (i % 2) * 2) + ' 0 ' + (10 + (i % 2) * 4)
+      + ' q-4.4 -' + (6 + (i % 2) * 2) + ' 0 -' + (10 + (i % 2) * 4) + ' Z" fill="'
       + (i % 2 ? '#FFFDF8' : '#F1E9FF') + '" stroke="#D9C7F2" stroke-width="0.8"/>').join('') + '</g>',
   brocade: () => '<path d="M31 104 q29 9 58 0 q1 7 -1 12 q-28 7 -56 0 q-2 -5 -1 -12 Z" fill="#C6485C"/>'
     + '<path d="M31 104 q29 9 58 0 q0 3 0 4 q-29 8 -58 0 q0 -1 0 -4 Z" fill="#E5BE5E"/>'
@@ -802,10 +802,10 @@ Object.assign(WEAR_ART, {
   /* long, narrow and see-through, where the butterfly's are broad and opaque */
   dragonflywings: () => {
     const pair = (flip) => '<g transform="translate(' + (flip ? 72 : 48) + ',78)' + (flip ? ' scale(-1,1)' : '') + '">'
-      + '<ellipse cx="-24" cy="-8" rx="26" ry="6.5" fill="#CFE4EE" opacity=".62" stroke="#9EC2F0" stroke-width="1" transform="rotate(-14)"/>'
-      + '<ellipse cx="-22" cy="6" rx="23" ry="5.5" fill="#EAF2FA" opacity=".62" stroke="#9EC2F0" stroke-width="1" transform="rotate(12)"/>'
+      + '<ellipse cx="-22" cy="-8" rx="23" ry="6.5" fill="#CFE4EE" opacity=".62" stroke="#9EC2F0" stroke-width="1" transform="rotate(-14)"/>'
+      + '<ellipse cx="-20" cy="6" rx="20" ry="5.5" fill="#EAF2FA" opacity=".62" stroke="#9EC2F0" stroke-width="1" transform="rotate(12)"/>'
       + '<g stroke="#9EC2F0" stroke-width="0.6" opacity=".8">'
-      + '<path d="M-46 -14 q22 4 42 0 M-44 -4 q22 4 40 0" transform="rotate(-14)"/></g></g>';
+      + '<path d="M-40 -13 q19 4 36 0 M-38 -4 q19 4 34 0" transform="rotate(-14)"/></g></g>';
     return '<g class="wingpair">' + pair(false) + pair(true) + '</g>';
   },
   parasol: () => '<path d="M66 96 L86 50" stroke="#8F4A38" stroke-width="2.4" stroke-linecap="round"/>'

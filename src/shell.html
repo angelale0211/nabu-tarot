@@ -1848,7 +1848,13 @@ html,body{overscroll-behavior-y:contain}
    here animates transform or opacity and nothing else: a filter would force the
    whole drawing to rasterise, which is the fault the pet art comments record. */
 .petstage .petsky{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:2}
-.petstage .petart{position:relative;z-index:3}
+/* Only the stacking order. An earlier version of this line also said
+   position:relative, which has the same specificity as the rule above that
+   places the companion and comes after it - so it won, the companion stopped
+   being positioned at all and flowed to the top-left corner of its stage, on
+   the companion screen as well as in the wardrobe preview. Set nothing here
+   that the placement rule owns. */
+.petstage .petart{z-index:3}
 .petfx{pointer-events:none}
 @keyframes skfall{0%{transform:translateY(0)}100%{transform:translateY(256px)}}
 @keyframes sksway{0%,100%{transform:translateX(-6px)}50%{transform:translateX(6px)}}
@@ -1905,6 +1911,12 @@ html,body{overscroll-behavior-y:contain}
 .dresssheet .wpreview{display:flex;gap:12px;align-items:center}
 .dresssheet .wpreview .petstage{position:relative;flex:0 0 132px;width:132px;height:132px;
   border-radius:16px;overflow:hidden;box-shadow:0 3px 14px rgba(60,40,90,.16)}
+/* On the companion screen the companion stands left of centre because every
+   home is drawn with its building on the right. The preview is not that scene -
+   it is a mirror, and the only thing in it that matters is what is being worn -
+   so here it stands in the middle. Placed with `left` rather than a transform,
+   because the idle animation owns transform on this element. */
+.dresssheet .wpreview .petstage .petart{left:16%}
 .dresssheet .wmeta{display:flex;flex-direction:column;gap:3px;min-width:0}
 .dresssheet .wname{font-weight:700;font-size:14px}
 .dresssheet .wcount{font-size:12.5px;color:var(--muted)}
