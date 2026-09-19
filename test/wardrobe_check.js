@@ -50,7 +50,7 @@ const ok = (cond, label, detail) => {
 const W = sandbox.PET_WARDROBE, SLOTS = sandbox.PET_SLOT_IDS;
 
 console.log('\ncatalogue');
-ok(W.length === 69, 'sixty-nine pieces', 'found ' + W.length);
+ok(W.length === 89, 'eighty-nine pieces', 'found ' + W.length);
 const ids = W.map((x) => x.id);
 const dupes = ids.filter((v, i) => ids.indexOf(v) !== i);
 ok(!dupes.length, 'every id unique', dupes.join(', '));
@@ -66,8 +66,8 @@ ok(!missing.length, 'every piece is named in vi, en and de', missing.map((x) => 
 console.log('\ntier split');
 const by = (t) => W.filter((x) => x.tier === t).length;
 ok(by('free') === 2, 'two free pieces', String(by('free')));
-ok(by('plus') === 44, 'forty-four with Plus', String(by('plus')));
-ok(by('pro') === 23, 'twenty-three with Pro', String(by('pro')));
+ok(by('plus') === 59, 'fifty-nine with Plus', String(by('plus')));
+ok(by('pro') === 28, 'twenty-eight with Pro', String(by('pro')));
 const proCols = {};
 W.filter((x) => x.tier === 'pro').forEach((x) => { proCols[x.col] = 1; });
 ok(Object.keys(proCols).sort().join(',') === 'celestial,guardian,imperial',
@@ -76,7 +76,7 @@ ok(Object.keys(proCols).sort().join(',') === 'celestial,guardian,imperial',
 console.log('\nevery slot is wearable, and has something in it');
 SLOTS.forEach((s) => {
   const n = sandbox.wearIn(s).length;
-  ok(n >= 7, 'slot ' + s + ' has at least seven pieces', String(n));
+  ok(n >= 12, 'slot ' + s + ' offers at least twelve', String(n));
 });
 const freeSlots = {};
 W.filter((x) => x.tier === 'free').forEach((x) => { freeSlots[x.slot] = 1; });
@@ -100,6 +100,50 @@ ok(!filtered.length, 'no piece uses a filter', filtered.map((x) => x.id).join(',
 /* The hem replaced footwear, so no piece may reach for a foot. */
 const footed = W.filter((x) => /class="ft/.test(sandbox.wearDraw(x.id, sandbox.WEAR_DEF)));
 ok(!footed.length, 'no piece draws onto a foot', footed.map((x) => x.id).join(', '));
+
+/* ---- nothing may be a recolour of its neighbour ----
+   The first catalogue had four capes that were one outline in four colours and
+   three skirts that were one rectangle in three. Colour is the cheapest thing
+   to change and the easiest way to fake variety, so the guard ignores it: two
+   pieces are compared on their geometry alone - the path commands and the
+   shapes, with every number rounded and every fill dropped. */
+console.log('\nno piece is a recolour of another');
+const shapeOf = (id) => {
+  const svg = sandbox.wearDraw(id, sandbox.WEAR_DEF);
+  const marks = (svg.match(/<(path|circle|ellipse|rect|g)\b[^>]*>/g) || []).map((tag) => {
+    const d = (tag.match(/\sd="([^"]*)"/) || [, ''])[1];
+    const geo = (tag.match(/\s(c?[xy]|r[xy]?|width|height|transform|points)="([^"]*)"/g) || []).join(' ');
+    return (tag.match(/^<(\w+)/)[1] + ' ' + d + ' ' + geo)
+      .replace(/-?\d+(\.\d+)?/g, (n) => String(Math.round(Number(n) / 3)))  // coarse, so a nudge is not "different"
+      .replace(/\s+/g, ' ').trim();
+  });
+  return marks;
+};
+const overlap = (a, b) => {
+  if (!a.length || !b.length) return 0;
+  const set = new Set(b);
+  let hit = 0;
+  a.forEach((m) => { if (set.has(m)) hit++; });
+  return hit / Math.max(a.length, b.length);
+};
+const shapes = {};
+W.forEach((x) => { shapes[x.id] = shapeOf(x.id); });
+const twins = [];
+SLOTS.forEach((slot) => {
+  const mine = sandbox.wearIn(slot);
+  for (let i = 0; i < mine.length; i++) {
+    for (let j = i + 1; j < mine.length; j++) {
+      const sim = overlap(shapes[mine[i].id], shapes[mine[j].id]);
+      if (sim >= 0.6) twins.push(slot + ': ' + mine[i].id + ' ~ ' + mine[j].id + ' (' + Math.round(sim * 100) + '% same geometry)');
+    }
+  }
+});
+ok(!twins.length, 'no two pieces in a slot reuse the same geometry', twins.join('; '));
+const identical = [];
+W.forEach((a, i) => W.slice(i + 1).forEach((b) => {
+  if (sandbox.wearDraw(a.id, sandbox.WEAR_DEF) === sandbox.wearDraw(b.id, sandbox.WEAR_DEF)) identical.push(a.id + ' = ' + b.id);
+}));
+ok(!identical.length, 'no two pieces anywhere draw exactly the same markup', identical.join(', '));
 
 console.log('\nthe old single wear slot is carried across');
 const OLD = ['none', 'scarf', 'bell', 'crown', 'hat', 'jumper', 'armour', 'cloak', 'wings'];

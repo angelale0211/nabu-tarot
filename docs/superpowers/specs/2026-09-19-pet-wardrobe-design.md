@@ -14,7 +14,8 @@ back for. A second problem is commercial: every paid pet item is gated on
 ## Scope
 
 1. One `wear` slot becomes **seven outfit slots**, worn together.
-2. Roughly **69 items in nine named collections**, tiered free / Plus / Pro.
+2. **89 pieces in nine named collections**, at least twelve in every slot,
+   tiered free / Plus / Pro.
 3. A **backdrop layer** over the existing homes: 9 homes x 10 skies = 90 scenes.
 4. A **Pro-only effects layer**: blinking stars, falling stars and eight more.
 5. A **new wardrobe screen** replacing the flat four-tab sheet.
@@ -140,7 +141,7 @@ between slots where the drawing reads better elsewhere.
 | **Imperial Court** `imperial` | **Pro** | ~7 | dragon robe, phoenix headdress, jade collar, brocade hem |
 | **Guardian** `guardian` | **Pro** | ~7 | gold armour, war helm, war cape, chainmail hem |
 
-Split: 2 free, about 44 Plus, 23 Pro. The three Pro collections are the upgrade
+Split: 2 free, 59 Plus, 28 Pro. The three Pro collections are the upgrade
 argument and are described as legendary in the copy.
 
 Every item keeps the existing inline shape, with names in all three languages:
@@ -295,7 +296,31 @@ probes with screenshots.
   locks, and the right fallbacks when a tier lapses - clothing to nothing, sky
   to `clear`, effect to `none`.
 
-**What was built:** `test/wardrobe_check.js` (57 pure checks, node, no browser),
+**Twelve per slot, and none of them twins.** The first build had 69 pieces and
+as few as seven in a slot, and worse, it repeated itself: four back pieces were
+one cape outline in four colours, three skirts were one band, and every top used
+a single body path with only the decoration changed. The catalogue is now 89
+with a floor of twelve per slot, and the repetition was treated as the real
+fault:
+
+- `test/wardrobe_silhouette.py` renders every piece, throws the colour away and
+  compares each pair by its **outline** - where the ink starts and stops down
+  each column. Area overlap was tried first and was useless: any two skirts
+  cover the same part of the body and score ~0.85 however different they look.
+- The threshold is calibrated against cases known to be wrong, not chosen to
+  pass. The real duplicates scored **0.98-1.00**; garments that merely share a
+  region sit at **0.93-0.96**. The limit is 0.97.
+- The `hem` slot is exempt and says so: every hem is a strip along the same
+  edge, so the profiles agree by construction whatever is drawn between them.
+  Those pairs are settled on the contact sheet by eye.
+- The fix was silhouette, not palette: tops now differ in **length, shoulder
+  width and hem edge** (a cropped jumper, a long cardigan, a flared ink robe, a
+  dragon robe with a train), and the four capes differ by outline before colour.
+
+**What was built:** `test/wardrobe_check.js` (pure checks, node, no browser - including a floor of
+twelve per slot, and a copy-detector that is honest that it catches pasted
+geometry and not resemblance),
+`test/wardrobe_silhouette.py` (the outline comparison described above),
 `test/wardrobe_probe.py` (contact sheets of every piece on a footed, a footless
 and a spirit-beast kind, plus all ten effects and all ten skies) and
 `test/wardrobe_ui.py` (drives the screen at all three tiers: migration, equip,
