@@ -42,6 +42,47 @@ BOUNDS = """
 }
 """
 
+# The face is drawn before whatever is worn, so anything worn paints over it.
+# The mouth is the path "M56 64 q4 4 8 0" with a 2.4 stroke, which occupies
+# roughly x 55-65, y 63-67; the eyes sit at y 54. A neckline that rises into
+# that band gags the companion, and it is easy to do by accident because a
+# quadratic bulges well above the two points you wrote down.
+MOUTH = """
+(box) => {
+  const out = [];
+  const cv = document.createElement('canvas');
+  cv.width = 120; cv.height = 120;
+  const ctx = cv.getContext('2d', { willReadFrequently: true });
+  const load = (svg) => new Promise((res) => {
+    const img = new Image();
+    img.onload = () => res(img); img.onerror = () => res(null);
+    img.src = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(
+      '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" width="120" height="120">' + svg + '</svg>');
+  });
+  return (async () => {
+    for (const item of window.NABU.PET_WARDROBE) {
+      /* a mask is supposed to be on the face, and a hat may reach the brow */
+      /* a mask belongs on the face, a hat may reach the brow, and the back
+         slot is drawn BEHIND the companion so it is covered by the head, not
+         the other way round - rendering it alone here would accuse it wrongly */
+      if (item.slot === 'face' || item.slot === 'head' || item.slot === 'back') continue;
+      const img = await load(window.NABU.wearDraw(item.id, window.NABU.WEAR_DEF));
+      ctx.clearRect(0, 0, 120, 120);
+      if (img) ctx.drawImage(img, 0, 0, 120, 120);
+      const px = ctx.getImageData(0, 0, 120, 120).data;
+      let hit = 0, highest = 999;
+      for (let y = box.y0; y <= box.y1; y++) {
+        for (let x = box.x0; x <= box.x1; x++) {
+          if (px[(y * 120 + x) * 4 + 3] > 40) { hit++; if (y < highest) highest = y; }
+        }
+      }
+      if (hit) out.push({ id: item.id, slot: item.slot, px: hit, top: highest });
+    }
+    return out;
+  })();
+}
+"""
+
 PLACE = """
 () => {
   const pick = (sel) => document.querySelector(sel);
@@ -105,6 +146,15 @@ def main():
             if b['b'] > 120.5: over.append('%.1f below the bottom' % (b['b'] - 120))
             print('  %-8s %-16s %s' % (b['slot'], b['id'], ', '.join(over)))
             fails.append('%s is clipped (%s)' % (b['id'], ', '.join(over)))
+
+        # --- 1b. does anything worn cover the mouth? ---
+        gagged = page.evaluate(MOUTH, {'x0': 53, 'x1': 67, 'y0': 61, 'y1': 69})
+        print('\npieces painting over the mouth (x 53-67, y 61-69):')
+        if not gagged:
+            print('  none')
+        for g in sorted(gagged, key=lambda z: -z['px']):
+            print('  %-8s %-16s %d px, reaching up to y=%d' % (g['slot'], g['id'], g['px'], g['top']))
+            fails.append('%s covers the mouth (%d px)' % (g['id'], g['px']))
 
         # --- 2. where does the companion sit on the game stage? ---
         game = page.evaluate(PLACE)

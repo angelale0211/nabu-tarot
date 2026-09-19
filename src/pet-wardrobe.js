@@ -473,9 +473,9 @@ Object.assign(WEAR_ART, {
     + '<path d="M46 76 q-5 -5 -1 -8 q6 2 5 8 Z" fill="#7FBF95"/><path d="M74 76 q5 -5 1 -8 q-6 2 -5 8 Z" fill="#7FBF95"/>'
     + [0, 72, 144, 216, 288].map((ang) => '<ellipse cx="60" cy="76.6" rx="2" ry="3.2" fill="#F7A9C6" transform="rotate(' + ang + ' 60 80)"/>').join('')
     + '<circle cx="60" cy="80" r="1.6" fill="#FFE9A8"/>',
-  muffler: () => '<path d="M38 62 q22 12 44 0 l0 26 q-22 10 -44 0 Z" fill="#AFCEDF"/>'
-    + wRibs('M43 65 v24 M51 68 v24 M60 70 v24 M69 68 v24 M77 65 v24', '#8FB4D4', 2.2)
-    + '<path d="M38 62 q22 12 44 0 q0 3 -1 4 q-21 11 -42 0 q-1 -1 -1 -4 Z" fill="#CFE4EE"/>',
+  muffler: () => '<path d="M38 71 q22 12 44 0 l0 22 q-22 10 -44 0 Z" fill="#AFCEDF"/>'
+    + wRibs('M43 74 v21 M51 77 v21 M60 79 v21 M69 77 v21 M77 74 v21', '#8FB4D4', 2.2)
+    + '<path d="M38 71 q22 12 44 0 q0 3 -1 4 q-21 11 -42 0 q-1 -1 -1 -4 Z" fill="#CFE4EE"/>',
   boba: (a) => {
     const y = a.charmY;
     return '<path d="M46 73 q14 9 28 0" fill="none" stroke="#B45FA8" stroke-width="1.6"/>'
@@ -483,7 +483,7 @@ Object.assign(WEAR_ART, {
       + '<path d="M54.6 ' + (y + 2) + ' h10.8 l-1 8 h-8.8 Z" fill="#8F6A52"/>'
       + '<g fill="#3A2A1E"><circle cx="57.4" cy="' + (y + 8) + '" r="1.5"/><circle cx="61" cy="' + (y + 9) + '" r="1.5"/><circle cx="64" cy="' + (y + 8) + '" r="1.5"/></g>'
       + '<rect x="53" y="' + (y - 7) + '" width="14" height="2.8" rx="1.4" fill="#B45FA8"/>'
-      + '<path d="M63 ' + (y - 7) + ' l3 -9" stroke="#E1607F" stroke-width="2.2" stroke-linecap="round"/>';
+      + '<path d="M64 ' + (y - 6) + ' l2 -2" stroke="#E1607F" stroke-width="2.2" stroke-linecap="round"/>';
   },
   comet: (a) => {
     const y = a.charmY;
@@ -519,21 +519,21 @@ Object.assign(WEAR_ART, {
 
 /* ---- top: chest and shoulders, from the body ellipse down ---- */
 Object.assign(WEAR_ART, {
-  jumper: () => '<path d="M31 84 Q29 72 42 69 Q60 65 78 69 Q91 72 89 84 Q91 98 86 106 L34 106 Q29 98 31 84 Z" fill="#E1607F"/>'
-    + '<path d="M40 70 Q60 78 80 70 Q80 76 60 82 Q40 76 40 70 Z" fill="#C94C6C"/>'
+  jumper: () => '<path d="M31 84 Q29 74 42 72 Q60 76 78 72 Q91 74 89 84 Q91 98 86 106 L34 106 Q29 98 31 84 Z" fill="#E1607F"/>'
+    + '<path d="M42 72 Q60 80 78 72 Q78 78 60 84 Q42 78 42 72 Z" fill="#C94C6C"/>'
     + wRibs('M38 88 q22 -6 44 0 M36 96 q24 -6 48 0 M38 104 q22 -5 44 0', '#F5A6BF', 1.6)
     + wRibs('M46 84 v22 M60 82 v26 M74 84 v22', '#C94C6C', 1.4)
     + '<path d="M32 104 h12 v6 h-12 Z M76 104 h12 v6 h-12 Z" fill="#C94C6C"/>',
-  cardigan: () => '<path d="M36 84 Q34 71 45 69 Q60 65 75 69 Q86 71 84 84 Q87 102 81 116 L39 116 Q33 102 36 84 Z" fill="#C9B0EA"/>'
-    + '<path d="M43 69 Q60 77 77 69 Q76 75 60 80 Q44 75 43 69 Z" fill="#9E82D2"/>'
-    + '<path d="M55 79 q-3 16 -1 29 M65 79 q3 16 1 29" stroke="#7C63B8" stroke-width="2" fill="none"/>'
+  cardigan: () => '<path d="M36 84 Q34 74 45 72 Q60 78 75 72 Q86 74 84 84 Q87 102 81 116 L39 116 Q33 102 36 84 Z" fill="#C9B0EA"/>'
+    + '<path d="M43 72 Q60 80 77 72 Q76 78 60 84 Q44 78 43 72 Z" fill="#9E82D2"/>'
+    + '<path d="M55 83 q-3 15 -1 28 M65 83 q3 15 1 28" stroke="#7C63B8" stroke-width="2" fill="none"/>'
     + wRibs('M36 90 q10 -4 18 -4 M66 86 q8 0 18 4', '#DCCBF5', 1.6)
     + '<g fill="#FFF3C4"><circle cx="60" cy="86" r="1.8"/><circle cx="60" cy="96" r="1.8"/><circle cx="60" cy="106" r="1.8"/></g>'
     + '<path d="M39 116 h42" stroke="#9E82D2" stroke-width="2"/>',
-  aodai: () => '<path d="M43 70 Q60 64 77 70 Q80 92 78 118 L60 114 L42 118 Q40 92 43 70 Z" fill="#FBC7DA"/>'
-    + '<path d="M40 70 Q60 64 80 70 Q78 77 60 81 Q42 77 40 70 Z" fill="#F7A9C6"/>'
-    + '<path d="M40 70 Q60 64 80 70 Q79 73 78 75 Q60 70 42 75 Q41 73 40 70 Z" fill="#E5BE5E"/>'
-    + '<path d="M57.6 81 v31 M62.4 81 v31" stroke="#C6485C" stroke-width="1.2"/>'
+  aodai: () => '<path d="M43 73 Q60 79 77 73 Q80 94 78 118 L60 114 L42 118 Q40 94 43 73 Z" fill="#FBC7DA"/>'
+    + '<path d="M41 73 Q60 79 79 73 Q78 80 60 85 Q42 80 41 73 Z" fill="#F7A9C6"/>'
+    + '<path d="M41 73 Q60 79 79 73 Q78 76 77 78 Q60 74 43 78 Q42 76 41 73 Z" fill="#E5BE5E"/>'
+    + '<path d="M57.6 85 v27 M62.4 85 v27" stroke="#C6485C" stroke-width="1.2"/>'
     + '<g fill="#FFF0F5" opacity=".9"><circle cx="49" cy="92" r="2.2"/><circle cx="71" cy="99" r="2.2"/><circle cx="47" cy="105" r="1.8"/></g>'
     + '<path d="M40 112 q20 -5 40 0" fill="none" stroke="#E5BE5E" stroke-width="1.6"/>',
   inkrobe: () => '<path d="M40 76 Q60 69 80 76 Q88 96 92 118 L28 118 Q32 96 40 76 Z" fill="#2E3E60"/>'
@@ -547,16 +547,19 @@ Object.assign(WEAR_ART, {
     + wScallop(98, 38, 82, 6, 5.2, '#F7A9C6')
     + wScallop(90, 40, 80, 5, 4.2, '#FFD9E4')
     + '<circle cx="60" cy="85" r="2.6" fill="#E5BE5E"/>',
-  puffer: () => '<path d="M60 62 Q46 62 44 70 Q26 72 25 84 Q24 96 30 104 L90 104 Q96 96 95 84 Q94 72 76 70 Q74 62 60 62 Z" fill="#AFCEDF"/>'
+  puffer: () => '<path d="M60 72 Q46 70 44 74 Q26 76 25 86 Q24 96 30 104 L90 104 Q96 96 95 86 Q94 76 76 74 Q74 70 60 72 Z" fill="#AFCEDF"/>'
     + '<g fill="#CFE4EE"><path d="M26 80 q34 8 68 0 q1 5 0 8 q-34 8 -68 0 q-1 -3 0 -8 Z"/><path d="M28 96 q32 7 64 0 q0 4 0 8 l-64 0 q0 -4 0 -8 Z"/></g>'
     + wRibs('M26 79 q34 8 68 0 M26 88 q34 8 68 0 M27 96 q33 7 66 0', '#8FB4D4', 1.4)
-    + '<path d="M44 70 q16 8 32 0 q-2 6 -16 8 q-14 -2 -16 -8 Z" fill="#CFE4EE"/>'
+    + '<path d="M44 74 q16 8 32 0 q-2 6 -16 8 q-14 -2 -16 -8 Z" fill="#CFE4EE"/>'
     + '<rect x="58" y="70" width="4" height="34" rx="2" fill="#4A6FA8"/>'
     + '<circle cx="60" cy="74" r="2.4" fill="#EAF2FA"/>',
-  hoodie: () => '<path d="M38 66 Q60 54 82 66 Q90 70 88 82 Q90 100 84 112 L36 112 Q30 100 32 82 Q30 70 38 66 Z" fill="#B45FA8"/>'
-    + '<path d="M38 66 Q60 54 82 66 Q76 80 60 84 Q44 80 38 66 Z" fill="#8F4585"/>'
-    + '<path d="M54 80 q-2 10 -1 16 M66 80 q2 10 1 16" stroke="#FFF7EE" stroke-width="2" fill="none" stroke-linecap="round"/>'
-    + '<circle cx="53" cy="97" r="1.8" fill="#FFF7EE"/><circle cx="67" cy="97" r="1.8" fill="#FFF7EE"/>'
+  hoodie: () => '<path d="M34 74 Q60 80 86 74 Q90 76 88 84 Q90 100 84 112 L36 112 Q30 100 32 84 Q30 76 34 74 Z" fill="#B45FA8"/>'
+    /* the hood, bunched behind the shoulders on either side of the head */
+    + '<path d="M34 74 Q28 60 36 52 Q46 60 46 76 Z" fill="#8F4585"/>'
+    + '<path d="M86 74 Q92 60 84 52 Q74 60 74 76 Z" fill="#8F4585"/>'
+    + '<path d="M34 74 Q60 82 86 74 Q84 80 60 86 Q36 80 34 74 Z" fill="#8F4585"/>'
+    + '<path d="M54 86 q-2 9 -1 14 M66 86 q2 9 1 14" stroke="#FFF7EE" stroke-width="2" fill="none" stroke-linecap="round"/>'
+    + '<circle cx="53" cy="101" r="1.8" fill="#FFF7EE"/><circle cx="67" cy="101" r="1.8" fill="#FFF7EE"/>'
     + '<path d="M44 98 q16 6 32 0 l0 8 q-16 5 -32 0 Z" fill="#9B4E90"/>',
   starrobe: () => '<path d="M38 74 Q60 66 82 74 Q86 90 84 114 L36 114 Q34 90 38 74 Z" fill="#4A3E80"/>'
     + '<path d="M38 76 Q22 88 18 108 Q30 110 36 100 Z" fill="#4A3E80"/>'
