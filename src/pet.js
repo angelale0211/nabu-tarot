@@ -196,19 +196,10 @@ const PET_HOMES = [
   { id: 'lotus', pro: true, add: 12, name: { vi: 'Thủy tạ đầm sen', en: 'Lotus pavilion', de: 'Lotuspavillon' } },
   { id: 'isle', pro: true, add: 12, name: { vi: 'Đảo trời', en: 'Floating isle', de: 'Schwebende Insel' } }
 ];
-const PET_WEARS = [
-  { id: 'none', pro: false, add: 0, name: { vi: 'Để mộc', en: 'Nothing', de: 'Ohne Accessoire' } },
-  { id: 'scarf', pro: true, add: 10, name: { vi: 'Khăn lụa', en: 'Silk scarf', de: 'Seidenschal' } },
-  { id: 'bell', pro: true, add: 10, name: { vi: 'Chuông vàng', en: 'Gold bell', de: 'Goldglöckchen' } },
-  { id: 'crown', pro: true, add: 10, name: { vi: 'Vòng hoa', en: 'Flower crown', de: 'Blumenkranz' } },
-  { id: 'hat', pro: true, add: 10, name: { vi: 'Nón trăng', en: 'Moon hat', de: 'Mondhut' } },
-  /* Clothes rather than accessories: these are worn on the body. */
-  { id: 'jumper', pro: true, add: 10, name: { vi: 'Áo len', en: 'Knitted jumper', de: 'Strickpullover' } },
-  { id: 'cloak', pro: true, add: 10, name: { vi: 'Áo choàng sao', en: 'Star cloak', de: 'Sternenumhang' } },
-  { id: 'armour', pro: true, add: 10, name: { vi: 'Giáp vàng', en: 'Gold armour', de: 'Goldene Rüstung' } },
-  /* The only thing worn behind the companion rather than in front of it. */
-  { id: 'wings', pro: true, add: 10, name: { vi: 'Đôi cánh thần', en: 'Feathered wings', de: 'Federflügel' } }
-];
+/* What there is to wear now lives in pet-wardrobe.js: seven slots worn at once
+   instead of the single one this list used to hold. The nine ids it held are
+   still in the catalogue and are carried into their proper slots the first time
+   a companion is read, so nobody wakes up undressed. */
 /* What gets thrown when the two of you play. */
 const PET_PAT_XP = 4;
 const PET_GROOM_XP = 8;
@@ -239,7 +230,10 @@ const PETS = {
       list = old && PET_KINDS.indexOf(old.kind) > -1 ? [old] : [];
       if (list.length) store.set('nabu-pets', list);
     }
-    return list.filter((p) => p && PET_KINDS.indexOf(p.kind) > -1);
+    /* Seven slots replaced one, so a companion saved before that carries its one
+       piece across here - on the way out of the store, where every reader gets
+       it, rather than in each of the places that draw a companion. */
+    return list.filter((p) => p && PET_KINDS.indexOf(p.kind) > -1).map(fitMigrate);
   },
   save(list) { store.set('nabu-pets', list); },
   put(p) {
@@ -259,13 +253,25 @@ const PETS = {
   changeLeft() { return this.all().length ? Math.max(0, this.changedAt() + PET_CHANGE_GAP - Date.now()) : 0; },
   canChange() { return this.changeLeft() <= 0; },
   changeOn() { const d = new Date(this.changedAt() + PET_CHANGE_GAP); return isoDate(d); },
-  fresh(kind) { return { kind: kind, coat: 'cream', wear: 'none', home: 'mat', food: 'rice', name: '', streak: 0, meals: 0, treats: 0, xp: 0, last: 0, fed: '', pray: '', bless: 0, playDay: '', playN: 0, groomDay: '', groomN: 0 }; },
+  fresh(kind) { return { kind: kind, coat: 'cream', fit: fitBlank(), sky: 'clear', fx: 'none', home: 'mat', food: 'rice', name: '', streak: 0, meals: 0, treats: 0, xp: 0, last: 0, fed: '', pray: '', bless: 0, playDay: '', playN: 0, groomDay: '', groomN: 0 }; },
   /* Anything paid falls back to the free version the day Plus lapses, so a
-     lapsed subscription never leaves a companion looking broken. */
+     lapsed subscription never leaves a companion looking broken. Clothing falls
+     back to an empty slot, the sky to clear and the effect to none. */
   coat(p) { return pickFrom(PET_COATS, p && p.coat, true); },
-  wear(p) { return pickFrom(PET_WEARS, p && p.wear, true); },
+  fit(p) { return fitOf(p); },
+  sky(p) { return skyWorn(p && p.sky); },
+  fx(p) { return fxWorn(p && p.fx); },
   home(p) { return pickFrom(PET_HOMES, p && p.home, true); },
   food(p) { return pickFrom(PET_FOODS, p && p.food, true); },
+  /* Dressing writes one slot and leaves the rest alone. */
+  dress(p, slot, id) {
+    if (!p.fit || typeof p.fit !== 'object') fitMigrate(p);
+    p.fit[slot] = id || 'none';
+    return this.put(p);
+  },
+  strip(p) { p.fit = fitBlank(); return this.put(p); },
+  setSky(p, id) { p.sky = skyOf(id).id; return this.put(p); },
+  setFx(p, id) { p.fx = fxOf(id).id; return this.put(p); },
   fedToday(p) { return !!p && p.fed === isoDate(new Date()); },
   prayedToday(p) { return !!p && p.pray === isoDate(new Date()); },
   /* Everyone may feed a companion several times a day. The wait between two
@@ -278,13 +284,19 @@ const PETS = {
   gain(p) {
     const days = Math.min(10, ((Number(p.streak) || 0) - 1) * 2);
     const food = this.food(p).add ? 8 : 0;
-    const wear = this.wear(p).add ? 4 : 0;
+    /* One slot paid a flat four. Seven slots paying four each would pay
+       twenty-eight and make the wardrobe the fastest way to level, so the
+       outfit is worth four for the first piece and two for each after it, up to
+       a ceiling. See fitGain in pet-wardrobe.js. */
+    const fit = fitGain(this.fit(p));
+    const sky = this.sky(p).id === 'clear' ? 0 : SKY_ADD;
+    const fx = this.fx(p).id === 'none' ? 0 : FX_ADD;
     const home = this.home(p).add ? 5 : 0;
     const coat = this.coat(p).pro ? 3 : 0;
-    const sum = 10 + Math.max(0, days) + food + wear + home + coat;
+    const sum = 10 + Math.max(0, days) + food + fit + sky + fx + home + coat;
     const myth = petIsPro(p.kind) ? MYTH_XP : 1;
-    return { meal: 10, days: Math.max(0, days), food: food, wear: wear, home: home, coat: coat,
-      myth: myth, total: sum * myth };
+    return { meal: 10, days: Math.max(0, days), food: food, wear: fit, sky: sky, fx: fx,
+      home: home, coat: coat, myth: myth, total: sum * myth };
   },
   /* A streak counts one day at a time, however many meals are given that day.
      Feeding pays experience and a few coins; crossing a level pays more. */
@@ -1042,7 +1054,7 @@ const PET_ART = {
   })
 };
 
-function petSVG(kind, coat, mood, wear) {
+function petSVG(kind, coat, mood, fit, fx) {
   const dressed = coat || PET_COATS[0];
   const luck = petLuck(kind);
   const art = (PET_ART[kind] || PET_ART.cat)(dressed);
@@ -1065,66 +1077,16 @@ function petSVG(kind, coat, mood, wear) {
   const charmY = art.charmY || 80;
   const neck = (art.charmY ? '' : '<path d="M42 74 q18 9 36 0" fill="none" stroke="' + luck.ink + '" stroke-width="2.4" stroke-linecap="round" opacity=".9"/>')
     + '<circle cx="60" cy="' + charmY + '" r="6.4" fill="' + luck.ink + '"/><circle cx="60" cy="' + charmY + '" r="3" fill="' + luck.aura + '"/>';
-  /* Almost everything worn goes in front of the companion. Wings do not, so
-     there is a second slot for what belongs behind it. */
-  let worn = '', wornBack = '';
-  const w = (wear && wear.id) || 'none';
-  if (w === 'scarf') {
-    worn = '<path d="M38 72 q22 14 44 0 q2 8 -4 12 q-18 9 -36 0 q-6 -4 -4 -12 Z" fill="#E1607F"/>'
-      + '<path d="M74 82 q10 8 6 20 q-8 2 -12 -4 Z" fill="#C94C6C"/>';
-  } else if (w === 'bell') {
-    worn = '<circle cx="60" cy="' + charmY + '" r="6.4" fill="#E5BE5E" stroke="#B9913B" stroke-width="1.4"/>'
-      + '<path d="M55 ' + charmY + ' h10" stroke="#B9913B" stroke-width="1.4"/><circle cx="60" cy="' + (charmY + 4) + '" r="1.6" fill="#8A6B22"/>';
-  } else if (w === 'crown') {
-    const bud = (x, y, col) => [0, 72, 144, 216, 288].map((a) => '<ellipse cx="' + x + '" cy="' + (y - 3.4) + '" rx="2.2" ry="3.4" fill="' + col + '" transform="rotate(' + a + ' ' + x + ' ' + y + ')"/>').join('') + '<circle cx="' + x + '" cy="' + y + '" r="1.6" fill="#FFE9A8"/>';
-    worn = '<path d="M34 36 Q60 22 86 36" fill="none" stroke="#8FBF7F" stroke-width="2.4"/>'
-      + bud(38, 35, '#F7A9C6') + bud(52, 28, '#FFF3C4') + bud(68, 28, '#F7A9C6') + bud(82, 35, '#C9B0EA');
-  } else if (w === 'hat') {
-    worn = '<ellipse cx="60" cy="34" rx="30" ry="7" fill="#E8CFA0"/><path d="M38 34 L60 6 L82 34 Z" fill="#F0DFC8" stroke="#C6A98A" stroke-width="1.6"/>'
-      + '<path d="M46 28 q14 -6 28 0" fill="none" stroke="#C6A98A" stroke-width="1.4"/>'
-      + '<path d="M60 8 A9 9 0 1 0 60 26 A7 7 0 1 1 60 8 Z" fill="#E5BE5E"/>';
-  } else if (w === 'jumper') {
-    // A jumper covers the chest and the shoulders, with a rolled collar and cuffs.
-    worn = '<path d="M32 84 Q30 72 42 70 Q60 66 78 70 Q90 72 88 84 Q90 100 84 108 L36 108 Q30 100 32 84 Z" fill="#E1607F"/>'
-      + '<path d="M40 70 Q60 78 80 70 Q80 76 60 82 Q40 76 40 70 Z" fill="#C94C6C"/>'
-      + '<g stroke="#F5A6BF" stroke-width="1.6" fill="none" opacity=".85">'
-      + '<path d="M38 88 q22 -6 44 0 M36 96 q24 -6 48 0 M38 104 q22 -5 44 0"/></g>'
-      + '<g stroke="#C94C6C" stroke-width="1.4" fill="none" opacity=".7"><path d="M46 84 v22 M60 82 v26 M74 84 v22"/></g>'
-      + '<path d="M32 104 h12 v6 h-12 Z M76 104 h12 v6 h-12 Z" fill="#C94C6C"/>';
-  } else if (w === 'cloak') {
-    // A cloak hangs from the shoulders and spreads behind the feet.
-    worn = '<path d="M34 74 Q22 96 20 116 L100 116 Q98 96 86 74 Q60 84 34 74 Z" fill="#4A3E80"/>'
-      + '<path d="M34 74 Q26 92 24 112 L44 112 Q40 92 42 76 Z" fill="#5E4F9E" opacity=".8"/>'
-      + '<path d="M86 74 Q94 92 96 112 L76 112 Q80 92 78 76 Z" fill="#5E4F9E" opacity=".8"/>'
-      + '<path d="M34 74 Q60 84 86 74 Q88 68 82 66 Q60 74 38 66 Q32 68 34 74 Z" fill="#E5BE5E"/>'
-      + '<g fill="#FFF3C4"><circle cx="36" cy="96" r="1.8"/><circle cx="52" cy="106" r="1.4"/><circle cx="70" cy="98" r="1.6"/><circle cx="86" cy="108" r="1.5"/><circle cx="60" cy="90" r="1.3"/></g>'
-      + '<circle cx="60" cy="72" r="5" fill="#E5BE5E"/><circle cx="60" cy="72" r="2.2" fill="#4A3E80"/>';
-  } else if (w === 'armour') {
-    // Plate over the chest, pauldrons on the shoulders.
-    worn = '<path d="M38 76 Q60 70 82 76 Q86 92 80 108 L40 108 Q34 92 38 76 Z" fill="#EDD08A"/>'
-      + '<path d="M38 76 Q60 70 82 76 Q80 82 60 86 Q40 82 38 76 Z" fill="#D4B25F"/>'
-      + '<g stroke="#B9913B" stroke-width="1.5" fill="none"><path d="M42 92 q18 -6 36 0 M42 100 q18 -6 36 0 M60 86 v22"/></g>'
-      + '<path d="M30 74 q10 -8 18 -2 q-4 10 -18 10 Z" fill="#EDD08A" stroke="#B9913B" stroke-width="1.2"/>'
-      + '<path d="M90 74 q-10 -8 -18 -2 q4 10 18 10 Z" fill="#EDD08A" stroke="#B9913B" stroke-width="1.2"/>'
-      + '<path d="M60 88 l5 7 -5 7 -5 -7 Z" fill="#FFF3C4"/>';
-  } else if (w === 'wings') {
-    /* Each wing is a fan of long feathers turned about the shoulder, so it
-       opens the way a wing does instead of sitting there as a flat shape. The
-       beat lives on a group with no transform of its own: put it on one that
-       is already placed and the placement is thrown away. */
-    const fan = (flip) => {
-      /* [angle out from upright, how far the feather reaches]. An ellipse
-         standing on the shoulder has its centre at half that and its radius at
-         half that; giving it the whole length for both made every feather
-         twice as long as the table says, and the outer ones left the frame. */
-      const feath = [[-70, 42], [-56, 48], [-42, 50], [-28, 44], [-15, 34]].map((f, i) =>
-        '<ellipse cx="0" cy="' + (-f[1] / 2) + '" rx="8" ry="' + (f[1] / 2) + '" fill="' + (i % 2 ? '#FFFDF8' : '#F1E9FF')
-        + '" stroke="#D9C7F2" stroke-width="1" transform="rotate(' + f[0] + ')"/>').join('');
-      return '<g transform="translate(' + (flip ? 68 : 52) + ',84)' + (flip ? ' scale(-1,1)' : '') + '">' + feath + '</g>';
-    };
-    wornBack = '<g class="wingpair">' + fan(false) + fan(true) + '</g>';
-    worn = '<circle cx="60" cy="80" r="4.6" fill="#E5BE5E"/><circle cx="60" cy="80" r="2" fill="#FFF3C4"/>';
-  }
+  /* What is worn is drawn by the wardrobe, in two passes: the back slot belongs
+     behind the companion, the other six in front of it. This used to be nine
+     hard-coded branches for one slot; it is now a table in pet-wardrobe.js and
+     the drawings find this creature's own eyes and throat rather than the
+     average of eighteen of them. */
+  const fitNow = fit || fitBlank();
+  const drawn = fitDraw(fitNow, wearAnchors(art));
+  const worn = drawn.front, wornBack = drawn.back;
+  /* The Pro effect, also in two passes, and also around whatever is worn. */
+  const fxNow = petFxSVG(fx && fx.id ? fx.id : (fx || 'none'));
   const headShape = art.headPath
     ? '<path d="' + art.headPath + '" fill="' + c.body + '"/>'
     : '<ellipse cx="60" cy="56" rx="' + hRX + '" ry="' + hRY + '" fill="' + c.body + '"/>';
@@ -1151,17 +1113,17 @@ function petSVG(kind, coat, mood, wear) {
      it, so it stays part of the set. */
   if (art.only) {
     return '<svg viewBox="0 0 120 120" class="petart' + (art.glow ? ' myth' : '') + '" role="img" aria-label="' + esc(L(PET_NAMES[kind])) + '">'
-      + (art.noHalo ? '' : halo) + '<ellipse cx="60" cy="112" rx="32" ry="6" fill="#C9A5D8" opacity=".28"/>'
-      + wornBack + art.only + (art.noCharm ? '' : neck) + worn + '</svg>';
+      + (art.noHalo ? '' : halo) + fxNow.back + '<ellipse cx="60" cy="112" rx="32" ry="6" fill="#C9A5D8" opacity=".28"/>'
+      + wornBack + art.only + (art.noCharm ? '' : neck) + worn + fxNow.front + '</svg>';
   }
   return '<svg viewBox="0 0 120 120" class="petart' + (art.glow ? ' myth' : '') + '" role="img" aria-label="' + esc(L(PET_NAMES[kind])) + '">'
-    + halo
+    + halo + fxNow.back
     + '<ellipse cx="60" cy="112" rx="32" ry="6" fill="#C9A5D8" opacity=".28"/>'
     + (art.behind || '') + wornBack
     + '<ellipse cx="60" cy="88" rx="' + bRX + '" ry="' + bRY + '" fill="' + c.body + '"/>'
     + '<ellipse cx="60" cy="92" rx="' + (bRX * 0.6).toFixed(1) + '" ry="' + (bRY * 0.61).toFixed(1) + '" fill="#FFF7EE" opacity=".5"/>'
     + (art.feet === false ? '' : '<ellipse class="ft" cx="38" cy="104" rx="8" ry="5" fill="' + c.dark + '"/><ellipse class="ft wav" cx="82" cy="104" rx="8" ry="5" fill="' + c.dark + '"/>')
-    + (art.overBody || '') + (art.ears || '') + headed + neck + worn
+    + (art.overBody || '') + (art.ears || '') + headed + neck + worn + fxNow.front
     + '</svg>';
 }
 
@@ -1217,7 +1179,9 @@ function renderPet(want) {
   /* Every way to earn, as one table of two columns. A locked line still shows
      what it would be worth, because that is the case for Plus. */
   const earnGrid = (p) => {
-    const gain = PETS.gain(p), pro = proOn(), myth = petIsPro(p.kind) ? MYTH_XP : 1;
+    const gain = PETS.gain(p), pro = proOn(), plus = plusOn(), myth = petIsPro(p.kind) ? MYTH_XP : 1;
+    /* The outfit line shows what it is paying now rather than a fixed figure,
+       because with seven slots that number is something the visitor changes. */
     const rows = [
       ['🍚', S.earnMeal, 10 * myth, false],
       ['🔥', S.earnStreak, gain.days ? gain.days : 2 * myth, false],
@@ -1226,7 +1190,9 @@ function renderPet(want) {
       ['✋', S.earnPat, PET_PAT_XP, false],
       ['🙏', S.earnPray, 6, false],
       ['🍡', S.earnGood, 8 * myth, !pro],
-      ['👑', S.earnWear, 4 * myth, !pro],
+      ['👑', S.earnWear, (gain.wear || FIT_FIRST) * myth, !plus],
+      ['🌤️', S.earnSky, SKY_ADD * myth, !plus],
+      ['✨', S.earnFx, FX_ADD * myth, !pro],
       ['🏠', S.earnHome, 5 * myth, !pro],
       ['🎨', S.earnCoat, 3 * myth, !pro]
     ];
@@ -1246,9 +1212,9 @@ function renderPet(want) {
     const st = PETS.step(p), gain = PETS.gain(p), pro = proOn(), ready = PETS.canFeed(p);
     const bless = prayed ? PETS.blessing(p) : null;
     return '<div class="card petwrap luck-' + luck.id + '">'
-      + '<div class="petstage" id="petstage">' + petHomeSVG(PETS.home(p).id) + petAuraHTML(p.kind) + petSVG(p.kind, coat, ready ? '' : 'happy', PETS.wear(p))
+      + '<div class="petstage" id="petstage">' + petHomeSVG(PETS.home(p).id) + petSkySVG(PETS.sky(p).id) + petAuraHTML(p.kind) + petSVG(p.kind, coat, ready ? '' : 'happy', PETS.fit(p), PETS.fx(p))
       + '<span class="crumbs" id="crumbs"></span><span class="toys" id="toys"></span><span class="pats" id="pats"></span>'
-      + '<span class="stagebtns left">' + stageBtn('food', '🍚', S.petFoodTitle) + stageBtn('wear', '👑', S.petWearTitle) + '</span>'
+      + '<span class="stagebtns left">' + stageBtn('food', '🍚', S.petFoodTitle) + '<button type="button" class="stagebtn" id="opendress" aria-label="' + esc(S.wardrobeTitle) + '"><span class="ic">👑</span><span class="lb">' + esc(S.wardrobeTitle) + '</span></button></span>'
       + '<span class="stagebtns right">' + stageBtn('home', '🏠', S.petHomeShort) + stageBtn('coat', '🎨', S.petCoat) + '</span>'
       + (ready ? '<span class="foodchip" id="foodchip" title="' + esc(S.petDragFood) + '">' + PETS.food(p).sym + '</span>' : '')
       + '</div>'
@@ -1288,7 +1254,7 @@ function renderPet(want) {
   const shelfRows = (set, chosenId, key, label) => '<div class="shelf">' + set.map((x) => {
     const locked = x.pro && !proOn();
     return '<button type="button" class="sh' + (chosenId === x.id ? ' on' : '') + (locked ? ' locked' : '') + '" data-shelf="' + key + ':' + x.id + '">'
-      + '<span class="shart">' + (label === 'food' ? x.sym : (label === 'home' ? petHomeSVG(x.id) : (label === 'coat' ? '<span class="dot" style="background:' + x.body + '"></span>' : petWearArt(x.id)))) + '</span>'
+      + '<span class="shart">' + (label === 'food' ? x.sym : (label === 'home' ? petHomeSVG(x.id) : '<span class="dot" style="background:' + x.body + '"></span>')) + '</span>'
       + '<b>' + esc(L(x.name) || x.id) + '</b>'
       + (x.add ? '<span class="plus">+' + x.add + '</span>' : '')
       + (locked ? '<span class="sh-lock">🔒</span>' : '') + (chosenId === x.id ? '<span class="sh-on">✓</span>' : '')
@@ -1300,7 +1266,6 @@ function renderPet(want) {
   const SHEETS = [
     { key: 'food', icon: '🍚', title: () => S.petFoodTitle, note: () => S.petFoodNote, set: () => PET_FOODS, now: (p) => PETS.food(p).id, art: 'food' },
     { key: 'home', icon: '🏠', title: () => S.petHomeTitle, note: () => S.petHomeNote, set: () => PET_HOMES, now: (p) => PETS.home(p).id, art: 'home' },
-    { key: 'wear', icon: '👑', title: () => S.petWearTitle, note: () => S.petWearNote, set: () => PET_WEARS, now: (p) => PETS.wear(p).id, art: 'wear' },
     { key: 'coat', icon: '🎨', title: () => S.petCoat, note: (q) => (petIsPro(q.kind) ? S.petCoatMyth : S.petCoatNote), set: () => PET_COATS.map((c) => ({ id: c.id, pro: c.pro, add: 3, body: c.body, name: S.coatNames[c.id] || c.id })), now: (p) => PETS.coat(p).id, art: 'coat' }
   ];
   const sheetHTML = (p, open) => {
@@ -1327,7 +1292,7 @@ function renderPet(want) {
     if (!open || !PETS.one(open)) open = pets[0].kind;
     const p = PETS.one(open), coat = PETS.coat(p);
     const tabs = pets.length > 1
-      ? '<div class="pettabs">' + pets.map((x) => '<button type="button" class="pt' + (x.kind === open ? ' on' : '') + '" data-open="' + x.kind + '">' + petSVG(x.kind, PETS.coat(x), 'happy', PETS.wear(x)) + '<b>' + esc(x.name || L(PET_NAMES[x.kind])) + '</b></button>').join('') + '</div>'
+      ? '<div class="pettabs">' + pets.map((x) => '<button type="button" class="pt' + (x.kind === open ? ' on' : '') + '" data-open="' + x.kind + '">' + petSVG(x.kind, PETS.coat(x), 'happy', PETS.fit(x), PETS.fx(x)) + '<b>' + esc(x.name || L(PET_NAMES[x.kind])) + '</b></button>').join('') + '</div>'
       : '';
     const room = PETS.room(), left = PETS.cap() - pets.length;
     /* And the same from a companion's own screen: the bar above it leads back
@@ -1541,11 +1506,15 @@ function renderPet(want) {
       setTimeout(() => { PETS.pray(p); busy = false; draw(); }, 1200);
     });
     $$('[data-open-sheet]', m).forEach((b) => b.addEventListener('click', () => { sheet = b.getAttribute('data-open-sheet'); draw(); }));
+    /* Clothes are no longer a tab in the sheet. Seven slots, nine collections
+       and a live preview do not fit one, so they get a screen and it hands the
+       companion card back when it closes. */
+    { const dr = $('#opendress'); if (dr) dr.addEventListener('click', () => petDressOpen(p.kind, draw)); }
     $$('[data-sheet-tab]', m).forEach((b) => b.addEventListener('click', () => { sheet = b.getAttribute('data-sheet-tab'); draw(); }));
     $$('[data-close-sheet]', m).forEach((b) => b.addEventListener('click', () => { sheet = ''; draw(); }));
     $$('[data-shelf]', m).forEach((b) => b.addEventListener('click', () => {
       const parts = b.getAttribute('data-shelf').split(':'), key = parts[0], id = parts[1];
-      const set = key === 'food' ? PET_FOODS : (key === 'home' ? PET_HOMES : (key === 'wear' ? PET_WEARS : PET_COATS));
+      const set = key === 'food' ? PET_FOODS : (key === 'home' ? PET_HOMES : PET_COATS);
       const item = set.filter((x) => x.id === id)[0];
       if (!item) return;
       if (item.pro && !proOn()) {
@@ -1611,7 +1580,7 @@ function renderPet(want) {
       + '<p class="muted">' + esc(S.petPreviewIntro) + '</p>'
       + '<div class="card petwrap luck-' + luck.id + '">'
       + '<div class="petstage">' + petHomeSVG('mat') + petAuraHTML(kind) + petSVG(kind, PET_COATS[0], 'happy')
-      + '<span class="stagebtns left">' + prevBtn('🍚', S.petFoodTitle) + prevBtn('👑', S.petWearTitle) + '</span>'
+      + '<span class="stagebtns left">' + prevBtn('🍚', S.petFoodTitle) + prevBtn('👑', S.wardrobeTitle) + '</span>'
       + '<span class="stagebtns right">' + prevBtn('🏠', S.petHomeShort) + prevBtn('🎨', S.petCoat) + '</span></div>'
       + '<div class="lucktag" style="--ink:' + (luck.deep || luck.ink) + ';--aura:' + luck.aura + '">' + luck.sym + ' ' + esc(S.petBrings(L(luck.name))) + '</div>'
       + '<p class="petline">' + esc(L(petLine(kind))) + '</p>'
@@ -1621,7 +1590,7 @@ function renderPet(want) {
       + '<li><span>' + esc(S.petPrevFeed) + '</span><b>' + esc(S.petPrevFeedN(proOn() ? 2 : 6)) + '</b></li>'
       + '<li><span>' + esc(S.petPrevPlay) + '</span><b>' + esc(S.petPrevPlayN(proOn() ? 3 : 1)) + '</b></li>'
       + '<li><span>' + esc(S.petPrevWish) + '</span><b>' + esc(S.petPrevWishN) + '</b></li>'
-      + '<li><span>' + esc(S.petFoodTitle) + ' · ' + esc(S.petHomeShort) + ' · ' + esc(S.petWearTitle) + ' · ' + esc(S.petCoat) + '</span><b>🔒</b></li>'
+      + '<li><span>' + esc(S.petFoodTitle) + ' · ' + esc(S.petHomeShort) + ' · ' + esc(S.wardrobeTitle) + ' · ' + esc(S.petCoat) + '</span><b>🔒</b></li>'
       + '</ul></div>'
       + '<p class="hint">' + esc(have ? S.petPrevHave : (swap ? S.petPrevSwap : S.petPrevKeep)) + '</p>'
       + (blocked ? '<p class="hint err">' + esc(S.petChangeWait(fmtDate(PETS.changeOn()))) + '</p>' : '')
@@ -1709,41 +1678,10 @@ function renderPet(want) {
 }
 
 /* A small picture of each charm, shown on the shelf rather than on the pet. */
-function petWearArt(id) {
-  const open = '<svg viewBox="0 0 60 60" class="wearart" aria-hidden="true">';
-  if (id === 'scarf') return open + '<path d="M10 22 q20 14 40 0 q3 10 -4 15 q-16 9 -32 0 q-7 -5 -4 -15 Z" fill="#E1607F"/><path d="M40 36 q10 10 6 20 q-9 2 -13 -5 Z" fill="#C94C6C"/></svg>';
-  if (id === 'bell') return open + '<path d="M12 34 q18 10 36 0" fill="none" stroke="#B9913B" stroke-width="3" stroke-linecap="round"/><circle cx="30" cy="38" r="11" fill="#E5BE5E" stroke="#B9913B" stroke-width="2"/><path d="M21 38 h18" stroke="#B9913B" stroke-width="2"/><circle cx="30" cy="45" r="2.6" fill="#8A6B22"/></svg>';
-  if (id === 'crown') {
-    const bud = (x, y, col) => [0, 72, 144, 216, 288].map((a) => '<ellipse cx="' + x + '" cy="' + (y - 4.6) + '" rx="3" ry="4.6" fill="' + col + '" transform="rotate(' + a + ' ' + x + ' ' + y + ')"/>').join('') + '<circle cx="' + x + '" cy="' + y + '" r="2.2" fill="#FFE9A8"/>';
-    return open + '<path d="M8 40 Q30 20 52 40" fill="none" stroke="#8FBF7F" stroke-width="3"/>' + bud(13, 38, '#F7A9C6') + bud(30, 26, '#FFF3C4') + bud(47, 38, '#C9B0EA') + '</svg>';
-  }
-  if (id === 'hat') return open + '<ellipse cx="30" cy="42" rx="24" ry="6" fill="#E8CFA0"/><path d="M12 42 L30 12 L48 42 Z" fill="#F0DFC8" stroke="#C6A98A" stroke-width="2"/><path d="M30 14 A9 9 0 1 0 30 32 A7 7 0 1 1 30 14 Z" fill="#E5BE5E"/></svg>';
-  if (id === 'wings') {
-    const fan = (flip) => '<g transform="translate(' + (flip ? 34 : 26) + ',44)' + (flip ? ' scale(-1,1)' : '') + '">'
-      + [[-70, 30], [-56, 34], [-42, 36], [-28, 32], [-15, 25]].map((f, i) =>
-        '<ellipse cx="0" cy="' + (-f[1] / 2) + '" rx="5" ry="' + (f[1] / 2) + '" fill="' + (i % 2 ? '#FFFDF8' : '#F1E9FF')
-        + '" stroke="#D9C7F2" stroke-width="1" transform="rotate(' + f[0] + ')"/>').join('') + '</g>';
-    return open + fan(false) + fan(true) + '<circle cx="30" cy="42" r="4" fill="#E5BE5E"/></svg>';
-  }
-  /* The clothes get a picture of their own on the shelf; without one they fell
-     through to the empty dashed circle. */
-  if (id === 'jumper') return open + '<path d="M12 24 Q10 14 20 12 Q30 9 40 12 Q50 14 48 24 Q50 40 46 50 L14 50 Q10 40 12 24 Z" fill="#E1607F"/>'
-    + '<path d="M18 12 Q30 19 42 12 Q42 17 30 21 Q18 17 18 12 Z" fill="#C94C6C"/>'
-    + '<g stroke="#F5A6BF" stroke-width="1.6" fill="none" opacity=".9"><path d="M16 28 q14 -5 28 0 M15 36 q15 -5 30 0 M16 44 q14 -4 28 0"/></g>'
-    + '<g stroke="#C94C6C" stroke-width="1.3" fill="none" opacity=".7"><path d="M22 24 v26 M30 21 v29 M38 24 v26"/></g></svg>';
-  if (id === 'cloak') return open + '<path d="M14 14 Q4 34 3 52 L57 52 Q56 34 46 14 Q30 22 14 14 Z" fill="#4A3E80"/>'
-    + '<path d="M14 14 Q7 32 6 50 L20 50 Q17 32 19 16 Z" fill="#5E4F9E" opacity=".85"/>'
-    + '<path d="M14 14 Q30 22 46 14 Q48 8 42 6 Q30 14 18 6 Q12 8 14 14 Z" fill="#E5BE5E"/>'
-    + '<g fill="#FFF3C4"><circle cx="16" cy="34" r="1.8"/><circle cx="28" cy="44" r="1.5"/><circle cx="40" cy="36" r="1.6"/><circle cx="46" cy="46" r="1.4"/></g>'
-    + '<circle cx="30" cy="12" r="4.4" fill="#E5BE5E"/><circle cx="30" cy="12" r="2" fill="#4A3E80"/></svg>';
-  if (id === 'armour') return open + '<path d="M14 16 Q30 9 46 16 Q50 34 44 50 L16 50 Q10 34 14 16 Z" fill="#EDD08A"/>'
-    + '<path d="M14 16 Q30 9 46 16 Q44 22 30 26 Q16 22 14 16 Z" fill="#D4B25F"/>'
-    + '<g stroke="#B9913B" stroke-width="1.5" fill="none"><path d="M18 32 q12 -5 24 0 M18 40 q12 -5 24 0 M30 26 v24"/></g>'
-    + '<path d="M6 14 q8 -7 15 -2 q-4 9 -15 8 Z" fill="#EDD08A" stroke="#B9913B" stroke-width="1.2"/>'
-    + '<path d="M54 14 q-8 -7 -15 -2 q4 9 15 8 Z" fill="#EDD08A" stroke="#B9913B" stroke-width="1.2"/>'
-    + '<path d="M30 28 l5 7 -5 7 -5 -7 Z" fill="#FFF3C4"/></svg>';
-  return open + '<circle cx="30" cy="30" r="16" fill="none" stroke="#C9BFE0" stroke-width="2" stroke-dasharray="4 4"/></svg>';
-}
+/* petWearArt is gone. A shelf tile is now the item's own drawing seen through
+   the window its slot carries - see wearTile in pet-wardrobe.js - so a tile and
+   the companion can never disagree about what a piece looks like. */
+
 /* Two married people, named on each other's companion page - if the person
    whose phone this is asked for it, and only with the words each of them chose
    for themselves. A sign, a name, nothing else. */

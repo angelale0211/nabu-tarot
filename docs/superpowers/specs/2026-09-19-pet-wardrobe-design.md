@@ -1,7 +1,7 @@
 # Pet wardrobe: layered outfits, collections and backdrops
 
 Date: 2026-09-19
-Status: approved, ready for an implementation plan
+Status: built and verified 2026-09-19 on branch feature/pet-wardrobe
 
 ## Why
 
@@ -57,6 +57,10 @@ slot that would have been hidden for 11 kinds.
 `bottom` and `hem` are distinct and layer together: `bottom` is a skirt, wrap,
 hakama or sash **covering** the lower body, `hem` is the trim **along its
 edge**. Neither may draw trouser legs or ankles, for the same reason.
+
+The table above is **draw order**, which runs back to front. The wardrobe rail
+shows the body **top down** instead - head, face, neck, top, bottom, hem, back -
+because nobody dresses starting at the wings. `PET_SLOT_RAIL` holds that order.
 
 ### Every slot works on every kind
 
@@ -290,6 +294,24 @@ probes with screenshots.
 - **Manual pass**: as free, as Plus and as Pro, confirm each sees the right
   locks, and the right fallbacks when a tier lapses - clothing to nothing, sky
   to `clear`, effect to `none`.
+
+**What was built:** `test/wardrobe_check.js` (57 pure checks, node, no browser),
+`test/wardrobe_probe.py` (contact sheets of every piece on a footed, a footless
+and a spirit-beast kind, plus all ten effects and all ten skies) and
+`test/wardrobe_ui.py` (drives the screen at all three tiers: migration, equip,
+locked-piece behaviour, sky and effect tabs, surprise-me, save and restore a
+look, take it all off, close).
+
+Three faults the probes caught that the pure checks could not:
+
+1. The sky overlay did not carry the homes' `preserveAspectRatio="xMidYMax
+   slice"`, so it was framed differently from the home it lay on and the tints
+   barely registered. Every sky now matches the home's framing.
+2. Capes stopped at x=20 against a body spanning x=30..90, so ten pixels showed
+   and they read as a smudge. All four now run the full width behind the
+   companion.
+3. Effect tiles drew pale stars on a pale ground and looked empty, which made
+   the one Pro-only tab look broken. They get a night sky to be drawn on.
 
 ## 9. Layers touched
 

@@ -595,7 +595,7 @@ function treePetHTML() {
   if (!pets.length || !treePetsOn()) return '';
   /* Each one strolls at its own pace, so a row of them never marches in step. */
   return '<span class="treepets">' + pets.map((p, i) => '<a class="treepet" href="#/play/pet" style="animation-delay:' + (i * 1300) + 'ms" aria-label="' + esc(p.name || L(PET_NAMES[p.kind])) + '">'
-    + petSVG(p.kind, PETS.coat(p), PETS.fedToday(p) ? 'happy' : '', PETS.wear(p)) + '</a>').join('') + '</span>';
+    + petSVG(p.kind, PETS.coat(p), PETS.fedToday(p) ? 'happy' : '', PETS.fit(p), PETS.fx(p)) + '</a>').join('') + '</span>';
 }
 function renderTree() {
   const S = T(), m = $('#main');
