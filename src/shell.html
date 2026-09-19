@@ -1966,7 +1966,10 @@ html,body{overscroll-behavior-y:contain}
 @media (prefers-reduced-motion:reduce){.wtile.locked .wart::after{animation:none;opacity:.25}}
 
 /* a sky tile is the real home under the real sky, so the choice is honest */
-.wtile .wscene{position:relative;width:100%;height:64px;border-radius:11px;overflow:hidden;background:var(--surface)}
+/* A sky tile has to show the sky. The homes are drawn xMidYMax slice, so a wide
+   short box crops to the floor of the scene and every sky looked the same -
+   which is what the first UI pass showed. Nearly square, and the sky is back. */
+.wtile .wscene{position:relative;width:100%;height:112px;border-radius:11px;overflow:hidden;background:var(--surface)}
 .wtile .wscene svg{position:absolute;inset:0;width:100%;height:100%}
 /* Effects are stars, motes and fireflies. On the pale tile ground they were
    invisible, which made the one Pro-only tab look empty - so the effect gets
