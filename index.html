@@ -12,7 +12,7 @@
      carries this notice with it. See LICENSE. -->
 <meta name="author" content="Nabu Tarot">
 <meta name="copyright" content="Copyright (c) 2025-2026 Nabu Tarot. All rights reserved.">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'none'; object-src 'none'; form-action 'self'; script-src 'self' 'sha256-WZX2I21OnfHR/OSB0AcBijiyvExj8lSpsMZMq2XU0hk=' https://www.gstatic.com https://apis.google.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; font-src 'self' data:; media-src 'self' data: blob:; worker-src 'self'; connect-src 'self' https://*.googleapis.com https://*.google.com https://*.firebaseio.com https://*.cloudfunctions.net https://*.workers.dev https://generativelanguage.googleapis.com; frame-src https://*.firebaseapp.com https://accounts.google.com https://*.facebook.com">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'none'; object-src 'none'; form-action 'self'; script-src 'self' 'sha256-j65I/yW8ZCjEkPOrpFCauKNZ2sn1PUKBH6KDoeGnnqw=' https://www.gstatic.com https://apis.google.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; font-src 'self' data:; media-src 'self' data: blob:; worker-src 'self'; connect-src 'self' https://*.googleapis.com https://*.google.com https://*.firebaseio.com https://*.cloudfunctions.net https://*.workers.dev https://generativelanguage.googleapis.com; frame-src https://*.firebaseapp.com https://accounts.google.com https://*.facebook.com">
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <meta name="theme-color" content="#EFE9FA">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -3716,7 +3716,6 @@ const STR = {
     wardrobeWorn: (n) => 'Đang mặc ' + n + ' món',
     wardrobeBare: 'Chưa mặc gì',
     wardrobeFullTip: (n, b) => 'Mặc đủ ' + n + ' món trở lên được thưởng thêm +' + b + ' mỗi bữa.',
-    wardrobeAllYours: 'Của bạn cả rồi',
     wardrobeStrip: 'Bỏ hết ra', wardrobeRandom: 'Phối ngẫu nhiên',
     wardrobeLooks: 'Bộ đã lưu', wardrobeLookN: (n) => 'Bộ ' + n, wardrobeSave: 'Lưu', wardrobeSaved: 'Đã lưu bộ này.',
     wardrobeSkyNote: 'Bầu trời phủ lên nhà của bạn nhỏ một buổi trong ngày và một kiểu thời tiết.',
@@ -4587,7 +4586,6 @@ const STR = {
     wardrobeWorn: (n) => n + (n === 1 ? ' piece on' : ' pieces on'),
     wardrobeBare: 'Nothing on yet',
     wardrobeFullTip: (n, b) => 'Wear ' + n + ' pieces or more for a +' + b + ' full-look bonus at every meal.',
-    wardrobeAllYours: 'All yours',
     wardrobeStrip: 'Take it all off', wardrobeRandom: 'Surprise me',
     wardrobeLooks: 'Saved looks', wardrobeLookN: (n) => 'Look ' + n, wardrobeSave: 'Save', wardrobeSaved: 'Look saved.',
     wardrobeSkyNote: 'A sky lays a time of day and a weather over your companion’s home.',
@@ -5457,7 +5455,6 @@ const STR = {
     wardrobeWorn: (n) => n + (n === 1 ? ' Teil an' : ' Teile an'),
     wardrobeBare: 'Noch nichts an',
     wardrobeFullTip: (n, b) => 'Ab ' + n + ' Teilen gibt es bei jeder Mahlzeit +' + b + ' als Komplett-Bonus.',
-    wardrobeAllYours: 'Alles dabei',
     wardrobeStrip: 'Alles ablegen', wardrobeRandom: 'Überrasch mich',
     wardrobeLooks: 'Gespeicherte Looks', wardrobeLookN: (n) => 'Look ' + n, wardrobeSave: 'Speichern', wardrobeSaved: 'Look gespeichert.',
     wardrobeSkyNote: 'Ein Himmel legt Tageszeit und Wetter über das Zuhause deines Begleiters.',
@@ -25563,7 +25560,10 @@ function petDressOpen(kind, after) {
       const owned = items.filter(wearOn).length;
       out += '<div class="wrib" style="--accent:' + c.accent + ';--soft:' + c.soft + '">'
         + '<b>' + esc(L(S.colNames[c.id]) || c.id) + '</b>'
-        + '<span>' + (owned === items.length ? esc(S.wardrobeAllYours) : owned + '/' + items.length) + '</span></div>'
+        /* The count is there to show what is still locked. Once the whole
+           collection is owned it has nothing left to say, so it says nothing -
+           a badge congratulating somebody on every ribbon is just noise. */
+        + (owned === items.length ? '' : '<span>' + owned + '/' + items.length + '</span>') + '</div>'
         + '<div class="wgrid">' + items.map((x) => tile(x, x.id === now)).join('') + '</div>';
     });
     return out;
@@ -30731,7 +30731,7 @@ function adminSale(p) {
 ROUTES.admin = { nav: '', render: renderAdmin };
 
 /* ============================ boot ============================ */
-window.APP_VERSION = 'v247';
+window.APP_VERSION = 'v248';
 window.NABU = { CONFIG: CONFIG, SALE: SALE, salePrice: salePrice, loadActs: loadActs, BACK: BACK, LESSONS: LESSONS, localAnswer: localAnswer, compatVerdict: compatVerdict, numerologyOf: numerologyOf, ZDEEP: ZDEEP, lunarToday: lunarToday, solarToLunar: solarToLunar, DECK: DECK, INSIGHT: INSIGHT, KW: KW, ASK: ASK, TOPICS: TOPICS, GUIDES: GUIDES, SERVICES: SERVICES, COURSES: COURSES, ACCESS: ACCESS, INTERESTS: INTERESTS, plusOn: () => plusOn(), proOn: () => proOn(), luckUnlimited: () => luckUnlimited(), ZODIAC: ZODIAC, pick: pick, book: book, PLAY_ITEMS: PLAY_ITEMS, PLAY_SUB_SKUS: PLAY_SUB_SKUS, playItem: playItem, BILL: BILL, SUBS: SUBS, billUse: billUse, APPLE_BILL: APPLE_BILL, appleAccountToken: appleAccountToken, renderStore: renderStore, subStateWord: subStateWord,
   insightHTML: insightHTML, insightOf: insightOf, sunSignIndex: sunSignIndex, lifePath: lifePath, PROFILE: () => PROFILE, BE: BE, inAppBrowser: inAppBrowser, ACTS: ACTS, CMT: CMT, LIKES: LIKES, kbReady: kbReady, AI: AI, STR: STR, KB_URL: (typeof KB_URL === 'string' ? KB_URL : ''),
   ANGELS: ANGELS, angelRead: angelRead, CODEBOOK: CODEBOOK, redeemCode: redeemCode, loadCodebook: loadCodebook, petHomeSVG: petHomeSVG, PET_HOMES: PET_HOMES, PET_WARDROBE: PET_WARDROBE, PET_SLOTS: PET_SLOTS,

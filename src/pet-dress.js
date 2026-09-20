@@ -96,7 +96,10 @@ function petDressOpen(kind, after) {
       const owned = items.filter(wearOn).length;
       out += '<div class="wrib" style="--accent:' + c.accent + ';--soft:' + c.soft + '">'
         + '<b>' + esc(L(S.colNames[c.id]) || c.id) + '</b>'
-        + '<span>' + (owned === items.length ? esc(S.wardrobeAllYours) : owned + '/' + items.length) + '</span></div>'
+        /* The count is there to show what is still locked. Once the whole
+           collection is owned it has nothing left to say, so it says nothing -
+           a badge congratulating somebody on every ribbon is just noise. */
+        + (owned === items.length ? '' : '<span>' + owned + '/' + items.length + '</span>') + '</div>'
         + '<div class="wgrid">' + items.map((x) => tile(x, x.id === now)).join('') + '</div>';
     });
     return out;
