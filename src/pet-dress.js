@@ -108,7 +108,7 @@ function petDressOpen(kind, after) {
   /* ---- the sky tab: each tile is the real home under the real sky ---- */
   const skyHTML = () => {
     const S = T(), p = pet(), home = PETS.home(p).id, now = PETS.sky(p).id;
-    return '<p class="hint">' + esc(S.wardrobeSkyNote) + '</p><div class="wgrid sky">' + PET_SKIES.map((s) => {
+    return '<div class="wgrid sky">' + PET_SKIES.map((s) => {
       const locked = !tierOn(s.tier), on = s.id === now;
       return '<button type="button" class="wtile' + (on ? ' on' : '') + (locked ? ' locked' : '') + '"'
         + ' data-sky="' + s.id + '" aria-pressed="' + (on ? 'true' : 'false') + '">'
@@ -122,8 +122,7 @@ function petDressOpen(kind, after) {
   /* ---- the effects tab, which is the one place reserved for Pro ---- */
   const fxHTML = () => {
     const S = T(), p = pet(), now = PETS.fx(p).id, pro = proOn();
-    return '<p class="hint">' + esc(pro ? S.wardrobeFxNote : S.wardrobeFxLocked) + '</p>'
-      + '<div class="wgrid fx">' + PET_FX.map((f) => {
+    return '<div class="wgrid fx">' + PET_FX.map((f) => {
         const locked = !tierOn(f.tier), on = f.id === now, art = petFxSVG(f.id);
         return '<button type="button" class="wtile fxtile' + (on ? ' on' : '') + (locked ? ' locked' : '') + '"'
           + ' data-fx="' + f.id + '" aria-pressed="' + (on ? 'true' : 'false') + '">'
