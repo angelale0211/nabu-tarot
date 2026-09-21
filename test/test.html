@@ -2493,6 +2493,29 @@ async function go(hash, sel) { W().location.hash = hash; await sleep(30); return
         ok(cancelled && cancelled.outcome === 'aborted' && !N.BILL.buying, 'closing the App Store sheet is a cancelled purchase, and the Buy button is free again');
         sk.pendingNext = true;
         ok((await N.BILL.buy('plus')).pending === true, 'Ask to Buy answers pending and charges nothing yet');
+        { /* Buying something this Apple account already holds ends in Apple's
+             own "You are currently subscribed to this" alert, and behind it a
+             promise that never settles: the sheet closes, nothing is bought,
+             and the button sits on "Working..." until the app is killed. The
+             owner photographed exactly that. The wait is now watched, and on
+             the way out the App Store is asked what this account really holds
+             - which, when the subscription is genuinely there and genuinely
+             this account's, opens it and makes the purchase a success. */
+          const msWas = N.BILL.sheetMs, held = sk.held.slice();
+          N.BILL.sheetMs = 120;
+          N.ACCESS.grant('lenormand', null);   // start from nothing for this one
+          sk.hang = true;
+          const hangPlugin = w.Capacitor.Plugins.NativePurchases.purchaseProduct;
+          w.Capacitor.Plugins.NativePurchases.purchaseProduct = (o) => (sk.hang
+            ? new Promise((res) => { /* Apple's alert: the sheet is gone and nothing answers */
+                sk.held.push({ transactionId: '7001', productIdentifier: o.productIdentifier, appAccountToken: String(o.appAccountToken).toUpperCase() });
+                setTimeout(() => res(null), 60000); })
+            : hangPlugin(o));
+          const out = await N.BILL.buy('lenormand').then((r) => r, (e) => e);
+          ok(out && out.opened && out.opened.indexOf('lenormand') > -1 && N.ACCESS.has('lenormand') && !N.BILL.buying,
+            'a purchase the App Store never answers is not left hanging: what the account really holds is fetched, opened, and the button handed back');
+          sk.hang = false; w.Capacitor.Plugins.NativePurchases.purchaseProduct = hangPlugin;
+          N.BILL.sheetMs = msWas; sk.held.length = 0; held.forEach((t) => sk.held.push(t)); }
         await N.BILL.buy('plus');
         await go('#/home', '.tiles'); await go('#/unlock?from=app', '.store');
         const manage = d.querySelector('.store a[href="https://apps.apple.com/account/subscriptions"]');

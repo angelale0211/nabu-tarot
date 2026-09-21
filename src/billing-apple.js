@@ -44,7 +44,7 @@ const APPLE_BILL = {
   store: 'apple',
   service: null, details: {}, starting: null, ready: false, state: 'idle', why: '', stage: '',
   attempt: 0, tries: 0, lastTryAt: 0, tookMs: 0, buying: '', buyingSeq: 0, seq: 0, lastSheet: null, onSettled: null,
-  connectMs: 10000, detailsMs: 15000, listening: false,
+  connectMs: 10000, detailsMs: 15000, sheetMs: 150000, listening: false,
 
   can() { return this.state === 'ready' && !!this.service; },
   canBuy(key) { return this.can() && !!this.detailsOf(key); },
@@ -188,18 +188,34 @@ const APPLE_BILL = {
     this.seq++; this.buying = key; this.buyingSeq = this.seq;
     let tx;
     try {
-      tx = await this.service.purchaseProduct({
+      /* Watched. Buying something this Apple account already holds ends in
+         Apple's own "You are currently subscribed to this" alert, and the
+         promise behind it never settles: the sheet is gone, the account is
+         unchanged, and the button sits on "Working..." until the app is
+         closed - which is exactly what the owner photographed. The wait is
+         long enough for a slow payment and short enough to hand the button
+         back; whatever was really bought is picked up by restore(), which
+         runs on the way out of the failure. */
+      tx = await withTimeout(this.service.purchaseProduct({
         productIdentifier: it.sku, productType: it.kind === 'subs' ? 'subs' : 'inapp', quantity: 1,
         appAccountToken: await appleAccountToken(BE.user.uid), autoAcknowledgePurchases: false
-      });
+      }), this.sheetMs);
     } catch (e) {
       const msg = String((e && e.message) || e || '');
       this.buying = ''; this.buyingSeq = 0;
       /* Ask to Buy: nothing is charged until somebody approves, and the approval arrives through listen(). */
       if (/pending/i.test(msg)) { this.lastSheet = { outcome: 'done', name: 'Pending', ms: Date.now() - shownAt }; return { pending: true }; }
+      /* Before blaming the buyer: the App Store may have refused because this
+         Apple account already holds the thing. If it does, and it is this
+         Nabu account's, restore opens it and the purchase was a success after
+         all. Never allowed to throw over the original failure. */
+      try { await this.restore(); } catch (e2) { /* the failure below stands */ }
+      const got = it.opens.length && it.opens.every((k) => ACCESS.has(k));
+      if (got) { this.lastSheet = { outcome: 'done', name: 'Restored', ms: Date.now() - shownAt }; return { opened: it.opens }; }
+      const hung = /timeout|timed out/i.test(msg);
       const err = new Error(msg || 'failed');
-      err.outcome = /cancel/i.test(msg) ? 'aborted' : 'failed';
-      err.playName = /cancel/i.test(msg) ? 'UserCancelled' : 'StoreKitError';
+      err.outcome = /cancel/i.test(msg) ? 'aborted' : hung ? 'hung' : 'failed';
+      err.playName = /cancel/i.test(msg) ? 'UserCancelled' : hung ? 'SheetHung' : 'StoreKitError';
       this.lastSheet = { outcome: err.outcome, name: err.playName, ms: Date.now() - shownAt };
       throw err;
     }

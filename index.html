@@ -12,7 +12,7 @@
      carries this notice with it. See LICENSE. -->
 <meta name="author" content="Nabu Tarot">
 <meta name="copyright" content="Copyright (c) 2025-2026 Nabu Tarot. All rights reserved.">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'none'; object-src 'none'; form-action 'self'; script-src 'self' 'sha256-3njkp6yahd5ecMgQIVYYT+0wlAmWRceGmjyDMd2QZ84=' https://www.gstatic.com https://apis.google.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; font-src 'self' data:; media-src 'self' data: blob:; worker-src 'self'; connect-src 'self' https://*.googleapis.com https://*.google.com https://*.firebaseio.com https://*.cloudfunctions.net https://*.workers.dev https://generativelanguage.googleapis.com; frame-src https://*.firebaseapp.com https://accounts.google.com https://*.facebook.com">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'none'; object-src 'none'; form-action 'self'; script-src 'self' 'sha256-zfsEl6LSyykB176iILHINfpl5OHnJH8vWhI+SnH9SrU=' https://www.gstatic.com https://apis.google.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; font-src 'self' data:; media-src 'self' data: blob:; worker-src 'self'; connect-src 'self' https://*.googleapis.com https://*.google.com https://*.firebaseio.com https://*.cloudfunctions.net https://*.workers.dev https://generativelanguage.googleapis.com; frame-src https://*.firebaseapp.com https://accounts.google.com https://*.facebook.com">
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <meta name="theme-color" content="#EFE9FA">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -19076,7 +19076,7 @@ const APPLE_BILL = {
   store: 'apple',
   service: null, details: {}, starting: null, ready: false, state: 'idle', why: '', stage: '',
   attempt: 0, tries: 0, lastTryAt: 0, tookMs: 0, buying: '', buyingSeq: 0, seq: 0, lastSheet: null, onSettled: null,
-  connectMs: 10000, detailsMs: 15000, listening: false,
+  connectMs: 10000, detailsMs: 15000, sheetMs: 150000, listening: false,
 
   can() { return this.state === 'ready' && !!this.service; },
   canBuy(key) { return this.can() && !!this.detailsOf(key); },
@@ -19220,18 +19220,34 @@ const APPLE_BILL = {
     this.seq++; this.buying = key; this.buyingSeq = this.seq;
     let tx;
     try {
-      tx = await this.service.purchaseProduct({
+      /* Watched. Buying something this Apple account already holds ends in
+         Apple's own "You are currently subscribed to this" alert, and the
+         promise behind it never settles: the sheet is gone, the account is
+         unchanged, and the button sits on "Working..." until the app is
+         closed - which is exactly what the owner photographed. The wait is
+         long enough for a slow payment and short enough to hand the button
+         back; whatever was really bought is picked up by restore(), which
+         runs on the way out of the failure. */
+      tx = await withTimeout(this.service.purchaseProduct({
         productIdentifier: it.sku, productType: it.kind === 'subs' ? 'subs' : 'inapp', quantity: 1,
         appAccountToken: await appleAccountToken(BE.user.uid), autoAcknowledgePurchases: false
-      });
+      }), this.sheetMs);
     } catch (e) {
       const msg = String((e && e.message) || e || '');
       this.buying = ''; this.buyingSeq = 0;
       /* Ask to Buy: nothing is charged until somebody approves, and the approval arrives through listen(). */
       if (/pending/i.test(msg)) { this.lastSheet = { outcome: 'done', name: 'Pending', ms: Date.now() - shownAt }; return { pending: true }; }
+      /* Before blaming the buyer: the App Store may have refused because this
+         Apple account already holds the thing. If it does, and it is this
+         Nabu account's, restore opens it and the purchase was a success after
+         all. Never allowed to throw over the original failure. */
+      try { await this.restore(); } catch (e2) { /* the failure below stands */ }
+      const got = it.opens.length && it.opens.every((k) => ACCESS.has(k));
+      if (got) { this.lastSheet = { outcome: 'done', name: 'Restored', ms: Date.now() - shownAt }; return { opened: it.opens }; }
+      const hung = /timeout|timed out/i.test(msg);
       const err = new Error(msg || 'failed');
-      err.outcome = /cancel/i.test(msg) ? 'aborted' : 'failed';
-      err.playName = /cancel/i.test(msg) ? 'UserCancelled' : 'StoreKitError';
+      err.outcome = /cancel/i.test(msg) ? 'aborted' : hung ? 'hung' : 'failed';
+      err.playName = /cancel/i.test(msg) ? 'UserCancelled' : hung ? 'SheetHung' : 'StoreKitError';
       this.lastSheet = { outcome: err.outcome, name: err.playName, ms: Date.now() - shownAt };
       throw err;
     }
@@ -30921,7 +30937,7 @@ function adminSale(p) {
 ROUTES.admin = { nav: '', render: renderAdmin };
 
 /* ============================ boot ============================ */
-window.APP_VERSION = 'v258';
+window.APP_VERSION = 'v259';
 window.NABU = { CONFIG: CONFIG, SALE: SALE, salePrice: salePrice, loadActs: loadActs, BACK: BACK, LESSONS: LESSONS, localAnswer: localAnswer, compatVerdict: compatVerdict, numerologyOf: numerologyOf, ZDEEP: ZDEEP, lunarToday: lunarToday, solarToLunar: solarToLunar, DECK: DECK, INSIGHT: INSIGHT, KW: KW, ASK: ASK, GUIDES: GUIDES, SERVICES: SERVICES, COURSES: COURSES, ACCESS: ACCESS, INTERESTS: INTERESTS, plusOn: () => plusOn(), proOn: () => proOn(), luckUnlimited: () => luckUnlimited(), ZODIAC: ZODIAC, pick: pick, book: book, PLAY_ITEMS: PLAY_ITEMS, PLAY_SUB_SKUS: PLAY_SUB_SKUS, playItem: playItem, BILL: BILL, SUBS: SUBS, billUse: billUse, APPLE_BILL: APPLE_BILL, appleAccountToken: appleAccountToken, renderStore: renderStore, pickLimitHTML: pickLimitHTML, subStateWord: subStateWord,
   insightHTML: insightHTML, insightOf: insightOf, sunSignIndex: sunSignIndex, lifePath: lifePath, PROFILE: () => PROFILE, BE: BE, inAppBrowser: inAppBrowser, ACTS: ACTS, CMT: CMT, LIKES: LIKES, kbReady: kbReady, AI: AI, STR: STR, KB_URL: (typeof KB_URL === 'string' ? KB_URL : ''),
   ANGELS: ANGELS, angelRead: angelRead, CODEBOOK: CODEBOOK, redeemCode: redeemCode, loadCodebook: loadCodebook, petHomeSVG: petHomeSVG, PET_HOMES: PET_HOMES, PET_WARDROBE: PET_WARDROBE, PET_SLOTS: PET_SLOTS,
