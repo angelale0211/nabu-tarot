@@ -188,10 +188,11 @@ const BE = {
     try { const h = PROFILE.handle; if (h) await db.collection('handles').doc(h).delete(); } catch (e) { /* rules or offline */ }
     try { await db.collection('people').doc(uid).delete(); } catch (e) { /* rules or offline */ }
     await this.user.delete();
-    store.set('nabu-access', {});
-    store.set('nabu-subs', {});
-    store.set('nabu-today', null);
-    saveProfileLocal({ handle: '', lang: '' });
+    /* And the phone itself. Clearing a handful of keys left the profile, the
+       diary, the companions and everything else where they were, which is not
+       what a person is asking for when they ask to be deleted. The caller
+       reloads, so nothing that was read into memory outlives this either. */
+    wipeDevice();
   },
 
   /* ---- profile ---- */

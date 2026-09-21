@@ -1248,6 +1248,33 @@ async function go(hash, sel) { W().location.hash = hash; await sleep(30); return
     ok(/Hồ sơ/.test(d.querySelector('.nav a[href="#/me"]').textContent) && !/Tôi/.test(d.querySelector('.nav').textContent), 'the Me tab is called Hồ sơ (Profile)');
     { const probe = d.createElement('div'); probe.innerHTML = '<h1>a</h1><h2>b</h2><p class="hint">c</p>'; d.querySelector('#main').appendChild(probe); const fs = (sel) => parseFloat(w.getComputedStyle(probe.querySelector(sel)).fontSize); ok(fs('h1') === 28 && fs('h2') === 21 && fs('.hint') === 13.5 && parseFloat(w.getComputedStyle(d.body).fontSize) === 16, 'one type scale: 28px screen titles, 21px sections, 16px body, 13.5px hints'); probe.remove(); }
     ok(typeof N.BE.deleteAccount === 'function' && d.querySelector('#main a[href="#/privacy"]') && /Quyền riêng tư/.test(d.querySelector('#foot').textContent), 'account deletion exists and the privacy policy is linked from Me and the footer');
+    { /* Asked to be deleted means deleted from this phone too. The profile,
+         the diary, the companions, what was unlocked - all of it went on
+         living in localStorage, so the next time the app opened it still said
+         the profile was kept on this device, and handed the name, the birthday
+         and the interests to whoever signed in next. */
+      const before = {};
+      for (let i2 = 0; i2 < w.localStorage.length; i2++) { const k = w.localStorage.key(i2); before[k] = w.localStorage.getItem(k); }
+      w.localStorage.setItem('nabu-profile', JSON.stringify({ name: 'Lan', birthday: '1998-08-05', interests: ['love'] }));
+      w.localStorage.setItem('nabu-diary', JSON.stringify([{ t: 'riêng tư' }]));
+      w.localStorage.setItem('nabu-pets', JSON.stringify([{ kind: 'cat' }]));
+      w.localStorage.setItem('nabu-access', JSON.stringify({ tarot: '2027-01-01' }));
+      w.localStorage.setItem('nabu-lang', '"de"');
+      w.localStorage.setItem('nabu-theme', '"dark"');
+      w.wipeDevice();
+      const gone = ['nabu-profile', 'nabu-diary', 'nabu-pets', 'nabu-access'].filter((k) => w.localStorage.getItem(k) !== null);
+      ok(gone.length === 0 && w.localStorage.getItem('nabu-lang') === '"de"' && w.localStorage.getItem('nabu-theme') === '"dark"',
+        'deleting an account clears everything this phone knew about the person, and keeps only how the phone itself is set up'
+        + (gone.length ? ' [left behind: ' + gone.join(', ') + ']' : ''));
+      for (let i2 = w.localStorage.length - 1; i2 >= 0; i2--) { const k = w.localStorage.key(i2); if (before[k] === undefined) w.localStorage.removeItem(k); }
+      Object.keys(before).forEach((k) => w.localStorage.setItem(k, before[k])); }
+    { /* What is lost is said before it is lost, in all three languages, and a
+         subscription is named as something the store keeps charging for. */
+      const full = (L) => L.delConfirm + ' ' + L.delConfirmStore('App Store') + ' ' + L.delConfirmAsk;
+      ok(/vĩnh viễn/.test(N.STR.vi.delConfirm) && /mua lại/.test(N.STR.vi.delConfirm) && /huỷ gói trong App Store/.test(full(N.STR.vi))
+        && /permanent/.test(N.STR.en.delConfirm) && /buy again/.test(N.STR.en.delConfirm) && /cancel it in App Store/.test(full(N.STR.en))
+        && /endgültig/.test(N.STR.de.delConfirm) && /erneut kaufen/.test(N.STR.de.delConfirm) && /im App Store/.test(full(N.STR.de)),
+        'the warning says the deletion is permanent, that what was bought must be bought again, and that a subscription is cancelled in the store'); }
     { /* The results day has to stay in the future or the pile flips and the
      'come back on' line is gone. It used to be a fixed date, which passed. */
       const soon = new Date(Date.now() + 4 * 864e5);

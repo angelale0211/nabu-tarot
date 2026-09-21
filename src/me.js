@@ -354,9 +354,22 @@ function meSect(id, icon, title, body, openByDefault, force) {
     }));
     const so = $('#signout'); if (so) so.addEventListener('click', () => BE.signOut());
     const da = $('#delacct'); if (da) da.addEventListener('click', async () => {
-      if (!confirm(S.delConfirm)) return;
+      /* What is actually lost, said before it is lost - and the line about the
+         store only when there is a subscription to cancel, because telling
+         somebody to cancel what they do not have is noise. A subscription
+         outlives a deleted account: the store goes on charging until it is
+         cancelled where it was bought. */
+      const live = PLAY_ITEMS.some((i) => i.kind === 'subs' && (SUBS.of(i.key) || {}).grant);
+      const storeName = isIOSApp() ? 'App Store' : isTWA() ? 'Google Play' : '';
+      const say = [S.delConfirm]
+        .concat(live && storeName ? [S.delConfirmStore(storeName)] : [])
+        .concat([S.delConfirmAsk]).join('\n\n');
+      if (!confirm(say)) return;
       da.disabled = true; const st = $('#delstatus'); st.textContent = S.sending;
-      try { await BE.deleteAccount(); toast(S.delDone); location.hash = '#/home'; }
+      /* Reloaded, not redrawn: the profile, what was unlocked and everything
+         else was read into memory when the app started, and a screen change
+         would leave all of it sitting there under a deleted account. */
+      try { await BE.deleteAccount(); toast(S.delDone); location.hash = '#/home'; setTimeout(() => location.reload(), 900); }
       catch (e) { da.disabled = false; if (e && e.code === 'auth/popup-closed-by-user') { st.textContent = S.authCancelled; st.className = 'hint'; } else if (e && e.code === 'auth/requires-recent-login') { st.textContent = S.delRelogin; st.className = 'hint err'; try { await BE.signOut(); } catch (e2) { /* already out */ } } else { st.textContent = S.publishFail + ': ' + (e && e.message || e); st.className = 'hint err'; } }
     });
     if (BE.enabled && BE.user) {

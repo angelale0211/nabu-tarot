@@ -25,6 +25,29 @@ const STORE_SPARE = ['nabu-fb', 'nabu-horo', 'nabu-acts', 'nabu-acts-stock', 'na
 const UPD = { last: 0, every: 10 * 60 * 1000 };
 let STORE_SAID = 0;
 
+/* Everything this device holds about one person, gone in one go.
+
+   Deleting an account used to clear four keys and leave the rest: the profile
+   itself stayed, so the next time the app opened it still said "your profile
+   is kept on this device", still knew the name, the birthday and the chosen
+   interests - and handed them back to whoever signed in next on that phone.
+   An account somebody asked to be deleted has to leave nothing behind.
+
+   The language and the theme stay: they are how this phone is set up, not who
+   used it, and resetting them would hand a German reader a Vietnamese app. */
+const WIPE_KEEP = ['nabu-lang', 'nabu-theme', 'nabu-twa'];
+function wipeDevice() {
+  try {
+    const keys = [];
+    for (let i = 0; i < localStorage.length; i++) {
+      const k = localStorage.key(i);
+      if (k && k.indexOf('nabu-') === 0 && WIPE_KEEP.indexOf(k) < 0) keys.push(k);
+    }
+    keys.forEach((k) => { try { localStorage.removeItem(k); } catch (e) { /* locked */ } });
+    return true;
+  } catch (e) { return false; }  // private mode, storage blocked
+}
+
 const store = {
   get(k, d) { try { const v = localStorage.getItem(k); return v == null ? d : JSON.parse(v); } catch (e) { return d; } },
   /* A write that fails is not a write, and this used to pretend otherwise.
