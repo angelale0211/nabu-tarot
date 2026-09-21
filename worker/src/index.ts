@@ -55,12 +55,17 @@ export interface Env {
    Workers AI's free tier the whole project gets roughly a hundred questions
    a day before requests start failing for everyone, so the per-person
    allowance is not the binding constraint there - the daily total is. */
-const ASK_A_DAY_FREE = 5, ASK_A_DAY_PAID = 50, ASK_A_MINUTE = 6;
-/* The entitlements that earn the larger allowance: the three courses, and
+const ASK_A_DAY_FREE = 5, ASK_A_DAY_PLUS = 20, ASK_A_DAY_PAID = 50, ASK_A_MINUTE = 6;
+/* The entitlements that earn the largest allowance: the three courses, and
    Pro - both the six-month and the twelve-month plan, which each open the
-   key `pro`. `plus` on its own and `manifest` on its own do not: they are
-   not courses, and the owner named the courses. */
+   key `pro`. */
 const ASK_PAID_KEYS = ["tarot", "lenormand", "playing", "pro"];
+/* A rung of its own between the two. Plus is a paid plan, so five questions a
+   day reads as broken to somebody who is paying; it is the smaller plan, so it
+   does not get what Pro gets. Twenty. `manifest` sits here too: it is bought,
+   and it is not a course. Note that Pro opens `plus` as well, so the larger
+   allowance has to be looked for first. */
+const ASK_PLUS_KEYS = ["plus", "manifest"];
 const MAIL_A_DAY = 20, MAIL_A_MINUTE = 3;
 
 interface AskBody {
@@ -135,20 +140,26 @@ const SOURCES_WORD: Record<string, string> = { vi: "Tham khảo", de: "Quellen",
    who has paid and is wrongly given five questions without search is annoyed
    and writes in, which is recoverable; the other way round, an outage becomes
    an open bar. */
-async function isPaid(env: Env, uid: string): Promise<boolean> {
+export type Tier = "free" | "plus" | "paid";
+export const tierOfAccess = (access: Record<string, unknown>, today: string): Tier => {
+  const held = (k: string) => { const until = String(access[k] || ""); return !!until && until.slice(0, 10) >= today; };
+  if (ASK_PAID_KEYS.some(held)) return "paid";
+  if (ASK_PLUS_KEYS.some(held)) return "plus";
+  return "free";
+};
+const ASK_A_DAY: Record<Tier, number> = { free: ASK_A_DAY_FREE, plus: ASK_A_DAY_PLUS, paid: ASK_A_DAY_PAID };
+
+async function tierOf(env: Env, uid: string): Promise<Tier> {
   try {
     const doc = await fsGet(env as unknown as PlayEnv, "users/" + uid);
     const access = (doc && (doc.access as Record<string, unknown>)) || {};
     const d = new Date();
     const today = d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, "0") + "-" + String(d.getDate()).padStart(2, "0");
-    for (const k of ASK_PAID_KEYS) {
-      const until = String(access[k] || "");
-      if (until && until.slice(0, 10) >= today) return true;
-    }
+    return tierOfAccess(access, today);
   } catch (e) {
     console.error(JSON.stringify({ at: "ai", uid, tier: "read failed, treating as free", error: String(e) }));
   }
-  return false;
+  return "free";
 }
 
 /* ---- the two free answering services ----
@@ -590,9 +601,13 @@ export default {
     mark("auth");
     /* Paid or not, read once: it sets the allowance and whether the answer may
        search. Asking requires an account, so `who` is a uid here. */
-    const paid = env.FIREBASE_PROJECT_ID ? await isPaid(env, who) : true;
+    const tier: Tier = env.FIREBASE_PROJECT_ID ? await tierOf(env, who) : "paid";
+    /* What the answer may do - search the web, and the wider scope - stays
+       with the courses and Pro. The rung in the middle buys more questions,
+       not a different answer. */
+    const paid = tier === "paid";
     mark("tier");
-    const verdict = await allow(env, who, paid ? ASK_A_DAY_PAID : ASK_A_DAY_FREE, ASK_A_MINUTE);
+    const verdict = await allow(env, who, ASK_A_DAY[tier], ASK_A_MINUTE);
     mark("allow");
     if (!verdict.ok) return tooMany(verdict, headers);
 
