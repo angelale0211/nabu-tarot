@@ -12,7 +12,7 @@
      carries this notice with it. See LICENSE. -->
 <meta name="author" content="Nabu Tarot">
 <meta name="copyright" content="Copyright (c) 2025-2026 Nabu Tarot. All rights reserved.">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'none'; object-src 'none'; form-action 'self'; script-src 'self' 'sha256-3qALulDfz/PfziHHOxP1xaovxwz4ZMWwztoGw50HTmM=' https://www.gstatic.com https://apis.google.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; font-src 'self' data:; media-src 'self' data: blob:; worker-src 'self'; connect-src 'self' https://*.googleapis.com https://*.google.com https://*.firebaseio.com https://*.cloudfunctions.net https://*.workers.dev https://generativelanguage.googleapis.com; frame-src https://*.firebaseapp.com https://accounts.google.com https://*.facebook.com">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'none'; object-src 'none'; form-action 'self'; script-src 'self' 'sha256-eSS8tP0fWN4yvwgg52AsQm73TC+wfz18KIPtrKdJKh4=' https://www.gstatic.com https://apis.google.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; font-src 'self' data:; media-src 'self' data: blob:; worker-src 'self'; connect-src 'self' https://*.googleapis.com https://*.google.com https://*.firebaseio.com https://*.cloudfunctions.net https://*.workers.dev https://generativelanguage.googleapis.com; frame-src https://*.firebaseapp.com https://accounts.google.com https://*.facebook.com">
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <meta name="theme-color" content="#EFE9FA">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -4209,7 +4209,7 @@ const STR = {
     needInLuck: 'Lượt dùng của bạn sẽ được lưu vào tài khoản và vẫn còn khi bạn đăng nhập trên thiết bị khác.',
     needInDiary: 'Nhật ký chỉ nằm trên máy này nếu bạn chưa đăng nhập, và sẽ mất khi bạn xoá dữ liệu trình duyệt.',
     needInPet: 'Bạn đăng nhập trước nhé, để bạn nhỏ của bạn còn nhớ được bạn đã cho ăn.',
-    needInDraw: 'Bạn vừa rút thử một lá. Đăng nhập để rút mỗi ngày, và để app nhớ lá bạn đã rút.',
+    needInDraw: 'Bạn đăng nhập để rút bài nhé, app sẽ nhớ lá bài của bạn mỗi ngày.', needInActs: 'Các hoạt động cần một tài khoản, để những gì bạn làm được lưu lại cho riêng bạn.',
     modReport: 'Báo cáo', modBlock: 'Chặn người này',
     modAbout: (n) => 'Về ' + n + ':',
     modReported: 'Đã gửi báo cáo cho Nabu. Cảm ơn bạn.',
@@ -5080,7 +5080,7 @@ const STR = {
     needInLuck: 'Your turns are kept on your account, so they are still there when you open the app on another device.',
     needInDiary: 'Without an account the diary sits on this device only, and goes when you clear your browser.',
     needInPet: 'Sign in first, so your companion can remember being fed.',
-    needInDraw: 'That was your free card. Sign in to draw one every day, and to keep the card you drew.',
+    needInDraw: 'Sign in to draw a card - Nabu will remember the card you drew each day.', needInActs: 'The activities need an account, so that what you do is kept for you.',
     modReport: 'Report', modBlock: 'Block this person',
     modAbout: (n) => 'About ' + n + ':',
     modReported: 'Sent to Nabu. Thank you.',
@@ -5943,7 +5943,7 @@ const STR = {
     needInLuck: 'Deine Runden liegen auf deinem Konto, also sind sie noch da, wenn du die App auf einem anderen Gerät öffnest.',
     needInDiary: 'Ohne Konto liegt das Tagebuch nur auf diesem Gerät und ist weg, sobald du den Browser leerst.',
     needInPet: 'Melde dich bitte an, damit dein Begleiter sich ans Füttern erinnern kann.',
-    needInDraw: 'Das war deine freie Karte. Melde dich an, um jeden Tag eine zu ziehen - und um die gezogene Karte zu behalten.',
+    needInDraw: 'Melde dich an, um eine Karte zu ziehen - Nabu merkt sich deine Karte jeden Tag.', needInActs: 'Für die Aktivitäten brauchst du ein Konto, damit alles, was du tust, für dich erhalten bleibt.',
     modReport: 'Melden', modBlock: 'Diese Person blockieren',
     modAbout: (n) => 'About ' + n + ':',
     modReported: 'An Nabu gesendet. Danke dir.',
@@ -16780,11 +16780,14 @@ const pickToday = () => { const s = store.get('nabu-pick-day', null); return s &
 /* Signed out, one card ever - enough to see what this is, not enough to use
    the app without an account. Signed in, one a day. On Plus, as many as you
    like. */
-const guestSpent = () => !signedIn() && Number(store.get('nabu-guest-draw', 0)) >= 1;
+/* Drawing needs an account. It used to hand a visitor one card ever, which
+   left a reading on the phone belonging to nobody, and the owner asked for
+   the plain rule instead: signed out, the deck is on the table and the way to
+   use it is to sign in. */
+const guestSpent = () => !signedIn();
 const pickSpent = () => !plusOn() && (guestSpent() || !!pickToday());
 function pickSpend(id, focus) {
   if (plusOn()) return;
-  if (!signedIn()) store.set('nabu-guest-draw', Number(store.get('nabu-guest-draw', 0)) + 1);
   store.set('nabu-pick-day', { d: isoDate(new Date()), id: id, focus: focus });
   /* And on the account, so the same person does not get a second card by
      opening this in another browser or clearing the app's data. */
@@ -30952,7 +30955,7 @@ function adminSale(p) {
 ROUTES.admin = { nav: '', render: renderAdmin };
 
 /* ============================ boot ============================ */
-window.APP_VERSION = 'v261';
+window.APP_VERSION = 'v262';
 window.NABU = { CONFIG: CONFIG, SALE: SALE, salePrice: salePrice, loadActs: loadActs, BACK: BACK, LESSONS: LESSONS, localAnswer: localAnswer, compatVerdict: compatVerdict, numerologyOf: numerologyOf, ZDEEP: ZDEEP, lunarToday: lunarToday, solarToLunar: solarToLunar, DECK: DECK, INSIGHT: INSIGHT, KW: KW, ASK: ASK, GUIDES: GUIDES, SERVICES: SERVICES, COURSES: COURSES, ACCESS: ACCESS, INTERESTS: INTERESTS, plusOn: () => plusOn(), proOn: () => proOn(), luckUnlimited: () => luckUnlimited(), ZODIAC: ZODIAC, pick: pick, book: book, PLAY_ITEMS: PLAY_ITEMS, PLAY_SUB_SKUS: PLAY_SUB_SKUS, playItem: playItem, BILL: BILL, SUBS: SUBS, billUse: billUse, APPLE_BILL: APPLE_BILL, appleAccountToken: appleAccountToken, renderStore: renderStore, pickLimitHTML: pickLimitHTML, subStateWord: subStateWord,
   insightHTML: insightHTML, insightOf: insightOf, sunSignIndex: sunSignIndex, lifePath: lifePath, PROFILE: () => PROFILE, BE: BE, inAppBrowser: inAppBrowser, ACTS: ACTS, CMT: CMT, LIKES: LIKES, kbReady: kbReady, AI: AI, STR: STR, KB_URL: (typeof KB_URL === 'string' ? KB_URL : ''),
   ANGELS: ANGELS, angelRead: angelRead, CODEBOOK: CODEBOOK, redeemCode: redeemCode, loadCodebook: loadCodebook, petHomeSVG: petHomeSVG, PET_HOMES: PET_HOMES, PET_WARDROBE: PET_WARDROBE, PET_SLOTS: PET_SLOTS,

@@ -149,10 +149,19 @@ async function go(hash, sel) { W().location.hash = hash; await sleep(30); return
     { const before = d.querySelector('#deckpos').textContent; d.querySelector('[data-step="1"]').click(); await sleep(400); ok(d.querySelector('#deckpos').textContent !== before, 'the arrow steps to the next card'); }
     { const fan = d.querySelector('#fan.deck'), l0 = fan.scrollLeft; fan.dispatchEvent(new w.MouseEvent('mousedown', { clientX: 200, button: 0, bubbles: true })); w.dispatchEvent(new w.MouseEvent('mousemove', { clientX: 60, bubbles: true })); w.dispatchEvent(new w.MouseEvent('mouseup', { bubbles: true })); await sleep(80); ok(fan.scrollLeft !== l0 && w.getComputedStyle(fan).cursor === 'grab', 'pressing and dragging with the mouse slides the deck'); }
     w.localStorage.removeItem('nabu-pick-day'); const accBeforePick = w.localStorage.getItem('nabu-access');
+    { /* Drawing needs an account. Signed out, the deck is on the table, the
+         tap does nothing, and the way to use it is the sign-in card. */
+      d.querySelector('[data-focus="love"]').click(); d.querySelectorAll('#fan button')[2].click(); await sleep(200);
+      ok(N.pick.chosen === null && !d.querySelector('#reveal .hero') && !!d.querySelector('#main .needin') && !w.localStorage.getItem('nabu-pick-day'),
+        'signed out, a tap on the deck draws nothing and the screen asks for an account instead'); }
+    /* The rest of the draw screen is what somebody signed in sees. */
+    const pickUser = N.BE.user;
+    N.BE.user = { uid: 'nabu-test-uid', email: 'pick@test' };
+    await go('#/home', '.tiles'); await go('#/pick', '#fan .slot');
     d.querySelector('[data-focus="love"]').click(); d.querySelectorAll('#fan button')[2].click();
     await waitFor(() => d.querySelector('#reveal .hero'), 4000);
-    ok(!d.querySelector('#redraw') && !d.querySelector('#redrawTop') && d.querySelector('#reveal .needin') && (JSON.parse(w.localStorage.getItem('nabu-pick-day') || '{}').id === N.pick.chosen),
-      'signed out, one card is free and the second asks for an account; the card drawn is kept either way');
+    ok(!!d.querySelector('#reveal .hero') && (JSON.parse(w.localStorage.getItem('nabu-pick-day') || '{}').id === N.pick.chosen),
+      'signed in, the card is drawn and kept for the day');
     const chosen = N.pick.chosen;
     ok(!!d.querySelector('#reveal .hero .name') && d.querySelectorAll('#reveal .ins').length === 3 && d.querySelector('#reveal .teaser a[href="#/learn/tarot"]') && !/Mặt trái cần để ý/.test(d.querySelector('#reveal').textContent), 'card revealed with energy, a note, the CTA block and a course teaser; no reversed meaning or scene');
     ok(!/🃏/.test(d.querySelector('#main').innerHTML) && !/🃏/.test(d.querySelector('#nav').innerHTML), 'no joker emoji on the draw screen');
@@ -166,8 +175,13 @@ async function go(hash, sel) { W().location.hash = hash; await sleep(30); return
        sign-in, so there is no box here to type a question into and be turned
        away afterwards. The rest of this check is about the engine, so it signs
        in and redraws the panel, then puts the visitor back as they were. */
-    ok(!d.querySelector('#reveal .ai [data-ai-q]') && !!d.querySelector('#reveal .ai .aisignin'),
-      'the panel under a freshly drawn card offers a visitor with no account the way to sign in, not a box');
+    { const was = N.BE.user;
+      N.BE.user = null;
+      const panel = d.querySelector('#reveal .ai');
+      panel.outerHTML = w.aiPanelHTML(JSON.parse(panel.getAttribute('data-ai')));
+      ok(!d.querySelector('#reveal .ai [data-ai-q]') && !!d.querySelector('#reveal .ai .aisignin'),
+        'the panel offers a visitor with no account the way to sign in, not a box');
+      N.BE.user = was; }
     const aiWas = N.BE.user, epWas = N.CONFIG.aiEndpoint;
     N.BE.user = { uid: 'aitest', email: 'ai@test' };
     N.CONFIG.aiEndpoint = '';  /* nothing configured at all: no key, no worker */
@@ -205,7 +219,7 @@ async function go(hash, sel) { W().location.hash = hash; await sleep(30); return
       ok(/Bạn đã hết lượt hỏi hôm nay\./.test(d.querySelector('#reveal .ai [data-ai-left]').textContent) && /Bạn đã hết lượt hỏi hôm nay\./.test(chat) && !/kho kiến thức/.test(chat),
         'out of questions, it says so in those words and offers nothing from the knowledge base in place of an answer');
       w.fetch = was.f; N.CONFIG.aiEndpoint = was.ep; w.NABU.AI ? 0 : 0; }
-    N.CONFIG.geminiKey = gk; N.BE.user = aiWas; N.CONFIG.aiEndpoint = epWas;
+    N.CONFIG.geminiKey = gk; N.BE.user = pickUser; N.CONFIG.aiEndpoint = epWas;   // signed out again, as this run started
     const yn = N.localAnswer('Mình có nên tiếp tục không?', { type: 'card', id: 'major-19' }), tm = N.localAnswer('Khi nào chuyện này xảy ra?', { type: 'card', id: 'wands-8' });
     ok(/thiên về CÓ/.test(yn) && /Gậy đi nhanh/.test(tm), 'yes/no lean and timing hints');
     ok(/Gã Khờ/.test(N.localAnswer('Gã Khờ nghĩa là gì?', { type: 'general' })) && /Sư Tử và Bảo Bình là hai cung đối diện/.test(N.localAnswer('Sư Tử hợp với Bảo Bình không?', { type: 'sign', key: 'leo' })), 'mentions of cards and signs are picked up; compatibility gets a straight verdict');

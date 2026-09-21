@@ -27,11 +27,14 @@ const pickToday = () => { const s = store.get('nabu-pick-day', null); return s &
 /* Signed out, one card ever - enough to see what this is, not enough to use
    the app without an account. Signed in, one a day. On Plus, as many as you
    like. */
-const guestSpent = () => !signedIn() && Number(store.get('nabu-guest-draw', 0)) >= 1;
+/* Drawing needs an account. It used to hand a visitor one card ever, which
+   left a reading on the phone belonging to nobody, and the owner asked for
+   the plain rule instead: signed out, the deck is on the table and the way to
+   use it is to sign in. */
+const guestSpent = () => !signedIn();
 const pickSpent = () => !plusOn() && (guestSpent() || !!pickToday());
 function pickSpend(id, focus) {
   if (plusOn()) return;
-  if (!signedIn()) store.set('nabu-guest-draw', Number(store.get('nabu-guest-draw', 0)) + 1);
   store.set('nabu-pick-day', { d: isoDate(new Date()), id: id, focus: focus });
   /* And on the account, so the same person does not get a second card by
      opening this in another browser or clearing the app's data. */
