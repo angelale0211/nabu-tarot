@@ -12,7 +12,7 @@
      carries this notice with it. See LICENSE. -->
 <meta name="author" content="Nabu Tarot">
 <meta name="copyright" content="Copyright (c) 2025-2026 Nabu Tarot. All rights reserved.">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'none'; object-src 'none'; form-action 'self'; script-src 'self' 'sha256-/t3Cu72PU5Qu3c4dkOv1TEQdWEoIcI9MVMCXZIlB6IA=' https://www.gstatic.com https://apis.google.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; font-src 'self' data:; media-src 'self' data: blob:; worker-src 'self'; connect-src 'self' https://*.googleapis.com https://*.google.com https://*.firebaseio.com https://*.cloudfunctions.net https://*.workers.dev https://generativelanguage.googleapis.com; frame-src https://*.firebaseapp.com https://accounts.google.com https://*.facebook.com">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'none'; object-src 'none'; form-action 'self'; script-src 'self' 'sha256-dyh6vHyuQB9vLhKj1vBFCjYbEmumAYUidcx0KWIOStI=' https://www.gstatic.com https://apis.google.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; font-src 'self' data:; media-src 'self' data: blob:; worker-src 'self'; connect-src 'self' https://*.googleapis.com https://*.google.com https://*.firebaseio.com https://*.cloudfunctions.net https://*.workers.dev https://generativelanguage.googleapis.com; frame-src https://*.firebaseapp.com https://accounts.google.com https://*.facebook.com">
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <meta name="theme-color" content="#EFE9FA">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -696,6 +696,7 @@ html.iosapp[lang="en"] #today .tbl td:first-child{white-space:normal;width:36%}
 .pricerules summary{cursor:pointer;font-weight:700;font-size:14.5px}
 .pricerules ul{margin:8px 0 0 18px;padding:0;font-size:13.5px;line-height:1.6;color:var(--fg-faint)}
 .pricerules li{margin:0 0 4px}
+.ai .ai-left{margin:8px 0 0;font-size:13px}
 .svc button.pkg.on{background:var(--primary);color:var(--primary-ink);border-color:transparent}
 .paynote{background:var(--tag-gold-bg);color:var(--tag-gold-ink);border-radius:12px;padding:10px 14px;font-size:14px;font-weight:600;text-align:center}
 
@@ -3495,7 +3496,7 @@ const STR = {
     priceOpen: 'Xem thử',
     priceFree: 'Miễn phí', priceFreeHint: 'Phần lớn Nabu là miễn phí và không cần mã. Chạm vào để khám phá.',
     courses: 'Khóa học', coursesPractice: 'Khóa học và thực hành', freeReads: 'Đọc miễn phí', practice: 'Thực hành', lessonsIntro: (n) => 'Khóa học có ' + n + ' bài. Bạn nên học lần lượt và dành khoảng một tuần cho mỗi bài.', markDone: 'Đánh dấu đã học xong', lessonDone: 'Đã học xong', journeyHint: 'Chạm vào một lá để mở trang của lá đó.', lenGridHint: 'Cả 36 lá. Chạm để xem từng lá.',
-    aiIntro: 'Bạn có thể hỏi Nabu AI về nội dung đang mở. Câu hỏi càng cụ thể thì câu trả lời càng rõ.', aiIntroLesson: 'Nếu có chỗ nào trong bài bạn chưa hiểu, bạn hãy hỏi Nabu AI tại đây.', aiPlaceholder: 'Ví dụ: lá này nói gì về chuyện tình cảm của mình?', aiAsk: 'Hỏi', aiOnline: 'trả lời bằng AI', aiBuiltin: 'trả lời từ kho kiến thức', aiNote: 'Nabu AI trả lời câu hỏi về Tarot, chiêm tinh, thần số học và lịch âm dương. Với những chuyện riêng cần xem kỹ, bạn có thể đặt lịch với Nabu.', aiFallback: 'AI đang bận, đây là câu trả lời từ kho kiến thức.', aiOff: 'Nabu AI chưa được bật. Đây là câu trả lời từ kho kiến thức của app.', aiSignIn: 'Bạn đăng nhập để hỏi Nabu AI nhé.', aiNeedSignin: 'Bạn đăng nhập để hỏi Nabu AI nhé. Đây là câu trả lời từ kho kiến thức.', aiLimit: 'Hôm nay bạn hỏi khá nhiều rồi. Bạn thử lại sau nhé, đây là câu trả lời từ kho kiến thức.',
+    aiIntro: 'Bạn có thể hỏi Nabu AI về nội dung đang mở. Câu hỏi càng cụ thể thì câu trả lời càng rõ.', aiIntroLesson: 'Nếu có chỗ nào trong bài bạn chưa hiểu, bạn hãy hỏi Nabu AI tại đây.', aiPlaceholder: 'Ví dụ: lá này nói gì về chuyện tình cảm của mình?', aiAsk: 'Hỏi', aiOnline: 'trả lời bằng AI', aiNote: 'Nabu AI trả lời câu hỏi về Tarot, chiêm tinh, thần số học và lịch âm dương. Với những chuyện riêng cần xem kỹ, bạn có thể đặt lịch với Nabu.', aiFallback: 'Nabu AI đang bận. Bạn thử lại sau một chút nhé.', aiOff: 'Nabu AI chưa được bật.', aiSignIn: 'Bạn đăng nhập để hỏi Nabu AI nhé.', aiNeedSignin: 'Bạn đăng nhập để hỏi Nabu AI nhé.', aiLimit: 'Bạn đã hết lượt hỏi hôm nay.', aiOffShort: 'chưa bật', aiLeft: (n) => 'Bạn còn ' + n + ' lượt hỏi hôm nay.', aiLeftNone: 'Bạn đã hết lượt hỏi hôm nay.',
     aiSugCard: ['Lá này nói gì về tình cảm của mình?', 'Mình có nên tiếp tục không?', 'Khi nào chuyện này xảy ra?'], aiSugLesson: ['Ẩn Chính khác Ẩn Phụ thế nào?', 'Lá Hoàng gia đại diện cho ai?', 'Nếu mình không hiểu một lá thì làm sao?'], aiSugSign: ['Cung này hợp với cung nào?', 'Cung này trong tình yêu thế nào?', 'Mặt Trăng ở cung này là sao?'], aiSugNumbers: ['Số đường đời của mình nói gì?', 'Năm nay của mình là năm gì?', 'Số vận mệnh theo tên mình là gì?'], aiSugGeneral: ['Gã Khờ nghĩa là gì?', 'Sư Tử hợp với Bảo Bình không?', 'Số đường đời của mình?'],
     aiCardGeneral: (n) => 'Lá ' + n + ' đang nói về năng lượng chung của bạn lúc này.', aiCardFocus: (n, f) => 'Với câu hỏi về ' + f.toLowerCase() + ', lá ' + n + ' nói thế này:', aiCardWhy: 'Lá này mang năng lượng:', aiCardShadow: 'Mặt trái cần để ý:', aiYes: (n) => 'Nếu hỏi có hay không: ' + n + ' thiên về CÓ, nhưng một lá không quyết định được. Muốn rõ hơn, hãy đặt lịch xem bài.', aiNo: (n) => 'Nếu hỏi có hay không: ' + n + ' thiên về KHÔNG, hoặc chưa phải lúc. Một lá không quyết định được; muốn rõ hơn, hãy đặt lịch xem bài.', aiMaybe: (n) => 'Nếu hỏi có hay không: ' + n + ' không nghiêng hẳn về bên nào. Câu trả lời tuỳ vào việc bạn làm tiếp theo.', aiTiming: 'Về thời gian, một lá bài chỉ gợi ý nhịp diễn biến, không cho ngày chính xác.', aiFound: 'Mình tìm thấy trong khóa học:', aiLessonNone: 'Mình chưa thấy phần nào khớp. Bạn thử hỏi bằng tên lá bài, hoặc một từ khóa trong bài học nhé.', aiChem: (a, b) => a + ' và ' + b + ':', aiCompatYes: 'Đây là một trong những cặp thường được xem là hợp.', aiCompatWork: 'Không nằm trong nhóm dễ hợp nhất, nhưng cung chỉ là một phần; bản đồ sao đầy đủ mới nói được nhiều hơn.', aiAbout: (n) => 'Về ' + n + ':', aiGeneralHelp: 'Mình chưa có câu trả lời sẵn cho câu này. Mình trả lời tốt nhất khi câu hỏi nhắc đến một lá bài, một cung hoàng đạo, một hành tinh, một nhà, một con giáp hay một con số.', aiOfflineHint: 'Chuyện riêng của bạn thì đặt lịch với Nabu để được xem kỹ.', aiBooking: 'Bạn xem bảng giá và chọn giờ ở mục Đặt lịch. Chọn gói, chọn giờ trống trên lịch, rồi gửi cho Nabu.',
     compatHead: { same: (a, b) => a + ' và ' + b + ': cùng một cung, nên rất dễ hiểu nhau. Câu trả lời ngắn là có, hai bạn hợp, miễn là đừng giống nhau cả ở tật xấu.', opposite: (a, b) => a + ' và ' + b + ' là hai cung đối diện nhau trên vòng hoàng đạo. Câu trả lời ngắn là có, hai bạn hút nhau rất mạnh, nhưng phải học cách cân bằng vì mỗi bên là mặt còn thiếu của bên kia.', good: (a, b) => a + ' và ' + b + ': câu trả lời ngắn là có, đây là một trong những cặp được xem là hợp nhau.', ok: (a, b) => a + ' và ' + b + ': khá hợp. Hai cung không cùng nguyên tố nhưng nuôi được nhau.', work: (a, b) => a + ' và ' + b + ': hợp được, nhưng phải cố gắng. Hai cung đứng ở góc vuông với nhau, nên dễ va chạm về cách làm.', neutral: (a, b) => a + ' và ' + b + ': ở mức trung bình. Không thuộc nhóm dễ hợp nhất, cũng không thuộc nhóm hay xung đột.' },
@@ -4364,7 +4365,7 @@ const STR = {
     priceOpen: 'Take a look',
     priceFree: 'Free', priceFreeHint: 'Most of Nabu is free and needs no code. Tap to explore.',
     courses: 'Courses', coursesPractice: 'Courses and practice', freeReads: 'Free to read', practice: 'Practice', lessonsIntro: (n) => 'The course has ' + n + ' sessions. Take them in order, about one a week.', markDone: 'Mark as done', lessonDone: 'Done', journeyHint: 'Tap a card to open its page.', lenGridHint: 'All 36 cards. Tap one to open it.',
-    aiIntro: 'Ask Nabu AI about what you are looking at. The more specific, the better.', aiIntroLesson: 'Anything in this lesson unclear? Ask Nabu AI here.', aiPlaceholder: 'For example: what does this card say about my love life?', aiAsk: 'Ask', aiOnline: 'answered by AI', aiBuiltin: 'answered from the knowledge base', aiNote: 'Nabu AI answers questions about Tarot, astrology, numerology and the Vietnamese lunisolar calendar. For personal questions that need a closer reading, you can book with Nabu.', aiFallback: 'AI is busy; this answer comes from the knowledge base.', aiOff: 'Nabu AI is not switched on yet. This answer comes from the knowledge base inside the app.', aiSignIn: 'Sign in to ask Nabu AI.', aiNeedSignin: 'Sign in to ask Nabu AI. This answer comes from the knowledge base.', aiLimit: 'That is a lot of questions for one day. Try again later; this answer comes from the knowledge base.',
+    aiIntro: 'Ask Nabu AI about what you are looking at. The more specific, the better.', aiIntroLesson: 'Anything in this lesson unclear? Ask Nabu AI here.', aiPlaceholder: 'For example: what does this card say about my love life?', aiAsk: 'Ask', aiOnline: 'answered by AI', aiNote: 'Nabu AI answers questions about Tarot, astrology, numerology and the Vietnamese lunisolar calendar. For personal questions that need a closer reading, you can book with Nabu.', aiFallback: 'Nabu AI is busy. Please try again in a moment.', aiOff: 'Nabu AI is not switched on yet.', aiSignIn: 'Sign in to ask Nabu AI.', aiNeedSignin: 'Sign in to ask Nabu AI.', aiLimit: 'You have used up your questions for today.', aiOffShort: 'not switched on', aiLeft: (n) => 'You have ' + n + ' question' + (n === 1 ? '' : 's') + ' left today.', aiLeftNone: 'You have used up your questions for today.',
     aiSugCard: ['What does this card say about my love life?', 'Should I keep going?', 'When will this happen?'], aiSugLesson: ['How do Majors differ from Minors?', 'Who do the court cards represent?', 'What if I do not understand a card?'], aiSugSign: ['Which signs suit this sign?', 'How is this sign in love?', 'What does the Moon in this sign mean?'], aiSugNumbers: ['What does my life path say?', 'What kind of year is this for me?', 'What is my destiny number from my name?'], aiSugGeneral: ['What does The Fool mean?', 'Do Leo and Aquarius get along?', 'What is my life path?'],
     aiCardGeneral: (n) => n + ' speaks about your general energy right now.', aiCardFocus: (n, f) => 'For a question about ' + f.toLowerCase() + ', ' + n + ' says:', aiCardWhy: 'The card carries this energy:', aiCardShadow: 'The shadow to watch:', aiYes: (n) => 'As a yes-or-no: ' + n + ' leans YES, but one card cannot decide it. For a clear answer, book a reading.', aiNo: (n) => 'As a yes-or-no: ' + n + ' leans NO, or not yet. One card cannot decide it; for a clear answer, book a reading.', aiMaybe: (n) => 'As a yes-or-no: ' + n + ' does not lean either way. The answer depends on what you do next.', aiTiming: 'For timing, one card only suggests the pace of events, not an exact date.', aiFound: 'Found in the course:', aiLessonNone: 'Nothing matched yet. Try a card name or a keyword from the lesson.', aiChem: (a, b) => a + ' and ' + b + ':', aiCompatYes: 'This is one of the pairs usually seen as a good match.', aiCompatWork: 'Not among the easiest pairs, but the Sun sign is one part; the full chart says much more.', aiAbout: (n) => 'About ' + n + ':', aiGeneralHelp: 'I do not have a ready answer for that. I answer best when the question names a card, a sign, a planet, a house, a zodiac animal or a number.', aiOfflineHint: 'For your own situation, book a reading with Nabu.', aiBooking: 'See the price list and pick a time under Book. Choose a package, a free slot on the calendar, then send it to Nabu.',
     compatHead: { same: (a, b) => a + ' and ' + b + ' are the same sign, so you understand each other easily. The short answer is yes, you match, as long as you do not share the same faults.', opposite: (a, b) => a + ' and ' + b + ' sit opposite each other on the zodiac. The short answer is yes, the attraction is strong, but you have to learn balance, because each of you is the missing half of the other.', good: (a, b) => a + ' and ' + b + ': the short answer is yes, this is one of the pairs usually seen as a good match.', ok: (a, b) => a + ' and ' + b + ': a fairly good match. The two signs are not the same element, but they feed each other.', work: (a, b) => a + ' and ' + b + ': it can work, but it takes effort. The two signs sit at a square angle, so you tend to clash over how things should be done.', neutral: (a, b) => a + ' and ' + b + ': an average match. Not among the easiest pairs, and not among the ones that clash most either.' },
@@ -5232,7 +5233,7 @@ const STR = {
     priceOpen: 'Ansehen',
     priceFree: 'Kostenlos', priceFreeHint: 'Das meiste in Nabu ist kostenlos und braucht keinen Code. Tipp dich einfach durch.',
     courses: 'Kurse', coursesPractice: 'Kurse und Übung', freeReads: 'Kostenlos zu lesen', practice: 'Übung', lessonsIntro: (n) => 'Der Kurs hat ' + n + ' Einheiten. Geh sie am besten der Reihe nach durch, ungefähr eine pro Woche.', markDone: 'Als erledigt markieren', lessonDone: 'Erledigt', journeyHint: 'Tipp eine Karte an, um ihre Seite zu öffnen.', lenGridHint: 'Alle 36 Karten. Tipp eine an, um sie zu öffnen.',
-    aiIntro: 'Frag Nabu AI zu dem, was du gerade vor dir hast. Je genauer die Frage, desto besser.', aiIntroLesson: 'Ist in dieser Lektion etwas unklar? Frag hier Nabu AI.', aiPlaceholder: 'Zum Beispiel: Was sagt diese Karte über mein Liebesleben?', aiAsk: 'Fragen', aiOnline: 'von der KI beantwortet', aiBuiltin: 'aus der Wissensbasis beantwortet', aiNote: 'Nabu AI beantwortet Fragen zu Tarot, Astrologie, Numerologie und zum vietnamesischen Lunisolarkalender. Für persönliche Themen, die genauer betrachtet werden sollen, kannst du eine Legung bei Nabu buchen.', aiFallback: 'Die KI ist gerade beschäftigt; diese Antwort kommt aus der Wissensbasis.', aiOff: 'Nabu AI ist noch nicht eingeschaltet. Diese Antwort kommt aus der Wissensbasis der App.', aiSignIn: 'Melde dich an, um Nabu AI zu fragen.', aiNeedSignin: 'Melde dich an, um Nabu AI zu fragen. Diese Antwort kommt aus der Wissensbasis.', aiLimit: 'Das sind viele Fragen für einen Tag. Versuch es später noch einmal; diese Antwort kommt aus der Wissensbasis.',
+    aiIntro: 'Frag Nabu AI zu dem, was du gerade vor dir hast. Je genauer die Frage, desto besser.', aiIntroLesson: 'Ist in dieser Lektion etwas unklar? Frag hier Nabu AI.', aiPlaceholder: 'Zum Beispiel: Was sagt diese Karte über mein Liebesleben?', aiAsk: 'Fragen', aiOnline: 'von der KI beantwortet', aiNote: 'Nabu AI beantwortet Fragen zu Tarot, Astrologie, Numerologie und zum vietnamesischen Lunisolarkalender. Für persönliche Themen, die genauer betrachtet werden sollen, kannst du eine Legung bei Nabu buchen.', aiFallback: 'Nabu AI ist gerade beschäftigt. Versuch es gleich noch einmal.', aiOff: 'Nabu AI ist noch nicht eingeschaltet.', aiSignIn: 'Melde dich an, um Nabu AI zu fragen.', aiNeedSignin: 'Melde dich an, um Nabu AI zu fragen.', aiLimit: 'Du hast deine Fragen für heute aufgebraucht.', aiOffShort: 'nicht aktiv', aiLeft: (n) => 'Du hast heute noch ' + n + ' Frage' + (n === 1 ? '' : 'n') + '.', aiLeftNone: 'Du hast deine Fragen für heute aufgebraucht.',
     aiSugCard: ['Was sagt diese Karte über mein Liebesleben?', 'Soll ich weitermachen?', 'Wann könnte das passieren?'], aiSugLesson: ['Was unterscheidet die Große von der Kleinen Arkana?', 'Wer sind die Hofkarten?', 'Was mache ich, wenn ich eine Karte nicht verstehe?'], aiSugSign: ['Welche Sternzeichen passen zu diesem Zeichen?', 'Wie ist dieses Sternzeichen in der Liebe?', 'Was bedeutet der Mond in diesem Zeichen?'], aiSugNumbers: ['Was sagt meine Lebenszahl über mich aus?', 'Was für ein persönliches Jahr ist das für mich?', 'Wie lautet meine Schicksalszahl aus meinem Namen?'], aiSugGeneral: ['Was bedeutet Der Narr?', 'Passen Löwe und Wassermann zusammen?', 'Wie lautet meine Lebenszahl?'],
     aiCardGeneral: (n) => n + ' beschreibt deine allgemeine Energie im Moment.', aiCardFocus: (n, f) => 'Bei einer Frage zum Thema „' + f + '“ sagt ' + n + ':', aiCardWhy: 'Die Karte trägt diese Energie:', aiCardShadow: 'Der Schatten, auf den du achten solltest:', aiYes: (n) => 'Bei einer Ja-oder-Nein-Frage tendiert ' + n + ' zu JA. Eine einzelne Karte entscheidet aber nichts sicher. Für eine persönliche Einordnung kannst du eine Legung bei Nabu buchen.', aiNo: (n) => 'Bei einer Ja-oder-Nein-Frage tendiert ' + n + ' zu NEIN oder „noch nicht“. Eine einzelne Karte entscheidet aber nichts sicher. Für eine persönliche Einordnung kannst du eine Legung bei Nabu buchen.', aiMaybe: (n) => 'Bei einer Ja-oder-Nein-Frage legt sich ' + n + ' nicht eindeutig fest. Viel hängt davon ab, was du als Nächstes tust.', aiTiming: 'Beim Timing deutet eine einzelne Karte nur das Tempo an, kein genaues Datum.', aiFound: 'Im Kurs gefunden:', aiLessonNone: 'Dazu habe ich noch nichts gefunden. Versuch einen Kartennamen oder ein Stichwort aus der Lektion.', aiChem: (a, b) => a + ' und ' + b + ':', aiCompatYes: 'Das ist eines der Paare, die üblicherweise als gute Verbindung gelten.', aiCompatWork: 'Nicht zu den leichtesten Paaren, aber das Sternzeichen ist nur ein Teil; das ganze Horoskop sagt viel mehr.', aiAbout: (n) => 'Über ' + n + ':', aiGeneralHelp: 'Darauf habe ich keine fertige Antwort. Am besten antworte ich, wenn die Frage eine Karte, ein Sternzeichen, einen Planeten, ein Haus, ein Tierkreiszeichen oder eine Zahl nennt.', aiOfflineHint: 'Für deine eigene Lage buch dir eine Legung bei Nabu.', aiBooking: 'Die Preisliste und die freien Zeiten findest du unter Buchen. Wähl ein Paket, einen freien Termin im Kalender und schick es an Nabu.',
     compatHead: { same: (a, b) => a + ' und ' + b + ' haben dasselbe Sternzeichen und verstehen vieles intuitiv ähnlich. Das kann sehr stimmig sein, solange ihr euch nicht gegenseitig in denselben Schwächen verstärkt.', opposite: (a, b) => a + ' und ' + b + ' liegen sich im Tierkreis gegenüber. Das kann starke Anziehung schaffen, braucht aber auch Ausgleich, weil ihr vieles aus entgegengesetzten Blickwinkeln angeht.', good: (a, b) => a + ' und ' + b + ' gelten in der Astrologie oft als harmonische Kombination.', ok: (a, b) => a + ' und ' + b + ' können gut zusammenpassen. Eure Elemente sind verschieden, können sich aber gegenseitig unterstützen.', work: (a, b) => a + ' und ' + b + ' können funktionieren, brauchen aber etwas mehr Verständnis füreinander. Die Zeichen stehen im Quadrat und geraten deshalb leichter darüber aneinander, wie etwas laufen sollte.', neutral: (a, b) => a + ' und ' + b + ' sind astrologisch eher eine neutrale Kombination: weder besonders mühelos noch besonders konfliktreich.'},
@@ -15811,7 +15812,7 @@ function openShareSheet(what) {
    the knowledge base with "AI is busy" under it, for months, because the
    worker was never given a provider. Once it says so, the panel stops
    calling itself an AI answer. */
-const AI = { history: {}, busy: false, model: '', noSearchUntil: 0, off: false };
+const AI = { history: {}, busy: false, model: '', noSearchUntil: 0, off: false, left: null };
 const fold = (s) => String(s || '').normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/đ/g, 'd').replace(/Đ/g, 'D').toLowerCase();
 const CATS = {
   love: ['yeu', 'tinh cam', 'nguoi ay', 'crush', 'nguoi cu', 'chia tay', 'hen ho', 'ket hon', 'cuoi', 'ban trai', 'ban gai', 'chong', 'vo', 'love', 'relationship', 'partner', 'boyfriend', 'girlfriend', 'ex ', 'marriage', 'date'],
@@ -16210,28 +16211,27 @@ async function remoteAnswer(q, ctx, history) {
   }
   if (r.status === 429) {
     let wait = 0; try { wait = Number((await r.json()).retryAfter) || 0; } catch (e) { /* no body */ }
+    AI.left = 0;
     const e = new Error('AI-LIMIT'); e.retryAfter = wait; throw e;
   }
   if (!r.ok) throw new Error('AI ' + r.status);
   const j = await r.json();
   if (!j.answer) throw new Error(j.error || 'AI');
   AI.off = false;
+  /* The worker counts the day, so the number comes from there rather than
+     being guessed here: a phone that asked from another device would count
+     its own questions and say the wrong thing. */
+  if (typeof j.left === 'number') AI.left = j.left;
   return j.answer;
 }
 
 /* ---- panel ---- */
-/* Which of the two this panel can honestly call itself. An endpoint being
-   configured is not the same as an endpoint that can answer: the app used to
-   read the first as proof of the second, so every knowledge-base answer sat
-   under a heading that said an AI had written it. */
+/* Every answer here is the AI's now, so the heading has one thing to say -
+   except where there is no service at all to answer, and then it says that
+   instead of putting a name to nothing. */
 function aiSourceWord() {
   const S = T();
-  return (CONFIG.geminiKey || CONFIG.aiEndpoint) && !AI.off ? S.aiOnline : S.aiBuiltin;
-}
-/* Every panel already on the screen, corrected at once. */
-function aiSayBuiltin() {
-  const S = T();
-  $$('.ai .ai-h .faint', document).forEach((el) => { el.textContent = S.aiBuiltin; });
+  return (CONFIG.geminiKey || CONFIG.aiEndpoint) && !AI.off ? S.aiOnline : S.aiOffShort;
 }
 function aiSuggestions(ctx) {
   const S = T();
@@ -16250,6 +16250,14 @@ function aiSuggestions(ctx) {
    BE.enabled false means accounts are off altogether (the app is running
    with no backend); then the built-in engine answers and the box stays. */
 function aiLocked() { return !!(typeof BE !== 'undefined' && BE.enabled && !BE.user); }
+/* What is left of today, said only once the worker has told us. Before the
+   first question of a session there is no number to show, and a made-up one
+   is worse than none. */
+function aiLeftText() {
+  const S = T();
+  if (AI.left === null || typeof AI.left !== 'number') return '';
+  return AI.left > 0 ? S.aiLeft(AI.left) : S.aiLeftNone;
+}
 function aiPanelHTML(ctx) {
   const S = T(), key = JSON.stringify(ctx), hist = AI.history[key] || [];
   return '<div class="ai" data-ai=\'' + esc(key) + '\'><div class="ai-h"><span class="ai-logo">✦</span><b>Nabu AI</b><span class="faint">' + esc(aiSourceWord()) + '</span></div>'
@@ -16259,6 +16267,7 @@ function aiPanelHTML(ctx) {
     + (aiLocked()
       ? '<p class="hint aisignin">' + esc(S.aiSignIn) + ' <a href="' + esc(signinHref()) + '">' + esc(S.signIn) + '</a></p>'
       : '<div class="chatbar"><textarea data-ai-q placeholder="' + esc(S.aiPlaceholder) + '"></textarea><button class="btn primary" data-ai-send>' + esc(S.aiAsk) + '</button></div>')
+    + '<p class="faint ai-left" data-ai-left' + (aiLeftText() ? '' : ' hidden') + '>' + esc(aiLeftText()) + '</p>'
     + '<p class="faint" style="margin-top:8px">' + esc(S.aiNote) + '</p></div>';
 }
 const aiMsgHTML = (role, text) => '<div class="msg ' + (role === 'user' ? 'me' : 'them') + '">' + (role === 'user' ? '' : '<button type="button" class="flag" data-ai-flag title="' + esc(T().aiFlag) + '" aria-label="' + esc(T().aiFlag) + '">⚑</button>') + paras(text) + '</div>';
@@ -16281,23 +16290,31 @@ function bindAI(root) {
       busy = true; send.disabled = true; ta.value = ''; push('user', q);
       const thinking = document.createElement('div'); thinking.className = 'msg them ai-wait'; thinking.textContent = '…'; chat.appendChild(thinking); chat.scrollTop = chat.scrollHeight;
       let a;
-      try { a = CONFIG.geminiKey ? await geminiAnswer(q, ctx, AI.history[key]) : CONFIG.aiEndpoint ? await remoteAnswer(q, ctx, AI.history[key]) : localAnswer(q, ctx); }
+      /* Nabu AI answers, or says why it cannot. It used to answer from the
+         app's own knowledge base whenever the service was busy, out of
+         questions or switched off, with a line in brackets underneath - and
+         what the reader saw was a thin answer to a question they had asked
+         the AI. The owner asked for that to go: one voice, and a plain
+         sentence when there is no answer to give. */
+      try {
+        a = CONFIG.geminiKey ? await geminiAnswer(q, ctx, AI.history[key])
+          : CONFIG.aiEndpoint ? await remoteAnswer(q, ctx, AI.history[key])
+          : (function () { AI.off = true; throw new Error('AI-OFF'); })();
+      }
       catch (e) {
-        /* Busy, signed out and asked-too-much all still get an answer from the
-           knowledge base. Only the line underneath it changes, because only one
-           of the three is something the reader can do anything about. */
         const said = String((e && e.message) || '');
-        const why = said === 'AI-SIGNIN' ? T().aiNeedSignin
+        a = said === 'AI-SIGNIN' ? T().aiNeedSignin
           : said === 'AI-LIMIT' ? T().aiLimit
           : said === 'AI-OFF' ? T().aiOff
           : T().aiFallback;
-        /* The heading says "answered by AI"; once the service has said it
-           cannot, every panel on the page has to stop saying that. */
-        if (said === 'AI-OFF') aiSayBuiltin(); 
-        try { a = localAnswer(q, ctx) + '\n\n(' + why + ')'; } catch (e2) { a = T().aiGeneralHelp; }
       }
       finally { thinking.remove(); busy = false; send.disabled = false; }
       push('assistant', a); ta.focus();
+      /* Every panel on the page, not this one alone: the count is the day's,
+         and two panels disagreeing about it is how a reader stops trusting
+         either. */
+      const line = aiLeftText();
+      $$('[data-ai-left]').forEach((el) => { el.textContent = line; el.hidden = !line; });
     };
     $('[data-ai-send]', panel).addEventListener('click', () => ask(ta.value));
     chat.addEventListener('click', (e) => {
@@ -30786,7 +30803,7 @@ function adminSale(p) {
 ROUTES.admin = { nav: '', render: renderAdmin };
 
 /* ============================ boot ============================ */
-window.APP_VERSION = 'v251';
+window.APP_VERSION = 'v252';
 window.NABU = { CONFIG: CONFIG, SALE: SALE, salePrice: salePrice, loadActs: loadActs, BACK: BACK, LESSONS: LESSONS, localAnswer: localAnswer, compatVerdict: compatVerdict, numerologyOf: numerologyOf, ZDEEP: ZDEEP, lunarToday: lunarToday, solarToLunar: solarToLunar, DECK: DECK, INSIGHT: INSIGHT, KW: KW, ASK: ASK, TOPICS: TOPICS, GUIDES: GUIDES, SERVICES: SERVICES, COURSES: COURSES, ACCESS: ACCESS, INTERESTS: INTERESTS, plusOn: () => plusOn(), proOn: () => proOn(), luckUnlimited: () => luckUnlimited(), ZODIAC: ZODIAC, pick: pick, book: book, PLAY_ITEMS: PLAY_ITEMS, PLAY_SUB_SKUS: PLAY_SUB_SKUS, playItem: playItem, BILL: BILL, SUBS: SUBS, billUse: billUse, APPLE_BILL: APPLE_BILL, appleAccountToken: appleAccountToken, renderStore: renderStore, pickLimitHTML: pickLimitHTML, subStateWord: subStateWord,
   insightHTML: insightHTML, insightOf: insightOf, sunSignIndex: sunSignIndex, lifePath: lifePath, PROFILE: () => PROFILE, BE: BE, inAppBrowser: inAppBrowser, ACTS: ACTS, CMT: CMT, LIKES: LIKES, kbReady: kbReady, AI: AI, STR: STR, KB_URL: (typeof KB_URL === 'string' ? KB_URL : ''),
   ANGELS: ANGELS, angelRead: angelRead, CODEBOOK: CODEBOOK, redeemCode: redeemCode, loadCodebook: loadCodebook, petHomeSVG: petHomeSVG, PET_HOMES: PET_HOMES, PET_WARDROBE: PET_WARDROBE, PET_SLOTS: PET_SLOTS,

@@ -19,12 +19,18 @@ test("a paying reader's prompt answers questions beyond tarot and takes dates fr
   assert.match(systemFor("en", true), /do not turn a question down only because it is not about tarot/);
 });
 
-test("a reader with nothing bought keeps the app's knowledge, the calendar included", () => {
+/* The narrow scope is gone. It was there to keep a reader who had bought
+   nothing from spending an allowance on questions that were not about the app,
+   and what it did instead was refuse them - a festival date turned down by an
+   assistant that knew it. Both allowances are free, and a refusal costs the
+   same request as an answer. */
+test("a reader with nothing bought is answered as fully as one who has", () => {
   for (const lang of ["vi", "en", "de"]) {
     const p = systemFor(lang, false);
     assert.match(p, /CALENDAR/, lang + ": the calendar is the app's knowledge too");
-    assert.match(p, /một lá bài hay một cung không trả lời được|one card or one sign cannot answer|einzelne Karte oder ein einzelnes Sternzeichen das nicht beantworten/,
-      lang + ": beyond that, says a card cannot answer and points to a reading");
+    assert.doesNotMatch(p, /một lá bài hay một cung không trả lời được|one card or one sign cannot answer|einzelne Karte oder ein einzelnes Sternzeichen das nicht beantworten/,
+      lang + ": nobody is told a card cannot answer that any more");
+    assert.equal(p, systemFor(lang, true), lang + ": one prompt for everyone");
   }
 });
 

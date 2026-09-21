@@ -169,16 +169,44 @@ async function go(hash, sel) { W().location.hash = hash; await sleep(30); return
        in and redraws the panel, then puts the visitor back as they were. */
     ok(!d.querySelector('#reveal .ai [data-ai-q]') && !!d.querySelector('#reveal .ai .aisignin'),
       'the panel under a freshly drawn card offers a visitor with no account the way to sign in, not a box');
-    const aiWas = N.BE.user;
+    const aiWas = N.BE.user, epWas = N.CONFIG.aiEndpoint;
     N.BE.user = { uid: 'aitest', email: 'ai@test' };
+    N.CONFIG.aiEndpoint = '';  /* nothing configured at all: no key, no worker */
     { const panel = d.querySelector('#reveal .ai');
       panel.outerHTML = w.aiPanelHTML(JSON.parse(panel.getAttribute('data-ai')));
       w.bindAI(d.querySelector('#reveal')); }
     d.querySelector('#reveal .ai [data-ai-q]').value = 'Lá này nói gì về chuyện tình cảm của mình?'; d.querySelector('#reveal .ai [data-ai-send]').click(); await sleep(150);
-    ok(d.querySelectorAll('#reveal .ai-chat .msg').length === 2 && /Với câu hỏi về tình cảm/.test(d.querySelector('#reveal .ai-chat').textContent), 'built-in engine answers the chosen focus (love) from the card');
+    /* With no key and no worker there is nothing to answer with, and the app
+       no longer reaches for its own knowledge base and presents that as the
+       AI's reply: it says, in one sentence, that Nabu AI is not switched on. */
+    ok(d.querySelectorAll('#reveal .ai-chat .msg').length === 2
+      && /Nabu AI chưa được bật/.test(d.querySelector('#reveal .ai-chat').textContent)
+      && !/kho kiến thức/.test(d.querySelector('#reveal .ai-chat').textContent),
+      'with nothing configured to answer, the panel says so instead of answering from the knowledge base');
     ok(d.querySelector('#reveal .ai-chat .msg.them [data-ai-flag]'), 'every AI answer carries a report flag');
     ok(/Khóa Tarot/.test(N.localAnswer('Lá này nói gì về công việc của mình?', { type: 'card', id: N.pick.chosen, focus: 'love', lite: 1 })) && !/Khóa Tarot/.test(N.localAnswer('Lá này nói gì về công việc của mình?', { type: 'card', id: N.pick.chosen, focus: 'love' })), 'on the free draw other topics are kept for the course; on the card page they are answered');
-    N.CONFIG.geminiKey = gk; N.BE.user = aiWas;
+    { /* How many questions are left today is the worker's count, not a guess
+         made on the phone, and the reader is told it under the box: the last
+         question used to arrive as a surprise. */
+      const was = { f: w.fetch, ep: N.CONFIG.aiEndpoint, left: N.AI ? null : null };
+      N.CONFIG.aiEndpoint = 'https://nabu-ai.test';
+      let reply = { status: 200, body: { answer: 'Trả lời thử.', left: 3 } };
+      w.fetch = async (url) => (String(url).indexOf('nabu-ai.test') < 0 ? was.f(url)
+        : { ok: reply.status === 200, status: reply.status, json: async () => reply.body, text: async () => JSON.stringify(reply.body) });
+      const redraw = () => { const panel = d.querySelector('#reveal .ai');
+        panel.outerHTML = w.aiPanelHTML(JSON.parse(panel.getAttribute('data-ai'))); w.bindAI(d.querySelector('#reveal')); };
+      const ask = async (q) => { d.querySelector('#reveal .ai [data-ai-q]').value = q; d.querySelector('#reveal .ai [data-ai-send]').click(); await sleep(200); };
+      redraw();
+      ok(!d.querySelector('#reveal .ai [data-ai-left]').textContent, 'before the first question nothing is claimed about the day');
+      await ask('Câu một');
+      ok(/Bạn còn 3 lượt hỏi hôm nay\./.test(d.querySelector('#reveal .ai [data-ai-left]').textContent), 'after an answer the box says how many questions are left today');
+      reply = { status: 429, body: { error: 'limit', retryAfter: 3600 } };
+      await ask('Câu hai');
+      const chat = d.querySelector('#reveal .ai-chat').textContent;
+      ok(/Bạn đã hết lượt hỏi hôm nay\./.test(d.querySelector('#reveal .ai [data-ai-left]').textContent) && /Bạn đã hết lượt hỏi hôm nay\./.test(chat) && !/kho kiến thức/.test(chat),
+        'out of questions, it says so in those words and offers nothing from the knowledge base in place of an answer');
+      w.fetch = was.f; N.CONFIG.aiEndpoint = was.ep; w.NABU.AI ? 0 : 0; }
+    N.CONFIG.geminiKey = gk; N.BE.user = aiWas; N.CONFIG.aiEndpoint = epWas;
     const yn = N.localAnswer('Mình có nên tiếp tục không?', { type: 'card', id: 'major-19' }), tm = N.localAnswer('Khi nào chuyện này xảy ra?', { type: 'card', id: 'wands-8' });
     ok(/thiên về CÓ/.test(yn) && /Gậy đi nhanh/.test(tm), 'yes/no lean and timing hints');
     ok(/Gã Khờ/.test(N.localAnswer('Gã Khờ nghĩa là gì?', { type: 'general' })) && /Sư Tử và Bảo Bình là hai cung đối diện/.test(N.localAnswer('Sư Tử hợp với Bảo Bình không?', { type: 'sign', key: 'leo' })), 'mentions of cards and signs are picked up; compatibility gets a straight verdict');
@@ -4184,26 +4212,20 @@ async function go(hash, sel) { W().location.hash = hash; await sleep(30); return
         ok(ran.length === 2,
           'and neither is left behind to run again on the next screen [' + ran.join(',') + ']'); }
 
-      /* ---- Nabu AI says which of the two actually answered ---- */
+      /* ---- Nabu AI answers, or says plainly that it cannot ---- */
       { const wasOff = N.AI.off;
         const word = async () => { await go('#/home', '#main'); await go('#/learn/sign/leo', '.ai'); return d.querySelector('.ai .ai-h .faint').textContent; };
         N.AI.off = false;
         const on = await word();
         N.AI.off = true;
         const off = await word();
-        ok(on !== off && /kho ki\u1ebfn th\u1ee9c|knowledge base|Wissensbasis/.test(off),
-          'the panel calls an answer an AI answer only while one is possible; once the service says it has no model, it says the knowledge base answered [' + on + ' -> ' + off + ']');
-        { /* An endpoint being configured is not proof it can answer. That was
-             the whole bug: every answer came from the knowledge base under a
-             heading saying an AI wrote it. A panel already on the screen is
-             corrected the moment the service says otherwise, with no reload. */
-          N.AI.off = false;
-          await go('#/home', '#main'); await go('#/learn/sign/leo', '.ai');
-          const before = d.querySelector('.ai .ai-h .faint').textContent;
-          N.AI.off = true; w.aiSayBuiltin();
-          const after = d.querySelector('.ai .ai-h .faint').textContent;
-          ok(before !== after && /kho ki\u1ebfn th\u1ee9c|knowledge base|Wissensbasis/.test(after),
-            'a panel already on the screen stops claiming an AI answer as soon as the service says it cannot give one [' + before + ' -> ' + after + ']'); }
+        ok(on !== off && !/kho kiến thức|knowledge base|Wissensbasis/.test(on + off) && /chưa bật|not switched on|nicht aktiv/.test(off),
+          'the heading says an AI answered while one can, and says it is not switched on when none can - never that a knowledge base answered [' + on + ' -> ' + off + ']');
+        ok(!/kho kiến thức/.test(N.STR.vi.aiOff + N.STR.vi.aiFallback + N.STR.vi.aiLimit + N.STR.vi.aiNeedSignin)
+          && !/knowledge base/.test(N.STR.en.aiOff + N.STR.en.aiFallback + N.STR.en.aiLimit + N.STR.en.aiNeedSignin)
+          && !/Wissensbasis/.test(N.STR.de.aiOff + N.STR.de.aiFallback + N.STR.de.aiLimit + N.STR.de.aiNeedSignin)
+          && !N.STR.vi.aiBuiltin && !N.STR.en.aiBuiltin && !N.STR.de.aiBuiltin,
+          'nothing the reader is shown offers an answer from the knowledge base any more, in any of the three languages');
         ok(N.STR.vi.aiOff && N.STR.en.aiOff && N.STR.de.aiOff
           && N.STR.vi.aiOff !== N.STR.vi.aiFallback && N.STR.en.aiOff !== N.STR.en.aiFallback && N.STR.de.aiOff !== N.STR.de.aiFallback,
           '"Nabu AI is not switched on" is its own sentence in all three languages, never the "the AI is busy" one, which means something a reader can wait out');

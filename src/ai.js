@@ -11,7 +11,7 @@
    the knowledge base with "AI is busy" under it, for months, because the
    worker was never given a provider. Once it says so, the panel stops
    calling itself an AI answer. */
-const AI = { history: {}, busy: false, model: '', noSearchUntil: 0, off: false };
+const AI = { history: {}, busy: false, model: '', noSearchUntil: 0, off: false, left: null };
 const fold = (s) => String(s || '').normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/đ/g, 'd').replace(/Đ/g, 'D').toLowerCase();
 const CATS = {
   love: ['yeu', 'tinh cam', 'nguoi ay', 'crush', 'nguoi cu', 'chia tay', 'hen ho', 'ket hon', 'cuoi', 'ban trai', 'ban gai', 'chong', 'vo', 'love', 'relationship', 'partner', 'boyfriend', 'girlfriend', 'ex ', 'marriage', 'date'],
@@ -410,28 +410,27 @@ async function remoteAnswer(q, ctx, history) {
   }
   if (r.status === 429) {
     let wait = 0; try { wait = Number((await r.json()).retryAfter) || 0; } catch (e) { /* no body */ }
+    AI.left = 0;
     const e = new Error('AI-LIMIT'); e.retryAfter = wait; throw e;
   }
   if (!r.ok) throw new Error('AI ' + r.status);
   const j = await r.json();
   if (!j.answer) throw new Error(j.error || 'AI');
   AI.off = false;
+  /* The worker counts the day, so the number comes from there rather than
+     being guessed here: a phone that asked from another device would count
+     its own questions and say the wrong thing. */
+  if (typeof j.left === 'number') AI.left = j.left;
   return j.answer;
 }
 
 /* ---- panel ---- */
-/* Which of the two this panel can honestly call itself. An endpoint being
-   configured is not the same as an endpoint that can answer: the app used to
-   read the first as proof of the second, so every knowledge-base answer sat
-   under a heading that said an AI had written it. */
+/* Every answer here is the AI's now, so the heading has one thing to say -
+   except where there is no service at all to answer, and then it says that
+   instead of putting a name to nothing. */
 function aiSourceWord() {
   const S = T();
-  return (CONFIG.geminiKey || CONFIG.aiEndpoint) && !AI.off ? S.aiOnline : S.aiBuiltin;
-}
-/* Every panel already on the screen, corrected at once. */
-function aiSayBuiltin() {
-  const S = T();
-  $$('.ai .ai-h .faint', document).forEach((el) => { el.textContent = S.aiBuiltin; });
+  return (CONFIG.geminiKey || CONFIG.aiEndpoint) && !AI.off ? S.aiOnline : S.aiOffShort;
 }
 function aiSuggestions(ctx) {
   const S = T();
@@ -450,6 +449,14 @@ function aiSuggestions(ctx) {
    BE.enabled false means accounts are off altogether (the app is running
    with no backend); then the built-in engine answers and the box stays. */
 function aiLocked() { return !!(typeof BE !== 'undefined' && BE.enabled && !BE.user); }
+/* What is left of today, said only once the worker has told us. Before the
+   first question of a session there is no number to show, and a made-up one
+   is worse than none. */
+function aiLeftText() {
+  const S = T();
+  if (AI.left === null || typeof AI.left !== 'number') return '';
+  return AI.left > 0 ? S.aiLeft(AI.left) : S.aiLeftNone;
+}
 function aiPanelHTML(ctx) {
   const S = T(), key = JSON.stringify(ctx), hist = AI.history[key] || [];
   return '<div class="ai" data-ai=\'' + esc(key) + '\'><div class="ai-h"><span class="ai-logo">✦</span><b>Nabu AI</b><span class="faint">' + esc(aiSourceWord()) + '</span></div>'
@@ -459,6 +466,7 @@ function aiPanelHTML(ctx) {
     + (aiLocked()
       ? '<p class="hint aisignin">' + esc(S.aiSignIn) + ' <a href="' + esc(signinHref()) + '">' + esc(S.signIn) + '</a></p>'
       : '<div class="chatbar"><textarea data-ai-q placeholder="' + esc(S.aiPlaceholder) + '"></textarea><button class="btn primary" data-ai-send>' + esc(S.aiAsk) + '</button></div>')
+    + '<p class="faint ai-left" data-ai-left' + (aiLeftText() ? '' : ' hidden') + '>' + esc(aiLeftText()) + '</p>'
     + '<p class="faint" style="margin-top:8px">' + esc(S.aiNote) + '</p></div>';
 }
 const aiMsgHTML = (role, text) => '<div class="msg ' + (role === 'user' ? 'me' : 'them') + '">' + (role === 'user' ? '' : '<button type="button" class="flag" data-ai-flag title="' + esc(T().aiFlag) + '" aria-label="' + esc(T().aiFlag) + '">⚑</button>') + paras(text) + '</div>';
@@ -481,23 +489,31 @@ function bindAI(root) {
       busy = true; send.disabled = true; ta.value = ''; push('user', q);
       const thinking = document.createElement('div'); thinking.className = 'msg them ai-wait'; thinking.textContent = '…'; chat.appendChild(thinking); chat.scrollTop = chat.scrollHeight;
       let a;
-      try { a = CONFIG.geminiKey ? await geminiAnswer(q, ctx, AI.history[key]) : CONFIG.aiEndpoint ? await remoteAnswer(q, ctx, AI.history[key]) : localAnswer(q, ctx); }
+      /* Nabu AI answers, or says why it cannot. It used to answer from the
+         app's own knowledge base whenever the service was busy, out of
+         questions or switched off, with a line in brackets underneath - and
+         what the reader saw was a thin answer to a question they had asked
+         the AI. The owner asked for that to go: one voice, and a plain
+         sentence when there is no answer to give. */
+      try {
+        a = CONFIG.geminiKey ? await geminiAnswer(q, ctx, AI.history[key])
+          : CONFIG.aiEndpoint ? await remoteAnswer(q, ctx, AI.history[key])
+          : (function () { AI.off = true; throw new Error('AI-OFF'); })();
+      }
       catch (e) {
-        /* Busy, signed out and asked-too-much all still get an answer from the
-           knowledge base. Only the line underneath it changes, because only one
-           of the three is something the reader can do anything about. */
         const said = String((e && e.message) || '');
-        const why = said === 'AI-SIGNIN' ? T().aiNeedSignin
+        a = said === 'AI-SIGNIN' ? T().aiNeedSignin
           : said === 'AI-LIMIT' ? T().aiLimit
           : said === 'AI-OFF' ? T().aiOff
           : T().aiFallback;
-        /* The heading says "answered by AI"; once the service has said it
-           cannot, every panel on the page has to stop saying that. */
-        if (said === 'AI-OFF') aiSayBuiltin(); 
-        try { a = localAnswer(q, ctx) + '\n\n(' + why + ')'; } catch (e2) { a = T().aiGeneralHelp; }
       }
       finally { thinking.remove(); busy = false; send.disabled = false; }
       push('assistant', a); ta.focus();
+      /* Every panel on the page, not this one alone: the count is the day's,
+         and two panels disagreeing about it is how a reader stops trusting
+         either. */
+      const line = aiLeftText();
+      $$('[data-ai-left]').forEach((el) => { el.textContent = line; el.hidden = !line; });
     };
     $('[data-ai-send]', panel).addEventListener('click', () => ask(ta.value));
     chat.addEventListener('click', (e) => {

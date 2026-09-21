@@ -7,6 +7,7 @@
 import Anthropic from "@anthropic-ai/sdk";
 import { whoIsAsking } from "./auth";
 import { allow, cachedAnswer, keepAnswer } from "./limit";
+import { wikiLook } from "./web";
 import { checkPurchase, acknowledge, grantUntil, checkSubscription, acknowledgeSub } from "./play";
 import type { PlayEnv } from "./play";
 import { fsGet } from "./fs";
@@ -113,9 +114,16 @@ const LIMITS: Record<string, string> = {
 /* German used to fall through to the Vietnamese prompt, because the choice was
    written as "English, or else Vietnamese" back when there were two languages.
    A German reader was answered in Vietnamese by a prompt they could not read. */
+/* One scope for everyone now. The narrow one was there to keep a reader who
+   had bought nothing from spending the allowance on questions that were not
+   about the app, and what it actually did was refuse them: somebody asking
+   when a festival falls was told a card cannot answer that, by an assistant
+   that knew perfectly well. Both allowances are free; a refusal costs the
+   same request as an answer and reads as a broken app. */
 export const systemFor = (lang: string, paid = false): string => {
   const lg = lang === "en" || lang === "de" ? lang : "vi";
-  return [VOICE[lg], (paid ? SCOPE_PAID : SCOPE_FREE)[lg], LIMITS[lg]].join("\n");
+  void paid;
+  return [VOICE[lg], SCOPE_PAID[lg], LIMITS[lg]].join("\n");
 };
 /* Set for an hour when Google refuses a search for quota; while it exists,
    paying readers are answered by Gemini without search. */
@@ -194,13 +202,29 @@ function history(body: AskBody, question: string): Turn[] {
    reader is answered without it. Gemini without search still knows dates,
    festivals and most general facts up to its training, which is most of what
    a tarot reader is asked. */
+/* What counts as a question worth thinking about. Length alone is a poor
+   judge - "vì sao lá này lại ngược với lá kia?" is short and needs reasoning,
+   while a long one can be a greeting with a name in it - so the words that ask
+   for a reason or a comparison decide, and a conversation that has already run
+   a few turns counts too, because by then the reader is working something out
+   rather than asking one thing. */
+const HARD_WORDS = /(vì sao|tại sao|vi sao|tai sao|so sánh|so sanh|phân tích|phan tich|nên chọn|nen chon|khác nhau|khac nhau|ý nghĩa sâu|giải thích|giai thich|liên quan|lien quan|why|how come|compare|difference|analyse|analyze|explain|should i|warum|wieso|vergleich|unterschied|erklär|erklar)/i;
+export const isHard = (body: { history?: { role: string; text: string }[] }, question: string): boolean =>
+  HARD_WORDS.test(question) || question.trim().length > 140 || ((body.history || []).length >= 4);
+
 async function gemini(env: Env, sys: string, body: AskBody, question: string, search: boolean): Promise<Said> {
   if (!env.GEMINI_API_KEY) return {};
   /* maxOutputTokens covers the model's thinking as well as its answer on the
      Gemini 3 models, and 900 was spent thinking: answers came back cut off
      mid-word ("rơi vào ngày **2"). The system prompt keeps the answer itself to
      a few sentences; this is only the ceiling. */
-  const base = { systemInstruction: { parts: [{ text: sys }] }, contents: history(body, question), generationConfig: { temperature: 0.6, maxOutputTokens: 4096, thinkingConfig: { thinkingLevel: "low" } } };
+  /* A question that has to be reasoned about gets a model that reasons, and
+     one that wants a card's meaning gets the fast one. Thinking is free on
+     both - it is spent in tokens, and the tokens are inside an allowance
+     nobody is billed for - so the only price of "high" is seconds. */
+  const hard = isHard(body, question);
+  const base = { systemInstruction: { parts: [{ text: sys }] }, contents: history(body, question),
+    generationConfig: { temperature: 0.6, maxOutputTokens: 8192, thinkingConfig: { thinkingLevel: hard ? "high" : "low" } } };
   let why = "";
   /* Flash-Lite first, for speed. Measured on 13 September 2026 with the
      calendar context the app sends: gemini-3.6-flash took 5-6 seconds to answer
@@ -214,7 +238,7 @@ async function gemini(env: Env, sys: string, body: AskBody, question: string, se
      2026 is exactly that, so every paid question fell through to Workers AI,
      which cannot search and invented a date. If Google retires these too, the
      404 names their successor in the worker's logs (wrangler tail). */
-  for (const model of ["gemini-3.5-flash-lite", "gemini-3.6-flash"]) {
+  for (const model of (hard ? ["gemini-3.6-flash", "gemini-3.5-flash-lite"] : ["gemini-3.5-flash-lite", "gemini-3.6-flash"])) {
     try {
       const r = await fetch("https://generativelanguage.googleapis.com/v1beta/models/" + encodeURIComponent(model) + ":generateContent?key=" + encodeURIComponent(env.GEMINI_API_KEY), {
         method: "POST",
@@ -610,6 +634,9 @@ export default {
     const verdict = await allow(env, who, ASK_A_DAY[tier], ASK_A_MINUTE);
     mark("allow");
     if (!verdict.ok) return tooMany(verdict, headers);
+    /* How many questions are left today, sent with every answer: the app says
+       it under the reply, so the last question does not come as a surprise. */
+    const left = verdict.left;
 
     let body: AskBody;
     try { body = (await request.json()) as AskBody; } catch { return new Response(JSON.stringify({ error: "bad json" }), { status: 400, headers }); }
@@ -633,15 +660,25 @@ export default {
        about tarot for readers who have paid; their cached refusals go. */
     /* 5 - Flash-Lite answers first, and the prompt stops it opening unrelated
        answers with today's date or calling itself Nabu. */
-    const cacheKey = { gen: 5, lang: body.lang, kind: body.kind, question, context: (body.context || "").slice(0, 12000), tier: paid ? "paid" : "free" };
+    /* 6 - one scope for everyone, so the free tier's narrower answers go; and
+       a Wikipedia lookup now sits behind a miss, so what is cached is the
+       answer that lookup produced. */
+    const cacheKey = { gen: 6, lang: body.lang, kind: body.kind, question, context: (body.context || "").slice(0, 12000), tier: "all" };
     if (fresh) {
       const hit = await cachedAnswer(cacheKey);
       mark("cache");
-      if (hit) return new Response(JSON.stringify({ answer: hit }), { headers: timed("cache") });
+      if (hit) return new Response(JSON.stringify({ answer: hit, left }), { headers: timed("cache") });
     }
     const keep = (answer: string): void => { if (fresh && answer) keepAnswer(cacheKey, answer, ctx); };
 
-    const knowledge = `KIND: ${body.kind}\nVISITOR: ${body.profile?.name || "-"} ${body.profile?.sign ? "(" + body.profile.sign + ")" : ""}\nKNOWLEDGE:\n${(body.context || "").slice(0, 12000)}`;
+    /* One free lookup of the open web, since grounding with Google Search is
+       shut to a key with no billing account. It is background: the model is
+       told to use it only where it answers the question, and a slow or empty
+       Wikipedia simply leaves it out. */
+    const web = await wikiLook(body.lang || "vi", question);
+    mark("web");
+    const knowledge = `KIND: ${body.kind}\nVISITOR: ${body.profile?.name || "-"} ${body.profile?.sign ? "(" + body.profile.sign + ")" : ""}\nKNOWLEDGE:\n${(body.context || "").slice(0, 12000)}`
+      + (web ? `\n\nWEB (Wikipedia, background only - use it where it answers the question, ignore it where it does not, and never name it):\n${web}` : "");
     const sys = systemFor(body.lang, paid) + "\n\n" + knowledge;
 
     /* Who answers, in order - and none of it costs money.
@@ -669,7 +706,7 @@ export default {
     for (const [label, attempt] of order) {
       const got = await attempt();
       mark(label);
-      if (got.text) { if (!got.partial) keep(got.text); return new Response(JSON.stringify({ answer: got.text }), { headers: timed(label) }); }
+      if (got.text) { if (!got.partial) keep(got.text); return new Response(JSON.stringify({ answer: got.text, left }), { headers: timed(label) }); }
       if (got.why) why = got.why;
     }
 
@@ -716,11 +753,11 @@ export default {
         const said = body.lang === "en" ? "I can't help with that one. Try asking about the card, the lesson or your sign."
           : body.lang === "de" ? "Damit kann ich dir nicht helfen. Frag mich lieber etwas zur Karte, zur Lektion oder zu deinem Sternzeichen."
           : "Câu này mình không trả lời được. Bạn thử hỏi về lá bài, bài học hay cung của bạn nhé.";
-        return new Response(JSON.stringify({ answer: said }), { headers });
+        return new Response(JSON.stringify({ answer: said, left }), { headers });
       }
       const answer = response.content.filter((b) => b.type === "text").map((b) => (b as Anthropic.TextBlock).text).join("\n").trim();
       keep(answer);
-      return new Response(JSON.stringify({ answer }), { headers });
+      return new Response(JSON.stringify({ answer, left }), { headers });
     } catch (error) {
       if (error instanceof Anthropic.RateLimitError) return new Response(JSON.stringify({ error: "busy" }), { status: 429, headers });
       if (error instanceof Anthropic.AuthenticationError) return new Response(JSON.stringify({ error: "key" }), { status: 500, headers });
