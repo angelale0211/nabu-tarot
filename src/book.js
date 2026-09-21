@@ -1,5 +1,5 @@
 /* ============================ booking ============================
-   Service and package, topic (required for "set topic" packages), a
+   Service and package, a
    calendar of Nabu's free slots (schedule.json, minus slots taken in
    Firestore when accounts are on), details, then send. */
 const book = { items: [], name: '', note: '', birth: '', birthTime: '', card: null, slot: null, month: null, day: null, where: '', whereId: '', timeSaved: false, restored: false, use: { v: false, c: 0 } };
@@ -67,7 +67,6 @@ const cartTotal = () => book.items.reduce((sum, it) => { const p = pkgOfItem(it)
 /* The person's own coins and voucher, against whatever is in the basket. */
 const bookLuck = () => luckCut(cartTotal(), { v: book.use.v, c: luckWanted(book.use, cartTotal()) });
 const needsBirth = () => book.items.some((it) => { const s = serviceOf(it.svc); return s && s.needsBirth; });
-const topicLabel = (n, l) => { const t = TOPICS[n - 1]; return t ? '#' + t.id + ' ' + (l ? L2(t.name, l) : L(t.name)) : ''; };
 function composeMessage() {
   const S = T(), out = [S.msgHello, ''];
   if (book.items.length) {
@@ -75,7 +74,6 @@ function composeMessage() {
     book.items.forEach((it) => {
       const s = serviceOf(it.svc), p = pkgOfItem(it); if (!s || !p) return;
       out.push('• ' + L(s.name) + ' – ' + L(p.name) + ': ' + fmtPrice(salePrice(p.price, 'reading', s.id), p.abroad));
-      if (p.needsTopic && it.topic) out.push('   ↳ ' + S.msgTopic + ': ' + topicLabel(it.topic));
     });
     if (book.items.length > 1) out.push('💰 ' + S.msgTotal + ': ' + fmtPrice(cartTotal()));
     const cut = bookLuck();
@@ -147,7 +145,7 @@ function whereHTML() {
 /* The request as a labelled card: packages one per line, total, time, details. */
 function summaryHTML(withPanel) {
   const S = T(), rows = [], cut = bookLuck();
-  const items = book.items.map((it) => { const s = serviceOf(it.svc), p = pkgOfItem(it); if (!s || !p) return ''; return '<li>' + esc(L(s.name) + ' – ' + L(p.name)) + ' <b>' + priceHTML(p.price, 'reading', s.id, p.abroad) + '</b>' + (p.needsTopic ? '<br><small class="' + (it.topic ? 'ok' : 'warn') + '">' + esc(it.topic ? S.msgTopic + ': ' + topicLabel(it.topic) : S.cartNeedsTopic) + '</small>' : '') + '</li>'; }).join('');
+  const items = book.items.map((it) => { const s = serviceOf(it.svc), p = pkgOfItem(it); if (!s || !p) return ''; return '<li>' + esc(L(s.name) + ' – ' + L(p.name)) + ' <b>' + priceHTML(p.price, 'reading', s.id, p.abroad) + '</b></li>'; }).join('');
   rows.push([S.bkItems, items ? '<ul>' + items + '</ul>' : '<span class="warn">' + esc(S.cartEmpty) + '</span>']);
   if (book.items.length > 1 || cut.pctOff || cut.coins) rows.push([S.msgTotal, '<b>' + fmtPrice(cartTotal()) + '</b>']);
   if (cut.pctOff) rows.push(['🎟️ ' + S.luckVoucherOf(cut.pct), '<b>-' + fmtPrice(cut.pctOff) + '</b>']);
@@ -161,20 +159,12 @@ function summaryHTML(withPanel) {
   return '<div class="sum">' + rows.map((r) => '<div class="r"><span class="k">' + esc(r[0]) + '</span><span class="v">' + r[1] + '</span></div>').join('') + '</div>'
     + (withPanel && book.items.length ? rewardPanelHTML(cartTotal(), book.use) : '');
 }
-/* The basket under the price list: every chosen package, its topic, the total. */
+/* The basket under the price list: every chosen package and the total. */
 function cartHTML() {
   const S = T();
   if (!book.items.length) return '<div class="cart empty"><span>🧺 ' + esc(S.cartEmpty) + '</span></div>';
-  return '<div class="cart"><b>🧺 ' + esc(S.cartTitle) + '</b>' + book.items.map((it, k) => { const s = serviceOf(it.svc), p = pkgOfItem(it); if (!s || !p) return ''; return '<div class="ci"><span>' + esc(L(s.name) + ' – ' + L(p.name)) + (p.needsTopic ? '<br><small class="' + (it.topic ? 'ok' : 'warn') + '">' + esc(it.topic ? S.msgTopic + ': ' + topicLabel(it.topic) : S.cartNeedsTopic) + '</small>' : '') + '</span><b>' + fmtPrice(p.price) + '</b><button class="x" data-remove="' + k + '" aria-label="remove">✕</button></div>'; }).join('')
+  return '<div class="cart"><b>🧺 ' + esc(S.cartTitle) + '</b>' + book.items.map((it, k) => { const s = serviceOf(it.svc), p = pkgOfItem(it); if (!s || !p) return ''; return '<div class="ci"><span>' + esc(L(s.name) + ' – ' + L(p.name)) + '</span><b>' + fmtPrice(p.price) + '</b><button class="x" data-remove="' + k + '" aria-label="remove">✕</button></div>'; }).join('')
     + (book.items.length > 1 ? '<div class="ci total"><span>' + esc(S.msgTotal) + '</span><b>' + fmtPrice(cartTotal()) + '</b></div>' : '') + '</div>';
-}
-/* Step 2: one topic picker per "1 preset topic" package in the basket. */
-function topicSectionHTML() {
-  const S = T();
-  const need = book.items.map((it, k) => ({ it: it, k: k })).filter((x) => { const p = pkgOfItem(x.it); return p && p.needsTopic; });
-  const cards = (k, chosen) => TOPICS.map((t) => '<button class="topic' + (chosen === t.id ? ' on open' : '') + '" data-topic="' + k + '/' + t.id + '"><div class="t"><span class="ic">' + t.icon + '</span><span><span class="n">#' + t.id + '</span> ' + esc(L(t.name)) + '</span></div><ol>' + t.q[lang].map((q) => '<li>' + esc(q) + '</li>').join('') + '</ol></button>').join('');
-  if (!need.length) return '<p class="hint" style="margin-bottom:12px">' + esc(S.topicHint) + '</p><p class="hint faint">' + esc(S.topicNone) + '</p>';
-  return '<p class="hint" style="margin-bottom:12px">' + esc(S.topicHint) + '</p>' + need.map((x) => { const s = serviceOf(x.it.svc), p = pkgOfItem(x.it); return '<div class="tpick" data-tpick="' + x.k + '"><h3>' + esc(S.topicFor) + ' ' + esc(L(s.name)) + '</h3>' + (x.it.topic ? '<p class="hint ok">✓</p>' : '<p class="hint warn">' + esc(S.cartNeedsTopic) + '</p>') + cards(x.k, x.it.topic) + '</div>'; }).join('');
 }
 
 /* ---- price sheet (also its own screen at #/prices) ---- */
@@ -283,14 +273,8 @@ async function renderBook(args, params) {
   restoreBook();
   book.card = params.card || book.card || null; book.name = book.name || PROFILE.name || ''; book.birth = book.birth || PROFILE.birthday || '';
   if (!book.month) book.month = new Date(new Date().getFullYear(), new Date().getMonth(), 1);
-  m.innerHTML = '<div class="eyebrow">' + esc(CONFIG.brand) + '</div><h1 style="margin-bottom:6px">' + esc(S.bookTitle) + '</h1>' + bookHowHTML() + '<div class="notes"><div class="note"><span class="ni">👆</span><span>' + esc(S.bookTip) + '</span></div><div class="note"><span class="ni">💾</span><span>' + esc(S.draftKept) + '</span></div><div class="note"><span class="ni">📋</span><span>' + esc(S.topicNote) + '</span></div></div>'
-    + '<div class="sec"><h2 style="margin:18px 0 4px">' + esc(S.chooseService) + '</h2><p class="hint" style="margin-bottom:12px">' + esc(S.serviceHint) + '</p><div id="svcwrap">' + priceSheetHTML(true) + '</div><div id="cartwrap">' + cartHTML() + '</div></div>'
-    /* The step that asked for one of the five preset topics is only there
-       while a package needs one. Since the price list stopped selling those
-       packages, nothing does, and a step that can never be filled in is a
-       step in the way; the code stays, for whenever a package asks again. */
-    + (SERVICES.some((s2) => s2.packages.some((p) => p.needsTopic))
-      ? '<div class="sec"><h2 style="margin:18px 0 4px">' + esc(S.chooseTopic) + '</h2><div id="topicwrap">' + topicSectionHTML() + '</div></div>' : '')
+  m.innerHTML = '<div class="eyebrow">' + esc(CONFIG.brand) + '</div><h1 style="margin-bottom:6px">' + esc(S.bookTitle) + '</h1>' + bookHowHTML() + '<div class="notes"><div class="note"><span class="ni">👆</span><span>' + esc(S.bookTip) + '</span></div><div class="note"><span class="ni">💾</span><span>' + esc(S.draftKept) + '</span></div></div>'
+    + '<div class="sec"><h2 style="margin:18px 0 4px">' + esc(S.chooseService) + '</h2><p class="hint" style="margin-bottom:12px">' + esc(S.serviceHint) + '</p><div id="svcwrap">' + priceSheetHTML(true) + '</div>' + priceRulesHTML() + '<div id="cartwrap">' + cartHTML() + '</div></div>'
     + '<div class="sec"><h2 style="margin-bottom:4px">' + esc(S.chooseTime) + '</h2><p class="hint" style="margin-bottom:10px">' + esc(S.timeHint(L(CONFIG.tzLabel))) + '</p><div id="calwrap"><p class="hint">…</p></div></div>'
     + '<div class="sec"><h2 style="margin:18px 0 4px">' + esc(S.chooseWhere) + '</h2><p class="hint" style="margin-bottom:10px">' + esc(S.whereHint) + '</p><div id="wherewrap">' + whereHTML() + '</div></div>'
     + '<div class="sec"><h2>' + esc(S.yourDetails) + '</h2><label class="f" for="bname">' + esc(S.yourName) + '</label><input id="bname" value="' + esc(book.name) + '" autocomplete="nickname">'
@@ -323,15 +307,7 @@ async function renderBook(args, params) {
     clearBook(); window.scrollTo(0, 0);
     $('#bookmore').addEventListener('click', () => { renderBook([], {}); });
   };
-  const bindTopics = () => {
-    $$('[data-topic]', m).forEach((btn) => btn.addEventListener('click', () => {
-      const v = btn.getAttribute('data-topic').split('/'), k = Number(v[0]), id = Number(v[1]), it = book.items[k];
-      if (!it) return;
-      it.topic = it.topic === id ? null : id;   // a second tap clears the choice
-      syncCart(false);
-    }));
-  };
-  const syncCart = (scrollTopics) => {
+  const syncCart = () => {
     $$('.svc', m).forEach((el) => el.classList.toggle('on', book.items.some((it) => it.svc === el.getAttribute('data-svc'))));
     /* The tick is written back into the name, and the package's own sentence
        has to survive that: setting textContent alone wiped the line under it
@@ -341,22 +317,17 @@ async function renderBook(args, params) {
       el.classList.toggle('on', on);
       el.querySelector('span').innerHTML = esc((on ? '✓ ' : '') + L(pk.name)) + (pk.desc ? '<small>' + esc(L(pk.desc)) + '</small>' : ''); });
     $('#cartwrap').innerHTML = cartHTML();
-    $$('[data-remove]', m).forEach((x) => x.addEventListener('click', () => { book.items.splice(Number(x.getAttribute('data-remove')), 1); syncCart(false); }));
-    if ($('#topicwrap')) { $('#topicwrap').innerHTML = topicSectionHTML(); bindTopics(); }
+    $$('[data-remove]', m).forEach((x) => x.addEventListener('click', () => { book.items.splice(Number(x.getAttribute('data-remove')), 1); syncCart(); }));
     $('#birthwrap').hidden = !needsBirth();
     prev();
-    if (scrollTopics) { const t = $('.tpick:not(:has(.topic.on))', m); if (t) t.scrollIntoView({ behavior: 'smooth', block: 'start' }); }
   };
-  syncCart(false);
+  syncCart();
   $$('[data-pkg]', m).forEach((btn) => btn.addEventListener('click', () => {
     const v = btn.getAttribute('data-pkg').split('/'), k = itemIndex(v[0], v[1]);
-    if (k > -1) { book.items.splice(k, 1); syncCart(false); return; }
+    if (k > -1) { book.items.splice(k, 1); syncCart(); return; }
     const p = serviceOf(v[0]).packages.filter((x) => x.id === v[1])[0];
-    book.items.push({ svc: v[0], pkg: v[1], topic: null });
-    /* No jump down to the topic picker: being pulled down the page right after
-       tapping a package confused people. The basket flags the missing topic,
-       and Send scrolls to it if it is still missing. */
-    syncCart(false);
+    book.items.push({ svc: v[0], pkg: v[1] });
+    syncCart();
   }));
   $('#bname').addEventListener('input', (e) => { book.name = e.target.value; prev(); });
   $('#bnote').addEventListener('input', (e) => { book.note = e.target.value; prev(); });
@@ -364,8 +335,6 @@ async function renderBook(args, params) {
   $('#btime').addEventListener('input', (e) => { book.birthTime = e.target.value; prev(); });
   const need = () => {
     if (!book.items.length) { toast(S.needService); $('#svcwrap').scrollIntoView({ behavior: 'smooth', block: 'start' }); return false; }
-    const missing = book.items.findIndex((it) => { const p = pkgOfItem(it); return p && p.needsTopic && !it.topic; });
-    if (missing > -1) { toast(S.needTopic); const t = $('.tpick[data-tpick="' + missing + '"]', m); if (t) t.scrollIntoView({ behavior: 'smooth', block: 'start' }); return false; }
     if (!book.slot) { toast(S.needSlot); $('#calwrap').scrollIntoView({ behavior: 'smooth', block: 'center' }); return false; }
     if (needsBirth() && !book.birth) { toast(S.needBirth); $('#birthwrap').scrollIntoView({ behavior: 'smooth', block: 'center' }); return false; }
     if (!book.where) { toast(S.needWhere); $('#wherewrap').scrollIntoView({ behavior: 'smooth', block: 'center' }); return false; }
@@ -383,9 +352,9 @@ async function renderBook(args, params) {
     if (!BE.user) { $('#sendstatus').textContent = S.needLogin; location.hash = signinHref('/book'); return; }
     sendBtn.disabled = true; sendBtn.textContent = S.sending;
     try {
-      const items = book.items.map((it) => { const s = serviceOf(it.svc), p = pkgOfItem(it); return { service: L2(s.name, 'vi'), pkg: L2(p.name, 'vi'), price: p.price, topic: p.needsTopic && it.topic ? topicLabel(it.topic, 'vi') : '' }; });
+      const items = book.items.map((it) => { const s = serviceOf(it.svc), p = pkgOfItem(it); return { service: L2(s.name, 'vi'), pkg: L2(p.name, 'vi'), price: p.price }; });
       await BE.createBooking({ name: book.name.trim() || PROFILE.name || '', slot: book.slot,
-        service: items.map((x) => x.service + ' – ' + x.pkg + (x.topic ? ' (' + x.topic + ')' : '')).join(' + '), pkg: '', price: bookLuck().final, topic: items.map((x) => x.topic).filter(Boolean).join('; '), items: items,
+        service: items.map((x) => x.service + ' – ' + x.pkg).join(' + '), pkg: '', price: bookLuck().final, items: items,
         where: book.where, whereName: L2((whereOf(book.where) || { name: {} }).name, 'vi'),
         whereId: String(book.whereId || '').trim(),
         note: book.note.trim(), message: composeMessage(), luck: bookLuck(), birth: needsBirth() ? (book.birth + (book.birthTime ? ' ' + book.birthTime : '')) : '', card: book.card ? cardById(book.card).name : '' });

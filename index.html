@@ -12,7 +12,7 @@
      carries this notice with it. See LICENSE. -->
 <meta name="author" content="Nabu Tarot">
 <meta name="copyright" content="Copyright (c) 2025-2026 Nabu Tarot. All rights reserved.">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'none'; object-src 'none'; form-action 'self'; script-src 'self' 'sha256-UFDrCZBZ6h6+Svp+q+x0IUnjVRRmHTJlS64CBAXE1hU=' https://www.gstatic.com https://apis.google.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; font-src 'self' data:; media-src 'self' data: blob:; worker-src 'self'; connect-src 'self' https://*.googleapis.com https://*.google.com https://*.firebaseio.com https://*.cloudfunctions.net https://*.workers.dev https://generativelanguage.googleapis.com; frame-src https://*.firebaseapp.com https://accounts.google.com https://*.facebook.com">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'none'; object-src 'none'; form-action 'self'; script-src 'self' 'sha256-ggY7lAgPEqzrWLk+C6eRCpFLVKqa7Xw1GkI44amQ4UQ=' https://www.gstatic.com https://apis.google.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; font-src 'self' data:; media-src 'self' data: blob:; worker-src 'self'; connect-src 'self' https://*.googleapis.com https://*.google.com https://*.firebaseio.com https://*.cloudfunctions.net https://*.workers.dev https://generativelanguage.googleapis.com; frame-src https://*.firebaseapp.com https://accounts.google.com https://*.facebook.com">
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <meta name="theme-color" content="#EFE9FA">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -1009,10 +1009,6 @@ h1 .pileico{width:34px;height:27px;vertical-align:-3px;margin-right:2px}
 
 .cart{background:var(--surface);border:1.5px solid var(--primary);border-radius:16px;padding:12px 14px;margin:4px 0 6px;font-size:14.5px;max-width:100%;overflow:hidden}.cart.empty{border-style:dashed;border-color:var(--rule);color:var(--fg-faint)}.cart>b{display:block;margin-bottom:8px}
 .ci{display:flex;align-items:center;flex-wrap:wrap;gap:4px 10px;padding:7px 0;border-top:1px solid var(--rule-soft)}.ci>span{flex:1 1 140px}.ci b{margin-left:auto}.ci>span{flex:1;min-width:0}.ci b{white-space:nowrap}.ci .x{background:none;border:1px solid var(--rule);border-radius:50%;width:28px;height:28px;font-size:12px;color:var(--fg-soft)}.ci.total{border-top:2px solid var(--rule);font-weight:700}.ci small.warn,.tpick .warn{color:#B04A2E;font-size:12.5px;font-weight:600}.ci small.ok,.tpick .ok{color:#2E7D46;font-size:12.5px;font-weight:600}
-.tpick{margin:14px 0 18px}.tpick h3{margin:0 0 8px;font-size:15.5px}
-.topic{display:block;width:100%;max-width:100%;text-align:left;background:var(--surface);border:1px solid var(--rule-soft);border-radius:16px;padding:14px 16px;margin-bottom:10px;overflow:hidden}
-.topic.on{border-color:var(--primary);box-shadow:0 0 0 1px var(--primary) inset}
-.topic .t{display:flex;align-items:center;gap:10px;font-weight:600;font-size:16px}
 .topic .t>span:last-child{min-width:0;overflow-wrap:anywhere}
 .topic .t .n{color:var(--fg-faint);font-weight:500;font-size:13px}
 .topic .t .ic{font-size:20px}
@@ -3168,7 +3164,7 @@ const LOGO_PNG = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAKAAAACgCAYAAACL
 
 /* ============================ services + prices ============================
    Nabu's price list. Prices in VND. Each service has packages; a package
-   with needsTopic asks the client to choose one of the five preset topics.
+   may carry a `desc`, one sentence saying what it covers.
    Edit here, then  python build.py  and push. */
 const SERVICES = [
   { id: 'tarot', icon: PICK_ICON, tone: 'blue', name: { vi: 'Tarot', en: 'Tarot', de: 'Tarot' },
@@ -3559,12 +3555,10 @@ const STR = {
 
     bookTitle: 'Đặt lịch xem bài',
     priceTitle: 'Bảng giá', priceIntro: 'Tất cả dịch vụ, khóa học và nội dung mở thêm của Nabu đều ở đây. Phần lớn ứng dụng vẫn miễn phí.',
-    chooseService: '1. Chọn dịch vụ', serviceHint: 'Chạm vào gói để chọn; chạm lại để bỏ chọn.', needService: 'Bạn chọn ít nhất một gói dịch vụ trước nhé.', bookTip: 'Bạn có thể chọn nhiều gói cho cùng một buổi.', cartTitle: 'Các gói bạn đã chọn', cartEmpty: 'Bạn chưa chọn gói nào.', cartNeedsTopic: 'chưa chọn chủ đề', msgTotal: 'Tổng', topicFor: 'Chủ đề cho', topicNone: 'Phần này chỉ hiện khi bạn chọn gói có sẵn 1 chủ đề ở bước 1.',
+    chooseService: '1. Chọn dịch vụ', serviceHint: 'Chạm vào gói để chọn; chạm lại để bỏ chọn.', needService: 'Bạn chọn ít nhất một gói dịch vụ trước nhé.', bookTip: 'Bạn có thể chọn nhiều gói cho cùng một buổi.', cartTitle: 'Các gói bạn đã chọn', cartEmpty: 'Bạn chưa chọn gói nào.', msgTotal: 'Tổng',
     optional: 'không bắt buộc', birthTime: 'Giờ sinh', birthHint: 'Giờ sinh càng chính xác thì phần luận Tử vi càng sát hơn.', needBirth: 'Tử vi cần ngày sinh của bạn.',
     msgService: 'Dịch vụ', msgBirth: 'Ngày giờ sinh',
-    chooseTopic: '2. Chọn chủ đề cho gói 1 chủ đề sẵn',
     presetTopics: 'Chủ đề sẵn',
-    topicHint: 'Chọn một trong năm chủ đề. Mỗi chủ đề gồm năm câu hỏi; chạm vào để xem trước.',
     ownTopic: 'Câu hỏi riêng',
     ownTopicHint: 'Với gói này, bạn tự viết câu hỏi của mình.',
     chooseWhere: '3. Xem ở đâu', whereHint: 'Bạn muốn Nabu nhắn cho bạn ở đâu? Chọn một nơi nhé.',
@@ -4102,7 +4096,7 @@ const STR = {
     toolClear: 'Xoá làm lại', toolSaved: 'Lưu trên máy này.', toolTemplate: 'Mẫu mới', toolAdd: 'Thêm dòng', toolRelease: 'Buông', toolReleased: 'Đã buông. Nhẹ hơn rồi. 🍃', releasedTimes: (n) => 'Bạn đã buông ' + n + ' lần', tapPhoto: 'thêm ảnh', caption: 'ghi chú ngắn', clearedToast: 'Đã xoá, bạn làm lại từ đầu nhé.',
     saveSlot: 'Lưu giờ hẹn', changeSlot: 'Đổi giờ', slotSaved: 'Đã lưu giờ hẹn', summaryTitle: 'Tóm tắt yêu cầu', showMsg: 'Xem tin nhắn sẽ gửi', bkItems: 'Gói đã chọn',
     doneTitle: 'Đã gửi yêu cầu đặt lịch', doneBody: 'Nabu sẽ xem và xác nhận sớm. Bạn theo dõi trạng thái trong mục Hồ sơ và sẽ nhận thông báo khi Nabu trả lời.', doneMe: 'Xem lịch hẹn của tôi', doneHome: 'Về trang chủ', doneMore: 'Đặt thêm lịch khác',
-    draftKept: 'Lựa chọn của bạn được lưu trên máy này, nên bạn có thể rời đi rồi quay lại sau.', topicNote: 'Chọn gói "1 chủ đề sẵn" thì danh sách chủ đề và câu hỏi hiện ở phía dưới.', openInLibrary: 'Đọc đầy đủ trong Kho kiến thức',
+    draftKept: 'Lựa chọn của bạn được lưu trên máy này, nên bạn có thể rời đi rồi quay lại sau.', openInLibrary: 'Đọc đầy đủ trong Kho kiến thức',
     aiGreet: 'Chào bạn! Mình là Nabu AI. Bạn có thể hỏi mình về một lá bài, một cung hoàng đạo, con số của bạn, hay bảo mình rút một lá cho hôm nay.', aiDrew: (n) => 'Mình rút cho bạn một lá: ' + n + '.', aiDrawHint: 'Muốn rút bài đầy đủ hơn, bạn vào mục Rút bài nhé.', aiSignOf: (s) => 'Với cung ' + s + ' của bạn:', aiThanks: 'Không có gì! Bạn cần gì cứ hỏi tiếp nhé.', aiTodayMoon: (m) => 'Hôm nay trăng đang ở pha ' + m + '.',
     needLogin: 'Bạn cần đăng nhập để gửi trong app. Hoặc gửi qua Instagram bên dưới.',
     viaInstagram: 'Nhắn qua Instagram',
@@ -4110,10 +4104,8 @@ const STR = {
     viaZalo: 'Nhắn qua Zalo',
     viaEmail: 'Gửi email',
     copyMsg: 'Chỉ sao chép tin nhắn',
-    needTopic: 'Bạn chọn một chủ đề trước nhé.',
     needSlot: 'Bạn chọn giờ hẹn trước nhé.',
     msgHello: 'Chào Nabu, mình muốn đặt lịch xem bài.',
-    msgTopic: 'Chủ đề',
     msgTime: 'Giờ hẹn',
     msgName: 'Tên',
     msgNote: 'Câu hỏi thêm',
@@ -4428,12 +4420,10 @@ const STR = {
 
     bookTitle: 'Book a reading',
     priceTitle: 'Prices', priceIntro: 'All Nabu readings, courses and optional unlocks are listed here. Most of the app is still free.',
-    chooseService: '1. Choose a service', serviceHint: 'Tap a package to select it; tap again to remove it.', needService: 'Choose at least one package first.', bookTip: 'Tap a package to select it. You can choose as many as you like. Changed your mind? Simply tap the package once more to deselect it.', cartTitle: 'Your chosen packages', cartEmpty: 'No package chosen yet.', cartNeedsTopic: 'topic not chosen', msgTotal: 'Total', topicFor: 'Topic for', topicNone: 'This appears only after you choose a one-topic package in step 1.',
+    chooseService: '1. Choose a service', serviceHint: 'Tap a package to select it; tap again to remove it.', needService: 'Choose at least one package first.', bookTip: 'Tap a package to select it. You can choose as many as you like. Changed your mind? Simply tap the package once more to deselect it.', cartTitle: 'Your chosen packages', cartEmpty: 'No package chosen yet.', msgTotal: 'Total',
     optional: 'optional', birthTime: 'Time of birth', birthHint: 'A more accurate birth time gives a more precise Tử vi reading.', needBirth: 'Tử vi needs your birth date.',
     msgService: 'Service', msgBirth: 'Birth date and time',
-    chooseTopic: '2. Choose the topic for each preset-topic package',
     presetTopics: 'Set topics',
-    topicHint: 'Choose one of five topics. Each includes five questions; tap to preview them.',
     ownTopic: 'Your own question',
     ownTopicHint: 'Write your own question.',
     chooseWhere: '3. Where it happens', whereHint: 'Where would you like Nabu to write to you? Choose one.',
@@ -4971,7 +4961,7 @@ const STR = {
     toolClear: 'Clear and redo', toolSaved: 'Saved on this device.', toolTemplate: 'New template', toolAdd: 'Add a line', toolRelease: 'Let go', toolReleased: 'Released. Lighter now. 🍃', releasedTimes: (n) => 'You have let go ' + n + ' times', tapPhoto: 'add photo', caption: 'short note', clearedToast: 'Cleared. Start again whenever you like.',
     saveSlot: 'Save this time', changeSlot: 'Change', slotSaved: 'Time saved', summaryTitle: 'Your request', showMsg: 'Show the message that will be sent', bkItems: 'Packages',
     doneTitle: 'Booking request sent', doneBody: 'Nabu will review it and confirm soon. Follow the status under Profile; you will be notified when Nabu replies.', doneMe: 'See my bookings', doneHome: 'Back to home', doneMore: 'Book another reading',
-    draftKept: 'Your choices are saved on this device automatically, so you can leave and come back.', topicNote: 'Choose the preset-topic package and the topics with their questions appear further down.', openInLibrary: 'Read the full guide in the library',
+    draftKept: 'Your choices are saved on this device automatically, so you can leave and come back.', openInLibrary: 'Read the full guide in the library',
     aiGreet: 'Hi! I am Nabu AI. Ask me about a card, a zodiac sign, your numbers, or tell me to draw a card for today.', aiDrew: (n) => 'I drew a card for you: ' + n + '.', aiDrawHint: 'For a fuller draw, open the Pick a card tab.', aiSignOf: (s) => 'For your sign, ' + s + ':', aiThanks: 'You are welcome! Ask me anything else.', aiTodayMoon: (m) => 'Today the Moon is in its ' + m + ' phase.',
     needLogin: 'Sign in to send inside the app, or send through Instagram below.',
     viaInstagram: 'Message on Instagram',
@@ -4979,10 +4969,8 @@ const STR = {
     viaZalo: 'Message on Zalo',
     viaEmail: 'Send an email',
     copyMsg: 'Just copy the message',
-    needTopic: 'Choose a topic first.',
     needSlot: 'Choose a time first.',
     msgHello: 'Hi Nabu, I would like to book a reading.',
-    msgTopic: 'Topic',
     msgTime: 'Time',
     msgName: 'Name',
     msgNote: 'Extra question',
@@ -5296,12 +5284,10 @@ const STR = {
 
     bookTitle: 'Eine Legung buchen',
     priceTitle: 'Preise', priceIntro: 'Hier findest du alle Legungen, Kurse und optionalen Freischaltungen von Nabu. Der größte Teil der App bleibt kostenlos.',
-    chooseService: '1. Wähl eine Leistung', serviceHint: 'Tipp ein Paket an, um es auszuwählen; tipp erneut, um es abzuwählen.', needService: 'Wähl bitte zuerst mindestens ein Paket.', bookTip: 'Tipp ein Paket an, um es zu wählen. Du kannst so viele nehmen, wie du magst. Anders überlegt? Tipp das Paket einfach noch einmal an, um es abzuwählen.', cartTitle: 'Deine gewählten Pakete', cartEmpty: 'Noch kein Paket gewählt.', cartNeedsTopic: 'Thema noch nicht gewählt', msgTotal: 'Gesamt', topicFor: 'Thema für', topicNone: 'Dieser Bereich erscheint erst, wenn du in Schritt 1 ein Paket mit einem festen Thema auswählst.',
+    chooseService: '1. Wähl eine Leistung', serviceHint: 'Tipp ein Paket an, um es auszuwählen; tipp erneut, um es abzuwählen.', needService: 'Wähl bitte zuerst mindestens ein Paket.', bookTip: 'Tipp ein Paket an, um es zu wählen. Du kannst so viele nehmen, wie du magst. Anders überlegt? Tipp das Paket einfach noch einmal an, um es abzuwählen.', cartTitle: 'Deine gewählten Pakete', cartEmpty: 'Noch kein Paket gewählt.', msgTotal: 'Gesamt',
     optional: 'freiwillig', birthTime: 'Geburtszeit', birthHint: 'Je genauer die Geburtszeit, desto genauer kann die Tử-vi-Deutung werden.', needBirth: 'Tử vi braucht dein Geburtsdatum.',
     msgService: 'Leistung', msgBirth: 'Geburtsdatum und -zeit',
-    chooseTopic: '2. Wähl das Thema für jedes Paket mit festem Thema',
     presetTopics: 'Feste Themen',
-    topicHint: 'Wähl eines von fünf Themen. Jedes enthält fünf Fragen; tipp darauf, um sie vorab zu sehen.',
     ownTopic: 'Deine eigene Frage',
     ownTopicHint: 'Schreib deine eigene Frage.',
     chooseWhere: '3. Wo es stattfindet', whereHint: 'Wo soll Nabu dir schreiben? Wähl eines aus.',
@@ -5832,7 +5818,7 @@ const STR = {
     toolClear: 'Löschen und neu machen', toolSaved: 'Auf diesem Gerät gespeichert.', toolTemplate: 'Neue Vorlage', toolAdd: 'Eine Zeile hinzufügen', toolRelease: 'Loslassen', toolReleased: 'Losgelassen. Jetzt leichter. 🍃', releasedTimes: (n) => 'Du hast ' + n + '-mal losgelassen.', tapPhoto: 'Foto hinzufügen', caption: 'kurze Notiz', clearedToast: 'Gelöscht. Fang neu an, wann du magst.',
     saveSlot: 'Diese Zeit speichern', changeSlot: 'Ändern', slotSaved: 'Zeit gespeichert', summaryTitle: 'Deine Anfrage', showMsg: 'Die Nachricht anzeigen, die gesendet wird', bkItems: 'Pakete',
     doneTitle: 'Buchungsanfrage gesendet', doneBody: 'Nabu prüft sie und bestätigt bald. Den Stand siehst du im Profil; du wirst benachrichtigt, sobald Nabu antwortet.', doneMe: 'Meine Termine ansehen', doneHome: 'Zurück zur Startseite', doneMore: 'Noch eine Legung buchen',
-    draftKept: 'Deine Auswahl wird automatisch auf diesem Gerät gespeichert, du kannst also weggehen und wiederkommen.', topicNote: 'Wähl das Paket mit festem Thema, dann erscheinen weiter unten die Themen mit ihren Fragen.', openInLibrary: 'Die ganze Anleitung in der Bibliothek lesen',
+    draftKept: 'Deine Auswahl wird automatisch auf diesem Gerät gespeichert, du kannst also weggehen und wiederkommen.', openInLibrary: 'Die ganze Anleitung in der Bibliothek lesen',
     aiGreet: 'Hallo! Ich bin Nabu AI. Frag mich nach einer Karte, einem Sternzeichen, deinen Zahlen, oder sag mir, ich soll eine Karte für heute ziehen.', aiDrew: (n) => 'Ich habe eine Karte für dich gezogen: ' + n + '.', aiDrawHint: 'Für eine ausführlichere Ziehung öffne den Tab Karte ziehen.', aiSignOf: (s) => 'Für dein Sternzeichen ' + s + ':', aiThanks: 'Gern! Frag mich ruhig noch etwas.', aiTodayMoon: (m) => 'Heute befindet sich der Mond in der Phase „' + m + '“.',
     needLogin: 'Melde dich an, um in der App zu senden, oder schick es unten über Instagram.',
     viaInstagram: 'Auf Instagram schreiben',
@@ -5840,10 +5826,8 @@ const STR = {
     viaZalo: 'Auf Zalo schreiben',
     viaEmail: 'Eine E-Mail senden',
     copyMsg: 'Nur die Nachricht kopieren',
-    needTopic: 'Wähl zuerst ein Thema.',
     needSlot: 'Wähl zuerst eine Zeit.',
     msgHello: 'Hallo Nabu, ich würde gern eine Beratung buchen.',
-    msgTopic: 'Thema',
     msgTime: 'Zeit',
     msgName: 'Name',
     msgNote: 'Zusätzliche Frage',
@@ -6017,25 +6001,6 @@ const STR = {
     dateShort: (d) => d.getDate() + '/' + (d.getMonth() + 1)
   }
 };
-
-/* Nabu Tarot's five preset topics. Fixed brand copy: never paraphrase. */
-const TOPICS = [
-  { id: 1, icon: '💗', interest: 'love', name: { vi: 'Tình cảm hiện tại', en: 'Current relationship', de: 'Aktuelle Beziehung' },
-    q: { vi: ['Năng lượng hiện tại của mối quan hệ này là gì?', 'Người ấy hiện đang có cảm xúc như thế nào với mình?', 'Người ấy nhìn nhận mình và mối quan hệ này ra sao?', 'Trở ngại lớn nhất giữa hai người hiện tại là gì?', 'Mối quan hệ có xu hướng phát triển thế nào trong 1–3 tháng tới?'],
-         en: ['What is the current energy of this relationship?', 'How does this person feel about me right now?', 'How do they see me and this relationship?', 'What is the biggest obstacle between us right now?', 'How is the relationship likely to develop in the next 1–3 months?'], de: ['Welche Energie prägt diese Beziehung gerade?', 'Was empfindet diese Person im Moment für mich?', 'Wie sieht sie mich und diese Beziehung?', 'Was ist derzeit das größte Hindernis zwischen uns?', 'Wie könnte sich die Beziehung in den nächsten 1–3 Monaten entwickeln?'] } },
-  { id: 2, icon: '💔', interest: 'ex', name: { vi: 'Người cũ', en: 'An ex', de: 'Ex-Partner' },
-    q: { vi: ['Người ấy hiện nghĩ gì về mình?', 'Họ còn tình cảm với mình không?', 'Vì sao họ chưa chủ động liên lạc?', 'Có khả năng hai người liên lạc hoặc gặp lại nhau không?', 'Mình nên tiếp tục chờ đợi hay buông bỏ?'],
-         en: ['What do they think of me now?', 'Do they still have feelings for me?', 'Why have they not reached out?', 'Is there a chance we get in touch or meet again?', 'Should I keep waiting or let go?'], de: ['Was denkt diese Person im Moment über mich?', 'Hat sie noch Gefühle für mich?', 'Warum hat sie bisher keinen Kontakt aufgenommen?', 'Besteht die Möglichkeit, dass wir wieder Kontakt haben oder uns sehen?', 'Sollte ich weiter warten oder loslassen?'] } },
-  { id: 3, icon: '💗', interest: 'crush', name: { vi: 'Mập mờ - Crush', en: 'Situationship / crush', de: 'Crush / Kennenlernphase' },
-    q: { vi: ['Người ấy có cảm xúc gì với mình?', 'Họ có nhận ra tình cảm của mình không?', 'Ý định của họ đối với mình là gì?', 'Điều gì đang ngăn mối quan hệ này tiến triển thêm?', 'Khả năng hai người trở thành một cặp trong thời gian tới như thế nào?'],
-         en: ['What do they feel for me?', 'Do they notice my feelings?', 'What are their intentions with me?', 'What is holding this back from going further?', 'How likely are we to become a couple soon?'], de: ['Was empfindet diese Person für mich?', 'Hat sie meine Gefühle bemerkt?', 'Welche Absicht hat sie mir gegenüber?', 'Was hindert diese Verbindung gerade daran, sich weiterzuentwickeln?', 'Wie wahrscheinlich ist es, dass wir in nächster Zeit ein Paar werden?'] } },
-  { id: 4, icon: '⭐', interest: 'work', name: { vi: 'Công việc', en: 'Career', de: 'Arbeit' },
-    q: { vi: ['Tình hình công việc hiện tại của mình đang ở đâu?', 'Điểm mạnh nào mình nên tận dụng?', 'Trở ngại lớn nhất trong công việc hiện tại là gì?', 'Cơ hội đáng chú ý nào có thể xuất hiện sắp tới?', 'Mình nên làm gì để phát triển sự nghiệp tốt hơn?'],
-         en: ['Where is my work situation right now?', 'Which strength should I lean on?', 'What is the biggest obstacle at work right now?', 'What notable opportunity may come up soon?', 'What should I do to grow my career?'], de: ['Wo stehe ich beruflich gerade?', 'Welche Stärke sollte ich jetzt nutzen?', 'Was ist derzeit mein größtes Hindernis bei der Arbeit?', 'Welche bemerkenswerte Chance könnte sich bald zeigen?', 'Was kann ich tun, um mich beruflich besser weiterzuentwickeln?'] } },
-  { id: 5, icon: '✉️', interest: 'study', name: { vi: 'Học tập', en: 'Study', de: 'Lernen' },
-    q: { vi: ['Tình trạng học tập hiện tại của mình như thế nào?', 'Điểm yếu nào đang ảnh hưởng đến kết quả học tập?', 'Điểm mạnh nào mình nên tận dụng?', 'Hướng học tập nào phù hợp hơn với bản thân mình?', 'Mình nên thay đổi gì để đạt kết quả tốt hơn?'],
-         en: ['How is my study going right now?', 'Which weakness is hurting my results?', 'Which strength should I lean on?', 'Which study path suits me better?', 'What should I change to do better?'], de: ['Wie läuft mein Lernen im Moment?', 'Welche Schwäche beeinträchtigt meine Ergebnisse gerade?', 'Welche Stärke sollte ich nutzen?', 'Welcher Lernweg passt besser zu mir?', 'Was sollte ich verändern, um bessere Ergebnisse zu erzielen?'] } }
-];
 
 
 
@@ -13405,7 +13370,22 @@ let STORE_SAID = 0;
    The language and the theme stay: they are how this phone is set up, not who
    used it, and resetting them would hand a German reader a Vietnamese app. */
 const WIPE_KEEP = ['nabu-lang', 'nabu-theme', 'nabu-twa'];
+/* Wiping is the last thing this copy of the app does: the caller reloads
+   immediately afterwards. Until that reload lands, nothing may write to the
+   phone again - and plenty wanted to. Deleting the login makes Firebase
+   announce that nobody is signed in, and that announcement runs the sign-out
+   housekeeping and redraws whatever screen is open; both save as they go, so
+   the profile was written straight back out of memory and the app opened
+   saying it was kept on this device, with the name and birthday still in it.
+   One flag closes the door on all of them at once. */
+let WIPED = false;
+/* The one way back, for the test suite: the real app reloads instead. */
+function unwipeForTests() { WIPED = false; }
 function wipeDevice() {
+  WIPED = true;
+  /* Memory too, or the next write - if one slips through anywhere - puts the
+     same person back. */
+  PROFILE = { name: '', birthday: '', interests: [], tourDone: false };
   try {
     const keys = [];
     for (let i = 0; i < localStorage.length; i++) {
@@ -13426,6 +13406,7 @@ const store = {
      that had stored successfully, which was an older one. Same three lines
      behind every setting, every diary page, and everything unlocked. */
   set(k, v) {
+    if (WIPED) return true;  // an account being deleted: see wipeDevice
     try { localStorage.setItem(k, JSON.stringify(v)); return true; } catch (e) { /* full, probably */ }
     let freed = false;
     STORE_SPARE.forEach((s) => {
@@ -13491,7 +13472,10 @@ darkMQ.addEventListener('change', applyTheme);
 
 /* ---- profile (local first; backend.js syncs it when signed in) ---- */
 let PROFILE = Object.assign({ name: '', birthday: '', interests: [], tourDone: false }, store.get('nabu-profile', {}));
-function saveProfileLocal(p) { PROFILE = Object.assign(PROFILE, p); store.set('nabu-profile', PROFILE); }
+function saveProfileLocal(p) {
+  if (WIPED) return;  // a deletion is in flight; see wipeDevice
+  PROFILE = Object.assign(PROFILE, p); store.set('nabu-profile', PROFILE);
+}
 function birthParts() {
   const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(PROFILE.birthday || '');
   return m ? { y: Number(m[1]), m: Number(m[2]), d: Number(m[3]) } : null;
@@ -25842,7 +25826,7 @@ function petDressOpen(kind, after) {
 }
 
 /* ============================ booking ============================
-   Service and package, topic (required for "set topic" packages), a
+   Service and package, a
    calendar of Nabu's free slots (schedule.json, minus slots taken in
    Firestore when accounts are on), details, then send. */
 const book = { items: [], name: '', note: '', birth: '', birthTime: '', card: null, slot: null, month: null, day: null, where: '', whereId: '', timeSaved: false, restored: false, use: { v: false, c: 0 } };
@@ -25910,7 +25894,6 @@ const cartTotal = () => book.items.reduce((sum, it) => { const p = pkgOfItem(it)
 /* The person's own coins and voucher, against whatever is in the basket. */
 const bookLuck = () => luckCut(cartTotal(), { v: book.use.v, c: luckWanted(book.use, cartTotal()) });
 const needsBirth = () => book.items.some((it) => { const s = serviceOf(it.svc); return s && s.needsBirth; });
-const topicLabel = (n, l) => { const t = TOPICS[n - 1]; return t ? '#' + t.id + ' ' + (l ? L2(t.name, l) : L(t.name)) : ''; };
 function composeMessage() {
   const S = T(), out = [S.msgHello, ''];
   if (book.items.length) {
@@ -25918,7 +25901,6 @@ function composeMessage() {
     book.items.forEach((it) => {
       const s = serviceOf(it.svc), p = pkgOfItem(it); if (!s || !p) return;
       out.push('• ' + L(s.name) + ' – ' + L(p.name) + ': ' + fmtPrice(salePrice(p.price, 'reading', s.id), p.abroad));
-      if (p.needsTopic && it.topic) out.push('   ↳ ' + S.msgTopic + ': ' + topicLabel(it.topic));
     });
     if (book.items.length > 1) out.push('💰 ' + S.msgTotal + ': ' + fmtPrice(cartTotal()));
     const cut = bookLuck();
@@ -25990,7 +25972,7 @@ function whereHTML() {
 /* The request as a labelled card: packages one per line, total, time, details. */
 function summaryHTML(withPanel) {
   const S = T(), rows = [], cut = bookLuck();
-  const items = book.items.map((it) => { const s = serviceOf(it.svc), p = pkgOfItem(it); if (!s || !p) return ''; return '<li>' + esc(L(s.name) + ' – ' + L(p.name)) + ' <b>' + priceHTML(p.price, 'reading', s.id, p.abroad) + '</b>' + (p.needsTopic ? '<br><small class="' + (it.topic ? 'ok' : 'warn') + '">' + esc(it.topic ? S.msgTopic + ': ' + topicLabel(it.topic) : S.cartNeedsTopic) + '</small>' : '') + '</li>'; }).join('');
+  const items = book.items.map((it) => { const s = serviceOf(it.svc), p = pkgOfItem(it); if (!s || !p) return ''; return '<li>' + esc(L(s.name) + ' – ' + L(p.name)) + ' <b>' + priceHTML(p.price, 'reading', s.id, p.abroad) + '</b></li>'; }).join('');
   rows.push([S.bkItems, items ? '<ul>' + items + '</ul>' : '<span class="warn">' + esc(S.cartEmpty) + '</span>']);
   if (book.items.length > 1 || cut.pctOff || cut.coins) rows.push([S.msgTotal, '<b>' + fmtPrice(cartTotal()) + '</b>']);
   if (cut.pctOff) rows.push(['🎟️ ' + S.luckVoucherOf(cut.pct), '<b>-' + fmtPrice(cut.pctOff) + '</b>']);
@@ -26004,20 +25986,12 @@ function summaryHTML(withPanel) {
   return '<div class="sum">' + rows.map((r) => '<div class="r"><span class="k">' + esc(r[0]) + '</span><span class="v">' + r[1] + '</span></div>').join('') + '</div>'
     + (withPanel && book.items.length ? rewardPanelHTML(cartTotal(), book.use) : '');
 }
-/* The basket under the price list: every chosen package, its topic, the total. */
+/* The basket under the price list: every chosen package and the total. */
 function cartHTML() {
   const S = T();
   if (!book.items.length) return '<div class="cart empty"><span>🧺 ' + esc(S.cartEmpty) + '</span></div>';
-  return '<div class="cart"><b>🧺 ' + esc(S.cartTitle) + '</b>' + book.items.map((it, k) => { const s = serviceOf(it.svc), p = pkgOfItem(it); if (!s || !p) return ''; return '<div class="ci"><span>' + esc(L(s.name) + ' – ' + L(p.name)) + (p.needsTopic ? '<br><small class="' + (it.topic ? 'ok' : 'warn') + '">' + esc(it.topic ? S.msgTopic + ': ' + topicLabel(it.topic) : S.cartNeedsTopic) + '</small>' : '') + '</span><b>' + fmtPrice(p.price) + '</b><button class="x" data-remove="' + k + '" aria-label="remove">✕</button></div>'; }).join('')
+  return '<div class="cart"><b>🧺 ' + esc(S.cartTitle) + '</b>' + book.items.map((it, k) => { const s = serviceOf(it.svc), p = pkgOfItem(it); if (!s || !p) return ''; return '<div class="ci"><span>' + esc(L(s.name) + ' – ' + L(p.name)) + '</span><b>' + fmtPrice(p.price) + '</b><button class="x" data-remove="' + k + '" aria-label="remove">✕</button></div>'; }).join('')
     + (book.items.length > 1 ? '<div class="ci total"><span>' + esc(S.msgTotal) + '</span><b>' + fmtPrice(cartTotal()) + '</b></div>' : '') + '</div>';
-}
-/* Step 2: one topic picker per "1 preset topic" package in the basket. */
-function topicSectionHTML() {
-  const S = T();
-  const need = book.items.map((it, k) => ({ it: it, k: k })).filter((x) => { const p = pkgOfItem(x.it); return p && p.needsTopic; });
-  const cards = (k, chosen) => TOPICS.map((t) => '<button class="topic' + (chosen === t.id ? ' on open' : '') + '" data-topic="' + k + '/' + t.id + '"><div class="t"><span class="ic">' + t.icon + '</span><span><span class="n">#' + t.id + '</span> ' + esc(L(t.name)) + '</span></div><ol>' + t.q[lang].map((q) => '<li>' + esc(q) + '</li>').join('') + '</ol></button>').join('');
-  if (!need.length) return '<p class="hint" style="margin-bottom:12px">' + esc(S.topicHint) + '</p><p class="hint faint">' + esc(S.topicNone) + '</p>';
-  return '<p class="hint" style="margin-bottom:12px">' + esc(S.topicHint) + '</p>' + need.map((x) => { const s = serviceOf(x.it.svc), p = pkgOfItem(x.it); return '<div class="tpick" data-tpick="' + x.k + '"><h3>' + esc(S.topicFor) + ' ' + esc(L(s.name)) + '</h3>' + (x.it.topic ? '<p class="hint ok">✓</p>' : '<p class="hint warn">' + esc(S.cartNeedsTopic) + '</p>') + cards(x.k, x.it.topic) + '</div>'; }).join('');
 }
 
 /* ---- price sheet (also its own screen at #/prices) ---- */
@@ -26126,14 +26100,8 @@ async function renderBook(args, params) {
   restoreBook();
   book.card = params.card || book.card || null; book.name = book.name || PROFILE.name || ''; book.birth = book.birth || PROFILE.birthday || '';
   if (!book.month) book.month = new Date(new Date().getFullYear(), new Date().getMonth(), 1);
-  m.innerHTML = '<div class="eyebrow">' + esc(CONFIG.brand) + '</div><h1 style="margin-bottom:6px">' + esc(S.bookTitle) + '</h1>' + bookHowHTML() + '<div class="notes"><div class="note"><span class="ni">👆</span><span>' + esc(S.bookTip) + '</span></div><div class="note"><span class="ni">💾</span><span>' + esc(S.draftKept) + '</span></div><div class="note"><span class="ni">📋</span><span>' + esc(S.topicNote) + '</span></div></div>'
-    + '<div class="sec"><h2 style="margin:18px 0 4px">' + esc(S.chooseService) + '</h2><p class="hint" style="margin-bottom:12px">' + esc(S.serviceHint) + '</p><div id="svcwrap">' + priceSheetHTML(true) + '</div><div id="cartwrap">' + cartHTML() + '</div></div>'
-    /* The step that asked for one of the five preset topics is only there
-       while a package needs one. Since the price list stopped selling those
-       packages, nothing does, and a step that can never be filled in is a
-       step in the way; the code stays, for whenever a package asks again. */
-    + (SERVICES.some((s2) => s2.packages.some((p) => p.needsTopic))
-      ? '<div class="sec"><h2 style="margin:18px 0 4px">' + esc(S.chooseTopic) + '</h2><div id="topicwrap">' + topicSectionHTML() + '</div></div>' : '')
+  m.innerHTML = '<div class="eyebrow">' + esc(CONFIG.brand) + '</div><h1 style="margin-bottom:6px">' + esc(S.bookTitle) + '</h1>' + bookHowHTML() + '<div class="notes"><div class="note"><span class="ni">👆</span><span>' + esc(S.bookTip) + '</span></div><div class="note"><span class="ni">💾</span><span>' + esc(S.draftKept) + '</span></div></div>'
+    + '<div class="sec"><h2 style="margin:18px 0 4px">' + esc(S.chooseService) + '</h2><p class="hint" style="margin-bottom:12px">' + esc(S.serviceHint) + '</p><div id="svcwrap">' + priceSheetHTML(true) + '</div>' + priceRulesHTML() + '<div id="cartwrap">' + cartHTML() + '</div></div>'
     + '<div class="sec"><h2 style="margin-bottom:4px">' + esc(S.chooseTime) + '</h2><p class="hint" style="margin-bottom:10px">' + esc(S.timeHint(L(CONFIG.tzLabel))) + '</p><div id="calwrap"><p class="hint">…</p></div></div>'
     + '<div class="sec"><h2 style="margin:18px 0 4px">' + esc(S.chooseWhere) + '</h2><p class="hint" style="margin-bottom:10px">' + esc(S.whereHint) + '</p><div id="wherewrap">' + whereHTML() + '</div></div>'
     + '<div class="sec"><h2>' + esc(S.yourDetails) + '</h2><label class="f" for="bname">' + esc(S.yourName) + '</label><input id="bname" value="' + esc(book.name) + '" autocomplete="nickname">'
@@ -26166,15 +26134,7 @@ async function renderBook(args, params) {
     clearBook(); window.scrollTo(0, 0);
     $('#bookmore').addEventListener('click', () => { renderBook([], {}); });
   };
-  const bindTopics = () => {
-    $$('[data-topic]', m).forEach((btn) => btn.addEventListener('click', () => {
-      const v = btn.getAttribute('data-topic').split('/'), k = Number(v[0]), id = Number(v[1]), it = book.items[k];
-      if (!it) return;
-      it.topic = it.topic === id ? null : id;   // a second tap clears the choice
-      syncCart(false);
-    }));
-  };
-  const syncCart = (scrollTopics) => {
+  const syncCart = () => {
     $$('.svc', m).forEach((el) => el.classList.toggle('on', book.items.some((it) => it.svc === el.getAttribute('data-svc'))));
     /* The tick is written back into the name, and the package's own sentence
        has to survive that: setting textContent alone wiped the line under it
@@ -26184,22 +26144,17 @@ async function renderBook(args, params) {
       el.classList.toggle('on', on);
       el.querySelector('span').innerHTML = esc((on ? '✓ ' : '') + L(pk.name)) + (pk.desc ? '<small>' + esc(L(pk.desc)) + '</small>' : ''); });
     $('#cartwrap').innerHTML = cartHTML();
-    $$('[data-remove]', m).forEach((x) => x.addEventListener('click', () => { book.items.splice(Number(x.getAttribute('data-remove')), 1); syncCart(false); }));
-    if ($('#topicwrap')) { $('#topicwrap').innerHTML = topicSectionHTML(); bindTopics(); }
+    $$('[data-remove]', m).forEach((x) => x.addEventListener('click', () => { book.items.splice(Number(x.getAttribute('data-remove')), 1); syncCart(); }));
     $('#birthwrap').hidden = !needsBirth();
     prev();
-    if (scrollTopics) { const t = $('.tpick:not(:has(.topic.on))', m); if (t) t.scrollIntoView({ behavior: 'smooth', block: 'start' }); }
   };
-  syncCart(false);
+  syncCart();
   $$('[data-pkg]', m).forEach((btn) => btn.addEventListener('click', () => {
     const v = btn.getAttribute('data-pkg').split('/'), k = itemIndex(v[0], v[1]);
-    if (k > -1) { book.items.splice(k, 1); syncCart(false); return; }
+    if (k > -1) { book.items.splice(k, 1); syncCart(); return; }
     const p = serviceOf(v[0]).packages.filter((x) => x.id === v[1])[0];
-    book.items.push({ svc: v[0], pkg: v[1], topic: null });
-    /* No jump down to the topic picker: being pulled down the page right after
-       tapping a package confused people. The basket flags the missing topic,
-       and Send scrolls to it if it is still missing. */
-    syncCart(false);
+    book.items.push({ svc: v[0], pkg: v[1] });
+    syncCart();
   }));
   $('#bname').addEventListener('input', (e) => { book.name = e.target.value; prev(); });
   $('#bnote').addEventListener('input', (e) => { book.note = e.target.value; prev(); });
@@ -26207,8 +26162,6 @@ async function renderBook(args, params) {
   $('#btime').addEventListener('input', (e) => { book.birthTime = e.target.value; prev(); });
   const need = () => {
     if (!book.items.length) { toast(S.needService); $('#svcwrap').scrollIntoView({ behavior: 'smooth', block: 'start' }); return false; }
-    const missing = book.items.findIndex((it) => { const p = pkgOfItem(it); return p && p.needsTopic && !it.topic; });
-    if (missing > -1) { toast(S.needTopic); const t = $('.tpick[data-tpick="' + missing + '"]', m); if (t) t.scrollIntoView({ behavior: 'smooth', block: 'start' }); return false; }
     if (!book.slot) { toast(S.needSlot); $('#calwrap').scrollIntoView({ behavior: 'smooth', block: 'center' }); return false; }
     if (needsBirth() && !book.birth) { toast(S.needBirth); $('#birthwrap').scrollIntoView({ behavior: 'smooth', block: 'center' }); return false; }
     if (!book.where) { toast(S.needWhere); $('#wherewrap').scrollIntoView({ behavior: 'smooth', block: 'center' }); return false; }
@@ -26226,9 +26179,9 @@ async function renderBook(args, params) {
     if (!BE.user) { $('#sendstatus').textContent = S.needLogin; location.hash = signinHref('/book'); return; }
     sendBtn.disabled = true; sendBtn.textContent = S.sending;
     try {
-      const items = book.items.map((it) => { const s = serviceOf(it.svc), p = pkgOfItem(it); return { service: L2(s.name, 'vi'), pkg: L2(p.name, 'vi'), price: p.price, topic: p.needsTopic && it.topic ? topicLabel(it.topic, 'vi') : '' }; });
+      const items = book.items.map((it) => { const s = serviceOf(it.svc), p = pkgOfItem(it); return { service: L2(s.name, 'vi'), pkg: L2(p.name, 'vi'), price: p.price }; });
       await BE.createBooking({ name: book.name.trim() || PROFILE.name || '', slot: book.slot,
-        service: items.map((x) => x.service + ' – ' + x.pkg + (x.topic ? ' (' + x.topic + ')' : '')).join(' + '), pkg: '', price: bookLuck().final, topic: items.map((x) => x.topic).filter(Boolean).join('; '), items: items,
+        service: items.map((x) => x.service + ' – ' + x.pkg).join(' + '), pkg: '', price: bookLuck().final, items: items,
         where: book.where, whereName: L2((whereOf(book.where) || { name: {} }).name, 'vi'),
         whereId: String(book.whereId || '').trim(),
         note: book.note.trim(), message: composeMessage(), luck: bookLuck(), birth: needsBirth() ? (book.birth + (book.birthTime ? ' ' + book.birthTime : '')) : '', card: book.card ? cardById(book.card).name : '' });
@@ -30845,8 +30798,8 @@ function adminSale(p) {
 ROUTES.admin = { nav: '', render: renderAdmin };
 
 /* ============================ boot ============================ */
-window.APP_VERSION = 'v253';
-window.NABU = { CONFIG: CONFIG, SALE: SALE, salePrice: salePrice, loadActs: loadActs, BACK: BACK, LESSONS: LESSONS, localAnswer: localAnswer, compatVerdict: compatVerdict, numerologyOf: numerologyOf, ZDEEP: ZDEEP, lunarToday: lunarToday, solarToLunar: solarToLunar, DECK: DECK, INSIGHT: INSIGHT, KW: KW, ASK: ASK, TOPICS: TOPICS, GUIDES: GUIDES, SERVICES: SERVICES, COURSES: COURSES, ACCESS: ACCESS, INTERESTS: INTERESTS, plusOn: () => plusOn(), proOn: () => proOn(), luckUnlimited: () => luckUnlimited(), ZODIAC: ZODIAC, pick: pick, book: book, PLAY_ITEMS: PLAY_ITEMS, PLAY_SUB_SKUS: PLAY_SUB_SKUS, playItem: playItem, BILL: BILL, SUBS: SUBS, billUse: billUse, APPLE_BILL: APPLE_BILL, appleAccountToken: appleAccountToken, renderStore: renderStore, pickLimitHTML: pickLimitHTML, subStateWord: subStateWord,
+window.APP_VERSION = 'v254';
+window.NABU = { CONFIG: CONFIG, SALE: SALE, salePrice: salePrice, loadActs: loadActs, BACK: BACK, LESSONS: LESSONS, localAnswer: localAnswer, compatVerdict: compatVerdict, numerologyOf: numerologyOf, ZDEEP: ZDEEP, lunarToday: lunarToday, solarToLunar: solarToLunar, DECK: DECK, INSIGHT: INSIGHT, KW: KW, ASK: ASK, GUIDES: GUIDES, SERVICES: SERVICES, COURSES: COURSES, ACCESS: ACCESS, INTERESTS: INTERESTS, plusOn: () => plusOn(), proOn: () => proOn(), luckUnlimited: () => luckUnlimited(), ZODIAC: ZODIAC, pick: pick, book: book, PLAY_ITEMS: PLAY_ITEMS, PLAY_SUB_SKUS: PLAY_SUB_SKUS, playItem: playItem, BILL: BILL, SUBS: SUBS, billUse: billUse, APPLE_BILL: APPLE_BILL, appleAccountToken: appleAccountToken, renderStore: renderStore, pickLimitHTML: pickLimitHTML, subStateWord: subStateWord,
   insightHTML: insightHTML, insightOf: insightOf, sunSignIndex: sunSignIndex, lifePath: lifePath, PROFILE: () => PROFILE, BE: BE, inAppBrowser: inAppBrowser, ACTS: ACTS, CMT: CMT, LIKES: LIKES, kbReady: kbReady, AI: AI, STR: STR, KB_URL: (typeof KB_URL === 'string' ? KB_URL : ''),
   ANGELS: ANGELS, angelRead: angelRead, CODEBOOK: CODEBOOK, redeemCode: redeemCode, loadCodebook: loadCodebook, petHomeSVG: petHomeSVG, PET_HOMES: PET_HOMES, PET_WARDROBE: PET_WARDROBE, PET_SLOTS: PET_SLOTS,
   PET_SKIES: PET_SKIES, PET_FX: PET_FX, petSkySVG: petSkySVG, petFxSVG: petFxSVG, wearTile: wearTile, wearDraw: wearDraw, WEAR_DEF: WEAR_DEF,
@@ -30890,7 +30843,7 @@ function deDefaults(v, depth) {
  typeof MOON_TEXT !== 'undefined' && MOON_TEXT, typeof FT_CARDS !== 'undefined' && FT_CARDS,
  typeof PC_RANK_TEXT !== 'undefined' && PC_RANK_TEXT, typeof PC_SUIT_TEXT !== 'undefined' && PC_SUIT_TEXT,
  typeof PC_COURT_TEXT !== 'undefined' && PC_COURT_TEXT, typeof INTERESTS !== 'undefined' && INTERESTS,
- typeof TOPICS !== 'undefined' && TOPICS, typeof TOUR !== 'undefined' && TOUR
+ typeof TOUR !== 'undefined' && TOUR
 ].forEach((t) => deDefaults(t, 0));
 
 try { petRemindCheck(); } catch (e) { /* nothing kept yet */ }

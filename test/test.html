@@ -69,7 +69,6 @@ async function go(hash, sel) { W().location.hash = hash; await sleep(30); return
        before they can be counted. */
     ok(await N.kbReady(), 'the course answers can be fetched');
     ok(Object.keys(N.ASK.vi).length === 78 && Object.keys(N.KW.vi).length === 0, 'the Vietnamese question readings cover 78 cards and no lecture keyword sets remain');
-    ok(N.TOPICS.length === 5 && N.TOPICS[1].q.vi[4] === 'Mình nên tiếp tục chờ đợi hay buông bỏ?', 'preset topics verbatim');
     ok(N.GUIDES.length >= 20 && N.GUIDES.every((g) => g.sections.length >= 2 && g.title.vi && g.title.en), 'guides present in both languages (' + N.GUIDES.length + ')');
     ok(!JSON.stringify(N.GUIDES).match(/Thu Anh/) && !d.querySelector('#main').textContent.match(/Thu Anh/), 'no source names in guides or on screen');
     ok(N.sunSignIndex(8, 5) === 4 && N.sunSignIndex(1, 10) === 9 && N.sunSignIndex(3, 21) === 0 && N.sunSignIndex(12, 25) === 9, 'sun sign boundaries');
@@ -576,7 +575,7 @@ async function go(hash, sel) { W().location.hash = hash; await sleep(30); return
     await go('#/learn', '.tiles'); await go('#/learn/astro', '.backlink');
     ok(/Kho kiến thức/.test(d.querySelector('.backlink').textContent), 'opened from the library, the same screen points back at the library');
     ok(d.querySelectorAll('#main .backlink').length === 0 && d.querySelectorAll('#backbar .backlink').length === 1, 'only one back arrow above the screen, none inside it');
-    await go('#/learn', '.tiles'); await go('#/book', '#backbar .backlink'); ok(d.querySelectorAll('#main .notes .note').length === 3 && !/Về Nabu Tarot/.test(d.querySelector('#main').textContent) && Math.abs(d.querySelector('#main .note .ni').getBoundingClientRect().left - d.querySelector('#main h1').getBoundingClientRect().left) < 2, 'the booking notes start at the same edge as the title and the about tail is gone');
+    await go('#/learn', '.tiles'); await go('#/book', '#backbar .backlink'); ok(d.querySelectorAll('#main .notes .note').length === 2 && !/Về Nabu Tarot/.test(d.querySelector('#main').textContent) && Math.abs(d.querySelector('#main .note .ni').getBoundingClientRect().left - d.querySelector('#main h1').getBoundingClientRect().left) < 2, 'the booking notes start at the same edge as the title and the about tail is gone');
     ok(/Trang chủ/.test(d.querySelector('#backbar').textContent) && d.querySelector('#backbar .backlink').getAttribute('href') === '#/home', 'a main tab always points its arrow at home, even when opened from another tab');
     await go('#/home', '.tiles'); await go('#/pick', '.pick-head');
     ok(!d.querySelector('#backbar').hidden && /Trang chủ/.test(d.querySelector('#backbar').textContent), 'the draw tab opened from home shows a back arrow to home');
@@ -691,8 +690,13 @@ async function go(hash, sel) { W().location.hash = hash; await sleep(30); return
     d.querySelector('[data-pkg="tarot/m3"]').click();
     d.querySelector('[data-pkg="tea/area"]').click();
     await sleep(120);
-    ok(!w.NABU.SERVICES.some((s) => s.packages.some((p) => p.needsTopic)) && d.querySelectorAll('.tpick').length === 0 && d.querySelectorAll('#cartwrap .warn').length === 0,
-      'no package asks for one of the five preset topics any more, so nothing is flagged as unfinished');
+    ok(!d.querySelector('#topicwrap') && d.querySelectorAll('.tpick').length === 0 && d.querySelectorAll('#cartwrap .warn').length === 0
+      && !/chủ đề sẵn|preset topic/i.test(d.querySelector('#main').textContent) && N.STR.vi.topicNote === undefined && N.STR.vi.chooseTopic === undefined,
+      'the preset-topic packages are gone and so is every line about them - no step, no note, no strings');
+    { /* The rules are where a booking is made, not only on the price page. */
+      const rules = d.querySelector('#main .pricerules');
+      ok(rules && /Lưu ý trước khi đặt dịch vụ/.test(rules.textContent) && /không được bảo lưu/.test(rules.textContent),
+        'the booking screen carries the same six rules, under the packages'); }
     ok(d.querySelectorAll('.cal .d.has').length >= 5, 'calendar has days with free slots');
     ok(/• Tarot – Tổng quan 3 tháng: 159\.000đ/.test(d.querySelector('#msgtext').textContent) && /• Bài trà – Một lĩnh vực chuyên sâu: 149\.000đ/.test(d.querySelector('#msgtext').textContent) && /Tổng: 407\.000đ/.test(d.querySelector('#msgtext').textContent), 'three packages from three services add up in the message');
     d.querySelector('.cal .d.has').click(); await sleep(50);
@@ -1253,7 +1257,7 @@ async function go(hash, sel) { W().location.hash = hash; await sleep(30); return
          living in localStorage, so the next time the app opened it still said
          the profile was kept on this device, and handed the name, the birthday
          and the interests to whoever signed in next. */
-      const before = {};
+      const before = {}, memWas = JSON.parse(JSON.stringify(N.PROFILE()));
       for (let i2 = 0; i2 < w.localStorage.length; i2++) { const k = w.localStorage.key(i2); before[k] = w.localStorage.getItem(k); }
       w.localStorage.setItem('nabu-profile', JSON.stringify({ name: 'Lan', birthday: '1998-08-05', interests: ['love'] }));
       w.localStorage.setItem('nabu-diary', JSON.stringify([{ t: 'riêng tư' }]));
@@ -1266,6 +1270,16 @@ async function go(hash, sel) { W().location.hash = hash; await sleep(30); return
       ok(gone.length === 0 && w.localStorage.getItem('nabu-lang') === '"de"' && w.localStorage.getItem('nabu-theme') === '"dark"',
         'deleting an account clears everything this phone knew about the person, and keeps only how the phone itself is set up'
         + (gone.length ? ' [left behind: ' + gone.join(', ') + ']' : ''));
+      /* The bug the owner photographed: the wipe worked, and then Firebase
+         announced that nobody was signed in, the open screen redrew, and the
+         profile was written straight back out of memory - so the app opened
+         saying the profile was kept on this device, name and birthday intact.
+         Nothing may reach the phone between the wipe and the reload. */
+      w.saveProfileLocal({ name: 'Lan', birthday: '1998-08-05', interests: ['love'] });
+      ok(w.localStorage.getItem('nabu-profile') === null && !N.PROFILE().name && !N.PROFILE().birthday,
+        'once a deletion has wiped the phone, nothing written afterwards lands there - not the sign-out housekeeping, not a redraw - and memory is empty too');
+      w.unwipeForTests();
+      w.saveProfileLocal(memWas);  // the rest of the run expects this phone's person back
       for (let i2 = w.localStorage.length - 1; i2 >= 0; i2--) { const k = w.localStorage.key(i2); if (before[k] === undefined) w.localStorage.removeItem(k); }
       Object.keys(before).forEach((k) => w.localStorage.setItem(k, before[k])); }
     { /* What is lost is said before it is lost, in all three languages, and a

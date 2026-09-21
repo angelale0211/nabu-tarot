@@ -36,7 +36,22 @@ let STORE_SAID = 0;
    The language and the theme stay: they are how this phone is set up, not who
    used it, and resetting them would hand a German reader a Vietnamese app. */
 const WIPE_KEEP = ['nabu-lang', 'nabu-theme', 'nabu-twa'];
+/* Wiping is the last thing this copy of the app does: the caller reloads
+   immediately afterwards. Until that reload lands, nothing may write to the
+   phone again - and plenty wanted to. Deleting the login makes Firebase
+   announce that nobody is signed in, and that announcement runs the sign-out
+   housekeeping and redraws whatever screen is open; both save as they go, so
+   the profile was written straight back out of memory and the app opened
+   saying it was kept on this device, with the name and birthday still in it.
+   One flag closes the door on all of them at once. */
+let WIPED = false;
+/* The one way back, for the test suite: the real app reloads instead. */
+function unwipeForTests() { WIPED = false; }
 function wipeDevice() {
+  WIPED = true;
+  /* Memory too, or the next write - if one slips through anywhere - puts the
+     same person back. */
+  PROFILE = { name: '', birthday: '', interests: [], tourDone: false };
   try {
     const keys = [];
     for (let i = 0; i < localStorage.length; i++) {
@@ -57,6 +72,7 @@ const store = {
      that had stored successfully, which was an older one. Same three lines
      behind every setting, every diary page, and everything unlocked. */
   set(k, v) {
+    if (WIPED) return true;  // an account being deleted: see wipeDevice
     try { localStorage.setItem(k, JSON.stringify(v)); return true; } catch (e) { /* full, probably */ }
     let freed = false;
     STORE_SPARE.forEach((s) => {
@@ -122,7 +138,10 @@ darkMQ.addEventListener('change', applyTheme);
 
 /* ---- profile (local first; backend.js syncs it when signed in) ---- */
 let PROFILE = Object.assign({ name: '', birthday: '', interests: [], tourDone: false }, store.get('nabu-profile', {}));
-function saveProfileLocal(p) { PROFILE = Object.assign(PROFILE, p); store.set('nabu-profile', PROFILE); }
+function saveProfileLocal(p) {
+  if (WIPED) return;  // a deletion is in flight; see wipeDevice
+  PROFILE = Object.assign(PROFILE, p); store.set('nabu-profile', PROFILE);
+}
 function birthParts() {
   const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(PROFILE.birthday || '');
   return m ? { y: Number(m[1]), m: Number(m[2]), d: Number(m[3]) } : null;

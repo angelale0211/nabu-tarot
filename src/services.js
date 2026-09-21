@@ -1,6 +1,6 @@
 /* ============================ services + prices ============================
    Nabu's price list. Prices in VND. Each service has packages; a package
-   with needsTopic asks the client to choose one of the five preset topics.
+   may carry a `desc`, one sentence saying what it covers.
    Edit here, then  python build.py  and push. */
 const SERVICES = [
   { id: 'tarot', icon: PICK_ICON, tone: 'blue', name: { vi: 'Tarot', en: 'Tarot', de: 'Tarot' },
