@@ -220,6 +220,16 @@ function bindStore(root, redraw) {
         const code = [(e && e.playName) || (e && e.name) || '', out || '', wsafe === (out || '') ? '' : wsafe].filter(Boolean).join('/');
         const showCode = !!said && why !== 'signin' && !busy;
         st.textContent = said + (showCode && code ? ' (' + code + ')' : '');
+        /* Two of these send the reader to the same place: a subscription this
+           Apple account already holds, bought on another Nabu account or in
+           an earlier test, which the App Store will not sell twice and which
+           has to be cancelled where it was bought. Telling somebody to go and
+           find that screen is telling them to give up; the button opens it. */
+        if (BILL.store === 'apple' && (why === 'already used' || out === 'hung') && typeof BILL.manage === 'function' && !$('[data-manage]', st.parentNode)) {
+          st.insertAdjacentHTML('afterend', '<button type="button" class="btn block" data-manage style="margin-top:8px">' + esc(T().stManage) + '</button>');
+          const mb = $('[data-manage]', st.parentNode);
+          if (mb) mb.addEventListener('click', () => { BILL.manage(); });
+        }
       }
       /* The line the screen shows is also filed where the owner can read it
          without asking anybody for a screenshot. errors/ is write-only for
