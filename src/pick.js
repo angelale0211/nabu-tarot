@@ -47,7 +47,15 @@ function pickLimitHTML() {
   if (guestSpent()) return needAccountHTML(S.needInDraw);
   return '<div class="card luckbox"><p class="lead">' + esc(S.pickSpent) + '</p>'
     + (inStoreApp()
-      ? (BILL.can() ? '<p class="hint" style="margin-bottom:10px">' + esc(S.stPlusPitch) + '</p>' + buyButtonHTML('plus', S.stSubscribe) + '<p class="hint st" data-st="plus"></p>' : storeNotReadyHTML())
+      /* Both plans, not Plus alone: one button called "Subscribe" under a
+         sentence about Plus, on a screen whose prices are Pro's as well, read
+         as the app hiding which of the two was being bought. The store's own
+         row says it - name, price, how long it runs, what it opens beyond the
+         other one - so the two rows are the store's, and the links Apple asks
+         a subscription screen for come with them. */
+      ? (BILL.can() ? '<p class="hint" style="margin-bottom:10px">' + esc(S.stPlusPitch) + '</p>'
+          + '<div class="unlist">' + [playItem('plus'), playItem('pro')].map(storeRowHTML).join('') + '</div>'
+          + legalHTML() + '<p class="hint"><a class="backlink" href="#/unlock?from=pick">' + esc(S.stTitle) + ' →</a></p>' : storeNotReadyHTML())
       : '<p class="hint" style="margin-bottom:10px">' + esc(S.pickOffer) + '</p><a class="btn primary block" href="#/unlock?from=pick">' + esc(S.pickPlus) + '</a>')
     + '</div>';
 }
