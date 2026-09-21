@@ -69,6 +69,12 @@ function renderPick(args, params) {
   /* A new day deals afresh. Whatever this screen held yesterday, in the memory
      of an app left open overnight, is not today's card. */
   { const today = isoDate(new Date()); if (pick.day !== today) { pick.day = today; pick.hand = []; pick.chosen = null; } }
+  /* Nobody signed in, nobody shown a card - whatever this screen or this phone
+     still holds. There were two ways a kept card came back and only one of
+     them had been closed, which is why the owner kept finding the same
+     reading under the deck after signing out. This is the rule itself, said
+     once, before either of them runs. */
+  if (!drawIsMine()) pick.chosen = null;
   // A shared link (#/pick?card=…) opens straight on that card, in the focus it was drawn with.
   const want = params && params.card && cardById(params.card) ? params.card : '';
   if (want && pick.chosen !== want) {
@@ -80,7 +86,7 @@ function renderPick(args, params) {
        comes back rather than a fresh fan, for everyone. Drawing again (on
        Plus) deals a hand and clears the choice, so it is never undone here. */
     newHand();
-    const sv = want ? null : TODAY.last('pick');
+    const sv = (want || !drawIsMine()) ? null : TODAY.last('pick');
     if (sv && cardById(sv.id)) { pick.chosen = sv.id; if (T().focus[sv.focus]) pick.focus = sv.focus; }
   }
   /* Same day, not on Plus: the card already drawn comes back, not the fan -

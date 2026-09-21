@@ -12,7 +12,7 @@
      carries this notice with it. See LICENSE. -->
 <meta name="author" content="Nabu Tarot">
 <meta name="copyright" content="Copyright (c) 2025-2026 Nabu Tarot. All rights reserved.">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'none'; object-src 'none'; form-action 'self'; script-src 'self' 'sha256-3+ryiZQ96twdJxhIbLcgrqIfiu+vzr9o9NQ2Yc9DYHk=' https://www.gstatic.com https://apis.google.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; font-src 'self' data:; media-src 'self' data: blob:; worker-src 'self'; connect-src 'self' https://*.googleapis.com https://*.google.com https://*.firebaseio.com https://*.cloudfunctions.net https://*.workers.dev https://generativelanguage.googleapis.com; frame-src https://*.firebaseapp.com https://accounts.google.com https://*.facebook.com">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'none'; object-src 'none'; form-action 'self'; script-src 'self' 'sha256-pNt+JEvlrNxcDd4PlY8VBF1ZMmYdTgdC9M/9A8873K0=' https://www.gstatic.com https://apis.google.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; font-src 'self' data:; media-src 'self' data: blob:; worker-src 'self'; connect-src 'self' https://*.googleapis.com https://*.google.com https://*.firebaseio.com https://*.cloudfunctions.net https://*.workers.dev https://generativelanguage.googleapis.com; frame-src https://*.firebaseapp.com https://accounts.google.com https://*.facebook.com">
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <meta name="theme-color" content="#EFE9FA">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -13657,9 +13657,10 @@ const signedIn = () => !(typeof BE !== 'undefined' && BE.enabled) || !!(typeof B
    still waking up, which is right for a button that must not flicker and
    wrong for anything that hands over what somebody left behind: on a cold
    start the draw screen took that moment as proof of an account and dealt the
-   last reading back to whoever opened the app. This one says no until the
-   account has actually answered. */
-const signedInForSure = () => (typeof BE === 'undefined' || !BE.enabled) ? false : !!(BE.ready && BE.user);
+   last reading back to whoever opened the app. This one is the account
+   itself - present only once Firebase has named somebody - so the silence
+   before it answers counts as nobody, which is the safe way round. */
+const signedInForSure = () => (typeof BE === 'undefined' || !BE.enabled) ? false : !!BE.user;
 /* The card shown in place of whatever was asked for. */
 function needAccountHTML(why) {
   const S = T();
@@ -16829,6 +16830,12 @@ function renderPick(args, params) {
   /* A new day deals afresh. Whatever this screen held yesterday, in the memory
      of an app left open overnight, is not today's card. */
   { const today = isoDate(new Date()); if (pick.day !== today) { pick.day = today; pick.hand = []; pick.chosen = null; } }
+  /* Nobody signed in, nobody shown a card - whatever this screen or this phone
+     still holds. There were two ways a kept card came back and only one of
+     them had been closed, which is why the owner kept finding the same
+     reading under the deck after signing out. This is the rule itself, said
+     once, before either of them runs. */
+  if (!drawIsMine()) pick.chosen = null;
   // A shared link (#/pick?card=…) opens straight on that card, in the focus it was drawn with.
   const want = params && params.card && cardById(params.card) ? params.card : '';
   if (want && pick.chosen !== want) {
@@ -16840,7 +16847,7 @@ function renderPick(args, params) {
        comes back rather than a fresh fan, for everyone. Drawing again (on
        Plus) deals a hand and clears the choice, so it is never undone here. */
     newHand();
-    const sv = want ? null : TODAY.last('pick');
+    const sv = (want || !drawIsMine()) ? null : TODAY.last('pick');
     if (sv && cardById(sv.id)) { pick.chosen = sv.id; if (T().focus[sv.focus]) pick.focus = sv.focus; }
   }
   /* Same day, not on Plus: the card already drawn comes back, not the fan -
@@ -30975,7 +30982,7 @@ function adminSale(p) {
 ROUTES.admin = { nav: '', render: renderAdmin };
 
 /* ============================ boot ============================ */
-window.APP_VERSION = 'v263';
+window.APP_VERSION = 'v264';
 window.NABU = { CONFIG: CONFIG, SALE: SALE, salePrice: salePrice, loadActs: loadActs, BACK: BACK, LESSONS: LESSONS, localAnswer: localAnswer, compatVerdict: compatVerdict, numerologyOf: numerologyOf, ZDEEP: ZDEEP, lunarToday: lunarToday, solarToLunar: solarToLunar, DECK: DECK, INSIGHT: INSIGHT, KW: KW, ASK: ASK, GUIDES: GUIDES, SERVICES: SERVICES, COURSES: COURSES, ACCESS: ACCESS, INTERESTS: INTERESTS, plusOn: () => plusOn(), proOn: () => proOn(), luckUnlimited: () => luckUnlimited(), ZODIAC: ZODIAC, pick: pick, book: book, PLAY_ITEMS: PLAY_ITEMS, PLAY_SUB_SKUS: PLAY_SUB_SKUS, playItem: playItem, BILL: BILL, SUBS: SUBS, billUse: billUse, APPLE_BILL: APPLE_BILL, appleAccountToken: appleAccountToken, renderStore: renderStore, pickLimitHTML: pickLimitHTML, subStateWord: subStateWord,
   insightHTML: insightHTML, insightOf: insightOf, sunSignIndex: sunSignIndex, lifePath: lifePath, PROFILE: () => PROFILE, BE: BE, inAppBrowser: inAppBrowser, ACTS: ACTS, CMT: CMT, LIKES: LIKES, kbReady: kbReady, AI: AI, STR: STR, KB_URL: (typeof KB_URL === 'string' ? KB_URL : ''),
   ANGELS: ANGELS, angelRead: angelRead, CODEBOOK: CODEBOOK, redeemCode: redeemCode, loadCodebook: loadCodebook, petHomeSVG: petHomeSVG, PET_HOMES: PET_HOMES, PET_WARDROBE: PET_WARDROBE, PET_SLOTS: PET_SLOTS,

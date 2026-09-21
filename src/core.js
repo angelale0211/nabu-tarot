@@ -300,9 +300,10 @@ const signedIn = () => !(typeof BE !== 'undefined' && BE.enabled) || !!(typeof B
    still waking up, which is right for a button that must not flicker and
    wrong for anything that hands over what somebody left behind: on a cold
    start the draw screen took that moment as proof of an account and dealt the
-   last reading back to whoever opened the app. This one says no until the
-   account has actually answered. */
-const signedInForSure = () => (typeof BE === 'undefined' || !BE.enabled) ? false : !!(BE.ready && BE.user);
+   last reading back to whoever opened the app. This one is the account
+   itself - present only once Firebase has named somebody - so the silence
+   before it answers counts as nobody, which is the safe way round. */
+const signedInForSure = () => (typeof BE === 'undefined' || !BE.enabled) ? false : !!BE.user;
 /* The card shown in place of whatever was asked for. */
 function needAccountHTML(why) {
   const S = T();
