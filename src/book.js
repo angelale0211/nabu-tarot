@@ -189,7 +189,12 @@ function priceSheetHTML(interactive) {
 function priceRulesHTML() {
   const S = T();
   return '<details class="card pricerules"><summary>' + esc(S.priceRules) + '</summary><ul>'
-    + S.priceRulesList.map((r) => '<li>' + esc(r) + '</li>').join('') + '</ul></details>';
+    + S.priceRulesList.map((r) => '<li>' + esc(r) + '</li>').join('') + '</ul>'
+    /* Which price applies is settled by how the money arrives, not by where
+       somebody says they live: a đồng price is paid from a Vietnamese bank.
+       It is also the answer to "why is the Vietnamese price lower", printed
+       where the question comes up rather than waiting to be asked. */
+    + '<p class="hint">' + esc(S.priceCurrency) + '</p></details>';
 }
 
 /* One shape for every paid thing on the page: a tile of one size, a name, one

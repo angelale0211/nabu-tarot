@@ -659,6 +659,21 @@ async function go(hash, sel) { W().location.hash = hash; await sleep(30); return
         && price('tuvi', 'one') === 99000 && price('tuvi', 'year') === 333000 && price('tuvi', 'all') === 666000
         && svc('tuvi').name.vi === 'Tử vi' && svc('tuvi').packages.length === 3,
         'Tâm sự 59/99k, and Tử vi is untouched: same three packages, same prices');
+      { /* The conversion added a flat fee to every package, so the cheapest
+           one carried it hardest: 39.000đ came out $4 and 149.000đ only $8,
+           and a five-question reading looked barely dearer than one question.
+           Every reading now names its own price abroad. */
+        const all = w.NABU.SERVICES.reduce((n, sv) => n.concat(sv.packages.map((p) => [sv.id, p])), []);
+        const noPrice = all.filter(([, p]) => !p.abroad || typeof p.abroad.en !== 'number' || typeof p.abroad.de !== 'number').map(([sv, p]) => sv + '/' + p.id);
+        ok(noPrice.length === 0, 'every reading package carries its own price in dollars and euros' + (noPrice.length ? ' [missing: ' + noPrice.join(', ') + ']' : ''));
+        const per = (sv, pk, n) => svc(sv).packages.filter((p) => p.id === pk)[0].abroad.en / n;
+        ok(per('tarot', 'q1', 1) > per('tarot', 'q3', 3) && per('tarot', 'q3', 3) > per('tarot', 'deep', 5),
+          'the more questions a package holds, the less each one costs - which is what a buyer expects and what the old conversion broke');
+        const tuvi = svc('tuvi').packages.map((p) => p.abroad.en), tarotTop = Math.max.apply(null, svc('tarot').packages.map((p) => p.abroad.en));
+        ok(Math.min.apply(null, tuvi) > 0 && Math.max.apply(null, tuvi) > tarotTop,
+          'Tử vi stands above Tarot abroad, as the owner asked');
+        ok(/chuyển khoản ngân hàng trong nước/.test(N.STR.vi.priceCurrency) && /domestic bank transfer/.test(N.STR.en.priceCurrency) && /Inlandsüberweisung/.test(N.STR.de.priceCurrency),
+          'the price list says which price applies to which way of paying, in all three languages'); }
       ok([['tarot', 'm3'], ['tarot', 'm6'], ['tarot', 'm12'], ['tea', 'm1'], ['tea', 'area'], ['tarot', 'deep']].every(([sv, pk]) => {
         const p = svc(sv).packages.filter((x) => x.id === pk)[0];
         return p.desc && p.desc.vi && p.desc.en && p.desc.de; }),

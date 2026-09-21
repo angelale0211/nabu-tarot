@@ -12,7 +12,7 @@
      carries this notice with it. See LICENSE. -->
 <meta name="author" content="Nabu Tarot">
 <meta name="copyright" content="Copyright (c) 2025-2026 Nabu Tarot. All rights reserved.">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'none'; object-src 'none'; form-action 'self'; script-src 'self' 'sha256-ggY7lAgPEqzrWLk+C6eRCpFLVKqa7Xw1GkI44amQ4UQ=' https://www.gstatic.com https://apis.google.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; font-src 'self' data:; media-src 'self' data: blob:; worker-src 'self'; connect-src 'self' https://*.googleapis.com https://*.google.com https://*.firebaseio.com https://*.cloudfunctions.net https://*.workers.dev https://generativelanguage.googleapis.com; frame-src https://*.firebaseapp.com https://accounts.google.com https://*.facebook.com">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'none'; object-src 'none'; form-action 'self'; script-src 'self' 'sha256-DeuzXJgEpq8EgSJYu5U51jsHdyzUcQ1OSuIJ9/6nwEU=' https://www.gstatic.com https://apis.google.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; font-src 'self' data:; media-src 'self' data: blob:; worker-src 'self'; connect-src 'self' https://*.googleapis.com https://*.google.com https://*.firebaseio.com https://*.cloudfunctions.net https://*.workers.dev https://generativelanguage.googleapis.com; frame-src https://*.firebaseapp.com https://accounts.google.com https://*.facebook.com">
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <meta name="theme-color" content="#EFE9FA">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -3170,57 +3170,57 @@ const SERVICES = [
   { id: 'tarot', icon: PICK_ICON, tone: 'blue', name: { vi: 'Tarot', en: 'Tarot', de: 'Tarot' },
     tagline: { vi: 'Bạn hỏi được thì Tarot trả lời được.', en: 'If you can ask it, Tarot can answer it.', de: 'Wenn du eine Frage hast, kann Tarot dir eine neue Perspektive darauf geben.' },
     packages: [
-      { id: 'q1', name: { vi: '1 câu hỏi', en: '1 question', de: '1 Frage' }, price: 39000 },
-      { id: 'q3', name: { vi: '3 câu hỏi', en: '3 questions', de: '3 Fragen' }, price: 99000 },
-      { id: 'deep', name: { vi: 'Chuyên sâu 1 vấn đề', en: 'One matter in depth', de: 'Ein Thema ausführlich' }, price: 149000,
+      { id: 'q1', name: { vi: '1 câu hỏi', en: '1 question', de: '1 Frage' }, price: 39000, abroad: { en: 5, de: 5 } },
+      { id: 'q3', name: { vi: '3 câu hỏi', en: '3 questions', de: '3 Fragen' }, price: 99000, abroad: { en: 12, de: 11 } },
+      { id: 'deep', name: { vi: 'Chuyên sâu 1 vấn đề', en: 'One matter in depth', de: 'Ein Thema ausführlich' }, price: 149000, abroad: { en: 18, de: 16 },
         desc: { vi: 'Tối đa 5 câu hỏi, tất cả xoay quanh cùng một vấn đề.', en: 'Up to 5 questions, all about the same matter.', de: 'Bis zu 5 Fragen, alle zum selben Thema.' } },
-      { id: 'm3', name: { vi: 'Tổng quan 3 tháng', en: '3-month overview', de: 'Überblick 3 Monate' }, price: 159000,
+      { id: 'm3', name: { vi: 'Tổng quan 3 tháng', en: '3-month overview', de: 'Überblick 3 Monate' }, price: 159000, abroad: { en: 19, de: 17 },
         desc: { vi: 'Tình cảm, công việc/học tập, tài chính, xu hướng nổi bật, cơ hội và thử thách, điều cần lưu ý và lời khuyên.', en: 'Love, work or study, money, the main trends, opportunities and challenges, what to watch for and advice.', de: 'Liebe, Arbeit oder Studium, Finanzen, die wichtigsten Tendenzen, Chancen und Herausforderungen, worauf du achten solltest, und ein Rat.' } },
-      { id: 'm6', name: { vi: 'Tổng quan 6 tháng', en: '6-month overview', de: 'Überblick 6 Monate' }, price: 249000,
+      { id: 'm6', name: { vi: 'Tổng quan 6 tháng', en: '6-month overview', de: 'Überblick 6 Monate' }, price: 249000, abroad: { en: 29, de: 27 },
         desc: { vi: 'Như gói 3 tháng, nhìn xa hơn: từng giai đoạn trong 6 tháng, những thay đổi lớn và lời khuyên cho từng chặng.', en: 'As the 3-month reading, over a longer road: each stage of the six months, the larger changes, and advice for each one.', de: 'Wie der 3-Monats-Überblick, aber weiter gefasst: jede Phase der sechs Monate, die größeren Veränderungen und ein Rat zu jeder.' } },
-      { id: 'm12', name: { vi: 'Tổng quan 12 tháng', en: '12-month overview', de: 'Überblick 12 Monate' }, price: 399000,
+      { id: 'm12', name: { vi: 'Tổng quan 12 tháng', en: '12-month overview', de: 'Überblick 12 Monate' }, price: 399000, abroad: { en: 45, de: 41 },
         desc: { vi: 'Trọn một năm: từng quý, xu hướng dài hạn, cơ hội và thử thách lớn, cùng lời khuyên chi tiết cho cả năm.', en: 'A whole year: quarter by quarter, the long trends, the big opportunities and challenges, and detailed advice for the year.', de: 'Ein ganzes Jahr: Quartal für Quartal, die langen Tendenzen, die großen Chancen und Herausforderungen und ein ausführlicher Rat für das Jahr.' } }
     ] },
   { id: 'tarot-oracle', icon: '🌙', tone: 'pink', name: { vi: 'Tarot + Oracle', en: 'Tarot + Oracle', de: 'Tarot + Oracle' },
     tagline: { vi: 'Tarot phân tích tình huống, diễn biến, nguyên nhân, cảm xúc và xu hướng; Oracle bổ sung thông điệp, định hướng và lời khuyên.', en: 'Tarot reads the situation, how it unfolds, the reasons, the feelings and the trend; Oracle adds a message, a direction and advice.', de: 'Tarot deutet die Situation, ihren Verlauf, die Gründe, die Gefühle und die Tendenz; Oracle ergänzt eine Botschaft, eine Richtung und einen Rat.' },
     packages: [
-      { id: 'deep', name: { vi: 'Chuyên sâu 1 vấn đề', en: 'One matter in depth', de: 'Ein Thema ausführlich' }, price: 179000,
+      { id: 'deep', name: { vi: 'Chuyên sâu 1 vấn đề', en: 'One matter in depth', de: 'Ein Thema ausführlich' }, price: 179000, abroad: { en: 21, de: 19 },
         desc: { vi: 'Tối đa 5 câu hỏi cùng một chủ đề, kèm thông điệp và định hướng từ Oracle.', en: 'Up to 5 questions on the same matter, with a message and a direction from Oracle.', de: 'Bis zu 5 Fragen zum selben Thema, dazu eine Botschaft und eine Richtung von Oracle.' } },
-      { id: 'm3', name: { vi: 'Tổng quan 3 tháng', en: '3-month overview', de: 'Überblick 3 Monate' }, price: 199000,
+      { id: 'm3', name: { vi: 'Tổng quan 3 tháng', en: '3-month overview', de: 'Überblick 3 Monate' }, price: 199000, abroad: { en: 24, de: 22 },
         desc: { vi: 'Phần phân tích Tarot của gói tổng quan 3 tháng, thêm thông điệp và định hướng từ Oracle.', en: 'The Tarot reading of the 3-month overview, with a message and a direction from Oracle.', de: 'Die Tarot-Deutung des 3-Monats-Überblicks, dazu eine Botschaft und eine Richtung von Oracle.' } },
-      { id: 'm6', name: { vi: 'Tổng quan 6 tháng', en: '6-month overview', de: 'Überblick 6 Monate' }, price: 299000,
+      { id: 'm6', name: { vi: 'Tổng quan 6 tháng', en: '6-month overview', de: 'Überblick 6 Monate' }, price: 299000, abroad: { en: 35, de: 32 },
         desc: { vi: 'Phần phân tích Tarot của gói tổng quan 6 tháng, thêm thông điệp và định hướng từ Oracle.', en: 'The Tarot reading of the 6-month overview, with a message and a direction from Oracle.', de: 'Die Tarot-Deutung des 6-Monats-Überblicks, dazu eine Botschaft und eine Richtung von Oracle.' } },
-      { id: 'm12', name: { vi: 'Tổng quan 12 tháng', en: '12-month overview', de: 'Überblick 12 Monate' }, price: 459000,
+      { id: 'm12', name: { vi: 'Tổng quan 12 tháng', en: '12-month overview', de: 'Überblick 12 Monate' }, price: 459000, abroad: { en: 52, de: 48 },
         desc: { vi: 'Phần phân tích Tarot của gói tổng quan 12 tháng, thêm thông điệp và định hướng từ Oracle.', en: 'The Tarot reading of the 12-month overview, with a message and a direction from Oracle.', de: 'Die Tarot-Deutung des 12-Monats-Überblicks, dazu eine Botschaft und eine Richtung von Oracle.' } }
     ] },
   { id: 'tea', icon: '🍵', tone: 'gold', name: { vi: 'Bài trà', en: 'Tealeaf fortune telling', de: 'Teeblattdeutung' },
     tagline: { vi: 'Tập trung vào sự kiện, dấu hiệu, cơ hội và thay đổi có thể xuất hiện trong thời gian tới.', en: 'It looks at events, signs, opportunities and changes that may be on their way.', de: 'Der Blick geht auf Ereignisse, Zeichen, Chancen und Veränderungen, die kommen können.' },
     packages: [
-      { id: 'coming', name: { vi: 'Điều gì đang đến với bạn?', en: 'What is coming your way?', de: 'Was auf dich zukommt' }, price: 99000,
+      { id: 'coming', name: { vi: 'Điều gì đang đến với bạn?', en: 'What is coming your way?', de: 'Was auf dich zukommt' }, price: 99000, abroad: { en: 12, de: 11 },
         desc: { vi: 'Những sự kiện và dấu hiệu nổi bật đang đến gần.', en: 'The events and signs that stand out as they approach.', de: 'Die Ereignisse und Zeichen, die sich gerade abzeichnen.' } },
-      { id: 'm1', name: { vi: '1 tháng', en: '1 month', de: '1 Monat' }, price: 79000,
+      { id: 'm1', name: { vi: '1 tháng', en: '1 month', de: '1 Monat' }, price: 79000, abroad: { en: 9, de: 8 },
         desc: { vi: 'Sự kiện, thay đổi và điều đáng chú ý trong 1 tháng tới.', en: 'Events, changes and what is worth noticing in the coming month.', de: 'Ereignisse, Veränderungen und Bemerkenswertes im kommenden Monat.' } },
-      { id: 'm3', name: { vi: '3 tháng', en: '3 months', de: '3 Monate' }, price: 159000,
+      { id: 'm3', name: { vi: '3 tháng', en: '3 months', de: '3 Monate' }, price: 159000, abroad: { en: 19, de: 17 },
         desc: { vi: 'Sự kiện, thay đổi và điều đáng chú ý trong 3 tháng tới.', en: 'Events, changes and what is worth noticing over the next three months.', de: 'Ereignisse, Veränderungen und Bemerkenswertes in den nächsten drei Monaten.' } },
-      { id: 'm6', name: { vi: '6 tháng', en: '6 months', de: '6 Monate' }, price: 279000,
+      { id: 'm6', name: { vi: '6 tháng', en: '6 months', de: '6 Monate' }, price: 279000, abroad: { en: 33, de: 30 },
         desc: { vi: 'Sự kiện, thay đổi và điều đáng chú ý trong 6 tháng tới, theo từng giai đoạn.', en: 'Events, changes and what is worth noticing over six months, stage by stage.', de: 'Ereignisse, Veränderungen und Bemerkenswertes über sechs Monate, Phase für Phase.' } },
-      { id: 'm12', name: { vi: '12 tháng', en: '12 months', de: '12 Monate' }, price: 499000,
+      { id: 'm12', name: { vi: '12 tháng', en: '12 months', de: '12 Monate' }, price: 499000, abroad: { en: 57, de: 52 },
         desc: { vi: 'Sự kiện, thay đổi và điều đáng chú ý trong cả năm, theo từng quý.', en: 'Events, changes and what is worth noticing across the year, quarter by quarter.', de: 'Ereignisse, Veränderungen und Bemerkenswertes über das ganze Jahr, Quartal für Quartal.' } },
-      { id: 'area', name: { vi: 'Một lĩnh vực chuyên sâu', en: 'One area in depth', de: 'Ein Bereich ausführlich' }, price: 149000,
+      { id: 'area', name: { vi: 'Một lĩnh vực chuyên sâu', en: 'One area in depth', de: 'Ein Bereich ausführlich' }, price: 149000, abroad: { en: 18, de: 16 },
         desc: { vi: 'Chọn tình yêu, công việc, tài chính, gia đình hoặc một vấn đề bạn đang quan tâm.', en: 'Choose love, work, money, family, or a matter on your mind.', de: 'Wähle Liebe, Arbeit, Finanzen, Familie oder ein Thema, das dich beschäftigt.' } }
     ] },
   { id: 'tea-oracle', icon: '✨', tone: 'lav', name: { vi: 'Bài trà + Oracle', en: 'Tealeaf + Oracle', de: 'Teeblattdeutung + Oracle' },
     tagline: { vi: 'Bài trà tập trung vào sự kiện và những điều có khả năng xảy ra; Oracle bổ sung thông điệp, lời khuyên và định hướng.', en: 'The tealeaves look at events and what may happen; Oracle adds a message, advice and a direction.', de: 'Die Teeblätter zeigen Ereignisse und Mögliches; Oracle ergänzt eine Botschaft, einen Rat und eine Richtung.' },
     packages: [
-      { id: 'coming', name: { vi: 'Điều sắp tới', en: 'What is coming your way', de: 'Was auf dich zukommt' }, price: 129000,
+      { id: 'coming', name: { vi: 'Điều sắp tới', en: 'What is coming your way', de: 'Was auf dich zukommt' }, price: 129000, abroad: { en: 15, de: 14 },
         desc: { vi: 'Những điều đang đến gần, kèm thông điệp và lời khuyên từ Oracle.', en: 'What is drawing near, with a message and advice from Oracle.', de: 'Was sich nähert, dazu eine Botschaft und ein Rat von Oracle.' } },
-      { id: 'm1', name: { vi: '1 tháng', en: '1 month', de: '1 Monat' }, price: 109000,
+      { id: 'm1', name: { vi: '1 tháng', en: '1 month', de: '1 Monat' }, price: 109000, abroad: { en: 13, de: 12 },
         desc: { vi: 'Sự kiện và thay đổi trong 1 tháng tới, kèm thông điệp và lời khuyên từ Oracle.', en: 'Events and changes in the coming month, with a message and advice from Oracle.', de: 'Ereignisse und Veränderungen im kommenden Monat, dazu eine Botschaft und ein Rat von Oracle.' } },
-      { id: 'm3', name: { vi: '3 tháng', en: '3 months', de: '3 Monate' }, price: 199000,
+      { id: 'm3', name: { vi: '3 tháng', en: '3 months', de: '3 Monate' }, price: 199000, abroad: { en: 24, de: 22 },
         desc: { vi: 'Sự kiện và thay đổi trong 3 tháng tới, kèm thông điệp và lời khuyên từ Oracle.', en: 'Events and changes over three months, with a message and advice from Oracle.', de: 'Ereignisse und Veränderungen über drei Monate, dazu eine Botschaft und ein Rat von Oracle.' } },
-      { id: 'm6', name: { vi: '6 tháng', en: '6 months', de: '6 Monate' }, price: 329000,
+      { id: 'm6', name: { vi: '6 tháng', en: '6 months', de: '6 Monate' }, price: 329000, abroad: { en: 38, de: 35 },
         desc: { vi: 'Sự kiện và thay đổi trong 6 tháng tới, kèm thông điệp và lời khuyên từ Oracle.', en: 'Events and changes over six months, with a message and advice from Oracle.', de: 'Ereignisse und Veränderungen über sechs Monate, dazu eine Botschaft und ein Rat von Oracle.' } },
-      { id: 'm12', name: { vi: '12 tháng', en: '12 months', de: '12 Monate' }, price: 569000,
+      { id: 'm12', name: { vi: '12 tháng', en: '12 months', de: '12 Monate' }, price: 569000, abroad: { en: 65, de: 59 },
         desc: { vi: 'Sự kiện và thay đổi trong cả năm, kèm thông điệp và lời khuyên từ Oracle.', en: 'Events and changes across the year, with a message and advice from Oracle.', de: 'Ereignisse und Veränderungen über das ganze Jahr, dazu eine Botschaft und ein Rat von Oracle.' } }
     ] },
   { id: 'tuvi', icon: '🌸', tone: 'pink', name: { vi: 'Tử vi', en: 'Tử vi (Vietnamese astrology)', de: 'Tử vi (vietnamesische Astrologie)' },
@@ -3228,16 +3228,16 @@ const SERVICES = [
     note: { vi: 'Cần ngày, tháng, năm sinh và giờ sinh chính xác.', en: 'Needs your exact date and hour of birth.', de: 'Benötigt dein genaues Geburtsdatum und möglichst die genaue Geburtszeit.' },
     needsBirth: true,
     packages: [
-      { id: 'one', name: { vi: '1 vấn đề', en: '1 matter', de: '1 Thema' }, price: 99000 },
-      { id: 'year', name: { vi: 'Vận hạn năm', en: 'The year ahead', de: 'Das kommende Jahr' }, price: 333000 },
-      { id: 'all', name: { vi: 'Tổng quan mọi vấn đề', en: 'Full overview of everything', de: 'Gesamtüberblick' }, price: 666000 }
+      { id: 'one', name: { vi: '1 vấn đề', en: '1 matter', de: '1 Thema' }, price: 99000, abroad: { en: 20, de: 18 } },
+      { id: 'year', name: { vi: 'Vận hạn năm', en: 'The year ahead', de: 'Das kommende Jahr' }, price: 333000, abroad: { en: 45, de: 41 } },
+      { id: 'all', name: { vi: 'Tổng quan mọi vấn đề', en: 'Full overview of everything', de: 'Gesamtüberblick' }, price: 666000, abroad: { en: 85, de: 78 } }
     ] },
   { id: 'talk', icon: '💬', tone: 'blue', name: { vi: 'Tâm sự', en: 'Just talk', de: 'Einfach reden' },
     tagline: { vi: 'Một không gian riêng tư để bạn chia sẻ điều đang khiến mình băn khoăn, áp lực, hoặc đơn giản là cần một người lắng nghe.', en: 'A private space to share what is weighing on you, or simply to be heard.', de: 'Ein privater Raum für das, was dich beschäftigt oder belastet - oder einfach, um gehört zu werden.' },
     note: { vi: 'Lắng nghe và trò chuyện riêng tư, không phán xét. Bạn có thể chia sẻ về tình cảm, công việc, học tập, gia đình hoặc chuyện cá nhân. Đây không phải trị liệu hay tư vấn tâm lý chuyên môn.', en: 'A private conversation, without judgement. Love, work, study, family or anything personal. This is not therapy or professional psychological advice.', de: 'Ein privates Gespräch, ohne Urteil. Liebe, Arbeit, Studium, Familie oder Persönliches. Das ist keine Therapie und keine psychologische Fachberatung.' },
     packages: [
-      { id: 't30', name: { vi: '30 phút', en: '30 minutes', de: '30 Minuten' }, price: 59000 },
-      { id: 't60', name: { vi: '60 phút', en: '60 minutes', de: '60 Minuten' }, price: 99000 }
+      { id: 't30', name: { vi: '30 phút', en: '30 minutes', de: '30 Minuten' }, price: 59000, abroad: { en: 9, de: 8 } },
+      { id: 't60', name: { vi: '60 phút', en: '60 minutes', de: '60 Minuten' }, price: 99000, abroad: { en: 15, de: 14 } }
     ] }
 ];
 /* Paid courses in the Học tab. Access codes are made in the dashboard. */
@@ -3485,6 +3485,7 @@ const STR = {
     angelWhyRoot: (r) => 'Cộng các chữ số lại và rút gọn, bạn được số gốc ' + r + '. Bạn đọc theo nhóm số ' + r + '.',
     angelNote: 'Con số thiên thần là một cách diễn giải mang tính tham khảo. Hãy xem chúng như lời nhắc để nhìn lại mình, không phải lời tiên đoán.',
     priceRules: '⚠️ Lưu ý trước khi đặt dịch vụ',
+    priceCurrency: 'Giá tiền Việt áp dụng cho thanh toán bằng chuyển khoản ngân hàng trong nước. Thanh toán quốc tế được tính theo bảng giá USD hoặc EUR.',
     priceRulesList: ['Số câu hỏi trong mỗi gói chỉ có giá trị trong một lần xem.', 'Câu hỏi chưa dùng hết không được bảo lưu, cộng dồn hay chuyển sang lần xem khác.', 'Với gói chuyên sâu, các câu hỏi phải xoay quanh cùng một vấn đề.', 'Câu hỏi về một người hoặc một vấn đề hoàn toàn khác có thể được tính thành câu hỏi mới.', 'Tarot, Oracle và Bài trà mang tính tham khảo và định hướng.', 'Không thay thế tư vấn chuyên môn về y tế, tâm lý, pháp lý hoặc tài chính.'],
     priceReadings: 'Xem bài cùng Nabu', priceReadingsHint: 'Nabu xem bài trực tiếp cho bạn. Bạn chọn gói, chọn giờ, sau đó nhắn tin cho Nabu.',
     priceCoursesHint: 'Bạn học theo tốc độ của mình và xem lại được cả khi không có mạng.',
@@ -4350,6 +4351,7 @@ const STR = {
     angelWhyRoot: (r) => 'Adding the digits and reducing gives a root of ' + r + ', so it is read as the ' + r + ' group.',
     angelNote: 'Angel numbers are an interpretive tradition, offered here for reference. Treat them as prompts for reflection, not predictions.',
     priceRules: '⚠️ Please read before booking',
+    priceCurrency: 'Prices in Vietnamese đồng apply to payment by domestic bank transfer. International payments are charged at the USD or EUR price.',
     priceRulesList: ['The questions in a package are for one reading.', 'Questions you do not use are not kept, added up or carried over to another reading.', 'In an in-depth package, every question has to be about the same matter.', 'A question about a different person or a different matter may count as a new question.', 'Tarot, Oracle and the tealeaves are for reflection and orientation.', 'They do not replace professional medical, psychological, legal or financial advice.'],
     priceReadings: 'A reading with Nabu', priceReadingsHint: 'Nabu reads for you directly. Pick a package, pick a time, then send it.',
     priceCoursesHint: 'Learn at your own pace. Everything works without a connection.',
@@ -5214,6 +5216,7 @@ const STR = {
     angelWhyRoot: (r) => 'Addiert und auf eine Ziffer reduziert ergibt sich ' + r + '. Deshalb wird die Zahl der Gruppe ' + r + ' zugeordnet.',
     angelNote: 'Engelszahlen sind eine Deutungstradition und hier als Orientierung gedacht. Sieh sie als Anstoß zur Selbstreflexion, nicht als Vorhersage.',
     priceRules: '⚠️ Bitte vor der Buchung lesen',
+    priceCurrency: 'Preise in vietnamesischen Đồng gelten für die Zahlung per Inlandsüberweisung. Internationale Zahlungen werden zum USD- oder EUR-Preis berechnet.',
     priceRulesList: ['Die Fragen eines Pakets gelten für eine Legung.', 'Nicht genutzte Fragen verfallen; sie werden nicht gesammelt oder auf eine andere Legung übertragen.', 'In einem ausführlichen Paket müssen alle Fragen dasselbe Thema betreffen.', 'Eine Frage zu einer anderen Person oder einem anderen Thema kann als neue Frage gelten.', 'Tarot, Oracle und Teeblattdeutung dienen der Orientierung und dem Nachdenken.', 'Sie ersetzen keine ärztliche, psychologische, rechtliche oder finanzielle Fachberatung.'],
     priceReadings: 'Eine Legung mit Nabu', priceReadingsHint: 'Nabu legt dir persönlich. Wähl ein Paket, wähl eine Zeit und schick es ab.',
     priceCoursesHint: 'Lern in deinem eigenen Tempo. Alles funktioniert auch ohne Verbindung.',
@@ -26016,7 +26019,12 @@ function priceSheetHTML(interactive) {
 function priceRulesHTML() {
   const S = T();
   return '<details class="card pricerules"><summary>' + esc(S.priceRules) + '</summary><ul>'
-    + S.priceRulesList.map((r) => '<li>' + esc(r) + '</li>').join('') + '</ul></details>';
+    + S.priceRulesList.map((r) => '<li>' + esc(r) + '</li>').join('') + '</ul>'
+    /* Which price applies is settled by how the money arrives, not by where
+       somebody says they live: a đồng price is paid from a Vietnamese bank.
+       It is also the answer to "why is the Vietnamese price lower", printed
+       where the question comes up rather than waiting to be asked. */
+    + '<p class="hint">' + esc(S.priceCurrency) + '</p></details>';
 }
 
 /* One shape for every paid thing on the page: a tile of one size, a name, one
@@ -30798,7 +30806,7 @@ function adminSale(p) {
 ROUTES.admin = { nav: '', render: renderAdmin };
 
 /* ============================ boot ============================ */
-window.APP_VERSION = 'v254';
+window.APP_VERSION = 'v255';
 window.NABU = { CONFIG: CONFIG, SALE: SALE, salePrice: salePrice, loadActs: loadActs, BACK: BACK, LESSONS: LESSONS, localAnswer: localAnswer, compatVerdict: compatVerdict, numerologyOf: numerologyOf, ZDEEP: ZDEEP, lunarToday: lunarToday, solarToLunar: solarToLunar, DECK: DECK, INSIGHT: INSIGHT, KW: KW, ASK: ASK, GUIDES: GUIDES, SERVICES: SERVICES, COURSES: COURSES, ACCESS: ACCESS, INTERESTS: INTERESTS, plusOn: () => plusOn(), proOn: () => proOn(), luckUnlimited: () => luckUnlimited(), ZODIAC: ZODIAC, pick: pick, book: book, PLAY_ITEMS: PLAY_ITEMS, PLAY_SUB_SKUS: PLAY_SUB_SKUS, playItem: playItem, BILL: BILL, SUBS: SUBS, billUse: billUse, APPLE_BILL: APPLE_BILL, appleAccountToken: appleAccountToken, renderStore: renderStore, pickLimitHTML: pickLimitHTML, subStateWord: subStateWord,
   insightHTML: insightHTML, insightOf: insightOf, sunSignIndex: sunSignIndex, lifePath: lifePath, PROFILE: () => PROFILE, BE: BE, inAppBrowser: inAppBrowser, ACTS: ACTS, CMT: CMT, LIKES: LIKES, kbReady: kbReady, AI: AI, STR: STR, KB_URL: (typeof KB_URL === 'string' ? KB_URL : ''),
   ANGELS: ANGELS, angelRead: angelRead, CODEBOOK: CODEBOOK, redeemCode: redeemCode, loadCodebook: loadCodebook, petHomeSVG: petHomeSVG, PET_HOMES: PET_HOMES, PET_WARDROBE: PET_WARDROBE, PET_SLOTS: PET_SLOTS,
