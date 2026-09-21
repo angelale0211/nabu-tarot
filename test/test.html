@@ -1297,6 +1297,27 @@ async function go(hash, sel) { W().location.hash = hash; await sleep(30); return
       w.saveProfileLocal(memWas);  // the rest of the run expects this phone's person back
       for (let i2 = w.localStorage.length - 1; i2 >= 0; i2--) { const k = w.localStorage.key(i2); if (before[k] === undefined) w.localStorage.removeItem(k); }
       Object.keys(before).forEach((k) => w.localStorage.setItem(k, before[k])); }
+    { /* The owner reported the same thing five times: after deleting the
+         account, the Profile screen still opened with the old name and
+         birthday. Every fix so far governed what happens next; the leftover
+         already on the phone stayed. The app clears it once, at the first
+         start after the fix, and never claims a profile is kept when none is. */
+      ok(w.localStorage.getItem('nabu-reset-profile') === '1',
+        'the one-time cleanup of what the old rules left behind has run and marked itself done');
+      const before = {}, memWas = JSON.parse(JSON.stringify(N.PROFILE()));
+      for (let i2 = 0; i2 < w.localStorage.length; i2++) { const k = w.localStorage.key(i2); before[k] = w.localStorage.getItem(k); }
+      w.saveProfileLocal({ name: '', birthday: '', interests: [] });
+      await go('#/home', '#main'); await go('#/me', '.me-head');
+      const headLine = d.querySelector('.me-head .faint').textContent;
+      ok(!/lưu trên máy này|saved on this device|auf diesem Gerät gespeichert/.test(headLine) && !d.querySelector('#pwipe'),
+        'signed out with nothing kept, the Profile screen does not say a profile is kept on this device, and offers nothing to clear [' + headLine + ']');
+      w.saveProfileLocal({ name: 'Lan', birthday: '1998-08-05' });
+      await go('#/home', '#main'); await go('#/me', '.me-head');
+      ok(/lưu trên máy này|saved on this device|auf diesem Gerät gespeichert/.test(d.querySelector('.me-head .faint').textContent) && !!d.querySelector('#pwipe'),
+        'and when something is kept, it says so and offers the way to clear it');
+      for (let i2 = w.localStorage.length - 1; i2 >= 0; i2--) { const k = w.localStorage.key(i2); if (before[k] === undefined) w.localStorage.removeItem(k); }
+      Object.keys(before).forEach((k) => w.localStorage.setItem(k, before[k]));
+      w.saveProfileLocal(memWas); }
     { /* Signing out used to clear the profile, the plans and today's card and
          leave the rest: the diary, the companions, the wishes, the coins, the
          votes, the course progress. The next person on the phone - or the

@@ -32,7 +32,9 @@ function profileFormHTML() {
        account - which somebody who never made one cannot do. A phone handed
        on, or one still holding what an account left behind before deletion
        learned to clear up after itself, is cleaned from here. */
-    + '<button type="button" class="btn block" id="pwipe" style="margin-top:10px">' + esc(S.wipeBtn) + '</button></div>';
+    + ((p.name || p.birthday || (p.interests || []).length)
+      ? '<button type="button" class="btn block" id="pwipe" style="margin-top:10px">' + esc(S.wipeBtn) + '</button>' : '')
+    + '<p class="hint faint" style="margin-top:10px">' + esc(String(window.APP_VERSION || '')) + '</p></div>';
 }
 function bindProfileForm(root, after) {
   const wipe = $('#pwipe', root);
@@ -228,7 +230,12 @@ function renderMe(args, params) {
   meCleanup();
   const S = T(), m = $('#main');
   const name = (PROFILE.name || '').trim();
-  const head = '<div class="me-head"><div class="avatar">' + esc((name || '?').charAt(0).toUpperCase()) + '</div><div><b>' + esc(name || S.helloGuest) + '</b><span class="faint">' + esc(BE.user ? (BE.user.email || '') : S.localOnly) + '</span></div></div>';
+  /* "Your profile is kept on this device" belongs under a profile. Signed out
+     with nothing kept - which is what every sign-out and every deletion now
+     leaves - the line said it anyway, over the name of whoever used the phone
+     last, and that is the sentence the owner kept photographing. */
+  const kept = !BE.user && !!(name || PROFILE.birthday || (PROFILE.interests || []).length);
+  const head = '<div class="me-head"><div class="avatar">' + esc((name || '?').charAt(0).toUpperCase()) + '</div><div><b>' + esc(name || S.helloGuest) + '</b><span class="faint">' + esc(BE.user ? (BE.user.email || '') : (kept ? S.localOnly : S.meIntroGuest)) + '</span></div></div>';
   m.innerHTML = head + loveBadgeHTML() + '<div id="mebody"></div>';
   const body = $('#mebody');
 /* A folding group. Whether it was open is kept per device, so the page comes

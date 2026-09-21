@@ -12,7 +12,7 @@
      carries this notice with it. See LICENSE. -->
 <meta name="author" content="Nabu Tarot">
 <meta name="copyright" content="Copyright (c) 2025-2026 Nabu Tarot. All rights reserved.">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'none'; object-src 'none'; form-action 'self'; script-src 'self' 'sha256-n7b8qA7vlkfvJvnvCCMFjZZ7K+OwMaP0j30nUGGC7lc=' https://www.gstatic.com https://apis.google.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; font-src 'self' data:; media-src 'self' data: blob:; worker-src 'self'; connect-src 'self' https://*.googleapis.com https://*.google.com https://*.firebaseio.com https://*.cloudfunctions.net https://*.workers.dev https://generativelanguage.googleapis.com; frame-src https://*.firebaseapp.com https://accounts.google.com https://*.facebook.com">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'none'; object-src 'none'; form-action 'self'; script-src 'self' 'sha256-3njkp6yahd5ecMgQIVYYT+0wlAmWRceGmjyDMd2QZ84=' https://www.gstatic.com https://apis.google.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; font-src 'self' data:; media-src 'self' data: blob:; worker-src 'self'; connect-src 'self' https://*.googleapis.com https://*.google.com https://*.firebaseio.com https://*.cloudfunctions.net https://*.workers.dev https://generativelanguage.googleapis.com; frame-src https://*.firebaseapp.com https://accounts.google.com https://*.facebook.com">
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <meta name="theme-color" content="#EFE9FA">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -4120,6 +4120,7 @@ const STR = {
     meIntro: 'Ngày sinh và sở thích giúp Nabu chọn nội dung phù hợp với bạn.',
     localOnly: 'Hồ sơ đang lưu trên máy này.',
     wipeBtn: 'Xoá dữ liệu trên máy này',
+    meIntroGuest: 'Chưa có hồ sơ nào trên máy này.',
     signOutConfirm: 'Đăng xuất sẽ xoá dữ liệu Nabu Tarot trên máy này: nhật ký, bạn nhỏ, điều ước, tiến độ học và những lựa chọn đã lưu. Tài khoản của bạn không bị ảnh hưởng, nhưng những nội dung chỉ lưu trên máy sẽ không lấy lại được. Bạn vẫn muốn đăng xuất?',
     wipeConfirm: 'Xoá toàn bộ dữ liệu Nabu Tarot trên máy này? Hồ sơ, nhật ký, tiến độ và những lựa chọn đã lưu sẽ mất. Thao tác này không ảnh hưởng đến tài khoản của bạn.',
     wipeDone: 'Đã xoá dữ liệu trên máy này.',
@@ -4990,6 +4991,7 @@ const STR = {
     meIntro: 'Your birthday and interests help Nabu choose content that fits you.',
     localOnly: 'Your profile is saved on this device.',
     wipeBtn: 'Clear this device',
+    meIntroGuest: 'No profile is kept on this device.',
     signOutConfirm: 'Signing out removes the Nabu Tarot data kept on this device: your diary, companions, wishes, course progress and saved choices. Your account is not affected, but anything kept only on this device cannot be recovered. Sign out anyway?',
     wipeConfirm: 'Remove all Nabu Tarot data from this device? Your profile, diary, progress and saved choices will be gone. This does not affect your account.',
     wipeDone: 'This device has been cleared.',
@@ -5852,6 +5854,7 @@ const STR = {
     meIntro: 'Geburtstag und Interessen helfen Nabu, passende Inhalte für dich auszuwählen.',
     localOnly: 'Dein Profil ist nur auf diesem Gerät gespeichert.',
     wipeBtn: 'Daten auf diesem Gerät löschen',
+    meIntroGuest: 'Auf diesem Gerät ist kein Profil gespeichert.',
     signOutConfirm: 'Beim Abmelden werden die Nabu-Tarot-Daten auf diesem Gerät entfernt: Tagebuch, Begleiter, Wünsche, Lernfortschritt und gespeicherte Auswahl. Dein Konto bleibt unberührt, aber was nur auf diesem Gerät liegt, lässt sich nicht zurückholen. Trotzdem abmelden?',
     wipeConfirm: 'Alle Nabu-Tarot-Daten von diesem Gerät entfernen? Profil, Tagebuch, Fortschritt und gespeicherte Auswahl gehen verloren. Dein Konto bleibt davon unberührt.',
     wipeDone: 'Die Daten auf diesem Gerät wurden gelöscht.',
@@ -13494,6 +13497,30 @@ function applyTheme() {
 darkMQ.addEventListener('change', applyTheme);
 
 /* ---- profile (local first; backend.js syncs it when signed in) ---- */
+/* One cleanup, once, for what the old rules left behind.
+
+   Signing out used to clear a few keys and deleting an account cleared four;
+   the profile stayed either way. Both were fixed, and a fix only governs what
+   happens next: a phone that had already been signed out of, or whose account
+   had already been deleted, went on opening with the name and the birthday of
+   somebody who is gone - and the owner, quite reasonably, kept reporting the
+   same bug. This runs at the first start after the fix and takes that
+   leftover with it: the profile, the day's card, and the guest's spent draw.
+
+   It is safe to run twice, and safe on a phone that never had an account:
+   what it removes is a name and a birthday somebody can type again in ten
+   seconds, and it never touches the diary, the companions or anything bought.
+   The mark is not kept out of a wipe, so a wipe simply makes it run again on
+   nothing. */
+(function clearWhatTheOldRulesLeft() {
+  try {
+    if (localStorage.getItem('nabu-reset-profile') === '1') return;
+    ['nabu-profile', 'nabu-today', 'nabu-pick-day', 'nabu-guest-draw'].forEach((k) => {
+      try { localStorage.removeItem(k); } catch (e) { /* locked */ }
+    });
+    localStorage.setItem('nabu-reset-profile', '1');
+  } catch (e) { /* private mode: nothing was kept to clear */ }
+})();
 let PROFILE = Object.assign({ name: '', birthday: '', interests: [], tourDone: false }, store.get('nabu-profile', {}));
 function saveProfileLocal(p) {
   if (WIPED) return;  // a deletion is in flight; see wipeDevice
@@ -26358,7 +26385,9 @@ function profileFormHTML() {
        account - which somebody who never made one cannot do. A phone handed
        on, or one still holding what an account left behind before deletion
        learned to clear up after itself, is cleaned from here. */
-    + '<button type="button" class="btn block" id="pwipe" style="margin-top:10px">' + esc(S.wipeBtn) + '</button></div>';
+    + ((p.name || p.birthday || (p.interests || []).length)
+      ? '<button type="button" class="btn block" id="pwipe" style="margin-top:10px">' + esc(S.wipeBtn) + '</button>' : '')
+    + '<p class="hint faint" style="margin-top:10px">' + esc(String(window.APP_VERSION || '')) + '</p></div>';
 }
 function bindProfileForm(root, after) {
   const wipe = $('#pwipe', root);
@@ -26554,7 +26583,12 @@ function renderMe(args, params) {
   meCleanup();
   const S = T(), m = $('#main');
   const name = (PROFILE.name || '').trim();
-  const head = '<div class="me-head"><div class="avatar">' + esc((name || '?').charAt(0).toUpperCase()) + '</div><div><b>' + esc(name || S.helloGuest) + '</b><span class="faint">' + esc(BE.user ? (BE.user.email || '') : S.localOnly) + '</span></div></div>';
+  /* "Your profile is kept on this device" belongs under a profile. Signed out
+     with nothing kept - which is what every sign-out and every deletion now
+     leaves - the line said it anyway, over the name of whoever used the phone
+     last, and that is the sentence the owner kept photographing. */
+  const kept = !BE.user && !!(name || PROFILE.birthday || (PROFILE.interests || []).length);
+  const head = '<div class="me-head"><div class="avatar">' + esc((name || '?').charAt(0).toUpperCase()) + '</div><div><b>' + esc(name || S.helloGuest) + '</b><span class="faint">' + esc(BE.user ? (BE.user.email || '') : (kept ? S.localOnly : S.meIntroGuest)) + '</span></div></div>';
   m.innerHTML = head + loveBadgeHTML() + '<div id="mebody"></div>';
   const body = $('#mebody');
 /* A folding group. Whether it was open is kept per device, so the page comes
@@ -30887,7 +30921,7 @@ function adminSale(p) {
 ROUTES.admin = { nav: '', render: renderAdmin };
 
 /* ============================ boot ============================ */
-window.APP_VERSION = 'v257';
+window.APP_VERSION = 'v258';
 window.NABU = { CONFIG: CONFIG, SALE: SALE, salePrice: salePrice, loadActs: loadActs, BACK: BACK, LESSONS: LESSONS, localAnswer: localAnswer, compatVerdict: compatVerdict, numerologyOf: numerologyOf, ZDEEP: ZDEEP, lunarToday: lunarToday, solarToLunar: solarToLunar, DECK: DECK, INSIGHT: INSIGHT, KW: KW, ASK: ASK, GUIDES: GUIDES, SERVICES: SERVICES, COURSES: COURSES, ACCESS: ACCESS, INTERESTS: INTERESTS, plusOn: () => plusOn(), proOn: () => proOn(), luckUnlimited: () => luckUnlimited(), ZODIAC: ZODIAC, pick: pick, book: book, PLAY_ITEMS: PLAY_ITEMS, PLAY_SUB_SKUS: PLAY_SUB_SKUS, playItem: playItem, BILL: BILL, SUBS: SUBS, billUse: billUse, APPLE_BILL: APPLE_BILL, appleAccountToken: appleAccountToken, renderStore: renderStore, pickLimitHTML: pickLimitHTML, subStateWord: subStateWord,
   insightHTML: insightHTML, insightOf: insightOf, sunSignIndex: sunSignIndex, lifePath: lifePath, PROFILE: () => PROFILE, BE: BE, inAppBrowser: inAppBrowser, ACTS: ACTS, CMT: CMT, LIKES: LIKES, kbReady: kbReady, AI: AI, STR: STR, KB_URL: (typeof KB_URL === 'string' ? KB_URL : ''),
   ANGELS: ANGELS, angelRead: angelRead, CODEBOOK: CODEBOOK, redeemCode: redeemCode, loadCodebook: loadCodebook, petHomeSVG: petHomeSVG, PET_HOMES: PET_HOMES, PET_WARDROBE: PET_WARDROBE, PET_SLOTS: PET_SLOTS,

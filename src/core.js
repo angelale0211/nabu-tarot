@@ -145,6 +145,30 @@ function applyTheme() {
 darkMQ.addEventListener('change', applyTheme);
 
 /* ---- profile (local first; backend.js syncs it when signed in) ---- */
+/* One cleanup, once, for what the old rules left behind.
+
+   Signing out used to clear a few keys and deleting an account cleared four;
+   the profile stayed either way. Both were fixed, and a fix only governs what
+   happens next: a phone that had already been signed out of, or whose account
+   had already been deleted, went on opening with the name and the birthday of
+   somebody who is gone - and the owner, quite reasonably, kept reporting the
+   same bug. This runs at the first start after the fix and takes that
+   leftover with it: the profile, the day's card, and the guest's spent draw.
+
+   It is safe to run twice, and safe on a phone that never had an account:
+   what it removes is a name and a birthday somebody can type again in ten
+   seconds, and it never touches the diary, the companions or anything bought.
+   The mark is not kept out of a wipe, so a wipe simply makes it run again on
+   nothing. */
+(function clearWhatTheOldRulesLeft() {
+  try {
+    if (localStorage.getItem('nabu-reset-profile') === '1') return;
+    ['nabu-profile', 'nabu-today', 'nabu-pick-day', 'nabu-guest-draw'].forEach((k) => {
+      try { localStorage.removeItem(k); } catch (e) { /* locked */ }
+    });
+    localStorage.setItem('nabu-reset-profile', '1');
+  } catch (e) { /* private mode: nothing was kept to clear */ }
+})();
 let PROFILE = Object.assign({ name: '', birthday: '', interests: [], tourDone: false }, store.get('nabu-profile', {}));
 function saveProfileLocal(p) {
   if (WIPED) return;  // a deletion is in flight; see wipeDevice
