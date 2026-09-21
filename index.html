@@ -12,7 +12,7 @@
      carries this notice with it. See LICENSE. -->
 <meta name="author" content="Nabu Tarot">
 <meta name="copyright" content="Copyright (c) 2025-2026 Nabu Tarot. All rights reserved.">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'none'; object-src 'none'; form-action 'self'; script-src 'self' 'sha256-TEgQY4FN2SrCbnVB2o4U9nwtbIO/kltbBwWMb0vmtZU=' https://www.gstatic.com https://apis.google.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; font-src 'self' data:; media-src 'self' data: blob:; worker-src 'self'; connect-src 'self' https://*.googleapis.com https://*.google.com https://*.firebaseio.com https://*.cloudfunctions.net https://*.workers.dev https://generativelanguage.googleapis.com; frame-src https://*.firebaseapp.com https://accounts.google.com https://*.facebook.com">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'none'; object-src 'none'; form-action 'self'; script-src 'self' 'sha256-/t3Cu72PU5Qu3c4dkOv1TEQdWEoIcI9MVMCXZIlB6IA=' https://www.gstatic.com https://apis.google.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; font-src 'self' data:; media-src 'self' data: blob:; worker-src 'self'; connect-src 'self' https://*.googleapis.com https://*.google.com https://*.firebaseio.com https://*.cloudfunctions.net https://*.workers.dev https://generativelanguage.googleapis.com; frame-src https://*.firebaseapp.com https://accounts.google.com https://*.facebook.com">
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <meta name="theme-color" content="#EFE9FA">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -691,6 +691,11 @@ html.iosapp[lang="en"] #today .tbl td:first-child{white-space:normal;width:36%}
 .svc .pkg b{font-family:var(--body);font-weight:700;white-space:nowrap;margin-left:auto}
 .svc .pkg>span{flex:1 1 150px}
 .svc .pkg span{min-width:0;overflow-wrap:anywhere}
+.svc .pkg small{display:block;margin-top:2px;font-size:12.5px;line-height:1.45;font-weight:400;opacity:.75}
+.pricerules{margin-top:12px}
+.pricerules summary{cursor:pointer;font-weight:700;font-size:14.5px}
+.pricerules ul{margin:8px 0 0 18px;padding:0;font-size:13.5px;line-height:1.6;color:var(--fg-faint)}
+.pricerules li{margin:0 0 4px}
 .svc button.pkg.on{background:var(--primary);color:var(--primary-ink);border-color:transparent}
 .paynote{background:var(--tag-gold-bg);color:var(--tag-gold-ink);border-radius:12px;padding:10px 14px;font-size:14px;font-weight:600;text-align:center}
 
@@ -3168,43 +3173,58 @@ const SERVICES = [
   { id: 'tarot', icon: PICK_ICON, tone: 'blue', name: { vi: 'Tarot', en: 'Tarot', de: 'Tarot' },
     tagline: { vi: 'Bạn hỏi được thì Tarot trả lời được.', en: 'If you can ask it, Tarot can answer it.', de: 'Wenn du eine Frage hast, kann Tarot dir eine neue Perspektive darauf geben.' },
     packages: [
-      { id: 'yn', name: { vi: '1 câu Yes/No', en: '1 yes/no question', de: '1 Ja/Nein-Frage' }, price: 10000, abroad: { en: 1, de: 1 } },
-      { id: 'q1', name: { vi: '1 câu chi tiết', en: '1 question in detail', de: '1 ausführliche Frage' }, price: 20000 },
-      { id: 'q3', name: { vi: '3 câu chi tiết', en: '3 questions in detail', de: '3 ausführliche Fragen' }, price: 50000 },
-      { id: 'topic', name: { vi: '1 chủ đề sẵn (chọn trong 5 chủ đề)', en: '1 of the 5 preset topics', de: '1 festes Thema (aus 5 Themen wählen)' }, price: 60000, needsTopic: true },
-      { id: 't40', name: { vi: '40 phút', en: '40 minutes', de: '40 Minuten' }, price: 80000 }
-    ] },
-  { id: 'lenormand', icon: '🗝️', tone: 'lav', name: { vi: 'Lenormand', en: 'Lenormand', de: 'Lenormand' },
-    tagline: { vi: 'Hỏi chuyện cụ thể, trả lời cụ thể.', en: 'Concrete questions, concrete answers.', de: 'Konkrete Frage, konkrete Deutung.' },
-    packages: [
-      { id: 'yn', name: { vi: '1 câu Yes/No', en: '1 yes/no question', de: '1 Ja/Nein-Frage' }, price: 15000, abroad: { en: 1, de: 1 } },
-      { id: 'q1', name: { vi: '1 câu chi tiết', en: '1 question in detail', de: '1 ausführliche Frage' }, price: 25000 },
-      { id: 'q3', name: { vi: '3 câu chi tiết', en: '3 questions in detail', de: '3 ausführliche Fragen' }, price: 60000 },
-      { id: 'topic', name: { vi: '1 chủ đề sẵn (chọn trong 5 chủ đề)', en: '1 of the 5 preset topics', de: '1 festes Thema (aus 5 Themen wählen)' }, price: 75000, needsTopic: true },
-      { id: 't40', name: { vi: '40 phút', en: '40 minutes', de: '40 Minuten' }, price: 90000 }
-    ] },
-  { id: 'tea', icon: '🍵', tone: 'gold', name: { vi: 'Bài trà', en: 'Tealeaf fortune telling', de: 'Teeblattdeutung' },
-    tagline: { vi: 'Một tách trà, một câu chuyện.', en: 'One cup of tea, one story.', de: 'Eine Tasse Tee, eine kleine Geschichte.' },
-    packages: [
-      { id: 'q1', name: { vi: '1 câu', en: '1 question', de: '1 Frage' }, price: 25000 },
-      { id: 'q3', name: { vi: '3 câu', en: '3 questions', de: '3 Fragen' }, price: 50000 },
-      { id: 't30', name: { vi: '30 phút', en: '30 minutes', de: '30 Minuten' }, price: 80000 }
+      { id: 'q1', name: { vi: '1 câu hỏi', en: '1 question', de: '1 Frage' }, price: 39000 },
+      { id: 'q3', name: { vi: '3 câu hỏi', en: '3 questions', de: '3 Fragen' }, price: 99000 },
+      { id: 'deep', name: { vi: 'Chuyên sâu 1 vấn đề', en: 'One matter in depth', de: 'Ein Thema ausführlich' }, price: 149000,
+        desc: { vi: 'Tối đa 5 câu hỏi, tất cả xoay quanh cùng một vấn đề.', en: 'Up to 5 questions, all about the same matter.', de: 'Bis zu 5 Fragen, alle zum selben Thema.' } },
+      { id: 'm3', name: { vi: 'Tổng quan 3 tháng', en: '3-month overview', de: 'Überblick 3 Monate' }, price: 159000,
+        desc: { vi: 'Tình cảm, công việc/học tập, tài chính, xu hướng nổi bật, cơ hội và thử thách, điều cần lưu ý và lời khuyên.', en: 'Love, work or study, money, the main trends, opportunities and challenges, what to watch for and advice.', de: 'Liebe, Arbeit oder Studium, Finanzen, die wichtigsten Tendenzen, Chancen und Herausforderungen, worauf du achten solltest, und ein Rat.' } },
+      { id: 'm6', name: { vi: 'Tổng quan 6 tháng', en: '6-month overview', de: 'Überblick 6 Monate' }, price: 249000,
+        desc: { vi: 'Như gói 3 tháng, nhìn xa hơn: từng giai đoạn trong 6 tháng, những thay đổi lớn và lời khuyên cho từng chặng.', en: 'As the 3-month reading, over a longer road: each stage of the six months, the larger changes, and advice for each one.', de: 'Wie der 3-Monats-Überblick, aber weiter gefasst: jede Phase der sechs Monate, die größeren Veränderungen und ein Rat zu jeder.' } },
+      { id: 'm12', name: { vi: 'Tổng quan 12 tháng', en: '12-month overview', de: 'Überblick 12 Monate' }, price: 399000,
+        desc: { vi: 'Trọn một năm: từng quý, xu hướng dài hạn, cơ hội và thử thách lớn, cùng lời khuyên chi tiết cho cả năm.', en: 'A whole year: quarter by quarter, the long trends, the big opportunities and challenges, and detailed advice for the year.', de: 'Ein ganzes Jahr: Quartal für Quartal, die langen Tendenzen, die großen Chancen und Herausforderungen und ein ausführlicher Rat für das Jahr.' } }
     ] },
   { id: 'tarot-oracle', icon: '🌙', tone: 'pink', name: { vi: 'Tarot + Oracle', en: 'Tarot + Oracle', de: 'Tarot + Oracle' },
-    tagline: { vi: 'Tarot trả lời, Oracle nhắn thêm một lời.', en: 'Tarot answers, Oracle adds a message.', de: 'Tarot deutet die Frage, Oracle gibt eine zusätzliche Botschaft.' },
+    tagline: { vi: 'Tarot phân tích tình huống, diễn biến, nguyên nhân, cảm xúc và xu hướng; Oracle bổ sung thông điệp, định hướng và lời khuyên.', en: 'Tarot reads the situation, how it unfolds, the reasons, the feelings and the trend; Oracle adds a message, a direction and advice.', de: 'Tarot deutet die Situation, ihren Verlauf, die Gründe, die Gefühle und die Tendenz; Oracle ergänzt eine Botschaft, eine Richtung und einen Rat.' },
     packages: [
-      { id: 'q1', name: { vi: '1 câu chi tiết', en: '1 question in detail', de: '1 ausführliche Frage' }, price: 30000 },
-      { id: 'q3', name: { vi: '3 câu chi tiết', en: '3 questions in detail', de: '3 ausführliche Fragen' }, price: 75000 },
-      { id: 'topic', name: { vi: '1 chủ đề sẵn (chọn trong 5 chủ đề)', en: '1 of the 5 preset topics', de: '1 festes Thema (aus 5 Themen wählen)' }, price: 95000, needsTopic: true },
-      { id: 't60', name: { vi: '60 phút', en: '60 minutes', de: '60 Minuten' }, price: 120000 }
+      { id: 'deep', name: { vi: 'Chuyên sâu 1 vấn đề', en: 'One matter in depth', de: 'Ein Thema ausführlich' }, price: 179000,
+        desc: { vi: 'Tối đa 5 câu hỏi cùng một chủ đề, kèm thông điệp và định hướng từ Oracle.', en: 'Up to 5 questions on the same matter, with a message and a direction from Oracle.', de: 'Bis zu 5 Fragen zum selben Thema, dazu eine Botschaft und eine Richtung von Oracle.' } },
+      { id: 'm3', name: { vi: 'Tổng quan 3 tháng', en: '3-month overview', de: 'Überblick 3 Monate' }, price: 199000,
+        desc: { vi: 'Phần phân tích Tarot của gói tổng quan 3 tháng, thêm thông điệp và định hướng từ Oracle.', en: 'The Tarot reading of the 3-month overview, with a message and a direction from Oracle.', de: 'Die Tarot-Deutung des 3-Monats-Überblicks, dazu eine Botschaft und eine Richtung von Oracle.' } },
+      { id: 'm6', name: { vi: 'Tổng quan 6 tháng', en: '6-month overview', de: 'Überblick 6 Monate' }, price: 299000,
+        desc: { vi: 'Phần phân tích Tarot của gói tổng quan 6 tháng, thêm thông điệp và định hướng từ Oracle.', en: 'The Tarot reading of the 6-month overview, with a message and a direction from Oracle.', de: 'Die Tarot-Deutung des 6-Monats-Überblicks, dazu eine Botschaft und eine Richtung von Oracle.' } },
+      { id: 'm12', name: { vi: 'Tổng quan 12 tháng', en: '12-month overview', de: 'Überblick 12 Monate' }, price: 459000,
+        desc: { vi: 'Phần phân tích Tarot của gói tổng quan 12 tháng, thêm thông điệp và định hướng từ Oracle.', en: 'The Tarot reading of the 12-month overview, with a message and a direction from Oracle.', de: 'Die Tarot-Deutung des 12-Monats-Überblicks, dazu eine Botschaft und eine Richtung von Oracle.' } }
     ] },
-  { id: 'lenormand-oracle', icon: '✨', tone: 'lav', name: { vi: 'Lenormand + Oracle', en: 'Lenormand + Oracle', de: 'Lenormand + Oracle' },
-    tagline: { vi: 'Chuyện cụ thể, thêm một lời nhắn.', en: 'The concrete story, plus a message.', de: 'Eine konkrete Deutung, ergänzt um eine Botschaft.' },
+  { id: 'tea', icon: '🍵', tone: 'gold', name: { vi: 'Bài trà', en: 'Tealeaf fortune telling', de: 'Teeblattdeutung' },
+    tagline: { vi: 'Tập trung vào sự kiện, dấu hiệu, cơ hội và thay đổi có thể xuất hiện trong thời gian tới.', en: 'It looks at events, signs, opportunities and changes that may be on their way.', de: 'Der Blick geht auf Ereignisse, Zeichen, Chancen und Veränderungen, die kommen können.' },
     packages: [
-      { id: 'q1', name: { vi: '1 câu chi tiết', en: '1 question in detail', de: '1 ausführliche Frage' }, price: 35000 },
-      { id: 'q3', name: { vi: '3 câu chi tiết', en: '3 questions in detail', de: '3 ausführliche Fragen' }, price: 90000 },
-      { id: 'topic', name: { vi: '1 chủ đề sẵn (chọn trong 5 chủ đề)', en: '1 of the 5 preset topics', de: '1 festes Thema (aus 5 Themen wählen)' }, price: 110000, needsTopic: true },
-      { id: 't60', name: { vi: '60 phút', en: '60 minutes', de: '60 Minuten' }, price: 145000 }
+      { id: 'coming', name: { vi: 'Điều gì đang đến với bạn?', en: 'What is coming your way?', de: 'Was auf dich zukommt' }, price: 99000,
+        desc: { vi: 'Những sự kiện và dấu hiệu nổi bật đang đến gần.', en: 'The events and signs that stand out as they approach.', de: 'Die Ereignisse und Zeichen, die sich gerade abzeichnen.' } },
+      { id: 'm1', name: { vi: '1 tháng', en: '1 month', de: '1 Monat' }, price: 79000,
+        desc: { vi: 'Sự kiện, thay đổi và điều đáng chú ý trong 1 tháng tới.', en: 'Events, changes and what is worth noticing in the coming month.', de: 'Ereignisse, Veränderungen und Bemerkenswertes im kommenden Monat.' } },
+      { id: 'm3', name: { vi: '3 tháng', en: '3 months', de: '3 Monate' }, price: 159000,
+        desc: { vi: 'Sự kiện, thay đổi và điều đáng chú ý trong 3 tháng tới.', en: 'Events, changes and what is worth noticing over the next three months.', de: 'Ereignisse, Veränderungen und Bemerkenswertes in den nächsten drei Monaten.' } },
+      { id: 'm6', name: { vi: '6 tháng', en: '6 months', de: '6 Monate' }, price: 279000,
+        desc: { vi: 'Sự kiện, thay đổi và điều đáng chú ý trong 6 tháng tới, theo từng giai đoạn.', en: 'Events, changes and what is worth noticing over six months, stage by stage.', de: 'Ereignisse, Veränderungen und Bemerkenswertes über sechs Monate, Phase für Phase.' } },
+      { id: 'm12', name: { vi: '12 tháng', en: '12 months', de: '12 Monate' }, price: 499000,
+        desc: { vi: 'Sự kiện, thay đổi và điều đáng chú ý trong cả năm, theo từng quý.', en: 'Events, changes and what is worth noticing across the year, quarter by quarter.', de: 'Ereignisse, Veränderungen und Bemerkenswertes über das ganze Jahr, Quartal für Quartal.' } },
+      { id: 'area', name: { vi: 'Một lĩnh vực chuyên sâu', en: 'One area in depth', de: 'Ein Bereich ausführlich' }, price: 149000,
+        desc: { vi: 'Chọn tình yêu, công việc, tài chính, gia đình hoặc một vấn đề bạn đang quan tâm.', en: 'Choose love, work, money, family, or a matter on your mind.', de: 'Wähle Liebe, Arbeit, Finanzen, Familie oder ein Thema, das dich beschäftigt.' } }
+    ] },
+  { id: 'tea-oracle', icon: '✨', tone: 'lav', name: { vi: 'Bài trà + Oracle', en: 'Tealeaf + Oracle', de: 'Teeblattdeutung + Oracle' },
+    tagline: { vi: 'Bài trà tập trung vào sự kiện và những điều có khả năng xảy ra; Oracle bổ sung thông điệp, lời khuyên và định hướng.', en: 'The tealeaves look at events and what may happen; Oracle adds a message, advice and a direction.', de: 'Die Teeblätter zeigen Ereignisse und Mögliches; Oracle ergänzt eine Botschaft, einen Rat und eine Richtung.' },
+    packages: [
+      { id: 'coming', name: { vi: 'Điều sắp tới', en: 'What is coming your way', de: 'Was auf dich zukommt' }, price: 129000,
+        desc: { vi: 'Những điều đang đến gần, kèm thông điệp và lời khuyên từ Oracle.', en: 'What is drawing near, with a message and advice from Oracle.', de: 'Was sich nähert, dazu eine Botschaft und ein Rat von Oracle.' } },
+      { id: 'm1', name: { vi: '1 tháng', en: '1 month', de: '1 Monat' }, price: 109000,
+        desc: { vi: 'Sự kiện và thay đổi trong 1 tháng tới, kèm thông điệp và lời khuyên từ Oracle.', en: 'Events and changes in the coming month, with a message and advice from Oracle.', de: 'Ereignisse und Veränderungen im kommenden Monat, dazu eine Botschaft und ein Rat von Oracle.' } },
+      { id: 'm3', name: { vi: '3 tháng', en: '3 months', de: '3 Monate' }, price: 199000,
+        desc: { vi: 'Sự kiện và thay đổi trong 3 tháng tới, kèm thông điệp và lời khuyên từ Oracle.', en: 'Events and changes over three months, with a message and advice from Oracle.', de: 'Ereignisse und Veränderungen über drei Monate, dazu eine Botschaft und ein Rat von Oracle.' } },
+      { id: 'm6', name: { vi: '6 tháng', en: '6 months', de: '6 Monate' }, price: 329000,
+        desc: { vi: 'Sự kiện và thay đổi trong 6 tháng tới, kèm thông điệp và lời khuyên từ Oracle.', en: 'Events and changes over six months, with a message and advice from Oracle.', de: 'Ereignisse und Veränderungen über sechs Monate, dazu eine Botschaft und ein Rat von Oracle.' } },
+      { id: 'm12', name: { vi: '12 tháng', en: '12 months', de: '12 Monate' }, price: 569000,
+        desc: { vi: 'Sự kiện và thay đổi trong cả năm, kèm thông điệp và lời khuyên từ Oracle.', en: 'Events and changes across the year, with a message and advice from Oracle.', de: 'Ereignisse und Veränderungen über das ganze Jahr, dazu eine Botschaft und ein Rat von Oracle.' } }
     ] },
   { id: 'tuvi', icon: '🌸', tone: 'pink', name: { vi: 'Tử vi', en: 'Tử vi (Vietnamese astrology)', de: 'Tử vi (vietnamesische Astrologie)' },
     tagline: { vi: 'Không phải chuyện hôm nay, mà là cả đường dài.', en: 'Not just today, but the long road.', de: 'Nicht nur der heutige Tag, sondern der längere Weg.' },
@@ -3215,11 +3235,12 @@ const SERVICES = [
       { id: 'year', name: { vi: 'Vận hạn năm', en: 'The year ahead', de: 'Das kommende Jahr' }, price: 333000 },
       { id: 'all', name: { vi: 'Tổng quan mọi vấn đề', en: 'Full overview of everything', de: 'Gesamtüberblick' }, price: 666000 }
     ] },
-  { id: 'talk', icon: '💬', tone: 'blue', name: { vi: 'Chỉ tâm sự', en: 'Just talk', de: 'Einfach reden' },
-    tagline: { vi: 'Không có trải bài, không đưa dự đoán, nhưng luôn sẵn lòng lắng nghe.', en: 'No readings or predictions, but always ready to listen.', de: 'Keine Kartenlegung, keine Vorhersagen – einfach ein offenes Ohr.' },
+  { id: 'talk', icon: '💬', tone: 'blue', name: { vi: 'Tâm sự', en: 'Just talk', de: 'Einfach reden' },
+    tagline: { vi: 'Một không gian riêng tư để bạn chia sẻ điều đang khiến mình băn khoăn, áp lực, hoặc đơn giản là cần một người lắng nghe.', en: 'A private space to share what is weighing on you, or simply to be heard.', de: 'Ein privater Raum für das, was dich beschäftigt oder belastet - oder einfach, um gehört zu werden.' },
+    note: { vi: 'Lắng nghe và trò chuyện riêng tư, không phán xét. Bạn có thể chia sẻ về tình cảm, công việc, học tập, gia đình hoặc chuyện cá nhân. Đây không phải trị liệu hay tư vấn tâm lý chuyên môn.', en: 'A private conversation, without judgement. Love, work, study, family or anything personal. This is not therapy or professional psychological advice.', de: 'Ein privates Gespräch, ohne Urteil. Liebe, Arbeit, Studium, Familie oder Persönliches. Das ist keine Therapie und keine psychologische Fachberatung.' },
     packages: [
-      { id: 't30', name: { vi: '30 phút', en: '30 minutes', de: '30 Minuten' }, price: 30000 },
-      { id: 't60', name: { vi: '1 tiếng', en: '1 hour', de: '1 Stunde' }, price: 60000 }
+      { id: 't30', name: { vi: '30 phút', en: '30 minutes', de: '30 Minuten' }, price: 59000 },
+      { id: 't60', name: { vi: '60 phút', en: '60 minutes', de: '60 Minuten' }, price: 99000 }
     ] }
 ];
 /* Paid courses in the Học tab. Access codes are made in the dashboard. */
@@ -3466,6 +3487,8 @@ const STR = {
     angelWhyLadder: 'Đây là số bậc thang: các chữ số tăng dần liền nhau.',
     angelWhyRoot: (r) => 'Cộng các chữ số lại và rút gọn, bạn được số gốc ' + r + '. Bạn đọc theo nhóm số ' + r + '.',
     angelNote: 'Con số thiên thần là một cách diễn giải mang tính tham khảo. Hãy xem chúng như lời nhắc để nhìn lại mình, không phải lời tiên đoán.',
+    priceRules: '⚠️ Lưu ý trước khi đặt dịch vụ',
+    priceRulesList: ['Số câu hỏi trong mỗi gói chỉ có giá trị trong một lần xem.', 'Câu hỏi chưa dùng hết không được bảo lưu, cộng dồn hay chuyển sang lần xem khác.', 'Với gói chuyên sâu, các câu hỏi phải xoay quanh cùng một vấn đề.', 'Câu hỏi về một người hoặc một vấn đề hoàn toàn khác có thể được tính thành câu hỏi mới.', 'Tarot, Oracle và Bài trà mang tính tham khảo và định hướng.', 'Không thay thế tư vấn chuyên môn về y tế, tâm lý, pháp lý hoặc tài chính.'],
     priceReadings: 'Xem bài cùng Nabu', priceReadingsHint: 'Nabu xem bài trực tiếp cho bạn. Bạn chọn gói, chọn giờ, sau đó nhắn tin cho Nabu.',
     priceCoursesHint: 'Bạn học theo tốc độ của mình và xem lại được cả khi không có mạng.',
     priceUnlocks: 'Mở thêm trong ứng dụng', priceUnlocksHint: 'Đây không phải khoá học, mà là những tính năng bạn dùng hằng ngày trong ứng dụng.',
@@ -3543,19 +3566,19 @@ const STR = {
     topicHint: 'Chọn một trong năm chủ đề. Mỗi chủ đề gồm năm câu hỏi; chạm vào để xem trước.',
     ownTopic: 'Câu hỏi riêng',
     ownTopicHint: 'Với gói này, bạn tự viết câu hỏi của mình.',
-    chooseWhere: '4. Xem ở đâu', whereHint: 'Bạn muốn Nabu nhắn cho bạn ở đâu? Chọn một nơi nhé.',
+    chooseWhere: '3. Xem ở đâu', whereHint: 'Bạn muốn Nabu nhắn cho bạn ở đâu? Chọn một nơi nhé.',
     needWhere: 'Bạn chọn nơi xem bài trước nhé.', msgWhere: 'Xem ở',
     adminCancel: 'Huỷ lịch', adminCancelAsk: 'Huỷ buổi này? Giờ đó sẽ trống lại trên lịch và khách sẽ thấy là đã huỷ.', adminCancelDone: 'Đã huỷ buổi này.',
-    chooseTime: '3. Chọn giờ hẹn',
+    chooseTime: '2. Chọn giờ hẹn',
     timeHint: (tz) => 'Chọn ngày có chấm hồng, rồi chọn giờ theo ' + tz + '. Khung giờ đã có người đặt sẽ được gạch đi.',
     noSlots: 'Ngày này không còn chỗ.',
     pickDay: 'Chọn một ngày có chấm hồng.',
     yourPick: 'Bạn chọn',
-    yourDetails: '5. Thông tin của bạn',
+    yourDetails: '4. Thông tin của bạn',
     yourName: 'Tên bạn (hoặc biệt danh)',
     yourNote: 'Bạn muốn hỏi thêm gì?',
     notePlaceholder: 'Kể ngắn gọn chuyện của bạn, hoặc câu hỏi bạn muốn hỏi.',
-    sendVia: '6. Gửi cho Nabu',
+    sendVia: '5. Gửi cho Nabu',
     sendHint: 'Tin nhắn đã được chuẩn bị sẵn. Mở ứng dụng bạn muốn dùng, dán vào ô chat rồi gửi.',
     sendInApp: 'Gửi yêu cầu đặt lịch',
     sending: 'Đang gửi...',
@@ -4333,6 +4356,8 @@ const STR = {
     angelWhyLadder: 'This is a ladder: the digits rise one after another.',
     angelWhyRoot: (r) => 'Adding the digits and reducing gives a root of ' + r + ', so it is read as the ' + r + ' group.',
     angelNote: 'Angel numbers are an interpretive tradition, offered here for reference. Treat them as prompts for reflection, not predictions.',
+    priceRules: '⚠️ Please read before booking',
+    priceRulesList: ['The questions in a package are for one reading.', 'Questions you do not use are not kept, added up or carried over to another reading.', 'In an in-depth package, every question has to be about the same matter.', 'A question about a different person or a different matter may count as a new question.', 'Tarot, Oracle and the tealeaves are for reflection and orientation.', 'They do not replace professional medical, psychological, legal or financial advice.'],
     priceReadings: 'A reading with Nabu', priceReadingsHint: 'Nabu reads for you directly. Pick a package, pick a time, then send it.',
     priceCoursesHint: 'Learn at your own pace. Everything works without a connection.',
     priceUnlocks: 'Open more in the app', priceUnlocksHint: 'Not lessons — these are things you use in the app every day.',
@@ -4410,19 +4435,19 @@ const STR = {
     topicHint: 'Choose one of five topics. Each includes five questions; tap to preview them.',
     ownTopic: 'Your own question',
     ownTopicHint: 'Write your own question.',
-    chooseWhere: '4. Where it happens', whereHint: 'Where would you like Nabu to write to you? Choose one.',
+    chooseWhere: '3. Where it happens', whereHint: 'Where would you like Nabu to write to you? Choose one.',
     needWhere: 'Choose where the reading happens first.', msgWhere: 'Where',
     adminCancel: 'Cancel it', adminCancelAsk: 'Call this booking off? The hour goes back on the calendar and the client sees it as cancelled.', adminCancelDone: 'The booking is cancelled.',
-    chooseTime: '3. Choose a time',
+    chooseTime: '2. Choose a time',
     timeHint: (tz) => 'Choose a day with a pink dot, then a time in ' + tz + '. Taken slots are crossed out.',
     noSlots: 'No free slots on this day.',
     pickDay: 'Choose a day with a pink dot.',
     yourPick: 'Your pick',
-    yourDetails: '5. Your details',
+    yourDetails: '4. Your details',
     yourName: 'Your name (or nickname)',
     yourNote: 'Anything to add?',
     notePlaceholder: 'A few lines about your situation, or the question you want to ask.',
-    sendVia: '6. Send to Nabu',
+    sendVia: '5. Send to Nabu',
     sendHint: 'The message is ready for you. Open the app you want to use, paste it into the chat and send it.',
     sendInApp: 'Send booking request',
     sending: 'Sending...',
@@ -5199,6 +5224,8 @@ const STR = {
     angelWhyLadder: 'Das ist eine Leiter: die Ziffern steigen eine nach der anderen an.',
     angelWhyRoot: (r) => 'Addiert und auf eine Ziffer reduziert ergibt sich ' + r + '. Deshalb wird die Zahl der Gruppe ' + r + ' zugeordnet.',
     angelNote: 'Engelszahlen sind eine Deutungstradition und hier als Orientierung gedacht. Sieh sie als Anstoß zur Selbstreflexion, nicht als Vorhersage.',
+    priceRules: '⚠️ Bitte vor der Buchung lesen',
+    priceRulesList: ['Die Fragen eines Pakets gelten für eine Legung.', 'Nicht genutzte Fragen verfallen; sie werden nicht gesammelt oder auf eine andere Legung übertragen.', 'In einem ausführlichen Paket müssen alle Fragen dasselbe Thema betreffen.', 'Eine Frage zu einer anderen Person oder einem anderen Thema kann als neue Frage gelten.', 'Tarot, Oracle und Teeblattdeutung dienen der Orientierung und dem Nachdenken.', 'Sie ersetzen keine ärztliche, psychologische, rechtliche oder finanzielle Fachberatung.'],
     priceReadings: 'Eine Legung mit Nabu', priceReadingsHint: 'Nabu legt dir persönlich. Wähl ein Paket, wähl eine Zeit und schick es ab.',
     priceCoursesHint: 'Lern in deinem eigenen Tempo. Alles funktioniert auch ohne Verbindung.',
     priceUnlocks: 'Mehr in der App freischalten', priceUnlocksHint: 'Keine Lektionen - das sind Dinge, die du jeden Tag in der App benutzt.',
@@ -5276,19 +5303,19 @@ const STR = {
     topicHint: 'Wähl eines von fünf Themen. Jedes enthält fünf Fragen; tipp darauf, um sie vorab zu sehen.',
     ownTopic: 'Deine eigene Frage',
     ownTopicHint: 'Schreib deine eigene Frage.',
-    chooseWhere: '4. Wo es stattfindet', whereHint: 'Wo soll Nabu dir schreiben? Wähl eines aus.',
+    chooseWhere: '3. Wo es stattfindet', whereHint: 'Wo soll Nabu dir schreiben? Wähl eines aus.',
     needWhere: 'Wähl bitte zuerst, wo die Legung stattfindet.', msgWhere: 'Wo',
     adminCancel: 'Absagen', adminCancelAsk: 'Diesen Termin absagen? Die Stunde geht zurück in den Kalender und der Kunde sieht ihn als abgesagt.', adminCancelDone: 'Der Termin ist abgesagt.',
-    chooseTime: '3. Wähl eine Zeit',
+    chooseTime: '2. Wähl eine Zeit',
     timeHint: (tz) => 'Tipp auf einen Tag mit rosa Punkt und dann auf eine Uhrzeit (' + tz + '). Bereits belegte Zeiten sind durchgestrichen.',
     noSlots: 'An diesem Tag ist nichts frei.',
     pickDay: 'Wähl einen Tag mit einem rosa Punkt.',
     yourPick: 'Deine Auswahl',
-    yourDetails: '5. Deine Angaben',
+    yourDetails: '4. Deine Angaben',
     yourName: 'Dein Name (oder Spitzname)',
     yourNote: 'Möchtest du etwas ergänzen?',
     notePlaceholder: 'Ein paar Zeilen zu deiner Lage, oder die Frage, die du stellen willst.',
-    sendVia: '6. An Nabu senden',
+    sendVia: '5. An Nabu senden',
     sendHint: 'Die Nachricht ist schon vorbereitet. Öffne die gewünschte App, füge sie in den Chat ein und sende sie.',
     sendInApp: 'Buchungsanfrage senden',
     sending: 'Wird gesendet...',
@@ -25776,7 +25803,12 @@ const book = { items: [], name: '', note: '', birth: '', birthTime: '', card: nu
 /* The draft lives on the device: leave the screen, come back, everything is still chosen. */
 const BOOK_KEYS = ['items', 'name', 'note', 'birth', 'birthTime', 'slot', 'day', 'where', 'whereId', 'timeSaved'];
 function saveBook() { const o = {}; BOOK_KEYS.forEach((k) => { o[k] = book[k]; }); store.set('nabu-book', o); }
-function restoreBook() { if (book.restored) return; book.restored = true; const o = store.get('nabu-book', null); if (!o) return; BOOK_KEYS.forEach((k) => { if (o[k] != null) book[k] = o[k]; }); if (!Array.isArray(book.items)) book.items = []; }
+function restoreBook() { if (book.restored) return; book.restored = true; const o = store.get('nabu-book', null); if (!o) return; BOOK_KEYS.forEach((k) => { if (o[k] != null) book[k] = o[k]; }); if (!Array.isArray(book.items)) book.items = [];
+  /* A draft kept on the phone can name a package the price list no longer
+     sells - a service that was taken off it, a tier that was renamed. Those
+     lines are dropped on the way in, because everything downstream reads a
+     package by looking it up and would find nothing. */
+  book.items = book.items.filter((it) => { const sv = serviceOf(it.svc); return !!(sv && sv.packages.some((p) => p.id === it.pkg)); }); }
 function clearBook() { book.items = []; book.slot = null; book.day = null; book.timeSaved = false; book.note = ''; book.card = null; book.where = ''; book.whereId = ''; store.set('nabu-book', null); }
 let SCHEDULE = null, TAKEN = {}, TAKEN_KNOWN = true;
 
@@ -25930,7 +25962,7 @@ function summaryHTML(withPanel) {
 function cartHTML() {
   const S = T();
   if (!book.items.length) return '<div class="cart empty"><span>🧺 ' + esc(S.cartEmpty) + '</span></div>';
-  return '<div class="cart"><b>🧺 ' + esc(S.cartTitle) + '</b>' + book.items.map((it, k) => { const s = serviceOf(it.svc), p = pkgOfItem(it); return '<div class="ci"><span>' + esc(L(s.name) + ' – ' + L(p.name)) + (p.needsTopic ? '<br><small class="' + (it.topic ? 'ok' : 'warn') + '">' + esc(it.topic ? S.msgTopic + ': ' + topicLabel(it.topic) : S.cartNeedsTopic) + '</small>' : '') + '</span><b>' + fmtPrice(p.price) + '</b><button class="x" data-remove="' + k + '" aria-label="remove">✕</button></div>'; }).join('')
+  return '<div class="cart"><b>🧺 ' + esc(S.cartTitle) + '</b>' + book.items.map((it, k) => { const s = serviceOf(it.svc), p = pkgOfItem(it); if (!s || !p) return ''; return '<div class="ci"><span>' + esc(L(s.name) + ' – ' + L(p.name)) + (p.needsTopic ? '<br><small class="' + (it.topic ? 'ok' : 'warn') + '">' + esc(it.topic ? S.msgTopic + ': ' + topicLabel(it.topic) : S.cartNeedsTopic) + '</small>' : '') + '</span><b>' + fmtPrice(p.price) + '</b><button class="x" data-remove="' + k + '" aria-label="remove">✕</button></div>'; }).join('')
     + (book.items.length > 1 ? '<div class="ci total"><span>' + esc(S.msgTotal) + '</span><b>' + fmtPrice(cartTotal()) + '</b></div>' : '') + '</div>';
 }
 /* Step 2: one topic picker per "1 preset topic" package in the basket. */
@@ -25948,11 +25980,25 @@ function priceSheetHTML(interactive) {
   return SERVICES.map((s) => '<div class="svc ' + s.tone + (interactive && book.items.some((it) => it.svc === s.id) ? ' on' : '') + '" data-svc="' + s.id + '">'
     + '<div class="t"><span class="ic">' + s.icon + '</span><div><b>' + esc(L(s.name)) + '</b><div class="tag">' + esc(L(s.tagline)) + '</div></div></div>'
     + (s.note ? '<p class="hint">' + esc(L(s.note)) + '</p>' : '')
-    + '<div class="pk">' + s.packages.map((p) => (interactive
-      ? '<button class="pkg' + (itemIndex(s.id, p.id) > -1 ? ' on' : '') + '" data-pkg="' + s.id + '/' + p.id + '"><span>' + (itemIndex(s.id, p.id) > -1 ? '✓ ' : '') + esc(L(p.name)) + '</span><b>' + priceHTML(p.price, 'reading', s.id, p.abroad) + '</b></button>'
-      : '<div class="pkg"><span>' + esc(L(p.name)) + '</span><b>' + priceHTML(p.price, 'reading', s.id, p.abroad) + '</b></div>')).join('') + '</div></div>').join('')
+    /* A package that needs a sentence carries it under its own name: which
+       questions it covers, how far ahead it looks. The row keeps its shape -
+       name left, price right - and the line sits under the name. */
+    + '<div class="pk">' + s.packages.map((p) => { const d = p.desc ? '<small>' + esc(L(p.desc)) + '</small>' : '';
+      return interactive
+        ? '<button class="pkg' + (itemIndex(s.id, p.id) > -1 ? ' on' : '') + '" data-pkg="' + s.id + '/' + p.id + '"><span>' + (itemIndex(s.id, p.id) > -1 ? '✓ ' : '') + esc(L(p.name)) + d + '</span><b>' + priceHTML(p.price, 'reading', s.id, p.abroad) + '</b></button>'
+        : '<div class="pkg"><span>' + esc(L(p.name)) + d + '</span><b>' + priceHTML(p.price, 'reading', s.id, p.abroad) + '</b></div>'; }).join('') + '</div></div>').join('')
     + '<p class="paynote">💜 ' + esc(L(PAYMENT_NOTE)) + '</p>';
 }
+/* What a package does and does not include, at the foot of the price list and
+   above the button that starts a booking - the last thing read before asking
+   for a time. Shut, so the prices stay in one screen; the line on it says
+   plainly what is inside, because a note nobody opens is a note nobody reads. */
+function priceRulesHTML() {
+  const S = T();
+  return '<details class="card pricerules"><summary>' + esc(S.priceRules) + '</summary><ul>'
+    + S.priceRulesList.map((r) => '<li>' + esc(r) + '</li>').join('') + '</ul></details>';
+}
+
 /* One shape for every paid thing on the page: a tile of one size, a name, one
    line about it, what it costs, and where it leads. Nothing on this page is
    allowed to be a different shape from anything else. */
@@ -26006,7 +26052,7 @@ function renderPrices(args, params) {
   m.innerHTML = '<div class="eyebrow">' + esc(CONFIG.brand) + '</div>'
     + '<h1 style="margin-bottom:6px">' + esc(S.priceTitle) + '</h1><p class="muted">' + esc(S.priceIntro) + '</p>'
     + (() => {
-      const readings = sec(1, S.priceReadings, S.priceReadingsHint, priceSheetHTML(false) + '<a class="btn primary block" href="#/book">' + esc(S.ctaBook) + '</a>');
+      const readings = sec(1, S.priceReadings, S.priceReadingsHint, priceSheetHTML(false) + priceRulesHTML() + '<a class="btn primary block" href="#/book">' + esc(S.ctaBook) + '</a>');
       const courses = sec(2, S.courses, S.priceCoursesHint, of('course'));
       const unlocks = sec(3, S.priceUnlocks, S.priceUnlocksHint, of('unlock'));
       const free = sec(4, S.priceFree, S.priceFreeHint, freeGridHTML());
@@ -26036,7 +26082,12 @@ async function renderBook(args, params) {
   if (!book.month) book.month = new Date(new Date().getFullYear(), new Date().getMonth(), 1);
   m.innerHTML = '<div class="eyebrow">' + esc(CONFIG.brand) + '</div><h1 style="margin-bottom:6px">' + esc(S.bookTitle) + '</h1>' + bookHowHTML() + '<div class="notes"><div class="note"><span class="ni">👆</span><span>' + esc(S.bookTip) + '</span></div><div class="note"><span class="ni">💾</span><span>' + esc(S.draftKept) + '</span></div><div class="note"><span class="ni">📋</span><span>' + esc(S.topicNote) + '</span></div></div>'
     + '<div class="sec"><h2 style="margin:18px 0 4px">' + esc(S.chooseService) + '</h2><p class="hint" style="margin-bottom:12px">' + esc(S.serviceHint) + '</p><div id="svcwrap">' + priceSheetHTML(true) + '</div><div id="cartwrap">' + cartHTML() + '</div></div>'
-    + '<div class="sec"><h2 style="margin:18px 0 4px">' + esc(S.chooseTopic) + '</h2><div id="topicwrap">' + topicSectionHTML() + '</div></div>'
+    /* The step that asked for one of the five preset topics is only there
+       while a package needs one. Since the price list stopped selling those
+       packages, nothing does, and a step that can never be filled in is a
+       step in the way; the code stays, for whenever a package asks again. */
+    + (SERVICES.some((s2) => s2.packages.some((p) => p.needsTopic))
+      ? '<div class="sec"><h2 style="margin:18px 0 4px">' + esc(S.chooseTopic) + '</h2><div id="topicwrap">' + topicSectionHTML() + '</div></div>' : '')
     + '<div class="sec"><h2 style="margin-bottom:4px">' + esc(S.chooseTime) + '</h2><p class="hint" style="margin-bottom:10px">' + esc(S.timeHint(L(CONFIG.tzLabel))) + '</p><div id="calwrap"><p class="hint">…</p></div></div>'
     + '<div class="sec"><h2 style="margin:18px 0 4px">' + esc(S.chooseWhere) + '</h2><p class="hint" style="margin-bottom:10px">' + esc(S.whereHint) + '</p><div id="wherewrap">' + whereHTML() + '</div></div>'
     + '<div class="sec"><h2>' + esc(S.yourDetails) + '</h2><label class="f" for="bname">' + esc(S.yourName) + '</label><input id="bname" value="' + esc(book.name) + '" autocomplete="nickname">'
@@ -26047,7 +26098,7 @@ async function renderBook(args, params) {
     + '<div class="row" style="flex-direction:column">'
     + (BE.enabled ? '<button class="btn block primary" id="sendapp">' + esc(S.sendInApp) + '</button><p class="hint" id="sendstatus"></p>' : '<p class="hint">' + esc(S.needLogin) + '</p>')
     + '<a class="btn block" href="#/contact">💬 ' + esc(S.contactTitle) + '</a></div></div>'
-    + '<div class="sec card"><h3 style="margin-bottom:10px">' + esc(S.howItWorks) + '</h3><ol class="steps">' + [S.chooseService.slice(3), S.chooseTopic.slice(3), S.chooseTime.slice(3), S.chooseWhere.slice(3), S.sendVia.slice(3), L(PAYMENT_NOTE)].map((x) => '<li>' + esc(x) + '</li>').join('') + '</ol></div>';
+    + '<div class="sec card"><h3 style="margin-bottom:10px">' + esc(S.howItWorks) + '</h3><ol class="steps">' + [S.chooseService.slice(3), S.chooseTime.slice(3), S.chooseWhere.slice(3), S.sendVia.slice(3), L(PAYMENT_NOTE)].map((x) => '<li>' + esc(x) + '</li>').join('') + '</ol></div>';
   const prev = () => { const p = $('#msgprev'); if (!p) return; p.innerHTML = summaryHTML(true); bindRewardPanel(p, book.use, prev); $('#msgtext').textContent = composeMessage(); saveBook(); };
   const done = () => {
     /* Kept before the basket is emptied, so the panel underneath can say what
@@ -26079,10 +26130,16 @@ async function renderBook(args, params) {
   };
   const syncCart = (scrollTopics) => {
     $$('.svc', m).forEach((el) => el.classList.toggle('on', book.items.some((it) => it.svc === el.getAttribute('data-svc'))));
-    $$('[data-pkg]', m).forEach((el) => { const v = el.getAttribute('data-pkg').split('/'), on = itemIndex(v[0], v[1]) > -1; el.classList.toggle('on', on); el.querySelector('span').textContent = (on ? '✓ ' : '') + L(serviceOf(v[0]).packages.filter((p) => p.id === v[1])[0].name); });
+    /* The tick is written back into the name, and the package's own sentence
+       has to survive that: setting textContent alone wiped the line under it
+       on the first tap. */
+    $$('[data-pkg]', m).forEach((el) => { const v = el.getAttribute('data-pkg').split('/'), on = itemIndex(v[0], v[1]) > -1;
+      const pk = serviceOf(v[0]).packages.filter((p) => p.id === v[1])[0];
+      el.classList.toggle('on', on);
+      el.querySelector('span').innerHTML = esc((on ? '✓ ' : '') + L(pk.name)) + (pk.desc ? '<small>' + esc(L(pk.desc)) + '</small>' : ''); });
     $('#cartwrap').innerHTML = cartHTML();
     $$('[data-remove]', m).forEach((x) => x.addEventListener('click', () => { book.items.splice(Number(x.getAttribute('data-remove')), 1); syncCart(false); }));
-    $('#topicwrap').innerHTML = topicSectionHTML(); bindTopics();
+    if ($('#topicwrap')) { $('#topicwrap').innerHTML = topicSectionHTML(); bindTopics(); }
     $('#birthwrap').hidden = !needsBirth();
     prev();
     if (scrollTopics) { const t = $('.tpick:not(:has(.topic.on))', m); if (t) t.scrollIntoView({ behavior: 'smooth', block: 'start' }); }
@@ -30729,7 +30786,7 @@ function adminSale(p) {
 ROUTES.admin = { nav: '', render: renderAdmin };
 
 /* ============================ boot ============================ */
-window.APP_VERSION = 'v250';
+window.APP_VERSION = 'v251';
 window.NABU = { CONFIG: CONFIG, SALE: SALE, salePrice: salePrice, loadActs: loadActs, BACK: BACK, LESSONS: LESSONS, localAnswer: localAnswer, compatVerdict: compatVerdict, numerologyOf: numerologyOf, ZDEEP: ZDEEP, lunarToday: lunarToday, solarToLunar: solarToLunar, DECK: DECK, INSIGHT: INSIGHT, KW: KW, ASK: ASK, TOPICS: TOPICS, GUIDES: GUIDES, SERVICES: SERVICES, COURSES: COURSES, ACCESS: ACCESS, INTERESTS: INTERESTS, plusOn: () => plusOn(), proOn: () => proOn(), luckUnlimited: () => luckUnlimited(), ZODIAC: ZODIAC, pick: pick, book: book, PLAY_ITEMS: PLAY_ITEMS, PLAY_SUB_SKUS: PLAY_SUB_SKUS, playItem: playItem, BILL: BILL, SUBS: SUBS, billUse: billUse, APPLE_BILL: APPLE_BILL, appleAccountToken: appleAccountToken, renderStore: renderStore, pickLimitHTML: pickLimitHTML, subStateWord: subStateWord,
   insightHTML: insightHTML, insightOf: insightOf, sunSignIndex: sunSignIndex, lifePath: lifePath, PROFILE: () => PROFILE, BE: BE, inAppBrowser: inAppBrowser, ACTS: ACTS, CMT: CMT, LIKES: LIKES, kbReady: kbReady, AI: AI, STR: STR, KB_URL: (typeof KB_URL === 'string' ? KB_URL : ''),
   ANGELS: ANGELS, angelRead: angelRead, CODEBOOK: CODEBOOK, redeemCode: redeemCode, loadCodebook: loadCodebook, petHomeSVG: petHomeSVG, PET_HOMES: PET_HOMES, PET_WARDROBE: PET_WARDROBE, PET_SLOTS: PET_SLOTS,

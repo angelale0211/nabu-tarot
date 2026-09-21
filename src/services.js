@@ -6,43 +6,58 @@ const SERVICES = [
   { id: 'tarot', icon: PICK_ICON, tone: 'blue', name: { vi: 'Tarot', en: 'Tarot', de: 'Tarot' },
     tagline: { vi: 'Bạn hỏi được thì Tarot trả lời được.', en: 'If you can ask it, Tarot can answer it.', de: 'Wenn du eine Frage hast, kann Tarot dir eine neue Perspektive darauf geben.' },
     packages: [
-      { id: 'yn', name: { vi: '1 câu Yes/No', en: '1 yes/no question', de: '1 Ja/Nein-Frage' }, price: 10000, abroad: { en: 1, de: 1 } },
-      { id: 'q1', name: { vi: '1 câu chi tiết', en: '1 question in detail', de: '1 ausführliche Frage' }, price: 20000 },
-      { id: 'q3', name: { vi: '3 câu chi tiết', en: '3 questions in detail', de: '3 ausführliche Fragen' }, price: 50000 },
-      { id: 'topic', name: { vi: '1 chủ đề sẵn (chọn trong 5 chủ đề)', en: '1 of the 5 preset topics', de: '1 festes Thema (aus 5 Themen wählen)' }, price: 60000, needsTopic: true },
-      { id: 't40', name: { vi: '40 phút', en: '40 minutes', de: '40 Minuten' }, price: 80000 }
-    ] },
-  { id: 'lenormand', icon: '🗝️', tone: 'lav', name: { vi: 'Lenormand', en: 'Lenormand', de: 'Lenormand' },
-    tagline: { vi: 'Hỏi chuyện cụ thể, trả lời cụ thể.', en: 'Concrete questions, concrete answers.', de: 'Konkrete Frage, konkrete Deutung.' },
-    packages: [
-      { id: 'yn', name: { vi: '1 câu Yes/No', en: '1 yes/no question', de: '1 Ja/Nein-Frage' }, price: 15000, abroad: { en: 1, de: 1 } },
-      { id: 'q1', name: { vi: '1 câu chi tiết', en: '1 question in detail', de: '1 ausführliche Frage' }, price: 25000 },
-      { id: 'q3', name: { vi: '3 câu chi tiết', en: '3 questions in detail', de: '3 ausführliche Fragen' }, price: 60000 },
-      { id: 'topic', name: { vi: '1 chủ đề sẵn (chọn trong 5 chủ đề)', en: '1 of the 5 preset topics', de: '1 festes Thema (aus 5 Themen wählen)' }, price: 75000, needsTopic: true },
-      { id: 't40', name: { vi: '40 phút', en: '40 minutes', de: '40 Minuten' }, price: 90000 }
-    ] },
-  { id: 'tea', icon: '🍵', tone: 'gold', name: { vi: 'Bài trà', en: 'Tealeaf fortune telling', de: 'Teeblattdeutung' },
-    tagline: { vi: 'Một tách trà, một câu chuyện.', en: 'One cup of tea, one story.', de: 'Eine Tasse Tee, eine kleine Geschichte.' },
-    packages: [
-      { id: 'q1', name: { vi: '1 câu', en: '1 question', de: '1 Frage' }, price: 25000 },
-      { id: 'q3', name: { vi: '3 câu', en: '3 questions', de: '3 Fragen' }, price: 50000 },
-      { id: 't30', name: { vi: '30 phút', en: '30 minutes', de: '30 Minuten' }, price: 80000 }
+      { id: 'q1', name: { vi: '1 câu hỏi', en: '1 question', de: '1 Frage' }, price: 39000 },
+      { id: 'q3', name: { vi: '3 câu hỏi', en: '3 questions', de: '3 Fragen' }, price: 99000 },
+      { id: 'deep', name: { vi: 'Chuyên sâu 1 vấn đề', en: 'One matter in depth', de: 'Ein Thema ausführlich' }, price: 149000,
+        desc: { vi: 'Tối đa 5 câu hỏi, tất cả xoay quanh cùng một vấn đề.', en: 'Up to 5 questions, all about the same matter.', de: 'Bis zu 5 Fragen, alle zum selben Thema.' } },
+      { id: 'm3', name: { vi: 'Tổng quan 3 tháng', en: '3-month overview', de: 'Überblick 3 Monate' }, price: 159000,
+        desc: { vi: 'Tình cảm, công việc/học tập, tài chính, xu hướng nổi bật, cơ hội và thử thách, điều cần lưu ý và lời khuyên.', en: 'Love, work or study, money, the main trends, opportunities and challenges, what to watch for and advice.', de: 'Liebe, Arbeit oder Studium, Finanzen, die wichtigsten Tendenzen, Chancen und Herausforderungen, worauf du achten solltest, und ein Rat.' } },
+      { id: 'm6', name: { vi: 'Tổng quan 6 tháng', en: '6-month overview', de: 'Überblick 6 Monate' }, price: 249000,
+        desc: { vi: 'Như gói 3 tháng, nhìn xa hơn: từng giai đoạn trong 6 tháng, những thay đổi lớn và lời khuyên cho từng chặng.', en: 'As the 3-month reading, over a longer road: each stage of the six months, the larger changes, and advice for each one.', de: 'Wie der 3-Monats-Überblick, aber weiter gefasst: jede Phase der sechs Monate, die größeren Veränderungen und ein Rat zu jeder.' } },
+      { id: 'm12', name: { vi: 'Tổng quan 12 tháng', en: '12-month overview', de: 'Überblick 12 Monate' }, price: 399000,
+        desc: { vi: 'Trọn một năm: từng quý, xu hướng dài hạn, cơ hội và thử thách lớn, cùng lời khuyên chi tiết cho cả năm.', en: 'A whole year: quarter by quarter, the long trends, the big opportunities and challenges, and detailed advice for the year.', de: 'Ein ganzes Jahr: Quartal für Quartal, die langen Tendenzen, die großen Chancen und Herausforderungen und ein ausführlicher Rat für das Jahr.' } }
     ] },
   { id: 'tarot-oracle', icon: '🌙', tone: 'pink', name: { vi: 'Tarot + Oracle', en: 'Tarot + Oracle', de: 'Tarot + Oracle' },
-    tagline: { vi: 'Tarot trả lời, Oracle nhắn thêm một lời.', en: 'Tarot answers, Oracle adds a message.', de: 'Tarot deutet die Frage, Oracle gibt eine zusätzliche Botschaft.' },
+    tagline: { vi: 'Tarot phân tích tình huống, diễn biến, nguyên nhân, cảm xúc và xu hướng; Oracle bổ sung thông điệp, định hướng và lời khuyên.', en: 'Tarot reads the situation, how it unfolds, the reasons, the feelings and the trend; Oracle adds a message, a direction and advice.', de: 'Tarot deutet die Situation, ihren Verlauf, die Gründe, die Gefühle und die Tendenz; Oracle ergänzt eine Botschaft, eine Richtung und einen Rat.' },
     packages: [
-      { id: 'q1', name: { vi: '1 câu chi tiết', en: '1 question in detail', de: '1 ausführliche Frage' }, price: 30000 },
-      { id: 'q3', name: { vi: '3 câu chi tiết', en: '3 questions in detail', de: '3 ausführliche Fragen' }, price: 75000 },
-      { id: 'topic', name: { vi: '1 chủ đề sẵn (chọn trong 5 chủ đề)', en: '1 of the 5 preset topics', de: '1 festes Thema (aus 5 Themen wählen)' }, price: 95000, needsTopic: true },
-      { id: 't60', name: { vi: '60 phút', en: '60 minutes', de: '60 Minuten' }, price: 120000 }
+      { id: 'deep', name: { vi: 'Chuyên sâu 1 vấn đề', en: 'One matter in depth', de: 'Ein Thema ausführlich' }, price: 179000,
+        desc: { vi: 'Tối đa 5 câu hỏi cùng một chủ đề, kèm thông điệp và định hướng từ Oracle.', en: 'Up to 5 questions on the same matter, with a message and a direction from Oracle.', de: 'Bis zu 5 Fragen zum selben Thema, dazu eine Botschaft und eine Richtung von Oracle.' } },
+      { id: 'm3', name: { vi: 'Tổng quan 3 tháng', en: '3-month overview', de: 'Überblick 3 Monate' }, price: 199000,
+        desc: { vi: 'Phần phân tích Tarot của gói tổng quan 3 tháng, thêm thông điệp và định hướng từ Oracle.', en: 'The Tarot reading of the 3-month overview, with a message and a direction from Oracle.', de: 'Die Tarot-Deutung des 3-Monats-Überblicks, dazu eine Botschaft und eine Richtung von Oracle.' } },
+      { id: 'm6', name: { vi: 'Tổng quan 6 tháng', en: '6-month overview', de: 'Überblick 6 Monate' }, price: 299000,
+        desc: { vi: 'Phần phân tích Tarot của gói tổng quan 6 tháng, thêm thông điệp và định hướng từ Oracle.', en: 'The Tarot reading of the 6-month overview, with a message and a direction from Oracle.', de: 'Die Tarot-Deutung des 6-Monats-Überblicks, dazu eine Botschaft und eine Richtung von Oracle.' } },
+      { id: 'm12', name: { vi: 'Tổng quan 12 tháng', en: '12-month overview', de: 'Überblick 12 Monate' }, price: 459000,
+        desc: { vi: 'Phần phân tích Tarot của gói tổng quan 12 tháng, thêm thông điệp và định hướng từ Oracle.', en: 'The Tarot reading of the 12-month overview, with a message and a direction from Oracle.', de: 'Die Tarot-Deutung des 12-Monats-Überblicks, dazu eine Botschaft und eine Richtung von Oracle.' } }
     ] },
-  { id: 'lenormand-oracle', icon: '✨', tone: 'lav', name: { vi: 'Lenormand + Oracle', en: 'Lenormand + Oracle', de: 'Lenormand + Oracle' },
-    tagline: { vi: 'Chuyện cụ thể, thêm một lời nhắn.', en: 'The concrete story, plus a message.', de: 'Eine konkrete Deutung, ergänzt um eine Botschaft.' },
+  { id: 'tea', icon: '🍵', tone: 'gold', name: { vi: 'Bài trà', en: 'Tealeaf fortune telling', de: 'Teeblattdeutung' },
+    tagline: { vi: 'Tập trung vào sự kiện, dấu hiệu, cơ hội và thay đổi có thể xuất hiện trong thời gian tới.', en: 'It looks at events, signs, opportunities and changes that may be on their way.', de: 'Der Blick geht auf Ereignisse, Zeichen, Chancen und Veränderungen, die kommen können.' },
     packages: [
-      { id: 'q1', name: { vi: '1 câu chi tiết', en: '1 question in detail', de: '1 ausführliche Frage' }, price: 35000 },
-      { id: 'q3', name: { vi: '3 câu chi tiết', en: '3 questions in detail', de: '3 ausführliche Fragen' }, price: 90000 },
-      { id: 'topic', name: { vi: '1 chủ đề sẵn (chọn trong 5 chủ đề)', en: '1 of the 5 preset topics', de: '1 festes Thema (aus 5 Themen wählen)' }, price: 110000, needsTopic: true },
-      { id: 't60', name: { vi: '60 phút', en: '60 minutes', de: '60 Minuten' }, price: 145000 }
+      { id: 'coming', name: { vi: 'Điều gì đang đến với bạn?', en: 'What is coming your way?', de: 'Was auf dich zukommt' }, price: 99000,
+        desc: { vi: 'Những sự kiện và dấu hiệu nổi bật đang đến gần.', en: 'The events and signs that stand out as they approach.', de: 'Die Ereignisse und Zeichen, die sich gerade abzeichnen.' } },
+      { id: 'm1', name: { vi: '1 tháng', en: '1 month', de: '1 Monat' }, price: 79000,
+        desc: { vi: 'Sự kiện, thay đổi và điều đáng chú ý trong 1 tháng tới.', en: 'Events, changes and what is worth noticing in the coming month.', de: 'Ereignisse, Veränderungen und Bemerkenswertes im kommenden Monat.' } },
+      { id: 'm3', name: { vi: '3 tháng', en: '3 months', de: '3 Monate' }, price: 159000,
+        desc: { vi: 'Sự kiện, thay đổi và điều đáng chú ý trong 3 tháng tới.', en: 'Events, changes and what is worth noticing over the next three months.', de: 'Ereignisse, Veränderungen und Bemerkenswertes in den nächsten drei Monaten.' } },
+      { id: 'm6', name: { vi: '6 tháng', en: '6 months', de: '6 Monate' }, price: 279000,
+        desc: { vi: 'Sự kiện, thay đổi và điều đáng chú ý trong 6 tháng tới, theo từng giai đoạn.', en: 'Events, changes and what is worth noticing over six months, stage by stage.', de: 'Ereignisse, Veränderungen und Bemerkenswertes über sechs Monate, Phase für Phase.' } },
+      { id: 'm12', name: { vi: '12 tháng', en: '12 months', de: '12 Monate' }, price: 499000,
+        desc: { vi: 'Sự kiện, thay đổi và điều đáng chú ý trong cả năm, theo từng quý.', en: 'Events, changes and what is worth noticing across the year, quarter by quarter.', de: 'Ereignisse, Veränderungen und Bemerkenswertes über das ganze Jahr, Quartal für Quartal.' } },
+      { id: 'area', name: { vi: 'Một lĩnh vực chuyên sâu', en: 'One area in depth', de: 'Ein Bereich ausführlich' }, price: 149000,
+        desc: { vi: 'Chọn tình yêu, công việc, tài chính, gia đình hoặc một vấn đề bạn đang quan tâm.', en: 'Choose love, work, money, family, or a matter on your mind.', de: 'Wähle Liebe, Arbeit, Finanzen, Familie oder ein Thema, das dich beschäftigt.' } }
+    ] },
+  { id: 'tea-oracle', icon: '✨', tone: 'lav', name: { vi: 'Bài trà + Oracle', en: 'Tealeaf + Oracle', de: 'Teeblattdeutung + Oracle' },
+    tagline: { vi: 'Bài trà tập trung vào sự kiện và những điều có khả năng xảy ra; Oracle bổ sung thông điệp, lời khuyên và định hướng.', en: 'The tealeaves look at events and what may happen; Oracle adds a message, advice and a direction.', de: 'Die Teeblätter zeigen Ereignisse und Mögliches; Oracle ergänzt eine Botschaft, einen Rat und eine Richtung.' },
+    packages: [
+      { id: 'coming', name: { vi: 'Điều sắp tới', en: 'What is coming your way', de: 'Was auf dich zukommt' }, price: 129000,
+        desc: { vi: 'Những điều đang đến gần, kèm thông điệp và lời khuyên từ Oracle.', en: 'What is drawing near, with a message and advice from Oracle.', de: 'Was sich nähert, dazu eine Botschaft und ein Rat von Oracle.' } },
+      { id: 'm1', name: { vi: '1 tháng', en: '1 month', de: '1 Monat' }, price: 109000,
+        desc: { vi: 'Sự kiện và thay đổi trong 1 tháng tới, kèm thông điệp và lời khuyên từ Oracle.', en: 'Events and changes in the coming month, with a message and advice from Oracle.', de: 'Ereignisse und Veränderungen im kommenden Monat, dazu eine Botschaft und ein Rat von Oracle.' } },
+      { id: 'm3', name: { vi: '3 tháng', en: '3 months', de: '3 Monate' }, price: 199000,
+        desc: { vi: 'Sự kiện và thay đổi trong 3 tháng tới, kèm thông điệp và lời khuyên từ Oracle.', en: 'Events and changes over three months, with a message and advice from Oracle.', de: 'Ereignisse und Veränderungen über drei Monate, dazu eine Botschaft und ein Rat von Oracle.' } },
+      { id: 'm6', name: { vi: '6 tháng', en: '6 months', de: '6 Monate' }, price: 329000,
+        desc: { vi: 'Sự kiện và thay đổi trong 6 tháng tới, kèm thông điệp và lời khuyên từ Oracle.', en: 'Events and changes over six months, with a message and advice from Oracle.', de: 'Ereignisse und Veränderungen über sechs Monate, dazu eine Botschaft und ein Rat von Oracle.' } },
+      { id: 'm12', name: { vi: '12 tháng', en: '12 months', de: '12 Monate' }, price: 569000,
+        desc: { vi: 'Sự kiện và thay đổi trong cả năm, kèm thông điệp và lời khuyên từ Oracle.', en: 'Events and changes across the year, with a message and advice from Oracle.', de: 'Ereignisse und Veränderungen über das ganze Jahr, dazu eine Botschaft und ein Rat von Oracle.' } }
     ] },
   { id: 'tuvi', icon: '🌸', tone: 'pink', name: { vi: 'Tử vi', en: 'Tử vi (Vietnamese astrology)', de: 'Tử vi (vietnamesische Astrologie)' },
     tagline: { vi: 'Không phải chuyện hôm nay, mà là cả đường dài.', en: 'Not just today, but the long road.', de: 'Nicht nur der heutige Tag, sondern der längere Weg.' },
@@ -53,11 +68,12 @@ const SERVICES = [
       { id: 'year', name: { vi: 'Vận hạn năm', en: 'The year ahead', de: 'Das kommende Jahr' }, price: 333000 },
       { id: 'all', name: { vi: 'Tổng quan mọi vấn đề', en: 'Full overview of everything', de: 'Gesamtüberblick' }, price: 666000 }
     ] },
-  { id: 'talk', icon: '💬', tone: 'blue', name: { vi: 'Chỉ tâm sự', en: 'Just talk', de: 'Einfach reden' },
-    tagline: { vi: 'Không có trải bài, không đưa dự đoán, nhưng luôn sẵn lòng lắng nghe.', en: 'No readings or predictions, but always ready to listen.', de: 'Keine Kartenlegung, keine Vorhersagen – einfach ein offenes Ohr.' },
+  { id: 'talk', icon: '💬', tone: 'blue', name: { vi: 'Tâm sự', en: 'Just talk', de: 'Einfach reden' },
+    tagline: { vi: 'Một không gian riêng tư để bạn chia sẻ điều đang khiến mình băn khoăn, áp lực, hoặc đơn giản là cần một người lắng nghe.', en: 'A private space to share what is weighing on you, or simply to be heard.', de: 'Ein privater Raum für das, was dich beschäftigt oder belastet - oder einfach, um gehört zu werden.' },
+    note: { vi: 'Lắng nghe và trò chuyện riêng tư, không phán xét. Bạn có thể chia sẻ về tình cảm, công việc, học tập, gia đình hoặc chuyện cá nhân. Đây không phải trị liệu hay tư vấn tâm lý chuyên môn.', en: 'A private conversation, without judgement. Love, work, study, family or anything personal. This is not therapy or professional psychological advice.', de: 'Ein privates Gespräch, ohne Urteil. Liebe, Arbeit, Studium, Familie oder Persönliches. Das ist keine Therapie und keine psychologische Fachberatung.' },
     packages: [
-      { id: 't30', name: { vi: '30 phút', en: '30 minutes', de: '30 Minuten' }, price: 30000 },
-      { id: 't60', name: { vi: '1 tiếng', en: '1 hour', de: '1 Stunde' }, price: 60000 }
+      { id: 't30', name: { vi: '30 phút', en: '30 minutes', de: '30 Minuten' }, price: 59000 },
+      { id: 't60', name: { vi: '60 phút', en: '60 minutes', de: '60 Minuten' }, price: 99000 }
     ] }
 ];
 /* Paid courses in the Học tab. Access codes are made in the dashboard. */
