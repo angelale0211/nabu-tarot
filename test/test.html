@@ -4226,6 +4226,23 @@ async function go(hash, sel) { W().location.hash = hash; await sleep(30); return
           && !/Wissensbasis/.test(N.STR.de.aiOff + N.STR.de.aiFallback + N.STR.de.aiLimit + N.STR.de.aiNeedSignin)
           && !N.STR.vi.aiBuiltin && !N.STR.en.aiBuiltin && !N.STR.de.aiBuiltin,
           'nothing the reader is shown offers an answer from the knowledge base any more, in any of the three languages');
+        { /* Three languages, or none: a key added to one and forgotten in the
+             others shows a reader an English sentence in a Vietnamese app, or
+             the word "undefined". Checked for every key, at every depth. */
+          const miss = [];
+          const walk = (path, vi, en, de) => {
+            Object.keys(vi).forEach((k) => {
+              const a2 = vi[k], b2 = en ? en[k] : undefined, c2 = de ? de[k] : undefined;
+              const here = path ? path + '.' + k : k;
+              if (b2 === undefined || c2 === undefined) { miss.push(here + (b2 === undefined ? ' (en)' : '') + (c2 === undefined ? ' (de)' : '')); return; }
+              if (typeof a2 !== typeof b2 || typeof a2 !== typeof c2) { miss.push(here + ' (type)'); return; }
+              if (a2 && typeof a2 === 'object' && !Array.isArray(a2)) walk(here, a2, b2, c2);
+              else if (typeof a2 === 'string' && (!b2.trim() || !c2.trim())) miss.push(here + ' (empty)');
+            });
+          };
+          walk('', N.STR.vi, N.STR.en, N.STR.de);
+          ok(miss.length === 0, 'every string the app shows exists in all three languages'
+            + (miss.length ? ' [missing: ' + miss.slice(0, 12).join(', ') + (miss.length > 12 ? ' and ' + (miss.length - 12) + ' more' : '') + ']' : '')); }
         ok(N.STR.vi.aiOff && N.STR.en.aiOff && N.STR.de.aiOff
           && N.STR.vi.aiOff !== N.STR.vi.aiFallback && N.STR.en.aiOff !== N.STR.en.aiFallback && N.STR.de.aiOff !== N.STR.de.aiFallback,
           '"Nabu AI is not switched on" is its own sentence in all three languages, never the "the AI is busy" one, which means something a reader can wait out');

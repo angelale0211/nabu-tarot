@@ -3,7 +3,7 @@ main = "src/index.ts"
 compatibility_date = "2026-06-01"
 compatibility_flags = ["nodejs_compat"]
 
-# The answer of last resort. With no GEMINI_API_KEY and no ANTHROPIC_API_KEY
+# The answer of last resort. With no GEMINI_API_KEY
 # set, this binding is the only thing standing between a reader and "Nabu AI is
 # not switched on" - it answers with an open model on Workers AI, on the free
 # tier, with no key to buy and nothing to configure. It cannot look anything up
@@ -59,7 +59,6 @@ id = "fe90fd7038bf476b8f167676dc19c730"
 
 # Secrets (never in this file):
 #   npx wrangler secret put GEMINI_API_KEY      (Gemini answers, key never in the browser)
-#   npx wrangler secret put ANTHROPIC_API_KEY   (Claude answers; optional)
 #   npx wrangler secret put RESEND_API_KEY      (booking invitations by email; resend.com free tier)
 #   npx wrangler secret put PLAY_SERVICE_ACCOUNT (the whole service-account JSON; checks Play purchases,
 #                                                reads the code book and writes access - /billing and /redeem

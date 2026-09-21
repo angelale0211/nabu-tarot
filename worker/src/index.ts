@@ -2,9 +2,8 @@
    The app never sees the API key: it POSTs { lang, question, context, kind,
    history, profile } here, and this worker calls Claude with a fixed system
    prompt plus the knowledge the app already showed the visitor.
-   Deploy: npm install && npx wrangler secret put ANTHROPIC_API_KEY && npx wrangler deploy
+   Deploy: npm install && npx wrangler deploy
    Then put the worker URL into CONFIG.aiEndpoint in src/config.js. */
-import Anthropic from "@anthropic-ai/sdk";
 import { whoIsAsking } from "./auth";
 import { allow, cachedAnswer, keepAnswer } from "./limit";
 import { wikiLook } from "./web";
@@ -20,7 +19,6 @@ import { reconcileSubs } from "./reconcile";
 import { appleBill, handleAsn, sweepAppleRefunds, appleRevoke } from "./apple";
 
 export interface Env {
-  ANTHROPIC_API_KEY?: string;
   GEMINI_API_KEY?: string;
   AI?: { run: (model: string, input: unknown) => Promise<{ response?: string }> }; // Workers AI binding (free tier, open models)
   ALLOWED_ORIGIN?: string; // e.g. https://nabutarot.com
@@ -710,60 +708,20 @@ export default {
       if (got.why) why = got.why;
     }
 
-    if (!env.ANTHROPIC_API_KEY) {
+    /* Nothing left to try, and nothing after this. Claude used to answer here,
+       with a web search of its own, and it is the one provider in this worker
+       that bills per answer: the owner asked for an app that cannot cost
+       anything, so it is gone, and with it the key and the SDK. What remains
+       is Gemini's free allowance and Cloudflare's; when both are spent the
+       reader is told the AI is busy, which by then is true. */
+    if (!env.GEMINI_API_KEY && !env.AI) {
       /* Nothing configured at all is not "busy": it is a 503 the app names, so
          the reader is told Nabu AI is not switched on. */
-      if (!env.GEMINI_API_KEY && !env.AI) {
-        console.error(JSON.stringify({ at: "ai", giving_up: "no provider: no GEMINI_API_KEY, no ANTHROPIC_API_KEY, no AI binding" }));
-        return new Response(JSON.stringify({ error: "no-provider" }), { status: 503, headers });
-      }
-      /* Something is configured and every allowance is spent or failing. */
-      console.error(JSON.stringify({ at: "ai", giving_up: why, paid }));
-      return new Response(JSON.stringify({ error: "busy", why }), { status: 502, headers });
+      console.error(JSON.stringify({ at: "ai", giving_up: "no provider: no GEMINI_API_KEY, no AI binding" }));
+      return new Response(JSON.stringify({ error: "no-provider" }), { status: 503, headers });
     }
-    const client = new Anthropic({ apiKey: env.ANTHROPIC_API_KEY });
-    const messages: Anthropic.MessageParam[] = [];
-    for (const h of (body.history || []).slice(-6)) {
-      if (h && (h.role === "user" || h.role === "assistant") && h.text) messages.push({ role: h.role, content: h.text.slice(0, 2000) });
-    }
-    if (messages.length && messages[messages.length - 1].role === "user") messages.pop();
-    messages.push({ role: "user", content: question });
-
-    try {
-      const response = await client.messages.create({
-        model: "claude-opus-5",
-        max_tokens: 1200,
-        thinking: { type: "adaptive" },
-        output_config: { effort: "low" },
-        /* The card text is in KNOWLEDGE; this is for everything else the
-           reader might ask about that is not in it. */
-        tools: [{ type: "web_search_20260209", name: "web_search", max_uses: 3 }],
-        /* Server-side fallbacks on a refusal would be better than the fixed
-           line below, but this worker is pinned to @anthropic-ai/sdk 0.90,
-           which has no `fallbacks` parameter - it typechecks as an unknown
-           property. Worth adding with the next SDK bump; until then the
-           refusal is answered in the reader's own language further down. */
-        system: [
-          { type: "text", text: systemFor(body.lang, paid), cache_control: { type: "ephemeral" } },
-          { type: "text", text: knowledge },
-        ],
-        messages,
-      });
-      if (response.stop_reason === "refusal") {
-        const said = body.lang === "en" ? "I can't help with that one. Try asking about the card, the lesson or your sign."
-          : body.lang === "de" ? "Damit kann ich dir nicht helfen. Frag mich lieber etwas zur Karte, zur Lektion oder zu deinem Sternzeichen."
-          : "Câu này mình không trả lời được. Bạn thử hỏi về lá bài, bài học hay cung của bạn nhé.";
-        return new Response(JSON.stringify({ answer: said, left }), { headers });
-      }
-      const answer = response.content.filter((b) => b.type === "text").map((b) => (b as Anthropic.TextBlock).text).join("\n").trim();
-      keep(answer);
-      return new Response(JSON.stringify({ answer, left }), { headers });
-    } catch (error) {
-      if (error instanceof Anthropic.RateLimitError) return new Response(JSON.stringify({ error: "busy" }), { status: 429, headers });
-      if (error instanceof Anthropic.AuthenticationError) return new Response(JSON.stringify({ error: "key" }), { status: 500, headers });
-      if (error instanceof Anthropic.APIError) return new Response(JSON.stringify({ error: `api ${error.status}` }), { status: 502, headers });
-      return new Response(JSON.stringify({ error: "unknown" }), { status: 500, headers });
-    }
+    console.error(JSON.stringify({ at: "ai", giving_up: why, tier }));
+    return new Response(JSON.stringify({ error: "busy", why }), { status: 502, headers });
   },
 
   /* ---- every six hours: anything Google refunded taken back, every live
