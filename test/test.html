@@ -1529,6 +1529,25 @@ async function go(hash, sel) { W().location.hash = hash; await sleep(30); return
         await go('#/play', '.actbtn'); await go('#/play/diary', '#dtext'); await sleep(60);
         ok(d.querySelector('#dtext').value === 'Một ngày yên.' && d.querySelector('.mood.on'),
           'and walking away and back brings the unsaved draft with it'); }
+      { /* Chosen has to look chosen. The paper a page is written on styles the
+           mood buttons with two classes, which outranked `.mood.on`, so on
+           three of the four papers the tap was stored and the screen did not
+           move: the owner reported the buttons as dead. Measured on every
+           paper rather than trusted. */
+        const box = d.querySelector('.diary'), was = box.className;
+        const bad = [];
+        for (const paper of ['paper-plain', 'paper-ruled', 'paper-floral', 'paper-starry']) {
+          box.className = was.replace(/paper-[a-z]+/, paper);
+          const on = d.querySelector('.mood.on'), off = Array.from(d.querySelectorAll('.mood')).filter((x) => !x.classList.contains('on'))[0];
+          const cs = (el) => w.getComputedStyle(el);
+          const same = cs(on).borderTopColor === cs(off).borderTopColor
+            && cs(on).backgroundColor === cs(off).backgroundColor
+            && cs(on).boxShadow === cs(off).boxShadow;
+          if (same) bad.push(paper);
+        }
+        box.className = was;
+        ok(bad.length === 0, 'the chosen mood looks chosen on every paper the diary can be written on'
+          + (bad.length ? ' [looks the same as the others on: ' + bad.join(', ') + ']' : '')); }
       d.querySelector('#dsave').click(); await sleep(120);
       { const dd = JSON.parse(w.localStorage.getItem('nabu-diary') || 'null'); const k = dd && Object.keys(dd)[0];
         ok(dd && Object.keys(dd).length === 1 && dd[k].m === '🙂' && dd[k].t === 'Một ngày yên.'
