@@ -39,8 +39,13 @@ test("Wikipedia being down, slow or angry answers nothing rather than throwing",
   assert.equal(down, "");
   const refused = await wikiLook("vi", "Lễ Vu Lan", { fetch: (async () => ({ ok: false, status: 429 })) as unknown as typeof fetch });
   assert.equal(refused, "");
+  /* The pending side of this needs a timer that holds the event loop open:
+     AbortSignal.timeout's own timer is unref'd, so on Node 22 the loop can
+     settle before the abort ever fires and the test is cancelled mid-promise
+     rather than failing honestly. */
   const slow = await wikiLook("vi", "Lễ Vu Lan", { ms: 20, fetch: ((_u: string, o: { signal: AbortSignal }) => new Promise((_res, rej) => {
-    o.signal.addEventListener("abort", () => rej(new Error("aborted")));
+    const held = setTimeout(() => rej(new Error("never answered")), 5000);
+    o.signal.addEventListener("abort", () => { clearTimeout(held); rej(new Error("aborted")); });
   })) as unknown as typeof fetch });
   assert.equal(slow, "");
 });
