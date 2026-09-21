@@ -162,6 +162,19 @@ const BE = {
        Apple sign-in revoked. If the person closes Apple's sheet here, nothing at all has been deleted. */
     await this.appleBeforeDelete();
     const uid = this.user.uid, db = this.db;
+    /* The rows only Nabu may read - the moderation flags, the error lines and
+       the messages sent in from #/report - name this person and refuse a
+       delete from the phone. The worker holds the service account and does
+       them, and it is asked now, while the login still exists to prove who is
+       asking. Offline or not configured: the rest of the deletion goes on. */
+    try {
+      if (CONFIG.aiEndpoint) {
+        const tok = await this.token();
+        await withTimeout(fetch(CONFIG.aiEndpoint.replace(/\/$/, '') + '/forget', {
+          method: 'POST', headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + tok }, body: '{}'
+        }), 15000);
+      }
+    } catch (e) { /* offline, or no worker: the account still goes */ }
     const wipe = async (q) => { const s = await q.get(); await Promise.all(s.docs.map((d) => d.ref.delete().catch(() => {}))); };
     try { await wipe(db.collection('threads').doc(uid).collection('messages')); } catch (e) { /* rules or offline */ }
     try { await db.collection('threads').doc(uid).delete(); } catch (e) { /* nothing there */ }

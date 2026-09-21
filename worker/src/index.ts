@@ -7,6 +7,7 @@
 import { whoIsAsking } from "./auth";
 import { allow, cachedAnswer, keepAnswer } from "./limit";
 import { wikiLook } from "./web";
+import { fsDeleteWhere } from "./fs";
 import { checkPurchase, acknowledge, grantUntil, checkSubscription, acknowledgeSub } from "./play";
 import type { PlayEnv } from "./play";
 import { fsGet } from "./fs";
@@ -396,6 +397,26 @@ export default {
       try { b = await request.json(); } catch { return new Response(JSON.stringify({ error: "bad json" }), { status: 400, headers }); }
       try { const a = await appleRevoke(env, person, String(b.code || "")); return new Response(JSON.stringify(a.body), { status: a.status, headers }); }
       catch (e) { console.error(JSON.stringify({ at: "apple-revoke", uid: person.uid, error: String((e as Error).message || e) })); return new Response(JSON.stringify({ error: "revoke failed" }), { status: 502, headers }); }
+    }
+
+    /* ---- an account is being deleted: the rows only the owner can read ----
+       The flags, the error lines and the messages sent to Nabu name the
+       person who wrote them and are refused to the phone by their own rules,
+       so the app asks here on its way out. Called while the login still
+       exists, because the token is the proof of who is asking. */
+    if (path.endsWith("/forget")) {
+      if (!env.FIREBASE_PROJECT_ID) return new Response(JSON.stringify({ error: "not configured" }), { status: 500, headers });
+      const person = await whoIsAsking(request, env.FIREBASE_PROJECT_ID);
+      if (!person) return new Response(JSON.stringify({ error: "signin" }), { status: 401, headers });
+      const v = await allow(env, "forget:" + person.uid, 6, 3);
+      if (!v.ok) return tooMany(v, headers);
+      const gone: Record<string, number> = {};
+      for (const c of ["flags", "errors", "reports"]) {
+        try { gone[c] = await fsDeleteWhere(env as unknown as PlayEnv, c, "uid", person.uid); }
+        catch (e) { console.error(JSON.stringify({ at: "forget", uid: person.uid, collection: c, error: String((e as Error).message || e) })); gone[c] = -1; }
+      }
+      console.log(JSON.stringify({ at: "forget", uid: person.uid, gone }));
+      return new Response(JSON.stringify({ ok: true, gone }), { headers });
     }
 
     if (path.endsWith("/billing")) {

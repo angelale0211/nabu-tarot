@@ -69,3 +69,42 @@ export async function fsPatch(env: PlayEnv, path: string, obj: Record<string, un
     body: JSON.stringify({ fields: encode(obj) }),
   });
 }
+
+/* Everything in one collection that names this person, gone.
+
+   An account being deleted has rows the phone itself may not touch: the
+   moderation flags, the error log and the messages sent to Nabu are readable
+   by the owner alone, so their rules refuse a delete from the client. They
+   still carry a uid and an email. The worker holds the service account, so
+   this is where they go.
+
+   Paged and capped: a runaway loop against Firestore is somebody else's bill,
+   and no account here has three hundred error lines to its name. */
+export async function fsDeleteWhere(env: PlayEnv, collection: string, field: string, value: string, cap = 300): Promise<number> {
+  const at = await serviceToken(env, FS_SCOPE);
+  const base = "https://firestore.googleapis.com/v1/projects/" + encodeURIComponent(env.FIREBASE_PROJECT_ID || "") + "/databases/(default)/documents";
+  const head = { Authorization: "Bearer " + at, "Content-Type": "application/json" };
+  let gone = 0;
+  for (let page = 0; page < 5 && gone < cap; page++) {
+    const r = await fetch(base + ":runQuery", {
+      method: "POST", headers: head,
+      body: JSON.stringify({ structuredQuery: {
+        from: [{ collectionId: collection }],
+        where: { fieldFilter: { field: { fieldPath: field }, op: "EQUAL", value: { stringValue: value } } },
+        limit: 100,
+      } }),
+    });
+    if (!r.ok) throw new Error("firestore query " + r.status);
+    const rows = (await r.json()) as { document?: { name?: string } }[];
+    const names = rows.map((x) => x.document && x.document.name).filter((n): n is string => !!n);
+    if (!names.length) return gone;
+    for (const name of names) {
+      const d = await fetch("https://firestore.googleapis.com/v1/" + name, { method: "DELETE", headers: head });
+      /* Already gone counts as gone: two deletions racing is not an error. */
+      if (d.ok || d.status === 404) gone++;
+      if (gone >= cap) break;
+    }
+    if (names.length < 100) return gone;
+  }
+  return gone;
+}
