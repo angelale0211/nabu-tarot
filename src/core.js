@@ -296,6 +296,13 @@ const SUBS = {
    With accounts switched off entirely, nothing is gated - the app falls back to
    being device-only, as it always has. */
 const signedIn = () => !(typeof BE !== 'undefined' && BE.enabled) || !!(typeof BE !== 'undefined' && BE.user);
+/* Signed in, and known to be. signedIn() answers true while the backend is
+   still waking up, which is right for a button that must not flicker and
+   wrong for anything that hands over what somebody left behind: on a cold
+   start the draw screen took that moment as proof of an account and dealt the
+   last reading back to whoever opened the app. This one says no until the
+   account has actually answered. */
+const signedInForSure = () => (typeof BE === 'undefined' || !BE.enabled) ? false : !!(BE.ready && BE.user);
 /* The card shown in place of whatever was asked for. */
 function needAccountHTML(why) {
   const S = T();

@@ -12,7 +12,7 @@
      carries this notice with it. See LICENSE. -->
 <meta name="author" content="Nabu Tarot">
 <meta name="copyright" content="Copyright (c) 2025-2026 Nabu Tarot. All rights reserved.">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'none'; object-src 'none'; form-action 'self'; script-src 'self' 'sha256-eSS8tP0fWN4yvwgg52AsQm73TC+wfz18KIPtrKdJKh4=' https://www.gstatic.com https://apis.google.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; font-src 'self' data:; media-src 'self' data: blob:; worker-src 'self'; connect-src 'self' https://*.googleapis.com https://*.google.com https://*.firebaseio.com https://*.cloudfunctions.net https://*.workers.dev https://generativelanguage.googleapis.com; frame-src https://*.firebaseapp.com https://accounts.google.com https://*.facebook.com">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'none'; object-src 'none'; form-action 'self'; script-src 'self' 'sha256-3+ryiZQ96twdJxhIbLcgrqIfiu+vzr9o9NQ2Yc9DYHk=' https://www.gstatic.com https://apis.google.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; font-src 'self' data:; media-src 'self' data: blob:; worker-src 'self'; connect-src 'self' https://*.googleapis.com https://*.google.com https://*.firebaseio.com https://*.cloudfunctions.net https://*.workers.dev https://generativelanguage.googleapis.com; frame-src https://*.firebaseapp.com https://accounts.google.com https://*.facebook.com">
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <meta name="theme-color" content="#EFE9FA">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -13653,6 +13653,13 @@ const SUBS = {
    With accounts switched off entirely, nothing is gated - the app falls back to
    being device-only, as it always has. */
 const signedIn = () => !(typeof BE !== 'undefined' && BE.enabled) || !!(typeof BE !== 'undefined' && BE.user);
+/* Signed in, and known to be. signedIn() answers true while the backend is
+   still waking up, which is right for a button that must not flicker and
+   wrong for anything that hands over what somebody left behind: on a cold
+   start the draw screen took that moment as proof of an account and dealt the
+   last reading back to whoever opened the app. This one says no until the
+   account has actually answered. */
+const signedInForSure = () => (typeof BE === 'undefined' || !BE.enabled) ? false : !!(BE.ready && BE.user);
 /* The card shown in place of whatever was asked for. */
 function needAccountHTML(why) {
   const S = T();
@@ -16785,6 +16792,9 @@ const pickToday = () => { const s = store.get('nabu-pick-day', null); return s &
    the plain rule instead: signed out, the deck is on the table and the way to
    use it is to sign in. */
 const guestSpent = () => !signedIn();
+/* Whose card this is. Nothing kept on the phone is dealt back until the
+   account has answered, and then only to the account it belongs to. */
+const drawIsMine = () => signedInForSure() || (typeof BE === 'undefined' || !BE.enabled);
 const pickSpent = () => !plusOn() && (guestSpent() || !!pickToday());
 function pickSpend(id, focus) {
   if (plusOn()) return;
@@ -16842,7 +16852,7 @@ function renderPick(args, params) {
      the screen and found a stranger's reading sitting under the deck, with no
      way past it. Signed out, the deck is dealt fresh and the way in is the
      sign-in card under it. */
-  if (!want && pick.chosen == null && signedIn() && pickSpent()) { const sv = pickToday(); if (sv && cardById(sv.id)) { newHand(); pick.chosen = sv.id; if (T().focus[sv.focus]) pick.focus = sv.focus; } }
+  if (!want && pick.chosen == null && drawIsMine() && pickSpent()) { const sv = pickToday(); if (sv && cardById(sv.id)) { newHand(); pick.chosen = sv.id; if (T().focus[sv.focus]) pick.focus = sv.focus; } }
   const S = T(), m = $('#main');
   // Once a card is drawn the focus is fixed for that draw: the other chips stay visible but off until a redraw.
   const chips = Object.keys(S.focus).map((f) => '<button class="chip' + (pick.focus === f ? ' on' : '') + '" data-focus="' + f + '"' + (pick.chosen != null && pick.focus !== f ? ' disabled' : '') + '>' + esc(S.focus[f]) + '</button>').join('');
@@ -16864,6 +16874,16 @@ function renderPick(args, params) {
     + '<div class="reveal" id="reveal"></div>'
     + lookStripHTML('cardback');
   bindDeck(m);
+  /* The account answers a moment after the screen is drawn, and until it does
+     nothing kept on the phone is dealt back. Once it answers, this draws
+     again: whoever signed in gets their own card, and whoever did not gets
+     the deck and the way in. */
+  if (typeof BE !== 'undefined' && BE.enabled && !BE.ready) {
+    let done = false;
+    const cb = () => { if (done) return; done = true; if (parseHash().route === 'pick') renderPick(args, params); };
+    BE.listeners.push(cb);
+    navOnLeave(() => { done = true; BE.listeners = BE.listeners.filter((x) => x !== cb); });
+  }
   // Changing the back redraws the fan, so the new one is seen straight away.
   bindLookStrip(m, () => renderPick(args, params));
   $$('[data-focus]', m).forEach((b) => b.addEventListener('click', () => {
@@ -30955,7 +30975,7 @@ function adminSale(p) {
 ROUTES.admin = { nav: '', render: renderAdmin };
 
 /* ============================ boot ============================ */
-window.APP_VERSION = 'v262';
+window.APP_VERSION = 'v263';
 window.NABU = { CONFIG: CONFIG, SALE: SALE, salePrice: salePrice, loadActs: loadActs, BACK: BACK, LESSONS: LESSONS, localAnswer: localAnswer, compatVerdict: compatVerdict, numerologyOf: numerologyOf, ZDEEP: ZDEEP, lunarToday: lunarToday, solarToLunar: solarToLunar, DECK: DECK, INSIGHT: INSIGHT, KW: KW, ASK: ASK, GUIDES: GUIDES, SERVICES: SERVICES, COURSES: COURSES, ACCESS: ACCESS, INTERESTS: INTERESTS, plusOn: () => plusOn(), proOn: () => proOn(), luckUnlimited: () => luckUnlimited(), ZODIAC: ZODIAC, pick: pick, book: book, PLAY_ITEMS: PLAY_ITEMS, PLAY_SUB_SKUS: PLAY_SUB_SKUS, playItem: playItem, BILL: BILL, SUBS: SUBS, billUse: billUse, APPLE_BILL: APPLE_BILL, appleAccountToken: appleAccountToken, renderStore: renderStore, pickLimitHTML: pickLimitHTML, subStateWord: subStateWord,
   insightHTML: insightHTML, insightOf: insightOf, sunSignIndex: sunSignIndex, lifePath: lifePath, PROFILE: () => PROFILE, BE: BE, inAppBrowser: inAppBrowser, ACTS: ACTS, CMT: CMT, LIKES: LIKES, kbReady: kbReady, AI: AI, STR: STR, KB_URL: (typeof KB_URL === 'string' ? KB_URL : ''),
   ANGELS: ANGELS, angelRead: angelRead, CODEBOOK: CODEBOOK, redeemCode: redeemCode, loadCodebook: loadCodebook, petHomeSVG: petHomeSVG, PET_HOMES: PET_HOMES, PET_WARDROBE: PET_WARDROBE, PET_SLOTS: PET_SLOTS,

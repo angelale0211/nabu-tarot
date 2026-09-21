@@ -5495,6 +5495,23 @@ async function go(hash, sel) { W().location.hash = hash; await sleep(30); return
       await go('#/home', '.tiles'); await go('#/pick', '#fan .slot');
       ok(N2.pick.chosen === null && !d2.querySelector('#reveal .hero') && d2.querySelectorAll('#fan .slot').length === 78 && !!d2.querySelector('#main .needin'),
         'signed out, a card drawn earlier on this phone is not dealt back - the deck is fresh and the sign-in card is under it');
+      { /* And not in the moment before the account answers either. On a cold
+           start the backend is awake but has not said who is there yet, and
+           the screen used to read that silence as a signed-in reader and hand
+           the last card to whoever had opened the app. */
+        const wasReady = N2.BE.ready;
+        N2.BE.ready = false; N2.BE.user = { uid: 'someone', email: 's@test' };
+        put('nabu-pick-day', { d: tiso, id: 'major-7', focus: 'love' }); fresh();
+        await go('#/home', '.tiles'); await go('#/pick', '#fan .slot');
+        ok(N2.pick.chosen === null && !d2.querySelector('#reveal .hero'),
+          'while the account is still answering, nothing kept on the phone is dealt back');
+        /* And when it answers, the reader gets their own card without touching anything. */
+        N2.BE.ready = true;
+        N2.BE.listeners.slice().forEach((cb) => cb(N2.BE.user));
+        await waitFor(() => d2.querySelector('#reveal .hero'), 3000);
+        ok(N2.pick.chosen === 'major-7' && !!d2.querySelector('#reveal .hero'),
+          'and the moment the account answers, the card it belongs to is dealt back on its own');
+        N2.BE.ready = wasReady; N2.BE.user = null; }
       put('nabu-pick-day', { d: yiso, id: 'major-7', focus: 'love' }); fresh();
       await go('#/home', '.tiles'); const drew = await go('#/pick', '#fan .slot');
       ok(drew && d2.querySelectorAll('#fan .slot').length === 78 && !d2.querySelector('#reveal .hero') && !!d2.querySelector('#main .needin') && d2.querySelector('.tap-hint').textContent === '',

@@ -32,6 +32,9 @@ const pickToday = () => { const s = store.get('nabu-pick-day', null); return s &
    the plain rule instead: signed out, the deck is on the table and the way to
    use it is to sign in. */
 const guestSpent = () => !signedIn();
+/* Whose card this is. Nothing kept on the phone is dealt back until the
+   account has answered, and then only to the account it belongs to. */
+const drawIsMine = () => signedInForSure() || (typeof BE === 'undefined' || !BE.enabled);
 const pickSpent = () => !plusOn() && (guestSpent() || !!pickToday());
 function pickSpend(id, focus) {
   if (plusOn()) return;
@@ -89,7 +92,7 @@ function renderPick(args, params) {
      the screen and found a stranger's reading sitting under the deck, with no
      way past it. Signed out, the deck is dealt fresh and the way in is the
      sign-in card under it. */
-  if (!want && pick.chosen == null && signedIn() && pickSpent()) { const sv = pickToday(); if (sv && cardById(sv.id)) { newHand(); pick.chosen = sv.id; if (T().focus[sv.focus]) pick.focus = sv.focus; } }
+  if (!want && pick.chosen == null && drawIsMine() && pickSpent()) { const sv = pickToday(); if (sv && cardById(sv.id)) { newHand(); pick.chosen = sv.id; if (T().focus[sv.focus]) pick.focus = sv.focus; } }
   const S = T(), m = $('#main');
   // Once a card is drawn the focus is fixed for that draw: the other chips stay visible but off until a redraw.
   const chips = Object.keys(S.focus).map((f) => '<button class="chip' + (pick.focus === f ? ' on' : '') + '" data-focus="' + f + '"' + (pick.chosen != null && pick.focus !== f ? ' disabled' : '') + '>' + esc(S.focus[f]) + '</button>').join('');
@@ -111,6 +114,16 @@ function renderPick(args, params) {
     + '<div class="reveal" id="reveal"></div>'
     + lookStripHTML('cardback');
   bindDeck(m);
+  /* The account answers a moment after the screen is drawn, and until it does
+     nothing kept on the phone is dealt back. Once it answers, this draws
+     again: whoever signed in gets their own card, and whoever did not gets
+     the deck and the way in. */
+  if (typeof BE !== 'undefined' && BE.enabled && !BE.ready) {
+    let done = false;
+    const cb = () => { if (done) return; done = true; if (parseHash().route === 'pick') renderPick(args, params); };
+    BE.listeners.push(cb);
+    navOnLeave(() => { done = true; BE.listeners = BE.listeners.filter((x) => x !== cb); });
+  }
   // Changing the back redraws the fan, so the new one is seen straight away.
   bindLookStrip(m, () => renderPick(args, params));
   $$('[data-focus]', m).forEach((b) => b.addEventListener('click', () => {
