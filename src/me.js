@@ -26,9 +26,22 @@ function profileFormHTML() {
     + '<label class="f" for="pname">' + esc(S.displayName) + '</label><input id="pname" value="' + esc(p.name || '') + '" autocomplete="nickname">'
     + '<label class="f" for="pbday">' + esc(S.birthday) + '</label><input id="pbday" type="date" value="' + esc(p.birthday || '') + '" max="' + isoDate(new Date()) + '">'
     + '<button class="btn primary block" id="psave" style="margin-top:16px">' + esc(S.saveProfile) + '</button>'
-    + '<p class="hint" id="pstatus">' + esc(S.localOnly) + '</p></div>';
+    + '<p class="hint" id="pstatus">' + esc(S.localOnly) + '</p>'
+    /* A phone keeps this profile whether or not anybody ever signed in, and
+       until now there was no way to take it off again short of deleting an
+       account - which somebody who never made one cannot do. A phone handed
+       on, or one still holding what an account left behind before deletion
+       learned to clear up after itself, is cleaned from here. */
+    + '<button type="button" class="btn block" id="pwipe" style="margin-top:10px">' + esc(S.wipeBtn) + '</button></div>';
 }
 function bindProfileForm(root, after) {
+  const wipe = $('#pwipe', root);
+  if (wipe) wipe.addEventListener('click', () => {
+    if (!confirm(T().wipeConfirm)) return;
+    wipeDevice(true);
+    toast(T().wipeDone);
+    setTimeout(() => location.reload(), 700);
+  });
   const save = $('#psave', root);
   if (!save) return;                 // signed in: a summary, nothing to bind
   $$('[data-int]', root).forEach((b) => b.addEventListener('click', () => b.classList.toggle('on')));
@@ -352,7 +365,14 @@ function meSect(id, icon, title, body, openByDefault, force) {
       await MOD.unblock(b.getAttribute('data-unblock'));
       renderMe(args, params);
     }));
-    const so = $('#signout'); if (so) so.addEventListener('click', () => BE.signOut());
+    /* Signing out now takes this phone's copy with it, so it says so first -
+       and reloads afterwards, because everything already read into memory
+       belongs to the person who has just left. */
+    const so = $('#signout'); if (so) so.addEventListener('click', async () => {
+      if (!confirm(S.signOutConfirm)) return;
+      try { await BE.signOut(); } catch (e) { /* signed out locally either way */ }
+      location.hash = '#/home'; setTimeout(() => location.reload(), 400);
+    });
     const da = $('#delacct'); if (da) da.addEventListener('click', async () => {
       /* What is actually lost, said before it is lost - and the line about the
          store only when there is a subscription to cancel, because telling

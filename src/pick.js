@@ -81,7 +81,12 @@ function renderPick(args, params) {
      including one drawn on another phone, which the account carries. A visitor
      without an account who drew on an earlier day has no card to show, and the
      screen must not fall over on that. */
-  if (!want && pick.chosen == null && pickSpent()) { const sv = pickToday(); if (sv && cardById(sv.id)) { newHand(); pick.chosen = sv.id; if (T().focus[sv.focus]) pick.focus = sv.focus; } }
+  /* Only for somebody signed in. A card kept on the phone belongs to whoever
+     drew it; a visitor - including one whose account has been deleted - opened
+     the screen and found a stranger's reading sitting under the deck, with no
+     way past it. Signed out, the deck is dealt fresh and the way in is the
+     sign-in card under it. */
+  if (!want && pick.chosen == null && signedIn() && pickSpent()) { const sv = pickToday(); if (sv && cardById(sv.id)) { newHand(); pick.chosen = sv.id; if (T().focus[sv.focus]) pick.focus = sv.focus; } }
   const S = T(), m = $('#main');
   // Once a card is drawn the focus is fixed for that draw: the other chips stay visible but off until a redraw.
   const chips = Object.keys(S.focus).map((f) => '<button class="chip' + (pick.focus === f ? ' on' : '') + '" data-focus="' + f + '"' + (pick.chosen != null && pick.focus !== f ? ' disabled' : '') + '>' + esc(S.focus[f]) + '</button>').join('');

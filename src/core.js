@@ -47,8 +47,13 @@ const WIPE_KEEP = ['nabu-lang', 'nabu-theme', 'nabu-twa'];
 let WIPED = false;
 /* The one way back, for the test suite: the real app reloads instead. */
 function unwipeForTests() { WIPED = false; }
-function wipeDevice() {
-  WIPED = true;
+/* `lock` bars every later write until the page reloads. Deleting an account
+   needs that: Firebase announces the empty seat, the open screen redraws, and
+   both would write the person straight back. Signing out reloads just as
+   fast but stays on the same phone, and locking the store there would stop a
+   perfectly ordinary next write from landing. */
+function wipeDevice(lock) {
+  if (lock) WIPED = true;
   /* Memory too, or the next write - if one slips through anywhere - puts the
      same person back. */
   PROFILE = { name: '', birthday: '', interests: [], tourDone: false };
@@ -59,6 +64,9 @@ function wipeDevice() {
       if (k && k.indexOf('nabu-') === 0 && WIPE_KEEP.indexOf(k) < 0) keys.push(k);
     }
     keys.forEach((k) => { try { localStorage.removeItem(k); } catch (e) { /* locked */ } });
+    /* Where the app has been is kept for the back arrow, and it is nobody
+       else's business either. */
+    try { sessionStorage.removeItem('nabu-nav'); } catch (e) { /* private mode */ }
     return true;
   } catch (e) { return false; }  // private mode, storage blocked
 }

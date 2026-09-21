@@ -109,25 +109,16 @@ const BE = {
   async signOut() {
     try {
       this.profileRead = false;
-      /* handle and lang go too. saveProfileLocal is a merge, so leaving them out
-         keeps them: the next account created on this phone would skip the welcome
-         screen and push the previous person's username into its own document.
-         Clearing lang here does not change the device language - that is
-         'nabu-lang' in store, which belongs to the phone. */
-      saveProfileLocal({ name: '', birthday: '', interests: [], handle: '', lang: '' });
-      store.set('nabu-profile', PROFILE);
-      store.set('nabu-access', {});
-      /* the plans too: they belong to the account, not the phone */
-      store.set('nabu-subs', {});
-      /* and today's card, coin answer and tree message: on a shared phone the
-         next person must not open the draw screen on someone else's day */
-      store.set('nabu-today', null);
-      store.set('nabu-admin', '');
-      store.set('nabu-revoked-at', 0);
-      /* Which posts this phone had hearted: that was the person signing out,
-         not the phone. The counts stay - they are the public number and the
-         next reader sees the same one a stranger would. */
+      /* Everything, not a chosen few. Signing out used to clear the profile,
+         the plans and today's card, and leave the rest where it was: the
+         diary, the companions, the wishes, the coins, the course progress,
+         the votes, the message tree. The next person to open the app on that
+         phone - or the same person after deleting their account - was handed
+         somebody else's inner life, and there was no way to get rid of it.
+         The language and the theme stay, because they are how the phone is
+         set up rather than who was using it. */
       if (typeof LIKES !== 'undefined') LIKES.forget();
+      wipeDevice();
     } catch (e) { /* a full phone must not be able to trap somebody signed in */ }
     /* In the iPhone app Google's own SDK remembers who signed in, apart from
        Firebase. Forgotten too, so the next person on the phone is asked to
@@ -180,6 +171,38 @@ const BE = {
        leave rows behind that still name it - and a post's number should not
        count somebody who no longer has an account. */
     try { await wipe(db.collection('likes').where('uid', '==', uid)); } catch (e) { /* rules or offline */ }
+    /* The red thread, and the wedding held on it. A deleted account used to
+       leave both standing: the other person kept a partner who no longer
+       existed, and the shared diary, the gifts and the wedding room went on
+       holding what this person had written. Their own rows go first - the
+       rules let a member delete what they wrote - and then the room itself,
+       which a member may also delete. */
+    try {
+      const bonds = await db.collection('bonds').where('uids', 'array-contains', uid).get();
+      for (const b of bonds.docs) {
+        await wipe(b.ref.collection('diary').where('from', '==', uid));
+        await wipe(b.ref.collection('gifts').where('from', '==', uid));
+        await b.ref.delete().catch(() => {});
+      }
+    } catch (e) { /* rules or offline */ }
+    try {
+      const weds = await db.collection('weddings').where('uids', 'array-contains', uid).get();
+      for (const w of weds.docs) {
+        await w.ref.collection('guests').doc(uid).delete().catch(() => {});
+        await wipe(w.ref.collection('talk').where('from', '==', uid));
+        await wipe(w.ref.collection('says').where('from', '==', uid));
+        await wipe(w.ref.collection('gifts').where('from', '==', uid));
+        await w.ref.delete().catch(() => {});
+      }
+    } catch (e) { /* rules or offline */ }
+    /* Invitations: the ones waiting in this person's inbox, and the link they
+       made for somebody to open. Both name them. */
+    try { await wipe(db.collection('requests').doc(uid).collection('from')); } catch (e) { /* rules or offline */ }
+    try { await wipe(db.collection('wedasks').doc(uid).collection('from')); } catch (e) { /* rules or offline */ }
+    try { await wipe(db.collection('invites').where('from', '==', uid)); } catch (e) { /* rules or offline */ }
+    /* How this person voted in the activities. The counts are public, but a
+       vote carries the uid that cast it. */
+    try { await wipe(db.collection('votes').where('uid', '==', uid)); } catch (e) { /* rules or offline */ }
     try { await db.collection('users').doc(uid).delete(); } catch (e) { /* nothing there */ }
     /* Every registered person now has a public card and a reserved username, so
        deletion has to take both with it: the card in 'people' and the row in
@@ -192,7 +215,7 @@ const BE = {
        diary, the companions and everything else where they were, which is not
        what a person is asking for when they ask to be deleted. The caller
        reloads, so nothing that was read into memory outlives this either. */
-    wipeDevice();
+    wipeDevice(true);
   },
 
   /* ---- profile ---- */
