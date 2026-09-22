@@ -110,20 +110,48 @@ test("a course bought in the iPhone app: six months from Apple's purchase date, 
     assert.equal((a.body.access as Record<string, string>).tarot, "2027-03-01");
     const again = await post("u1", { store: "apple", sku: "tarot", token: "1001" });
     assert.equal(again.status, 200); assert.equal((again.body.access as Record<string, string>).tarot, "2027-03-01");
-    /* A different Nabu account: refused by the account token before the ledger is even asked. */
-    const other = await post("u2", { store: "apple", sku: "tarot", token: "1001" });
-    assert.equal(other.status, 402); assert.equal(other.body.error, "already used");
     const row = Object.keys(w.docs).find((k) => k.indexOf("purchases/") === 0) as string;
     assert.equal(s(w.docs[row].store), "apple"); assert.equal(s(w.docs[row].token), "apple:1001");
   } finally { w.m.restore(); }
 });
 
-test("without an account token the ledger alone decides: the first account keeps it, a second is refused", async () => {
+/* The rule that replaced "the first account keeps it for ever": the App Store
+   sells a course or a subscription to an Apple Account once, so whoever
+   presents that purchase is the person who paid for it, and it follows them.
+   One account holds it at a time - which is what stops it being shared. */
+test("a course follows its buyer to their new account, and leaves the old one", async () => {
+  const w = world({ tx: { "1001": course("1001", await accountToken("u1")) }, subs: {} });
+  try {
+    assert.equal((await post("u1", { store: "apple", sku: "tarot", token: "1001" })).status, 200);
+    const moved = await post("u2", { store: "apple", sku: "tarot", token: "1001" });
+    assert.equal(moved.status, 200, "the same Apple purchase, presented by another Nabu account");
+    assert.deepEqual(moved.body.opened, ["tarot"]);
+    const row = Object.keys(w.docs).find((k) => k.indexOf("purchases/") === 0) as string;
+    assert.equal(s(w.docs[row].uid), "u2"); assert.equal(s(w.docs[row].from), "u1");
+    assert.ok(s(w.docs[row].movedAt), "the move is written down");
+    assert.equal(map(w.docs["users/u1"].access).tarot, undefined, "and the account that held it lets go");
+    assert.equal(s(map(w.docs["users/u2"].access).tarot), "2027-03-01");
+  } finally { w.m.restore(); }
+});
+
+test("a purchase moves once a day, not back and forth all afternoon", async () => {
   const w = world({ tx: { "1002": course("1002", "", { appAccountToken: undefined }) }, subs: {} });
   try {
     assert.equal((await post("u1", { store: "apple", sku: "tarot", token: "1002" })).status, 200);
-    const b = await post("u2", { store: "apple", sku: "tarot", token: "1002" });
+    assert.equal((await post("u2", { store: "apple", sku: "tarot", token: "1002" })).status, 200);
+    const back = await post("u1", { store: "apple", sku: "tarot", token: "1002" });
+    assert.equal(back.status, 402); assert.equal(back.body.error, "already used");
+  } finally { w.m.restore(); }
+});
+
+test("a purchase Apple says belongs to another Nabu account, and that nothing has ever claimed, is still refused", async () => {
+  const w = world({ tx: { "1003": course("1003", await accountToken("u1")) }, subs: {} });
+  try {
+    /* Nobody is holding it, so there is no buyer to put right and no owner to
+       take it from - only an id somebody would be guessing with. */
+    const b = await post("u2", { store: "apple", sku: "tarot", token: "1003" });
     assert.equal(b.status, 402); assert.equal(b.body.error, "already used");
+    assert.equal(Object.keys(w.docs).find((k) => k.indexOf("purchases/") === 0), undefined, "and nothing was written");
   } finally { w.m.restore(); }
 });
 
@@ -163,6 +191,29 @@ test("Apple being down is 502 so the phone tries again - never a refusal, never 
   } finally { w.m.restore(); }
 });
 
+/* The case that sent people to write in: buy Pro, delete the Nabu account or
+   simply sign up again, and the App Store will not sell the same subscription
+   twice - it hands back the purchase already made, which the ledger then read
+   as somebody else's. The subscription follows its buyer instead. */
+test("a subscription follows its buyer to their new account, and the old one stops holding it", async () => {
+  const u1 = await accountToken("u1");
+  const plus = itemByKey("plus")!;
+  const exp = Date.now() + 300 * DAY;
+  const apple: Store = { tx: { "6001": { transactionId: "6001", originalTransactionId: "6000", bundleId: "app.nabutarot.ios", productId: plus.sku, purchaseDate: Date.now() - DAY, expiresDate: exp, appAccountToken: u1 } }, subs: { "6000": { status: 1 } } };
+  const w = world(apple);
+  try {
+    assert.equal((await post("u1", { store: "apple", sku: plus.sku, token: "6001" })).status, 200);
+    const moved = await post("u2", { store: "apple", sku: plus.sku, token: "6001" });
+    assert.equal(moved.status, 200); assert.deepEqual(moved.body.opened, ["plus"]);
+    assert.equal((moved.body.subs as Record<string, Record<string, unknown>>).plus.grant, true);
+    const row = Object.keys(w.docs).find((k) => k.indexOf("purchases/") === 0) as string;
+    assert.equal(s(w.docs[row].uid), "u2"); assert.equal(s(w.docs[row].from), "u1");
+    const before = map(w.docs["users/u1"].subs).plus as { mapValue: { fields: Record<string, unknown> } };
+    assert.equal((before.mapValue.fields.grant as { booleanValue: boolean }).booleanValue, false, "the old account's row stops granting");
+    assert.equal(map(w.docs["users/u1"].access).plus, undefined, "and its access goes with it");
+  } finally { w.m.restore(); }
+});
+
 test("a subscription: Plus granted to Apple's expiry, marked as the App Store's; upgrading to Pro retires Plus on the same purchase", async () => {
   const u1 = await accountToken("u1");
   const plus = itemByKey("plus")!, pro = itemByKey("pro")!;
@@ -194,6 +245,13 @@ test("a wedding bought in the iPhone app pays exactly the room it names", async 
     const a = await post("u1", { store: "apple", sku: "wedding", token: "6001", wid: "u1__u9" });
     assert.equal(a.status, 200);
     assert.equal((w.docs["weddings/u1__u9"].paid as { booleanValue: boolean }).booleanValue, true);
+    /* And it stays paid for that room. A course or a subscription follows its
+       buyer to a new account; a wedding was bought for two people in a room,
+       so there is nothing for it to follow. */
+    const other = await post("u2", { store: "apple", sku: "wedding", token: "6001", wid: "u2__u8" });
+    assert.equal(other.status, 402); assert.equal(other.body.error, "already used");
+    const row = Object.keys(w.docs).find((k) => k.indexOf("purchases/") === 0) as string;
+    assert.equal(s(w.docs[row].uid), "u1"); assert.equal(s(w.docs[row].wid), "u1__u9");
   } finally { w.m.restore(); }
 });
 

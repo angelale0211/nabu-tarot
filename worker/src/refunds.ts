@@ -59,6 +59,10 @@ export interface LedgerRow {
      field that lookup has nothing to send. */
   token: string;
   until?: string; wid?: string; plan?: string;
+  /* Who held this purchase before it followed its buyer to another account,
+     and when. Written down so a move can be read back afterwards, and so one
+     purchase cannot be walked from account to account all day. */
+  from?: string; movedAt?: string;
 }
 export interface Claim { ok: boolean; why?: string; existing?: LedgerRow }
 
@@ -94,6 +98,49 @@ export async function claimPurchase(env: PlayEnv, uid: string, sku: string, ids:
   if (cur.uid !== uid) return { ok: false, why: "already used" };
   if (extra.wid && cur.wid && cur.wid !== extra.wid) return { ok: false, why: "already used" };
   return { ok: true, existing: cur };
+}
+
+/* ---- a purchase follows the person who paid for it ----
+
+   The App Store sells a subscription to an Apple Account once. Buy Nabu Pro,
+   delete the Nabu account, sign up again, and Apple will not sell it a second
+   time - it hands back the same purchase - while the ledger, which binds a
+   purchase to the first account that claimed it, refuses it as somebody
+   else's. The buyer is left holding a subscription they still pay for and
+   cannot use, and the sentence the app showed them as they deleted the
+   account - "you will need to buy again" - turns out to be something the App
+   Store will not let them do. Apple's own rule, that restoring a purchase has
+   to work, says the same thing from the other side.
+
+   So the purchase moves. The account presenting it now gets what it opens and
+   the account that held it loses it in the same step: the store sold one, and
+   one is what is held. That is what keeps this from becoming a way to share -
+   at any moment exactly one account holds it, and whoever lost it takes it
+   straight back by signing in and restoring.
+
+   Guarded, because a purchase here is presented rather than proven:
+   - a wedding never moves; it was paid for a room, not for an account;
+   - a refunded or voided purchase moves nothing, there is nothing to hold;
+   - one move a day per purchase, so a leaked id cannot be passed around;
+   - and the caller has already asked the store whether this purchase is real
+     and current before reaching this point.
+   Every move leaves `from` and `movedAt` on the row, and is logged. */
+const MOVE_QUIET_MS = 24 * 60 * 60 * 1000;
+
+export async function movePurchase(env: PlayEnv, hash: string, toUid: string,
+  drop: (row: LedgerRow) => Promise<void>): Promise<{ ok: boolean; why?: string; from?: string }> {
+  const cur = await ledgerGet(env, hash);
+  if (!cur) return { ok: false, why: "already used" };
+  if (cur.uid === toUid) return { ok: true };
+  if (cur.wid) return { ok: false, why: "already used" };
+  if (cur.state === "voided") return { ok: false, why: "refunded" };
+  if (cur.movedAt && Date.now() - Date.parse(cur.movedAt) < MOVE_QUIET_MS) return { ok: false, why: "already used" };
+  /* The old holder loses it first: the other order leaves both accounts
+     holding one purchase if the write below never lands. */
+  await drop(cur);
+  await ledgerSet(env, hash, { uid: toUid, from: cur.uid, movedAt: new Date().toISOString() });
+  console.log(JSON.stringify({ at: "billing", moved: hash, from: cur.uid, to: toUid, sku: cur.sku }));
+  return { ok: true, from: cur.uid };
 }
 
 /* Said once the access exists, so the ledger distinguishes a purchase that was

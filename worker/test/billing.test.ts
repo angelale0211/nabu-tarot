@@ -24,6 +24,10 @@ function world(k: Awaited<ReturnType<typeof makeKeys>>, play: { products?: Recor
       const table = url.includes("/subscriptionsv2/") ? play.subs || {} : play.products || {};
       return table[tok] ? json(table[tok]) : json({}, 404);
     },
+    /* Asked when a purchase changes hands: what else an account still holds
+       decides how much of a course it keeps (survivingFloor, refunds.ts). */
+    ":runQuery": () => json(Object.keys(docs).filter((k) => k.indexOf("purchases/") === 0)
+      .map((k) => ({ document: { name: "projects/x/databases/(default)/documents/" + k, fields: docs[k] } }))),
     "firestore.googleapis.com": (url, init) => {
       const id = url.split("/documents/")[1].split("?")[0];
       if (init.method === "PATCH") {
@@ -53,8 +57,13 @@ test("a course: granted once; the same token again returns the same date and con
     const until = (a.body.access as Record<string, string>).tarot;
     const b = await post(k, "u1", { sku: "tarot", token: "T1" });
     assert.equal(b.status, 200); assert.equal((b.body.access as Record<string, string>).tarot, until);
+    /* Another account presenting the same Play purchase is the buyer with a
+       new account, not a second student: it follows them, and the account
+       that held it lets go. One purchase, one holder (movePurchase). */
     const c = await post(k, "u2", { sku: "tarot", token: "T1" });
-    assert.equal(c.status, 402); assert.equal(c.body.error, "already used");
+    assert.equal(c.status, 200); assert.equal((c.body.access as Record<string, string>).tarot, until);
+    assert.equal(str(w.docs["users/u2"].access ? (w.docs["users/u2"].access as { mapValue: { fields: Record<string, unknown> } }).mapValue.fields.tarot : undefined), until);
+    assert.equal((w.docs["users/u1"].access as { mapValue: { fields: Record<string, unknown> } }).mapValue.fields.tarot, undefined);
   } finally { w.m.restore(); }
 });
 test("a pending purchase answers 202 and grants nothing", async () => {

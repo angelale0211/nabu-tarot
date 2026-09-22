@@ -206,12 +206,12 @@ function bindStore(root, redraw) {
           : paidNotConfirmed ? S.stPending
           : out === 'aborted' ? S.stAborted
           : out === 'nolaunch' ? S.stNoSheet
-          /* Named for what it is: the App Store or Play handed back a purchase
-             that belongs to a Nabu account that is not this one - which is
-             what somebody sees after deleting their account and signing up
-             again on the same Apple ID. "Already used" left them with nothing
-             to do about it. */
-          : why === 'already used' ? S.buyAlready(isIOSApp() ? 'App Store' : isTWA() ? 'Google Play' : '')
+          /* What is left of "already used" now that a purchase follows the
+             person who paid for it (movePurchase, worker/src/refunds.ts): the
+             store handed back a purchase that has just moved to another Nabu
+             account, and it does not move again for a day. Deleting an account
+             and signing up on the same Apple ID no longer lands here at all. */
+          : why === 'already used' ? S.buyAlready
           : why === 'nostore' ? S.stNotReady
           : why === 'noproduct' ? S.stItemOff
           : S.stFailed;

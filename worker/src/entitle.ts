@@ -150,6 +150,36 @@ export async function applySubscription(env: PlayEnv, uid: string, item: PlayIte
   return { access: next, subs, granted };
 }
 
+/* ---- and taking one back off the account that used to hold it ----
+
+   The other half of a purchase moving to the account that paid for it
+   (movePurchase, refunds.ts). Every subscription row filed under this
+   purchase stops granting, and the recompute writes the shorter access that
+   follows. It is deliberately not a delete: the row is the record that this
+   account once held the subscription, and `granted` - a code, a bank transfer
+   - is left standing, so an account that also redeemed a code keeps what the
+   code gave it. An account that no longer exists holds nothing, so a missing
+   document is not an error. */
+export async function dropSubscriptionFrom(env: PlayEnv, uid: string, tokenHash: string): Promise<string[]> {
+  const doc = await fsGet(env, "users/" + encodeURIComponent(uid));
+  if (!doc) return [];
+  const subs = { ...((doc.subs as Record<string, SubRow>) || {}) };
+  const access = (doc.access as Record<string, string>) || {};
+  const granted = (doc.granted as Record<string, string>) || {};
+  const dropped: string[] = [];
+  for (const k of Object.keys(subs)) {
+    const row = subs[k];
+    if (!row || row.tok !== tokenHash || !row.grant) continue;
+    subs[k] = { ...row, grant: false, state: "SUBSCRIPTION_STATE_EXPIRED" };
+    dropped.push(k);
+  }
+  if (!dropped.length) return [];
+  const next = recompute(subs, access, granted);
+  const w = await fsPatch(env, "users/" + encodeURIComponent(uid), { access: next, subs, granted }, ["access", "subs", "granted"]);
+  if (!w.ok) throw new Error("firestore " + w.status);
+  return dropped;
+}
+
 /* ---- writing down a grant that did not come from Play ----
 
    Called by /redeem, so a code that opens a Play-managed key leaves a record

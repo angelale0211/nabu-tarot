@@ -12,9 +12,9 @@ import { checkPurchase, acknowledge, grantUntil, checkSubscription, acknowledgeS
 import type { PlayEnv } from "./play";
 import { fsGet } from "./fs";
 import { claimCode } from "./codes";
-import { claimPurchase, markGranted, sweepRefunds, tokenId, ledgerSet } from "./refunds";
+import { claimPurchase, markGranted, movePurchase, removeAccessFor, sweepRefunds, tokenId, ledgerSet } from "./refunds";
 import { itemBySku, itemByKey } from "./catalog";
-import { applySubscription, payRoom, noteGranted } from "./entitle";
+import { applySubscription, dropSubscriptionFrom, payRoom, noteGranted } from "./entitle";
 import { handleRtdn } from "./rtdn";
 import { reconcileSubs } from "./reconcile";
 import { appleBill, handleAsn, sweepAppleRefunds, appleRevoke } from "./apple";
@@ -468,8 +468,16 @@ export default {
           if (sub.productId !== sku) { log({ refused: "product mismatch", product: sub.productId }); return say(402, { error: "product mismatch" }); }
           if (sub.state === "SUBSCRIPTION_STATE_PENDING") return say(202, { pending: true });
           const claim = await claimPurchase(env, person.uid, sku, item.opens, token, { kind: "subs" });
-          if (!claim.ok) { log({ refused: claim.why }); return say(402, { error: claim.why || "already used" }); }
           const hash = await tokenId(token);
+          if (!claim.ok) {
+            /* Held by another Nabu account, and Google has just said this is
+               the subscription this phone holds: it follows its buyer, and
+               the account that held it loses it in the same step. Same rule
+               as the App Store, for the same reason - see movePurchase. */
+            const moved = await movePurchase(env, hash, person.uid, (row) => dropSubscriptionFrom(env, row.uid, hash).then(() => undefined));
+            if (!moved.ok) { log({ refused: moved.why || claim.why }); return say(402, { error: moved.why || claim.why || "already used" }); }
+            log({ moved: hash, from: moved.from });
+          }
           const out = await applySubscription(env, person.uid, item, sub, hash);
           await markGranted(env, token, { state: sub.state, plan: sub.basePlanId }).catch((e) => log({ ledger: String(e) }));
           const opened = out.subs[item.key].grant ? item.opens : [];
@@ -540,7 +548,14 @@ export default {
            claim closes the gap, and it doubles as the ledger row the nightly
            refund sweep needs. */
         const claim = await claimPurchase(env, person.uid, sku, item.opens, token, { kind: "inapp" });
-        if (!claim.ok) { log({ refused: claim.why }); return say(402, { error: claim.why || "already used" }); }
+        if (!claim.ok) {
+          /* And a course follows its buyer too (movePurchase): the account
+             that held it keeps whatever a code or a bank transfer paid for. */
+          const hash = await tokenId(token);
+          const moved = await movePurchase(env, hash, person.uid, (row) => removeAccessFor(env, row.uid, row.ids, hash).then(() => undefined));
+          if (!moved.ok) { log({ refused: moved.why || claim.why }); return say(402, { error: moved.why || claim.why || "already used" }); }
+          log({ moved: hash, from: moved.from });
+        }
 
         /* The date is decided once and written to the ledger; a retry reads
            it back rather than adding another six months. */

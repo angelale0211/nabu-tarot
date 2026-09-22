@@ -18,8 +18,8 @@
 import { b64url, utf8, pemToBytes } from "./play";
 import type { PlayEnv, SubInfo } from "./play";
 import { itemBySku } from "./catalog";
-import { applySubscription, payRoom, unpayRoom } from "./entitle";
-import { claimPurchase, ledgerGet, ledgerSet, markGranted, tokenId, removeAccessFor, LedgerRow } from "./refunds";
+import { applySubscription, dropSubscriptionFrom, payRoom, unpayRoom } from "./entitle";
+import { claimPurchase, ledgerGet, ledgerSet, markGranted, movePurchase, tokenId, removeAccessFor, LedgerRow } from "./refunds";
 import { decode } from "./fs";
 import { serviceToken, FS_SCOPE, grantUntil } from "./play";
 
@@ -209,9 +209,13 @@ export async function appleBill(env: AppleEnv, uid: string, b: { sku?: string; t
   const got = await checkAppleTransaction(env, id);
   if (!got.ok || !got.tx) return refuse(got.why);
   const tx = got.tx;
-  /* Bought by a different Nabu account. Said the way the ledger says it, so
-     the phone shows the one sentence it already has for this. */
-  if (tx.appAccountToken && tx.appAccountToken.toLowerCase() !== await accountToken(uid)) return refuse("already used");
+  /* Apple wrote down which Nabu account started this purchase. A purchase
+     naming somebody else is only allowed through when the ledger has a row
+     for it and can therefore move it - the account that held it loses it in
+     the same step (movePurchase). A purchase naming somebody else that
+     nothing has ever claimed has no owner to take it from and no buyer to put
+     right, so it stays refused, the way the ledger says it. */
+  const foreign = !!(tx.appAccountToken && tx.appAccountToken.toLowerCase() !== await accountToken(uid));
   if (tx.revocationDate) return refuse("refunded");
 
   /* ---- a subscription: Apple's current state is the state ---- */
@@ -225,9 +229,20 @@ export async function appleBill(env: AppleEnv, uid: string, b: { sku?: string; t
     const item = itemBySku(s.sub.productId);
     if (!item || item.kind !== "subs") return refuse("product mismatch");
     const token = appleToken(s.tx.originalTransactionId);
-    const claim = await claimPurchase(env, uid, item.sku, item.opens, token, { kind: "subs" });
-    if (!claim.ok) return refuse(claim.why || "already used");
     const hash = await tokenId(token);
+    /* Asked before the claim, never after: a claim that should not have been
+       made cannot be taken back without leaving a row that refuses its own
+       rightful owner later. */
+    if (foreign && !(await ledgerGet(env, hash))) return refuse("already used");
+    const claim = await claimPurchase(env, uid, item.sku, item.opens, token, { kind: "subs" });
+    if (!claim.ok) {
+      /* Held by another Nabu account. Apple has just said this subscription
+         is the one this phone holds, so it follows its buyer: the account
+         that held it stops holding it and this one takes it up. */
+      const moved = await movePurchase(env, hash, uid, (row) => dropSubscriptionFrom(env, row.uid, hash).then(() => undefined));
+      if (!moved.ok) return refuse(moved.why || claim.why || "already used");
+      log({ moved: hash, from: moved.from });
+    }
     const out = await applySubscription(env, uid, item, s.sub, hash, "apple");
     await ledgerSet(env, hash, { state: s.sub.state, plan: s.sub.basePlanId, sku: item.sku, ids: item.opens, store: "apple" }).catch((e) => log({ ledger: String(e) }));
     const opened = out.subs[item.key].grant ? item.opens : [];
@@ -237,6 +252,9 @@ export async function appleBill(env: AppleEnv, uid: string, b: { sku?: string; t
 
   if (tx.productId !== want.sku) return refuse("product mismatch");
   const token = appleToken(tx.transactionId);
+  /* A wedding is paid for a room and never moves, so for it this is what it
+     has always been: a flat refusal. */
+  if (foreign && (want.key === "wedding" || !(await ledgerGet(env, await tokenId(token))))) return refuse("already used");
 
   /* ---- the wedding: the same claim-then-pay order as Play, and for the same reasons (index.ts) ---- */
   if (want.key === "wedding") {
@@ -260,7 +278,15 @@ export async function appleBill(env: AppleEnv, uid: string, b: { sku?: string; t
      than from now, so a purchase that reaches the worker a day late is not
      given a day extra, and a retry reads the date back from the ledger. */
   const claim = await claimPurchase(env, uid, want.sku, want.opens, token, { kind: "inapp" });
-  if (!claim.ok) return refuse(claim.why || "already used");
+  if (!claim.ok) {
+    /* A course follows its buyer for the same reason a subscription does, and
+       loses nothing on the way: the old holder keeps any part of it a code or
+       a bank transfer paid for (removeAccess reads that floor for itself). */
+    const hash = await tokenId(token);
+    const moved = await movePurchase(env, hash, uid, (row) => removeAccessFor(env, row.uid, row.ids, hash).then(() => undefined));
+    if (!moved.ok) return refuse(moved.why || claim.why || "already used");
+    log({ moved: hash, from: moved.from });
+  }
   let until = claim.existing && claim.existing.until;
   if (!until) { const d = new Date(tx.purchaseDate || Date.now()); d.setMonth(d.getMonth() + want.months); until = d.toISOString().slice(0, 10); }
   const wantAccess: Record<string, string> = {};
