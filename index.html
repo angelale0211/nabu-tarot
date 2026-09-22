@@ -1403,12 +1403,15 @@ h1 .pileico{width:34px;height:27px;vertical-align:-3px;margin-right:2px}
 .stagebtns.right{right:6px;align-items:flex-end}
 /* The pill is white whatever the theme, so its ink is dark whatever the
    theme. Following --fg here made these vanish in the dark. */
-.stagebtn{display:flex;align-items:center;gap:5px;background:rgba(255,255,255,.9);border:1px solid rgba(90,70,120,.18);border-radius:999px;padding:5px 9px;font:inherit;color:#3B2A5E;cursor:pointer;box-shadow:0 2px 8px rgba(60,40,90,.18);backdrop-filter:blur(3px)}
+/* Forty is the smallest a thumb reliably hits. These were thirty: four
+   round-cornered buttons on the edge of a 288px stage, and the two that open
+   a whole screen of their own are among them. */
+.stagebtn{display:flex;align-items:center;gap:5px;min-height:40px;background:rgba(255,255,255,.9);border:1px solid rgba(90,70,120,.18);border-radius:999px;padding:5px 11px;font:inherit;color:#3B2A5E;cursor:pointer;box-shadow:0 2px 8px rgba(60,40,90,.18);backdrop-filter:blur(3px)}
 .stagebtn .ic{font-size:15px;line-height:1}
 .stagebtn .lb{font-size:11.5px;font-weight:600;white-space:nowrap}
 .stagebtn.locked{opacity:.9;border-style:dashed;cursor:default}
 .stagebtn .lk{font-size:11px}
-@media (max-width:360px){.stagebtn .lb{display:none}.stagebtn{padding:6px 7px}}
+@media (max-width:360px){.stagebtn .lb{display:none}.stagebtn{min-width:40px;justify-content:center;padding:6px 8px}}
 /* The sheet that those buttons lift. */
 .sheet{position:fixed;inset:0;z-index:60;display:flex;align-items:flex-end;justify-content:center}
 .sheet .sh-back{position:absolute;inset:0;background:rgba(30,18,50,.42);animation:fadein .18s ease}
@@ -1453,12 +1456,14 @@ h1 .pileico{width:34px;height:27px;vertical-align:-3px;margin-right:2px}
 /* Said under the picture, where the hands actually go. */
 #main p.handhint{text-align:center;margin:0 0 12px;font-size:13px;color:var(--fg-soft)}
 /* What the next level pays, said where the level is shown. */
-.nextpay{display:flex;align-items:center;gap:8px;margin:0 0 12px;padding:8px 12px;border-radius:12px;background:var(--tag-gold-bg);color:var(--tag-gold-ink);font-size:12.5px;font-weight:600;text-decoration:none}
+.nextpay{display:flex;align-items:center;min-height:40px;gap:8px;margin:0 0 12px;padding:8px 12px;border-radius:12px;background:var(--tag-gold-bg);color:var(--tag-gold-ink);font-size:12.5px;font-weight:600;text-decoration:none}
 .nextpay .go{margin-left:auto;font-weight:700}
 /* Every way to earn, two to a row. */
 /* The reminder switch, under the companion's name. */
-.remind{display:flex;align-items:center;gap:9px;margin-top:12px;font-size:13.5px;cursor:pointer}
-.remind input{width:18px;height:18px;flex:none;margin:0}
+/* The label is the target, not the box - so the label is what has to be
+   big enough. It was as tall as its own text, twenty-one pixels. */
+.remind{display:flex;align-items:center;min-height:40px;gap:9px;margin-top:12px;font-size:13.5px;cursor:pointer}
+.remind input{width:22px;height:22px;flex:none;margin:0}
 .earnhead{display:flex;justify-content:space-between;align-items:baseline;gap:10px;margin-bottom:6px;font-size:13px}
 .earnhead span{color:var(--fg-soft)}.earnhead b{font-weight:700;white-space:nowrap}
 .earngrid{display:grid;grid-template-columns:1fr 1fr;gap:4px 8px;margin-bottom:12px}
@@ -1508,7 +1513,10 @@ h1 .pileico{width:34px;height:27px;vertical-align:-3px;margin-right:2px}
 .carelist li.locked{opacity:.7}.carelist li.locked b{color:var(--gold-deep)}
 .carelist li.head{border-bottom:1px solid var(--rule-soft);padding-bottom:5px;margin-bottom:1px;color:var(--fg)}
 .carelist li.head span,.carelist li.head b{font-weight:600;font-size:13px}
-.petstat a{color:var(--gold-deep);text-decoration:none;font-weight:600}
+/* The only thing in this row anybody taps, and it was twenty-one pixels
+   across. The row centres on it so the other two do not jump. */
+.petstat a{display:inline-flex;align-items:center;justify-content:center;
+  min-height:40px;min-width:40px;padding:0 6px;color:var(--gold-deep);text-decoration:none;font-weight:600}
 /* ---- coins, vouchers and the panel offered when ordering ---- */
 .luckpanel .lk-row{display:flex;align-items:center;gap:9px;padding:7px 0;font-size:13.5px;border-bottom:1px solid var(--rule-soft)}
 .luckpanel .lk-row:last-of-type{border-bottom:0}
@@ -2031,7 +2039,7 @@ html,body{overscroll-behavior-y:contain}
 .holds li span{flex:1}
 .holds li b{font-weight:700;color:var(--gold-deep);white-space:nowrap}
 .btn.tiny{padding:5px 11px;font-size:12.5px;width:auto;flex:none}
-.petstat{display:flex;justify-content:center;gap:14px;font-size:13.5px;color:var(--fg-soft);margin-bottom:10px}
+.petstat{display:flex;align-items:center;justify-content:center;gap:14px;font-size:13.5px;color:var(--fg-soft);margin-bottom:10px}
 /* What the companion answers with, once a day. */
 /* Its own space at both ends, so neither the marker above nor the badge
    below it ever collides with the text. */
@@ -2049,7 +2057,7 @@ html,body{overscroll-behavior-y:contain}
 /* The title holds the name and the pencil that edits it in place. */
 #main h1.pettitle{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
 .pettitle input{flex:1 1 160px;min-width:0;max-width:260px;font-size:17px;padding:8px 12px}
-.renamebtn{flex:none;width:34px;height:34px;border:1px solid var(--rule);border-radius:50%;background:var(--surface);font-size:15px;line-height:1;display:grid;place-content:center}
+.renamebtn{flex:none;width:40px;height:40px;border:1px solid var(--rule);border-radius:50%;background:var(--surface);font-size:15px;line-height:1;display:grid;place-content:center}
 .petsetcard{margin-top:18px}
 /* Six at most, so they fit on two rows and sit in the middle rather than
    sliding off to the left. */
@@ -2147,7 +2155,7 @@ body.behindsheet #main *,body.behindsheet #backbar *{animation-play-state:paused
 .dresssheet .wtitle{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:8px}
 .dresssheet .wtitle b{font-size:15px}
 .dresssheet .wclose{background:var(--surface-2);border:1px solid var(--rule-soft);border-radius:999px;
-  width:30px;height:30px;font-size:14px;color:var(--fg);cursor:pointer;line-height:1}
+  width:40px;height:40px;font-size:16px;color:var(--fg);cursor:pointer;line-height:1}
 .dresssheet .wpreview{display:flex;gap:12px;align-items:center}
 .dresssheet .wpreview .petstage{position:relative;flex:0 0 132px;width:132px;height:132px;
   border-radius:16px;overflow:hidden;box-shadow:0 3px 14px rgba(60,40,90,.16)}
@@ -2178,7 +2186,7 @@ body.behindsheet #main *,body.behindsheet #backbar *{animation-play-state:paused
 .dresssheet .wslot.on .wthumb{border-color:var(--primary);border-width:2px;border-style:solid;
   box-shadow:0 0 0 3px color-mix(in srgb,var(--primary) 18%,transparent)}
 .dresssheet .wslot.on{color:var(--fg)}
-.dresssheet .wslot u{text-decoration:none;font-size:10.5px;font-weight:600;white-space:nowrap}
+.dresssheet .wslot u{text-decoration:none;font-size:12px;font-weight:600;white-space:nowrap}
 .dresssheet .wsep{flex:0 0 1px;background:var(--rule-soft);margin:4px 4px 18px}
 
 .dresssheet .wbody{flex:1 1 auto;overflow-y:auto;padding:10px 14px 4px}
@@ -2247,6 +2255,7 @@ body.behindsheet #main *,body.behindsheet #backbar *{animation-play-state:paused
    the rail is centred and the tabs are allowed to be wide enough to read. */
 .scenesheet .scenerail{justify-content:center;gap:14px;overflow-x:visible}
 .scenesheet .scenerail .wslot{flex:0 0 auto;min-width:64px}
+.scenesheet .scenerail u{font-size:12.5px}
 .scenesheet .scenerail .wthumb{border-style:solid;border-color:var(--rule-soft);background:var(--surface)}
 .scenesheet .scenerail .wslot.on .wthumb{background:var(--soft)}
 .scenesheet .wmeta .wcount b,.scenesheet .wmeta .wpay b{color:var(--primary)}
@@ -2262,7 +2271,7 @@ body.behindsheet #main *,body.behindsheet #backbar *{animation-play-state:paused
 .dresssheet .wlooks .lbl{font-size:11.5px;color:var(--muted);white-space:nowrap}
 .dresssheet .wlook{display:flex;flex-direction:column;align-items:center;gap:1px;flex:0 0 auto}
 .dresssheet .wlook .btn.small{padding:3px 10px;font-size:11.5px;min-width:52px}
-.dresssheet .wlook .linkbtn{font-size:10.5px}
+.dresssheet .wlook .linkbtn{min-width:44px;justify-content:center;font-size:12px}
 .dresssheet .wacts{gap:6px}
 .dresssheet .wacts .btn{font-size:12px;padding:8px 6px}
 

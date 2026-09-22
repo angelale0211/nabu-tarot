@@ -63,6 +63,34 @@ def main():
             if shown != want:
                 fails.append('%s: head slot shows %s, expected %s' % (tier, shown, want))
 
+            # ---- nothing on this screen is too small to put a thumb on ----
+            # Forty pixels, measured on the control itself unless it sits in a
+            # label, which is then the real target - a checkbox is meant to be
+            # small and its words are what gets tapped. The companion screen
+            # had six of these: the four buttons on the edge of the stage, the
+            # coin, the pencil and the reminder row.
+            SMALL = """() => {
+              const out = [];
+              document.querySelectorAll('#main button, #main a[href], #main input').forEach((el) => {
+                if (el.closest('button, a[href]') !== el && el.closest('button, a[href]')) return;
+                const lab = el.closest('label');
+                const t = lab || el;
+                const r = t.getBoundingClientRect();
+                if (!r.width || !r.height) return;
+                if (getComputedStyle(el).display === 'none') return;
+                if (Math.min(r.width, r.height) < 40) {
+                  out.push((el.id ? '#' + el.id : el.tagName.toLowerCase()
+                    + (el.className && typeof el.className === 'string' ? '.' + el.className.trim().split(/\\s+/)[0] : ''))
+                    + ' ' + Math.round(r.width) + 'x' + Math.round(r.height));
+                }
+              });
+              return out;
+            }"""
+            small = page.evaluate(SMALL)
+            if small:
+                fails.append('%s: too small to tap on the companion screen: %s'
+                             % (tier, ', '.join(sorted(set(small))[:6])))
+
             btn = page.locator('#opendress')
             if not btn.count():
                 fails.append('%s: no wardrobe button on the companion screen' % tier)
@@ -167,6 +195,16 @@ def main():
                     page.wait_for_timeout(300)
                     if '#/unlock' in page.url:
                         fails.append('%s: a locked scene threw the visitor at the price list' % tier)
+                sheet_small = page.evaluate(
+                    "() => Array.from(document.querySelectorAll('.scenesheet .whead button,"
+                    " .scenesheet .wfoot button, .scenesheet .wrail button'))"
+                    " .map(el => ({ el, r: el.getBoundingClientRect() }))"
+                    " .filter(x => x.r.width && x.r.height && Math.min(x.r.width, x.r.height) < 40)"
+                    " .map(x => (x.el.className || x.el.tagName) + ' ' + Math.round(x.r.width)"
+                    " + 'x' + Math.round(x.r.height))")
+                if sheet_small:
+                    fails.append('%s: too small to tap on the scene screen: %s'
+                                 % (tier, ', '.join(sorted(set(sheet_small))[:6])))
                 page.locator('.scenesheet .wclose').click()
                 page.wait_for_timeout(500)
                 if page.locator('.scenesheet').count():
