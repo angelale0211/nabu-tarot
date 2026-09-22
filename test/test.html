@@ -1596,26 +1596,51 @@ async function go(hash, sel) { W().location.hash = hash; await sleep(30); return
         && d.querySelectorAll('.earngrid .e').length === 12 && d.querySelectorAll('.earngrid .e.locked').length === 6
         && d.querySelector('#petfeed') && d.querySelector('#groombtn') && d.querySelector('.nextpay') && d.querySelector('.petstage #foodchip'),
         'the chosen companion arrives with a home, a halo, four ways to dress it on the scene itself, and six locked ways to earn more');
-      /* Three of the four buttons lift a shelf; the fourth opens the wardrobe,
-         which is a screen of its own since the clothing outgrew a tab. */
-      ok(d.querySelectorAll('.petstage [data-open-sheet]').length === 3 && !!d.querySelector('.petstage #opendress'),
-        'food, home and coat keep their shelves, and the crown opens the wardrobe');
+      /* Two of the four buttons lift a shelf. The other two open screens of
+         their own: the wardrobe, which the clothing outgrew a tab for, and the
+         scene, which is the home with the sky and the effects gathered onto
+         it - a sky is the room, not the coat. */
+      ok(d.querySelectorAll('.petstage [data-open-sheet]').length === 2
+        && !!d.querySelector('.petstage #opendress') && !!d.querySelector('.petstage #openscene'),
+        'food and coat keep their shelves; the crown opens the wardrobe and the house the scene');
       d.querySelector('[data-open-sheet="food"]').click(); await sleep(40);
-      ok(d.querySelector('.sheet') && d.querySelectorAll('[data-sheet-tab]').length === 3
+      ok(d.querySelector('.sheet') && d.querySelectorAll('[data-sheet-tab]').length === 2
         && d.querySelectorAll('[data-shelf^="food"]').length === 9 && d.querySelectorAll('[data-shelf^="food"].locked').length === 7,
-        'a button on the scene lifts one sheet holding the three shelves; two plain foods are free and seven need Plus');
-      d.querySelector('[data-sheet-tab="home"]').click(); await sleep(40);
-      ok(d.querySelectorAll('[data-shelf^="home"]').length === 9 && d.querySelectorAll('[data-shelf^="home"].locked').length === 8, 'the grass mat is free and the eight homes need Plus');
+        'a button on the scene lifts one sheet holding the two shelves; two plain foods are free and seven need Plus');
+      ok(!d.querySelector('[data-sheet-tab="home"]') && !d.querySelector('[data-shelf^="home"]'),
+        'the home has left the sheet it used to share with the food');
       d.querySelector('[data-close-sheet]').click(); await sleep(40);
       ok(!d.querySelector('.sheet'), 'the sheet closes again');
-      { /* the wardrobe: seven slots and the two scene tabs, every piece locked
-           for a visitor who holds neither plan, each with a picture of its own */
+      { /* the scene screen: three tabs, twenty-one homes, ten skies, ten
+           effects, and for a visitor holding neither plan almost all of it
+           locked - but shown in full, with what it would look like. */
+        d.querySelector('#openscene').click(); await sleep(90);
+        const tabs = d.querySelectorAll('.scenesheet [data-scene-tab]');
+        ok(!!d.querySelector('.scenesheet') && !!d.querySelector('#scenestage') && tabs.length === 3,
+          'the home opens as its own screen, with the sky and the effects beside it'
+          + ' [tabs ' + tabs.length + ']');
+        const homes = d.querySelectorAll('.scenesheet [data-home]');
+        ok(homes.length === 21 && d.querySelectorAll('.scenesheet [data-home].locked').length === 20,
+          'twenty-one homes, of which the grass mat alone is free'
+          + ' [' + homes.length + ', locked ' + d.querySelectorAll('.scenesheet [data-home].locked').length + ']');
+        d.querySelector('.scenesheet [data-scene-tab="sky"]').click(); await sleep(60);
+        ok(d.querySelectorAll('.scenesheet [data-sky]').length === 10
+          && d.querySelectorAll('.scenesheet [data-sky].locked').length === 8,
+          'ten skies, of which the clear one and the fireflies are free');
+        d.querySelector('.scenesheet [data-scene-tab="fx"]').click(); await sleep(60);
+        ok(d.querySelectorAll('.scenesheet [data-fx]').length === 10
+          && d.querySelectorAll('.scenesheet [data-fx].locked').length === 9,
+          'ten effects, of which only having none is free');
+        d.querySelector('.scenesheet [data-dclose]').click(); await sleep(60);
+        ok(!d.querySelector('.scenesheet'), 'the scene screen closes again'); }
+      { /* the wardrobe: seven slots and nothing else, every piece locked for a
+           visitor who holds neither plan, each with a picture of its own */
         d.querySelector('#opendress').click(); await sleep(80);
         const rail = d.querySelectorAll('.dresssheet .wrail .wslot');
         const tiles = d.querySelectorAll('.dresssheet .wtile:not(.bare)');
-        ok(!!d.querySelector('.dresssheet') && !!d.querySelector('#dressstage') && rail.length === 9
-          && d.querySelectorAll('.dresssheet .wslot.scene').length === 2,
-          'the wardrobe opens as its own screen, with the seven slots and the sky and effect tabs'
+        ok(!!d.querySelector('.dresssheet') && !!d.querySelector('#dressstage') && rail.length === 7
+          && !d.querySelector('.dresssheet .wslot.scene'),
+          'the wardrobe opens as its own screen, with the seven slots and no scene tabs left on it'
           + ' [rail ' + rail.length + ']');
         ok(tiles.length >= 10 && [].every.call(tiles, (t) => t.classList.contains('locked'))
           && [].every.call(tiles, (t) => !!t.querySelector('.wart svg')) && !!d.querySelector('.dresssheet .wtile.bare'),
@@ -4389,7 +4414,13 @@ async function go(hash, sel) { W().location.hash = hash; await sleep(30); return
           'the page names the file its course answers live in, and the name carries a hash of their contents [' + N.KB_URL + ']');
         const size = async (u) => { const r = await w.fetch(u, { method: 'HEAD' }); return r.ok ? Number(r.headers.get('content-length') || 0) : -1; };
         const pageBytes = await size('/index.html'), kbBytes = await size('/' + String(N.KB_URL || '').replace('./', ''));
-        ok(pageBytes > 0 && kbBytes > 400000 && pageBytes < 3500000,
+        /* The ceiling moved from 3.5MB to 3.6MB when the companion's homes went
+           from nine to twenty-one. The guard is against the page growing
+           without anybody noticing, not against it growing: twelve hand-drawn
+           scenes are 53KB of source and 13KB once Cloudflare has compressed
+           it, about 1% of what the page already sends. Raise it deliberately
+           or not at all - and never to make a red run go green. */
+        ok(pageBytes > 0 && kbBytes > 400000 && pageBytes < 3600000,
           'the biggest table in the app sits beside the page rather than inside it, so a cold open no longer parses it'
           + ' [page ' + Math.round(pageBytes / 1024) + 'KB, answers ' + Math.round(kbBytes / 1024) + 'KB]');
         const got = await N.kbReady();
@@ -4852,7 +4883,7 @@ async function go(hash, sel) { W().location.hash = hash; await sleep(30); return
       if (d.querySelector('#petkeep')) { d.querySelector('#petkeep').click(); await sleep(320); }
 
       const bad = [];
-      for (const pair of [['food', 'honey'], ['home', 'cloud'], ['coat', 'gold']]) {
+      for (const pair of [['food', 'honey'], ['coat', 'gold']]) {
         /* Each shelf starts from the companion's own page, so one choice
            cannot leave the next in a state it did not expect. */
         await go('#/home', '#main'); await go('#/play/pet', '#main'); await sleep(240);
@@ -4867,6 +4898,34 @@ async function go(hash, sel) { W().location.hash = hash; await sleep(30); return
         const p = N.PETS.all()[0] || {};
         if (p[pair[0]] !== pair[1]) bad.push(pair[0] + ' stayed ' + p[pair[0]] + ' instead of ' + pair[1]);
       }
+      /* The home left the sheet too, and took the sky and the effects with it:
+         one screen of three tabs, opened by the house on the edge of the stage.
+         All three are set from there and nowhere else now. */
+      { await go('#/home', '#main'); await go('#/play/pet', '#main'); await sleep(240);
+        if (!d.querySelector('#openscene')) bad.push('the scene screen has no way to open it');
+        else {
+          d.querySelector('#openscene').click(); await sleep(240);
+          for (const pair of [['home', 'cloud'], ['sky', 'starry'], ['fx', 'twinkle']]) {
+            const tabb = d.querySelector('[data-scene-tab="' + pair[0] + '"]');
+            if (!tabb) { bad.push('the scene screen has no ' + pair[0] + ' tab'); continue; }
+            tabb.click(); await sleep(200);
+            const t = d.querySelector('[data-' + pair[0] + '="' + pair[1] + '"]');
+            if (!t) { bad.push('the ' + pair[0] + ' tab has no ' + pair[1]); continue; }
+            t.click(); await sleep(240);
+            const p = N.PETS.all()[0] || {};
+            if (p[pair[0]] !== pair[1]) bad.push(pair[0] + ' stayed ' + p[pair[0]] + ' instead of ' + pair[1]);
+          }
+          /* And the wardrobe must not still be offering them. */
+          if (d.querySelector('.scenesheet [data-dclose]')) { d.querySelector('.scenesheet [data-dclose]').click(); await sleep(120); }
+          if (d.querySelector('#opendress')) {
+            d.querySelector('#opendress').click(); await sleep(220);
+            if (d.querySelector('.dresssheet [data-tab="sky"]') || d.querySelector('.dresssheet [data-tab="fx"]')) {
+              bad.push('the wardrobe still has a sky or effects tab');
+            }
+            if (d.querySelector('.dresssheet [data-dclose]')) { d.querySelector('.dresssheet [data-dclose]').click(); await sleep(80); }
+          }
+        } }
+
       /* Clothing left the sheet for the wardrobe, and is kept per slot rather
          than as one `wear`, so it is put on and read back its own way. */
       { await go('#/home', '#main'); await go('#/play/pet', '#main'); await sleep(240);

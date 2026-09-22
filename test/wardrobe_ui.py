@@ -72,9 +72,11 @@ def main():
             page.wait_for_timeout(700)
             page.screenshot(path=os.path.join(SHOTS, 'wardrobe-ui-%s-head.png' % tier))
 
+            # Seven slots and nothing else. It was nine while the sky and the
+            # effects were tabs on this rail; they live on the scene screen now.
             rail = page.locator('.dresssheet .wslot')
-            if rail.count() != 9:
-                fails.append('%s: slot rail has %d buttons, expected 9' % (tier, rail.count()))
+            if rail.count() != 7:
+                fails.append('%s: slot rail has %d buttons, expected 7' % (tier, rail.count()))
 
             # put something on, and check the preview changed with it
             free_tile = page.locator('.dresssheet [data-wear]:not(.locked):not(.bare)').first
@@ -95,13 +97,12 @@ def main():
                 if '#/unlock' in page.url:
                     fails.append('%s: a locked piece threw the visitor at the price list' % tier)
 
-            # the sky tab, then the effects tab
-            page.locator('.dresssheet [data-tab="sky"]').click()
-            page.wait_for_timeout(500)
-            page.screenshot(path=os.path.join(SHOTS, 'wardrobe-ui-%s-sky.png' % tier))
-            page.locator('.dresssheet [data-tab="fx"]').click()
-            page.wait_for_timeout(500)
-            page.screenshot(path=os.path.join(SHOTS, 'wardrobe-ui-%s-fx.png' % tier))
+            # The sky and the effects are not in here any more: they went to
+            # the scene screen with the home. Check they are gone, and shoot
+            # them where they now live.
+            for gone in ('sky', 'fx'):
+                if page.locator('.dresssheet [data-tab="%s"]' % gone).count():
+                    fails.append('%s: the wardrobe still has a %s tab' % (tier, gone))
 
             # surprise me, then save it, then strip, then bring it back
             page.locator('.dresssheet [data-tab="top"]').click()
@@ -130,6 +131,46 @@ def main():
             if page.locator('.dresssheet').count():
                 fails.append('%s: the wardrobe would not close' % tier)
             page.screenshot(path=os.path.join(SHOTS, 'wardrobe-ui-%s-card.png' % tier))
+
+            # ---- the scene screen: home, sky and effects, in one place ----
+            if not page.locator('#openscene').count():
+                fails.append('%s: no way to open the scene screen' % tier)
+            else:
+                page.locator('#openscene').click()
+                page.wait_for_timeout(600)
+                for tab in ('home', 'sky', 'fx'):
+                    t = page.locator('.scenesheet [data-scene-tab="%s"]' % tab)
+                    if not t.count():
+                        fails.append('%s: the scene screen has no %s tab' % (tier, tab))
+                        continue
+                    t.click()
+                    page.wait_for_timeout(450)
+                    page.screenshot(path=os.path.join(SHOTS, 'scene-ui-%s-%s.png' % (tier, tab)))
+                # Every scene in the grid is held still. One that moves is one
+                # of ten or twenty moving at once, which is the fault this
+                # screen was rebuilt to cure. The shimmer that marks a locked
+                # tile is not one of them: it is a pseudo-element sweeping a
+                # band with a transform, which the compositor takes off the
+                # main thread entirely, and it is how a visitor without the
+                # plan is told what they are looking at.
+                moving = page.evaluate(
+                    "() => document.getAnimations().filter(a => a.playState === 'running'"
+                    " && a.effect && !a.effect.pseudoElement && a.effect.target"
+                    " && a.effect.target.closest"
+                    " && a.effect.target.closest('.scenesheet .wgrid')).length")
+                if moving:
+                    fails.append('%s: %d animations running inside the picker grid' % (tier, moving))
+                # A free visitor must still be told why, in place.
+                locked = page.locator('.scenesheet .wtile.locked').first
+                if locked.count():
+                    locked.click()
+                    page.wait_for_timeout(300)
+                    if '#/unlock' in page.url:
+                        fails.append('%s: a locked scene threw the visitor at the price list' % tier)
+                page.locator('.scenesheet .wclose').click()
+                page.wait_for_timeout(500)
+                if page.locator('.scenesheet').count():
+                    fails.append('%s: the scene screen would not close' % tier)
 
             real = [e for e in errs if 'firebase' not in e.lower() and 'network' not in e.lower()]
             if real:

@@ -194,7 +194,21 @@ const PET_HOMES = [
   { id: 'palace', pro: true, add: 12, name: { vi: 'Cung điện', en: 'The palace', de: 'Palast' } },
   { id: 'castle', pro: true, add: 12, name: { vi: 'Lâu đài phép', en: 'Magic castle', de: 'Zauberschloss' } },
   { id: 'lotus', pro: true, add: 12, name: { vi: 'Thủy tạ đầm sen', en: 'Lotus pavilion', de: 'Lotuspavillon' } },
-  { id: 'isle', pro: true, add: 12, name: { vi: 'Đảo trời', en: 'Floating isle', de: 'Schwebende Insel' } }
+  { id: 'isle', pro: true, add: 12, name: { vi: 'Đảo trời', en: 'Floating isle', de: 'Schwebende Insel' } },
+  /* Twelve more, drawn in the same hand. They go after the first nine rather
+     than among them so that nobody's home moves in the list overnight. */
+  { id: 'bamboo', pro: true, add: 12, name: { vi: 'Vườn tre', en: 'Bamboo grove', de: 'Bambushain' } },
+  { id: 'teahouse', pro: true, add: 12, name: { vi: 'Quán trà', en: 'Tea house', de: 'Teehaus' } },
+  { id: 'study', pro: true, add: 12, name: { vi: 'Thư phòng', en: 'Reading room', de: 'Lesezimmer' } },
+  { id: 'greenhouse', pro: true, add: 12, name: { vi: 'Nhà kính', en: 'Glasshouse', de: 'Gewächshaus' } },
+  { id: 'mushroom', pro: true, add: 12, name: { vi: 'Nhà nấm', en: 'Mushroom house', de: 'Pilzhaus' } },
+  { id: 'shell', pro: true, add: 12, name: { vi: 'Nhà vỏ sò', en: 'Shell on the shore', de: 'Muschel am Strand' } },
+  { id: 'treehouse', pro: true, add: 12, name: { vi: 'Nhà trên cây', en: 'Treehouse', de: 'Baumhaus' } },
+  { id: 'crystal', pro: true, add: 12, name: { vi: 'Hang pha lê', en: 'Crystal cave', de: 'Kristallhöhle' } },
+  { id: 'observatory', pro: true, add: 12, name: { vi: 'Đài ngắm sao', en: 'Observatory', de: 'Sternwarte' } },
+  { id: 'boat', pro: true, add: 12, name: { vi: 'Thuyền hoa', en: 'Flower boat', de: 'Blumenboot' } },
+  { id: 'cabin', pro: true, add: 12, name: { vi: 'Nhà gỗ mùa đông', en: 'Winter cabin', de: 'Winterhütte' } },
+  { id: 'oasis', pro: true, add: 12, name: { vi: 'Ốc đảo', en: 'Oasis', de: 'Oase' } }
 ];
 /* What there is to wear now lives in pet-wardrobe.js: seven slots worn at once
    instead of the single one this list used to hold. The nine ids it held are
@@ -270,6 +284,7 @@ const PETS = {
     return this.put(p);
   },
   strip(p) { p.fit = fitBlank(); return this.put(p); },
+  setHome(p, id) { p.home = pickFrom(PET_HOMES, id, true).id; return this.put(p); },
   setSky(p, id) { p.sky = skyOf(id).id; return this.put(p); },
   setFx(p, id) { p.fx = fxOf(id).id; return this.put(p); },
   fedToday(p) { return !!p && p.fed === isoDate(new Date()); },
@@ -445,6 +460,20 @@ const PET = PETS;
    stage exactly, so the scene fills the frame with nothing floating in it.
    The companion stands to the left of centre, which is why every building is
    set to the right. */
+/* A scene held still: the classes that name an animation, taken out of the
+   markup, and the delays with them.
+
+   A picker tile does not need to move. Ten of them moving at once is what put
+   the wardrobe at half of every frame on a mid-range Android - the grid, the
+   preview above it and the companion screen behind it all ticking together.
+   Stripping the markup beats threading a flag through nine hand-drawn homes,
+   and it cannot be forgotten in the tenth. Only classes that name a keyframe
+   are listed; .pethome and .petsky place the layer and must survive. */
+const PET_ANI_CLASS = /\s+class="(?:twinkle|fly(?: lit)?|drift|shaft|shoot|wing|leaffall|flit)"/g;
+const petStill = (svg) => String(svg)
+  .replace(PET_ANI_CLASS, '')
+  .replace(/\s+style="animation-delay:[^"]*"/g, '');
+
 function petHomeSVG(id) {
   const open = '<svg viewBox="0 0 240 240" class="pethome" preserveAspectRatio="xMidYMax slice" aria-hidden="true">';
   if (id === 'cloud') {
@@ -633,6 +662,490 @@ function petHomeSVG(id) {
       + '<rect x="0" y="206" width="240" height="34" fill="#4A3E80"/>'
       + '<g fill="#5E4F9E"><ellipse cx="40" cy="212" rx="30" ry="8"/><ellipse cx="190" cy="214" rx="34" ry="9"/></g></svg>';
   }
+  /* ---- the twelve added homes ----
+     Same hand as the nine above: a gradient for the air, a mist layer far off,
+     the place itself standing to the right because the companion stands left
+     of centre, and the ground last. Nothing moves in them but the odd star,
+     and that is stripped out by petStill for a picker tile. Thirty-odd nodes
+     is the ceiling - a home is the backdrop, not the subject. */
+
+  /* A grove, and a thatched hut standing in it. */
+  if (id === 'bamboo') {
+    const cane = (x, top, w, col, dark) => {
+      let g = '<rect x="' + (x - w / 2) + '" y="' + top + '" width="' + w + '" height="' + (214 - top) + '" fill="' + col + '"/>';
+      for (let y = top + 24; y < 214; y += 28) g += '<rect x="' + (x - w / 2 - 1.5) + '" y="' + y + '" width="' + (w + 3) + '" height="3" rx="1.5" fill="' + dark + '"/>';
+      return g;
+    };
+    /* Two arcs bowing opposite ways make a leaf. The first pass sent both the
+       same way and every leaf came out as a dark pen stroke. */
+    const leaf = (x, y, dx, dy, col) => {
+      const ex = x + dx * 1.7, ey = y + dy;
+      return '<path d="M' + x + ' ' + y + ' Q' + (x + dx * 0.45) + ' ' + (y + dy - 13) + ' ' + ex + ' ' + ey
+        + ' Q' + (x + dx * 0.95) + ' ' + (y + dy * 0.8 + 7) + ' ' + x + ' ' + y + ' Z" fill="' + col + '"/>';
+    };
+    return open
+      + '<defs><linearGradient id="hnba" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#D2E6CA"/>'
+      + '<stop offset="56%" stop-color="#F2F3DF"/><stop offset="100%" stop-color="#EADFC0"/></linearGradient></defs>'
+      + '<rect width="240" height="240" fill="url(#hnba)"/>'
+      + '<circle cx="50" cy="46" r="24" fill="#FFF3C4" opacity=".6"/>'
+      + '<path d="M0 148 q44 -22 92 -6 q46 16 86 -6 q34 -18 62 -2 L240 240 L0 240 Z" fill="#C2DCB0" opacity=".8"/>'
+      /* the grove: a pale back row for depth, then the canes that count */
+      + '<g opacity=".4">' + cane(112, 26, 7, '#9ABF88', '#7FA372') + cane(238, 12, 8, '#9ABF88', '#7FA372') + '</g>'
+      + cane(134, 6, 11, '#7CB267', '#568A46') + cane(226, 0, 13, '#8CC176', '#679E52')
+      + '<g>' + leaf(134, 30, 20, 15, '#568A46') + leaf(134, 56, -22, 13, '#679E52') + leaf(134, 84, 17, 14, '#4E7E40')
+      + leaf(226, 22, -26, 17, '#568A46') + leaf(226, 52, 21, 13, '#7CB267') + leaf(226, 82, -23, 15, '#679E52')
+      + leaf(112, 44, -18, 12, '#7FA372') + '</g>'
+      /* the hut: a solid cone of thatch over daubed walls, not an outline */
+      + '<path d="M172 96 L246 156 Q172 172 98 156 Z" fill="#BE9C5E"/>'
+      + '<path d="M172 96 L172 166 Q132 163 98 156 Z" fill="#DFC48C"/>'
+      + '<g stroke="#A8884A" stroke-width="1.5" opacity=".5"><path d="M172 104 L124 154 M172 104 L148 160 M172 104 L198 160 M172 104 L222 154"/></g>'
+      + '<path d="M98 156 Q172 172 246 156" fill="none" stroke="#A8884A" stroke-width="2.4"/>'
+      + '<path d="M172 96 q-7 -8 0 -14 q7 6 0 14 Z" fill="#A8884A"/>'
+      + '<rect x="118" y="158" width="106" height="52" rx="4" fill="#F0E2C6" stroke="#B89A62" stroke-width="2.2"/>'
+      + '<path d="M148 210 v-32 a15 15 0 0 1 30 0 v32 Z" fill="#7A5A3A"/>'
+      + '<path d="M163 178 v32" stroke="#5E4430" stroke-width="1.6" opacity=".6"/>'
+      + '<rect x="192" y="168" width="22" height="20" rx="3" fill="#FFF7EE" stroke="#B89A62" stroke-width="1.8"/>'
+      + '<path d="M203 168 v20 M192 178 h22" stroke="#B89A62" stroke-width="1.6"/>'
+      /* a low bamboo fence, then the ground and its stepping stones */
+      + '<g stroke="#8CC176" stroke-width="3" stroke-linecap="round"><path d="M112 210 v-22 M96 212 v-20 M80 214 v-18"/>'
+      + '<path d="M76 196 q18 -3 40 -5"/></g>'
+      + '<path d="M0 206 q60 -12 124 0 q60 12 116 -2 L240 240 L0 240 Z" fill="#AECF98"/>'
+      + '<g fill="#D9D0B4"><ellipse cx="44" cy="226" rx="16" ry="6"/><ellipse cx="88" cy="234" rx="14" ry="5.4"/><ellipse cx="12" cy="236" rx="12" ry="5"/></g>'
+      + '<g stroke="#8FB27E" stroke-width="2.2" stroke-linecap="round"><path d="M64 222 v-10 M72 224 v-8"/></g></svg>';
+  }
+
+  /* Dusk, and a row of paper lanterns along the eave. */
+  if (id === 'teahouse') {
+    /* Hung on a visible line below the eave. The first pass tucked them into
+       the gap between roof and shopfront, where they read as candle stubs. */
+    let lamps = '';
+    [124, 152, 180, 208, 234].forEach((x, k) => {
+      const r = 9 - (k % 2) * 1.6;
+      lamps += '<path d="M' + x + ' 126 v' + (12 + (k % 2) * 4) + '" stroke="#5E2E2A" stroke-width="1.6"/>'
+        + '<ellipse cx="' + x + '" cy="' + (148 + (k % 2) * 4) + '" rx="' + r + '" ry="' + (r * 1.24).toFixed(1) + '" fill="#E23A66"/>'
+        + '<ellipse cx="' + x + '" cy="' + (148 + (k % 2) * 4) + '" rx="' + (r * 0.48).toFixed(1) + '" ry="' + (r * 0.72).toFixed(1) + '" fill="#FFE9A8"/>'
+        + '<ellipse cx="' + x + '" cy="' + (148 + (k % 2) * 4) + '" rx="' + (r * 2).toFixed(1) + '" ry="' + (r * 2.2).toFixed(1) + '" fill="#FFB27A" opacity=".16"/>';
+    });
+    return open
+      + '<defs><linearGradient id="hnte" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#5E3F82"/>'
+      + '<stop offset="44%" stop-color="#E07E86"/><stop offset="100%" stop-color="#FBD3AE"/></linearGradient></defs>'
+      + '<rect width="240" height="240" fill="url(#hnte)"/>'
+      + '<circle cx="44" cy="80" r="19" fill="#FFD9A8" opacity=".8"/>'
+      + '<g fill="#A86E8E" opacity=".45"><path d="M0 128 q40 -30 78 -8 q36 20 70 -4 q36 -24 92 2 L240 160 L0 160 Z"/></g>'
+      /* the tiled roof, its ends turned up the way they are on a shophouse */
+      + '<path d="M100 130 Q116 116 134 108 Q166 90 196 90 Q224 96 242 114 Q252 118 258 130 Q236 122 222 124 Q198 108 172 108 Q140 112 116 126 Q106 124 100 130 Z" fill="#8E3A33"/>'
+      + '<path d="M120 124 Q148 104 176 102 Q208 104 236 122 Q206 110 176 110 Q148 112 120 124 Z" fill="#C6485C"/>'
+      + '<g stroke="#6E2A26" stroke-width="1.3" opacity=".5"><path d="M176 100 v22 M154 108 l-12 14 M198 108 l12 14"/></g>'
+      + '<path d="M110 128 h132" stroke="#5E2E2A" stroke-width="2"/>'
+      + lamps
+      /* the shopfront, its shutters open on a lit room */
+      + '<rect x="112" y="166" width="126" height="44" rx="4" fill="#F3DCC0" stroke="#8A5A38" stroke-width="2.4"/>'
+      + '<g stroke="#8A5A38" stroke-width="2.2"><path d="M144 166 v44 M182 166 v44 M214 166 v44"/></g>'
+      + '<rect x="116" y="172" width="24" height="26" rx="2" fill="#FFE9A8" opacity=".95"/>'
+      + '<rect x="186" y="172" width="24" height="26" rx="2" fill="#FFE9A8" opacity=".95"/>'
+      + '<path d="M150 210 v-32 h28 v32 Z" fill="#5E3A2E"/>'
+      + '<path d="M150 178 h28" stroke="#C9A96E" stroke-width="2.4"/>'
+      + '<rect x="156" y="186" width="16" height="9" rx="2" fill="#E5BE5E"/>'
+      /* the deck, and one lantern on a post where the companion stands */
+      + '<path d="M0 210 h240 v9 H0 Z" fill="#A8724A"/><path d="M0 210 h240 v3 H0 Z" fill="#C9906A"/>'
+      + '<g stroke="#8A5A38" stroke-width="1.4" opacity=".55"><path d="M30 219 v-9 M70 219 v-9 M110 219 v-9 M150 219 v-9 M190 219 v-9 M228 219 v-9"/></g>'
+      + '<rect y="219" width="240" height="21" fill="#6E4636"/>'
+      + '<path d="M58 210 v-24" stroke="#8A5A38" stroke-width="2.6"/>'
+      + '<ellipse cx="58" cy="178" rx="8" ry="10" fill="#E23A66"/><ellipse cx="58" cy="178" rx="3.6" ry="5.6" fill="#FFF3C4"/>'
+      + '<ellipse cx="58" cy="178" rx="17" ry="20" fill="#FFE9A8" opacity=".18"/></svg>';
+  }
+
+  /* Indoors for once: shelves, a round window, and a candle burning low. */
+  if (id === 'study') {
+    let books = '';
+    [[152, 120], [152, 152], [152, 184]].forEach((row) => {
+      let x = row[0];
+      for (let k = 0; x < 232; k++) {
+        const w = 6 + (k * 5) % 7, h = 20 + (k * 3) % 6;
+        books += '<rect x="' + x + '" y="' + (row[1] - h) + '" width="' + w + '" height="' + h + '" rx="1.5" fill="'
+          + ['#C6485C', '#5E4F9E', '#2F7F6E', '#C9904A', '#9E82D2', '#B0483F'][k % 6] + '"/>';
+        x += w + 1.6;
+      }
+    });
+    let stars = '';
+    [[62, 60], [76, 48], [52, 44], [86, 66], [66, 76]].forEach((p, k) => {
+      stars += '<circle class="twinkle" cx="' + p[0] + '" cy="' + p[1] + '" r="1.5" fill="#FFF7EE" style="animation-delay:' + (k * 300) + 'ms"/>';
+    });
+    return open
+      + '<defs><linearGradient id="hnst" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#5E4436"/>'
+      + '<stop offset="100%" stop-color="#8A6A52"/></linearGradient>'
+      + '<linearGradient id="hnsw" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#1B1440"/>'
+      + '<stop offset="100%" stop-color="#4A3A86"/></linearGradient></defs>'
+      + '<rect width="240" height="240" fill="url(#hnst)"/>'
+      /* the round window, and the night standing in it */
+      + '<circle cx="68" cy="60" r="38" fill="url(#hnsw)"/>' + stars
+      + '<circle cx="84" cy="44" r="10" fill="#FFF3C4" opacity=".9"/>'
+      + '<circle cx="68" cy="60" r="38" fill="none" stroke="#C9A96E" stroke-width="5"/>'
+      + '<g stroke="#C9A96E" stroke-width="3"><path d="M30 60 h76 M68 22 v76"/></g>'
+      /* the shelves */
+      + '<rect x="146" y="46" width="92" height="166" rx="4" fill="#6E5140" stroke="#4A3527" stroke-width="2"/>'
+      + '<g fill="#4A3527"><rect x="148" y="118" width="88" height="4"/><rect x="148" y="150" width="88" height="4"/><rect x="148" y="182" width="88" height="4"/></g>'
+      + books
+      + '<g fill="#8FD1A6"><ellipse cx="168" cy="82" rx="10" ry="7"/><ellipse cx="160" cy="88" rx="7" ry="5"/><ellipse cx="176" cy="88" rx="7" ry="5"/></g>'
+      + '<rect x="164" y="88" width="9" height="12" rx="2" fill="#C9704F"/>'
+      + '<g fill="#F7A9C6"><circle cx="212" cy="86" r="5"/><circle cx="222" cy="92" r="4"/></g>'
+      + '<rect x="204" y="96" width="26" height="14" rx="2" fill="#9E82D2"/>'
+      /* the desk, the candle, and the rug the companion stands on */
+      + '<rect x="108" y="196" width="60" height="9" rx="2" fill="#8A6A44"/>'
+      + '<path d="M120 205 v14 M156 205 v14" stroke="#6E5140" stroke-width="4" stroke-linecap="round"/>'
+      + '<rect x="126" y="180" width="8" height="16" rx="2" fill="#FFF7EE"/>'
+      + '<ellipse cx="130" cy="176" rx="3.4" ry="5.4" fill="#FFB27A"/><ellipse cx="130" cy="177" rx="1.6" ry="3" fill="#FFF3C4"/>'
+      + '<ellipse cx="130" cy="180" rx="22" ry="20" fill="#FFE9A8" opacity=".2"/>'
+      + '<rect y="212" width="240" height="28" fill="#6E4636"/>'
+      + '<ellipse cx="96" cy="226" rx="86" ry="15" fill="#B0483F"/>'
+      + '<ellipse cx="96" cy="226" rx="70" ry="11" fill="none" stroke="#E2A08C" stroke-width="2.4"/>'
+      + '<ellipse cx="96" cy="226" rx="50" ry="7" fill="#C6485C"/></svg>';
+  }
+
+  /* Glass, and a morning coming through it. */
+  if (id === 'greenhouse') {
+    /* The frame carries the whole drawing. The first pass drew it in the same
+       pale mint as the sky and the house all but vanished. */
+    let bars = '';
+    for (let x = 128; x <= 230; x += 17) bars += '<path d="M' + x + ' 208 V148" stroke="#5E8A7E" stroke-width="2.4" opacity=".85"/>';
+    return open
+      + '<defs><linearGradient id="hngr" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#BFDEDA"/>'
+      + '<stop offset="60%" stop-color="#F4F7E8"/><stop offset="100%" stop-color="#DCE8C4"/></linearGradient>'
+      + '<linearGradient id="hngp" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#DCF0EA"/>'
+      + '<stop offset="100%" stop-color="#A8CFC6"/></linearGradient></defs>'
+      + '<rect width="240" height="240" fill="url(#hngr)"/>'
+      + '<circle cx="50" cy="44" r="24" fill="#FFF3C4" opacity=".7"/>'
+      + '<g fill="#FFFFFF" opacity=".75"><ellipse cx="86" cy="38" rx="24" ry="11"/><ellipse cx="110" cy="32" rx="17" ry="9"/></g>'
+      + '<path d="M0 164 q54 -20 110 -4 q52 14 130 -6 L240 240 L0 240 Z" fill="#BFD8A8" opacity=".85"/>'
+      /* the glasshouse: a gabled roof, then the glazing, then the frame */
+      + '<path d="M114 150 L179 104 L244 150 Z" fill="url(#hngp)"/>'
+      + '<path d="M114 150 L179 104 L244 150" fill="none" stroke="#3E6E62" stroke-width="3.4" stroke-linejoin="round"/>'
+      + '<g stroke="#5E8A7E" stroke-width="2.2" opacity=".85"><path d="M179 104 v46 M146 128 v22 M212 128 v22 M132 138 h94"/></g>'
+      + '<rect x="120" y="148" width="118" height="60" fill="url(#hngp)"/>'
+      + bars
+      + '<path d="M120 178 h118" stroke="#5E8A7E" stroke-width="2.2" opacity=".85"/>'
+      + '<rect x="120" y="148" width="118" height="60" fill="none" stroke="#3E6E62" stroke-width="3.4"/>'
+      /* what is growing behind the glass, and the door out of it */
+      + '<g opacity=".8"><g fill="#4E9E76"><ellipse cx="138" cy="192" rx="12" ry="15"/><ellipse cx="162" cy="188" rx="9" ry="17"/>'
+      + '<ellipse cx="220" cy="190" rx="13" ry="16"/></g>'
+      + '<g fill="#F2789F"><circle cx="138" cy="180" r="4"/><circle cx="220" cy="178" r="4"/><circle cx="162" cy="173" r="3.4"/></g></g>'
+      + '<path d="M184 208 v-26 a11 11 0 0 1 22 0 v26 Z" fill="#CFE8E0" stroke="#3E6E62" stroke-width="2.6"/>'
+      + '<circle cx="201" cy="196" r="2" fill="#3E6E62"/>'
+      + '<path d="M179 102 v-9" stroke="#3E6E62" stroke-width="2.6"/><circle cx="179" cy="90" r="4.4" fill="#E5BE5E"/>'
+      /* the beds outside, a can left on the grass */
+      + '<path d="M0 202 q62 -10 122 2 q60 12 118 -4 L240 240 L0 240 Z" fill="#A8CB92"/>'
+      + '<g fill="#C9704F"><path d="M38 230 h26 v-14 h-26 Z"/><path d="M64 222 h9 l5 -7 h-6 Z"/></g>'
+      + '<rect x="34" y="212" width="34" height="5" rx="2" fill="#E09069"/>'
+      + '<g fill="#F2789F"><circle cx="96" cy="222" r="4.4"/><circle cx="108" cy="229" r="3.6"/><circle cx="16" cy="220" r="4"/></g>'
+      + '<g fill="#FFF3C4"><circle cx="96" cy="222" r="1.7"/><circle cx="108" cy="229" r="1.4"/><circle cx="16" cy="220" r="1.5"/></g></svg>';
+  }
+
+  /* A cap for a roof, in a clearing that keeps the light out. */
+  if (id === 'mushroom') {
+    const spot = (x, y, r) => '<ellipse cx="' + x + '" cy="' + y + '" rx="' + r + '" ry="' + (r * 0.78) + '" fill="#FFF0F5"/>';
+    const small = (x, y, s) => '<g transform="translate(' + x + ',' + y + ') scale(' + s + ')">'
+      + '<path d="M-11 0 q0 -13 11 -13 q11 0 11 13 Z" fill="#E2748A"/>'
+      + '<rect x="-3.4" y="0" width="6.8" height="10" rx="2.4" fill="#FBEBD6"/></g>';
+    const tree = (x, base, h, r, a, b) => '<path d="M' + x + ' ' + base + ' v-' + h + '" stroke="#7A5A44" stroke-width="6" stroke-linecap="round"/>'
+      + '<ellipse cx="' + x + '" cy="' + (base - h - r * 0.5) + '" rx="' + r + '" ry="' + (r * 0.84) + '" fill="' + a + '"/>'
+      + '<ellipse cx="' + (x - r * 0.62) + '" cy="' + (base - h + r * 0.1) + '" rx="' + (r * 0.66) + '" ry="' + (r * 0.56) + '" fill="' + b + '"/>'
+      + '<ellipse cx="' + (x + r * 0.62) + '" cy="' + (base - h + r * 0.1) + '" rx="' + (r * 0.66) + '" ry="' + (r * 0.56) + '" fill="' + b + '"/>';
+    return open
+      + '<defs><linearGradient id="hnmu" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#A8C9B4"/>'
+      + '<stop offset="52%" stop-color="#DCEBCE"/><stop offset="100%" stop-color="#C2D6A8"/></linearGradient></defs>'
+      + '<rect width="240" height="240" fill="url(#hnmu)"/>'
+      /* the wood behind, kept flat so the cap stays the loudest thing in it */
+      + '<g opacity=".5">' + tree(26, 180, 40, 28, '#6EA87F', '#7FBF95')
+      + tree(96, 176, 34, 23, '#7FBF95', '#8FD1A6') + tree(236, 172, 38, 26, '#6EA87F', '#7FBF95') + '</g>'
+      /* the house */
+      + '<rect x="146" y="140" width="66" height="70" rx="6" fill="#FBEBD6" stroke="#E0C8A8" stroke-width="2"/>'
+      + '<path d="M118 146 q0 -52 61 -52 q61 0 61 52 Z" fill="#C6485C"/>'
+      + '<path d="M118 146 q0 -52 61 -52 q22 0 37 12 q-38 4 -60 40 Z" fill="#DF6076"/>'
+      + spot(146, 118, 10) + spot(200, 110, 12) + spot(172, 136, 7) + spot(226, 134, 8) + spot(176, 100, 6)
+      + '<path d="M118 146 q60 12 122 0" fill="none" stroke="#A83247" stroke-width="2.4"/>'
+      + '<path d="M164 210 v-30 a15 15 0 0 1 30 0 v30 Z" fill="#8A6A44"/>'
+      + '<circle cx="188" cy="196" r="2.4" fill="#E5BE5E"/>'
+      + '<circle cx="206" cy="160" r="9" fill="#FFE9A8" stroke="#E0C8A8" stroke-width="2"/>'
+      + '<path d="M197 160 h18 M206 151 v18" stroke="#E0C8A8" stroke-width="1.6"/>'
+      /* the clearing */
+      + '<path d="M0 198 q58 -14 118 -2 q62 12 122 -6 L240 240 L0 240 Z" fill="#9EC98A"/>'
+      + '<path d="M0 220 q66 -12 128 2 q56 12 112 -4 L240 240 L0 240 Z" fill="#88B876"/>'
+      + small(42, 216, 1) + small(80, 228, .74) + small(16, 232, .6) + small(122, 214, .66)
+      + '<g fill="#FFF3C4" opacity=".85"><circle cx="64" cy="196" r="2.2"/><circle cx="104" cy="186" r="2"/><circle cx="30" cy="200" r="1.8"/></g></svg>';
+  }
+
+  /* A shell big enough to live in, on the sand the tide left. */
+  if (id === 'shell') {
+    /* A nautilus, not a blob: the whorl has to be drawn as bands that narrow
+       into the eye of it, or the shape reads as a pale stone. */
+    let bands = '';
+    for (let k = 0; k < 7; k++) {
+      const t = k / 6;
+      bands += '<path d="M' + (188 - t * 34) + ' ' + (210 - t * 6) + ' Q' + (150 + t * 40) + ' ' + (182 - t * 38)
+        + ' ' + (184 - t * 26) + ' ' + (140 + t * 44) + '" fill="none" stroke="#D98E84" stroke-width="'
+        + (2.6 - t * 1.4).toFixed(1) + '" opacity="' + (0.75 - t * 0.2).toFixed(2) + '"/>';
+    }
+    return open
+      + '<defs><linearGradient id="hnsh" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#8E6BA8"/>'
+      + '<stop offset="40%" stop-color="#F29A86"/><stop offset="100%" stop-color="#FFD9A8"/></linearGradient>'
+      + '<linearGradient id="hnss" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#FFF7F0"/>'
+      + '<stop offset="55%" stop-color="#FBD5C4"/><stop offset="100%" stop-color="#E8A493"/></linearGradient></defs>'
+      + '<rect width="240" height="240" fill="url(#hnsh)"/>'
+      + '<circle cx="62" cy="72" r="21" fill="#FFF3C4" opacity=".85"/>'
+      + '<g fill="#FFC9A8" opacity=".4"><ellipse cx="152" cy="56" rx="46" ry="8"/><ellipse cx="52" cy="38" rx="34" ry="6"/></g>'
+      /* sea, wet sand, dry sand */
+      + '<rect y="128" width="240" height="46" fill="#8FAFCE"/>'
+      + '<g fill="#FFD9A8" opacity=".3"><rect y="134" width="240" height="4"/><rect x="40" y="150" width="180" height="3"/></g>'
+      + '<g fill="#FFF7EE" opacity=".75"><path d="M0 170 q30 -8 58 0 q30 8 60 0 q30 -8 60 0 q30 8 62 0 L240 180 L0 180 Z"/></g>'
+      + '<path d="M0 178 q60 -8 120 2 q62 10 120 -4 L240 240 L0 240 Z" fill="#F0D6B2"/>'
+      + '<path d="M0 208 q70 -10 134 2 q52 10 106 -2 L240 240 L0 240 Z" fill="#E4C49A"/>'
+      /* the shell: a fat outer whorl, the spire turning back into itself */
+      + '<path d="M128 212 Q118 158 156 128 Q198 98 226 136 Q250 174 226 212 Z" fill="url(#hnss)"/>'
+      + '<path d="M128 212 Q118 158 156 128 Q198 98 226 136 Q250 174 226 212 Z" fill="none" stroke="#C97F73" stroke-width="2.6"/>'
+      + bands
+      + '<path d="M176 150 Q196 140 204 158 Q210 176 192 182 Q176 184 174 168 Q174 158 186 158" fill="none" stroke="#C97F73" stroke-width="2.4"/>'
+      + '<path d="M162 212 v-30 a16 16 0 0 1 32 0 v30 Z" fill="#9E6278"/>'
+      + '<path d="M166 212 v-28 a12 12 0 0 1 24 0 v28 Z" fill="#6E4258"/>'
+      + '<circle cx="186" cy="196" r="2.4" fill="#FFE9A8"/>'
+      + '<ellipse cx="178" cy="206" rx="46" ry="10" fill="#C9A484" opacity=".35"/>'
+      /* what the tide left, on the side the companion stands */
+      + '<g fill="#F2789F"><path d="M44 214 l5 -13 5 13 13 2 -10 9 3 13 -11 -7 -11 7 3 -13 -10 -9 Z"/></g>'
+      + '<g fill="#FFF7EE" opacity=".95"><ellipse cx="88" cy="226" rx="9" ry="6"/><ellipse cx="18" cy="230" rx="7" ry="5"/></g>'
+      + '<g stroke="#D9B48A" stroke-width="1.6" opacity=".7"><path d="M84 224 q4 -6 8 0 M14 228 q4 -5 8 0"/></g></svg>';
+  }
+
+  /* A house built into the crown of one big tree. */
+  if (id === 'treehouse') {
+    /* The trunk has to be seen, or the house hangs in the air - which is what
+       the first pass did: a slim trunk drawn behind the walls and hidden by
+       the companion in front of them. It stands to the right now, thick, with
+       the house built against it and the crown spread over both. */
+    let leaves = '';
+    [[176, 52, 58, 34], [122, 74, 40, 26], [224, 74, 42, 28], [196, 28, 44, 26], [150, 40, 34, 22]].forEach((c, k) => {
+      leaves += '<ellipse cx="' + c[0] + '" cy="' + c[1] + '" rx="' + c[2] + '" ry="' + c[3] + '" fill="' + (k % 2 ? '#6EA87F' : '#7FBF95') + '"/>';
+    });
+    return open
+      + '<defs><linearGradient id="hntr" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#C2DEEE"/>'
+      + '<stop offset="58%" stop-color="#F0F3E0"/><stop offset="100%" stop-color="#D6E4BC"/></linearGradient></defs>'
+      + '<rect width="240" height="240" fill="url(#hntr)"/>'
+      + '<circle cx="46" cy="48" r="22" fill="#FFF3C4" opacity=".6"/>'
+      + '<g fill="#FFFFFF" opacity=".75"><ellipse cx="70" cy="42" rx="22" ry="10"/><ellipse cx="92" cy="36" rx="15" ry="8"/></g>'
+      + '<path d="M0 158 q50 -18 102 -2 q52 16 138 -8 L240 240 L0 240 Z" fill="#C2DCA8" opacity=".85"/>'
+      /* the trunk, wide enough to carry a house, and the boughs off it */
+      + '<path d="M186 216 q-16 -80 -4 -140 q4 -22 18 -22 q14 0 16 22 q10 60 -2 140 Z" fill="#8A6A44"/>'
+      + '<path d="M196 216 q-8 -78 0 -138 q4 -18 10 -18 q6 42 4 156 Z" fill="#A07E54" opacity=".65"/>'
+      + '<g stroke="#7A5A44" stroke-width="1.6" opacity=".5"><path d="M190 200 q6 -50 2 -92 M204 196 q4 -48 0 -88"/></g>'
+      + '<path d="M188 120 q-28 -10 -42 -26 M206 104 q22 -12 30 -28" fill="none" stroke="#8A6A44" stroke-width="6" stroke-linecap="round"/>'
+      + '<path d="M180 216 q-16 -10 -34 -6 M208 216 q14 -10 30 -4" fill="none" stroke="#7A5A44" stroke-width="6" stroke-linecap="round"/>'
+      + leaves
+      + '<g fill="#5E9470" opacity=".45"><ellipse cx="176" cy="66" rx="34" ry="16"/></g>'
+      /* the house, built against the trunk and standing on a bough */
+      + '<rect x="104" y="140" width="82" height="50" rx="5" fill="#E8D2AE" stroke="#A8724A" stroke-width="2.4"/>'
+      + '<path d="M94 142 L145 110 L196 142 Z" fill="#B0483F"/>'
+      + '<path d="M145 110 L196 142 L186 142 L145 118 Z" fill="#8E3A33"/>'
+      + '<rect x="114" y="154" width="20" height="18" rx="3" fill="#FFE9A8" stroke="#A8724A" stroke-width="1.8"/>'
+      + '<path d="M124 154 v18 M114 163 h20" stroke="#A8724A" stroke-width="1.5"/>'
+      + '<path d="M150 190 v-24 a11 11 0 0 1 22 0 v24 Z" fill="#8A5A38"/>'
+      + '<circle cx="166" cy="178" r="2" fill="#E5BE5E"/>'
+      + '<path d="M98 190 h92 v6 H98 Z" fill="#A8724A"/>'
+      + '<g stroke="#C9906A" stroke-width="2" stroke-linecap="round"><path d="M102 190 v-10 M114 190 v-10 M126 190 v-10 M186 190 v-10"/></g>'
+      + '<path d="M145 108 v-8" stroke="#A8724A" stroke-width="2.2"/><circle cx="145" cy="96" r="3.6" fill="#E5BE5E"/>'
+      /* the ladder down to the grass */
+      + '<g stroke="#A8724A" stroke-width="2.4" stroke-linecap="round"><path d="M116 196 v22 M132 196 v22"/>'
+      + '<path d="M116 202 h16 M116 210 h16 M116 218 h16"/></g>'
+      + '<path d="M0 204 q64 -12 126 0 q58 12 114 -4 L240 240 L0 240 Z" fill="#AECF98"/>'
+      + '<g stroke="#8FB27E" stroke-width="2.2" stroke-linecap="round"><path d="M34 222 v-10 M42 224 v-8 M86 228 v-9"/></g>'
+      + '<g fill="#F7A9C6"><circle cx="60" cy="220" r="3.8"/><circle cx="18" cy="226" r="3.2"/></g></svg>';
+  }
+
+  /* A seam of crystal, lit from inside the rock. */
+  if (id === 'crystal') {
+    const shard = (x, base, w, h, a, b) => '<path d="M' + (x - w) + ' ' + base + ' L' + x + ' ' + (base - h)
+      + ' L' + (x + w) + ' ' + base + ' Z" fill="' + a + '"/>'
+      + '<path d="M' + x + ' ' + base + ' L' + x + ' ' + (base - h) + ' L' + (x + w) + ' ' + base + ' Z" fill="' + b + '"/>';
+    let motes = '';
+    [[92, 128], [118, 96], [66, 104], [140, 120], [46, 138], [160, 82]].forEach((p, k) => {
+      motes += '<circle class="twinkle" cx="' + p[0] + '" cy="' + p[1] + '" r="' + (1.6 + (k % 2) * 0.8) + '" fill="#D8C4FF" style="animation-delay:' + (k * 280) + 'ms"/>';
+    });
+    return open
+      + '<defs><linearGradient id="hncr" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#1E1638"/>'
+      + '<stop offset="100%" stop-color="#3B2C66"/></linearGradient>'
+      + '<linearGradient id="hncp" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#C9B0EA"/>'
+      + '<stop offset="100%" stop-color="#6E58B0"/></linearGradient></defs>'
+      + '<rect width="240" height="240" fill="url(#hncr)"/>'
+      /* the roof of the cave, hanging down */
+      + '<path d="M0 0 h240 v46 q-18 6 -26 26 q-10 -20 -24 -8 q-12 10 -20 -6 q-14 22 -28 4 q-16 -14 -26 8 q-12 20 -24 -2 q-14 -16 -26 6 q-10 16 -22 -4 q-12 -14 -24 8 Z" fill="#241A44"/>'
+      + '<g stroke="#3B2C66" stroke-width="2" opacity=".8"><path d="M40 52 v18 M118 60 v14 M198 56 v16"/></g>'
+      + motes
+      /* the seam itself, which is the house: a lit doorway cut into it */
+      + shard(232, 208, 22, 96, '#8E76CC', '#6E58B0')
+      + shard(186, 212, 34, 118, '#A98FDE', '#8467C8')
+      + shard(144, 210, 20, 72, '#8E76CC', '#6E58B0')
+      + '<path d="M172 212 v-34 a14 14 0 0 1 28 0 v34 Z" fill="#2E2158"/>'
+      + '<path d="M176 212 v-32 a10 10 0 0 1 20 0 v32 Z" fill="#FFE9A8" opacity=".85"/>'
+      + '<ellipse cx="186" cy="200" rx="34" ry="30" fill="#FFE9A8" opacity=".14"/>'
+      + '<g fill="#D8C4FF" opacity=".55"><path d="M168 150 l4 -12 4 12 11 4 -11 4 -4 12 -4 -12 -11 -4 Z"/></g>'
+      /* the floor, and a still pool that takes the light */
+      + '<path d="M0 206 q56 -12 116 -2 q62 10 124 -6 L240 240 L0 240 Z" fill="#2E2158"/>'
+      + '<ellipse cx="74" cy="222" rx="60" ry="14" fill="#4A3A86"/>'
+      + '<ellipse cx="74" cy="221" rx="48" ry="10" fill="#6E58B0" opacity=".8"/>'
+      + '<g fill="#D8C4FF" opacity=".5"><ellipse cx="74" cy="218" rx="28" ry="3"/><ellipse cx="60" cy="226" rx="18" ry="2"/></g>'
+      + shard(28, 216, 12, 42, '#8E76CC', '#6E58B0') + shard(120, 220, 9, 26, '#A98FDE', '#8467C8') + '</svg>';
+  }
+
+  /* A dome that opens, and one long glass pointed at the rest of it. */
+  if (id === 'observatory') {
+    let stars = '';
+    for (let k = 0; k < 16; k++) {
+      stars += '<circle class="twinkle" cx="' + (8 + (k * 47) % 228) + '" cy="' + (10 + (k * 61) % 116) + '" r="'
+        + (1 + (k % 3) * 0.55) + '" fill="#FFF7EE" style="animation-delay:' + (k * 190) + 'ms"/>';
+    }
+    return open
+      + '<defs><linearGradient id="hnob" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#141E38"/>'
+      + '<stop offset="62%" stop-color="#2E3A6E"/><stop offset="100%" stop-color="#4A5490"/></linearGradient>'
+      + '<linearGradient id="hnod" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#D6DEF2"/>'
+      + '<stop offset="100%" stop-color="#8E9ACC"/></linearGradient></defs>'
+      + '<rect width="240" height="240" fill="url(#hnob)"/>' + stars
+      + '<g stroke="#9EC2F0" stroke-width="1.4" opacity=".28" fill="none"><path d="M42 58 L70 42 L96 62 L74 82 Z M70 42 L74 82"/></g>'
+      + '<circle cx="46" cy="40" r="13" fill="#FFF3C4" opacity=".9"/>'
+      + '<path d="M0 152 q50 -28 104 -6 q52 22 136 -10 L240 240 L0 240 Z" fill="#2A3360"/>'
+      /* the tower, then the dome, then the glass looking out of it */
+      + '<path d="M132 214 v-58 h96 v58 Z" fill="#3E4A80"/>'
+      + '<path d="M132 156 h96 v6 H132 Z" fill="#5A68A8"/>'
+      + '<g fill="#FFE9A8" opacity=".9"><rect x="146" y="172" width="14" height="18" rx="3"/><rect x="200" y="172" width="14" height="18" rx="3"/></g>'
+      + '<path d="M156 214 v-24 a12 12 0 0 1 24 0 v24 Z" fill="#26304F"/>'
+      + '<path d="M126 156 a54 40 0 0 1 108 0 Z" fill="url(#hnod)"/>'
+      + '<path d="M180 116 a54 40 0 0 1 54 40 h-18 a38 34 0 0 0 -36 -40 Z" fill="#6E7ABC" opacity=".7"/>'
+      + '<path d="M164 118 a54 40 0 0 1 22 -2 l-4 40 h-24 Z" fill="#26304F"/>'
+      + '<g stroke="#26304F" stroke-width="2" opacity=".6"><path d="M126 156 h108"/></g>'
+      + '<g transform="rotate(-32 178 130)"><rect x="150" y="122" width="76" height="15" rx="7" fill="#C9D3EE"/>'
+      + '<rect x="150" y="122" width="76" height="6" rx="3" fill="#EAF0FF" opacity=".8"/>'
+      + '<rect x="220" y="118" width="12" height="23" rx="4" fill="#9EA8D8"/></g>'
+      /* the rail, and the hill it all stands on */
+      + '<path d="M0 214 q60 -14 122 -2 q58 12 118 -8 L240 240 L0 240 Z" fill="#26304F"/>'
+      + '<g stroke="#5A68A8" stroke-width="2.4" stroke-linecap="round"><path d="M112 214 v-16 M96 216 v-14 M80 218 v-13"/>'
+      + '<path d="M78 204 q18 -4 36 -6"/></g>'
+      + '<g fill="#FFE9A8" opacity=".85"><circle cx="58" cy="222" r="2.4"/><circle cx="30" cy="228" r="2"/></g></svg>';
+  }
+
+  /* A boat that sells flowers, tied up for the night. */
+  if (id === 'boat') {
+    let lamps = '';
+    [136, 160, 184, 208, 230].forEach((x, k) => {
+      lamps += '<path d="M' + x + ' 120 v6" stroke="#B0553F" stroke-width="1.2"/>'
+        + '<ellipse cx="' + x + '" cy="133" rx="6" ry="7.4" fill="' + (k % 2 ? '#F2789F' : '#E5BE5E') + '"/>'
+        + '<ellipse cx="' + x + '" cy="133" rx="2.8" ry="4.2" fill="#FFF3C4"/>';
+    });
+    let floats = '';
+    [[36, 206, 7], [76, 216, 6], [12, 220, 5.4], [104, 204, 5.6]].forEach((p) => {
+      floats += '<ellipse cx="' + p[0] + '" cy="' + p[1] + '" rx="' + p[2] + '" ry="' + (p[2] * 0.62) + '" fill="#F2789F" opacity=".9"/>'
+        + '<ellipse cx="' + p[0] + '" cy="' + p[1] + '" rx="' + (p[2] * 0.42) + '" ry="' + (p[2] * 0.3) + '" fill="#FFF3C4"/>'
+        + '<ellipse cx="' + p[0] + '" cy="' + (p[1] + 8) + '" rx="' + (p[2] * 1.1) + '" ry="2" fill="#FFE9A8" opacity=".3"/>';
+    });
+    return open
+      + '<defs><linearGradient id="hnbo" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#4E3A72"/>'
+      + '<stop offset="44%" stop-color="#E08A86"/><stop offset="100%" stop-color="#FFD9B0"/></linearGradient>'
+      + '<linearGradient id="hnbw" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#7A6AA0"/>'
+      + '<stop offset="100%" stop-color="#4A3E72"/></linearGradient></defs>'
+      + '<rect width="240" height="240" fill="url(#hnbo)"/>'
+      + '<circle cx="54" cy="56" r="17" fill="#FFF3C4" opacity=".85"/>'
+      + '<g fill="#6E4E8E" opacity=".4"><path d="M0 112 q34 -20 66 -4 q30 16 62 -2 q34 -20 72 -2 q22 10 40 2 L240 132 L0 132 Z"/></g>'
+      + '<rect y="130" width="240" height="110" fill="url(#hnbw)"/>'
+      + '<g fill="#FFD9B0" opacity=".2"><rect y="140" width="240" height="4"/><rect x="30" y="158" width="190" height="3"/>'
+      + '<rect x="10" y="182" width="160" height="2.6"/></g>'
+      /* the boat, the awning over it, and the flowers it carries */
+      + '<path d="M112 178 q64 -10 128 0 l-10 34 q-54 10 -108 0 Z" fill="#8A5A38"/>'
+      + '<path d="M112 178 q64 -10 128 0 l-3 9 q-60 -9 -122 0 Z" fill="#C9906A"/>'
+      + '<g stroke="#B0553F" stroke-width="2.4" stroke-linecap="round"><path d="M130 178 v-52 M228 178 v-52"/></g>'
+      + '<path d="M118 126 q60 -16 124 0 l-4 8 q-58 -14 -116 0 Z" fill="#C6485C"/>'
+      + lamps
+      + '<rect x="150" y="142" width="58" height="30" rx="4" fill="#E8D2AE" opacity=".95"/>'
+      + '<g stroke="#B0553F" stroke-width="1.8"><path d="M170 142 v30 M190 142 v30"/></g>'
+      + '<g fill="#F7A9C6"><circle cx="128" cy="172" r="6"/><circle cx="140" cy="176" r="5"/><circle cx="220" cy="172" r="6"/>'
+      + '<circle cx="232" cy="176" r="4.6"/></g>'
+      + '<g fill="#FFF0F5"><circle cx="128" cy="172" r="2.4"/><circle cx="220" cy="172" r="2.4"/></g>'
+      + '<g fill="#7FBF95" opacity=".9"><ellipse cx="146" cy="178" rx="9" ry="4"/><ellipse cx="212" cy="178" rx="8" ry="3.6"/></g>'
+      /* what is on the water, and the reflection under the boat */
+      + '<g fill="#FFE9A8" opacity=".22"><ellipse cx="176" cy="216" rx="62" ry="8"/></g>'
+      + floats
+      + '<g stroke="#8A7AB0" stroke-width="2" opacity=".5" fill="none"><path d="M0 232 q30 -6 60 0 q30 6 60 0"/></g></svg>';
+  }
+
+  /* Deep winter, and one window that is warmer than the rest of it. */
+  if (id === 'cabin') {
+    const pine = (x, base, h, w, a, b) => '<path d="M' + x + ' ' + (base - h) + ' L' + (x + w) + ' ' + base + ' L' + (x - w) + ' ' + base + ' Z" fill="' + a + '"/>'
+      + '<path d="M' + x + ' ' + (base - h) + ' L' + (x + w * 0.72) + ' ' + (base - h * 0.34) + ' L' + (x - w * 0.72) + ' ' + (base - h * 0.34) + ' Z" fill="' + b + '"/>'
+      + '<path d="M' + (x - w * 0.62) + ' ' + (base - h * 0.3) + ' q' + (w * 0.62) + ' 6 ' + (w * 1.24) + ' 0 q' + (-w * 0.62) + ' -10 ' + (-w * 1.24) + ' 0 Z" fill="#FFFFFF" opacity=".75"/>';
+    let flakes = '';
+    [[28, 62], [96, 40], [148, 72], [212, 52], [62, 96], [180, 104], [120, 20]].forEach((p, k) => {
+      flakes += '<circle class="twinkle" cx="' + p[0] + '" cy="' + p[1] + '" r="' + (1.6 + (k % 2)) + '" fill="#FFFFFF" opacity=".8" style="animation-delay:' + (k * 260) + 'ms"/>';
+    });
+    return open
+      + '<defs><linearGradient id="hnca" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#4E5E86"/>'
+      + '<stop offset="52%" stop-color="#9EB4D2"/><stop offset="100%" stop-color="#DCE8F2"/></linearGradient></defs>'
+      + '<rect width="240" height="240" fill="url(#hnca)"/>' + flakes
+      + '<g fill="#B8CADE" opacity=".6"><path d="M0 146 q40 -40 82 -10 q36 26 74 -6 q38 -34 84 -2 L240 170 L0 170 Z"/></g>'
+      + pine(36, 196, 68, 24, '#3E6E5E', '#4E8470') + pine(94, 190, 50, 18, '#35604F', '#446E5E')
+      + pine(250, 192, 60, 22, '#3E6E5E', '#4E8470')
+      /* the cabin: logs, a snow-laden roof, one lit window */
+      + '<rect x="126" y="150" width="96" height="58" rx="3" fill="#A8724A"/>'
+      + '<g stroke="#8A5A38" stroke-width="1.6" opacity=".7"><path d="M126 164 h96 M126 178 h96 M126 192 h96"/></g>'
+      + '<path d="M114 152 L174 110 L234 152 Z" fill="#6E4636"/>'
+      + '<path d="M110 154 L174 106 L238 154 l-8 6 L174 118 L118 160 Z" fill="#FFFFFF"/>'
+      + '<rect x="196" y="112" width="14" height="24" rx="2" fill="#6E4636"/>'
+      + '<path d="M194 112 h18 v-5 h-18 Z" fill="#FFFFFF"/>'
+      + '<g fill="#E8EFF6" opacity=".55"><ellipse cx="203" cy="96" rx="9" ry="6"/><ellipse cx="212" cy="82" rx="7" ry="5"/><ellipse cx="204" cy="70" rx="5" ry="4"/></g>'
+      + '<rect x="140" y="164" width="26" height="24" rx="3" fill="#FFE9A8"/>'
+      + '<g stroke="#8A5A38" stroke-width="1.8"><path d="M153 164 v24 M140 176 h26"/></g>'
+      + '<ellipse cx="153" cy="176" rx="30" ry="26" fill="#FFE9A8" opacity=".2"/>'
+      + '<path d="M186 208 v-30 a13 13 0 0 1 26 0 v30 Z" fill="#6E4636"/>'
+      + '<circle cx="206" cy="194" r="2.4" fill="#E5BE5E"/>'
+      /* snow, banked up where it drifted */
+      + '<path d="M0 198 q54 -18 112 -4 q62 14 128 -10 L240 240 L0 240 Z" fill="#FFFFFF"/>'
+      + '<path d="M0 220 q66 -12 130 2 q54 12 110 -4 L240 240 L0 240 Z" fill="#E8EFF6"/>'
+      + '<g fill="#C9D8E8" opacity=".7"><ellipse cx="60" cy="228" rx="24" ry="5"/><ellipse cx="150" cy="232" rx="30" ry="5"/></g></svg>';
+  }
+
+  /* Water where there was not supposed to be any. */
+  if (id === 'oasis') {
+    const palm = (x, base, h, lean, col, dark) => {
+      let g = '<path d="M' + x + ' ' + base + ' q' + lean + ' ' + (-h * 0.6) + ' ' + (lean * 1.6) + ' ' + (-h)
+        + '" fill="none" stroke="' + col + '" stroke-width="6" stroke-linecap="round"/>';
+      const tx = x + lean * 1.6, ty = base - h;
+      [[-34, 10], [-24, -14], [0, -22], [26, -12], [34, 12], [12, 16], [-14, 18]].forEach((f) => {
+        g += '<path d="M' + tx + ' ' + ty + ' q' + (f[0] * 0.6) + ' ' + (f[1] * 0.6 - 8) + ' ' + f[0] + ' ' + f[1]
+          + ' q' + (-f[0] * 0.5) + ' ' + (-f[1] * 0.2 + 4) + ' ' + (-f[0]) + ' ' + (-f[1]) + ' Z" fill="' + dark + '"/>';
+      });
+      g += '<circle cx="' + tx + '" cy="' + (ty + 4) + '" r="3.4" fill="#C9904A"/>';
+      return g;
+    };
+    return open
+      + '<defs><linearGradient id="hnoa" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#8E6BA8"/>'
+      + '<stop offset="38%" stop-color="#F0A882"/><stop offset="100%" stop-color="#FBD9A8"/></linearGradient>'
+      + '<linearGradient id="hnow" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#8FC4C0"/>'
+      + '<stop offset="100%" stop-color="#5E9EA0"/></linearGradient></defs>'
+      + '<rect width="240" height="240" fill="url(#hnoa)"/>'
+      + '<circle cx="72" cy="78" r="26" fill="#FFE1B0" opacity=".8"/>'
+      + '<g stroke="#FFF3C4" stroke-width="2" opacity=".3" stroke-linecap="round"><path d="M72 40 v-8 M72 116 v8 M34 78 h-8 M110 78 h8 M45 51 l-6 -6 M99 105 l6 6"/></g>'
+      /* the dunes, back to front */
+      + '<path d="M0 148 q46 -26 96 -6 q46 18 82 -8 q30 -20 62 0 L240 176 L0 176 Z" fill="#E8B87E" opacity=".75"/>'
+      + '<path d="M0 174 q56 -20 116 -2 q56 16 124 -12 L240 240 L0 240 Z" fill="#EBC490"/>'
+      + palm(150, 204, 64, 7, '#8A6A44', '#5E9E76') + palm(206, 208, 80, -9, '#7A5A44', '#4E8E66')
+      + palm(234, 200, 52, 5, '#8A6A44', '#5E9E76')
+      /* the tent, striped, standing between the palms */
+      + '<path d="M118 208 L156 150 L194 208 Z" fill="#F3DCC0"/>'
+      + '<g fill="#C6485C" opacity=".85"><path d="M156 150 L166 166 L152 208 h-12 Z"/><path d="M180 186 L194 208 h-18 Z"/></g>'
+      + '<path d="M156 150 L194 208 L186 208 L156 162 Z" fill="#E0C8A8"/>'
+      + '<path d="M146 208 q10 -26 20 -26 q-6 14 -4 26 Z" fill="#6E4636"/>'
+      + '<path d="M156 150 v-10" stroke="#8A6A44" stroke-width="2.4"/><circle cx="156" cy="136" r="3.6" fill="#E5BE5E"/>'
+      /* the water, which is the whole point of the place */
+      + '<ellipse cx="66" cy="216" rx="72" ry="20" fill="url(#hnow)"/>'
+      + '<ellipse cx="66" cy="214" rx="62" ry="15" fill="#A8D6D0" opacity=".55"/>'
+      + '<g fill="#FFF7EE" opacity=".5"><ellipse cx="50" cy="210" rx="26" ry="2.6"/><ellipse cx="82" cy="220" rx="20" ry="2.2"/></g>'
+      + '<g stroke="#5E9E76" stroke-width="2.6" stroke-linecap="round"><path d="M6 206 q6 -16 -2 -26 M18 208 q10 -14 4 -24 M124 210 q8 -14 0 -22"/></g>'
+      + '<g fill="#C9904A"><ellipse cx="110" cy="230" rx="8" ry="4"/><ellipse cx="22" cy="234" rx="7" ry="3.4"/></g></svg>';
+  }
+
   return open
     + '<defs><linearGradient id="hgg" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#DCEBFB"/><stop offset="70%" stop-color="#F7F1E6"/><stop offset="100%" stop-color="#F2EEDF"/></linearGradient></defs>'
     + '<rect width="240" height="240" fill="url(#hgg)"/>'
@@ -1215,7 +1728,7 @@ function renderPet(want) {
       + '<div class="petstage" id="petstage">' + petHomeSVG(PETS.home(p).id) + petSkySVG(PETS.sky(p).id) + petAuraHTML(p.kind) + petSVG(p.kind, coat, ready ? '' : 'happy', PETS.fit(p), PETS.fx(p))
       + '<span class="crumbs" id="crumbs"></span><span class="toys" id="toys"></span><span class="pats" id="pats"></span>'
       + '<span class="stagebtns left">' + stageBtn('food', '🍚', S.petFoodTitle) + '<button type="button" class="stagebtn" id="opendress" aria-label="' + esc(S.wardrobeTitle) + '"><span class="ic">👑</span><span class="lb">' + esc(S.wardrobeTitle) + '</span></button></span>'
-      + '<span class="stagebtns right">' + stageBtn('home', '🏠', S.petHomeShort) + stageBtn('coat', '🎨', S.petCoat) + '</span>'
+      + '<span class="stagebtns right"><button type="button" class="stagebtn" id="openscene" aria-label="' + esc(S.petHomeTitle) + '"><span class="ic">🏠</span><span class="lb">' + esc(S.petHomeShort) + '</span></button>' + stageBtn('coat', '🎨', S.petCoat) + '</span>'
       + (ready ? '<span class="foodchip" id="foodchip" title="' + esc(S.petDragFood) + '">' + PETS.food(p).sym + '</span>' : '')
       + '</div>'
       + '<p class="handhint">✋ ' + esc(S.petPatHint) + '</p>'
@@ -1254,18 +1767,19 @@ function renderPet(want) {
   const shelfRows = (set, chosenId, key, label) => '<div class="shelf">' + set.map((x) => {
     const locked = x.pro && !proOn();
     return '<button type="button" class="sh' + (chosenId === x.id ? ' on' : '') + (locked ? ' locked' : '') + '" data-shelf="' + key + ':' + x.id + '">'
-      + '<span class="shart">' + (label === 'food' ? x.sym : (label === 'home' ? petHomeSVG(x.id) : '<span class="dot" style="background:' + x.body + '"></span>')) + '</span>'
+      + '<span class="shart">' + (label === 'food' ? x.sym : '<span class="dot" style="background:' + x.body + '"></span>') + '</span>'
       + '<b>' + esc(L(x.name) || x.id) + '</b>'
       + (x.add ? '<span class="plus">+' + x.add + '</span>' : '')
       + (locked ? '<span class="sh-lock">🔒</span>' : '') + (chosenId === x.id ? '<span class="sh-on">✓</span>' : '')
       + '</button>';
   }).join('') + '</div>';
 
-  /* The four groups live in one sheet, so a visitor who opens the food can go
-     straight on to the home without closing anything. */
+  /* The food and the coat share one sheet, so a visitor who opens the one can
+     go on to the other without closing anything. The home left this sheet for
+     a screen of its own - it is twenty-one scenes now, and it brought the sky
+     and the effects with it. See petSceneOpen in pet-dress.js. */
   const SHEETS = [
     { key: 'food', icon: '🍚', title: () => S.petFoodTitle, note: () => S.petFoodNote, set: () => PET_FOODS, now: (p) => PETS.food(p).id, art: 'food' },
-    { key: 'home', icon: '🏠', title: () => S.petHomeTitle, note: () => S.petHomeNote, set: () => PET_HOMES, now: (p) => PETS.home(p).id, art: 'home' },
     { key: 'coat', icon: '🎨', title: () => S.petCoat, note: (q) => (petIsPro(q.kind) ? S.petCoatMyth : S.petCoatNote), set: () => PET_COATS.map((c) => ({ id: c.id, pro: c.pro, add: 3, body: c.body, name: S.coatNames[c.id] || c.id })), now: (p) => PETS.coat(p).id, art: 'coat' }
   ];
   const sheetHTML = (p, open) => {
@@ -1510,11 +2024,12 @@ function renderPet(want) {
        and a live preview do not fit one, so they get a screen and it hands the
        companion card back when it closes. */
     { const dr = $('#opendress'); if (dr) dr.addEventListener('click', () => petDressOpen(p.kind, draw)); }
+    { const sc = $('#openscene'); if (sc) sc.addEventListener('click', () => petSceneOpen(p.kind, draw)); }
     $$('[data-sheet-tab]', m).forEach((b) => b.addEventListener('click', () => { sheet = b.getAttribute('data-sheet-tab'); draw(); }));
     $$('[data-close-sheet]', m).forEach((b) => b.addEventListener('click', () => { sheet = ''; draw(); }));
     $$('[data-shelf]', m).forEach((b) => b.addEventListener('click', () => {
       const parts = b.getAttribute('data-shelf').split(':'), key = parts[0], id = parts[1];
-      const set = key === 'food' ? PET_FOODS : (key === 'home' ? PET_HOMES : PET_COATS);
+      const set = key === 'food' ? PET_FOODS : PET_COATS;
       const item = set.filter((x) => x.id === id)[0];
       if (!item) return;
       if (item.pro && !proOn()) {

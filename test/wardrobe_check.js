@@ -224,6 +224,42 @@ const heavy = sandbox.PET_FX.filter((f) => {
 ok(!heavy.length, 'no effect animates more than twelve nodes', heavy.map((f) => f.id).join(', '));
 ok(sandbox.petFxSVG('none').back === '' && sandbox.petFxSVG('none').front === '', 'no effect means no markup');
 
+/* ---- held still ----
+   A picker tile draws the scene without animating it. Ten live scenes in a
+   grid put the main thread at about half of every frame on a mid-range
+   Android, which is the fault the whole still mode exists to cure - so a
+   class that names a keyframe, or an animation-delay, is a regression. */
+const ANI = /class="(?:twinkle|skfall|skrise|skwander|skaurora|sway|fx[a-z]+|fly)/;
+const skyMoves = sandbox.PET_SKIES.filter((s) => {
+  const svg = sandbox.petSkySVG(s.id, true);
+  return ANI.test(svg) || svg.indexOf('animation-delay') > -1;
+}).map((s) => s.id);
+ok(!skyMoves.length, 'every sky can be held still', skyMoves.join(','));
+const fxMoves = sandbox.PET_FX.filter((f) => {
+  const a = sandbox.petFxSVG(f.id, true), svg = a.back + a.front;
+  return ANI.test(svg) || svg.indexOf('animation-delay') > -1;
+}).map((f) => f.id);
+ok(!fxMoves.length, 'every effect can be held still', fxMoves.join(','));
+/* And held still it must still show something: three of the effects begin at
+   opacity 0 off the frame, and frozen on their start mark they were a black
+   tile with nothing in it. */
+const skyThin = sandbox.PET_SKIES.filter((s) => s.id !== 'clear' && sandbox.petSkySVG(s.id, true).length < 200).map((s) => s.id);
+ok(!skyThin.length, 'a still sky still draws a sky', skyThin.join(','));
+const fxThin = sandbox.PET_FX.filter((f) => {
+  if (f.id === 'none') return false;
+  const a = sandbox.petFxSVG(f.id, true);
+  return (a.back + a.front).length < 160;
+}).map((f) => f.id);
+ok(!fxThin.length, 'a still effect still draws an effect', fxThin.join(','));
+/* A still node that is only a class away from its running twin has not been
+   held anywhere: it needs a transform saying where in the flight it was
+   caught. Only the three that start off the frame are checked. */
+const uncaught = ['shooting', 'motes', 'petals'].filter((id) => {
+  const a = sandbox.petFxSVG(id, true);
+  return (a.back + a.front).indexOf('transform:transl') < 0;
+});
+ok(!uncaught.length, 'an effect that starts off the frame is caught mid-flight', uncaught.join(','));
+
 console.log('\nthe shelf tile and the companion cannot disagree');
 const tileBad = W.filter((x) => {
   const t = sandbox.wearTile(x.id);

@@ -12,7 +12,7 @@
      carries this notice with it. See LICENSE. -->
 <meta name="author" content="Nabu Tarot">
 <meta name="copyright" content="Copyright (c) 2025-2026 Nabu Tarot. All rights reserved.">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'none'; object-src 'none'; form-action 'self'; script-src 'self' 'sha256-XhmaCVy6tU4V0i7cWwNubrtJHJIO1wvboiFqysgIKrI=' https://www.gstatic.com https://apis.google.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; font-src 'self' data:; media-src 'self' data: blob:; worker-src 'self'; connect-src 'self' https://*.googleapis.com https://*.google.com https://*.firebaseio.com https://*.cloudfunctions.net https://*.workers.dev https://generativelanguage.googleapis.com; frame-src https://*.firebaseapp.com https://accounts.google.com https://*.facebook.com">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'none'; object-src 'none'; form-action 'self'; script-src 'self' 'sha256-jaoPBAjIY/HaUzrSjxMk/6F/osALVKQLRe1TXf0uUO4=' https://www.gstatic.com https://apis.google.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; font-src 'self' data:; media-src 'self' data: blob:; worker-src 'self'; connect-src 'self' https://*.googleapis.com https://*.google.com https://*.firebaseio.com https://*.cloudfunctions.net https://*.workers.dev https://generativelanguage.googleapis.com; frame-src https://*.firebaseapp.com https://accounts.google.com https://*.facebook.com">
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <meta name="theme-color" content="#EFE9FA">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -2109,7 +2109,10 @@ html,body{overscroll-behavior-y:contain}
 .fxshoot{animation:fxshoot 5.5s linear infinite;transform-origin:60px 60px}
 .fxrise{animation:fxrise 4.4s linear infinite}
 .fxfall{animation:fxfall 6s linear infinite}
-.fxfall.sway{animation:fxfall 6s linear infinite,sksway 2.4s ease-in-out infinite}
+/* The drift belongs to the petal inside the falling group, never to the group
+   as well: two animations on one element both naming transform do not compose,
+   the last one wins, and the petals stopped falling. */
+.fxfall.sway>*{animation:sksway 2.4s ease-in-out infinite}
 .fxwander{animation:fxwander 7s ease-in-out infinite}
 .fxspin{animation:fxspin 14s linear infinite}
 .fxorbit{animation:fxorbit 7s linear infinite}
@@ -2121,9 +2124,18 @@ html,body{overscroll-behavior-y:contain}
    things keeps the stars and loses only the blinking. */
 @media (prefers-reduced-motion:reduce){
   .skfall,.skfall.sway>*,.skrise,.skwander,.skaurora>path,
-  .fxshoot,.fxrise,.fxfall,.fxfall.sway,.fxwander,.fxspin,.fxorbit,.fxflap,.fxripple,.fxsheen{animation:none!important}
+  .fxshoot,.fxrise,.fxfall,.fxfall.sway>*,.fxwander,.fxspin,.fxorbit,.fxflap,.fxripple,.fxsheen{animation:none!important}
   .fxshoot,.fxfall,.fxrise{opacity:.85}
 }
+
+/* A full-height sheet covers the screen it was opened from, and that screen
+   is a companion breathing in a home under falling weather. Left running it
+   went on costing a style recalculation every frame for something nobody can
+   see - about a fifth of the frame on a mid-range Android, on top of whatever
+   the sheet itself is drawing. Paused, not hidden: hiding it would cost a
+   relayout of the whole screen on open and again on close. */
+body.behindsheet #main,body.behindsheet #backbar{animation-play-state:paused}
+body.behindsheet #main *,body.behindsheet #backbar *{animation-play-state:paused!important}
 
 /* ---- the wardrobe screen ----
    Rides on .sheet so the backdrop tap and the close button already work, but
@@ -2181,6 +2193,14 @@ html,body{overscroll-behavior-y:contain}
 .dresssheet .wgrid.sky{grid-template-columns:repeat(2,1fr)}
 @media (min-width:520px){.dresssheet .wgrid.sky{grid-template-columns:repeat(3,1fr)}}
 
+/* Twenty-one homes, ten skies and ten effects is more tiles than fit on a
+   phone, and the ones below the fold were being drawn and styled anyway.
+   contain-intrinsic-size keeps the scrollbar honest while they are skipped. */
+.dresssheet .wgrid .wtile{content-visibility:auto}
+.dresssheet .wgrid.sky .wtile{contain-intrinsic-size:auto 168px}
+.dresssheet .wgrid.fx .wtile{contain-intrinsic-size:auto 112px}
+.scenesheet .wgrid.sky .wtile{contain-intrinsic-size:auto 152px}
+
 .wtile{position:relative;display:flex;flex-direction:column;align-items:center;gap:5px;
   background:var(--surface-2);border:1px solid var(--rule-soft);border-radius:15px;
   padding:9px 6px 8px;font:inherit;color:inherit;cursor:pointer;transition:transform .12s ease,box-shadow .12s ease}
@@ -2197,12 +2217,16 @@ html,body{overscroll-behavior-y:contain}
 .wtile .wbadge{position:absolute;top:5px;right:6px;font-size:10.5px;border-radius:999px;padding:1px 5px;line-height:1.5}
 .wtile .wbadge.plus{background:var(--tag-gold-bg);color:var(--gold-deep)}
 .wtile .wbadge.pro{background:#3B2A5E;color:#FFF3C4}
-/* the shimmer that marks a piece somebody does not own yet */
-.wtile.locked .wart::after{content:'';position:absolute;inset:0;border-radius:11px;pointer-events:none;
-  background:linear-gradient(105deg,transparent 40%,rgba(255,255,255,.5) 50%,transparent 60%);
-  background-size:280% 100%;animation:wshine 3.4s ease-in-out infinite}
+/* The shimmer that marks a piece somebody does not own yet.
+   It used to slide a 280%-wide gradient with background-position, which is a
+   paint the browser cannot hand to the compositor: every locked tile repainted
+   itself every frame, and a grid is mostly locked tiles for anyone who has not
+   subscribed. Same sweep, moved with a transform, which costs nothing. */
+.wtile.locked .wart::after{content:'';position:absolute;top:0;bottom:0;left:100%;width:62%;pointer-events:none;
+  background:linear-gradient(105deg,transparent,rgba(255,255,255,.5),transparent);
+  animation:wshine 3.4s ease-in-out infinite}
 .wtile .wart{position:relative;overflow:hidden}
-@keyframes wshine{0%{background-position:150% 0}55%,100%{background-position:-60% 0}}
+@keyframes wshine{0%{transform:translateX(0)}55%,100%{transform:translateX(-265%)}}
 @media (prefers-reduced-motion:reduce){.wtile.locked .wart::after{animation:none;opacity:.25}}
 
 /* a sky tile is the real home under the real sky, so the choice is honest */
@@ -2217,6 +2241,19 @@ html,body{overscroll-behavior-y:contain}
 .wtile .fxbox{background:radial-gradient(circle at 50% 38%,#4A3E80,#241B4A 78%)}
 .wtile .fxbox svg{width:100%;height:100%}
 .wtile.fxtile.locked .wart{opacity:.9}
+
+/* ---- the scene screen ----
+   The wardrobe's sheet, with three tabs instead of a rail of seven slots, so
+   the rail is centred and the tabs are allowed to be wide enough to read. */
+.scenesheet .scenerail{justify-content:center;gap:14px;overflow-x:visible}
+.scenesheet .scenerail .wslot{flex:0 0 auto;min-width:64px}
+.scenesheet .scenerail .wthumb{border-style:solid;border-color:var(--rule-soft);background:var(--surface)}
+.scenesheet .scenerail .wslot.on .wthumb{background:var(--soft)}
+.scenesheet .wmeta .wcount b,.scenesheet .wmeta .wpay b{color:var(--primary)}
+/* Twenty-one homes want three across on anything wider than a small phone. */
+@media (min-width:400px){.scenesheet .wgrid.sky{grid-template-columns:repeat(3,1fr)}}
+@media (min-width:620px){.scenesheet .wgrid.sky{grid-template-columns:repeat(4,1fr)}}
+.scenesheet .wtile .wscene{height:96px}
 
 .dresssheet .wfoot{position:sticky;bottom:0;background:var(--surface);border-top:1px solid var(--rule-soft);
   padding:9px 14px calc(12px + env(safe-area-inset-bottom))}
@@ -3734,6 +3771,9 @@ const STR = {
     coatNames: { cream: 'Kem', lilac: 'Tím nhạt', rose: 'Hồng phấn', sky: 'Xanh trời', mint: 'Bạc hà', ember: 'Cam đất', midnight: 'Tím đêm', gold: 'Vàng ánh' },
     petFoodTitle: 'Bữa ăn', petFoodNote: 'Món ăn ngon hơn làm bạn nhỏ vui hơn, và vận may cũng đầy nhanh hơn.',
     petHomeShort: 'Nhà', petHomeTitle: 'Nhà của bạn nhỏ', petHomeNote: 'Bạn nhỏ có chỗ ở đẹp thì ở lại lâu hơn và mang về nhiều may mắn hơn.',
+    petSkyNote: 'Bầu trời phủ lên ngôi nhà bạn nhỏ đang ở, đổi cả giờ trong ngày lẫn thời tiết.',
+    petFxNote: 'Hiệu ứng nằm ngay trên bạn nhỏ, không phải trên ngôi nhà.',
+    petSceneWorth: 'Cảnh này thêm',
     petWearTitle: 'Đồ mặc', petWearNote: 'Bạn nhỏ mặc áo hay đeo phụ kiện đều rạng rỡ hơn hẳn.',
     wardrobeTitle: 'Tủ quần áo', wardrobeSky: 'Bầu trời', wardrobeFx: 'Hiệu ứng',
     wearNone: 'Bỏ ra',
@@ -4605,6 +4645,9 @@ const STR = {
     coatNames: { cream: 'Cream', lilac: 'Lilac', rose: 'Rose', sky: 'Sky', mint: 'Mint', ember: 'Ember', midnight: 'Midnight', gold: 'Gold' },
     petFoodTitle: 'Meals', petFoodNote: 'Better food makes a happier companion, and its luck fills faster.',
     petHomeShort: 'Home', petHomeTitle: 'Its home', petHomeNote: 'A companion with a lovely home settles in and brings back more.',
+    petSkyNote: 'The sky lies over whichever home it lives in, and changes both the hour and the weather.',
+    petFxNote: 'An effect sits on the companion itself, not on the room.',
+    petSceneWorth: 'This scene adds',
     petWearTitle: 'Clothes', petWearNote: 'A jumper, a cloak or a flower crown: a dressed companion shines.',
     wardrobeTitle: 'Wardrobe', wardrobeSky: 'Sky', wardrobeFx: 'Effects',
     wearNone: 'Take off',
@@ -5475,6 +5518,9 @@ const STR = {
     coatNames: { cream: 'Creme', lilac: 'Flieder', rose: 'Rosé', sky: 'Himmelblau', mint: 'Mint', ember: 'Glut', midnight: 'Mitternacht', gold: 'Gold' },
     petFoodTitle: 'Mahlzeiten', petFoodNote: 'Besseres Futter macht den Begleiter glücklicher, und sein Glück füllt sich schneller.',
     petHomeShort: 'Zuhause', petHomeTitle: 'Sein Zuhause', petHomeNote: 'Ein Begleiter mit einem schönen Zuhause fühlt sich wohl und bringt mehr zurück.',
+    petSkyNote: 'Der Himmel legt sich über das Zuhause und ändert Tageszeit und Wetter.',
+    petFxNote: 'Ein Effekt liegt auf dem Begleiter selbst, nicht auf dem Raum.',
+    petSceneWorth: 'Diese Szene bringt',
     petWearTitle: 'Kleidung', petWearNote: 'Ein Pullover, ein Umhang oder ein Blumenkranz: ein angezogener Begleiter strahlt.',
     wardrobeTitle: 'Kleiderschrank', wardrobeSky: 'Himmel', wardrobeFx: 'Effekte',
     wearNone: 'Ablegen',
@@ -23775,22 +23821,39 @@ const skyWash = (id, cols, op) => '<defs><linearGradient id="' + id + '" x1="0" 
   + '<stop offset="100%" stop-color="' + cols[1] + '" stop-opacity=".35"/></linearGradient></defs>'
   + '<rect width="240" height="240" fill="url(#' + id + ')" opacity="' + op + '"/>';
 /* Things that fall, drift or wander. The delay spread is what stops a dozen
-   identical nodes reading as one blinking row. */
-const skyMany = (n, cls, make) => {
+   identical nodes reading as one blinking row.
+
+   Still, the same weather is held rather than run: every node is laid where
+   the animation would have carried it, because anything that falls starts
+   above the frame and a frozen snowfall is an empty tile. `travel` is how far
+   down (or, for a lantern, up) the animation takes it. */
+const skyMany = (n, cls, make, still, travel) => {
   let out = '';
   for (let i = 0; i < n; i++) {
     const x = Math.round(((i * 97) % 100) * 2.3 + 8), d = i * 740;
-    out += '<g class="' + cls + '" style="animation-delay:' + d + 'ms">' + make(x, i) + '</g>';
+    out += still
+      ? '<g style="transform:translateY(' + Math.round((travel || 0) * ((i + 0.5) / n)) + 'px)">' + make(x, i) + '</g>'
+      : '<g class="' + cls + '" style="animation-delay:' + d + 'ms">' + make(x, i) + '</g>';
   }
   return out;
 };
 
-function petSkySVG(id) {
+/* `still` draws the sky as a picture instead of a scene: no animation on any
+   node at all. It is what the picker tiles ask for, and it is not a nicety.
+   Ten live skies in a grid, each one a whole home redrawn under falling
+   weather, put the main thread at about half of every frame on a mid-range
+   Android - the grid, the preview above it and the companion screen behind it
+   all ticking at once. Held still they cost nothing and still show what they
+   are, and the one scene that has to move - the preview - still moves. */
+function petSkySVG(id, still) {
   /* The homes are drawn with xMidYMax slice, so the square is scaled to cover
      the stage and cropped at the top. A sky framed any other way would drift
      off the home it is supposed to be lying on - which is exactly what the
      first probe run showed. */
   const open = '<svg viewBox="0 0 240 240" class="petsky" preserveAspectRatio="xMidYMax slice" aria-hidden="true">';
+  /* A class that names an animation, or nothing at all when held still. */
+  const ani = (c) => still ? '' : ' class="' + c + '"';
+  const lag = (ms) => still ? '' : ' style="animation-delay:' + ms + 'ms"';
   if (id === 'clear' || !id) return '';
   if (id === 'dawn') {
     return open + skyWash('skdawn', ['#FFB877', '#FFE4C4'], '.55')
@@ -23809,37 +23872,37 @@ function petSkySVG(id) {
     return open + skyWash('skstar', ['#1B1440', '#4A3A86'], '.6')
       + '<g fill="#FFF7EE">'
       + [[24, 28], [62, 16], [106, 36], [148, 20], [196, 30], [226, 58], [16, 74], [86, 62], [170, 68]]
-        .map((p, k) => '<circle class="twinkle" cx="' + p[0] + '" cy="' + p[1] + '" r="' + (1.3 + (k % 3) * 0.5) + '" style="animation-delay:' + (k * 280) + 'ms"/>').join('')
+        .map((p, k) => '<circle' + ani('twinkle') + ' cx="' + p[0] + '" cy="' + p[1] + '" r="' + (1.3 + (k % 3) * 0.5) + '"' + lag(k * 280) + '/>').join('')
       + '</g></svg>';
   }
   if (id === 'snow') {
     return open + skyWash('sksnow', ['#BCD6EE', '#F2F8FF'], '.5')
-      + skyMany(10, 'skfall', (x, i) => '<circle cx="' + x + '" cy="-8" r="' + (2.4 + (i % 3)) + '" fill="#FFFFFF" opacity=".95"/>')
+      + skyMany(10, 'skfall', (x, i) => '<circle cx="' + x + '" cy="-8" r="' + (2.4 + (i % 3)) + '" fill="#FFFFFF" opacity=".95"/>', still, 232)
       + '</svg>';
   }
   if (id === 'sakura') {
     return open + skyWash('sksak', ['#FFBBD0', '#FFE6EE'], '.5')
-      + skyMany(10, 'skfall sway', (x, i) => '<ellipse cx="' + x + '" cy="-8" rx="' + (4 + (i % 2) * 1.6) + '" ry="2.6" fill="' + (i % 2 ? '#FFF0F5' : '#FBC7DA') + '" opacity=".95"/>')
+      + skyMany(10, 'skfall sway', (x, i) => '<ellipse cx="' + x + '" cy="-8" rx="' + (4 + (i % 2) * 1.6) + '" ry="2.6" fill="' + (i % 2 ? '#FFF0F5' : '#FBC7DA') + '" opacity=".95"/>', still, 232)
       + '</svg>';
   }
   if (id === 'rain') {
     return open + skyWash('skrain', ['#6E869E', '#B8D2E0'], '.5')
-      + skyMany(11, 'skfall fast', (x) => '<path d="M' + x + ' -12 v16" stroke="#EAF6FF" stroke-width="2" stroke-linecap="round" opacity=".9"/>')
+      + skyMany(11, 'skfall fast', (x) => '<path d="M' + x + ' -12 v16" stroke="#EAF6FF" stroke-width="2" stroke-linecap="round" opacity=".9"/>', still, 232)
       + '</svg>';
   }
   if (id === 'fireflies') {
     return open + skyWash('skfly', ['#2E3A58', '#5E6E90'], '.45')
       + skyMany(7, 'skwander', (x, i) => '<circle cx="' + x + '" cy="' + (90 + (i % 4) * 26) + '" r="2.4" fill="#FFF3C4" opacity=".9"/>'
-        + '<circle cx="' + x + '" cy="' + (90 + (i % 4) * 26) + '" r="5.5" fill="#FFF3C4" opacity=".2"/>')
+        + '<circle cx="' + x + '" cy="' + (90 + (i % 4) * 26) + '" r="5.5" fill="#FFF3C4" opacity=".2"/>', still, 0)
       + '</svg>';
   }
   if (id === 'aurora') {
     return open + skyWash('skaur', ['#141E38', '#2A3A5E'], '.6')
-      + '<g class="skaurora" fill="none" stroke-width="12" stroke-linecap="round" opacity=".38">'
+      + '<g' + ani('skaurora') + ' fill="none" stroke-width="12" stroke-linecap="round" opacity=".38">'
       + '<path d="M-10 60 Q60 22 120 52 Q186 82 250 44" stroke="#7FE6C0"/>'
-      + '<path d="M-10 84 Q70 48 132 76 Q194 102 250 70" stroke="#9EC2F0" style="animation-delay:1400ms"/>'
-      + '<path d="M-10 40 Q64 10 126 34 Q190 58 250 28" stroke="#C9B0EA" style="animation-delay:2600ms"/></g>'
-      + '<g fill="#FFF7EE">' + [[30, 22], [110, 14], [200, 26]].map((p, k) => '<circle class="twinkle" cx="' + p[0] + '" cy="' + p[1] + '" r="1.5" style="animation-delay:' + (k * 420) + 'ms"/>').join('') + '</g>'
+      + '<path d="M-10 84 Q70 48 132 76 Q194 102 250 70" stroke="#9EC2F0"' + lag(1400) + '/>'
+      + '<path d="M-10 40 Q64 10 126 34 Q190 58 250 28" stroke="#C9B0EA"' + lag(2600) + '/></g>'
+      + '<g fill="#FFF7EE">' + [[30, 22], [110, 14], [200, 26]].map((p, k) => '<circle' + ani('twinkle') + ' cx="' + p[0] + '" cy="' + p[1] + '" r="1.5"' + lag(k * 420) + '/>').join('') + '</g>'
       + '</svg>';
   }
   if (id === 'lanterns') {
@@ -23849,7 +23912,7 @@ function petSkySVG(id) {
         return '<ellipse cx="' + x + '" cy="230" rx="' + r + '" ry="' + (r * 1.24).toFixed(1) + '" fill="#F2789F" opacity=".9"/>'
           + '<ellipse cx="' + x + '" cy="230" rx="' + (r * 0.45).toFixed(1) + '" ry="' + (r * 0.62).toFixed(1) + '" fill="#FFF3C4" opacity=".8"/>'
           + '<ellipse cx="' + x + '" cy="230" rx="' + (r * 1.9).toFixed(1) + '" ry="' + (r * 2.1).toFixed(1) + '" fill="#FFB27A" opacity=".12"/>';
-      })
+      }, still, -196)
       + '</svg>';
   }
   return '';
@@ -23884,35 +23947,64 @@ const fxWorn = (id) => { const f = fxOf(id); return tierOn(f.tier) ? f : PET_FX[
 
 /* Returns the two layers separately: one behind the companion, one in front.
    Coordinates are the companion's 120x120, so an effect sits on the creature
-   rather than on the room. */
-function petFxSVG(id) {
+   rather than on the room.
+
+   `still` holds the effect mid-gesture instead of running it, for the picker
+   tiles. Three of these - the falling star, the motes, the petals - begin at
+   opacity 0 somewhere off the frame, so frozen on their start mark they are a
+   black tile with nothing in it. Each one names where it is worth catching. */
+function petFxSVG(id, still) {
   const none = { back: '', front: '' };
   if (!id || id === 'none') return none;
+  /* A class that names an animation, and a delay, or nothing when held. */
+  const ani = (c) => still ? '' : ' class="' + c + '"';
+  const lag = (ms) => still ? '' : ' style="animation-delay:' + ms + 'ms"';
+  /* Held at the point in the flight the tile should show, or running. */
+  const hold = (c, ms, css) => still ? ' style="' + css + '"' : ' class="' + c + '" style="animation-delay:' + ms + 'ms"';
+  /* Where along its flight node i is caught. x climbs with i in every one of
+     these, so a distance that climbs with i too lays the whole set on one
+     diagonal - which is what the first contact sheet showed motes and petals
+     as: a row of beads on a wire. Stepping by three around seven breaks it. */
+  const scatter = (i, n) => ((i * 3) % 7) / 6;
   if (id === 'twinkle') {
     const pts = [[14, 24], [102, 20], [24, 98], [106, 94], [60, 8], [8, 60], [112, 54], [42, 14], [80, 110]];
     return { back: '<g class="petfx">' + pts.map((p, k) =>
-      '<g class="twinkle" style="animation-delay:' + (k * 380) + 'ms">'
+      '<g' + ani('twinkle') + lag(k * 380) + '>'
       + wStar(p[0], p[1], 5.2 - (k % 3) * 1.1, '#FFE9A8')
       + wStar(p[0], p[1], 2.4 - (k % 3) * 0.4, '#FFFFFF') + '</g>').join('') + '</g>', front: '' };
   }
   if (id === 'shooting') {
     return { back: '<g class="petfx">' + [0, 1, 2].map((i) =>
-      '<g class="fxshoot" style="animation-delay:' + (i * 1800) + 'ms;--fy:' + (14 + i * 26) + '">'
+      '<g' + (still
+        ? ' style="transform:translate(' + [88, 44, 104][i] + 'px,' + [16, 58, 88][i] + 'px)"'
+        : ' class="fxshoot" style="animation-delay:' + (i * 1800) + 'ms;--fy:' + (14 + i * 26) + '"') + '>'
       + '<path d="M0 0 l-34 14" stroke="#FFE9A8" stroke-width="3" stroke-linecap="round" opacity=".55"/>'
       + '<path d="M0 0 l-18 7" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round" opacity=".9"/>'
       + wStar(2, -1, 4.4, '#FFFFFF') + '</g>').join('') + '</g>', front: '' };
   }
   if (id === 'motes') {
     return { back: '', front: '<g class="petfx" fill="#FFE9A8">' + [0, 1, 2, 3, 4, 5, 6].map((i) =>
-      '<circle class="fxrise" cx="' + (20 + i * 14) + '" cy="114" r="' + (2.2 + (i % 3) * 0.9) + '" opacity=".95" style="animation-delay:' + (i * 620) + 'ms"/>').join('') + '</g>' };
+      '<circle' + hold('fxrise', i * 620, 'transform:translateY(' + Math.round(-10 - scatter(i, 7) * 62) + 'px)')
+      + ' cx="' + (20 + i * 14) + '" cy="114" r="' + (2.2 + (i % 3) * 0.9) + '" opacity=".95"/>').join('') + '</g>' };
   }
   if (id === 'petals') {
+    /* The fall goes on the group and the drift on the petal inside it, which
+       is how the sakura sky has always done it. Both on the one element is not
+       a composition: two animations naming transform means the last one in the
+       list wins outright, so for as long as this was written that way the
+       petals drifted a few pixels sideways and never fell at all - and cost
+       six times what the rain costs, because a property two animations fight
+       over cannot be handed to the compositor. */
     return { back: '', front: '<g class="petfx">' + [0, 1, 2, 3, 4, 5, 6].map((i) =>
-      '<ellipse class="fxfall sway" cx="' + (14 + i * 15) + '" cy="-8" rx="' + (4.4 + (i % 2) * 1.4) + '" ry="2.8" fill="' + (i % 2 ? '#FFF0F5' : '#F7A9C6') + '" opacity=".97" style="animation-delay:' + (i * 700) + 'ms"/>').join('') + '</g>' };
+      '<g' + (still
+        ? ' style="transform:translateY(' + Math.round(18 + scatter(i, 7) * 96) + 'px)"'
+        : ' class="fxfall sway" style="animation-delay:' + (i * 700) + 'ms"') + '>'
+      + '<ellipse cx="' + (14 + i * 15) + '" cy="-8" rx="' + (4.4 + (i % 2) * 1.4) + '" ry="2.8" fill="' + (i % 2 ? '#FFF0F5' : '#F7A9C6') + '" opacity=".97"/>'
+      + '</g>').join('') + '</g>' };
   }
   if (id === 'fireflies') {
     return { back: '', front: '<g class="petfx">' + [0, 1, 2, 3, 4].map((i) =>
-      '<g class="fxwander" style="animation-delay:' + (i * 900) + 'ms">'
+      '<g' + ani('fxwander') + lag(i * 900) + '>'
       + '<circle cx="' + (20 + i * 21) + '" cy="' + (48 + (i % 3) * 24) + '" r="3" fill="#FFFBE8"/>'
       + '<circle cx="' + (20 + i * 21) + '" cy="' + (48 + (i % 3) * 24) + '" r="8" fill="#FFE9A8" opacity=".3"/></g>').join('') + '</g>' };
   }
@@ -23923,25 +24015,34 @@ function petFxSVG(id) {
       + '<ellipse cx="0" cy="0" rx="46" ry="13" fill="#C9B0EA" opacity=".18"/>'
       + '<ellipse cx="0" cy="0" rx="46" ry="13" fill="none" stroke="#9E82D2" stroke-width="2.2" opacity=".8"/>'
       + '<ellipse cx="0" cy="0" rx="34" ry="9.6" fill="none" stroke="#C9B0EA" stroke-width="1.4" opacity=".7"/>'
-      + '<g class="fxspin" transform="scale(1,0.3)">' + runes + '</g></g>', front: '' };
+      + '<g' + (still ? '' : ' class="fxspin"') + ' transform="scale(1,0.3)">' + runes + '</g></g>', front: '' };
   }
   if (id === 'butterfly') {
-    return { back: '', front: '<g class="petfx"><g class="fxorbit" transform="translate(60,74)">'
+    return { back: '', front: '<g class="petfx"><g' + (still ? '' : ' class="fxorbit"') + ' transform="translate(60,74)">'
       + '<g transform="translate(48,0)">'
-      + '<g class="fxflap"><path d="M0 0 Q-14 -15 -18 -3 Q-18 9 -3 6 Z" fill="#F7A9C6"/>'
+      /* .fxflap carries a transform-origin; a still tile has no class to
+         carry one, and a scaled wing about the view box corner slides off the
+         butterfly altogether. Held open instead of held mid-beat. */
+      + '<g' + (still ? '' : ' class="fxflap"') + '><path d="M0 0 Q-14 -15 -18 -3 Q-18 9 -3 6 Z" fill="#F7A9C6"/>'
       + '<path d="M0 0 Q14 -15 18 -3 Q18 9 3 6 Z" fill="#C9B0EA"/></g>'
       + '<ellipse cx="0" cy="1" rx="1.8" ry="6" fill="#5E4F9E"/></g></g></g>' };
   }
   if (id === 'ripple') {
+    /* Three rings at rest sit exactly on top of one another and read as one,
+       so held still they take the three sizes the animation passes through. */
     return { back: '<g class="petfx" fill="none" stroke="#9EC2F0" stroke-width="2.6">' + [0, 1, 2].map((i) =>
-      '<ellipse class="fxripple" cx="60" cy="112" rx="18" ry="5" style="animation-delay:' + (i * 1100) + 'ms"/>').join('') + '</g>', front: '' };
+      '<ellipse' + (still
+        ? ' style="transform-origin:60px 112px;transform:scale(' + (0.8 + i * 0.7) + ');opacity:' + (0.8 - i * 0.24) + '"'
+        : ' class="fxripple" style="animation-delay:' + (i * 1100) + 'ms"')
+      + ' cx="60" cy="112" rx="18" ry="5"/>').join('') + '</g>', front: '' };
   }
   if (id === 'shimmer') {
     return { back: '', front: '<g class="petfx"><defs><linearGradient id="fxsh" x1="0" y1="0" x2="1" y2="0">'
       + '<stop offset="0%" stop-color="#FFF7EE" stop-opacity="0"/><stop offset="45%" stop-color="#FFF3C4" stop-opacity=".55"/>'
       + '<stop offset="55%" stop-color="#F7A9C6" stop-opacity=".5"/><stop offset="100%" stop-color="#C9B0EA" stop-opacity="0"/>'
       + '</linearGradient></defs>'
-      + '<rect class="fxsheen" x="-60" y="26" width="52" height="92" rx="20" fill="url(#fxsh)"/></g>' };
+      + '<rect' + (still ? ' style="transform:translateX(92px)"' : ' class="fxsheen"')
+      + ' x="-60" y="26" width="52" height="92" rx="20" fill="url(#fxsh)"/></g>' };
   }
   return none;
 }
@@ -24142,7 +24243,21 @@ const PET_HOMES = [
   { id: 'palace', pro: true, add: 12, name: { vi: 'Cung điện', en: 'The palace', de: 'Palast' } },
   { id: 'castle', pro: true, add: 12, name: { vi: 'Lâu đài phép', en: 'Magic castle', de: 'Zauberschloss' } },
   { id: 'lotus', pro: true, add: 12, name: { vi: 'Thủy tạ đầm sen', en: 'Lotus pavilion', de: 'Lotuspavillon' } },
-  { id: 'isle', pro: true, add: 12, name: { vi: 'Đảo trời', en: 'Floating isle', de: 'Schwebende Insel' } }
+  { id: 'isle', pro: true, add: 12, name: { vi: 'Đảo trời', en: 'Floating isle', de: 'Schwebende Insel' } },
+  /* Twelve more, drawn in the same hand. They go after the first nine rather
+     than among them so that nobody's home moves in the list overnight. */
+  { id: 'bamboo', pro: true, add: 12, name: { vi: 'Vườn tre', en: 'Bamboo grove', de: 'Bambushain' } },
+  { id: 'teahouse', pro: true, add: 12, name: { vi: 'Quán trà', en: 'Tea house', de: 'Teehaus' } },
+  { id: 'study', pro: true, add: 12, name: { vi: 'Thư phòng', en: 'Reading room', de: 'Lesezimmer' } },
+  { id: 'greenhouse', pro: true, add: 12, name: { vi: 'Nhà kính', en: 'Glasshouse', de: 'Gewächshaus' } },
+  { id: 'mushroom', pro: true, add: 12, name: { vi: 'Nhà nấm', en: 'Mushroom house', de: 'Pilzhaus' } },
+  { id: 'shell', pro: true, add: 12, name: { vi: 'Nhà vỏ sò', en: 'Shell on the shore', de: 'Muschel am Strand' } },
+  { id: 'treehouse', pro: true, add: 12, name: { vi: 'Nhà trên cây', en: 'Treehouse', de: 'Baumhaus' } },
+  { id: 'crystal', pro: true, add: 12, name: { vi: 'Hang pha lê', en: 'Crystal cave', de: 'Kristallhöhle' } },
+  { id: 'observatory', pro: true, add: 12, name: { vi: 'Đài ngắm sao', en: 'Observatory', de: 'Sternwarte' } },
+  { id: 'boat', pro: true, add: 12, name: { vi: 'Thuyền hoa', en: 'Flower boat', de: 'Blumenboot' } },
+  { id: 'cabin', pro: true, add: 12, name: { vi: 'Nhà gỗ mùa đông', en: 'Winter cabin', de: 'Winterhütte' } },
+  { id: 'oasis', pro: true, add: 12, name: { vi: 'Ốc đảo', en: 'Oasis', de: 'Oase' } }
 ];
 /* What there is to wear now lives in pet-wardrobe.js: seven slots worn at once
    instead of the single one this list used to hold. The nine ids it held are
@@ -24218,6 +24333,7 @@ const PETS = {
     return this.put(p);
   },
   strip(p) { p.fit = fitBlank(); return this.put(p); },
+  setHome(p, id) { p.home = pickFrom(PET_HOMES, id, true).id; return this.put(p); },
   setSky(p, id) { p.sky = skyOf(id).id; return this.put(p); },
   setFx(p, id) { p.fx = fxOf(id).id; return this.put(p); },
   fedToday(p) { return !!p && p.fed === isoDate(new Date()); },
@@ -24393,6 +24509,20 @@ const PET = PETS;
    stage exactly, so the scene fills the frame with nothing floating in it.
    The companion stands to the left of centre, which is why every building is
    set to the right. */
+/* A scene held still: the classes that name an animation, taken out of the
+   markup, and the delays with them.
+
+   A picker tile does not need to move. Ten of them moving at once is what put
+   the wardrobe at half of every frame on a mid-range Android - the grid, the
+   preview above it and the companion screen behind it all ticking together.
+   Stripping the markup beats threading a flag through nine hand-drawn homes,
+   and it cannot be forgotten in the tenth. Only classes that name a keyframe
+   are listed; .pethome and .petsky place the layer and must survive. */
+const PET_ANI_CLASS = /\s+class="(?:twinkle|fly(?: lit)?|drift|shaft|shoot|wing|leaffall|flit)"/g;
+const petStill = (svg) => String(svg)
+  .replace(PET_ANI_CLASS, '')
+  .replace(/\s+style="animation-delay:[^"]*"/g, '');
+
 function petHomeSVG(id) {
   const open = '<svg viewBox="0 0 240 240" class="pethome" preserveAspectRatio="xMidYMax slice" aria-hidden="true">';
   if (id === 'cloud') {
@@ -24581,6 +24711,490 @@ function petHomeSVG(id) {
       + '<rect x="0" y="206" width="240" height="34" fill="#4A3E80"/>'
       + '<g fill="#5E4F9E"><ellipse cx="40" cy="212" rx="30" ry="8"/><ellipse cx="190" cy="214" rx="34" ry="9"/></g></svg>';
   }
+  /* ---- the twelve added homes ----
+     Same hand as the nine above: a gradient for the air, a mist layer far off,
+     the place itself standing to the right because the companion stands left
+     of centre, and the ground last. Nothing moves in them but the odd star,
+     and that is stripped out by petStill for a picker tile. Thirty-odd nodes
+     is the ceiling - a home is the backdrop, not the subject. */
+
+  /* A grove, and a thatched hut standing in it. */
+  if (id === 'bamboo') {
+    const cane = (x, top, w, col, dark) => {
+      let g = '<rect x="' + (x - w / 2) + '" y="' + top + '" width="' + w + '" height="' + (214 - top) + '" fill="' + col + '"/>';
+      for (let y = top + 24; y < 214; y += 28) g += '<rect x="' + (x - w / 2 - 1.5) + '" y="' + y + '" width="' + (w + 3) + '" height="3" rx="1.5" fill="' + dark + '"/>';
+      return g;
+    };
+    /* Two arcs bowing opposite ways make a leaf. The first pass sent both the
+       same way and every leaf came out as a dark pen stroke. */
+    const leaf = (x, y, dx, dy, col) => {
+      const ex = x + dx * 1.7, ey = y + dy;
+      return '<path d="M' + x + ' ' + y + ' Q' + (x + dx * 0.45) + ' ' + (y + dy - 13) + ' ' + ex + ' ' + ey
+        + ' Q' + (x + dx * 0.95) + ' ' + (y + dy * 0.8 + 7) + ' ' + x + ' ' + y + ' Z" fill="' + col + '"/>';
+    };
+    return open
+      + '<defs><linearGradient id="hnba" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#D2E6CA"/>'
+      + '<stop offset="56%" stop-color="#F2F3DF"/><stop offset="100%" stop-color="#EADFC0"/></linearGradient></defs>'
+      + '<rect width="240" height="240" fill="url(#hnba)"/>'
+      + '<circle cx="50" cy="46" r="24" fill="#FFF3C4" opacity=".6"/>'
+      + '<path d="M0 148 q44 -22 92 -6 q46 16 86 -6 q34 -18 62 -2 L240 240 L0 240 Z" fill="#C2DCB0" opacity=".8"/>'
+      /* the grove: a pale back row for depth, then the canes that count */
+      + '<g opacity=".4">' + cane(112, 26, 7, '#9ABF88', '#7FA372') + cane(238, 12, 8, '#9ABF88', '#7FA372') + '</g>'
+      + cane(134, 6, 11, '#7CB267', '#568A46') + cane(226, 0, 13, '#8CC176', '#679E52')
+      + '<g>' + leaf(134, 30, 20, 15, '#568A46') + leaf(134, 56, -22, 13, '#679E52') + leaf(134, 84, 17, 14, '#4E7E40')
+      + leaf(226, 22, -26, 17, '#568A46') + leaf(226, 52, 21, 13, '#7CB267') + leaf(226, 82, -23, 15, '#679E52')
+      + leaf(112, 44, -18, 12, '#7FA372') + '</g>'
+      /* the hut: a solid cone of thatch over daubed walls, not an outline */
+      + '<path d="M172 96 L246 156 Q172 172 98 156 Z" fill="#BE9C5E"/>'
+      + '<path d="M172 96 L172 166 Q132 163 98 156 Z" fill="#DFC48C"/>'
+      + '<g stroke="#A8884A" stroke-width="1.5" opacity=".5"><path d="M172 104 L124 154 M172 104 L148 160 M172 104 L198 160 M172 104 L222 154"/></g>'
+      + '<path d="M98 156 Q172 172 246 156" fill="none" stroke="#A8884A" stroke-width="2.4"/>'
+      + '<path d="M172 96 q-7 -8 0 -14 q7 6 0 14 Z" fill="#A8884A"/>'
+      + '<rect x="118" y="158" width="106" height="52" rx="4" fill="#F0E2C6" stroke="#B89A62" stroke-width="2.2"/>'
+      + '<path d="M148 210 v-32 a15 15 0 0 1 30 0 v32 Z" fill="#7A5A3A"/>'
+      + '<path d="M163 178 v32" stroke="#5E4430" stroke-width="1.6" opacity=".6"/>'
+      + '<rect x="192" y="168" width="22" height="20" rx="3" fill="#FFF7EE" stroke="#B89A62" stroke-width="1.8"/>'
+      + '<path d="M203 168 v20 M192 178 h22" stroke="#B89A62" stroke-width="1.6"/>'
+      /* a low bamboo fence, then the ground and its stepping stones */
+      + '<g stroke="#8CC176" stroke-width="3" stroke-linecap="round"><path d="M112 210 v-22 M96 212 v-20 M80 214 v-18"/>'
+      + '<path d="M76 196 q18 -3 40 -5"/></g>'
+      + '<path d="M0 206 q60 -12 124 0 q60 12 116 -2 L240 240 L0 240 Z" fill="#AECF98"/>'
+      + '<g fill="#D9D0B4"><ellipse cx="44" cy="226" rx="16" ry="6"/><ellipse cx="88" cy="234" rx="14" ry="5.4"/><ellipse cx="12" cy="236" rx="12" ry="5"/></g>'
+      + '<g stroke="#8FB27E" stroke-width="2.2" stroke-linecap="round"><path d="M64 222 v-10 M72 224 v-8"/></g></svg>';
+  }
+
+  /* Dusk, and a row of paper lanterns along the eave. */
+  if (id === 'teahouse') {
+    /* Hung on a visible line below the eave. The first pass tucked them into
+       the gap between roof and shopfront, where they read as candle stubs. */
+    let lamps = '';
+    [124, 152, 180, 208, 234].forEach((x, k) => {
+      const r = 9 - (k % 2) * 1.6;
+      lamps += '<path d="M' + x + ' 126 v' + (12 + (k % 2) * 4) + '" stroke="#5E2E2A" stroke-width="1.6"/>'
+        + '<ellipse cx="' + x + '" cy="' + (148 + (k % 2) * 4) + '" rx="' + r + '" ry="' + (r * 1.24).toFixed(1) + '" fill="#E23A66"/>'
+        + '<ellipse cx="' + x + '" cy="' + (148 + (k % 2) * 4) + '" rx="' + (r * 0.48).toFixed(1) + '" ry="' + (r * 0.72).toFixed(1) + '" fill="#FFE9A8"/>'
+        + '<ellipse cx="' + x + '" cy="' + (148 + (k % 2) * 4) + '" rx="' + (r * 2).toFixed(1) + '" ry="' + (r * 2.2).toFixed(1) + '" fill="#FFB27A" opacity=".16"/>';
+    });
+    return open
+      + '<defs><linearGradient id="hnte" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#5E3F82"/>'
+      + '<stop offset="44%" stop-color="#E07E86"/><stop offset="100%" stop-color="#FBD3AE"/></linearGradient></defs>'
+      + '<rect width="240" height="240" fill="url(#hnte)"/>'
+      + '<circle cx="44" cy="80" r="19" fill="#FFD9A8" opacity=".8"/>'
+      + '<g fill="#A86E8E" opacity=".45"><path d="M0 128 q40 -30 78 -8 q36 20 70 -4 q36 -24 92 2 L240 160 L0 160 Z"/></g>'
+      /* the tiled roof, its ends turned up the way they are on a shophouse */
+      + '<path d="M100 130 Q116 116 134 108 Q166 90 196 90 Q224 96 242 114 Q252 118 258 130 Q236 122 222 124 Q198 108 172 108 Q140 112 116 126 Q106 124 100 130 Z" fill="#8E3A33"/>'
+      + '<path d="M120 124 Q148 104 176 102 Q208 104 236 122 Q206 110 176 110 Q148 112 120 124 Z" fill="#C6485C"/>'
+      + '<g stroke="#6E2A26" stroke-width="1.3" opacity=".5"><path d="M176 100 v22 M154 108 l-12 14 M198 108 l12 14"/></g>'
+      + '<path d="M110 128 h132" stroke="#5E2E2A" stroke-width="2"/>'
+      + lamps
+      /* the shopfront, its shutters open on a lit room */
+      + '<rect x="112" y="166" width="126" height="44" rx="4" fill="#F3DCC0" stroke="#8A5A38" stroke-width="2.4"/>'
+      + '<g stroke="#8A5A38" stroke-width="2.2"><path d="M144 166 v44 M182 166 v44 M214 166 v44"/></g>'
+      + '<rect x="116" y="172" width="24" height="26" rx="2" fill="#FFE9A8" opacity=".95"/>'
+      + '<rect x="186" y="172" width="24" height="26" rx="2" fill="#FFE9A8" opacity=".95"/>'
+      + '<path d="M150 210 v-32 h28 v32 Z" fill="#5E3A2E"/>'
+      + '<path d="M150 178 h28" stroke="#C9A96E" stroke-width="2.4"/>'
+      + '<rect x="156" y="186" width="16" height="9" rx="2" fill="#E5BE5E"/>'
+      /* the deck, and one lantern on a post where the companion stands */
+      + '<path d="M0 210 h240 v9 H0 Z" fill="#A8724A"/><path d="M0 210 h240 v3 H0 Z" fill="#C9906A"/>'
+      + '<g stroke="#8A5A38" stroke-width="1.4" opacity=".55"><path d="M30 219 v-9 M70 219 v-9 M110 219 v-9 M150 219 v-9 M190 219 v-9 M228 219 v-9"/></g>'
+      + '<rect y="219" width="240" height="21" fill="#6E4636"/>'
+      + '<path d="M58 210 v-24" stroke="#8A5A38" stroke-width="2.6"/>'
+      + '<ellipse cx="58" cy="178" rx="8" ry="10" fill="#E23A66"/><ellipse cx="58" cy="178" rx="3.6" ry="5.6" fill="#FFF3C4"/>'
+      + '<ellipse cx="58" cy="178" rx="17" ry="20" fill="#FFE9A8" opacity=".18"/></svg>';
+  }
+
+  /* Indoors for once: shelves, a round window, and a candle burning low. */
+  if (id === 'study') {
+    let books = '';
+    [[152, 120], [152, 152], [152, 184]].forEach((row) => {
+      let x = row[0];
+      for (let k = 0; x < 232; k++) {
+        const w = 6 + (k * 5) % 7, h = 20 + (k * 3) % 6;
+        books += '<rect x="' + x + '" y="' + (row[1] - h) + '" width="' + w + '" height="' + h + '" rx="1.5" fill="'
+          + ['#C6485C', '#5E4F9E', '#2F7F6E', '#C9904A', '#9E82D2', '#B0483F'][k % 6] + '"/>';
+        x += w + 1.6;
+      }
+    });
+    let stars = '';
+    [[62, 60], [76, 48], [52, 44], [86, 66], [66, 76]].forEach((p, k) => {
+      stars += '<circle class="twinkle" cx="' + p[0] + '" cy="' + p[1] + '" r="1.5" fill="#FFF7EE" style="animation-delay:' + (k * 300) + 'ms"/>';
+    });
+    return open
+      + '<defs><linearGradient id="hnst" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#5E4436"/>'
+      + '<stop offset="100%" stop-color="#8A6A52"/></linearGradient>'
+      + '<linearGradient id="hnsw" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#1B1440"/>'
+      + '<stop offset="100%" stop-color="#4A3A86"/></linearGradient></defs>'
+      + '<rect width="240" height="240" fill="url(#hnst)"/>'
+      /* the round window, and the night standing in it */
+      + '<circle cx="68" cy="60" r="38" fill="url(#hnsw)"/>' + stars
+      + '<circle cx="84" cy="44" r="10" fill="#FFF3C4" opacity=".9"/>'
+      + '<circle cx="68" cy="60" r="38" fill="none" stroke="#C9A96E" stroke-width="5"/>'
+      + '<g stroke="#C9A96E" stroke-width="3"><path d="M30 60 h76 M68 22 v76"/></g>'
+      /* the shelves */
+      + '<rect x="146" y="46" width="92" height="166" rx="4" fill="#6E5140" stroke="#4A3527" stroke-width="2"/>'
+      + '<g fill="#4A3527"><rect x="148" y="118" width="88" height="4"/><rect x="148" y="150" width="88" height="4"/><rect x="148" y="182" width="88" height="4"/></g>'
+      + books
+      + '<g fill="#8FD1A6"><ellipse cx="168" cy="82" rx="10" ry="7"/><ellipse cx="160" cy="88" rx="7" ry="5"/><ellipse cx="176" cy="88" rx="7" ry="5"/></g>'
+      + '<rect x="164" y="88" width="9" height="12" rx="2" fill="#C9704F"/>'
+      + '<g fill="#F7A9C6"><circle cx="212" cy="86" r="5"/><circle cx="222" cy="92" r="4"/></g>'
+      + '<rect x="204" y="96" width="26" height="14" rx="2" fill="#9E82D2"/>'
+      /* the desk, the candle, and the rug the companion stands on */
+      + '<rect x="108" y="196" width="60" height="9" rx="2" fill="#8A6A44"/>'
+      + '<path d="M120 205 v14 M156 205 v14" stroke="#6E5140" stroke-width="4" stroke-linecap="round"/>'
+      + '<rect x="126" y="180" width="8" height="16" rx="2" fill="#FFF7EE"/>'
+      + '<ellipse cx="130" cy="176" rx="3.4" ry="5.4" fill="#FFB27A"/><ellipse cx="130" cy="177" rx="1.6" ry="3" fill="#FFF3C4"/>'
+      + '<ellipse cx="130" cy="180" rx="22" ry="20" fill="#FFE9A8" opacity=".2"/>'
+      + '<rect y="212" width="240" height="28" fill="#6E4636"/>'
+      + '<ellipse cx="96" cy="226" rx="86" ry="15" fill="#B0483F"/>'
+      + '<ellipse cx="96" cy="226" rx="70" ry="11" fill="none" stroke="#E2A08C" stroke-width="2.4"/>'
+      + '<ellipse cx="96" cy="226" rx="50" ry="7" fill="#C6485C"/></svg>';
+  }
+
+  /* Glass, and a morning coming through it. */
+  if (id === 'greenhouse') {
+    /* The frame carries the whole drawing. The first pass drew it in the same
+       pale mint as the sky and the house all but vanished. */
+    let bars = '';
+    for (let x = 128; x <= 230; x += 17) bars += '<path d="M' + x + ' 208 V148" stroke="#5E8A7E" stroke-width="2.4" opacity=".85"/>';
+    return open
+      + '<defs><linearGradient id="hngr" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#BFDEDA"/>'
+      + '<stop offset="60%" stop-color="#F4F7E8"/><stop offset="100%" stop-color="#DCE8C4"/></linearGradient>'
+      + '<linearGradient id="hngp" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#DCF0EA"/>'
+      + '<stop offset="100%" stop-color="#A8CFC6"/></linearGradient></defs>'
+      + '<rect width="240" height="240" fill="url(#hngr)"/>'
+      + '<circle cx="50" cy="44" r="24" fill="#FFF3C4" opacity=".7"/>'
+      + '<g fill="#FFFFFF" opacity=".75"><ellipse cx="86" cy="38" rx="24" ry="11"/><ellipse cx="110" cy="32" rx="17" ry="9"/></g>'
+      + '<path d="M0 164 q54 -20 110 -4 q52 14 130 -6 L240 240 L0 240 Z" fill="#BFD8A8" opacity=".85"/>'
+      /* the glasshouse: a gabled roof, then the glazing, then the frame */
+      + '<path d="M114 150 L179 104 L244 150 Z" fill="url(#hngp)"/>'
+      + '<path d="M114 150 L179 104 L244 150" fill="none" stroke="#3E6E62" stroke-width="3.4" stroke-linejoin="round"/>'
+      + '<g stroke="#5E8A7E" stroke-width="2.2" opacity=".85"><path d="M179 104 v46 M146 128 v22 M212 128 v22 M132 138 h94"/></g>'
+      + '<rect x="120" y="148" width="118" height="60" fill="url(#hngp)"/>'
+      + bars
+      + '<path d="M120 178 h118" stroke="#5E8A7E" stroke-width="2.2" opacity=".85"/>'
+      + '<rect x="120" y="148" width="118" height="60" fill="none" stroke="#3E6E62" stroke-width="3.4"/>'
+      /* what is growing behind the glass, and the door out of it */
+      + '<g opacity=".8"><g fill="#4E9E76"><ellipse cx="138" cy="192" rx="12" ry="15"/><ellipse cx="162" cy="188" rx="9" ry="17"/>'
+      + '<ellipse cx="220" cy="190" rx="13" ry="16"/></g>'
+      + '<g fill="#F2789F"><circle cx="138" cy="180" r="4"/><circle cx="220" cy="178" r="4"/><circle cx="162" cy="173" r="3.4"/></g></g>'
+      + '<path d="M184 208 v-26 a11 11 0 0 1 22 0 v26 Z" fill="#CFE8E0" stroke="#3E6E62" stroke-width="2.6"/>'
+      + '<circle cx="201" cy="196" r="2" fill="#3E6E62"/>'
+      + '<path d="M179 102 v-9" stroke="#3E6E62" stroke-width="2.6"/><circle cx="179" cy="90" r="4.4" fill="#E5BE5E"/>'
+      /* the beds outside, a can left on the grass */
+      + '<path d="M0 202 q62 -10 122 2 q60 12 118 -4 L240 240 L0 240 Z" fill="#A8CB92"/>'
+      + '<g fill="#C9704F"><path d="M38 230 h26 v-14 h-26 Z"/><path d="M64 222 h9 l5 -7 h-6 Z"/></g>'
+      + '<rect x="34" y="212" width="34" height="5" rx="2" fill="#E09069"/>'
+      + '<g fill="#F2789F"><circle cx="96" cy="222" r="4.4"/><circle cx="108" cy="229" r="3.6"/><circle cx="16" cy="220" r="4"/></g>'
+      + '<g fill="#FFF3C4"><circle cx="96" cy="222" r="1.7"/><circle cx="108" cy="229" r="1.4"/><circle cx="16" cy="220" r="1.5"/></g></svg>';
+  }
+
+  /* A cap for a roof, in a clearing that keeps the light out. */
+  if (id === 'mushroom') {
+    const spot = (x, y, r) => '<ellipse cx="' + x + '" cy="' + y + '" rx="' + r + '" ry="' + (r * 0.78) + '" fill="#FFF0F5"/>';
+    const small = (x, y, s) => '<g transform="translate(' + x + ',' + y + ') scale(' + s + ')">'
+      + '<path d="M-11 0 q0 -13 11 -13 q11 0 11 13 Z" fill="#E2748A"/>'
+      + '<rect x="-3.4" y="0" width="6.8" height="10" rx="2.4" fill="#FBEBD6"/></g>';
+    const tree = (x, base, h, r, a, b) => '<path d="M' + x + ' ' + base + ' v-' + h + '" stroke="#7A5A44" stroke-width="6" stroke-linecap="round"/>'
+      + '<ellipse cx="' + x + '" cy="' + (base - h - r * 0.5) + '" rx="' + r + '" ry="' + (r * 0.84) + '" fill="' + a + '"/>'
+      + '<ellipse cx="' + (x - r * 0.62) + '" cy="' + (base - h + r * 0.1) + '" rx="' + (r * 0.66) + '" ry="' + (r * 0.56) + '" fill="' + b + '"/>'
+      + '<ellipse cx="' + (x + r * 0.62) + '" cy="' + (base - h + r * 0.1) + '" rx="' + (r * 0.66) + '" ry="' + (r * 0.56) + '" fill="' + b + '"/>';
+    return open
+      + '<defs><linearGradient id="hnmu" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#A8C9B4"/>'
+      + '<stop offset="52%" stop-color="#DCEBCE"/><stop offset="100%" stop-color="#C2D6A8"/></linearGradient></defs>'
+      + '<rect width="240" height="240" fill="url(#hnmu)"/>'
+      /* the wood behind, kept flat so the cap stays the loudest thing in it */
+      + '<g opacity=".5">' + tree(26, 180, 40, 28, '#6EA87F', '#7FBF95')
+      + tree(96, 176, 34, 23, '#7FBF95', '#8FD1A6') + tree(236, 172, 38, 26, '#6EA87F', '#7FBF95') + '</g>'
+      /* the house */
+      + '<rect x="146" y="140" width="66" height="70" rx="6" fill="#FBEBD6" stroke="#E0C8A8" stroke-width="2"/>'
+      + '<path d="M118 146 q0 -52 61 -52 q61 0 61 52 Z" fill="#C6485C"/>'
+      + '<path d="M118 146 q0 -52 61 -52 q22 0 37 12 q-38 4 -60 40 Z" fill="#DF6076"/>'
+      + spot(146, 118, 10) + spot(200, 110, 12) + spot(172, 136, 7) + spot(226, 134, 8) + spot(176, 100, 6)
+      + '<path d="M118 146 q60 12 122 0" fill="none" stroke="#A83247" stroke-width="2.4"/>'
+      + '<path d="M164 210 v-30 a15 15 0 0 1 30 0 v30 Z" fill="#8A6A44"/>'
+      + '<circle cx="188" cy="196" r="2.4" fill="#E5BE5E"/>'
+      + '<circle cx="206" cy="160" r="9" fill="#FFE9A8" stroke="#E0C8A8" stroke-width="2"/>'
+      + '<path d="M197 160 h18 M206 151 v18" stroke="#E0C8A8" stroke-width="1.6"/>'
+      /* the clearing */
+      + '<path d="M0 198 q58 -14 118 -2 q62 12 122 -6 L240 240 L0 240 Z" fill="#9EC98A"/>'
+      + '<path d="M0 220 q66 -12 128 2 q56 12 112 -4 L240 240 L0 240 Z" fill="#88B876"/>'
+      + small(42, 216, 1) + small(80, 228, .74) + small(16, 232, .6) + small(122, 214, .66)
+      + '<g fill="#FFF3C4" opacity=".85"><circle cx="64" cy="196" r="2.2"/><circle cx="104" cy="186" r="2"/><circle cx="30" cy="200" r="1.8"/></g></svg>';
+  }
+
+  /* A shell big enough to live in, on the sand the tide left. */
+  if (id === 'shell') {
+    /* A nautilus, not a blob: the whorl has to be drawn as bands that narrow
+       into the eye of it, or the shape reads as a pale stone. */
+    let bands = '';
+    for (let k = 0; k < 7; k++) {
+      const t = k / 6;
+      bands += '<path d="M' + (188 - t * 34) + ' ' + (210 - t * 6) + ' Q' + (150 + t * 40) + ' ' + (182 - t * 38)
+        + ' ' + (184 - t * 26) + ' ' + (140 + t * 44) + '" fill="none" stroke="#D98E84" stroke-width="'
+        + (2.6 - t * 1.4).toFixed(1) + '" opacity="' + (0.75 - t * 0.2).toFixed(2) + '"/>';
+    }
+    return open
+      + '<defs><linearGradient id="hnsh" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#8E6BA8"/>'
+      + '<stop offset="40%" stop-color="#F29A86"/><stop offset="100%" stop-color="#FFD9A8"/></linearGradient>'
+      + '<linearGradient id="hnss" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#FFF7F0"/>'
+      + '<stop offset="55%" stop-color="#FBD5C4"/><stop offset="100%" stop-color="#E8A493"/></linearGradient></defs>'
+      + '<rect width="240" height="240" fill="url(#hnsh)"/>'
+      + '<circle cx="62" cy="72" r="21" fill="#FFF3C4" opacity=".85"/>'
+      + '<g fill="#FFC9A8" opacity=".4"><ellipse cx="152" cy="56" rx="46" ry="8"/><ellipse cx="52" cy="38" rx="34" ry="6"/></g>'
+      /* sea, wet sand, dry sand */
+      + '<rect y="128" width="240" height="46" fill="#8FAFCE"/>'
+      + '<g fill="#FFD9A8" opacity=".3"><rect y="134" width="240" height="4"/><rect x="40" y="150" width="180" height="3"/></g>'
+      + '<g fill="#FFF7EE" opacity=".75"><path d="M0 170 q30 -8 58 0 q30 8 60 0 q30 -8 60 0 q30 8 62 0 L240 180 L0 180 Z"/></g>'
+      + '<path d="M0 178 q60 -8 120 2 q62 10 120 -4 L240 240 L0 240 Z" fill="#F0D6B2"/>'
+      + '<path d="M0 208 q70 -10 134 2 q52 10 106 -2 L240 240 L0 240 Z" fill="#E4C49A"/>'
+      /* the shell: a fat outer whorl, the spire turning back into itself */
+      + '<path d="M128 212 Q118 158 156 128 Q198 98 226 136 Q250 174 226 212 Z" fill="url(#hnss)"/>'
+      + '<path d="M128 212 Q118 158 156 128 Q198 98 226 136 Q250 174 226 212 Z" fill="none" stroke="#C97F73" stroke-width="2.6"/>'
+      + bands
+      + '<path d="M176 150 Q196 140 204 158 Q210 176 192 182 Q176 184 174 168 Q174 158 186 158" fill="none" stroke="#C97F73" stroke-width="2.4"/>'
+      + '<path d="M162 212 v-30 a16 16 0 0 1 32 0 v30 Z" fill="#9E6278"/>'
+      + '<path d="M166 212 v-28 a12 12 0 0 1 24 0 v28 Z" fill="#6E4258"/>'
+      + '<circle cx="186" cy="196" r="2.4" fill="#FFE9A8"/>'
+      + '<ellipse cx="178" cy="206" rx="46" ry="10" fill="#C9A484" opacity=".35"/>'
+      /* what the tide left, on the side the companion stands */
+      + '<g fill="#F2789F"><path d="M44 214 l5 -13 5 13 13 2 -10 9 3 13 -11 -7 -11 7 3 -13 -10 -9 Z"/></g>'
+      + '<g fill="#FFF7EE" opacity=".95"><ellipse cx="88" cy="226" rx="9" ry="6"/><ellipse cx="18" cy="230" rx="7" ry="5"/></g>'
+      + '<g stroke="#D9B48A" stroke-width="1.6" opacity=".7"><path d="M84 224 q4 -6 8 0 M14 228 q4 -5 8 0"/></g></svg>';
+  }
+
+  /* A house built into the crown of one big tree. */
+  if (id === 'treehouse') {
+    /* The trunk has to be seen, or the house hangs in the air - which is what
+       the first pass did: a slim trunk drawn behind the walls and hidden by
+       the companion in front of them. It stands to the right now, thick, with
+       the house built against it and the crown spread over both. */
+    let leaves = '';
+    [[176, 52, 58, 34], [122, 74, 40, 26], [224, 74, 42, 28], [196, 28, 44, 26], [150, 40, 34, 22]].forEach((c, k) => {
+      leaves += '<ellipse cx="' + c[0] + '" cy="' + c[1] + '" rx="' + c[2] + '" ry="' + c[3] + '" fill="' + (k % 2 ? '#6EA87F' : '#7FBF95') + '"/>';
+    });
+    return open
+      + '<defs><linearGradient id="hntr" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#C2DEEE"/>'
+      + '<stop offset="58%" stop-color="#F0F3E0"/><stop offset="100%" stop-color="#D6E4BC"/></linearGradient></defs>'
+      + '<rect width="240" height="240" fill="url(#hntr)"/>'
+      + '<circle cx="46" cy="48" r="22" fill="#FFF3C4" opacity=".6"/>'
+      + '<g fill="#FFFFFF" opacity=".75"><ellipse cx="70" cy="42" rx="22" ry="10"/><ellipse cx="92" cy="36" rx="15" ry="8"/></g>'
+      + '<path d="M0 158 q50 -18 102 -2 q52 16 138 -8 L240 240 L0 240 Z" fill="#C2DCA8" opacity=".85"/>'
+      /* the trunk, wide enough to carry a house, and the boughs off it */
+      + '<path d="M186 216 q-16 -80 -4 -140 q4 -22 18 -22 q14 0 16 22 q10 60 -2 140 Z" fill="#8A6A44"/>'
+      + '<path d="M196 216 q-8 -78 0 -138 q4 -18 10 -18 q6 42 4 156 Z" fill="#A07E54" opacity=".65"/>'
+      + '<g stroke="#7A5A44" stroke-width="1.6" opacity=".5"><path d="M190 200 q6 -50 2 -92 M204 196 q4 -48 0 -88"/></g>'
+      + '<path d="M188 120 q-28 -10 -42 -26 M206 104 q22 -12 30 -28" fill="none" stroke="#8A6A44" stroke-width="6" stroke-linecap="round"/>'
+      + '<path d="M180 216 q-16 -10 -34 -6 M208 216 q14 -10 30 -4" fill="none" stroke="#7A5A44" stroke-width="6" stroke-linecap="round"/>'
+      + leaves
+      + '<g fill="#5E9470" opacity=".45"><ellipse cx="176" cy="66" rx="34" ry="16"/></g>'
+      /* the house, built against the trunk and standing on a bough */
+      + '<rect x="104" y="140" width="82" height="50" rx="5" fill="#E8D2AE" stroke="#A8724A" stroke-width="2.4"/>'
+      + '<path d="M94 142 L145 110 L196 142 Z" fill="#B0483F"/>'
+      + '<path d="M145 110 L196 142 L186 142 L145 118 Z" fill="#8E3A33"/>'
+      + '<rect x="114" y="154" width="20" height="18" rx="3" fill="#FFE9A8" stroke="#A8724A" stroke-width="1.8"/>'
+      + '<path d="M124 154 v18 M114 163 h20" stroke="#A8724A" stroke-width="1.5"/>'
+      + '<path d="M150 190 v-24 a11 11 0 0 1 22 0 v24 Z" fill="#8A5A38"/>'
+      + '<circle cx="166" cy="178" r="2" fill="#E5BE5E"/>'
+      + '<path d="M98 190 h92 v6 H98 Z" fill="#A8724A"/>'
+      + '<g stroke="#C9906A" stroke-width="2" stroke-linecap="round"><path d="M102 190 v-10 M114 190 v-10 M126 190 v-10 M186 190 v-10"/></g>'
+      + '<path d="M145 108 v-8" stroke="#A8724A" stroke-width="2.2"/><circle cx="145" cy="96" r="3.6" fill="#E5BE5E"/>'
+      /* the ladder down to the grass */
+      + '<g stroke="#A8724A" stroke-width="2.4" stroke-linecap="round"><path d="M116 196 v22 M132 196 v22"/>'
+      + '<path d="M116 202 h16 M116 210 h16 M116 218 h16"/></g>'
+      + '<path d="M0 204 q64 -12 126 0 q58 12 114 -4 L240 240 L0 240 Z" fill="#AECF98"/>'
+      + '<g stroke="#8FB27E" stroke-width="2.2" stroke-linecap="round"><path d="M34 222 v-10 M42 224 v-8 M86 228 v-9"/></g>'
+      + '<g fill="#F7A9C6"><circle cx="60" cy="220" r="3.8"/><circle cx="18" cy="226" r="3.2"/></g></svg>';
+  }
+
+  /* A seam of crystal, lit from inside the rock. */
+  if (id === 'crystal') {
+    const shard = (x, base, w, h, a, b) => '<path d="M' + (x - w) + ' ' + base + ' L' + x + ' ' + (base - h)
+      + ' L' + (x + w) + ' ' + base + ' Z" fill="' + a + '"/>'
+      + '<path d="M' + x + ' ' + base + ' L' + x + ' ' + (base - h) + ' L' + (x + w) + ' ' + base + ' Z" fill="' + b + '"/>';
+    let motes = '';
+    [[92, 128], [118, 96], [66, 104], [140, 120], [46, 138], [160, 82]].forEach((p, k) => {
+      motes += '<circle class="twinkle" cx="' + p[0] + '" cy="' + p[1] + '" r="' + (1.6 + (k % 2) * 0.8) + '" fill="#D8C4FF" style="animation-delay:' + (k * 280) + 'ms"/>';
+    });
+    return open
+      + '<defs><linearGradient id="hncr" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#1E1638"/>'
+      + '<stop offset="100%" stop-color="#3B2C66"/></linearGradient>'
+      + '<linearGradient id="hncp" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#C9B0EA"/>'
+      + '<stop offset="100%" stop-color="#6E58B0"/></linearGradient></defs>'
+      + '<rect width="240" height="240" fill="url(#hncr)"/>'
+      /* the roof of the cave, hanging down */
+      + '<path d="M0 0 h240 v46 q-18 6 -26 26 q-10 -20 -24 -8 q-12 10 -20 -6 q-14 22 -28 4 q-16 -14 -26 8 q-12 20 -24 -2 q-14 -16 -26 6 q-10 16 -22 -4 q-12 -14 -24 8 Z" fill="#241A44"/>'
+      + '<g stroke="#3B2C66" stroke-width="2" opacity=".8"><path d="M40 52 v18 M118 60 v14 M198 56 v16"/></g>'
+      + motes
+      /* the seam itself, which is the house: a lit doorway cut into it */
+      + shard(232, 208, 22, 96, '#8E76CC', '#6E58B0')
+      + shard(186, 212, 34, 118, '#A98FDE', '#8467C8')
+      + shard(144, 210, 20, 72, '#8E76CC', '#6E58B0')
+      + '<path d="M172 212 v-34 a14 14 0 0 1 28 0 v34 Z" fill="#2E2158"/>'
+      + '<path d="M176 212 v-32 a10 10 0 0 1 20 0 v32 Z" fill="#FFE9A8" opacity=".85"/>'
+      + '<ellipse cx="186" cy="200" rx="34" ry="30" fill="#FFE9A8" opacity=".14"/>'
+      + '<g fill="#D8C4FF" opacity=".55"><path d="M168 150 l4 -12 4 12 11 4 -11 4 -4 12 -4 -12 -11 -4 Z"/></g>'
+      /* the floor, and a still pool that takes the light */
+      + '<path d="M0 206 q56 -12 116 -2 q62 10 124 -6 L240 240 L0 240 Z" fill="#2E2158"/>'
+      + '<ellipse cx="74" cy="222" rx="60" ry="14" fill="#4A3A86"/>'
+      + '<ellipse cx="74" cy="221" rx="48" ry="10" fill="#6E58B0" opacity=".8"/>'
+      + '<g fill="#D8C4FF" opacity=".5"><ellipse cx="74" cy="218" rx="28" ry="3"/><ellipse cx="60" cy="226" rx="18" ry="2"/></g>'
+      + shard(28, 216, 12, 42, '#8E76CC', '#6E58B0') + shard(120, 220, 9, 26, '#A98FDE', '#8467C8') + '</svg>';
+  }
+
+  /* A dome that opens, and one long glass pointed at the rest of it. */
+  if (id === 'observatory') {
+    let stars = '';
+    for (let k = 0; k < 16; k++) {
+      stars += '<circle class="twinkle" cx="' + (8 + (k * 47) % 228) + '" cy="' + (10 + (k * 61) % 116) + '" r="'
+        + (1 + (k % 3) * 0.55) + '" fill="#FFF7EE" style="animation-delay:' + (k * 190) + 'ms"/>';
+    }
+    return open
+      + '<defs><linearGradient id="hnob" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#141E38"/>'
+      + '<stop offset="62%" stop-color="#2E3A6E"/><stop offset="100%" stop-color="#4A5490"/></linearGradient>'
+      + '<linearGradient id="hnod" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#D6DEF2"/>'
+      + '<stop offset="100%" stop-color="#8E9ACC"/></linearGradient></defs>'
+      + '<rect width="240" height="240" fill="url(#hnob)"/>' + stars
+      + '<g stroke="#9EC2F0" stroke-width="1.4" opacity=".28" fill="none"><path d="M42 58 L70 42 L96 62 L74 82 Z M70 42 L74 82"/></g>'
+      + '<circle cx="46" cy="40" r="13" fill="#FFF3C4" opacity=".9"/>'
+      + '<path d="M0 152 q50 -28 104 -6 q52 22 136 -10 L240 240 L0 240 Z" fill="#2A3360"/>'
+      /* the tower, then the dome, then the glass looking out of it */
+      + '<path d="M132 214 v-58 h96 v58 Z" fill="#3E4A80"/>'
+      + '<path d="M132 156 h96 v6 H132 Z" fill="#5A68A8"/>'
+      + '<g fill="#FFE9A8" opacity=".9"><rect x="146" y="172" width="14" height="18" rx="3"/><rect x="200" y="172" width="14" height="18" rx="3"/></g>'
+      + '<path d="M156 214 v-24 a12 12 0 0 1 24 0 v24 Z" fill="#26304F"/>'
+      + '<path d="M126 156 a54 40 0 0 1 108 0 Z" fill="url(#hnod)"/>'
+      + '<path d="M180 116 a54 40 0 0 1 54 40 h-18 a38 34 0 0 0 -36 -40 Z" fill="#6E7ABC" opacity=".7"/>'
+      + '<path d="M164 118 a54 40 0 0 1 22 -2 l-4 40 h-24 Z" fill="#26304F"/>'
+      + '<g stroke="#26304F" stroke-width="2" opacity=".6"><path d="M126 156 h108"/></g>'
+      + '<g transform="rotate(-32 178 130)"><rect x="150" y="122" width="76" height="15" rx="7" fill="#C9D3EE"/>'
+      + '<rect x="150" y="122" width="76" height="6" rx="3" fill="#EAF0FF" opacity=".8"/>'
+      + '<rect x="220" y="118" width="12" height="23" rx="4" fill="#9EA8D8"/></g>'
+      /* the rail, and the hill it all stands on */
+      + '<path d="M0 214 q60 -14 122 -2 q58 12 118 -8 L240 240 L0 240 Z" fill="#26304F"/>'
+      + '<g stroke="#5A68A8" stroke-width="2.4" stroke-linecap="round"><path d="M112 214 v-16 M96 216 v-14 M80 218 v-13"/>'
+      + '<path d="M78 204 q18 -4 36 -6"/></g>'
+      + '<g fill="#FFE9A8" opacity=".85"><circle cx="58" cy="222" r="2.4"/><circle cx="30" cy="228" r="2"/></g></svg>';
+  }
+
+  /* A boat that sells flowers, tied up for the night. */
+  if (id === 'boat') {
+    let lamps = '';
+    [136, 160, 184, 208, 230].forEach((x, k) => {
+      lamps += '<path d="M' + x + ' 120 v6" stroke="#B0553F" stroke-width="1.2"/>'
+        + '<ellipse cx="' + x + '" cy="133" rx="6" ry="7.4" fill="' + (k % 2 ? '#F2789F' : '#E5BE5E') + '"/>'
+        + '<ellipse cx="' + x + '" cy="133" rx="2.8" ry="4.2" fill="#FFF3C4"/>';
+    });
+    let floats = '';
+    [[36, 206, 7], [76, 216, 6], [12, 220, 5.4], [104, 204, 5.6]].forEach((p) => {
+      floats += '<ellipse cx="' + p[0] + '" cy="' + p[1] + '" rx="' + p[2] + '" ry="' + (p[2] * 0.62) + '" fill="#F2789F" opacity=".9"/>'
+        + '<ellipse cx="' + p[0] + '" cy="' + p[1] + '" rx="' + (p[2] * 0.42) + '" ry="' + (p[2] * 0.3) + '" fill="#FFF3C4"/>'
+        + '<ellipse cx="' + p[0] + '" cy="' + (p[1] + 8) + '" rx="' + (p[2] * 1.1) + '" ry="2" fill="#FFE9A8" opacity=".3"/>';
+    });
+    return open
+      + '<defs><linearGradient id="hnbo" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#4E3A72"/>'
+      + '<stop offset="44%" stop-color="#E08A86"/><stop offset="100%" stop-color="#FFD9B0"/></linearGradient>'
+      + '<linearGradient id="hnbw" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#7A6AA0"/>'
+      + '<stop offset="100%" stop-color="#4A3E72"/></linearGradient></defs>'
+      + '<rect width="240" height="240" fill="url(#hnbo)"/>'
+      + '<circle cx="54" cy="56" r="17" fill="#FFF3C4" opacity=".85"/>'
+      + '<g fill="#6E4E8E" opacity=".4"><path d="M0 112 q34 -20 66 -4 q30 16 62 -2 q34 -20 72 -2 q22 10 40 2 L240 132 L0 132 Z"/></g>'
+      + '<rect y="130" width="240" height="110" fill="url(#hnbw)"/>'
+      + '<g fill="#FFD9B0" opacity=".2"><rect y="140" width="240" height="4"/><rect x="30" y="158" width="190" height="3"/>'
+      + '<rect x="10" y="182" width="160" height="2.6"/></g>'
+      /* the boat, the awning over it, and the flowers it carries */
+      + '<path d="M112 178 q64 -10 128 0 l-10 34 q-54 10 -108 0 Z" fill="#8A5A38"/>'
+      + '<path d="M112 178 q64 -10 128 0 l-3 9 q-60 -9 -122 0 Z" fill="#C9906A"/>'
+      + '<g stroke="#B0553F" stroke-width="2.4" stroke-linecap="round"><path d="M130 178 v-52 M228 178 v-52"/></g>'
+      + '<path d="M118 126 q60 -16 124 0 l-4 8 q-58 -14 -116 0 Z" fill="#C6485C"/>'
+      + lamps
+      + '<rect x="150" y="142" width="58" height="30" rx="4" fill="#E8D2AE" opacity=".95"/>'
+      + '<g stroke="#B0553F" stroke-width="1.8"><path d="M170 142 v30 M190 142 v30"/></g>'
+      + '<g fill="#F7A9C6"><circle cx="128" cy="172" r="6"/><circle cx="140" cy="176" r="5"/><circle cx="220" cy="172" r="6"/>'
+      + '<circle cx="232" cy="176" r="4.6"/></g>'
+      + '<g fill="#FFF0F5"><circle cx="128" cy="172" r="2.4"/><circle cx="220" cy="172" r="2.4"/></g>'
+      + '<g fill="#7FBF95" opacity=".9"><ellipse cx="146" cy="178" rx="9" ry="4"/><ellipse cx="212" cy="178" rx="8" ry="3.6"/></g>'
+      /* what is on the water, and the reflection under the boat */
+      + '<g fill="#FFE9A8" opacity=".22"><ellipse cx="176" cy="216" rx="62" ry="8"/></g>'
+      + floats
+      + '<g stroke="#8A7AB0" stroke-width="2" opacity=".5" fill="none"><path d="M0 232 q30 -6 60 0 q30 6 60 0"/></g></svg>';
+  }
+
+  /* Deep winter, and one window that is warmer than the rest of it. */
+  if (id === 'cabin') {
+    const pine = (x, base, h, w, a, b) => '<path d="M' + x + ' ' + (base - h) + ' L' + (x + w) + ' ' + base + ' L' + (x - w) + ' ' + base + ' Z" fill="' + a + '"/>'
+      + '<path d="M' + x + ' ' + (base - h) + ' L' + (x + w * 0.72) + ' ' + (base - h * 0.34) + ' L' + (x - w * 0.72) + ' ' + (base - h * 0.34) + ' Z" fill="' + b + '"/>'
+      + '<path d="M' + (x - w * 0.62) + ' ' + (base - h * 0.3) + ' q' + (w * 0.62) + ' 6 ' + (w * 1.24) + ' 0 q' + (-w * 0.62) + ' -10 ' + (-w * 1.24) + ' 0 Z" fill="#FFFFFF" opacity=".75"/>';
+    let flakes = '';
+    [[28, 62], [96, 40], [148, 72], [212, 52], [62, 96], [180, 104], [120, 20]].forEach((p, k) => {
+      flakes += '<circle class="twinkle" cx="' + p[0] + '" cy="' + p[1] + '" r="' + (1.6 + (k % 2)) + '" fill="#FFFFFF" opacity=".8" style="animation-delay:' + (k * 260) + 'ms"/>';
+    });
+    return open
+      + '<defs><linearGradient id="hnca" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#4E5E86"/>'
+      + '<stop offset="52%" stop-color="#9EB4D2"/><stop offset="100%" stop-color="#DCE8F2"/></linearGradient></defs>'
+      + '<rect width="240" height="240" fill="url(#hnca)"/>' + flakes
+      + '<g fill="#B8CADE" opacity=".6"><path d="M0 146 q40 -40 82 -10 q36 26 74 -6 q38 -34 84 -2 L240 170 L0 170 Z"/></g>'
+      + pine(36, 196, 68, 24, '#3E6E5E', '#4E8470') + pine(94, 190, 50, 18, '#35604F', '#446E5E')
+      + pine(250, 192, 60, 22, '#3E6E5E', '#4E8470')
+      /* the cabin: logs, a snow-laden roof, one lit window */
+      + '<rect x="126" y="150" width="96" height="58" rx="3" fill="#A8724A"/>'
+      + '<g stroke="#8A5A38" stroke-width="1.6" opacity=".7"><path d="M126 164 h96 M126 178 h96 M126 192 h96"/></g>'
+      + '<path d="M114 152 L174 110 L234 152 Z" fill="#6E4636"/>'
+      + '<path d="M110 154 L174 106 L238 154 l-8 6 L174 118 L118 160 Z" fill="#FFFFFF"/>'
+      + '<rect x="196" y="112" width="14" height="24" rx="2" fill="#6E4636"/>'
+      + '<path d="M194 112 h18 v-5 h-18 Z" fill="#FFFFFF"/>'
+      + '<g fill="#E8EFF6" opacity=".55"><ellipse cx="203" cy="96" rx="9" ry="6"/><ellipse cx="212" cy="82" rx="7" ry="5"/><ellipse cx="204" cy="70" rx="5" ry="4"/></g>'
+      + '<rect x="140" y="164" width="26" height="24" rx="3" fill="#FFE9A8"/>'
+      + '<g stroke="#8A5A38" stroke-width="1.8"><path d="M153 164 v24 M140 176 h26"/></g>'
+      + '<ellipse cx="153" cy="176" rx="30" ry="26" fill="#FFE9A8" opacity=".2"/>'
+      + '<path d="M186 208 v-30 a13 13 0 0 1 26 0 v30 Z" fill="#6E4636"/>'
+      + '<circle cx="206" cy="194" r="2.4" fill="#E5BE5E"/>'
+      /* snow, banked up where it drifted */
+      + '<path d="M0 198 q54 -18 112 -4 q62 14 128 -10 L240 240 L0 240 Z" fill="#FFFFFF"/>'
+      + '<path d="M0 220 q66 -12 130 2 q54 12 110 -4 L240 240 L0 240 Z" fill="#E8EFF6"/>'
+      + '<g fill="#C9D8E8" opacity=".7"><ellipse cx="60" cy="228" rx="24" ry="5"/><ellipse cx="150" cy="232" rx="30" ry="5"/></g></svg>';
+  }
+
+  /* Water where there was not supposed to be any. */
+  if (id === 'oasis') {
+    const palm = (x, base, h, lean, col, dark) => {
+      let g = '<path d="M' + x + ' ' + base + ' q' + lean + ' ' + (-h * 0.6) + ' ' + (lean * 1.6) + ' ' + (-h)
+        + '" fill="none" stroke="' + col + '" stroke-width="6" stroke-linecap="round"/>';
+      const tx = x + lean * 1.6, ty = base - h;
+      [[-34, 10], [-24, -14], [0, -22], [26, -12], [34, 12], [12, 16], [-14, 18]].forEach((f) => {
+        g += '<path d="M' + tx + ' ' + ty + ' q' + (f[0] * 0.6) + ' ' + (f[1] * 0.6 - 8) + ' ' + f[0] + ' ' + f[1]
+          + ' q' + (-f[0] * 0.5) + ' ' + (-f[1] * 0.2 + 4) + ' ' + (-f[0]) + ' ' + (-f[1]) + ' Z" fill="' + dark + '"/>';
+      });
+      g += '<circle cx="' + tx + '" cy="' + (ty + 4) + '" r="3.4" fill="#C9904A"/>';
+      return g;
+    };
+    return open
+      + '<defs><linearGradient id="hnoa" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#8E6BA8"/>'
+      + '<stop offset="38%" stop-color="#F0A882"/><stop offset="100%" stop-color="#FBD9A8"/></linearGradient>'
+      + '<linearGradient id="hnow" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#8FC4C0"/>'
+      + '<stop offset="100%" stop-color="#5E9EA0"/></linearGradient></defs>'
+      + '<rect width="240" height="240" fill="url(#hnoa)"/>'
+      + '<circle cx="72" cy="78" r="26" fill="#FFE1B0" opacity=".8"/>'
+      + '<g stroke="#FFF3C4" stroke-width="2" opacity=".3" stroke-linecap="round"><path d="M72 40 v-8 M72 116 v8 M34 78 h-8 M110 78 h8 M45 51 l-6 -6 M99 105 l6 6"/></g>'
+      /* the dunes, back to front */
+      + '<path d="M0 148 q46 -26 96 -6 q46 18 82 -8 q30 -20 62 0 L240 176 L0 176 Z" fill="#E8B87E" opacity=".75"/>'
+      + '<path d="M0 174 q56 -20 116 -2 q56 16 124 -12 L240 240 L0 240 Z" fill="#EBC490"/>'
+      + palm(150, 204, 64, 7, '#8A6A44', '#5E9E76') + palm(206, 208, 80, -9, '#7A5A44', '#4E8E66')
+      + palm(234, 200, 52, 5, '#8A6A44', '#5E9E76')
+      /* the tent, striped, standing between the palms */
+      + '<path d="M118 208 L156 150 L194 208 Z" fill="#F3DCC0"/>'
+      + '<g fill="#C6485C" opacity=".85"><path d="M156 150 L166 166 L152 208 h-12 Z"/><path d="M180 186 L194 208 h-18 Z"/></g>'
+      + '<path d="M156 150 L194 208 L186 208 L156 162 Z" fill="#E0C8A8"/>'
+      + '<path d="M146 208 q10 -26 20 -26 q-6 14 -4 26 Z" fill="#6E4636"/>'
+      + '<path d="M156 150 v-10" stroke="#8A6A44" stroke-width="2.4"/><circle cx="156" cy="136" r="3.6" fill="#E5BE5E"/>'
+      /* the water, which is the whole point of the place */
+      + '<ellipse cx="66" cy="216" rx="72" ry="20" fill="url(#hnow)"/>'
+      + '<ellipse cx="66" cy="214" rx="62" ry="15" fill="#A8D6D0" opacity=".55"/>'
+      + '<g fill="#FFF7EE" opacity=".5"><ellipse cx="50" cy="210" rx="26" ry="2.6"/><ellipse cx="82" cy="220" rx="20" ry="2.2"/></g>'
+      + '<g stroke="#5E9E76" stroke-width="2.6" stroke-linecap="round"><path d="M6 206 q6 -16 -2 -26 M18 208 q10 -14 4 -24 M124 210 q8 -14 0 -22"/></g>'
+      + '<g fill="#C9904A"><ellipse cx="110" cy="230" rx="8" ry="4"/><ellipse cx="22" cy="234" rx="7" ry="3.4"/></g></svg>';
+  }
+
   return open
     + '<defs><linearGradient id="hgg" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#DCEBFB"/><stop offset="70%" stop-color="#F7F1E6"/><stop offset="100%" stop-color="#F2EEDF"/></linearGradient></defs>'
     + '<rect width="240" height="240" fill="url(#hgg)"/>'
@@ -25163,7 +25777,7 @@ function renderPet(want) {
       + '<div class="petstage" id="petstage">' + petHomeSVG(PETS.home(p).id) + petSkySVG(PETS.sky(p).id) + petAuraHTML(p.kind) + petSVG(p.kind, coat, ready ? '' : 'happy', PETS.fit(p), PETS.fx(p))
       + '<span class="crumbs" id="crumbs"></span><span class="toys" id="toys"></span><span class="pats" id="pats"></span>'
       + '<span class="stagebtns left">' + stageBtn('food', '🍚', S.petFoodTitle) + '<button type="button" class="stagebtn" id="opendress" aria-label="' + esc(S.wardrobeTitle) + '"><span class="ic">👑</span><span class="lb">' + esc(S.wardrobeTitle) + '</span></button></span>'
-      + '<span class="stagebtns right">' + stageBtn('home', '🏠', S.petHomeShort) + stageBtn('coat', '🎨', S.petCoat) + '</span>'
+      + '<span class="stagebtns right"><button type="button" class="stagebtn" id="openscene" aria-label="' + esc(S.petHomeTitle) + '"><span class="ic">🏠</span><span class="lb">' + esc(S.petHomeShort) + '</span></button>' + stageBtn('coat', '🎨', S.petCoat) + '</span>'
       + (ready ? '<span class="foodchip" id="foodchip" title="' + esc(S.petDragFood) + '">' + PETS.food(p).sym + '</span>' : '')
       + '</div>'
       + '<p class="handhint">✋ ' + esc(S.petPatHint) + '</p>'
@@ -25202,18 +25816,19 @@ function renderPet(want) {
   const shelfRows = (set, chosenId, key, label) => '<div class="shelf">' + set.map((x) => {
     const locked = x.pro && !proOn();
     return '<button type="button" class="sh' + (chosenId === x.id ? ' on' : '') + (locked ? ' locked' : '') + '" data-shelf="' + key + ':' + x.id + '">'
-      + '<span class="shart">' + (label === 'food' ? x.sym : (label === 'home' ? petHomeSVG(x.id) : '<span class="dot" style="background:' + x.body + '"></span>')) + '</span>'
+      + '<span class="shart">' + (label === 'food' ? x.sym : '<span class="dot" style="background:' + x.body + '"></span>') + '</span>'
       + '<b>' + esc(L(x.name) || x.id) + '</b>'
       + (x.add ? '<span class="plus">+' + x.add + '</span>' : '')
       + (locked ? '<span class="sh-lock">🔒</span>' : '') + (chosenId === x.id ? '<span class="sh-on">✓</span>' : '')
       + '</button>';
   }).join('') + '</div>';
 
-  /* The four groups live in one sheet, so a visitor who opens the food can go
-     straight on to the home without closing anything. */
+  /* The food and the coat share one sheet, so a visitor who opens the one can
+     go on to the other without closing anything. The home left this sheet for
+     a screen of its own - it is twenty-one scenes now, and it brought the sky
+     and the effects with it. See petSceneOpen in pet-dress.js. */
   const SHEETS = [
     { key: 'food', icon: '🍚', title: () => S.petFoodTitle, note: () => S.petFoodNote, set: () => PET_FOODS, now: (p) => PETS.food(p).id, art: 'food' },
-    { key: 'home', icon: '🏠', title: () => S.petHomeTitle, note: () => S.petHomeNote, set: () => PET_HOMES, now: (p) => PETS.home(p).id, art: 'home' },
     { key: 'coat', icon: '🎨', title: () => S.petCoat, note: (q) => (petIsPro(q.kind) ? S.petCoatMyth : S.petCoatNote), set: () => PET_COATS.map((c) => ({ id: c.id, pro: c.pro, add: 3, body: c.body, name: S.coatNames[c.id] || c.id })), now: (p) => PETS.coat(p).id, art: 'coat' }
   ];
   const sheetHTML = (p, open) => {
@@ -25458,11 +26073,12 @@ function renderPet(want) {
        and a live preview do not fit one, so they get a screen and it hands the
        companion card back when it closes. */
     { const dr = $('#opendress'); if (dr) dr.addEventListener('click', () => petDressOpen(p.kind, draw)); }
+    { const sc = $('#openscene'); if (sc) sc.addEventListener('click', () => petSceneOpen(p.kind, draw)); }
     $$('[data-sheet-tab]', m).forEach((b) => b.addEventListener('click', () => { sheet = b.getAttribute('data-sheet-tab'); draw(); }));
     $$('[data-close-sheet]', m).forEach((b) => b.addEventListener('click', () => { sheet = ''; draw(); }));
     $$('[data-shelf]', m).forEach((b) => b.addEventListener('click', () => {
       const parts = b.getAttribute('data-shelf').split(':'), key = parts[0], id = parts[1];
-      const set = key === 'food' ? PET_FOODS : (key === 'home' ? PET_HOMES : PET_COATS);
+      const set = key === 'food' ? PET_FOODS : PET_COATS;
       const item = set.filter((x) => x.id === id)[0];
       if (!item) return;
       if (item.pro && !proOn()) {
@@ -25676,9 +26292,12 @@ ROUTES.pet = { nav: 'play', render: renderPet };
 
 /* ---- the wardrobe screen ----
    The four things you could give a companion used to share one bottom sheet
-   with a flat grid of small buttons. Seven slots, nine collections, ten skies
-   and ten effects do not fit in that, so clothes moved out into a screen of
-   their own.
+   with a flat grid of small buttons. Seven slots and nine collections do not
+   fit in that, so clothes moved out into a screen of their own.
+
+   The sky and the effects were tabs on this rail once. They are not clothes -
+   a sky is the room, not the coat - and they live with the home now, on the
+   screen petSceneOpen draws at the foot of this file.
 
    It is still a sheet rather than a route: the close button, the tap on the
    backdrop and the phone's own back gesture already work on a sheet, and the
@@ -25712,8 +26331,12 @@ function petDressOpen(kind, after) {
   /* 'head', 'top', ... for a slot, or 'sky' / 'fx' for the two scene tabs. */
   let tab = 'head';
 
+  /* The companion screen is still underneath this, breathing in a home under
+     falling weather, and nobody can see it. Paused while the sheet is up. */
+  document.body.classList.add('behindsheet');
   const close = () => {
     document.removeEventListener('keydown', onKey);
+    document.body.classList.remove('behindsheet');
     host.remove();
     if (after) after();
   };
@@ -25781,37 +26404,6 @@ function petDressOpen(kind, after) {
     return out;
   };
 
-  /* ---- the sky tab: each tile is the real home under the real sky ---- */
-  const skyHTML = () => {
-    const S = T(), p = pet(), home = PETS.home(p).id, now = PETS.sky(p).id;
-    return '<div class="wgrid sky">' + PET_SKIES.map((s) => {
-      const locked = !tierOn(s.tier), on = s.id === now;
-      return '<button type="button" class="wtile' + (on ? ' on' : '') + (locked ? ' locked' : '') + '"'
-        + ' data-sky="' + s.id + '" aria-pressed="' + (on ? 'true' : 'false') + '">'
-        + '<span class="wscene">' + petHomeSVG(home) + petSkySVG(s.id) + '</span>'
-        + '<b>' + esc(L(S.skyNames[s.id]) || s.id) + '</b>'
-        + (locked ? '<span class="wbadge ' + s.tier + '">' + (s.tier === 'pro' ? '👑' : '✨') + '</span>' : '')
-        + (on ? '<span class="won">✓</span>' : '') + '</button>';
-    }).join('') + '</div>';
-  };
-
-  /* ---- the effects tab, which is the one place reserved for Pro ---- */
-  const fxHTML = () => {
-    const S = T(), p = pet(), now = PETS.fx(p).id, pro = proOn();
-    return '<div class="wgrid fx">' + PET_FX.map((f) => {
-        const locked = !tierOn(f.tier), on = f.id === now, art = petFxSVG(f.id);
-        return '<button type="button" class="wtile fxtile' + (on ? ' on' : '') + (locked ? ' locked' : '') + '"'
-          + ' data-fx="' + f.id + '" aria-pressed="' + (on ? 'true' : 'false') + '">'
-          + '<span class="wart fxbox"><svg viewBox="0 0 120 120" class="wearart" aria-hidden="true">'
-          + art.back + art.front + '</svg></span>'
-          + '<b>' + esc(L(S.fxNames[f.id]) || f.id) + '</b>'
-          + (locked ? '<span class="wbadge pro">👑</span>' : '')
-          + (on ? '<span class="won">✓</span>' : '') + '</button>';
-      }).join('') + '</div>'
-      + (pro ? '' : '<a class="salebar" href="#/unlock?from=app"><span class="tag">✨ ' + esc(S.proName) + '</span>'
-        + '<span class="txt">' + esc(S.wardrobeFxPitch) + '</span><span class="go">' + esc(S.unlockLink) + ' ›</span></a>');
-  };
-
   /* ---- the saved looks ---- */
   const looksHTML = () => {
     const S = T(), saved = looksGet(kind);
@@ -25825,7 +26417,6 @@ function petDressOpen(kind, after) {
 
   const draw = () => {
     const S = T(), p = pet();
-    const isSlot = PET_SLOT_IDS.indexOf(tab) > -1;
     const rail = PET_SLOT_RAIL.map((s) => {
       const id = PETS.fit(p)[s.id], worn = id && id !== 'none';
       return '<button type="button" class="wslot' + (tab === s.id ? ' on' : '') + (worn ? ' worn' : '') + '"'
@@ -25833,11 +26424,6 @@ function petDressOpen(kind, after) {
         + '<span class="wthumb">' + (worn ? wearTile(id) : '<i>' + s.ic + '</i>') + '</span>'
         + '<u>' + esc(L(S.slotNames[s.id]) || s.id) + '</u></button>';
     }).join('');
-    const scenes = '<button type="button" class="wslot scene' + (tab === 'sky' ? ' on' : '') + '" data-tab="sky">'
-      + '<span class="wthumb"><i>🌤️</i></span><u>' + esc(S.wardrobeSky) + '</u></button>'
-      + '<button type="button" class="wslot scene' + (tab === 'fx' ? ' on' : '') + '" data-tab="fx">'
-      + '<span class="wthumb"><i>✨</i></span><u>' + esc(S.wardrobeFx) + '</u></button>';
-
     const n = fitCount(PETS.fit(p));
     host.innerHTML = '<div class="sheet dresssheet"><div class="sh-back" data-dclose="1"></div>'
       + '<div class="sh-body" role="dialog" aria-modal="true" aria-label="' + esc(S.wardrobeTitle) + '">'
@@ -25851,10 +26437,10 @@ function petDressOpen(kind, after) {
       + '<span class="wpay">' + esc(S.petMealWorth) + ' <b id="dressbonus">+' + PETS.gain(p).total + '</b></span>'
       + '<span class="wtip">' + esc(S.wardrobeFullTip(FIT_FULL_AT, FIT_FULL_BONUS)) + '</span>'
       + '</div></div>'
-      + '<div class="wrail">' + rail + '<span class="wsep"></span>' + scenes + '</div>'
+      + '<div class="wrail">' + rail + '</div>'
       + '</div>'
       + '<div class="wbody">'
-      + (isSlot ? slotHTML(tab) : (tab === 'sky' ? skyHTML() : fxHTML()))
+      + slotHTML(tab)
       + '<p class="hint shelfsay" id="wsay" hidden></p>'
       + '</div>'
       + '<div class="wfoot">'
@@ -25916,17 +26502,6 @@ function petDressOpen(kind, after) {
       repaint();
     }));
 
-    $$('[data-sky]', host).forEach((b) => b.addEventListener('click', () => {
-      const id = b.getAttribute('data-sky'), s = skyOf(id);
-      if (!tierOn(s.tier)) { sayLocked(L(T().skyNames[id]) || id, s.tier); return; }
-      PETS.setSky(pet(), id); draw(); repaint();
-    }));
-    $$('[data-fx]', host).forEach((b) => b.addEventListener('click', () => {
-      const id = b.getAttribute('data-fx'), f = fxOf(id);
-      if (!tierOn(f.tier)) { sayLocked(L(T().fxNames[id]) || id, 'pro'); return; }
-      PETS.setFx(pet(), id); draw(); repaint();
-    }));
-
     { const sb = $('#wstrip', host); if (sb) sb.addEventListener('click', () => { PETS.strip(pet()); draw(); }); }
     { const rb = $('#wrandom', host); if (rb) rb.addEventListener('click', () => { surprise(); draw(); sparkle(); }); }
 
@@ -25977,6 +26552,187 @@ function petDressOpen(kind, after) {
     box.appendChild(wrap);
     setTimeout(() => wrap.remove(), 1100);
   };
+
+  draw();
+}
+
+/* ---- the scene screen: a home, a sky over it, and an effect on the one who
+   lives there ----
+   The three used to be in three places. The home was a shelf in the bottom
+   sheet next to the food; the sky and the effects were two tabs at the far end
+   of the wardrobe rail, behind seven slots of clothes. But a sky is not
+   something a companion wears - it is the room it wears - and the owner said
+   so plainly: the effects and the sky behind belong with the house. So they
+   are one screen now, three tabs of one thing, and the wardrobe is clothes.
+
+   Built on the wardrobe's own sheet, and for the same reason: the preview at
+   the top is the point. Choosing a home from a strip of thumbnails with the
+   companion hidden behind a sheet was guesswork, and there are twenty-one of
+   them now. Picking redraws the preview and the two tiles that changed. */
+function petSceneOpen(kind, after) {
+  const p0 = PETS.one(kind);
+  if (!p0) return;
+  const host = document.createElement('div');
+  document.body.appendChild(host);
+  let tab = 'home';
+
+  document.body.classList.add('behindsheet');
+  const close = () => {
+    document.removeEventListener('keydown', onKey);
+    document.body.classList.remove('behindsheet');
+    host.remove();
+    if (after) after();
+  };
+  const onKey = (e) => { if (e.key === 'Escape') close(); };
+  document.addEventListener('keydown', onKey);
+
+  const pet = () => PETS.one(kind) || p0;
+
+  const previewHTML = () => {
+    const p = pet();
+    return petHomeSVG(PETS.home(p).id) + petSkySVG(PETS.sky(p).id) + petAuraHTML(p.kind)
+      + petSVG(p.kind, PETS.coat(p), 'happy', PETS.fit(p), PETS.fx(p));
+  };
+  /* What the three of them are worth together, which is the only number on
+     this screen a visitor can move. */
+  const sceneAdd = (p) => (PETS.home(p).add ? 5 : 0)
+    + (PETS.sky(p).id === 'clear' ? 0 : SKY_ADD)
+    + (PETS.fx(p).id === 'none' ? 0 : FX_ADD);
+  const repaint = () => {
+    const p = pet(), box = $('#scenestage', host);
+    if (box) box.innerHTML = previewHTML();
+    const add = $('#sceneadd', host);
+    if (add) add.textContent = '+' + sceneAdd(p);
+    const tot = $('#scenetotal', host);
+    if (tot) tot.textContent = '+' + PETS.gain(p).total;
+  };
+
+  /* One tile. Homes carry a boolean, skies and effects carry a tier; both
+     become the same question here - may this visitor use it. */
+  const tile = (attr, id, art, name, tier, on) => {
+    const locked = !tierOn(tier);
+    return '<button type="button" class="wtile' + (on ? ' on' : '') + (locked ? ' locked' : '') + '"'
+      + ' data-' + attr + '="' + id + '" aria-pressed="' + (on ? 'true' : 'false') + '">'
+      + '<span class="wscene">' + art + '</span>'
+      + '<b>' + esc(name) + '</b>'
+      + (locked ? '<span class="wbadge ' + tier + '">' + (tier === 'pro' ? '👑' : '✨') + '</span>' : '')
+      + (on ? '<span class="won">✓</span>' : '') + '</button>';
+  };
+
+  /* Every home under the sky this companion actually has, because that is the
+     picture it will be. All of them held still: twenty-one live scenes in a
+     grid is what made the old two tabs crawl. */
+  const homeHTML = () => {
+    const p = pet(), sky = PETS.sky(p).id, now = PETS.home(p).id;
+    return '<div class="wgrid sky">' + PET_HOMES.map((h) =>
+      tile('home', h.id, petStill(petHomeSVG(h.id)) + petSkySVG(sky, true),
+        L(h.name) || h.id, h.pro ? 'pro' : 'free', h.id === now)).join('') + '</div>';
+  };
+
+  const skyHTML = () => {
+    const S = T(), p = pet(), home = PETS.home(p).id, now = PETS.sky(p).id;
+    return '<div class="wgrid sky">' + PET_SKIES.map((s) =>
+      tile('sky', s.id, petStill(petHomeSVG(home)) + petSkySVG(s.id, true),
+        L(S.skyNames[s.id]) || s.id, s.tier, s.id === now)).join('') + '</div>';
+  };
+
+  const fxHTML = () => {
+    const S = T(), p = pet(), now = PETS.fx(p).id, pro = proOn();
+    return '<div class="wgrid fx">' + PET_FX.map((f) => {
+        const locked = !tierOn(f.tier), on = f.id === now, art = petFxSVG(f.id, true);
+        return '<button type="button" class="wtile fxtile' + (on ? ' on' : '') + (locked ? ' locked' : '') + '"'
+          + ' data-fx="' + f.id + '" aria-pressed="' + (on ? 'true' : 'false') + '">'
+          + '<span class="wart fxbox"><svg viewBox="0 0 120 120" class="wearart" aria-hidden="true">'
+          + art.back + art.front + '</svg></span>'
+          + '<b>' + esc(L(S.fxNames[f.id]) || f.id) + '</b>'
+          + (locked ? '<span class="wbadge pro">👑</span>' : '')
+          + (on ? '<span class="won">✓</span>' : '') + '</button>';
+      }).join('') + '</div>'
+      + (pro ? '' : '<a class="salebar" href="#/unlock?from=app"><span class="tag">✨ ' + esc(S.proName) + '</span>'
+        + '<span class="txt">' + esc(S.wardrobeFxPitch) + '</span><span class="go">' + esc(S.unlockLink) + ' ›</span></a>');
+  };
+
+  const draw = () => {
+    const S = T(), p = pet();
+    const TABS = [
+      { id: 'home', ic: '🏠', lb: S.petHomeShort, note: S.petHomeNote },
+      { id: 'sky', ic: '🌤️', lb: S.wardrobeSky, note: S.petSkyNote },
+      { id: 'fx', ic: '✨', lb: S.wardrobeFx, note: S.petFxNote }
+    ];
+    const rail = TABS.map((t) => '<button type="button" class="wslot scene' + (tab === t.id ? ' on' : '') + '"'
+      + ' data-scene-tab="' + t.id + '"><span class="wthumb"><i>' + t.ic + '</i></span>'
+      + '<u>' + esc(t.lb) + '</u></button>').join('');
+    const cur = TABS.filter((t) => t.id === tab)[0] || TABS[0];
+    host.innerHTML = '<div class="sheet dresssheet scenesheet"><div class="sh-back" data-dclose="1"></div>'
+      + '<div class="sh-body" role="dialog" aria-modal="true" aria-label="' + esc(S.petHomeTitle) + '">'
+      + '<div class="whead">'
+      + '<div class="wtitle"><b>🏠 ' + esc(S.petHomeTitle) + '</b>'
+      + '<button type="button" class="wclose" data-dclose="1" aria-label="' + esc(S.sheetClose) + '">✕</button></div>'
+      + '<div class="wpreview"><div class="petstage" id="scenestage">' + previewHTML() + '</div>'
+      + '<div class="wmeta">'
+      + '<span class="wname">' + esc(p.name || L(PET_NAMES[p.kind])) + '</span>'
+      + '<span class="wcount">' + esc(S.petSceneWorth) + ' <b id="sceneadd">+' + sceneAdd(p) + '</b></span>'
+      + '<span class="wpay">' + esc(S.petMealWorth) + ' <b id="scenetotal">+' + PETS.gain(p).total + '</b></span>'
+      + '<span class="wtip">' + esc(cur.note) + '</span>'
+      + '</div></div>'
+      + '<div class="wrail scenerail">' + rail + '</div>'
+      + '</div>'
+      + '<div class="wbody">'
+      + (tab === 'home' ? homeHTML() : (tab === 'sky' ? skyHTML() : fxHTML()))
+      + '<p class="hint shelfsay" id="scenesay" hidden></p>'
+      + '</div>'
+      + '<div class="wfoot"><button type="button" class="btn primary block" data-dclose="1">'
+      + esc(S.sheetClose) + '</button></div>'
+      + '</div></div>';
+    wire();
+  };
+
+  /* Says why, where the tap happened, rather than throwing the visitor at the
+     price list and losing the screen they were looking at. */
+  const sayLocked = (name, tier) => {
+    const S = T(), say = $('#scenesay', host);
+    const line = (tier === 'pro' ? S.wardrobeNeedPro : S.wardrobeNeedPlus);
+    if (!say) { toast(line); return; }
+    say.hidden = false;
+    say.innerHTML = esc(name) + ' — ' + esc(line) + ' <a href="#/unlock?from=app">' + esc(T().unlockLink) + ' ›</a>';
+  };
+
+  /* Swaps one tile's state for another's without redrawing the grid: twenty-one
+     scenes rebuilt on every tap is the thing this screen exists to avoid. */
+  const swap = (attr, id) => {
+    $$('[data-' + attr + ']', host).forEach((b) => {
+      const on = b.getAttribute('data-' + attr) === id;
+      b.classList.toggle('on', on);
+      b.setAttribute('aria-pressed', on ? 'true' : 'false');
+      const mark = $('.won', b);
+      if (on && !mark) b.insertAdjacentHTML('beforeend', '<span class="won">✓</span>');
+      if (!on && mark) mark.remove();
+    });
+  };
+
+  function wire() {
+    $$('[data-dclose]', host).forEach((b) => b.addEventListener('click', close));
+    $$('[data-scene-tab]', host).forEach((b) => b.addEventListener('click', () => {
+      tab = b.getAttribute('data-scene-tab'); draw();
+    }));
+    $$('[data-home]', host).forEach((b) => b.addEventListener('click', () => {
+      const id = b.getAttribute('data-home'), h = PET_HOMES.filter((x) => x.id === id)[0];
+      if (!h) return;
+      if (h.pro && !proOn()) { sayLocked(L(h.name) || id, 'pro'); return; }
+      PETS.setHome(pet(), id); swap('home', id); repaint();
+      /* Every sky tile is drawn on the home, so the sky tab is stale now. */
+    }));
+    $$('[data-sky]', host).forEach((b) => b.addEventListener('click', () => {
+      const id = b.getAttribute('data-sky'), s = skyOf(id);
+      if (!tierOn(s.tier)) { sayLocked(L(T().skyNames[id]) || id, s.tier); return; }
+      PETS.setSky(pet(), id); swap('sky', id); repaint();
+    }));
+    $$('[data-fx]', host).forEach((b) => b.addEventListener('click', () => {
+      const id = b.getAttribute('data-fx'), f = fxOf(id);
+      if (!tierOn(f.tier)) { sayLocked(L(T().fxNames[id]) || id, f.tier); return; }
+      PETS.setFx(pet(), id); swap('fx', id); repaint();
+    }));
+  }
 
   draw();
 }
@@ -31002,10 +31758,10 @@ function adminSale(p) {
 ROUTES.admin = { nav: '', render: renderAdmin };
 
 /* ============================ boot ============================ */
-window.APP_VERSION = 'v266';
+window.APP_VERSION = 'v267';
 window.NABU = { CONFIG: CONFIG, SALE: SALE, salePrice: salePrice, loadActs: loadActs, BACK: BACK, LESSONS: LESSONS, localAnswer: localAnswer, compatVerdict: compatVerdict, numerologyOf: numerologyOf, ZDEEP: ZDEEP, lunarToday: lunarToday, solarToLunar: solarToLunar, DECK: DECK, INSIGHT: INSIGHT, KW: KW, ASK: ASK, GUIDES: GUIDES, SERVICES: SERVICES, COURSES: COURSES, ACCESS: ACCESS, INTERESTS: INTERESTS, plusOn: () => plusOn(), proOn: () => proOn(), luckUnlimited: () => luckUnlimited(), ZODIAC: ZODIAC, pick: pick, book: book, PLAY_ITEMS: PLAY_ITEMS, PLAY_SUB_SKUS: PLAY_SUB_SKUS, playItem: playItem, BILL: BILL, SUBS: SUBS, billUse: billUse, APPLE_BILL: APPLE_BILL, appleAccountToken: appleAccountToken, renderStore: renderStore, pickLimitHTML: pickLimitHTML, subStateWord: subStateWord,
   insightHTML: insightHTML, insightOf: insightOf, sunSignIndex: sunSignIndex, lifePath: lifePath, PROFILE: () => PROFILE, BE: BE, inAppBrowser: inAppBrowser, ACTS: ACTS, CMT: CMT, LIKES: LIKES, kbReady: kbReady, AI: AI, STR: STR, KB_URL: (typeof KB_URL === 'string' ? KB_URL : ''),
-  ANGELS: ANGELS, angelRead: angelRead, CODEBOOK: CODEBOOK, redeemCode: redeemCode, loadCodebook: loadCodebook, petHomeSVG: petHomeSVG, PET_HOMES: PET_HOMES, PET_WARDROBE: PET_WARDROBE, PET_SLOTS: PET_SLOTS,
+  ANGELS: ANGELS, angelRead: angelRead, CODEBOOK: CODEBOOK, redeemCode: redeemCode, loadCodebook: loadCodebook, petHomeSVG: petHomeSVG, petStill: petStill, PET_HOMES: PET_HOMES, PET_WARDROBE: PET_WARDROBE, PET_SLOTS: PET_SLOTS,
   PET_SKIES: PET_SKIES, PET_FX: PET_FX, petSkySVG: petSkySVG, petFxSVG: petFxSVG, wearTile: wearTile, wearDraw: wearDraw, WEAR_DEF: WEAR_DEF,
   /* the old flat list, kept so the layout probes in test/ still resolve it */
   PET_WEARS: PET_WARDROBE, codeDigest: codeDigest, randomCode: randomCode, BANK: BANK, PETS: PETS, petSVG: petSVG, PET_COATS: PET_COATS, PET_KINDS: PET_KINDS, turnsMerge: turnsMerge, turnsLocal: turnsLocal, TODAY: TODAY, treeMsgOf: treeMsgOf, priceText: priceText, termText: termText, proSaveText: () => proSaveText(), wedFeeText: () => wedFeeText(), fmtPrice: fmtPrice, luckCut: luckCut, petLevel: petLevel, petStep: petStep, VOUCHERS: VOUCHERS, levelCoins: levelCoins, LOOKS: LOOKS,

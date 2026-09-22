@@ -920,22 +920,39 @@ const skyWash = (id, cols, op) => '<defs><linearGradient id="' + id + '" x1="0" 
   + '<stop offset="100%" stop-color="' + cols[1] + '" stop-opacity=".35"/></linearGradient></defs>'
   + '<rect width="240" height="240" fill="url(#' + id + ')" opacity="' + op + '"/>';
 /* Things that fall, drift or wander. The delay spread is what stops a dozen
-   identical nodes reading as one blinking row. */
-const skyMany = (n, cls, make) => {
+   identical nodes reading as one blinking row.
+
+   Still, the same weather is held rather than run: every node is laid where
+   the animation would have carried it, because anything that falls starts
+   above the frame and a frozen snowfall is an empty tile. `travel` is how far
+   down (or, for a lantern, up) the animation takes it. */
+const skyMany = (n, cls, make, still, travel) => {
   let out = '';
   for (let i = 0; i < n; i++) {
     const x = Math.round(((i * 97) % 100) * 2.3 + 8), d = i * 740;
-    out += '<g class="' + cls + '" style="animation-delay:' + d + 'ms">' + make(x, i) + '</g>';
+    out += still
+      ? '<g style="transform:translateY(' + Math.round((travel || 0) * ((i + 0.5) / n)) + 'px)">' + make(x, i) + '</g>'
+      : '<g class="' + cls + '" style="animation-delay:' + d + 'ms">' + make(x, i) + '</g>';
   }
   return out;
 };
 
-function petSkySVG(id) {
+/* `still` draws the sky as a picture instead of a scene: no animation on any
+   node at all. It is what the picker tiles ask for, and it is not a nicety.
+   Ten live skies in a grid, each one a whole home redrawn under falling
+   weather, put the main thread at about half of every frame on a mid-range
+   Android - the grid, the preview above it and the companion screen behind it
+   all ticking at once. Held still they cost nothing and still show what they
+   are, and the one scene that has to move - the preview - still moves. */
+function petSkySVG(id, still) {
   /* The homes are drawn with xMidYMax slice, so the square is scaled to cover
      the stage and cropped at the top. A sky framed any other way would drift
      off the home it is supposed to be lying on - which is exactly what the
      first probe run showed. */
   const open = '<svg viewBox="0 0 240 240" class="petsky" preserveAspectRatio="xMidYMax slice" aria-hidden="true">';
+  /* A class that names an animation, or nothing at all when held still. */
+  const ani = (c) => still ? '' : ' class="' + c + '"';
+  const lag = (ms) => still ? '' : ' style="animation-delay:' + ms + 'ms"';
   if (id === 'clear' || !id) return '';
   if (id === 'dawn') {
     return open + skyWash('skdawn', ['#FFB877', '#FFE4C4'], '.55')
@@ -954,37 +971,37 @@ function petSkySVG(id) {
     return open + skyWash('skstar', ['#1B1440', '#4A3A86'], '.6')
       + '<g fill="#FFF7EE">'
       + [[24, 28], [62, 16], [106, 36], [148, 20], [196, 30], [226, 58], [16, 74], [86, 62], [170, 68]]
-        .map((p, k) => '<circle class="twinkle" cx="' + p[0] + '" cy="' + p[1] + '" r="' + (1.3 + (k % 3) * 0.5) + '" style="animation-delay:' + (k * 280) + 'ms"/>').join('')
+        .map((p, k) => '<circle' + ani('twinkle') + ' cx="' + p[0] + '" cy="' + p[1] + '" r="' + (1.3 + (k % 3) * 0.5) + '"' + lag(k * 280) + '/>').join('')
       + '</g></svg>';
   }
   if (id === 'snow') {
     return open + skyWash('sksnow', ['#BCD6EE', '#F2F8FF'], '.5')
-      + skyMany(10, 'skfall', (x, i) => '<circle cx="' + x + '" cy="-8" r="' + (2.4 + (i % 3)) + '" fill="#FFFFFF" opacity=".95"/>')
+      + skyMany(10, 'skfall', (x, i) => '<circle cx="' + x + '" cy="-8" r="' + (2.4 + (i % 3)) + '" fill="#FFFFFF" opacity=".95"/>', still, 232)
       + '</svg>';
   }
   if (id === 'sakura') {
     return open + skyWash('sksak', ['#FFBBD0', '#FFE6EE'], '.5')
-      + skyMany(10, 'skfall sway', (x, i) => '<ellipse cx="' + x + '" cy="-8" rx="' + (4 + (i % 2) * 1.6) + '" ry="2.6" fill="' + (i % 2 ? '#FFF0F5' : '#FBC7DA') + '" opacity=".95"/>')
+      + skyMany(10, 'skfall sway', (x, i) => '<ellipse cx="' + x + '" cy="-8" rx="' + (4 + (i % 2) * 1.6) + '" ry="2.6" fill="' + (i % 2 ? '#FFF0F5' : '#FBC7DA') + '" opacity=".95"/>', still, 232)
       + '</svg>';
   }
   if (id === 'rain') {
     return open + skyWash('skrain', ['#6E869E', '#B8D2E0'], '.5')
-      + skyMany(11, 'skfall fast', (x) => '<path d="M' + x + ' -12 v16" stroke="#EAF6FF" stroke-width="2" stroke-linecap="round" opacity=".9"/>')
+      + skyMany(11, 'skfall fast', (x) => '<path d="M' + x + ' -12 v16" stroke="#EAF6FF" stroke-width="2" stroke-linecap="round" opacity=".9"/>', still, 232)
       + '</svg>';
   }
   if (id === 'fireflies') {
     return open + skyWash('skfly', ['#2E3A58', '#5E6E90'], '.45')
       + skyMany(7, 'skwander', (x, i) => '<circle cx="' + x + '" cy="' + (90 + (i % 4) * 26) + '" r="2.4" fill="#FFF3C4" opacity=".9"/>'
-        + '<circle cx="' + x + '" cy="' + (90 + (i % 4) * 26) + '" r="5.5" fill="#FFF3C4" opacity=".2"/>')
+        + '<circle cx="' + x + '" cy="' + (90 + (i % 4) * 26) + '" r="5.5" fill="#FFF3C4" opacity=".2"/>', still, 0)
       + '</svg>';
   }
   if (id === 'aurora') {
     return open + skyWash('skaur', ['#141E38', '#2A3A5E'], '.6')
-      + '<g class="skaurora" fill="none" stroke-width="12" stroke-linecap="round" opacity=".38">'
+      + '<g' + ani('skaurora') + ' fill="none" stroke-width="12" stroke-linecap="round" opacity=".38">'
       + '<path d="M-10 60 Q60 22 120 52 Q186 82 250 44" stroke="#7FE6C0"/>'
-      + '<path d="M-10 84 Q70 48 132 76 Q194 102 250 70" stroke="#9EC2F0" style="animation-delay:1400ms"/>'
-      + '<path d="M-10 40 Q64 10 126 34 Q190 58 250 28" stroke="#C9B0EA" style="animation-delay:2600ms"/></g>'
-      + '<g fill="#FFF7EE">' + [[30, 22], [110, 14], [200, 26]].map((p, k) => '<circle class="twinkle" cx="' + p[0] + '" cy="' + p[1] + '" r="1.5" style="animation-delay:' + (k * 420) + 'ms"/>').join('') + '</g>'
+      + '<path d="M-10 84 Q70 48 132 76 Q194 102 250 70" stroke="#9EC2F0"' + lag(1400) + '/>'
+      + '<path d="M-10 40 Q64 10 126 34 Q190 58 250 28" stroke="#C9B0EA"' + lag(2600) + '/></g>'
+      + '<g fill="#FFF7EE">' + [[30, 22], [110, 14], [200, 26]].map((p, k) => '<circle' + ani('twinkle') + ' cx="' + p[0] + '" cy="' + p[1] + '" r="1.5"' + lag(k * 420) + '/>').join('') + '</g>'
       + '</svg>';
   }
   if (id === 'lanterns') {
@@ -994,7 +1011,7 @@ function petSkySVG(id) {
         return '<ellipse cx="' + x + '" cy="230" rx="' + r + '" ry="' + (r * 1.24).toFixed(1) + '" fill="#F2789F" opacity=".9"/>'
           + '<ellipse cx="' + x + '" cy="230" rx="' + (r * 0.45).toFixed(1) + '" ry="' + (r * 0.62).toFixed(1) + '" fill="#FFF3C4" opacity=".8"/>'
           + '<ellipse cx="' + x + '" cy="230" rx="' + (r * 1.9).toFixed(1) + '" ry="' + (r * 2.1).toFixed(1) + '" fill="#FFB27A" opacity=".12"/>';
-      })
+      }, still, -196)
       + '</svg>';
   }
   return '';
@@ -1029,35 +1046,64 @@ const fxWorn = (id) => { const f = fxOf(id); return tierOn(f.tier) ? f : PET_FX[
 
 /* Returns the two layers separately: one behind the companion, one in front.
    Coordinates are the companion's 120x120, so an effect sits on the creature
-   rather than on the room. */
-function petFxSVG(id) {
+   rather than on the room.
+
+   `still` holds the effect mid-gesture instead of running it, for the picker
+   tiles. Three of these - the falling star, the motes, the petals - begin at
+   opacity 0 somewhere off the frame, so frozen on their start mark they are a
+   black tile with nothing in it. Each one names where it is worth catching. */
+function petFxSVG(id, still) {
   const none = { back: '', front: '' };
   if (!id || id === 'none') return none;
+  /* A class that names an animation, and a delay, or nothing when held. */
+  const ani = (c) => still ? '' : ' class="' + c + '"';
+  const lag = (ms) => still ? '' : ' style="animation-delay:' + ms + 'ms"';
+  /* Held at the point in the flight the tile should show, or running. */
+  const hold = (c, ms, css) => still ? ' style="' + css + '"' : ' class="' + c + '" style="animation-delay:' + ms + 'ms"';
+  /* Where along its flight node i is caught. x climbs with i in every one of
+     these, so a distance that climbs with i too lays the whole set on one
+     diagonal - which is what the first contact sheet showed motes and petals
+     as: a row of beads on a wire. Stepping by three around seven breaks it. */
+  const scatter = (i, n) => ((i * 3) % 7) / 6;
   if (id === 'twinkle') {
     const pts = [[14, 24], [102, 20], [24, 98], [106, 94], [60, 8], [8, 60], [112, 54], [42, 14], [80, 110]];
     return { back: '<g class="petfx">' + pts.map((p, k) =>
-      '<g class="twinkle" style="animation-delay:' + (k * 380) + 'ms">'
+      '<g' + ani('twinkle') + lag(k * 380) + '>'
       + wStar(p[0], p[1], 5.2 - (k % 3) * 1.1, '#FFE9A8')
       + wStar(p[0], p[1], 2.4 - (k % 3) * 0.4, '#FFFFFF') + '</g>').join('') + '</g>', front: '' };
   }
   if (id === 'shooting') {
     return { back: '<g class="petfx">' + [0, 1, 2].map((i) =>
-      '<g class="fxshoot" style="animation-delay:' + (i * 1800) + 'ms;--fy:' + (14 + i * 26) + '">'
+      '<g' + (still
+        ? ' style="transform:translate(' + [88, 44, 104][i] + 'px,' + [16, 58, 88][i] + 'px)"'
+        : ' class="fxshoot" style="animation-delay:' + (i * 1800) + 'ms;--fy:' + (14 + i * 26) + '"') + '>'
       + '<path d="M0 0 l-34 14" stroke="#FFE9A8" stroke-width="3" stroke-linecap="round" opacity=".55"/>'
       + '<path d="M0 0 l-18 7" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round" opacity=".9"/>'
       + wStar(2, -1, 4.4, '#FFFFFF') + '</g>').join('') + '</g>', front: '' };
   }
   if (id === 'motes') {
     return { back: '', front: '<g class="petfx" fill="#FFE9A8">' + [0, 1, 2, 3, 4, 5, 6].map((i) =>
-      '<circle class="fxrise" cx="' + (20 + i * 14) + '" cy="114" r="' + (2.2 + (i % 3) * 0.9) + '" opacity=".95" style="animation-delay:' + (i * 620) + 'ms"/>').join('') + '</g>' };
+      '<circle' + hold('fxrise', i * 620, 'transform:translateY(' + Math.round(-10 - scatter(i, 7) * 62) + 'px)')
+      + ' cx="' + (20 + i * 14) + '" cy="114" r="' + (2.2 + (i % 3) * 0.9) + '" opacity=".95"/>').join('') + '</g>' };
   }
   if (id === 'petals') {
+    /* The fall goes on the group and the drift on the petal inside it, which
+       is how the sakura sky has always done it. Both on the one element is not
+       a composition: two animations naming transform means the last one in the
+       list wins outright, so for as long as this was written that way the
+       petals drifted a few pixels sideways and never fell at all - and cost
+       six times what the rain costs, because a property two animations fight
+       over cannot be handed to the compositor. */
     return { back: '', front: '<g class="petfx">' + [0, 1, 2, 3, 4, 5, 6].map((i) =>
-      '<ellipse class="fxfall sway" cx="' + (14 + i * 15) + '" cy="-8" rx="' + (4.4 + (i % 2) * 1.4) + '" ry="2.8" fill="' + (i % 2 ? '#FFF0F5' : '#F7A9C6') + '" opacity=".97" style="animation-delay:' + (i * 700) + 'ms"/>').join('') + '</g>' };
+      '<g' + (still
+        ? ' style="transform:translateY(' + Math.round(18 + scatter(i, 7) * 96) + 'px)"'
+        : ' class="fxfall sway" style="animation-delay:' + (i * 700) + 'ms"') + '>'
+      + '<ellipse cx="' + (14 + i * 15) + '" cy="-8" rx="' + (4.4 + (i % 2) * 1.4) + '" ry="2.8" fill="' + (i % 2 ? '#FFF0F5' : '#F7A9C6') + '" opacity=".97"/>'
+      + '</g>').join('') + '</g>' };
   }
   if (id === 'fireflies') {
     return { back: '', front: '<g class="petfx">' + [0, 1, 2, 3, 4].map((i) =>
-      '<g class="fxwander" style="animation-delay:' + (i * 900) + 'ms">'
+      '<g' + ani('fxwander') + lag(i * 900) + '>'
       + '<circle cx="' + (20 + i * 21) + '" cy="' + (48 + (i % 3) * 24) + '" r="3" fill="#FFFBE8"/>'
       + '<circle cx="' + (20 + i * 21) + '" cy="' + (48 + (i % 3) * 24) + '" r="8" fill="#FFE9A8" opacity=".3"/></g>').join('') + '</g>' };
   }
@@ -1068,25 +1114,34 @@ function petFxSVG(id) {
       + '<ellipse cx="0" cy="0" rx="46" ry="13" fill="#C9B0EA" opacity=".18"/>'
       + '<ellipse cx="0" cy="0" rx="46" ry="13" fill="none" stroke="#9E82D2" stroke-width="2.2" opacity=".8"/>'
       + '<ellipse cx="0" cy="0" rx="34" ry="9.6" fill="none" stroke="#C9B0EA" stroke-width="1.4" opacity=".7"/>'
-      + '<g class="fxspin" transform="scale(1,0.3)">' + runes + '</g></g>', front: '' };
+      + '<g' + (still ? '' : ' class="fxspin"') + ' transform="scale(1,0.3)">' + runes + '</g></g>', front: '' };
   }
   if (id === 'butterfly') {
-    return { back: '', front: '<g class="petfx"><g class="fxorbit" transform="translate(60,74)">'
+    return { back: '', front: '<g class="petfx"><g' + (still ? '' : ' class="fxorbit"') + ' transform="translate(60,74)">'
       + '<g transform="translate(48,0)">'
-      + '<g class="fxflap"><path d="M0 0 Q-14 -15 -18 -3 Q-18 9 -3 6 Z" fill="#F7A9C6"/>'
+      /* .fxflap carries a transform-origin; a still tile has no class to
+         carry one, and a scaled wing about the view box corner slides off the
+         butterfly altogether. Held open instead of held mid-beat. */
+      + '<g' + (still ? '' : ' class="fxflap"') + '><path d="M0 0 Q-14 -15 -18 -3 Q-18 9 -3 6 Z" fill="#F7A9C6"/>'
       + '<path d="M0 0 Q14 -15 18 -3 Q18 9 3 6 Z" fill="#C9B0EA"/></g>'
       + '<ellipse cx="0" cy="1" rx="1.8" ry="6" fill="#5E4F9E"/></g></g></g>' };
   }
   if (id === 'ripple') {
+    /* Three rings at rest sit exactly on top of one another and read as one,
+       so held still they take the three sizes the animation passes through. */
     return { back: '<g class="petfx" fill="none" stroke="#9EC2F0" stroke-width="2.6">' + [0, 1, 2].map((i) =>
-      '<ellipse class="fxripple" cx="60" cy="112" rx="18" ry="5" style="animation-delay:' + (i * 1100) + 'ms"/>').join('') + '</g>', front: '' };
+      '<ellipse' + (still
+        ? ' style="transform-origin:60px 112px;transform:scale(' + (0.8 + i * 0.7) + ');opacity:' + (0.8 - i * 0.24) + '"'
+        : ' class="fxripple" style="animation-delay:' + (i * 1100) + 'ms"')
+      + ' cx="60" cy="112" rx="18" ry="5"/>').join('') + '</g>', front: '' };
   }
   if (id === 'shimmer') {
     return { back: '', front: '<g class="petfx"><defs><linearGradient id="fxsh" x1="0" y1="0" x2="1" y2="0">'
       + '<stop offset="0%" stop-color="#FFF7EE" stop-opacity="0"/><stop offset="45%" stop-color="#FFF3C4" stop-opacity=".55"/>'
       + '<stop offset="55%" stop-color="#F7A9C6" stop-opacity=".5"/><stop offset="100%" stop-color="#C9B0EA" stop-opacity="0"/>'
       + '</linearGradient></defs>'
-      + '<rect class="fxsheen" x="-60" y="26" width="52" height="92" rx="20" fill="url(#fxsh)"/></g>' };
+      + '<rect' + (still ? ' style="transform:translateX(92px)"' : ' class="fxsheen"')
+      + ' x="-60" y="26" width="52" height="92" rx="20" fill="url(#fxsh)"/></g>' };
   }
   return none;
 }

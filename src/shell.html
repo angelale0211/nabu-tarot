@@ -1943,7 +1943,10 @@ html,body{overscroll-behavior-y:contain}
 .fxshoot{animation:fxshoot 5.5s linear infinite;transform-origin:60px 60px}
 .fxrise{animation:fxrise 4.4s linear infinite}
 .fxfall{animation:fxfall 6s linear infinite}
-.fxfall.sway{animation:fxfall 6s linear infinite,sksway 2.4s ease-in-out infinite}
+/* The drift belongs to the petal inside the falling group, never to the group
+   as well: two animations on one element both naming transform do not compose,
+   the last one wins, and the petals stopped falling. */
+.fxfall.sway>*{animation:sksway 2.4s ease-in-out infinite}
 .fxwander{animation:fxwander 7s ease-in-out infinite}
 .fxspin{animation:fxspin 14s linear infinite}
 .fxorbit{animation:fxorbit 7s linear infinite}
@@ -1955,9 +1958,18 @@ html,body{overscroll-behavior-y:contain}
    things keeps the stars and loses only the blinking. */
 @media (prefers-reduced-motion:reduce){
   .skfall,.skfall.sway>*,.skrise,.skwander,.skaurora>path,
-  .fxshoot,.fxrise,.fxfall,.fxfall.sway,.fxwander,.fxspin,.fxorbit,.fxflap,.fxripple,.fxsheen{animation:none!important}
+  .fxshoot,.fxrise,.fxfall,.fxfall.sway>*,.fxwander,.fxspin,.fxorbit,.fxflap,.fxripple,.fxsheen{animation:none!important}
   .fxshoot,.fxfall,.fxrise{opacity:.85}
 }
+
+/* A full-height sheet covers the screen it was opened from, and that screen
+   is a companion breathing in a home under falling weather. Left running it
+   went on costing a style recalculation every frame for something nobody can
+   see - about a fifth of the frame on a mid-range Android, on top of whatever
+   the sheet itself is drawing. Paused, not hidden: hiding it would cost a
+   relayout of the whole screen on open and again on close. */
+body.behindsheet #main,body.behindsheet #backbar{animation-play-state:paused}
+body.behindsheet #main *,body.behindsheet #backbar *{animation-play-state:paused!important}
 
 /* ---- the wardrobe screen ----
    Rides on .sheet so the backdrop tap and the close button already work, but
@@ -2015,6 +2027,14 @@ html,body{overscroll-behavior-y:contain}
 .dresssheet .wgrid.sky{grid-template-columns:repeat(2,1fr)}
 @media (min-width:520px){.dresssheet .wgrid.sky{grid-template-columns:repeat(3,1fr)}}
 
+/* Twenty-one homes, ten skies and ten effects is more tiles than fit on a
+   phone, and the ones below the fold were being drawn and styled anyway.
+   contain-intrinsic-size keeps the scrollbar honest while they are skipped. */
+.dresssheet .wgrid .wtile{content-visibility:auto}
+.dresssheet .wgrid.sky .wtile{contain-intrinsic-size:auto 168px}
+.dresssheet .wgrid.fx .wtile{contain-intrinsic-size:auto 112px}
+.scenesheet .wgrid.sky .wtile{contain-intrinsic-size:auto 152px}
+
 .wtile{position:relative;display:flex;flex-direction:column;align-items:center;gap:5px;
   background:var(--surface-2);border:1px solid var(--rule-soft);border-radius:15px;
   padding:9px 6px 8px;font:inherit;color:inherit;cursor:pointer;transition:transform .12s ease,box-shadow .12s ease}
@@ -2031,12 +2051,16 @@ html,body{overscroll-behavior-y:contain}
 .wtile .wbadge{position:absolute;top:5px;right:6px;font-size:10.5px;border-radius:999px;padding:1px 5px;line-height:1.5}
 .wtile .wbadge.plus{background:var(--tag-gold-bg);color:var(--gold-deep)}
 .wtile .wbadge.pro{background:#3B2A5E;color:#FFF3C4}
-/* the shimmer that marks a piece somebody does not own yet */
-.wtile.locked .wart::after{content:'';position:absolute;inset:0;border-radius:11px;pointer-events:none;
-  background:linear-gradient(105deg,transparent 40%,rgba(255,255,255,.5) 50%,transparent 60%);
-  background-size:280% 100%;animation:wshine 3.4s ease-in-out infinite}
+/* The shimmer that marks a piece somebody does not own yet.
+   It used to slide a 280%-wide gradient with background-position, which is a
+   paint the browser cannot hand to the compositor: every locked tile repainted
+   itself every frame, and a grid is mostly locked tiles for anyone who has not
+   subscribed. Same sweep, moved with a transform, which costs nothing. */
+.wtile.locked .wart::after{content:'';position:absolute;top:0;bottom:0;left:100%;width:62%;pointer-events:none;
+  background:linear-gradient(105deg,transparent,rgba(255,255,255,.5),transparent);
+  animation:wshine 3.4s ease-in-out infinite}
 .wtile .wart{position:relative;overflow:hidden}
-@keyframes wshine{0%{background-position:150% 0}55%,100%{background-position:-60% 0}}
+@keyframes wshine{0%{transform:translateX(0)}55%,100%{transform:translateX(-265%)}}
 @media (prefers-reduced-motion:reduce){.wtile.locked .wart::after{animation:none;opacity:.25}}
 
 /* a sky tile is the real home under the real sky, so the choice is honest */
@@ -2051,6 +2075,19 @@ html,body{overscroll-behavior-y:contain}
 .wtile .fxbox{background:radial-gradient(circle at 50% 38%,#4A3E80,#241B4A 78%)}
 .wtile .fxbox svg{width:100%;height:100%}
 .wtile.fxtile.locked .wart{opacity:.9}
+
+/* ---- the scene screen ----
+   The wardrobe's sheet, with three tabs instead of a rail of seven slots, so
+   the rail is centred and the tabs are allowed to be wide enough to read. */
+.scenesheet .scenerail{justify-content:center;gap:14px;overflow-x:visible}
+.scenesheet .scenerail .wslot{flex:0 0 auto;min-width:64px}
+.scenesheet .scenerail .wthumb{border-style:solid;border-color:var(--rule-soft);background:var(--surface)}
+.scenesheet .scenerail .wslot.on .wthumb{background:var(--soft)}
+.scenesheet .wmeta .wcount b,.scenesheet .wmeta .wpay b{color:var(--primary)}
+/* Twenty-one homes want three across on anything wider than a small phone. */
+@media (min-width:400px){.scenesheet .wgrid.sky{grid-template-columns:repeat(3,1fr)}}
+@media (min-width:620px){.scenesheet .wgrid.sky{grid-template-columns:repeat(4,1fr)}}
+.scenesheet .wtile .wscene{height:96px}
 
 .dresssheet .wfoot{position:sticky;bottom:0;background:var(--surface);border-top:1px solid var(--rule-soft);
   padding:9px 14px calc(12px + env(safe-area-inset-bottom))}
