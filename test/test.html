@@ -1798,7 +1798,7 @@ async function go(hash, sel) { W().location.hash = hash; await sleep(30); return
       const pub = await fetch('/privacy.html', { cache: 'no-store' }).then((r) => r.text()).catch(() => '');
       ok(/Bình luận thì khác/.test(pv) && /công khai/.test(pv)
         && pub.indexOf('Bình luận thì khác') > -1 && pub.indexOf('Comments you write under a post') > -1
-        && pub.indexOf('Kommentare, die du unter einen Beitrag') > -1 && pub.indexOf('2026-09-17') > -1,
+        && pub.indexOf('Kommentare, die du unter einen Beitrag') > -1 && pub.indexOf('2026-09-22') > -1,
         'the privacy policy says, in all three languages, that comments are public, show the chosen name only, can be deleted, and go with the account'); }
     { /* v242: the iPhone app. App Review reads the policy against the app, and
          the policy predated Sign in with Apple and App Store purchases. */
@@ -1824,6 +1824,27 @@ async function go(hash, sel) { W().location.hash = hash; await sleep(30); return
       ok(saysEdit && saysHeart,
         'the policy says in all three languages that a comment can be edited and shows it, and that a heart records the post and the account but never a name'
         + ' [edit ' + saysEdit + ', heart ' + saysHeart + ']'); }
+    { /* v265: terms of Nabu's own. Apple's licence covers what Apple sells;
+         it says nothing about a reading Nabu gives herself, booked in the app
+         and paid by bank transfer, and nothing about a bought plan dying with
+         a deleted account. Both are things a buyer is entitled to read. */
+      await go('#/terms', '.privacy .gsec');
+      const tx = d.querySelector('.privacy').textContent;
+      const covers = /24 gi\u1edd/.test(tx) && /ho\u00e0n l\u1ea1i|ho\u00e0n ti\u1ec1n/.test(tx) && /Xo\u00e1 t\u00e0i kho\u1ea3n/.test(tx) && /t\u1ef1 \u0111\u1ed9ng gia h\u1ea1n/.test(tx) && /Nabu AI/.test(tx);
+      ok(d.querySelectorAll('.privacy .gsec').length >= 12 && covers,
+        'the terms say how a membership renews, how a booked reading is moved or refunded, and what deleting an account costs');
+      const pubT = await fetch('/terms.html', { cache: 'no-store' }).then((r) => r.text()).catch(() => '');
+      ok(pubT.indexOf('\u0110i\u1ec1u kho\u1ea3n d\u1ecbch v\u1ee5') > -1 && pubT.indexOf('Terms of service') > -1 && pubT.indexOf('Nutzungsbedingungen') > -1
+        && pubT.indexOf('reportaproblem.apple.com') > -1 && pubT.indexOf('Widerrufsrecht') > -1,
+        'terms.html is public and complete in all three languages, and names where a store refund is asked for'); }
+    { /* Every screen that sells something carries the terms and the policy -
+         on the iPhone Apple's licence first, because that is the link App
+         Review looks for, and elsewhere Nabu's own. */
+      await go('#/unlock', '.unlist');
+      const legal = d.querySelector('#main .legal');
+      ok(legal && legal.querySelector('a[href="#/terms"]') && legal.querySelector('a[href="#/privacy"]')
+        && !legal.querySelector('a[href*="apple.com/legal"]'),
+        'the store screen on Android and the web links Nabu\'s terms and the privacy policy'); }
     { await playMode(true);
       ok(N.BILL.can() && N.BILL.priceOf('tarot') && /300/.test(N.BILL.priceOf('tarot')) && N.BILL.periodMonths('pro6') === 6,
         'inside the app BILL answers with Play\'s own prices and periods for every catalogue item');

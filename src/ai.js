@@ -1,10 +1,10 @@
 /* ============================ Nabu AI ============================
    A question box that knows what the visitor is looking at: the card they
    drew, the lesson they are reading, their sign, their numbers. Two engines:
-   - online: CONFIG.aiEndpoint (the Cloudflare Worker in worker/) calls Claude
-     with the same context and the visitor's question;
-   - built-in: when no endpoint is set, answers are assembled here from the
-     app's own knowledge base, so the feature works offline and costs nothing. */
+   Answers come from CONFIG.aiEndpoint (the Cloudflare Worker in worker/),
+   which asks Gemini, falls back to Cloudflare Workers AI, and may hand the
+   model a public Wikipedia summary when the question goes past the cards.
+   With no endpoint set the box says so rather than answering. */
 /* off: the answering service has told us it has no model to answer with -
    no key, no binding, nothing. Not the same as busy, and the difference is
    the whole of what readers were complaining about: every answer came from

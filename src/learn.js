@@ -600,6 +600,7 @@ function renderUnlock(args, params) {
         : payPanelHTML(unlockCartRows().map((c) => L(c.name)).join(', '), unlockBase(),
             payRef('unlock|' + unlockCartRows().map((c) => c.id).join('+')), 'unlockpay'))
       + '<div class="card"><label class="f" for="ucode">' + esc(S.unlockCodeLabel) + '</label><div class="row nw"><input id="ucode" placeholder="' + esc(S.luckCodePh) + '" autocapitalize="characters"><button class="btn" id="ugo">' + esc(S.unlock) + '</button></div><p class="hint" id="ustatus"></p></div>'
+      + legalHTML()
       + '<p style="margin-top:14px"><a class="backlink" href="#/prices">' + esc(S.unlockReadings) + ' →</a></p>';
     $$('[data-unl]', m).forEach((b) => b.addEventListener('click', () => { UNL_CART.toggle(b.getAttribute('data-unl')); draw(); }));
     if (unlockCartRows().length) {

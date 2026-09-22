@@ -24,10 +24,13 @@ function subStateWord(row) {
 const APPLE_MANAGE = 'https://apps.apple.com/account/subscriptions';
 /* App Review asks every subscription screen for the Terms of Use and the
    privacy policy. On the iPhone the terms are Apple's standard licence, the
-   same link the App Store listing gives; Play asks for neither, so Android
-   and the web show nothing new. */
+   same link the App Store listing gives - that is the one App Review looks
+   for, so it stays first there. Everywhere else the terms are Nabu's own,
+   which is also where a buyer reads what deleting an account costs them. */
 const APPLE_EULA = 'https://www.apple.com/legal/internet-services/itunes/dev/stdeula/';
-const legalHTML = () => (isIOSApp() ? '<p class="hint legal"><a href="' + APPLE_EULA + '" target="_blank" rel="noopener">' + esc(T().stTerms) + '</a> · <a href="#/privacy">' + esc(T().stPrivacy) + '</a></p>' : '');
+const legalHTML = () => '<p class="hint legal">'
+  + (isIOSApp() ? '<a href="' + APPLE_EULA + '" target="_blank" rel="noopener">' + esc(T().stTerms) + '</a> · ' : '')
+  + '<a href="#/terms">' + esc(T().termsTitle) + '</a> · <a href="#/privacy">' + esc(T().stPrivacy) + '</a></p>';
 const manageURL = (key) => ((SUBS.of(key) || {}).store === 'apple' ? APPLE_MANAGE
   : 'https://play.google.com/store/account/subscriptions?sku=' + encodeURIComponent((playItem(key) || {}).sku || '') + '&package=app.nabutarot.twa');
 /* Every screen that sells anything comes through here, so this is where
