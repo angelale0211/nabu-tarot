@@ -12,7 +12,7 @@
      carries this notice with it. See LICENSE. -->
 <meta name="author" content="Nabu Tarot">
 <meta name="copyright" content="Copyright (c) 2025-2026 Nabu Tarot. All rights reserved.">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'none'; object-src 'none'; form-action 'self'; script-src 'self' 'sha256-pK95dEMWJ79pefnhF541ygiSBFB/5ciHURa740VohGs=' https://www.gstatic.com https://apis.google.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; font-src 'self' data:; media-src 'self' data: blob:; worker-src 'self'; connect-src 'self' https://*.googleapis.com https://*.google.com https://*.firebaseio.com https://*.cloudfunctions.net https://*.workers.dev https://generativelanguage.googleapis.com; frame-src https://*.firebaseapp.com https://accounts.google.com https://*.facebook.com">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'none'; object-src 'none'; form-action 'self'; script-src 'self' 'sha256-cAmbFpU+n3rS+3t9htX+7jwzQNhf4Pm5B5Mu7yjCEPU=' https://www.gstatic.com https://apis.google.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; font-src 'self' data:; media-src 'self' data: blob:; worker-src 'self'; connect-src 'self' https://*.googleapis.com https://*.google.com https://*.firebaseio.com https://*.cloudfunctions.net https://*.workers.dev https://generativelanguage.googleapis.com; frame-src https://*.firebaseapp.com https://accounts.google.com https://*.facebook.com">
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <meta name="theme-color" content="#EFE9FA">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -23201,13 +23201,10 @@ ROUTES.practice = { nav: 'learn', render: (a) => a[0] ? renderExercise(a[0]) : r
    sign's palette. The pictures are AI-painted and live beside the page in
    outfit/<character>/, fetched only when this screen is opened.
 
-   Hair can be recoloured. Each picture has a grey mask of its hair
-   (outfit/<character>/m/), and paintOutfit() runs a gradient map inside it:
-   every pixel keeps its place between the hair's own shadows and highlights
-   and takes a colour from a ramp running from a warm dark, through the
-   chosen colour, to a lighter one. Skin is not recoloured, because a mask
-   cannot tell pale fabric from skin reliably; skin tone is chosen by picking
-   the character painted with it.
+   Hair is shown as painted. Recolouring it pixel by pixel was tried and dropped on 2026-09-28:
+   the hair is painted pale and half-transparent, and every mask left blur or specks once the colour
+   went dark. A different hair colour is a different painted picture; for now each character has
+   one, natural colour (character 1's women were repainted from pink to dark brown).
 
    The screen is organised by zodiac sign, which is what App Store review
    objected to (4.3b). It was kept out of the iPhone app at first; since
@@ -23221,21 +23218,12 @@ const OUTFIT_PAL = [['#C8373B', '#F08A5D', '#F4EBDD', '#3A3A40'], ['#6B7F4E', '#
   ['#F3EEE3', '#C9CCD1', '#A9C9D9', '#EFC6CC'], ['#E3A72F', '#C8642C', '#F6EFE2', '#8A5A35'], ['#D8CBB3', '#7E8457', '#F7F5F0', '#A88A6A'],
   ['#F2E8DC', '#D9B8B4', '#A8B9A0', '#9C5B44'], ['#2E2B3A', '#7B2D3B', '#C9A227', '#E8E2D6'], ['#6D3B6E', '#1F6F78', '#C0703B', '#F1E7D6'],
   ['#3C3F46', '#5B4636', '#B08A5E', '#F4F2EE'], ['#3E6FD8', '#C9CCD1', '#B7A6D9', '#F8F8FA'], ['#9ED3CF', '#C9B6E4', '#5B8DB8', '#F6F3EE']];
-/* Natural hair colours only, at the owner's request: black, dark brown, chestnut, light brown,
-   auburn, honey blonde, grey. No pink, no blue, no free colour picker. */
-const OUTFIT_HAIR = ['#1E1A1A', '#3B2A22', '#5A3A28', '#8A5A3C', '#8E4A2E', '#C29A5E', '#A7A4A0'];
-/* Character 1's women were painted with pink hair; they start on dark brown instead. The others
-   were painted with natural hair and start as painted. */
-const outfitHairFor = (st) => st.hair || (st.c === '1' && st.g === 'female' ? OUTFIT_HAIR[1] : null);
-const outfitPaintedNatural = (st) => !(st.c === '1' && st.g === 'female');
-
 /* The Vietnamese here was approved on 2026-09-28 (appstore/duyet-noi-dung.md, section J); change it only with a new approval. */
 const OUTFIT_TXT = {
   vi: {
     title: 'Mặc gì tháng này', intro: 'Mỗi tháng một bộ đồ hợp thời tiết miền Bắc, phối từ bảng màu của cung bạn.',
     female: 'Nữ', male: 'Nam', chars: { 1: 'Da sáng', 2: 'Da nâu' }, month: (m) => 'Tháng ' + m,
     pal: (s) => 'Bảng màu của ' + s, hair: 'Màu tóc', hairReset: 'Để nguyên', hairOther: 'Chọn màu khác',
-    hairNames: ['Đen', 'Nâu đen', 'Nâu hạt dẻ', 'Nâu sáng', 'Nâu đỏ', 'Vàng mật ong', 'Muối tiêu'],
     ai: 'Hình minh hoạ do AI vẽ.', offline: 'Chưa tải được hình. Kiểm tra mạng rồi thử lại nhé.',
     /* Choosing the weather: draft Vietnamese, section O of the approval file. */
     modeMonth: 'Theo tháng (Hà Nội)', modeWx: 'Tự chọn thời tiết', wxLbl: 'Thời tiết', tLbl: 'Nhiệt độ',
@@ -23248,7 +23236,6 @@ const OUTFIT_TXT = {
     title: 'What to wear this month', intro: 'An outfit for every month, dressed for the weather in northern Vietnam and coloured from your sign’s palette.',
     female: 'Women', male: 'Men', chars: { 1: 'Fair skin', 2: 'Brown skin' }, month: (m) => MONTHS_EN[m - 1],
     pal: (s) => s + ' palette', hair: 'Hair colour', hairReset: 'As painted', hairOther: 'Pick another colour',
-    hairNames: ['Black', 'Dark brown', 'Chestnut', 'Light brown', 'Auburn', 'Honey blonde', 'Grey'],
     ai: 'Illustrations painted by AI.', offline: 'The picture did not load. Check your connection and try again.',
     modeMonth: 'By month (Hanoi)', modeWx: 'Choose the weather', wxLbl: 'Weather', tLbl: 'Temperature',
     wx: { sun: 'Sunny', cloud: 'Cloudy, overcast', rain: 'Rain' },
@@ -23260,7 +23247,6 @@ const OUTFIT_TXT = {
     title: 'Was ziehe ich diesen Monat an', intro: 'Für jeden Monat ein Outfit, passend zum Wetter in Nordvietnam und in den Farben deines Sternzeichens.',
     female: 'Damen', male: 'Herren', chars: { 1: 'Helle Haut', 2: 'Braune Haut' }, month: (m) => MONTHS_DE[m - 1],
     pal: (s) => 'Farben: ' + s, hair: 'Haarfarbe', hairReset: 'Wie gemalt', hairOther: 'Andere Farbe wählen',
-    hairNames: ['Schwarz', 'Dunkelbraun', 'Kastanienbraun', 'Hellbraun', 'Kupferbraun', 'Honigblond', 'Grau'],
     ai: 'Illustrationen von einer KI gemalt.', offline: 'Das Bild ließ sich nicht laden. Prüfe deine Verbindung und versuch es noch einmal.',
     modeMonth: 'Nach Monat (Hanoi)', modeWx: 'Wetter selbst wählen', wxLbl: 'Wetter', tLbl: 'Temperatur',
     wx: { sun: 'Sonnig', cloud: 'Bewölkt, trüb', rain: 'Regen' },
@@ -23286,8 +23272,7 @@ const OUTFIT_MONTH_WX = ['drizzle', 'cloud', 'drizzle', 'sun', 'sun', 'sun', 'ra
 const outfitMonth = (st) => (st.mode === 'wx' ? OUTFIT_CELL[st.t][OUTFIT_WX.indexOf(st.w)] : st.m);
 const outfitFx = (st) => (st.mode === 'wx' ? (st.w === 'rain' && st.t < 2 ? 'drizzle' : st.w) : OUTFIT_MONTH_WX[st.m - 1]);
 
-/* ?v=4: the hair masks were rebuilt on 2026-09-28 (v4: per-pixel hair, strands over the background marked) (no more cheek, jaw or neck taking the hair colour;
-   the strands behind the body now included). A new query makes phones fetch them again. */
+/* ?v=2 on the pictures: character 1's women were repainted with dark brown hair on 2026-09-28. */
 const outfitTxt = () => OUTFIT_TXT[lang] || OUTFIT_TXT.en;
 
 /* What the visitor picked last time. The sign starts at their own when the
@@ -23300,75 +23285,14 @@ function outfitState() {
     g: saved.g === 'male' ? 'male' : 'female',
     s: typeof saved.s === 'number' && saved.s >= 0 && saved.s < 12 ? saved.s : (own >= 0 ? own : 0),
     m: new Date(Date.now() + 7 * 3600e3).getUTCMonth() + 1,
-    hair: OUTFIT_HAIR.indexOf(saved.hair) > -1 ? saved.hair : null,
     mode: saved.mode === 'wx' ? 'wx' : 'month',
     w: OUTFIT_WX.indexOf(saved.w) > -1 ? saved.w : 'sun',
     t: typeof saved.t === 'number' && saved.t >= 0 && saved.t < 4 ? saved.t : 2
   };
   return st;
 }
-const outfitSave = (st) => store.set('nabu-outfit', { c: st.c, g: st.g, s: st.s, hair: st.hair, mode: st.mode, w: st.w, t: st.t });
+const outfitSave = (st) => store.set('nabu-outfit', { c: st.c, g: st.g, s: st.s, mode: st.mode, w: st.w, t: st.t });
 const outfitName = (st) => OUTFIT_SIGNS[st.s] + '-' + outfitMonth(st) + '-' + st.g;
-
-/* The recolour itself: base picture into `canvas`, hair gradient-mapped to `hex`. Pure pixels in,
-   pixels out, so the suite can run it.
-   The mask's red channel is how much hair a pixel holds. Since 2026-09-28 (masks ?v=4) its green
-   channel says how far the pixel is a thin strand painted over the plain background: there the old
-   colour is taken out and the new one laid over the background, instead of tinting a pale pink into
-   mauve. A grey mask (blue = red) has no such channel and is simply tinted. */
-function paintOutfit(canvas, base, mask, hex) {
-  const w = base.naturalWidth || base.width, h = base.naturalHeight || base.height;
-  canvas.width = w; canvas.height = h;
-  const c = canvas.getContext('2d'); c.drawImage(base, 0, 0, w, h);
-  if (!hex || !mask) return;
-  const px = c.getImageData(0, 0, w, h), d = px.data;
-  const mc = document.createElement('canvas'); mc.width = w; mc.height = h;
-  const mx = mc.getContext('2d'); mx.drawImage(mask, 0, 0, w, h); const m = mx.getImageData(0, 0, w, h).data;
-  const t = [1, 3, 5].map((i) => parseInt(hex.substr(i, 2), 16) / 255);
-  const tl = 0.299 * t[0] + 0.587 * t[1] + 0.114 * t[2];
-  const lum = (i) => (0.299 * d[i] + 0.587 * d[i + 1] + 0.114 * d[i + 2]) / 255;
-  /* The plain background: the two top corners of the picture. */
-  const bg = [0, 0, 0]; let bn = 0;
-  for (let y = 4; y < Math.min(24, h); y++) for (const x0 of [4, Math.max(4, w - 24)]) for (let x = x0; x < Math.min(x0 + 20, w); x++) { const i = (y * w + x) * 4; bg[0] += d[i]; bg[1] += d[i + 1]; bg[2] += d[i + 2]; bn++; }
-  for (let k = 0; k < 3; k++) bg[k] = bn ? bg[k] / bn / 255 : 1;
-  const bl = 0.299 * bg[0] + 0.587 * bg[1] + 0.114 * bg[2];
-  const n4 = d.length / 4, A = new Float32Array(n4), U = new Float32Array(n4), HL = new Float32Array(n4);
-  let sum = 0, n = 0;
-  for (let p = 0, i = 0; p < n4; p++, i += 4) {
-    const a = m[i] / 255; A[p] = a; if (!a) continue;
-    /* Blue near 0 marks a two-channel mask (a browser's colour handling may leave it at 1 or 2). */
-    const u = m[i + 2] < 16 ? m[i + 1] / 255 : 0; U[p] = u;
-    const l = lum(i);
-    /* A thin strand's own shade, with the background it is painted over taken out. */
-    HL[p] = u ? l * (1 - u) + u * (l - (1 - a) * bl) / Math.max(a, 0.2) : l;
-    if (a > 0.5) { sum += HL[p]; n++; }
-  }
-  if (!n) return;
-  const mean = sum / n;
-  let sq = 0;
-  for (let p = 0; p < n4; p++) if (A[p] > 0.5) { const l = HL[p] - mean; sq += l * l; }
-  const sd = Math.sqrt(sq / n) || 0.1;
-  /* Darkening a light colour directly turns blonde olive; a warm shadow does not. */
-  const shadow = [t[0] * 0.42 + 0.03, t[1] * 0.32 + 0.02, t[2] * 0.26 + 0.02];
-  const light = t.map((v) => v + (1 - v) * 0.45);
-  const ramp = (q) => (q < 0.5 ? shadow.map((s, k) => s + (t[k] - s) * (q * 2)) : t.map((v, k) => v + (light[k] - v) * ((q - 0.5) * 2)));
-  /* Dark colours get a narrower spread, or pale paintwork turns into silver highlights. */
-  const spread = 0.18 * (0.45 + 0.55 * tl), dense = 0.45 + 0.55 * tl;
-  for (let p = 0, i = 0; p < n4; p++, i += 4) {
-    const a = A[p]; if (!a) continue;
-    const u = U[p];
-    let z = (HL[p] - mean) / sd;
-    z *= Math.min(1, Math.max(a, 0.35)) * (1 - u * 0.5);
-    const nv = ramp(Math.max(0, Math.min(1, 0.5 + z * spread)));
-    /* A thin dark strand over a pale background reads grey; dark colours cover more densely. */
-    const ad = Math.pow(A[p], dense);
-    for (let k = 0; k < 3; k++) {
-      const tint = d[i + k] / 255 * (1 - a) + nv[k] * a, unmix = bg[k] * (1 - ad) + nv[k] * ad;
-      d[i + k] = Math.round((tint * (1 - u) + unmix * u) * 255);
-    }
-  }
-  c.putImageData(px, 0, 0);
-}
 
 function outfitLoad(src) {
   return new Promise((ok, no) => { const i = new Image(); i.onload = () => ok(i); i.onerror = no; i.src = src; });
@@ -23377,7 +23301,7 @@ function outfitLoad(src) {
 function renderOutfit() {
   const S = T(), X = outfitTxt(), m = $('#main'), st = outfitState();
   const here = navStillHere();
-  let base = null, mask = null, token = 0;
+  let base = null, token = 0;
   const chip = (k, v, label, on) => '<button class="chip' + (on ? ' on' : '') + '" data-ok="' + k + '" data-ov="' + v + '" aria-pressed="' + on + '">' + esc(label) + '</button>';
 
   function chrome() {
@@ -23396,9 +23320,6 @@ function renderOutfit() {
       + '<p>' + esc(X[st.g + '_'][mo - 1]) + '</p>'
       + '<div class="ofpal" aria-label="' + esc(X.pal(S.zodiac[st.s])) + '">' + pal.map((c) => '<span style="background:' + c + '"></span>').join('')
       + '<span class="faint">' + esc(X.pal(S.zodiac[st.s])) + '</span></div>';
-    const hc = outfitHairFor(st);
-    $('#ofHair').innerHTML = OUTFIT_HAIR.map((c, i) => '<button class="ofsw" data-ok="hair" data-ov="' + c + '" style="background:' + c + '" aria-label="' + esc(X.hairNames[i]) + '" title="' + esc(X.hairNames[i]) + '" aria-pressed="' + (hc === c) + '"></button>').join('')
-      + (outfitPaintedNatural(st) ? '<button class="more" data-ok="hair" data-ov="">' + esc(X.hairReset) + '</button>' : '');
     /* The rows are redrawn on every tap, which scrolls them back to the start:
        bring the chosen sign and month back into view. */
     document.querySelectorAll('#ofChips .ofscroll').forEach((row) => {
@@ -23410,7 +23331,8 @@ function renderOutfit() {
   function weatherFx() { const fx = $('#ofWx'); if (fx) fx.className = 'ofwx wx-' + outfitFx(st); }
   function paint() {
     const cv = $('#ofCanvas'); if (!cv || !base) return;
-    paintOutfit(cv, base, mask, outfitHairFor(st));
+    cv.width = base.naturalWidth; cv.height = base.naturalHeight;
+    cv.getContext('2d').drawImage(base, 0, 0);
     /* The two characters were painted at slightly different heights; the frame takes the picture's own shape. */
     cv.parentNode.style.aspectRatio = cv.width + '/' + cv.height;
     cv.classList.remove('dim');
@@ -23419,9 +23341,9 @@ function renderOutfit() {
     const my = ++token, dir = 'outfit/' + st.c + '/', n = outfitName(st);
     const cv = $('#ofCanvas'); if (cv) cv.classList.add('dim');
     try {
-      const got = await Promise.all([outfitLoad(dir + n + '.jpg'), outfitLoad(dir + 'm/' + n + '.webp?v=4').catch(() => null)]);
+      const got = await outfitLoad(dir + n + '.jpg?v=2');
       if (my !== token || !here()) return;
-      base = got[0]; mask = got[1];
+      base = got;
       const er = $('#ofErr'); if (er) er.textContent = '';
       paint();
     } catch (e) {
@@ -23436,7 +23358,6 @@ function renderOutfit() {
     + '<div class="ofstage"><canvas id="ofCanvas" class="dim" role="img" aria-label="' + esc(X.title) + '"></canvas><div class="ofwx" id="ofWx" aria-hidden="true"></div></div>'
     + '<p class="err" id="ofErr" role="status"></p>'
     + '<div id="ofCap" class="ofcap"></div>'
-    + '<h3 class="oflbl">' + esc(X.hair) + '</h3><div class="ofhair" id="ofHair"></div>'
     + '<p class="faint" style="margin-top:18px">' + esc(X.ai) + '</p></div>';
   chrome(); weatherFx(); fetchAndPaint();
 
@@ -23444,7 +23365,6 @@ function renderOutfit() {
   root.addEventListener('click', (e) => {
     const b = e.target.closest('[data-ok]'); if (!b || b.type === 'color') return;
     const k = b.dataset.ok, v = b.dataset.ov;
-    if (k === 'hair') { st.hair = v || null; outfitSave(st); chrome(); paint(); return; }
     st[k] = (k === 's' || k === 'm' || k === 't') ? Number(v) : v;
     outfitSave(st); chrome(); weatherFx(); fetchAndPaint();
   });
@@ -32870,7 +32790,7 @@ window.NABU = { CONFIG: CONFIG, SALE: SALE, salePrice: salePrice, loadActs: load
   PET_WEARS: PET_WARDROBE, codeDigest: codeDigest, randomCode: randomCode, BANK: BANK, PETS: PETS, petSVG: petSVG, PET_COATS: PET_COATS, PET_KINDS: PET_KINDS, turnsMerge: turnsMerge, turnsLocal: turnsLocal, TODAY: TODAY, treeMsgOf: treeMsgOf, priceText: priceText, termText: termText, proSaveText: () => proSaveText(), wedFeeText: () => wedFeeText(), fmtPrice: fmtPrice, luckCut: luckCut, petLevel: petLevel, petStep: petStep, VOUCHERS: VOUCHERS, levelCoins: levelCoins, LOOKS: LOOKS,
   LOVE: LOVE, LOVEDB: LOVEDB, HANDLE_RE: HANDLE_RE, loveBadgeHTML: loveBadgeHTML,
   loveMarkSVG: loveMarkSVG, QUIZ: QUIZ, QSCORE: QSCORE, QUIZ_PASS: QUIZ_PASS, QUIZ_LEN: QUIZ_LEN, pileArtSVG: pileArtSVG, PILE_ARTS: PILE_ARTS, threadSVG: threadSVG, petParentsHTML: petParentsHTML, GIFTS: GIFTS, ALERTS: ALERTS, alertsStart: alertsStart, alertWas: alertWas,
-  SPREADS: SPREADS, PRACTICE: () => PRACTICE, pCard: pCard, paintOutfit: paintOutfit, outfitState: outfitState, OUTFIT_TXT: OUTFIT_TXT, OUTFIT_CELL: OUTFIT_CELL, practiceReady: practiceReady, PSCORE: PSCORE, gradeReading: gradeReading, practiceById: practiceById, pBand: pBand,
+  SPREADS: SPREADS, PRACTICE: () => PRACTICE, pCard: pCard, outfitState: outfitState, OUTFIT_TXT: OUTFIT_TXT, OUTFIT_CELL: OUTFIT_CELL, practiceReady: practiceReady, PSCORE: PSCORE, gradeReading: gradeReading, practiceById: practiceById, pBand: pBand,
   /* the booking calendar's own state, for the overlap checks */
   bookState: (sch, tk, ig) => { if (sch !== undefined) SCHEDULE = sch; if (tk !== undefined) TAKEN = tk; if (ig !== undefined) book.ignoreKey = ig; return { schedule: SCHEDULE, taken: TAKEN }; },
   WED: WED, WED_STEPS: WED_STEPS, wedStep: wedStep, cupidSVG: cupidSVG, shareLine: shareLine, UPD: UPD, NOTE: NOTE };

@@ -4967,9 +4967,9 @@ async function go(hash, sel) { W().location.hash = hash; await sleep(30); return
         ok(!bad.length, 'the outfit screen has weather and clothes for all twelve months in vi, en and de' + (bad.length ? ' (' + bad.join('; ') + ')' : '')); }
       { const signs = ['aries', 'taurus', 'gemini', 'cancer', 'leo', 'virgo', 'libra', 'scorpio', 'sagittarius', 'capricorn', 'aquarius', 'pisces'], miss = [];
         const want = [];
-        ['1', '2'].forEach((c) => signs.forEach((sg) => { for (let mo = 1; mo <= 12; mo++) ['female', 'male'].forEach((gd) => { want.push('outfit/' + c + '/' + sg + '-' + mo + '-' + gd + '.jpg', 'outfit/' + c + '/m/' + sg + '-' + mo + '-' + gd + '.webp'); }); }));
+        ['1', '2'].forEach((c) => signs.forEach((sg) => { for (let mo = 1; mo <= 12; mo++) ['female', 'male'].forEach((gd) => { want.push('outfit/' + c + '/' + sg + '-' + mo + '-' + gd + '.jpg'); }); }));
         await Promise.all(want.map((u) => fetch('../' + u, { method: 'HEAD' }).then((r) => { if (!r.ok) miss.push(u); }, () => miss.push(u))));
-        ok(!miss.length, 'all 1152 outfit pictures and hair masks, both characters, are on the server' + (miss.length ? ' (missing ' + miss.slice(0, 4).join(', ') + ')' : '')); }
+        ok(!miss.length, 'all 576 outfit pictures, both characters, are on the server' + (miss.length ? ' (missing ' + miss.slice(0, 4).join(', ') + ')' : '')); }
       /* Choosing the weather: every cell of weather and temperature leads to a month whose outfit is
          on the server, rain in the heat is the raincoat and boots, the sun at 29° the straw hat, and
          the picture carries the weather's own layer. */
@@ -4985,16 +4985,11 @@ async function go(hash, sel) { W().location.hash = hash; await sleep(30); return
         ok(d.querySelector('#ofChips [data-ok="m"]') && !d.querySelector('#ofChips [data-ok="w"]') && /wx-/.test(d.querySelector('#ofWx').className) && JSON.parse(w.localStorage.getItem('nabu-outfit')).mode === 'month',
           'back to "by month": the month row returns, the month\u2019s own weather is drawn, and the choice is remembered');
         w.localStorage.removeItem('nabu-outfit'); }
-      { const doc = document, mk = (fill) => { const c = doc.createElement('canvas'); c.width = 4; c.height = 1; const x = c.getContext('2d'); fill(x); return c; };
-        /* Two grey hair pixels on the left, two pink dress pixels on the right. */
-        const base = mk((x) => { x.fillStyle = '#505050'; x.fillRect(0, 0, 1, 1); x.fillStyle = '#606060'; x.fillRect(1, 0, 1, 1); x.fillStyle = '#e0a0b0'; x.fillRect(2, 0, 2, 1); });
-        const mask = mk((x) => { x.fillStyle = '#000'; x.fillRect(0, 0, 4, 1); x.fillStyle = '#fff'; x.fillRect(0, 0, 2, 1); });
-        const out = doc.createElement('canvas'); N.paintOutfit(out, base, mask, '#E8CB86');
-        const d = out.getContext('2d').getImageData(0, 0, 4, 1).data;
-        ok(d[0] > d[2] + 40 && d[4] > d[6] + 40, 'blonde hair comes out warm, not grey [' + [d[0], d[1], d[2]] + ']');
-        ok(d[8] === 0xe0 && d[9] === 0xa0 && d[10] === 0xb0, 'the dress outside the hair mask is left exactly as painted');
-        N.paintOutfit(out, base, mask, null);
-        ok(out.getContext('2d').getImageData(0, 0, 1, 1).data[0] === 0x50, 'with no hair colour chosen the picture is untouched'); }
+      /* Hair is shown as painted: no recolouring, no picker for colours that were never painted. */
+      { w.localStorage.setItem('nabu-outfit', JSON.stringify({ c: '1', g: 'female', s: 0 }));
+        await go('#/outfit', '#ofCanvas'); await waitFor(() => !d.querySelector('#ofCanvas.dim'), 6000);
+        ok(!d.querySelector('#ofHair') && !d.querySelector('[data-ok="hair"]') && d.querySelector('#ofCanvas').width === 900, 'the outfit picture is drawn as painted, with no hair recolouring');
+        w.localStorage.removeItem('nabu-outfit'); }
       { const pp = N.practiceById('pp-1');
         const good = N.gradeReading(pp, ['memories someone from the past returns ky niem nguoi cu quay lai Erinnerungen jemand aus der Vergangenheit is dang ist',
           'a new romance disagreement with friends tinh cam moi bat dong voi ban be neue Romanze Meinungsverschiedenheit mit Freunden is dang ist',
