@@ -12,7 +12,7 @@
      carries this notice with it. See LICENSE. -->
 <meta name="author" content="Nabu Tarot">
 <meta name="copyright" content="Copyright (c) 2025-2026 Nabu Tarot. All rights reserved.">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'none'; object-src 'none'; form-action 'self'; script-src 'self' 'sha256-bFSVSY4ZOfuhEDAKBe9WvDbPDg4KwdSKlwPcI7Ir6Co=' https://www.gstatic.com https://apis.google.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; font-src 'self' data:; media-src 'self' data: blob:; worker-src 'self'; connect-src 'self' https://*.googleapis.com https://*.google.com https://*.firebaseio.com https://*.cloudfunctions.net https://*.workers.dev https://generativelanguage.googleapis.com; frame-src https://*.firebaseapp.com https://accounts.google.com https://*.facebook.com">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'none'; object-src 'none'; form-action 'self'; script-src 'self' 'sha256-t8dERsML5B2XRv8AklMIIdxI0iTZik1p1WZateCBMpk=' https://www.gstatic.com https://apis.google.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; font-src 'self' data:; media-src 'self' data: blob:; worker-src 'self'; connect-src 'self' https://*.googleapis.com https://*.google.com https://*.firebaseio.com https://*.cloudfunctions.net https://*.workers.dev https://generativelanguage.googleapis.com; frame-src https://*.firebaseapp.com https://accounts.google.com https://*.facebook.com">
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <meta name="theme-color" content="#EFE9FA">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -17139,7 +17139,7 @@ async function renderHome(args, params) {
   homeActHTML($('#actwrap')).catch(() => {});
   if (POSTS == null) await loadPosts();
   const feed = $('#feed'); if (!feed) return;
-  const all = sortedPosts().filter((p) => !(isIOSApp() && p.markers && p.markers.signs && p.markers.signs.length)), welcome = all.filter((p) => p.welcome)[0], list = all.filter((p) => !p.welcome);
+  const all = sortedPosts(), welcome = all.filter((p) => p.welcome)[0], list = all.filter((p) => !p.welcome);
   const wopen = store.get('nabu-welcome-open', true) !== false;
   feed.innerHTML = (welcome ? '<section class="welcome' + (wopen ? ' open' : '') + '"><button type="button" class="wtoggle" data-wtoggle><h2>' + esc(S.welcomeHead) + '</h2><span class="chev">' + (wopen ? '–' : '+') + '</span></button><div class="in">' + paras(L(welcome.body)) + '<div class="sig">' + LOGO + '</div></div></section>' : '')
     + (POSTS_CACHED && all.length ? '<div class="banner">' + esc(S.feedOffline) + '</div>' : '')
@@ -17758,13 +17758,13 @@ function astroLine(id) {
 function renderAstro() {
   const S = T(), m = $('#main'), me = mySign();
   m.innerHTML = backLink('#/learn', S.learnTitle) + '<h1 style="margin-bottom:6px">' + esc(S.cats.astro) + '</h1><p class="muted" style="font-size:14px">' + esc(S.astroNote) + '</p>'
-    /* The visitor's sign, life path and the forecasts for it moved here from the home screen, which now
-       leads with learning. The iPhone app keeps the forecasts off, as its home screen already did. */
+    /* The visitor's sign, life path and Nabu's own weekly and monthly forecasts for it moved here from
+       the home screen, which now leads with learning. Shown on every platform, the iPhone included. */
     + personalHTML() + '<div id="astrohoro"></div>'
     + '<div class="tabs" id="atabs"><button class="on" data-t="signs">' + (lang === 'vi' ? '12 cung' : (lang === 'de' ? '12 Zeichen' : '12 signs')) + '</button><button data-t="planets">' + (lang === 'vi' ? 'Hành tinh' : (lang === 'de' ? 'Planeten' : 'Planets')) + '</button><button data-t="houses">' + (lang === 'vi' ? '12 nhà' : (lang === 'de' ? '12 Häuser' : '12 houses')) + '</button><button data-t="aspects">' + (lang === 'vi' ? 'Góc chiếu' : (lang === 'de' ? 'Aspekte' : 'Aspects')) + '</button><button data-t="guides">' + (lang === 'vi' ? 'Bài đọc' : 'Guides') + '</button></div>'
     + '<div id="apanel"></div>';
   bindCardLinks(m);
-  if (!isIOSApp()) (HORO ? Promise.resolve() : loadPosts()).then(() => { const h = $('#astrohoro'); if (h) { h.innerHTML = suggestedGuidesHTML(); bindPost(h); } }).catch(() => {});
+  (HORO ? Promise.resolve() : loadPosts()).then(() => { const h = $('#astrohoro'); if (h) { h.innerHTML = suggestedGuidesHTML(); bindPost(h); } }).catch(() => {});
   const panel = $('#apanel');
   const show = (t) => {
     if (t === 'signs') {

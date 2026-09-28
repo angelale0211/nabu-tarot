@@ -348,13 +348,13 @@ function astroLine(id) {
 function renderAstro() {
   const S = T(), m = $('#main'), me = mySign();
   m.innerHTML = backLink('#/learn', S.learnTitle) + '<h1 style="margin-bottom:6px">' + esc(S.cats.astro) + '</h1><p class="muted" style="font-size:14px">' + esc(S.astroNote) + '</p>'
-    /* The visitor's sign, life path and the forecasts for it moved here from the home screen, which now
-       leads with learning. The iPhone app keeps the forecasts off, as its home screen already did. */
+    /* The visitor's sign, life path and Nabu's own weekly and monthly forecasts for it moved here from
+       the home screen, which now leads with learning. Shown on every platform, the iPhone included. */
     + personalHTML() + '<div id="astrohoro"></div>'
     + '<div class="tabs" id="atabs"><button class="on" data-t="signs">' + (lang === 'vi' ? '12 cung' : (lang === 'de' ? '12 Zeichen' : '12 signs')) + '</button><button data-t="planets">' + (lang === 'vi' ? 'Hành tinh' : (lang === 'de' ? 'Planeten' : 'Planets')) + '</button><button data-t="houses">' + (lang === 'vi' ? '12 nhà' : (lang === 'de' ? '12 Häuser' : '12 houses')) + '</button><button data-t="aspects">' + (lang === 'vi' ? 'Góc chiếu' : (lang === 'de' ? 'Aspekte' : 'Aspects')) + '</button><button data-t="guides">' + (lang === 'vi' ? 'Bài đọc' : 'Guides') + '</button></div>'
     + '<div id="apanel"></div>';
   bindCardLinks(m);
-  if (!isIOSApp()) (HORO ? Promise.resolve() : loadPosts()).then(() => { const h = $('#astrohoro'); if (h) { h.innerHTML = suggestedGuidesHTML(); bindPost(h); } }).catch(() => {});
+  (HORO ? Promise.resolve() : loadPosts()).then(() => { const h = $('#astrohoro'); if (h) { h.innerHTML = suggestedGuidesHTML(); bindPost(h); } }).catch(() => {});
   const panel = $('#apanel');
   const show = (t) => {
     if (t === 'signs') {
