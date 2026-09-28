@@ -338,7 +338,7 @@ async function renderPlay(args) {
   /* The four built-in screens are answered before the cloud list is fetched, so
      a slow or failed connection never leaves one of them blank. */
   if (args && args[0] === 'diary') { renderDiary(); return; }
-  if (args && args[0] === 'coin') { if (isIOSApp()) { redirect('#/play'); return; } renderCoin(); return; }
+  if (args && args[0] === 'coin') { renderCoin(); return; }
   if (args && args[0] === 'tree') { renderTree(); return; }
   if (args && args[0] === 'pet') { renderPet(args[1]); return; }
   const list = (await loadActs()).slice().sort((a, b) => String(b.date).localeCompare(String(a.date)));
@@ -365,14 +365,14 @@ async function renderPlay(args) {
   }
   const diaryN = Object.keys(store.get('nabu-diary', {}) || {}).length;
   m.innerHTML = '<div class="eyebrow">' + esc(CONFIG.brand) + '</div><h1 style="margin-bottom:6px">' + esc(S.actTitle) + '</h1><p class="muted">' + esc(S.actIntro) + '</p><div id="acts" class="actlist">'
-    /* Lifestyle: the tree, what to wear and the diary first, then the companion and the Red Thread.
-       The yes/no coin is the one screen that reads as fortune telling, so the iPhone app leaves it out. */
+    /* Lifestyle: the tree, what to wear and the diary first, then the companion, the Red Thread and
+       the coin. Every activity shows on every platform - the owner keeps them all. */
     + '<a class="actbtn act-tree live" href="#/play/tree"><span class="ic">🌸</span><span class="body"><b>' + esc(S.treeTitle) + '</b><span class="meta">' + esc(S.treeSub) + '</span></span><span class="go">›</span></a>'
     + ('<a class="actbtn act-outfit live" href="#/outfit"><span class="ic">👗</span><span class="body"><b>' + esc(outfitTxt().title) + '</b><span class="meta">' + esc(outfitTxt().intro) + '</span></span><span class="go">›</span></a>')
     + '<a class="actbtn act-diary live" href="#/play/diary"><span class="ic">📔</span><span class="body"><b>' + esc(S.diaryTitle) + '</b><span class="meta">' + esc(S.diarySub) + (diaryN ? ' · ' + esc(S.diaryCount(diaryN)) : '') + '</span></span><span class="chev">›</span></a>'
     + petRowHTML(S)
     + '<a class="actbtn act-love live" href="#/love"><span class="ic">' + loveKnotSVG() + '</span><span class="body"><b>' + esc(S.loveTitle) + '</b><span class="meta">' + esc(S.loveSub) + '</span></span><span class="go">›</span></a>'
-    + (isIOSApp() ? '' : '<a class="actbtn act-coin live" href="#/play/coin"><span class="ic">🪙</span><span class="body"><b>' + esc(S.coinTitle) + '</b><span class="meta">' + esc(S.coinSub) + '</span></span><span class="go">›</span></a>')
+    + ('<a class="actbtn act-coin live" href="#/play/coin"><span class="ic">🪙</span><span class="body"><b>' + esc(S.coinTitle) + '</b><span class="meta">' + esc(S.coinSub) + '</span></span><span class="go">›</span></a>')
     + '</div>'
     + '<div class="actquick three">' + ACT_GROUPS.map((g) => {
       const n = list.filter((a2) => a2.type === g[0]).length;
