@@ -12,7 +12,7 @@
      carries this notice with it. See LICENSE. -->
 <meta name="author" content="Nabu Tarot">
 <meta name="copyright" content="Copyright (c) 2025-2026 Nabu Tarot. All rights reserved.">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'none'; object-src 'none'; form-action 'self'; script-src 'self' 'sha256-edreS4t8zEeUi2znkDNYejpGzK27/6tbxM9q3QTOcsA=' https://www.gstatic.com https://apis.google.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; font-src 'self' data:; media-src 'self' data: blob:; worker-src 'self'; connect-src 'self' https://*.googleapis.com https://*.google.com https://*.firebaseio.com https://*.cloudfunctions.net https://*.workers.dev https://generativelanguage.googleapis.com; frame-src https://*.firebaseapp.com https://accounts.google.com https://*.facebook.com">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'none'; object-src 'none'; form-action 'self'; script-src 'self' 'sha256-HOfsv/yF/Q5m9wSl8Udwav+utIQCQShkpIr3weE8sAE=' https://www.gstatic.com https://apis.google.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; font-src 'self' data:; media-src 'self' data: blob:; worker-src 'self'; connect-src 'self' https://*.googleapis.com https://*.google.com https://*.firebaseio.com https://*.cloudfunctions.net https://*.workers.dev https://generativelanguage.googleapis.com; frame-src https://*.firebaseapp.com https://accounts.google.com https://*.facebook.com">
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <meta name="theme-color" content="#EFE9FA">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -353,7 +353,7 @@ h1,h2,h3,.eyebrow{text-wrap:balance}
 /* ---- bottom nav ---- */
 .nav{position:fixed;left:0;right:0;bottom:0;z-index:20;background:color-mix(in srgb,var(--surface) 94%,transparent);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
   border-top:1px solid var(--rule-soft);padding-bottom:env(safe-area-inset-bottom)}
-.nav .wrap{display:grid;grid-template-columns:repeat(6,1fr);height:var(--nav-h);padding:0}
+.nav .wrap{display:grid;grid-template-columns:repeat(5,1fr);height:var(--nav-h);padding:0}
 .nav a{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;text-decoration:none;color:var(--fg-faint);font-size:10.5px;font-weight:600;white-space:nowrap;letter-spacing:.01em;position:relative}
 .nav a svg{width:24px;height:24px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
 .nav a.on{color:var(--link)}
@@ -716,6 +716,22 @@ html[lang="de"] .freegrid{--fgmin:132px}
    narrower label column there, and only there - Android and the website keep
    the layout above. */
 html.iosapp[lang="en"] #today .tbl td:first-child{white-space:normal;width:36%}
+/* The iPhone app: every control at least 44pt, Apple's minimum tap target
+   (App Review flagged the 40px ones). iOS only - Android and the website keep
+   the sizes above. Inline links inside running text are left as text. */
+html.iosapp .pill{min-height:44px;min-width:44px;display:inline-flex;align-items:center;justify-content:center;padding:0 11px}
+html.iosapp .brand{min-height:44px}
+/* Three 44pt pills leave the name too little room under 360px: close the gaps and shrink the avatar a little. */
+@media (max-width:359px){html.iosapp .tools{gap:4px}html.iosapp .brand .lockup .avatar{width:36px;height:36px}}
+html.iosapp .btn.sm{min-height:44px;min-width:44px}
+html.iosapp button.chip,html.iosapp a.chip,html.iosapp label.chip{min-height:44px}
+html.iosapp .tabs button{min-height:44px}
+html.iosapp .linkbtn{min-height:44px}
+html.iosapp .lookstrip .ls-h a{min-height:44px}
+html.iosapp .post .foot button,html.iosapp .post .more,html.iosapp .horo .more,html.iosapp .salebar{min-height:44px}
+html.iosapp .post .foot .cmtn{min-height:44px;min-width:44px;justify-content:center}
+html.iosapp .billdiag summary,html.iosapp .msgd summary{min-height:44px;padding:12px 0}
+html.iosapp .legal a,html.iosapp .verline a,html.iosapp .signin .later a,html.iosapp .aisignin a{display:inline-flex;align-items:center;justify-content:center;min-height:44px;min-width:44px;vertical-align:middle}
 
 /* ---- services / prices ---- */
 .svc{background:var(--surface);border:1.5px solid var(--rule);border-radius:18px;padding:14px 14px 10px;margin-bottom:12px;max-width:100%;overflow:hidden}
@@ -1124,6 +1140,8 @@ h1 .pileico{width:34px;height:27px;vertical-align:-3px;margin-right:2px}
 .bk .tot{display:flex;justify-content:space-between;border-top:1px solid var(--rule-soft);padding-top:6px;margin-top:4px;font-weight:700}.bk .meta{margin:6px 0 0;color:var(--fg-soft);font-size:13px}.bk .acts{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px}.bk .acts .wide{grid-column:1/-1}.bk .chg{background:var(--tag-gold-bg);color:var(--tag-gold-ink);border-radius:10px;padding:8px 10px;margin-top:8px;font-weight:600}
 .bkcal{margin-bottom:12px}.bkcal .d.has:after{background:var(--pink-ink)}.bkcal .d .n{position:absolute;top:3px;right:5px;font-size:9px;font-weight:700;color:var(--pink-ink)}
 .upnext{display:flex;gap:10px;align-items:center;background:var(--tag-gold-bg);color:var(--tag-gold-ink);border-radius:14px;padding:12px 14px;margin-bottom:14px;text-decoration:none;font-weight:600}.upnext .ic{font-size:24px}
+/* the home screen's next lesson: a thin progress bar along the bottom of the row */
+.upnext{position:relative}.upnext .lbar{position:absolute;left:14px;right:14px;bottom:6px;height:3px;border-radius:2px;background:color-mix(in srgb,currentColor 18%,transparent);overflow:hidden}.upnext .lbar span{display:block;height:100%;background:currentColor}
 .st{font-size:12px;font-weight:700;border-radius:8px;padding:3px 8px;background:var(--surface-3);white-space:nowrap}
 .st.confirmed{background:var(--tag-green-bg);color:var(--tag-green-ink)}.st.declined{background:var(--tag-pink-bg);color:var(--tag-pink-ink)}.st.requested{background:var(--tag-gold-bg);color:var(--tag-gold-ink)}
 /* Waiting on the person who booked: gold, like any other answer still to come. A time they turned down is pink, like a decline. */
@@ -3234,11 +3252,15 @@ const CONFIG = {
   attachments: false,
   // Photos in chat without Storage: shrunk on the phone and kept inside the message itself.
   chatImages: true,
-  // Where booking requests are mailed as calendar invitations (an .ics the
-  // mail app adds to the calendar). Sent by the worker in worker/ through
-  // Resend; set bookingEndpoint to '<worker url>/booking' once deployed.
+  // Where booking requests are mailed (a new booking with an .ics the mail
+  // app adds to the calendar; requests to move or cancel as plain mail).
+  // The worker in worker/ sends them through Resend to MAIL_TO in
+  // worker/wrangler.toml - never to an address the app names - and sends
+  // nothing until its RESEND_API_KEY secret exists. The worker ignores any
+  // address the app sends (report.js still sends adminNotifyEmails); keep this
+  // list matching MAIL_TO so the two read the same.
   adminNotifyEmails: ['nabutarot@outlook.com', 'angela_le_@outlook.com'],
-  bookingEndpoint: '',
+  bookingEndpoint: 'https://nabu-ai.0211nhatanh.workers.dev/booking',
   // Bug reports from #/report are mailed to the same addresses through the
   // worker: set reportEndpoint to '<worker url>/report' once deployed.
   reportEndpoint: '',
@@ -3560,7 +3582,7 @@ const STR = {
     lang: 'VI',
     a11yBell: 'Thông báo', a11yTheme: 'Giao diện', a11yTop: 'Lên đầu trang',
     langSwitch: 'Chuyển sang tiếng Đức',
-    nav: { home: 'Trang chủ', pick: 'Rút bài', play: 'Hoạt động', learn: 'Học', book: 'Đặt lịch', me: 'Hồ sơ' },
+    nav: { home: 'Trang chủ', pick: 'Rút bài', play: 'Đời sống', learn: 'Học', book: 'Đặt lịch', me: 'Hồ sơ' },
 
     feedTitle: 'Dự đoán mới',
     feedEmpty: 'Chưa có bài nào. Quay lại sau nhé.',
@@ -3726,7 +3748,7 @@ const STR = {
     sentOk: 'Đã gửi. Nabu sẽ xác nhận sớm. Bạn xem lại trong mục Hồ sơ.',
     welcomeHead: 'Nabu Tarot xin chào! 🌙', nabuPosts: 'Bài viết của Nabu', versionLine: (v) => 'Phiên bản ' + v, checkUpdate: 'Kiểm tra cập nhật', updating: 'Đang tải bản mới…',
     privacyTitle: 'Chính sách quyền riêng tư', privacyLink: 'Quyền riêng tư', termsTitle: 'Điều khoản dịch vụ', termsLink: 'Điều khoản', delAccount: 'Xoá tài khoản', delHint: 'Thao tác này sẽ xóa tài khoản, hồ sơ, tin nhắn và lịch hẹn của bạn. Dữ liệu không thể khôi phục.', delConfirm: 'Xoá tài khoản là vĩnh viễn. Hồ sơ, tiến độ học, nhật ký và mọi nội dung bạn đã mua sẽ bị xoá và không thể khôi phục. Nếu sau này bạn đăng nhập lại bằng chính email đó, bạn vẫn phải mua lại từ đầu.', delConfirmStore: (st) => 'Bạn đang có gói đăng ký. Xoá tài khoản không dừng việc thanh toán: bạn hãy huỷ gói trong ' + st + ' trước.', delConfirmAsk: 'Bạn vẫn muốn xoá tài khoản?', delDone: 'Đã xoá tài khoản. Cảm ơn bạn đã ghé Nabu Tarot.', delRelogin: 'Để xác nhận đúng là bạn, hãy đăng nhập lại rồi chọn Xóa tài khoản một lần nữa.', aiFlag: 'Báo cáo câu trả lời này', aiFlagged: 'Đã ghi nhận. Cảm ơn bạn, Nabu sẽ xem lại.',
-    actTitle: 'Hoạt động', actIntro: 'Những việc nhỏ để bạn ghé qua mỗi ngày: nuôi bạn nhỏ may mắn, buộc sợi tơ hồng với người ấy, rung cây thông điệp, tung đồng xu và viết nhật ký. Khi Nabu đăng thì có thêm tụ bài để chọn, bình chọn để tham gia và điều ước để gửi.', actEmpty: 'Chưa có hoạt động nào. Quay lại sau nhé.', actAll: 'Tất cả hoạt động', actOpen: 'Đang mở', actClosed: 'Đã đóng', actHasResults: 'Đã có kết quả',
+    actTitle: 'Đời sống', actIntro: 'Mang những điều bạn học vào đời sống mỗi ngày: rung cây thông điệp, chọn trang phục theo tháng, viết nhật ký, chăm bạn đồng hành và buộc sợi tơ hồng với người ấy. Khi Nabu đăng thì có thêm tụ bài để chọn, bình chọn để tham gia và điều ước để gửi.', actEmpty: 'Chưa có hoạt động nào. Quay lại sau nhé.', actAll: 'Tất cả hoạt động', actOpen: 'Đang mở', actClosed: 'Đã đóng', actHasResults: 'Đã có kết quả',
     actPickHint: 'Bạn chạm vào tụ bài mà mình thấy bị thu hút nhất. Nabu sẽ đăng thông điệp của từng tụ sau vài ngày.', actPicked: (n) => 'Bạn đã chọn tụ ' + n + '.', actComeBack: (d) => 'Quay lại vào ' + d + ' để lật bài xem thông điệp.', actChangePile: 'Đổi sang tụ khác?', actPickToSee: 'Thông điệp đã có. Chạm vào một tụ để lật lên.', actTapOthers: 'Tụ bạn chọn đã lật lên. Bạn có thể chạm vào tụ khác để xem thử.',
     actVoteHint: 'Bạn chạm vào một lựa chọn. Mỗi người chỉ được bình chọn một lần.', actVoteLogin: 'Bạn cần đăng nhập để bình chọn và xem kết quả.', actVoted: 'Cảm ơn bạn đã bình chọn!', actClosedNote: 'Bình chọn đã đóng. Đây là kết quả.', actVotes: (n) => n + ' phiếu',
     actWishPh: 'Điều mình ước lúc này là…', actWishSend: 'Gửi vào vũ trụ', actWishHint: 'Bạn viết ngắn gọn, ở thì hiện tại, rồi gửi đi. Điều ước chỉ được lưu trên máy của bạn và không ai đọc được.', actWishCount: (n) => 'Bạn đã gửi ' + n + ' điều ước ở đây.', actWishSent: 'Đã gửi. Giờ đến lượt bạn làm bước đầu tiên. ✨', actWishEmpty: 'Bạn viết điều ước trước nhé.', actWishClear: 'Xoá các điều ước đã lưu trên máy', actWishClearConfirm: 'Xoá các điều ước đã lưu trên máy này?',
@@ -4286,6 +4308,7 @@ const STR = {
     viaEmail: 'Gửi email',
     copyMsg: 'Chỉ sao chép tin nhắn',
     needSlot: 'Bạn chọn giờ hẹn trước nhé.',
+    slotGone: 'Giờ bạn đã chọn không còn đặt được nữa. Bạn chọn giờ khác nhé.',
     msgHello: 'Chào Nabu, mình muốn đặt lịch xem bài.',
     msgTime: 'Giờ hẹn',
     msgName: 'Tên',
@@ -4357,7 +4380,7 @@ const STR = {
     stCancelMeaning: 'Bạn có thể hủy bất cứ lúc nào trong Google Play. Gói vẫn dùng được đến hết kỳ đã thanh toán.',
     stManage: 'Quản lý trong Google Play', stRestore: 'Khôi phục mua hàng', stRestoring: 'Đang khôi phục…', stRestored: (n) => 'Đã khôi phục ' + n + ' mục', stRestoreNone: 'Không có gì để khôi phục',
     /* The same store sentences inside the iPhone app, where the App Store takes the payment (core.js lays them over the rest). */
-    appStore: { stIntro: 'Thanh toán qua App Store. Mở khóa ngay sau khi thanh toán thành công.', stProblem: 'Thanh toán không thành công · Vui lòng kiểm tra trong App Store', stCancelMeaning: 'Bạn có thể hủy bất cứ lúc nào trong phần Cài đặt tài khoản Apple. Gói vẫn dùng được đến hết kỳ đã thanh toán.', stManage: 'Quản lý trong App Store', stNotReady: 'Không nhận được phản hồi từ App Store.', stNoSheet: 'App Store chưa mở được ô thanh toán. Bạn kiểm tra đã đăng nhập tài khoản Apple trong Cài đặt, rồi thử lại.', stSheetHung: 'App Store không trả lời. Bạn đóng hẳn app, mở lại rồi thử lần nữa.', stSheetWaiting: 'App Store đang xử lý. Nếu bạn đã thanh toán xong, đợi một phút rồi bấm Khôi phục mua hàng.', stAborted: 'Chưa mua xong. Nếu bạn không thấy ô thanh toán của App Store hiện ra, bạn thử lại nhé.', stItemOff: 'App Store chưa cho mua mục này trên tài khoản của bạn.', stTerms: 'Điều khoản sử dụng', stPrivacy: 'Chính sách quyền riêng tư' },
+    appStore: { learnIntro: 'Học đọc Tarot, Lenormand và bài Tây qua từng lá, từng biểu tượng, tự luyện trải bài và mang những điều học được vào cuộc sống hằng ngày. Còn có con số thiên thần, manifestation và nhiều điều khác để bạn khám phá.', needInKeep: 'Bạn đăng nhập để giữ lại lá bài này và mỗi ngày rút một lá mới, app sẽ nhớ các lá bài cho bạn.', stIntro: 'Thanh toán qua App Store. Mở khóa ngay sau khi thanh toán thành công.', stProblem: 'Thanh toán không thành công · Vui lòng kiểm tra trong App Store', stCancelMeaning: 'Bạn có thể hủy bất cứ lúc nào trong phần Cài đặt tài khoản Apple. Gói vẫn dùng được đến hết kỳ đã thanh toán.', stManage: 'Quản lý trong App Store', stNotReady: 'Không nhận được phản hồi từ App Store.', stNoSheet: 'App Store chưa mở được ô thanh toán. Bạn kiểm tra đã đăng nhập tài khoản Apple trong Cài đặt, rồi thử lại.', stSheetHung: 'App Store không trả lời. Bạn đóng hẳn app, mở lại rồi thử lần nữa.', stSheetWaiting: 'App Store đang xử lý. Nếu bạn đã thanh toán xong, đợi một phút rồi bấm Khôi phục mua hàng.', stAborted: 'Chưa mua xong. Nếu bạn không thấy ô thanh toán của App Store hiện ra, bạn thử lại nhé.', stItemOff: 'App Store chưa cho mua mục này trên tài khoản của bạn.', stTerms: 'Điều khoản sử dụng', stPrivacy: 'Chính sách quyền riêng tư' },
     stNotReady: 'Không nhận được phản hồi từ Google Play.', stRetry: 'Thử lại', stPending: 'Đang chờ thanh toán. Hoàn tất xong, quyền truy cập sẽ tự mở.',
     stIncludedPro: 'Đã bao gồm trong Nabu Pro', stSwitchTo: (n) => 'Chuyển sang gói ' + n, stNeedIn: 'Mục này chỉ có thể mua trong ứng dụng Nabu Tarot trên Android.', stFailed: 'Mua chưa thành công. Vui lòng thử lại.', stNoSheet: 'Google Play chưa mở được ô thanh toán. Bạn mở Cửa hàng Play, kiểm tra đúng tài khoản Google, rồi thử lại.', stSignInToBuy: 'Bạn cần đăng nhập để mua. Đang mở trang đăng nhập…', stNeedChrome: (b) => (b ? 'App đang chạy trong ' + b + ', trình duyệt này' : 'App đang chạy trong một trình duyệt') + ' không hỗ trợ thanh toán Google Play. Bạn đặt Chrome làm trình duyệt mặc định: Cài đặt → Ứng dụng → Chọn ứng dụng mặc định → Ứng dụng trình duyệt → Chrome. Nếu máy chưa có Chrome, cài từ CH Play trước. Rồi đóng hẳn app và mở lại. Có thể bạn sẽ phải đăng nhập lại.', stSheetHung: 'Google Play không trả lời. Bạn đóng hẳn app, mở lại rồi thử lần nữa.', stSheetWaiting: 'Google Play đang xử lý. Nếu bạn đã thanh toán xong, đợi một phút rồi bấm Khôi phục mua hàng.', stAborted: 'Chưa mua xong. Nếu bạn không thấy ô thanh toán của Google Play hiện ra, bạn thử lại nhé.', stBusy: 'Đang mở ô thanh toán. Bạn đợi một chút nhé.', stItemOff: 'Google Play chưa cho mua mục này trên tài khoản của bạn.', stDiagTitle: 'Thông tin kỹ thuật', stDiagCopy: 'Chép thông tin kỹ thuật', stDiagCopied: 'Đã chép. Bạn gửi cho Nabu giúp mình nhé.',
     myPlans: 'Gói của bạn', stPlusPitch: 'Nabu Plus mở lượt xem không giới hạn và giúp bạn nhỏ lớn nhanh hơn.',
@@ -4470,7 +4493,7 @@ const STR = {
     lang: 'EN',
     a11yBell: 'Notifications', a11yTheme: 'Theme', a11yTop: 'Back to top',
     langSwitch: 'Switch to Vietnamese',
-    nav: { home: 'Home', pick: 'Pick a card', play: 'Activities', learn: 'Learn', book: 'Book', me: 'Profile' },
+    nav: { home: 'Home', pick: 'Draw a card', play: 'Lifestyle', learn: 'Learn', book: 'Book', me: 'Profile' },
 
     feedTitle: 'Latest readings',
     feedEmpty: 'Nothing posted yet. Come back soon.',
@@ -4633,7 +4656,7 @@ const STR = {
     sentOk: 'Sent. Nabu will confirm soon. You can check it under Profile.',
     welcomeHead: 'Welcome to Nabu Tarot 🌙', nabuPosts: 'Nabu Posts', versionLine: (v) => 'Version ' + v, checkUpdate: 'Check for updates', updating: 'Loading the new version…',
     privacyTitle: 'Privacy policy', privacyLink: 'Privacy', termsTitle: 'Terms of service', termsLink: 'Terms', delAccount: 'Delete account', delHint: 'This deletes your account, profile, messages and bookings. The data cannot be restored.', delConfirm: 'Deleting your account is permanent. Your profile, course progress, diary and everything you have purchased will be removed and cannot be restored. If you sign in again later with the same email, you will need to buy again.', delConfirmStore: (st) => 'You have an active subscription. Deleting your account does not stop the billing: cancel it in ' + st + ' first.', delConfirmAsk: 'Delete your account anyway?', delDone: 'Account deleted. Thank you for visiting Nabu Tarot.', delRelogin: 'To confirm it is really you, sign in again and choose Delete account once more.', aiFlag: 'Report this answer', aiFlagged: 'Noted. Thank you, Nabu will review it.',
-    actTitle: 'Activities', actIntro: 'Small things to drop in on each day: a lucky companion to keep, the red thread to tie, the message tree, the coin and the diary. When Nabu posts there are piles to pick, polls to vote in and wishes to send.', actEmpty: 'No activities yet. Come back soon.', actAll: 'All activities', actOpen: 'Open', actClosed: 'Closed', actHasResults: 'Answered',
+    actTitle: 'Lifestyle', actIntro: 'Bring what you learn into everyday life: the message tree, what to wear this month, the diary, your companion and the red thread. When Nabu posts there are piles to pick, polls to vote in and wishes to send.', actEmpty: 'No activities yet. Come back soon.', actAll: 'All activities', actOpen: 'Open', actClosed: 'Closed', actHasResults: 'Answered',
     actPickHint: 'Tap the pile that pulls you. Nabu posts each pile\'s message a few days later.', actPicked: (n) => 'You chose pile ' + n + '.', actComeBack: (d) => 'Come back on ' + d + ' to flip it over.', actChangePile: 'Switch to another pile?', actPickToSee: 'The messages are in. Tap a pile to flip it.', actTapOthers: 'Your pile is open. Tap another pile to peek.',
     actVoteHint: 'Tap an option. One vote per person.', actVoteLogin: 'Sign in to vote and see the results.', actVoted: 'Thank you for voting!', actClosedNote: 'Voting is closed. Here are the results.', actVotes: (n) => n + ' votes',
     actWishPh: 'Right now I wish…', actWishSend: 'Send it to the universe', actWishHint: 'Keep it short, in the present tense, then send. Wishes stay on your device; nobody reads them.', actWishCount: (n) => 'You have sent ' + n + ' wishes here.', actWishSent: 'Sent. Now the first step is yours. ✨', actWishEmpty: 'Write your wish first.', actWishClear: 'Clear the wishes saved on this device', actWishClearConfirm: 'Clear the wishes saved on this device?',
@@ -5193,6 +5216,7 @@ const STR = {
     viaEmail: 'Send an email',
     copyMsg: 'Just copy the message',
     needSlot: 'Choose a time first.',
+    slotGone: 'The time you chose can no longer be booked. Please choose another.',
     msgHello: 'Hi Nabu, I would like to book a reading.',
     msgTime: 'Time',
     msgName: 'Name',
@@ -5264,7 +5288,7 @@ const STR = {
     stCancelMeaning: 'Cancel anytime in Google Play. You’ll keep access until the end of your paid period.',
     stManage: 'Manage in Google Play', stRestore: 'Restore purchases', stRestoring: 'Restoring…', stRestored: (n) => 'Restored ' + n + ' items', stRestoreNone: 'Nothing to restore',
     /* The same store sentences inside the iPhone app, where the App Store takes the payment (core.js lays them over the rest). */
-    appStore: { wedUnpaid: 'The room is holding this hour for you. Complete the payment to keep it.', wedWaitPay: 'The room is holding this hour for you. Once the wedding is paid, the doors open at the time you chose.', priceFreeHint: 'Most of Nabu is free. Tap to explore.', stIntro: 'Pay through the App Store. Access unlocks as soon as your payment is complete.', stProblem: 'Payment declined · Check your payment method in the App Store', stCancelMeaning: 'Cancel anytime in your Apple account settings. You’ll keep access until the end of your paid period.', stManage: 'Manage in the App Store', stNotReady: 'No response from the App Store.', stNoSheet: 'The App Store could not open the payment sheet. Check that you are signed in to your Apple account in Settings, then try again.', stSheetHung: 'The App Store did not answer. Close the app fully, open it again and try once more.', stSheetWaiting: 'The App Store is still working. If you have already paid, wait a minute and tap Restore purchases.', stAborted: 'The purchase did not complete. If you never saw the App Store payment sheet, please try again.', stItemOff: 'The App Store is not offering this item to your account.', stTerms: 'Terms of Use', stPrivacy: 'Privacy Policy' },
+    appStore: { learnIntro: 'Learn to read Tarot, Lenormand and playing cards one symbol at a time, practise on real spreads, and bring what you learn into everyday life. Angel numbers, manifestation and more are here to explore too.', needInKeep: 'Sign in to keep this card and draw a new one each day - Nabu will remember your cards for you.', wedUnpaid: 'The room is holding this hour for you. Complete the payment to keep it.', wedWaitPay: 'The room is holding this hour for you. Once the wedding is paid, the doors open at the time you chose.', priceFreeHint: 'Most of Nabu is free. Tap to explore.', stIntro: 'Pay through the App Store. Access unlocks as soon as your payment is complete.', stProblem: 'Payment declined · Check your payment method in the App Store', stCancelMeaning: 'Cancel anytime in your Apple account settings. You’ll keep access until the end of your paid period.', stManage: 'Manage in the App Store', stNotReady: 'No response from the App Store.', stNoSheet: 'The App Store could not open the payment sheet. Check that you are signed in to your Apple account in Settings, then try again.', stSheetHung: 'The App Store did not answer. Close the app fully, open it again and try once more.', stSheetWaiting: 'The App Store is still working. If you have already paid, wait a minute and tap Restore purchases.', stAborted: 'The purchase did not complete. If you never saw the App Store payment sheet, please try again.', stItemOff: 'The App Store is not offering this item to your account.', stTerms: 'Terms of Use', stPrivacy: 'Privacy Policy' },
     stNotReady: 'No response from Google Play.', stRetry: 'Try again', stPending: 'Payment pending. Access will unlock automatically once it’s complete.',
     stIncludedPro: 'Included in Nabu Pro', stSwitchTo: (n) => 'Switch to ' + n, stNeedIn: 'This item can only be purchased in the Nabu Tarot Android app.', stFailed: 'Purchase didn’t go through. Please try again.', stNoSheet: 'Google Play could not open the payment sheet. Open the Play Store, check you are signed in to the right Google account, then try again.', stSignInToBuy: 'Please sign in to buy. Opening the sign-in screen…', stNeedChrome: (b) => (b ? 'The app is running in ' + b + ', which cannot reach Google Play payments' : 'The app is running in a browser that cannot reach Google Play payments') + '. Set Chrome as the default browser: Settings → Apps → Default apps → Browser → Chrome. If Chrome is not installed, get it from the Play Store first. Then close the app fully and open it again. You may need to sign in again.', stSheetHung: 'Google Play did not answer. Close the app fully, open it again and try once more.', stSheetWaiting: 'Google Play is still working. If you have already paid, wait a minute and tap Restore purchases.', stAborted: 'The purchase did not complete. If you never saw the Google Play payment sheet, please try again.', stBusy: 'The payment sheet is opening. One moment.', stItemOff: 'Google Play is not offering this item to your account.', stDiagTitle: 'Technical details', stDiagCopy: 'Copy technical details', stDiagCopied: 'Copied. Please send it to Nabu.',
     myPlans: 'Your plans', stPlusPitch: 'Nabu Plus gives you unlimited readings and helps your companion grow faster.',
@@ -5376,7 +5400,7 @@ const STR = {
     lang: 'DE',
     a11yBell: 'Benachrichtigungen', a11yTheme: 'Design', a11yTop: 'Nach oben',
     langSwitch: 'Zu Englisch wechseln',
-    nav: { home: 'Start', pick: 'Karte ziehen', play: 'Spiele', learn: 'Lernen', book: 'Termin', me: 'Profil' },
+    nav: { home: 'Start', pick: 'Karte ziehen', play: 'Lifestyle', learn: 'Lernen', book: 'Termin', me: 'Profil' },
 
     feedTitle: 'Neueste Beiträge',
     feedEmpty: 'Noch nichts veröffentlicht. Schau bald wieder vorbei.',
@@ -5539,7 +5563,7 @@ const STR = {
     sentOk: 'Gesendet. Nabu bestätigt bald. Du siehst es im Profil.',
     welcomeHead: 'Willkommen bei Nabu Tarot 🌙', nabuPosts: 'Beiträge von Nabu', versionLine: (v) => 'Version ' + v, checkUpdate: 'Nach Updates suchen', updating: 'Die neue Version wird geladen…',
     privacyTitle: 'Datenschutzerklärung', privacyLink: 'Datenschutz', termsTitle: 'Nutzungsbedingungen', termsLink: 'Bedingungen', delAccount: 'Konto löschen', delHint: 'Dadurch werden dein Konto, Profil, deine Nachrichten und Termine gelöscht. Die Daten können nicht wiederhergestellt werden.', delConfirm: 'Das Löschen deines Kontos ist endgültig. Profil, Lernfortschritt, Tagebuch und alle gekauften Inhalte werden entfernt und lassen sich nicht wiederherstellen. Meldest du dich später mit derselben E-Mail wieder an, musst du erneut kaufen.', delConfirmStore: (st) => 'Du hast ein laufendes Abo. Das Löschen des Kontos beendet die Zahlung nicht: kündige es zuerst im ' + st + '.', delConfirmAsk: 'Konto trotzdem löschen?', delDone: 'Konto gelöscht. Danke, dass du bei Nabu Tarot warst.', delRelogin: 'Melde dich zur Bestätigung noch einmal an und wähle danach erneut Konto löschen.', aiFlag: 'Diese Antwort melden', aiFlagged: 'Notiert. Danke dir, Nabu schaut es sich an.',
-    actTitle: 'Aktivitäten', actIntro: 'Kleine Dinge für jeden Tag: ein Glücksbegleiter zum Behalten, der rote Faden zum Knüpfen, der Nachrichtenbaum, die Münze und das Tagebuch. Wenn Nabu etwas postet, gibt es Stapel zum Wählen, Umfragen zum Abstimmen und Wünsche zum Senden.', actEmpty: 'Noch keine Aktivitäten. Schau bald wieder vorbei.', actAll: 'Alle Aktivitäten', actOpen: 'Offen', actClosed: 'Geschlossen', actHasResults: 'Beantwortet',
+    actTitle: 'Lifestyle', actIntro: 'Was du lernst, in den Alltag bringen: der Nachrichtenbaum, was du diesen Monat trägst, das Tagebuch, dein Begleiter und der rote Faden. Wenn Nabu etwas postet, gibt es Stapel zum Wählen, Umfragen zum Abstimmen und Wünsche zum Senden.', actEmpty: 'Noch keine Aktivitäten. Schau bald wieder vorbei.', actAll: 'Alle Aktivitäten', actOpen: 'Offen', actClosed: 'Geschlossen', actHasResults: 'Beantwortet',
     actPickHint: 'Tipp den Stapel an, der dich anzieht. Die Botschaft jedes Stapels postet Nabu ein paar Tage später.', actPicked: (n) => 'Du hast Stapel ' + n + ' gewählt.', actComeBack: (d) => 'Komm am ' + d + ' zurück, um ihn umzudrehen.', actChangePile: 'Zu einem anderen Stapel wechseln?', actPickToSee: 'Die Botschaften sind da. Tipp einen Stapel an, um ihn umzudrehen.', actTapOthers: 'Dein Stapel ist offen. Tipp einen anderen Stapel an, um hineinzuschauen.',
     actVoteHint: 'Tipp eine Antwort an. Eine Stimme pro Person.', actVoteLogin: 'Melde dich an, um abzustimmen und die Ergebnisse zu sehen.', actVoted: 'Danke für deine Stimme!', actClosedNote: 'Die Abstimmung ist beendet. Hier sind die Ergebnisse.', actVotes: (n) => n + ' Stimmen',
     actWishPh: 'Gerade wünsche ich mir…', actWishSend: 'Ans Universum schicken', actWishHint: 'Halt ihn kurz, in der Gegenwart, und schick ihn ab. Wünsche bleiben auf deinem Gerät; niemand liest sie.', actWishCount: (n) => 'Du hast hier ' + n + ' Wünsche abgeschickt.', actWishSent: 'Abgeschickt. Der erste Schritt liegt jetzt bei dir. ✨', actWishEmpty: 'Schreib zuerst deinen Wunsch.', actWishClear: 'Die auf diesem Gerät gespeicherten Wünsche löschen', actWishClearConfirm: 'Die auf diesem Gerät gespeicherten Wünsche löschen?',
@@ -6092,6 +6116,7 @@ const STR = {
     viaEmail: 'Eine E-Mail senden',
     copyMsg: 'Nur die Nachricht kopieren',
     needSlot: 'Wähl zuerst eine Zeit.',
+    slotGone: 'Die gewählte Zeit ist nicht mehr buchbar. Wähl bitte eine andere.',
     msgHello: 'Hallo Nabu, ich würde gern eine Beratung buchen.',
     msgTime: 'Zeit',
     msgName: 'Name',
@@ -6163,7 +6188,7 @@ const STR = {
     stCancelMeaning: 'Du kannst jederzeit in Google Play kündigen. Dein Zugang bleibt bis zum Ende des bezahlten Zeitraums bestehen.',
     stManage: 'In Google Play verwalten', stRestore: 'Käufe wiederherstellen', stRestoring: 'Wird wiederhergestellt…', stRestored: (n) => n + ' Elemente wiederhergestellt', stRestoreNone: 'Nichts zum Wiederherstellen',
     /* The same store sentences inside the iPhone app, where the App Store takes the payment (core.js lays them over the rest). */
-    appStore: { wedUnpaid: 'Der Raum hält diese Stunde für euch frei. Schließt die Zahlung ab, damit sie euch bleibt.', wedWaitPay: 'Der Raum hält diese Stunde für euch frei. Sobald die Hochzeit bezahlt ist, öffnen sich die Türen zur gewählten Zeit.', priceFreeHint: 'Das meiste in Nabu ist kostenlos. Tipp dich einfach durch.', stIntro: 'Zahlung über den App Store. Nach erfolgreicher Zahlung wird sofort freigeschaltet.', stProblem: 'Zahlung abgelehnt · Bitte Zahlungsmethode im App Store prüfen', stCancelMeaning: 'Du kannst jederzeit in den Einstellungen deines Apple-Accounts kündigen. Dein Zugang bleibt bis zum Ende des bezahlten Zeitraums bestehen.', stManage: 'Im App Store verwalten', stNotReady: 'Keine Antwort vom App Store.', stNoSheet: 'Der App Store konnte das Zahlungsfenster nicht öffnen. Prüf in den Einstellungen, ob du mit deinem Apple-Account angemeldet bist, und versuch es noch einmal.', stSheetHung: 'Der App Store hat nicht geantwortet. Schließ die App ganz, öffne sie neu und versuch es noch mal.', stSheetWaiting: 'Der App Store arbeitet noch. Wenn du schon bezahlt hast, warte eine Minute und tipp auf Käufe wiederherstellen.', stAborted: 'Der Kauf wurde nicht abgeschlossen. Wenn du das Zahlungsfenster des App Store nicht gesehen hast, versuch es bitte noch einmal.', stItemOff: 'Der App Store bietet diesen Artikel deinem Konto nicht an.', stTerms: 'Nutzungsbedingungen', stPrivacy: 'Datenschutz' },
+    appStore: { learnIntro: 'Lerne, Tarot, Lenormand und Spielkarten Symbol für Symbol zu lesen, übe an echten Legungen und nimm mit, was du lernst, in deinen Alltag. Engelszahlen, Manifestation und mehr kannst du hier ebenfalls entdecken.', needInKeep: 'Melde dich an, um diese Karte zu behalten und jeden Tag eine neue zu ziehen - Nabu merkt sich deine Karten für dich.', wedUnpaid: 'Der Raum hält diese Stunde für euch frei. Schließt die Zahlung ab, damit sie euch bleibt.', wedWaitPay: 'Der Raum hält diese Stunde für euch frei. Sobald die Hochzeit bezahlt ist, öffnen sich die Türen zur gewählten Zeit.', priceFreeHint: 'Das meiste in Nabu ist kostenlos. Tipp dich einfach durch.', stIntro: 'Zahlung über den App Store. Nach erfolgreicher Zahlung wird sofort freigeschaltet.', stProblem: 'Zahlung abgelehnt · Bitte Zahlungsmethode im App Store prüfen', stCancelMeaning: 'Du kannst jederzeit in den Einstellungen deines Apple-Accounts kündigen. Dein Zugang bleibt bis zum Ende des bezahlten Zeitraums bestehen.', stManage: 'Im App Store verwalten', stNotReady: 'Keine Antwort vom App Store.', stNoSheet: 'Der App Store konnte das Zahlungsfenster nicht öffnen. Prüf in den Einstellungen, ob du mit deinem Apple-Account angemeldet bist, und versuch es noch einmal.', stSheetHung: 'Der App Store hat nicht geantwortet. Schließ die App ganz, öffne sie neu und versuch es noch mal.', stSheetWaiting: 'Der App Store arbeitet noch. Wenn du schon bezahlt hast, warte eine Minute und tipp auf Käufe wiederherstellen.', stAborted: 'Der Kauf wurde nicht abgeschlossen. Wenn du das Zahlungsfenster des App Store nicht gesehen hast, versuch es bitte noch einmal.', stItemOff: 'Der App Store bietet diesen Artikel deinem Konto nicht an.', stTerms: 'Nutzungsbedingungen', stPrivacy: 'Datenschutz' },
     stNotReady: 'Keine Antwort von Google Play.', stRetry: 'Erneut versuchen', stPending: 'Zahlung ausstehend. Nach Abschluss wird der Zugang automatisch freigeschaltet.',
     stIncludedPro: 'In Nabu Pro enthalten', stSwitchTo: (n) => 'Zu ' + n + ' wechseln', stNeedIn: 'Dieser Artikel kann nur in der Nabu-Tarot-App für Android gekauft werden.', stFailed: 'Kauf nicht abgeschlossen. Bitte erneut versuchen.', stNoSheet: 'Google Play konnte das Zahlungsfenster nicht öffnen. Öffne den Play Store, prüfe dein Google-Konto und versuch es noch einmal.', stSignInToBuy: 'Zum Kaufen bitte anmelden. Die Anmeldeseite wird geöffnet…', stNeedChrome: (b) => 'Die App läuft in ' + (b || 'einem Browser') + ', der Google-Play-Zahlungen nicht erreichen kann. Mach Chrome zum Standardbrowser: Einstellungen → Apps → Standard-Apps → Browser → Chrome. Falls Chrome fehlt, zuerst aus dem Play Store installieren. Dann die App ganz schließen und neu öffnen. Eventuell musst du dich neu anmelden.', stSheetHung: 'Google Play hat nicht geantwortet. Schließ die App ganz, öffne sie neu und versuch es noch mal.', stSheetWaiting: 'Google Play arbeitet noch. Wenn du schon bezahlt hast, warte eine Minute und tipp auf Käufe wiederherstellen.', stAborted: 'Der Kauf wurde nicht abgeschlossen. Wenn du das Zahlungsfenster von Google Play nicht gesehen hast, versuch es bitte noch einmal.', stBusy: 'Das Zahlungsfenster wird geöffnet. Einen Moment.', stItemOff: 'Google Play bietet diesen Artikel deinem Konto nicht an.', stDiagTitle: 'Technische Details', stDiagCopy: 'Technische Details kopieren', stDiagCopied: 'Kopiert. Bitte schick es an Nabu.',
     myPlans: 'Deine Abos', stPlusPitch: 'Nabu Plus bietet unbegrenzte Legungen und lässt deinen kleinen Begleiter schneller wachsen.',
@@ -14232,11 +14257,13 @@ function renderChrome(route) {
   $('#lang').textContent = T().lang;
   $('#lang').setAttribute('aria-label', T().langSwitch);
   $('#lang').setAttribute('title', T().langSwitch);
-  $('#nav').innerHTML = ['home', 'pick', 'play', 'learn', 'book', 'me'].map((k) =>
+  /* Five tabs: learning first, then the card a day and the lifestyle screens. Booking is no tab of its
+     own any more - it sits on Home and in Profile - so a sale on readings shows on Home. */
+  $('#nav').innerHTML = ['home', 'learn', 'pick', 'play', 'me'].map((k) =>
     '<a href="#/' + k + '" class="' + (route === k ? 'on' : '') + '">' + ICONS[k] + '<span>' + esc(T().nav[k]) + '</span>'
     + (k === 'me' && (UNREAD + NEWBK + NEWC) ? '<span class="badge">' + (UNREAD + NEWBK + NEWC) + '</span>' : '')
     // A sale on readings shows up on the tab where readings are booked.
-    + (k === 'book' && SALE.covers('reading') ? '<span class="saletag" aria-hidden="true">🏷️</span>' : '')
+    + (k === 'home' && SALE.covers('reading') ? '<span class="saletag" aria-hidden="true">🏷️</span>' : '')
     + (k === 'learn' && SALE.covers('unlock') ? '<span class="saletag" aria-hidden="true">🏷️</span>' : '') + '</a>').join('');
   if (typeof alertsBadge === 'function') alertsBadge();
   if (typeof adminTabBadges === 'function') adminTabBadges();
@@ -14327,7 +14354,9 @@ async function addToCalendar(b) {
     toast(S.icsDownloaded);
   } catch (e) { window.open(gcalLink(b), '_blank', 'noopener'); }
 }
-const slotDate = (slot) => { const m = /^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2})/.exec(String(slot || '')); return m ? new Date(+m[1], +m[2] - 1, +m[3], +m[4], +m[5]) : null; };
+/* A slot is Vietnam wall-clock time (UTC+7, no daylight saving): the moment it starts, the same on
+   every phone. Built from the device's own clock it was hours out for anybody outside Vietnam. */
+function slotDate(slot) { const m = /^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2})/.exec(String(slot || '')); return m ? new Date(Date.UTC(+m[1], +m[2] - 1, +m[3], +m[4] - 7, +m[5])) : null; }
 /* Reminders while the app is open: 24 h, 6 h, 1 h and 15 min before every upcoming booking. */
 const REM = { timers: [] };
 function scheduleReminders(list) {
@@ -14969,10 +14998,17 @@ function todayRedraw(draw, focusId) {
    Firestore) when CONFIG.firebase is set. Without it, BE.enabled is false and
    every screen falls back to the device-only profile and to Instagram.
    The SDK is loaded on demand so the app shell stays offline-capable. */
-/* Mail the booking to Nabu as a calendar invitation (through the worker). Best effort. */
-function notifyBooking(b) {
-  if (!CONFIG.bookingEndpoint) return Promise.resolve();
-  return fetch(CONFIG.bookingEndpoint, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ booking: b, tz: CONFIG.timezone, to: CONFIG.adminNotifyEmails, lang: lang }) }).catch(() => {});
+/* Mail the booking to Nabu (through the worker). Best effort, never in the way.
+   Only the id goes, with the sign-in: the worker reads the booking itself and
+   mails it to the addresses it holds (MAIL_TO in worker/wrangler.toml), so the
+   endpoint cannot be used to mail anything else to anybody else. Until the
+   worker has a mail key it answers { sent: false } and nothing is sent. */
+async function notifyBooking(b) {
+  if (!CONFIG.bookingEndpoint || !b || !b.id) return;
+  try {
+    const tok = await BE.token(); if (!tok) return;
+    await fetch(CONFIG.bookingEndpoint, { method: 'POST', headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + tok }, body: JSON.stringify({ id: b.id }) });
+  } catch (e) { /* offline, or the worker is down: the booking itself is saved */ }
 }
 /* What a booking goes back to once whatever is in flight - a request from
    the client, a proposal from Nabu, a proposal turned down - is settled. */
@@ -15286,6 +15322,12 @@ const BE = {
   async markPaid(b) {
     await this.db.collection('bookings').doc(b.id).set(
       { paid: true, paidAt: Date.now(), status: b.status === 'requested' ? 'confirmed' : (b.status || 'confirmed') }, { merge: true });
+    /* A reading paid for while still waiting is confirmed by it, so its hour
+       is marked confirmed exactly as the confirm button would (setBookingStatus):
+       otherwise the half hours either side stayed open to somebody else. */
+    if (b.kind !== 'unlock' && b.slot && b.status === 'requested') {
+      await this.db.collection('taken').doc(String(b.slot).replace(/[^0-9T]/g, '')).set({ bookingId: b.id, confirmed: true }, { merge: true }).catch(() => {});
+    }
     const ids = (b.items || []).map((it) => it.id)
       .filter((id) => COURSES.some((c) => c.id === id));
     if (ids.length && b.uid) await this.grantAccess(b.uid, ids);
@@ -16803,7 +16845,12 @@ const TOUR_IOS_LEAD = [
   { ic: "✍️", vi: ["Luyện đọc bài", "Ở đây bạn là người đọc bài. Nabu dựng sẵn một tình huống và chia bài úp. Bạn lật từng lá, viết lời đọc của mình, rồi Nabu chấm và chỉ ra chỗ bạn còn đọc sót.\nLời đọc của Nabu chỉ hiện ra sau khi bạn nộp bài."], en: ["Practise reading", "Here you are the reader. Nabu sets up a situation and deals the cards face down; you turn them, write your reading, and Nabu marks it and shows what you missed.\nNabu\u2019s own reading only appears once you hand yours in."], de: ["Deuten üben", "Hier bist du die Lesende. Nabu stellt eine Situation und legt die Karten verdeckt aus; du deckst sie auf, schreibst deine Deutung, und Nabu bewertet sie und zeigt, was dir entgangen ist.\nNabus eigene Deutung erscheint erst, wenn du deine abgegeben hast."] },
   { ic: "🃏", vi: ["Một lá mỗi ngày", "Mỗi ngày rút một lá để ôn: đọc ý nghĩa và các từ khóa của lá đó. Chọn chủ đề bạn đang nghĩ tới, vì mỗi chủ đề có cách đọc riêng."], en: ["A card a day", "Draw one card a day to study: read its meaning and its keywords. Choose the topic on your mind, because each topic is read in its own way."], de: ["Eine Karte am Tag", "Zieh jeden Tag eine Karte zum Lernen: lies ihre Bedeutung und ihre Stichworte. Wähl dein Thema, denn jedes wird auf seine eigene Weise gelesen."] }
 ];
-const tourSteps = () => (isIOSApp() ? TOUR_IOS_LEAD.concat([TOUR[4], TOUR[2], TOUR[6], TOUR[7]]) : TOUR);
+/* The Lifestyle tab replaced Activities, so its step says what the tab now holds. The second paragraph
+   is the owner's; the first is a draft awaiting her approval. */
+const TOUR_LIFE = { ic: "🌿", vi: ["Đời sống", "Mang những điều bạn học vào mỗi ngày: rung Cây Thông Điệp, xem tháng này nên mặc gì, viết nhật ký và chăm bạn đồng hành.\nKhi Nabu mở các hoạt động đặc biệt, bạn còn có thể tham gia chọn tụ bài, bình chọn, gửi điều ước và nhiều sự kiện nhỏ khác."], en: ["Lifestyle", "Bring what you learn into each day: shake the Message Tree, see what to wear this month, write your diary and look after your companion.\nWhen Nabu opens special activities you can also pick a pile, vote in a poll, send a wish and join other small events."], de: ["Lifestyle", "Bring das Gelernte in jeden Tag: schüttle den Nachrichtenbaum, sieh nach, was du diesen Monat trägst, schreib dein Tagebuch und kümmere dich um deinen Begleiter.\nWenn Nabu besondere Aktivitäten öffnet, kannst du auch einen Stapel wählen, abstimmen, einen Wunsch senden und bei anderen kleinen Aktionen mitmachen."] };
+/* One tour for everyone, in the order of the new home screen: learning, practice, the daily card, then
+   lifestyle, the Red Thread, booking, refresh and the profile. Forecasts by sign are no longer a step. */
+const tourSteps = () => TOUR_IOS_LEAD.concat([TOUR_LIFE, TOUR[4], TOUR[5], TOUR[6], TOUR[7]]);
 function tourHTML(step) {
   const TS = tourSteps(), t = TS[step], txt = t[lang];
   const pct = Math.round((step + 1) / TS.length * 100);
@@ -16959,6 +17006,57 @@ function pickCtaHTML() {
   return '<a class="pickcta" href="#/pick"><div class="fan3"><span style="transform:rotate(-16deg)">' + logoCardSVG('blue') + '</span><span>' + logoCardSVG('purple') + '</span><span style="transform:rotate(16deg)">' + logoCardSVG('pink') + '</span></div>'
     + '<div><b>' + esc(S.pickToday) + '</b><p>' + esc(S.pickIntro) + '</p><span class="btn primary sm">' + esc(S.nav.pick) + ' →</span></div></a>';
 }
+/* ---- the home screen: learn, practise, then carry it into the day ----
+   Headings are drafts in Vietnamese until the owner approves them. */
+const HT = (vi, en, de) => (lang === 'vi' ? vi : (lang === 'de' ? de : en));
+function tilesHTML(it) {
+  return '<div class="tiles">' + it.map((t) => '<a class="tile" href="' + t[0] + '"><div class="ic">' + t[1] + '</div><b>' + esc(t[2]) + '</b><span>' + esc(t[3]) + '</span></a>').join('') + '</div>';
+}
+/* The daily card, framed as something to study and reflect on: draw it, read it, write a line about it. */
+function dailyHTML() {
+  return '<div class="sec" id="daily"><div class="eyebrow">' + esc(HT('Thực hành hôm nay', 'Today\u2019s practice', 'Deine Übung heute')) + '</div>'
+    + pickCtaHTML()
+    + '<a class="upnext" href="#/play/diary" style="margin-top:-8px"><span class="ic">📔</span><span><b>' + esc(HT('Rút một lá → đọc ý nghĩa → ghi lại', 'Draw a card → read its meaning → write it down', 'Karte ziehen → Bedeutung lesen → aufschreiben')) + '</b><br>'
+    + esc(HT('Viết một dòng vào nhật ký: lá bài hôm nay nói gì với bạn?', 'One line in your diary: what does today\u2019s card say to you?', 'Eine Zeile ins Tagebuch: Was sagt dir die Karte heute?')) + '</span></a></div>';
+}
+/* The next lesson of whichever course the learner is furthest into (Tarot for a newcomer), and practice. */
+function nextLesson() {
+  const cs = ['tarot', 'lenormand', 'playing'].filter((c) => LESSONS[c] && LESSONS[c].length);
+  const prog = cs.map((c) => ({ c, done: LESSONS[c].filter((l) => DONE.is(c, l.n)).length, total: LESSONS[c].length, next: LESSONS[c].filter((l) => !DONE.is(c, l.n))[0] }));
+  const going = prog.filter((p) => p.next && p.done).sort((a, b) => b.done - a.done)[0];
+  return going || prog.filter((p) => p.next)[0] || null;
+}
+function continueHTML() {
+  const S = T(), nl = nextLesson();
+  const passed = Object.keys(store.get('nabu-practice', {}) || {}).length;
+  const lesson = nl
+    ? '<a class="upnext" href="#/learn/lesson/' + nl.c + '/' + nl.next.n + '"><span class="ic">📚</span><span><b>' + esc(S.cats[nl.c]) + ' · ' + esc(S.lessonN(nl.next.n)) + ' / ' + nl.total + '</b><br>' + esc(L(nl.next.title)) + '</span>'
+      + '<span class="lbar" aria-hidden="true"><span style="width:' + Math.round(nl.done / nl.total * 100) + '%"></span></span></a>'
+    : '';
+  return '<div class="sec" id="continue"><div class="eyebrow">' + esc(nl && nl.done ? HT('Học tiếp', 'Continue learning', 'Weiterlernen') : HT('Bắt đầu học', 'Start learning', 'Mit dem Lernen anfangen')) + '</div>'
+    + lesson
+    + '<a class="upnext" href="#/practice"><span class="ic">✍️</span><span><b>' + esc(S.practiceTitle) + '</b><br>'
+    + esc(HT('Nabu chia bài và đặt tình huống, bạn viết lời đọc, Nabu chấm.', 'Nabu deals the cards and sets the scene; you write the reading and Nabu marks it.', 'Nabu legt die Karten und stellt die Situation; du deutest, Nabu bewertet.'))
+    + (passed ? ' · ' + passed + ' ✓' : '') + '</span></a>'
+    + '<a class="btn block" href="#/learn">' + esc(HT('Tất cả khóa học', 'All courses', 'Alle Kurse')) + ' →</a></div>';
+}
+function lifeHTML() {
+  const S = T();
+  return '<div class="sec" id="life"><div class="eyebrow">' + esc(HT('Mang vào đời sống', 'Bring it into your day', 'In deinen Alltag')) + '</div>'
+    + tilesHTML([['#/outfit', '👗', outfitTxt().title, HT('màu sắc và thời tiết tháng này', 'this month\u2019s colours and weather', 'Farben und Wetter des Monats')],
+      ['#/play/tree', '🌸', S.treeTitle, S.treeSub],
+      ['#/play/diary', '📔', S.diaryTitle, S.diarySub],
+      ['#/play/pet', '🐾', S.petTitle, S.petSub]]) + '</div>';
+}
+function connectHTML() {
+  const S = T();
+  const it = [['#/love', '💞', S.loveTitle, S.loveSub],
+    ['#/book', '📅', HT('Xem bài cùng Nabu', 'A reading with Nabu', 'Eine Legung mit Nabu'), HT('trò chuyện trực tiếp, đúng giờ bạn đặt', 'a live chat at the time you book', 'ein Live-Chat zur gebuchten Zeit')]];
+  return '<div class="sec" id="connect"><div class="eyebrow">' + esc(HT('Kết nối', 'Connect', 'Verbinden')) + '</div>' + tilesHTML(it)
+    + (isStandalone() || inStoreApp() ? '' : '<a class="upnext" href="#/install" style="margin-top:-8px"><span class="ic">📲</span><span><b>' + esc(S.installTitle) + '</b><br>' + esc(S.instAndroidIntro) + '</span></a>')
+    + '</div>';
+}
+/* Kept for reference: the six tiles the home screen had before it was built around learning. */
 function quickLinksHTML() {
   const S = T();
   /* In the iPhone app the tiles lead with learning: practice and the Tarot course first, the daily
@@ -17025,23 +17123,21 @@ async function renderHome(args, params) {
        the calendar, rather than a long way down the left. On a phone this box
        stays empty and hidden and the forecast keeps its old place further down
        - the same two cards, drawn once for whichever column is showing. */
-    + '<div id="sidehoro" hidden></div>'
     + '</aside>'
     + '<h1 style="margin:18px 0 4px">' + esc(name ? S.hello(name) : S.helloGuest) + '</h1><p class="muted">' + esc(lang === 'vi' ? 'Hôm nay bạn muốn làm gì?' : (lang === 'de' ? 'Was möchtest du heute machen?' : 'What would you like to do today?')) + '</p>'
     + upcomingHTML()
-    + pickCtaHTML()
-    + quickLinksHTML()
+    /* Learning and practice lead; the sign, life path and forecasts by sign live in Learn → Astrology
+       rather than on the first screen, for everyone. */
+    + dailyHTML()
+    + continueHTML()
+    + lifeHTML()
+    + connectHTML()
     + '<div id="actwrap"></div>'
-    /* The sign, the life path and the forecasts by sign are the horoscope app App Review saw; the
-       iPhone app keeps them in Learn and off the first screen. */
-    + (isIOSApp() ? '' : personalHTML() + '<div id="foryouwrap"></div>')
     + '<div class="sec" id="feed"><p class="muted">…</p></div>';
   bindAccordions(m); bindCardLinks(m);
   bindTour(m, 0);
   homeActHTML($('#actwrap')).catch(() => {});
   if (POSTS == null) await loadPosts();
-  const fy = $('#foryouwrap'); if (fy) { fy.innerHTML = suggestedGuidesHTML(); bindPost(fy); bindAccordions(fy); }
-  const sh = isIOSApp() ? null : $('#sidehoro'); if (sh) { sh.innerHTML = '<div class="eyebrow">' + esc(T().forInterests) + '</div>' + horoCardHTML('monthly') + horoCardHTML('weekly'); sh.hidden = false; }
   const feed = $('#feed'); if (!feed) return;
   const all = sortedPosts().filter((p) => !(isIOSApp() && p.markers && p.markers.signs && p.markers.signs.length)), welcome = all.filter((p) => p.welcome)[0], list = all.filter((p) => !p.welcome);
   const wopen = store.get('nabu-welcome-open', true) !== false;
@@ -17115,7 +17211,23 @@ const pickToday = () => { const s = store.get('nabu-pick-day', null); return s &
    left a reading on the phone belonging to nobody, and the owner asked for
    the plain rule instead: signed out, the deck is on the table and the way to
    use it is to sign in. */
-const guestSpent = () => !signedIn();
+/* Except in the iPhone app. Apple's reviewers open it signed out, and an app
+   whose first screen of cards is a sign-in wall is refused (guideline 5.1.1:
+   a sign-in may only be asked for what is really the account's). There a
+   visitor draws one card, held in memory only (pick.guest) - nothing on the
+   phone, nothing on an account, gone when the app is closed - and the sign-in
+   card is asked for keeping it and for the next day's. Signing in with that
+   card on the table makes it the account's card for the day (guestAdopt).
+   The web and Android keep the plain rule the owner asked for. */
+const guestSpent = () => !signedIn() && !(isIOSApp() && !pick.guest);
+const guestDraws = () => isIOSApp() && !signedIn() && !plusOn();
+function guestAdopt() {
+  const g = pick.guest; pick.guest = null;
+  const had = pickToday();
+  /* The account already has a card today (from another phone): that one stands. */
+  if (had && had.id !== g.id) { if (pick.chosen === g.id) pick.chosen = null; return; }
+  if (!had) { pickSpend(g.id, g.focus); TODAY.add('pick', { id: g.id, focus: g.focus }); }
+}
 /* Whose card this is. Nothing kept on the phone is dealt back until the
    account has answered, and then only to the account it belongs to. */
 const drawIsMine = () => signedInForSure() || (typeof BE === 'undefined' || !BE.enabled);
@@ -17134,7 +17246,7 @@ function pickLimitHTML() {
   const S = T();
   /* Two different sentences, because they ask for two different things: one
      wants tomorrow, the other wants an account. */
-  if (guestSpent()) return needAccountHTML(S.needInDraw);
+  if (guestSpent()) return needAccountHTML(pick.guest ? (S.needInKeep || S.needInDraw) : S.needInDraw);
   return '<div class="card luckbox"><p class="lead">' + esc(S.pickSpent) + '</p>'
     + (inStoreApp()
       /* Both plans, not Plus alone: one button called "Subscribe" under a
@@ -17152,13 +17264,15 @@ function pickLimitHTML() {
 function renderPick(args, params) {
   /* A new day deals afresh. Whatever this screen held yesterday, in the memory
      of an app left open overnight, is not today's card. */
-  { const today = isoDate(new Date()); if (pick.day !== today) { pick.day = today; pick.hand = []; pick.chosen = null; } }
+  { const today = isoDate(new Date()); if (pick.day !== today) { pick.day = today; pick.hand = []; pick.chosen = null; pick.guest = null; } }
   /* Nobody signed in, nobody shown a card - whatever this screen or this phone
      still holds. There were two ways a kept card came back and only one of
      them had been closed, which is why the owner kept finding the same
      reading under the deck after signing out. This is the rule itself, said
      once, before either of them runs. */
-  if (!drawIsMine()) pick.chosen = null;
+  if (pick.guest && signedInForSure()) guestAdopt();
+  /* The iPhone app's visitor keeps the one card they drew in this sitting. */
+  if (!drawIsMine()) pick.chosen = (pick.guest && guestDraws()) ? pick.guest.id : null;
   // A shared link (#/pick?card=…) opens straight on that card, in the focus it was drawn with.
   const want = params && params.card && cardById(params.card) ? params.card : '';
   if (want && pick.chosen !== want) {
@@ -17224,8 +17338,8 @@ function renderPick(args, params) {
   $$('[data-card]', m).forEach((b) => b.addEventListener('click', () => {
     if (pick.chosen != null || pickSpent()) return;
     pick.chosen = b.getAttribute('data-card');
-    pickSpend(pick.chosen, pick.focus);
-    TODAY.add('pick', { id: pick.chosen, focus: pick.focus });
+    if (guestDraws()) pick.guest = { id: pick.chosen, focus: pick.focus };
+    else { pickSpend(pick.chosen, pick.focus); TODAY.add('pick', { id: pick.chosen, focus: pick.focus }); }
     $$('.slot', m).forEach((s) => s.classList.add($('button', s) === b ? 'chosen' : 'dim'));
     $$('[data-focus]', m).forEach((x) => { if (!x.classList.contains('on')) x.disabled = true; });
     $('.tap-hint', m).textContent = '';
@@ -17408,7 +17522,8 @@ function renderLearn(args, params) {
          what turns a reader of lessons into somebody who can lay a spread. */
       + '<a class="prcta" href="#/practice"><div class="ic">✍️</div><div><b>' + esc(S.practiceTitle) + '</b><span>' + esc(S.practiceIntro) + '</span></div></a>'
       + '<div class="eyebrow">' + esc(S.coursesPractice) + '</div><div class="tiles">' + tile('tarot', !ACCESS.has('tarot')) + tile('lenormand', !ACCESS.has('lenormand')) + tile('playing', !ACCESS.has('playing')) + tile('manifest', !ACCESS.has('manifest')) + '</div>'
-      + '<div class="eyebrow">' + esc(S.freeReads) + '</div><div class="tiles">' + tile('astro') + tile('angel') + tile('fortune') + '</div>'
+      /* In the iPhone app the reading and practice lead and astrology comes last (4.3(b)). */
+      + '<div class="eyebrow">' + esc(S.freeReads) + '</div><div class="tiles">' + (isIOSApp() ? tile('angel') + tile('fortune') + tile('astro') : tile('astro') + tile('angel') + tile('fortune')) + '</div>'
       + '<p style="margin-top:14px"><a class="btn block" href="#/unlock?from=learn">💳 ' + esc(S.unlockLink) + '</a></p>'
       + (function () { const ints = PROFILE.interests || []; const list = GUIDES.filter((g) => g.tags.some((t) => ints.indexOf(t) > -1) && !((g.cat === 'tarot' || g.cat === 'lenormand') && !ACCESS.has(g.cat)) && !(g.id === 'fort-playing' && !ACCESS.has('playing'))).slice(0, 4); return list.length ? '<div class="sec"><div class="eyebrow">' + esc(S.forInterests) + '</div>' + list.map(guideRow).join('') + '</div>' : ''; }());
     return;
@@ -17643,8 +17758,13 @@ function astroLine(id) {
 function renderAstro() {
   const S = T(), m = $('#main'), me = mySign();
   m.innerHTML = backLink('#/learn', S.learnTitle) + '<h1 style="margin-bottom:6px">' + esc(S.cats.astro) + '</h1><p class="muted" style="font-size:14px">' + esc(S.astroNote) + '</p>'
+    /* The visitor's sign, life path and the forecasts for it moved here from the home screen, which now
+       leads with learning. The iPhone app keeps the forecasts off, as its home screen already did. */
+    + personalHTML() + '<div id="astrohoro"></div>'
     + '<div class="tabs" id="atabs"><button class="on" data-t="signs">' + (lang === 'vi' ? '12 cung' : (lang === 'de' ? '12 Zeichen' : '12 signs')) + '</button><button data-t="planets">' + (lang === 'vi' ? 'Hành tinh' : (lang === 'de' ? 'Planeten' : 'Planets')) + '</button><button data-t="houses">' + (lang === 'vi' ? '12 nhà' : (lang === 'de' ? '12 Häuser' : '12 houses')) + '</button><button data-t="aspects">' + (lang === 'vi' ? 'Góc chiếu' : (lang === 'de' ? 'Aspekte' : 'Aspects')) + '</button><button data-t="guides">' + (lang === 'vi' ? 'Bài đọc' : 'Guides') + '</button></div>'
     + '<div id="apanel"></div>';
+  bindCardLinks(m);
+  if (!isIOSApp()) (HORO ? Promise.resolve() : loadPosts()).then(() => { const h = $('#astrohoro'); if (h) { h.innerHTML = suggestedGuidesHTML(); bindPost(h); } }).catch(() => {});
   const panel = $('#apanel');
   const show = (t) => {
     if (t === 'signs') {
@@ -27573,21 +27693,37 @@ function clashesConfirmed(key, ignore) {
   const len = (SCHEDULE && SCHEDULE.slotMinutes) || 60, at = slotMin(String(key).replace(/[^0-9T]/g, ''));
   return Object.keys(TAKEN).some((k) => TAKEN[k] === 'confirmed' && k !== ignore && Math.abs(slotMin(k) - at) < len);
 }
+/* Nabu works in Vietnam, so "today", the notice window and "has this hour
+   passed" are Vietnam's (UTC+7, no daylight saving), not the phone's. At 20:00
+   in Germany it is already tomorrow in Hanoi; counted from the phone's own
+   date, a customer there was offered hours inside Nabu's notice window. The
+   date arithmetic is done on plain YYYY-MM-DD in UTC, which has no daylight
+   saving to trip over. */
+const VN_MS = 7 * 3600000;
+function vnToday(ms) { return new Date((ms == null ? Date.now() : ms) + VN_MS).toISOString().slice(0, 10); }
+const isoUTC = (y, m, d) => new Date(Date.UTC(y, m, d)).toISOString().slice(0, 10);
+const addDaysISO = (iso, n) => isoUTC(+iso.slice(0, 4), +iso.slice(5, 7) - 1, +iso.slice(8, 10) + n);
+function vnMonthStart() { const t = vnToday(); return new Date(+t.slice(0, 4), +t.slice(5, 7) - 1, 1); }
 function slotsFor(dateStr) {
-  const S = SCHEDULE; if (!S) return [];
-  const d = new Date(dateStr + 'T00:00:00'), today = new Date(); today.setHours(0, 0, 0, 0);
-  const lead = new Date(today); lead.setDate(lead.getDate() + (S.leadDays || 0));
-  const horizon = new Date(today); horizon.setDate(horizon.getDate() + (S.horizonDays || 42));
-  if (d < lead || d > horizon) return [];
+  const S = SCHEDULE; if (!S || !/^\d{4}-\d{2}-\d{2}$/.test(String(dateStr))) return [];
+  const today = vnToday(), lead = addDaysISO(today, S.leadDays || 0), horizon = addDaysISO(today, S.horizonDays || 42);
+  if (dateStr < lead || dateStr > horizon) return [];
   if ((S.blocked || []).indexOf(dateStr) > -1) return [];
-  const base = (S.weekly || {})[String(d.getDay())] || [], extra = (S.extra || {})[dateStr] || [];
-  const all = base.concat(extra).filter((t, i, a) => a.indexOf(t) === i).sort(), booked = S.booked || [];
-  return all.map((t) => { const k = slotKey(dateStr, t); return { time: t, key: k, taken: booked.indexOf(k) > -1 || !!TAKEN[k.replace(/[^0-9T]/g, '')] || clashesConfirmed(k, book.ignoreKey) }; });
+  const dow = new Date(Date.UTC(+dateStr.slice(0, 4), +dateStr.slice(5, 7) - 1, +dateStr.slice(8, 10))).getUTCDay();
+  const base = (S.weekly || {})[String(dow)] || [], extra = (S.extra || {})[dateStr] || [];
+  const all = base.concat(extra).filter((t, i, a) => a.indexOf(t) === i).sort(), booked = S.booked || [], now = Date.now();
+  /* An hour already begun is never offered, even with no notice days set. */
+  return all.filter((t) => { const at = slotDate(slotKey(dateStr, t)); return at && at.getTime() > now; })
+    .map((t) => { const k = slotKey(dateStr, t); return { time: t, key: k, taken: booked.indexOf(k) > -1 || !!TAKEN[k.replace(/[^0-9T]/g, '')] || clashesConfirmed(k, book.ignoreKey) }; });
 }
+/* Still bookable now: on the calendar, free, not past, not inside the notice
+   window. A draft kept on the phone can hold an hour that stopped being any of
+   these while it sat there. */
+function slotBookable(key) { return !!key && slotsFor(String(key).slice(0, 10)).some((s) => s.key === key && !s.taken); }
 function calendarHTML() {
   const S = T(), m = book.month;
   if (book.timeSaved && book.slot) return '<div class="picked saved"><span>📅 ' + esc(slotLabel(book.slot)) + '</span><button class="btn sm" id="changeslot">' + esc(S.changeSlot) + '</button></div>';
-  const start = new Date(m.getFullYear(), m.getMonth(), 1).getDay(), days = new Date(m.getFullYear(), m.getMonth() + 1, 0).getDate(), todayStr = isoDate(new Date());
+  const start = new Date(m.getFullYear(), m.getMonth(), 1).getDay(), days = new Date(m.getFullYear(), m.getMonth() + 1, 0).getDate(), todayStr = vnToday();
   let cells = '';
   for (let i = 0; i < start; i++) cells += '<div class="d off"></div>';
   for (let d = 1; d <= days; d++) {
@@ -27829,7 +27965,7 @@ async function renderBook(args, params) {
   book.ignoreKey = '';  // left over if a move was abandoned half way
   restoreBook();
   book.card = params.card || book.card || null; book.name = book.name || PROFILE.name || ''; book.birth = book.birth || PROFILE.birthday || '';
-  if (!book.month) book.month = new Date(new Date().getFullYear(), new Date().getMonth(), 1);
+  if (!book.month) book.month = vnMonthStart();
   m.innerHTML = '<div class="eyebrow">' + esc(CONFIG.brand) + '</div><h1 style="margin-bottom:6px">' + esc(S.bookTitle) + '</h1>' + bookHowHTML() + '<div class="notes"><div class="note"><span class="ni">👆</span><span>' + esc(S.bookTip) + '</span></div><div class="note"><span class="ni">💾</span><span>' + esc(S.draftKept) + '</span></div></div>'
     + '<div class="sec"><h2 style="margin:18px 0 4px">' + esc(S.chooseService) + '</h2><p class="hint" style="margin-bottom:12px">' + esc(S.serviceHint) + '</p><div id="svcwrap">' + priceSheetHTML(true) + '</div>' + priceRulesHTML() + '<div id="cartwrap">' + cartHTML() + '</div></div>'
     + '<div class="sec"><h2 style="margin-bottom:4px">' + esc(S.chooseTime) + '</h2><p class="hint" style="margin-bottom:10px">' + esc(S.timeHint(L(CONFIG.tzLabel))) + '</p><div id="calwrap"><p class="hint">…</p></div></div>'
@@ -27893,6 +28029,7 @@ async function renderBook(args, params) {
   const need = () => {
     if (!book.items.length) { toast(S.needService); $('#svcwrap').scrollIntoView({ behavior: 'smooth', block: 'start' }); return false; }
     if (!book.slot) { toast(S.needSlot); $('#calwrap').scrollIntoView({ behavior: 'smooth', block: 'center' }); return false; }
+    if (SCHEDULE && !slotBookable(book.slot)) { book.slot = null; book.timeSaved = false; saveBook(); drawCal(); toast(S.slotGone); $('#calwrap').scrollIntoView({ behavior: 'smooth', block: 'center' }); return false; }
     if (needsBirth() && !book.birth) { toast(S.needBirth); $('#birthwrap').scrollIntoView({ behavior: 'smooth', block: 'center' }); return false; }
     if (!book.where) { toast(S.needWhere); $('#wherewrap').scrollIntoView({ behavior: 'smooth', block: 'center' }); return false; }
     { const w = whereOf(book.where);
@@ -27984,6 +28121,7 @@ async function renderChange(id, asAdmin) {
   const go = async (how) => {
     const st = $('#chstatus');
     if (!book.slot || book.slot === bk.slot) { toast(S.needSlot); return; }
+    if (!admin && !slotBookable(book.slot)) { book.slot = null; drawCal(); toast(S.slotGone); return; }
     if (how === 'move' && !confirm(S.adminMoveAsk)) return;
     $$('#sendchange,#movenow', m).forEach((b) => { b.disabled = true; });
     try {
@@ -27998,8 +28136,8 @@ async function renderChange(id, asAdmin) {
   $('#sendchange').addEventListener('click', () => go(admin ? 'propose' : 'request'));
   if ($('#movenow')) $('#movenow').addEventListener('click', () => go('move'));
 }
-ROUTES.book = { nav: 'book', render: renderBook };
-ROUTES.prices = { nav: 'book', render: renderPrices };
+ROUTES.book = { nav: 'home', render: renderBook };
+ROUTES.prices = { nav: 'home', render: renderPrices };
 
 /* ============================ me ============================
    Profile (name, birthday, interests), sign-in when accounts are on,
@@ -28330,6 +28468,8 @@ function meSect(id, icon, title, body, openByDefault, force) {
 
     let app = '<div class="card themecard"><h3 style="margin-bottom:8px">' + esc(S.themeTitle) + '</h3><div class="themes">' + ['auto', 'light', 'dark', 'pink'].map((t) => '<button class="chip' + (themeChoice() === t ? ' on' : '') + '" data-theme-pick="' + t + '" title="' + esc(S.themes[t]) + '">' + esc(S.themeShort[t]) + '</button>').join('') + '</div></div>';
     if (!(isStandalone() || inStoreApp())) app += '<a class="card" href="#/install" style="display:block;text-decoration:none;color:inherit"><h3 style="margin-bottom:4px">\uD83D\uDCF2 ' + esc(S.installTitle) + '</h3><p class="hint">' + esc(S.instIntro) + '</p></a>';
+    /* Booking lost its tab; Profile, where bookings are followed, is the second way in after Home. */
+    app += '<a class="btn block primary" href="#/book" style="margin-bottom:10px">📅 ' + esc(HT('Xem bài cùng Nabu', 'A reading with Nabu', 'Eine Legung mit Nabu')) + '</a>';
     app += '<div class="meacts"><div class="row3"><a class="btn" href="#/contact">💬 ' + esc(S.contactLink) + '</a><a class="btn" href="#/report">🐞 ' + esc(S.reportLink) + '</a><button class="btn" id="retour">🎓 ' + esc(S.tourLink) + '</button></div>'
       + (BE.user || BE.isAdmin() ? '<div class="row">' + (BE.user ? '<button class="btn" id="signout" style="flex:1">🚪 ' + esc(S.signOut) + '</button>' : '') + (BE.isAdmin() ? '<a class="btn gold" href="#/admin" style="flex:1">🛠 ' + esc(S.adminTitle) + '</a>' : '') + '</div>' : '') + '</div>';
     if (BE.enabled && BE.user) app += '<div class="card danger"><h3 style="margin-bottom:4px">' + esc(S.delAccount) + '</h3><p class="hint" style="margin-bottom:10px">' + esc(S.delHint) + '</p><button class="btn block" id="delacct">🗑 ' + esc(S.delAccount) + '</button><p class="hint" id="delstatus"></p></div>';
@@ -29178,7 +29318,7 @@ async function renderPlay(args) {
   /* The four built-in screens are answered before the cloud list is fetched, so
      a slow or failed connection never leaves one of them blank. */
   if (args && args[0] === 'diary') { renderDiary(); return; }
-  if (args && args[0] === 'coin') { renderCoin(); return; }
+  if (args && args[0] === 'coin') { if (isIOSApp()) { redirect('#/play'); return; } renderCoin(); return; }
   if (args && args[0] === 'tree') { renderTree(); return; }
   if (args && args[0] === 'pet') { renderPet(args[1]); return; }
   const list = (await loadActs()).slice().sort((a, b) => String(b.date).localeCompare(String(a.date)));
@@ -29205,12 +29345,14 @@ async function renderPlay(args) {
   }
   const diaryN = Object.keys(store.get('nabu-diary', {}) || {}).length;
   m.innerHTML = '<div class="eyebrow">' + esc(CONFIG.brand) + '</div><h1 style="margin-bottom:6px">' + esc(S.actTitle) + '</h1><p class="muted">' + esc(S.actIntro) + '</p><div id="acts" class="actlist">'
+    /* Lifestyle: the tree, what to wear and the diary first, then the companion and the Red Thread.
+       The yes/no coin is the one screen that reads as fortune telling, so the iPhone app leaves it out. */
+    + '<a class="actbtn act-tree live" href="#/play/tree"><span class="ic">🌸</span><span class="body"><b>' + esc(S.treeTitle) + '</b><span class="meta">' + esc(S.treeSub) + '</span></span><span class="go">›</span></a>'
+    + ('<a class="actbtn act-outfit live" href="#/outfit"><span class="ic">👗</span><span class="body"><b>' + esc(outfitTxt().title) + '</b><span class="meta">' + esc(outfitTxt().intro) + '</span></span><span class="go">›</span></a>')
+    + '<a class="actbtn act-diary live" href="#/play/diary"><span class="ic">📔</span><span class="body"><b>' + esc(S.diaryTitle) + '</b><span class="meta">' + esc(S.diarySub) + (diaryN ? ' · ' + esc(S.diaryCount(diaryN)) : '') + '</span></span><span class="chev">›</span></a>'
     + petRowHTML(S)
     + '<a class="actbtn act-love live" href="#/love"><span class="ic">' + loveKnotSVG() + '</span><span class="body"><b>' + esc(S.loveTitle) + '</b><span class="meta">' + esc(S.loveSub) + '</span></span><span class="go">›</span></a>'
-    + ('<a class="actbtn act-outfit live" href="#/outfit"><span class="ic">👗</span><span class="body"><b>' + esc(outfitTxt().title) + '</b><span class="meta">' + esc(outfitTxt().intro) + '</span></span><span class="go">›</span></a>')
-    + '<a class="actbtn act-tree live" href="#/play/tree"><span class="ic">🌸</span><span class="body"><b>' + esc(S.treeTitle) + '</b><span class="meta">' + esc(S.treeSub) + '</span></span><span class="go">›</span></a>'
-    + '<a class="actbtn act-coin live" href="#/play/coin"><span class="ic">🪙</span><span class="body"><b>' + esc(S.coinTitle) + '</b><span class="meta">' + esc(S.coinSub) + '</span></span><span class="go">›</span></a>'
-    + '<a class="actbtn act-diary live" href="#/play/diary"><span class="ic">📔</span><span class="body"><b>' + esc(S.diaryTitle) + '</b><span class="meta">' + esc(S.diarySub) + (diaryN ? ' · ' + esc(S.diaryCount(diaryN)) : '') + '</span></span><span class="chev">›</span></a>'
+    + (isIOSApp() ? '' : '<a class="actbtn act-coin live" href="#/play/coin"><span class="ic">🪙</span><span class="body"><b>' + esc(S.coinTitle) + '</b><span class="meta">' + esc(S.coinSub) + '</span></span><span class="go">›</span></a>')
     + '</div>'
     + '<div class="actquick three">' + ACT_GROUPS.map((g) => {
       const n = list.filter((a2) => a2.type === g[0]).length;
@@ -29770,24 +29912,13 @@ async function homeActHTML(root) {
   const a = list.filter(actOpen)[0] || list[0];
   if (!a || !root) return;
   const S = T();
-  const pets = PETS.all();
-  const quick = [
-    ['#/play/pet', '🐾', pets.length === 1 ? (pets[0].name || L(PET_NAMES[pets[0].kind])) : S.petTitle],
-    ['#/play/tree', '🌸', S.treeTitle],
-    ['#/play/coin', '🪙', S.coinTitle],
-    ['#/play/diary', '📔', S.diaryTitle]
-  ];
-  root.innerHTML = '<div class="sec"><div class="eyebrow">🎲 ' + esc(S.actTitle) + '</div>'
-    + '<div class="actquick">' + quick.map((q) => '<a class="aq" href="' + q[0] + '"><span class="ic">' + q[1] + '</span><b>' + esc(q[2]) + '</b></a>').join('') + '</div>'
-    /* The three published kinds, and the thread beside them: four across, the
-       same shape as the row of everyday things above. When the thread is tied
-       it carries the days, so the count is on the first screen. */
-    + '<div class="actquick next">' + ACT_GROUPS.map((g) => {
+  /* Only what Nabu publishes - piles, polls, wishes. The everyday screens and the Red Thread have
+     their own blocks on the home screen above this one. */
+  root.innerHTML = '<div class="sec"><div class="eyebrow">🎲 ' + esc(HT('Hoạt động cùng Nabu', 'Activities with Nabu', 'Aktionen mit Nabu')) + '</div>'
+    + '<div class="actquick three">' + ACT_GROUPS.map((g) => {
       const n = list.filter((a2) => a2.type === g[0]).length;
       return '<a class="aq" href="#/play/' + esc(g[2]) + '"><span class="ic">' + g[1] + '</span><b>' + esc(S.actTypes[g[0]]) + '</b>' + (n ? '<span class="cnt">' + n + '</span>' : '') + '</a>';
     }).join('')
-    + '<a class="aq" href="#/love"><span class="ic">' + loveKnotSVG() + '</span><b>' + esc(S.loveTitle) + '</b>'
-    + (LOVE.local().bond ? '<span class="cnt">' + LOVE.days({ since: LOVE.local().since }) + '</span>' : '') + '</a>'
     + '</div>'
     + '<p style="margin-top:10px"><a class="btn block" href="#/play">' + esc(S.actAll) + '</a></p></div>';
   hydrateImages(root);
@@ -31692,11 +31823,13 @@ function alertsWatchBookings() {
       const key = 'bk.' + b.id, now = String(b.status || '') + '|' + String(b.slot || '');
       const before = alertWas(key, now);
       if (!before || before === now) return;
-      const when = String(b.slot || '').replace('T', ' ');
+      /* With the day, the hour and "Vietnam time", like everywhere else a
+         booking's hour is shown: a customer abroad reads the same slot. */
+      const when = b.slot ? slotLabel(String(b.slot)) : '';
       /* The same status with a different hour is a move, not a second
          confirmation: Nabu moved it, or the client accepted her proposal. */
       const wasStatus = String(before).split('|')[0];
-      if (b.status === 'change_proposed') alertSay({ id: key + '-prop-' + now, k: 'book', t: S.alertBookProposed, b: String(b.proposedSlot || '').replace('T', ' '), href: '#/me' }, true);
+      if (b.status === 'change_proposed') alertSay({ id: key + '-prop-' + now, k: 'book', t: S.alertBookProposed, b: b.proposedSlot ? slotLabel(String(b.proposedSlot)) : '', href: '#/me' }, true);
       else if (['requested', 'confirmed'].indexOf(b.status) > -1 && b.movedFrom && (wasStatus === b.status || wasStatus === 'change_proposed' || wasStatus === 'proposal_declined') && String(before).split('|')[1] !== String(b.slot || '')) alertSay({ id: key + '-moved-' + now, k: 'book', t: S.alertBookMoved, b: when, href: '#/me' }, true);
       else if (b.status === 'confirmed') alertSay({ id: key + '-ok-' + now, k: 'book', t: S.alertBookOk, b: when, href: '#/me' }, true);
       else if (b.status === 'cancelled') alertSay({ id: key + '-no-' + now, k: 'book', t: S.alertBookNo, b: when, href: '#/me' }, true);
@@ -32135,7 +32268,7 @@ function adminBookings(p) {
   /* Hours here, money in its own tab. An order has no hour in it and never
      belonged on a calendar; neither does a transfer that has not arrived. */
   p.innerHTML = '<p class="hint">' + esc(S.bookingsIntro) + '</p><div id="bkcal" class="bkcal"></div><div id="bklist"></div>';
-  let all = [], month = new Date(new Date().getFullYear(), new Date().getMonth(), 1), day = '';
+  let all = [], month = vnMonthStart(), day = '';
   const draw = () => {
     /* Bookings keep arriving after Nabu has walked off this tab, and a
        snapshot with nowhere to go is not an error worth throwing. */
@@ -32145,7 +32278,7 @@ function adminBookings(p) {
        time somebody pressed a month arrow. */
     const books = all.filter((b) => b.kind !== 'unlock');
     const byDay = {}; books.forEach((b) => { if (['declined', 'cancelled'].indexOf(b.status) > -1) return; const k = String(b.slot).slice(0, 10); (byDay[k] = byDay[k] || []).push(b); });
-    const start = new Date(month.getFullYear(), month.getMonth(), 1).getDay(), days = new Date(month.getFullYear(), month.getMonth() + 1, 0).getDate(), todayStr = isoDate(new Date());
+    const start = new Date(month.getFullYear(), month.getMonth(), 1).getDay(), days = new Date(month.getFullYear(), month.getMonth() + 1, 0).getDate(), todayStr = vnToday();
     let cells = ''; for (let i = 0; i < start; i++) cells += '<div class="d off"></div>';
     for (let d = 1; d <= days; d++) { const ds = isoDate(new Date(month.getFullYear(), month.getMonth(), d)), n = (byDay[ds] || []).length; cells += '<button class="d' + (n ? ' has' : '') + (ds === todayStr ? ' today' : '') + (ds === day ? ' sel' : '') + '" data-bday="' + ds + '">' + d + (n ? '<span class="n">' + n + '</span>' : '') + '</button>'; }
     $('#bkcal').innerHTML = '<div class="cal"><div class="head"><button data-bcal="-1" aria-label="prev">‹</button><b>' + esc(S.months[month.getMonth()]) + ' ' + month.getFullYear() + '</b><button data-bcal="1" aria-label="next">›</button></div><div class="dow">' + S.dow.map((x) => '<span>' + x + '</span>').join('') + '</div><div class="days">' + cells + '</div>'
@@ -32164,6 +32297,9 @@ function adminBookings(p) {
       if (clash && !confirm(T().adminOverlapAsk(slotLabel(clash.slot), clash.name || clash.email || ''))) return;
       try { await BE.setBookingStatus(bk, b.getAttribute('data-bk')); toast(T().saved); } catch (e) { toast(loveWhy(e)); }
     }));
+    /* "Got paid" is on every unpaid reading here too, and did nothing: only
+       the Payments tab listened for it. Same press, same question first. */
+    bindGotPaid(p, () => all);
     /* Calling one off is behind a question, because the hour goes back on the
        calendar and the person who booked it is told. */
     $$('[data-bkoff]', p).forEach((b) => b.addEventListener('click', async () => {
@@ -32181,6 +32317,44 @@ function adminBookings(p) {
     if (marked || !BE.db) return; marked = true;
     list.filter((b) => b.kind !== 'unlock' && b.status === 'confirmed' && b.slot && (slotDate(b.slot) || 0) > Date.now())
       .forEach((b) => BE.db.collection('taken').doc(String(b.slot).replace(/[^0-9T]/g, '')).set({ bookingId: b.id, confirmed: true }, { merge: true }).catch(() => {}));
+  }));
+}
+/* "💰 Got paid", wherever a booking row shows it (the Bookings and the Payments
+   tabs). `list` gives the bookings as they are now. */
+function bindGotPaid(p, list) {
+  $$('[data-paid]', p).forEach((b) => b.addEventListener('click', async () => {
+    const bk = list().filter((x) => x.id === b.getAttribute('data-paid'))[0];
+    if (!bk) return;
+    /* Confirming an order takes its two buttons away, and this one then slides
+       left into the space where "confirm" stood a moment ago - so the second
+       half of a double tap landed on "the money arrived", which opens a course
+       and cannot be undone from this screen. It asks first now, so a stray tap
+       hits the question rather than the money. confirm() is no use here: some
+       phone webviews skip it outright. */
+    if (b.getAttribute('data-sure') !== '1') {
+      b.setAttribute('data-sure', '1');
+      b.textContent = T().adminGotPaidSure;
+      setTimeout(() => {
+        if (b.getAttribute('data-sure') === '1') {
+          b.removeAttribute('data-sure');
+          b.textContent = '💰 ' + T().adminGotPaid;
+        }
+      }, 5000);
+      return;
+    }
+    /* Paid for a reading still waiting confirms it too (markPaid), so the
+       same overlap question as the confirm button is asked first. */
+    if (bk.kind !== 'unlock' && bk.status === 'requested' && bk.slot) {
+      const clash = bkClash(list().filter((x) => x.kind !== 'unlock'), bk.id, bk.slot);
+      if (clash && !confirm(T().adminOverlapAsk(slotLabel(clash.slot), clash.name || clash.email || ''))) return;
+    }
+    b.disabled = true;
+    try {
+      const opened = await BE.markPaid(bk);
+      const wed = (bk.items || []).filter((it) => it.id === 'wedding' && it.wid)[0];
+      if (wed) await WED.setPaid(wed.wid, true);
+      toast(opened.length ? T().payOpened(opened.map(accessName).join(', ')) : T().payMarked);
+    } catch (e) { b.disabled = false; toast(loveWhy(e)); }
   }));
 }
 /* Another confirmed booking whose hour runs into `slot`, or null. */
@@ -32374,34 +32548,7 @@ function adminPay(p) {
     }));
     /* The press that matters. It writes what was bought onto the buyer's own
        account, so there is no code for anybody to pass around. */
-    $$('[data-paid]', p).forEach((b) => b.addEventListener('click', async () => {
-      const bk = all.filter((x) => x.id === b.getAttribute('data-paid'))[0];
-      if (!bk) return;
-      /* Confirming an order takes its two buttons away, and this one then slides
-         left into the space where "confirm" stood a moment ago - so the second
-         half of a double tap landed on "the money arrived", which opens a course
-         and cannot be undone from this screen. It asks first now, so a stray tap
-         hits the question rather than the money. confirm() is no use here: some
-         phone webviews skip it outright. */
-      if (b.getAttribute('data-sure') !== '1') {
-        b.setAttribute('data-sure', '1');
-        b.textContent = T().adminGotPaidSure;
-        setTimeout(() => {
-          if (b.getAttribute('data-sure') === '1') {
-            b.removeAttribute('data-sure');
-            b.textContent = '💰 ' + T().adminGotPaid;
-          }
-        }, 5000);
-        return;
-      }
-      b.disabled = true;
-      try {
-        const opened = await BE.markPaid(bk);
-        const wed = (bk.items || []).filter((it) => it.id === 'wedding' && it.wid)[0];
-        if (wed) await WED.setPaid(wed.wid, true);
-        toast(opened.length ? T().payOpened(opened.map(accessName).join(', ')) : T().payMarked);
-      } catch (e) { b.disabled = false; toast(loveWhy(e)); }
-    }));
+    bindGotPaid(p, () => all);
     /* The one thing Nabu could not do anywhere: say the money arrived. */
     $$('[data-wpaid]', p).forEach((b) => b.addEventListener('click', async () => {
       const id = b.getAttribute('data-wpaid');
@@ -32630,7 +32777,7 @@ function adminSale(p) {
 ROUTES.admin = { nav: '', render: renderAdmin };
 
 /* ============================ boot ============================ */
-window.APP_VERSION = 'v269';
+window.APP_VERSION = 'v270';
 window.NABU = { CONFIG: CONFIG, SALE: SALE, salePrice: salePrice, loadActs: loadActs, BACK: BACK, LESSONS: LESSONS, localAnswer: localAnswer, compatVerdict: compatVerdict, numerologyOf: numerologyOf, ZDEEP: ZDEEP, lunarToday: lunarToday, solarToLunar: solarToLunar, DECK: DECK, INSIGHT: INSIGHT, KW: KW, ASK: ASK, GUIDES: GUIDES, SERVICES: SERVICES, COURSES: COURSES, ACCESS: ACCESS, INTERESTS: INTERESTS, plusOn: () => plusOn(), proOn: () => proOn(), luckUnlimited: () => luckUnlimited(), ZODIAC: ZODIAC, pick: pick, book: book, PLAY_ITEMS: PLAY_ITEMS, PLAY_SUB_SKUS: PLAY_SUB_SKUS, playItem: playItem, BILL: BILL, SUBS: SUBS, billUse: billUse, APPLE_BILL: APPLE_BILL, appleAccountToken: appleAccountToken, renderStore: renderStore, pickLimitHTML: pickLimitHTML, subStateWord: subStateWord,
   insightHTML: insightHTML, insightOf: insightOf, sunSignIndex: sunSignIndex, lifePath: lifePath, PROFILE: () => PROFILE, BE: BE, inAppBrowser: inAppBrowser, ACTS: ACTS, CMT: CMT, LIKES: LIKES, kbReady: kbReady, AI: AI, STR: STR, KB_URL: (typeof KB_URL === 'string' ? KB_URL : ''),
   ANGELS: ANGELS, angelRead: angelRead, CODEBOOK: CODEBOOK, redeemCode: redeemCode, loadCodebook: loadCodebook, petHomeSVG: petHomeSVG, petStill: petStill, PET_HOMES: PET_HOMES, PET_WARDROBE: PET_WARDROBE, PET_SLOTS: PET_SLOTS,

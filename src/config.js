@@ -55,11 +55,15 @@ const CONFIG = {
   attachments: false,
   // Photos in chat without Storage: shrunk on the phone and kept inside the message itself.
   chatImages: true,
-  // Where booking requests are mailed as calendar invitations (an .ics the
-  // mail app adds to the calendar). Sent by the worker in worker/ through
-  // Resend; set bookingEndpoint to '<worker url>/booking' once deployed.
+  // Where booking requests are mailed (a new booking with an .ics the mail
+  // app adds to the calendar; requests to move or cancel as plain mail).
+  // The worker in worker/ sends them through Resend to MAIL_TO in
+  // worker/wrangler.toml - never to an address the app names - and sends
+  // nothing until its RESEND_API_KEY secret exists. The worker ignores any
+  // address the app sends (report.js still sends adminNotifyEmails); keep this
+  // list matching MAIL_TO so the two read the same.
   adminNotifyEmails: ['nabutarot@outlook.com', 'angela_le_@outlook.com'],
-  bookingEndpoint: '',
+  bookingEndpoint: 'https://nabu-ai.0211nhatanh.workers.dev/booking',
   // Bug reports from #/report are mailed to the same addresses through the
   // worker: set reportEndpoint to '<worker url>/report' once deployed.
   reportEndpoint: '',

@@ -257,7 +257,7 @@ function adminBookings(p) {
   /* Hours here, money in its own tab. An order has no hour in it and never
      belonged on a calendar; neither does a transfer that has not arrived. */
   p.innerHTML = '<p class="hint">' + esc(S.bookingsIntro) + '</p><div id="bkcal" class="bkcal"></div><div id="bklist"></div>';
-  let all = [], month = new Date(new Date().getFullYear(), new Date().getMonth(), 1), day = '';
+  let all = [], month = vnMonthStart(), day = '';
   const draw = () => {
     /* Bookings keep arriving after Nabu has walked off this tab, and a
        snapshot with nowhere to go is not an error worth throwing. */
@@ -267,7 +267,7 @@ function adminBookings(p) {
        time somebody pressed a month arrow. */
     const books = all.filter((b) => b.kind !== 'unlock');
     const byDay = {}; books.forEach((b) => { if (['declined', 'cancelled'].indexOf(b.status) > -1) return; const k = String(b.slot).slice(0, 10); (byDay[k] = byDay[k] || []).push(b); });
-    const start = new Date(month.getFullYear(), month.getMonth(), 1).getDay(), days = new Date(month.getFullYear(), month.getMonth() + 1, 0).getDate(), todayStr = isoDate(new Date());
+    const start = new Date(month.getFullYear(), month.getMonth(), 1).getDay(), days = new Date(month.getFullYear(), month.getMonth() + 1, 0).getDate(), todayStr = vnToday();
     let cells = ''; for (let i = 0; i < start; i++) cells += '<div class="d off"></div>';
     for (let d = 1; d <= days; d++) { const ds = isoDate(new Date(month.getFullYear(), month.getMonth(), d)), n = (byDay[ds] || []).length; cells += '<button class="d' + (n ? ' has' : '') + (ds === todayStr ? ' today' : '') + (ds === day ? ' sel' : '') + '" data-bday="' + ds + '">' + d + (n ? '<span class="n">' + n + '</span>' : '') + '</button>'; }
     $('#bkcal').innerHTML = '<div class="cal"><div class="head"><button data-bcal="-1" aria-label="prev">‹</button><b>' + esc(S.months[month.getMonth()]) + ' ' + month.getFullYear() + '</b><button data-bcal="1" aria-label="next">›</button></div><div class="dow">' + S.dow.map((x) => '<span>' + x + '</span>').join('') + '</div><div class="days">' + cells + '</div>'
@@ -286,6 +286,9 @@ function adminBookings(p) {
       if (clash && !confirm(T().adminOverlapAsk(slotLabel(clash.slot), clash.name || clash.email || ''))) return;
       try { await BE.setBookingStatus(bk, b.getAttribute('data-bk')); toast(T().saved); } catch (e) { toast(loveWhy(e)); }
     }));
+    /* "Got paid" is on every unpaid reading here too, and did nothing: only
+       the Payments tab listened for it. Same press, same question first. */
+    bindGotPaid(p, () => all);
     /* Calling one off is behind a question, because the hour goes back on the
        calendar and the person who booked it is told. */
     $$('[data-bkoff]', p).forEach((b) => b.addEventListener('click', async () => {
@@ -303,6 +306,44 @@ function adminBookings(p) {
     if (marked || !BE.db) return; marked = true;
     list.filter((b) => b.kind !== 'unlock' && b.status === 'confirmed' && b.slot && (slotDate(b.slot) || 0) > Date.now())
       .forEach((b) => BE.db.collection('taken').doc(String(b.slot).replace(/[^0-9T]/g, '')).set({ bookingId: b.id, confirmed: true }, { merge: true }).catch(() => {}));
+  }));
+}
+/* "💰 Got paid", wherever a booking row shows it (the Bookings and the Payments
+   tabs). `list` gives the bookings as they are now. */
+function bindGotPaid(p, list) {
+  $$('[data-paid]', p).forEach((b) => b.addEventListener('click', async () => {
+    const bk = list().filter((x) => x.id === b.getAttribute('data-paid'))[0];
+    if (!bk) return;
+    /* Confirming an order takes its two buttons away, and this one then slides
+       left into the space where "confirm" stood a moment ago - so the second
+       half of a double tap landed on "the money arrived", which opens a course
+       and cannot be undone from this screen. It asks first now, so a stray tap
+       hits the question rather than the money. confirm() is no use here: some
+       phone webviews skip it outright. */
+    if (b.getAttribute('data-sure') !== '1') {
+      b.setAttribute('data-sure', '1');
+      b.textContent = T().adminGotPaidSure;
+      setTimeout(() => {
+        if (b.getAttribute('data-sure') === '1') {
+          b.removeAttribute('data-sure');
+          b.textContent = '💰 ' + T().adminGotPaid;
+        }
+      }, 5000);
+      return;
+    }
+    /* Paid for a reading still waiting confirms it too (markPaid), so the
+       same overlap question as the confirm button is asked first. */
+    if (bk.kind !== 'unlock' && bk.status === 'requested' && bk.slot) {
+      const clash = bkClash(list().filter((x) => x.kind !== 'unlock'), bk.id, bk.slot);
+      if (clash && !confirm(T().adminOverlapAsk(slotLabel(clash.slot), clash.name || clash.email || ''))) return;
+    }
+    b.disabled = true;
+    try {
+      const opened = await BE.markPaid(bk);
+      const wed = (bk.items || []).filter((it) => it.id === 'wedding' && it.wid)[0];
+      if (wed) await WED.setPaid(wed.wid, true);
+      toast(opened.length ? T().payOpened(opened.map(accessName).join(', ')) : T().payMarked);
+    } catch (e) { b.disabled = false; toast(loveWhy(e)); }
   }));
 }
 /* Another confirmed booking whose hour runs into `slot`, or null. */
@@ -496,34 +537,7 @@ function adminPay(p) {
     }));
     /* The press that matters. It writes what was bought onto the buyer's own
        account, so there is no code for anybody to pass around. */
-    $$('[data-paid]', p).forEach((b) => b.addEventListener('click', async () => {
-      const bk = all.filter((x) => x.id === b.getAttribute('data-paid'))[0];
-      if (!bk) return;
-      /* Confirming an order takes its two buttons away, and this one then slides
-         left into the space where "confirm" stood a moment ago - so the second
-         half of a double tap landed on "the money arrived", which opens a course
-         and cannot be undone from this screen. It asks first now, so a stray tap
-         hits the question rather than the money. confirm() is no use here: some
-         phone webviews skip it outright. */
-      if (b.getAttribute('data-sure') !== '1') {
-        b.setAttribute('data-sure', '1');
-        b.textContent = T().adminGotPaidSure;
-        setTimeout(() => {
-          if (b.getAttribute('data-sure') === '1') {
-            b.removeAttribute('data-sure');
-            b.textContent = '💰 ' + T().adminGotPaid;
-          }
-        }, 5000);
-        return;
-      }
-      b.disabled = true;
-      try {
-        const opened = await BE.markPaid(bk);
-        const wed = (bk.items || []).filter((it) => it.id === 'wedding' && it.wid)[0];
-        if (wed) await WED.setPaid(wed.wid, true);
-        toast(opened.length ? T().payOpened(opened.map(accessName).join(', ')) : T().payMarked);
-      } catch (e) { b.disabled = false; toast(loveWhy(e)); }
-    }));
+    bindGotPaid(p, () => all);
     /* The one thing Nabu could not do anywhere: say the money arrived. */
     $$('[data-wpaid]', p).forEach((b) => b.addEventListener('click', async () => {
       const id = b.getAttribute('data-wpaid');

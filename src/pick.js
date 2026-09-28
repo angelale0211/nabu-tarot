@@ -31,7 +31,23 @@ const pickToday = () => { const s = store.get('nabu-pick-day', null); return s &
    left a reading on the phone belonging to nobody, and the owner asked for
    the plain rule instead: signed out, the deck is on the table and the way to
    use it is to sign in. */
-const guestSpent = () => !signedIn();
+/* Except in the iPhone app. Apple's reviewers open it signed out, and an app
+   whose first screen of cards is a sign-in wall is refused (guideline 5.1.1:
+   a sign-in may only be asked for what is really the account's). There a
+   visitor draws one card, held in memory only (pick.guest) - nothing on the
+   phone, nothing on an account, gone when the app is closed - and the sign-in
+   card is asked for keeping it and for the next day's. Signing in with that
+   card on the table makes it the account's card for the day (guestAdopt).
+   The web and Android keep the plain rule the owner asked for. */
+const guestSpent = () => !signedIn() && !(isIOSApp() && !pick.guest);
+const guestDraws = () => isIOSApp() && !signedIn() && !plusOn();
+function guestAdopt() {
+  const g = pick.guest; pick.guest = null;
+  const had = pickToday();
+  /* The account already has a card today (from another phone): that one stands. */
+  if (had && had.id !== g.id) { if (pick.chosen === g.id) pick.chosen = null; return; }
+  if (!had) { pickSpend(g.id, g.focus); TODAY.add('pick', { id: g.id, focus: g.focus }); }
+}
 /* Whose card this is. Nothing kept on the phone is dealt back until the
    account has answered, and then only to the account it belongs to. */
 const drawIsMine = () => signedInForSure() || (typeof BE === 'undefined' || !BE.enabled);
@@ -50,7 +66,7 @@ function pickLimitHTML() {
   const S = T();
   /* Two different sentences, because they ask for two different things: one
      wants tomorrow, the other wants an account. */
-  if (guestSpent()) return needAccountHTML(S.needInDraw);
+  if (guestSpent()) return needAccountHTML(pick.guest ? (S.needInKeep || S.needInDraw) : S.needInDraw);
   return '<div class="card luckbox"><p class="lead">' + esc(S.pickSpent) + '</p>'
     + (inStoreApp()
       /* Both plans, not Plus alone: one button called "Subscribe" under a
@@ -68,13 +84,15 @@ function pickLimitHTML() {
 function renderPick(args, params) {
   /* A new day deals afresh. Whatever this screen held yesterday, in the memory
      of an app left open overnight, is not today's card. */
-  { const today = isoDate(new Date()); if (pick.day !== today) { pick.day = today; pick.hand = []; pick.chosen = null; } }
+  { const today = isoDate(new Date()); if (pick.day !== today) { pick.day = today; pick.hand = []; pick.chosen = null; pick.guest = null; } }
   /* Nobody signed in, nobody shown a card - whatever this screen or this phone
      still holds. There were two ways a kept card came back and only one of
      them had been closed, which is why the owner kept finding the same
      reading under the deck after signing out. This is the rule itself, said
      once, before either of them runs. */
-  if (!drawIsMine()) pick.chosen = null;
+  if (pick.guest && signedInForSure()) guestAdopt();
+  /* The iPhone app's visitor keeps the one card they drew in this sitting. */
+  if (!drawIsMine()) pick.chosen = (pick.guest && guestDraws()) ? pick.guest.id : null;
   // A shared link (#/pick?card=…) opens straight on that card, in the focus it was drawn with.
   const want = params && params.card && cardById(params.card) ? params.card : '';
   if (want && pick.chosen !== want) {
@@ -140,8 +158,8 @@ function renderPick(args, params) {
   $$('[data-card]', m).forEach((b) => b.addEventListener('click', () => {
     if (pick.chosen != null || pickSpent()) return;
     pick.chosen = b.getAttribute('data-card');
-    pickSpend(pick.chosen, pick.focus);
-    TODAY.add('pick', { id: pick.chosen, focus: pick.focus });
+    if (guestDraws()) pick.guest = { id: pick.chosen, focus: pick.focus };
+    else { pickSpend(pick.chosen, pick.focus); TODAY.add('pick', { id: pick.chosen, focus: pick.focus }); }
     $$('.slot', m).forEach((s) => s.classList.add($('button', s) === b ? 'chosen' : 'dim'));
     $$('[data-focus]', m).forEach((x) => { if (!x.classList.contains('on')) x.disabled = true; });
     $('.tap-hint', m).textContent = '';

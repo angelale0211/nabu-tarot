@@ -33,21 +33,37 @@ function clashesConfirmed(key, ignore) {
   const len = (SCHEDULE && SCHEDULE.slotMinutes) || 60, at = slotMin(String(key).replace(/[^0-9T]/g, ''));
   return Object.keys(TAKEN).some((k) => TAKEN[k] === 'confirmed' && k !== ignore && Math.abs(slotMin(k) - at) < len);
 }
+/* Nabu works in Vietnam, so "today", the notice window and "has this hour
+   passed" are Vietnam's (UTC+7, no daylight saving), not the phone's. At 20:00
+   in Germany it is already tomorrow in Hanoi; counted from the phone's own
+   date, a customer there was offered hours inside Nabu's notice window. The
+   date arithmetic is done on plain YYYY-MM-DD in UTC, which has no daylight
+   saving to trip over. */
+const VN_MS = 7 * 3600000;
+function vnToday(ms) { return new Date((ms == null ? Date.now() : ms) + VN_MS).toISOString().slice(0, 10); }
+const isoUTC = (y, m, d) => new Date(Date.UTC(y, m, d)).toISOString().slice(0, 10);
+const addDaysISO = (iso, n) => isoUTC(+iso.slice(0, 4), +iso.slice(5, 7) - 1, +iso.slice(8, 10) + n);
+function vnMonthStart() { const t = vnToday(); return new Date(+t.slice(0, 4), +t.slice(5, 7) - 1, 1); }
 function slotsFor(dateStr) {
-  const S = SCHEDULE; if (!S) return [];
-  const d = new Date(dateStr + 'T00:00:00'), today = new Date(); today.setHours(0, 0, 0, 0);
-  const lead = new Date(today); lead.setDate(lead.getDate() + (S.leadDays || 0));
-  const horizon = new Date(today); horizon.setDate(horizon.getDate() + (S.horizonDays || 42));
-  if (d < lead || d > horizon) return [];
+  const S = SCHEDULE; if (!S || !/^\d{4}-\d{2}-\d{2}$/.test(String(dateStr))) return [];
+  const today = vnToday(), lead = addDaysISO(today, S.leadDays || 0), horizon = addDaysISO(today, S.horizonDays || 42);
+  if (dateStr < lead || dateStr > horizon) return [];
   if ((S.blocked || []).indexOf(dateStr) > -1) return [];
-  const base = (S.weekly || {})[String(d.getDay())] || [], extra = (S.extra || {})[dateStr] || [];
-  const all = base.concat(extra).filter((t, i, a) => a.indexOf(t) === i).sort(), booked = S.booked || [];
-  return all.map((t) => { const k = slotKey(dateStr, t); return { time: t, key: k, taken: booked.indexOf(k) > -1 || !!TAKEN[k.replace(/[^0-9T]/g, '')] || clashesConfirmed(k, book.ignoreKey) }; });
+  const dow = new Date(Date.UTC(+dateStr.slice(0, 4), +dateStr.slice(5, 7) - 1, +dateStr.slice(8, 10))).getUTCDay();
+  const base = (S.weekly || {})[String(dow)] || [], extra = (S.extra || {})[dateStr] || [];
+  const all = base.concat(extra).filter((t, i, a) => a.indexOf(t) === i).sort(), booked = S.booked || [], now = Date.now();
+  /* An hour already begun is never offered, even with no notice days set. */
+  return all.filter((t) => { const at = slotDate(slotKey(dateStr, t)); return at && at.getTime() > now; })
+    .map((t) => { const k = slotKey(dateStr, t); return { time: t, key: k, taken: booked.indexOf(k) > -1 || !!TAKEN[k.replace(/[^0-9T]/g, '')] || clashesConfirmed(k, book.ignoreKey) }; });
 }
+/* Still bookable now: on the calendar, free, not past, not inside the notice
+   window. A draft kept on the phone can hold an hour that stopped being any of
+   these while it sat there. */
+function slotBookable(key) { return !!key && slotsFor(String(key).slice(0, 10)).some((s) => s.key === key && !s.taken); }
 function calendarHTML() {
   const S = T(), m = book.month;
   if (book.timeSaved && book.slot) return '<div class="picked saved"><span>📅 ' + esc(slotLabel(book.slot)) + '</span><button class="btn sm" id="changeslot">' + esc(S.changeSlot) + '</button></div>';
-  const start = new Date(m.getFullYear(), m.getMonth(), 1).getDay(), days = new Date(m.getFullYear(), m.getMonth() + 1, 0).getDate(), todayStr = isoDate(new Date());
+  const start = new Date(m.getFullYear(), m.getMonth(), 1).getDay(), days = new Date(m.getFullYear(), m.getMonth() + 1, 0).getDate(), todayStr = vnToday();
   let cells = '';
   for (let i = 0; i < start; i++) cells += '<div class="d off"></div>';
   for (let d = 1; d <= days; d++) {
@@ -289,7 +305,7 @@ async function renderBook(args, params) {
   book.ignoreKey = '';  // left over if a move was abandoned half way
   restoreBook();
   book.card = params.card || book.card || null; book.name = book.name || PROFILE.name || ''; book.birth = book.birth || PROFILE.birthday || '';
-  if (!book.month) book.month = new Date(new Date().getFullYear(), new Date().getMonth(), 1);
+  if (!book.month) book.month = vnMonthStart();
   m.innerHTML = '<div class="eyebrow">' + esc(CONFIG.brand) + '</div><h1 style="margin-bottom:6px">' + esc(S.bookTitle) + '</h1>' + bookHowHTML() + '<div class="notes"><div class="note"><span class="ni">👆</span><span>' + esc(S.bookTip) + '</span></div><div class="note"><span class="ni">💾</span><span>' + esc(S.draftKept) + '</span></div></div>'
     + '<div class="sec"><h2 style="margin:18px 0 4px">' + esc(S.chooseService) + '</h2><p class="hint" style="margin-bottom:12px">' + esc(S.serviceHint) + '</p><div id="svcwrap">' + priceSheetHTML(true) + '</div>' + priceRulesHTML() + '<div id="cartwrap">' + cartHTML() + '</div></div>'
     + '<div class="sec"><h2 style="margin-bottom:4px">' + esc(S.chooseTime) + '</h2><p class="hint" style="margin-bottom:10px">' + esc(S.timeHint(L(CONFIG.tzLabel))) + '</p><div id="calwrap"><p class="hint">…</p></div></div>'
@@ -353,6 +369,7 @@ async function renderBook(args, params) {
   const need = () => {
     if (!book.items.length) { toast(S.needService); $('#svcwrap').scrollIntoView({ behavior: 'smooth', block: 'start' }); return false; }
     if (!book.slot) { toast(S.needSlot); $('#calwrap').scrollIntoView({ behavior: 'smooth', block: 'center' }); return false; }
+    if (SCHEDULE && !slotBookable(book.slot)) { book.slot = null; book.timeSaved = false; saveBook(); drawCal(); toast(S.slotGone); $('#calwrap').scrollIntoView({ behavior: 'smooth', block: 'center' }); return false; }
     if (needsBirth() && !book.birth) { toast(S.needBirth); $('#birthwrap').scrollIntoView({ behavior: 'smooth', block: 'center' }); return false; }
     if (!book.where) { toast(S.needWhere); $('#wherewrap').scrollIntoView({ behavior: 'smooth', block: 'center' }); return false; }
     { const w = whereOf(book.where);
@@ -444,6 +461,7 @@ async function renderChange(id, asAdmin) {
   const go = async (how) => {
     const st = $('#chstatus');
     if (!book.slot || book.slot === bk.slot) { toast(S.needSlot); return; }
+    if (!admin && !slotBookable(book.slot)) { book.slot = null; drawCal(); toast(S.slotGone); return; }
     if (how === 'move' && !confirm(S.adminMoveAsk)) return;
     $$('#sendchange,#movenow', m).forEach((b) => { b.disabled = true; });
     try {
@@ -458,5 +476,5 @@ async function renderChange(id, asAdmin) {
   $('#sendchange').addEventListener('click', () => go(admin ? 'propose' : 'request'));
   if ($('#movenow')) $('#movenow').addEventListener('click', () => go('move'));
 }
-ROUTES.book = { nav: 'book', render: renderBook };
-ROUTES.prices = { nav: 'book', render: renderPrices };
+ROUTES.book = { nav: 'home', render: renderBook };
+ROUTES.prices = { nav: 'home', render: renderPrices };

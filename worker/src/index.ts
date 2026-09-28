@@ -12,7 +12,7 @@ import { checkPurchase, acknowledge, grantUntil, checkSubscription, acknowledgeS
 import type { PlayEnv } from "./play";
 import { fsGet } from "./fs";
 import { claimCode } from "./codes";
-import { answerProposal } from "./bookings";
+import { answerProposal, mailBooking, mailTo } from "./bookings";
 import { claimPurchase, markGranted, movePurchase, removeAccessFor, sweepRefunds, tokenId, ledgerSet } from "./refunds";
 import { itemBySku, itemByKey } from "./catalog";
 import { applySubscription, dropSubscriptionFrom, payRoom, noteGranted } from "./entitle";
@@ -24,7 +24,9 @@ export interface Env {
   GEMINI_API_KEY?: string;
   AI?: { run: (model: string, input: unknown) => Promise<{ response?: string }> }; // Workers AI binding (free tier, open models)
   ALLOWED_ORIGIN?: string; // e.g. https://nabutarot.com
-  RESEND_API_KEY?: string; // for /booking: mails the reader a calendar invitation
+  RESEND_API_KEY?: string; // for /booking and /report: mail through Resend; unset = no mail is sent
+  MAIL_TO?: string;         // where booking mail goes, comma-separated (wrangler.toml); never taken from a request
+  MAIL_FROM?: string;       // the sender; onboarding@resend.dev until a domain is verified at Resend
   PLAY_SERVICE_ACCOUNT?: string; // the service-account JSON, for checking purchases
   ANDROID_PACKAGE?: string;      // app.nabutarot.twa
   FIREBASE_PROJECT_ID?: string; // whose sign-ins this worker accepts; unset = anybody may ask
@@ -315,43 +317,18 @@ const tooMany = (v: { retryAfter: number }, headers: Record<string, string>): Re
     status: 429, headers: { ...headers, "Retry-After": String(v.retryAfter) },
   });
 
-const recipients = (to: unknown): string[] => (Array.isArray(to) ? to : [to]).map((x) => String(x || "").trim()).filter((x) => /^[^@\s]+@[^@\s]+$/.test(x)).slice(0, 5);
 
 /* Mail a bug report from #/report (Resend). */
 async function reportMail(request: Request, env: Env, headers: Record<string, string>): Promise<Response> {
   if (!env.RESEND_API_KEY) return new Response(JSON.stringify({ error: "no mail key" }), { status: 500, headers });
   let b: { text?: string; contact?: string; info?: string; to?: string | string[]; lang?: string };
   try { b = await request.json(); } catch { return new Response(JSON.stringify({ error: "bad json" }), { status: 400, headers }); }
-  const toList = recipients(b.to), text = String(b.text || "").trim().slice(0, 4000);
+  /* Only to MAIL_TO, like booking mail: with the mail key set, an endpoint that
+     mails whoever the request names is a free open relay for anybody. */
+  const toList = mailTo(env), text = String(b.text || "").trim().slice(0, 4000);
   if (!toList.length || !text) return new Response(JSON.stringify({ error: "missing" }), { status: 400, headers });
   const bodyText = text + "\n\n" + (b.contact ? "Liên hệ: " + String(b.contact).slice(0, 200) + "\n" : "") + "— " + String(b.info || "").slice(0, 600);
   const r = await fetch("https://api.resend.com/emails", { method: "POST", headers: { Authorization: "Bearer " + env.RESEND_API_KEY, "Content-Type": "application/json" }, body: JSON.stringify({ from: "Nabu Tarot <onboarding@resend.dev>", to: toList, subject: "Báo lỗi app Nabu Tarot", text: bodyText }) });
-  if (!r.ok) return new Response(JSON.stringify({ error: "mail " + r.status }), { status: 502, headers });
-  return new Response(JSON.stringify({ ok: true }), { headers });
-}
-
-/* Build an iCalendar invitation for a booking and mail it (Resend). Outlook and
-   most mail apps add a METHOD:REQUEST invitation to the calendar on arrival. */
-async function bookingMail(request: Request, env: Env, headers: Record<string, string>): Promise<Response> {
-  if (!env.RESEND_API_KEY) return new Response(JSON.stringify({ error: "no mail key" }), { status: 500, headers });
-  let b: { booking: Record<string, string>; tz?: string; to?: string | string[]; lang?: string };
-  try { b = await request.json(); } catch { return new Response(JSON.stringify({ error: "bad json" }), { status: 400, headers }); }
-  const bk = b.booking || {}, toList = recipients(b.to), to = toList[0] || "";
-  if (!to || !bk.slot) return new Response(JSON.stringify({ error: "missing" }), { status: 400, headers });
-  const start = bk.slot.replace(/[^0-9T]/g, "") + "00"; // YYYYMMDDTHHMM00 local time
-  const [d, t] = bk.slot.split("T"), hh = Number(t.slice(0, 2)) + 1;
-  const end = d.replace(/-/g, "") + "T" + String(hh).padStart(2, "0") + t.slice(3, 5) + "00";
-  const tz = b.tz || "Asia/Ho_Chi_Minh";
-  const summary = "Nabu Tarot: " + (bk.service || "") + (bk.pkg ? " – " + bk.pkg : "") + (bk.name ? " · " + bk.name : "");
-  const desc = [bk.service && bk.pkg ? bk.service + " – " + bk.pkg + (bk.price ? " (" + bk.price + "đ)" : "") : "", bk.topic ? "Chủ đề: " + bk.topic : "", bk.name ? "Khách: " + bk.name : "", bk.email ? "Email: " + bk.email : "", bk.birth ? "Ngày giờ sinh: " + bk.birth : "", bk.card ? "Lá đã rút: " + bk.card : "", bk.note ? "Ghi chú: " + bk.note : "", bk.id ? "Mã đặt lịch: " + bk.id : ""].filter(Boolean).join("\n");
-  const esc = (s: string) => s.replace(/\\/g, "\\\\").replace(/;/g, "\\;").replace(/,/g, "\\,").replace(/\n/g, "\\n");
-  const uid = (bk.id || start) + "@nabu-tarot";
-  const ics = ["BEGIN:VCALENDAR", "VERSION:2.0", "PRODID:-//Nabu Tarot//Booking//VI", "METHOD:REQUEST", "BEGIN:VEVENT", "UID:" + uid, "DTSTAMP:" + new Date().toISOString().replace(/[-:]/g, "").slice(0, 15) + "Z", "DTSTART;TZID=" + tz + ":" + start, "DTEND;TZID=" + tz + ":" + end, "SUMMARY:" + esc(summary), "DESCRIPTION:" + esc(desc), "ORGANIZER;CN=Nabu Tarot:mailto:" + to, "ATTENDEE;CN=Nabu;ROLE=REQ-PARTICIPANT;PARTSTAT=ACCEPTED:mailto:" + to, "STATUS:CONFIRMED", "END:VEVENT", "END:VCALENDAR"].join("\r\n");
-  const r = await fetch("https://api.resend.com/emails", { method: "POST", headers: { Authorization: "Bearer " + env.RESEND_API_KEY, "Content-Type": "application/json" }, body: JSON.stringify({
-    from: "Nabu Tarot <onboarding@resend.dev>", to: toList, subject: summary,
-    text: desc + "\n\nLịch hẹn đã được thêm vào lịch (file .ics đính kèm).",
-    attachments: [{ filename: "nabu-booking.ics", content: btoa(unescape(encodeURIComponent(ics))), content_type: "text/calendar; method=REQUEST" }],
-  }) });
   if (!r.ok) return new Response(JSON.stringify({ error: "mail " + r.status }), { status: 502, headers });
   return new Response(JSON.stringify({ ok: true }), { headers });
 }
@@ -362,9 +339,9 @@ export default {
     if (request.method === "OPTIONS") return new Response(null, { headers });
     if (request.method !== "POST") return new Response(JSON.stringify({ error: "POST only" }), { status: 405, headers });
 
-    /* The two mail endpoints do not need an account - a bug report from
-       somebody who cannot sign in is exactly the report worth having - so they
-       are counted by address instead. */
+    /* The bug-report mail does not need an account - a report from somebody
+       who cannot sign in is exactly the report worth having - so it is counted
+       by address instead. Booking mail (/booking, below) needs the sign-in. */
     const path = new URL(request.url).pathname;
     if (path.endsWith("/rtdn")) return handleRtdn(request, env);
     /* The App Store's notifications. Counted by address like the mail endpoints, generously - Apple sends
@@ -374,10 +351,10 @@ export default {
       if (!v.ok) return tooMany(v, headers);
       return handleAsn(request, env);
     }
-    if (path.endsWith("/booking") || path.endsWith("/report")) {
+    if (path.endsWith("/report")) {
       const v = await allow(env, caller(request), MAIL_A_DAY, MAIL_A_MINUTE);
       if (!v.ok) return tooMany(v, headers);
-      return path.endsWith("/booking") ? bookingMail(request, env, headers) : reportMail(request, env, headers);
+      return reportMail(request, env, headers);
     }
 
     /* ---- somebody bought something in the Android app ----
@@ -590,6 +567,29 @@ export default {
        worker can read, and bound to the account that typed it. The same
        account may type it again on another phone; a different account is
        refused. The access is then written from here, like a purchase. */
+    /* A booking, a request to move one or to call one off, mailed to Nabu.
+       Only the id comes from the phone; see mailBooking in bookings.ts. With
+       no mail key or no MAIL_TO it answers { ok, sent: false } and sends
+       nothing, so the app can call it before mail is set up. */
+    if (path.endsWith("/booking")) {
+      if (!env.RESEND_API_KEY || !env.MAIL_TO) return new Response(JSON.stringify({ ok: true, sent: false }), { headers });
+      if (!env.FIREBASE_PROJECT_ID || !env.PLAY_SERVICE_ACCOUNT) return new Response(JSON.stringify({ error: "not configured" }), { status: 500, headers });
+      const person = await whoIsAsking(request, env.FIREBASE_PROJECT_ID);
+      if (!person) return new Response(JSON.stringify({ error: "signin" }), { status: 401, headers });
+      const v = await allow(env, "bkmail:" + person.uid, MAIL_A_DAY, MAIL_A_MINUTE);
+      if (!v.ok) return tooMany(v, headers);
+      let b: { id?: string };
+      try { b = await request.json(); } catch { return new Response(JSON.stringify({ error: "bad json" }), { status: 400, headers }); }
+      try {
+        const got = await mailBooking(env, person.uid, String(b.id || ""));
+        console.log(JSON.stringify({ at: "booking-mail", uid: person.uid, id: String(b.id || "").slice(0, 64), result: got.ok ? (got.sent ? "sent" : got.why) : got.why }));
+        if (!got.ok) return new Response(JSON.stringify({ error: got.why }), { status: got.why === "not yours" ? 403 : got.why === "gone" ? 404 : 400, headers });
+        return new Response(JSON.stringify(got), { headers });
+      } catch (e) {
+        console.error(JSON.stringify({ at: "booking-mail", uid: person.uid, error: String((e as Error).message || e) }));
+        return new Response(JSON.stringify({ error: "mail failed" }), { status: 502, headers });
+      }
+    }
     /* The person who booked answers a new time Nabu proposed. See bookings.ts
        for why this is not a plain Firestore write from the phone. */
     if (path.endsWith("/booking-answer")) {

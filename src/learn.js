@@ -112,7 +112,8 @@ function renderLearn(args, params) {
          what turns a reader of lessons into somebody who can lay a spread. */
       + '<a class="prcta" href="#/practice"><div class="ic">✍️</div><div><b>' + esc(S.practiceTitle) + '</b><span>' + esc(S.practiceIntro) + '</span></div></a>'
       + '<div class="eyebrow">' + esc(S.coursesPractice) + '</div><div class="tiles">' + tile('tarot', !ACCESS.has('tarot')) + tile('lenormand', !ACCESS.has('lenormand')) + tile('playing', !ACCESS.has('playing')) + tile('manifest', !ACCESS.has('manifest')) + '</div>'
-      + '<div class="eyebrow">' + esc(S.freeReads) + '</div><div class="tiles">' + tile('astro') + tile('angel') + tile('fortune') + '</div>'
+      /* In the iPhone app the reading and practice lead and astrology comes last (4.3(b)). */
+      + '<div class="eyebrow">' + esc(S.freeReads) + '</div><div class="tiles">' + (isIOSApp() ? tile('angel') + tile('fortune') + tile('astro') : tile('astro') + tile('angel') + tile('fortune')) + '</div>'
       + '<p style="margin-top:14px"><a class="btn block" href="#/unlock?from=learn">💳 ' + esc(S.unlockLink) + '</a></p>'
       + (function () { const ints = PROFILE.interests || []; const list = GUIDES.filter((g) => g.tags.some((t) => ints.indexOf(t) > -1) && !((g.cat === 'tarot' || g.cat === 'lenormand') && !ACCESS.has(g.cat)) && !(g.id === 'fort-playing' && !ACCESS.has('playing'))).slice(0, 4); return list.length ? '<div class="sec"><div class="eyebrow">' + esc(S.forInterests) + '</div>' + list.map(guideRow).join('') + '</div>' : ''; }());
     return;
@@ -347,8 +348,13 @@ function astroLine(id) {
 function renderAstro() {
   const S = T(), m = $('#main'), me = mySign();
   m.innerHTML = backLink('#/learn', S.learnTitle) + '<h1 style="margin-bottom:6px">' + esc(S.cats.astro) + '</h1><p class="muted" style="font-size:14px">' + esc(S.astroNote) + '</p>'
+    /* The visitor's sign, life path and the forecasts for it moved here from the home screen, which now
+       leads with learning. The iPhone app keeps the forecasts off, as its home screen already did. */
+    + personalHTML() + '<div id="astrohoro"></div>'
     + '<div class="tabs" id="atabs"><button class="on" data-t="signs">' + (lang === 'vi' ? '12 cung' : (lang === 'de' ? '12 Zeichen' : '12 signs')) + '</button><button data-t="planets">' + (lang === 'vi' ? 'Hành tinh' : (lang === 'de' ? 'Planeten' : 'Planets')) + '</button><button data-t="houses">' + (lang === 'vi' ? '12 nhà' : (lang === 'de' ? '12 Häuser' : '12 houses')) + '</button><button data-t="aspects">' + (lang === 'vi' ? 'Góc chiếu' : (lang === 'de' ? 'Aspekte' : 'Aspects')) + '</button><button data-t="guides">' + (lang === 'vi' ? 'Bài đọc' : 'Guides') + '</button></div>'
     + '<div id="apanel"></div>';
+  bindCardLinks(m);
+  if (!isIOSApp()) (HORO ? Promise.resolve() : loadPosts()).then(() => { const h = $('#astrohoro'); if (h) { h.innerHTML = suggestedGuidesHTML(); bindPost(h); } }).catch(() => {});
   const panel = $('#apanel');
   const show = (t) => {
     if (t === 'signs') {

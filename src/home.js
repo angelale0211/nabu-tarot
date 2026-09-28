@@ -66,7 +66,12 @@ const TOUR_IOS_LEAD = [
   { ic: "✍️", vi: ["Luyện đọc bài", "Ở đây bạn là người đọc bài. Nabu dựng sẵn một tình huống và chia bài úp. Bạn lật từng lá, viết lời đọc của mình, rồi Nabu chấm và chỉ ra chỗ bạn còn đọc sót.\nLời đọc của Nabu chỉ hiện ra sau khi bạn nộp bài."], en: ["Practise reading", "Here you are the reader. Nabu sets up a situation and deals the cards face down; you turn them, write your reading, and Nabu marks it and shows what you missed.\nNabu\u2019s own reading only appears once you hand yours in."], de: ["Deuten üben", "Hier bist du die Lesende. Nabu stellt eine Situation und legt die Karten verdeckt aus; du deckst sie auf, schreibst deine Deutung, und Nabu bewertet sie und zeigt, was dir entgangen ist.\nNabus eigene Deutung erscheint erst, wenn du deine abgegeben hast."] },
   { ic: "🃏", vi: ["Một lá mỗi ngày", "Mỗi ngày rút một lá để ôn: đọc ý nghĩa và các từ khóa của lá đó. Chọn chủ đề bạn đang nghĩ tới, vì mỗi chủ đề có cách đọc riêng."], en: ["A card a day", "Draw one card a day to study: read its meaning and its keywords. Choose the topic on your mind, because each topic is read in its own way."], de: ["Eine Karte am Tag", "Zieh jeden Tag eine Karte zum Lernen: lies ihre Bedeutung und ihre Stichworte. Wähl dein Thema, denn jedes wird auf seine eigene Weise gelesen."] }
 ];
-const tourSteps = () => (isIOSApp() ? TOUR_IOS_LEAD.concat([TOUR[4], TOUR[2], TOUR[6], TOUR[7]]) : TOUR);
+/* The Lifestyle tab replaced Activities, so its step says what the tab now holds. The second paragraph
+   is the owner's; the first is a draft awaiting her approval. */
+const TOUR_LIFE = { ic: "🌿", vi: ["Đời sống", "Mang những điều bạn học vào mỗi ngày: rung Cây Thông Điệp, xem tháng này nên mặc gì, viết nhật ký và chăm bạn đồng hành.\nKhi Nabu mở các hoạt động đặc biệt, bạn còn có thể tham gia chọn tụ bài, bình chọn, gửi điều ước và nhiều sự kiện nhỏ khác."], en: ["Lifestyle", "Bring what you learn into each day: shake the Message Tree, see what to wear this month, write your diary and look after your companion.\nWhen Nabu opens special activities you can also pick a pile, vote in a poll, send a wish and join other small events."], de: ["Lifestyle", "Bring das Gelernte in jeden Tag: schüttle den Nachrichtenbaum, sieh nach, was du diesen Monat trägst, schreib dein Tagebuch und kümmere dich um deinen Begleiter.\nWenn Nabu besondere Aktivitäten öffnet, kannst du auch einen Stapel wählen, abstimmen, einen Wunsch senden und bei anderen kleinen Aktionen mitmachen."] };
+/* One tour for everyone, in the order of the new home screen: learning, practice, the daily card, then
+   lifestyle, the Red Thread, booking, refresh and the profile. Forecasts by sign are no longer a step. */
+const tourSteps = () => TOUR_IOS_LEAD.concat([TOUR_LIFE, TOUR[4], TOUR[5], TOUR[6], TOUR[7]]);
 function tourHTML(step) {
   const TS = tourSteps(), t = TS[step], txt = t[lang];
   const pct = Math.round((step + 1) / TS.length * 100);
@@ -222,6 +227,57 @@ function pickCtaHTML() {
   return '<a class="pickcta" href="#/pick"><div class="fan3"><span style="transform:rotate(-16deg)">' + logoCardSVG('blue') + '</span><span>' + logoCardSVG('purple') + '</span><span style="transform:rotate(16deg)">' + logoCardSVG('pink') + '</span></div>'
     + '<div><b>' + esc(S.pickToday) + '</b><p>' + esc(S.pickIntro) + '</p><span class="btn primary sm">' + esc(S.nav.pick) + ' →</span></div></a>';
 }
+/* ---- the home screen: learn, practise, then carry it into the day ----
+   Headings are drafts in Vietnamese until the owner approves them. */
+const HT = (vi, en, de) => (lang === 'vi' ? vi : (lang === 'de' ? de : en));
+function tilesHTML(it) {
+  return '<div class="tiles">' + it.map((t) => '<a class="tile" href="' + t[0] + '"><div class="ic">' + t[1] + '</div><b>' + esc(t[2]) + '</b><span>' + esc(t[3]) + '</span></a>').join('') + '</div>';
+}
+/* The daily card, framed as something to study and reflect on: draw it, read it, write a line about it. */
+function dailyHTML() {
+  return '<div class="sec" id="daily"><div class="eyebrow">' + esc(HT('Thực hành hôm nay', 'Today\u2019s practice', 'Deine Übung heute')) + '</div>'
+    + pickCtaHTML()
+    + '<a class="upnext" href="#/play/diary" style="margin-top:-8px"><span class="ic">📔</span><span><b>' + esc(HT('Rút một lá → đọc ý nghĩa → ghi lại', 'Draw a card → read its meaning → write it down', 'Karte ziehen → Bedeutung lesen → aufschreiben')) + '</b><br>'
+    + esc(HT('Viết một dòng vào nhật ký: lá bài hôm nay nói gì với bạn?', 'One line in your diary: what does today\u2019s card say to you?', 'Eine Zeile ins Tagebuch: Was sagt dir die Karte heute?')) + '</span></a></div>';
+}
+/* The next lesson of whichever course the learner is furthest into (Tarot for a newcomer), and practice. */
+function nextLesson() {
+  const cs = ['tarot', 'lenormand', 'playing'].filter((c) => LESSONS[c] && LESSONS[c].length);
+  const prog = cs.map((c) => ({ c, done: LESSONS[c].filter((l) => DONE.is(c, l.n)).length, total: LESSONS[c].length, next: LESSONS[c].filter((l) => !DONE.is(c, l.n))[0] }));
+  const going = prog.filter((p) => p.next && p.done).sort((a, b) => b.done - a.done)[0];
+  return going || prog.filter((p) => p.next)[0] || null;
+}
+function continueHTML() {
+  const S = T(), nl = nextLesson();
+  const passed = Object.keys(store.get('nabu-practice', {}) || {}).length;
+  const lesson = nl
+    ? '<a class="upnext" href="#/learn/lesson/' + nl.c + '/' + nl.next.n + '"><span class="ic">📚</span><span><b>' + esc(S.cats[nl.c]) + ' · ' + esc(S.lessonN(nl.next.n)) + ' / ' + nl.total + '</b><br>' + esc(L(nl.next.title)) + '</span>'
+      + '<span class="lbar" aria-hidden="true"><span style="width:' + Math.round(nl.done / nl.total * 100) + '%"></span></span></a>'
+    : '';
+  return '<div class="sec" id="continue"><div class="eyebrow">' + esc(nl && nl.done ? HT('Học tiếp', 'Continue learning', 'Weiterlernen') : HT('Bắt đầu học', 'Start learning', 'Mit dem Lernen anfangen')) + '</div>'
+    + lesson
+    + '<a class="upnext" href="#/practice"><span class="ic">✍️</span><span><b>' + esc(S.practiceTitle) + '</b><br>'
+    + esc(HT('Nabu chia bài và đặt tình huống, bạn viết lời đọc, Nabu chấm.', 'Nabu deals the cards and sets the scene; you write the reading and Nabu marks it.', 'Nabu legt die Karten und stellt die Situation; du deutest, Nabu bewertet.'))
+    + (passed ? ' · ' + passed + ' ✓' : '') + '</span></a>'
+    + '<a class="btn block" href="#/learn">' + esc(HT('Tất cả khóa học', 'All courses', 'Alle Kurse')) + ' →</a></div>';
+}
+function lifeHTML() {
+  const S = T();
+  return '<div class="sec" id="life"><div class="eyebrow">' + esc(HT('Mang vào đời sống', 'Bring it into your day', 'In deinen Alltag')) + '</div>'
+    + tilesHTML([['#/outfit', '👗', outfitTxt().title, HT('màu sắc và thời tiết tháng này', 'this month\u2019s colours and weather', 'Farben und Wetter des Monats')],
+      ['#/play/tree', '🌸', S.treeTitle, S.treeSub],
+      ['#/play/diary', '📔', S.diaryTitle, S.diarySub],
+      ['#/play/pet', '🐾', S.petTitle, S.petSub]]) + '</div>';
+}
+function connectHTML() {
+  const S = T();
+  const it = [['#/love', '💞', S.loveTitle, S.loveSub],
+    ['#/book', '📅', HT('Xem bài cùng Nabu', 'A reading with Nabu', 'Eine Legung mit Nabu'), HT('trò chuyện trực tiếp, đúng giờ bạn đặt', 'a live chat at the time you book', 'ein Live-Chat zur gebuchten Zeit')]];
+  return '<div class="sec" id="connect"><div class="eyebrow">' + esc(HT('Kết nối', 'Connect', 'Verbinden')) + '</div>' + tilesHTML(it)
+    + (isStandalone() || inStoreApp() ? '' : '<a class="upnext" href="#/install" style="margin-top:-8px"><span class="ic">📲</span><span><b>' + esc(S.installTitle) + '</b><br>' + esc(S.instAndroidIntro) + '</span></a>')
+    + '</div>';
+}
+/* Kept for reference: the six tiles the home screen had before it was built around learning. */
 function quickLinksHTML() {
   const S = T();
   /* In the iPhone app the tiles lead with learning: practice and the Tarot course first, the daily
@@ -288,23 +344,21 @@ async function renderHome(args, params) {
        the calendar, rather than a long way down the left. On a phone this box
        stays empty and hidden and the forecast keeps its old place further down
        - the same two cards, drawn once for whichever column is showing. */
-    + '<div id="sidehoro" hidden></div>'
     + '</aside>'
     + '<h1 style="margin:18px 0 4px">' + esc(name ? S.hello(name) : S.helloGuest) + '</h1><p class="muted">' + esc(lang === 'vi' ? 'Hôm nay bạn muốn làm gì?' : (lang === 'de' ? 'Was möchtest du heute machen?' : 'What would you like to do today?')) + '</p>'
     + upcomingHTML()
-    + pickCtaHTML()
-    + quickLinksHTML()
+    /* Learning and practice lead; the sign, life path and forecasts by sign live in Learn → Astrology
+       rather than on the first screen, for everyone. */
+    + dailyHTML()
+    + continueHTML()
+    + lifeHTML()
+    + connectHTML()
     + '<div id="actwrap"></div>'
-    /* The sign, the life path and the forecasts by sign are the horoscope app App Review saw; the
-       iPhone app keeps them in Learn and off the first screen. */
-    + (isIOSApp() ? '' : personalHTML() + '<div id="foryouwrap"></div>')
     + '<div class="sec" id="feed"><p class="muted">…</p></div>';
   bindAccordions(m); bindCardLinks(m);
   bindTour(m, 0);
   homeActHTML($('#actwrap')).catch(() => {});
   if (POSTS == null) await loadPosts();
-  const fy = $('#foryouwrap'); if (fy) { fy.innerHTML = suggestedGuidesHTML(); bindPost(fy); bindAccordions(fy); }
-  const sh = isIOSApp() ? null : $('#sidehoro'); if (sh) { sh.innerHTML = '<div class="eyebrow">' + esc(T().forInterests) + '</div>' + horoCardHTML('monthly') + horoCardHTML('weekly'); sh.hidden = false; }
   const feed = $('#feed'); if (!feed) return;
   const all = sortedPosts().filter((p) => !(isIOSApp() && p.markers && p.markers.signs && p.markers.signs.length)), welcome = all.filter((p) => p.welcome)[0], list = all.filter((p) => !p.welcome);
   const wopen = store.get('nabu-welcome-open', true) !== false;

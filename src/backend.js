@@ -3,10 +3,17 @@
    Firestore) when CONFIG.firebase is set. Without it, BE.enabled is false and
    every screen falls back to the device-only profile and to Instagram.
    The SDK is loaded on demand so the app shell stays offline-capable. */
-/* Mail the booking to Nabu as a calendar invitation (through the worker). Best effort. */
-function notifyBooking(b) {
-  if (!CONFIG.bookingEndpoint) return Promise.resolve();
-  return fetch(CONFIG.bookingEndpoint, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ booking: b, tz: CONFIG.timezone, to: CONFIG.adminNotifyEmails, lang: lang }) }).catch(() => {});
+/* Mail the booking to Nabu (through the worker). Best effort, never in the way.
+   Only the id goes, with the sign-in: the worker reads the booking itself and
+   mails it to the addresses it holds (MAIL_TO in worker/wrangler.toml), so the
+   endpoint cannot be used to mail anything else to anybody else. Until the
+   worker has a mail key it answers { sent: false } and nothing is sent. */
+async function notifyBooking(b) {
+  if (!CONFIG.bookingEndpoint || !b || !b.id) return;
+  try {
+    const tok = await BE.token(); if (!tok) return;
+    await fetch(CONFIG.bookingEndpoint, { method: 'POST', headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + tok }, body: JSON.stringify({ id: b.id }) });
+  } catch (e) { /* offline, or the worker is down: the booking itself is saved */ }
 }
 /* What a booking goes back to once whatever is in flight - a request from
    the client, a proposal from Nabu, a proposal turned down - is settled. */
@@ -320,6 +327,12 @@ const BE = {
   async markPaid(b) {
     await this.db.collection('bookings').doc(b.id).set(
       { paid: true, paidAt: Date.now(), status: b.status === 'requested' ? 'confirmed' : (b.status || 'confirmed') }, { merge: true });
+    /* A reading paid for while still waiting is confirmed by it, so its hour
+       is marked confirmed exactly as the confirm button would (setBookingStatus):
+       otherwise the half hours either side stayed open to somebody else. */
+    if (b.kind !== 'unlock' && b.slot && b.status === 'requested') {
+      await this.db.collection('taken').doc(String(b.slot).replace(/[^0-9T]/g, '')).set({ bookingId: b.id, confirmed: true }, { merge: true }).catch(() => {});
+    }
     const ids = (b.items || []).map((it) => it.id)
       .filter((id) => COURSES.some((c) => c.id === id));
     if (ids.length && b.uid) await this.grantAccess(b.uid, ids);

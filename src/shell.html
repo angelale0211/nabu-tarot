@@ -187,7 +187,7 @@ h1,h2,h3,.eyebrow{text-wrap:balance}
 /* ---- bottom nav ---- */
 .nav{position:fixed;left:0;right:0;bottom:0;z-index:20;background:color-mix(in srgb,var(--surface) 94%,transparent);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
   border-top:1px solid var(--rule-soft);padding-bottom:env(safe-area-inset-bottom)}
-.nav .wrap{display:grid;grid-template-columns:repeat(6,1fr);height:var(--nav-h);padding:0}
+.nav .wrap{display:grid;grid-template-columns:repeat(5,1fr);height:var(--nav-h);padding:0}
 .nav a{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;text-decoration:none;color:var(--fg-faint);font-size:10.5px;font-weight:600;white-space:nowrap;letter-spacing:.01em;position:relative}
 .nav a svg{width:24px;height:24px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
 .nav a.on{color:var(--link)}
@@ -550,6 +550,22 @@ html[lang="de"] .freegrid{--fgmin:132px}
    narrower label column there, and only there - Android and the website keep
    the layout above. */
 html.iosapp[lang="en"] #today .tbl td:first-child{white-space:normal;width:36%}
+/* The iPhone app: every control at least 44pt, Apple's minimum tap target
+   (App Review flagged the 40px ones). iOS only - Android and the website keep
+   the sizes above. Inline links inside running text are left as text. */
+html.iosapp .pill{min-height:44px;min-width:44px;display:inline-flex;align-items:center;justify-content:center;padding:0 11px}
+html.iosapp .brand{min-height:44px}
+/* Three 44pt pills leave the name too little room under 360px: close the gaps and shrink the avatar a little. */
+@media (max-width:359px){html.iosapp .tools{gap:4px}html.iosapp .brand .lockup .avatar{width:36px;height:36px}}
+html.iosapp .btn.sm{min-height:44px;min-width:44px}
+html.iosapp button.chip,html.iosapp a.chip,html.iosapp label.chip{min-height:44px}
+html.iosapp .tabs button{min-height:44px}
+html.iosapp .linkbtn{min-height:44px}
+html.iosapp .lookstrip .ls-h a{min-height:44px}
+html.iosapp .post .foot button,html.iosapp .post .more,html.iosapp .horo .more,html.iosapp .salebar{min-height:44px}
+html.iosapp .post .foot .cmtn{min-height:44px;min-width:44px;justify-content:center}
+html.iosapp .billdiag summary,html.iosapp .msgd summary{min-height:44px;padding:12px 0}
+html.iosapp .legal a,html.iosapp .verline a,html.iosapp .signin .later a,html.iosapp .aisignin a{display:inline-flex;align-items:center;justify-content:center;min-height:44px;min-width:44px;vertical-align:middle}
 
 /* ---- services / prices ---- */
 .svc{background:var(--surface);border:1.5px solid var(--rule);border-radius:18px;padding:14px 14px 10px;margin-bottom:12px;max-width:100%;overflow:hidden}
@@ -958,6 +974,8 @@ h1 .pileico{width:34px;height:27px;vertical-align:-3px;margin-right:2px}
 .bk .tot{display:flex;justify-content:space-between;border-top:1px solid var(--rule-soft);padding-top:6px;margin-top:4px;font-weight:700}.bk .meta{margin:6px 0 0;color:var(--fg-soft);font-size:13px}.bk .acts{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px}.bk .acts .wide{grid-column:1/-1}.bk .chg{background:var(--tag-gold-bg);color:var(--tag-gold-ink);border-radius:10px;padding:8px 10px;margin-top:8px;font-weight:600}
 .bkcal{margin-bottom:12px}.bkcal .d.has:after{background:var(--pink-ink)}.bkcal .d .n{position:absolute;top:3px;right:5px;font-size:9px;font-weight:700;color:var(--pink-ink)}
 .upnext{display:flex;gap:10px;align-items:center;background:var(--tag-gold-bg);color:var(--tag-gold-ink);border-radius:14px;padding:12px 14px;margin-bottom:14px;text-decoration:none;font-weight:600}.upnext .ic{font-size:24px}
+/* the home screen's next lesson: a thin progress bar along the bottom of the row */
+.upnext{position:relative}.upnext .lbar{position:absolute;left:14px;right:14px;bottom:6px;height:3px;border-radius:2px;background:color-mix(in srgb,currentColor 18%,transparent);overflow:hidden}.upnext .lbar span{display:block;height:100%;background:currentColor}
 .st{font-size:12px;font-weight:700;border-radius:8px;padding:3px 8px;background:var(--surface-3);white-space:nowrap}
 .st.confirmed{background:var(--tag-green-bg);color:var(--tag-green-ink)}.st.declined{background:var(--tag-pink-bg);color:var(--tag-pink-ink)}.st.requested{background:var(--tag-gold-bg);color:var(--tag-gold-ink)}
 /* Waiting on the person who booked: gold, like any other answer still to come. A time they turned down is pink, like a decline. */

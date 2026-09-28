@@ -627,11 +627,13 @@ function renderChrome(route) {
   $('#lang').textContent = T().lang;
   $('#lang').setAttribute('aria-label', T().langSwitch);
   $('#lang').setAttribute('title', T().langSwitch);
-  $('#nav').innerHTML = ['home', 'pick', 'play', 'learn', 'book', 'me'].map((k) =>
+  /* Five tabs: learning first, then the card a day and the lifestyle screens. Booking is no tab of its
+     own any more - it sits on Home and in Profile - so a sale on readings shows on Home. */
+  $('#nav').innerHTML = ['home', 'learn', 'pick', 'play', 'me'].map((k) =>
     '<a href="#/' + k + '" class="' + (route === k ? 'on' : '') + '">' + ICONS[k] + '<span>' + esc(T().nav[k]) + '</span>'
     + (k === 'me' && (UNREAD + NEWBK + NEWC) ? '<span class="badge">' + (UNREAD + NEWBK + NEWC) + '</span>' : '')
     // A sale on readings shows up on the tab where readings are booked.
-    + (k === 'book' && SALE.covers('reading') ? '<span class="saletag" aria-hidden="true">🏷️</span>' : '')
+    + (k === 'home' && SALE.covers('reading') ? '<span class="saletag" aria-hidden="true">🏷️</span>' : '')
     + (k === 'learn' && SALE.covers('unlock') ? '<span class="saletag" aria-hidden="true">🏷️</span>' : '') + '</a>').join('');
   if (typeof alertsBadge === 'function') alertsBadge();
   if (typeof adminTabBadges === 'function') adminTabBadges();
@@ -722,7 +724,9 @@ async function addToCalendar(b) {
     toast(S.icsDownloaded);
   } catch (e) { window.open(gcalLink(b), '_blank', 'noopener'); }
 }
-const slotDate = (slot) => { const m = /^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2})/.exec(String(slot || '')); return m ? new Date(+m[1], +m[2] - 1, +m[3], +m[4], +m[5]) : null; };
+/* A slot is Vietnam wall-clock time (UTC+7, no daylight saving): the moment it starts, the same on
+   every phone. Built from the device's own clock it was hours out for anybody outside Vietnam. */
+function slotDate(slot) { const m = /^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2})/.exec(String(slot || '')); return m ? new Date(Date.UTC(+m[1], +m[2] - 1, +m[3], +m[4] - 7, +m[5])) : null; }
 /* Reminders while the app is open: 24 h, 6 h, 1 h and 15 min before every upcoming booking. */
 const REM = { timers: [] };
 function scheduleReminders(list) {
