@@ -13,7 +13,8 @@
    the character painted with it.
 
    The screen is organised by zodiac sign, which is what App Store review
-   objected to (4.3b), so the iPhone app does not show it. */
+   objected to (4.3b). It was kept out of the iPhone app at first; since
+   v269 it shows there too, at the owner's request, knowing the risk. */
 
 /* The two characters: fair skin, and brown skin. */
 const OUTFIT_CHARS = ['1', '2'];
@@ -117,7 +118,6 @@ function outfitLoad(src) {
 }
 
 function renderOutfit() {
-  if (isIOSApp()) { redirect('#/home'); return; }
   const S = T(), X = outfitTxt(), m = $('#main'), st = outfitState();
   const here = navStillHere();
   let base = null, mask = null, token = 0;
@@ -158,11 +158,11 @@ function renderOutfit() {
       const got = await Promise.all([outfitLoad(dir + n + '.jpg'), outfitLoad(dir + 'm/' + n + '.png').catch(() => null)]);
       if (my !== token || !here()) return;
       base = got[0]; mask = got[1];
-      $('#ofErr').textContent = '';
+      const er = $('#ofErr'); if (er) er.textContent = '';
       paint();
     } catch (e) {
       if (my !== token || !here()) return;
-      $('#ofErr').textContent = X.offline;
+      const er = $('#ofErr'); if (er) er.textContent = X.offline;
       if (cv) cv.classList.remove('dim');
     }
   }
