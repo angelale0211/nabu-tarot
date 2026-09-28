@@ -203,13 +203,20 @@ function bookingRow(b, admin) {
         + (b.whereId ? ' · <b>' + esc(b.whereId) + '</b>' : '')
       : (b.whereName ? '💬 ' + esc(S.msgWhere) + ': <b>' + esc(b.whereName) + '</b>' : ''),
     b.birth ? '🎂 ' + esc(b.birth) : '', b.note ? '📝 ' + esc(b.note) : '', b.card ? '🃏 ' + esc(b.card) : ''].filter(Boolean).join('<br>');
-  const d = slotDate(b.slot), future = d && d.getTime() > Date.now(), live = ['requested', 'confirmed', 'change_requested', 'cancel_requested'].indexOf(b.status) > -1;
-  const change = b.status === 'change_requested' && b.newSlot ? '<div class="chg">🔁 ' + esc(S.newSlotLabel) + ': ' + esc(slotLabel(b.newSlot)) + '</div>' : '';
+  const d = slotDate(b.slot), future = d && d.getTime() > Date.now(), live = ['requested', 'confirmed', 'change_requested', 'cancel_requested', 'change_proposed', 'proposal_declined'].indexOf(b.status) > -1;
+  const change = b.status === 'change_requested' && b.newSlot ? '<div class="chg">🔁 ' + esc(S.newSlotLabel) + ': ' + esc(slotLabel(b.newSlot)) + '</div>'
+    : b.status === 'change_proposed' && b.proposedSlot ? '<div class="chg">🕒 ' + esc(S.proposedLabel) + ': <b>' + esc(slotLabel(b.proposedSlot)) + '</b></div>'
+    : b.status === 'proposal_declined' && b.declinedSlot ? '<div class="chg">✕ ' + esc(S.declinedLabel) + ': ' + esc(slotLabel(b.declinedSlot)) + '</div>' : '';
   let acts = '';
   if (admin) {
     if (b.status === 'requested') acts = '<button class="btn sm primary" data-bk="confirmed" data-id="' + b.id + '">' + esc(S.confirm) + '</button><button class="btn sm" data-bk="declined" data-id="' + b.id + '">' + esc(S.decline) + '</button>';
     else if (b.status === 'change_requested') acts = '<button class="btn sm primary" data-bk="confirmed" data-id="' + b.id + '">' + esc(S.adminApplyChange) + '</button><button class="btn sm" data-bk="keep" data-id="' + b.id + '">' + esc(S.adminKeep) + '</button>';
     else if (b.status === 'cancel_requested') acts = '<button class="btn sm primary" data-bk="cancelled" data-id="' + b.id + '">' + esc(S.adminApplyCancel) + '</button><button class="btn sm" data-bk="keep" data-id="' + b.id + '">' + esc(S.adminKeepBooking) + '</button>';
+    else if (b.status === 'change_proposed') acts = '<button class="btn sm" data-bk="keep" data-id="' + b.id + '">' + esc(S.adminWithdraw) + '</button>';
+    else if (b.status === 'proposal_declined') acts = '<button class="btn sm" data-bk="keep" data-id="' + b.id + '">' + esc(S.adminKeep) + '</button>';
+    /* Nabu moves a reading herself: straight to a new hour, or a proposal the
+       person who booked accepts or declines. */
+    if (live && future && b.status !== 'cancel_requested') acts += '<a class="btn sm" href="#/book?change=' + esc(b.id) + '&as=admin">🔁 ' + esc(S.adminMoveBtn) + '</a>';
     /* Nabu could confirm, decline, and agree to a cancellation somebody else
        asked for - but not call one off. Anyone who takes bookings falls ill. */
     if (live && b.status !== 'cancel_requested') acts += '<button type="button" class="btn sm" data-bkoff="' + b.id + '">✕ ' + esc(S.adminCancel) + '</button>';
@@ -217,6 +224,8 @@ function bookingRow(b, admin) {
        ones have been settled. */
     if (!b.paid && live) acts += '<button type="button" class="btn sm" data-paid="' + b.id + '">💰 ' + esc(S.adminGotPaid) + '</button>';
     if (live && future) acts += '<button type="button" class="btn sm" data-ics="' + b.id + '">📅 ' + esc(S.addToCalendar) + '</button><a class="btn sm" href="' + esc(gcalLink(b)) + '" target="_blank" rel="noopener">🗓 ' + esc(S.gcal) + '</a>';
+  } else if (live && future && b.status === 'change_proposed') {
+    acts = '<button type="button" class="btn sm primary" data-propyes="' + b.id + '">✓ ' + esc(S.acceptTime) + '</button><button type="button" class="btn sm" data-propno="' + b.id + '">' + esc(S.declineTime) + '</button>';
   } else if (live && future) {
     acts = '<a class="btn sm" href="#/book?change=' + esc(b.id) + '">🔁 ' + esc(S.changeSlot) + '</a><button class="btn sm" data-cancel="' + b.id + '">✕ ' + esc(S.cancelBooking) + '</button>'
       + '<button type="button" class="btn sm" data-ics="' + b.id + '">📅 ' + esc(S.addToCalendar) + '</button><a class="btn sm" href="' + esc(gcalLink(b)) + '" target="_blank" rel="noopener">🗓 ' + esc(S.gcal) + '</a>';
@@ -425,6 +434,15 @@ function meSect(id, icon, title, body, openByDefault, force) {
             if (!bk || !confirm(S.adminCancelAsk)) return;
             try { await BE.setBookingStatus(bk, 'cancelled'); toast(S.adminCancelDone); } catch (e) { toast(e.message); }
           }));
+          /* Nabu proposed a new hour: yes moves the booking there, no keeps the
+             old hour and tells her. Either answer goes through the worker. */
+          const answer = async (id, yes) => {
+            const bk = list.filter((y) => y.id === id)[0]; if (!bk) return;
+            if (!yes && !confirm(S.declineAsk)) return;
+            try { await BE.answerProposal(bk, yes); toast(yes ? S.proposalAccepted : S.proposalDeclined); } catch (e) { toast(S.proposalFail); }
+          };
+          $$('[data-propyes]', body).forEach((x) => x.addEventListener('click', () => answer(x.getAttribute('data-propyes'), true)));
+          $$('[data-propno]', body).forEach((x) => x.addEventListener('click', () => answer(x.getAttribute('data-propno'), false)));
           $$('[data-cancel]', body).forEach((x) => x.addEventListener('click', async () => { const bk = list.filter((y) => y.id === x.getAttribute('data-cancel'))[0]; if (!bk || !confirm(S.confirmCancel)) return; try { await BE.requestCancel(bk); toast(S.cancelSent); } catch (e) { toast(e.message); } }));
         }
         scheduleReminders(list);

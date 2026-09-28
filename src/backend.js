@@ -8,6 +8,10 @@ function notifyBooking(b) {
   if (!CONFIG.bookingEndpoint) return Promise.resolve();
   return fetch(CONFIG.bookingEndpoint, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ booking: b, tz: CONFIG.timezone, to: CONFIG.adminNotifyEmails, lang: lang }) }).catch(() => {});
 }
+/* What a booking goes back to once whatever is in flight - a request from
+   the client, a proposal from Nabu, a proposal turned down - is settled. */
+const BK_INFLIGHT = ['change_requested', 'cancel_requested', 'change_proposed', 'proposal_declined'];
+const settledStatus = (b) => (BK_INFLIGHT.indexOf(b.status) > -1 ? (b.prevStatus || 'confirmed') : b.status);
 const BE = {
   enabled: !!CONFIG.firebase,
   ready: false, user: null, db: null, auth: null,
@@ -383,7 +387,7 @@ const BE = {
         if (!firstT) s.docChanges().forEach((c) => { if (c.type === 'added' || c.type === 'modified') { const t = c.doc.data(); if (t.lastFrom === 'user') notifyAdmin(S.notifNewMsg + (t.name || t.email || S.guestLabel), t.lastText || '', '#/admin?tab=inbox'); } });
         firstT = false;
       });
-      this._unsubBk = this.db.collection('bookings').where('status', 'in', ['requested', 'change_requested', 'cancel_requested']).onSnapshot((s) => {
+      this._unsubBk = this.db.collection('bookings').where('status', 'in', ['requested', 'change_requested', 'cancel_requested', 'proposal_declined']).onSnapshot((s) => {
         NEWBK = s.size; nav();
         if (!firstB) s.docChanges().forEach((c) => { if (c.type === 'added') { const b = c.doc.data(); notifyAdmin(S.notifNewBooking + (b.name || b.email || S.guestLabel), (b.service || '') + (b.slot ? ' · ' + b.slot.replace('T', ' ') : ''), '#/admin?tab=bookings'); } });
         firstB = false;
@@ -463,32 +467,70 @@ const BE = {
        the calendar for an order without an hour, so nothing is held. */
     const key = b.slot ? String(b.slot).replace(/[^0-9T]/g, '') : '';
     const newKey = b.newSlot ? String(b.newSlot).replace(/[^0-9T]/g, '') : '';
+    const propKey = b.proposedSlot ? String(b.proposedSlot).replace(/[^0-9T]/g, '') : '';
     const taken = (k) => this.db.collection('taken').doc(k);
-    if (status === 'keep') {  // the client asked for a change or a cancellation; Nabu keeps the booking as it was
-      await ref.set({ status: b.prevStatus || 'confirmed', newSlot: firebase.firestore.FieldValue.delete(), prevStatus: firebase.firestore.FieldValue.delete() }, { merge: true });
+    const del = firebase.firestore.FieldValue.delete();
+    /* Keep: the client asked for a change or a cancellation, or Nabu proposed
+       a new time and takes it back, or the client said no to it. Either way
+       the booking stays at its hour and every pending hour is let go. */
+    if (status === 'keep') {
+      await ref.set({ status: b.prevStatus || 'confirmed', newSlot: del, proposedSlot: del, prevStatus: del, declinedSlot: del }, { merge: true });
       if (newKey) await taken(newKey).delete().catch(() => {});
+      if (propKey) await taken(propKey).delete().catch(() => {});
       return;
     }
     if (status === 'confirmed' && b.status === 'change_requested' && b.newSlot) {  // the new time takes over
       await ref.set({ status: 'confirmed', slot: b.newSlot, newSlot: firebase.firestore.FieldValue.delete(), prevStatus: firebase.firestore.FieldValue.delete() }, { merge: true });
       if (key) await taken(key).delete().catch(() => {});
-      await taken(newKey).set({ bookingId: b.id }, { merge: true });
+      await taken(newKey).set({ bookingId: b.id, pending: firebase.firestore.FieldValue.delete(), confirmed: true }, { merge: true });
       return;
     }
     await ref.set({ status: status }, { merge: true });
     if (status === 'declined' || status === 'cancelled') {
       if (key) await taken(key).delete().catch(() => {});
       if (newKey) await taken(newKey).delete().catch(() => {});
-    } else if (key) await taken(key).set({ bookingId: b.id }, { merge: true });
+      if (propKey) await taken(propKey).delete().catch(() => {});
+    } else if (key) await taken(key).set({ bookingId: b.id, confirmed: status === 'confirmed' }, { merge: true });
+  },
+  /* Nabu moves a booking. Proposing holds the new hour as pending and waits
+     for the person who booked to accept or decline it (the worker's
+     /booking-answer, since the rules keep a customer off the slot itself).
+     Moving is for when they have already agreed, in the chat or elsewhere: the
+     booking takes the new hour at once and the old one is let go. Either
+     closes whatever else was in flight - their own request for a new time,
+     an earlier proposal. */
+  async proposeSlot(b, slot) {
+    const del = firebase.firestore.FieldValue.delete(), k = (x) => String(x).replace(/[^0-9T]/g, '');
+    await this.db.collection('bookings').doc(b.id).set({ status: 'change_proposed', proposedSlot: slot, prevStatus: settledStatus(b), newSlot: del, declinedSlot: del }, { merge: true });
+    if (b.newSlot && b.newSlot !== slot) await this.db.collection('taken').doc(k(b.newSlot)).delete().catch(() => {});
+    if (b.proposedSlot && b.proposedSlot !== slot) await this.db.collection('taken').doc(k(b.proposedSlot)).delete().catch(() => {});
+    await this.db.collection('taken').doc(k(slot)).set({ bookingId: b.id, pending: true }, { merge: true });
+  },
+  async moveBooking(b, slot) {
+    const del = firebase.firestore.FieldValue.delete(), k = (x) => String(x).replace(/[^0-9T]/g, '');
+    await this.db.collection('bookings').doc(b.id).set({ slot: slot, status: settledStatus(b), movedFrom: b.slot || '', movedAt: firebase.firestore.FieldValue.serverTimestamp(), newSlot: del, proposedSlot: del, prevStatus: del, declinedSlot: del }, { merge: true });
+    [b.slot, b.newSlot, b.proposedSlot].filter((x) => x && x !== slot).forEach((x) => this.db.collection('taken').doc(k(x)).delete().catch(() => {}));
+    await this.db.collection('taken').doc(k(slot)).set({ bookingId: b.id, pending: firebase.firestore.FieldValue.delete(), confirmed: settledStatus(b) === 'confirmed' }, { merge: true });
+  },
+  /* The person who booked answers Nabu's proposal. */
+  async answerProposal(b, yes) {
+    if (!CONFIG.aiEndpoint) throw new Error('not configured');
+    const r = await withTimeout(fetch(CONFIG.aiEndpoint.replace(/\/$/, '') + '/booking-answer', {
+      method: 'POST', headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + await this.token() },
+      body: JSON.stringify({ id: b.id, yes: !!yes })
+    }), 20000);
+    const j = await r.json().catch(() => ({}));
+    if (!r.ok || !j.ok) throw new Error(j.error || ('HTTP ' + r.status));
+    return j;
   },
   /* The client asks to move the booking: the new slot is reserved at once, Nabu approves or keeps the old time. */
   async requestChange(b, newSlot) {
-    await this.db.collection('bookings').doc(b.id).set({ status: 'change_requested', newSlot: newSlot, prevStatus: b.status === 'change_requested' || b.status === 'cancel_requested' ? (b.prevStatus || 'confirmed') : b.status }, { merge: true });
+    await this.db.collection('bookings').doc(b.id).set({ status: 'change_requested', newSlot: newSlot, prevStatus: settledStatus(b) }, { merge: true });
     await this.db.collection('taken').doc(String(newSlot).replace(/[^0-9T]/g, '')).set({ bookingId: b.id, pending: true }, { merge: true });
     notifyBooking(Object.assign({}, b, { newSlot: newSlot, status: 'change_requested' }));
   },
   async requestCancel(b) {
-    await this.db.collection('bookings').doc(b.id).set({ status: 'cancel_requested', prevStatus: b.status === 'change_requested' || b.status === 'cancel_requested' ? (b.prevStatus || 'confirmed') : b.status }, { merge: true });
+    await this.db.collection('bookings').doc(b.id).set({ status: 'cancel_requested', prevStatus: settledStatus(b) }, { merge: true });
     notifyBooking(Object.assign({}, b, { status: 'cancel_requested' }));
   },
   async getBooking(id) { const d = await this.db.collection('bookings').doc(id).get(); return d.exists ? Object.assign({ id: d.id }, d.data()) : null; },
@@ -504,7 +546,10 @@ const BE = {
     const out = {};
     try {
       const s = await Promise.race([this.db.collection('taken').get(), new Promise((_, rej) => setTimeout(() => rej(new Error('timeout')), 3000))]);
-      s.forEach((d) => { out[d.id] = true; });
+      /* 'confirmed' for an hour Nabu has confirmed: it also closes the start
+         times that would run into it (slotsFor). Any other held hour closes
+         only itself. */
+      s.forEach((d) => { const x = d.data ? d.data() : null; out[d.id] = x && x.confirmed ? 'confirmed' : true; });
     } catch (e) { return null; }
     return out;
   }

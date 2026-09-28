@@ -143,7 +143,12 @@ const BOOK_WHERE = [
     name: { vi: 'Trong Nabu Tarot', en: 'Here in Nabu Tarot', de: 'In Nabu Tarot' },
     sub: { vi: 'Nabu nhắn trực tiếp trong mục Hồ sơ. Bạn có thể xem lại trên cả điện thoại và máy tính.',
       en: 'Nabu replies directly under Profile. You can revisit the reading on both phone and computer.',
-      de: 'Nabu antwortet direkt im Profil. Du kannst die Legung später auf dem Handy und am Computer wieder ansehen.' } },
+      de: 'Nabu antwortet direkt im Profil. Du kannst die Legung später auf dem Handy und am Computer wieder ansehen.' },
+    /* The iPhone app says what App Review needs to read: the reading is a live conversation at the
+       booked time (3.1.3(d)), not a written report delivered later. Every reading is live. */
+    subIOS: { vi: 'Nabu trò chuyện trực tiếp với bạn trong mục Hồ sơ, đúng giờ đã hẹn.',
+      en: 'A live chat with Nabu under Profile, at the time you booked.',
+      de: 'Ein Live-Chat mit Nabu im Profil, zur gebuchten Zeit.' } },
   { id: 'ig', icon: '📸', needsId: true, name: { vi: 'Instagram', en: 'Instagram', de: 'Instagram' },
     sub: { vi: 'Nabu nhắn qua tin nhắn Instagram', en: 'Nabu writes to you on Instagram', de: 'Nabu schreibt dir per Instagram-Direktnachricht.' } },
   { id: 'fb', icon: '💬', needsId: true, name: { vi: 'Facebook', en: 'Facebook', de: 'Facebook' },

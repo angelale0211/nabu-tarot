@@ -486,6 +486,54 @@ html[lang="de"] .freegrid{--fgmin:132px}
 .signlist button b{font-size:13px;display:block;font-weight:600}
 .signlist button span{font-size:11px;color:var(--fg-faint)}
 .signlist button.me{border-color:var(--pink);box-shadow:0 0 0 1px var(--pink) inset}
+
+/* ---- tập đọc bài: the learner writes, the app marks ----
+   The card and the box sit side by side so the picture is in view while the
+   sentence is being written; below 420px they stack, because a 64px card
+   beside a textarea leaves the textarea too narrow to write a paragraph in. */
+.prcta{display:flex;gap:14px;align-items:center;background:linear-gradient(135deg,var(--lav-soft),var(--surface));border:1.5px solid var(--lav);border-radius:20px;padding:16px;margin:14px 0 4px;text-decoration:none;color:inherit}
+.prcta .ic{font-size:30px;line-height:1;flex:none}
+.prcta b{display:block;margin-bottom:3px}
+.prcta span{display:block;font-size:13.5px;line-height:1.45;color:var(--fg-faint)}
+.pprog{height:6px;border-radius:99px;background:var(--surface-2);overflow:hidden;margin-top:12px}
+.pprog span{display:block;height:100%;background:var(--lav);border-radius:99px}
+.prow{display:flex;gap:12px;align-items:center;justify-content:space-between;background:var(--surface);border:1px solid var(--rule);border-radius:16px;padding:13px 15px;margin-bottom:8px;text-decoration:none;color:inherit;min-height:40px}
+.prowin{min-width:0}
+.prow b{display:block;margin-bottom:3px;font-weight:700}
+.prow b .faint{white-space:nowrap}
+.prow>.prowin>span{display:block;font-size:13px;line-height:1.4;color:var(--fg-faint)}
+.pmark{font-size:12.5px;font-weight:700;padding:2px 8px;border-radius:99px;background:var(--surface-2);color:var(--fg-faint)}
+.pmark.gold{background:#F3E2A8;color:#6B5310}.pmark.silver{background:var(--lav-soft);color:var(--fg)}.pmark.bronze{background:var(--surface-2);color:var(--fg)}
+.pscene .pq{font-weight:600}
+.prcard{display:flex;gap:14px;align-items:flex-start;margin:14px 0}
+.pface{width:86px;flex:none}
+.pface svg{width:100%;height:auto;display:block}
+.pface.rev svg{transform:rotate(180deg)}
+.pturn{display:block;width:100%;padding:0;border:0;background:none;cursor:pointer;border-radius:10px}
+.pturn svg{width:100%;height:auto;display:block}
+.pface .flip{perspective:900px}
+.pface .flip .inner{position:relative;transform-style:preserve-3d;animation:flip .55s ease forwards}
+.pface .flip .fr,.pface .flip .bk{backface-visibility:hidden;-webkit-backface-visibility:hidden;display:block}
+.pface .flip .fr svg,.pface .flip .bk svg{width:100%;height:auto;display:block}
+.pface .flip .bk{position:absolute;inset:0;transform:rotateY(180deg)}
+/* The box for a card is not there to be written in until its card is up. */
+.pask.shut textarea,.pask.shut .faint{display:none}
+.pask.shut b{color:var(--fg-faint);font-weight:600}
+.pask{flex:1;min-width:0}
+.pask textarea{width:100%;margin-top:6px;resize:vertical;font:inherit;padding:10px;border-radius:12px;border:1px solid var(--rule);background:var(--surface);color:var(--fg)}
+.psynth{border-top:1px solid var(--rule);padding-top:14px}
+.presult{margin-top:18px;border:1.5px solid var(--rule);border-radius:18px;padding:16px;background:var(--surface-2)}
+.presult.gold{border-color:#D9BE63}.presult.silver{border-color:var(--lav)}.presult.bronze{border-color:var(--rule)}
+.pscore{font-size:34px;font-weight:800;line-height:1.1;margin-bottom:10px}
+.pscore span{display:block;font-size:14px;font-weight:600;color:var(--fg-faint)}
+.pnotes{margin:0 0 14px 18px;padding:0}
+.pnotes li{margin-bottom:6px;font-size:14.5px;line-height:1.5}
+.pline{padding:10px 0;border-top:1px solid var(--rule)}
+.pgot,.pmiss{margin-top:5px;font-size:13.5px}
+.pkw{display:inline-block;padding:1px 8px;margin:2px 4px 2px 0;border-radius:99px;font-size:12.5px}
+.pgot .pkw{background:var(--lav-soft);color:var(--fg)}
+.pmiss .pkw{background:var(--surface);color:var(--fg-faint);border:1px dashed var(--rule)}
+@media (max-width:420px){.prcard{flex-direction:column}.pface{width:72px}}
 .spread-d{display:flex;justify-content:center;margin:8px 0 12px}
 .spread-d svg{max-width:100%;height:auto}
 .guide h2{margin:14px 0 6px}
@@ -912,6 +960,31 @@ h1 .pileico{width:34px;height:27px;vertical-align:-3px;margin-right:2px}
 .upnext{display:flex;gap:10px;align-items:center;background:var(--tag-gold-bg);color:var(--tag-gold-ink);border-radius:14px;padding:12px 14px;margin-bottom:14px;text-decoration:none;font-weight:600}.upnext .ic{font-size:24px}
 .st{font-size:12px;font-weight:700;border-radius:8px;padding:3px 8px;background:var(--surface-3);white-space:nowrap}
 .st.confirmed{background:var(--tag-green-bg);color:var(--tag-green-ink)}.st.declined{background:var(--tag-pink-bg);color:var(--tag-pink-ink)}.st.requested{background:var(--tag-gold-bg);color:var(--tag-gold-ink)}
+/* Waiting on the person who booked: gold, like any other answer still to come. A time they turned down is pink, like a decline. */
+.pcourse{font-size:17px;margin:20px 0 8px}
+/* What to wear: chips, one painted figure, its caption and the hair swatches. */
+.ofrow{display:flex;gap:6px;flex-wrap:wrap;margin:10px 0 0}
+.ofrow.ofscroll{flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;padding-bottom:2px;margin-left:-16px;margin-right:-16px;padding-left:16px;padding-right:16px}
+.ofrow.ofscroll::-webkit-scrollbar{display:none}
+.ofrow .chip{flex:none}
+.ofstage{margin:14px auto 0;max-width:420px;border-radius:22px;overflow:hidden;background:#F8E6EA;aspect-ratio:900/1784}
+.ofstage canvas{display:block;width:100%;height:100%;object-fit:contain;transition:opacity .25s ease}
+.ofstage canvas.dim{opacity:.35}
+.ofcap{max-width:420px;margin:0 auto}.ofcap h2{font-size:19px;margin:12px 0 2px}.ofcap p{margin:4px 0}
+.ofpal{display:flex;align-items:center;gap:6px;margin-top:8px}
+.ofpal span[style]{width:22px;height:22px;border-radius:50%;box-shadow:inset 0 0 0 1px rgba(0,0,0,.15)}
+.ofpal .faint{margin-left:4px;font-size:13px}
+.oflbl{max-width:420px;margin:18px auto 8px;font-size:15px}
+.ofhair{max-width:420px;margin:0 auto;display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+.ofsw{width:44px;height:44px;border-radius:50%;border:0;padding:0;cursor:pointer;box-shadow:inset 0 0 0 1px rgba(0,0,0,.18)}
+.ofsw[aria-pressed="true"]{outline:3px solid var(--primary);outline-offset:2px}
+/* The free picker: its colour inside a rainbow ring, so it does not read as one more preset. */
+input.ofsw{-webkit-appearance:none;appearance:none;padding:4px;box-shadow:none;background:conic-gradient(#e0605e,#e8c15a,#7cc27a,#5fb3d9,#8a7ad9,#d97ab8,#e0605e)}
+input.ofsw::-webkit-color-swatch-wrapper{padding:0}input.ofsw::-webkit-color-swatch{border:2px solid var(--bg);border-radius:50%}
+input.ofsw::-moz-color-swatch{border:2px solid var(--bg);border-radius:50%}
+.ofhair .more{color:var(--link);font-weight:700;font-size:14px;min-height:44px;padding:0 4px;background:none;border:0}
+@media (prefers-reduced-motion:reduce){.ofstage canvas{transition:none}}
+.st.change_proposed{background:var(--tag-gold-bg);color:var(--tag-gold-ink)}.st.proposal_declined{background:var(--tag-pink-bg);color:var(--tag-pink-ink)}
 /* The line under a Buy button (p.hint.st) borrows the chip's colours, but it
    says a sentence, not one word: it wraps inside its card and sits centred.
    With nothing to say it is not drawn at all - empty, the chip's padding and

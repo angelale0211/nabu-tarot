@@ -279,6 +279,11 @@ function adminBookings(p) {
     $$('[data-ics]', p).forEach((b) => b.addEventListener('click', () => { const bk = books.filter((x) => x.id === b.getAttribute('data-ics'))[0]; if (bk) addToCalendar(bk); }));
     $$('[data-bk]', p).forEach((b) => b.addEventListener('click', async () => {
       const bk = all.filter((x) => x.id === b.getAttribute('data-id'))[0];
+      /* Confirming an hour that runs into one already confirmed is asked
+         about, not refused: Nabu may mean it. */
+      const will = bk && b.getAttribute('data-bk') === 'confirmed' ? (bk.status === 'change_requested' && bk.newSlot ? bk.newSlot : bk.slot) : '';
+      const clash = will ? bkClash(books, bk.id, will) : null;
+      if (clash && !confirm(T().adminOverlapAsk(slotLabel(clash.slot), clash.name || clash.email || ''))) return;
       try { await BE.setBookingStatus(bk, b.getAttribute('data-bk')); toast(T().saved); } catch (e) { toast(loveWhy(e)); }
     }));
     /* Calling one off is behind a question, because the hour goes back on the
@@ -289,7 +294,21 @@ function adminBookings(p) {
       try { await BE.setBookingStatus(bk, 'cancelled'); toast(T().adminCancelDone); } catch (e) { toast(e.message); }
     }));
   };
-  admin.unsubs.push(BE.watchAllBookings((list) => { all = list; draw(); }));
+  /* Hours confirmed before overlap was checked carry no mark in `taken`, so
+     nothing closed the half hours either side of them. The first time the
+     list arrives, each future confirmed booking's hour is marked. */
+  let marked = false;
+  admin.unsubs.push(BE.watchAllBookings((list) => {
+    all = list; draw();
+    if (marked || !BE.db) return; marked = true;
+    list.filter((b) => b.kind !== 'unlock' && b.status === 'confirmed' && b.slot && (slotDate(b.slot) || 0) > Date.now())
+      .forEach((b) => BE.db.collection('taken').doc(String(b.slot).replace(/[^0-9T]/g, '')).set({ bookingId: b.id, confirmed: true }, { merge: true }).catch(() => {}));
+  }));
+}
+/* Another confirmed booking whose hour runs into `slot`, or null. */
+function bkClash(books, id, slot) {
+  const len = (SCHEDULE && SCHEDULE.slotMinutes) || 60, at = slotMin(String(slot).replace(/[^0-9T]/g, ''));
+  return books.filter((x) => x.id !== id && x.status === 'confirmed' && x.slot && Math.abs(slotMin(String(x.slot).replace(/[^0-9T]/g, '')) - at) < len)[0] || null;
 }
 /* ---- the money, which is not the calendar ----
 

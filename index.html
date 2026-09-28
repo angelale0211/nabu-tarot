@@ -12,7 +12,7 @@
      carries this notice with it. See LICENSE. -->
 <meta name="author" content="Nabu Tarot">
 <meta name="copyright" content="Copyright (c) 2025-2026 Nabu Tarot. All rights reserved.">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'none'; object-src 'none'; form-action 'self'; script-src 'self' 'sha256-jaoPBAjIY/HaUzrSjxMk/6F/osALVKQLRe1TXf0uUO4=' https://www.gstatic.com https://apis.google.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; font-src 'self' data:; media-src 'self' data: blob:; worker-src 'self'; connect-src 'self' https://*.googleapis.com https://*.google.com https://*.firebaseio.com https://*.cloudfunctions.net https://*.workers.dev https://generativelanguage.googleapis.com; frame-src https://*.firebaseapp.com https://accounts.google.com https://*.facebook.com">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'none'; object-src 'none'; form-action 'self'; script-src 'self' 'sha256-x+6b3BR+j7fvgznd0mzi2Ll5s3e/1tM1zfzTlRL10uQ=' https://www.gstatic.com https://apis.google.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; font-src 'self' data:; media-src 'self' data: blob:; worker-src 'self'; connect-src 'self' https://*.googleapis.com https://*.google.com https://*.firebaseio.com https://*.cloudfunctions.net https://*.workers.dev https://generativelanguage.googleapis.com; frame-src https://*.firebaseapp.com https://accounts.google.com https://*.facebook.com">
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <meta name="theme-color" content="#EFE9FA">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -652,6 +652,54 @@ html[lang="de"] .freegrid{--fgmin:132px}
 .signlist button b{font-size:13px;display:block;font-weight:600}
 .signlist button span{font-size:11px;color:var(--fg-faint)}
 .signlist button.me{border-color:var(--pink);box-shadow:0 0 0 1px var(--pink) inset}
+
+/* ---- tập đọc bài: the learner writes, the app marks ----
+   The card and the box sit side by side so the picture is in view while the
+   sentence is being written; below 420px they stack, because a 64px card
+   beside a textarea leaves the textarea too narrow to write a paragraph in. */
+.prcta{display:flex;gap:14px;align-items:center;background:linear-gradient(135deg,var(--lav-soft),var(--surface));border:1.5px solid var(--lav);border-radius:20px;padding:16px;margin:14px 0 4px;text-decoration:none;color:inherit}
+.prcta .ic{font-size:30px;line-height:1;flex:none}
+.prcta b{display:block;margin-bottom:3px}
+.prcta span{display:block;font-size:13.5px;line-height:1.45;color:var(--fg-faint)}
+.pprog{height:6px;border-radius:99px;background:var(--surface-2);overflow:hidden;margin-top:12px}
+.pprog span{display:block;height:100%;background:var(--lav);border-radius:99px}
+.prow{display:flex;gap:12px;align-items:center;justify-content:space-between;background:var(--surface);border:1px solid var(--rule);border-radius:16px;padding:13px 15px;margin-bottom:8px;text-decoration:none;color:inherit;min-height:40px}
+.prowin{min-width:0}
+.prow b{display:block;margin-bottom:3px;font-weight:700}
+.prow b .faint{white-space:nowrap}
+.prow>.prowin>span{display:block;font-size:13px;line-height:1.4;color:var(--fg-faint)}
+.pmark{font-size:12.5px;font-weight:700;padding:2px 8px;border-radius:99px;background:var(--surface-2);color:var(--fg-faint)}
+.pmark.gold{background:#F3E2A8;color:#6B5310}.pmark.silver{background:var(--lav-soft);color:var(--fg)}.pmark.bronze{background:var(--surface-2);color:var(--fg)}
+.pscene .pq{font-weight:600}
+.prcard{display:flex;gap:14px;align-items:flex-start;margin:14px 0}
+.pface{width:86px;flex:none}
+.pface svg{width:100%;height:auto;display:block}
+.pface.rev svg{transform:rotate(180deg)}
+.pturn{display:block;width:100%;padding:0;border:0;background:none;cursor:pointer;border-radius:10px}
+.pturn svg{width:100%;height:auto;display:block}
+.pface .flip{perspective:900px}
+.pface .flip .inner{position:relative;transform-style:preserve-3d;animation:flip .55s ease forwards}
+.pface .flip .fr,.pface .flip .bk{backface-visibility:hidden;-webkit-backface-visibility:hidden;display:block}
+.pface .flip .fr svg,.pface .flip .bk svg{width:100%;height:auto;display:block}
+.pface .flip .bk{position:absolute;inset:0;transform:rotateY(180deg)}
+/* The box for a card is not there to be written in until its card is up. */
+.pask.shut textarea,.pask.shut .faint{display:none}
+.pask.shut b{color:var(--fg-faint);font-weight:600}
+.pask{flex:1;min-width:0}
+.pask textarea{width:100%;margin-top:6px;resize:vertical;font:inherit;padding:10px;border-radius:12px;border:1px solid var(--rule);background:var(--surface);color:var(--fg)}
+.psynth{border-top:1px solid var(--rule);padding-top:14px}
+.presult{margin-top:18px;border:1.5px solid var(--rule);border-radius:18px;padding:16px;background:var(--surface-2)}
+.presult.gold{border-color:#D9BE63}.presult.silver{border-color:var(--lav)}.presult.bronze{border-color:var(--rule)}
+.pscore{font-size:34px;font-weight:800;line-height:1.1;margin-bottom:10px}
+.pscore span{display:block;font-size:14px;font-weight:600;color:var(--fg-faint)}
+.pnotes{margin:0 0 14px 18px;padding:0}
+.pnotes li{margin-bottom:6px;font-size:14.5px;line-height:1.5}
+.pline{padding:10px 0;border-top:1px solid var(--rule)}
+.pgot,.pmiss{margin-top:5px;font-size:13.5px}
+.pkw{display:inline-block;padding:1px 8px;margin:2px 4px 2px 0;border-radius:99px;font-size:12.5px}
+.pgot .pkw{background:var(--lav-soft);color:var(--fg)}
+.pmiss .pkw{background:var(--surface);color:var(--fg-faint);border:1px dashed var(--rule)}
+@media (max-width:420px){.prcard{flex-direction:column}.pface{width:72px}}
 .spread-d{display:flex;justify-content:center;margin:8px 0 12px}
 .spread-d svg{max-width:100%;height:auto}
 .guide h2{margin:14px 0 6px}
@@ -1078,6 +1126,31 @@ h1 .pileico{width:34px;height:27px;vertical-align:-3px;margin-right:2px}
 .upnext{display:flex;gap:10px;align-items:center;background:var(--tag-gold-bg);color:var(--tag-gold-ink);border-radius:14px;padding:12px 14px;margin-bottom:14px;text-decoration:none;font-weight:600}.upnext .ic{font-size:24px}
 .st{font-size:12px;font-weight:700;border-radius:8px;padding:3px 8px;background:var(--surface-3);white-space:nowrap}
 .st.confirmed{background:var(--tag-green-bg);color:var(--tag-green-ink)}.st.declined{background:var(--tag-pink-bg);color:var(--tag-pink-ink)}.st.requested{background:var(--tag-gold-bg);color:var(--tag-gold-ink)}
+/* Waiting on the person who booked: gold, like any other answer still to come. A time they turned down is pink, like a decline. */
+.pcourse{font-size:17px;margin:20px 0 8px}
+/* What to wear: chips, one painted figure, its caption and the hair swatches. */
+.ofrow{display:flex;gap:6px;flex-wrap:wrap;margin:10px 0 0}
+.ofrow.ofscroll{flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;padding-bottom:2px;margin-left:-16px;margin-right:-16px;padding-left:16px;padding-right:16px}
+.ofrow.ofscroll::-webkit-scrollbar{display:none}
+.ofrow .chip{flex:none}
+.ofstage{margin:14px auto 0;max-width:420px;border-radius:22px;overflow:hidden;background:#F8E6EA;aspect-ratio:900/1784}
+.ofstage canvas{display:block;width:100%;height:100%;object-fit:contain;transition:opacity .25s ease}
+.ofstage canvas.dim{opacity:.35}
+.ofcap{max-width:420px;margin:0 auto}.ofcap h2{font-size:19px;margin:12px 0 2px}.ofcap p{margin:4px 0}
+.ofpal{display:flex;align-items:center;gap:6px;margin-top:8px}
+.ofpal span[style]{width:22px;height:22px;border-radius:50%;box-shadow:inset 0 0 0 1px rgba(0,0,0,.15)}
+.ofpal .faint{margin-left:4px;font-size:13px}
+.oflbl{max-width:420px;margin:18px auto 8px;font-size:15px}
+.ofhair{max-width:420px;margin:0 auto;display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+.ofsw{width:44px;height:44px;border-radius:50%;border:0;padding:0;cursor:pointer;box-shadow:inset 0 0 0 1px rgba(0,0,0,.18)}
+.ofsw[aria-pressed="true"]{outline:3px solid var(--primary);outline-offset:2px}
+/* The free picker: its colour inside a rainbow ring, so it does not read as one more preset. */
+input.ofsw{-webkit-appearance:none;appearance:none;padding:4px;box-shadow:none;background:conic-gradient(#e0605e,#e8c15a,#7cc27a,#5fb3d9,#8a7ad9,#d97ab8,#e0605e)}
+input.ofsw::-webkit-color-swatch-wrapper{padding:0}input.ofsw::-webkit-color-swatch{border:2px solid var(--bg);border-radius:50%}
+input.ofsw::-moz-color-swatch{border:2px solid var(--bg);border-radius:50%}
+.ofhair .more{color:var(--link);font-weight:700;font-size:14px;min-height:44px;padding:0 4px;background:none;border:0}
+@media (prefers-reduced-motion:reduce){.ofstage canvas{transition:none}}
+.st.change_proposed{background:var(--tag-gold-bg);color:var(--tag-gold-ink)}.st.proposal_declined{background:var(--tag-pink-bg);color:var(--tag-pink-ink)}
 /* The line under a Buy button (p.hint.st) borrows the chip's colours, but it
    says a sentence, not one word: it wraps inside its card and sits centred.
    With nothing to say it is not drawn at all - empty, the chip's padding and
@@ -3064,6 +3137,22 @@ html[lang="de"] #today .tbl td:first-child{-webkit-hyphens:manual;hyphens:manual
 @media (prefers-reduced-motion:reduce){
   #boot .deal span{animation:none;opacity:1;transform:translate(var(--x),0) rotate(var(--r))}
 }
+@media (min-width:768px) and (max-width:899px) and (min-height:600px){html.iosapp{--rail-w:96px}html.iosapp body{padding-bottom:0;padding-left:var(--rail-w)}html.iosapp .wrap{max-width:1040px;padding:0 32px}html.iosapp .nav{top:0;bottom:0;right:auto;left:0;width:var(--rail-w);border-top:0;border-right:1px solid var(--rule-soft)}html.iosapp .nav .wrap{display:flex;flex-direction:column;height:auto;max-width:none;margin:0;padding:78px 0 0;gap:4px}html.iosapp .nav a{height:64px;font-size:11px;gap:5px;border-radius:14px;margin:0 8px}html.iosapp .nav a svg{width:26px;height:26px}html.iosapp .toast{bottom:28px}html.iosapp #totop{bottom:28px;right:28px}html.iosapp .sheet{align-items:center}html.iosapp .tiles{grid-template-columns:repeat(3,1fr);gap:14px}html.iosapp .tiles:has(>:nth-child(4):last-child){grid-template-columns:repeat(4,1fr)}html.iosapp .pickcta{grid-template-columns:170px 1fr;padding:22px}html.iosapp .pricesec{display:grid;grid-template-columns:repeat(2,1fr);gap:0 18px;align-items:start}html.iosapp .pricesec>.hint + *,html.iosapp #svcwrap>.hint + *{margin-top:0}html.iosapp .pricesec>h2,html.iosapp .pricesec>.hint,html.iosapp .pricesec>.paynote,html.iosapp .pricesec>p{grid-column:1/-1}html.iosapp .pricesec>.btn,html.iosapp .pricesec>.freegrid{grid-column:1/-1}html.iosapp .pricesec>.paynote{max-width:none}html.iosapp .pricesec .freegrid{grid-template-columns:repeat(4,1fr);gap:12px}html.iosapp #svcwrap{display:grid;grid-template-columns:repeat(2,1fr);gap:0 18px;align-items:start}html.iosapp #svcwrap>.paynote{grid-column:1/-1}html.iosapp .cal{display:grid;grid-template-columns:minmax(0,2fr) minmax(0,1fr);grid-template-rows:auto auto 1fr;column-gap:18px;align-items:start}html.iosapp .cal>.head{grid-area:1/1}html.iosapp .cal>.dow{grid-area:2/1}html.iosapp .cal>.days{grid-area:3/1}html.iosapp .cal>#slots{grid-area:1/2/4/3}html.iosapp .cal .slots{grid-template-columns:repeat(2,1fr);margin-top:0}html.iosapp .tabs{flex-wrap:wrap;overflow:visible}html.iosapp .chat{max-height:70vh}html.iosapp #main .paywall{max-width:640px;margin-left:auto;margin-right:auto}html.iosapp .upnext[href="#/install"]{display:none}
+html.iosapp #main>.detail{display:grid;grid-template-columns:300px minmax(0,680px);column-gap:36px;
+    justify-content:center;align-items:start}html.iosapp #main>.detail>*{grid-column:2;min-width:0}html.iosapp #main>.detail>.rail{display:flex;flex-direction:column;grid-column:1;grid-row:1/span 200;
+    position:sticky;top:78px;max-height:calc(100vh - 96px);overflow:auto;
+    scrollbar-width:none;padding-bottom:10px}html.iosapp #main>.detail>.rail::-webkit-scrollbar{display:none}html.iosapp .rail .hero,html.iosapp .rail .angelhero{order:1}html.iosapp .rail .cardnav{order:2}html.iosapp .rail .ai{order:3}html.iosapp .rail .hero{display:flex;flex-direction:column;align-items:center;text-align:center;
+    gap:2px;margin:2px 0 0}html.iosapp .rail .hero>div{width:100%;min-width:0}html.iosapp .rail .hero .face{width:180px}html.iosapp .rail .hero .flip{width:180px;margin:0 auto}html.iosapp .rail .hero .name{font-size:27px;margin-top:8px}html.iosapp .rail .hero .meta,html.iosapp .rail .hero .row{justify-content:center}html.iosapp .rail .hero .row{display:flex;flex-wrap:wrap;margin-bottom:0}html.iosapp .rail .angelhero{margin-bottom:0}html.iosapp .rail .cardnav{grid-template-columns:1fr;gap:8px;margin:16px 0 0}html.iosapp .rail .cardnav a,html.iosapp .rail .cardnav a.next{justify-content:center;text-align:center}html.iosapp .rail .ai{margin:16px 0 0;padding:14px}html.iosapp .rail .ai>.hint,html.iosapp .rail .ai>.faint{display:none}html.iosapp .rail .ai .sugs{margin:6px 0}html.iosapp .rail .ai .chatbar{flex-direction:column;align-items:stretch;margin-top:8px}html.iosapp .rail .ai .chatbar .btn{width:100%;min-height:42px}html.iosapp .rail .ai .chatbar textarea{min-height:68px}html.iosapp .rail .ai .ai-chat{max-height:34vh}html.iosapp #main>.detail>.cardnav{display:none}html.iosapp .guide,html.iosapp .reading{max-width:680px;margin-left:auto;margin-right:auto}html.iosapp .reading .guide{max-width:none}html.iosapp body[data-shape="one"] #main,html.iosapp body[data-shape="one"] #backbar,html.iosapp body[data-shape="one"] #homefoot{max-width:720px;margin-left:auto;margin-right:auto}html.iosapp body[data-shape="one"] #main p,html.iosapp body[data-shape="one"] #main li,html.iosapp body[data-shape="one"] .guide,html.iosapp body[data-shape="one"] .reading{max-width:none}html.iosapp #main>.eyebrow,html.iosapp #main>h1,html.iosapp #main>h1+p,html.iosapp #main>h1+p+p,html.iosapp #main>.eyebrow+h1,html.iosapp #main>h1+.muted,html.iosapp #main>h1+.hint,html.iosapp #main>.sec>.eyebrow,html.iosapp #main>.sec>h2{text-align:center;text-wrap:pretty}html.iosapp #main>h1{text-wrap:balance}html.iosapp #main>h1+p,html.iosapp #main>h1+p+p,html.iosapp #main>p.muted,html.iosapp #main>p.hint,html.iosapp #main>p.faint{width:100%;
+    margin-left:auto;margin-right:auto}html.iosapp #main>p.muted,html.iosapp #main>p.hint,html.iosapp #main>p.faint{text-align:center}html.iosapp .lookstrip{max-width:none}
+
+  
+html.iosapp .signin{max-width:480px;padding:24px 0}html.iosapp .signin .hlogo .avatar{width:84px;height:84px}html.iosapp .signin .hlogo .word{font-size:32px}html.iosapp .signin h1{font-size:32px;margin-bottom:12px}html.iosapp .signin .lead .ln1{font-size:19px}html.iosapp .signin .lead .ln2{font-size:16px}html.iosapp .signin .btn{min-height:54px;font-size:16.5px}html.iosapp .signin input{padding:15px 16px}
+html.iosapp .signin{padding-top:34px}
+html.iosapp .fan.deck .slot{flex:0 0 168px;width:168px;height:289px}html.iosapp .fan.deck{gap:12px;padding:8px calc(50% - 84px);margin-left:0;margin-right:0}html.iosapp .fan.deck .slot.near{box-shadow:none}html.iosapp .fan.deck .slot.near svg{filter:drop-shadow(0 4px 8px var(--shade)) drop-shadow(0 0 5px var(--lav))}html.iosapp .fan{max-width:640px;height:340px}html.iosapp .fan .slot{width:150px;height:246px;margin-left:-75px}html.iosapp .lookstrip{max-width:560px;margin-left:auto;margin-right:auto}html.iosapp .lookgrid.four{grid-template-columns:repeat(4,1fr);gap:10px}html.iosapp .lookstrip .look{padding:8px 6px}html.iosapp .lookstrip .look svg{max-height:110px;width:auto;margin-inline:auto}
+html.iosapp .foot .wrap{align-items:center;text-align:center}html.iosapp .foot .wrap>div{display:flex;flex-direction:column;align-items:center}html.iosapp .foot .links{justify-content:center}
+html.iosapp .shdlg .sh-body{border-radius:20px;padding-bottom:18px;box-shadow:0 18px 50px rgba(40,25,70,.3);margin-left:var(--rail-w)}
+html.iosapp .lesson>button{padding:16px 40px;font-size:18px}html.iosapp #main .lesson .in{padding:22px 40px 28px}html.iosapp #main .lesson .in .guide,html.iosapp #main .lesson .in .reading{max-width:none;margin-left:0;margin-right:0}html.iosapp #main .lesson .in p,html.iosapp #main .lesson .in li,html.iosapp #main .lesson .in .lead{max-width:none}html.iosapp #main .lesson .in p,html.iosapp #main .lesson .in li{font-size:16.5px;line-height:1.65}html.iosapp #main .lesson .in h3{font-size:20px}
+}
 </style>
 </head>
 <body>
@@ -3358,7 +3447,12 @@ const BOOK_WHERE = [
     name: { vi: 'Trong Nabu Tarot', en: 'Here in Nabu Tarot', de: 'In Nabu Tarot' },
     sub: { vi: 'Nabu nhắn trực tiếp trong mục Hồ sơ. Bạn có thể xem lại trên cả điện thoại và máy tính.',
       en: 'Nabu replies directly under Profile. You can revisit the reading on both phone and computer.',
-      de: 'Nabu antwortet direkt im Profil. Du kannst die Legung später auf dem Handy und am Computer wieder ansehen.' } },
+      de: 'Nabu antwortet direkt im Profil. Du kannst die Legung später auf dem Handy und am Computer wieder ansehen.' },
+    /* The iPhone app says what App Review needs to read: the reading is a live conversation at the
+       booked time (3.1.3(d)), not a written report delivered later. Every reading is live. */
+    subIOS: { vi: 'Nabu trò chuyện trực tiếp với bạn trong mục Hồ sơ, đúng giờ đã hẹn.',
+      en: 'A live chat with Nabu under Profile, at the time you booked.',
+      de: 'Ein Live-Chat mit Nabu im Profil, zur gebuchten Zeit.' } },
   { id: 'ig', icon: '📸', needsId: true, name: { vi: 'Instagram', en: 'Instagram', de: 'Instagram' },
     sub: { vi: 'Nabu nhắn qua tin nhắn Instagram', en: 'Nabu writes to you on Instagram', de: 'Nabu schreibt dir per Instagram-Direktnachricht.' } },
   { id: 'fb', icon: '💬', needsId: true, name: { vi: 'Facebook', en: 'Facebook', de: 'Facebook' },
@@ -3783,6 +3877,38 @@ const STR = {
     petSkyNote: 'Bầu trời phủ lên ngôi nhà bạn nhỏ đang ở, đổi cả giờ trong ngày lẫn thời tiết.',
     petFxNote: 'Hiệu ứng nằm ngay trên bạn nhỏ, không phải trên ngôi nhà.',
     petSceneWorth: 'Cảnh này thêm',
+    /* ---- tập đọc bài ---- */
+    practiceTitle: 'Luyện tập đọc bài Tarot',
+    practiceAsks: 'Bạn ấy hỏi:',
+    practiceTurn: 'Chạm để lật bài',
+    practiceIntro: 'Ở đây bạn là người đọc bài. Nabu dựng sẵn một tình huống và lật bài ngửa, bạn viết lời đọc của mình, rồi Nabu chấm.',
+    practiceDone: (d, t) => 'Bạn đã qua ' + d + '/' + t + ' bài tập',
+    practiceOffline: 'Chưa tải được bài tập. Bạn thử lại khi có mạng nhé.',
+    practiceWho: 'Tình huống',
+    practiceQ: 'Câu hỏi',
+    practiceHow: 'Lật từng lá một rồi viết lời đọc của bạn cho lá đó, rồi gộp lại thành một câu trả lời cho người hỏi. Viết xong hãy bấm chấm bài — đáp án của Nabu chỉ hiện ra sau đó.',
+    practiceSynth: 'Gộp lại',
+    practiceSynthHint: 'Trả lời thẳng câu hỏi ở trên, có nhắc tới ít nhất hai lá.',
+    practicePlaceholder: 'Viết bằng lời của bạn…',
+    practiceMark: 'Chấm bài',
+    practiceAgain: 'Chấm lại',
+    practiceByCard: 'Từng lá một',
+    practiceGot: 'Bạn bắt được:',
+    practiceMissed: 'Chưa chạm tới:',
+    practiceModel: 'Nabu đọc thế này',
+    practiceThin: (c) => 'Lá ' + c + ' bạn viết còn quá ngắn để chấm.',
+    practiceFrame: {
+      state: (c) => 'Ở lá ' + c + ', vị trí này hỏi chuyện đang xảy ra, nhưng bạn lại viết như một lời khuyên hoặc một dự đoán.',
+      advice: (c) => 'Ở lá ' + c + ', vị trí này là lời khuyên — hãy viết một việc để làm, đừng viết một điều sẽ xảy ra.',
+      outcome: (c) => 'Ở lá ' + c + ', vị trí này nói con đường dẫn tới đâu, nên câu của bạn cần có điều kiện hoặc kết quả.'
+    },
+    practiceMiss: (c) => 'Lá ' + c + ' thì bạn viết dài, nhưng không chạm vào ý nào của lá cả — thử đọc lại từ khoá của nó rồi viết lại.',
+    practiceRev: (c) => 'Lá ' + c + ' nằm ngược mà bạn vẫn đọc nghĩa xuôi. Nghĩa ngược không phải là nghĩa xuôi thêm chữ “không”.',
+    practiceDate: 'Bạn đã nêu một mốc ngày cụ thể. Tarot mô tả trình tự chứ không gọi ra ngày — đây là điều bài học về trải bài thời gian đã dặn.',
+    practiceBare: 'Một chữ “có” hay “không” trơ trọi thì chưa phải là một bài đọc. Hãy nói rõ đó là cái “có” kiểu gì.',
+    practiceNoSynth: 'Phần gộp lại còn thiếu, hoặc chưa nối các lá với nhau.',
+    practiceBand: { gold: 'Đọc chắc tay', silver: 'Khá', bronze: 'Đạt', none: 'Chưa đạt' },
+    pRev: 'Ngược',
     petWearTitle: 'Đồ mặc', petWearNote: 'Bạn nhỏ mặc áo hay đeo phụ kiện đều rạng rỡ hơn hẳn.',
     wardrobeTitle: 'Tủ quần áo', wardrobeSky: 'Bầu trời', wardrobeFx: 'Hiệu ứng',
     wearNone: 'Bỏ ra',
@@ -4201,7 +4327,8 @@ const STR = {
     saved: 'Đã lưu', loading: 'Đang tải…',
     myBookings: 'Lịch hẹn của tôi',
     noBookings: 'Bạn chưa có lịch hẹn nào.',
-    status: { requested: 'Chờ xác nhận', confirmed: 'Đã xác nhận', declined: 'Không nhận', cancelled: 'Đã hủy', change_requested: 'Chờ duyệt giờ mới', cancel_requested: 'Chờ duyệt hủy' },
+    status: { requested: 'Chờ xác nhận', confirmed: 'Đã xác nhận', declined: 'Không nhận', cancelled: 'Đã hủy', change_requested: 'Chờ duyệt giờ mới', cancel_requested: 'Chờ duyệt hủy', change_proposed: 'Nabu đề xuất giờ mới', proposal_declined: 'Chưa chốt giờ mới' },
+    adminOverlapAsk: (when, who) => 'Giờ này trùng với buổi đã xác nhận lúc ' + when + (who ? ' (' + who + ')' : '') + '. Vẫn xác nhận?', adminMoveBtn: 'Đổi giờ', adminMoveTitle: 'Đổi giờ buổi xem', adminMoveIntro: 'Chọn giờ mới. “Gợi ý cho khách” để khách đồng ý hoặc từ chối; “Đổi luôn” khi khách đã đồng ý với bạn.', adminPropose: 'Gợi ý giờ này cho khách', adminMoveNow: 'Đổi luôn', adminMoveAsk: 'Đổi luôn sang giờ này? Khách sẽ không được hỏi lại.', adminProposeSent: 'Đã gửi giờ đề xuất cho khách', adminMoved: 'Đã đổi giờ', adminWithdraw: 'Rút lại đề xuất', proposedLabel: 'Giờ Nabu đề xuất', declinedLabel: 'Khách chưa đồng ý giờ', acceptTime: 'Đồng ý giờ mới', declineTime: 'Giờ này không hợp', declineAsk: 'Giờ này không hợp với bạn? Bạn vẫn có thể chọn giờ khác, hoặc hủy và được hoàn tiền đầy đủ.', proposalAccepted: 'Đã đổi sang giờ mới', proposalDeclined: 'Nabu sẽ liên hệ lại với bạn', proposalFail: 'Chưa gửi được, bạn thử lại nhé', alertBookProposed: 'Nabu đề xuất giờ mới cho buổi xem của bạn', alertBookMoved: 'Buổi xem của bạn đã được đổi giờ',
     messages: 'Nhắn tin với Nabu',
     messagesIntro: 'Tin nhắn với Nabu được đồng bộ trên các thiết bị. Khi có tin mới, bạn sẽ thấy một chấm đỏ.',
     messagesSoon: 'Nhắn tin ở đây sẽ mở khi Nabu bật tài khoản. Bây giờ bạn nhắn qua Instagram nhé.',
@@ -4657,6 +4784,38 @@ const STR = {
     petSkyNote: 'The sky lies over whichever home it lives in, and changes both the hour and the weather.',
     petFxNote: 'An effect sits on the companion itself, not on the room.',
     petSceneWorth: 'This scene adds',
+    /* ---- practice readings ---- */
+    practiceTitle: 'Practise reading the cards',
+    practiceAsks: 'They ask:',
+    practiceTurn: 'Tap to turn the card',
+    practiceIntro: 'Here you are the reader. Nabu sets a scene and deals the cards face down; you turn them, write the reading, and Nabu marks it.',
+    practiceDone: (d, t) => 'You have passed ' + d + ' of ' + t + ' exercises',
+    practiceOffline: 'The exercises could not be loaded. Try again when you are back online.',
+    practiceWho: 'The situation',
+    practiceQ: 'The question',
+    practiceHow: 'Turn one card at a time and write your reading for it, then draw it together into one answer for the querent. Ask for the mark when you are done — Nabu\u2019s own reading only appears after that.',
+    practiceSynth: 'Put it together',
+    practiceSynthHint: 'Answer the question above directly, naming at least two of the cards.',
+    practicePlaceholder: 'In your own words…',
+    practiceMark: 'Mark my reading',
+    practiceAgain: 'Mark it again',
+    practiceByCard: 'Card by card',
+    practiceGot: 'You caught:',
+    practiceMissed: 'Not yet touched:',
+    practiceModel: 'How Nabu reads it',
+    practiceThin: (c) => 'What you wrote for ' + c + ' is too short to mark.',
+    practiceFrame: {
+      state: (c) => 'On ' + c + ', this position asks what is happening, but you wrote it as advice or as a prediction.',
+      advice: (c) => 'On ' + c + ', this position is advice — write something to do, not something that will happen.',
+      outcome: (c) => 'On ' + c + ', this position says where the path leads, so your sentence needs a condition or an outcome.'
+    },
+    practiceMiss: (c) => 'You wrote at length about ' + c + ' without touching any of its meanings — read its keywords again and try once more.',
+    practiceRev: (c) => c + ' landed reversed and you read it upright. A reversal is not the upright meaning with "not" in front of it.',
+    practiceDate: 'You named a specific date. Tarot describes sequence and does not name dates — the timing spread says so itself.',
+    practiceBare: 'A bare yes or no is not a reading. Say what kind of yes it is.',
+    practiceNoSynth: 'The synthesis is missing, or it does not join the cards up.',
+    practiceBand: { gold: 'Sure-handed', silver: 'Good', bronze: 'Passed', none: 'Not yet' },
+    pRev: 'Reversed',
     petWearTitle: 'Clothes', petWearNote: 'A jumper, a cloak or a flower crown: a dressed companion shines.',
     wardrobeTitle: 'Wardrobe', wardrobeSky: 'Sky', wardrobeFx: 'Effects',
     wearNone: 'Take off',
@@ -5075,7 +5234,8 @@ const STR = {
     saved: 'Saved', loading: 'Loading…',
     myBookings: 'My bookings',
     noBookings: 'You have no bookings yet.',
-    status: { requested: 'Awaiting confirmation', confirmed: 'Confirmed', declined: 'Declined', cancelled: 'Cancelled', change_requested: 'New time awaiting approval', cancel_requested: 'Cancellation pending' },
+    status: { requested: 'Awaiting confirmation', confirmed: 'Confirmed', declined: 'Declined', cancelled: 'Cancelled', change_requested: 'New time awaiting approval', cancel_requested: 'Cancellation pending', change_proposed: 'New time suggested', proposal_declined: 'Suggested time declined' },
+    adminOverlapAsk: (when, who) => 'This runs into a confirmed reading at ' + when + (who ? ' (' + who + ')' : '') + '. Confirm anyway?', adminMoveBtn: 'Change time', adminMoveTitle: 'Change the reading\u2019s time', adminMoveIntro: 'Choose the new time. Suggest it and the client accepts or declines, or move it now if they have already agreed with you.', adminPropose: 'Suggest this time', adminMoveNow: 'Move now', adminMoveAsk: 'Move the reading to this time now? The client will not be asked.', adminProposeSent: 'Suggested time sent to the client', adminMoved: 'Time changed', adminWithdraw: 'Withdraw suggestion', proposedLabel: 'Time Nabu suggests', declinedLabel: 'Declined time', acceptTime: 'Accept new time', declineTime: 'This time doesn\u2019t suit me', declineAsk: 'This time doesn\u2019t suit you? You can still pick another time, or cancel and get the full amount back.', proposalAccepted: 'Moved to the new time', proposalDeclined: 'Nabu will get back to you', proposalFail: 'Could not send. Try again.', alertBookProposed: 'Nabu suggests a new time for your reading', alertBookMoved: 'Your reading has a new time',
     messages: 'Message Nabu',
     messagesIntro: 'Messages with Nabu sync across your devices. A red dot appears when there is something new.',
     messagesSoon: 'Messaging here opens once Nabu turns on accounts. For now, message on Instagram.',
@@ -5104,7 +5264,7 @@ const STR = {
     stCancelMeaning: 'Cancel anytime in Google Play. You’ll keep access until the end of your paid period.',
     stManage: 'Manage in Google Play', stRestore: 'Restore purchases', stRestoring: 'Restoring…', stRestored: (n) => 'Restored ' + n + ' items', stRestoreNone: 'Nothing to restore',
     /* The same store sentences inside the iPhone app, where the App Store takes the payment (core.js lays them over the rest). */
-    appStore: { stIntro: 'Pay through the App Store. Access unlocks as soon as your payment is complete.', stProblem: 'Payment declined · Check your payment method in the App Store', stCancelMeaning: 'Cancel anytime in your Apple account settings. You’ll keep access until the end of your paid period.', stManage: 'Manage in the App Store', stNotReady: 'No response from the App Store.', stNoSheet: 'The App Store could not open the payment sheet. Check that you are signed in to your Apple account in Settings, then try again.', stSheetHung: 'The App Store did not answer. Close the app fully, open it again and try once more.', stSheetWaiting: 'The App Store is still working. If you have already paid, wait a minute and tap Restore purchases.', stAborted: 'The purchase did not complete. If you never saw the App Store payment sheet, please try again.', stItemOff: 'The App Store is not offering this item to your account.', stTerms: 'Terms of Use', stPrivacy: 'Privacy Policy' },
+    appStore: { wedUnpaid: 'The room is holding this hour for you. Complete the payment to keep it.', wedWaitPay: 'The room is holding this hour for you. Once the wedding is paid, the doors open at the time you chose.', priceFreeHint: 'Most of Nabu is free. Tap to explore.', stIntro: 'Pay through the App Store. Access unlocks as soon as your payment is complete.', stProblem: 'Payment declined · Check your payment method in the App Store', stCancelMeaning: 'Cancel anytime in your Apple account settings. You’ll keep access until the end of your paid period.', stManage: 'Manage in the App Store', stNotReady: 'No response from the App Store.', stNoSheet: 'The App Store could not open the payment sheet. Check that you are signed in to your Apple account in Settings, then try again.', stSheetHung: 'The App Store did not answer. Close the app fully, open it again and try once more.', stSheetWaiting: 'The App Store is still working. If you have already paid, wait a minute and tap Restore purchases.', stAborted: 'The purchase did not complete. If you never saw the App Store payment sheet, please try again.', stItemOff: 'The App Store is not offering this item to your account.', stTerms: 'Terms of Use', stPrivacy: 'Privacy Policy' },
     stNotReady: 'No response from Google Play.', stRetry: 'Try again', stPending: 'Payment pending. Access will unlock automatically once it’s complete.',
     stIncludedPro: 'Included in Nabu Pro', stSwitchTo: (n) => 'Switch to ' + n, stNeedIn: 'This item can only be purchased in the Nabu Tarot Android app.', stFailed: 'Purchase didn’t go through. Please try again.', stNoSheet: 'Google Play could not open the payment sheet. Open the Play Store, check you are signed in to the right Google account, then try again.', stSignInToBuy: 'Please sign in to buy. Opening the sign-in screen…', stNeedChrome: (b) => (b ? 'The app is running in ' + b + ', which cannot reach Google Play payments' : 'The app is running in a browser that cannot reach Google Play payments') + '. Set Chrome as the default browser: Settings → Apps → Default apps → Browser → Chrome. If Chrome is not installed, get it from the Play Store first. Then close the app fully and open it again. You may need to sign in again.', stSheetHung: 'Google Play did not answer. Close the app fully, open it again and try once more.', stSheetWaiting: 'Google Play is still working. If you have already paid, wait a minute and tap Restore purchases.', stAborted: 'The purchase did not complete. If you never saw the Google Play payment sheet, please try again.', stBusy: 'The payment sheet is opening. One moment.', stItemOff: 'Google Play is not offering this item to your account.', stDiagTitle: 'Technical details', stDiagCopy: 'Copy technical details', stDiagCopied: 'Copied. Please send it to Nabu.',
     myPlans: 'Your plans', stPlusPitch: 'Nabu Plus gives you unlimited readings and helps your companion grow faster.',
@@ -5530,6 +5690,38 @@ const STR = {
     petSkyNote: 'Der Himmel legt sich über das Zuhause und ändert Tageszeit und Wetter.',
     petFxNote: 'Ein Effekt liegt auf dem Begleiter selbst, nicht auf dem Raum.',
     petSceneWorth: 'Diese Szene bringt',
+    /* ---- Legungen üben ---- */
+    practiceTitle: 'Karten deuten üben',
+    practiceAsks: 'Sie fragt:',
+    practiceTurn: 'Zum Umdrehen tippen',
+    practiceIntro: 'Hier bist du die Lesende. Nabu stellt eine Situation und legt die Karten verdeckt aus, du deckst sie auf, schreibst die Deutung, und Nabu bewertet sie.',
+    practiceDone: (d, t) => 'Du hast ' + d + ' von ' + t + ' Übungen bestanden',
+    practiceOffline: 'Die Übungen konnten nicht geladen werden. Versuch es wieder, sobald du online bist.',
+    practiceWho: 'Die Situation',
+    practiceQ: 'Die Frage',
+    practiceHow: 'Dreh eine Karte nach der anderen um und schreib deine Deutung dazu und fass sie dann zu einer Antwort zusammen. Lass erst danach bewerten — Nabus eigene Deutung erscheint erst dann.',
+    practiceSynth: 'Zusammenfassen',
+    practiceSynthHint: 'Beantworte die Frage oben direkt und nenne dabei mindestens zwei Karten.',
+    practicePlaceholder: 'In deinen eigenen Worten…',
+    practiceMark: 'Bewerten lassen',
+    practiceAgain: 'Erneut bewerten',
+    practiceByCard: 'Karte für Karte',
+    practiceGot: 'Getroffen:',
+    practiceMissed: 'Noch nicht berührt:',
+    practiceModel: 'So liest Nabu es',
+    practiceThin: (c) => 'Was du zu ' + c + ' geschrieben hast, ist zu kurz für eine Bewertung.',
+    practiceFrame: {
+      state: (c) => 'Bei ' + c + ' fragt diese Position, was gerade geschieht — du hast sie aber als Rat oder Vorhersage geschrieben.',
+      advice: (c) => 'Bei ' + c + ' ist diese Position ein Rat — schreib etwas zu Tuendes, nicht etwas, das geschehen wird.',
+      outcome: (c) => 'Bei ' + c + ' sagt diese Position, wohin der Weg führt; dein Satz braucht also eine Bedingung oder ein Ergebnis.'
+    },
+    practiceMiss: (c) => 'Zu ' + c + ' hast du viel geschrieben, aber keine ihrer Bedeutungen berührt — lies ihre Stichworte noch einmal und versuch es erneut.',
+    practiceRev: (c) => c + ' liegt umgekehrt, du hast sie aber aufrecht gelesen. Eine Umkehrung ist nicht die aufrechte Bedeutung mit einem „nicht“ davor.',
+    practiceDate: 'Du hast ein konkretes Datum genannt. Tarot beschreibt Abfolge und nennt keine Daten — das sagt die Zeit-Legung selbst.',
+    practiceBare: 'Ein nacktes Ja oder Nein ist keine Deutung. Sag, welche Art von Ja es ist.',
+    practiceNoSynth: 'Die Zusammenfassung fehlt oder verbindet die Karten nicht.',
+    practiceBand: { gold: 'Sicher gelesen', silver: 'Gut', bronze: 'Bestanden', none: 'Noch nicht' },
+    pRev: 'Umgekehrt',
     petWearTitle: 'Kleidung', petWearNote: 'Ein Pullover, ein Umhang oder ein Blumenkranz: ein angezogener Begleiter strahlt.',
     wardrobeTitle: 'Kleiderschrank', wardrobeSky: 'Himmel', wardrobeFx: 'Effekte',
     wearNone: 'Ablegen',
@@ -5941,7 +6133,8 @@ const STR = {
     saved: 'Gespeichert', loading: 'Wird geladen…',
     myBookings: 'Meine Termine',
     noBookings: 'Du hast noch keine Termine.',
-    status: { requested: 'Wartet auf Bestätigung', confirmed: 'Bestätigt', declined: 'Abgelehnt', cancelled: 'Abgesagt', change_requested: 'Neue Zeit wartet auf Zustimmung', cancel_requested: 'Absage wartet auf Bestätigung' },
+    status: { requested: 'Wartet auf Bestätigung', confirmed: 'Bestätigt', declined: 'Abgelehnt', cancelled: 'Abgesagt', change_requested: 'Neue Zeit wartet auf Zustimmung', cancel_requested: 'Absage wartet auf Bestätigung', change_proposed: 'Neue Zeit vorgeschlagen', proposal_declined: 'Vorgeschlagene Zeit abgelehnt' },
+    adminOverlapAsk: (when, who) => 'Das überschneidet sich mit einer bestätigten Legung um ' + when + (who ? ' (' + who + ')' : '') + '. Trotzdem bestätigen?', adminMoveBtn: 'Zeit ändern', adminMoveTitle: 'Zeit der Legung ändern', adminMoveIntro: 'Wähl die neue Zeit. Schlag sie vor, dann nimmt die Person an oder lehnt ab – oder verschieb sofort, wenn ihr euch schon einig seid.', adminPropose: 'Diese Zeit vorschlagen', adminMoveNow: 'Jetzt verschieben', adminMoveAsk: 'Die Legung jetzt auf diese Zeit verschieben? Die Person wird nicht gefragt.', adminProposeSent: 'Vorgeschlagene Zeit gesendet', adminMoved: 'Zeit geändert', adminWithdraw: 'Vorschlag zurückziehen', proposedLabel: 'Von Nabu vorgeschlagen', declinedLabel: 'Abgelehnte Zeit', acceptTime: 'Neue Zeit annehmen', declineTime: 'Diese Zeit passt mir nicht', declineAsk: 'Diese Zeit passt dir nicht? Du kannst trotzdem eine andere Zeit wählen oder absagen und den vollen Betrag zurückbekommen.', proposalAccepted: 'Auf die neue Zeit verschoben', proposalDeclined: 'Nabu meldet sich bei dir', proposalFail: 'Konnte nicht gesendet werden. Bitte versuch es noch einmal.', alertBookProposed: 'Nabu schlägt eine neue Zeit für deine Legung vor', alertBookMoved: 'Deine Legung hat eine neue Zeit',
     messages: 'Nabu schreiben',
     messagesIntro: 'Nachrichten mit Nabu werden auf deinen Geräten synchronisiert. Bei etwas Neuem erscheint ein roter Punkt.',
     messagesSoon: 'Nachrichten hier gibt es, sobald Nabu die Konten einschaltet. Bis dahin schreib auf Instagram.',
@@ -5970,7 +6163,7 @@ const STR = {
     stCancelMeaning: 'Du kannst jederzeit in Google Play kündigen. Dein Zugang bleibt bis zum Ende des bezahlten Zeitraums bestehen.',
     stManage: 'In Google Play verwalten', stRestore: 'Käufe wiederherstellen', stRestoring: 'Wird wiederhergestellt…', stRestored: (n) => n + ' Elemente wiederhergestellt', stRestoreNone: 'Nichts zum Wiederherstellen',
     /* The same store sentences inside the iPhone app, where the App Store takes the payment (core.js lays them over the rest). */
-    appStore: { stIntro: 'Zahlung über den App Store. Nach erfolgreicher Zahlung wird sofort freigeschaltet.', stProblem: 'Zahlung abgelehnt · Bitte Zahlungsmethode im App Store prüfen', stCancelMeaning: 'Du kannst jederzeit in den Einstellungen deines Apple-Accounts kündigen. Dein Zugang bleibt bis zum Ende des bezahlten Zeitraums bestehen.', stManage: 'Im App Store verwalten', stNotReady: 'Keine Antwort vom App Store.', stNoSheet: 'Der App Store konnte das Zahlungsfenster nicht öffnen. Prüf in den Einstellungen, ob du mit deinem Apple-Account angemeldet bist, und versuch es noch einmal.', stSheetHung: 'Der App Store hat nicht geantwortet. Schließ die App ganz, öffne sie neu und versuch es noch mal.', stSheetWaiting: 'Der App Store arbeitet noch. Wenn du schon bezahlt hast, warte eine Minute und tipp auf Käufe wiederherstellen.', stAborted: 'Der Kauf wurde nicht abgeschlossen. Wenn du das Zahlungsfenster des App Store nicht gesehen hast, versuch es bitte noch einmal.', stItemOff: 'Der App Store bietet diesen Artikel deinem Konto nicht an.', stTerms: 'Nutzungsbedingungen', stPrivacy: 'Datenschutz' },
+    appStore: { wedUnpaid: 'Der Raum hält diese Stunde für euch frei. Schließt die Zahlung ab, damit sie euch bleibt.', wedWaitPay: 'Der Raum hält diese Stunde für euch frei. Sobald die Hochzeit bezahlt ist, öffnen sich die Türen zur gewählten Zeit.', priceFreeHint: 'Das meiste in Nabu ist kostenlos. Tipp dich einfach durch.', stIntro: 'Zahlung über den App Store. Nach erfolgreicher Zahlung wird sofort freigeschaltet.', stProblem: 'Zahlung abgelehnt · Bitte Zahlungsmethode im App Store prüfen', stCancelMeaning: 'Du kannst jederzeit in den Einstellungen deines Apple-Accounts kündigen. Dein Zugang bleibt bis zum Ende des bezahlten Zeitraums bestehen.', stManage: 'Im App Store verwalten', stNotReady: 'Keine Antwort vom App Store.', stNoSheet: 'Der App Store konnte das Zahlungsfenster nicht öffnen. Prüf in den Einstellungen, ob du mit deinem Apple-Account angemeldet bist, und versuch es noch einmal.', stSheetHung: 'Der App Store hat nicht geantwortet. Schließ die App ganz, öffne sie neu und versuch es noch mal.', stSheetWaiting: 'Der App Store arbeitet noch. Wenn du schon bezahlt hast, warte eine Minute und tipp auf Käufe wiederherstellen.', stAborted: 'Der Kauf wurde nicht abgeschlossen. Wenn du das Zahlungsfenster des App Store nicht gesehen hast, versuch es bitte noch einmal.', stItemOff: 'Der App Store bietet diesen Artikel deinem Konto nicht an.', stTerms: 'Nutzungsbedingungen', stPrivacy: 'Datenschutz' },
     stNotReady: 'Keine Antwort von Google Play.', stRetry: 'Erneut versuchen', stPending: 'Zahlung ausstehend. Nach Abschluss wird der Zugang automatisch freigeschaltet.',
     stIncludedPro: 'In Nabu Pro enthalten', stSwitchTo: (n) => 'Zu ' + n + ' wechseln', stNeedIn: 'Dieser Artikel kann nur in der Nabu-Tarot-App für Android gekauft werden.', stFailed: 'Kauf nicht abgeschlossen. Bitte erneut versuchen.', stNoSheet: 'Google Play konnte das Zahlungsfenster nicht öffnen. Öffne den Play Store, prüfe dein Google-Konto und versuch es noch einmal.', stSignInToBuy: 'Zum Kaufen bitte anmelden. Die Anmeldeseite wird geöffnet…', stNeedChrome: (b) => 'Die App läuft in ' + (b || 'einem Browser') + ', der Google-Play-Zahlungen nicht erreichen kann. Mach Chrome zum Standardbrowser: Einstellungen → Apps → Standard-Apps → Browser → Chrome. Falls Chrome fehlt, zuerst aus dem Play Store installieren. Dann die App ganz schließen und neu öffnen. Eventuell musst du dich neu anmelden.', stSheetHung: 'Google Play hat nicht geantwortet. Schließ die App ganz, öffne sie neu und versuch es noch mal.', stSheetWaiting: 'Google Play arbeitet noch. Wenn du schon bezahlt hast, warte eine Minute und tipp auf Käufe wiederherstellen.', stAborted: 'Der Kauf wurde nicht abgeschlossen. Wenn du das Zahlungsfenster von Google Play nicht gesehen hast, versuch es bitte noch einmal.', stBusy: 'Das Zahlungsfenster wird geöffnet. Einen Moment.', stItemOff: 'Google Play bietet diesen Artikel deinem Konto nicht an.', stDiagTitle: 'Technische Details', stDiagCopy: 'Technische Details kopieren', stDiagCopied: 'Kopiert. Bitte schick es an Nabu.',
     myPlans: 'Deine Abos', stPlusPitch: 'Nabu Plus bietet unbegrenzte Legungen und lässt deinen kleinen Begleiter schneller wachsen.',
@@ -13514,7 +13707,15 @@ const pad2 = (n) => String(n).padStart(2, '0');
 const isoDate = (d) => d.getFullYear() + '-' + pad2(d.getMonth() + 1) + '-' + pad2(d.getDate());
 
 /* ---- language + theme ---- */
-let lang = store.get('nabu-lang', 'vi');
+/* A first open inside the iPhone app follows the phone's language: the App Store is worldwide and
+   App Review starts from an English iPad, where Vietnamese was the first thing it met. A language
+   the app does not speak falls to English there. The web and Android keep Vietnamese as the default. */
+function deviceLang() {
+  const all = (navigator.languages && navigator.languages.length ? navigator.languages : [navigator.language || '']);
+  for (const l of all) { const two = String(l).slice(0, 2).toLowerCase(); if (['vi', 'en', 'de'].indexOf(two) >= 0) return two; }
+  return 'en';
+}
+let lang = store.get('nabu-lang', iosShell() ? deviceLang() : 'vi');
 /* The language belongs to the person, not to the handset. It is chosen once on
    the welcome screen and carried on the account, so a second phone or a
    reinstall opens in the right language instead of falling back to Vietnamese.
@@ -14132,7 +14333,7 @@ const REM = { timers: [] };
 function scheduleReminders(list) {
   REM.timers.forEach(clearTimeout); REM.timers = [];
   const S = T(), now = Date.now(), soon = [];
-  (list || []).filter((b) => ['requested', 'confirmed', 'change_requested'].indexOf(b.status) > -1).forEach((b) => {
+  (list || []).filter((b) => ['requested', 'confirmed', 'change_requested', 'change_proposed', 'proposal_declined'].indexOf(b.status) > -1).forEach((b) => {
     const d = slotDate(b.slot); if (!d || d.getTime() < now) return;
     soon.push(b);
     [[24 * 60, S.inHours(24)], [6 * 60, S.inHours(6)], [60, S.inHours(1)], [15, S.inMinutes(15)]].forEach((r) => {
@@ -14389,7 +14590,7 @@ function parseHash() {
   return { route: path[0] || 'home', args: path.slice(1), params: params };
 }
 const ONE_COL = ['love', 'wedding', 'pet', 'play', 'looks', 'rewards', 'me', 'book',
-  'contact', 'report', 'privacy', 'install', 'alerts', 'news', 'post', 'unlock', 'welcome'];
+  'contact', 'report', 'privacy', 'install', 'alerts', 'news', 'post', 'unlock', 'welcome', 'outfit'];
 /* Under #/learn only the hub and the card pages are wide; the rest is reading. */
 const ONE_COL_LEARN = ['astro', 'fortune', 'numbers', 'angel', 'quiz', 'manifest',
   'guide', 'spread', 'lesson'];
@@ -14773,6 +14974,10 @@ function notifyBooking(b) {
   if (!CONFIG.bookingEndpoint) return Promise.resolve();
   return fetch(CONFIG.bookingEndpoint, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ booking: b, tz: CONFIG.timezone, to: CONFIG.adminNotifyEmails, lang: lang }) }).catch(() => {});
 }
+/* What a booking goes back to once whatever is in flight - a request from
+   the client, a proposal from Nabu, a proposal turned down - is settled. */
+const BK_INFLIGHT = ['change_requested', 'cancel_requested', 'change_proposed', 'proposal_declined'];
+const settledStatus = (b) => (BK_INFLIGHT.indexOf(b.status) > -1 ? (b.prevStatus || 'confirmed') : b.status);
 const BE = {
   enabled: !!CONFIG.firebase,
   ready: false, user: null, db: null, auth: null,
@@ -15148,7 +15353,7 @@ const BE = {
         if (!firstT) s.docChanges().forEach((c) => { if (c.type === 'added' || c.type === 'modified') { const t = c.doc.data(); if (t.lastFrom === 'user') notifyAdmin(S.notifNewMsg + (t.name || t.email || S.guestLabel), t.lastText || '', '#/admin?tab=inbox'); } });
         firstT = false;
       });
-      this._unsubBk = this.db.collection('bookings').where('status', 'in', ['requested', 'change_requested', 'cancel_requested']).onSnapshot((s) => {
+      this._unsubBk = this.db.collection('bookings').where('status', 'in', ['requested', 'change_requested', 'cancel_requested', 'proposal_declined']).onSnapshot((s) => {
         NEWBK = s.size; nav();
         if (!firstB) s.docChanges().forEach((c) => { if (c.type === 'added') { const b = c.doc.data(); notifyAdmin(S.notifNewBooking + (b.name || b.email || S.guestLabel), (b.service || '') + (b.slot ? ' · ' + b.slot.replace('T', ' ') : ''), '#/admin?tab=bookings'); } });
         firstB = false;
@@ -15228,32 +15433,70 @@ const BE = {
        the calendar for an order without an hour, so nothing is held. */
     const key = b.slot ? String(b.slot).replace(/[^0-9T]/g, '') : '';
     const newKey = b.newSlot ? String(b.newSlot).replace(/[^0-9T]/g, '') : '';
+    const propKey = b.proposedSlot ? String(b.proposedSlot).replace(/[^0-9T]/g, '') : '';
     const taken = (k) => this.db.collection('taken').doc(k);
-    if (status === 'keep') {  // the client asked for a change or a cancellation; Nabu keeps the booking as it was
-      await ref.set({ status: b.prevStatus || 'confirmed', newSlot: firebase.firestore.FieldValue.delete(), prevStatus: firebase.firestore.FieldValue.delete() }, { merge: true });
+    const del = firebase.firestore.FieldValue.delete();
+    /* Keep: the client asked for a change or a cancellation, or Nabu proposed
+       a new time and takes it back, or the client said no to it. Either way
+       the booking stays at its hour and every pending hour is let go. */
+    if (status === 'keep') {
+      await ref.set({ status: b.prevStatus || 'confirmed', newSlot: del, proposedSlot: del, prevStatus: del, declinedSlot: del }, { merge: true });
       if (newKey) await taken(newKey).delete().catch(() => {});
+      if (propKey) await taken(propKey).delete().catch(() => {});
       return;
     }
     if (status === 'confirmed' && b.status === 'change_requested' && b.newSlot) {  // the new time takes over
       await ref.set({ status: 'confirmed', slot: b.newSlot, newSlot: firebase.firestore.FieldValue.delete(), prevStatus: firebase.firestore.FieldValue.delete() }, { merge: true });
       if (key) await taken(key).delete().catch(() => {});
-      await taken(newKey).set({ bookingId: b.id }, { merge: true });
+      await taken(newKey).set({ bookingId: b.id, pending: firebase.firestore.FieldValue.delete(), confirmed: true }, { merge: true });
       return;
     }
     await ref.set({ status: status }, { merge: true });
     if (status === 'declined' || status === 'cancelled') {
       if (key) await taken(key).delete().catch(() => {});
       if (newKey) await taken(newKey).delete().catch(() => {});
-    } else if (key) await taken(key).set({ bookingId: b.id }, { merge: true });
+      if (propKey) await taken(propKey).delete().catch(() => {});
+    } else if (key) await taken(key).set({ bookingId: b.id, confirmed: status === 'confirmed' }, { merge: true });
+  },
+  /* Nabu moves a booking. Proposing holds the new hour as pending and waits
+     for the person who booked to accept or decline it (the worker's
+     /booking-answer, since the rules keep a customer off the slot itself).
+     Moving is for when they have already agreed, in the chat or elsewhere: the
+     booking takes the new hour at once and the old one is let go. Either
+     closes whatever else was in flight - their own request for a new time,
+     an earlier proposal. */
+  async proposeSlot(b, slot) {
+    const del = firebase.firestore.FieldValue.delete(), k = (x) => String(x).replace(/[^0-9T]/g, '');
+    await this.db.collection('bookings').doc(b.id).set({ status: 'change_proposed', proposedSlot: slot, prevStatus: settledStatus(b), newSlot: del, declinedSlot: del }, { merge: true });
+    if (b.newSlot && b.newSlot !== slot) await this.db.collection('taken').doc(k(b.newSlot)).delete().catch(() => {});
+    if (b.proposedSlot && b.proposedSlot !== slot) await this.db.collection('taken').doc(k(b.proposedSlot)).delete().catch(() => {});
+    await this.db.collection('taken').doc(k(slot)).set({ bookingId: b.id, pending: true }, { merge: true });
+  },
+  async moveBooking(b, slot) {
+    const del = firebase.firestore.FieldValue.delete(), k = (x) => String(x).replace(/[^0-9T]/g, '');
+    await this.db.collection('bookings').doc(b.id).set({ slot: slot, status: settledStatus(b), movedFrom: b.slot || '', movedAt: firebase.firestore.FieldValue.serverTimestamp(), newSlot: del, proposedSlot: del, prevStatus: del, declinedSlot: del }, { merge: true });
+    [b.slot, b.newSlot, b.proposedSlot].filter((x) => x && x !== slot).forEach((x) => this.db.collection('taken').doc(k(x)).delete().catch(() => {}));
+    await this.db.collection('taken').doc(k(slot)).set({ bookingId: b.id, pending: firebase.firestore.FieldValue.delete(), confirmed: settledStatus(b) === 'confirmed' }, { merge: true });
+  },
+  /* The person who booked answers Nabu's proposal. */
+  async answerProposal(b, yes) {
+    if (!CONFIG.aiEndpoint) throw new Error('not configured');
+    const r = await withTimeout(fetch(CONFIG.aiEndpoint.replace(/\/$/, '') + '/booking-answer', {
+      method: 'POST', headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + await this.token() },
+      body: JSON.stringify({ id: b.id, yes: !!yes })
+    }), 20000);
+    const j = await r.json().catch(() => ({}));
+    if (!r.ok || !j.ok) throw new Error(j.error || ('HTTP ' + r.status));
+    return j;
   },
   /* The client asks to move the booking: the new slot is reserved at once, Nabu approves or keeps the old time. */
   async requestChange(b, newSlot) {
-    await this.db.collection('bookings').doc(b.id).set({ status: 'change_requested', newSlot: newSlot, prevStatus: b.status === 'change_requested' || b.status === 'cancel_requested' ? (b.prevStatus || 'confirmed') : b.status }, { merge: true });
+    await this.db.collection('bookings').doc(b.id).set({ status: 'change_requested', newSlot: newSlot, prevStatus: settledStatus(b) }, { merge: true });
     await this.db.collection('taken').doc(String(newSlot).replace(/[^0-9T]/g, '')).set({ bookingId: b.id, pending: true }, { merge: true });
     notifyBooking(Object.assign({}, b, { newSlot: newSlot, status: 'change_requested' }));
   },
   async requestCancel(b) {
-    await this.db.collection('bookings').doc(b.id).set({ status: 'cancel_requested', prevStatus: b.status === 'change_requested' || b.status === 'cancel_requested' ? (b.prevStatus || 'confirmed') : b.status }, { merge: true });
+    await this.db.collection('bookings').doc(b.id).set({ status: 'cancel_requested', prevStatus: settledStatus(b) }, { merge: true });
     notifyBooking(Object.assign({}, b, { status: 'cancel_requested' }));
   },
   async getBooking(id) { const d = await this.db.collection('bookings').doc(id).get(); return d.exists ? Object.assign({ id: d.id }, d.data()) : null; },
@@ -15269,7 +15512,10 @@ const BE = {
     const out = {};
     try {
       const s = await Promise.race([this.db.collection('taken').get(), new Promise((_, rej) => setTimeout(() => rej(new Error('timeout')), 3000))]);
-      s.forEach((d) => { out[d.id] = true; });
+      /* 'confirmed' for an hour Nabu has confirmed: it also closes the start
+         times that would run into it (slotsFor). Any other held hour closes
+         only itself. */
+      s.forEach((d) => { const x = d.data ? d.data() : null; out[d.id] = x && x.confirmed ? 'confirmed' : true; });
     } catch (e) { return null; }
     return out;
   }
@@ -16548,9 +16794,19 @@ const TOUR = [
   { ic: "🔔", vi: ["Làm mới & thông báo", "Muốn cập nhật nội dung mới nhất, bạn chỉ cần kéo màn hình xuống từ đầu trang rồi thả ra. Nabu sẽ tự làm mới và tải phiên bản nội dung mới nhất.\nBiểu tượng chuông 🔔 ở góc trên bên phải lưu lại những cập nhật và hoạt động đã diễn ra khi bạn không mở app, để bạn không bỏ lỡ điều gì."], en: ["Refresh & notifications", "To get the newest content, pull the screen down from the top and let go. Nabu refreshes itself and loads the latest version.\nThe bell 🔔 in the top right keeps the updates and activities that happened while you were away, so you miss nothing."], de: ["Aktualisieren & Benachrichtigungen", "Für die neuesten Inhalte ziehst du den Bildschirm oben einfach nach unten und lässt los. Nabu aktualisiert sich selbst und lädt die neueste Version.\nDie Glocke 🔔 oben rechts bewahrt die Neuigkeiten und Aktivitäten auf, die passiert sind, während du weg warst, damit dir nichts entgeht."] },
   { ic: "👤", vi: ["Hồ sơ của bạn", "Nhập tên và ngày sinh để Nabu cá nhân hóa trải nghiệm dành riêng cho bạn. Đăng nhập để lưu lại hồ sơ nhé! ✨"], en: ["Your profile", "Enter your name and birthday so Nabu can personalise the experience just for you. Sign in to keep your profile! ✨"], de: ["Dein Profil", "Gib deinen Namen und dein Geburtsdatum ein, damit Nabu das Erlebnis ganz auf dich abstimmen kann. Melde dich an, um dein Profil zu speichern! ✨"] }
 ];
+/* Inside the iPhone app the tour leads with learning. App Review turned the app down as one more
+   horoscope app, and the first two steps above - a card for today's energy, forecasts by sign - were
+   the first thing it read. Same steps otherwise, the owner's words untouched; forecasts and booking
+   drop out, and three steps of learning come first. */
+const TOUR_IOS_LEAD = [
+  { ic: "📚", vi: ["Học Tarot", "Các khóa Tarot, Lenormand và bài Tây đi từng bài một, có câu đố ôn tập. Đủ 78 lá Tarot, mỗi lá có nghĩa xuôi, nghĩa ngược và cách đọc theo từng chủ đề."], en: ["Learn Tarot", "Courses in Tarot, Lenormand and playing cards go one lesson at a time, with quizzes to review. All 78 Tarot cards are here, each with its upright and reversed meaning and how to read it for each topic."], de: ["Tarot lernen", "Die Kurse in Tarot, Lenormand und Spielkarten gehen Lektion für Lektion, mit Quizfragen zum Wiederholen. Alle 78 Tarotkarten sind da, jede mit aufrechter und umgekehrter Bedeutung und wie man sie für jedes Thema liest."] },
+  { ic: "✍️", vi: ["Luyện đọc bài", "Ở đây bạn là người đọc bài. Nabu dựng sẵn một tình huống và chia bài úp. Bạn lật từng lá, viết lời đọc của mình, rồi Nabu chấm và chỉ ra chỗ bạn còn đọc sót.\nLời đọc của Nabu chỉ hiện ra sau khi bạn nộp bài."], en: ["Practise reading", "Here you are the reader. Nabu sets up a situation and deals the cards face down; you turn them, write your reading, and Nabu marks it and shows what you missed.\nNabu\u2019s own reading only appears once you hand yours in."], de: ["Deuten üben", "Hier bist du die Lesende. Nabu stellt eine Situation und legt die Karten verdeckt aus; du deckst sie auf, schreibst deine Deutung, und Nabu bewertet sie und zeigt, was dir entgangen ist.\nNabus eigene Deutung erscheint erst, wenn du deine abgegeben hast."] },
+  { ic: "🃏", vi: ["Một lá mỗi ngày", "Mỗi ngày rút một lá để ôn: đọc ý nghĩa và các từ khóa của lá đó. Chọn chủ đề bạn đang nghĩ tới, vì mỗi chủ đề có cách đọc riêng."], en: ["A card a day", "Draw one card a day to study: read its meaning and its keywords. Choose the topic on your mind, because each topic is read in its own way."], de: ["Eine Karte am Tag", "Zieh jeden Tag eine Karte zum Lernen: lies ihre Bedeutung und ihre Stichworte. Wähl dein Thema, denn jedes wird auf seine eigene Weise gelesen."] }
+];
+const tourSteps = () => (isIOSApp() ? TOUR_IOS_LEAD.concat([TOUR[4], TOUR[2], TOUR[6], TOUR[7]]) : TOUR);
 function tourHTML(step) {
-  const t = TOUR[step], txt = t[lang];
-  const pct = Math.round((step + 1) / TOUR.length * 100);
+  const TS = tourSteps(), t = TS[step], txt = t[lang];
+  const pct = Math.round((step + 1) / TS.length * 100);
   /* A bar along the top, because eight steps with no sense of how many are
      left is eight steps somebody abandons at the third. The icon sits in a
      round well rather than loose on the card, which is what makes a row of
@@ -16560,7 +16816,7 @@ function tourHTML(step) {
     + '<div class="tourwell">' + t.ic + '</div>'
     + '<h3 style="margin:6px 0">' + esc(txt[0]) + '</h3>' + txt[1].split('\n').map((para) => '<p class="muted" style="font-size:14.5px">' + esc(para) + '</p>').join('')
     // Both arrows are always there, in the same place: back is greyed out on the first step, forward becomes a tick on the last.
-    + '<div class="tournav"><button class="btn sm" data-tour="prev" aria-label="back"' + (step === 0 ? ' disabled' : '') + '>←</button><span class="faint">' + (step + 1) + ' / ' + TOUR.length + '</span><button class="btn sm primary" data-tour="next" aria-label="next">' + (step === TOUR.length - 1 ? '✓' : '→') + '</button></div>'
+    + '<div class="tournav"><button class="btn sm" data-tour="prev" aria-label="back"' + (step === 0 ? ' disabled' : '') + '>←</button><span class="faint">' + (step + 1) + ' / ' + TS.length + '</span><button class="btn sm primary" data-tour="next" aria-label="next">' + (step === TS.length - 1 ? '✓' : '→') + '</button></div>'
     + '<button class="linkbtn" data-tour="skip" style="margin-top:8px;font-size:13px">' + esc(T().dismiss) + '</button></div>';
 }
 /* Once the tour is done or closed it shrinks to a one-line bar that can reopen it. */
@@ -16572,7 +16828,7 @@ function bindTour(root, step) {
   $$('[data-tour]', root).forEach((b) => b.addEventListener('click', () => {
     const act = b.getAttribute('data-tour');
     if (act === 'open') { $('#tour').outerHTML = tourHTML(0); bindTour(root, 0); return; }
-    if (act === 'next' && step < TOUR.length - 1) { $('#tour').outerHTML = tourHTML(step + 1); bindTour(root, step + 1); return; }
+    if (act === 'next' && step < tourSteps().length - 1) { $('#tour').outerHTML = tourHTML(step + 1); bindTour(root, step + 1); return; }
     if (act === 'prev') { $('#tour').outerHTML = tourHTML(Math.max(0, step - 1)); bindTour(root, Math.max(0, step - 1)); return; }
     saveProfileLocal({ tourDone: true }); if (BE.user) BE.pushProfile();
     // On the home screen the card folds into its little bar; anywhere else it
@@ -16705,6 +16961,17 @@ function pickCtaHTML() {
 }
 function quickLinksHTML() {
   const S = T();
+  /* In the iPhone app the tiles lead with learning: practice and the Tarot course first, the daily
+     card as a card to study, the Red Thread; astrology and the price list step aside. */
+  if (isIOSApp()) {
+    const it = [['#/practice', '✍️', S.practiceTitle, lang === 'vi' ? 'viết lời đọc, Nabu chấm' : (lang === 'de' ? 'deuten, bewerten lassen' : 'write a reading, get it marked')],
+      ['#/learn/tarot', PICK_ICON, S.cats.tarot, lang === 'vi' ? '78 lá, ý nghĩa' : (lang === 'de' ? '78 Karten, Bedeutungen' : '78 cards, meanings')],
+      ['#/pick', DRAW_ICON, S.nav.pick, lang === 'vi' ? 'một lá để học hôm nay' : (lang === 'de' ? 'eine Karte zum Lernen' : 'a card to study today')],
+      ['#/love', '💞', S.loveTitle, S.loveSub],
+      ['#/news', '✨', S.newsTitle, lang === 'vi' ? 'bài mới của Nabu' : (lang === 'de' ? 'neue Beiträge von Nabu' : 'new posts from Nabu')],
+      ['#/book', '📅', S.nav.book, lang === 'vi' ? 'hẹn giờ với Nabu' : (lang === 'de' ? 'Termin bei Nabu' : 'book a time with Nabu')]];
+    return '<div class="tiles">' + it.map((t) => '<a class="tile" href="' + t[0] + '"><div class="ic">' + t[1] + '</div><b>' + esc(t[2]) + '</b><span>' + esc(t[3]) + '</span></a>').join('') + '</div>';
+  }
   const tiles = [['#/pick', DRAW_ICON, S.nav.pick, lang === 'vi' ? 'năng lượng hôm nay' : (lang === 'de' ? 'deine Energie heute' : 'your energy today')],
     ['#/news', '✨', S.newsTitle, lang === 'vi' ? 'bài mới của Nabu' : (lang === 'de' ? 'neue Beiträge von Nabu' : 'new posts from Nabu')],
     ['#/learn/astro', '🔮', S.cats.astro, lang === 'vi' ? '12 cung, hành tinh, nhà' : (lang === 'de' ? '12 Zeichen, Planeten, Häuser' : '12 signs, planets, houses')],
@@ -16740,7 +17007,7 @@ function upcomingHTML() {
 async function renderHome(args, params) {
   const S = T(), m = $('#main');
   const name = (PROFILE.name || '').trim();
-  const sale = SALE.live();
+  const sale = isIOSApp() ? null : SALE.live();
   const saleBanner = sale
     ? '<a class="salebar" href="' + (sale.scope === 'unlock' ? '#/unlock?from=app' : '#/prices') + '"><span class="tag">🏷️ ' + esc(SALE.off()) + '</span><span class="txt">' + esc(SALE.title() || T().saleDefault) + '</span><span class="go">' + esc(T().saleSee) + ' ›</span></a>'
     : '';
@@ -16765,17 +17032,18 @@ async function renderHome(args, params) {
     + pickCtaHTML()
     + quickLinksHTML()
     + '<div id="actwrap"></div>'
-    + personalHTML()
-    + '<div id="foryouwrap"></div>'
+    /* The sign, the life path and the forecasts by sign are the horoscope app App Review saw; the
+       iPhone app keeps them in Learn and off the first screen. */
+    + (isIOSApp() ? '' : personalHTML() + '<div id="foryouwrap"></div>')
     + '<div class="sec" id="feed"><p class="muted">…</p></div>';
   bindAccordions(m); bindCardLinks(m);
   bindTour(m, 0);
   homeActHTML($('#actwrap')).catch(() => {});
   if (POSTS == null) await loadPosts();
   const fy = $('#foryouwrap'); if (fy) { fy.innerHTML = suggestedGuidesHTML(); bindPost(fy); bindAccordions(fy); }
-  const sh = $('#sidehoro'); if (sh) { sh.innerHTML = '<div class="eyebrow">' + esc(T().forInterests) + '</div>' + horoCardHTML('monthly') + horoCardHTML('weekly'); sh.hidden = false; }
+  const sh = isIOSApp() ? null : $('#sidehoro'); if (sh) { sh.innerHTML = '<div class="eyebrow">' + esc(T().forInterests) + '</div>' + horoCardHTML('monthly') + horoCardHTML('weekly'); sh.hidden = false; }
   const feed = $('#feed'); if (!feed) return;
-  const all = sortedPosts(), welcome = all.filter((p) => p.welcome)[0], list = all.filter((p) => !p.welcome);
+  const all = sortedPosts().filter((p) => !(isIOSApp() && p.markers && p.markers.signs && p.markers.signs.length)), welcome = all.filter((p) => p.welcome)[0], list = all.filter((p) => !p.welcome);
   const wopen = store.get('nabu-welcome-open', true) !== false;
   feed.innerHTML = (welcome ? '<section class="welcome' + (wopen ? ' open' : '') + '"><button type="button" class="wtoggle" data-wtoggle><h2>' + esc(S.welcomeHead) + '</h2><span class="chev">' + (wopen ? '–' : '+') + '</span></button><div class="in">' + paras(L(welcome.body)) + '<div class="sig">' + LOGO + '</div></div></section>' : '')
     + (POSTS_CACHED && all.length ? '<div class="banner">' + esc(S.feedOffline) + '</div>' : '')
@@ -17136,6 +17404,9 @@ function renderLearn(args, params) {
     const ints = PROFILE.interests || [];
     const tile = (k, locked) => '<a class="tile' + (ints.indexOf(k) > -1 || k === 'tarot' || k === 'lenormand' || k === 'playing' || k === 'manifest' || k === 'angel' ? ' rec' : '') + '" href="#/learn/' + k + '"><div class="ic">' + CAT_ICONS[k] + (locked ? ' <span class="lock">🔒</span>' : '') + '</div><b>' + esc(S.cats[k]) + '</b><span>' + esc(S.catSub[k]) + '</span></a>';
     m.innerHTML = '<div class="eyebrow">' + esc(S.nav.learn) + '</div><h1 style="margin-bottom:6px">' + esc(S.learnTitle) + '</h1><p class="muted">' + esc(S.learnIntro) + '</p>'
+      /* The practice screen leads, because reading badly and being told why is
+         what turns a reader of lessons into somebody who can lay a spread. */
+      + '<a class="prcta" href="#/practice"><div class="ic">✍️</div><div><b>' + esc(S.practiceTitle) + '</b><span>' + esc(S.practiceIntro) + '</span></div></a>'
       + '<div class="eyebrow">' + esc(S.coursesPractice) + '</div><div class="tiles">' + tile('tarot', !ACCESS.has('tarot')) + tile('lenormand', !ACCESS.has('lenormand')) + tile('playing', !ACCESS.has('playing')) + tile('manifest', !ACCESS.has('manifest')) + '</div>'
       + '<div class="eyebrow">' + esc(S.freeReads) + '</div><div class="tiles">' + tile('astro') + tile('angel') + tile('fortune') + '</div>'
       + '<p style="margin-top:14px"><a class="btn block" href="#/unlock?from=learn">💳 ' + esc(S.unlockLink) + '</a></p>'
@@ -22455,6 +22726,527 @@ Object.keys(QUIZ_PLAY_DE).forEach((lesson) => {
   });
 });
 
+/* Filled by practice-e2b0c457e9e2.js, fetched when the practice screen first opens. */
+let PRACTICE = [];
+const PRACTICE_URL = './practice-e2b0c457e9e2.js';
+
+/* ============================ practice ============================
+   Tập đọc bài: the learner reads, the app marks.
+
+   Every other screen in this app deals a card and tells the visitor what it
+   means. This one turns that around. The cards are dealt face up against a
+   scenario, and the learner writes the reading themselves; the app then marks
+   what they wrote. That inversion is the whole point of the screen, so nothing
+   here ever volunteers an interpretation before the learner has committed to
+   one - the model reading stays hidden until the answer is in.
+
+   The marking is local, deterministic and offline. It needs no key, no
+   network and no one on the other end, which is what makes it honest to call
+   it automatic: the same answer always earns the same mark, and a learner who
+   disagrees can go and look up the card and see for themselves.
+
+   Almost none of the marking text is new. The keywords come from INSIGHT, the
+   position teaching from SPREADS, and both are Nabu's own words, already
+   written and already read by learners elsewhere in the app. What is new per
+   exercise is only the scenario, the question and one short model paragraph. */
+
+/* ---- the exercises ----
+   `cards` are dealt in order; `rev` marks the ones that land reversed, which
+   is what makes the keyword pool flip from pos to neg. `frames` says what each
+   position is FOR, because a sentence that describes when it should advise is
+   a wrong reading even when every keyword is right - and SPREADS says that in
+   prose to a human but not in a way a marker can read. `traps` names the
+   mistakes this particular exercise is built to catch. */
+/* PRACTICE itself is declared beside its data file, which build.py splits out
+   of the page; this file only reads it. */
+
+
+/* The exercises arrive with the screen, not with the app. Nothing else in the
+   app reads them, so a visitor who never opens this screen never pays for it.
+   A failure is not remembered: somebody whose signal comes back gets another
+   try the next time they open it. */
+let PRACTICE_WANT = null;
+function practiceReady() {
+  if (PRACTICE_WANT) return PRACTICE_WANT;
+  if (PRACTICE.length) return (PRACTICE_WANT = Promise.resolve(true));
+  if (typeof PRACTICE_URL !== 'string' || !PRACTICE_URL) return (PRACTICE_WANT = Promise.resolve(false));
+  PRACTICE_WANT = new Promise((done) => {
+    const sc = document.createElement('script');
+    sc.src = PRACTICE_URL;
+    sc.async = true;
+    sc.onload = () => done(true);
+    sc.onerror = () => { PRACTICE_WANT = null; sc.remove(); done(false); };
+    document.head.appendChild(sc);
+  });
+  return PRACTICE_WANT;
+}
+
+const practiceById = (id) => PRACTICE.filter((p) => p.id === id)[0];
+
+/* ---- three decks, one screen ----
+   An exercise says which deck it deals from (`deck`: tarot when absent, 'len'
+   for Lenormand, 'pc' for playing cards). Everything the screen and the marker
+   need from a card - its name, its face, the keywords that count as reading
+   it, and the ones that belong to its other side - comes through here, so the
+   rest of this file never asks which deck it is looking at.
+   Lenormand keywords are the card's own kw.pos in each language; the system
+   has no reversals, so nothing is on the wrong side. Playing cards read their
+   traditional meanings (PC_TRAD), split into the phrases a reader would use. */
+const P_PC_LANG = { vi: 0, en: 1, de: 2 };
+function pCard(ex, i) {
+  const cid = ex.cards[i];
+  if (ex.deck === 'len') {
+    const c = lenCard(cid);
+    /* Both sides count. A hard card keeps its main meaning in kw.neg - the
+       Mice are loss before they are "caught early" - and with no reversals
+       nothing a reader says about either side is reading it upside down. */
+    return { name: c.name, face: lenFace(cid), pos: ((c.kw && c.kw.pos) || []).concat((c.kw && c.kw.neg) || []), neg: [] };
+  }
+  if (ex.deck === 'pc') {
+    const suit = String(cid)[0], rank = String(cid).slice(1), tr = PC_TRAD[cid] || [];
+    const pos = String(tr[P_PC_LANG[lang]] || tr[1] || '').replace(/^[^:]*:\s*/, '').replace(/[.;]/g, ',')
+      .split(/,\s*|\s+(?:hoặc|or|oder)\s+/).map((x) => x.trim()).filter((x) => x.length > 2);
+    return { name: pcName(suit, rank), face: pcFaceSVG(suit, rank), pos: pos, neg: [] };
+  }
+  const card = cardById(cid), ins = insightOf(cid);
+  return { name: card.name, face: faceSVG(card), pos: ins.pos, neg: ins.neg };
+}
+/* The spread an exercise is dealt into. Tarot and Lenormand spreads live in
+   SPREADS with their positions; the playing-card course teaches its spreads
+   as prose (PC_SPREADS), so their positions are named here. */
+const P_PC_POS = {
+  3: { vi: [['1 · Quá khứ', 'Điều đã xảy ra và còn ảnh hưởng tới chuyện bây giờ.'], ['2 · Hiện tại', 'Chuyện đang diễn ra lúc này.'], ['3 · Tương lai', 'Hướng sự việc đang đi tới nếu mọi thứ giữ nguyên.']],
+       en: [['1 · Past', 'What has happened and still weighs on the present.'], ['2 · Present', 'What is going on right now.'], ['3 · Future', 'Where things are heading if nothing changes.']],
+       de: [['1 · Vergangenheit', 'Was geschehen ist und noch nachwirkt.'], ['2 · Gegenwart', 'Was gerade geschieht.'], ['3 · Zukunft', 'Wohin es führt, wenn alles so bleibt.']] },
+  5: { vi: [['1 · Quá khứ', 'Gốc rễ của chuyện này.'], ['2 · Hiện tại', 'Chuyện đang diễn ra lúc này.'], ['3 · Điều cản trở', 'Thứ đang chắn đường.'], ['4 · Lời khuyên', 'Việc nên làm.'], ['5 · Kết quả', 'Nơi sự việc dừng lại.']],
+       en: [['1 · Past', 'Where this began.'], ['2 · Present', 'What is going on right now.'], ['3 · What blocks', 'What stands in the way.'], ['4 · Advice', 'What to do.'], ['5 · Outcome', 'Where it comes to rest.']],
+       de: [['1 · Vergangenheit', 'Wo es angefangen hat.'], ['2 · Gegenwart', 'Was gerade geschieht.'], ['3 · Hindernis', 'Was im Weg steht.'], ['4 · Rat', 'Was zu tun ist.'], ['5 · Ergebnis', 'Wo es zur Ruhe kommt.']] }
+};
+function pSpread(ex) {
+  if (ex.deck === 'pc') {
+    const s = PC_SPREADS.filter((x) => x.n === ex.cards.length)[0];
+    return { name: s ? s[lang][0] : '', pos: (P_PC_POS[ex.cards.length] || {})[lang] || [], read: s ? s[lang][1] : '', note: '' };
+  }
+  return SPREADS[lang].filter((x) => x.id === ex.spread)[0] || { name: ex.spread, pos: [], read: '', note: '' };
+}
+
+/* ---- what the learner has done ----
+   Kept on the device, best mark only, exactly like the lesson quizzes: a worse
+   retry never takes away a mark already earned. */
+const PSCORE = {
+  all() { return store.get('nabu-practice', {}) || {}; },
+  best(id) { return Number(this.all()[id] || 0); },
+  tried(id) { return this.all()[id] != null; },
+  put(id, pct) {
+    const a = this.all();
+    if (!(id in a) || pct > a[id]) { a[id] = pct; store.set('nabu-practice', a); }
+  },
+  passed(id) { return this.best(id) >= 50; },
+  done() { return PRACTICE.filter((p) => this.passed(p.id)).length; }
+};
+
+/* ---- marking ---- */
+const P_BANDS = [[90, 'gold'], [75, 'silver'], [50, 'bronze'], [0, 'none']];
+const pBand = (pct) => P_BANDS.filter((b) => pct >= b[0])[0][1];
+
+/* Keywords are matched without accents, because a learner typing fast on a
+   phone drops them and still knows the card. Grammar markers below are matched
+   WITH accents, because folded Vietnamese collapses "đừng", "dùng" and "đúng"
+   into one word and an advice check built on that would fire on anything. */
+function pHit(folded, phrase) {
+  /* Two letters still count: a Vietnamese keyword is syllables, and dropping
+     the short ones leaves "bẽ mặt" as the single syllable "mat", which then
+     matches mất, mặt and mát alike and marks a card as read that was not.
+     For the same reason a one- or two-syllable keyword has to arrive whole;
+     only a longer phrase is allowed to be half-recognised. */
+  const words = fold(phrase).split(/[^a-z0-9]+/).filter((w) => w.length >= 2);
+  if (!words.length) return false;
+  const hit = words.filter((w) => folded.indexOf(' ' + w) > -1).length;
+  const need = words.length <= 2 ? words.length : Math.ceil(words.length / 2);
+  return hit >= need;
+}
+
+const P_MARK = {
+  advice: { vi: ['nên', 'hãy', 'đừng', 'cần', 'tránh', 'thử'], en: ['should', 'try', 'avoid', 'focus', 'start', 'stop', 'need to', 'let '], de: ['sollt', 'versuch', 'vermeid', 'fang', 'muss', 'lass'] },
+  outcome: { vi: ['sẽ', 'nếu', 'dẫn', 'kết quả', 'khả năng', 'cuối cùng'], en: ['will', 'if ', 'lead', 'end up', 'likely', 'result'], de: ['wird', 'wenn', 'führt', 'wahrscheinlich', 'ergebnis'] },
+  state: { vi: ['đang', 'hiện', 'lúc này', 'bây giờ', 'là '], en: ['is ', 'are ', 'right now', 'currently', 'at the moment', 'has ', 'have '], de: ['ist ', 'sind ', 'gerade', 'momentan', 'hat '] }
+};
+const pMarked = (text, frame) => (P_MARK[frame] || {})[lang] ? (P_MARK[frame][lang] || []).some((m) => text.indexOf(m) > -1) : true;
+
+/* A date where the cards gave a sequence, and a yes with nothing behind it:
+   both are mistakes Nabu names in the spread notes, so both are marked. */
+/* Matched against the folded text, because a learner typing fast drops the
+   accents and "20 ngay" is the same mistake as "20 ngày". A bare month number
+   is deliberately not here: on a four-month timing spread "tháng 2" names the
+   second period, which is the spread working as intended, not a date. */
+const P_DATE = /(\bngay\s*\d|\d{1,2}\s*\/\s*\d{1,2}|\b\d{1,3}\s*(ngay|tuan|days?|weeks?|tage|wochen)\b|\b\d{1,2}(st|nd|rd|th)\b)/;
+const pTrapHit = (trap, joined) => trap === 'date' ? P_DATE.test(fold(joined))
+  : trap === 'bare' ? joined.replace(/\s+/g, ' ').trim().length < 60
+  : false;
+
+/* The mark. Cards weigh most, because reading the card is the skill being
+   taught; the frame and the synthesis are what turn three read cards into a
+   reading. Traps come off the top, since each one is a thing the course
+   explicitly told the learner not to do. */
+function gradeReading(ex, answers, synth) {
+  const perCard = [], notes = [];
+  ex.cards.forEach((cid, i) => {
+    const card = pCard(ex, i);
+    const pool = (ex.rev[i] ? card.neg : card.pos), off = (ex.rev[i] ? card.pos : card.neg);
+    const text = String(answers[i] || ''), folded = ' ' + fold(text) + ' ', low = text.toLowerCase();
+    if (text.trim().length < 15) {
+      perCard.push({ card: card, rev: !!ex.rev[i], score: 0, got: [], missed: pool, frame: false, thin: true });
+      notes.push({ kind: 'thin', card: card.name });
+      return;
+    }
+    const got = pool.filter((k) => pHit(folded, k)), wrongSide = off.filter((k) => pHit(folded, k));
+    /* Two of the four keywords is a full mark. Asking for all four would be
+       asking the learner to list the card rather than read it. */
+    /* A card whose tradition gives it a single phrase (the wish card) counts
+       as read when that one phrase is there. */
+    const score = Math.min(1, got.length / Math.max(1, Math.min(2, pool.length)));
+    const frame = pMarked(low, ex.frames[i]);
+    perCard.push({ card: card, rev: !!ex.rev[i], score: score, got: got, missed: pool.filter((k) => got.indexOf(k) < 0), frame: frame, wrongSide: wrongSide });
+    if (!frame) notes.push({ kind: 'frame', card: card.name, frame: ex.frames[i] });
+    if (ex.rev[i] && !got.length && wrongSide.length >= 2) notes.push({ kind: 'reversal', card: card.name });
+    /* Long enough to mark and not one keyword in it. Without this the worst
+       answer on the page - a paragraph about some other card entirely - comes
+       back with an empty "you caught" line and nothing said about it, which
+       reads as approval. */
+    else if (!got.length && !wrongSide.length) notes.push({ kind: 'missed', card: card.name });
+  });
+
+  const joined = ex.cards.map((c, i) => String(answers[i] || '')).join(' ') + ' ' + String(synth || '');
+  ex.traps.forEach((t) => { if (pTrapHit(t, joined)) notes.push({ kind: t }); });
+
+  /* The synthesis is marked on whether it joined the cards up and answered the
+     question that was asked, not on length. */
+  const sTxt = String(synth || ''), sFold = ' ' + fold(sTxt) + ' ';
+  const named = ex.cards.filter((cid, i) => pHit(sFold, pCard(ex, i).name)).length;
+  const linked = (P_MARK.outcome[lang] || []).concat(P_MARK.advice[lang] || []).some((m) => sTxt.toLowerCase().indexOf(m) > -1);
+  const synthScore = sTxt.trim().length < 25 ? 0 : Math.min(1, (named >= 2 ? 0.6 : named ? 0.3 : 0) + (linked ? 0.4 : 0));
+  if (!synthScore) notes.push({ kind: 'synth' });
+
+  const cardAvg = perCard.reduce((a, c) => a + c.score, 0) / (perCard.length || 1);
+  const frameAvg = perCard.filter((c) => c.frame).length / (perCard.length || 1);
+  const trapCount = notes.filter((n) => n.kind === 'date' || n.kind === 'bare' || n.kind === 'reversal').length;
+  const pct = Math.max(0, Math.min(100, Math.round(100 * (0.6 * cardAvg + 0.15 * frameAvg + 0.25 * synthScore)) - 6 * trapCount));
+  return { pct: pct, band: pBand(pct), perCard: perCard, notes: notes, synthScore: synthScore };
+}
+
+/* ---- screens ---- */
+/* The row carries the question, not only the spread, because three of the six
+   exercises use the same three-card spread and a list of three identical names
+   is a list nobody can choose from. */
+function practiceRow(p) {
+  const best = PSCORE.best(p.id), locked = !p.free && !ACCESS.has(p.course);
+  const sp = pSpread(p);
+  const n = p.cards.length + (lang === 'vi' ? ' lá' : (lang === 'de' ? ' Karten' : ' cards'));
+  return '<a class="prow" href="#/practice/' + p.id + '">'
+    + '<div class="prowin"><b>' + (locked ? '🔒 ' : '') + esc(sp.name || p.spread)
+    + ' <span class="faint">· ' + n + '</span></b><span>' + esc(L(p.q)) + '</span></div>'
+    + (PSCORE.tried(p.id) ? '<span class="pmark ' + pBand(best) + '">' + best + '%</span>' : '') + '</a>';
+}
+
+async function renderPractice() {
+  const S = T(), m = $('#main');
+  if (!(await practiceReady())) { m.innerHTML = backLink('#/learn', S.learnTitle) + '<p class="muted">' + esc(S.practiceOffline) + '</p>'; return; }
+  if (parseHash().route !== 'practice') return;
+  const done = PSCORE.done();
+  m.innerHTML = backLink('#/learn', S.learnTitle) + '<h1 style="margin-bottom:6px">' + esc(S.practiceTitle) + '</h1>'
+    + '<p class="muted">' + esc(S.practiceIntro) + '</p>'
+    + '<div class="pprog"><span style="width:' + Math.round(done / PRACTICE.length * 100) + '%"></span></div>'
+    + '<p class="faint" style="margin-top:4px">' + esc(S.practiceDone(done, PRACTICE.length)) + '</p>'
+    /* Grouped by course, each under its own name, so a Lenormand learner does
+       not scroll through Tarot to find what is theirs. */
+    + ['tarot', 'lenormand', 'playing'].map((c) => {
+      const list = PRACTICE.filter((p) => (p.course || 'tarot') === c);
+      return list.length ? '<h2 class="pcourse">' + esc(S.cats[c]) + '</h2>' + list.map(practiceRow).join('') : '';
+    }).join('');
+}
+
+async function renderExercise(id) {
+  const S = T(), m = $('#main');
+  if (!(await practiceReady())) { m.innerHTML = backLink('#/practice', S.practiceTitle) + '<p class="muted">' + esc(S.practiceOffline) + '</p>'; return; }
+  if (parseHash().route !== 'practice') return;
+  const ex = practiceById(id);
+  if (!ex) { redirect('#/practice'); return; }
+  if (!ex.free && gate(ex.course, '#/practice')) return;
+  const sp = pSpread(ex);
+  const perPos = sp.pos && sp.pos.length === ex.cards.length;
+
+  const box = (cid, i) => {
+    const card = pCard(ex, i), label = perPos ? sp.pos[i][0] : (lang === 'vi' ? 'L\u00e1 ' : (lang === 'de' ? 'Karte ' : 'Card ')) + (i + 1);
+    return '<div class="prcard"><div class="pface' + (ex.rev[i] ? ' rev' : '') + '">'
+      + '<button class="pturn" data-turn="' + i + '" aria-label="' + esc(S.practiceTurn) + '">' + backNow() + '</button></div>'
+      + '<div class="pask shut"><b>' + esc(label) + '</b>'
+      + '<div class="faint">' + esc(card.name) + (ex.rev[i] ? ' \u00b7 ' + esc(S.pRev) : '') + '</div>'
+      + '<textarea data-pos="' + i + '" rows="4" placeholder="' + esc(S.practicePlaceholder) + '"></textarea></div></div>';
+  };
+
+  m.innerHTML = backLink('#/practice', S.practiceTitle) + '<div class="guide"><h1>' + esc(sp.name) + '</h1>'
+    + '<div class="ins pscene"><div class="eyebrow">' + esc(S.practiceWho) + '</div>'
+    + '<p>' + esc(L(ex.who)) + ' <b>' + esc(S.practiceAsks) + '</b> <span class="pq">\u201c' + esc(L(ex.q)) + '\u201d</span></p></div>'
+    + '<p class="muted">' + esc(S.practiceHow) + '</p>'
+    + ex.cards.map(box).join('')
+    + '<div class="prcard psynth"><div class="pask" style="width:100%"><b>' + esc(S.practiceSynth) + '</b>'
+    + '<div class="faint">' + esc(S.practiceSynthHint) + '</div>'
+    + '<textarea data-synth="1" rows="4" placeholder="' + esc(S.practicePlaceholder) + '"></textarea></div></div>'
+    + '<button class="btn primary block" id="pmark">' + esc(S.practiceMark) + '</button>'
+    + '<div id="presult"></div></div>';
+
+  /* The cards are dealt face down and turned one at a time, the way the daily
+     draw does it. A learner who can see all three at once reads the spread
+     backwards from the last card; turning them in order is how the reading is
+     actually built. The box for a card only appears once its card is up. */
+  $$('[data-turn]', m).forEach((b) => b.addEventListener('click', () => {
+    const i = Number(b.getAttribute('data-turn')), card = pCard(ex, i);
+    const slot = b.parentNode;
+    slot.innerHTML = '<div class="flip"><div class="inner"><span class="face fr">' + card.face
+      + '</span><span class="face bk">' + backNow() + '</span></div></div>';
+    const ask = $('.pask', slot.parentNode);
+    ask.classList.remove('shut');
+    const ta = $('textarea', ask);
+    if (ta) setTimeout(() => ta.focus({ preventScroll: true }), 420);
+  }));
+
+  $('#pmark').addEventListener('click', () => {
+    const answers = ex.cards.map((c, i) => ($('[data-pos="' + i + '"]') || {}).value || '');
+    const synth = ($('[data-synth="1"]') || {}).value || '';
+    const r = gradeReading(ex, answers, synth);
+    PSCORE.put(ex.id, r.pct);
+    $('#presult').innerHTML = resultHTML(ex, sp, r, perPos);
+    $('#pmark').textContent = S.practiceAgain;
+    $('#presult').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  });
+}
+
+/* The mark, then why, then - last, and only now - how Nabu reads it. The order
+   matters: showing the model answer beside the boxes would turn the exercise
+   into a copying exercise. */
+function resultHTML(ex, sp, r, perPos) {
+  const S = T();
+  const kw = (list) => list.map((k) => '<span class="pkw">' + esc(k) + '</span>').join('');
+  const noteLine = (n) => n.kind === 'thin' ? S.practiceThin(n.card)
+    : n.kind === 'frame' ? S.practiceFrame[n.frame](n.card)
+    : n.kind === 'reversal' ? S.practiceRev(n.card)
+    : n.kind === 'missed' ? S.practiceMiss(n.card)
+    : n.kind === 'date' ? S.practiceDate
+    : n.kind === 'bare' ? S.practiceBare
+    : n.kind === 'synth' ? S.practiceNoSynth : '';
+
+  return '<div class="presult ' + r.band + '">'
+    + '<div class="pscore">' + r.pct + '%<span>' + esc(S.practiceBand[r.band]) + '</span></div>'
+    + (r.notes.length ? '<ul class="pnotes">' + r.notes.map((n) => '<li>' + esc(noteLine(n)) + '</li>').join('') + '</ul>' : '')
+    + '<h3>' + esc(S.practiceByCard) + '</h3>'
+    + r.perCard.map((c, i) => '<div class="pline"><b>' + esc(c.card.name) + (c.rev ? ' · ' + esc(S.pRev) : '') + '</b>'
+      + (c.got.length ? '<div class="pgot">' + esc(S.practiceGot) + ' ' + kw(c.got) + '</div>' : '')
+      + (c.missed.length ? '<div class="pmiss">' + esc(S.practiceMissed) + ' ' + kw(c.missed) + '</div>' : '')
+      + (perPos ? '<p class="faint">' + esc(sp.pos[i][1]) + '</p>' : '') + '</div>').join('')
+    + '<h3>' + esc(S.practiceModel) + '</h3><p>' + esc(L(ex.model)) + '</p>'
+    + (sp.read ? '<p class="faint">' + esc(sp.read) + '</p>' : '')
+    + '</div>';
+}
+
+ROUTES.practice = { nav: 'learn', render: (a) => a[0] ? renderExercise(a[0]) : renderPractice() };
+
+/* ============================ outfit ============================
+   Mặc gì tháng này: one painted outfit for every sign, month and gender,
+   dressed for the weather in the north of Vietnam and coloured from the
+   sign's palette. The pictures are AI-painted and live beside the page in
+   outfit/<character>/, fetched only when this screen is opened.
+
+   Hair can be recoloured. Each picture has a grey mask of its hair
+   (outfit/<character>/m/), and paintOutfit() runs a gradient map inside it:
+   every pixel keeps its place between the hair's own shadows and highlights
+   and takes a colour from a ramp running from a warm dark, through the
+   chosen colour, to a lighter one. Skin is not recoloured, because a mask
+   cannot tell pale fabric from skin reliably; skin tone is chosen by picking
+   the character painted with it.
+
+   The screen is organised by zodiac sign, which is what App Store review
+   objected to (4.3b), so the iPhone app does not show it. */
+
+/* The two characters: fair skin, and brown skin. */
+const OUTFIT_CHARS = ['1', '2'];
+const OUTFIT_SIGNS = ['aries', 'taurus', 'gemini', 'cancer', 'leo', 'virgo', 'libra', 'scorpio', 'sagittarius', 'capricorn', 'aquarius', 'pisces'];
+/* Four clothing colours per sign, in the order of STR.zodiac. */
+const OUTFIT_PAL = [['#C8373B', '#F08A5D', '#F4EBDD', '#3A3A40'], ['#6B7F4E', '#D9C7A7', '#C98C7E', '#5A3E2B'], ['#F2D95C', '#8EC5E8', '#FAFAF7', '#B9BCC2'],
+  ['#F3EEE3', '#C9CCD1', '#A9C9D9', '#EFC6CC'], ['#E3A72F', '#C8642C', '#F6EFE2', '#8A5A35'], ['#D8CBB3', '#7E8457', '#F7F5F0', '#A88A6A'],
+  ['#F2E8DC', '#D9B8B4', '#A8B9A0', '#9C5B44'], ['#2E2B3A', '#7B2D3B', '#C9A227', '#E8E2D6'], ['#6D3B6E', '#1F6F78', '#C0703B', '#F1E7D6'],
+  ['#3C3F46', '#5B4636', '#B08A5E', '#F4F2EE'], ['#3E6FD8', '#C9CCD1', '#B7A6D9', '#F8F8FA'], ['#9ED3CF', '#C9B6E4', '#5B8DB8', '#F6F3EE']];
+const OUTFIT_HAIR = ['#1E1A1A', '#4A3226', '#8A5A3C', '#E8CB86', '#D98FA8', '#8FA7D9', '#B8B8C0'];
+
+/* The Vietnamese here was approved on 2026-09-28 (appstore/duyet-noi-dung.md, section J); change it only with a new approval. */
+const OUTFIT_TXT = {
+  vi: {
+    title: 'Mặc gì tháng này', intro: 'Mỗi tháng một bộ đồ hợp thời tiết miền Bắc, phối từ bảng màu của cung bạn.',
+    female: 'Nữ', male: 'Nam', chars: { 1: 'Da sáng', 2: 'Da nâu' }, month: (m) => 'Tháng ' + m,
+    pal: (s) => 'Bảng màu của ' + s, hair: 'Màu tóc', hairReset: 'Để nguyên', hairOther: 'Chọn màu khác',
+    ai: 'Hình minh hoạ do AI vẽ.', offline: 'Chưa tải được hình. Kiểm tra mạng rồi thử lại nhé.',
+    weather: ['10–17°, rét, mưa phùn', '13–19°, nồm ẩm', '17–23°, mưa phùn', '21–28°, ấm', '25–33°, nóng dần', '27–35°, nắng gắt', '27–34°, mưa rào', '26–33°, mưa nhiều', '24–31°, đầu thu', '20–27°, thu mát', '17–24°, se lạnh', '12–19°, lạnh'],
+    female_: ['Áo khoác dạ dài, len cổ lọ, chân váy xếp ly qua gối, quần tất, bốt cổ ngắn và khăn len', 'Trench coat thắt eo, áo len mỏng, quần ống đứng và giày lười', 'Áo khoác lửng, sơ mi mềm, chân váy chữ A và giày búp bê', 'Áo tay bồng sơ vin, chân váy xoè và sandal quai mảnh', 'Áo linen sát nách, quần linen ống rộng và dép quai đan', 'Váy suông sát nách, mũ cói rộng vành và sandal quai mảnh', 'Váy sơ mi vải nhanh khô, áo mưa mỏng buộc ngang eo và sandal nhựa', 'Áo mưa lửng, áo ba lỗ, quần lửng và ủng mưa cổ ngắn', 'Sơ mi mềm, chân váy satin và giày mary jane', 'Áo len gân mỏng, cardigan, quần ống đứng và giày lười đính nơ', 'Áo khoác dạ ngắn, len cổ lọ, chân váy xếp ly, quần tất và bốt gót nhỏ', 'Áo phao, len vặn thừng, quần jeans ống đứng, bốt lót lông và mũ len'],
+    male_: ['Măng tô dạ, len cổ lọ, quần âu len, bốt chelsea da nâu và khăn len', 'Trench coat, áo len mỏng, quần kaki ống đứng và giày derby da', 'Áo khoác khoá kéo mỏng, sơ mi oxford, quần kaki và giày thể thao da trắng', 'Sơ mi linen ngắn tay, quần kaki ống côn và giày vải buộc dây', 'Áo phông linen rộng, quần short linen và sandal da quai bản', 'Sơ mi cổ bẻ ngắn tay, quần short, mũ tai bèo và sandal đế dày', 'Áo phông nhanh khô, quần short túi hộp, áo mưa mỏng và sandal chống nước', 'Áo mưa có mũ, áo phông, quần lửng và ủng cao su buộc dây', 'Sơ mi xắn tay, quần ống đứng và giày lười da lộn', 'Polo len mỏng, cardigan, quần ống đứng và giày brogue da', 'Áo khoác dạ ngắn, len cổ lọ, quần âu ôm và bốt da buộc dây', 'Áo phao, len vặn thừng, quần jeans ống đứng, giày leo núi và mũ len']
+  },
+  en: {
+    title: 'What to wear this month', intro: 'An outfit for every month, dressed for the weather in northern Vietnam and coloured from your sign’s palette.',
+    female: 'Women', male: 'Men', chars: { 1: 'Fair skin', 2: 'Brown skin' }, month: (m) => MONTHS_EN[m - 1],
+    pal: (s) => s + ' palette', hair: 'Hair colour', hairReset: 'As painted', hairOther: 'Pick another colour',
+    ai: 'Illustrations painted by AI.', offline: 'The picture did not load. Check your connection and try again.',
+    weather: ['10–17°, cold and drizzly', '13–19°, damp and muggy', '17–23°, drizzle', '21–28°, warm', '25–33°, heating up', '27–35°, blazing sun', '27–34°, showers', '26–33°, heavy rain', '24–31°, early autumn', '20–27°, mild autumn', '17–24°, a chill in the air', '12–19°, cold'],
+    female_: ['A long wool coat, a chunky turtleneck, a pleated midi skirt with tights, ankle boots and a knitted scarf', 'A belted trench coat, a fine-knit jumper, straight trousers and loafers', 'A cropped jacket, a soft blouse, an A-line midi skirt and ballet flats', 'A puff-sleeve blouse tucked into a flared midi skirt, with strappy sandals', 'A sleeveless linen top, wide-leg linen trousers and woven slides', 'A flowing sundress, a wide straw hat and fine-strapped sandals', 'A quick-dry shirt dress, a light rain jacket tied at the waist and jelly sandals', 'A cropped rain jacket over a vest top, cropped trousers and short rain boots', 'A soft shirt, a satin midi skirt and Mary Janes', 'A ribbed top, an open cardigan, straight trousers and bow loafers', 'A short wool jacket, a turtleneck, a pleated skirt with tights and heeled ankle boots', 'A padded coat, a cable-knit jumper, straight jeans, fleece-lined boots and a beanie'],
+    male_: ['A wool overcoat, a chunky turtleneck, wool trousers, brown Chelsea boots and a knitted scarf', 'A trench coat, a fine-knit jumper, straight chinos and leather derbies', 'A light zip jacket, an Oxford shirt, slim chinos and white leather trainers', 'A short-sleeved linen shirt, tapered chinos and canvas lace-ups', 'A loose linen T-shirt, linen shorts and leather fisherman sandals', 'A camp-collar shirt, light shorts, a bucket hat and chunky sport sandals', 'A quick-dry T-shirt, cargo shorts, a light rain jacket and trekking sandals', 'A hooded rain jacket, a T-shirt, cropped trousers and laced rubber boots', 'A shirt with the sleeves rolled, straight trousers and suede penny loafers', 'A knitted polo, an open cardigan, straight trousers and leather brogues', 'A short wool jacket, a turtleneck, slim trousers and lace-up work boots', 'A padded coat, a cable-knit jumper, straight jeans, hiking boots and a beanie']
+  },
+  de: {
+    title: 'Was ziehe ich diesen Monat an', intro: 'Für jeden Monat ein Outfit, passend zum Wetter in Nordvietnam und in den Farben deines Sternzeichens.',
+    female: 'Damen', male: 'Herren', chars: { 1: 'Helle Haut', 2: 'Braune Haut' }, month: (m) => MONTHS_DE[m - 1],
+    pal: (s) => 'Farben: ' + s, hair: 'Haarfarbe', hairReset: 'Wie gemalt', hairOther: 'Andere Farbe wählen',
+    ai: 'Illustrationen von einer KI gemalt.', offline: 'Das Bild ließ sich nicht laden. Prüfe deine Verbindung und versuch es noch einmal.',
+    weather: ['10–17°, kalt, Nieselregen', '13–19°, feucht und schwül', '17–23°, Nieselregen', '21–28°, warm', '25–33°, es wird heiß', '27–35°, pralle Sonne', '27–34°, Regenschauer', '26–33°, viel Regen', '24–31°, Frühherbst', '20–27°, milder Herbst', '17–24°, frisch', '12–19°, kalt'],
+    female_: ['Langer Wollmantel, grober Rollkragenpullover, Plisseerock mit Strumpfhose, Stiefeletten und Strickschal', 'Trenchcoat mit Gürtel, feiner Pullover, gerade Hose und Loafer', 'Kurze Jacke, weiche Bluse, A-Linien-Midirock und Ballerinas', 'Bluse mit Puffärmeln im ausgestellten Midirock, dazu Riemchensandalen', 'Ärmelloses Leinentop, weite Leinenhose und geflochtene Pantoletten', 'Fließendes Sommerkleid, breiter Strohhut und zarte Sandalen', 'Hemdblusenkleid aus schnell trocknendem Stoff, Regenjacke um die Taille und Jelly-Sandalen', 'Kurze Regenjacke über einem Top, verkürzte Hose und kurze Gummistiefel', 'Weiche Bluse, Satin-Midirock und Mary Janes', 'Geripptes Oberteil, offene Strickjacke, gerade Hose und Loafer mit Schleife', 'Kurze Wolljacke, Rollkragen, Faltenrock mit Strumpfhose und Stiefeletten mit Absatz', 'Steppmantel, Zopfstrickpullover, gerade Jeans, gefütterte Boots und Mütze'],
+    male_: ['Wollmantel, grober Rollkragenpullover, Wollhose, braune Chelsea-Boots und Strickschal', 'Trenchcoat, feiner Pullover, gerade Chinos und Derbys aus Leder', 'Leichte Jacke mit Reißverschluss, Oxfordhemd, schmale Chinos und weiße Ledersneaker', 'Kurzärmliges Leinenhemd, Chinos und Schnürschuhe aus Canvas', 'Lockeres Leinenshirt, Leinenshorts und Fischersandalen aus Leder', 'Hemd mit Reverskragen, leichte Shorts, Fischerhut und Sportsandalen', 'Schnell trocknendes Shirt, Cargoshorts, leichte Regenjacke und Trekkingsandalen', 'Regenjacke mit Kapuze, T-Shirt, verkürzte Hose und Gummistiefel zum Schnüren', 'Hemd mit hochgekrempelten Ärmeln, gerade Hose und Penny Loafer aus Wildleder', 'Strickpolo, offene Strickjacke, gerade Hose und Budapester', 'Kurze Wolljacke, Rollkragen, schmale Hose und Schnürboots', 'Steppmantel, Zopfstrickpullover, gerade Jeans, Wanderschuhe und Mütze']
+  }
+};
+const MONTHS_EN = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+const MONTHS_DE = ['Januar', 'Februar', 'März', 'April', 'Mai', 'Juni', 'Juli', 'August', 'September', 'Oktober', 'November', 'Dezember'];
+const outfitTxt = () => OUTFIT_TXT[lang] || OUTFIT_TXT.en;
+
+/* What the visitor picked last time. The sign starts at their own when the
+   birthday is known, the month at this one (Vietnam time). */
+function outfitState() {
+  const saved = store.get('nabu-outfit', {}) || {};
+  const own = mySign();
+  const st = {
+    c: OUTFIT_CHARS.indexOf(saved.c) > -1 ? saved.c : OUTFIT_CHARS[0],
+    g: saved.g === 'male' ? 'male' : 'female',
+    s: typeof saved.s === 'number' && saved.s >= 0 && saved.s < 12 ? saved.s : (own >= 0 ? own : 0),
+    m: new Date(Date.now() + 7 * 3600e3).getUTCMonth() + 1,
+    hair: /^#[0-9a-f]{6}$/i.test(saved.hair || '') ? saved.hair : null
+  };
+  return st;
+}
+const outfitSave = (st) => store.set('nabu-outfit', { c: st.c, g: st.g, s: st.s, hair: st.hair });
+const outfitName = (st) => OUTFIT_SIGNS[st.s] + '-' + st.m + '-' + st.g;
+
+/* The recolour itself: base picture into `canvas`, hair (mask channel 0)
+   gradient-mapped to `hex`. Pure pixels in, pixels out, so the suite can run it. */
+function paintOutfit(canvas, base, mask, hex) {
+  const w = base.naturalWidth || base.width, h = base.naturalHeight || base.height;
+  canvas.width = w; canvas.height = h;
+  const c = canvas.getContext('2d'); c.drawImage(base, 0, 0, w, h);
+  if (!hex || !mask) return;
+  const px = c.getImageData(0, 0, w, h), d = px.data;
+  const mc = document.createElement('canvas'); mc.width = w; mc.height = h;
+  const mx = mc.getContext('2d'); mx.drawImage(mask, 0, 0, w, h); const m = mx.getImageData(0, 0, w, h).data;
+  const t = [1, 3, 5].map((i) => parseInt(hex.substr(i, 2), 16) / 255);
+  const lum = (i) => (0.299 * d[i] + 0.587 * d[i + 1] + 0.114 * d[i + 2]) / 255;
+  let sum = 0, n = 0;
+  for (let i = 0; i < d.length; i += 4) if (m[i] > 127) { sum += lum(i); n++; }
+  if (!n) return;
+  const mean = sum / n;
+  let sq = 0;
+  for (let i = 0; i < d.length; i += 4) if (m[i] > 127) { const l = lum(i) - mean; sq += l * l; }
+  const sd = Math.sqrt(sq / n) || 0.1;
+  /* Darkening a light colour directly turns blonde olive; a warm shadow does not. */
+  const shadow = [t[0] * 0.42 + 0.03, t[1] * 0.32 + 0.02, t[2] * 0.26 + 0.02];
+  const light = t.map((v) => v + (1 - v) * 0.45);
+  const ramp = (u) => (u < 0.5 ? shadow.map((s, k) => s + (t[k] - s) * (u * 2)) : t.map((v, k) => v + (light[k] - v) * ((u - 0.5) * 2)));
+  for (let i = 0; i < d.length; i += 4) {
+    let a = m[i] / 255; if (!a) continue;
+    /* Much brighter than the hair is background showing through the mask's
+       soft edge: fade it out rather than paint a pale fringe. */
+    const z = (lum(i) - mean) / sd;
+    if (z > 2) a *= Math.max(0, 1 - (z - 2) / 1.5);
+    if (!a) continue;
+    const nv = ramp(Math.max(0, Math.min(1, 0.5 + z * 0.18)));
+    for (let k = 0; k < 3; k++) d[i + k] = Math.round((d[i + k] / 255 * (1 - a) + nv[k] * a) * 255);
+  }
+  c.putImageData(px, 0, 0);
+}
+
+function outfitLoad(src) {
+  return new Promise((ok, no) => { const i = new Image(); i.onload = () => ok(i); i.onerror = no; i.src = src; });
+}
+
+function renderOutfit() {
+  if (isIOSApp()) { redirect('#/home'); return; }
+  const S = T(), X = outfitTxt(), m = $('#main'), st = outfitState();
+  const here = navStillHere();
+  let base = null, mask = null, token = 0;
+  const chip = (k, v, label, on) => '<button class="chip' + (on ? ' on' : '') + '" data-ok="' + k + '" data-ov="' + v + '" aria-pressed="' + on + '">' + esc(label) + '</button>';
+
+  function chrome() {
+    const pal = OUTFIT_PAL[st.s];
+    $('#ofChips').innerHTML = '<div class="ofrow">' + chip('g', 'female', X.female, st.g === 'female') + chip('g', 'male', X.male, st.g === 'male')
+      + (OUTFIT_CHARS.length > 1 ? OUTFIT_CHARS.map((c) => chip('c', c, X.chars[c], st.c === c)).join('') : '') + '</div>'
+      + '<div class="ofrow ofscroll">' + S.zodiac.map((z, i) => chip('s', i, z, st.s === i)).join('') + '</div>'
+      + '<div class="ofrow ofscroll">' + MONTHS_EN.map((_, i) => chip('m', i + 1, X.month(i + 1), st.m === i + 1)).join('') + '</div>';
+    $('#ofCap').innerHTML = '<h2>' + esc(S.zodiac[st.s]) + ' · ' + esc(X.month(st.m)) + '</h2>'
+      + '<p class="faint">' + esc(X.weather[st.m - 1]) + '</p>'
+      + '<p>' + esc(X[st.g + '_'][st.m - 1]) + '</p>'
+      + '<div class="ofpal" aria-label="' + esc(X.pal(S.zodiac[st.s])) + '">' + pal.map((c) => '<span style="background:' + c + '"></span>').join('')
+      + '<span class="faint">' + esc(X.pal(S.zodiac[st.s])) + '</span></div>';
+    $('#ofHair').innerHTML = OUTFIT_HAIR.map((c) => '<button class="ofsw" data-ok="hair" data-ov="' + c + '" style="background:' + c + '" aria-label="' + c + '" aria-pressed="' + (st.hair === c) + '"></button>').join('')
+      + '<input type="color" class="ofsw" id="ofPick" aria-label="' + esc(X.hairOther) + '" value="' + (st.hair || '#8a5a3c') + '">'
+      + '<button class="more" data-ok="hair" data-ov="">' + esc(X.hairReset) + '</button>';
+    /* The rows are redrawn on every tap, which scrolls them back to the start:
+       bring the chosen sign and month back into view. */
+    document.querySelectorAll('#ofChips .ofscroll').forEach((row) => {
+      const on = row.querySelector('.on');
+      if (on) row.scrollLeft = on.offsetLeft - row.offsetLeft - (row.clientWidth - on.offsetWidth) / 2;
+    });
+  }
+  function paint() {
+    const cv = $('#ofCanvas'); if (!cv || !base) return;
+    paintOutfit(cv, base, mask, st.hair);
+    /* The two characters were painted at slightly different heights; the frame takes the picture's own shape. */
+    cv.parentNode.style.aspectRatio = cv.width + '/' + cv.height;
+    cv.classList.remove('dim');
+  }
+  async function fetchAndPaint() {
+    const my = ++token, dir = 'outfit/' + st.c + '/', n = outfitName(st);
+    const cv = $('#ofCanvas'); if (cv) cv.classList.add('dim');
+    try {
+      const got = await Promise.all([outfitLoad(dir + n + '.jpg'), outfitLoad(dir + 'm/' + n + '.png').catch(() => null)]);
+      if (my !== token || !here()) return;
+      base = got[0]; mask = got[1];
+      $('#ofErr').textContent = '';
+      paint();
+    } catch (e) {
+      if (my !== token || !here()) return;
+      $('#ofErr').textContent = X.offline;
+      if (cv) cv.classList.remove('dim');
+    }
+  }
+
+  m.innerHTML = backLink('#/play', S.actTitle) + '<div id="of"><h1 style="margin-bottom:6px">' + esc(X.title) + '</h1><p class="muted">' + esc(X.intro) + '</p>'
+    + '<div id="ofChips"></div>'
+    + '<div class="ofstage"><canvas id="ofCanvas" class="dim" role="img" aria-label="' + esc(X.title) + '"></canvas></div>'
+    + '<p class="err" id="ofErr" role="status"></p>'
+    + '<div id="ofCap" class="ofcap"></div>'
+    + '<h3 class="oflbl">' + esc(X.hair) + '</h3><div class="ofhair" id="ofHair"></div>'
+    + '<p class="faint" style="margin-top:18px">' + esc(X.ai) + '</p></div>';
+  chrome(); fetchAndPaint();
+
+  const root = $('#of');
+  root.addEventListener('click', (e) => {
+    const b = e.target.closest('[data-ok]'); if (!b || b.type === 'color') return;
+    const k = b.dataset.ok, v = b.dataset.ov;
+    if (k === 'hair') { st.hair = v || null; outfitSave(st); chrome(); paint(); return; }
+    st[k] = (k === 's' || k === 'm') ? Number(v) : v;
+    outfitSave(st); chrome(); fetchAndPaint();
+  });
+  /* The native picker fires input on every drag; repaint at most once a frame. */
+  let raf = 0;
+  root.addEventListener('input', (e) => {
+    if (e.target.id !== 'ofPick') return;
+    st.hair = e.target.value;
+    if (!raf) raf = requestAnimationFrame(() => { raf = 0; paint(); });
+  });
+  root.addEventListener('change', (e) => { if (e.target.id === 'ofPick') { outfitSave(st); chrome(); } });
+}
+ROUTES.outfit = { nav: 'play', render: renderOutfit };
+
 /* ============================ looks ============================
    Four things in the app can be dressed differently: the back of the cards you
    draw, the message tree, the coin, and the paper the diary is written on.
@@ -26770,6 +27562,17 @@ async function loadSchedule() {
   return SCHEDULE;
 }
 const slotKey = (dateStr, time) => dateStr + 'T' + time;
+/* A reading lasts slotMinutes (60) and start times are every half hour, so an
+   hour Nabu has confirmed also closes every start that would run into it:
+   14:00 confirmed takes 13:30 and 14:30 off the calendar too. Only confirmed
+   hours do this; a request still waiting closes its own start and no more.
+   `ignore` is the booking being moved, which must not block its own
+   neighbours. */
+const slotMin = (k) => { const m = /^(\d{4})(\d{2})(\d{2})T(\d{2})(\d{2})$/.exec(k); return m ? Date.UTC(+m[1], +m[2] - 1, +m[3], +m[4], +m[5]) / 60000 : NaN; };
+function clashesConfirmed(key, ignore) {
+  const len = (SCHEDULE && SCHEDULE.slotMinutes) || 60, at = slotMin(String(key).replace(/[^0-9T]/g, ''));
+  return Object.keys(TAKEN).some((k) => TAKEN[k] === 'confirmed' && k !== ignore && Math.abs(slotMin(k) - at) < len);
+}
 function slotsFor(dateStr) {
   const S = SCHEDULE; if (!S) return [];
   const d = new Date(dateStr + 'T00:00:00'), today = new Date(); today.setHours(0, 0, 0, 0);
@@ -26779,7 +27582,7 @@ function slotsFor(dateStr) {
   if ((S.blocked || []).indexOf(dateStr) > -1) return [];
   const base = (S.weekly || {})[String(d.getDay())] || [], extra = (S.extra || {})[dateStr] || [];
   const all = base.concat(extra).filter((t, i, a) => a.indexOf(t) === i).sort(), booked = S.booked || [];
-  return all.map((t) => { const k = slotKey(dateStr, t); return { time: t, key: k, taken: booked.indexOf(k) > -1 || !!TAKEN[k.replace(/[^0-9T]/g, '')] }; });
+  return all.map((t) => { const k = slotKey(dateStr, t); return { time: t, key: k, taken: booked.indexOf(k) > -1 || !!TAKEN[k.replace(/[^0-9T]/g, '')] || clashesConfirmed(k, book.ignoreKey) }; });
 }
 function calendarHTML() {
   const S = T(), m = book.month;
@@ -26878,7 +27681,7 @@ function whereHTML() {
   const S = T(), picked = whereOf(book.where);
   const cards = BOOK_WHERE.map((w) => '<button type="button" class="wp' + (book.where === w.id ? ' on' : '') + (w.best ? ' best' : '') + '" data-where="' + w.id + '">'
     + '<span class="ic">' + (whereArt(w.id) || w.icon) + '</span><b>' + esc(L(w.name)) + (w.best ? '<span class="wbest">\uD83D\uDC9C ' + esc(S.whereBest) + '</span>' : '') + '</b>'
-    + '<span class="s">' + esc(L(w.sub)) + '</span><span class="tick">\u2713</span></button>').join('');
+    + '<span class="s">' + esc(L(isIOSApp() && w.subIOS ? w.subIOS : w.sub)) + '</span><span class="tick">\u2713</span></button>').join('');
   /* Nabu cannot write to somebody on Instagram or Facebook without being told
      who they are, so the account is asked for at the moment that is chosen -
      along with the reason a message so often never arrives. */
@@ -27022,7 +27825,8 @@ function bookHowHTML() {
 }
 async function renderBook(args, params) {
   const S = T(), m = $('#main');
-  if (params.change) return renderChange(params.change);
+  if (params.change) return renderChange(params.change, params.as === 'admin');
+  book.ignoreKey = '';  // left over if a move was abandoned half way
   restoreBook();
   book.card = params.card || book.card || null; book.name = book.name || PROFILE.name || ''; book.birth = book.birth || PROFILE.birthday || '';
   if (!book.month) book.month = new Date(new Date().getFullYear(), new Date().getMonth(), 1);
@@ -27144,22 +27948,30 @@ async function renderBook(args, params) {
   }
   drawCal();
 }
-/* Moving an existing booking: only the calendar, then a request Nabu approves. */
-async function renderChange(id) {
+/* Moving an existing booking: only the calendar, then a request Nabu approves.
+   Nabu herself comes here too (as=admin), from the dashboard, and gets two
+   buttons instead of one: propose the hour to the person who booked, or move
+   the booking there at once. */
+async function renderChange(id, asAdmin) {
   const S = T(), m = $('#main');
   m.innerHTML = '<div class="eyebrow">' + esc(CONFIG.brand) + '</div><h1 style="margin-bottom:6px">' + esc(S.changeTitle) + '</h1><p class="muted">…</p>';
   if (!BE.enabled) { redirect('#/me'); return; }
   await Promise.race([BE.initP || Promise.resolve(), new Promise((r) => setTimeout(r, 4000))]);
   if (!BE.user) { location.hash = '#/me'; return; }
   let bk = null; try { bk = await BE.getBooking(id); } catch (e) { /* shown below */ }
-  if (!bk || bk.uid !== BE.user.uid) { redirect('#/me'); return; }
+  const admin = !!asAdmin && BE.isAdmin(), back = admin ? '#/admin?tab=bookings' : '#/me';
+  if (!bk || (!admin && bk.uid !== BE.user.uid)) { redirect(back); return; }
   const keep = { slot: book.slot, day: book.day, timeSaved: book.timeSaved, month: book.month };
   book.slot = null; book.day = String(bk.slot).slice(0, 10); book.timeSaved = false; book.month = new Date(book.day + 'T00:00:00'); book.month = new Date(book.month.getFullYear(), book.month.getMonth(), 1);
-  m.innerHTML = '<div class="eyebrow">' + esc(CONFIG.brand) + '</div><h1 style="margin-bottom:6px">' + esc(S.changeTitle) + '</h1><p class="muted">' + esc(S.changeIntro) + '</p>'
+  m.innerHTML = '<div class="eyebrow">' + esc(CONFIG.brand) + '</div><h1 style="margin-bottom:6px">' + esc(admin ? S.adminMoveTitle : S.changeTitle) + '</h1><p class="muted">' + esc(admin ? S.adminMoveIntro : S.changeIntro) + '</p>'
+    + (admin && (bk.name || bk.email) ? '<p class="hint">🙋 ' + esc([bk.name, bk.email].filter(Boolean).join(' · ')) + (bk.service ? ' · ' + esc(bk.service) : '') + '</p>' : '')
     + '<div class="picked"><span>' + esc(S.currentSlot) + ': ' + esc(slotLabel(bk.slot)) + '</span></div>'
     + '<div class="sec" style="margin-top:14px"><p class="hint" style="margin-bottom:10px">' + esc(S.timeHint(L(CONFIG.tzLabel))) + '</p><div id="calwrap"><p class="hint">…</p></div></div>'
-    + '<button class="btn primary block" id="sendchange">' + esc(S.sendChange) + '</button><p class="hint" id="chstatus"></p><p style="margin-top:10px"><a href="#/me" class="backlink">← ' + esc(S.nav.me) + '</a></p>';
-  const restore = () => { book.slot = keep.slot; book.day = keep.day; book.timeSaved = keep.timeSaved; book.month = keep.month; };
+    + (admin ? '<button class="btn primary block" id="sendchange">' + esc(S.adminPropose) + '</button><button class="btn block" id="movenow" style="margin-top:8px">' + esc(S.adminMoveNow) + '</button>'
+      : '<button class="btn primary block" id="sendchange">' + esc(S.sendChange) + '</button>')
+    + '<p class="hint" id="chstatus"></p><p style="margin-top:10px"><a href="' + back + '" class="backlink">← ' + esc(admin ? S.adminTitle : S.nav.me) + '</a></p>';
+  book.ignoreKey = String(bk.slot).replace(/[^0-9T]/g, '');
+  const restore = () => { book.slot = keep.slot; book.day = keep.day; book.timeSaved = keep.timeSaved; book.month = keep.month; book.ignoreKey = ''; };
   const bindSlots = () => { $$('[data-slot]', m).forEach((b) => b.addEventListener('click', () => { book.slot = b.getAttribute('data-slot'); $('#slots').innerHTML = slotsHTML().replace(/<button class="btn primary block" id="saveslot"[^]*?<\/button>/, ''); bindSlots(); })); };
   const drawCal = () => {
     const w = $('#calwrap'); if (!w) return;
@@ -27169,14 +27981,22 @@ async function renderChange(id) {
     bindSlots();
   };
   await loadSchedule(); drawCal();
-  $('#sendchange').addEventListener('click', async () => {
+  const go = async (how) => {
     const st = $('#chstatus');
-    if (!book.slot) { toast(S.needSlot); return; }
-    if (book.slot === bk.slot) { toast(S.needSlot); return; }
-    $('#sendchange').disabled = true;
-    try { await BE.requestChange(bk, book.slot); restore(); st.textContent = S.changeSent; st.className = 'hint ok'; toast(T().saved); setTimeout(() => { location.hash = '#/me'; }, 900); }
-    catch (e) { st.textContent = S.publishFail + ': ' + e.message; st.className = 'hint err'; $('#sendchange').disabled = false; }
-  });
+    if (!book.slot || book.slot === bk.slot) { toast(S.needSlot); return; }
+    if (how === 'move' && !confirm(S.adminMoveAsk)) return;
+    $$('#sendchange,#movenow', m).forEach((b) => { b.disabled = true; });
+    try {
+      if (how === 'move') await BE.moveBooking(bk, book.slot);
+      else if (admin) await BE.proposeSlot(bk, book.slot);
+      else await BE.requestChange(bk, book.slot);
+      restore();
+      st.textContent = how === 'move' ? S.adminMoved : admin ? S.adminProposeSent : S.changeSent; st.className = 'hint ok'; toast(T().saved);
+      setTimeout(() => { location.hash = back; }, 900);
+    } catch (e) { st.textContent = S.publishFail + ': ' + e.message; st.className = 'hint err'; $$('#sendchange,#movenow', m).forEach((b) => { b.disabled = false; }); }
+  };
+  $('#sendchange').addEventListener('click', () => go(admin ? 'propose' : 'request'));
+  if ($('#movenow')) $('#movenow').addEventListener('click', () => go('move'));
 }
 ROUTES.book = { nav: 'book', render: renderBook };
 ROUTES.prices = { nav: 'book', render: renderPrices };
@@ -27386,13 +28206,20 @@ function bookingRow(b, admin) {
         + (b.whereId ? ' · <b>' + esc(b.whereId) + '</b>' : '')
       : (b.whereName ? '💬 ' + esc(S.msgWhere) + ': <b>' + esc(b.whereName) + '</b>' : ''),
     b.birth ? '🎂 ' + esc(b.birth) : '', b.note ? '📝 ' + esc(b.note) : '', b.card ? '🃏 ' + esc(b.card) : ''].filter(Boolean).join('<br>');
-  const d = slotDate(b.slot), future = d && d.getTime() > Date.now(), live = ['requested', 'confirmed', 'change_requested', 'cancel_requested'].indexOf(b.status) > -1;
-  const change = b.status === 'change_requested' && b.newSlot ? '<div class="chg">🔁 ' + esc(S.newSlotLabel) + ': ' + esc(slotLabel(b.newSlot)) + '</div>' : '';
+  const d = slotDate(b.slot), future = d && d.getTime() > Date.now(), live = ['requested', 'confirmed', 'change_requested', 'cancel_requested', 'change_proposed', 'proposal_declined'].indexOf(b.status) > -1;
+  const change = b.status === 'change_requested' && b.newSlot ? '<div class="chg">🔁 ' + esc(S.newSlotLabel) + ': ' + esc(slotLabel(b.newSlot)) + '</div>'
+    : b.status === 'change_proposed' && b.proposedSlot ? '<div class="chg">🕒 ' + esc(S.proposedLabel) + ': <b>' + esc(slotLabel(b.proposedSlot)) + '</b></div>'
+    : b.status === 'proposal_declined' && b.declinedSlot ? '<div class="chg">✕ ' + esc(S.declinedLabel) + ': ' + esc(slotLabel(b.declinedSlot)) + '</div>' : '';
   let acts = '';
   if (admin) {
     if (b.status === 'requested') acts = '<button class="btn sm primary" data-bk="confirmed" data-id="' + b.id + '">' + esc(S.confirm) + '</button><button class="btn sm" data-bk="declined" data-id="' + b.id + '">' + esc(S.decline) + '</button>';
     else if (b.status === 'change_requested') acts = '<button class="btn sm primary" data-bk="confirmed" data-id="' + b.id + '">' + esc(S.adminApplyChange) + '</button><button class="btn sm" data-bk="keep" data-id="' + b.id + '">' + esc(S.adminKeep) + '</button>';
     else if (b.status === 'cancel_requested') acts = '<button class="btn sm primary" data-bk="cancelled" data-id="' + b.id + '">' + esc(S.adminApplyCancel) + '</button><button class="btn sm" data-bk="keep" data-id="' + b.id + '">' + esc(S.adminKeepBooking) + '</button>';
+    else if (b.status === 'change_proposed') acts = '<button class="btn sm" data-bk="keep" data-id="' + b.id + '">' + esc(S.adminWithdraw) + '</button>';
+    else if (b.status === 'proposal_declined') acts = '<button class="btn sm" data-bk="keep" data-id="' + b.id + '">' + esc(S.adminKeep) + '</button>';
+    /* Nabu moves a reading herself: straight to a new hour, or a proposal the
+       person who booked accepts or declines. */
+    if (live && future && b.status !== 'cancel_requested') acts += '<a class="btn sm" href="#/book?change=' + esc(b.id) + '&as=admin">🔁 ' + esc(S.adminMoveBtn) + '</a>';
     /* Nabu could confirm, decline, and agree to a cancellation somebody else
        asked for - but not call one off. Anyone who takes bookings falls ill. */
     if (live && b.status !== 'cancel_requested') acts += '<button type="button" class="btn sm" data-bkoff="' + b.id + '">✕ ' + esc(S.adminCancel) + '</button>';
@@ -27400,6 +28227,8 @@ function bookingRow(b, admin) {
        ones have been settled. */
     if (!b.paid && live) acts += '<button type="button" class="btn sm" data-paid="' + b.id + '">💰 ' + esc(S.adminGotPaid) + '</button>';
     if (live && future) acts += '<button type="button" class="btn sm" data-ics="' + b.id + '">📅 ' + esc(S.addToCalendar) + '</button><a class="btn sm" href="' + esc(gcalLink(b)) + '" target="_blank" rel="noopener">🗓 ' + esc(S.gcal) + '</a>';
+  } else if (live && future && b.status === 'change_proposed') {
+    acts = '<button type="button" class="btn sm primary" data-propyes="' + b.id + '">✓ ' + esc(S.acceptTime) + '</button><button type="button" class="btn sm" data-propno="' + b.id + '">' + esc(S.declineTime) + '</button>';
   } else if (live && future) {
     acts = '<a class="btn sm" href="#/book?change=' + esc(b.id) + '">🔁 ' + esc(S.changeSlot) + '</a><button class="btn sm" data-cancel="' + b.id + '">✕ ' + esc(S.cancelBooking) + '</button>'
       + '<button type="button" class="btn sm" data-ics="' + b.id + '">📅 ' + esc(S.addToCalendar) + '</button><a class="btn sm" href="' + esc(gcalLink(b)) + '" target="_blank" rel="noopener">🗓 ' + esc(S.gcal) + '</a>';
@@ -27608,6 +28437,15 @@ function meSect(id, icon, title, body, openByDefault, force) {
             if (!bk || !confirm(S.adminCancelAsk)) return;
             try { await BE.setBookingStatus(bk, 'cancelled'); toast(S.adminCancelDone); } catch (e) { toast(e.message); }
           }));
+          /* Nabu proposed a new hour: yes moves the booking there, no keeps the
+             old hour and tells her. Either answer goes through the worker. */
+          const answer = async (id, yes) => {
+            const bk = list.filter((y) => y.id === id)[0]; if (!bk) return;
+            if (!yes && !confirm(S.declineAsk)) return;
+            try { await BE.answerProposal(bk, yes); toast(yes ? S.proposalAccepted : S.proposalDeclined); } catch (e) { toast(S.proposalFail); }
+          };
+          $$('[data-propyes]', body).forEach((x) => x.addEventListener('click', () => answer(x.getAttribute('data-propyes'), true)));
+          $$('[data-propno]', body).forEach((x) => x.addEventListener('click', () => answer(x.getAttribute('data-propno'), false)));
           $$('[data-cancel]', body).forEach((x) => x.addEventListener('click', async () => { const bk = list.filter((y) => y.id === x.getAttribute('data-cancel'))[0]; if (!bk || !confirm(S.confirmCancel)) return; try { await BE.requestCancel(bk); toast(S.cancelSent); } catch (e) { toast(e.message); } }));
         }
         scheduleReminders(list);
@@ -28369,6 +29207,7 @@ async function renderPlay(args) {
   m.innerHTML = '<div class="eyebrow">' + esc(CONFIG.brand) + '</div><h1 style="margin-bottom:6px">' + esc(S.actTitle) + '</h1><p class="muted">' + esc(S.actIntro) + '</p><div id="acts" class="actlist">'
     + petRowHTML(S)
     + '<a class="actbtn act-love live" href="#/love"><span class="ic">' + loveKnotSVG() + '</span><span class="body"><b>' + esc(S.loveTitle) + '</b><span class="meta">' + esc(S.loveSub) + '</span></span><span class="go">›</span></a>'
+    + (isIOSApp() ? '' : '<a class="actbtn act-outfit live" href="#/outfit"><span class="ic">👗</span><span class="body"><b>' + esc(outfitTxt().title) + '</b><span class="meta">' + esc(outfitTxt().intro) + '</span></span><span class="go">›</span></a>')
     + '<a class="actbtn act-tree live" href="#/play/tree"><span class="ic">🌸</span><span class="body"><b>' + esc(S.treeTitle) + '</b><span class="meta">' + esc(S.treeSub) + '</span></span><span class="go">›</span></a>'
     + '<a class="actbtn act-coin live" href="#/play/coin"><span class="ic">🪙</span><span class="body"><b>' + esc(S.coinTitle) + '</b><span class="meta">' + esc(S.coinSub) + '</span></span><span class="go">›</span></a>'
     + '<a class="actbtn act-diary live" href="#/play/diary"><span class="ic">📔</span><span class="body"><b>' + esc(S.diaryTitle) + '</b><span class="meta">' + esc(S.diarySub) + (diaryN ? ' · ' + esc(S.diaryCount(diaryN)) : '') + '</span></span><span class="chev">›</span></a>'
@@ -30854,7 +31693,12 @@ function alertsWatchBookings() {
       const before = alertWas(key, now);
       if (!before || before === now) return;
       const when = String(b.slot || '').replace('T', ' ');
-      if (b.status === 'confirmed') alertSay({ id: key + '-ok-' + now, k: 'book', t: S.alertBookOk, b: when, href: '#/me' }, true);
+      /* The same status with a different hour is a move, not a second
+         confirmation: Nabu moved it, or the client accepted her proposal. */
+      const wasStatus = String(before).split('|')[0];
+      if (b.status === 'change_proposed') alertSay({ id: key + '-prop-' + now, k: 'book', t: S.alertBookProposed, b: String(b.proposedSlot || '').replace('T', ' '), href: '#/me' }, true);
+      else if (['requested', 'confirmed'].indexOf(b.status) > -1 && b.movedFrom && (wasStatus === b.status || wasStatus === 'change_proposed' || wasStatus === 'proposal_declined') && String(before).split('|')[1] !== String(b.slot || '')) alertSay({ id: key + '-moved-' + now, k: 'book', t: S.alertBookMoved, b: when, href: '#/me' }, true);
+      else if (b.status === 'confirmed') alertSay({ id: key + '-ok-' + now, k: 'book', t: S.alertBookOk, b: when, href: '#/me' }, true);
       else if (b.status === 'cancelled') alertSay({ id: key + '-no-' + now, k: 'book', t: S.alertBookNo, b: when, href: '#/me' }, true);
       else if (b.status === 'declined') alertSay({ id: key + '-dec-' + now, k: 'book', t: S.alertBookNo, b: when, href: '#/me' }, true);
     });
@@ -31313,6 +32157,11 @@ function adminBookings(p) {
     $$('[data-ics]', p).forEach((b) => b.addEventListener('click', () => { const bk = books.filter((x) => x.id === b.getAttribute('data-ics'))[0]; if (bk) addToCalendar(bk); }));
     $$('[data-bk]', p).forEach((b) => b.addEventListener('click', async () => {
       const bk = all.filter((x) => x.id === b.getAttribute('data-id'))[0];
+      /* Confirming an hour that runs into one already confirmed is asked
+         about, not refused: Nabu may mean it. */
+      const will = bk && b.getAttribute('data-bk') === 'confirmed' ? (bk.status === 'change_requested' && bk.newSlot ? bk.newSlot : bk.slot) : '';
+      const clash = will ? bkClash(books, bk.id, will) : null;
+      if (clash && !confirm(T().adminOverlapAsk(slotLabel(clash.slot), clash.name || clash.email || ''))) return;
       try { await BE.setBookingStatus(bk, b.getAttribute('data-bk')); toast(T().saved); } catch (e) { toast(loveWhy(e)); }
     }));
     /* Calling one off is behind a question, because the hour goes back on the
@@ -31323,7 +32172,21 @@ function adminBookings(p) {
       try { await BE.setBookingStatus(bk, 'cancelled'); toast(T().adminCancelDone); } catch (e) { toast(e.message); }
     }));
   };
-  admin.unsubs.push(BE.watchAllBookings((list) => { all = list; draw(); }));
+  /* Hours confirmed before overlap was checked carry no mark in `taken`, so
+     nothing closed the half hours either side of them. The first time the
+     list arrives, each future confirmed booking's hour is marked. */
+  let marked = false;
+  admin.unsubs.push(BE.watchAllBookings((list) => {
+    all = list; draw();
+    if (marked || !BE.db) return; marked = true;
+    list.filter((b) => b.kind !== 'unlock' && b.status === 'confirmed' && b.slot && (slotDate(b.slot) || 0) > Date.now())
+      .forEach((b) => BE.db.collection('taken').doc(String(b.slot).replace(/[^0-9T]/g, '')).set({ bookingId: b.id, confirmed: true }, { merge: true }).catch(() => {}));
+  }));
+}
+/* Another confirmed booking whose hour runs into `slot`, or null. */
+function bkClash(books, id, slot) {
+  const len = (SCHEDULE && SCHEDULE.slotMinutes) || 60, at = slotMin(String(slot).replace(/[^0-9T]/g, ''));
+  return books.filter((x) => x.id !== id && x.status === 'confirmed' && x.slot && Math.abs(slotMin(String(x.slot).replace(/[^0-9T]/g, '')) - at) < len)[0] || null;
 }
 /* ---- the money, which is not the calendar ----
 
@@ -31767,7 +32630,7 @@ function adminSale(p) {
 ROUTES.admin = { nav: '', render: renderAdmin };
 
 /* ============================ boot ============================ */
-window.APP_VERSION = 'v267';
+window.APP_VERSION = 'v268';
 window.NABU = { CONFIG: CONFIG, SALE: SALE, salePrice: salePrice, loadActs: loadActs, BACK: BACK, LESSONS: LESSONS, localAnswer: localAnswer, compatVerdict: compatVerdict, numerologyOf: numerologyOf, ZDEEP: ZDEEP, lunarToday: lunarToday, solarToLunar: solarToLunar, DECK: DECK, INSIGHT: INSIGHT, KW: KW, ASK: ASK, GUIDES: GUIDES, SERVICES: SERVICES, COURSES: COURSES, ACCESS: ACCESS, INTERESTS: INTERESTS, plusOn: () => plusOn(), proOn: () => proOn(), luckUnlimited: () => luckUnlimited(), ZODIAC: ZODIAC, pick: pick, book: book, PLAY_ITEMS: PLAY_ITEMS, PLAY_SUB_SKUS: PLAY_SUB_SKUS, playItem: playItem, BILL: BILL, SUBS: SUBS, billUse: billUse, APPLE_BILL: APPLE_BILL, appleAccountToken: appleAccountToken, renderStore: renderStore, pickLimitHTML: pickLimitHTML, subStateWord: subStateWord,
   insightHTML: insightHTML, insightOf: insightOf, sunSignIndex: sunSignIndex, lifePath: lifePath, PROFILE: () => PROFILE, BE: BE, inAppBrowser: inAppBrowser, ACTS: ACTS, CMT: CMT, LIKES: LIKES, kbReady: kbReady, AI: AI, STR: STR, KB_URL: (typeof KB_URL === 'string' ? KB_URL : ''),
   ANGELS: ANGELS, angelRead: angelRead, CODEBOOK: CODEBOOK, redeemCode: redeemCode, loadCodebook: loadCodebook, petHomeSVG: petHomeSVG, petStill: petStill, PET_HOMES: PET_HOMES, PET_WARDROBE: PET_WARDROBE, PET_SLOTS: PET_SLOTS,
@@ -31776,6 +32639,9 @@ window.NABU = { CONFIG: CONFIG, SALE: SALE, salePrice: salePrice, loadActs: load
   PET_WEARS: PET_WARDROBE, codeDigest: codeDigest, randomCode: randomCode, BANK: BANK, PETS: PETS, petSVG: petSVG, PET_COATS: PET_COATS, PET_KINDS: PET_KINDS, turnsMerge: turnsMerge, turnsLocal: turnsLocal, TODAY: TODAY, treeMsgOf: treeMsgOf, priceText: priceText, termText: termText, proSaveText: () => proSaveText(), wedFeeText: () => wedFeeText(), fmtPrice: fmtPrice, luckCut: luckCut, petLevel: petLevel, petStep: petStep, VOUCHERS: VOUCHERS, levelCoins: levelCoins, LOOKS: LOOKS,
   LOVE: LOVE, LOVEDB: LOVEDB, HANDLE_RE: HANDLE_RE, loveBadgeHTML: loveBadgeHTML,
   loveMarkSVG: loveMarkSVG, QUIZ: QUIZ, QSCORE: QSCORE, QUIZ_PASS: QUIZ_PASS, QUIZ_LEN: QUIZ_LEN, pileArtSVG: pileArtSVG, PILE_ARTS: PILE_ARTS, threadSVG: threadSVG, petParentsHTML: petParentsHTML, GIFTS: GIFTS, ALERTS: ALERTS, alertsStart: alertsStart, alertWas: alertWas,
+  SPREADS: SPREADS, PRACTICE: () => PRACTICE, pCard: pCard, paintOutfit: paintOutfit, outfitState: outfitState, OUTFIT_TXT: OUTFIT_TXT, practiceReady: practiceReady, PSCORE: PSCORE, gradeReading: gradeReading, practiceById: practiceById, pBand: pBand,
+  /* the booking calendar's own state, for the overlap checks */
+  bookState: (sch, tk, ig) => { if (sch !== undefined) SCHEDULE = sch; if (tk !== undefined) TAKEN = tk; if (ig !== undefined) book.ignoreKey = ig; return { schedule: SCHEDULE, taken: TAKEN }; },
   WED: WED, WED_STEPS: WED_STEPS, wedStep: wedStep, cupidSVG: cupidSVG, shareLine: shareLine, UPD: UPD, NOTE: NOTE };
 /* ---- German reads English where German does not exist yet ----
    Every table in the app that is written per language is keyed 'vi' and 'en'.

@@ -22,6 +22,17 @@ async function loadSchedule() {
   return SCHEDULE;
 }
 const slotKey = (dateStr, time) => dateStr + 'T' + time;
+/* A reading lasts slotMinutes (60) and start times are every half hour, so an
+   hour Nabu has confirmed also closes every start that would run into it:
+   14:00 confirmed takes 13:30 and 14:30 off the calendar too. Only confirmed
+   hours do this; a request still waiting closes its own start and no more.
+   `ignore` is the booking being moved, which must not block its own
+   neighbours. */
+const slotMin = (k) => { const m = /^(\d{4})(\d{2})(\d{2})T(\d{2})(\d{2})$/.exec(k); return m ? Date.UTC(+m[1], +m[2] - 1, +m[3], +m[4], +m[5]) / 60000 : NaN; };
+function clashesConfirmed(key, ignore) {
+  const len = (SCHEDULE && SCHEDULE.slotMinutes) || 60, at = slotMin(String(key).replace(/[^0-9T]/g, ''));
+  return Object.keys(TAKEN).some((k) => TAKEN[k] === 'confirmed' && k !== ignore && Math.abs(slotMin(k) - at) < len);
+}
 function slotsFor(dateStr) {
   const S = SCHEDULE; if (!S) return [];
   const d = new Date(dateStr + 'T00:00:00'), today = new Date(); today.setHours(0, 0, 0, 0);
@@ -31,7 +42,7 @@ function slotsFor(dateStr) {
   if ((S.blocked || []).indexOf(dateStr) > -1) return [];
   const base = (S.weekly || {})[String(d.getDay())] || [], extra = (S.extra || {})[dateStr] || [];
   const all = base.concat(extra).filter((t, i, a) => a.indexOf(t) === i).sort(), booked = S.booked || [];
-  return all.map((t) => { const k = slotKey(dateStr, t); return { time: t, key: k, taken: booked.indexOf(k) > -1 || !!TAKEN[k.replace(/[^0-9T]/g, '')] }; });
+  return all.map((t) => { const k = slotKey(dateStr, t); return { time: t, key: k, taken: booked.indexOf(k) > -1 || !!TAKEN[k.replace(/[^0-9T]/g, '')] || clashesConfirmed(k, book.ignoreKey) }; });
 }
 function calendarHTML() {
   const S = T(), m = book.month;
@@ -130,7 +141,7 @@ function whereHTML() {
   const S = T(), picked = whereOf(book.where);
   const cards = BOOK_WHERE.map((w) => '<button type="button" class="wp' + (book.where === w.id ? ' on' : '') + (w.best ? ' best' : '') + '" data-where="' + w.id + '">'
     + '<span class="ic">' + (whereArt(w.id) || w.icon) + '</span><b>' + esc(L(w.name)) + (w.best ? '<span class="wbest">\uD83D\uDC9C ' + esc(S.whereBest) + '</span>' : '') + '</b>'
-    + '<span class="s">' + esc(L(w.sub)) + '</span><span class="tick">\u2713</span></button>').join('');
+    + '<span class="s">' + esc(L(isIOSApp() && w.subIOS ? w.subIOS : w.sub)) + '</span><span class="tick">\u2713</span></button>').join('');
   /* Nabu cannot write to somebody on Instagram or Facebook without being told
      who they are, so the account is asked for at the moment that is chosen -
      along with the reason a message so often never arrives. */
@@ -274,7 +285,8 @@ function bookHowHTML() {
 }
 async function renderBook(args, params) {
   const S = T(), m = $('#main');
-  if (params.change) return renderChange(params.change);
+  if (params.change) return renderChange(params.change, params.as === 'admin');
+  book.ignoreKey = '';  // left over if a move was abandoned half way
   restoreBook();
   book.card = params.card || book.card || null; book.name = book.name || PROFILE.name || ''; book.birth = book.birth || PROFILE.birthday || '';
   if (!book.month) book.month = new Date(new Date().getFullYear(), new Date().getMonth(), 1);
@@ -396,22 +408,30 @@ async function renderBook(args, params) {
   }
   drawCal();
 }
-/* Moving an existing booking: only the calendar, then a request Nabu approves. */
-async function renderChange(id) {
+/* Moving an existing booking: only the calendar, then a request Nabu approves.
+   Nabu herself comes here too (as=admin), from the dashboard, and gets two
+   buttons instead of one: propose the hour to the person who booked, or move
+   the booking there at once. */
+async function renderChange(id, asAdmin) {
   const S = T(), m = $('#main');
   m.innerHTML = '<div class="eyebrow">' + esc(CONFIG.brand) + '</div><h1 style="margin-bottom:6px">' + esc(S.changeTitle) + '</h1><p class="muted">…</p>';
   if (!BE.enabled) { redirect('#/me'); return; }
   await Promise.race([BE.initP || Promise.resolve(), new Promise((r) => setTimeout(r, 4000))]);
   if (!BE.user) { location.hash = '#/me'; return; }
   let bk = null; try { bk = await BE.getBooking(id); } catch (e) { /* shown below */ }
-  if (!bk || bk.uid !== BE.user.uid) { redirect('#/me'); return; }
+  const admin = !!asAdmin && BE.isAdmin(), back = admin ? '#/admin?tab=bookings' : '#/me';
+  if (!bk || (!admin && bk.uid !== BE.user.uid)) { redirect(back); return; }
   const keep = { slot: book.slot, day: book.day, timeSaved: book.timeSaved, month: book.month };
   book.slot = null; book.day = String(bk.slot).slice(0, 10); book.timeSaved = false; book.month = new Date(book.day + 'T00:00:00'); book.month = new Date(book.month.getFullYear(), book.month.getMonth(), 1);
-  m.innerHTML = '<div class="eyebrow">' + esc(CONFIG.brand) + '</div><h1 style="margin-bottom:6px">' + esc(S.changeTitle) + '</h1><p class="muted">' + esc(S.changeIntro) + '</p>'
+  m.innerHTML = '<div class="eyebrow">' + esc(CONFIG.brand) + '</div><h1 style="margin-bottom:6px">' + esc(admin ? S.adminMoveTitle : S.changeTitle) + '</h1><p class="muted">' + esc(admin ? S.adminMoveIntro : S.changeIntro) + '</p>'
+    + (admin && (bk.name || bk.email) ? '<p class="hint">🙋 ' + esc([bk.name, bk.email].filter(Boolean).join(' · ')) + (bk.service ? ' · ' + esc(bk.service) : '') + '</p>' : '')
     + '<div class="picked"><span>' + esc(S.currentSlot) + ': ' + esc(slotLabel(bk.slot)) + '</span></div>'
     + '<div class="sec" style="margin-top:14px"><p class="hint" style="margin-bottom:10px">' + esc(S.timeHint(L(CONFIG.tzLabel))) + '</p><div id="calwrap"><p class="hint">…</p></div></div>'
-    + '<button class="btn primary block" id="sendchange">' + esc(S.sendChange) + '</button><p class="hint" id="chstatus"></p><p style="margin-top:10px"><a href="#/me" class="backlink">← ' + esc(S.nav.me) + '</a></p>';
-  const restore = () => { book.slot = keep.slot; book.day = keep.day; book.timeSaved = keep.timeSaved; book.month = keep.month; };
+    + (admin ? '<button class="btn primary block" id="sendchange">' + esc(S.adminPropose) + '</button><button class="btn block" id="movenow" style="margin-top:8px">' + esc(S.adminMoveNow) + '</button>'
+      : '<button class="btn primary block" id="sendchange">' + esc(S.sendChange) + '</button>')
+    + '<p class="hint" id="chstatus"></p><p style="margin-top:10px"><a href="' + back + '" class="backlink">← ' + esc(admin ? S.adminTitle : S.nav.me) + '</a></p>';
+  book.ignoreKey = String(bk.slot).replace(/[^0-9T]/g, '');
+  const restore = () => { book.slot = keep.slot; book.day = keep.day; book.timeSaved = keep.timeSaved; book.month = keep.month; book.ignoreKey = ''; };
   const bindSlots = () => { $$('[data-slot]', m).forEach((b) => b.addEventListener('click', () => { book.slot = b.getAttribute('data-slot'); $('#slots').innerHTML = slotsHTML().replace(/<button class="btn primary block" id="saveslot"[^]*?<\/button>/, ''); bindSlots(); })); };
   const drawCal = () => {
     const w = $('#calwrap'); if (!w) return;
@@ -421,14 +441,22 @@ async function renderChange(id) {
     bindSlots();
   };
   await loadSchedule(); drawCal();
-  $('#sendchange').addEventListener('click', async () => {
+  const go = async (how) => {
     const st = $('#chstatus');
-    if (!book.slot) { toast(S.needSlot); return; }
-    if (book.slot === bk.slot) { toast(S.needSlot); return; }
-    $('#sendchange').disabled = true;
-    try { await BE.requestChange(bk, book.slot); restore(); st.textContent = S.changeSent; st.className = 'hint ok'; toast(T().saved); setTimeout(() => { location.hash = '#/me'; }, 900); }
-    catch (e) { st.textContent = S.publishFail + ': ' + e.message; st.className = 'hint err'; $('#sendchange').disabled = false; }
-  });
+    if (!book.slot || book.slot === bk.slot) { toast(S.needSlot); return; }
+    if (how === 'move' && !confirm(S.adminMoveAsk)) return;
+    $$('#sendchange,#movenow', m).forEach((b) => { b.disabled = true; });
+    try {
+      if (how === 'move') await BE.moveBooking(bk, book.slot);
+      else if (admin) await BE.proposeSlot(bk, book.slot);
+      else await BE.requestChange(bk, book.slot);
+      restore();
+      st.textContent = how === 'move' ? S.adminMoved : admin ? S.adminProposeSent : S.changeSent; st.className = 'hint ok'; toast(T().saved);
+      setTimeout(() => { location.hash = back; }, 900);
+    } catch (e) { st.textContent = S.publishFail + ': ' + e.message; st.className = 'hint err'; $$('#sendchange,#movenow', m).forEach((b) => { b.disabled = false; }); }
+  };
+  $('#sendchange').addEventListener('click', () => go(admin ? 'propose' : 'request'));
+  if ($('#movenow')) $('#movenow').addEventListener('click', () => go('move'));
 }
 ROUTES.book = { nav: 'book', render: renderBook };
 ROUTES.prices = { nav: 'book', render: renderPrices };

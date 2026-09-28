@@ -13,7 +13,7 @@ OUT = os.environ.get('NABU_OUT', HERE)
 SCRIPTS = ['config.js', 'logo-data.js', 'services.js', 'play-catalog.js', 'strings.js', 'art.js', 'tarot-en.js', 'tarot-vi.js', 'tarot-de.js', 'kb-questions.js',
            'insight-en.js', 'insight-vi.js', 'insight-majors.js', 'insight-minors.js', 'insight-de.js', 'len-art.js', 'len-en.js', 'len-vi.js', 'len-de.js', 'astro.js',
            'zodiac.js', 'astro-kb.js', 'astro-deep.js', 'numerology.js', 'lunar.js', 'spreads.js', 'kb-guides.js',
-           'core.js', 'today.js', 'backend.js', 'comments.js', 'likes.js', 'share.js', 'ai.js', 'home.js', 'pick.js', 'learn.js', 'lessons.js', 'fortune.js', 'playing.js', 'guide-visuals.js', 'codes.js', 'billing.js', 'billing-apple.js', 'store.js', 'angel.js', 'love.js', 'welcome.js', 'quiz.js', 'quiz-tarot.js', 'quiz-tarot-de.js', 'quiz-len.js', 'quiz-play.js', 'looks.js', 'luck.js', 'pet-wardrobe.js', 'pet.js', 'pet-dress.js', 'book.js', 'me.js', 'signin.js', 'contact.js', 'privacy.js', 'terms.js', 'install.js', 'hello.js', 'report.js', 'play.js', 'wedding.js', 'alerts.js', 'admin.js', 'main.js']
+           'core.js', 'today.js', 'backend.js', 'comments.js', 'likes.js', 'share.js', 'ai.js', 'home.js', 'pick.js', 'learn.js', 'lessons.js', 'fortune.js', 'playing.js', 'guide-visuals.js', 'codes.js', 'billing.js', 'billing-apple.js', 'store.js', 'angel.js', 'love.js', 'welcome.js', 'quiz.js', 'quiz-tarot.js', 'quiz-tarot-de.js', 'quiz-len.js', 'quiz-play.js', 'practice-data.js', 'practice.js', 'outfit.js', 'looks.js', 'luck.js', 'pet-wardrobe.js', 'pet.js', 'pet-dress.js', 'book.js', 'me.js', 'signin.js', 'contact.js', 'privacy.js', 'terms.js', 'install.js', 'hello.js', 'report.js', 'play.js', 'wedding.js', 'alerts.js', 'admin.js', 'main.js']
 
 
 # Data files transcribed from outside sources carry working notes in block
@@ -32,6 +32,48 @@ def read(name):
 shell = read('shell.html')
 shell = shell.replace('/* __FONTS__ */', read('fonts.css').rstrip())
 assert 'fonts.googleapis.com' not in shell
+
+
+# ---- the iPad in portrait gets the wide layout, inside the iPhone app only ----
+# Every wide-window rule starts at 900px, and an iPad held upright is 768-834px
+# wide, so App Review saw the phone column with a margin of nothing either side.
+# Widening the queries would also reach Android tablets in the Play app, and
+# iOS changes must never change Android. Instead each 900px block is repeated
+# here for 768-899px with every selector behind html.iosapp, which only the
+# iPhone app sets. The min-height keeps a phone on its side out of the band.
+# One source of truth: edit the 900px blocks, never the copy.
+def ipad_band(css):
+    out, i, head = [], 0, '@media (min-width:900px){'
+    while True:
+        j = css.find(head, i)
+        if j < 0:
+            break
+        k = p = j + len(head)
+        depth = 1
+        while depth:
+            depth += (css[p] == '{') - (css[p] == '}')
+            p += 1
+        body = re.sub(r'/\*.*?\*/', '', css[k:p - 1], flags=re.S)
+        assert '@' not in body, 'a 900px block holds an at-rule; ipad_band cannot copy it'
+
+        def scope(m):
+            sels = []
+            for sel in m.group(1).split(','):
+                sel = sel.strip()
+                if sel == ':root':
+                    sels.append('html.iosapp')
+                elif sel.startswith('html'):
+                    sels.append('html.iosapp' + sel[4:])
+                else:
+                    sels.append('html.iosapp ' + sel)
+            return ','.join(sels) + '{'
+        out.append(re.sub(r'([^{}]+)\{', scope, body))
+        i = p
+    assert out, 'no 900px blocks found for the iPad band'
+    return '@media (min-width:768px) and (max-width:899px) and (min-height:600px){' + ''.join(out) + '}'
+
+
+shell = shell.replace('</style>', ipad_band(shell) + '\n</style>', 1)
 
 # ---- the course answers are fetched, not inlined ----
 # kb-questions.js is the biggest file in the app by a wide margin - the
@@ -52,7 +94,22 @@ assert 'Object.assign' not in KB_HEAD, 'the kb head kept some of the data'
 KB_NAME = 'kb-%s.js' % hashlib.sha256(KB_BODY.encode('utf-8')).hexdigest()[:12]
 KB_HEAD += "\n/* Where the rest of this table lives; learn.js fetches it on demand. */\nconst KB_URL = './" + KB_NAME + "';"
 
-js = '\n\n'.join((KB_HEAD if s == KB_FILE else read(s)).rstrip() for s in SCRIPTS)
+
+# ---- the practice exercises are fetched, not inlined ----
+# Same reasoning as the course answers above: the scenarios, their cards and
+# Nabu's reading of each are read by exactly one screen, and most visitors
+# never open it. The declaration everything else refers to stays in the page;
+# the data becomes its own script, fetched when that screen first opens.
+PR_FILE = 'practice-data.js'
+_pr = read(PR_FILE)
+_prcut = _pr.index('PRACTICE = [')
+PR_BODY = _pr[_prcut:].strip()
+assert PR_BODY.startswith('PRACTICE = ['), 'the practice data lost its assignment'
+PR_NAME = 'practice-%s.js' % hashlib.sha256(PR_BODY.encode('utf-8')).hexdigest()[:12]
+PR_HEAD = ("/* Filled by %s, fetched when the practice screen first opens. */\n"
+           "let PRACTICE = [];\nconst PRACTICE_URL = './%s';" % (PR_NAME, PR_NAME))
+
+js = '\n\n'.join((KB_HEAD if s == KB_FILE else PR_HEAD if s == PR_FILE else read(s)).rstrip() for s in SCRIPTS)
 assert '</script' not in js.lower(), 'a script source contains a closing script tag'
 
 # Does the page's one script actually parse? A stray apostrophe inside a
@@ -123,6 +180,13 @@ for _stale in glob.glob(os.path.join(OUT, 'kb-*.js')):
         print('removed stale %s' % os.path.basename(_stale))
 io.open(os.path.join(OUT, KB_NAME), 'w', encoding='utf-8', newline='\n').write(KB_BODY + '\n')
 print('%s: %d bytes (fetched when a card is opened)' % (KB_NAME, len(KB_BODY.encode('utf-8'))))
+
+for _stale in glob.glob(os.path.join(OUT, 'practice-*.js')):
+    if os.path.basename(_stale) != PR_NAME:
+        os.remove(_stale)
+        print('removed stale %s' % os.path.basename(_stale))
+io.open(os.path.join(OUT, PR_NAME), 'w', encoding='utf-8', newline='\n').write(PR_BODY + '\n')
+print('%s: %d bytes (fetched when the practice screen is opened)' % (PR_NAME, len(PR_BODY.encode('utf-8'))))
 
 # privacy.html and terms.html: the same text as #/privacy and #/terms, at a
 # public address, because the store listings have to link to a plain web page.

@@ -108,6 +108,9 @@ function renderLearn(args, params) {
     const ints = PROFILE.interests || [];
     const tile = (k, locked) => '<a class="tile' + (ints.indexOf(k) > -1 || k === 'tarot' || k === 'lenormand' || k === 'playing' || k === 'manifest' || k === 'angel' ? ' rec' : '') + '" href="#/learn/' + k + '"><div class="ic">' + CAT_ICONS[k] + (locked ? ' <span class="lock">🔒</span>' : '') + '</div><b>' + esc(S.cats[k]) + '</b><span>' + esc(S.catSub[k]) + '</span></a>';
     m.innerHTML = '<div class="eyebrow">' + esc(S.nav.learn) + '</div><h1 style="margin-bottom:6px">' + esc(S.learnTitle) + '</h1><p class="muted">' + esc(S.learnIntro) + '</p>'
+      /* The practice screen leads, because reading badly and being told why is
+         what turns a reader of lessons into somebody who can lay a spread. */
+      + '<a class="prcta" href="#/practice"><div class="ic">✍️</div><div><b>' + esc(S.practiceTitle) + '</b><span>' + esc(S.practiceIntro) + '</span></div></a>'
       + '<div class="eyebrow">' + esc(S.coursesPractice) + '</div><div class="tiles">' + tile('tarot', !ACCESS.has('tarot')) + tile('lenormand', !ACCESS.has('lenormand')) + tile('playing', !ACCESS.has('playing')) + tile('manifest', !ACCESS.has('manifest')) + '</div>'
       + '<div class="eyebrow">' + esc(S.freeReads) + '</div><div class="tiles">' + tile('astro') + tile('angel') + tile('fortune') + '</div>'
       + '<p style="margin-top:14px"><a class="btn block" href="#/unlock?from=learn">💳 ' + esc(S.unlockLink) + '</a></p>'

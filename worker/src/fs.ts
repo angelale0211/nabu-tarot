@@ -70,6 +70,13 @@ export async function fsPatch(env: PlayEnv, path: string, obj: Record<string, un
   });
 }
 
+/* One document, gone. Already gone counts as gone. */
+export async function fsDelete(env: PlayEnv, path: string): Promise<void> {
+  const at = await serviceToken(env, FS_SCOPE);
+  const r = await fetch(docUrl(env, path), { method: "DELETE", headers: { Authorization: "Bearer " + at } });
+  if (!r.ok && r.status !== 404) throw new Error("firestore delete " + r.status);
+}
+
 /* Everything in one collection that names this person, gone.
 
    An account being deleted has rows the phone itself may not touch: the

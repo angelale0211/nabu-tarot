@@ -102,7 +102,15 @@ const pad2 = (n) => String(n).padStart(2, '0');
 const isoDate = (d) => d.getFullYear() + '-' + pad2(d.getMonth() + 1) + '-' + pad2(d.getDate());
 
 /* ---- language + theme ---- */
-let lang = store.get('nabu-lang', 'vi');
+/* A first open inside the iPhone app follows the phone's language: the App Store is worldwide and
+   App Review starts from an English iPad, where Vietnamese was the first thing it met. A language
+   the app does not speak falls to English there. The web and Android keep Vietnamese as the default. */
+function deviceLang() {
+  const all = (navigator.languages && navigator.languages.length ? navigator.languages : [navigator.language || '']);
+  for (const l of all) { const two = String(l).slice(0, 2).toLowerCase(); if (['vi', 'en', 'de'].indexOf(two) >= 0) return two; }
+  return 'en';
+}
+let lang = store.get('nabu-lang', iosShell() ? deviceLang() : 'vi');
 /* The language belongs to the person, not to the handset. It is chosen once on
    the welcome screen and carried on the account, so a second phone or a
    reinstall opens in the right language instead of falling back to Vietnamese.
@@ -720,7 +728,7 @@ const REM = { timers: [] };
 function scheduleReminders(list) {
   REM.timers.forEach(clearTimeout); REM.timers = [];
   const S = T(), now = Date.now(), soon = [];
-  (list || []).filter((b) => ['requested', 'confirmed', 'change_requested'].indexOf(b.status) > -1).forEach((b) => {
+  (list || []).filter((b) => ['requested', 'confirmed', 'change_requested', 'change_proposed', 'proposal_declined'].indexOf(b.status) > -1).forEach((b) => {
     const d = slotDate(b.slot); if (!d || d.getTime() < now) return;
     soon.push(b);
     [[24 * 60, S.inHours(24)], [6 * 60, S.inHours(6)], [60, S.inHours(1)], [15, S.inMinutes(15)]].forEach((r) => {
@@ -977,7 +985,7 @@ function parseHash() {
   return { route: path[0] || 'home', args: path.slice(1), params: params };
 }
 const ONE_COL = ['love', 'wedding', 'pet', 'play', 'looks', 'rewards', 'me', 'book',
-  'contact', 'report', 'privacy', 'install', 'alerts', 'news', 'post', 'unlock', 'welcome'];
+  'contact', 'report', 'privacy', 'install', 'alerts', 'news', 'post', 'unlock', 'welcome', 'outfit'];
 /* Under #/learn only the hub and the card pages are wide; the rest is reading. */
 const ONE_COL_LEARN = ['astro', 'fortune', 'numbers', 'angel', 'quiz', 'manifest',
   'guide', 'spread', 'lesson'];

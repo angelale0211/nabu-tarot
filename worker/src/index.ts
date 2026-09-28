@@ -12,6 +12,7 @@ import { checkPurchase, acknowledge, grantUntil, checkSubscription, acknowledgeS
 import type { PlayEnv } from "./play";
 import { fsGet } from "./fs";
 import { claimCode } from "./codes";
+import { answerProposal } from "./bookings";
 import { claimPurchase, markGranted, movePurchase, removeAccessFor, sweepRefunds, tokenId, ledgerSet } from "./refunds";
 import { itemBySku, itemByKey } from "./catalog";
 import { applySubscription, dropSubscriptionFrom, payRoom, noteGranted } from "./entitle";
@@ -589,6 +590,27 @@ export default {
        worker can read, and bound to the account that typed it. The same
        account may type it again on another phone; a different account is
        refused. The access is then written from here, like a purchase. */
+    /* The person who booked answers a new time Nabu proposed. See bookings.ts
+       for why this is not a plain Firestore write from the phone. */
+    if (path.endsWith("/booking-answer")) {
+      if (!env.FIREBASE_PROJECT_ID || !env.PLAY_SERVICE_ACCOUNT) return new Response(JSON.stringify({ error: "not configured" }), { status: 500, headers });
+      const person = await whoIsAsking(request, env.FIREBASE_PROJECT_ID);
+      if (!person) return new Response(JSON.stringify({ error: "signin" }), { status: 401, headers });
+      const v = await allow(env, "bkans:" + person.uid, 30, 5);
+      if (!v.ok) return tooMany(v, headers);
+      let b: { id?: string; yes?: boolean };
+      try { b = await request.json(); } catch { return new Response(JSON.stringify({ error: "bad json" }), { status: 400, headers }); }
+      try {
+        const got = await answerProposal(env, person.uid, String(b.id || ""), b.yes === true);
+        console.log(JSON.stringify({ at: "booking-answer", uid: person.uid, id: String(b.id || "").slice(0, 64), yes: b.yes === true, result: got.ok ? got.status : got.why }));
+        if (!got.ok) return new Response(JSON.stringify({ error: got.why }), { status: got.why === "not yours" ? 403 : got.why === "gone" ? 404 : got.why === "bad" ? 400 : 409, headers });
+        return new Response(JSON.stringify(got), { headers });
+      } catch (e) {
+        console.error(JSON.stringify({ at: "booking-answer", uid: person.uid, error: String((e as Error).message || e) }));
+        return new Response(JSON.stringify({ error: "check failed" }), { status: 502, headers });
+      }
+    }
+
     if (path.endsWith("/redeem")) {
       if (!env.FIREBASE_PROJECT_ID || !env.PLAY_SERVICE_ACCOUNT) return new Response(JSON.stringify({ error: "not configured" }), { status: 500, headers });
       const person = await whoIsAsking(request, env.FIREBASE_PROJECT_ID);

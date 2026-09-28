@@ -57,9 +57,19 @@ const TOUR = [
   { ic: "🔔", vi: ["Làm mới & thông báo", "Muốn cập nhật nội dung mới nhất, bạn chỉ cần kéo màn hình xuống từ đầu trang rồi thả ra. Nabu sẽ tự làm mới và tải phiên bản nội dung mới nhất.\nBiểu tượng chuông 🔔 ở góc trên bên phải lưu lại những cập nhật và hoạt động đã diễn ra khi bạn không mở app, để bạn không bỏ lỡ điều gì."], en: ["Refresh & notifications", "To get the newest content, pull the screen down from the top and let go. Nabu refreshes itself and loads the latest version.\nThe bell 🔔 in the top right keeps the updates and activities that happened while you were away, so you miss nothing."], de: ["Aktualisieren & Benachrichtigungen", "Für die neuesten Inhalte ziehst du den Bildschirm oben einfach nach unten und lässt los. Nabu aktualisiert sich selbst und lädt die neueste Version.\nDie Glocke 🔔 oben rechts bewahrt die Neuigkeiten und Aktivitäten auf, die passiert sind, während du weg warst, damit dir nichts entgeht."] },
   { ic: "👤", vi: ["Hồ sơ của bạn", "Nhập tên và ngày sinh để Nabu cá nhân hóa trải nghiệm dành riêng cho bạn. Đăng nhập để lưu lại hồ sơ nhé! ✨"], en: ["Your profile", "Enter your name and birthday so Nabu can personalise the experience just for you. Sign in to keep your profile! ✨"], de: ["Dein Profil", "Gib deinen Namen und dein Geburtsdatum ein, damit Nabu das Erlebnis ganz auf dich abstimmen kann. Melde dich an, um dein Profil zu speichern! ✨"] }
 ];
+/* Inside the iPhone app the tour leads with learning. App Review turned the app down as one more
+   horoscope app, and the first two steps above - a card for today's energy, forecasts by sign - were
+   the first thing it read. Same steps otherwise, the owner's words untouched; forecasts and booking
+   drop out, and three steps of learning come first. */
+const TOUR_IOS_LEAD = [
+  { ic: "📚", vi: ["Học Tarot", "Các khóa Tarot, Lenormand và bài Tây đi từng bài một, có câu đố ôn tập. Đủ 78 lá Tarot, mỗi lá có nghĩa xuôi, nghĩa ngược và cách đọc theo từng chủ đề."], en: ["Learn Tarot", "Courses in Tarot, Lenormand and playing cards go one lesson at a time, with quizzes to review. All 78 Tarot cards are here, each with its upright and reversed meaning and how to read it for each topic."], de: ["Tarot lernen", "Die Kurse in Tarot, Lenormand und Spielkarten gehen Lektion für Lektion, mit Quizfragen zum Wiederholen. Alle 78 Tarotkarten sind da, jede mit aufrechter und umgekehrter Bedeutung und wie man sie für jedes Thema liest."] },
+  { ic: "✍️", vi: ["Luyện đọc bài", "Ở đây bạn là người đọc bài. Nabu dựng sẵn một tình huống và chia bài úp. Bạn lật từng lá, viết lời đọc của mình, rồi Nabu chấm và chỉ ra chỗ bạn còn đọc sót.\nLời đọc của Nabu chỉ hiện ra sau khi bạn nộp bài."], en: ["Practise reading", "Here you are the reader. Nabu sets up a situation and deals the cards face down; you turn them, write your reading, and Nabu marks it and shows what you missed.\nNabu\u2019s own reading only appears once you hand yours in."], de: ["Deuten üben", "Hier bist du die Lesende. Nabu stellt eine Situation und legt die Karten verdeckt aus; du deckst sie auf, schreibst deine Deutung, und Nabu bewertet sie und zeigt, was dir entgangen ist.\nNabus eigene Deutung erscheint erst, wenn du deine abgegeben hast."] },
+  { ic: "🃏", vi: ["Một lá mỗi ngày", "Mỗi ngày rút một lá để ôn: đọc ý nghĩa và các từ khóa của lá đó. Chọn chủ đề bạn đang nghĩ tới, vì mỗi chủ đề có cách đọc riêng."], en: ["A card a day", "Draw one card a day to study: read its meaning and its keywords. Choose the topic on your mind, because each topic is read in its own way."], de: ["Eine Karte am Tag", "Zieh jeden Tag eine Karte zum Lernen: lies ihre Bedeutung und ihre Stichworte. Wähl dein Thema, denn jedes wird auf seine eigene Weise gelesen."] }
+];
+const tourSteps = () => (isIOSApp() ? TOUR_IOS_LEAD.concat([TOUR[4], TOUR[2], TOUR[6], TOUR[7]]) : TOUR);
 function tourHTML(step) {
-  const t = TOUR[step], txt = t[lang];
-  const pct = Math.round((step + 1) / TOUR.length * 100);
+  const TS = tourSteps(), t = TS[step], txt = t[lang];
+  const pct = Math.round((step + 1) / TS.length * 100);
   /* A bar along the top, because eight steps with no sense of how many are
      left is eight steps somebody abandons at the third. The icon sits in a
      round well rather than loose on the card, which is what makes a row of
@@ -69,7 +79,7 @@ function tourHTML(step) {
     + '<div class="tourwell">' + t.ic + '</div>'
     + '<h3 style="margin:6px 0">' + esc(txt[0]) + '</h3>' + txt[1].split('\n').map((para) => '<p class="muted" style="font-size:14.5px">' + esc(para) + '</p>').join('')
     // Both arrows are always there, in the same place: back is greyed out on the first step, forward becomes a tick on the last.
-    + '<div class="tournav"><button class="btn sm" data-tour="prev" aria-label="back"' + (step === 0 ? ' disabled' : '') + '>←</button><span class="faint">' + (step + 1) + ' / ' + TOUR.length + '</span><button class="btn sm primary" data-tour="next" aria-label="next">' + (step === TOUR.length - 1 ? '✓' : '→') + '</button></div>'
+    + '<div class="tournav"><button class="btn sm" data-tour="prev" aria-label="back"' + (step === 0 ? ' disabled' : '') + '>←</button><span class="faint">' + (step + 1) + ' / ' + TS.length + '</span><button class="btn sm primary" data-tour="next" aria-label="next">' + (step === TS.length - 1 ? '✓' : '→') + '</button></div>'
     + '<button class="linkbtn" data-tour="skip" style="margin-top:8px;font-size:13px">' + esc(T().dismiss) + '</button></div>';
 }
 /* Once the tour is done or closed it shrinks to a one-line bar that can reopen it. */
@@ -81,7 +91,7 @@ function bindTour(root, step) {
   $$('[data-tour]', root).forEach((b) => b.addEventListener('click', () => {
     const act = b.getAttribute('data-tour');
     if (act === 'open') { $('#tour').outerHTML = tourHTML(0); bindTour(root, 0); return; }
-    if (act === 'next' && step < TOUR.length - 1) { $('#tour').outerHTML = tourHTML(step + 1); bindTour(root, step + 1); return; }
+    if (act === 'next' && step < tourSteps().length - 1) { $('#tour').outerHTML = tourHTML(step + 1); bindTour(root, step + 1); return; }
     if (act === 'prev') { $('#tour').outerHTML = tourHTML(Math.max(0, step - 1)); bindTour(root, Math.max(0, step - 1)); return; }
     saveProfileLocal({ tourDone: true }); if (BE.user) BE.pushProfile();
     // On the home screen the card folds into its little bar; anywhere else it
@@ -214,6 +224,17 @@ function pickCtaHTML() {
 }
 function quickLinksHTML() {
   const S = T();
+  /* In the iPhone app the tiles lead with learning: practice and the Tarot course first, the daily
+     card as a card to study, the Red Thread; astrology and the price list step aside. */
+  if (isIOSApp()) {
+    const it = [['#/practice', '✍️', S.practiceTitle, lang === 'vi' ? 'viết lời đọc, Nabu chấm' : (lang === 'de' ? 'deuten, bewerten lassen' : 'write a reading, get it marked')],
+      ['#/learn/tarot', PICK_ICON, S.cats.tarot, lang === 'vi' ? '78 lá, ý nghĩa' : (lang === 'de' ? '78 Karten, Bedeutungen' : '78 cards, meanings')],
+      ['#/pick', DRAW_ICON, S.nav.pick, lang === 'vi' ? 'một lá để học hôm nay' : (lang === 'de' ? 'eine Karte zum Lernen' : 'a card to study today')],
+      ['#/love', '💞', S.loveTitle, S.loveSub],
+      ['#/news', '✨', S.newsTitle, lang === 'vi' ? 'bài mới của Nabu' : (lang === 'de' ? 'neue Beiträge von Nabu' : 'new posts from Nabu')],
+      ['#/book', '📅', S.nav.book, lang === 'vi' ? 'hẹn giờ với Nabu' : (lang === 'de' ? 'Termin bei Nabu' : 'book a time with Nabu')]];
+    return '<div class="tiles">' + it.map((t) => '<a class="tile" href="' + t[0] + '"><div class="ic">' + t[1] + '</div><b>' + esc(t[2]) + '</b><span>' + esc(t[3]) + '</span></a>').join('') + '</div>';
+  }
   const tiles = [['#/pick', DRAW_ICON, S.nav.pick, lang === 'vi' ? 'năng lượng hôm nay' : (lang === 'de' ? 'deine Energie heute' : 'your energy today')],
     ['#/news', '✨', S.newsTitle, lang === 'vi' ? 'bài mới của Nabu' : (lang === 'de' ? 'neue Beiträge von Nabu' : 'new posts from Nabu')],
     ['#/learn/astro', '🔮', S.cats.astro, lang === 'vi' ? '12 cung, hành tinh, nhà' : (lang === 'de' ? '12 Zeichen, Planeten, Häuser' : '12 signs, planets, houses')],
@@ -249,7 +270,7 @@ function upcomingHTML() {
 async function renderHome(args, params) {
   const S = T(), m = $('#main');
   const name = (PROFILE.name || '').trim();
-  const sale = SALE.live();
+  const sale = isIOSApp() ? null : SALE.live();
   const saleBanner = sale
     ? '<a class="salebar" href="' + (sale.scope === 'unlock' ? '#/unlock?from=app' : '#/prices') + '"><span class="tag">🏷️ ' + esc(SALE.off()) + '</span><span class="txt">' + esc(SALE.title() || T().saleDefault) + '</span><span class="go">' + esc(T().saleSee) + ' ›</span></a>'
     : '';
@@ -274,17 +295,18 @@ async function renderHome(args, params) {
     + pickCtaHTML()
     + quickLinksHTML()
     + '<div id="actwrap"></div>'
-    + personalHTML()
-    + '<div id="foryouwrap"></div>'
+    /* The sign, the life path and the forecasts by sign are the horoscope app App Review saw; the
+       iPhone app keeps them in Learn and off the first screen. */
+    + (isIOSApp() ? '' : personalHTML() + '<div id="foryouwrap"></div>')
     + '<div class="sec" id="feed"><p class="muted">…</p></div>';
   bindAccordions(m); bindCardLinks(m);
   bindTour(m, 0);
   homeActHTML($('#actwrap')).catch(() => {});
   if (POSTS == null) await loadPosts();
   const fy = $('#foryouwrap'); if (fy) { fy.innerHTML = suggestedGuidesHTML(); bindPost(fy); bindAccordions(fy); }
-  const sh = $('#sidehoro'); if (sh) { sh.innerHTML = '<div class="eyebrow">' + esc(T().forInterests) + '</div>' + horoCardHTML('monthly') + horoCardHTML('weekly'); sh.hidden = false; }
+  const sh = isIOSApp() ? null : $('#sidehoro'); if (sh) { sh.innerHTML = '<div class="eyebrow">' + esc(T().forInterests) + '</div>' + horoCardHTML('monthly') + horoCardHTML('weekly'); sh.hidden = false; }
   const feed = $('#feed'); if (!feed) return;
-  const all = sortedPosts(), welcome = all.filter((p) => p.welcome)[0], list = all.filter((p) => !p.welcome);
+  const all = sortedPosts().filter((p) => !(isIOSApp() && p.markers && p.markers.signs && p.markers.signs.length)), welcome = all.filter((p) => p.welcome)[0], list = all.filter((p) => !p.welcome);
   const wopen = store.get('nabu-welcome-open', true) !== false;
   feed.innerHTML = (welcome ? '<section class="welcome' + (wopen ? ' open' : '') + '"><button type="button" class="wtoggle" data-wtoggle><h2>' + esc(S.welcomeHead) + '</h2><span class="chev">' + (wopen ? '–' : '+') + '</span></button><div class="in">' + paras(L(welcome.body)) + '<div class="sig">' + LOGO + '</div></div></section>' : '')
     + (POSTS_CACHED && all.length ? '<div class="banner">' + esc(S.feedOffline) + '</div>' : '')

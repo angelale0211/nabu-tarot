@@ -258,7 +258,12 @@ function alertsWatchBookings() {
       const before = alertWas(key, now);
       if (!before || before === now) return;
       const when = String(b.slot || '').replace('T', ' ');
-      if (b.status === 'confirmed') alertSay({ id: key + '-ok-' + now, k: 'book', t: S.alertBookOk, b: when, href: '#/me' }, true);
+      /* The same status with a different hour is a move, not a second
+         confirmation: Nabu moved it, or the client accepted her proposal. */
+      const wasStatus = String(before).split('|')[0];
+      if (b.status === 'change_proposed') alertSay({ id: key + '-prop-' + now, k: 'book', t: S.alertBookProposed, b: String(b.proposedSlot || '').replace('T', ' '), href: '#/me' }, true);
+      else if (['requested', 'confirmed'].indexOf(b.status) > -1 && b.movedFrom && (wasStatus === b.status || wasStatus === 'change_proposed' || wasStatus === 'proposal_declined') && String(before).split('|')[1] !== String(b.slot || '')) alertSay({ id: key + '-moved-' + now, k: 'book', t: S.alertBookMoved, b: when, href: '#/me' }, true);
+      else if (b.status === 'confirmed') alertSay({ id: key + '-ok-' + now, k: 'book', t: S.alertBookOk, b: when, href: '#/me' }, true);
       else if (b.status === 'cancelled') alertSay({ id: key + '-no-' + now, k: 'book', t: S.alertBookNo, b: when, href: '#/me' }, true);
       else if (b.status === 'declined') alertSay({ id: key + '-dec-' + now, k: 'book', t: S.alertBookNo, b: when, href: '#/me' }, true);
     });
