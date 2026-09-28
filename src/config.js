@@ -26,7 +26,7 @@ const CONFIG = {
   // Social handles. Leave a value empty ('') to hide that button.
   instagram: 'nabutarot',          // https://instagram.com/nabutarot  (DM: https://ig.me/m/nabutarot)
   facebookPage: '',                // the page's username, e.g. 'nabutarot' -> https://m.me/nabutarot
-  facebookUrl: 'https://www.facebook.com/search/top?q=Nabu%20Tarot', // replace with the page's real address, e.g. https://www.facebook.com/nabutarot
+  facebookUrl: 'https://www.facebook.com/p/Nabu-Tarot-61593632255071/', // the owner's page (from her share link, 2026-09-28)
   zalo: '',                        // phone number or Zalo id -> https://zalo.me/<id>
   email: '',                       // optional: shows a mail button on the booking screen
 
