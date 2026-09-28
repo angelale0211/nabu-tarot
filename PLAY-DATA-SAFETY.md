@@ -22,7 +22,7 @@ third-party sharing answers change: it is no longer "Google only".
 | Play category | Data type | Collected? | Shared? | Why | Optional? | Where in the code |
 |---|---|---|---|---|---|---|
 | Personal info | Name | Yes | Yes → Anthropic (sent with an AI question) | App functionality, Personalisation | Optional | `src/ai.js:348` `profile.name` |
-| Personal info | Email address | Yes | No | Account management | Required to sign in | Firebase Auth, `src/backend.js` |
+| Personal info | Email address | Yes | No (Resend delivers booking emails to Nabu as a service provider) | Account management, App functionality | Required to sign in | Firebase Auth, `src/backend.js` |
 | Personal info | Other info (birthday, star sign, interests, search handle) | Yes | Star sign only → Anthropic | Personalisation, App functionality | Optional | `saveProfileLocal`, `src/ai.js:348` `profile.sign` |
 | Messages | Other in-app messages | Yes | No | App functionality | Optional | `threads/{uid}/messages` in Firestore |
 | Photos and videos | Photos | Yes | No | App functionality | Optional | chat images, shrunk on device (`chatImages: true`) |
@@ -60,10 +60,27 @@ Declare sharing for the two rows marked above, and name the recipients:
   third-party processor as sharing in some categories; declare it the same
   way you did before.
 
-## Two things that are wired but currently off
+## Resend — booking notification emails (since v271)
 
-Neither is live today, so neither belongs in the form yet. If you switch
-either on, come back and add **Resend** as a recipient of your email address:
+`bookingEndpoint` is set (`src/config.js`), so when a signed-in person books,
+or asks to move or cancel a booking, the worker reads that booking from
+Firestore and mails it **only to Nabu** (`MAIL_TO` in `worker/wrangler.toml`)
+through **Resend** (`mailBooking`, `worker/src/bookings.ts`). The customer
+gets no email. Nothing is sent until the `RESEND_API_KEY` secret is set on the
+worker; the privacy policy names Resend from v271 so it is already covered
+when she switches it on.
 
-- `bookingEndpoint` is empty — booking invitations are not being mailed.
-- `reportEndpoint` is empty — bug reports go to Firestore, not to Resend.
+What the email carries: name, email address, service and price, topic, the
+booked time (and the new time asked for), where the reading is held and the
+account given for it, birth date and time if given, the card drawn, the note,
+the booking id.
+
+In the form: Resend is a **service provider processing for Nabu**, like
+Firebase. Play does not count transfers to a service provider acting on your
+behalf as sharing, so the rows stay "Shared: No" for Resend; list it the same
+way you listed Firebase. The data types involved (name, email address, other
+info, other user-generated content) are already declared as collected.
+
+Still off: `reportEndpoint` is empty — bug reports go to Firestore, not to
+Resend. If that is switched on, bug reports (the text, an optional contact,
+app version, screen, browser, last error) go to Resend too.
