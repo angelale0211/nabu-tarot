@@ -12,7 +12,7 @@
      carries this notice with it. See LICENSE. -->
 <meta name="author" content="Nabu Tarot">
 <meta name="copyright" content="Copyright (c) 2025-2026 Nabu Tarot. All rights reserved.">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'none'; object-src 'none'; form-action 'self'; script-src 'self' 'sha256-vwWjzmKIv1jY0gQfE4Jrhgi8mod95vm8j7vKGHxJ7W8=' https://www.gstatic.com https://apis.google.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; font-src 'self' data:; media-src 'self' data: blob:; worker-src 'self'; connect-src 'self' https://*.googleapis.com https://*.google.com https://*.firebaseio.com https://*.cloudfunctions.net https://*.workers.dev https://generativelanguage.googleapis.com; frame-src https://*.firebaseapp.com https://accounts.google.com https://*.facebook.com">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'none'; object-src 'none'; form-action 'self'; script-src 'self' 'sha256-pK95dEMWJ79pefnhF541ygiSBFB/5ciHURa740VohGs=' https://www.gstatic.com https://apis.google.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; font-src 'self' data:; media-src 'self' data: blob:; worker-src 'self'; connect-src 'self' https://*.googleapis.com https://*.google.com https://*.firebaseio.com https://*.cloudfunctions.net https://*.workers.dev https://generativelanguage.googleapis.com; frame-src https://*.firebaseapp.com https://accounts.google.com https://*.facebook.com">
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <meta name="theme-color" content="#EFE9FA">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -23286,7 +23286,7 @@ const OUTFIT_MONTH_WX = ['drizzle', 'cloud', 'drizzle', 'sun', 'sun', 'sun', 'ra
 const outfitMonth = (st) => (st.mode === 'wx' ? OUTFIT_CELL[st.t][OUTFIT_WX.indexOf(st.w)] : st.m);
 const outfitFx = (st) => (st.mode === 'wx' ? (st.w === 'rain' && st.t < 2 ? 'drizzle' : st.w) : OUTFIT_MONTH_WX[st.m - 1]);
 
-/* ?v=3: the hair masks were rebuilt on 2026-09-28 (v3 drops sleeve-shading scraps) (no more cheek, jaw or neck taking the hair colour;
+/* ?v=4: the hair masks were rebuilt on 2026-09-28 (v4: per-pixel hair, strands over the background marked) (no more cheek, jaw or neck taking the hair colour;
    the strands behind the body now included). A new query makes phones fetch them again. */
 const outfitTxt = () => OUTFIT_TXT[lang] || OUTFIT_TXT.en;
 
@@ -23310,8 +23310,12 @@ function outfitState() {
 const outfitSave = (st) => store.set('nabu-outfit', { c: st.c, g: st.g, s: st.s, hair: st.hair, mode: st.mode, w: st.w, t: st.t });
 const outfitName = (st) => OUTFIT_SIGNS[st.s] + '-' + outfitMonth(st) + '-' + st.g;
 
-/* The recolour itself: base picture into `canvas`, hair (mask channel 0)
-   gradient-mapped to `hex`. Pure pixels in, pixels out, so the suite can run it. */
+/* The recolour itself: base picture into `canvas`, hair gradient-mapped to `hex`. Pure pixels in,
+   pixels out, so the suite can run it.
+   The mask's red channel is how much hair a pixel holds. Since 2026-09-28 (masks ?v=4) its green
+   channel says how far the pixel is a thin strand painted over the plain background: there the old
+   colour is taken out and the new one laid over the background, instead of tinting a pale pink into
+   mauve. A grey mask (blue = red) has no such channel and is simply tinted. */
 function paintOutfit(canvas, base, mask, hex) {
   const w = base.naturalWidth || base.width, h = base.naturalHeight || base.height;
   canvas.width = w; canvas.height = h;
@@ -23321,27 +23325,47 @@ function paintOutfit(canvas, base, mask, hex) {
   const mc = document.createElement('canvas'); mc.width = w; mc.height = h;
   const mx = mc.getContext('2d'); mx.drawImage(mask, 0, 0, w, h); const m = mx.getImageData(0, 0, w, h).data;
   const t = [1, 3, 5].map((i) => parseInt(hex.substr(i, 2), 16) / 255);
+  const tl = 0.299 * t[0] + 0.587 * t[1] + 0.114 * t[2];
   const lum = (i) => (0.299 * d[i] + 0.587 * d[i + 1] + 0.114 * d[i + 2]) / 255;
+  /* The plain background: the two top corners of the picture. */
+  const bg = [0, 0, 0]; let bn = 0;
+  for (let y = 4; y < Math.min(24, h); y++) for (const x0 of [4, Math.max(4, w - 24)]) for (let x = x0; x < Math.min(x0 + 20, w); x++) { const i = (y * w + x) * 4; bg[0] += d[i]; bg[1] += d[i + 1]; bg[2] += d[i + 2]; bn++; }
+  for (let k = 0; k < 3; k++) bg[k] = bn ? bg[k] / bn / 255 : 1;
+  const bl = 0.299 * bg[0] + 0.587 * bg[1] + 0.114 * bg[2];
+  const n4 = d.length / 4, A = new Float32Array(n4), U = new Float32Array(n4), HL = new Float32Array(n4);
   let sum = 0, n = 0;
-  for (let i = 0; i < d.length; i += 4) if (m[i] > 127) { sum += lum(i); n++; }
+  for (let p = 0, i = 0; p < n4; p++, i += 4) {
+    const a = m[i] / 255; A[p] = a; if (!a) continue;
+    /* Blue near 0 marks a two-channel mask (a browser's colour handling may leave it at 1 or 2). */
+    const u = m[i + 2] < 16 ? m[i + 1] / 255 : 0; U[p] = u;
+    const l = lum(i);
+    /* A thin strand's own shade, with the background it is painted over taken out. */
+    HL[p] = u ? l * (1 - u) + u * (l - (1 - a) * bl) / Math.max(a, 0.2) : l;
+    if (a > 0.5) { sum += HL[p]; n++; }
+  }
   if (!n) return;
   const mean = sum / n;
   let sq = 0;
-  for (let i = 0; i < d.length; i += 4) if (m[i] > 127) { const l = lum(i) - mean; sq += l * l; }
+  for (let p = 0; p < n4; p++) if (A[p] > 0.5) { const l = HL[p] - mean; sq += l * l; }
   const sd = Math.sqrt(sq / n) || 0.1;
   /* Darkening a light colour directly turns blonde olive; a warm shadow does not. */
   const shadow = [t[0] * 0.42 + 0.03, t[1] * 0.32 + 0.02, t[2] * 0.26 + 0.02];
   const light = t.map((v) => v + (1 - v) * 0.45);
-  const ramp = (u) => (u < 0.5 ? shadow.map((s, k) => s + (t[k] - s) * (u * 2)) : t.map((v, k) => v + (light[k] - v) * ((u - 0.5) * 2)));
-  for (let i = 0; i < d.length; i += 4) {
-    let a = m[i] / 255; if (!a) continue;
-    /* Much brighter than the hair is background showing through the mask's
-       soft edge: fade it out rather than paint a pale fringe. */
-    const z = (lum(i) - mean) / sd;
-    if (z > 2) a *= Math.max(0, 1 - (z - 2) / 1.5);
-    if (!a) continue;
-    const nv = ramp(Math.max(0, Math.min(1, 0.5 + z * 0.18)));
-    for (let k = 0; k < 3; k++) d[i + k] = Math.round((d[i + k] / 255 * (1 - a) + nv[k] * a) * 255);
+  const ramp = (q) => (q < 0.5 ? shadow.map((s, k) => s + (t[k] - s) * (q * 2)) : t.map((v, k) => v + (light[k] - v) * ((q - 0.5) * 2)));
+  /* Dark colours get a narrower spread, or pale paintwork turns into silver highlights. */
+  const spread = 0.18 * (0.45 + 0.55 * tl), dense = 0.45 + 0.55 * tl;
+  for (let p = 0, i = 0; p < n4; p++, i += 4) {
+    const a = A[p]; if (!a) continue;
+    const u = U[p];
+    let z = (HL[p] - mean) / sd;
+    z *= Math.min(1, Math.max(a, 0.35)) * (1 - u * 0.5);
+    const nv = ramp(Math.max(0, Math.min(1, 0.5 + z * spread)));
+    /* A thin dark strand over a pale background reads grey; dark colours cover more densely. */
+    const ad = Math.pow(A[p], dense);
+    for (let k = 0; k < 3; k++) {
+      const tint = d[i + k] / 255 * (1 - a) + nv[k] * a, unmix = bg[k] * (1 - ad) + nv[k] * ad;
+      d[i + k] = Math.round((tint * (1 - u) + unmix * u) * 255);
+    }
   }
   c.putImageData(px, 0, 0);
 }
@@ -23395,7 +23419,7 @@ function renderOutfit() {
     const my = ++token, dir = 'outfit/' + st.c + '/', n = outfitName(st);
     const cv = $('#ofCanvas'); if (cv) cv.classList.add('dim');
     try {
-      const got = await Promise.all([outfitLoad(dir + n + '.jpg'), outfitLoad(dir + 'm/' + n + '.png?v=3').catch(() => null)]);
+      const got = await Promise.all([outfitLoad(dir + n + '.jpg'), outfitLoad(dir + 'm/' + n + '.webp?v=4').catch(() => null)]);
       if (my !== token || !here()) return;
       base = got[0]; mask = got[1];
       const er = $('#ofErr'); if (er) er.textContent = '';
