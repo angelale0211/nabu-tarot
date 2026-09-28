@@ -58,6 +58,8 @@ const OUTFIT_TXT = {
 };
 const MONTHS_EN = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
 const MONTHS_DE = ['Januar', 'Februar', 'März', 'April', 'Mai', 'Juni', 'Juli', 'August', 'September', 'Oktober', 'November', 'Dezember'];
+/* ?v=2: the hair masks were rebuilt on 2026-09-28 (no more cheek, jaw or neck taking the hair colour;
+   the strands behind the body now included). A new query makes phones fetch them again. */
 const outfitTxt = () => OUTFIT_TXT[lang] || OUTFIT_TXT.en;
 
 /* What the visitor picked last time. The sign starts at their own when the
@@ -155,7 +157,7 @@ function renderOutfit() {
     const my = ++token, dir = 'outfit/' + st.c + '/', n = outfitName(st);
     const cv = $('#ofCanvas'); if (cv) cv.classList.add('dim');
     try {
-      const got = await Promise.all([outfitLoad(dir + n + '.jpg'), outfitLoad(dir + 'm/' + n + '.png').catch(() => null)]);
+      const got = await Promise.all([outfitLoad(dir + n + '.jpg'), outfitLoad(dir + 'm/' + n + '.png?v=2').catch(() => null)]);
       if (my !== token || !here()) return;
       base = got[0]; mask = got[1];
       const er = $('#ofErr'); if (er) er.textContent = '';
