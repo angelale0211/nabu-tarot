@@ -24,7 +24,13 @@ const OUTFIT_PAL = [['#C8373B', '#F08A5D', '#F4EBDD', '#3A3A40'], ['#6B7F4E', '#
   ['#F3EEE3', '#C9CCD1', '#A9C9D9', '#EFC6CC'], ['#E3A72F', '#C8642C', '#F6EFE2', '#8A5A35'], ['#D8CBB3', '#7E8457', '#F7F5F0', '#A88A6A'],
   ['#F2E8DC', '#D9B8B4', '#A8B9A0', '#9C5B44'], ['#2E2B3A', '#7B2D3B', '#C9A227', '#E8E2D6'], ['#6D3B6E', '#1F6F78', '#C0703B', '#F1E7D6'],
   ['#3C3F46', '#5B4636', '#B08A5E', '#F4F2EE'], ['#3E6FD8', '#C9CCD1', '#B7A6D9', '#F8F8FA'], ['#9ED3CF', '#C9B6E4', '#5B8DB8', '#F6F3EE']];
-const OUTFIT_HAIR = ['#1E1A1A', '#4A3226', '#8A5A3C', '#E8CB86', '#D98FA8', '#8FA7D9', '#B8B8C0'];
+/* Natural hair colours only, at the owner's request: black, dark brown, chestnut, light brown,
+   auburn, honey blonde, grey. No pink, no blue, no free colour picker. */
+const OUTFIT_HAIR = ['#1E1A1A', '#3B2A22', '#5A3A28', '#8A5A3C', '#8E4A2E', '#C29A5E', '#A7A4A0'];
+/* Character 1's women were painted with pink hair; they start on dark brown instead. The others
+   were painted with natural hair and start as painted. */
+const outfitHairFor = (st) => st.hair || (st.c === '1' && st.g === 'female' ? OUTFIT_HAIR[1] : null);
+const outfitPaintedNatural = (st) => !(st.c === '1' && st.g === 'female');
 
 /* The Vietnamese here was approved on 2026-09-28 (appstore/duyet-noi-dung.md, section J); change it only with a new approval. */
 const OUTFIT_TXT = {
@@ -32,6 +38,7 @@ const OUTFIT_TXT = {
     title: 'Mặc gì tháng này', intro: 'Mỗi tháng một bộ đồ hợp thời tiết miền Bắc, phối từ bảng màu của cung bạn.',
     female: 'Nữ', male: 'Nam', chars: { 1: 'Da sáng', 2: 'Da nâu' }, month: (m) => 'Tháng ' + m,
     pal: (s) => 'Bảng màu của ' + s, hair: 'Màu tóc', hairReset: 'Để nguyên', hairOther: 'Chọn màu khác',
+    hairNames: ['Đen', 'Nâu đen', 'Nâu hạt dẻ', 'Nâu sáng', 'Nâu đỏ', 'Vàng mật ong', 'Muối tiêu'],
     ai: 'Hình minh hoạ do AI vẽ.', offline: 'Chưa tải được hình. Kiểm tra mạng rồi thử lại nhé.',
     /* Choosing the weather: draft Vietnamese, section O of the approval file. */
     modeMonth: 'Theo tháng (Hà Nội)', modeWx: 'Tự chọn thời tiết', wxLbl: 'Thời tiết', tLbl: 'Nhiệt độ',
@@ -44,6 +51,7 @@ const OUTFIT_TXT = {
     title: 'What to wear this month', intro: 'An outfit for every month, dressed for the weather in northern Vietnam and coloured from your sign’s palette.',
     female: 'Women', male: 'Men', chars: { 1: 'Fair skin', 2: 'Brown skin' }, month: (m) => MONTHS_EN[m - 1],
     pal: (s) => s + ' palette', hair: 'Hair colour', hairReset: 'As painted', hairOther: 'Pick another colour',
+    hairNames: ['Black', 'Dark brown', 'Chestnut', 'Light brown', 'Auburn', 'Honey blonde', 'Grey'],
     ai: 'Illustrations painted by AI.', offline: 'The picture did not load. Check your connection and try again.',
     modeMonth: 'By month (Hanoi)', modeWx: 'Choose the weather', wxLbl: 'Weather', tLbl: 'Temperature',
     wx: { sun: 'Sunny', cloud: 'Cloudy, overcast', rain: 'Rain' },
@@ -55,6 +63,7 @@ const OUTFIT_TXT = {
     title: 'Was ziehe ich diesen Monat an', intro: 'Für jeden Monat ein Outfit, passend zum Wetter in Nordvietnam und in den Farben deines Sternzeichens.',
     female: 'Damen', male: 'Herren', chars: { 1: 'Helle Haut', 2: 'Braune Haut' }, month: (m) => MONTHS_DE[m - 1],
     pal: (s) => 'Farben: ' + s, hair: 'Haarfarbe', hairReset: 'Wie gemalt', hairOther: 'Andere Farbe wählen',
+    hairNames: ['Schwarz', 'Dunkelbraun', 'Kastanienbraun', 'Hellbraun', 'Kupferbraun', 'Honigblond', 'Grau'],
     ai: 'Illustrationen von einer KI gemalt.', offline: 'Das Bild ließ sich nicht laden. Prüfe deine Verbindung und versuch es noch einmal.',
     modeMonth: 'Nach Monat (Hanoi)', modeWx: 'Wetter selbst wählen', wxLbl: 'Wetter', tLbl: 'Temperatur',
     wx: { sun: 'Sonnig', cloud: 'Bewölkt, trüb', rain: 'Regen' },
@@ -80,7 +89,7 @@ const OUTFIT_MONTH_WX = ['drizzle', 'cloud', 'drizzle', 'sun', 'sun', 'sun', 'ra
 const outfitMonth = (st) => (st.mode === 'wx' ? OUTFIT_CELL[st.t][OUTFIT_WX.indexOf(st.w)] : st.m);
 const outfitFx = (st) => (st.mode === 'wx' ? (st.w === 'rain' && st.t < 2 ? 'drizzle' : st.w) : OUTFIT_MONTH_WX[st.m - 1]);
 
-/* ?v=2: the hair masks were rebuilt on 2026-09-28 (no more cheek, jaw or neck taking the hair colour;
+/* ?v=3: the hair masks were rebuilt on 2026-09-28 (v3 drops sleeve-shading scraps) (no more cheek, jaw or neck taking the hair colour;
    the strands behind the body now included). A new query makes phones fetch them again. */
 const outfitTxt = () => OUTFIT_TXT[lang] || OUTFIT_TXT.en;
 
@@ -94,7 +103,7 @@ function outfitState() {
     g: saved.g === 'male' ? 'male' : 'female',
     s: typeof saved.s === 'number' && saved.s >= 0 && saved.s < 12 ? saved.s : (own >= 0 ? own : 0),
     m: new Date(Date.now() + 7 * 3600e3).getUTCMonth() + 1,
-    hair: /^#[0-9a-f]{6}$/i.test(saved.hair || '') ? saved.hair : null,
+    hair: OUTFIT_HAIR.indexOf(saved.hair) > -1 ? saved.hair : null,
     mode: saved.mode === 'wx' ? 'wx' : 'month',
     w: OUTFIT_WX.indexOf(saved.w) > -1 ? saved.w : 'sun',
     t: typeof saved.t === 'number' && saved.t >= 0 && saved.t < 4 ? saved.t : 2
@@ -166,9 +175,9 @@ function renderOutfit() {
       + '<p>' + esc(X[st.g + '_'][mo - 1]) + '</p>'
       + '<div class="ofpal" aria-label="' + esc(X.pal(S.zodiac[st.s])) + '">' + pal.map((c) => '<span style="background:' + c + '"></span>').join('')
       + '<span class="faint">' + esc(X.pal(S.zodiac[st.s])) + '</span></div>';
-    $('#ofHair').innerHTML = OUTFIT_HAIR.map((c) => '<button class="ofsw" data-ok="hair" data-ov="' + c + '" style="background:' + c + '" aria-label="' + c + '" aria-pressed="' + (st.hair === c) + '"></button>').join('')
-      + '<input type="color" class="ofsw" id="ofPick" aria-label="' + esc(X.hairOther) + '" value="' + (st.hair || '#8a5a3c') + '">'
-      + '<button class="more" data-ok="hair" data-ov="">' + esc(X.hairReset) + '</button>';
+    const hc = outfitHairFor(st);
+    $('#ofHair').innerHTML = OUTFIT_HAIR.map((c, i) => '<button class="ofsw" data-ok="hair" data-ov="' + c + '" style="background:' + c + '" aria-label="' + esc(X.hairNames[i]) + '" title="' + esc(X.hairNames[i]) + '" aria-pressed="' + (hc === c) + '"></button>').join('')
+      + (outfitPaintedNatural(st) ? '<button class="more" data-ok="hair" data-ov="">' + esc(X.hairReset) + '</button>' : '');
     /* The rows are redrawn on every tap, which scrolls them back to the start:
        bring the chosen sign and month back into view. */
     document.querySelectorAll('#ofChips .ofscroll').forEach((row) => {
@@ -180,7 +189,7 @@ function renderOutfit() {
   function weatherFx() { const fx = $('#ofWx'); if (fx) fx.className = 'ofwx wx-' + outfitFx(st); }
   function paint() {
     const cv = $('#ofCanvas'); if (!cv || !base) return;
-    paintOutfit(cv, base, mask, st.hair);
+    paintOutfit(cv, base, mask, outfitHairFor(st));
     /* The two characters were painted at slightly different heights; the frame takes the picture's own shape. */
     cv.parentNode.style.aspectRatio = cv.width + '/' + cv.height;
     cv.classList.remove('dim');
@@ -189,7 +198,7 @@ function renderOutfit() {
     const my = ++token, dir = 'outfit/' + st.c + '/', n = outfitName(st);
     const cv = $('#ofCanvas'); if (cv) cv.classList.add('dim');
     try {
-      const got = await Promise.all([outfitLoad(dir + n + '.jpg'), outfitLoad(dir + 'm/' + n + '.png?v=2').catch(() => null)]);
+      const got = await Promise.all([outfitLoad(dir + n + '.jpg'), outfitLoad(dir + 'm/' + n + '.png?v=3').catch(() => null)]);
       if (my !== token || !here()) return;
       base = got[0]; mask = got[1];
       const er = $('#ofErr'); if (er) er.textContent = '';
@@ -218,13 +227,5 @@ function renderOutfit() {
     st[k] = (k === 's' || k === 'm' || k === 't') ? Number(v) : v;
     outfitSave(st); chrome(); weatherFx(); fetchAndPaint();
   });
-  /* The native picker fires input on every drag; repaint at most once a frame. */
-  let raf = 0;
-  root.addEventListener('input', (e) => {
-    if (e.target.id !== 'ofPick') return;
-    st.hair = e.target.value;
-    if (!raf) raf = requestAnimationFrame(() => { raf = 0; paint(); });
-  });
-  root.addEventListener('change', (e) => { if (e.target.id === 'ofPick') { outfitSave(st); chrome(); } });
 }
 ROUTES.outfit = { nav: 'play', render: renderOutfit };
