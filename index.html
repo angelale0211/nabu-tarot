@@ -12,7 +12,7 @@
      carries this notice with it. See LICENSE. -->
 <meta name="author" content="Nabu Tarot">
 <meta name="copyright" content="Copyright (c) 2025-2026 Nabu Tarot. All rights reserved.">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'none'; object-src 'none'; form-action 'self'; script-src 'self' 'sha256-6EeAkvA1TR/C7wCqX3U70LyuZbMyF7LxG6LmUWR3FNI=' https://www.gstatic.com https://apis.google.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; font-src 'self' data:; media-src 'self' data: blob:; worker-src 'self'; connect-src 'self' https://*.googleapis.com https://*.google.com https://*.firebaseio.com https://*.cloudfunctions.net https://*.workers.dev https://generativelanguage.googleapis.com; frame-src https://*.firebaseapp.com https://accounts.google.com https://*.facebook.com">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'none'; object-src 'none'; form-action 'self'; script-src 'self' 'sha256-Qpq6ixPMUgzFQip8lz6p9HtE4UQNoviw/gYuOflHmog=' https://www.gstatic.com https://apis.google.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; font-src 'self' data:; media-src 'self' data: blob:; worker-src 'self'; connect-src 'self' https://*.googleapis.com https://*.google.com https://*.firebaseio.com https://*.cloudfunctions.net https://*.workers.dev https://generativelanguage.googleapis.com; frame-src https://*.firebaseapp.com https://accounts.google.com https://*.facebook.com">
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <meta name="theme-color" content="#EFE9FA">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -1159,25 +1159,10 @@ h1 .pileico{width:34px;height:27px;vertical-align:-3px;margin-right:2px}
 .ofstage{position:relative}
 .ofwx{position:absolute;inset:0;pointer-events:none;overflow:hidden}
 .ofwx::before,.ofwx::after{content:"";position:absolute;inset:0;opacity:0;transition:opacity .4s ease}
-.ofwx.wx-rain::before,.ofwx.wx-drizzle::before{inset:-100% -20% 0 -20%;opacity:.55;
-  background-image:repeating-linear-gradient(104deg,transparent 0 14px,rgba(120,140,190,.55) 14px 15.5px,transparent 15.5px 38px),
-  repeating-linear-gradient(98deg,transparent 0 23px,rgba(120,140,190,.35) 23px 24px,transparent 24px 57px);
-  background-size:100% 90px,100% 130px;animation:ofRain .7s linear infinite}
-.ofwx.wx-drizzle::before{opacity:.3;animation-duration:1.3s}
-.ofwx.wx-rain::after,.ofwx.wx-drizzle::after{opacity:1;background:linear-gradient(180deg,rgba(90,105,140,.18),rgba(90,105,140,0) 55%)}
-.ofwx.wx-drizzle::after{opacity:.6}
-@keyframes ofRain{to{transform:translateY(50%)}}
+.ofwx canvas{position:absolute;inset:0;width:100%;height:100%;display:block}
 .ofwx.wx-sun::before{opacity:1;inset:-30% -30% auto auto;width:95%;aspect-ratio:1;border-radius:50%;
   background:radial-gradient(circle,rgba(255,221,140,.75),rgba(255,206,120,.3) 38%,rgba(255,206,120,0) 70%);animation:ofSun 5s ease-in-out infinite}
 @keyframes ofSun{50%{opacity:.6;transform:scale(1.08)}}
-.ofwx.wx-cloud::before{opacity:1;inset:2% auto auto -60%;width:220%;height:34%;
-  background:radial-gradient(ellipse 18% 40% at 12% 40%,rgba(255,255,255,.85),rgba(255,255,255,0) 70%),
-  radial-gradient(ellipse 16% 34% at 34% 30%,rgba(250,250,255,.8),rgba(250,250,255,0) 70%),
-  radial-gradient(ellipse 20% 44% at 62% 45%,rgba(255,255,255,.8),rgba(255,255,255,0) 70%),
-  radial-gradient(ellipse 15% 36% at 86% 32%,rgba(250,250,255,.78),rgba(250,250,255,0) 70%);
-  animation:ofCloud 38s linear infinite alternate}
-.ofwx.wx-cloud::after{opacity:1;background:linear-gradient(180deg,rgba(120,125,140,.16),rgba(120,125,140,0) 60%)}
-@keyframes ofCloud{to{transform:translateX(30%)}}
 @media (prefers-reduced-motion:reduce){.ofwx::before{animation:none!important}}
 .ofcap{max-width:420px;margin:0 auto}.ofcap h2{font-size:19px;margin:12px 0 2px}.ofcap p{margin:4px 0}
 .ofpal{display:flex;align-items:center;gap:6px;margin-top:8px}
@@ -23301,6 +23286,119 @@ function outfitState() {
 const outfitSave = (st) => store.set('nabu-outfit', { c: st.c, g: st.g, s: st.s, mode: st.mode, w: st.w, t: st.t });
 const outfitName = (st) => OUTFIT_SIGNS[st.s] + '-' + outfitMonth(st) + '-' + st.g;
 
+/* ---- the weather over the picture ----
+   Rain and overcast are drawn on a canvas, not with CSS stripes: rain falls in three depths (far
+   drops thin, faint and slow; near ones long and fast), slanted by the wind, splashing at the feet,
+   under a cool grey light with mist near the ground; overcast is soft clouds with lit tops and grey
+   undersides drifting at two speeds under a dim sky. About a hundred drops at most and a handful of
+   cloud sprites drawn from an offscreen canvas, so a phone keeps up. It stops when the screen goes,
+   pauses in a background tab, and draws one still frame for anyone who asked for less motion. */
+let OF_WX = null, OF_FIG = null;
+/* Where the figure is: the pictures have a flat pale background, so every pixel far from the
+   corner colour is figure. Clouds are cut out there and so pass behind the character. */
+function ofFigure(base) {
+  const w = 225, h = Math.round(w * (base.naturalHeight || base.height) / (base.naturalWidth || base.width));
+  const o = document.createElement('canvas'); o.width = w; o.height = h; const x = o.getContext('2d');
+  x.drawImage(base, 0, 0, w, h);
+  const im = x.getImageData(0, 0, w, h), d = im.data;
+  const bg = [0, 1, 2].map((k) => (d[k] + d[(w - 1) * 4 + k] + d[(w * 3) * 4 + k] + d[(w * 3 + w - 1) * 4 + k]) / 4);
+  for (let i = 0; i < d.length; i += 4) {
+    const dist = Math.abs(d[i] - bg[0]) + Math.abs(d[i + 1] - bg[1]) + Math.abs(d[i + 2] - bg[2]);
+    const a = Math.max(0, Math.min(1, (dist - 10) / 14));
+    d[i] = d[i + 1] = d[i + 2] = 0; d[i + 3] = Math.round(a * 255);
+  }
+  x.putImageData(im, 0, 0);
+  const g = document.createElement('canvas'); g.width = w; g.height = h; const gx = g.getContext('2d');
+  gx.filter = 'blur(1.2px)'; gx.drawImage(o, 0, 0); gx.drawImage(o, 0, 0);
+  OF_FIG = g;
+}
+function ofWeather(host, kind) {
+  if (OF_WX) { cancelAnimationFrame(OF_WX.raf); OF_WX = null; }
+  let cv = host.querySelector('canvas');
+  if (kind !== 'rain' && kind !== 'drizzle' && kind !== 'cloud') { if (cv) cv.remove(); return; }
+  if (!cv) { cv = document.createElement('canvas'); host.appendChild(cv); }
+  const still = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const dpr = Math.min(2, window.devicePixelRatio || 1);
+  const size = () => { const r = host.getBoundingClientRect(); cv.width = Math.max(1, Math.round(r.width * dpr)); cv.height = Math.max(1, Math.round(r.height * dpr)); };
+  size();
+  const c = cv.getContext('2d'), rnd = (a, b) => a + Math.random() * (b - a);
+  const light = kind === 'drizzle';
+  const st = { raf: 0, kind, t0: performance.now(), last: performance.now() };
+  OF_WX = st;
+  /* rain */
+  const wind = 0.16;
+  const layers = kind === 'cloud' ? [] : [
+    { n: light ? 34 : 60, len: [10, 16], w: 0.8, v: [520, 700], a: light ? 0.22 : 0.32 },
+    { n: light ? 18 : 38, len: [18, 28], w: 1.1, v: [800, 1000], a: light ? 0.3 : 0.44 },
+    { n: light ? 6 : 14, len: [30, 46], w: 1.5, v: [1150, 1400], a: light ? 0.36 : 0.55 }];
+  const drops = [];
+  layers.forEach((L, li) => { for (let i = 0; i < L.n; i++) drops.push({ li, x: Math.random(), y: Math.random(), l: rnd(L.len[0], L.len[1]), v: rnd(L.v[0], L.v[1]) }); });
+  const splashes = [];
+  /* clouds: sprites of overlapping puffs, lit from above */
+  const sprite = (w, h, dark) => {
+    const o = document.createElement('canvas'); o.width = w; o.height = h; const x = o.getContext('2d');
+    for (let i = 0; i < 26; i++) {
+      const px = rnd(w * 0.15, w * 0.85), py = rnd(h * 0.35, h * 0.75), r = rnd(h * 0.18, h * 0.42);
+      const g = x.createRadialGradient(px, py - r * 0.35, r * 0.1, px, py, r);
+      g.addColorStop(0, dark ? 'rgba(236,236,242,0.95)' : 'rgba(255,255,255,0.95)');
+      g.addColorStop(0.55, dark ? 'rgba(196,199,212,0.75)' : 'rgba(236,238,246,0.7)');
+      g.addColorStop(1, 'rgba(170,175,192,0)');
+      x.fillStyle = g; x.beginPath(); x.arc(px, py, r, 0, Math.PI * 2); x.fill();
+    }
+    return o;
+  };
+  const clouds = kind === 'cloud' ? [0, 1, 2, 3, 4, 5].map((i) => ({ s: sprite(420, 180, i < 3), x: rnd(-0.5, 0.9), y: i < 3 ? rnd(-0.08, 0.06) : rnd(0.12, 0.3), k: i < 3 ? 1.3 : 0.95, v: i < 3 ? 0.006 : 0.012, a: i < 3 ? 0.95 : 0.8 })) : [];
+  function frame(now) {
+    if (!host.isConnected || OF_WX !== st) return;
+    if (document.hidden) { st.raf = requestAnimationFrame(frame); st.last = now; return; }
+    if (cv.width !== Math.round(host.getBoundingClientRect().width * dpr)) size();
+    const W = cv.width, H = cv.height, dt = Math.max(0, Math.min(0.05, (now - st.last) / 1000)); st.last = now;
+    c.clearRect(0, 0, W, H);
+    if (kind === 'cloud') {
+      const sky = c.createLinearGradient(0, 0, 0, H);
+      sky.addColorStop(0, 'rgba(118,124,142,0.30)'); sky.addColorStop(0.45, 'rgba(140,146,160,0.12)'); sky.addColorStop(1, 'rgba(150,154,166,0.06)');
+      c.fillStyle = sky; c.fillRect(0, 0, W, H);
+      if (!st.layer || st.layer.width !== W || st.layer.height !== H) { st.layer = document.createElement('canvas'); st.layer.width = W; st.layer.height = H; }
+      const lx = st.layer.getContext('2d'); lx.clearRect(0, 0, W, H);
+      clouds.forEach((cl) => {
+        if (!still) cl.x += cl.v * dt; if (cl.x > 1.1) cl.x = -1.2;
+        const w = W * cl.k, h = w * cl.s.height / cl.s.width;
+        lx.globalAlpha = cl.a; lx.drawImage(cl.s, cl.x * W, cl.y * H, w, h);
+      });
+      lx.globalAlpha = 1;
+      if (OF_FIG) { lx.globalCompositeOperation = 'destination-out'; lx.drawImage(OF_FIG, 0, 0, W, H); lx.globalCompositeOperation = 'source-over'; }
+      c.drawImage(st.layer, 0, 0);
+    } else {
+      const sky = c.createLinearGradient(0, 0, 0, H);
+      sky.addColorStop(0, light ? 'rgba(96,110,138,0.20)' : 'rgba(80,94,124,0.30)'); sky.addColorStop(0.6, 'rgba(110,122,146,0.08)'); sky.addColorStop(1, light ? 'rgba(210,216,228,0.22)' : 'rgba(200,208,224,0.30)');
+      c.fillStyle = sky; c.fillRect(0, 0, W, H);
+      c.lineCap = 'round';
+      drops.forEach((d) => {
+        const L = layers[d.li];
+        if (!still) { d.y += d.v * dt * dpr / H; d.x += d.v * wind * dt * dpr / W; }
+        if (d.y > 1.02) {
+          if (d.li === 2 || (d.li === 1 && Math.random() < 0.4)) splashes.push({ x: d.x * W, y: H * rnd(0.9, 0.985), t: 0 });
+          d.y = rnd(-0.15, -0.02); d.x = Math.random() * 1.1 - 0.1;
+        }
+        const x = d.x * W, y = d.y * H, len = d.l * dpr;
+        const g = c.createLinearGradient(x - len * wind, y - len, x, y);
+        g.addColorStop(0, 'rgba(70,86,120,0)'); g.addColorStop(0.7, 'rgba(78,94,128,' + (L.a * 0.8) + ')'); g.addColorStop(1, 'rgba(96,112,146,' + L.a + ')');
+        c.strokeStyle = g; c.lineWidth = L.w * dpr;
+        c.beginPath(); c.moveTo(x - len * wind, y - len); c.lineTo(x, y); c.stroke();
+      });
+      for (let i = splashes.length - 1; i >= 0; i--) {
+        const sp = splashes[i]; sp.t += dt;
+        if (sp.t > 0.35) { splashes.splice(i, 1); continue; }
+        const k = sp.t / 0.35;
+        c.strokeStyle = 'rgba(84,100,134,' + (0.5 * (1 - k)) + ')'; c.lineWidth = 1 * dpr;
+        c.beginPath(); c.ellipse(sp.x, sp.y, (3 + 9 * k) * dpr, (1 + 2.5 * k) * dpr, 0, 0, Math.PI * 2); c.stroke();
+      }
+    }
+    if (!still) st.raf = requestAnimationFrame(frame);
+  }
+  st.raf = requestAnimationFrame(frame);
+}
+
 function outfitLoad(src) {
   return new Promise((ok, no) => { const i = new Image(); i.onload = () => ok(i); i.onerror = no; i.src = src; });
 }
@@ -23335,11 +23433,12 @@ function renderOutfit() {
     });
   }
   /* Rain, sun or cloud drawn over the picture, from the chosen weather or the month's. */
-  function weatherFx() { const fx = $('#ofWx'); if (fx) fx.className = 'ofwx wx-' + outfitFx(st); }
+  function weatherFx() { const fx = $('#ofWx'); if (fx) { fx.className = 'ofwx wx-' + outfitFx(st); ofWeather(fx, outfitFx(st)); } }
   function paint() {
     const cv = $('#ofCanvas'); if (!cv || !base) return;
     cv.width = base.naturalWidth; cv.height = base.naturalHeight;
     cv.getContext('2d').drawImage(base, 0, 0);
+    ofFigure(base);
     /* The two characters were painted at slightly different heights; the frame takes the picture's own shape. */
     cv.parentNode.style.aspectRatio = cv.width + '/' + cv.height;
     cv.classList.remove('dim');

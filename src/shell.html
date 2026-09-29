@@ -993,25 +993,10 @@ h1 .pileico{width:34px;height:27px;vertical-align:-3px;margin-right:2px}
 .ofstage{position:relative}
 .ofwx{position:absolute;inset:0;pointer-events:none;overflow:hidden}
 .ofwx::before,.ofwx::after{content:"";position:absolute;inset:0;opacity:0;transition:opacity .4s ease}
-.ofwx.wx-rain::before,.ofwx.wx-drizzle::before{inset:-100% -20% 0 -20%;opacity:.55;
-  background-image:repeating-linear-gradient(104deg,transparent 0 14px,rgba(120,140,190,.55) 14px 15.5px,transparent 15.5px 38px),
-  repeating-linear-gradient(98deg,transparent 0 23px,rgba(120,140,190,.35) 23px 24px,transparent 24px 57px);
-  background-size:100% 90px,100% 130px;animation:ofRain .7s linear infinite}
-.ofwx.wx-drizzle::before{opacity:.3;animation-duration:1.3s}
-.ofwx.wx-rain::after,.ofwx.wx-drizzle::after{opacity:1;background:linear-gradient(180deg,rgba(90,105,140,.18),rgba(90,105,140,0) 55%)}
-.ofwx.wx-drizzle::after{opacity:.6}
-@keyframes ofRain{to{transform:translateY(50%)}}
+.ofwx canvas{position:absolute;inset:0;width:100%;height:100%;display:block}
 .ofwx.wx-sun::before{opacity:1;inset:-30% -30% auto auto;width:95%;aspect-ratio:1;border-radius:50%;
   background:radial-gradient(circle,rgba(255,221,140,.75),rgba(255,206,120,.3) 38%,rgba(255,206,120,0) 70%);animation:ofSun 5s ease-in-out infinite}
 @keyframes ofSun{50%{opacity:.6;transform:scale(1.08)}}
-.ofwx.wx-cloud::before{opacity:1;inset:2% auto auto -60%;width:220%;height:34%;
-  background:radial-gradient(ellipse 18% 40% at 12% 40%,rgba(255,255,255,.85),rgba(255,255,255,0) 70%),
-  radial-gradient(ellipse 16% 34% at 34% 30%,rgba(250,250,255,.8),rgba(250,250,255,0) 70%),
-  radial-gradient(ellipse 20% 44% at 62% 45%,rgba(255,255,255,.8),rgba(255,255,255,0) 70%),
-  radial-gradient(ellipse 15% 36% at 86% 32%,rgba(250,250,255,.78),rgba(250,250,255,0) 70%);
-  animation:ofCloud 38s linear infinite alternate}
-.ofwx.wx-cloud::after{opacity:1;background:linear-gradient(180deg,rgba(120,125,140,.16),rgba(120,125,140,0) 60%)}
-@keyframes ofCloud{to{transform:translateX(30%)}}
 @media (prefers-reduced-motion:reduce){.ofwx::before{animation:none!important}}
 .ofcap{max-width:420px;margin:0 auto}.ofcap h2{font-size:19px;margin:12px 0 2px}.ofcap p{margin:4px 0}
 .ofpal{display:flex;align-items:center;gap:6px;margin-top:8px}
