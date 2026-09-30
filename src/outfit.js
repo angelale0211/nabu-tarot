@@ -152,20 +152,24 @@ function ofWeather(host, kind) {
   const drops = [];
   layers.forEach((L, li) => { for (let i = 0; i < L.n; i++) drops.push({ li, x: Math.random(), y: Math.random(), l: rnd(L.len[0], L.len[1]), v: rnd(L.v[0], L.v[1]) }); });
   const splashes = [];
-  /* clouds: sprites of overlapping puffs, lit from above */
+  /* clouds: small, flat sprites of soft puffs, lit from above with a grey underside. Every puff
+     stays inside its sprite so no cloud shows a cut edge, and they keep to the strip of sky over
+     the head rather than covering the figure. */
   const sprite = (w, h, dark) => {
     const o = document.createElement('canvas'); o.width = w; o.height = h; const x = o.getContext('2d');
-    for (let i = 0; i < 26; i++) {
-      const px = rnd(w * 0.15, w * 0.85), py = rnd(h * 0.35, h * 0.75), r = rnd(h * 0.18, h * 0.42);
-      const g = x.createRadialGradient(px, py - r * 0.35, r * 0.1, px, py, r);
-      g.addColorStop(0, dark ? 'rgba(236,236,242,0.95)' : 'rgba(255,255,255,0.95)');
-      g.addColorStop(0.55, dark ? 'rgba(196,199,212,0.75)' : 'rgba(236,238,246,0.7)');
-      g.addColorStop(1, 'rgba(170,175,192,0)');
+    /* a dome: puffs grow toward the middle, and every one sits on the same flat base */
+    for (let i = 0; i < 24; i++) {
+      const u = rnd(-1, 1), px = w * (0.5 + u * 0.3), r = h * (0.36 - Math.abs(u) * 0.2) * rnd(0.8, 1.05);
+      const py = h * 0.8 - r * rnd(0.55, 0.85);
+      const g = x.createRadialGradient(px, py - r * 0.45, r * 0.05, px, py, r);
+      g.addColorStop(0, dark ? 'rgba(236,237,243,0.92)' : 'rgba(255,255,255,0.95)');
+      g.addColorStop(0.62, dark ? 'rgba(204,207,219,0.66)' : 'rgba(236,238,246,0.6)');
+      g.addColorStop(1, 'rgba(190,194,208,0)');
       x.fillStyle = g; x.beginPath(); x.arc(px, py, r, 0, Math.PI * 2); x.fill();
     }
     return o;
   };
-  const clouds = kind === 'cloud' ? [0, 1, 2, 3, 4, 5].map((i) => ({ s: sprite(420, 180, i < 3), x: rnd(-0.5, 0.9), y: i < 3 ? rnd(-0.08, 0.06) : rnd(0.12, 0.3), k: i < 3 ? 1.3 : 0.95, v: i < 3 ? 0.006 : 0.012, a: i < 3 ? 0.95 : 0.8 })) : [];
+  const clouds = kind === 'cloud' ? [0, 1, 2, 3].map((i) => ({ s: sprite(360, 150, i < 2), x: i / 4 * 1.5 - 0.5 + rnd(-0.08, 0.08), y: i < 2 ? rnd(-0.04, 0.0) : rnd(0.03, 0.07), k: i < 2 ? rnd(0.62, 0.72) : rnd(0.46, 0.54), v: i < 2 ? 0.008 : 0.014, a: i < 2 ? 0.8 : 0.65 })) : [];
   function frame(now) {
     if (!host.isConnected || OF_WX !== st) return;
     if (document.hidden) { st.raf = requestAnimationFrame(frame); st.last = now; return; }
@@ -179,7 +183,7 @@ function ofWeather(host, kind) {
       if (!st.layer || st.layer.width !== W || st.layer.height !== H) { st.layer = document.createElement('canvas'); st.layer.width = W; st.layer.height = H; }
       const lx = st.layer.getContext('2d'); lx.clearRect(0, 0, W, H);
       clouds.forEach((cl) => {
-        if (!still) cl.x += cl.v * dt; if (cl.x > 1.1) cl.x = -1.2;
+        if (!still) cl.x += cl.v * dt; if (cl.x > 1.05) cl.x = -cl.k - 0.05;
         const w = W * cl.k, h = w * cl.s.height / cl.s.width;
         lx.globalAlpha = cl.a; lx.drawImage(cl.s, cl.x * W, cl.y * H, w, h);
       });
