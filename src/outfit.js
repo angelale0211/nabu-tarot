@@ -1,6 +1,6 @@
 /* ============================ outfit ============================
    Mặc gì tháng này: one painted outfit for every sign, month and gender,
-   dressed for the weather in the north of Vietnam and coloured from the
+   dressed for the weather and coloured from the
    sign's palette. The pictures are AI-painted and live beside the page in
    outfit/<character>/, fetched only when this screen is opened.
 
@@ -24,12 +24,12 @@ const OUTFIT_PAL = [['#C8373B', '#F08A5D', '#F4EBDD', '#3A3A40'], ['#6B7F4E', '#
 /* The Vietnamese here was approved on 2026-09-28 (appstore/duyet-noi-dung.md, section J); change it only with a new approval. */
 const OUTFIT_TXT = {
   vi: {
-    title: 'Mặc gì tháng này', intro: 'Mỗi tháng một bộ đồ hợp thời tiết miền Bắc, phối từ bảng màu của cung bạn.',
+    title: 'Mặc gì tháng này', intro: 'Mỗi tháng một bộ đồ hợp thời tiết, phối từ bảng màu của cung bạn.',
     female: 'Nữ', male: 'Nam', chars: { 1: 'Da sáng', 2: 'Da nâu' }, month: (m) => 'Tháng ' + m,
     pal: (s) => 'Bảng màu của ' + s, hair: 'Màu tóc', hairReset: 'Để nguyên', hairOther: 'Chọn màu khác',
     ai: 'Hình minh hoạ do AI vẽ.', offline: 'Chưa tải được hình. Kiểm tra mạng rồi thử lại nhé.',
     /* Choosing the weather: draft Vietnamese, section O of the approval file. */
-    modeMonth: 'Theo tháng (Hà Nội)', modeWx: 'Tự chọn thời tiết', wxLbl: 'Thời tiết', tLbl: 'Nhiệt độ',
+    modeMonth: 'Theo tháng', modeWx: 'Tự chọn thời tiết', wxLbl: 'Thời tiết', tLbl: 'Nhiệt độ',
     wx: { sun: 'Nắng', cloud: 'Nhiều mây, âm u', rain: 'Mưa' },
     rain: { w1: { female: 'Áo mưa dài có mũ thắt eo, len cổ lọ, quần ống đứng và ủng mưa cao cổ', male: 'Áo parka chống nước có mũ, áo len, quần ống đứng và ủng cao su' },
       w2: { female: 'Trench coat chống nước, áo len mỏng, chân váy midi và ủng mưa cổ ngắn', male: 'Áo khoác đi mưa mỏng có mũ, sơ mi dài tay, quần kaki và giày thể thao chống nước' } },
@@ -38,11 +38,11 @@ const OUTFIT_TXT = {
     male_: ['Măng tô dạ, len cổ lọ, quần âu len, bốt chelsea da nâu và khăn len', 'Trench coat, áo len mỏng, quần kaki ống đứng và giày derby da', 'Áo khoác khoá kéo mỏng, sơ mi oxford, quần kaki và giày thể thao da trắng', 'Sơ mi linen ngắn tay, quần kaki ống côn và giày vải buộc dây', 'Áo phông linen rộng, quần short linen và sandal da quai bản', 'Sơ mi cổ bẻ ngắn tay, quần short, mũ tai bèo và sandal đế dày', 'Áo phông nhanh khô, quần short túi hộp, áo mưa mỏng và sandal chống nước', 'Áo mưa có mũ, áo phông, quần lửng và ủng cao su buộc dây', 'Sơ mi xắn tay, quần ống đứng và giày lười da lộn', 'Polo len mỏng, cardigan, quần ống đứng và giày brogue da', 'Áo khoác dạ ngắn, len cổ lọ, quần âu ôm và bốt da buộc dây', 'Áo phao, len vặn thừng, quần jeans ống đứng, giày leo núi và mũ len']
   },
   en: {
-    title: 'What to wear this month', intro: 'An outfit for every month, dressed for the weather in northern Vietnam and coloured from your sign’s palette.',
+    title: 'What to wear this month', intro: 'An outfit for every month, dressed for the weather and coloured from your sign’s palette.',
     female: 'Women', male: 'Men', chars: { 1: 'Fair skin', 2: 'Brown skin' }, month: (m) => MONTHS_EN[m - 1],
     pal: (s) => s + ' palette', hair: 'Hair colour', hairReset: 'As painted', hairOther: 'Pick another colour',
     ai: 'Illustrations painted by AI.', offline: 'The picture did not load. Check your connection and try again.',
-    modeMonth: 'By month (Hanoi)', modeWx: 'Choose the weather', wxLbl: 'Weather', tLbl: 'Temperature',
+    modeMonth: 'By month', modeWx: 'Choose the weather', wxLbl: 'Weather', tLbl: 'Temperature',
     wx: { sun: 'Sunny', cloud: 'Cloudy, overcast', rain: 'Rain' },
     rain: { w1: { female: 'A long belted hooded raincoat, a turtleneck, straight trousers and tall rain boots', male: 'A hooded waterproof parka, a knit jumper, straight trousers and rubber rain boots' },
       w2: { female: 'A light waterproof trench coat, a fine-knit top, a midi skirt and short rain boots', male: 'A light hooded rain jacket, a long-sleeved shirt, chinos and waterproof trainers' } },
@@ -51,11 +51,11 @@ const OUTFIT_TXT = {
     male_: ['A wool overcoat, a chunky turtleneck, wool trousers, brown Chelsea boots and a knitted scarf', 'A trench coat, a fine-knit jumper, straight chinos and leather derbies', 'A light zip jacket, an Oxford shirt, slim chinos and white leather trainers', 'A short-sleeved linen shirt, tapered chinos and canvas lace-ups', 'A loose linen T-shirt, linen shorts and leather fisherman sandals', 'A camp-collar shirt, light shorts, a bucket hat and chunky sport sandals', 'A quick-dry T-shirt, cargo shorts, a light rain jacket and trekking sandals', 'A hooded rain jacket, a T-shirt, cropped trousers and laced rubber boots', 'A shirt with the sleeves rolled, straight trousers and suede penny loafers', 'A knitted polo, an open cardigan, straight trousers and leather brogues', 'A short wool jacket, a turtleneck, slim trousers and lace-up work boots', 'A padded coat, a cable-knit jumper, straight jeans, hiking boots and a beanie']
   },
   de: {
-    title: 'Was ziehe ich diesen Monat an', intro: 'Für jeden Monat ein Outfit, passend zum Wetter in Nordvietnam und in den Farben deines Sternzeichens.',
+    title: 'Was ziehe ich diesen Monat an', intro: 'Für jeden Monat ein Outfit, passend zum Wetter und in den Farben deines Sternzeichens.',
     female: 'Damen', male: 'Herren', chars: { 1: 'Helle Haut', 2: 'Braune Haut' }, month: (m) => MONTHS_DE[m - 1],
     pal: (s) => 'Farben: ' + s, hair: 'Haarfarbe', hairReset: 'Wie gemalt', hairOther: 'Andere Farbe wählen',
     ai: 'Illustrationen von einer KI gemalt.', offline: 'Das Bild ließ sich nicht laden. Prüfe deine Verbindung und versuch es noch einmal.',
-    modeMonth: 'Nach Monat (Hanoi)', modeWx: 'Wetter selbst wählen', wxLbl: 'Wetter', tLbl: 'Temperatur',
+    modeMonth: 'Nach Monat', modeWx: 'Wetter selbst wählen', wxLbl: 'Wetter', tLbl: 'Temperatur',
     wx: { sun: 'Sonnig', cloud: 'Bewölkt, trüb', rain: 'Regen' },
     rain: { w1: { female: 'Langer Regenmantel mit Kapuze und Gürtel, Rollkragen, gerade Hose und hohe Gummistiefel', male: 'Wasserdichter Parka mit Kapuze, Strickpullover, gerade Hose und Gummistiefel' },
       w2: { female: 'Leichter wasserdichter Trenchcoat, feines Strickoberteil, Midirock und kurze Gummistiefel', male: 'Leichte Regenjacke mit Kapuze, langärmliges Hemd, Chinos und wasserdichte Sneaker' } },

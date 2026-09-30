@@ -344,21 +344,26 @@ async function renderHome(args, params) {
        the calendar, rather than a long way down the left. On a phone this box
        stays empty and hidden and the forecast keeps its old place further down
        - the same two cards, drawn once for whichever column is showing. */
+    + '<div id="sidehoro" hidden></div>'
     + '</aside>'
     + '<h1 style="margin:18px 0 4px">' + esc(name ? S.hello(name) : S.helloGuest) + '</h1><p class="muted">' + esc(lang === 'vi' ? 'Hôm nay bạn muốn làm gì?' : (lang === 'de' ? 'Was möchtest du heute machen?' : 'What would you like to do today?')) + '</p>'
     + upcomingHTML()
-    /* Learning and practice lead; the sign, life path and forecasts by sign live in Learn → Astrology
-       rather than on the first screen, for everyone. */
+    /* Learning and practice lead. The visitor's sign, life path and Nabu's own weekly and monthly
+       forecasts for it are back on the home screen at the owner's request, on every platform, and
+       stay in Learn → Astrology as well. */
     + dailyHTML()
     + continueHTML()
     + lifeHTML()
     + connectHTML()
     + '<div id="actwrap"></div>'
+    + personalHTML() + '<div id="foryouwrap"></div>'
     + '<div class="sec" id="feed"><p class="muted">…</p></div>';
   bindAccordions(m); bindCardLinks(m);
   bindTour(m, 0);
   homeActHTML($('#actwrap')).catch(() => {});
   if (POSTS == null) await loadPosts();
+  const fy = $('#foryouwrap'); if (fy) { fy.innerHTML = suggestedGuidesHTML(); bindPost(fy); bindAccordions(fy); }
+  const sh = $('#sidehoro'); if (sh) { sh.innerHTML = '<div class="eyebrow">' + esc(T().forInterests) + '</div>' + horoCardHTML('monthly') + horoCardHTML('weekly'); sh.hidden = false; }
   const feed = $('#feed'); if (!feed) return;
   const all = sortedPosts(), welcome = all.filter((p) => p.welcome)[0], list = all.filter((p) => !p.welcome);
   const wopen = store.get('nabu-welcome-open', true) !== false;
