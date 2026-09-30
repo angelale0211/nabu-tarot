@@ -82,7 +82,7 @@ const OUTFIT_MONTH_WX = ['drizzle', 'cloud', 'drizzle', 'sun', 'sun', 'sun', 'ra
 const outfitMonth = (st) => (st.mode === 'wx' ? OUTFIT_CELL[st.t][OUTFIT_WX.indexOf(st.w)] : st.m);
 const outfitFx = (st) => (st.mode === 'wx' ? (st.w === 'rain' && st.t < 2 ? 'drizzle' : st.w) : OUTFIT_MONTH_WX[st.m - 1]);
 
-/* ?v=2 on the pictures: character 1's women were repainted with dark brown hair on 2026-09-28. */
+/* ?v=3 refreshes the repaired hair in character 2's pictures. */
 const outfitTxt = () => OUTFIT_TXT[lang] || OUTFIT_TXT.en;
 
 /* What the visitor picked last time. The sign starts at their own when the
@@ -269,7 +269,7 @@ function renderOutfit() {
     const my = ++token, dir = 'outfit/' + st.c + '/', n = outfitName(st);
     const cv = $('#ofCanvas'); if (cv) cv.classList.add('dim');
     try {
-      const got = await outfitLoad(dir + n + '.jpg?v=2');
+      const got = await outfitLoad(dir + n + '.jpg?v=3');
       if (my !== token || !here()) return;
       base = got;
       const er = $('#ofErr'); if (er) er.textContent = '';
