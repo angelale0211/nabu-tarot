@@ -6,15 +6,17 @@
 
    Hair is shown as painted. Recolouring it pixel by pixel was tried and dropped on 2026-09-28:
    the hair is painted pale and half-transparent, and every mask left blur or specks once the colour
-   went dark. A different hair colour is a different painted picture; for now each character has
-   one, natural colour (character 1's women were repainted from pink to dark brown).
+   went dark. A different hair colour is a different painted picture; each supported skin/hair combination
+   has its own complete set of pictures.
 
    The screen is organised by zodiac sign, which is what App Store review
    objected to (4.3b). It was kept out of the iPhone app at first; since
    v269 it shows there too, at the owner's request, knowing the risk. */
 
-/* The two characters: fair skin, and brown skin. */
-const OUTFIT_CHARS = ['1', '2'];
+/* Every available combination has its own painted image set. */
+const OUTFIT_CHARS = ['1', '2', '3', '4'];
+const outfitSkin = (c) => c === '4' ? '1' : c;
+const outfitHairChoices = (c) => outfitSkin(c) === '1' ? ['1', '4'] : [c];
 const OUTFIT_SIGNS = ['aries', 'taurus', 'gemini', 'cancer', 'leo', 'virgo', 'libra', 'scorpio', 'sagittarius', 'capricorn', 'aquarius', 'pisces'];
 /* Four clothing colours per sign, in the order of STR.zodiac. */
 const OUTFIT_PAL = [['#C8373B', '#F08A5D', '#F4EBDD', '#3A3A40'], ['#6B7F4E', '#D9C7A7', '#C98C7E', '#5A3E2B'], ['#F2D95C', '#8EC5E8', '#FAFAF7', '#B9BCC2'],
@@ -25,7 +27,7 @@ const OUTFIT_PAL = [['#C8373B', '#F08A5D', '#F4EBDD', '#3A3A40'], ['#6B7F4E', '#
 const OUTFIT_TXT = {
   vi: {
     title: 'Mặc gì tháng này', intro: 'Mỗi tháng một bộ đồ hợp thời tiết, phối từ bảng màu của cung bạn.',
-    female: 'Nữ', male: 'Nam', chars: { 1: 'Da sáng', 2: 'Da nâu' }, month: (m) => 'Tháng ' + m,
+    female: 'Nữ', male: 'Nam', chars: { 1: 'Da sáng', 2: 'Da nâu', 3: 'Da ngăm', 4: 'Da sáng' }, skin: 'Màu da', skins: { 1: 'Sáng', 3: 'Ngăm', 2: 'Nâu' }, hairs: { 1: 'Nâu đen', 2: 'Đen', 3: 'Đen', 4: 'Vàng' }, month: (m) => 'Tháng ' + m,
     pal: (s) => 'Bảng màu của ' + s, hair: 'Màu tóc', hairReset: 'Để nguyên', hairOther: 'Chọn màu khác',
     ai: 'Hình minh hoạ do AI vẽ.', offline: 'Chưa tải được hình. Kiểm tra mạng rồi thử lại nhé.',
     /* Choosing the weather: draft Vietnamese, section O of the approval file. */
@@ -39,7 +41,7 @@ const OUTFIT_TXT = {
   },
   en: {
     title: 'What to wear this month', intro: 'An outfit for every month, dressed for the weather and coloured from your sign’s palette.',
-    female: 'Women', male: 'Men', chars: { 1: 'Fair skin', 2: 'Brown skin' }, month: (m) => MONTHS_EN[m - 1],
+    female: 'Women', male: 'Men', chars: { 1: 'Fair skin', 2: 'Brown skin', 3: 'Tan skin', 4: 'Fair skin' }, skin: 'Skin tone', skins: { 1: 'Fair', 3: 'Tan', 2: 'Brown' }, hairs: { 1: 'Dark brown', 2: 'Black', 3: 'Black', 4: 'Blonde' }, month: (m) => MONTHS_EN[m - 1],
     pal: (s) => s + ' palette', hair: 'Hair colour', hairReset: 'As painted', hairOther: 'Pick another colour',
     ai: 'Illustrations painted by AI.', offline: 'The picture did not load. Check your connection and try again.',
     modeMonth: 'By month', modeWx: 'Choose the weather', wxLbl: 'Weather', tLbl: 'Temperature',
@@ -52,7 +54,7 @@ const OUTFIT_TXT = {
   },
   de: {
     title: 'Was ziehe ich diesen Monat an', intro: 'Für jeden Monat ein Outfit, passend zum Wetter und in den Farben deines Sternzeichens.',
-    female: 'Damen', male: 'Herren', chars: { 1: 'Helle Haut', 2: 'Braune Haut' }, month: (m) => MONTHS_DE[m - 1],
+    female: 'Damen', male: 'Herren', chars: { 1: 'Helle Haut', 2: 'Braune Haut', 3: 'Gebräunte Haut', 4: 'Helle Haut' }, skin: 'Hautton', skins: { 1: 'Hell', 3: 'Gebräunt', 2: 'Braun' }, hairs: { 1: 'Dunkelbraun', 2: 'Schwarz', 3: 'Schwarz', 4: 'Blond' }, month: (m) => MONTHS_DE[m - 1],
     pal: (s) => 'Farben: ' + s, hair: 'Haarfarbe', hairReset: 'Wie gemalt', hairOther: 'Andere Farbe wählen',
     ai: 'Illustrationen von einer KI gemalt.', offline: 'Das Bild ließ sich nicht laden. Prüfe deine Verbindung und versuch es noch einmal.',
     modeMonth: 'Nach Monat', modeWx: 'Wetter selbst wählen', wxLbl: 'Wetter', tLbl: 'Temperatur',
@@ -82,7 +84,7 @@ const OUTFIT_MONTH_WX = ['drizzle', 'cloud', 'drizzle', 'sun', 'sun', 'sun', 'ra
 const outfitMonth = (st) => (st.mode === 'wx' ? OUTFIT_CELL[st.t][OUTFIT_WX.indexOf(st.w)] : st.m);
 const outfitFx = (st) => (st.mode === 'wx' ? (st.w === 'rain' && st.t < 2 ? 'drizzle' : st.w) : OUTFIT_MONTH_WX[st.m - 1]);
 
-/* ?v=4 refreshes the repaired hair in character 2's pictures. */
+/* ?v=5 refreshes the reviewed painted image sets. */
 const outfitTxt = () => OUTFIT_TXT[lang] || OUTFIT_TXT.en;
 
 /* What the visitor picked last time. The sign starts at their own when the
@@ -231,10 +233,16 @@ function renderOutfit() {
   let base = null, token = 0;
   const chip = (k, v, label, on) => '<button class="chip' + (on ? ' on' : '') + '" data-ok="' + k + '" data-ov="' + v + '" aria-pressed="' + on + '">' + esc(label) + '</button>';
 
+  const swatch = (k, v, label, on, color) => chip(k, v, label, on).replace('>' + esc(label), '><span class="ofswatch" aria-hidden="true" style="background:' + color + '"></span>' + esc(label));
+
   function chrome() {
     const pal = OUTFIT_PAL[st.s];
     $('#ofChips').innerHTML = '<div class="ofrow">' + chip('g', 'female', X.female, st.g === 'female') + chip('g', 'male', X.male, st.g === 'male')
-      + (OUTFIT_CHARS.length > 1 ? OUTFIT_CHARS.map((c) => chip('c', c, X.chars[c], st.c === c)).join('') : '') + '</div>'
+      + '</div>'
+      + '<div class="ofrow ofcolors" role="group" aria-label="' + esc(X.skin) + '"><span class="oflabel">' + esc(X.skin) + '</span>'
+      + ['1', '3', '2'].map((c) => swatch('skin', c, X.skins[c], outfitSkin(st.c) === c, { 1: '#f4d9c7', 3: '#c99462', 2: '#815437' }[c])).join('') + '</div>'
+      + '<div class="ofrow ofcolors" role="group" aria-label="' + esc(X.hair) + '"><span class="oflabel">' + esc(X.hair) + '</span>'
+      + outfitHairChoices(st.c).map((c) => swatch('c', c, X.hairs[c], st.c === c, { 1: '#44312b', 2: '#202023', 3: '#202023', 4: '#d7b06a' }[c])).join('') + '</div>'
       + '<div class="ofrow ofscroll">' + S.zodiac.map((z, i) => chip('s', i, z, st.s === i)).join('') + '</div>'
       + '<div class="ofrow ofmode">' + chip('mode', 'month', '📅 ' + X.modeMonth, st.mode === 'month') + chip('mode', 'wx', '🌤️ ' + X.modeWx, st.mode === 'wx') + '</div>'
       + (st.mode === 'wx'
@@ -269,7 +277,7 @@ function renderOutfit() {
     const my = ++token, dir = 'outfit/' + st.c + '/', n = outfitName(st);
     const cv = $('#ofCanvas'); if (cv) cv.classList.add('dim');
     try {
-      const got = await outfitLoad(dir + n + '.jpg?v=4');
+      const got = await outfitLoad(dir + n + '.jpg?v=5');
       if (my !== token || !here()) return;
       base = got;
       const er = $('#ofErr'); if (er) er.textContent = '';
@@ -293,7 +301,8 @@ function renderOutfit() {
   root.addEventListener('click', (e) => {
     const b = e.target.closest('[data-ok]'); if (!b || b.type === 'color') return;
     const k = b.dataset.ok, v = b.dataset.ov;
-    st[k] = (k === 's' || k === 'm' || k === 't') ? Number(v) : v;
+    if (k === 'skin') st.c = v === '1' && outfitSkin(st.c) === '1' ? st.c : v;
+    else st[k] = (k === 's' || k === 'm' || k === 't') ? Number(v) : v;
     outfitSave(st); chrome(); weatherFx(); fetchAndPaint();
   });
 }

@@ -4968,9 +4968,9 @@ async function go(hash, sel) { W().location.hash = hash; await sleep(30); return
         ok(!bad.length, 'the outfit screen has weather and clothes for all twelve months in vi, en and de' + (bad.length ? ' (' + bad.join('; ') + ')' : '')); }
       { const signs = ['aries', 'taurus', 'gemini', 'cancer', 'leo', 'virgo', 'libra', 'scorpio', 'sagittarius', 'capricorn', 'aquarius', 'pisces'], miss = [];
         const want = [];
-        ['1', '2'].forEach((c) => signs.forEach((sg) => { for (const mo of [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 'w1', 'w2']) ['female', 'male'].forEach((gd) => { want.push('outfit/' + c + '/' + sg + '-' + mo + '-' + gd + '.jpg'); }); }));
+        ['1', '2', '3', '4'].forEach((c) => signs.forEach((sg) => { for (const mo of [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 'w1', 'w2']) ['female', 'male'].forEach((gd) => { want.push('outfit/' + c + '/' + sg + '-' + mo + '-' + gd + '.jpg'); }); }));
         await Promise.all(want.map((u) => fetch('../' + u, { method: 'HEAD' }).then((r) => { if (!r.ok) miss.push(u); }, () => miss.push(u))));
-        ok(!miss.length, 'all 672 outfit pictures (12 months and 2 rain looks), both characters, are on the server' + (miss.length ? ' (missing ' + miss.slice(0, 4).join(', ') + ')' : '')); }
+        ok(!miss.length, 'all 1344 outfit pictures (12 months and 2 rain looks), all four combinations, are on the server' + (miss.length ? ' (missing ' + miss.slice(0, 4).join(', ') + ')' : '')); }
       /* Choosing the weather: every cell of weather and temperature leads to a month whose outfit is
          on the server, rain in the heat is the raincoat and boots, the sun at 29° the straw hat, and
          the picture carries the weather's own layer. */
@@ -4990,6 +4990,21 @@ async function go(hash, sel) { W().location.hash = hash; await sleep(30); return
       { w.localStorage.setItem('nabu-outfit', JSON.stringify({ c: '1', g: 'female', s: 0 }));
         await go('#/outfit', '#ofCanvas'); await waitFor(() => !d.querySelector('#ofCanvas.dim'), 6000);
         ok(!d.querySelector('#ofHair') && !d.querySelector('[data-ok="hair"]') && d.querySelector('#ofCanvas').width === 900, 'the outfit picture is drawn as painted, with no hair recolouring');
+        d.querySelector('[data-ok="c"][data-ov="4"]').click();
+        await waitFor(() => !d.querySelector('#ofCanvas.dim'), 6000);
+        ok(JSON.parse(w.localStorage.getItem('nabu-outfit')).c === '4' && d.querySelector('[data-ok="skin"][data-ov="1"].on') && d.querySelector('#ofCanvas').height === 1784 && !d.querySelector('#ofErr').textContent,
+          'fair blonde selects its painted image set and keeps fair skin selected');
+        d.querySelector('[data-ok="skin"][data-ov="3"]').click();
+        await waitFor(() => !d.querySelector('#ofCanvas.dim'), 6000);
+        ok(JSON.parse(w.localStorage.getItem('nabu-outfit')).c === '3' && d.querySelectorAll('[data-ok="c"]').length === 1 && !d.querySelector('[data-ok="c"][data-ov="4"]') && !d.querySelector('#ofErr').textContent,
+          'tan selects its painted black-haired image and offers no unavailable hair colors');
+        d.querySelector('[data-ok="skin"][data-ov="2"]').click();
+        await waitFor(() => !d.querySelector('#ofCanvas.dim'), 6000);
+        ok(JSON.parse(w.localStorage.getItem('nabu-outfit')).c === '2' && d.querySelector('#ofCanvas').height === 1612 && !d.querySelector('#ofErr').textContent,
+          'existing brown character remains available at its original image aspect ratio');
+        d.querySelector('[data-ok="skin"][data-ov="1"]').click();
+        ok(JSON.parse(w.localStorage.getItem('nabu-outfit')).c === '1' && d.querySelectorAll('[data-ok="c"]').length === 2,
+          'returning to fair skin restores both supported painted hair options');
         w.localStorage.removeItem('nabu-outfit'); }
       { const pp = N.practiceById('pp-1');
         const good = N.gradeReading(pp, ['memories someone from the past returns ky niem nguoi cu quay lai Erinnerungen jemand aus der Vergangenheit is dang ist',
