@@ -84,7 +84,7 @@ const OUTFIT_MONTH_WX = ['drizzle', 'cloud', 'drizzle', 'sun', 'sun', 'sun', 'ra
 const outfitMonth = (st) => (st.mode === 'wx' ? OUTFIT_CELL[st.t][OUTFIT_WX.indexOf(st.w)] : st.m);
 const outfitFx = (st) => (st.mode === 'wx' ? (st.w === 'rain' && st.t < 2 ? 'drizzle' : st.w) : OUTFIT_MONTH_WX[st.m - 1]);
 
-/* ?v=5 refreshes the reviewed painted image sets. */
+/* ?v=6 refreshes the reviewed painted image sets. */
 const outfitTxt = () => OUTFIT_TXT[lang] || OUTFIT_TXT.en;
 
 /* What the visitor picked last time. The sign starts at their own when the
@@ -277,7 +277,7 @@ function renderOutfit() {
     const my = ++token, dir = 'outfit/' + st.c + '/', n = outfitName(st);
     const cv = $('#ofCanvas'); if (cv) cv.classList.add('dim');
     try {
-      const got = await outfitLoad(dir + n + '.jpg?v=5');
+      const got = await outfitLoad(dir + n + '.jpg?v=6');
       if (my !== token || !here()) return;
       base = got;
       const er = $('#ofErr'); if (er) er.textContent = '';
