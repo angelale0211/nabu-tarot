@@ -258,7 +258,7 @@ async function renderExercise(id) {
     + '<p class="muted">' + esc(S.practiceHow) + '</p>'
     + ex.cards.map(box).join('')
     + '<div class="prcard psynth"><div class="pask" style="width:100%"><b>' + esc(S.practiceSynth) + '</b>'
-    + '<div class="faint">' + esc(S.practiceSynthHint) + '</div>'
+    + '<div class="faint">' + esc(ex.cards.length === 1 ? S.practiceSynthHintSingle : S.practiceSynthHint) + '</div>'
     + '<textarea data-synth="1" rows="4" placeholder="' + esc(S.practicePlaceholder) + '"></textarea></div></div>'
     + '<button class="btn primary block" id="pmark">' + esc(S.practiceMark) + '</button>'
     + '<div id="presult"></div></div>';

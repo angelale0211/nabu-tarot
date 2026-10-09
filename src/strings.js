@@ -327,7 +327,7 @@ const STR = {
     practiceTitle: 'Luyện tập đọc bài Tarot',
     practiceAsks: 'Bạn ấy hỏi:',
     practiceTurn: 'Chạm để lật bài',
-    practiceIntro: 'Ở đây bạn là người đọc bài. Nabu dựng sẵn một tình huống và lật bài ngửa, bạn viết lời đọc của mình, rồi Nabu chấm.',
+    practiceIntro: 'Ở đây bạn là người đọc bài. Nabu dựng sẵn một tình huống và chia bài úp; bạn lật bài, viết lời đọc của mình, rồi Nabu chấm.',
     practiceDone: (d, t) => 'Bạn đã qua ' + d + '/' + t + ' bài tập',
     practiceOffline: 'Chưa tải được bài tập. Bạn thử lại khi có mạng nhé.',
     practiceWho: 'Tình huống',
@@ -335,6 +335,7 @@ const STR = {
     practiceHow: 'Lật từng lá một rồi viết lời đọc của bạn cho lá đó, rồi gộp lại thành một câu trả lời cho người hỏi. Viết xong hãy bấm chấm bài — đáp án của Nabu chỉ hiện ra sau đó.',
     practiceSynth: 'Gộp lại',
     practiceSynthHint: 'Trả lời thẳng câu hỏi ở trên, có nhắc tới ít nhất hai lá.',
+    practiceSynthHintSingle: 'Trả lời thẳng câu hỏi ở trên, dựa vào lá bài này.',
     practicePlaceholder: 'Viết bằng lời của bạn…',
     practiceMark: 'Chấm bài',
     practiceAgain: 'Chấm lại',
@@ -1243,6 +1244,7 @@ const STR = {
     practiceHow: 'Turn one card at a time and write your reading for it, then draw it together into one answer for the querent. Ask for the mark when you are done — Nabu\u2019s own reading only appears after that.',
     practiceSynth: 'Put it together',
     practiceSynthHint: 'Answer the question above directly, naming at least two of the cards.',
+    practiceSynthHintSingle: 'Answer the question above directly, using this card.',
     practicePlaceholder: 'In your own words…',
     practiceMark: 'Mark my reading',
     practiceAgain: 'Mark it again',
@@ -2150,6 +2152,7 @@ const STR = {
     practiceHow: 'Dreh eine Karte nach der anderen um und schreib deine Deutung dazu und fass sie dann zu einer Antwort zusammen. Lass erst danach bewerten — Nabus eigene Deutung erscheint erst dann.',
     practiceSynth: 'Zusammenfassen',
     practiceSynthHint: 'Beantworte die Frage oben direkt und nenne dabei mindestens zwei Karten.',
+    practiceSynthHintSingle: 'Beantworte die Frage oben direkt anhand dieser Karte.',
     practicePlaceholder: 'In deinen eigenen Worten…',
     practiceMark: 'Bewerten lassen',
     practiceAgain: 'Erneut bewerten',
@@ -2721,4 +2724,3 @@ const STR = {
     dateShort: (d) => d.getDate() + '/' + (d.getMonth() + 1)
   }
 };
-

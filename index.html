@@ -12,7 +12,7 @@
      carries this notice with it. See LICENSE. -->
 <meta name="author" content="Nabu Tarot">
 <meta name="copyright" content="Copyright (c) 2025-2026 Nabu Tarot. All rights reserved.">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'none'; object-src 'none'; form-action 'self'; script-src 'self' 'sha256-tnrM6sQiNs6sxywG3yQmR+4383akJOcmOzkvrjTVPJY=' https://www.gstatic.com https://apis.google.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; font-src 'self' data:; media-src 'self' data: blob:; worker-src 'self'; connect-src 'self' https://*.googleapis.com https://*.google.com https://*.firebaseio.com https://*.cloudfunctions.net https://*.workers.dev https://generativelanguage.googleapis.com; frame-src https://*.firebaseapp.com https://accounts.google.com https://*.facebook.com">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'none'; object-src 'none'; form-action 'self'; script-src 'self' 'sha256-W/MkfWye01dflBNaruOCB+gssXdION2+snGDlJiSKLQ=' https://www.gstatic.com https://apis.google.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; font-src 'self' data:; media-src 'self' data: blob:; worker-src 'self'; connect-src 'self' https://*.googleapis.com https://*.google.com https://*.firebaseio.com https://*.cloudfunctions.net https://*.workers.dev https://generativelanguage.googleapis.com; frame-src https://*.firebaseapp.com https://accounts.google.com https://*.facebook.com">
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <meta name="theme-color" content="#EFE9FA">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -3917,7 +3917,7 @@ const STR = {
     practiceTitle: 'Luyện tập đọc bài Tarot',
     practiceAsks: 'Bạn ấy hỏi:',
     practiceTurn: 'Chạm để lật bài',
-    practiceIntro: 'Ở đây bạn là người đọc bài. Nabu dựng sẵn một tình huống và lật bài ngửa, bạn viết lời đọc của mình, rồi Nabu chấm.',
+    practiceIntro: 'Ở đây bạn là người đọc bài. Nabu dựng sẵn một tình huống và chia bài úp; bạn lật bài, viết lời đọc của mình, rồi Nabu chấm.',
     practiceDone: (d, t) => 'Bạn đã qua ' + d + '/' + t + ' bài tập',
     practiceOffline: 'Chưa tải được bài tập. Bạn thử lại khi có mạng nhé.',
     practiceWho: 'Tình huống',
@@ -3925,6 +3925,7 @@ const STR = {
     practiceHow: 'Lật từng lá một rồi viết lời đọc của bạn cho lá đó, rồi gộp lại thành một câu trả lời cho người hỏi. Viết xong hãy bấm chấm bài — đáp án của Nabu chỉ hiện ra sau đó.',
     practiceSynth: 'Gộp lại',
     practiceSynthHint: 'Trả lời thẳng câu hỏi ở trên, có nhắc tới ít nhất hai lá.',
+    practiceSynthHintSingle: 'Trả lời thẳng câu hỏi ở trên, dựa vào lá bài này.',
     practicePlaceholder: 'Viết bằng lời của bạn…',
     practiceMark: 'Chấm bài',
     practiceAgain: 'Chấm lại',
@@ -4833,6 +4834,7 @@ const STR = {
     practiceHow: 'Turn one card at a time and write your reading for it, then draw it together into one answer for the querent. Ask for the mark when you are done — Nabu\u2019s own reading only appears after that.',
     practiceSynth: 'Put it together',
     practiceSynthHint: 'Answer the question above directly, naming at least two of the cards.',
+    practiceSynthHintSingle: 'Answer the question above directly, using this card.',
     practicePlaceholder: 'In your own words…',
     practiceMark: 'Mark my reading',
     practiceAgain: 'Mark it again',
@@ -5740,6 +5742,7 @@ const STR = {
     practiceHow: 'Dreh eine Karte nach der anderen um und schreib deine Deutung dazu und fass sie dann zu einer Antwort zusammen. Lass erst danach bewerten — Nabus eigene Deutung erscheint erst dann.',
     practiceSynth: 'Zusammenfassen',
     practiceSynthHint: 'Beantworte die Frage oben direkt und nenne dabei mindestens zwei Karten.',
+    practiceSynthHintSingle: 'Beantworte die Frage oben direkt anhand dieser Karte.',
     practicePlaceholder: 'In deinen eigenen Worten…',
     practiceMark: 'Bewerten lassen',
     practiceAgain: 'Erneut bewerten',
@@ -23129,7 +23132,7 @@ async function renderExercise(id) {
     + '<p class="muted">' + esc(S.practiceHow) + '</p>'
     + ex.cards.map(box).join('')
     + '<div class="prcard psynth"><div class="pask" style="width:100%"><b>' + esc(S.practiceSynth) + '</b>'
-    + '<div class="faint">' + esc(S.practiceSynthHint) + '</div>'
+    + '<div class="faint">' + esc(ex.cards.length === 1 ? S.practiceSynthHintSingle : S.practiceSynthHint) + '</div>'
     + '<textarea data-synth="1" rows="4" placeholder="' + esc(S.practicePlaceholder) + '"></textarea></div></div>'
     + '<button class="btn primary block" id="pmark">' + esc(S.practiceMark) + '</button>'
     + '<div id="presult"></div></div>';
@@ -32909,7 +32912,7 @@ function adminSale(p) {
 ROUTES.admin = { nav: '', render: renderAdmin };
 
 /* ============================ boot ============================ */
-window.APP_VERSION = 'v280';
+window.APP_VERSION = 'v281';
 window.NABU = { CONFIG: CONFIG, SALE: SALE, salePrice: salePrice, loadActs: loadActs, BACK: BACK, LESSONS: LESSONS, localAnswer: localAnswer, compatVerdict: compatVerdict, numerologyOf: numerologyOf, ZDEEP: ZDEEP, lunarToday: lunarToday, solarToLunar: solarToLunar, DECK: DECK, INSIGHT: INSIGHT, KW: KW, ASK: ASK, GUIDES: GUIDES, SERVICES: SERVICES, COURSES: COURSES, ACCESS: ACCESS, INTERESTS: INTERESTS, plusOn: () => plusOn(), proOn: () => proOn(), luckUnlimited: () => luckUnlimited(), ZODIAC: ZODIAC, pick: pick, book: book, PLAY_ITEMS: PLAY_ITEMS, PLAY_SUB_SKUS: PLAY_SUB_SKUS, playItem: playItem, BILL: BILL, SUBS: SUBS, billUse: billUse, APPLE_BILL: APPLE_BILL, appleAccountToken: appleAccountToken, renderStore: renderStore, pickLimitHTML: pickLimitHTML, subStateWord: subStateWord,
   insightHTML: insightHTML, insightOf: insightOf, sunSignIndex: sunSignIndex, lifePath: lifePath, PROFILE: () => PROFILE, BE: BE, inAppBrowser: inAppBrowser, ACTS: ACTS, CMT: CMT, LIKES: LIKES, kbReady: kbReady, AI: AI, STR: STR, KB_URL: (typeof KB_URL === 'string' ? KB_URL : ''),
   ANGELS: ANGELS, angelRead: angelRead, CODEBOOK: CODEBOOK, redeemCode: redeemCode, loadCodebook: loadCodebook, petHomeSVG: petHomeSVG, petStill: petStill, PET_HOMES: PET_HOMES, PET_WARDROBE: PET_WARDROBE, PET_SLOTS: PET_SLOTS,
