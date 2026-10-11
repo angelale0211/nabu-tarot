@@ -348,6 +348,11 @@ button.chip,a.chip,label.chip{display:inline-flex;align-items:center;justify-con
 /* The deck as a carousel: swipe, the middle card grows, tap to pick. */
 .fan.deck{position:static;height:auto;max-width:none;perspective:none;display:flex;gap:6px;overflow-x:auto;overflow-y:hidden;scroll-snap-type:x mandatory;scroll-behavior:smooth;padding:16px calc(50% - 46px) 14px;margin:0 -18px 4px;scrollbar-width:none;-webkit-overflow-scrolling:touch}
 .fan.deck::-webkit-scrollbar{display:none}
+/* The strip scrolls sideways, and a box that scrolls on one axis clips the other, so the room above and
+   below has to be its own padding: the middle card grows to 1.1x (1.12x under the mouse) and its shadow
+   reaches past that. 16/14 left the shadow 5px under a hovered card; 18 keeps the whole card and its
+   shadow inside. The ends fade instead of slicing the next card into a thin bar at the edge. */
+.fan.deck{padding-top:18px;padding-bottom:18px;-webkit-mask-image:linear-gradient(90deg,transparent 0,#000 12%,#000 88%,transparent 100%);mask-image:linear-gradient(90deg,transparent 0,#000 12%,#000 88%,transparent 100%)}
 .fan.deck .slot{position:relative;flex:0 0 92px;width:92px;height:150px;margin:0;scroll-snap-align:center;transform:scale(.68);transform-origin:50% 50%;opacity:.45;transition:transform .12s linear,opacity .12s linear;border-radius:6px;left:auto;bottom:auto}
 .fan.deck{cursor:grab}.fan.deck.grabbing{cursor:grabbing}.fan.deck .slot button{cursor:pointer}
 @media (hover:hover){.fan.deck .slot:hover{transform:scale(1.12)!important;opacity:1!important;z-index:6}}
@@ -2794,7 +2799,12 @@ body[data-route="hello"] #main{width:100%}
      layout everything else keeps to. And the side padding is what lets the
      first and last card reach the middle: it was half of a 92px card, so with
      a 168px card neither end could ever centre. */
-  .fan.deck{gap:12px;padding:8px calc(50% - 84px);margin-left:0;margin-right:0}
+  /* 26px above and below: a 289px card grown to 1.12x is 324px, 17.5px past the slot on each side, and
+     its shadow needs a little more. At 8px the middle card lost its top and bottom edge. */
+  .fan.deck{gap:12px;padding:26px calc(50% - 84px);margin-left:0;margin-right:0}
+  /* Each topic chip is a third of the row, which on a phone is a neat three-up grid and on a desk was
+     five 320px bars. The row keeps the phone's proportions at a width that suits the words in it. */
+  .chips.focus{max-width:560px;margin-left:auto;margin-right:auto}
   /* The mark on the middle card was a square ring on the slot, and the card
      inside it is drawn with rounded corners and a small inset of its own, so
      the ring never touched it - at this size it read as two stray vertical
