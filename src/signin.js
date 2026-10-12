@@ -77,9 +77,12 @@ const GOOGLE_MARK ='<svg viewBox="0 0 24 24"><path fill="#4285F4" d="M21.6 12.2c
    CONFIG lists. The iPhone app offers Google, Apple and email: Apple requires
    its own sign-in wherever Google's is offered, and Facebook's native SDK was
    left out of the shell - an account made with Facebook still signs in on the
-   website. */
+   website. The Android app offers Google (the phone's own sheet) and email:
+   Facebook's page would need a second window the app's web view does not
+   open, and would leave the app. */
 function authProvidersHere() {
   const prov = CONFIG.authProviders || [];
+  if (window.__nabuAndroid) return prov.filter((p) => p !== 'facebook');
   if (!isIOSApp()) return prov;
   return ['google', 'apple', 'email'].filter((p) => p === 'apple' ? prov.indexOf('google') > -1 : prov.indexOf(p) > -1);
 }
@@ -132,7 +135,9 @@ function renderSignin(args, params) {
   let mode = 'in';
   const draw = (keepEmail) => {
     m.innerHTML = signinHTML(mode);
-    const status = (msg, cls) => { const s = $('#astatus', m); if (s) { s.textContent = msg; s.className = 'hint ' + (cls || ''); } };
+    /* The status line sits under the form; an error scrolls it into sight, or a
+       tap on a button high up the page would seem to do nothing. */
+    const status = (msg, cls) => { const s = $('#astatus', m); if (s) { s.textContent = msg; s.className = 'hint ' + (cls || ''); if (cls === 'err' && s.scrollIntoView) s.scrollIntoView({ block: 'center', behavior: 'smooth' }); } };
     /* A brand new account goes to the welcome screen; somebody signing back in
        carries on where they were headed. */
     const onward = () => { if (BE.user) redirect(mode === 'create' ? '#/welcome' : signinNext(params)); };

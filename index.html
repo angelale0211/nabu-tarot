@@ -12,7 +12,7 @@
      carries this notice with it. See LICENSE. -->
 <meta name="author" content="Nabu Tarot">
 <meta name="copyright" content="Copyright (c) 2025-2026 Nabu Tarot. All rights reserved.">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'none'; object-src 'none'; form-action 'self'; script-src 'self' 'sha256-G4ALh+dLf6d/sTwZhmBsvvqx1xswf4PR7xuonx9bmsg=' https://www.gstatic.com https://apis.google.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; font-src 'self' data:; media-src 'self' data: blob:; worker-src 'self'; connect-src 'self' https://*.googleapis.com https://*.google.com https://*.firebaseio.com https://*.cloudfunctions.net https://*.workers.dev https://generativelanguage.googleapis.com; frame-src https://*.firebaseapp.com https://accounts.google.com https://*.facebook.com">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'none'; object-src 'none'; form-action 'self'; script-src 'self' 'sha256-jcpQWzv1TjzjNGDr5Jz9Ozhx3mpTvCylPg1vGbRgnoE=' https://www.gstatic.com https://apis.google.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; font-src 'self' data:; media-src 'self' data: blob:; worker-src 'self'; connect-src 'self' https://*.googleapis.com https://*.google.com https://*.firebaseio.com https://*.cloudfunctions.net https://*.workers.dev https://generativelanguage.googleapis.com; frame-src https://*.firebaseapp.com https://accounts.google.com https://*.facebook.com">
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <meta name="theme-color" content="#EFE9FA">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -28821,9 +28821,12 @@ const GOOGLE_MARK ='<svg viewBox="0 0 24 24"><path fill="#4285F4" d="M21.6 12.2c
    CONFIG lists. The iPhone app offers Google, Apple and email: Apple requires
    its own sign-in wherever Google's is offered, and Facebook's native SDK was
    left out of the shell - an account made with Facebook still signs in on the
-   website. */
+   website. The Android app offers Google (the phone's own sheet) and email:
+   Facebook's page would need a second window the app's web view does not
+   open, and would leave the app. */
 function authProvidersHere() {
   const prov = CONFIG.authProviders || [];
+  if (window.__nabuAndroid) return prov.filter((p) => p !== 'facebook');
   if (!isIOSApp()) return prov;
   return ['google', 'apple', 'email'].filter((p) => p === 'apple' ? prov.indexOf('google') > -1 : prov.indexOf(p) > -1);
 }
@@ -28876,7 +28879,9 @@ function renderSignin(args, params) {
   let mode = 'in';
   const draw = (keepEmail) => {
     m.innerHTML = signinHTML(mode);
-    const status = (msg, cls) => { const s = $('#astatus', m); if (s) { s.textContent = msg; s.className = 'hint ' + (cls || ''); } };
+    /* The status line sits under the form; an error scrolls it into sight, or a
+       tap on a button high up the page would seem to do nothing. */
+    const status = (msg, cls) => { const s = $('#astatus', m); if (s) { s.textContent = msg; s.className = 'hint ' + (cls || ''); if (cls === 'err' && s.scrollIntoView) s.scrollIntoView({ block: 'center', behavior: 'smooth' }); } };
     /* A brand new account goes to the welcome screen; somebody signing back in
        carries on where they were headed. */
     const onward = () => { if (BE.user) redirect(mode === 'create' ? '#/welcome' : signinNext(params)); };
@@ -32925,7 +32930,7 @@ function adminSale(p) {
 ROUTES.admin = { nav: '', render: renderAdmin };
 
 /* ============================ boot ============================ */
-window.APP_VERSION = 'v283';
+window.APP_VERSION = 'v284';
 window.NABU = { CONFIG: CONFIG, SALE: SALE, salePrice: salePrice, loadActs: loadActs, BACK: BACK, LESSONS: LESSONS, localAnswer: localAnswer, compatVerdict: compatVerdict, numerologyOf: numerologyOf, ZDEEP: ZDEEP, lunarToday: lunarToday, solarToLunar: solarToLunar, DECK: DECK, INSIGHT: INSIGHT, KW: KW, ASK: ASK, GUIDES: GUIDES, SERVICES: SERVICES, COURSES: COURSES, ACCESS: ACCESS, INTERESTS: INTERESTS, plusOn: () => plusOn(), proOn: () => proOn(), luckUnlimited: () => luckUnlimited(), ZODIAC: ZODIAC, pick: pick, book: book, PLAY_ITEMS: PLAY_ITEMS, PLAY_SUB_SKUS: PLAY_SUB_SKUS, playItem: playItem, BILL: BILL, SUBS: SUBS, billUse: billUse, APPLE_BILL: APPLE_BILL, appleAccountToken: appleAccountToken, renderStore: renderStore, pickLimitHTML: pickLimitHTML, subStateWord: subStateWord,
   insightHTML: insightHTML, insightOf: insightOf, sunSignIndex: sunSignIndex, lifePath: lifePath, PROFILE: () => PROFILE, BE: BE, inAppBrowser: inAppBrowser, ACTS: ACTS, CMT: CMT, LIKES: LIKES, kbReady: kbReady, AI: AI, STR: STR, KB_URL: (typeof KB_URL === 'string' ? KB_URL : ''),
   ANGELS: ANGELS, angelRead: angelRead, CODEBOOK: CODEBOOK, redeemCode: redeemCode, loadCodebook: loadCodebook, petHomeSVG: petHomeSVG, petStill: petStill, PET_HOMES: PET_HOMES, PET_WARDROBE: PET_WARDROBE, PET_SLOTS: PET_SLOTS,
