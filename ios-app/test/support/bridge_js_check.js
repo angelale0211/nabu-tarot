@@ -42,7 +42,10 @@ new Function('window', fs.readFileSync(process.argv[2], 'utf8'))(window);
 
   // Events reach listeners; remove() stops them.
   const seen = [];
+  const before = calls.length;
   const h = C.Plugins.NativePurchases.addListener('transactionUpdated', (d) => seen.push(d));
+  // Registering a listener tells the app, so events it held can be delivered.
+  assert.deepStrictEqual(calls[before][1], { plugin: 'NativePurchases', method: '__listen', args: { event: 'transactionUpdated' } });
   window.__nabuEmit('NativePurchases', 'transactionUpdated', { transactionId: '1' });
   h.remove();
   window.__nabuEmit('NativePurchases', 'transactionUpdated', { transactionId: '2' });

@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 
 import 'bridge/bridge.dart';
 import 'bridge/firebase_authentication_plugin.dart';
+import 'bridge/native_purchases_plugin.dart';
 import 'bridge/plugin.dart';
 import 'shell/host.dart';
 import 'shell/web_shell.dart';
@@ -12,7 +13,8 @@ void main() {
   SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
   SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.dark);
   final auth = FirebaseAuthenticationPlugin(apple: SystemAppleSignIn(), google: SystemGoogleSignIn());
-  runApp(NabuApp(plugins: [auth]));
+  final purchases = NativePurchasesPlugin(ChannelStoreKit());
+  runApp(NabuApp(plugins: [auth, purchases]));
 }
 
 class NabuApp extends StatefulWidget {
@@ -24,7 +26,7 @@ class NabuApp extends StatefulWidget {
 }
 
 class _NabuAppState extends State<NabuApp> {
-  late final Bridge bridge = Bridge(widget.plugins);
+  late final Bridge bridge = Bridge(widget.plugins, holdUntilListened: true);
   final shell = GlobalKey<WebShellState>();
 
   @override

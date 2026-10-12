@@ -25,6 +25,9 @@
     var byEvent = listeners[plugin] || (listeners[plugin] = {});
     var list = byEvent[event] || (byEvent[event] = []);
     list.push(cb);
+    /* Tells the app this page listens, so what it held (a purchase StoreKit
+       re-delivered before the site was ready) arrives now. */
+    call(plugin, '__listen', { event: event }).catch(function () {});
     var handle = { remove: function () { var i = list.indexOf(cb); if (i > -1) list.splice(i, 1); return Promise.resolve(); } };
     return handle;
   }

@@ -47,6 +47,7 @@ class _NabuHostState extends State<NabuHost> {
             UserScript(source: s.data!, injectionTime: UserScriptInjectionTime.AT_DOCUMENT_START, forMainFrameOnly: true),
           ],
           onCreated: _created,
+          onStarted: (_) => widget.bridge.pageChanged(),
           onLoaded: (_) => widget.onLoaded?.call(),
         );
       },

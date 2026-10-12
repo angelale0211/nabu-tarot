@@ -23,11 +23,13 @@ String siteUrl(String route) => route.isEmpty ? kSite : '$kSite#/$route';
 const kGround = Color(0xFFFBEEF2);
 
 class WebShell extends StatefulWidget {
-  const WebShell({super.key, this.scripts = const [], this.onCreated, this.onLoaded});
+  const WebShell({super.key, this.scripts = const [], this.onCreated, this.onStarted, this.onLoaded});
 
   /// Scripts the site needs before its own script runs (the bridge).
   final List<UserScript> scripts;
   final void Function(InAppWebViewController c)? onCreated;
+  /// A new page (not a hash change) started loading.
+  final void Function(InAppWebViewController c)? onStarted;
   final void Function(InAppWebViewController c)? onLoaded;
 
   @override
@@ -85,6 +87,10 @@ class WebShellState extends State<WebShell> {
             if (u == null || !isExternal(u)) return NavigationActionPolicy.ALLOW;
             await launchUrl(u, mode: LaunchMode.externalApplication);
             return NavigationActionPolicy.CANCEL;
+          },
+          onLoadStart: (c, url) {
+            loaded = false;
+            widget.onStarted?.call(c);
           },
           onLoadStop: (c, url) {
             if (offline) return;
