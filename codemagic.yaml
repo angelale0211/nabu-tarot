@@ -5,7 +5,7 @@
 # Codemagic, once:
 #   - Team integrations > Developer Portal: the App Store Connect key named "codemagic".
 #   - Global variables, group nabu_ios (all Secure):
-#       CERTIFICATE_PRIVATE_KEY     contents of nabu-tarot-keys/ios_distribution_private_key
+#       CERTIFICATE_PRIVATE_KEY     nabu-tarot-keys/ios_distribution_private_key, as base64 on one line (or its text)
 #       GOOGLE_SERVICE_INFO_PLIST   base64 of GoogleService-Info.plist for app.nabutarot.ios
 workflows:
   ios-testflight:
@@ -75,10 +75,12 @@ workflows:
         script: keychain initialize
       - name: Signing - certificate and App Store profiles
         script: |
-          app-store-connect fetch-signing-files "$BUNDLE_ID" --type IOS_APP_STORE --create
+          set -e
+          python3 ios/scripts/certificate_key.py /tmp/certificate_key
+          app-store-connect fetch-signing-files "$BUNDLE_ID" --type IOS_APP_STORE --create --certificate-key=@file:/tmp/certificate_key
           if [ "$NABU_WIDGET" = "1" ]; then
             app-store-connect bundle-ids create "$BUNDLE_ID.today" --name "Nabu Tarot Today" --platform IOS || true
-            app-store-connect fetch-signing-files "$BUNDLE_ID.today" --type IOS_APP_STORE --create
+            app-store-connect fetch-signing-files "$BUNDLE_ID.today" --type IOS_APP_STORE --create --certificate-key=@file:/tmp/certificate_key
           fi
           keychain add-certificates
           xcode-project use-profiles
