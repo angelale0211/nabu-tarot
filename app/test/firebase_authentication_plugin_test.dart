@@ -100,4 +100,9 @@ void main() {
     final p = FirebaseAuthenticationPlugin(apple: FakeApple(), google: FakeGoogle());
     await expectLater(p.call('linkWithFacebook', {}), throwsA(predicate((e) => '$e'.contains('linkWithFacebook'))));
   });
+
+  test("Google needs the site's web client id on Android; none given means none passed", () {
+    expect(serverClientIdFrom(''), isNull);
+    expect(serverClientIdFrom('609592701892-abc.apps.googleusercontent.com'), '609592701892-abc.apps.googleusercontent.com');
+  });
 }

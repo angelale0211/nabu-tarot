@@ -107,6 +107,11 @@ class SystemAppleSignIn implements AppleSignIn {
   }
 }
 
+/// The site's Google web client id (Firebase -> Authentication -> Google ->
+/// Web SDK configuration), given at build time as GOOGLE_WEB_CLIENT_ID. On
+/// Android, Google hands out an ID token Firebase accepts only for it.
+String? serverClientIdFrom(String v) => v.isEmpty ? null : v;
+
 /// Google's sheet through google_sign_in 7. The client id comes from
 /// GoogleService-Info.plist (CLIENT_ID), written into Info.plist at build time.
 class SystemGoogleSignIn implements GoogleSignInLike {
@@ -114,7 +119,7 @@ class SystemGoogleSignIn implements GoogleSignInLike {
 
   Future<void> _init() async {
     if (_ready) return;
-    await GoogleSignIn.instance.initialize();
+    await GoogleSignIn.instance.initialize(serverClientId: serverClientIdFrom(const String.fromEnvironment('GOOGLE_WEB_CLIENT_ID')));
     _ready = true;
   }
 
