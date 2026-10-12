@@ -18,12 +18,6 @@
   /* isTWA() in src/core.js: the store app, so the Play shop and no web prices. */
   try { localStorage.setItem('nabu-twa', 'true'); } catch (e) { /* storage off */ }
 
-  /* The app draws its own tab bar; the site's would be a second one. */
-  try {
-    var st = document.createElement('style');
-    st.textContent = 'nav.nav{display:none!important}:root{--nav-h:0px!important}';
-    (document.head || document.documentElement).appendChild(st);
-  } catch (e) { /* no document yet */ }
 
   function call(plugin, method, args) {
     var h = window.flutter_inappwebview;

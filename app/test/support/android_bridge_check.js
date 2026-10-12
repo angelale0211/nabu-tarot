@@ -25,8 +25,8 @@ new Function('window', 'localStorage', 'document', 'setInterval', 'clearInterval
 (async () => {
   // The site reads isTWA() from this, so it shows the Play shop and no web prices.
   assert.strictEqual(ls['nabu-twa'], 'true');
-  // The site's own bottom bar is hidden: the app has its own.
-  assert.ok(added.some((n) => n.tag === 'style' && /nav\.nav/.test(n.textContent)));
+  // The site keeps its own tab bar: nothing hides it.
+  assert.ok(!added.some((n) => n.tag === 'style'));
 
   // Digital Goods: getDetails / listPurchases / consume go to PlayBilling.
   answers.getDetails = { ok: true, value: [{ itemId: 'tarot', title: 'Tarot', price: { currency: 'VND', value: '199000' } }] };

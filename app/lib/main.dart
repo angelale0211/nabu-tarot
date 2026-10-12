@@ -5,21 +5,16 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 import 'bridge/bridge.dart';
 import 'bridge/firebase_authentication_plugin.dart';
 import 'bridge/native_purchases_plugin.dart';
 import 'bridge/play_billing_plugin.dart';
 import 'bridge/plugin.dart';
-import 'native/deck.dart';
-import 'native/home.dart';
-import 'native/look.dart';
-import 'native/lunar.dart';
-import 'native/today_store.dart';
 import 'push/adapters.dart';
 import 'push/firebase_config.dart';
 import 'push/push.dart';
+import 'shell/app_page.dart';
 import 'shell/web_shell.dart';
 
 Future<void> main() async {
@@ -28,8 +23,7 @@ Future<void> main() async {
   SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.dark);
 
   final shell = GlobalKey<WebShellState>();
-  final home = GlobalKey<NabuHomeState>();
-  void open(String route) => home.currentState?.open(route);
+  void open(String route) => shell.currentState?.go(route);
 
   // The phone's own sign-in and store, behind the site's existing calls.
   final auth = FirebaseAuthenticationPlugin(apple: SystemAppleSignIn(), google: SystemGoogleSignIn());
@@ -37,10 +31,6 @@ Future<void> main() async {
       ? [auth, PlayBillingPlugin(GooglePlayStore())]
       : [auth, NativePurchasesPlugin(ChannelStoreKit())];
   final shim = Platform.isAndroid ? 'assets/android_bridge.js' : 'assets/bridge.js';
-
-  final deck = await Deck.load();
-  final lunar = await Lunar.load();
-  final store = TodayStore(await SharedPreferences.getInstance());
 
   // Notifications only when the build carried the Firebase settings.
   Push? push;
@@ -71,12 +61,7 @@ Future<void> main() async {
   runApp(MaterialApp(
     title: 'Nabu Tarot',
     debugShowCheckedModeBanner: false,
-    theme: Look.theme(),
-    home: NabuHome(
-      key: home,
-      deck: deck,
-      lunar: lunar,
-      store: store,
+    home: AppPage(
       bridge: Bridge(plugins, holdUntilListened: true),
       shell: shell,
       shimAsset: shim,
