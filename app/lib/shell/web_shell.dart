@@ -1,4 +1,5 @@
 import 'dart:collection';
+import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
@@ -6,6 +7,11 @@ import 'package:url_launcher/url_launcher.dart';
 
 import 'links.dart';
 import 'offline_page.dart';
+
+/// The user agent the web view sends: on the iPhone, Mobile Safari's plus the
+/// token src/core.js iosShell() looks for; on Android the web view's own, so
+/// the site never mistakes the Android app for the iPhone one.
+String userAgentFor({required bool android}) => android ? '' : kUserAgent;
 
 /// Mobile Safari's own user agent plus the token the site looks for
 /// (src/core.js iosShell()): the site's phone layout and its iPhone-app
@@ -49,6 +55,12 @@ class WebShell extends StatefulWidget {
 
 class WebShellState extends State<WebShell> {
   InAppWebViewController? controller;
+  late final PullToRefreshController? _pull = Platform.isAndroid
+      ? PullToRefreshController(
+          settings: PullToRefreshSettings(color: const Color(0xFF3D2A6E)),
+          onRefresh: () async => controller?.reload(),
+        )
+      : null;
   bool offline = false;
   bool loaded = false;
 
@@ -79,8 +91,9 @@ class WebShellState extends State<WebShell> {
         InAppWebView(
           initialUrlRequest: URLRequest(url: WebUri(siteUrl(widget.initialRoute ?? ''))),
           initialUserScripts: UnmodifiableListView(widget.scripts),
+          pullToRefreshController: _pull,
           initialSettings: InAppWebViewSettings(
-            userAgent: kUserAgent,
+            userAgent: userAgentFor(android: Platform.isAndroid),
             useShouldOverrideUrlLoading: true,
             allowsBackForwardNavigationGestures: true,
             mediaPlaybackRequiresUserGesture: false,
@@ -106,6 +119,7 @@ class WebShellState extends State<WebShell> {
             widget.onStarted?.call(c);
           },
           onLoadStop: (c, url) {
+            _pull?.endRefreshing();
             if (offline) return;
             loaded = true;
             widget.onLoaded?.call(c);

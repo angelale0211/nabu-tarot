@@ -53,8 +53,11 @@ class FcmMessaging implements Messaging {
 /// asked of the site itself (BE, CONFIG and lang in src/), so the app holds
 /// no address and no credentials of its own.
 class ShellSitePage implements SitePage {
-  ShellSitePage(this.shell);
+  ShellSitePage(this.shell, {this.opener});
   final GlobalKey<WebShellState> shell;
+
+  /// Opens a route through the app's tabs (so a native route shows its tab).
+  final void Function(String route)? opener;
 
   InAppWebViewController? get _c => shell.currentState?.controller;
 
@@ -62,7 +65,13 @@ class ShellSitePage implements SitePage {
   bool get loaded => shell.currentState?.loaded ?? false;
 
   @override
-  Future<void> go(String route) async => shell.currentState?.go(route);
+  Future<void> go(String route) async {
+    if (opener != null) {
+      opener!(route);
+    } else {
+      await shell.currentState?.go(route);
+    }
+  }
 
   Future<Object?> _run(String body, [Map<String, Object?> args = const {}]) async {
     final c = _c;

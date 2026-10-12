@@ -7,6 +7,12 @@
    before the site's own script runs, so iosShell() already sees it. */
 (function () {
   if (window.Capacitor && window.Capacitor.__nabu) return;
+  /* The app draws its own tab bar; the site's would be a second one. */
+  try {
+    var st = document.createElement('style');
+    st.textContent = 'nav.nav{display:none!important}:root{--nav-h:0px!important}';
+    (document.head || document.documentElement).appendChild(st);
+  } catch (e) { /* no document yet */ }
   var NAMES = ['NativePurchases', 'FirebaseAuthentication'];
   var listeners = {};
 

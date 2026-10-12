@@ -8,6 +8,11 @@ void main() {
     expect(kUserAgent, contains('Mobile/15E148 Safari'));
   });
 
+  test("Android sends the web view's own user agent, never the iPhone token", () {
+    expect(userAgentFor(android: true), isNot(contains('NabuTarotiOS')));
+    expect(userAgentFor(android: false), contains('NabuTarotiOS'));
+  });
+
   test('the widget link nabutarot://pick opens Draw; anything else is ignored', () {
     expect(routeOfLink(Uri.parse('nabutarot://pick')), 'pick');
     expect(routeOfLink(Uri.parse('nabutarot://me/bookings')), 'me/bookings');

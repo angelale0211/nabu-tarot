@@ -11,8 +11,12 @@ import 'web_shell.dart';
 /// The site with the bridge in it: assets/bridge.js injected before the
 /// site's script, calls answered by [bridge], plugin events handed back.
 class NabuHost extends StatefulWidget {
-  const NabuHost({super.key, required this.bridge, this.shellKey, this.initialRoute, this.onLoaded});
+  const NabuHost({super.key, required this.bridge, this.shellKey, this.initialRoute, this.onLoaded, this.shimAsset = 'assets/bridge.js'});
   final Bridge bridge;
+
+  /// The overlay injected before the site's script: assets/bridge.js on the
+  /// iPhone, assets/android_bridge.js on Android.
+  final String shimAsset;
   final String? initialRoute;
   final GlobalKey<WebShellState>? shellKey;
   final void Function()? onLoaded;
@@ -22,7 +26,7 @@ class NabuHost extends StatefulWidget {
 }
 
 class _NabuHostState extends State<NabuHost> {
-  late final Future<String> _shim = rootBundle.loadString('assets/bridge.js');
+  late final Future<String> _shim = rootBundle.loadString(widget.shimAsset);
   StreamSubscription<(String, String, Object?)>? _events;
 
   void _created(InAppWebViewController c) {
