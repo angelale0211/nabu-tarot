@@ -28,3 +28,4 @@ ios-app/build/
 ios-app/.dart_tool/
 ios-app/ios/Pods/
 ios-app/ios/Runner/GoogleService-Info.plist
+ios-app/firebase_defines.json

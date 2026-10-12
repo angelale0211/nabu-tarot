@@ -19,6 +19,10 @@ import { applySubscription, dropSubscriptionFrom, payRoom, noteGranted } from ".
 import { handleRtdn } from "./rtdn";
 import { reconcileSubs } from "./reconcile";
 import { appleBill, handleAsn, sweepAppleRefunds, appleRevoke } from "./apple";
+import { registerPush, unregisterPush, sweepPush } from "./push";
+
+/* Must match the second entry of [triggers] crons in wrangler.toml. */
+const PUSH_CRON = "*/15 * * * *";
 
 export interface Env {
   GEMINI_API_KEY?: string;
@@ -611,6 +615,32 @@ export default {
       }
     }
 
+    /* The iPhone app files (or withdraws) this phone's notification token
+       under the signed-in account. See push.ts. */
+    if (path.endsWith("/push-register") || path.endsWith("/push-unregister")) {
+      if (!env.FIREBASE_PROJECT_ID || !env.PLAY_SERVICE_ACCOUNT) return new Response(JSON.stringify({ error: "not configured" }), { status: 500, headers });
+      const person = await whoIsAsking(request, env.FIREBASE_PROJECT_ID);
+      if (!person) return new Response(JSON.stringify({ error: "signin" }), { status: 401, headers });
+      const v = await allow(env, "push:" + person.uid, 20, 5);
+      if (!v.ok) return tooMany(v, headers);
+      let b: { token?: string; lang?: string };
+      try { b = await request.json(); } catch { return new Response(JSON.stringify({ error: "bad json" }), { status: 400, headers }); }
+      const token = String(b.token || "");
+      if (!token || token.length > 4096) return new Response(JSON.stringify({ error: "bad token" }), { status: 400, headers });
+      try {
+        if (path.endsWith("/push-unregister")) {
+          await unregisterPush(env, person.uid, token);
+          return new Response(JSON.stringify({ ok: true }), { headers });
+        }
+        const got = await registerPush(env, person.uid, token, String(b.lang || "vi"));
+        console.log(JSON.stringify({ at: "push-register", uid: person.uid, first: got.first }));
+        return new Response(JSON.stringify(got), { headers });
+      } catch (e) {
+        console.error(JSON.stringify({ at: "push-register", uid: person.uid, error: String((e as Error).message || e) }));
+        return new Response(JSON.stringify({ error: "failed" }), { status: 502, headers });
+      }
+    }
+
     if (path.endsWith("/redeem")) {
       if (!env.FIREBASE_PROJECT_ID || !env.PLAY_SERVICE_ACCOUNT) return new Response(JSON.stringify({ error: "not configured" }), { status: 500, headers });
       const person = await whoIsAsking(request, env.FIREBASE_PROJECT_ID);
@@ -795,7 +825,16 @@ export default {
      Both run every time, and neither's failure stops the other: a scheduled
      handler that throws is a red mark in a dashboard nobody opens; one that
      logs says what happened in a place the logs already go. */
-  async scheduled(_controller: ScheduledController, env: Env, ctx: ExecutionContext): Promise<void> {
+  async scheduled(controller: ScheduledController, env: Env, ctx: ExecutionContext): Promise<void> {
+    /* Every 15 minutes: notifications for the iPhone app (push.ts). The
+       refund and subscription sweeps below keep their six-hourly schedule. */
+    if (controller.cron === PUSH_CRON) {
+      ctx.waitUntil((async () => {
+        try { console.log(JSON.stringify({ at: "push-sweep", ...(await sweepPush(env, new Date(controller.scheduledTime || Date.now()))) })); }
+        catch (e) { console.error(JSON.stringify({ at: "push-sweep", error: String((e as Error).message || e) })); }
+      })());
+      return;
+    }
     ctx.waitUntil((async () => {
       try { console.log(JSON.stringify({ at: "refund-sweep", ...(await sweepRefunds(env)) })); }
       catch (e) { console.error(JSON.stringify({ at: "refund-sweep", error: String((e as Error).message || e) })); }

@@ -16,7 +16,7 @@ binding = "AI"
 # Every six hours: refunds taken back, subscriptions re-read. Minute 10 so it
 # never lands on the hour with every other cron job everyone else schedules.
 [triggers]
-crons = ["10 */6 * * *"]
+crons = ["10 */6 * * *", "*/15 * * * *"]   # refunds and subscriptions; iPhone notifications (push.ts)
 
 # Logs, declared here rather than switched on in the dashboard, because
 # `wrangler deploy` applies this file as the whole truth: a setting that lives

@@ -58,6 +58,7 @@ workflows:
           # Always higher than any earlier build: yy + day of year + hhmm (UTC).
           flutter build ipa --release \
             --export-options-plist=/Users/builder/export_options.plist \
+            --dart-define-from-file=firebase_defines.json \
             --build-number=$(date -u +%y%j%H%M)
     artifacts:
       - build/ios/ipa/*.ipa
