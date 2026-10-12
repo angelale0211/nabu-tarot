@@ -10,6 +10,6 @@ async function renderTerms() {
   if (!p) { m.innerHTML += '<p class="hint">' + esc(S.feedOffline) + '</p>'; return; }
   m.innerHTML = '<div class="eyebrow">' + esc(CONFIG.brand) + '</div><div class="guide privacy"><h1 style="margin-bottom:6px">' + esc(L(p.title)) + '</h1><p class="faint">' + esc(S.horoUpdated) + ' ' + esc(p.updated) + '</p><p class="lead">' + esc(L(p.intro)) + '</p>'
     + p.sections.map((s, i) => '<div class="gsec"><span class="n">' + (i + 1) + '</span><div><h2>' + esc(L(s.h)) + '</h2><p>' + esc(L(s.p)) + '</p></div></div>').join('')
-    + '<p class="hint" style="margin-top:14px"><a href="terms.html" target="_blank" rel="noopener">terms.html</a> · <a href="#/privacy">' + esc(S.privacyLink) + '</a></p></div>';
+    + '<p class="hint" style="margin-top:14px">' + (inStoreApp() ? '' : '<a href="terms.html" target="_blank" rel="noopener">terms.html</a> · ') + '<a href="#/privacy">' + esc(S.privacyLink) + '</a></p></div>';
 }
 ROUTES.terms = { nav: 'me', render: renderTerms };

@@ -36,7 +36,7 @@ function signinNext(params) {
    run before the page) sets window.__nabuAndroid and signs in to Google with
    the phone's own sheet, so nothing there needs the way out. */
 function inAppBrowser(ua) {
-  if (ua == null && window.__nabuAndroid) return '';
+  if (ua == null && (window.__nabuAndroid || inStoreApp())) return '';
   const s = String(ua == null ? ((window.navigator || {}).userAgent || '') : ua);
   if (/FBAN\/Messenger|MessengerForiOS|MessengerLite/.test(s)) return 'Messenger';
   if (/Instagram/.test(s)) return 'Instagram';

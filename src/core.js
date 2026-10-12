@@ -110,7 +110,7 @@ function deviceLang() {
   for (const l of all) { const two = String(l).slice(0, 2).toLowerCase(); if (['vi', 'en', 'de'].indexOf(two) >= 0) return two; }
   return 'en';
 }
-let lang = store.get('nabu-lang', iosShell() ? deviceLang() : 'vi');
+let lang = store.get('nabu-lang', iosShell() || window.__nabuAndroid ? deviceLang() : 'vi');
 /* The language belongs to the person, not to the handset. It is chosen once on
    the welcome screen and carried on the account, so a second phone or a
    reinstall opens in the right language instead of falling back to Vietnamese.
@@ -585,7 +585,8 @@ function renderFooter() {
      and Báo lỗi used to drop to a second row on its own. */
   if (soc.length) links.push('<span class="soc">' + soc.join('') + '</span>');
   links.push('<a href="#/contact">' + esc(S.contactLink) + '</a>');
-  links.push('<a href="#/install">' + esc(S.installLink) + '</a>');
+  /* Inside a store app there is nothing to install. */
+  if (!inStoreApp()) links.push('<a href="#/install">' + esc(S.installLink) + '</a>');
   links.push('<a href="#/privacy">' + esc(S.privacyLink) + '</a>');
   links.push('<a href="#/report">' + esc(S.reportLink) + '</a>');
   /* The dot is a separator, not a word: it carries its own spacing (so the row
@@ -671,7 +672,9 @@ function shrinkImage(file, max, quality) {
    rules forbid pointing people to outside payment for digital content, so that build hides course prices and
    the "buy" buttons and only takes an unlock code. Remembered on the device after the first launch. */
 try { if (/^android-app:\/\//.test(document.referrer || '')) store.set('nabu-twa', true); } catch (e) { /* no referrer */ }
-const isTWA = () => store.get('nabu-twa', false) === true;
+/* The Android app (app/, a Flutter shell) marks every page it opens with window.__nabuAndroid before the site's
+   script runs; that counts on its own, so cleared storage never makes the app look like a website. */
+const isTWA = () => !!window.__nabuAndroid || store.get('nabu-twa', false) === true;
 /* The App Store build is a Capacitor shell around this same site, and it adds NabuTarotiOS to the user agent
    (appendUserAgent in the shell's capacitor.config.json). Apple's rule is Play's rule: anything digital sold
    inside the app is sold through Apple, so that build hides the same prices, transfers and codes. Read fresh on
@@ -714,10 +717,9 @@ function gcalLink(b) {
 async function addToCalendar(b) {
   const S = T(), ics = icsFor(b); if (!ics) return;
   const name = 'nabu-tarot-' + String(b.slot || '').slice(0, 10) + '.ics';
-  try {
-    const file = new File([ics], name, { type: 'text/calendar' });
-    if (navigator.canShare && navigator.canShare({ files: [file] })) { await navigator.share({ files: [file], title: CONFIG.brand }); return; }
-  } catch (e) { if (e && e.name === 'AbortError') return; }
+  if (await shareFile(ics, name, 'text/calendar') !== false) return;
+  /* The apps cannot take a download; Google Calendar's own page can take the event. */
+  if (inStoreApp()) { const g = gcalLink(b); if (g) location.href = g; return; }
   try {
     const url = URL.createObjectURL(new Blob([ics], { type: 'text/calendar;charset=utf-8' })), a = document.createElement('a');
     a.href = url; a.download = name; a.rel = 'noopener'; document.body.appendChild(a); a.click(); setTimeout(() => { document.body.removeChild(a); URL.revokeObjectURL(url); }, 4000);
@@ -742,6 +744,16 @@ function scheduleReminders(list) {
   });
   soon.sort((a, b) => String(a.slot).localeCompare(String(b.slot)));
   store.set('nabu-nextbk', soon[0] ? { slot: soon[0].slot, status: soon[0].status, service: soon[0].service || '' } : null);
+}
+/* A file handed to the phone's share sheet (Calendar, Photos, Files...). true when shared, null when the
+   person closed the sheet, false where this phone has no sheet for files - the caller then does what it can. */
+async function shareFile(data, name, type) {
+  try {
+    const file = new File([data], name, { type: type });
+    if (!(navigator.canShare && navigator.canShare({ files: [file] }))) return false;
+    await navigator.share({ files: [file], title: CONFIG.brand });
+    return true;
+  } catch (e) { return e && e.name === 'AbortError' ? null : false; }
 }
 function shareOrCopy(text, url) {
   if (navigator.share) return navigator.share({ text: text, url: url }).catch(() => {});
@@ -1177,6 +1189,8 @@ function imageViewer() {
   const keep = async (src) => {
     try {
       const blob = await (await fetch(src)).blob();
+      /* In the apps a download goes nowhere: the share sheet has "Save image". */
+      if (inStoreApp()) { if (await shareFile(blob, 'nabu-' + Date.now() + '.jpg', blob.type || 'image/jpeg') === false) show(src); return; }
       const url = URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;
@@ -1197,7 +1211,7 @@ function imageViewer() {
     const img = e.target.closest && e.target.closest('img.att[data-img]');
     if (!img) return;
     const src = img.getAttribute('src');
-    if (isIOS) show(src); else keep(src);
+    if (isIOS && !inStoreApp()) show(src); else keep(src);
   });
   document.addEventListener('keydown', (e) => { if (e.key === 'Escape') shut(); });
 }
@@ -1245,7 +1259,7 @@ function boot() {
       navigator.serviceWorker.addEventListener('message', (e) => { const m = e.data || {}; if (m.type === 'nabu-open' && typeof m.hash === 'string' && /^#\/[\w\-/?=&.%]*$/.test(m.hash)) location.hash = m.hash; });
       navigator.serviceWorker.register('sw.js').then((reg) => {
         const w = reg.installing;
-        if (w && !had) w.addEventListener('statechange', () => { if (w.state === 'activated') toast(T().offlineReady); });
+        if (w && !had && !inStoreApp()) w.addEventListener('statechange', () => { if (w.state === 'activated') toast(T().offlineReady); });
         reg.update().catch(() => {});
       }).catch(() => {});
     });

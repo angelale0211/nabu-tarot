@@ -326,7 +326,7 @@ function upcomingHTML() {
 async function renderHome(args, params) {
   const S = T(), m = $('#main');
   const name = (PROFILE.name || '').trim();
-  const sale = isIOSApp() ? null : SALE.live();
+  const sale = inStoreApp() ? null : SALE.live();
   const saleBanner = sale
     ? '<a class="salebar" href="' + (sale.scope === 'unlock' ? '#/unlock?from=app' : '#/prices') + '"><span class="tag">🏷️ ' + esc(SALE.off()) + '</span><span class="txt">' + esc(SALE.title() || T().saleDefault) + '</span><span class="go">' + esc(T().saleSee) + ' ›</span></a>'
     : '';

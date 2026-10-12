@@ -15,6 +15,8 @@ function platformOf() {
 }
 const isStandalone = () => window.matchMedia('(display-mode: standalone)').matches || navigator.standalone === true;
 function renderInstall() {
+  /* The store apps are already installed: an old link lands on the profile instead. */
+  if (inStoreApp()) { location.replace('#/me'); return; }
   const S = T(), m = $('#main'), pf = platformOf(), inApp = isStandalone() || inStoreApp();
   const play = CONFIG.playTestUrl ? '<div class="card"><h3>▶️ Google Play</h3><p class="muted" style="margin:6px 0 10px">' + esc(S.instPlayIntro) + '</p>'
     + '<a class="btn primary block" href="' + esc(CONFIG.playTestUrl) + '" target="_blank" rel="noopener">' + esc(S.instPlayBtn) + '</a>'

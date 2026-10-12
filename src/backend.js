@@ -54,6 +54,8 @@ const BE = {
   },
   async signIn(provider) {
     if (isIOSApp()) return this.signInNative(provider);
+    /* The Android app answers Google with the phone's own sheet; make sure its hook is on Firebase first. */
+    if (window.__nabuPatchAuth) window.__nabuPatchAuth();
     const P = provider === 'google' ? new firebase.auth.GoogleAuthProvider() : new firebase.auth.FacebookAuthProvider();
     try { await this.auth.signInWithPopup(P); } catch (e) { if (/popup/i.test(e.code || '')) await this.auth.signInWithRedirect(P); else throw e; }
   },
@@ -166,12 +168,26 @@ const BE = {
       }), 20000);
     } catch (e) { /* offline or not configured: the deletion goes on */ }
   },
+  /* In the apps a Google account is confirmed once more with the phone's own Google sheet before it is
+     deleted: Firebase wants a recent sign-in, and "sign in again" inside an app reads as being thrown out.
+     Same account or nothing is deleted. An Apple account on the iPhone was just confirmed with Apple. */
+  async googleBeforeDelete() {
+    if (!(isIOSApp() || window.__nabuAndroid) || !this.user) return;
+    const ps = (this.user.providerData || []).map((p) => p && p.providerId);
+    if (ps.indexOf('google.com') < 0 || (isIOSApp() && ps.indexOf('apple.com') > -1)) return;
+    const uid = this.user.uid;
+    await this.signIn('google');
+    const now = this.auth.currentUser;
+    if (!now || now.uid !== uid) throw Object.assign(new Error('another account'), { code: 'auth/user-mismatch' });
+    this.user = now;
+  },
   /* Account deletion (a store requirement): profile, thread and messages, bookings, then the login itself.
      Firebase asks for a recent sign-in before deleting a login; the caller handles that error. */
   async deleteAccount() {
     /* First, while nothing is gone yet: an account that signs in with Apple is confirmed with Apple and its
        Apple sign-in revoked. If the person closes Apple's sheet here, nothing at all has been deleted. */
     await this.appleBeforeDelete();
+    await this.googleBeforeDelete();
     const uid = this.user.uid, db = this.db;
     /* The rows only Nabu may read - the moderation flags, the error lines and
        the messages sent in from #/report - name this person and refuse a

@@ -1473,6 +1473,10 @@ function wedSaveIcs(w) {
     'UID:' + w.id + '@nabutarot', 'DTSTAMP:' + z(new Date()), 'DTSTART:' + z(d), 'DTEND:' + z(end),
     'SUMMARY:' + title, 'DESCRIPTION:' + appURL() + '#/wedding/' + w.id,
     'URL:' + appURL() + '#/wedding/' + w.id, 'END:VEVENT', 'END:VCALENDAR'].join('\r\n');
+  /* The share sheet first (the only way in the apps), a download where there is none. */
+  shareFile(body, 'nabu-wedding.ics', 'text/calendar').then((r) => { if (r === false && !inStoreApp()) wedDownloadIcs(body); });
+}
+function wedDownloadIcs(body) {
   const blob = new Blob([body], { type: 'text/calendar' });
   const a = document.createElement('a');
   a.href = URL.createObjectURL(blob);

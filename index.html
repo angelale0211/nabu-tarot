@@ -12,7 +12,7 @@
      carries this notice with it. See LICENSE. -->
 <meta name="author" content="Nabu Tarot">
 <meta name="copyright" content="Copyright (c) 2025-2026 Nabu Tarot. All rights reserved.">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'none'; object-src 'none'; form-action 'self'; script-src 'self' 'sha256-jcpQWzv1TjzjNGDr5Jz9Ozhx3mpTvCylPg1vGbRgnoE=' https://www.gstatic.com https://apis.google.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; font-src 'self' data:; media-src 'self' data: blob:; worker-src 'self'; connect-src 'self' https://*.googleapis.com https://*.google.com https://*.firebaseio.com https://*.cloudfunctions.net https://*.workers.dev https://generativelanguage.googleapis.com; frame-src https://*.firebaseapp.com https://accounts.google.com https://*.facebook.com">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'none'; object-src 'none'; form-action 'self'; script-src 'self' 'sha256-xPXPAoaqG9ySM0sjnzHW4FDfMwgw3kcLCIKLOauAxOc=' https://www.gstatic.com https://apis.google.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; font-src 'self' data:; media-src 'self' data: blob:; worker-src 'self'; connect-src 'self' https://*.googleapis.com https://*.google.com https://*.firebaseio.com https://*.cloudfunctions.net https://*.workers.dev https://generativelanguage.googleapis.com; frame-src https://*.firebaseapp.com https://accounts.google.com https://*.facebook.com">
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <meta name="theme-color" content="#EFE9FA">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -4091,7 +4091,7 @@ const STR = {
     adminGotPaid: 'Đã nhận tiền', adminPaidTag: 'Đã thanh toán',
     payMarked: 'Đã đánh dấu là đã nhận tiền.',
     payOpened: (n) => 'Đã mở ' + n + ' cho khách rồi nhé.',
-    storeFull: 'Máy của bạn đầy bộ nhớ rồi nên Nabu chưa lưu lại được. Bạn thử xoá bớt dữ liệu trình duyệt hoặc ứng dụng khác giúp Nabu nhé.',
+    storeFull: 'Máy của bạn đầy bộ nhớ rồi nên Nabu chưa lưu lại được. Bạn thử giải phóng bớt bộ nhớ trên máy giúp Nabu nhé.',
     wedStartBoth: 'Một người bấm bắt đầu, người còn lại xác nhận là đã sẵn sàng thì lễ cưới mới diễn ra nhé.',
     wedImReady: 'Mình sẵn sàng rồi',
     wedWaitReady: (n) => 'Đang đợi ' + n + ' xác nhận…',
@@ -4431,7 +4431,7 @@ const STR = {
     needInWhy: 'Phần này lưu lại những gì bạn làm, nên cần một tài khoản.',
     needInGo: 'Đăng nhập hoặc tạo tài khoản',
     needInLuck: 'Lượt dùng của bạn sẽ được lưu vào tài khoản và vẫn còn khi bạn đăng nhập trên thiết bị khác.',
-    needInDiary: 'Nhật ký chỉ nằm trên máy này nếu bạn chưa đăng nhập, và sẽ mất khi bạn xoá dữ liệu trình duyệt.',
+    needInDiary: 'Nhật ký chỉ nằm trên máy này nếu bạn chưa đăng nhập, và sẽ mất khi dữ liệu trên máy bị xoá.',
     needInPet: 'Bạn đăng nhập trước nhé, để bạn nhỏ của bạn còn nhớ được bạn đã cho ăn.',
     needInDraw: 'Bạn đăng nhập để rút bài nhé, app sẽ nhớ lá bài của bạn mỗi ngày.', needInActs: 'Các hoạt động cần một tài khoản, để những gì bạn làm được lưu lại cho riêng bạn.',
     modReport: 'Báo cáo', modBlock: 'Chặn người này',
@@ -5000,7 +5000,7 @@ const STR = {
     adminGotPaid: 'Payment received', adminPaidTag: 'Paid',
     payMarked: 'Marked as paid.',
     payOpened: (n) => 'Opened ' + n + ' for them.',
-    storeFull: 'This phone has no storage left, so Nabu could not save that. Freeing some space in the browser or another app will fix it.',
+    storeFull: 'This phone has no storage left, so Nabu could not save that. Freeing some space on the phone will fix it.',
     wedStartBoth: 'One of you presses begin and the other confirms they are ready \u2014 the ceremony starts only then.',
     wedImReady: 'I am ready',
     wedWaitReady: (n) => 'Waiting for ' + n + '\u2026',
@@ -5340,7 +5340,7 @@ const STR = {
     needInWhy: 'This part keeps what you do, so it needs an account.',
     needInGo: 'Sign in or create an account',
     needInLuck: 'Your turns are kept on your account, so they are still there when you open the app on another device.',
-    needInDiary: 'Without an account the diary sits on this device only, and goes when you clear your browser.',
+    needInDiary: 'Without an account the diary sits on this device only, and is lost if this device is cleared.',
     needInPet: 'Sign in first, so your companion can remember being fed.',
     needInDraw: 'Sign in to draw a card - Nabu will remember the card you drew each day.', needInActs: 'The activities need an account, so that what you do is kept for you.',
     modReport: 'Report', modBlock: 'Block this person',
@@ -5908,7 +5908,7 @@ const STR = {
     adminGotPaid: 'Zahlung erhalten', adminPaidTag: 'Bezahlt',
     payMarked: 'Als bezahlt markiert.',
     payOpened: (n) => n + ' wurde für die beiden freigeschaltet.',
-    storeFull: 'Auf diesem Gerät ist kein Speicher mehr frei, deshalb konnte Nabu das nicht sichern. Etwas Platz im Browser oder in einer anderen App zu schaffen behebt es.',
+    storeFull: 'Auf diesem Gerät ist kein Speicher mehr frei, deshalb konnte Nabu das nicht sichern. Etwas Speicher auf dem Gerät freizugeben behebt es.',
     wedStartBoth: 'Einer von euch drückt auf Beginnen und der andere bestätigt, dass er bereit ist \u2014 erst dann startet die Zeremonie.',
     wedImReady: 'Ich bin bereit',
     wedWaitReady: (n) => 'Warte auf ' + n + '…',
@@ -6241,7 +6241,7 @@ const STR = {
     needInWhy: 'Dieser Teil merkt sich, was du tust - dafür braucht es ein Konto.',
     needInGo: 'Anmelden oder Konto erstellen',
     needInLuck: 'Deine Runden liegen auf deinem Konto, also sind sie noch da, wenn du die App auf einem anderen Gerät öffnest.',
-    needInDiary: 'Ohne Konto liegt das Tagebuch nur auf diesem Gerät und ist weg, sobald du den Browser leerst.',
+    needInDiary: 'Ohne Konto liegt das Tagebuch nur auf diesem Gerät und ist weg, sobald die Daten auf dem Gerät gelöscht werden.',
     needInPet: 'Melde dich bitte an, damit dein Begleiter sich ans Füttern erinnern kann.',
     needInDraw: 'Melde dich an, um eine Karte zu ziehen - Nabu merkt sich deine Karte jeden Tag.', needInActs: 'Für die Aktivitäten brauchst du ein Konto, damit alles, was du tust, für dich erhalten bleibt.',
     modReport: 'Melden', modBlock: 'Diese Person blockieren',
@@ -13767,7 +13767,7 @@ function deviceLang() {
   for (const l of all) { const two = String(l).slice(0, 2).toLowerCase(); if (['vi', 'en', 'de'].indexOf(two) >= 0) return two; }
   return 'en';
 }
-let lang = store.get('nabu-lang', iosShell() ? deviceLang() : 'vi');
+let lang = store.get('nabu-lang', iosShell() || window.__nabuAndroid ? deviceLang() : 'vi');
 /* The language belongs to the person, not to the handset. It is chosen once on
    the welcome screen and carried on the account, so a second phone or a
    reinstall opens in the right language instead of falling back to Vietnamese.
@@ -14242,7 +14242,8 @@ function renderFooter() {
      and Báo lỗi used to drop to a second row on its own. */
   if (soc.length) links.push('<span class="soc">' + soc.join('') + '</span>');
   links.push('<a href="#/contact">' + esc(S.contactLink) + '</a>');
-  links.push('<a href="#/install">' + esc(S.installLink) + '</a>');
+  /* Inside a store app there is nothing to install. */
+  if (!inStoreApp()) links.push('<a href="#/install">' + esc(S.installLink) + '</a>');
   links.push('<a href="#/privacy">' + esc(S.privacyLink) + '</a>');
   links.push('<a href="#/report">' + esc(S.reportLink) + '</a>');
   /* The dot is a separator, not a word: it carries its own spacing (so the row
@@ -14328,7 +14329,9 @@ function shrinkImage(file, max, quality) {
    rules forbid pointing people to outside payment for digital content, so that build hides course prices and
    the "buy" buttons and only takes an unlock code. Remembered on the device after the first launch. */
 try { if (/^android-app:\/\//.test(document.referrer || '')) store.set('nabu-twa', true); } catch (e) { /* no referrer */ }
-const isTWA = () => store.get('nabu-twa', false) === true;
+/* The Android app (app/, a Flutter shell) marks every page it opens with window.__nabuAndroid before the site's
+   script runs; that counts on its own, so cleared storage never makes the app look like a website. */
+const isTWA = () => !!window.__nabuAndroid || store.get('nabu-twa', false) === true;
 /* The App Store build is a Capacitor shell around this same site, and it adds NabuTarotiOS to the user agent
    (appendUserAgent in the shell's capacitor.config.json). Apple's rule is Play's rule: anything digital sold
    inside the app is sold through Apple, so that build hides the same prices, transfers and codes. Read fresh on
@@ -14371,10 +14374,9 @@ function gcalLink(b) {
 async function addToCalendar(b) {
   const S = T(), ics = icsFor(b); if (!ics) return;
   const name = 'nabu-tarot-' + String(b.slot || '').slice(0, 10) + '.ics';
-  try {
-    const file = new File([ics], name, { type: 'text/calendar' });
-    if (navigator.canShare && navigator.canShare({ files: [file] })) { await navigator.share({ files: [file], title: CONFIG.brand }); return; }
-  } catch (e) { if (e && e.name === 'AbortError') return; }
+  if (await shareFile(ics, name, 'text/calendar') !== false) return;
+  /* The apps cannot take a download; Google Calendar's own page can take the event. */
+  if (inStoreApp()) { const g = gcalLink(b); if (g) location.href = g; return; }
   try {
     const url = URL.createObjectURL(new Blob([ics], { type: 'text/calendar;charset=utf-8' })), a = document.createElement('a');
     a.href = url; a.download = name; a.rel = 'noopener'; document.body.appendChild(a); a.click(); setTimeout(() => { document.body.removeChild(a); URL.revokeObjectURL(url); }, 4000);
@@ -14399,6 +14401,16 @@ function scheduleReminders(list) {
   });
   soon.sort((a, b) => String(a.slot).localeCompare(String(b.slot)));
   store.set('nabu-nextbk', soon[0] ? { slot: soon[0].slot, status: soon[0].status, service: soon[0].service || '' } : null);
+}
+/* A file handed to the phone's share sheet (Calendar, Photos, Files...). true when shared, null when the
+   person closed the sheet, false where this phone has no sheet for files - the caller then does what it can. */
+async function shareFile(data, name, type) {
+  try {
+    const file = new File([data], name, { type: type });
+    if (!(navigator.canShare && navigator.canShare({ files: [file] }))) return false;
+    await navigator.share({ files: [file], title: CONFIG.brand });
+    return true;
+  } catch (e) { return e && e.name === 'AbortError' ? null : false; }
 }
 function shareOrCopy(text, url) {
   if (navigator.share) return navigator.share({ text: text, url: url }).catch(() => {});
@@ -14834,6 +14846,8 @@ function imageViewer() {
   const keep = async (src) => {
     try {
       const blob = await (await fetch(src)).blob();
+      /* In the apps a download goes nowhere: the share sheet has "Save image". */
+      if (inStoreApp()) { if (await shareFile(blob, 'nabu-' + Date.now() + '.jpg', blob.type || 'image/jpeg') === false) show(src); return; }
       const url = URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;
@@ -14854,7 +14868,7 @@ function imageViewer() {
     const img = e.target.closest && e.target.closest('img.att[data-img]');
     if (!img) return;
     const src = img.getAttribute('src');
-    if (isIOS) show(src); else keep(src);
+    if (isIOS && !inStoreApp()) show(src); else keep(src);
   });
   document.addEventListener('keydown', (e) => { if (e.key === 'Escape') shut(); });
 }
@@ -14902,7 +14916,7 @@ function boot() {
       navigator.serviceWorker.addEventListener('message', (e) => { const m = e.data || {}; if (m.type === 'nabu-open' && typeof m.hash === 'string' && /^#\/[\w\-/?=&.%]*$/.test(m.hash)) location.hash = m.hash; });
       navigator.serviceWorker.register('sw.js').then((reg) => {
         const w = reg.installing;
-        if (w && !had) w.addEventListener('statechange', () => { if (w.state === 'activated') toast(T().offlineReady); });
+        if (w && !had && !inStoreApp()) w.addEventListener('statechange', () => { if (w.state === 'activated') toast(T().offlineReady); });
         reg.update().catch(() => {});
       }).catch(() => {});
     });
@@ -15076,6 +15090,8 @@ const BE = {
   },
   async signIn(provider) {
     if (isIOSApp()) return this.signInNative(provider);
+    /* The Android app answers Google with the phone's own sheet; make sure its hook is on Firebase first. */
+    if (window.__nabuPatchAuth) window.__nabuPatchAuth();
     const P = provider === 'google' ? new firebase.auth.GoogleAuthProvider() : new firebase.auth.FacebookAuthProvider();
     try { await this.auth.signInWithPopup(P); } catch (e) { if (/popup/i.test(e.code || '')) await this.auth.signInWithRedirect(P); else throw e; }
   },
@@ -15188,12 +15204,26 @@ const BE = {
       }), 20000);
     } catch (e) { /* offline or not configured: the deletion goes on */ }
   },
+  /* In the apps a Google account is confirmed once more with the phone's own Google sheet before it is
+     deleted: Firebase wants a recent sign-in, and "sign in again" inside an app reads as being thrown out.
+     Same account or nothing is deleted. An Apple account on the iPhone was just confirmed with Apple. */
+  async googleBeforeDelete() {
+    if (!(isIOSApp() || window.__nabuAndroid) || !this.user) return;
+    const ps = (this.user.providerData || []).map((p) => p && p.providerId);
+    if (ps.indexOf('google.com') < 0 || (isIOSApp() && ps.indexOf('apple.com') > -1)) return;
+    const uid = this.user.uid;
+    await this.signIn('google');
+    const now = this.auth.currentUser;
+    if (!now || now.uid !== uid) throw Object.assign(new Error('another account'), { code: 'auth/user-mismatch' });
+    this.user = now;
+  },
   /* Account deletion (a store requirement): profile, thread and messages, bookings, then the login itself.
      Firebase asks for a recent sign-in before deleting a login; the caller handles that error. */
   async deleteAccount() {
     /* First, while nothing is gone yet: an account that signs in with Apple is confirmed with Apple and its
        Apple sign-in revoked. If the person closes Apple's sheet here, nothing at all has been deleted. */
     await this.appleBeforeDelete();
+    await this.googleBeforeDelete();
     const uid = this.user.uid, db = this.db;
     /* The rows only Nabu may read - the moderation flags, the error lines and
        the messages sent in from #/report - name this person and refuse a
@@ -17132,7 +17162,7 @@ function upcomingHTML() {
 async function renderHome(args, params) {
   const S = T(), m = $('#main');
   const name = (PROFILE.name || '').trim();
-  const sale = isIOSApp() ? null : SALE.live();
+  const sale = inStoreApp() ? null : SALE.live();
   const saleBanner = sale
     ? '<a class="salebar" href="' + (sale.scope === 'unlock' ? '#/unlock?from=app' : '#/prices') + '"><span class="tag">🏷️ ' + esc(SALE.off()) + '</span><span class="txt">' + esc(SALE.title() || T().saleDefault) + '</span><span class="go">' + esc(T().saleSee) + ' ›</span></a>'
     : '';
@@ -19904,7 +19934,7 @@ const storeNotReadyHTML = () => '<div class="card">'
      installed app, no Play bridge at all means the wrapper opened in a
      browser that does not carry one. The browser is only named when it can
      actually be recognised - Brave ships Chrome's UA verbatim. */
-  + (isTWA() && (BILL.why === 'noapi' || (BILL.provider() === 'samsung' && /^connect:/.test(BILL.why))) ? '<p class="hint err" style="margin-bottom:10px">' + esc(T().stNeedChrome({ samsung: 'Samsung Internet', brave: 'Brave', edge: 'Microsoft Edge' }[BILL.provider()] || '')) + '</p>' : '')
+  + (isTWA() && !window.__nabuAndroid && (BILL.why === 'noapi' || (BILL.provider() === 'samsung' && /^connect:/.test(BILL.why))) ? '<p class="hint err" style="margin-bottom:10px">' + esc(T().stNeedChrome({ samsung: 'Samsung Internet', brave: 'Brave', edge: 'Microsoft Edge' }[BILL.provider()] || '')) + '</p>' : '')
   + '<p class="hint">' + esc(T().stNotReady) + '</p><button type="button" class="btn block" data-retry>' + esc(T().stRetry) + '</button>'
   + (BILL.why ? '<p class="hint" style="margin-top:8px;opacity:.6;font-size:12px;user-select:all">' + esc(BILL.why) + '</p>' : '') + '</div>'
   /* The diagnostics have to be reachable from the one screen a stuck buyer
@@ -28363,7 +28393,7 @@ function adminSummaryHTML() {
   return '<div class="card admin-sum"><div class="eyebrow">' + esc(S.adminSummary) + '</div>'
     + '<div class="cnt"><a href="#/admin?tab=inbox"><b>' + UNREAD + '</b><span>' + esc(S.unreadMsgs) + '</span></a><a href="#/admin?tab=bookings"><b>' + NEWBK + '</b><span>' + esc(S.newBookings) + '</span></a><a href="#/admin?tab=comments"><b>' + NEWC + '</b><span>' + esc(S.newComments) + '</span></a></div>'
     + '<a class="btn primary block" href="#/admin">' + esc(S.openAdmin) + '</a>'
-    + (st === 'granted' ? '<p class="hint ok">🔔 ' + esc(S.notifOn) + '</p>' : st === 'denied' ? '<p class="hint err">' + esc(S.notifDenied) + '</p>' : st === 'unsupported' ? '<p class="hint">' + esc(S.notifUnsupported) + '</p>' : '<button class="btn block" id="notifon">🔔 ' + esc(S.enableNotif) + '</button><p class="hint">' + esc(S.notifHint) + '</p>')
+    + (inStoreApp() ? '' : st === 'granted' ? '<p class="hint ok">🔔 ' + esc(S.notifOn) + '</p>' : st === 'denied' ? '<p class="hint err">' + esc(S.notifDenied) + '</p>' : st === 'unsupported' ? '<p class="hint">' + esc(S.notifUnsupported) + '</p>' : '<button class="btn block" id="notifon">🔔 ' + esc(S.enableNotif) + '</button><p class="hint">' + esc(S.notifHint) + '</p>')
     + '</div>';
 }
 function bindNotify(root) {
@@ -28618,7 +28648,7 @@ function meSect(id, icon, title, body, openByDefault, force) {
     app += '<div class="meacts"><div class="row3"><a class="btn" href="#/contact">💬 ' + esc(S.contactLink) + '</a><a class="btn" href="#/report">🐞 ' + esc(S.reportLink) + '</a><button class="btn" id="retour">🎓 ' + esc(S.tourLink) + '</button></div>'
       + (BE.user || BE.isAdmin() ? '<div class="row">' + (BE.user ? '<button class="btn" id="signout" style="flex:1">🚪 ' + esc(S.signOut) + '</button>' : '') + (BE.isAdmin() ? '<a class="btn gold" href="#/admin" style="flex:1">🛠 ' + esc(S.adminTitle) + '</a>' : '') + '</div>' : '') + '</div>';
     if (BE.enabled && BE.user) app += '<div class="card danger"><h3 style="margin-bottom:4px">' + esc(S.delAccount) + '</h3><p class="hint" style="margin-bottom:10px">' + esc(S.delHint) + '</p><button class="btn block" id="delacct">🗑 ' + esc(S.delAccount) + '</button><p class="hint" id="delstatus"></p></div>';
-    app += '<p class="hint verline" style="text-align:center;margin-top:16px"><span>' + esc(S.versionLine(window.APP_VERSION || '')) + '</span> <span>· <button type="button" class="linkbtn" id="chkupd">' + esc(S.checkUpdate) + '</button></span> <span>· <a href="#/privacy">' + esc(S.privacyLink) + '</a></span> <span>· <a href="#/terms">' + esc(S.termsLink) + '</a></span></p>';
+    app += '<p class="hint verline" style="text-align:center;margin-top:16px"><span>' + esc(S.versionLine(window.APP_VERSION || '')) + '</span> ' + (inStoreApp() ? '' : '<span>· <button type="button" class="linkbtn" id="chkupd">' + esc(S.checkUpdate) + '</button></span>') + ' <span>· <a href="#/privacy">' + esc(S.privacyLink) + '</a></span> <span>· <a href="#/terms">' + esc(S.termsLink) + '</a></span></p>';
     /* Group four: the app itself. Folded - nobody changes their theme twice a
        day, and deleting the account should take a deliberate reach. */
     h += meSect('app', '\u2699\uFE0F', S.meGroupApp, app, false);
@@ -28631,7 +28661,7 @@ function meSect(id, icon, title, body, openByDefault, force) {
     }));
     bindAuth(body); bindAI(body); bindNotify(body);
     if (inStoreApp()) bindMyPlans(body, draw);
-    $('#chkupd').addEventListener('click', async () => {
+    if ($('#chkupd')) $('#chkupd').addEventListener('click', async () => {
       toast(S.updating);
       try { if ('serviceWorker' in navigator) { const reg = await navigator.serviceWorker.getRegistration(); if (reg) await reg.update(); } } catch (e) { /* offline */ }
       setTimeout(() => location.reload(), 800);
@@ -28780,7 +28810,7 @@ function signinNext(params) {
    run before the page) sets window.__nabuAndroid and signs in to Google with
    the phone's own sheet, so nothing there needs the way out. */
 function inAppBrowser(ua) {
-  if (ua == null && window.__nabuAndroid) return '';
+  if (ua == null && (window.__nabuAndroid || inStoreApp())) return '';
   const s = String(ua == null ? ((window.navigator || {}).userAgent || '') : ua);
   if (/FBAN\/Messenger|MessengerForiOS|MessengerLite/.test(s)) return 'Messenger';
   if (/Instagram/.test(s)) return 'Instagram';
@@ -28971,7 +29001,7 @@ async function renderPrivacy() {
   if (!p) { m.innerHTML += '<p class="hint">' + esc(S.feedOffline) + '</p>'; return; }
   m.innerHTML = '<div class="eyebrow">' + esc(CONFIG.brand) + '</div><div class="guide privacy"><h1 style="margin-bottom:6px">' + esc(L(p.title)) + '</h1><p class="faint">' + esc(S.horoUpdated) + ' ' + esc(p.updated) + '</p><p class="lead">' + esc(L(p.intro)) + '</p>'
     + p.sections.map((s, i) => '<div class="gsec"><span class="n">' + (i + 1) + '</span><div><h2>' + esc(L(s.h)) + '</h2><p>' + esc(L(s.p)) + '</p></div></div>').join('')
-    + '<p class="hint" style="margin-top:14px"><a href="privacy.html" target="_blank" rel="noopener">privacy.html</a></p></div>';
+    + (inStoreApp() ? '' : '<p class="hint" style="margin-top:14px"><a href="privacy.html" target="_blank" rel="noopener">privacy.html</a></p>') + '</div>';
 }
 ROUTES.privacy = { nav: 'me', render: renderPrivacy };
 
@@ -28987,7 +29017,7 @@ async function renderTerms() {
   if (!p) { m.innerHTML += '<p class="hint">' + esc(S.feedOffline) + '</p>'; return; }
   m.innerHTML = '<div class="eyebrow">' + esc(CONFIG.brand) + '</div><div class="guide privacy"><h1 style="margin-bottom:6px">' + esc(L(p.title)) + '</h1><p class="faint">' + esc(S.horoUpdated) + ' ' + esc(p.updated) + '</p><p class="lead">' + esc(L(p.intro)) + '</p>'
     + p.sections.map((s, i) => '<div class="gsec"><span class="n">' + (i + 1) + '</span><div><h2>' + esc(L(s.h)) + '</h2><p>' + esc(L(s.p)) + '</p></div></div>').join('')
-    + '<p class="hint" style="margin-top:14px"><a href="terms.html" target="_blank" rel="noopener">terms.html</a> · <a href="#/privacy">' + esc(S.privacyLink) + '</a></p></div>';
+    + '<p class="hint" style="margin-top:14px">' + (inStoreApp() ? '' : '<a href="terms.html" target="_blank" rel="noopener">terms.html</a> · ') + '<a href="#/privacy">' + esc(S.privacyLink) + '</a></p></div>';
 }
 ROUTES.terms = { nav: 'me', render: renderTerms };
 
@@ -29008,6 +29038,8 @@ function platformOf() {
 }
 const isStandalone = () => window.matchMedia('(display-mode: standalone)').matches || navigator.standalone === true;
 function renderInstall() {
+  /* The store apps are already installed: an old link lands on the profile instead. */
+  if (inStoreApp()) { location.replace('#/me'); return; }
   const S = T(), m = $('#main'), pf = platformOf(), inApp = isStandalone() || inStoreApp();
   const play = CONFIG.playTestUrl ? '<div class="card"><h3>▶️ Google Play</h3><p class="muted" style="margin:6px 0 10px">' + esc(S.instPlayIntro) + '</p>'
     + '<a class="btn primary block" href="' + esc(CONFIG.playTestUrl) + '" target="_blank" rel="noopener">' + esc(S.instPlayBtn) + '</a>'
@@ -31685,6 +31717,10 @@ function wedSaveIcs(w) {
     'UID:' + w.id + '@nabutarot', 'DTSTAMP:' + z(new Date()), 'DTSTART:' + z(d), 'DTEND:' + z(end),
     'SUMMARY:' + title, 'DESCRIPTION:' + appURL() + '#/wedding/' + w.id,
     'URL:' + appURL() + '#/wedding/' + w.id, 'END:VEVENT', 'END:VCALENDAR'].join('\r\n');
+  /* The share sheet first (the only way in the apps), a download where there is none. */
+  shareFile(body, 'nabu-wedding.ics', 'text/calendar').then((r) => { if (r === false && !inStoreApp()) wedDownloadIcs(body); });
+}
+function wedDownloadIcs(body) {
   const blob = new Blob([body], { type: 'text/calendar' });
   const a = document.createElement('a');
   a.href = URL.createObjectURL(blob);
@@ -32930,7 +32966,7 @@ function adminSale(p) {
 ROUTES.admin = { nav: '', render: renderAdmin };
 
 /* ============================ boot ============================ */
-window.APP_VERSION = 'v284';
+window.APP_VERSION = 'v285';
 window.NABU = { CONFIG: CONFIG, SALE: SALE, salePrice: salePrice, loadActs: loadActs, BACK: BACK, LESSONS: LESSONS, localAnswer: localAnswer, compatVerdict: compatVerdict, numerologyOf: numerologyOf, ZDEEP: ZDEEP, lunarToday: lunarToday, solarToLunar: solarToLunar, DECK: DECK, INSIGHT: INSIGHT, KW: KW, ASK: ASK, GUIDES: GUIDES, SERVICES: SERVICES, COURSES: COURSES, ACCESS: ACCESS, INTERESTS: INTERESTS, plusOn: () => plusOn(), proOn: () => proOn(), luckUnlimited: () => luckUnlimited(), ZODIAC: ZODIAC, pick: pick, book: book, PLAY_ITEMS: PLAY_ITEMS, PLAY_SUB_SKUS: PLAY_SUB_SKUS, playItem: playItem, BILL: BILL, SUBS: SUBS, billUse: billUse, APPLE_BILL: APPLE_BILL, appleAccountToken: appleAccountToken, renderStore: renderStore, pickLimitHTML: pickLimitHTML, subStateWord: subStateWord,
   insightHTML: insightHTML, insightOf: insightOf, sunSignIndex: sunSignIndex, lifePath: lifePath, PROFILE: () => PROFILE, BE: BE, inAppBrowser: inAppBrowser, ACTS: ACTS, CMT: CMT, LIKES: LIKES, kbReady: kbReady, AI: AI, STR: STR, KB_URL: (typeof KB_URL === 'string' ? KB_URL : ''),
   ANGELS: ANGELS, angelRead: angelRead, CODEBOOK: CODEBOOK, redeemCode: redeemCode, loadCodebook: loadCodebook, petHomeSVG: petHomeSVG, petStill: petStill, PET_HOMES: PET_HOMES, PET_WARDROBE: PET_WARDROBE, PET_SLOTS: PET_SLOTS,
