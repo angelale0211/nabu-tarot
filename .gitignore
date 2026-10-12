@@ -24,8 +24,10 @@ _patch/
 worker/.wrangler/
 
 # iPhone app (Flutter): build output and the Firebase file written at build time
-ios-app/build/
-ios-app/.dart_tool/
-ios-app/ios/Pods/
-ios-app/ios/Runner/GoogleService-Info.plist
-ios-app/firebase_defines.json
+app/build/
+app/.dart_tool/
+app/ios/Pods/
+app/ios/Runner/GoogleService-Info.plist
+app/firebase_defines.json
+app/android/build/
+app/android/.kotlin/

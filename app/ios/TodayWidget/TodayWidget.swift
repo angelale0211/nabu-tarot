@@ -4,7 +4,7 @@ import WidgetKit
 /// "Today" on the home screen: the date, the Vietnamese lunar date with the
 /// year's animal, the moon phase, and a tap that opens Draw in the app
 /// (nabutarot://pick). The lunar dates come from lunar.json, made from the
-/// site's own src/lunar.js (ios-app/tool/make_lunar_table.js), so the widget
+/// site's own src/lunar.js (app/tool/make_lunar_table.js), so the widget
 /// and the app always agree.
 
 private enum Lang: String { case vi, en, de }

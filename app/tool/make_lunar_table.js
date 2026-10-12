@@ -1,6 +1,6 @@
 // Writes ios/TodayWidget/lunar.json for the home-screen widget, from the
 // site's own calendar code, so the widget can never disagree with the app.
-//   node tool/make_lunar_table.js   (from ios-app/; rerun before 2032)
+//   node tool/make_lunar_table.js   (from app/; rerun before 2032)
 // Each day: [lunar day, lunar month, leap 0/1, year can chi, animal 0-11 (Rat first), moon phase 0-7].
 const fs = require('fs');
 const path = require('path');
