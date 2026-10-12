@@ -31,3 +31,4 @@ app/ios/Runner/GoogleService-Info.plist
 app/firebase_defines.json
 app/android/build/
 app/android/.kotlin/
+app/android_defines.json
