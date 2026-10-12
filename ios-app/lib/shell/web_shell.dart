@@ -95,8 +95,10 @@ class WebShellState extends State<WebShell> {
           },
           shouldOverrideUrlLoading: (c, action) async {
             final u = action.request.url;
-            if (u == null || !isExternal(u)) return NavigationActionPolicy.ALLOW;
-            await launchUrl(u, mode: LaunchMode.externalApplication);
+            if (u == null || !opensOutside(u, mainFrame: action.isForMainFrame)) return NavigationActionPolicy.ALLOW;
+            try {
+              await launchUrl(u, mode: LaunchMode.externalApplication);
+            } catch (_) {/* no app for that address: stay on the site */}
             return NavigationActionPolicy.CANCEL;
           },
           onLoadStart: (c, url) {

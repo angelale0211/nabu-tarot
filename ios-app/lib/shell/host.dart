@@ -5,6 +5,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 
 import '../bridge/bridge.dart';
+import 'links.dart';
 import 'web_shell.dart';
 
 /// The site with the bridge in it: assets/bridge.js injected before the
@@ -25,9 +26,15 @@ class _NabuHostState extends State<NabuHost> {
   StreamSubscription<(String, String, Object?)>? _events;
 
   void _created(InAppWebViewController c) {
-    c.addJavaScriptHandler(handlerName: 'nabu', callback: (a) => widget.bridge.handle(a.isEmpty ? null : a.first));
+    // Only nabutarot.com may use sign-in and purchases, whatever else loads.
+    c.addJavaScriptHandler(handlerName: 'nabu', callback: (a) async {
+      if (!isSiteOrigin(await c.getUrl())) return {'ok': false, 'message': 'not available on this page'};
+      return widget.bridge.handle(a.isEmpty ? null : a.first);
+    });
     _events?.cancel();
-    _events = widget.bridge.events.listen((e) => c.evaluateJavascript(source: emitScript(e.$1, e.$2, e.$3)));
+    _events = widget.bridge.events.listen((e) async {
+      if (isSiteOrigin(await c.getUrl())) await c.evaluateJavascript(source: emitScript(e.$1, e.$2, e.$3));
+    });
   }
 
   @override

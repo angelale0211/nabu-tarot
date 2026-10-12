@@ -96,7 +96,10 @@ export async function registerPush(env: PlayEnv, uid: string, token: string, lan
   const first = Object.keys(tokens).length === 0;
   tokens[token] = { lang: ["vi", "en", "de"].indexOf(lang) > -1 ? lang : "vi", platform: "ios", at: Date.now() };
   if (first) await baseline(env, uid);
-  const r = await fsPatch(env, "pushtokens/" + uid, { tokens }, ["tokens"]);
+  /* Turning notifications on is not a reason to send today's card at once. */
+  const r = first
+    ? await fsPatch(env, "pushtokens/" + uid, { tokens, daily: vnDay(new Date()) }, ["tokens", "daily"])
+    : await fsPatch(env, "pushtokens/" + uid, { tokens }, ["tokens"]);
   if (!r.ok) throw new Error("firestore patch " + r.status);
   return { ok: true, first };
 }
@@ -134,7 +137,9 @@ export async function sendPush(env: PlayEnv, uid: string, text: (lang: string) =
     if (r.ok) { out.sent++; continue; }
     const j = (await r.json().catch(() => ({}))) as { error?: { status?: string; details?: { errorCode?: string }[] } };
     const code = ((j.error && j.error.details) || []).map((d) => d.errorCode).join(",");
-    if (r.status === 404 || /UNREGISTERED|INVALID_ARGUMENT/.test(code) || (j.error && j.error.status === "NOT_FOUND")) dead.push(token);
+    /* Only a phone FCM no longer knows. INVALID_ARGUMENT is also what a
+       malformed message gets, and must not wipe every token. */
+    if (r.status === 404 || /UNREGISTERED/.test(code) || (j.error && j.error.status === "NOT_FOUND")) dead.push(token);
   }
   if (dead.length) {
     for (const t of dead) delete tokens[t];
@@ -144,26 +149,42 @@ export async function sendPush(env: PlayEnv, uid: string, text: (lang: string) =
   return out;
 }
 
-async function accounts(env: PlayEnv): Promise<string[]> {
+/* Workers on the Free plan may make 50 outside requests per run, and one
+   account costs a handful (thread, bookings, a send, a write). So each run
+   takes the next few accounts after a cursor kept in pushstate/sweep, and
+   starts again from the top once it has been round. */
+export const PUSH_PER_RUN = 6;
+
+async function nextAccounts(env: PlayEnv): Promise<{ uid: string; f: Record<string, unknown> }[]> {
+  const st = await fsGet(env, "pushstate/sweep");
+  const after = String((st && st.after) || "");
   const at = await serviceToken(env, FS_SCOPE);
-  const r = await fetch(docUrl(env, "pushtokens") + "?pageSize=300", { headers: { Authorization: "Bearer " + at } });
-  if (!r.ok) throw new Error("firestore list " + r.status);
-  const j = (await r.json()) as { documents?: { name?: string; fields?: Record<string, Record<string, unknown>> }[] };
-  return (j.documents || [])
-    .filter((d) => Object.keys(tokensOf(decode(d))).length)
-    .map((d) => String(d.name || "").split("/").pop() || "")
-    .filter(Boolean);
+  const base = "https://firestore.googleapis.com/v1/projects/" + encodeURIComponent(env.FIREBASE_PROJECT_ID || "") + "/databases/(default)/documents";
+  const q: Record<string, unknown> = { from: [{ collectionId: "pushtokens" }], orderBy: [{ field: { fieldPath: "__name__" } }], limit: PUSH_PER_RUN };
+  if (after) q.where = { fieldFilter: { field: { fieldPath: "__name__" }, op: "GREATER_THAN", value: { referenceValue: base.replace("https://firestore.googleapis.com/v1/", "") + "/pushtokens/" + after } } };
+  const r = await fetch(base + ":runQuery", {
+    method: "POST", headers: { Authorization: "Bearer " + at, "Content-Type": "application/json" },
+    body: JSON.stringify({ structuredQuery: q }),
+  });
+  if (!r.ok) throw new Error("firestore query " + r.status);
+  const rows = (await r.json()) as { document?: { name?: string; fields?: Record<string, Record<string, unknown>> } }[];
+  const got = rows.filter((x) => x.document && x.document.name)
+    .map((x) => ({ uid: String(x.document!.name).split("/").pop() || "", f: decode(x.document!) }));
+  const last = got.length === PUSH_PER_RUN ? got[got.length - 1].uid : "";
+  await fsPatch(env, "pushstate/sweep", { after: last }, ["after"]);
+  return got.filter((a) => a.uid && Object.keys(tokensOf(a.f)).length);
 }
 
 const PUSHABLE: Record<string, Kind> = { confirmed: "confirmed", change_proposed: "moved" };
 
-/* Daily card: the sweep that runs in the first quarter hour after 00:00 UTC,
-   which is 07:00 in Vietnam. */
-const dailyWindow = (now: Date) => now.getUTCHours() === 0 && now.getUTCMinutes() < 15;
+/* Daily card: once per Vietnam day, from 07:00 Vietnam time (UTC+7), noted
+   on the token document as that day's date so a later run never repeats it. */
+const vnDay = (now: Date) => new Date(now.getTime() + 7 * 3600000).toISOString().slice(0, 10);
+const dailyDue = (now: Date, last: unknown) => new Date(now.getTime() + 7 * 3600000).getUTCHours() >= 7 && last !== vnDay(now);
 
 export async function sweepPush(env: PlayEnv, now: Date): Promise<{ people: number; sent: number }> {
   const out = { people: 0, sent: 0 };
-  for (const uid of await accounts(env)) {
+  for (const { uid, f } of await nextAccounts(env)) {
     out.people++;
     try {
       const th = await rawGet(env, "threads/" + uid);
@@ -185,7 +206,10 @@ export async function sweepPush(env: PlayEnv, now: Date): Promise<{ people: numb
         if (kind) out.sent += (await sendPush(env, uid, (lang) => ({ ...pushText(kind, lang), route: "me/bookings" }))).sent;
         await fsPatch(env, "bookings/" + b.id, { pushed: status }, ["pushed"], { exists: true });
       }
-      if (dailyWindow(now)) out.sent += (await sendPush(env, uid, (lang) => ({ ...pushText("daily", lang), route: "pick" }))).sent;
+      if (dailyDue(now, f.daily)) {
+        out.sent += (await sendPush(env, uid, (lang) => ({ ...pushText("daily", lang), route: "pick" }))).sent;
+        await fsPatch(env, "pushtokens/" + uid, { daily: vnDay(now) }, ["daily"], { exists: true });
+      }
     } catch (e) {
       console.error(JSON.stringify({ at: "push-sweep", uid, error: String((e as Error).message || e) }));
     }

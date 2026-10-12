@@ -3,7 +3,7 @@
    writes Firestore directly and never calls the worker). */
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { registerPush, unregisterPush, sendPush, sweepPush, pushText } from "../src/push";
+import { registerPush, unregisterPush, sendPush, sweepPush, pushText, PUSH_PER_RUN } from "../src/push";
 import { makeKeys, env, mockFetch, json, Keys } from "./util";
 
 /* A small Firestore: documents by path, with GET, PATCH (mask + preconditions),
@@ -42,11 +42,14 @@ function firestore(k: Keys, docs: Record<string, Doc>, fcm: (body: { message: { 
     ":runQuery": (_u, init) => {
       const q = JSON.parse(String(init.body)).structuredQuery;
       const coll = q.from[0].collectionId as string;
-      const f = q.where.fieldFilter;
-      const want = f.value.stringValue;
-      const rows = Object.keys(docs)
-        .filter((p) => p.startsWith(coll + "/") && p.split("/").length === 2 && docs[p][f.field.fieldPath] === want)
-        .map((p) => ({ document: { name: name(p), fields: encDoc(docs[p]) } }));
+      const f = q.where && q.where.fieldFilter;
+      let paths = Object.keys(docs).filter((p) => p.startsWith(coll + "/") && p.split("/").length === 2).sort();
+      if (f && f.field.fieldPath === "__name__") {
+        const after = String(f.value.referenceValue).split(ROOT)[1];
+        paths = paths.filter((p) => p > after);
+      } else if (f) paths = paths.filter((p) => docs[p][f.field.fieldPath] === f.value.stringValue);
+      if (q.limit) paths = paths.slice(0, q.limit);
+      const rows = paths.map((p) => ({ document: { name: name(p), fields: encDoc(docs[p]) } }));
       return json(rows.length ? rows : [{ readTime: "x" }]);
     },
     "firestore.googleapis.com": (u, init) => {
@@ -153,7 +156,7 @@ test("an FCM outage keeps the token", async () => {
 test("the sweep tells the person Nabu answered, once", async () => {
   const k = await makeKeys();
   const docs: Record<string, Doc> = {
-    "pushtokens/u1": { tokens: { tok: { lang: "en" } } },
+    "pushtokens/u1": { tokens: { tok: { lang: "en" } }, daily: "2026-10-12" },
     "threads/u1": { lastFrom: "nabu", userUnread: 1, lastAt: ts("2026-10-12T09:00:00Z"), lastText: "Your reading is ready", pushedAt: "2026-10-11T09:00:00Z" },
   };
   const fs = firestore(k, docs);
@@ -171,8 +174,8 @@ test("the sweep tells the person Nabu answered, once", async () => {
 test("the sweep says nothing about a message the person wrote, or one already read", async () => {
   const k = await makeKeys();
   const docs: Record<string, Doc> = {
-    "pushtokens/u1": { tokens: { tok: { lang: "vi" } } },
-    "pushtokens/u2": { tokens: { tok2: { lang: "vi" } } },
+    "pushtokens/u1": { tokens: { tok: { lang: "vi" } }, daily: "2026-10-12" },
+    "pushtokens/u2": { tokens: { tok2: { lang: "vi" } }, daily: "2026-10-12" },
     "threads/u1": { lastFrom: "user", userUnread: 0, lastAt: ts("2026-10-12T09:00:00Z") },
     "threads/u2": { lastFrom: "nabu", userUnread: 0, lastAt: ts("2026-10-12T09:00:00Z") },
   };
@@ -186,7 +189,7 @@ test("the sweep says nothing about a message the person wrote, or one already re
 test("a booking Nabu confirms or moves is told once; other changes are noted silently", async () => {
   const k = await makeKeys();
   const docs: Record<string, Doc> = {
-    "pushtokens/u1": { tokens: { tok: { lang: "vi" } } },
+    "pushtokens/u1": { tokens: { tok: { lang: "vi" } }, daily: "2026-10-12" },
     "bookings/b1": { uid: "u1", status: "confirmed", pushed: "requested" },
     "bookings/b2": { uid: "u1", status: "change_proposed", pushed: "confirmed" },
     "bookings/b3": { uid: "u1", status: "cancel_requested", pushed: "confirmed" },
@@ -204,18 +207,52 @@ test("a booking Nabu confirms or moves is told once; other changes are noted sil
   } finally { fs.restore(); }
 });
 
-test("the daily card goes out in the 07:00 Vietnam window only", async () => {
+test("the daily card goes out once per account per Vietnam day, from 07:00", async () => {
   const k = await makeKeys();
-  const docs: Record<string, Doc> = { "pushtokens/u1": { tokens: { tok: { lang: "de" } } } };
+  const docs: Record<string, Doc> = { "pushtokens/u1": { tokens: { tok: { lang: "de" } }, daily: "2026-10-12" } };
   const fs = firestore(k, docs);
   try {
-    await sweepPush(env(k), new Date("2026-10-12T05:00:00Z"));
+    await sweepPush(env(k), new Date("2026-10-12T23:30:00Z"));   // 06:30 on the 13th in Vietnam
     assert.equal(fs.sent.length, 0);
-    await sweepPush(env(k), new Date("2026-10-13T00:05:00Z"));   // 07:05 in Vietnam
+    await sweepPush(env(k), new Date("2026-10-13T00:05:00Z"));   // 07:05
     assert.equal(fs.sent.length, 1);
     const msg = fs.sent[0].body as { data: { route: string }; notification: { body: string } };
     assert.equal(msg.data.route, "pick");
     assert.equal(msg.notification.body, pushText("daily", "de").body);
+    assert.equal(docs["pushtokens/u1"].daily, "2026-10-13");
+    await sweepPush(env(k), new Date("2026-10-13T09:00:00Z"));
+    assert.equal(fs.sent.length, 1);
+  } finally { fs.restore(); }
+});
+
+test("a sweep takes a few accounts at a time and the next run goes on from there", async () => {
+  const k = await makeKeys();
+  const docs: Record<string, Doc> = {};
+  const n = PUSH_PER_RUN * 2 + 1;
+  for (let i = 0; i < n; i++) docs["pushtokens/u" + String(i).padStart(2, "0")] = { tokens: { ["t" + i]: { lang: "vi" } }, daily: "2026-10-12" };
+  const fs = firestore(k, docs);
+  try {
+    const seen = new Set<number>();
+    for (let run = 0; run < 3; run++) {
+      const r = await sweepPush(env(k), new Date("2026-10-12T10:00:00Z"));
+      assert.ok(r.people <= PUSH_PER_RUN);
+      seen.add(r.people);
+    }
+    // three runs covered every account exactly once, then the cursor starts over
+    const firestoreReads = fs.log.filter((l) => l.url.includes("threads/")).map((l) => l.url.split("threads/")[1]);
+    assert.equal(new Set(firestoreReads).size, n);
+    assert.equal(docs["pushstate/sweep"].after, "");
+  } finally { fs.restore(); }
+});
+
+test("a token FCM calls INVALID_ARGUMENT is kept: that is a message fault, not a dead phone", async () => {
+  const k = await makeKeys();
+  const docs: Record<string, Doc> = { "pushtokens/u1": { tokens: { good: { lang: "vi" } } } };
+  const fs = firestore(k, docs, () => json({ error: { status: "INVALID_ARGUMENT", details: [{ errorCode: "INVALID_ARGUMENT" }] } }, 400));
+  try {
+    const r = await sendPush(env(k), "u1", () => ({ title: "T", body: "B", route: "" }));
+    assert.deepEqual(r, { sent: 0, dropped: 0 });
+    assert.ok((docs["pushtokens/u1"].tokens as Doc).good);
   } finally { fs.restore(); }
 });
 
@@ -274,7 +311,20 @@ test("the 15-minute schedule runs the push sweep and not the six-hourly refund s
     const c = ctx();
     await worker.scheduled({ cron: "*/15 * * * *", scheduledTime: Date.now() } as never, env(k) as never, c as never);
     await c.done();
-    assert.ok(fs.log.some((l) => l.url.includes("/documents/pushtokens")), "push sweep listed the tokens");
+    assert.ok(fs.log.some((l) => l.url.includes(":runQuery") && l.body.includes("pushtokens")), "push sweep listed the tokens");
     assert.ok(!fs.log.some((l) => l.url.includes("androidpublisher") || l.url.includes("api.storekit")), "no refund sweep");
+  } finally { fs.restore(); }
+});
+
+test("/forget also removes the account's notification tokens", async () => {
+  const k = await routeKeys;
+  const docs: Record<string, Doc> = { "pushtokens/u7": { tokens: { "tok-7": { lang: "vi" } } } };
+  const fs = firestore(k, docs);
+  try {
+    const r = await worker.fetch(new Request("https://nabu-ai.test/forget", {
+      method: "POST", headers: { "Content-Type": "application/json", Authorization: "Bearer " + await idToken(k, "u7") }, body: "{}",
+    }), env(k) as never, ctx() as never);
+    assert.equal(r.status, 200);
+    assert.equal(docs["pushtokens/u7"], undefined);
   } finally { fs.restore(); }
 });

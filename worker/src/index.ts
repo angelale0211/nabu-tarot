@@ -7,7 +7,7 @@
 import { whoIsAsking } from "./auth";
 import { allow, cachedAnswer, keepAnswer } from "./limit";
 import { wikiLook } from "./web";
-import { fsDeleteWhere } from "./fs";
+import { fsDeleteWhere, fsDelete } from "./fs";
 import { checkPurchase, acknowledge, grantUntil, checkSubscription, acknowledgeSub } from "./play";
 import type { PlayEnv } from "./play";
 import { fsGet } from "./fs";
@@ -397,6 +397,9 @@ export default {
         try { gone[c] = await fsDeleteWhere(env as unknown as PlayEnv, c, "uid", person.uid); }
         catch (e) { console.error(JSON.stringify({ at: "forget", uid: person.uid, collection: c, error: String((e as Error).message || e) })); gone[c] = -1; }
       }
+      /* The iPhone's notification tokens, filed under the uid (push.ts). */
+      try { await fsDelete(env as unknown as PlayEnv, "pushtokens/" + person.uid); gone.pushtokens = 1; }
+      catch (e) { console.error(JSON.stringify({ at: "forget", uid: person.uid, collection: "pushtokens", error: String((e as Error).message || e) })); gone.pushtokens = -1; }
       console.log(JSON.stringify({ at: "forget", uid: person.uid, gone }));
       return new Response(JSON.stringify({ ok: true, gone }), { headers });
     }
