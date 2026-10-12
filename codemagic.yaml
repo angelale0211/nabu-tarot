@@ -41,6 +41,7 @@ workflows:
           if [ -n "$GOOGLE_SERVICE_INFO_PLIST" ]; then
             echo "$GOOGLE_SERVICE_INFO_PLIST" | base64 --decode > ios/Runner/GoogleService-Info.plist
           fi
+          sh ios/scripts/firebase_ids.sh
       - name: Packages
         script: flutter pub get
       - name: Tests

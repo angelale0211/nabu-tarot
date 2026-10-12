@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 import 'bridge/bridge.dart';
+import 'bridge/firebase_authentication_plugin.dart';
 import 'bridge/plugin.dart';
 import 'shell/host.dart';
 import 'shell/web_shell.dart';
@@ -10,7 +11,8 @@ void main() {
   WidgetsFlutterBinding.ensureInitialized();
   SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
   SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.dark);
-  runApp(NabuApp(plugins: const []));
+  final auth = FirebaseAuthenticationPlugin(apple: SystemAppleSignIn(), google: SystemGoogleSignIn());
+  runApp(NabuApp(plugins: [auth]));
 }
 
 class NabuApp extends StatefulWidget {
