@@ -51,7 +51,7 @@ class FirebaseAuthenticationPlugin implements NativePlugin {
   Stream<(String, Object?)> get events => const Stream.empty();
 
   /// Said the way backend.js recognises a closed sheet (/cancel|error 1001/).
-  static const _cancelled = PluginError('The user canceled the sign-in flow (error 1001)');
+  static const _cancelled = PluginError('The user canceled the sign-in flow (error 1001)', code: 'cancelled');
 
   @override
   Future<Object?> call(String method, Map<String, Object?> args) async {
@@ -70,6 +70,11 @@ class FirebaseAuthenticationPlugin implements NativePlugin {
           return {
             'credential': {'idToken': idToken, 'accessToken': null},
           };
+        // The page says who is signed in (assets/app_common.js), however they signed
+        // in - email too - so notifications follow the account, and sign-out clears them.
+        case '__state':
+          _signedIn.add(args['signedIn'] == true);
+          return null;
         case 'signOut':
           try {
             await google.signOut();
@@ -112,6 +117,12 @@ class SystemAppleSignIn implements AppleSignIn {
 /// Android, Google hands out an ID token Firebase accepts only for it.
 String? serverClientIdFrom(String v) => v.isEmpty ? null : v;
 
+/// Whether Google's "canceled" was a person closing the sheet. Android also
+/// answers "canceled", at once, when the app is not set up with Google (a
+/// signing key Firebase does not know) or the phone has no Google account;
+/// nobody closes a sheet within a second of tapping, so that is said as an error.
+bool isPersonCancel(bool canceled, Duration took) => canceled && took >= const Duration(milliseconds: 1200);
+
 /// Google's sheet through google_sign_in 7. The client id comes from
 /// GoogleService-Info.plist (CLIENT_ID), written into Info.plist at build time.
 class SystemGoogleSignIn implements GoogleSignInLike {
@@ -125,15 +136,16 @@ class SystemGoogleSignIn implements GoogleSignInLike {
 
   @override
   Future<String> signIn() async {
-    await _init();
+    final began = DateTime.now();
     try {
+      await _init();
       final a = await GoogleSignIn.instance.authenticate();
       final t = a.authentication.idToken;
       if (t == null) throw const PluginError('Google gave no ID token');
       return t;
     } on GoogleSignInException catch (e) {
-      if (e.code == GoogleSignInExceptionCode.canceled) throw const SignInCancelled();
-      rethrow;
+      if (isPersonCancel(e.code == GoogleSignInExceptionCode.canceled, DateTime.now().difference(began))) throw const SignInCancelled();
+      throw PluginError('Google sign-in did not work (${e.code.name}${e.description == null ? '' : ': ${e.description}'})', code: 'google');
     }
   }
 

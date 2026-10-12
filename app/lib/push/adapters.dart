@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:io';
 
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/widgets.dart';
@@ -22,7 +23,7 @@ class FcmMessaging implements Messaging {
   /// moment after permission is granted.
   @override
   Future<String?> token() async {
-    for (var i = 0; i < 10 && await _fm.getAPNSToken() == null; i++) {
+    for (var i = 0; i < 10 && Platform.isIOS && await _fm.getAPNSToken() == null; i++) {
       await Future<void>.delayed(const Duration(milliseconds: 500));
     }
     try {
@@ -100,9 +101,9 @@ class ShellSitePage implements SitePage {
       const r = await fetch(CONFIG.aiEndpoint.replace(/\\/\$/, '') + '/push-register', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + idTok },
-        body: JSON.stringify({ token: token, lang: typeof lang !== 'undefined' ? lang : 'vi', platform: 'ios' })
+        body: JSON.stringify({ token: token, lang: typeof lang !== 'undefined' ? lang : 'vi', platform: platform })
       });
-      return r.ok;''', {'token': token});
+      return r.ok;''', {'token': token, 'platform': Platform.isAndroid ? 'android' : 'ios'});
     return v == true;
   }
 }

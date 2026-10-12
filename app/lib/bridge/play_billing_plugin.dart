@@ -88,7 +88,9 @@ class GooglePlayStore implements PlayStore {
           final cancelled = e != null && (e.code == 'BillingResponse.userCanceled' || e.message.contains('userCanceled'));
           c.completeError(PluginError(e?.message ?? 'Play refused the purchase', code: cancelled ? 'cancelled' : 'error'));
         case PurchaseStatus.pending:
-          break; // Play answers again when the payment settles.
+          // Not refused, not done: the sheet is free again for another purchase, and the site
+          // (assets/android_bridge.js) says the purchase is waiting; a restore picks it up later.
+          c.complete({'itemId': p.productID, 'pending': true});
       }
     }
   }

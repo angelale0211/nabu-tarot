@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+import '../bridge/app_plugin.dart';
 import 'links.dart';
 import 'offline_page.dart';
 
@@ -55,12 +56,6 @@ class WebShell extends StatefulWidget {
 
 class WebShellState extends State<WebShell> {
   InAppWebViewController? controller;
-  late final PullToRefreshController? _pull = Platform.isAndroid
-      ? PullToRefreshController(
-          settings: PullToRefreshSettings(color: const Color(0xFF3D2A6E)),
-          onRefresh: () async => controller?.reload(),
-        )
-      : null;
   bool offline = false;
   bool loaded = false;
 
@@ -85,13 +80,17 @@ class WebShellState extends State<WebShell> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: kGround,
+    // No pull-to-refresh: an app does not reload itself under a finger (the
+    // site has its own refresh where one makes sense). No zoom, no link
+    // previews or long-press menus, no keyboard accessory bar: an app's look.
+    return ValueListenableBuilder<Color>(
+      valueListenable: ground,
+      builder: (context, bg, _) => Scaffold(
+      backgroundColor: bg,
       body: Stack(children: [
         InAppWebView(
           initialUrlRequest: URLRequest(url: WebUri(siteUrl(widget.initialRoute ?? ''))),
           initialUserScripts: UnmodifiableListView(widget.scripts),
-          pullToRefreshController: _pull,
           initialSettings: InAppWebViewSettings(
             userAgent: userAgentFor(android: Platform.isAndroid),
             useShouldOverrideUrlLoading: true,
@@ -99,8 +98,16 @@ class WebShellState extends State<WebShell> {
             mediaPlaybackRequiresUserGesture: false,
             allowsInlineMediaPlayback: true,
             supportMultipleWindows: false,
+            javaScriptCanOpenWindowsAutomatically: true,
             transparentBackground: true,
             disallowOverScroll: false,
+            supportZoom: false,
+            builtInZoomControls: false,
+            displayZoomControls: false,
+            horizontalScrollBarEnabled: false,
+            allowsLinkPreview: false,
+            disableLongPressContextMenuOnLinks: true,
+            disableInputAccessoryView: true,
           ),
           onWebViewCreated: (c) {
             controller = c;
@@ -119,11 +126,14 @@ class WebShellState extends State<WebShell> {
             widget.onStarted?.call(c);
           },
           onLoadStop: (c, url) {
-            _pull?.endRefreshing();
             if (offline) return;
             loaded = true;
             widget.onLoaded?.call(c);
           },
+          // The phone may end the page's process while the app sits in the
+          // background; it comes back by itself instead of a blank screen.
+          onRenderProcessGone: (c, detail) => c.reload(),
+          onWebContentProcessDidTerminate: (c) => c.reload(),
           onReceivedError: (c, request, error) {
             if (request.isForMainFrame != true) return;
             if (error.type == WebResourceErrorType.CANCELLED) return;
@@ -132,6 +142,7 @@ class WebShellState extends State<WebShell> {
         ),
         if (offline) OfflinePage(onRetry: _retry),
       ]),
+    ),
     );
   }
 }

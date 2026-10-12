@@ -57,6 +57,12 @@ new Function('window', 'localStorage', 'document', 'setInterval', 'clearInterval
   answers.buy = { ok: false, message: 'BillingResponse.error', code: 'error' };
   await assert.rejects(new window.PaymentRequest([{ supportedMethods: 'https://play.google.com/billing', data: { sku: 'tarot' } }], {}).show(),
     (e) => e.name === 'OperationError');
+  // A pending payment keeps the sheet's promise open, so the site's watchdog says "waiting".
+  answers.buy = { ok: true, value: { itemId: 'tarot', pending: true } };
+  let settled = false;
+  new window.PaymentRequest([{ supportedMethods: 'https://play.google.com/billing', data: { sku: 'tarot' } }], {}).show().then(() => { settled = true; }, () => { settled = true; });
+  await new Promise((r) => setTimeout(r, 60));
+  assert.strictEqual(settled, false);
   // abort() is refused while Play's sheet is up: the site then says "still waiting".
   await assert.rejects(new window.PaymentRequest([{ supportedMethods: 'https://play.google.com/billing', data: { sku: 'x' } }], {}).abort());
 
@@ -76,8 +82,13 @@ new Function('window', 'localStorage', 'document', 'setInterval', 'clearInterval
   assert.deepStrictEqual(calls.at(-1)[1], { plugin: 'FirebaseAuthentication', method: 'signInWithGoogle', args: {} });
   assert.strictEqual(out.user.uid, 'u1');
   // A closed Google sheet reads as a closed popup, the code the site already handles.
-  answers.signInWithGoogle = { ok: false, message: 'The user canceled the sign-in flow (error 1001)' };
+  answers.signInWithGoogle = { ok: false, message: 'The user canceled the sign-in flow (error 1001)', code: 'cancelled' };
   await assert.rejects(new Auth().signInWithPopup(new GoogleAuthProvider()), (e) => e.code === 'auth/popup-closed-by-user');
+  // Anything else reaches the page with Google's reason, so a tap never seems to do nothing.
+  answers.signInWithGoogle = { ok: false, message: 'Google sign-in did not work (canceled: [16] Account reauth failed.)', code: 'google' };
+  await assert.rejects(new Auth().signInWithPopup(new GoogleAuthProvider()), (e) => e.code === 'auth/internal-error' && /reauth/.test(e.message));
+  // The site re-applies the hook itself right before it signs in.
+  assert.strictEqual(typeof window.__nabuPatchAuth, 'function');
   // Other providers keep the web flow.
   assert.strictEqual(await new Auth().signInWithPopup({ providerId: 'facebook.com' }), 'web popup');
 

@@ -54,6 +54,10 @@
     if (d.oldSku) args.oldSku = d.oldSku;
     if (d.purchaseToken) args.oldToken = d.purchaseToken;
     return call('PlayBilling', 'buy', args).then(function (v) {
+      /* A payment Play holds as pending (cash, a slow bank) is not refused and not done: the sheet's
+         promise stays open, the site's own watchdog then says the purchase is waiting, and the next
+         restore picks it up once Play settles it. */
+      if (v && v.pending) return new Promise(function () {});
       return {
         methodName: PLAY,
         details: { purchaseToken: v && v.purchaseToken, itemId: v && v.itemId },
@@ -75,9 +79,10 @@
       var c = (r && r.credential) || {};
       return auth.signInWithCredential(window.firebase.auth.GoogleAuthProvider.credential(c.idToken, c.accessToken));
     }, function (e) {
-      /* Said the way a closed popup is, which backend.js already handles. */
-      if (/cancel|error 1001/i.test(String((e && e.message) || ''))) { var x = new Error('cancelled'); x.code = 'auth/popup-closed-by-user'; throw x; }
-      throw e;
+      /* Only a person closing the sheet is said the way a closed popup is (backend.js stays quiet then);
+         anything else reaches the page with Google's own reason, so a tap never seems to do nothing. */
+      if (e && e.code === 'cancelled') { var x = new Error('cancelled'); x.code = 'auth/popup-closed-by-user'; throw x; }
+      var y = new Error((e && e.message) || 'Google sign-in failed'); y.code = 'auth/internal-error'; throw y;
     });
   }
   function patch() {
@@ -89,8 +94,58 @@
     A.prototype.__nabu = true;
     return true;
   }
-  /* Firebase arrives with the site's script; look for it until it is there. */
+  /* Firebase arrives with the site's script, later on a slow network; look for it until it is there,
+     and the site asks once more right before it signs anybody in (src/backend.js signIn). */
+  window.__nabuPatchAuth = patch;
   if (!patch()) {
-    var tries = 0, t = setInterval(function () { if (patch() || ++tries > 120) clearInterval(t); }, 250);
+    var t = setInterval(function () { if (patch()) clearInterval(t); }, 300);
   }
+
+  /* ---- the phone's share sheet (this web view has no navigator.share) ---- */
+  function b64(blob) {
+    return new Promise(function (res, rej) {
+      var r = new FileReader();
+      r.onload = function () { res(String(r.result).split(',')[1] || ''); };
+      r.onerror = function () { rej(r.error); };
+      r.readAsDataURL(blob);
+    });
+  }
+  function shareFiles(d) {
+    var fs = [].slice.call((d && d.files) || []);
+    return Promise.all(fs.map(function (f) {
+      return b64(f).then(function (x) { return { name: f.name || 'nabu', type: f.type || 'application/octet-stream', data: x }; });
+    })).then(function (files) {
+      return call('Share', 'share', { title: (d && d.title) || '', text: (d && d.text) || '', url: (d && d.url) || '', files: files });
+    }).then(function () {}, function (e) {
+      throw named(e && e.code === 'cancelled' ? 'AbortError' : 'NotAllowedError', e && e.message);
+    });
+  }
+  var nav = window.navigator;
+  if (nav) {
+    nav.canShare = function (d) { return !!d && !!(d.text || d.url || d.title || (d.files && d.files.length)); };
+    nav.share = function (d) { return shareFiles(d || {}); };
+  }
+
+  /* A download (a calendar file, a picture) has nowhere to go in a web view: it goes to the share
+     sheet instead, where Calendar, Photos and Files are. */
+  function viaShare(a) {
+    var href = a.href, name = a.getAttribute('download') || 'nabu';
+    fetch(href).then(function (r) { return r.blob(); }).then(function (blob) {
+      return shareFiles({ files: [new File([blob], name, { type: blob.type || 'application/octet-stream' })] });
+    }).catch(function () {});
+  }
+  var A = window.HTMLAnchorElement;
+  if (A && A.prototype) {
+    var click0 = A.prototype.click;
+    A.prototype.click = function () {
+      if (this.hasAttribute('download') && /^(blob|data):/.test(this.href || '')) { viaShare(this); return; }
+      return click0.apply(this, arguments);
+    };
+  }
+  if (document.addEventListener) document.addEventListener('click', function (e) {
+    var a = e.target && e.target.closest ? e.target.closest('a[download]') : null;
+    if (!a || !/^(blob|data):/.test(a.href || '')) return;
+    e.preventDefault();
+    viaShare(a);
+  }, true);
 })();

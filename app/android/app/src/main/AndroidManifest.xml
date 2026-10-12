@@ -33,6 +33,10 @@
                 <data android:scheme="nabutarot"/>
             </intent-filter>
         </activity>
+        <!-- A push that arrives while the app is closed: Nabu's own small icon and channel. -->
+        <meta-data android:name="com.google.firebase.messaging.default_notification_icon" android:resource="@drawable/ic_stat_nabu"/>
+        <meta-data android:name="com.google.firebase.messaging.default_notification_color" android:resource="@color/ic_launcher_background"/>
+        <meta-data android:name="com.google.firebase.messaging.default_notification_channel_id" android:value="nabu"/>
         <!-- Don't delete the meta-data below.
              This is used by the Flutter tool to generate GeneratedPluginRegistrant.java -->
         <meta-data

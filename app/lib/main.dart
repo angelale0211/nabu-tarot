@@ -6,11 +6,14 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
+import 'bridge/app_plugin.dart';
 import 'bridge/bridge.dart';
 import 'bridge/firebase_authentication_plugin.dart';
 import 'bridge/native_purchases_plugin.dart';
+import 'bridge/notify_plugin.dart';
 import 'bridge/play_billing_plugin.dart';
 import 'bridge/plugin.dart';
+import 'bridge/share_plugin.dart';
 import 'push/adapters.dart';
 import 'push/firebase_config.dart';
 import 'push/push.dart';
@@ -25,11 +28,16 @@ Future<void> main() async {
   final shell = GlobalKey<WebShellState>();
   void open(String route) => shell.currentState?.go(route);
 
-  // The phone's own sign-in and store, behind the site's existing calls.
+  // The phone's own sign-in and store, behind the site's existing calls;
+  // its notifications, share sheet (Android's web view has none) and status bar.
   final auth = FirebaseAuthenticationPlugin(apple: SystemAppleSignIn(), google: SystemGoogleSignIn());
+  final notify = NotifyPlugin(onOpen: open);
   final List<NativePlugin> plugins = Platform.isAndroid
-      ? [auth, PlayBillingPlugin(GooglePlayStore())]
-      : [auth, NativePurchasesPlugin(ChannelStoreKit())];
+      ? [auth, PlayBillingPlugin(GooglePlayStore()), notify, SharePlugin(), AppPlugin()]
+      : [auth, NativePurchasesPlugin(ChannelStoreKit()), notify, AppPlugin()];
+  try {
+    await notify.init();
+  } catch (_) {/* the app works without them */}
   final shim = Platform.isAndroid ? 'assets/android_bridge.js' : 'assets/bridge.js';
 
   // Notifications only when the build carried the Firebase settings.
@@ -40,6 +48,16 @@ Future<void> main() async {
       await Firebase.initializeApp(options: opts);
       await FirebaseMessaging.instance.setForegroundNotificationPresentationOptions(alert: true, badge: true, sound: true);
       push = Push(FcmMessaging(), ShellSitePage(shell, opener: open));
+      // On Android a push that arrives while the app is open shows nothing by
+      // itself; the iPhone shows it (the presentation options above).
+      if (Platform.isAndroid) {
+        FirebaseMessaging.onMessage.listen((m) {
+          final n = m.notification;
+          if (n == null) return;
+          final r = routeOf(m.data);
+          notify.show(n.title ?? 'Nabu Tarot', n.body ?? '', hash: r == null ? '' : '#/$r').catchError((_) {});
+        });
+      }
       await push.start(auth.signedIn);
     } catch (_) {
       push = null; // the app works without them

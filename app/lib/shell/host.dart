@@ -27,6 +27,8 @@ class NabuHost extends StatefulWidget {
 
 class _NabuHostState extends State<NabuHost> {
   late final Future<String> _shim = rootBundle.loadString(widget.shimAsset);
+  late final Future<String> _common = rootBundle.loadString('assets/app_common.js');
+  String _shimSrc = '', _commonSrc = '';
   StreamSubscription<(String, String, Object?)>? _events;
 
   void _created(InAppWebViewController c) {
@@ -41,6 +43,16 @@ class _NabuHostState extends State<NabuHost> {
     });
   }
 
+  /// An older web view may run the start-of-page scripts late, or not at all;
+  /// then they are run now, so the site never takes the app for a browser.
+  Future<void> _ensureShims(InAppWebViewController c) async {
+    if (!isSiteOrigin(await c.getUrl())) return;
+    final has = await c.evaluateJavascript(source: '!!(window.__nabuApp && (window.__nabuAndroid || (window.Capacitor && window.Capacitor.__nabu)))');
+    if (has == true) return;
+    await c.evaluateJavascript(source: _shimSrc);
+    await c.evaluateJavascript(source: _commonSrc);
+  }
+
   @override
   void dispose() {
     _events?.cancel();
@@ -49,19 +61,25 @@ class _NabuHostState extends State<NabuHost> {
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder<String>(
-      future: _shim,
+    return FutureBuilder<List<String>>(
+      future: Future.wait([_shim, _common]),
       builder: (context, s) {
         if (!s.hasData) return const ColoredBox(color: kGround);
+        _shimSrc = s.data![0];
+        _commonSrc = s.data![1];
         return WebShell(
           key: widget.shellKey,
           initialRoute: widget.initialRoute,
           scripts: [
-            UserScript(source: s.data!, injectionTime: UserScriptInjectionTime.AT_DOCUMENT_START, forMainFrameOnly: true),
+            UserScript(source: _shimSrc, injectionTime: UserScriptInjectionTime.AT_DOCUMENT_START, forMainFrameOnly: true),
+            UserScript(source: _commonSrc, injectionTime: UserScriptInjectionTime.AT_DOCUMENT_START, forMainFrameOnly: true),
           ],
           onCreated: _created,
           onStarted: (_) => widget.bridge.pageChanged(),
-          onLoaded: (_) => widget.onLoaded?.call(),
+          onLoaded: (c) async {
+            await _ensureShims(c);
+            widget.onLoaded?.call();
+          },
         );
       },
     );

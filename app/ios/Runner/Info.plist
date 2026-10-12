@@ -84,5 +84,13 @@
 	<true/>
 	<key>UIStatusBarStyle</key>
 	<string>UIStatusBarStyleDarkContent</string>
+	<key>NSCameraUsageDescription</key>
+	<string>Nabu uses the camera only when you take a photo to send in a chat or add to your vision board.</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>Nabu opens your photos only when you choose a picture to send in a chat or add to your vision board.</string>
+	<key>NSPhotoLibraryAddUsageDescription</key>
+	<string>Nabu saves a picture to your photos only when you ask it to.</string>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>Nabu uses the microphone only when you record a voice message.</string>
 </dict>
 </plist>
