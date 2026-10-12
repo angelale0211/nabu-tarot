@@ -17,7 +17,9 @@ workflows:
       app_store_connect: codemagic
     environment:
       flutter: stable
-      xcode: latest
+      # A fixed Xcode, not 'latest': the latest pool queues for hours when busy
+      # (Codemagic support, 2026-10-12). 26.x meets Apple's iOS 26 SDK rule.
+      xcode: 26.6
       cocoapods: default
       groups:
         - nabu_ios
@@ -29,7 +31,6 @@ workflows:
       events:
         - push
       branch_patterns:
-        - pattern: feature/ios-flutter
         - pattern: main
       cancel_previous_builds: true
     when:
