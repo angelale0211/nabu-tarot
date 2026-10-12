@@ -1,3 +1,4 @@
+import 'package:app_links/app_links.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
@@ -34,12 +35,24 @@ Future<void> main() async {
       push = null; // the app works without them
     }
   }
-  runApp(NabuApp(plugins: [auth, purchases], shell: shell, push: push));
+  // nabutarot:// links (the home-screen widget): the first one picks the
+  // page the app opens on, later ones move the site there.
+  final links = AppLinks();
+  Uri? first;
+  try {
+    first = await links.getInitialLink();
+  } catch (_) {}
+  links.uriLinkStream.listen((u) {
+    final r = routeOfLink(u);
+    if (r != null) shell.currentState?.go(r);
+  });
+  runApp(NabuApp(plugins: [auth, purchases], shell: shell, push: push, initialRoute: first == null ? null : routeOfLink(first)));
 }
 
 class NabuApp extends StatefulWidget {
-  const NabuApp({super.key, required this.plugins, required this.shell, this.push});
+  const NabuApp({super.key, required this.plugins, required this.shell, this.push, this.initialRoute});
   final List<NativePlugin> plugins;
+  final String? initialRoute;
   final GlobalKey<WebShellState> shell;
   final Push? push;
 
@@ -55,7 +68,7 @@ class _NabuAppState extends State<NabuApp> {
     return MaterialApp(
       title: 'Nabu Tarot',
       debugShowCheckedModeBanner: false,
-      home: NabuHost(bridge: bridge, shellKey: widget.shell, onLoaded: () => widget.push?.pageLoaded()),
+      home: NabuHost(bridge: bridge, shellKey: widget.shell, initialRoute: widget.initialRoute, onLoaded: () => widget.push?.pageLoaded()),
     );
   }
 }

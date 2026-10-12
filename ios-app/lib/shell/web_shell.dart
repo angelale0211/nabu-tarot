@@ -19,11 +19,22 @@ const kSite = 'https://nabutarot.com/';
 /// The site's address for one of its own routes ('pick', 'me/bookings').
 String siteUrl(String route) => route.isEmpty ? kSite : '$kSite#/$route';
 
+/// The site route a nabutarot:// link names (the home-screen widget opens
+/// nabutarot://pick), or null for anything else.
+String? routeOfLink(Uri u) {
+  if (u.scheme != 'nabutarot') return null;
+  final r = [u.host, ...u.pathSegments].where((s) => s.isNotEmpty).join('/');
+  return RegExp(r'^[a-z0-9][a-z0-9/_-]*$').hasMatch(r) && !r.contains('..') ? r : null;
+}
+
 /// The pink the site paints its first frame with, so nothing flashes white.
 const kGround = Color(0xFFFBEEF2);
 
 class WebShell extends StatefulWidget {
-  const WebShell({super.key, this.scripts = const [], this.onCreated, this.onStarted, this.onLoaded});
+  const WebShell({super.key, this.initialRoute, this.scripts = const [], this.onCreated, this.onStarted, this.onLoaded});
+
+  /// The route to open first (the app was launched from a link or a notification).
+  final String? initialRoute;
 
   /// Scripts the site needs before its own script runs (the bridge).
   final List<UserScript> scripts;
@@ -66,7 +77,7 @@ class WebShellState extends State<WebShell> {
       backgroundColor: kGround,
       body: Stack(children: [
         InAppWebView(
-          initialUrlRequest: URLRequest(url: WebUri(kSite)),
+          initialUrlRequest: URLRequest(url: WebUri(siteUrl(widget.initialRoute ?? ''))),
           initialUserScripts: UnmodifiableListView(widget.scripts),
           initialSettings: InAppWebViewSettings(
             userAgent: kUserAgent,

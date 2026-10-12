@@ -8,6 +8,14 @@ void main() {
     expect(kUserAgent, contains('Mobile/15E148 Safari'));
   });
 
+  test('the widget link nabutarot://pick opens Draw; anything else is ignored', () {
+    expect(routeOfLink(Uri.parse('nabutarot://pick')), 'pick');
+    expect(routeOfLink(Uri.parse('nabutarot://me/bookings')), 'me/bookings');
+    expect(routeOfLink(Uri.parse('nabutarot://')), isNull);
+    expect(routeOfLink(Uri.parse('https://evil.example/pick')), isNull);
+    expect(routeOfLink(Uri.parse('nabutarot://pick?x=javascript:1')), 'pick');
+  });
+
   test('a route becomes the site address with that hash', () {
     expect(siteUrl('pick'), 'https://nabutarot.com/#/pick');
     expect(siteUrl('me/bookings'), 'https://nabutarot.com/#/me/bookings');

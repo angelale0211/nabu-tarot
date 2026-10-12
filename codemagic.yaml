@@ -23,6 +23,8 @@ workflows:
         - nabu_ios
       vars:
         BUNDLE_ID: app.nabutarot.ios
+        # The home-screen widget (ios/TodayWidget). "0" builds the app without it.
+        NABU_WIDGET: "1"
     triggering:
       events:
         - push
@@ -42,8 +44,17 @@ workflows:
             echo "$GOOGLE_SERVICE_INFO_PLIST" | base64 --decode > ios/Runner/GoogleService-Info.plist
           fi
           sh ios/scripts/firebase_ids.sh
+      - name: Version
+        script: |
+          # One version for the app and its widget. The build number is always
+          # higher than any earlier build: yy + day of year + hhmm (UTC).
+          echo "NABU_BUILD_NAME=$(grep '^version:' pubspec.yaml | sed 's/version: *//; s/+.*//')" >> $CM_ENV
+          echo "NABU_BUILD_NUMBER=$(date -u +%y%j%H%M)" >> $CM_ENV
       - name: Packages
         script: flutter pub get
+      - name: Widget
+        script: |
+          if [ "$NABU_WIDGET" = "1" ]; then ruby ios/scripts/add_widget.rb; else echo "widget off"; fi
       - name: Tests
         script: flutter test
       - name: Signing - keychain
@@ -51,15 +62,19 @@ workflows:
       - name: Signing - certificate and App Store profiles
         script: |
           app-store-connect fetch-signing-files "$BUNDLE_ID" --type IOS_APP_STORE --create
+          if [ "$NABU_WIDGET" = "1" ]; then
+            app-store-connect bundle-ids create "$BUNDLE_ID.today" --name "Nabu Tarot Today" --platform IOS || true
+            app-store-connect fetch-signing-files "$BUNDLE_ID.today" --type IOS_APP_STORE --create
+          fi
           keychain add-certificates
           xcode-project use-profiles
       - name: Build
         script: |
-          # Always higher than any earlier build: yy + day of year + hhmm (UTC).
           flutter build ipa --release \
             --export-options-plist=/Users/builder/export_options.plist \
             --dart-define-from-file=firebase_defines.json \
-            --build-number=$(date -u +%y%j%H%M)
+            --build-name=$NABU_BUILD_NAME \
+            --build-number=$NABU_BUILD_NUMBER
     artifacts:
       - build/ios/ipa/*.ipa
       - /tmp/xcodebuild_logs/*.log

@@ -10,8 +10,9 @@ import 'web_shell.dart';
 /// The site with the bridge in it: assets/bridge.js injected before the
 /// site's script, calls answered by [bridge], plugin events handed back.
 class NabuHost extends StatefulWidget {
-  const NabuHost({super.key, required this.bridge, this.shellKey, this.onLoaded});
+  const NabuHost({super.key, required this.bridge, this.shellKey, this.initialRoute, this.onLoaded});
   final Bridge bridge;
+  final String? initialRoute;
   final GlobalKey<WebShellState>? shellKey;
   final void Function()? onLoaded;
 
@@ -43,6 +44,7 @@ class _NabuHostState extends State<NabuHost> {
         if (!s.hasData) return const ColoredBox(color: kGround);
         return WebShell(
           key: widget.shellKey,
+          initialRoute: widget.initialRoute,
           scripts: [
             UserScript(source: s.data!, injectionTime: UserScriptInjectionTime.AT_DOCUMENT_START, forMainFrameOnly: true),
           ],
