@@ -31,9 +31,12 @@ function signinNext(params) {
    403 disallowed_useragent, and the visitor is left on it. These apps name
    themselves in the user agent, so only what they say is believed. 'app' is
    a plain Android WebView (the "; wv)" token) whose app did not say its name.
-   Chrome, Samsung Internet, Safari and the Android app itself (which runs in
-   the real browser) answer ''. */
+   Chrome, Samsung Internet, Safari and our own Android app answer ''. The
+   app is a WebView too ("; wv)"), but its bridge (app/assets/android_bridge.js,
+   run before the page) sets window.__nabuAndroid and signs in to Google with
+   the phone's own sheet, so nothing there needs the way out. */
 function inAppBrowser(ua) {
+  if (ua == null && window.__nabuAndroid) return '';
   const s = String(ua == null ? ((window.navigator || {}).userAgent || '') : ua);
   if (/FBAN\/Messenger|MessengerForiOS|MessengerLite/.test(s)) return 'Messenger';
   if (/Instagram/.test(s)) return 'Instagram';

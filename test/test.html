@@ -1138,6 +1138,16 @@ async function go(hash, sel) { W().location.hash = hash; await sleep(30); return
       ok(chrome && /Facebook/.test(d.querySelector('.signin .inapp').textContent) && /Chrome/.test(d.querySelector('.signin .inapp').textContent)
          && /^intent:\/\/.+#\/signin.*#Intent;scheme=https;package=com\.android\.chrome;end$/.test(chrome.getAttribute('href')),
         'inside Facebook on Android the way out opens this same page in Chrome');
+      /* Our own Android app is a WebView with no name in its user agent; its
+         bridge marks the page, and Google goes to the phone's sign-in sheet. */
+      const NABU_APP = 'Mozilla/5.0 (Linux; Android 14; SM-A546B Build/UP1A.231005.007; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/129.0.6668.100 Mobile Safari/537.36';
+      Object.defineProperty(nav, 'userAgent', { configurable: true, get: () => NABU_APP });
+      d.defaultView.__nabuAndroid = true;
+      await go('#/home', '#main'); await go('#/signin', '.signin');
+      const inOurApp = !d.querySelector('.signin .inapp');
+      d.querySelector('.signin [data-auth="google"]').click(); await sleep(60);
+      ok(inOurApp && asked.join() === 'facebook,google', 'inside the Nabu Android app the sign-in page does not send people to Chrome, and Google is asked as usual');
+      asked.pop(); delete d.defaultView.__nabuAndroid;
       delete nav.userAgent;
       await go('#/home', '#main'); await go('#/signin', '.signin');
       ok(!d.querySelector('.signin .inapp'), 'in an ordinary browser the sign-in page says nothing about in-app browsers');
