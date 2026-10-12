@@ -1,5 +1,5 @@
 /// One native capability the site can call by name, the way it called a
-/// Capacitor plugin: window.Capacitor.Plugins.<name>.<method>(args).
+/// Capacitor plugin: `window.Capacitor.Plugins.<name>.<method>(args)`.
 abstract class NativePlugin {
   String get name;
 
