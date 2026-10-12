@@ -30,6 +30,8 @@ for (let d = new Date(FROM); d < TO; d = new Date(d.getTime() + 86400000)) {
   const noon = new Date(Date.UTC(d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate(), 5));
   days.push([l.day, l.month, l.leap ? 1 : 0, canChi(l.year), (((l.year - 4) % 12) + 12) % 12, moonPhase(noon).idx]);
 }
-const out = path.join(__dirname, '..', 'ios', 'TodayWidget', 'lunar.json');
-fs.writeFileSync(out, JSON.stringify({ from: '2026-01-01', days }));
-console.log('wrote', days.length, 'days to', out);
+// The same table for the iPhone widget and for the app's own Today screen.
+for (const out of [path.join(__dirname, '..', 'ios', 'TodayWidget', 'lunar.json'), path.join(__dirname, '..', 'assets', 'lunar.json')]) {
+  fs.writeFileSync(out, JSON.stringify({ from: '2026-01-01', days }));
+  console.log('wrote', days.length, 'days to', out);
+}
