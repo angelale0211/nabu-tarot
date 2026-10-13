@@ -74,7 +74,5 @@ flutter {
 }
 
 dependencies {
-    // enableEdgeToEdge() in MainActivity.
-    implementation("androidx.activity:activity-ktx:1.9.0")
     coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.1.4")
 }
