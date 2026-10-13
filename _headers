@@ -44,6 +44,13 @@
   Access-Control-Allow-Origin: *
   Cache-Control: no-cache
 
+# The iPhone reads this to let links to the site open in the app (Team VDW67F7549,
+# app.nabutarot.ios). Served as JSON, with no file extension, as Apple requires.
+/.well-known/apple-app-site-association
+  Content-Type: application/json
+  Access-Control-Allow-Origin: *
+  Cache-Control: no-cache
+
 # Pictures and icons never change without changing their name.
 /*.png
   Cache-Control: public, max-age=604800

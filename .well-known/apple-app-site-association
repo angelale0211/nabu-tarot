@@ -1,0 +1,13 @@
+{
+  "applinks": {
+    "apps": [],
+    "details": [
+      {
+        "appIDs": ["VDW67F7549.app.nabutarot.ios"],
+        "appID": "VDW67F7549.app.nabutarot.ios",
+        "components": [{ "/": "*" }],
+        "paths": ["*"]
+      }
+    ]
+  }
+}
