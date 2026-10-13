@@ -5,6 +5,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 
 import 'bridge/app_plugin.dart';
 import 'bridge/bridge.dart';
@@ -22,6 +23,8 @@ import 'shell/web_shell.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  // Only the side-by-side check build (never a store build) can be inspected from a computer.
+  if (const bool.fromEnvironment('NABU_CHECK')) await InAppWebViewController.setWebContentsDebuggingEnabled(true);
   SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
   SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
   SystemChrome.setSystemUIOverlayStyle(barsFor(kGround));

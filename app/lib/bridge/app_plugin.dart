@@ -10,6 +10,28 @@ import 'plugin.dart';
 /// behind the page (seen when it bounces) and dark or light status-bar icons.
 final ground = ValueNotifier<Color>(kGround);
 
+/// Whether the app must keep the page clear of the status and navigation bars
+/// itself (Android). A current web view tells the page where the bars are
+/// (env(safe-area-inset-*)) and the site pads itself; an older one says 0, and
+/// then the app pads instead - never both, or the gap would be doubled. The
+/// app asks the page after every load (lib/shell/host.dart _watchInsets).
+final padForBars = ValueNotifier<bool>(false);
+
+/// What the page measures: env(safe-area-inset-top/bottom) in CSS px.
+const kInsetsProbe = '''(function () {
+  var b = document.body; if (!b) return [0, 0];
+  var d = document.createElement('div');
+  d.style.cssText = 'position:fixed;top:0;left:0;width:1px;height:1px;visibility:hidden;pointer-events:none;'
+    + 'padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)';
+  b.appendChild(d);
+  var cs = getComputedStyle(d), r = [parseFloat(cs.paddingTop) || 0, parseFloat(cs.paddingBottom) || 0];
+  b.removeChild(d);
+  return r;
+})()''';
+
+/// The page's measured insets (CSS px): it pads itself when either is above 0.
+bool pageNeedsAppPadding(num top, num bottom) => top <= 0 && bottom <= 0;
+
 /// 'rgb(251, 238, 242)' / 'rgba(…)' -> a Color, or null.
 Color? cssColor(String s) {
   final m = RegExp(r'rgba?\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)').firstMatch(s);

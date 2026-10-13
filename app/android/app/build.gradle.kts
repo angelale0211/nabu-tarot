@@ -39,6 +39,10 @@ android {
         // flag during build.
         versionCode = flutter.versionCode
         versionName = flutter.versionName
+        // A side-by-side copy for checking a build on a phone that has the Play
+        // version installed (flutter build apk --android-project-arg nabuCheck=1).
+        // Never uploaded: Play builds have no suffix.
+        if (project.hasProperty("nabuCheck")) applicationIdSuffix = ".check"
     }
 
     signingConfigs {

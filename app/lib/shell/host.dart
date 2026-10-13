@@ -1,9 +1,11 @@
 import 'dart:async';
+import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 
+import '../bridge/app_plugin.dart';
 import '../bridge/bridge.dart';
 import 'links.dart';
 import 'web_shell.dart';
@@ -53,6 +55,31 @@ class _NabuHostState extends State<NabuHost> {
     await c.evaluateJavascript(source: _commonSrc);
   }
 
+  /// Asks the page, after every load, whether the web view tells it where the
+  /// system bars are (Android). A current web view does, and the site keeps
+  /// itself clear of them; an older one says 0, and then the app keeps the page
+  /// between the bars (padForBars) - never both. A slow phone may tell the web
+  /// view late, so it is asked several times; "none" counts only once the page
+  /// has been up a few seconds.
+  int _insetRun = 0;
+  void _watchInsets(InAppWebViewController c) {
+    if (!Platform.isAndroid) return;
+    final run = ++_insetRun;
+    for (final s in const [1, 3, 6, 10, 20, 40]) {
+      Future<void>.delayed(Duration(seconds: s), () async {
+        if (run != _insetRun || !mounted) return;
+        try {
+          final v = await c.evaluateJavascript(source: kInsetsProbe);
+          if (v is! List || v.length < 2) return;
+          final top = v[0] is num ? v[0] as num : 0, bottom = v[1] is num ? v[1] as num : 0;
+          final needs = pageNeedsAppPadding(top, bottom);
+          if (needs && s < 6) return;
+          padForBars.value = needs;
+        } catch (_) {/* the page is changing; the next load asks again */}
+      });
+    }
+  }
+
   @override
   void dispose() {
     _events?.cancel();
@@ -79,6 +106,7 @@ class _NabuHostState extends State<NabuHost> {
           onLoaded: (c) async {
             await _ensureShims(c);
             widget.onLoaded?.call();
+            _watchInsets(c);
           },
         );
       },

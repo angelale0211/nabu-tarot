@@ -3,6 +3,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:nabu_tarot/bridge/app_plugin.dart';
 import 'package:nabu_tarot/bridge/firebase_authentication_plugin.dart';
 import 'package:nabu_tarot/bridge/notify_plugin.dart';
+import 'package:nabu_tarot/bridge/share_plugin.dart';
 
 void main() {
   test('only a sheet closed after it was seen is a person cancelling', () {
@@ -21,6 +22,21 @@ void main() {
     expect(routeOfHash('#/../x'), isNull);
     expect(routeOfHash('javascript:alert(1)'), isNull);
     expect(routeOfHash('https://evil.example'), isNull);
+  });
+
+  test('a shared file keeps its name, without folders or odd characters', () {
+    expect(safeFileName('nabu-tarot-2026-10-14.ics'), 'nabu-tarot-2026-10-14.ics');
+    expect(safeFileName('../../etc/x.ics'), 'x.ics');
+    expect(safeFileName(''), 'nabu');
+    expect(safeFileName('.ics'), 'nabu.ics');
+    expect(safeFileName('ảnh:1.jpg'), '_nh_1.jpg');
+    expect(safeFileName(r'C:\x\y.ics'), 'y.ics');
+  });
+
+  test('the app pads for the bars only when the web view tells the page nothing', () {
+    expect(pageNeedsAppPadding(0, 0), isTrue);
+    expect(pageNeedsAppPadding(46, 24), isFalse);
+    expect(pageNeedsAppPadding(0, 24), isFalse);
   });
 
   test('the status bar follows the page: light icons on a dark page, dark on a light one', () {
