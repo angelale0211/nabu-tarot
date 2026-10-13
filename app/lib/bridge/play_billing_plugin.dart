@@ -57,6 +57,24 @@ class PlayBillingPlugin implements NativePlugin {
   }
 }
 
+/// What the first payment of an offer (or a base plan) costs, in micros.
+int firstPaymentMicros(GooglePlayProductDetails pd) {
+  final o = pd.productDetails.subscriptionOfferDetails;
+  final i = pd.subscriptionIndex;
+  if (o == null || i == null || i >= o.length || o[i].pricingPhases.isEmpty) return 1 << 62;
+  return o[i].pricingPhases.first.priceAmountMicros;
+}
+
+/// The offer whose first payment is the lowest, if it is lower than the plan's own.
+ProductDetails bestOffer(ProductDetails base, List<GooglePlayProductDetails> offers) {
+  if (base is! GooglePlayProductDetails || offers.isEmpty) return base;
+  var best = base;
+  for (final o in offers) {
+    if (firstPaymentMicros(o) < firstPaymentMicros(best)) best = o;
+  }
+  return best;
+}
+
 /// [PlayStore] through in_app_purchase.
 class GooglePlayStore implements PlayStore {
   GooglePlayStore() {
@@ -66,6 +84,10 @@ class GooglePlayStore implements PlayStore {
   final _iap = InAppPurchase.instance;
   late final StreamSubscription<List<PurchaseDetails>> _sub;
   final _products = <String, ProductDetails>{};
+
+  /// A subscription's offers (a free trial, an introductory price). Play lists
+  /// only the offers this account may still take.
+  final _offers = <String, List<GooglePlayProductDetails>>{};
   Completer<Map<String, Object?>>? _buying;
   String? _buyingSku;
 
@@ -101,10 +123,17 @@ class GooglePlayStore implements PlayStore {
     final r = await _iap.queryProductDetails(ids.toSet());
     final out = <String, Map<String, Object?>>{};
     for (final pd in r.productDetails) {
-      // A subscription comes once per offer; the base plan (no offer id) speaks for it.
+      // A subscription comes once per offer; the first base plan (no offer id)
+      // speaks for it, and its offers are kept for the purchase.
       if (pd is GooglePlayProductDetails && pd.subscriptionIndex != null) {
         final offer = pd.productDetails.subscriptionOfferDetails![pd.subscriptionIndex!];
-        if (out.containsKey(pd.id) && offer.offerId != null) continue;
+        if (offer.offerId != null) {
+          final list = _offers.putIfAbsent(pd.id, () => []);
+          list.removeWhere((x) => x.subscriptionIndex == pd.subscriptionIndex);
+          list.add(pd);
+          continue;
+        }
+        if (out.containsKey(pd.id)) continue;
         _products[pd.id] = pd;
         out[pd.id] = {
           'itemId': pd.id,
@@ -139,7 +168,7 @@ class GooglePlayStore implements PlayStore {
   @override
   Future<Map<String, Object?>> buy(String sku, {String? oldSku, String? oldToken}) async {
     if (_buying != null && !_buying!.isCompleted) throw const PluginError('a purchase is already open', code: 'busy');
-    var pd = _products[sku];
+    ProductDetails? pd = _products[sku];
     if (pd == null) {
       await details([sku]);
       pd = _products[sku];
@@ -150,6 +179,9 @@ class GooglePlayStore implements PlayStore {
       final old = (await _held()).where((p) => p.verificationData.serverVerificationData == oldToken).firstOrNull;
       if (old != null) change = ChangeSubscriptionParam(oldPurchaseDetails: old, replacementMode: ReplacementMode.withTimeProration);
     }
+    // A new subscription starts with the best offer Play still allows this
+    // account (a free trial before a discount); a plan change keeps the base plan.
+    if (change == null) pd = bestOffer(pd, _offers[sku] ?? const []);
     final c = _buying = Completer<Map<String, Object?>>();
     _buyingSku = sku;
     final started = await _iap.buyNonConsumable(

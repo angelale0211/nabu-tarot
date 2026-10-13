@@ -1162,6 +1162,21 @@ async function go(hash, sel) { W().location.hash = hash; await sleep(30); return
       d.querySelector('.signin [data-auth="google"]').click(); await sleep(60);
       ok(asked.join() === 'facebook,google', 'and Google is asked as usual there');
       N.BE.user = keepA.user; N.BE.enabled = keepA.on; N.BE.signIn = keepA.signIn; }
+    { /* In the apps reminders are handed to the phone, so they arrive with the app closed. */
+      const W = d.defaultView, got = [];
+      W.NabuNotify = { replace: (g, items) => { got.push([g, items]); return Promise.resolve(items.length); } };
+      const v = new Date(Date.now() + 48 * 3600000 + 7 * 3600000), p2 = (n) => String(n).padStart(2, '0');
+      const slot = v.getUTCFullYear() + '-' + p2(v.getUTCMonth() + 1) + '-' + p2(v.getUTCDate()) + 'T' + p2(v.getUTCHours()) + ':' + p2(v.getUTCMinutes());
+      N.scheduleReminders([{ id: 'b1', slot: slot, status: 'confirmed', service: 'Tarot' }, { id: 'b2', slot: slot, status: 'cancelled' }]);
+      const bk = got.find((x) => x[0] === 'booking');
+      ok(bk && bk[1].length === 4 && bk[1].every((i) => i.at > Date.now() && i.hash === '#/me' && i.title && i.body),
+        'a booking two days away gives the phone four reminders (24 h, 6 h, 1 h, 15 min), none for a cancelled one (' + (bk ? bk[1].length : 'none') + ')');
+      got.length = 0; N.petRemindSet(true);
+      const pt = got.find((x) => x[0] === 'pet');
+      ok(pt && pt[1].length === N.PETS.all().length && pt[1].every((i) => i.hash === '#/play/pet'), 'switching the pet reminder on plans one reminder per pet, a day after its last meal');
+      N.petRemindSet(false);
+      ok(got.length && got[got.length - 1][0] === 'pet' && got[got.length - 1][1].length === 0, 'switching it off clears them');
+      delete W.NabuNotify; N.scheduleReminders([]); }
     { /* The welcome screen: asked once, at registration, and never again. */
       const keepW = { db: N.BE.db, user: N.BE.user, on: N.BE.enabled };
       const wdocs = {};

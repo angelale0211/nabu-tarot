@@ -12,7 +12,7 @@
      carries this notice with it. See LICENSE. -->
 <meta name="author" content="Nabu Tarot">
 <meta name="copyright" content="Copyright (c) 2025-2026 Nabu Tarot. All rights reserved.">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'none'; object-src 'none'; form-action 'self'; script-src 'self' 'sha256-xPXPAoaqG9ySM0sjnzHW4FDfMwgw3kcLCIKLOauAxOc=' https://www.gstatic.com https://apis.google.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; font-src 'self' data:; media-src 'self' data: blob:; worker-src 'self'; connect-src 'self' https://*.googleapis.com https://*.google.com https://*.firebaseio.com https://*.cloudfunctions.net https://*.workers.dev https://generativelanguage.googleapis.com; frame-src https://*.firebaseapp.com https://accounts.google.com https://*.facebook.com">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'none'; object-src 'none'; form-action 'self'; script-src 'self' 'sha256-2BxVy3R1g/vZqV6okngphQ0DTEzM4BeobBAOE6MeQPo=' https://www.gstatic.com https://apis.google.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; font-src 'self' data:; media-src 'self' data: blob:; worker-src 'self'; connect-src 'self' https://*.googleapis.com https://*.google.com https://*.firebaseio.com https://*.cloudfunctions.net https://*.workers.dev https://generativelanguage.googleapis.com; frame-src https://*.firebaseapp.com https://accounts.google.com https://*.facebook.com">
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <meta name="theme-color" content="#EFE9FA">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -14390,15 +14390,20 @@ function slotDate(slot) { const m = /^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2})/.e
 const REM = { timers: [] };
 function scheduleReminders(list) {
   REM.timers.forEach(clearTimeout); REM.timers = [];
-  const S = T(), now = Date.now(), soon = [];
+  const S = T(), now = Date.now(), soon = [], later = [];
+  /* In the apps the phone keeps the reminders itself, so they arrive with the app closed too;
+     the page then sets none of its own, or each would come twice. */
+  const phone = !!(window.NabuNotify && window.NabuNotify.replace);
   (list || []).filter((b) => ['requested', 'confirmed', 'change_requested', 'change_proposed', 'proposal_declined'].indexOf(b.status) > -1).forEach((b) => {
     const d = slotDate(b.slot); if (!d || d.getTime() < now) return;
     soon.push(b);
     [[24 * 60, S.inHours(24)], [6 * 60, S.inHours(6)], [60, S.inHours(1)], [15, S.inMinutes(15)]].forEach((r) => {
       const at = d.getTime() - r[0] * 60000, wait = at - now;
+      if (phone) { if (wait > 0) later.push({ at: at, title: S.remindTitle(r[1]), body: slotLabel(b.slot), hash: '#/me' }); return; }
       if (wait > 0 && wait < 36 * 3600000) REM.timers.push(setTimeout(() => notifyAdmin(S.remindTitle(r[1]), slotLabel(b.slot), '#/me'), wait));
     });
   });
+  if (phone) window.NabuNotify.replace('booking', later).catch(() => {});
   soon.sort((a, b) => String(a.slot).localeCompare(String(b.slot)));
   store.set('nabu-nextbk', soon[0] ? { slot: soon[0].slot, status: soon[0].status, service: soon[0].service || '' } : null);
 }
@@ -25394,7 +25399,7 @@ const PETS = {
        it, rather than in each of the places that draw a companion. */
     return list.filter((p) => p && PET_KINDS.indexOf(p.kind) > -1).map(fitMigrate);
   },
-  save(list) { store.set('nabu-pets', list); },
+  save(list) { store.set('nabu-pets', list); petRemindPlan(); },
   put(p) {
     const list = this.all().filter((x) => x.kind !== p.kind);
     list.push(p); this.save(list); return p;
@@ -27370,8 +27375,21 @@ function petParentsHTML() {
    quiet: once a day, and only if it was asked for. */
 const PET_REMIND_KEY = 'nabu-pet-remind';
 const petRemindOn = () => store.get(PET_REMIND_KEY, false) === true;
-function petRemindSet(on) { store.set(PET_REMIND_KEY, !!on); }
+function petRemindSet(on) { store.set(PET_REMIND_KEY, !!on); petRemindPlan(); }
+/* In the apps the phone itself says when a pet gets hungry (a day after its last meal), with the app
+   closed too. Planned again whenever a pet is fed or changed and when the switch moves. */
+function petRemindPlan() {
+  if (!(window.NabuNotify && window.NabuNotify.replace)) return;
+  try {
+  const S = T(), items = !petRemindOn() ? [] : PETS.all().map((p) => ({
+    at: (Number(p.last) || Date.now()) + 24 * 3600000 + 5 * 60000,
+    title: S.petHungryTitle, body: S.petHungryOne(p.name || L(PET_NAMES[p.kind])), hash: '#/play/pet'
+  }));
+  window.NabuNotify.replace('pet', items).catch(() => {});
+  } catch (e) { /* before the strings are ready: planned again at the next change */ }
+}
 function petRemindCheck() {
+  petRemindPlan();
   if (!petRemindOn()) return;
   const today = isoDate(new Date());
   if (store.get('nabu-pet-remind-day', '') === today) return;
@@ -27382,7 +27400,8 @@ function petRemindCheck() {
   const name = p.name || L(PET_NAMES[p.kind]);
   const body = hungry.length > 1 ? S.petHungryMany(hungry.length) : S.petHungryOne(name);
   toast('🍚 ' + body);
-  showNote(S.petHungryTitle, body, 'nabu-pet', '#/play/pet');
+  /* The phone has already said so at the hour, in the apps. */
+  if (!window.NabuNotify) showNote(S.petHungryTitle, body, 'nabu-pet', '#/play/pet');
 }
 ROUTES.pet = { nav: 'play', render: renderPet };
 
@@ -32966,13 +32985,13 @@ function adminSale(p) {
 ROUTES.admin = { nav: '', render: renderAdmin };
 
 /* ============================ boot ============================ */
-window.APP_VERSION = 'v285';
+window.APP_VERSION = 'v286';
 window.NABU = { CONFIG: CONFIG, SALE: SALE, salePrice: salePrice, loadActs: loadActs, BACK: BACK, LESSONS: LESSONS, localAnswer: localAnswer, compatVerdict: compatVerdict, numerologyOf: numerologyOf, ZDEEP: ZDEEP, lunarToday: lunarToday, solarToLunar: solarToLunar, DECK: DECK, INSIGHT: INSIGHT, KW: KW, ASK: ASK, GUIDES: GUIDES, SERVICES: SERVICES, COURSES: COURSES, ACCESS: ACCESS, INTERESTS: INTERESTS, plusOn: () => plusOn(), proOn: () => proOn(), luckUnlimited: () => luckUnlimited(), ZODIAC: ZODIAC, pick: pick, book: book, PLAY_ITEMS: PLAY_ITEMS, PLAY_SUB_SKUS: PLAY_SUB_SKUS, playItem: playItem, BILL: BILL, SUBS: SUBS, billUse: billUse, APPLE_BILL: APPLE_BILL, appleAccountToken: appleAccountToken, renderStore: renderStore, pickLimitHTML: pickLimitHTML, subStateWord: subStateWord,
   insightHTML: insightHTML, insightOf: insightOf, sunSignIndex: sunSignIndex, lifePath: lifePath, PROFILE: () => PROFILE, BE: BE, inAppBrowser: inAppBrowser, ACTS: ACTS, CMT: CMT, LIKES: LIKES, kbReady: kbReady, AI: AI, STR: STR, KB_URL: (typeof KB_URL === 'string' ? KB_URL : ''),
   ANGELS: ANGELS, angelRead: angelRead, CODEBOOK: CODEBOOK, redeemCode: redeemCode, loadCodebook: loadCodebook, petHomeSVG: petHomeSVG, petStill: petStill, PET_HOMES: PET_HOMES, PET_WARDROBE: PET_WARDROBE, PET_SLOTS: PET_SLOTS,
   PET_SKIES: PET_SKIES, PET_FX: PET_FX, petSkySVG: petSkySVG, petFxSVG: petFxSVG, wearTile: wearTile, wearDraw: wearDraw, WEAR_DEF: WEAR_DEF,
   /* the old flat list, kept so the layout probes in test/ still resolve it */
-  PET_WEARS: PET_WARDROBE, codeDigest: codeDigest, randomCode: randomCode, BANK: BANK, PETS: PETS, petSVG: petSVG, PET_COATS: PET_COATS, PET_KINDS: PET_KINDS, turnsMerge: turnsMerge, turnsLocal: turnsLocal, TODAY: TODAY, treeMsgOf: treeMsgOf, priceText: priceText, termText: termText, proSaveText: () => proSaveText(), wedFeeText: () => wedFeeText(), fmtPrice: fmtPrice, luckCut: luckCut, petLevel: petLevel, petStep: petStep, VOUCHERS: VOUCHERS, levelCoins: levelCoins, LOOKS: LOOKS,
+  PET_WEARS: PET_WARDROBE, codeDigest: codeDigest, randomCode: randomCode, BANK: BANK, PETS: PETS, scheduleReminders: scheduleReminders, petRemindSet: petRemindSet, petSVG: petSVG, PET_COATS: PET_COATS, PET_KINDS: PET_KINDS, turnsMerge: turnsMerge, turnsLocal: turnsLocal, TODAY: TODAY, treeMsgOf: treeMsgOf, priceText: priceText, termText: termText, proSaveText: () => proSaveText(), wedFeeText: () => wedFeeText(), fmtPrice: fmtPrice, luckCut: luckCut, petLevel: petLevel, petStep: petStep, VOUCHERS: VOUCHERS, levelCoins: levelCoins, LOOKS: LOOKS,
   LOVE: LOVE, LOVEDB: LOVEDB, HANDLE_RE: HANDLE_RE, loveBadgeHTML: loveBadgeHTML,
   loveMarkSVG: loveMarkSVG, QUIZ: QUIZ, QSCORE: QSCORE, QUIZ_PASS: QUIZ_PASS, QUIZ_LEN: QUIZ_LEN, pileArtSVG: pileArtSVG, PILE_ARTS: PILE_ARTS, threadSVG: threadSVG, petParentsHTML: petParentsHTML, GIFTS: GIFTS, ALERTS: ALERTS, alertsStart: alertsStart, alertWas: alertWas,
   SPREADS: SPREADS, PRACTICE: () => PRACTICE, pCard: pCard, outfitState: outfitState, OUTFIT_TXT: OUTFIT_TXT, OUTFIT_CELL: OUTFIT_CELL, practiceReady: practiceReady, PSCORE: PSCORE, gradeReading: gradeReading, practiceById: practiceById, pBand: pBand,

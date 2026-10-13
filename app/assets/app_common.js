@@ -47,6 +47,13 @@
     }, function () { return NabuNotification.permission; });
   };
   window.Notification = NabuNotification;
+  /* Reminders for later, kept by the phone itself so they arrive with the app closed. The site
+     (scheduleReminders, the pet) replaces a whole group at once: [{at, title, body, hash}]. */
+  window.NabuNotify = {
+    replace: function (group, items) {
+      return new Promise(function (res) { ready(function () { res(call('Notify', 'replace', { group: group, items: items || [] })); }); });
+    }
+  };
   ready(function () { call('Notify', 'permission', {}).then(function (p) { NabuNotification.permission = p; }).catch(function () {}); });
 
   /* ---- links and windows ---- */

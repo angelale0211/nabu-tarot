@@ -77,7 +77,9 @@ workflows:
         script: |
           set -e
           python3 ios/scripts/certificate_key.py /tmp/certificate_key
+          bash ios/scripts/associated_domains.sh enable
           app-store-connect fetch-signing-files "$BUNDLE_ID" --type IOS_APP_STORE --create --certificate-key=@file:/tmp/certificate_key
+          bash ios/scripts/associated_domains.sh apply
           if [ "$NABU_WIDGET" = "1" ]; then
             app-store-connect bundle-ids create "$BUNDLE_ID.today" --name "Nabu Tarot Today" --platform IOS || true
             app-store-connect fetch-signing-files "$BUNDLE_ID.today" --type IOS_APP_STORE --create --certificate-key=@file:/tmp/certificate_key

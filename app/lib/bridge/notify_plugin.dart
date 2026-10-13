@@ -2,6 +2,8 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:timezone/data/latest.dart' as tzdata;
+import 'package:timezone/timezone.dart' as tz;
 
 import 'plugin.dart';
 
@@ -37,6 +39,7 @@ class NotifyPlugin implements NativePlugin {
 
   Future<void> init() async {
     if (_ready) return;
+    tzdata.initializeTimeZones();
     await _n.initialize(
       settings: const InitializationSettings(
         android: AndroidInitializationSettings('ic_stat_nabu'),
@@ -77,13 +80,49 @@ class NotifyPlugin implements NativePlugin {
   /// Shows one notification now; [hash] is the site route it opens ('#/play/pet').
   Future<void> show(String title, String body, {String hash = ''}) async {
     await init();
-    _id = (_id + 1) % 100000;
+    _id = _id % 9999 + 1; // 1-9999: below the reminder groups
     await _n.show(id: _id, title: title, body: body, notificationDetails: _details, payload: hash);
+  }
+
+  /// Each kind of reminder owns a block of notification ids, so one kind is
+  /// replaced without touching the other and nothing needs to be stored.
+  static const groups = {'booking': 20000, 'pet': 21000};
+  static const groupSize = 1000;
+
+  /// Puts [items] ({at: ms since epoch, title, body, hash}) in place of every
+  /// reminder of [group] still waiting: they arrive even when the app is closed.
+  Future<int> replace(String group, List<Object?> items) async {
+    final base = groups[group];
+    if (base == null) throw PluginError('no reminder group $group');
+    await init();
+    for (final r in await _n.pendingNotificationRequests()) {
+      if (r.id >= base && r.id < base + groupSize) await _n.cancel(id: r.id);
+    }
+    final now = DateTime.now().millisecondsSinceEpoch;
+    var n = 0;
+    for (final it in items.whereType<Map>()) {
+      final at = it['at'];
+      if (at is! num || at <= now + 30000 || n >= groupSize) continue;
+      await _n.zonedSchedule(
+        id: base + n,
+        scheduledDate: tz.TZDateTime.fromMillisecondsSinceEpoch(tz.UTC, at.toInt()),
+        notificationDetails: _details,
+        // Inexact: Play reserves exact alarms for alarm-clock and calendar apps.
+        androidScheduleMode: AndroidScheduleMode.inexactAllowWhileIdle,
+        title: '${it['title'] ?? ''}',
+        body: '${it['body'] ?? ''}',
+        payload: '${it['hash'] ?? ''}',
+      );
+      n++;
+    }
+    return n;
   }
 
   @override
   Future<Object?> call(String method, Map<String, Object?> args) async {
     switch (method) {
+      case 'replace':
+        return replace('${args['group']}', (args['items'] as List?) ?? const []);
       case 'permission':
         return _permission();
       case 'request':

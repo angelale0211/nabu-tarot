@@ -733,15 +733,20 @@ function slotDate(slot) { const m = /^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2})/.e
 const REM = { timers: [] };
 function scheduleReminders(list) {
   REM.timers.forEach(clearTimeout); REM.timers = [];
-  const S = T(), now = Date.now(), soon = [];
+  const S = T(), now = Date.now(), soon = [], later = [];
+  /* In the apps the phone keeps the reminders itself, so they arrive with the app closed too;
+     the page then sets none of its own, or each would come twice. */
+  const phone = !!(window.NabuNotify && window.NabuNotify.replace);
   (list || []).filter((b) => ['requested', 'confirmed', 'change_requested', 'change_proposed', 'proposal_declined'].indexOf(b.status) > -1).forEach((b) => {
     const d = slotDate(b.slot); if (!d || d.getTime() < now) return;
     soon.push(b);
     [[24 * 60, S.inHours(24)], [6 * 60, S.inHours(6)], [60, S.inHours(1)], [15, S.inMinutes(15)]].forEach((r) => {
       const at = d.getTime() - r[0] * 60000, wait = at - now;
+      if (phone) { if (wait > 0) later.push({ at: at, title: S.remindTitle(r[1]), body: slotLabel(b.slot), hash: '#/me' }); return; }
       if (wait > 0 && wait < 36 * 3600000) REM.timers.push(setTimeout(() => notifyAdmin(S.remindTitle(r[1]), slotLabel(b.slot), '#/me'), wait));
     });
   });
+  if (phone) window.NabuNotify.replace('booking', later).catch(() => {});
   soon.sort((a, b) => String(a.slot).localeCompare(String(b.slot)));
   store.set('nabu-nextbk', soon[0] ? { slot: soon[0].slot, status: soon[0].status, service: soon[0].service || '' } : null);
 }

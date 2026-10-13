@@ -1,6 +1,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
     <uses-permission android:name="android.permission.INTERNET"/>
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>
+    <!-- Reminders set for later are set again after the phone restarts. -->
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
     <application
         android:label="Nabu Tarot"
         android:name="${applicationName}"
@@ -32,7 +34,26 @@
                 <category android:name="android.intent.category.BROWSABLE"/>
                 <data android:scheme="nabutarot"/>
             </intent-filter>
+            <!-- Links to the site open in the app (verified by nabutarot.com/.well-known/assetlinks.json). -->
+            <intent-filter android:autoVerify="true">
+                <action android:name="android.intent.action.VIEW"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+                <category android:name="android.intent.category.BROWSABLE"/>
+                <data android:scheme="https"/>
+                <data android:host="nabutarot.com"/>
+                <data android:host="www.nabutarot.com"/>
+            </intent-filter>
         </activity>
+        <!-- Reminders (a booking, a hungry pet) that arrive with the app closed. -->
+        <receiver android:exported="false" android:name="com.dexterous.flutterlocalnotifications.ScheduledNotificationReceiver" />
+        <receiver android:exported="false" android:name="com.dexterous.flutterlocalnotifications.ScheduledNotificationBootReceiver">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED"/>
+                <action android:name="android.intent.action.MY_PACKAGE_REPLACED"/>
+                <action android:name="android.intent.action.QUICKBOOT_POWERON" />
+                <action android:name="com.htc.intent.action.QUICKBOOT_POWERON"/>
+            </intent-filter>
+        </receiver>
         <!-- A push that arrives while the app is closed: Nabu's own small icon and channel. -->
         <meta-data android:name="com.google.firebase.messaging.default_notification_icon" android:resource="@drawable/ic_stat_nabu"/>
         <meta-data android:name="com.google.firebase.messaging.default_notification_color" android:resource="@color/ic_launcher_background"/>

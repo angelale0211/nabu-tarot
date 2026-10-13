@@ -26,9 +26,17 @@ const kSite = 'https://nabutarot.com/';
 /// The site's address for one of its own routes ('pick', 'me/bookings').
 String siteUrl(String route) => route.isEmpty ? kSite : '$kSite#/$route';
 
-/// The site route a nabutarot:// link names (the home-screen widget opens
-/// nabutarot://pick), or null for anything else.
+/// The site route a link names, or null for anything else:
+///  - nabutarot://pick (the home-screen widget)
+///  - https://nabutarot.com/#/post/2026-10-11-a6lz (a link shared from the
+///    site, opened in the app instead of a browser); the bare site is ''.
 String? routeOfLink(Uri u) {
+  if (u.scheme == 'https' && isSiteOrigin(u)) {
+    final f = u.fragment;
+    if (f.isEmpty || f == '/') return '';
+    final r = f.startsWith('/') ? f.substring(1) : f;
+    return !r.contains('..') && RegExp(r'^[a-z0-9][a-zA-Z0-9/_?=&.%-]*$').hasMatch(r) ? r : '';
+  }
   if (u.scheme != 'nabutarot') return null;
   final r = [u.host, ...u.pathSegments].where((s) => s.isNotEmpty).join('/');
   return RegExp(r'^[a-z0-9][a-z0-9/_-]*$').hasMatch(r) && !r.contains('..') ? r : null;

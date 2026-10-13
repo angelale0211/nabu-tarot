@@ -249,7 +249,7 @@ const PETS = {
        it, rather than in each of the places that draw a companion. */
     return list.filter((p) => p && PET_KINDS.indexOf(p.kind) > -1).map(fitMigrate);
   },
-  save(list) { store.set('nabu-pets', list); },
+  save(list) { store.set('nabu-pets', list); petRemindPlan(); },
   put(p) {
     const list = this.all().filter((x) => x.kind !== p.kind);
     list.push(p); this.save(list); return p;
@@ -2225,8 +2225,21 @@ function petParentsHTML() {
    quiet: once a day, and only if it was asked for. */
 const PET_REMIND_KEY = 'nabu-pet-remind';
 const petRemindOn = () => store.get(PET_REMIND_KEY, false) === true;
-function petRemindSet(on) { store.set(PET_REMIND_KEY, !!on); }
+function petRemindSet(on) { store.set(PET_REMIND_KEY, !!on); petRemindPlan(); }
+/* In the apps the phone itself says when a pet gets hungry (a day after its last meal), with the app
+   closed too. Planned again whenever a pet is fed or changed and when the switch moves. */
+function petRemindPlan() {
+  if (!(window.NabuNotify && window.NabuNotify.replace)) return;
+  try {
+  const S = T(), items = !petRemindOn() ? [] : PETS.all().map((p) => ({
+    at: (Number(p.last) || Date.now()) + 24 * 3600000 + 5 * 60000,
+    title: S.petHungryTitle, body: S.petHungryOne(p.name || L(PET_NAMES[p.kind])), hash: '#/play/pet'
+  }));
+  window.NabuNotify.replace('pet', items).catch(() => {});
+  } catch (e) { /* before the strings are ready: planned again at the next change */ }
+}
 function petRemindCheck() {
+  petRemindPlan();
   if (!petRemindOn()) return;
   const today = isoDate(new Date());
   if (store.get('nabu-pet-remind-day', '') === today) return;
@@ -2237,6 +2250,7 @@ function petRemindCheck() {
   const name = p.name || L(PET_NAMES[p.kind]);
   const body = hungry.length > 1 ? S.petHungryMany(hungry.length) : S.petHungryOne(name);
   toast('🍚 ' + body);
-  showNote(S.petHungryTitle, body, 'nabu-pet', '#/play/pet');
+  /* The phone has already said so at the hour, in the apps. */
+  if (!window.NabuNotify) showNote(S.petHungryTitle, body, 'nabu-pet', '#/play/pet');
 }
 ROUTES.pet = { nav: 'play', render: renderPet };
