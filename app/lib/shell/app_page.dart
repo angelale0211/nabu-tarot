@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -42,11 +44,13 @@ class AppPage extends StatelessWidget {
         },
         child: Scaffold(
           backgroundColor: kGround,
-          // The site keeps itself clear of the status and gesture bars
-          // (env(safe-area-inset-*)), on Android's web view as on the iPhone.
+          // The app is edge to edge. On the iPhone the site keeps itself clear
+          // of the bars (env(safe-area-inset-*)); Android's web view does not
+          // report them reliably, so there the app keeps the page between the
+          // bars, and the ground behind them is the page's own colour.
           body: SafeArea(
-            top: false,
-            bottom: false,
+            top: Platform.isAndroid,
+            bottom: Platform.isAndroid,
             child: NabuHost(
               bridge: bridge,
               shellKey: shell,

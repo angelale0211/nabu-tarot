@@ -23,7 +23,8 @@ import 'shell/web_shell.dart';
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
-  SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.dark);
+  SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
+  SystemChrome.setSystemUIOverlayStyle(barsFor(kGround));
 
   final shell = GlobalKey<WebShellState>();
   void open(String route) => shell.currentState?.go(route);

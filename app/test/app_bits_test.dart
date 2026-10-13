@@ -27,8 +27,12 @@ void main() {
     final pink = cssColor('rgb(251, 238, 242)')!;
     final night = cssColor('rgba(26, 20, 38, 1)')!;
     expect(pink, const Color(0xFFFBEEF2));
-    expect(barsFor(pink), SystemUiOverlayStyle.dark);
-    expect(barsFor(night), SystemUiOverlayStyle.light);
+    expect(barsFor(pink).statusBarIconBrightness, Brightness.dark);
+    expect(barsFor(night).statusBarIconBrightness, Brightness.light);
+    expect(barsFor(night).systemNavigationBarIconBrightness, Brightness.light);
+    // Edge to edge: no bar colours are set (deprecated on Android 15); the ground shows through.
+    expect(barsFor(pink).statusBarColor, isNull);
+    expect(barsFor(pink).systemNavigationBarColor, isNull);
     expect(cssColor('transparent'), isNull);
   });
 }

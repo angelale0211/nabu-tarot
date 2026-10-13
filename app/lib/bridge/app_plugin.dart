@@ -18,9 +18,20 @@ Color? cssColor(String s) {
   return Color.fromARGB(255, c(1), c(2), c(3));
 }
 
-/// Light icons on a dark page, dark icons on a light one.
-SystemUiOverlayStyle barsFor(Color c) =>
-    c.computeLuminance() < 0.4 ? SystemUiOverlayStyle.light : SystemUiOverlayStyle.dark;
+/// The bars' icons over the page's ground: light on a dark page, dark on a
+/// light one. No bar colours: the app is edge to edge (MainActivity), the bars
+/// are see-through, and setting their colour is deprecated from Android 15.
+SystemUiOverlayStyle barsFor(Color c) {
+  final dark = c.computeLuminance() < 0.4;
+  final icons = dark ? Brightness.light : Brightness.dark;
+  return SystemUiOverlayStyle(
+    systemNavigationBarContrastEnforced: false,
+    statusBarIconBrightness: icons,
+    systemNavigationBarIconBrightness: icons,
+    // iPhone: the bar's own brightness, the opposite way round.
+    statusBarBrightness: dark ? Brightness.dark : Brightness.light,
+  );
+}
 
 class AppPlugin implements NativePlugin {
   @override
