@@ -1,9 +1,11 @@
 import 'package:flutter/services.dart';
+import 'package:flutter/widgets.dart' show EdgeInsets;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:nabu_tarot/bridge/app_plugin.dart';
 import 'package:nabu_tarot/bridge/firebase_authentication_plugin.dart';
 import 'package:nabu_tarot/bridge/notify_plugin.dart';
 import 'package:nabu_tarot/bridge/share_plugin.dart';
+import 'package:nabu_tarot/shell/host.dart';
 
 void main() {
   test('only a sheet closed after it was seen is a person cancelling', () {
@@ -50,5 +52,12 @@ void main() {
     expect(barsFor(pink).statusBarColor, isNull);
     expect(barsFor(pink).systemNavigationBarColor, isNull);
     expect(cssColor('transparent'), isNull);
+  });
+
+  test('the iPhone tells the page where its bars are, in the values the site reads before env()', () {
+    final js = safeAreaScript(const EdgeInsets.only(top: 59, bottom: 34));
+    expect(js, contains("'--nabu-safe-top','59.0px'"));
+    expect(js, contains("'--nabu-safe-bottom','34.0px'"));
+    expect(safeAreaScript(EdgeInsets.zero), contains("'--nabu-safe-top','0px'"));
   });
 }

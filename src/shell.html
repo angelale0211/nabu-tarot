@@ -27,6 +27,9 @@
 
 /* Palette taken from the Nabu Tarot logo: lavender ground, cream disc, deep
    purple line, gold crescent, pink and blue side cards. */
+/* Where the phone's own bars are. The iPhone app's web view says nothing
+   (env() is 0 there), so the app tells the page itself, in these two; the
+   browser and the Android app leave them unset and env() answers. */
 :root{
   --bg:#EFE9FA; --surface:#FFF9FA; --surface-2:#F4EEFB; --surface-3:#E9E0F7;
   --fg:#3B2A5E; --fg-soft:#6B5C8A; --fg-faint:#9C90B6;
@@ -115,7 +118,7 @@ html{-webkit-text-size-adjust:100%;touch-action:manipulation}
    border, the footer's last line always ends the same distance above it. */
 body{margin:0;background:var(--bg);color:var(--fg);font-family:var(--body);font-size:16px;line-height:1.55;
   -webkit-font-smoothing:antialiased;display:flex;flex-direction:column;min-height:100vh;min-height:100dvh;
-  padding-bottom:calc(var(--nav-h) + env(safe-area-inset-bottom))}
+  padding-bottom:calc(var(--nav-h) + var(--nabu-safe-bottom,env(safe-area-inset-bottom)))}
 a{color:var(--link)}
 button{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:pointer;-webkit-tap-highlight-color:transparent}
 input,textarea,select{font:inherit;color:var(--fg);background:var(--surface);border:1px solid var(--rule);border-radius:12px;padding:12px 14px;width:100%;max-width:100%;-webkit-appearance:none;appearance:none;margin:0}
@@ -174,7 +177,7 @@ h1,h2,h3,.eyebrow{text-wrap:balance}
 
 /* ---- header ---- */
 .top{position:sticky;top:0;z-index:20;background:color-mix(in srgb,var(--bg) 90%,transparent);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);
-  border-bottom:1px solid var(--rule-soft);padding-top:env(safe-area-inset-top)}
+  border-bottom:1px solid var(--rule-soft);padding-top:var(--nabu-safe-top,env(safe-area-inset-top))}
 .top .wrap{display:flex;align-items:center;justify-content:space-between;height:58px}
 .brand{display:flex;align-items:center;gap:9px;font-family:var(--display);font-size:20px;letter-spacing:.02em;color:var(--fg);text-decoration:none}
 .brand .lockup .word{font-size:20px}
@@ -186,7 +189,7 @@ h1,h2,h3,.eyebrow{text-wrap:balance}
 
 /* ---- bottom nav ---- */
 .nav{position:fixed;left:0;right:0;bottom:0;z-index:20;background:color-mix(in srgb,var(--surface) 94%,transparent);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
-  border-top:1px solid var(--rule-soft);padding-bottom:env(safe-area-inset-bottom)}
+  border-top:1px solid var(--rule-soft);padding-bottom:var(--nabu-safe-bottom,env(safe-area-inset-bottom))}
 .nav .wrap{display:grid;grid-template-columns:repeat(5,1fr);height:var(--nav-h);padding:0}
 .nav a{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;text-decoration:none;color:var(--fg-faint);font-size:10.5px;font-weight:600;white-space:nowrap;letter-spacing:.01em;position:relative}
 .nav a svg{width:24px;height:24px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
@@ -223,7 +226,7 @@ button.chip,a.chip,label.chip{display:inline-flex;align-items:center;justify-con
 .card{background:var(--surface);border:1px solid var(--rule-soft);border-radius:18px;padding:18px;margin-bottom:14px;box-shadow:0 1px 0 var(--rule-soft)}
 .muted{color:var(--fg-soft)}
 .faint{color:var(--fg-faint);font-size:13.5px;line-height:1.45}
-.toast{position:fixed;left:50%;bottom:calc(var(--nav-h) + env(safe-area-inset-bottom) + 14px);transform:translateX(-50%);z-index:30;
+.toast{position:fixed;left:50%;bottom:calc(var(--nav-h) + var(--nabu-safe-bottom,env(safe-area-inset-bottom)) + 14px);transform:translateX(-50%);z-index:30;
   background:var(--fg);color:var(--bg);padding:10px 16px;border-radius:14px;font-size:14px;font-weight:500;
   box-shadow:0 8px 24px var(--shade);opacity:0;pointer-events:none;transition:opacity .2s;max-width:88vw;text-align:center}
 .toast.show{opacity:1}
@@ -1063,7 +1066,7 @@ input.ofsw::-moz-color-swatch{border:2px solid var(--bg);border-radius:50%}
 .cardnav a.next{justify-content:flex-end;text-align:right}.cardnav a b{font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.cardnav .ar{flex:none;color:var(--fg-faint)}.cardnav .cn-sp{display:block}
 .meacts{margin-bottom:14px}.meacts .row{margin-top:8px}
 /* Shows itself once a screen has scrolled far enough to be worth a shortcut. */
-#totop{position:fixed;right:14px;bottom:calc(74px + env(safe-area-inset-bottom,0px));z-index:40;width:44px;height:44px;border-radius:50%;border:1px solid var(--rule);background:var(--surface);color:var(--fg);font-size:19px;line-height:1;box-shadow:0 3px 12px var(--shade);cursor:pointer}
+#totop{position:fixed;right:14px;bottom:calc(74px + var(--nabu-safe-bottom,env(safe-area-inset-bottom,0px)));z-index:40;width:44px;height:44px;border-radius:50%;border:1px solid var(--rule);background:var(--surface);color:var(--fg);font-size:19px;line-height:1;box-shadow:0 3px 12px var(--shade);cursor:pointer}
 #totop:active{transform:scale(.94)}
 .coinwrap{text-align:center}.coinwrap input{text-align:center}
 .coin{width:150px;height:150px;margin:16px auto 4px}.coin svg{width:100%;height:100%;display:block}
@@ -1321,7 +1324,7 @@ input.ofsw::-moz-color-swatch{border:2px solid var(--bg);border-radius:50%}
    navigation for as long as the real ones at the foot of the page are out of
    sight. Below the navigation's z-index on purpose: the tab bar is how
    somebody leaves, and nothing may sit on top of that. */
-.petbar{position:fixed;left:0;right:0;bottom:calc(var(--nav-h) + env(safe-area-inset-bottom,0px));z-index:19;
+.petbar{position:fixed;left:0;right:0;bottom:calc(var(--nav-h) + var(--nabu-safe-bottom,env(safe-area-inset-bottom,0px)));z-index:19;
   background:color-mix(in srgb,var(--surface) 94%,transparent);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
   border-top:1px solid var(--rule-soft);box-shadow:0 -6px 18px var(--shade)}
 /* The two choices are stacked, each the full width of the bar and the same
@@ -1359,7 +1362,7 @@ input.ofsw::-moz-color-swatch{border:2px solid var(--bg);border-radius:50%}
 /* The sheet that those buttons lift. */
 .sheet{position:fixed;inset:0;z-index:60;display:flex;align-items:flex-end;justify-content:center}
 .sheet .sh-back{position:absolute;inset:0;background:rgba(30,18,50,.42);animation:fadein .18s ease}
-.sheet .sh-body{position:relative;width:100%;max-width:520px;max-height:82vh;overflow-y:auto;background:var(--surface);border-radius:20px 20px 0 0;padding:10px 16px calc(18px + env(safe-area-inset-bottom));box-shadow:0 -8px 30px rgba(40,25,70,.25);animation:sheetup .22s cubic-bezier(.2,.7,.3,1)}
+.sheet .sh-body{position:relative;width:100%;max-width:520px;max-height:82vh;overflow-y:auto;background:var(--surface);border-radius:20px 20px 0 0;padding:10px 16px calc(18px + var(--nabu-safe-bottom,env(safe-area-inset-bottom)));box-shadow:0 -8px 30px rgba(40,25,70,.25);animation:sheetup .22s cubic-bezier(.2,.7,.3,1)}
 .shelfsay{margin-top:10px;padding:9px 12px;border-radius:12px;background:var(--surface-2);color:var(--fg)}
 .shelfsay a{white-space:nowrap}
 .sheet .sh-grip{width:40px;height:4px;border-radius:4px;background:var(--rule);margin:0 auto 10px}
@@ -1832,7 +1835,7 @@ input.ofsw::-moz-color-swatch{border:2px solid var(--bg);border-radius:50%}
 .imgview{position:fixed;inset:0;z-index:90;background:rgba(16,10,32,.92);display:flex;
   flex-direction:column;align-items:center;justify-content:center;gap:14px;padding:20px}
 .imgview img{max-width:100%;max-height:72vh;border-radius:14px;box-shadow:0 8px 40px rgba(0,0,0,.5)}
-.imgview .ivx{position:absolute;top:calc(env(safe-area-inset-top,0px) + 12px);right:14px;width:38px;height:38px;
+.imgview .ivx{position:absolute;top:calc(var(--nabu-safe-top,env(safe-area-inset-top,0px)) + 12px);right:14px;width:38px;height:38px;
   border-radius:999px;border:0;background:rgba(255,255,255,.16);color:#fff;font-size:17px;line-height:1;cursor:pointer}
 .imgview .hint{color:#EDE6F7;max-width:340px;text-align:center}
 .att{cursor:zoom-in}
@@ -1840,7 +1843,7 @@ input.ofsw::-moz-color-swatch{border:2px solid var(--bg);border-radius:50%}
 /* Pull down to refresh. The browser's own is switched off: it reloads the
    whole page and loses the screen you were standing on. */
 html,body{overscroll-behavior-y:contain}
-#pull{position:fixed;top:calc(env(safe-area-inset-top,0px) + 4px);left:50%;z-index:60;width:34px;height:34px;
+#pull{position:fixed;top:calc(var(--nabu-safe-top,env(safe-area-inset-top,0px)) + 4px);left:50%;z-index:60;width:34px;height:34px;
   display:flex;align-items:center;justify-content:center;border-radius:999px;pointer-events:none;
   background:var(--surface);border:1px solid var(--rule);color:var(--fg-soft);
   opacity:0;transform:translate(-50%,0);box-shadow:0 2px 10px var(--shade)}
@@ -2209,7 +2212,7 @@ body.behindsheet #main *,body.behindsheet #backbar *{animation-play-state:paused
 .scenesheet .wtile .wscene{height:96px}
 
 .dresssheet .wfoot{position:sticky;bottom:0;background:var(--surface);border-top:1px solid var(--rule-soft);
-  padding:9px 14px calc(12px + env(safe-area-inset-bottom))}
+  padding:9px 14px calc(12px + var(--nabu-safe-bottom,env(safe-area-inset-bottom)))}
 .dresssheet .wlooks{display:flex;align-items:center;gap:7px;margin-bottom:8px;overflow-x:auto;scrollbar-width:none}
 .dresssheet .wlooks::-webkit-scrollbar{display:none}
 .dresssheet .wlooks .lbl{font-size:11.5px;color:var(--muted);white-space:nowrap}

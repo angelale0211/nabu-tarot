@@ -80,6 +80,31 @@ class _NabuHostState extends State<NabuHost> {
     }
   }
 
+  /// The iPhone's web view, inside the app, tells the page nothing about the
+  /// status bar, the notch or the home indicator (env(safe-area-inset-*) is
+  /// 0), and the site's top bar sat under the clock and the battery. So the
+  /// app tells the page itself, in the two values the site's stylesheet reads
+  /// before env(): the top bar and the tabs then reach under the phone's bars
+  /// in their own colours, as in Safari.
+  EdgeInsets _safe = EdgeInsets.zero;
+
+  Future<void> _tellSafeArea(InAppWebViewController c) async {
+    if (!Platform.isIOS || !isSiteOrigin(await c.getUrl())) return;
+    try {
+      await c.evaluateJavascript(source: safeAreaScript(_safe));
+    } catch (_) {/* the page is changing; its next load is told again */}
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final now = MediaQuery.viewPaddingOf(context);
+    if (now == _safe) return;
+    _safe = now;
+    final c = widget.shellKey?.currentState?.controller;
+    if (c != null) _tellSafeArea(c);
+  }
+
   @override
   void dispose() {
     _events?.cancel();
@@ -100,11 +125,14 @@ class _NabuHostState extends State<NabuHost> {
           scripts: [
             UserScript(source: _shimSrc, injectionTime: UserScriptInjectionTime.AT_DOCUMENT_START, forMainFrameOnly: true),
             UserScript(source: _commonSrc, injectionTime: UserScriptInjectionTime.AT_DOCUMENT_START, forMainFrameOnly: true),
+            // Before the first paint, so the top bar never shows under the clock.
+            if (Platform.isIOS) UserScript(source: safeAreaScript(_safe), injectionTime: UserScriptInjectionTime.AT_DOCUMENT_START, forMainFrameOnly: true),
           ],
           onCreated: _created,
           onStarted: (_) => widget.bridge.pageChanged(),
           onLoaded: (c) async {
             await _ensureShims(c);
+            await _tellSafeArea(c);
             widget.onLoaded?.call();
             _watchInsets(c);
           },
@@ -112,4 +140,15 @@ class _NabuHostState extends State<NabuHost> {
       },
     );
   }
+}
+
+/// Hands the page the phone's bars (CSS px): --nabu-safe-top and
+/// --nabu-safe-bottom on the root element, which the site's stylesheet reads
+/// before env(safe-area-inset-*). Waits for the root element if the page has
+/// none yet.
+String safeAreaScript(EdgeInsets p) {
+  String px(double v) => '${v.isFinite && v > 0 ? v.toStringAsFixed(1) : '0'}px';
+  return "(function(){var f=function(){var d=document.documentElement;if(!d)return false;"
+      "d.style.setProperty('--nabu-safe-top','${px(p.top)}');d.style.setProperty('--nabu-safe-bottom','${px(p.bottom)}');return true;};"
+      "if(!f())new MutationObserver(function(m,o){if(f())o.disconnect();}).observe(document,{childList:true,subtree:true});})();";
 }
