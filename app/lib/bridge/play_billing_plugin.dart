@@ -12,13 +12,16 @@ abstract class PlayStore {
   /// [{itemId, title, description, price: {currency, value}, subscriptionPeriod?}]
   Future<List<Map<String, Object?>>> details(List<String> ids);
 
-  /// What this Play account holds: [{itemId, purchaseToken}].
+  /// What this Play account holds: [{itemId, purchaseToken, account?}];
+  /// account is the Nabu account the purchase was made for, when it was.
   Future<List<Map<String, Object?>>> purchases();
 
   /// Shows Play's sheet. Resolves {itemId, purchaseToken}; a closed sheet
   /// throws PluginError(code: 'cancelled'). Nothing is acknowledged here: the
   /// worker acknowledges a purchase once it has checked it (worker/src/play.ts).
-  Future<Map<String, Object?>> buy(String sku, {String? oldSku, String? oldToken});
+  /// [account] is written on the purchase (Play's obfuscatedAccountId), so
+  /// it can later be told apart from another Nabu account's on the same phone.
+  Future<Map<String, Object?>> buy(String sku, {String? oldSku, String? oldToken, String? account});
   Future<void> consume(String token);
 }
 
@@ -45,7 +48,7 @@ class PlayBillingPlugin implements NativePlugin {
       case 'buy':
         final sku = args['sku'];
         if (sku is! String || sku.isEmpty) throw const PluginError('no sku');
-        return store.buy(sku, oldSku: args['oldSku'] as String?, oldToken: args['oldToken'] as String?);
+        return store.buy(sku, oldSku: args['oldSku'] as String?, oldToken: args['oldToken'] as String?, account: accountIdOf(args['account']));
       case 'consume':
         final t = args['purchaseToken'];
         if (t is! String || t.isEmpty) throw const PluginError('no purchaseToken');
@@ -166,11 +169,16 @@ class GooglePlayStore implements PlayStore {
 
   @override
   Future<List<Map<String, Object?>>> purchases() async => [
-        for (final p in await _held()) {'itemId': p.productID, 'purchaseToken': p.verificationData.serverVerificationData},
+        for (final p in await _held())
+          {
+            'itemId': p.productID,
+            'purchaseToken': p.verificationData.serverVerificationData,
+            if ((p.billingClientPurchase.obfuscatedAccountId ?? '').isNotEmpty) 'account': p.billingClientPurchase.obfuscatedAccountId,
+          },
       ];
 
   @override
-  Future<Map<String, Object?>> buy(String sku, {String? oldSku, String? oldToken}) async {
+  Future<Map<String, Object?>> buy(String sku, {String? oldSku, String? oldToken, String? account}) async {
     if (_buying != null && !_buying!.isCompleted) throw const PluginError('a purchase is already open', code: 'busy');
     ProductDetails? pd = _products[sku];
     if (pd == null) {
@@ -190,7 +198,7 @@ class GooglePlayStore implements PlayStore {
     _buyingSku = sku;
     try {
       final started = await _iap.buyNonConsumable(
-        purchaseParam: GooglePlayPurchaseParam(productDetails: pd, changeSubscriptionParam: change),
+        purchaseParam: GooglePlayPurchaseParam(productDetails: pd, changeSubscriptionParam: change, applicationUserName: account),
       );
       if (!started && !c.isCompleted) c.completeError(const PluginError('Play did not open its sheet', code: 'error'));
     } catch (e) {
@@ -215,3 +223,8 @@ class GooglePlayStore implements PlayStore {
 /// a refusal arrive.
 bool isAnswerTo(String productId, PurchaseStatus status, String? buying) =>
     productId == buying || (productId.isEmpty && (status == PurchaseStatus.canceled || status == PurchaseStatus.error));
+
+/// The Nabu account a purchase is made for, as the site sends it (a hash of
+/// the account, never the account itself), or null for anything else. Play
+/// keeps at most 64 characters.
+String? accountIdOf(Object? v) => v is String && RegExp(r'^[0-9a-fA-F-]{8,64}$').hasMatch(v) ? v.toLowerCase() : null;

@@ -134,6 +134,15 @@ async function loadImg(id) {
 }
 function videoHTML(url) {
   const u = String(url).trim(), m = /(?:youtube\.com\/(?:watch\?v=|shorts\/|embed\/)|youtu\.be\/)([A-Za-z0-9_-]{6,})/.exec(u);
+  /* Inside the apps a video is a button that opens YouTube or Facebook, not a
+     player inside the page: a frame of theirs in the app's own web view could
+     reach the app's bridge (sign-in, purchases, notifications) - Android hands
+     that to every frame on the page. The website keeps its players. */
+  if (inStoreApp()) {
+    const site = m || /youtu/.test(u) ? 'YouTube' : /tiktok/.test(u) ? 'TikTok' : /instagram/.test(u) ? 'Instagram' : /facebook|fb\./.test(u) ? 'Facebook' : 'video';
+    const href = m ? 'https://www.youtube.com/watch?v=' + m[1] : u;
+    return /^https:\/\//.test(href) ? '<a class="vlink" href="' + esc(href) + '" target="_blank" rel="noopener">▶ ' + esc(T().watchOn(site)) + '</a>' : '';
+  }
   if (m) return '<div class="video"><iframe src="https://www.youtube.com/embed/' + m[1] + '" allow="accelerometer; autoplay; encrypted-media; picture-in-picture" allowfullscreen loading="lazy"></iframe></div>';
   if (/facebook\.com\/.*\/videos\/|fb\.watch\//.test(u)) return '<div class="video"><iframe src="https://www.facebook.com/plugins/video.php?href=' + encodeURIComponent(u) + '&show_text=false" allowfullscreen loading="lazy"></iframe></div>';
   const site = /tiktok/.test(u) ? 'TikTok' : /instagram/.test(u) ? 'Instagram' : /facebook|fb\./.test(u) ? 'Facebook' : 'video';

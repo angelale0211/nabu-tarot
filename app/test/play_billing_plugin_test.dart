@@ -6,6 +6,7 @@ import 'package:nabu_tarot/bridge/plugin.dart';
 class FakePlay implements PlayStore {
   List<String>? asked;
   (String, String?, String?)? bought;
+  String? boughtFor;
   Object? buyError;
   final consumed = <String>[];
   List<Map<String, Object?>> held = [
@@ -25,9 +26,10 @@ class FakePlay implements PlayStore {
   Future<List<Map<String, Object?>>> purchases() async => held;
 
   @override
-  Future<Map<String, Object?>> buy(String sku, {String? oldSku, String? oldToken}) async {
+  Future<Map<String, Object?>> buy(String sku, {String? oldSku, String? oldToken, String? account}) async {
     if (buyError != null) throw buyError!;
     bought = (sku, oldSku, oldToken);
+    boughtFor = account;
     return {'itemId': sku, 'purchaseToken': 'tok-new'};
   }
 
@@ -91,5 +93,14 @@ void main() {
     // Another product's row (a renewal, a pending one settling) is not this purchase's answer.
     expect(isAnswerTo('plus', PurchaseStatus.purchased, 'tarot'), isFalse);
     expect(isAnswerTo('', PurchaseStatus.purchased, 'tarot'), isFalse);
+  });
+
+  test('a purchase is made for the Nabu account the site names, and only for a well-formed one', () async {
+    await p.call('buy', {'sku': 'plus', 'account': '0A1B2C3D-4E5F-5a6b-8c7d-0123456789ab'});
+    expect(play.boughtFor, '0a1b2c3d-4e5f-5a6b-8c7d-0123456789ab');
+    await p.call('buy', {'sku': 'plus', 'account': 'someone@example.com'});
+    expect(play.boughtFor, isNull);
+    await p.call('buy', {'sku': 'plus'});
+    expect(play.boughtFor, isNull);
   });
 }

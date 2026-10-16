@@ -4,7 +4,10 @@
 # reversed id as a URL scheme so Google's sheet can come back to the app.
 set -e
 cd "$(dirname "$0")/../Runner"
-[ -f GoogleService-Info.plist ] || { echo "no GoogleService-Info.plist: Google sign-in and notifications stay off"; echo "{}" > ../../firebase_defines.json; exit 0; }
+# NABU_REQUIRE_FIREBASE=1 (Codemagic): a build without them stops instead.
+[ -f GoogleService-Info.plist ] || {
+  [ "$NABU_REQUIRE_FIREBASE" = "1" ] && { echo "ERROR: no GoogleService-Info.plist"; exit 1; }
+  echo "no GoogleService-Info.plist: Google sign-in and notifications stay off"; echo "{}" > ../../firebase_defines.json; exit 0; }
 PB=/usr/libexec/PlistBuddy
 CID=$($PB -c "Print :CLIENT_ID" GoogleService-Info.plist 2>/dev/null || true)
 RID=$($PB -c "Print :REVERSED_CLIENT_ID" GoogleService-Info.plist 2>/dev/null || true)
@@ -17,6 +20,7 @@ $PB -c "Add :CFBundleURLTypes:1 dict" Info.plist
 $PB -c "Add :CFBundleURLTypes:1:CFBundleURLSchemes array" Info.plist
 $PB -c "Add :CFBundleURLTypes:1:CFBundleURLSchemes:0 string $RID" Info.plist
 else
+[ "$NABU_REQUIRE_FIREBASE" = "1" ] && { echo "ERROR: no Google client id in GoogleService-Info.plist (download it again with Google sign-in enabled)"; exit 1; }
 echo "no Google client id in GoogleService-Info.plist: Google sign-in stays off"
 fi
 # Firebase for notifications, as build-time defines (lib/push/firebase_config.dart).

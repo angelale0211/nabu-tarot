@@ -12,7 +12,7 @@
      carries this notice with it. See LICENSE. -->
 <meta name="author" content="Nabu Tarot">
 <meta name="copyright" content="Copyright (c) 2025-2026 Nabu Tarot. All rights reserved.">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'none'; object-src 'none'; form-action 'self'; script-src 'self' 'sha256-QQ3FbtxCe/Py7wW0FEUgrmwdavrT+9tZe+bdZ+T+A+s=' https://www.gstatic.com https://apis.google.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; font-src 'self' data:; media-src 'self' data: blob:; worker-src 'self'; connect-src 'self' https://*.googleapis.com https://*.google.com https://*.firebaseio.com https://*.cloudfunctions.net https://*.workers.dev https://generativelanguage.googleapis.com; frame-src https://*.firebaseapp.com https://accounts.google.com https://*.facebook.com">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'none'; object-src 'none'; form-action 'self'; script-src 'self' 'sha256-nwdlMwLm1QbnoPzttuCsy52JJQ5Ya/DA4h06eIF+kBQ=' https://www.gstatic.com https://apis.google.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; font-src 'self' data:; media-src 'self' data: blob:; worker-src 'self'; connect-src 'self' https://*.googleapis.com https://*.google.com https://*.firebaseio.com https://*.cloudfunctions.net https://*.workers.dev https://generativelanguage.googleapis.com; frame-src https://*.firebaseapp.com https://accounts.google.com https://*.facebook.com">
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <meta name="theme-color" content="#EFE9FA">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -17008,6 +17008,15 @@ async function loadImg(id) {
 }
 function videoHTML(url) {
   const u = String(url).trim(), m = /(?:youtube\.com\/(?:watch\?v=|shorts\/|embed\/)|youtu\.be\/)([A-Za-z0-9_-]{6,})/.exec(u);
+  /* Inside the apps a video is a button that opens YouTube or Facebook, not a
+     player inside the page: a frame of theirs in the app's own web view could
+     reach the app's bridge (sign-in, purchases, notifications) - Android hands
+     that to every frame on the page. The website keeps its players. */
+  if (inStoreApp()) {
+    const site = m || /youtu/.test(u) ? 'YouTube' : /tiktok/.test(u) ? 'TikTok' : /instagram/.test(u) ? 'Instagram' : /facebook|fb\./.test(u) ? 'Facebook' : 'video';
+    const href = m ? 'https://www.youtube.com/watch?v=' + m[1] : u;
+    return /^https:\/\//.test(href) ? '<a class="vlink" href="' + esc(href) + '" target="_blank" rel="noopener">▶ ' + esc(T().watchOn(site)) + '</a>' : '';
+  }
   if (m) return '<div class="video"><iframe src="https://www.youtube.com/embed/' + m[1] + '" allow="accelerometer; autoplay; encrypted-media; picture-in-picture" allowfullscreen loading="lazy"></iframe></div>';
   if (/facebook\.com\/.*\/videos\/|fb\.watch\//.test(u)) return '<div class="video"><iframe src="https://www.facebook.com/plugins/video.php?href=' + encodeURIComponent(u) + '&show_text=false" allowfullscreen loading="lazy"></iframe></div>';
   const site = /tiktok/.test(u) ? 'TikTok' : /instagram/.test(u) ? 'Instagram' : /facebook|fb\./.test(u) ? 'Facebook' : 'video';
@@ -19404,6 +19413,11 @@ const BILL = {
       if (row) { data.oldSku = old.sku; data.purchaseToken = row.purchaseToken; }
       else if ((SUBS.of(opt.oldKey) || {}).grant) throw new Error('oldmissing');
     }
+    /* The Nabu account this is bought for, written on the purchase by Play
+       (the Android app 1.2+; Chrome and older apps ignore it). The same hash
+       of the account the iPhone writes, never the account itself. restore()
+       then leaves another account's purchases on a shared phone alone. */
+    if (window.__nabuAndroid && BE.user) { try { data.account = await appleAccountToken(BE.user.uid); } catch (e) { /* bought unmarked, as before */ } }
     const req = new PaymentRequest([{ supportedMethods: PLAY_METHOD, data: data }],
       { total: { label: L((courseOf(key) || { name: { vi: key, en: key } }).name), amount: { currency: 'VND', value: '0' } } });
     /* The rejection is classified by name, not by stopwatch, and what came
@@ -19583,7 +19597,16 @@ const BILL = {
        so it wins the merge rather than being shadowed by a fresh, empty-
        looking row that happens to carry the same token. */
     const byToken = {};
-    list.forEach((p) => { if (p.purchaseToken) byToken[p.purchaseToken] = { sku: p.itemId, token: p.purchaseToken }; });
+    /* Only what this Nabu account bought. On a phone two people share, the
+       one signing in used to take the other's Plus or Pro with them, without
+       pressing anything. A purchase that names no account (made before the
+       app wrote one, or in Chrome) is sent as before: the ledger decides. */
+    let mine = '';
+    try { mine = (await appleAccountToken(BE.user.uid)).toLowerCase(); } catch (e) { /* no hashing: nothing filtered */ }
+    list.forEach((p) => {
+      const acct = String(p.account || '').toLowerCase();
+      if (p.purchaseToken && (!acct || !mine || acct === mine)) byToken[p.purchaseToken] = { sku: p.itemId, token: p.purchaseToken };
+    });
     this.pendingList().forEach((p) => { if (p.token) byToken[p.token] = Object.assign({}, byToken[p.token], p); });
     for (const token of Object.keys(byToken)) {
       const p = byToken[token], it = playItemBySku(p.sku);
@@ -33040,7 +33063,7 @@ function adminSale(p) {
 ROUTES.admin = { nav: '', render: renderAdmin };
 
 /* ============================ boot ============================ */
-window.APP_VERSION = 'v287';
+window.APP_VERSION = 'v288';
 window.NABU = { CONFIG: CONFIG, SALE: SALE, salePrice: salePrice, loadActs: loadActs, BACK: BACK, LESSONS: LESSONS, localAnswer: localAnswer, compatVerdict: compatVerdict, numerologyOf: numerologyOf, ZDEEP: ZDEEP, lunarToday: lunarToday, solarToLunar: solarToLunar, DECK: DECK, INSIGHT: INSIGHT, KW: KW, ASK: ASK, GUIDES: GUIDES, SERVICES: SERVICES, COURSES: COURSES, ACCESS: ACCESS, INTERESTS: INTERESTS, plusOn: () => plusOn(), proOn: () => proOn(), luckUnlimited: () => luckUnlimited(), ZODIAC: ZODIAC, pick: pick, book: book, PLAY_ITEMS: PLAY_ITEMS, PLAY_SUB_SKUS: PLAY_SUB_SKUS, playItem: playItem, BILL: BILL, SUBS: SUBS, billUse: billUse, APPLE_BILL: APPLE_BILL, appleAccountToken: appleAccountToken, renderStore: renderStore, pickLimitHTML: pickLimitHTML, subStateWord: subStateWord,
   insightHTML: insightHTML, insightOf: insightOf, sunSignIndex: sunSignIndex, lifePath: lifePath, PROFILE: () => PROFILE, BE: BE, inAppBrowser: inAppBrowser, ACTS: ACTS, CMT: CMT, LIKES: LIKES, kbReady: kbReady, AI: AI, STR: STR, KB_URL: (typeof KB_URL === 'string' ? KB_URL : ''),
   ANGELS: ANGELS, angelRead: angelRead, CODEBOOK: CODEBOOK, redeemCode: redeemCode, loadCodebook: loadCodebook, petHomeSVG: petHomeSVG, petStill: petStill, PET_HOMES: PET_HOMES, PET_WARDROBE: PET_WARDROBE, PET_SLOTS: PET_SLOTS,

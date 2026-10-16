@@ -53,6 +53,8 @@
     var d = this._data, args = { sku: d.sku };
     if (d.oldSku) args.oldSku = d.oldSku;
     if (d.purchaseToken) args.oldToken = d.purchaseToken;
+    /* The Nabu account this is bought for (a hash), written on the purchase by Play. */
+    if (d.account) args.account = d.account;
     return call('PlayBilling', 'buy', args).then(function (v) {
       /* A payment Play holds as pending (cash, a slow bank) is not refused and not done: the sheet
          answers with no token and says so (src/billing.js then says it is waiting and frees the

@@ -344,6 +344,11 @@ const BILL = {
       if (row) { data.oldSku = old.sku; data.purchaseToken = row.purchaseToken; }
       else if ((SUBS.of(opt.oldKey) || {}).grant) throw new Error('oldmissing');
     }
+    /* The Nabu account this is bought for, written on the purchase by Play
+       (the Android app 1.2+; Chrome and older apps ignore it). The same hash
+       of the account the iPhone writes, never the account itself. restore()
+       then leaves another account's purchases on a shared phone alone. */
+    if (window.__nabuAndroid && BE.user) { try { data.account = await appleAccountToken(BE.user.uid); } catch (e) { /* bought unmarked, as before */ } }
     const req = new PaymentRequest([{ supportedMethods: PLAY_METHOD, data: data }],
       { total: { label: L((courseOf(key) || { name: { vi: key, en: key } }).name), amount: { currency: 'VND', value: '0' } } });
     /* The rejection is classified by name, not by stopwatch, and what came
@@ -523,7 +528,16 @@ const BILL = {
        so it wins the merge rather than being shadowed by a fresh, empty-
        looking row that happens to carry the same token. */
     const byToken = {};
-    list.forEach((p) => { if (p.purchaseToken) byToken[p.purchaseToken] = { sku: p.itemId, token: p.purchaseToken }; });
+    /* Only what this Nabu account bought. On a phone two people share, the
+       one signing in used to take the other's Plus or Pro with them, without
+       pressing anything. A purchase that names no account (made before the
+       app wrote one, or in Chrome) is sent as before: the ledger decides. */
+    let mine = '';
+    try { mine = (await appleAccountToken(BE.user.uid)).toLowerCase(); } catch (e) { /* no hashing: nothing filtered */ }
+    list.forEach((p) => {
+      const acct = String(p.account || '').toLowerCase();
+      if (p.purchaseToken && (!acct || !mine || acct === mine)) byToken[p.purchaseToken] = { sku: p.itemId, token: p.purchaseToken };
+    });
     this.pendingList().forEach((p) => { if (p.token) byToken[p.token] = Object.assign({}, byToken[p.token], p); });
     for (const token of Object.keys(byToken)) {
       const p = byToken[token], it = playItemBySku(p.sku);

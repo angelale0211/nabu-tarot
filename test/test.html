@@ -403,7 +403,7 @@ async function go(hash, sel) { W().location.hash = hash; await sleep(30); return
           if (play.connectFail) { play.connectFail = false; const e = new Error('no'); e.name = play.connectFailName || 'InvalidStateError'; throw e; }
           return {
           getDetails: async (ids) => (play.hangDetails ? new Promise(() => {}) : play.emptyDetails ? [] : ids.filter((s) => !!skuKey(s) && (!play.onlySkus || play.onlySkus.indexOf(s) > -1)).map((s) => { const it = playItem(skuKey(s)); return { itemId: s, title: it.key, description: '', type: it.kind === 'subs' ? 'subscription' : 'product', price: { currency: 'VND', value: String({ tarot: 300000, lenormand: 300000, playing: 300000, wedding: 30000, manifest: 75000, plus: 79000, pro6: 149000, pro: 249000 }[it.key]) }, subscriptionPeriod: it.kind === 'subs' ? 'P' + it.months + 'M' : undefined }; })),
-          listPurchases: async () => (play.hangPurchases ? new Promise(() => {}) : Object.keys(play.products).filter((t) => !play.products[t].consumed).map((t) => ({ itemId: play.products[t].sku, purchaseToken: t }))
+          listPurchases: async () => (play.hangPurchases ? new Promise(() => {}) : Object.keys(play.products).filter((t) => !play.products[t].consumed).map((t) => Object.assign({ itemId: play.products[t].sku, purchaseToken: t }, play.products[t].account ? { account: play.products[t].account } : {}))
             .concat(Object.keys(play.subs).map((t) => ({ itemId: play.subs[t].sku, purchaseToken: t })))),
           consume: async () => {}
           }; };
@@ -1937,6 +1937,11 @@ async function go(hash, sel) { W().location.hash = hash; await sleep(30); return
       play.products[N.BILL.pendingList()[0].token].state = 'ok';
       const rs = await N.BILL.restore();
       ok(N.ACCESS.has('lenormand') && N.BILL.pendingList().length === 0 && rs.opened >= 1, 'restore re-sends pending and listed purchases and clears what went through');
+      /* A phone two people share: what Play lists for the other Nabu account stays theirs. */
+      play.products.tokForeign = { sku: N.playItem('playing').sku, state: 'ok', account: '00000000-0000-5000-8000-000000000000' };
+      await N.BILL.restore();
+      ok(!N.ACCESS.has('playing'), 'restore leaves a purchase Play holds for another Nabu account on this phone alone');
+      delete play.products.tokForeign;
       play.sheetPendingNext = true;
       const held = await N.BILL.buy('playing').catch((e) => e);
       ok(held && held.pending === true && !N.BILL.buying && !N.ACCESS.has('playing'),
