@@ -12,7 +12,7 @@
      carries this notice with it. See LICENSE. -->
 <meta name="author" content="Nabu Tarot">
 <meta name="copyright" content="Copyright (c) 2025-2026 Nabu Tarot. All rights reserved.">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'none'; object-src 'none'; form-action 'self'; script-src 'self' 'sha256-2BxVy3R1g/vZqV6okngphQ0DTEzM4BeobBAOE6MeQPo=' https://www.gstatic.com https://apis.google.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; font-src 'self' data:; media-src 'self' data: blob:; worker-src 'self'; connect-src 'self' https://*.googleapis.com https://*.google.com https://*.firebaseio.com https://*.cloudfunctions.net https://*.workers.dev https://generativelanguage.googleapis.com; frame-src https://*.firebaseapp.com https://accounts.google.com https://*.facebook.com">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'none'; object-src 'none'; form-action 'self'; script-src 'self' 'sha256-QQ3FbtxCe/Py7wW0FEUgrmwdavrT+9tZe+bdZ+T+A+s=' https://www.gstatic.com https://apis.google.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; font-src 'self' data:; media-src 'self' data: blob:; worker-src 'self'; connect-src 'self' https://*.googleapis.com https://*.google.com https://*.firebaseio.com https://*.cloudfunctions.net https://*.workers.dev https://generativelanguage.googleapis.com; frame-src https://*.firebaseapp.com https://accounts.google.com https://*.facebook.com">
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <meta name="theme-color" content="#EFE9FA">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -13711,6 +13711,10 @@ function unwipeForTests() { WIPED = false; }
    perfectly ordinary next write from landing. */
 function wipeDevice(lock) {
   if (lock) WIPED = true;
+  /* The reminders the phone keeps for this account's bookings go with it. In
+     the apps the phone holds them itself (NabuNotify), and a signed-out or
+     deleted account's "your reading starts in an hour" kept arriving. */
+  try { scheduleReminders([]); } catch (e) { /* nothing was set */ }
   /* Memory too, or the next write - if one slips through anywhere - puts the
      same person back. */
   PROFILE = { name: '', birthday: '', interests: [], tourDone: false };
@@ -13759,9 +13763,9 @@ const pad2 = (n) => String(n).padStart(2, '0');
 const isoDate = (d) => d.getFullYear() + '-' + pad2(d.getMonth() + 1) + '-' + pad2(d.getDate());
 
 /* ---- language + theme ---- */
-/* A first open inside the iPhone app follows the phone's language: the App Store is worldwide and
+/* A first open inside either app follows the phone's language: the stores are worldwide and
    App Review starts from an English iPad, where Vietnamese was the first thing it met. A language
-   the app does not speak falls to English there. The web and Android keep Vietnamese as the default. */
+   the app does not speak falls to English there. The web keeps Vietnamese as the default. */
 function deviceLang() {
   const all = (navigator.languages && navigator.languages.length ? navigator.languages : [navigator.language || '']);
   for (const l of all) { const two = String(l).slice(0, 2).toLowerCase(); if (['vi', 'en', 'de'].indexOf(two) >= 0) return two; }
@@ -15216,11 +15220,40 @@ const BE = {
     if (!(isIOSApp() || window.__nabuAndroid) || !this.user) return;
     const ps = (this.user.providerData || []).map((p) => p && p.providerId);
     if (ps.indexOf('google.com') < 0 || (isIOSApp() && ps.indexOf('apple.com') > -1)) return;
-    const uid = this.user.uid;
-    await this.signIn('google');
-    const now = this.auth.currentUser;
-    if (!now || now.uid !== uid) throw Object.assign(new Error('another account'), { code: 'auth/user-mismatch' });
-    this.user = now;
+    /* Confirmed, not signed in again. Signing in with whatever account the
+       sheet came back with used to switch the phone to it: somebody who picked
+       the wrong account was told so, and was by then signed in as that other
+       account - a new, empty one if it had never been used here - while the
+       account they meant to delete stayed. Reauthenticating checks the answer
+       against the account that is signed in and changes nothing if it is
+       another one (auth/user-mismatch). */
+    const cred = await this.googleCredential();
+    await this.user.reauthenticateWithCredential(cred);
+  },
+  /* Google's answer from the phone's own sheet, as a credential, without
+     signing anybody in with it. The Android app (every version) answers the
+     same call its own overlay makes; the iPhone app through its plugin. */
+  async googleCredential() {
+    if (window.__nabuAndroid) {
+      const h = window.flutter_inappwebview;
+      if (!h || typeof h.callHandler !== 'function') throw Object.assign(new Error('native sign-in unavailable'), { code: 'auth/native-unavailable' });
+      const r = await h.callHandler('nabu', { plugin: 'FirebaseAuthentication', method: 'signInWithGoogle', args: {} });
+      if (!r || !r.ok) {
+        if (r && r.code === 'cancelled') throw Object.assign(new Error('cancelled'), { code: 'auth/popup-closed-by-user' });
+        throw Object.assign(new Error((r && r.message) || 'Google sign-in failed'), { code: 'auth/internal-error' });
+      }
+      const c = (r.value && r.value.credential) || {};
+      return firebase.auth.GoogleAuthProvider.credential(c.idToken, c.accessToken);
+    }
+    const FA = this.nativeAuth();
+    if (!FA) throw Object.assign(new Error('native sign-in unavailable'), { code: 'auth/native-unavailable' });
+    try {
+      const r = await FA.signInWithGoogle({ skipNativeAuth: true }), c = (r && r.credential) || {};
+      return firebase.auth.GoogleAuthProvider.credential(c.idToken, c.accessToken);
+    } catch (e) {
+      if (e && !/^auth\//.test(e.code || '') && /cancel/i.test(String(e.message || ''))) throw Object.assign(new Error('cancelled'), { code: 'auth/popup-closed-by-user' });
+      throw e;
+    }
   },
   /* Account deletion (a store requirement): profile, thread and messages, bookings, then the login itself.
      Firebase asks for a recent sign-in before deleting a login; the caller handles that error. */
@@ -19454,6 +19487,10 @@ const BILL = {
         this.remember(Object.assign({ sku: it.sku, token: tok, at: Date.now() }, opt.wid ? { wid: opt.wid } : {}));
         this.lastSheet = { outcome: 'done', name: '-', ms: Date.now() - shownAt };
         fin = this.restore().catch(() => {});
+      } else if (late && late.details && late.details.pending) {
+        /* Play holds the payment (cash, a slow bank): bought, not yet paid.
+           restore() opens it once Play settles it. */
+        this.lastSheet = { outcome: 'done', name: 'Pending', ms: Date.now() - shownAt };
       } else {
         /* Answered, and nothing was bought. Left as it was, the diagnostic
            line would go on saying Play is still working on a sheet that has
@@ -19493,6 +19530,13 @@ const BILL = {
        what restore() needs to finish it later. */
     if (token) this.remember(Object.assign({ sku: it.sku, token: token, at: Date.now() }, extra || {}));
     try { await res.complete(token ? 'success' : 'fail'); } catch (e) { /* already closed */ }
+    /* The Android app (1.1.9+) answers a payment Play holds as pending with no
+       token and says so, as the iPhone does: the shop is free again and says
+       the purchase is waiting; restore() opens it once Play settles it. */
+    if (!token && res && res.details && res.details.pending) {
+      this.lastSheet = { outcome: 'done', name: 'Pending', ms: Date.now() - shownAt };
+      return { pending: true };
+    }
     if (!token) throw new Error('nopurchase');
     let out;
     try { out = await this.verify(it.sku, token, extra); }
@@ -19723,7 +19767,7 @@ const APPLE_BILL = {
     } catch (e) { throw new Error('offline'); }
     const j = await r.json().catch(() => ({}));
     if (r.status >= 500 || r.status === 429) throw new Error('offline');
-    if (!r.ok || !j.ok) throw new Error(j.error || ('billing ' + r.status));
+    if (!r.ok || !j.ok) throw Object.assign(new Error(j.error || ('billing ' + r.status)), { status: r.status });
     return j;
   },
 
@@ -19744,7 +19788,12 @@ const APPLE_BILL = {
       const why = String((e && e.message) || '');
       /* Apple has the money and the worker could not be reached: kept, unfinished, for restore(). */
       if (why === 'offline') throw e;
-      /* A final answer - already used by another account, refunded, not this app - is final for StoreKit too. */
+      /* Only the App Store's own refusal (402: already used by another account,
+         refunded, not this app's product) is final for StoreKit too. Anything
+         else - a sign-in that had lapsed (401), a wedding room not found - can
+         still come right, and a finished transaction cannot be found again:
+         the wedding is a consumable, and once finished it is gone from restore. */
+      if (e && e.status !== 402) throw e;
       this.forget(rec.token); await this.finish(rec.token);
       throw e;
     }
@@ -32026,6 +32075,12 @@ function alertsAnniversary(bond, name) {
 function alertsWatchBookings() {
   if (!BE.enabled || !BE.user || BE.isAdmin()) return;
   ALERT_STOP.push(BE.watchMyBookings((list) => {
+    /* In the apps the phone keeps the reminders (NabuNotify), and they follow
+       every change while the app is open, not only while Profile is on screen:
+       a booking Nabu moved or called off went on reminding at the old hour
+       until Profile was opened. The web's reminders are timers that live only
+       as long as the page, and stay with Profile. */
+    if (window.NabuNotify) { try { scheduleReminders(list); } catch (e) { /* reminders are a nicety */ } }
     const S = T();
     (list || []).forEach((b) => {
       const key = 'bk.' + b.id, now = String(b.status || '') + '|' + String(b.slot || '');
@@ -32985,7 +33040,7 @@ function adminSale(p) {
 ROUTES.admin = { nav: '', render: renderAdmin };
 
 /* ============================ boot ============================ */
-window.APP_VERSION = 'v286';
+window.APP_VERSION = 'v287';
 window.NABU = { CONFIG: CONFIG, SALE: SALE, salePrice: salePrice, loadActs: loadActs, BACK: BACK, LESSONS: LESSONS, localAnswer: localAnswer, compatVerdict: compatVerdict, numerologyOf: numerologyOf, ZDEEP: ZDEEP, lunarToday: lunarToday, solarToLunar: solarToLunar, DECK: DECK, INSIGHT: INSIGHT, KW: KW, ASK: ASK, GUIDES: GUIDES, SERVICES: SERVICES, COURSES: COURSES, ACCESS: ACCESS, INTERESTS: INTERESTS, plusOn: () => plusOn(), proOn: () => proOn(), luckUnlimited: () => luckUnlimited(), ZODIAC: ZODIAC, pick: pick, book: book, PLAY_ITEMS: PLAY_ITEMS, PLAY_SUB_SKUS: PLAY_SUB_SKUS, playItem: playItem, BILL: BILL, SUBS: SUBS, billUse: billUse, APPLE_BILL: APPLE_BILL, appleAccountToken: appleAccountToken, renderStore: renderStore, pickLimitHTML: pickLimitHTML, subStateWord: subStateWord,
   insightHTML: insightHTML, insightOf: insightOf, sunSignIndex: sunSignIndex, lifePath: lifePath, PROFILE: () => PROFILE, BE: BE, inAppBrowser: inAppBrowser, ACTS: ACTS, CMT: CMT, LIKES: LIKES, kbReady: kbReady, AI: AI, STR: STR, KB_URL: (typeof KB_URL === 'string' ? KB_URL : ''),
   ANGELS: ANGELS, angelRead: angelRead, CODEBOOK: CODEBOOK, redeemCode: redeemCode, loadCodebook: loadCodebook, petHomeSVG: petHomeSVG, petStill: petStill, PET_HOMES: PET_HOMES, PET_WARDROBE: PET_WARDROBE, PET_SLOTS: PET_SLOTS,

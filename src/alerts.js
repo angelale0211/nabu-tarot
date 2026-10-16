@@ -252,6 +252,12 @@ function alertsAnniversary(bond, name) {
 function alertsWatchBookings() {
   if (!BE.enabled || !BE.user || BE.isAdmin()) return;
   ALERT_STOP.push(BE.watchMyBookings((list) => {
+    /* In the apps the phone keeps the reminders (NabuNotify), and they follow
+       every change while the app is open, not only while Profile is on screen:
+       a booking Nabu moved or called off went on reminding at the old hour
+       until Profile was opened. The web's reminders are timers that live only
+       as long as the page, and stay with Profile. */
+    if (window.NabuNotify) { try { scheduleReminders(list); } catch (e) { /* reminders are a nicety */ } }
     const S = T();
     (list || []).forEach((b) => {
       const key = 'bk.' + b.id, now = String(b.status || '') + '|' + String(b.slot || '');

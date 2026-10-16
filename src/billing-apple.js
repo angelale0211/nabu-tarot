@@ -142,7 +142,7 @@ const APPLE_BILL = {
     } catch (e) { throw new Error('offline'); }
     const j = await r.json().catch(() => ({}));
     if (r.status >= 500 || r.status === 429) throw new Error('offline');
-    if (!r.ok || !j.ok) throw new Error(j.error || ('billing ' + r.status));
+    if (!r.ok || !j.ok) throw Object.assign(new Error(j.error || ('billing ' + r.status)), { status: r.status });
     return j;
   },
 
@@ -163,7 +163,12 @@ const APPLE_BILL = {
       const why = String((e && e.message) || '');
       /* Apple has the money and the worker could not be reached: kept, unfinished, for restore(). */
       if (why === 'offline') throw e;
-      /* A final answer - already used by another account, refunded, not this app - is final for StoreKit too. */
+      /* Only the App Store's own refusal (402: already used by another account,
+         refunded, not this app's product) is final for StoreKit too. Anything
+         else - a sign-in that had lapsed (401), a wedding room not found - can
+         still come right, and a finished transaction cannot be found again:
+         the wedding is a consumable, and once finished it is gone from restore. */
+      if (e && e.status !== 402) throw e;
       this.forget(rec.token); await this.finish(rec.token);
       throw e;
     }

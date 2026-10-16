@@ -98,7 +98,11 @@ class GooglePlayStore implements PlayStore {
   void _onPurchases(List<PurchaseDetails> list) {
     for (final p in list) {
       final c = _buying;
-      if (c == null || c.isCompleted || p.productID != _buyingSku) continue;
+      if (c == null || c.isCompleted) continue;
+      // A closed or refused sheet comes back as one row with no product at
+      // all (in_app_purchase_android: no purchase to name). It answers the
+      // purchase on show, or the shop would wait on it for ever.
+      if (!isAnswerTo(p.productID, p.status, _buyingSku)) continue;
       switch (p.status) {
         case PurchaseStatus.purchased:
         case PurchaseStatus.restored:
@@ -184,10 +188,16 @@ class GooglePlayStore implements PlayStore {
     if (change == null) pd = bestOffer(pd, _offers[sku] ?? const []);
     final c = _buying = Completer<Map<String, Object?>>();
     _buyingSku = sku;
-    final started = await _iap.buyNonConsumable(
-      purchaseParam: GooglePlayPurchaseParam(productDetails: pd, changeSubscriptionParam: change),
-    );
-    if (!started && !c.isCompleted) c.completeError(const PluginError('Play did not open its sheet', code: 'error'));
+    try {
+      final started = await _iap.buyNonConsumable(
+        purchaseParam: GooglePlayPurchaseParam(productDetails: pd, changeSubscriptionParam: change),
+      );
+      if (!started && !c.isCompleted) c.completeError(const PluginError('Play did not open its sheet', code: 'error'));
+    } catch (e) {
+      // Play would not start (no activity, an offer that has gone): the
+      // purchase is over, and the next one must not find it still open.
+      if (!c.isCompleted) c.completeError(PluginError('$e', code: 'error'));
+    }
     return c.future;
   }
 
@@ -199,3 +209,9 @@ class GooglePlayStore implements PlayStore {
     if (r.responseCode != BillingResponse.ok) throw PluginError(r.debugMessage ?? 'consume failed');
   }
 }
+
+/// Whether a row from Play answers the purchase on show: the product being
+/// bought, or Play's row without a product, which is how a closed sheet and
+/// a refusal arrive.
+bool isAnswerTo(String productId, PurchaseStatus status, String? buying) =>
+    productId == buying || (productId.isEmpty && (status == PurchaseStatus.canceled || status == PurchaseStatus.error));

@@ -26,13 +26,21 @@ const kSite = 'https://nabutarot.com/';
 /// The site's address for one of its own routes ('pick', 'me/bookings').
 String siteUrl(String route) => route.isEmpty ? kSite : '$kSite#/$route';
 
+/// The site's own pages that live at an address of their own, and the
+/// screen of the app that shows the same text.
+const _pageRoutes = {'/privacy.html': 'privacy', '/terms.html': 'terms'};
+
 /// The site route a link names, or null for anything else:
 ///  - nabutarot://pick (the home-screen widget)
 ///  - https://nabutarot.com/#/post/2026-10-11-a6lz (a link shared from the
 ///    site, opened in the app instead of a browser); the bare site is ''.
+///  - https://nabutarot.com/privacy.html (the store listings link it): the
+///    app's own privacy screen, not the home screen.
 String? routeOfLink(Uri u) {
   if (u.scheme == 'https' && isSiteOrigin(u)) {
     final f = u.fragment;
+    final page = _pageRoutes[u.path.toLowerCase()];
+    if (page != null && (f.isEmpty || f == '/')) return page;
     if (f.isEmpty || f == '/') return '';
     final r = f.startsWith('/') ? f.substring(1) : f;
     return !r.contains('..') && RegExp(r'^[a-z0-9][a-zA-Z0-9/_?=&.%-]*$').hasMatch(r) ? r : '';
@@ -67,6 +75,13 @@ class WebShellState extends State<WebShell> {
   bool offline = false;
   bool loaded = false;
 
+  /// A new web view each time Android ends the old one's page process: a web
+  /// view whose renderer is gone cannot be used again, only replaced.
+  int _generation = 0;
+
+  /// Where the page was, so a replaced web view opens there again.
+  String? _lastUrl;
+
   /// Open one of the site's routes. Before the first page has finished
   /// loading the whole address is loaded instead of changing the hash.
   Future<void> go(String route) async {
@@ -97,7 +112,8 @@ class WebShellState extends State<WebShell> {
       backgroundColor: bg,
       body: Stack(children: [
         InAppWebView(
-          initialUrlRequest: URLRequest(url: WebUri(siteUrl(widget.initialRoute ?? ''))),
+          key: ValueKey(_generation),
+          initialUrlRequest: URLRequest(url: WebUri(_generation > 0 && _lastUrl != null ? _lastUrl! : siteUrl(widget.initialRoute ?? ''))),
           initialUserScripts: UnmodifiableListView(widget.scripts),
           initialSettings: InAppWebViewSettings(
             userAgent: userAgentFor(android: Platform.isAndroid),
@@ -133,14 +149,27 @@ class WebShellState extends State<WebShell> {
             loaded = false;
             widget.onStarted?.call(c);
           },
+          onUpdateVisitedHistory: (c, url, _) {
+            if (url != null && isSiteOrigin(url)) _lastUrl = url.toString();
+          },
           onLoadStop: (c, url) {
+            if (url != null && isSiteOrigin(url)) _lastUrl = url.toString();
             if (offline) return;
             loaded = true;
             widget.onLoaded?.call(c);
           },
           // The phone may end the page's process while the app sits in the
           // background; it comes back by itself instead of a blank screen.
-          onRenderProcessGone: (c, detail) => c.reload(),
+          // On Android that web view is finished and a new one takes its
+          // place, on the page it was showing; the iPhone's reloads.
+          onRenderProcessGone: (c, detail) {
+            if (!mounted) return;
+            setState(() {
+              loaded = false;
+              controller = null;
+              _generation++;
+            });
+          },
           onWebContentProcessDidTerminate: (c) => c.reload(),
           onReceivedError: (c, request, error) {
             if (request.isForMainFrame != true) return;

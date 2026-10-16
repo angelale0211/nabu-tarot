@@ -427,6 +427,10 @@ const BILL = {
         this.remember(Object.assign({ sku: it.sku, token: tok, at: Date.now() }, opt.wid ? { wid: opt.wid } : {}));
         this.lastSheet = { outcome: 'done', name: '-', ms: Date.now() - shownAt };
         fin = this.restore().catch(() => {});
+      } else if (late && late.details && late.details.pending) {
+        /* Play holds the payment (cash, a slow bank): bought, not yet paid.
+           restore() opens it once Play settles it. */
+        this.lastSheet = { outcome: 'done', name: 'Pending', ms: Date.now() - shownAt };
       } else {
         /* Answered, and nothing was bought. Left as it was, the diagnostic
            line would go on saying Play is still working on a sheet that has
@@ -466,6 +470,13 @@ const BILL = {
        what restore() needs to finish it later. */
     if (token) this.remember(Object.assign({ sku: it.sku, token: token, at: Date.now() }, extra || {}));
     try { await res.complete(token ? 'success' : 'fail'); } catch (e) { /* already closed */ }
+    /* The Android app (1.1.9+) answers a payment Play holds as pending with no
+       token and says so, as the iPhone does: the shop is free again and says
+       the purchase is waiting; restore() opens it once Play settles it. */
+    if (!token && res && res.details && res.details.pending) {
+      this.lastSheet = { outcome: 'done', name: 'Pending', ms: Date.now() - shownAt };
+      return { pending: true };
+    }
     if (!token) throw new Error('nopurchase');
     let out;
     try { out = await this.verify(it.sku, token, extra); }

@@ -15,6 +15,10 @@ void main() {
 
   test('the widget link nabutarot://pick opens Draw; anything else is ignored', () {
     expect(routeOfLink(Uri.parse('nabutarot://pick')), 'pick');
+    // The store listings link the privacy and terms pages by their own address.
+    expect(routeOfLink(Uri.parse('https://nabutarot.com/privacy.html')), 'privacy');
+    expect(routeOfLink(Uri.parse('https://www.nabutarot.com/terms.html')), 'terms');
+    expect(routeOfLink(Uri.parse('https://nabutarot.com/')), '');
     expect(routeOfLink(Uri.parse('nabutarot://me/bookings')), 'me/bookings');
     expect(routeOfLink(Uri.parse('nabutarot://')), isNull);
     expect(routeOfLink(Uri.parse('https://evil.example/pick')), isNull);

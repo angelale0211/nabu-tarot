@@ -54,10 +54,10 @@
     if (d.oldSku) args.oldSku = d.oldSku;
     if (d.purchaseToken) args.oldToken = d.purchaseToken;
     return call('PlayBilling', 'buy', args).then(function (v) {
-      /* A payment Play holds as pending (cash, a slow bank) is not refused and not done: the sheet's
-         promise stays open, the site's own watchdog then says the purchase is waiting, and the next
-         restore picks it up once Play settles it. */
-      if (v && v.pending) return new Promise(function () {});
+      /* A payment Play holds as pending (cash, a slow bank) is not refused and not done: the sheet
+         answers with no token and says so (src/billing.js then says it is waiting and frees the
+         shop), and the next restore picks it up once Play settles it. */
+      if (v && v.pending) return { methodName: PLAY, details: { pending: true, itemId: v.itemId }, complete: function () { return Promise.resolve(); } };
       return {
         methodName: PLAY,
         details: { purchaseToken: v && v.purchaseToken, itemId: v && v.itemId },

@@ -54,6 +54,10 @@ function unwipeForTests() { WIPED = false; }
    perfectly ordinary next write from landing. */
 function wipeDevice(lock) {
   if (lock) WIPED = true;
+  /* The reminders the phone keeps for this account's bookings go with it. In
+     the apps the phone holds them itself (NabuNotify), and a signed-out or
+     deleted account's "your reading starts in an hour" kept arriving. */
+  try { scheduleReminders([]); } catch (e) { /* nothing was set */ }
   /* Memory too, or the next write - if one slips through anywhere - puts the
      same person back. */
   PROFILE = { name: '', birthday: '', interests: [], tourDone: false };
@@ -102,9 +106,9 @@ const pad2 = (n) => String(n).padStart(2, '0');
 const isoDate = (d) => d.getFullYear() + '-' + pad2(d.getMonth() + 1) + '-' + pad2(d.getDate());
 
 /* ---- language + theme ---- */
-/* A first open inside the iPhone app follows the phone's language: the App Store is worldwide and
+/* A first open inside either app follows the phone's language: the stores are worldwide and
    App Review starts from an English iPad, where Vietnamese was the first thing it met. A language
-   the app does not speak falls to English there. The web and Android keep Vietnamese as the default. */
+   the app does not speak falls to English there. The web keeps Vietnamese as the default. */
 function deviceLang() {
   const all = (navigator.languages && navigator.languages.length ? navigator.languages : [navigator.language || '']);
   for (const l of all) { const two = String(l).slice(0, 2).toLowerCase(); if (['vi', 'en', 'de'].indexOf(two) >= 0) return two; }

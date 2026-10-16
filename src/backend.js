@@ -175,11 +175,40 @@ const BE = {
     if (!(isIOSApp() || window.__nabuAndroid) || !this.user) return;
     const ps = (this.user.providerData || []).map((p) => p && p.providerId);
     if (ps.indexOf('google.com') < 0 || (isIOSApp() && ps.indexOf('apple.com') > -1)) return;
-    const uid = this.user.uid;
-    await this.signIn('google');
-    const now = this.auth.currentUser;
-    if (!now || now.uid !== uid) throw Object.assign(new Error('another account'), { code: 'auth/user-mismatch' });
-    this.user = now;
+    /* Confirmed, not signed in again. Signing in with whatever account the
+       sheet came back with used to switch the phone to it: somebody who picked
+       the wrong account was told so, and was by then signed in as that other
+       account - a new, empty one if it had never been used here - while the
+       account they meant to delete stayed. Reauthenticating checks the answer
+       against the account that is signed in and changes nothing if it is
+       another one (auth/user-mismatch). */
+    const cred = await this.googleCredential();
+    await this.user.reauthenticateWithCredential(cred);
+  },
+  /* Google's answer from the phone's own sheet, as a credential, without
+     signing anybody in with it. The Android app (every version) answers the
+     same call its own overlay makes; the iPhone app through its plugin. */
+  async googleCredential() {
+    if (window.__nabuAndroid) {
+      const h = window.flutter_inappwebview;
+      if (!h || typeof h.callHandler !== 'function') throw Object.assign(new Error('native sign-in unavailable'), { code: 'auth/native-unavailable' });
+      const r = await h.callHandler('nabu', { plugin: 'FirebaseAuthentication', method: 'signInWithGoogle', args: {} });
+      if (!r || !r.ok) {
+        if (r && r.code === 'cancelled') throw Object.assign(new Error('cancelled'), { code: 'auth/popup-closed-by-user' });
+        throw Object.assign(new Error((r && r.message) || 'Google sign-in failed'), { code: 'auth/internal-error' });
+      }
+      const c = (r.value && r.value.credential) || {};
+      return firebase.auth.GoogleAuthProvider.credential(c.idToken, c.accessToken);
+    }
+    const FA = this.nativeAuth();
+    if (!FA) throw Object.assign(new Error('native sign-in unavailable'), { code: 'auth/native-unavailable' });
+    try {
+      const r = await FA.signInWithGoogle({ skipNativeAuth: true }), c = (r && r.credential) || {};
+      return firebase.auth.GoogleAuthProvider.credential(c.idToken, c.accessToken);
+    } catch (e) {
+      if (e && !/^auth\//.test(e.code || '') && /cancel/i.test(String(e.message || ''))) throw Object.assign(new Error('cancelled'), { code: 'auth/popup-closed-by-user' });
+      throw e;
+    }
   },
   /* Account deletion (a store requirement): profile, thread and messages, bookings, then the login itself.
      Firebase asks for a recent sign-in before deleting a login; the caller handles that error. */

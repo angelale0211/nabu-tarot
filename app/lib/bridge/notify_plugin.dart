@@ -51,7 +51,30 @@ class NotifyPlugin implements NativePlugin {
         if (route != null) onOpen(route);
       },
     );
+    // The channel exists from the first launch, so a push that arrives while
+    // the app is shut (Firebase's default channel is this one) is shown with
+    // its importance, not in a "Miscellaneous" channel of Firebase's own.
+    if (Platform.isAndroid) {
+      try {
+        await _n.resolvePlatformSpecificImplementation<AndroidFlutterLocalNotificationsPlugin>()?.createNotificationChannel(
+              const AndroidNotificationChannel('nabu', 'Nabu Tarot', description: 'Reminders and messages from Nabu', importance: Importance.high),
+            );
+      } catch (_) {/* shown in the default channel instead */}
+    }
     _ready = true;
+  }
+
+  /// The route of the notification that started the app, if one did. A tap
+  /// that launches the app is not reported to the tap callback above.
+  Future<String?> launchRoute() async {
+    try {
+      await init();
+      final d = await _n.getNotificationAppLaunchDetails();
+      if (d == null || !d.didNotificationLaunchApp) return null;
+      return routeOfHash(d.notificationResponse?.payload);
+    } catch (_) {
+      return null;
+    }
   }
 
   /// What the web's Notification.permission says: granted, denied or default.

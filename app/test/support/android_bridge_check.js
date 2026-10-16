@@ -57,12 +57,12 @@ new Function('window', 'localStorage', 'document', 'setInterval', 'clearInterval
   answers.buy = { ok: false, message: 'BillingResponse.error', code: 'error' };
   await assert.rejects(new window.PaymentRequest([{ supportedMethods: 'https://play.google.com/billing', data: { sku: 'tarot' } }], {}).show(),
     (e) => e.name === 'OperationError');
-  // A pending payment keeps the sheet's promise open, so the site's watchdog says "waiting".
+  // A pending payment answers at once, with no token and saying so: the site frees the shop and
+  // says the purchase is waiting (a promise left open locked every Buy button until a restart).
   answers.buy = { ok: true, value: { itemId: 'tarot', pending: true } };
-  let settled = false;
-  new window.PaymentRequest([{ supportedMethods: 'https://play.google.com/billing', data: { sku: 'tarot' } }], {}).show().then(() => { settled = true; }, () => { settled = true; });
-  await new Promise((r) => setTimeout(r, 60));
-  assert.strictEqual(settled, false);
+  const held = await new window.PaymentRequest([{ supportedMethods: 'https://play.google.com/billing', data: { sku: 'tarot' } }], {}).show();
+  assert.strictEqual(held.details.pending, true);
+  assert.strictEqual(held.details.purchaseToken, undefined);
   // abort() is refused while Play's sheet is up: the site then says "still waiting".
   await assert.rejects(new window.PaymentRequest([{ supportedMethods: 'https://play.google.com/billing', data: { sku: 'x' } }], {}).abort());
 

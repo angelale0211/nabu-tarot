@@ -1,4 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
+import 'package:in_app_purchase/in_app_purchase.dart';
 import 'package:nabu_tarot/bridge/play_billing_plugin.dart';
 import 'package:nabu_tarot/bridge/plugin.dart';
 
@@ -80,5 +81,15 @@ void main() {
   test('digital goods price strings: a whole-number price keeps no decimals', () {
     expect(priceValue(199000.0), '199000');
     expect(priceValue(4.99), '4.99');
+  });
+
+  test('a closed or refused Play sheet answers the purchase on show, though Play names no product', () {
+    // in_app_purchase_android sends a cancel or a refusal as one row with productID ''.
+    expect(isAnswerTo('', PurchaseStatus.canceled, 'tarot'), isTrue);
+    expect(isAnswerTo('', PurchaseStatus.error, 'tarot'), isTrue);
+    expect(isAnswerTo('tarot', PurchaseStatus.purchased, 'tarot'), isTrue);
+    // Another product's row (a renewal, a pending one settling) is not this purchase's answer.
+    expect(isAnswerTo('plus', PurchaseStatus.purchased, 'tarot'), isFalse);
+    expect(isAnswerTo('', PurchaseStatus.purchased, 'tarot'), isFalse);
   });
 }

@@ -39,8 +39,10 @@ Future<void> main() async {
   final List<NativePlugin> plugins = Platform.isAndroid
       ? [auth, PlayBillingPlugin(GooglePlayStore()), notify, SharePlugin(), AppPlugin()]
       : [auth, NativePurchasesPlugin(ChannelStoreKit()), notify, AppPlugin()];
+  String? fromNotification;
   try {
     await notify.init();
+    fromNotification = await notify.launchRoute();
   } catch (_) {/* the app works without them */}
   final shim = Platform.isAndroid ? 'assets/android_bridge.js' : 'assets/bridge.js';
 
@@ -87,7 +89,8 @@ Future<void> main() async {
       bridge: Bridge(plugins, holdUntilListened: true),
       shell: shell,
       shimAsset: shim,
-      initialRoute: first == null ? null : routeOfLink(first),
+      // A tapped reminder that started the app opens where it points.
+      initialRoute: fromNotification ?? (first == null ? null : routeOfLink(first)),
       onSiteLoaded: () => push?.pageLoaded(),
     ),
   ));

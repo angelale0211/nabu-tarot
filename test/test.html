@@ -443,6 +443,8 @@ async function go(hash, sel) { W().location.hash = hash; await sleep(30); return
                classifier is that only the first half decides anything. */
             if (play.showFail) { const f = play.showFail; play.showFail = null; if (f.delay) await new Promise((r) => setTimeout(r, f.delay)); const e = new Error(f.msg || 'sheet'); e.name = f.name; throw e; }
             if (play.cancelNext) { play.cancelNext = false; const e = new Error('cancelled'); e.name = 'AbortError'; throw e; }
+            /* The Android app's answer for a payment Play holds (cash, a slow bank): no token, and says so. */
+            if (play.sheetPendingNext) { play.sheetPendingNext = false; return { details: { pending: true, itemId: it.sku }, complete: async () => {} }; }
             if (it.kind === 'subs') { play.subs[tok] = { sku: it.sku, state: play.pendingNext ? 'SUBSCRIPTION_STATE_PENDING' : 'SUBSCRIPTION_STATE_ACTIVE', expiryMs: Date.now() + it.months * 30 * 86400000, plan: it.key + '-plan' }; if (data.oldSku) Object.keys(play.subs).forEach((t) => { if (play.subs[t].sku === data.oldSku && t !== tok) play.subs[t].state = 'SUBSCRIPTION_STATE_EXPIRED'; }); }
             else play.products[tok] = { sku: it.sku, state: play.pendingNext ? 'pending' : 'ok' };
             play.pendingNext = false; return { details: { purchaseToken: tok }, complete: async () => {} }; }; };
@@ -1935,6 +1937,10 @@ async function go(hash, sel) { W().location.hash = hash; await sleep(30); return
       play.products[N.BILL.pendingList()[0].token].state = 'ok';
       const rs = await N.BILL.restore();
       ok(N.ACCESS.has('lenormand') && N.BILL.pendingList().length === 0 && rs.opened >= 1, 'restore re-sends pending and listed purchases and clears what went through');
+      play.sheetPendingNext = true;
+      const held = await N.BILL.buy('playing').catch((e) => e);
+      ok(held && held.pending === true && !N.BILL.buying && !N.ACCESS.has('playing'),
+        'a payment Play holds as pending says so and frees the shop at once, instead of locking every Buy button until the app restarts');
       play.cancelNext = true;
       const cancelled = await N.BILL.buy('playing').catch((e) => e);
       ok(cancelled instanceof Error && cancelled.outcome === 'aborted' && !N.ACCESS.has('playing'),
