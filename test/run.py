@@ -301,9 +301,12 @@ def icons_round():
 
 
 if __name__ == '__main__':
+    page = os.environ.get('NABU_TEST_PAGE', 'test.html')
+    if page not in ('test.html', 'study.html'):
+        sys.exit('NABU_TEST_PAGE must be test.html or study.html')
     httpd = serve()
     time.sleep(0.3)
-    res = run('http://127.0.0.1:%d/test/test.html' % PORT)
+    res = run('http://127.0.0.1:%d/test/%s' % (PORT, page))
     print(res)
     # Read from the source, not from the page: this one is about what is
     # written down, and it renders perfectly while being the wrong money.

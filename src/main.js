@@ -1,5 +1,5 @@
 /* ============================ boot ============================ */
-window.APP_VERSION = 'v289';
+window.APP_VERSION = 'v290';
 window.NABU = { CONFIG: CONFIG, SALE: SALE, salePrice: salePrice, loadActs: loadActs, BACK: BACK, LESSONS: LESSONS, localAnswer: localAnswer, compatVerdict: compatVerdict, numerologyOf: numerologyOf, ZDEEP: ZDEEP, lunarToday: lunarToday, solarToLunar: solarToLunar, DECK: DECK, INSIGHT: INSIGHT, KW: KW, ASK: ASK, GUIDES: GUIDES, SERVICES: SERVICES, COURSES: COURSES, ACCESS: ACCESS, INTERESTS: INTERESTS, plusOn: () => plusOn(), proOn: () => proOn(), luckUnlimited: () => luckUnlimited(), ZODIAC: ZODIAC, pick: pick, book: book, PLAY_ITEMS: PLAY_ITEMS, PLAY_SUB_SKUS: PLAY_SUB_SKUS, playItem: playItem, BILL: BILL, SUBS: SUBS, billUse: billUse, APPLE_BILL: APPLE_BILL, appleAccountToken: appleAccountToken, renderStore: renderStore, pickLimitHTML: pickLimitHTML, subStateWord: subStateWord,
   insightHTML: insightHTML, insightOf: insightOf, sunSignIndex: sunSignIndex, lifePath: lifePath, PROFILE: () => PROFILE, BE: BE, inAppBrowser: inAppBrowser, ACTS: ACTS, CMT: CMT, LIKES: LIKES, kbReady: kbReady, AI: AI, STR: STR, KB_URL: (typeof KB_URL === 'string' ? KB_URL : ''),
   ANGELS: ANGELS, angelRead: angelRead, CODEBOOK: CODEBOOK, redeemCode: redeemCode, loadCodebook: loadCodebook, petHomeSVG: petHomeSVG, petStill: petStill, PET_HOMES: PET_HOMES, PET_WARDROBE: PET_WARDROBE, PET_SLOTS: PET_SLOTS,
@@ -9,6 +9,7 @@ window.NABU = { CONFIG: CONFIG, SALE: SALE, salePrice: salePrice, loadActs: load
   LOVE: LOVE, LOVEDB: LOVEDB, HANDLE_RE: HANDLE_RE, loveBadgeHTML: loveBadgeHTML,
   loveMarkSVG: loveMarkSVG, QUIZ: QUIZ, QSCORE: QSCORE, QUIZ_PASS: QUIZ_PASS, QUIZ_LEN: QUIZ_LEN, pileArtSVG: pileArtSVG, PILE_ARTS: PILE_ARTS, threadSVG: threadSVG, petParentsHTML: petParentsHTML, GIFTS: GIFTS, ALERTS: ALERTS, alertsStart: alertsStart, alertWas: alertWas,
   SPREADS: SPREADS, PRACTICE: () => PRACTICE, pCard: pCard, outfitState: outfitState, OUTFIT_TXT: OUTFIT_TXT, OUTFIT_CELL: OUTFIT_CELL, practiceReady: practiceReady, PSCORE: PSCORE, gradeReading: gradeReading, practiceById: practiceById, pBand: pBand,
+  STUDY: STUDY, STUDY_TEXT: STUDY_TEXT, studyOwner: studyOwner, studySuggestions: studySuggestions,
   /* the booking calendar's own state, for the overlap checks */
   bookState: (sch, tk, ig) => { if (sch !== undefined) SCHEDULE = sch; if (tk !== undefined) TAKEN = tk; if (ig !== undefined) book.ignoreKey = ig; return { schedule: SCHEDULE, taken: TAKEN }; },
   WED: WED, WED_STEPS: WED_STEPS, wedStep: wedStep, cupidSVG: cupidSVG, shareLine: shareLine, UPD: UPD, NOTE: NOTE };
@@ -55,7 +56,12 @@ try { petRemindCheck(); } catch (e) { /* nothing kept yet */ }
    listening while it is open. Signing in or out changes what there is to
    listen to, so it is started again then. */
 try { alertsStart(); } catch (e) { /* nothing to catch up on */ }
-BE.initP = BE.init().catch(() => { /* backend unreachable: the app runs device-only */ });
+BE.initP = BE.init().catch(() => {
+  /* Do not guess the previous account when the auth SDK could not load.
+     Device-only practice can still use the separate guest notebook. */
+  BE.initFailed = true;
+  if (['practice', 'study'].includes(parseHash().route)) route();
+});
 // The Gemini key is a dashboard setting kept in the app cloud (content/ai), never in the source.
 /* The code book is Nabu's to read; the dashboard loads it when the Codes tab
    opens. A copy an older version kept on this phone is cleared. */
@@ -75,7 +81,7 @@ BE.onAuth(() => {
      activity page opened from a shared link has to swap its sign-in line
      for the comment box. */
   const r = parseHash().route;
-  if (['learn', 'me', 'home', 'pick', 'post'].indexOf(r) > -1 || (r === 'play' && $('.cmts'))) route();
+  if (['learn', 'me', 'home', 'pick', 'post', 'practice', 'study'].indexOf(r) > -1 || (r === 'play' && $('.cmts'))) route();
 });
 boot();
 

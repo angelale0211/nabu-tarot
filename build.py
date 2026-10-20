@@ -16,6 +16,8 @@ SCRIPTS = ['config.js', 'logo-data.js', 'services.js', 'play-catalog.js', 'strin
            'core.js', 'today.js', 'backend.js', 'comments.js', 'likes.js', 'share.js', 'ai.js', 'home.js', 'pick.js', 'learn.js', 'lessons.js', 'fortune.js', 'playing.js', 'guide-visuals.js', 'codes.js', 'billing.js', 'billing-apple.js', 'store.js', 'angel.js', 'love.js', 'welcome.js', 'quiz.js', 'quiz-tarot.js', 'quiz-tarot-de.js', 'quiz-len.js', 'quiz-play.js', 'practice-data.js', 'practice.js', 'outfit.js', 'looks.js', 'luck.js', 'pet-wardrobe.js', 'pet.js', 'pet-dress.js', 'book.js', 'me.js', 'signin.js', 'contact.js', 'privacy.js', 'terms.js', 'install.js', 'hello.js', 'report.js', 'play.js', 'wedding.js', 'alerts.js', 'admin.js', 'main.js']
 
 
+SCRIPTS.insert(SCRIPTS.index('practice.js') + 1, 'study.js')
+
 # Data files transcribed from outside sources carry working notes in block
 # comments; the shipped page mentions no sources, so those comments are
 # dropped at build time (string literals in these files never contain '/*').
