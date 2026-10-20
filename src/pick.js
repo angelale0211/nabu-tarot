@@ -214,6 +214,8 @@ function renderReveal(animate) {
     + '<div class="hero"><div class="flip"><div class="inner"' + (animate ? '' : ' style="animation:none"') + '><span class="face fr">' + faceSVG(c) + '</span><span class="face bk">' + backNow() + '</span></div></div>'
     + '<div><div class="name">' + esc(c.name) + '</div><div class="en">' + esc(other.name) + '</div><div class="meta m-' + c.suit + '"><i>' + esc(c.meta) + '</i></div></div></div>'
     + insightHTML(id, pick.focus)
+    + '<a class="btn block" href="#/study/card?card=' + encodeURIComponent(id) + '&focus=' + encodeURIComponent(pick.focus)
+      + '&date=' + encodeURIComponent(pick.day || isoDate(new Date())) + '">' + esc(studyT().saveCard) + '</a>'
     + '<div class="ins" style="border-color:var(--gold)"><p class="muted" style="margin-bottom:12px">' + esc(S.quickNote) + '</p>'
     + '<div class="row"><a class="btn primary" href="#/book?card=' + id + '">' + esc(S.bookWithCard) + '</a><a class="btn" href="#/learn/card/' + id + '">' + esc(S.learnCard) + '</a>'
     + '<button class="btn" id="shareCard">' + esc(S.shareCard) + '</button></div></div>'

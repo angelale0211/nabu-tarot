@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="en"><meta charset="utf-8"><title>Study notebook checks</title>
+<iframe id="app" src="../index.html#/practice" style="width:390px;height:844px"></iframe><pre id="results">Running</pre>
+<script>
+const output = [], frame = document.querySelector('#app');
+const pause = (ms) => new Promise((r) => setTimeout(r, ms));
+const check = (test, label) => { output.push((test ? 'PASS ' : 'FAIL ') + label); document.querySelector('#results').textContent = output.join('\n'); };
+const wait = async (fn) => { for (let i = 0; i < 150; i++) { if (fn()) return; await pause(40); } throw Error('Timed out'); };
+(async () => {
+  try {
+    await wait(() => frame.contentWindow.NABU);
+    const w = frame.contentWindow, N = w.NABU, d = frame.contentDocument;
+    // A new disposable browser profile, no real auth or writes to a backend.
+    N.BE.enabled = false; N.BE.ready = true; N.BE.user = null;
+    w.localStorage.clear();
+    const language = async (lg) => { for (let i = 0; i < 3 && d.documentElement.lang !== lg; i++) { d.querySelector('#lang').click(); await pause(100); } };
+    await language('en');
+    await N.practiceReady();
+    const go = async (hash, selector) => { w.location.hash = hash; await pause(80); await wait(() => d.querySelector(selector)); };
+    const input = (sel, text) => { const el = d.querySelector(sel); el.value = text; el.dispatchEvent(new w.Event('input', {bubbles:true})); };
+    await go('#/practice/pr-1', '#pmark');
+    d.querySelector('#pmark').click();
+    check(!d.querySelector('.presult') && N.STUDY.read('guest').attempts.length === 0, 'blank submission does not reveal model or create an attempt');
+    d.querySelector('[data-turn="0"]').click();
+    input('[data-pos="0"]', 'This is a new beginning, with freedom and curiosity.');
+    input('[data-synth]', 'The Fool suggests a fresh beginning; try to explore the offer thoughtfully.');
+    await go('#/study', '#study-export');
+    await go('#/practice/pr-1', '#pmark');
+    check(d.querySelector('[data-pos="0"]').value.includes('curiosity') && !d.querySelector('[data-turn="0"]'), 'draft and revealed card survive leaving the screen');
+    d.querySelector('#pmark').click();
+    check(d.querySelector('.presult') && N.STUDY.read('guest').attempts.length === 1, 'complete answer saves an attempt and reveals feedback');
+    const first = N.STUDY.read('guest').attempts[0];
+    check(d.querySelector('#pmark').disabled, 'unchanged attempt cannot be submitted twice');
+    await go('#/practice', '.prow');
+    await go('#/practice/pr-1?revise=' + first.id, '#pmark');
+    check(d.querySelector('[data-pos="0"]').value === first.answers[0], 'revision starts with saved writing');
+    input('[data-pos="0"]', first.answers[0] + ' This revision is worth remembering.');
+    d.querySelector('#pmark').click();
+    const entries = N.STUDY.read('guest').attempts;
+    check(entries.length === 2 && entries[0].answers[0] === first.answers[0] && entries[1].answers[0] !== first.answers[0], 'revision preserves original and adds a separate attempt');
+    await go('#/study/exercise/pr-1', '#study-comparison');
+    check(d.querySelectorAll('#study-comparison .study-entry').length === 2, 'comparison shows both saved texts and feedback');
+    d.querySelector('#study-export').click();
+    check(JSON.parse(d.querySelector('#study-export-text').value).attempts.length === 2, 'export contains the actual saved attempts');
+    await go('#/study/card?card=major-0&focus=love&date=2026-10-20', '#study-reflection');
+    input('#study-reflection', '<img src=x onerror=alert(1)> My private reflection.');
+    await go('#/study', '#study-export');
+    await go('#/study/card?card=major-0&focus=love&date=2026-10-20', '#study-reflection');
+    check(d.querySelector('#study-reflection').value.includes('private reflection'), 'card reflection draft survives navigation');
+    d.querySelector('#study-save-note').click();
+    await wait(() => d.querySelector('#study-export'));
+    const note = N.STUDY.read('guest').reflections[0];
+    check(note.card === 'major-0' && note.focus === 'love' && note.date === '2026-10-20', 'card reflection retains card, focus and draw date');
+    check(!d.querySelector('#main img[src="x"]') && d.querySelector('#main').textContent.includes('<img'), 'saved writing is escaped rather than interpreted as HTML');
+    const realSet = w.Storage.prototype.setItem;
+    await go('#/practice/pr-1', '#pmark');
+    d.querySelector('[data-turn="0"]').click();
+    input('[data-pos="0"]', 'This is a complete response written during a storage failure.');
+    input('[data-synth]', 'The Fool suggests trying a new approach with care.');
+    w.Storage.prototype.setItem = () => { throw Error('storage unavailable'); };
+    d.querySelector('#pmark').click();
+    check(!d.querySelector('.presult') && /Not saved/.test(d.querySelector('#practice-save-status').textContent), 'storage failure reports unsaved state without false success');
+    w.Storage.prototype.setItem = realSet;
+    check(N.STUDY.read('guest').attempts.length === 2, 'failed save does not create a partial attempt');
+    // A changed account cannot write through a form opened by the previous user.
+    N.BE.enabled = true; N.BE.user = {uid:'another-person'};
+    d.querySelector('#pmark').click();
+    check(/account changed/.test(d.querySelector('#practice-save-status').textContent) && N.STUDY.read(N.studyOwner()).attempts.length === 0, 'stale form cannot write into another account');
+    await go('#/study', '#study-export');
+    check(!d.querySelector('#main').textContent.includes('private reflection'), 'other account does not see guest writing');
+    N.BE.enabled = false; N.BE.user = null;
+    for (const lg of ['vi','de','en']) {
+      await language(lg); w.route(); await pause(80);
+      check(d.querySelector('h1').textContent === N.STUDY_TEXT[lg].title, lg + ' notebook labels render');
+    }
+    w.wipeDevice(true);
+    check(!Array.from({length:w.localStorage.length},(_,i)=>w.localStorage.key(i)).some((k)=>k.startsWith('nabu-study-')), 'account/device wipe removes notebook records');
+    w.unwipeForTests();
+  } catch (e) { check(false, e.stack || e.message); }
+  document.querySelector('#results').textContent = output.join('\n') + '\nDONE';
+  await fetch('/__results?done=1', {method:'POST',body:output.join('\n')}).catch(()=>{});
+})();
+</script>

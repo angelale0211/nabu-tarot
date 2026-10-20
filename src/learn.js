@@ -111,6 +111,7 @@ function renderLearn(args, params) {
       /* The practice screen leads, because reading badly and being told why is
          what turns a reader of lessons into somebody who can lay a spread. */
       + '<a class="prcta" href="#/practice"><div class="ic">✍️</div><div><b>' + esc(S.practiceTitle) + '</b><span>' + esc(S.practiceIntro) + '</span></div></a>'
+      + studyLinkHTML()
       + '<div class="eyebrow">' + esc(S.coursesPractice) + '</div><div class="tiles">' + tile('tarot', !ACCESS.has('tarot')) + tile('lenormand', !ACCESS.has('lenormand')) + tile('playing', !ACCESS.has('playing')) + tile('manifest', !ACCESS.has('manifest')) + '</div>'
       /* In the iPhone app the reading and practice lead and astrology comes last (4.3(b)). */
       + '<div class="eyebrow">' + esc(S.freeReads) + '</div><div class="tiles">' + (isIOSApp() ? tile('angel') + tile('fortune') + tile('astro') : tile('astro') + tile('angel') + tile('fortune')) + '</div>'

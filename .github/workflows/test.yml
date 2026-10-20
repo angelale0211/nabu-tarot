@@ -42,3 +42,13 @@ jobs:
           NABU_BROWSER: /usr/bin/google-chrome
           PYTHONIOENCODING: utf-8
         run: python test/run.py
+
+      - name: Check notebook storage and account isolation
+        run: node test/study_check.js
+
+      - name: Check notebook interactions
+        env:
+          NABU_BROWSER: /usr/bin/google-chrome
+          NABU_TEST_PAGE: study.html
+          PYTHONIOENCODING: utf-8
+        run: python test/run.py

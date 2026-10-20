@@ -12,7 +12,7 @@
      carries this notice with it. See LICENSE. -->
 <meta name="author" content="Nabu Tarot">
 <meta name="copyright" content="Copyright (c) 2025-2026 Nabu Tarot. All rights reserved.">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'none'; object-src 'none'; form-action 'self'; script-src 'self' 'sha256-6REG3Wbs4TQ+vOverUnC8xsYUbW08mqGNei1ab2U2M0=' https://www.gstatic.com https://apis.google.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; font-src 'self' data:; media-src 'self' data: blob:; worker-src 'self'; connect-src 'self' https://*.googleapis.com https://*.google.com https://*.firebaseio.com https://*.cloudfunctions.net https://*.workers.dev https://generativelanguage.googleapis.com; frame-src https://*.firebaseapp.com https://accounts.google.com https://*.facebook.com">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'none'; object-src 'none'; form-action 'self'; script-src 'self' 'sha256-qadTTqeydi7crBsN5Ucja8Rp/KfRxTFhKcy/yzamcoU=' https://www.gstatic.com https://apis.google.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; font-src 'self' data:; media-src 'self' data: blob:; worker-src 'self'; connect-src 'self' https://*.googleapis.com https://*.google.com https://*.firebaseio.com https://*.cloudfunctions.net https://*.workers.dev https://generativelanguage.googleapis.com; frame-src https://*.firebaseapp.com https://accounts.google.com https://*.facebook.com">
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <meta name="theme-color" content="#EFE9FA">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -3182,6 +3182,14 @@ html[lang="de"] #today .tbl td:first-child{-webkit-hyphens:manual;hyphens:manual
 @media (prefers-reduced-motion:reduce){
   #boot .deal span{animation:none;opacity:1;transform:translate(var(--x),0) rotate(var(--r))}
 }
+.study-writing{white-space:pre-wrap;overflow-wrap:anywhere}
+.study-entry{min-width:0}
+.study-entry h4{margin:18px 0 6px}
+.study-compare{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;align-items:start}
+.study-compare select{width:100%;min-width:0}
+#study-reflection{width:100%;box-sizing:border-box}
+#study-comparison .card{padding:12px}
+@media(max-width:600px){.study-compare{grid-template-columns:1fr}}
 @media (min-width:768px) and (max-width:899px) and (min-height:600px){html.iosapp{--rail-w:96px}html.iosapp body{padding-bottom:0;padding-left:var(--rail-w)}html.iosapp .wrap{max-width:1040px;padding:0 32px}html.iosapp .nav{top:0;bottom:0;right:auto;left:0;width:var(--rail-w);border-top:0;border-right:1px solid var(--rule-soft)}html.iosapp .nav .wrap{display:flex;flex-direction:column;height:auto;max-width:none;margin:0;padding:78px 0 0;gap:4px}html.iosapp .nav a{height:64px;font-size:11px;gap:5px;border-radius:14px;margin:0 8px}html.iosapp .nav a svg{width:26px;height:26px}html.iosapp .toast{bottom:28px}html.iosapp #totop{bottom:28px;right:28px}html.iosapp .sheet{align-items:center}html.iosapp .tiles{grid-template-columns:repeat(3,1fr);gap:14px}html.iosapp .tiles:has(>:nth-child(4):last-child){grid-template-columns:repeat(4,1fr)}html.iosapp .pickcta{grid-template-columns:170px 1fr;padding:22px}html.iosapp .pricesec{display:grid;grid-template-columns:repeat(2,1fr);gap:0 18px;align-items:start}html.iosapp .pricesec>.hint + *,html.iosapp #svcwrap>.hint + *{margin-top:0}html.iosapp .pricesec>h2,html.iosapp .pricesec>.hint,html.iosapp .pricesec>.paynote,html.iosapp .pricesec>p{grid-column:1/-1}html.iosapp .pricesec>.btn,html.iosapp .pricesec>.freegrid{grid-column:1/-1}html.iosapp .pricesec>.paynote{max-width:none}html.iosapp .pricesec .freegrid{grid-template-columns:repeat(4,1fr);gap:12px}html.iosapp #svcwrap{display:grid;grid-template-columns:repeat(2,1fr);gap:0 18px;align-items:start}html.iosapp #svcwrap>.paynote{grid-column:1/-1}html.iosapp .cal{display:grid;grid-template-columns:minmax(0,2fr) minmax(0,1fr);grid-template-rows:auto auto 1fr;column-gap:18px;align-items:start}html.iosapp .cal>.head{grid-area:1/1}html.iosapp .cal>.dow{grid-area:2/1}html.iosapp .cal>.days{grid-area:3/1}html.iosapp .cal>#slots{grid-area:1/2/4/3}html.iosapp .cal .slots{grid-template-columns:repeat(2,1fr);margin-top:0}html.iosapp .tabs{flex-wrap:wrap;overflow:visible}html.iosapp .chat{max-height:70vh}html.iosapp #main .paywall{max-width:640px;margin-left:auto;margin-right:auto}html.iosapp .upnext[href="#/install"]{display:none}
 html.iosapp #main>.detail{display:grid;grid-template-columns:300px minmax(0,680px);column-gap:36px;
     justify-content:center;align-items:start}html.iosapp #main>.detail>*{grid-column:2;min-width:0}html.iosapp #main>.detail>.rail{display:flex;flex-direction:column;grid-column:1;grid-row:1/span 200;
@@ -14669,7 +14677,7 @@ function parseHash() {
   (q[1] || '').split('&').forEach((kv) => { if (!kv) return; const p = kv.split('='); params[decodeURIComponent(p[0])] = decodeURIComponent(p[1] || ''); });
   return { route: path[0] || 'home', args: path.slice(1), params: params };
 }
-const ONE_COL = ['love', 'wedding', 'pet', 'play', 'looks', 'rewards', 'me', 'book',
+const ONE_COL = ['study', 'love', 'wedding', 'pet', 'play', 'looks', 'rewards', 'me', 'book',
   'contact', 'report', 'privacy', 'install', 'alerts', 'news', 'post', 'unlock', 'welcome', 'outfit'];
 /* Under #/learn only the hub and the card pages are wide; the rest is reading. */
 const ONE_COL_LEARN = ['astro', 'fortune', 'numbers', 'angel', 'quiz', 'manifest',
@@ -17145,7 +17153,8 @@ function continueHTML() {
     + '<a class="upnext" href="#/practice"><span class="ic">✍️</span><span><b>' + esc(S.practiceTitle) + '</b><br>'
     + esc(HT('Nabu chia bài và đặt tình huống, bạn viết lời đọc, Nabu chấm.', 'Nabu deals the cards and sets the scene; you write the reading and Nabu marks it.', 'Nabu legt die Karten und stellt die Situation; du deutest, Nabu bewertet.'))
     + (passed ? ' · ' + passed + ' ✓' : '') + '</span></a>'
-    + '<a class="btn block" href="#/learn">' + esc(HT('Tất cả khóa học', 'All courses', 'Alle Kurse')) + ' →</a></div>';
+    + '<a class="btn block" href="#/learn">' + esc(HT('Tất cả khóa học', 'All courses', 'Alle Kurse')) + ' →</a>'
+    + studyLinkHTML() + '</div>';
 }
 function lifeHTML() {
   const S = T();
@@ -17506,6 +17515,8 @@ function renderReveal(animate) {
     + '<div class="hero"><div class="flip"><div class="inner"' + (animate ? '' : ' style="animation:none"') + '><span class="face fr">' + faceSVG(c) + '</span><span class="face bk">' + backNow() + '</span></div></div>'
     + '<div><div class="name">' + esc(c.name) + '</div><div class="en">' + esc(other.name) + '</div><div class="meta m-' + c.suit + '"><i>' + esc(c.meta) + '</i></div></div></div>'
     + insightHTML(id, pick.focus)
+    + '<a class="btn block" href="#/study/card?card=' + encodeURIComponent(id) + '&focus=' + encodeURIComponent(pick.focus)
+      + '&date=' + encodeURIComponent(pick.day || isoDate(new Date())) + '">' + esc(studyT().saveCard) + '</a>'
     + '<div class="ins" style="border-color:var(--gold)"><p class="muted" style="margin-bottom:12px">' + esc(S.quickNote) + '</p>'
     + '<div class="row"><a class="btn primary" href="#/book?card=' + id + '">' + esc(S.bookWithCard) + '</a><a class="btn" href="#/learn/card/' + id + '">' + esc(S.learnCard) + '</a>'
     + '<button class="btn" id="shareCard">' + esc(S.shareCard) + '</button></div></div>'
@@ -17633,6 +17644,7 @@ function renderLearn(args, params) {
       /* The practice screen leads, because reading badly and being told why is
          what turns a reader of lessons into somebody who can lay a spread. */
       + '<a class="prcta" href="#/practice"><div class="ic">✍️</div><div><b>' + esc(S.practiceTitle) + '</b><span>' + esc(S.practiceIntro) + '</span></div></a>'
+      + studyLinkHTML()
       + '<div class="eyebrow">' + esc(S.coursesPractice) + '</div><div class="tiles">' + tile('tarot', !ACCESS.has('tarot')) + tile('lenormand', !ACCESS.has('lenormand')) + tile('playing', !ACCESS.has('playing')) + tile('manifest', !ACCESS.has('manifest')) + '</div>'
       /* In the iPhone app the reading and practice lead and astrology comes last (4.3(b)). */
       + '<div class="eyebrow">' + esc(S.freeReads) + '</div><div class="tiles">' + (isIOSApp() ? tile('angel') + tile('fortune') + tile('astro') : tile('astro') + tile('angel') + tile('fortune')) + '</div>'
@@ -23219,6 +23231,7 @@ async function renderPractice() {
     + '<p class="muted">' + esc(S.practiceIntro) + '</p>'
     + '<div class="pprog"><span style="width:' + Math.round(done / PRACTICE.length * 100) + '%"></span></div>'
     + '<p class="faint" style="margin-top:4px">' + esc(S.practiceDone(done, PRACTICE.length)) + '</p>'
+    + studyLinkHTML()
     /* Grouped by course, each under its own name, so a Lenormand learner does
        not scroll through Tarot to find what is theirs. */
     + ['tarot', 'lenormand', 'playing'].map((c) => {
@@ -23227,15 +23240,20 @@ async function renderPractice() {
     }).join('');
 }
 
-async function renderExercise(id) {
-  const S = T(), m = $('#main');
+async function renderExercise(id, params) {
+  const S = T(), m = $('#main'), owner = studyOwner(), hash = location.hash;
+  if (owner == null) { m.innerHTML = '<p role="status">' + esc(studyT().waiting) + '</p>'; return; }
   if (!(await practiceReady())) { m.innerHTML = backLink('#/practice', S.practiceTitle) + '<p class="muted">' + esc(S.practiceOffline) + '</p>'; return; }
-  if (parseHash().route !== 'practice') return;
+  if (location.hash !== hash || owner !== studyOwner()) return;
   const ex = practiceById(id);
   if (!ex) { redirect('#/practice'); return; }
   if (!ex.free && gate(ex.course, '#/practice')) return;
   const sp = pSpread(ex);
   const perPos = sp.pos && sp.pos.length === ex.cards.length;
+  const book = STUDY.read(owner), draftKey = studyDraftKey(id), draft = book.drafts[draftKey];
+  const revision = params && params.revise ? book.attempts.find((a) => a.id === params.revise && a.exercise === id) : null;
+  const restored = draft || (revision && revision.lang === lang ? revision : null);
+  const J = studyT();
 
   const box = (cid, i) => {
     const card = pCard(ex, i), label = perPos ? sp.pos[i][0] : (lang === 'vi' ? 'L\u00e1 ' : (lang === 'de' ? 'Karte ' : 'Card ')) + (i + 1);
@@ -23243,25 +23261,47 @@ async function renderExercise(id) {
       + '<button class="pturn" data-turn="' + i + '" aria-label="' + esc(S.practiceTurn) + '">' + backNow() + '</button></div>'
       + '<div class="pask shut"><b>' + esc(label) + '</b>'
       + '<div class="faint">' + esc(card.name) + (ex.rev[i] ? ' \u00b7 ' + esc(S.pRev) : '') + '</div>'
-      + '<textarea data-pos="' + i + '" rows="4" placeholder="' + esc(S.practicePlaceholder) + '"></textarea></div></div>';
+      + '<textarea data-pos="' + i + '" rows="4" maxlength="4000" aria-label="' + esc(label + ' · ' + card.name) + '" placeholder="' + esc(S.practicePlaceholder) + '"></textarea></div></div>';
   };
 
   m.innerHTML = backLink('#/practice', S.practiceTitle) + '<div class="guide"><h1>' + esc(sp.name) + '</h1>'
     + '<div class="ins pscene"><div class="eyebrow">' + esc(S.practiceWho) + '</div>'
     + '<p>' + esc(L(ex.who)) + ' <b>' + esc(S.practiceAsks) + '</b> <span class="pq">\u201c' + esc(L(ex.q)) + '\u201d</span></p></div>'
     + '<p class="muted">' + esc(S.practiceHow) + '</p>'
+    + '<p class="hint">' + esc(J.rules) + '</p><p class="hint">' + esc(J.local) + '</p>'
+    + (revision && revision.lang !== lang ? '<p class="hint">' + esc(J.originalLanguage) + '</p>' : '')
+    + (restored ? '<p class="hint">' + esc(draft ? J.draftRestored : J.newAttempt) + '</p>' : '')
     + ex.cards.map(box).join('')
     + '<div class="prcard psynth"><div class="pask" style="width:100%"><b>' + esc(S.practiceSynth) + '</b>'
     + '<div class="faint">' + esc(ex.cards.length === 1 ? S.practiceSynthHintSingle : S.practiceSynthHint) + '</div>'
-    + '<textarea data-synth="1" rows="4" placeholder="' + esc(S.practicePlaceholder) + '"></textarea></div></div>'
-    + '<button class="btn primary block" id="pmark">' + esc(S.practiceMark) + '</button>'
+    + '<textarea data-synth="1" rows="4" maxlength="4000" aria-label="' + esc(S.practiceSynth) + '" placeholder="' + esc(S.practicePlaceholder) + '"></textarea></div></div>'
+    + '<p id="practice-save-status" role="status" aria-live="polite"></p>'
+    + '<button class="btn primary block" id="pmark">' + esc(J.submit) + '</button>'
+    + '<a class="btn block" href="#/study/exercise/' + id + '">' + esc(J.history) + '</a>'
     + '<div id="presult"></div></div>';
 
+  const status = $('#practice-save-status'), button = $('#pmark');
+  const values = () => ({
+    answers: ex.cards.map((c, i) => $('[data-pos="' + i + '"]', m).value),
+    synth: $('[data-synth]', m).value,
+    turned: ex.cards.map((c, i) => !$('[data-turn="' + i + '"]', m)),
+    lang
+  });
+  const saveDraft = () => {
+    const error = STUDY.draft(owner, draftKey, values());
+    studyStatus(status, error, 'draft');
+    button.disabled = false;
+    return error;
+  };
+  if (restored) {
+    ex.cards.forEach((c, i) => { $('[data-pos="' + i + '"]', m).value = restored.answers[i] || ''; });
+    $('[data-synth]', m).value = restored.synth || '';
+  }
   /* The cards are dealt face down and turned one at a time, the way the daily
      draw does it. A learner who can see all three at once reads the spread
      backwards from the last card; turning them in order is how the reading is
      actually built. The box for a card only appears once its card is up. */
-  $$('[data-turn]', m).forEach((b) => b.addEventListener('click', () => {
+  const turn = (b, focus) => {
     const i = Number(b.getAttribute('data-turn')), card = pCard(ex, i);
     const slot = b.parentNode;
     slot.innerHTML = '<div class="flip"><div class="inner"><span class="face fr">' + card.face
@@ -23269,16 +23309,33 @@ async function renderExercise(id) {
     const ask = $('.pask', slot.parentNode);
     ask.classList.remove('shut');
     const ta = $('textarea', ask);
-    if (ta) setTimeout(() => ta.focus({ preventScroll: true }), 420);
+    if (ta && focus) ta.focus({ preventScroll: true });
+  };
+  $$('[data-turn]', m).forEach((b) => {
+    const i = Number(b.getAttribute('data-turn'));
+    if (restored && (restored.turned ? restored.turned[i] : true)) turn(b, false);
+    else b.addEventListener('click', () => { turn(b, true); saveDraft(); });
+  });
+  $$('textarea', m).forEach((ta) => ta.addEventListener('input', () => {
+    saveDraft();
+    // Once edited, the last score is stale. The saved attempt stays in history.
+    $('#presult').innerHTML = '';
   }));
 
   $('#pmark').addEventListener('click', () => {
-    const answers = ex.cards.map((c, i) => ($('[data-pos="' + i + '"]') || {}).value || '');
-    const synth = ($('[data-synth="1"]') || {}).value || '';
+    if (owner !== studyOwner()) { studyStatus(status, 'changed'); return; }
+    if (!ex.free && !ACCESS.has(ex.course)) { gate(ex.course, '#/practice'); return; }
+    const { answers, synth, turned } = values();
+    if (!turned.every(Boolean) || answers.some((s) => s.trim().length < 15) || synth.trim().length < 25) {
+      studyStatus(status, 'required'); return;
+    }
     const r = gradeReading(ex, answers, synth);
+    const error = STUDY.add(owner, 'attempts', studyAttempt(ex, sp, answers, synth, r), draftKey);
+    if (error) { studyStatus(status, error); return; }
     PSCORE.put(ex.id, r.pct);
     $('#presult').innerHTML = resultHTML(ex, sp, r, perPos);
-    $('#pmark').textContent = S.practiceAgain;
+    studyStatus(status, '', 'saved');
+    button.disabled = true; // edit before saving another attempt
     $('#presult').scrollIntoView({ behavior: 'smooth', block: 'start' });
   });
 }
@@ -23286,20 +23343,23 @@ async function renderExercise(id) {
 /* The mark, then why, then - last, and only now - how Nabu reads it. The order
    matters: showing the model answer beside the boxes would turn the exercise
    into a copying exercise. */
-function resultHTML(ex, sp, r, perPos) {
+function practiceNoteText(n) {
   const S = T();
-  const kw = (list) => list.map((k) => '<span class="pkw">' + esc(k) + '</span>').join('');
-  const noteLine = (n) => n.kind === 'thin' ? S.practiceThin(n.card)
+  return n.kind === 'thin' ? S.practiceThin(n.card)
     : n.kind === 'frame' ? S.practiceFrame[n.frame](n.card)
     : n.kind === 'reversal' ? S.practiceRev(n.card)
     : n.kind === 'missed' ? S.practiceMiss(n.card)
     : n.kind === 'date' ? S.practiceDate
     : n.kind === 'bare' ? S.practiceBare
     : n.kind === 'synth' ? S.practiceNoSynth : '';
+}
+function resultHTML(ex, sp, r, perPos) {
+  const S = T();
+  const kw = (list) => list.map((k) => '<span class="pkw">' + esc(k) + '</span>').join('');
 
   return '<div class="presult ' + r.band + '">'
     + '<div class="pscore">' + r.pct + '%<span>' + esc(S.practiceBand[r.band]) + '</span></div>'
-    + (r.notes.length ? '<ul class="pnotes">' + r.notes.map((n) => '<li>' + esc(noteLine(n)) + '</li>').join('') + '</ul>' : '')
+    + (r.notes.length ? '<ul class="pnotes">' + r.notes.map((n) => '<li>' + esc(practiceNoteText(n)) + '</li>').join('') + '</ul>' : '')
     + '<h3>' + esc(S.practiceByCard) + '</h3>'
     + r.perCard.map((c, i) => '<div class="pline"><b>' + esc(c.card.name) + (c.rev ? ' · ' + esc(S.pRev) : '') + '</b>'
       + (c.got.length ? '<div class="pgot">' + esc(S.practiceGot) + ' ' + kw(c.got) + '</div>' : '')
@@ -23310,7 +23370,275 @@ function resultHTML(ex, sp, r, perPos) {
     + '</div>';
 }
 
-ROUTES.practice = { nav: 'learn', render: (a) => a[0] ? renderExercise(a[0]) : renderPractice() };
+ROUTES.practice = { nav: 'learn', render: (a, p) => a[0] ? renderExercise(a[0], p) : renderPractice() };
+
+/* A device-local notebook. Entries are scoped to the resolved account (or
+   guest); a form opened by one person must never write into another's book.
+   The app's existing nabu-* wipe removes these on sign-out/account deletion.
+   No timers keep private text alive after leaving a screen. */
+const STUDY_RUBRIC = 'keywords-positions-v1';
+const STUDY_TEXT = {
+  vi: {
+    title: 'Sổ học của bạn', intro: 'Giữ lại lời đọc của mình, sửa lại và nhìn thấy điều đã học được.',
+    local: 'Sổ chỉ lưu trên thiết bị này, chưa đồng bộ. Đăng xuất, xóa tài khoản hoặc xóa dữ liệu ứng dụng sẽ xóa sổ. Hãy xuất bản sao trước.',
+    waiting: 'Đang xác định tài khoản. Sổ sẽ mở khi tài khoản tải xong.',
+    rules: 'Phản hồi tự động dựa trên từ khóa và vai trò từng vị trí, có thể bỏ sót cách diễn đạt khác. Điểm không đo khả năng dự đoán tương lai.',
+    saved: 'Đã lưu trên thiết bị', draft: 'Đã lưu bản nháp', failed: 'Chưa lưu được. Giữ trang này mở và sao chép bài viết trước khi rời đi.',
+    changed: 'Tài khoản đã thay đổi. Mở lại sổ trước khi viết tiếp.', empty: 'Chưa có bài nào được lưu.',
+    history: 'Xem các lần làm', revise: 'Sửa lại bài này', attempts: 'Các lần làm bài', notes: 'Ghi chép từ lá bài',
+    submit: 'Chấm và lưu bài', required: 'Hãy lật tất cả lá bài, viết ít nhất 15 ký tự cho mỗi lá và 25 ký tự cho phần tổng hợp.',
+    feedback: 'Phản hồi đã lưu', response: 'Lời đọc của bạn', synthesis: 'Phần tổng hợp', model: 'Bài đọc tham khảo',
+    compare: 'So sánh hai lần làm', first: 'Lần trước', second: 'Lần sau', choose: 'Chọn hai lần làm khác nhau để so sánh.',
+    different: 'Hai lần dùng ngôn ngữ hoặc tiêu chí khác nhau; không so sánh điểm trực tiếp.',
+    improved: 'Tiêu chí không còn bị nhắc ở lần sau', remaining: 'Tiêu chí cần xem lại ở lần sau', none: 'Không có.',
+    review: 'Ôn từ lần làm gần nhất', reviewHint: 'Gợi ý từ phản hồi gần nhất của từng bài, chỉ gồm bài bạn đang được mở.',
+    retry: 'Luyện lại', export: 'Xuất bản sao JSON', remove: 'Xóa mục này', confirm: 'Xóa mục này khỏi sổ trên thiết bị? Không thể khôi phục nếu chưa xuất bản sao.',
+    full: 'Sổ đã đầy (100 lần làm hoặc 100 ghi chép). Xuất bản sao rồi xóa bớt mục trước khi lưu thêm.',
+    saveCard: 'Ghi vào sổ học', reflection: 'Điều bạn nhận ra từ lá bài', reflectionHint: 'Viết cách bạn hiểu lá bài và điều muốn ghi nhớ. Lời luận giải hiện tại vẫn giữ nguyên.',
+    save: 'Lưu ghi chép', noteRequired: 'Viết ít nhất một dòng trước khi lưu.', fromDraw: 'Lá bài đã chọn',
+    words: 'Ý nghĩa và từ khóa', position: 'Vai trò của vị trí', reversal: 'Nghĩa lá ngược', short: 'Diễn giải còn ngắn',
+    date: 'Thời điểm quá cụ thể', bare: 'Câu trả lời thiếu giải thích', synth: 'Kết nối các lá và câu hỏi',
+    draftRestored: 'Bản nháp đã được khôi phục.', originalLanguage: 'Đổi về ngôn ngữ của bài đã lưu để sửa; bản gốc được giữ nguyên.',
+    newAttempt: 'Lần làm mới sẽ được lưu riêng, không ghi đè bài cũ.', result: 'Điểm', rubric: 'Tiêu chí',
+    studyLink: 'Mở sổ học', dateLabel: 'Ngày rút', focusLabel: 'Chủ đề',
+    exportHint: 'Bản sao chứa bài viết riêng tư của bạn. Bạn có thể chọn và sao chép toàn bộ văn bản bên dưới, hoặc lưu tệp.',
+    exportFile: 'Lưu hoặc chia sẻ tệp JSON'
+  },
+  en: {
+    title: 'Your study notebook', intro: 'Keep your interpretation, revise it and see what you have learned.',
+    local: 'This notebook is stored only on this device, without sync. Signing out, deleting your account or clearing app data removes it. Export a copy first.',
+    waiting: 'Resolving your account. Your notebook will open when it is ready.',
+    rules: 'Automatic feedback checks keywords and card-position roles and may miss other valid wording. Scores do not measure the ability to predict the future.',
+    saved: 'Saved on this device', draft: 'Draft saved', failed: 'Not saved. Keep this page open and copy your writing before leaving.',
+    changed: 'Your account changed. Reopen the notebook before continuing.', empty: 'Nothing saved yet.',
+    history: 'View attempts', revise: 'Revise this attempt', attempts: 'Practice attempts', notes: 'Card reflections',
+    submit: 'Mark and save', required: 'Turn every card and write at least 15 characters per card and 25 for the combined response.',
+    feedback: 'Saved feedback', response: 'Your interpretation', synthesis: 'Combined response', model: 'Reference interpretation',
+    compare: 'Compare two attempts', first: 'Earlier attempt', second: 'Later attempt', choose: 'Choose two different attempts.',
+    different: 'These attempts use different languages or criteria; do not compare their scores directly.',
+    improved: 'Criteria no longer flagged in the later attempt', remaining: 'Criteria to revisit in the later attempt', none: 'None.',
+    review: 'Review your latest work', reviewHint: 'Suggestions use the latest feedback for each exercise you currently have access to.',
+    retry: 'Practise again', export: 'Export a JSON copy', remove: 'Delete this entry', confirm: 'Delete this entry from this device? It cannot be restored without an exported copy.',
+    full: 'Notebook full (100 attempts or 100 reflections). Export a copy and remove some entries before saving more.',
+    saveCard: 'Write in study notebook', reflection: 'What you noticed in this card', reflectionHint: 'Write your interpretation and what you want to remember. Your current reading stays unchanged.',
+    save: 'Save reflection', noteRequired: 'Write a line before saving.', fromDraw: 'Selected card',
+    words: 'Meanings and keywords', position: 'Card-position role', reversal: 'Reversed meaning', short: 'Interpretation too brief',
+    date: 'Overly specific timing', bare: 'Answer needs explanation', synth: 'Connecting cards and question',
+    draftRestored: 'Your draft has been restored.', originalLanguage: 'Switch to the saved attempt’s language to revise it; the original is kept.',
+    newAttempt: 'A new attempt is saved separately without overwriting the original.', result: 'Score', rubric: 'Criteria',
+    studyLink: 'Open study notebook', dateLabel: 'Draw date', focusLabel: 'Focus',
+    exportHint: 'This copy contains your private writing. Select and copy all the text below, or save the file.',
+    exportFile: 'Save or share JSON file'
+  },
+  de: {
+    title: 'Dein Lernheft', intro: 'Bewahre deine Deutung auf, überarbeite sie und erkenne, was du gelernt hast.',
+    local: 'Dieses Heft wird nur auf diesem Gerät gespeichert, ohne Synchronisierung. Abmelden, Kontolöschung oder Löschen der App-Daten entfernt es. Exportiere vorher eine Kopie.',
+    waiting: 'Dein Konto wird geladen. Danach öffnet sich dein Lernheft.',
+    rules: 'Das automatische Feedback prüft Stichworte und Kartenpositionen und kann andere passende Formulierungen übersehen. Die Punktzahl misst keine Fähigkeit, die Zukunft vorherzusagen.',
+    saved: 'Auf diesem Gerät gespeichert', draft: 'Entwurf gespeichert', failed: 'Nicht gespeichert. Lass die Seite offen und kopiere deinen Text, bevor du sie verlässt.',
+    changed: 'Dein Konto hat sich geändert. Öffne das Heft erneut.', empty: 'Noch keine Einträge.',
+    history: 'Versuche ansehen', revise: 'Diesen Versuch überarbeiten', attempts: 'Übungsversuche', notes: 'Gedanken zu Karten',
+    submit: 'Bewerten und speichern', required: 'Decke alle Karten auf. Schreibe mindestens 15 Zeichen pro Karte und 25 für die Zusammenfassung.',
+    feedback: 'Gespeichertes Feedback', response: 'Deine Deutung', synthesis: 'Zusammenfassung', model: 'Beispieldeutung',
+    compare: 'Zwei Versuche vergleichen', first: 'Früherer Versuch', second: 'Späterer Versuch', choose: 'Wähle zwei verschiedene Versuche.',
+    different: 'Sprache oder Kriterien unterscheiden sich; vergleiche diese Punktzahlen nicht direkt.',
+    improved: 'Im späteren Versuch nicht mehr beanstandete Kriterien', remaining: 'Im späteren Versuch noch zu üben', none: 'Keine.',
+    review: 'Deine letzte Arbeit wiederholen', reviewHint: 'Vorschläge aus dem neuesten Feedback je Übung, auf die du aktuell Zugriff hast.',
+    retry: 'Erneut üben', export: 'JSON-Kopie exportieren', remove: 'Eintrag löschen', confirm: 'Diesen Eintrag auf dem Gerät löschen? Ohne exportierte Kopie ist er nicht wiederherstellbar.',
+    full: 'Das Heft ist voll (100 Versuche oder 100 Notizen). Exportiere eine Kopie und lösche einige Einträge, bevor du weitere speicherst.',
+    saveCard: 'Ins Lernheft schreiben', reflection: 'Was dir bei dieser Karte aufgefallen ist', reflectionHint: 'Schreibe deine Deutung und was du dir merken möchtest. Deine aktuelle Legung bleibt unverändert.',
+    save: 'Notiz speichern', noteRequired: 'Schreibe vor dem Speichern eine Zeile.', fromDraw: 'Gewählte Karte',
+    words: 'Bedeutungen und Stichworte', position: 'Rolle der Kartenposition', reversal: 'Umgekehrte Bedeutung', short: 'Deutung zu kurz',
+    date: 'Zu genaue Zeitangabe', bare: 'Antwort braucht eine Erklärung', synth: 'Karten und Frage verbinden',
+    draftRestored: 'Dein Entwurf wurde wiederhergestellt.', originalLanguage: 'Wechsle zur Sprache des gespeicherten Versuchs, um ihn zu überarbeiten. Das Original bleibt erhalten.',
+    newAttempt: 'Der neue Versuch wird separat gespeichert und überschreibt das Original nicht.', result: 'Punktzahl', rubric: 'Kriterien',
+    studyLink: 'Lernheft öffnen', dateLabel: 'Datum der Ziehung', focusLabel: 'Thema',
+    exportHint: 'Diese Kopie enthält deine privaten Texte. Wähle und kopiere den gesamten Text unten oder speichere die Datei.',
+    exportFile: 'JSON-Datei speichern oder teilen'
+  }
+};
+const studyT = () => STUDY_TEXT[lang] || STUDY_TEXT.en;
+function studyOwner() {
+  if (typeof WIPED !== 'undefined' && WIPED) return null;
+  if (typeof BE !== 'undefined' && BE.enabled && !BE.ready) return null;
+  return typeof BE !== 'undefined' && BE.user ? 'user:' + BE.user.uid : 'guest';
+}
+const STUDY = {
+  key(owner) { return 'nabu-study-v1:' + encodeURIComponent(owner); },
+  read(owner) {
+    const empty = () => ({ version: 1, attempts: [], reflections: [], drafts: {} });
+    if (owner == null || owner !== studyOwner()) return empty();
+    const b = store.get(this.key(owner), null);
+    return b && b.version === 1 && Array.isArray(b.attempts) && Array.isArray(b.reflections)
+      && b.drafts && typeof b.drafts === 'object' ? b : empty();
+  },
+  write(owner, b) {
+    if (owner == null || owner !== studyOwner()) return 'changed';
+    return store.set(this.key(owner), b) ? '' : 'failed';
+  },
+  draft(owner, key, value) {
+    const b = this.read(owner); b.drafts[key] = value;
+    return this.write(owner, b);
+  },
+  add(owner, type, entry, draftKey) {
+    const b = this.read(owner);
+    if (b[type].length >= 100) return 'full'; // never silently discard writing
+    b[type].push(entry);
+    delete b.drafts[draftKey];
+    return this.write(owner, b);
+  },
+  remove(owner, type, id) {
+    const b = this.read(owner); b[type] = b[type].filter((x) => x.id !== id);
+    return this.write(owner, b);
+  }
+};
+const studyId = () => Date.now().toString(36) + '-' + Math.random().toString(36).slice(2, 10);
+const studyDraftKey = (id) => 'exercise:' + id + ':' + lang;
+const studyTextHTML = (text) => '<p class="study-writing">' + esc(text) + '</p>';
+const studyDate = (at) => new Date(at).toLocaleString({ vi: 'vi-VN', en: 'en-GB', de: 'de-DE' }[lang] || 'en-GB');
+const studyCanRead = (a) => { const ex = practiceById(a.exercise); return !!ex && (ex.free || ACCESS.has(ex.course)); };
+const studyNeeds = (r) => Array.from(new Set(r.notes.map((n) => ({
+  thin: 'short', frame: 'position', reversal: 'reversal', missed: 'words',
+  date: 'date', bare: 'bare', synth: 'synth'
+})[n.kind]).filter(Boolean).concat(r.perCard.some((c) => c.score < 1) ? ['words'] : [])));
+function studyAttempt(ex, sp, answers, synth, r) {
+  return { id: studyId(), exercise: ex.id, at: Date.now(), lang, rubric: STUDY_RUBRIC,
+    title: sp.name, question: L(ex.q), answers, synth, pct: r.pct, needs: studyNeeds(r),
+    cards: r.perCard.map((c, i) => ({ name: c.card.name, reversed: c.rev,
+      position: sp.pos && sp.pos[i] ? sp.pos[i][0] : String(i + 1),
+      got: c.got, missed: c.missed })),
+    feedback: r.notes.map(practiceNoteText), model: L(ex.model) };
+}
+function studyStatus(el, error, success) {
+  if (!el) return;
+  el.textContent = studyT()[error || success || 'saved'];
+  el.className = 'hint' + (error ? ' err' : '');
+}
+function studyLinkHTML() {
+  return '<a class="btn block" href="#/study">' + esc(studyT().studyLink) + ' →</a>';
+}
+function studyAttemptHTML(a, controls) {
+  const S = studyT();
+  return '<article class="card study-entry"><h3>' + esc(a.title) + '</h3>'
+    + '<p class="faint">' + esc(studyDate(a.at)) + ' · ' + esc(a.lang.toUpperCase()) + ' · ' + esc(S.result) + ': ' + a.pct + '%</p>'
+    + studyTextHTML(a.question)
+    + a.cards.map((c, i) => '<h4>' + esc(c.position) + ' · ' + esc(c.name) + (c.reversed ? ' ↶' : '') + '</h4>'
+      + studyTextHTML(a.answers[i]) + '<p class="hint">' + esc(T().practiceGot) + ' ' + esc(c.got.join(', ') || '—')
+      + '<br>' + esc(T().practiceMissed) + ' ' + esc(c.missed.join(', ') || '—') + '</p>').join('')
+    + '<h4>' + esc(S.synthesis) + '</h4>' + studyTextHTML(a.synth)
+    + '<h4>' + esc(S.feedback) + '</h4>' + (a.feedback.length
+      ? '<ul>' + a.feedback.map((n) => '<li>' + esc(n) + '</li>').join('') + '</ul>' : '<p>' + esc(S.none) + '</p>')
+    + '<details><summary>' + esc(S.model) + '</summary>' + studyTextHTML(a.model) + '</details>'
+    + (controls ? '<div class="row"><a class="btn" href="#/practice/' + encodeURIComponent(a.exercise) + '?revise=' + encodeURIComponent(a.id) + '">' + esc(S.revise) + '</a>'
+      + '<button class="btn" data-study-delete="' + esc(a.id) + '" data-study-type="attempts">' + esc(S.remove) + '</button></div>' : '')
+    + '</article>';
+}
+function studySuggestions(book) {
+  const latest = {};
+  book.attempts.forEach((a) => { latest[a.exercise] = a; });
+  return Object.values(latest).filter((a) => studyCanRead(a) && a.needs.length).sort((a, b) => b.at - a.at).slice(0, 3);
+}
+async function renderStudy(args, params) {
+  const m = $('#main'), S = studyT(), owner = studyOwner(), hash = location.hash;
+  if (owner == null) { m.innerHTML = '<p role="status">' + esc(S.waiting) + '</p>'; return; }
+  if (args[0] === 'card') { renderStudyCard(params); return; }
+  const ready = await practiceReady();
+  if (location.hash !== hash || studyOwner() !== owner) return;
+  if (!ready) { m.innerHTML = backLink('#/learn', T().learnTitle) + '<p>' + esc(T().practiceOffline) + '</p>'; return; }
+  const book = STUDY.read(owner);
+  const exercise = args[0] === 'exercise' ? practiceById(args[1]) : null;
+  if (args[0] === 'exercise' && !exercise) { redirect('#/study'); return; }
+  if (exercise && !exercise.free && gate(exercise.course, '#/study')) return;
+  const attempts = book.attempts.filter((a) => studyCanRead(a) && (!exercise || a.exercise === exercise.id));
+  const suggestions = exercise ? [] : studySuggestions(book);
+  m.innerHTML = backLink(exercise ? '#/study' : '#/practice', S.title)
+    + '<h1>' + esc(S.title) + '</h1><p>' + esc(S.intro) + '</p><p class="hint">' + esc(S.local) + '</p>'
+    + '<p class="hint">' + esc(S.rules) + '</p><button class="btn" id="study-export">' + esc(S.export) + '</button>'
+    + '<p id="study-status" role="status" aria-live="polite"></p><div id="study-export-panel"></div>'
+    + (suggestions.length ? '<section class="card"><h2>' + esc(S.review) + '</h2><p class="hint">' + esc(S.reviewHint) + '</p>'
+      + suggestions.map((a) => '<p><a href="#/practice/' + a.exercise + '?revise=' + a.id + '">' + esc(a.title) + ' — ' + esc(S.retry) + '</a><br>'
+        + esc(a.needs.map((k) => S[k]).join(' · ')) + '</p>').join('') + '</section>' : '')
+    + (exercise && attempts.length > 1 ? '<section class="card"><h2>' + esc(S.compare) + '</h2>'
+      + '<div class="study-compare"><label>' + esc(S.first) + '<select id="study-first"></select></label><label>' + esc(S.second)
+      + '<select id="study-second"></select></label></div><div id="study-comparison"></div></section>' : '')
+    + '<h2>' + esc(S.attempts) + '</h2>'
+    + (attempts.length ? (exercise ? attempts.slice().reverse().map((a) => studyAttemptHTML(a, true)).join('')
+      : Array.from(new Set(attempts.map((a) => a.exercise))).map((id) => {
+        const list = attempts.filter((a) => a.exercise === id), a = list[list.length - 1];
+        return '<a class="prow" href="#/study/exercise/' + id + '"><span>' + esc(a.title) + '<br><small>' + esc(a.question)
+          + '</small></span><span>' + list.length + ' · ' + a.pct + '%</span></a>';
+      }).join('')) : '<p>' + esc(S.empty) + '</p>')
+    + (exercise ? '' : '<h2>' + esc(S.notes) + '</h2>' + (book.reflections.length ? book.reflections.slice().reverse().map((a) =>
+      '<article class="card"><h3>' + esc(a.name) + '</h3><p class="hint">' + esc(a.date) + ' · ' + esc(a.focusLabel) + '</p>'
+      + studyTextHTML(a.text) + '<button class="btn" data-study-delete="' + esc(a.id) + '" data-study-type="reflections">' + esc(S.remove) + '</button></article>').join('') : '<p>' + esc(S.empty) + '</p>'));
+  $('#study-export').onclick = () => {
+    if (studyOwner() !== owner) { studyStatus($('#study-status'), 'changed'); return; }
+    const text = JSON.stringify(STUDY.read(owner), null, 2);
+    const panel = $('#study-export-panel');
+    panel.innerHTML = '<label for="study-export-text">' + esc(S.exportHint) + '</label>'
+      + '<textarea id="study-export-text" readonly rows="8"></textarea><button class="btn" id="study-export-file">' + esc(S.exportFile) + '</button>';
+    $('#study-export-text').value = text;
+    $('#study-export-file').onclick = async () => {
+      if (studyOwner() !== owner) { route(); return; }
+      const name = 'nabu-study-' + isoDate(new Date()) + '.json';
+      const shared = await shareFile(text, name, 'application/json');
+      if (shared !== false || studyOwner() !== owner || location.hash !== hash) return;
+      // The text remains selectable even in WebViews without file downloads.
+      if (inStoreApp()) { $('#study-export-text').focus(); $('#study-export-text').select(); return; }
+      const url = URL.createObjectURL(new Blob([text], { type: 'application/json' })), a = document.createElement('a');
+      a.href = url; a.download = name; a.click();
+      setTimeout(() => URL.revokeObjectURL(url), 30000);
+    };
+  };
+  $$('[data-study-delete]', m).forEach((b) => { b.onclick = () => {
+    if (studyOwner() !== owner) { studyStatus($('#study-status'), 'changed'); return; }
+    if (!confirm(S.confirm)) return;
+    const error = STUDY.remove(owner, b.dataset.studyType, b.dataset.studyDelete);
+    if (error) studyStatus($('#study-status'), error); else renderStudy(args, params);
+  }; });
+  if (exercise && attempts.length > 1) {
+    const options = attempts.map((a, i) => '<option value="' + a.id + '">' + (i + 1) + ' · ' + esc(studyDate(a.at)) + ' · ' + a.pct + '% · ' + esc(a.lang) + '</option>').join('');
+    $('#study-first').innerHTML = $('#study-second').innerHTML = options;
+    $('#study-first').value = attempts[attempts.length - 2].id;
+    $('#study-second').value = attempts[attempts.length - 1].id;
+    const compare = () => {
+      if (studyOwner() !== owner) { route(); return; }
+      const a = attempts.find((x) => x.id === $('#study-first').value), b = attempts.find((x) => x.id === $('#study-second').value);
+      const el = $('#study-comparison');
+      if (a.id === b.id) { el.innerHTML = '<p>' + esc(S.choose) + '</p>'; return; }
+      const pair = [a, b].sort((x, y) => x.at - y.at), old = pair[0], next = pair[1];
+      const list = (ks) => esc(ks.map((k) => S[k]).join(' · ') || S.none);
+      el.innerHTML = (old.lang !== next.lang || old.rubric !== next.rubric ? '<p>' + esc(S.different) + '</p>'
+        : '<p><b>' + esc(S.result) + ': ' + old.pct + '% → ' + next.pct + '%</b></p><p>' + esc(S.improved) + ': '
+          + list(old.needs.filter((k) => !next.needs.includes(k))) + '</p><p>' + esc(S.remaining) + ': ' + list(next.needs) + '</p>')
+        + '<div class="study-compare">' + pair.map((x) => studyAttemptHTML(x, false)).join('') + '</div>';
+    };
+    $('#study-first').onchange = $('#study-second').onchange = compare; compare();
+  }
+}
+function renderStudyCard(params) {
+  const S = studyT(), owner = studyOwner(), m = $('#main'), card = cardById(params.card);
+  if (!card) { redirect('#/study'); return; }
+  const date = /^\d{4}-\d{2}-\d{2}$/.test(params.date || '') ? params.date : isoDate(new Date());
+  const focus = T().focus[params.focus] ? params.focus : 'general';
+  const key = 'card:' + date + ':' + card.id + ':' + focus + ':' + lang;
+  const draft = STUDY.read(owner).drafts[key];
+  m.innerHTML = backLink('#/study', S.title) + '<h1>' + esc(S.saveCard) + '</h1><h2>' + esc(card.name) + '</h2>'
+    + '<p>' + esc(S.dateLabel) + ': ' + esc(date) + ' · ' + esc(T().focus[focus]) + '</p>'
+    + '<p class="hint">' + esc(S.local) + '</p><label for="study-reflection">' + esc(S.reflection) + '</label>'
+    + '<p class="hint">' + esc(S.reflectionHint) + '</p><textarea id="study-reflection" rows="7" maxlength="4000"></textarea>'
+    + '<p id="study-status" role="status" aria-live="polite"></p><button id="study-save-note" class="btn primary block">' + esc(S.save) + '</button>';
+  const input = $('#study-reflection'), status = $('#study-status');
+  input.value = draft && draft.text || '';
+  input.oninput = () => studyStatus(status, STUDY.draft(owner, key, { text: input.value }), 'draft');
+  $('#study-save-note').onclick = () => {
+    if (!input.value.trim()) { studyStatus(status, 'noteRequired'); return; }
+    const error = STUDY.add(owner, 'reflections', { id: studyId(), at: Date.now(), lang, card: card.id,
+      name: card.name, date, focus, focusLabel: T().focus[focus], text: input.value }, key);
+    if (error) studyStatus(status, error); else { toast(S.saved); redirect('#/study'); }
+  };
+}
+ROUTES.study = { nav: 'learn', render: renderStudy };
 
 /* ============================ outfit ============================
    Mặc gì tháng này: one painted outfit for every sign, month and gender,
@@ -33066,7 +33394,7 @@ function adminSale(p) {
 ROUTES.admin = { nav: '', render: renderAdmin };
 
 /* ============================ boot ============================ */
-window.APP_VERSION = 'v289';
+window.APP_VERSION = 'v290';
 window.NABU = { CONFIG: CONFIG, SALE: SALE, salePrice: salePrice, loadActs: loadActs, BACK: BACK, LESSONS: LESSONS, localAnswer: localAnswer, compatVerdict: compatVerdict, numerologyOf: numerologyOf, ZDEEP: ZDEEP, lunarToday: lunarToday, solarToLunar: solarToLunar, DECK: DECK, INSIGHT: INSIGHT, KW: KW, ASK: ASK, GUIDES: GUIDES, SERVICES: SERVICES, COURSES: COURSES, ACCESS: ACCESS, INTERESTS: INTERESTS, plusOn: () => plusOn(), proOn: () => proOn(), luckUnlimited: () => luckUnlimited(), ZODIAC: ZODIAC, pick: pick, book: book, PLAY_ITEMS: PLAY_ITEMS, PLAY_SUB_SKUS: PLAY_SUB_SKUS, playItem: playItem, BILL: BILL, SUBS: SUBS, billUse: billUse, APPLE_BILL: APPLE_BILL, appleAccountToken: appleAccountToken, renderStore: renderStore, pickLimitHTML: pickLimitHTML, subStateWord: subStateWord,
   insightHTML: insightHTML, insightOf: insightOf, sunSignIndex: sunSignIndex, lifePath: lifePath, PROFILE: () => PROFILE, BE: BE, inAppBrowser: inAppBrowser, ACTS: ACTS, CMT: CMT, LIKES: LIKES, kbReady: kbReady, AI: AI, STR: STR, KB_URL: (typeof KB_URL === 'string' ? KB_URL : ''),
   ANGELS: ANGELS, angelRead: angelRead, CODEBOOK: CODEBOOK, redeemCode: redeemCode, loadCodebook: loadCodebook, petHomeSVG: petHomeSVG, petStill: petStill, PET_HOMES: PET_HOMES, PET_WARDROBE: PET_WARDROBE, PET_SLOTS: PET_SLOTS,
@@ -33076,6 +33404,7 @@ window.NABU = { CONFIG: CONFIG, SALE: SALE, salePrice: salePrice, loadActs: load
   LOVE: LOVE, LOVEDB: LOVEDB, HANDLE_RE: HANDLE_RE, loveBadgeHTML: loveBadgeHTML,
   loveMarkSVG: loveMarkSVG, QUIZ: QUIZ, QSCORE: QSCORE, QUIZ_PASS: QUIZ_PASS, QUIZ_LEN: QUIZ_LEN, pileArtSVG: pileArtSVG, PILE_ARTS: PILE_ARTS, threadSVG: threadSVG, petParentsHTML: petParentsHTML, GIFTS: GIFTS, ALERTS: ALERTS, alertsStart: alertsStart, alertWas: alertWas,
   SPREADS: SPREADS, PRACTICE: () => PRACTICE, pCard: pCard, outfitState: outfitState, OUTFIT_TXT: OUTFIT_TXT, OUTFIT_CELL: OUTFIT_CELL, practiceReady: practiceReady, PSCORE: PSCORE, gradeReading: gradeReading, practiceById: practiceById, pBand: pBand,
+  STUDY: STUDY, STUDY_TEXT: STUDY_TEXT, studyOwner: studyOwner, studySuggestions: studySuggestions,
   /* the booking calendar's own state, for the overlap checks */
   bookState: (sch, tk, ig) => { if (sch !== undefined) SCHEDULE = sch; if (tk !== undefined) TAKEN = tk; if (ig !== undefined) book.ignoreKey = ig; return { schedule: SCHEDULE, taken: TAKEN }; },
   WED: WED, WED_STEPS: WED_STEPS, wedStep: wedStep, cupidSVG: cupidSVG, shareLine: shareLine, UPD: UPD, NOTE: NOTE };
@@ -33142,7 +33471,7 @@ BE.onAuth(() => {
      activity page opened from a shared link has to swap its sign-in line
      for the comment box. */
   const r = parseHash().route;
-  if (['learn', 'me', 'home', 'pick', 'post'].indexOf(r) > -1 || (r === 'play' && $('.cmts'))) route();
+  if (['learn', 'me', 'home', 'pick', 'post', 'practice', 'study'].indexOf(r) > -1 || (r === 'play' && $('.cmts'))) route();
 });
 boot();
 

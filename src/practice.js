@@ -225,6 +225,7 @@ async function renderPractice() {
     + '<p class="muted">' + esc(S.practiceIntro) + '</p>'
     + '<div class="pprog"><span style="width:' + Math.round(done / PRACTICE.length * 100) + '%"></span></div>'
     + '<p class="faint" style="margin-top:4px">' + esc(S.practiceDone(done, PRACTICE.length)) + '</p>'
+    + studyLinkHTML()
     /* Grouped by course, each under its own name, so a Lenormand learner does
        not scroll through Tarot to find what is theirs. */
     + ['tarot', 'lenormand', 'playing'].map((c) => {
@@ -233,15 +234,20 @@ async function renderPractice() {
     }).join('');
 }
 
-async function renderExercise(id) {
-  const S = T(), m = $('#main');
+async function renderExercise(id, params) {
+  const S = T(), m = $('#main'), owner = studyOwner(), hash = location.hash;
+  if (owner == null) { m.innerHTML = '<p role="status">' + esc(studyT().waiting) + '</p>'; return; }
   if (!(await practiceReady())) { m.innerHTML = backLink('#/practice', S.practiceTitle) + '<p class="muted">' + esc(S.practiceOffline) + '</p>'; return; }
-  if (parseHash().route !== 'practice') return;
+  if (location.hash !== hash || owner !== studyOwner()) return;
   const ex = practiceById(id);
   if (!ex) { redirect('#/practice'); return; }
   if (!ex.free && gate(ex.course, '#/practice')) return;
   const sp = pSpread(ex);
   const perPos = sp.pos && sp.pos.length === ex.cards.length;
+  const book = STUDY.read(owner), draftKey = studyDraftKey(id), draft = book.drafts[draftKey];
+  const revision = params && params.revise ? book.attempts.find((a) => a.id === params.revise && a.exercise === id) : null;
+  const restored = draft || (revision && revision.lang === lang ? revision : null);
+  const J = studyT();
 
   const box = (cid, i) => {
     const card = pCard(ex, i), label = perPos ? sp.pos[i][0] : (lang === 'vi' ? 'L\u00e1 ' : (lang === 'de' ? 'Karte ' : 'Card ')) + (i + 1);
@@ -249,25 +255,47 @@ async function renderExercise(id) {
       + '<button class="pturn" data-turn="' + i + '" aria-label="' + esc(S.practiceTurn) + '">' + backNow() + '</button></div>'
       + '<div class="pask shut"><b>' + esc(label) + '</b>'
       + '<div class="faint">' + esc(card.name) + (ex.rev[i] ? ' \u00b7 ' + esc(S.pRev) : '') + '</div>'
-      + '<textarea data-pos="' + i + '" rows="4" placeholder="' + esc(S.practicePlaceholder) + '"></textarea></div></div>';
+      + '<textarea data-pos="' + i + '" rows="4" maxlength="4000" aria-label="' + esc(label + ' · ' + card.name) + '" placeholder="' + esc(S.practicePlaceholder) + '"></textarea></div></div>';
   };
 
   m.innerHTML = backLink('#/practice', S.practiceTitle) + '<div class="guide"><h1>' + esc(sp.name) + '</h1>'
     + '<div class="ins pscene"><div class="eyebrow">' + esc(S.practiceWho) + '</div>'
     + '<p>' + esc(L(ex.who)) + ' <b>' + esc(S.practiceAsks) + '</b> <span class="pq">\u201c' + esc(L(ex.q)) + '\u201d</span></p></div>'
     + '<p class="muted">' + esc(S.practiceHow) + '</p>'
+    + '<p class="hint">' + esc(J.rules) + '</p><p class="hint">' + esc(J.local) + '</p>'
+    + (revision && revision.lang !== lang ? '<p class="hint">' + esc(J.originalLanguage) + '</p>' : '')
+    + (restored ? '<p class="hint">' + esc(draft ? J.draftRestored : J.newAttempt) + '</p>' : '')
     + ex.cards.map(box).join('')
     + '<div class="prcard psynth"><div class="pask" style="width:100%"><b>' + esc(S.practiceSynth) + '</b>'
     + '<div class="faint">' + esc(ex.cards.length === 1 ? S.practiceSynthHintSingle : S.practiceSynthHint) + '</div>'
-    + '<textarea data-synth="1" rows="4" placeholder="' + esc(S.practicePlaceholder) + '"></textarea></div></div>'
-    + '<button class="btn primary block" id="pmark">' + esc(S.practiceMark) + '</button>'
+    + '<textarea data-synth="1" rows="4" maxlength="4000" aria-label="' + esc(S.practiceSynth) + '" placeholder="' + esc(S.practicePlaceholder) + '"></textarea></div></div>'
+    + '<p id="practice-save-status" role="status" aria-live="polite"></p>'
+    + '<button class="btn primary block" id="pmark">' + esc(J.submit) + '</button>'
+    + '<a class="btn block" href="#/study/exercise/' + id + '">' + esc(J.history) + '</a>'
     + '<div id="presult"></div></div>';
 
+  const status = $('#practice-save-status'), button = $('#pmark');
+  const values = () => ({
+    answers: ex.cards.map((c, i) => $('[data-pos="' + i + '"]', m).value),
+    synth: $('[data-synth]', m).value,
+    turned: ex.cards.map((c, i) => !$('[data-turn="' + i + '"]', m)),
+    lang
+  });
+  const saveDraft = () => {
+    const error = STUDY.draft(owner, draftKey, values());
+    studyStatus(status, error, 'draft');
+    button.disabled = false;
+    return error;
+  };
+  if (restored) {
+    ex.cards.forEach((c, i) => { $('[data-pos="' + i + '"]', m).value = restored.answers[i] || ''; });
+    $('[data-synth]', m).value = restored.synth || '';
+  }
   /* The cards are dealt face down and turned one at a time, the way the daily
      draw does it. A learner who can see all three at once reads the spread
      backwards from the last card; turning them in order is how the reading is
      actually built. The box for a card only appears once its card is up. */
-  $$('[data-turn]', m).forEach((b) => b.addEventListener('click', () => {
+  const turn = (b, focus) => {
     const i = Number(b.getAttribute('data-turn')), card = pCard(ex, i);
     const slot = b.parentNode;
     slot.innerHTML = '<div class="flip"><div class="inner"><span class="face fr">' + card.face
@@ -275,16 +303,33 @@ async function renderExercise(id) {
     const ask = $('.pask', slot.parentNode);
     ask.classList.remove('shut');
     const ta = $('textarea', ask);
-    if (ta) setTimeout(() => ta.focus({ preventScroll: true }), 420);
+    if (ta && focus) ta.focus({ preventScroll: true });
+  };
+  $$('[data-turn]', m).forEach((b) => {
+    const i = Number(b.getAttribute('data-turn'));
+    if (restored && (restored.turned ? restored.turned[i] : true)) turn(b, false);
+    else b.addEventListener('click', () => { turn(b, true); saveDraft(); });
+  });
+  $$('textarea', m).forEach((ta) => ta.addEventListener('input', () => {
+    saveDraft();
+    // Once edited, the last score is stale. The saved attempt stays in history.
+    $('#presult').innerHTML = '';
   }));
 
   $('#pmark').addEventListener('click', () => {
-    const answers = ex.cards.map((c, i) => ($('[data-pos="' + i + '"]') || {}).value || '');
-    const synth = ($('[data-synth="1"]') || {}).value || '';
+    if (owner !== studyOwner()) { studyStatus(status, 'changed'); return; }
+    if (!ex.free && !ACCESS.has(ex.course)) { gate(ex.course, '#/practice'); return; }
+    const { answers, synth, turned } = values();
+    if (!turned.every(Boolean) || answers.some((s) => s.trim().length < 15) || synth.trim().length < 25) {
+      studyStatus(status, 'required'); return;
+    }
     const r = gradeReading(ex, answers, synth);
+    const error = STUDY.add(owner, 'attempts', studyAttempt(ex, sp, answers, synth, r), draftKey);
+    if (error) { studyStatus(status, error); return; }
     PSCORE.put(ex.id, r.pct);
     $('#presult').innerHTML = resultHTML(ex, sp, r, perPos);
-    $('#pmark').textContent = S.practiceAgain;
+    studyStatus(status, '', 'saved');
+    button.disabled = true; // edit before saving another attempt
     $('#presult').scrollIntoView({ behavior: 'smooth', block: 'start' });
   });
 }
@@ -292,20 +337,23 @@ async function renderExercise(id) {
 /* The mark, then why, then - last, and only now - how Nabu reads it. The order
    matters: showing the model answer beside the boxes would turn the exercise
    into a copying exercise. */
-function resultHTML(ex, sp, r, perPos) {
+function practiceNoteText(n) {
   const S = T();
-  const kw = (list) => list.map((k) => '<span class="pkw">' + esc(k) + '</span>').join('');
-  const noteLine = (n) => n.kind === 'thin' ? S.practiceThin(n.card)
+  return n.kind === 'thin' ? S.practiceThin(n.card)
     : n.kind === 'frame' ? S.practiceFrame[n.frame](n.card)
     : n.kind === 'reversal' ? S.practiceRev(n.card)
     : n.kind === 'missed' ? S.practiceMiss(n.card)
     : n.kind === 'date' ? S.practiceDate
     : n.kind === 'bare' ? S.practiceBare
     : n.kind === 'synth' ? S.practiceNoSynth : '';
+}
+function resultHTML(ex, sp, r, perPos) {
+  const S = T();
+  const kw = (list) => list.map((k) => '<span class="pkw">' + esc(k) + '</span>').join('');
 
   return '<div class="presult ' + r.band + '">'
     + '<div class="pscore">' + r.pct + '%<span>' + esc(S.practiceBand[r.band]) + '</span></div>'
-    + (r.notes.length ? '<ul class="pnotes">' + r.notes.map((n) => '<li>' + esc(noteLine(n)) + '</li>').join('') + '</ul>' : '')
+    + (r.notes.length ? '<ul class="pnotes">' + r.notes.map((n) => '<li>' + esc(practiceNoteText(n)) + '</li>').join('') + '</ul>' : '')
     + '<h3>' + esc(S.practiceByCard) + '</h3>'
     + r.perCard.map((c, i) => '<div class="pline"><b>' + esc(c.card.name) + (c.rev ? ' · ' + esc(S.pRev) : '') + '</b>'
       + (c.got.length ? '<div class="pgot">' + esc(S.practiceGot) + ' ' + kw(c.got) + '</div>' : '')
@@ -316,4 +364,4 @@ function resultHTML(ex, sp, r, perPos) {
     + '</div>';
 }
 
-ROUTES.practice = { nav: 'learn', render: (a) => a[0] ? renderExercise(a[0]) : renderPractice() };
+ROUTES.practice = { nav: 'learn', render: (a, p) => a[0] ? renderExercise(a[0], p) : renderPractice() };

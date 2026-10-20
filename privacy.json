@@ -1,5 +1,5 @@
 {
- "updated": "2026-09-28",
+ "updated": "2026-10-20",
  "title": {
   "vi": "Chính sách quyền riêng tư",
   "en": "Privacy policy",
@@ -11,6 +11,18 @@
   "de": "Nabu Tarot ist die App einer unabhängigen Tarot-Readerin in Vietnam. Hier steht klar, welche Daten die App erfasst, wofür sie verwendet werden, wer sie sehen kann und wie du sie löschen kannst. Ohne verstecktes Kleingedrucktes."
  },
  "sections": [
+  {
+   "h": {
+    "vi": "Sổ học và bài luyện",
+    "en": "Study notebook and practice",
+    "de": "Lernheft und Übungen"
+   },
+   "p": {
+    "vi": "Bản nháp, lời đọc bạn viết, phản hồi tự động và ghi chép từ lá bài trong Sổ học chỉ lưu trên thiết bị này. Phản hồi bài luyện được tính trên thiết bị, không gửi bài viết tới AI hay máy chủ. Sổ được tách theo tài khoản đang đăng nhập hoặc người dùng khách, nhưng chưa đồng bộ sang thiết bị khác. Đăng xuất, xóa tài khoản hoặc xóa dữ liệu ứng dụng sẽ xóa sổ trên thiết bị. Bạn có thể xóa từng mục hoặc xuất bản sao JSON trước khi xóa. Chỉ khi bạn chủ động lưu hoặc chia sẻ bản sao, nội dung mới được chuyển tới nơi bạn chọn.",
+    "en": "Drafts, your written interpretations, automatic feedback and card reflections in the study notebook are stored only on this device. Practice feedback is calculated on the device without sending your writing to AI or a server. The notebook is separated by signed-in account or guest, but does not sync to other devices. Signing out, deleting your account or clearing app data removes the notebook on this device. You can delete individual entries or export a JSON copy before removal. Content is transferred to a destination you choose only when you explicitly save or share that copy.",
+    "de": "Entwürfe, deine Deutungen, automatisches Feedback und Kartennotizen im Lernheft werden nur auf diesem Gerät gespeichert. Das Übungsfeedback wird auf dem Gerät berechnet, ohne deine Texte an eine KI oder einen Server zu senden. Das Heft ist nach angemeldetem Konto oder Gast getrennt, wird aber nicht mit anderen Geräten synchronisiert. Abmelden, Kontolöschung oder Löschen der App-Daten entfernt das Heft auf diesem Gerät. Du kannst einzelne Einträge löschen oder vorher eine JSON-Kopie exportieren. Inhalte werden nur dann an ein von dir gewähltes Ziel übertragen, wenn du diese Kopie selbst speicherst oder teilst."
+   }
+  },
   {
    "h": {
     "vi": "Dùng app mà không cần tài khoản",
