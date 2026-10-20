@@ -44,6 +44,10 @@ assert.equal(run("studySuggestions(STUDY.read(studyOwner())).length"), 0, 'locke
 run("BE.ready = false");
 assert.equal(run('studyOwner()'), null);
 assert.equal(run("STUDY.write('user:alice', {})"), 'changed');
+run("BE.initFailed = true");
+assert.equal(run('studyOwner()'), 'guest', 'failed initialization never guesses the saved account');
+assert.equal(run("STUDY.read('user:alice').attempts.length"), 0);
+run("BE.initFailed = false");
 run("BE.ready = true; WIPED = true");
 assert.equal(run("STUDY.draft('user:alice','x',{text:'restore after deletion'})"), 'changed');
 run("WIPED = false");

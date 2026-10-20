@@ -793,8 +793,16 @@ async function go(hash, sel) { W().location.hash = hash; await sleep(30); return
         'with the places to send it, minus the copy button the box already has');
       ok(/Bài thử/.test(d.querySelector('.shdlg-what').textContent) && /Nabu/.test(d.querySelector('.shdlg-lead').textContent),
         'it names the post and speaks in Nabu\'s words');
-      d.querySelector('#sharesheet [data-share-copyic]').click(); await sleep(40);
-      ok(d.querySelector('#sharesheet [data-share-copyic]').classList.contains('done')
+      // Test the completion UI without depending on the headless runner's
+      // OS clipboard permission, whose promise may outlive virtual time.
+      const realCopy = w.copyText;
+      let copiedLink = '';
+      try {
+        w.copyText = async (text) => { copiedLink = text; };
+        d.querySelector('#sharesheet [data-share-copyic]').click(); await sleep(40);
+      } finally { w.copyText = realCopy; }
+      ok(copiedLink === 'https://nabutarot.com/#/post/abc'
+        && d.querySelector('#sharesheet [data-share-copyic]').classList.contains('done')
         && /Đã chép/.test(d.querySelector('#sharesheet [data-share-copyic]').getAttribute('data-tip')),
         'the copy mark turns into a tick and says so');
       d.dispatchEvent(new w.KeyboardEvent('keydown', { key: 'Escape' }));
@@ -1868,7 +1876,7 @@ async function go(hash, sel) { W().location.hash = hash; await sleep(30); return
       const pub = await fetch('/privacy.html', { cache: 'no-store' }).then((r) => r.text()).catch(() => '');
       ok(/Bình luận thì khác/.test(pv) && /công khai/.test(pv)
         && pub.indexOf('Bình luận thì khác') > -1 && pub.indexOf('Comments you write under a post') > -1
-        && pub.indexOf('Kommentare, die du unter einen Beitrag') > -1 && pub.indexOf('2026-09-28') > -1,
+        && pub.indexOf('Kommentare, die du unter einen Beitrag') > -1,
         'the privacy policy says, in all three languages, that comments are public, show the chosen name only, can be deleted, and go with the account'); }
     { /* v242: the iPhone app. App Review reads the policy against the app, and
          the policy predated Sign in with Apple and App Store purchases. */

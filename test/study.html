@@ -73,6 +73,14 @@ const wait = async (fn) => { for (let i = 0; i < 150; i++) { if (fn()) return; a
       await language(lg); w.route(); await pause(80);
       check(d.querySelector('h1').textContent === N.STUDY_TEXT[lg].title, lg + ' notebook labels render');
     }
+    N.BE.enabled = true; N.BE.ready = false; N.BE.initFailed = true;
+    await go('#/practice/pr-1', '#pmark');
+    check(N.studyOwner() === 'guest' && d.querySelector('#main').textContent.includes(N.STUDY_TEXT.en.offlineGuest),
+      'failed auth initialization opens guest practice with an explicit notice');
+    await go('#/study', '#study-export');
+    check(d.querySelector('#main').textContent.includes('private reflection'),
+      'guest notebook remains available when auth initialization fails');
+    N.BE.enabled = false; N.BE.ready = true; N.BE.initFailed = false;
     w.wipeDevice(true);
     check(!Array.from({length:w.localStorage.length},(_,i)=>w.localStorage.key(i)).some((k)=>k.startsWith('nabu-study-')), 'account/device wipe removes notebook records');
     w.unwipeForTests();

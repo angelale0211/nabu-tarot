@@ -8,6 +8,7 @@ const STUDY_TEXT = {
     title: 'Sổ học của bạn', intro: 'Giữ lại lời đọc của mình, sửa lại và nhìn thấy điều đã học được.',
     local: 'Sổ chỉ lưu trên thiết bị này, chưa đồng bộ. Đăng xuất, xóa tài khoản hoặc xóa dữ liệu ứng dụng sẽ xóa sổ. Hãy xuất bản sao trước.',
     waiting: 'Đang xác định tài khoản. Sổ sẽ mở khi tài khoản tải xong.',
+    offlineGuest: 'Không tải được đăng nhập. Bạn đang dùng sổ khách trên thiết bị; hãy kết nối lại và mở lại app để xem sổ của tài khoản.',
     rules: 'Phản hồi tự động dựa trên từ khóa và vai trò từng vị trí, có thể bỏ sót cách diễn đạt khác. Điểm không đo khả năng dự đoán tương lai.',
     saved: 'Đã lưu trên thiết bị', draft: 'Đã lưu bản nháp', failed: 'Chưa lưu được. Giữ trang này mở và sao chép bài viết trước khi rời đi.',
     changed: 'Tài khoản đã thay đổi. Mở lại sổ trước khi viết tiếp.', empty: 'Chưa có bài nào được lưu.',
@@ -34,6 +35,7 @@ const STUDY_TEXT = {
     title: 'Your study notebook', intro: 'Keep your interpretation, revise it and see what you have learned.',
     local: 'This notebook is stored only on this device, without sync. Signing out, deleting your account or clearing app data removes it. Export a copy first.',
     waiting: 'Resolving your account. Your notebook will open when it is ready.',
+    offlineGuest: 'Sign-in could not load. You are using the guest notebook on this device; reconnect and reopen the app to access your account notebook.',
     rules: 'Automatic feedback checks keywords and card-position roles and may miss other valid wording. Scores do not measure the ability to predict the future.',
     saved: 'Saved on this device', draft: 'Draft saved', failed: 'Not saved. Keep this page open and copy your writing before leaving.',
     changed: 'Your account changed. Reopen the notebook before continuing.', empty: 'Nothing saved yet.',
@@ -60,6 +62,7 @@ const STUDY_TEXT = {
     title: 'Dein Lernheft', intro: 'Bewahre deine Deutung auf, überarbeite sie und erkenne, was du gelernt hast.',
     local: 'Dieses Heft wird nur auf diesem Gerät gespeichert, ohne Synchronisierung. Abmelden, Kontolöschung oder Löschen der App-Daten entfernt es. Exportiere vorher eine Kopie.',
     waiting: 'Dein Konto wird geladen. Danach öffnet sich dein Lernheft.',
+    offlineGuest: 'Die Anmeldung konnte nicht geladen werden. Du nutzt das Gästeheft auf diesem Gerät. Verbinde dich erneut und öffne die App wieder, um dein Kontoheft zu sehen.',
     rules: 'Das automatische Feedback prüft Stichworte und Kartenpositionen und kann andere passende Formulierungen übersehen. Die Punktzahl misst keine Fähigkeit, die Zukunft vorherzusagen.',
     saved: 'Auf diesem Gerät gespeichert', draft: 'Entwurf gespeichert', failed: 'Nicht gespeichert. Lass die Seite offen und kopiere deinen Text, bevor du sie verlässt.',
     changed: 'Dein Konto hat sich geändert. Öffne das Heft erneut.', empty: 'Noch keine Einträge.',
@@ -86,7 +89,7 @@ const STUDY_TEXT = {
 const studyT = () => STUDY_TEXT[lang] || STUDY_TEXT.en;
 function studyOwner() {
   if (typeof WIPED !== 'undefined' && WIPED) return null;
-  if (typeof BE !== 'undefined' && BE.enabled && !BE.ready) return null;
+  if (typeof BE !== 'undefined' && BE.enabled && !BE.ready) return BE.initFailed ? 'guest' : null;
   return typeof BE !== 'undefined' && BE.user ? 'user:' + BE.user.uid : 'guest';
 }
 const STUDY = {
@@ -143,6 +146,10 @@ function studyStatus(el, error, success) {
 function studyLinkHTML() {
   return '<a class="btn block" href="#/study">' + esc(studyT().studyLink) + ' →</a>';
 }
+function studyOfflineHTML() {
+  return typeof BE !== 'undefined' && BE.enabled && !BE.ready && BE.initFailed
+    ? '<p class="hint">' + esc(studyT().offlineGuest) + '</p>' : '';
+}
 function studyAttemptHTML(a, controls) {
   const S = studyT();
   return '<article class="card study-entry"><h3>' + esc(a.title) + '</h3>'
@@ -178,7 +185,7 @@ async function renderStudy(args, params) {
   const attempts = book.attempts.filter((a) => studyCanRead(a) && (!exercise || a.exercise === exercise.id));
   const suggestions = exercise ? [] : studySuggestions(book);
   m.innerHTML = backLink(exercise ? '#/study' : '#/practice', S.title)
-    + '<h1>' + esc(S.title) + '</h1><p>' + esc(S.intro) + '</p><p class="hint">' + esc(S.local) + '</p>'
+    + '<h1>' + esc(S.title) + '</h1><p>' + esc(S.intro) + '</p>' + studyOfflineHTML() + '<p class="hint">' + esc(S.local) + '</p>'
     + '<p class="hint">' + esc(S.rules) + '</p><button class="btn" id="study-export">' + esc(S.export) + '</button>'
     + '<p id="study-status" role="status" aria-live="polite"></p><div id="study-export-panel"></div>'
     + (suggestions.length ? '<section class="card"><h2>' + esc(S.review) + '</h2><p class="hint">' + esc(S.reviewHint) + '</p>'
@@ -251,7 +258,7 @@ function renderStudyCard(params) {
   const draft = STUDY.read(owner).drafts[key];
   m.innerHTML = backLink('#/study', S.title) + '<h1>' + esc(S.saveCard) + '</h1><h2>' + esc(card.name) + '</h2>'
     + '<p>' + esc(S.dateLabel) + ': ' + esc(date) + ' · ' + esc(T().focus[focus]) + '</p>'
-    + '<p class="hint">' + esc(S.local) + '</p><label for="study-reflection">' + esc(S.reflection) + '</label>'
+    + studyOfflineHTML() + '<p class="hint">' + esc(S.local) + '</p><label for="study-reflection">' + esc(S.reflection) + '</label>'
     + '<p class="hint">' + esc(S.reflectionHint) + '</p><textarea id="study-reflection" rows="7" maxlength="4000"></textarea>'
     + '<p id="study-status" role="status" aria-live="polite"></p><button id="study-save-note" class="btn primary block">' + esc(S.save) + '</button>';
   const input = $('#study-reflection'), status = $('#study-status');

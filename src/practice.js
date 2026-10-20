@@ -262,7 +262,7 @@ async function renderExercise(id, params) {
     + '<div class="ins pscene"><div class="eyebrow">' + esc(S.practiceWho) + '</div>'
     + '<p>' + esc(L(ex.who)) + ' <b>' + esc(S.practiceAsks) + '</b> <span class="pq">\u201c' + esc(L(ex.q)) + '\u201d</span></p></div>'
     + '<p class="muted">' + esc(S.practiceHow) + '</p>'
-    + '<p class="hint">' + esc(J.rules) + '</p><p class="hint">' + esc(J.local) + '</p>'
+    + studyOfflineHTML() + '<p class="hint">' + esc(J.rules) + '</p><p class="hint">' + esc(J.local) + '</p>'
     + (revision && revision.lang !== lang ? '<p class="hint">' + esc(J.originalLanguage) + '</p>' : '')
     + (restored ? '<p class="hint">' + esc(draft ? J.draftRestored : J.newAttempt) + '</p>' : '')
     + ex.cards.map(box).join('')

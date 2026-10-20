@@ -56,7 +56,12 @@ try { petRemindCheck(); } catch (e) { /* nothing kept yet */ }
    listening while it is open. Signing in or out changes what there is to
    listen to, so it is started again then. */
 try { alertsStart(); } catch (e) { /* nothing to catch up on */ }
-BE.initP = BE.init().catch(() => { /* backend unreachable: the app runs device-only */ });
+BE.initP = BE.init().catch(() => {
+  /* Do not guess the previous account when the auth SDK could not load.
+     Device-only practice can still use the separate guest notebook. */
+  BE.initFailed = true;
+  if (['practice', 'study'].includes(parseHash().route)) route();
+});
 // The Gemini key is a dashboard setting kept in the app cloud (content/ai), never in the source.
 /* The code book is Nabu's to read; the dashboard loads it when the Codes tab
    opens. A copy an older version kept on this phone is cleared. */
