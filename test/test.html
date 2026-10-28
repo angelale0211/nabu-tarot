@@ -5030,7 +5030,10 @@ async function go(hash, sel) { W().location.hash = hash; await sleep(30); return
       { const signs = ['aries', 'taurus', 'gemini', 'cancer', 'leo', 'virgo', 'libra', 'scorpio', 'sagittarius', 'capricorn', 'aquarius', 'pisces'], miss = [];
         const want = [];
         ['1', '2', '3', '4'].forEach((c) => signs.forEach((sg) => { for (const mo of [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 'w1', 'w2']) ['female', 'male'].forEach((gd) => { want.push('outfit/' + c + '/' + sg + '-' + mo + '-' + gd + '.jpg'); }); }));
-        await Promise.all(want.map((u) => fetch('../' + u, { method: 'HEAD' }).then((r) => { if (!r.ok) miss.push(u); }, () => miss.push(u))));
+        // Bound requests so a busy local server is not mistaken for a missing file.
+        for (let i = 0; i < want.length; i += 16) {
+          await Promise.all(want.slice(i, i + 16).map((u) => fetch('../' + u, { method: 'HEAD' }).then((r) => { if (!r.ok) miss.push(u); }, () => miss.push(u))));
+        }
         ok(!miss.length, 'all 1344 outfit pictures (12 months and 2 rain looks), all four combinations, are on the server' + (miss.length ? ' (missing ' + miss.slice(0, 4).join(', ') + ')' : '')); }
       /* Choosing the weather: every cell of weather and temperature leads to a month whose outfit is
          on the server, rain in the heat is the raincoat and boots, the sun at 29° the straw hat, and
