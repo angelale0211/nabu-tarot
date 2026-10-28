@@ -10,11 +10,12 @@ const wait = async (fn) => { for (let i = 0; i < 500; i++) { if (fn()) return; a
   try {
     await wait(() => frame.contentWindow.NABU);
     const w = frame.contentWindow, N = w.NABU, d = frame.contentDocument;
-    // Let initial auth settle before substituting identities; its first callback
-    // must not overwrite a fake account partway through the messaging checks.
-    await wait(() => N.BE.ready || N.BE.initFailed || !N.BE.enabled);
+    // Test identities are isolated from a late real-auth initialization callback.
+    // Do not wait for an external SDK using the CI runner's accelerated clock.
+    let testUser = null;
+    Object.defineProperty(N.BE, 'user', {configurable:true, get:()=>testUser, set:()=>{}});
     // A new disposable browser profile, no real auth or writes to a backend.
-    N.BE.enabled = false; N.BE.ready = true; N.BE.user = null;
+    N.BE.enabled = false; N.BE.ready = true;
     w.localStorage.clear();
     const language = async (lg) => { for (let i = 0; i < 3 && d.documentElement.lang !== lg; i++) { d.querySelector('#lang').click(); await pause(100); } };
     await language('en');
@@ -90,7 +91,7 @@ const wait = async (fn) => { for (let i = 0; i < 500; i++) { if (fn()) return; a
     w.Storage.prototype.setItem = realSet;
     check(N.STUDY.read('guest').attempts.length === 2, 'failed save does not create a partial attempt');
     // A changed account cannot write through a form opened by the previous user.
-    N.BE.enabled = true; N.BE.user = {uid:'another-person'};
+    N.BE.enabled = true; testUser = {uid:'another-person'};
     d.querySelector('#pmark').click();
     check(/account changed/.test(d.querySelector('#practice-save-status').textContent) && N.STUDY.read(N.studyOwner()).attempts.length === 0, 'stale form cannot write into another account');
     await go('#/study', '#study-export');
@@ -114,7 +115,7 @@ const wait = async (fn) => { for (let i = 0; i < 500; i++) { if (fn()) return; a
     failSend = false; d.querySelector('#msend').click(); await pause(30);
     check(sends === 2 && !d.querySelector('#mtext').value && !w.sessionStorage.getItem('nabu-mentor-draft'), 'successful explicit send clears the private draft');
     Object.assign(N.BE, originals);
-    N.BE.enabled = false; N.BE.user = null;
+    N.BE.enabled = false; testUser = null;
     await go('#/study', '#study-export');
     for (const lg of ['vi','de','en']) {
       await language(lg); w.route(); await pause(80);
