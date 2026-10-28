@@ -470,11 +470,19 @@ function aiPanelHTML(ctx) {
     + '<p class="faint" style="margin-top:8px">' + esc(S.aiNote) + '</p></div>';
 }
 const aiMsgHTML = (role, text) => '<div class="msg ' + (role === 'user' ? 'me' : 'them') + '">' + (role === 'user' ? '' : '<button type="button" class="flag" data-ai-flag title="' + esc(T().aiFlag) + '" aria-label="' + esc(T().aiFlag) + '">⚑</button>') + paras(text) + '</div>';
-/* A flagged answer goes to Nabu's reports (signed in) or waits on the device; either way the person is thanked. */
+/* Success requires a server acknowledgement. A local copy is not a report. */
 async function flagAnswer(question, answer) {
+  if (!(BE.enabled && BE.user && BE.db)) return 'signin';
   const rec = { type: 'ai', question: question, text: answer, info: typeof reportInfo === 'function' ? reportInfo() : '', lang: lang };
-  try { if (BE.enabled && BE.user) { await BE.db.collection('reports').add(Object.assign({ uid: BE.user.uid, email: BE.user.email || '', at: firebase.firestore.FieldValue.serverTimestamp() }, rec)); return; } } catch (e) { /* kept locally below */ }
-  const list = store.get('nabu-ai-flags', []) || []; list.push(Object.assign({ at: new Date().toISOString() }, rec)); store.set('nabu-ai-flags', list.slice(-20));
+  let timer;
+  try {
+    await Promise.race([
+      BE.db.collection('reports').add(Object.assign({ uid: BE.user.uid, email: BE.user.email || '', at: firebase.firestore.FieldValue.serverTimestamp() }, rec)),
+      new Promise((resolve, reject) => { timer = setTimeout(() => reject(Error('timeout')), 15000); })
+    ]);
+    return 'sent';
+  } catch (e) { return 'unconfirmed'; }
+  finally { clearTimeout(timer); }
 }
 function bindAI(root) {
   $$('.ai', root).forEach((panel) => {
@@ -516,10 +524,16 @@ function bindAI(root) {
       $$('[data-ai-left]').forEach((el) => { el.textContent = line; el.hidden = !line; });
     };
     $('[data-ai-send]', panel).addEventListener('click', () => ask(ta.value));
-    chat.addEventListener('click', (e) => {
-      const b = e.target.closest && e.target.closest('[data-ai-flag]'); if (!b) return;
+    chat.addEventListener('click', async (e) => {
+      const b = e.target.closest && e.target.closest('[data-ai-flag]'); if (!b || b.disabled) return;
       const bubble = b.closest('.msg'), prev = bubble && bubble.previousElementSibling;
-      flagAnswer(prev && prev.classList.contains('me') ? prev.textContent : '', bubble ? bubble.textContent.replace(/^⚑/, '').trim() : ''); b.disabled = true; b.textContent = '✓'; toast(T().aiFlagged);
+      const owner = BE.user && BE.user.uid;
+      const question = prev && prev.classList.contains('me') ? prev.textContent : '', answer = bubble ? bubble.textContent.replace(/^⚑/, '').trim() : '';
+      b.disabled = true; b.textContent = '…';
+      const result = await flagAnswer(question, answer);
+      if (!b.isConnected || owner !== (BE.user && BE.user.uid)) return;
+      b.disabled = result === 'sent'; b.textContent = result === 'sent' ? '✓' : '⚑';
+      toast(result === 'sent' ? T().aiFlagged : result === 'signin' ? T().aiNeedSignin : HT('Chưa xác nhận gửi báo cáo. Kiểm tra mạng rồi thử lại.', 'Report delivery is not confirmed. Check your connection and try again.', 'Der Versand ist nicht bestätigt. Prüfe deine Verbindung und versuche es erneut.'));
     });
     ta.addEventListener('keydown', (e) => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); ask(ta.value); } });
     $$('[data-ai-sug]', panel).forEach((b) => b.addEventListener('click', () => ask(b.textContent)));

@@ -12,7 +12,7 @@
      carries this notice with it. See LICENSE. -->
 <meta name="author" content="Nabu Tarot">
 <meta name="copyright" content="Copyright (c) 2025-2026 Nabu Tarot. All rights reserved.">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'none'; object-src 'none'; form-action 'self'; script-src 'self' 'sha256-LeZuJWkQB3Lsf0Te7gQScKRABggBvcoeAs3txSDMr04=' https://www.gstatic.com https://apis.google.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; font-src 'self' data:; media-src 'self' data: blob:; worker-src 'self'; connect-src 'self' https://*.googleapis.com https://*.google.com https://*.firebaseio.com https://*.cloudfunctions.net https://*.workers.dev https://generativelanguage.googleapis.com; frame-src https://*.firebaseapp.com https://accounts.google.com https://*.facebook.com">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'none'; object-src 'none'; form-action 'self'; script-src 'self' 'sha256-nCYJOdLR10HlK7y0XkV1FOUJm0bmKFcMA7xRx7vVtIU=' https://www.gstatic.com https://apis.google.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; font-src 'self' data:; media-src 'self' data: blob:; worker-src 'self'; connect-src 'self' https://*.googleapis.com https://*.google.com https://*.firebaseio.com https://*.cloudfunctions.net https://*.workers.dev https://generativelanguage.googleapis.com; frame-src https://*.firebaseapp.com https://accounts.google.com https://*.facebook.com">
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <meta name="theme-color" content="#EFE9FA">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -3190,6 +3190,8 @@ html[lang="de"] #today .tbl td:first-child{-webkit-hyphens:manual;hyphens:manual
 #study-reflection{width:100%;box-sizing:border-box}
 #study-comparison .card{padding:12px}
 @media(max-width:600px){.study-compare{grid-template-columns:1fr}}
+/* Reading workshop: equally visible paths and readable mobile forms. */
+.home-paths,.ws-skills{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin:18px 0}.home-paths a,.ws-skills a{text-decoration:none;color:inherit;overflow-wrap:anywhere}.home-paths p,.ws-skill p{margin:8px 0 0;text-align:left}.home-paths a:focus-visible,.ws-skill:focus-visible{outline:3px solid var(--accent,#7754ae);outline-offset:3px}.ws-skill.selected{border:2px solid #7754ae}.ws-totals{display:flex;gap:24px;flex-wrap:wrap}.ws-totals b{font-size:24px}.ws-check{display:flex;align-items:flex-start;gap:10px;margin:14px 0}.ws-check input[type=checkbox]{width:20px;height:20px;flex:0 0 20px;margin-top:3px}.ws-reason{margin:14px 0}.ws-reason label{display:block;margin-top:12px}.ws-feedback details{margin:14px 0}.ws-feedback summary{cursor:pointer;font-weight:600}#ws-review fieldset{border:1px solid #c9bcda;border-radius:12px;padding:12px}#ws-message{min-height:260px}#ws-import{font-family:monospace;font-size:13px}@media(max-width:360px){.home-paths,.ws-skills{grid-template-columns:1fr}}
 @media (min-width:768px) and (max-width:899px) and (min-height:600px){html.iosapp{--rail-w:96px}html.iosapp body{padding-bottom:0;padding-left:var(--rail-w)}html.iosapp .wrap{max-width:1040px;padding:0 32px}html.iosapp .nav{top:0;bottom:0;right:auto;left:0;width:var(--rail-w);border-top:0;border-right:1px solid var(--rule-soft)}html.iosapp .nav .wrap{display:flex;flex-direction:column;height:auto;max-width:none;margin:0;padding:78px 0 0;gap:4px}html.iosapp .nav a{height:64px;font-size:11px;gap:5px;border-radius:14px;margin:0 8px}html.iosapp .nav a svg{width:26px;height:26px}html.iosapp .toast{bottom:28px}html.iosapp #totop{bottom:28px;right:28px}html.iosapp .sheet{align-items:center}html.iosapp .tiles{grid-template-columns:repeat(3,1fr);gap:14px}html.iosapp .tiles:has(>:nth-child(4):last-child){grid-template-columns:repeat(4,1fr)}html.iosapp .pickcta{grid-template-columns:170px 1fr;padding:22px}html.iosapp .pricesec{display:grid;grid-template-columns:repeat(2,1fr);gap:0 18px;align-items:start}html.iosapp .pricesec>.hint + *,html.iosapp #svcwrap>.hint + *{margin-top:0}html.iosapp .pricesec>h2,html.iosapp .pricesec>.hint,html.iosapp .pricesec>.paynote,html.iosapp .pricesec>p{grid-column:1/-1}html.iosapp .pricesec>.btn,html.iosapp .pricesec>.freegrid{grid-column:1/-1}html.iosapp .pricesec>.paynote{max-width:none}html.iosapp .pricesec .freegrid{grid-template-columns:repeat(4,1fr);gap:12px}html.iosapp #svcwrap{display:grid;grid-template-columns:repeat(2,1fr);gap:0 18px;align-items:start}html.iosapp #svcwrap>.paynote{grid-column:1/-1}html.iosapp .cal{display:grid;grid-template-columns:minmax(0,2fr) minmax(0,1fr);grid-template-rows:auto auto 1fr;column-gap:18px;align-items:start}html.iosapp .cal>.head{grid-area:1/1}html.iosapp .cal>.dow{grid-area:2/1}html.iosapp .cal>.days{grid-area:3/1}html.iosapp .cal>#slots{grid-area:1/2/4/3}html.iosapp .cal .slots{grid-template-columns:repeat(2,1fr);margin-top:0}html.iosapp .tabs{flex-wrap:wrap;overflow:visible}html.iosapp .chat{max-height:70vh}html.iosapp #main .paywall{max-width:640px;margin-left:auto;margin-right:auto}html.iosapp .upnext[href="#/install"]{display:none}
 html.iosapp #main>.detail{display:grid;grid-template-columns:300px minmax(0,680px);column-gap:36px;
     justify-content:center;align-items:start}html.iosapp #main>.detail>*{grid-column:2;min-width:0}html.iosapp #main>.detail>.rail{display:flex;flex-direction:column;grid-column:1;grid-row:1/span 200;
@@ -3938,7 +3940,7 @@ const STR = {
     practiceTitle: 'Luyện tập đọc bài Tarot',
     practiceAsks: 'Bạn ấy hỏi:',
     practiceTurn: 'Chạm để lật bài',
-    practiceIntro: 'Ở đây bạn là người đọc bài. Nabu dựng sẵn một tình huống và chia bài úp; bạn lật bài, viết lời đọc của mình, rồi Nabu chấm.',
+    practiceIntro: 'Ở đây bạn là người đọc bài. Nabu dựng sẵn một tình huống và chia bài úp; bạn lật bài, viết lời đọc, rồi tự đối chiếu cùng gợi ý tự động về từ khóa và vị trí.',
     practiceDone: (d, t) => 'Bạn đã qua ' + d + '/' + t + ' bài tập',
     practiceOffline: 'Chưa tải được bài tập. Bạn thử lại khi có mạng nhé.',
     practiceWho: 'Tình huống',
@@ -4847,7 +4849,7 @@ const STR = {
     practiceTitle: 'Practise reading the cards',
     practiceAsks: 'They ask:',
     practiceTurn: 'Tap to turn the card',
-    practiceIntro: 'Here you are the reader. Nabu sets a scene and deals the cards face down; you turn them, write the reading, and Nabu marks it.',
+    practiceIntro: 'Here you are the reader. Nabu sets a scene and deals the cards face down; you turn them, write a reading, and assess it alongside automatic keyword and position hints.',
     practiceDone: (d, t) => 'You have passed ' + d + ' of ' + t + ' exercises',
     practiceOffline: 'The exercises could not be loaded. Try again when you are back online.',
     practiceWho: 'The situation',
@@ -5755,7 +5757,7 @@ const STR = {
     practiceTitle: 'Karten deuten üben',
     practiceAsks: 'Sie fragt:',
     practiceTurn: 'Zum Umdrehen tippen',
-    practiceIntro: 'Hier bist du die Lesende. Nabu stellt eine Situation und legt die Karten verdeckt aus, du deckst sie auf, schreibst die Deutung, und Nabu bewertet sie.',
+    practiceIntro: 'Hier bist du die Lesende. Nabu stellt eine Situation und legt die Karten verdeckt aus. Du deckst sie auf, schreibst deine Deutung und prüfst sie mit automatischen Hinweisen zu Stichworten und Positionen.',
     practiceDone: (d, t) => 'Du hast ' + d + ' von ' + t + ' Übungen bestanden',
     practiceOffline: 'Die Übungen konnten nicht geladen werden. Versuch es wieder, sobald du online bist.',
     practiceWho: 'Die Situation',
@@ -13738,7 +13740,7 @@ function wipeDevice(lock) {
     keys.forEach((k) => { try { localStorage.removeItem(k); } catch (e) { /* locked */ } });
     /* Where the app has been is kept for the back arrow, and it is nobody
        else's business either. */
-    try { sessionStorage.removeItem('nabu-nav'); } catch (e) { /* private mode */ }
+    try { sessionStorage.removeItem('nabu-nav'); sessionStorage.removeItem('nabu-mentor-draft'); } catch (e) { /* private mode */ }
     return true;
   } catch (e) { return false; }  // private mode, storage blocked
 }
@@ -14677,7 +14679,7 @@ function parseHash() {
   (q[1] || '').split('&').forEach((kv) => { if (!kv) return; const p = kv.split('='); params[decodeURIComponent(p[0])] = decodeURIComponent(p[1] || ''); });
   return { route: path[0] || 'home', args: path.slice(1), params: params };
 }
-const ONE_COL = ['study', 'love', 'wedding', 'pet', 'play', 'looks', 'rewards', 'me', 'book',
+const ONE_COL = ['workshop', 'study', 'love', 'wedding', 'pet', 'play', 'looks', 'rewards', 'me', 'book',
   'contact', 'report', 'privacy', 'install', 'alerts', 'news', 'post', 'unlock', 'welcome', 'outfit'];
 /* Under #/learn only the hub and the card pages are wide; the rest is reading. */
 const ONE_COL_LEARN = ['astro', 'fortune', 'numbers', 'angel', 'quiz', 'manifest',
@@ -16827,11 +16829,19 @@ function aiPanelHTML(ctx) {
     + '<p class="faint" style="margin-top:8px">' + esc(S.aiNote) + '</p></div>';
 }
 const aiMsgHTML = (role, text) => '<div class="msg ' + (role === 'user' ? 'me' : 'them') + '">' + (role === 'user' ? '' : '<button type="button" class="flag" data-ai-flag title="' + esc(T().aiFlag) + '" aria-label="' + esc(T().aiFlag) + '">⚑</button>') + paras(text) + '</div>';
-/* A flagged answer goes to Nabu's reports (signed in) or waits on the device; either way the person is thanked. */
+/* Success requires a server acknowledgement. A local copy is not a report. */
 async function flagAnswer(question, answer) {
+  if (!(BE.enabled && BE.user && BE.db)) return 'signin';
   const rec = { type: 'ai', question: question, text: answer, info: typeof reportInfo === 'function' ? reportInfo() : '', lang: lang };
-  try { if (BE.enabled && BE.user) { await BE.db.collection('reports').add(Object.assign({ uid: BE.user.uid, email: BE.user.email || '', at: firebase.firestore.FieldValue.serverTimestamp() }, rec)); return; } } catch (e) { /* kept locally below */ }
-  const list = store.get('nabu-ai-flags', []) || []; list.push(Object.assign({ at: new Date().toISOString() }, rec)); store.set('nabu-ai-flags', list.slice(-20));
+  let timer;
+  try {
+    await Promise.race([
+      BE.db.collection('reports').add(Object.assign({ uid: BE.user.uid, email: BE.user.email || '', at: firebase.firestore.FieldValue.serverTimestamp() }, rec)),
+      new Promise((resolve, reject) => { timer = setTimeout(() => reject(Error('timeout')), 15000); })
+    ]);
+    return 'sent';
+  } catch (e) { return 'unconfirmed'; }
+  finally { clearTimeout(timer); }
 }
 function bindAI(root) {
   $$('.ai', root).forEach((panel) => {
@@ -16873,10 +16883,16 @@ function bindAI(root) {
       $$('[data-ai-left]').forEach((el) => { el.textContent = line; el.hidden = !line; });
     };
     $('[data-ai-send]', panel).addEventListener('click', () => ask(ta.value));
-    chat.addEventListener('click', (e) => {
-      const b = e.target.closest && e.target.closest('[data-ai-flag]'); if (!b) return;
+    chat.addEventListener('click', async (e) => {
+      const b = e.target.closest && e.target.closest('[data-ai-flag]'); if (!b || b.disabled) return;
       const bubble = b.closest('.msg'), prev = bubble && bubble.previousElementSibling;
-      flagAnswer(prev && prev.classList.contains('me') ? prev.textContent : '', bubble ? bubble.textContent.replace(/^⚑/, '').trim() : ''); b.disabled = true; b.textContent = '✓'; toast(T().aiFlagged);
+      const owner = BE.user && BE.user.uid;
+      const question = prev && prev.classList.contains('me') ? prev.textContent : '', answer = bubble ? bubble.textContent.replace(/^⚑/, '').trim() : '';
+      b.disabled = true; b.textContent = '…';
+      const result = await flagAnswer(question, answer);
+      if (!b.isConnected || owner !== (BE.user && BE.user.uid)) return;
+      b.disabled = result === 'sent'; b.textContent = result === 'sent' ? '✓' : '⚑';
+      toast(result === 'sent' ? T().aiFlagged : result === 'signin' ? T().aiNeedSignin : HT('Chưa xác nhận gửi báo cáo. Kiểm tra mạng rồi thử lại.', 'Report delivery is not confirmed. Check your connection and try again.', 'Der Versand ist nicht bestätigt. Prüfe deine Verbindung und versuche es erneut.'));
     });
     ta.addEventListener('keydown', (e) => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); ask(ta.value); } });
     $$('[data-ai-sug]', panel).forEach((b) => b.addEventListener('click', () => ask(b.textContent)));
@@ -16948,7 +16964,7 @@ const TOUR = [
    drop out, and three steps of learning come first. */
 const TOUR_IOS_LEAD = [
   { ic: "📚", vi: ["Học Tarot", "Các khóa Tarot, Lenormand và bài Tây đi từng bài một, có câu đố ôn tập. Đủ 78 lá Tarot, mỗi lá có nghĩa xuôi, nghĩa ngược và cách đọc theo từng chủ đề."], en: ["Learn Tarot", "Courses in Tarot, Lenormand and playing cards go one lesson at a time, with quizzes to review. All 78 Tarot cards are here, each with its upright and reversed meaning and how to read it for each topic."], de: ["Tarot lernen", "Die Kurse in Tarot, Lenormand und Spielkarten gehen Lektion für Lektion, mit Quizfragen zum Wiederholen. Alle 78 Tarotkarten sind da, jede mit aufrechter und umgekehrter Bedeutung und wie man sie für jedes Thema liest."] },
-  { ic: "✍️", vi: ["Luyện đọc bài", "Ở đây bạn là người đọc bài. Nabu dựng sẵn một tình huống và chia bài úp. Bạn lật từng lá, viết lời đọc của mình, rồi Nabu chấm và chỉ ra chỗ bạn còn đọc sót.\nLời đọc của Nabu chỉ hiện ra sau khi bạn nộp bài."], en: ["Practise reading", "Here you are the reader. Nabu sets up a situation and deals the cards face down; you turn them, write your reading, and Nabu marks it and shows what you missed.\nNabu\u2019s own reading only appears once you hand yours in."], de: ["Deuten üben", "Hier bist du die Lesende. Nabu stellt eine Situation und legt die Karten verdeckt aus; du deckst sie auf, schreibst deine Deutung, und Nabu bewertet sie und zeigt, was dir entgangen ist.\nNabus eigene Deutung erscheint erst, wenn du deine abgegeben hast."] },
+  { ic: "✍️", vi: ["Luyện đọc bài", "Ở đây bạn là người đọc bài. Nabu dựng sẵn một tình huống và chia bài úp. Bạn lật từng lá, viết lời đọc của mình, rồi nhận gợi ý tự động dựa trên từ khóa và vị trí.\nLời đọc của Nabu chỉ hiện ra sau khi bạn nộp bài."], en: ["Practise reading", "Here you are the reader. Nabu sets up a situation and deals the cards face down; you turn them, write your reading, and get automatic hints based on keywords and card positions.\nNabu\u2019s own reading only appears once you hand yours in."], de: ["Deuten üben", "Hier bist du die Lesende. Nabu stellt eine Situation und legt die Karten verdeckt aus; du deckst sie auf, schreibst deine Deutung, und erhältst automatische Hinweise zu Stichworten und Kartenpositionen.\nNabus eigene Deutung erscheint erst, wenn du deine abgegeben hast."] },
   { ic: "🃏", vi: ["Một lá mỗi ngày", "Mỗi ngày rút một lá để ôn: đọc ý nghĩa và các từ khóa của lá đó. Chọn chủ đề bạn đang nghĩ tới, vì mỗi chủ đề có cách đọc riêng."], en: ["A card a day", "Draw one card a day to study: read its meaning and its keywords. Choose the topic on your mind, because each topic is read in its own way."], de: ["Eine Karte am Tag", "Zieh jeden Tag eine Karte zum Lernen: lies ihre Bedeutung und ihre Stichworte. Wähl dein Thema, denn jedes wird auf seine eigene Weise gelesen."] }
 ];
 /* The Lifestyle tab replaced Activities, so its step says what the tab now holds. The second paragraph
@@ -16964,7 +16980,7 @@ function tourHTML(step) {
      left is eight steps somebody abandons at the third. The icon sits in a
      round well rather than loose on the card, which is what makes a row of
      unrelated emoji read as one series. */
-  return '<div class="card tourcard" id="tour" style="text-align:center;border-color:var(--lav)">'
+  return '<div class="card tourcard" id="tour" data-tour-step="' + step + '" style="text-align:center;border-color:var(--lav)">'
     + '<div class="tourbar"><span style="width:' + pct + '%"></span></div>'
     + '<div class="tourwell">' + t.ic + '</div>'
     + '<h3 style="margin:6px 0">' + esc(txt[0]) + '</h3>' + txt[1].split('\n').map((para) => '<p class="muted" style="font-size:14.5px">' + esc(para) + '</p>').join('')
@@ -17151,7 +17167,7 @@ function continueHTML() {
   return '<div class="sec" id="continue"><div class="eyebrow">' + esc(nl && nl.done ? HT('Học tiếp', 'Continue learning', 'Weiterlernen') : HT('Bắt đầu học', 'Start learning', 'Mit dem Lernen anfangen')) + '</div>'
     + lesson
     + '<a class="upnext" href="#/practice"><span class="ic">✍️</span><span><b>' + esc(S.practiceTitle) + '</b><br>'
-    + esc(HT('Nabu chia bài và đặt tình huống, bạn viết lời đọc, Nabu chấm.', 'Nabu deals the cards and sets the scene; you write the reading and Nabu marks it.', 'Nabu legt die Karten und stellt die Situation; du deutest, Nabu bewertet.'))
+    + esc(HT('Nabu chia bài và đặt tình huống, bạn viết lời đọc và tự đối chiếu cùng gợi ý tự động.', 'Nabu deals the cards and sets the scene; you write, review automatic hints and assess your reasoning.', 'Nabu legt die Karten und stellt die Situation; du deutest und prüfst deine Begründung mit automatischen Hinweisen.'))
     + (passed ? ' · ' + passed + ' ✓' : '') + '</span></a>'
     + '<a class="btn block" href="#/learn">' + esc(HT('Tất cả khóa học', 'All courses', 'Alle Kurse')) + ' →</a>'
     + studyLinkHTML() + '</div>';
@@ -17178,7 +17194,7 @@ function quickLinksHTML() {
   /* In the iPhone app the tiles lead with learning: practice and the Tarot course first, the daily
      card as a card to study, the Red Thread; astrology and the price list step aside. */
   if (isIOSApp()) {
-    const it = [['#/practice', '✍️', S.practiceTitle, lang === 'vi' ? 'viết lời đọc, Nabu chấm' : (lang === 'de' ? 'deuten, bewerten lassen' : 'write a reading, get it marked')],
+    const it = [['#/practice', '✍️', S.practiceTitle, lang === 'vi' ? 'viết, đối chiếu, sửa' : (lang === 'de' ? 'deuten, prüfen, überarbeiten' : 'write, reflect, revise')],
       ['#/learn/tarot', PICK_ICON, S.cats.tarot, lang === 'vi' ? '78 lá, ý nghĩa' : (lang === 'de' ? '78 Karten, Bedeutungen' : '78 cards, meanings')],
       ['#/pick', DRAW_ICON, S.nav.pick, lang === 'vi' ? 'một lá để học hôm nay' : (lang === 'de' ? 'eine Karte zum Lernen' : 'a card to study today')],
       ['#/love', '💞', S.loveTitle, S.loveSub],
@@ -17220,29 +17236,30 @@ function upcomingHTML() {
 }
 async function renderHome(args, params) {
   const S = T(), m = $('#main');
+  // Auth or sale data may redraw Home while someone is reading the tour.
+  const tourStep = Math.max(0, Math.min(tourSteps().length - 1, Number(($('#tour', m) || {}).dataset?.tourStep) || 0));
   const name = (PROFILE.name || '').trim();
   const sale = inStoreApp() ? null : SALE.live();
   const saleBanner = sale
     ? '<a class="salebar" href="' + (sale.scope === 'unlock' ? '#/unlock?from=app' : '#/prices') + '"><span class="tag">🏷️ ' + esc(SALE.off()) + '</span><span class="txt">' + esc(SALE.title() || T().saleDefault) + '</span><span class="go">' + esc(T().saleSee) + ' ›</span></a>'
     : '';
-  /* The calendar and the tour sit together in an aside. On a phone that is
-     invisible: same order, same flow. On a wide window it becomes the right
-     column, sticky, so a desk sees today's date beside the feed rather than
-     above it and then never again. */
+  /* Reading and learning choices lead on a phone. The calendar and tour
+     follow them, or sit in the right column on a wider screen. */
   /* No eyebrow with the name on it: the logo sits directly above this line
      and already says it. */
   m.innerHTML = saleBanner
+    + '<h1 style="margin:18px 0 4px">' + esc(name ? S.hello(name) : S.helloGuest) + '</h1><p class="muted">' + esc(lang === 'vi' ? 'Hôm nay bạn muốn làm gì?' : (lang === 'de' ? 'Was möchtest du heute machen?' : 'What would you like to do today?')) + '</p>'
+    + upcomingHTML()
+    + '<div class="home-paths"><a class="card" href="#/pick"><b>' + esc(HT('Xem bài', 'Draw & read', 'Karten ziehen')) + '</b><p>' + esc(HT('Rút bài và khám phá lời diễn giải.', 'Draw a card and explore its interpretation.', 'Ziehe eine Karte und entdecke ihre Deutung.')) + '</p></a><a class="card" href="#/workshop"><b>' + esc(HT('Học & luyện', 'Learn & practise', 'Lernen & üben')) + '</b><p>' + esc(HT('Viết lời đọc, giải thích lý do và theo dõi lần sửa.', 'Write a reading, explain your reasoning and track revisions.', 'Schreibe und begründe deine Deutung und verfolge Überarbeitungen.')) + '</p></a></div>'
     + '<aside class="side">'
     + todayHTML()
-    + (PROFILE.tourDone ? tourMiniHTML() : tourHTML(0))
+    + (PROFILE.tourDone ? tourMiniHTML() : tourHTML(tourStep))
     /* On a desk the month and the week for this person's sign sit here, under
        the calendar, rather than a long way down the left. On a phone this box
        stays empty and hidden and the forecast keeps its old place further down
        - the same two cards, drawn once for whichever column is showing. */
     + '<div id="sidehoro" hidden></div>'
     + '</aside>'
-    + '<h1 style="margin:18px 0 4px">' + esc(name ? S.hello(name) : S.helloGuest) + '</h1><p class="muted">' + esc(lang === 'vi' ? 'Hôm nay bạn muốn làm gì?' : (lang === 'de' ? 'Was möchtest du heute machen?' : 'What would you like to do today?')) + '</p>'
-    + upcomingHTML()
     /* Learning and practice lead. The visitor's sign, life path and Nabu's own weekly and monthly
        forecasts for it are back on the home screen at the owner's request, on every platform, and
        stay in Learn → Astrology as well. */
@@ -17254,7 +17271,7 @@ async function renderHome(args, params) {
     + personalHTML() + '<div id="foryouwrap"></div>'
     + '<div class="sec" id="feed"><p class="muted">…</p></div>';
   bindAccordions(m); bindCardLinks(m);
-  bindTour(m, 0);
+  bindTour(m, tourStep);
   homeActHTML($('#actwrap')).catch(() => {});
   if (POSTS == null) await loadPosts();
   const fy = $('#foryouwrap'); if (fy) { fy.innerHTML = suggestedGuidesHTML(); bindPost(fy); bindAccordions(fy); }
@@ -17644,6 +17661,7 @@ function renderLearn(args, params) {
       /* The practice screen leads, because reading badly and being told why is
          what turns a reader of lessons into somebody who can lay a spread. */
       + '<a class="prcta" href="#/practice"><div class="ic">✍️</div><div><b>' + esc(S.practiceTitle) + '</b><span>' + esc(S.practiceIntro) + '</span></div></a>'
+      + '<a class="btn block" href="#/workshop">' + esc(HT('Lộ trình luyện đọc', 'Reading practice pathway', 'Dein Übungsweg')) + '</a>'
       + studyLinkHTML()
       + '<div class="eyebrow">' + esc(S.coursesPractice) + '</div><div class="tiles">' + tile('tarot', !ACCESS.has('tarot')) + tile('lenormand', !ACCESS.has('lenormand')) + tile('playing', !ACCESS.has('playing')) + tile('manifest', !ACCESS.has('manifest')) + '</div>'
       /* In the iPhone app the reading and practice lead and astrology comes last (4.3(b)). */
@@ -23003,6 +23021,7 @@ Object.keys(QUIZ_PLAY_DE).forEach((lesson) => {
 /* Filled by practice-e2b0c457e9e2.js, fetched when the practice screen first opens. */
 let PRACTICE = [];
 const PRACTICE_URL = './practice-e2b0c457e9e2.js';
+const WORKSHOP_URL = './workshop-adbe908d6d74.js';
 
 /* ============================ practice ============================
    Tập đọc bài: the learner reads, the app marks.
@@ -23232,6 +23251,7 @@ async function renderPractice() {
     + '<div class="pprog"><span style="width:' + Math.round(done / PRACTICE.length * 100) + '%"></span></div>'
     + '<p class="faint" style="margin-top:4px">' + esc(S.practiceDone(done, PRACTICE.length)) + '</p>'
     + studyLinkHTML()
+    + '<p><a class="btn" href="#/workshop">' + esc(HT('Lộ trình luyện đọc', 'Reading workshop', 'Deutungswerkstatt')) + ' →</a></p>'
     /* Grouped by course, each under its own name, so a Lenormand learner does
        not scroll through Tarot to find what is theirs. */
     + ['tarot', 'lenormand', 'playing'].map((c) => {
@@ -23244,6 +23264,7 @@ async function renderExercise(id, params) {
   const S = T(), m = $('#main'), owner = studyOwner(), hash = location.hash;
   if (owner == null) { m.innerHTML = '<p role="status">' + esc(studyT().waiting) + '</p>'; return; }
   if (!(await practiceReady())) { m.innerHTML = backLink('#/practice', S.practiceTitle) + '<p class="muted">' + esc(S.practiceOffline) + '</p>'; return; }
+  if (!(await workshopReady())) { m.innerHTML = '<p>' + esc(S.practiceOffline) + '</p>'; return; }
   if (location.hash !== hash || owner !== studyOwner()) return;
   const ex = practiceById(id);
   if (!ex) { redirect('#/practice'); return; }
@@ -23261,7 +23282,8 @@ async function renderExercise(id, params) {
       + '<button class="pturn" data-turn="' + i + '" aria-label="' + esc(S.practiceTurn) + '">' + backNow() + '</button></div>'
       + '<div class="pask shut"><b>' + esc(label) + '</b>'
       + '<div class="faint">' + esc(card.name) + (ex.rev[i] ? ' \u00b7 ' + esc(S.pRev) : '') + '</div>'
-      + '<textarea data-pos="' + i + '" rows="4" maxlength="4000" aria-label="' + esc(label + ' · ' + card.name) + '" placeholder="' + esc(S.practicePlaceholder) + '"></textarea></div></div>';
+      + '<textarea data-pos="' + i + '" rows="4" maxlength="4000" aria-label="' + esc(label + ' · ' + card.name) + '" placeholder="' + esc(S.practicePlaceholder) + '"></textarea>'
+      + workshopReasonHTML(ex, sp, i) + '</div></div>';
   };
 
   m.innerHTML = backLink('#/practice', S.practiceTitle) + '<div class="guide"><h1>' + esc(sp.name) + '</h1>'
@@ -23285,6 +23307,7 @@ async function renderExercise(id, params) {
     answers: ex.cards.map((c, i) => $('[data-pos="' + i + '"]', m).value),
     synth: $('[data-synth]', m).value,
     turned: ex.cards.map((c, i) => !$('[data-turn="' + i + '"]', m)),
+    reasoning: ex.cards.map((c, i) => $('[data-reason="' + i + '"]', m).value),
     lang
   });
   const saveDraft = () => {
@@ -23296,6 +23319,7 @@ async function renderExercise(id, params) {
   if (restored) {
     ex.cards.forEach((c, i) => { $('[data-pos="' + i + '"]', m).value = restored.answers[i] || ''; });
     $('[data-synth]', m).value = restored.synth || '';
+    ex.cards.forEach((c, i) => { $('[data-reason="' + i + '"]', m).value = (restored.reasoning || [])[i] || ''; });
   }
   /* The cards are dealt face down and turned one at a time, the way the daily
      draw does it. A learner who can see all three at once reads the spread
@@ -23325,15 +23349,17 @@ async function renderExercise(id, params) {
   $('#pmark').addEventListener('click', () => {
     if (owner !== studyOwner()) { studyStatus(status, 'changed'); return; }
     if (!ex.free && !ACCESS.has(ex.course)) { gate(ex.course, '#/practice'); return; }
-    const { answers, synth, turned } = values();
+    const { answers, synth, turned, reasoning } = values();
     if (!turned.every(Boolean) || answers.some((s) => s.trim().length < 15) || synth.trim().length < 25) {
       studyStatus(status, 'required'); return;
     }
     const r = gradeReading(ex, answers, synth);
-    const error = STUDY.add(owner, 'attempts', studyAttempt(ex, sp, answers, synth, r), draftKey);
+    const attempt = studyAttempt(ex, sp, answers, synth, r, reasoning);
+    const error = STUDY.add(owner, 'attempts', attempt, draftKey);
     if (error) { studyStatus(status, error); return; }
     PSCORE.put(ex.id, r.pct);
     $('#presult').innerHTML = resultHTML(ex, sp, r, perPos);
+    $('#presult').insertAdjacentHTML('beforeend', workshopFeedbackHTML(ex, sp, r, attempt.id));
     studyStatus(status, '', 'saved');
     button.disabled = true; // edit before saving another attempt
     $('#presult').scrollIntoView({ behavior: 'smooth', block: 'start' });
@@ -23461,6 +23487,24 @@ const STUDY_TEXT = {
   }
 };
 const studyT = () => STUDY_TEXT[lang] || STUDY_TEXT.en;
+let WORKSHOP_WANT = null;
+function workshopReady() {
+  if (WORKSHOP_WANT) return WORKSHOP_WANT;
+  WORKSHOP_WANT = new Promise((resolve) => {
+    const s = document.createElement('script'); s.src = WORKSHOP_URL; s.async = true;
+    s.onload = () => resolve(true);
+    s.onerror = () => { WORKSHOP_WANT = null; s.remove(); resolve(false); };
+    document.head.appendChild(s);
+  });
+  return WORKSHOP_WANT;
+}
+ROUTES.workshop = { nav: 'learn', render: async (a, p) => {
+  const hash = location.hash;
+  const ready = await workshopReady();
+  if (location.hash !== hash) return;
+  if (ready) return renderWorkshop(a, p);
+  $('#main').innerHTML = '<p>' + esc(T().practiceOffline) + '</p>';
+} };
 function studyOwner() {
   if (typeof WIPED !== 'undefined' && WIPED) return null;
   if (typeof BE !== 'undefined' && BE.enabled && !BE.ready) return BE.initFailed ? 'guest' : null;
@@ -23504,13 +23548,13 @@ const studyNeeds = (r) => Array.from(new Set(r.notes.map((n) => ({
   thin: 'short', frame: 'position', reversal: 'reversal', missed: 'words',
   date: 'date', bare: 'bare', synth: 'synth'
 })[n.kind]).filter(Boolean).concat(r.perCard.some((c) => c.score < 1) ? ['words'] : [])));
-function studyAttempt(ex, sp, answers, synth, r) {
+function studyAttempt(ex, sp, answers, synth, r, reasoning) {
   return { id: studyId(), exercise: ex.id, at: Date.now(), lang, rubric: STUDY_RUBRIC,
     title: sp.name, question: L(ex.q), answers, synth, pct: r.pct, needs: studyNeeds(r),
     cards: r.perCard.map((c, i) => ({ name: c.card.name, reversed: c.rev,
       position: sp.pos && sp.pos[i] ? sp.pos[i][0] : String(i + 1),
       got: c.got, missed: c.missed })),
-    feedback: r.notes.map(practiceNoteText), model: L(ex.model) };
+    feedback: r.notes.map(practiceNoteText), model: L(ex.model), reasoning: reasoning || [] };
 }
 function studyStatus(el, error, success) {
   if (!el) return;
@@ -23536,8 +23580,11 @@ function studyAttemptHTML(a, controls) {
     + '<h4>' + esc(S.feedback) + '</h4>' + (a.feedback.length
       ? '<ul>' + a.feedback.map((n) => '<li>' + esc(n) + '</li>').join('') + '</ul>' : '<p>' + esc(S.none) + '</p>')
     + '<details><summary>' + esc(S.model) + '</summary>' + studyTextHTML(a.model) + '</details>'
+    + workshopSavedHTML(a)
     + (controls ? '<div class="row"><a class="btn" href="#/practice/' + encodeURIComponent(a.exercise) + '?revise=' + encodeURIComponent(a.id) + '">' + esc(S.revise) + '</a>'
       + '<button class="btn" data-study-delete="' + esc(a.id) + '" data-study-type="attempts">' + esc(S.remove) + '</button></div>' : '')
+    + (controls ? '<a class="btn" href="#/workshop/review/' + encodeURIComponent(a.id) + '">' + esc(workshopT().review) + '</a> '
+      + '<a class="btn" href="#/workshop/mentor/' + encodeURIComponent(a.id) + '">' + esc(workshopT().mentor) + '</a>' : '')
     + '</article>';
 }
 function studySuggestions(book) {
@@ -23550,8 +23597,9 @@ async function renderStudy(args, params) {
   if (owner == null) { m.innerHTML = '<p role="status">' + esc(S.waiting) + '</p>'; return; }
   if (args[0] === 'card') { renderStudyCard(params); return; }
   const ready = await practiceReady();
+  const workshop = ready && await workshopReady();
   if (location.hash !== hash || studyOwner() !== owner) return;
-  if (!ready) { m.innerHTML = backLink('#/learn', T().learnTitle) + '<p>' + esc(T().practiceOffline) + '</p>'; return; }
+  if (!workshop) { m.innerHTML = backLink('#/learn', T().learnTitle) + '<p>' + esc(T().practiceOffline) + '</p>'; return; }
   const book = STUDY.read(owner);
   const exercise = args[0] === 'exercise' ? practiceById(args[1]) : null;
   if (args[0] === 'exercise' && !exercise) { redirect('#/study'); return; }
@@ -23562,6 +23610,7 @@ async function renderStudy(args, params) {
     + '<h1>' + esc(S.title) + '</h1><p>' + esc(S.intro) + '</p>' + studyOfflineHTML() + '<p class="hint">' + esc(S.local) + '</p>'
     + '<p class="hint">' + esc(S.rules) + '</p><button class="btn" id="study-export">' + esc(S.export) + '</button>'
     + '<p id="study-status" role="status" aria-live="polite"></p><div id="study-export-panel"></div>'
+    + '<p><a class="btn" href="#/workshop">' + esc(workshopT().title) + '</a> <a class="btn" href="#/workshop/import">' + esc(workshopT().restore) + '</a></p>'
     + (suggestions.length ? '<section class="card"><h2>' + esc(S.review) + '</h2><p class="hint">' + esc(S.reviewHint) + '</p>'
       + suggestions.map((a) => '<p><a href="#/practice/' + a.exercise + '?revise=' + a.id + '">' + esc(a.title) + ' — ' + esc(S.retry) + '</a><br>'
         + esc(a.needs.map((k) => S[k]).join(' · ')) + '</p>').join('') + '</section>' : '')
@@ -29037,7 +29086,7 @@ function meSect(id, icon, title, body, openByDefault, force) {
     }
     /* Group two: everything that is a conversation - with Nabu, and with the
        machine. Open, because it is the half people come back for. */
-    h += meSect('talk', '\uD83D\uDCAC', S.meGroupTalk, talk, true);
+    h += meSect('talk', '\uD83D\uDCAC', S.meGroupTalk, talk, true, params.tab === 'talk');
 
     /* Not in the installed app. On the web this list is useful - it is where
        somebody checks what they hold and when it runs out. Inside the Android
@@ -29161,7 +29210,29 @@ function meSect(id, icon, title, body, openByDefault, force) {
       if (chat) {
       meUnsubs.push(BE.watchMessages(BE.user.uid, (msgs) => { chat.innerHTML = chatHTML(msgs, 'user'); chat.scrollTop = chat.scrollHeight; BE.markRead(BE.user.uid, 'user'); }));
       const sendUser = async (text, file, kind) => { let att = null; if (file) att = await chatAttachment(file, BE.user.uid, kind); await BE.sendMessage(text, null, att); };
-      $('#msend').addEventListener('click', async () => { const t = $('#mtext').value.trim(); if (!t) return; $('#mtext').value = ''; try { await sendUser(t); } catch (e) { toast(e.message); } });
+      const messageInput = $('#mtext'), messageSend = $('#msend'), messageOwner = studyOwner();
+      let mentorDraft = false;
+      try {
+        const draft = JSON.parse(sessionStorage.getItem('nabu-mentor-draft') || 'null');
+        if (draft && draft.owner === messageOwner && typeof draft.text === 'string' && draft.text.length < 3900) { messageInput.value = draft.text; mentorDraft = true; }
+        else sessionStorage.removeItem('nabu-mentor-draft');
+      } catch (e) { /* no draft in this browser */ }
+      messageInput.addEventListener('input', () => {
+        if (mentorDraft && messageOwner === studyOwner()) {
+          try { sessionStorage.setItem('nabu-mentor-draft', JSON.stringify({owner:messageOwner,text:messageInput.value})); } catch (e) { /* the text remains in the input */ }
+        }
+      });
+      messageSend.addEventListener('click', async () => {
+        const t = messageInput.value.trim(), owner = studyOwner(); if (!t || messageSend.disabled) return;
+        if (owner !== messageOwner) { toast(studyT().changed); return; }
+        messageSend.disabled = true;
+        try { await sendUser(t); if (owner === studyOwner() && messageInput.value.trim() === t) {
+          messageInput.value = '';
+          if (mentorDraft) { try { sessionStorage.removeItem('nabu-mentor-draft'); } catch (e) { /* private mode */ } mentorDraft = false; }
+        } }
+        catch (e) { toast(e.message); }
+        finally { messageSend.disabled = false; }
+      });
       bindChatBar(body, sendUser); }
       meUnsubs.push(BE.watchMyBookings((list) => {
         /* This is a live listener, so the snapshot can land after the screen
@@ -33401,7 +33472,7 @@ function adminSale(p) {
 ROUTES.admin = { nav: '', render: renderAdmin };
 
 /* ============================ boot ============================ */
-window.APP_VERSION = 'v290';
+window.APP_VERSION = 'v291';
 window.NABU = { CONFIG: CONFIG, SALE: SALE, salePrice: salePrice, loadActs: loadActs, BACK: BACK, LESSONS: LESSONS, localAnswer: localAnswer, compatVerdict: compatVerdict, numerologyOf: numerologyOf, ZDEEP: ZDEEP, lunarToday: lunarToday, solarToLunar: solarToLunar, DECK: DECK, INSIGHT: INSIGHT, KW: KW, ASK: ASK, GUIDES: GUIDES, SERVICES: SERVICES, COURSES: COURSES, ACCESS: ACCESS, INTERESTS: INTERESTS, plusOn: () => plusOn(), proOn: () => proOn(), luckUnlimited: () => luckUnlimited(), ZODIAC: ZODIAC, pick: pick, book: book, PLAY_ITEMS: PLAY_ITEMS, PLAY_SUB_SKUS: PLAY_SUB_SKUS, playItem: playItem, BILL: BILL, SUBS: SUBS, billUse: billUse, APPLE_BILL: APPLE_BILL, appleAccountToken: appleAccountToken, renderStore: renderStore, pickLimitHTML: pickLimitHTML, subStateWord: subStateWord,
   insightHTML: insightHTML, insightOf: insightOf, sunSignIndex: sunSignIndex, lifePath: lifePath, PROFILE: () => PROFILE, BE: BE, inAppBrowser: inAppBrowser, ACTS: ACTS, CMT: CMT, LIKES: LIKES, kbReady: kbReady, AI: AI, STR: STR, KB_URL: (typeof KB_URL === 'string' ? KB_URL : ''),
   ANGELS: ANGELS, angelRead: angelRead, CODEBOOK: CODEBOOK, redeemCode: redeemCode, loadCodebook: loadCodebook, petHomeSVG: petHomeSVG, petStill: petStill, PET_HOMES: PET_HOMES, PET_WARDROBE: PET_WARDROBE, PET_SLOTS: PET_SLOTS,
@@ -33462,7 +33533,7 @@ BE.initP = BE.init().catch(() => {
   /* Do not guess the previous account when the auth SDK could not load.
      Device-only practice can still use the separate guest notebook. */
   BE.initFailed = true;
-  if (['practice', 'study'].includes(parseHash().route)) route();
+  if (['practice', 'study', 'workshop'].includes(parseHash().route)) route();
 });
 // The Gemini key is a dashboard setting kept in the app cloud (content/ai), never in the source.
 /* The code book is Nabu's to read; the dashboard loads it when the Codes tab
@@ -33483,7 +33554,7 @@ BE.onAuth(() => {
      activity page opened from a shared link has to swap its sign-in line
      for the comment box. */
   const r = parseHash().route;
-  if (['learn', 'me', 'home', 'pick', 'post', 'practice', 'study'].indexOf(r) > -1 || (r === 'play' && $('.cmts'))) route();
+  if (['learn', 'me', 'home', 'pick', 'post', 'practice', 'study', 'workshop'].indexOf(r) > -1 || (r === 'play' && $('.cmts'))) route();
 });
 boot();
 

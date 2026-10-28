@@ -46,6 +46,11 @@ jobs:
       - name: Check notebook storage and account isolation
         run: node test/study_check.js
 
+      - name: Check workshop backups and report delivery
+        run: |
+          node --check src/workshop.js
+          node test/workshop_check.js
+
       - name: Check notebook interactions
         env:
           NABU_BROWSER: /usr/bin/google-chrome

@@ -226,6 +226,7 @@ async function renderPractice() {
     + '<div class="pprog"><span style="width:' + Math.round(done / PRACTICE.length * 100) + '%"></span></div>'
     + '<p class="faint" style="margin-top:4px">' + esc(S.practiceDone(done, PRACTICE.length)) + '</p>'
     + studyLinkHTML()
+    + '<p><a class="btn" href="#/workshop">' + esc(HT('Lộ trình luyện đọc', 'Reading workshop', 'Deutungswerkstatt')) + ' →</a></p>'
     /* Grouped by course, each under its own name, so a Lenormand learner does
        not scroll through Tarot to find what is theirs. */
     + ['tarot', 'lenormand', 'playing'].map((c) => {
@@ -238,6 +239,7 @@ async function renderExercise(id, params) {
   const S = T(), m = $('#main'), owner = studyOwner(), hash = location.hash;
   if (owner == null) { m.innerHTML = '<p role="status">' + esc(studyT().waiting) + '</p>'; return; }
   if (!(await practiceReady())) { m.innerHTML = backLink('#/practice', S.practiceTitle) + '<p class="muted">' + esc(S.practiceOffline) + '</p>'; return; }
+  if (!(await workshopReady())) { m.innerHTML = '<p>' + esc(S.practiceOffline) + '</p>'; return; }
   if (location.hash !== hash || owner !== studyOwner()) return;
   const ex = practiceById(id);
   if (!ex) { redirect('#/practice'); return; }
@@ -255,7 +257,8 @@ async function renderExercise(id, params) {
       + '<button class="pturn" data-turn="' + i + '" aria-label="' + esc(S.practiceTurn) + '">' + backNow() + '</button></div>'
       + '<div class="pask shut"><b>' + esc(label) + '</b>'
       + '<div class="faint">' + esc(card.name) + (ex.rev[i] ? ' \u00b7 ' + esc(S.pRev) : '') + '</div>'
-      + '<textarea data-pos="' + i + '" rows="4" maxlength="4000" aria-label="' + esc(label + ' · ' + card.name) + '" placeholder="' + esc(S.practicePlaceholder) + '"></textarea></div></div>';
+      + '<textarea data-pos="' + i + '" rows="4" maxlength="4000" aria-label="' + esc(label + ' · ' + card.name) + '" placeholder="' + esc(S.practicePlaceholder) + '"></textarea>'
+      + workshopReasonHTML(ex, sp, i) + '</div></div>';
   };
 
   m.innerHTML = backLink('#/practice', S.practiceTitle) + '<div class="guide"><h1>' + esc(sp.name) + '</h1>'
@@ -279,6 +282,7 @@ async function renderExercise(id, params) {
     answers: ex.cards.map((c, i) => $('[data-pos="' + i + '"]', m).value),
     synth: $('[data-synth]', m).value,
     turned: ex.cards.map((c, i) => !$('[data-turn="' + i + '"]', m)),
+    reasoning: ex.cards.map((c, i) => $('[data-reason="' + i + '"]', m).value),
     lang
   });
   const saveDraft = () => {
@@ -290,6 +294,7 @@ async function renderExercise(id, params) {
   if (restored) {
     ex.cards.forEach((c, i) => { $('[data-pos="' + i + '"]', m).value = restored.answers[i] || ''; });
     $('[data-synth]', m).value = restored.synth || '';
+    ex.cards.forEach((c, i) => { $('[data-reason="' + i + '"]', m).value = (restored.reasoning || [])[i] || ''; });
   }
   /* The cards are dealt face down and turned one at a time, the way the daily
      draw does it. A learner who can see all three at once reads the spread
@@ -319,15 +324,17 @@ async function renderExercise(id, params) {
   $('#pmark').addEventListener('click', () => {
     if (owner !== studyOwner()) { studyStatus(status, 'changed'); return; }
     if (!ex.free && !ACCESS.has(ex.course)) { gate(ex.course, '#/practice'); return; }
-    const { answers, synth, turned } = values();
+    const { answers, synth, turned, reasoning } = values();
     if (!turned.every(Boolean) || answers.some((s) => s.trim().length < 15) || synth.trim().length < 25) {
       studyStatus(status, 'required'); return;
     }
     const r = gradeReading(ex, answers, synth);
-    const error = STUDY.add(owner, 'attempts', studyAttempt(ex, sp, answers, synth, r), draftKey);
+    const attempt = studyAttempt(ex, sp, answers, synth, r, reasoning);
+    const error = STUDY.add(owner, 'attempts', attempt, draftKey);
     if (error) { studyStatus(status, error); return; }
     PSCORE.put(ex.id, r.pct);
     $('#presult').innerHTML = resultHTML(ex, sp, r, perPos);
+    $('#presult').insertAdjacentHTML('beforeend', workshopFeedbackHTML(ex, sp, r, attempt.id));
     studyStatus(status, '', 'saved');
     button.disabled = true; // edit before saving another attempt
     $('#presult').scrollIntoView({ behavior: 'smooth', block: 'start' });

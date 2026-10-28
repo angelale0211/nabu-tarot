@@ -87,6 +87,24 @@ const STUDY_TEXT = {
   }
 };
 const studyT = () => STUDY_TEXT[lang] || STUDY_TEXT.en;
+let WORKSHOP_WANT = null;
+function workshopReady() {
+  if (WORKSHOP_WANT) return WORKSHOP_WANT;
+  WORKSHOP_WANT = new Promise((resolve) => {
+    const s = document.createElement('script'); s.src = WORKSHOP_URL; s.async = true;
+    s.onload = () => resolve(true);
+    s.onerror = () => { WORKSHOP_WANT = null; s.remove(); resolve(false); };
+    document.head.appendChild(s);
+  });
+  return WORKSHOP_WANT;
+}
+ROUTES.workshop = { nav: 'learn', render: async (a, p) => {
+  const hash = location.hash;
+  const ready = await workshopReady();
+  if (location.hash !== hash) return;
+  if (ready) return renderWorkshop(a, p);
+  $('#main').innerHTML = '<p>' + esc(T().practiceOffline) + '</p>';
+} };
 function studyOwner() {
   if (typeof WIPED !== 'undefined' && WIPED) return null;
   if (typeof BE !== 'undefined' && BE.enabled && !BE.ready) return BE.initFailed ? 'guest' : null;
@@ -130,13 +148,13 @@ const studyNeeds = (r) => Array.from(new Set(r.notes.map((n) => ({
   thin: 'short', frame: 'position', reversal: 'reversal', missed: 'words',
   date: 'date', bare: 'bare', synth: 'synth'
 })[n.kind]).filter(Boolean).concat(r.perCard.some((c) => c.score < 1) ? ['words'] : [])));
-function studyAttempt(ex, sp, answers, synth, r) {
+function studyAttempt(ex, sp, answers, synth, r, reasoning) {
   return { id: studyId(), exercise: ex.id, at: Date.now(), lang, rubric: STUDY_RUBRIC,
     title: sp.name, question: L(ex.q), answers, synth, pct: r.pct, needs: studyNeeds(r),
     cards: r.perCard.map((c, i) => ({ name: c.card.name, reversed: c.rev,
       position: sp.pos && sp.pos[i] ? sp.pos[i][0] : String(i + 1),
       got: c.got, missed: c.missed })),
-    feedback: r.notes.map(practiceNoteText), model: L(ex.model) };
+    feedback: r.notes.map(practiceNoteText), model: L(ex.model), reasoning: reasoning || [] };
 }
 function studyStatus(el, error, success) {
   if (!el) return;
@@ -162,8 +180,11 @@ function studyAttemptHTML(a, controls) {
     + '<h4>' + esc(S.feedback) + '</h4>' + (a.feedback.length
       ? '<ul>' + a.feedback.map((n) => '<li>' + esc(n) + '</li>').join('') + '</ul>' : '<p>' + esc(S.none) + '</p>')
     + '<details><summary>' + esc(S.model) + '</summary>' + studyTextHTML(a.model) + '</details>'
+    + workshopSavedHTML(a)
     + (controls ? '<div class="row"><a class="btn" href="#/practice/' + encodeURIComponent(a.exercise) + '?revise=' + encodeURIComponent(a.id) + '">' + esc(S.revise) + '</a>'
       + '<button class="btn" data-study-delete="' + esc(a.id) + '" data-study-type="attempts">' + esc(S.remove) + '</button></div>' : '')
+    + (controls ? '<a class="btn" href="#/workshop/review/' + encodeURIComponent(a.id) + '">' + esc(workshopT().review) + '</a> '
+      + '<a class="btn" href="#/workshop/mentor/' + encodeURIComponent(a.id) + '">' + esc(workshopT().mentor) + '</a>' : '')
     + '</article>';
 }
 function studySuggestions(book) {
@@ -176,8 +197,9 @@ async function renderStudy(args, params) {
   if (owner == null) { m.innerHTML = '<p role="status">' + esc(S.waiting) + '</p>'; return; }
   if (args[0] === 'card') { renderStudyCard(params); return; }
   const ready = await practiceReady();
+  const workshop = ready && await workshopReady();
   if (location.hash !== hash || studyOwner() !== owner) return;
-  if (!ready) { m.innerHTML = backLink('#/learn', T().learnTitle) + '<p>' + esc(T().practiceOffline) + '</p>'; return; }
+  if (!workshop) { m.innerHTML = backLink('#/learn', T().learnTitle) + '<p>' + esc(T().practiceOffline) + '</p>'; return; }
   const book = STUDY.read(owner);
   const exercise = args[0] === 'exercise' ? practiceById(args[1]) : null;
   if (args[0] === 'exercise' && !exercise) { redirect('#/study'); return; }
@@ -188,6 +210,7 @@ async function renderStudy(args, params) {
     + '<h1>' + esc(S.title) + '</h1><p>' + esc(S.intro) + '</p>' + studyOfflineHTML() + '<p class="hint">' + esc(S.local) + '</p>'
     + '<p class="hint">' + esc(S.rules) + '</p><button class="btn" id="study-export">' + esc(S.export) + '</button>'
     + '<p id="study-status" role="status" aria-live="polite"></p><div id="study-export-panel"></div>'
+    + '<p><a class="btn" href="#/workshop">' + esc(workshopT().title) + '</a> <a class="btn" href="#/workshop/import">' + esc(workshopT().restore) + '</a></p>'
     + (suggestions.length ? '<section class="card"><h2>' + esc(S.review) + '</h2><p class="hint">' + esc(S.reviewHint) + '</p>'
       + suggestions.map((a) => '<p><a href="#/practice/' + a.exercise + '?revise=' + a.id + '">' + esc(a.title) + ' — ' + esc(S.retry) + '</a><br>'
         + esc(a.needs.map((k) => S[k]).join(' · ')) + '</p>').join('') + '</section>' : '')

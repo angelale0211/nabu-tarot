@@ -5,11 +5,14 @@
 const output = [], frame = document.querySelector('#app');
 const pause = (ms) => new Promise((r) => setTimeout(r, ms));
 const check = (test, label) => { output.push((test ? 'PASS ' : 'FAIL ') + label); document.querySelector('#results').textContent = output.join('\n'); };
-const wait = async (fn) => { for (let i = 0; i < 150; i++) { if (fn()) return; await pause(40); } throw Error('Timed out'); };
+const wait = async (fn) => { for (let i = 0; i < 500; i++) { if (fn()) return; await pause(40); } throw Error('Timed out'); };
 (async () => {
   try {
     await wait(() => frame.contentWindow.NABU);
     const w = frame.contentWindow, N = w.NABU, d = frame.contentDocument;
+    // Let initial auth settle before substituting identities; its first callback
+    // must not overwrite a fake account partway through the messaging checks.
+    await wait(() => N.BE.ready || N.BE.initFailed || !N.BE.enabled);
     // A new disposable browser profile, no real auth or writes to a backend.
     N.BE.enabled = false; N.BE.ready = true; N.BE.user = null;
     w.localStorage.clear();
@@ -23,6 +26,7 @@ const wait = async (fn) => { for (let i = 0; i < 150; i++) { if (fn()) return; a
     check(!d.querySelector('.presult') && N.STUDY.read('guest').attempts.length === 0, 'blank submission does not reveal model or create an attempt');
     d.querySelector('[data-turn="0"]').click();
     input('[data-pos="0"]', 'This is a new beginning, with freedom and curiosity.');
+    input('[data-reason="0"]', 'The Fool is beginning a journey; I connect that image with the offer in this situation.');
     input('[data-synth]', 'The Fool suggests a fresh beginning; try to explore the offer thoughtfully.');
     await go('#/study', '#study-export');
     await go('#/practice/pr-1', '#pmark');
@@ -30,6 +34,8 @@ const wait = async (fn) => { for (let i = 0; i < 150; i++) { if (fn()) return; a
     d.querySelector('#pmark').click();
     check(d.querySelector('.presult') && N.STUDY.read('guest').attempts.length === 1, 'complete answer saves an attempt and reveals feedback');
     const first = N.STUDY.read('guest').attempts[0];
+    check(first.reasoning[0].includes('journey'), 'reasoning survives navigation and is saved with the attempt');
+    check(d.querySelector('.ws-feedback') && /automatic/i.test(d.querySelector('.ws-feedback').textContent), 'feedback distinguishes automatic hints from self-review');
     check(d.querySelector('#pmark').disabled, 'unchanged attempt cannot be submitted twice');
     await go('#/practice', '.prow');
     await go('#/practice/pr-1?revise=' + first.id, '#pmark');
@@ -38,10 +44,31 @@ const wait = async (fn) => { for (let i = 0; i < 150; i++) { if (fn()) return; a
     d.querySelector('#pmark').click();
     const entries = N.STUDY.read('guest').attempts;
     check(entries.length === 2 && entries[0].answers[0] === first.answers[0] && entries[1].answers[0] !== first.answers[0], 'revision preserves original and adds a separate attempt');
+    await go('#/workshop/review/' + first.id, '#ws-plan');
+    d.querySelector('#ws-review').requestSubmit();
+    check(!N.STUDY.read('guest').attempts[0].selfReview, 'empty self-review does not record false completion');
+    input('#ws-plan', 'I will connect the card to the specific offer and explain an alternative.');
+    d.querySelector('[data-ws-check="0"]').click();
+    d.querySelector('#ws-review').requestSubmit();
+    const reviewed = N.STUDY.read('guest').attempts[0];
+    check(reviewed.selfReview.checks[0] && reviewed.selfReview.plan.includes('alternative') && reviewed.answers[0] === first.answers[0], 'self-review saves without changing the submitted interpretation');
+    await go('#/workshop', '.ws-skills');
+    check(d.querySelectorAll('.ws-skill').length === 5 && d.querySelector('a[href="#/learn/tarot"]'), 'five skills and valid lesson links are available');
+    check(Array.from(d.querySelectorAll('.prow')).every((a) => { const ex = N.PRACTICE().find((x)=>a.hash.endsWith('/'+x.id)); return ex && ex.free; }), 'next exercises respect current access');
     await go('#/study/exercise/pr-1', '#study-comparison');
     check(d.querySelectorAll('#study-comparison .study-entry').length === 2, 'comparison shows both saved texts and feedback');
     d.querySelector('#study-export').click();
     check(JSON.parse(d.querySelector('#study-export-text').value).attempts.length === 2, 'export contains the actual saved attempts');
+    const backup = d.querySelector('#study-export-text').value;
+    await go('#/workshop/import', '#ws-import');
+    input('#ws-import', backup); d.querySelector('#ws-restore').click();
+    check(N.STUDY.read('guest').attempts.length === 2 && !d.querySelector('#ws-import').value, 'restoring an identical backup skips duplicates');
+    input('#ws-import', '{bad json'); d.querySelector('#ws-restore').click();
+    check(N.STUDY.read('guest').attempts.length === 2 && d.querySelector('#ws-import').value, 'invalid backup preserves current data and input');
+    await go('#/workshop/mentor/' + first.id, '#ws-message');
+    check(d.querySelector('#ws-message').value.includes('journey') && !w.sessionStorage.getItem('nabu-mentor-draft'), 'mentor request is only a preview, not sent or shared automatically');
+    d.querySelector('#ws-compose').click();
+    check(!w.sessionStorage.getItem('nabu-mentor-draft'), 'guest cannot transfer a private message draft');
     await go('#/study/card?card=major-0&focus=love&date=2026-10-20', '#study-reflection');
     input('#study-reflection', '<img src=x onerror=alert(1)> My private reflection.');
     await go('#/study', '#study-export');
@@ -68,7 +95,27 @@ const wait = async (fn) => { for (let i = 0; i < 150; i++) { if (fn()) return; a
     check(/account changed/.test(d.querySelector('#practice-save-status').textContent) && N.STUDY.read(N.studyOwner()).attempts.length === 0, 'stale form cannot write into another account');
     await go('#/study', '#study-export');
     check(!d.querySelector('#main').textContent.includes('private reflection'), 'other account does not see guest writing');
+    // Signed-in messaging uses test doubles; this suite never sends a real message.
+    const originals = {watchMessages:N.BE.watchMessages,watchMyBookings:N.BE.watchMyBookings,sendMessage:N.BE.sendMessage,markRead:N.BE.markRead};
+    let sends = 0, failSend = true;
+    N.BE.watchMessages = () => () => {};
+    N.BE.watchMyBookings = () => () => {};
+    N.BE.markRead = () => {};
+    N.BE.sendMessage = async () => { sends++; if (failSend) throw Error('test delivery failure'); };
+    w.workshopMentorScreen(N.studyOwner(), first);
+    d.querySelector('#ws-compose').click();
+    check(!w.sessionStorage.getItem('nabu-mentor-draft') && sends === 0, 'signed-in preview still requires explicit sharing consent');
+    d.querySelector('#ws-consent').click(); d.querySelector('#ws-compose').click();
+    await wait(() => d.querySelector('#mtext'));
+    check(d.querySelector('#mtext').value.includes('journey') && sends === 0, 'approved preview opens an editable message without sending');
+    const message = d.querySelector('#mtext').value;
+    d.querySelector('#msend').click(); await pause(30);
+    check(sends === 1 && d.querySelector('#mtext').value === message && w.sessionStorage.getItem('nabu-mentor-draft'), 'failed message preserves the editable draft');
+    failSend = false; d.querySelector('#msend').click(); await pause(30);
+    check(sends === 2 && !d.querySelector('#mtext').value && !w.sessionStorage.getItem('nabu-mentor-draft'), 'successful explicit send clears the private draft');
+    Object.assign(N.BE, originals);
     N.BE.enabled = false; N.BE.user = null;
+    await go('#/study', '#study-export');
     for (const lg of ['vi','de','en']) {
       await language(lg); w.route(); await pause(80);
       check(d.querySelector('h1').textContent === N.STUDY_TEXT[lg].title, lg + ' notebook labels render');

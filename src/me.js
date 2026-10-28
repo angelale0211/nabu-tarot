@@ -292,7 +292,7 @@ function meSect(id, icon, title, body, openByDefault, force) {
     }
     /* Group two: everything that is a conversation - with Nabu, and with the
        machine. Open, because it is the half people come back for. */
-    h += meSect('talk', '\uD83D\uDCAC', S.meGroupTalk, talk, true);
+    h += meSect('talk', '\uD83D\uDCAC', S.meGroupTalk, talk, true, params.tab === 'talk');
 
     /* Not in the installed app. On the web this list is useful - it is where
        somebody checks what they hold and when it runs out. Inside the Android
@@ -416,7 +416,29 @@ function meSect(id, icon, title, body, openByDefault, force) {
       if (chat) {
       meUnsubs.push(BE.watchMessages(BE.user.uid, (msgs) => { chat.innerHTML = chatHTML(msgs, 'user'); chat.scrollTop = chat.scrollHeight; BE.markRead(BE.user.uid, 'user'); }));
       const sendUser = async (text, file, kind) => { let att = null; if (file) att = await chatAttachment(file, BE.user.uid, kind); await BE.sendMessage(text, null, att); };
-      $('#msend').addEventListener('click', async () => { const t = $('#mtext').value.trim(); if (!t) return; $('#mtext').value = ''; try { await sendUser(t); } catch (e) { toast(e.message); } });
+      const messageInput = $('#mtext'), messageSend = $('#msend'), messageOwner = studyOwner();
+      let mentorDraft = false;
+      try {
+        const draft = JSON.parse(sessionStorage.getItem('nabu-mentor-draft') || 'null');
+        if (draft && draft.owner === messageOwner && typeof draft.text === 'string' && draft.text.length < 3900) { messageInput.value = draft.text; mentorDraft = true; }
+        else sessionStorage.removeItem('nabu-mentor-draft');
+      } catch (e) { /* no draft in this browser */ }
+      messageInput.addEventListener('input', () => {
+        if (mentorDraft && messageOwner === studyOwner()) {
+          try { sessionStorage.setItem('nabu-mentor-draft', JSON.stringify({owner:messageOwner,text:messageInput.value})); } catch (e) { /* the text remains in the input */ }
+        }
+      });
+      messageSend.addEventListener('click', async () => {
+        const t = messageInput.value.trim(), owner = studyOwner(); if (!t || messageSend.disabled) return;
+        if (owner !== messageOwner) { toast(studyT().changed); return; }
+        messageSend.disabled = true;
+        try { await sendUser(t); if (owner === studyOwner() && messageInput.value.trim() === t) {
+          messageInput.value = '';
+          if (mentorDraft) { try { sessionStorage.removeItem('nabu-mentor-draft'); } catch (e) { /* private mode */ } mentorDraft = false; }
+        } }
+        catch (e) { toast(e.message); }
+        finally { messageSend.disabled = false; }
+      });
       bindChatBar(body, sendUser); }
       meUnsubs.push(BE.watchMyBookings((list) => {
         /* This is a live listener, so the snapshot can land after the screen
