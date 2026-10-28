@@ -81,7 +81,8 @@ function firestore(k: Keys, docs: Record<string, Doc>, fcm: (body: { message: { 
 
 const ts = (iso: string) => ({ __ts: iso });
 
-test("register files the token under the account and baselines what already happened", async () => {
+test("register files the token under the account and baselines what already happened", async (t) => {
+  t.mock.timers.enable({ apis: ["Date"], now: new Date("2026-10-12T10:00:00Z") });
   const k = await makeKeys();
   const docs: Record<string, Doc> = {
     "threads/u1": { lastFrom: "nabu", userUnread: 2, lastAt: ts("2026-10-10T08:00:00.123Z"), lastText: "old answer" },

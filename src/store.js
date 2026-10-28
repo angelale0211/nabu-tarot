@@ -211,6 +211,7 @@ function bindStore(root, redraw) {
              store handed back a purchase that has just moved to another Nabu
              account, and it does not move again for a day. Deleting an account
              and signing up on the same Apple ID no longer lands here at all. */
+          : why === 'test purchase' ? (lang === 'vi' ? 'Giao dịch thử Google Play không còn mở nội dung trả phí. Tài khoản thử cần được bỏ khỏi danh sách kiểm thử giấy phép trước khi mua thật.' : lang === 'de' ? 'Google-Play-Testkäufe schalten keine kostenpflichtigen Inhalte mehr frei. Entferne das Konto vor einem echten Kauf aus den Lizenztestern.' : 'Google Play test purchases no longer unlock paid content. The account must be removed from license testing before making a real purchase.')
           : why === 'already used' ? S.buyAlready
           : why === 'nostore' ? S.stNotReady
           : why === 'noproduct' ? S.stItemOff
