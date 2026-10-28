@@ -182,7 +182,8 @@ test("a code-granted Pro customer who subscribes to Manifestation keeps pro and 
    make it permanent, and the very next legitimate SHORTENING - a downgrade, a
    partial refund, an expiry - would find the old longer date sitting in
    `granted` and hand back access Google had just taken away. */
-test("the capture does NOT fire for a key an existing row already names: a Play shortening stands", async () => {
+test("the capture does NOT fire for a key an existing row already names: a Play shortening stands", async (t) => {
+  t.mock.timers.enable({ apis: ["Date"], now: new Date("2026-09-01T00:00:00Z") });
   const k = await makeKeys();
   const w = acct(k, null);
   try {

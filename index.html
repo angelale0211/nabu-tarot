@@ -12,7 +12,7 @@
      carries this notice with it. See LICENSE. -->
 <meta name="author" content="Nabu Tarot">
 <meta name="copyright" content="Copyright (c) 2025-2026 Nabu Tarot. All rights reserved.">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'none'; object-src 'none'; form-action 'self'; script-src 'self' 'sha256-6REG3Wbs4TQ+vOverUnC8xsYUbW08mqGNei1ab2U2M0=' https://www.gstatic.com https://apis.google.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; font-src 'self' data:; media-src 'self' data: blob:; worker-src 'self'; connect-src 'self' https://*.googleapis.com https://*.google.com https://*.firebaseio.com https://*.cloudfunctions.net https://*.workers.dev https://generativelanguage.googleapis.com; frame-src https://*.firebaseapp.com https://accounts.google.com https://*.facebook.com">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'none'; object-src 'none'; form-action 'self'; script-src 'self' 'sha256-Awpa9cpqNEIo7rgD8IRWZ3aEc2MFdBtYwGen8xQqqUE=' https://www.gstatic.com https://apis.google.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; font-src 'self' data:; media-src 'self' data: blob:; worker-src 'self'; connect-src 'self' https://*.googleapis.com https://*.google.com https://*.firebaseio.com https://*.cloudfunctions.net https://*.workers.dev https://generativelanguage.googleapis.com; frame-src https://*.firebaseapp.com https://accounts.google.com https://*.facebook.com">
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <meta name="theme-color" content="#EFE9FA">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -19380,7 +19380,13 @@ const BILL = {
     }), 30000);
     const j = await r.json().catch(() => ({}));
     if (r.status === 202 && j.pending) { this.remember(Object.assign({ sku: sku, token: token, at: Date.now() }, extra || {})); return { pending: true }; }
-    if (!r.ok || !j.ok) throw new Error(j.error || ('billing ' + r.status));
+    if (!r.ok || !j.ok) {
+      if (j.error === 'test purchase') {
+        this.forget(token);
+        try { await BE.pullProfile(); } catch (e) { /* refresh again on the next sync */ }
+      }
+      throw new Error(j.error || ('billing ' + r.status));
+    }
     this.forget(token);
     return j;
   },
@@ -19630,7 +19636,7 @@ const BILL = {
         }
       } catch (e) {
         const msg = String(e && e.message);
-        if (msg === 'already used') { this.forget(token); continue; }
+        if (msg === 'already used' || msg === 'test purchase') { this.forget(token); continue; }
         const tries = (p.tries || 0) + 1;
         if (tries >= PLAY_GIVE_UP) { this.forget(token); out.failed++; this.flagStuck(p); }
         else this.remember(Object.assign({}, p, { token: token, tries: tries }));
@@ -20167,6 +20173,7 @@ function bindStore(root, redraw) {
              store handed back a purchase that has just moved to another Nabu
              account, and it does not move again for a day. Deleting an account
              and signing up on the same Apple ID no longer lands here at all. */
+          : why === 'test purchase' ? (lang === 'vi' ? 'Giao dịch thử Google Play không còn mở nội dung trả phí. Tài khoản thử cần được bỏ khỏi danh sách kiểm thử giấy phép trước khi mua thật.' : lang === 'de' ? 'Google-Play-Testkäufe schalten keine kostenpflichtigen Inhalte mehr frei. Entferne das Konto vor einem echten Kauf aus den Lizenztestern.' : 'Google Play test purchases no longer unlock paid content. The account must be removed from license testing before making a real purchase.')
           : why === 'already used' ? S.buyAlready
           : why === 'nostore' ? S.stNotReady
           : why === 'noproduct' ? S.stItemOff
@@ -33066,7 +33073,7 @@ function adminSale(p) {
 ROUTES.admin = { nav: '', render: renderAdmin };
 
 /* ============================ boot ============================ */
-window.APP_VERSION = 'v289';
+window.APP_VERSION = 'v292';
 window.NABU = { CONFIG: CONFIG, SALE: SALE, salePrice: salePrice, loadActs: loadActs, BACK: BACK, LESSONS: LESSONS, localAnswer: localAnswer, compatVerdict: compatVerdict, numerologyOf: numerologyOf, ZDEEP: ZDEEP, lunarToday: lunarToday, solarToLunar: solarToLunar, DECK: DECK, INSIGHT: INSIGHT, KW: KW, ASK: ASK, GUIDES: GUIDES, SERVICES: SERVICES, COURSES: COURSES, ACCESS: ACCESS, INTERESTS: INTERESTS, plusOn: () => plusOn(), proOn: () => proOn(), luckUnlimited: () => luckUnlimited(), ZODIAC: ZODIAC, pick: pick, book: book, PLAY_ITEMS: PLAY_ITEMS, PLAY_SUB_SKUS: PLAY_SUB_SKUS, playItem: playItem, BILL: BILL, SUBS: SUBS, billUse: billUse, APPLE_BILL: APPLE_BILL, appleAccountToken: appleAccountToken, renderStore: renderStore, pickLimitHTML: pickLimitHTML, subStateWord: subStateWord,
   insightHTML: insightHTML, insightOf: insightOf, sunSignIndex: sunSignIndex, lifePath: lifePath, PROFILE: () => PROFILE, BE: BE, inAppBrowser: inAppBrowser, ACTS: ACTS, CMT: CMT, LIKES: LIKES, kbReady: kbReady, AI: AI, STR: STR, KB_URL: (typeof KB_URL === 'string' ? KB_URL : ''),
   ANGELS: ANGELS, angelRead: angelRead, CODEBOOK: CODEBOOK, redeemCode: redeemCode, loadCodebook: loadCodebook, petHomeSVG: petHomeSVG, petStill: petStill, PET_HOMES: PET_HOMES, PET_WARDROBE: PET_WARDROBE, PET_SLOTS: PET_SLOTS,
