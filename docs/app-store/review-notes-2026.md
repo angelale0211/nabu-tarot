@@ -20,7 +20,7 @@ Replace [version/build] with the build selected in App Store Connect. Do not cla
 
 ## Before sending
 
-- Merge and deploy the reviewed changes, then confirm the actual iPhone app loads web/cache version **v291**, including its hashed workshop script. This PR is not a TestFlight submission.
+- Merge and deploy the reviewed changes, then confirm the actual iPhone app loads web/cache version **v293**, including its hashed workshop script. This PR is not a TestFlight submission.
 - Repeat the five steps above on the exact build, check all three languages, relaunch with and without connectivity, and test local persistence and backup import/export. Lazy practice/workshop modules must have been opened online before they can be used from cache offline.
 - Check sign-in, account switching, logout/deletion, purchases and restore purchases on iPhone with appropriate review/sandbox accounts. Windows browser tests do not verify StoreKit or native sharing.
 - Supply current reviewer credentials and explain how reviewers can access any paid courses. The free exercises are available without a purchase.
