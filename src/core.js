@@ -70,7 +70,7 @@ function wipeDevice(lock) {
     keys.forEach((k) => { try { localStorage.removeItem(k); } catch (e) { /* locked */ } });
     /* Where the app has been is kept for the back arrow, and it is nobody
        else's business either. */
-    try { sessionStorage.removeItem('nabu-nav'); } catch (e) { /* private mode */ }
+    try { sessionStorage.removeItem('nabu-nav'); sessionStorage.removeItem('nabu-mentor-draft'); } catch (e) { /* private mode */ }
     return true;
   } catch (e) { return false; }  // private mode, storage blocked
 }
@@ -1009,7 +1009,7 @@ function parseHash() {
   (q[1] || '').split('&').forEach((kv) => { if (!kv) return; const p = kv.split('='); params[decodeURIComponent(p[0])] = decodeURIComponent(p[1] || ''); });
   return { route: path[0] || 'home', args: path.slice(1), params: params };
 }
-const ONE_COL = ['love', 'wedding', 'pet', 'play', 'looks', 'rewards', 'me', 'book',
+const ONE_COL = ['workshop', 'study', 'love', 'wedding', 'pet', 'play', 'looks', 'rewards', 'me', 'book',
   'contact', 'report', 'privacy', 'install', 'alerts', 'news', 'post', 'unlock', 'welcome', 'outfit'];
 /* Under #/learn only the hub and the card pages are wide; the rest is reading. */
 const ONE_COL_LEARN = ['astro', 'fortune', 'numbers', 'angel', 'quiz', 'manifest',

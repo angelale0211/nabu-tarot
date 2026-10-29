@@ -16,6 +16,8 @@ SCRIPTS = ['config.js', 'logo-data.js', 'services.js', 'play-catalog.js', 'strin
            'core.js', 'today.js', 'backend.js', 'comments.js', 'likes.js', 'share.js', 'ai.js', 'home.js', 'pick.js', 'learn.js', 'lessons.js', 'fortune.js', 'playing.js', 'guide-visuals.js', 'codes.js', 'billing.js', 'billing-apple.js', 'store.js', 'angel.js', 'love.js', 'welcome.js', 'quiz.js', 'quiz-tarot.js', 'quiz-tarot-de.js', 'quiz-len.js', 'quiz-play.js', 'practice-data.js', 'practice.js', 'outfit.js', 'looks.js', 'luck.js', 'pet-wardrobe.js', 'pet.js', 'pet-dress.js', 'book.js', 'me.js', 'signin.js', 'contact.js', 'privacy.js', 'terms.js', 'install.js', 'hello.js', 'report.js', 'play.js', 'wedding.js', 'alerts.js', 'admin.js', 'main.js']
 
 
+SCRIPTS.insert(SCRIPTS.index('practice.js') + 1, 'study.js')
+
 # Data files transcribed from outside sources carry working notes in block
 # comments; the shipped page mentions no sources, so those comments are
 # dropped at build time (string literals in these files never contain '/*').
@@ -109,6 +111,10 @@ PR_NAME = 'practice-%s.js' % hashlib.sha256(PR_BODY.encode('utf-8')).hexdigest()
 PR_HEAD = ("/* Filled by %s, fetched when the practice screen first opens. */\n"
            "let PRACTICE = [];\nconst PRACTICE_URL = './%s';" % (PR_NAME, PR_NAME))
 
+WS_BODY = read('workshop.js').strip()
+WS_NAME = 'workshop-%s.js' % hashlib.sha256(WS_BODY.encode('utf-8')).hexdigest()[:12]
+PR_HEAD += "\nconst WORKSHOP_URL = './%s';" % WS_NAME
+
 js = '\n\n'.join((KB_HEAD if s == KB_FILE else PR_HEAD if s == PR_FILE else read(s)).rstrip() for s in SCRIPTS)
 assert '</script' not in js.lower(), 'a script source contains a closing script tag'
 
@@ -187,6 +193,12 @@ for _stale in glob.glob(os.path.join(OUT, 'practice-*.js')):
         print('removed stale %s' % os.path.basename(_stale))
 io.open(os.path.join(OUT, PR_NAME), 'w', encoding='utf-8', newline='\n').write(PR_BODY + '\n')
 print('%s: %d bytes (fetched when the practice screen is opened)' % (PR_NAME, len(PR_BODY.encode('utf-8'))))
+
+for _stale in glob.glob(os.path.join(OUT, 'workshop-*.js')):
+    if os.path.basename(_stale) != WS_NAME:
+        os.remove(_stale)
+io.open(os.path.join(OUT, WS_NAME), 'w', encoding='utf-8', newline='\n').write(WS_BODY + '\n')
+print('%s: %d bytes (learning workspace, loaded on demand)' % (WS_NAME, len(WS_BODY.encode('utf-8'))))
 
 # privacy.html and terms.html: the same text as #/privacy and #/terms, at a
 # public address, because the store listings have to link to a plain web page.

@@ -3016,6 +3016,16 @@ html[lang="de"] #today .tbl td:first-child{-webkit-hyphens:manual;hyphens:manual
 @media (prefers-reduced-motion:reduce){
   #boot .deal span{animation:none;opacity:1;transform:translate(var(--x),0) rotate(var(--r))}
 }
+.study-writing{white-space:pre-wrap;overflow-wrap:anywhere}
+.study-entry{min-width:0}
+.study-entry h4{margin:18px 0 6px}
+.study-compare{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;align-items:start}
+.study-compare select{width:100%;min-width:0}
+#study-reflection{width:100%;box-sizing:border-box}
+#study-comparison .card{padding:12px}
+@media(max-width:600px){.study-compare{grid-template-columns:1fr}}
+/* Reading workshop: equally visible paths and readable mobile forms. */
+.home-paths,.ws-skills{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin:18px 0}.home-paths a,.ws-skills a{text-decoration:none;color:inherit;overflow-wrap:anywhere}.home-paths p,.ws-skill p{margin:8px 0 0;text-align:left}.home-paths a:focus-visible,.ws-skill:focus-visible{outline:3px solid var(--accent,#7754ae);outline-offset:3px}.ws-skill.selected{border:2px solid #7754ae}.ws-totals{display:flex;gap:24px;flex-wrap:wrap}.ws-totals b{font-size:24px}.ws-check{display:flex;align-items:flex-start;gap:10px;margin:14px 0}.ws-check input[type=checkbox]{width:20px;height:20px;flex:0 0 20px;margin-top:3px}.ws-reason{margin:14px 0}.ws-reason label{display:block;margin-top:12px}.ws-feedback details{margin:14px 0}.ws-feedback summary{cursor:pointer;font-weight:600}#ws-review fieldset{border:1px solid #c9bcda;border-radius:12px;padding:12px}#ws-message{min-height:260px}#ws-import{font-family:monospace;font-size:13px}@media(max-width:360px){.home-paths,.ws-skills{grid-template-columns:1fr}}
 </style>
 </head>
 <body>

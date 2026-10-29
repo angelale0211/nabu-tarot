@@ -63,7 +63,7 @@ const TOUR = [
    drop out, and three steps of learning come first. */
 const TOUR_IOS_LEAD = [
   { ic: "📚", vi: ["Học Tarot", "Các khóa Tarot, Lenormand và bài Tây đi từng bài một, có câu đố ôn tập. Đủ 78 lá Tarot, mỗi lá có nghĩa xuôi, nghĩa ngược và cách đọc theo từng chủ đề."], en: ["Learn Tarot", "Courses in Tarot, Lenormand and playing cards go one lesson at a time, with quizzes to review. All 78 Tarot cards are here, each with its upright and reversed meaning and how to read it for each topic."], de: ["Tarot lernen", "Die Kurse in Tarot, Lenormand und Spielkarten gehen Lektion für Lektion, mit Quizfragen zum Wiederholen. Alle 78 Tarotkarten sind da, jede mit aufrechter und umgekehrter Bedeutung und wie man sie für jedes Thema liest."] },
-  { ic: "✍️", vi: ["Luyện đọc bài", "Ở đây bạn là người đọc bài. Nabu dựng sẵn một tình huống và chia bài úp. Bạn lật từng lá, viết lời đọc của mình, rồi Nabu chấm và chỉ ra chỗ bạn còn đọc sót.\nLời đọc của Nabu chỉ hiện ra sau khi bạn nộp bài."], en: ["Practise reading", "Here you are the reader. Nabu sets up a situation and deals the cards face down; you turn them, write your reading, and Nabu marks it and shows what you missed.\nNabu\u2019s own reading only appears once you hand yours in."], de: ["Deuten üben", "Hier bist du die Lesende. Nabu stellt eine Situation und legt die Karten verdeckt aus; du deckst sie auf, schreibst deine Deutung, und Nabu bewertet sie und zeigt, was dir entgangen ist.\nNabus eigene Deutung erscheint erst, wenn du deine abgegeben hast."] },
+  { ic: "✍️", vi: ["Luyện đọc bài", "Ở đây bạn là người đọc bài. Nabu dựng sẵn một tình huống và chia bài úp. Bạn lật từng lá, viết lời đọc của mình, rồi nhận gợi ý tự động dựa trên từ khóa và vị trí.\nLời đọc của Nabu chỉ hiện ra sau khi bạn nộp bài."], en: ["Practise reading", "Here you are the reader. Nabu sets up a situation and deals the cards face down; you turn them, write your reading, and get automatic hints based on keywords and card positions.\nNabu\u2019s own reading only appears once you hand yours in."], de: ["Deuten üben", "Hier bist du die Lesende. Nabu stellt eine Situation und legt die Karten verdeckt aus; du deckst sie auf, schreibst deine Deutung, und erhältst automatische Hinweise zu Stichworten und Kartenpositionen.\nNabus eigene Deutung erscheint erst, wenn du deine abgegeben hast."] },
   { ic: "🃏", vi: ["Một lá mỗi ngày", "Mỗi ngày rút một lá để ôn: đọc ý nghĩa và các từ khóa của lá đó. Chọn chủ đề bạn đang nghĩ tới, vì mỗi chủ đề có cách đọc riêng."], en: ["A card a day", "Draw one card a day to study: read its meaning and its keywords. Choose the topic on your mind, because each topic is read in its own way."], de: ["Eine Karte am Tag", "Zieh jeden Tag eine Karte zum Lernen: lies ihre Bedeutung und ihre Stichworte. Wähl dein Thema, denn jedes wird auf seine eigene Weise gelesen."] }
 ];
 /* The Lifestyle tab replaced Activities, so its step says what the tab now holds. The second paragraph
@@ -79,7 +79,7 @@ function tourHTML(step) {
      left is eight steps somebody abandons at the third. The icon sits in a
      round well rather than loose on the card, which is what makes a row of
      unrelated emoji read as one series. */
-  return '<div class="card tourcard" id="tour" style="text-align:center;border-color:var(--lav)">'
+  return '<div class="card tourcard" id="tour" data-tour-step="' + step + '" style="text-align:center;border-color:var(--lav)">'
     + '<div class="tourbar"><span style="width:' + pct + '%"></span></div>'
     + '<div class="tourwell">' + t.ic + '</div>'
     + '<h3 style="margin:6px 0">' + esc(txt[0]) + '</h3>' + txt[1].split('\n').map((para) => '<p class="muted" style="font-size:14.5px">' + esc(para) + '</p>').join('')
@@ -266,9 +266,10 @@ function continueHTML() {
   return '<div class="sec" id="continue"><div class="eyebrow">' + esc(nl && nl.done ? HT('Học tiếp', 'Continue learning', 'Weiterlernen') : HT('Bắt đầu học', 'Start learning', 'Mit dem Lernen anfangen')) + '</div>'
     + lesson
     + '<a class="upnext" href="#/practice"><span class="ic">✍️</span><span><b>' + esc(S.practiceTitle) + '</b><br>'
-    + esc(HT('Nabu chia bài và đặt tình huống, bạn viết lời đọc, Nabu chấm.', 'Nabu deals the cards and sets the scene; you write the reading and Nabu marks it.', 'Nabu legt die Karten und stellt die Situation; du deutest, Nabu bewertet.'))
+    + esc(HT('Nabu chia bài và đặt tình huống, bạn viết lời đọc và tự đối chiếu cùng gợi ý tự động.', 'Nabu deals the cards and sets the scene; you write, review automatic hints and assess your reasoning.', 'Nabu legt die Karten und stellt die Situation; du deutest und prüfst deine Begründung mit automatischen Hinweisen.'))
     + (passed ? ' · ' + passed + ' ✓' : '') + '</span></a>'
-    + '<a class="btn block" href="#/learn">' + esc(HT('Tất cả khóa học', 'All courses', 'Alle Kurse')) + ' →</a></div>';
+    + '<a class="btn block" href="#/learn">' + esc(HT('Tất cả khóa học', 'All courses', 'Alle Kurse')) + ' →</a>'
+    + studyLinkHTML() + '</div>';
 }
 function lifeHTML() {
   const S = T();
@@ -292,7 +293,7 @@ function quickLinksHTML() {
   /* In the iPhone app the tiles lead with learning: practice and the Tarot course first, the daily
      card as a card to study, the Red Thread; astrology and the price list step aside. */
   if (isIOSApp()) {
-    const it = [['#/practice', '✍️', S.practiceTitle, lang === 'vi' ? 'viết lời đọc, Nabu chấm' : (lang === 'de' ? 'deuten, bewerten lassen' : 'write a reading, get it marked')],
+    const it = [['#/practice', '✍️', S.practiceTitle, lang === 'vi' ? 'viết, đối chiếu, sửa' : (lang === 'de' ? 'deuten, prüfen, überarbeiten' : 'write, reflect, revise')],
       ['#/learn/tarot', PICK_ICON, S.cats.tarot, lang === 'vi' ? '78 lá, ý nghĩa' : (lang === 'de' ? '78 Karten, Bedeutungen' : '78 cards, meanings')],
       ['#/pick', DRAW_ICON, S.nav.pick, lang === 'vi' ? 'một lá để học hôm nay' : (lang === 'de' ? 'eine Karte zum Lernen' : 'a card to study today')],
       ['#/love', '💞', S.loveTitle, S.loveSub],
@@ -334,29 +335,30 @@ function upcomingHTML() {
 }
 async function renderHome(args, params) {
   const S = T(), m = $('#main');
+  // Auth or sale data may redraw Home while someone is reading the tour.
+  const tourStep = Math.max(0, Math.min(tourSteps().length - 1, Number(($('#tour', m) || {}).dataset?.tourStep) || 0));
   const name = (PROFILE.name || '').trim();
   const sale = inStoreApp() ? null : SALE.live();
   const saleBanner = sale
     ? '<a class="salebar" href="' + (sale.scope === 'unlock' ? '#/unlock?from=app' : '#/prices') + '"><span class="tag">🏷️ ' + esc(SALE.off()) + '</span><span class="txt">' + esc(SALE.title() || T().saleDefault) + '</span><span class="go">' + esc(T().saleSee) + ' ›</span></a>'
     : '';
-  /* The calendar and the tour sit together in an aside. On a phone that is
-     invisible: same order, same flow. On a wide window it becomes the right
-     column, sticky, so a desk sees today's date beside the feed rather than
-     above it and then never again. */
+  /* Reading and learning choices lead on a phone. The calendar and tour
+     follow them, or sit in the right column on a wider screen. */
   /* No eyebrow with the name on it: the logo sits directly above this line
      and already says it. */
   m.innerHTML = saleBanner
+    + '<h1 style="margin:18px 0 4px">' + esc(name ? S.hello(name) : S.helloGuest) + '</h1><p class="muted">' + esc(lang === 'vi' ? 'Hôm nay bạn muốn làm gì?' : (lang === 'de' ? 'Was möchtest du heute machen?' : 'What would you like to do today?')) + '</p>'
+    + upcomingHTML()
+    + '<div class="home-paths"><a class="card" href="#/pick"><b>' + esc(HT('Xem bài', 'Draw & read', 'Karten ziehen')) + '</b><p>' + esc(HT('Rút bài và khám phá lời diễn giải.', 'Draw a card and explore its interpretation.', 'Ziehe eine Karte und entdecke ihre Deutung.')) + '</p></a><a class="card" href="#/workshop"><b>' + esc(HT('Học & luyện', 'Learn & practise', 'Lernen & üben')) + '</b><p>' + esc(HT('Viết lời đọc, giải thích lý do và theo dõi lần sửa.', 'Write a reading, explain your reasoning and track revisions.', 'Schreibe und begründe deine Deutung und verfolge Überarbeitungen.')) + '</p></a></div>'
     + '<aside class="side">'
     + todayHTML()
-    + (PROFILE.tourDone ? tourMiniHTML() : tourHTML(0))
+    + (PROFILE.tourDone ? tourMiniHTML() : tourHTML(tourStep))
     /* On a desk the month and the week for this person's sign sit here, under
        the calendar, rather than a long way down the left. On a phone this box
        stays empty and hidden and the forecast keeps its old place further down
        - the same two cards, drawn once for whichever column is showing. */
     + '<div id="sidehoro" hidden></div>'
     + '</aside>'
-    + '<h1 style="margin:18px 0 4px">' + esc(name ? S.hello(name) : S.helloGuest) + '</h1><p class="muted">' + esc(lang === 'vi' ? 'Hôm nay bạn muốn làm gì?' : (lang === 'de' ? 'Was möchtest du heute machen?' : 'What would you like to do today?')) + '</p>'
-    + upcomingHTML()
     /* Learning and practice lead. The visitor's sign, life path and Nabu's own weekly and monthly
        forecasts for it are back on the home screen at the owner's request, on every platform, and
        stay in Learn → Astrology as well. */
@@ -368,7 +370,7 @@ async function renderHome(args, params) {
     + personalHTML() + '<div id="foryouwrap"></div>'
     + '<div class="sec" id="feed"><p class="muted">…</p></div>';
   bindAccordions(m); bindCardLinks(m);
-  bindTour(m, 0);
+  bindTour(m, tourStep);
   homeActHTML($('#actwrap')).catch(() => {});
   if (POSTS == null) await loadPosts();
   const fy = $('#foryouwrap'); if (fy) { fy.innerHTML = suggestedGuidesHTML(); bindPost(fy); bindAccordions(fy); }

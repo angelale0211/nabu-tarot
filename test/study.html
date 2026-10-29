@@ -1,0 +1,139 @@
+<!doctype html>
+<html lang="en"><meta charset="utf-8"><title>Study notebook checks</title>
+<iframe id="app" src="../index.html#/practice" style="width:390px;height:844px"></iframe><pre id="results">Running</pre>
+<script>
+const output = [], frame = document.querySelector('#app');
+const pause = (ms) => new Promise((r) => setTimeout(r, ms));
+const check = (test, label) => { output.push((test ? 'PASS ' : 'FAIL ') + label); document.querySelector('#results').textContent = output.join('\n'); };
+const wait = async (fn) => { for (let i = 0; i < 500; i++) { if (fn()) return; await pause(40); } throw Error('Timed out'); };
+(async () => {
+  try {
+    await wait(() => frame.contentWindow.NABU);
+    const w = frame.contentWindow, N = w.NABU, d = frame.contentDocument;
+    // Test identities are isolated from a late real-auth initialization callback.
+    // Do not wait for an external SDK using the CI runner's accelerated clock.
+    let testUser = null;
+    Object.defineProperty(N.BE, 'user', {configurable:true, get:()=>testUser, set:()=>{}});
+    // A new disposable browser profile, no real auth or writes to a backend.
+    N.BE.enabled = false; N.BE.ready = true;
+    w.localStorage.clear();
+    const language = async (lg) => { for (let i = 0; i < 3 && d.documentElement.lang !== lg; i++) { d.querySelector('#lang').click(); await pause(100); } };
+    await language('en');
+    await N.practiceReady();
+    const go = async (hash, selector) => { w.location.hash = hash; await pause(80); await wait(() => d.querySelector(selector)); };
+    const input = (sel, text) => { const el = d.querySelector(sel); el.value = text; el.dispatchEvent(new w.Event('input', {bubbles:true})); };
+    await go('#/practice/pr-1', '#pmark');
+    d.querySelector('#pmark').click();
+    check(!d.querySelector('.presult') && N.STUDY.read('guest').attempts.length === 0, 'blank submission does not reveal model or create an attempt');
+    d.querySelector('[data-turn="0"]').click();
+    input('[data-pos="0"]', 'This is a new beginning, with freedom and curiosity.');
+    input('[data-reason="0"]', 'The Fool is beginning a journey; I connect that image with the offer in this situation.');
+    input('[data-synth]', 'The Fool suggests a fresh beginning; try to explore the offer thoughtfully.');
+    await go('#/study', '#study-export');
+    await go('#/practice/pr-1', '#pmark');
+    check(d.querySelector('[data-pos="0"]').value.includes('curiosity') && !d.querySelector('[data-turn="0"]'), 'draft and revealed card survive leaving the screen');
+    d.querySelector('#pmark').click();
+    check(d.querySelector('.presult') && N.STUDY.read('guest').attempts.length === 1, 'complete answer saves an attempt and reveals feedback');
+    const first = N.STUDY.read('guest').attempts[0];
+    check(first.reasoning[0].includes('journey'), 'reasoning survives navigation and is saved with the attempt');
+    check(d.querySelector('.ws-feedback') && /automatic/i.test(d.querySelector('.ws-feedback').textContent), 'feedback distinguishes automatic hints from self-review');
+    check(d.querySelector('#pmark').disabled, 'unchanged attempt cannot be submitted twice');
+    await go('#/practice', '.prow');
+    await go('#/practice/pr-1?revise=' + first.id, '#pmark');
+    check(d.querySelector('[data-pos="0"]').value === first.answers[0], 'revision starts with saved writing');
+    input('[data-pos="0"]', first.answers[0] + ' This revision is worth remembering.');
+    d.querySelector('#pmark').click();
+    const entries = N.STUDY.read('guest').attempts;
+    check(entries.length === 2 && entries[0].answers[0] === first.answers[0] && entries[1].answers[0] !== first.answers[0], 'revision preserves original and adds a separate attempt');
+    await go('#/workshop/review/' + first.id, '#ws-plan');
+    d.querySelector('#ws-review').requestSubmit();
+    check(!N.STUDY.read('guest').attempts[0].selfReview, 'empty self-review does not record false completion');
+    input('#ws-plan', 'I will connect the card to the specific offer and explain an alternative.');
+    d.querySelector('[data-ws-check="0"]').click();
+    d.querySelector('#ws-review').requestSubmit();
+    const reviewed = N.STUDY.read('guest').attempts[0];
+    check(reviewed.selfReview.checks[0] && reviewed.selfReview.plan.includes('alternative') && reviewed.answers[0] === first.answers[0], 'self-review saves without changing the submitted interpretation');
+    await go('#/workshop', '.ws-skills');
+    check(d.querySelectorAll('.ws-skill').length === 5 && d.querySelector('a[href="#/learn/tarot"]'), 'five skills and valid lesson links are available');
+    check(Array.from(d.querySelectorAll('.prow')).every((a) => { const ex = N.PRACTICE().find((x)=>a.hash.endsWith('/'+x.id)); return ex && ex.free; }), 'next exercises respect current access');
+    await go('#/study/exercise/pr-1', '#study-comparison');
+    check(d.querySelectorAll('#study-comparison .study-entry').length === 2, 'comparison shows both saved texts and feedback');
+    d.querySelector('#study-export').click();
+    check(JSON.parse(d.querySelector('#study-export-text').value).attempts.length === 2, 'export contains the actual saved attempts');
+    const backup = d.querySelector('#study-export-text').value;
+    await go('#/workshop/import', '#ws-import');
+    input('#ws-import', backup); d.querySelector('#ws-restore').click();
+    check(N.STUDY.read('guest').attempts.length === 2 && !d.querySelector('#ws-import').value, 'restoring an identical backup skips duplicates');
+    input('#ws-import', '{bad json'); d.querySelector('#ws-restore').click();
+    check(N.STUDY.read('guest').attempts.length === 2 && d.querySelector('#ws-import').value, 'invalid backup preserves current data and input');
+    await go('#/workshop/mentor/' + first.id, '#ws-message');
+    check(d.querySelector('#ws-message').value.includes('journey') && !w.sessionStorage.getItem('nabu-mentor-draft'), 'mentor request is only a preview, not sent or shared automatically');
+    d.querySelector('#ws-compose').click();
+    check(!w.sessionStorage.getItem('nabu-mentor-draft'), 'guest cannot transfer a private message draft');
+    await go('#/study/card?card=major-0&focus=love&date=2026-10-20', '#study-reflection');
+    input('#study-reflection', '<img src=x onerror=alert(1)> My private reflection.');
+    await go('#/study', '#study-export');
+    await go('#/study/card?card=major-0&focus=love&date=2026-10-20', '#study-reflection');
+    check(d.querySelector('#study-reflection').value.includes('private reflection'), 'card reflection draft survives navigation');
+    d.querySelector('#study-save-note').click();
+    await wait(() => d.querySelector('#study-export'));
+    const note = N.STUDY.read('guest').reflections[0];
+    check(note.card === 'major-0' && note.focus === 'love' && note.date === '2026-10-20', 'card reflection retains card, focus and draw date');
+    check(!d.querySelector('#main img[src="x"]') && d.querySelector('#main').textContent.includes('<img'), 'saved writing is escaped rather than interpreted as HTML');
+    const realSet = w.Storage.prototype.setItem;
+    await go('#/practice/pr-1', '#pmark');
+    d.querySelector('[data-turn="0"]').click();
+    input('[data-pos="0"]', 'This is a complete response written during a storage failure.');
+    input('[data-synth]', 'The Fool suggests trying a new approach with care.');
+    w.Storage.prototype.setItem = () => { throw Error('storage unavailable'); };
+    d.querySelector('#pmark').click();
+    check(!d.querySelector('.presult') && /Not saved/.test(d.querySelector('#practice-save-status').textContent), 'storage failure reports unsaved state without false success');
+    w.Storage.prototype.setItem = realSet;
+    check(N.STUDY.read('guest').attempts.length === 2, 'failed save does not create a partial attempt');
+    // A changed account cannot write through a form opened by the previous user.
+    N.BE.enabled = true; testUser = {uid:'another-person'};
+    d.querySelector('#pmark').click();
+    check(/account changed/.test(d.querySelector('#practice-save-status').textContent) && N.STUDY.read(N.studyOwner()).attempts.length === 0, 'stale form cannot write into another account');
+    await go('#/study', '#study-export');
+    check(!d.querySelector('#main').textContent.includes('private reflection'), 'other account does not see guest writing');
+    // Signed-in messaging uses test doubles; this suite never sends a real message.
+    const originals = {watchMessages:N.BE.watchMessages,watchMyBookings:N.BE.watchMyBookings,sendMessage:N.BE.sendMessage,markRead:N.BE.markRead};
+    let sends = 0, failSend = true;
+    N.BE.watchMessages = () => () => {};
+    N.BE.watchMyBookings = () => () => {};
+    N.BE.markRead = () => {};
+    N.BE.sendMessage = async () => { sends++; if (failSend) throw Error('test delivery failure'); };
+    w.workshopMentorScreen(N.studyOwner(), first);
+    d.querySelector('#ws-compose').click();
+    check(!w.sessionStorage.getItem('nabu-mentor-draft') && sends === 0, 'signed-in preview still requires explicit sharing consent');
+    d.querySelector('#ws-consent').click(); d.querySelector('#ws-compose').click();
+    await wait(() => d.querySelector('#mtext'));
+    check(d.querySelector('#mtext').value.includes('journey') && sends === 0, 'approved preview opens an editable message without sending');
+    const message = d.querySelector('#mtext').value;
+    d.querySelector('#msend').click(); await pause(30);
+    check(sends === 1 && d.querySelector('#mtext').value === message && w.sessionStorage.getItem('nabu-mentor-draft'), 'failed message preserves the editable draft');
+    failSend = false; d.querySelector('#msend').click(); await pause(30);
+    check(sends === 2 && !d.querySelector('#mtext').value && !w.sessionStorage.getItem('nabu-mentor-draft'), 'successful explicit send clears the private draft');
+    Object.assign(N.BE, originals);
+    N.BE.enabled = false; testUser = null;
+    await go('#/study', '#study-export');
+    for (const lg of ['vi','de','en']) {
+      await language(lg); w.route(); await pause(80);
+      check(d.querySelector('h1').textContent === N.STUDY_TEXT[lg].title, lg + ' notebook labels render');
+    }
+    N.BE.enabled = true; N.BE.ready = false; N.BE.initFailed = true;
+    await go('#/practice/pr-1', '#pmark');
+    check(N.studyOwner() === 'guest' && d.querySelector('#main').textContent.includes(N.STUDY_TEXT.en.offlineGuest),
+      'failed auth initialization opens guest practice with an explicit notice');
+    await go('#/study', '#study-export');
+    check(d.querySelector('#main').textContent.includes('private reflection'),
+      'guest notebook remains available when auth initialization fails');
+    N.BE.enabled = false; N.BE.ready = true; N.BE.initFailed = false;
+    w.wipeDevice(true);
+    check(!Array.from({length:w.localStorage.length},(_,i)=>w.localStorage.key(i)).some((k)=>k.startsWith('nabu-study-')), 'account/device wipe removes notebook records');
+    w.unwipeForTests();
+  } catch (e) { check(false, e.stack || e.message); }
+  document.querySelector('#results').textContent = output.join('\n') + '\nDONE';
+  await fetch('/__results?done=1', {method:'POST',body:output.join('\n')}).catch(()=>{});
+})();
+</script>
