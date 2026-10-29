@@ -59,6 +59,7 @@ export interface LedgerRow {
      field that lookup has nothing to send. */
   token: string;
   until?: string; wid?: string; plan?: string;
+  testPurchase?: boolean; testAccessRemoved?: boolean;
   /* Who held this purchase before it followed its buyer to another account,
      and when. Written down so a move can be read back afterwards, and so one
      purchase cannot be walked from account to account all day. */
@@ -217,11 +218,13 @@ async function survivingFloor(env: PlayEnv, uid: string, ids: string[], exceptHa
      unreadable account does below. */
   if (!r.ok) throw new Error("query " + r.status);
   const rows = (await r.json()) as { document?: { name: string; fields?: Record<string, unknown> } }[];
+  // A capped query cannot prove that no later purchase still pays for access.
+  if (rows.filter(it => it.document).length >= LEDGER_PAGE) throw new Error("purchase history incomplete");
   for (const it of rows) {
     if (!it.document) continue;
     if (it.document.name.split("/purchases/")[1] === exceptHash) continue;   // the one being refunded
     const row = decode(it.document as { fields?: Record<string, never> }) as unknown as LedgerRow;
-    if (row.state === "voided" || !row.until) continue;
+    if (row.state === "voided" || row.state === "test_revoked" || row.testPurchase || !row.until) continue;
     for (const k of row.ids || []) {
       if (ids.indexOf(k) < 0) continue;
       if (!floor[k] || row.until > floor[k]) floor[k] = row.until;

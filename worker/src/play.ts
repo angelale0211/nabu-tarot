@@ -86,7 +86,7 @@ const accessToken = serviceToken;
 export const PLAY_SCOPE = "https://www.googleapis.com/auth/androidpublisher";
 export const FS_SCOPE = "https://www.googleapis.com/auth/datastore";
 
-export interface Bought { ok: boolean; why?: string; sku?: string }
+export interface Bought { ok: boolean; why?: string; sku?: string; testPurchase?: boolean }
 
 /* purchaseState 0 is bought, 1 cancelled, 2 pending. consumptionState 1 means
    it has already been handed over once, which is what stops the same token
@@ -100,7 +100,9 @@ export async function checkPurchase(env: PlayEnv, sku: string, token: string): P
   const r = await fetch(url, { headers: { Authorization: "Bearer " + at } });
   if (r.status === 404) return { ok: false, why: "unknown purchase" };
   if (!r.ok) return { ok: false, why: "play " + r.status };
-  const p = (await r.json()) as { purchaseState?: number; consumptionState?: number; acknowledgementState?: number };
+  const p = (await r.json()) as { purchaseState?: number; consumptionState?: number; acknowledgementState?: number; purchaseType?: number };
+  // Check before consumptionState: old test-card courses may already be consumed.
+  if (p.purchaseType === 0) return { ok: false, why: "test purchase", testPurchase: true };
   if (p.purchaseState === 2) return { ok: false, why: "pending" };
   if (p.purchaseState !== 0) return { ok: false, why: "not bought" };
   if (p.consumptionState === 1) return { ok: false, why: "already used" };
@@ -186,6 +188,7 @@ export async function grantUntil(env: PlayEnv, uid: string, want: Record<string,
    subscription, and a line item per product with its expiry and base plan.
    The state is Google's word, and it is the only word this worker takes. */
 export interface SubInfo {
+  testPurchase?: boolean; // set from Google's response only, never from the phone
   state: string;          // SUBSCRIPTION_STATE_ACTIVE | _CANCELED | _IN_GRACE_PERIOD | _ON_HOLD | _PAUSED | _EXPIRED | _PENDING | _PENDING_PURCHASE_CANCELED | _UNSPECIFIED
   expiryMs: number;
   productId: string;
@@ -205,11 +208,12 @@ export async function checkSubscription(env: PlayEnv, token: string): Promise<Su
   if (r.status === 404) return { ok: false, why: "unknown purchase" };
   if (!r.ok) return { ok: false, why: "play " + r.status };
   const j = (await r.json()) as {
-    subscriptionState?: string; acknowledgementState?: string; linkedPurchaseToken?: string;
+    subscriptionState?: string; acknowledgementState?: string; linkedPurchaseToken?: string; testPurchase?: object;
     lineItems?: { productId?: string; expiryTime?: string; autoRenewingPlan?: { autoRenewEnabled?: boolean }; offerDetails?: { basePlanId?: string } }[];
   };
   const li = (j.lineItems || [])[0] || {};
   return { ok: true, sub: {
+    ...(j.testPurchase != null ? { testPurchase: true } : {}),
     state: j.subscriptionState || "SUBSCRIPTION_STATE_UNSPECIFIED",
     expiryMs: li.expiryTime ? Date.parse(li.expiryTime) : 0,
     productId: li.productId || "",

@@ -18,6 +18,7 @@ import { itemBySku, itemByKey } from "./catalog";
 import { applySubscription, dropSubscriptionFrom, payRoom, noteGranted } from "./entitle";
 import { handleRtdn } from "./rtdn";
 import { reconcileSubs } from "./reconcile";
+import { revokeVerifiedPlayTest, sweepPlayTests } from "./play-tests";
 import { appleBill, handleAsn, sweepAppleRefunds, appleRevoke } from "./apple";
 import { registerPush, unregisterPush, sweepPush } from "./push";
 
@@ -451,6 +452,7 @@ export default {
           }
           const sub = got.sub;
           if (sub.productId !== sku) { log({ refused: "product mismatch", product: sub.productId }); return say(402, { error: "product mismatch" }); }
+          if (sub.testPurchase) { await revokeVerifiedPlayTest(env, token); return say(403, { error: "test purchase" }); }
           if (sub.state === "SUBSCRIPTION_STATE_PENDING") return say(202, { pending: true });
           const claim = await claimPurchase(env, person.uid, sku, item.opens, token, { kind: "subs" });
           const hash = await tokenId(token);
@@ -473,6 +475,7 @@ export default {
 
         /* ---- a one-time purchase ---- */
         const bought = await checkPurchase(env, sku, token);
+        if (bought.testPurchase) { await revokeVerifiedPlayTest(env, token); return say(403, { error: "test purchase" }); }
         if (!bought.ok) {
           if (bought.why === "pending") return say(202, { pending: true });
           if (transient(bought.why)) { log({ transient: bought.why }); return say(502, { error: bought.why }); }
@@ -843,6 +846,8 @@ export default {
       catch (e) { console.error(JSON.stringify({ at: "refund-sweep", error: String((e as Error).message || e) })); }
       try { console.log(JSON.stringify({ at: "reconcile", ...(await reconcileSubs(env)) })); }
       catch (e) { console.error(JSON.stringify({ at: "reconcile", error: String((e as Error).message || e) })); }
+      try { console.log(JSON.stringify({ at: "play-test-access", ...(await sweepPlayTests(env, true)) })); }
+      catch (e) { console.error(JSON.stringify({ at: "play-test-access", error: String((e as Error).message || e) })); }
       try { console.log(JSON.stringify({ at: "apple-refund-sweep", ...(await sweepAppleRefunds(env)) })); }
       catch (e) { console.error(JSON.stringify({ at: "apple-refund-sweep", error: String((e as Error).message || e) })); }
     })());

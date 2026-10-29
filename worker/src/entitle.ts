@@ -127,6 +127,13 @@ function capture(subs: Record<string, SubRow>, access: Record<string, string>, g
 }
 
 export async function applySubscription(env: PlayEnv, uid: string, item: PlayItem, sub: SubInfo, tokenHash: string, store?: string): Promise<{ access: Record<string, string>; subs: Record<string, SubRow>; granted: Record<string, string> }> {
+  // A stale test token must not replace a later real purchase for the same SKU.
+  // Retire only rows carrying this token; never capture test access as an admin grant.
+  if (store !== "apple" && sub.testPurchase) {
+    await dropSubscriptionFrom(env, uid, tokenHash);
+    const current = (await fsGet(env, "users/" + encodeURIComponent(uid))) || {};
+    return { access: (current.access || {}) as Record<string,string>, subs: (current.subs || {}) as Record<string,SubRow>, granted: (current.granted || {}) as Record<string,string> };
+  }
   const doc = (await fsGet(env, "users/" + encodeURIComponent(uid))) || {};
   const access = (doc.access as Record<string, string>) || {};
   const subs = { ...((doc.subs as Record<string, SubRow>) || {}) };

@@ -1941,6 +1941,18 @@ async function go(hash, sel) { W().location.hash = hash; await sleep(30); return
       const r2 = await N.BILL.verify('tarot', 'tok1');
       ok(r1.opened[0] === 'tarot' && N.ACCESS.has('tarot') && until1 && N.ACCESS.get().tarot === until1 && r2.ok,
         'buying a course opens it on the account, and sending the same token again returns the same date');
+      { const savedFetch = w.fetch, savedPull = N.BE.pullProfile;
+        let refreshed = 0, refused;
+        try {
+          w.fetch = async () => ({ ok: false, status: 403, json: async () => ({ error: 'test purchase' }) });
+          N.BE.pullProfile = async () => { refreshed++; };
+          N.BILL.remember({ sku: 'tarot', token: 'old-test', at: Date.now() });
+          try { await N.BILL.verify('tarot', 'old-test'); } catch (e) { refused = e; }
+          ok(refused && refused.message === 'test purchase' && refreshed === 1
+            && !N.BILL.pendingList().some((p) => p.token === 'old-test'),
+            'a rejected Play test purchase is forgotten and refreshes access from the account');
+        } finally { w.fetch = savedFetch; N.BE.pullProfile = savedPull; }
+      }
       play.pendingNext = true;
       const r3 = await N.BILL.buy('lenormand');
       ok(r3.pending === true && N.BILL.pendingList().length === 1 && !N.ACCESS.has('lenormand'), 'a pending purchase is remembered and opens nothing yet');
@@ -5023,7 +5035,10 @@ async function go(hash, sel) { W().location.hash = hash; await sleep(30); return
       { const signs = ['aries', 'taurus', 'gemini', 'cancer', 'leo', 'virgo', 'libra', 'scorpio', 'sagittarius', 'capricorn', 'aquarius', 'pisces'], miss = [];
         const want = [];
         ['1', '2', '3', '4'].forEach((c) => signs.forEach((sg) => { for (const mo of [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 'w1', 'w2']) ['female', 'male'].forEach((gd) => { want.push('outfit/' + c + '/' + sg + '-' + mo + '-' + gd + '.jpg'); }); }));
-        await Promise.all(want.map((u) => fetch('../' + u, { method: 'HEAD' }).then((r) => { if (!r.ok) miss.push(u); }, () => miss.push(u))));
+        // Bound requests so a busy local server is not mistaken for a missing file.
+        for (let i = 0; i < want.length; i += 16) {
+          await Promise.all(want.slice(i, i + 16).map((u) => fetch('../' + u, { method: 'HEAD' }).then((r) => { if (!r.ok) miss.push(u); }, () => miss.push(u))));
+        }
         ok(!miss.length, 'all 1344 outfit pictures (12 months and 2 rain looks), all four combinations, are on the server' + (miss.length ? ' (missing ' + miss.slice(0, 4).join(', ') + ')' : '')); }
       /* Choosing the weather: every cell of weather and temperature leads to a month whose outfit is
          on the server, rain in the heat is the raincoat and boots, the sun at 29° the straw hat, and

@@ -308,7 +308,13 @@ const BILL = {
     }), 30000);
     const j = await r.json().catch(() => ({}));
     if (r.status === 202 && j.pending) { this.remember(Object.assign({ sku: sku, token: token, at: Date.now() }, extra || {})); return { pending: true }; }
-    if (!r.ok || !j.ok) throw new Error(j.error || ('billing ' + r.status));
+    if (!r.ok || !j.ok) {
+      if (j.error === 'test purchase') {
+        this.forget(token);
+        try { await BE.pullProfile(); } catch (e) { /* refresh again on the next sync */ }
+      }
+      throw new Error(j.error || ('billing ' + r.status));
+    }
     this.forget(token);
     return j;
   },
@@ -558,7 +564,7 @@ const BILL = {
         }
       } catch (e) {
         const msg = String(e && e.message);
-        if (msg === 'already used') { this.forget(token); continue; }
+        if (msg === 'already used' || msg === 'test purchase') { this.forget(token); continue; }
         const tries = (p.tries || 0) + 1;
         if (tries >= PLAY_GIVE_UP) { this.forget(token); out.failed++; this.flagStuck(p); }
         else this.remember(Object.assign({}, p, { token: token, tries: tries }));
